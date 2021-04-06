@@ -84,29 +84,17 @@ void GameHUDShroudLifeComponent::UpdateMesh()
 
 	chaos::BitmapAtlas::BitmapLayout layout = bitmap_info->GetAnimationLayout(index, chaos::WrapMode::CLAMP);
 
-	float bw = (float)layout.width;
-	float bh = (float)layout.height;
-
-	glm::vec2 particle_final_size = particle_size;
-	if (particle_final_size.x <= 0.0f || particle_final_size.y <= 0.0f)
-	{
-		if (particle_final_size.x <= 0.0f && particle_final_size.y <= 0.0f) // both are invalid
-			particle_final_size = glm::vec2(bw, bh);
-		else if (particle_final_size.x <= 0.0f)
-			particle_final_size.x = particle_final_size.y * bw / bh;
-		else
-			particle_final_size.y = particle_final_size.x * bh / bw;
-	}
+	glm::vec2 final_particle_size = layout.ApplyRatioToSize(particle_size);
 
 	glm::vec2 screen_ref = GetCanvasBoxCorner(GetGame()->GetCanvasBox(), hotpoint);
-	glm::vec2 particle_position = chaos::ConvertHotpoint(screen_ref + position, particle_final_size, hotpoint, chaos::Hotpoint::CENTER);
+	glm::vec2 particle_position = chaos::ConvertHotpoint(screen_ref + position, final_particle_size, hotpoint, chaos::Hotpoint::CENTER);
 
 	chaos::ParticleDefault particle;
 
 	particle.texcoords = layout.GetTexcoords();
 	particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	particle.bounding_box.position = particle_position;
-	particle.bounding_box.half_size = 0.5f * particle_final_size;
+	particle.bounding_box.half_size = 0.5f * final_particle_size;
 
 	ParticleToPrimitives(particle, DI);
 

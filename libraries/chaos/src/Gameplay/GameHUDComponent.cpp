@@ -461,21 +461,7 @@ namespace chaos
 		if (bitmap_info != nullptr)
 		{
 			// compute the final size of the particle
-			//
-			// XXX: explanation of 'particle_size' member usage
-			//      -if .x AND .y are 0     => use the particle size in the atlas
-			//      -if .x AND .y are not 0 => override particle size in the atlas
-			//      -if .x OR  .y is  0     => use the particle effective ratio to compute the 0 member value
-			glm::vec2 particle_final_size = particle_size;
-			if (particle_final_size.x <= 0.0f || particle_final_size.y <= 0.0f)
-			{
-				if (particle_final_size.x <= 0.0f && particle_final_size.y <= 0.0f) // both are invalid
-					particle_final_size = glm::vec2(bitmap_info->width, bitmap_info->height);
-				else if (particle_final_size.x <= 0.0f)
-					particle_final_size.x = particle_final_size.y * bitmap_info->width / bitmap_info->height;
-				else
-					particle_final_size.y = particle_final_size.x * bitmap_info->height / bitmap_info->width;
-			}
+			glm::vec2 particle_final_size = bitmap_info->ApplyRatioToSize(particle_size);
 
 			// compute the size of the whole sprites with their offset
 			glm::vec2 whole_particle_size =

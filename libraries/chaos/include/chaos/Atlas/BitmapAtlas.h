@@ -44,9 +44,10 @@ namespace chaos
 
 			/** returns whether the bitmap index is valid */
 			bool IsValid() const { return (bitmap_index >= 0); }
-
 			/** get the texcoordinates for that bitmap */
 			class ParticleTexcoords GetTexcoords() const;
+			/** give a size for the bitmap depending on whether src.x.y == 0, and applying aspect ratio */
+			glm::vec2 ApplyRatioToSize(glm::vec2 src) const;
 
 		public:
 

@@ -12,7 +12,7 @@
 // ====================================================================
 
 GameHUDRacePositionComponent::GameHUDRacePositionComponent() :
-	chaos::GameHUDCacheValueTextComponent<glm::ivec2>("Pos %d/%d", glm::ivec2(-1, -1))
+	chaos::GameHUDCacheValueTextComponent<glm::ivec2>("Pos %d/%d")
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
@@ -26,14 +26,14 @@ glm::ivec2 GameHUDRacePositionComponent::QueryValue() const
 }
 
 
-std::string GameHUDRacePositionComponent::FormatText() const
+void GameHUDRacePositionComponent::UpdateText()
 {
 	char const* f = ((cached_value.x > cached_value.y / 2) && blink_value) ? "[WARNING Pos %d/%d]" : "Pos %d/%d";
 
 
 
 
-	return chaos::StringTools::Printf(f, 1 + cached_value.x, 1 + cached_value.y);
+	SetText(chaos::StringTools::Printf(f, 1 + cached_value.x, 1 + cached_value.y).c_str());
 }
 
 
@@ -105,45 +105,23 @@ GameHUDRaceLapsComponent::GameHUDRaceLapsComponent() :
 	generator_params.hotpoint = chaos::Hotpoint::TOP_LEFT;
 }
 
-glm::ivec2 GameHUDRaceLapsComponent::QueryValue() const
+bool GameHUDRaceLapsComponent::QueryValue(glm::ivec2 & result) const
 {
 	LudumLevelInstance const* li = GetLevelInstance();
 	if (li == nullptr || li->road == nullptr)
-		return nullptr;
-	{
-		LudumPlayer* player = GetPlayer(0);
-		if (player != nullptr && !player->race_position.IsCompleted())
+		return false;
+	LudumPlayer const* player = GetPlayer(0);
+	if (player == nullptr || !player->race_position.IsCompleted())
+		return false;
+	result = { player->race_position.current_lap, li->road->lap_count };
+	return true;
+		
 }
 
-std::string GameHUDRaceLapsComponent::FormatText() const
+void GameHUDRaceLapsComponent::UpdateMesh()
 {
-	return chaos::StringTools::Printf(format.c_str(), 1 + cached_value.x, cached_value.y);
+	SetText(chaos::StringTools::Printf(text.c_str(), 1 + cached_value.x, cached_value.y).c_str());
 }
-
-bool GameHUDRaceLapsComponent::UpdateCachedValue(bool& destroy_mesh)
-{
-	LudumPlayingHUD const* playing_hud = auto_cast(hud);
-	if (playing_hud != nullptr)
-	{
-		LudumLevelInstance const* li = playing_hud->GetLevelInstance();
-		if (li != nullptr && li->road != nullptr)
-		{
-			LudumPlayer* player = GetPlayer(0);
-			if (player != nullptr && !player->race_position.IsCompleted())
-			{
-				glm::ivec2 v = { player->race_position.current_lap, li->road->lap_count };
-
-				if (v != cached_value)
-				{
-					cached_value = v;
-					return true;
-				}
-			}
-		}
-	}
-	return false;
-}
-
 
 // ====================================================================
 // LudumPlayingHUD

@@ -33,7 +33,7 @@ public:
 protected:
 
 	/** override */
-	virtual bool UpdateCachedValue(bool& destroy_mesh) override;
+	virtual bool UpdateText() override;
 	/** override */
 	virtual bool DoTick(float delta_time) override;
 
@@ -61,18 +61,13 @@ public:
 	GameHUDRaceLapsComponent(chaos::ParticleTextGenerator::GeneratorParams const& in_params) :
 		chaos::GameHUDCacheValueTextComponent<glm::ivec2>("Pos %d/%d", in_params) {}
 
-	/** override */
-	virtual glm::ivec2 QueryValue() const override;
-
 protected:
 
 	/** override */
-	virtual bool UpdateCachedValue(bool& destroy_mesh) override;
-
-
-
+	virtual bool QueryValue(glm::ivec2 & result) const override;
+	/** override */
+	virtual void UpdateMesh() override;
 };
-
 
 // ====================================================================
 // LudumPlayingHUD

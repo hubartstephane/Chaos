@@ -105,6 +105,8 @@ namespace chaos
 		virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params) override;
 		/** update the mesh according to internal data */
 		virtual void UpdateMesh() {}
+		/** invalidate the mesh. May force its reconstruction */
+		void InvalidateMesh() { mesh = nullptr; }
 
 	protected:
 
@@ -320,7 +322,7 @@ namespace chaos
 	// GameHUDLifeComponent
 	// ====================================================================
 
-	class GameHUDLifeComponent : public GameHUDMeshComponent
+	class GameHUDLifeComponent : public GameHUDCacheValueMeshComponent<int>
 	{
 	public:
 
@@ -331,19 +333,17 @@ namespace chaos
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;
-		/** update all particles (count, alpha) */
-		void UpdateLifeMesh(float delta_time);
-		/** returns the number of life */
-		virtual int GetLifeCount() const;
 		/** tick heart */
 		void TickHeartBeat(float delta_time);
+
 		/** override */
-		virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path) override;
+		virtual bool QueryValue(int& result) const override;
+		/** override */
+		virtual void UpdateMesh() override;
+		/** override */
+		virtual bool InitializeFromConfiguration(nlohmann::json const& json, boost::filesystem::path const& config_path) override;
 
 	protected:
-
-		/** caching the current life count */
-		int cached_value = -1;
 
 		/** the hotpoint of the first particle */
 		Hotpoint hotpoint = Hotpoint::BOTTOM_LEFT;
@@ -360,12 +360,10 @@ namespace chaos
 		std::string heart_beat_sound = "heartbeat";
 		/** the heart beat frequency */
 		float heart_beat_frequency = 1.0f;
-
 		/** the minimum alpha apply to particle when it is the last life */
 		float fadeout_warning_base = 0.4f;
-
 		/** the current heart warning timer value */
-		float warning_value = 0.0f;
+		float warning_value = 1.0f;
 	};
 	
 	// ====================================================================

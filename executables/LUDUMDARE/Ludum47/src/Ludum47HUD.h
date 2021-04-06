@@ -26,22 +26,18 @@ public:
 	GameHUDRacePositionComponent(chaos::ParticleTextGenerator::GeneratorParams const& in_params) :
 		chaos::GameHUDCacheValueTextComponent<glm::ivec2>("Pos %d/%d", in_params) {}
 
-	virtual glm::ivec2 QueryValue() const override;
-
-	virtual std::string FormatText() const override;
-
 protected:
 
 	/** override */
-	virtual bool UpdateText() override;
+	virtual bool QueryValue(glm::ivec2& result) const override;
+	/** override */
+	virtual void UpdateMesh() override;
 	/** override */
 	virtual bool DoTick(float delta_time) override;
 
-
-	float current_dt = 0.0f;
+protected:
 
 	float blink_timer = 0.0f;
-
 	bool blink_value = false;
 };
 

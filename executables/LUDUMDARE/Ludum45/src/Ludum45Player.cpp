@@ -18,14 +18,6 @@ bool LudumPlayer::Initialize(chaos::GameInstance * in_game_instance)
 
 void LudumPlayer::UpdateBrightSideOfLife(float delta_time)
 {
-#if 0
-	if (brightsideoflife_timer > 0.0f)
-	{
-		brightsideoflife_timer -= delta_time;
-		if (brightsideoflife_timer > 0.0f)
-			return;	
-	}
-#endif
 	if (GetSpecialPowerLevel() > 0)
 	{
 		chaos::Key const bright_key_buttons[] = { chaos::KeyboardButton::LEFT_ALT, chaos::KeyboardButton::RIGHT_ALT, chaos::GamepadButton::Y, chaos::Key()};
@@ -36,10 +28,6 @@ void LudumPlayer::UpdateBrightSideOfLife(float delta_time)
 			return;
 		}
 	}
-#if 0
-	DoUpdateBrightSideOfLife(false);
-#endif
-
 }
 
 void LudumPlayer::DoUpdateBrightSideOfLife(bool value)
@@ -51,38 +39,6 @@ void LudumPlayer::DoUpdateBrightSideOfLife(bool value)
 
 	}	
 	brightsideoflife = value;
-
-#if 0
-
-	if (brightsideoflife == value)
-		return;
-	brightsideoflife = value;
-	brightsideoflife_timer = 2.0f;
-
-	if (value)
-	{
-		GetGame()->SetInGameMusic("brightsideoflife");
-	}		
-	else
-	{
-		chaos::TMLevel * tiled_level = auto_cast(GetLevel());
-		if (tiled_level != nullptr)
-		{
-			chaos::TiledMap::Map * tiled_map = tiled_level->GetTiledMap();
-			if (tiled_map != nullptr)
-			{
-				std::string const * level_music = tiled_map->FindPropertyString("MUSIC");
-				if (level_music != nullptr && !chaos::StringTools::IsEmpty(*level_music))
-				{
-					GetGame()->SetInGameMusic(level_music->c_str());				
-					return;
-				}			
-			}					
-		}
-		GetGame()->SetInGameMusic("game_music");
-	}
-#endif
-	
 }
 
 void LudumPlayer::TickInternal(float delta_time)

@@ -158,7 +158,9 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 			return;
 
 		glEnable(GL_BLEND);
+		glDisable(GL_DEPTH_TEST);
 		renderer->DrawFullscreenQuad(postprocess_material, uniform_provider, render_params);	
+		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 	}
 }

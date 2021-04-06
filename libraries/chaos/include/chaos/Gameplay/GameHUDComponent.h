@@ -172,7 +172,7 @@ namespace chaos
 		virtual void OnInsertedInHUD()
 		{
 			if (!QueryValue(cached_value))
-				mesh = nullptr;
+				InvalidateMesh();
 			else
 				UpdateMesh();
 		}
@@ -181,7 +181,7 @@ namespace chaos
 		{
 			type new_value;
 			if (!QueryValue(new_value))
-				mesh = nullptr;
+				InvalidateMesh();
 			else if (mesh == nullptr || cached_value != new_value) // maybe the Query may returns from false to true, but with a same cache value
 			{                                                      // check if mesh was nullptr to avoid this case
 				cached_value = new_value;

@@ -7,14 +7,6 @@
 #include "Ludum46LevelInstance.h"
 #include "Ludum46GameInstance.h"
 
-namespace chaos
-{
-	namespace GameHUDKeys
-	{
-
-	};
-};
-
 // ====================================================================
 // LudumPlayingHUD
 // ====================================================================

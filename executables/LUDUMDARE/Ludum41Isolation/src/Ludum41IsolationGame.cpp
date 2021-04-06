@@ -324,7 +324,6 @@ int LudumGame::AddParticleLayers()
 	particle_manager->AddLayer<ParticleBrickLayerTrait>(render_order++, chaos::GameHUDKeys::BRICK_LAYER_ID, "gameobject", brick_trait);
 
 	particle_manager->AddLayer<ParticleChallengeLayerTrait>(render_order++, chaos::GameHUDKeys::CHALLENGE_LAYER_ID, "challenge");
-	particle_manager->AddLayer<ParticleObjectLayerTrait>(render_order++, chaos::GameHUDKeys::TEXT_LAYER_ID, "text");
 
 	return render_order;
 }

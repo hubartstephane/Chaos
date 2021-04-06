@@ -10,16 +10,6 @@
 // LudumGame
 // =================================================
 
-namespace chaos
-{
-	namespace GameHUDKeys
-	{
-		CHAOS_DECLARE_TAG(PLANETS_LAYER_ID);
-		CHAOS_DECLARE_TAG(GAMEOBJECT_LAYER_ID);
-		CHAOS_DECLARE_TAG(FIRE_LAYER_ID);
-	};
-};
-
 class LudumGame : public chaos::Game
 {
 	friend class LudumWindow;

@@ -44,12 +44,5 @@
       "position": [ 0.0, 0.0 ],
       "line_height": 200
     }
-  },
-
-  "FPS_ID": {
-    "generator_params": {
-      "hotpoint": "bottom-right",
-      "position": [ -20.0, 20.0 ]
-    }
   }
 }

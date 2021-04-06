@@ -84,16 +84,28 @@ namespace chaos
 		return true;
 	}
 		
+#if !_DEBUG
 	CHAOS_HELP_TEXT(CMD, "-ShowFPS");
+	CHAOS_HELP_TEXT(CMD, "-ShowPerfs");
+#endif
 	CHAOS_HELP_TEXT(CMD, "-HideFPS");
+	CHAOS_HELP_TEXT(CMD, "-HidePerfs");
 
 	bool GameHUD::FillHUDContent()
 	{		
+		// FPS
 #if !_DEBUG
 		if (Application::HasApplicationCommandLineFlag("-ShowFPS")) // CMDLINE
 #endif
 			if (!Application::HasApplicationCommandLineFlag("-HideFPS")) // CMDLINE
 				RegisterComponent(GameHUDKeys::FPS_ID, new GameHUDFramerateComponent());
+		// PERFS
+#if !_DEBUG
+		if (Application::HasApplicationCommandLineFlag("-ShowPerfs")) // CMDLINE
+#endif
+			if (!Application::HasApplicationCommandLineFlag("-HidePerfs")) // CMDLINE
+				RegisterComponent(GameHUDKeys::PERFS_ID, new GameHUDPerfsComponent());
+		// FREECAMERA
 #if _DEBUG
 		RegisterComponent(GameHUDKeys::FREECAMERA_ID, new GameHUDFreeCameraComponent());
 #endif

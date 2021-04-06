@@ -57,6 +57,13 @@
     }
   },
 
+  "PERFS_ID": {
+    "generator_params": {
+      "hotpoint": "top-right",
+      "position": [ -20.0, -120.0 ]
+    }
+  },
+
   "LIFE_ID": {
 
     "hotpoint": "bottom-left",

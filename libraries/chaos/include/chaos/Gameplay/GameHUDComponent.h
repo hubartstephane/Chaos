@@ -291,8 +291,39 @@ namespace chaos
 
 	protected:
 
-		/** the current framerate */
-		float framerate = 0.0f;
+		/** the framerate */
+		float average_framerate = 0.0f;
+	};
+
+	// ====================================================================
+	// GameHUDPerfsComponent
+	// ====================================================================
+
+	class GameHUDPerfsComponent : public GameHUDCacheValueTextComponent<std::pair<int, int>>
+	{
+	public:
+
+		/** constructor */
+		GameHUDPerfsComponent(char const* in_text = "DrawCalls(%03d) Vertices(%03d)");
+		/** constructor */
+		GameHUDPerfsComponent(char const* in_text, ParticleTextGenerator::GeneratorParams const& in_params) :
+			GameHUDCacheValueTextComponent<std::pair<int, int>>(in_text, in_params) {}
+
+	protected:
+
+		/** override */
+		virtual bool QueryValue(std::pair<int, int>& result) const override;
+		/** override */
+		virtual void UpdateMesh() override;
+		/** override */
+		virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params) override;
+
+	protected:
+
+		/** the drawcalls */
+		int average_drawcall = 0;
+		/** the vertices */
+		int average_vertices = 0;
 	};
 
 	// ====================================================================

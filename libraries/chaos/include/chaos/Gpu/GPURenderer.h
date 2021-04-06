@@ -46,8 +46,13 @@ namespace chaos
 		/** called at the start of rendering on a framebuffer */ 
 		bool PopFramebufferRenderContext();
 
-		/** get the current frame rate */
-		float GetFrameRate() const;
+		/** get the average frame rate */
+		float GetAverageFrameRate() const;
+		/** get the number of average draw calls */
+		int GetAverageDrawCalls() const;
+		/** get the number of average rendered vertices */
+		int GetAverageVertices() const;
+
 		/** get the rendering timestamp */
 		uint64_t GetTimestamp() const;
 		/** get  a fence for the end of this frame */
@@ -70,9 +75,9 @@ namespace chaos
 		/** for counting frame per seconds */
 		TimedAccumulator<float> framerate_counter;
 		/** for counting drawcall per seconds */
-		TimedAccumulator<float> drawcall_counter;
+		TimedAccumulator<int> drawcall_counter;
 		/** for counting drawcall per seconds */
-		TimedAccumulator<float> vertices_counter;
+		TimedAccumulator<int> vertices_counter;
 
 		/** the owning window */
 		weak_ptr<Window> window;

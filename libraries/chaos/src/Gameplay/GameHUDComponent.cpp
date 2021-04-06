@@ -306,16 +306,48 @@ namespace chaos
 
 	int GameHUDFramerateComponent::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
 	{
-		framerate = renderer->GetFrameRate();
+		average_framerate = renderer->GetAverageFrameRate();
 		return GameHUDCacheValueTextComponent<float>::DoDisplay(renderer, uniform_provider, render_params);
 	}
 
 	bool GameHUDFramerateComponent::QueryValue(float & result) const
 	{
-		if (framerate <= 0.0f)
+		if (average_framerate <= 0.0f)
 			return false;
-		result = std::ceil(framerate * 100.0f) / 100.0f;
+		result = std::ceil(average_framerate * 100.0f) / 100.0f;
 		return true;
+	}
+
+
+	// ====================================================================
+	// GameHUDPerfsComponent
+	// ====================================================================
+
+	GameHUDPerfsComponent::GameHUDPerfsComponent(char const* in_text) :
+		GameHUDCacheValueTextComponent<std::pair<int, int>>(in_text)
+	{
+		generator_params.line_height = 30.0f;
+		generator_params.font_info_name = "normal";
+		generator_params.position = glm::vec2(-20.0f, -80.0f);
+		generator_params.hotpoint = Hotpoint::TOP_RIGHT;
+	}
+
+	int GameHUDPerfsComponent::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+	{
+		average_drawcall = renderer->GetAverageDrawCalls();
+		average_vertices = renderer->GetAverageVertices();
+		return GameHUDCacheValueTextComponent<std::pair<int, int>>::DoDisplay(renderer, uniform_provider, render_params);
+	}
+
+	bool GameHUDPerfsComponent::QueryValue(std::pair<int, int>& result) const
+	{
+		result = { average_drawcall , average_vertices };
+		return true;
+	}
+
+	void GameHUDPerfsComponent::UpdateMesh()
+	{
+		SetText(StringTools::Printf(text.c_str(), cached_value.first, cached_value.second).c_str());
 	}
 
 	// ====================================================================

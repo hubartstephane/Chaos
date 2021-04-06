@@ -36,7 +36,7 @@ namespace chaos
 			timer_value += delta_time;
 			if (timer_value >= timer_duration)
 			{
-				current_value = accumulated_values / timer_value;
+				current_value = T(float(accumulated_values) / timer_value);
 				timer_value = 0.0f;
 				accumulated_values = {};
 			}

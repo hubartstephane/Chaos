@@ -98,9 +98,19 @@ namespace chaos
 			rendering_fence->CreateGPUFence();
 	}
 
-	float GPURenderer::GetFrameRate() const 
+	float GPURenderer::GetAverageFrameRate() const 
 	{ 
 		return framerate_counter.GetCurrentValue();
+	}
+
+	int GPURenderer::GetAverageDrawCalls() const
+	{
+		return drawcall_counter.GetCurrentValue();
+	}
+
+	int GPURenderer::GetAverageVertices() const
+	{
+		return vertices_counter.GetCurrentValue();
 	}
 
 	GPUFence * GPURenderer::GetCurrentFrameFence()
@@ -178,9 +188,9 @@ namespace chaos
 
 		// update some statistics
 		int instance_count = (instancing.instance_count > 1) ? instancing.instance_count : 1;
-		vertices_counter.Accumulate((float)primitive.count * instance_count);
+		vertices_counter.Accumulate(primitive.count * instance_count);
 
-		drawcall_counter.Accumulate(1.0f);		
+		drawcall_counter.Accumulate(1);		
 	}
 
 	void GPURenderer::DrawFullscreenQuad(GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)

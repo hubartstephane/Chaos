@@ -18,6 +18,26 @@ namespace chaos
 			return result;
 		}
 
+		// if src.x AND src.y are 0     => use the size in the atlas
+		// if src.x AND src.y are not 0 => returns the src unmodified
+		// if src.x OR  src.y is  0     => use bitmap ratio to replace the 0 axis
+		glm::vec2 BitmapLayout::ApplyRatioToSize(glm::vec2 src) const
+		{
+			float bw = float(width);
+			float bh = float(height);
+
+			if (src.x <= 0.0f || src.y <= 0.0f)
+			{
+				if (src.x <= 0.0f && src.y <= 0.0f) // both are invalid
+					src = { bw, bh };
+				else if (src.x <= 0.0f)
+					src.x = src.y * bw / bh;
+				else
+					src.y = src.x * bh / bw;
+			}
+			return src;
+		}
+
 		// ========================================================================
 		// BitmapInfo functions
 		// ========================================================================

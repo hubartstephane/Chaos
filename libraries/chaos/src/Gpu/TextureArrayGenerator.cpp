@@ -119,7 +119,7 @@ namespace chaos
 		}
 
 		// no slice, no texture
-		if (slice_registry.GetSliceCount() == 0)
+		if (generators.size() != 0 && slice_registry.GetSliceCount() == 0)
 			return nullptr;
 
 		// search max size and merged pixel format
@@ -136,11 +136,16 @@ namespace chaos
 
 		// test whether the final size is valid
 		if (width <= 0 || height <= 0)
-			return nullptr;
+			if (generators.size() != 0)
+				return nullptr;
 
 		PixelFormat pixel_format = pixel_format_merger.GetResult(); 
 		if (!pixel_format.IsValid())
-			return nullptr;
+		{
+			if (generators.size() > 0)
+				return nullptr;
+			pixel_format = (merge_params.pixel_format.IsValid()) ? merge_params.pixel_format : PixelFormat::BGRA;
+		}
 
 		// create the texture and fill the slices
 		GPUTexture * result = GenTextureObjectHelper(slice_registry, pixel_format, width, height, parameters);
@@ -209,9 +214,10 @@ namespace chaos
 		if (texture_id > 0)
 		{
 			// initialize the storage
-			int level_count = (parameters.reserve_mipmaps) ?
-				GLTextureTools::GetMipmapLevelCount(width, height) :
-				1;
+			int level_count = 1;
+			if (width > 0 && height > 0)
+				if (parameters.reserve_mipmaps)
+					level_count = GLTextureTools::GetMipmapLevelCount(width, height);
 			glTextureStorage3D(texture_id, level_count, gl_pixel_format.internal_format, width, height, (GLsizei)slice_count);
 
 			// fill each slices into GPU

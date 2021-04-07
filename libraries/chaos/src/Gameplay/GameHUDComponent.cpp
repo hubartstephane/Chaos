@@ -336,12 +336,17 @@ namespace chaos
 	{
 		average_drawcall = renderer->GetAverageDrawCalls();
 		average_vertices = renderer->GetAverageVertices();
+		average_framerate = renderer->GetAverageFrameRate();
 		return GameHUDCacheValueTextComponent<std::pair<int, int>>::DoDisplay(renderer, uniform_provider, render_params);
 	}
 
 	bool GameHUDPerfsComponent::QueryValue(std::pair<int, int>& result) const
 	{
-		result = { average_drawcall , average_vertices };
+		float rate = (average_framerate == 0.0f) ? 1.0f : average_framerate;
+		result = {
+			int(float(average_drawcall) / rate),
+			int(float(average_vertices) / rate)
+		};
 		return true;
 	}
 

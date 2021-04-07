@@ -157,8 +157,11 @@ namespace chaos
 
 		bool AtlasGenerator::EnsureValidResults(BitmapInfoInputVector const & entries, std::ostream & stream) const
 		{
-			bool result = true;
+			// early exit
+			if (entries.size() == 0)
+				return true;
 
+			bool result = true;
 			Rectangle atlas_rectangle = GetAtlasRectangle();
 
 			// individual tests
@@ -502,7 +505,11 @@ namespace chaos
 			// test whether a correct pixel format has been found
 			PixelFormat final_pixel_format = pixel_format_merger.GetResult();
 			if (!final_pixel_format.IsValid())
-				return false;
+			{
+				if (entries.size() != 0)
+					return false;
+				final_pixel_format = (params.merge_params.pixel_format.IsValid()) ? params.merge_params.pixel_format : PixelFormat::BGRA;
+			}
 
 			// compute final atlas size
 			max_width += params.atlas_padding * 2;

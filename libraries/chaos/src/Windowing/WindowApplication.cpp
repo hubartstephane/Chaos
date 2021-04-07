@@ -429,11 +429,20 @@ namespace chaos
 		assert(glfwGetCurrentContext() == shared_context);
 
 		if (!CreateTextureAtlas())
+		{
+			chaos::Log::Error("WindowApplication::CreateTextureAtlas(...) failure");
 			return false;
+		}
 		if (!InitializeGamepadButtonMap())
+		{
+			chaos::Log::Error("WindowApplication::InitializeGamepadButtonMap(...) failure");
 			return false;
+		}
 		if (!CreateTextGenerator())
+		{
+			chaos::Log::Error("WindowApplication::CreateTextGenerator(...) failure");
 			return false;
+		}
 		return true;
 	}
 

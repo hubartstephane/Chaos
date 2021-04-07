@@ -304,7 +304,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GameHUDPerfsComponent(char const* in_text = "DrawCalls(%03d) Vertices(%03d)");
+		GameHUDPerfsComponent(char const* in_text = "DrawCalls(%d) Vertices(%d)");
 		/** constructor */
 		GameHUDPerfsComponent(char const* in_text, ParticleTextGenerator::GeneratorParams const& in_params) :
 			GameHUDCacheValueTextComponent<std::pair<int, int>>(in_text, in_params) {}
@@ -324,6 +324,8 @@ namespace chaos
 		int average_drawcall = 0;
 		/** the vertices */
 		int average_vertices = 0;
+		/** the framerate */
+		float average_framerate = 0.0f;
 	};
 
 	// ====================================================================

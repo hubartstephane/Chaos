@@ -2,6 +2,7 @@
 #include <chaos/Gameplay/ComponentOwner.h>
 #include <chaos/Gameplay/GameParticles.h>
 #include <chaos/Gameplay/SceneNode.h>
+#include <chaos/Gameplay/SceneRenderer.h>
 #include <chaos/Gameplay/GameEntity.h>
 #include <chaos/Gameplay/Camera.h>
 #include <chaos/Gameplay/CameraComponent.h>

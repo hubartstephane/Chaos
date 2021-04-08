@@ -194,10 +194,6 @@ namespace chaos
 	bool TMLevelInstance::DoTick(float delta_time)
 	{
 		LevelInstance::DoTick(delta_time);
-
-		// tick the particle manager
-		if (particle_manager != nullptr)
-			particle_manager->Tick(delta_time);
 		// tick all layer instances
 		size_t count = layer_instances.size();
 		for (size_t i = 0; i < count; ++i)
@@ -215,15 +211,10 @@ namespace chaos
 	int TMLevelInstance::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
 	{
 		int result = 0;
-
-		// display particle manager
-		if (particle_manager != nullptr)
-			result += particle_manager->Display(renderer, uniform_provider, render_params);
 		// draw the layer instances
 		size_t count = layer_instances.size();
 		for (size_t i = 0; i < count; ++i)
 			result += layer_instances[i]->Display(renderer, uniform_provider, render_params);
-
 		return result;
 	}
 
@@ -243,9 +234,6 @@ namespace chaos
 			return false;
 		// solve the references
 		reference_solver.SolveReferences(this);
-		// create a particle manager
-		if (!CreateParticleManager(in_game))
-			return false;
 		return true;
 	}
 
@@ -255,23 +243,6 @@ namespace chaos
 		reference_solver.DeclareReference(main_camera, "MAIN_CAMERA", property_owner);
 		return true;
 	}
-
-	bool TMLevelInstance::CreateParticleManager(Game* in_game)
-	{
-		WindowApplication* window_application = Application::GetInstance();
-		if (window_application == nullptr)
-			return false;
-		particle_manager = new ParticleManager;
-		if (particle_manager == nullptr)
-			return false;
-		particle_manager->SetTextureAtlas(window_application->GetTextureAtlas()); // take the atlas
-		return true;
-	}
-
-
-
-
-	// shulayer
 
 	bool TMLevelInstance::DoCreateLayerInstances(std::vector<shared_ptr<TiledMap::LayerBase>> const & layers, TMObjectReferenceSolver& reference_solver)
 	{

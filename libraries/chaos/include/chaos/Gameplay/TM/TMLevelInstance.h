@@ -172,8 +172,6 @@ namespace chaos
 		/** create the cameras */
 		virtual void CreateCameras() override;
 
-		/** create the particle manager */
-		virtual bool CreateParticleManager(Game* in_game);
 		/** create the layers instances */
 		virtual bool CreateLayerInstances(Game* in_game, TMObjectReferenceSolver &reference_solver);
 		/** create the layers instances */
@@ -204,9 +202,6 @@ namespace chaos
 
 		/** the layer of reference for displacement */
 		shared_ptr<TMLayerInstance> reference_layer;
-
-		/** the particle manager used to render the world */
-		shared_ptr<ParticleManager> particle_manager;
 
 		/** the layers */
 		std::vector<shared_ptr<TMLayerInstance>> layer_instances;

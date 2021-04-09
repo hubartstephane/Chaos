@@ -19,10 +19,10 @@ namespace chaos
 			XMLTools::ReadAttribute(element, "opacity", opacity);
 			XMLTools::ReadAttribute(element, "offsetx", offset.x);
 			XMLTools::ReadAttribute(element, "offsety", offset.y);
-
+			XMLTools::ReadAttribute(element, "parallaxx", parallax_factor.x);
+			XMLTools::ReadAttribute(element, "parallaxy", parallax_factor.y);
 			// reverse the Y axis
 			offset = offset * REVERSE_Y_AXIS;
-
 			return true;
 		}
 

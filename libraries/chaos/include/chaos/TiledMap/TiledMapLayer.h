@@ -55,7 +55,10 @@ namespace chaos
 			/** the opacity */
 			float opacity = 1.0f;
 			/** the offset of the layer */
-			glm::vec2 offset = glm::vec2(0.0f, 0.0f);
+			glm::vec2 offset = { 0.0f, 0.0f };
+			/** the parallax value for the layer */
+			glm::vec2 parallax_factor = { 1.0f, 1.0f };
+
 		};
 
 		// ==========================================

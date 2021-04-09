@@ -18,6 +18,12 @@ namespace chaos
 		AXIS_Z = 2
 	};
 
+	/** JSON loading method */
+	bool LoadFromJSON(nlohmann::json const& json_entry, Axis& dst);
+	/** JSON saving method */
+	bool SaveIntoJSON(nlohmann::json& json_entry, Axis const& src);
+
+
 }; // namespace chaos
 
 #endif // CHAOS_FORWARD_DECLARATION

@@ -8,6 +8,7 @@
 #include <chaos/Gameplay/CameraComponent.h>
 #include <chaos/Gameplay/FreeCameraComponent.h>
 #include <chaos/Gameplay/FollowPlayerCameraComponent.h>
+#include <chaos/Gameplay/AutoRecenterToPlayerCameraComponent.h>
 #include <chaos/Gameplay/SoundListenerCameraComponent.h>
 #include <chaos/Gameplay/ShakeCameraComponent.h>
 #include <chaos/Gameplay/ScrollCameraComponent.h>

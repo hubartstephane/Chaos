@@ -17,6 +17,8 @@ namespace chaos
 
 	class FollowPlayerCameraComponent : public CameraComponent
 	{
+		CHAOS_DECLARE_OBJECT_CLASS2(FollowPlayerCameraComponent, CameraComponent);
+
 	public:
 
 		/** constructor */

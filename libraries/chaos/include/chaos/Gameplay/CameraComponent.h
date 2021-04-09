@@ -14,7 +14,7 @@ namespace chaos
 	// CameraComponent
 	// =============================================
 
-	class CameraComponent : public Tickable
+	class CameraComponent : public Tickable, public JSONSerializable
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 

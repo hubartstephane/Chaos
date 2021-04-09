@@ -17,6 +17,8 @@ namespace chaos
 
 	class FreeCameraComponent : public CameraComponent
 	{
+		CHAOS_DECLARE_OBJECT_CLASS2(FreeCameraComponent, CameraComponent);
+
 	public:
 
 		/** constructor */

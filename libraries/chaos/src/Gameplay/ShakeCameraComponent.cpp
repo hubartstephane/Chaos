@@ -47,4 +47,28 @@ namespace chaos
 		return true;
 	}
 
+	bool ShakeCameraComponent::SerializeIntoJSON(nlohmann::json& json_entry) const
+	{
+		if (!CameraComponent::SerializeIntoJSON(json_entry))
+			return false;
+		JSONTools::SetAttribute(json_entry, "modifier_duration", modifier_duration);
+		JSONTools::SetAttribute(json_entry, "modifier_range", modifier_range);
+		JSONTools::SetAttribute(json_entry, "modifier_frequency", modifier_frequency);
+		JSONTools::SetAttribute(json_entry, "use_damping", use_damping);
+		JSONTools::SetAttribute(json_entry, "zoom_effect", zoom_effect);
+		return true;
+	}
+
+	bool ShakeCameraComponent::SerializeFromJSON(nlohmann::json const& json_entry)
+	{
+		if (!CameraComponent::SerializeFromJSON(json_entry))
+			return false;
+		JSONTools::GetAttribute(json_entry, "modifier_duration", modifier_duration);
+		JSONTools::GetAttribute(json_entry, "modifier_range", modifier_range);
+		JSONTools::GetAttribute(json_entry, "modifier_frequency", modifier_frequency);
+		JSONTools::GetAttribute(json_entry, "use_damping", use_damping);
+		JSONTools::GetAttribute(json_entry, "zoom_effect", zoom_effect);
+		return true;
+	}
+
 }; // namespace chaos

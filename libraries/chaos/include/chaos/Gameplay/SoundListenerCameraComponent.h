@@ -16,6 +16,8 @@ namespace chaos
 
 	class SoundListenerCameraComponent : public CameraComponent
 	{
+		CHAOS_DECLARE_OBJECT_CLASS2(SoundListenerCameraComponent, CameraComponent);
+
 	protected:
 
 		/** override */

@@ -104,7 +104,24 @@ namespace chaos
 			if (RestrictToInside(camera_box, pawn_box, false))
 				player_pawn->SetBoundingBox(pawn_box);
 		}
+		return true;
+	}
 
+	bool ScrollCameraComponent::SerializeIntoJSON(nlohmann::json& json_entry) const
+	{
+		if (!CameraComponent::SerializeIntoJSON(json_entry))
+			return false;
+		JSONTools::SetAttribute(json_entry, "scroll_speed", scroll_speed);
+		JSONTools::SetAttribute(json_entry, "axis", axis);
+		return true;
+	}
+
+	bool ScrollCameraComponent::SerializeFromJSON(nlohmann::json const& json_entry)
+	{
+		if (!CameraComponent::SerializeFromJSON(json_entry))
+			return false;
+		JSONTools::GetAttribute(json_entry, "scroll_speed", scroll_speed);
+		JSONTools::GetAttribute(json_entry, "axis", axis);
 		return true;
 	}
 

@@ -28,7 +28,7 @@ namespace chaos
 		/** destroy cameras when the level is finished */
 		virtual void DestroyCameras();
 		/** create cameras when the level is started */
-		virtual void CreateCameras();
+		virtual void CreateMainCamera();
 
 		/** get the transformation world to camera */
 		obox2 GetCameraOBox(size_t index, bool apply_modifiers = true) const;

@@ -16,18 +16,14 @@ LudumLevelInstance::LudumLevelInstance()
 	player_displacement_component_class = LudumPlayerDisplacementComponent::GetStaticClass();
 }
 
-void LudumLevelInstance::CreateCameras()
+void LudumLevelInstance::CreateCameraComponents(chaos::Camera* camera, chaos::TMCameraTemplate* camera_template)
 {
-	chaos::TMLevelInstance::CreateCameras();
+	chaos::TMLevelInstance::CreateCameraComponents(camera, camera_template);
 
-	size_t camera_count = cameras.size();
-	for (size_t i = 0; i < camera_count; ++i)
-	{
-		cameras[i]->SetSafeZone(glm::vec2(0.6f, 0.6f));
-		cameras[i]->AddComponent(new chaos::FollowPlayerCameraComponent(0));
-		cameras[i]->AddComponent(new chaos::ShakeCameraComponent(0.15f, 0.05f, 0.15f, true, true));
-		cameras[i]->AddComponent(new chaos::SoundListenerCameraComponent());
-	}
+	camera->SetSafeZone(glm::vec2(0.6f, 0.6f));
+	camera->AddComponent(new chaos::FollowPlayerCameraComponent(0));
+	camera->AddComponent(new chaos::ShakeCameraComponent(0.15f, 0.05f, 0.15f, true, true));
+	camera->AddComponent(new chaos::SoundListenerCameraComponent());
 }
 
 

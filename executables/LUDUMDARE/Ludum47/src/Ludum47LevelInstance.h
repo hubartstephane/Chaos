@@ -54,7 +54,7 @@ protected:
 	/** override */
 	virtual bool Initialize(chaos::Game * in_game, chaos::Level * in_level) override;
 	/** override */
-	virtual void CreateCameras() override;
+	virtual void CreateCameraComponents(chaos::Camera* camera, chaos::TMCameraTemplate* camera_template) override;
 
 	/** override */
 	virtual bool IsPlayerDead(chaos::Player* player) override;

@@ -10,18 +10,13 @@
 // LudumLevelInstance implementation
 // =============================================================
 
-void LudumLevelInstance::CreateCameras()
+void LudumLevelInstance::CreateCameraComponents(chaos::Camera* camera, chaos::TMCameraTemplate* camera_template)
 {
-	// create the cameras
-	chaos::TMLevelInstance::CreateCameras();
-	// tweak the cameras
-	size_t camera_count = cameras.size();
-	for (size_t i = 0; i < camera_count; ++i)
-	{
-		cameras[i]->SetSafeZone(glm::vec2(0.2f, 0.2f));
-		cameras[i]->AddComponent(new chaos::FollowPlayerCameraComponent(0));
-		cameras[i]->AddComponent(new chaos::SoundListenerCameraComponent());
-	}
+	chaos::TMLevelInstance::CreateCameraComponents(camera, camera_template);
+
+	camera->SetSafeZone(glm::vec2(0.2f, 0.2f));
+	camera->AddComponent(new chaos::FollowPlayerCameraComponent(0));
+	camera->AddComponent(new chaos::SoundListenerCameraComponent());
 }
 
 bool LudumLevelInstance::CheckLevelCompletion() const

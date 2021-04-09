@@ -144,7 +144,7 @@ namespace chaos
 		return result;
 	}
 
-	void LevelInstance::CreateCameras()
+	void LevelInstance::CreateMainCamera()
 	{
 
 	}
@@ -174,7 +174,7 @@ namespace chaos
 		if (game_instance == nullptr)
 			return;
 		// create cameras
-		CreateCameras();
+		CreateMainCamera();
 		// last initialization of camera
 		size_t camera_count = cameras.size();
 		for (size_t i = 0; i < camera_count; ++i)

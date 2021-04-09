@@ -25,7 +25,7 @@ protected:
 	/** override */
 	virtual void OnPlayerLeaved(chaos::Player * player) override;
 	/** override */
-	virtual void CreateCameras() override;
+	virtual void CreateCameraComponents(chaos::Camera* camera, chaos::TMCameraTemplate* camera_template) override;
 
 protected:
 

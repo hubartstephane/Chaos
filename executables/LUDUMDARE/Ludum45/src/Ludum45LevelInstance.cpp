@@ -10,22 +10,15 @@
 // LudumLevelInstance implementation
 // =============================================================
 
-void LudumLevelInstance::CreateCameras()
+void LudumLevelInstance::CreateCameraComponents(chaos::Camera* camera, chaos::TMCameraTemplate* camera_template)
 {
-	chaos::TMLevelInstance::CreateCameras();
+	chaos::TMLevelInstance::CreateCameraComponents(camera, camera_template);
 
-	LudumGame* ludum_game = GetGame();
-
-	size_t camera_count = cameras.size();
-	for (size_t i = 0; i < camera_count; ++i)
-	{
-		cameras[i]->SetSafeZone(glm::vec2(0.9f, 0.6f));
-
-		cameras[i]->AddComponent(new chaos::ShakeCameraComponent(0.15f, 0.05f, 0.15f, true, true));
-		cameras[i]->AddComponent(new chaos::SoundListenerCameraComponent());
-		if (ludum_game != nullptr)
-			cameras[i]->AddComponent(new chaos::ScrollCameraComponent(ludum_game->scroll_factor * camera_speed, chaos::Axis::AXIS_X));
-	}
+	camera->SetSafeZone(glm::vec2(0.9f, 0.6f));
+	camera->AddComponent(new chaos::ShakeCameraComponent(0.15f, 0.05f, 0.15f, true, true));
+	camera->AddComponent(new chaos::SoundListenerCameraComponent());
+	if (LudumGame* ludum_game = GetGame())
+		camera->AddComponent(new chaos::ScrollCameraComponent(ludum_game->scroll_factor * camera_speed, chaos::Axis::AXIS_X));
 }
 
 bool LudumLevelInstance::DoTick(float delta_time)

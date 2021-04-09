@@ -29,7 +29,7 @@ protected:
 	/** override */
 	virtual bool Initialize(chaos::Game * in_game, chaos::Level * in_level) override;
 	/** override */
-	virtual void CreateCameras() override;
+	virtual void CreateCameraComponents(chaos::Camera* camera, chaos::TMCameraTemplate* camera_template) override;
 
 
 	virtual int DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params) override;

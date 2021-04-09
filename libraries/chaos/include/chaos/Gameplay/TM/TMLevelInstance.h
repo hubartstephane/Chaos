@@ -169,8 +169,10 @@ namespace chaos
 		/** override */
 		virtual void OnLevelStarted() override;
 
-		/** create the cameras */
-		virtual void CreateCameras() override;
+		/** create the main camera */
+		virtual void CreateMainCamera() override;
+		/** create the main camera components */
+		virtual void CreateCameraComponents(Camera* camera, TMCameraTemplate* camera_template);
 
 		/** create the layers instances */
 		virtual bool CreateLayerInstances(Game* in_game, TMObjectReferenceSolver &reference_solver);

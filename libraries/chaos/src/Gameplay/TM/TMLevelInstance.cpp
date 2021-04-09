@@ -320,11 +320,9 @@ namespace chaos
 		return nullptr;
 	}
 
-	void TMLevelInstance::CreateCameras()
+	void TMLevelInstance::CreateMainCamera()
 	{
-		TMLevel* level = GetLevel();
-
-		// search the MAIN CAMERA TEMPLATE
+		// search the MAIN camera template (or the first one)
 		TMCameraTemplate* camera_template = main_camera.get();
 		if (camera_template == nullptr)
 		{
@@ -332,10 +330,8 @@ namespace chaos
 			if (camera_template == nullptr)
 				return;
 		}
-
 		// get the aspect ratio
 		float aspect_ratio = 16.0f / 9.0f;
-
 		Game const* game = GetGame();
 		if (game != nullptr)
 			aspect_ratio = game->GetViewportWantedAspect();
@@ -351,7 +347,16 @@ namespace chaos
 
 		// initialize the camera
 		camera->SetCameraBox(camera_box);
+
+		// initialize the camera components
+		CreateCameraComponents(camera, camera_template);
 	}
+
+	void TMLevelInstance::CreateCameraComponents(Camera * camera, TMCameraTemplate * camera_template)
+	{
+
+	}
+
 
 
 	TMPlayerStart* TMLevelInstance::GetPlayerStartForPawn(Player* player)

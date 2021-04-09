@@ -16,8 +16,12 @@ namespace chaos
 
 	class ShakeCameraComponent : public CameraComponent
 	{
+		CHAOS_DECLARE_OBJECT_CLASS2(ShakeCameraComponent, CameraComponent);
+
 	public:
 
+		/** constructor */
+		ShakeCameraComponent() = default;
 		/** constructor */
 		ShakeCameraComponent(float in_modifier_duration, float in_modifier_range, float in_modifier_frequency, bool in_use_damping, bool in_zoom_effect):
 			modifier_duration(in_modifier_duration),
@@ -26,13 +30,17 @@ namespace chaos
 			use_damping(in_use_damping),
 			zoom_effect(in_zoom_effect){}
 
-		/** override */
-		virtual box2 ApplyModifier(box2 const & src) const override;
-
 		/** the modifier is restarted */
 		void RestartModifier();
 		/** stop the modifier */
 		void StopModifier();
+
+		/** override */
+		virtual box2 ApplyModifier(box2 const& src) const override;
+		/** override */
+		virtual bool SerializeIntoJSON(nlohmann::json& json_entry) const;
+		/** override */
+		virtual bool SerializeFromJSON(nlohmann::json const& json_entry);
 
 	protected:
 

@@ -33,6 +33,8 @@ namespace chaos
 		virtual bool SerializeIntoJSON(nlohmann::json& json_entry) const;
 		/** override */
 		virtual bool SerializeFromJSON(nlohmann::json const& json_entry);
+		/** override */
+		virtual box2 ApplyModifier(box2 const& src) const override;
 
 	protected:
 
@@ -40,6 +42,10 @@ namespace chaos
 		virtual bool DoTick(float delta_time) override;
 
 	protected:
+
+		glm::vec2 offset = { 0.0f, 0.0f };
+
+
 
 		/** the player index to follow */
 		size_t player_index = 0;

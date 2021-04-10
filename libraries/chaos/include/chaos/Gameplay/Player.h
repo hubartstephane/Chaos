@@ -66,7 +66,7 @@ namespace chaos
 		/** gets the left stick position */
 		glm::vec2 GetLeftStickPosition() const { return left_stick_position; }
 		/** gets the right stick position */
-		glm::vec2 GeRightStickPosition() const { return right_stick_position; }
+		glm::vec2 GetRightStickPosition() const { return right_stick_position; }
 
 		/** gets the left trigger */
 		float GetLeftTrigger() const { return left_trigger; }

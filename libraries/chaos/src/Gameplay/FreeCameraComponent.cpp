@@ -11,7 +11,7 @@ namespace chaos
 		CameraComponent::DoTick(delta_time);
 
 		// get the wanted player
-		Player * player = camera->GetPlayer(player_index);
+		Player * player = GetPlayer(player_index);
 		if (player == nullptr)
 			return true;
 
@@ -38,9 +38,8 @@ namespace chaos
 		zoom_value = std::clamp(zoom_value, 1.0f, 4.0f);
 
 		// update camera position
-		// XXX : -multiply by 'half_size' => the greater the view is, the faster we go
-		//       -screen Y coordinate and gamepad are inverted
-		camera_box.position += glm::vec2(1.0f, -1.0f) * left_stick_position * delta_time * camera_box.half_size * 3.0f;
+		// XXX : multiply by 'half_size' => the greater the view is, the faster we go
+		camera_box.position += left_stick_position * delta_time * camera_box.half_size * 3.0f;
 
 		// try to keep the camera in the world
 		box2 world = camera->GetLevelInstance()->GetBoundingBox();

@@ -121,9 +121,7 @@ void Game::UpdatePlayerDisplacement(float delta_time)
 
 	if (stick_position.x != 0.0f || stick_position.y != 0.0f)
 	{
-		glm::vec2 invert_y_stick = glm::vec2(1.0f, -1.0f);
-
-		stick_to_apply = stick_position * invert_y_stick;
+		stick_to_apply = stick_position;
 	}
 	else
 	{

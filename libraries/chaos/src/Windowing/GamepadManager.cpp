@@ -150,7 +150,7 @@ namespace chaos
 		GLFWgamepadstate state;
 		glfwGetGamepadState(stick_index, &state);
 
-#if 1
+#if 0
 		char const* n1 = glfwGetGamepadName(stick_index);
 		char const* n2 = glfwGetJoystickGUID(stick_index);
 		char const* n3 = glfwGetJoystickName(stick_index);
@@ -167,8 +167,12 @@ namespace chaos
 		for (size_t i = 0; i < AXIS_COUNT; ++i)
 		{
 			float value = state.axes[i];
-			if (i == (size_t)GamepadAxis::LEFT_TRIGGER || i == (size_t)GamepadAxis::RIGHT_TRIGGER)  // renormalize icomming value [-1 .. +1] => [0 .. 1]
+			// renormalize icomming value [-1 .. +1] => [0 .. 1]
+			if (i == (size_t)GamepadAxis::LEFT_TRIGGER || i == (size_t)GamepadAxis::RIGHT_TRIGGER)  
 				value = (value * 0.5f + 0.5f);
+			// want positive Y when stick is UP
+			else if (i == (size_t)GamepadAxis::LEFT_AXIS_Y || i == (size_t)GamepadAxis::RIGHT_AXIS_Y)
+				value = -value;
 			axes[i].SetValue(value, dead_zone);
 			axes[i].UpdateSameValueTimer(delta_time);
 		}

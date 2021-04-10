@@ -153,7 +153,6 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 		stick_position.x = chaos::MathTools::AnalogicToDiscret(stick_position.x);
 		stick_position.y = chaos::MathTools::AnalogicToDiscret(stick_position.y);
 	}
-	stick_position.y = -stick_position.y; // Y stick is inverted
 
 	chaos::Key const accelerate_keys[] = { chaos::KeyboardButton::SPACE, chaos::GamepadButton::A, chaos::Key() };
 	particle.accelerate_pressed = player->CheckButtonPressed(accelerate_keys);

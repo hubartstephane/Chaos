@@ -199,7 +199,6 @@ namespace chaos
 			stick_position.x = MathTools::AnalogicToDiscret(stick_position.x);
 			stick_position.y = MathTools::AnalogicToDiscret(stick_position.y);
 		}
-		stick_position.y = -stick_position.y; // Y stick is inverted
 
 		Key const jump_key_buttons[] = { KeyboardButton::SPACE, GamepadButton::A, Key() };
 		bool jump_pressed = player->CheckButtonPressed(jump_key_buttons);

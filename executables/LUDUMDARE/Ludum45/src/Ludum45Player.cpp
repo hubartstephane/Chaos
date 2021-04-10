@@ -141,9 +141,6 @@ void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 			direction = (left_length_2 > right_length_2) ?
 				left_stick_position / std::sqrt(left_length_2) :
 				right_stick_position / std::sqrt(right_length_2);	
-
-			// axis Y reversed
-			direction *= glm::vec2(1.0f, -1.0f);
 		}
 		else
 		{

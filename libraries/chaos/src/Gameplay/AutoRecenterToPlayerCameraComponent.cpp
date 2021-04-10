@@ -7,9 +7,25 @@ namespace chaos
 	// AutoRecenterToPlayerCameraComponent
 	// =============================================
 
+	box2 AutoRecenterToPlayerCameraComponent::ApplyModifier(box2 const& src) const
+	{
+		box2 result = src;
+		result.position += offset;
+		return result;
+	}
+
 	bool AutoRecenterToPlayerCameraComponent::DoTick(float delta_time)
 	{
 		CameraComponent::DoTick(delta_time);
+
+		Player* player = GetPlayer(player_index);
+		if (player == nullptr)
+			return true;
+
+		glm::vec2 right_stick = player->GetRightStickPosition();
+
+		offset += right_stick * delta_time * 150.0f;
+
 
 #if 0
 

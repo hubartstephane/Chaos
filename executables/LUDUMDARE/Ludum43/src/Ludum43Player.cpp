@@ -74,7 +74,7 @@ void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 			left_stick_position / std::sqrt(left_length_2) :
 			right_stick_position / std::sqrt(right_length_2);
 
-		player_particle->acceleration = ludum_game->player_acceleration * glm::vec2(1.0f, -1.0f) * acceleration; // axis Y reversed
+		player_particle->acceleration = ludum_game->player_acceleration * acceleration;
 	}
 }
 

@@ -39,15 +39,6 @@ namespace chaos
 		/** override */
 		virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
 
-		
-
-
-
-
-
-	//	bool Show
-
-
 	protected:
 
 		/** additionnal initialization */
@@ -97,6 +88,11 @@ namespace chaos
 
 		/** override */
 		virtual bool Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+
+	protected:
+
+		/** the classes for camera components */
+		std::vector<SubClassOf<CameraComponent>> camera_component_classes;
 	};
 
 	// =====================================

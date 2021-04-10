@@ -354,10 +354,10 @@ namespace chaos
 
 	void TMLevelInstance::CreateCameraComponents(Camera * camera, TMCameraTemplate * camera_template)
 	{
-
+		for (SubClassOf<CameraComponent> const& cls : camera_template->camera_component_classes)
+			if (CameraComponent* component = cls.CreateInstance())
+				camera->AddComponent(component);
 	}
-
-
 
 	TMPlayerStart* TMLevelInstance::GetPlayerStartForPawn(Player* player)
 	{

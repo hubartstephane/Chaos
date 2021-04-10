@@ -467,7 +467,7 @@ namespace chaos
 		if (!TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
 			return false;
 		// get the camera component classes
-		if (std::string const* names = in_geometric_object->FindPropertyString("camera_component_classes"))
+		if (std::string const* names = in_geometric_object->FindPropertyString("CAMERA_COMPONENTS"))
 			camera_component_classes = GetSubClassesFromString<CameraComponent>(names->c_str(), ',');
 		return true;
 	}

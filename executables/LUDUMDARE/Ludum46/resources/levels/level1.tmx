@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="32" tileheight="32" infinite="0" nextlayerid="46" nextobjectid="2185">
+<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="32" tileheight="32" infinite="0" nextlayerid="46" nextobjectid="2185">
  <editorsettings>
   <chunksize width="37" height="37"/>
  </editorsettings>
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
-  <property name="MAIN_CAMERA" type="object" value="2114"/>
   <property name="CAMERA_SPEED" type="float" value="400"/>
   <property name="FLAME_HEALTH" type="float" value="100"/>
   <property name="FLAME_HEALTH_LOST_PER_SECOND" type="float" value="0.1"/>
   <property name="LEVEL_TITLE">Level 1
 [LEVELTITLE Welcome Home]</property>
+  <property name="MAIN_CAMERA" type="object" value="2114"/>
   <property name="MUSIC" value="game_music1"/>
   <property name="PLAYER_START" type="object" value="0"/>
   <property name="REQUIRED_SOULS" type="int" value="50"/>
@@ -48,7 +48,11 @@
     <properties>
      <property name="OBJECT_REFERENCE" type="object" value="1"/>
     </properties>
-    <object id="2114" type="Camera" x="99.21" y="1591.43" width="306.275" height="201.06"/>
+    <object id="2114" type="Camera" x="99.21" y="1591.43" width="306.275" height="201.06">
+     <properties>
+      <property name="CAMERA_COMPONENTS" value="AutoRecenterToPlayerCameraComponent"/>
+     </properties>
+    </object>
    </objectgroup>
    <layer id="37" name="BurningFlames" width="57" height="56">
     <properties>

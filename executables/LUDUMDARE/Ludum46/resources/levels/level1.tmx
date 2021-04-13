@@ -128,24 +128,6 @@
     <object id="2155" gid="7" x="850" y="672" width="40" height="80" rotation="10"/>
     <object id="2156" gid="7" x="850" y="672.67" width="40" height="80" rotation="50"/>
     <object id="2157" gid="3221225479" x="501.667" y="747.67" width="40" height="80"/>
-    <object id="2158" name="my_rectangle" x="0" y="0" width="97.3333" height="88" rotation="314.428"/>
-    <object id="2159" name="my_ellipse" x="0" y="0" width="250.034" height="110" rotation="20">
-     <ellipse/>
-    </object>
-    <object id="2160" name="my_polygon" x="0" y="0" rotation="30">
-     <polygon points="0,0 -26,54 6.66667,64 47.3333,56.6667"/>
-    </object>
-    <object id="2163" name="my_polyline" x="0" y="0" rotation="37">
-     <polyline points="0,0 11.3333,-96 107.333,-25.3333 194.667,-78"/>
-    </object>
-    <object id="2165" name="my_tile" gid="7" x="0" y="0" width="40" height="80" rotation="20"/>
-    <object id="2166" name="my_rect1" x="0" y="0" width="108.667" height="77.3333"/>
-    <object id="2175" x="0" y="0" rotation="10">
-     <polygon points="0,0 60.6667,-103.333 212.667,-23.3333 65.3333,86.6667 100.667,-17.3333 4.66667,-78 -79.3333,8.66667 38.6667,169.333"/>
-    </object>
-    <object id="2176" x="0" y="0" width="508" height="109" rotation="10">
-     <text wrap="1" halign="center">Bonjour Monde</text>
-    </object>
     <object id="2177" x="1086" y="1268.5" width="108" height="19">
      <text wrap="1">Bonjour Monde</text>
     </object>

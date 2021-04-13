@@ -4,11 +4,6 @@ namespace chaos
 {
 	class AutoRecenterToPlayerCameraComponent;
 
-	extern float GMN;
-	extern float GMX;
-
-
-
 }; // namespace chaos
 
 #else
@@ -48,11 +43,14 @@ namespace chaos
 
 	protected:
 
-		float safe_zone_speed = 0.2f; // relative to the camera safe zone
-
+		/** the speed of limits displacement (ratio per sec relative to the camera safe zone) */
+		float safe_zone_speed = 0.25f; 
+		/** the previous pawn position */
 		glm::vec2 pawn_previous_position = { std::numeric_limits<float>::quiet_NaN(), std::numeric_limits<float>::quiet_NaN() };
 
-		glm::vec2 min_dynamic_safe_zone = { 0.0f, 0.0f }; // in ratio of camera safe zone
+		/** current ratio of dynamic limits (min limits, left and down)*/
+		glm::vec2 min_dynamic_safe_zone = { 0.0f, 0.0f }; 
+		/** current ratio of dynamic limits (max limits, right and up) */
 		glm::vec2 max_dynamic_safe_zone = { 0.0f, 0.0f };
 
 

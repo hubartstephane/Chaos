@@ -12,7 +12,7 @@ namespace chaos
 		CameraComponent::DoTick(delta_time);
 
 		// get the wanted player
-		Player * player = camera->GetPlayer(player_index);
+		Player * player = GetPlayer(player_index);
 		if (player == nullptr)
 			return true;
 
@@ -37,7 +37,7 @@ namespace chaos
 		}
 
 		// try to keep the camera in the world
-		box2 world = camera->GetLevelInstance()->GetBoundingBox();
+		box2 world = GetLevelInstance()->GetBoundingBox();
 		if (!IsGeometryEmpty(world))
 			RestrictToInside(world, camera_box, false);
 

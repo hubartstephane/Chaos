@@ -20,8 +20,7 @@ void LudumLevelInstance::CreateCameraComponents(chaos::Camera* camera, chaos::TM
 {
 	chaos::TMLevelInstance::CreateCameraComponents(camera, camera_template);
 
-	camera->SetSafeZone(glm::vec2(0.6f, 0.6f));
-	camera->AddComponent(new chaos::FollowPlayerCameraComponent(0));
+	camera->SetSafeZone(glm::vec2(0.8f, 0.8f));
 	camera->AddComponent(new chaos::ShakeCameraComponent(0.15f, 0.05f, 0.15f, true, true));
 	camera->AddComponent(new chaos::SoundListenerCameraComponent());
 }

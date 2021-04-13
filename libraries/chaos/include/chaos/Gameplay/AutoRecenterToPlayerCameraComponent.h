@@ -4,6 +4,11 @@ namespace chaos
 {
 	class AutoRecenterToPlayerCameraComponent;
 
+	extern float GMN;
+	extern float GMX;
+
+
+
 }; // namespace chaos
 
 #else
@@ -42,6 +47,17 @@ namespace chaos
 		virtual bool DoTick(float delta_time) override;
 
 	protected:
+
+		float safe_zone_speed = 0.2f; // relative to the camera safe zone
+
+		glm::vec2 pawn_previous_position = { std::numeric_limits<float>::quiet_NaN(), std::numeric_limits<float>::quiet_NaN() };
+
+		glm::vec2 min_dynamic_safe_zone = { 0.0f, 0.0f }; // in ratio of camera safe zone
+		glm::vec2 max_dynamic_safe_zone = { 0.0f, 0.0f };
+
+
+
+
 
 		glm::vec2 offset = { 0.0f, 0.0f };
 

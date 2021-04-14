@@ -301,6 +301,17 @@ namespace chaos
 			return result;
 		}
 
+		/** target a value */
+		template<typename T> 
+		T TargetValue(T src, T target_value, T increase_value, T decrease_value)
+		{
+			if (src < target_value)
+				src = std::min(src + increase_value, target_value);
+			else if (src > target_value)
+				src = std::max(src - decrease_value, target_value);
+			return src;
+		}
+
 		/** a function to reset rand() function */
 		void ResetRandSeed();
 

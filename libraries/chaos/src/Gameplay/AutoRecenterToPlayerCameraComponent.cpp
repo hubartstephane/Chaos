@@ -40,71 +40,8 @@ namespace chaos
 				if (isnan(pawn_previous_position[0]) || isnan(pawn_previous_position[1]))
 					pawn_previous_position = pawn_box.position;
 
-				// fake a manual camera with stick displacement by enlarging the pawn_box
+				// move the camera with the right stick
 				glm::vec2 right_stick = player->GetRightStickPosition();
-				if (right_stick.x != 0.0f || right_stick.y != 0.0f)
-				{
-					idle_timer = 0.0f; // no automatic recenter
-
-					camera_offset += right_stick * camera_offset_speed * camera_box.half_size * 2.0f * safe_zone * delta_time;
-
-					std::pair<glm::vec2, glm::vec2> pawn_corners = GetBoxCorners(pawn_box);
-					for (int axis = 0; axis < 2; ++axis)
-					{
-						if (camera_offset[axis] > 0) // use left/bottom corner as a reference
-						{
-							float new_corner = std::min(pawn_corners.second[axis] + camera_offset[axis], pawn_corners.first[axis] + safe_zone[axis] * camera_box.half_size[axis] * 1.9f);
-							if (!IsGeometryEmpty(world))
-								new_corner = std::min(new_corner, world.position[axis] + world.half_size[axis]);
-
-							camera_offset[axis] = new_corner - pawn_corners.second[axis];
-							pawn_corners.second[axis] = new_corner;
-						}
-						else if (camera_offset[axis] < 0) // use right/to corner as a reference
-						{
-							float new_corner = std::max(pawn_corners.first[axis] + camera_offset[axis], pawn_corners.second[axis] - safe_zone[axis] * camera_box.half_size[axis] * 1.9f);
-							if (!IsGeometryEmpty(world))
-								new_corner = std::max(new_corner, world.position[axis] - world.half_size[axis]);
-
-							camera_offset[axis] = new_corner - pawn_corners.first[axis];
-							pawn_corners.first[axis] = new_corner;
-						}
-
-						if (camera_offset[axis] < 0.0)
-							idle_timer = idle_timer;
-						if (camera_offset[axis] > 0.0)
-							idle_timer = idle_timer;
-
-
-
-
-					}
-					pawn_box = box2(pawn_corners); // hack the pawn size
-
-				}
-
-
-
-
-
-				
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 				// XXX : The safe zone used to restrict the player inside the camera view is dynamic
 				//       for each axis, we have 2 invisible limits for the camera view
@@ -131,24 +68,38 @@ namespace chaos
 				{
 					float pawn_speed = std::abs(pawn_previous_position[axis] - pawn_box.position[axis]) / delta_time;
 
-					if (pawn_speed > fast_pawn_limit)
+					if (pawn_speed > fast_pawn_limit || right_stick[axis] != 0.0f)
 					{
 						idle_timer = 0.0f;
 
 						if (PAWNBOX_INCREASE_FACTOR * pawn_box.half_size[axis] < camera_box.half_size[axis])
 						{
-							// player going right/up
+							// XXX : order of theses tests is important : pawn movement first, manual camera offset thereafter
+
+							// pawn going right/up
 							if (pawn_previous_position[axis] < pawn_box.position[axis])
 							{
 								min_dynamic_safe_zone[axis] = std::max(min_dynamic_safe_zone[axis] - safe_zone_speed * delta_time, 0.0f);
 								max_dynamic_safe_zone[axis] = std::min(max_dynamic_safe_zone[axis] + safe_zone_speed * delta_time, 1.0f - pawn_box_ratio[axis]);
 
 							}
-							// player going left/down
+							// pawn going left/down
 							else if (pawn_previous_position[axis] > pawn_box.position[axis])
 							{
 								min_dynamic_safe_zone[axis] = std::min(min_dynamic_safe_zone[axis] + safe_zone_speed * delta_time, 1.0f - pawn_box_ratio[axis]);
 								max_dynamic_safe_zone[axis] = std::max(max_dynamic_safe_zone[axis] - safe_zone_speed * delta_time, 0.0f);
+							}
+							// camera manually displaced to the right/up
+							else if (right_stick[axis] > 0.0f)
+							{
+								min_dynamic_safe_zone[axis] = std::max(min_dynamic_safe_zone[axis] - camera_offset_speed * delta_time, 0.0f);
+								max_dynamic_safe_zone[axis] = std::min(max_dynamic_safe_zone[axis] + camera_offset_speed * delta_time, 1.0f - pawn_box_ratio[axis]);
+							}
+							// camera manually displaced to the left/down
+							else if (right_stick[axis] < 0.0f)
+							{
+								min_dynamic_safe_zone[axis] = std::min(min_dynamic_safe_zone[axis] + camera_offset_speed * delta_time, 1.0f - pawn_box_ratio[axis]);
+								max_dynamic_safe_zone[axis] = std::max(max_dynamic_safe_zone[axis] - camera_offset_speed * delta_time, 0.0f);
 							}
 						}
 					}
@@ -163,7 +114,7 @@ namespace chaos
 				// step 2 : recenter the camera if both idle for both axis
 				if (idle[0] && idle[1])
 				{
-					if (right_stick.x == 0.0f && right_stick.y == 0.0f)
+					if (right_stick.x == 0.0f && right_stick.y == 0.0f) // no auto center if player want to move the camera
 					{
 						idle_timer = std::min(idle_timer + delta_time, idle_delay);
 						if (idle_timer >= idle_delay)
@@ -188,10 +139,6 @@ namespace chaos
 				else
 				{
 					idle_timer = 0;
-
-					camera_offset.x = MathTools::TargetValue(camera_offset.x, 0.0f, camera_offset_speed, camera_offset_speed);
-					camera_offset.y = MathTools::TargetValue(camera_offset.y, 0.0f, camera_offset_speed, camera_offset_speed);
-
 					for (int axis = 0; axis < 2; ++axis)
 					{
 						if (idle[axis])
@@ -201,10 +148,6 @@ namespace chaos
 						}
 					}
 				}
-				
-
-				
-	
 
 				// store the pawn previous position for next frame
 				pawn_previous_position = pawn_box.position;

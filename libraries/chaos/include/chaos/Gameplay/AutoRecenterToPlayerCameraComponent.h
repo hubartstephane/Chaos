@@ -41,7 +41,14 @@ namespace chaos
 		size_t player_index = 0;
 
 		/** the speed of limits displacement (ratio per sec relative to the camera safe zone) */
-		float safe_zone_speed = 0.25f; 
+		float safe_zone_speed = 0.5f; 
+		/** the pawn speed above which the dynamic safe zone decrease */
+		float fast_pawn_limit = 150.0f;
+		/** the speed at which the camera offset updates (safe_zone size as a unit) */
+		float camera_offset_speed = 1.0f;
+		/** the delay of idle to recenter the camera to player */
+		float idle_delay = 5.0f;
+
 		/** the previous pawn position */
 		glm::vec2 pawn_previous_position = { std::numeric_limits<float>::quiet_NaN(), std::numeric_limits<float>::quiet_NaN() };
 
@@ -50,23 +57,6 @@ namespace chaos
 		/** current ratio of dynamic limits (max limits, right and up) */
 		glm::vec2 max_dynamic_safe_zone = { 0.0f, 0.0f };
 
-		/** the idle safe zone limit */
-		glm::vec2 idle_safe_zone = { 0.3f, 0.3f };
-
-		/** the pawn speed above which the dynamic safe zone decrease */
-		float fast_pawn_limit = 150.0f;
-
-		/** the camera offset due to right stick usage */
-		glm::vec2 camera_offset = { 0.0f, 0.0f };
-		/** the speed at which the camera offset updates (safe_zone size as a unit) */
-		float camera_offset_speed = 1.0f;
-
-
-
-
-
-		/** the delay of idle to recenter the camera to player */
-		float idle_delay = 5.0f;
 		/** current idle timer value */
 		float idle_timer = 0.0f;
 	};

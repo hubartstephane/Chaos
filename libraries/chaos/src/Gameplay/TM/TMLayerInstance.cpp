@@ -770,12 +770,12 @@ namespace chaos
 
 			// new provider for camera override (will be fullfill only if necessary)
 			GPUProgramProviderChain main_uniform_provider(uniform_provider);
-			main_uniform_provider.AddVariable("world_to_camera", CameraTransform::GetCameraTransform(final_camera_obox));
+			main_uniform_provider.AddVariable("world_to_camera", CameraTools::GetCameraTransform(final_camera_obox));
 
 			box2 final_camera_box;
 			final_camera_box.position = final_camera_obox.position;
 			final_camera_box.half_size = final_camera_obox.half_size;
-			main_uniform_provider.AddVariable("projection_matrix", CameraTransform::GetProjectionMatrix(final_camera_obox));
+			main_uniform_provider.AddVariable("projection_matrix", CameraTools::GetProjectionMatrix(final_camera_obox));
 
 
 

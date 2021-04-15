@@ -6,21 +6,30 @@ namespace chaos
 	CHAOS_IMPLEMENT_GAMEPLAY_GETTERS(Camera);
 
 	// =================================================
-	// CameraTransform
+	// CameraTools
 	// =================================================
 
-	glm::mat4x4 CameraTransform::GetCameraTransform(obox2 const & obox)
+	glm::mat4x4 CameraTools::GetCameraTransform(obox2 const & obox)
 	{
 		glm::mat4x4 result;	
 		result = GetRotatorMatrix(-obox.rotator) * glm::translate(glm::vec3(-obox.position.x, -obox.position.y, 0.0f));
 		return result;
 	}
 
-	glm::mat4x4 CameraTransform::GetProjectionMatrix(obox2 const& obox)
+	glm::mat4x4 CameraTools::GetProjectionMatrix(obox2 const& obox)
 	{
 		glm::mat4x4 result;
 		result = glm::scale(glm::vec3(1.0f / obox.half_size.x, 1.0f / obox.half_size.y, 1.0f));
 		return result;
+	}
+
+	box2 CameraTools::GetSafeCameraBox(box2 const & camera_box, SafeZone const & safe_zone)
+	{
+		std::pair<glm::vec2, glm::vec2> corners = GetBoxCorners(camera_box);
+		return std::make_pair(
+			corners.first + safe_zone.first * (corners.second - corners.first),
+			corners.first + safe_zone.second * (corners.second - corners.first)
+		);
 	}
 
 	// =================================================
@@ -80,6 +89,29 @@ namespace chaos
 		return result;
 	}
 
+	void Camera::SetSafeZone(glm::vec2 const& in_safe_zone)
+	{
+		SetSafeZone(std::make_pair(
+			glm::vec2(0.5f, 0.5f) - in_safe_zone * 0.5f,
+			glm::vec2(0.5f, 0.5f) + in_safe_zone * 0.5f
+		));
+	}
+
+	box2 Camera::GetSafeCameraBox(bool apply_modifiers) const
+	{
+		return CameraTools::GetSafeCameraBox(GetCameraBox(apply_modifiers), safe_zone);
+	}
+
+	void Camera::SetSafeZone(SafeZone const& in_safe_zone)
+	{
+		assert(in_safe_zone.first.x >= 0.0f && in_safe_zone.first.x <= 1.0f);
+		assert(in_safe_zone.first.y >= 0.0f && in_safe_zone.first.y <= 1.0f);
+		assert(in_safe_zone.second.x >= 0.0f && in_safe_zone.second.x <= 1.0f);
+		assert(in_safe_zone.second.y >= 0.0f && in_safe_zone.second.y <= 1.0f);
+		assert(in_safe_zone.first.x <= in_safe_zone.second.x);
+		assert(in_safe_zone.first.y <= in_safe_zone.second.y);
+		safe_zone = in_safe_zone;
+	}
 	
 	bool Camera::SerializeIntoJSON(nlohmann::json& json_entry) const
 	{

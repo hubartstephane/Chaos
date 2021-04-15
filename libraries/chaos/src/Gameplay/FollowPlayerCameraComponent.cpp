@@ -27,7 +27,6 @@ namespace chaos
 			if (!IsGeometryEmpty(pawn_box))
 			{
 				box2 safe_camera = CameraTools::GetSafeCameraBox(camera_box, camera->GetSafeZone());
-
 				glm::vec2 p = safe_camera.position;
 				if (RestrictToInside(safe_camera, pawn_box, true)) // apply the safe_zone displacement to the real camera
 					camera_box.position += (safe_camera.position - p);

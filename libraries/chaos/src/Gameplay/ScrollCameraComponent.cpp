@@ -10,16 +10,10 @@ namespace chaos
 	bool ScrollCameraComponent::DoTick(float delta_time)
 	{
 		CameraComponent::DoTick(delta_time);
-
-
-#if 0
-
-
 		// get the level instance
 		LevelInstance* level_instance = camera->GetLevelInstance();
 		if (level_instance == nullptr)
 			return true;
-
 		// get the camera box without effects
 		box2 camera_box = camera->GetCameraBox(false);
 		if (IsGeometryEmpty(camera_box))
@@ -60,10 +54,10 @@ namespace chaos
 			player_pawn->SetBoundingBox(pawn_box);
 
 			// the camera follows the player in X & Y direction
-			box2 safe_camera = camera_box;
-			safe_camera.half_size *= camera->GetSafeZone();
-			RestrictToInside(safe_camera, pawn_box, true);
-			camera_box.position = safe_camera.position;
+			box2 safe_camera = CameraTools::GetSafeCameraBox(camera_box, camera->GetSafeZone());
+			glm::vec2 p = safe_camera.position;
+			if (RestrictToInside(safe_camera, pawn_box, true)) // apply the safe_zone displacement to the real camera
+				camera_box.position += (safe_camera.position - p);
 			// ensure the camera has not been modified along the scroll direction
 			camera_box.position[axis_index] = camera_position_scroll_axis;
 			// the whole player bounding box
@@ -73,11 +67,9 @@ namespace chaos
 		// compute the max displacement along the other index
 		float min_pawn_box_other_axis = all_pawns_box.position[1 - axis_index] - all_pawns_box.half_size[1 - axis_index];
 		float max_pawn_box_other_axis = all_pawns_box.position[1 - axis_index] + all_pawns_box.half_size[1 - axis_index];
-
 		// the camera position must stay between theses 2 values 
 		float p1_other_axis = min_pawn_box_other_axis + camera_box.half_size[1 - axis_index];
 		float p2_other_axis = max_pawn_box_other_axis - camera_box.half_size[1 - axis_index];
-
 
 		if (p2_other_axis - p1_other_axis > 2.0f * camera_box.half_size[1 - axis_index]) // range too big : dont move
 			camera_box.position[1 - axis_index] = camera_position_scroll_other_axis;
@@ -89,10 +81,8 @@ namespace chaos
 		// restrict camera to world		
 		if (!IsGeometryEmpty(world))
 			RestrictToInside(world, camera_box, false);
-
 		// apply the compute result
 		camera->SetCameraBox(camera_box);
-
 		// step 2 : make all pawns stay inside the camera (maybe 2 players want to go in opposite direction)
 		for (size_t i = 0; i < player_count; ++i)
 		{
@@ -108,8 +98,6 @@ namespace chaos
 			if (RestrictToInside(camera_box, pawn_box, false))
 				player_pawn->SetBoundingBox(pawn_box);
 		}
-#endif
-
 		return true;
 	}
 

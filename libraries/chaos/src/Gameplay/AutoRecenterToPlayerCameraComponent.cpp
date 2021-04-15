@@ -9,7 +9,7 @@ namespace chaos
 	bool AutoRecenterToPlayerCameraComponent::DoTick(float delta_time)
 	{
 		CameraComponent::DoTick(delta_time);
-
+#if 0
 		// 1.1 just to be sure that the space between the 2 limits is greater that pawn size
 		float constexpr PAWNBOX_INCREASE_FACTOR = 1.1f;
 
@@ -177,7 +177,7 @@ namespace chaos
 
 		// apply camera changes
 		camera->SetCameraBox(camera_box);
-
+#endif
 		return true;
 	}
 

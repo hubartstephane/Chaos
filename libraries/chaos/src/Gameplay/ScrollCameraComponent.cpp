@@ -11,6 +11,10 @@ namespace chaos
 	{
 		CameraComponent::DoTick(delta_time);
 
+
+#if 0
+
+
 		// get the level instance
 		LevelInstance* level_instance = camera->GetLevelInstance();
 		if (level_instance == nullptr)
@@ -104,6 +108,8 @@ namespace chaos
 			if (RestrictToInside(camera_box, pawn_box, false))
 				player_pawn->SetBoundingBox(pawn_box);
 		}
+#endif
+
 		return true;
 	}
 

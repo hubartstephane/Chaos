@@ -25,20 +25,6 @@ void LudumLevelInstance::CreateCameraComponents(chaos::Camera* camera, chaos::TM
 	camera->AddComponent(new chaos::SoundListenerCameraComponent());
 }
 
-
-
-// Mesh creation is not free
-//   - create a VertexArrayCache empty each time, generate a vertex array object each time
-//
-// GPUBuffer creation is not free
-//   - use pool as much as possible
-
-
-// DrawInterface create a mesh each time : BAD
-// DrawInterface does not use pool      : BAD
-
-
-
 int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params)
 {
 	return chaos::TMLevelInstance::DoDisplay(renderer, uniform_provider, render_params);

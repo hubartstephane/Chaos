@@ -344,22 +344,15 @@ namespace chaos
 	{
 		float rate = (average_framerate == 0.0f) ? 1.0f : average_framerate;
 		result = {
-			rand(),
-			//int(float(average_drawcall) / rate),
+			int(float(average_drawcall) / rate),
 			int(float(average_vertices) / rate)
 		};
 		return true;
 	}
 
-	extern float MN;
-	extern float MX;
-	extern float SPEED;
-
 	void GameHUDPerfsComponent::UpdateMesh()
 	{
-		SetText(StringTools::Printf("%f , %f     speed = %f", MN,MX, SPEED).c_str());
-
-		//SetText(StringTools::Printf(text.c_str(), cached_value.first, cached_value.second).c_str());
+		SetText(StringTools::Printf(text.c_str(), cached_value.first, cached_value.second).c_str());
 	}
 
 	// ====================================================================

@@ -120,8 +120,9 @@ namespace chaos
 
 					glm::vec2 pawn_box_ratio = PAWNBOX_INCREASE_FACTOR * pawn_box.half_size / safe_box.half_size;
 
-					// analyse the speed
-					glm::vec2 wanted_limit_speed = { limit_speed, limit_speed }; // by default, considere the moving speed
+					// by default, considere the moving speed
+					glm::vec2 min_speed = { limit_speed, limit_speed }; 
+					glm::vec2 max_speed = { limit_speed, limit_speed };
 
 					for (size_t axis : {0, 1})
 					{
@@ -147,7 +148,7 @@ namespace chaos
 						else if (right_stick[axis] > 0.0f)
 						{
 							idle_timer = 0.0f;
-							wanted_limit_speed[axis] = manual_limit_speed;
+							min_speed[axis] = max_speed[axis] = manual_limit_speed;
 							target_min_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.first[axis], safe_corners.first[axis], safe_box.half_size[axis]);
 							target_max_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.second[axis], safe_corners.first[axis], safe_box.half_size[axis]) + pawn_box_ratio[axis];
 						}
@@ -155,7 +156,7 @@ namespace chaos
 						else if (right_stick[axis] < 0.0f)
 						{
 							idle_timer = 0.0f;
-							wanted_limit_speed[axis] = manual_limit_speed;
+							min_speed[axis] = max_speed[axis] = manual_limit_speed;
 							target_min_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.first[axis], safe_corners.second[axis], safe_box.half_size[axis]) - pawn_box_ratio[axis];
 							target_max_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.second[axis], safe_corners.second[axis], safe_box.half_size[axis]);
 						}
@@ -165,7 +166,6 @@ namespace chaos
 
 							if (other_axis_pawn_speed <= idle_pawn_speed) // if pawn idle in both axis, do not move the camera
 							{                                             // ie. if pawn is moving in a single axis, the camera recenter itself on the other axis
-								wanted_limit_speed[axis] = recenter_limit_speed;
 								target_min_limit[axis] = min_dynamic_safe_zone[axis];
 								target_max_limit[axis] = max_dynamic_safe_zone[axis];
 							}
@@ -181,18 +181,53 @@ namespace chaos
 					if (idle_timer >= idle_delay)
 					{
 						for (size_t axis : {0, 1})
-						{
+						{					
 							target_min_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.first[axis], slow_safe_box.position[axis] - pawn_box.half_size[axis], safe_box.half_size[axis]);
 							target_max_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.second[axis], slow_safe_box.position[axis] + pawn_box.half_size[axis], safe_box.half_size[axis]);
+						}
+						// XXX : we do not want both axis to be interpolated as the same speed
+						//       because depending to the position of the pawn on the camera, one axis interpolation would ends before the other
+						//       instead, we want both interpolation to ends at the same time
+						//       so the farest the pawn is for one axis, the faster the interpolation
+						//
+						//       BAD interpolation.
+						//         -same speed for both axis
+						//         -but more distance to go along X axis than Y
+						//
+						//       X initial position on screen
+						//        .  
+						//         .
+						//          ........X final position on screen
+						//      
+						//       GOOD interpolation
+						//         -no the same distance along X & Y axis
+						//         -speed is not the same along theses axis so that we have the impression the pawn movement is linear
+						//
+						//       X initial position on screen
+						//        ...  
+						//           ...
+						//              ..X final position on screen   
+						{
+							float d1 = std::abs(min_dynamic_safe_zone[0] - target_min_limit[0]);
+							float d2 = std::abs(min_dynamic_safe_zone[1] - target_min_limit[1]);
+							min_speed[0] = recenter_limit_speed * d1 / (d1 + d2);
+							min_speed[1] = recenter_limit_speed * d2 / (d1 + d2);
+						}
+						{
+							float d1 = std::abs(max_dynamic_safe_zone[0] - target_max_limit[0]);
+							float d2 = std::abs(max_dynamic_safe_zone[1] - target_max_limit[1]);
+							max_speed[0] = recenter_limit_speed * d1 / (d1 + d2);
+							max_speed[1] = recenter_limit_speed * d2 / (d1 + d2);
 						}
 					}
 
 					// compute dynamic limit by interpolation
 					for (size_t axis : {0, 1})
 					{
-						float delta_limit = wanted_limit_speed[axis] * delta_time;
-						min_dynamic_safe_zone[axis] = MathTools::TargetValue(min_dynamic_safe_zone[axis], target_min_limit[axis], delta_limit, delta_limit);
-						max_dynamic_safe_zone[axis] = MathTools::TargetValue(max_dynamic_safe_zone[axis], target_max_limit[axis], delta_limit, delta_limit);
+						float min_delta = min_speed[axis] * delta_time;
+						float max_delta = max_speed[axis] * delta_time;
+						min_dynamic_safe_zone[axis] = MathTools::TargetValue(min_dynamic_safe_zone[axis], target_min_limit[axis], min_delta, min_delta);
+						max_dynamic_safe_zone[axis] = MathTools::TargetValue(max_dynamic_safe_zone[axis], target_max_limit[axis], max_delta, max_delta);
 					}
 					// restrict the pawn to the dynamic safe zone
 					glm::vec2 mn = slow_safe_corners.first  + 2.0f * min_dynamic_safe_zone * safe_box.half_size;

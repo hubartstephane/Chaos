@@ -50,7 +50,6 @@ namespace chaos
 	//  |   |  min_limit      max_limit |   |
 	//  |   |                           |   |
 	//
-	//
 	// We considere 3 pawn speeds
 	//  - fast
 	//  - slow
@@ -62,7 +61,10 @@ namespace chaos
 	//
 	// idle speed: after an idle time, the pawn is centered inside the slow_safe_box
 	//             the camera may be moved manually (this move min_limit/max_limit like for fast speeds)
-
+	//
+	// min_dynamic_safe_zone : is the signed distance from     slow_safe_box.bottom_left (unit is the whole safe_zone size)
+	// max_dynamic_safe_zone : is the signed distance from     slow_safe_box.top_right   (unit is the whole safe_zone size)
+	//
 
 	bool AutoRecenterToPlayerCameraComponent::DoTick(float delta_time)
 	{
@@ -159,9 +161,14 @@ namespace chaos
 						}
 						else if (pawn_speed <= idle_pawn_speed)
 						{
-							wanted_limit_speed[axis] = recenter_limit_speed;
-							target_min_limit[axis] = min_dynamic_safe_zone[axis];
-							target_max_limit[axis] = max_dynamic_safe_zone[axis];
+							float other_axis_pawn_speed = std::abs(pawn_previous_position[1 - axis] - pawn_box.position[1 - axis]) / delta_time;
+
+							if (other_axis_pawn_speed <= idle_pawn_speed) // if pawn idle in both axis, do not move the camera
+							{                                             // ie. if pawn is moving in a single axis, the camera recenter itself on the other axis
+								wanted_limit_speed[axis] = recenter_limit_speed;
+								target_min_limit[axis] = min_dynamic_safe_zone[axis];
+								target_max_limit[axis] = max_dynamic_safe_zone[axis];
+							}
 						}
 						else
 						{

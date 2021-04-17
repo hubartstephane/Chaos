@@ -2,6 +2,11 @@
 
 namespace chaos
 {
+
+	extern float MN;
+	extern float MX;
+	extern float SPEED;
+
 	class AutoRecenterToPlayerCameraComponent;
 
 }; // namespace chaos
@@ -40,12 +45,22 @@ namespace chaos
 		/** the player index to follow */
 		size_t player_index = 0;
 
-		/** the speed of limits displacement (ratio per sec relative to the camera safe zone) */
-		float safe_zone_speed = 0.5f; 
-		/** the pawn speed above which the dynamic safe zone decrease */
-		float fast_pawn_limit = 150.0f;
-		/** the speed at which the camera offset updates (safe_zone size as a unit) */
-		float camera_offset_speed = 1.0f;
+		/** the safe zone (inside the camera safe_zone) where the pawn must be restricted in low speed */
+		SafeZone slow_safe_zone = { {0.3f, 0.3f}, {0.7f, 0.7f} };
+
+		/** the speed at which limit updates (safe_zone size as a unit) */
+		float limit_speed = 0.5f; 
+		/** the speed at which the camera is manually moved (safe_zone size as a unit) */
+		float manual_camera_speed = 1.0f;
+
+		/** the speed above which the speed is considered high */
+		float fast_pawn_speed = 150.0f;
+		/** the speed under which the speed is considered idle */
+		float idle_pawn_speed = 10.0f;
+
+
+
+
 		/** the delay of idle to recenter the camera to player */
 		float idle_delay = 5.0f;
 

@@ -74,6 +74,7 @@ namespace chaos
 		CameraComponent::DoTick(delta_time);
 
 		fast_pawn_speed = 300.0f;
+		idle_pawn_speed = 50.0f;
 		//slow_safe_zone = { {0.0f, 0.0f}, {1.0f, 1.0f} };
 
 
@@ -144,7 +145,7 @@ namespace chaos
 							idle_pawn[axis] = true;
 					}
 
-					float wanted_limit_speed = limit_speed; // by default, considere the moving speed
+					glm::vec2 wanted_limit_speed = { limit_speed, limit_speed }; // by default, considere the moving speed
 
 					// idle
 					if (idle_pawn[0] && idle_pawn[1])
@@ -155,7 +156,7 @@ namespace chaos
 							if (right_stick[axis] > 0.0f)
 							{
 								idle_timer = 0.0f;
-								wanted_limit_speed = manual_camera_speed;
+								wanted_limit_speed = { manual_camera_speed, manual_camera_speed };
 								target_min_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.first[axis], safe_corners.first[axis], safe_box.half_size[axis]);
 								target_max_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.second[axis], safe_corners.first[axis], safe_box.half_size[axis]) + pawn_box_ratio[axis];
 							}
@@ -163,18 +164,30 @@ namespace chaos
 							else if (right_stick[axis] < 0.0f)
 							{
 								idle_timer = 0.0f;
-								wanted_limit_speed = manual_camera_speed;
+								wanted_limit_speed = { manual_camera_speed, manual_camera_speed };
 								target_min_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.first[axis], safe_corners.second[axis], safe_box.half_size[axis]) - pawn_box_ratio[axis];
 								target_max_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.second[axis], safe_corners.second[axis], safe_box.half_size[axis]);
+							}
+							// target is the current position
+							else
+							{
+								target_min_limit[axis] = min_dynamic_safe_zone[axis];
+								target_max_limit[axis] = max_dynamic_safe_zone[axis];
 							}
 						}
 
 						// autocenter
-						idle_timer = std::min(idle_timer + delta_time, idle_delay);
-						if (idle_timer >= idle_delay)
+						if (right_stick == glm::vec2(0.0f, 0.0f))
 						{
-
-
+							idle_timer = std::min(idle_timer + delta_time, idle_delay);
+							if (idle_timer >= idle_delay)
+							{
+								for (size_t axis : {0, 1})
+								{
+									target_min_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.first[axis], slow_safe_box.position[axis] - pawn_box.half_size[axis], safe_box.half_size[axis]);
+									target_max_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.second[axis], slow_safe_box.position[axis] + pawn_box.half_size[axis], safe_box.half_size[axis]);
+								}
+							}
 						}
 					}
 					else
@@ -205,14 +218,14 @@ namespace chaos
 						// slow
 						else
 						{
-
+							// nop
 						}
 					}
 
 					// compute dynamic limit by interpolation
 					for (size_t axis : {0, 1})
 					{
-						float delta_limit = wanted_limit_speed * delta_time;
+						float delta_limit = wanted_limit_speed[axis] * delta_time;
 						min_dynamic_safe_zone[axis] = MathTools::TargetValue(min_dynamic_safe_zone[axis], target_min_limit[axis], delta_limit, delta_limit);
 						max_dynamic_safe_zone[axis] = MathTools::TargetValue(max_dynamic_safe_zone[axis], target_max_limit[axis], delta_limit, delta_limit);
 					}

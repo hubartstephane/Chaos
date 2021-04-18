@@ -109,6 +109,10 @@ namespace chaos
 #if _DEBUG
 		RegisterComponent(GameHUDKeys::FREECAMERA_ID, new GameHUDFreeCameraComponent());
 #endif
+		// DEBUG VALUES
+#if _DEBUG
+		RegisterComponent(GameHUDKeys::DEBUG_VALUES_ID, new GameHUDDebugValuesComponent());
+#endif
 		return true;
 	}
 

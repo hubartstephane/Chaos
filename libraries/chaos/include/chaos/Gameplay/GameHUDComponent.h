@@ -22,6 +22,10 @@ namespace chaos
 	class GameHUDLevelTitleComponent;
 	class GameHUDFreeCameraComponent;
 
+#if _DEBUG
+	class GameHUDDebugValuesComponent;
+#endif
+
 }; // namespace chaos
 
 #else
@@ -442,6 +446,67 @@ namespace chaos
 		/** override */
 		virtual bool DoTick(float delta_time) override;
 	};
+
+	// ====================================================================
+	// GameHUDFreeCameraComponent
+	// ====================================================================
+
+#if _DEBUG
+
+	class GameHUDDebugValuesComponent : public GameHUDMeshComponent
+	{
+		class Entry
+		{
+		public:
+
+			TagType name = 0;
+			std::string title;
+			std::string value;
+			float life_time;
+		};
+
+	public:
+
+		/** insert an entry */
+		void AddValue(char const* title, char const* value, TagType name = 0, float life_time = 0.0f);
+		/** remove an entry */
+		void RemoveValue(TagType name);
+
+	protected:
+
+		/** override */
+		virtual bool DoUpdateGPUResources(GPURenderer* renderer) override;
+		/** override */
+		virtual bool DoTick(float delta_time) override;
+		/** override */
+		virtual void OnInsertedInHUD() override;
+		/** override */
+		virtual bool InitializeFromConfiguration(nlohmann::json const& json, boost::filesystem::path const& config_path) override;
+
+	protected:
+
+		/** the entries */
+		std::vector<Entry> entries;
+		/** store the delta_time on tick */
+		float last_delta_time = 0.0f;
+		/** the placement and aspect of the text */
+		ParticleTextGenerator::GeneratorParams generator_params;
+		/** whether new entries has been manually inserted/removed */
+		bool should_update_mesh = false;
+	};
+
+	void DebugValue(char const* title, char const* value, TagType name = 0, float life_time = 0.0f);
+
+	template<typename T>
+	void DebugValue(char const* title, T const& value, TagType name = 0, float life_time = 0.0f)
+	{
+		std::string str = ToString(value);
+		DebugValue(title, str.c_str(), name, life_time);
+	}
+
+	//static void RemoveDebugValue(TagType name = 0);
+
+#endif
 
 }; // namespace chaos
 

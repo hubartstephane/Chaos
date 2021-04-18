@@ -355,9 +355,9 @@ namespace chaos
 
 		void AtlasBase::DoOutputInfo(FolderInfo const & folder_info, std::ostream & stream, int indent) const
 		{
-			StreamTools::Whitespaces stream_whitespaces(indent);
+			StreamTools::Whitespaces whitespaces(indent);
 
-			stream << stream_whitespaces << "Folder:" << '\n';
+			stream << whitespaces << "Folder:" << '\n';
 			NamedObject const & named_info = folder_info;
 			DoOutputInfo(named_info, stream, indent);
 
@@ -391,24 +391,24 @@ namespace chaos
 
 		void AtlasBase::DoOutputInfo(NamedObject const & info, std::ostream & stream, int indent)
 		{
-			StreamTools::Whitespaces stream_whitespaces(indent);
-			stream << stream_whitespaces << "  name         : " << info.GetName() << '\n';
-			stream << stream_whitespaces << "  tag          : " << info.GetTag() << '\n';
+			StreamTools::Whitespaces whitespaces(indent);
+			stream << whitespaces << "  name         : " << info.GetName() << '\n';
+			stream << whitespaces << "  tag          : " << info.GetTag() << '\n';
 		}
 
 
 		void AtlasBase::DoOutputInfo(BitmapLayout const & info, std::ostream & stream, int indent)
 		{
-			StreamTools::Whitespaces stream_whitespaces(indent);
-			stream << stream_whitespaces << "  bitmap_index          : " << info.bitmap_index << '\n';
-			stream << stream_whitespaces << "  width                 : " << info.width << '\n';
-			stream << stream_whitespaces << "  height                : " << info.height << '\n';
-			stream << stream_whitespaces << "  x                     : " << info.x << '\n';
-			stream << stream_whitespaces << "  y                     : " << info.y << '\n';
-			stream << stream_whitespaces << "  bottomleft_texcoord.x : " << info.bottomleft_texcoord.x << '\n';
-			stream << stream_whitespaces << "  bottomleft_texcoord.y : " << info.bottomleft_texcoord.y << '\n';
-			stream << stream_whitespaces << "  topright_texcoord.x   : " << info.topright_texcoord.x << '\n';
-			stream << stream_whitespaces << "  topright_texcoord.y   : " << info.topright_texcoord.y << '\n';
+			StreamTools::Whitespaces whitespaces(indent);
+			stream << whitespaces << "  bitmap_index          : " << info.bitmap_index << '\n';
+			stream << whitespaces << "  width                 : " << info.width << '\n';
+			stream << whitespaces << "  height                : " << info.height << '\n';
+			stream << whitespaces << "  x                     : " << info.x << '\n';
+			stream << whitespaces << "  y                     : " << info.y << '\n';
+			stream << whitespaces << "  bottomleft_texcoord.x : " << info.bottomleft_texcoord.x << '\n';
+			stream << whitespaces << "  bottomleft_texcoord.y : " << info.bottomleft_texcoord.y << '\n';
+			stream << whitespaces << "  topright_texcoord.x   : " << info.topright_texcoord.x << '\n';
+			stream << whitespaces << "  topright_texcoord.y   : " << info.topright_texcoord.y << '\n';
 		}
 
 		void AtlasBase::DoOutputInfo(CharacterLayout const & info, std::ostream & stream, int indent)
@@ -416,11 +416,11 @@ namespace chaos
 			BitmapLayout const & bitmap_layout = info;
 			DoOutputInfo(bitmap_layout, stream, indent);
 
-			StreamTools::Whitespaces stream_whitespaces(indent);
-			stream << stream_whitespaces << "  advance.x    : " << info.advance.x << '\n';
-			stream << stream_whitespaces << "  advance.y    : " << info.advance.y << '\n';
-			stream << stream_whitespaces << "  bitmap_left  : " << info.bitmap_left << '\n';
-			stream << stream_whitespaces << "  bitmap_top   : " << info.bitmap_top << '\n';
+			StreamTools::Whitespaces whitespaces(indent);
+			stream << whitespaces << "  advance.x    : " << info.advance.x << '\n';
+			stream << whitespaces << "  advance.y    : " << info.advance.y << '\n';
+			stream << whitespaces << "  bitmap_left  : " << info.bitmap_left << '\n';
+			stream << whitespaces << "  bitmap_top   : " << info.bitmap_top << '\n';
 		}
 
 		void AtlasBase::DoOutputInfo(BitmapInfo const & info, std::ostream & stream, int indent)
@@ -446,17 +446,17 @@ namespace chaos
 			NamedObject const & named_info = info;
 			DoOutputInfo(named_info, stream, indent);
 
-			StreamTools::Whitespaces stream_whitespaces(indent);
-			stream << stream_whitespaces << "  glyph_width  : " << info.glyph_width << '\n';
-			stream << stream_whitespaces << "  glyph_height : " << info.glyph_height << '\n';
-			stream << stream_whitespaces << "  ascender             : " << info.ascender << '\n';
-			stream << stream_whitespaces << "  descender            : " << info.descender << '\n';
-			stream << stream_whitespaces << "  face_height          : " << info.face_height << '\n';
+			StreamTools::Whitespaces whitespaces(indent);
+			stream << whitespaces << "  glyph_width  : " << info.glyph_width << '\n';
+			stream << whitespaces << "  glyph_height : " << info.glyph_height << '\n';
+			stream << whitespaces << "  ascender             : " << info.ascender << '\n';
+			stream << whitespaces << "  descender            : " << info.descender << '\n';
+			stream << whitespaces << "  face_height          : " << info.face_height << '\n';
 
 			// output the charactars in the fonts
 			if (info.elements.size() > 0)
 			{
-				stream << stream_whitespaces << "Characters:" << '\n';
+				stream << whitespaces << "Characters:" << '\n';
 				for (CharacterInfo const & character_info : info.elements)
 					DoOutputInfo(character_info, stream, indent + INDENT_VALUE);
 			}

@@ -26,20 +26,22 @@ namespace chaos
 		public:
 
 			/** constructor */
-			Whitespaces(int in_value = 0) :
-				value(in_value) {}
-			/** friend function to add indents */
-			friend std::ostream & operator << (std::ostream & stream, Whitespaces const & stream_whitespaces)
+			Whitespaces(size_t in_count = 0) :
+				count(in_count) {}
+			/** constructor */
+			Whitespaces(Whitespaces const& src) = default;
+			/** friend function to add characters */
+			friend std::ostream & operator << (std::ostream & stream, Whitespaces const & whitespaces)
 			{
-				for (int i = 0; i < stream_whitespaces.value; ++i)
+				for (size_t i = 0; i < whitespaces.count; ++i)
 					stream << " ";
 				return stream;
 			}
 
 		protected:
 
-			/** number of indent to insert */
-			int value = 0;
+			/** number of characters */
+			size_t count = 0;
 		};
 
 	}; // namespace StreamTools

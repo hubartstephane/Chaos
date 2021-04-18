@@ -20,6 +20,28 @@ namespace chaos
 namespace chaos
 {
 	// ==============================================================================================
+	// Streaming functions
+	// ==============================================================================================
+
+	template<typename T>
+	std::ostream& operator << (std::ostream& str, glm::tvec2<T> const& v)
+	{
+		return str << "{" << v.x << ", " << v.y << "}";
+	}
+
+	template<typename T>
+	std::ostream& operator << (std::ostream& str, glm::tvec3<T> const& v)
+	{
+		return str << "{" << v.x << ", " << v.y << ", " << v.z << "}";
+	}
+
+	template<typename T>
+	std::ostream& operator << (std::ostream& str, glm::tvec4<T> const& v)
+	{
+		return str << "{" << v.x << ", " << v.y << ", " << v.z << ", " << v.w << "}";
+	}
+
+	// ==============================================================================================
 	// GLMTools
 	// ==============================================================================================
 

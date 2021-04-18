@@ -349,7 +349,7 @@ namespace chaos
 			// generate glyph cache
 
 			// if user does not provide a list of charset for the fonts, use this hard coded one
-			static char const * DEFAULT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789<>()[]{}+-*./\\?!;:$@\"'";
+			static char const * DEFAULT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789<>()[]{}+-*./\\?,!;:$@\"'";
 
 			char const * characters = (params.characters.length() > 0) ?
 				params.characters.c_str() :

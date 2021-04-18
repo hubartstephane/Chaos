@@ -500,7 +500,7 @@ namespace chaos
 	template<typename T>
 	void DebugValue(char const* title, T const& value, TagType name = 0, float life_time = 0.0f)
 	{
-		std::string str = ToString(value);
+		std::string str = StringTools::ToString(value);
 		DebugValue(title, str.c_str(), name, life_time);
 	}
 

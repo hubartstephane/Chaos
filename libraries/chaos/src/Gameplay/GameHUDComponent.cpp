@@ -615,7 +615,7 @@ namespace chaos
 
 				std::stringstream stream;
 				for (Entry const& entry : entries)
-					stream << entry.title << StreamTools::Whitespaces(10) << ": " << entry.value << "\n";
+					stream << entry.title << StreamTools::Whitespaces(largest_title - entry.title.length()) << ": " << entry.value << "\n";
 
 				DI.AddText(stream.str().c_str(), other_generator_params);
 

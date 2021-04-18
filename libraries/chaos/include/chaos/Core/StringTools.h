@@ -12,6 +12,14 @@ namespace chaos
 
 	namespace StringTools
 	{
+		/** transform any object that have stream operator into a string */
+		template<typename T>
+		std::string ToString(T const & value)
+		{
+			std::stringstream stream;
+			stream << value;
+			return stream.str();
+		}
 
         /** get the numerical suffix of the input string (ex. toto_123 => 123) */
         size_t GetStringNumSuffix(std::string_view s);

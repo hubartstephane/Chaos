@@ -83,8 +83,8 @@ namespace chaos
 		return hud->GetPlayerCount();
 	}
 
-	void GameHUDComponent::OnInsertedInHUD() // XXX: this function is a "PLACEHOLDER". It does not deserve to be overriden. It is called in a template function 
-	{                                        // Arguments can be changed to anything
+	void GameHUDComponent::OnInsertedInHUD()
+	{
 	}
 
 	void GameHUDComponent::OnRemovedFromHUD()
@@ -570,5 +570,118 @@ namespace chaos
 			ShowComponent(game->IsFreeCameraMode());
 		return true;
 	}
+
+	// ====================================================================
+	// GameHUDDebugValuesComponent
+	// ====================================================================
+
+#if _DEBUG
+
+	void GameHUDDebugValuesComponent::AddValue(char const* title, char const* value, TagType name, float life_time)
+	{
+		entries.push_back({ name, title, value, life_time });
+		should_update_mesh = true;
+
+	}
+
+	void GameHUDDebugValuesComponent::RemoveValue(TagType name)
+	{
+
+		should_update_mesh = true;
+	}
+
+	bool GameHUDDebugValuesComponent::DoTick(float delta_time)
+	{
+		// XXX : do not apply delta_time to entries here because we want entries to be displayed at least once
+		last_delta_time = delta_time;
+		return true;
+	}
+
+	bool GameHUDDebugValuesComponent::DoUpdateGPUResources(GPURenderer* renderer)
+	{
+		if (should_update_mesh)
+		{
+			if (entries.size() == 0)
+				mesh = nullptr;
+			else
+			{
+				ParticleTextGenerator::GeneratorParams other_generator_params = generator_params;
+
+				GPUDrawInterface<VertexDefault> DI(nullptr);
+
+				size_t largest_title = 0;
+				for (Entry const& entry : entries)
+					largest_title = std::max(largest_title, entry.title.length());
+
+				std::stringstream stream;
+				for (Entry const& entry : entries)
+					stream << entry.title << StreamTools::Whitespaces(10) << ": " << entry.value << "\n";
+
+				DI.AddText(stream.str().c_str(), other_generator_params);
+
+				mesh = DI.ExtractMesh();
+			}
+
+			// decrease time for all entries
+			for (Entry& entry : entries)
+				entry.life_time -= last_delta_time;
+			// remove timed out entries
+			size_t count1 = entries.size();
+			entries.erase(std::remove_if(entries.begin(), entries.end(), [](Entry& entry) { return entry.life_time < 0.0f; }), entries.end());
+			size_t count2 = entries.size();
+			should_update_mesh = (count1 != count2);
+
+#if 0
+			enum class Hotpoint : int
+			{
+				LEFT = 1,
+				RIGHT = 2,
+				HMIDDLE = 0,
+
+				BOTTOM = 4,
+				TOP = 8,
+				VMIDDLE = 0,
+
+				BOTTOM_LEFT = BOTTOM | LEFT,
+				TOP_LEFT = TOP | LEFT,
+				BOTTOM_RIGHT = BOTTOM | RIGHT,
+				TOP_RIGHT = TOP | RIGHT,
+				CENTER = VMIDDLE | HMIDDLE
+			};
+#endif
+			
+			
+		//	DI.AddText(in_text, other_params);
+
+
+
+			
+		}
+		return true;
+	}
+
+	void GameHUDDebugValuesComponent::OnInsertedInHUD()
+	{
+		should_update_mesh = true;
+	}
+
+	bool GameHUDDebugValuesComponent::InitializeFromConfiguration(nlohmann::json const& json, boost::filesystem::path const& config_path)
+	{
+		if (!GameHUDMeshComponent::InitializeFromConfiguration(json, config_path))
+			return true;
+		JSONTools::GetAttribute(json, "generator_params", generator_params);
+		return true;
+	}
+
+	void DebugValue(char const* title, char const* value, TagType name, float life_time)
+	{
+		if (GameApplication* game_application = Application::GetInstance())
+			if (Game* game = game_application->GetGame())
+				if (GameHUD* hud = game->GetCurrentHUD())
+					if (GameHUDDebugValuesComponent* debug_component = hud->FindComponentByClass<GameHUDDebugValuesComponent>())
+						debug_component->AddValue(title, value, name, life_time);
+	}
+
+#endif
 
 }; // namespace chaos

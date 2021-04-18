@@ -4,7 +4,7 @@ namespace chaos
 {
 	namespace StreamTools
 	{
-		class Indent;
+		class Whitespaces;
 
 	}; // namespace StreamTools
 
@@ -20,20 +20,19 @@ namespace chaos
 
 	namespace StreamTools
 	{
-
-		/** a class that deserves to insert indents into a output stream */
-		class Indent
+		/** a class that deserves to insert whitespaces into a output stream */
+		class Whitespaces
 		{
 		public:
 
 			/** constructor */
-			Indent(int in_value = 0) :
+			Whitespaces(int in_value = 0) :
 				value(in_value) {}
 			/** friend function to add indents */
-			friend std::ostream & operator << (std::ostream & stream, Indent const & stream_indent)
+			friend std::ostream & operator << (std::ostream & stream, Whitespaces const & stream_whitespaces)
 			{
-				for (int i = 0; i < stream_indent.value; ++i)
-					stream << "  ";
+				for (int i = 0; i < stream_whitespaces.value; ++i)
+					stream << " ";
 				return stream;
 			}
 

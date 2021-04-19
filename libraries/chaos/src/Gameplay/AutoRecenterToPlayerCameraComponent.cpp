@@ -70,9 +70,6 @@ namespace chaos
 	{
 		CameraComponent::DoTick(delta_time);
 
-		DebugValue("truc", 6);
-		DebugValue("machin", glm::bvec2(false, true));
-
 		// 1.1 just to be sure that the space between the 2 limits is greater that pawn size
 		float constexpr PAWNBOX_INCREASE_FACTOR = 1.1f;
 

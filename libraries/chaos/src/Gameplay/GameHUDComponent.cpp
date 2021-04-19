@@ -126,6 +126,28 @@ namespace chaos
 	}
 
 	// ====================================================================
+	// Standalone functions
+	// ====================================================================
+
+	void TweakTextHotpointWithCanvas(box2 const & canvas_box, ParticleTextGenerator::GeneratorParams& final_params)
+	{
+		// XXX : for text generation, we use a HOTPOINT that describe where is the origin of the set of particles (LEFT, RIGHT, TOP, BOTTOM, CENTER)
+		//       It makes sence to use the same HOTPOINT to give the position on SCREEN as a reference
+		//    0
+		//     +-------------------+
+		//     | 0                 |
+		//     |  +------+         |     for example, the relative coordinate of a TOP-LEFT text would be the
+		//     |  |TEXT  |         |     TOP-LEFT corner of the screen
+		//     |  +------+         |
+		//     |                   |
+		//
+		//      As a side effect the params.position is just a relative offset
+		//
+		glm::vec2 corner = GameHUDComponent::GetCanvasBoxCorner(canvas_box, final_params.hotpoint);
+		final_params.position += corner;
+	}
+
+	// ====================================================================
 	// GameHUDMeshComponent
 	// ====================================================================
 
@@ -188,22 +210,7 @@ namespace chaos
 
 	void GameHUDTextComponent::TweakTextGeneratorParams(ParticleTextGenerator::GeneratorParams & final_params) const
 	{
-		// XXX : for text generation, we use a HOTPOINT that describe where is the origin of the set of particles (LEFT, RIGHT, TOP, BOTTOM, CENTER)
-		//       It makes sence to use the same HOTPOINT to give the position on SCREEN as a reference
-		//    0
-		//     +-------------------+
-		//     | 0                 |
-		//     |  +------+         |     for example, the relative coordinate of a TOP-LEFT text would be the
-		//     |  |TEXT  |         |     TOP-LEFT corner of the screen
-		//     |  +------+         |
-		//     |                   |
-		//
-		//      As a side effect the params.position is just a relative offset
-		//
-
-		box2 canvas_box = GetGame()->GetCanvasBox();
-		glm::vec2 corner = GetCanvasBoxCorner(canvas_box, final_params.hotpoint);
-		final_params.position += corner;
+		TweakTextHotpointWithCanvas(GetGame()->GetCanvasBox(), final_params);
 	}
 
 	void GameHUDTextComponent::SetText(char const * in_text)
@@ -577,16 +584,17 @@ namespace chaos
 
 #if _DEBUG
 
-	void GameHUDDebugValuesComponent::AddValue(char const* title, char const* value, TagType name, float life_time)
+	GameHUDDebugValuesComponent::GameHUDDebugValuesComponent()
 	{
-		entries.push_back({ name, title, value, life_time });
-		should_update_mesh = true;
-
+		generator_params.line_height = 30.0f;
+		generator_params.font_info_name = "normal";
+		generator_params.position = glm::vec2(40.0f, -100.0f);
+		generator_params.hotpoint = Hotpoint::TOP_LEFT;
 	}
 
-	void GameHUDDebugValuesComponent::RemoveValue(TagType name)
+	void GameHUDDebugValuesComponent::AddValue(char const* title, char const* value, float life_time)
 	{
-
+		entries.push_back({ title, value, life_time });
 		should_update_mesh = true;
 	}
 
@@ -605,8 +613,6 @@ namespace chaos
 				mesh = nullptr;
 			else
 			{
-				ParticleTextGenerator::GeneratorParams other_generator_params = generator_params;
-
 				GPUDrawInterface<VertexDefault> DI(nullptr);
 
 				size_t largest_title = 0;
@@ -617,7 +623,9 @@ namespace chaos
 				for (Entry const& entry : entries)
 					stream << entry.title << StreamTools::Whitespaces(largest_title - entry.title.length()) << ": " << entry.value << "\n";
 
-				DI.AddText(stream.str().c_str(), other_generator_params);
+				ParticleTextGenerator::GeneratorParams other_params = generator_params;
+				TweakTextHotpointWithCanvas(GetGame()->GetCanvasBox(), other_params);
+				DI.AddText(stream.str().c_str(), other_params);
 
 				mesh = DI.ExtractMesh();
 			}
@@ -630,32 +638,6 @@ namespace chaos
 			entries.erase(std::remove_if(entries.begin(), entries.end(), [](Entry& entry) { return entry.life_time < 0.0f; }), entries.end());
 			size_t count2 = entries.size();
 			should_update_mesh = (count1 != count2);
-
-#if 0
-			enum class Hotpoint : int
-			{
-				LEFT = 1,
-				RIGHT = 2,
-				HMIDDLE = 0,
-
-				BOTTOM = 4,
-				TOP = 8,
-				VMIDDLE = 0,
-
-				BOTTOM_LEFT = BOTTOM | LEFT,
-				TOP_LEFT = TOP | LEFT,
-				BOTTOM_RIGHT = BOTTOM | RIGHT,
-				TOP_RIGHT = TOP | RIGHT,
-				CENTER = VMIDDLE | HMIDDLE
-			};
-#endif
-			
-			
-		//	DI.AddText(in_text, other_params);
-
-
-
-			
 		}
 		return true;
 	}
@@ -673,13 +655,13 @@ namespace chaos
 		return true;
 	}
 
-	void DebugValue(char const* title, char const* value, TagType name, float life_time)
+	void DebugValue(char const* title, char const* value, float life_time)
 	{
 		if (GameApplication* game_application = Application::GetInstance())
 			if (Game* game = game_application->GetGame())
 				if (GameHUD* hud = game->GetCurrentHUD())
 					if (GameHUDDebugValuesComponent* debug_component = hud->FindComponentByClass<GameHUDDebugValuesComponent>())
-						debug_component->AddValue(title, value, name, life_time);
+						debug_component->AddValue(title, value, life_time);
 	}
 
 #endif

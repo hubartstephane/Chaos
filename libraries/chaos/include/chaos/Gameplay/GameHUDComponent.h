@@ -73,10 +73,11 @@ namespace chaos
 		/** get the number of player */
 		size_t GetPlayerCount() const;
 
+		/** returns the coordinate of the view corner corresponding to the given hotpoint */
+		static glm::vec2 GetCanvasBoxCorner(box2 const& canvas_box, Hotpoint hotpoint);
+
 	protected:
 
-		/** returns the coordinate of the view corner corresponding to the given hotpoint */
-		static glm::vec2 GetCanvasBoxCorner(box2 const & canvas_box, Hotpoint hotpoint);
 		/** called whenever the hud is beeing inserted into the hud */
 		virtual void OnInsertedInHUD();
 		/** called whenever the hud is beeing removed into the hud */
@@ -459,18 +460,17 @@ namespace chaos
 		{
 		public:
 
-			TagType name = 0;
 			std::string title;
 			std::string value;
-			float life_time;
+			float life_time = 0.0f;
 		};
 
 	public:
 
+		/** constructor */
+		GameHUDDebugValuesComponent();
 		/** insert an entry */
-		void AddValue(char const* title, char const* value, TagType name = 0, float life_time = 0.0f);
-		/** remove an entry */
-		void RemoveValue(TagType name);
+		void AddValue(char const* title, char const* value, float life_time = 0.0f);
 
 	protected:
 
@@ -495,16 +495,14 @@ namespace chaos
 		bool should_update_mesh = false;
 	};
 
-	void DebugValue(char const* title, char const* value, TagType name = 0, float life_time = 0.0f);
+	void DebugValue(char const* title, char const* value, float life_time = 0.0f);
 
 	template<typename T>
-	void DebugValue(char const* title, T const& value, TagType name = 0, float life_time = 0.0f)
+	void DebugValue(char const* title, T const& value, float life_time = 0.0f)
 	{
 		std::string str = StringTools::ToString(value);
-		DebugValue(title, str.c_str(), name, life_time);
+		DebugValue(title, str.c_str(), life_time);
 	}
-
-	//static void RemoveDebugValue(TagType name = 0);
 
 #endif
 

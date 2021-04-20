@@ -61,6 +61,16 @@ namespace chaos
 			return result;
 		}
 
+		/** getter on the mesh */
+		GPUDynamicMesh& GetDynamicMesh() { return dynamic_mesh; }
+		/** getter on the mesh */
+		GPUDynamicMesh const& GetDynamicMesh() const { return dynamic_mesh; }
+		/** clear the dynamic mesh */
+		void Clear()
+		{
+			dynamic_mesh.Clear(GetBufferPool());
+		}
+
 	protected:
 
 		/** gets the shared GPUBufferPool to improve GPUBuffer allocation */

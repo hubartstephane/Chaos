@@ -24,6 +24,7 @@ namespace chaos
 
 #if _DEBUG
 	class GameHUDDebugValuesComponent;
+	class GameHUDDebugDrawComponent;
 #endif
 
 }; // namespace chaos
@@ -102,8 +103,6 @@ namespace chaos
 	{
 	protected:
 
-		/** show or hide the component */
-		virtual void ShowComponent(bool in_show);
 		/** override */
 		virtual void OnRemovedFromHUD() override;
 		/** override */
@@ -495,8 +494,9 @@ namespace chaos
 		bool should_update_mesh = false;
 	};
 
+	/** display a variable for 1 frame */
 	void DebugValue(char const* title, char const* value, float life_time = 0.0f);
-
+	/** display a variable for 1 frame */
 	template<typename T>
 	void DebugValue(char const* title, T const& value, float life_time = 0.0f)
 	{
@@ -504,7 +504,39 @@ namespace chaos
 		DebugValue(title, str.c_str(), life_time);
 	}
 
-#endif
+#endif // #if _DEBUG
+
+	// ====================================================================
+	// GameHUDDebugDrawComponent
+	// ====================================================================
+
+#if _DEBUG
+
+	class GameHUDDebugDrawComponent : public GameHUDComponent
+	{
+	public:
+
+		/** constructor */
+		GameHUDDebugDrawComponent();
+		/** getter on the draw interface */
+		GPUDrawInterface<VertexDefault>* GetDebugDrawInterface();
+
+	protected:
+
+		/** override */
+		virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params) override;
+
+	protected:
+
+		/** the draw interface */
+		GPUDrawInterface<VertexDefault> draw_interface;
+	};
+
+	/** display a variable for 1 frame */
+	GPUDrawInterface<VertexDefault> * GetDebugDrawInterface();
+
+
+#endif // #if _DEBUG
 
 }; // namespace chaos
 

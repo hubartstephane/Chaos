@@ -105,13 +105,14 @@ namespace chaos
 #endif
 			if (!Application::HasApplicationCommandLineFlag("-HidePerfs")) // CMDLINE
 				RegisterComponent(GameHUDKeys::PERFS_ID, new GameHUDPerfsComponent());
+		
+#if _DEBUG
 		// FREECAMERA
-#if _DEBUG
 		RegisterComponent(GameHUDKeys::FREECAMERA_ID, new GameHUDFreeCameraComponent());
-#endif
 		// DEBUG VALUES
-#if _DEBUG
 		RegisterComponent(GameHUDKeys::DEBUG_VALUES_ID, new GameHUDDebugValuesComponent());
+		// DEBUG DRAW
+		RegisterComponent(GameHUDKeys::DEBUG_DRAW_ID, new GameHUDDebugDrawComponent());
 #endif
 		return true;
 	}

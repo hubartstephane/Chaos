@@ -70,6 +70,10 @@ namespace chaos
 	{
 		CameraComponent::DoTick(delta_time);
 
+
+
+
+
 		// 1.1 just to be sure that the space between the 2 limits is greater that pawn size
 		float constexpr PAWNBOX_INCREASE_FACTOR = 1.1f;
 
@@ -92,6 +96,36 @@ namespace chaos
 			box2 pawn_box = player_pawn->GetBoundingBox();
 			if (!IsGeometryEmpty(pawn_box))
 			{
+
+
+
+
+
+				GPUDrawInterface<VertexDefault>* DI = GetDebugDrawInterface();
+
+				if (DI != nullptr)
+				{
+					ParticleTextGenerator::GeneratorParams params;
+					params.line_height = 100.0f;
+					params.hotpoint = Hotpoint::CENTER;
+					//params.alignment = TextAlignment::CENTER;
+					params.position = pawn_box.position;
+					DI->AddText("TRUC", params);
+						
+
+
+				}
+				
+
+
+
+
+
+
+
+
+
+
 				box2 safe_box = CameraTools::GetSafeCameraBox(camera_box, camera->GetSafeZone());
 
 				// pawn is too big (in any axis) to fit inside the safe_zone, just use restrict method (with degenerated use case implemented)

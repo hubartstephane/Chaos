@@ -151,12 +151,6 @@ namespace chaos
 	// GameHUDMeshComponent
 	// ====================================================================
 
-	void GameHUDMeshComponent::ShowComponent(bool in_show)
-	{
-		if (mesh != nullptr)
-			mesh->Show(in_show);
-	}
-
 	void GameHUDMeshComponent::OnRemovedFromHUD()
 	{
 		mesh = nullptr;
@@ -574,7 +568,7 @@ namespace chaos
 	{
 		Game * game = GetGame();
 		if (game != nullptr)
-			ShowComponent(game->IsFreeCameraMode());
+			mesh->Show(game->IsFreeCameraMode());
 		return true;
 	}
 
@@ -664,6 +658,52 @@ namespace chaos
 						debug_component->AddValue(title, value, life_time);
 	}
 
-#endif
+#endif // #if _DEBUG
+
+	// ====================================================================
+	// GameHUDDebugDrawComponent
+	// ====================================================================
+
+#if _DEBUG
+
+	GameHUDDebugDrawComponent::GameHUDDebugDrawComponent():
+		draw_interface(DefaultParticleProgram::GetMaterial())
+	{
+	}
+
+	int GameHUDDebugDrawComponent::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+	{
+		draw_interface.Flush();
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_CULL_FACE);
+		int result = draw_interface.GetDynamicMesh().Display(renderer, uniform_provider, render_params);
+		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
+		
+		draw_interface.Clear();
+		return result;
+	}
+
+	GPUDrawInterface<VertexDefault>* GameHUDDebugDrawComponent::GetDebugDrawInterface()
+	{
+		return &draw_interface;
+	}
+
+	GPUDrawInterface<VertexDefault> * GetDebugDrawInterface()
+	{
+		if (GameApplication* game_application = Application::GetInstance())
+			if (Game* game = game_application->GetGame())
+				if (GameHUD* hud = game->GetCurrentHUD())
+					if (GameHUDDebugDrawComponent* debug_component = hud->FindComponentByClass<GameHUDDebugDrawComponent>())
+						return debug_component->GetDebugDrawInterface();
+		return nullptr;
+	}
+
+#endif // #if _DEBUG
+
 
 }; // namespace chaos

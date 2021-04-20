@@ -47,8 +47,6 @@ namespace chaos
 
 namespace chaos
 {
-
-
 	// ==============================================================================================
 	// rotators
 	// ==============================================================================================
@@ -148,10 +146,6 @@ namespace chaos
 		using triangle_type = type_triangle<type, dimension>;
 	};
 
-
-
-
-
 	// ==============================================================================================
 	// type_box_base class
 	// ==============================================================================================
@@ -165,9 +159,9 @@ namespace chaos
 		using type     = typename type_geometric<T, dimension>::type;
 
 		/** constructor (empty box) */
-		type_box_base() : half_size((T)-1.0f) {}
+		type_box_base() = default;
 		/** copy constructor */
-		type_box_base(type_box_base const & src) : position(src.position), half_size(src.half_size) {}
+		type_box_base(type_box_base const& src) = default;
 		/** other constructor */
 		type_box_base(vec_type const & in_position, vec_type const & in_half_size) : position(in_position), half_size(in_half_size) {}
 
@@ -176,7 +170,7 @@ namespace chaos
 		/** the center of the box */
 		vec_type position;
 		/** the half size the box */
-		vec_type half_size;
+		vec_type half_size = vec_type(T(-1));
 	};
 
 	// ==============================================================================================
@@ -192,9 +186,11 @@ namespace chaos
 		using type     = typename type_box_base<T, dimension>::type;
 
 		/** constructor (empty box) */
-		type_box() {}
+		type_box() = default;
 		/** copy constructor */
-		type_box(type_box const & src) : type_box_base(src.position, src.half_size) {}
+		type_box(type_box const & src) = default;
+		/** constructor from base (usefull for obox conversion) */
+		type_box(type_box_base<T, dimension> const & src) : type_box_base(src.position, src.half_size) {}
 		/** other constructor */
 		type_box(vec_type const & in_position, vec_type const & in_half_size) : type_box_base(in_position, in_half_size) {}
 		/** construct a box from 2 points */
@@ -223,9 +219,11 @@ namespace chaos
 		using rot_type = typename type_box_base<T, dimension>::rot_type;
 
 		/** constructor (empty box) */
-		type_obox() {}
+		type_obox() = default;
 		/** copy constructor */
-		type_obox(type_obox const & src) : type_box_base(src.position, src.half_size), rotator(src.rotator) {}
+		type_obox(type_obox const& src) = default;
+		/** constructor from base (usefull for box conversion) */
+		type_obox(type_box_base<T, dimension> const& src) : type_box_base(src.position, src.half_size){}
 		/** other constructor */
 		type_obox(vec_type const & in_position, vec_type const & in_half_size, rot_type const & in_rotator) : type_box_base(in_position, in_half_size), rotator(in_rotator) {}
 
@@ -248,9 +246,9 @@ namespace chaos
 		using type = typename type_geometric<T, dimension>::type;
 
 		/** constructor (empty circle) */
-		type_sphere() : radius((T)-1.0f) {}
+		type_sphere() = default;
 		/** copy constructor */
-		type_sphere(type_sphere const & src) : position(src.position), radius(src.radius) {}
+		type_sphere(type_sphere const& src) = default;
 		/** other constructor */
 		type_sphere(vec_type const & in_position, type in_radius) : position(in_position), radius(in_radius) {}
 
@@ -259,7 +257,7 @@ namespace chaos
 		/** the center of the circle */
 		vec_type position;
 		/** the radius of the circle */
-		type radius;
+		type radius = type(-1);
 	};
 
 	// ==============================================================================================
@@ -275,9 +273,9 @@ namespace chaos
 		using type = typename type_geometric<T, dimension>::type;
 
 		/** default constructor */
-		type_triangle() {}
+		type_triangle() = default;
 		/** copy constructor */
-		type_triangle(type_triangle const & src) : a(src.a), b(src.b), c(src.c) {}
+		type_triangle(type_triangle const& src) = default;
 		/** constructor from points */
 		type_triangle(vec_type const & in_a, vec_type const & in_b, vec_type const & in_c) : a(in_a), b(in_b), c(in_c) {}
 
@@ -318,9 +316,9 @@ namespace chaos
 		using type = typename type_geometric<T, dimension>::type;
 
 		/** default constructor */
-		type_ray() {}
+		type_ray() = default;
 		/** copy constructor */
-		type_ray(type_ray const & src) : position(src.position), direction(src.direction) {}
+		type_ray(type_ray const& src) = default;
 		/** other constructor */
 		type_ray(vec_type const & in_position, vec_type const & in_direction) : position(in_position), direction(in_direction) {}
 		/** construct a ray from 2 points */

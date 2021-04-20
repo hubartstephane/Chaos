@@ -103,6 +103,10 @@ namespace chaos
 		GPUDynamicMesh dynamic_mesh;
 	};
 
+	void DrawLine(PrimitiveOutput<VertexDefault>& output, glm::vec2 const& p1, glm::vec2 const& p2, glm::vec4 const& color);
+	void DrawBox (PrimitiveOutput<VertexDefault>& output, obox2 const& b, glm::vec4 const& color, bool fill = true);
+	void DrawSphere(PrimitiveOutput<VertexDefault>& output, sphere2 const & s, glm::vec4 const& color, bool fill = true);
+
 }; // namespace chaos
 
 #endif // CHAOS_FORWARD_DECLARATION

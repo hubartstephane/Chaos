@@ -144,9 +144,9 @@ namespace chaos
 			simulated_stick.x += 1.0f;
 
 		if (CheckButtonPressed(KeyboardButton::DOWN))
-			simulated_stick.y += 1.0f;
-		if (CheckButtonPressed(KeyboardButton::UP))
 			simulated_stick.y -= 1.0f;
+		if (CheckButtonPressed(KeyboardButton::UP))
+			simulated_stick.y += 1.0f;
 
 		if (glm::length2(simulated_stick) > 0)
 			left_stick_position = simulated_stick;

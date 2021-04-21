@@ -76,7 +76,7 @@ void GameHUDPowerUpComponent::UpdateMesh()
 		title = chaos::StringTools::Printf("Keep [ButtonY] or [KEYBOARD ALT] Pressed to buy\n[POWERUP %s]", cached_value->GetPowerUpTitle());
 
 	chaos::GPUDrawInterface<chaos::VertexDefault> DI(nullptr);
-	DI.AddText(title.c_str(), params);
+	DrawText(DI, title.c_str(), params);
 	mesh = DI.ExtractMesh();
 }
 

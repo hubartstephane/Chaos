@@ -217,7 +217,7 @@ namespace chaos
 			TweakTextGeneratorParams(other_params);
 
 			GPUDrawInterface<VertexDefault> DI(nullptr);
-			DI.AddText(in_text, other_params);
+			DrawText(DI, in_text, other_params);
 			mesh = DI.ExtractMesh();
 		}
 	}
@@ -619,7 +619,7 @@ namespace chaos
 
 				ParticleTextGenerator::GeneratorParams other_params = generator_params;
 				TweakTextHotpointWithCanvas(GetGame()->GetCanvasBox(), other_params);
-				DI.AddText(stream.str().c_str(), other_params);
+				DrawText(DI, stream.str().c_str(), other_params);
 
 				mesh = DI.ExtractMesh();
 			}

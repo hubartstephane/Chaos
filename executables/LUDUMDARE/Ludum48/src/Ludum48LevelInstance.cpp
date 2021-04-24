@@ -16,6 +16,8 @@
 
 bool GridCellInfo::CanLock(GameObjectParticle* p) const
 {
+	//if (locked)
+	//	return false;
 	if (particle != nullptr && particle != p)
 		return false;
 	if (locked_by != p && locked_by != nullptr)
@@ -25,6 +27,8 @@ bool GridCellInfo::CanLock(GameObjectParticle* p) const
 
 void GridCellInfo::Lock(GameObjectParticle* p)
 {
+	//locked = (p != nullptr);
+
 	locked_by = p;
 }
 
@@ -176,6 +180,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 						}
 						else
 						{
+#if _DEBUG
 							if (below.particle != nullptr)
 							{
 								glm::vec4 RED = { 1.0f, 0.0f, 0.0f, 1.0f };
@@ -183,13 +188,14 @@ bool LudumLevelInstance::DoTick(float delta_time)
 								chaos::DrawBox(*DI, below.particle->bounding_box, RED, false);
 								chaos::DrawLine(*DI, particle->bounding_box.position, below.particle->bounding_box.position, RED);
 							}
+#endif
 						}
 					}
 					else if (step == 1)
 					{
 						if (below.particle == nullptr)
 							continue;
-						if (below.particle->type != GameObjectType::Rock && below.particle->type != GameObjectType::Diamond) // do not try going left or right above the player
+						if (below.particle->type != GameObjectType::Wall && below.particle->type != GameObjectType::Rock && below.particle->type != GameObjectType::Diamond) // do not try going left or right above the player
 							continue;
 						if (below.particle->direction.x != 0.0f || below.particle->direction.y != 0.0f)
 							continue;
@@ -209,7 +215,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 									if (left.CanLock(particle) && left_below.CanLock(particle))
 									{
 										left.Lock(particle);
-										left_below.Lock(particle);
+										//left_below.Lock(particle);
 										particle->direction = { -1.0f, 0.0f };
 										break;
 									}
@@ -225,7 +231,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 									if (right.CanLock(particle) && right_below.CanLock(particle))
 									{
 										right.Lock(particle);
-										right_below.Lock(particle);
+									//	right_below.Lock(particle);
 										particle->direction = { +1.0f, 0.0f };
 										break;
 
@@ -257,7 +263,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 		}
 	}
 
-
+#if _DEBUG
 	//debug draw
 	glm::vec4 YELLOW = { 1.0f, 1.0f, 0.0f, 1.0f };
 
@@ -277,6 +283,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 			}
 		}
 	}
+#endif
 
 
 				
@@ -402,7 +409,7 @@ void LudumLevelInstance::CollectObjects()
 	chaos::TMTileCollisionIterator it = GetTileCollisionIterator(GetBoundingBox(), COLLISION_GAMEOBJECT, false);
 	while (it)
 	{
-		grid_info(it->particle->bounding_box.position) = { (GameObjectParticle*)it->particle };
+		grid_info(it->particle->bounding_box.position).particle = (GameObjectParticle*)it->particle;
 		++it;
 	}
 }

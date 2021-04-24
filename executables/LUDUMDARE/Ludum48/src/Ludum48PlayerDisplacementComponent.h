@@ -24,4 +24,6 @@ public:
 protected:
 
 	float pawn_speed = 3.0f;
+
+	float push_speed = 1.0f;
 };

@@ -143,14 +143,14 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 // ===========================================================================
 
 
-bool UpdateParticlePositionInGrid(GameObjectParticle* particle, float speed, float delta_time, class GridInfo& grid_info)
+bool UpdateParticlePositionInGrid(GameObjectParticle* particle, float delta_time, class GridInfo& grid_info)
 {
 	bool result = (particle->direction.y < 0.0f);
 	for (int axis : {0, 1})
 	{
 		if (particle->direction[axis] != 0.0f)
 		{
-			particle->offset[axis] = std::clamp(particle->offset[axis] + speed * delta_time * particle->direction[axis], -1.0f, 1.0f);
+			particle->offset[axis] = std::clamp(particle->offset[axis] + particle->speed * delta_time * particle->direction[axis], -1.0f, 1.0f);
 			if (particle->offset[axis] == -1.0f || particle->offset[axis] == 1.0f)
 			{
 				if (grid_info(particle->bounding_box.position).particle == particle)

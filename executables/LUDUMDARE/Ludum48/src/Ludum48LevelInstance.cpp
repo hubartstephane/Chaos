@@ -133,20 +133,9 @@ bool LudumLevelInstance::DoTick(float delta_time)
 
 	for (int step : {0, 1})
 	{
-
-		// from left to right then from right to left
-		//static int direction = 1;
-		//direction = 1 - direction;
-
-		int direction = 0;
-
-		int start = (direction > 0) ? 0 : grid_info.size.x - 1;
-		int end = (direction > 0) ? grid_info.size.x : -1;
-		int next = (direction > 0) ? +1 : -1;
-
-		for (int x = start; x != end; x += next)
+		for (int y = 0; y < grid_info.size.y; ++y)
 		{
-			for (int y = 0; y < grid_info.size.y; ++y)
+			for (int x = 0; x < grid_info.size.x; ++x)
 			{
 				int index = x + y * grid_info.size.x;
 
@@ -167,8 +156,8 @@ bool LudumLevelInstance::DoTick(float delta_time)
 						if (below.CanLock(particle))
 						{
 							below.Lock(particle);
-
 							particle->direction = { 0.0f, -1.0f };
+							particle->speed = object_speed;
 						}
 						else
 						{
@@ -197,7 +186,6 @@ bool LudumLevelInstance::DoTick(float delta_time)
 						for (int i : { 0, 1 })
 						{
 							if (((i + random) & 1) == 0) // check one branch before the other in a random order
-							//if (i == 0)
 							{
 								if (x > 0) // fall to the left
 								{
@@ -207,8 +195,8 @@ bool LudumLevelInstance::DoTick(float delta_time)
 									if (left.CanLock(particle) && left_below.CanLock(particle))
 									{
 										left.Lock(particle);
-										//left_below.Lock(particle);
 										particle->direction = { -1.0f, 0.0f };
+										particle->speed = object_speed;
 										break;
 									}
 								}
@@ -223,8 +211,8 @@ bool LudumLevelInstance::DoTick(float delta_time)
 									if (right.CanLock(particle) && right_below.CanLock(particle))
 									{
 										right.Lock(particle);
-									//	right_below.Lock(particle);
 										particle->direction = { +1.0f, 0.0f };
+										particle->speed = object_speed;
 										break;
 
 									}
@@ -251,7 +239,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 			if (particle == nullptr)
 				continue;
 
-			if (UpdateParticlePositionInGrid(particle, object_speed, delta_time, grid_info))
+			if (UpdateParticlePositionInGrid(particle, delta_time, grid_info))
 			{
 				if (particle->type == GameObjectType::Rock || particle->type == GameObjectType::Diamond)
 				{

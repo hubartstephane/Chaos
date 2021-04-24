@@ -114,6 +114,14 @@ numeric_limits for glm ??
 
 		shared_ptr -> ref_ptr  (pour eviter le conflit avec STL)
 
+		------------------------------------------------------
+
+
+autorecenter camera : le recentrage automatique fait des marches d escaliers visibles sur dans grandes zone de camra
+
+meilleur parametrage du recentrage
+
+
 
 
 #endif

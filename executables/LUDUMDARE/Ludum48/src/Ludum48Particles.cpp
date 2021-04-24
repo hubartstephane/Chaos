@@ -27,7 +27,8 @@ void ParticleGameObjectLayerTrait::ParticleToPrimitives(GameObjectParticle const
 bool ParticleGameObjectLayerTrait::UpdateParticle(float delta_time, GameObjectParticle& particle) const
 {
 
-
+	if (particle.destroy_particle && particle.locked_cell != nullptr)
+		particle.locked_cell->UnLock(&particle);
 	return particle.destroy_particle;
 }
 
@@ -156,7 +157,7 @@ void UpdateParticlePositionInGrid(GameObjectParticle* particle, float speed, flo
 				particle->offset = { 0.0f, 0.0f };
 				particle->direction = { 0.0f, 0.0f };
 
-				grid_info(particle->bounding_box.position).Lock(nullptr);
+				grid_info(particle->bounding_box.position).UnLock(particle);
 			}
 		}
 	}

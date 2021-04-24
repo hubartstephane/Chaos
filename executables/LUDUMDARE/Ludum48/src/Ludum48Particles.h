@@ -45,7 +45,8 @@ public:
 	glm::vec2 offset = { 0.0f, 0.0f };
 	/** direction where the object want to go */
 	glm::vec2 direction = { 0.0f, 0.0f };
-
+	/** the displacement speed along the direction */
+	float speed = 1.0f;
 
 	bool destroy_particle = false;
 
@@ -129,7 +130,7 @@ public:
 
 
 
-bool UpdateParticlePositionInGrid(GameObjectParticle* particle, float speed, float delta_time, class GridInfo& grid_info);
+bool UpdateParticlePositionInGrid(GameObjectParticle* particle, float delta_time, class GridInfo& grid_info);
 
 
 

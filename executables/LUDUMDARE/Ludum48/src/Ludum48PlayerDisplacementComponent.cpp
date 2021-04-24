@@ -86,32 +86,18 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 						if (stick_position.x != 0.0f && other.particle->direction == glm::vec2(0.0f, 0.0f)) // can only push horizontally
 						{
 							glm::ivec2 rock_p = grid_info.GetCellCoord(other);
-							if (rock_p.x > 0 && stick_position.x < 0.0f)
+							if ((rock_p.x > 0 && stick_position.x < 0.0f) || (rock_p.x < grid_info.size.x - 1 && stick_position.x > 0.0f))
 							{
 								GridCellInfo& next_to_rock = grid_info(rock_p + chaos::RecastVector<glm::ivec2>(stick_position));
 								if (next_to_rock.CanLock(other.particle))
 								{
 									next_to_rock.Lock(other.particle);
 									other.particle->direction = stick_position;
+									other.particle->speed = push_speed;
 									particle->direction = stick_position;
+									particle->speed = push_speed;
 								}
-
-
-
 							}
-							else if (rock_p.x < grid_info.size.x - 1 && stick_position.x > 0.0f)
-							{
-								GridCellInfo& next_to_rock = grid_info(rock_p + chaos::RecastVector<glm::ivec2>(stick_position));
-								if (next_to_rock.CanLock(other.particle))
-								{
-									next_to_rock.Lock(other.particle);
-									other.particle->direction = stick_position;
-									particle->direction = stick_position;
-								}
-
-							}
-
-
 						}
 					}
 				}
@@ -126,6 +112,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 					{
 						other.Lock(particle);
 						particle->direction = stick_position;
+						particle->speed = pawn_speed;
 					}
 
 				}
@@ -149,7 +136,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 
 	}
-	UpdateParticlePositionInGrid(particle, pawn_speed, delta_time, grid_info);
+	//UpdateParticlePositionInGrid(particle, delta_time, grid_info);
 
 	
 
@@ -163,6 +150,7 @@ bool LudumPlayerDisplacementComponent::SerializeIntoJSON(nlohmann::json& json_en
 	if (!chaos::PlayerDisplacementComponent::SerializeIntoJSON(json_entry))
 		return false;
 	chaos::JSONTools::SetAttribute(json_entry, "pawn_speed", pawn_speed);
+	chaos::JSONTools::SetAttribute(json_entry, "push_speed", push_speed);
 	return true;
 }
 
@@ -172,6 +160,7 @@ bool LudumPlayerDisplacementComponent::SerializeFromJSON(nlohmann::json const& j
 		return false;
 
 	chaos::JSONTools::GetAttribute(json_entry, "pawn_speed", pawn_speed);
+	chaos::JSONTools::GetAttribute(json_entry, "push_speed", push_speed);
 	return true;
 }
 

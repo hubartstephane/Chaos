@@ -15,26 +15,17 @@ class GridInfo
 {
 public:
 
-	GridInfo() = default;
-
-	GridInfo(GridInfo&& src)
-	{
-		size = src.size;
-		cells = src.cells;
-		src.size = { 0, 0 };
-		src.cells = nullptr;
-	}
-
 	~GridInfo() 
 	{
 		delete[] cells;
 	}
 
-
-
 	glm::ivec2 size = {0, 0};
 
 	GridCellInfo* cells = nullptr;
+
+	glm::vec2 min_position = { std::numeric_limits<float>::max(), std::numeric_limits<float>::max() };
+	glm::vec2 max_position = { std::numeric_limits<float>::min(), std::numeric_limits<float>::min() };
 };
 
 
@@ -76,9 +67,13 @@ protected:
 
 	virtual uint64_t GetCollisionFlagByName(char const* name) const override;
 
+
+	GridInfo const & GetGridInfo() const { return grid_info; }
+	GridInfo& GetGridInfo(){ return grid_info; }
+
 protected:
 
-	GridInfo CollectObjects();
+	void CollectObjects();
 
 
 
@@ -90,5 +85,8 @@ protected:
 
 	mutable float completion_timer = -1.0f; // shu48 : due to Checkcomplete constness !!
 	float completion_delay = 3.0f;
+
+
+	GridInfo grid_info;
 
 };

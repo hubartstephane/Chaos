@@ -11,4 +11,5 @@ ProcessSubPremake("Ludum44")
 ProcessSubPremake("Ludum45")
 ProcessSubPremake("Ludum46")
 ProcessSubPremake("Ludum47")
+ProcessSubPremake("Ludum48")
 

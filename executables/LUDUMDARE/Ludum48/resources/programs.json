@@ -1,0 +1,8 @@
+{
+  "@background": { "path": "@programs/background/background.pgm" },
+  "@text": { "path": "@programs/text/text.pgm" },
+  "@screenspace1": { "path": "@programs/screenspace1/screenspace1.pgm" },
+  "@screenspace2": { "path": "@programs/screenspace2/screenspace2.pgm" },
+  "@BurningFlames": { "path": "@programs/BurningFlames/BurningFlames.pgm" },
+  "@blackscreen": { "path": "@programs/blackscreen/blackscreen.pgm" }
+}

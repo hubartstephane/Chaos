@@ -1,0 +1,10 @@
+{
+	"pixel_sources":
+	[
+		"@screenspace2.psh"
+	],
+	"vertex_sources":
+	[
+		"@screenspace2.vsh"
+	]
+}

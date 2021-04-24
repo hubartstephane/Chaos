@@ -128,6 +128,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	// update pawn position
 	else
 	{
+		UpdateParticlePositionInGrid(particle, delta_time, grid_info);
 		
 		
 
@@ -136,7 +137,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 
 	}
-	//UpdateParticlePositionInGrid(particle, delta_time, grid_info);
+	//
 
 	
 

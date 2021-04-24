@@ -121,6 +121,19 @@ autorecenter camera : le recentrage automatique fait des marches d escaliers vis
 
 meilleur parametrage du recentrage
 
+------------------------------------------------------
+
+s 'affranchir de chaos::' dans les projets ludums ???
+
+------------------------------------------------------
+
+quelques ennumeration de couleur YELLOW, GREEN ...
+
+
+
+
+
+
 
 
 

@@ -8,7 +8,16 @@ class GridCellInfo
 {
 public:
 
+	bool CanLock(GameObjectParticle* p) const;
+
+	void Lock(GameObjectParticle* p);
+
+
+
+
 	GameObjectParticle* particle = nullptr;
+
+	GameObjectParticle* locked_by = nullptr;
 };
 
 class GridInfo
@@ -26,6 +35,10 @@ public:
 	GridCellInfo const& operator ()(glm::vec2 const& p) const;
 
 	glm::ivec2 GetIndexForPosition(glm::vec2 const& p) const;
+
+	chaos::box2 GetBoundingBox(GridCellInfo const & cell) const;
+
+	glm::ivec2 GetCellCoord(GridCellInfo const& cell) const;
 
 
 	glm::ivec2 size = {0, 0};

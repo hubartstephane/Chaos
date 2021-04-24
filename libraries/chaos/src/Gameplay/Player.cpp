@@ -177,9 +177,9 @@ namespace chaos
 				left_stick_position.x = 1.0f;
 
 			if (gamepad_state->IsButtonPressed(GamepadButton::DPAD_UP, false))
-				left_stick_position.y = -1.0f;
+				left_stick_position.y = +1.0f;
 			else if (gamepad_state->IsButtonPressed(GamepadButton::DPAD_DOWN, false))
-				left_stick_position.y = 1.0f;
+				left_stick_position.y = -1.0f;
 		}
 
 		// cache the RIGHT stick position

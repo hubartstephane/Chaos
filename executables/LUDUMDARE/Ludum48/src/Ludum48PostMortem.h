@@ -101,6 +101,20 @@ numeric_limits for glm ??
 
 	ParticleTools devrait disparaitre
 
+		------------------------------------------------------
+
+		DrawInterface / GetDebugDrawInterface();
+
+	pourquoi ne pas avoir des parametres par defaut
+
+	DI->SetColor(...)
+	DI->SetFill(...)
+
+		------------------------------------------------------
+
+		shared_ptr -> ref_ptr  (pour eviter le conflit avec STL)
+
+
 
 #endif
 

@@ -33,18 +33,86 @@ int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgra
 
 bool LudumLevelInstance::DoTick(float delta_time)
 {
+	float SPEED = 2.0f;
+	float TIMER = 1.0f;
+
 	GridInfo grid_info = CollectObjects(); // before everything else
 
-	for (size_t y = 0; y < grid_info.size.y; ++y)
+	for (int y = 0; y < grid_info.size.y; ++y)
 	{
-		for (size_t x = 0; x < grid_info.size.x; ++x)
+		for (int x = 0; x < grid_info.size.x; ++x)
 		{
+			int index = x + y * grid_info.size.x;
+
+			GameObjectParticle* particle = grid_info.cells[index].particle;
+
+			if (particle == nullptr)
+				continue;
+			if (particle->type == GameObjectType::Wall || particle->type == GameObjectType::Foam)
+				continue;
+
+			// search where the particle may move
+			if (y > 0)
+			{
+				int index_below = index - grid_info.size.x;
+
+				GameObjectParticle* particle_below = grid_info.cells[index_below].particle;
+				if (particle_below == nullptr)
+				{
+					if (particle->fall_timer < 0.0f) // particle is resting
+						particle->fall_timer = TIMER;
+					else
+					{
+						particle->fall_timer = std::max(particle->fall_timer - delta_time, 0.0f);
+						if (particle->fall_timer == 0.0f)
+						{
+							particle->offset.y = std::max(particle->offset.y - SPEED * delta_time, -1.0f);
+							if (particle->offset.y == -1.0f)
+							{
+								particle->bounding_box.position.y -= GetTiledMap()->tile_size.y;
+								particle->offset.y = 0.0f;
+							}
+						}
+					}
+				}
+				else
+				{
+					auto DI = chaos::GetDebugDrawInterface();
+					chaos::DrawBox(*DI, particle_below->bounding_box, { 1.0f, 0.0f, 0.0f, 1.0f }, false);
+
+					chaos::DrawLine(*DI, particle->bounding_box.position, particle_below->bounding_box.position, { 1.0f, 0.0f, 0.0f, 1.0f });
+
+					if (particle_below->type == GameObjectType::Player) // do not try going left or right above the player
+						continue;
+
+				}
+				
+
+				int random = rand(); // random because we do not want the fall to right or left choice to be determinist
+
+				for (int i : { 0, 1 })
+				{
+					if (((i + random) & 1) == 0) // check one branch before the other in a random order
+					{
+						if (x > 0) // fall to the left
+						{
 
 
 
+						}
+					} 
+					else
+					{
+						if (x < grid_info.size.x - 1) // fall to the right
+						{
+
+
+
+						}
+					}
+				}
+			}
 		}
-
-
 	}
 
 
@@ -135,7 +203,6 @@ GridInfo LudumLevelInstance::CollectObjects()
 	if (ludum_level == nullptr || ludum_level->GetTiledMap() == nullptr)
 		return {};
 
-	glm::ivec2 size = ludum_level->GetTiledMap()->size;
 	glm::ivec2 tile_size = ludum_level->GetTiledMap()->tile_size;
 
 	// grid mod unimplemented
@@ -161,6 +228,10 @@ GridInfo LudumLevelInstance::CollectObjects()
 		return {};
 
 	// step 2
+
+	float a = (max_position.x - min_position.x) / float(tile_size.x);
+	float b = (max_position.y - min_position.y) / float(tile_size.y);
+
 	result.size.x = 1 + int((max_position.x - min_position.x) / float(tile_size.x));
 	result.size.y = 1 + int((max_position.y - min_position.y) / float(tile_size.y));
 
@@ -171,9 +242,9 @@ GridInfo LudumLevelInstance::CollectObjects()
 	{
 		glm::vec2 position = it->particle->bounding_box.position - min_position;
 
-		glm::ivec2 p = chaos::RecastVector<glm::ivec2>(position) / size;
+		glm::ivec2 p = chaos::RecastVector<glm::ivec2>(position / chaos::RecastVector<glm::vec2>(tile_size));
 
-		size_t index = p.x + p.y * result.size.x;
+		int index = p.x + p.y * result.size.x;
 		result.cells[index] = { (GameObjectParticle*)it->particle };
 
 		++it;
@@ -182,33 +253,3 @@ GridInfo LudumLevelInstance::CollectObjects()
 	return result;
 }
 
-
-
-
-
-class MyParticle : public chaos::ParticleDefault
-{
-public:
-
-	float rest_timer = 0.0f;
-
-	void Update(float delta_time)
-	{
-
-
-	}
-
-
-};
-
-
-void GameGG()
-{
-
-
-
-
-
-
-
-}

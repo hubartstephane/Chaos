@@ -13,7 +13,13 @@ public:
 
 	glm::vec2 GetPawnMaxVelocity() const { return pawn_max_velocity; }
 
-	virtual bool DoTick(float delta_time);
+	virtual bool DoTick(float delta_time) override;
+
+	
+	virtual bool SerializeIntoJSON(nlohmann::json& json_entry) const override;
+	
+	virtual bool SerializeFromJSON(nlohmann::json const& json_entry) override;
+
 
 protected:
 

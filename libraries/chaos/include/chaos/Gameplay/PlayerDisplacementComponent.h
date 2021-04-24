@@ -10,7 +10,9 @@ namespace chaos
 
 namespace chaos
 {
-	class PlayerDisplacementComponent : public Tickable
+	// shu48 ajout de public JSONSerializable 
+
+	class PlayerDisplacementComponent : public Tickable, public JSONSerializable 
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 

@@ -71,7 +71,7 @@ public:
 // ParticleAnimated
 // ===========================================================================
 
-class ParticleAnimated : public ParticleBase
+class ParticleAnimated : public GameObjectParticle
 {
 
 
@@ -99,6 +99,11 @@ class ParticlePlayer : public ParticleAnimated
 {
 public:
 
+	ParticlePlayer()
+	{
+		type = GameObjectType::Player;
+	}
+
 
 };
 
@@ -118,6 +123,6 @@ public:
 
 CHAOS_REGISTER_CLASS2(ParticleBase, chaos::TMParticle);
 CHAOS_REGISTER_CLASS2(GameObjectParticle, ParticleBase);
-CHAOS_REGISTER_CLASS2(ParticleAnimated, ParticleBase);
+CHAOS_REGISTER_CLASS2(ParticleAnimated, GameObjectParticle);
 CHAOS_REGISTER_CLASS2(ParticlePlayer, ParticleAnimated);
 

@@ -53,136 +53,21 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	return true;
 }
 
-#if 0
 
-
-
-bool PlatformerDisplacementComponent::DoTick(float delta_time)
+bool LudumPlayerDisplacementComponent::SerializeIntoJSON(nlohmann::json& json_entry) const
 {
-	// early exit
-	PlayerPawn* pawn = player->GetPawn();
-	if (pawn == nullptr)
-		return true;
-
-	// get player inputs of interrests
-	glm::vec2 stick_position = player->GetLeftStickPosition();
-	if (displacement_info.discrete_stick_mode)
-	{
-		stick_position.x = MathTools::AnalogicToDiscret(stick_position.x);
-		stick_position.y = MathTools::AnalogicToDiscret(stick_position.y);
-	}
-
-	Key const jump_key_buttons[] = { KeyboardButton::SPACE, GamepadButton::A, Key() };
-	bool jump_pressed = player->CheckButtonPressed(jump_key_buttons);
-
-	Key const run_key_buttons[] = { KeyboardButton::LEFT_SHIFT, KeyboardButton::RIGHT_SHIFT, GamepadButton::RIGHT_TRIGGER, Key() };
-	bool run_pressed = player->CheckButtonPressed(run_key_buttons);
-
-	// get player position
-	box2 initial_pawn_box = pawn->GetBoundingBox();
-
-	box2 pawn_box = initial_pawn_box;
-	glm::vec2& pawn_position = pawn_box.position;
-
-	// sum the forces 
-	glm::vec2 sum_forces = glm::vec2(0.0f, 0.0f);
-
-	if (displacement_state == PlatformerDisplacementState::FALLING || displacement_state == PlatformerDisplacementState::JUMPING_DOWN) // do not fall otherway
-		sum_forces += glm::vec2(0.0f, -displacement_info.gravity);
-
-	// compute horizonral velocity (based on uniform acceleration or not for climbing)
-	if (displacement_state == PlatformerDisplacementState::CLIMBING)
-	{
-		pawn_velocity.x = stick_position.x * displacement_info.climp_velocity.x;
-	}
-	else
-	{
-		float run_factor = (run_pressed) ? displacement_info.run_velocity_factor : 1.0f;
-
-		// pawn is breaking
-		if (stick_position.x == 0.0f)
-			pawn_velocity.x = pawn_velocity.x * std::pow(displacement_info.pawn_break_ratio, delta_time);
-		// pawn is accelerating forward
-		else if (stick_position.x * pawn_velocity.x >= 0.0f)
-			pawn_velocity.x = pawn_velocity.x + run_factor * stick_position.x * displacement_info.pawn_impulse.x * delta_time;
-		// pawn is changing direction (break harder)
-		else if (stick_position.x * pawn_velocity.x < 0.0f)
-			pawn_velocity.x =
-			pawn_velocity.x * std::pow(displacement_info.pawn_hardturn_break_ratio, delta_time) +
-			run_factor * stick_position.x * displacement_info.pawn_impulse.x * delta_time;
-	}
-
-	// compute vertical velocity
-	if (displacement_state == PlatformerDisplacementState::GROUNDED)
-	{
-		current_jump_count = 0;
-		pawn_velocity.y = 0.0f;
-	}
-	else if (displacement_state == PlatformerDisplacementState::CLIMBING)
-	{
-		current_jump_count = 0;
-		pawn_velocity.y = stick_position.y * displacement_info.climp_velocity.y;
-	}
-	else if (displacement_state == PlatformerDisplacementState::JUMPING)
-	{
-		current_jump_timer = std::min(current_jump_timer + delta_time, GetMaxJumpDuration());
-		pawn_position.y = current_jump_start_y + GetJumpRelativeHeight(current_jump_timer);
-		pawn_velocity.y = 0.0f; // no physics (ignore gravity, velocity) for the jump, just use a curve for the height of the player (even if that curve is based on physical equations)
-	}
-	else if (displacement_state == PlatformerDisplacementState::JUMPING_DOWN || displacement_state == PlatformerDisplacementState::FALLING)
-	{
-		pawn_velocity += (sum_forces * delta_time);
-	}
-
-	// update pawn position
-	pawn_velocity = ClampPlayerVelocity(pawn_velocity, run_pressed && displacement_state != PlatformerDisplacementState::CLIMBING);
-	pawn_position += pawn_velocity * delta_time;
-
-	// search collisions, apply collision reaction
-	int collision_flags = PlatformerDisplacementCollisionFlags::NOTHING;
-
-	char const* wangset_name = nullptr;  //"CollisionPlatformer"; 
-
-	TileCollisionComputer computer = TileCollisionComputer(GetLevelInstance(), initial_pawn_box, pawn_box, CollisionMask::PLAYER, pawn->GetAllocation(), displacement_info.pawn_extend, wangset_name);
-
-	pawn_box = computer.Run([&computer, &collision_flags](TileCollisionInfo const& collision_info)
-	{
-		if ((collision_info.particle->flags & PlatformerParticleFlags::LADDER) != 0)
-		{
-			if (Collide(computer.dst_box, collision_info.particle->bounding_box))
-			{
-				collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_LADDER;
-			}
-		}
-		else
-		{
-			computer.ComputeReaction(collision_info, [&collision_flags](TileCollisionInfo const& collision_info, Edge edge)
-			{
-				if (edge == Edge::TOP)
-				{
-					if ((collision_info.particle->flags & PlatformerParticleFlags::BRIDGE) != 0)
-						collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_BRIDGE;
-					collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_FLOOR;
-				}
-				else if (edge == Edge::BOTTOM)
-					collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_CEIL;
-				else if (edge == Edge::LEFT || edge == Edge::RIGHT)
-					collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_WALL;
-				return true;
-			});
-		}
-	});
-
-	// update player state
-	displacement_state = ComputeDisplacementState(pawn_box, jump_pressed, stick_position, collision_flags);
-
-	// update the player pawn
-	pawn->SetPosition(pawn_box.position);
-
-	was_jump_pressed = jump_pressed;
-
+	if (!chaos::PlayerDisplacementComponent::SerializeIntoJSON(json_entry))
+		return false;
+	chaos::JSONTools::SetAttribute(json_entry, "pawn_max_velocity", pawn_max_velocity);
 	return true;
-	}
+}
 
+bool LudumPlayerDisplacementComponent::SerializeFromJSON(nlohmann::json const& json_entry)
+{
+	if (!chaos::PlayerDisplacementComponent::SerializeFromJSON(json_entry))
+		return false;
 
-#endif
+	chaos::JSONTools::GetAttribute(json_entry, "pawn_max_velocity", pawn_max_velocity);
+	return true;
+}
+

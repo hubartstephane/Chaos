@@ -14,7 +14,7 @@
 
 LudumLevelInstance::LudumLevelInstance()
 {
-	player_displacement_component_class = LudumPlayerDisplacementComponent::GetStaticClass();
+	player_displacement_component_class = chaos::Class::FindClass("MyDisplacementComponent");
 }
 
 void LudumLevelInstance::CreateCameraComponents(chaos::Camera* camera, chaos::TMCameraTemplate* camera_template)
@@ -34,6 +34,25 @@ int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgra
 bool LudumLevelInstance::DoTick(float delta_time)
 {
 	GridInfo grid_info = CollectObjects(); // before everything else
+
+	for (size_t y = 0; y < grid_info.size.y; ++y)
+	{
+		for (size_t x = 0; x < grid_info.size.x; ++x)
+		{
+
+
+
+		}
+
+
+	}
+
+
+
+
+
+
+
 
 
 

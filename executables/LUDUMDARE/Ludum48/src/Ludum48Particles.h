@@ -38,6 +38,9 @@ public:
 	GameObjectType type = GameObjectType::None;
 
 
+
+	class GridCellInfo* locked_cell = nullptr;
+
 	/** an offset in [-1..1] relative to the cell the particle belongs to (unit is tile_size) */
 	glm::vec2 offset = { 0.0f, 0.0f };
 	/** direction where the object want to go */

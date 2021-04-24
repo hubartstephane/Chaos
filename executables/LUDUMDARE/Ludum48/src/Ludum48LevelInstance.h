@@ -11,6 +11,7 @@ public:
 	bool CanLock(GameObjectParticle* p) const;
 
 	void Lock(GameObjectParticle* p);
+	void UnLock(GameObjectParticle* p);
 
 
 
@@ -19,7 +20,9 @@ public:
 
 	bool locked = false;
 
-	GameObjectParticle* locked_by = nullptr;
+#if _DEBUG
+	chaos::box2 locked_by_box;
+#endif
 };
 
 class GridInfo

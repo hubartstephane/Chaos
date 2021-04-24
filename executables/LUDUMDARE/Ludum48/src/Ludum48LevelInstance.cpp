@@ -16,22 +16,25 @@
 
 bool GridCellInfo::CanLock(GameObjectParticle* p) const
 {
-	//if (locked)
-	//	return false;
-	if (particle != nullptr && particle != p)
-		return false;
-	if (locked_by != p && locked_by != nullptr)
-		return false;
-	return true;
+	return !locked && particle == nullptr;
 }
 
 void GridCellInfo::Lock(GameObjectParticle* p)
 {
-	//locked = (p != nullptr);
-
-	locked_by = p;
+	assert(p != nullptr);
+	p->locked_cell = this;
+#if _DEBUG
+	locked_by_box = p->bounding_box;
+#endif
+	locked = true;
 }
 
+void GridCellInfo::UnLock(GameObjectParticle* p)
+{
+	assert(p != nullptr);
+	locked = false;
+	p->locked_cell = nullptr;
+}
 
 
 
@@ -273,13 +276,13 @@ bool LudumLevelInstance::DoTick(float delta_time)
 		{
 			GridCellInfo const& cell = grid_info(glm::ivec2(x, y));
 
-			if (cell.locked_by != nullptr)
+			if (cell.locked)
 			{
 				chaos::box2 bb = grid_info.GetBoundingBox(cell);
 				bb.half_size *= 0.9f;
 				chaos::DrawBox(*DI, bb, YELLOW , false);
 
-				chaos::DrawLine(*DI, bb.position, cell.locked_by->bounding_box.position, YELLOW);
+				chaos::DrawLine(*DI, bb.position, cell.locked_by_box.position, YELLOW);
 			}
 		}
 	}

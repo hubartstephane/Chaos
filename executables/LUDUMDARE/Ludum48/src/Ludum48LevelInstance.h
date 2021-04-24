@@ -4,6 +4,42 @@
 
 #include "Ludum48Game.h"
 
+class GridCellInfo
+{
+public:
+
+};
+
+class GridInfo
+{
+public:
+
+	GridInfo() = default;
+
+	GridInfo(GridInfo&& src)
+	{
+		size = src.size;
+		cells = src.cells;
+		src.size = { 0, 0 };
+		src.cells = nullptr;
+	}
+
+	~GridInfo() 
+	{
+		delete[] cells;
+	}
+
+
+
+	glm::ivec2 size = {0, 0};
+
+	GridCellInfo* cells = nullptr;
+};
+
+
+
+
+
 // =================================================
 // LudumLevelInstance
 // =================================================
@@ -17,10 +53,6 @@ public:
 	CHAOS_DECLARE_OBJECT_CLASS2(LudumLevelInstance, chaos::TMLevelInstance);
 
 	LudumLevelInstance();
-
-	void SpawnBloodParticles(chaos::box2 const& box, int particles_count);
-
-	void SpawnBurnedSoulParticles(chaos::box2 const& box, int particles_count);
 
 protected:
 
@@ -41,7 +73,11 @@ protected:
 
 	virtual bool CanCompleteLevel() const override;
 
+	virtual uint64_t GetCollisionFlagByName(char const* name) const override;
 
+protected:
+
+	GridInfo CollectObjects();
 
 
 

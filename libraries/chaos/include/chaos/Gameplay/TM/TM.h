@@ -41,7 +41,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPLAY_TM_FORWARD_DECL, _, CHAOS_GAMEPLAY_TM_CLASS
 	class TMTileCollisionIteratorBase;
 
 	using TMTileCollisionIterator = TMTileCollisionIteratorBase<boost::mpl::identity<boost::mpl::_1>>;
-	using TMTileCollisionConstIterator = TMTileCollisionIteratorBase<boost::mpl::identity<boost::mpl::_1>>;
+	using TMTileCollisionConstIterator = TMTileCollisionIteratorBase<boost::add_const<boost::mpl::_1>>;
 
 
 	template<typename T, typename CONSTNESS_OPERATOR>

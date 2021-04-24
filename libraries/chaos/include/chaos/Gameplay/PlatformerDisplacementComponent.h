@@ -161,9 +161,6 @@ protected:
 	/** clamp the player velocity according to limits */
 	glm::vec2 ClampPlayerVelocity(glm::vec2 velocity, bool running) const;
 
-protected:
-
-
 public:
 
 	/** the rules for the displacement */

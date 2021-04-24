@@ -1,5 +1,6 @@
 #include <chaos/Chaos.h>
 
+#include "Ludum48.h"
 #include "Ludum48Level.h"
 #include "Ludum48LevelInstance.h"
 #include "Ludum48Game.h"
@@ -32,6 +33,12 @@ int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgra
 
 bool LudumLevelInstance::DoTick(float delta_time)
 {
+	GridInfo grid_info = CollectObjects(); // before everything else
+
+
+
+
+
 	chaos::TMLevelInstance::DoTick(delta_time);
 
 
@@ -91,4 +98,73 @@ bool LudumLevelInstance::CanCompleteLevel() const
 	return false;
 }
 
+uint64_t LudumLevelInstance::GetCollisionFlagByName(char const* name) const
+{
+	assert(name != nullptr);
 
+	if (chaos::StringTools::Stricmp(name, "World") == 0)
+		return COLLISION_GAMEOBJECT;
+
+	return chaos::TMLevelInstance::GetCollisionFlagByName(name);
+}
+
+
+
+GridInfo LudumLevelInstance::CollectObjects()
+{
+	GridInfo result;
+
+	result.size = GetTiledMap()->size;
+	result.cells = new GridCellInfo[size_t(result.size.x * result.size.y)];
+
+
+	chaos::TMTileCollisionIterator it = GetTileCollisionIterator(GetBoundingBox(), COLLISION_GAMEOBJECT, false);
+	while (it)
+	{
+		chaos::TileCollisionInfo collision_info = *it;
+
+
+		
+
+
+
+		++it;
+	}
+
+
+
+
+
+	return result;
+}
+
+
+
+
+
+class MyParticle : public chaos::ParticleDefault
+{
+public:
+
+	float rest_timer = 0.0f;
+
+	void Update(float delta_time)
+	{
+
+
+	}
+
+
+};
+
+
+void GameGG()
+{
+
+
+
+
+
+
+
+}

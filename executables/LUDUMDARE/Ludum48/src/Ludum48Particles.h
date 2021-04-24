@@ -129,7 +129,7 @@ public:
 
 
 
-void UpdateParticlePositionInGrid(GameObjectParticle* particle, float speed, float delta_time, class GridInfo& grid_info);
+bool UpdateParticlePositionInGrid(GameObjectParticle* particle, float speed, float delta_time, class GridInfo& grid_info);
 
 
 

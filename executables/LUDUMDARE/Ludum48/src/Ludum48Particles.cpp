@@ -143,8 +143,9 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 // ===========================================================================
 
 
-void UpdateParticlePositionInGrid(GameObjectParticle* particle, float speed, float delta_time, class GridInfo& grid_info)
+bool UpdateParticlePositionInGrid(GameObjectParticle* particle, float speed, float delta_time, class GridInfo& grid_info)
 {
+	bool result = (particle->direction.y < 0.0f);
 	for (int axis : {0, 1})
 	{
 		if (particle->direction[axis] != 0.0f)
@@ -152,16 +153,20 @@ void UpdateParticlePositionInGrid(GameObjectParticle* particle, float speed, flo
 			particle->offset[axis] = std::clamp(particle->offset[axis] + speed * delta_time * particle->direction[axis], -1.0f, 1.0f);
 			if (particle->offset[axis] == -1.0f || particle->offset[axis] == 1.0f)
 			{
-				grid_info(particle->bounding_box.position).particle = nullptr;
+				if (grid_info(particle->bounding_box.position).particle == particle)
+					grid_info(particle->bounding_box.position).particle = nullptr;
 				particle->bounding_box.position += particle->direction * chaos::RecastVector<glm::vec2>(grid_info.tile_size);
+				grid_info(particle->bounding_box.position).particle = particle;
+				grid_info(particle->bounding_box.position).UnLock(particle);
+
 				particle->offset = { 0.0f, 0.0f };
 				particle->direction = { 0.0f, 0.0f };
 
-				grid_info(particle->bounding_box.position).UnLock(particle);
+				return result; // object was falling and is now stopped
 			}
 		}
 	}
-
+	return false; // movement not finished yet
 }
 
 

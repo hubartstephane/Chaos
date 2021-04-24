@@ -17,9 +17,17 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	if (particle == nullptr)
 		return true;
 
-#if _DEBUG
-	chaos::DebugValue("player_particle", particle);
-#endif
+	GridInfo& grid_info = ludum_level_instance->GetGridInfo();
+	if (grid_info.cells == nullptr)
+		return true;
+
+
+	chaos::Key const fake_displacement_key_buttons[] = { chaos::KeyboardButton::LEFT_CONTROL, chaos::KeyboardButton::RIGHT_CONTROL, chaos::GamepadButton::A, chaos::Key() };
+	bool fake_displacement = GetPlayer()->CheckButtonPressed(fake_displacement_key_buttons);
+
+	if (fake_displacement)
+		fake_displacement = true;
+
 
 	// get player inputs of interrests
 	glm::vec2 stick_position = player->GetLeftStickPosition();
@@ -30,7 +38,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	else
 		stick_position.x = 0.0f;
 
-	GridInfo& grid_info = ludum_level_instance->GetGridInfo();
+
 
 	// change pawn direction
 	if (particle->direction.x == 0.0f && particle->direction.y == 0.0f)
@@ -61,13 +69,16 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 					if (other.particle->type == GameObjectType::Foam)
 					{
 						other.particle->destroy_particle = true;
-						other.particle = nullptr;
+						if (!fake_displacement)
+							other.particle = nullptr;
 						can_go = true;
 					}
 					else if (other.particle->type == GameObjectType::Diamond)
 					{
 						other.particle->destroy_particle = true;
-						other.particle = nullptr;
+						ludum_level_instance->TakeDiamond();
+						if (!fake_displacement)
+							other.particle = nullptr;
 						can_go = true;
 					}
 					else if (other.particle->type == GameObjectType::Rock)
@@ -83,8 +94,12 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 				if (can_go && other.CanLock(particle))
 				{
-					other.Lock(particle);
-					particle->direction = stick_position;
+					if (!fake_displacement)
+					{
+						other.Lock(particle);
+						particle->direction = stick_position;
+					}
+
 				}
 				
 
@@ -99,14 +114,16 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	else
 	{
 		
+		
 
 		
 
 
 
 	}
-
 	UpdateParticlePositionInGrid(particle, pawn_speed, delta_time, grid_info);
+
+	
 
 
 	return true;

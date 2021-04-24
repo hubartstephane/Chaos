@@ -16,7 +16,6 @@ public:
 };
 
 
-
 // ===========================================================================
 // GameObjectParticle
 // ===========================================================================
@@ -28,8 +27,7 @@ enum class GameObjectType
 	Diamond = 2,
 	Wall = 3,
 	Foam = 4,
-	Player = 5,
-	Blocker = 6 // a fake particle that prevent other particles to move in its cell
+	Player = 5
 };
 
 
@@ -120,6 +118,16 @@ public:
 
 	glm::vec2 tile_size = { 0.0f , 0.0f };
 };
+
+
+
+
+
+
+void UpdateParticlePositionInGrid(GameObjectParticle* particle, float speed, float delta_time, class GridInfo& grid_info);
+
+
+
 
 CHAOS_REGISTER_CLASS2(ParticleBase, chaos::TMParticle);
 CHAOS_REGISTER_CLASS2(GameObjectParticle, ParticleBase);

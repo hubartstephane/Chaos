@@ -13,6 +13,10 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	if (ludum_level_instance == nullptr)
 		return true;
 
+	ParticlePlayer* particle = pawn->GetParticle<ParticlePlayer>(0);
+	if (particle == nullptr)
+		return true;
+
 	// get player inputs of interrests
 	glm::vec2 stick_position = player->GetLeftStickPosition();
 	stick_position.x = chaos::MathTools::AnalogicToDiscret(stick_position.x);
@@ -27,6 +31,30 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	chaos::box2 pawn_box = initial_pawn_box;
 	glm::vec2& pawn_position = pawn_box.position;
+
+
+	GridInfo& grid_info = ludum_level_instance->GetGridInfo();
+
+	// change pawn direction
+	if (particle->direction.x == 0.0f && particle->direction.y == 0.0f)
+	{
+		if (stick_position != glm::vec2(0.0f, 0.0f))
+		{
+
+
+
+		}
+
+	}
+	// update pawn position
+	else
+	{
+
+
+
+	}
+
+
 
 	// start displacement in given direction
 	if (pawn_resting && stick_position != glm::vec2(0.0f, 0.0f))

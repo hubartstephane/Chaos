@@ -99,7 +99,7 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 			}
 			else
 			{
-				float max_pawn_velocity = displacement_component->GetDisplacementInfo().max_pawn_velocity.x;
+				float max_pawn_velocity = displacement_component->GetPawnMaxVelocity().x;
 
 				float speed_factor = 8.0f;
 				if (max_pawn_velocity > 0.0f)
@@ -113,19 +113,6 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 			if (pawn_velocity.x < 0.0f)
 				particle.flags |= chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
 		}
-
-
-
-
-
-
-		if (displacement_component->displacement_state == chaos::PlatformerDisplacementState::GROUNDED)
-			particle.color = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
-		else
-			particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-
-
-
 	}
 
 	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasAnimation())

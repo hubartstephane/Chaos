@@ -23,4 +23,6 @@ protected:
 	virtual chaos::TMObjectFactory DoGetObjectFactory(chaos::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object) override;
 
 	virtual bool Initialize(chaos::TiledMap::Map* in_tiled_map) override;
+
+	virtual bool FinalizeLayerParticles(chaos::TMLayerInstance* layer_instance, chaos::ParticleAllocationBase* allocation) override;
 };

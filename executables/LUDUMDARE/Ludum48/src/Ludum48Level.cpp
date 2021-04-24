@@ -27,6 +27,7 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(chaos::TMLayerInsta
 	{
 		ParticlePlayerLayerTrait layer_trait;
 		layer_trait.game = ludum_game;
+		layer_trait.tile_size = GetTiledMap()->tile_size;
 		return new chaos::ParticleLayer<ParticlePlayerLayerTrait>(layer_trait);
 	}
 

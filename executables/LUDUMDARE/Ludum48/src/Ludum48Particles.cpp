@@ -16,13 +16,30 @@
 
 void ParticleGameObjectLayerTrait::ParticleToPrimitives(GameObjectParticle const& particle, chaos::PrimitiveOutput<VertexBase>& output) const
 {
+#if 0
+	if (particle.type == GameObjectType::Blocker) // do not render blocker
+		return;
+#endif
+
 	LudumGameInstance const* ludum_game_instance = game->GetGameInstance();
 
 	chaos::ParticleDefault copy = particle;
 	copy.bounding_box.position += particle.offset * tile_size;
+
+	//if (particle.type == GameObjectType::Blocker) // do not render blocker
+	//	copy.color.a = particle_uniform_lifetime;
+
+
+
 	chaos::ParticleToPrimitives(copy, output);
 }
 
+bool ParticleGameObjectLayerTrait::UpdateParticle(float delta_time, GameObjectParticle& particle) const
+{
+
+
+	return particle.destroy_particle;
+}
 
 
 
@@ -59,30 +76,6 @@ bool UpdateParticle(float delta_time, ParticleAnimated & particle)
 
 	return false;
 }
-#if 0
-bool ParticleAnimated::UpdateParticle(float delta_time)
-{
-	animation_timer += delta_time;
-
-	// destroy the particles ? 
-	if (!UpdateAnimatedParticleTexcoords(*this))
-		return true;
-
-	return false;
-}
-
-
-bool ParticleAnimatedLayerTrait::UpdateParticle(float delta_time, ParticleAnimated & particle)
-{
-	particle.animation_timer += delta_time;
-
-	// destroy the particles ? 
-	if (!UpdateAnimatedParticleTexcoords(particle))
-		return true;
-
-	return false;
-}
-#endif
 
 // ===========================================================================
 // ParticlePlayerLayerTrait

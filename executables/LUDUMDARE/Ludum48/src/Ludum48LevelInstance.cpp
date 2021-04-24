@@ -38,18 +38,38 @@ bool LudumLevelInstance::DoTick(float delta_time)
 
 	GridInfo grid_info = CollectObjects(); // before everything else
 
-	for (int y = 0; y < grid_info.size.y; ++y)
+	GameObjectParticle BLOCKER_PARTICLE;
+	BLOCKER_PARTICLE.type = GameObjectType::Blocker;
+
+	// from left to right then from right to left
+	static int direction = 1;
+	direction = 1 - direction;
+
+	int start = (direction > 0) ? 0 : grid_info.size.x - 1;
+	int end   = (direction > 0) ? grid_info.size.x : - 1;
+	int next  = (direction > 0) ? +1 : -1;
+
+	for (int x = start; x != end; x += next)
 	{
-		for (int x = 0; x < grid_info.size.x; ++x)
+
+		int previous_status = 0;
+
+		for (int y = 0; y < grid_info.size.y; ++y)
 		{
 			int index = x + y * grid_info.size.x;
 
 			GameObjectParticle* particle = grid_info.cells[index].particle;
 
 			if (particle == nullptr)
+			{
+				previous_status = 0;
 				continue;
-			if (particle->type == GameObjectType::Wall || particle->type == GameObjectType::Foam)
+			}
+			if (particle->type != GameObjectType::Rock && particle->type != GameObjectType::Diamond)
+			{
+				previous_status = 0;
 				continue;
+			}
 
 			// search where the particle may move
 			if (y > 0)
@@ -128,11 +148,6 @@ bool LudumLevelInstance::DoTick(float delta_time)
 										particle->bounding_box.position.x += GetTiledMap()->tile_size.x;
 										particle->offset.x = 0.0f;
 									}
-
-
-
-
-
 
 								}
 
@@ -282,7 +297,7 @@ GridInfo LudumLevelInstance::CollectObjects()
 
 	result.cells = new GridCellInfo[size_t(result.size.x * result.size.y)];
 
-	 it = GetTileCollisionIterator(GetBoundingBox(), COLLISION_GAMEOBJECT, false);
+	it = GetTileCollisionIterator(GetBoundingBox(), COLLISION_GAMEOBJECT, false);
 	while (it)
 	{
 		glm::vec2 position = it->particle->bounding_box.position - min_position;
@@ -294,6 +309,25 @@ GridInfo LudumLevelInstance::CollectObjects()
 
 		++it;
 	}
+
+	// insert player
+
+
+	chaos::Player const* player = GetPlayer(0);
+	if (player != nullptr)
+	{
+		static GameObjectParticle FakePlayerParticle;
+		FakePlayerParticle.type = GameObjectType::Player;
+
+		glm::vec2 position = player->GetPawn()->GetBoundingBox().position - min_position;
+
+		glm::ivec2 p = chaos::RecastVector<glm::ivec2>(position / chaos::RecastVector<glm::vec2>(tile_size));
+
+		int index = p.x + p.y * result.size.x;
+		result.cells[index] = { &FakePlayerParticle };
+	}
+
+
 
 	return result;
 }

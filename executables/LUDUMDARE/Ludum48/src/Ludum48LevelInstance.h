@@ -41,11 +41,6 @@ protected:
 
 	virtual bool CanCompleteLevel() const override;
 
-	int GetCurrentSoulCount() const;
-
-	int GetPotentialSoulCount() const;
-
-
 
 
 
@@ -59,7 +54,4 @@ protected:
 	mutable float completion_timer = -1.0f; // shu48 : due to Checkcomplete constness !!
 	float completion_delay = 3.0f;
 
-	float flame_health = 100.0f;
-	float flame_initial_health = 100.0f;
-	float flame_health_lost_per_second = 1.0f;
 };

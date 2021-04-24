@@ -15,88 +15,12 @@ public:
 	glm::vec2 velocity = glm::vec2(0.0f, 0.0f);
 	float life = 0.0f;
 	float duration = 0.0f;
-
 };
 
 
 
 
-// ===========================================================================
-// ParticleSoul
-// ===========================================================================
 
-class ParticleSoulUpdateData
-{
-public:
-
-	chaos::box2 level_bounding_box;
-
-	std::vector<class SoulTrigger*> soul_triggers;
-
-	chaos::TMLayerInstance * fire_layer_instance = nullptr;
-
-	class LudumLevelInstance* ludum_level_instance = nullptr;
-
-};
-
-class ParticleSoul : public ParticleBase
-{
-public:
-
-	float health = 1.0f;
-
-
-};
-
-class ParticleSoulLayerTrait : public chaos::ParticleLayerTrait<ParticleSoul, VertexBase>
-{
-public:
-
-	ParticleSoulUpdateData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleSoul>& particle_accessor) const;
-
-	bool UpdateParticle(float delta_time, ParticleSoul & particle, ParticleSoulUpdateData& update_data) const;
-
-public:
-
-	class LudumGame* game = nullptr;
-};
-
-
-
-
-// ===========================================================================
-// ParticleFire
-// ===========================================================================
-
-class ParticleFireUpdateData
-{
-public:
-
-	chaos::box2 level_bounding_box;
-
-};
-
-class ParticleFire : public ParticleBase
-{
-public:
-
-
-
-
-};
-
-class ParticleFireLayerTrait : public chaos::ParticleLayerTrait<ParticleFire, VertexBase>
-{
-public:
-
-	ParticleFireUpdateData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleFire>& particle_accessor) const;
-
-	bool UpdateParticle(float delta_time, ParticleFire & particle, ParticleFireUpdateData& update_data) const;
-
-public:
-
-	class LudumGame* game = nullptr;
-};
 
 // ===========================================================================
 // ParticleAnimated
@@ -166,69 +90,7 @@ public:
 	class LudumGame* game = nullptr;
 };
 
-
-
-
-// ===========================================================================
-// ParticleBlood
-// ===========================================================================
-
-class ParticleBlood : public ParticleAnimated
-{
-public:
-
-	glm::vec2 acceleration = glm::vec2(0.0f, 0.0f);
-
-};
-
-
-
-
-class ParticleBloodLayerTrait : public chaos::ParticleLayerTrait<ParticleBlood, VertexBase>
-{
-public:
-
-	bool UpdateParticle(float delta_time, ParticleBlood & particle) const;
-
-	void ParticleToPrimitives(ParticleBlood const& particle, chaos::PrimitiveOutput<VertexBase>& output) const;
-
-public:
-
-	class LudumGame* game = nullptr;
-};
-
-// ===========================================================================
-// ParticleBurnedSoul
-// ===========================================================================
-
-class ParticleBurnedSoul : public ParticleBlood
-{
-public:
-
-	float offset_t = 0.0f;
-
-};
-
-class ParticleBurnedSoulLayerTrait : public chaos::ParticleLayerTrait<ParticleBurnedSoul, VertexBase>
-{
-public:
-
-	int BeginParticlesToPrimitives(chaos::ParticleConstAccessor<ParticleBurnedSoul>& accessor) const;
-
-	bool UpdateParticle(float delta_time, ParticleBurnedSoul & particle) const;
-
-	void ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::PrimitiveOutput<VertexBase>& output, int useless) const;
-
-public:
-
-	class LudumGame* game = nullptr;
-};
-
 CHAOS_REGISTER_CLASS2(ParticleBase, chaos::TMParticle);
 CHAOS_REGISTER_CLASS2(ParticleAnimated, ParticleBase);
 CHAOS_REGISTER_CLASS2(ParticlePlayer, ParticleAnimated);
-CHAOS_REGISTER_CLASS2(ParticleFire, ParticleBase);
-CHAOS_REGISTER_CLASS2(ParticleSoul, ParticleBase);
-CHAOS_REGISTER_CLASS2(ParticleBlood, ParticleAnimated);
-CHAOS_REGISTER_CLASS2(ParticleBurnedSoul, ParticleBlood);
 

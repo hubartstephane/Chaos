@@ -1,10 +1,16 @@
 #include "Ludum48PlayerDisplacementComponent.h"
 
+#include "Ludum48LevelInstance.h"
+
 bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 {
 	// early exit
 	chaos::PlayerPawn* pawn = player->GetPawn();
 	if (pawn == nullptr)
+		return true;
+
+	LudumLevelInstance* ludum_level_instance = GetLevelInstance();
+	if (ludum_level_instance == nullptr)
 		return true;
 
 	// get player inputs of interrests
@@ -29,6 +35,12 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 		pawn_velocity = stick_position;
 		pawn_offset = 0.0f;
 		pawn_resting = false;
+
+		GridInfo& grid_info = ludum_level_instance->GetGridInfo();
+		
+
+
+
 	}
 
 	// update displacement

@@ -28,7 +28,8 @@ enum class GameObjectType
 	Diamond = 2,
 	Wall = 3,
 	Foam = 4,
-	Player = 5
+	Player = 5,
+	Blocker = 6 // a fake particle that prevent other particles to move in its cell
 };
 
 
@@ -45,6 +46,8 @@ public:
 	float fall_timer = -1.0f;
 
 
+	bool destroy_particle = false;
+
 };
 
 class ParticleGameObjectLayerTrait : public chaos::ParticleLayerTrait<GameObjectParticle, VertexBase>
@@ -52,6 +55,8 @@ class ParticleGameObjectLayerTrait : public chaos::ParticleLayerTrait<GameObject
 public:
 
 	void ParticleToPrimitives(GameObjectParticle const& particle, chaos::PrimitiveOutput<VertexBase>& output) const;
+
+	bool UpdateParticle(float delta_time, GameObjectParticle& particle) const;
 
 public:
 
@@ -69,9 +74,7 @@ public:
 class ParticleAnimated : public ParticleBase
 {
 
-public:
 
-	//bool UpdateParticle(float delta_time);
 
 public:
 	int frame_index = 0;
@@ -84,9 +87,7 @@ class ParticleAnimatedLayerTrait : public chaos::ParticleLayerTrait<ParticleAnim
 {
 public:
 
-#if 0
-	static bool UpdateParticle(float delta_time, ParticleAnimated & particle);
-#endif
+
 
 };
 
@@ -111,6 +112,8 @@ public:
 public:
 
 	class LudumGame* game = nullptr;
+
+	glm::vec2 tile_size = { 0.0f , 0.0f };
 };
 
 CHAOS_REGISTER_CLASS2(ParticleBase, chaos::TMParticle);

@@ -238,32 +238,24 @@ bool LudumLevelInstance::DoTick(float delta_time)
 			GameObjectParticle* particle = grid_info.cells[index].particle;
 			if (particle == nullptr)
 				continue;
+			if (particle->type != GameObjectType::Rock && particle->type != GameObjectType::Diamond)
+				continue;
 
 			if (UpdateParticlePositionInGrid(particle, delta_time, grid_info))
 			{
-				if (particle->type == GameObjectType::Rock || particle->type == GameObjectType::Diamond)
+				glm::ivec2 p = grid_info.GetIndexForPosition(particle->bounding_box.position);
+				if (p.y > 0)
 				{
-					glm::ivec2 p = grid_info.GetIndexForPosition(particle->bounding_box.position);
-					if (p.y > 0)
+					GridCellInfo& other = grid_info(glm::ivec2(p.x, p.y - 1));
+					if (other.particle != nullptr)
 					{
-						GridCellInfo& other = grid_info(glm::ivec2(p.x, p.y - 1));
-						if (other.particle != nullptr)
+						if (other.particle->type == GameObjectType::Player)
 						{
-							if (other.particle->type == GameObjectType::Player)
-							{
 
 
-								x = x;
-							}
+							x = x;
 						}
 					}
-
-
-
-
-
-
-
 				}
 			}
 		}

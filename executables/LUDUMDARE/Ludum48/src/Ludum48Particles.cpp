@@ -10,7 +10,18 @@
 #include "Ludum48Level.h"
 #include "Ludum48PlayerDisplacementComponent.h"
 
+// ===========================================================================
+// ParticleGameObjectLayerTrait
+// ===========================================================================
 
+void ParticleGameObjectLayerTrait::ParticleToPrimitives(GameObjectParticle const& particle, chaos::PrimitiveOutput<VertexBase>& output) const
+{
+	LudumGameInstance const* ludum_game_instance = game->GetGameInstance();
+
+	chaos::ParticleDefault copy = particle;
+	copy.bounding_box.position += particle.offset * tile_size;
+	chaos::ParticleToPrimitives(copy, output);
+}
 
 
 

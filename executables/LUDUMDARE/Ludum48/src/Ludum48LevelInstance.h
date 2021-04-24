@@ -8,6 +8,7 @@ class GridCellInfo
 {
 public:
 
+	GameObjectParticle* particle = nullptr;
 };
 
 class GridInfo

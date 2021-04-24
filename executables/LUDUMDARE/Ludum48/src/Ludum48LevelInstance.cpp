@@ -112,28 +112,53 @@ uint64_t LudumLevelInstance::GetCollisionFlagByName(char const* name) const
 
 GridInfo LudumLevelInstance::CollectObjects()
 {
+	LudumLevel* ludum_level = GetLevel();
+	if (ludum_level == nullptr || ludum_level->GetTiledMap() == nullptr)
+		return {};
+
+	glm::ivec2 size = ludum_level->GetTiledMap()->size;
+	glm::ivec2 tile_size = ludum_level->GetTiledMap()->tile_size;
+
+	// grid mod unimplemented
+	// step 1: get min/max
+	// step 2: put on the grid
+
 	GridInfo result;
 
-	result.size = GetTiledMap()->size;
-	result.cells = new GridCellInfo[size_t(result.size.x * result.size.y)];
-
+	// step 1
+	glm::vec2 min_position = { std::numeric_limits<float>::max(), std::numeric_limits<float>::max() };
+	glm::vec2 max_position = { std::numeric_limits<float>::min(), std::numeric_limits<float>::min() };
 
 	chaos::TMTileCollisionIterator it = GetTileCollisionIterator(GetBoundingBox(), COLLISION_GAMEOBJECT, false);
 	while (it)
 	{
-		chaos::TileCollisionInfo collision_info = *it;
-
-
-		
-
-
-
+		min_position = glm::min(min_position, it->particle->bounding_box.position);
+		max_position = glm::max(max_position, it->particle->bounding_box.position);
 		++it;
 	}
 
+	// no element in grid
+	if (min_position.x == std::numeric_limits<float>::max())
+		return {};
 
+	// step 2
+	result.size.x = 1 + int((max_position.x - min_position.x) / float(tile_size.x));
+	result.size.y = 1 + int((max_position.y - min_position.y) / float(tile_size.y));
 
+	result.cells = new GridCellInfo[size_t(result.size.x * result.size.y)];
 
+	 it = GetTileCollisionIterator(GetBoundingBox(), COLLISION_GAMEOBJECT, false);
+	while (it)
+	{
+		glm::vec2 position = it->particle->bounding_box.position - min_position;
+
+		glm::ivec2 p = chaos::RecastVector<glm::ivec2>(position) / size;
+
+		size_t index = p.x + p.y * result.size.x;
+		result.cells[index] = { (GameObjectParticle*)it->particle };
+
+		++it;
+	}
 
 	return result;
 }

@@ -607,6 +607,25 @@ namespace chaos
 
 				// prepare data for the tile/object
 				glm::ivec2  tile_coord = tile_layer->GetTileCoordinate(chunk, i);
+
+
+
+
+				// shu48
+				//
+				// a ce niveau, une particle ne sait pas ou elle est sur la grille
+
+
+
+
+
+
+
+
+
+
+
+
 				box2 particle_box = tile_layer->GetTileBoundingBox(tile_coord, tile_info.tiledata->image_size, particle_flags, false);
 
 				// try to create a geometric object from the tile

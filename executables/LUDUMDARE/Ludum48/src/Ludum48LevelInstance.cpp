@@ -124,17 +124,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 
 	auto DI = chaos::GetDebugDrawInterface();
 
-
-
-	float SPEED = 0.5f;
-	float TIMER = 0.1f;
-
-	GameObjectParticle BLOCKER_PARTICLE;
-	BLOCKER_PARTICLE.type = GameObjectType::Blocker;
-
-
-
-
+	float object_speed = GetTiledMap()->GetPropertyValueFloat("OBJECT_SPEED", 0.5f);
 
 	for (int step : {0, 1})
 	{
@@ -263,22 +253,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 			if (particle == nullptr)
 				continue;
 
-			for (int axis : {0, 1})
-			{
-				if (particle->direction[axis] != 0.0f)
-				{
-					particle->offset[axis] = std::clamp(particle->offset[axis] + SPEED * delta_time * particle->direction[axis], -1.0f, 1.0f);
-					if (particle->offset[axis] == -1.0f || particle->offset[axis] == 1.0f)
-					{
-						grid_info(particle->bounding_box.position).particle = nullptr;
-						particle->bounding_box.position += particle->direction * chaos::RecastVector<glm::vec2>(GetTiledMap()->tile_size);
-						particle->offset = { 0.0f, 0.0f };
-						particle->direction = { 0.0f, 0.0f };
-
-						grid_info(particle->bounding_box.position).Lock(nullptr);
-					}
-				}
-			}
+			UpdateParticlePositionInGrid(particle, object_speed, delta_time, grid_info);
 		}
 	}
 

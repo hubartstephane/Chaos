@@ -8,6 +8,62 @@
 #include "Ludum48GameInstance.h"
 #include "Ludum48PlayerDisplacementComponent.h"
 
+
+
+
+
+
+
+
+// =============================================================
+// GridInfo implementation
+// =============================================================
+
+
+GridCellInfo& GridInfo::operator ()(glm::ivec2 const & p)
+{
+	assert(p.x >= 0 && p.x < size.x);
+	assert(p.y >= 0 && p.y < size.y);
+	int index = p.x + p.y * size.x;
+	return cells[index];
+}
+
+GridCellInfo const& GridInfo::operator ()(glm::ivec2 const& p) const
+{
+	assert(p.x >= 0 && p.x < size.x);
+	assert(p.y >= 0 && p.y < size.y);
+	int index = p.x + p.y * size.x;
+	return cells[index];
+}
+
+GridCellInfo& GridInfo::operator ()(glm::vec2 const& p)
+{
+	return operator ()(GetIndexForPosition(p));
+}
+
+GridCellInfo const& GridInfo::operator () (glm::vec2 const& p) const
+{
+	return operator ()(GetIndexForPosition(p));
+}
+
+glm::ivec2 GridInfo::GetIndexForPosition(glm::vec2 const& p) const
+{
+	glm::vec2 position = p - min_position;
+
+	return chaos::RecastVector<glm::ivec2>(position / chaos::RecastVector<glm::vec2>(tile_size));
+}
+
+
+
+
+
+
+
+
+
+
+
+
 // =============================================================
 // LudumLevelInstance implementation
 // =============================================================
@@ -103,14 +159,9 @@ bool LudumLevelInstance::DoTick(float delta_time)
 					if (particle_below->type == GameObjectType::Player) // do not try going left or right above the player
 						continue;
 
-
-
-
-					int random = rand(); // random because we do not want the fall to right or left choice to be determinist
-
 					for (int i : { 0, 1 })
 					{
-						if (((i + random) & 1) == 0) // check one branch before the other in a random order
+						if (((i + next) & 1) == 0) // check one branch before the other in a random order
 						{
 							if (x > 0) // fall to the left
 							{
@@ -264,18 +315,10 @@ void LudumLevelInstance::CollectObjects()
 	if (ludum_level == nullptr || ludum_level->GetTiledMap() == nullptr)
 		return;
 
-	glm::ivec2 tile_size = ludum_level->GetTiledMap()->tile_size;
-
-	// grid mod unimplemented
-	// step 1: get min/max
-	// step 2: put on the grid
-
-
-	// XXX : map must be closed!!!
-
+	// XXX : Initialization map must be closed!!!
 	if (grid_info.cells == nullptr)
 	{
-		// step 1
+		
 		grid_info.min_position = { std::numeric_limits<float>::max(), std::numeric_limits<float>::max() };
 		grid_info.max_position = { std::numeric_limits<float>::min(), std::numeric_limits<float>::min() };
 
@@ -291,26 +334,24 @@ void LudumLevelInstance::CollectObjects()
 		if (grid_info.min_position.x == std::numeric_limits<float>::max())
 			return;
 
-		grid_info.size.x = 1 + int((grid_info.max_position.x - grid_info.min_position.x) / float(tile_size.x));
-		grid_info.size.y = 1 + int((grid_info.max_position.y - grid_info.min_position.y) / float(tile_size.y));
+		grid_info.tile_size = ludum_level->GetTiledMap()->tile_size;
+
+		grid_info.size.x = 1 + int((grid_info.max_position.x - grid_info.min_position.x) / float(grid_info.tile_size.x));
+		grid_info.size.y = 1 + int((grid_info.max_position.y - grid_info.min_position.y) / float(grid_info.tile_size.y));
 
 		grid_info.cells = new GridCellInfo[size_t(grid_info.size.x * grid_info.size.y)];
+
+		
 	}
 
-	// step 2
+	// fill the grid
 	for (int i = 0; i < grid_info.size.x * grid_info.size.y; ++i)
 		grid_info.cells[i].particle = nullptr;
 
 	chaos::TMTileCollisionIterator it = GetTileCollisionIterator(GetBoundingBox(), COLLISION_GAMEOBJECT, false);
 	while (it)
 	{
-		glm::vec2 position = it->particle->bounding_box.position - grid_info.min_position;
-
-		glm::ivec2 p = chaos::RecastVector<glm::ivec2>(position / chaos::RecastVector<glm::vec2>(tile_size));
-
-		int index = p.x + p.y * grid_info.size.x;
-		grid_info.cells[index] = { (GameObjectParticle*)it->particle };
-
+		grid_info(it->particle->bounding_box.position) = { (GameObjectParticle*)it->particle };
 		++it;
 	}
 }

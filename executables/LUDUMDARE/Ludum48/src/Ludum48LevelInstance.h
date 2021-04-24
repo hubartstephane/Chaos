@@ -20,7 +20,16 @@ public:
 		delete[] cells;
 	}
 
+	GridCellInfo& operator ()(glm::ivec2 const& index);
+	GridCellInfo const & operator ()(glm::ivec2 const& index) const;
+	GridCellInfo& operator ()(glm::vec2 const & p);
+	GridCellInfo const& operator ()(glm::vec2 const& p) const;
+
+	glm::ivec2 GetIndexForPosition(glm::vec2 const& p) const;
+
+
 	glm::ivec2 size = {0, 0};
+	glm::vec2 tile_size = { 0, 0 };
 
 	GridCellInfo* cells = nullptr;
 

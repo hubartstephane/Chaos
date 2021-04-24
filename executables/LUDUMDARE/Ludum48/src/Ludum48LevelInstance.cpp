@@ -54,9 +54,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 			// search where the particle may move
 			if (y > 0)
 			{
-				int index_below = index - grid_info.size.x;
-
-				GameObjectParticle* particle_below = grid_info.cells[index_below].particle;
+				GameObjectParticle* particle_below = grid_info.cells[index - grid_info.size.x].particle; // particle below
 				if (particle_below == nullptr)
 				{
 					if (particle->fall_timer < 0.0f) // particle is resting
@@ -79,38 +77,85 @@ bool LudumLevelInstance::DoTick(float delta_time)
 				{
 					auto DI = chaos::GetDebugDrawInterface();
 					chaos::DrawBox(*DI, particle_below->bounding_box, { 1.0f, 0.0f, 0.0f, 1.0f }, false);
-
 					chaos::DrawLine(*DI, particle->bounding_box.position, particle_below->bounding_box.position, { 1.0f, 0.0f, 0.0f, 1.0f });
 
 					if (particle_below->type == GameObjectType::Player) // do not try going left or right above the player
 						continue;
 
+
+
+
+					int random = rand(); // random because we do not want the fall to right or left choice to be determinist
+
+					for (int i : { 0, 1 })
+					{
+						if (((i + random) & 1) == 0) // check one branch before the other in a random order
+						{
+							if (x > 0) // fall to the left
+							{
+								GameObjectParticle* particle_left = grid_info.cells[index - 1].particle;
+								GameObjectParticle* particle_left_below = grid_info.cells[index - 1 - grid_info.size.x].particle;
+
+								if (particle_left == nullptr && particle_left_below == nullptr) // can go left
+								{
+									particle->fall_timer = 0.0f; // do not wait
+
+									particle->offset.x = std::max(particle->offset.x - SPEED * delta_time, -1.0f);
+									if (particle->offset.x == -1.0f)
+									{
+										particle->bounding_box.position.x -= GetTiledMap()->tile_size.x;
+										particle->offset.x = 0.0f;
+									}
+
+
+								}
+							}
+						}
+						else
+						{
+							if (x < grid_info.size.x - 1) // fall to the right
+							{
+								GameObjectParticle* particle_right = grid_info.cells[index + 1].particle;
+								GameObjectParticle* particle_right_below = grid_info.cells[index + 1 - grid_info.size.x].particle;
+
+								if (particle_right == nullptr && particle_right_below == nullptr) // can go right
+								{
+									particle->fall_timer = 0.0f; // do not wait
+
+									particle->offset.x = std::max(particle->offset.x + SPEED * delta_time, +1.0f);
+									if (particle->offset.x == +1.0f)
+									{
+										particle->bounding_box.position.x += GetTiledMap()->tile_size.x;
+										particle->offset.x = 0.0f;
+									}
+
+
+
+
+
+
+								}
+
+							}
+						}
+					}
+
+
+
+
+
+
+
+
+
+
+
+
+
 				}
 				
 
-				int random = rand(); // random because we do not want the fall to right or left choice to be determinist
-
-				for (int i : { 0, 1 })
-				{
-					if (((i + random) & 1) == 0) // check one branch before the other in a random order
-					{
-						if (x > 0) // fall to the left
-						{
-
-
-
-						}
-					} 
-					else
-					{
-						if (x < grid_info.size.x - 1) // fall to the right
-						{
-
-
-
-						}
-					}
-				}
+			
 			}
 		}
 	}

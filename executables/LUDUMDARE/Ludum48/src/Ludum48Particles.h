@@ -42,8 +42,8 @@ public:
 
 	/** an offset in [-1..1] relative to the cell the particle belongs to (unit is tile_size) */
 	glm::vec2 offset = { 0.0f, 0.0f };
-	/** timer before moving */
-	float fall_timer = -1.0f;
+	/** direction where the object want to go */
+	glm::vec2 direction = { 0.0f, 0.0f };
 
 
 	bool destroy_particle = false;

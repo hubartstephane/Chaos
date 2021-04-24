@@ -131,8 +131,10 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	BLOCKER_PARTICLE.type = GameObjectType::Blocker;
 
 	// from left to right then from right to left
-	static int direction = 1;
-	direction = 1 - direction;
+	//static int direction = 1;
+	//direction = 1 - direction;
+
+	int direction = 0;
 
 	int start = (direction > 0) ? 0 : grid_info.size.x - 1;
 	int end   = (direction > 0) ? grid_info.size.x : - 1;
@@ -160,8 +162,14 @@ bool LudumLevelInstance::DoTick(float delta_time)
 				continue;
 			}
 
+
+
+
+
+
+
 			// search where the particle may move
-			if (y > 0)
+			if (y > 0 && particle->direction.x == 0.0f && particle->direction.y == 0.0f)
 			{
 				GridCellInfo & below = grid_info.cells[index - grid_info.size.x]; 
 
@@ -169,23 +177,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 				{
 					below.Lock(particle);
 
-					//if (particle->fall_timer < 0.0f) // particle is resting
-					//	particle->fall_timer = TIMER;
-					//else
-					{
-						//particle->fall_timer = std::max(particle->fall_timer - delta_time, 0.0f);
-						//if (particle->fall_timer == 0.0f)
-						{
-							particle->offset.y = std::max(particle->offset.y - SPEED * delta_time, -1.0f);
-							if (particle->offset.y == -1.0f)
-							{
-								particle->bounding_box.position.y -= GetTiledMap()->tile_size.y;
-								particle->offset.y = 0.0f;
-
-								grid_info(particle->bounding_box.position).Lock(nullptr);
-							}
-						}
-					}
+					particle->direction = { 0.0f, -1.0f };
 				}
 				else
 				{
@@ -196,16 +188,27 @@ bool LudumLevelInstance::DoTick(float delta_time)
 						chaos::DrawBox(*DI, below.particle->bounding_box, RED, false);
 						chaos::DrawLine(*DI, particle->bounding_box.position, below.particle->bounding_box.position, RED);
 
-						if (below.particle->type == GameObjectType::Player) // do not try going left or right above the player
+
+
+
+
+
+						if (below.particle->type != GameObjectType::Rock && below.particle->type != GameObjectType::Diamond) // do not try going left or right above the player
 							continue;
+
+						if (below.particle->direction.x != 0.0f || below.particle->direction.y != 0.0f)
+							continue;
+
+
 					}
 
 
 
-
+					int random = rand();
 					for (int i : { 0, 1 })
 					{
-						if (((i + next) & 1) == 0) // check one branch before the other in a random order
+						if (((i + random) & 1) == 0) // check one branch before the other in a random order
+						//if (i == 0)
 						{
 							if (x > 0) // fall to the left
 							{
@@ -215,17 +218,9 @@ bool LudumLevelInstance::DoTick(float delta_time)
 								if (left.CanLock(particle) && left_below.CanLock(particle))
 								{
 									left.Lock(particle);
-
-									particle->fall_timer = 0.0f; // do not wait
-
-									particle->offset.x = std::max(particle->offset.x - SPEED * delta_time, -1.0f);
-									if (particle->offset.x == -1.0f)
-									{
-										particle->bounding_box.position.x -= GetTiledMap()->tile_size.x;
-										particle->offset.x = 0.0f;
-
-										grid_info(particle->bounding_box.position).Lock(nullptr);
-									}
+									left_below.Lock(particle);
+									particle->direction = { -1.0f, 0.0f };
+									break;
 								}
 							}
 						}
@@ -239,20 +234,11 @@ bool LudumLevelInstance::DoTick(float delta_time)
 								if (right.CanLock(particle) && right_below.CanLock(particle))
 								{
 									right.Lock(particle);
-
-									particle->fall_timer = 0.0f; // do not wait
-
-									particle->offset.x = std::max(particle->offset.x + SPEED * delta_time, +1.0f);
-									if (particle->offset.x == +1.0f)
-									{
-										particle->bounding_box.position.x += GetTiledMap()->tile_size.x;
-										particle->offset.x = 0.0f;
-
-										grid_info(particle->bounding_box.position).Lock(nullptr);
-									}
+									right_below.Lock(particle);
+									particle->direction = { +1.0f, 0.0f };
+									break;
 
 								}
-
 							}
 						}
 					}
@@ -274,6 +260,29 @@ bool LudumLevelInstance::DoTick(float delta_time)
 
 			
 			}
+
+
+			// continue movement
+			for (int axis : {0, 1})
+			{
+				if (particle->direction[axis] != 0.0f)
+				{
+					particle->offset[axis] = std::clamp(particle->offset[axis] + SPEED * delta_time * particle->direction[axis], -1.0f, 1.0f);
+					if (particle->offset[axis] == -1.0f || particle->offset[axis] == 1.0f)
+					{
+						grid_info(particle->bounding_box.position).particle = nullptr;
+						particle->bounding_box.position += particle->direction * chaos::RecastVector<glm::vec2>(GetTiledMap()->tile_size);
+						particle->offset = { 0.0f, 0.0f };
+						particle->direction = { 0.0f, 0.0f };
+
+						grid_info(particle->bounding_box.position).Lock(nullptr);
+					}
+				}
+			}
+
+
+
+
 		}
 	}
 

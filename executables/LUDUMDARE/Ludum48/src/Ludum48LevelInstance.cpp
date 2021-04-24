@@ -33,6 +33,9 @@ int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgra
 
 bool LudumLevelInstance::DoTick(float delta_time)
 {
+	CollectObjects();
+
+
 	float SPEED = 2.0f;
 	float TIMER = 1.0f;
 
@@ -295,6 +298,9 @@ void LudumLevelInstance::CollectObjects()
 	}
 
 	// step 2
+	for (int i = 0; i < grid_info.size.x * grid_info.size.y; ++i)
+		grid_info.cells[i].particle = nullptr;
+
 	chaos::TMTileCollisionIterator it = GetTileCollisionIterator(GetBoundingBox(), COLLISION_GAMEOBJECT, false);
 	while (it)
 	{
@@ -307,27 +313,5 @@ void LudumLevelInstance::CollectObjects()
 
 		++it;
 	}
-#if 0
-	// insert player
-
-
-	chaos::Player const* player = GetPlayer(0);
-	if (player != nullptr)
-	{
-		static GameObjectParticle FakePlayerParticle;
-		FakePlayerParticle.type = GameObjectType::Player;
-
-		glm::vec2 position = player->GetPawn()->GetBoundingBox().position - min_position;
-
-		glm::ivec2 p = chaos::RecastVector<glm::ivec2>(position / chaos::RecastVector<glm::vec2>(tile_size));
-
-		int index = p.x + p.y * result.size.x;
-		result.cells[index] = { &FakePlayerParticle };
-	}
-
-
-
-	return result;
-#endif
 }
 

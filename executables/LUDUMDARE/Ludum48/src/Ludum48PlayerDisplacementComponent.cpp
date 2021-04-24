@@ -11,8 +11,10 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	glm::vec2 stick_position = player->GetLeftStickPosition();
 	stick_position.x = chaos::MathTools::AnalogicToDiscret(stick_position.x);
 	stick_position.y = chaos::MathTools::AnalogicToDiscret(stick_position.y);
-	if (stick_position.x != 0.0f)
+	if (std::abs(stick_position.x) > std::abs(stick_position.y))
 		stick_position.y = 0.0f;
+	else
+		stick_position.x = 0.0f;
 
 	// get player position
 	chaos::box2 initial_pawn_box = pawn->GetBoundingBox();

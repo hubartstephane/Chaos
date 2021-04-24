@@ -24,7 +24,7 @@ public:
 enum class GameObjectType
 {
 	None = 0,
-	Stone = 1,
+	Rock = 1,
 	Diamond = 2,
 	Wall = 3,
 	Foam = 4,
@@ -41,6 +41,8 @@ public:
 
 	/** an offset in [-1..1] relative to the cell the particle belongs to (unit is tile_size) */
 	glm::vec2 offset = { 0.0f, 0.0f };
+	/** timer before moving */
+	float fall_timer = -1.0f;
 
 
 };

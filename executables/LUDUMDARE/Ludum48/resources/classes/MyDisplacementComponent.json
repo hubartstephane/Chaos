@@ -1,4 +1,4 @@
 {
   "parent_class": "LudumPlayerDisplacementComponent",
-  "pawn_max_velocity": [7, 7]
+  "pawn_speed": 3
 }

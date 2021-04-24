@@ -16,21 +16,11 @@
 
 void ParticleGameObjectLayerTrait::ParticleToPrimitives(GameObjectParticle const& particle, chaos::PrimitiveOutput<VertexBase>& output) const
 {
-#if 0
-	if (particle.type == GameObjectType::Blocker) // do not render blocker
-		return;
-#endif
 
 	LudumGameInstance const* ludum_game_instance = game->GetGameInstance();
 
 	chaos::ParticleDefault copy = particle;
 	copy.bounding_box.position += particle.offset * tile_size;
-
-	//if (particle.type == GameObjectType::Blocker) // do not render blocker
-	//	copy.color.a = particle_uniform_lifetime;
-
-
-
 	chaos::ParticleToPrimitives(copy, output);
 }
 
@@ -80,6 +70,17 @@ bool UpdateParticle(float delta_time, ParticleAnimated & particle)
 // ===========================================================================
 // ParticlePlayerLayerTrait
 // ===========================================================================
+
+void ParticlePlayerLayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, chaos::PrimitiveOutput<VertexBase>& output) const
+{
+
+	LudumGameInstance const* ludum_game_instance = game->GetGameInstance();
+
+	chaos::ParticleDefault copy = particle;
+	copy.bounding_box.position += particle.offset * tile_size;
+	chaos::ParticleToPrimitives(copy, output);
+}
+
 
 bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer & particle) const
 {

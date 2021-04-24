@@ -83,8 +83,36 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 					}
 					else if (other.particle->type == GameObjectType::Rock)
 					{
+						if (stick_position.x != 0.0f && other.particle->direction == glm::vec2(0.0f, 0.0f)) // can only push horizontally
+						{
+							glm::ivec2 rock_p = grid_info.GetCellCoord(other);
+							if (rock_p.x > 0 && stick_position.x < 0.0f)
+							{
+								GridCellInfo& next_to_rock = grid_info(rock_p + chaos::RecastVector<glm::ivec2>(stick_position));
+								if (next_to_rock.CanLock(other.particle))
+								{
+									next_to_rock.Lock(other.particle);
+									other.particle->direction = stick_position;
+									particle->direction = stick_position;
+								}
 
 
+
+							}
+							else if (rock_p.x < grid_info.size.x - 1 && stick_position.x > 0.0f)
+							{
+								GridCellInfo& next_to_rock = grid_info(rock_p + chaos::RecastVector<glm::ivec2>(stick_position));
+								if (next_to_rock.CanLock(other.particle))
+								{
+									next_to_rock.Lock(other.particle);
+									other.particle->direction = stick_position;
+									particle->direction = stick_position;
+								}
+
+							}
+
+
+						}
 					}
 				}
 				else

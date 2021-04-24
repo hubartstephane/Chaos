@@ -10,6 +10,22 @@
 
 
 
+// =============================================================
+// GridInfo implementation
+// =============================================================
+
+bool GridCellInfo::CanLock(GameObjectParticle* p) const
+{
+	if (particle != nullptr && particle != p)
+		return false;
+	return (locked_by == p || locked_by == nullptr);
+}
+
+void GridCellInfo::Lock(GameObjectParticle* p)
+{
+	locked_by = p;
+}
+
 
 
 
@@ -53,7 +69,20 @@ glm::ivec2 GridInfo::GetIndexForPosition(glm::vec2 const& p) const
 	return chaos::RecastVector<glm::ivec2>(position / chaos::RecastVector<glm::vec2>(tile_size));
 }
 
+glm::ivec2 GridInfo::GetCellCoord(GridCellInfo const& cell) const
+{
+	int offset = int(&cell - &cells[0]);
+	return { offset % size.x, offset / size.y };
+}
 
+chaos::box2 GridInfo::GetBoundingBox(GridCellInfo const& cell) const
+{
+	chaos::box2 result;
+	result.position = min_position + tile_size * chaos::RecastVector<glm::vec2>(GetCellCoord(cell));
+
+	result.half_size = tile_size * 0.5f;
+	return result;
+}
 
 
 
@@ -91,9 +120,12 @@ bool LudumLevelInstance::DoTick(float delta_time)
 {
 	CollectObjects();
 
+	auto DI = chaos::GetDebugDrawInterface();
 
-	float SPEED = 2.0f;
-	float TIMER = 1.0f;
+
+
+	float SPEED = 0.5f;
+	float TIMER = 0.1f;
 
 	GameObjectParticle BLOCKER_PARTICLE;
 	BLOCKER_PARTICLE.type = GameObjectType::Blocker;
@@ -131,33 +163,45 @@ bool LudumLevelInstance::DoTick(float delta_time)
 			// search where the particle may move
 			if (y > 0)
 			{
-				GameObjectParticle* particle_below = grid_info.cells[index - grid_info.size.x].particle; // particle below
-				if (particle_below == nullptr)
+				GridCellInfo & below = grid_info.cells[index - grid_info.size.x]; 
+
+				if (below.CanLock(particle))
 				{
-					if (particle->fall_timer < 0.0f) // particle is resting
-						particle->fall_timer = TIMER;
-					else
+					below.Lock(particle);
+
+					//if (particle->fall_timer < 0.0f) // particle is resting
+					//	particle->fall_timer = TIMER;
+					//else
 					{
-						particle->fall_timer = std::max(particle->fall_timer - delta_time, 0.0f);
-						if (particle->fall_timer == 0.0f)
+						//particle->fall_timer = std::max(particle->fall_timer - delta_time, 0.0f);
+						//if (particle->fall_timer == 0.0f)
 						{
 							particle->offset.y = std::max(particle->offset.y - SPEED * delta_time, -1.0f);
 							if (particle->offset.y == -1.0f)
 							{
 								particle->bounding_box.position.y -= GetTiledMap()->tile_size.y;
 								particle->offset.y = 0.0f;
+
+								grid_info(particle->bounding_box.position).Lock(nullptr);
 							}
 						}
 					}
 				}
 				else
 				{
-					auto DI = chaos::GetDebugDrawInterface();
-					chaos::DrawBox(*DI, particle_below->bounding_box, { 1.0f, 0.0f, 0.0f, 1.0f }, false);
-					chaos::DrawLine(*DI, particle->bounding_box.position, particle_below->bounding_box.position, { 1.0f, 0.0f, 0.0f, 1.0f });
+					if (below.particle != nullptr)
+					{
+						glm::vec4 RED = { 1.0f, 0.0f, 0.0f, 1.0f };
 
-					if (particle_below->type == GameObjectType::Player) // do not try going left or right above the player
-						continue;
+						chaos::DrawBox(*DI, below.particle->bounding_box, RED, false);
+						chaos::DrawLine(*DI, particle->bounding_box.position, below.particle->bounding_box.position, RED);
+
+						if (below.particle->type == GameObjectType::Player) // do not try going left or right above the player
+							continue;
+					}
+
+
+
 
 					for (int i : { 0, 1 })
 					{
@@ -165,11 +209,13 @@ bool LudumLevelInstance::DoTick(float delta_time)
 						{
 							if (x > 0) // fall to the left
 							{
-								GameObjectParticle* particle_left = grid_info.cells[index - 1].particle;
-								GameObjectParticle* particle_left_below = grid_info.cells[index - 1 - grid_info.size.x].particle;
+								GridCellInfo & left = grid_info.cells[index - 1];
+								GridCellInfo & left_below = grid_info.cells[index - 1 - grid_info.size.x];
 
-								if (particle_left == nullptr && particle_left_below == nullptr) // can go left
+								if (left.CanLock(particle) && left_below.CanLock(particle))
 								{
+									left.Lock(particle);
+
 									particle->fall_timer = 0.0f; // do not wait
 
 									particle->offset.x = std::max(particle->offset.x - SPEED * delta_time, -1.0f);
@@ -177,9 +223,9 @@ bool LudumLevelInstance::DoTick(float delta_time)
 									{
 										particle->bounding_box.position.x -= GetTiledMap()->tile_size.x;
 										particle->offset.x = 0.0f;
+
+										grid_info(particle->bounding_box.position).Lock(nullptr);
 									}
-
-
 								}
 							}
 						}
@@ -187,11 +233,13 @@ bool LudumLevelInstance::DoTick(float delta_time)
 						{
 							if (x < grid_info.size.x - 1) // fall to the right
 							{
-								GameObjectParticle* particle_right = grid_info.cells[index + 1].particle;
-								GameObjectParticle* particle_right_below = grid_info.cells[index + 1 - grid_info.size.x].particle;
+								GridCellInfo& right = grid_info.cells[index + 1];
+								GridCellInfo& right_below = grid_info.cells[index + 1 - grid_info.size.x];
 
-								if (particle_right == nullptr && particle_right_below == nullptr) // can go right
+								if (right.CanLock(particle) && right_below.CanLock(particle))
 								{
+									right.Lock(particle);
+
 									particle->fall_timer = 0.0f; // do not wait
 
 									particle->offset.x = std::max(particle->offset.x + SPEED * delta_time, +1.0f);
@@ -199,6 +247,8 @@ bool LudumLevelInstance::DoTick(float delta_time)
 									{
 										particle->bounding_box.position.x += GetTiledMap()->tile_size.x;
 										particle->offset.x = 0.0f;
+
+										grid_info(particle->bounding_box.position).Lock(nullptr);
 									}
 
 								}
@@ -227,8 +277,27 @@ bool LudumLevelInstance::DoTick(float delta_time)
 		}
 	}
 
+	glm::vec4 YELLOW = { 1.0f, 1.0f, 0.0f, 1.0f };
+
+	for (int x = 0; x < grid_info.size.x; ++x)
+	{
+		for (int y = 0; y < grid_info.size.y; ++y)
+		{
+			GridCellInfo const& cell = grid_info(glm::ivec2(x, y));
+
+			if (cell.locked_by != nullptr)
+			{
+				chaos::box2 bb = grid_info.GetBoundingBox(cell);
+				bb.half_size *= 0.9f;
+				chaos::DrawBox(*DI, bb, YELLOW , false);
+
+				chaos::DrawLine(*DI, bb.position, cell.locked_by->bounding_box.position, YELLOW);
+			}
+		}
+	}
 
 
+				
 
 
 

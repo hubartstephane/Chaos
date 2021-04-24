@@ -17,6 +17,8 @@ public:
 
 	GameObjectParticle* particle = nullptr;
 
+	bool locked = false;
+
 	GameObjectParticle* locked_by = nullptr;
 };
 

@@ -39,9 +39,24 @@ public:
 	GameObjectType type = GameObjectType::None;
 
 
+	/** an offset in [-1..1] relative to the cell the particle belongs to (unit is tile_size) */
+	glm::vec2 offset = { 0.0f, 0.0f };
+
+
 };
 
+class ParticleGameObjectLayerTrait : public chaos::ParticleLayerTrait<GameObjectParticle, VertexBase>
+{
+public:
 
+	void ParticleToPrimitives(GameObjectParticle const& particle, chaos::PrimitiveOutput<VertexBase>& output) const;
+
+public:
+
+	class LudumGame* game = nullptr;
+
+	glm::vec2 tile_size = { 0.0f , 0.0f };
+};
 
 
 

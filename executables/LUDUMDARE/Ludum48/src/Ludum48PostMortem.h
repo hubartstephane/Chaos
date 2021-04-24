@@ -42,6 +42,66 @@ certaines fonction sont virtual dans TMLevel, d autres dans TMLevelInstance. Fai
 
 	------------------------------------------------------
 
+dans 
+
+	chaos::ParticleLayerBase* LudumLevel::DoCreateParticleLayer(chaos::TMLayerInstance* layer_instance)
+
+	on creer des layers de particles avec  
+	
+	   new chaos::ParticleLayer<ParticleAnimatedLayerTrait>();
+
+    on est donc obligé de creer de LayerTrait alors qu on pourrait faire de l inplace
+
+
+		new chaos::ParticleLayer<PARTICLE, VERTEX>();
+
+	------------------------------------------------------
+
+dans 
+
+bool LudumLevel::FinalizeLayerParticles(chaos::TMLayerInstance* layer_instance, chaos::ParticleAllocationBase* allocation)
+
+for (GameObjectParticle& particle : accessor)
+
+on a particle.bitmap_info   ... mais on ne trouve pas l information du tileset qui a permis sa creation
+
+il ya 
+
+TMParticle::gid ... mais un acces directement au TileData serait il pas mieux ?
+
+
+------------------------------------------------------
+
+ne devrait on pas s 'affranchir de GetTiledMap() depuis TMLayer/Level Instance
+
+------------------------------------------------------
+
+les TMparticle ne savent pas ou elles sont sur la grille. Passer en mode grille est tres fastidieux
+
+
+------------------------------------------------------
+
+chaos::TMTileCollisionIterator it = GetTileCollisionIterator(GetBoundingBox(), COLLISION_GAMEOBJECT, false);
+	while (it)
+
+	reflechir a avoir un begin() et end() pour des meilleurs iterations
+
+		------------------------------------------------------
+
+numeric_limits for glm ??
+
+		glm::vec2 min_position = { std::numeric_limits<float>::max(), std::numeric_limits<float>::max() };
+	glm::vec2 max_position = { std::numeric_limits<float>::min(), std::numeric_limits<float>::min() };
+
+	------------------------------------------------------
+
+		glm::vec2 std::min(v1, v2); --> il y a glm::min(...)
+
+	------------------------------------------------------
+
+	ParticleTools devrait disparaitre
 
 
 #endif
+
+

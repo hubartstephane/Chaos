@@ -69,12 +69,11 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 	LudumLevelInstance const* ludum_level_instance = GetLevelInstance();
 	if (ludum_level_instance != nullptr)
 	{
-		float health = ludum_level_instance->flame_health;
-		float max_health = ludum_level_instance->flame_initial_health;
+		
 
-		int burning_decrease_step = (int)(12.0 * (max_health - health) / max_health);
 
-		update_provider.AddVariable("burning_decrease_step", burning_decrease_step);
+
+
 	}
 	
 

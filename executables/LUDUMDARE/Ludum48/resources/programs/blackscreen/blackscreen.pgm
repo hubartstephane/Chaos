@@ -1,0 +1,10 @@
+{
+	"pixel_sources":
+	[
+		"@blackscreen.psh"
+	],
+	"vertex_sources":
+	[
+		"@blackscreen.vsh"
+	]
+}

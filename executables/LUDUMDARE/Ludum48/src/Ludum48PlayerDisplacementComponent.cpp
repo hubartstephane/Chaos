@@ -26,13 +26,6 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	else
 		stick_position.x = 0.0f;
 
-	// get player position
-	chaos::box2 initial_pawn_box = pawn->GetBoundingBox();
-
-	chaos::box2 pawn_box = initial_pawn_box;
-	glm::vec2& pawn_position = pawn_box.position;
-
-
 	GridInfo& grid_info = ludum_level_instance->GetGridInfo();
 
 	// change pawn direction
@@ -42,55 +35,50 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 		{
 
 
+			glm::ivec2 p = grid_info.GetIndexForPosition(particle->bounding_box.position);
 
+			int index = p.x + p.y * grid_info.size.x;
+
+			int other_index = -1;
+			if (stick_position.x > 0 && p.x < grid_info.size.x - 1)
+				other_index = index + 1;
+			else if (stick_position.x < 0 && p.x > 0.0f)
+				other_index = index - 1;
+			else if (stick_position.y > 0 && p.y < grid_info.size.y - 1)
+				other_index = index + grid_info.size.x;
+			else if (stick_position.y < 0 && p.y > 0.0f)
+				other_index = index - grid_info.size.x;
+
+			if (other_index >= 0)
+			{
+				GridCellInfo& other = grid_info(p + chaos::RecastVector<glm::ivec2>(stick_position));
+				if (other.CanLock(particle))
+				{
+					other.Lock(particle);
+					particle->direction = stick_position;
+
+
+				}
+				
+
+
+
+
+			}
 		}
 
 	}
 	// update pawn position
 	else
 	{
+		UpdateParticlePositionInGrid(particle, pawn_speed, delta_time, grid_info);
 
-
-
-	}
-
-
-
-	// start displacement in given direction
-	if (pawn_resting && stick_position != glm::vec2(0.0f, 0.0f))
-	{
-		start_pawn_position = pawn_position;
-		pawn_velocity = stick_position;
-		pawn_offset = 0.0f;
-		pawn_resting = false;
-
-		GridInfo& grid_info = ludum_level_instance->GetGridInfo();
 		
 
 
 
 	}
 
-	// update displacement
-	if (!pawn_resting)
-	{
-		for (size_t axis : {0, 1})
-		{
-			if (pawn_velocity[axis] == 0.0f)
-				continue;
-			pawn_offset = std::min(pawn_offset + pawn_max_velocity[axis] * delta_time, 1.0f);
-		}
-
-		pawn_position = start_pawn_position + pawn_offset * pawn_velocity * tile_size;
-			
-		if (pawn_offset == 1.0f)
-			pawn_resting = true;
-
-
-
-		// update the player pawn
-		pawn->SetPosition(pawn_box.position);
-	}
 
 	return true;
 }
@@ -100,7 +88,7 @@ bool LudumPlayerDisplacementComponent::SerializeIntoJSON(nlohmann::json& json_en
 {
 	if (!chaos::PlayerDisplacementComponent::SerializeIntoJSON(json_entry))
 		return false;
-	chaos::JSONTools::SetAttribute(json_entry, "pawn_max_velocity", pawn_max_velocity);
+	chaos::JSONTools::SetAttribute(json_entry, "pawn_speed", pawn_speed);
 	return true;
 }
 
@@ -109,7 +97,7 @@ bool LudumPlayerDisplacementComponent::SerializeFromJSON(nlohmann::json const& j
 	if (!chaos::PlayerDisplacementComponent::SerializeFromJSON(json_entry))
 		return false;
 
-	chaos::JSONTools::GetAttribute(json_entry, "pawn_max_velocity", pawn_max_velocity);
+	chaos::JSONTools::GetAttribute(json_entry, "pawn_speed", pawn_speed);
 	return true;
 }
 

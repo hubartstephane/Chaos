@@ -74,7 +74,7 @@ glm::ivec2 GridInfo::GetIndexForPosition(glm::vec2 const& p) const
 glm::ivec2 GridInfo::GetCellCoord(GridCellInfo const& cell) const
 {
 	int offset = int(&cell - &cells[0]);
-	return { offset % size.x, offset / size.y };
+	return { offset % size.x, offset / size.x };
 }
 
 chaos::box2 GridInfo::GetBoundingBox(GridCellInfo const& cell) const

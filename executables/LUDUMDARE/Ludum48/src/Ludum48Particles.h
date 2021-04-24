@@ -112,6 +112,8 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticlePlayer & particle) const;
 
+	void ParticleToPrimitives(ParticlePlayer const& particle, chaos::PrimitiveOutput<VertexBase>& output) const;
+
 public:
 
 	class LudumGame* game = nullptr;

@@ -18,7 +18,9 @@ bool GridCellInfo::CanLock(GameObjectParticle* p) const
 {
 	if (particle != nullptr && particle != p)
 		return false;
-	return (locked_by == p || locked_by == nullptr);
+	if (locked_by != p && locked_by != nullptr)
+		return false;
+	return true;
 }
 
 void GridCellInfo::Lock(GameObjectParticle* p)
@@ -130,139 +132,137 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	GameObjectParticle BLOCKER_PARTICLE;
 	BLOCKER_PARTICLE.type = GameObjectType::Blocker;
 
-	// from left to right then from right to left
-	//static int direction = 1;
-	//direction = 1 - direction;
 
-	int direction = 0;
 
-	int start = (direction > 0) ? 0 : grid_info.size.x - 1;
-	int end   = (direction > 0) ? grid_info.size.x : - 1;
-	int next  = (direction > 0) ? +1 : -1;
 
-	for (int x = start; x != end; x += next)
+
+	for (int step : {0, 1})
 	{
 
-		int previous_status = 0;
+		// from left to right then from right to left
+		//static int direction = 1;
+		//direction = 1 - direction;
 
+		int direction = 0;
+
+		int start = (direction > 0) ? 0 : grid_info.size.x - 1;
+		int end = (direction > 0) ? grid_info.size.x : -1;
+		int next = (direction > 0) ? +1 : -1;
+
+		for (int x = start; x != end; x += next)
+		{
+
+			int previous_status = 0;
+
+			for (int y = 0; y < grid_info.size.y; ++y)
+			{
+				int index = x + y * grid_info.size.x;
+
+				GameObjectParticle* particle = grid_info.cells[index].particle;
+
+				if (particle == nullptr)
+				{
+					previous_status = 0;
+					continue;
+				}
+				if (particle->type != GameObjectType::Rock && particle->type != GameObjectType::Diamond)
+				{
+					previous_status = 0;
+					continue;
+				}
+
+				// search where the particle may move
+				if (y > 0 && particle->direction.x == 0.0f && particle->direction.y == 0.0f)
+				{
+					GridCellInfo& below = grid_info.cells[index - grid_info.size.x];
+
+					if (step == 0)
+					{
+						if (below.CanLock(particle))
+						{
+							below.Lock(particle);
+
+							particle->direction = { 0.0f, -1.0f };
+						}
+						else
+						{
+							if (below.particle != nullptr)
+							{
+								glm::vec4 RED = { 1.0f, 0.0f, 0.0f, 1.0f };
+
+								chaos::DrawBox(*DI, below.particle->bounding_box, RED, false);
+								chaos::DrawLine(*DI, particle->bounding_box.position, below.particle->bounding_box.position, RED);
+							}
+						}
+					}
+					else if (step == 1)
+					{
+						if (below.particle == nullptr)
+							continue;
+						if (below.particle->type != GameObjectType::Rock && below.particle->type != GameObjectType::Diamond) // do not try going left or right above the player
+							continue;
+						if (below.particle->direction.x != 0.0f || below.particle->direction.y != 0.0f)
+							continue;
+
+
+						int random = rand();
+						for (int i : { 0, 1 })
+						{
+							if (((i + random) & 1) == 0) // check one branch before the other in a random order
+							//if (i == 0)
+							{
+								if (x > 0) // fall to the left
+								{
+									GridCellInfo& left = grid_info.cells[index - 1];
+									GridCellInfo& left_below = grid_info.cells[index - 1 - grid_info.size.x];
+
+									if (left.CanLock(particle) && left_below.CanLock(particle))
+									{
+										left.Lock(particle);
+										left_below.Lock(particle);
+										particle->direction = { -1.0f, 0.0f };
+										break;
+									}
+								}
+							}
+							else
+							{
+								if (x < grid_info.size.x - 1) // fall to the right
+								{
+									GridCellInfo& right = grid_info.cells[index + 1];
+									GridCellInfo& right_below = grid_info.cells[index + 1 - grid_info.size.x];
+
+									if (right.CanLock(particle) && right_below.CanLock(particle))
+									{
+										right.Lock(particle);
+										right_below.Lock(particle);
+										particle->direction = { +1.0f, 0.0f };
+										break;
+
+									}
+								}
+							}
+						}
+
+					} // end step 1
+				}
+			} // end y
+		} // end x
+	} // end step
+
+
+		
+	// continue movement
+	for (int x = 0; x < grid_info.size.x; ++x)
+	{
 		for (int y = 0; y < grid_info.size.y; ++y)
 		{
 			int index = x + y * grid_info.size.x;
 
 			GameObjectParticle* particle = grid_info.cells[index].particle;
-
 			if (particle == nullptr)
-			{
-				previous_status = 0;
 				continue;
-			}
-			if (particle->type != GameObjectType::Rock && particle->type != GameObjectType::Diamond)
-			{
-				previous_status = 0;
-				continue;
-			}
 
-
-
-
-
-
-
-			// search where the particle may move
-			if (y > 0 && particle->direction.x == 0.0f && particle->direction.y == 0.0f)
-			{
-				GridCellInfo & below = grid_info.cells[index - grid_info.size.x]; 
-
-				if (below.CanLock(particle))
-				{
-					below.Lock(particle);
-
-					particle->direction = { 0.0f, -1.0f };
-				}
-				else
-				{
-					if (below.particle != nullptr)
-					{
-						glm::vec4 RED = { 1.0f, 0.0f, 0.0f, 1.0f };
-
-						chaos::DrawBox(*DI, below.particle->bounding_box, RED, false);
-						chaos::DrawLine(*DI, particle->bounding_box.position, below.particle->bounding_box.position, RED);
-
-
-
-
-
-
-						if (below.particle->type != GameObjectType::Rock && below.particle->type != GameObjectType::Diamond) // do not try going left or right above the player
-							continue;
-
-						if (below.particle->direction.x != 0.0f || below.particle->direction.y != 0.0f)
-							continue;
-
-
-					}
-
-
-
-					int random = rand();
-					for (int i : { 0, 1 })
-					{
-						if (((i + random) & 1) == 0) // check one branch before the other in a random order
-						//if (i == 0)
-						{
-							if (x > 0) // fall to the left
-							{
-								GridCellInfo & left = grid_info.cells[index - 1];
-								GridCellInfo & left_below = grid_info.cells[index - 1 - grid_info.size.x];
-
-								if (left.CanLock(particle) && left_below.CanLock(particle))
-								{
-									left.Lock(particle);
-									left_below.Lock(particle);
-									particle->direction = { -1.0f, 0.0f };
-									break;
-								}
-							}
-						}
-						else
-						{
-							if (x < grid_info.size.x - 1) // fall to the right
-							{
-								GridCellInfo& right = grid_info.cells[index + 1];
-								GridCellInfo& right_below = grid_info.cells[index + 1 - grid_info.size.x];
-
-								if (right.CanLock(particle) && right_below.CanLock(particle))
-								{
-									right.Lock(particle);
-									right_below.Lock(particle);
-									particle->direction = { +1.0f, 0.0f };
-									break;
-
-								}
-							}
-						}
-					}
-
-
-
-
-
-
-
-
-
-
-
-
-
-				}
-				
-
-			
-			}
-
-
-			// continue movement
 			for (int axis : {0, 1})
 			{
 				if (particle->direction[axis] != 0.0f)
@@ -279,13 +279,11 @@ bool LudumLevelInstance::DoTick(float delta_time)
 					}
 				}
 			}
-
-
-
-
 		}
 	}
 
+
+	//debug draw
 	glm::vec4 YELLOW = { 1.0f, 1.0f, 0.0f, 1.0f };
 
 	for (int x = 0; x < grid_info.size.x; ++x)

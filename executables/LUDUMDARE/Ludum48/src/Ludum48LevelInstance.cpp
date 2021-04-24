@@ -131,8 +131,6 @@ bool LudumLevelInstance::DoTick(float delta_time)
 
 	auto DI = chaos::GetDebugDrawInterface();
 
-	float object_speed = GetTiledMap()->GetPropertyValueFloat("OBJECT_SPEED", 0.5f);
-
 	for (int step : {0, 1})
 	{
 
@@ -148,9 +146,6 @@ bool LudumLevelInstance::DoTick(float delta_time)
 
 		for (int x = start; x != end; x += next)
 		{
-
-			int previous_status = 0;
-
 			for (int y = 0; y < grid_info.size.y; ++y)
 			{
 				int index = x + y * grid_info.size.x;
@@ -158,15 +153,9 @@ bool LudumLevelInstance::DoTick(float delta_time)
 				GameObjectParticle* particle = grid_info.cells[index].particle;
 
 				if (particle == nullptr)
-				{
-					previous_status = 0;
 					continue;
-				}
 				if (particle->type != GameObjectType::Rock && particle->type != GameObjectType::Diamond)
-				{
-					previous_status = 0;
 					continue;
-				}
 
 				// search where the particle may move
 				if (y > 0 && particle->direction.x == 0.0f && particle->direction.y == 0.0f)
@@ -262,13 +251,40 @@ bool LudumLevelInstance::DoTick(float delta_time)
 			if (particle == nullptr)
 				continue;
 
-			UpdateParticlePositionInGrid(particle, object_speed, delta_time, grid_info);
+			if (UpdateParticlePositionInGrid(particle, object_speed, delta_time, grid_info))
+			{
+				if (particle->type == GameObjectType::Rock || particle->type == GameObjectType::Diamond)
+				{
+					glm::ivec2 p = grid_info.GetIndexForPosition(particle->bounding_box.position);
+					if (p.y > 0)
+					{
+						GridCellInfo& other = grid_info(glm::ivec2(p.x, p.y - 1));
+						if (other.particle != nullptr)
+						{
+							if (other.particle->type == GameObjectType::Player)
+							{
+
+
+								x = x;
+							}
+						}
+					}
+
+
+
+
+
+
+
+				}
+			}
 		}
 	}
 
 #if _DEBUG
 	//debug draw
 	glm::vec4 YELLOW = { 1.0f, 1.0f, 0.0f, 1.0f };
+	glm::vec4 GREEN  = { 0.0f, 1.0f, 0.0f, 1.0f };
 
 	for (int x = 0; x < grid_info.size.x; ++x)
 	{
@@ -283,6 +299,14 @@ bool LudumLevelInstance::DoTick(float delta_time)
 				chaos::DrawBox(*DI, bb, YELLOW , false);
 
 				chaos::DrawLine(*DI, bb.position, cell.locked_by_box.position, YELLOW);
+			}
+
+			if (cell.particle != nullptr && cell.particle->type == GameObjectType::Player)
+			{
+				chaos::box2 bb = grid_info.GetBoundingBox(cell);
+				bb.half_size *= 0.5f;
+				chaos::DrawBox(*DI, bb, GREEN, false);
+
 			}
 		}
 	}
@@ -310,6 +334,18 @@ bool LudumLevelInstance::DoTick(float delta_time)
 
 	return true;
 }
+
+bool LudumLevelInstance::InitializeLevelInstance(chaos::TMObjectReferenceSolver& reference_solver, chaos::TiledMap::PropertyOwner const* property_owner)
+{
+	if (!chaos::TMLevelInstance::InitializeLevelInstance(reference_solver, property_owner))
+		return false;
+
+	required_diamond_count = property_owner->GetPropertyValueInt("REQUIRED_DIAMOND", 10);
+	object_speed = property_owner->GetPropertyValueFloat("OBJECT_SPEED", 0.5f);
+
+	return true;
+}
+
 
 bool LudumLevelInstance::Initialize(chaos::Game * in_game, chaos::Level * in_level)
 {
@@ -417,3 +453,7 @@ void LudumLevelInstance::CollectObjects()
 	}
 }
 
+void LudumLevelInstance::TakeDiamond()
+{
+	++diamond_count;
+}

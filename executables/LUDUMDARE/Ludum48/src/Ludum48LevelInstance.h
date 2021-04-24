@@ -73,6 +73,12 @@ public:
 
 	LudumLevelInstance();
 
+
+	void TakeDiamond();
+
+	int GetDiamondCount() const { return diamond_count; }
+	int GetRequiredDiamondCount() const { return required_diamond_count; }
+
 protected:
 
 	/** override */
@@ -81,6 +87,8 @@ protected:
 	virtual bool Initialize(chaos::Game * in_game, chaos::Level * in_level) override;
 	/** override */
 	virtual void CreateCameraComponents(chaos::Camera* camera, chaos::TMCameraTemplate* camera_template) override;
+	/** override */
+	virtual bool InitializeLevelInstance(chaos::TMObjectReferenceSolver& reference_solver, chaos::TiledMap::PropertyOwner const* property_owner) override;
 
 
 	virtual int DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params) override;
@@ -97,6 +105,8 @@ protected:
 
 	GridInfo const & GetGridInfo() const { return grid_info; }
 	GridInfo& GetGridInfo(){ return grid_info; }
+
+	
 
 protected:
 
@@ -115,5 +125,10 @@ protected:
 
 
 	GridInfo grid_info;
+
+	int diamond_count = 0;
+	int required_diamond_count = 0;
+
+	float object_speed = 0.5f;
 
 };

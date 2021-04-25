@@ -116,11 +116,6 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 					}
 
 				}
-				
-
-
-
-
 			}
 		}
 
@@ -129,19 +124,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	else
 	{
 		UpdateParticlePositionInGrid(particle, delta_time, grid_info);
-		
-		
-
-		
-
-
-
 	}
-	//
-
-	
-
-
 	return true;
 }
 

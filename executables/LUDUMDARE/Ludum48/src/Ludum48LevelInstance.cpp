@@ -348,16 +348,9 @@ bool LudumLevelInstance::HandlePlayerObject(float delta_time)
 	if (particle == nullptr)
 		return true;
 
-	
-
-
-
 
 	chaos::Key const fake_displacement_key_buttons[] = { chaos::KeyboardButton::LEFT_CONTROL, chaos::KeyboardButton::RIGHT_CONTROL, chaos::GamepadButton::A, chaos::Key() };
 	bool fake_displacement = player->CheckButtonPressed(fake_displacement_key_buttons);
-
-	if (fake_displacement)
-		fake_displacement = true;
 
 
 	// get player inputs of interrests
@@ -368,8 +361,6 @@ bool LudumLevelInstance::HandlePlayerObject(float delta_time)
 		stick_position.y = 0.0f;
 	else
 		stick_position.x = 0.0f;
-
-
 
 	// change pawn direction
 	if (particle->direction.x == 0.0f && particle->direction.y == 0.0f)
@@ -427,8 +418,11 @@ bool LudumLevelInstance::HandlePlayerObject(float delta_time)
 									next_to_rock.Lock(other.particle);
 									other.particle->direction = stick_position;
 									other.particle->speed = displacement_component->push_speed;
-									particle->direction = stick_position;
-									particle->speed = displacement_component->push_speed;
+									if (!fake_displacement)
+									{
+										particle->direction = stick_position;
+										particle->speed = displacement_component->push_speed;
+									}
 								}
 							}
 						}

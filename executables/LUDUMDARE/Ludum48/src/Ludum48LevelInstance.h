@@ -156,5 +156,6 @@ protected:
 	float speed_factor = 1.0f;
 
 	bool door_opened = false;
+	bool level_complete = false;
 
 };

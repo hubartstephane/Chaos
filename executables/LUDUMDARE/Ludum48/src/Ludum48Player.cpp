@@ -22,7 +22,7 @@ void LudumPlayer::OnLifeLost()
 	chaos::Player::OnLifeLost();
 
 	death_timer = -1.0f;
-	suicidal_timer = 0.0f;
+	suicidal_timer = -1.0f;
 
 
 	GetGame()->ReloadCurrentLevel();
@@ -35,7 +35,7 @@ void LudumPlayer::OnLevelChanged(chaos::Level * new_level, chaos::Level * old_le
 	chaos::Player::OnLevelChanged(new_level, old_level, new_level_instance);
 
 	death_timer = -1.0f;
-	suicidal_timer = 0.0f;
+	suicidal_timer = -1.0f;
 
 
 }
@@ -67,7 +67,7 @@ bool LudumPlayer::DoTick(float delta_time)
 		chaos::Key const suicidal_buttons[] = { chaos::KeyboardButton::SPACE, chaos::GamepadButton::Y, chaos::Key() };
 		if (CheckButtonPressed(suicidal_buttons))
 		{
-			suicidal_timer = std::min(suicidal_timer + delta_time, max_suicidal_timer); 
+			suicidal_timer = std::min(std::max(suicidal_timer, 0.0f) + delta_time, max_suicidal_timer); 
 			if (suicidal_timer == max_suicidal_timer)
 			{
 				death_timer = 0.0f; // kill the player
@@ -75,7 +75,8 @@ bool LudumPlayer::DoTick(float delta_time)
 		}
 		else
 		{
-			suicidal_timer = std::max(suicidal_timer - delta_time, 0.0f);
+			suicidal_timer = -1.0f;
+
 			
 
 		}

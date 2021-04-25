@@ -8,13 +8,13 @@
 #include "Ludum48GameInstance.h"
 #include "Ludum48Camera.h"
 
-MyAutoRecenterCameraComponent::MyAutoRecenterCameraComponent(size_t in_player_index):
+LudumAutoRecenterToPlayerCameraComponent::LudumAutoRecenterToPlayerCameraComponent(size_t in_player_index):
 	chaos::AutoRecenterToPlayerCameraComponent(in_player_index)
 {
 	in_player_index = in_player_index;
 }
 
-chaos::box2 MyAutoRecenterCameraComponent::GetTargetBox() const
+chaos::box2 LudumAutoRecenterToPlayerCameraComponent::GetTargetBox() const
 {
 	chaos::PlayerPawn const * player_pawn = GetPlayerPawn(player_index);
 	if (player_pawn != nullptr)

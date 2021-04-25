@@ -461,7 +461,7 @@ static glm::vec2 GetDirectionIndex(int direction_index)
 		return { 0.0f, 1.0f };
 }
 
-void LudumLevelInstance::HandleMonsterObjects(bool delta_time)
+void LudumLevelInstance::HandleMonsterObjects(float delta_time)
 {
 	for (int x = 0; x < grid_info.size.x; ++x)
 	{
@@ -499,7 +499,7 @@ void LudumLevelInstance::HandleMonsterObjects(bool delta_time)
 	}
 }
 
-void LudumLevelInstance::HandleBlobObjects(bool delta_time)
+void LudumLevelInstance::HandleBlobObjects(float delta_time)
 {
 
 

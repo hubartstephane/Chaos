@@ -352,6 +352,13 @@ namespace chaos
 		virtual bool QueryValue(float & result) const override;
 		/** override */
 		virtual void TweakTextGeneratorParams(ParticleTextGenerator::GeneratorParams & final_params) const override;
+		/** override */
+		virtual bool InitializeFromConfiguration(nlohmann::json const& json, boost::filesystem::path const& config_path) override;
+
+	protected:
+
+		/** number of digits */
+		int digit_count = 2;
 	};
 
 

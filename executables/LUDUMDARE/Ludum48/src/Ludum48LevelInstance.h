@@ -106,6 +106,8 @@ protected:
 
 	virtual uint64_t GetCollisionFlagByName(char const* name) const override;
 
+	void DiamondsCreationRequest(glm::ivec2 const& p);
+
 
 	GridInfo const & GetGridInfo() const { return grid_info; }
 	GridInfo& GetGridInfo(){ return grid_info; }

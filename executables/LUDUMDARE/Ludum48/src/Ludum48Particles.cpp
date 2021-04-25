@@ -165,7 +165,11 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 
 
 
-	return false;
+
+
+	if (particle.destroy_particle && particle.locked_cell != nullptr)
+		particle.locked_cell->UnLock(&particle);
+	return particle.destroy_particle;
 }
 
 // ===========================================================================

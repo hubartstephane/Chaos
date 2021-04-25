@@ -711,20 +711,25 @@ void LudumLevelInstance::CollectObjects()
 
 void LudumLevelInstance::KillPlayer(GameObjectParticle* player)
 {
-	int i = 0;
-	++i;
+	player->destroy_particle = true;
+	glm::ivec2 player_p = grid_info.GetIndexForPosition(player->bounding_box.position);
+	DiamondsCreationRequest(player_p);
 
 }
 
-void LudumLevelInstance::KillMonster(GameObjectParticle * monster)
+void LudumLevelInstance::KillMonster(GameObjectParticle* monster)
 {
 	glm::ivec2 monster_p = grid_info.GetIndexForPosition(monster->bounding_box.position);
+	DiamondsCreationRequest(monster_p);
+}
 
+void LudumLevelInstance::DiamondsCreationRequest(glm::ivec2 const & p)
+{
 	for (int dy : {-1, 0, +1})
 	{
 		for (int dx : {-1, 0, +1})
 		{
-			glm::ivec2 other_p = monster_p + glm::ivec2(dx, dy);
+			glm::ivec2 other_p = p + glm::ivec2(dx, dy);
 			if (grid_info.IsInside(other_p))
 			{
 				GameObjectParticle* other = grid_info(other_p).particle;

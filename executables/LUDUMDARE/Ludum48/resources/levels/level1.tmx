@@ -11,7 +11,7 @@
 [LEVELTITLE Welcome Home]</property>
   <property name="MAIN_CAMERA" type="object" value="2114"/>
   <property name="MUSIC" value="game_music1"/>
-  <property name="OBJECT_SPEED" type="float" value="5"/>
+  <property name="OBJECT_SPEED" type="float" value="4"/>
   <property name="PLAYER_SPEED" type="float" value="6"/>
   <property name="PLAYER_START" type="object" value="0"/>
   <property name="PUSH_SPEED" type="float" value="2"/>

@@ -119,8 +119,12 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 
 	int reversed_flag = (particle.flags & chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP);
 
+	float & idle_timer = particle.idle_timer;
+
 	if (particle.direction.x != 0.0f || particle.direction.y != 0.0f)
 	{
+		idle_timer = 0.0f;
+
 		particle.animation_timer += SPEED_FACTOR * delta_time * particle.speed;
 		particle.frame_index = 1 + (int)std::fmodf(particle.animation_timer, 2.0f);
 
@@ -137,7 +141,9 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 	}
 	else 
 	{
-		particle.frame_index = 0;
+		idle_timer = std::min(idle_timer + delta_time, 1.0f);
+		if (idle_timer == 1.0f)
+			particle.frame_index = 0;
 
 	}
 

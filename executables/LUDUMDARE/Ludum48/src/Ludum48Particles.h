@@ -115,6 +115,9 @@ public:
 	}
 
 
+	mutable float idle_timer = 0.0f;
+
+
 };
 
 

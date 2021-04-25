@@ -115,7 +115,7 @@ void ParticlePlayerLayerTrait::ParticleToPrimitives(ParticlePlayer const& partic
 
 bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer & particle) const
 {
-	static constexpr float SPEED_FACTOR = 5.0f;
+	static constexpr float SPEED_FACTOR = 2.0f;
 
 	int reversed_flag = (particle.flags & chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP);
 

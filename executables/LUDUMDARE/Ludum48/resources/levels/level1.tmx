@@ -44,7 +44,8 @@
     </properties>
     <object id="2114" type="Camera" x="497.543" y="1494.76" width="360.608" height="257.727">
      <properties>
-      <property name="CAMERA_COMPONENTS" value="AutoRecenterToPlayerCameraComponent"/>
+      <property name="CAMERA" type="bool" value="false"/>
+      <property name="CAMERA_COMPONENTS" value="MyAutoRecenterCameraComponent"/>
      </properties>
     </object>
    </objectgroup>

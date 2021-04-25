@@ -94,6 +94,11 @@ namespace chaos
 		template<typename PARTICLE_TYPE>
 		ParticleAccessor<PARTICLE_TYPE> GetParticleAccessor(size_t start = 0, size_t count = 0)
 		{
+
+			// shu48
+
+
+
 			// check for compatibility => returns failure accessor
 			if (!IsParticleClassCompatible<PARTICLE_TYPE>())
 				return {};
@@ -109,6 +114,10 @@ namespace chaos
 		template<typename PARTICLE_TYPE>
 		ParticleConstAccessor<PARTICLE_TYPE> GetParticleConstAccessor(size_t start = 0, size_t count = 0) const
 		{
+
+			// shu48
+
+
 			// check for compatibility => returns failure accessor
 			if (!IsParticleClassCompatible<PARTICLE_TYPE>())
 				return {};

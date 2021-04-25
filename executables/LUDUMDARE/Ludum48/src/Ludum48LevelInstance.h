@@ -126,7 +126,7 @@ protected:
 
 
 
-protected:
+	public:
 
 	/** pointer on game */
 	class LudumGame * game = nullptr;

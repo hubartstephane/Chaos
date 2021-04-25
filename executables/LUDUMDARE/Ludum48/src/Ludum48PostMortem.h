@@ -147,6 +147,11 @@ Dans GameHUD la notion de text/format n'est pas tres claire'
 		le system de respawn est pourri
 		si le pawn n'as plus de particle c'est la merde
 
+		------------------------------------------------------
+
+
+	CjeckPlayerAlive() -> peut etre inverser la logique avec des kill ??
+
 
 
 

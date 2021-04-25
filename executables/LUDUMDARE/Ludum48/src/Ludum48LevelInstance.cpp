@@ -134,6 +134,21 @@ int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgra
 
 bool LudumLevelInstance::DoTick(float delta_time)
 {
+	if (level_timeout == 0.0f)
+	{
+		chaos::PlayerPawn* pawn = GetPlayerPawn(0);
+		if (pawn != nullptr)
+		{
+			if (GameObjectParticle* particle = pawn->GetParticle<GameObjectParticle>(0))
+			{
+				KillPlayer(particle);
+				level_timeout = -1.0f;
+			}
+		}
+	}
+
+
+
 	CollectObjects();
 
 	if (grid_info.cells != nullptr)
@@ -619,8 +634,9 @@ bool LudumLevelInstance::Initialize(chaos::Game * in_game, chaos::Level * in_lev
 
 bool LudumLevelInstance::IsPlayerDead(chaos::Player* player)
 {
-	if (chaos::TMLevelInstance::IsPlayerDead(player))
-		return true;
+	// ignore super ... just handle timeout component
+	//if (chaos::TMLevelInstance::IsPlayerDead(player))
+	//	return true;
 
 
 

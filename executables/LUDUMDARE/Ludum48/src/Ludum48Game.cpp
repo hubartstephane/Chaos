@@ -12,7 +12,7 @@ LudumGame::LudumGame()
 {		
 	// 	Don't let the Flames of Hell die
 
-	game_name = "Burnaouf Paradise\nVII";
+	game_name = "Burnaouf Paradise\n";
 	game_instructions = R"INSTRUCTIONS(
 	[ButtonA] or [KEYBOARD SPACE] : Jump
 	[ButtonB] or [KEYBOARD CTRL]  : Attack
@@ -98,21 +98,29 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer* renderer, chaos::GPUProgramPro
 			
 		}
 
+		LudumLevelInstance const * li = GetLevelInstance();
 
 
 
 
 
 
+		
 
 		if (player->death_timer >= 0.0f)
 		{
-			SetFadeEffect(renderer, uniform_provider, render_params, true, 1.0f - (player->death_timer / player->max_death_timer));
+			SetFadeEffect(renderer, uniform_provider, render_params, false, 1.0f - (player->death_timer / player->max_death_timer));
 		}
 		else if (player->suicidal_timer >= 0.0f)
 		{
-			SetFadeEffect(renderer, uniform_provider, render_params, true, (player->suicidal_timer / player->max_suicidal_timer));
+			SetFadeEffect(renderer, uniform_provider, render_params, false, (player->suicidal_timer / player->max_suicidal_timer));
 		}
+		else if (li != nullptr && li->level_complete)
+		{
+			SetFadeEffect(renderer, uniform_provider, render_params, true, 1.0f - (li->completion_timer / li->completion_delay));
+
+		}
+
 
 	}
 }
@@ -123,17 +131,17 @@ void LudumGame::SetFadeEffect(chaos::GPURenderer* renderer, chaos::GPUProgramPro
 	if (resource_manager == nullptr)
 		return;
 
-	chaos::GPURenderMaterial* blackscreen_material = resource_manager->FindRenderMaterial("blackscreen");
-	if (blackscreen_material != nullptr)
+	chaos::GPURenderMaterial* fade_material = resource_manager->FindRenderMaterial(fade_to_black? "blackscreen" : "whitescreen");
+	if (fade_material != nullptr)
 	{
 		glEnable(GL_BLEND);
 		glDisable(GL_DEPTH_TEST);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		chaos::GPUProgramProviderChain blackscreen_provider(uniform_provider);
-		blackscreen_provider.AddVariable("fade_ratio", ratio);
+		chaos::GPUProgramProviderChain fade_provider(uniform_provider);
+		fade_provider.AddVariable("fade_ratio", ratio);
 
-		renderer->DrawFullscreenQuad(blackscreen_material, &blackscreen_provider, render_params);
+		renderer->DrawFullscreenQuad(fade_material, &fade_provider, render_params);
 
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);

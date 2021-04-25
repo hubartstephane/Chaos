@@ -148,6 +148,29 @@ bool LudumLevelInstance::DoTick(float delta_time)
 		}
 	}
 
+	// check for leaving level
+	if (door_opened && !level_complete)
+	{
+		chaos::PlayerPawn const* player_pawn = GetPlayerPawn(0);
+		if (player_pawn != nullptr)
+		{
+			GameObjectParticle const * player_particle = player_pawn->GetParticle<GameObjectParticle>(0);
+			if (player_particle != nullptr)
+			{
+				chaos::box2 player_box = player_particle->bounding_box;
+				player_box.position += player_particle->offset * glm::vec2(32.0f, 32.0f); // HACK shu48
+				player_box.half_size *= 0.01f;
+
+				chaos::TMTileCollisionIterator it = GetTileCollisionIterator(player_box, COLLISION_GATE, false);
+				if (it)
+				{
+					level_complete = true;
+					completion_timer = completion_delay;
+				}
+			}
+		}
+	}
+
 	
 
 	
@@ -654,16 +677,7 @@ bool LudumLevelInstance::IsPlayerDead(chaos::Player* player)
 
 bool LudumLevelInstance::CheckLevelCompletion() const
 {
-	LudumLevel const * ludum_level = GetLevel();
-
-	LudumPlayer const * ludum_player = GetPlayer(0);
-	if (ludum_player != nullptr && ludum_level != nullptr)
-	{
-
-
-
-	}
-	return false;
+	return level_complete;
 }
 
 bool LudumLevelInstance::CanCompleteLevel() const
@@ -679,6 +693,8 @@ uint64_t LudumLevelInstance::GetCollisionFlagByName(char const* name) const
 
 	if (chaos::StringTools::Stricmp(name, "World") == 0)
 		return COLLISION_GAMEOBJECT;
+	if (chaos::StringTools::Stricmp(name, "Gate") == 0)
+		return COLLISION_GATE;
 
 	return chaos::TMLevelInstance::GetCollisionFlagByName(name);
 }

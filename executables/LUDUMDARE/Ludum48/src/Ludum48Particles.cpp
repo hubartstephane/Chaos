@@ -16,6 +16,15 @@
 
 void ParticleGameObjectLayerTrait::ParticleToPrimitives(GameObjectParticle const& particle, chaos::PrimitiveOutput<VertexBase>& output) const
 {
+	if (particle.type == GameObjectType::Diamond)
+	{
+
+
+
+
+	}
+
+
 
 	LudumGameInstance const* ludum_game_instance = game->GetGameInstance();
 
@@ -92,6 +101,9 @@ bool UpdateParticle(float delta_time, ParticleAnimated & particle)
 
 void ParticlePlayerLayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, chaos::PrimitiveOutput<VertexBase>& output) const
 {
+
+
+
 
 	LudumGameInstance const* ludum_game_instance = game->GetGameInstance();
 

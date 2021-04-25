@@ -144,6 +144,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 		HandleMonsterObjects(dt);
 		HandleBlobObjects(dt);
 		HandleDisplacements(dt);
+		CreateDiamonds();
 	}
 
 
@@ -284,20 +285,20 @@ void LudumLevelInstance::HandleFallingObjects(float delta_time)
 						GridCellInfo& other = grid_info(other_index);
 						if (other.particle != nullptr)
 						{
-							if ((dx == 0) ||
-								(dx == -1 && other.particle->direction.x > 0) || // other object is entering the cell behind us
+							if ((dx ==  0 /*&& other.particle->direction.y >= 0*/ )|| // object is not going down too !
+								(dx == -1 && other.particle->direction.x > 0) || // other object is entering the cell under us
 								(dx == +1 && other.particle->direction.x < 0))
 							{
 
 								if (other.particle->type == GameObjectType::Player)
 								{
 
-									x = x;
+									KillPlayer(other.particle);
 								}
 								else if (other.particle->type == GameObjectType::Monster)
 								{
 
-									x = x;
+									KillMonster(other.particle);
 								}
 
 
@@ -559,11 +560,8 @@ void LudumLevelInstance::HandleMonsterObjects(float delta_time)
 						GameObjectParticle* other_particle = grid_info(other_p).particle;
 						if (other_particle != nullptr && other_particle->type == GameObjectType::Player)
 						{
-
-							axis = axis;
+							KillPlayer(other_particle);
 						}
-
-
 					}
 				}
 			}
@@ -710,6 +708,63 @@ void LudumLevelInstance::CollectObjects()
 		++it;
 	}
 }
+
+void LudumLevelInstance::KillPlayer(GameObjectParticle* player)
+{
+	int i = 0;
+	++i;
+
+}
+
+void LudumLevelInstance::KillMonster(GameObjectParticle * monster)
+{
+	glm::ivec2 monster_p = grid_info.GetIndexForPosition(monster->bounding_box.position);
+
+	for (int dy : {-1, 0, +1})
+	{
+		for (int dx : {-1, 0, +1})
+		{
+			glm::ivec2 other_p = monster_p + glm::ivec2(dx, dy);
+			if (grid_info.IsInside(other_p))
+			{
+				GameObjectParticle* other = grid_info(other_p).particle;
+				if (other != nullptr)
+				{
+					other->destroy_particle = true;
+				}
+				grid_info(other_p).create_diamond = true;
+			}
+		}
+	}
+}
+
+void LudumLevelInstance::CreateDiamonds()
+{
+	chaos::ParticleSpawner spawner = GetParticleSpawner("GameObjects", "diamond");
+	if (!spawner.IsValid())
+		return;
+
+	for (int y = 0; y < grid_info.size.y; ++y)
+	{
+		for (int x = 0; x < grid_info.size.x; ++x)
+		{
+			GridCellInfo& cell = grid_info.cells[x + y * grid_info.size.y];
+			if (cell.create_diamond)
+			{
+				spawner.SpawnParticles(1, true).Process([this, &cell](chaos::ParticleAccessor<GameObjectParticle> accessor)
+				{
+					for (GameObjectParticle& p : accessor)
+					{
+						p.bounding_box = grid_info.GetBoundingBox(cell);
+						p.type = GameObjectType::Diamond;
+					}
+				});
+				cell.create_diamond = false;
+			}
+		}
+	}
+}
+
 
 void LudumLevelInstance::TakeDiamond()
 {

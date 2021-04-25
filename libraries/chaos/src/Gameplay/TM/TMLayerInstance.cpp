@@ -597,6 +597,12 @@ namespace chaos
 				int gid = chunk.tile_indices[i].gid;
 				int particle_flags = chunk.tile_indices[i].flags;
 
+
+
+				// shu48 recuperer le GID pour le spawn de particle
+
+
+
 				if (gid == 0)
 					continue;
 

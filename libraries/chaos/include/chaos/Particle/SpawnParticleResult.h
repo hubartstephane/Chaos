@@ -32,6 +32,21 @@ namespace chaos
 		{
 			return allocation;
 		}
+
+		// shu48
+
+		/** conversion operator */
+		ParticleAllocationBase * operator ->()
+		{
+			return allocation;
+		}
+		/** conversion operator */
+		ParticleAllocationBase const * operator -> () const
+		{
+			return allocation;
+		}
+
+
 		/** access all particles */
 		template<typename FUNC>
 		SpawnParticleResult & Process(FUNC func)

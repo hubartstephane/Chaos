@@ -114,9 +114,9 @@ protected:
 
 	void HandleFallingObjects(float delta_time);
 
-	void HandleMonsterObjects(bool delta_time);
+	void HandleMonsterObjects(float delta_time);
 
-	void HandleBlobObjects(bool delta_time);
+	void HandleBlobObjects(float delta_time);
 
 	void HandleDisplacements(float delta_time);
 

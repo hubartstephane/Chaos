@@ -145,6 +145,8 @@ bool LudumLevelInstance::DoTick(float delta_time)
 		HandleMonsterObjects(dt);
 		HandleBlobObjects(dt);
 		HandleDisplacements(dt);
+
+		delta_time = dt;
 	}
 
 
@@ -545,6 +547,33 @@ void LudumLevelInstance::HandleMonsterObjects(float delta_time)
 				}
 			}
 			UpdateParticlePositionInGrid(particle, delta_time, grid_info);
+
+			// search whether the player is touching the particle
+			glm::ivec2 p = grid_info.GetIndexForPosition(particle->bounding_box.position);
+			for (int axis : {0, 1})
+			{
+				for (int offset : {-1, 1})
+				{
+					glm::ivec2 other_p = p;
+					other_p[axis] += offset;
+
+					if (grid_info.IsInside(other_p))
+					{
+						GameObjectParticle* other_particle = grid_info(other_p).particle;
+						if (other_particle != nullptr && other_particle->type == GameObjectType::Player)
+						{
+
+							axis = axis;
+						}
+
+
+					}
+				}
+			}
+
+			
+
+
 		}
 	}
 }

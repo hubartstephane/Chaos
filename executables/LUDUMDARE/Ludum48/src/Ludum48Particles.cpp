@@ -26,6 +26,20 @@ void ParticleGameObjectLayerTrait::ParticleToPrimitives(GameObjectParticle const
 
 bool ParticleGameObjectLayerTrait::UpdateParticle(float delta_time, GameObjectParticle& particle) const
 {
+	if (particle.type == GameObjectType::Rock)
+	{
+		float constexpr ROTATION_SPEED = 3.0f;
+
+
+		if (particle.direction.x != 0)
+			particle.rotation -= ROTATION_SPEED * delta_time * particle.direction.x;
+
+
+
+	}
+
+
+
 
 
 

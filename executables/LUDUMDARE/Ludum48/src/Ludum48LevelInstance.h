@@ -110,6 +110,10 @@ protected:
 
 protected:
 
+	bool HandlePlayerObject(float delta_time);
+
+	bool HandleFallingObjects(float delta_time);
+
 	void CollectObjects();
 
 

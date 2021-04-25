@@ -21,7 +21,7 @@ public:
 	virtual bool SerializeFromJSON(nlohmann::json const& json_entry) override;
 
 
-protected:
+public:
 
 	float pawn_speed = 3.0f;
 

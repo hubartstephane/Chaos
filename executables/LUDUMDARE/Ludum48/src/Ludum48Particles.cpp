@@ -21,7 +21,6 @@ void ParticleGameObjectLayerTrait::ParticleToPrimitives(GameObjectParticle const
 
 	chaos::ParticleDefault copy = particle;
 	copy.bounding_box.position += particle.offset * tile_size;
-	copy.color.a = particle.timer;
 	chaos::ParticleToPrimitives(copy, output);
 }
 
@@ -29,24 +28,10 @@ bool ParticleGameObjectLayerTrait::UpdateParticle(float delta_time, GameObjectPa
 {
 
 
-	if (particle.destroy_particle)
-	{
-		particle.timer -= delta_time;
-		if (particle.timer <= 0.0f)
-		{
-			if (particle.locked_cell != nullptr)
-				particle.locked_cell->UnLock(&particle);
-			return true;
-		}
 
-	}
-	return false;
-
-#if 0
 	if (particle.destroy_particle && particle.locked_cell != nullptr)
 		particle.locked_cell->UnLock(&particle);
 	return particle.destroy_particle;
-#endif
 }
 
 

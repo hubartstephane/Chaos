@@ -49,8 +49,6 @@ public:
 	float speed = 1.0f;
 
 
-	float timer = 1.0f;
-
 	bool destroy_particle = false;
 
 };

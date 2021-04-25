@@ -18,8 +18,6 @@ public:
 
 	CHAOS_DECLARE_OBJECT_CLASS2(LudumPlayer, chaos::Player);
 
-	void AddBurnedSouls(int count) { burned_souls += count; }
-
 protected:
 
     /** override */
@@ -30,8 +28,14 @@ protected:
     /** override */
     virtual void OnLevelChanged(chaos::Level* new_level, chaos::Level* old_level, chaos::LevelInstance* new_level_instance) override;
 
-protected:
+	virtual bool IsDead() const override;
 
-	int burned_souls = 0;
+    virtual bool DoTick(float delta_time) override;
+
+public:
+
+    float death_timer = -1.0f;
+
+    float max_death_timer = 3.0f;
 };
 

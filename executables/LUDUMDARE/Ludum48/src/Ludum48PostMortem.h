@@ -138,6 +138,14 @@ Dans GameHUD la notion de text/format n'est pas tres claire'
 
  spawning partilces ... on perd le GID
 
+		------------------------------------------------------
+
+		un flag par particle DESTROY ??
+
+		------------------------------------------------------
+
+		le system de respawn est pourri
+		si le pawn n'as plus de particle c'est la merde
 
 
 

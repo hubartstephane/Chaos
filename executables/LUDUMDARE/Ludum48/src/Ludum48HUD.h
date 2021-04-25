@@ -22,3 +22,31 @@ protected:
 
 
 
+
+// ====================================================================
+// GameHUDDiamondComponent
+// ====================================================================
+
+class GameHUDDiamondComponent : public chaos::GameHUDCacheValueTextComponent<std::pair<int, int> >
+{
+	friend class GameHUD;
+
+public:
+
+	/** constructor */
+	GameHUDDiamondComponent(char const* in_text = "%d/%d");
+	/** constructor */
+	GameHUDDiamondComponent(chaos::ParticleTextGenerator::GeneratorParams const& in_params) :
+		chaos::GameHUDCacheValueTextComponent<std::pair<int, int>>("%d/%d", in_params) {}
+
+
+protected:
+
+	/** override */
+	virtual bool QueryValue(std::pair<int, int>& result) const override;
+	/** override */
+	virtual void UpdateMesh() override;
+};
+
+
+

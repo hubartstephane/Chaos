@@ -129,6 +129,11 @@ s 'affranchir de chaos::' dans les projets ludums ???
 
 quelques ennumeration de couleur YELLOW, GREEN ...
 
+------------------------------------------------------
+
+Dans GameHUD la notion de text/format n'est pas tres claire'
+
+
 
 
 

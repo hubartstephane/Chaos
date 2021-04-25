@@ -45,18 +45,25 @@ void GridCellInfo::UnLock(GameObjectParticle* p)
 // =============================================================
 
 
+bool GridInfo::IsInside(glm::ivec2 const& p) const
+{
+	if (p.x < 0 || p.x >= size.x)
+		return false;
+	if (p.y < 0 || p.y >= size.y)
+		return false;
+	return true;
+}
+
 GridCellInfo& GridInfo::operator ()(glm::ivec2 const & p)
 {
-	assert(p.x >= 0 && p.x < size.x);
-	assert(p.y >= 0 && p.y < size.y);
+	assert(IsInside(p));
 	int index = p.x + p.y * size.x;
 	return cells[index];
 }
 
 GridCellInfo const& GridInfo::operator ()(glm::ivec2 const& p) const
 {
-	assert(p.x >= 0 && p.x < size.x);
-	assert(p.y >= 0 && p.y < size.y);
+	assert(IsInside(p));
 	int index = p.x + p.y * size.x;
 	return cells[index];
 }
@@ -359,6 +366,8 @@ void LudumLevelInstance::HandlePlayerObject(float delta_time)
 	else
 		stick_position.x = 0.0f;
 
+	glm::ivec2 istick_position = chaos::RecastVector<glm::ivec2>(stick_position);
+
 	// change pawn direction
 	if (particle->direction.x == 0.0f && particle->direction.y == 0.0f)
 	{
@@ -366,20 +375,10 @@ void LudumLevelInstance::HandlePlayerObject(float delta_time)
 		{
 			glm::ivec2 p = grid_info.GetIndexForPosition(particle->bounding_box.position);
 
-			bool inside_world = false;
-			if (stick_position.x > 0 && p.x < grid_info.size.x - 1)
-				inside_world = true;
-			else if (stick_position.x < 0 && p.x > 0.0f)
-				inside_world = true;
-			else if (stick_position.y > 0 && p.y < grid_info.size.y - 1)
-				inside_world = true;
-			else if (stick_position.y < 0 && p.y > 0.0f)
-				inside_world = true;
+			glm::ivec2 other_index = (p + istick_position);
 
-			if (inside_world)
+			if (grid_info.IsInside(other_index))
 			{
-				glm::ivec2 other_index = (p + chaos::RecastVector<glm::ivec2>(stick_position));
-
 				GridCellInfo& other = grid_info(other_index);
 
 				bool can_go = false;
@@ -406,9 +405,9 @@ void LudumLevelInstance::HandlePlayerObject(float delta_time)
 						if (stick_position.x != 0.0f && other.particle->direction == glm::vec2(0.0f, 0.0f)) // can only push horizontally
 						{
 							glm::ivec2 rock_p = grid_info.GetCellCoord(other);
-							if ((rock_p.x > 0 && stick_position.x < 0.0f) || (rock_p.x < grid_info.size.x - 1 && stick_position.x > 0.0f))
+							if (grid_info.IsInside(rock_p + istick_position))
 							{
-								GridCellInfo& next_to_rock = grid_info(rock_p + chaos::RecastVector<glm::ivec2>(stick_position));
+								GridCellInfo& next_to_rock = grid_info(rock_p + istick_position);
 								if (next_to_rock.CanLock(other.particle))
 								{
 									next_to_rock.Lock(other.particle);
@@ -448,7 +447,7 @@ void LudumLevelInstance::HandlePlayerObject(float delta_time)
 	}
 }
 
-static glm::vec2 GetDirectionIndex(int direction_index)
+static glm::vec2 GetMonsterDirection(int direction_index)
 {
 	direction_index = direction_index % 4;
 	if (direction_index == 0)
@@ -460,6 +459,20 @@ static glm::vec2 GetDirectionIndex(int direction_index)
 	else //if (direction_index == 3)
 		return { 0.0f, 1.0f };
 }
+
+static int GetMonsterDirectionIndex(glm::vec2 const & direction)
+{
+	if (direction.x > 0.0f)
+		return 0;
+	if (direction.y < 0.0f)
+		return 1;
+	if (direction.x < 0.0f)
+		return 2;
+	if (direction.y > 0.0f)
+		return 3;
+	return 0;
+}
+
 
 void LudumLevelInstance::HandleMonsterObjects(float delta_time)
 {
@@ -477,9 +490,30 @@ void LudumLevelInstance::HandleMonsterObjects(float delta_time)
 			{
 				glm::ivec2 p = grid_info.GetIndexForPosition(particle->bounding_box.position);
 
+				glm::vec2 monster_direction = GetMonsterDirection(particle->monster_direction_index);
+
+				int monster_direction_index = GetMonsterDirectionIndex(monster_direction);
+
+				glm::vec2 neighboor_offset = GetMonsterDirection((monster_direction_index + 1) % 4); // the touching neighboor should be there
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0
+
 				for (int i = 0; i < 4; ++i)
 				{
-					glm::vec2 wanted_direction = GetDirectionIndex(particle->monster_direction_index);
+					
 
 					GridCellInfo other_cell = grid_info(p + chaos::RecastVector<glm::ivec2>(wanted_direction));
 					if (!other_cell.CanLock(particle))
@@ -493,6 +527,7 @@ void LudumLevelInstance::HandleMonsterObjects(float delta_time)
 
 					}
 				}
+#endif
 			}
 			UpdateParticlePositionInGrid(particle, delta_time, grid_info);
 		}

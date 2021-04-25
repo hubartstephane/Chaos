@@ -34,6 +34,8 @@ public:
 		delete[] cells;
 	}
 
+	bool IsInside(glm::ivec2 const& p) const;
+
 	GridCellInfo& operator ()(glm::ivec2 const& index);
 	GridCellInfo const & operator ()(glm::ivec2 const& index) const;
 	GridCellInfo& operator ()(glm::vec2 const & p);

@@ -18,8 +18,8 @@
 
   "LEVEL_TIMEOUT_ID": {
 
-    "format": "XXX %f XXX"
-
+    "format": "[CLOCK_ICON] %02.0f [CLOCK_ICON]",
+    "digit_count": 0
   },
 
 

@@ -382,7 +382,9 @@ namespace chaos
 		if (level_timeout < 0.0f)
 			return false;
 		// compute the timer
-		result = std::ceil(level_timeout * 100.0f) / 100.0f;
+		int dc = std::max(digit_count, 0);
+		float div = std::pow(10.0f, (float)dc);
+		result = std::ceil(level_timeout * div) / div;
 		return true;
 	}
 
@@ -390,6 +392,14 @@ namespace chaos
 	{
 		GameHUDCacheValueTextComponent<float>::TweakTextGeneratorParams(final_params);
 		final_params.default_color = (cached_value >= 10.0f) ? glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) : glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);	
+	}
+
+	bool GameHUDTimeoutComponent::InitializeFromConfiguration(nlohmann::json const& json, boost::filesystem::path const& config_path)
+	{
+		if (!GameHUDCacheValueTextComponent<float>::InitializeFromConfiguration(json, config_path))
+			return true;
+		JSONTools::GetAttribute(json, "digit_count", digit_count);
+		return true;
 	}
 
 	// ====================================================================

@@ -15,5 +15,8 @@
   },
   "colors": {
     "LEVELTITLE": [ 1.0, 0.0, 0.0 ]
+  },
+  "bitmaps": {
+    "CLOCK_ICON": "Timer"
   }
 }

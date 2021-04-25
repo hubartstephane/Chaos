@@ -38,11 +38,11 @@ public:
 
     float death_timer = -1.0f;
 
-    float max_death_timer = 3.0f;
+    float max_death_timer = 2.0f;
 
     float suicidal_timer = -1.0f;
 
-    float max_suicidal_timer = 3.0f;
+    float max_suicidal_timer = 2.0f;
 
     bool cheater_farid = false;
 };

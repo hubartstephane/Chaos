@@ -142,7 +142,7 @@ protected:
 
 
 	mutable float completion_timer = -1.0f; // shu48 : due to Checkcomplete constness !!
-	float completion_delay = 3.0f;
+	float completion_delay = 1.0f;
 
 
 	GridInfo grid_info;

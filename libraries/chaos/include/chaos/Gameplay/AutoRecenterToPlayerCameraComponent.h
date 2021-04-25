@@ -25,6 +25,9 @@ namespace chaos
 		AutoRecenterToPlayerCameraComponent(size_t in_player_index = 0) :
 			player_index(in_player_index) {}
 
+		/** gets the target the component wants to focus on */
+		virtual box2 GetTargetBox() const;
+
 		/** override */
 		virtual bool SerializeIntoJSON(nlohmann::json& json_entry) const;
 		/** override */

@@ -152,6 +152,11 @@ Dans GameHUD la notion de text/format n'est pas tres claire'
 
 	CjeckPlayerAlive() -> peut etre inverser la logique avec des kill ??
 
+		------------------------------------------------------
+
+	CameraComponent(player_index)  bahhh
+
+		l index dans le constructeur c'est mal'
 
 
 

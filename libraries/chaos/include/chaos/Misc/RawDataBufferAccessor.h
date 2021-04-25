@@ -41,7 +41,7 @@ namespace chaos
             buffer(src.GetBuffer()), data_count(src.GetDataCount()), data_size(src.GetDataSize())
         {
             assert((data_count > 0) ^ (buffer == nullptr));
-            assert(data_size > 0);
+            assert((data_size > 0) ^ (buffer == nullptr)); // shu48 (just data_size > 0) before
         }
 
         /** constructor */

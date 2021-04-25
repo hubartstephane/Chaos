@@ -391,7 +391,7 @@ namespace chaos
 	void GameHUDTimeoutComponent::TweakTextGeneratorParams(ParticleTextGenerator::GeneratorParams & final_params) const
 	{
 		GameHUDCacheValueTextComponent<float>::TweakTextGeneratorParams(final_params);
-		final_params.default_color = (cached_value >= 10.0f) ? glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) : glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);	
+		final_params.default_color = (cached_value >= 10.0f) ? normal_color : final_color;
 	}
 
 	bool GameHUDTimeoutComponent::InitializeFromConfiguration(nlohmann::json const& json, boost::filesystem::path const& config_path)
@@ -399,6 +399,8 @@ namespace chaos
 		if (!GameHUDCacheValueTextComponent<float>::InitializeFromConfiguration(json, config_path))
 			return true;
 		JSONTools::GetAttribute(json, "digit_count", digit_count);
+		JSONTools::GetAttribute(json, "normal_color", normal_color);
+		JSONTools::GetAttribute(json, "final_color", final_color);
 		return true;
 	}
 

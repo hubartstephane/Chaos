@@ -52,8 +52,6 @@ bool LudumLevelInstance::Initialize(chaos::Game * in_game, chaos::Level * in_lev
 {
 	if (!chaos::TMLevelInstance::Initialize(in_game, in_level))
 		return false;
-	// change the level timeout
-	level_timeout = in_level->GetLevelTimeout();
 	return true;
 }
 

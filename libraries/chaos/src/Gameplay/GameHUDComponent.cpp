@@ -187,7 +187,9 @@ namespace chaos
 	{
 		if (!GameHUDMeshComponent::InitializeFromConfiguration(json, config_path))
 			return true;
-		JSONTools::GetAttribute(json, "text", text);
+		// JSONTools::GetAttribute(json, "text", text); // shu48
+
+		JSONTools::GetAttribute(json, "format", text);
 		JSONTools::GetAttribute(json, "generator_params", generator_params);
 		return true;
 	}

@@ -234,6 +234,8 @@ namespace chaos
 			return false;
 		// solve the references
 		reference_solver.SolveReferences(this);
+		// change the level timeout
+		level_timeout = in_level->GetLevelTimeout();
 		return true;
 	}
 

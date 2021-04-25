@@ -62,28 +62,19 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 	return true;
 }
 
-void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params)
+
+void LudumGame::DoDisplayGame(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params)
 {
 	chaos::GPUProgramProviderChain update_provider(uniform_provider);
-
-	LudumLevelInstance const* ludum_level_instance = GetLevelInstance();
-	if (ludum_level_instance != nullptr)
-	{
-		
-
-
-
-
-	}
-	
 
 	chaos::Game::DoDisplayGame(renderer, &update_provider, render_params);
 
 
 	// Win Fadeout to white
-	if (ludum_level_instance != nullptr)
+	LudumPlayer* player = GetPlayer(0);
+	if (player != nullptr)
 	{
-		if (ludum_level_instance->completion_timer > 0.0f && ludum_level_instance->completion_delay > 0.0f)
+		if (player->death_timer >= 0.0f)
 		{
 			chaos::GPUResourceManager* resource_manager = chaos::WindowApplication::GetGPUResourceManagerInstance();
 			if (resource_manager == nullptr)
@@ -93,18 +84,28 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 			if (blackscreen_material != nullptr)
 			{
 				glEnable(GL_BLEND);
+				glDisable(GL_DEPTH_TEST);
 				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 				chaos::GPUProgramProviderChain blackscreen_provider(uniform_provider);
-				blackscreen_provider.AddVariable("fade_ratio", 1.0f - (ludum_level_instance->completion_timer / ludum_level_instance->completion_delay));
+				blackscreen_provider.AddVariable("fade_ratio", 1.0f - (player->death_timer / player->max_death_timer));
 
 				renderer->DrawFullscreenQuad(blackscreen_material, &blackscreen_provider, render_params);
 
+				glEnable(GL_DEPTH_TEST);
 				glDisable(GL_BLEND);
 			}
 		}
 	}
 }
+
+
+
+
+
+
+
+
 
 
 

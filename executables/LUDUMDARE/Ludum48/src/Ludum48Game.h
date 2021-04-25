@@ -41,6 +41,7 @@ public:
 
 protected:
 
+
 	/** override */
 	virtual bool OnEnterGame(chaos::PhysicalGamepad * in_physical_gamepad) override;
 

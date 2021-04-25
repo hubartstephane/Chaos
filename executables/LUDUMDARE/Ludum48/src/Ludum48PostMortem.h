@@ -170,6 +170,15 @@ Dans GameHUD la notion de text/format n'est pas tres claire'
 		la recherche dans l'atlas /sprite/truc/bitmap est tres fastidieuse
 
 
+		------------------------------------------------------
+
+		Particle Spawner ... voir si on ne peut pas avoir
+
+		HEIGHT_BIT_FLAG AUTOMATIQUEMENT ... voir d autres choses
+
+		BitmapInfo a coller dans une particle ou GID
+
+
 
 
 

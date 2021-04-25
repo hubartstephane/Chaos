@@ -24,9 +24,15 @@ chaos::box2 LudumAutoRecenterToPlayerCameraComponent::GetTargetBox() const
 		{
 			chaos::box2 result = particle->bounding_box;
 			result.position += particle->offset * glm::vec2(32.0f, 32.0f); // HACK shu48
+
+
+			previous_frame_box = result;
+
 			return result;
 
 		}
 	}
+	if (!IsGeometryEmpty(previous_frame_box))
+		return previous_frame_box;
 	return chaos::AutoRecenterToPlayerCameraComponent::GetTargetBox();
 }

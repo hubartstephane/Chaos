@@ -18,6 +18,8 @@
   },
   "bitmaps": {
     "CLOCK_ICON": "Timer",
-    "DIAMOND_ICON": "Diamond_Icon"
+    "DIAMOND_ICON": "Diamond_Icon",
+    "PLAYER_ICON": "Player_Icon",
+    "KISS": "Kiss"
   }
 }

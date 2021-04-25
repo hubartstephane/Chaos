@@ -159,6 +159,13 @@ Dans GameHUD la notion de text/format n'est pas tres claire'
 		l index dans le constructeur c'est mal'
 
 
+		------------------------------------------------------
+
+		Player::InitializeGameValues ... Player::LoadFromJSON
+		ca fait double emploui,
+		l un est utilisé pour le hot reload, l autre les checkpoints
+
+
 
 
 

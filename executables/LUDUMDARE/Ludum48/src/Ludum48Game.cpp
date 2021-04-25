@@ -74,6 +74,37 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer* renderer, chaos::GPUProgramPro
 	LudumPlayer* player = GetPlayer(0);
 	if (player != nullptr)
 	{
+
+		if (player->cheater_farid)
+		{
+			chaos::ParticleTextGenerator::GeneratorParams params;
+			params.line_height = 80.0f;
+			params.hotpoint = chaos::Hotpoint::BOTTOM;
+			params.position.y = -300.0f;
+
+			chaos::GPUDrawInterface<chaos::VertexDefault> DI(nullptr);
+			chaos::DrawText(DI, "[KISS] Cheater Farid [KISS]", params);
+
+
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glDisable(GL_DEPTH_TEST);
+			glDisable(GL_CULL_FACE);
+			DI.Display(renderer, uniform_provider, render_params);
+			glDisable(GL_BLEND);
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_CULL_FACE);
+
+			
+		}
+
+
+
+
+
+
+
+
 		if (player->death_timer >= 0.0f)
 		{
 			SetFadeEffect(renderer, uniform_provider, render_params, true, 1.0f - (player->death_timer / player->max_death_timer));

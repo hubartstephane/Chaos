@@ -9,6 +9,8 @@
     }
   },
 
+
+
   "INSTRUCTIONS_ID": {
     "generator_params": {
       "line_height": 40
@@ -16,17 +18,14 @@
     }
   },
 
-  "LEVEL_TIMEOUT_ID": {
-
-    "format": "[CLOCK_ICON] %02.0f",
+  "LIFE_ID": {
+    "format": "[PLAYER_ICON] %d",
     "generator_params": {
       "hotpoint": "top-left",
       "line_height": 50,
       "position": [ 20.0, -20.0 ]
-    },
-    "digit_count": 0
+    }
   },
-
 
   "DIAMOND_ID": {
 
@@ -34,9 +33,30 @@
     "generator_params": {
       "hotpoint": "top-left",
       "line_height": 50,
-      "position": [ 240.0, -20.0 ]
+      "position": [ 180.0, -20.0 ]
     }
   },
+
+
+
+  "LEVEL_TIMEOUT_ID": {
+
+    "format": "[CLOCK_ICON] %02.0f",
+    "generator_params": {
+      "hotpoint": "top-left",
+      "line_height": 50,
+      "position": [ 460.0, -20.0 ]
+    },
+    "digit_count": 0
+  },
+
+
+
+
+
+
+
+
 
   "SCORE_ID": {
 

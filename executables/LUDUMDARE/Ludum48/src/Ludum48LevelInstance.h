@@ -155,4 +155,6 @@ protected:
 	float push_speed   = 1.0f;
 	float speed_factor = 1.0f;
 
+	bool door_opened = false;
+
 };

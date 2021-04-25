@@ -44,6 +44,14 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(chaos::TMLayerInsta
 		return new chaos::ParticleLayer<ParticleGameObjectLayerTrait>(layer_trait);
 	}
 
+	if (chaos::StringTools::Stricmp(layer_name, "Gate") == 0)
+	{
+		ParticleGateLayerTrait layer_trait;
+		layer_trait.game = ludum_game;
+		layer_trait.tile_size = GetTiledMap()->tile_size;
+		return new chaos::ParticleLayer<ParticleGateLayerTrait>(layer_trait);
+	}
+
 
 	return chaos::TMLevel::DoCreateParticleLayer(layer_instance);
 }

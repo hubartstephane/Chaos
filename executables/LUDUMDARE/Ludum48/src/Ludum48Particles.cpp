@@ -10,6 +10,54 @@
 #include "Ludum48Level.h"
 #include "Ludum48PlayerDisplacementComponent.h"
 
+
+
+
+// ===========================================================================
+// ParticleGameObjectLayerTrait
+// ===========================================================================
+
+
+void ParticleGateLayerTrait::ParticleToPrimitives(GateParticle const& particle, chaos::PrimitiveOutput<VertexBase>& output) const
+{
+	bool door_opened = false;
+
+	GateParticle other = particle;
+
+
+	LudumLevelInstance* li = game->GetLevelInstance();
+	if (li != nullptr)
+		door_opened = li->door_opened;
+
+	chaos::WindowApplication const * application = chaos::Application::GetConstInstance();
+	if (application != nullptr)
+	{
+		chaos::BitmapAtlas::TextureArrayAtlas const * atlas = application->GetTextureAtlas();
+		if (atlas != nullptr)
+		{
+			chaos::BitmapAtlas::BitmapInfo const* bi = (door_opened) ?
+				atlas->GetBitmapInfo("OpenGate", true) :
+				atlas->GetBitmapInfo("Gate", true);
+
+			if (bi != nullptr)
+				other.texcoords = bi->GetTexcoords();
+		}
+	}
+
+	return chaos::ParticleToPrimitives(other, output);
+}
+
+bool ParticleGateLayerTrait::UpdateParticle(float delta_time, GateParticle& particle) const
+{
+
+
+
+
+
+	return false;
+}
+
+
 // ===========================================================================
 // ParticleGameObjectLayerTrait
 // ===========================================================================

@@ -27,9 +27,6 @@ namespace chaos
 			if (game->OnKeyEvent(event))
 				return true;
 		return false;
-		 
-
-		return Window::OnKeyEventImpl(event);
 	}
 
 	bool GameWindow::OnMouseButtonImpl(int button, int action, int modifier)

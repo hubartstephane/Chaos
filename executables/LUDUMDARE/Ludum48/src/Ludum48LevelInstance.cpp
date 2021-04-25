@@ -131,8 +131,13 @@ bool LudumLevelInstance::DoTick(float delta_time)
 
 	if (grid_info.cells != nullptr)
 	{
-		HandlePlayerObject(delta_time);
-		HandleFallingObjects(delta_time);
+		float dt = delta_time * speed_factor;
+
+		HandlePlayerObject(dt);
+		HandleFallingObjects(dt);
+		HandleMonsterObjects(dt);
+		HandleBlobObjects(dt);
+		HandleDisplacements(dt);
 	}
 
 
@@ -146,7 +151,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 }
 
 
-bool LudumLevelInstance::HandleFallingObjects(float delta_time)
+void LudumLevelInstance::HandleFallingObjects(float delta_time)
 {
 	auto DI = chaos::GetDebugDrawInterface();
 
@@ -199,7 +204,6 @@ bool LudumLevelInstance::HandleFallingObjects(float delta_time)
 							continue;
 						if (below.particle->direction.x != 0.0f || below.particle->direction.y != 0.0f)
 							continue;
-
 
 						int random = rand();
 						for (int i : { 0, 1 })
@@ -270,24 +274,28 @@ bool LudumLevelInstance::HandleFallingObjects(float delta_time)
 						GridCellInfo& other = grid_info(glm::ivec2(p.x + dx, p.y - 1));
 						if (other.particle != nullptr)
 						{
-							if (other.particle->type == GameObjectType::Player)
+							if ((dx == 0) ||
+								(dx == -1 && other.particle->direction.x > 0) ||
+								(dx == +1 && other.particle->direction.x < 0))
 							{
-								if ((dx == 0) ||
-									(dx == -1 && other.particle->direction.x > 0) ||
-									(dx == +1 && other.particle->direction.x < 0))
+
+								if (other.particle->type == GameObjectType::Player)
 								{
-
-
 
 									x = x;
 								}
+								else if (other.particle->type == GameObjectType::Monster)
+								{
+
+									x = x;
+								}
+
+
+
+
 							}
 						}
-
 					}
-
-
-
 				}
 			}
 		}
@@ -323,35 +331,24 @@ bool LudumLevelInstance::HandleFallingObjects(float delta_time)
 		}
 	}
 #endif
-
-
-
-	return true;
 }
 
-
-bool LudumLevelInstance::HandlePlayerObject(float delta_time)
+void LudumLevelInstance::HandlePlayerObject(float delta_time)
 {	
 	LudumPlayer* player = GetPlayer(0);
 	if (player == nullptr)
-		return true;
-
-	LudumPlayerDisplacementComponent* displacement_component = player->GetDisplacementComponent();
-	if (displacement_component == nullptr)
-		return true;
+		return;
 	
 	chaos::PlayerPawn* pawn = player->GetPawn();
 	if (pawn == nullptr)
-		return true;
+		return;
 
 	ParticlePlayer* particle = pawn->GetParticle<ParticlePlayer>(0);
 	if (particle == nullptr)
-		return true;
-
+		return;
 
 	chaos::Key const fake_displacement_key_buttons[] = { chaos::KeyboardButton::LEFT_CONTROL, chaos::KeyboardButton::RIGHT_CONTROL, chaos::GamepadButton::A, chaos::Key() };
 	bool fake_displacement = player->CheckButtonPressed(fake_displacement_key_buttons);
-
 
 	// get player inputs of interrests
 	glm::vec2 stick_position = player->GetLeftStickPosition();
@@ -385,7 +382,6 @@ bool LudumLevelInstance::HandlePlayerObject(float delta_time)
 
 				GridCellInfo& other = grid_info(other_index);
 
-
 				bool can_go = false;
 
 				if (other.particle != nullptr)
@@ -417,11 +413,11 @@ bool LudumLevelInstance::HandlePlayerObject(float delta_time)
 								{
 									next_to_rock.Lock(other.particle);
 									other.particle->direction = stick_position;
-									other.particle->speed = displacement_component->push_speed;
+									other.particle->speed = push_speed;
 									if (!fake_displacement)
 									{
 										particle->direction = stick_position;
-										particle->speed = displacement_component->push_speed;
+										particle->speed = push_speed;
 									}
 								}
 							}
@@ -431,15 +427,13 @@ bool LudumLevelInstance::HandlePlayerObject(float delta_time)
 				else
 					can_go = true;
 
-
-
 				if (can_go && other.CanLock(particle))
 				{
 					if (!fake_displacement)
 					{
 						other.Lock(particle);
 						particle->direction = stick_position;
-						particle->speed = displacement_component->pawn_speed;
+						particle->speed = player_speed;
 					}
 
 				}
@@ -452,23 +446,73 @@ bool LudumLevelInstance::HandlePlayerObject(float delta_time)
 	{
 		UpdateParticlePositionInGrid(particle, delta_time, grid_info);
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	return true;
 }
+
+static glm::vec2 GetDirectionIndex(int direction_index)
+{
+	direction_index = direction_index % 4;
+	if (direction_index == 0)
+		return { 1.0f, 0.0f };
+	else if (direction_index == 1)
+		return { 0.0f, -1.0f };
+	else if (direction_index == 2)
+		return { -1.0f, 0.0f };
+	else //if (direction_index == 3)
+		return { 0.0f, 1.0f };
+}
+
+void LudumLevelInstance::HandleMonsterObjects(bool delta_time)
+{
+	for (int x = 0; x < grid_info.size.x; ++x)
+	{
+		for (int y = 0; y < grid_info.size.y; ++y)
+		{
+			int index = x + y * grid_info.size.x;
+
+			GameObjectParticle* particle = grid_info.cells[index].particle;
+			if (particle == nullptr || particle->type != GameObjectType::Monster)
+				continue;
+
+			if (particle->direction == glm::vec2(0.0f, 0.0f))
+			{
+				glm::ivec2 p = grid_info.GetIndexForPosition(particle->bounding_box.position);
+
+				for (int i = 0; i < 4; ++i)
+				{
+					glm::vec2 wanted_direction = GetDirectionIndex(particle->monster_direction_index);
+
+					GridCellInfo other_cell = grid_info(p + chaos::RecastVector<glm::ivec2>(wanted_direction));
+					if (!other_cell.CanLock(particle))
+						particle->monster_direction_index = (particle->monster_direction_index + 1) % 4;
+					else
+					{
+						other_cell.Lock(particle);
+						particle->direction = wanted_direction;
+						particle->speed = object_speed;
+						break;
+
+					}
+				}
+			}
+			UpdateParticlePositionInGrid(particle, delta_time, grid_info);
+		}
+	}
+}
+
+void LudumLevelInstance::HandleBlobObjects(bool delta_time)
+{
+
+
+}
+
+void LudumLevelInstance::HandleDisplacements(float delta_time)
+{
+
+
+}
+
+
+
 
 bool LudumLevelInstance::InitializeLevelInstance(chaos::TMObjectReferenceSolver& reference_solver, chaos::TiledMap::PropertyOwner const* property_owner)
 {
@@ -476,7 +520,10 @@ bool LudumLevelInstance::InitializeLevelInstance(chaos::TMObjectReferenceSolver&
 		return false;
 
 	required_diamond_count = property_owner->GetPropertyValueInt("REQUIRED_DIAMOND", 10);
-	object_speed = property_owner->GetPropertyValueFloat("OBJECT_SPEED", 0.5f);
+	object_speed = property_owner->GetPropertyValueFloat("OBJECT_SPEED", object_speed);
+	player_speed = property_owner->GetPropertyValueFloat("PLAYER_SPEED", player_speed);
+	push_speed = property_owner->GetPropertyValueFloat("PUSH_SPEED", push_speed);
+	speed_factor = property_owner->GetPropertyValueFloat("SPEED_FACTOR", speed_factor);
 
 	return true;
 }

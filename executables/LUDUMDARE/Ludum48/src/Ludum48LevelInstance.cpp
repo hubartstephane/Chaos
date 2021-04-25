@@ -246,16 +246,29 @@ bool LudumLevelInstance::DoTick(float delta_time)
 				glm::ivec2 p = grid_info.GetIndexForPosition(particle->bounding_box.position);
 				if (p.y > 0)
 				{
-					GridCellInfo& other = grid_info(glm::ivec2(p.x, p.y - 1));
-					if (other.particle != nullptr)
+					for (int dx : {-1, 0, 1}) // check the 3 cells below for the player
 					{
-						if (other.particle->type == GameObjectType::Player)
+						GridCellInfo& other = grid_info(glm::ivec2(p.x + dx, p.y - 1));
+						if (other.particle != nullptr)
 						{
+							if (other.particle->type == GameObjectType::Player)
+							{
+								if ((dx == 0) ||
+									(dx == -1 && other.particle->direction.x > 0) ||
+									(dx == +1 && other.particle->direction.x < 0))
+								{
 
 
-							x = x;
+
+									x = x;
+								}
+							}
 						}
+
 					}
+
+
+
 				}
 			}
 		}

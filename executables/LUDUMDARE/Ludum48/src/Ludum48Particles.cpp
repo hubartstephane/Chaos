@@ -115,40 +115,30 @@ void ParticlePlayerLayerTrait::ParticleToPrimitives(ParticlePlayer const& partic
 
 bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer & particle) const
 {
-	LudumPlayerDisplacementComponent* displacement_component = game->GetPlayerDisplacementComponent(0);
-	if (displacement_component != nullptr)
+	static constexpr float SPEED_FACTOR = 5.0f;
+
+	int reversed_flag = (particle.flags & chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP);
+
+	if (particle.direction.x != 0.0f || particle.direction.y != 0.0f)
 	{
-		glm::vec2 pawn_velocity = displacement_component->GetPawnVelocity();
+		particle.animation_timer += SPEED_FACTOR * delta_time * particle.speed;
+		particle.frame_index = 1 + (int)std::fmodf(particle.animation_timer, 2.0f);
 
-		particle.flags &= ~chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
-
-		if (std::abs(pawn_velocity.x) < 1.0f)
+		if (particle.direction.y != 0.0f)
 		{
-			particle.frame_index = 0;
+			particle.flags &= ~chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
+			particle.flags |= reversed_flag;
 		}
+		else if (particle.direction.x > 0.0f)
+			particle.flags &= ~chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
 		else
-		{
-			if (std::abs(pawn_velocity.x) < 12.0f)
-			{
-				particle.frame_index = 3;
+			particle.flags |= chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
 
-			}
-			else
-			{
-				float max_pawn_velocity = displacement_component->GetPawnMaxVelocity().x;
+	}
+	else 
+	{
+		particle.frame_index = 0;
 
-				float speed_factor = 8.0f;
-				if (max_pawn_velocity > 0.0f)
-					speed_factor = std::max(1.0f, speed_factor * std::abs(pawn_velocity.x) / max_pawn_velocity);
-
-				particle.animation_timer += speed_factor * delta_time;
-
-				particle.frame_index = 1 + (int)std::fmodf(particle.animation_timer, 2.0f);
-			}
-
-			if (pawn_velocity.x < 0.0f)
-				particle.flags |= chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
-		}
 	}
 
 	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasAnimation())
@@ -159,12 +149,6 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 
 		particle.texcoords = layout.GetTexcoords();
 	}
-
-
-
-
-
-
 
 
 	if (particle.destroy_particle && particle.locked_cell != nullptr)

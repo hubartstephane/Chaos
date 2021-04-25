@@ -8,7 +8,7 @@
 #include "Ludum48GameInstance.h"
 #include "Ludum48PlayerDisplacementComponent.h"
 
-
+#define DEBUG_DRAW 0 //_DEBUG
 
 // =============================================================
 // GridInfo implementation
@@ -23,7 +23,7 @@ void GridCellInfo::Lock(GameObjectParticle* p)
 {
 	assert(p != nullptr);
 	p->locked_cell = this;
-#if _DEBUG
+#if DEBUG_DRAW
 	locked_by_box = p->bounding_box;
 #endif
 	locked = true;
@@ -207,7 +207,7 @@ void LudumLevelInstance::HandleFallingObjects(float delta_time)
 						}
 						else
 						{
-#if _DEBUG
+#if DEBUG_DRAW
 							if (below.particle != nullptr)
 							{
 								glm::vec4 RED = { 1.0f, 0.0f, 0.0f, 1.0f };
@@ -327,7 +327,7 @@ void LudumLevelInstance::HandleFallingObjects(float delta_time)
 		}
 	}
 
-#if _DEBUG
+#if DEBUG_DRAW
 	//debug draw
 	glm::vec4 YELLOW = { 1.0f, 1.0f, 0.0f, 1.0f };
 	glm::vec4 GREEN  = { 0.0f, 1.0f, 0.0f, 1.0f };

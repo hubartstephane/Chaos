@@ -20,6 +20,8 @@ public:
 
 	bool locked = false;
 
+	bool create_diamond = false;
+
 #if _DEBUG
 	chaos::box2 locked_by_box;
 #endif
@@ -124,6 +126,11 @@ protected:
 
 	void CollectObjects();
 
+	void KillPlayer(GameObjectParticle* player);
+
+	void KillMonster(GameObjectParticle* monster);
+
+	void CreateDiamonds();
 
 
 	public:

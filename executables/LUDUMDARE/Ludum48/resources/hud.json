@@ -9,13 +9,19 @@
     }
   },
 
-  "INSTRUCTIONS_ID": 
-  {
+  "INSTRUCTIONS_ID": {
     "generator_params": {
       "line_height": 40
 
     }
   },
+
+  "LEVEL_TIMEOUT_ID": {
+
+    "format": "XXX %f XXX"
+
+  },
+
 
   "SCORE_ID": {
 

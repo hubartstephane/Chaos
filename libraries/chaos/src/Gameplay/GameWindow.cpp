@@ -61,10 +61,14 @@ namespace chaos
 		{
 			GPUProgramProvider provider;
 
+
+			// shu48 ???
+#if 1
 			WindowApplication* application = Application::GetInstance();
 			if (application != nullptr)
 				if (application->GetTextureAtlas() != nullptr)
 					provider.AddTexture("material", application->GetTextureAtlas()->GetTexture());
+#endif
 
 			GPURenderParams render_params;
 			render_params.viewport = viewport;

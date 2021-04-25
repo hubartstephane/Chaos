@@ -165,6 +165,10 @@ Dans GameHUD la notion de text/format n'est pas tres claire'
 		ca fait double emploui,
 		l un est utilisé pour le hot reload, l autre les checkpoints
 
+		------------------------------------------------------
+
+		la recherche dans l'atlas /sprite/truc/bitmap est tres fastidieuse
+
 
 
 

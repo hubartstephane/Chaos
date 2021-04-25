@@ -134,6 +134,7 @@ int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgra
 
 bool LudumLevelInstance::DoTick(float delta_time)
 {
+	// timeout
 	if (level_timeout == 0.0f)
 	{
 		chaos::PlayerPawn* pawn = GetPlayerPawn(0);
@@ -146,6 +147,12 @@ bool LudumLevelInstance::DoTick(float delta_time)
 			}
 		}
 	}
+
+	
+
+	
+
+
 
 
 
@@ -789,5 +796,10 @@ void LudumLevelInstance::CreateDiamonds()
 
 void LudumLevelInstance::TakeDiamond()
 {
-	++diamond_count;
+	if (++diamond_count == required_diamond_count)
+	{
+		door_opened = true;
+
+
+	}
 }

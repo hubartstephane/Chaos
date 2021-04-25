@@ -17,6 +17,32 @@ public:
 
 
 // ===========================================================================
+// GateParticle
+// ===========================================================================
+
+class GateParticle : public ParticleBase
+{
+public:
+
+};
+
+class ParticleGateLayerTrait : public chaos::ParticleLayerTrait<GateParticle, VertexBase>
+{
+public:
+
+	void ParticleToPrimitives(GateParticle const& particle, chaos::PrimitiveOutput<VertexBase>& output) const;
+
+	bool UpdateParticle(float delta_time, GateParticle& particle) const;
+
+public:
+
+	class LudumGame* game = nullptr;
+
+	glm::vec2 tile_size = { 0.0f , 0.0f };
+};
+
+
+// ===========================================================================
 // GameObjectParticle
 // ===========================================================================
 
@@ -147,6 +173,7 @@ bool UpdateParticlePositionInGrid(GameObjectParticle* particle, float delta_time
 
 
 CHAOS_REGISTER_CLASS2(ParticleBase, chaos::TMParticle);
+CHAOS_REGISTER_CLASS2(GateParticle, ParticleBase);
 CHAOS_REGISTER_CLASS2(GameObjectParticle, ParticleBase);
 CHAOS_REGISTER_CLASS2(ParticleAnimated, GameObjectParticle);
 CHAOS_REGISTER_CLASS2(ParticlePlayer, ParticleAnimated);

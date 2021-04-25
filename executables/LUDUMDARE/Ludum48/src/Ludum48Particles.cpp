@@ -28,14 +28,16 @@ bool ParticleGameObjectLayerTrait::UpdateParticle(float delta_time, GameObjectPa
 {
 	if (particle.type == GameObjectType::Rock)
 	{
-		float constexpr ROTATION_SPEED = 3.0f;
-
-
 		if (particle.direction.x != 0)
-			particle.rotation -= ROTATION_SPEED * delta_time * particle.direction.x;
+		{
+			float constexpr ROTATION_SPEED = 10.0f;
 
-
-
+			float speed_factor = 1.0f;
+			LudumLevelInstance const* li = game->GetLevelInstance();
+			if (li != nullptr)
+				speed_factor = li->speed_factor;
+			particle.rotation -= ROTATION_SPEED * delta_time * particle.direction.x * speed_factor;
+		}
 	}
 
 

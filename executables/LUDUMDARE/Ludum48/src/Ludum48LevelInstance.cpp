@@ -139,14 +139,11 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	if (grid_info.cells != nullptr)
 	{
 		float dt = delta_time * speed_factor;
-
 		HandlePlayerObject(dt);
 		HandleFallingObjects(dt);
 		HandleMonsterObjects(dt);
 		HandleBlobObjects(dt);
 		HandleDisplacements(dt);
-
-		delta_time = dt;
 	}
 
 

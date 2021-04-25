@@ -3,14 +3,14 @@
 #include <chaos/Chaos.h>
 
 
-class MyAutoRecenterCameraComponent : public chaos::AutoRecenterToPlayerCameraComponent
+class LudumAutoRecenterToPlayerCameraComponent : public chaos::AutoRecenterToPlayerCameraComponent
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(MyAutoRecenterCameraComponent, chaos::AutoRecenterToPlayerCameraComponent);
+	CHAOS_DECLARE_OBJECT_CLASS2(LudumAutoRecenterToPlayerCameraComponent, chaos::AutoRecenterToPlayerCameraComponent);
 
 public:
 
 
-	MyAutoRecenterCameraComponent(size_t in_player_index = 0);
+	LudumAutoRecenterToPlayerCameraComponent(size_t in_player_index = 0);
 
 
 	virtual chaos::box2 GetTargetBox() const override;

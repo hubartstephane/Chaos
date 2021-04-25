@@ -169,7 +169,7 @@ namespace chaos
 				}
 				else
 				{
-					// nop: targe is already 0 
+					// nop: target is already 0 
 				}
 			}
 

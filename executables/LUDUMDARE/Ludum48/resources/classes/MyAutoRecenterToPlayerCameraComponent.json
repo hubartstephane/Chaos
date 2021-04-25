@@ -1,0 +1,8 @@
+{
+  "parent_class": "LudumAutoRecenterToPlayerCameraComponent",
+  "idle_delay": 0.2,
+  "recenter_limit_speed": 0.25,
+  "fast_pawn_speed": 20.0,
+  "idle_pawn_speed": 0.0,
+  "limit_speed": 0.25
+}

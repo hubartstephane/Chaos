@@ -15,4 +15,8 @@ public:
 
 	virtual chaos::box2 GetTargetBox() const override;
 
+
+
+	mutable chaos::box2 previous_frame_box;
+
 };

@@ -76,26 +76,36 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer* renderer, chaos::GPUProgramPro
 	{
 		if (player->death_timer >= 0.0f)
 		{
-			chaos::GPUResourceManager* resource_manager = chaos::WindowApplication::GetGPUResourceManagerInstance();
-			if (resource_manager == nullptr)
-				return;
-
-			chaos::GPURenderMaterial* blackscreen_material = resource_manager->FindRenderMaterial("blackscreen");
-			if (blackscreen_material != nullptr)
-			{
-				glEnable(GL_BLEND);
-				glDisable(GL_DEPTH_TEST);
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-				chaos::GPUProgramProviderChain blackscreen_provider(uniform_provider);
-				blackscreen_provider.AddVariable("fade_ratio", 1.0f - (player->death_timer / player->max_death_timer));
-
-				renderer->DrawFullscreenQuad(blackscreen_material, &blackscreen_provider, render_params);
-
-				glEnable(GL_DEPTH_TEST);
-				glDisable(GL_BLEND);
-			}
+			SetFadeEffect(renderer, uniform_provider, render_params, true, 1.0f - (player->death_timer / player->max_death_timer));
 		}
+		else if (player->suicidal_timer >= 0.0f)
+		{
+			SetFadeEffect(renderer, uniform_provider, render_params, true, (player->suicidal_timer / player->max_suicidal_timer));
+		}
+
+	}
+}
+
+void LudumGame::SetFadeEffect(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params, bool fade_to_black, float ratio)
+{
+	chaos::GPUResourceManager* resource_manager = chaos::WindowApplication::GetGPUResourceManagerInstance();
+	if (resource_manager == nullptr)
+		return;
+
+	chaos::GPURenderMaterial* blackscreen_material = resource_manager->FindRenderMaterial("blackscreen");
+	if (blackscreen_material != nullptr)
+	{
+		glEnable(GL_BLEND);
+		glDisable(GL_DEPTH_TEST);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		chaos::GPUProgramProviderChain blackscreen_provider(uniform_provider);
+		blackscreen_provider.AddVariable("fade_ratio", ratio);
+
+		renderer->DrawFullscreenQuad(blackscreen_material, &blackscreen_provider, render_params);
+
+		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_BLEND);
 	}
 }
 

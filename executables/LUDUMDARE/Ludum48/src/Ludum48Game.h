@@ -56,6 +56,8 @@ protected:
 
 	virtual void DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params) override;
 
+	void SetFadeEffect(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params, bool fade_to_black, float t);
+
 protected:
 
 };

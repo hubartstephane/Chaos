@@ -89,3 +89,13 @@ bool LudumPlayer::DoTick(float delta_time)
 
 
 }
+
+
+bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload)
+{
+	if (!chaos::Player::InitializeGameValues(config, config_path, hot_reload))
+		return false;
+	if (life_count != 5)
+		cheater_farid = true;
+	return true;
+}

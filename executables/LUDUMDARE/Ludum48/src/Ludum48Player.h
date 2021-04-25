@@ -32,6 +32,8 @@ protected:
 
     virtual bool DoTick(float delta_time) override;
 
+    virtual bool InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload) override;
+
 public:
 
     float death_timer = -1.0f;
@@ -41,5 +43,7 @@ public:
     float suicidal_timer = 0.0f;
 
     float max_suicidal_timer = 3.0f;
+
+    bool cheater_farid = false;
 };
 

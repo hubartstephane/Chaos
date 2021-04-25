@@ -43,7 +43,6 @@ namespace chaos
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
 		friend class GameHUD;
-		friend class GameHUDTimedComponent;
 
 	public:
 
@@ -359,6 +358,10 @@ namespace chaos
 
 		/** number of digits */
 		int digit_count = 2;
+		/** the normal color */
+		glm::vec4 normal_color = { 1.0f, 1.0f, 1.0f, 1.0f };
+		/** the color for the last 10 seconds */
+		glm::vec4 final_color = { 1.0f, 0.0f, 0.0f, 1.0f };
 	};
 
 

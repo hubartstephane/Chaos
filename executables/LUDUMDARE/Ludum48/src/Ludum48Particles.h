@@ -27,7 +27,9 @@ enum class GameObjectType
 	Diamond = 2,
 	Wall = 3,
 	Foam = 4,
-	Player = 5
+	Player = 5,
+	Blob = 6,
+	Monster = 7,
 };
 
 
@@ -47,6 +49,11 @@ public:
 	glm::vec2 direction = { 0.0f, 0.0f };
 	/** the displacement speed along the direction */
 	float speed = 1.0f;
+
+
+	/** direction orientation of the monster */
+	int monster_direction_index = 0;
+
 
 
 	bool destroy_particle = false;

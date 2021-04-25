@@ -110,9 +110,15 @@ protected:
 
 protected:
 
-	bool HandlePlayerObject(float delta_time);
+	void HandlePlayerObject(float delta_time);
 
-	bool HandleFallingObjects(float delta_time);
+	void HandleFallingObjects(float delta_time);
+
+	void HandleMonsterObjects(bool delta_time);
+
+	void HandleBlobObjects(bool delta_time);
+
+	void HandleDisplacements(float delta_time);
 
 	void CollectObjects();
 
@@ -133,6 +139,9 @@ protected:
 	int diamond_count = 0;
 	int required_diamond_count = 0;
 
-	float object_speed = 0.5f;
+	float object_speed = 3.0f;
+	float player_speed = 3.0f;
+	float push_speed   = 1.0f;
+	float speed_factor = 1.0f;
 
 };

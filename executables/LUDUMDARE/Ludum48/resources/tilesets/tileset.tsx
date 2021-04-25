@@ -16,6 +16,9 @@
   <image width="32" height="32" source="../sprites/player.png"/>
  </tile>
  <tile id="7" type="Fire">
+  <properties>
+   <property name="ObjectType" type="int" value="7"/>
+  </properties>
   <image width="32" height="32" source="../sprites/fire.png"/>
  </tile>
  <tile id="14" type="BurningFire">

@@ -8,7 +8,7 @@
 #include "Ludum48GameInstance.h"
 #include "Ludum48PlayerDisplacementComponent.h"
 
-#define DEBUG_DRAW 0 //_DEBUG
+#define DEBUG_DRAW _DEBUG
 
 // =============================================================
 // GridInfo implementation
@@ -801,6 +801,8 @@ void LudumLevelInstance::CreateDiamonds()
 					{
 						p.bounding_box = grid_info.GetBoundingBox(cell);
 						p.type = GameObjectType::Diamond;
+						p.flags |= chaos::ParticleFlags::HEIGHT_BITS_MODE;
+
 					}
 				});
 				cell.create_diamond = false;

@@ -185,6 +185,10 @@ Dans GameHUD la notion de text/format n'est pas tres claire'
 		creer un iterator sur glm:vec2 ?
 
 
+		------------------------------------------------------
+
+		une vraie rotation de sprite en mode HEIGHT_BPP (avec les texels qui restent alignés avec l ecran)
+
 
 
 

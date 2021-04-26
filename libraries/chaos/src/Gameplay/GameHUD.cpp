@@ -280,7 +280,13 @@ namespace chaos
 		// call super method
 		if (!GameHUD::FillHUDContent())
 			return false;
-		RegisterComponent(GameHUDKeys::SCORE_ID, new GameHUDScoreComponent());
+		
+		
+		
+		// shu48 RegisterComponent(GameHUDKeys::SCORE_ID, new GameHUDScoreComponent());
+
+
+
 		return true;
 	}
 	

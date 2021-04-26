@@ -5,7 +5,7 @@
  </editorsettings>
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
-  <property name="FRAME_DURATION" type="float" value="0.15"/>
+  <property name="FRAME_DURATION" type="float" value="0.2"/>
   <property name="LEVEL_TIMEOUT" type="float" value="50"/>
   <property name="LEVEL_TITLE" value="Diamonds are forever"/>
   <property name="MAIN_CAMERA" type="object" value="2114"/>

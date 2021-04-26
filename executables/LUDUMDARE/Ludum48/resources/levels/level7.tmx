@@ -9,7 +9,7 @@
   <property name="LEVEL_TIMEOUT" type="float" value="50"/>
   <property name="LEVEL_TITLE" value="A NICE new friend"/>
   <property name="MAIN_CAMERA" type="object" value="2114"/>
-  <property name="MUSIC" value="game_music1"/>
+  <property name="MUSIC" value="game_music3"/>
   <property name="PLAYER_START" type="object" value="0"/>
   <property name="REQUIRED_DIAMOND" type="int" value="6"/>
  </properties>

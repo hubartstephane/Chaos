@@ -16,22 +16,13 @@
 
 bool GridCellInfo::CanLock(GameObjectParticle* p) const
 {
-	return !locked && particle == nullptr;
+	return locked_by == nullptr && particle == nullptr;
 }
 
 void GridCellInfo::Lock(GameObjectParticle* p)
 {
 	assert(p != nullptr);
-#if DEBUG_DRAW
-	locked_by_box = p->bounding_box;
-#endif
-	locked = true;
-}
-
-void GridCellInfo::UnLock(GameObjectParticle* p)
-{
-	assert(p != nullptr);
-	locked = false;
+	locked_by = p;
 }
 
 // =============================================================
@@ -159,15 +150,11 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	if (frame_timer == 0.0f)
 	{
 		CollectObjects();
-
-
-
-
-
-
+		NegociateDisplacements();
 	}
 
 	// normal frames
+	DisplaceObjects(delta_time);
 
 
 
@@ -176,7 +163,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	frame_timer += delta_time;
 	if (frame_timer >= frame_duration)
 	{
-
+		FinalizeDisplacements();
 
 
 
@@ -215,6 +202,204 @@ bool LudumLevelInstance::DoTick(float delta_time)
 		completion_timer = std::max(0.0f, completion_timer - delta_time);
 	return true;
 }
+
+float LudumLevelInstance::GetObjectSpeed() const
+{
+	return 1.0f/ ((frame_duration <= 0.0f)? 0.5f : frame_duration);
+}
+
+
+void LudumLevelInstance::NegociateDisplacements()
+{
+	for (GameObjectType type : {GameObjectType::Monster, GameObjectType::Diamond, GameObjectType::Rock, GameObjectType::Player}) // order of priorities
+	{
+		for (size_t y = 0; y < grid_info.size.y; ++y)
+		{
+			for (size_t x = 0; x < grid_info.size.x; ++x)
+			{
+				glm::ivec2 p = { x, y };
+
+				GridCellInfo& cell = grid_info(p);
+				if (cell.particle != nullptr && cell.particle->type == type)
+				{
+					// Monster
+					if (type == GameObjectType::Monster)
+					{
+						NegociateMonsterDisplacement(p, cell);
+					}
+					// Diamond/Rock
+					else if (type == GameObjectType::Diamond || type == GameObjectType::Rock)
+					{
+						NegociateFallerDisplacement(p, cell);
+
+
+					}
+					// Player
+					else if (type == GameObjectType::Player)
+					{
+						NegociatePlayerDisplacement(p, cell);
+					}
+					//
+				}
+			}
+		}
+	}
+}
+
+void LudumLevelInstance::NegociateMonsterDisplacement(glm::ivec2 const& p, GridCellInfo& cell)
+{
+
+}
+
+void LudumLevelInstance::NegociateFallerDisplacement(glm::ivec2 const& p, GridCellInfo& cell)
+{
+	glm::ivec2 below_p = p - glm::ivec2(0, 1);
+	if (!grid_info.IsInside(below_p))
+		return;
+
+	GridCellInfo& below = grid_info(below_p);
+	if (below.CanLock(cell.particle))
+	{
+		below.Lock(cell.particle);
+		cell.particle->direction = { 0.0f, -1.0f };
+		cell.particle->speed = GetObjectSpeed();
+	}
+	else
+	{
+		//if (below)
+
+
+	}
+
+
+
+
+#if 0
+	GridCellInfo& below = grid_info.cells[index - grid_info.size.x];
+
+	if (step == 0)
+	{
+		if (below.CanLock(particle))
+		{
+			below.Lock(particle);
+			particle->direction = { 0.0f, -1.0f };
+			particle->speed = object_speed;
+		}
+		else
+		{
+#if DEBUG_DRAW
+			if (below.particle != nullptr)
+			{
+				glm::vec4 RED = { 1.0f, 0.0f, 0.0f, 1.0f };
+
+				DrawBox(*DI, below.particle->bounding_box, RED, false);
+				DrawLine(*DI, particle->bounding_box.position, below.particle->bounding_box.position, RED);
+			}
+#endif
+		}
+	}
+	else if (step == 1)
+	{
+		if (below.particle == nullptr)
+			continue;
+		if (below.particle->type != GameObjectType::Wall && below.particle->type != GameObjectType::Rock && below.particle->type != GameObjectType::Diamond) // do not try going left or right above the player
+			continue;
+		if (below.particle->direction.x != 0.0f || below.particle->direction.y != 0.0f)
+			continue;
+
+		int random = rand();
+		for (int i : { 0, 1 })
+		{
+			if (((i + random) & 1) == 0) // check one branch before the other in a random order
+			{
+				if (x > 0) // fall to the left
+				{
+					GridCellInfo& left = grid_info.cells[index - 1];
+					GridCellInfo& left_below = grid_info.cells[index - 1 - grid_info.size.x];
+
+					if (left.CanLock(particle) && left_below.CanLock(particle))
+					{
+						left.Lock(particle);
+						particle->direction = { -1.0f, 0.0f };
+						particle->speed = object_speed;
+						break;
+					}
+				}
+			}
+			else
+			{
+				if (x < grid_info.size.x - 1) // fall to the right
+				{
+					GridCellInfo& right = grid_info.cells[index + 1];
+					GridCellInfo& right_below = grid_info.cells[index + 1 - grid_info.size.x];
+
+					if (right.CanLock(particle) && right_below.CanLock(particle))
+					{
+						right.Lock(particle);
+						particle->direction = { +1.0f, 0.0f };
+						particle->speed = object_speed;
+						break;
+
+					}
+				}
+			}
+
+#endif
+
+
+}
+
+void LudumLevelInstance::NegociatePlayerDisplacement(glm::ivec2 const& p, GridCellInfo& cell)
+{
+}
+
+
+
+void LudumLevelInstance::DisplaceObjects(float delta_time)
+{
+	for (int y = 0; y < grid_info.size.y; ++y)
+	{
+		for (int x = 0; x < grid_info.size.x; ++x)
+		{
+			glm::ivec2 p = { x, y };
+
+			GridCellInfo& cell = grid_info(p);
+			if (cell.particle == nullptr)
+				continue;
+
+			for (int axis : {0, 1})
+				if (cell.particle->direction[axis] != 0.0f)
+					cell.particle->offset[axis] = std::clamp(cell.particle->offset[axis] + cell.particle->speed * delta_time * cell.particle->direction[axis], -1.0f, 1.0f);
+		}
+	}
+}
+
+
+
+
+
+
+
+void LudumLevelInstance::FinalizeDisplacements()
+{
+	for (int y = 0; y < grid_info.size.y; ++y)
+	{
+		for (int x = 0; x < grid_info.size.x; ++x)
+		{
+			glm::ivec2 p = { x, y };
+
+			GridCellInfo& cell = grid_info(p);
+			if (cell.particle == nullptr)
+				continue;
+
+			cell.particle->bounding_box.position += cell.particle->direction * RecastVector<glm::vec2>(grid_info.tile_size);
+			cell.particle->offset = { 0.0f, 0.0f };
+			cell.particle->direction = { 0.0f, 0.0f };
+		}
+	}
+}
+
+
 
 
 void LudumLevelInstance::HandleFallingObjects(float delta_time)
@@ -688,7 +873,6 @@ bool LudumLevelInstance::InitializeLevelInstance(TMObjectReferenceSolver& refere
 	if (!TMLevelInstance::InitializeLevelInstance(reference_solver, property_owner))
 		return false;
 	required_diamond_count = property_owner->GetPropertyValueInt("REQUIRED_DIAMOND", 10);
-	object_speed = property_owner->GetPropertyValueFloat("OBJECT_SPEED", object_speed);
 	frame_duration = property_owner->GetPropertyValueFloat("FRAME_DURATION", frame_duration);
 	return true;
 }
@@ -751,7 +935,6 @@ void LudumLevelInstance::CollectObjects()
 	// XXX : Initialization map must be closed!!!
 	if (grid_info.cells == nullptr)
 	{
-		
 		grid_info.min_position = { std::numeric_limits<float>::max(), std::numeric_limits<float>::max() };
 		grid_info.max_position = { std::numeric_limits<float>::min(), std::numeric_limits<float>::min() };
 
@@ -773,14 +956,13 @@ void LudumLevelInstance::CollectObjects()
 		grid_info.size.y = 1 + int((grid_info.max_position.y - grid_info.min_position.y) / float(grid_info.tile_size.y));
 
 		grid_info.cells = new GridCellInfo[size_t(grid_info.size.x * grid_info.size.y)];
-
-		
 	}
 
-	// fill the grid
+	// empty the grid
 	for (int i = 0; i < grid_info.size.x * grid_info.size.y; ++i)
-		grid_info.cells[i].particle = nullptr;
-
+		grid_info.cells[i] = { nullptr, nullptr };
+	
+	// fill the grid
 	TMTileCollisionIterator it = GetTileCollisionIterator(GetBoundingBox(), COLLISION_GAMEOBJECT, false);
 	while (it)
 	{
@@ -864,3 +1046,41 @@ void LudumLevelInstance::TakeDiamond()
 
 	}
 }
+
+
+
+
+// ===========================================================================
+// Standalone function
+// ===========================================================================
+
+#if 0
+
+bool UpdateParticlePositionInGrid(GameObjectParticle* particle, float delta_time, class GridInfo& grid_info)
+{
+	bool result = (particle->direction.y < 0.0f);
+	for (int axis : {0, 1})
+	{
+		if (particle->direction[axis] != 0.0f)
+		{
+			particle->offset[axis] = std::clamp(particle->offset[axis] + particle->speed * delta_time * particle->direction[axis], -1.0f, 1.0f);
+			if (particle->offset[axis] == -1.0f || particle->offset[axis] == 1.0f)
+			{
+				if (grid_info(particle->bounding_box.position).particle == particle)
+					grid_info(particle->bounding_box.position).particle = nullptr;
+				particle->bounding_box.position += particle->direction * RecastVector<glm::vec2>(grid_info.tile_size);
+				grid_info(particle->bounding_box.position).particle = particle;
+				grid_info(particle->bounding_box.position).UnLock(particle);
+
+				particle->offset = { 0.0f, 0.0f };
+				particle->direction = { 0.0f, 0.0f };
+
+				return result; // object was falling and is now stopped
+			}
+		}
+	}
+	return false; // movement not finished yet
+}
+
+#endif
+

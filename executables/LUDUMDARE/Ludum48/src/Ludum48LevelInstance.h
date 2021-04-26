@@ -8,22 +8,12 @@ class GridCellInfo
 public:
 
 	bool CanLock(GameObjectParticle* p) const;
-
 	void Lock(GameObjectParticle* p);
-	void UnLock(GameObjectParticle* p);
 
-
-
-
-	GameObjectParticle* particle = nullptr;
-
-	bool locked = false;
+	GameObjectParticle* particle  = nullptr;
+	GameObjectParticle* locked_by = nullptr;
 
 	bool create_diamond = false;
-
-#if _DEBUG
-	box2 locked_by_box;
-#endif
 };
 
 class GridInfo
@@ -115,6 +105,23 @@ protected:
 
 protected:
 
+	float GetObjectSpeed() const;
+
+	void CollectObjects();
+
+	void NegociateDisplacements();
+
+	void NegociateMonsterDisplacement(glm::ivec2 const& p, GridCellInfo& cell);
+	void NegociateFallerDisplacement(glm::ivec2 const& p, GridCellInfo& cell);
+	void NegociatePlayerDisplacement(glm::ivec2 const& p, GridCellInfo& cell);
+
+	void DisplaceObjects(float delta_time);
+
+
+
+	void FinalizeDisplacements();
+
+
 	void HandlePlayerObject(float delta_time);
 
 	void HandleFallingObjects(float delta_time);
@@ -125,7 +132,7 @@ protected:
 
 	void HandleDisplacements(float delta_time);
 
-	void CollectObjects();
+	
 
 	void KillPlayer(GameObjectParticle* player);
 
@@ -151,7 +158,6 @@ protected:
 
 	float frame_duration = 0.5f;
 	float frame_timer = 0.0f;
-	float object_speed = 3.0f;
 
 	bool door_opened = false;
 	bool level_complete = false;

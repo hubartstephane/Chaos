@@ -179,6 +179,14 @@ Dans GameHUD la notion de text/format n'est pas tres claire'
 		BitmapInfo a coller dans une particle ou GID
 
 
+		------------------------------------------------------
+
+
+		creer un iterator sur glm:vec2 ?
+
+
+
+
 
 
 

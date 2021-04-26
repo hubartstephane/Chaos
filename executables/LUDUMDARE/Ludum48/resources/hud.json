@@ -71,10 +71,9 @@
   "LEVEL_TITLE_ID": {
 
     "generator_params": {
-      "hotpoint": "center",
-      "alignment": "center",
-      "line_height": 100,
-      "position": [ 0.0, 0.0 ]
+      "hotpoint": "top",
+      "line_height": 60,
+      "position": [ 0.0, -120.0 ]
     }
   },
 

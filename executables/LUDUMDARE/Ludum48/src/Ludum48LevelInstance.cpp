@@ -788,7 +788,13 @@ void LudumLevelInstance::DestroyNeighboorsAndCreateDiamonds(glm::ivec2 const & p
 							particle.bounding_box.position = b.position + offset;
 							particle.bounding_box.half_size = b.half_size * size_ratio;
 							particle.velocity = 7.0f * offset;
-							particle.lifetime = MathTools::RandFloat(0.5f, 1.0f);
+							particle.lifetime = MathTools::RandFloat(0.5f, 1.5f);
+
+							float color_ratio = MathTools::RandFloat(0.7f, 1.0f);
+
+							particle.color.x *= color_ratio;
+							particle.color.y *= color_ratio;
+							particle.color.z *= color_ratio;
 
 						}
 					});

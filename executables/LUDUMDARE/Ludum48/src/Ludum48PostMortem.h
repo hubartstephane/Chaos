@@ -189,7 +189,18 @@ Dans GameHUD la notion de text/format n'est pas tres claire'
 
 		une vraie rotation de sprite en mode HEIGHT_BPP (avec les texels qui restent alignés avec l ecran)
 
+		------------------------------------------------------
 
+		HEIGHT BIT TEXT
+
+		------------------------------------------------------
+
+		il manque des balides [DPAD] ... pour le text formaté
+
+
+		------------------------------------------------------
+
+		faire que l on puisse desactiver certains elements du HUD par fichier de config (cf scrore)
 
 
 

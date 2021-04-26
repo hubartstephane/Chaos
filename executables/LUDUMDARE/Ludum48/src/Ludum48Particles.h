@@ -139,20 +139,20 @@ public:
 class ParticleAnimated : public GameObjectParticle
 {
 
-
-
 public:
+
 	int frame_index = 0;
 	float animation_timer = 0.0f;
 };
 
-bool UpdateParticle(float delta_time, ParticleAnimated& particle);
 
 class ParticleAnimatedLayerTrait : public ParticleLayerTrait<ParticleAnimated, VertexBase>
 {
 public:
 
+	bool UpdateParticle(float delta_time, ParticleAnimated& particle) const;
 
+	void ParticleToPrimitives(ParticleAnimated const& particle, PrimitiveOutput<VertexBase>& output) const;
 
 };
 

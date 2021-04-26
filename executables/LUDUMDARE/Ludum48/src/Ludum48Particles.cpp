@@ -97,14 +97,6 @@ bool ParticleGateLayerTrait::UpdateParticle(float delta_time, GateParticle& part
 
 void ParticleGameObjectLayerTrait::ParticleToPrimitives(GameObjectParticle const& particle, PrimitiveOutput<VertexBase>& output) const
 {
-	if (particle.type == GameObjectType::Diamond)
-	{
-
-
-
-
-	}
-
 	GameObjectParticle copy = particle;
 	copy.bounding_box.position += particle.offset * tile_size;
 	::ParticleToPrimitives(copy, output);
@@ -146,12 +138,16 @@ static bool UpdateAnimatedParticleTexcoords(ParticleAnimated & particle) // retu
 	return true;
 }
 
+
+
+
+
 // ===========================================================================
 // ParticleAnimatedLayerTrait
 // ===========================================================================
 
 
-bool UpdateParticle(float delta_time, ParticleAnimated & particle)
+bool ParticleAnimatedLayerTrait::UpdateParticle(float delta_time, ParticleAnimated & particle) const
 {
 	particle.animation_timer += delta_time;
 
@@ -160,6 +156,13 @@ bool UpdateParticle(float delta_time, ParticleAnimated & particle)
 		return true;
 
 	return false;
+}
+
+void ParticleAnimatedLayerTrait::ParticleToPrimitives(ParticleAnimated const& particle, PrimitiveOutput<VertexBase>& output) const
+{
+	ParticleAnimated copy = particle;
+	copy.bounding_box.position += particle.offset * glm::vec2(32.0f, 32.0f); // HACK
+	::ParticleToPrimitives(copy, output);
 }
 
 // ===========================================================================

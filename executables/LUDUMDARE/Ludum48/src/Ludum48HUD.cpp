@@ -26,6 +26,7 @@ bool LudumPlayingHUD::FillHUDContent()
 	RegisterComponent(GameHUDKeys::LEVEL_TIMEOUT_ID, new GameHUDTimeoutComponent());
 	RegisterComponent(GameHUDKeys::DIAMOND_ID, new LudumHUDDiamondComponent());
 	RegisterComponent(GameHUDKeys::LIFE_ID, new LudumHUDLifeComponent());
+	RegisterComponent(GameHUDKeys::LEVEL_TITLE_ID, new GameHUDLevelTitleComponent());
 	return true;
 }
 

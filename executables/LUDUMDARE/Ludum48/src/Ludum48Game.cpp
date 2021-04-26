@@ -12,7 +12,7 @@ LudumGame::LudumGame()
 {		
 	// 	Don't let the Flames of Hell die
 
-	game_name = "Burnaouf Paradash\n";
+	game_name = "Bouldaouf Dash\n";
 	game_instructions = R"INSTRUCTIONS(
 Move:                 Dpad or Arrows
 Move camera:         Right Stick

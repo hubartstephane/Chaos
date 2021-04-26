@@ -751,12 +751,15 @@ void LudumLevelInstance::KillPlayer(GameObjectParticle* player)
 	glm::ivec2 player_p = grid_info.GetIndexForPosition(player->bounding_box.position);
 	DestroyNeighboorsAndCreateDiamonds(player_p, false);
 
+	GetGame()->PlaySound("explosion", false, false, 0.0f, chaos::SoundContext::GAME);
 }
 
 void LudumLevelInstance::KillMonster(GameObjectParticle* monster, bool create_diamond)
 {
 	glm::ivec2 monster_p = grid_info.GetIndexForPosition(monster->bounding_box.position);
 	DestroyNeighboorsAndCreateDiamonds(monster_p, create_diamond);
+
+	GetGame()->PlaySound("explosion", false, false, 0.0f, chaos::SoundContext::GAME);
 }
 
 void LudumLevelInstance::DestroyNeighboorsAndCreateDiamonds(glm::ivec2 const & p, bool create_diamond)

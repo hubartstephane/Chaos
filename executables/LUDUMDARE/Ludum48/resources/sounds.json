@@ -38,7 +38,9 @@
 
     { "path": "sounds/stone_scrub.ogg" , "categories" :  "FX"},
 
-    { "path": "sounds/stone_falling.ogg" , "categories" :  "FX"},
+    { "path": "sounds/stone_falling.ogg" , "categories" :  "FX2"},
+
+    { "path": "sounds/explosion.ogg" , "categories" :  "FX2"},
 
     { "path": "sounds/door.ogg" , "categories" :  "FX2"},
   

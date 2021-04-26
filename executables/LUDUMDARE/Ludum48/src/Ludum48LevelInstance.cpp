@@ -298,19 +298,13 @@ void LudumLevelInstance::NegociateFallerDisplacement(glm::ivec2 const& p, GridCe
 				{
 					// check left or right position in a random order
 					int random = rand();
-					for (int i : { 0, 1 })
-					{
-						if (((i + random) & 1) == 0)
-						{
-							if (TrySlipFaller(p, cell, -1))
-								break;
-						}
-						else
-						{
-							if (TrySlipFaller(p, cell, +1))
-								break;
-						}
-					}
+
+					constexpr int directions[] = { -1, +1 };
+					int index1 = random & 1;
+					int index2 = index1 ^ 1;
+
+					if (!TrySlipFaller(p, cell, directions[index1]))
+						TrySlipFaller(p, cell, directions[index2]);
 				}
 			}
 		}

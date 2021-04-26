@@ -46,10 +46,10 @@
   <image width="32" height="32" source="../sprites/stone.png"/>
  </tile>
  <tile id="35">
-  <image width="96" height="96" source="../sprites/Gate.png"/>
+  <image width="64" height="64" source="../sprites/Gate.png"/>
  </tile>
  <tile id="36">
-  <image width="96" height="96" source="../sprites/OpenGate.png"/>
+  <image width="64" height="64" source="../sprites/OpenGate.png"/>
  </tile>
  <tile id="37">
   <properties>

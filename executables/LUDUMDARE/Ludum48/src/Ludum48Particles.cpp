@@ -18,7 +18,7 @@
 // ===========================================================================
 
 
-void ParticleGateLayerTrait::ParticleToPrimitives(GateParticle const& particle, chaos::PrimitiveOutput<VertexBase>& output) const
+void ParticleGateLayerTrait::ParticleToPrimitives(GateParticle const& particle, PrimitiveOutput<VertexBase>& output) const
 {
 	bool door_opened = false;
 
@@ -29,13 +29,13 @@ void ParticleGateLayerTrait::ParticleToPrimitives(GateParticle const& particle, 
 	if (li != nullptr)
 		door_opened = li->door_opened;
 
-	chaos::WindowApplication const * application = chaos::Application::GetConstInstance();
+	WindowApplication const * application = Application::GetConstInstance();
 	if (application != nullptr)
 	{
-		chaos::BitmapAtlas::TextureArrayAtlas const * atlas = application->GetTextureAtlas();
+		BitmapAtlas::TextureArrayAtlas const * atlas = application->GetTextureAtlas();
 		if (atlas != nullptr)
 		{
-			chaos::BitmapAtlas::BitmapInfo const* bi = (door_opened) ?
+			BitmapAtlas::BitmapInfo const* bi = (door_opened) ?
 				atlas->GetBitmapInfo("OpenGate", true) :
 				atlas->GetBitmapInfo("Gate", true);
 
@@ -44,7 +44,7 @@ void ParticleGateLayerTrait::ParticleToPrimitives(GateParticle const& particle, 
 		}
 	}
 
-	return chaos::ParticleToPrimitives(other, output);
+	return ParticleToPrimitives(other, output);
 }
 
 bool ParticleGateLayerTrait::UpdateParticle(float delta_time, GateParticle& particle) const
@@ -62,7 +62,7 @@ bool ParticleGateLayerTrait::UpdateParticle(float delta_time, GateParticle& part
 // ParticleGameObjectLayerTrait
 // ===========================================================================
 
-void ParticleGameObjectLayerTrait::ParticleToPrimitives(GameObjectParticle const& particle, chaos::PrimitiveOutput<VertexBase>& output) const
+void ParticleGameObjectLayerTrait::ParticleToPrimitives(GameObjectParticle const& particle, PrimitiveOutput<VertexBase>& output) const
 {
 	if (particle.type == GameObjectType::Diamond)
 	{
@@ -72,13 +72,9 @@ void ParticleGameObjectLayerTrait::ParticleToPrimitives(GameObjectParticle const
 
 	}
 
-
-
-	LudumGameInstance const* ludum_game_instance = game->GetGameInstance();
-
-	chaos::ParticleDefault copy = particle;
+	GameObjectParticle copy = particle;
 	copy.bounding_box.position += particle.offset * tile_size;
-	chaos::ParticleToPrimitives(copy, output);
+	::ParticleToPrimitives(copy, output);
 }
 
 bool ParticleGameObjectLayerTrait::UpdateParticle(float delta_time, GameObjectParticle& particle) const
@@ -90,20 +86,10 @@ bool ParticleGameObjectLayerTrait::UpdateParticle(float delta_time, GameObjectPa
 			float constexpr ROTATION_SPEED = 10.0f;
 
 			float speed_factor = 1.0f;
-			LudumLevelInstance const* li = game->GetLevelInstance();
-			if (li != nullptr)
-				speed_factor = li->speed_factor;
 			particle.rotation -= ROTATION_SPEED * delta_time * particle.direction.x * speed_factor;
 		}
 	}
 
-
-
-
-
-
-	if (particle.destroy_particle && particle.locked_cell != nullptr)
-		particle.locked_cell->UnLock(&particle);
 	return particle.destroy_particle;
 }
 
@@ -119,7 +105,7 @@ static bool UpdateAnimatedParticleTexcoords(ParticleAnimated & particle) // retu
 {
 	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasAnimation())
 	{
-		chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayoutFromTime(particle.animation_timer);
+		BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayoutFromTime(particle.animation_timer);
 		if (!layout.IsValid())
 			return false;
 		particle.texcoords = layout.GetTexcoords();
@@ -147,17 +133,11 @@ bool UpdateParticle(float delta_time, ParticleAnimated & particle)
 // ParticlePlayerLayerTrait
 // ===========================================================================
 
-void ParticlePlayerLayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, chaos::PrimitiveOutput<VertexBase>& output) const
+void ParticlePlayerLayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, PrimitiveOutput<VertexBase>& output) const
 {
-
-
-
-
-	LudumGameInstance const* ludum_game_instance = game->GetGameInstance();
-
-	chaos::ParticleDefault copy = particle;
+	ParticlePlayer copy = particle;
 	copy.bounding_box.position += particle.offset * tile_size;
-	chaos::ParticleToPrimitives(copy, output);
+	::ParticleToPrimitives(copy, output);
 }
 
 
@@ -165,7 +145,7 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 {
 	static constexpr float SPEED_FACTOR = 2.0f;
 
-	int reversed_flag = (particle.flags & chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP);
+	int reversed_flag = (particle.flags & ParticleFlags::TEXTURE_HORIZONTAL_FLIP);
 
 	float & idle_timer = particle.idle_timer;
 
@@ -178,13 +158,13 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 
 		if (particle.direction.y != 0.0f)
 		{
-			particle.flags &= ~chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
+			particle.flags &= ~ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
 			particle.flags |= reversed_flag;
 		}
 		else if (particle.direction.x > 0.0f)
-			particle.flags &= ~chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
+			particle.flags &= ~ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
 		else
-			particle.flags |= chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
+			particle.flags |= ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
 
 	}
 	else 
@@ -197,16 +177,12 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 
 	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasAnimation())
 	{
-		chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayout(particle.frame_index);
+		BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayout(particle.frame_index);
 		if (!layout.IsValid())
 			return true; // destroy the particle
 
 		particle.texcoords = layout.GetTexcoords();
 	}
-
-
-	if (particle.destroy_particle && particle.locked_cell != nullptr)
-		particle.locked_cell->UnLock(&particle);
 	return particle.destroy_particle;
 }
 
@@ -227,7 +203,7 @@ bool UpdateParticlePositionInGrid(GameObjectParticle* particle, float delta_time
 			{
 				if (grid_info(particle->bounding_box.position).particle == particle)
 					grid_info(particle->bounding_box.position).particle = nullptr;
-				particle->bounding_box.position += particle->direction * chaos::RecastVector<glm::vec2>(grid_info.tile_size);
+				particle->bounding_box.position += particle->direction * RecastVector<glm::vec2>(grid_info.tile_size);
 				grid_info(particle->bounding_box.position).particle = particle;
 				grid_info(particle->bounding_box.position).UnLock(particle);
 

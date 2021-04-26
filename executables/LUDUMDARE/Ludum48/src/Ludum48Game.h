@@ -1,6 +1,6 @@
 #pragma once
 
-#include <chaos/Chaos.h>
+#include "Ludum48.h"
 
 #include "Ludum48Particles.h"
 #include "Ludum48Level.h"
@@ -9,7 +9,7 @@
 // LudumGame
 // =================================================
 
-class LudumGame : public chaos::Game
+class LudumGame : public Game
 {	
 	friend class ParticlePlayerLayerTrait;
 
@@ -30,7 +30,7 @@ public:
 
 	CHAOS_DECLARE_GAMEPLAY_FRIENDSHIPS(Ludum);
 
-	CHAOS_DECLARE_OBJECT_CLASS2(LudumGame, chaos::Game);
+	CHAOS_DECLARE_OBJECT_CLASS2(LudumGame, Game);
 
 	/** constructor */
 	LudumGame();
@@ -43,20 +43,20 @@ protected:
 
 
 	/** override */
-	virtual bool OnEnterGame(chaos::PhysicalGamepad * in_physical_gamepad) override;
+	virtual bool OnEnterGame(PhysicalGamepad * in_physical_gamepad) override;
 
 	/** initialize the game variables */
 	virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload) override;
 
 	/** override level creation */
-	chaos::TMLevel * CreateTMLevel() override;
+	TMLevel * CreateTMLevel() override;
 
 	/** move the player */
-	virtual chaos::GameHUD * DoCreatePlayingHUD() override;
+	virtual GameHUD * DoCreatePlayingHUD() override;
 
-	virtual void DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params) override;
+	virtual void DoDisplayGame(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) override;
 
-	void SetFadeEffect(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params, bool fade_to_black, float t);
+	void SetFadeEffect(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params, bool fade_to_black, float t);
 
 protected:
 

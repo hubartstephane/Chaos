@@ -9,20 +9,20 @@
 #include "Ludum48Camera.h"
 
 LudumAutoRecenterToPlayerCameraComponent::LudumAutoRecenterToPlayerCameraComponent(size_t in_player_index):
-	chaos::AutoRecenterToPlayerCameraComponent(in_player_index)
+	AutoRecenterToPlayerCameraComponent(in_player_index)
 {
 	in_player_index = in_player_index;
 }
 
-chaos::box2 LudumAutoRecenterToPlayerCameraComponent::GetTargetBox() const
+box2 LudumAutoRecenterToPlayerCameraComponent::GetTargetBox() const
 {
-	chaos::PlayerPawn const * player_pawn = GetPlayerPawn(player_index);
+	PlayerPawn const * player_pawn = GetPlayerPawn(player_index);
 	if (player_pawn != nullptr)
 	{
 		GameObjectParticle const * particle = player_pawn->GetParticle<GameObjectParticle>(0);
 		if (particle != nullptr)
 		{
-			chaos::box2 result = particle->bounding_box;
+			box2 result = particle->bounding_box;
 			result.position += particle->offset * glm::vec2(32.0f, 32.0f); // HACK shu48
 
 
@@ -34,5 +34,5 @@ chaos::box2 LudumAutoRecenterToPlayerCameraComponent::GetTargetBox() const
 	}
 	if (!IsGeometryEmpty(previous_frame_box))
 		return previous_frame_box;
-	return chaos::AutoRecenterToPlayerCameraComponent::GetTargetBox();
+	return AutoRecenterToPlayerCameraComponent::GetTargetBox();
 }

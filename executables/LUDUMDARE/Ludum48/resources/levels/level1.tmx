@@ -6,16 +6,14 @@
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
   <property name="CAMERA_SPEED" type="float" value="400"/>
+  <property name="FRAME_DURATION" type="float" value="0.5"/>
   <property name="LEVEL_TIMEOUT" type="float" value="50"/>
   <property name="LEVEL_TITLE">Level 1
 [LEVELTITLE Welcome Home]</property>
   <property name="MAIN_CAMERA" type="object" value="2114"/>
   <property name="MUSIC" value="game_music1"/>
   <property name="OBJECT_SPEED" type="float" value="4"/>
-  <property name="PLAYER_SPEED" type="float" value="6"/>
   <property name="PLAYER_START" type="object" value="0"/>
-  <property name="PUSH_SPEED" type="float" value="2"/>
-  <property name="SPEED_FACTOR" type="float" value="0.4"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
  <tileset firstgid="38" name="background" tilewidth="800" tileheight="600" tilecount="1" columns="1">

@@ -17,47 +17,47 @@ LudumLevel::LudumLevel()
 	level_instance_class = LudumLevelInstance::GetStaticClass();
 }
 
-chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(chaos::TMLayerInstance * layer_instance)
+ParticleLayerBase * LudumLevel::DoCreateParticleLayer(TMLayerInstance * layer_instance)
 {
 	LudumGame * ludum_game = auto_cast(layer_instance->GetGame());
 
 	std::string const & layer_name = layer_instance->GetTiledLayer()->name;
 
-	if (chaos::StringTools::Stricmp(layer_name, "PlayerAndCamera") == 0)
+	if (StringTools::Stricmp(layer_name, "PlayerAndCamera") == 0)
 	{
 		ParticlePlayerLayerTrait layer_trait;
 		layer_trait.game = ludum_game;
 		layer_trait.tile_size = GetTiledMap()->tile_size;
-		return new chaos::ParticleLayer<ParticlePlayerLayerTrait>(layer_trait);
+		return new ParticleLayer<ParticlePlayerLayerTrait>(layer_trait);
 	}
 
-	if ((chaos::StringTools::Stricmp(layer_name, "BurningFlames") == 0) || (chaos::StringTools::Stricmp(layer_name, "Animated") == 0))
+	if ((StringTools::Stricmp(layer_name, "BurningFlames") == 0) || (StringTools::Stricmp(layer_name, "Animated") == 0))
 	{
-		return new chaos::ParticleLayer<ParticleAnimatedLayerTrait>();
+		return new ParticleLayer<ParticleAnimatedLayerTrait>();
 	}
 
-	if (chaos::StringTools::Stricmp(layer_name, "GameObjects") == 0 || chaos::StringTools::Stricmp(layer_name, "Walls") == 0)
+	if (StringTools::Stricmp(layer_name, "GameObjects") == 0 || StringTools::Stricmp(layer_name, "Walls") == 0)
 	{
 		ParticleGameObjectLayerTrait layer_trait;
 		layer_trait.game = ludum_game;
 		layer_trait.tile_size = GetTiledMap()->tile_size;
-		return new chaos::ParticleLayer<ParticleGameObjectLayerTrait>(layer_trait);
+		return new ParticleLayer<ParticleGameObjectLayerTrait>(layer_trait);
 	}
 
-	if (chaos::StringTools::Stricmp(layer_name, "Gate") == 0)
+	if (StringTools::Stricmp(layer_name, "Gate") == 0)
 	{
 		ParticleGateLayerTrait layer_trait;
 		layer_trait.game = ludum_game;
 		layer_trait.tile_size = GetTiledMap()->tile_size;
-		return new chaos::ParticleLayer<ParticleGateLayerTrait>(layer_trait);
+		return new ParticleLayer<ParticleGateLayerTrait>(layer_trait);
 	}
 
 
-	return chaos::TMLevel::DoCreateParticleLayer(layer_instance);
+	return TMLevel::DoCreateParticleLayer(layer_instance);
 }
 
 
-chaos::TMObjectFactory LudumLevel::DoGetObjectFactory(chaos::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
+TMObjectFactory LudumLevel::DoGetObjectFactory(TMLayerInstance * in_layer_instance, TiledMap::TypedObject const * in_typed_object)
 {
 	if (in_typed_object->IsObjectOfType("Spawner"))
 	{
@@ -68,13 +68,13 @@ chaos::TMObjectFactory LudumLevel::DoGetObjectFactory(chaos::TMLayerInstance * i
 		}
 	}
 
-	return chaos::TMLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
+	return TMLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
 }
 
 
-bool LudumLevel::Initialize(chaos::TiledMap::Map* in_tiled_map)
+bool LudumLevel::Initialize(TiledMap::Map* in_tiled_map)
 {
-	if (!chaos::TMLevel::Initialize(in_tiled_map))
+	if (!TMLevel::Initialize(in_tiled_map))
 		return false;
 
 
@@ -82,18 +82,18 @@ bool LudumLevel::Initialize(chaos::TiledMap::Map* in_tiled_map)
 }
 
 
-bool LudumLevel::FinalizeLayerParticles(chaos::TMLayerInstance* layer_instance, chaos::ParticleAllocationBase* allocation)
+bool LudumLevel::FinalizeLayerParticles(TMLayerInstance* layer_instance, ParticleAllocationBase* allocation)
 {
-	if (!chaos::TMLevel::FinalizeLayerParticles(layer_instance, allocation))
+	if (!TMLevel::FinalizeLayerParticles(layer_instance, allocation))
 		return false;
 
 	if (layer_instance->GetCollisionMask() & COLLISION_GAMEOBJECT)
 	{
-		chaos::ParticleAccessor<GameObjectParticle> accessor = allocation->GetParticleAccessor();
+		ParticleAccessor<GameObjectParticle> accessor = allocation->GetParticleAccessor();
 
 		for (GameObjectParticle& particle : accessor)
 		{
-			chaos::TiledMap::TileInfo tile_info = GetTiledMap()->FindTileInfo(particle.gid);
+			TiledMap::TileInfo tile_info = GetTiledMap()->FindTileInfo(particle.gid);
 			if (tile_info.tiledata != nullptr)
 			{
 				int const* object_type = tile_info.tiledata->FindPropertyInt("ObjectType");

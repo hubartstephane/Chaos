@@ -1,7 +1,6 @@
 #pragma once
 
-#include <chaos/Chaos.h>
-
+#include "Ludum48.h"
 #include "Ludum48Game.h"
 
 class GridCellInfo
@@ -23,7 +22,7 @@ public:
 	bool create_diamond = false;
 
 #if _DEBUG
-	chaos::box2 locked_by_box;
+	box2 locked_by_box;
 #endif
 };
 
@@ -45,7 +44,7 @@ public:
 
 	glm::ivec2 GetIndexForPosition(glm::vec2 const& p) const;
 
-	chaos::box2 GetBoundingBox(GridCellInfo const & cell) const;
+	box2 GetBoundingBox(GridCellInfo const & cell) const;
 
 	glm::ivec2 GetCellCoord(GridCellInfo const& cell) const;
 
@@ -67,13 +66,13 @@ public:
 // LudumLevelInstance
 // =================================================
 
-class LudumLevelInstance : public chaos::TMLevelInstance
+class LudumLevelInstance : public TMLevelInstance
 {
 public:
 
 	CHAOS_DECLARE_GAMEPLAY_FRIENDSHIPS(Ludum);
 
-	CHAOS_DECLARE_OBJECT_CLASS2(LudumLevelInstance, chaos::TMLevelInstance);
+	CHAOS_DECLARE_OBJECT_CLASS2(LudumLevelInstance, TMLevelInstance);
 
 	LudumLevelInstance();
 
@@ -88,17 +87,17 @@ protected:
 	/** override */
 	virtual bool DoTick(float delta_time) override;
 	/** override */
-	virtual bool Initialize(chaos::Game * in_game, chaos::Level * in_level) override;
+	virtual bool Initialize(Game * in_game, Level * in_level) override;
 	/** override */
-	virtual void CreateCameraComponents(chaos::Camera* camera, chaos::TMCameraTemplate* camera_template) override;
+	virtual void CreateCameraComponents(Camera* camera, TMCameraTemplate* camera_template) override;
 	/** override */
-	virtual bool InitializeLevelInstance(chaos::TMObjectReferenceSolver& reference_solver, chaos::TiledMap::PropertyOwner const* property_owner) override;
+	virtual bool InitializeLevelInstance(TMObjectReferenceSolver& reference_solver, TiledMap::PropertyOwner const* property_owner) override;
 
 
-	virtual int DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params) override;
+	virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params) override;
 
 	/** override */
-	virtual bool IsPlayerDead(chaos::Player* player) override;
+	virtual bool IsPlayerDead(Player* player) override;
 
 	virtual bool CheckLevelCompletion() const override;
 
@@ -150,10 +149,9 @@ protected:
 	int diamond_count = 0;
 	int required_diamond_count = 0;
 
+	float frame_duration = 0.5f;
+	float frame_timer = 0.0f;
 	float object_speed = 3.0f;
-	float player_speed = 3.0f;
-	float push_speed   = 1.0f;
-	float speed_factor = 1.0f;
 
 	bool door_opened = false;
 	bool level_complete = false;

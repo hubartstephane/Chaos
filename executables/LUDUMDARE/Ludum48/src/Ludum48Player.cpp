@@ -7,9 +7,9 @@
 #include "Ludum48GameInstance.h"
 #include "Ludum48Particles.h"
 
-bool LudumPlayer::Initialize(chaos::GameInstance * in_game_instance)
+bool LudumPlayer::Initialize(GameInstance * in_game_instance)
 {
-	if (!chaos::Player::Initialize(in_game_instance))
+	if (!Player::Initialize(in_game_instance))
 		return false;
 
 
@@ -19,7 +19,7 @@ bool LudumPlayer::Initialize(chaos::GameInstance * in_game_instance)
 
 void LudumPlayer::OnLifeLost()
 {
-	chaos::Player::OnLifeLost();
+	Player::OnLifeLost();
 
 	death_timer = -1.0f;
 	suicidal_timer = -1.0f;
@@ -30,9 +30,9 @@ void LudumPlayer::OnLifeLost()
 
 }
 
-void LudumPlayer::OnLevelChanged(chaos::Level * new_level, chaos::Level * old_level, chaos::LevelInstance * new_level_instance)
+void LudumPlayer::OnLevelChanged(Level * new_level, Level * old_level, LevelInstance * new_level_instance)
 {
-	chaos::Player::OnLevelChanged(new_level, old_level, new_level_instance);
+	Player::OnLevelChanged(new_level, old_level, new_level_instance);
 
 	death_timer = -1.0f;
 	suicidal_timer = -1.0f;
@@ -42,7 +42,7 @@ void LudumPlayer::OnLevelChanged(chaos::Level * new_level, chaos::Level * old_le
 
 bool LudumPlayer::IsDead() const
 {
-	if (chaos::Player::IsDead())
+	if (Player::IsDead())
 		return true;
 	if (death_timer == 0.0f)
 		return true;
@@ -51,10 +51,10 @@ bool LudumPlayer::IsDead() const
 
 bool LudumPlayer::DoTick(float delta_time)
 {
-	chaos::Player::DoTick(delta_time);
+	Player::DoTick(delta_time);
 
 	// count down
-	if (pawn == nullptr || pawn->GetParticle<chaos::ParticleDefault>(0) == nullptr)
+	if (pawn == nullptr || pawn->GetParticle<ParticleDefault>(0) == nullptr)
 	{
 		if (death_timer < 0.0f)
 			death_timer = max_death_timer;
@@ -64,7 +64,7 @@ bool LudumPlayer::DoTick(float delta_time)
 	// suicidal
 	if (death_timer < 0.0f)
 	{
-		chaos::Key const suicidal_buttons[] = { chaos::KeyboardButton::SPACE, chaos::GamepadButton::Y, chaos::Key() };
+		Key const suicidal_buttons[] = { KeyboardButton::SPACE, GamepadButton::Y, Key() };
 		if (CheckButtonPressed(suicidal_buttons))
 		{
 			suicidal_timer = std::min(std::max(suicidal_timer, 0.0f) + delta_time, max_suicidal_timer); 
@@ -94,7 +94,7 @@ bool LudumPlayer::DoTick(float delta_time)
 
 bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload)
 {
-	if (!chaos::Player::InitializeGameValues(config, config_path, hot_reload))
+	if (!Player::InitializeGameValues(config, config_path, hot_reload))
 		return false;
 	if (life_count != 5)
 		cheater_farid = true;

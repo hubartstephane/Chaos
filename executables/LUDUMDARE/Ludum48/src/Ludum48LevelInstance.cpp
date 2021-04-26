@@ -22,7 +22,6 @@ bool GridCellInfo::CanLock(GameObjectParticle* p) const
 void GridCellInfo::Lock(GameObjectParticle* p)
 {
 	assert(p != nullptr);
-	p->locked_cell = this;
 #if DEBUG_DRAW
 	locked_by_box = p->bounding_box;
 #endif
@@ -33,17 +32,11 @@ void GridCellInfo::UnLock(GameObjectParticle* p)
 {
 	assert(p != nullptr);
 	locked = false;
-	p->locked_cell = nullptr;
 }
-
-
-
-
 
 // =============================================================
 // GridInfo implementation
 // =============================================================
-
 
 bool GridInfo::IsInside(glm::ivec2 const& p) const
 {
@@ -82,7 +75,7 @@ glm::ivec2 GridInfo::GetIndexForPosition(glm::vec2 const& p) const
 {
 	glm::vec2 position = p - min_position;
 
-	return chaos::RecastVector<glm::ivec2>(position / chaos::RecastVector<glm::vec2>(tile_size));
+	return RecastVector<glm::ivec2>(position / RecastVector<glm::vec2>(tile_size));
 }
 
 glm::ivec2 GridInfo::GetCellCoord(GridCellInfo const& cell) const
@@ -91,23 +84,14 @@ glm::ivec2 GridInfo::GetCellCoord(GridCellInfo const& cell) const
 	return { offset % size.x, offset / size.x };
 }
 
-chaos::box2 GridInfo::GetBoundingBox(GridCellInfo const& cell) const
+box2 GridInfo::GetBoundingBox(GridCellInfo const& cell) const
 {
-	chaos::box2 result;
-	result.position = min_position + tile_size * chaos::RecastVector<glm::vec2>(GetCellCoord(cell));
+	box2 result;
+	result.position = min_position + tile_size * RecastVector<glm::vec2>(GetCellCoord(cell));
 
 	result.half_size = tile_size * 0.5f;
 	return result;
 }
-
-
-
-
-
-
-
-
-
 
 // =============================================================
 // LudumLevelInstance implementation
@@ -115,21 +99,21 @@ chaos::box2 GridInfo::GetBoundingBox(GridCellInfo const& cell) const
 
 LudumLevelInstance::LudumLevelInstance()
 {
-	player_displacement_component_class = chaos::Class::FindClass("MyDisplacementComponent");
+	player_displacement_component_class = Class::FindClass("MyDisplacementComponent");
 }
 
-void LudumLevelInstance::CreateCameraComponents(chaos::Camera* camera, chaos::TMCameraTemplate* camera_template)
+void LudumLevelInstance::CreateCameraComponents(Camera* camera, TMCameraTemplate* camera_template)
 {
-	chaos::TMLevelInstance::CreateCameraComponents(camera, camera_template);
+	TMLevelInstance::CreateCameraComponents(camera, camera_template);
 
 	camera->SetSafeZone(glm::vec2(0.8f, 0.8f));
-	camera->AddComponent(new chaos::ShakeCameraComponent(0.15f, 0.05f, 0.15f, true, true));
-	camera->AddComponent(new chaos::SoundListenerCameraComponent());
+	camera->AddComponent(new ShakeCameraComponent(0.15f, 0.05f, 0.15f, true, true));
+	camera->AddComponent(new SoundListenerCameraComponent());
 }
 
-int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params)
+int LudumLevelInstance::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
 {
-	return chaos::TMLevelInstance::DoDisplay(renderer, uniform_provider, render_params);
+	return TMLevelInstance::DoDisplay(renderer, uniform_provider, render_params);
 }
 
 bool LudumLevelInstance::DoTick(float delta_time)
@@ -137,7 +121,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	// timeout
 	if (level_timeout == 0.0f)
 	{
-		chaos::PlayerPawn* pawn = GetPlayerPawn(0);
+		PlayerPawn* pawn = GetPlayerPawn(0);
 		if (pawn != nullptr)
 		{
 			if (GameObjectParticle* particle = pawn->GetParticle<GameObjectParticle>(0))
@@ -151,17 +135,17 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	// check for leaving level
 	if (door_opened && !level_complete)
 	{
-		chaos::PlayerPawn const* player_pawn = GetPlayerPawn(0);
+		PlayerPawn const* player_pawn = GetPlayerPawn(0);
 		if (player_pawn != nullptr)
 		{
 			GameObjectParticle const * player_particle = player_pawn->GetParticle<GameObjectParticle>(0);
 			if (player_particle != nullptr)
 			{
-				chaos::box2 player_box = player_particle->bounding_box;
+				box2 player_box = player_particle->bounding_box;
 				player_box.position += player_particle->offset * glm::vec2(32.0f, 32.0f); // HACK shu48
 				player_box.half_size *= 0.01f;
 
-				chaos::TMTileCollisionIterator it = GetTileCollisionIterator(player_box, COLLISION_GATE, false);
+				TMTileCollisionIterator it = GetTileCollisionIterator(player_box, COLLISION_GATE, false);
 				if (it)
 				{
 					level_complete = true;
@@ -171,13 +155,43 @@ bool LudumLevelInstance::DoTick(float delta_time)
 		}
 	}
 
-	
+	// very first frame
+	if (frame_timer == 0.0f)
+	{
+		CollectObjects();
+
+
+
+
+
+
+	}
+
+	// normal frames
+
+
+
+
+	// last frame
+	frame_timer += delta_time;
+	if (frame_timer >= frame_duration)
+	{
+
+
+
+
+
+
+		frame_timer = 0.0f;
+	}
 
 	
 
+	
 
 
 
+#if 0
 
 	CollectObjects();
 
@@ -191,10 +205,10 @@ bool LudumLevelInstance::DoTick(float delta_time)
 		HandleDisplacements(dt);
 		CreateDiamonds();
 	}
+#endif
 
 
-	chaos::TMLevelInstance::DoTick(delta_time);
-
+	TMLevelInstance::DoTick(delta_time);
 
 	// completed ?
 	if (completion_timer > 0.0f)
@@ -205,7 +219,8 @@ bool LudumLevelInstance::DoTick(float delta_time)
 
 void LudumLevelInstance::HandleFallingObjects(float delta_time)
 {
-	auto DI = chaos::GetDebugDrawInterface();
+#if 0
+	auto DI = GetDebugDrawInterface();
 
 	for (int step : {0, 1})
 	{
@@ -242,8 +257,8 @@ void LudumLevelInstance::HandleFallingObjects(float delta_time)
 							{
 								glm::vec4 RED = { 1.0f, 0.0f, 0.0f, 1.0f };
 
-								chaos::DrawBox(*DI, below.particle->bounding_box, RED, false);
-								chaos::DrawLine(*DI, particle->bounding_box.position, below.particle->bounding_box.position, RED);
+								DrawBox(*DI, below.particle->bounding_box, RED, false);
+								DrawLine(*DI, particle->bounding_box.position, below.particle->bounding_box.position, RED);
 							}
 #endif
 						}
@@ -370,32 +385,48 @@ void LudumLevelInstance::HandleFallingObjects(float delta_time)
 
 			if (cell.locked)
 			{
-				chaos::box2 bb = grid_info.GetBoundingBox(cell);
+				box2 bb = grid_info.GetBoundingBox(cell);
 				bb.half_size *= 0.9f;
-				chaos::DrawBox(*DI, bb, YELLOW , false);
+				DrawBox(*DI, bb, YELLOW , false);
 
-				chaos::DrawLine(*DI, bb.position, cell.locked_by_box.position, YELLOW);
+				DrawLine(*DI, bb.position, cell.locked_by_box.position, YELLOW);
 			}
 
 			if (cell.particle != nullptr && cell.particle->type == GameObjectType::Player)
 			{
-				chaos::box2 bb = grid_info.GetBoundingBox(cell);
+				box2 bb = grid_info.GetBoundingBox(cell);
 				bb.half_size *= 0.5f;
-				chaos::DrawBox(*DI, bb, GREEN, false);
+				DrawBox(*DI, bb, GREEN, false);
 
 			}
 		}
 	}
 #endif
+
+
+
+#endif
+
 }
 
 void LudumLevelInstance::HandlePlayerObject(float delta_time)
 {	
+
+
+
+
+
+
+
+
+#if 0
+
+
 	LudumPlayer* player = GetPlayer(0);
 	if (player == nullptr)
 		return;
 	
-	chaos::PlayerPawn* pawn = player->GetPawn();
+	PlayerPawn* pawn = player->GetPawn();
 	if (pawn == nullptr)
 		return;
 
@@ -403,19 +434,19 @@ void LudumLevelInstance::HandlePlayerObject(float delta_time)
 	if (particle == nullptr)
 		return;
 
-	chaos::Key const fake_displacement_key_buttons[] = { chaos::KeyboardButton::LEFT_CONTROL, chaos::KeyboardButton::RIGHT_CONTROL, chaos::GamepadButton::A, chaos::Key() };
+	Key const fake_displacement_key_buttons[] = { KeyboardButton::LEFT_CONTROL, KeyboardButton::RIGHT_CONTROL, GamepadButton::A, Key() };
 	bool fake_displacement = player->CheckButtonPressed(fake_displacement_key_buttons);
 
 	// get player inputs of interrests
 	glm::vec2 stick_position = player->GetLeftStickPosition();
-	stick_position.x = chaos::MathTools::AnalogicToDiscret(stick_position.x);
-	stick_position.y = chaos::MathTools::AnalogicToDiscret(stick_position.y);
+	stick_position.x = MathTools::AnalogicToDiscret(stick_position.x);
+	stick_position.y = MathTools::AnalogicToDiscret(stick_position.y);
 	if (std::abs(stick_position.x) > std::abs(stick_position.y))
 		stick_position.y = 0.0f;
 	else
 		stick_position.x = 0.0f;
 
-	glm::ivec2 istick_position = chaos::RecastVector<glm::ivec2>(stick_position);
+	glm::ivec2 istick_position = RecastVector<glm::ivec2>(stick_position);
 
 	// change pawn direction
 	if (particle->direction.x == 0.0f && particle->direction.y == 0.0f)
@@ -494,6 +525,11 @@ void LudumLevelInstance::HandlePlayerObject(float delta_time)
 	{
 		UpdateParticlePositionInGrid(particle, delta_time, grid_info);
 	}
+
+
+#endif
+
+
 }
 
 static glm::vec2 GetMonsterDirection(int direction_index)
@@ -525,6 +561,17 @@ static int GetMonsterDirectionIndex(glm::vec2 const & direction)
 
 void LudumLevelInstance::HandleMonsterObjects(float delta_time)
 {
+
+
+
+
+
+
+
+
+
+#if 0
+
 	for (int x = 0; x < grid_info.size.x; ++x)
 	{
 		for (int y = 0; y < grid_info.size.y; ++y)
@@ -543,7 +590,7 @@ void LudumLevelInstance::HandleMonsterObjects(float delta_time)
 
 				glm::vec2 neighboor_offset = GetMonsterDirection((particle->monster_direction_index + 1) % 4); // the touching neighboor should be there
 
-				glm::ivec2 neighboor_p = p + chaos::RecastVector<glm::ivec2>(neighboor_offset);
+				glm::ivec2 neighboor_p = p + RecastVector<glm::ivec2>(neighboor_offset);
 
 				// try keeping contact with a neighboor
 				if (grid_info.IsInside(neighboor_p))
@@ -555,7 +602,7 @@ void LudumLevelInstance::HandleMonsterObjects(float delta_time)
 					{
 						if (neighboor.CanLock(particle))
 						{
-							glm::ivec2 neighboor_neighboor_offset = chaos::RecastVector<glm::ivec2>(GetMonsterDirection((particle->monster_direction_index + 2) % 4)); // the touching neighboor's neighboor should be there
+							glm::ivec2 neighboor_neighboor_offset = RecastVector<glm::ivec2>(GetMonsterDirection((particle->monster_direction_index + 2) % 4)); // the touching neighboor's neighboor should be there
 
 							if (grid_info.IsInside(neighboor_p + neighboor_neighboor_offset) && grid_info(neighboor_p + neighboor_neighboor_offset).particle != nullptr)
 							{
@@ -571,7 +618,7 @@ void LudumLevelInstance::HandleMonsterObjects(float delta_time)
 				// direction still not found
 				if (particle->direction == glm::vec2(0.0f, 0.0f))
 				{
-					glm::ivec2 other_index = p + chaos::RecastVector<glm::ivec2>(monster_direction);
+					glm::ivec2 other_index = p + RecastVector<glm::ivec2>(monster_direction);
 					if (grid_info.IsInside(other_index))
 					{
 						if (grid_info(other_index).CanLock(particle))
@@ -616,6 +663,9 @@ void LudumLevelInstance::HandleMonsterObjects(float delta_time)
 
 		}
 	}
+
+#endif
+
 }
 
 void LudumLevelInstance::HandleBlobObjects(float delta_time)
@@ -633,24 +683,20 @@ void LudumLevelInstance::HandleDisplacements(float delta_time)
 
 
 
-bool LudumLevelInstance::InitializeLevelInstance(chaos::TMObjectReferenceSolver& reference_solver, chaos::TiledMap::PropertyOwner const* property_owner)
+bool LudumLevelInstance::InitializeLevelInstance(TMObjectReferenceSolver& reference_solver, TiledMap::PropertyOwner const* property_owner)
 {
-	if (!chaos::TMLevelInstance::InitializeLevelInstance(reference_solver, property_owner))
+	if (!TMLevelInstance::InitializeLevelInstance(reference_solver, property_owner))
 		return false;
-
 	required_diamond_count = property_owner->GetPropertyValueInt("REQUIRED_DIAMOND", 10);
 	object_speed = property_owner->GetPropertyValueFloat("OBJECT_SPEED", object_speed);
-	player_speed = property_owner->GetPropertyValueFloat("PLAYER_SPEED", player_speed);
-	push_speed = property_owner->GetPropertyValueFloat("PUSH_SPEED", push_speed);
-	speed_factor = property_owner->GetPropertyValueFloat("SPEED_FACTOR", speed_factor);
-
+	frame_duration = property_owner->GetPropertyValueFloat("FRAME_DURATION", frame_duration);
 	return true;
 }
 
 
-bool LudumLevelInstance::Initialize(chaos::Game * in_game, chaos::Level * in_level)
+bool LudumLevelInstance::Initialize(Game * in_game, Level * in_level)
 {
-	if (!chaos::TMLevelInstance::Initialize(in_game, in_level))
+	if (!TMLevelInstance::Initialize(in_game, in_level))
 		return false;
 
 	LudumLevel* ludum_level = auto_cast(in_level);
@@ -662,16 +708,11 @@ bool LudumLevelInstance::Initialize(chaos::Game * in_game, chaos::Level * in_lev
 }
 
 
-bool LudumLevelInstance::IsPlayerDead(chaos::Player* player)
+bool LudumLevelInstance::IsPlayerDead(Player* player)
 {
 	// ignore super ... just handle timeout component
-	//if (chaos::TMLevelInstance::IsPlayerDead(player))
+	//if (TMLevelInstance::IsPlayerDead(player))
 	//	return true;
-
-
-
-
-
 	return false;
 }
 
@@ -691,12 +732,12 @@ uint64_t LudumLevelInstance::GetCollisionFlagByName(char const* name) const
 {
 	assert(name != nullptr);
 
-	if (chaos::StringTools::Stricmp(name, "World") == 0)
+	if (StringTools::Stricmp(name, "World") == 0)
 		return COLLISION_GAMEOBJECT;
-	if (chaos::StringTools::Stricmp(name, "Gate") == 0)
+	if (StringTools::Stricmp(name, "Gate") == 0)
 		return COLLISION_GATE;
 
-	return chaos::TMLevelInstance::GetCollisionFlagByName(name);
+	return TMLevelInstance::GetCollisionFlagByName(name);
 }
 
 
@@ -714,7 +755,7 @@ void LudumLevelInstance::CollectObjects()
 		grid_info.min_position = { std::numeric_limits<float>::max(), std::numeric_limits<float>::max() };
 		grid_info.max_position = { std::numeric_limits<float>::min(), std::numeric_limits<float>::min() };
 
-		chaos::TMTileCollisionIterator it = GetTileCollisionIterator(GetBoundingBox(), COLLISION_GAMEOBJECT, false);
+		TMTileCollisionIterator it = GetTileCollisionIterator(GetBoundingBox(), COLLISION_GAMEOBJECT, false);
 		while (it)
 		{
 			grid_info.min_position = glm::min(grid_info.min_position, it->particle->bounding_box.position);
@@ -740,7 +781,7 @@ void LudumLevelInstance::CollectObjects()
 	for (int i = 0; i < grid_info.size.x * grid_info.size.y; ++i)
 		grid_info.cells[i].particle = nullptr;
 
-	chaos::TMTileCollisionIterator it = GetTileCollisionIterator(GetBoundingBox(), COLLISION_GAMEOBJECT, false);
+	TMTileCollisionIterator it = GetTileCollisionIterator(GetBoundingBox(), COLLISION_GAMEOBJECT, false);
 	while (it)
 	{
 		grid_info(it->particle->bounding_box.position).particle = (GameObjectParticle*)it->particle;
@@ -784,7 +825,8 @@ void LudumLevelInstance::DiamondsCreationRequest(glm::ivec2 const & p)
 
 void LudumLevelInstance::CreateDiamonds()
 {
-	chaos::ParticleSpawner spawner = GetParticleSpawner("GameObjects", "diamond");
+#if 0
+	ParticleSpawner spawner = GetParticleSpawner("GameObjects", "diamond");
 	if (!spawner.IsValid())
 		return;
 
@@ -795,13 +837,13 @@ void LudumLevelInstance::CreateDiamonds()
 			GridCellInfo& cell = grid_info.cells[x + y * grid_info.size.y];
 			if (cell.create_diamond)
 			{
-				spawner.SpawnParticles(1, true).Process([this, &cell](chaos::ParticleAccessor<GameObjectParticle> accessor)
+				spawner.SpawnParticles(1, true).Process([this, &cell](ParticleAccessor<GameObjectParticle> accessor)
 				{
 					for (GameObjectParticle& p : accessor)
 					{
 						p.bounding_box = grid_info.GetBoundingBox(cell);
 						p.type = GameObjectType::Diamond;
-						p.flags |= chaos::ParticleFlags::HEIGHT_BITS_MODE;
+						p.flags |= ParticleFlags::HEIGHT_BITS_MODE;
 
 					}
 				});
@@ -809,6 +851,7 @@ void LudumLevelInstance::CreateDiamonds()
 			}
 		}
 	}
+#endif
 }
 
 

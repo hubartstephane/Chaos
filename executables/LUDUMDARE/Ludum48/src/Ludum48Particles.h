@@ -17,6 +17,37 @@ public:
 
 
 // ===========================================================================
+// SmokeParticle
+// ===========================================================================
+
+class SmokeParticle : public ParticleBase
+{
+public:
+
+	glm::vec2 velocity = { 0.0f, 0.0f };
+	float lifetime = 1.0f;
+	float age = 0.0f;
+
+};
+
+class ParticleSmokeLayerTrait : public ParticleLayerTrait<SmokeParticle, VertexBase>
+{
+public:
+
+	void ParticleToPrimitives(SmokeParticle const& particle, PrimitiveOutput<VertexBase>& output) const;
+
+	bool UpdateParticle(float delta_time, SmokeParticle& particle) const;
+
+public:
+
+	class LudumGame* game = nullptr;
+
+	glm::vec2 tile_size = { 0.0f , 0.0f };
+};
+
+
+
+// ===========================================================================
 // GateParticle
 // ===========================================================================
 
@@ -172,6 +203,7 @@ bool UpdateParticlePositionInGrid(GameObjectParticle* particle, float delta_time
 
 CHAOS_REGISTER_CLASS2(ParticleBase, TMParticle);
 CHAOS_REGISTER_CLASS2(GateParticle, ParticleBase);
+CHAOS_REGISTER_CLASS2(SmokeParticle, ParticleBase);
 CHAOS_REGISTER_CLASS2(GameObjectParticle, ParticleBase);
 CHAOS_REGISTER_CLASS2(ParticleAnimated, GameObjectParticle);
 CHAOS_REGISTER_CLASS2(ParticlePlayer, ParticleAnimated);

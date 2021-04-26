@@ -11,10 +11,34 @@
 #include "Ludum48PlayerDisplacementComponent.h"
 
 
+// ===========================================================================
+// ParticleGateLayerTrait
+// ===========================================================================
+
+
+void ParticleSmokeLayerTrait::ParticleToPrimitives(SmokeParticle const& particle, PrimitiveOutput<VertexBase>& output) const
+{
+
+
+	return ::ParticleToPrimitives(particle, output);
+}
+
+bool ParticleSmokeLayerTrait::UpdateParticle(float delta_time, SmokeParticle& particle) const
+{
+
+
+
+
+
+	return false;
+}
+
+
+
 
 
 // ===========================================================================
-// ParticleGameObjectLayerTrait
+// ParticleGateLayerTrait
 // ===========================================================================
 
 

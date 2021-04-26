@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.5" tiledversion="1.5.0" name="tileset" tilewidth="128" tileheight="128" tilecount="12" columns="0" objectalignment="center">
+<tileset version="1.5" tiledversion="1.5.0" name="tileset" tilewidth="128" tileheight="128" tilecount="13" columns="0" objectalignment="center">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0" type="WALL">
   <properties>
@@ -62,6 +62,9 @@
    <property name="ObjectType" type="int" value="9"/>
   </properties>
   <image width="32" height="32" source="../sprites/Monster2.png"/>
+ </tile>
+ <tile id="39">
+  <image width="32" height="32" source="../sprites/Smoke.png"/>
  </tile>
  <wangsets>
   <wangset name="Terrains" type="corner" tile="-1">

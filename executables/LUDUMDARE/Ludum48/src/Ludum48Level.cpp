@@ -52,6 +52,14 @@ ParticleLayerBase * LudumLevel::DoCreateParticleLayer(TMLayerInstance * layer_in
 		return new ParticleLayer<ParticleGateLayerTrait>(layer_trait);
 	}
 
+	if (StringTools::Stricmp(layer_name, "Smoke") == 0)
+	{
+		ParticleSmokeLayerTrait layer_trait;
+		layer_trait.game = ludum_game;
+		layer_trait.tile_size = GetTiledMap()->tile_size;
+		return new ParticleLayer<ParticleSmokeLayerTrait>(layer_trait);
+	}
+
 
 	return TMLevel::DoCreateParticleLayer(layer_instance);
 }

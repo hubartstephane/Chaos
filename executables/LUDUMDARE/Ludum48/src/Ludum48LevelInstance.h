@@ -133,6 +133,9 @@ protected:
 
 	void CreatePendingDiamonds();
 
+	void CapturePlayerInputs();
+	void FlushPlayerInputs();
+
 
 	public:
 
@@ -154,5 +157,8 @@ protected:
 
 	bool door_opened = false;
 	bool level_complete = false;
+
+	bool cached_fake_move = false;
+	glm::ivec2 cached_stick_position = { 0, 0 };
 
 };

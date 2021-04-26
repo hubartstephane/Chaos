@@ -76,6 +76,12 @@ namespace chaos
 
 	bool Player::DoTick(float delta_time)
 	{	
+		// shu48
+		previous_left_stick_position = left_stick_position;
+		previous_right_stick_position = right_stick_position;
+		previous_left_trigger = left_trigger;
+		previous_right_trigger = right_trigger;
+
 		// remove previous frame cached input
 		ResetCachedInputs();
 		// cache values for stick displacement

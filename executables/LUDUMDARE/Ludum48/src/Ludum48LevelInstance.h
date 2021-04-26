@@ -121,6 +121,7 @@ protected:
 
 
 
+	void CommitDisplacements();
 	void FinalizeDisplacements();
 	void DisplacementConsequences();
 
@@ -130,7 +131,7 @@ protected:
 
 	void KillMonster(GameObjectParticle* monster);
 
-	void CreateDiamonds();
+	void CreatePendingDiamonds();
 
 
 	public:

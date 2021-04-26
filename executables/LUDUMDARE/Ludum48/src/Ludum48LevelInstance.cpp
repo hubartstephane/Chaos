@@ -156,15 +156,14 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	// normal frames
 	DisplaceObjects(delta_time);
 
-
-
-
 	// last frame
 	frame_timer += delta_time;
 	if (frame_timer >= frame_duration)
 	{
+		CommitDisplacements();
 		DisplacementConsequences();
 		FinalizeDisplacements();
+		CreatePendingDiamonds(); // XXX : create particles only at the end, not to break all particles pointers in grid_info
 		frame_timer = 0.0f;
 	}
 
@@ -194,24 +193,12 @@ void LudumLevelInstance::NegociateDisplacements()
 				GridCellInfo& cell = grid_info(p);
 				if (cell.particle != nullptr && cell.particle->type == type)
 				{
-					// Monster
 					if (type == GameObjectType::Monster)
-					{
 						NegociateMonsterDisplacement(p, cell);
-					}
-					// Diamond/Rock
 					else if (type == GameObjectType::Diamond || type == GameObjectType::Rock)
-					{
 						NegociateFallerDisplacement(p, cell);
-
-
-					}
-					// Player
 					else if (type == GameObjectType::Player)
-					{
 						NegociatePlayerDisplacement(p, cell);
-					}
-					//
 				}
 			}
 		}
@@ -475,12 +462,39 @@ void LudumLevelInstance::DisplaceObjects(float delta_time)
 	}
 }
 
-void LudumLevelInstance::DisplacementConsequences()
+void LudumLevelInstance::CommitDisplacements()
 {
+	for (int y = 0; y < grid_info.size.y; ++y)
+	{
+		for (int x = 0; x < grid_info.size.x; ++x)
+		{
+			glm::ivec2 p = { x, y };
 
+			GridCellInfo& cell = grid_info(p);
+			if (cell.particle != nullptr && cell.particle->speed > 0.0f && cell.particle->direction != glm::vec2(0.0f, 0.0f))
+			{
+				cell.particle->bounding_box.position += cell.particle->direction * RecastVector<glm::vec2>(grid_info.tile_size);
+				cell.particle->offset = { 0.0f, 0.0f };
+				cell.particle = nullptr;
+			}
+		}
+	}
+
+	for (int y = 0; y < grid_info.size.y; ++y)
+	{
+		for (int x = 0; x < grid_info.size.x; ++x)
+		{
+			glm::ivec2 p = { x, y };
+
+			GridCellInfo& cell = grid_info(p);
+			if (cell.locked_by != nullptr)
+				cell.particle = cell.locked_by;
+			cell.locked_by = nullptr;
+		}
+	}
 }
 
-void LudumLevelInstance::FinalizeDisplacements()
+void LudumLevelInstance::DisplacementConsequences()
 {
 	for (int y = 0; y < grid_info.size.y; ++y)
 	{
@@ -492,11 +506,63 @@ void LudumLevelInstance::FinalizeDisplacements()
 			if (cell.particle == nullptr)
 				continue;
 
-			if (cell.particle->speed > 0.0f)
-				cell.particle->bounding_box.position += cell.particle->direction * RecastVector<glm::vec2>(grid_info.tile_size);
-			cell.particle->offset = { 0.0f, 0.0f };
-			cell.particle->direction = { 0.0f, 0.0f };
-			cell.particle->speed = 0.0f;
+			// ROCK / DIAMOND
+			if (cell.particle->type == GameObjectType::Rock || cell.particle->type == GameObjectType::Diamond)
+			{
+				if (cell.particle->direction.y == -1.0f) // even if speed = 0
+				{
+					glm::ivec2 other_p = p + glm::ivec2(0, -1);
+					if (grid_info.IsInside(other_p))
+					{
+						GridCellInfo& other_cell = grid_info(other_p);
+						if (other_cell.particle != nullptr)
+						{
+							if (other_cell.particle->type == GameObjectType::Player)
+								KillPlayer(other_cell.particle);
+							else if (other_cell.particle->type == GameObjectType::Monster)
+								KillMonster(other_cell.particle);
+						}
+					}
+				}
+			}
+			// MONSTER
+			else if (cell.particle->type == GameObjectType::Monster) // search for player in neighboor
+			{
+				for (int axis : {0, 1})
+				{
+					for (int delta : {-1, +1})
+					{
+						glm::ivec2 other_p = p;
+						other_p[axis] += delta;
+						if (grid_info.IsInside(other_p))
+						{
+							GridCellInfo& other_cell = grid_info(other_p);
+							if (other_cell.particle != nullptr && other_cell.particle->type == GameObjectType::Player)
+								KillPlayer(other_cell.particle);
+						}
+					}
+				}
+			}
+			//
+		}
+	}
+}
+
+void LudumLevelInstance::FinalizeDisplacements()
+{
+	for (int y = 0; y < grid_info.size.y; ++y)
+	{
+		for (int x = 0; x < grid_info.size.x; ++x)
+		{
+			glm::ivec2 p = { x, y };
+
+			GridCellInfo& cell = grid_info(p);
+			if (cell.particle != nullptr)
+			{
+				cell.particle->offset = { 0.0f, 0.0f };
+				cell.particle->direction = { 0.0f, 0.0f };
+				cell.particle->speed = 0.0f;
+			}
 		}
 	}
 }
@@ -657,9 +723,8 @@ void LudumLevelInstance::DiamondsCreationRequest(glm::ivec2 const & p)
 	}
 }
 
-void LudumLevelInstance::CreateDiamonds()
+void LudumLevelInstance::CreatePendingDiamonds()
 {
-#if 0
 	ParticleSpawner spawner = GetParticleSpawner("GameObjects", "diamond");
 	if (!spawner.IsValid())
 		return;
@@ -668,16 +733,18 @@ void LudumLevelInstance::CreateDiamonds()
 	{
 		for (int x = 0; x < grid_info.size.x; ++x)
 		{
-			GridCellInfo& cell = grid_info.cells[x + y * grid_info.size.y];
+			glm::ivec2 p = { x, y };
+
+			GridCellInfo& cell = grid_info(p);
 			if (cell.create_diamond)
 			{
 				spawner.SpawnParticles(1, true).Process([this, &cell](ParticleAccessor<GameObjectParticle> accessor)
 				{
-					for (GameObjectParticle& p : accessor)
+					for (GameObjectParticle& particle : accessor)
 					{
-						p.bounding_box = grid_info.GetBoundingBox(cell);
-						p.type = GameObjectType::Diamond;
-						p.flags |= ParticleFlags::HEIGHT_BITS_MODE;
+						particle.bounding_box = grid_info.GetBoundingBox(cell);
+						particle.type = GameObjectType::Diamond;
+						particle.flags |= ParticleFlags::HEIGHT_BITS_MODE;
 
 					}
 				});
@@ -685,7 +752,6 @@ void LudumLevelInstance::CreateDiamonds()
 			}
 		}
 	}
-#endif
 }
 
 

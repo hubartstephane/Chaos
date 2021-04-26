@@ -95,7 +95,7 @@ protected:
 
 	virtual uint64_t GetCollisionFlagByName(char const* name) const override;
 
-	void DiamondsCreationRequest(glm::ivec2 const& p);
+	void DestroyNeighboorsAndCreateDiamonds(glm::ivec2 const& p, bool create_diamond);
 
 
 	GridInfo const & GetGridInfo() const { return grid_info; }
@@ -129,7 +129,7 @@ protected:
 
 	void KillPlayer(GameObjectParticle* player);
 
-	void KillMonster(GameObjectParticle* monster);
+	void KillMonster(GameObjectParticle* monster, bool create_diamond);
 
 	void CreatePendingDiamonds();
 

@@ -567,7 +567,7 @@ void LudumLevelInstance::DisplacementConsequences()
 							if (other_cell.particle->type == GameObjectType::Player)
 								KillPlayer(other_cell.particle);
 							else if (other_cell.particle->type == GameObjectType::Monster1 || other_cell.particle->type == GameObjectType::Monster2)
-								KillMonster(other_cell.particle);
+								KillMonster(other_cell.particle, other_cell.particle->type == GameObjectType::Monster1);
 						}
 					}
 				}
@@ -740,17 +740,17 @@ void LudumLevelInstance::KillPlayer(GameObjectParticle* player)
 {
 	player->destroy_particle = true;
 	glm::ivec2 player_p = grid_info.GetIndexForPosition(player->bounding_box.position);
-	DiamondsCreationRequest(player_p);
+	DestroyNeighboorsAndCreateDiamonds(player_p, false);
 
 }
 
-void LudumLevelInstance::KillMonster(GameObjectParticle* monster)
+void LudumLevelInstance::KillMonster(GameObjectParticle* monster, bool create_diamond)
 {
 	glm::ivec2 monster_p = grid_info.GetIndexForPosition(monster->bounding_box.position);
-	DiamondsCreationRequest(monster_p);
+	DestroyNeighboorsAndCreateDiamonds(monster_p, create_diamond);
 }
 
-void LudumLevelInstance::DiamondsCreationRequest(glm::ivec2 const & p)
+void LudumLevelInstance::DestroyNeighboorsAndCreateDiamonds(glm::ivec2 const & p, bool create_diamond)
 {
 	for (int dy : {-1, 0, +1})
 	{
@@ -760,11 +760,11 @@ void LudumLevelInstance::DiamondsCreationRequest(glm::ivec2 const & p)
 			if (grid_info.IsInside(other_p))
 			{
 				GameObjectParticle* other = grid_info(other_p).particle;
-				if (other != nullptr)
-				{
+				if (other != nullptr && other->type != GameObjectType::HardWall)
 					other->destroy_particle = true;
-				}
-				grid_info(other_p).create_diamond = true;
+				if (create_diamond)
+					if (other == nullptr || other->type != GameObjectType::HardWall)
+						grid_info(other_p).create_diamond = true;
 			}
 		}
 	}

@@ -156,7 +156,6 @@ void LudumLevelInstance::CapturePlayerInputs()
 			cached_stick_position = stick_position;
 		}
 	}
-	DebugValue("stick:", cached_stick_position);
 }
 
 void LudumLevelInstance::FlushPlayerInputs()

@@ -12,11 +12,12 @@ LudumGame::LudumGame()
 {		
 	// 	Don't let the Flames of Hell die
 
-	game_name = "Burnaouf Paradise\n";
+	game_name = "Burnaouf Paradash\n";
 	game_instructions = R"INSTRUCTIONS(
-	[ButtonA] or [KEYBOARD SPACE] : Jump
-	[ButtonB] or [KEYBOARD CTRL]  : Attack
-	[RightTrigger] or [KEYBOARD SHIFT] : Run)INSTRUCTIONS";
+Move:                 Dpad or Arrows
+Move camera:         Right Stick
+Fake displacement: [ButtonA] or Control
+Suicide:            [ButtonY] or Space)INSTRUCTIONS";
 
 	looping_levels = false;
 

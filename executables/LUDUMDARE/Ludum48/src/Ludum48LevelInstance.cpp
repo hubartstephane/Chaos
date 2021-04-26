@@ -241,7 +241,7 @@ float LudumLevelInstance::GetObjectSpeed() const
 
 void LudumLevelInstance::NegociateDisplacements()
 {
-	for (GameObjectType type : {GameObjectType::Monster, GameObjectType::Diamond, GameObjectType::Rock, GameObjectType::Player}) // order of priorities
+	for (GameObjectType type : {GameObjectType::Monster1, GameObjectType::Monster2, GameObjectType::Diamond, GameObjectType::Rock, GameObjectType::Player}) // order of priorities
 	{
 		for (size_t y = 0; y < grid_info.size.y; ++y)
 		{
@@ -252,7 +252,7 @@ void LudumLevelInstance::NegociateDisplacements()
 				GridCellInfo& cell = grid_info(p);
 				if (cell.particle != nullptr && cell.particle->type == type)
 				{
-					if (type == GameObjectType::Monster)
+					if (type == GameObjectType::Monster1 || type == GameObjectType::Monster2)
 						NegociateMonsterDisplacement(p, cell);
 					else if (type == GameObjectType::Diamond || type == GameObjectType::Rock)
 						NegociateFallerDisplacement(p, cell);
@@ -282,7 +282,7 @@ void LudumLevelInstance::NegociateFallerDisplacement(glm::ivec2 const& p, GridCe
 		// nothing yet below
 		if (below.locked_by != nullptr)
 		{
-			if (below.locked_by->type == GameObjectType::Monster || below.locked_by->type == GameObjectType::Player) // still "falling" but waiting for the objects to arrive to kill it
+			if (below.locked_by->type == GameObjectType::Monster1 || below.locked_by->type == GameObjectType::Monster2 || below.locked_by->type == GameObjectType::Player) // still "falling" but waiting for the objects to arrive to kill it
 			{
 				cell.particle->direction = { 0.0f, -1.0f };
 				cell.particle->speed = 0.0f; // WAITING !
@@ -292,7 +292,7 @@ void LudumLevelInstance::NegociateFallerDisplacement(glm::ivec2 const& p, GridCe
 		else
 		{
 			assert(below.particle != nullptr);
-			if (below.particle->type == GameObjectType::Rock || below.particle->type == GameObjectType::Diamond || below.particle->type == GameObjectType::Wall) // may slip on theses elements
+			if (below.particle->type == GameObjectType::Rock || below.particle->type == GameObjectType::Diamond || below.particle->type == GameObjectType::Wall || below.particle->type == GameObjectType::HardWall) // may slip on theses elements
 			{
 				if (below.particle->direction == glm::vec2(0.0f, 0.0f)) // may not slip on a moving objects
 				{
@@ -566,14 +566,14 @@ void LudumLevelInstance::DisplacementConsequences()
 						{
 							if (other_cell.particle->type == GameObjectType::Player)
 								KillPlayer(other_cell.particle);
-							else if (other_cell.particle->type == GameObjectType::Monster)
+							else if (other_cell.particle->type == GameObjectType::Monster1 || other_cell.particle->type == GameObjectType::Monster2)
 								KillMonster(other_cell.particle);
 						}
 					}
 				}
 			}
 			// MONSTER
-			else if (cell.particle->type == GameObjectType::Monster) // search for player in neighboor
+			else if (cell.particle->type == GameObjectType::Monster1 || cell.particle->type == GameObjectType::Monster2) // search for player in neighboor
 			{
 				for (int axis : {0, 1})
 				{

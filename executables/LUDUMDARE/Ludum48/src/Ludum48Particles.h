@@ -55,7 +55,9 @@ enum class GameObjectType
 	Foam = 4,
 	Player = 5,
 	Blob = 6,
-	Monster = 7,
+	Monster1 = 7,
+	HardWall = 8,
+	Monster2 = 9,
 };
 
 

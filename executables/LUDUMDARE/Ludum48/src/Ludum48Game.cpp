@@ -23,36 +23,36 @@ LudumGame::LudumGame()
 	game_instance_class = LudumGameInstance::GetStaticClass();
 }
 
-bool LudumGame::OnEnterGame(chaos::PhysicalGamepad * in_physical_gamepad)
+bool LudumGame::OnEnterGame(PhysicalGamepad * in_physical_gamepad)
 {
-	if (!chaos::Game::OnEnterGame(in_physical_gamepad))
+	if (!Game::OnEnterGame(in_physical_gamepad))
 		return false;
-    PlaySound("start", false, false, 0.0f, chaos::SoundContext::GAME);
+    PlaySound("start", false, false, 0.0f, SoundContext::GAME);
 	return true;
 }
 
 
-chaos::GameHUD * LudumGame::DoCreatePlayingHUD()
+GameHUD * LudumGame::DoCreatePlayingHUD()
 {
 	return new LudumPlayingHUD();
 }
 
 bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload)
 {
-	if (!chaos::Game::InitializeGameValues(config, config_path, hot_reload))
+	if (!Game::InitializeGameValues(config, config_path, hot_reload))
 		return false;
 						
 	return true;
 }
 
-chaos::TMLevel * LudumGame::CreateTMLevel()
+TMLevel * LudumGame::CreateTMLevel()
 {
 	return new LudumLevel();
 }
 
 bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
 {
-	if (!chaos::Game::InitializeFromConfiguration(config, config_path))
+	if (!Game::InitializeFromConfiguration(config, config_path))
 		return false;
 
 
@@ -63,11 +63,11 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 }
 
 
-void LudumGame::DoDisplayGame(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params)
+void LudumGame::DoDisplayGame(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
 {
-	chaos::GPUProgramProviderChain update_provider(uniform_provider);
+	GPUProgramProviderChain update_provider(uniform_provider);
 
-	chaos::Game::DoDisplayGame(renderer, &update_provider, render_params);
+	Game::DoDisplayGame(renderer, &update_provider, render_params);
 
 
 	// Win Fadeout to white
@@ -77,13 +77,13 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer* renderer, chaos::GPUProgramPro
 
 		if (player->cheater_farid)
 		{
-			chaos::ParticleTextGenerator::GeneratorParams params;
+			ParticleTextGenerator::GeneratorParams params;
 			params.line_height = 80.0f;
-			params.hotpoint = chaos::Hotpoint::BOTTOM;
+			params.hotpoint = Hotpoint::BOTTOM;
 			params.position.y = -300.0f;
 
-			chaos::GPUDrawInterface<chaos::VertexDefault> DI(nullptr);
-			chaos::DrawText(DI, "[KISS] Cheater Farid [KISS]", params);
+			GPUDrawInterface<VertexDefault> DI(nullptr);
+			DrawText(DI, "[KISS] Cheater Farid [KISS]", params);
 
 
 			glEnable(GL_BLEND);
@@ -125,20 +125,20 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer* renderer, chaos::GPUProgramPro
 	}
 }
 
-void LudumGame::SetFadeEffect(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params, bool fade_to_black, float ratio)
+void LudumGame::SetFadeEffect(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params, bool fade_to_black, float ratio)
 {
-	chaos::GPUResourceManager* resource_manager = chaos::WindowApplication::GetGPUResourceManagerInstance();
+	GPUResourceManager* resource_manager = WindowApplication::GetGPUResourceManagerInstance();
 	if (resource_manager == nullptr)
 		return;
 
-	chaos::GPURenderMaterial* fade_material = resource_manager->FindRenderMaterial(fade_to_black? "blackscreen" : "whitescreen");
+	GPURenderMaterial* fade_material = resource_manager->FindRenderMaterial(fade_to_black? "blackscreen" : "whitescreen");
 	if (fade_material != nullptr)
 	{
 		glEnable(GL_BLEND);
 		glDisable(GL_DEPTH_TEST);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		chaos::GPUProgramProviderChain fade_provider(uniform_provider);
+		GPUProgramProviderChain fade_provider(uniform_provider);
 		fade_provider.AddVariable("fade_ratio", ratio);
 
 		renderer->DrawFullscreenQuad(fade_material, &fade_provider, render_params);

@@ -21,11 +21,11 @@ namespace chaos
 
 bool LudumPlayingHUD::FillHUDContent()
 {
-	if (!chaos::PlayingHUD::FillHUDContent())
+	if (!PlayingHUD::FillHUDContent())
 		return false;	
-	RegisterComponent(chaos::GameHUDKeys::LEVEL_TIMEOUT_ID, new chaos::GameHUDTimeoutComponent());
-	RegisterComponent(chaos::GameHUDKeys::DIAMOND_ID, new LudumHUDDiamondComponent());
-	RegisterComponent(chaos::GameHUDKeys::LIFE_ID, new LudumHUDLifeComponent());
+	RegisterComponent(GameHUDKeys::LEVEL_TIMEOUT_ID, new GameHUDTimeoutComponent());
+	RegisterComponent(GameHUDKeys::DIAMOND_ID, new LudumHUDDiamondComponent());
+	RegisterComponent(GameHUDKeys::LIFE_ID, new LudumHUDLifeComponent());
 	return true;
 }
 
@@ -39,7 +39,7 @@ LudumHUDDiamondComponent::LudumHUDDiamondComponent(char const* in_text) :
 	generator_params.line_height = 130.0f;
 	generator_params.font_info_name = "normal";
 	generator_params.position = glm::vec2(-20.0f, -80.0f);
-	generator_params.hotpoint = chaos::Hotpoint::TOP_RIGHT;
+	generator_params.hotpoint = Hotpoint::TOP_RIGHT;
 }
 
 bool LudumHUDDiamondComponent::QueryValue(std::pair<int, int>& result) const
@@ -52,7 +52,7 @@ bool LudumHUDDiamondComponent::QueryValue(std::pair<int, int>& result) const
 }
 void LudumHUDDiamondComponent::UpdateMesh()
 {
-	SetText(chaos::StringTools::Printf(text.c_str(), cached_value.first, cached_value.second).c_str());
+	SetText(StringTools::Printf(text.c_str(), cached_value.first, cached_value.second).c_str());
 }
 
 // ====================================================================
@@ -65,12 +65,12 @@ LudumHUDLifeComponent::LudumHUDLifeComponent(char const* in_text) :
 	generator_params.line_height = 130.0f;
 	generator_params.font_info_name = "normal";
 	generator_params.position = glm::vec2(-20.0f, -80.0f);
-	generator_params.hotpoint = chaos::Hotpoint::TOP_RIGHT;
+	generator_params.hotpoint = Hotpoint::TOP_RIGHT;
 }
 
 bool LudumHUDLifeComponent::QueryValue(int & result) const
 {
-	chaos::Player const * player = GetPlayer(0);
+	Player const * player = GetPlayer(0);
 	if (player == nullptr)
 		return false;
 	result = player->GetLifeCount();
@@ -78,6 +78,6 @@ bool LudumHUDLifeComponent::QueryValue(int & result) const
 }
 void LudumHUDLifeComponent::UpdateMesh()
 {
-	SetText(chaos::StringTools::Printf(text.c_str(), cached_value).c_str());
+	SetText(StringTools::Printf(text.c_str(), cached_value).c_str());
 }
 

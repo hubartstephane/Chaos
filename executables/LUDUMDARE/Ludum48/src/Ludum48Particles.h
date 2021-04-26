@@ -1,14 +1,14 @@
 #pragma once
 
-#include <chaos/Chaos.h>
+#include "Ludum48.h"
 
 // ===========================================================================
 // VertexBase and ParticleBase
 // ===========================================================================
 
-using VertexBase = chaos::VertexDefault;
+using VertexBase = VertexDefault;
 
-class ParticleBase : public  chaos::TMParticle
+class ParticleBase : public TMParticle
 {
 public:
 
@@ -26,11 +26,11 @@ public:
 
 };
 
-class ParticleGateLayerTrait : public chaos::ParticleLayerTrait<GateParticle, VertexBase>
+class ParticleGateLayerTrait : public ParticleLayerTrait<GateParticle, VertexBase>
 {
 public:
 
-	void ParticleToPrimitives(GateParticle const& particle, chaos::PrimitiveOutput<VertexBase>& output) const;
+	void ParticleToPrimitives(GateParticle const& particle, PrimitiveOutput<VertexBase>& output) const;
 
 	bool UpdateParticle(float delta_time, GateParticle& particle) const;
 
@@ -65,10 +65,6 @@ public:
 
 	GameObjectType type = GameObjectType::None;
 
-
-
-	class GridCellInfo* locked_cell = nullptr;
-
 	/** an offset in [-1..1] relative to the cell the particle belongs to (unit is tile_size) */
 	glm::vec2 offset = { 0.0f, 0.0f };
 	/** direction where the object want to go */
@@ -86,11 +82,11 @@ public:
 
 };
 
-class ParticleGameObjectLayerTrait : public chaos::ParticleLayerTrait<GameObjectParticle, VertexBase>
+class ParticleGameObjectLayerTrait : public ParticleLayerTrait<GameObjectParticle, VertexBase>
 {
 public:
 
-	void ParticleToPrimitives(GameObjectParticle const& particle, chaos::PrimitiveOutput<VertexBase>& output) const;
+	void ParticleToPrimitives(GameObjectParticle const& particle, PrimitiveOutput<VertexBase>& output) const;
 
 	bool UpdateParticle(float delta_time, GameObjectParticle& particle) const;
 
@@ -119,7 +115,7 @@ public:
 
 bool UpdateParticle(float delta_time, ParticleAnimated& particle);
 
-class ParticleAnimatedLayerTrait : public chaos::ParticleLayerTrait<ParticleAnimated, VertexBase>
+class ParticleAnimatedLayerTrait : public ParticleLayerTrait<ParticleAnimated, VertexBase>
 {
 public:
 
@@ -147,13 +143,13 @@ public:
 };
 
 
-class ParticlePlayerLayerTrait : public chaos::ParticleLayerTrait<ParticlePlayer, VertexBase>
+class ParticlePlayerLayerTrait : public ParticleLayerTrait<ParticlePlayer, VertexBase>
 {
 public:
 
 	bool UpdateParticle(float delta_time, ParticlePlayer & particle) const;
 
-	void ParticleToPrimitives(ParticlePlayer const& particle, chaos::PrimitiveOutput<VertexBase>& output) const;
+	void ParticleToPrimitives(ParticlePlayer const& particle, PrimitiveOutput<VertexBase>& output) const;
 
 public:
 
@@ -172,7 +168,7 @@ bool UpdateParticlePositionInGrid(GameObjectParticle* particle, float delta_time
 
 
 
-CHAOS_REGISTER_CLASS2(ParticleBase, chaos::TMParticle);
+CHAOS_REGISTER_CLASS2(ParticleBase, TMParticle);
 CHAOS_REGISTER_CLASS2(GateParticle, ParticleBase);
 CHAOS_REGISTER_CLASS2(GameObjectParticle, ParticleBase);
 CHAOS_REGISTER_CLASS2(ParticleAnimated, GameObjectParticle);

@@ -1,28 +1,27 @@
 #pragma once
 
-#include <chaos/Chaos.h>
-
+#include "Ludum48.h"
 #include "Ludum48Game.h"
 
 // =================================================
 // Levels
 // =================================================
 
-class LudumLevel : public chaos::TMLevel
+class LudumLevel : public TMLevel
 {
 	friend class LudumLevelInstance;
 
-	CHAOS_DECLARE_OBJECT_CLASS2(LudumLevel, chaos::TMLevel);
+	CHAOS_DECLARE_OBJECT_CLASS2(LudumLevel, TMLevel);
 
 	LudumLevel();
 
 protected:
 
-	virtual chaos::ParticleLayerBase * DoCreateParticleLayer(chaos::TMLayerInstance * layer_instance) override;
+	virtual ParticleLayerBase * DoCreateParticleLayer(TMLayerInstance * layer_instance) override;
 
-	virtual chaos::TMObjectFactory DoGetObjectFactory(chaos::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object) override;
+	virtual TMObjectFactory DoGetObjectFactory(TMLayerInstance * in_layer_instance, TiledMap::TypedObject const * in_typed_object) override;
 
-	virtual bool Initialize(chaos::TiledMap::Map* in_tiled_map) override;
+	virtual bool Initialize(TiledMap::Map* in_tiled_map) override;
 
-	virtual bool FinalizeLayerParticles(chaos::TMLayerInstance* layer_instance, chaos::ParticleAllocationBase* allocation) override;
+	virtual bool FinalizeLayerParticles(TMLayerInstance* layer_instance, ParticleAllocationBase* allocation) override;
 };

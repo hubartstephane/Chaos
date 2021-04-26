@@ -1,14 +1,13 @@
 #pragma once
 
-#include <chaos/Chaos.h>
-
+#include "Ludum48.h"
 #include "Ludum48Particles.h"
 
 // =========================================================
 // LudumPlayer
 // =========================================================
 
-class LudumPlayer : public chaos::Player
+class LudumPlayer : public Player
 {
 
 public:
@@ -16,17 +15,17 @@ public:
 
     CHAOS_DECLARE_GAMEPLAY_FRIENDSHIPS(Ludum);
 
-	CHAOS_DECLARE_OBJECT_CLASS2(LudumPlayer, chaos::Player);
+	CHAOS_DECLARE_OBJECT_CLASS2(LudumPlayer, Player);
 
 protected:
 
     /** override */
-    virtual bool Initialize(chaos::GameInstance* in_game_instance);
+    virtual bool Initialize(GameInstance* in_game_instance);
 
 	/** override */
 	virtual void OnLifeLost() override;
     /** override */
-    virtual void OnLevelChanged(chaos::Level* new_level, chaos::Level* old_level, chaos::LevelInstance* new_level_instance) override;
+    virtual void OnLevelChanged(Level* new_level, Level* old_level, LevelInstance* new_level_instance) override;
 
 	virtual bool IsDead() const override;
 

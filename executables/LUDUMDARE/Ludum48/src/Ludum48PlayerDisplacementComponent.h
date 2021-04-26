@@ -1,11 +1,11 @@
 #pragma once
 
 
-#include <chaos/Chaos.h>
+#include "Ludum48.h"
 
-class LudumPlayerDisplacementComponent : public chaos::PlayerDisplacementComponent
+class LudumPlayerDisplacementComponent : public PlayerDisplacementComponent
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LudumPlayerDisplacementComponent, chaos::PlayerDisplacementComponent);
+	CHAOS_DECLARE_OBJECT_CLASS2(LudumPlayerDisplacementComponent, PlayerDisplacementComponent);
 
 public:
 

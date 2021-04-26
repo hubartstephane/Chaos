@@ -44,22 +44,22 @@ certaines fonction sont virtual dans TMLevel, d autres dans TMLevelInstance. Fai
 
 dans 
 
-	chaos::ParticleLayerBase* LudumLevel::DoCreateParticleLayer(chaos::TMLayerInstance* layer_instance)
+	ParticleLayerBase* LudumLevel::DoCreateParticleLayer(TMLayerInstance* layer_instance)
 
 	on creer des layers de particles avec  
 	
-	   new chaos::ParticleLayer<ParticleAnimatedLayerTrait>();
+	   new ParticleLayer<ParticleAnimatedLayerTrait>();
 
     on est donc obligé de creer de LayerTrait alors qu on pourrait faire de l inplace
 
 
-		new chaos::ParticleLayer<PARTICLE, VERTEX>();
+		new ParticleLayer<PARTICLE, VERTEX>();
 
 	------------------------------------------------------
 
 dans 
 
-bool LudumLevel::FinalizeLayerParticles(chaos::TMLayerInstance* layer_instance, chaos::ParticleAllocationBase* allocation)
+bool LudumLevel::FinalizeLayerParticles(TMLayerInstance* layer_instance, ParticleAllocationBase* allocation)
 
 for (GameObjectParticle& particle : accessor)
 
@@ -81,7 +81,7 @@ les TMparticle ne savent pas ou elles sont sur la grille. Passer en mode grille 
 
 ------------------------------------------------------
 
-chaos::TMTileCollisionIterator it = GetTileCollisionIterator(GetBoundingBox(), COLLISION_GAMEOBJECT, false);
+TMTileCollisionIterator it = GetTileCollisionIterator(GetBoundingBox(), COLLISION_GAMEOBJECT, false);
 	while (it)
 
 	reflechir a avoir un begin() et end() pour des meilleurs iterations
@@ -123,7 +123,7 @@ meilleur parametrage du recentrage
 
 ------------------------------------------------------
 
-s 'affranchir de chaos::' dans les projets ludums ???
+s 'affranchir de ' dans les projets ludums ???
 
 ------------------------------------------------------
 

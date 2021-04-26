@@ -23,11 +23,21 @@
   "sources": [
 
     { "path": "sounds/game_music1.ogg" , "categories" :  "music"},
+    
+    { "path": "sounds/game_music2.ogg" , "categories" :  "music"},
+    { "path": "sounds/game_music3.ogg" , "categories" :  "music"},
+    { "path": "sounds/game_music4.ogg" , "categories" :  "music"},
+
     { "path": "sounds/pause_music.ogg" , "categories" :  "music"},
     { "path": "sounds/menu_music.ogg" , "categories" :  "music"},
     { "path": "sounds/gameover.ogg" , "categories" :  "Voices"},
     { "path": "sounds/start.ogg" , "categories" :  "FX"},
     { "path": "sounds/next_level.ogg" , "categories" :  "FX"},     
-    { "path": "sounds/heartbeat.ogg" , "categories" :  "HeartBeat"}
+    { "path": "sounds/heartbeat.ogg" , "categories" :  "HeartBeat"},
+  
+
+    { "path": "sounds/door.ogg" , "categories" :  "FX2"},
+  
+    { "path": "sounds/bonus1.ogg" , "categories" :  "FX"}
   ]
 }

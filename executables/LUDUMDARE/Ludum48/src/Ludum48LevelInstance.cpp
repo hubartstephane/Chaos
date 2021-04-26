@@ -833,10 +833,11 @@ void LudumLevelInstance::CreatePendingDiamonds()
 
 void LudumLevelInstance::TakeDiamond()
 {
+	GetGame()->PlaySound("bonus1", false, false, 0.0f, chaos::SoundContext::GAME);
 	if (++diamond_count == required_diamond_count)
 	{
 		door_opened = true;
 
-
+		GetGame()->PlaySound("door", false, false, 0.0f, chaos::SoundContext::GAME);
 	}
 }

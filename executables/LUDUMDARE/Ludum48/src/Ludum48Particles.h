@@ -109,7 +109,7 @@ public:
 	/** direction orientation of the monster */
 	int monster_direction_index = 0;
 
-
+	bool falling_previous_frame = false;
 
 	bool destroy_particle = false;
 

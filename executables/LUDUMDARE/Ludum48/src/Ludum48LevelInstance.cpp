@@ -241,6 +241,10 @@ float LudumLevelInstance::GetObjectSpeed() const
 
 void LudumLevelInstance::NegociateDisplacements()
 {
+	bool play_stone_sound = false;
+
+	
+
 	for (GameObjectType type : {GameObjectType::Monster1, GameObjectType::Monster2, GameObjectType::Diamond, GameObjectType::Rock, GameObjectType::Player}) // order of priorities
 	{
 		for (size_t y = 0; y < grid_info.size.y; ++y)
@@ -255,13 +259,22 @@ void LudumLevelInstance::NegociateDisplacements()
 					if (type == GameObjectType::Monster1 || type == GameObjectType::Monster2)
 						NegociateMonsterDisplacement(p, cell);
 					else if (type == GameObjectType::Diamond || type == GameObjectType::Rock)
+					{
 						NegociateFallerDisplacement(p, cell);
+
+						play_stone_sound |= (cell.particle->falling_previous_frame && cell.particle->direction.y >= 0.0f);
+						cell.particle->falling_previous_frame = (cell.particle->direction.y < 0.0f);
+					}
 					else if (type == GameObjectType::Player)
 						NegociatePlayerDisplacement(p, cell);
 				}
 			}
 		}
 	}
+
+	
+	if (play_stone_sound)
+		GetGame()->PlaySound("stone_falling", false, false, 0.0f, chaos::SoundContext::GAME);
 }
 
 void LudumLevelInstance::NegociateFallerDisplacement(glm::ivec2 const& p, GridCellInfo& cell)

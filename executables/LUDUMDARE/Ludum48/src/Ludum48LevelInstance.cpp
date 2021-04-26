@@ -218,11 +218,6 @@ void LudumLevelInstance::NegociateDisplacements()
 	}
 }
 
-void LudumLevelInstance::NegociateMonsterDisplacement(glm::ivec2 const& p, GridCellInfo& cell)
-{
-
-}
-
 void LudumLevelInstance::NegociateFallerDisplacement(glm::ivec2 const& p, GridCellInfo& cell)
 {
 	glm::ivec2 below_p = p - glm::ivec2(0, 1);
@@ -384,6 +379,82 @@ void LudumLevelInstance::NegociatePlayerDisplacement(glm::ivec2 const& p, GridCe
 	}
 }
 
+static glm::vec2 GetMonsterDirection(int direction_index)
+{
+	direction_index = direction_index % 4;
+	if (direction_index == 0)
+		return { 1.0f, 0.0f };
+	else if (direction_index == 1)
+		return { 0.0f, -1.0f };
+	else if (direction_index == 2)
+		return { -1.0f, 0.0f };
+	else //if (direction_index == 3)
+		return { 0.0f, 1.0f };
+}
+
+static int GetMonsterDirectionIndex(glm::vec2 const& direction)
+{
+	if (direction.x == 1.0f)
+		return 0;
+	if (direction.y == -1.0f)
+		return 1;
+	if (direction.x == -1.0f)
+		return 2;
+	if (direction.y == 1.0f)
+		return 3;
+	return 0;
+}
+
+void LudumLevelInstance::NegociateMonsterDisplacement(glm::ivec2 const& p, GridCellInfo& cell)
+{
+	int direction_index = cell.particle->monster_direction_index;
+
+	// first : keep touching neighboor
+	glm::ivec2 neighb_dir = RecastVector<glm::ivec2>(GetMonsterDirection(direction_index + 1));
+
+	glm::ivec2 neighb_p = p + neighb_dir;
+	if (grid_info.IsInside(neighb_p))
+	{
+		GridCellInfo& neighb_cell = grid_info(neighb_p);
+		if (neighb_cell.CanLock(cell.particle))
+		{
+			glm::ivec2 neighb_neighb_dir = RecastVector<glm::ivec2>(GetMonsterDirection(direction_index + 2));
+
+			glm::ivec2 neigb_neigb_p = neighb_p + neighb_neighb_dir;
+			assert(grid_info.IsInside(neigb_neigb_p));
+
+			GridCellInfo& neighb_neighb_cell = grid_info(neigb_neigb_p);
+			if (neighb_neighb_cell.particle != nullptr)
+			{
+				neighb_cell.Lock(cell.particle);
+				cell.particle->direction = RecastVector<glm::vec2>(neighb_dir);
+				cell.particle->speed = GetObjectSpeed();
+				cell.particle->monster_direction_index = (direction_index + 1) % 4;
+				return;
+			}
+		}
+	}
+
+	// check remaining 3 directions
+	for (int i = 0; i < 3; ++i)
+	{
+		glm::ivec2 other_dir = RecastVector<glm::ivec2>(GetMonsterDirection(direction_index + 4 - i));
+
+		glm::ivec2 other_p = p + other_dir;
+		if (grid_info.IsInside(other_p))
+		{
+			GridCellInfo& other_cell = grid_info(other_p);
+			if (other_cell.CanLock(cell.particle))
+			{
+				other_cell.Lock(cell.particle);
+				cell.particle->direction = RecastVector<glm::vec2>(other_dir);
+				cell.particle->speed = GetObjectSpeed();
+				cell.particle->monster_direction_index = (direction_index + 4 - i) % 4;
+				return;
+			}
+		}
+	}
+}
 
 void LudumLevelInstance::DisplaceObjects(float delta_time)
 {
@@ -421,9 +492,11 @@ void LudumLevelInstance::FinalizeDisplacements()
 			if (cell.particle == nullptr)
 				continue;
 
-			cell.particle->bounding_box.position += cell.particle->direction * RecastVector<glm::vec2>(grid_info.tile_size);
+			if (cell.particle->speed > 0.0f)
+				cell.particle->bounding_box.position += cell.particle->direction * RecastVector<glm::vec2>(grid_info.tile_size);
 			cell.particle->offset = { 0.0f, 0.0f };
 			cell.particle->direction = { 0.0f, 0.0f };
+			cell.particle->speed = 0.0f;
 		}
 	}
 }
@@ -443,157 +516,6 @@ void LudumLevelInstance::FinalizeDisplacements()
 
 
 
-
-
-
-
-static glm::vec2 GetMonsterDirection(int direction_index)
-{
-	direction_index = direction_index % 4;
-	if (direction_index == 0)
-		return { 1.0f, 0.0f };
-	else if (direction_index == 1)
-		return { 0.0f, -1.0f };
-	else if (direction_index == 2)
-		return { -1.0f, 0.0f };
-	else //if (direction_index == 3)
-		return { 0.0f, 1.0f };
-}
-
-static int GetMonsterDirectionIndex(glm::vec2 const & direction)
-{
-	if (direction.x ==  1.0f)
-		return 0;
-	if (direction.y == -1.0f)
-		return 1;
-	if (direction.x == -1.0f)
-		return 2;
-	if (direction.y ==  1.0f)
-		return 3;
-	return 0;
-}
-
-
-void LudumLevelInstance::HandleMonsterObjects(float delta_time)
-{
-
-
-
-
-
-
-
-
-
-#if 0
-
-	for (int x = 0; x < grid_info.size.x; ++x)
-	{
-		for (int y = 0; y < grid_info.size.y; ++y)
-		{
-			int index = x + y * grid_info.size.x;
-
-			GameObjectParticle* particle = grid_info.cells[index].particle;
-			if (particle == nullptr || particle->type != GameObjectType::Monster)
-				continue;
-
-			if (particle->direction == glm::vec2(0.0f, 0.0f))
-			{
-				glm::ivec2 p = grid_info.GetIndexForPosition(particle->bounding_box.position);
-
-				glm::vec2 monster_direction = GetMonsterDirection(particle->monster_direction_index);
-
-				glm::vec2 neighboor_offset = GetMonsterDirection((particle->monster_direction_index + 1) % 4); // the touching neighboor should be there
-
-				glm::ivec2 neighboor_p = p + RecastVector<glm::ivec2>(neighboor_offset);
-
-				// try keeping contact with a neighboor
-				if (grid_info.IsInside(neighboor_p))
-				{
-					GridCellInfo& neighboor = grid_info(neighboor_p);
-
-					// no touching neighboor. Check whether its position would be better
-					if (neighboor.particle == nullptr)
-					{
-						if (neighboor.CanLock(particle))
-						{
-							glm::ivec2 neighboor_neighboor_offset = RecastVector<glm::ivec2>(GetMonsterDirection((particle->monster_direction_index + 2) % 4)); // the touching neighboor's neighboor should be there
-
-							if (grid_info.IsInside(neighboor_p + neighboor_neighboor_offset) && grid_info(neighboor_p + neighboor_neighboor_offset).particle != nullptr)
-							{
-								neighboor.Lock(particle);
-								particle->direction = neighboor_offset;
-								particle->monster_direction_index = (particle->monster_direction_index + 1) % 4;
-								particle->speed = object_speed;
-							}
-						}
-					}
-				}
-
-				// direction still not found
-				if (particle->direction == glm::vec2(0.0f, 0.0f))
-				{
-					glm::ivec2 other_index = p + RecastVector<glm::ivec2>(monster_direction);
-					if (grid_info.IsInside(other_index))
-					{
-						if (grid_info(other_index).CanLock(particle))
-						{
-							grid_info(other_index).Lock(particle);
-							particle->direction = monster_direction;
-							particle->speed = object_speed;
-						}
-
-					}
-					// still no direction : turn
-					if (particle->direction == glm::vec2(0.0f, 0.0f))
-					{
-						particle->monster_direction_index = (particle->monster_direction_index - 1 + 4) % 4; // nothing more this frame
-					}
-				}
-			}
-			UpdateParticlePositionInGrid(particle, delta_time, grid_info);
-
-			// search whether the player is touching the particle
-			glm::ivec2 p = grid_info.GetIndexForPosition(particle->bounding_box.position);
-			for (int axis : {0, 1})
-			{
-				for (int offset : {-1, 1})
-				{
-					glm::ivec2 other_p = p;
-					other_p[axis] += offset;
-
-					if (grid_info.IsInside(other_p))
-					{
-						GameObjectParticle* other_particle = grid_info(other_p).particle;
-						if (other_particle != nullptr && other_particle->type == GameObjectType::Player)
-						{
-							KillPlayer(other_particle);
-						}
-					}
-				}
-			}
-
-			
-
-
-		}
-	}
-
-#endif
-
-}
-
-void LudumLevelInstance::HandleBlobObjects(float delta_time)
-{
-
-
-}
-
-void LudumLevelInstance::HandleDisplacements(float delta_time)
-{
-
-
-}
 
 
 
@@ -776,41 +698,3 @@ void LudumLevelInstance::TakeDiamond()
 
 	}
 }
-
-
-
-
-// ===========================================================================
-// Standalone function
-// ===========================================================================
-
-#if 0
-
-bool UpdateParticlePositionInGrid(GameObjectParticle* particle, float delta_time, class GridInfo& grid_info)
-{
-	bool result = (particle->direction.y < 0.0f);
-	for (int axis : {0, 1})
-	{
-		if (particle->direction[axis] != 0.0f)
-		{
-			particle->offset[axis] = std::clamp(particle->offset[axis] + particle->speed * delta_time * particle->direction[axis], -1.0f, 1.0f);
-			if (particle->offset[axis] == -1.0f || particle->offset[axis] == 1.0f)
-			{
-				if (grid_info(particle->bounding_box.position).particle == particle)
-					grid_info(particle->bounding_box.position).particle = nullptr;
-				particle->bounding_box.position += particle->direction * RecastVector<glm::vec2>(grid_info.tile_size);
-				grid_info(particle->bounding_box.position).particle = particle;
-				grid_info(particle->bounding_box.position).UnLock(particle);
-
-				particle->offset = { 0.0f, 0.0f };
-				particle->direction = { 0.0f, 0.0f };
-
-				return result; // object was falling and is now stopped
-			}
-		}
-	}
-	return false; // movement not finished yet
-}
-
-#endif
-

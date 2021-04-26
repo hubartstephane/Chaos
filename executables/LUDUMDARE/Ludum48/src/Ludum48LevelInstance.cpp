@@ -243,8 +243,6 @@ void LudumLevelInstance::NegociateDisplacements()
 {
 	bool play_stone_sound = false;
 
-	
-
 	for (GameObjectType type : {GameObjectType::Monster1, GameObjectType::Monster2, GameObjectType::Diamond, GameObjectType::Rock, GameObjectType::Player}) // order of priorities
 	{
 		for (size_t y = 0; y < grid_info.size.y; ++y)
@@ -256,6 +254,9 @@ void LudumLevelInstance::NegociateDisplacements()
 				GridCellInfo& cell = grid_info(p);
 				if (cell.particle != nullptr && cell.particle->type == type)
 				{
+					cell.particle->direction = { 0.0f, 0.0f };
+					cell.particle->speed = 0.0f;
+
 					if (type == GameObjectType::Monster1 || type == GameObjectType::Monster2)
 						NegociateMonsterDisplacement(p, cell);
 					else if (type == GameObjectType::Diamond || type == GameObjectType::Rock)
@@ -272,7 +273,6 @@ void LudumLevelInstance::NegociateDisplacements()
 		}
 	}
 
-	
 	if (play_stone_sound)
 		GetGame()->PlaySound("stone_falling", false, false, 0.0f, chaos::SoundContext::GAME);
 }
@@ -531,6 +531,7 @@ void LudumLevelInstance::CommitDisplacements()
 			{
 				cell.particle->bounding_box.position += cell.particle->direction * RecastVector<glm::vec2>(grid_info.tile_size);
 				cell.particle->offset = { 0.0f, 0.0f };
+				cell.particle->speed = 0.0f;
 				cell.particle = nullptr;
 			}
 		}
@@ -623,25 +624,6 @@ void LudumLevelInstance::FinalizeDisplacements()
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 bool LudumLevelInstance::InitializeLevelInstance(TMObjectReferenceSolver& reference_solver, TiledMap::PropertyOwner const* property_owner)
 {
 	if (!TMLevelInstance::InitializeLevelInstance(reference_solver, property_owner))
@@ -698,8 +680,6 @@ uint64_t LudumLevelInstance::GetCollisionFlagByName(char const* name) const
 	return TMLevelInstance::GetCollisionFlagByName(name);
 }
 
-
-
 void LudumLevelInstance::CollectObjects()
 {
 	LudumLevel* ludum_level = GetLevel();
@@ -733,13 +713,17 @@ void LudumLevelInstance::CollectObjects()
 	}
 
 	// empty the grid
-	for (int i = 0; i < grid_info.size.x * grid_info.size.y; ++i)
-		grid_info.cells[i] = { nullptr, nullptr };
-	
+	memset(grid_info.cells, 0, grid_info.size.x * grid_info.size.y * sizeof(GridCellInfo));
+
 	// fill the grid
 	TMTileCollisionIterator it = GetTileCollisionIterator(GetBoundingBox(), COLLISION_GAMEOBJECT, false);
 	while (it)
 	{
+		GameObjectParticle* p1 = (GameObjectParticle*)it->particle;
+		GameObjectParticle* p2 = grid_info(it->particle->bounding_box.position).particle;
+
+		assert(p2 == nullptr); // no 2 particles on the same position
+
 		grid_info(it->particle->bounding_box.position).particle = (GameObjectParticle*)it->particle;
 		++it;
 	}
@@ -839,7 +823,6 @@ void LudumLevelInstance::CreatePendingDiamonds()
 						particle.bounding_box = grid_info.GetBoundingBox(cell);
 						particle.type = GameObjectType::Diamond;
 						particle.flags |= ParticleFlags::HEIGHT_BITS_MODE;
-
 					}
 				});
 				cell.create_diamond = false;

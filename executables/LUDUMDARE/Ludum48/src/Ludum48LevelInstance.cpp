@@ -760,36 +760,40 @@ void LudumLevelInstance::DestroyNeighboorsAndCreateDiamonds(glm::ivec2 const & p
 		{
 			glm::ivec2 other_p = p + glm::ivec2(dx, dy);
 			if (grid_info.IsInside(other_p))
-			{
+			{		
+				bool create_smoke = false;
+
 				GameObjectParticle* other = grid_info(other_p).particle;
 				if (other != nullptr && other->type != GameObjectType::HardWall)
-				{
-					other->destroy_particle = true;
-					if (spawner.IsValid())
-					{
-						SpawnParticleResult spawn_result = spawner.SpawnParticles(20, false).Process([other](ParticleAccessor<SmokeParticle> accessor)
-						{
-							for (SmokeParticle& particle : accessor)
-							{
-								float size_ratio = MathTools::RandFloat(0.5f, 0.8f);
-
-								float angle = MathTools::RandFloat(0.0f, 6.28f);
-								float r = MathTools::RandFloat(0.0f, 0.5f) * other->bounding_box.half_size.x;
-
-								glm::vec2 offset = { r * std::cos(angle), r * std::sin(angle) };
-
-								particle.bounding_box.position = other->bounding_box.position + offset;
-								particle.bounding_box.half_size = other->bounding_box.half_size * size_ratio;
-								particle.velocity = offset;
-								particle.lifetime = MathTools::RandFloat(1.0f, 2.0f);
-
-							}
-						});
-					}
-				}
+					create_smoke = other->destroy_particle = true;
 				if (create_diamond)
 					if (other == nullptr || other->type != GameObjectType::HardWall)
-						grid_info(other_p).create_diamond = true;
+						create_smoke = grid_info(other_p).create_diamond = true;
+
+				if (create_smoke && spawner.IsValid())
+				{
+					spawner.SpawnParticles(20, false).Process([other_p, this](ParticleAccessor<SmokeParticle> accessor)
+					{
+						box2 b = grid_info.GetBoundingBox(grid_info(other_p));
+
+						for (SmokeParticle& particle : accessor)
+						{
+							float size_ratio = MathTools::RandFloat(0.5f, 0.8f);
+
+							float angle = MathTools::RandFloat(0.0f, 6.28f);
+							float r = MathTools::RandFloat(0.0f, 0.5f) * b.half_size.x;
+
+							glm::vec2 offset = { r * std::cos(angle), r * std::sin(angle) };
+
+							particle.bounding_box.position = b.position + offset;
+							particle.bounding_box.half_size = b.half_size * size_ratio;
+							particle.velocity = 7.0f * offset;
+							particle.lifetime = MathTools::RandFloat(0.5f, 1.0f);
+
+						}
+					});
+				}
+
 			}
 		}
 	}

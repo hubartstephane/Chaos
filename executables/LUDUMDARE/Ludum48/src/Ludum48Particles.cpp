@@ -18,15 +18,21 @@
 
 void ParticleSmokeLayerTrait::ParticleToPrimitives(SmokeParticle const& particle, PrimitiveOutput<VertexBase>& output) const
 {
+	SmokeParticle other = particle;
 
+	other.color.a = 1.0f - (particle.age / particle.lifetime);
+	other.bounding_box.half_size = particle.bounding_box.half_size;
 
-	return ::ParticleToPrimitives(particle, output);
+	return ::ParticleToPrimitives(other, output);
 }
 
 bool ParticleSmokeLayerTrait::UpdateParticle(float delta_time, SmokeParticle& particle) const
 {
+	particle.age += delta_time;
+	if (particle.age > particle.lifetime)
+		return true;
 
-
+	particle.bounding_box.position += particle.velocity * delta_time;
 
 
 

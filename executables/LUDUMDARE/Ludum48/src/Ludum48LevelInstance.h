@@ -112,8 +112,8 @@ protected:
 	void NegociateDisplacements();
 
 	void NegociateFallerDisplacement(glm::ivec2 const& p, GridCellInfo& cell);
-	void NegociateMonsterDisplacement(glm::ivec2 const& p, GridCellInfo& cell);
 	void NegociatePlayerDisplacement(glm::ivec2 const& p, GridCellInfo& cell);
+	void NegociateMonsterDisplacement(glm::ivec2 const& p, GridCellInfo& cell);
 
 	bool TrySlipFaller(glm::ivec2 const& p, GridCellInfo& cell, int direction);
 
@@ -125,14 +125,6 @@ protected:
 	void DisplacementConsequences();
 
 
-
-	void HandleMonsterObjects(float delta_time);
-
-	void HandleBlobObjects(float delta_time);
-
-	void HandleDisplacements(float delta_time);
-
-	
 
 	void KillPlayer(GameObjectParticle* player);
 

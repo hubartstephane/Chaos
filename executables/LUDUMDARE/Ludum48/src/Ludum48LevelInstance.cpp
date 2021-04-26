@@ -752,6 +752,8 @@ void LudumLevelInstance::KillMonster(GameObjectParticle* monster, bool create_di
 
 void LudumLevelInstance::DestroyNeighboorsAndCreateDiamonds(glm::ivec2 const & p, bool create_diamond)
 {
+	ParticleSpawner spawner = GetParticleSpawner("Smoke", "Smoke");
+
 	for (int dy : {-1, 0, +1})
 	{
 		for (int dx : {-1, 0, +1})
@@ -761,7 +763,30 @@ void LudumLevelInstance::DestroyNeighboorsAndCreateDiamonds(glm::ivec2 const & p
 			{
 				GameObjectParticle* other = grid_info(other_p).particle;
 				if (other != nullptr && other->type != GameObjectType::HardWall)
+				{
 					other->destroy_particle = true;
+					if (spawner.IsValid())
+					{
+						SpawnParticleResult spawn_result = spawner.SpawnParticles(20, false).Process([other](ParticleAccessor<SmokeParticle> accessor)
+						{
+							for (SmokeParticle& particle : accessor)
+							{
+								float size_ratio = MathTools::RandFloat(0.5f, 0.8f);
+
+								float angle = MathTools::RandFloat(0.0f, 6.28f);
+								float r = MathTools::RandFloat(0.0f, 0.5f) * other->bounding_box.half_size.x;
+
+								glm::vec2 offset = { r * std::cos(angle), r * std::sin(angle) };
+
+								particle.bounding_box.position = other->bounding_box.position + offset;
+								particle.bounding_box.half_size = other->bounding_box.half_size * size_ratio;
+								particle.velocity = offset;
+								particle.lifetime = MathTools::RandFloat(1.0f, 2.0f);
+
+							}
+						});
+					}
+				}
 				if (create_diamond)
 					if (other == nullptr || other->type != GameObjectType::HardWall)
 						grid_info(other_p).create_diamond = true;

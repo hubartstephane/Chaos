@@ -19,7 +19,7 @@
   <properties>
    <property name="ObjectType" type="int" value="7"/>
   </properties>
-  <image width="32" height="32" source="../sprites/Monster1.png"/>
+  <image width="32" height="32" source="Monster1.png"/>
  </tile>
  <tile id="14" type="BurningFire">
   <image width="128" height="96" source="BurningFire.png"/>
@@ -61,7 +61,7 @@
   <properties>
    <property name="ObjectType" type="int" value="9"/>
   </properties>
-  <image width="32" height="32" source="../sprites/Monster2.png"/>
+  <image width="32" height="32" source="Monster2.png"/>
  </tile>
  <tile id="39">
   <image width="32" height="32" source="../sprites/Smoke.png"/>

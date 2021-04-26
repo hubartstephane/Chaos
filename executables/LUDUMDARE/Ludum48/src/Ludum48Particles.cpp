@@ -104,6 +104,10 @@ void ParticleGameObjectLayerTrait::ParticleToPrimitives(GameObjectParticle const
 
 bool ParticleGameObjectLayerTrait::UpdateParticle(float delta_time, GameObjectParticle& particle) const
 {
+	if (particle.destroy_particle)
+		return true;
+
+
 	if (particle.type == GameObjectType::Rock)
 	{
 		if (particle.direction.x != 0)
@@ -114,8 +118,7 @@ bool ParticleGameObjectLayerTrait::UpdateParticle(float delta_time, GameObjectPa
 			particle.rotation -= ROTATION_SPEED * delta_time * particle.direction.x * speed_factor;
 		}
 	}
-
-	return particle.destroy_particle;
+	return false;
 }
 
 
@@ -149,6 +152,9 @@ static bool UpdateAnimatedParticleTexcoords(ParticleAnimated & particle) // retu
 
 bool ParticleAnimatedLayerTrait::UpdateParticle(float delta_time, ParticleAnimated & particle) const
 {
+	if (particle.destroy_particle)
+		return true;
+
 	particle.animation_timer += delta_time;
 
 	// destroy the particles ? 
@@ -162,6 +168,26 @@ void ParticleAnimatedLayerTrait::ParticleToPrimitives(ParticleAnimated const& pa
 {
 	ParticleAnimated copy = particle;
 	copy.bounding_box.position += particle.offset * glm::vec2(32.0f, 32.0f); // HACK
+
+
+
+	int reversed_flag = (copy.flags & ParticleFlags::TEXTURE_HORIZONTAL_FLIP);
+
+	if (copy.direction.x != 0.0f || copy.direction.y != 0.0f)
+	{
+		if (copy.direction.y != 0.0f)
+		{
+			copy.flags &= ~ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
+			copy.flags |= reversed_flag;
+		}
+		else if (particle.direction.x > 0.0f)
+			copy.flags &= ~ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
+		else
+			copy.flags |= ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
+
+	}
+
+
 	::ParticleToPrimitives(copy, output);
 }
 

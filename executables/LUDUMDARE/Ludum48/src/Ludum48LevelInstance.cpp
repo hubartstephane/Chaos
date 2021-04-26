@@ -107,6 +107,64 @@ int LudumLevelInstance::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase 
 	return TMLevelInstance::DoDisplay(renderer, uniform_provider, render_params);
 }
 
+static glm::ivec2 GetAnalogicStickPosition(glm::vec2 stick_position)
+{
+	stick_position.x = MathTools::AnalogicToDiscret(stick_position.x);
+	stick_position.y = MathTools::AnalogicToDiscret(stick_position.y);
+	if (std::abs(stick_position.x) > std::abs(stick_position.y))
+		stick_position.y = 0.0f;
+	else
+		stick_position.x = 0.0f;
+	return RecastVector<glm::ivec2>(stick_position);
+}
+
+void LudumLevelInstance::CapturePlayerInputs()
+{
+	Player* player = GetPlayer(0);
+	if (player == nullptr)
+		return;
+
+	bool beginning = (frame_timer < frame_duration * 0.3f);
+
+	// Fake move
+	Key const fake_move_keys[] = { KeyboardButton::LEFT_CONTROL, KeyboardButton::RIGHT_CONTROL, GamepadButton::A, Key() };
+	if (player->CheckButtonPressed(fake_move_keys, false)) // current frame
+	{
+		if (beginning)
+		{
+			// button is just beeing pressed
+			if (!player->CheckButtonPressed(fake_move_keys, true)) // previous frame
+				cached_fake_move = true;
+		}
+		else
+		{
+			cached_fake_move = true;
+		}
+	}
+	// Stick
+	glm::ivec2 stick_position = GetAnalogicStickPosition(player->GetLeftStickPosition(false)); // current frame
+	if (stick_position != glm::ivec2(0, 0))
+	{
+		if (beginning)
+		{
+			// stick is just beeing moved
+			if (GetAnalogicStickPosition(player->GetLeftStickPosition(true)) == glm::ivec2(0, 0)) // previous frame
+				cached_stick_position = stick_position;
+		}
+		else
+		{
+			cached_stick_position = stick_position;
+		}
+	}
+	DebugValue("stick:", cached_stick_position);
+}
+
+void LudumLevelInstance::FlushPlayerInputs()
+{
+	cached_fake_move = false;
+	cached_stick_position = { 0, 0 };
+}
+
 bool LudumLevelInstance::DoTick(float delta_time)
 {
 	// timeout
@@ -151,9 +209,11 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	{
 		CollectObjects();
 		NegociateDisplacements();
+		FlushPlayerInputs();
 	}
 
-	// normal frames
+	// normal frames	
+	CapturePlayerInputs();
 	DisplaceObjects(delta_time);
 
 	// last frame
@@ -288,19 +348,7 @@ void LudumLevelInstance::NegociatePlayerDisplacement(glm::ivec2 const& p, GridCe
 	if (player == nullptr)
 		return;
 
-	Key const fake_displacement_key_buttons[] = { KeyboardButton::LEFT_CONTROL, KeyboardButton::RIGHT_CONTROL, GamepadButton::A, Key() };
-	bool fake_displacement = player->CheckButtonPressed(fake_displacement_key_buttons);
-
-	// get player inputs of interrests
-	glm::vec2 stick_position = player->GetLeftStickPosition();
-	stick_position.x = MathTools::AnalogicToDiscret(stick_position.x);
-	stick_position.y = MathTools::AnalogicToDiscret(stick_position.y);
-	if (std::abs(stick_position.x) > std::abs(stick_position.y))
-		stick_position.y = 0.0f;
-	else
-		stick_position.x = 0.0f;
-
-	glm::ivec2 istick_position = RecastVector<glm::ivec2>(stick_position);
+	glm::ivec2 istick_position = cached_stick_position;
 
 	// displace player
 	if (istick_position != glm::ivec2(0, 0))
@@ -341,7 +389,7 @@ void LudumLevelInstance::NegociatePlayerDisplacement(glm::ivec2 const& p, GridCe
 						if (next_other_cell.CanLock(other_cell.particle))
 						{
 							next_other_cell.Lock(other_cell.particle);
-							other_cell.particle->direction = stick_position;
+							other_cell.particle->direction = RecastVector<glm::vec2>(istick_position);
 							other_cell.particle->speed = GetObjectSpeed();
 							can_move = true;
 						}
@@ -356,7 +404,7 @@ void LudumLevelInstance::NegociatePlayerDisplacement(glm::ivec2 const& p, GridCe
 		
 		if (can_move)
 		{
-			if (!fake_displacement)
+			if (!cached_fake_move)
 			{
 				other_cell.Lock(cell.particle);
 				cell.particle->direction = istick_position;

@@ -148,7 +148,7 @@ void LudumLevelInstance::CapturePlayerInputs()
 		if (beginning)
 		{
 			// stick is just beeing moved
-			if (GetAnalogicStickPosition(player->GetLeftStickPosition(true)) == glm::ivec2(0, 0)) // previous frame
+			if (GetAnalogicStickPosition(player->GetLeftStickPosition(true)) != stick_position) // previous frame
 				cached_stick_position = stick_position;
 		}
 		else

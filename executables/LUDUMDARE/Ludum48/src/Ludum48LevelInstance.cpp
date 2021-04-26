@@ -163,37 +163,10 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	frame_timer += delta_time;
 	if (frame_timer >= frame_duration)
 	{
+		DisplacementConsequences();
 		FinalizeDisplacements();
-
-
-
-
-
 		frame_timer = 0.0f;
 	}
-
-	
-
-	
-
-
-
-#if 0
-
-	CollectObjects();
-
-	if (grid_info.cells != nullptr)
-	{
-		float dt = delta_time * speed_factor;
-		HandlePlayerObject(dt);
-		HandleFallingObjects(dt);
-		HandleMonsterObjects(dt);
-		HandleBlobObjects(dt);
-		HandleDisplacements(dt);
-		CreateDiamonds();
-	}
-#endif
-
 
 	TMLevelInstance::DoTick(delta_time);
 
@@ -207,7 +180,6 @@ float LudumLevelInstance::GetObjectSpeed() const
 {
 	return 1.0f/ ((frame_duration <= 0.0f)? 0.5f : frame_duration);
 }
-
 
 void LudumLevelInstance::NegociateDisplacements()
 {
@@ -266,93 +238,151 @@ void LudumLevelInstance::NegociateFallerDisplacement(glm::ivec2 const& p, GridCe
 	}
 	else
 	{
-		//if (below)
-
-
-	}
-
-
-
-
-#if 0
-	GridCellInfo& below = grid_info.cells[index - grid_info.size.x];
-
-	if (step == 0)
-	{
-		if (below.CanLock(particle))
+		// nothing yet below
+		if (below.locked_by != nullptr)
 		{
-			below.Lock(particle);
-			particle->direction = { 0.0f, -1.0f };
-			particle->speed = object_speed;
+			if (below.locked_by->type == GameObjectType::Monster || below.locked_by->type == GameObjectType::Player) // still "falling" but waiting for the objects to arrive to kill it
+			{
+				cell.particle->direction = { 0.0f, -1.0f };
+				cell.particle->speed = 0.0f; // WAITING !
+			}
 		}
+		// something below
 		else
 		{
-#if DEBUG_DRAW
-			if (below.particle != nullptr)
+			assert(below.particle != nullptr);
+			if (below.particle->type == GameObjectType::Rock || below.particle->type == GameObjectType::Diamond || below.particle->type == GameObjectType::Wall) // may slip on theses elements
 			{
-				glm::vec4 RED = { 1.0f, 0.0f, 0.0f, 1.0f };
-
-				DrawBox(*DI, below.particle->bounding_box, RED, false);
-				DrawLine(*DI, particle->bounding_box.position, below.particle->bounding_box.position, RED);
+				if (below.particle->direction == glm::vec2(0.0f, 0.0f)) // may not slip on a moving objects
+				{
+					// check left or right position in a random order
+					int random = rand();
+					for (int i : { 0, 1 })
+					{
+						if (((i + random) & 1) == 0)
+						{
+							if (TrySlipFaller(p, cell, -1))
+								break;
+						}
+						else
+						{
+							if (TrySlipFaller(p, cell, +1))
+								break;
+						}
+					}
+				}
 			}
-#endif
 		}
 	}
-	else if (step == 1)
-	{
-		if (below.particle == nullptr)
-			continue;
-		if (below.particle->type != GameObjectType::Wall && below.particle->type != GameObjectType::Rock && below.particle->type != GameObjectType::Diamond) // do not try going left or right above the player
-			continue;
-		if (below.particle->direction.x != 0.0f || below.particle->direction.y != 0.0f)
-			continue;
-
-		int random = rand();
-		for (int i : { 0, 1 })
-		{
-			if (((i + random) & 1) == 0) // check one branch before the other in a random order
-			{
-				if (x > 0) // fall to the left
-				{
-					GridCellInfo& left = grid_info.cells[index - 1];
-					GridCellInfo& left_below = grid_info.cells[index - 1 - grid_info.size.x];
-
-					if (left.CanLock(particle) && left_below.CanLock(particle))
-					{
-						left.Lock(particle);
-						particle->direction = { -1.0f, 0.0f };
-						particle->speed = object_speed;
-						break;
-					}
-				}
-			}
-			else
-			{
-				if (x < grid_info.size.x - 1) // fall to the right
-				{
-					GridCellInfo& right = grid_info.cells[index + 1];
-					GridCellInfo& right_below = grid_info.cells[index + 1 - grid_info.size.x];
-
-					if (right.CanLock(particle) && right_below.CanLock(particle))
-					{
-						right.Lock(particle);
-						particle->direction = { +1.0f, 0.0f };
-						particle->speed = object_speed;
-						break;
-
-					}
-				}
-			}
-
-#endif
-
-
 }
+
+bool LudumLevelInstance::TrySlipFaller(glm::ivec2 const& p, GridCellInfo& cell, int direction)
+{
+	glm::ivec2 neighb_p = p + glm::ivec2(direction, 0);
+	if (!grid_info.IsInside(neighb_p)) // if true, left below is inside too
+		return false;
+
+	glm::ivec2 neighb_below_p = p + glm::ivec2(direction, -1);
+	assert(grid_info.IsInside(neighb_below_p));
+
+	GridCellInfo& neighb = grid_info(neighb_p);
+	GridCellInfo& neighb_below = grid_info(neighb_below_p);
+
+	if (neighb.CanLock(cell.particle) && neighb_below.CanLock(cell.particle))
+	{
+		neighb.Lock(cell.particle); // XXX : donot lock neigb_below
+		cell.particle->direction = { float(direction), 0.0f };
+		cell.particle->speed = GetObjectSpeed();
+		return true;
+	}
+	return false;
+}
+
 
 void LudumLevelInstance::NegociatePlayerDisplacement(glm::ivec2 const& p, GridCellInfo& cell)
 {
-}
+	// early exit
+	LudumPlayer* player = GetPlayer(0);
+	if (player == nullptr)
+		return;
 
+	Key const fake_displacement_key_buttons[] = { KeyboardButton::LEFT_CONTROL, KeyboardButton::RIGHT_CONTROL, GamepadButton::A, Key() };
+	bool fake_displacement = player->CheckButtonPressed(fake_displacement_key_buttons);
+
+	// get player inputs of interrests
+	glm::vec2 stick_position = player->GetLeftStickPosition();
+	stick_position.x = MathTools::AnalogicToDiscret(stick_position.x);
+	stick_position.y = MathTools::AnalogicToDiscret(stick_position.y);
+	if (std::abs(stick_position.x) > std::abs(stick_position.y))
+		stick_position.y = 0.0f;
+	else
+		stick_position.x = 0.0f;
+
+	glm::ivec2 istick_position = RecastVector<glm::ivec2>(stick_position);
+
+	// displace player
+	if (istick_position != glm::ivec2(0, 0))
+	{
+		// check whether wanted cell exists
+		glm::ivec2 p = grid_info.GetIndexForPosition(cell.particle->bounding_box.position);
+		glm::ivec2 other_p = p + istick_position;
+		if (!grid_info.IsInside(other_p))
+			return;
+
+		GridCellInfo& other_cell = grid_info(other_p);
+
+		bool can_move = false;
+
+		if (other_cell.particle != nullptr)
+		{
+			if (other_cell.particle->type == GameObjectType::Diamond)
+			{
+				TakeDiamond();
+				other_cell.particle->destroy_particle = true;
+				other_cell.particle = nullptr;
+				can_move = true;
+			}
+			else if (other_cell.particle->type == GameObjectType::Foam)
+			{
+				other_cell.particle->destroy_particle = true;
+				other_cell.particle = nullptr;
+				can_move = true;
+			}
+			else if (other_cell.particle->type == GameObjectType::Rock)
+			{
+				if (istick_position.x != 0 && other_cell.particle->direction == glm::vec2(0.0f, 0.0f)) // can only push horizontally
+				{
+					glm::ivec2 next_other_p = other_p + istick_position;
+					if (grid_info.IsInside(next_other_p))
+					{
+						GridCellInfo& next_other_cell = grid_info(next_other_p);
+						if (next_other_cell.CanLock(other_cell.particle))
+						{
+							next_other_cell.Lock(other_cell.particle);
+							other_cell.particle->direction = stick_position;
+							other_cell.particle->speed = GetObjectSpeed();
+							can_move = true;
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			can_move = other_cell.CanLock(cell.particle);
+		}
+		
+		if (can_move)
+		{
+			if (!fake_displacement)
+			{
+				other_cell.Lock(cell.particle);
+				cell.particle->direction = istick_position;
+				cell.particle->speed = GetObjectSpeed();
+			}
+		}
+	}
+}
 
 
 void LudumLevelInstance::DisplaceObjects(float delta_time)
@@ -374,11 +404,10 @@ void LudumLevelInstance::DisplaceObjects(float delta_time)
 	}
 }
 
+void LudumLevelInstance::DisplacementConsequences()
+{
 
-
-
-
-
+}
 
 void LudumLevelInstance::FinalizeDisplacements()
 {
@@ -402,200 +431,6 @@ void LudumLevelInstance::FinalizeDisplacements()
 
 
 
-void LudumLevelInstance::HandleFallingObjects(float delta_time)
-{
-#if 0
-	auto DI = GetDebugDrawInterface();
-
-	for (int step : {0, 1})
-	{
-		for (int y = 0; y < grid_info.size.y; ++y)
-		{
-			for (int x = 0; x < grid_info.size.x; ++x)
-			{
-				int index = x + y * grid_info.size.x;
-
-				GameObjectParticle* particle = grid_info.cells[index].particle;
-
-				if (particle == nullptr)
-					continue;
-				if (particle->type != GameObjectType::Rock && particle->type != GameObjectType::Diamond)
-					continue;
-
-				// search where the particle may move
-				if (y > 0 && particle->direction.x == 0.0f && particle->direction.y == 0.0f)
-				{
-					GridCellInfo& below = grid_info.cells[index - grid_info.size.x];
-
-					if (step == 0)
-					{
-						if (below.CanLock(particle))
-						{
-							below.Lock(particle);
-							particle->direction = { 0.0f, -1.0f };
-							particle->speed = object_speed;
-						}
-						else
-						{
-#if DEBUG_DRAW
-							if (below.particle != nullptr)
-							{
-								glm::vec4 RED = { 1.0f, 0.0f, 0.0f, 1.0f };
-
-								DrawBox(*DI, below.particle->bounding_box, RED, false);
-								DrawLine(*DI, particle->bounding_box.position, below.particle->bounding_box.position, RED);
-							}
-#endif
-						}
-					}
-					else if (step == 1)
-					{
-						if (below.particle == nullptr)
-							continue;
-						if (below.particle->type != GameObjectType::Wall && below.particle->type != GameObjectType::Rock && below.particle->type != GameObjectType::Diamond) // do not try going left or right above the player
-							continue;
-						if (below.particle->direction.x != 0.0f || below.particle->direction.y != 0.0f)
-							continue;
-
-						int random = rand();
-						for (int i : { 0, 1 })
-						{
-							if (((i + random) & 1) == 0) // check one branch before the other in a random order
-							{
-								if (x > 0) // fall to the left
-								{
-									GridCellInfo& left = grid_info.cells[index - 1];
-									GridCellInfo& left_below = grid_info.cells[index - 1 - grid_info.size.x];
-
-									if (left.CanLock(particle) && left_below.CanLock(particle))
-									{
-										left.Lock(particle);
-										particle->direction = { -1.0f, 0.0f };
-										particle->speed = object_speed;
-										break;
-									}
-								}
-							}
-							else
-							{
-								if (x < grid_info.size.x - 1) // fall to the right
-								{
-									GridCellInfo& right = grid_info.cells[index + 1];
-									GridCellInfo& right_below = grid_info.cells[index + 1 - grid_info.size.x];
-
-									if (right.CanLock(particle) && right_below.CanLock(particle))
-									{
-										right.Lock(particle);
-										particle->direction = { +1.0f, 0.0f };
-										particle->speed = object_speed;
-										break;
-
-									}
-								}
-							}
-						}
-
-					} // end step 1
-				}
-			} // end y
-		} // end x
-	} // end step
-
-
-		
-	// continue movement
-	for (int x = 0; x < grid_info.size.x; ++x)
-	{
-		for (int y = 0; y < grid_info.size.y; ++y)
-		{
-			int index = x + y * grid_info.size.x;
-
-			GameObjectParticle* particle = grid_info.cells[index].particle;
-			if (particle == nullptr)
-				continue;
-			if (particle->type != GameObjectType::Rock && particle->type != GameObjectType::Diamond)
-				continue;
-
-			if (UpdateParticlePositionInGrid(particle, delta_time, grid_info))
-			{
-				glm::ivec2 p = grid_info.GetIndexForPosition(particle->bounding_box.position);
-				if (p.y > 0)
-				{
-					for (int dx : {-1, 0, 1}) // check the 3 cells below for the player
-					{
-						glm::ivec2 other_index = glm::ivec2(p.x + dx, p.y - 1);
-						if (!grid_info.IsInside(other_index))
-							continue;
-
-						GridCellInfo& other = grid_info(other_index);
-						if (other.particle != nullptr)
-						{
-							if ((dx ==  0 /*&& other.particle->direction.y >= 0*/ )|| // object is not going down too !
-								(dx == -1 && other.particle->direction.x > 0) || // other object is entering the cell under us
-								(dx == +1 && other.particle->direction.x < 0))
-							{
-
-								if (other.particle->type == GameObjectType::Player)
-								{
-
-									KillPlayer(other.particle);
-								}
-								else if (other.particle->type == GameObjectType::Monster)
-								{
-
-									KillMonster(other.particle);
-								}
-
-
-
-
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-#if DEBUG_DRAW
-	//debug draw
-	glm::vec4 YELLOW = { 1.0f, 1.0f, 0.0f, 1.0f };
-	glm::vec4 GREEN  = { 0.0f, 1.0f, 0.0f, 1.0f };
-
-	for (int x = 0; x < grid_info.size.x; ++x)
-	{
-		for (int y = 0; y < grid_info.size.y; ++y)
-		{
-			GridCellInfo const& cell = grid_info(glm::ivec2(x, y));
-
-			if (cell.locked)
-			{
-				box2 bb = grid_info.GetBoundingBox(cell);
-				bb.half_size *= 0.9f;
-				DrawBox(*DI, bb, YELLOW , false);
-
-				DrawLine(*DI, bb.position, cell.locked_by_box.position, YELLOW);
-			}
-
-			if (cell.particle != nullptr && cell.particle->type == GameObjectType::Player)
-			{
-				box2 bb = grid_info.GetBoundingBox(cell);
-				bb.half_size *= 0.5f;
-				DrawBox(*DI, bb, GREEN, false);
-
-			}
-		}
-	}
-#endif
-
-
-
-#endif
-
-}
-
-void LudumLevelInstance::HandlePlayerObject(float delta_time)
-{	
 
 
 
@@ -604,118 +439,13 @@ void LudumLevelInstance::HandlePlayerObject(float delta_time)
 
 
 
-#if 0
 
 
-	LudumPlayer* player = GetPlayer(0);
-	if (player == nullptr)
-		return;
-	
-	PlayerPawn* pawn = player->GetPawn();
-	if (pawn == nullptr)
-		return;
-
-	ParticlePlayer* particle = pawn->GetParticle<ParticlePlayer>(0);
-	if (particle == nullptr)
-		return;
-
-	Key const fake_displacement_key_buttons[] = { KeyboardButton::LEFT_CONTROL, KeyboardButton::RIGHT_CONTROL, GamepadButton::A, Key() };
-	bool fake_displacement = player->CheckButtonPressed(fake_displacement_key_buttons);
-
-	// get player inputs of interrests
-	glm::vec2 stick_position = player->GetLeftStickPosition();
-	stick_position.x = MathTools::AnalogicToDiscret(stick_position.x);
-	stick_position.y = MathTools::AnalogicToDiscret(stick_position.y);
-	if (std::abs(stick_position.x) > std::abs(stick_position.y))
-		stick_position.y = 0.0f;
-	else
-		stick_position.x = 0.0f;
-
-	glm::ivec2 istick_position = RecastVector<glm::ivec2>(stick_position);
-
-	// change pawn direction
-	if (particle->direction.x == 0.0f && particle->direction.y == 0.0f)
-	{
-		if (stick_position != glm::vec2(0.0f, 0.0f))
-		{
-			glm::ivec2 p = grid_info.GetIndexForPosition(particle->bounding_box.position);
-
-			glm::ivec2 other_index = (p + istick_position);
-
-			if (grid_info.IsInside(other_index))
-			{
-				GridCellInfo& other = grid_info(other_index);
-
-				bool can_go = false;
-
-				if (other.particle != nullptr)
-				{
-					if (other.particle->type == GameObjectType::Foam)
-					{
-						other.particle->destroy_particle = true;
-						if (!fake_displacement)
-							other.particle = nullptr;
-						can_go = true;
-					}
-					else if (other.particle->type == GameObjectType::Diamond)
-					{
-						other.particle->destroy_particle = true;
-						TakeDiamond();
-						if (!fake_displacement)
-							other.particle = nullptr;
-						can_go = true;
-					}
-					else if (other.particle->type == GameObjectType::Rock)
-					{
-						if (stick_position.x != 0.0f && other.particle->direction == glm::vec2(0.0f, 0.0f)) // can only push horizontally
-						{
-							glm::ivec2 rock_p = grid_info.GetCellCoord(other);
-							if (grid_info.IsInside(rock_p + istick_position))
-							{
-								GridCellInfo& next_to_rock = grid_info(rock_p + istick_position);
-								if (next_to_rock.CanLock(other.particle))
-								{
-									next_to_rock.Lock(other.particle);
-									other.particle->direction = stick_position;
-									other.particle->speed = push_speed;
-									if (!fake_displacement)
-									{
-										particle->direction = stick_position;
-										particle->speed = push_speed;
-									}
-								}
-							}
-						}
-					}
-				}
-				else
-					can_go = true;
-
-				if (can_go && other.CanLock(particle))
-				{
-					if (!fake_displacement)
-					{
-						other.Lock(particle);
-						particle->direction = stick_position;
-						particle->speed = player_speed;
-					}
-
-				}
-			}
-		}
-
-	}
-	// update pawn position
-	else
-	{
-		UpdateParticlePositionInGrid(particle, delta_time, grid_info);
-	}
 
 
-#endif
 
 
-}
+
 
 static glm::vec2 GetMonsterDirection(int direction_index)
 {

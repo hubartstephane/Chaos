@@ -6,7 +6,7 @@
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
   <property name="CAMERA_SPEED" type="float" value="400"/>
-  <property name="FRAME_DURATION" type="float" value="0.5"/>
+  <property name="FRAME_DURATION" type="float" value="0.2"/>
   <property name="LEVEL_TIMEOUT" type="float" value="50"/>
   <property name="LEVEL_TITLE">Level 1
 [LEVELTITLE Welcome Home]</property>

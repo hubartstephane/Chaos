@@ -103,7 +103,7 @@ public:
 	/** direction where the object want to go */
 	glm::vec2 direction = { 0.0f, 0.0f };
 	/** the displacement speed along the direction */
-	float speed = 1.0f;
+	float speed = 0.0f;
 
 
 	/** direction orientation of the monster */

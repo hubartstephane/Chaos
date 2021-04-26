@@ -21,7 +21,10 @@ void ParticleSmokeLayerTrait::ParticleToPrimitives(SmokeParticle const& particle
 	SmokeParticle other = particle;
 
 	other.color.a = 1.0f - (particle.age / particle.lifetime);
-	other.bounding_box.half_size = particle.bounding_box.half_size;
+
+	float box_ratio = 1.0f + 0.4f * (particle.age / particle.lifetime);
+
+	other.bounding_box.half_size = particle.bounding_box.half_size * box_ratio;
 
 	return ::ParticleToPrimitives(other, output);
 }

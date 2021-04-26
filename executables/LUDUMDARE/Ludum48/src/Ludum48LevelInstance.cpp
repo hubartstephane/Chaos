@@ -381,6 +381,8 @@ void LudumLevelInstance::NegociatePlayerDisplacement(glm::ivec2 const& p, GridCe
 						GridCellInfo& next_other_cell = grid_info(next_other_p);
 						if (next_other_cell.CanLock(other_cell.particle))
 						{
+							GetGame()->PlaySound("stone_scrub", false, false, 0.0f, chaos::SoundContext::GAME);
+
 							next_other_cell.Lock(other_cell.particle);
 							other_cell.particle->direction = RecastVector<glm::vec2>(istick_position);
 							other_cell.particle->speed = GetObjectSpeed();

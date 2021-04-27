@@ -254,13 +254,13 @@ void LudumLevelInstance::NegociateDisplacements()
 				GridCellInfo& cell = grid_info(p);
 				if (cell.particle != nullptr && cell.particle->type == type)
 				{
-					cell.particle->direction = { 0.0f, 0.0f };
-					cell.particle->speed = 0.0f;
-
 					if (type == GameObjectType::Monster1 || type == GameObjectType::Monster2)
 						NegociateMonsterDisplacement(p, cell);
 					else if (type == GameObjectType::Diamond || type == GameObjectType::Rock)
 					{
+						cell.particle->direction = { 0.0f, 0.0f };
+						cell.particle->speed = 0.0f;
+
 						NegociateFallerDisplacement(p, cell);
 
 						play_stone_sound |= (cell.particle->falling_previous_frame && cell.particle->direction.y >= 0.0f);

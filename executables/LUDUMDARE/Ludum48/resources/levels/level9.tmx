@@ -20,6 +20,7 @@
  <group id="45" name="Groupe 2">
   <group id="40" name="Groupe 1">
    <properties>
+    <property name="INFINITE_BOUNDING_BOX" type="bool" value="true"/>
     <property name="OBJECT_REFERN" type="object" value="0"/>
    </properties>
    <layer id="39" name="Background" width="24" height="14" locked="1">

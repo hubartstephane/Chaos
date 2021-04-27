@@ -776,23 +776,36 @@ namespace chaos
 
 			// shulayer
 
-			bool recursive = true;
-
-			box2 layer_box = GetBoundingBox(true, recursive);
-
-#if 0
-			box2 reference_box = reference_layer->GetBoundingBox(true);
-			if (!IsGeometryEmpty(layer_box) && !IsGeometryEmpty(reference_box))
-				final_ratio = layer_box.half_size / reference_box.half_size;
-#endif
-
 			obox2 final_camera_obox;
 			final_camera_obox.position = initial_camera_obox.position + (camera_obox.position - initial_camera_obox.position) * final_ratio;
 			final_camera_obox.half_size = initial_camera_obox.half_size + (camera_obox.half_size - initial_camera_obox.half_size) * final_ratio;
 
-			// compute repetitions
-			RepeatedBoxScissor scissor = RepeatedBoxScissor(layer_box, chaos::GetBoundingBox(final_camera_obox), wrap_x, wrap_y);
 
+
+			// shu48
+
+			// default block to render
+			glm::ivec2 start_instance = glm::ivec2(0, 0);
+			glm::ivec2 last_instance  = glm::ivec2(1, 1);
+
+			RepeatedBoxScissor scissor;
+			if (!infinite_bounding_box)
+			{
+				// compute repetitions
+				bool recursive = true;
+				box2 layer_box = GetBoundingBox(true, recursive);
+				scissor = RepeatedBoxScissor(layer_box, chaos::GetBoundingBox(final_camera_obox), wrap_x, wrap_y);
+
+				// HACK : due to bad LAYER_BOUNDING_BOX computation, the layer containing PLAYER_START may be clamped and layer hidden
+				start_instance = scissor.start_instance;
+				last_instance = scissor.last_instance;
+				if (this == reference_layer || IsGeometryEmpty(layer_box))
+				{
+					start_instance = glm::ivec2(0, 0);
+					last_instance = glm::ivec2(1, 1); // always see fully the layer without clamp => repetition not working
+				}
+			}
+				
 			// new provider for camera override (will be fullfill only if necessary)
 			GPUProgramProviderChain main_uniform_provider(uniform_provider);
 			main_uniform_provider.AddVariable("world_to_camera", CameraTools::GetCameraTransform(final_camera_obox));
@@ -801,18 +814,6 @@ namespace chaos
 			final_camera_box.position = final_camera_obox.position;
 			final_camera_box.half_size = final_camera_obox.half_size;
 			main_uniform_provider.AddVariable("projection_matrix", CameraTools::GetProjectionMatrix(final_camera_obox));
-
-
-
-
-			// HACK : due to bad LAYER_BOUNDING_BOX computation, the layer containing PLAYER_START may be clamped and layer hidden
-			glm::ivec2 start_instance = scissor.start_instance;
-			glm::ivec2 last_instance = scissor.last_instance;
-			if (this == reference_layer || IsGeometryEmpty(layer_box))
-			{
-				start_instance = glm::ivec2(0, 0);
-				last_instance = glm::ivec2(1, 1); // always see fully the layer without clamp => repetition not working
-			}
 
 			glm::mat4 local_to_world = glm::translate(glm::vec3(offset.x, offset.y, 0.0f));
 
@@ -823,7 +824,7 @@ namespace chaos
 				{
 					// new Provider to apply the offset for this 'instance'
 					GPUProgramProviderChain instance_uniform_provider(&main_uniform_provider);
-					glm::vec2 instance_offset = scissor.GetInstanceOffset(glm::ivec2(x, y));
+					glm::vec2 instance_offset = (!infinite_bounding_box) ? scissor.GetInstanceOffset(glm::ivec2(x, y)) : glm::vec2(0.0f, 0.0f);
 
 					local_to_world[3][0] = instance_offset.x + offset.x;
 					local_to_world[3][1] = instance_offset.y + offset.y;

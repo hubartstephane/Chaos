@@ -202,7 +202,12 @@ Dans GameHUD la notion de text/format n'est pas tres claire'
 
 		faire que l on puisse desactiver certains elements du HUD par fichier de config (cf scrore)
 
+		------------------------------------------------------
 
+
+		bug layer whole is clipped if initial bounding box is outside the camera
+		(even if particles have moved outside
+		)
 
 
 

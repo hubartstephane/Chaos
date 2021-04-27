@@ -96,7 +96,7 @@ bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, boost::file
 {
 	if (!Player::InitializeGameValues(config, config_path, hot_reload))
 		return false;
-	if (life_count != 5)
+	if (life_count != 8)
 		cheater_farid = true;
 	return true;
 }

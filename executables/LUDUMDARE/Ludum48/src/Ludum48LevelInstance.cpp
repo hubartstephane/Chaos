@@ -722,7 +722,7 @@ void LudumLevelInstance::CollectObjects()
 		GameObjectParticle* p1 = (GameObjectParticle*)it->particle;
 		GameObjectParticle* p2 = grid_info(it->particle->bounding_box.position).particle;
 
-		assert(p2 == nullptr); // no 2 particles on the same position
+		//assert(p2 == nullptr); // no 2 particles on the same position
 
 		grid_info(it->particle->bounding_box.position).particle = (GameObjectParticle*)it->particle;
 		++it;
@@ -748,6 +748,8 @@ void LudumLevelInstance::KillMonster(GameObjectParticle* monster, bool create_di
 
 void LudumLevelInstance::DestroyNeighboorsAndCreateDiamonds(glm::ivec2 const & p, bool create_diamond)
 {
+	create_diamond = false;
+
 	ParticleSpawner spawner = GetParticleSpawner("Smoke", "Smoke");
 
 	for (int dy : {-1, 0, +1})
@@ -762,11 +764,12 @@ void LudumLevelInstance::DestroyNeighboorsAndCreateDiamonds(glm::ivec2 const & p
 				GameObjectParticle* other = grid_info(other_p).particle;
 				if (other != nullptr && other->type != GameObjectType::HardWall)
 					create_smoke = other->destroy_particle = true;
+
 				if (create_diamond)
 					if (other == nullptr || other->type != GameObjectType::HardWall)
 						create_smoke = grid_info(other_p).create_diamond = true;
 
-				if (create_smoke && spawner.IsValid())
+				if (0 && create_smoke && spawner.IsValid())
 				{
 					spawner.SpawnParticles(20, false).Process([other_p, this](ParticleAccessor<SmokeParticle> accessor)
 					{

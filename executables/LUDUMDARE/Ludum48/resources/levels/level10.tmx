@@ -7,9 +7,9 @@
   <property name="BACKGROUND_TEXTURE" value="background1"/>
   <property name="FRAME_DURATION" type="float" value="0.2"/>
   <property name="LEVEL_TIMEOUT" type="float" value="120"/>
-  <property name="LEVEL_TITLE" value=""/>
+  <property name="LEVEL_TITLE" value="Kill them all"/>
   <property name="MAIN_CAMERA" type="object" value="2114"/>
-  <property name="MUSIC" value="game_music3"/>
+  <property name="MUSIC" value="game_music1"/>
   <property name="PLAYER_START" type="object" value="0"/>
   <property name="REQUIRED_DIAMOND" type="int" value="18"/>
  </properties>

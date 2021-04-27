@@ -23,11 +23,6 @@
   "sources": [
 
     { "path": "sounds/game_music1.ogg" , "categories" :  "music"},
-    
-    { "path": "sounds/game_music2.ogg" , "categories" :  "music"},
-    { "path": "sounds/game_music3.ogg" , "categories" :  "music"},
-    { "path": "sounds/game_music4.ogg" , "categories" :  "music"},
-
     { "path": "sounds/pause_music.ogg" , "categories" :  "music"},
     { "path": "sounds/menu_music.ogg" , "categories" :  "music"},
     { "path": "sounds/gameover.ogg" , "categories" :  "Voices"},

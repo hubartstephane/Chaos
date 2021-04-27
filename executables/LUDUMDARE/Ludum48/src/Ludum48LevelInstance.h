@@ -11,7 +11,9 @@ public:
 	void Lock(GameObjectParticle* p);
 
 	GameObjectParticle* particle  = nullptr;
-	GameObjectParticle* locked_by = nullptr;
+
+
+	GameObjectType locked_by_type = GameObjectType::None;
 
 	bool create_diamond = false;
 };
@@ -119,13 +121,8 @@ protected:
 
 	void DisplaceObjects(float delta_time);
 
-
-
 	void CommitDisplacements();
-	void FinalizeDisplacements();
 	void DisplacementConsequences();
-
-
 
 	void KillPlayer(GameObjectParticle* player);
 

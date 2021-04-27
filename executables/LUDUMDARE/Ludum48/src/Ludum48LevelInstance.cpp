@@ -16,13 +16,13 @@
 
 bool GridCellInfo::CanLock(GameObjectParticle* p) const
 {
-	return locked_by == nullptr && particle == nullptr;
+	return locked_by_type == GameObjectType::None && particle == nullptr;
 }
 
 void GridCellInfo::Lock(GameObjectParticle* p)
 {
 	assert(p != nullptr);
-	locked_by = p;
+	locked_by_type = p->type;
 }
 
 // =============================================================
@@ -203,10 +203,12 @@ bool LudumLevelInstance::DoTick(float delta_time)
 		}
 	}
 
+	// some particle may have been destroyed during each frames (so must recollect, but do not destroy the locked_by !
+	CollectObjects(); 
+
 	// very first frame
 	if (frame_timer == 0.0f)
 	{
-		CollectObjects();
 		NegociateDisplacements();
 		FlushPlayerInputs();
 	}
@@ -220,8 +222,8 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	if (frame_timer >= frame_duration)
 	{
 		CommitDisplacements();
+		CollectObjects(); // get corrects Particles on the grid 
 		DisplacementConsequences();
-		FinalizeDisplacements();
 		CreatePendingDiamonds(); // XXX : create particles only at the end, not to break all particles pointers in grid_info
 		frame_timer = 0.0f;
 	}
@@ -254,12 +256,13 @@ void LudumLevelInstance::NegociateDisplacements()
 				GridCellInfo& cell = grid_info(p);
 				if (cell.particle != nullptr && cell.particle->type == type)
 				{
+					cell.particle->direction = { 0.0f, 0.0f };
+					cell.particle->speed = 0.0f;
+
 					if (type == GameObjectType::Monster1 || type == GameObjectType::Monster2)
 						NegociateMonsterDisplacement(p, cell);
 					else if (type == GameObjectType::Diamond || type == GameObjectType::Rock)
 					{
-					//	cell.particle->direction = { 0.0f, 0.0f };
-					//	cell.particle->speed = 0.0f;
 
 						NegociateFallerDisplacement(p, cell);
 
@@ -293,9 +296,9 @@ void LudumLevelInstance::NegociateFallerDisplacement(glm::ivec2 const& p, GridCe
 	else
 	{
 		// nothing yet below
-		if (below.locked_by != nullptr)
+		if (below.locked_by_type != GameObjectType::None)
 		{
-			if (below.locked_by->type == GameObjectType::Monster1 || below.locked_by->type == GameObjectType::Monster2 || below.locked_by->type == GameObjectType::Player) // still "falling" but waiting for the objects to arrive to kill it
+			if (below.locked_by_type == GameObjectType::Monster1 || below.locked_by_type == GameObjectType::Monster2 || below.locked_by_type == GameObjectType::Player) // still "falling" but waiting for the objects to arrive to kill it
 			{
 				cell.particle->direction = { 0.0f, -1.0f };
 				cell.particle->speed = 0.0f; // WAITING !
@@ -373,10 +376,13 @@ void LudumLevelInstance::NegociatePlayerDisplacement(glm::ivec2 const& p, GridCe
 		{
 			if (other_cell.particle->type == GameObjectType::Diamond)
 			{
-				TakeDiamond();
-				other_cell.particle->destroy_particle = true;
-				other_cell.particle = nullptr;
-				can_move = true;
+				if (other_cell.particle->direction == glm::vec2(0.0f, 0.0f)) // because Diamond may already have locked a neighboor (like stone finally)
+				{
+					TakeDiamond();
+					other_cell.particle->destroy_particle = true;
+					other_cell.particle = nullptr;
+					can_move = true;
+				}
 			}
 			else if (other_cell.particle->type == GameObjectType::Foam)
 			{
@@ -531,22 +537,7 @@ void LudumLevelInstance::CommitDisplacements()
 			{
 				cell.particle->bounding_box.position += cell.particle->direction * RecastVector<glm::vec2>(grid_info.tile_size);
 				cell.particle->offset = { 0.0f, 0.0f };
-				cell.particle->speed = 0.0f;
-				cell.particle = nullptr;
 			}
-		}
-	}
-
-	for (int y = 0; y < grid_info.size.y; ++y)
-	{
-		for (int x = 0; x < grid_info.size.x; ++x)
-		{
-			glm::ivec2 p = { x, y };
-
-			GridCellInfo& cell = grid_info(p);
-			if (cell.locked_by != nullptr)
-				cell.particle = cell.locked_by;
-			cell.locked_by = nullptr;
 		}
 	}
 }
@@ -601,25 +592,6 @@ void LudumLevelInstance::DisplacementConsequences()
 				}
 			}
 			//
-		}
-	}
-}
-
-void LudumLevelInstance::FinalizeDisplacements()
-{
-	for (int y = 0; y < grid_info.size.y; ++y)
-	{
-		for (int x = 0; x < grid_info.size.x; ++x)
-		{
-			glm::ivec2 p = { x, y };
-
-			GridCellInfo& cell = grid_info(p);
-			if (cell.particle != nullptr)
-			{
-				cell.particle->offset = { 0.0f, 0.0f };
-				cell.particle->direction = { 0.0f, 0.0f };
-				cell.particle->speed = 0.0f;
-			}
 		}
 	}
 }
@@ -712,19 +684,24 @@ void LudumLevelInstance::CollectObjects()
 		grid_info.cells = new GridCellInfo[size_t(grid_info.size.x * grid_info.size.y)];
 	}
 
-	// empty the grid
-	memset(grid_info.cells, 0, grid_info.size.x * grid_info.size.y * sizeof(GridCellInfo));
+	// clear 
+	for (int i = 0; i < grid_info.size.x * grid_info.size.y; ++i)
+	{
+		grid_info.cells[i].locked_by_type = GameObjectType::None;
+		grid_info.cells[i].particle = nullptr;
+	}
 
 	// fill the grid
 	TMTileCollisionIterator it = GetTileCollisionIterator(GetBoundingBox(), COLLISION_GAMEOBJECT, false);
 	while (it)
 	{
-		GameObjectParticle* p1 = (GameObjectParticle*)it->particle;
+		GameObjectParticle* particle = (GameObjectParticle*)it->particle;
 		GameObjectParticle* p2 = grid_info(it->particle->bounding_box.position).particle;
 
 		assert(p2 == nullptr); // no 2 particles on the same position
 
-		grid_info(it->particle->bounding_box.position).particle = (GameObjectParticle*)it->particle;
+		if (!particle->destroy_particle)
+			grid_info(it->particle->bounding_box.position).particle = particle;
 		++it;
 	}
 }

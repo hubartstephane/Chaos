@@ -176,7 +176,7 @@ namespace chaos
 	auto GetRestrictToOutsideDisplacement(type_box<T, dimension> const & src, type_box<T, dimension> const & target, int axis_of_interrests = -1)
 	{
 		// the null result
-		type_box<T, dimension>::vec_type result = type_box<T, dimension>::vec_type(0);
+		typename type_box<T, dimension>::vec_type result = type_box<T, dimension>::vec_type(0);
 
 		if (IsGeometryEmpty(src) || IsGeometryEmpty(target))
 			return result;

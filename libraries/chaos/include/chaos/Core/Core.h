@@ -18,6 +18,8 @@
 #include <chaos/Core/AutoCast.h>
 #include <chaos/Core/SmartPointers.h>
 #include <chaos/Core/Class.h>
+#include <chaos/Core/MetaProgramming.h>
+#include <chaos/Core/JSONTools.h>
 #include <chaos/Core/SubClassOf.h>
 #include <chaos/Core/ClassLoader.h>
 #include <chaos/Core/Object.h>
@@ -32,8 +34,6 @@
 #include <chaos/Core/InputMode.h>
 #include <chaos/Core/InputEventReceiver.h>
 #include <chaos/Core/Application.h>
-#include <chaos/Core/MetaProgramming.h>
-#include <chaos/Core/JSONTools.h>
 #include <chaos/Core/Manager.h>
 #include <chaos/Core/ResourceManagerLoader.h>
 #include <chaos/Core/Tickable.h>
@@ -41,5 +41,6 @@
 #include <chaos/Core/BufferReader.h>
 #include <chaos/Core/StateMachine.h>
 #include <chaos/Core/InheritanceIntrospection.h>
+#include <chaos/Core/BitTools.h>
 #include <chaos/Core/PriorityQueue.h>
 #include <chaos/Core/NestedIterator.h>

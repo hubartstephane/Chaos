@@ -210,7 +210,8 @@ namespace chaos
 
 		FontInfoInput* FolderInfoInput::AddFont(FilePathParam const& path, FT_Library library, bool release_library, char const* name, TagType tag, FontInfoInputParams const& params)
 		{
-			return AddFontFileImpl(path, library, release_library, name, tag, params, AddFilesToFolderData(path.GetResolvedPath().parent_path()));
+			AddFilesToFolderData add_data(path.GetResolvedPath().parent_path());
+			return AddFontFileImpl(path, library, release_library, name, tag, params, add_data);
 		}
 
 		FontInfoInput* FolderInfoInput::AddFontFileImpl(FilePathParam const& path, FT_Library library, bool release_library, char const* name, TagType tag, FontInfoInputParams const& params, AddFilesToFolderData & add_data)
@@ -648,7 +649,8 @@ namespace chaos
 
 		BitmapInfoInput* FolderInfoInput::AddBitmap(FilePathParam const& path, char const* name, TagType tag)
 		{
-			return AddBitmapFileImpl(path, name, tag, AddFilesToFolderData(path.GetResolvedPath().parent_path()));
+			AddFilesToFolderData add_data(path.GetResolvedPath().parent_path());
+			return AddBitmapFileImpl(path, name, tag, add_data);
 		}
 
 		BitmapInfoInput * FolderInfoInput::AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag)

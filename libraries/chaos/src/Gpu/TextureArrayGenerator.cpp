@@ -6,7 +6,7 @@ namespace chaos
 	// TextureArraySliceRegistry functions
 	// ========================================================================
 
-	bool TextureArraySliceRegistry::InsertSlice(ImageDescription & description, void * user_data)
+	bool TextureArraySliceRegistry::InsertSlice(ImageDescription const & description, void * user_data)
 	{
 		// test whether the slice format is valid
 		if (!IsImageSliceValid(description))

@@ -190,17 +190,17 @@ namespace chaos
 		/** copy constructor */
 		type_box(type_box const & src) = default;
 		/** constructor from base (usefull for obox conversion) */
-		type_box(type_box_base<T, dimension> const & src) : type_box_base(src.position, src.half_size) {}
+		type_box(type_box_base<T, dimension> const & src) : type_box_base<T, dimension>(src.position, src.half_size) {}
 		/** other constructor */
-		type_box(vec_type const & in_position, vec_type const & in_half_size) : type_box_base(in_position, in_half_size) {}
+		type_box(vec_type const & in_position, vec_type const & in_half_size) : type_box_base<T, dimension>(in_position, in_half_size) {}
 		/** construct a box from 2 points */
 		type_box(std::pair<vec_type, vec_type> const & pts)
 		{
 			vec_type a = glm::min(pts.first, pts.second);
 			vec_type b = glm::max(pts.first, pts.second);
 
-			position = (b + a) / static_cast<T>(2);
-			half_size = (b - a) / static_cast<T>(2);
+			this->position = (b + a) / static_cast<T>(2);
+			this->half_size = (b - a) / static_cast<T>(2);
 		}
 	};
 
@@ -223,9 +223,9 @@ namespace chaos
 		/** copy constructor */
 		type_obox(type_obox const& src) = default;
 		/** constructor from base (usefull for box conversion) */
-		type_obox(type_box_base<T, dimension> const& src) : type_box_base(src.position, src.half_size){}
+		type_obox(type_box_base<T, dimension> const& src) : type_box_base<T, dimension>(src.position, src.half_size){}
 		/** other constructor */
-		type_obox(vec_type const & in_position, vec_type const & in_half_size, rot_type const & in_rotator) : type_box_base(in_position, in_half_size), rotator(in_rotator) {}
+		type_obox(vec_type const & in_position, vec_type const & in_half_size, rot_type const & in_rotator) : type_box_base<T, dimension>(in_position, in_half_size), rotator(in_rotator) {}
 
 	public:
 

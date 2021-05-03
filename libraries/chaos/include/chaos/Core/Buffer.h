@@ -17,6 +17,39 @@ namespace chaos
 namespace chaos
 {
 	/**
+	* BufferBase : base class for buffer
+	*/
+
+	class BufferBase
+	{
+		friend class BufferPolicyBase;
+
+	public:
+
+		/** default constructor */
+		BufferBase() = default;
+		/** destructor */
+		~BufferBase();
+
+		/** XXX : use with caution : get the policy */
+		BufferPolicyBase* GetPolicy();
+		/** XXX : use with caution : get the policy */
+		BufferPolicyBase const* GetPolicy() const;
+		/** XXX : use with caution : change the policy */
+		void SetPolicy(BufferPolicyBase* in_policy);
+
+	protected:
+
+		/** an utility function for friendship */
+		void CopyFromBuffer(BufferBase const* src);
+
+	protected:
+
+		/** the policy */
+		BufferPolicyBase* policy = nullptr;
+	};
+
+	/**
 	* BufferPolicyBase : base class for the Policy 
 	*/
 
@@ -120,7 +153,7 @@ namespace chaos
 		/** destroy the buffer */
 		virtual void DestroyBuffer(BufferBase * buf) override
 		{
-			if (--reference_count == 0)
+			if (--this->reference_count == 0)
 			{
 				Buffer<T> * b = (Buffer<T>*)buf;
 				delete [] b->data;
@@ -128,56 +161,6 @@ namespace chaos
 			}    
 		}
 	};
-
-	/**
-	* BufferBase : base class for buffer
-	*/
-
-	class BufferBase
-	{
-		friend class BufferPolicyBase;
-
-	public:
-
-		/** default constructor */
-		BufferBase() = default;
-		/** destructor */
-		~BufferBase()
-		{
-			if (policy != nullptr)
-				policy->DestroyBuffer(this);
-		}
-
-		/** XXX : use with caution : get the policy */
-		BufferPolicyBase * GetPolicy()
-		{
-			return policy;
-		}
-		/** XXX : use with caution : get the policy */
-		BufferPolicyBase const * GetPolicy() const
-		{
-			return policy;
-		}
-		/** XXX : use with caution : change the policy */
-		void SetPolicy(BufferPolicyBase * in_policy)
-		{
-			policy = in_policy;
-		}
-
-	protected:
-
-		/** an utility function for friendship */
-		void CopyFromBuffer(BufferBase const * src)
-		{
-			src->policy->CopyBuffer(this, src);
-		}
-
-	protected:
-
-		/** the policy */
-		BufferPolicyBase * policy = nullptr;
-	};
-
 
 	/**
 	* Buffer : a buffer with typed data inside

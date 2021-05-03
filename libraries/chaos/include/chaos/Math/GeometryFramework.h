@@ -5,6 +5,33 @@ namespace chaos
 	template<typename VECTOR_TYPE>
 	class AutoCastableVector;
 
+
+
+
+
+#if 0
+
+	template<typename T, glm::precision P>
+	bool SaveIntoJSON(nlohmann::json& json_entry, glm::tvec2<T, P> const& src);
+
+	template<typename T, glm::precision P>
+	bool LoadFromJSON(nlohmann::json const& json_entry, glm::tvec2<T, P>& dst);
+
+	template<typename T, glm::precision P>
+	bool SaveIntoJSON(nlohmann::json& json_entry, glm::tvec3<T, P> const& src);
+
+	template<typename T, glm::precision P>
+	bool LoadFromJSON(nlohmann::json const& json_entry, glm::tvec3<T, P>& dst);
+
+	template<typename T, glm::precision P>
+	bool SaveIntoJSON(nlohmann::json& json_entry, glm::tvec4<T, P> const& src);
+
+	template<typename T, glm::precision P>
+	bool LoadFromJSON(nlohmann::json const& json_entry, glm::tvec4<T, P>& dst);
+
+#endif
+
+
 }; // namespace chaos
 
 #else 
@@ -149,7 +176,7 @@ namespace chaos
 		if (IsGeometryEmpty(src))
 			return src;
 		// aspect already good
-		BOX_TYPE::type effective_aspect = GetBoxAspect(src);
+		auto effective_aspect = GetBoxAspect(src);
 		if (effective_aspect == aspect)
 			return src;
 		// make the update
@@ -484,10 +511,10 @@ namespace chaos
 		// copy position
 		result.position = b.position;
 		// get all vertices and compute max values
-		type_box<T, 2>::vec_type vertices[4];
+		typename type_box<T, 2>::vec_type vertices[4];
 		GetBoxVertices(b, vertices, false);
 
-		type_box<T, 2>::vec_type max_vec = glm::tvec2<T>(-std::numeric_limits<T>::max(), -std::numeric_limits<T>::max());
+		auto max_vec = glm::tvec2<T>(-std::numeric_limits<T>::max(), -std::numeric_limits<T>::max());
 
 		auto transform = GetRotatorMatrix(b.rotator);
 		for (int i = 0; i < 4; ++i)
@@ -506,10 +533,10 @@ namespace chaos
 		result.position = b.position;
 
 		// get all vertices and compute max values
-		type_box<T, 3>::vec_type vertices[8];
+		typename type_box<T, 3>::vec_type vertices[8];
 		GetBoxVertices(b, vertices, false);
 
-		type_box<T, 3>::vec_type max_vec = glm::tvec3<T>(-std::numeric_limits<T>::max(), -std::numeric_limits<T>::max(), -std::numeric_limits<T>::max());
+		auto max_vec = glm::tvec3<T>(-std::numeric_limits<T>::max(), -std::numeric_limits<T>::max(), -std::numeric_limits<T>::max());
 
 		auto transform = GetRotatorMatrix(b.rotator);
 		for (int i = 0; i < 8; ++i)
@@ -607,7 +634,7 @@ namespace chaos
 	template<typename T, int dimension>
 	bool operator == (type_sphere<T, dimension> const & c1, type_sphere<T, dimension> const & c2)
 	{
-		return (b1.position == b1.position) && (b1.radius == b2.radius);
+		return (c1.position == c1.position) && (c1.radius == c2.radius);
 	}
 
 	/** difference function for circle */
@@ -676,7 +703,7 @@ namespace chaos
 	template<typename T>
 	type_box<T, 3> GetInnerBox(type_sphere<T, 3> const & s)
 	{
-		using vec_type = typename type_sphere3<T>::vec_type;
+		using vec_type = typename type_sphere<T, 3>::vec_type;
 
 		static double const INV_SQRT3 = 0.577350269189625; /* 1.0 / sqrtf(3.0) */
 

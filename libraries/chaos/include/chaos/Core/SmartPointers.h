@@ -16,6 +16,8 @@ namespace chaos
 
 	template<typename T>
 	struct is_weak_ptr;
+	template<typename T>
+	struct is_shared_ptr;
 
 }; // namespace chaos
 
@@ -40,9 +42,9 @@ namespace chaos
 	//         to work the target must have a pointer on the WeakPointerData so it can reset it when it is destroyed
 	//
 	//         As a side effect, accessing target from a weak_ptr requires an additionnal indirection (slower)
-	//                           using weak_ptr cause an allocation (for the very first only)
+	//                           using weak_ptr cause an allocation (for the very first time only)
 	//
-	// XXX : -shared_ptr<T const> make no sense !!! (while the shared_ptr is responsible for th death of the object)
+	// XXX : -shared_ptr<T const> make no sense !!! (while the shared_ptr is responsible for the death of the object)
 	//
 	//       -weak_ptr<T const>   can be used
 
@@ -84,7 +86,7 @@ namespace chaos
 		static pointer_type<T> * AddReference(T* in_target)
 		{
 			assert(in_target != nullptr);
-			intrusive_ptr_add_ref(in_target);
+			::intrusive_ptr_add_ref(in_target);
 			return in_target;
 		}
 
@@ -93,7 +95,7 @@ namespace chaos
 		static pointer_type<T> * SubReference(pointer_type<T> * in_target)
 		{
 			assert(in_target != nullptr);
-			intrusive_ptr_release(in_target);
+			::intrusive_ptr_release(in_target);
 			return nullptr;
 		}
 
@@ -176,6 +178,37 @@ namespace chaos
 			if (in_target != nullptr)
 				target = POLICY::AddReference(in_target);
 		}
+
+#if 0
+
+		template<typename T2, typename POLICY2>
+		SmartPointerBase(SmartPointerBase<T2, POLICY2> const& src) :
+			SmartPointerBase(src.get())
+		{
+			static_assert(std::is_base_of<T, T2>);
+		}
+
+		template<typename T2, typename POLICY2>
+		SmartPointerBase(SmartPointerBase<T2, POLICY2> && src) noexcept:
+			SmartPointerBase(src.target)
+		{
+			static_assert(std::is_base_of<T, T2>);
+			src.target = nullptr; // capture the reference
+		}
+
+
+
+
+		//AutoCastable
+
+
+
+
+
+
+#else
+
+
 		/** copy constructor */
 		SmartPointerBase(SmartPointerBase<T, POLICY> const & src) :
 			SmartPointerBase(src.get())
@@ -188,6 +221,14 @@ namespace chaos
 		{
 			src.target = nullptr; // capture the reference
 		}
+
+#endif
+
+
+
+
+
+
 
 		/** destructor */
 		~SmartPointerBase()
@@ -232,7 +273,7 @@ namespace chaos
 		/** getters */
 		type * get() const
 		{
-			return POLICY::Get<type>(target);
+			return POLICY::template Get<type>(target);
 		}
 
 		/** getters */

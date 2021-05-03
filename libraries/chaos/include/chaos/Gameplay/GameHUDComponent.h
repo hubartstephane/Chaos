@@ -175,20 +175,20 @@ namespace chaos
 		virtual void OnInsertedInHUD()
 		{
 			if (!QueryValue(cached_value))
-				InvalidateMesh();
+				this->InvalidateMesh();
 			else
-				UpdateMesh();
+				this->UpdateMesh();
 		}
 		/** override */
 		virtual bool DoUpdateGPUResources(GPURenderer* renderer) override
 		{
 			type new_value;
 			if (!QueryValue(new_value))
-				InvalidateMesh();
-			else if (mesh == nullptr || cached_value != new_value) // maybe the Query may returns from false to true, but with a same cache value
+				this->InvalidateMesh();
+			else if (this->mesh == nullptr || cached_value != new_value) // maybe the Query may returns from false to true, but with a same cache value
 			{                                                      // check if mesh was nullptr to avoid this case
 				cached_value = new_value;
-				UpdateMesh();
+				this->UpdateMesh();
 			}
 			return true;
 		}
@@ -209,12 +209,12 @@ namespace chaos
 	protected:
 
 		/** constructor */
-		using GameHUDCacheValueComponent::GameHUDCacheValueComponent;
+		using GameHUDCacheValueComponent<T, GameHUDTextComponent>::GameHUDCacheValueComponent;
 
 		/** override */
 		virtual void UpdateMesh() override
 		{
-			SetText(StringTools::Printf(text.c_str(), cached_value).c_str());
+			this->SetText(StringTools::Printf(this->text.c_str(), this->cached_value).c_str());
 		}
 	};
 

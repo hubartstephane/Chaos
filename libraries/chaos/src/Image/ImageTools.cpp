@@ -490,7 +490,7 @@ namespace chaos
 	}
 
 	// XXX : Lifetime rules are respected (see note at the begining of this file)
-	FIBITMAP * ImageTools::LoadImageFromBuffer(Buffer<char> & buffer)
+	FIBITMAP * ImageTools::LoadImageFromBuffer(Buffer<char> buffer)
 	{
 		FIBITMAP * result = nullptr;
 

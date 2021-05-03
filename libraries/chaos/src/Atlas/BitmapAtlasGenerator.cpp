@@ -2,46 +2,46 @@
 
 namespace chaos
 {
+	// ========================================================================
+	// Utility functions
+	// ========================================================================
+
+	bool LoadFromJSON(nlohmann::json const& json_entry, BitmapAtlas::AtlasGeneratorParams& dst)
+	{
+		if (!json_entry.is_object())
+			return false;
+		JSONTools::GetAttribute(json_entry, "force_power_of_2", dst.force_power_of_2);
+		JSONTools::GetAttribute(json_entry, "force_square", dst.force_square);
+		JSONTools::GetAttribute(json_entry, "duplicate_image_border", dst.duplicate_image_border);
+		JSONTools::GetAttribute(json_entry, "atlas_width", dst.atlas_width);
+		JSONTools::GetAttribute(json_entry, "atlas_height", dst.atlas_height);
+		JSONTools::GetAttribute(json_entry, "atlas_max_width", dst.atlas_max_width);
+		JSONTools::GetAttribute(json_entry, "atlas_max_height", dst.atlas_max_height);
+		JSONTools::GetAttribute(json_entry, "atlas_padding", dst.atlas_padding);
+		JSONTools::GetAttribute(json_entry, "background_color", dst.background_color);
+		JSONTools::GetAttribute(json_entry, "merge_params", dst.merge_params);
+		return true;
+	}
+
+	bool SaveIntoJSON(nlohmann::json& json_entry, BitmapAtlas::AtlasGeneratorParams const& src)
+	{
+		if (!json_entry.is_object())
+			json_entry = nlohmann::json::object();
+		JSONTools::SetAttribute(json_entry, "force_power_of_2", src.force_power_of_2);
+		JSONTools::SetAttribute(json_entry, "force_square", src.force_square);
+		JSONTools::SetAttribute(json_entry, "duplicate_image_border", src.duplicate_image_border);
+		JSONTools::SetAttribute(json_entry, "atlas_width", src.atlas_width);
+		JSONTools::SetAttribute(json_entry, "atlas_height", src.atlas_height);
+		JSONTools::SetAttribute(json_entry, "atlas_max_width", src.atlas_max_width);
+		JSONTools::SetAttribute(json_entry, "atlas_max_height", src.atlas_max_height);
+		JSONTools::SetAttribute(json_entry, "atlas_padding", src.atlas_padding);
+		JSONTools::SetAttribute(json_entry, "background_color", src.background_color);
+		JSONTools::SetAttribute(json_entry, "merge_params", src.merge_params);
+		return true;
+	}
+
 	namespace BitmapAtlas
 	{
-
-		// ========================================================================
-		// Utility functions
-		// ========================================================================
-
-		bool LoadFromJSON(nlohmann::json const& json_entry, AtlasGeneratorParams& dst)
-		{
-			if (!json_entry.is_object())
-				return false;
-			JSONTools::GetAttribute(json_entry, "force_power_of_2", dst.force_power_of_2);
-			JSONTools::GetAttribute(json_entry, "force_square", dst.force_square);
-			JSONTools::GetAttribute(json_entry, "duplicate_image_border", dst.duplicate_image_border);
-			JSONTools::GetAttribute(json_entry, "atlas_width", dst.atlas_width);
-			JSONTools::GetAttribute(json_entry, "atlas_height", dst.atlas_height);
-			JSONTools::GetAttribute(json_entry, "atlas_max_width", dst.atlas_max_width);
-			JSONTools::GetAttribute(json_entry, "atlas_max_height", dst.atlas_max_height);
-			JSONTools::GetAttribute(json_entry, "atlas_padding", dst.atlas_padding);
-			JSONTools::GetAttribute(json_entry, "background_color", dst.background_color);
-			JSONTools::GetAttribute(json_entry, "merge_params", dst.merge_params);
-			return true;
-		}
-
-		bool SaveIntoJSON(nlohmann::json& json_entry, AtlasGeneratorParams const& src)
-		{
-			if (!json_entry.is_object())
-				json_entry = nlohmann::json::object();
-			JSONTools::SetAttribute(json_entry, "force_power_of_2", src.force_power_of_2);
-			JSONTools::SetAttribute(json_entry, "force_square", src.force_square);
-			JSONTools::SetAttribute(json_entry, "duplicate_image_border", src.duplicate_image_border);
-			JSONTools::SetAttribute(json_entry, "atlas_width", src.atlas_width);
-			JSONTools::SetAttribute(json_entry, "atlas_height", src.atlas_height);
-			JSONTools::SetAttribute(json_entry, "atlas_max_width", src.atlas_max_width);
-			JSONTools::SetAttribute(json_entry, "atlas_max_height", src.atlas_max_height);
-			JSONTools::SetAttribute(json_entry, "atlas_padding", src.atlas_padding);
-			JSONTools::SetAttribute(json_entry, "background_color", src.background_color);
-			JSONTools::SetAttribute(json_entry, "merge_params", src.merge_params);
-			return true;
-		}
 
 		// ========================================================================
 		// Utility functions

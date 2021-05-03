@@ -214,7 +214,7 @@ namespace chaos
 		/** override */
 		virtual bool AreVerticesDynamic() const override 
 		{ 			
-			return data.dynamic_vertices;
+			return this->data.dynamic_vertices;
 		}
 		/** override */
 		virtual Class const * GetParticleClass() const override { return Class::FindClass<particle_type>(); }
@@ -230,9 +230,9 @@ namespace chaos
 			return result;
 		}
 		/** override */
-		virtual AutoCastable<ParticleLayerTraitBase> GetLayerTrait() override { return &data; }
+		virtual AutoCastable<ParticleLayerTraitBase> GetLayerTrait() override { return &this->data; }
 		/** override */
-		virtual AutoConstCastable<ParticleLayerTraitBase> GetLayerTrait() const override { return &data; }
+		virtual AutoConstCastable<ParticleLayerTraitBase> GetLayerTrait() const override { return &this->data; }
 
 	protected:
 
@@ -244,7 +244,7 @@ namespace chaos
 		{ 
 			ParticleAllocation<layer_trait_type>* allocation = auto_cast(in_allocation);
 			if (allocation != nullptr)
-				return allocation->TickAllocation(delta_time, &data);
+				return allocation->TickAllocation(delta_time, &this->data);
 			return false; // do not destroy the allocation
 		} 
 
@@ -252,36 +252,16 @@ namespace chaos
 		virtual void UpdateRenderingStates(GPURenderer* renderer, bool begin) const override
 		{
 			if constexpr (check_method_UpdateRenderingStates_v<layer_trait_type const, GPURenderer *, bool>)
-				data.UpdateRenderingStates(renderer, begin);
+				this->data.UpdateRenderingStates(renderer, begin);
 			else
 				ParticleLayerBase::UpdateRenderingStates(renderer, begin);
 		}
 
         /** override */
-        virtual void GenerateMeshData(GPUDynamicMesh * in_dynamic_mesh, GPUVertexDeclaration * in_vertex_declaration, GPURenderMaterial* in_render_material, size_t vertex_requirement_evaluation) override
-        {
-            // some layers are in a manager, some not (see TiledMap)
-            GPUBufferPool* cache = (particle_manager == nullptr) ? &buffer_pool : &particle_manager->GetBufferPool();
-
-			PrimitiveOutput<vertex_type> output(in_dynamic_mesh, cache, in_vertex_declaration, in_render_material, vertex_requirement_evaluation);
-			ParticlesToPrimitivesLoop(output);
-        }
+		virtual void GenerateMeshData(GPUDynamicMesh* in_dynamic_mesh, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t vertex_requirement_evaluation) override;
 
         // convert particles into vertices
-        void ParticlesToPrimitivesLoop(PrimitiveOutput<vertex_type>& output)
-        {
-            size_t count = particles_allocations.size();
-            for (size_t i = 0; i < count; ++i)
-            {
-                // get the allocation, ignore if invisible
-                ParticleAllocation<layer_trait_type> * allocation = auto_cast(particles_allocations[i].get());
-                if (!allocation->IsVisible())
-                    continue;
-                // transform particles into vertices
-                allocation->ParticlesToPrimitives(output, &data);
-            }
-            output.Flush();
-        }
+		void ParticlesToPrimitivesLoop(PrimitiveOutput<vertex_type>& output);
 	};
 
 }; // namespace chaos

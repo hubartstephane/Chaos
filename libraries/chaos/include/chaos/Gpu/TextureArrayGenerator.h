@@ -41,7 +41,7 @@ namespace chaos
 	public:
 
 		/** the method to insert one slice */
-		bool InsertSlice(ImageDescription & description, void * user_data = nullptr);
+		bool InsertSlice(ImageDescription const & description, void * user_data = nullptr);
 		/** gets the number of slices inserted */
 		size_t GetSliceCount() const { return slices.size(); }
 

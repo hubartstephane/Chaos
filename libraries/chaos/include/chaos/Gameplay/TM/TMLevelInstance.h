@@ -97,7 +97,7 @@ namespace chaos
 		template<typename ...PARAMS>
 		ParticleSpawner* CreateParticleSpawner(ObjectRequest layer_instance_name, PARAMS... params)
 		{
-			LayerInstance* layer_instance = FindLayerInstance(layer_instance_name, true);
+			TMLayerInstance* layer_instance = FindLayerInstance(layer_instance_name, true);
 			if (layer_instance == nullptr)
 				return nullptr;
 			return layer_instance->CreateParticleSpawner(params...);

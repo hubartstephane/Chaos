@@ -78,7 +78,7 @@ namespace ParticleTraitTools
 
 		using particle = typename trait::particle_type;
 		using vertex = typename trait::vertex_type;
-		using accessor = typename ParticleConstAccessor<particle>;
+		using accessor = ParticleConstAccessor<particle>;
 
 		using primitive_output = PrimitiveOutput<vertex>;
 
@@ -140,7 +140,7 @@ namespace ParticleTraitTools
 
 		using particle = typename trait::particle_type;
 		using vertex = typename trait::vertex_type;
-		using accessor = typename ParticleAccessor<particle>;
+		using accessor = ParticleAccessor<particle>;
 
 		// ============================== use implementation from TRAIT_TYPE ==============================
 		if constexpr (has_AllocationTrait_v<trait>)

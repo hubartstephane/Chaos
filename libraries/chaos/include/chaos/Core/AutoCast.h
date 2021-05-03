@@ -26,6 +26,11 @@ namespace chaos
 		AutoConstCastable(AutoConstCastable const& src) = default;
 		AutoConstCastable(T const* in_ptr) : ptr(in_ptr) {}
 		/** the conversion operator */
+		operator T const* () const
+		{
+			return ptr;
+		}
+		/** the conversion operator */
 		template<typename U>
 		operator U const* () const
 		{
@@ -68,6 +73,11 @@ namespace chaos
 		operator AutoConstCastable<T>() const
 		{
 			return AutoConstCastable<T>(ptr);
+		}
+		/** the conversion operator */
+		operator T * () const
+		{
+			return ptr;
 		}
 		/** the conversion operator */
 		template<typename U>

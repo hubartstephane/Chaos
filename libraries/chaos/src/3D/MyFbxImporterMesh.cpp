@@ -348,7 +348,7 @@ namespace chaos
 			int removed_vertex_count = 0;
 			if (params.remove_duplicated_vertex)
 			{
-#if _DEBUG
+#if _DEBUG && 0
 				size_t optimized_comparaison_count = 0;
 				for (auto & it = potential_equiv_vertices.begin(); it != potential_equiv_vertices.end(); ++it)
 					optimized_comparaison_count += it->second.size() * (it->second.size() - 1);
@@ -365,7 +365,7 @@ namespace chaos
 					equiv_classes.push_back(i);  // one equivalence class per vertex
 
 												 // compare vertices by pairs and compute the equivalence table
-				for (auto & it = potential_equiv_vertices.begin(); it != potential_equiv_vertices.end(); ++it)
+				for (auto it = potential_equiv_vertices.begin(); it != potential_equiv_vertices.end(); ++it)
 				{
 					size_t count = it->second.size();
 					for (size_t i = 0; i < count - 1; ++i)
@@ -377,7 +377,7 @@ namespace chaos
 
 						for (size_t j = i + 1; j < count; ++j)
 						{
-#if _DEBUG
+#if _DEBUG && 0 
 							++effective_comparaison_count;
 #endif
 							int v2 = it->second[j];
@@ -386,7 +386,7 @@ namespace chaos
 						}
 					}
 				}
-#if _DEBUG
+#if _DEBUG && 0
 				assert(effective_comparaison_count <= optimized_comparaison_count);
 #endif
 

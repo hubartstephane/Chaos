@@ -22,13 +22,13 @@ namespace chaos
 
 		/** constructor */
 		GPUDrawInterface(ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation = PrimitiveOutputBase::MIN_VERTEX_ALLOCATION) :
-			PrimitiveOutput(&dynamic_mesh, GetBufferPool(), GetVertexDeclaration(), in_render_material_request, in_vertex_requirement_evaluation)
+			PrimitiveOutput<VERTEX_TYPE>(&dynamic_mesh, GetBufferPool(), GetVertexDeclaration(), in_render_material_request, in_vertex_requirement_evaluation)
 		{
 			dynamic_mesh.SetVertexArrayCache(GetVertexArrayCache());
 		}
 		/** constructor */
 		GPUDrawInterface(GPURenderMaterial * in_render_material, size_t in_vertex_requirement_evaluation = PrimitiveOutputBase::MIN_VERTEX_ALLOCATION) :
-			PrimitiveOutput(&dynamic_mesh, GetBufferPool(), GetVertexDeclaration(), (in_render_material != nullptr)? in_render_material : DefaultScreenSpaceProgram::GetMaterial(), in_vertex_requirement_evaluation)
+			PrimitiveOutput<VERTEX_TYPE>(&dynamic_mesh, GetBufferPool(), GetVertexDeclaration(), (in_render_material != nullptr)? in_render_material : DefaultScreenSpaceProgram::GetMaterial(), in_vertex_requirement_evaluation)
 		{
 			dynamic_mesh.SetVertexArrayCache(GetVertexArrayCache());
 		}
@@ -42,7 +42,7 @@ namespace chaos
 		/** flush and display the pending content */
 		int Display(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
 		{
-			Flush();
+			this->Flush();
 			int result = dynamic_mesh.Display(renderer, uniform_provider, render_params);
 			dynamic_mesh.Clear(GetBufferPool());
 			return result;
@@ -54,7 +54,7 @@ namespace chaos
 			GPUDynamicMesh* result = new GPUDynamicMesh();
 			if (result != nullptr)
 			{
-				Flush();
+				this->Flush();
 				swap(*result, dynamic_mesh);
 				dynamic_mesh.SetVertexArrayCache(GetVertexArrayCache());
 			}
@@ -80,16 +80,7 @@ namespace chaos
 			return result.get();
 		}
 		/** gets the shared GPUVertexDeclaration */
-		static GPUVertexDeclaration* GetVertexDeclaration()
-		{
-			static shared_ptr<GPUVertexDeclaration> result;
-			if (result == nullptr)
-			{
-				result = new GPUVertexDeclaration;
-				GetTypedVertexDeclaration(result.get(), boost::mpl::identity<VertexDefault>());
-			}
-			return result.get();
-		}
+		static GPUVertexDeclaration* GetVertexDeclaration();
 		/** gets the shared GPUVertexArrayCache */
 		static GPUVertexArrayCache* GetVertexArrayCache()
 		{

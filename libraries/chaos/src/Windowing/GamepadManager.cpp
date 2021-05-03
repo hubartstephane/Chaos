@@ -150,7 +150,7 @@ namespace chaos
 		GLFWgamepadstate state;
 		glfwGetGamepadState(stick_index, &state);
 
-#if 0
+#if 1
 		char const* n1 = glfwGetGamepadName(stick_index);
 		char const* n2 = glfwGetJoystickGUID(stick_index);
 		char const* n3 = glfwGetJoystickName(stick_index);

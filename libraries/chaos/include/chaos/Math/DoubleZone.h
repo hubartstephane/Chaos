@@ -82,11 +82,11 @@ namespace chaos
 		/** returns the point zone changement */
 		static ZonePartitionChangeType CheckZoneChange(ZonePartitionType before, ZonePartitionType after)
 		{  
-			if (before_zone != after_zone)
+			if (before != after)
 			{
-				if (after_zone == ZonePartitionType::NEAR_ZONE)
+				if (after == ZonePartitionType::NEAR_ZONE)
 					return ZonePartitionChangeType::ENTER;
-				if (after_zone == ZonePartitionType::FAR_ZONE)
+				if (after == ZonePartitionType::FAR_ZONE)
 					return ZonePartitionChangeType::LEAVE;
 			}
 			return ZonePartitionChangeType::NOCHANGE;

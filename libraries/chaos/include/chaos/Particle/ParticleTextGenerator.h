@@ -313,9 +313,18 @@ namespace chaos
 		/** get particles corresponding to the background */
 		ParticleDefault GetBackgroundParticle(GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params);
 
+
+		// shu48
+		// ca devrait etre un ParticleAllocationResult
+
+
 		/** generate an allocation for a generated text */
 		ParticleAllocationBase* CreateTextAllocation(ParticleLayerBase* layer, GeneratorResult const& generator_result, bool new_allocation = true, CreateTextAllocationParams const& allocation_params = {});
 
+
+
+
+#if 0
 		/** spawn + user initialization methods */
 		template<typename INIT_PARTICLE_FUNC>
 		ParticleAllocationBase* CreateTextAllocation(ParticleLayerBase* layer, GeneratorResult const& generator_result, bool new_allocation, CreateTextAllocationParams const& allocation_params, INIT_PARTICLE_FUNC init_func)
@@ -329,6 +338,7 @@ namespace chaos
 			}
 			return result;
 		}
+#endif
 
 		/** output primitives corresponding to generated text */
 		template<typename VERTEX_TYPE>

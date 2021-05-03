@@ -93,7 +93,7 @@ namespace chaos
 		/** remove an element by value */
 		void remove(const value_type & _Val)
 		{
-			std::vector<T>::iterator it = std::find(c.begin(), c.end(), _Val);
+			auto it = std::find(c.begin(), c.end(), _Val);
 			if (it != c.end())
 			{
 				size_type count = c.size();
@@ -116,7 +116,7 @@ namespace chaos
 		/*  XXX : use with care, or use get_container instead                                       */
 		void update(const value_type & _Val)
 		{
-			std::vector<T>::iterator it = std::find(c.begin(), c.end(), _Val);
+			auto it = std::find(c.begin(), c.end(), _Val);
 			if (it != c.end())
 			{
 				size_type index = it - c.begin();

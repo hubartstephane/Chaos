@@ -323,11 +323,11 @@ namespace chaos
 			TiledMap::Map* tiled_map = tiled_map_manager->LoadMap(path, false); // XXX : false => dont keep it in manager => necessary for HOTRELOAD
 
 			if (tiled_map == nullptr)
-				return false;
+				return nullptr;
 			// allocate a level
 			TMLevel * result = CreateTMLevel();
 			if (result == nullptr)
-				return false;
+				return nullptr;
 			// some additionnal computation
 			if (!result->Initialize(tiled_map))
 			{

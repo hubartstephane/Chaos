@@ -190,7 +190,7 @@ namespace chaos
     class TypedPrimitive : public Primitive<VERTEX_TYPE>
     {
     public:
-        using Primitive::Primitive;
+        using Primitive<VERTEX_TYPE>::Primitive;
 
         /** cast operator to child vertex type */
         template<typename OTHER_VERTEX_TYPE>
@@ -226,9 +226,9 @@ namespace chaos
 
             vertices_per_primitive *= count;
 
-            assert(vertex_count >= vertices_per_primitive);
-            buffer += vertex_size * vertices_per_primitive;
-            vertex_count -= vertices_per_primitive;
+            assert(this->vertex_count >= vertices_per_primitive);
+            this->buffer += this->vertex_size * vertices_per_primitive;
+            this->vertex_count -= vertices_per_primitive;
             return *this;
         }
 

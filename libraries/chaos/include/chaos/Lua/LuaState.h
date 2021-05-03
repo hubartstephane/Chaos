@@ -223,10 +223,10 @@ namespace chaos
 		template<typename T>
 		bool GetUserDataUnsafe(T & result, int index)
 		{
-			if (!lua_isuserdata(L, index))
+			if (!lua_isuserdata(state, index))
 				return false;
 
-			void * ptr = lua_touserdata(L, index);
+			void * ptr = lua_touserdata(state, index);
 			result = *((T*)ptr);
 			return true;
 		}
@@ -234,7 +234,7 @@ namespace chaos
 	public:
 
 		/** the state */
-		lua_State * state;
+		lua_State * state = nullptr;
 	};
 
 }; // namespace chaos

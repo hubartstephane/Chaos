@@ -22,18 +22,7 @@ namespace chaos
 	public:
 
 		/** override */
-		virtual bool Solve(TMLevelInstance * level_instance, void* weak_ptr_result, int id) override
-		{ 
-			assert(level_instance != nullptr);
-			assert(weak_ptr_result != nullptr);
-			// search the object and cast to check if class is correct
-			T* object = auto_cast(level_instance->FindObjectByID(id, true));
-			if (object == nullptr)
-				return false;
-			// apply the object to the weak_ptr (after having casting the weak ptr)
-			*(weak_ptr<T>*)(weak_ptr_result) = object;
-			return true;
-		}
+		virtual bool Solve(TMLevelInstance* level_instance, void* weak_ptr_result, int id) override;
 	};
 
 	class TMObjectReferenceEntry

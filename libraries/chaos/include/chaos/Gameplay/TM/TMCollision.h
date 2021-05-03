@@ -101,13 +101,13 @@ namespace chaos
 		TMTileCollisionIteratorBase(TMTileCollisionIteratorBase const& src) = default;
 		/** the constructor with initialization */
 		TMTileCollisionIteratorBase(layer_type* in_layer_instance, uint64_t in_collision_mask, box2 const& in_collision_box, bool in_open_geometry) :
-			TMCollisionIteratorBase(in_layer_instance, in_collision_mask, in_collision_box, in_open_geometry)
+			TMCollisionIteratorBase<CONSTNESS_OPERATOR>(in_layer_instance, in_collision_mask, in_collision_box, in_open_geometry)
 		{
 			FindElement(false);
 		}
 		/** the constructor with initialization */
 		TMTileCollisionIteratorBase(level_type* in_level_instance, uint64_t in_collision_mask, box2 const& in_collision_box, bool in_open_geometry) :
-			TMCollisionIteratorBase(in_level_instance, in_collision_mask, in_collision_box, in_open_geometry)
+			TMCollisionIteratorBase<CONSTNESS_OPERATOR>(in_level_instance, in_collision_mask, in_collision_box, in_open_geometry)
 		{
 			FindElement(false);
 		}
@@ -133,21 +133,21 @@ namespace chaos
 		/** indirection method */
 		collision_info const& operator *() const
 		{
-			assert(li_iterator); // end not reached
+			assert(this->li_iterator); // end not reached
 			return cached_result;
 		}
 
 		/** indirection method */
 		collision_info const* operator ->() const
 		{
-			assert(li_iterator); // end not reached
+			assert(this->li_iterator); // end not reached
 			return &cached_result;
 		}
 
 		/** pre increment iterator */
 		TMTileCollisionIteratorBase& operator ++ ()
 		{
-			assert(li_iterator); // end not reached
+			assert(this->li_iterator); // end not reached
 			FindElement(true);
 			return *this;
 		}
@@ -163,8 +163,8 @@ namespace chaos
 		/** skip to next layer */
 		void NextLayer()
 		{
-			assert(li_iterator); // end not reached
-			++li_iterator;
+			assert(this->li_iterator); // end not reached
+			++this->li_iterator;
 			allocation_index = 0;
 			particle_index = 0;
 			FindElement(false);
@@ -173,7 +173,7 @@ namespace chaos
 		/** skip to next allocation */
 		void NextAllocation()
 		{
-			assert(li_iterator); // end not reached
+			assert(this->li_iterator); // end not reached
 			++allocation_index;
 			particle_index = 0;
 			FindElement(false);
@@ -182,7 +182,7 @@ namespace chaos
 		/** skip to next particle */
 		void NextParticle()
 		{
-			assert(li_iterator); // end not reached
+			assert(this->li_iterator); // end not reached
 			++particle_index;
 			FindElement(false);
 		}
@@ -192,9 +192,9 @@ namespace chaos
 		/** find the very first collision from given conditions */
 		void FindElement(bool ignore_first)
 		{
-			while (li_iterator)
+			while (this->li_iterator)
 			{
-				auto* particle_layer = li_iterator->particle_layer.get();
+				auto* particle_layer = this->li_iterator->particle_layer.get();
 
 				if (particle_layer != nullptr)
 				{
@@ -211,14 +211,14 @@ namespace chaos
 
 								auto * particle = &accessor[particle_index];
 
-								if (Collide(collision_box, particle->bounding_box, open_geometry))
+								if (Collide(this->collision_box, particle->bounding_box, this->open_geometry))
 								{
 									if (!ignore_first)
 									{
-										cached_result.layer_instance = &(*li_iterator);
+										cached_result.layer_instance = &(*this->li_iterator);
 										cached_result.allocation = allocation;
 										cached_result.particle = particle;
-										cached_result.tile_info = level_instance->GetTiledMap()->FindTileInfo(particle->gid);
+										cached_result.tile_info = this->level_instance->GetTiledMap()->FindTileInfo(particle->gid);
 										return;
 									}
 									ignore_first = false;
@@ -233,7 +233,7 @@ namespace chaos
 					}
 				}
 				// next layer instance
-				++li_iterator;
+				++this->li_iterator;
 				allocation_index = 0;
 				particle_index = 0;
 			}
@@ -268,13 +268,13 @@ namespace chaos
 		TMObjectCollisionIteratorBase(TMObjectCollisionIteratorBase const& src) = default;
 		/** the constructor with initialization */
 		TMObjectCollisionIteratorBase(layer_type * in_layer_instance, uint64_t in_collision_mask, box2 const& in_collision_box, bool in_open_geometry) :
-			TMCollisionIteratorBase(in_layer_instance, in_collision_mask, in_collision_box, in_open_geometry)
+			TMCollisionIteratorBase<CONSTNESS_OPERATOR>(in_layer_instance, in_collision_mask, in_collision_box, in_open_geometry)
 		{
 			FindElement(false);
 		}
 		/** the constructor with initialization */
 		TMObjectCollisionIteratorBase(level_type * in_level_instance, uint64_t in_collision_mask, box2 const& in_collision_box, bool in_open_geometry) :
-			TMCollisionIteratorBase(in_level_instance, in_collision_mask, in_collision_box, in_open_geometry)
+			TMCollisionIteratorBase<CONSTNESS_OPERATOR>(in_level_instance, in_collision_mask, in_collision_box, in_open_geometry)
 		{
 			FindElement(false);
 		}
@@ -299,21 +299,21 @@ namespace chaos
 		/** indirection method */
 		object_type & operator *() const
 		{
-			assert(li_iterator); // end already reached. cannot indirect
+			assert(this->li_iterator); // end already reached. cannot indirect
 			return *cached_result;
 		}
 
 		/** indirection method */
 		object_type* operator ->() const
 		{
-			assert(li_iterator); // end already reached. cannot indirect
+			assert(this->li_iterator); // end already reached. cannot indirect
 			return cached_result;
 		}
 
 		/** pre increment iterator */
 		TMObjectCollisionIteratorBase& operator ++ ()
 		{
-			assert(li_iterator); // end already reached. cannot indirect
+			assert(this->li_iterator); // end already reached. cannot indirect
 			FindElement(true);
 			return *this;
 		}
@@ -329,8 +329,8 @@ namespace chaos
 		/** skip to next layer */
 		void NextLayer()
 		{
-			assert(li_iterator); // end not reached
-			++li_iterator;
+			assert(this->li_iterator); // end not reached
+			++this->li_iterator;
 			object_index = 0;
 			FindElement(false);
 		}
@@ -339,7 +339,7 @@ namespace chaos
 		/** skip to next object */
 		void NextObject()
 		{
-			assert(li_iterator); // end not reached
+			assert(this->li_iterator); // end not reached
 			++object_index;
 			FindElement(false);
 		}
@@ -349,14 +349,14 @@ namespace chaos
 		/** find the very first collision from given conditions */
 		void FindElement(bool ignore_first)
 		{
-			while (li_iterator)
+			while (this->li_iterator)
 			{
-				while (object_index < li_iterator->GetObjectCount())
+				while (object_index < this->li_iterator->GetObjectCount())
 				{
-					object_type * object = auto_cast(li_iterator->GetObject(object_index));
+					object_type * object = auto_cast(this->li_iterator->GetObject(object_index));
 					if (object != nullptr)
 					{
-						if (Collide(collision_box, object->GetBoundingBox(true), open_geometry))
+						if (Collide(this->collision_box, object->GetBoundingBox(true), this->open_geometry))
 						{
 							if (!ignore_first)
 							{
@@ -370,7 +370,7 @@ namespace chaos
 					++object_index;
 				}
 				// next layer
-				++li_iterator;
+				++this->li_iterator;
 				object_index = 0;
 			}
 		}

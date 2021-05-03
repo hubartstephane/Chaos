@@ -17,6 +17,11 @@ namespace chaos
 
 namespace chaos
 {
+	/** load from JSON */
+	bool LoadFromJSON(nlohmann::json const& json_entry, BitmapAtlas::AtlasGeneratorParams& dst);
+	/** save into JSON */
+	bool SaveIntoJSON(nlohmann::json& json_entry, BitmapAtlas::AtlasGeneratorParams const& src);
+
 	namespace BitmapAtlas
 	{
 
@@ -62,11 +67,6 @@ namespace chaos
 			/** the filters to be applyed to each bitmaps */
 			BitmapAtlasFilterSet const* filters = nullptr;
 		};
-
-		/** load from JSON */
-		bool LoadFromJSON(nlohmann::json const& json_entry, AtlasGeneratorParams& dst);
-		/** save into JSON */
-		bool SaveIntoJSON(nlohmann::json& json_entry, AtlasGeneratorParams const& src);
 
 		/**
 		* Rectangle : a class to represents rectangles

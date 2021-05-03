@@ -42,25 +42,7 @@ namespace chaos
 		GPUProgramProviderDeduceLock CanDeduce(char const* searched_name) const;
 		/** get a value for the uniform / attribute */
 		template<typename T>
-		bool GetValue(char const* name, T& result) const
-		{
-			auto action = GPUProgramGetValueAction<T>(result);
-
-			GPUProgramProviderExecutionData other_execution_data(name, action, this); // another data that shares the same vector than us !
-			// search for explicit first ...
-			other_execution_data.pass_type = GPUProgramProviderPassType::EXPLICIT;
-			if (top_provider->DoProcessAction(other_execution_data))
-				return true;
-			// ... then use deduced rules
-			other_execution_data.pass_type = GPUProgramProviderPassType::DEDUCED;
-			if (top_provider->DoProcessAction(other_execution_data))
-				return true;
-			// ... finally accept any fallback values
-			other_execution_data.pass_type = GPUProgramProviderPassType::FALLBACK;
-			if (top_provider->DoProcessAction(other_execution_data))
-				return true;
-			return false;
-		}
+		bool GetValue(char const* name, T& result) const;
 
 		/** get the name searched */
 		char const* GetSearchedName() const { return searched_name; }

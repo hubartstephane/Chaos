@@ -187,12 +187,52 @@ CHAOS_GENERATE_CHECK_FUNCTION(funcname)
 
 namespace chaos
 {
+	namespace meta
+	{
+		// ==================================================
+		// details
+		// ==================================================
+
+		namespace details
+		{
+			/** internal method */
+			template<typename IT, typename END, typename FUNC, typename DEFAULT_RESULT>
+			auto for_each_internal(FUNC func, DEFAULT_RESULT default_result)
+			{
+				if constexpr (std::is_same_v<IT, END>) // constexpr is important for compilation
+					return default_result;
+				else
+				{
+					using VALUE = typename boost::mpl::deref<IT>::type;
+
+					auto result = func(boost::mpl::identity<VALUE>()); // wrap with identity to avoid potentially costly instanciation (and maybe not possible) ... we do not need an instance anyway
+					if (result)
+						return result;
+					return for_each_internal<boost::mpl::next<IT>::type, END>(func, default_result);
+				}
+			}
+
+			/** internal method */
+			template<typename IT, typename END, typename FUNC>
+			void for_each_internal(FUNC func)
+			{
+				if constexpr (std::is_same_v<IT, END>)
+					return;
+				else
+				{
+					using VALUE = typename boost::mpl::deref<IT>::type;
+
+					func(boost::mpl::identity<VALUE>());
+					for_each_internal<boost::mpl::next<IT>::type, END>(func);
+				}
+			}
+
+		}; // namespace details
+
 	// ==================================================
 	// Meta functions
 	// ==================================================
 
-	namespace meta
-	{
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
 		T * get_raw_pointer(T * src)
@@ -273,42 +313,7 @@ namespace chaos
 			details::for_each_internal<boost::mpl::begin<ELEMENTS>::type, boost::mpl::end<ELEMENTS>::type>(func);
 		}
 
-		namespace details
-		{
-			/** internal method */
-			template<typename IT, typename END, typename FUNC, typename DEFAULT_RESULT>
-			auto for_each_internal(FUNC func, DEFAULT_RESULT default_result)
-			{
-				if constexpr (std::is_same_v<IT, END>) // constexpr is important for compilation
-					return default_result;
-				else
-				{
-					using VALUE = typename boost::mpl::deref<IT>::type;
 
-					auto result = func(boost::mpl::identity<VALUE>()); // wrap with identity to avoid potentially costly instanciation (and maybe not possible) ... we do not need an instance anyway
-					if (result)
-						return result;
-					return for_each_internal<boost::mpl::next<IT>::type, END>(func, default_result);
-				}
-			}
-
-			/** internal method */
-			template<typename IT, typename END, typename FUNC>
-			void for_each_internal(FUNC func)
-			{
-				if constexpr (std::is_same_v<IT, END>)
-					return;
-				else
-				{
-					using VALUE = typename boost::mpl::deref<IT>::type;
-
-					func(boost::mpl::identity<VALUE>());
-					for_each_internal<boost::mpl::next<IT>::type, END>(func);
-				}
-			}
-
-		}; // namespace details
-	
 	}; // namespace meta
 
 }; // namespace chaos

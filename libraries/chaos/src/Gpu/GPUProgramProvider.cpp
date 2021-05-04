@@ -28,12 +28,14 @@ namespace chaos
 
 	bool GPUProgramProviderBase::BindUniform(GLUniformInfo const& uniform) const
 	{
-		return ProcessAction(uniform.name.c_str(), GPUProgramSetUniformAction(uniform));
+		GPUProgramSetUniformAction action(uniform);
+		return ProcessAction(uniform.name.c_str(), action);
 	}
 
 	bool GPUProgramProviderBase::BindAttribute(GLAttributeInfo const& attribute) const
 	{
-		return ProcessAction(attribute.name.c_str(), GPUProgramSetAttributeAction(attribute));
+		GPUProgramSetAttributeAction action(attribute);
+		return ProcessAction(attribute.name.c_str(), action);
 	}
 	
 	bool GPUProgramProviderBase::DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const 

@@ -102,7 +102,7 @@ return_type * Manager::funcname(FilePathParam const & path, tinyxml2::XMLDocumen
 			{
 				ObjectTypeSet const * ots = object_type_sets[i].get();
 				if (ots == nullptr)
-					return false;
+					return nullptr;
 				Property const * result = ots->FindObjectProperty(type, name, type_id);
 				if (result != nullptr)
 					return result;		

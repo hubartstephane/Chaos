@@ -8,7 +8,7 @@ namespace chaos
     // ==============================================================
 
     template<typename PARTICLE_TYPE>
-    operator AutoCastedParticleAccessor::ParticleAccessor<PARTICLE_TYPE>() const
+    AutoCastedParticleAccessor::operator ParticleAccessor<PARTICLE_TYPE>() const
     {
         return (allocation_base != nullptr) ?
             allocation_base->GetParticleAccessor<PARTICLE_TYPE>(start, count) :
@@ -16,7 +16,7 @@ namespace chaos
     }
 
     template<typename PARTICLE_TYPE>
-    operator AutoCastedParticleAccessor::ParticleConstAccessor<PARTICLE_TYPE>() const
+    AutoCastedParticleAccessor::operator ParticleConstAccessor<PARTICLE_TYPE>() const
     {
         return (allocation_base != nullptr) ?
             allocation_base->GetParticleConstAccessor<PARTICLE_TYPE>(start, count) :
@@ -28,7 +28,7 @@ namespace chaos
     // ==============================================================
 
     template<typename PARTICLE_TYPE>
-    operator AutoCastedParticleConstAccessor::ParticleConstAccessor<PARTICLE_TYPE>() const
+    AutoCastedParticleConstAccessor::operator ParticleConstAccessor<PARTICLE_TYPE>() const
     {
         return (allocation_base != nullptr) ?
             allocation_base->GetParticleConstAccessor<PARTICLE_TYPE>(start, count) :

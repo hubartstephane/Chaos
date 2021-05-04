@@ -63,7 +63,8 @@ namespace chaos
 	bool MidiLoader::LoadBuffer(Buffer<char> const & buffer)
 	{
 		Clean();
-		if (!DoLoadBuffer(BufferReader(buffer)))
+		BufferReader reader(buffer);
+		if (!DoLoadBuffer(reader))
 		{
 			Clean();
 			return false;

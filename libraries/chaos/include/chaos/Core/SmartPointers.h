@@ -178,57 +178,27 @@ namespace chaos
 			if (in_target != nullptr)
 				target = POLICY::AddReference(in_target);
 		}
-
-#if 0
-
-		template<typename T2, typename POLICY2>
-		SmartPointerBase(SmartPointerBase<T2, POLICY2> const& src) :
-			SmartPointerBase(src.get())
-		{
-			static_assert(std::is_base_of<T, T2>);
-		}
-
-		template<typename T2, typename POLICY2>
-		SmartPointerBase(SmartPointerBase<T2, POLICY2> && src) noexcept:
-			SmartPointerBase(src.target)
-		{
-			static_assert(std::is_base_of<T, T2>);
-			src.target = nullptr; // capture the reference
-		}
-
-
-
-
-		//AutoCastable
-
-
-
-
-
-
-#else
-
-
 		/** copy constructor */
-		SmartPointerBase(SmartPointerBase<T, POLICY> const & src) :
+		SmartPointerBase(SmartPointerBase<T, POLICY> const& src) :
 			SmartPointerBase(src.get())
 		{
 		}
 
 		/** move constructor */
-		SmartPointerBase(SmartPointerBase<T, POLICY>&& src) noexcept: // XXX : the noexcept is required to have move semantic used during vector resized
+		SmartPointerBase(SmartPointerBase<T, POLICY>&& src) noexcept : // XXX : the noexcept is required to have move semantic used during vector resized
 			target(src.target)
 		{
 			src.target = nullptr; // capture the reference
 		}
 
-#endif
-
-
-
-
-
-
+		/** constructor with AutoCastable */
+		template<typename U>
+		SmartPointerBase(AutoCastable<U> const& src)
+		{
+			static_assert(std::is_base_of_v<T, U>);
+			if (src != nullptr)
+				target = POLICY::AddReference((T *)src);
+		}
 
 		/** destructor */
 		~SmartPointerBase()

@@ -5,6 +5,9 @@
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
+
+#if 0
+
     glfwInit();
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
@@ -73,6 +76,8 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
     }
  
     glfwTerminate();
+
+#endif
 
 	return 0;
 }

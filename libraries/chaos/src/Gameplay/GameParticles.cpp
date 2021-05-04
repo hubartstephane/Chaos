@@ -4,10 +4,11 @@ namespace chaos
 {
     void ParticleToPrimitives(ParticleBackground const& particle, PrimitiveOutput<VertexDefault> & output)
     {
-        ParticleToPrimitive(particle, output.AddQuads());
+        QuadPrimitive<VertexDefault> quad = output.AddQuads();
+        ParticleToPrimitive(particle, quad);
     }
 
-    void ParticleToPrimitive(ParticleBackground const& particle, QuadPrimitive<VertexDefault>& primitive)
+    void ParticleToPrimitive(ParticleBackground const& particle, QuadPrimitive<VertexDefault> & primitive)
     {
         primitive[0].position = glm::vec2(-1.0f, -1.0f);
         primitive[1].position = glm::vec2(+1.0f, -1.0f);
@@ -24,7 +25,7 @@ namespace chaos
             vertex.color = particle.color;
         }
     }
-    void ParticleToPrimitive(ParticleBackground const& particle, TrianglePairPrimitive<VertexDefault>& primitive)
+    void ParticleToPrimitive(ParticleBackground const& particle, TrianglePairPrimitive<VertexDefault> & primitive)
     {
         primitive[0].position = glm::vec2(-1.0f, -1.0f);
         primitive[1].position = glm::vec2(+1.0f, -1.0f);

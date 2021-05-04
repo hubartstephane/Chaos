@@ -38,6 +38,32 @@ namespace chaos
 
 namespace chaos
 {
+	// ==============================================================================================
+	// rotator functions
+	// ==============================================================================================
+
+	/** rotator to matrix */
+	glm::mat4x4 GetRotatorMatrix(glm::quat const& rotator);
+	/** rotator to matrix */
+	glm::dmat4x4 GetRotatorMatrix(glm::dquat const& rotator);
+	/** rotator to matrix */
+	glm::mat4x4 GetRotatorMatrix(float rotator);
+	/** rotator to matrix */
+	glm::dmat4x4 GetRotatorMatrix(double rotator);
+
+	// ==============================================================================================
+	// plane functions
+	// ==============================================================================================
+
+	glm::vec2  GetPlaneNormal(glm::vec3  const& p);
+	glm::vec3  GetPlaneNormal(glm::vec4  const& p);
+	glm::dvec2 GetPlaneNormal(glm::dvec3 const& p);
+	glm::dvec3 GetPlaneNormal(glm::dvec4 const& p);
+
+	float  GetPlaneOffset(glm::vec3  const& p);
+	float  GetPlaneOffset(glm::vec4  const& p);
+	double GetPlaneOffset(glm::dvec3 const& p);
+	double GetPlaneOffset(glm::dvec4 const& p);
 
 	// ==============================================================================================
 	// GLM vector functions
@@ -764,34 +790,6 @@ namespace chaos
 			s1.position + ((b + a) / static_cast<T>(2)) * delta_pos,
 			((b - a) / static_cast<T>(2)) * distance);
 	}
-
-	// ==============================================================================================
-	// rotator functions
-	// ==============================================================================================
-
-	/** rotator to matrix */
-	glm::mat4x4 GetRotatorMatrix(glm::quat const & rotator);
-	/** rotator to matrix */
-	glm::dmat4x4 GetRotatorMatrix(glm::dquat const & rotator);
-	/** rotator to matrix */
-	glm::mat4x4 GetRotatorMatrix(float rotator);
-	/** rotator to matrix */
-	glm::dmat4x4 GetRotatorMatrix(double rotator);
-
-	// ==============================================================================================
-	// plane functions
-	// ==============================================================================================
-
-	glm::vec2  GetPlaneNormal(glm::vec3  const & p);
-	glm::vec3  GetPlaneNormal(glm::vec4  const & p);
-	glm::dvec2 GetPlaneNormal(glm::dvec3 const & p);
-	glm::dvec3 GetPlaneNormal(glm::dvec4 const & p);
-
-	float  GetPlaneOffset(glm::vec3  const & p);
-	float  GetPlaneOffset(glm::vec4  const & p);
-	double GetPlaneOffset(glm::dvec3 const & p);
-	double GetPlaneOffset(glm::dvec4 const & p);
-
 
 	// ==============================================================================================
 	// JSON functions

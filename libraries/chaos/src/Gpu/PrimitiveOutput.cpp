@@ -336,7 +336,7 @@ namespace chaos
 
     /** text creation */
     template<typename VERTEX_TYPE>
-    QuadPrimitive<VERTEX_TYPE> DrawText(PrimitiveOutput<VERTEX_TYPE>& output, char const* in_text, ParticleTextGenerator::GeneratorParams const& params = {}, ParticleTextGenerator::CreateTextAllocationParams const& allocation_params = {})
+    QuadPrimitive<VERTEX_TYPE> DrawText(PrimitiveOutput<VERTEX_TYPE>& output, char const* in_text, ParticleTextGenerator::GeneratorParams const& params, ParticleTextGenerator::CreateTextAllocationParams const& allocation_params)
     {
         // get the application
         WindowApplication const* window_application = Application::GetInstance();

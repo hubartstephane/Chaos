@@ -67,7 +67,8 @@ namespace chaos
 
 	void ParticleToPrimitives(ParticleDefault const& particle, PrimitiveOutput<VertexDefault>& output)
 	{
-		ParticleToPrimitive(particle, output.AddQuads());
+		QuadPrimitive<VertexDefault> quad = output.AddQuads();
+		ParticleToPrimitive(particle, quad);
 	}
 
 	void ParticleToPrimitive(ParticleDefault const& particle, QuadPrimitive<VertexDefault>& primitive)

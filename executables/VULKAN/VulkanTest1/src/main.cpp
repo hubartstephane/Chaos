@@ -1,3 +1,105 @@
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <boost/crc.hpp> 
+
+
+template<typename T>
+class B;
+
+
+template<typename T>
+class A
+{
+public:
+
+    B<T> GetB()
+    {
+        return B<T>(this);
+    }
+
+    void f()
+    {
+        int i = 0;
+        ++i;
+    }
+
+};
+
+template<typename T>
+class B
+{
+public:
+
+    B(A<T>* in_a) :a(in_a) {}
+
+    void f()
+    {
+        a->f();
+    }
+
+
+protected:
+
+    A<T>* a = nullptr;
+};
+
+
+bool LoadFromJSON(int & i)
+{
+
+
+    return false;
+}
+
+template<typename T>
+bool LoadFromJSON(A<T>& dst)
+{
+
+
+    return true;
+}
+
+template<typename T>
+bool LoadFromJSON(T & dst)
+{
+
+
+    return true;
+}
+
+
+
+
+
+int main(int argc, char** argv, char** env)
+{
+    int i = 1;
+    LoadFromJSON(i);
+    float f = 1.1f;
+    LoadFromJSON(f);
+    A<int> a;
+    LoadFromJSON(a);
+
+    a.GetB().f();
+
+
+
+
+
+
+
+
+
+
+
+
+    return 0;
+}
+
+#if 0
 #include <chaos/chaos.h>
 
 #include <vulkan/vulkan.h>
@@ -6,7 +108,7 @@
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
 
-#if 0
+
 
     glfwInit();
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -77,9 +179,11 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
  
     glfwTerminate();
 
-#endif
+
 
 	return 0;
 }
+
+#endif
 
 

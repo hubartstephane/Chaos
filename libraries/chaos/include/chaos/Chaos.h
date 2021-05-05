@@ -98,7 +98,7 @@
 #include <boost/program_options/variables_map.hpp>
 #include <boost/program_options/parsers.hpp>
 #include <boost/call_traits.hpp>
-#include <boost/crc.hpp> 
+//#include <boost/crc.hpp> 
 #include <boost/type_traits.hpp>
 #include <boost/algorithm/string.hpp>
 

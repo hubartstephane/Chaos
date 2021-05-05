@@ -307,7 +307,7 @@ namespace chaos
 	template<typename T, int dimension>
 	type_box<T, dimension> operator & (type_box<T, dimension> const & b1, type_box<T, dimension> const & b2)
 	{
-		using vec_type = type_box<T, dimension>::vec_type;
+		using vec_type = typename type_box<T, dimension>::vec_type;
 
 		if (IsGeometryEmpty(b1) || IsGeometryEmpty(b2)) // any of the 2 is empty, intersection is empty
 			return type_box<T, dimension>();
@@ -334,7 +334,7 @@ namespace chaos
 	template<typename T, int dimension>
 	type_box<T, dimension> operator | (type_box<T, dimension> const & b1, type_box<T, dimension> const & b2)
 	{
-		using vec_type = type_box<T, dimension>::vec_type;
+		using vec_type = typename type_box<T, dimension>::vec_type;
 
 		if (IsGeometryEmpty(b1)) // if one is empty, returns other
 			return b2;
@@ -357,7 +357,7 @@ namespace chaos
 	template<typename T>
 	type_box<T, 2> GetSplitBox(type_box<T, 2> const & b, int i, int j)
 	{
-		using vec_type = type_box<T, 2>::vec_type;
+		using vec_type = typename type_box<T, 2>::vec_type;
 
 		assert((i == 0) || (i == 1));
 		assert((j == 0) || (j == 1));
@@ -374,7 +374,7 @@ namespace chaos
 	template<typename T>
 	type_box<T, 3> GetSplitBox(type_box<T, 3> const & b, int i, int j, int k)
 	{
-		using vec_type = type_box<T, 3>::vec_type;
+		using vec_type = typename type_box<T, 3>::vec_type;
 
 		assert((i == 0) || (i == 1));
 		assert((j == 0) || (j == 1));

@@ -80,7 +80,16 @@ namespace chaos
 			return result.get();
 		}
 		/** gets the shared GPUVertexDeclaration */
-		static GPUVertexDeclaration* GetVertexDeclaration();
+		static GPUVertexDeclaration* GetVertexDeclaration()
+		{
+			static shared_ptr<GPUVertexDeclaration> result;
+			if (result == nullptr)
+			{
+				result = new GPUVertexDeclaration;
+				GetTypedVertexDeclaration(result.get(), boost::mpl::identity<VERTEX_TYPE>());
+			}
+			return result.get();
+		}
 		/** gets the shared GPUVertexArrayCache */
 		static GPUVertexArrayCache* GetVertexArrayCache()
 		{

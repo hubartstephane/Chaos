@@ -71,6 +71,26 @@ namespace chaos
 		return Resize(extra_count + GetParticleCount());
 	}
 
+	AutoCastedParticleAccessor ParticleAllocationBase::Resize(size_t new_count) 
+	{ 
+		return AutoCastedParticleAccessor(this, 0, 0); 
+	}
+
+	AutoCastedParticleAccessor ParticleAllocationBase::GetParticleAccessor(size_t start, size_t count)
+	{
+		return AutoCastedParticleAccessor(this, start, count);
+	}
+
+	AutoCastedParticleConstAccessor ParticleAllocationBase::GetParticleAccessor(size_t start, size_t count) const
+	{
+		return AutoCastedParticleConstAccessor(this, start, count);
+	}
+
+	AutoCastedParticleConstAccessor ParticleAllocationBase::GetParticleConstAccessor(size_t start, size_t count) const
+	{
+		return AutoCastedParticleConstAccessor(this, start, count);
+	}
+
 	//
 	// XXX : SpawnParticle(...) returns a raw pointer on ParticleAllocation
 	//       the user has to possibilities

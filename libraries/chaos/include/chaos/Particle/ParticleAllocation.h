@@ -49,7 +49,7 @@ namespace chaos
 		/** get the particles */
 		virtual void const * GetParticleBuffer() const { return nullptr; }
 		/** resize the particles */
-		virtual AutoCastedParticleAccessor Resize(size_t new_count) { return AutoCastedParticleAccessor(this, 0, 0); }
+		virtual AutoCastedParticleAccessor Resize(size_t new_count);
 
 		/** increment number of particles */
         AutoCastedParticleAccessor AddParticles(size_t extra_count);
@@ -75,20 +75,11 @@ namespace chaos
 		}
 
         /** get an AutoCasting particle accessor */
-        AutoCastedParticleAccessor GetParticleAccessor(size_t start = 0, size_t count = 0)
-        {
-            return AutoCastedParticleAccessor(this, start, count);
-        }
+		AutoCastedParticleAccessor GetParticleAccessor(size_t start = 0, size_t count = 0);
         /** get an AutoCasting particle accessor */
-        AutoCastedParticleConstAccessor GetParticleAccessor(size_t start = 0, size_t count = 0) const
-        {
-            return AutoCastedParticleConstAccessor(this, start, count);
-        }
+		AutoCastedParticleConstAccessor GetParticleAccessor(size_t start = 0, size_t count = 0) const;
         /** get an AutoCasting particle accessor */
-        AutoCastedParticleConstAccessor GetParticleConstAccessor(size_t start = 0, size_t count = 0) const
-        {
-            return AutoCastedParticleConstAccessor(this, start, count);
-        }
+		AutoCastedParticleConstAccessor GetParticleConstAccessor(size_t start = 0, size_t count = 0) const;
 
 		/** get an accessor for the particles */
 		template<typename PARTICLE_TYPE>

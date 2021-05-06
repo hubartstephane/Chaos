@@ -20,6 +20,63 @@ namespace chaos
 #elif defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 
+
+namespace chaos
+{
+	namespace ParticleTextGenerator
+	{
+		/** output primitives corresponding to generated text */
+		template<typename VERTEX_TYPE>
+		QuadPrimitive<VERTEX_TYPE> TextToPrimitives(PrimitiveOutput<VERTEX_TYPE>& output, GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params)
+		{
+			// early exit
+			size_t token_count = generator_result.GetTokenCount();
+			if (token_count == 0)
+				return {};
+
+			int extra_background = (allocation_params.create_background) ? 1 : 0;
+
+			QuadPrimitive<VERTEX_TYPE> result = output.AddQuads(token_count + extra_background);
+			QuadPrimitive<VERTEX_TYPE> current_primitive = result;
+
+			// create the background
+			if (allocation_params.create_background)
+			{
+				ParticleDefault particle = GetBackgroundParticle(generator_result, allocation_params);
+				ParticleToPrimitive(particle, current_primitive);
+				current_primitive++;
+			}
+			// convert the text			
+			for (size_t i = 0; i < generator_result.token_lines.size(); ++i)
+			{
+				ParticleTextGenerator::TokenLine const& line = generator_result.token_lines[i];
+				for (size_t j = 0; j < line.size(); ++j)
+				{
+					ParticleDefault particle = TokenToParticle(line[j]);
+					ParticleToPrimitive(particle, current_primitive);
+					current_primitive++;
+				}
+			}
+			return result;
+		}
+
+	}; // namespace ParticleTextGenerator
+
+}; // namespace chaos
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #else 
 
 namespace chaos
@@ -324,57 +381,9 @@ namespace chaos
 		/** generate an allocation for a generated text */
 		ParticleAllocationBase* CreateTextAllocation(ParticleLayerBase* layer, GeneratorResult const& generator_result, bool new_allocation = true, CreateTextAllocationParams const& allocation_params = {});
 
-
-
-
-#if 0
-		/** spawn + user initialization methods */
-		template<typename INIT_PARTICLE_FUNC>
-		ParticleAllocationBase* CreateTextAllocation(ParticleLayerBase* layer, GeneratorResult const& generator_result, bool new_allocation, CreateTextAllocationParams const& allocation_params, INIT_PARTICLE_FUNC init_func)
-		{
-			ParticleAllocationBase* result = CreateTextAllocation(layer, generator_result, new_allocation, allocation_params);
-			// call user initialization function
-			if (result != nullptr)
-			{
-				size_t allocation_count = result->GetParticleCount();
-				init_func(result->GetParticleAccessor(allocation_count - count, count));  // partial accessor, take the last particles in the array
-			}
-			return result;
-		}
-#endif
-
 		/** output primitives corresponding to generated text */
 		template<typename VERTEX_TYPE>
-		QuadPrimitive<VERTEX_TYPE> TextToPrimitives(PrimitiveOutput<VERTEX_TYPE>& output, GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params)
-		{
-			// early exit
-			size_t token_count = generator_result.GetTokenCount();
-			if (token_count == 0)
-				return {};
-
-			int extra_background = (allocation_params.create_background) ? 1 : 0;
-
-			QuadPrimitive<VERTEX_TYPE> result = output.AddQuads(token_count + extra_background);
-			QuadPrimitive<VERTEX_TYPE> current_primitive = result;
-
-			// create the background
-			if (allocation_params.create_background)
-			{
-				ParticleDefault particle = GetBackgroundParticle(generator_result, allocation_params);
-				ParticleToPrimitive(particle, current_primitive++);
-			}
-			// convert the text			
-			for (size_t i = 0; i < generator_result.token_lines.size(); ++i)
-			{
-				ParticleTextGenerator::TokenLine const& line = generator_result.token_lines[i];
-				for (size_t j = 0; j < line.size(); ++j)
-				{
-					ParticleDefault particle = TokenToParticle(line[j]);
-					ParticleToPrimitive(particle, current_primitive++);
-				}
-			}
-			return result;
-		}
+		QuadPrimitive<VERTEX_TYPE> TextToPrimitives(PrimitiveOutput<VERTEX_TYPE>& output, GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params = {});
 
 	}; // namespace ParticleTextGenerator
 

@@ -61,12 +61,13 @@ namespace chaos
 
 }; // namespace chaos
 
+#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+
 #else 
 
 namespace chaos
 {
-
-
 
     /** returns the OpenGL primitive type corresponding to the primitive */
     constexpr GLenum GetGLPrimitiveType(PrimitiveType primitive_type)

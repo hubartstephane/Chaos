@@ -6,7 +6,11 @@ namespace chaos
 
 }; // namespace chaos
 
-#else 
+#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+
+#else
+
 namespace chaos
 {
 	/** the possible edges (XXX: values are related to TiledMap::Wang. do not change them without a check) */

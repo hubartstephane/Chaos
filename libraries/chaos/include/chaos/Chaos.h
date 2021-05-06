@@ -279,3 +279,8 @@
 
 // second step, full declarations
 #include <chaos/ChaosInternals.h>
+
+// last step, template implementation
+#define CHAOS_TEMPLATE_IMPLEMENTATION
+#include <chaos/ChaosInternals.h>
+#undef CHAOS_TEMPLATE_IMPLEMENTATION

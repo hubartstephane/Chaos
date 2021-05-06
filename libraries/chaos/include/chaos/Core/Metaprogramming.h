@@ -183,6 +183,9 @@ CHAOS_GENERATE_CHECK_METHOD(funcname)\
 CHAOS_GENERATE_CHECK_FUNCTION(funcname)
 
 
+#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+
 #else 
 
 namespace chaos

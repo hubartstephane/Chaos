@@ -110,6 +110,9 @@ bool OWNER_CLASS::Remove##FUNC_COMPONENT_NAME(ObjectRequest request)\
 	return true;\
 }
 
+#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+
 #else
 
 #endif // CHAOS_FORWARD_DECLARATION

@@ -6,6 +6,9 @@ namespace chaos
 
 }; // namespace chaos
 
+#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+
 #else
 
 // XXX : Due to class declaration order and dependencies, this must only be included from .cpp !!

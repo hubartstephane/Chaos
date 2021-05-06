@@ -21,6 +21,9 @@ namespace chaos
 	namespace JSONTools {};
 };
 
+#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+
 #else 
 
 namespace chaos

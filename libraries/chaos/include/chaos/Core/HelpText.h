@@ -7,6 +7,9 @@
 #define CHAOS_HELP_TEXT(FAMILY, x)
 #endif
 
+#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+
 #else 
 
 namespace chaos

@@ -1,12 +1,10 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 
 
-}; // namespace chaos
 
-#else 
+#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
+
 
 namespace chaos
 {
@@ -111,6 +109,25 @@ namespace chaos
         return TextToPrimitives(output, generator_result, allocation_params);
     }
 
+
+}; // namespace chaos
+
+#else 
+
+namespace chaos
+{
+    /** draw a line */
+    template<typename VERTEX_TYPE>
+    void DrawLine(PrimitiveOutput<VERTEX_TYPE>& output, glm::vec2 const& p1, glm::vec2 const& p2, glm::vec4 const& color);
+    /** draw a box/obox */
+    template<typename VERTEX_TYPE>
+    void DrawBox(PrimitiveOutput<VERTEX_TYPE>& output, obox2 const& b, glm::vec4 const& color, bool fill);
+    /** draw a sphere */
+    template<typename VERTEX_TYPE>
+    void DrawSphere(PrimitiveOutput<VERTEX_TYPE>& output, sphere2 const& s, glm::vec4 const& color, bool fill);
+    /** text creation */
+    template<typename VERTEX_TYPE>
+    QuadPrimitive<VERTEX_TYPE> DrawText(PrimitiveOutput<VERTEX_TYPE>& output, char const* in_text, ParticleTextGenerator::GeneratorParams const& params, ParticleTextGenerator::CreateTextAllocationParams const& allocation_params);
 
 }; // namespace chaos
 

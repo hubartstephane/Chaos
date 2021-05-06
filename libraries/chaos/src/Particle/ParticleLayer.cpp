@@ -274,31 +274,7 @@ namespace chaos
 
 
 
-	template<typename LAYER_TRAIT>
-	void ParticleLayer<LAYER_TRAIT>::GenerateMeshData(GPUDynamicMesh* in_dynamic_mesh, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t vertex_requirement_evaluation) override
-	{
-		// some layers are in a manager, some not (see TiledMap)
-		GPUBufferPool* cache = (particle_manager == nullptr) ? &buffer_pool : &particle_manager->GetBufferPool();
 
-		PrimitiveOutput<vertex_type> output(in_dynamic_mesh, cache, in_vertex_declaration, in_render_material, vertex_requirement_evaluation);
-		ParticlesToPrimitivesLoop(output);
-	}
-
-	template<typename LAYER_TRAIT>
-	void ParticleLayer<LAYER_TRAIT>::ParticlesToPrimitivesLoop(PrimitiveOutput<vertex_type>& output)
-	{
-		size_t count = particles_allocations.size();
-		for (size_t i = 0; i < count; ++i)
-		{
-			// get the allocation, ignore if invisible
-			ParticleAllocation<layer_trait_type>* allocation = auto_cast(particles_allocations[i].get());
-			if (!allocation->IsVisible())
-				continue;
-			// transform particles into vertices
-			allocation->ParticlesToPrimitives(output, &this->data);
-		}
-		output.Flush();
-	}
 
 
 }; // namespace chaos

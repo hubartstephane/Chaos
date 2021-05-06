@@ -47,6 +47,5 @@
 #include <chaos/Gpu/TextureArrayGenerator.h>
 #include <chaos/Gpu/TextureArrayAtlas.h>
 #include <chaos/Gpu/GPUResourceManager.h>
-#include <chaos/Gpu/PrimitiveOutputForward.h>
-#include <chaos/Gpu/GPUDrawInterface.h>
 #include <chaos/Gpu/PrimitiveOutput.h>
+#include <chaos/Gpu/GPUDrawInterface.h>

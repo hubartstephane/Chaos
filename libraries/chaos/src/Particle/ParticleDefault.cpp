@@ -65,60 +65,6 @@ namespace chaos
 		vertex_flags[3] = VertexFlags::TOP_LEFT | output_flags;
 	}
 
-	void ParticleToPrimitives(ParticleDefault const& particle, PrimitiveOutput<VertexDefault>& output)
-	{
-		QuadPrimitive<VertexDefault> quad = output.AddQuads();
-		ParticleToPrimitive(particle, quad);
-	}
-
-	void ParticleToPrimitive(ParticleDefault const& particle, QuadPrimitive<VertexDefault>& primitive)
-	{
-		// in order BL, BR, TR, TL
-		glm::vec2 vertex_positions[4];
-		GenerateVertexPositionAttributes(particle.bounding_box, particle.rotation, vertex_positions);
-
-		glm::vec3 vertex_texcoords[4];
-		GenerateVertexTextureAttributes(particle.texcoords, particle.flags, vertex_texcoords);
-
-		int vertex_flags[4];
-		GenerateVertexFlagAttributes(particle.flags, vertex_flags);
-
-		for (int i = 0; i < 4; ++i)
-		{
-			VertexDefault& v = primitive[i];
-			v.position = vertex_positions[i];
-			v.texcoord = vertex_texcoords[i];
-			v.flags = vertex_flags[i];
-			v.color = particle.color;
-		}
-	}
-
-	void ParticleToPrimitive(ParticleDefault const& particle, TrianglePairPrimitive<VertexDefault>& primitive)
-	{
-		// in order BL, BR, TR, TL
-		glm::vec2 vertex_positions[4];
-		GenerateVertexPositionAttributes(particle.bounding_box, particle.rotation, vertex_positions);
-
-		glm::vec3 vertex_texcoords[4];
-		GenerateVertexTextureAttributes(particle.texcoords, particle.flags, vertex_texcoords);
-
-		int vertex_flags[4];
-		GenerateVertexFlagAttributes(particle.flags, vertex_flags);
-
-		int const indices[] = { 0, 1, 2, 0, 2, 3 };
-
-		for (int i = 0; i < 6; ++i)
-		{
-			int indice = indices[i];
-
-			VertexDefault& v = primitive[i];
-			v.position = vertex_positions[indice];
-			v.texcoord = vertex_texcoords[indice];
-			v.flags = vertex_flags[indice];
-			v.color = particle.color;
-		}
-	}
-
 	void GetTypedVertexDeclaration(GPUVertexDeclaration* result, boost::mpl::identity<VertexDefault>)
 	{
 		result->Push(VertexAttributeSemantic::POSITION, 0, VertexAttributeType::FLOAT2, "position");

@@ -14,6 +14,66 @@ namespace chaos
 
 #elif defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+namespace chaos
+{
+	template<typename VERTEX_TYPE>
+	void ParticleToPrimitives(ParticleDefault const& particle, PrimitiveOutput<VERTEX_TYPE>& output)
+	{
+		QuadPrimitive<VERTEX_TYPE> quad = output.AddQuads();
+		ParticleToPrimitive(particle, quad);
+	}
+
+	template<typename VERTEX_TYPE>
+	void ParticleToPrimitive(ParticleDefault const& particle, QuadPrimitive<VERTEX_TYPE>& primitive)
+	{
+		// in order BL, BR, TR, TL
+		glm::vec2 vertex_positions[4];
+		GenerateVertexPositionAttributes(particle.bounding_box, particle.rotation, vertex_positions);
+
+		glm::vec3 vertex_texcoords[4];
+		GenerateVertexTextureAttributes(particle.texcoords, particle.flags, vertex_texcoords);
+
+		int vertex_flags[4];
+		GenerateVertexFlagAttributes(particle.flags, vertex_flags);
+
+		for (int i = 0; i < 4; ++i)
+		{
+			VERTEX_TYPE& v = primitive[i];
+			v.position = vertex_positions[i];
+			v.texcoord = vertex_texcoords[i];
+			v.flags = vertex_flags[i];
+			v.color = particle.color;
+		}
+	}
+
+	template<typename VERTEX_TYPE>
+	void ParticleToPrimitive(ParticleDefault const& particle, TrianglePairPrimitive<VERTEX_TYPE>& primitive)
+	{
+		// in order BL, BR, TR, TL
+		glm::vec2 vertex_positions[4];
+		GenerateVertexPositionAttributes(particle.bounding_box, particle.rotation, vertex_positions);
+
+		glm::vec3 vertex_texcoords[4];
+		GenerateVertexTextureAttributes(particle.texcoords, particle.flags, vertex_texcoords);
+
+		int vertex_flags[4];
+		GenerateVertexFlagAttributes(particle.flags, vertex_flags);
+
+		int const indices[] = { 0, 1, 2, 0, 2, 3 };
+
+		for (int i = 0; i < 6; ++i)
+		{
+			int indice = indices[i];
+
+			VERTEX_TYPE& v = primitive[i];
+			v.position = vertex_positions[indice];
+			v.texcoord = vertex_texcoords[indice];
+			v.flags = vertex_flags[indice];
+			v.color = particle.color;
+		}
+	}
+
+}; // namespace chaos
 
 #else 
 
@@ -101,11 +161,14 @@ namespace chaos
 	};
 
 	/** output primitive */
-	void ParticleToPrimitives(ParticleDefault const& particle, PrimitiveOutput<VertexDefault>& output);
+	template<typename VERTEX_TYPE>
+	void ParticleToPrimitives(ParticleDefault const& particle, PrimitiveOutput<VERTEX_TYPE>& output);
 	/** generates 1 quad from one particle */
-	void ParticleToPrimitive(ParticleDefault const& particle, QuadPrimitive<VertexDefault>& primitive);
+	template<typename VERTEX_TYPE>
+	void ParticleToPrimitive(ParticleDefault const& particle, QuadPrimitive<VERTEX_TYPE>& primitive);
 	/** generates 1 triangle pair from one particle */
-	void ParticleToPrimitive(ParticleDefault const& particle, TrianglePairPrimitive<VertexDefault>& primitive);
+	template<typename VERTEX_TYPE>
+	void ParticleToPrimitive(ParticleDefault const& particle, TrianglePairPrimitive<VERTEX_TYPE>& primitive);
 
 	/** utility method to have position for a quad (in order BL, BR, TR, TL) */
 	void GenerateVertexPositionAttributes(box2 const& bounding_box, float rotation, glm::vec2* vertex_positions);

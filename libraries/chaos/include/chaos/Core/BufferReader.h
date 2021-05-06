@@ -7,6 +7,9 @@ namespace chaos
 	
 }; // namespace chaos	
 
+#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+
 #else 
 	
 namespace chaos

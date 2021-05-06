@@ -9,30 +9,11 @@ namespace chaos
 
 
 
-#if 0
-
-	template<typename T, glm::precision P>
-	bool SaveIntoJSON(nlohmann::json& json_entry, glm::tvec2<T, P> const& src);
-
-	template<typename T, glm::precision P>
-	bool LoadFromJSON(nlohmann::json const& json_entry, glm::tvec2<T, P>& dst);
-
-	template<typename T, glm::precision P>
-	bool SaveIntoJSON(nlohmann::json& json_entry, glm::tvec3<T, P> const& src);
-
-	template<typename T, glm::precision P>
-	bool LoadFromJSON(nlohmann::json const& json_entry, glm::tvec3<T, P>& dst);
-
-	template<typename T, glm::precision P>
-	bool SaveIntoJSON(nlohmann::json& json_entry, glm::tvec4<T, P> const& src);
-
-	template<typename T, glm::precision P>
-	bool LoadFromJSON(nlohmann::json const& json_entry, glm::tvec4<T, P>& dst);
-
-#endif
-
 
 }; // namespace chaos
+
+#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
+
 
 #else 
 

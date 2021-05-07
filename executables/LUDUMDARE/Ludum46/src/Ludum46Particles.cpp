@@ -248,7 +248,8 @@ void ParticleBloodLayerTrait::ParticleToPrimitives(ParticleBlood const& particle
 	ParticleBlood other = particle;
 	other.bounding_box.half_size *= 1.0f + (other.life / other.duration);
 
-	ParticleToPrimitive(other, output.AddQuads());
+	auto quad = output.AddQuads();
+	ParticleToPrimitive(other, quad);
 }
 
 bool ParticleBloodLayerTrait::UpdateParticle(float delta_time, ParticleBlood & particle) const
@@ -270,7 +271,8 @@ void ParticleBurnedSoulLayerTrait::ParticleToPrimitives(ParticleBurnedSoul const
 	ParticleBurnedSoul other = particle;
 	other.bounding_box.position.x += 50.0f * std::sin(other.offset_t);
 
-	ParticleToPrimitive(other, output.AddTrianglePairs());
+	auto primitive = output.AddTrianglePairs();
+	ParticleToPrimitive(other, primitive);
 }
 
 bool ParticleBurnedSoulLayerTrait::UpdateParticle(float delta_time, ParticleBurnedSoul & particle) const

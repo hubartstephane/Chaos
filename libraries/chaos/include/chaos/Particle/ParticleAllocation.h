@@ -257,10 +257,12 @@ namespace chaos
 				{
 					if constexpr (with_begin_call != 0)
 					{
+						auto accessor = GetParticleConstAccessor<particle_type>();
+
 						DoParticlesToPrimitivesLoop_LayerTraitImplementation(
 							layer_trait,
 							output,
-							layer_trait->BeginParticlesToPrimitives(GetParticleConstAccessor<particle_type>(), this->data), // do not use a temp variable, so it can be a left-value reference
+							layer_trait->BeginParticlesToPrimitives(accessor, this->data), // do not use a temp variable, so it can be a left-value reference
 							this->data);
 					}
 					else
@@ -270,10 +272,12 @@ namespace chaos
 				}
 				else if constexpr (with_begin_call != 0)
 				{
+					auto accessor = GetParticleConstAccessor<particle_type>();
+
 					DoParticlesToPrimitivesLoop_LayerTraitImplementation(
 						layer_trait,
 						output,
-						layer_trait->BeginParticlesToPrimitives(GetParticleConstAccessor<particle_type>()) // do not use a temp variable, so it can be a left-value reference
+						layer_trait->BeginParticlesToPrimitives(accessor) // do not use a temp variable, so it can be a left-value reference
 					);
 				}
 				else

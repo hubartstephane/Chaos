@@ -1,19 +1,11 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class SurfaceDescription;
 	class TextureDescription;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* SurfaceDescription : used to describe an openGL surface
@@ -53,8 +45,6 @@ namespace chaos
 		GLenum type = GL_NONE;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-

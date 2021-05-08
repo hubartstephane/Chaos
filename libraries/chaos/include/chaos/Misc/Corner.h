@@ -1,18 +1,10 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	enum class Corner;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/** the possible corners (XXX: values are related to TiledMap::Wang. do not change them without a check) */
 	enum class Corner : int
@@ -20,9 +12,9 @@ namespace chaos
 		TOP_RIGHT = 0,
 		BOTTOM_RIGHT = 1,
 		BOTTOM_LEFT = 2,
-		TOP_LEFT = 3		
+		TOP_LEFT = 3
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

@@ -1,14 +1,6 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
 namespace chaos
 {
-
+#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	class LineIntersectionResult
 	{
@@ -55,7 +47,7 @@ namespace chaos
 
 	public:
 
-		static bool IsPolygonConvex(std::vector<glm::vec2> const & polygon, bool * reversed_convex = nullptr)
+		static bool IsPolygonConvex(std::vector<glm::vec2> const& polygon, bool* reversed_convex = nullptr)
 		{
 			assert(polygon.size() >= 3);
 
@@ -63,11 +55,11 @@ namespace chaos
 			bool has_negative = false;
 
 			size_t polygon_count = polygon.size();
-			for (size_t i = 0 ; i < polygon_count ; ++i)
+			for (size_t i = 0; i < polygon_count; ++i)
 			{
-				glm::vec2 const & A = polygon[i];
-				glm::vec2 const & B = polygon[(i + 1) % polygon_count];     
-				glm::vec2 const & C = polygon[(i + 2) % polygon_count];     
+				glm::vec2 const& A = polygon[i];
+				glm::vec2 const& B = polygon[(i + 1) % polygon_count];
+				glm::vec2 const& C = polygon[(i + 2) % polygon_count];
 
 				float value = GLMTools::Get2DCrossProductZ(B - A, C - B);
 
@@ -89,32 +81,32 @@ namespace chaos
 			return (has_negative ^ has_positive); // always in the same direction
 		}
 
-		static bool Collide(std::vector<glm::vec2> const & polygon1, std::vector<glm::vec2> const & polygon2)
+		static bool Collide(std::vector<glm::vec2> const& polygon1, std::vector<glm::vec2> const& polygon2)
 		{
 			if (HasSeparatingEdge(polygon1, polygon2))
 				return false;
 			if (HasSeparatingEdge(polygon2, polygon1))
-				return false;           
+				return false;
 			return true;
 		}
 
 	protected:
 
-		static bool HasSeparatingEdge(std::vector<glm::vec2> const & points, std::vector<glm::vec2> const & polygon)
+		static bool HasSeparatingEdge(std::vector<glm::vec2> const& points, std::vector<glm::vec2> const& polygon)
 		{
 			size_t polygon_count = polygon.size();
-			size_t points_count  = points.size();
-			for (size_t i = 0 ; i < polygon_count ; ++i)
+			size_t points_count = points.size();
+			for (size_t i = 0; i < polygon_count; ++i)
 			{
-				glm::vec2 const & A = polygon[i];
-				glm::vec2 const & B = polygon[(i + 1) % polygon_count];
+				glm::vec2 const& A = polygon[i];
+				glm::vec2 const& B = polygon[(i + 1) % polygon_count];
 
 				glm::vec2 AB = B - A;
 
 				size_t j = 0;
-				for(  ; j < points_count ; ++j)
+				for (; j < points_count; ++j)
 				{
-					glm::vec2 const & P = points[i];
+					glm::vec2 const& P = points[i];
 					glm::vec2 AP = P - A;
 
 					if (GLMTools::Get2DCrossProductZ(AB, AP) < 0.0f)
@@ -151,7 +143,7 @@ namespace chaos
 
 
 			/** search whether C and D are in the same sie relatively to [A, B] */
-			static bool ArePointsSameSide(glm::vec2 const & A, glm::vec2 const & B, glm::vec2 const & C, glm::vec2 const & D)
+			static bool ArePointsSameSide(glm::vec2 const& A, glm::vec2 const& B, glm::vec2 const& C, glm::vec2 const& D)
 		{
 			glm::vec2 AB = B - A;
 			glm::vec2 AC = C - A;
@@ -164,7 +156,7 @@ namespace chaos
 		}
 
 		/** search whether there is an intersection between [A, B] and [C, D] */
-		static LineIntersectionResult GetIntersection(glm::vec2 const & A, glm::vec2 const & B, glm::vec2 const & C, glm::vec2 const & D, bool check_for_segments = true)
+		static LineIntersectionResult GetIntersection(glm::vec2 const& A, glm::vec2 const& B, glm::vec2 const& C, glm::vec2 const& D, bool check_for_segments = true)
 		{
 			LineIntersectionResult result;
 
@@ -178,7 +170,7 @@ namespace chaos
 				if (ArePointsSameSide(A, B, C, D))
 					return result;
 				if (ArePointsSameSide(C, D, A, B))
-					return result;            
+					return result;
 			}
 
 			// special case : lines are colinear
@@ -194,7 +186,7 @@ namespace chaos
 				{
 					glm::vec2 AC = C - A;
 					glm::vec2 AD = D - A;
-					glm::vec2 CB = C - B;                
+					glm::vec2 CB = C - B;
 
 					result.has_solution = true;
 					result.has_infinite_solutions = true;
@@ -202,7 +194,7 @@ namespace chaos
 					float AB_length = glm::length(AB);
 					float CD_length = glm::length(CD);
 
-					float t1_1 = MathTools::GetSign(glm::dot(AC, AB)) * glm::length(AC) / AB_length; 
+					float t1_1 = MathTools::GetSign(glm::dot(AC, AB)) * glm::length(AC) / AB_length;
 					float t1_2 = MathTools::GetSign(glm::dot(AD, AB)) * glm::length(AD) / AB_length;
 					float t2_1 = MathTools::GetSign(glm::dot(CA, CD)) * glm::length(CA) / CD_length;
 					float t2_2 = MathTools::GetSign(glm::dot(CB, CD)) * glm::length(CB) / CD_length;
@@ -236,7 +228,7 @@ namespace chaos
 			float t2 = 0.0f;
 
 			// Simple case : cannot divide CD.x 
-			if (CD.x == 0.0f) 
+			if (CD.x == 0.0f)
 			{
 				assert(AB.x != 0.0f); // else lines would be colinear
 				assert(CD.y != 0.0f); // else this would be a degenerated case
@@ -245,14 +237,14 @@ namespace chaos
 				t2 = +(CA.y + t1 * AB.y) / CD.y;
 			}
 			// Other simple case : cannot divide by CD.y
-			else if (CD.y == 0.0f) 
+			else if (CD.y == 0.0f)
 			{
 				assert(AB.y != 0.0f); // else lines would be colinear
 				assert(CD.x != 0.0f); // else this would be a degenerated case
 
 				t1 = -(CA.y / AB.y);
 				t2 = +(CA.x + t1 * AB.x) / CD.x;
-			}        
+			}
 
 			// make substitutions
 			//
@@ -281,11 +273,11 @@ namespace chaos
 				assert(K2 != 0.0f); // the no solution, infinite solutions is given with colinear points that should already have been threated previously
 
 				t1 = -(K1 / K2);
-				t2 = +(CA.x + t1 * AB.x) / CD.x;           
+				t2 = +(CA.x + t1 * AB.x) / CD.x;
 			}
 
 			result.has_solution = true;
-			result.has_infinite_solutions = false;            
+			result.has_infinite_solutions = false;
 
 			result.t1 = t1;
 			result.t2 = t2;
@@ -300,19 +292,19 @@ namespace chaos
 			return result;
 		}
 
-		bool SplitPolygonNoIntersection(std::vector<glm::vec2> const & polygon, PolygonSet & result)
+		bool SplitPolygonNoIntersection(std::vector<glm::vec2> const& polygon, PolygonSet& result)
 		{
 			// For each edge of the polygon, search whether it intersects with another edge
 			size_t point_count = polygon.size();
-			for (size_t i = 0 ; i < point_count ; ++i)
+			for (size_t i = 0; i < point_count; ++i)
 			{
-				glm::vec2 const & A = polygon[i];
-				glm::vec2 const & B = polygon[(i + 1) % point_count];
+				glm::vec2 const& A = polygon[i];
+				glm::vec2 const& B = polygon[(i + 1) % point_count];
 
-				for (size_t j = 1 ; j < point_count ; ++j)
+				for (size_t j = 1; j < point_count; ++j)
 				{
-					glm::vec2 const & C = polygon[(i + j) % point_count];
-					glm::vec2 const & D = polygon[(i + j + 1) % point_count];
+					glm::vec2 const& C = polygon[(i + j) % point_count];
+					glm::vec2 const& D = polygon[(i + j + 1) % point_count];
 
 					LineIntersectionResult intersection = GetIntersection(A, B, C, D, true);
 					if (!intersection.has_solution)
@@ -328,7 +320,7 @@ namespace chaos
 		}
 
 
-		bool SearchPointInsidePolygon(std::vector<glm::vec2> const & src, glm::vec2 & result)
+		bool SearchPointInsidePolygon(std::vector<glm::vec2> const& src, glm::vec2& result)
 		{
 
 
@@ -339,7 +331,7 @@ namespace chaos
 			return true;
 		}
 
-		bool SplitIntoConvexPolygons(std::vector<glm::vec2> const & src)
+		bool SplitIntoConvexPolygons(std::vector<glm::vec2> const& src)
 		{
 
 
@@ -353,6 +345,6 @@ namespace chaos
 
 	};
 
-}; // namespace chaos
+#endif 
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

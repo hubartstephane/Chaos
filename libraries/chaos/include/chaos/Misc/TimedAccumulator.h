@@ -1,19 +1,11 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	template<typename T>
 	class TimedAccumulator;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	template<typename T>
 	class TimedAccumulator
@@ -62,9 +54,6 @@ namespace chaos
 		float timer_value = 0.0f;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

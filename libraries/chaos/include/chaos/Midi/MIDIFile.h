@@ -1,7 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class MidiChunk;
 	class MidiEvent;
 	class MidiSystemExclusiveEvent;
@@ -10,16 +10,8 @@ namespace chaos
 	class MidiTrack;
 	class MidiHeader;
 	class MidiLoader;
-	
-}; // namespace chaos
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* MidiChunk : this is a chunk of memory that contains MIDI data
@@ -33,7 +25,7 @@ namespace chaos
 		/** returns true whether the chunk is a track chunk */
 		bool IsTrackChunk() const { return IsTypedTrackChunk("MTrk"); }
 		/** utility method to test for chunk name */
-		bool IsTypedTrackChunk(char const * type_name) const { return (strncmp(chunk_name, type_name, 4) == 0); }
+		bool IsTypedTrackChunk(char const* type_name) const { return (strncmp(chunk_name, type_name, 4) == 0); }
 
 	public:
 		/** the name for the chunk */
@@ -53,7 +45,7 @@ namespace chaos
 		/** destructor */
 		virtual ~MidiEvent() = default;
 		/** try to initialize the event from the chunk of memory */
-		virtual bool InitializeEventFromChunk(BufferReader & reader) { return false; }
+		virtual bool InitializeEventFromChunk(BufferReader& reader) { return false; }
 
 	public:
 
@@ -72,7 +64,7 @@ namespace chaos
 		/** constructor */
 		MidiSystemExclusiveEvent(unsigned char in_signature) : MidiEvent(in_signature) {}
 
-		virtual bool InitializeEventFromChunk(BufferReader & reader) override;
+		virtual bool InitializeEventFromChunk(BufferReader& reader) override;
 	};
 
 	/**
@@ -86,7 +78,7 @@ namespace chaos
 		/** constructor */
 		MidiMetaEvent(unsigned char in_signature) : MidiEvent(in_signature) {}
 
-		virtual bool InitializeEventFromChunk(BufferReader & reader) override;
+		virtual bool InitializeEventFromChunk(BufferReader& reader) override;
 	};
 
 	class MidiCommandEvent : public MidiEvent
@@ -96,7 +88,7 @@ namespace chaos
 		/** constructor */
 		MidiCommandEvent(unsigned char in_signature) : MidiEvent(in_signature) {}
 
-		virtual bool InitializeEventFromChunk(BufferReader & reader) override;
+		virtual bool InitializeEventFromChunk(BufferReader& reader) override;
 	};
 
 	/**
@@ -150,25 +142,25 @@ namespace chaos
 	public:
 
 		/** the entry point for reading a MIDI file */
-		bool LoadBuffer(Buffer<char> const & buffer);
+		bool LoadBuffer(Buffer<char> const& buffer);
 
 	protected:
 
 		/** clean the content thata have parsed */
 		void Clean();
 		/** the effective method to read the buffer */
-		bool DoLoadBuffer(BufferReader & reader);
+		bool DoLoadBuffer(BufferReader& reader);
 
 		/** read a sub chunk of data */
-		MidiChunk const ReadChunk(BufferReader & reader);
+		MidiChunk const ReadChunk(BufferReader& reader);
 		/** read the header chunk */
-		MidiChunk const ReadHeaderChunk(BufferReader & reader);
+		MidiChunk const ReadHeaderChunk(BufferReader& reader);
 		/** initialize the track from data contained in the chunk */
-		bool InitializeTrackFromChunk(MidiTrack * track, MidiChunk const & track_chunk);
+		bool InitializeTrackFromChunk(MidiTrack* track, MidiChunk const& track_chunk);
 		/** read a variable length time in stream */
-		bool ReadVLTime(BufferReader & reader, uint32_t & result);
+		bool ReadVLTime(BufferReader& reader, uint32_t& result);
 		/** convert the header chunk into a header structure */
-		bool GetHeaderFromChunk(MidiChunk const & chunk, MidiHeader & result);
+		bool GetHeaderFromChunk(MidiChunk const& chunk, MidiHeader& result);
 
 	protected:
 
@@ -179,6 +171,6 @@ namespace chaos
 	};
 
 
+#endif
+	
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

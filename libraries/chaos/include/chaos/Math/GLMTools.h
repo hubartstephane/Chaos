@@ -1,7 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+
+#ifdef CHAOS_FORWARD_DECLARATION
 
 	using float2 = glm::vec2;
 	using float3 = glm::vec3;
@@ -13,15 +13,8 @@ namespace chaos
 
 	class GLMTools;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
 	// ==============================================================================================
 	// Streaming functions
 	// ==============================================================================================
@@ -86,56 +79,56 @@ namespace chaos
 
 		/** returns the min component of a vector */
 		template<typename T>
-		static T GetMinComponent(glm::tvec1<T> const & src)
+		static T GetMinComponent(glm::tvec1<T> const& src)
 		{
 			return src.x;
 		}
 
 		/** returns the min component of a vector */
 		template<typename T>
-		static T GetMinComponent(glm::tvec2<T> const & src)
+		static T GetMinComponent(glm::tvec2<T> const& src)
 		{
 			return glm::min(src.x, src.y);
 		}
 
 		/** returns the min component of a vector */
 		template<typename T>
-		static T GetMinComponent(glm::tvec3<T> const & src)
+		static T GetMinComponent(glm::tvec3<T> const& src)
 		{
 			return glm::min(src.x, glm::min(src.y, src.z));
 		}
 
 		/** returns the min component of a vector */
 		template<typename T>
-		static T GetMinComponent(glm::tvec4<T> const & src)
+		static T GetMinComponent(glm::tvec4<T> const& src)
 		{
 			return glm::min(glm::min(src.x, src.y), glm::min(src.z, src.w));
 		}
 
 		/** returns the max component of a vector */
 		template<typename T>
-		static T GetMaxComponent(glm::tvec1<T> const & src)
+		static T GetMaxComponent(glm::tvec1<T> const& src)
 		{
 			return src.x;
 		}
 
 		/** returns the max component of a vector */
 		template<typename T>
-		static T GetMaxComponent(glm::tvec2<T> const & src)
+		static T GetMaxComponent(glm::tvec2<T> const& src)
 		{
 			return glm::max(src.x, src.y);
 		}
 
 		/** returns the max component of a vector */
 		template<typename T>
-		static T GetMaxComponent(glm::tvec3<T> const & src)
+		static T GetMaxComponent(glm::tvec3<T> const& src)
 		{
 			return glm::max(src.x, glm::max(src.y, src.z));
 		}
 
 		/** returns the max component of a vector */
 		template<typename T>
-		static T GetMaxComponent(glm::tvec4<T> const & src)
+		static T GetMaxComponent(glm::tvec4<T> const& src)
 		{
 			return glm::max(glm::max(src.x, src.y), glm::max(src.z, src.w));
 		}
@@ -166,25 +159,25 @@ namespace chaos
 
 		/** convert argument into a glm::vector, returns value remains unchanged if it is already a vector */
 		template<typename T>
-		static glm::tvec1<T> const & ConvertIntoVector(glm::tvec1<T> const & value)
+		static glm::tvec1<T> const& ConvertIntoVector(glm::tvec1<T> const& value)
 		{
 			return value;
 		}
 		/** convert argument into a glm::vector, returns value remains unchanged if it is already a vector */
 		template<typename T>
-		static glm::tvec2<T> const & ConvertIntoVector(glm::tvec2<T> const & value)
+		static glm::tvec2<T> const& ConvertIntoVector(glm::tvec2<T> const& value)
 		{
 			return value;
 		}
 		/** convert argument into a glm::vector, returns value remains unchanged if it is already a vector */
 		template<typename T>
-		static glm::tvec3<T> const & ConvertIntoVector(glm::tvec3<T> const & value)
+		static glm::tvec3<T> const& ConvertIntoVector(glm::tvec3<T> const& value)
 		{
 			return value;
 		}
 		/** convert argument into a glm::vector, returns value remains unchanged if it is already a vector */
 		template<typename T>
-		static glm::tvec4<T> const & ConvertIntoVector(glm::tvec4<T> const & value)
+		static glm::tvec4<T> const& ConvertIntoVector(glm::tvec4<T> const& value)
 		{
 			return value;
 		}
@@ -198,56 +191,53 @@ namespace chaos
 
 		/** Compute simplified cross for a 2d vector */
 		template<typename T>
-		static T Get2DCrossProductZ(glm::tvec2<T> const & A, glm::tvec2<T> const & B)
+		static T Get2DCrossProductZ(glm::tvec2<T> const& A, glm::tvec2<T> const& B)
 		{
 			return (A.x * B.y) - (A.y * B.x);
 		}
 
 		/** Rotation of a vector (with Cos and Sin already computed) */
-		static glm::vec2 Rotate(glm::vec2 const & src, float c, float s)
+		static glm::vec2 Rotate(glm::vec2 const& src, float c, float s)
 		{
 			// copy form glm/gtx/rotate_vector.inl
 			// here we avoid multiple computation of cosinus and sinus
 
 			glm::vec2 result;
 			result.x = src.x * c - src.y * s;
-			result.y = src.x * s + src.y * c;			
+			result.y = src.x * s + src.y * c;
 			return result;
 		}
 
 		/** multiply a 2D vector by a 4x4 matrix WITHOUT translation applyed */
 		template<typename T>
-		static auto Mult(glm::tmat4x4<T> const & m, glm::tvec2<T> const & v)
+		static auto Mult(glm::tmat4x4<T> const& m, glm::tvec2<T> const& v)
 		{
 			return glm::tvec2<T>(m * glm::tvec4<T>(v, 0, 0));
 		}
 
 		/** multiply a 3D vector by a 4x4 matrix WITHOUT translation applyed */
 		template<typename T>
-		static auto Mult(glm::tmat4x4<T> const & m, glm::tvec3<T> const & v)
+		static auto Mult(glm::tmat4x4<T> const& m, glm::tvec3<T> const& v)
 		{
 			return glm::tvec3<T>(m * glm::tvec4<T>(v, 0));
 		}
 
 		/** multiply a 2D vector by a 4x4 matrix WITH translation applyed */
 		template<typename T>
-		static auto MultWithTranslation(glm::tmat4x4<T> const & m, glm::tvec2<T> const & v)
+		static auto MultWithTranslation(glm::tmat4x4<T> const& m, glm::tvec2<T> const& v)
 		{
 			return glm::tvec2<T>(m * glm::tvec4<T>(v, 0, (T)1.0f));
 		}
 
 		/** multiply a 3D vector by a 4x4 matrix WITH translation applyed */
 		template<typename T>
-		static auto MultWithTranslation(glm::tmat4x4<T> const & m, glm::tvec3<T> const & v)
+		static auto MultWithTranslation(glm::tmat4x4<T> const& m, glm::tvec3<T> const& v)
 		{
 			return glm::tvec3<T>(m * glm::tvec4<T>(v, (T)1.0f));
 		}
 
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

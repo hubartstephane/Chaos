@@ -1,19 +1,12 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	template<typename TYPE>
 	class DataOwner;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
 	// ==============================================================
 	// DataOwner
 	// ==============================================================
@@ -72,15 +65,14 @@ namespace chaos
 	}
 
 	template<typename T, typename U>
-	T const * GetOwnedData(U const * src)
+	T const* GetOwnedData(U const* src)
 	{
-		DataOwner<T> const * owner = auto_cast(src);
+		DataOwner<T> const* owner = auto_cast(src);
 		if (owner != nullptr)
 			return &owner->data;
 		return nullptr;
 	}
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-

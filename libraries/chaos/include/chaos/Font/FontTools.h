@@ -1,7 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class FTLibraryDeleter;
 	class FTFaceDeleter;
 
@@ -16,15 +16,7 @@ namespace chaos
 
 	}; // namespace FontTools
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* A smart pointer for FT_Library
@@ -61,7 +53,7 @@ namespace chaos
 		FTFaceDeleter(bool in_release = true) :
 			release(in_release) {}
 		/** the destruction method */
-		void operator ()(FT_Face face) 
+		void operator ()(FT_Face face)
 		{
 			if (release)
 				FT_Done_Face(face);
@@ -119,23 +111,23 @@ namespace chaos
 		};
 
 		/** get an image description from a FT_Bitmap object */
-		ImageDescription GetImageDescription(FT_Bitmap & bitmap);
+		ImageDescription GetImageDescription(FT_Bitmap& bitmap);
 
 		/** generate a bitmap from a glyph slot */
-		FIBITMAP * GenerateImage(FT_GlyphSlot glyph, PixelFormat const & pixel_format = PixelFormat::Gray);
+		FIBITMAP* GenerateImage(FT_GlyphSlot glyph, PixelFormat const& pixel_format = PixelFormat::Gray);
 		/** generate a bitmap from a bitmap */
-		FIBITMAP * GenerateImage(FT_Bitmap & bitmap, PixelFormat const & pixel_format = PixelFormat::Gray);
+		FIBITMAP* GenerateImage(FT_Bitmap& bitmap, PixelFormat const& pixel_format = PixelFormat::Gray);
 		/** generate a bitmap from a font an a string */
-		FIBITMAP * GenerateImage(FT_Face face, char const * str, PixelFormat const & pixel_format = PixelFormat::Gray);
+		FIBITMAP* GenerateImage(FT_Face face, char const* str, PixelFormat const& pixel_format = PixelFormat::Gray);
 		/** generate a bitmap from a font an a character */
-		FIBITMAP * GenerateImage(FT_Face face, char c, PixelFormat const & pixel_format = PixelFormat::Gray);
+		FIBITMAP* GenerateImage(FT_Face face, char c, PixelFormat const& pixel_format = PixelFormat::Gray);
 		/** generate a bitmap glyph from a character */
 		FT_BitmapGlyph GetBitmapGlyph(FT_Face face, char c, bool accept_notfound_glyph);
 		/** generate a cache with all glyph required for a string */
-		std::map<char, CharacterBitmapGlyph> GetGlyphCacheForString(FT_Face face, char const * str);
+		std::map<char, CharacterBitmapGlyph> GetGlyphCacheForString(FT_Face face, char const* str);
 
 	}; // namespace FontTools
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

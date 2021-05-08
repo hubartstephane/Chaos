@@ -1,18 +1,11 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	enum class Axis;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-	
-namespace chaos
-{
 	/** the possible axis */
 	enum class Axis : int
 	{
@@ -26,7 +19,6 @@ namespace chaos
 	/** JSON saving method */
 	bool SaveIntoJSON(nlohmann::json& json_entry, Axis const& src);
 
+#endif
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

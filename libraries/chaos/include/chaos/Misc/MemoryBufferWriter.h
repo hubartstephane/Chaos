@@ -1,18 +1,11 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class MemoryBufferWriter;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
 	/**
 	* MemoryBufferWriter : used to write untyped data in a buffer
 	*/
@@ -27,10 +20,10 @@ namespace chaos
 		MemoryBufferWriter(MemoryBufferWriter const& src) = default;
 
 		/** constructor */
-		MemoryBufferWriter(void * in_buffer, size_t in_bufsize):
+		MemoryBufferWriter(void* in_buffer, size_t in_bufsize) :
 			buffer(in_buffer),
 			bufsize(in_bufsize),
-			position(in_buffer){}
+			position(in_buffer) {}
 
 		/** get the size of the buffer */
 		size_t GetBufferSize() const { return bufsize; }
@@ -42,19 +35,19 @@ namespace chaos
 
 		/** insert data inside the buffer */
 		template<typename T>
-		MemoryBufferWriter & operator << (T const & data)
+		MemoryBufferWriter& operator << (T const& data)
 		{
 			Write(&data, sizeof(T));
 			return *this;
 		}
 
 		/** insert raw data inside buffer */
-		void Write(void const * data, size_t size)
+		void Write(void const* data, size_t size)
 		{
 			assert(buffer != nullptr);
 			assert(GetRemainingBufferSize() >= size);
 			memcpy(position, data, size);
-			position = ((char *)position) + size;    
+			position = ((char*)position) + size;
 		}
 
 		/** returns the number of bytes written */
@@ -64,13 +57,13 @@ namespace chaos
 		}
 
 		/** the buffer where writing is done */
-		void * buffer = nullptr;
+		void* buffer = nullptr;
 		/** the size of the buffer */
 		size_t bufsize = 0;
 		/** the current position in the buffer */
-		void * position = nullptr;    
+		void* position = nullptr;
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

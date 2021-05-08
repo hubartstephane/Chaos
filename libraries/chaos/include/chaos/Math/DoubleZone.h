@@ -1,7 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	enum class ZonePartitionType;
 	
 	enum class ZonePartitionChangeType;
@@ -9,15 +9,8 @@ namespace chaos
 	template<typename ZONE_TYPE> 
 	class DoubleZone;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
 	enum class ZonePartitionType : int
 	{
 		/** point is inside inner zone */
@@ -27,7 +20,7 @@ namespace chaos
 		/** point is outside outer_zone */
 		FAR_ZONE = 2
 	};
-	
+
 	enum class ZonePartitionChangeType : int
 	{
 		/** no zone of change */
@@ -39,12 +32,12 @@ namespace chaos
 	};
 
 	/**
-	* DoubleZone : testing if a point enters or exits to trigger an action can be tedious if the 
+	* DoubleZone : testing if a point enters or exits to trigger an action can be tedious if the
 	*              point change its zone too often. DoubleZone helps avoiding this issue by using
 	*              using 2 zones
 	*/
 
-	template<typename ZONE_TYPE> 
+	template<typename ZONE_TYPE>
 	class DoubleZone
 	{
 	public:
@@ -57,7 +50,7 @@ namespace chaos
 		/** constructor */
 		DoubleZone() = default;
 		/** copy constructor */
-		DoubleZone(DoubleZone const & src) = default;
+		DoubleZone(DoubleZone const& src) = default;
 		/** initialization constructor */
 		DoubleZone(zone_type const& in_zone_type, zone_type const& in_outer_zone) :
 			zone_type(in_zone_type), outer_zone(in_outer_zone)
@@ -65,7 +58,7 @@ namespace chaos
 		}
 
 		/** returns the zone where is the point */
-		ZonePartitionType GetPointZone(vec_type const & p) const
+		ZonePartitionType GetPointZone(vec_type const& p) const
 		{
 			if (!inside(p, outer_zone))
 				return ZonePartitionType::FAR_ZONE;
@@ -75,16 +68,16 @@ namespace chaos
 		}
 
 		/** returns the point zone changement */
-		ZonePartitionChangeType CheckZoneChange(vec_type const & before, vec_type const & after) const
+		ZonePartitionChangeType CheckZoneChange(vec_type const& before, vec_type const& after) const
 		{
 			ZonePartitionType before_zone = GetPointZone(before);
-			ZonePartitionType after_zone  = GetPointZone(after);
+			ZonePartitionType after_zone = GetPointZone(after);
 			return CheckZoneChange(before_zone, after_zone);
 		}
 
 		/** returns the point zone changement */
 		static ZonePartitionChangeType CheckZoneChange(ZonePartitionType before, ZonePartitionType after)
-		{  
+		{
 			if (before != after)
 			{
 				if (after == ZonePartitionType::NEAR_ZONE)
@@ -103,6 +96,6 @@ namespace chaos
 		zone_type outer_zone;
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

@@ -1,18 +1,11 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	enum class Hotpoint;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
 	enum class Hotpoint : int
 	{
 		LEFT = 1,
@@ -40,7 +33,7 @@ namespace chaos
 	/** JSON saving method */
 	bool SaveIntoJSON(nlohmann::json& json_entry, Hotpoint const& src);
 
+
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-

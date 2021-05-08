@@ -1,7 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class GPUProgramProviderBase;
 
 	template<typename T, typename MEMBER_TYPE>
@@ -17,15 +17,8 @@ namespace chaos
 	class GPUProgramProviderChain;
 	class GPUProgramProviderCommonTransforms;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
 	/**
 	* GPUProgramProviderBase : a base class for filling uniforms or attributes in a program. The purpose is to take responsability to start an ACTION
 	*/
@@ -48,7 +41,7 @@ namespace chaos
 		bool BindAttribute(GLAttributeInfo const& attribute) const;
 		/** get a value for the uniform / attribute */
 		template<typename T>
-		bool GetValue(char const * name, T & result) const
+		bool GetValue(char const* name, T& result) const
 		{
 			return ProcessAction(name, GPUProgramGetValueAction<T>(result));
 		}
@@ -104,13 +97,13 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramProviderTexture(char const * in_name, shared_ptr<GPUTexture> in_value, GPUProgramProviderPassType in_pass_type = GPUProgramProviderPassType::EXPLICIT) :
-			handled_name(in_name), value(in_value), pass_type(in_pass_type){}
+		GPUProgramProviderTexture(char const* in_name, shared_ptr<GPUTexture> in_value, GPUProgramProviderPassType in_pass_type = GPUProgramProviderPassType::EXPLICIT) :
+			handled_name(in_name), value(in_value), pass_type(in_pass_type) {}
 
 	protected:
 
 		/** the main method */
-		virtual bool DoProcessAction(GPUProgramProviderExecutionData const & execution_data) const override;
+		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override;
 
 	protected:
 
@@ -134,14 +127,14 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramProvider(std::function<bool(GPUProgramProviderExecutionData const& execution_data)> const & in_process_func = nullptr):
+		GPUProgramProvider(std::function<bool(GPUProgramProviderExecutionData const& execution_data)> const& in_process_func = nullptr) :
 			process_func(in_process_func)
 		{
 		}
 
 		/** register a uniform value */
 		template<typename T>
-		void AddVariable(char const * name, T const & value, GPUProgramProviderPassType pass_type = GPUProgramProviderPassType::EXPLICIT)
+		void AddVariable(char const* name, T const& value, GPUProgramProviderPassType pass_type = GPUProgramProviderPassType::EXPLICIT)
 		{
 			AddProvider(new GPUProgramProviderValue<T>(name, value, pass_type));
 		}
@@ -152,19 +145,19 @@ namespace chaos
 			AddProvider(new GPUProgramProviderReference<T>(name, value, pass_type));
 		}
 		/** register a uniform texture */
-		void AddTexture(char const * name, shared_ptr<class GPUTexture> texture, GPUProgramProviderPassType pass_type = GPUProgramProviderPassType::EXPLICIT)
+		void AddTexture(char const* name, shared_ptr<class GPUTexture> texture, GPUProgramProviderPassType pass_type = GPUProgramProviderPassType::EXPLICIT)
 		{
 			AddProvider(new GPUProgramProviderTexture(name, texture, pass_type));
 		}
 		/** register a generic uniform */
-		virtual void AddProvider(GPUProgramProviderBase * provider);
+		virtual void AddProvider(GPUProgramProviderBase* provider);
 		/** remove all uniforms for binding */
 		virtual void Clear();
 
 	protected:
 
 		/** the main method */
-		virtual bool DoProcessAction(GPUProgramProviderExecutionData const & execution_data) const override;
+		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override;
 
 	protected:
 
@@ -184,19 +177,19 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramProviderChain(GPUProgramProviderBase const * in_fallback_provider, std::function<bool(GPUProgramProviderExecutionData const& execution_data)> const& in_process_func = nullptr) :
+		GPUProgramProviderChain(GPUProgramProviderBase const* in_fallback_provider, std::function<bool(GPUProgramProviderExecutionData const& execution_data)> const& in_process_func = nullptr) :
 			DisableReferenceCount<GPUProgramProvider>(in_process_func),
 			fallback_provider(in_fallback_provider) {}
 
 	protected:
 
 		/** apply the actions */
-		virtual bool DoProcessAction(GPUProgramProviderExecutionData const & execution_data) const override;
+		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override;
 
 	protected:
 
 		/** another provider (use a non intrusive reference !!!) */
-		GPUProgramProviderBase const * fallback_provider = nullptr;
+		GPUProgramProviderBase const* fallback_provider = nullptr;
 	};
 
 	/**
@@ -211,12 +204,9 @@ namespace chaos
 		using GPUProgramProvider::GPUProgramProvider;
 
 		/** apply the actions */
-		virtual bool DoProcessAction(GPUProgramProviderExecutionData const & execution_data) const override;
+		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

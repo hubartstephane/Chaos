@@ -1,19 +1,10 @@
-
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class GPUMultiMeshGenerator;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* GPUMultiMeshGenerator : this class is used to generator multiple mesh in a row, shared vertex and index buffer
@@ -29,7 +20,7 @@ namespace chaos
 		virtual ~GPUMultiMeshGenerator();
 
 		/** the insertion method */
-		void AddGenerator(GPUSimpleMeshGenerator * generator, shared_ptr<GPUSimpleMesh> & target_ptr);
+		void AddGenerator(GPUSimpleMeshGenerator* generator, shared_ptr<GPUSimpleMesh>& target_ptr);
 		/** clean all generators */
 		void Clean();
 		/** generate all meshes */
@@ -38,12 +29,9 @@ namespace chaos
 	protected:
 
 		/** the registered element to generate */
-		std::vector<std::pair<shared_ptr<GPUSimpleMeshGenerator>, shared_ptr<GPUSimpleMesh> *>> generators;
+		std::vector<std::pair<shared_ptr<GPUSimpleMeshGenerator>, shared_ptr<GPUSimpleMesh>*>> generators;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

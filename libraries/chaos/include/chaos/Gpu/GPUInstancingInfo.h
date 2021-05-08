@@ -1,18 +1,10 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class GPUInstancingInfo;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* GPUInstancingInfo
@@ -23,7 +15,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUInstancingInfo(int in_instance_count = 0, int in_base_instance = 0):
+		GPUInstancingInfo(int in_instance_count = 0, int in_base_instance = 0) :
 			instance_count(in_instance_count),
 			base_instance(in_base_instance)
 		{}
@@ -34,7 +26,6 @@ namespace chaos
 		int base_instance = 0;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-

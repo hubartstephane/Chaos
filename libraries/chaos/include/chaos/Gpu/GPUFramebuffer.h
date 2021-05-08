@@ -1,19 +1,12 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class GPUFramebufferAttachmentInfo;
 	class GPUFramebuffer;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
 	class GPUFramebufferAttachmentInfo
 	{
 	public:
@@ -51,7 +44,7 @@ namespace chaos
 		bool CheckCompletionStatus() const;
 
 		/** a getter on size */
-		glm::ivec2 const & GetSize() const { return size; }
+		glm::ivec2 const& GetSize() const { return size; }
 
 		/** override */
 		virtual void Release() override;
@@ -61,10 +54,9 @@ namespace chaos
 		/** the resource id */
 		GLuint framebuffer_id = 0;
 		/** the size of the framebuffer */
-		glm::ivec2 size = glm::ivec2(0, 0);
+		glm::ivec2 size = { 0, 0 };
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-

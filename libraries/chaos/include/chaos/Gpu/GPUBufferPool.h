@@ -1,23 +1,15 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
     class GPUBufferPoolEntries;
     class GPUBufferPool;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
     /**
-     * GPUBufferPoolEntries : an entry that match several GPUBuffers to a GPUFence
-     */
+      * GPUBufferPoolEntries : an entry that match several GPUBuffers to a GPUFence
+      */
 
     class GPUBufferPoolEntries
     {
@@ -26,7 +18,7 @@ namespace chaos
     protected:
 
         /** returns the best cached buffer for the given size (returns true whether their is no need to search for another buffer) */
-         bool GetBuffer(size_t required_size, size_t max_accepted_size, shared_ptr<GPUBuffer> & result);
+        bool GetBuffer(size_t required_size, size_t max_accepted_size, shared_ptr<GPUBuffer>& result);
 
     protected:
 
@@ -67,8 +59,6 @@ namespace chaos
         std::vector<GPUBufferPoolEntries> entries;
     };
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-

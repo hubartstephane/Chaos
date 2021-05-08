@@ -1,20 +1,12 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class GPUDrawPrimitive;
 	class GPUIndirectDrawArraysCommand;
 	class GPUIndirectDrawElementsCommand;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* GPUDrawPrimitive : a draw call
@@ -41,34 +33,31 @@ namespace chaos
 		int    base_vertex_index = 0;
 	};
 
-    // For indirect rendering. 
-    //
-    // https://www.khronos.org/opengl/wiki/Vertex_Rendering
+	// For indirect rendering. 
+	//
+	// https://www.khronos.org/opengl/wiki/Vertex_Rendering
 
-    class GPUIndirectDrawArraysCommand
-    {
-    public:
+	class GPUIndirectDrawArraysCommand
+	{
+	public:
 
-        GLuint  Count;
-        GLuint  InstanceCount;
-        GLuint  First;
-        GLuint  BaseInstance;
-    };
+		GLuint  Count;
+		GLuint  InstanceCount;
+		GLuint  First;
+		GLuint  BaseInstance;
+	};
 
-    class GPUIndirectDrawElementsCommand
-    {
-    public:
+	class GPUIndirectDrawElementsCommand
+	{
+	public:
 
-        GLuint  Count;
-        GLuint  InstanceCount;
-        GLuint  FirstIndex;
-        GLuint  BaseVertex;
-        GLuint  BaseInstance;
-    };
+		GLuint  Count;
+		GLuint  InstanceCount;
+		GLuint  FirstIndex;
+		GLuint  BaseVertex;
+		GLuint  BaseInstance;
+	};
+
+#endif
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

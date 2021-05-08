@@ -1,20 +1,12 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class MyFbxImporterOutput;
 	class MyFbxImporterParams;
 	class MyFbxImporter;
-	
-}; // namespace chaos
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* MyFbxImporterOutput : a class to hold all data results from the importation
@@ -33,9 +25,9 @@ namespace chaos
 	public:
 
 		/** the meshes that have been read */
-		std::vector<GPUSimpleMesh *> meshes;
+		std::vector<GPUSimpleMesh*> meshes;
 		/** the skeleton hierarchies that have been read */
-		std::vector<GPUSkeletonHierarchyDef *> skeleton_defs;
+		std::vector<GPUSkeletonHierarchyDef*> skeleton_defs;
 	};
 
 	/**
@@ -102,64 +94,64 @@ namespace chaos
 		MyFbxImporter();
 
 		/** Main method to import a scene */
-		virtual bool ImportScene(boost::filesystem::path const & model_path, MyFbxImporterOutput & output, MyFbxImporterParams const & in_params = MyFbxImporterParams());
+		virtual bool ImportScene(boost::filesystem::path const& model_path, MyFbxImporterOutput& output, MyFbxImporterParams const& in_params = MyFbxImporterParams());
 
 	protected:
 
 		/** Internal method to import a scene */
-		virtual bool ImportScene(FbxManager * lSdkManager, FbxImporter * lImporter);
+		virtual bool ImportScene(FbxManager* lSdkManager, FbxImporter* lImporter);
 		/** Internal methods to import a scene */
-		virtual bool DoImportScene(FbxScene * myScene);
+		virtual bool DoImportScene(FbxScene* myScene);
 		/** Internal methods to import the skeletal of the scene */
-		virtual bool DoImportSceneSkeletals(FbxScene * myScene);
+		virtual bool DoImportSceneSkeletals(FbxScene* myScene);
 		/** Internal methods to import the skeletal of the scene */
-		virtual bool DoImportSceneSkeletals(FbxNode * node, int level);
+		virtual bool DoImportSceneSkeletals(FbxNode* node, int level);
 		/** Internal methods to import the skeletal of the scene */
-		virtual bool DoImportSceneSkeletalsChildren(FbxNode * node, int level);
+		virtual bool DoImportSceneSkeletalsChildren(FbxNode* node, int level);
 
 		/** Internal methods to import resources */
-		virtual bool DoImportSceneResources(FbxScene * myScene);
+		virtual bool DoImportSceneResources(FbxScene* myScene);
 		/** Internal methods to import the hierarchy */
-		virtual bool DoImportSceneHierarchy(FbxScene * myScene);
+		virtual bool DoImportSceneHierarchy(FbxScene* myScene);
 		/** Internal method to import a node in a scene */
-		virtual bool DoImportSceneHierarchy(FbxNode * node, int level);
+		virtual bool DoImportSceneHierarchy(FbxNode* node, int level);
 
 		/** import one character */
-		virtual bool DoImportCharacter(FbxCharacter * character);
+		virtual bool DoImportCharacter(FbxCharacter* character);
 		/** import one pose */
-		virtual bool DoImportPose(FbxPose * character);
+		virtual bool DoImportPose(FbxPose* character);
 		/** import one character pose */
-		virtual bool DoImportCharacterPose(FbxCharacterPose * character_pose);
+		virtual bool DoImportCharacterPose(FbxCharacterPose* character_pose);
 		/** import one material */
-		virtual bool DoImportMaterial(FbxSurfaceMaterial * material);
+		virtual bool DoImportMaterial(FbxSurfaceMaterial* material);
 		/** import one texture */
-		virtual bool DoImportTexture(FbxTexture * texture);
+		virtual bool DoImportTexture(FbxTexture* texture);
 		/** import one geometry (mesh or skeleton) */
-		virtual bool DoImportGeometry(FbxGeometry * geometry);
+		virtual bool DoImportGeometry(FbxGeometry* geometry);
 		/** import one mesh */
-		virtual bool DoImportMesh(FbxMesh * mesh);
+		virtual bool DoImportMesh(FbxMesh* mesh);
 
 		/** import the children nodes */
-		bool DoImportSceneHierarchyChildren(FbxNode * node, int level);
+		bool DoImportSceneHierarchyChildren(FbxNode* node, int level);
 
 		/** import one geometry */
-		virtual bool DoImportGeometryNode(FbxGeometry * mesh, FbxNode * node, int level);
+		virtual bool DoImportGeometryNode(FbxGeometry* mesh, FbxNode* node, int level);
 		/** import one marker */
-		virtual bool DoImportMarkerNode(FbxMarker * marker, FbxNode * node, int level);
+		virtual bool DoImportMarkerNode(FbxMarker* marker, FbxNode* node, int level);
 		/** import one skeleton */
-		virtual bool DoImportSkeletonNode(FbxSkeleton * skeleton, FbxNode * node, int level);
+		virtual bool DoImportSkeletonNode(FbxSkeleton* skeleton, FbxNode* node, int level);
 		/** import one camera */
-		virtual bool DoImportCameraNode(FbxCamera * camera, FbxNode * node, int level);
+		virtual bool DoImportCameraNode(FbxCamera* camera, FbxNode* node, int level);
 		/** import one light */
-		virtual bool DoImportLightNode(FbxLight * light, FbxNode * node, int level);
+		virtual bool DoImportLightNode(FbxLight* light, FbxNode* node, int level);
 
 		/** internal method to create a mesh */
-		GPUSimpleMesh * DoCreateMesh(GPUVertexDeclaration const & vertex_declaration, Buffer<char> vertices, std::vector<int> const & index_buffer);
+		GPUSimpleMesh* DoCreateMesh(GPUVertexDeclaration const& vertex_declaration, Buffer<char> vertices, std::vector<int> const& index_buffer);
 
 		/** get assoication table, CTRL_POINT => BONE INFO */
-		static BoneTableType GetBoneData(FbxMesh * mesh);
+		static BoneTableType GetBoneData(FbxMesh* mesh);
 		/** get the max number of bone for a given CTRL POINT */
-		static size_t GetMaxBoneCount(BoneTableType const & table);
+		static size_t GetMaxBoneCount(BoneTableType const& table);
 
 
 	protected:
@@ -167,14 +159,13 @@ namespace chaos
 		/** the parameters for the importation */
 		MyFbxImporterParams params;
 		/** the result of the importation */
-		MyFbxImporterOutput * output;
+		MyFbxImporterOutput* output;
 		/** the currently constructed skeleton hierarchy */
 		size_t current_skeleton_index;
 		/** the currently constructed bone */
 		size_t current_bone_index;
-
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

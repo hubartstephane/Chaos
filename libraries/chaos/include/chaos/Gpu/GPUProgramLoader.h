@@ -1,18 +1,10 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class GPUProgramLoader;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* GPUProgramLoader : this class deserves to generate GPU programs from sources.
@@ -24,30 +16,27 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramLoader(GPUResourceManager * in_resource_manager = nullptr) :
-			ResourceManagerLoader<GPUProgram, GPUResourceManager>(in_resource_manager){}
+		GPUProgramLoader(GPUResourceManager* in_resource_manager = nullptr) :
+			ResourceManagerLoader<GPUProgram, GPUResourceManager>(in_resource_manager) {}
 
 		/** load an object from JSON */
-		virtual GPUProgram * LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
+		virtual GPUProgram* LoadObject(char const* name, nlohmann::json const& json, boost::filesystem::path const& config_path) const;
 		/** program loading from path */
-		virtual GPUProgram * LoadObject(FilePathParam const & path, char const * name = nullptr) const;
+		virtual GPUProgram* LoadObject(FilePathParam const& path, char const* name = nullptr) const;
 
 		/** Generate a program from a json content */
-		virtual GPUProgram * GenProgramObject(nlohmann::json const & json, boost::filesystem::path const & config_path) const;
+		virtual GPUProgram* GenProgramObject(nlohmann::json const& json, boost::filesystem::path const& config_path) const;
 		/** Generate a program from an file */
-		virtual GPUProgram * GenProgramObject(FilePathParam const & path) const;
+		virtual GPUProgram* GenProgramObject(FilePathParam const& path) const;
 
 	protected:
 
 		/** search whether the path is already in used in the manager */
-		virtual bool IsPathAlreadyUsedInManager(FilePathParam const & path) const override;
+		virtual bool IsPathAlreadyUsedInManager(FilePathParam const& path) const override;
 		/** search whether the name is already in used in the manager */
 		virtual bool IsNameAlreadyUsedInManager(ObjectRequest request) const override;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

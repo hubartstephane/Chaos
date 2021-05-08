@@ -1,43 +1,36 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	template<typename ATTACHMENT_TYPE>
 	class GPUFramebufferAttachmentOwner;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
 	template<typename ATTACHMENT_TYPE>
 	class GPUFramebufferAttachmentOwner
 	{
 	public:
 
 		/** returns an attachment by its type */
-		ATTACHMENT_TYPE const * GetAttachment(char const * name) const
+		ATTACHMENT_TYPE const* GetAttachment(char const* name) const
 		{
 			assert(name != nullptr);
-			for (ATTACHMENT_TYPE const & attachment : attachment_info)
+			for (ATTACHMENT_TYPE const& attachment : attachment_info)
 				if (attachment.name == name)
 					return &attachment;
 			return nullptr;
 		}
 		/** returns an attachment by its type */
-		ATTACHMENT_TYPE const * GetAttachment(GLenum type) const
+		ATTACHMENT_TYPE const* GetAttachment(GLenum type) const
 		{
-			for (ATTACHMENT_TYPE const & attachment : attachment_info)
+			for (ATTACHMENT_TYPE const& attachment : attachment_info)
 				if (attachment.attachment_point == type)
 					return &attachment;
 			return nullptr;
 		}
 		/** get the color attachment */
-		ATTACHMENT_TYPE const * GetColorAttachment(int color_index) const
+		ATTACHMENT_TYPE const* GetColorAttachment(int color_index) const
 		{
 #if _DEBUG
 			GLint max_color_attachment = 0;
@@ -47,22 +40,22 @@ namespace chaos
 			return GetAttachment(color_index + GL_COLOR_ATTACHMENT0);
 		}
 		/** get the depth stencil attachment */
-		ATTACHMENT_TYPE const * GetDepthStencilAttachment() const
+		ATTACHMENT_TYPE const* GetDepthStencilAttachment() const
 		{
 			return GetAttachment(GL_DEPTH_STENCIL_ATTACHMENT);
 		}
 		/** returns whether the name is already in use in an attachment */
-		bool IsAttachmentNameInUse(char const * name) const
+		bool IsAttachmentNameInUse(char const* name) const
 		{
 			if (name == nullptr)
 				return false;
 			return (GetAttachment(name) != nullptr);
 		}
 		/** returns whether the surface is already in use in an attachment */
-		bool IsSurfaceInUse(GPUSurface * surface) const
+		bool IsSurfaceInUse(GPUSurface* surface) const
 		{
 			assert(surface != nullptr);
-			for (ATTACHMENT_TYPE const & attachment : attachment_info)
+			for (ATTACHMENT_TYPE const& attachment : attachment_info)
 			{
 				if (attachment.texture == surface)
 					return true;
@@ -88,7 +81,6 @@ namespace chaos
 		std::vector<ATTACHMENT_TYPE> attachment_info;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-

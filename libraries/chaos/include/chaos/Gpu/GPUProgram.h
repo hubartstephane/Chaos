@@ -1,18 +1,10 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class GPUProgram;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	class GPUProgram : public GPUFileResource
 	{
@@ -26,14 +18,14 @@ namespace chaos
 		virtual ~GPUProgram();
 
 		/** use the program */
-		bool UseProgram(class GPUProgramProviderBase const * uniform_provider) const;
+		bool UseProgram(class GPUProgramProviderBase const* uniform_provider) const;
 
 		/** returns the GL name of the resource */
 		GLuint GetResourceID() const { return program_id; }
 		/** returns true whether the resource is valid */
-		bool IsValid() const { return glIsProgram(program_id) == GL_TRUE;}
+		bool IsValid() const { return glIsProgram(program_id) == GL_TRUE; }
 		/** get the program data */
-		GPUProgramData const & GetProgramData() const { return program_data; }
+		GPUProgramData const& GetProgramData() const { return program_data; }
 
 		/** override */
 		virtual void Release() override;
@@ -46,9 +38,6 @@ namespace chaos
 		GPUProgramData program_data;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

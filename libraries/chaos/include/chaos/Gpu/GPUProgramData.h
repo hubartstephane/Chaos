@@ -1,21 +1,13 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class GLVariableInfo;
 	class GLUniformInfo;
 	class GLAttributeInfo;
 	class GPUProgramData;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* GLVariableInfo : a base class for uniforms and attributes
@@ -43,52 +35,52 @@ namespace chaos
 	{
 	public:
 
-		bool SetUniform(glm::mat2x3 const & value) const;
-		bool SetUniform(glm::mat2x4 const & value) const;
-		bool SetUniform(glm::mat3x2 const & value) const;
-		bool SetUniform(glm::mat3x4 const & value) const;
-		bool SetUniform(glm::mat4x2 const & value) const;
-		bool SetUniform(glm::mat4x3 const & value) const;
-		bool SetUniform(glm::mat2   const & value) const;
-		bool SetUniform(glm::mat3   const & value) const;
-		bool SetUniform(glm::mat4   const & value) const;
+		bool SetUniform(glm::mat2x3 const& value) const;
+		bool SetUniform(glm::mat2x4 const& value) const;
+		bool SetUniform(glm::mat3x2 const& value) const;
+		bool SetUniform(glm::mat3x4 const& value) const;
+		bool SetUniform(glm::mat4x2 const& value) const;
+		bool SetUniform(glm::mat4x3 const& value) const;
+		bool SetUniform(glm::mat2   const& value) const;
+		bool SetUniform(glm::mat3   const& value) const;
+		bool SetUniform(glm::mat4   const& value) const;
 
-		bool SetUniform(glm::dmat2x3 const & value) const;
-		bool SetUniform(glm::dmat2x4 const & value) const;
-		bool SetUniform(glm::dmat3x2 const & value) const;
-		bool SetUniform(glm::dmat3x4 const & value) const;
-		bool SetUniform(glm::dmat4x2 const & value) const;
-		bool SetUniform(glm::dmat4x3 const & value) const;
-		bool SetUniform(glm::dmat2   const & value) const;
-		bool SetUniform(glm::dmat3   const & value) const;
-		bool SetUniform(glm::dmat4   const & value) const;
+		bool SetUniform(glm::dmat2x3 const& value) const;
+		bool SetUniform(glm::dmat2x4 const& value) const;
+		bool SetUniform(glm::dmat3x2 const& value) const;
+		bool SetUniform(glm::dmat3x4 const& value) const;
+		bool SetUniform(glm::dmat4x2 const& value) const;
+		bool SetUniform(glm::dmat4x3 const& value) const;
+		bool SetUniform(glm::dmat2   const& value) const;
+		bool SetUniform(glm::dmat3   const& value) const;
+		bool SetUniform(glm::dmat4   const& value) const;
 
-		bool SetUniform(glm::tvec1<GLfloat> const & value) const;
-		bool SetUniform(glm::tvec2<GLfloat> const & value) const;
-		bool SetUniform(glm::tvec3<GLfloat> const & value) const;
-		bool SetUniform(glm::tvec4<GLfloat> const & value) const;
+		bool SetUniform(glm::tvec1<GLfloat> const& value) const;
+		bool SetUniform(glm::tvec2<GLfloat> const& value) const;
+		bool SetUniform(glm::tvec3<GLfloat> const& value) const;
+		bool SetUniform(glm::tvec4<GLfloat> const& value) const;
 
-		bool SetUniform(glm::tvec1<GLdouble> const & value) const;
-		bool SetUniform(glm::tvec2<GLdouble> const & value) const;
-		bool SetUniform(glm::tvec3<GLdouble> const & value) const;
-		bool SetUniform(glm::tvec4<GLdouble> const & value) const;
+		bool SetUniform(glm::tvec1<GLdouble> const& value) const;
+		bool SetUniform(glm::tvec2<GLdouble> const& value) const;
+		bool SetUniform(glm::tvec3<GLdouble> const& value) const;
+		bool SetUniform(glm::tvec4<GLdouble> const& value) const;
 
-		bool SetUniform(glm::tvec1<GLint> const & value) const;
-		bool SetUniform(glm::tvec2<GLint> const & value) const;
-		bool SetUniform(glm::tvec3<GLint> const & value) const;
-		bool SetUniform(glm::tvec4<GLint> const & value) const;
+		bool SetUniform(glm::tvec1<GLint> const& value) const;
+		bool SetUniform(glm::tvec2<GLint> const& value) const;
+		bool SetUniform(glm::tvec3<GLint> const& value) const;
+		bool SetUniform(glm::tvec4<GLint> const& value) const;
 
-		bool SetUniform(glm::tvec1<GLuint> const & value) const;
-		bool SetUniform(glm::tvec2<GLuint> const & value) const;
-		bool SetUniform(glm::tvec3<GLuint> const & value) const;
-		bool SetUniform(glm::tvec4<GLuint> const & value) const;
+		bool SetUniform(glm::tvec1<GLuint> const& value) const;
+		bool SetUniform(glm::tvec2<GLuint> const& value) const;
+		bool SetUniform(glm::tvec3<GLuint> const& value) const;
+		bool SetUniform(glm::tvec4<GLuint> const& value) const;
 
 		bool SetUniform(GLfloat  value) const;
 		bool SetUniform(GLdouble value) const;
 		bool SetUniform(GLint    value) const;
 		bool SetUniform(GLuint   value) const;
 
-		bool SetUniform(GPUTexture const * texture) const;
+		bool SetUniform(GPUTexture const* texture) const;
 
 	public:
 
@@ -128,28 +120,28 @@ namespace chaos
 		GLint GetLocation(VertexAttributeSemantic semantic, int semantic_index) const;
 
 		/** bind the attributes */
-		void BindAttributes(GLuint vertex_array, GPUVertexDeclaration const & declaration, class GPUProgramProviderBase const * attribute_provider = nullptr) const;
+		void BindAttributes(GLuint vertex_array, GPUVertexDeclaration const& declaration, class GPUProgramProviderBase const* attribute_provider = nullptr) const;
 
 		/** find a uniform */
-		GLUniformInfo * FindUniform(char const * name);
+		GLUniformInfo* FindUniform(char const* name);
 		/** find an uniform */
-		GLUniformInfo const * FindUniform(char const * name) const;
+		GLUniformInfo const* FindUniform(char const* name) const;
 
 		/** set an uniform by its name */
 		template<typename T>
-		bool SetUniform(char const * name, T const & value) const
+		bool SetUniform(char const* name, T const& value) const
 		{
 			assert(name != nullptr);
-			GLUniformInfo const * uniform = FindUniform(name);
+			GLUniformInfo const* uniform = FindUniform(name);
 			if (uniform == nullptr)
 				return false;
 			GLTools::SetUniform(uniform->location, value); // beware, there is no verification of data coherence
-			return true;  
+			return true;
 		}
 		/** try to bind all uniforms */
-		void BindUniforms(class GPUProgramProviderBase const * provider) const;
+		void BindUniforms(class GPUProgramProviderBase const* provider) const;
 		/** try to bind all uniforms using multiples provider */
-		void BindUniforms(class GPUProgramProviderBase const * const * providers, int count) const;
+		void BindUniforms(class GPUProgramProviderBase const* const* providers, int count) const;
 
 		/** clear the program data object */
 		void Clear();
@@ -157,9 +149,9 @@ namespace chaos
 	protected:
 
 		/** compute the semantic and semantic index from a name */
-		static std::string ExtractSemanticDataAndName(char const * attrib_name, std::pair<VertexAttributeSemantic, int> & semantic_data, bool & is_array);
+		static std::string ExtractSemanticDataAndName(char const* attrib_name, std::pair<VertexAttributeSemantic, int>& semantic_data, bool& is_array);
 		/** remove the '[' part from a variable name et returns if it is an array*/
-		static std::string ExtractVariableName(char const * name, bool & is_array);
+		static std::string ExtractVariableName(char const* name, bool& is_array);
 
 	public:
 
@@ -169,6 +161,6 @@ namespace chaos
 		std::vector<GLUniformInfo> uniforms;
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

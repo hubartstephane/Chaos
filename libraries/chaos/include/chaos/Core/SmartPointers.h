@@ -174,7 +174,7 @@ namespace chaos
 		using type = T;
 		
 		/** default constructor */
-		SmartPointerBase() {}
+		SmartPointerBase() = default;
 		/** constructor with capturing the object */
 		SmartPointerBase(type * in_target)
 		{
@@ -186,7 +186,6 @@ namespace chaos
 			SmartPointerBase(src.get())
 		{
 		}
-
 		/** move constructor */
 		SmartPointerBase(SmartPointerBase<T, POLICY>&& src) noexcept : // XXX : the noexcept is required to have move semantic used during vector resized
 			target(src.target)
@@ -194,11 +193,17 @@ namespace chaos
 			src.target = nullptr; // capture the reference
 		}
 
+		/** copy/cast constructor */
+		template<typename T2, typename POLICY2>
+		SmartPointerBase(SmartPointerBase<T2, POLICY2> const& src) :
+			SmartPointerBase(src.get())
+		{
+			static_assert(std::is_base_of_v<T, T2>);
+		}
 		/** constructor with AutoCastable */
 		template<typename U>
 		SmartPointerBase(AutoCastable<U> const& src)
 		{
-			static_assert(std::is_base_of_v<T, U>);
 			if (src != nullptr)
 				target = POLICY::AddReference((T *)src);
 		}
@@ -218,15 +223,14 @@ namespace chaos
 			return *this;
 		}
 		/** copy */
-		SmartPointerBase & operator = (SmartPointerBase<T, POLICY> const & src)
+		SmartPointerBase& operator = (SmartPointerBase<T, POLICY> const& src)
 		{
 			if (src.target != target) // no need to fully get() => small optimization for weak_ptr
 				DoSetTarget(src.get());
 			return *this;
 		}
-
 		/** move */
-		SmartPointerBase & operator = (SmartPointerBase<T, POLICY>&& src) noexcept // shuxxx to test
+		SmartPointerBase& operator = (SmartPointerBase<T, POLICY>&& src) noexcept // shuxxx to test
 		{
 			if (src.target != target)
 			{
@@ -242,6 +246,27 @@ namespace chaos
 			}
 			return *this;
 		}
+
+
+
+		/** copy */
+		template<typename T2, typename POLICY2>
+		SmartPointerBase & operator = (SmartPointerBase<T2, POLICY2> const & src)
+		{
+			static_assert(std::is_base_of_v<T, T2>);
+			if (src.target != target) // no need to fully get() => small optimization for weak_ptr
+				DoSetTarget(src.get());
+			return *this;
+		}
+
+
+		/** constructor with AutoCastable */
+		template<typename U>
+		SmartPointerBase & operator = (AutoCastable<U> const& src)
+		{
+			return operator = ((type*)src);
+		}
+
 
 		/** getters */
 		type * get() const
@@ -355,14 +380,14 @@ namespace chaos
 	* SmartPointerBase / SmartPointerBase comparaisons
 	*/
 
-	template<typename T, typename POLICY, typename U>
-	bool operator == (SmartPointerBase<T, POLICY> const & src1, SmartPointerBase<U, POLICY> const & src2)
+	template<typename T, typename POLICY, typename U, typename POLICY2>
+	bool operator == (SmartPointerBase<T, POLICY> const & src1, SmartPointerBase<U, POLICY2> const & src2)
 	{
 		return (src1.get() == src2.get());
 	}
 
-	template<typename T, typename POLICY, typename U>
-	bool operator != (SmartPointerBase<T, POLICY> const & src1, SmartPointerBase<U, POLICY> const & src2)
+	template<typename T, typename POLICY, typename U, typename POLICY2>
+	bool operator != (SmartPointerBase<T, POLICY> const & src1, SmartPointerBase<U, POLICY2> const & src2)
 	{
 		return (src1.get() != src2.get());
 	}

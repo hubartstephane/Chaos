@@ -1,30 +1,14 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+	/** MathTools is namespace for methods to handle mathematical functions */
 	namespace MathTools
 	{
+#ifdef CHAOS_FORWARD_DECLARATION
+
 		template<typename T, typename U>
 		class RangeMapper;
 
-	}; // namespace MathTools
-
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
-
-	/**
-	* MathTools is namespace for methods to handle mathematical functions
-	*/
-
-	namespace MathTools
-	{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 		/** returns the mantissa of a float */
 		unsigned int GetMantissa(float f);
@@ -42,14 +26,14 @@ namespace chaos
 		public:
 
 			/** constructor */
-			RangeMapper(std::pair<T, T> const & src_range, std::pair<U, U> const & dst_range)
+			RangeMapper(std::pair<T, T> const& src_range, std::pair<U, U> const& dst_range)
 			{
 				factor = (dst_range.second - dst_range.first) / (src_range.second - src_range.first);
 				origin = dst_range.first - src_range.first * factor;
 			}
 
 			/** constructor */
-			RangeMapper(T const & src_range_min, T const & src_range_max, U const & dst_range_min, U const & dst_range_max)
+			RangeMapper(T const& src_range_min, T const& src_range_max, U const& dst_range_min, U const& dst_range_max)
 			{
 				factor = (dst_range_max - dst_range_min) / (src_range_max - src_range_min);
 				origin = dst_range_min - src_range_min * factor;
@@ -99,7 +83,7 @@ namespace chaos
 				if (a < 0)
 				{
 					int64_t k = -static_cast<int64_t>(a / b) + static_cast<int64_t>(1);
-					a = a + (static_cast<T>(k)* b);
+					a = a + (static_cast<T>(k) * b);
 				}
 				return std::fmod(a, b);
 			}
@@ -111,8 +95,8 @@ namespace chaos
 		{
 			T const pi = T(M_PI);
 			// set the two parameters into [0 .. 2PI] (the choosen range is not important while this is for difference computation)
-			src = chaos::MathTools::Modulo(src, pi + pi);
-			dst = chaos::MathTools::Modulo(dst, pi + pi);
+			src = Modulo(src, pi + pi);
+			dst = Modulo(dst, pi + pi);
 			// compute the best path
 			T diff = dst - src;
 			if (std::abs(diff) <= pi)
@@ -142,21 +126,21 @@ namespace chaos
 
 		/** remap a range to another */
 		template<typename T, typename U>
-		U RemapRanges(T const & src_range_min, T const & src_range_max, U const & dst_range_min, U const & dst_range_max, T src)
+		U RemapRanges(T const& src_range_min, T const& src_range_max, U const& dst_range_min, U const& dst_range_max, T src)
 		{
 			return dst_range_min + (src - src_range_min) * (dst_range_max - dst_range_min) / (src_range_max - src_range_min);
 		}
 
 		/** create a range remapper functor */
 		template<typename T, typename U>
-		RangeMapper<T, U> MakeRangeRemapper(T const & src_range_min, T const & src_range_max, U const & dst_range_min, U const & dst_range_max)
+		RangeMapper<T, U> MakeRangeRemapper(T const& src_range_min, T const& src_range_max, U const& dst_range_min, U const& dst_range_max)
 		{
 			return RangeMapper<T, U>(src_range_min, src_range_max, dst_range_min, dst_range_max);
 		}
 
 		/** create a range remapper functor */
 		template<typename T, typename U>
-		RangeMapper<T, U> MakeRangeRemapper(std::pair<T, T> const & src_range, std::pair<U, U> const & dst_range)
+		RangeMapper<T, U> MakeRangeRemapper(std::pair<T, T> const& src_range, std::pair<U, U> const& dst_range)
 		{
 			return RangeMapper<T, U>(src_range, dst_range);
 		}
@@ -207,23 +191,23 @@ namespace chaos
 		}
 
 		/** compute a vector from polar coordinates */
-		template<typename T> 
+		template<typename T>
 		glm::tvec3<T> PolarCoordToVector(T alpha, T beta)
 		{
-			T c = std::cos (beta);
+			T c = std::cos(beta);
 
 			return glm::tvec3<T>(std::cos(alpha) * c, std::sin(beta), std::sin(alpha) * c);
 		}
 
 		/** returns the linear interpolation between 2 values */
-		template<typename T> 
+		template<typename T>
 		T Lerp(T t, T a, T b)
 		{
 			return ((static_cast<T>(1) - t) * a) + (t * b);
 		}
 
 		/** returns the cos interpolation between 2 values */
-		template<typename T> 
+		template<typename T>
 		T Coserp(T t, T a, T b)
 		{
 			T f = (static_cast<T>(1) - std::cos(t * static_cast<T>(M_PI)) / static_cast<T>(2));
@@ -237,11 +221,11 @@ namespace chaos
 			// ----> f --> [0..1] 
 			//
 
-			return Lerp(f, a , b);
+			return Lerp(f, a, b);
 		}
 
 		/** an Ease-In, Ease-out function */
-		template<typename T>  
+		template<typename T>
 		T Ease(T x)
 		{
 			T x2 = x * x;
@@ -249,7 +233,7 @@ namespace chaos
 		}
 
 		/** a linear function that is y(x) = a.x + b, but with a ease In (the derivative of    y(x) = x * x    as a value of 1 when x = 0.5) */
-		template<typename T>  
+		template<typename T>
 		T EaseInIdentity(T x)
 		{
 			return static_cast<T>(x) - (static_cast<T>(1.0 - 0.5 * 0.5));
@@ -266,7 +250,7 @@ namespace chaos
 
 		/** the structure for polynomial solutions */
 		template<typename T>
-		struct Polynome2Solution 
+		struct Polynome2Solution
 		{
 			/** the number of solutions (0, 1 or 2) */
 			size_t solution_count;
@@ -296,8 +280,8 @@ namespace chaos
 			{
 				T sqrtdelta = Sqrt(delta);
 				T _2a = a + a;
-				result.solutions[0] = (- b - sqrtdelta) / _2a;
-				result.solutions[1] = (- b + sqrtdelta) / _2a;
+				result.solutions[0] = (-b - sqrtdelta) / _2a;
+				result.solutions[1] = (-b + sqrtdelta) / _2a;
 				result.solution_count = 2;
 			}
 
@@ -305,7 +289,7 @@ namespace chaos
 		}
 
 		/** target a value */
-		template<typename T> 
+		template<typename T>
 		T TargetValue(T src, T target_value, T increase_value, T decrease_value)
 		{
 			if (src < target_value)
@@ -358,12 +342,8 @@ namespace chaos
 			return true;
 		}
 
+#endif
+
 	}; // namespace MathTools
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-
-

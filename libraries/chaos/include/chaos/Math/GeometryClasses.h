@@ -1,7 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	// ==============================================================================================
 	// Some common typedefs for geometry
 	// ==============================================================================================
@@ -37,19 +37,11 @@ namespace chaos
 	//using rotator2 = float; // this are ROTATION here (angle or quaternion)
 	//using rotator3 = glm::quat; //
 	
-	
 	//using rotator2 = typename type_rotator2<float>::type; // this are ROTATION here (angle or quaternion)
 	//using rotator3 = typename type_rotator3<float>::type; //
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
 	// ==============================================================================================
 	// rotators
 	// ==============================================================================================
@@ -335,9 +327,11 @@ namespace chaos
 		vec_type direction;
 	};
 
+#endif
+
 }; // namespace chaos
 
-#endif // CHAOS_FORWARD_DECLARATION
+
 
 
 

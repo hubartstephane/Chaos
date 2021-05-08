@@ -1,18 +1,10 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	enum class ComparisonOperator;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* ComparisonOperator
@@ -26,7 +18,7 @@ namespace chaos
 		NOT_EQUAL,
 		GREATER,
 		GREATER_EQUAL,
-		LESS,		
+		LESS,
 		LESS_EQUAL
 	};
 
@@ -59,8 +51,6 @@ namespace chaos
 
 	bool LoadFromJSON(nlohmann::json const& json_entry, ComparisonOperator& dst);
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-

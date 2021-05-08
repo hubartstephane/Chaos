@@ -1,7 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class TextureArraySliceRegistryEntry;
 	class TextureArraySliceRegistry;
 	class TextureArraySliceGenerator;
@@ -9,15 +9,7 @@ namespace chaos
 
 	class TextureArrayGenerator;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* TextureArraySliceRegistryEntry : an entry in the registry of slices
@@ -30,7 +22,7 @@ namespace chaos
 		/** the image description */
 		ImageDescription description;
 		/** a user data that may be used later for memory releasing */
-		void * user_data = nullptr;
+		void* user_data = nullptr;
 	};
 
 	/**
@@ -44,14 +36,14 @@ namespace chaos
 	public:
 
 		/** the method to insert one slice */
-		bool InsertSlice(ImageDescription const & description, void * user_data = nullptr);
+		bool InsertSlice(ImageDescription const& description, void* user_data = nullptr);
 		/** gets the number of slices inserted */
 		size_t GetSliceCount() const { return slices.size(); }
 
 	protected:
 
 		/** test whether the description is valid */
-		bool IsImageSliceValid(ImageDescription const & description) const;
+		bool IsImageSliceValid(ImageDescription const& description) const;
 
 		/** the array that contains all slices */
 		std::vector<TextureArraySliceRegistryEntry> slices;
@@ -66,11 +58,11 @@ namespace chaos
 	public:
 
 		/** the method to override to add all slice we want */
-		virtual void RegisterSlices(TextureArraySliceRegistry & slice_registry){}
+		virtual void RegisterSlices(TextureArraySliceRegistry& slice_registry) {}
 		/** the method to override to release all slices */
-		virtual void ReleaseSlices(TextureArraySliceRegistryEntry * slices, size_t count){}
+		virtual void ReleaseSlices(TextureArraySliceRegistryEntry* slices, size_t count) {}
 		/** called just before the insertion into the registry */
-		virtual bool PreRegister(){return true;}
+		virtual bool PreRegister() { return true; }
 
 	};
 
@@ -83,10 +75,10 @@ namespace chaos
 	public:
 
 		/** constructor */
-		TextureArraySliceGenerator_Image(FilePathParam const & in_image_path) :
-			image_path(in_image_path.GetResolvedPath()){} 
+		TextureArraySliceGenerator_Image(FilePathParam const& in_image_path) :
+			image_path(in_image_path.GetResolvedPath()) {}
 
-		TextureArraySliceGenerator_Image(FIBITMAP * in_image, bool in_release_image) :
+		TextureArraySliceGenerator_Image(FIBITMAP* in_image, bool in_release_image) :
 			image(in_image),
 			release_image(in_release_image)
 		{
@@ -97,7 +89,7 @@ namespace chaos
 		virtual ~TextureArraySliceGenerator_Image();
 
 		/** override */
-		virtual void RegisterSlices(TextureArraySliceRegistry & slice_registry) override;
+		virtual void RegisterSlices(TextureArraySliceRegistry& slice_registry) override;
 		/** override */
 		virtual bool PreRegister() override;
 
@@ -106,24 +98,10 @@ namespace chaos
 		/** path of the resource file */
 		boost::filesystem::path image_path;
 		/** the image */
-		FIBITMAP * image = nullptr;
+		FIBITMAP* image = nullptr;
 		/** whether the image has to be released */
-		bool release_image = false;  
+		bool release_image = false;
 	};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	/**
 	* TextureArrayGenerator : an helper class that is used to generate texture array    GL_TEXTURE_1D_ARRAY,    GL_TEXTURE_2D_ARRAY or    GL_TEXTURE_CUBE_ARRAY
@@ -149,7 +127,7 @@ namespace chaos
 			/** the generator that will request some slices */
 			shared_ptr<TextureArraySliceGenerator> generator;
 			/** optional where the slices are allocated */
-			SliceInfo * slice_info = nullptr;
+			SliceInfo* slice_info = nullptr;
 		};
 
 		/** constructor */
@@ -158,7 +136,7 @@ namespace chaos
 		virtual ~TextureArrayGenerator();
 
 		/** the insertion method (returns the slice considered) */
-		bool AddGenerator(TextureArraySliceGenerator * generator, SliceInfo * slice_info = nullptr);
+		bool AddGenerator(TextureArraySliceGenerator* generator, SliceInfo* slice_info = nullptr);
 		/** clean all generators */
 		void Clean();
 		/** generate the texture array */
@@ -167,7 +145,7 @@ namespace chaos
 	protected:
 
 		/** internal method to generate the texture array */
-		GPUTexture * GenTextureObjectHelper(TextureArraySliceRegistry & slice_registry, PixelFormat const & final_pixel_format, int width, int height, GenTextureParameters const & parameters) const;
+		GPUTexture* GenTextureObjectHelper(TextureArraySliceRegistry& slice_registry, PixelFormat const& final_pixel_format, int width, int height, GenTextureParameters const& parameters) const;
 
 	protected:
 
@@ -175,8 +153,6 @@ namespace chaos
 		std::vector<GeneratorEntry> generators;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-

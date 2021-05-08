@@ -1,25 +1,13 @@
+namespace chaos
+{
+	namespace BitmapAtlas
+	{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
-
-	namespace BitmapAtlas
-	{
 		class TextureArrayAtlas;
 
-	}; // namespace BitmapAtlas
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
-	namespace BitmapAtlas
-	{
 		class TextureArrayAtlas : public AtlasBase
 		{
 		public:
@@ -27,25 +15,25 @@ namespace chaos
 			/** the clearing method */
 			virtual void Clear() override;
 			/** load an atlas from an index file */
-			bool LoadAtlas(FilePathParam const & path);
+			bool LoadAtlas(FilePathParam const& path);
 			/** generate a texture atlas from a standard atlas */
-			bool LoadFromBitmapAtlas(Atlas const & atlas);
+			bool LoadFromBitmapAtlas(Atlas const& atlas);
 			/** generate a texture atlas from a standard atlas */
-			bool LoadFromBitmapAtlas(Atlas && atlas);
+			bool LoadFromBitmapAtlas(Atlas&& atlas);
 
 			/* get the array texture */
-			GPUTexture * GetTexture() { return texture.get(); }
+			GPUTexture* GetTexture() { return texture.get(); }
 
 		protected:
 
 			/** generate a texture atlas from a standard atlas */
-			bool DoLoadFromBitmapAtlas(Atlas const & atlas);
+			bool DoLoadFromBitmapAtlas(Atlas const& atlas);
 			/** generate a texture atlas from a standard atlas */
-			bool DoLoadFromBitmapAtlas(Atlas && atlas);
+			bool DoLoadFromBitmapAtlas(Atlas&& atlas);
 			/** copy src folder into dst folder */
-			bool DoCopyFolder(FolderInfo * dst_folder_info, FolderInfo const * src_folder_info);
+			bool DoCopyFolder(FolderInfo* dst_folder_info, FolderInfo const* src_folder_info);
 			/** generate a texture array */
-			bool DoGenerateTextureArray(Atlas const & atlas);
+			bool DoGenerateTextureArray(Atlas const& atlas);
 
 		protected:
 
@@ -53,10 +41,8 @@ namespace chaos
 			shared_ptr<GPUTexture> texture;
 		};
 
+#endif
+
 	}; // namespace BitmapAtlas
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-

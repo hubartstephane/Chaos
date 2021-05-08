@@ -1,7 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
     template<typename TYPE>
     class RawDataBufferAccessorBase;
 
@@ -10,19 +10,11 @@ namespace chaos
     template<typename TYPE>
     using RawDataBufferConstAccessor = RawDataBufferAccessorBase<TYPE const>;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
-
-	// ==============================================================
-	// RawDataBufferAccessorBase
-	// ==============================================================
+    // ==============================================================
+    // RawDataBufferAccessorBase
+    // ==============================================================
 
     template<typename TYPE>
     class RawDataBufferAccessorBase
@@ -57,10 +49,10 @@ namespace chaos
         }
 
         /** array accessor */
-        type & operator [](size_t index) const
+        type& operator [](size_t index) const
         {
             assert(index < data_count);
-            char const * b = (char const *)buffer;
+            char const* b = (char const*)buffer;
             return *((type*)(b + index * data_size));
         }
         /** gets the number of objects */
@@ -133,9 +125,6 @@ namespace chaos
         size_t data_size = 0;
     };
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

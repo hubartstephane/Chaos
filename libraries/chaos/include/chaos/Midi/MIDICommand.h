@@ -1,18 +1,10 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class MIDICommand;
-	
-}; // namespace chaos
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	class MIDICommand
 	{
@@ -66,24 +58,24 @@ namespace chaos
 		//      V = channel concerned 
 		//
 		static unsigned int const CMD_NOTE_OFF = 0x80;
-		static unsigned int const CMD_NOTE_ON  = 0x90;
-		static unsigned int const CMD_POLYPHONIC_AFTER_TOUCH  = 0xA0;
+		static unsigned int const CMD_NOTE_ON = 0x90;
+		static unsigned int const CMD_POLYPHONIC_AFTER_TOUCH = 0xA0;
 		static unsigned int const CMD_CONTROL_CHANGE = 0xB0;
 		static unsigned int const CMD_PROGRAM_CHANGE = 0xC0;
 		static unsigned int const CMD_CHANNEL_AFTER_TOUCH = 0xD0;
-		static unsigned int const CMD_PITCH_WHEEL_CHANGE  = 0xE0;
+		static unsigned int const CMD_PITCH_WHEEL_CHANGE = 0xE0;
 		static unsigned int const CMD_SYSTEM_MESSAGE = 0xF0;
 
 		/** default constructor */
 		MIDICommand() = default;
 		/** constructor with initialization */
-		MIDICommand(uint32_t value) 
-		{ 
-			SetValue(value); 
+		MIDICommand(uint32_t value)
+		{
+			SetValue(value);
 		}
 		/** constructor with initialization */
 		MIDICommand(unsigned char in_status, unsigned char in_param1 = 0, unsigned char in_param2 = 0, unsigned char in_param3 = 0)
-		{ 
+		{
 			SetValue(in_status, in_param1, in_param2, in_param3);
 		}
 
@@ -106,9 +98,9 @@ namespace chaos
 		/** getter */
 		uint32_t GetValue() const
 		{
-			return  
+			return
 				(((uint32_t)status) << 0) |
-				(((uint32_t)params[0]) << 8)  |
+				(((uint32_t)params[0]) << 8) |
 				(((uint32_t)params[1]) << 16) |
 				(((uint32_t)params[2]) << 24);
 		}
@@ -155,7 +147,7 @@ namespace chaos
 		}
 
 		/** read the command from a buffer reader */
-		bool ReadParams(BufferReader & reader);
+		bool ReadParams(BufferReader& reader);
 
 		/** get number of bytes for the command */
 		static int GetCommandParamCount(unsigned char status);
@@ -168,7 +160,6 @@ namespace chaos
 		unsigned char params[3];
 	};
 
-
+#endif
+	
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

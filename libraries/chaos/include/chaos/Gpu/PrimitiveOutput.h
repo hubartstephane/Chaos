@@ -2,6 +2,8 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
+    class GPUPrimitiveBufferCacheEntry;
+
     class PrimitiveOutputBase;
 
     template<typename VERTEX_TYPE>
@@ -10,8 +12,8 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
     /**
-           * GPUPrimitiveBufferCacheEntry : the PrimitiveOutput has its own cache because we do not want to waste too much space whenever a new big strip/fan is requested (thoses buffers have been mapped in memory)
-           */
+    * GPUPrimitiveBufferCacheEntry : the PrimitiveOutput has its own cache because we do not want to waste too much space whenever a new big strip/fan is requested (thoses buffers have been mapped in memory)
+    */
 
     class GPUPrimitiveBufferCacheEntry
     {

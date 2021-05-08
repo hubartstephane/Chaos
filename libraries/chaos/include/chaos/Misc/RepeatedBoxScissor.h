@@ -1,18 +1,10 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class RepeatedBoxScissor;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// =====================================
 	// RepeatedBoxScissor : an utility object to compute instances in 2D of a box that collide a given scissor
@@ -33,9 +25,9 @@ namespace chaos
 	public:
 
 		/** the 'index' of the first instance to render/collide ... (included) */
-		glm::ivec2 start_instance = glm::ivec2(0, 0);
+		glm::ivec2 start_instance = { 0, 0 };
 		/** the 'index' of the last instance to render/collide ... (excluded) */
-		glm::ivec2 last_instance = glm::ivec2(0, 0);
+		glm::ivec2 last_instance = { 0, 0 };
 		/** copy of the construction parameters */
 		box2 target_box;
 		/** copy of the construction parameters */
@@ -46,9 +38,6 @@ namespace chaos
 		bool wrap_y = false;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

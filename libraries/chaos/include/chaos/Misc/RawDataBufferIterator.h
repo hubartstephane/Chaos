@@ -1,7 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
     template<typename TYPE, int DIRECTION>
     class RawDataBufferIteratorBase;
 
@@ -10,21 +10,13 @@ namespace chaos
     template<typename TYPE>
     using RawDataBufferReverseIterator = RawDataBufferIteratorBase<TYPE, -1>;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
     // ==============================================================
-    // RawDataBufferIteratorBase
-    // ==============================================================
+     // RawDataBufferIteratorBase
+     // ==============================================================
 
-    // XXX : use CONST/NON CONST for TYPE for const_iterator/non_const_iterator
+     // XXX : use CONST/NON CONST for TYPE for const_iterator/non_const_iterator
 
     template<typename TYPE, int DIRECTION>
     class RawDataBufferIteratorBase
@@ -41,12 +33,12 @@ namespace chaos
         /** copy constructor */
         RawDataBufferIteratorBase(RawDataBufferIteratorBase const& src) = default;
         /** initialization */
-        RawDataBufferIteratorBase(void const * in_buffer, size_t in_data_count, size_t in_data_size)
+        RawDataBufferIteratorBase(void const* in_buffer, size_t in_data_count, size_t in_data_size)
         {
             if (in_data_count > 0 && in_data_size > 0)
             {
                 buffer_start = (buffer_type)in_buffer;
-                buffer_end   = buffer_start + (in_data_count - 1) * in_data_size;
+                buffer_end = buffer_start + (in_data_count - 1) * in_data_size;
                 data_size = in_data_size;
                 if constexpr (DIRECTION > 0)
                     position = buffer_start;
@@ -184,9 +176,6 @@ namespace chaos
         return (result -= count);
     }
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

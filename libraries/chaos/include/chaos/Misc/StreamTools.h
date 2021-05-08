@@ -1,28 +1,14 @@
+namespace chaos
+{
+	/** a namespace for stream related functions */
+	namespace StreamTools
+	{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
-	namespace StreamTools
-	{
 		class Whitespaces;
 
-	}; // namespace StreamTools
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
-	/**
-	* StreamTools : a namespace for stream related functions
-	*/
-
-	namespace StreamTools
-	{
 		/** a class that deserves to insert whitespaces into a output stream */
 		class Whitespaces
 		{
@@ -34,7 +20,7 @@ namespace chaos
 			/** constructor */
 			Whitespaces(Whitespaces const& src) = default;
 			/** friend function to add characters */
-			friend std::ostream & operator << (std::ostream & stream, Whitespaces const & whitespaces)
+			friend std::ostream& operator << (std::ostream& stream, Whitespaces const& whitespaces)
 			{
 				for (size_t i = 0; i < whitespaces.count; ++i)
 					stream << " ";
@@ -47,9 +33,8 @@ namespace chaos
 			size_t count = 0;
 		};
 
+#endif
+
 	}; // namespace StreamTools
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-

@@ -1,15 +1,5 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
-
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
 namespace chaos
 {
-
 	//
 	// Little Endian :
 	// 
@@ -28,6 +18,8 @@ namespace chaos
 
 	namespace EndianTools
 	{
+#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
 		/** conversion method */
 		uint16_t EndianSwap(uint16_t src);
 		/** conversion method */
@@ -81,8 +73,8 @@ namespace chaos
 			return HostToBigEndian(src);
 		}
 
+#endif
+
 	}; // namespace EndianTools
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

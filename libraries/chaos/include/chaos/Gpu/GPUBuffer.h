@@ -1,18 +1,10 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class GPUBuffer;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/** GPUBuffer : self explaning */
 	class GPUBuffer : public GPUResource
@@ -37,12 +29,12 @@ namespace chaos
 		bool SetResource(GLuint in_id, bool in_ownership);
 
 		/** update the data of the buffer */
-		bool SetBufferData(char const * in_data, size_t in_size);
+		bool SetBufferData(char const* in_data, size_t in_size);
 		/** get the size of the buffer */
 		size_t GetBufferSize() const;
 
 		/** map the buffer */
-		char * MapBuffer(size_t start = 0, size_t count = 0, bool read = false, bool write = true);
+		char* MapBuffer(size_t start = 0, size_t count = 0, bool read = false, bool write = true);
 		/** unmap the buffer */
 		void UnMapBuffer();
 
@@ -63,7 +55,6 @@ namespace chaos
 		bool dynamic = false;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-

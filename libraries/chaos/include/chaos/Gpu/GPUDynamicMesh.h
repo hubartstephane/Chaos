@@ -1,23 +1,15 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
     class GPUDynamicMeshElement;
     class GPUDynamicMesh;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
     /**
-     * GPUDynamicMeshElement : a renderable element
-     */
+      * GPUDynamicMeshElement : a renderable element
+      */
 
     class GPUDynamicMeshElement
     {
@@ -63,13 +55,13 @@ namespace chaos
         /** remove all elements of the rendering (may give GPUBuffers back to a GPUBufferPool) */
         void Clear(GPUBufferPool* buffer_pool);
         /** gets the number of mesh element */
-        size_t GetMeshElementCount() const { return elements.size();}
+        size_t GetMeshElementCount() const { return elements.size(); }
         /** access any mesh element */
         GPUDynamicMeshElement& GetMeshElement(size_t index) { return elements[index]; }
         /** access any mesh element */
         GPUDynamicMeshElement const& GetMeshElement(size_t index) const { return elements[index]; }
         /** add an rendering element */
-        GPUDynamicMeshElement & AddMeshElement();
+        GPUDynamicMeshElement& AddMeshElement();
 
         /** change the vertex array cache */
         void SetVertexArrayCache(GPUVertexArrayCache* in_vertex_array_cache);
@@ -96,7 +88,6 @@ namespace chaos
         shared_ptr<GPUVertexArrayCache> vertex_array_cache;
     };
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-

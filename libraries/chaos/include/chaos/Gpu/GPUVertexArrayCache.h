@@ -1,19 +1,12 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class GPUVertexArrayCacheEntry;
 	class GPUVertexArrayCache;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
 	// ==================================================================
 	// GPUVertexArrayCacheEntry : an entry in the cache vertex array
 	// ==================================================================
@@ -65,9 +58,9 @@ namespace chaos
 	public:
 
 		/** find vertex array for the program */
-		GPUVertexArray const * FindVertexArray(GPURenderer* renderer, GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer) const;
+		GPUVertexArray const* FindVertexArray(GPURenderer* renderer, GPUProgram const* program, GPUBuffer const* vertex_buffer, GPUBuffer const* index_buffer) const;
 		/** create or return exisiting vertex array for a given program */
-		GPUVertexArray const * FindOrCreateVertexArray(GPURenderer* renderer, GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer, GPUVertexDeclaration const * declaration, GLintptr offset = 0);
+		GPUVertexArray const* FindOrCreateVertexArray(GPURenderer* renderer, GPUProgram const* program, GPUBuffer const* vertex_buffer, GPUBuffer const* index_buffer, GPUVertexDeclaration const* declaration, GLintptr offset = 0);
 		/** reset the whole object */
 		void Clear();
 
@@ -80,9 +73,6 @@ namespace chaos
 
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

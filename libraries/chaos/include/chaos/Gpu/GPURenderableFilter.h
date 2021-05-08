@@ -1,7 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class GPURenderableFilter;
 
 	template<typename T>
@@ -9,15 +9,8 @@ namespace chaos
 
 	using GPUParticleLayerFilterList = GPUTypedRenderableFilter<class ParticleLayerBase>;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
 	// ========================================================
 	// GPURenderableFilter : filter-out some objects frome rendering
 	// ========================================================
@@ -27,7 +20,7 @@ namespace chaos
 	public:
 
 		/** check whether given object can be rendered */
-		virtual bool CanRender(GPURenderable const * renderable) const;
+		virtual bool CanRender(GPURenderable const* renderable) const;
 
 	public:
 
@@ -45,11 +38,11 @@ namespace chaos
 	public:
 
 		/** override */
-		virtual bool CanRender(class GPURenderable const * renderable) const override
+		virtual bool CanRender(class GPURenderable const* renderable) const override
 		{
 			assert(renderable != nullptr);
 			// check whether the typed object can be filtered out from its class
-			T const * typed_object = auto_cast(renderable);
+			T const* typed_object = auto_cast(renderable);
 			if (typed_object == nullptr)
 				return true;
 			// check from name
@@ -57,8 +50,6 @@ namespace chaos
 		}
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-

@@ -1,18 +1,10 @@
-﻿#ifdef CHAOS_FORWARD_DECLARATION
-
-namespace chaos
+﻿namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class GPURenderbuffer;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	class GPURenderbuffer : public GPUSurface
 	{
@@ -28,7 +20,7 @@ namespace chaos
 		/** returns the GL name of the resource */
 		GLuint GetResourceID() const { return renderbuffer_id; }
 		/** get the description of the surface */
-		SurfaceDescription const & GetSurfaceDescription() const override { return surface_description; }
+		SurfaceDescription const& GetSurfaceDescription() const override { return surface_description; }
 
 		/** override */
 		virtual void Release() override;
@@ -41,9 +33,6 @@ namespace chaos
 		SurfaceDescription surface_description;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

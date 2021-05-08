@@ -1,26 +1,18 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class GPUFramebufferRenderData;
 	class GPURenderer;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	class GPUFramebufferRenderData
 	{
 	public:
 
 		/** the concerned framebuffer */
-		shared_ptr<GPUFramebuffer> framebuffer;	
+		shared_ptr<GPUFramebuffer> framebuffer;
 		/** whether mipmaps should be generated at the end of rendering */
 		bool generate_mipmaps = false;
 		/** the viewport to restore */
@@ -37,7 +29,7 @@ namespace chaos
 		/** draw a primitive */
 		void Draw(GPUDrawPrimitive const& primitive, GPUInstancingInfo const& instancing = {});
 		/** render a full screen quad */
-		void DrawFullscreenQuad(GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
+		void DrawFullscreenQuad(GPURenderMaterial const* material, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
 
 		/** called at the start of a new frame */
 		void BeginRenderingFrame();
@@ -45,8 +37,8 @@ namespace chaos
 		void EndRenderingFrame();
 
 		/** called to start of rendering on a new Framebuffer */
-		bool PushFramebufferRenderContext(GPUFramebuffer * framebuffer, bool generate_mipmaps);
-		/** called at the start of rendering on a framebuffer */ 
+		bool PushFramebufferRenderContext(GPUFramebuffer* framebuffer, bool generate_mipmaps);
+		/** called at the start of rendering on a framebuffer */
 		bool PopFramebufferRenderContext();
 
 		/** get the average frame rate */
@@ -59,7 +51,7 @@ namespace chaos
 		/** get the rendering timestamp */
 		uint64_t GetTimestamp() const;
 		/** get  a fence for the end of this frame */
-		GPUFence * GetCurrentFrameFence();
+		GPUFence* GetCurrentFrameFence();
 
 		/** get the owning window */
 		Window* GetWindow() const { return window.get(); }
@@ -94,8 +86,6 @@ namespace chaos
 #endif
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-

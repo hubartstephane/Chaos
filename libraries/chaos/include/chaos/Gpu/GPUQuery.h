@@ -1,7 +1,7 @@
-﻿#ifdef CHAOS_FORWARD_DECLARATION
-
-namespace chaos
+﻿namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class GPUQuery;
 
 	template<GLenum QUERY_TARGET>
@@ -15,15 +15,7 @@ namespace chaos
 	using GLTimeElapsedQuery = GLTypedQuery<GL_TIME_ELAPSED>;
 	using GLTimeStampQuery = GLTypedQuery<GL_TIMESTAMP>;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	class GPUQuery : public GPUResource
 	{
@@ -101,12 +93,9 @@ namespace chaos
 	{
 	public:
 
-		GLTypedQuery(Window * in_window = nullptr) : GPUQuery(in_window, QUERY_TARGET) {}
+		GLTypedQuery(Window* in_window = nullptr) : GPUQuery(in_window, QUERY_TARGET) {}
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

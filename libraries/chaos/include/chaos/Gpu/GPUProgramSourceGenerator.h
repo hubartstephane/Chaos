@@ -1,20 +1,12 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class GPUProgramSourceGenerator;
 	class GPUProgramStringSourceGenerator;
 	class GPUProgramFileSourceGenerator;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* GPUProgramSourceGenerator : used to generate GLSL source (or part of source) code from a set of definitions
@@ -28,10 +20,10 @@ namespace chaos
 		virtual ~GPUProgramSourceGenerator() = default;
 
 		/** returns generated code */
-		virtual Buffer<char> GenerateSource(std::map<std::string, int> const & definitions)
-		{ 
+		virtual Buffer<char> GenerateSource(std::map<std::string, int> const& definitions)
+		{
 			return Buffer<char>();
-		}  
+		}
 	};
 
 	class GPUProgramStringSourceGenerator : public GPUProgramSourceGenerator
@@ -40,14 +32,14 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramStringSourceGenerator(char const * src);
+		GPUProgramStringSourceGenerator(char const* src);
 		/** constructor */
 		GPUProgramStringSourceGenerator(Buffer<char> in_buffer);
 
 		/** returns generated code */
-		virtual Buffer<char> GenerateSource(std::map<std::string, int> const & definitions) override
+		virtual Buffer<char> GenerateSource(std::map<std::string, int> const& definitions) override
 		{
-			return buffer;    
+			return buffer;
 		}
 
 	protected:
@@ -61,12 +53,12 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramFileSourceGenerator(FilePathParam const & path);
+		GPUProgramFileSourceGenerator(FilePathParam const& path);
 
 		/** returns generated code */
-		virtual Buffer<char> GenerateSource(std::map<std::string, int> const & definitions) override
+		virtual Buffer<char> GenerateSource(std::map<std::string, int> const& definitions) override
 		{
-			return buffer;    
+			return buffer;
 		}
 
 	protected:
@@ -75,9 +67,6 @@ namespace chaos
 		Buffer<char> buffer;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

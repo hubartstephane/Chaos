@@ -1,19 +1,12 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class GPUSkeletonHierarchyBoneDef;
 	class GPUSkeletonHierarchyDef;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
 	/**
 	* GPUSkeletonHierarchyBoneDef : defines a bone in the hierarchy
 	*/
@@ -48,8 +41,6 @@ namespace chaos
 		std::vector<GPUSkeletonHierarchyBoneDef> bone_data;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-

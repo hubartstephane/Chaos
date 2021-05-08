@@ -1,7 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	enum class VertexAttributeSemantic;
 	enum class VertexAttributeComponentType;
 	enum class VertexAttributeType;
@@ -9,15 +9,7 @@ namespace chaos
 	class GPUVertexDeclarationEntry;
 	class GPUVertexDeclaration;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/** the possible semantics */
 	enum class VertexAttributeSemantic : int
@@ -36,7 +28,7 @@ namespace chaos
 
 	/** the possible component types */
 	enum class VertexAttributeComponentType : int
-	{	
+	{
 		FLOAT = 1,
 		DOUBLE = 2,
 		HALF = 3,
@@ -46,7 +38,7 @@ namespace chaos
 
 	/** the possible vector types */
 	enum class VertexAttributeType : int
-	{		
+	{
 		FLOAT1 = ((int)VertexAttributeComponentType::FLOAT << 3) | 1,
 		FLOAT2 = ((int)VertexAttributeComponentType::FLOAT << 3) | 2,
 		FLOAT3 = ((int)VertexAttributeComponentType::FLOAT << 3) | 3,
@@ -127,19 +119,19 @@ namespace chaos
 	public:
 
 		/** insert an entry into the declaration */
-		void Push(VertexAttributeSemantic semantic, int semantic_index, VertexAttributeType type, char const * name = nullptr);
+		void Push(VertexAttributeSemantic semantic, int semantic_index, VertexAttributeType type, char const* name = nullptr);
 		/** reset the object */
-		void Clear(){ entries.clear(); }
+		void Clear() { entries.clear(); }
 
 		/** gets an entry from its name */
-		GPUVertexDeclarationEntry const* GetEntry(char const * name) const;
+		GPUVertexDeclarationEntry const* GetEntry(char const* name) const;
 		/** gets an entry from its name */
 		GPUVertexDeclarationEntry* GetEntry(char const* name);
 
 		/** gets an entry from its semantic (ignore semantic_index if negative) */
-		GPUVertexDeclarationEntry const * GetEntry(VertexAttributeSemantic semantic, int semantic_index) const;
+		GPUVertexDeclarationEntry const* GetEntry(VertexAttributeSemantic semantic, int semantic_index) const;
 		/** gets an entry from its semantic (ignore semantic_index if negative) */
-		GPUVertexDeclarationEntry * GetEntry(VertexAttributeSemantic semantic, int semantic_index);
+		GPUVertexDeclarationEntry* GetEntry(VertexAttributeSemantic semantic, int semantic_index);
 
 	public:
 
@@ -149,9 +141,6 @@ namespace chaos
 		int effective_size = 0;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

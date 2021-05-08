@@ -1,18 +1,10 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class GenTextureParameters;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* GenTextureParameters : some parameters to load textures
@@ -24,7 +16,6 @@ namespace chaos
 
 
 		// TODO : take care of level and border
-
 
 		/** parameters for glTexParameteri(...) */
 		GLenum wrap_s = GL_REPEAT;
@@ -58,7 +49,7 @@ namespace chaos
 	namespace GLTextureTools
 	{
 		/** get buffer containing the texture data */
-		char * GetTextureImage(GLuint texture_id, GLint level, ImageDescription & desc);
+		char* GetTextureImage(GLuint texture_id, GLint level, ImageDescription& desc);
 		/** get the pixel format of the texture */
 		PixelFormat GetTexturePixelFormat(GLuint texture_id, GLint level);
 		/** get the pixel format from an internal format */
@@ -78,21 +69,19 @@ namespace chaos
 		int GetMipmapLevelCount(int width, int height);
 		int GetMipmapLevelCount(int width);
 		/** Get Format/Internal Format pair from the description */
-		GLPixelFormat GetGLPixelFormat(PixelFormat const & pixel_format);
+		GLPixelFormat GetGLPixelFormat(PixelFormat const& pixel_format);
 
 		/** utility function to compute target (GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_RECTANGLE) from dimension */
 		GLenum GetTextureTargetFromSize(int width, int height, bool rectangle_texture);
 
 		/** prepare store parameters */
-		char * PrepareGLTextureTransfert(ImageDescription const & desc);
+		char* PrepareGLTextureTransfert(ImageDescription const& desc);
 
 		/** utility function for texture loading */
-		void GenTextureApplyParameters(GLuint texture_id, TextureDescription const & texture_description, GenTextureParameters const & parameters);
+		void GenTextureApplyParameters(GLuint texture_id, TextureDescription const& texture_description, GenTextureParameters const& parameters);
 
 	}; // namespace GLTextureTools
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-

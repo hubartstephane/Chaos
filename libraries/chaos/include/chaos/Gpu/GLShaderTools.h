@@ -1,13 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	namespace GLShaderTools
 	{
 		/** transform a program into a binary chunk (the binary_format is encoded in the buffer) */
@@ -23,8 +17,6 @@ namespace chaos
 
 	}; // namespace GLShaderTools
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-

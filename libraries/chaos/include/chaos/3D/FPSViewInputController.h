@@ -1,20 +1,12 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class FPSViewMovementSpeed;
 	class FPSViewMovementKeyboardConfiguration;
 	class FPSViewInputController;
-	
-}; // namespace chaos
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* FPSViewMovementSpeed : a class that describes displacement speed for the FPS view
@@ -77,16 +69,17 @@ namespace chaos
 
 	class FPSViewInputController
 	{
+		static double constexpr INVALID_MOUSE_VALUE = std::numeric_limits<double>::max();
+
 	public:
 
 		/** the tick method */
-		virtual void Tick(GLFWwindow * glfw_window, float delta_time);
+		virtual void Tick(GLFWwindow* glfw_window, float delta_time);
 
 		/** matrix getter */
 		inline glm::mat4 GlobalToLocal() const { return fps_controller.GlobalToLocal(); }
 		/** matrix getter */
 		inline glm::mat4 LocalToGlobal() const { return fps_controller.LocalToGlobal(); }
-
 
 		/** returns true whether mouse capture is enabled */
 		bool IsMouseEnabled() const { return mouse_enabled; }
@@ -96,15 +89,12 @@ namespace chaos
 	protected:
 
 		/** handle the mouse displacement */
-		void HandleMouseInputs(GLFWwindow * glfw_window, float delta_time);
+		void HandleMouseInputs(GLFWwindow* glfw_window, float delta_time);
 		/** handle the keyboard inputs */
-		void HandleKeyboardInputs(GLFWwindow * glfw_window, float delta_time);
+		void HandleKeyboardInputs(GLFWwindow* glfw_window, float delta_time);
 
 		/** check whether keyboard input is down */
-		bool CheckKeyInput(GLFWwindow * glfw_window, int key) const;
-
-
-		static double constexpr INVALID_MOUSE_VALUE = std::numeric_limits<double>::max();
+		bool CheckKeyInput(GLFWwindow* glfw_window, int key) const;
 
 		/** whether the mouse is enabled or not */
 		bool mouse_enabled = true;
@@ -128,6 +118,6 @@ namespace chaos
 		bool must_click_to_rotate = true;
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

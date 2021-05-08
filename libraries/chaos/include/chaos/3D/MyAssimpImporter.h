@@ -1,18 +1,10 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class MyAssimpImporter;
-	
-}; // namespace chaos
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* MyAssimpImporter : a base class to import ASSIMP file
@@ -23,7 +15,7 @@ namespace chaos
 	public:
 
 	};
+	
+#endif
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

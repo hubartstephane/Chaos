@@ -1,25 +1,17 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class GPUVertexArray;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	class GPUVertexArray : public GPUResource
 	{
 	public:
 
 		/** constructor (create its own resource) */
-		GPUVertexArray(Window * in_window = nullptr);
+		GPUVertexArray(Window* in_window = nullptr);
 		/** constructor (reference a given resource). Call this function with 0 if you do not want to create resource at all */
 		GPUVertexArray(Window* in_window, GLuint in_id, bool in_ownership);
 
@@ -53,8 +45,6 @@ namespace chaos
 		GLFWwindow* context = nullptr;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-

@@ -1,18 +1,10 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class GPURenderable;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// ========================================================
 	// GPURenderable : base class for all object that can be rendered
@@ -26,7 +18,7 @@ namespace chaos
 	public:
 
 		/** public method to render the object (Display = PrepareDisplay + DoDisplay) */
-		int Display(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
+		int Display(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
 		/** check whether the object may be displayed, and update resources if necessary (this method is already integrated into Display method) */
 		bool PrepareDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
 		/** the user defined method to display the object (this method is already integrated into Display method) */
@@ -43,23 +35,23 @@ namespace chaos
 		void SetCanTickIfHidden(bool in_tick_hidden);
 
 		/** add names in the enabled list */
-		void AddEnabledRenderPasses(char const * renderpass_names);
+		void AddEnabledRenderPasses(char const* renderpass_names);
 		/** add names in the disabled list */
-		void AddDisabledRenderPasses(char const * renderpass_names);
+		void AddDisabledRenderPasses(char const* renderpass_names);
 		/** remove names from the enabled list */
-		void RemoveEnabledRenderPasses(char const * renderpass_names);
+		void RemoveEnabledRenderPasses(char const* renderpass_names);
 		/** remove names from the disabled list */
-		void RemoveDisabledRenderPasses(char const * renderpass_names);
+		void RemoveDisabledRenderPasses(char const* renderpass_names);
 
 		/** check whether the renderable can be displayed by the name */
-		bool IsRenderPassEnabled(char const * renderpass_name) const;
+		bool IsRenderPassEnabled(char const* renderpass_name) const;
 
 	protected:
 
 		/** override */
 		virtual bool CanTick() override;
 		/** called to update the graphic resource */
-		virtual bool DoUpdateGPUResources(GPURenderer * renderer);
+		virtual bool DoUpdateGPUResources(GPURenderer* renderer);
 		/** called whenever object visibility has been changed */
 		virtual void OnVisibilityChanged(bool in_visible);
 
@@ -76,7 +68,6 @@ namespace chaos
 		NameFilter renderpass_filter;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-

@@ -1,7 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class GPUMeshGenerationRequirement;
 	class GPUSimpleMeshGenerator;
 
@@ -14,15 +14,7 @@ namespace chaos
 	class GPUCircleMeshGenerator;
 	class GPUSphereMeshGenerator;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* A class to describe requirement for a mesh
@@ -59,14 +51,14 @@ namespace chaos
 		/** get requirement */
 		virtual GPUMeshGenerationRequirement GetRequirement() const = 0;
 		/** get the vertex declaration */
-		virtual GPUVertexDeclaration * GenerateVertexDeclaration() const = 0;
+		virtual GPUVertexDeclaration* GenerateVertexDeclaration() const = 0;
 		/** get the mesh data */
-		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const = 0;
+		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive>& primitives, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const = 0;
 
 		/** generation function */
 		shared_ptr<GPUSimpleMesh> GenerateMesh() const;
 		/** population function */
-		bool FillMeshData(GPUSimpleMesh * mesh) const;
+		bool FillMeshData(GPUSimpleMesh* mesh) const;
 	};
 
 	/**
@@ -81,9 +73,9 @@ namespace chaos
 		using primitive_type = T;
 
 		/** constructor */
-		GPUPrimitiveMeshGenerator(primitive_type const & in_primitive, glm::mat4x4 const & in_transform = glm::mat4x4()):
+		GPUPrimitiveMeshGenerator(primitive_type const& in_primitive, glm::mat4x4 const& in_transform = glm::mat4x4()) :
 			primitive(in_primitive),
-			transform(in_transform){}
+			transform(in_transform) {}
 
 	protected:
 
@@ -107,9 +99,9 @@ namespace chaos
 		/** get requirement */
 		virtual GPUMeshGenerationRequirement GetRequirement() const override;
 		/** get the vertex declaration */
-		virtual GPUVertexDeclaration * GenerateVertexDeclaration() const override;
+		virtual GPUVertexDeclaration* GenerateVertexDeclaration() const override;
 		/** get the mesh data */
-		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
+		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive>& primitives, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
 
 	protected:
 
@@ -133,9 +125,9 @@ namespace chaos
 		/** get requirement */
 		virtual GPUMeshGenerationRequirement GetRequirement() const override;
 		/** get the vertex declaration */
-		virtual GPUVertexDeclaration * GenerateVertexDeclaration() const override;
+		virtual GPUVertexDeclaration* GenerateVertexDeclaration() const override;
 		/** get the mesh data */
-		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
+		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive>& primitives, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
 	};
 
 	/**
@@ -152,9 +144,9 @@ namespace chaos
 		/** get requirement */
 		virtual GPUMeshGenerationRequirement GetRequirement() const override;
 		/** get the vertex declaration */
-		virtual GPUVertexDeclaration * GenerateVertexDeclaration() const override;
+		virtual GPUVertexDeclaration* GenerateVertexDeclaration() const override;
 		/** get the mesh data */
-		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
+		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive>& primitives, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
 
 	protected:
 
@@ -174,16 +166,16 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUCircleMeshGenerator(sphere2 const & in_primitive, glm::mat4x4 const & in_transform = glm::mat4x4(), int in_subdivisions = 10) :
+		GPUCircleMeshGenerator(sphere2 const& in_primitive, glm::mat4x4 const& in_transform = glm::mat4x4(), int in_subdivisions = 10) :
 			GPUPrimitiveMeshGenerator<sphere2>(in_primitive, in_transform),
 			subdivisions(in_subdivisions) {}
 
 		/** get requirement */
 		virtual GPUMeshGenerationRequirement GetRequirement() const override;
 		/** get the vertex declaration */
-		virtual GPUVertexDeclaration * GenerateVertexDeclaration() const override;
+		virtual GPUVertexDeclaration* GenerateVertexDeclaration() const override;
 		/** get the mesh data */
-		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
+		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive>& primitives, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
 
 	protected:
 
@@ -202,21 +194,21 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUSphereMeshGenerator(sphere3 const & in_primitive, glm::mat4x4 const & in_transform = glm::mat4x4(), int in_subdivisions = 10) :
+		GPUSphereMeshGenerator(sphere3 const& in_primitive, glm::mat4x4 const& in_transform = glm::mat4x4(), int in_subdivisions = 10) :
 			GPUPrimitiveMeshGenerator<sphere3>(in_primitive, in_transform),
 			subdivisions(in_subdivisions) {}
 
 		/** get requirement */
 		virtual GPUMeshGenerationRequirement GetRequirement() const override;
 		/** get the vertex declaration */
-		virtual GPUVertexDeclaration * GenerateVertexDeclaration() const override;
+		virtual GPUVertexDeclaration* GenerateVertexDeclaration() const override;
 		/** get the mesh data */
-		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
+		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive>& primitives, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
 
 	protected:
 
 		/** get a vertex on the sphere from polar angle */
-		void InsertVertex(MemoryBufferWriter & vertices_writer, float alpha, float beta) const;
+		void InsertVertex(MemoryBufferWriter& vertices_writer, float alpha, float beta) const;
 
 	protected:
 
@@ -224,8 +216,6 @@ namespace chaos
 		int subdivisions = 10;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-

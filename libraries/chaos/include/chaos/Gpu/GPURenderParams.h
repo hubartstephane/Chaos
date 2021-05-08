@@ -1,18 +1,10 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class GPURenderParams;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// ========================================================
 	// GPURenderParams : some data for the rendering
@@ -24,7 +16,7 @@ namespace chaos
 	public:
 
 		/** get the material */
-		GPURenderMaterial const * GetMaterial(GPURenderable const * renderable, GPURenderMaterial const * default_material) const;
+		GPURenderMaterial const* GetMaterial(GPURenderable const* renderable, GPURenderMaterial const* default_material) const;
 
 	public:
 
@@ -37,6 +29,8 @@ namespace chaos
 		/** some filters */
 		shared_ptr<GPURenderableFilter> object_filter;
 
+
+		// shu48
 
 		glm::mat4 projection_matrix;
 
@@ -57,11 +51,9 @@ namespace chaos
 		/** material specialization */
 		std::string renderpass_name;
 		/** the instancing information */
-		GPUInstancingInfo instancing;		
+		GPUInstancingInfo instancing;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-

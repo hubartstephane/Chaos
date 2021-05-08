@@ -1,7 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
     // QUAD
     // ----
     //     3      2
@@ -59,15 +59,7 @@ namespace chaos
     template<typename VERTEX_TYPE> using LineStripPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::LINE_STRIP>;
     template<typename VERTEX_TYPE> using LineLoopPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::LINE_LOOP>;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
     /** returns the OpenGL primitive type corresponding to the primitive */
     constexpr GLenum GetGLPrimitiveType(PrimitiveType primitive_type)
@@ -98,7 +90,7 @@ namespace chaos
     }
 
     /**
-     * Primitive : base object for writing GPU primitives into memory (GPU mapped memory for the usage) 
+     * Primitive : base object for writing GPU primitives into memory (GPU mapped memory for the usage)
      *             a primitive is a sequence of vertices.
      *             Despite of its name, it may represents several primitives
      *             For example you may have a QuadPrimitive that represents 3 quads, each with 4 vertices (so 12 vertices)
@@ -114,10 +106,10 @@ namespace chaos
         /** base constructor */
         inline Primitive() = default;
         /** copy constructor */
-        inline Primitive(Primitive const & src) = default;
+        inline Primitive(Primitive const& src) = default;
         /** constructor */
         inline Primitive(char* in_buffer, size_t in_vertex_size, size_t in_vertex_count) :
-            buffer(in_buffer), 
+            buffer(in_buffer),
             vertex_size(in_vertex_size),
             vertex_count(in_vertex_count)
         {
@@ -127,7 +119,7 @@ namespace chaos
         }
 
         /** cast operator to child vertex type */
-        template<typename OTHER_VERTEX_TYPE> 
+        template<typename OTHER_VERTEX_TYPE>
         operator Primitive<OTHER_VERTEX_TYPE>& ()
         {
             static_assert(std::is_base_of_v<OTHER_VERTEX_TYPE, VERTEX_TYPE>);
@@ -135,20 +127,20 @@ namespace chaos
         }
         /** cast operator to child vertex type */
         template<typename OTHER_VERTEX_TYPE>
-        operator Primitive<OTHER_VERTEX_TYPE> const & () const
+        operator Primitive<OTHER_VERTEX_TYPE> const& () const
         {
             static_assert(std::is_base_of_v<OTHER_VERTEX_TYPE, VERTEX_TYPE>);
             return *(Primitive<OTHER_VERTEX_TYPE>*)this;
         }
 
         /** accessor */
-        inline vertex_type & operator [](size_t index)
+        inline vertex_type& operator [](size_t index)
         {
             assert(index < vertex_count);
             return *((vertex_type*)(buffer + vertex_size * index));
         }
         /** const accessor */
-        inline vertex_type const & operator [](size_t index) const
+        inline vertex_type const& operator [](size_t index) const
         {
             assert(index < vertex_count);
             return *((vertex_type const*)(buffer + vertex_size * index));
@@ -168,7 +160,7 @@ namespace chaos
         }
 
         /** gets forward iterator on vertices */
-        RawDataBufferIterator<VERTEX_TYPE> begin() 
+        RawDataBufferIterator<VERTEX_TYPE> begin()
         {
             return RawDataBufferAccessor<VERTEX_TYPE>(buffer, vertex_count, vertex_size).begin();
         }
@@ -188,7 +180,7 @@ namespace chaos
             return RawDataBufferConstAccessor<VERTEX_TYPE>(buffer, vertex_count, vertex_size).end();
         }
 
-	protected:
+    protected:
 
         /** the buffer where we write buffer */
         char* buffer = nullptr;
@@ -247,7 +239,7 @@ namespace chaos
         }
 
         /** pre-decrement (next primitive for the row : not the next vertex !) */
-        TypedPrimitive<VERTEX_TYPE, PRIMITIVE_TYPE> & operator ++()
+        TypedPrimitive<VERTEX_TYPE, PRIMITIVE_TYPE>& operator ++()
         {
             return operator += (1);
         }
@@ -260,9 +252,6 @@ namespace chaos
         }
     };
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

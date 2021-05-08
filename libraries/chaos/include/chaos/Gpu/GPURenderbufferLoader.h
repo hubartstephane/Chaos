@@ -1,18 +1,10 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class GPURenderbufferLoader;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* GPURenderbufferLoader : used to have some generic functions for OpenGL
@@ -23,10 +15,9 @@ namespace chaos
 	public:
 
 		/** create a renderbuffer */
-		GPURenderbuffer * GenRenderbufferObject(PixelFormat const & pixel_format, glm::ivec2 const & size);
+		GPURenderbuffer* GenRenderbufferObject(PixelFormat const& pixel_format, glm::ivec2 const& size);
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-

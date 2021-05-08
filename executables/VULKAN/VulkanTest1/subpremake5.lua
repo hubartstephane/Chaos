@@ -4,6 +4,6 @@
 
   WindowedApp()
   DependOnLib("BOOST")  
-  --DependOnLib("CHAOS")  
-  --DependOnLib("VULKAN")  
+  DependOnLib("CHAOS")  
+  DependOnLib("VULKAN")  
                        

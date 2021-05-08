@@ -1,32 +1,37 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <boost/crc.hpp> 
+#include <chaos/chaos.h>
 
-namespace chaos
+
+class A : public chaos::Object
 {
-    void f()
+public:
+
+    virtual ~A() {}
+
+    virtual void f()
     {
         int i = 0;
         ++i;
     }
+};
 
-    void ::g()
-    {
 
-    }
 
-}
+
+
 
 
 int main(int argc, char** argv, char** env)
 {
-    g();
+    std::vector<chaos::shared_ptr<A>> v;
+    for (int i = 0; i < 100; ++i)
+        v.emplace_back(new A);
 
-
-
-
-
-
+  
+    for (auto& i : v)
+        i->f();
 
 
 

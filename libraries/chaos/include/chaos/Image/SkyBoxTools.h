@@ -1,23 +1,15 @@
-
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	enum class SkyBoxImageType;
 
 	class SkyBoxSingleDisposition;
 	class SkyBoxImages;
 	class SkyBoxTools;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
 	enum class SkyBoxImageType : int
 	{
 		IMAGE_LEFT = 0,
@@ -64,30 +56,30 @@ namespace chaos
 		/** constructor */
 		SkyBoxImages() = default;
 		/** copy constructor */
-		SkyBoxImages(SkyBoxImages const & other) = delete;
+		SkyBoxImages(SkyBoxImages const& other) = delete;
 		/** move constructor */
-		SkyBoxImages(SkyBoxImages && other) noexcept;
+		SkyBoxImages(SkyBoxImages&& other) noexcept;
 		/** destructor */
 		~SkyBoxImages();
 
 		/** Get skybox size */
 		int GetSkyBoxSize() const;
 		/** Get skybox size for a single image (returns -1 if not a good candidate i.e 4/3) */
-		static int GetSingleImageSize(FIBITMAP * image);
+		static int GetSingleImageSize(FIBITMAP* image);
 		/** Get skybox size for a multiple image (returns -1 if not a good candidate i.e square) */
-		static int GetMultipleImageSize(FIBITMAP * image);
+		static int GetMultipleImageSize(FIBITMAP* image);
 
 		/** Get skybox size for a single image (returns -1 if not a good candidate i.e 4/3) */
-		static int GetSingleImageSize(ImageDescription const & image_description);
+		static int GetSingleImageSize(ImageDescription const& image_description);
 		/** Get skybox size for a multiple image (returns -1 if not a good candidate i.e square) */
-		static int GetMultipleImageSize(ImageDescription const & image_description);
+		static int GetMultipleImageSize(ImageDescription const& image_description);
 
 		/** Method to clean the skybox */
 		void Release();
 		/** Transform a 6 images box into a one image box */
 		SkyBoxImages ToMultipleImages() const;
 		/** Transform a single image box into a six images box */
-		SkyBoxImages ToSingleImage(bool bHorizontal, glm::vec4 const & fill_color, PixelFormatMergeParams const & merge_params = PixelFormatMergeParams()) const;
+		SkyBoxImages ToSingleImage(bool bHorizontal, glm::vec4 const& fill_color, PixelFormatMergeParams const& merge_params = PixelFormatMergeParams()) const;
 
 		/** returns true whether the skybox is empty */
 		bool IsEmpty() const;
@@ -103,7 +95,7 @@ namespace chaos
 		bool IsSingleImageVertical() const;
 
 		/** get the pixel format for the skybox according to a merge param */
-		PixelFormat GetMergedPixelFormat(PixelFormatMergeParams const & merge_params) const;
+		PixelFormat GetMergedPixelFormat(PixelFormatMergeParams const& merge_params) const;
 
 		/** Gets the description of one face */
 		ImageDescription GetImageFaceDescription(SkyBoxImageType image_type) const;
@@ -111,30 +103,30 @@ namespace chaos
 		glm::ivec3 GetPositionAndFlags(SkyBoxImageType image_type) const;
 
 		/** Sets an image (verify that it is a coherent call) */
-		bool SetImage(SkyBoxImageType image_type, FIBITMAP * image, bool release_image);
+		bool SetImage(SkyBoxImageType image_type, FIBITMAP* image, bool release_image);
 		/** get the image of any face */
-		FIBITMAP * GetImage(SkyBoxImageType face) const;
+		FIBITMAP* GetImage(SkyBoxImageType face) const;
 
 		/** no copy */
-		SkyBoxImages & operator = (SkyBoxImages const & other) = delete;
+		SkyBoxImages& operator = (SkyBoxImages const& other) = delete;
 		/** move operator */
-		SkyBoxImages & operator = (SkyBoxImages && other) noexcept;
+		SkyBoxImages& operator = (SkyBoxImages&& other) noexcept;
 
 	protected:
 
 		/** compare 2 images and ensure they are compatible */
-		static bool AreImageCompatible(FIBITMAP * image1, FIBITMAP * image2);
+		static bool AreImageCompatible(FIBITMAP* image1, FIBITMAP* image2);
 
 	protected:
 
 		/** the images for the skybox */
-		FIBITMAP * images[7] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+		FIBITMAP* images[7] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 		/** whether the skybox images are to be released */
-		bool release_images[7] = {false, false, false, false, false, false, false};
+		bool release_images[7] = { false, false, false, false, false, false, false };
 	};
 
 
-	/** 
+	/**
 	* SkyBoxTools : deserve to load skybox files
 	*/
 
@@ -143,16 +135,16 @@ namespace chaos
 	public:
 
 		/** load a skybox from a single file */
-		static SkyBoxImages LoadSingleSkyBox(FilePathParam const & path);
+		static SkyBoxImages LoadSingleSkyBox(FilePathParam const& path);
 		/** load a skybox from a multiple files */
-		static SkyBoxImages LoadMultipleSkyBox(FilePathParam const & left_image, FilePathParam const & right_image, FilePathParam const & top_image, FilePathParam const & bottom_image, FilePathParam const & front_image, FilePathParam const & back_image);
+		static SkyBoxImages LoadMultipleSkyBox(FilePathParam const& left_image, FilePathParam const& right_image, FilePathParam const& top_image, FilePathParam const& bottom_image, FilePathParam const& front_image, FilePathParam const& back_image);
 
 	protected:
 
 		/** utility function to load a file into one image. Incrementaly test for compatibility with previsous image */
-		static bool DoLoadMultipleSkyBox_OneImage(SkyBoxImages & skybox, FilePathParam const & path, SkyBoxImageType image_index);
+		static bool DoLoadMultipleSkyBox_OneImage(SkyBoxImages& skybox, FilePathParam const& path, SkyBoxImageType image_index);
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

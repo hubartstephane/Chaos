@@ -1,19 +1,11 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class BitmapGridAnimationInfo;
 	class ImageAnimationDescription;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* BitmapGridAnimationInfo : some bitmaps represent a uniform grid of individual animation frames
@@ -24,7 +16,7 @@ namespace chaos
 	public:
 
 		/** the size of the grid */
-		glm::ivec2 grid_size = glm::ivec2(0, 0);
+		glm::ivec2 grid_size = { 0, 0 };
 		/** the last images that are not filled */
 		int skip_lasts = 0;
 
@@ -34,18 +26,18 @@ namespace chaos
 		int GetFrameCount() const;
 
 		/** parsing the the name to extract the grid numbers */
-		static bool ParseFromName(char const * name, BitmapGridAnimationInfo & result, std::string * name_result = nullptr);
+		static bool ParseFromName(char const* name, BitmapGridAnimationInfo& result, std::string* name_result = nullptr);
 
 	protected:
 
 		/** utility method */
-		static bool ParseFromNameReadGridX(char const * name, int i, BitmapGridAnimationInfo & result, std::string * name_result = nullptr);
+		static bool ParseFromNameReadGridX(char const* name, int i, BitmapGridAnimationInfo& result, std::string* name_result = nullptr);
 		/** utility method */
-		static bool ParseFromNameReadGridY(char const * name, int i, BitmapGridAnimationInfo & result, std::string * name_result = nullptr);
+		static bool ParseFromNameReadGridY(char const* name, int i, BitmapGridAnimationInfo& result, std::string* name_result = nullptr);
 		/** utility method */
-		static bool ParseFromNameReadGridSkip(char const * name, int i, BitmapGridAnimationInfo & result, std::string * name_result = nullptr);
+		static bool ParseFromNameReadGridSkip(char const* name, int i, BitmapGridAnimationInfo& result, std::string* name_result = nullptr);
 		/** utility method */
-		static bool ParseDigitReverse(char const * str, int & start);
+		static bool ParseDigitReverse(char const* str, int& start);
 	};
 
 	/**
@@ -86,18 +78,16 @@ namespace chaos
 	/**
 	* Some JSON utility functions
 	*/
-		
-	bool SaveIntoJSON(nlohmann::json & json_entry, BitmapGridAnimationInfo const & src);
 
-	bool LoadFromJSON(nlohmann::json const & json_entry, BitmapGridAnimationInfo & dst);
+	bool SaveIntoJSON(nlohmann::json& json_entry, BitmapGridAnimationInfo const& src);
 
-	bool SaveIntoJSON(nlohmann::json & json_entry, ImageAnimationDescription const & src);
+	bool LoadFromJSON(nlohmann::json const& json_entry, BitmapGridAnimationInfo& dst);
 
-	bool LoadFromJSON(nlohmann::json const & json_entry, ImageAnimationDescription & dst);
+	bool SaveIntoJSON(nlohmann::json& json_entry, ImageAnimationDescription const& src);
+
+	bool LoadFromJSON(nlohmann::json const& json_entry, ImageAnimationDescription& dst);
+
+
+#endif
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

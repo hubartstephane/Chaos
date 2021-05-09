@@ -1,25 +1,17 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	enum class PixelComponentType;
 
 	class PixelFormat;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
-
-	/** 
-	 * the type of each component of each pixels 
+	/**
+	 * the type of each component of each pixels
 	 */
-	 
+
 	enum class PixelComponentType : int
 	{
 		UNKNOWN = 0,
@@ -34,7 +26,7 @@ namespace chaos
 	/** JSON saving method */
 	bool SaveIntoJSON(nlohmann::json& json_entry, PixelComponentType const& src);
 
-	/** 
+	/**
 	* PixelFormat : the accepted pixel formats
 	*/
 
@@ -46,11 +38,11 @@ namespace chaos
 		/** constructor */
 		PixelFormat() = default;
 
-		PixelFormat(PixelFormat const & other) = default;
+		PixelFormat(PixelFormat const& other) = default;
 
 		PixelFormat(PixelComponentType in_component_type, int in_component_count) :
-			component_type(in_component_type), 
-			component_count(in_component_count){};
+			component_type(in_component_type),
+			component_count(in_component_count) {};
 
 		/** get the size of one pixel */
 		int GetPixelSize() const;
@@ -62,9 +54,9 @@ namespace chaos
 		bool IsDepthStencilPixel() const;
 
 		/** returns true whether the pixel format are same */
-		bool operator == (PixelFormat const & other) const;
+		bool operator == (PixelFormat const& other) const;
 		/** returns true whether the pixel format are different */
-		bool operator != (PixelFormat const & other) const;
+		bool operator != (PixelFormat const& other) const;
 
 		/** a static instance of all pixel formats */
 		static PixelFormat const Gray;
@@ -80,17 +72,17 @@ namespace chaos
 		static PixelFormat GetPixelFormat();
 
 		template<>
-		static PixelFormat GetPixelFormat<PixelGray>(){ return Gray;}
+		static PixelFormat GetPixelFormat<PixelGray>() { return Gray; }
 		template<>
-		static PixelFormat GetPixelFormat<PixelBGR>(){ return BGR;}
+		static PixelFormat GetPixelFormat<PixelBGR>() { return BGR; }
 		template<>
-		static PixelFormat GetPixelFormat<PixelBGRA>(){ return BGRA;}
+		static PixelFormat GetPixelFormat<PixelBGRA>() { return BGRA; }
 		template<>
-		static PixelFormat GetPixelFormat<PixelGrayFloat>(){ return GrayFloat;}
+		static PixelFormat GetPixelFormat<PixelGrayFloat>() { return GrayFloat; }
 		template<>
-		static PixelFormat GetPixelFormat<PixelRGBFloat>(){ return RGBFloat;}
+		static PixelFormat GetPixelFormat<PixelRGBFloat>() { return RGBFloat; }
 		template<>
-		static PixelFormat GetPixelFormat<PixelRGBAFloat>(){ return RGBAFloat;}
+		static PixelFormat GetPixelFormat<PixelRGBAFloat>() { return RGBAFloat; }
 		template<>
 		static PixelFormat GetPixelFormat<PixelDepthStencil>() { return DepthStencil; }
 
@@ -99,14 +91,13 @@ namespace chaos
 		/** the type of the components */
 		PixelComponentType component_type = PixelComponentType::UNKNOWN;
 		/** the number of components for each pixels */
-		int component_count = 0;		
+		int component_count = 0;
 	};
 
 	bool LoadFromJSON(nlohmann::json const& json_entry, PixelFormat& dst);
 
 	bool SaveIntoJSON(nlohmann::json& json_entry, PixelFormat const& src);
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-

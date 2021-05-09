@@ -1,25 +1,14 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
 	namespace BitmapAtlas
 	{
+#ifdef CHAOS_FORWARD_DECLARATION
+
 		class AtlasHTMLOutputParams;
 		class AtlasHTMLGenerator;
 
-	}; // namespace BitmapAtlas
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
-	namespace BitmapAtlas
-	{
 		/**
 		* AtlasHTMLOutputParams : settings to output an atlas into an HTML file
 		*/
@@ -51,34 +40,35 @@ namespace chaos
 		public:
 
 			/** create an XML document and output debug information */
-			static tinyxml2::XMLDocument * OutputToHTMLDocument(Atlas const & atlas, AtlasHTMLOutputParams params = AtlasHTMLOutputParams());
+			static tinyxml2::XMLDocument* OutputToHTMLDocument(Atlas const& atlas, AtlasHTMLOutputParams params = {});
 			/** create an XML document and output debug information */
-			static void OutputToHTMLDocument(Atlas const & atlas, tinyxml2::XMLDocument * doc, AtlasHTMLOutputParams params = AtlasHTMLOutputParams());
+			static void OutputToHTMLDocument(Atlas const& atlas, tinyxml2::XMLDocument* doc, AtlasHTMLOutputParams params = {});
 			/** output the atlas trees in HTML format */
-			static bool OutputToHTMLFile(Atlas const & atlas, FilePathParam const & path, AtlasHTMLOutputParams params = AtlasHTMLOutputParams());
+			static bool OutputToHTMLFile(Atlas const& atlas, FilePathParam const& path, AtlasHTMLOutputParams params = {});
 
 		protected:
 
 			/** utility methods to iterate over BitmapSets or FontInfos and display their entries informations into HTML */
 			template<typename T>
-			static void OutputElementsToHTMLDocument(char const * folder_path, std::vector<T> const & elements, XMLTools & html, tinyxml2::XMLElement * TABLE, tinyxml2::XMLElement * &TR, int bitmap_index, int & count);
+			static void OutputElementsToHTMLDocument(char const* folder_path, std::vector<T> const& elements, XMLTools& html, tinyxml2::XMLElement* TABLE, tinyxml2::XMLElement*& TR, int bitmap_index, int& count);
 			/** utility methods to iterate over elements of a folders and display their entries informations into HTML */
-			static void OutputElementsToHTMLDocument(char const * folder_path, FolderInfo const * folder_info, XMLTools & html, tinyxml2::XMLElement * TABLE, tinyxml2::XMLElement * &TR, int bitmap_index, int & count);
+			static void OutputElementsToHTMLDocument(char const* folder_path, FolderInfo const* folder_info, XMLTools& html, tinyxml2::XMLElement* TABLE, tinyxml2::XMLElement*& TR, int bitmap_index, int& count);
 
 			/** utility methods to iterate over BitmapSets or FontInfos and display the texture rectangle into HTML */
 			template<typename T>
-			static void OutputBitmapsToHTMLDocument(std::vector<T> const & elements, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale);
+			static void OutputBitmapsToHTMLDocument(std::vector<T> const& elements, XMLTools& html, tinyxml2::XMLElement* SVG, int bitmap_index, float scale);
 			/** utility method to recursively draw the bitmaps and characters from folders */
-			static void OutputBitmapsToHTMLDocument(FolderInfo const * folder_info, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale);
+			static void OutputBitmapsToHTMLDocument(FolderInfo const* folder_info, XMLTools& html, tinyxml2::XMLElement* SVG, int bitmap_index, float scale);
 
 			/** utility methods to iterate over BitmapSets or FontInfos and display the texture filename into HTML */
 			template<typename T>
-			static void OutputBitmapFilenamesToHTMLDocument(std::vector<T> const & elements, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale);
+			static void OutputBitmapFilenamesToHTMLDocument(std::vector<T> const& elements, XMLTools& html, tinyxml2::XMLElement* SVG, int bitmap_index, float scale);
 			/** utility method to recursively display bitmaps and characters filenames */
-			static void OutputBitmapFilenamesToHTMLDocument(FolderInfo const * folder_info, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale);
+			static void OutputBitmapFilenamesToHTMLDocument(FolderInfo const* folder_info, XMLTools& html, tinyxml2::XMLElement* SVG, int bitmap_index, float scale);
 		};
+
+#endif
+
 	}; // namespace BitmapAtlas
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

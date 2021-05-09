@@ -1,26 +1,15 @@
-
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
 	namespace BitmapAtlas
 	{
+#ifdef CHAOS_FORWARD_DECLARATION
+
 		class BitmapAtlasFilterCondition;
 		class BitmapAtlasFilter;
 		class BitmapAtlasFilterSet;
-	};
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
-	namespace BitmapAtlas
-	{
 		/**
 		* BitmapAtlasFilterCondition : a condition to know whether the bitmap is to be processed
 		*/
@@ -79,10 +68,8 @@ namespace chaos
 		/** saving method from JSON */
 		bool SaveIntoJSON(nlohmann::json& entry, BitmapAtlasFilterSet const& src);
 
+#endif
+
 	}; // namespace BitmapAtlas
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-

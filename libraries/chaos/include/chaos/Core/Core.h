@@ -40,7 +40,6 @@
 #include <chaos/Core/ClockManager.h>
 #include <chaos/Core/BufferReader.h>
 #include <chaos/Core/StateMachine.h>
-#include <chaos/Core/InheritanceIntrospection.h>
 #include <chaos/Core/BitTools.h>
 #include <chaos/Core/PriorityQueue.h>
 #include <chaos/Core/NestedIterator.h>

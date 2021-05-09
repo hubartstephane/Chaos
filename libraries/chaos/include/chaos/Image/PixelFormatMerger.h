@@ -1,19 +1,11 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class PixelFormatMergeParams;
 	class PixelFormatMerger;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* PixelFormatMergeParams
@@ -31,7 +23,7 @@ namespace chaos
 		/** if set to false, all luminances formats will become RGB */
 		bool accept_luminance = true;
 		/** if set to false, all float formats will become unsigned char */
-		bool accept_float = true;	
+		bool accept_float = true;
 	};
 
 	bool LoadFromJSON(nlohmann::json const& json_entry, PixelFormatMergeParams& dst);
@@ -73,7 +65,7 @@ namespace chaos
 		bool identical_incomming_format = true;
 	};
 
+
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-

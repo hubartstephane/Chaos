@@ -1,32 +1,15 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
 	namespace BitmapAtlas
 	{
+#ifdef CHAOS_FORWARD_DECLARATION
+
 		class AtlasGeneratorParams;
 		class Rectangle;
 		class AtlasGenerator;
 		class TextureArrayAtlasGenerator;
 
-	}; // namespace BitmapAtlas
-
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
-	/** load from JSON */
-	bool LoadFromJSON(nlohmann::json const& json_entry, BitmapAtlas::AtlasGeneratorParams& dst);
-	/** save into JSON */
-	bool SaveIntoJSON(nlohmann::json& json_entry, BitmapAtlas::AtlasGeneratorParams const& src);
-
-	namespace BitmapAtlas
-	{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 		/**
 		* AtlasGeneratorParams : parameters used when generating an atlas
@@ -41,7 +24,7 @@ namespace chaos
 			/** copy contructor */
 			AtlasGeneratorParams(AtlasGeneratorParams const& src) = default;
 			/** contructor with initialization */
-			AtlasGeneratorParams(int in_width, int in_height, int in_padding, PixelFormatMergeParams const & in_merge_params) :
+			AtlasGeneratorParams(int in_width, int in_height, int in_padding, PixelFormatMergeParams const& in_merge_params) :
 				atlas_width(in_width),
 				atlas_height(in_height),
 				atlas_padding(in_padding),
@@ -87,14 +70,14 @@ namespace chaos
 			/** the size of the rectangle */
 			int height = 0;
 			/** equality test */
-			bool operator == (Rectangle const & src) const
+			bool operator == (Rectangle const& src) const
 			{
 				return (x == src.x) && (y == src.y) && (width == src.width) && (height == src.height);
 			}
 			/** returns true whenever big does fully contains this */
-			bool IsFullyInside(Rectangle const & big) const;
+			bool IsFullyInside(Rectangle const& big) const;
 			/** returns true whenever there is an intersection between this and big */
-			bool IsIntersecting(Rectangle const & big) const;
+			bool IsIntersecting(Rectangle const& big) const;
 		};
 
 		/**
@@ -117,18 +100,18 @@ namespace chaos
 			};
 
 			/** an utility class used to reference all entries in input */
-			using BitmapInfoInputVector = std::vector<BitmapInfoInput *>;
+			using BitmapInfoInputVector = std::vector<BitmapInfoInput*>;
 
 		public:
 
 			/** make destructor virtual */
 			virtual ~AtlasGenerator() = default;
 			/** compute all BitmapInfo positions */
-			bool ComputeResult(AtlasInput const & in_input, Atlas & in_ouput, AtlasGeneratorParams const & in_params = AtlasGeneratorParams());
+			bool ComputeResult(AtlasInput const& in_input, Atlas& in_ouput, AtlasGeneratorParams const& in_params = AtlasGeneratorParams());
 			/** returns a vector with all generated bitmaps (to be deallocated after usage) */
-			std::vector<bitmap_ptr> GenerateBitmaps(BitmapInfoInputVector const & entries, PixelFormat const & final_pixel_format) const;
+			std::vector<bitmap_ptr> GenerateBitmaps(BitmapInfoInputVector const& entries, PixelFormat const& final_pixel_format) const;
 			/** create an atlas from a directory into another directory */
-			static bool CreateAtlasFromDirectory(FilePathParam const & bitmaps_dir, FilePathParam const & path, bool recursive, AtlasGeneratorParams const & in_params = AtlasGeneratorParams());
+			static bool CreateAtlasFromDirectory(FilePathParam const& bitmaps_dir, FilePathParam const& path, bool recursive, AtlasGeneratorParams const& in_params = AtlasGeneratorParams());
 
 		protected:
 
@@ -137,23 +120,23 @@ namespace chaos
 			/** returns the box for the atlas */
 			Rectangle GetAtlasRectangle() const;
 			/** add padding to a rectangle */
-			Rectangle AddPadding(Rectangle const & r) const;
+			Rectangle AddPadding(Rectangle const& r) const;
 			/** returns the rectangle corresponding to the BitmapLayout */
-			Rectangle GetRectangle(BitmapLayout const & layout) const;
+			Rectangle GetRectangle(BitmapLayout const& layout) const;
 
 			/** fill the entries of the atlas from input (collect all input entries) */
-			void FillAtlasEntriesFromInput(BitmapInfoInputVector & result, FolderInfoInput * folder_info_input, FolderInfo * folder_info_output);
+			void FillAtlasEntriesFromInput(BitmapInfoInputVector& result, FolderInfoInput* folder_info_input, FolderInfo* folder_info_output);
 			/** test whether there is an intersection between each pair of Entries in an atlas */
-			bool EnsureValidResults(BitmapInfoInputVector const & result, std::ostream & stream = std::cout) const;
+			bool EnsureValidResults(BitmapInfoInputVector const& result, std::ostream& stream = std::cout) const;
 			/** test whether rectangle intersects with any of the entries */
-			bool HasIntersectingInfo(Rectangle const & r, std::vector<Rectangle> const & collision_rectangles) const;
+			bool HasIntersectingInfo(Rectangle const& r, std::vector<Rectangle> const& collision_rectangles) const;
 
 			/** the effective function to do the computation */
-			bool DoComputeResult(BitmapInfoInputVector const & entries);
+			bool DoComputeResult(BitmapInfoInputVector const& entries);
 			/** returns the position (if any) in an atlas withe the best score */
-			float FindBestPositionInAtlas(BitmapInfoInputVector const & entries, BitmapInfoInput const & info, AtlasDefinition const & atlas_def, glm::ivec2 & position) const;
+			float FindBestPositionInAtlas(BitmapInfoInputVector const& entries, BitmapInfoInput const& info, AtlasDefinition const& atlas_def, glm::ivec2& position) const;
 			/** insert a bitmap in an atlas definition */
-			void InsertBitmapLayoutInAtlas(BitmapLayout & layout, AtlasDefinition & atlas_def, glm::ivec2 const & position);
+			void InsertBitmapLayoutInAtlas(BitmapLayout& layout, AtlasDefinition& atlas_def, glm::ivec2 const& position);
 
 			/** an utility function that returns an array with 0.. count - 1*/
 			static std::vector<size_t> CreateIndexTable(size_t count)
@@ -178,15 +161,15 @@ namespace chaos
 			/** the params for generation */
 			AtlasGeneratorParams params;
 			/** the input files */
-			AtlasInput const * input = nullptr;
+			AtlasInput const* input = nullptr;
 			/** the result */
-			Atlas * output = nullptr;
+			Atlas* output = nullptr;
 			/** all definitions */
 			std::vector<AtlasDefinition> atlas_definitions;
 		};
 
 		/**
-		* TextureArrayAtlasGenerator 
+		* TextureArrayAtlasGenerator
 		*/
 
 		class TextureArrayAtlasGenerator
@@ -197,11 +180,17 @@ namespace chaos
 			/** make destructor virtual */
 			virtual ~TextureArrayAtlasGenerator() = default;
 			/** compute all BitmapInfo positions */
-			TextureArrayAtlas * ComputeResult(AtlasInput const & in_input, AtlasGeneratorParams const & in_params = AtlasGeneratorParams(), char const * dump_atlas_dirname = nullptr);
+			TextureArrayAtlas* ComputeResult(AtlasInput const& in_input, AtlasGeneratorParams const& in_params = {}, char const* dump_atlas_dirname = nullptr);
 		};
+
+		/** load from JSON */
+		bool LoadFromJSON(nlohmann::json const& json_entry, AtlasGeneratorParams& dst);
+		/** save into JSON */
+		bool SaveIntoJSON(nlohmann::json& json_entry, AtlasGeneratorParams const& src);
+
+
+#endif
 
 	}; // namespace BitmapAtlas
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

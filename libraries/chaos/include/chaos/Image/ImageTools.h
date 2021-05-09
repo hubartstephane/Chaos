@@ -1,7 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	enum class ImageTransform;
 
 	class FIBITMAPDeleter;
@@ -12,15 +12,8 @@ namespace chaos
 
 	class ImageTools;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
 	enum class ImageTransform : int
 	{
 		NO_TRANSFORM = 0,
@@ -39,7 +32,7 @@ namespace chaos
 		FIBITMAPDeleter(bool in_release = true) :
 			release(in_release) {}
 		/** the destruction method */
-		void operator ()(FIBITMAP * bitmap)
+		void operator ()(FIBITMAP* bitmap)
 		{
 			if (release)
 				FreeImage_Unload(bitmap);
@@ -62,7 +55,7 @@ namespace chaos
 		FIMULTIBITMAPDeleter(bool in_release = true) :
 			release(in_release) {}
 		/** the destruction method */
-		void operator ()(FIMULTIBITMAP * multi_bitmap)
+		void operator ()(FIMULTIBITMAP* multi_bitmap)
 		{
 			if (release)
 				FreeImage_CloseMultiBitmap(multi_bitmap);
@@ -73,7 +66,7 @@ namespace chaos
 		bool release = true;
 	};
 
-	/** 
+	/**
 	* ImageTools : deserve to load some images
 	*/
 
@@ -83,77 +76,77 @@ namespace chaos
 	public:
 
 		/** fill the color of the background */
-		static void FillImageBackground(ImageDescription & image_description, glm::vec4 const & color);
+		static void FillImageBackground(ImageDescription& image_description, glm::vec4 const& color);
 
 		/** generate a free image corresponding to a given pixel format */
-		static FIBITMAP * GenFreeImage(PixelFormat const & pixel_format, int width, int height);
+		static FIBITMAP* GenFreeImage(PixelFormat const& pixel_format, int width, int height);
 		/** generate a free image from a description */
-		static FIBITMAP * GenFreeImage(ImageDescription const & src_desc);
+		static FIBITMAP* GenFreeImage(ImageDescription const& src_desc);
 		/** generate a free image from a texture */
-		static FIBITMAP * GenFreeImage(GLuint texture_id, GLint level);
-		
+		static FIBITMAP* GenFreeImage(GLuint texture_id, GLint level);
+
 		/** get the free image description frm a type */
-		static FREE_IMAGE_TYPE GetFreeImageType(PixelFormat const & pixel_format, int * bpp = nullptr);
+		static FREE_IMAGE_TYPE GetFreeImageType(PixelFormat const& pixel_format, int* bpp = nullptr);
 		/** the free image prefered file format for a given PixelFormat */
-		static FREE_IMAGE_FORMAT GetFreeImageFormat(PixelFormat const & pixel_format);
+		static FREE_IMAGE_FORMAT GetFreeImageFormat(PixelFormat const& pixel_format);
 
 		/** load an image from a buffer */
-		static FIBITMAP * LoadImageFromBuffer(Buffer<char> buffer);
+		static FIBITMAP* LoadImageFromBuffer(Buffer<char> buffer);
 		/** load an image from file (use our own implementation instead of FreeImage_LoadFromFile to provide our own error management) */
-		static FIBITMAP * LoadImageFromFile(FilePathParam const & path);
+		static FIBITMAP* LoadImageFromFile(FilePathParam const& path);
 
 		/** load multiple image from a buffer (animated gif) */
-		static std::vector<FIBITMAP*> LoadMultipleImagesFromBuffer(Buffer<char> buffer, ImageAnimationDescription * anim_description = nullptr);
+		static std::vector<FIBITMAP*> LoadMultipleImagesFromBuffer(Buffer<char> buffer, ImageAnimationDescription* anim_description = nullptr);
 		/** load multiple image from a file (animated gif) */
-		static std::vector<FIBITMAP*> LoadMultipleImagesFromFile(FilePathParam const & path, ImageAnimationDescription * anim_description = nullptr);
+		static std::vector<FIBITMAP*> LoadMultipleImagesFromFile(FilePathParam const& path, ImageAnimationDescription* anim_description = nullptr);
 		/** extract from a multi bitmap all pages (this is a 'duplication' due to library limitation) */
-		static std::vector<FIBITMAP *> GetMultiImagePages(FIMULTIBITMAP * multi_bitmap, ImageAnimationDescription * anim_description = nullptr);
+		static std::vector<FIBITMAP*> GetMultiImagePages(FIMULTIBITMAP* multi_bitmap, ImageAnimationDescription* anim_description = nullptr);
 
 		/** try to read animation meta data from an image */
-		static bool GetImageAnimDescription(FIBITMAP * image, ImageAnimationDescription & result);
+		static bool GetImageAnimDescription(FIBITMAP* image, ImageAnimationDescription& result);
 
 		/** returns true whether the image is paletted, 8 bits and its color are grays */
-		static bool IsGrayscaleImage(FIBITMAP * image, bool * alpha_needed = nullptr);
+		static bool IsGrayscaleImage(FIBITMAP* image, bool* alpha_needed = nullptr);
 		/** transform input image into a supported format whenever possible (may destroy the input in case of failure) */
-		static FIBITMAP * ConvertToSupportedType(FIBITMAP * src, bool can_delete_src);
+		static FIBITMAP* ConvertToSupportedType(FIBITMAP* src, bool can_delete_src);
 
 		/** get the image information from a FreeImage */
-		static ImageDescription GetImageDescription(FIBITMAP * image);
+		static ImageDescription GetImageDescription(FIBITMAP* image);
 		/** get pixel format corresponding to an image */
-		static PixelFormat GetPixelFormat(FIBITMAP * image);
+		static PixelFormat GetPixelFormat(FIBITMAP* image);
 
 		/** copy pixels */
-		static void CopyPixels(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height, ImageTransform image_transform = ImageTransform::NO_TRANSFORM);
+		static void CopyPixels(ImageDescription const& src_desc, ImageDescription& dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height, ImageTransform image_transform = ImageTransform::NO_TRANSFORM);
 		/** convert image into another pixel format + central symetry if required */
-		static ImageDescription ConvertPixels(ImageDescription const & src_desc, PixelFormat const & final_pixel_format, char * conversion_buffer, ImageTransform image_transform = ImageTransform::NO_TRANSFORM);
+		static ImageDescription ConvertPixels(ImageDescription const& src_desc, PixelFormat const& final_pixel_format, char* conversion_buffer, ImageTransform image_transform = ImageTransform::NO_TRANSFORM);
 
 		/** create a ImageTexture with DWORD alignment requirements with a given buffer */
-		static ImageDescription GetImageDescriptionForAlignedTexture(PixelFormat const & pixel_format, int width, int height, char * buffer);
+		static ImageDescription GetImageDescriptionForAlignedTexture(PixelFormat const& pixel_format, int width, int height, char* buffer);
 		/** compute the memory requirement for a texture with DWORD aligned rows texture */
-		static int GetMemoryRequirementForAlignedTexture(PixelFormat const & pixel_format, int width, int height);
+		static int GetMemoryRequirementForAlignedTexture(PixelFormat const& pixel_format, int width, int height);
 
 		/** Generate an image from lambda */
 		template<typename T, typename GENERATOR>
-		static FIBITMAP * GenFreeImage(int width, int height, GENERATOR const & generator)
+		static FIBITMAP* GenFreeImage(int width, int height, GENERATOR const& generator)
 		{
-			FIBITMAP * result = GenFreeImage(PixelFormat::GetPixelFormat<T>(), width, height);
+			FIBITMAP* result = GenFreeImage(PixelFormat::GetPixelFormat<T>(), width, height);
 			if (result != nullptr)
 			{
 				ImageDescription image_desc = GetImageDescription(result);
-				generator(image_desc);			
+				generator(image_desc);
 			}
 			return result;
 		}
 
 		// Read a FIFTag with a conversion (not all type handled)
 		template<typename T>
-		static bool ReadFIFTag(FITAG * tag, T & result)
+		static bool ReadFIFTag(FITAG* tag, T& result)
 		{
 			// early exit
 			if (tag == nullptr)
 				return false;
 			// get the value
-			void const * value_ptr = FreeImage_GetTagValue(tag);
+			void const* value_ptr = FreeImage_GetTagValue(tag);
 			if (value_ptr == nullptr)
 				return false;
 			// get the type
@@ -184,7 +177,7 @@ return true;\
 
 		// read a FIFTag with a conversion (and a default value)
 		template<typename T>
-		static bool ReadFIFTag(FITAG * tag, T & result, T default_value)
+		static bool ReadFIFTag(FITAG* tag, T& result, T default_value)
 		{
 			if (ReadFIFTag(tag, result))
 				return true;
@@ -194,9 +187,9 @@ return true;\
 
 		// Read some meta data
 		template<typename T>
-		static bool ReadMetaData(FIBITMAP * image, FREE_IMAGE_MDMODEL model, char const * name, T & result, T default_value = T())
+		static bool ReadMetaData(FIBITMAP* image, FREE_IMAGE_MDMODEL model, char const* name, T& result, T default_value = T())
 		{
-			FITAG * tag = nullptr;
+			FITAG* tag = nullptr;
 			if (!FreeImage_GetMetadata(model, image, name, &tag))
 				return false;
 			if (tag == nullptr)
@@ -213,9 +206,6 @@ return true;\
 
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

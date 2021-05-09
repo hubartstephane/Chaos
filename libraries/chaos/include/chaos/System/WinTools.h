@@ -1,24 +1,18 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
-namespace WinTools
-{
-	class WindowPixelCaptureResult;
-
-}; // namespace WinTools
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
 namespace chaos
 {
-
 	/**
 	* WinTools is an utility class with a number of tool function
 	*/
 	namespace WinTools
 	{
+
+#ifdef CHAOS_FORWARD_DECLARATION
+
+		class WindowPixelCaptureResult;
+
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+
 		/** a structure that contains the result of a capture of a window */
 		class WindowPixelCaptureResult
 		{
@@ -45,13 +39,13 @@ namespace chaos
 		bool AllocConsoleAndRedirectStdOutput();
 
 		/** test whether there is an error, display the message into the logs */
-		void DisplayErrorMessage(char const * title = nullptr);
+		void DisplayErrorMessage(char const* title = nullptr);
 
 		/** get the string from an error code */
 		std::string GetErrorString(DWORD errCode);
 
 		/** use the windows register to "open" a file */
-		void ShowFile(FilePathParam const & path);
+		void ShowFile(FilePathParam const& path);
 
 		/** returns the current user Document path */
 		boost::filesystem::path GetUserDocumentPath();
@@ -63,7 +57,7 @@ namespace chaos
 		boost::filesystem::path GetUserDesktopPath();
 
 		/** copies a string into the clipboard */
-		bool CopyStringToClipboard(char const * str);
+		bool CopyStringToClipboard(char const* str);
 
 		/** copies a HBITMAP into clipboard */
 		bool CopyBitmapToClipboard(HBITMAP hbitmap);
@@ -87,16 +81,15 @@ namespace chaos
 		/** capture a windows inside a buffer */
 		WindowPixelCaptureResult CaptureWindowToPixelBuffer(HDC hDC);
 		/** capture a windows inside an image */
-		FIBITMAP * CaptureWindowToImage(HWND hWnd);
+		FIBITMAP* CaptureWindowToImage(HWND hWnd);
 		/** capture a windows inside an image */
-		FIBITMAP * CaptureWindowToImage(HDC hDC);
+		FIBITMAP* CaptureWindowToImage(HDC hDC);
 
 		/** enumerate the monitors (ordered left to right) */
 		std::vector<MONITORINFOEX> EnumerateMonitors();
-	
-	}; // WinTools
+
+#endif
+
+	}; // namespace WinTools
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-

@@ -1,5 +1,3 @@
-
-
 namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
@@ -29,8 +27,6 @@ namespace chaos
 	BOOST_PP_SEQ_FOR_EACH(CHAOS_SOUND_FORWARD_DECL, _, CHAOS_SOUND_CLASSES);
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
 
 	// ==============================================================
 	// SoundBlendType

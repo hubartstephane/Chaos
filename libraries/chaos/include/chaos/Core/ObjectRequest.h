@@ -1,20 +1,13 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	enum class ObjectRequestType;
 
 	class ObjectRequest;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
 	/** a utility class for parameter passing */
 	enum class ObjectRequestType
 	{
@@ -28,34 +21,34 @@ namespace chaos
 		TAG = 3
 	};
 
-    /** a utility class for parameter passing */
-    class ObjectRequest
-    {
-    public:
+	/** a utility class for parameter passing */
+	class ObjectRequest
+	{
+	public:
 
 		/** constructor */
 		ObjectRequest() = default;
 		/** constructor */
-		ObjectRequest(ObjectRequest const & src) = default;
-        /** constructor */
-        ObjectRequest(char const* in_name) :
-            name(in_name), request_type(ObjectRequestType::STRING)
-        {
-			if (StringTools::IsEmpty(name))
-				request_type = ObjectRequestType::NONE;
-        }
+		ObjectRequest(ObjectRequest const& src) = default;
 		/** constructor */
-		ObjectRequest(std::string const & in_name) :
-			name(in_name.c_str()), request_type(ObjectRequestType::STRING)
-		{			
+		ObjectRequest(char const* in_name) :
+			name(in_name), request_type(ObjectRequestType::STRING)
+		{
 			if (StringTools::IsEmpty(name))
 				request_type = ObjectRequestType::NONE;
 		}
-        /** constructor */
-        ObjectRequest(TagType in_tag) :
-            tag(in_tag), request_type(ObjectRequestType::TAG)
-        {
-        }
+		/** constructor */
+		ObjectRequest(std::string const& in_name) :
+			name(in_name.c_str()), request_type(ObjectRequestType::STRING)
+		{
+			if (StringTools::IsEmpty(name))
+				request_type = ObjectRequestType::NONE;
+		}
+		/** constructor */
+		ObjectRequest(TagType in_tag) :
+			tag(in_tag), request_type(ObjectRequestType::TAG)
+		{
+		}
 
 		/** returns whether the request is none */
 		bool IsNoneRequest() const
@@ -106,7 +99,7 @@ namespace chaos
 			if (IsAnyRequest())
 				return true;
 			if (IsStringRequest())
-				return (StringTools::Stricmp(object.GetName(), name) == 0);										
+				return (StringTools::Stricmp(object.GetName(), name) == 0);
 			if (IsTagRequest())
 				return (object.GetTag() == tag);
 			return false;
@@ -155,14 +148,14 @@ namespace chaos
 
 	public:
 
-        /** the name for the request */
-        char const* name = nullptr;
-        /** the tag for the request */
-        TagType tag = 0;
-        /** the kind of request of interrest */
+		/** the name for the request */
+		char const* name = nullptr;
+		/** the tag for the request */
+		TagType tag = 0;
+		/** the kind of request of interrest */
 		ObjectRequestType request_type = ObjectRequestType::NONE;
-    };
+	};
+
+#endif
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

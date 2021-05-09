@@ -2,10 +2,7 @@
 
 #define CHAOS_PREMAIN static bool const BOOST_PP_CAT(premain_, __LINE__) = chaos::RegisterPremainCode
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 namespace chaos
 {
@@ -16,7 +13,7 @@ namespace chaos
 
 }; // namespace chaos
 
-#endif // CHAOS_FORWARD_DECLARATION
+#endif
 
 
 

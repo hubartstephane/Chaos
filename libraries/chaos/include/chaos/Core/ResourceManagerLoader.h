@@ -1,21 +1,13 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class ResourceManagerLoaderBase;
 
 	template<typename RESOURCE_TYPE, typename MANAGER_TYPE>
 	class ResourceManagerLoader;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// XXX : the path of a resource (texture/program ...) is given by the first time GenTextureObject( PATH ) is called
 	//       for example:
@@ -64,24 +56,22 @@ namespace chaos
 
 		using resource_type = RESOURCE_TYPE;
 		using manager_type = MANAGER_TYPE;
-		
+
 		/** constructor */
-		ResourceManagerLoader(MANAGER_TYPE * in_manager = nullptr) :
+		ResourceManagerLoader(MANAGER_TYPE* in_manager = nullptr) :
 			manager(in_manager)
-		{			
+		{
 		}
 
 		/** returns the manager */
-		manager_type * GetManager() const { return manager; }
+		manager_type* GetManager() const { return manager; }
 
 	protected:
 
 		/** the resource manager of interest */
-		MANAGER_TYPE * manager = nullptr;
+		MANAGER_TYPE* manager = nullptr;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-

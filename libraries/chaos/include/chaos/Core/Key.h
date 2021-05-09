@@ -1,7 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class Key;
 
 	enum class KeyType;
@@ -11,15 +11,8 @@ namespace chaos
 	enum class KeyboardButton;
 	enum class MouseButton;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
 #define CHAOS_KEYDEF(KEY) KEY = GLFW_KEY_##KEY
 
 	/**
@@ -156,7 +149,7 @@ namespace chaos
 	 */
 	enum class MouseButton : int
 	{
-		UNKNOWN  = -1,
+		UNKNOWN = -1,
 		BUTTON_1 = GLFW_MOUSE_BUTTON_1,
 		BUTTON_2 = GLFW_MOUSE_BUTTON_2,
 		BUTTON_3 = GLFW_MOUSE_BUTTON_3,
@@ -258,13 +251,13 @@ namespace chaos
 	enum class KeyType : int
 	{
 		/** undefined value */
-		UNKNOWN  = -1,
+		UNKNOWN = -1,
 		/** undefined value */
 		KEYBOARD = 0,
 		/** undefined value */
-		MOUSE    = 1,
+		MOUSE = 1,
 		/** undefined value */
-		GAMEPAD  = 2
+		GAMEPAD = 2
 	};
 
 	/**
@@ -322,7 +315,6 @@ namespace chaos
 		};
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-

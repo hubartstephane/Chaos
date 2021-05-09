@@ -1,25 +1,17 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	template<
 		typename T, 
 		typename _Pr = std::less<T>
 	>
 	class PriorityQueue;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* this code comes mostly from std::priority_queue 
+	* this code comes mostly from std::priority_queue
 	* this class has been designed to provide an additional 'remove' function
 	* the algorithm is design around the hypothesis that the nodes are stored as heap,
 	* and that the nodes are stored level by level
@@ -27,7 +19,7 @@ namespace chaos
 	* example tree:
 	*
 	*                  100
-	*         50                  80 
+	*         50                  80
 	*    25        30        77        78
 	* 20   13   12   11   60
 	*
@@ -39,16 +31,16 @@ namespace chaos
 	*             30
 	*             77
 	*             78
-	*   level 3:  20 
+	*   level 3:  20
 	*             13
-	*             12 
+	*             12
 	*             11
 	*             60
 	*
 	*/
 
 	template<
-		typename T, 
+		typename T,
 		typename _Pr
 	>
 		class PriorityQueue
@@ -77,7 +69,7 @@ namespace chaos
 		const_reference top() const { return (c.cfront()); }
 
 		/** return mutable highest-priority element (retained) */
-		reference top() {  return (c.front()); }
+		reference top() { return (c.front()); }
 
 		/** insert value in priority order */
 		void insert(const value_type& _Val)
@@ -94,7 +86,7 @@ namespace chaos
 		}
 
 		/** remove an element by value */
-		void remove(const value_type & _Val)
+		void remove(const value_type& _Val)
 		{
 			auto it = std::find(c.begin(), c.end(), _Val);
 			if (it != c.end())
@@ -103,8 +95,8 @@ namespace chaos
 				size_type index = it - c.begin();
 
 				// copy the last element  to current position & remove last
-				c[index] =  c[--count];
-				c.pop_back();     
+				c[index] = c[--count];
+				c.pop_back();
 				if (index == count) // the last node has been removed. nothing to do
 					return;
 				if (count <= 1) // an empty tree, or with only a root is already heap-sorted
@@ -117,7 +109,7 @@ namespace chaos
 		/*  XXX : beware, this is a dangerous call because, we can change the priority of an object */
 		/*        and the find call inside may access another element !!                            */
 		/*  XXX : use with care, or use get_container instead                                       */
-		void update(const value_type & _Val)
+		void update(const value_type& _Val)
 		{
 			auto it = std::find(c.begin(), c.end(), _Val);
 			if (it != c.end())
@@ -131,7 +123,7 @@ namespace chaos
 		bool test_heap(size_type index = 0) const
 		{
 			size_type level = BitTools::bsr(index + 1);
-			size_type base  = heap_baselevel(level); 
+			size_type base = heap_baselevel(level);
 			size_type count = size();
 
 			if (index >= count)
@@ -139,11 +131,11 @@ namespace chaos
 
 			if (index > 0)
 			{
-				size_type parent_index = 
+				size_type parent_index =
 					(heap_baselevel(level - 1)) +    // the base of previous level
-					(index - base) / 2;    
+					(index - base) / 2;
 
-				if (!comp(c[index], c[parent_index]) && comp(c[parent_index], c[index]) ) // double test because of equality / inequality issue
+				if (!comp(c[index], c[parent_index]) && comp(c[parent_index], c[index])) // double test because of equality / inequality issue
 					return false;
 			}
 
@@ -153,10 +145,10 @@ namespace chaos
 		}
 
 		/** get internal container */
-		_Container & get_container(){ return c;}
+		_Container& get_container() { return c; }
 
 		/** get internal container */
-		_Container const & get_container() const { return c;}
+		_Container const& get_container() const { return c; }
 
 		/** an utility function used to displace a node whose key has changed */
 		void update_indexed(size_type index)
@@ -171,11 +163,11 @@ namespace chaos
 			{
 				size_type base = heap_baselevel(level); // the index of the first element of the same level
 
-				size_type parent_index = 
+				size_type parent_index =
 					(heap_baselevel(level - 1)) +    // the base of previous level
 					(index - base) / 2;              // due to storage consideration, the first_child of the 4th node of a level 
 													 // is the 8h node of next level
-				if (comp(c[index], c[parent_index]))                    
+				if (comp(c[index], c[parent_index]))
 					break;
 
 				std::swap(c[index], c[parent_index]);
@@ -185,9 +177,9 @@ namespace chaos
 
 			// try to make the node down, if it is too low
 			// (in example, suppress the 80, that is replaced by 60)
-			while (true) 
+			while (true)
 			{
-				size_type base        = heap_baselevel(level); // the index of the first element of the same level
+				size_type base = heap_baselevel(level); // the index of the first element of the same level
 				size_type first_child = heap_baselevel(level + 1) + (index - base) * 2;  // due to storage, the first child of 2nd node of a 
 
 				if (first_child < count)
@@ -204,7 +196,7 @@ namespace chaos
 						index = first_child;
 						++level;
 						continue;
-					}                  
+					}
 				}
 				break; // we want to process the loop until no their is a no-op step
 			};
@@ -222,10 +214,10 @@ namespace chaos
 
 		/** the internal container */
 		_Container c;
-		/** the comparator functor */ 
+		/** the comparator functor */
 		_Pr comp;
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

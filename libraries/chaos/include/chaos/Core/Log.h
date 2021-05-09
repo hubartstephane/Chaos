@@ -1,19 +1,11 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	enum class LogType;
 	class Log;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* LogType : severity of the message
@@ -26,7 +18,7 @@ namespace chaos
 		Error
 	};
 
-	/** 
+	/**
 	* Log : deserve to output some logs
 	*/
 
@@ -50,13 +42,13 @@ namespace chaos
 		/** generic log function */
 		template<typename ...PARAMS>
 		static void Output(LogType type, bool add_line_jump, PARAMS... params)
-		{ 
+		{
 			if (Log* log = GetInstance())
 				log->DoFormatAndOuput(type, add_line_jump, params...);
 		}
 
 		/** display a box with a text */
-		static void Title(char const * title);
+		static void Title(char const* title);
 
 	protected:
 
@@ -73,8 +65,6 @@ namespace chaos
 		bool open_output_file = true;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-

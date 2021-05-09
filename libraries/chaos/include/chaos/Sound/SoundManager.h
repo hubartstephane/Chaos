@@ -1,6 +1,10 @@
+
+
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-// all classes in this file
+	// all classes in this file
 #define CHAOS_SOUND_CLASSES \
 (PlaySoundDesc) \
 (Sound) \
@@ -20,26 +24,17 @@
 #define CHAOS_SOUND_FRIEND_DECL(r, data, elem) friend class elem;
 #define CHAOS_SOUND_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_SOUND_FRIEND_DECL, _, CHAOS_SOUND_CLASSES)
 
-namespace chaos
-{
 	enum class SoundBlendType;
 
 	BOOST_PP_SEQ_FOR_EACH(CHAOS_SOUND_FORWARD_DECL, _, CHAOS_SOUND_CLASSES);
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 
-#else
 
-namespace chaos
-{
-
-
-		// ==============================================================
-		// SoundBlendType
-		// ==============================================================
+	// ==============================================================
+	// SoundBlendType
+	// ==============================================================
 
 	enum class SoundBlendType : int
 	{
@@ -48,9 +43,9 @@ namespace chaos
 		BLEND_OUT = 2
 	};
 
-		// ==============================================================
-		// CALLBACKS
-		// ==============================================================
+	// ==============================================================
+	// CALLBACKS
+	// ==============================================================
 
 	class SoundCallbacks : public Object
 	{
@@ -59,9 +54,9 @@ namespace chaos
 	protected:
 
 		/** called whenever an object is finished */
-		virtual void OnFinished(SoundObject * object);
+		virtual void OnFinished(SoundObject* object);
 		/** called whenever an object is removed from manager */
-		virtual void OnRemovedFromManager(SoundObject * object);
+		virtual void OnRemovedFromManager(SoundObject* object);
 	};
 
 	class SoundAutoCallbacks : public SoundCallbacks
@@ -74,7 +69,7 @@ namespace chaos
 		SoundAutoCallbacks() = default;
 		/** assignation constructor */
 		template<typename U, typename V>
-		SoundAutoCallbacks(U & in_finished, V & in_removed) :
+		SoundAutoCallbacks(U& in_finished, V& in_removed) :
 			finished_func(in_finished),
 			removed_func(in_removed)
 		{
@@ -83,16 +78,16 @@ namespace chaos
 	protected:
 
 		/** called whenever a sound is finished */
-		virtual void OnFinished(SoundObject * object) override;
+		virtual void OnFinished(SoundObject* object) override;
 		/** called whenever an object is removed from manager */
-		virtual void OnRemovedFromManager(SoundObject * object) override;
+		virtual void OnRemovedFromManager(SoundObject* object) override;
 
 	public:
 
 		/** the callbacks function */
-		std::function<void(SoundObject *)> finished_func;
+		std::function<void(SoundObject*)> finished_func;
 		/** the callbacks function */
-		std::function<void(SoundObject *)> removed_func;
+		std::function<void(SoundObject*)> removed_func;
 	};
 
 	// ==============================================================
@@ -140,9 +135,9 @@ namespace chaos
 		void Enable3D(bool enable);
 
 		/** set the position of the sound (this enables the 3D feature) */
-		void SetPosition(glm::vec3 const & in_position, bool update_3D_sound = true);
+		void SetPosition(glm::vec3 const& in_position, bool update_3D_sound = true);
 		/** set the velocity of the sound (this enables the 3D feature) */
-		void SetVelocity(glm::vec3 const & in_velocity, bool update_3D_sound = true);
+		void SetVelocity(glm::vec3 const& in_velocity, bool update_3D_sound = true);
 
 	public:
 
@@ -159,23 +154,23 @@ namespace chaos
 		/** true whether the sound is in 3D */
 		bool is_3D_sound = false;
 		/** the position of the sound in 3D */
-		glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
+		glm::vec3 position = { 0.0f, 0.0f, 0.0f };
 		/** the velocity of the sound in 3D */
-		glm::vec3 velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+		glm::vec3 velocity = { 0.0f, 0.0f, 0.0f };
 		/** the minimal distance for sound in 3D */
 		float min_distance = 0.0f;
 		/** the maximum distance for sound in 3D */
 		float max_distance = 0.0f;
 		/** timer for far 3D sound before entering pause */
 		float pause_timer_when_too_far = 0.0f;
-		
+
 		/** the name of the sound object to create */
 		std::string sound_name;
-		
+
 		/** the names of the categories ... */
 		std::vector<std::string> category_names;
 		/** ... or a pointer on the category */
-		std::vector<SoundCategory *> categories;
+		std::vector<SoundCategory*> categories;
 	};
 
 	// ==============================================================
@@ -189,15 +184,15 @@ namespace chaos
 	public:
 
 		/** getter on the irrklang engine */
-		irrklang::ISoundEngine * GetIrrklangEngine();
+		irrklang::ISoundEngine* GetIrrklangEngine();
 
 		/** getter on the manager object */
-		SoundManager * GetManager();
+		SoundManager* GetManager();
 		/** getter on the manager object */
-		SoundManager const * GetManager() const;
+		SoundManager const* GetManager() const;
 
 		/** blend the volume */
-		bool StartBlend(BlendVolumeDesc const & desc, bool replace_older = false);
+		bool StartBlend(BlendVolumeDesc const& desc, bool replace_older = false);
 		/** start a fade out and pause or kill */
 		bool FadeOut(float blend_time, bool kill_at_end = false, bool kill_when_paused = false);
 		/** stop the object */
@@ -206,7 +201,7 @@ namespace chaos
 		/** returns whether the object is attached to a manager */
 		bool IsAttachedToManager() const;
 		/** change the callbacks associated to this object */
-		void SetCallbacks(SoundCallbacks * in_callbacks);
+		void SetCallbacks(SoundCallbacks* in_callbacks);
 		/** get whether the sound is finished */
 		bool IsFinished() const { return is_finished; }
 
@@ -253,7 +248,7 @@ namespace chaos
 		virtual void DoUpdateEffectivePause(bool effective_pause);
 
 		/** loading from a JSON object */
-		virtual bool InitializeFromJSON(nlohmann::json const & json, boost::filesystem::path const & config_path);
+		virtual bool InitializeFromJSON(nlohmann::json const& json, boost::filesystem::path const& config_path);
 
 	protected:
 
@@ -264,7 +259,7 @@ namespace chaos
 		/** the volume */
 		float volume = 1.0f;
 		/** the manager */
-		SoundManager * sound_manager = nullptr;
+		SoundManager* sound_manager = nullptr;
 		/** the blending description */
 		BlendVolumeDesc blend_desc;
 		/** the blend value */
@@ -284,9 +279,9 @@ namespace chaos
 	public:
 
 		/** generating and playing a sound */
-		Sound * Play(PlaySoundDesc const & play_desc, SoundCallbacks * in_callbacks = nullptr);
+		Sound* Play(PlaySoundDesc const& play_desc, SoundCallbacks* in_callbacks = nullptr);
 		/** set the categories */
-		bool SetDefaultCategories(std::vector<SoundCategory *> const & categories);
+		bool SetDefaultCategories(std::vector<SoundCategory*> const& categories);
 
 	protected:
 
@@ -300,17 +295,17 @@ namespace chaos
 		/** remove element from manager list and detach it */
 		virtual void RemoveFromManager() override;
 		/** the sound generation method */
-		virtual Sound * GenerateSound();
+		virtual Sound* GenerateSound();
 
 		/** loading from a JSON object */
-		virtual bool InitializeFromJSON(nlohmann::json const & json, boost::filesystem::path const & config_path) override;
+		virtual bool InitializeFromJSON(nlohmann::json const& json, boost::filesystem::path const& config_path) override;
 
 	protected:
 
 		/** the irrklang source */
 		shared_ptr<irrklang::ISoundSource> irrklang_source;
 		/** the default category */
-		std::vector<SoundCategory *> default_categories;
+		std::vector<SoundCategory*> default_categories;
 	};
 
 	// ==============================================================
@@ -343,14 +338,14 @@ namespace chaos
 		CHAOS_SOUND_ALL_FRIENDS
 
 	public:
-	
+
 		/** returns true whether this sound belongs to given category */
-		bool IsOfCategory(SoundCategory const * category) const;
+		bool IsOfCategory(SoundCategory const* category) const;
 
 		/** set the position of the sound */
-		void SetPosition(glm::vec3 const & in_position);
+		void SetPosition(glm::vec3 const& in_position);
 		/** set the velocity of the sound */
-		void SetVelocity(glm::vec3 const & in_velocity);
+		void SetVelocity(glm::vec3 const& in_velocity);
 
 		/** returns whether the sound is effectively paused */
 		virtual bool IsEffectivePaused() const override;
@@ -378,9 +373,9 @@ namespace chaos
 		void SetSoundTrackPosition(int position);
 
 		/** returns the source */
-		SoundSource * GetSource() { return source; }
+		SoundSource* GetSource() { return source; }
 		/** returns the source */
-		SoundSource const * GetSource() const { return source; }
+		SoundSource const* GetSource() const { return source; }
 
 	protected:
 
@@ -398,7 +393,7 @@ namespace chaos
 		void DoUpdateIrrklangPause(bool effective_pause);
 
 		/** the sound method (returns true whether it is immediatly finished) */
-		virtual bool DoPlaySound(PlaySoundDesc const & play_desc);
+		virtual bool DoPlaySound(PlaySoundDesc const& play_desc);
 		/** unbind from manager */
 		virtual void OnRemovedFromManager() override;
 		/** remove element from manager list and detach it */
@@ -424,14 +419,14 @@ namespace chaos
 		bool looping = false;
 
 		/** the position of the sound in 3D */
-		glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
+		glm::vec3 position = { 0.0f, 0.0f, 0.0f };
 		/** the velocity of the sound in 3D */
-		glm::vec3 velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+		glm::vec3 velocity = { 0.0f, 0.0f, 0.0f };
 
 		/** the categories of the sound */
-		std::vector<SoundCategory *> categories;
+		std::vector<SoundCategory*> categories;
 		/** the source that generated this object */
-		SoundSource * source = nullptr;
+		SoundSource* source = nullptr;
 
 		/** the irrklang sound */
 		shared_ptr<irrklang::ISound> irrklang_sound;
@@ -446,26 +441,26 @@ namespace chaos
 	public:
 
 		/** constructor */
-		SoundSourceLoader(SoundManager * in_sound_manager) :
-			ResourceManagerLoader<SoundSource, SoundManager>(in_sound_manager) 
+		SoundSourceLoader(SoundManager* in_sound_manager) :
+			ResourceManagerLoader<SoundSource, SoundManager>(in_sound_manager)
 		{
 			assert(in_sound_manager != nullptr); // source cannot be loaded outside of a manager
 		}
 
 		/** load an object from JSON */
-		virtual SoundSource * LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
+		virtual SoundSource* LoadObject(char const* name, nlohmann::json const& json, boost::filesystem::path const& config_path) const;
 		/** program loading from path */
-		virtual SoundSource * LoadObject(FilePathParam const & path, char const * name = nullptr) const;
+		virtual SoundSource* LoadObject(FilePathParam const& path, char const* name = nullptr) const;
 
 	protected:
 
 		/** internal method to load a source */
-		SoundSource * GenSourceObject(FilePathParam const & path, char const * name) const;
+		SoundSource* GenSourceObject(FilePathParam const& path, char const* name) const;
 
 	protected:
 
 		/** search whether the path is already in used in the manager */
-		virtual bool IsPathAlreadyUsedInManager(FilePathParam const & path) const override;
+		virtual bool IsPathAlreadyUsedInManager(FilePathParam const& path) const override;
 		/** search whether the name is already in used in the manager */
 		virtual bool IsNameAlreadyUsedInManager(ObjectRequest request) const override;
 	};
@@ -479,14 +474,14 @@ namespace chaos
 	public:
 
 		/** constructor */
-		SoundCategoryLoader(SoundManager * in_sound_manager) :
+		SoundCategoryLoader(SoundManager* in_sound_manager) :
 			ResourceManagerLoader<SoundCategory, SoundManager>(in_sound_manager)
 		{
 			assert(in_sound_manager != nullptr); // source cannot be loaded outside of a manager
 		}
 
 		/** load an object from JSON */
-		virtual SoundCategory * LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
+		virtual SoundCategory* LoadObject(char const* name, nlohmann::json const& json, boost::filesystem::path const& config_path) const;
 
 	protected:
 
@@ -505,56 +500,56 @@ namespace chaos
 	public:
 
 		/** getter on the irrklang engine */
-		irrklang::ISoundEngine * GetIrrklangEngine();
+		irrklang::ISoundEngine* GetIrrklangEngine();
 
 		/** public method to tick the manager */
 		void Tick(float delta_time);
 
 		/** find a source by its name */
-		SoundSource * FindSource(ObjectRequest request);
+		SoundSource* FindSource(ObjectRequest request);
 		/** find a source by its name */
-		SoundSource const * FindSource(ObjectRequest request) const;
+		SoundSource const* FindSource(ObjectRequest request) const;
 
 		/** find a simple source by its path */
-		SoundSource * FindSourceByPath(FilePathParam const & path);
+		SoundSource* FindSourceByPath(FilePathParam const& path);
 		/** find a simple source by its path */
-		SoundSource const * FindSourceByPath(FilePathParam const & path) const;
+		SoundSource const* FindSourceByPath(FilePathParam const& path) const;
 
 		/** find a category by its name */
-		SoundCategory * FindCategory(ObjectRequest request);
+		SoundCategory* FindCategory(ObjectRequest request);
 		/** find a category by its name */
-		SoundCategory const * FindCategory(ObjectRequest request) const;
+		SoundCategory const* FindCategory(ObjectRequest request) const;
 
 		/** find a sound by its name */
-		Sound * FindSound(ObjectRequest request);
+		Sound* FindSound(ObjectRequest request);
 		/** find a sound by its name */
-		Sound const * FindSound(ObjectRequest request) const;
+		Sound const* FindSound(ObjectRequest request) const;
 
 		/** add a category inside the manager */
-		SoundCategory * AddCategory(char const * name);
+		SoundCategory* AddCategory(char const* name);
 		/** load and add a simple source inside the manager */
-		SoundSource * AddSource(FilePathParam const & path, char const * name = nullptr);
+		SoundSource* AddSource(FilePathParam const& path, char const* name = nullptr);
 
 		/** update the listener position */
-		bool SetListenerPosition(glm::vec3 const & position, glm::vec3 const & velocity = glm::vec3(0.0f, 0.0f, 0.0f));
+		bool SetListenerPosition(glm::vec3 const& position, glm::vec3 const& velocity = { 0.0f, 0.0f, 0.0f });
 
 		/** initialize the manager from a configuration file */
-		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
+		virtual bool InitializeFromConfiguration(nlohmann::json const& config, boost::filesystem::path const& config_path) override;
 
 		/** getters on sound */
 		size_t GetSoundCount() const;
-		Sound * GetSound(size_t index);
-		Sound const * GetSound(size_t index) const;
-		
+		Sound* GetSound(size_t index);
+		Sound const* GetSound(size_t index) const;
+
 		/** getters on category */
 		size_t GetCategoryCount() const;
-		SoundCategory * GetCategory(size_t index);
-		SoundCategory const * GetCategory(size_t index) const;
+		SoundCategory* GetCategory(size_t index);
+		SoundCategory const* GetCategory(size_t index) const;
 
 		/** getters on sources */
 		size_t GetSourceCount() const;
-		SoundSource * GetSource(size_t index);
-		SoundSource const * GetSource(size_t index) const;
+		SoundSource* GetSource(size_t index);
+		SoundSource const* GetSource(size_t index) const;
 
 		/** get the current listener position */
 		glm::vec3 GetListenerPosition() const;
@@ -569,11 +564,11 @@ namespace chaos
 		virtual bool DoStopManager() override;
 
 		/** remove a category from the list */
-		void RemoveCategory(SoundCategory * category);
+		void RemoveCategory(SoundCategory* category);
 		/** remove a sound from the list */
-		void RemoveSound(Sound * sound);
+		void RemoveSound(Sound* sound);
 		/** remove a sound source from the list */
-		void RemoveSource(SoundSource * source);
+		void RemoveSource(SoundSource* source);
 
 		/** remove a category from the list */
 		void RemoveCategoryByIndex(size_t index);
@@ -583,18 +578,18 @@ namespace chaos
 		void RemoveSourceByIndex(size_t index);
 
 		/** called whenever an object is being removed */
-		static void OnObjectRemovedFromManager(SoundObject * object);
+		static void OnObjectRemovedFromManager(SoundObject* object);
 
 		/** destroy all sounds in a category */
-		void DestroyAllSoundPerCategory(SoundCategory * category);
+		void DestroyAllSoundPerCategory(SoundCategory* category);
 		/** destroy all sounds with a given source */
-		void DestroyAllSoundPerSource(SoundSource * source);
+		void DestroyAllSoundPerSource(SoundSource* source);
 		/** remove the category of all sources using given argument */
-		void UpdateAllSourcesPerCategory(SoundCategory * category);
+		void UpdateAllSourcesPerCategory(SoundCategory* category);
 
 		/** internal tick list of objects */
 		template<typename T, typename REMOVE_FUNC>
-		void DoTickObjects(float delta_time, T & vector, REMOVE_FUNC remove_func)
+		void DoTickObjects(float delta_time, T& vector, REMOVE_FUNC remove_func)
 		{
 			T objects = vector; // XXX: work on a copy because due to callbacks, the input vector is volatile
 
@@ -618,9 +613,9 @@ namespace chaos
 				// remove the object if needed
 				if (finished)
 				{
-						object->OnObjectFinished();
-						if (object->IsAttachedToManager())
-							(this->*remove_func)(object.get());
+					object->OnObjectFinished();
+					if (object->IsAttachedToManager())
+						(this->*remove_func)(object.get());
 				}
 			}
 		}
@@ -633,21 +628,21 @@ namespace chaos
 		bool CanAddSound(ObjectRequest request) const;
 
 		/** update all sounds pause per category */
-		void UpdateAllSoundPausePerCategory(SoundCategory * category);
+		void UpdateAllSoundPausePerCategory(SoundCategory* category);
 		/** update all sounds volume per category */
-		void UpdateAllSoundVolumePerCategory(SoundCategory * category);
+		void UpdateAllSoundVolumePerCategory(SoundCategory* category);
 		/** update all sounds pause per source */
-		void UpdateAllSoundPausePerSource(SoundSource * source);
+		void UpdateAllSoundPausePerSource(SoundSource* source);
 		/** update all sounds volume per source */
-		void UpdateAllSoundVolumePerSource(SoundSource * source);
+		void UpdateAllSoundVolumePerSource(SoundSource* source);
 
 		/** add a category from a JSON object */
-		SoundCategory * AddJSONCategory(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path);
+		SoundCategory* AddJSONCategory(char const* name, nlohmann::json const& json, boost::filesystem::path const& config_path);
 
 		/** load the categories from configuration */
-		bool LoadCategoriesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
+		bool LoadCategoriesFromConfiguration(nlohmann::json const& json, boost::filesystem::path const& config_path);
 		/** load the sources from configuration */
-		bool LoadSourcesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
+		bool LoadSourcesFromConfiguration(nlohmann::json const& json, boost::filesystem::path const& config_path);
 
 	protected:
 
@@ -666,10 +661,9 @@ namespace chaos
 		/** the listener transform */
 		glm::mat4 listener_transform = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
 		/** the listener velocity */
-		glm::vec3 listener_velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+		glm::vec3 listener_velocity = { 0.0f, 0.0f, 0.0f };
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-

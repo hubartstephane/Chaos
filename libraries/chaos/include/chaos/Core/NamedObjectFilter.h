@@ -1,26 +1,18 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class NamedObjectFilter;
 	class NamedObjectFilterList;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/** NamedObjectFilter : a class to filter objects by their name */
 	class NamedObjectFilter : public Object
 	{
 	public:
 
-		virtual bool CheckName(NamedObject const & object) const { return true; }
+		virtual bool CheckName(NamedObject const& object) const { return true; }
 	};
 
 	/** NamedObjectFilterList : filter objects with a list */
@@ -29,7 +21,7 @@ namespace chaos
 	public:
 
 		/** override */
-		virtual bool CheckName(NamedObject const & object) const override;
+		virtual bool CheckName(NamedObject const& object) const override;
 
 	public:
 
@@ -43,6 +35,6 @@ namespace chaos
 		std::vector<TagType> forbidden_tags;
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

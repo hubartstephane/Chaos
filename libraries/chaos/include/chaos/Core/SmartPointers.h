@@ -1,7 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class WeakPointerData;
 	class SharedPointerPolicy;
 	class WeakPointerPolicy;
@@ -19,16 +19,7 @@ namespace chaos
 	template<typename T>
 	struct is_shared_ptr;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
-
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// XXX : -shared_ptr<> is more or less a clone of boost::intrusive_ptr<>. It can be used on any class as soon as there are the 2 following functions
 	//        	 
@@ -67,7 +58,7 @@ namespace chaos
 		}
 
 		/** pointer on the object */
-		void const * object_ptr = nullptr;
+		void const* object_ptr = nullptr;
 		/** count weak reference */
 		boost::atomic<int> weak_count;
 	};
@@ -86,7 +77,7 @@ namespace chaos
 
 		/** adding a reference */
 		template<typename T>
-		static pointer_type<T> * AddReference(T* in_target)
+		static pointer_type<T>* AddReference(T* in_target)
 		{
 			assert(in_target != nullptr);
 			::intrusive_ptr_add_ref(in_target);
@@ -95,7 +86,7 @@ namespace chaos
 
 		/** removing a reference */
 		template<typename T>
-		static pointer_type<T> * SubReference(pointer_type<T> * in_target)
+		static pointer_type<T>* SubReference(pointer_type<T>* in_target)
 		{
 			assert(in_target != nullptr);
 			::intrusive_ptr_release(in_target);
@@ -104,7 +95,7 @@ namespace chaos
 
 		/** get the resource pointed */
 		template<typename T>
-		static T * Get(T * in_target)
+		static T* Get(T* in_target)
 		{
 			return in_target;
 		}
@@ -126,7 +117,7 @@ namespace chaos
 
 		/** adding a reference */
 		template<typename T>
-		static WeakPointerData * AddReference(T* in_target)
+		static WeakPointerData* AddReference(T* in_target)
 		{
 			assert(in_target != nullptr);
 
@@ -141,7 +132,7 @@ namespace chaos
 		}
 
 		/** removing a reference */
-		static WeakPointerData * SubReference(WeakPointerData* in_target)
+		static WeakPointerData* SubReference(WeakPointerData* in_target)
 		{
 			--in_target->weak_count;
 			return nullptr;
@@ -149,7 +140,7 @@ namespace chaos
 
 		/** get the resource pointed */
 		template<typename T>
-		static T * Get(WeakPointerData* in_target)
+		static T* Get(WeakPointerData* in_target)
 		{
 			if (in_target != nullptr)
 				return (T*)in_target->object_ptr; // remove constness here
@@ -172,11 +163,11 @@ namespace chaos
 
 		/** the type of object pointed */
 		using type = T;
-		
+
 		/** default constructor */
 		SmartPointerBase() = default;
 		/** constructor with capturing the object */
-		SmartPointerBase(type * in_target)
+		SmartPointerBase(type* in_target)
 		{
 			if (in_target != nullptr)
 				target = POLICY::AddReference(in_target);
@@ -205,7 +196,7 @@ namespace chaos
 		SmartPointerBase(AutoCastable<U> const& src)
 		{
 			if (src != nullptr)
-				target = POLICY::AddReference((T *)src);
+				target = POLICY::AddReference((T*)src);
 		}
 
 		/** destructor */
@@ -216,7 +207,7 @@ namespace chaos
 		}
 
 		/** copy */
-		SmartPointerBase & operator = (type * src)
+		SmartPointerBase& operator = (type* src)
 		{
 			if (src != get())
 				DoSetTarget(src);
@@ -251,7 +242,7 @@ namespace chaos
 
 		/** copy */
 		template<typename T2, typename POLICY2>
-		SmartPointerBase & operator = (SmartPointerBase<T2, POLICY2> const & src)
+		SmartPointerBase& operator = (SmartPointerBase<T2, POLICY2> const& src)
 		{
 			static_assert(std::is_base_of_v<T, T2>);
 			if (src.target != target) // no need to fully get() => small optimization for weak_ptr
@@ -262,30 +253,30 @@ namespace chaos
 
 		/** constructor with AutoCastable */
 		template<typename U>
-		SmartPointerBase & operator = (AutoCastable<U> const& src)
+		SmartPointerBase& operator = (AutoCastable<U> const& src)
 		{
 			return operator = ((type*)src);
 		}
 
 
 		/** getters */
-		type * get() const
+		type* get() const
 		{
 			return POLICY::template Get<type>(target);
 		}
 
 		/** getters */
-		type * operator ->() const
+		type* operator ->() const
 		{
-			type * result = get();
+			type* result = get();
 			assert(result != nullptr);
 			return result;
 		}
 
 		/** getters */
-		type & operator * () const
+		type& operator * () const
 		{
-			type * result = get();
+			type* result = get();
 			assert(result != nullptr);
 			return *result;
 		}
@@ -299,7 +290,7 @@ namespace chaos
 	protected:
 
 		/** internal method to change the content of the pointer */
-		void DoSetTarget(type * src)
+		void DoSetTarget(type* src)
 		{
 			// XXX : add reference before destroying to be sure that by chain reaction we do not destroy the object we want to point first
 			auto old_target = target;
@@ -317,7 +308,7 @@ namespace chaos
 	protected:
 
 		/** the object pointed (or a WeakPointerData structure) */
-		typename POLICY::template pointer_type<type> * target = nullptr;
+		typename POLICY::template pointer_type<type>* target = nullptr;
 	};
 
 	/**
@@ -325,25 +316,25 @@ namespace chaos
 	*/
 
 	template<typename T, typename POLICY, typename U>
-	bool operator == (SmartPointerBase<T, POLICY> const & src1, U * src2)
+	bool operator == (SmartPointerBase<T, POLICY> const& src1, U* src2)
 	{
 		return (src1.get() == src2);
 	}
 
 	template<typename T, typename POLICY, typename U>
-	bool operator != (SmartPointerBase<T, POLICY> const & src1, U * src2)
+	bool operator != (SmartPointerBase<T, POLICY> const& src1, U* src2)
 	{
 		return (src1.get() != src2);
 	}
 
 	template<typename T, typename POLICY, typename U>
-	bool operator == (U * src1, SmartPointerBase<T, POLICY> const & src2)
+	bool operator == (U* src1, SmartPointerBase<T, POLICY> const& src2)
 	{
 		return (src1 == src2.get());
 	}
 
 	template<typename T, typename POLICY, typename U>
-	bool operator != (U * src1, SmartPointerBase<T, POLICY> const & src2)
+	bool operator != (U* src1, SmartPointerBase<T, POLICY> const& src2)
 	{
 		return (src1 != src2.get());
 	}
@@ -353,25 +344,25 @@ namespace chaos
 	*/
 
 	template<typename T, typename POLICY>
-	bool operator == (SmartPointerBase<T, POLICY> const & src1, nullptr_t src2)
+	bool operator == (SmartPointerBase<T, POLICY> const& src1, nullptr_t src2)
 	{
 		return (src1.get() == src2);
 	}
 
 	template<typename T, typename POLICY>
-	bool operator != (SmartPointerBase<T, POLICY> const & src1, nullptr_t src2)
+	bool operator != (SmartPointerBase<T, POLICY> const& src1, nullptr_t src2)
 	{
 		return (src1.get() != src2);
 	}
 
 	template<typename T, typename POLICY>
-	bool operator == (nullptr_t src1, SmartPointerBase<T, POLICY> const & src2)
+	bool operator == (nullptr_t src1, SmartPointerBase<T, POLICY> const& src2)
 	{
 		return (src1 == src2.get());
 	}
 
 	template<typename T, typename POLICY>
-	bool operator != (nullptr_t src1, SmartPointerBase<T, POLICY> const & src2)
+	bool operator != (nullptr_t src1, SmartPointerBase<T, POLICY> const& src2)
 	{
 		return (src1 != src2.get());
 	}
@@ -381,13 +372,13 @@ namespace chaos
 	*/
 
 	template<typename T, typename POLICY, typename U, typename POLICY2>
-	bool operator == (SmartPointerBase<T, POLICY> const & src1, SmartPointerBase<U, POLICY2> const & src2)
+	bool operator == (SmartPointerBase<T, POLICY> const& src1, SmartPointerBase<U, POLICY2> const& src2)
 	{
 		return (src1.get() == src2.get());
 	}
 
 	template<typename T, typename POLICY, typename U, typename POLICY2>
-	bool operator != (SmartPointerBase<T, POLICY> const & src1, SmartPointerBase<U, POLICY2> const & src2)
+	bool operator != (SmartPointerBase<T, POLICY> const& src1, SmartPointerBase<U, POLICY2> const& src2)
 	{
 		return (src1.get() != src2.get());
 	}
@@ -396,8 +387,8 @@ namespace chaos
 	* swap
 	*/
 
-	template<typename T, typename POLICY> 
-	void swap(SmartPointerBase<T, POLICY> & src1, SmartPointerBase<T, POLICY> & src2)
+	template<typename T, typename POLICY>
+	void swap(SmartPointerBase<T, POLICY>& src1, SmartPointerBase<T, POLICY>& src2)
 	{
 		src1.swap(src2);
 	}
@@ -440,9 +431,6 @@ namespace chaos
 	template<typename T>
 	constexpr bool is_shared_ptr_v = is_shared_ptr<T>::value;
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

@@ -1,8 +1,10 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-// =================================
-// Some macros for enum json reading
-// =================================
+	// =================================
+	// Some macros for enum json reading
+	// =================================
 
 #define CHAOS_IMPLEMENT_ENUMJSON_METHOD(enum_type, table_name)\
 bool LoadFromJSON(nlohmann::json const& json_entry, enum_type& dst)\
@@ -16,16 +18,139 @@ bool SaveIntoJSON(nlohmann::json& json_entry, enum_type const& src)\
 
 #define CHAOS_JSON_ATTRIBUTE(config, x) chaos::JSONTools::GetAttribute(config, #x, x)
 
-namespace chaos
-{
 	namespace JSONTools {};
-};
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+	// =================
+	// Some meta methods
+	// =================
 
-namespace chaos
-{
+	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(SerializeFromJSON);
+	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(SerializeIntoJSON);
+	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(GetClass);
+
+	// ====================
+	// Standalone functions
+	// ====================
+
+	/** loading a bool (because we try to read an int as a fallback) */
+	bool LoadFromJSON(nlohmann::json const& entry, bool& dst);
+
+	/** an utility function to create an object from a json object */
+	template<typename T>
+	T* LoadFromJSONCreateObject(nlohmann::json const& entry);
+
+	/** default template loading (catch exceptions) */
+	template<typename T>
+	bool LoadFromJSON(nlohmann::json const& entry, T& dst);
+	/** template for unique_ptr */
+	template<typename T, typename DELETER>
+	bool LoadFromJSON(nlohmann::json const& entry, std::unique_ptr<T, DELETER>& dst);
+	/** template for shared_ptr */
+	template<typename T>
+	bool LoadFromJSON(nlohmann::json const& entry, shared_ptr<T>& dst);
+	/** loading specialization for vector */
+	template<typename T>
+	bool LoadFromJSON(nlohmann::json const& entry, std::vector<T>& dst);
+
+	/** basic types */
+	template<typename T>
+	bool SaveIntoJSON(nlohmann::json& entry, T const& src);
+	/** template for unique_ptr */
+	template<typename T, typename DELETER>
+	bool SaveIntoJSON(nlohmann::json& entry, std::unique_ptr<T, DELETER> const& src);
+	/** template for shared_ptr */
+	template<typename T>
+	bool SaveIntoJSON(nlohmann::json& entry, shared_ptr<T> const& src);
+	/** specialization for vector */
+	template<typename T>
+	bool SaveIntoJSON(nlohmann::json& entry, std::vector<T> const& src);
+
+	/** enumeration method */
+	template<typename T, typename ENCODE_TABLE>
+	bool SaveEnumIntoJSON(nlohmann::json& json_entry, ENCODE_TABLE const& encode_table, T const& src);
+	/** enumeration method */
+	template<typename T, typename ENCODE_TABLE>
+	bool LoadEnumFromJSON(nlohmann::json const& json_entry, ENCODE_TABLE const& encode_table, T& dst);
+
+	// =================
+	// JSONTools
+	// =================
+
+	namespace JSONTools
+	{
+		/** parsing a JSON file (catch exceptions) */
+		bool Parse(char const* buffer, nlohmann::json& result);
+		/** parsing a JSON file from a buffer (load any dependant files) */
+		bool ParseRecursive(char const* buffer, boost::filesystem::path const& config_path, nlohmann::json& result);
+		/** Load a JSON file in a recursive whay */
+		bool LoadJSONFile(FilePathParam const& path, nlohmann::json& result, bool recursive = false);
+		/** create a temporary directory to hold the configuration (returns the path of the directory where the file is) */
+		boost::filesystem::path DumpConfigFile(nlohmann::json const& json, char const* filename = "myconfig.json");
+
+		/** get a sub object from an object */
+		nlohmann::json* GetStructure(nlohmann::json& entry, char const* name);
+		/** get a sub object from an object */
+		nlohmann::json const* GetStructure(nlohmann::json const& entry, char const* name);
+
+		/** get a sub object from an object */
+		nlohmann::json* GetStructureByIndex(nlohmann::json& entry, size_t index);
+		/** get a sub object from an object */
+		nlohmann::json const* GetStructureByIndex(nlohmann::json const& entry, size_t index);
+
+		/** set an attribute in a json structure */
+		template<typename T>
+		bool SetAttribute(nlohmann::json& entry, char const* name, T const& src);
+
+		/** set an attribute in a json array */
+		template<typename T>
+		bool SetAttributeByIndex(nlohmann::json& entry, size_t index, T const& src);
+
+		/** set an attribute in a json structure with a lookup table */
+		template<typename T, typename ENCODE_TABLE>
+		bool SetEnumAttribute(nlohmann::json& entry, char const* name, ENCODE_TABLE const& encode_table, T const& src);
+
+		/** set an attribute in a json structure with a lookup table */
+		template<typename T, typename ENCODE_TABLE>
+		bool SetEnumAttributeByIndex(nlohmann::json& entry, size_t index, ENCODE_TABLE const& encode_table, T const& src);
+
+		/** reading an attribute from a JSON structure */
+		template<typename T>
+		bool GetAttribute(nlohmann::json const& entry, char const* name, T& result);
+
+		/** reading an attribute from a JSON array */
+		template<typename T>
+		bool GetAttributeByIndex(nlohmann::json const& entry, size_t index, T& result);
+
+		/** reading an attribute with default value */
+		template<typename T, typename Y>
+		bool GetAttribute(nlohmann::json const& entry, char const* name, T& result, Y default_value);
+
+		/** reading an attribute with default value */
+		template<typename T, typename Y>
+		bool GetAttributeByIndex(nlohmann::json const& entry, size_t index, T& result, Y default_value);
+
+		/** reading an attribute and make a lookup on an encoding table */
+		template<typename T, typename ENCODE_TABLE>
+		bool GetEnumAttribute(nlohmann::json const& entry, char const* name, ENCODE_TABLE const& encode_table, T& result);
+
+		/** reading an attribute and make a lookup on an encoding table */
+		template<typename T, typename ENCODE_TABLE>
+		bool GetEnumAttributeByIndex(nlohmann::json const& entry, size_t index, ENCODE_TABLE const& encode_table, T& result);
+
+		/** reading an attribute and make a lookup on an encoding table with a default value */
+		template<typename T, typename ENCODE_TABLE, typename Y>
+		bool GetEnumAttribute(nlohmann::json const& entry, char const* name, ENCODE_TABLE const& encode_table, T& result, Y default_value);
+
+		/** reading an attribute and make a lookup on an encoding table with a default value */
+		template<typename T, typename ENCODE_TABLE, typename Y>
+		bool GetEnumAttributeByIndex(nlohmann::json const& entry, size_t index, ENCODE_TABLE const& encode_table, T& result, Y default_value);
+
+	}; // namespace JSONTools
+
+#else
+
 	/** default template loading (catch exceptions) */
 	template<typename T>
 	bool LoadFromJSON(nlohmann::json const& entry, T& dst)
@@ -58,30 +183,6 @@ namespace chaos
 				// shu48
 				// peut etre qu on devrait accepter les entrées ou classname n est pas specifiée ?
 
-
-
-
-
-				Class const* dst_class = dst.GetClass();
-				if (dst_class != nullptr && dst_class->IsDeclared())
-				{
-					nlohmann::json::const_iterator it = entry.find("classname");
-					if (it != entry.end())
-					{
-						std::string classname;
-						if (LoadFromJSON(*it, classname))
-						{
-							Class const* json_class = Class::FindClass(classname.c_str());
-							if (json_class == nullptr || !json_class->IsDeclared() || json_class != dst_class)
-								return false;
-						}
-					}
-				}
-
-
-
-
-#if 0
 				Class const* dst_class = dst.GetClass();
 				if (dst_class == nullptr || !dst_class->IsDeclared())
 					return false;
@@ -92,7 +193,6 @@ namespace chaos
 				Class const* json_class = Class::FindClass(classname.c_str());
 				if (json_class == nullptr || !json_class->IsDeclared() || json_class != dst_class)
 					return false;
-#endif
 			}
 			return dst.SerializeFromJSON(entry);
 		}
@@ -111,34 +211,13 @@ namespace chaos
 		}
 	}
 
-
 	/** an utility function to create an object from a json object */
 	template<typename T>
 	T* LoadFromJSONCreateObject(nlohmann::json const& entry)
 	{
 		if (entry.is_object())
 		{
-			nlohmann::json::const_iterator it = entry.find("classname");
-			if (it != entry.end())
-			{
-				std::string classname;
-				if (LoadFromJSON(*it, classname))
-				{
-					Class const* json_class = Class::FindClass(classname.c_str());
-					if (json_class != nullptr)
-					{
-						Class const* dst_class = Class::FindClass<T>();
-						if (dst_class != nullptr)
-							if (json_class->InheritsFrom(dst_class, true) == InheritanceType::YES) // accept equal
-								return (T*)json_class->CreateInstance();
-					}
-				}
-			}
-
-
-
-
-#if 0
+			std::string classname;
 			if (JSONTools::GetAttribute(entry, "classname", classname))
 			{
 				Class const* json_class = Class::FindClass(classname.c_str());
@@ -150,7 +229,6 @@ namespace chaos
 							return (T*)json_class->CreateInstance();
 				}
 			}
-#endif
 		}
 		return new T;
 	}
@@ -237,35 +315,7 @@ namespace chaos
 				// write the class into the json object
 
 				if (src_class != nullptr && src_class->IsDeclared())
-					entry["classname"] = src_class->GetClassName();
-
-
-#if 0
-
-				/** set an attribute in a json structure */
-				template<typename T>
-				bool SetAttribute(nlohmann::json & entry, char const* name, T const& src)
-				{
-					assert(name != nullptr);
-					if (entry.is_null())
-						entry = nlohmann::json::object();
-					else if (!entry.is_object())
-						return false;
-					entry[name] = nlohmann::json();
-					return SaveIntoJSON(entry[name], src);
-				}
-
-				if (src_class != nullptr && src_class->IsDeclared())
 					JSONTools::SetAttribute(entry, "classname", src_class->GetClassName());
-
-#endif
-
-
-
-
-
-
-
 
 				// save into JSON
 				return src.SerializeIntoJSON(entry);
@@ -460,190 +510,8 @@ namespace chaos
 			return false;
 		}
 
-	}; // namespace JSONTools
+	} // namespace JSONTools
 
-
-
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-///////////////////////////////////
-
-#else 
-
-namespace chaos
-{
-	// =================
-	// Some meta methods
-	// =================
-
-	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(SerializeFromJSON);
-	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(SerializeIntoJSON);
-	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(GetClass);
-
-	// ====================
-	// Standalone functions
-	// ====================
-
-	/** loading a bool (because we try to read an int as a fallback) */
-	bool LoadFromJSON(nlohmann::json const& entry, bool& dst);
-
-	/** an utility function to create an object from a json object */
-	template<typename T>
-	T* LoadFromJSONCreateObject(nlohmann::json const& entry);
-
-	/** default template loading (catch exceptions) */
-	template<typename T>
-	bool LoadFromJSON(nlohmann::json const& entry, T& dst);
-	/** template for unique_ptr */
-	template<typename T, typename DELETER>
-	bool LoadFromJSON(nlohmann::json const& entry, std::unique_ptr<T, DELETER>& dst);
-	/** template for shared_ptr */
-	template<typename T>
-	bool LoadFromJSON(nlohmann::json const& entry, shared_ptr<T>& dst);
-	/** loading specialization for vector */
-	template<typename T>
-	bool LoadFromJSON(nlohmann::json const& entry, std::vector<T>& dst);
-
-	/** basic types */
-	template<typename T>
-	bool SaveIntoJSON(nlohmann::json& entry, T const& src);
-	/** template for unique_ptr */
-	template<typename T, typename DELETER>
-	bool SaveIntoJSON(nlohmann::json& entry, std::unique_ptr<T, DELETER> const& src);
-	/** template for shared_ptr */
-	template<typename T>
-	bool SaveIntoJSON(nlohmann::json& entry, shared_ptr<T> const& src);
-	/** specialization for vector */
-	template<typename T>
-	bool SaveIntoJSON(nlohmann::json& entry, std::vector<T> const& src);
-
-	/** enumeration method */
-	template<typename T, typename ENCODE_TABLE>
-	bool SaveEnumIntoJSON(nlohmann::json& json_entry, ENCODE_TABLE const& encode_table, T const& src);
-	/** enumeration method */
-	template<typename T, typename ENCODE_TABLE>
-	bool LoadEnumFromJSON(nlohmann::json const& json_entry, ENCODE_TABLE const& encode_table, T& dst);
-
-	// =================
-	// JSONTools
-	// =================
-
-	namespace JSONTools
-	{
-		/** parsing a JSON file (catch exceptions) */
-		bool Parse(char const* buffer, nlohmann::json& result);
-		/** parsing a JSON file from a buffer (load any dependant files) */
-		bool ParseRecursive(char const* buffer, boost::filesystem::path const& config_path, nlohmann::json& result);
-		/** Load a JSON file in a recursive whay */
-		bool LoadJSONFile(FilePathParam const& path, nlohmann::json& result, bool recursive = false);
-		/** create a temporary directory to hold the configuration (returns the path of the directory where the file is) */
-		boost::filesystem::path DumpConfigFile(nlohmann::json const& json, char const* filename = "myconfig.json");
-
-		/** get a sub object from an object */
-		nlohmann::json* GetStructure(nlohmann::json& entry, char const* name);
-		/** get a sub object from an object */
-		nlohmann::json const* GetStructure(nlohmann::json const& entry, char const* name);
-
-		/** get a sub object from an object */
-		nlohmann::json* GetStructureByIndex(nlohmann::json& entry, size_t index);
-		/** get a sub object from an object */
-		nlohmann::json const* GetStructureByIndex(nlohmann::json const& entry, size_t index);
-
-		/** set an attribute in a json structure */
-		template<typename T>
-		bool SetAttribute(nlohmann::json& entry, char const* name, T const& src);
-
-		/** set an attribute in a json array */
-		template<typename T>
-		bool SetAttributeByIndex(nlohmann::json& entry, size_t index, T const& src);
-
-		/** set an attribute in a json structure with a lookup table */
-		template<typename T, typename ENCODE_TABLE>
-		bool SetEnumAttribute(nlohmann::json& entry, char const* name, ENCODE_TABLE const& encode_table, T const& src);
-
-		/** set an attribute in a json structure with a lookup table */
-		template<typename T, typename ENCODE_TABLE>
-		bool SetEnumAttributeByIndex(nlohmann::json& entry, size_t index, ENCODE_TABLE const& encode_table, T const& src);
-
-		/** reading an attribute from a JSON structure */
-		template<typename T>
-		bool GetAttribute(nlohmann::json const& entry, char const* name, T& result);
-
-		/** reading an attribute from a JSON array */
-		template<typename T>
-		bool GetAttributeByIndex(nlohmann::json const& entry, size_t index, T& result);
-
-		/** reading an attribute with default value */
-		template<typename T, typename Y>
-		bool GetAttribute(nlohmann::json const& entry, char const* name, T& result, Y default_value);
-
-		/** reading an attribute with default value */
-		template<typename T, typename Y>
-		bool GetAttributeByIndex(nlohmann::json const& entry, size_t index, T& result, Y default_value);
-
-		/** reading an attribute and make a lookup on an encoding table */
-		template<typename T, typename ENCODE_TABLE>
-		bool GetEnumAttribute(nlohmann::json const& entry, char const* name, ENCODE_TABLE const& encode_table, T& result);
-
-		/** reading an attribute and make a lookup on an encoding table */
-		template<typename T, typename ENCODE_TABLE>
-		bool GetEnumAttributeByIndex(nlohmann::json const& entry, size_t index, ENCODE_TABLE const& encode_table, T& result);
-
-		/** reading an attribute and make a lookup on an encoding table with a default value */
-		template<typename T, typename ENCODE_TABLE, typename Y>
-		bool GetEnumAttribute(nlohmann::json const& entry, char const* name, ENCODE_TABLE const& encode_table, T& result, Y default_value);
-
-		/** reading an attribute and make a lookup on an encoding table with a default value */
-		template<typename T, typename ENCODE_TABLE, typename Y>
-		bool GetEnumAttributeByIndex(nlohmann::json const& entry, size_t index, ENCODE_TABLE const& encode_table, T& result, Y default_value);
-
-	}; // namespace JSONTools
-
-
-
-
-
-
-
-
-
-
-
-
-
+#endif
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-

@@ -182,11 +182,7 @@ using typeof_function_##funcname = typename details::check_function_##funcname##
 CHAOS_GENERATE_CHECK_METHOD(funcname)\
 CHAOS_GENERATE_CHECK_FUNCTION(funcname)
 
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 namespace chaos
 {
@@ -238,51 +234,51 @@ namespace chaos
 
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		T * get_raw_pointer(T * src)
+		T* get_raw_pointer(T* src)
 		{
 			return src;
 		}
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		T const * get_raw_pointer(T const * src)
+		T const* get_raw_pointer(T const* src)
 		{
 			return src;
 		}
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		T * get_raw_pointer(T & src)
+		T* get_raw_pointer(T& src)
 		{
 			return &src;
 		}
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		T const * get_raw_pointer(T const & src)
+		T const* get_raw_pointer(T const& src)
 		{
 			return &src;
 		}
 
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		 T * get_raw_pointer(shared_ptr<T> & src)
+		T* get_raw_pointer(shared_ptr<T>& src)
 		{
 			return src.get();
 		}
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		T const * get_raw_pointer(shared_ptr<T> const & src)
+		T const* get_raw_pointer(shared_ptr<T> const& src)
 		{
 			return src.get();
 		}
 
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		T * get_raw_pointer(std::unique_ptr<T> & src)
+		T* get_raw_pointer(std::unique_ptr<T>& src)
 		{
 			return src.get();
 		}
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		T const * get_raw_pointer(std::unique_ptr<T> const & src)
+		T const* get_raw_pointer(std::unique_ptr<T> const& src)
 		{
 			return src.get();
 		}
@@ -300,7 +296,7 @@ namespace chaos
 
 		/** a fake function (not implemented) that pretends to return a reference to an instance of T (does not deserve to be called) */
 		template<typename T>
-		constexpr T & FakeInstance();
+		constexpr T& FakeInstance();
 
 		/** apply a functor on a boost::mpl::vector<>. Stop whenever some kind of result is found */
 		template<typename ELEMENTS, typename FUNC, typename DEFAULT_RESULT>
@@ -321,6 +317,4 @@ namespace chaos
 
 }; // namespace chaos
 
-#endif // CHAOS_FORWARD_DECLARATION
-
-
+#endif

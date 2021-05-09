@@ -1,7 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	enum class ButtonStateChange;
 
 	template<typename T>
@@ -13,15 +13,7 @@ namespace chaos
 	class KeyEvent;
 	class InputEventReceiver;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* ButtonStateChange
@@ -168,7 +160,7 @@ namespace chaos
 		void SetInputMode(InputMode new_mode);
 		/* get the current input mode */
 		InputMode GetInputMode() const { return input_mode; }
-		
+
 		/** check whether a key is pressed. Change input mode according to success */
 		bool CheckButtonPressed(Key button, bool previous_frame = false);
 		/** check whether a key in a set is pressed */
@@ -210,9 +202,6 @@ namespace chaos
 		InputMode input_mode = InputMode::KEYBOARD;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

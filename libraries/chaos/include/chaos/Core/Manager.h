@@ -1,18 +1,11 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class Manager;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
 	// ==============================================================
 	// MANAGER
 	// ==============================================================
@@ -31,7 +24,7 @@ namespace chaos
 		bool IsManagerStarted() const;
 
 		/** initialize the manager from a configuration file */
-		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
+		virtual bool InitializeFromConfiguration(nlohmann::json const& config, boost::filesystem::path const& config_path);
 
 	protected:
 
@@ -42,7 +35,7 @@ namespace chaos
 
 		/** an utility method to initialize a single object in an JSON array/object */
 		template<typename LOADER>
-		static void DoLoadObjectsRecurseDirectories(nlohmann::json const & json, boost::filesystem::path const & config_path, LOADER const & loader)
+		static void DoLoadObjectsRecurseDirectories(nlohmann::json const& json, boost::filesystem::path const& config_path, LOADER const& loader)
 		{
 			if (json.is_array())
 			{
@@ -65,7 +58,7 @@ namespace chaos
 
 		/** an utility method to initialize a single object in an JSON array/object */
 		template<typename LOADER>
-		static auto DoLoadObjectsFromConfiguration(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, boost::mpl::false_ recurse_enabled, LOADER loader) -> typename LOADER::resource_type * // LOADER passed by copy is important to ensure reset for all loaded objects
+		static auto DoLoadObjectsFromConfiguration(char const* name, nlohmann::json const& json, boost::filesystem::path const& config_path, boost::mpl::false_ recurse_enabled, LOADER loader) -> typename LOADER::resource_type* // LOADER passed by copy is important to ensure reset for all loaded objects
 		{
 			// 2 - we receive a key and its is valid (starts with '@')
 			if (name != nullptr && name[0] == '@' && name[1] != 0)
@@ -85,7 +78,7 @@ namespace chaos
 		}
 
 		template<typename LOADER>
-		static auto DoLoadObjectsFromConfiguration(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, boost::mpl::true_ recurse_enabled, LOADER loader) -> typename LOADER::resource_type * // LOADER passed by copy is important to ensure reset for all loaded objects
+		static auto DoLoadObjectsFromConfiguration(char const* name, nlohmann::json const& json, boost::filesystem::path const& config_path, boost::mpl::true_ recurse_enabled, LOADER loader) -> typename LOADER::resource_type* // LOADER passed by copy is important to ensure reset for all loaded objects
 		{
 			// 1 - recurse over some directories
 			if (name != nullptr && StringTools::Stricmp(name, "[recurse]") == 0)
@@ -98,9 +91,9 @@ namespace chaos
 
 		/** an utility method to initialize a list of objects from a JSON object or array */
 		template<typename LOADER, typename RECURSE_FLAG>
-		static bool LoadObjectsFromConfiguration(char const * object_names, nlohmann::json const & json, boost::filesystem::path const & config_path, RECURSE_FLAG recurse_flag, LOADER loader) // LOADER passed by copy is important to ensure reset for all loaded objects
+		static bool LoadObjectsFromConfiguration(char const* object_names, nlohmann::json const& json, boost::filesystem::path const& config_path, RECURSE_FLAG recurse_flag, LOADER loader) // LOADER passed by copy is important to ensure reset for all loaded objects
 		{
-			nlohmann::json const * objects_json = JSONTools::GetStructure(json, object_names);
+			nlohmann::json const* objects_json = JSONTools::GetStructure(json, object_names);
 			if (objects_json != nullptr)
 			{
 				for (nlohmann::json::const_iterator it = objects_json->begin(); it != objects_json->end(); ++it)
@@ -117,7 +110,7 @@ namespace chaos
 
 		/** utility function to remove an object from a list */
 		template<typename T, typename FUNC>
-		static void DoRemoveObject(size_t index, T & vector, FUNC remove_func)
+		static void DoRemoveObject(size_t index, T& vector, FUNC remove_func)
 		{
 			// ensure the index is valid
 			size_t count = vector.size();
@@ -135,7 +128,7 @@ namespace chaos
 
 		/** detach all elements from a list */
 		template<typename T, typename FUNC>
-		static void RemoveAllObjectsFromList(T & vector, FUNC remove_func)
+		static void RemoveAllObjectsFromList(T& vector, FUNC remove_func)
 		{
 			while (vector.size() > 0)
 			{
@@ -149,7 +142,7 @@ namespace chaos
 		}
 
 		template<typename T, typename U>
-		static size_t FindObjectIndexInVector(T * object, U const & vector)
+		static size_t FindObjectIndexInVector(T* object, U const& vector)
 		{
 			assert(object != nullptr);
 			size_t count = vector.size();
@@ -168,8 +161,6 @@ namespace chaos
 		bool manager_started = false;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-

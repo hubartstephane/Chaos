@@ -1,11 +1,3 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
 namespace chaos
 {
 
@@ -15,6 +7,8 @@ namespace chaos
 
 	namespace StringTools
 	{
+#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
 		/** transform any object that have stream operator into a string */
 		template<typename T>
 		std::string ToString(T const & value)
@@ -131,10 +125,12 @@ namespace chaos
 			}
 		};
 
+#endif
+
 	}; // namespace StringTools
 
 }; // namespace chaos
 
-#endif // CHAOS_FORWARD_DECLARATION
+
 
 

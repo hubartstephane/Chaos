@@ -1,19 +1,12 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	template<typename OUTER_ITERATOR, typename INNER_ITERATOR, std::pair<INNER_ITERATOR, INNER_ITERATOR>(*GetInnerIterators)(OUTER_ITERATOR)>
 	class NestedIterator;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
 	template<typename OUTER_ITERATOR, typename INNER_ITERATOR, std::pair<INNER_ITERATOR, INNER_ITERATOR>(*GetInnerIterators)(OUTER_ITERATOR)>
 	class NestedIterator
 	{
@@ -130,8 +123,6 @@ namespace chaos
 		INNER_ITERATOR inner_end_it;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-

@@ -1,14 +1,9 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-	
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else	
-	
 namespace chaos
 {
 	namespace STLTools
 	{
+#if !defined CHAOS_FORWARD_DECLARATION && ! defined CHAOS_TEMPLATE_IMPLEMENTATION
+
 		namespace details
 		{
 			template<typename VECTOR, typename IT, typename VALUE, typename COMPARE>
@@ -49,8 +44,9 @@ namespace chaos
 			return details::FindSortedVector(v, v.begin(), v.end(), value, compare);
 		}
 
+#endif
+
 	}; // namespace STLTools
 
 }; // namespace chaos
 
-#endif // CHAOS_FORWARD_DECLARATION

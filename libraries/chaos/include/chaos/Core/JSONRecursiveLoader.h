@@ -1,20 +1,11 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class JSONRecursiveLoader;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
-
-	//
 	// Note on recursive substitution.
 	//
 	// -any object {"@filename", "XXX"} is replaced by the content of the JSON file XXX
@@ -39,41 +30,41 @@ namespace chaos
 	public:
 
 		/** entry point to parse recursively a JSON file from its path */
-		bool LoadJSONFile(FilePathParam const & path, nlohmann::json & result);
+		bool LoadJSONFile(FilePathParam const& path, nlohmann::json& result);
 		/** entry point to parse recursively a JSON file from an already loaded buffer in memory */
-		bool ParseJSONFile(char const * buffer, boost::filesystem::path const & config_path, nlohmann::json & result);
+		bool ParseJSONFile(char const* buffer, boost::filesystem::path const& config_path, nlohmann::json& result);
 
 	protected:
 
 		/** internal method */
-		bool FinalizeSubstitutions(nlohmann::json & result);
+		bool FinalizeSubstitutions(nlohmann::json& result);
 		/** internal method */
-		void ComputeSubstitutionChain(char const * buffer, boost::filesystem::path const & config_path);
+		void ComputeSubstitutionChain(char const* buffer, boost::filesystem::path const& config_path);
 		/** internal method */
-		void ComputeSubstitutionChain(FilePathParam const & path);
+		void ComputeSubstitutionChain(FilePathParam const& path);
 		/** internal method */
-		void ComputeSubstitutionChainHelper(LoaderEntry * entry);
+		void ComputeSubstitutionChainHelper(LoaderEntry* entry);
 		/** internal method */
-		bool DoMakeStringSubstitution(LoaderEntry * entry, std::string & result);
+		bool DoMakeStringSubstitution(LoaderEntry* entry, std::string& result);
 		/** internal method */
-		void MakeStringSubstitution(LoaderEntry * entry, nlohmann::json & root);
+		void MakeStringSubstitution(LoaderEntry* entry, nlohmann::json& root);
 		/** internal method */
-		void DoComputeSubstitutionChain(LoaderEntry * entry, nlohmann::json & root);
+		void DoComputeSubstitutionChain(LoaderEntry* entry, nlohmann::json& root);
 		/** internal method */
 		void MakeSubstitutions();
 		/** internal method */
 		void Clear();
 
 		/** internal method */
-		LoaderEntry * FindEntry(FilePathParam const & path);
+		LoaderEntry* FindEntry(FilePathParam const& path);
 		/** internal method */
-		LoaderEntry * FindOrCreateEntry(FilePathParam const & path, bool & infinite_recursion);
+		LoaderEntry* FindOrCreateEntry(FilePathParam const& path, bool& infinite_recursion);
 		/** internal method */
-		LoaderEntry * CreateEntry(FilePathParam const & path);
+		LoaderEntry* CreateEntry(FilePathParam const& path);
 		/** internal method */
-		LoaderEntry * CreateEntry(char const * buffer, boost::filesystem::path const & config_path);
+		LoaderEntry* CreateEntry(char const* buffer, boost::filesystem::path const& config_path);
 		/** internal method */
-		LoaderEntry * DoCreateEntry(nlohmann::json & new_json, boost::filesystem::path const & config_path);
+		LoaderEntry* DoCreateEntry(nlohmann::json& new_json, boost::filesystem::path const& config_path);
 
 	protected:
 
@@ -83,8 +74,6 @@ namespace chaos
 		std::vector<LoaderEntry*> stacked_entries;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-

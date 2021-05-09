@@ -1,18 +1,11 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class MyBase64;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
 	//
 	// Implementation is coming from : https://stackoverflow.com/questions/180947/base64-decode-snippet-in-c
 	//
@@ -21,9 +14,9 @@ namespace chaos
 	public:
 
 		/** encoding method */
-		std::string Encode(Buffer<char> const & src);
+		std::string Encode(Buffer<char> const& src);
 		/** decoding method */
-		Buffer<char> Decode(char const * src);
+		Buffer<char> Decode(char const* src);
 
 		/** returns true whether the input is a valid character */
 		static bool IsBase64(unsigned char c);
@@ -31,18 +24,16 @@ namespace chaos
 	protected:
 
 		/** utility function to encode 3 bytes into 4 bytes */
-		static void EncodeBuffer(unsigned char const * char_array_3, unsigned char * char_array_4);
+		static void EncodeBuffer(unsigned char const* char_array_3, unsigned char* char_array_4);
 		/** utility function to decode 4 bytes into 3 bytes */
-		static void DecodeBuffer(unsigned char const * char_array_4, unsigned char * char_array_3);
+		static void DecodeBuffer(unsigned char const* char_array_4, unsigned char* char_array_3);
 
 	protected:
 
 		/** utility buffer for encodage */
-		static char const * base64_chars;
+		static char const* base64_chars;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-

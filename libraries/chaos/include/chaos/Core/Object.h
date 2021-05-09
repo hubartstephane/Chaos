@@ -37,10 +37,7 @@ namespace chaos
 
 }; // namespace chaos
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 namespace chaos
 {
@@ -179,4 +176,4 @@ void intrusive_ptr_add_ref(chaos::Object* obj); // should work with boost::intru
 	/** utility method for shared_ptr */
 void intrusive_ptr_release(chaos::Object* obj); // should work with boost::intrusive_ptr<>
 
-#endif // CHAOS_FORWARD_DECLARATION
+#endif

@@ -1,11 +1,3 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
 namespace chaos
 {
 
@@ -15,6 +7,8 @@ namespace chaos
 
 	namespace BitTools
 	{
+
+#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 #if _WIN32
 
@@ -50,11 +44,13 @@ namespace chaos
 
 #endif // _WIN64
 
+#endif
+
 	}; // namespace BitTools
 
 }; // namespace chaos
 
-#endif // CHAOS_FORWARD_DECLARATION
+
 
 
 

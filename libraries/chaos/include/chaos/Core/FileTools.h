@@ -1,11 +1,3 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
 namespace chaos
 {
 	/**
@@ -14,6 +6,8 @@ namespace chaos
 
 	namespace FileTools
 	{
+#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
 		/** returns true if the extension of a file correspond to a string */
 		bool IsTypedFile(FilePathParam const & path, char const * expected_ext);
 		/** loading a whole file into memory */
@@ -37,9 +31,11 @@ namespace chaos
 		bool GetRedirectedPath(boost::filesystem::path const & p, boost::filesystem::path & redirected_path);
 #endif
 
+#endif
+
 	}; // namespace FileTools
 
 }; // namespace chaos
 
-#endif // CHAOS_FORWARD_DECLARATION
+
 

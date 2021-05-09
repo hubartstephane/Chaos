@@ -1,18 +1,10 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class FilePathParam;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// ==============================================================
 	// FILE PATH PARAM
@@ -26,25 +18,25 @@ namespace chaos
 	public:
 
 		/** constructor */
-		FilePathParam(char const * basic_path);
+		FilePathParam(char const* basic_path);
 		/** constructor */
-		FilePathParam(std::string const & string_path);
+		FilePathParam(std::string const& string_path);
 		/** constructor */
-		FilePathParam(boost::filesystem::path const & filesystem_path);
+		FilePathParam(boost::filesystem::path const& filesystem_path);
 		/** constructor */
-		FilePathParam(char const * basic_path, boost::filesystem::path const & reference_path);
+		FilePathParam(char const* basic_path, boost::filesystem::path const& reference_path);
 		/** constructor */
-		FilePathParam(std::string const & string_path, boost::filesystem::path const & reference_path);
+		FilePathParam(std::string const& string_path, boost::filesystem::path const& reference_path);
 		/** constructor */
-		FilePathParam(boost::filesystem::path const & filesystem_path, boost::filesystem::path const & reference_path);
+		FilePathParam(boost::filesystem::path const& filesystem_path, boost::filesystem::path const& reference_path);
 
 		/** resolve if necessary and return the path */
-		boost::filesystem::path const & GetResolvedPath() const;
+		boost::filesystem::path const& GetResolvedPath() const;
 
 	protected:
 
 		/** internal method to compute the resolved path */
-		void ResolvePath(char const * basic_path, std::string const * string_path, boost::filesystem::path const * filesystem_path, boost::filesystem::path const * reference_path);
+		void ResolvePath(char const* basic_path, std::string const* string_path, boost::filesystem::path const* filesystem_path, boost::filesystem::path const* reference_path);
 
 	protected:
 
@@ -70,6 +62,6 @@ namespace chaos
 		return nullptr;
 	}
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

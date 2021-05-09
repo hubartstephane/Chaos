@@ -1,22 +1,14 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	template<typename T>
 	class AutoConstCastable;
 
 	template<typename T>
 	class AutoCastable;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/** AutoConstCastable : an object that provide dynamic_cast on demand */
 	template<typename T>
@@ -28,13 +20,7 @@ namespace chaos
 		AutoConstCastable() = default;
 		AutoConstCastable(AutoConstCastable const& src) = default;
 		AutoConstCastable(T const* in_ptr) : ptr(in_ptr) {}
-#if 0
-		/** the conversion operator */
-		operator T const* () const
-		{
-			return ptr;
-		}
-#endif
+
 		/** the conversion operator */
 		template<typename U>
 		operator U const* () const
@@ -43,14 +29,14 @@ namespace chaos
 				return ptr;
 			if constexpr (!std::is_polymorphic_v<T>)
 				return nullptr;
-			else 
+			else
 				return dynamic_cast<const U*>(ptr);
 		}
 
 		/** indirection operator */
 		T const* operator -> () const { return ptr; }
 		/** deferencing operator */
-		T const & operator * () const { return *ptr; }
+		T const& operator * () const { return *ptr; }
 		/** checking whether this is valid */
 		bool operator == (nullptr_t) const { return (ptr == nullptr); }
 		/** checking whether this is valid */
@@ -74,18 +60,12 @@ namespace chaos
 		AutoCastable() = default;
 		AutoCastable(AutoCastable const& src) = default;
 		AutoCastable(T* in_ptr) : ptr(in_ptr) {}
+
 		/** the const conversion operator */
 		operator AutoConstCastable<T>() const
 		{
 			return AutoConstCastable<T>(ptr);
 		}
-		/** the conversion operator */
-#if 0
-		operator T * () const
-		{
-			return ptr;
-		}
-#endif
 		/** the conversion operator */
 		template<typename U>
 		operator U* () const
@@ -98,9 +78,9 @@ namespace chaos
 				return dynamic_cast<U*>(ptr);
 		}
 		/** indirection operator */
-		T * operator -> () const { return ptr; }
+		T* operator -> () const { return ptr; }
 		/** deferencing operator */
-		T & operator * () const { return *ptr; }
+		T& operator * () const { return *ptr; }
 		/** checking whether this is valid */
 		bool operator == (nullptr_t) const { return (ptr == nullptr); }
 		/** checking whether this is valid */
@@ -116,17 +96,17 @@ namespace chaos
 
 	/** create a delayed dynamic_cast<> */
 	template<typename T>
-	AutoCastable<T> auto_cast(AutoCastable<T> const & src) { return src; }
+	AutoCastable<T> auto_cast(AutoCastable<T> const& src) { return src; }
 	/** create a delayed dynamic_cast<> */
 	template<typename T>
 	AutoConstCastable<T> auto_cast(AutoConstCastable<T> const& src) { return src; }
 	/** create a delayed dynamic_cast<> */
 	template<typename T>
-	AutoCastable<T> auto_cast(T * ptr) { return AutoCastable<T>(ptr); }
+	AutoCastable<T> auto_cast(T* ptr) { return AutoCastable<T>(ptr); }
 	/** create a delayed dynamic_cast<> */
 	template<typename T>
-	AutoConstCastable<T> auto_cast(T const * ptr) { return AutoConstCastable<T>(ptr); }
+	AutoConstCastable<T> auto_cast(T const* ptr) { return AutoConstCastable<T>(ptr); }
 
-}; // chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

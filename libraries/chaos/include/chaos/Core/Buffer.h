@@ -1,6 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
 namespace chaos
 {
+
+#ifdef CHAOS_FORWARD_DECLARATION
 
 	class BufferBase;
 	class BufferPolicyBase;
@@ -11,15 +12,8 @@ namespace chaos
 	template<typename T> 
 	class BufferPolicy;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
 	/**
 	* BufferBase : base class for buffer
 	*/
@@ -54,7 +48,7 @@ namespace chaos
 	};
 
 	/**
-	* BufferPolicyBase : base class for the Policy 
+	* BufferPolicyBase : base class for the Policy
 	*/
 
 	class BufferPolicyBase
@@ -70,23 +64,23 @@ namespace chaos
 	protected:
 
 		/** called whenever the buffer is destroyed */
-		virtual void DestroyBuffer(BufferBase * buf){}
+		virtual void DestroyBuffer(BufferBase* buf) {}
 		/** called whenever we want to copy a buffer */
-		virtual void CopyBuffer(BufferBase * dst, BufferBase const * src){}
+		virtual void CopyBuffer(BufferBase* dst, BufferBase const* src) {}
 	};
 
 	/**
 	* SharedBufferPolicy : the policy for memory management is based on a counter. Policy and data are allocated in the same chunk of memory
 	*/
 
-	template<typename T> 
+	template<typename T>
 	class SharedBufferPolicy : public BufferPolicyBase
 	{
 
 	public:
 
 		/** constructor */
-		SharedBufferPolicy() : reference_count(1){}
+		SharedBufferPolicy() : reference_count(1) {}
 
 		/** generate the buffer */
 		static Buffer<T> NewBuffer(size_t count)
@@ -100,32 +94,32 @@ namespace chaos
 	protected:
 
 		/** copy the buffer */
-		virtual void CopyBuffer(BufferBase * dst, BufferBase const * src) override
+		virtual void CopyBuffer(BufferBase* dst, BufferBase const* src) override
 		{
 			assert(dst != nullptr);
 			assert(src != nullptr);
 			assert(src->GetPolicy() == this);
 
-			Buffer<T> * d = (Buffer<T>*)dst;
-			Buffer<T> * s = (Buffer<T>*)src;
+			Buffer<T>* d = (Buffer<T>*)dst;
+			Buffer<T>* s = (Buffer<T>*)src;
 
-			d->data    = s->data;
+			d->data = s->data;
 			d->bufsize = s->bufsize;
 			d->SetPolicy(this);
 			++reference_count;
 		}
 
 		/** destroy the buffer */
-		virtual void DestroyBuffer(BufferBase * buf) override
+		virtual void DestroyBuffer(BufferBase* buf) override
 		{
 			if (--reference_count == 0)
 			{
-				Buffer<T> * b = (Buffer<T>*)buf;
-				for (size_t i = 0 ; i < b->bufsize ; ++i)
-					b->data[i].~T();      
+				Buffer<T>* b = (Buffer<T>*)buf;
+				for (size_t i = 0; i < b->bufsize; ++i)
+					b->data[i].~T();
 				b->GetPolicy()->~BufferPolicyBase();
-				AllocatorTools::Aligned16Free(b->GetPolicy());           
-			}    
+				AllocatorTools::Aligned16Free(b->GetPolicy());
+			}
 		}
 
 	protected:
@@ -138,7 +132,7 @@ namespace chaos
 	* SharedNonOptimizedBufferPolicy : same than SharedNonOptimizedBufferPolicy, but policy is in an independent memory than the data
 	*/
 
-	template<typename T> 
+	template<typename T>
 	class SharedNonOptimizedBufferPolicy : public SharedBufferPolicy<T>
 	{
 
@@ -155,14 +149,14 @@ namespace chaos
 	protected:
 
 		/** destroy the buffer */
-		virtual void DestroyBuffer(BufferBase * buf) override
+		virtual void DestroyBuffer(BufferBase* buf) override
 		{
 			if (--this->reference_count == 0)
 			{
-				Buffer<T> * b = (Buffer<T>*)buf;
-				delete [] b->data;
+				Buffer<T>* b = (Buffer<T>*)buf;
+				delete[] b->data;
 				delete(this);
-			}    
+			}
 		}
 	};
 
@@ -180,34 +174,34 @@ namespace chaos
 		/** the type of the element in the buffer */
 		using type = TYPE;
 
-		/** default constructor */    
+		/** default constructor */
 		Buffer() = default;
 
 		/** constructor with initialization */
-		Buffer(TYPE * in_data, size_t in_bufsize):
+		Buffer(TYPE* in_data, size_t in_bufsize) :
 			data(in_data),
-			bufsize(in_bufsize){}
+			bufsize(in_bufsize) {}
 
 		/** copy constructor (let the policy decide what to do) */
-		Buffer(Buffer<TYPE> const & other)
+		Buffer(Buffer<TYPE> const& other)
 		{
 			if (other.policy == nullptr) // buffer is unmanaged => simple copy
 			{
-				data    = other.data;
-				bufsize = other.bufsize; 
+				data = other.data;
+				bufsize = other.bufsize;
 			}
 			else
 			{
 				CopyFromBuffer(&other);
-			}   
+			}
 		}
 
 		/** move constructor */
-		Buffer(Buffer<TYPE> && other) noexcept
+		Buffer(Buffer<TYPE>&& other) noexcept
 		{
-			std::swap(policy,  other.policy);
-			std::swap(data,    other.data);
-			std::swap(bufsize, other.bufsize);    
+			std::swap(policy, other.policy);
+			std::swap(data, other.data);
+			std::swap(bufsize, other.bufsize);
 		}
 
 		/** get the size */
@@ -217,26 +211,26 @@ namespace chaos
 		}
 
 		/** cast the buffer in a data pointer */
-		operator type const * () const
+		operator type const* () const
 		{
 			return data;
 		}
 		/** cast the buffer in a data pointer */
-		operator type * ()
+		operator type* ()
 		{
 			return data;
 		}
 
 		/** copy operator */
-		Buffer<TYPE> & operator = (Buffer<TYPE> const & other) 
+		Buffer<TYPE>& operator = (Buffer<TYPE> const& other)
 		{
 			Buffer<TYPE> to_destroy(std::move(*this)); // to destroy at the end of call
 
 			if (other.policy == nullptr)
 			{
-				data    = other.data;
+				data = other.data;
 				bufsize = other.bufsize;
-				policy  = nullptr;
+				policy = nullptr;
 			}
 			else
 			{
@@ -247,10 +241,10 @@ namespace chaos
 		}
 
 		/** move operator */
-		Buffer<TYPE> & operator = (Buffer<TYPE> && other) noexcept
+		Buffer<TYPE>& operator = (Buffer<TYPE>&& other) noexcept
 		{
-			std::swap(policy,  other.policy);
-			std::swap(data,    other.data);
+			std::swap(policy, other.policy);
+			std::swap(data, other.data);
 			std::swap(bufsize, other.bufsize);
 			return *this;
 		}
@@ -258,12 +252,11 @@ namespace chaos
 	public:
 
 		/** the pointer on the data */
-		type * data = nullptr;
+		type* data = nullptr;
 		/** the number of elements in the buffer */
 		size_t bufsize = 0;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-

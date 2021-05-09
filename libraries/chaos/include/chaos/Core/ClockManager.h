@@ -1,7 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	//
 	//                                      TICK RANGE 
 	//                                   +--------------+
@@ -29,15 +29,8 @@ namespace chaos
 	/** events ordered by start time */
 	using ClockEventTickSet = std::set<ClockEventTickRegistration, ClockEventTickSort>;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
 	/**
 	* ClockEventTickData : describe all information for ticking an event
 	*/
@@ -50,23 +43,23 @@ namespace chaos
 		/** returns the event is really to be ticked */
 		bool IsValid() const
 		{
-			return 
-				(tick_range.first  != std::numeric_limits<double>::max()) &&
+			return
+				(tick_range.first != std::numeric_limits<double>::max()) &&
 				(tick_range.second != std::numeric_limits<double>::max());
 		}
 
 	public:
 
 		/** the event without any consideration of time slicing */
-		ClockTimeRange execution_range{0.0, 0.0}; 
+		ClockTimeRange execution_range{ 0.0, 0.0 };
 		/** the whole tick range */
-		ClockTimeRange time_slice{0.0, 0.0}; 
+		ClockTimeRange time_slice{ 0.0, 0.0 };
 		/** the tick range where event is activate */
-		ClockTimeRange tick_range{0.0, 0.0};
+		ClockTimeRange tick_range{ 0.0, 0.0 };
 	};
 
 	/**
-	* ClockEventTickRegistration : events to tick are registered inside that structure 
+	* ClockEventTickRegistration : events to tick are registered inside that structure
 	*/
 
 	class ClockEventTickRegistration : public ClockEventTickData
@@ -90,9 +83,9 @@ namespace chaos
 		/** default constructor */
 		ClockEventRepetitionInfo() = default;
 		/** intialization constructor */
-		ClockEventRepetitionInfo(double in_repetition_delay, int in_repetition_count):
+		ClockEventRepetitionInfo(double in_repetition_delay, int in_repetition_count) :
 			repetition_delay(in_repetition_delay),
-			repetition_count(in_repetition_count){}
+			repetition_count(in_repetition_count) {}
 
 		/** return an instance with no repetition */
 		static ClockEventRepetitionInfo NoRepetition()
@@ -114,11 +107,11 @@ namespace chaos
 		}
 
 		/** returns true whether the event is repeated */
-		bool IsRepeated() const { return (repetition_count != 0);}
+		bool IsRepeated() const { return (repetition_count != 0); }
 		/** returns true whether the event is repeated a limited number of time */
-		bool IsRepeatedLimited() const { return (repetition_count > 0.0);}
+		bool IsRepeatedLimited() const { return (repetition_count > 0.0); }
 		/** returns true whether the event is repeated forever  */
-		bool IsRepeatedInfinitly() const { return (repetition_count < 0.0);}
+		bool IsRepeatedInfinitly() const { return (repetition_count < 0.0); }
 
 	public:
 
@@ -139,7 +132,7 @@ namespace chaos
 		/** default constructor */
 		ClockEventInfo() = default;
 		/** constructor with initialization */
-		ClockEventInfo(double in_start_time, double in_duration, ClockEventRepetitionInfo const & in_repetition_info = ClockEventRepetitionInfo::NoRepetition()):
+		ClockEventInfo(double in_start_time, double in_duration, ClockEventRepetitionInfo const& in_repetition_info = ClockEventRepetitionInfo::NoRepetition()) :
 			ClockEventRepetitionInfo(in_repetition_info),
 			start_time(in_start_time),
 			duration(in_duration)
@@ -147,27 +140,27 @@ namespace chaos
 		}
 
 		/** creates an instance that describes an event to be ticked once */
-		static ClockEventInfo SingleTickEvent(double in_start_time, ClockEventRepetitionInfo const & in_repetition_info = ClockEventRepetitionInfo::NoRepetition())
+		static ClockEventInfo SingleTickEvent(double in_start_time, ClockEventRepetitionInfo const& in_repetition_info = ClockEventRepetitionInfo::NoRepetition())
 		{
 			return ClockEventInfo(in_start_time, 0.0, in_repetition_info);
 		}
 		/** creates an instance that describes an event to be ticked for a given time */
-		static ClockEventInfo RangeEvent(double in_start_time, double in_duration, ClockEventRepetitionInfo const & in_repetition_info = ClockEventRepetitionInfo::NoRepetition())
+		static ClockEventInfo RangeEvent(double in_start_time, double in_duration, ClockEventRepetitionInfo const& in_repetition_info = ClockEventRepetitionInfo::NoRepetition())
 		{
-			return ClockEventInfo(in_start_time, in_duration,in_repetition_info);
+			return ClockEventInfo(in_start_time, in_duration, in_repetition_info);
 		}
 		/** creates an instance that describes an event to be ticked for a given time */
-		static ClockEventInfo ForeverEvent(double in_start_time, ClockEventRepetitionInfo const & in_repetition_info = ClockEventRepetitionInfo::NoRepetition())
+		static ClockEventInfo ForeverEvent(double in_start_time, ClockEventRepetitionInfo const& in_repetition_info = ClockEventRepetitionInfo::NoRepetition())
 		{
 			return ClockEventInfo(in_start_time, -1.0, in_repetition_info);
 		}
 
 		/** returns true whether the event is to be ticked only once */
-		bool IsSingleTickEvent() const { return (duration == 0.0);}
+		bool IsSingleTickEvent() const { return (duration == 0.0); }
 		/** returns true whether the event is to be ticked for a given range */
-		bool IsRangeEvent() const { return (duration > 0.0);}
+		bool IsRangeEvent() const { return (duration > 0.0); }
 		/** returns true whether the event is to be ticked for an undermined time */
-		bool IsForeverEvent() const { return (duration < 0.0);}
+		bool IsForeverEvent() const { return (duration < 0.0); }
 
 		/** the maximum time the event can be triggered */
 		double GetMaxEventTime() const;
@@ -251,8 +244,8 @@ namespace chaos
 		bool RemoveFromClock();
 
 		/** get the info */
-		ClockEventInfo & GetEventInfo(){ return event_info;}
-		ClockEventInfo const & GetEventInfo() const { return event_info;}
+		ClockEventInfo& GetEventInfo() { return event_info; }
+		ClockEventInfo const& GetEventInfo() const { return event_info; }
 
 		/** returns true whether the event is ticked for the very first time */
 		bool IsFirstTick() const { return tick_count == 0; }
@@ -265,7 +258,7 @@ namespace chaos
 		int GetExecutionCount() const { return execution_count; }
 
 		/** the public method to process */
-		virtual ClockEventTickResult Tick(ClockEventTickData const & tick_data) { return CompleteExecution(); }
+		virtual ClockEventTickResult Tick(ClockEventTickData const& tick_data) { return CompleteExecution(); }
 		/** called whenever the event is removed from the clock */
 		virtual void OnEventRemovedFromClock() {}
 
@@ -285,9 +278,9 @@ namespace chaos
 		/** the tick count for current execution */
 		int tick_count = 0;
 		/** the execution count (used for restarted event) */
-		int execution_count = 0;    
+		int execution_count = 0;
 		/** the clock it belongs to */
-		class Clock * clock = nullptr;    
+		class Clock* clock = nullptr;
 	};
 
 	/**
@@ -298,7 +291,7 @@ namespace chaos
 	{
 	public:
 
-		bool operator ()(ClockEventTickRegistration const & src1, ClockEventTickRegistration const & src2) const
+		bool operator ()(ClockEventTickRegistration const& src1, ClockEventTickRegistration const& src2) const
 		{
 			return src1.abs_time_to_start < src2.abs_time_to_start;
 		};
@@ -315,7 +308,7 @@ namespace chaos
 		/** a time scale for the clock */
 		float time_scale = 1.0;
 		/** whether the clock is paused or not */
-		bool   paused = false;  	
+		bool   paused = false;
 	};
 
 	/**
@@ -331,7 +324,7 @@ namespace chaos
 	public:
 
 		/** the constructor */
-		Clock(char const * in_name = nullptr, ClockCreateParams const & params = ClockCreateParams());
+		Clock(char const* in_name = nullptr, ClockCreateParams const& params = ClockCreateParams());
 		/** the destructor */
 		virtual ~Clock();
 
@@ -341,11 +334,11 @@ namespace chaos
 		/** returns the internal time */
 		double GetClockTime() const { return clock_time; }
 		/** returns the clock name */
-		char const * GetClockName() const { return name.c_str(); }
+		char const* GetClockName() const { return name.c_str(); }
 		/** returns the parent clock */
-		Clock * GetParentClock(){ return parent_clock;}
+		Clock* GetParentClock() { return parent_clock; }
 		/** returns the parent clock */
-		Clock const * GetParentClock() const { return parent_clock;}
+		Clock const* GetParentClock() const { return parent_clock; }
 
 		/** change the pause state */
 		void SetPause(bool in_pause);
@@ -366,25 +359,25 @@ namespace chaos
 		float GetTimeScale() const { return time_scale; }
 
 		/** gets a clock by name */
-		Clock * FindChildClock(char const * in_name, bool recursive = true);
+		Clock* FindChildClock(char const* in_name, bool recursive = true);
 		/** gets a clock by name */
-		Clock const * FindChildClock(char const * in_name, bool recursive = true) const;
+		Clock const* FindChildClock(char const* in_name, bool recursive = true) const;
 
 		/** get the top level clock */
-		Clock * GetTopLevelParent();
+		Clock* GetTopLevelParent();
 		/** get the top level clock */
-		Clock const * GetTopLevelParent() const;
+		Clock const* GetTopLevelParent() const;
 
 		/** advance the clock (public interface) */
 		bool TickClock(float delta_time);
 
 		/** add a clock */
-		Clock * CreateChildClock(char const * in_name = nullptr, ClockCreateParams const & params = ClockCreateParams());
+		Clock* CreateChildClock(char const* in_name = nullptr, ClockCreateParams const& params = ClockCreateParams());
 		/** remove a clock */
 		bool RemoveFromParent();
 
 		/** add an event to be ticked */
-		bool AddPendingEvent(ClockEvent * clock_event, ClockEventInfo event_info, bool relative_time);
+		bool AddPendingEvent(ClockEvent* clock_event, ClockEventInfo event_info, bool relative_time);
 		/** remove all child clocks */
 		void RemoveAllChildClocks();
 		/** remove all pending events */
@@ -396,7 +389,7 @@ namespace chaos
 		bool GetTickEventsEnabled() const { return tick_events; }
 
 		/** initialization of the manager from configuration file */
-		virtual void InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
+		virtual void InitializeFromConfiguration(nlohmann::json const& config, boost::filesystem::path const& config_path);
 
 		/** the processor may save its configuration into a JSON file */
 		virtual bool SerializeIntoJSON(nlohmann::json& json_entry) const override;
@@ -406,22 +399,22 @@ namespace chaos
 	protected:
 
 		/** advance the clock */
-		bool TickClockImpl(float delta_time, double cumulated_factor, ClockEventTickSet & event_tick_set);
+		bool TickClockImpl(float delta_time, double cumulated_factor, ClockEventTickSet& event_tick_set);
 		/** internal methods to trigger all the event */
-		void TriggerClockEvent(ClockEventTickRegistration & registered_event);
+		void TriggerClockEvent(ClockEventTickRegistration& registered_event);
 		/** ensure given clock is a child of the hierarchy tree */
-		bool IsDescendantClock(Clock const * child_clock) const;
+		bool IsDescendantClock(Clock const* child_clock) const;
 
 	protected:
 
 		/** the parent clock */
-		Clock * parent_clock = nullptr;
+		Clock* parent_clock = nullptr;
 		/** the time of the clock */
 		double clock_time = 0.0;
 		/** a time scale for the clock */
 		float time_scale = 1.0;
 		/** whether the clock is paused or not */
-		bool   paused = false;  
+		bool   paused = false;
 		/** whether events should be ticked */
 		bool   tick_events = true;
 		/** the name of the clock */
@@ -433,6 +426,6 @@ namespace chaos
 		std::vector<shared_ptr<Clock>> children_clocks;
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

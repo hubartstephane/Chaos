@@ -1,18 +1,10 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class Application;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* Application : used to store generic application data
@@ -28,7 +20,7 @@ namespace chaos
 		virtual ~Application();
 
 		/** the user main method */
-		bool Run(int argc, char ** argv, char ** env);
+		bool Run(int argc, char** argv, char** env);
 
 		/** getter of the singleton instance */
 		static AutoCastable<Application> GetInstance() { return singleton_instance; }
@@ -36,37 +28,37 @@ namespace chaos
 		static AutoConstCastable<Application> GetConstInstance() { return singleton_instance; }
 
 		/** get the name of the application */
-		char const * GetName() const { return application_name.c_str(); }
+		char const* GetName() const { return application_name.c_str(); }
 		/** get the name of the application */
 		static char const* GetApplicationName();
 
 		/** get an environment value */
-		char const * GetEnvironment(char const * key) const;
+		char const* GetEnvironment(char const* key) const;
 		/** get an environment value */
-		static char const * GetApplicationEnvironment(char const * key);
+		static char const* GetApplicationEnvironment(char const* key);
 
 		/** get the application arguments */
-		std::vector<std::string> const & GetArguments() const { return arguments; }
+		std::vector<std::string> const& GetArguments() const { return arguments; }
 		/** get the application path */
-		boost::filesystem::path const & GetApplicationPath() const { return application_path; }
+		boost::filesystem::path const& GetApplicationPath() const { return application_path; }
 		/** get the resources path */
-		boost::filesystem::path const & GetResourcesPath() const { return resources_path; }
+		boost::filesystem::path const& GetResourcesPath() const { return resources_path; }
 		/** get the application name */
-		boost::filesystem::path const & GetApplicationFilename() const { return application_filename; }
+		boost::filesystem::path const& GetApplicationFilename() const { return application_filename; }
 		/** get the application local path for execution data */
-		boost::filesystem::path const & GetUserLocalPath() const { return userlocal_path; }
+		boost::filesystem::path const& GetUserLocalPath() const { return userlocal_path; }
 		/** get the application local temp path for execution data */
-		boost::filesystem::path const & GetUserLocalTempPath() const { return userlocal_temp_path; }
+		boost::filesystem::path const& GetUserLocalTempPath() const { return userlocal_temp_path; }
 
 		/** get the configuration */
-		nlohmann::json const & GetConfiguration() const { return configuration;}
+		nlohmann::json const& GetConfiguration() const { return configuration; }
 		/** get the configuration file */
-		boost::filesystem::path const & GetConfigurationPath() const { return configuration_path; }
+		boost::filesystem::path const& GetConfigurationPath() const { return configuration_path; }
 
 		/** open the temp local user directory (for debugging purpose) */
-		boost::filesystem::path const & ShowUserLocalTempDirectory() const;	
+		boost::filesystem::path const& ShowUserLocalTempDirectory() const;
 		/** create the use local temp directory */
-		boost::filesystem::path const & CreateUserLocalTempDirectory() const;
+		boost::filesystem::path const& CreateUserLocalTempDirectory() const;
 
 		/** get the current input mode (search the application) */
 		static InputMode GetApplicationInputMode();
@@ -74,20 +66,20 @@ namespace chaos
 		static void SetApplicationInputMode(InputMode new_mode);
 
 		/** check whether -flag_name is in command line */
-		bool HasCommandLineFlag(char const * flag_name) const;
+		bool HasCommandLineFlag(char const* flag_name) const;
 		/** check whether -flag_name is in command line */
-		static bool HasApplicationCommandLineFlag(char const * flag_name);
+		static bool HasApplicationCommandLineFlag(char const* flag_name);
 
 		/** reloading the configuration file (do not apply it to any object at all) */
-		bool ReloadConfigurationFile(nlohmann::json & result) const;
-		
+		bool ReloadConfigurationFile(nlohmann::json& result) const;
+
 #if _DEBUG
 		/** set redirection file directories */
-		void SetFileRedirectionDirectories(boost::filesystem::path const & build_path, boost::filesystem::path const & src_path);
+		void SetFileRedirectionDirectories(boost::filesystem::path const& build_path, boost::filesystem::path const& src_path);
 		/** get the redirected source directory */
-		boost::filesystem::path const & GetRedirectionSourcePath() const { return redirection_source_path;};
+		boost::filesystem::path const& GetRedirectionSourcePath() const { return redirection_source_path; };
 		/** get the redirected build directory */
-		boost::filesystem::path const & GetRedirectionBuildPath() const { return redirection_build_path; };
+		boost::filesystem::path const& GetRedirectionBuildPath() const { return redirection_build_path; };
 #endif
 
 	protected:
@@ -95,7 +87,7 @@ namespace chaos
 		/** the method that should be override */
 		virtual bool Main();
 		/** store the application parameters */
-		virtual void StoreParameters(int argc, char ** argv, char ** env);
+		virtual void StoreParameters(int argc, char** argv, char** env);
 		/** Initialize the application with the main data */
 		virtual bool Initialize();
 		/** Finalization method */
@@ -122,7 +114,7 @@ namespace chaos
 	protected:
 
 		/** the single application instance */
-		static Application * singleton_instance;
+		static Application* singleton_instance;
 
 		/** the name of the application */
 		std::string application_name;
@@ -178,6 +170,6 @@ namespace chaos
 		return false;
 	}
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

@@ -1,20 +1,12 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class ImageDescription;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
-
-	/** 
+	/**
 	* ImageFaceDescription : data to work with pixels
 	*/
 
@@ -25,7 +17,7 @@ namespace chaos
 		/** constructor */
 		ImageDescription() = default;
 
-		ImageDescription(void * in_data, int in_width, int in_height, PixelFormat const & in_pixel_format, int in_padding = 0);
+		ImageDescription(void* in_data, int in_width, int in_height, PixelFormat const& in_pixel_format, int in_padding = 0);
 
 		/** returns true whether the description is valid */
 		bool IsValid(bool accept_uninitialized_content) const;
@@ -37,11 +29,11 @@ namespace chaos
 	public:
 
 		/** the buffer */
-		void * data = nullptr;
+		void* data = nullptr;
 		/** the image width */
 		int    width = 0;
 		/** the image height */
-		int    height = 0;	
+		int    height = 0;
 		/** the pixel format */
 		PixelFormat pixel_format;
 		/** size of line in bytes (exclude padding) : width * pixel_size */
@@ -52,9 +44,7 @@ namespace chaos
 		int    padding_size = 0;
 	};
 
+
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

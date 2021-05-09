@@ -1,18 +1,10 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class SimpleWin32Window;
-	
-}; // namespace chaos
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* SimpleWin32Window : a class handle some on-the-shelve window
@@ -40,21 +32,21 @@ namespace chaos
 		/** called whenever Windows size changed */
 		virtual LRESULT OnWindowSize(int width, int height);
 		/** called whenever a file is being dropped */
-		virtual BOOL OnDragFile(char const * Filename, POINT const & pt);
+		virtual BOOL OnDragFile(char const* Filename, POINT const& pt);
 		/** handle a dropped file */
 		virtual LRESULT OnDropFile(HDROP hDrop);
 		/** some mouse events MOUSE_MOVE */
 		virtual LRESULT OnMouseMove(int x, int y, int buttonStates);
 		/** some mouse events MOUSE_LEFT_DOWN */
-		virtual LRESULT OnLButtonDown(int x, int y, int buttonStates); 
+		virtual LRESULT OnLButtonDown(int x, int y, int buttonStates);
 		/** some mouse events MOUSE_LEFT_UP */
-		virtual LRESULT OnLButtonUp(int x, int y, int buttonStates); 
+		virtual LRESULT OnLButtonUp(int x, int y, int buttonStates);
 		/** some mouse events MOUSE_RIGHT_DOWN */
-		virtual LRESULT OnRButtonDown(int x, int y, int buttonStates); 
+		virtual LRESULT OnRButtonDown(int x, int y, int buttonStates);
 		/** some mouse events MOUSE_RIGHT_UP */
-		virtual LRESULT OnRButtonUp(int x, int y, int buttonStates); 
+		virtual LRESULT OnRButtonUp(int x, int y, int buttonStates);
 		/** some mouse events MOUSE_MIDDLE_DOWN */
-		virtual LRESULT OnMButtonDown(int x, int y, int buttonStates); 
+		virtual LRESULT OnMButtonDown(int x, int y, int buttonStates);
 		/** some mouse events MOUSE_MIDDLE_UP */
 		virtual LRESULT OnMButtonUp(int x, int y, int buttonStates);
 		/** some mouse events MOUSE_WHEEL */
@@ -64,7 +56,7 @@ namespace chaos
 		/** called whenever the background is to be erased */
 		virtual LRESULT OnEraseBackground(HDC hDC);
 		/** the window creation callback */
-		virtual LRESULT OnCreate(CREATESTRUCTA * create_param);
+		virtual LRESULT OnCreate(CREATESTRUCTA* create_param);
 		/** the method that is beeing called after the window creation */
 		virtual void PostCreateWindow();
 
@@ -76,9 +68,9 @@ namespace chaos
 		/** the default message dispatch function */
 		static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam); // the default static Window Loop method
 																								/** the specific message handler */
-		virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL & message_handled);
+		virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& message_handled);
 		/** called whenever the window is being created */
-		static LRESULT BindWindow(HWND hWnd, CREATESTRUCTA * create_param);
+		static LRESULT BindWindow(HWND hWnd, CREATESTRUCTA* create_param);
 
 	protected:
 
@@ -86,7 +78,6 @@ namespace chaos
 		HWND hWnd = NULL;
 	};
 
-
+#endif
+	
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

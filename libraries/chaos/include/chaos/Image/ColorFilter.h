@@ -1,21 +1,13 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class ColorFilter;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* ColorFilter : filter out some pixel 
+	* ColorFilter : filter out some pixel
 	*/
 
 	class ColorFilter
@@ -42,17 +34,15 @@ namespace chaos
 		/** the operator to apply to the distance */
 		ComparisonOperator distance_operator = ComparisonOperator::GREATER;
 		/** a reference color to check distance with */
-		glm::vec4 color_reference = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+		glm::vec4 color_reference = { 0.0f, 0.0f, 0.0f, 0.0f };
 		/** the mask to apply to incomming color before checking for distance */
-		glm::vec4 color_mask = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		glm::vec4 color_mask = { 0.0f, 0.0f, 0.0f, 1.0f };
 	};
 
 	bool SaveIntoJSON(nlohmann::json& json_entry, ColorFilter const& src);
 
 	bool LoadFromJSON(nlohmann::json const& json_entry, ColorFilter& dst);
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-

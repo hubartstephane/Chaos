@@ -1,22 +1,13 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class ImageProcessor;
 	class ImageProcessorOutline;
 	class ImageProcessorAddAlpha;
 	class ImageProcessorShadow;
 
-
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* ImageProcessor : take an image as an entry and returns a new image as output
@@ -33,13 +24,13 @@ namespace chaos
 		virtual FIBITMAP* ProcessImage(ImageDescription const& src_desc) const;
 
 		/** apply processing on a whole animation (grid or not) */
-		virtual std::vector<FIBITMAP*> ProcessImageFrames(std::vector<FIBITMAP*> const& src, BitmapGridAnimationInfo const & grid_anim) const;
+		virtual std::vector<FIBITMAP*> ProcessImageFrames(std::vector<FIBITMAP*> const& src, BitmapGridAnimationInfo const& grid_anim) const;
 
 	protected:
 
 		/** an utility function to call functor on pixel accessor */
 		template<typename FUNC>
-		static FIBITMAP * DoImageProcessing(ImageDescription const& src_desc, FUNC func)
+		static FIBITMAP* DoImageProcessing(ImageDescription const& src_desc, FUNC func)
 		{
 			FIBITMAP* result = nullptr;
 
@@ -49,7 +40,7 @@ namespace chaos
 				using pixel_type = typename decltype(value)::type;
 				if (src_desc.pixel_format == PixelFormat::GetPixelFormat<pixel_type>())
 				{
-					result = func(ImagePixelAccessor<pixel_type>(src_desc)); 
+					result = func(ImagePixelAccessor<pixel_type>(src_desc));
 					return true;
 				}
 				return false;
@@ -57,7 +48,7 @@ namespace chaos
 			}, false);
 
 			return result;
-		}	
+		}
 	};
 
 	/**
@@ -85,9 +76,9 @@ namespace chaos
 		/** filter to check pixel to keep */
 		ColorFilter color_filter;
 		/** the ouline color */
-		glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 		/** the empty color */
-		glm::vec4 empty_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+		glm::vec4 empty_color = { 0.0f, 0.0f, 0.0f, 0.0f };
 	};
 
 	/**
@@ -130,15 +121,16 @@ namespace chaos
 	public:
 
 		/** the offset of the shadow */
-		glm::vec2 offset = glm::vec2(5, 5);
+		glm::vec2 offset = { 5, 5 };
 		/** filter to check pixel to keep */
 		ColorFilter color_filter;
 		/** the ouline color */
-		glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 		/** the empty color */
-		glm::vec4 empty_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+		glm::vec4 empty_color = { 0.0f, 0.0f, 0.0f, 0.0f };
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+
+}; // namespace chaos

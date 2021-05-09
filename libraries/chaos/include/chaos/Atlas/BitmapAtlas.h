@@ -1,10 +1,9 @@
-
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
 	namespace BitmapAtlas
 	{
+#ifdef CHAOS_FORWARD_DECLARATION
+
 		class BitmapLayout;
 		class CharacterLayout;
 		class BitmapAnimationInfo;
@@ -24,19 +23,8 @@ namespace chaos
 		template<typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE, typename PARENT_CLASS>
 		class AtlasBaseTemplate;
 
-	}; // namespace BitmapAtlas
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
-	namespace BitmapAtlas
-	{
 		/**
 		* BitmapLayout : were the bitmap lies in the atlas
 		*/
@@ -80,7 +68,7 @@ namespace chaos
 		public:
 			FT_Vector advance{ 0, 0 };
 			int       bitmap_left = 0; // from 'CharacterMetrics' class
-			int       bitmap_top = 0;		
+			int       bitmap_top = 0;
 		};
 
 		/**
@@ -111,7 +99,7 @@ namespace chaos
 			/** returns the layout for one linear frame of the animation */
 			BitmapLayout GetAnimationLayout(int index, WrapMode mode = WrapMode::NONE) const;
 			/** returns the layout for one grid frame of the animation */
-			BitmapLayout GetAnimationLayout(glm::ivec2 const & grid_index, WrapMode mode = WrapMode::NONE) const;
+			BitmapLayout GetAnimationLayout(glm::ivec2 const& grid_index, WrapMode mode = WrapMode::NONE) const;
 			/** returns the number of frames in the animation */
 			int GetAnimationImageCount() const;
 			/** returns the duration of a frame in seconds */
@@ -156,7 +144,7 @@ namespace chaos
 			using character_stored_type = typename boost::mpl::apply<meta_wrapper_type, character_type>::type;
 
 			/** gets an info by name/tag */
-			character_type const * GetCharacterInfo(ObjectRequest request) const
+			character_type const* GetCharacterInfo(ObjectRequest request) const
 			{
 				return request.FindObject(elements);
 			}
@@ -195,14 +183,14 @@ namespace chaos
 		{
 		public:
 
-			using bitmap_type    = BITMAP_INFO_TYPE;
-			using font_type      = FONT_INFO_TYPE;
-			using folder_type    = FOLDER_INFO_TYPE;
+			using bitmap_type = BITMAP_INFO_TYPE;
+			using font_type = FONT_INFO_TYPE;
+			using folder_type = FOLDER_INFO_TYPE;
 			using character_type = typename font_type::character_type;
 
-			using meta_wrapper_type  = META_WRAPPER_TYPE;
+			using meta_wrapper_type = META_WRAPPER_TYPE;
 			using bitmap_stored_type = typename boost::mpl::apply<meta_wrapper_type, bitmap_type>::type;
-			using font_stored_type   = typename boost::mpl::apply<meta_wrapper_type, font_type>::type;
+			using font_stored_type = typename boost::mpl::apply<meta_wrapper_type, font_type>::type;
 
 #define CHAOS_IMPL_GETINFO(result_type, funcname, vector_name, constness)\
 			result_type constness * funcname(ObjectRequest request, bool recursive = false) constness\
@@ -253,7 +241,7 @@ namespace chaos
 
 			/** get all entries from the root folder */
 			template<typename T, typename ...PARAMS>
-			void CollectEntries(T & result, bool recursive, PARAMS... params)
+			void CollectEntries(T& result, bool recursive, PARAMS... params)
 			{
 				DoCollectEntries(result, params...);
 				if (recursive)
@@ -261,16 +249,16 @@ namespace chaos
 					size_t folder_count = folders.size();
 					for (size_t i = 0; i < folder_count; ++i)
 						folders[i]->CollectEntries(result, recursive, params...);
-				}			
+				}
 			}
-			
+
 		protected:
 
-			void DoCollectEntries(std::vector<BitmapInfo> & result);
+			void DoCollectEntries(std::vector<BitmapInfo>& result);
 			/** get all entries from the root folder */
-			void DoCollectEntries(std::vector<CharacterInfo> & result);
+			void DoCollectEntries(std::vector<CharacterInfo>& result);
 			/** get all entries from the root folder */
-			void DoCollectEntries(std::vector<BitmapLayout> & result, bool collect_bitmaps = true, bool collect_characters = true);
+			void DoCollectEntries(std::vector<BitmapLayout>& result, bool collect_bitmaps = true, bool collect_characters = true);
 		};
 
 		/**
@@ -281,9 +269,9 @@ namespace chaos
 		{
 		public:
 
-			using bitmap_type    = BITMAP_INFO_TYPE;
-			using font_type      = FONT_INFO_TYPE;
-			using folder_type    = FOLDER_INFO_TYPE;
+			using bitmap_type = BITMAP_INFO_TYPE;
+			using font_type = FONT_INFO_TYPE;
+			using folder_type = FOLDER_INFO_TYPE;
 			using character_type = typename font_type::character_type;
 
 			friend class ParticleTextGenerator::GeneratorData;
@@ -295,40 +283,40 @@ namespace chaos
 			}
 
 			/** get the root folder */
-			folder_type * GetRootFolder()
+			folder_type* GetRootFolder()
 			{
 				return &root_folder;
 			}
 			/** get the root folder */
-			folder_type const * GetRootFolder() const
+			folder_type const* GetRootFolder() const
 			{
 				return &root_folder;
 			}
 
 			/** gets a bitmap info by its name/tag */
-			bitmap_type * GetBitmapInfo(ObjectRequest request, bool recursive = false)
+			bitmap_type* GetBitmapInfo(ObjectRequest request, bool recursive = false)
 			{
 				return root_folder.GetBitmapInfo(request, recursive);
 			}
-			bitmap_type const * GetBitmapInfo(ObjectRequest request, bool recursive = false) const
+			bitmap_type const* GetBitmapInfo(ObjectRequest request, bool recursive = false) const
 			{
 				return root_folder.GetBitmapInfo(request, recursive);
 			}
 			/** gets a font info by its name/tag */
-			font_type * GetFontInfo(ObjectRequest request, bool recursive = false)
+			font_type* GetFontInfo(ObjectRequest request, bool recursive = false)
 			{
 				return root_folder.GetFontInfo(request, recursive);
 			}
-			font_type const * GetFontInfo(ObjectRequest request, bool recursive = false) const
+			font_type const* GetFontInfo(ObjectRequest request, bool recursive = false) const
 			{
 				return root_folder.GetFontInfo(request, recursive);
 			}
 			/** gets a folder info by its name/tag */
-			folder_type * GetFolderInfo(ObjectRequest request, bool recursive = false)
+			folder_type* GetFolderInfo(ObjectRequest request, bool recursive = false)
 			{
 				return root_folder.GetFolderInfo(request, recursive);
 			}
-			folder_type const * GetFolderInfo(ObjectRequest request, bool recursive = false) const
+			folder_type const* GetFolderInfo(ObjectRequest request, bool recursive = false) const
 			{
 				return root_folder.GetFolderInfo(request, recursive);
 			}
@@ -366,20 +354,20 @@ namespace chaos
 			float ComputeSurface(int bitmap_index) const;
 
 			/** display information */
-			void OutputInfo(std::ostream & stream) const;
+			void OutputInfo(std::ostream& stream) const;
 
 			/** display information */
 			std::string GetInfoString() const;
 			/** display information about one named object */
-			static std::string GetInfoString(NamedObject const & info);
+			static std::string GetInfoString(NamedObject const& info);
 			/** display information about one bitmap info */
-			static std::string GetInfoString(BitmapInfo const & info);
+			static std::string GetInfoString(BitmapInfo const& info);
 			/** display information about one character info */
-			static std::string GetInfoString(CharacterInfo const & info);
+			static std::string GetInfoString(CharacterInfo const& info);
 
 			/** get all entries from the root folder */
 			template<typename T, typename ...PARAMS>
-			void CollectEntries(T & result, bool recursive, PARAMS... params)
+			void CollectEntries(T& result, bool recursive, PARAMS... params)
 			{
 				root_folder.CollectEntries(result, recursive, params...);
 			}
@@ -387,22 +375,22 @@ namespace chaos
 		protected:
 
 			/** utility function to get the surface used in a bitmap */
-			float DoComputeSurface(int bitmap_index, FolderInfo const * folder_info) const;
+			float DoComputeSurface(int bitmap_index, FolderInfo const* folder_info) const;
 
 			/** display information */
-			void DoOutputInfo(FolderInfo const & folder_info, std::ostream & stream, int indent = 0) const;
+			void DoOutputInfo(FolderInfo const& folder_info, std::ostream& stream, int indent = 0) const;
 			/** display information about one named element */
-			static void DoOutputInfo(NamedObject const & info, std::ostream & stream, int indent = 0);
+			static void DoOutputInfo(NamedObject const& info, std::ostream& stream, int indent = 0);
 			/** display information about one bitmap layout */
-			static void DoOutputInfo(BitmapLayout const & info, std::ostream & stream, int indent = 0);
+			static void DoOutputInfo(BitmapLayout const& info, std::ostream& stream, int indent = 0);
 			/** display information about one character layout */
-			static void DoOutputInfo(CharacterLayout const & info, std::ostream & stream, int indent = 0);
+			static void DoOutputInfo(CharacterLayout const& info, std::ostream& stream, int indent = 0);
 			/** display information about one bitmap info */
-			static void DoOutputInfo(BitmapInfo const & info, std::ostream & stream, int indent = 0);
+			static void DoOutputInfo(BitmapInfo const& info, std::ostream& stream, int indent = 0);
 			/** display information about one character info */
-			static void DoOutputInfo(CharacterInfo const & info, std::ostream & stream, int indent = 0);
+			static void DoOutputInfo(CharacterInfo const& info, std::ostream& stream, int indent = 0);
 			/** display information about one font info */
-			static void DoOutputInfo(FontInfo const & info, std::ostream & stream, int indent = 0);
+			static void DoOutputInfo(FontInfo const& info, std::ostream& stream, int indent = 0);
 
 			/** get a string with the general information */
 			std::string GetGeneralInformationString() const;
@@ -411,11 +399,11 @@ namespace chaos
 			/** get a string with the surface occupation of one atlas */
 			std::string GetAtlasSpaceOccupationString(int bitmap_index) const;
 			/** display the surface occupation of all atlas */
-			void OutputAtlasSpaceOccupation(std::ostream & stream = std::cout) const;
+			void OutputAtlasSpaceOccupation(std::ostream& stream = std::cout) const;
 			/** display the surface occupation of all atlas */
-			void OutputAtlasSpaceOccupation(int bitmap_index, std::ostream & stream = std::cout) const;
+			void OutputAtlasSpaceOccupation(int bitmap_index, std::ostream& stream = std::cout) const;
 			/** display the general information if the atlas */
-			void OutputGeneralInformation(std::ostream & stream = std::cout) const;
+			void OutputGeneralInformation(std::ostream& stream = std::cout) const;
 
 		protected:
 
@@ -442,23 +430,23 @@ namespace chaos
 			size_t GetBitmapCount() const { return bitmaps.size(); }
 
 			/** load an atlas from an index file */
-			bool LoadAtlas(FilePathParam const & path);
+			bool LoadAtlas(FilePathParam const& path);
 			/** function to save the results */
-			bool SaveAtlas(FilePathParam const & path) const;
+			bool SaveAtlas(FilePathParam const& path) const;
 
 			/** returns the bitmaps contained in the atlas */
-			std::vector<bitmap_ptr> const & GetBitmaps() const { return bitmaps; }
+			std::vector<bitmap_ptr> const& GetBitmaps() const { return bitmaps; }
 
 		protected:
 
 			/** load an atlas from a json object */
-			bool LoadAtlas(nlohmann::json const & json, boost::filesystem::path const & src_dir);
+			bool LoadAtlas(nlohmann::json const& json, boost::filesystem::path const& src_dir);
 			/** function to save bitmaps */
-			bool SaveAtlasBitmaps(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & bitmap_filename) const;
+			bool SaveAtlasBitmaps(boost::filesystem::path const& target_dir, boost::filesystem::path const& index_filename, boost::filesystem::path const& bitmap_filename) const;
 			/** function to save contents */
-			bool SaveAtlasIndex(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & bitmap_filename) const;
+			bool SaveAtlasIndex(boost::filesystem::path const& target_dir, boost::filesystem::path const& index_filename, boost::filesystem::path const& bitmap_filename) const;
 			/** split a filename into DIRECTORY, INDEX_FILENAME and BITMAP prefix path */
-			void SplitFilename(FilePathParam const & path, boost::filesystem::path & target_dir, boost::filesystem::path & index_filename, boost::filesystem::path & bitmap_filename) const;
+			void SplitFilename(FilePathParam const& path, boost::filesystem::path& target_dir, boost::filesystem::path& index_filename, boost::filesystem::path& bitmap_filename) const;
 			/** get the name of a bitmap */
 			boost::filesystem::path GetBitmapFilename(FREE_IMAGE_FORMAT image_format, boost::filesystem::path bitmap_filename, int index) const;
 
@@ -472,38 +460,37 @@ namespace chaos
 		* Some JSON utility functions
 		*/
 
-		bool SaveIntoJSON(nlohmann::json & json_entry, BitmapAnimationInfo const & src);
+		bool SaveIntoJSON(nlohmann::json& json_entry, BitmapAnimationInfo const& src);
 
-		bool LoadFromJSON(nlohmann::json const & json_entry, BitmapAnimationInfo & dst);
+		bool LoadFromJSON(nlohmann::json const& json_entry, BitmapAnimationInfo& dst);
 
-		bool SaveIntoJSON(nlohmann::json & json_entry, BitmapLayout const & src);
+		bool SaveIntoJSON(nlohmann::json& json_entry, BitmapLayout const& src);
 
-		bool LoadFromJSON(nlohmann::json const & json_entry, BitmapLayout & dst);
+		bool LoadFromJSON(nlohmann::json const& json_entry, BitmapLayout& dst);
 
-		bool SaveIntoJSON(nlohmann::json & json_entry, CharacterLayout const & src);
+		bool SaveIntoJSON(nlohmann::json& json_entry, CharacterLayout const& src);
 
-		bool LoadFromJSON(nlohmann::json const & json_entry, CharacterLayout & dst);
+		bool LoadFromJSON(nlohmann::json const& json_entry, CharacterLayout& dst);
 
-		bool SaveIntoJSON(nlohmann::json & json_entry, BitmapInfo const & src);
+		bool SaveIntoJSON(nlohmann::json& json_entry, BitmapInfo const& src);
 
-		bool LoadFromJSON(nlohmann::json const & json_entry, BitmapInfo & dst);
+		bool LoadFromJSON(nlohmann::json const& json_entry, BitmapInfo& dst);
 
-		bool SaveIntoJSON(nlohmann::json & json_entry, CharacterInfo const & src);
+		bool SaveIntoJSON(nlohmann::json& json_entry, CharacterInfo const& src);
 
-		bool LoadFromJSON(nlohmann::json const & json_entry, CharacterInfo & dst);
+		bool LoadFromJSON(nlohmann::json const& json_entry, CharacterInfo& dst);
 
-		bool SaveIntoJSON(nlohmann::json & json_entry, FolderInfo const & src);
+		bool SaveIntoJSON(nlohmann::json& json_entry, FolderInfo const& src);
 
-		bool LoadFromJSON(nlohmann::json const & json_entry, FolderInfo & dst);
+		bool LoadFromJSON(nlohmann::json const& json_entry, FolderInfo& dst);
 
-		bool SaveIntoJSON(nlohmann::json & json_entry, FontInfo const & src);
+		bool SaveIntoJSON(nlohmann::json& json_entry, FontInfo const& src);
 
-		bool LoadFromJSON(nlohmann::json const & json_entry, FontInfo & dst);
+		bool LoadFromJSON(nlohmann::json const& json_entry, FontInfo& dst);
+
+
+#endif
 
 	}; // namespace BitmapAtlas
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-

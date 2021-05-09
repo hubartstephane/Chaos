@@ -1,9 +1,9 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
 	namespace BitmapAtlas
 	{
+#ifdef CHAOS_FORWARD_DECLARATION
+
 		class FontInfoInputParams;
 		class ObjectBaseInput;
 		class BitmapAnimationInfoInput;
@@ -14,19 +14,8 @@ namespace chaos
 		class FolderInfoInput;
 		class AtlasInput;
 
-	}; // namespace BitmapAtlas
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
-	namespace BitmapAtlas
-	{
 		/**
 		* FontInfoInputParams : when inserting FontInfoInput into AtlasInput, some glyphs are rendered into bitmaps. This controls the process
 		*/
@@ -64,9 +53,9 @@ namespace chaos
 		public:
 
 			/** register bitmap */
-			void RegisterResource(FIBITMAP * bitmap, bool release);
+			void RegisterResource(FIBITMAP* bitmap, bool release);
 			/** register multi bitmap */
-			void RegisterResource(FIMULTIBITMAP * multi_bitmap, bool release);
+			void RegisterResource(FIMULTIBITMAP* multi_bitmap, bool release);
 			/** register font */
 			void RegisterResource(FT_Library library, bool release);
 			/** register face */
@@ -75,7 +64,7 @@ namespace chaos
 		public:
 
 			/** the atlas the input belongs to */
-			class AtlasInput * atlas_input = nullptr;
+			class AtlasInput* atlas_input = nullptr;
 		};
 
 		/**
@@ -90,7 +79,7 @@ namespace chaos
 			/** the animation description */
 			ImageAnimationDescription animation_description;
 			/** the child frames of animated image (GIF) */
-			std::vector<class BitmapInfoInput *> child_frames;
+			std::vector<class BitmapInfoInput*> child_frames;
 		};
 
 		/**
@@ -108,9 +97,9 @@ namespace chaos
 			shared_ptr<BitmapAnimationInfoInput> animation_info;
 
 			/** a pointer on the destination info associated */
-			BitmapInfo * bitmap_output_info = nullptr;
+			BitmapInfo* bitmap_output_info = nullptr;
 			/** a pointer on the destination info associated */
-			CharacterInfo * character_output_info = nullptr;
+			CharacterInfo* character_output_info = nullptr;
 		};
 
 		/**
@@ -124,7 +113,7 @@ namespace chaos
 			/** from 'CharacterMetrics' class */
 			FT_Vector advance{ 0, 0 };
 			/** from 'CharacterMetrics' class */
-			int       bitmap_left = 0; 
+			int       bitmap_left = 0;
 			/** from 'CharacterMetrics' class */
 			int       bitmap_top = 0;
 		};
@@ -149,7 +138,7 @@ namespace chaos
 			/** constructor */
 			AddFilesToFolderData() = default;
 			/** constructor */
-			AddFilesToFolderData(AddFilesToFolderData const & src) = default;
+			AddFilesToFolderData(AddFilesToFolderData const& src) = default;
 			/** constructor */
 			AddFilesToFolderData(FilePathParam const& in_path);
 
@@ -192,43 +181,43 @@ namespace chaos
 			FolderInfoInput() = default;
 
 			/** insert a Folder set inside the input */
-			FolderInfoInput * AddFolder(char const * name, TagType tag);
+			FolderInfoInput* AddFolder(char const* name, TagType tag);
 
 			/** insert multiple bitmap before computation */
-			bool AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive);
+			bool AddBitmapFilesFromDirectory(FilePathParam const& path, bool recursive);
 
 			/** insert a bitmap before computation */
-			BitmapInfoInput * AddBitmap(FilePathParam const & path, char const * name, TagType tag);
+			BitmapInfoInput* AddBitmap(FilePathParam const& path, char const* name, TagType tag);
 			/** insert an image inside the atlas */
-			BitmapInfoInput * AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag);
+			BitmapInfoInput* AddBitmap(FIBITMAP* bitmap, bool release_bitmap, char const* name, TagType tag);
 			/** insert an image inside the atlas */
-			BitmapInfoInput * AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_animated_bitmap, char const * name, TagType tag);
+			BitmapInfoInput* AddBitmap(FIMULTIBITMAP* animated_bitmap, bool release_animated_bitmap, char const* name, TagType tag);
 
 			/** Add a character set */
-			FontInfoInput * AddFont(				
+			FontInfoInput* AddFont(
 				FilePathParam const& path,
 				FT_Library library,
 				bool release_library,
-				char const * name,
+				char const* name,
 				TagType tag,
-				FontInfoInputParams const & params = FontInfoInputParams());
+				FontInfoInputParams const& params = FontInfoInputParams());
 
 			/** Add a character set */
-			FontInfoInput * AddFont(
+			FontInfoInput* AddFont(
 				FT_Face face,
 				bool release_face,
-				char const * name,
+				char const* name,
 				TagType tag,
-				FontInfoInputParams const & params = FontInfoInputParams());
+				FontInfoInputParams const& params = FontInfoInputParams());
 
 		protected:
 
 			/** internal method to add a bitmap from file (and searching manifest) */
-			BitmapInfoInput * AddBitmapFileImpl(FilePathParam const & path, char const * name, TagType tag, AddFilesToFolderData& add_data);
-            /** internal method to add a bitmap whose manifest (or not) is known */
-            BitmapInfoInput * AddBitmapFileWithManifestImpl(FilePathParam const& path, char const* name, TagType tag, nlohmann::json const* json_manifest, std::vector<FIBITMAP*> * images);
+			BitmapInfoInput* AddBitmapFileImpl(FilePathParam const& path, char const* name, TagType tag, AddFilesToFolderData& add_data);
+			/** internal method to add a bitmap whose manifest (or not) is known */
+			BitmapInfoInput* AddBitmapFileWithManifestImpl(FilePathParam const& path, char const* name, TagType tag, nlohmann::json const* json_manifest, std::vector<FIBITMAP*>* images);
 			/** internal method to add a bitmap or a multi bitmap */
-			BitmapInfoInput * AddBitmapImpl(std::vector<FIBITMAP *> pages, char const * name, TagType tag, ImageAnimationDescription const * animation_description);
+			BitmapInfoInput* AddBitmapImpl(std::vector<FIBITMAP*> pages, char const* name, TagType tag, ImageAnimationDescription const* animation_description);
 
 			/** internal method to insert a font file (and searching manifest)*/
 			FontInfoInput* AddFontFileImpl(FilePathParam const& path, FT_Library library, bool release_library, char const* name, TagType tag, FontInfoInputParams const& params, AddFilesToFolderData& add_data);
@@ -236,14 +225,14 @@ namespace chaos
 			FontInfoInput* AddFontFileWithManifestImpl(FilePathParam const& path, FT_Library library, bool release_library, char const* name, TagType tag, FontInfoInputParams const& params, nlohmann::json const* json_manifest);
 
 			/** internal method to add a character set */
-			FontInfoInput * AddFontImpl(
+			FontInfoInput* AddFontImpl(
 				FT_Library library,
 				FT_Face face,
 				bool release_library,
 				bool release_face,
-				char const * name,
+				char const* name,
 				TagType tag,
-				FontInfoInputParams const & params);
+				FontInfoInputParams const& params);
 		};
 
 		/**
@@ -253,7 +242,7 @@ namespace chaos
 		class AtlasInput : public AtlasBaseTemplate<BitmapInfoInput, FontInfoInput, FolderInfoInput, Object>
 		{
 			friend class ObjectBaseInput;
-			friend class AtlasGenerator;		
+			friend class AtlasGenerator;
 
 		public:
 
@@ -263,41 +252,41 @@ namespace chaos
 			virtual void Clear() override;
 
 			/** insert a Folder set inside the input */
-			FolderInfoInput * AddFolder(char const * name, TagType tag);
+			FolderInfoInput* AddFolder(char const* name, TagType tag);
 
 			/** insert multiple bitmap before computation */
-			bool AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive);
+			bool AddBitmapFilesFromDirectory(FilePathParam const& path, bool recursive);
 
 			/** insert an image from a file */
-			BitmapInfoInput * AddBitmap(FilePathParam const & path, char const * name, TagType tag);
+			BitmapInfoInput* AddBitmap(FilePathParam const& path, char const* name, TagType tag);
 			/** insert an image inside the atlas */
-			BitmapInfoInput * AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag);
+			BitmapInfoInput* AddBitmap(FIBITMAP* bitmap, bool release_bitmap, char const* name, TagType tag);
 			/** insert an image inside the atlas */
-			BitmapInfoInput * AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag);
+			BitmapInfoInput* AddBitmap(FIMULTIBITMAP* animated_bitmap, bool release_bitmap, char const* name, TagType tag);
 
 			/** Add a character set */
-			FontInfoInput * AddFont(
+			FontInfoInput* AddFont(
 				FilePathParam const& path,
 				FT_Library library,
 				bool release_library,
-				char const * name,
+				char const* name,
 				TagType tag,
-				FontInfoInputParams const & params = FontInfoInputParams());
+				FontInfoInputParams const& params = FontInfoInputParams());
 
 			/** Add a character set */
-			FontInfoInput * AddFont(
+			FontInfoInput* AddFont(
 				FT_Face face,
 				bool release_face,
-				char const * name,
+				char const* name,
 				TagType tag,
-				FontInfoInputParams const & params = FontInfoInputParams());
+				FontInfoInputParams const& params = FontInfoInputParams());
 
 		protected:
 
 			/** register bitmap */
-			void RegisterResource(FIBITMAP * bitmap, bool release);
+			void RegisterResource(FIBITMAP* bitmap, bool release);
 			/** register multi bitmap */
-			void RegisterResource(FIMULTIBITMAP * multi_bitmap, bool release);
+			void RegisterResource(FIMULTIBITMAP* multi_bitmap, bool release);
 			/** register font */
 			void RegisterResource(FT_Library library, bool release);
 			/** register face */
@@ -312,11 +301,12 @@ namespace chaos
 			/** the ft_libraries to destroy */
 			std::vector<library_ptr> libraries; // XXX : order declaration of 'libraries' and 'faces' is important
 			/** the ft_faces to destroy */      //       'faces' have to be destroyed first. So it must be declared last
-			std::vector<face_ptr> faces;    
+			std::vector<face_ptr> faces;
 		};
+
+
+#endif
 
 	}; // namespace BitmapAtlas
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

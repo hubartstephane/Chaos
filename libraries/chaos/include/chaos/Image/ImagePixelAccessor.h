@@ -1,19 +1,11 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	template<typename PIXEL_TYPE>
 	class ImagePixelAccessor;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	template<typename PIXEL_TYPE>
 	class ImagePixelAccessor
@@ -41,7 +33,7 @@ namespace chaos
 		ImageDescription const& GetImageDescription() const { return description; }
 
 		/** access a pixel */
-		type & operator () (int x, int y)
+		type& operator () (int x, int y)
 		{
 			assert(x >= 0);
 			assert(y >= 0);
@@ -72,9 +64,6 @@ namespace chaos
 		ImageDescription description;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

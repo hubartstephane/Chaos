@@ -1,26 +1,18 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	enum class InheritanceType;
 
 	class Class;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	 * CHAOS_REGISTER_CLASS : a macro that helps register classes automatically
 	 */
 
-	// ideally this should be replaced with __VA_OPT__, but not supported yet by VS2019
+	 // ideally this should be replaced with __VA_OPT__, but not supported yet by VS2019
 
 #define CHAOS_REGISTER_CLASS1(classname) inline chaos::Class const * classname##_class = chaos::Class::DeclareClass<classname>(#classname);
 #define CHAOS_REGISTER_CLASS2(classname, parent_classname) inline chaos::Class const * classname##_class = chaos::Class::DeclareClass<classname, parent_classname>(#classname);
@@ -36,7 +28,7 @@ namespace chaos
 		YES = 1
 	};
 
-	/** 
+	/**
 	 * Class : a registered class
 	 */
 	class Class
@@ -46,7 +38,7 @@ namespace chaos
 	public:
 
 		/** method to create an instance of the object */
-		Object * CreateInstance() const;
+		Object* CreateInstance() const;
 		/** returns whether the class has been registered */
 		bool IsDeclared() const;
 		/** gets the class size */
@@ -54,7 +46,7 @@ namespace chaos
 		/** gets the parent class */
 		Class const* GetParentClass() const { return parent; }
 		/** gets the class name */
-		std::string const & GetClassName() const { return class_name; }
+		std::string const& GetClassName() const { return class_name; }
 		/** returns whether we can create instances */
 		bool CanCreateInstance() const { return create_instance_func != nullptr; }
 		/** gets the depth of the class in the inheritance hierarchy */
@@ -91,14 +83,14 @@ namespace chaos
 				// do not register class whose name is empty
 				if (!empty_name)
 				{
-					GetClassesList().push_back(result); 
+					GetClassesList().push_back(result);
 					result->class_name = class_name;
-				}					
+				}
 				result->class_size = sizeof(CLASS_TYPE);
 				result->declared = true;
 				// instance constructible only if derives from Object
 				if constexpr (std::is_base_of_v<Object, CLASS_TYPE>)
-					result->create_instance_func = []() { return new CLASS_TYPE; }; 
+					result->create_instance_func = []() { return new CLASS_TYPE; };
 				// the parent is accessed, but not necessaraly initialized yet
 				if (!std::is_same_v<PARENT_CLASS_TYPE, EmptyClass>)
 					result->parent = GetClassInstance<PARENT_CLASS_TYPE>();
@@ -107,7 +99,7 @@ namespace chaos
 		}
 
 		/** declare a pseudo class, that is a class with additionnal json initialization */
-		static Class const* DeclareSpecialClass(char const* class_name, nlohmann::json const & json);
+		static Class const* DeclareSpecialClass(char const* class_name, nlohmann::json const& json);
 
 		/** static inheritance method */
 		static InheritanceType InheritsFrom(Class const* child_class, Class const* parent_class, bool accept_equal = false);
@@ -117,7 +109,7 @@ namespace chaos
 	protected:
 
 		/** internal method to declare a class without finding yet its parent (used for directory iteration) */
-		static Class * DoDeclareSpecialClassStep1(char const* class_name, nlohmann::json const & json); // XXX : no const return value here !! (for Finalization of special class)
+		static Class* DoDeclareSpecialClassStep1(char const* class_name, nlohmann::json const& json); // XXX : no const return value here !! (for Finalization of special class)
 		/** finalization of a special class (called from ClassLoader) : find parent */
 		bool DoDeclareSpecialClassStep2();
 		/** finalization of a special class (called from ClassLoader) : creation delegate */
@@ -128,19 +120,19 @@ namespace chaos
 
 		/** return the class for a type even if not initialized */
 		template<typename CLASS_TYPE>
-		static Class * GetClassInstance()
-		{		
-			static Class * result = new Class;
+		static Class* GetClassInstance()
+		{
+			static Class* result = new Class;
 			return result;
 		}
 
 		/** get the list of all classes */
-		static std::vector<Class *>& GetClassesList();
+		static std::vector<Class*>& GetClassesList();
 
 	protected:
 
 		/** the parent of the class */
-		Class const * parent = nullptr;
+		Class const* parent = nullptr;
 		/** get class size */
 		size_t class_size = 0;
 		/** the optional name of the class */
@@ -148,11 +140,11 @@ namespace chaos
 		/** whether the class has been fully declared */
 		bool declared = false;
 		/** create an instance of the object delegate */
-		std::function<Object * ()> create_instance_func;
+		std::function<Object* ()> create_instance_func;
 		/** additionnal initialization for JSONSerializable objects */
 		nlohmann::json json_data;
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

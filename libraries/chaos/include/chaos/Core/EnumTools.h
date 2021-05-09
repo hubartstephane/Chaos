@@ -1,15 +1,9 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
 namespace chaos
 {
 	namespace EnumTools
 	{
+#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
 		/** decode a value with a conversion table */
 		template<typename T, typename ENCODE_TABLE>
 		bool StringToEnum(char const * str, ENCODE_TABLE const & encode_table, T & result)
@@ -39,8 +33,8 @@ namespace chaos
 			}
 			return false;
 		}
+#endif
+
 	}; // namespace EnumTools
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

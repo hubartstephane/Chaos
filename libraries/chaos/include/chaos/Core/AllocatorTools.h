@@ -1,16 +1,9 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
-
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
 namespace chaos
 {
 	namespace AllocatorTools
 	{
+#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
 		/** an aligned allocator */
 		void* Aligned16Alloc(size_t size);
 		/** an aligned allocator */
@@ -55,8 +48,8 @@ namespace chaos
 			return result;
 		}
 
+#endif
+
 	}; // namespace AllocatorTools
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

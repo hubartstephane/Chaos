@@ -1,18 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
 	// =====================================
 	// TMTriggerCollisionInfo 
 	// =====================================
@@ -214,7 +203,7 @@ namespace chaos
 		std::vector<TMTriggerCollisionInfo> collision_info;
 	};
 
+#endif
 
 }; // namespace chaos
 
-#endif // CHAOS_FORWARD_DECLARATION

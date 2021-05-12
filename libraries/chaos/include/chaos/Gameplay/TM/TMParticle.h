@@ -1,17 +1,13 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class TMParticle;
-};
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
+	using TMParticleLayerTrait = ParticleLayerTrait<TMParticle, VertexDefault, GameEntity const*>;
 
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#else
-
-namespace chaos
-{
 	// =====================================
 	// TMParticle
 	// =====================================
@@ -23,20 +19,11 @@ namespace chaos
 		// the ID for the "tile" (0 if the particle is not a tile)
 		int gid = 0;
 		// the bitmap for the particle
-		BitmapAtlas::BitmapInfo const* bitmap_info = nullptr; 
+		BitmapAtlas::BitmapInfo const* bitmap_info = nullptr;
 	};
 
 	CHAOS_REGISTER_CLASS2(TMParticle, ParticleDefault);
 
-	// =====================================
-	// TMParticleLayerTrait
-	// =====================================
-
-	class TMParticleLayerTrait : public ParticleLayerTrait<TMParticle, VertexDefault, GameEntity const *>
-	{
-
-	};
+#endif
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

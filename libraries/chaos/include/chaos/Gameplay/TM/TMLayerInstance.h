@@ -1,17 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
 	// =====================================
 	// TMLayerInstance : instance of a Layer
 	// =====================================
@@ -268,7 +258,6 @@ namespace chaos
 		std::vector<shared_ptr<TMLayerInstance>> layer_instances;
 	};
 
+#endif
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

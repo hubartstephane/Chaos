@@ -20,7 +20,6 @@ namespace chaos
 (TMTriggerCollisionInfo)\
 (TMSoundTrigger)\
 (TMParticle)\
-(TMParticleLayerTrait)\
 (TMParticlePopulator)\
 (TileCollisionComputer)
 

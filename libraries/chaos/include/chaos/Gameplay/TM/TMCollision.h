@@ -1,12 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
 namespace chaos
 {
+#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
 	// =====================================
 	// TileCollisionInfo
 	// =====================================
@@ -386,8 +381,6 @@ namespace chaos
 		object_type * cached_result = nullptr;
 	};
 
-
+#endif
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

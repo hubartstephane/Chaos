@@ -1,18 +1,10 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class GameInstance;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// =============================================
 	// GameInstance
@@ -29,10 +21,10 @@ namespace chaos
 		CHAOS_DECLARE_GAMEPLAY_GETTERS();
 
 		/** create one player and give it the gamepad provided if any */
-		Player * CreatePlayer(PhysicalGamepad * in_physical_gamepad);
+		Player* CreatePlayer(PhysicalGamepad* in_physical_gamepad);
 
 		/** try to give a physical to any player (returns the player) */
-		Player * GivePhysicalGamepadToPlayer(PhysicalGamepad * in_physical_gamepad);
+		Player* GivePhysicalGamepadToPlayer(PhysicalGamepad* in_physical_gamepad);
 
 		/** get the best score among players */
 		int GetBestPlayerScore() const;
@@ -45,19 +37,19 @@ namespace chaos
 		//   - pause clock : reseted whenever we enter/leave pause. only running during pause
 
 		/** returns main clock */
-		Clock * GetMainClock() { return main_clock.get(); }
+		Clock* GetMainClock() { return main_clock.get(); }
 		/** returns main clock */
-		Clock const * GetMainClock() const { return main_clock.get(); }
+		Clock const* GetMainClock() const { return main_clock.get(); }
 
 		/** returns game clock */
-		Clock * GetGameClock() { return game_clock.get(); }
+		Clock* GetGameClock() { return game_clock.get(); }
 		/** returns game clock */
-		Clock const * GetGameClock() const { return game_clock.get(); }
+		Clock const* GetGameClock() const { return game_clock.get(); }
 
 		/** returns pause clock */
-		Clock * GetPauseClock() { return pause_clock.get(); }
+		Clock* GetPauseClock() { return pause_clock.get(); }
 		/** returns pause clock */
-		Clock const * GetPauseClock() const { return pause_clock.get(); }
+		Clock const* GetPauseClock() const { return pause_clock.get(); }
 
 		/** returns the main time */
 		double GetMainClockTime() const;
@@ -72,9 +64,9 @@ namespace chaos
 		bool RestartFromRespawnCheckpoint();
 
 		/** returns the sound category */
-		SoundCategory * GetSoundCategory();
+		SoundCategory* GetSoundCategory();
 		/** returns the sound category */
-		SoundCategory const * GetSoundCategory() const;
+		SoundCategory const* GetSoundCategory() const;
 
 		/** initialization of the game instance */
 		virtual bool InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload);
@@ -84,15 +76,15 @@ namespace chaos
 	protected:
 
 		/** initialize the game instance */
-		virtual bool Initialize(Game * in_game);
+		virtual bool Initialize(Game* in_game);
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;
 
 		/** handle an uncatched gamepad input incomming */
-		virtual bool OnGamepadInput(PhysicalGamepad* in_physical_gamepad); 
+		virtual bool OnGamepadInput(PhysicalGamepad* in_physical_gamepad);
 		/** handle keyboard input */
-		virtual bool OnKeyEventImpl(KeyEvent const & event) override;
+		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
 		/** handle keyboard input */
 		virtual bool OnCharEventImpl(unsigned int c) override;
 		/** handle mouse input */
@@ -104,10 +96,10 @@ namespace chaos
 		virtual size_t GetMaxPlayerCount() const;
 
 		/** return a new player */
-		virtual Player * DoCreatePlayer();
+		virtual Player* DoCreatePlayer();
 
 		/** fill the rendering params before rendering */
-		virtual void FillUniformProvider(GPUProgramProvider & main_uniform_provider);
+		virtual void FillUniformProvider(GPUProgramProvider& main_uniform_provider);
 
 		/** state changes */
 		virtual void OnEnterPause();
@@ -123,7 +115,7 @@ namespace chaos
 		void OnPauseStateUpdateClocks(bool enter_pause);
 
 		/** called whenever the level is being changed */
-		virtual void OnLevelChanged(Level * new_level, Level * old_level, LevelInstance * new_level_instance);
+		virtual void OnLevelChanged(Level* new_level, Level* old_level, LevelInstance* new_level_instance);
 
 		/** check whether there is a game over */
 		virtual bool DoCheckGameOverCondition();
@@ -132,24 +124,24 @@ namespace chaos
 		virtual bool RespawnPlayer(Player* player);
 
 		/** called for each player whenever a level is started */
-		virtual void OnPlayerEntered(Player * player);
+		virtual void OnPlayerEntered(Player* player);
 		/** called for each player whenever a level is ended */
-		virtual void OnPlayerLeaved(Player * player);
+		virtual void OnPlayerLeaved(Player* player);
 
 		/** called whenever the game is started */
 		virtual void OnEnterGame();
 		/** called whenever the game is finished */
 		virtual void OnLeaveGame();
-		
+
 		/** override */
-		virtual bool DoSaveIntoCheckpoint(GameCheckpoint * checkpoint) const override;
+		virtual bool DoSaveIntoCheckpoint(GameCheckpoint* checkpoint) const override;
 		/** override */
-		virtual bool DoLoadFromCheckpoint(GameCheckpoint const * checkpoint) override;
+		virtual bool DoLoadFromCheckpoint(GameCheckpoint const* checkpoint) override;
 
 	protected:
 
 		/** the game */
-		Game * game = nullptr;
+		Game* game = nullptr;
 
 		/** the configuration object to use for players */
 		nlohmann::json player_configuration;
@@ -172,6 +164,6 @@ namespace chaos
 		shared_ptr<GameCheckpoint> respawn_checkpoint;
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

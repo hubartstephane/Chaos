@@ -1,35 +1,15 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
 	namespace SoundContext
 	{
+#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	}; // namespace SoundContext
-
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
-	namespace SoundContext
-	{
 		CHAOS_DECLARE_TAG(GAME);
 		CHAOS_DECLARE_TAG(LEVEL);
 		CHAOS_DECLARE_TAG(PAUSEMENU);
 		CHAOS_DECLARE_TAG(MAINMENU);
+
+#endif
 	}
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-
-
-
-
-

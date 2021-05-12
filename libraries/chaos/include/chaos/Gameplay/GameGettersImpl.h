@@ -1,16 +1,3 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
-namespace chaos
-{
-	class GameGettersTools;
-
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
 // XXX : Due to class declaration order and dependencies, this must only be included from .cpp !!
 //       usefull for classes using CHAOS_IMPLEMENT_GAMEPLAY_GETTERS(...)
 
@@ -26,6 +13,12 @@ namespace chaos
 
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
+	class GameGettersTools;
+
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
 	class GameGettersTools
 	{
 	public:
@@ -36,7 +29,7 @@ namespace chaos
 		// =======================================================================
 
 		template<typename T>
-		static inline size_t GetPlayerCount(T const * src)
+		static inline size_t GetPlayerCount(T const* src)
 		{
 			GameInstance const* gi = GetGameInstance(src);
 			if (gi != nullptr)
@@ -80,7 +73,7 @@ namespace chaos
 		static inline AutoCastable<PlayerPawn> GetPlayerPawn(T* src, size_t player_index)
 		{
 			assert(src != nullptr);
-			Player * pl = GetPlayer(src, player_index);
+			Player* pl = GetPlayer(src, player_index);
 			if (pl != nullptr)
 				return meta::get_raw_pointer(pl->pawn);
 			return nullptr;
@@ -90,7 +83,7 @@ namespace chaos
 		static inline AutoConstCastable<PlayerPawn> GetPlayerPawn(T const* src, size_t player_index)
 		{
 			assert(src != nullptr);
-			Player const * pl = GetPlayer(src, player_index);
+			Player const* pl = GetPlayer(src, player_index);
 			if (pl != nullptr)
 				return meta::get_raw_pointer(pl->pawn);
 			return nullptr;
@@ -123,7 +116,7 @@ namespace chaos
 		// =======================================================================
 		// Camera Getters
 		// =======================================================================
-		
+
 		template<typename T>
 		static inline size_t GetCameraCount(T const* src)
 		{
@@ -142,7 +135,7 @@ namespace chaos
 				return li->DoGetCamera(camera_index, true);  // accept free camera
 			return nullptr;
 		}
-		
+
 		template<typename T>
 		static inline AutoConstCastable<Camera> GetCamera(T const* src, size_t camera_index)
 		{
@@ -158,7 +151,7 @@ namespace chaos
 		// Game Getters
 		// =======================================================================
 
-		static inline AutoCastable<Game> GetGame(Player * src)
+		static inline AutoCastable<Game> GetGame(Player* src)
 		{
 			assert(src != nullptr);
 			if (src->game_instance != nullptr)
@@ -182,25 +175,25 @@ namespace chaos
 			return nullptr;
 		}
 
-		static inline AutoCastable<Game> GetGame(GameInstance * src)
+		static inline AutoCastable<Game> GetGame(GameInstance* src)
 		{
 			assert(src != nullptr);
 			return meta::get_raw_pointer(src->game);
 		}
 
-		static inline AutoCastable<Game> GetGame(Game * src)
+		static inline AutoCastable<Game> GetGame(Game* src)
 		{
 			assert(src != nullptr);
 			return src;
 		}
 
-		static inline AutoCastable<Game> GetGame(LevelInstance * src)
+		static inline AutoCastable<Game> GetGame(LevelInstance* src)
 		{
 			assert(src != nullptr);
 			return meta::get_raw_pointer(src->game);
 		}
 
-		static inline AutoCastable<Game> GetGame(Camera * src)
+		static inline AutoCastable<Game> GetGame(Camera* src)
 		{
 			assert(src != nullptr);
 			if (src->level_instance != nullptr)
@@ -208,7 +201,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		static inline AutoCastable<Game> GetGame(CameraComponent * src)
+		static inline AutoCastable<Game> GetGame(CameraComponent* src)
 		{
 			assert(src != nullptr);
 			if (src->camera != nullptr)
@@ -224,7 +217,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		static inline AutoCastable<Game> GetGame(PlayerPawn const * src)
+		static inline AutoCastable<Game> GetGame(PlayerPawn const* src)
 		{
 			assert(src != nullptr);
 			if (src->player != nullptr)
@@ -328,7 +321,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		static inline AutoCastable<GameInstance> GetGameInstance(CameraComponent * src)
+		static inline AutoCastable<GameInstance> GetGameInstance(CameraComponent* src)
 		{
 			assert(src != nullptr);
 			if (src->camera != nullptr)
@@ -386,7 +379,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		static inline AutoConstCastable<GameInstance> GetGameInstance(CameraComponent const * src)
+		static inline AutoConstCastable<GameInstance> GetGameInstance(CameraComponent const* src)
 		{
 			assert(src != nullptr);
 			if (src->camera != nullptr)
@@ -506,7 +499,7 @@ namespace chaos
 			return meta::get_raw_pointer(src->level_instance);
 		}
 
-		static inline AutoConstCastable<LevelInstance> GetLevelInstance(CameraComponent const * src)
+		static inline AutoConstCastable<LevelInstance> GetLevelInstance(CameraComponent const* src)
 		{
 			assert(src != nullptr);
 			if (src->camera != nullptr)
@@ -532,7 +525,7 @@ namespace chaos
 		static inline AutoConstCastable<Level> GetLevel(T const* src)
 		{
 			assert(src != nullptr);
-			LevelInstance const * li = GetLevelInstance(src);
+			LevelInstance const* li = GetLevelInstance(src);
 			if (li != nullptr)
 				return meta::get_raw_pointer(li->level);
 			return nullptr;
@@ -540,7 +533,6 @@ namespace chaos
 
 	};
 
+#endif
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

@@ -1,21 +1,14 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class PlayerDisplacementComponent;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
 	// shu48 ajout de public JSONSerializable 
 
-	class PlayerDisplacementComponent : public Tickable, public JSONSerializable 
+	class PlayerDisplacementComponent : public Tickable, public JSONSerializable
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
@@ -40,6 +33,6 @@ namespace chaos
 
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

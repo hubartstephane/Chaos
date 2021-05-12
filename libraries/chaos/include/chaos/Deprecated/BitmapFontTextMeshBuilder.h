@@ -1,18 +1,11 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class BitmapFontTextMeshBuilder;
-	
-}; // namespace chaos	
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-
-#else
-
-namespace chaos
-{
 	/**
 	* BitmapFontTextMeshBuilder : this class is used to generate quads to represents characters for a text using a bitmap font
 	*/
@@ -27,12 +20,12 @@ namespace chaos
 		public:
 
 			/** constructor */
-			Params(char const * characters = nullptr) :
+			Params(char const* characters = nullptr) :
 				font_characters(characters)
 			{}
 
 			/** the characters contained inside the font bitmap, in order */
-			char const * font_characters = nullptr;
+			char const* font_characters = nullptr;
 			/** the number of characters on a line of the bitmap */
 			int          font_characters_per_line = 0;
 			/** the number of lines of characters in the bitmap */
@@ -55,16 +48,16 @@ namespace chaos
 		};
 
 		/** the main function */
-		box2 BuildBuffer(char const * msg, Params const & params, std::vector<float> & vertices) const;
+		box2 BuildBuffer(char const* msg, Params const& params, std::vector<float>& vertices) const;
 
 	protected:
 
 		/** insert vertices components by components */
-		static void InsertVertexComponent(std::vector<float> & vertices, glm::vec2 const & v, glm::vec2 const & t);
+		static void InsertVertexComponent(std::vector<float>& vertices, glm::vec2 const& v, glm::vec2 const& t);
 		/** apply offset to all vertices */
-		static void ApplyVertexOffset(std::vector<float> & vertices, glm::vec2 const & offset, size_t start, size_t end);
+		static void ApplyVertexOffset(std::vector<float>& vertices, glm::vec2 const& offset, size_t start, size_t end);
 	};
 
+#endif
+	
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

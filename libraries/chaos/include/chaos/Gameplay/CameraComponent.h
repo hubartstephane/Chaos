@@ -1,18 +1,11 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class CameraComponent;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
 	// =============================================
 	// CameraComponent
 	// =============================================
@@ -33,21 +26,21 @@ namespace chaos
 		AutoConstCastable<Camera> GetCamera() const { return camera; }
 
 		/** modifier */
-		virtual box2 ApplyModifier(box2 const & src) const;
+		virtual box2 ApplyModifier(box2 const& src) const;
 
 	protected:
 
 		/** called whenever the component is inserted into the camera */
-		virtual void OnInsertedInto(Camera * in_camera);
+		virtual void OnInsertedInto(Camera* in_camera);
 		/** called whenever the component is removed from the camera */
-		virtual void OnRemovedFrom(Camera * in_camera);
+		virtual void OnRemovedFrom(Camera* in_camera);
 
 	protected:
 
 		/** the owning camera */
-		Camera * camera = nullptr;
+		Camera* camera = nullptr;
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

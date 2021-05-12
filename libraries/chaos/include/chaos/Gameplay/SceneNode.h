@@ -1,18 +1,11 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class SceneNode;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
 	class SceneNode : public GPURenderable
 	{
 		static constexpr int INVALID_LOCAL_TO_PARENT = 1;
@@ -34,7 +27,7 @@ namespace chaos
 		glm::mat4 GetLocalToWorld() const;
 
 		/** get the position of the node */
-		glm::vec2 const & GetPosition() const { return position; }
+		glm::vec2 const& GetPosition() const { return position; }
 		/** get the scale of the node */
 		glm::vec2 const& GetScale() const { return scale; }
 		/** get the rotation of the node */
@@ -53,9 +46,9 @@ namespace chaos
 		void RemoveChildNode(SceneNode* in_child);
 
 		/** gets the children nodes */
-		std::vector<shared_ptr<SceneNode>> & ChildrenNodes() { return child_nodes; }
+		std::vector<shared_ptr<SceneNode>>& ChildrenNodes() { return child_nodes; }
 		/** gets the children nodes */
-		std::vector<shared_ptr<SceneNode>> const & ChildrenNodes() const { return child_nodes; }
+		std::vector<shared_ptr<SceneNode>> const& ChildrenNodes() const { return child_nodes; }
 
 	protected:
 
@@ -84,13 +77,7 @@ namespace chaos
 		weak_ptr<SceneNode> parent_node;
 	};
 
+
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-
-
-
-
-

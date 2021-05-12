@@ -1,24 +1,10 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
-namespace chaos
-{
-	namespace GameHUDKeys
-	{
-
-	};
-
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
 namespace chaos
 {
 	// Create a gamespace for unique idenfiers
 	namespace GameHUDKeys
 	{
+#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
 		// some allocation ID's
 		CHAOS_DECLARE_TAG(LIFE_ID);        // number of life
 		CHAOS_DECLARE_TAG(LIFE_HEALTH_ID);  // a floating life bar
@@ -38,8 +24,9 @@ namespace chaos
 		CHAOS_DECLARE_TAG(GAME_LAYER_ID);
 		CHAOS_DECLARE_TAG(PLAYER_LAYER_ID);
 		CHAOS_DECLARE_TAG(HUD_LAYER_ID);
-	};
+
+#endif
+
+	}; // namespace GameHUDKeys
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

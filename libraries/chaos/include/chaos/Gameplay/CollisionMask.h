@@ -1,21 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
-	namespace CollisionMask
-	{
+#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	}; // namespace CollisionMask
-
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
 	namespace CollisionMask
 	{
 		/** for object/layer ... that can collides with player */
@@ -23,7 +9,7 @@ namespace chaos
 		/** for object/layer ... that can collides with camera */
 		static constexpr int CAMERA = (1 << 1);
 	};
+
+#endif
 	
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

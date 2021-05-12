@@ -1,18 +1,11 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class GameWindow;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
 	class GameWindow : public Window
 	{
 		friend class GameApplication;
@@ -31,10 +24,10 @@ namespace chaos
 		/** override */
 		virtual bool OnCharEventImpl(unsigned int c) override;
 		/** override */
-		virtual bool OnKeyEventImpl(KeyEvent const & event) override;
+		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
 
 		/** override */
-		virtual bool OnDraw(GPURenderer * renderer, box2 const & viewport, glm::ivec2 window_size) override;
+		virtual bool OnDraw(GPURenderer* renderer, box2 const& viewport, glm::ivec2 window_size) override;
 		/** override */
 		virtual void Finalize() override;
 		/** override */
@@ -44,7 +37,7 @@ namespace chaos
 		/** override */
 		virtual void OnFocusStateChange(bool gain_focus) override;
 		/** override */
-		virtual box2 GetRequiredViewport(glm::ivec2 const & size) const override;
+		virtual box2 GetRequiredViewport(glm::ivec2 const& size) const override;
 
 
 	protected:
@@ -53,7 +46,6 @@ namespace chaos
 		shared_ptr<Game> game;
 	};
 
+#endif
+
 }; // namespace chaos
-
-
-#endif // CHAOS_FORWARD_DECLARATION

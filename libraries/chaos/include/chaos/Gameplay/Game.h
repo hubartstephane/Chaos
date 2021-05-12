@@ -1,22 +1,13 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
-
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	using PhysicalGamepadWrapper = ReferencedObjectDataWrapper<PhysicalGamepad*>;
 
 	class Game;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
 	class Game : public Object, public InputEventReceiver
 	{
 		friend class GameGamepadManager;
@@ -60,9 +51,9 @@ namespace chaos
 		AutoConstCastable<Level> FindLevel(ObjectRequest request) const;
 
 		/** returns the game name */
-		char const * GetGameName() const { return game_name; }
+		char const* GetGameName() const { return game_name; }
 		/** returns the game instructions */
-		char const * GetGameInstructions() const { return game_instructions; }
+		char const* GetGameInstructions() const { return game_instructions; }
 
 		/** returns the best score */
 		int GetBestScore() const { return best_score; }
@@ -70,12 +61,12 @@ namespace chaos
 		int GetBestPlayerScore() const;
 
 		/** getter on the tiled map manager */
-		TiledMap::Manager * GetTiledMapManager() { return tiled_map_manager.get(); }
-		TiledMap::Manager const * GetTiledMapManager() const { return tiled_map_manager.get(); }
+		TiledMap::Manager* GetTiledMapManager() { return tiled_map_manager.get(); }
+		TiledMap::Manager const* GetTiledMapManager() const { return tiled_map_manager.get(); }
 
 		/** getter on the particle manager */
-		ParticleManager * GetParticleManager() { return particle_manager.get(); }
-		ParticleManager const * GetParticleManager() const { return particle_manager.get(); }
+		ParticleManager* GetParticleManager() { return particle_manager.get(); }
+		ParticleManager const* GetParticleManager() const { return particle_manager.get(); }
 
 		// The clocks: 
 		//   - root  clock : the top level clock. never reseted, never paused
@@ -83,9 +74,9 @@ namespace chaos
 		/** returns the root time */
 		double GetRootClockTime() const;
 		/** returns root clock */
-		Clock * GetRootClock() { return root_clock.get(); }
+		Clock* GetRootClock() { return root_clock.get(); }
 		/** returns root clock */
-		Clock const * GetRootClock() const { return root_clock.get(); }
+		Clock const* GetRootClock() const { return root_clock.get(); }
 
 		// GPURenderable layers
 #define CHAOS_FIND_RENDERABLE_CHILD(result, funcname)\
@@ -98,17 +89,17 @@ namespace chaos
 #undef CHAOS_FIND_RENDERABLE_CHILD
 
 		/** utility function to get the sound manager */
-		SoundManager * GetSoundManager();
+		SoundManager* GetSoundManager();
 
 		/** returns application clock */
-		Clock * GetApplicationClock();
+		Clock* GetApplicationClock();
 		/** returns application clock */
-		Clock const * GetApplicationClock() const;
+		Clock const* GetApplicationClock() const;
 
 		/** returns the HUD */
-		GameHUD * GetCurrentHUD() { return hud.get(); }
+		GameHUD* GetCurrentHUD() { return hud.get(); }
 		/** returns the HUD */
-		GameHUD const * GetCurrentHUD() const { return hud.get(); }
+		GameHUD const* GetCurrentHUD() const { return hud.get(); }
 
 		/** get the view */
 		box2 GetCanvasBox() const;
@@ -117,11 +108,11 @@ namespace chaos
 		virtual box2 GetWorldBox() const;
 
 		/** play some sound */
-		Sound * PlaySound(char const * name, bool paused, bool looping, float blend_time, TagType category_tag);
+		Sound* PlaySound(char const* name, bool paused, bool looping, float blend_time, TagType category_tag);
 		/** play some sound */
-		Sound * PlaySound(char const * name, PlaySoundDesc play_desc, TagType category_tag);
+		Sound* PlaySound(char const* name, PlaySoundDesc play_desc, TagType category_tag);
 		/** change the in game music (fadeout previous music) */
-		Sound * SetInGameMusic(char const * music_name);
+		Sound* SetInGameMusic(char const* music_name);
 
 #if _DEBUG	
 		/** declare we want to skip level */
@@ -140,7 +131,7 @@ namespace chaos
 		bool ReloadCurrentLevel();
 
 		/** getter on mouse sensitivity */
-		float GetMouseSensitivity() const { return mouse_sensitivity;}
+		float GetMouseSensitivity() const { return mouse_sensitivity; }
 		/** getter on gamepad sensitivity */
 		float GetGamepadSensitivity() const { return gamepad_sensitivity; }
 		/** get the wanted viewport aspect */
@@ -162,12 +153,12 @@ namespace chaos
 		void SetFreeCameraMode(bool free_camera_mode);
 
 		/** get the free camera */
-		Camera * GetFreeCamera();
+		Camera* GetFreeCamera();
 		/** get the free camera */
-		Camera const * GetFreeCamera() const;
+		Camera const* GetFreeCamera() const;
 
 		/** save the game into a checkpoint */
-		GameCheckpoint * SaveIntoCheckpoint();
+		GameCheckpoint* SaveIntoCheckpoint();
 
 		/** create a particle spawner */
 		template<typename ...PARAMS>
@@ -195,7 +186,7 @@ namespace chaos
 		virtual void TickGameInputs(float delta_time);
 
 		/** whenever a key event is received */
-		virtual bool OnKeyEventImpl(KeyEvent const & event) override;
+		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
 		/** whenever a char event is received */
 		virtual bool OnCharEventImpl(unsigned int c) override;
 		/** whenever a mouse event is received */
@@ -204,26 +195,26 @@ namespace chaos
 		virtual bool OnMouseMoveImpl(double x, double y) override;
 
 		/** getting the required viewport for given window */
-		virtual box2 GetRequiredViewport(glm::ivec2 const & size) const;
+		virtual box2 GetRequiredViewport(glm::ivec2 const& size) const;
 
 		/** the rendering method */
-		virtual void Display(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
+		virtual void Display(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
 		/** the user defined rendering function */
-		virtual void DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
+		virtual void DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
 		/** internal method to prepare rendering */
-		virtual void DoPreDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
+		virtual void DoPreDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
 		/** internal method to display the background */
 		virtual void DoDisplayBackground(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
 		/** internal  method to display the game content */
-		virtual void DoDisplayGame(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
+		virtual void DoDisplayGame(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
 		/** internal  method to display the HUD */
-		virtual void DoDisplayHUD(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
+		virtual void DoDisplayHUD(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
 
 		/** fill the rendering params before rendering */
-		virtual void FillUniformProvider(GPUProgramProvider & main_uniform_provider);
+		virtual void FillUniformProvider(GPUProgramProvider& main_uniform_provider);
 
 		/** initialization from the config file */
-		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
+		virtual bool InitializeFromConfiguration(nlohmann::json const& config, boost::filesystem::path const& config_path);
 		/** called whenever the game values as been changed */
 		virtual void OnGameValuesChanged(bool hot_reload);
 		/** initialize some resources */
@@ -235,7 +226,7 @@ namespace chaos
 		/** data internal method serialization */
 		virtual bool LoadPersistentGameData(nlohmann::json const& game_data);
 		/** data internal method serialization */
-		virtual bool SavePersistentGameData(nlohmann::json & game_data) const;
+		virtual bool SavePersistentGameData(nlohmann::json& game_data) const;
 		/** prepare data before saving */
 		virtual void UpdatePersistentGameData();
 
@@ -244,14 +235,14 @@ namespace chaos
 		/** create the game state_machine */
 		virtual bool CreateGameStateMachine(nlohmann::json const& config, boost::filesystem::path const& config_path);
 		/** allocate the state machine */
-		virtual SM::StateMachine * DoCreateGameStateMachine();
+		virtual SM::StateMachine* DoCreateGameStateMachine();
 		/** create the game state_machine instance */
-		virtual SM::StateMachineInstance * DoCreateGameStateMachineInstance(SM::StateMachine * state_machine);
+		virtual SM::StateMachineInstance* DoCreateGameStateMachineInstance(SM::StateMachine* state_machine);
 
 		/** special action on gamepad input reception */
-		virtual bool OnGamepadInput(PhysicalGamepad * in_physical_gamepad);
+		virtual bool OnGamepadInput(PhysicalGamepad* in_physical_gamepad);
 		/** called whenever a gamepad input is comming */
-		virtual bool OnPhysicalGamepadInput(PhysicalGamepad * physical_gamepad);
+		virtual bool OnPhysicalGamepadInput(PhysicalGamepad* physical_gamepad);
 
 		/** called whenever the input mode changes */
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;
@@ -259,7 +250,7 @@ namespace chaos
 		/** create some clocks */
 		virtual bool CreateClocks(nlohmann::json const& config, boost::filesystem::path const& config_path);
 		/** initialize the game data from configuration file */
-		virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload);
+		virtual bool InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload);
 
 		/** initialize the particle manager */
 		virtual bool CreateParticleManager();
@@ -269,29 +260,29 @@ namespace chaos
 		/** create the layers in the particle manager (returns the number of layer inserted => -1 for error) */
 		virtual int AddParticleLayers();
 		/** insert a rendering layering */
-		GPURenderableLayerSystem * AddChildRenderLayer(char const * layer_name, TagType layer_tag, int render_order);
+		GPURenderableLayerSystem* AddChildRenderLayer(char const* layer_name, TagType layer_tag, int render_order);
 
 		/** fill atlas generation input from the tiled map manager */
-		virtual bool FillAtlasGeneratorInput(BitmapAtlas::AtlasInput & input);
+		virtual bool FillAtlasGeneratorInput(BitmapAtlas::AtlasInput& input);
 
 		/** load object type sets concerned by the game (if required) */
-		virtual bool GenerateObjectTypeSets(nlohmann::json const & config, boost::filesystem::path const& config_path);
+		virtual bool GenerateObjectTypeSets(nlohmann::json const& config, boost::filesystem::path const& config_path);
 		/** load tileset concerned by the game (if required) */
-		virtual bool GenerateTileSets(nlohmann::json const & config, boost::filesystem::path const& config_path);
+		virtual bool GenerateTileSets(nlohmann::json const& config, boost::filesystem::path const& config_path);
 
 		/** a generic function to load some tiled map instances */
 		template<typename FUNC>
-		bool DoGenerateTiledMapEntity(nlohmann::json const & config, char const * property_name, char const * default_value, char const * extension, FUNC func);
+		bool DoGenerateTiledMapEntity(nlohmann::json const& config, char const* property_name, char const* default_value, char const* extension, FUNC func);
 
 		/** read in config file an entry and open in resource directory a directory iterator on that target */
-		boost::filesystem::directory_iterator GetResourceDirectoryIteratorFromConfig(nlohmann::json const & config, char const * config_name, char const * default_path) const;
+		boost::filesystem::directory_iterator GetResourceDirectoryIteratorFromConfig(nlohmann::json const& config, char const* config_name, char const* default_path) const;
 
 		/** load all the levels from the game (can be simple data) */
-		virtual bool LoadLevels(nlohmann::json const & config, boost::filesystem::path const& config_path);
+		virtual bool LoadLevels(nlohmann::json const& config, boost::filesystem::path const& config_path);
 		/* load one level */
-		virtual Level * DoLoadLevel(FilePathParam const & path);
+		virtual Level* DoLoadLevel(FilePathParam const& path);
 		/** create one tiled map level */
-		virtual TMLevel * CreateTMLevel();
+		virtual TMLevel* CreateTMLevel();
 
 		/** the game main loop */
 		virtual bool TickGameLoop(float delta_time);
@@ -318,7 +309,7 @@ namespace chaos
 		virtual bool OnLeavePause();
 
 		/** called whenever we enter in game mode */
-		virtual bool OnEnterGame(PhysicalGamepad * in_physical_gamepad);
+		virtual bool OnEnterGame(PhysicalGamepad* in_physical_gamepad);
 		/** called whenever we leave game mode */
 		virtual bool OnLeaveGame();
 
@@ -327,7 +318,7 @@ namespace chaos
 		/** require a pause or resume */
 		virtual bool RequireTogglePause();
 		/** require a game Start */
-		virtual bool RequireStartGame(PhysicalGamepad * physical_gamepad);
+		virtual bool RequireStartGame(PhysicalGamepad* physical_gamepad);
 		/** require a game exit */
 		virtual bool RequireExitGame();
 		/** require a game over */
@@ -346,21 +337,21 @@ namespace chaos
 		void DestroyHUD();
 
 		/** user defined method to create the pause HUD */
-		virtual GameHUD * DoCreatePauseMenuHUD();
+		virtual GameHUD* DoCreatePauseMenuHUD();
 		/** user defined method to create the main menu HUD */
-		virtual GameHUD * DoCreateMainMenuHUD();
+		virtual GameHUD* DoCreateMainMenuHUD();
 		/** user defined method to create the game HUD */
-		virtual GameHUD * DoCreatePlayingHUD();
+		virtual GameHUD* DoCreatePlayingHUD();
 		/** user defined method to create the gameover HUD */
-		virtual GameHUD * DoCreateGameOverHUD();
+		virtual GameHUD* DoCreateGameOverHUD();
 
 
 		/** change the current level */
-		bool SetCurrentLevel(Level * new_level);
+		bool SetCurrentLevel(Level* new_level);
 		/** change the current level for the next */
 		bool SetNextLevel(bool looping_levels);
 		/** reflex method whenever the level is changed */
-		virtual void OnLevelChanged(Level * new_level, Level * old_level, LevelInstance * new_level_instance);
+		virtual void OnLevelChanged(Level* new_level, Level* old_level, LevelInstance* new_level_instance);
 
 		/** generate the game instance entry point*/
 		virtual GameInstance* CreateGameInstance();
@@ -371,9 +362,9 @@ namespace chaos
 		void SetInGameSoundPause(bool in_paused);
 
 		/** create a free camera for the current level instance */
-		Camera * CreateFreeCamera() const;
+		Camera* CreateFreeCamera() const;
 		/** create a free camera for the current level instance */
-		Camera * DoCreateFreeCamera(Camera const * camera_to_copy, LevelInstance * level_instance) const;
+		Camera* DoCreateFreeCamera(Camera const* camera_to_copy, LevelInstance* level_instance) const;
 
 	protected:
 
@@ -418,9 +409,9 @@ namespace chaos
 		/** the wanted viewport aspect */
 		float viewport_wanted_aspect = (16.0f / 9.0f);
 		/** name of the game */
-		char const * game_name = nullptr;
+		char const* game_name = nullptr;
 		/** instructions displayed on may screen */
-		char const * game_instructions = nullptr;		
+		char const* game_instructions = nullptr;
 		/** whether levels are looping */
 		bool looping_levels = true;
 		/** score values */
@@ -445,12 +436,8 @@ namespace chaos
 		mutable shared_ptr<Camera> free_camera;
 		/** free camera mode */
 		bool free_camera_mode = false;
-
-		
 	};
 
+#endif
+
 }; // namespace chaos
-
-
-
-#endif // CHAOS_FORWARD_DECLARATION

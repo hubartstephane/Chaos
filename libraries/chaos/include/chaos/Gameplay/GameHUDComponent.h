@@ -1,7 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class GameHUDComponent;
 	class GameHUDMeshComponent;
 	class GameHUDTextComponent;
@@ -27,15 +27,7 @@ namespace chaos
 	class GameHUDDebugDrawComponent;
 #endif
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// ====================================================================
 	// GameHUDComponent
@@ -86,14 +78,14 @@ namespace chaos
 		/** called whenever the hud is beeing removed into the hud */
 		virtual void OnRemovedFromHUD();
 		/** initialization method from JSON */
-		virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
+		virtual bool InitializeFromConfiguration(nlohmann::json const& json, boost::filesystem::path const& config_path);
 		/** set the HUD */
-		virtual void SetHUD(GameHUD * in_hud);
+		virtual void SetHUD(GameHUD* in_hud);
 
 	protected:
 
 		/** the current hud */
-		GameHUD * hud = nullptr;
+		GameHUD* hud = nullptr;
 	};
 
 	// ====================================================================
@@ -136,13 +128,13 @@ namespace chaos
 	protected:
 
 		/** tweak the text generation parameters */
-		virtual void TweakTextGeneratorParams(ParticleTextGenerator::GeneratorParams & final_params) const;
+		virtual void TweakTextGeneratorParams(ParticleTextGenerator::GeneratorParams& final_params) const;
 		/** create the text */
-		virtual void SetText(char const * in_text);
+		virtual void SetText(char const* in_text);
 		/** override */
 		virtual void UpdateMesh() override;
 		/** override */
-		virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path) override;
+		virtual bool InitializeFromConfiguration(nlohmann::json const& json, boost::filesystem::path const& config_path) override;
 		/** override */
 		virtual void OnInsertedInHUD() override;
 
@@ -169,10 +161,10 @@ namespace chaos
 		using BASE::BASE;
 
 		/** gets the value (returns true whether the object is valid) */
-		virtual bool QueryValue(type& result) const 
-		{ 
-			result = type(); 
-			return true; 
+		virtual bool QueryValue(type& result) const
+		{
+			result = type();
+			return true;
 		}
 		/** override */
 		virtual void OnInsertedInHUD()
@@ -234,10 +226,10 @@ namespace chaos
 		/** constructor */
 		GameHUDNotificationComponent();
 		/** constructor */
-		GameHUDNotificationComponent(ParticleTextGenerator::GeneratorParams const & in_params);
+		GameHUDNotificationComponent(ParticleTextGenerator::GeneratorParams const& in_params);
 
 		/** show/initialize the notification */
-		void ShowNotification(char const * in_message, float in_lifetime);
+		void ShowNotification(char const* in_message, float in_lifetime);
 		/** hide the notification */
 		void HideNotification();
 
@@ -263,15 +255,15 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GameHUDScoreComponent(char const * in_text = "Score: %d");
+		GameHUDScoreComponent(char const* in_text = "Score: %d");
 		/** constructor */
-		GameHUDScoreComponent(char const* in_text, ParticleTextGenerator::GeneratorParams const & in_params):
+		GameHUDScoreComponent(char const* in_text, ParticleTextGenerator::GeneratorParams const& in_params) :
 			GameHUDCacheValueTextComponent<int>(in_text, in_params) {}
 
 	protected:
 
 		/** override */
-		virtual bool QueryValue(int & result) const override;
+		virtual bool QueryValue(int& result) const override;
 	};
 
 	// ====================================================================
@@ -285,7 +277,7 @@ namespace chaos
 		/** constructor */
 		GameHUDFramerateComponent(char const* in_text = "%02.01f FPS");
 		/** constructor */
-		GameHUDFramerateComponent(char const* in_text, ParticleTextGenerator::GeneratorParams const & in_params):
+		GameHUDFramerateComponent(char const* in_text, ParticleTextGenerator::GeneratorParams const& in_params) :
 			GameHUDCacheValueTextComponent<float>(in_text, in_params) {}
 
 	protected:
@@ -343,17 +335,17 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GameHUDTimeoutComponent(char const * in_text = "%02.01f");
+		GameHUDTimeoutComponent(char const* in_text = "%02.01f");
 		/** constructor */
-		GameHUDTimeoutComponent(char const* in_text, ParticleTextGenerator::GeneratorParams const & in_params) :
+		GameHUDTimeoutComponent(char const* in_text, ParticleTextGenerator::GeneratorParams const& in_params) :
 			GameHUDCacheValueTextComponent<float>(in_text, in_params) {}
 
 	protected:
 
 		/** override */
-		virtual bool QueryValue(float & result) const override;
+		virtual bool QueryValue(float& result) const override;
 		/** override */
-		virtual void TweakTextGeneratorParams(ParticleTextGenerator::GeneratorParams & final_params) const override;
+		virtual void TweakTextGeneratorParams(ParticleTextGenerator::GeneratorParams& final_params) const override;
 		/** override */
 		virtual bool InitializeFromConfiguration(nlohmann::json const& json, boost::filesystem::path const& config_path) override;
 
@@ -415,12 +407,12 @@ namespace chaos
 		/** the current heart warning timer value */
 		float warning_value = 1.0f;
 	};
-	
+
 	// ====================================================================
 	// GameHUDLevelTitleComponent
 	// ====================================================================
 
-	class GameHUDLevelTitleComponent : public GameHUDCacheValueTextComponent<Level const *>
+	class GameHUDLevelTitleComponent : public GameHUDCacheValueTextComponent<Level const*>
 	{
 		friend class GameHUD;
 
@@ -429,16 +421,16 @@ namespace chaos
 		/** constructor */
 		GameHUDLevelTitleComponent();
 		/** constructor */
-		GameHUDLevelTitleComponent(ParticleTextGenerator::GeneratorParams const & in_params) :
+		GameHUDLevelTitleComponent(ParticleTextGenerator::GeneratorParams const& in_params) :
 			GameHUDCacheValueTextComponent<Level const*>("%s", in_params) {}
 
 	protected:
 
 		/** override */
-		virtual bool QueryValue(Level const * & result) const override;
+		virtual bool QueryValue(Level const*& result) const override;
 		/** override */
 		virtual void UpdateMesh() override;
-	};	
+	};
 
 	// ====================================================================
 	// GameHUDFreeCameraComponent
@@ -452,7 +444,7 @@ namespace chaos
 		/** constructor */
 		GameHUDFreeCameraComponent(char const* in_text = "Free Camera Mode");
 		/** constructor */
-		GameHUDFreeCameraComponent(char const* in_text, ParticleTextGenerator::GeneratorParams const & in_params);
+		GameHUDFreeCameraComponent(char const* in_text, ParticleTextGenerator::GeneratorParams const& in_params);
 
 	protected:
 
@@ -546,11 +538,11 @@ namespace chaos
 	};
 
 	/** display a variable for 1 frame */
-	GPUDrawInterface<VertexDefault> * GetDebugDrawInterface();
+	GPUDrawInterface<VertexDefault>* GetDebugDrawInterface();
 
 
 #endif // #if _DEBUG
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

@@ -1,18 +1,10 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class GLDebugOnScreenDisplay;
-	
-}; // namespace chaos	
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* GLDebugOnScreenDisplay : used to display some text on screen with timeout from a bitmap font (a texture)
@@ -48,22 +40,22 @@ namespace chaos
 		/** tick all lines (returns true whether there is a change) */
 		bool Tick(float delta_time);
 		/** Add a line in the log (character size and position are in pixels) */
-		void AddLine(char const * line, float duration = -1);
+		void AddLine(char const* line, float duration = -1);
 		/** clear all the lines */
 		void Clear();
 
 		/** Initialize the displayer */
-		bool Initialize(GLDebugOnScreenDisplay::Params const & params);
+		bool Initialize(GLDebugOnScreenDisplay::Params const& params);
 		/** Finalize */
 		void Finalize();
 
 		/** get the characters in the font */
-		std::string const & GetFontCharacters() const { return mesh_builder_params.font_characters;}
+		std::string const& GetFontCharacters() const { return mesh_builder_params.font_characters; }
 
 	protected:
 
 		/** internal initialization method */
-		bool DoInitialize(GLDebugOnScreenDisplay::Params const & params);
+		bool DoInitialize(GLDebugOnScreenDisplay::Params const& params);
 		/** internal method to build the vertex buffer */
 		bool BuildVertexBuffer(int width, int height) const;
 
@@ -94,11 +86,11 @@ namespace chaos
 		Params mesh_builder_params;
 
 		/** the source for the vertex shader */
-		static char const * vertex_shader_source;
+		static char const* vertex_shader_source;
 		/** the source for the pixel shader */
-		static char const * pixel_shader_source;
+		static char const* pixel_shader_source;
 	};
 
+#endif
+	
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

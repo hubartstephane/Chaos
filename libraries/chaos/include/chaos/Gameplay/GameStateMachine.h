@@ -1,10 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
-	namespace GameStateMachineKeys
-	{
-	}; // namespace GameStateMachineKeys
+
+#ifdef CHAOS_FORWARD_DECLARATION
 
 	class GameState;
 	class GameTransition;
@@ -17,16 +14,8 @@ namespace chaos
 	class GameStateMachine;
 	class GameStateMachineInstance;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-
-namespace chaos
-{
 	namespace GameStateMachineKeys
 	{
 		// the possible states
@@ -50,11 +39,11 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GameState(class GameStateMachine * in_state_machine);
+		GameState(class GameStateMachine* in_state_machine);
 		/** get the game */
-		Game * GetGame(SM::StateMachineInstance * sm_instance);
+		Game* GetGame(SM::StateMachineInstance* sm_instance);
 		/** get the game */
-		Game const * GetGame(SM::StateMachineInstance const * sm_instance) const;
+		Game const* GetGame(SM::StateMachineInstance const* sm_instance) const;
 	};
 
 	// =========================================================
@@ -66,11 +55,11 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GameTransition(GameState * in_from_state, GameState * in_to_state, TagType in_triggering_event);
+		GameTransition(GameState* in_from_state, GameState* in_to_state, TagType in_triggering_event);
 		/** get the game */
-		Game * GetGame(SM::StateMachineInstance * sm_instance);
+		Game* GetGame(SM::StateMachineInstance* sm_instance);
 		/** get the game */
-		Game const * GetGame(SM::StateMachineInstance * sm_instance) const;
+		Game const* GetGame(SM::StateMachineInstance* sm_instance) const;
 	};
 
 	// =========================================================
@@ -82,11 +71,11 @@ namespace chaos
 	public:
 
 		/** constructor */
-		MainMenuState(GameStateMachine * in_state_machine);
+		MainMenuState(GameStateMachine* in_state_machine);
 		/** override */
-		virtual bool OnEnterImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * from_state, Object * extra_data) override;
+		virtual bool OnEnterImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* from_state, Object* extra_data) override;
 		/** override */
-		virtual bool OnLeaveImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * to, Object * extra_data) override;
+		virtual bool OnLeaveImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* to, Object* extra_data) override;
 	};
 
 	class PlayingState : public GameState
@@ -94,9 +83,9 @@ namespace chaos
 	public:
 
 		/** constructor */
-		PlayingState(GameStateMachine * in_state_machine);
+		PlayingState(GameStateMachine* in_state_machine);
 		/** override */
-		virtual bool TickImpl(SM::StateMachineInstance * sm_instance, float delta_time, Object * extra_data) override;
+		virtual bool TickImpl(SM::StateMachineInstance* sm_instance, float delta_time, Object* extra_data) override;
 	};
 
 	class PauseState : public GameState
@@ -104,11 +93,11 @@ namespace chaos
 	public:
 
 		/** constructor */
-		PauseState(GameStateMachine * in_state_machine);
+		PauseState(GameStateMachine* in_state_machine);
 		/** override */
-		virtual bool OnEnterImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * from_state, Object * extra_data) override;
+		virtual bool OnEnterImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* from_state, Object* extra_data) override;
 		/** override */
-		virtual bool OnLeaveImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * to, Object * extra_data) override;
+		virtual bool OnLeaveImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* to, Object* extra_data) override;
 	};
 
 	// =========================================================
@@ -124,7 +113,7 @@ namespace chaos
 	protected:
 
 		/** overriding */
-		virtual bool OnEnterImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * from, Object * extra_data) override;
+		virtual bool OnEnterImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* from, Object* extra_data) override;
 	};
 
 	class PlayingToMainMenuTransition : public GameTransition
@@ -137,9 +126,9 @@ namespace chaos
 	protected:
 
 		/** overriding */
-		virtual bool OnEnterImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * from, Object * extra_data) override;
+		virtual bool OnEnterImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* from, Object* extra_data) override;
 	};
-	
+
 	class PlayingToGameOverTransition : public GameTransition
 	{
 
@@ -150,11 +139,11 @@ namespace chaos
 	protected:
 
 		/** overriding */
-		virtual bool OnEnterImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * from, Object * extra_data) override;
+		virtual bool OnEnterImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* from, Object* extra_data) override;
 		/** overriding */
-		virtual bool OnLeaveImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * to, Object * extra_data) override;
+		virtual bool OnLeaveImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* to, Object* extra_data) override;
 		/** overriding */
-		virtual bool TickImpl(SM::StateMachineInstance * sm_instance, float delta_time, Object * extra_data) override;
+		virtual bool TickImpl(SM::StateMachineInstance* sm_instance, float delta_time, Object* extra_data) override;
 	};
 
 	// =========================================================
@@ -196,25 +185,25 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GameStateMachineInstance(Game * in_game, SM::StateMachine * in_state_machine);
+		GameStateMachineInstance(Game* in_game, SM::StateMachine* in_state_machine);
 
 		/** get the game */
-		Game * GetGame()
+		Game* GetGame()
 		{
 			return game;
 		}
 		/** get the game */
-		Game const * GetGame() const
+		Game const* GetGame() const
 		{
-			return game;		
+			return game;
 		}
 
 	protected:
 
 		/** the game */
-		Game * game = nullptr;	
+		Game* game = nullptr;
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

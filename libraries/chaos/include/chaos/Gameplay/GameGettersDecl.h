@@ -40,21 +40,4 @@
 	AutoCastable<Camera> CLASSNAME::GetCamera(size_t camera_index) { return GameGettersTools::GetCamera(this, camera_index); }\
 	AutoConstCastable<Camera> CLASSNAME::GetCamera(size_t camera_index) const { return GameGettersTools::GetCamera(this, camera_index); }
 
-namespace chaos
-{
-
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
-
-
-
-}; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
+#endif

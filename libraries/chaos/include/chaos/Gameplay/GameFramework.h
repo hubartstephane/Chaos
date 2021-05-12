@@ -1,6 +1,5 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
-
 // internal macros (do not use outside this file)
 #define CHAOS_DECLARE_GAMEPLAY_UTILITY(prefix, friend_prefix)\
 	friend_prefix class prefix##LevelCheckpoint;\
@@ -31,22 +30,4 @@ namespace chaos
 
 }; // namespace chaos
 
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-
-
-
-
-
-
-
-
-
-
-
-
-#endif // CHAOS_FORWARD_DECLARATION
+#endif

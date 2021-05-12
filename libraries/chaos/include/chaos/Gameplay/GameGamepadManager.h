@@ -1,24 +1,17 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class GameGamepadManager;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
 	class GameGamepadManager : public GamepadManager
 	{
 	public:
 
 		/** the constructor */
-		GameGamepadManager(Game * in_game) : game(in_game)
+		GameGamepadManager(Game* in_game) : game(in_game)
 		{
 			assert(in_game != nullptr);
 		}
@@ -26,14 +19,14 @@ namespace chaos
 	protected:
 
 		/** the gamepad manager */
-		virtual bool DoPoolGamepad(PhysicalGamepad * physical_gamepad) override;
+		virtual bool DoPoolGamepad(PhysicalGamepad* physical_gamepad) override;
 
 	protected:
 
 		/** pointer on the game */
-		Game * game = nullptr;
+		Game* game = nullptr;
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

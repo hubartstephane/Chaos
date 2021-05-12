@@ -1,19 +1,11 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class Player;
 	class PlayerGamepadCallbacks;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// =============================================
 	// Player
@@ -24,7 +16,7 @@ namespace chaos
 		friend class PlayerGamepadCallbacks;
 
 		CHAOS_GAMEPLAY_ALLFRIENDS;
-		
+
 		CHAOS_DECLARE_OBJECT_CLASS2(Player, Tickable);
 
 	public:
@@ -38,23 +30,23 @@ namespace chaos
 		int GetScore() const { return score; }
 		/** get the life count */
 		int GetLifeCount() const { return life_count; }
-        /** get the current health value */
-        float GetHealth() const { return health; }
-        /** get the maximum health value health value */
-        float GetMaxHealth() const { return max_health; }
+		/** get the current health value */
+		float GetHealth() const { return health; }
+		/** get the maximum health value health value */
+		float GetMaxHealth() const { return max_health; }
 
 		/** update player score */
 		void SetScore(int in_score, bool increment = false);
 		/** update player life */
 		void SetLifeCount(int in_life, bool increment = false);
-        /** update player health */
-        void SetHealth(float in_value, bool in_increment = false);
+		/** update player health */
+		void SetHealth(float in_value, bool in_increment = false);
 
 		/** check whether the player is dead */
 		virtual bool IsDead() const;
 
 		/** try to give physical device to the player */
-		bool CapturePhysicalGamepad(PhysicalGamepad * in_physical_gamepad);
+		bool CapturePhysicalGamepad(PhysicalGamepad* in_physical_gamepad);
 
 		/** gets the pawn */
 		AutoCastable<PlayerPawn> GetPawn() { return pawn.get(); }
@@ -70,14 +62,14 @@ namespace chaos
 		// shu48
 
 		/** gets the left stick position */
-		glm::vec2 GetLeftStickPosition(bool previous_frame = false) const { return (previous_frame)? previous_left_stick_position : left_stick_position; }
+		glm::vec2 GetLeftStickPosition(bool previous_frame = false) const { return (previous_frame) ? previous_left_stick_position : left_stick_position; }
 		/** gets the right stick position */
-		glm::vec2 GetRightStickPosition(bool previous_frame = false) const { return (previous_frame)? previous_right_stick_position: right_stick_position; }
+		glm::vec2 GetRightStickPosition(bool previous_frame = false) const { return (previous_frame) ? previous_right_stick_position : right_stick_position; }
 
 		/** gets the left trigger */
-		float GetLeftTrigger(bool previous_frame = false) const { return (previous_frame)? previous_left_trigger : left_trigger; }
+		float GetLeftTrigger(bool previous_frame = false) const { return (previous_frame) ? previous_left_trigger : left_trigger; }
 		/** gets the right trigger */
-		float GetRightTrigger(bool previous_frame = false) const { return (previous_frame)? previous_right_trigger : right_trigger; }
+		float GetRightTrigger(bool previous_frame = false) const { return (previous_frame) ? previous_right_trigger : right_trigger; }
 
 		/** player initialization from config */
 		virtual bool InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload);
@@ -92,10 +84,10 @@ namespace chaos
 	protected:
 
 		/** initialize the game instance */
-		virtual bool Initialize(GameInstance * in_game_instance);
+		virtual bool Initialize(GameInstance* in_game_instance);
 
 		/** called whenever the level is being changed */
-		virtual void OnLevelChanged(Level * new_level, Level * old_level, LevelInstance * new_level_instance);
+		virtual void OnLevelChanged(Level* new_level, Level* old_level, LevelInstance* new_level_instance);
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;
@@ -125,8 +117,8 @@ namespace chaos
 		/** called whenever a life is lost */
 		virtual void OnLifeLost();
 
-        /** called whenever health is changed */
-        virtual void OnHealthChanged(float old_health, float new_health, bool invulnerable);
+		/** called whenever health is changed */
+		virtual void OnHealthChanged(float old_health, float new_health, bool invulnerable);
 
 		/** the effects for life changes */
 		virtual void PlayHealthChangedEffects(bool health_lost);
@@ -188,16 +180,16 @@ namespace chaos
 	public:
 
 		/** constructor */
-		PlayerGamepadCallbacks(Player * in_player);
+		PlayerGamepadCallbacks(Player* in_player);
 		/** override */
-		virtual bool OnGamepadDisconnected(Gamepad * in_gamepad) override;
+		virtual bool OnGamepadDisconnected(Gamepad* in_gamepad) override;
 
 	protected:
 
 		/** player of interrest */
-		Player * player = nullptr;
+		Player* player = nullptr;
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

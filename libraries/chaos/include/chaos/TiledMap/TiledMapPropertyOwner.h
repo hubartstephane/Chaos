@@ -1,14 +1,9 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
 namespace chaos
 {	
 	namespace TiledMap
 	{
+
+#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 		// ==========================================
 		// Property : base class for some properties
@@ -220,8 +215,8 @@ namespace chaos
 			std::string type;
 		};
 
+#endif
+
 	}; // namespace TiledMap
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

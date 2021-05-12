@@ -1,7 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	template<typename GENERATOR>
 	class DefaultMaterialBase;
 
@@ -11,16 +11,8 @@ namespace chaos
 	using DefaultParticleProgram = DefaultMaterialBase<DefaultParticleProgramSource>;
 	using DefaultScreenSpaceProgram = DefaultMaterialBase<DefaultScreenSpaceProgramGenerator>;
 
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
 	/**
 	 * DefaultMaterialBase : base class to have default material
 	 */
@@ -59,7 +51,7 @@ namespace chaos
 	protected:
 
 		/** gets the singleton */
-		static DefaultMaterialBase<SOURCE> & GetInstance()
+		static DefaultMaterialBase<SOURCE>& GetInstance()
 		{
 			static DefaultMaterialBase<SOURCE> result;
 			return result;
@@ -82,7 +74,7 @@ namespace chaos
 	public:
 
 		/** get the sources */
-		void GetSources(GPUProgramGenerator & program_generator);
+		void GetSources(GPUProgramGenerator& program_generator);
 
 	public:
 
@@ -111,6 +103,7 @@ namespace chaos
 		static char const* pixel_shader_source;
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+
+}; // namespace chaos

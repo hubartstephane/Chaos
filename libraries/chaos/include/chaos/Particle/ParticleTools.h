@@ -1,19 +1,3 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
-namespace chaos
-{
-    namespace ParticleTools
-    {
-
-    }; // namespace ParticleTools
-
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
 namespace chaos
 {
 
@@ -23,6 +7,8 @@ namespace chaos
 
 	namespace ParticleTools
 	{
+#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
         /** get particle by index */
         ParticleDefault* GetParticle(ParticleAllocationBase* allocation, size_t index);
         ParticleDefault const* GetParticle(ParticleAllocationBase const* allocation, size_t index);
@@ -49,11 +35,8 @@ namespace chaos
         /** set the particle rotation */
         bool SetParticleRotation(ParticleAllocationBase* allocation, size_t index, float rotation);
 
+#endif
+
 	}; // namespace ParticleTools
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

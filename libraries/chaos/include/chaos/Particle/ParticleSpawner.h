@@ -1,18 +1,11 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
     class ParticleSpawner;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
     class ParticleSpawner : public Object
     {
     public:
@@ -20,16 +13,16 @@ namespace chaos
         /** constructor */
         ParticleSpawner(BitmapAtlas::TextureArrayAtlas const* in_atlas = nullptr, ParticleLayerBase* in_particle_layer = nullptr, ObjectRequest bitmap_request = ObjectRequest::None(), ObjectRequest folder_request = "sprites");
         /** constructor */
-        ParticleSpawner(ParticleSpawner const & src) = default;
+        ParticleSpawner(ParticleSpawner const& src) = default;
 
         /** get the texture atlas */
         BitmapAtlas::TextureArrayAtlas const* GetTextureAtlas() const { return atlas; }
 
         /** change the bitmap info */
-		bool SetBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request = "sprites"); // folder "sprites" by default
+        bool SetBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request = "sprites"); // folder "sprites" by default
         /** find the bitmap info */
         BitmapAtlas::BitmapInfo const* FindBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request = "sprites") const;
-   
+
         /** spawn particles */
         SpawnParticleResult SpawnParticles(size_t count, bool new_allocation = true);
 
@@ -37,7 +30,7 @@ namespace chaos
         SpawnParticleResult SpawnText(char const* in_text, bool new_allocation, ParticleTextGenerator::GeneratorParams const& params, ParticleTextGenerator::CreateTextAllocationParams const& allocation_params);
 
         /** gets the bitmap info used for spawned particles */
-        BitmapAtlas::BitmapInfo const * GetBitmapInfo() const { return bitmap_info; }
+        BitmapAtlas::BitmapInfo const* GetBitmapInfo() const { return bitmap_info; }
 
         /** returns whether the spawner is valid */
         bool IsValid() const { return (particle_layer != nullptr); }
@@ -54,9 +47,6 @@ namespace chaos
         BitmapAtlas::TextureArrayAtlas const* atlas = nullptr;
     };
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

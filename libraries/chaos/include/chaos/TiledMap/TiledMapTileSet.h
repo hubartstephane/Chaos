@@ -1,24 +1,13 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
 	namespace TiledMap
 	{
+#ifdef CHAOS_FORWARD_DECLARATION
+
 		enum class TileSetOrientation;
 
-	}; // namespace TiledMap
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{	
-	namespace TiledMap
-	{
 		// ==========================================
 		// GroundData
 		// ==========================================
@@ -33,7 +22,7 @@ namespace chaos
 			using PropertyOwner::PropertyOwner;
 
 			/** loading method from XML */
-			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
 
 		public:
 
@@ -139,7 +128,7 @@ namespace chaos
 			/** object information */
 			std::vector<WangEdgeColor> wang_edge_colors;
 			/** object information */
-			std::vector<WangCornerColor> wang_corner_colors;			
+			std::vector<WangCornerColor> wang_corner_colors;
 			/** object information */
 			std::vector<WangTile> wang_tiles;
 		};
@@ -158,10 +147,10 @@ namespace chaos
 			using TypedObject::TypedObject;
 
 			/** override */
-			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
 
 			/** initialize terrain indices from string */
-			bool ComputeTerrainIndices(char const * str);
+			bool ComputeTerrainIndices(char const* str);
 
 		public:
 
@@ -209,30 +198,30 @@ namespace chaos
 			using ManagerObject::ManagerObject;
 
 			/** loading method from XML */
-			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
 			/** loading method from XML */
-			virtual bool DoLoadMembers(tinyxml2::XMLElement const * element) override;
+			virtual bool DoLoadMembers(tinyxml2::XMLElement const* element) override;
 			/** loading method from XML */
-			bool DoLoadTiles(tinyxml2::XMLElement const * element);
+			bool DoLoadTiles(tinyxml2::XMLElement const* element);
 			/** loading method from XML */
-			bool DoLoadGrounds(tinyxml2::XMLElement const * element);
+			bool DoLoadGrounds(tinyxml2::XMLElement const* element);
 			/** loading method from XML */
 			bool DoLoadWangsets(tinyxml2::XMLElement const* element);
 
 			/** get the name of the expected markup */
-			virtual char const * GetXMLMarkupName() const override { return "tileset"; }
+			virtual char const* GetXMLMarkupName() const override { return "tileset"; }
 
 		public:
 
 			/** find TileData from its id */
-			TileData const * FindTileData(int gid) const;
+			TileData const* FindTileData(int gid) const;
 			/** find TileData from its type */
-			TileData const * FindTileData(char const * type) const;
+			TileData const* FindTileData(char const* type) const;
 			/** find TileData from its atlas key */
-			TileData const * FindTileDataFromAtlasKey(char const * atlas_key) const;
+			TileData const* FindTileDataFromAtlasKey(char const* atlas_key) const;
 
 			/** find the wangset for this name */
-			Wangset const * FindWangset(char const* name) const;
+			Wangset const* FindWangset(char const* name) const;
 
 		public:
 
@@ -276,8 +265,9 @@ namespace chaos
 			int max_tile_id = 0;
 		};
 
+
+#endif
+
 	}; // namespace TiledMap
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

@@ -1,24 +1,13 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
 	namespace TiledMap
 	{
+#ifdef CHAOS_FORWARD_DECLARATION
+
 		enum class DrawOrder;
 
-	}; // namespace TiledMap
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{	
-	namespace TiledMap
-	{
 		// ==========================================
 		// LayerBase
 		// ==========================================
@@ -43,7 +32,7 @@ namespace chaos
 			using PropertyOwner::PropertyOwner;
 
 			/** the loading method */
-			virtual bool DoLoad(tinyxml2::XMLElement const * element);
+			virtual bool DoLoad(tinyxml2::XMLElement const* element);
 
 		public:
 
@@ -78,7 +67,7 @@ namespace chaos
 			using LayerBase::LayerBase;
 
 			/** the loading method */
-			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
 
 		public:
 
@@ -110,11 +99,11 @@ namespace chaos
 			using LayerBase::LayerBase;
 
 			/** the loading method */
-			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
 			/** the loading method */
-			bool DoLoadObjects(tinyxml2::XMLElement const * element);
+			bool DoLoadObjects(tinyxml2::XMLElement const* element);
 			/** the loading method */
-			GeometricObject * DoLoadOneObject(tinyxml2::XMLElement const * element);
+			GeometricObject* DoLoadOneObject(tinyxml2::XMLElement const* element);
 
 		public:
 
@@ -176,7 +165,7 @@ namespace chaos
 		public:
 
 			/** get the bounding box of a tile */
-			box2 GetTileBoundingBox(glm::ivec2 const tile_coord, glm::vec2 const & image_size, int particle_flags, bool world_system) const;
+			box2 GetTileBoundingBox(glm::ivec2 const tile_coord, glm::vec2 const& image_size, int particle_flags, bool world_system) const;
 
 			/** get the position of the tile */
 			glm::ivec2 GetTileCoordinate(TileLayerChunk const& chunk, size_t index) const;
@@ -189,19 +178,19 @@ namespace chaos
 		protected:
 
 			/** constructor */
-			TileLayer(BaseObject * in_owner, glm::ivec2 const & in_tile_size) :
+			TileLayer(BaseObject* in_owner, glm::ivec2 const& in_tile_size) :
 				LayerBase(in_owner),
 				tile_size(in_tile_size)
-				{}
+			{}
 
 			/** the loading method */
-			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
 			/** the loading method */
-			bool DoLoadTileBuffer(tinyxml2::XMLElement const * element);
+			bool DoLoadTileBuffer(tinyxml2::XMLElement const* element);
 			/** load all chunks of tiles */
-			bool DoLoadTileChunk(tinyxml2::XMLElement const* element, char const * encoding, char const * compression);
+			bool DoLoadTileChunk(tinyxml2::XMLElement const* element, char const* encoding, char const* compression);
 			/** loading buffer method */
-			std::vector<Tile> DoLoadTileChunkFromBuffer(Buffer<char> const & buffer, glm::ivec2 const & chunk_size);
+			std::vector<Tile> DoLoadTileChunkFromBuffer(Buffer<char> const& buffer, glm::ivec2 const& chunk_size);
 			/** add some flags to tiles */
 			virtual void ComputeTileFlags();
 
@@ -236,8 +225,9 @@ namespace chaos
 			std::vector<shared_ptr<LayerBase>> layers;
 		};
 
+
+#endif
+
 	}; // namespace TiledMap
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

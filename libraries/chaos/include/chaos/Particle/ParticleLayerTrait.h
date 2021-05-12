@@ -1,21 +1,13 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class ParticleLayerTraitBase;
 
 	template<typename PARTICLE_TYPE, typename VERTEX_TYPE, typename ALLOCATION_TYPE = EmptyClass>
 	class ParticleLayerTrait;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// ==============================================================
 	// ParticleLayerTraitBase
@@ -77,9 +69,6 @@ namespace chaos
 	//  };
 	//
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

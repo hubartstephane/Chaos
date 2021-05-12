@@ -1,25 +1,14 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
 	namespace TiledMap
 	{
+#ifdef CHAOS_FORWARD_DECLARATION
+
 		enum class HorizontalTextAlignment;
 		enum class VerticalTextAlignment;
 
-	}; // namespace TiledMap
-	
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{	
-	namespace TiledMap
-	{
 		// ==========================================
 		// GeometricObject
 		// ==========================================
@@ -42,13 +31,13 @@ namespace chaos
 			using TypedObject::TypedObject;
 
 			/** override */
-			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
 
 			/** get the local bouding box */
 			virtual box2 DoGetBoundingBox() const;
 
 			/** loading method from XML */
-			std::vector<glm::vec2> GetPointArray(tinyxml2::XMLElement const * element, char const * attribute_name);
+			std::vector<glm::vec2> GetPointArray(tinyxml2::XMLElement const* element, char const* attribute_name);
 
 		public:
 
@@ -67,7 +56,7 @@ namespace chaos
 			//         - Tile : it depends on the object_alignment of the tileset (BOTTOM-LEFT by default)
 
 			/** object information */
-			float rotation = 0.0f; 
+			float rotation = 0.0f;
 		};
 
 		// ==========================================
@@ -84,7 +73,7 @@ namespace chaos
 			using GeometricObject::GeometricObject;
 
 			/** loading method from XML */
-			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
 		};
 
 		// ==========================================
@@ -103,7 +92,7 @@ namespace chaos
 			/** override */
 			virtual box2 DoGetBoundingBox() const override;
 			/** loading method from XML */
-			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
 
 		public:
 
@@ -125,7 +114,7 @@ namespace chaos
 			using GeometricObjectSurface::GeometricObjectSurface;
 
 			/** loading method from XML */
-			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
 		};
 
 		// ==========================================
@@ -142,7 +131,7 @@ namespace chaos
 			using GeometricObjectSurface::GeometricObjectSurface;
 
 			/** loading method from XML */
-			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
 		};
 
 		// ==========================================
@@ -159,7 +148,7 @@ namespace chaos
 			using GeometricObject::GeometricObject;
 
 			/** loading method from XML */
-			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
 
 		public:
 
@@ -181,7 +170,7 @@ namespace chaos
 			using GeometricObject::GeometricObject;
 
 			/** loading method from XML */
-			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
 
 		public:
 
@@ -222,7 +211,7 @@ namespace chaos
 			using GeometricObjectSurface::GeometricObjectSurface;
 
 			/** loading method from XML */
-			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
 
 		public:
 
@@ -253,7 +242,7 @@ namespace chaos
 		public:
 
 			/** override */
-			virtual Property const * FindProperty(char const * name, PropertyType type_id) const override;			
+			virtual Property const* FindProperty(char const* name, PropertyType type_id) const override;
 			/** override */
 			virtual bool IsObjectOfType(char const* in_type) const override;
 
@@ -268,7 +257,7 @@ namespace chaos
 			/** override */
 			virtual box2 DoGetBoundingBox() const override;
 			/** loading method from XML */
-			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
 
 		public:
 
@@ -278,8 +267,8 @@ namespace chaos
 			int particle_flags = 0;
 		};
 
+#endif
+
 	}; // namespace TiledMap
-
+	
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

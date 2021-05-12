@@ -1,16 +1,9 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
-
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
 namespace chaos
 {	
 	namespace TiledMap
 	{
+#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
 		// ==========================================
 		// ObjectTypeDefinition
 		// ==========================================
@@ -92,8 +85,8 @@ namespace chaos
 			std::vector<shared_ptr<ObjectTypeDefinition>> object_types;
 		};
 
+#endif
+
 	}; // namespace TiledMap
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

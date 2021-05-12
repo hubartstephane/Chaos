@@ -1,17 +1,6 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
-	class ParticleManager;
-
-}; // namespace chaos
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
+#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// ==============================================================
 	// ParticleManager
@@ -114,9 +103,11 @@ namespace chaos
         GPUBufferPool buffer_pool;
 	};
 
+#endif
+
 }; // namespace chaos
 
-#endif // CHAOS_FORWARD_DECLARATION
+
 
 
 

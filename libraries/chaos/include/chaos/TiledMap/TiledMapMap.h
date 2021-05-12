@@ -1,27 +1,15 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
 	namespace TiledMap
 	{
+#ifdef CHAOS_FORWARD_DECLARATION
+
 		enum class MapOrientation;
 		enum class StaggerAxis;
 		enum class StaggerIndex;
 		enum class RenderOrder;
 
-	}; // namespace TiledMap
-
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{	
-	namespace TiledMap
-	{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 		// ==========================================
 		// Map
@@ -119,30 +107,30 @@ namespace chaos
 			using ManagerObject::ManagerObject;
 
 			/** loading method from XML */
-			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
 			/** get the name of the expected markup */
-			virtual char const * GetXMLMarkupName() const override { return "map"; }
+			virtual char const* GetXMLMarkupName() const override { return "map"; }
 
 			/** load internal data */
-			virtual bool DoLoadMembers(tinyxml2::XMLElement const * element) override;
+			virtual bool DoLoadMembers(tinyxml2::XMLElement const* element) override;
 			/** load the tile sets */
-			bool DoLoadTileSet(tinyxml2::XMLElement const * element);
+			bool DoLoadTileSet(tinyxml2::XMLElement const* element);
 			/** load all the layers */
-			bool DoLoadLayers(tinyxml2::XMLElement const * element);
+			bool DoLoadLayers(tinyxml2::XMLElement const* element);
 
 		public:
 
 			/** find tileset data for a given gid */
 			TileInfo FindTileInfo(int gid) const;
 			/** find tileset data from its type */
-			TileInfo FindTileInfo(char const * type) const;
+			TileInfo FindTileInfo(char const* type) const;
 			/** find tileset data from its atlas key */
-			TileInfo FindTileInfoFromAtlasKey(char const * atlas_key) const;
+			TileInfo FindTileInfoFromAtlasKey(char const* atlas_key) const;
 
 			/** find a layer by its name */
-			LayerBase * FindLayer(char const * in_name);
+			LayerBase* FindLayer(char const* in_name);
 			/** find a layer by its name */
-			LayerBase const * FindLayer(char const * in_name) const;
+			LayerBase const* FindLayer(char const* in_name) const;
 
 			/** returns the number of layers */
 			size_t GetLayerCount() const;
@@ -165,8 +153,8 @@ namespace chaos
 			StaggerIndex stagger_index = StaggerIndex::ODD;
 			/** object information */
 			RenderOrder render_order = RenderOrder::RIGHT_DOWN;
-            /** object information */
-            int compressionlevel = 0;
+			/** object information */
+			int compressionlevel = 0;
 			/** object information */
 			glm::vec4 background_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 			/** object information */
@@ -179,8 +167,8 @@ namespace chaos
 			std::vector<shared_ptr<LayerBase>> layers;
 		};
 
+#endif
+
 	}; // namespace TiledMap
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

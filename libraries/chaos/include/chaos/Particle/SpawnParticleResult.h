@@ -1,27 +1,20 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class SpawnParticleResult;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else 
-
-namespace chaos
-{
 	class SpawnParticleResult
 	{
 	public:
 
 		/** constructor */
-		SpawnParticleResult(ParticleAllocationBase * in_allocation = nullptr, size_t in_start = 0, size_t in_count = 0):
+		SpawnParticleResult(ParticleAllocationBase* in_allocation = nullptr, size_t in_start = 0, size_t in_count = 0) :
 			allocation(in_allocation),
 			start(in_start),
-			count(in_count){}
+			count(in_count) {}
 		/** copy constructor */
 		SpawnParticleResult(SpawnParticleResult const& src) = default;
 
@@ -31,7 +24,7 @@ namespace chaos
 			return allocation;
 		}
 		/** conversion operator */
-		operator ParticleAllocationBase const * () const 
+		operator ParticleAllocationBase const* () const
 		{
 			return allocation;
 		}
@@ -39,12 +32,12 @@ namespace chaos
 		// shu48
 
 		/** conversion operator */
-		ParticleAllocationBase * operator ->()
+		ParticleAllocationBase* operator ->()
 		{
 			return allocation;
 		}
 		/** conversion operator */
-		ParticleAllocationBase const * operator -> () const
+		ParticleAllocationBase const* operator -> () const
 		{
 			return allocation;
 		}
@@ -52,7 +45,7 @@ namespace chaos
 
 		/** access all particles */
 		template<typename FUNC>
-		SpawnParticleResult & Process(FUNC func)
+		SpawnParticleResult& Process(FUNC func)
 		{
 			if (allocation != nullptr && count != 0)
 				func(allocation->GetParticleAccessor(start, count));
@@ -74,9 +67,7 @@ namespace chaos
 		size_t count = 0;
 	};
 
+
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-
-

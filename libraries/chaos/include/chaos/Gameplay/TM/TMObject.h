@@ -1,12 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
 namespace chaos
 {
+#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
 	// =====================================
 	// TMObject 
 	// =====================================
@@ -318,6 +313,6 @@ namespace chaos
 		std::string player_start_name;
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

@@ -1,7 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	// =====================================
 	// TMLevel : utility
 	// =====================================
@@ -26,15 +26,8 @@ namespace chaos
 	/** an helper to make a lambda inside DoGetObjectFactory */
 #define CHAOS_TM_MAKE_OBJECT_FACTORY(x) [this, in_layer_instance](chaos::TiledMap::GeometricObject const *in_geometric_object, chaos::TMObjectReferenceSolver & in_reference_solver) { x }
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
 	// =====================================
 	// TMLevel : a level described by a tiledmap
 	// =====================================
@@ -51,7 +44,7 @@ namespace chaos
 		TMLevel();
 
 		/** initialization from tiled_map */
-		virtual bool Initialize(TiledMap::Map * in_tiled_map);
+		virtual bool Initialize(TiledMap::Map* in_tiled_map);
 
 		/** get the tiled map */
 		TiledMap::Map* GetTiledMap() { return tiled_map.get(); }
@@ -64,14 +57,14 @@ namespace chaos
 		virtual bool FlushParticlesIntoAllocation(TMLayerInstance* layer_instance, ParticleAllocationBase* allocation, TMParticle const* particles, size_t particle_count);
 
 		/** create a typed object based of a 'classname' property */
-		virtual TMObjectFactory DoGetExplicitObjectFactory(TMLayerInstance* in_layer_instance, TiledMap::TypedObject const * in_typed_object);
+		virtual TMObjectFactory DoGetExplicitObjectFactory(TMLayerInstance* in_layer_instance, TiledMap::TypedObject const* in_typed_object);
 		/** create a typed object specializable method */
-		virtual TMObjectFactory DoGetObjectFactory(TMLayerInstance* in_layer_instance, TiledMap::TypedObject const * in_typed_object);
+		virtual TMObjectFactory DoGetObjectFactory(TMLayerInstance* in_layer_instance, TiledMap::TypedObject const* in_typed_object);
 		/** create a typed object 'entry point' */
-		TMObjectFactory GetObjectFactory(TMLayerInstance* in_layer_instance, TiledMap::TypedObject const * in_typed_object);
+		TMObjectFactory GetObjectFactory(TMLayerInstance* in_layer_instance, TiledMap::TypedObject const* in_typed_object);
 
 		/** create a Path specializable method */
-		virtual TMPath * DoCreatePath();
+		virtual TMPath* DoCreatePath();
 		/** create a Camera specializable method */
 		virtual TMCameraTemplate* DoCreateCameraTemplate();
 		/** create a PlayerStartObject specializable method */
@@ -106,7 +99,6 @@ namespace chaos
 		shared_ptr<TiledMap::Map> tiled_map;
 	};
 
+#endif
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

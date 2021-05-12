@@ -1,15 +1,9 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
 namespace chaos
 {
 	namespace TMTools
 	{
+#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
 		/** serialize layers into JSON */
 		template<typename T>
 		void SerializeLayersFromJSON(T* object, nlohmann::json const& json)
@@ -103,8 +97,8 @@ namespace chaos
 		/** returns true whether the object is a sound */
 		bool IsSoundTrigger(TiledMap::TypedObject const* typed_object);
 
+#endif
+
 	}; // namespace TMTools
 
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

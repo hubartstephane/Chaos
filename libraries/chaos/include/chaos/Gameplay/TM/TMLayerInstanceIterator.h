@@ -1,12 +1,7 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
 namespace chaos
 {
+#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
 	template<typename CONSTNESS_OPERATOR> // should be add_const<_1> or identity<_1>
 	class TMLayerInstanceIteratorBase
 	{
@@ -201,7 +196,8 @@ protected:
 	using TMLayerInstanceIterator = TMLayerInstanceIteratorBase<boost::mpl::identity<boost::mpl::_1>>;
 
 	using TMLayerInstanceConstIterator = TMLayerInstanceIteratorBase<boost::add_const<boost::mpl::_1>>;
+
+#endif
 	
 }; // namespace chaos
 
-#endif // CHAOS_FORWARD_DECLARATION

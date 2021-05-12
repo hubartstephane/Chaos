@@ -1,20 +1,13 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class WindowHints;
 	class WindowParams;
 	class Window;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
 	/**
 	* WindowHints : this represents hints for GLFWwindow creation
 	*/
@@ -153,8 +146,8 @@ namespace chaos
 		T WithGLContext(std::function<T()> func)
 		{
 			GLFWwindow* previous_context = glfwGetCurrentContext();
-			glfwMakeContextCurrent(glfw_window);			
-			T result = func();			
+			glfwMakeContextCurrent(glfw_window);
+			T result = func();
 			glfwMakeContextCurrent(previous_context);
 			return result;
 		}
@@ -251,7 +244,6 @@ namespace chaos
 		bool non_fullscreen_window_decorated = true;
 	};
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-

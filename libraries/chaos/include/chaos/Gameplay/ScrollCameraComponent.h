@@ -1,18 +1,10 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class ScrollCameraComponent;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// =============================================
 	// ScrollCameraComponent
@@ -27,12 +19,12 @@ namespace chaos
 		/** constructor */
 		ScrollCameraComponent() = default;
 		/** constructor */
-		ScrollCameraComponent(float in_scroll_speed, Axis in_axis):
+		ScrollCameraComponent(float in_scroll_speed, Axis in_axis) :
 			scroll_speed(in_scroll_speed),
-			axis(in_axis){}
+			axis(in_axis) {}
 
 		/** get the scroll speed */
-		float GetScrollSpeed() const { return scroll_speed;	}
+		float GetScrollSpeed() const { return scroll_speed; }
 		/** set the scroll speed */
 		void SetScrollSpeed(float in_scroll_speed) { scroll_speed = in_scroll_speed; }
 		/** get the axis */
@@ -56,6 +48,6 @@ namespace chaos
 		Axis axis = Axis::AXIS_X;
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

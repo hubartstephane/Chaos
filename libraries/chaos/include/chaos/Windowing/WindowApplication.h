@@ -1,19 +1,11 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class GLFWHints;
 	class WindowApplication;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* GLFWHints : this represents hints for the application
@@ -100,8 +92,8 @@ namespace chaos
 		ParticleTextGenerator::Generator const* GetTextGenerator() const { return particle_text_generator.get(); }
 
 		/** get the button map */
-		std::map<GamepadButton, std::pair<std::string, std::string>> & GetGamepadButtonMap() { return gamepad_button_map; }
-		std::map<GamepadButton, std::pair<std::string, std::string>> const & GetGamepadButtonMap() const { return gamepad_button_map; }
+		std::map<GamepadButton, std::pair<std::string, std::string>>& GetGamepadButtonMap() { return gamepad_button_map; }
+		std::map<GamepadButton, std::pair<std::string, std::string>> const& GetGamepadButtonMap() const { return gamepad_button_map; }
 
 
 		/** used to force for one frame the duration of tick function to 0 : usefull for function that are long and would block the game for some time */
@@ -117,7 +109,7 @@ namespace chaos
 		/** change the state of a keyboard key */
 		bool GetKeyState(Key key, bool previous_frame = false) const;
 
-		/** get the OpenGL context, call the function, restore previous context after */		 
+		/** get the OpenGL context, call the function, restore previous context after */
 		template<typename T>
 		static T WithGLContext(GLFWwindow* context, std::function<T()> func)
 		{
@@ -176,7 +168,7 @@ namespace chaos
 		virtual bool CreateTextureAtlas();
 		/** create the text generator */
 		virtual bool CreateTextGenerator();
-		
+
 		/** main method to generate atlas entries */
 		virtual bool FillAtlasGeneratorInput(BitmapAtlas::AtlasInput& input);
 		/** generate atlas entries relative to sprite directory */
@@ -259,8 +251,6 @@ namespace chaos
 		return RunApplication<WindowApplication>(argc, argv, env, WINDOW_TYPE::GetStaticClass(), params...);
 	}
 
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-
-

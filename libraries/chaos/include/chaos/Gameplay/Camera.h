@@ -1,21 +1,13 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	using SafeZone = std::pair<glm::vec2, glm::vec2>;
 
 	class CameraTools;
 	class Camera;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// =============================================
 	// CameraTools
@@ -25,8 +17,8 @@ namespace chaos
 	{
 	public:
 
-		/** returns the transformation matrix from a camera obox */	
-		static glm::mat4x4 GetCameraTransform(obox2 const & obox);
+		/** returns the transformation matrix from a camera obox */
+		static glm::mat4x4 GetCameraTransform(obox2 const& obox);
 		/** returns the projection matrix from a camera obox */
 		static glm::mat4x4 GetProjectionMatrix(obox2 const& obox);
 
@@ -49,10 +41,10 @@ namespace chaos
 		CHAOS_DECLARE_GAMEPLAY_GETTERS();
 
 		/** initialization method */
-		bool Initialize(LevelInstance * in_level_instance);
+		bool Initialize(LevelInstance* in_level_instance);
 
 		/** set the camera box */
-		void SetCameraBox(box2 const & in_box) { camera_box = in_box;}
+		void SetCameraBox(box2 const& in_box) { camera_box = in_box; }
 
 		/** get the camera box */
 		box2  GetCameraBox(bool apply_modifiers = true) const;
@@ -61,9 +53,9 @@ namespace chaos
 
 
 		/** get the camera OBox when level instance is started */
-		obox2 const & GetInitialCameraOBox() const { return initial_camera_obox;}
+		obox2 const& GetInitialCameraOBox() const { return initial_camera_obox; }
 		/** set the camera initial OBox */
-		void SetInitialCameraOBox(obox2 const & in_obox) { initial_camera_obox = in_obox; }
+		void SetInitialCameraOBox(obox2 const& in_obox) { initial_camera_obox = in_obox; }
 
 		/** get the safe zone of the camera */
 		SafeZone const& GetSafeZone() const { return safe_zone; }
@@ -98,13 +90,13 @@ namespace chaos
 		SafeZone safe_zone = { {0.1f, 0.1f}, {0.9f, 0.9f} };
 
 		/** the game instance owning the camera */
-		LevelInstance * level_instance = nullptr;
+		LevelInstance* level_instance = nullptr;
 
 		/** the components */
 		std::vector<shared_ptr<CameraComponent>> components;
 
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

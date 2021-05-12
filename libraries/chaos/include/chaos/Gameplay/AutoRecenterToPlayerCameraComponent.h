@@ -1,18 +1,10 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class AutoRecenterToPlayerCameraComponent;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// =============================================
 	// AutoRecenterToPlayerCameraComponent
@@ -50,7 +42,7 @@ namespace chaos
 		SafeZone slow_safe_zone = { {0.3f, 0.3f}, {0.7f, 0.7f} };
 
 		/** the speed at which limit updates (safe_zone size as a unit) */
-		float limit_speed = 0.5f; 
+		float limit_speed = 0.5f;
 		/** the speed at which the camera is manually moved (safe_zone size as a unit) */
 		float manual_limit_speed = 1.0f;
 		/** the speed at which the camera is recentered (safe_zone size as a unit) */
@@ -68,7 +60,7 @@ namespace chaos
 		glm::vec2 pawn_previous_position = { std::numeric_limits<float>::quiet_NaN(), std::numeric_limits<float>::quiet_NaN() };
 
 		/** current ratio of dynamic limits (min limits, left and down)*/
-		glm::vec2 min_dynamic_safe_zone = { 0.0f, 0.0f }; 
+		glm::vec2 min_dynamic_safe_zone = { 0.0f, 0.0f };
 		/** current ratio of dynamic limits (max limits, right and up) */
 		glm::vec2 max_dynamic_safe_zone = { 0.0f, 0.0f };
 
@@ -76,6 +68,6 @@ namespace chaos
 		float idle_timer = 0.0f;
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

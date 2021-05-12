@@ -1,18 +1,10 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class LevelInstance;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// =====================================
 	// LevelInstance : this is the runtime part of a level
@@ -37,13 +29,13 @@ namespace chaos
 		obox2 GetCameraOBox(size_t index, bool apply_modifiers = true) const;
 		/** the camera transform whenever no camera exists */
 		obox2 GetDefaultCameraOBox() const;
-		/** the initial camera box getter */		
+		/** the initial camera box getter */
 		obox2 GetInitialCameraOBox(size_t index) const;
 
 		/** returns level clock */
-		Clock * GetLevelClock() { return level_clock.get();}
+		Clock* GetLevelClock() { return level_clock.get(); }
 		/** returns level clock */
-		Clock const * GetLevelClock() const { return level_clock.get(); }
+		Clock const* GetLevelClock() const { return level_clock.get(); }
 		/** returns the level time */
 		double GetLevelClockTime() const;
 
@@ -61,9 +53,9 @@ namespace chaos
 		virtual bool CanCompleteLevel() const;
 
 		/** restrict an object to the world */
-		void RestrictObjectToWorld(ParticleAllocationBase * allocation, size_t index);
+		void RestrictObjectToWorld(ParticleAllocationBase* allocation, size_t index);
 		/** restrict an pawn to the world */
-		void RestrictPawnToWorld(PlayerPawn * player_pawn);
+		void RestrictPawnToWorld(PlayerPawn* player_pawn);
 
 		/** get the current time out */
 		float GetLevelTimeout() const { return level_timeout; }
@@ -74,9 +66,9 @@ namespace chaos
 		bool GetLevelCompletionFlag() const;
 
 		/** returns the sound category */
-		SoundCategory * GetSoundCategory();
+		SoundCategory* GetSoundCategory();
 		/** returns the sound category */
-		SoundCategory const * GetSoundCategory() const;
+		SoundCategory const* GetSoundCategory() const;
 
 		/** the processor may save its configuration into a JSON file */
 		virtual bool SerializeIntoJSON(nlohmann::json& json_entry) const override;
@@ -91,9 +83,9 @@ namespace chaos
 		virtual Camera* CreateCamera();
 
 		/** gets a camera by its index */
-		Camera * DoGetCamera(size_t index, bool accept_freecam);
+		Camera* DoGetCamera(size_t index, bool accept_freecam);
 		/** gets a camera by its index */
-		Camera const * DoGetCamera(size_t index, bool accept_freecam) const;
+		Camera const* DoGetCamera(size_t index, bool accept_freecam) const;
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;
@@ -101,12 +93,12 @@ namespace chaos
 		virtual bool CanTick() override;
 
 		/** additionnal initialization */
-		virtual bool Initialize(Game * in_game, Level * in_level);
+		virtual bool Initialize(Game* in_game, Level* in_level);
 
 		/** called for each player whenever a level is started */
-		virtual void OnPlayerEntered(Player * player);
+		virtual void OnPlayerEntered(Player* player);
 		/** called for each player whenever a level is ended */
-		virtual void OnPlayerLeaved(Player * player);
+		virtual void OnPlayerLeaved(Player* player);
 
 		/** called whenever the level is about to be restarted */
 		virtual void OnRestart();
@@ -118,7 +110,7 @@ namespace chaos
 		virtual PlayerDisplacementComponent* DoCreatePlayerDisplacementComponent();
 
 		/** give the player a pawn */
-		virtual PlayerPawn * CreatePlayerPawn(Player* player);
+		virtual PlayerPawn* CreatePlayerPawn(Player* player);
 		/** the allocation PlayerPawn creation method */
 		virtual PlayerPawn* DoCreatePlayerPawn();
 
@@ -128,7 +120,7 @@ namespace chaos
 		virtual void DestroyPlayerDisplacementComponent(Player* player);
 
 		/** fill the rendering params before rendering */
-		virtual void FillUniformProvider(GPUProgramProvider & main_uniform_provider);
+		virtual void FillUniformProvider(GPUProgramProvider& main_uniform_provider);
 
 		/** state changes */
 		virtual void OnEnterPause();
@@ -138,7 +130,7 @@ namespace chaos
 		virtual void OnGameOver();
 
 		/** check whether a player is dead according to the level instance */
-		virtual bool IsPlayerDead(Player * player);
+		virtual bool IsPlayerDead(Player* player);
 
 		/** change the background */
 		virtual void CreateBackgroundImage();
@@ -148,9 +140,9 @@ namespace chaos
 	protected:
 
 		/** a pointer on the level that generated this */
-		Level * level = nullptr;
+		Level* level = nullptr;
 		/** pointer on the game */
-		Game * game = nullptr;
+		Game* game = nullptr;
 		/** the time to run the level (no time out by default) */
 		float level_timeout = -1.0f;
 		/** the level completion flag */
@@ -174,6 +166,6 @@ namespace chaos
 		SubClassOf<Camera> camera_class;
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

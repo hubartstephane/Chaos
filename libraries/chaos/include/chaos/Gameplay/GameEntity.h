@@ -1,18 +1,11 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class GameEntity;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
 	// =============================================
 	// GameEntity
 	// =============================================
@@ -61,7 +54,7 @@ namespace chaos
 		}
 
 		template<typename T>
-		T const * GetParticle(size_t index) const
+		T const* GetParticle(size_t index) const
 		{
 			if (allocations == nullptr)
 				return nullptr;
@@ -117,6 +110,7 @@ namespace chaos
 		shared_ptr<ParticleAllocationBase> allocations;
 	};
 
-}; // namespace chaos
 
-#endif // CHAOS_FORWARD_DECLARATION
+#endif
+
+}; // namespace chaos

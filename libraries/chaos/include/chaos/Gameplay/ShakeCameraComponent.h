@@ -1,18 +1,11 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class ShakeCameraComponent;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
 	// =============================================
 	// ShakeCameraComponent
 	// =============================================
@@ -26,12 +19,12 @@ namespace chaos
 		/** constructor */
 		ShakeCameraComponent() = default;
 		/** constructor */
-		ShakeCameraComponent(float in_modifier_duration, float in_modifier_range, float in_modifier_frequency, bool in_use_damping, bool in_zoom_effect):
+		ShakeCameraComponent(float in_modifier_duration, float in_modifier_range, float in_modifier_frequency, bool in_use_damping, bool in_zoom_effect) :
 			modifier_duration(in_modifier_duration),
 			modifier_range(in_modifier_range),
 			modifier_frequency(in_modifier_frequency),
 			use_damping(in_use_damping),
-			zoom_effect(in_zoom_effect){}
+			zoom_effect(in_zoom_effect) {}
 
 		/** the modifier is restarted */
 		void RestartModifier();
@@ -67,6 +60,6 @@ namespace chaos
 		float current_time = -1.0f;
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

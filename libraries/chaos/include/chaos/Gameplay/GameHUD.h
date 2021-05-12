@@ -1,22 +1,14 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class GameHUD;
 	class MainMenuHUD;
 	class PauseMenuHUD;
 	class GameOverHUD;
 	class PlayingHUD;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// =============================================
 	// GameHUD
@@ -59,11 +51,11 @@ namespace chaos
 
 		/** find a component by its class */
 		template<typename T>
-		T * FindComponentByClass()
+		T* FindComponentByClass()
 		{
 			for (auto it = components.begin(); it != components.end(); ++it)
 			{
-				T * result = auto_cast(it->second.get());
+				T* result = auto_cast(it->second.get());
 				if (result != nullptr)
 					return result;
 			}
@@ -71,11 +63,11 @@ namespace chaos
 		}
 		/** find a component by its class */
 		template<typename T>
-		T const * FindComponentByClass() const
+		T const* FindComponentByClass() const
 		{
 			for (auto it = components.begin(); it != components.end(); ++it)
 			{
-				T * result = auto_cast(it->second.get());
+				T* result = auto_cast(it->second.get());
 				if (result != nullptr)
 					return result;
 			}
@@ -90,12 +82,12 @@ namespace chaos
 		/** remove a component from the HUD */
 		void UnregisterComponent(TagType key);
 		/** remove a component from the HUD */
-		void UnregisterComponent(GameHUDComponent * in_component);
+		void UnregisterComponent(GameHUDComponent* in_component);
 
 		/** get the component from its ID */
-		GameHUDComponent * FindComponent(TagType key);
+		GameHUDComponent* FindComponent(TagType key);
 		/** get the component from its ID */
-		GameHUDComponent const * FindComponent(TagType key) const;
+		GameHUDComponent const* FindComponent(TagType key) const;
 
 		/** clear all components from the HUD */
 		void Clear();
@@ -105,21 +97,21 @@ namespace chaos
 		/** create the particles */
 		virtual bool FillHUDContent();
 		/** try to find some information in JSON for configuring the component */
-		void InitializeComponentFromConfiguration(TagType key, GameHUDComponent * component);
+		void InitializeComponentFromConfiguration(TagType key, GameHUDComponent* component);
 
 	protected:
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;
 		/** override */
-		virtual int DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) override;
+		virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params) override;
 
 	protected:
 
 		/** the allocations */
 		std::map<TagType, shared_ptr<GameHUDComponent>> components;
 		/** the game owning the HUD */
-		class Game * game = nullptr;
+		class Game* game = nullptr;
 	};
 
 	// =============================================
@@ -181,6 +173,6 @@ namespace chaos
 		virtual bool FillHUDContent() override;
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

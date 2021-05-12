@@ -1,20 +1,13 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class LoadFileResult;
 	
 	class FileManager;
-	
-}; // namespace chaos	
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-
-#else
-
-namespace chaos
-{
 	class LoadFileResult
 	{
 	public:
@@ -25,7 +18,7 @@ namespace chaos
 		boost::filesystem::path path;
 
 		/** implicit conversion into buffer */
-		operator Buffer<char> ();
+		operator Buffer<char>();
 	};
 
 	class FileManager : public Object
@@ -33,17 +26,17 @@ namespace chaos
 	public:
 
 		/** find corresponding full path */
-		boost::filesystem::path ResolvePath(char const * path, boost::filesystem::path const & context_path = boost::filesystem::path()) const;
+		boost::filesystem::path ResolvePath(char const* path, boost::filesystem::path const& context_path = boost::filesystem::path()) const;
 		/** find corresponding full path */
-		boost::filesystem::path ResolvePath(boost::filesystem::path const & path, boost::filesystem::path const & context_path = boost::filesystem::path()) const;
+		boost::filesystem::path ResolvePath(boost::filesystem::path const& path, boost::filesystem::path const& context_path = boost::filesystem::path()) const;
 
 		/** load a file (with path resolution) */
-		LoadFileResult LoadFile(char const * path, bool ascii, boost::filesystem::path const & context_path = boost::filesystem::path()) const;
+		LoadFileResult LoadFile(char const* path, bool ascii, boost::filesystem::path const& context_path = boost::filesystem::path()) const;
 		/** load a file (with path resolution) */
-		LoadFileResult LoadFile(boost::filesystem::path const & path, bool ascii, boost::filesystem::path const & context_path = boost::filesystem::path()) const;
+		LoadFileResult LoadFile(boost::filesystem::path const& path, bool ascii, boost::filesystem::path const& context_path = boost::filesystem::path()) const;
 
 		/** add a directory in the known directories */
-		void AddDirectory(boost::filesystem::path const & path, bool recursive);
+		void AddDirectory(boost::filesystem::path const& path, bool recursive);
 
 	protected:
 
@@ -51,6 +44,6 @@ namespace chaos
 		std::vector<boost::filesystem::path> directories;
 	};
 
-}; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
+#endif
+	
+}; // namespace chaos	

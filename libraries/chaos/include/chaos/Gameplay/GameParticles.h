@@ -1,17 +1,50 @@
-#ifdef CHAOS_FORWARD_DECLARATION
+
 
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	class ParticleBackground;
 	class ParticleBackgroundLayerTrait;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
+    // ===========================================================================
+    // Background particle system
+    // ===========================================================================
+
+    class ParticleBackground
+    {
+    public:
+
+        glm::vec4 color;
+    };
+
+    class ParticleBackgroundLayerTrait : public ParticleLayerTrait<ParticleBackground, VertexDefault>
+    {
+    public:
+
+        /** constructor */
+        ParticleBackgroundLayerTrait() { dynamic_particles = dynamic_vertices = false; }
+        /** copy constructor */
+        ParticleBackgroundLayerTrait(ParticleBackgroundLayerTrait const& src) = default;
+    };
+
+    /** output primitive */
+    template<typename VERTEX_TYPE>
+    void ParticleToPrimitives(ParticleBackground const& particle, PrimitiveOutput<VERTEX_TYPE>& output);
+    /** generates 1 quad from one particle */
+    template<typename VERTEX_TYPE>
+    void ParticleToPrimitive(ParticleBackground const& particle, QuadPrimitive<VERTEX_TYPE>& primitive);
+    /** generates 1 triangle pair from one particle */
+    template<typename VERTEX_TYPE>
+    void ParticleToPrimitive(ParticleBackground const& particle, TrianglePairPrimitive<VERTEX_TYPE>& primitive);
+
+    CHAOS_REGISTER_CLASS1(ParticleBackground);
 
 
-namespace chaos
-{
+#else
+
     template<typename VERTEX_TYPE>
     void ParticleToPrimitives(ParticleBackground const& particle, PrimitiveOutput<VERTEX_TYPE>& output)
     {
@@ -60,47 +93,6 @@ namespace chaos
         }
     }
 
+#endif
+
 }; // namespace chaos
-
-
-#else
-
-namespace chaos
-{
-
-	// ===========================================================================
-	// Background particle system
-	// ===========================================================================
-
-	class ParticleBackground
-	{
-	public:
-
-		glm::vec4 color;
-	};
-
-	class ParticleBackgroundLayerTrait : public ParticleLayerTrait<ParticleBackground, VertexDefault>
-	{
-	public:
-
-		/** constructor */
-		ParticleBackgroundLayerTrait(){ dynamic_particles = dynamic_vertices = false;}
-		/** copy constructor */
-		ParticleBackgroundLayerTrait(ParticleBackgroundLayerTrait const& src) = default;
-	};
-
-	/** output primitive */
-    template<typename VERTEX_TYPE>
-	void ParticleToPrimitives(ParticleBackground const& particle, PrimitiveOutput<VERTEX_TYPE>& output);
-	/** generates 1 quad from one particle */
-    template<typename VERTEX_TYPE>
-	void ParticleToPrimitive(ParticleBackground const& particle, QuadPrimitive<VERTEX_TYPE>& primitive);
-	/** generates 1 triangle pair from one particle */
-    template<typename VERTEX_TYPE>
-	void ParticleToPrimitive(ParticleBackground const& particle, TrianglePairPrimitive<VERTEX_TYPE>& primitive);
-
-	CHAOS_REGISTER_CLASS1(ParticleBackground);
-
-}; //namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION

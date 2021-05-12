@@ -1,18 +1,11 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class Level;
 
-}; // namespace chaos
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
 	// =====================================
 	// Level : a simple game level
 	// =====================================
@@ -26,19 +19,19 @@ namespace chaos
 	public:
 
 		/** create a level instance for that level */
-		LevelInstance * CreateLevelInstance(Game * in_game);
+		LevelInstance* CreateLevelInstance(Game* in_game);
 
 		/** returns the level timeout */
 		float GetLevelTimeout() const { return level_timeout; }
 		/** returns the title for that level */
-		std::string const & GetLevelTitle() const { return level_title; }
+		std::string const& GetLevelTitle() const { return level_title; }
 		/** the index of that level */
 		int GetLevelIndex() const { return level_index; }
 
 	protected:
 
 		/** create a level instance for that level user specified function */
-		virtual class LevelInstance * DoCreateLevelInstance();
+		virtual class LevelInstance* DoCreateLevelInstance();
 
 	protected:
 
@@ -53,6 +46,6 @@ namespace chaos
 		SubClassOf<LevelInstance> level_instance_class;
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

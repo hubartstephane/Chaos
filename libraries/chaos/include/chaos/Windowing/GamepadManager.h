@@ -1,10 +1,12 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-// ==============================================================
-// FORWARD DECLARATION / FRIENDSHIP MACROS
-// ==============================================================
+	// ==============================================================
+	// FORWARD DECLARATION / FRIENDSHIP MACROS
+	// ==============================================================
 
-// all classes in this file
+	// all classes in this file
 #define CHAOS_GAMEPAD_CLASSES \
 (GamepadState) \
 (PhysicalGamepad) \
@@ -21,19 +23,10 @@
 #define CHAOS_GAMEPAD_FRIEND_DECL(r, data, elem) friend class elem;
 #define CHAOS_GAMEPAD_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FRIEND_DECL, _, CHAOS_GAMEPAD_CLASSES)
 
-namespace chaos
-{
-	BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 
-}; // namespace chaos
+BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* Some constants
@@ -50,8 +43,8 @@ namespace chaos
 	{
 		CHAOS_GAMEPAD_ALL_FRIENDS
 
-		/** number of axis in a gamepad */
-		static constexpr size_t AXIS_COUNT = sizeof(meta::FakeInstance<GLFWgamepadstate>().axes) / sizeof(meta::FakeInstance<GLFWgamepadstate>().axes[0]);
+			/** number of axis in a gamepad */
+			static constexpr size_t AXIS_COUNT = sizeof(meta::FakeInstance<GLFWgamepadstate>().axes) / sizeof(meta::FakeInstance<GLFWgamepadstate>().axes[0]);
 		/** number of button in a gamepad */
 		static constexpr size_t BUTTON_COUNT = sizeof(meta::FakeInstance<GLFWgamepadstate>().buttons) / sizeof(meta::FakeInstance<GLFWgamepadstate>().buttons[0]);
 
@@ -423,7 +416,7 @@ namespace chaos
 #endif
 	};
 
+
+#endif
+
 }; // namespace chaos
-
-#endif // CHAOS_FORWARD_DECLARATION
-

@@ -1,18 +1,10 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class PlayerPawn;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// =============================================
 	// PlayerPawn
@@ -46,6 +38,7 @@ namespace chaos
 		Player* player = nullptr;
 	};
 
-}; // namespace chaos
 
-#endif // CHAOS_FORWARD_DECLARATION
+#endif
+
+}; // namespace chaos

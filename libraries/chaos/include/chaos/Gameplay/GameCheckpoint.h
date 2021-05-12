@@ -1,21 +1,13 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
 namespace chaos
 {
+#ifdef CHAOS_FORWARD_DECLARATION
+
 	template<typename T>
 	class CheckpointObject;
 
 	class GameCheckpoint;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// =============================================
 	// CheckpointObject
@@ -27,9 +19,9 @@ namespace chaos
 	public:
 
 		/** the saving entry point */
-		virtual T * SaveIntoCheckpoint() const
+		virtual T* SaveIntoCheckpoint() const
 		{
-			T * result = DoCreateCheckpoint();
+			T* result = DoCreateCheckpoint();
 			if (result == nullptr)
 				return nullptr;
 			if (!DoSaveIntoCheckpoint(result))
@@ -41,7 +33,7 @@ namespace chaos
 		}
 
 		/** the loading entry point */
-		virtual bool LoadFromCheckpoint(T const * checkpoint) 
+		virtual bool LoadFromCheckpoint(T const* checkpoint)
 		{
 			if (checkpoint == nullptr)
 				return false;
@@ -51,17 +43,17 @@ namespace chaos
 	protected:
 
 		/** checkpoint instanciation method */
-		virtual T * DoCreateCheckpoint() const
+		virtual T* DoCreateCheckpoint() const
 		{
 			return new T();
 		}
 		/** internal method for saving */
-		virtual bool DoSaveIntoCheckpoint(T * checkpoint) const
+		virtual bool DoSaveIntoCheckpoint(T* checkpoint) const
 		{
 			return true;
 		}
 		/** internal method for loading */
-		virtual bool DoLoadFromCheckpoint(T const * checkpoint)
+		virtual bool DoLoadFromCheckpoint(T const* checkpoint)
 		{
 			return true;
 		}
@@ -90,6 +82,6 @@ namespace chaos
 		nlohmann::json game_clock_save;
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

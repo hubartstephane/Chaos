@@ -1,18 +1,10 @@
+namespace chaos
+{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	class FreeCameraComponent;
 
-}; // namespace chaos
-
-#elif defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-
-#else
-
-namespace chaos
-{
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// =============================================
 	// FreeCameraComponent
@@ -31,14 +23,14 @@ namespace chaos
 		/** returns the zoom value */
 		float GetZoomValue() const { return zoom_value; }
 		/** set the zoom value */
-		void SetZoomValue(float in_zoom_value){ zoom_value = in_zoom_value; }
+		void SetZoomValue(float in_zoom_value) { zoom_value = in_zoom_value; }
 
 	protected:
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;
 		/** override */
-		virtual box2 ApplyModifier(box2 const & src) const override;
+		virtual box2 ApplyModifier(box2 const& src) const override;
 
 	protected:
 
@@ -48,6 +40,6 @@ namespace chaos
 		float zoom_value = 1.0f;
 	};
 
-}; // namespace chaos
+#endif
 
-#endif // CHAOS_FORWARD_DECLARATION
+}; // namespace chaos

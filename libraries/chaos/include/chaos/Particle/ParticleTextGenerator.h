@@ -304,14 +304,8 @@ namespace chaos
 		ParticleDefault TokenToParticle(ParticleTextGenerator::Token const& token);
 		/** get particles corresponding to the background */
 		ParticleDefault GetBackgroundParticle(GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params);
-
-
-		// shu48
-		// ca devrait etre un ParticleAllocationResult
-
-
 		/** generate an allocation for a generated text */
-		ParticleAllocationBase* CreateTextAllocation(ParticleLayerBase* layer, GeneratorResult const& generator_result, bool new_allocation = true, CreateTextAllocationParams const& allocation_params = {});
+		SpawnParticleResult CreateTextAllocation(ParticleLayerBase* layer, GeneratorResult const& generator_result, bool new_allocation = true, CreateTextAllocationParams const& allocation_params = {});
 
 		/** output primitives corresponding to generated text */
 		template<typename VERTEX_TYPE>

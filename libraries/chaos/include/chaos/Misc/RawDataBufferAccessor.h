@@ -32,11 +32,12 @@ namespace chaos
         RawDataBufferAccessorBase(RawDataBufferAccessorBase const& src) = default;
 
         template<typename OTHER_TYPE>
-        RawDataBufferAccessorBase(RawDataBufferAccessorBase<OTHER_TYPE> const& src, std::enable_if_t<std::is_base_of_v<TYPE, OTHER_TYPE>, int> = 0) :
+        RawDataBufferAccessorBase(RawDataBufferAccessorBase<OTHER_TYPE> const& src) :
             buffer(src.GetBuffer()), data_count(src.GetDataCount()), data_size(src.GetDataSize())
         {
+            static_assert(std::is_base_of_v<TYPE, OTHER_TYPE>);
             assert((data_count > 0) ^ (buffer == nullptr));
-            assert((data_size > 0) ^ (buffer == nullptr)); // shu48 (just data_size > 0) before
+            assert((data_size > 0) ^ (buffer == nullptr));
         }
 
         /** constructor */

@@ -3,39 +3,36 @@
 #include <boost/crc.hpp> 
 #include <chaos/chaos.h>
 
+#include <ranges>
 
-class A : public chaos::Object
-{
-public:
+class A {};
 
-    virtual ~A() {}
-
-    virtual void f()
-    {
-        int i = 0;
-        ++i;
-    }
-};
-
-
-
-
-
+void f(A& a = A()) {}
 
 
 int main(int argc, char** argv, char** env)
 {
-    std::vector<chaos::shared_ptr<A>> v;
-    for (int i = 0; i < 100; ++i)
-        v.emplace_back(new A);
+    f();
 
-  
-    for (auto& i : v)
-        i->f();
+    const std::vector<std::vector<int>> v{ {1,2}, {3,4,5}, {6}, {7,8,9} };
+    auto jv = std::ranges::join_view(v);
 
-
+    //for (int i : std::views::iota(1, 10))
+      //  i = i;
 
 
+    std::vector v = { 1, 2, 3, 4 , 5, 6, 10 };
+
+    //auto x = v | std::views::transform([](int i) { return i * i; }) | std::views::filter([](int i) {return i > 0; });
+
+
+    //auto x = v | std::views::drop_while([](int i) { return (i < 7); });
+
+    auto x = v | std::views::transform([](int i) { return float(i); });
+
+
+    for (auto i : x)
+        i = i;
 
     return 0;
 }

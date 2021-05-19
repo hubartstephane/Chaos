@@ -6,8 +6,6 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	// shu48 ajout de public JSONSerializable 
-
 	class PlayerDisplacementComponent : public Tickable, public JSONSerializable
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;

@@ -742,7 +742,7 @@ namespace chaos
 			return result;
 		}
 
-		ParticleAllocationBase * CreateTextAllocation(ParticleLayerBase * layer, GeneratorResult const & generator_result, bool new_allocation, CreateTextAllocationParams const & allocation_params)
+		SpawnParticleResult CreateTextAllocation(ParticleLayerBase * layer, GeneratorResult const & generator_result, bool new_allocation, CreateTextAllocationParams const & allocation_params)
 		{
 			assert(layer != nullptr);
 
@@ -751,7 +751,7 @@ namespace chaos
 			{
 				assert(0);
 				Log::Error("ParticleTextGenerator::CreateTextAllocation => IsParticleClassCompatible failure");
-				return nullptr;
+				return {};
 			}
 
 			int extra_background = (allocation_params.create_background) ? 1 : 0;

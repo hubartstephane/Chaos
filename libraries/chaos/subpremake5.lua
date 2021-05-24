@@ -4,6 +4,7 @@
    
   StaticLib()
 
+  DependOnLib("RANGE-V3") 
   DependOnLib("LUA") 
   DependOnLib("GLM")  
   DependOnLib("BOOST")  

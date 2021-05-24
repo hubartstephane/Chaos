@@ -192,33 +192,6 @@ local FBX_TOCOPY  = {   -- @ because this copies the file directly in
 
 DeclareExternalLib("FBX", FBX_INC_PATH, FBX_LIB_PATH, FBX_LIBNAME, FBX_TOCOPY)
 
-  -- FMODSTUDIO
---[[
-local FMODSTUDIO_PATH     = path.join("FMOD SoundSystem", "FMOD Studio API Windows", "api")
-local FMODSTUDIO_INC_PATH = path.join(FMODSTUDIO_PATH, "lowlevel", "inc")
-local FMODSTUDIO_LIB_PATH = path.join(FMODSTUDIO_PATH, "lowlevel", "lib")
-local FMODSTUDIO_LIBNAME = {
-  x32 = {DEBUG = "fmodL_vc.lib",   RELEASE = "fmod_vc.lib"},
-  x64 = {DEBUG = "fmodL64_vc.lib", RELEASE = "fmod64_vc.lib"} 
-}
-
-local FMOD_TOCOPY  = { -- @ because this copies the file directly in
-  x32 = {
-    DEBUG   = "@" .. path.join(FMODSTUDIO_LIB_PATH, "fmodL.dll"),     
-    RELEASE = "@" .. path.join(FMODSTUDIO_LIB_PATH, "fmod.dll"),
-  },
-  x64 = {
-    DEBUG   = "@" .. path.join(FMODSTUDIO_LIB_PATH, "fmodL64.dll"),     
-    RELEASE = "@" .. path.join(FMODSTUDIO_LIB_PATH, "fmod64.dll"),
-  }                  
-} 
-
-DeclareExternalLib("FMODSTUDIO", FMODSTUDIO_INC_PATH, FMODSTUDIO_LIB_PATH, FMODSTUDIO_LIBNAME, FMOD_TOCOPY)    
---]]
-
-
-
-
   -- ZLIB    
 local ZLIB_PATH     = "zlib-1.2.8"
 local ZLIB_LIB_PATH  = {
@@ -321,32 +294,6 @@ local NANA_LIBNAME = {
 } 
 DeclareExternalLib("NANA", NANA_INC_PATH, NANA_LIB_PATH, NANA_LIBNAME)
 
-
-
-
-
-
-
-   -- OCULUS SDK (OVR)
---[[
-local OVR_PATH = "OculusSDK"
-
-local OVR_INC_PATH = path.join(OVR_PATH, "LibOVR", "Include")
-
-local OVR_LIB_PATH = path.join(OVR_PATH, "LibOVR", "Lib", "Windows")
-
-OVR_LIB_PATH = {
-  x32 = path.join(OVR_LIB_PATH, "Win32", "Release", BUILD_TARGET),
-  x64 = path.join(OVR_LIB_PATH, "x64", "Release", BUILD_TARGET),
-} 
-
-DeclareExternalLib("OVR", OVR_INC_PATH, OVR_LIB_PATH, "LibOVR.lib", nil)
---]]
-
-
-
-
-
   -- TRISTRIPPER
 local TRISTRIPPER_PATH     = "tristripper-master"
 local TRISTRIPPER_INC_PATH = path.join(TRISTRIPPER_PATH, "include")
@@ -373,11 +320,79 @@ DeclareExternalLib("JSON", JSON_INC_PATH, nil, nil)
 local VULKAN_PATH = path.join("VulkanSDK", "1.2.162.0")
 local VULKAN_INC_PATH = path.join(VULKAN_PATH, "Include")
 local VULKAN_LIB_PATH = path.join(VULKAN_PATH, "Lib")
-local VULKAN_LIBNAME = "vulkan-1.lib"
+local VULKAN_BIN_PATH = path.join(VULKAN_PATH, "BIN")
+local VULKAN_LIBNAME = {"vulkan-1.lib", "VkLayer_utils.lib"}
 
-DeclareExternalLib("VULKAN", VULKAN_INC_PATH, VULKAN_LIB_PATH, VULKAN_LIBNAME, nil)
+
+local VULKAN_TOCOPY  = { -- @ because this copies the file directly in
+    "@" .. path.join(VULKAN_BIN_PATH, "VkLayer_api_dump.*"),
+    "@" .. path.join(VULKAN_BIN_PATH, "VkLayer_khronos_validation.*")
+} 
+
+DeclareExternalLib("VULKAN", VULKAN_INC_PATH, VULKAN_LIB_PATH, VULKAN_LIBNAME, VULKAN_TOCOPY)
+
+
+
+
+
+
+
+
+
+
+
+
+  -- FMODSTUDIO
+--[[
+local FMODSTUDIO_PATH     = path.join("FMOD SoundSystem", "FMOD Studio API Windows", "api")
+local FMODSTUDIO_INC_PATH = path.join(FMODSTUDIO_PATH, "lowlevel", "inc")
+local FMODSTUDIO_LIB_PATH = path.join(FMODSTUDIO_PATH, "lowlevel", "lib")
+local FMODSTUDIO_LIBNAME = {
+  x32 = {DEBUG = "fmodL_vc.lib",   RELEASE = "fmod_vc.lib"},
+  x64 = {DEBUG = "fmodL64_vc.lib", RELEASE = "fmod64_vc.lib"} 
+}
+
+local FMOD_TOCOPY  = { -- @ because this copies the file directly in
+  x32 = {
+    DEBUG   = "@" .. path.join(FMODSTUDIO_LIB_PATH, "fmodL.dll"),     
+    RELEASE = "@" .. path.join(FMODSTUDIO_LIB_PATH, "fmod.dll"),
+  },
+  x64 = {
+    DEBUG   = "@" .. path.join(FMODSTUDIO_LIB_PATH, "fmodL64.dll"),     
+    RELEASE = "@" .. path.join(FMODSTUDIO_LIB_PATH, "fmod64.dll"),
+  }                  
+} 
+
+DeclareExternalLib("FMODSTUDIO", FMODSTUDIO_INC_PATH, FMODSTUDIO_LIB_PATH, FMODSTUDIO_LIBNAME, FMOD_TOCOPY)    
+--]]
+
+
+
+
+
+   -- OCULUS SDK (OVR)
+--[[
+local OVR_PATH = "OculusSDK"
+
+local OVR_INC_PATH = path.join(OVR_PATH, "LibOVR", "Include")
+
+local OVR_LIB_PATH = path.join(OVR_PATH, "LibOVR", "Lib", "Windows")
+
+OVR_LIB_PATH = {
+  x32 = path.join(OVR_LIB_PATH, "Win32", "Release", BUILD_TARGET),
+  x64 = path.join(OVR_LIB_PATH, "x64", "Release", BUILD_TARGET),
+} 
+
+DeclareExternalLib("OVR", OVR_INC_PATH, OVR_LIB_PATH, "LibOVR.lib", nil)
+--]]
+
+
+
 
 -- ESCAPI
+
+--[[
+
 local ESCAPI_PATH = "escapi"
 local ESCAPI_INC_PATH = path.join(ESCAPI_PATH, "common")
 
@@ -406,17 +421,6 @@ local ESCAPI_TOCOPY  = { -- @ because this copies the file directly in
 } 
 
 DeclareExternalLib("ESCAPI", ESCAPI_INC_PATH, ESCAPI_LIB_PATH, ESCAPI_LIBNAME, ESCAPI_TOCOPY )
-
-
-
---[[
- 
-local VULKAN_LIBNAME = "vulkan-1.lib"
-local VULKAN_TOCOPY  = {   -- @ because this copies the file directly in
-  x32 = "@" .. path.join(VULKAN_X32_PATH, "bin", "win32-visualStudio", "irrKlang.dll"), 
-  x64 = "@" .. path.join(VULKAN_X64_PATH, "bin", "winx64-visualStudio" , "irrKlang.dll")  
-} 
-DeclareExternalLib("VULKAN", VULKAN_INC_PATH, VULKAN_LIB_PATH, VULKAN_LIBNAME, VULKAN_TOCOPY)
 
 --]]
 

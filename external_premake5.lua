@@ -5,6 +5,10 @@
 local WINDOWS = (os.target() == "windows")
 local LINUX = (os.target() == "linux")
 
+  -- RANGE-V3
+local RANGE_V3_INC_PATH =  path.join("range-v3", "include")
+DeclareExternalLib("range-v3", RANGE_V3_INC_PATH, nil, nil)  
+
   -- OPENGL
 local GL_INC_PATH = "openGL"
 DeclareExternalLib("OPENGL", GL_INC_PATH, nil, "OpenGL32")  

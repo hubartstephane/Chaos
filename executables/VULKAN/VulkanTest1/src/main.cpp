@@ -3,36 +3,66 @@
 #include <boost/crc.hpp> 
 #include <chaos/chaos.h>
 
-#include <ranges>
 
-class A {};
 
-void f(A& a = A()) {}
+#include <range/v3/numeric/accumulate.hpp>
+#include <range/v3/view/iota.hpp>
+#include <range/v3/view/take.hpp>
+#include <range/v3/view/join.hpp>
+#include <range/v3/view/transform.hpp>
 
+#include <range/v3/algorithm/all_of.hpp>
+#include <range/v3/algorithm/any_of.hpp>
+#include <range/v3/algorithm/for_each.hpp>
+#include <range/v3/algorithm/none_of.hpp>
+#include <range/v3/view/all.hpp>
+#include <range/v3/view/repeat_n.hpp>
+#include <range/v3/view/addressof.hpp>
+#include <range/v3/view/adjacent_filter.hpp>
+#include <range/v3/view/intersperse.hpp>
+#include <range/v3/view/concat.hpp>
+#include <range/v3/view/cartesian_product.hpp>
+#include <range/v3/view/generate.hpp>
+#include <range/v3/view/partial_sum.hpp>
+#include <range/v3/view/sample.hpp>
+
+#include <range/v3/action/sort.hpp>
+
+class A
+{
+public:
+
+    A(int i)
+        : values(i, i) {};
+
+    auto const & f() const { return values; }
+
+    std::vector<int> values;
+};
+
+#include <vector>
+using std::cout;
+
+
+auto is_six = [](int i) { return i == 6; };
 
 int main(int argc, char** argv, char** env)
 {
-    f();
-
-    const std::vector<std::vector<int>> v{ {1,2}, {3,4,5}, {6}, {7,8,9} };
-    auto jv = std::ranges::join_view(v);
-
-    //for (int i : std::views::iota(1, 10))
-      //  i = i;
+   
 
 
-    std::vector v = { 1, 2, 3, 4 , 5, 6, 10 };
+    chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
-    //auto x = v | std::views::transform([](int i) { return i * i; }) | std::views::filter([](int i) {return i > 0; });
+    std::vector<int> v{ 6, 2, 3, 4, 5, 6 };
+
+    ranges::actions::sort(v);
+
+    for (auto i : v)
+    {
+        std::cout << i << "\n";
+    }
 
 
-    //auto x = v | std::views::drop_while([](int i) { return (i < 7); });
-
-    auto x = v | std::views::transform([](int i) { return float(i); });
-
-
-    for (auto i : x)
-        i = i;
 
     return 0;
 }

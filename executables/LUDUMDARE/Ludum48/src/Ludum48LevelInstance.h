@@ -140,7 +140,7 @@ protected:
 	class LudumGame * game = nullptr;
 
 
-	mutable float completion_timer = -1.0f; // shu48 : due to Checkcomplete constness !!
+	float completion_timer = -1.0f;
 	float completion_delay = 1.0f;
 
 

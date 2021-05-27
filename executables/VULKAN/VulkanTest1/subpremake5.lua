@@ -3,7 +3,5 @@
 -- =============================================================================
 
   WindowedApp()
-  DependOnLib("BOOST")  
   DependOnLib("CHAOS")  
-  DependOnLib("VULKAN")  
-                       
+                      

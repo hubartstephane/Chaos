@@ -9,6 +9,7 @@
 #include <range/v3/view/transform.hpp>
 
 #include <range/v3/algorithm/all_of.hpp>
+#include <range/v3/algorithm/find_if.hpp>
 #include <range/v3/algorithm/any_of.hpp>
 #include <range/v3/algorithm/for_each.hpp>
 #include <range/v3/algorithm/none_of.hpp>
@@ -179,15 +180,15 @@ protected:
     bool CreateInstance()
     {
         // required extensions for GLFW
-        uint32_t glfwExtensionCount = 0;
-        const char** glfwExtensions = nullptr;
+        std::vector<char const*> extensions;
 
-        glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+        uint32_t glfwExtensionCount = 0;
+        const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
         for (uint32_t i = 0; i < glfwExtensionCount; ++i)
-        {
-            char const* ext = glfwExtensions[i];
+            extensions.push_back(glfwExtensions[i]);
+
+        for (char const * ext : extensions)
             std::cout << "GLFW extension: " << ext << "\n";
-        }
 
         VkApplicationInfo app_info{};
         app_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -202,8 +203,8 @@ protected:
         VkInstanceCreateInfo create_info{};
         create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
         create_info.pApplicationInfo = &app_info;
-        create_info.enabledExtensionCount = glfwExtensionCount;
-        create_info.ppEnabledExtensionNames = glfwExtensions;
+        create_info.enabledExtensionCount = (uint32_t)extensions.size();
+        create_info.ppEnabledExtensionNames = extensions.data();
         create_info.enabledLayerCount = (uint32_t)validation_layers.size();
         create_info.ppEnabledLayerNames = validation_layers.data();
 
@@ -215,8 +216,33 @@ protected:
         return (vkCreateInstance(&create_info, nullptr, &vk_instance) == VK_SUCCESS);
     }
 
+    std::vector<const char*> GetRequiredDeviceExtensions()
+    {
+        return {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+    }
+
+    bool DoesPhysicalDeviceSupportExtensions(VkPhysicalDevice device, std::vector<const char*> const& required_device_extensions)
+    {
+        uint32_t extension_count = 0;
+        vkEnumerateDeviceExtensionProperties(device, nullptr, &extension_count, nullptr);
+
+        std::vector<VkExtensionProperties> available_extensions(extension_count);
+        vkEnumerateDeviceExtensionProperties(device, nullptr, &extension_count, available_extensions.data());
+
+        for (const auto& searched_ext : required_device_extensions)
+        {
+            auto it = std::ranges::find_if(available_extensions, [searched_ext](char const* ext) { return chaos::StringTools::Stricmp(searched_ext, ext) == 0; }, &VkExtensionProperties::extensionName);
+            if (it == std::ranges::end(available_extensions))
+                return false;
+        }
+
+        return true;
+    }
+
     bool SelectPysicalDevice()
     {
+        std::vector<char const*> required_device_extensions = GetRequiredDeviceExtensions();
+
         uint32_t device_count = 0;
         vkEnumeratePhysicalDevices(vk_instance, &device_count, nullptr);
 
@@ -229,7 +255,7 @@ protected:
 
             std::cout << "Device Name:            " << device_properties.deviceName << "\n";
             std::cout << "Max Image Dimension 2D: " << device_properties.limits.maxImageDimension2D << "\n";
-            if (device_properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
+            if (device_properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && DoesPhysicalDeviceSupportExtensions(device, required_device_extensions))
             {
                 std::optional<uint32_t> graphic_queue;
                 std::optional<uint32_t> present_queue;

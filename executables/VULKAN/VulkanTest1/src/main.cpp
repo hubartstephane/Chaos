@@ -1,5 +1,7 @@
 #include <chaos/chaos.h>
 
+
+
 #include <range/v3/numeric/accumulate.hpp>
 #include <range/v3/view/iota.hpp>
 #include <range/v3/view/take.hpp>
@@ -10,6 +12,7 @@
 #include <range/v3/algorithm/any_of.hpp>
 #include <range/v3/algorithm/for_each.hpp>
 #include <range/v3/algorithm/none_of.hpp>
+#include <range/v3/algorithm/unique.hpp>
 #include <range/v3/view/all.hpp>
 #include <range/v3/view/repeat_n.hpp>
 #include <range/v3/view/addressof.hpp>
@@ -22,6 +25,7 @@
 #include <range/v3/view/sample.hpp>
 
 #include <range/v3/action/sort.hpp>
+#include <range/v3/action/unique.hpp>
 
 
 #include <vulkan/vulkan.h>
@@ -48,13 +52,11 @@ class VulkanApplication
 {
 public:
 
-
     void Run()
     {
         if (Initialize())
         {
             RunMainLoop();
-
         }
         Finalize();
     }
@@ -63,12 +65,13 @@ protected:
 
     VkDebugUtilsMessengerCreateInfoEXT GetDebugUtilsMessengerCreateInfo()
     {
-        VkDebugUtilsMessengerCreateInfoEXT createInfo{};
-        createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-        createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-        createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-        createInfo.pfnUserCallback = debugCallback;
-        createInfo.pUserData = nullptr; // Optional
+        VkDebugUtilsMessengerCreateInfoEXT result{};
+        result.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+        result.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+        result.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+        result.pfnUserCallback = debugCallback;
+        result.pUserData = nullptr; // Optional
+        return result;
     }
 
     void RunMainLoop()
@@ -85,18 +88,21 @@ protected:
         LogLayers();
         LogExtensions();
 
+        // GLFW initialization
+        if (!InitializeGLFW())
+            return false;
+        if (!CreateMainWindow())
+            return false;
+        // VULKAN initialization
         if (!CreateInstance())
+            return false;
+        if (!CreateDebugMessager())
+            return false;
+        if (!CreateKHRSurface())
             return false;
         if (!SelectPysicalDevice())
             return false;
         if (!CreateLogicalDevice())
-            return false;
-        if (!CreateDebugMessager())
-            return false;
-
-        if (!InitializeGLFW())
-            return false;
-        if (!CreateMainWindow())
             return false;
 
         return true;
@@ -104,11 +110,14 @@ protected:
 
     void Finalize()
     {
-        FinalizeGLFW();
-        DestroyMainWindow();
-        DestroyDebugMessager();
+        // VULKAN destruction
         DestroyLogicalDevice();
+        DestroyKHRSurface();
+        DestroyDebugMessager();
         DestroyInstance();
+        // GLFW destruction
+        DestroyMainWindow();
+        FinalizeGLFW();
     }
 
     void DestroyInstance()
@@ -125,7 +134,7 @@ protected:
         if (vk_device != VK_NULL_HANDLE)
         {
             vkDestroyDevice(vk_device, nullptr);
-            vk_instance = VK_NULL_HANDLE;
+            vk_device = VK_NULL_HANDLE;
         }
     }
 
@@ -198,8 +207,10 @@ protected:
         create_info.enabledLayerCount = (uint32_t)validation_layers.size();
         create_info.ppEnabledLayerNames = validation_layers.data();
 
+#if 0
         VkDebugUtilsMessengerCreateInfoEXT debug_create_info = GetDebugUtilsMessengerCreateInfo();
         create_info.pNext = &debug_create_info;
+#endif
 
         return (vkCreateInstance(&create_info, nullptr, &vk_instance) == VK_SUCCESS);
     }
@@ -220,18 +231,37 @@ protected:
             std::cout << "Max Image Dimension 2D: " << device_properties.limits.maxImageDimension2D << "\n";
             if (device_properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
             {
+                std::optional<uint32_t> graphic_queue;
+                std::optional<uint32_t> present_queue;
+
                 // check queue families for this device
                 uint32_t queue_family_count = 0;
                 vkGetPhysicalDeviceQueueFamilyProperties(device, &queue_family_count, nullptr);
 
                 std::vector<VkQueueFamilyProperties> queue_families_properties(queue_family_count);
                 vkGetPhysicalDeviceQueueFamilyProperties(device, &queue_family_count, queue_families_properties.data());
-                for (VkQueueFamilyProperties const& queue_family_property : queue_families_properties)
+
+                // the device must have a queue family for graphic and a family for present
+                for (VkQueueFamilyProperties const& queue_family_property : queue_families_properties) // all queues
                 {
-                    if (queue_family_property.queueFlags & VK_QUEUE_GRAPHICS_BIT)
+                    uint32_t index = uint32_t(&queue_family_property - &queue_families_properties[0]);
+
+                    if (!graphic_queue.has_value())
+                        if (queue_family_property.queueFlags & VK_QUEUE_GRAPHICS_BIT)
+                            graphic_queue = index;
+
+                    if (!present_queue.has_value())
+                    {
+                        VkBool32 present_support = false;
+                        if (vkGetPhysicalDeviceSurfaceSupportKHR(device, index, vk_khr_surface, &present_support) == VK_SUCCESS)
+                            if (present_support)
+                                present_queue = index;
+                    }
+                    if (graphic_queue.has_value() && present_queue.has_value())
                     {
                         vk_physical_device = device;
-                        vk_queue_family_index = uint32_t(&queue_family_property - &queue_families_properties[0]);
+                        vk_graphic_queue_family_index = graphic_queue.value();
+                        vk_present_queue_family_index = present_queue.value();
                         return true;
                     }
                 }
@@ -243,13 +273,22 @@ protected:
     bool CreateLogicalDevice()
     {
         // create logical device + queues
-        float priority = 1.0f;
+        std::vector<VkDeviceQueueCreateInfo> queue_create_info{};
 
-        VkDeviceQueueCreateInfo queue_create_info{};
-        queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        queue_create_info.queueFamilyIndex = vk_queue_family_index;
-        queue_create_info.queueCount = 1;
-        queue_create_info.pQueuePriorities = &priority;
+        std::vector<uint32_t> queue_indices = { vk_graphic_queue_family_index, vk_present_queue_family_index };
+        queue_indices |= ranges::actions::unique;
+
+        for (uint32_t index : queue_indices)
+        {
+            float priority = 1.0f;
+
+            VkDeviceQueueCreateInfo info{};
+            info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+            info.queueFamilyIndex = index;
+            info.queueCount = 1;
+            info.pQueuePriorities = &priority;
+            queue_create_info.push_back(info);
+        }
 
         VkPhysicalDeviceFeatures device_features{};
 
@@ -259,8 +298,8 @@ protected:
 
         VkDeviceCreateInfo create_info{};
         create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-        create_info.pQueueCreateInfos = &queue_create_info;
-        create_info.queueCreateInfoCount = 1;
+        create_info.pQueueCreateInfos = queue_create_info.data();
+        create_info.queueCreateInfoCount = uint32_t(queue_create_info.size());
         create_info.pEnabledFeatures = &device_features;
         create_info.enabledLayerCount = uint32_t(validation_layers.size());
         create_info.ppEnabledLayerNames = validation_layers.data();
@@ -268,7 +307,8 @@ protected:
         if (vkCreateDevice(vk_physical_device, &create_info, nullptr, &vk_device) == VK_SUCCESS)
         {
             // get the queue
-            vkGetDeviceQueue(vk_device, vk_queue_family_index, 0, &vk_graphics_queue);
+            vkGetDeviceQueue(vk_device, vk_graphic_queue_family_index, 0, &vk_graphic_queue);
+            vkGetDeviceQueue(vk_device, vk_present_queue_family_index, 0, &vk_present_queue);
             return true;
         }
         return false;
@@ -298,6 +338,7 @@ protected:
 
     bool CreateDebugMessager()
     {
+#if 0
         auto func = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(vk_instance, "vkCreateDebugUtilsMessengerEXT");
         if (func != nullptr)
         {
@@ -306,16 +347,42 @@ protected:
             return true;
         }
         return false;
+#endif
+        return true;
     }
 
     void DestroyDebugMessager()
     {
+#if 0
         if (vk_debug_messager != nullptr)
         {
             auto func = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(vk_instance, "vkDestroyDebugUtilsMessengerEXT");
-            if (func != nullptr) {
+            if (func != nullptr)
                 func(vk_instance, vk_debug_messager, nullptr);
             vk_debug_messager = VK_NULL_HANDLE;
+        }
+#endif
+    }
+
+    bool CreateKHRSurface()
+    {
+#if 0 // platform dependant version
+        VkWin32SurfaceCreateInfoKHR createInfo{};
+        createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+        createInfo.hwnd = glfwGetWin32Window(glfw_window);
+        createInfo.hinstance = GetModuleHandle(nullptr);
+        return (vkCreateWin32SurfaceKHR(vk_instance, &createInfo, nullptr, &vk_khr_surface) == VK_SUCCESS);
+#else // generic version
+        return (glfwCreateWindowSurface(vk_instance, glfw_window, nullptr, &vk_khr_surface) == VK_SUCCESS);
+#endif
+    }
+
+    void DestroyKHRSurface()
+    {
+        if (vk_khr_surface != VK_NULL_HANDLE)
+        {
+            vkDestroySurfaceKHR(vk_instance, vk_khr_surface, nullptr);
+            vk_khr_surface = VK_NULL_HANDLE;
         }
     }
 
@@ -325,36 +392,22 @@ protected:
 
     VkPhysicalDevice vk_physical_device = VK_NULL_HANDLE;
 
-    uint32_t vk_queue_family_index = 0;
+    uint32_t vk_graphic_queue_family_index = 0;
+
+    uint32_t vk_present_queue_family_index = 0;
                 
     VkDevice vk_device = VK_NULL_HANDLE;
 
-    VkQueue vk_graphics_queue = VK_NULL_HANDLE;
+    VkQueue vk_graphic_queue = VK_NULL_HANDLE;
+
+    VkQueue vk_present_queue = VK_NULL_HANDLE;
 
     VkDebugUtilsMessengerEXT vk_debug_messager = VK_NULL_HANDLE;
 
     GLFWwindow* glfw_window = nullptr;
+
+    VkSurfaceKHR vk_khr_surface = VK_NULL_HANDLE;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -363,207 +416,4 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
     VulkanApplication application;
     application.Run();
     return 0;
-
-
-
-     
-
-
-
-    glfwInit();
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
-    GLFWwindow * window = glfwCreateWindow(800, 600, "Vulkan", nullptr, nullptr);
-    if (window != nullptr)
-    {
-        // extensions GLFW
-        uint32_t glfwExtensionCount = 0;
-        const char** glfwExtensions = nullptr;
-
-        glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
-
-        for (uint32_t i = 0; i < glfwExtensionCount; ++i)
-        {
-            char const* ext = glfwExtensions[i];
-            std::cout << "GLFW extension: " << ext << "\n";
-        }
-            
-        // extensions VULKAN
-        uint32_t extensionCount = 0;
-        vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
-
-        std::vector<VkExtensionProperties> extensions(extensionCount);
-        vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
-        for (VkExtensionProperties const& ext : extensions)
-            std::cout << "Vulkan extension: " << ext.extensionName << "\n";
-        
-        // layers
-        uint32_t layerCount = 0;
-        vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
-
-        std::vector<VkLayerProperties> availableLayers(layerCount);
-        vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
-        for (VkLayerProperties const& layer : availableLayers)
-            std::cout << "Vulkan layer: " << layer.layerName << "\n";
-
-        // create vulkan
-
-#if 0
-        VkDebugUtilsMessengerCreateInfoEXT createInfo{};
-        createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-        createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-        createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-        createInfo.pfnUserCallback = debugCallback;
-        createInfo.pUserData = nullptr; // Optional
-#endif
-
-        VkInstance instance;
-
-        VkApplicationInfo appInfo{};
-        appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-        appInfo.pApplicationName = "Hello Triangle";
-        appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-        appInfo.pEngineName = "No Engine";
-        appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-        appInfo.apiVersion = VK_API_VERSION_1_0;
-#if 0
-        createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*) &debugCreateInfo; // create a temporary debugger for the creation only
-#endif
-
-
-
-
-        std::vector<const char*> validationLayers = {"VK_LAYER_KHRONOS_validation" /*, "VK_EXT_debug_utils"*/};
-
-        VkInstanceCreateInfo createInfo{};
-        createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-        createInfo.pApplicationInfo = &appInfo;
-        createInfo.enabledExtensionCount = glfwExtensionCount;
-        createInfo.ppEnabledExtensionNames = glfwExtensions;
-        createInfo.enabledLayerCount = (uint32_t)validationLayers.size();
-        createInfo.ppEnabledLayerNames = validationLayers.data();
-
-        VkResult result = vkCreateInstance(&createInfo, nullptr, &instance);
-        if (result == VK_SUCCESS)
-        {
-
-
- 
-#if 0
-            
-            VkDebugUtilsMessengerEXT debug_messager;
-            auto func = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
-            if (func != nullptr)
-                func(instance, &createInfo, nullptr, &debug_messager);
-#endif
-
-            // Physical device
-            VkPhysicalDevice physical_device = VK_NULL_HANDLE;
-
-            uint32_t deviceCount = 0;
-            vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
-
-            std::vector<VkPhysicalDevice> devices(deviceCount);
-            vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
-            for (VkPhysicalDevice device : devices)
-            {
-                VkPhysicalDeviceProperties device_properties;
-                vkGetPhysicalDeviceProperties(device, &device_properties);
-
-                std::cout << "Device Name:            " << device_properties.deviceName << "\n";
-                std::cout << "Max Image Dimension 2D: " << device_properties.limits.maxImageDimension2D << "\n";
-                if (device_properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
-                {
-                    physical_device = device;
-                }
-            }
-
-            // queue famillies
-            std::optional<uint32_t> queue_family;
-
-            uint32_t queueFamilyCount = 0;
-            vkGetPhysicalDeviceQueueFamilyProperties(physical_device, &queueFamilyCount, nullptr);
-
-            std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
-            vkGetPhysicalDeviceQueueFamilyProperties(physical_device, &queueFamilyCount, queueFamilies.data());
-            for (VkQueueFamilyProperties const& qf : queueFamilies)
-            {
-                if (qf.queueFlags & VK_QUEUE_GRAPHICS_BIT)
-                {
-                    queue_family = uint32_t(&qf - &queueFamilies[0]);
-                    break;
-                }
-            }
-
-            if (queue_family.has_value())
-            {
-                // create logical device + queues
-                float priority = 1.0f;
-
-                VkDeviceQueueCreateInfo queueCreateInfo{};
-                queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-                queueCreateInfo.queueFamilyIndex = queue_family.value();
-                queueCreateInfo.queueCount = 1;
-                queueCreateInfo.pQueuePriorities = &priority;
-
-                VkPhysicalDeviceFeatures deviceFeatures{};
-
-                // see VK_KHR_swapchain layer later
-
-                VkDeviceCreateInfo createInfo{};
-                createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-                createInfo.pQueueCreateInfos = &queueCreateInfo;
-                createInfo.queueCreateInfoCount = 1;
-                createInfo.pEnabledFeatures = &deviceFeatures;
-                createInfo.enabledLayerCount = uint32_t(validationLayers.size());
-                createInfo.ppEnabledLayerNames = validationLayers.data();
-
-                VkDevice device;
-                if (vkCreateDevice(physical_device, &createInfo, nullptr, &device) == VK_SUCCESS)
-                {
-                    // get the queue
-                    VkQueue graphics_queue;
-                    vkGetDeviceQueue(device, queue_family.value(), 0, &graphics_queue);
-
-
-                    // Loop
-                    while (!glfwWindowShouldClose(window))
-                    {
-                        glfwPollEvents();
-                    }
-
-
-
-
-                    // destroy logical device
-                    vkDestroyDevice(device, nullptr);
-                }
-            }
-
-                
-
-
-
-
-            // destroy the logger messager
-#if 0
-            auto func = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
-            if (func != nullptr) {
-                func(instance, debug_messager, nullptr);
-#endif
-   
-
-
-
-            vkDestroyInstance(instance, nullptr);
-        }
-        glfwDestroyWindow(window);
-    }
- 
-    glfwTerminate();
-
-
-
-	return 0;
 }

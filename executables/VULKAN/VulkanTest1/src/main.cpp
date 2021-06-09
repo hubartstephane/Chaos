@@ -270,6 +270,12 @@ protected:
             return false;
         if (!CreatePipeline())
             return false;
+        if (!CreateFramebuffers())
+            return false;
+        if (!CreateCommandPool())
+            return false;
+        if (!CreateCommandBuffers())
+            return false;
 
         return true;
     }
@@ -277,6 +283,9 @@ protected:
     void Finalize()
     {
         // VULKAN destruction
+        DestroyCommandBuffers();
+        DestroyCommandPool();
+        DestroyFramebuffers();
         DestroyPipeline();
         DestroyRenderPass();
         DestroySwapChainImageViews();
@@ -889,7 +898,7 @@ protected:
         multisampling.alphaToCoverageEnable = VK_FALSE; // Optional
         multisampling.alphaToOneEnable = VK_FALSE; // Optional
 
-        VkPipelineDepthStencilStateCreateInfo unused_yet;
+        //VkPipelineDepthStencilStateCreateInfo unused_yet;
 
         VkPipelineColorBlendAttachmentState color_blend_attachment{};
         color_blend_attachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
@@ -932,7 +941,28 @@ protected:
         if (vkCreatePipelineLayout(vk_device, &pipeline_layout_info, nullptr, &vk_pipeline_layout) != VK_SUCCESS)
             return false;
 
-        return false;
+        VkGraphicsPipelineCreateInfo pipeline_info{};
+        pipeline_info.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+        pipeline_info.stageCount = 2;
+        pipeline_info.pStages = shader_stages;
+        pipeline_info.pVertexInputState = &vertex_input_info;
+        pipeline_info.pInputAssemblyState = &input_assembly;
+        pipeline_info.pViewportState = &viewport_state;
+        pipeline_info.pRasterizationState = &rasterizer;
+        pipeline_info.pMultisampleState = &multisampling;
+        pipeline_info.pDepthStencilState = nullptr; // Optional
+        pipeline_info.pColorBlendState = &color_blending;
+        pipeline_info.pDynamicState = nullptr; // Optional
+        pipeline_info.layout = vk_pipeline_layout;
+        pipeline_info.renderPass = vk_render_pass;
+        pipeline_info.subpass = 0;
+        pipeline_info.basePipelineHandle = VK_NULL_HANDLE; // Optional
+        pipeline_info.basePipelineIndex = -1; // Optional
+
+        if (vkCreateGraphicsPipelines(vk_device, VK_NULL_HANDLE, 1, &pipeline_info, nullptr, &vk_graphics_pipeline) != VK_SUCCESS)
+            return false;
+
+        return true;
     }
 
     void DestroyPipeline()
@@ -954,6 +984,128 @@ protected:
             vkDestroyPipelineLayout(vk_device, vk_pipeline_layout, nullptr);
             vk_pipeline_layout = VK_NULL_HANDLE;
         }
+
+        if (vk_graphics_pipeline != VK_NULL_HANDLE)
+        {
+            vkDestroyPipeline(vk_device, vk_graphics_pipeline, nullptr);
+            vk_graphics_pipeline = VK_NULL_HANDLE;
+        }
+    }
+
+
+
+    bool CreateFramebuffers()
+    {
+        VkExtent2D swap_chain_extent = SelectBestSurfaceExtend(vk_surface_caps);
+
+        vk_swap_chain_framebuffers.resize(vk_swap_chain_image_views.size());
+
+        for (size_t i = 0; i < vk_swap_chain_image_views.size(); i++) 
+        {
+            VkImageView attachments[] = { vk_swap_chain_image_views[i] };
+
+            VkFramebufferCreateInfo framebuffer_info{};
+            framebuffer_info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+            framebuffer_info.renderPass = vk_render_pass;
+            framebuffer_info.attachmentCount = 1;
+            framebuffer_info.pAttachments = attachments;
+            framebuffer_info.width = swap_chain_extent.width;
+            framebuffer_info.height = swap_chain_extent.height;
+            framebuffer_info.layers = 1;
+
+            if (vkCreateFramebuffer(vk_device, &framebuffer_info, nullptr, &vk_swap_chain_framebuffers[i]) != VK_SUCCESS)
+                return false;
+        }
+        return true;
+    }
+
+    void DestroyFramebuffers()
+    {
+        for (auto framebuffer : vk_swap_chain_framebuffers)
+            vkDestroyFramebuffer(vk_device, framebuffer, nullptr);
+        vk_swap_chain_framebuffers.clear();
+    }
+
+    bool CreateCommandPool()
+    {
+        VkCommandPoolCreateInfo pool_info{};
+        pool_info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+        pool_info.queueFamilyIndex = vk_graphic_queue_family_index;
+        pool_info.flags = 0; // Optional
+
+        if (vkCreateCommandPool(vk_device, &pool_info, nullptr, &vk_command_pool) != VK_SUCCESS)
+            return false;
+
+        return true;
+    }
+
+    void DestroyCommandPool()
+    {
+        if (vk_command_pool != VK_NULL_HANDLE)
+        {
+            vkDestroyCommandPool(vk_device, vk_command_pool, nullptr);
+            vk_command_pool = VK_NULL_HANDLE;
+        }
+    }
+
+    bool CreateCommandBuffers()
+    {
+        vk_command_buffers.resize(vk_swap_chain_image_views.size());
+
+        VkCommandBufferAllocateInfo alloc_info{};
+        alloc_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+        alloc_info.commandPool = vk_command_pool;
+        alloc_info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+        alloc_info.commandBufferCount = (uint32_t) vk_command_buffers.size();
+
+        if (vkAllocateCommandBuffers(vk_device, &alloc_info, vk_command_buffers.data()) != VK_SUCCESS) // XXX : allocation X command buffers with a single call
+            return false;
+
+
+
+
+        VkExtent2D swap_chain_extent = SelectBestSurfaceExtend(vk_surface_caps);
+
+        for (size_t i = 0; i < vk_command_buffers.size(); i++) 
+        {
+            VkCommandBufferBeginInfo begin_info{};
+            begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+            begin_info.flags = 0; // Optional
+            begin_info.pInheritanceInfo = nullptr; // Optional
+
+            if (vkBeginCommandBuffer(vk_command_buffers[i], &begin_info) != VK_SUCCESS)
+                return false;
+
+            VkRenderPassBeginInfo render_pass_info{};
+            render_pass_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+            render_pass_info.renderPass = vk_render_pass;
+            render_pass_info.framebuffer = vk_swap_chain_framebuffers[i];
+            render_pass_info.renderArea.offset = {0, 0};
+            render_pass_info.renderArea.extent = swap_chain_extent;
+
+            VkClearValue clear_color = {0.0f, 0.0f, 0.0f, 1.0f};
+            render_pass_info.clearValueCount = 1;
+            render_pass_info.pClearValues = &clear_color;
+
+            vkCmdBeginRenderPass(vk_command_buffers[i], &render_pass_info, VK_SUBPASS_CONTENTS_INLINE); // no return value
+
+            vkCmdBindPipeline(vk_command_buffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, vk_graphics_pipeline);
+
+            vkCmdDraw(vk_command_buffers[i], 3, 1, 0, 0);
+
+            vkCmdEndRenderPass(vk_command_buffers[i]);
+
+            if (vkEndCommandBuffer(vk_command_buffers[i]) != VK_SUCCESS)
+                return false;
+        }
+
+        return true;
+    }
+
+    void DestroyCommandBuffers()
+    {
+
+        vk_command_buffers.clear();
     }
 
 protected:
@@ -997,6 +1149,14 @@ protected:
     VkPipelineLayout vk_pipeline_layout = VK_NULL_HANDLE;
 
     VkRenderPass vk_render_pass = VK_NULL_HANDLE;
+
+    VkPipeline vk_graphics_pipeline = VK_NULL_HANDLE;
+
+    std::vector<VkFramebuffer> vk_swap_chain_framebuffers;
+
+    VkCommandPool vk_command_pool = VK_NULL_HANDLE;
+
+    std::vector<VkCommandBuffer> vk_command_buffers;
 };
 
 

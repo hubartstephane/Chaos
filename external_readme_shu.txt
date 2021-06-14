@@ -2,6 +2,19 @@
 Utilisation de Visual Studio 2012 = 11
 --------------------------------------
 
+=> Vulkan/glslang
+
+  j ai download d une part vulkan et d autre part glslang (qui contient spirv aussi, mais que je ne vais pas utiliser directement)
+  les lib de vulkan possede aussi du glslang, mais comme on ne peut pas lier un exe.release avec glslang.debug (et reciproquement),
+  j'ai ete obligé de
+   -utiliser cmake-gui dans glslang (j ai decoché de memoire BUILD_EXTERNAL et BUILD_TESTING)
+   -une fois la solution glslang en main, j'ai fait un build sous visual studio (release et surtout debug)
+   -j'ai pris tous le fichiers lib DEBUG dans glslang que j'ai copié dans vulkan/lib
+   -je peux maintenant liés correctement mes projets debug et release avec les lib qui vont bien
+   
+   (les lib DEBUG ressemblent a ceci  XXXd.lib)
+
+
 
 => NANA
 

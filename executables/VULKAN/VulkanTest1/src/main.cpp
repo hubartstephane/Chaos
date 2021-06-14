@@ -1,5 +1,21 @@
+#define _ITERATOR_DEBUG_LEVELc 0
+
 #include <chaos/chaos.h>
 
+
+
+#include "glslang/public/ShaderLang.h"
+#include "spirv_cross/spirv_glsl.hpp"
+#if 0
+#include "../SPIRV/GlslangToSpv.h"
+#include "../SPIRV/GLSL.std.450.h"
+#include "../SPIRV/doc.h"
+#include "../SPIRV/disassemble.h"
+#include "../glslang/OSDependent/osinclude.h"
+
+// Build-time generated includes
+#include "glslang/build_info.h"
+#endif
 
 
 #include <range/v3/numeric/accumulate.hpp>
@@ -34,7 +50,7 @@
 //F:\Personnel\Programmation\external\VulkanSDK\1.2.162.0\Bin\glslc.exe shader.vert -o vert.spv -mfmt=c
 //F:\Personnel\Programmation\external\VulkanSDK\1.2.162.0\Bin\glslc.exe shader.frag -o frag.spv -mfmt=c
 
-uint32_t vertex_shader[] = { 
+std::vector<uint32_t> vertex_shader = { 
 0x07230203,0x00010000,0x000d000a,0x00000036,
 0x00000000,0x00020011,0x00000001,0x0006000b,
 0x00000001,0x4c534c47,0x6474732e,0x3035342e,
@@ -133,7 +149,7 @@ uint32_t vertex_shader[] = {
 0x0003003e,0x00000031,0x00000035,0x000100fd,
 0x00010038 };
 
-uint32_t frag_shader[] = { 
+std::vector<uint32_t> frag_shader = { 
 0x07230203,0x00010000,0x000d000a,0x00000013,
 0x00000000,0x00020011,0x00000001,0x0006000b,
 0x00000001,0x4c534c47,0x6474732e,0x3035342e,
@@ -235,6 +251,7 @@ protected:
         while (!glfwWindowShouldClose(glfw_window))
         {
             glfwPollEvents();
+            DrawFrame();
         }
     }
 
@@ -276,6 +293,8 @@ protected:
             return false;
         if (!CreateCommandBuffers())
             return false;
+        if (!CreateSemaphores())
+            return false;
 
         return true;
     }
@@ -283,6 +302,7 @@ protected:
     void Finalize()
     {
         // VULKAN destruction
+        DestroySemaphores();
         DestroyCommandBuffers();
         DestroyCommandPool();
         DestroyFramebuffers();
@@ -813,17 +833,17 @@ protected:
 
         VkShaderModule result = VK_NULL_HANDLE;
         if (vkCreateShaderModule(vk_device, &create_info, nullptr, &result) != VK_SUCCESS)
-            return result;
-        return VK_NULL_HANDLE;
+            return VK_NULL_HANDLE;
+        return result;
     }
 
     bool CreatePipeline()
     {
-         vk_frag_module = CreateShaderModule(frag_shader, sizeof(frag_shader));
+         vk_frag_module = CreateShaderModule(frag_shader.data(), frag_shader.size());
          if (vk_frag_module == VK_NULL_HANDLE)
              return false;
 
-         vk_vert_module = CreateShaderModule(vertex_shader, sizeof(vertex_shader));
+         vk_vert_module = CreateShaderModule(vertex_shader.data(), vertex_shader.size());
          if (vk_vert_module == VK_NULL_HANDLE)
              return false;
 
@@ -1104,9 +1124,55 @@ protected:
 
     void DestroyCommandBuffers()
     {
-
         vk_command_buffers.clear();
     }
+
+    bool CreateSemaphores()
+    {
+        VkSemaphoreCreateInfo semaphore_info{};
+        semaphore_info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+        if (vkCreateSemaphore(vk_device, &semaphore_info, nullptr, &vk_image_available_semaphore) != VK_SUCCESS)
+            return false;
+        if (vkCreateSemaphore(vk_device, &semaphore_info, nullptr, &vk_render_finished_semaphore) != VK_SUCCESS)
+            return false;
+
+        return true;
+    }
+
+    void DestroySemaphores()
+    {
+        if (vk_image_available_semaphore != VK_NULL_HANDLE)
+        {
+            vkDestroySemaphore(vk_device, vk_image_available_semaphore, nullptr);
+            vk_image_available_semaphore = VK_NULL_HANDLE;
+        }
+        if (vk_render_finished_semaphore != VK_NULL_HANDLE)
+        {
+            vkDestroySemaphore(vk_device, vk_render_finished_semaphore, nullptr);
+            vk_render_finished_semaphore = VK_NULL_HANDLE;
+        }
+    }
+
+    void DrawFrame()
+    {
+        uint32_t image_index = 0;
+        vkAcquireNextImageKHR(vk_device, vk_swap_chain, UINT64_MAX, vk_image_available_semaphore, VK_NULL_HANDLE, &image_index);
+
+        VkSubmitInfo submitInfo{};
+        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+        VkSemaphore waitSemaphores[] = {vk_image_available_semaphore};
+        VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+        submitInfo.waitSemaphoreCount = 1;
+        submitInfo.pWaitSemaphores = waitSemaphores;
+        submitInfo.pWaitDstStageMask = waitStages;
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &vk_command_buffers[image_index];
+    }
+
+
+
 
 protected:
 
@@ -1157,13 +1223,37 @@ protected:
     VkCommandPool vk_command_pool = VK_NULL_HANDLE;
 
     std::vector<VkCommandBuffer> vk_command_buffers;
+
+    VkSemaphore vk_image_available_semaphore = VK_NULL_HANDLE;
+
+    VkSemaphore vk_render_finished_semaphore = VK_NULL_HANDLE;
 };
 
 
+//#define TOTO
+#ifdef TOTO
+ddd
+#endif
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
-    VulkanApplication application;
-    application.Run();
+    //spirv_cross::CompilerGLSL glsl(vertex_shader);
+
+    //spirv_cross::ShaderResources resources = glsl.get_shader_resources();
+
+    glslang::InitializeProcess();
+
+
+#if 1
+   // ShInitialize();
+
+    char const* a = glslang::GetEsslVersionString();
+    char const* b = glslang::GetGlslVersionString();
+
+   // ShFinalize();
+#endif
+
+  //  VulkanApplication application;
+  //  application.Run();
     return 0;
 }

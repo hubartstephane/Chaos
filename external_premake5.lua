@@ -331,7 +331,24 @@ local VULKAN_TOCOPY  = { -- @ because this copies the file directly in
 
 DeclareExternalLib("VULKAN", VULKAN_INC_PATH, VULKAN_LIB_PATH, VULKAN_LIBNAME, VULKAN_TOCOPY)
 
+  -- GLSLANG   
+  
+local GLSLANG_PATH = path.join("VulkanSDK", "1.2.162.0")
+local GLSLANG_INC_PATH = path.join(GLSLANG_PATH, "Include")
+local GLSLANG_LIB_PATH = path.join(GLSLANG_PATH, "Lib")
+local GLSLANG_BIN_PATH = path.join(GLSLANG_PATH, "BIN")
 
+local GLSLANG_COMMON_LIBNAME = {"spirv-cross-core.lib", "spirv-cross-cpp.lib", "spirv-cross-glsl.lib"}
+local GLSLANG_LIBNAME = 
+{
+  DEBUG = {"glslangd.lib", "MachineIndependentd.lib", "GenericCodeGend.lib", "OSDependentd.lib", "OGLCompilerd.lib", "HLSLd.lib", table.unpack(GLSLANG_COMMON_LIBNAME)},
+  RELEASE = {"glslang.lib", "MachineIndependent.lib", "GenericCodeGen.lib", "OSDependent.lib", "OGLCompiler.lib", "HLSL.lib", table.unpack(GLSLANG_COMMON_LIBNAME)}
+}
+
+--local GLSLANG_LIBNAME = {"spirv-cross-core.lib", "spirv-cross-cpp.lib", "spirv-cross-glsl.lib", "glslang.lib", "MachineIndependent.lib", "GenericCodeGen.lib", "shaderc.lib", "OSDependent.lib", "OGLCompiler.lib", "HLSL.lib"}
+--local GLSLANG_LIBNAME = {"spirv-cross-c.lib", "spirv-cross-core.lib", "spirv-cross-cpp.lib", "spirv-cross-c-shared.lib", "spirv-cross-glsl.lib", "spirv-cross-hlsl.lib", "spirv-cross-msl.lib", "spirv-cross-reflect.lib", "spirv-cross-util.lib"}
+
+DeclareExternalLib("GLSLANG", GLSLANG_INC_PATH, GLSLANG_LIB_PATH, GLSLANG_LIBNAME)
 
 
 

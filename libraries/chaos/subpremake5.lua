@@ -9,6 +9,7 @@
   DependOnLib("GLM")  
   DependOnLib("BOOST")  
   DependOnLib("VULKAN")  
+  DependOnLib("GLSLANG")  
   DependOnLib("FREEIMAGE")  
   DependOnLib("TINYXML2")
   DependOnLib("OPENGL")      

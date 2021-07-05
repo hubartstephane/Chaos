@@ -2,10 +2,13 @@
 
 #include <chaos/chaos.h>
 
-
+//#include "shaderc/shaderc.hpp"
 
 #include "glslang/public/ShaderLang.h"
 #include "spirv_cross/spirv_glsl.hpp"
+
+#include "glslang/SPIRV/GlslangToSpv.h"
+
 #if 0
 #include "../SPIRV/GlslangToSpv.h"
 #include "../SPIRV/GLSL.std.450.h"
@@ -1230,18 +1233,259 @@ protected:
 };
 
 
-//#define TOTO
-#ifdef TOTO
-ddd
-#endif
+//====================================================================
+
+
+
+
+static const TBuiltInResource builtin_resources = {
+  /* .MaxLights = */ 32,
+  /* .MaxClipPlanes = */ 6,
+  /* .MaxTextureUnits = */ 32,
+  /* .MaxTextureCoords = */ 32,
+  /* .MaxVertexAttribs = */ 64,
+  /* .MaxVertexUniformComponents = */ 4096,
+  /* .MaxVaryingFloats = */ 64,
+  /* .MaxVertexTextureImageUnits = */ 32,
+  /* .MaxCombinedTextureImageUnits = */ 80,
+  /* .MaxTextureImageUnits = */ 32,
+  /* .MaxFragmentUniformComponents = */ 4096,
+  /* .MaxDrawBuffers = */ 32,
+  /* .MaxVertexUniformVectors = */ 128,
+  /* .MaxVaryingVectors = */ 8,
+  /* .MaxFragmentUniformVectors = */ 16,
+  /* .MaxVertexOutputVectors = */ 16,
+  /* .MaxFragmentInputVectors = */ 15,
+  /* .MinProgramTexelOffset = */ -8,
+  /* .MaxProgramTexelOffset = */ 7,
+  /* .MaxClipDistances = */ 8,
+  /* .MaxComputeWorkGroupCountX = */ 65535,
+  /* .MaxComputeWorkGroupCountY = */ 65535,
+  /* .MaxComputeWorkGroupCountZ = */ 65535,
+  /* .MaxComputeWorkGroupSizeX = */ 1024,
+  /* .MaxComputeWorkGroupSizeY = */ 1024,
+  /* .MaxComputeWorkGroupSizeZ = */ 64,
+  /* .MaxComputeUniformComponents = */ 1024,
+  /* .MaxComputeTextureImageUnits = */ 16,
+  /* .MaxComputeImageUniforms = */ 8,
+  /* .MaxComputeAtomicCounters = */ 8,
+  /* .MaxComputeAtomicCounterBuffers = */ 1,
+  /* .MaxVaryingComponents = */ 60,
+  /* .MaxVertexOutputComponents = */ 64,
+  /* .MaxGeometryInputComponents = */ 64,
+  /* .MaxGeometryOutputComponents = */ 128,
+  /* .MaxFragmentInputComponents = */ 128,
+  /* .MaxImageUnits = */ 8,
+  /* .MaxCombinedImageUnitsAndFragmentOutputs = */ 8,
+  /* .MaxCombinedShaderOutputResources = */ 8,
+  /* .MaxImageSamples = */ 0,
+  /* .MaxVertexImageUniforms = */ 0,
+  /* .MaxTessControlImageUniforms = */ 0,
+  /* .MaxTessEvaluationImageUniforms = */ 0,
+  /* .MaxGeometryImageUniforms = */ 0,
+  /* .MaxFragmentImageUniforms = */ 8,
+  /* .MaxCombinedImageUniforms = */ 8,
+  /* .MaxGeometryTextureImageUnits = */ 16,
+  /* .MaxGeometryOutputVertices = */ 256,
+  /* .MaxGeometryTotalOutputComponents = */ 1024,
+  /* .MaxGeometryUniformComponents = */ 1024,
+  /* .MaxGeometryVaryingComponents = */ 64,
+  /* .MaxTessControlInputComponents = */ 128,
+  /* .MaxTessControlOutputComponents = */ 128,
+  /* .MaxTessControlTextureImageUnits = */ 16,
+  /* .MaxTessControlUniformComponents = */ 1024,
+  /* .MaxTessControlTotalOutputComponents = */ 4096,
+  /* .MaxTessEvaluationInputComponents = */ 128,
+  /* .MaxTessEvaluationOutputComponents = */ 128,
+  /* .MaxTessEvaluationTextureImageUnits = */ 16,
+  /* .MaxTessEvaluationUniformComponents = */ 1024,
+  /* .MaxTessPatchComponents = */ 120,
+  /* .MaxPatchVertices = */ 32,
+  /* .MaxTessGenLevel = */ 64,
+  /* .MaxViewports = */ 16,
+  /* .MaxVertexAtomicCounters = */ 0,
+  /* .MaxTessControlAtomicCounters = */ 0,
+  /* .MaxTessEvaluationAtomicCounters = */ 0,
+  /* .MaxGeometryAtomicCounters = */ 0,
+  /* .MaxFragmentAtomicCounters = */ 8,
+  /* .MaxCombinedAtomicCounters = */ 8,
+  /* .MaxAtomicCounterBindings = */ 1,
+  /* .MaxVertexAtomicCounterBuffers = */ 0,
+  /* .MaxTessControlAtomicCounterBuffers = */ 0,
+  /* .MaxTessEvaluationAtomicCounterBuffers = */ 0,
+  /* .MaxGeometryAtomicCounterBuffers = */ 0,
+  /* .MaxFragmentAtomicCounterBuffers = */ 1,
+  /* .MaxCombinedAtomicCounterBuffers = */ 1,
+  /* .MaxAtomicCounterBufferSize = */ 16384,
+  /* .MaxTransformFeedbackBuffers = */ 4,
+  /* .MaxTransformFeedbackInterleavedComponents = */ 64,
+  /* .MaxCullDistances = */ 8,
+  /* .MaxCombinedClipAndCullDistances = */ 8,
+  /* .MaxSamples = */ 4,
+  /* .maxMeshOutputVerticesNV = */ 256,
+  /* .maxMeshOutputPrimitivesNV = */ 512,
+  /* .maxMeshWorkGroupSizeX_NV = */ 32,
+  /* .maxMeshWorkGroupSizeY_NV = */ 1,
+  /* .maxMeshWorkGroupSizeZ_NV = */ 1,
+  /* .maxTaskWorkGroupSizeX_NV = */ 32,
+  /* .maxTaskWorkGroupSizeY_NV = */ 1,
+  /* .maxTaskWorkGroupSizeZ_NV = */ 1,
+  /* .maxMeshViewCountNV = */ 4,
+
+  ///* .limits = */ {
+    /* .nonInductiveForLoops = */ 1,
+    /* .whileLoops = */ 1,
+    /* .doWhileLoops = */ 1,
+    /* .generalUniformIndexing = */ 1,
+    /* .generalAttributeMatrixVectorIndexing = */ 1,
+    /* .generalVaryingIndexing = */ 1,
+    /* .generalSamplerIndexing = */ 1,
+    /* .generalVariableIndexing = */ 1,
+    /* .generalConstantMatrixVectorIndexing = */ 1,
+    //},
+};
+
+
+
+
+
+char const* pixel_sourceXXX = R"PIXELSHADERCODE(
+    #version 450
+    #extension GL_ARB_separate_shader_objects : require
+    in vec3 vs_texcoord;
+    in vec3 vs_color;
+
+    out vec4 output_color;
+
+    uniform sampler2DArray material;
+
+    void main()
+    {
+	vec4 color = (vs_texcoord.z < 0.0)? 
+		vec4(1.0, 1.0, 1.0, 1.0) : 
+		texture(material, vs_texcoord);
+      output_color.xyz = color.xyz * vs_color;
+      output_color.a   = color.a;
+    };
+	)PIXELSHADERCODE";
+
+
+
+char const* pixel_source = R"PIXELSHADERCODE(
+    #version 450
+    #extension GL_ARB_separate_shader_objects : require
+    //layout(location = 0) 
+    out vec4 output_color;
+    void main()
+    {
+      output_color = vec4(1.0, 1.0, 1.0, 1.0);
+    }
+	)PIXELSHADERCODE";
+
+
+char const* vertex_source = R"VERTEXSHADERCODE(
+    #version 450
+    #extension GL_ARB_separate_shader_objects : require
+    in vec2 position;
+    in vec3 texcoord;
+    in vec3 color;
+
+    uniform mat4 local_to_cam;
+    
+    out vec3 vs_texcoord;
+    out vec3 vs_color;
+    
+    void main()
+    {
+      vs_texcoord = texcoord;
+      vs_color    = color;
+      gl_Position = local_to_cam * vec4(position.x, position.y, 0.0, 1.0);
+    }							
+	)VERTEXSHADERCODE";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
-    //spirv_cross::CompilerGLSL glsl(vertex_shader);
-
-    //spirv_cross::ShaderResources resources = glsl.get_shader_resources();
+  //VulkanApplication application;
+  //application.Run();
+  //return 0;
 
     glslang::InitializeProcess();
+
+     const EShMessages message_flags = EShMessages(EShMessages::EShMsgSpvRules | EShMessages::EShMsgVulkanRules);
+
+
+    glslang::TShader ps(EShLangFragment);
+    char const* source2[] = { pixel_source };
+    ps.setStrings(source2, 1);
+    ps.setAutoMapLocations(true);
+    ps.setAutoMapBindings(true);
+
+    
+
+    ps.setEnvInput(glslang::EShSource::EShSourceGlsl, EShLanguage::EShLangFragment, glslang::EShClient::EShClientVulkan, 450);
+    ps.setEnvClient(glslang::EShClient::EShClientVulkan, glslang::EShTargetClientVersion::EShTargetVulkan_1_0);
+    ps.setEnvTarget(glslang::EShTargetLanguage::EShTargetSpv, glslang::EShTargetLanguageVersion::EShTargetSpv_1_0);
+    //ps.parse(&builtin_resources, 450, EProfile::ENoProfile, true, true, message_flags);
+
+
+    bool b22 = ps.parse(&builtin_resources, 450, false, message_flags);
+
+    auto xxx2 = ps.getInfoLog();
+
+    auto yyy2 = ps.getInfoDebugLog();
+
+    std::vector<unsigned int> spirv;
+    spv::SpvBuildLogger logger;
+    glslang::GlslangToSpv(*ps.getIntermediate(), spirv, &logger);
+
+
+    glslang::TShader vs(EShLangVertex);
+    char const* sources1[] = { vertex_source };
+    vs.setStrings(sources1, 1);
+    vs.setEnvInput(glslang::EShSource::EShSourceGlsl, EShLanguage::EShLangVertex, glslang::EShClient::EShClientVulkan, 450);
+    vs.setEnvClient(glslang::EShClient::EShClientVulkan, glslang::EShTargetClientVersion::EShTargetVulkan_1_0);
+    vs.setEnvTarget(glslang::EShTargetLanguage::EShTargetSpv, glslang::EShTargetLanguageVersion::EShTargetSpv_1_0);
+
+    vs.setAutoMapLocations(true);
+    vs.setAutoMapBindings(true);
+
+    bool bb3 = vs.parse(&builtin_resources, 450, EProfile::ENoProfile, true, true, message_flags);
+    auto xxx1 = vs.getInfoLog();
+    auto yyy1 = vs.getInfoDebugLog();
+
+    std::vector<unsigned int> spirv2;
+    spv::SpvBuildLogger logger2;
+    glslang::GlslangToSpv(*vs.getIntermediate(), spirv2, &logger2);
+
+
+    glslang::TProgram prog;
+    prog.addShader(&vs);
+    prog.addShader(&ps);
+    bool b1 = prog.link(EShMsgDefault);
+    bool b2 = prog.mapIO();
+    bool b3 = prog.buildReflection();
+   prog.dumpReflection();
+    
 
 
 #if 1
@@ -1253,7 +1497,8 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
    // ShFinalize();
 #endif
 
-  //  VulkanApplication application;
-  //  application.Run();
+    glslang::FinalizeProcess();
+
+
     return 0;
 }

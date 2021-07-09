@@ -1391,6 +1391,7 @@ char const* vertex_source = R"VERTEXSHADERCODE(
     in vec3 color;
 
     uniform mat4 local_to_cam;
+    uniform float xxx;
     
     out vec3 vs_texcoord;
     out vec3 vs_color;
@@ -1483,9 +1484,57 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
     prog.addShader(&ps);
     bool b1 = prog.link(EShMsgDefault);
     bool b2 = prog.mapIO();
-    bool b3 = prog.buildReflection();
-   prog.dumpReflection();
+    bool b3 = prog.buildReflection(); // (EShReflectionAllBlockVariables | EShReflectionIntermediateIO);
+    prog.dumpReflection();
+   
+    int c1 = prog.getNumUniformBlocks();
+    int c2 = prog.getNumLiveUniformBlocks();    
+    int c3 = prog.getNumUniformVariables();
+    int c4 = prog.getNumLiveUniformVariables();
+
+    int c5 = prog.getNumPipeInputs();
+    int c6 = prog.getNumPipeOutputs();
+    int ppp = prog.getUniformIndex("local_to_cam");
+    int pppx = prog.getUniformBinding(ppp);
+
+   // prog.
+
+    for (int i = 0; i < c5; ++i)
+    {
+        glslang::TObjectReflection const& r = prog.getPipeInput(i);
+        
+        int b = r.getBinding();
+        
+        i = i;
+
+    }
+
+
+    for (int i = 0; i < c3; ++i)
+    {
+        glslang::TObjectReflection const& r = prog.getUniform(i);
+        int binding = r.getBinding();
+        const glslang::TType const * type = r.getType();
+
+        char const * n = type->getBasicString();
+
+        glslang::TBasicType basic_type = type->getBasicType(); // component type
+
+        int v = type->getVectorSize();
+        
+
+
+
+        n = n;
+            
+
+    }
+
     
+    
+    prog.dumpReflection();
+    
+
 
 
 #if 1

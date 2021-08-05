@@ -302,64 +302,13 @@ protected:
         return true;
     }
 
-    void Finalize()
-    {
-        // VULKAN destruction
-        DestroySemaphores();
-        DestroyCommandBuffers();
-        DestroyCommandPool();
-        DestroyFramebuffers();
-        DestroyPipeline();
-        DestroyRenderPass();
-        DestroySwapChainImageViews();
-        DestroySwapChain();
-        DestroyLogicalDevice();
-        DestroyKHRSurface();
-        DestroyDebugMessager();
-        DestroyInstance();
-        // GLFW destruction
-        DestroyMainWindow();
-        FinalizeGLFW();
-    }
-
-    void DestroyInstance()
-    {
-        if (vk_instance != VK_NULL_HANDLE)
-        {
-            vkDestroyInstance(vk_instance, nullptr);
-            vk_instance = VK_NULL_HANDLE;
-        }
-    }
-    
-    void DestroyLogicalDevice()
-    {
-        if (vk_device != VK_NULL_HANDLE)
-        {
-            vkDestroyDevice(vk_device, nullptr);
-            vk_device = VK_NULL_HANDLE;
-        }
-    }
-
-    void DestroyMainWindow()
-    {
-        if (glfw_window != nullptr)
-        {
-            glfwDestroyWindow(glfw_window);
-            glfw_window = nullptr;
-        }
-    }
-
+    // 1 --------------------------------------------
     bool InitializeGLFW()
     {
         glfwInit();
         return true;
     }
-
-    void FinalizeGLFW()
-    {
-        glfwTerminate();
-    }
-
+    // 2 --------------------------------------------
     bool CreateMainWindow()
     {
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -370,8 +319,7 @@ protected:
         }
         return false;
     }
-
-
+    // 3 --------------------------------------------
     std::vector<const char*> GetValidationLayers()
     {
         return {"VK_LAYER_KHRONOS_validation" /*, "VK_EXT_debug_utils"*/};
@@ -415,8 +363,36 @@ protected:
 
         return (vkCreateInstance(&create_info, nullptr, &vk_instance) == VK_SUCCESS);
     }
-
-    std::vector<const char*> GetRequiredDeviceExtensions()
+    // 4 --------------------------------------------
+    bool CreateDebugMessager()
+    {
+#if 0
+        auto func = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(vk_instance, "vkCreateDebugUtilsMessengerEXT");
+        if (func != nullptr)
+        {
+            VkDebugUtilsMessengerCreateInfoEXT debug_create_info = GetDebugUtilsMessengerCreateInfo();
+            func(vk_instance, &debug_create_info, nullptr, &vk_debug_messager);
+            return true;
+        }
+        return false;
+#endif
+        return true;
+    }
+    // 5 --------------------------------------------
+    bool CreateKHRSurface()
+    {
+#if 0 // platform dependant version
+        VkWin32SurfaceCreateInfoKHR createInfo{};
+        createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+        createInfo.hwnd = glfwGetWin32Window(glfw_window);
+        createInfo.hinstance = GetModuleHandle(nullptr);
+        return (vkCreateWin32SurfaceKHR(vk_instance, &createInfo, nullptr, &vk_khr_surface) == VK_SUCCESS);
+#else // generic version
+        return (glfwCreateWindowSurface(vk_instance, glfw_window, nullptr, &vk_khr_surface) == VK_SUCCESS);
+#endif
+    }
+    // 6 --------------------------------------------
+   std::vector<const char*> GetRequiredDeviceExtensions()
     {
         return {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
     }
@@ -569,7 +545,7 @@ protected:
         }
         return false;
     }
-    
+    // 7 --------------------------------------------
     bool CreateLogicalDevice()
     {
         // create logical device + queues
@@ -616,79 +592,7 @@ protected:
         }
         return false;
     }
-
-    void LogLayers()
-    {
-        uint32_t layer_count = 0;
-        vkEnumerateInstanceLayerProperties(&layer_count, nullptr);
-
-        std::vector<VkLayerProperties> available_layers(layer_count);
-        vkEnumerateInstanceLayerProperties(&layer_count, available_layers.data());
-        for (VkLayerProperties const& layer : available_layers)
-            std::cout << "Vulkan layer: " << layer.layerName << "\n";
-    }
-
-    void LogExtensions()
-    {
-        uint32_t extension_count = 0;
-        vkEnumerateInstanceExtensionProperties(nullptr, &extension_count, nullptr);
-
-        std::vector<VkExtensionProperties> available_extensions(extension_count);
-        vkEnumerateInstanceExtensionProperties(nullptr, &extension_count, available_extensions.data());
-        for (VkExtensionProperties const& ext : available_extensions)
-            std::cout << "Vulkan extension: " << ext.extensionName << "\n";
-    }
-
-    bool CreateDebugMessager()
-    {
-#if 0
-        auto func = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(vk_instance, "vkCreateDebugUtilsMessengerEXT");
-        if (func != nullptr)
-        {
-            VkDebugUtilsMessengerCreateInfoEXT debug_create_info = GetDebugUtilsMessengerCreateInfo();
-            func(vk_instance, &debug_create_info, nullptr, &vk_debug_messager);
-            return true;
-        }
-        return false;
-#endif
-        return true;
-    }
-
-    void DestroyDebugMessager()
-    {
-#if 0
-        if (vk_debug_messager != nullptr)
-        {
-            auto func = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(vk_instance, "vkDestroyDebugUtilsMessengerEXT");
-            if (func != nullptr)
-                func(vk_instance, vk_debug_messager, nullptr);
-            vk_debug_messager = VK_NULL_HANDLE;
-        }
-#endif
-    }
-
-    bool CreateKHRSurface()
-    {
-#if 0 // platform dependant version
-        VkWin32SurfaceCreateInfoKHR createInfo{};
-        createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-        createInfo.hwnd = glfwGetWin32Window(glfw_window);
-        createInfo.hinstance = GetModuleHandle(nullptr);
-        return (vkCreateWin32SurfaceKHR(vk_instance, &createInfo, nullptr, &vk_khr_surface) == VK_SUCCESS);
-#else // generic version
-        return (glfwCreateWindowSurface(vk_instance, glfw_window, nullptr, &vk_khr_surface) == VK_SUCCESS);
-#endif
-    }
-
-    void DestroyKHRSurface()
-    {
-        if (vk_khr_surface != VK_NULL_HANDLE)
-        {
-            vkDestroySurfaceKHR(vk_instance, vk_khr_surface, nullptr);
-            vk_khr_surface = VK_NULL_HANDLE;
-        }
-    }
-
+    // 8 --------------------------------------------
     bool CreateSwapChain()
     {
         VkSurfaceFormatKHR surface_format = SelectBestSurfaceFormat(vk_surface_formats);
@@ -729,7 +633,7 @@ protected:
 
         return (vkCreateSwapchainKHR(vk_device, &create_info, nullptr, &vk_swap_chain) == VK_SUCCESS);
     }
-
+    // 9 --------------------------------------------
     bool ExtractSwapChainImage()
     {
         uint32_t image_count = 0;
@@ -738,16 +642,7 @@ protected:
         vkGetSwapchainImagesKHR(vk_device, vk_swap_chain, &image_count, vk_swap_chain_images.data());
         return true;
     }
-
-    void DestroySwapChain()
-    {
-        if (vk_swap_chain != VK_NULL_HANDLE)
-        {
-            vkDestroySwapchainKHR(vk_device, vk_swap_chain, nullptr);
-            vk_swap_chain = VK_NULL_HANDLE;
-        }
-    }
-
+    // 10 --------------------------------------------
     bool CreateSwapChainImageViews()
     {
          VkSurfaceFormatKHR surface_format = SelectBestSurfaceFormat(vk_surface_formats);
@@ -776,14 +671,7 @@ protected:
         }
         return true;
     }
-
-    void DestroySwapChainImageViews()
-    {
-        for (VkImageView image_view : vk_swap_chain_image_views)
-            vkDestroyImageView(vk_device, image_view, nullptr);
-        vk_swap_chain_image_views.clear();
-    }
-
+    // 11 --------------------------------------------
     bool CreateRenderPass()
     {
         VkAttachmentDescription color_attachment{};
@@ -817,16 +705,7 @@ protected:
 
         return true;
     }
-
-    void DestroyRenderPass()
-    {
-        if (vk_render_pass != VK_NULL_HANDLE)
-        {
-            vkDestroyRenderPass(vk_device, vk_render_pass, nullptr);
-            vk_render_pass = VK_NULL_HANDLE;
-        }
-    }
-
+    // 12 -------------------------------------------- 
     VkShaderModule CreateShaderModule(uint32_t const* data, size_t data_size)
     {
         VkShaderModuleCreateInfo create_info{};
@@ -987,37 +866,8 @@ protected:
 
         return true;
     }
-
-    void DestroyPipeline()
-    {
-        if (vk_frag_module != VK_NULL_HANDLE)
-        {
-            vkDestroyShaderModule(vk_device, vk_frag_module, nullptr);
-            vk_frag_module = VK_NULL_HANDLE;
-        }
-
-        if (vk_vert_module != VK_NULL_HANDLE)
-        {
-            vkDestroyShaderModule(vk_device, vk_vert_module, nullptr);
-            vk_vert_module = VK_NULL_HANDLE;
-        }
-
-        if (vk_pipeline_layout != VK_NULL_HANDLE)
-        {
-            vkDestroyPipelineLayout(vk_device, vk_pipeline_layout, nullptr);
-            vk_pipeline_layout = VK_NULL_HANDLE;
-        }
-
-        if (vk_graphics_pipeline != VK_NULL_HANDLE)
-        {
-            vkDestroyPipeline(vk_device, vk_graphics_pipeline, nullptr);
-            vk_graphics_pipeline = VK_NULL_HANDLE;
-        }
-    }
-
-
-
-    bool CreateFramebuffers()
+    // 13 --------------------------------------------
+   bool CreateFramebuffers()
     {
         VkExtent2D swap_chain_extent = SelectBestSurfaceExtend(vk_surface_caps);
 
@@ -1041,14 +891,7 @@ protected:
         }
         return true;
     }
-
-    void DestroyFramebuffers()
-    {
-        for (auto framebuffer : vk_swap_chain_framebuffers)
-            vkDestroyFramebuffer(vk_device, framebuffer, nullptr);
-        vk_swap_chain_framebuffers.clear();
-    }
-
+    // 14 --------------------------------------------
     bool CreateCommandPool()
     {
         VkCommandPoolCreateInfo pool_info{};
@@ -1061,16 +904,7 @@ protected:
 
         return true;
     }
-
-    void DestroyCommandPool()
-    {
-        if (vk_command_pool != VK_NULL_HANDLE)
-        {
-            vkDestroyCommandPool(vk_device, vk_command_pool, nullptr);
-            vk_command_pool = VK_NULL_HANDLE;
-        }
-    }
-
+    // 15 --------------------------------------------
     bool CreateCommandBuffers()
     {
         vk_command_buffers.resize(vk_swap_chain_image_views.size());
@@ -1124,12 +958,7 @@ protected:
 
         return true;
     }
-
-    void DestroyCommandBuffers()
-    {
-        vk_command_buffers.clear();
-    }
-
+    // 16 --------------------------------------------
     bool CreateSemaphores()
     {
         VkSemaphoreCreateInfo semaphore_info{};
@@ -1142,6 +971,212 @@ protected:
 
         return true;
     }
+
+    // ===========================================
+
+    void Finalize()
+    {
+        // VULKAN destruction
+        DestroySemaphores();
+        DestroyCommandBuffers();
+        DestroyCommandPool();
+        DestroyFramebuffers();
+        DestroyPipeline();
+        DestroyRenderPass();
+        DestroySwapChainImageViews();
+        DestroySwapChain();
+        DestroyLogicalDevice();
+        DestroyKHRSurface();
+        DestroyDebugMessager();
+        DestroyInstance();
+        // GLFW destruction
+        DestroyMainWindow();
+        FinalizeGLFW();
+    }
+
+    void DestroyInstance()
+    {
+        if (vk_instance != VK_NULL_HANDLE)
+        {
+            vkDestroyInstance(vk_instance, nullptr);
+            vk_instance = VK_NULL_HANDLE;
+        }
+    }
+    
+    void DestroyLogicalDevice()
+    {
+        if (vk_device != VK_NULL_HANDLE)
+        {
+            vkDestroyDevice(vk_device, nullptr);
+            vk_device = VK_NULL_HANDLE;
+        }
+    }
+
+    void DestroyMainWindow()
+    {
+        if (glfw_window != nullptr)
+        {
+            glfwDestroyWindow(glfw_window);
+            glfw_window = nullptr;
+        }
+    }
+
+
+
+    void FinalizeGLFW()
+    {
+        glfwTerminate();
+    }
+
+
+
+
+
+
+ 
+    
+
+
+    void LogLayers()
+    {
+        uint32_t layer_count = 0;
+        vkEnumerateInstanceLayerProperties(&layer_count, nullptr);
+
+        std::vector<VkLayerProperties> available_layers(layer_count);
+        vkEnumerateInstanceLayerProperties(&layer_count, available_layers.data());
+        for (VkLayerProperties const& layer : available_layers)
+            std::cout << "Vulkan layer: " << layer.layerName << "\n";
+    }
+
+    void LogExtensions()
+    {
+        uint32_t extension_count = 0;
+        vkEnumerateInstanceExtensionProperties(nullptr, &extension_count, nullptr);
+
+        std::vector<VkExtensionProperties> available_extensions(extension_count);
+        vkEnumerateInstanceExtensionProperties(nullptr, &extension_count, available_extensions.data());
+        for (VkExtensionProperties const& ext : available_extensions)
+            std::cout << "Vulkan extension: " << ext.extensionName << "\n";
+    }
+
+
+
+    void DestroyDebugMessager()
+    {
+#if 0
+        if (vk_debug_messager != nullptr)
+        {
+            auto func = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(vk_instance, "vkDestroyDebugUtilsMessengerEXT");
+            if (func != nullptr)
+                func(vk_instance, vk_debug_messager, nullptr);
+            vk_debug_messager = VK_NULL_HANDLE;
+        }
+#endif
+    }
+
+
+
+    void DestroyKHRSurface()
+    {
+        if (vk_khr_surface != VK_NULL_HANDLE)
+        {
+            vkDestroySurfaceKHR(vk_instance, vk_khr_surface, nullptr);
+            vk_khr_surface = VK_NULL_HANDLE;
+        }
+    }
+
+
+
+
+
+    void DestroySwapChain()
+    {
+        if (vk_swap_chain != VK_NULL_HANDLE)
+        {
+            vkDestroySwapchainKHR(vk_device, vk_swap_chain, nullptr);
+            vk_swap_chain = VK_NULL_HANDLE;
+        }
+    }
+
+
+
+    void DestroySwapChainImageViews()
+    {
+        for (VkImageView image_view : vk_swap_chain_image_views)
+            vkDestroyImageView(vk_device, image_view, nullptr);
+        vk_swap_chain_image_views.clear();
+    }
+
+
+
+    void DestroyRenderPass()
+    {
+        if (vk_render_pass != VK_NULL_HANDLE)
+        {
+            vkDestroyRenderPass(vk_device, vk_render_pass, nullptr);
+            vk_render_pass = VK_NULL_HANDLE;
+        }
+    }
+
+
+
+    void DestroyPipeline()
+    {
+        if (vk_frag_module != VK_NULL_HANDLE)
+        {
+            vkDestroyShaderModule(vk_device, vk_frag_module, nullptr);
+            vk_frag_module = VK_NULL_HANDLE;
+        }
+
+        if (vk_vert_module != VK_NULL_HANDLE)
+        {
+            vkDestroyShaderModule(vk_device, vk_vert_module, nullptr);
+            vk_vert_module = VK_NULL_HANDLE;
+        }
+
+        if (vk_pipeline_layout != VK_NULL_HANDLE)
+        {
+            vkDestroyPipelineLayout(vk_device, vk_pipeline_layout, nullptr);
+            vk_pipeline_layout = VK_NULL_HANDLE;
+        }
+
+        if (vk_graphics_pipeline != VK_NULL_HANDLE)
+        {
+            vkDestroyPipeline(vk_device, vk_graphics_pipeline, nullptr);
+            vk_graphics_pipeline = VK_NULL_HANDLE;
+        }
+    }
+
+
+
+ 
+
+    void DestroyFramebuffers()
+    {
+        for (auto framebuffer : vk_swap_chain_framebuffers)
+            vkDestroyFramebuffer(vk_device, framebuffer, nullptr);
+        vk_swap_chain_framebuffers.clear();
+    }
+
+
+
+    void DestroyCommandPool()
+    {
+        if (vk_command_pool != VK_NULL_HANDLE)
+        {
+            vkDestroyCommandPool(vk_device, vk_command_pool, nullptr);
+            vk_command_pool = VK_NULL_HANDLE;
+        }
+    }
+
+
+
+    void DestroyCommandBuffers()
+    {
+        vk_command_buffers.clear();
+    }
+
+
 
     void DestroySemaphores()
     {
@@ -1156,6 +1191,8 @@ protected:
             vk_render_finished_semaphore = VK_NULL_HANDLE;
         }
     }
+
+    // ===========================================
 
     void DrawFrame()
     {
@@ -1355,6 +1392,8 @@ char const* pixel_sourceXXX = R"PIXELSHADERCODE(
     in vec3 vs_texcoord;
     in vec3 vs_color;
 
+
+
     out vec4 output_color;
 
     uniform sampler2DArray material;
@@ -1374,11 +1413,19 @@ char const* pixel_sourceXXX = R"PIXELSHADERCODE(
 char const* pixel_source = R"PIXELSHADERCODE(
     #version 450
     #extension GL_ARB_separate_shader_objects : require
-    //layout(location = 0) 
+
+
+    uniform vec3  zzz;
+    uniform vec3  bbb;
+
+    //layout(location = 0)
+
+
+ 
     out vec4 output_color;
     void main()
     {
-      output_color = vec4(1.0, 1.0, 1.0, 1.0);
+      output_color = vec4(zzz.x, bbb.y, 1.0, 1.0);
     }
 	)PIXELSHADERCODE";
 
@@ -1392,6 +1439,8 @@ char const* vertex_source = R"VERTEXSHADERCODE(
 
     uniform mat4 local_to_cam;
     uniform float xxx;
+    uniform float yyy[7];
+    uniform vec3  zzz;
     
     out vec3 vs_texcoord;
     out vec3 vs_color;
@@ -1400,7 +1449,7 @@ char const* vertex_source = R"VERTEXSHADERCODE(
     {
       vs_texcoord = texcoord;
       vs_color    = color;
-      gl_Position = local_to_cam * vec4(position.x, position.y, 0.0, 1.0);
+      gl_Position = local_to_cam * vec4(position.x + zzz.x, position.y, 0.0, 1.0);
     }							
 	)VERTEXSHADERCODE";
 
@@ -1426,9 +1475,13 @@ char const* vertex_source = R"VERTEXSHADERCODE(
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
-  //VulkanApplication application;
-  //application.Run();
-  //return 0;
+ // VulkanApplication application;
+ // application.Run();
+ // return 0;
+
+
+
+   // auto ppp = glslang::DefaultTBuiltInResource;
 
     glslang::InitializeProcess();
 
@@ -1440,9 +1493,6 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
     ps.setStrings(source2, 1);
     ps.setAutoMapLocations(true);
     ps.setAutoMapBindings(true);
-
-    
-
     ps.setEnvInput(glslang::EShSource::EShSourceGlsl, EShLanguage::EShLangFragment, glslang::EShClient::EShClientVulkan, 450);
     ps.setEnvClient(glslang::EShClient::EShClientVulkan, glslang::EShTargetClientVersion::EShTargetVulkan_1_0);
     ps.setEnvTarget(glslang::EShTargetLanguage::EShTargetSpv, glslang::EShTargetLanguageVersion::EShTargetSpv_1_0);
@@ -1459,6 +1509,9 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
     spv::SpvBuildLogger logger;
     glslang::GlslangToSpv(*ps.getIntermediate(), spirv, &logger);
 
+    auto p = logger.getAllMessages();
+
+    //---------------------------------------------
 
     glslang::TShader vs(EShLangVertex);
     char const* sources1[] = { vertex_source };
@@ -1478,13 +1531,17 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
     spv::SpvBuildLogger logger2;
     glslang::GlslangToSpv(*vs.getIntermediate(), spirv2, &logger2);
 
+    auto p2 = logger2.getAllMessages();
+
+    //---------------------------------------------
 
     glslang::TProgram prog;
     prog.addShader(&vs);
     prog.addShader(&ps);
     bool b1 = prog.link(EShMsgDefault);
+    
+    bool b3 = prog.buildReflection(EShReflectionAllBlockVariables | EShReflectionIntermediateIO /*| EShReflectionAllIOVariables*/);
     bool b2 = prog.mapIO();
-    bool b3 = prog.buildReflection(); // (EShReflectionAllBlockVariables | EShReflectionIntermediateIO);
     prog.dumpReflection();
    
     int c1 = prog.getNumUniformBlocks();
@@ -1499,7 +1556,7 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 
    // prog.
 
-    for (int i = 0; i < c5; ++i)
+    for (int i = 0; i < c5; ++i) //getNumPipeInputs
     {
         glslang::TObjectReflection const& r = prog.getPipeInput(i);
         
@@ -1509,8 +1566,22 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 
     }
 
+    for (int i = 0; i < c6; ++i) //getNumPipeOutputs
+    {
+        glslang::TObjectReflection const& r = prog.getPipeOutput(i);
+        
+        int b = r.getBinding();
+        
+        i = i;
 
-    for (int i = 0; i < c3; ++i)
+    }
+
+
+
+
+
+
+    for (int i = 0; i < c3; ++i) // getNumUniformVariables
     {
         glslang::TObjectReflection const& r = prog.getUniform(i);
         int binding = r.getBinding();
@@ -1522,17 +1593,20 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 
         int v = type->getVectorSize();
         
-
-
+        // offset: est OK
+        // size: indique si c'est un tableau[7]
+        // type.basicType: float/int...
+        // type.vectorSize: si float2/float3  si c'est une matrice c'est 0
+        // type.matrixCols/Rows (si pas matrice c'est 0)
+        //
+        // stages : c'est un mask qui indique dans quel shader est utilisé l uniform
 
         n = n;
             
 
     }
 
-    
-    
-    prog.dumpReflection();
+
     
 
 

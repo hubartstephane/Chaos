@@ -35,7 +35,7 @@ MYPROJECTS = {}
 
 DISPLAY_ROOT_ENVIRONMENT = true
 DISPLAY_ENVIRONMENT      = false
-DISPLAY_DEPENDENCIES     = false
+DISPLAY_DEPENDENCIES     = true
 
 DEBUG   = "DEBUG"
 RELEASE = "RELEASE"
@@ -48,9 +48,7 @@ win64   = "win64"
 PLATFORMS = {x64}
 CONFIGS   = {DEBUG, RELEASE}
 
-
 INDENT = 1
-
 
 -- =============================================================================
 -- call fun with all combinaison of PLATFORM & CONFIG
@@ -203,25 +201,6 @@ DisplayRootEnvironment()
 DisplayEnvironment()
 
 -- =============================================================================
--- An option to gain time and avoiding generation of doxygen documentation
--- CMD : premake5.exe vs2012 --no-auto-doc
--- =============================================================================
-
-newoption {
-   trigger     = "no-auto-doc",
-   description = "Do not generate doxygen documentation when project is being built (do it manually)"
-}
-
-local AUTO_DOCUMENTATION = true
-if (_OPTIONS["no-auto-doc"]) then
-  if (_OPTIONS["no-auto-doc"] == "") then
-    AUTO_DOCUMENTATION = false
-  elseif (string.lower(_OPTIONS["no-auto-doc"]) == "true") then
-    AUTO_DOCUMENTATION = false
-  end
-end
-
--- =============================================================================
 -- Dependant project names
 -- =============================================================================
 
@@ -236,18 +215,6 @@ end
 function GetDependantResourceProjName(proj_name)
   return "Resources of " .. proj_name
 end
-
-
-
-
-
-
-
-
-
-
-
-
 
 -- =============================================================================
 -- Function to require copying a file or directory
@@ -351,7 +318,7 @@ end
 -- DeclareExternalLib
 -- =============================================================================
 
--- add a prefix to a path (the path is an [PLATFORM][CONFIG] form)
+-- add a prefix to a path (the path is a table[PLATFORM][CONFIG] format)
 function PrefixPathArray(src, prefix)
   prefix = prefix or EXTERNAL_PATH
   AllTargets(function(plat, conf)
@@ -369,9 +336,9 @@ function DeclareExternalLib(external_name, inc_path, lib_path, libname, tocopy)
   local result = {}
   table.insert(MYPROJECTS, result)
 
-  result.name        = string.upper(external_name)
-  result.proj_type   = TYPE_EXTERNAL_LIBRARY
-  result.root_path   = EXTERNAL_PATH
+  result.name             = string.upper(external_name)
+  result.proj_type        = TYPE_EXTERNAL_LIBRARY
+  result.root_path        = EXTERNAL_PATH
   result.includedirs      = PrefixPathArray(GetPlatConfArray(inc_path), EXTERNAL_PATH)
   result.targetdir        = PrefixPathArray(GetPlatConfArray(lib_path), EXTERNAL_PATH)
   result.libname          = GetPlatConfArray(libname)
@@ -707,7 +674,7 @@ end
 
 
 -- =============================================================================
--- DependOnStandardLib : declare a dependency
+-- DependOnStandardLib : declare some additionnal dependency (does not depend on project)
 -- =============================================================================
 
 function DependOnStandardLib(libname)
@@ -716,13 +683,14 @@ function DependOnStandardLib(libname)
     return
   end
 
-  local proj = FindProject()
-
+  -- libname is a table
   if (IsTable(libname)) then
     for i in pairs(libname) do
       DependOnStandardLib(libname[i])
     end
+  -- libname is a string	
   else
+    local proj = FindProject()  
     AllTargets(function(plat, conf)
 	  table.insert(proj.additionnal_libs[plat][conf], libname)
 	end)
@@ -730,7 +698,7 @@ function DependOnStandardLib(libname)
 end
 
 -- =============================================================================
--- Depend : declare a dependency
+-- DependOnLib : declare a dependency
 -- =============================================================================
 
 function DependOnLib(libname)
@@ -874,8 +842,6 @@ end
 --  {TOUCH}
 -- =============================================================================
 
-
-
 -- =============================================================================
 -- Entry point
 -- =============================================================================
@@ -905,27 +871,6 @@ solution "Chaos"
 
   CURRENT_GROUP = "resources"
   ProcessSubPremake("resources")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 -- =============================================================================
 -- Propagate all dependencies
@@ -971,27 +916,61 @@ if (DISPLAY_DEPENDENCIES) then
   Output("=======================================================================")
 end
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 -- =============================================================================
 -- Fully propagate dependencies
 -- =============================================================================
 
 function CopyResourceFiles(dst_proj, src_proj, plat, conf, proj_visible) -- dst_proj is the project that wants resources
-  local p = project()
+
   if (dst_proj.proj_type == TYPE_EXECUTABLE) then
-    filter { "configurations:" .. conf, "platforms:" .. plat}
+
+    local p = project()
+  
     local all_files = src_proj.tocopy[plat][conf]
     if (all_files) then
+	
+      -- set the location	
       project(GetDependantResourceProjName(p.name))
       if (src_proj.proj_location ~= nil) then
         location(src_proj.proj_location)
       end
+	  
       filter { "configurations:" .. conf, "platforms:" .. plat}
       for v, data in ipairs(all_files) do
         local filename      = data[1]
         local full_filename = data[2]
         local dst_name      = path.join(dst_proj.targetdir[plat][conf], filename)
 
-	      if (proj_visible) then
+        -- add the resources files to the solution if required
+	    if (proj_visible) then
           if (os.isfile(full_filename)) then
             files(full_filename)
           elseif (os.isdir(full_filename)) then
@@ -999,23 +978,32 @@ function CopyResourceFiles(dst_proj, src_proj, plat, conf, proj_visible) -- dst_
           end
         end
 
-        local build_command_str = ('\"' .. COPY_SCRIPT .. '\" \"' .. full_filename .. '\" \"' .. dst_name .. '\"')
+        -- commands
+		local build_command_str = QuotationMarks(COPY_SCRIPT, full_filename, dst_name)
         buildcommands (build_command_str)
 
-		local clean_command_str = '\"' .. CLEAN_SCRIPT .. '\" \"' .. dst_name .. '\"'
+		local clean_command_str = QuotationMarks(CLEAN_SCRIPT, dst_name)
 		cleancommands (clean_command_str)
 
       end
     end
+
+    project(p.name)
+	
   end
-  project(p.name)
+
 end
 
+
+-- insert into PROJ include_dir, lib_dir.. coming from OTHER_PROJ
 function ResolveDependency(proj, other_proj, plat, conf)
 
+  -- resolve with TYPE_LIBRARY or TYPE_EXTERNAL_LIBRARY
   if (other_proj.proj_type == TYPE_LIBRARY or other_proj.proj_type == TYPE_EXTERNAL_LIBRARY) then -- only resolve dependencies with libraries
+  
     filter { "configurations:" .. conf, "platforms:" .. plat}
 
+    -- includes
     local inc_dir = other_proj.includedirs[plat][conf]
     if (inc_dir) then
       includedirs(inc_dir)
@@ -1024,6 +1012,7 @@ function ResolveDependency(proj, other_proj, plat, conf)
       end
     end
 
+    -- libdirs
     local targetdir = other_proj.targetdir[plat][conf]
     if (targetdir) then
       libdirs(targetdir)
@@ -1032,9 +1021,9 @@ function ResolveDependency(proj, other_proj, plat, conf)
       end
     end
 
-
     if (proj.proj_type == TYPE_EXECUTABLE) then
 
+      -- links (additionnal libs)
       local additionnal_libs = other_proj.additionnal_libs[plat][conf]
       if (additionnal_libs) then
         for i in pairs(additionnal_libs) do
@@ -1045,6 +1034,7 @@ function ResolveDependency(proj, other_proj, plat, conf)
         end
       end
 
+      -- links
       local libname = other_proj.libname[plat][conf]
       if (libname) then
         if (IsTable(libname)) then
@@ -1066,10 +1056,11 @@ function ResolveDependency(proj, other_proj, plat, conf)
 
     CopyResourceFiles(proj, other_proj, plat, conf, false) -- resources from dependancies cannot be visible
 
-  end
-
-  if (other_proj.proj_type == TYPE_RESOURCES) then -- for resources, only copy required data
+  -- resolve with TYPE_RESOURCES
+  elseif (other_proj.proj_type == TYPE_RESOURCES) then -- for resources, only copy required data
+  
     CopyResourceFiles(proj, other_proj, plat, conf, false) -- resources from dependancies cannot be visible
+	
   end
 
 end
@@ -1087,7 +1078,7 @@ function ResolveDependencyAndCopy(proj, plat, conf)
         ResolveDependency(proj, other_proj, plat, conf)
       end
     end
-    CopyResourceFiles(proj, proj, plat, conf,   true) -- resources from executable himself must be visible
+    CopyResourceFiles(proj, proj, plat, conf, true) -- resources from executable himself must be visible
   end
 end
 
@@ -1097,6 +1088,27 @@ for i in pairs(MYPROJECTS) do
     ResolveDependencyAndCopy(proj, plat, conf)
   end)
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 -- =============================================================================
 -- Generate documentation
@@ -1125,12 +1137,7 @@ for i in pairs(MYPROJECTS) do
     end)
 
 	links(proj.name)
---[[
-    if (AUTO_DOCUMENTATION) then
-      project(proj.name)
-      links(resources_proj_name)
-    end
-]]--
+
   end
 end
 
@@ -1139,9 +1146,7 @@ end
 -- =============================================================================
 
 for i in pairs(MYPROJECTS) do
-
   local proj = MYPROJECTS[i]
-
   if (proj.genzip and proj.proj_type == TYPE_EXECUTABLE) then
 
 	local zip_proj_name = GetDependantZipProjName(proj.name)
@@ -1169,4 +1174,3 @@ for i in pairs(MYPROJECTS) do
 	end)
   end
 end
-

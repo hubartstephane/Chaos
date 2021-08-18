@@ -192,20 +192,6 @@ std::vector<uint32_t> frag_shader = {
 0x00000010,0x00000011,0x0000000e,0x0003003e,
 0x00000009,0x00000012,0x000100fd,0x00010038 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
     VkDebugUtilsMessageTypeFlagsEXT messageType,
@@ -217,11 +203,6 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 
     return VK_FALSE;
 }
-
-
-
-
-
 
 class VulkanApplication
 {
@@ -423,15 +404,6 @@ protected:
         return formats[0];
     }
 
-    VkPresentModeKHR SelectBestPresentMode(std::vector<VkPresentModeKHR> const& present_modes)
-    {
-        VkPresentModeKHR searched_modes[] = { VK_PRESENT_MODE_MAILBOX_KHR, VK_PRESENT_MODE_FIFO_KHR };
-        for (VkPresentModeKHR mode : searched_modes)
-            if (std::ranges::find(present_modes, mode) != std::ranges::end(present_modes))
-                return mode;
-        return present_modes[0];
-    }
-
     VkExtent2D SelectBestSurfaceExtend(VkSurfaceCapabilitiesKHR const & surface_caps)
     {
         if (surface_caps.currentExtent.width != std::numeric_limits<uint32_t>::max())
@@ -444,14 +416,6 @@ protected:
 
         result.width = std::max(surface_caps.minImageExtent.width, std::min(surface_caps.maxImageExtent.width, result.width));
         result.height = std::max(surface_caps.minImageExtent.height, std::min(surface_caps.maxImageExtent.height, result.height));
-        return result;
-    }
-
-    uint32_t SelectBestSurfaceImageCount(VkSurfaceCapabilitiesKHR const& surface_caps)
-    {
-        uint32_t result = surface_caps.minImageCount + 1;
-        if (surface_caps.maxImageCount > 0 && result > surface_caps.maxImageCount)
-            result = surface_caps.maxImageCount;
         return result;
     }
 
@@ -593,6 +557,23 @@ protected:
         return false;
     }
     // 8 --------------------------------------------
+    VkPresentModeKHR SelectBestPresentMode(std::vector<VkPresentModeKHR> const& present_modes)
+    {
+        VkPresentModeKHR searched_modes[] = { VK_PRESENT_MODE_MAILBOX_KHR, VK_PRESENT_MODE_FIFO_KHR };
+        for (VkPresentModeKHR mode : searched_modes)
+            if (std::ranges::find(present_modes, mode) != std::ranges::end(present_modes))
+                return mode;
+        return present_modes[0];
+    }
+
+    uint32_t SelectBestSurfaceImageCount(VkSurfaceCapabilitiesKHR const& surface_caps)
+    {
+        uint32_t result = surface_caps.minImageCount + 1;
+        if (surface_caps.maxImageCount > 0 && result > surface_caps.maxImageCount)
+            result = surface_caps.maxImageCount;
+        return result;
+    }
+
     bool CreateSwapChain()
     {
         VkSurfaceFormatKHR surface_format = SelectBestSurfaceFormat(vk_surface_formats);
@@ -1463,18 +1444,38 @@ char const* vertex_source = R"VERTEXSHADERCODE(
 
 
 
+void f(int i)
+{
+    i = i;
+
+}
+void f(int i, int j)
+{
+    i = i;
+
+}
+
+void f(int i, int j, int k)
+{
+    j = j;
+
+}
 
 
 
 
-
-
-
-
+#define MAC(...) f(1, ##__VA_ARGS__)
 
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
+    MAC();
+    MAC(2);
+    MAC(2, 3);
+
+    return 0;
+
+
  // VulkanApplication application;
  // application.Run();
  // return 0;

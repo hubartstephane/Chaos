@@ -19,5 +19,5 @@
   DependOnLib("LIBXML2")  
   DependOnLib("CHAOS") 
   DependOnLib("TINYXML2")
-  DeclareResource("resources")
+  DeclareToCopyFile("resources")
                        

@@ -53,7 +53,7 @@ INDENT = 1
 
 
 -- ============================================================================= 
--- AllTargets functions
+-- call fun with all combinaison of PLATFORM & CONFIG
 -- =============================================================================
 
 function AllTargets(fun)
@@ -62,6 +62,24 @@ function AllTargets(fun)
       fun(PLATFORMS[pi], CONFIGS[pc]) 
     end  
   end
+end
+
+-- =============================================================================
+-- String concatenation
+-- =============================================================================
+
+function QuotationMarks(...)
+
+  local arg = {...}
+
+  local result = ""
+  for i,v in ipairs(arg) do
+    if (result ~= "") then
+	  result = result .. " "
+	end
+    result = result .. '"' .. tostring(arg[i]) .. '"'
+  end 
+  return result
 end
 
 -- ============================================================================= 
@@ -219,11 +237,34 @@ function GetDependantResourceProjName(proj_name)
   return "Resources of " .. proj_name
 end
 
+
+
+
+
+
+
+
+
+
+
+
+
 -- =============================================================================
 -- Function to require copying a file or directory
 -- =============================================================================
 
-function TransformResourcePathHelper(proj, dst, value, filename, plat, conf)
+-- for file copying (from src to build directory), 
+-- some paths start with @ -> in that case, the file is copied in the build directory directly (useful for DLL)
+--
+--      src/toto/titi/file.txt => build/file.txt
+--
+-- some does not they are copied in the equivalent path
+--
+--      src/toto/titi/file.txt => build/toto/titi/file.txt
+--
+-- TO_COPY is an array of {dst_path, src_path}
+
+function TransformPathAndDeclareToCopyFileHelper(proj, value, filename, plat, conf)
 
     local relative_path = true
     if (string.sub(filename, 1, 1) == "@") then -- the file is to be copied directly in the same directory than the executable itself
@@ -239,39 +280,34 @@ function TransformResourcePathHelper(proj, dst, value, filename, plat, conf)
     
     Output("DECLARE RESOURCE [" .. full_filename .. "] => [" .. filename .. "] for " .. plat .. " " .. conf)            
   
-    table.insert(dst[plat][conf], {filename, full_filename})   
+    table.insert(proj.tocopy[plat][conf], {filename, full_filename})   
 
 end
 
 
-function TransformResourcePath(proj, dst, value, plat, conf)
+-- transform path (whether value is a string or a table) and add it to TO_COPY
+function TransformPathAndDeclareToCopyFile(proj, value, plat, conf)
 
   if (not IsNil(value)) then
     local filename = value[plat][conf]
     
     if (IsTable(filename)) then
       for f in pairs(filename) do
-        TransformResourcePathHelper(proj, dst, value, filename[f], plat, conf)        
+        TransformPathAndDeclareToCopyFileHelper(proj, value, filename[f], plat, conf)        
       end
     else  
-      TransformResourcePathHelper(proj, dst, value, filename, plat, conf)  
+      TransformPathAndDeclareToCopyFileHelper(proj, value, filename, plat, conf)  
     end
   end      
 end
 
-function DeclareResourceHelper(proj, filename)
-
+-- add a file/directory in the TO_COPY list
+function DeclareToCopyFile(filename, proj)
+  proj = proj or FindProject()
   local tmp = GetPlatConfArray(filename)
-  
   AllTargets(function(plat, conf)
-    TransformResourcePath(proj, proj.tocopy, tmp, plat, conf) 
+    TransformPathAndDeclareToCopyFile(proj, tmp, plat, conf) 
   end)
-end
-
-function DeclareResource(filename)
-
-  DeclareResourceHelper(FindProject(), filename)
-   
 end
 
 -- =============================================================================
@@ -287,7 +323,7 @@ function DebugConf(plat)
 end
 
 -- =============================================================================
--- Function to initialize project for DEBUG
+-- Function to initialize project for RELEASE
 -- =============================================================================
 
 function ReleaseConf(plat)
@@ -319,6 +355,7 @@ end
 -- DeclareExternalLib
 -- =============================================================================
 
+-- add a prefix to a path (the path is an [PLATFORM][CONFIG] form)
 function PrefixPathArray(src, prefix)
   prefix = prefix or EXTERNAL_PATH
   AllTargets(function(plat, conf)
@@ -349,17 +386,17 @@ function DeclareExternalLib(external_name, inc_path, lib_path, libname, tocopy)
   result.tocopy = GetPlatConfArray({})
   
   if (not IsNil(tocopy)) then
-    DeclareResourceHelper(result, tocopy)
+    DeclareToCopyFile(tocopy, result)
   end            
     
   return result    
 end
 
-
 -- =============================================================================
 -- Function to get a platform/configuration array
 -- =============================================================================
 
+-- returns true whether value is a table with PLATFORM key
 function HasPlatformKey(value)
   if (not IsTable(value)) then
     return false
@@ -373,6 +410,7 @@ function HasPlatformKey(value)
   return false
 end
 
+-- returns true whether value is a table with CONFIG key
 function HasConfigKey(value)
   if (not IsTable(value)) then
     return false
@@ -408,6 +446,7 @@ function GetPlatConfArrayHelper(value, plat, conf)
   return value           
 end
 
+-- transform a value (array or not) in the form of [PLATFORM][CONFIG]
 function GetPlatConfArray(value)
   local result = {}
   
@@ -450,55 +489,22 @@ function onConfig(in_kind, plat, conf, proj)
    -- where the result EXE/LIB is been saved
    local targ = path.join(PROJECT_BUILD_PATH, conf, plat)
    targetdir(targ)
-   
    proj.targetdir[plat][conf] = targ     
                                         
    -- where the includes are for the project
    local inc = path.join(PROJECT_SRC_PATH, "include")   
    includedirs(inc)
-   
    proj.includedirs[plat][conf] = inc     
 
+   -- some definition for FILE REDIRECTION
    defines('CHAOS_PROJECT_PATH=\"'.. PROJECT_PATH..'\"')          
    defines('CHAOS_PROJECT_SRC_PATH=\"'.. PROJECT_SRC_PATH..'\"')     
    defines('CHAOS_PROJECT_BUILD_PATH=\"'.. targ .. '\"')        
       
-    characterset("ASCII")  
+   characterset("ASCII")
+   
 end
 
--- =============================================================================
--- ResourceProject : generate a non-visual project (just a data project or system)
--- =============================================================================
-
---[[
-
-function ResourceProject()
-                             
-  local result = {}  
-  table.insert(MYPROJECTS, result)
-            
-  result.name             = string.upper(PROJ_NAME)
-  result.proj_type        = TYPE_RESOURCES
-  result.path             = PROJECT_PATH    
-  result.root_path        = PROJECT_SRC_PATH         
-  result.build_path       = PROJECT_BUILD_PATH
-  result.lua_project      = nil                
-  result.targetdir        = GetPlatConfArray(nil);
-  result.includedirs      = GetPlatConfArray(nil); 
-  result.tocopy           = GetPlatConfArray({});
-  result.gendoxygen       = false
-  result.additionnal_libs = GetPlatConfArray({})  
-    
-  result.inc_path     = GetPlatConfArray(inc_path)      
-  result.src_path     = GetPlatConfArray(src_path)
-  result.res_path     = GetPlatConfArray(res_path)
-  result.dependencies = {}
-  
-  return result          
-    
-end
-
-]]--
 
 -- =============================================================================
 -- CppProject : entry point for all C++ Applications
@@ -590,8 +596,6 @@ end
 function WindowedApp()
 
   local result = CppProject("WindowedApp", TYPE_EXECUTABLE)
-  --DeclareResource("config.lua")
-  --DependOnLib("COMMON RESOURCES")       
   DisplayEnvironment()
   GenZIP()
   return result    
@@ -620,6 +624,91 @@ function SharedLib()
   GenDoxygen()  
   return result          
 end
+
+-- =============================================================================
+-- ResourceLib : entry point resources only libraries
+-- =============================================================================
+
+function ResourceLib()
+
+  -- the name of the group
+  local group_name = path.join(CURRENT_GROUP, PROJ_NAME)
+  if (CURRENT_GROUP ~= nil) then
+    group(group_name)   
+  end
+    
+  -- create the project it self
+  project(PROJ_NAME)
+   
+    local proj_location = path.join(SOLUTION_PATH, PROJECT_PATH)  
+  
+    location (proj_location)  
+  
+    local result = {}  
+    table.insert(MYPROJECTS, result)
+            
+    result.name             = string.upper(PROJ_NAME)
+    result.proj_type        = TYPE_RESOURCES
+    result.path             = PROJECT_PATH    
+    result.root_path        = PROJECT_SRC_PATH         
+    result.build_path       = PROJECT_BUILD_PATH
+    result.lua_project      = project()               
+    --result.targetdir        = GetPlatConfArray(nil);
+    --result.includedirs      = GetPlatConfArray(nil); 
+    result.tocopy           = GetPlatConfArray({});
+    result.gendoxygen       = false
+    result.genzip           = false
+    result.group_name       = group_name
+    result.proj_location    = proj_location
+	result.dependencies = {}
+    --result.additionnal_libs = GetPlatConfArray({});           
+         
+    kind("None")
+    
+	
+	
+	
+	
+	
+	
+    local res_path = path.join(PROJECT_SRC_PATH, "resources")    
+    result.res_path = GetPlatConfArray(res_path)	
+	
+	
+	DisplayEnvironment()
+	DeclareToCopyFile("resources")
+	
+    
+  return result        
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 -- =============================================================================
 -- DependOnStandardLib : declare a dependency
@@ -693,6 +782,7 @@ function ProcessFile(filename, new_context)
   end
 end
 
+-- returns an ENV array that contains all required members from _G
 function StoreEnvironment(names, result)
   result = result or {}
   for k in pairs(names) do   
@@ -701,12 +791,14 @@ function StoreEnvironment(names, result)
   return result
 end
 
+-- take an ENV and write back all members to _G
 function RestoreEnvironment(env)
   for k in pairs(env) do 
     _G[k] = env[k]  
   end  
 end  
 
+-- process a subpremake file (store then restore environment)
 function ProcessSubPremake(proj_name, sub_path, filename)
 
   INDENT = INDENT + 1
@@ -786,7 +878,13 @@ end
 --  {TOUCH}
 -- =============================================================================
 
+
+
+-- =============================================================================
+-- Entry point
+-- =============================================================================
 solution "Chaos"
+
   platforms {table.unpack(PLATFORMS)}
   configurations {table.unpack(CONFIGS)}
 
@@ -799,10 +897,7 @@ solution "Chaos"
   if os.target() == "linux" then
     defines { "LINUX" }
   end
-   
- -- CURRENT_GROUP = nil
- -- ProcessSubPremake("common resources")
-  
+
   CURRENT_GROUP = nil  
   ProcessSubPremake("external", ".", "external_premake5.lua")
   
@@ -811,6 +906,30 @@ solution "Chaos"
          
   CURRENT_GROUP = "executables"
   ProcessSubPremake("executables")  
+  
+  CURRENT_GROUP = "resources"
+  ProcessSubPremake("resources")    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 -- =============================================================================
 -- Propagate all dependencies
@@ -982,24 +1101,6 @@ for i in pairs(MYPROJECTS) do
     ResolveDependencyAndCopy(proj, plat, conf)      
   end)
 end  
-
--- =============================================================================
--- String concatenation
--- =============================================================================
-
-function QuotationMarks(...)
-  local arg={...}
-
-  local result = ""
-  for i,v in ipairs(arg) do
-    if (result ~= "") then
-	  result = result .. " "
-	end
-    result = result .. '"' .. tostring(arg[i]) .. '"'
-  end 
-  return result
-end
-
 
 -- =============================================================================
 -- Generate documentation

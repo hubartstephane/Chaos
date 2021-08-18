@@ -4,6 +4,6 @@
 
   WindowedApp()
   DependOnLib("CHAOS")    
-  DeclareResource("testfile.txt")
-  DeclareResource("resources")
+  DeclareToCopyFile("testfile.txt")
+  DeclareToCopyFile("resources")
                        

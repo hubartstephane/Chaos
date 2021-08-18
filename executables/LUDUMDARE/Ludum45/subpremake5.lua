@@ -4,4 +4,4 @@
 
   WindowedApp()
   DependOnLib("CHAOS")
-  DeclareResource("resources")    
+  DeclareToCopyFile("resources")

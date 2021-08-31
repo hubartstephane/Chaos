@@ -1026,6 +1026,12 @@ end
 -- Fully propagate dependencies
 -- =============================================================================
 
+--[[	local count = #proj.dependencies
+	for j = 1, count do
+      local other_proj = FindProject(proj.dependencies[j - count + 1])
+
+]]--
+
 function ResolveDependencyAndCopy(proj, plat, conf)
 
   -- external lib has not (and cannot be) resolved while it is not compiled
@@ -1061,7 +1067,6 @@ for i in pairs(MYPROJECTS) do
 	if (proj.proj_type == TYPE_EXECUTABLE) then 
 		project(proj.name)
 		filter { "configurations:" .. conf, "platforms:" .. plat}	
-		
 		
 		local resource_path = ""
 		
@@ -1175,3 +1180,14 @@ for i in pairs(MYPROJECTS) do
 	end)
   end
 end
+
+
+
+
+local x = {1,2,3,4}
+
+for i=1,#x do
+  Output(""..x[#x - i + 1])
+end
+
+--Output(""..#x)

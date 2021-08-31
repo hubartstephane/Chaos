@@ -1,5 +1,6 @@
 -- =============================================================================
--- ROOT_PATH/resources/Shared Images
+-- ROOT_PATH/resources/SharedImages
 -- =============================================================================
    
   ResourceLib()
+  DeclareToCopyFile("resources")

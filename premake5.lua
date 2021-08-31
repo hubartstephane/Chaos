@@ -221,11 +221,11 @@ end
 -- =============================================================================
 
 -- for file copying (from src to build directory),
--- some paths start with @ -> in that case, the file is copied in the build directory directly (useful for DLL)
+-- some paths start with @ -> in that case, the file is copied in the build directory directly (no matter what SRC relative path is) (useful for DLL)
 --
 --      src/toto/titi/file.txt => build/file.txt
 --
--- some does not they are copied in the equivalent path
+-- some does not -> they are copied in the equivalent path
 --
 --      src/toto/titi/file.txt => build/toto/titi/file.txt
 --
@@ -447,7 +447,7 @@ end
 function onConfig(in_kind, plat, conf, proj)
 
    -- a message that is display when the projection is being build
-   buildmessage("Make in_kind for plat config' : %{prj.name}")
+   buildmessage("Make %{in_kind} for plat config' : %{prj.name}")
 
    -- where the result EXE/LIB is been saved
    local targ = path.join(PROJECT_BUILD_PATH, conf, plat)
@@ -480,16 +480,23 @@ function CppProject(in_kind, proj_type)
   if (CURRENT_GROUP ~= nil) then
     group(group_name)
   end
-  -- create a project for the resources
-  local resource_proj_name = GetDependantResourceProjName(PROJ_NAME)
-  project (resource_proj_name)
-    kind("Makefile")
+  -- create a project for the resources (except for libs)
+  if (proj_type ~= TYPE_LIBRARY) then
+    local resource_proj_name = GetDependantResourceProjName(PROJ_NAME)
+    project (resource_proj_name)
+      kind("Makefile")
+	  
+    local proj_location = path.join(SOLUTION_PATH, "resources")
+    location (proj_location)
+	  
+    local res_path = path.join(PROJECT_SRC_PATH, "resources")
+    files {path.join(res_path, "**")}	
+  end	
 
   -- create the project it self
   project(PROJ_NAME)
 
     local proj_location = path.join(SOLUTION_PATH, PROJECT_PATH)
-
     location (proj_location)
 
     local result = {}
@@ -599,13 +606,15 @@ function ResourceLib()
   if (CURRENT_GROUP ~= nil) then
     group(group_name)
   end
-
+  
   -- create the project it self
   project(PROJ_NAME)
 
     local proj_location = path.join(SOLUTION_PATH, PROJECT_PATH)
-
     location (proj_location)
+		  
+    local res_path = path.join(PROJECT_SRC_PATH, "resources")
+    files {path.join(res_path, "**")}		
 
     local result = {}
     table.insert(MYPROJECTS, result)
@@ -628,19 +637,11 @@ function ResourceLib()
 
     kind("None")
 
-
-
-
-
-
-
     local res_path = path.join(PROJECT_SRC_PATH, "resources")
     result.res_path = GetPlatConfArray(res_path)
 
-
 	DisplayEnvironment()
-	DeclareToCopyFile("resources")
-
+	--DeclareToCopyFile("resources")
 
   return result
 end
@@ -916,72 +917,28 @@ if (DISPLAY_DEPENDENCIES) then
   Output("=======================================================================")
 end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 -- =============================================================================
 -- Fully propagate dependencies
 -- =============================================================================
 
-function CopyResourceFiles(dst_proj, src_proj, plat, conf, proj_visible) -- dst_proj is the project that wants resources
+function CopyResourceFiles(dst_proj, src_proj, plat, conf) -- dst_proj is the project that wants resources
 
   if (dst_proj.proj_type == TYPE_EXECUTABLE) then
 
     local p = project()
+	project(GetDependantResourceProjName(p.name))
   
     local all_files = src_proj.tocopy[plat][conf]
     if (all_files) then
 	
-      -- set the location	
-      project(GetDependantResourceProjName(p.name))
-      if (src_proj.proj_location ~= nil) then
-        location(src_proj.proj_location)
-      end
-	  
       filter { "configurations:" .. conf, "platforms:" .. plat}
       for v, data in ipairs(all_files) do
         local filename      = data[1]
         local full_filename = data[2]
         local dst_name      = path.join(dst_proj.targetdir[plat][conf], filename)
-
-        -- add the resources files to the solution if required
-	    if (proj_visible) then
-          if (os.isfile(full_filename)) then
-            files(full_filename)
-          elseif (os.isdir(full_filename)) then
-            files(path.join(full_filename, "**"))
-          end
-        end
-
         -- commands
 		local build_command_str = QuotationMarks(COPY_SCRIPT, full_filename, dst_name)
         buildcommands (build_command_str)
-
 		local clean_command_str = QuotationMarks(CLEAN_SCRIPT, dst_name)
 		cleancommands (clean_command_str)
 
@@ -1054,12 +1011,12 @@ function ResolveDependency(proj, other_proj, plat, conf)
 
     end
 
-    CopyResourceFiles(proj, other_proj, plat, conf, false) -- resources from dependancies cannot be visible
+    CopyResourceFiles(proj, other_proj, plat, conf)
 
   -- resolve with TYPE_RESOURCES
   elseif (other_proj.proj_type == TYPE_RESOURCES) then -- for resources, only copy required data
   
-    CopyResourceFiles(proj, other_proj, plat, conf, false) -- resources from dependancies cannot be visible
+    CopyResourceFiles(proj, other_proj, plat, conf)
 	
   end
 
@@ -1070,7 +1027,9 @@ end
 -- =============================================================================
 
 function ResolveDependencyAndCopy(proj, plat, conf)
-  if (proj.proj_type ~= TYPE_EXTERNAL_LIBRARY and proj.proj_type ~= TYPE_RESOURCES) then  -- external lib has not (and cannot be) resolved while it is not compiled
+
+  -- external lib has not (and cannot be) resolved while it is not compiled
+  if (proj.proj_type ~= TYPE_EXTERNAL_LIBRARY and proj.proj_type ~= TYPE_RESOURCES) then  
     project(proj.name)
     for j in pairs(proj.dependencies) do
       local other_proj = FindProject(proj.dependencies[j])
@@ -1078,7 +1037,9 @@ function ResolveDependencyAndCopy(proj, plat, conf)
         ResolveDependency(proj, other_proj, plat, conf)
       end
     end
-    CopyResourceFiles(proj, proj, plat, conf, true) -- resources from executable himself must be visible
+
+    -- resources from executable itself must be visible	
+    CopyResourceFiles(proj, proj, plat, conf) 
   end
 end
 
@@ -1088,27 +1049,6 @@ for i in pairs(MYPROJECTS) do
     ResolveDependencyAndCopy(proj, plat, conf)
   end)
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 -- =============================================================================
 -- Generate documentation

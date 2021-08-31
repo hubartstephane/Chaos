@@ -641,7 +641,7 @@ function ResourceLib()
     result.res_path = GetPlatConfArray(res_path)
 
 	DisplayEnvironment()
-	--DeclareToCopyFile("resources")
+	DeclareToCopyFile("resources")
 
   return result
 end
@@ -926,7 +926,7 @@ function CopyResourceFiles(dst_proj, src_proj, plat, conf) -- dst_proj is the pr
   if (dst_proj.proj_type == TYPE_EXECUTABLE) then
 
     local p = project()
-	project(GetDependantResourceProjName(p.name))
+	project(GetDependantResourceProjName(p.name)) -- files are copied only when the "resource project" is being build
   
     local all_files = src_proj.tocopy[plat][conf]
     if (all_files) then
@@ -1049,6 +1049,67 @@ for i in pairs(MYPROJECTS) do
     ResolveDependencyAndCopy(proj, plat, conf)
   end)
 end
+
+-- =============================================================================
+-- Direct file access
+-- =============================================================================
+
+for i in pairs(MYPROJECTS) do
+  local proj = MYPROJECTS[i]
+  local proj = MYPROJECTS[i]
+  AllTargets(function(plat, conf)
+	if (proj.proj_type == TYPE_EXECUTABLE) then 
+		project(proj.name)
+		filter { "configurations:" .. conf, "platforms:" .. plat}	
+		
+		
+		local resource_path = ""
+		
+		for d in pairs(proj.dependencies) do
+		  local other_proj = FindProject(proj.dependencies[d])
+		  if (other_proj and other_proj.proj_type == TYPE_RESOURCES) then
+			if (resource_path ~= "") then
+				resource_path = resource_path .. ';'
+			end
+			resource_path = resource_path .. other_proj.root_path
+		  end	
+		end	
+		if (resource_path ~= "") then		
+			Output("LA " .. resource_path)
+		end
+		
+		
+	end
+	
+
+	
+	
+	
+  end)
+end
+--[[
+
+    result.name             = string.upper(PROJ_NAME)
+    result.proj_type        = TYPE_RESOURCES
+    result.path             = PROJECT_PATH
+    result.root_path        = PROJECT_SRC_PATH
+    result.build_path       = PROJECT_BUILD_PATH
+    result.lua_project      = project()
+    --result.targetdir        = GetPlatConfArray(nil);
+    --result.includedirs      = GetPlatConfArray(nil);
+    result.tocopy           = GetPlatConfArray({});
+    result.gendoxygen       = false
+    result.genzip           = false
+    result.group_name       = group_name
+    result.proj_location    = proj_location
+	result.dependencies = {}
+    --result.additionnal_libs = GetPlatConfArray({});
+
+]]--
+
+   --defines('CHAOS_PROJECT_PATH=\"'.. PROJECT_PATH..'\"')
+   --defines('CHAOS_PROJECT_SRC_PATH=\"'.. PROJECT_SRC_PATH..'\"')
+   --defines('CHAOS_PROJECT_BUILD_PATH=\"'.. targ .. '\"')
 
 -- =============================================================================
 -- Generate documentation

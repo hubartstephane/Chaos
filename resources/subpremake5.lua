@@ -3,3 +3,4 @@
 -- =============================================================================
 
 ProcessSubPremake("SharedImages")
+ProcessSubPremake("SharedImages2")

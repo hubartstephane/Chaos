@@ -446,8 +446,7 @@ end
 
 function onConfig(in_kind, plat, conf, proj)
 
-   -- a message that is display when the projection is being build
-   buildmessage("Make %{in_kind} for plat config' : %{prj.name}")
+   postbuildcommands  ("echo pppp")
 
    -- where the result EXE/LIB is been saved
    local targ = path.join(PROJECT_BUILD_PATH, conf, plat)
@@ -463,6 +462,7 @@ function onConfig(in_kind, plat, conf, proj)
    defines('CHAOS_PROJECT_PATH=\"'.. PROJECT_PATH..'\"')
    defines('CHAOS_PROJECT_SRC_PATH=\"'.. PROJECT_SRC_PATH..'\"')
    defines('CHAOS_PROJECT_BUILD_PATH=\"'.. targ .. '\"')
+
 
    characterset("ASCII")
 
@@ -645,34 +645,6 @@ function ResourceLib()
 
   return result
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 -- =============================================================================
 -- DependOnStandardLib : declare some additionnal dependency (does not depend on project)
@@ -918,39 +890,8 @@ if (DISPLAY_DEPENDENCIES) then
 end
 
 -- =============================================================================
--- Fully propagate dependencies
+-- Link & include dependencies
 -- =============================================================================
-
-function CopyResourceFiles(dst_proj, src_proj, plat, conf) -- dst_proj is the project that wants resources
-
-  if (dst_proj.proj_type == TYPE_EXECUTABLE) then
-
-    local p = project()
-	project(GetDependantResourceProjName(p.name)) -- files are copied only when the "resource project" is being build
-  
-    local all_files = src_proj.tocopy[plat][conf]
-    if (all_files) then
-	
-      filter { "configurations:" .. conf, "platforms:" .. plat}
-      for v, data in ipairs(all_files) do
-        local filename      = data[1]
-        local full_filename = data[2]
-        local dst_name      = path.join(dst_proj.targetdir[plat][conf], filename)
-        -- commands
-		local build_command_str = QuotationMarks(COPY_SCRIPT, full_filename, dst_name)
-        buildcommands (build_command_str)
-		local clean_command_str = QuotationMarks(CLEAN_SCRIPT, dst_name)
-		cleancommands (clean_command_str)
-
-      end
-    end
-
-    project(p.name)
-	
-  end
-
-end
-
 
 -- insert into PROJ include_dir, lib_dir.. coming from OTHER_PROJ
 function ResolveDependency(proj, other_proj, plat, conf)
@@ -1008,34 +949,14 @@ function ResolveDependency(proj, other_proj, plat, conf)
           end
         end
       end
-
     end
-
-    CopyResourceFiles(proj, other_proj, plat, conf)
-
-  -- resolve with TYPE_RESOURCES
-  elseif (other_proj.proj_type == TYPE_RESOURCES) then -- for resources, only copy required data
-  
-    CopyResourceFiles(proj, other_proj, plat, conf)
-	
   end
-
 end
 
--- =============================================================================
--- Fully propagate dependencies
--- =============================================================================
+function ResolveDependencies(proj, plat, conf)
 
---[[	local count = #proj.dependencies
-	for j = 1, count do
-      local other_proj = FindProject(proj.dependencies[j - count + 1])
-
-]]--
-
-function ResolveDependencyAndCopy(proj, plat, conf)
-
-  -- external lib has not (and cannot be) resolved while it is not compiled
-  if (proj.proj_type ~= TYPE_EXTERNAL_LIBRARY and proj.proj_type ~= TYPE_RESOURCES) then  
+  -- only compilable projects need some special link & include
+  if (proj.proj_type == TYPE_EXECUTABLE or proj.proj_type == TYPE_LIBRARY) then  
     project(proj.name)
     for j in pairs(proj.dependencies) do
       local other_proj = FindProject(proj.dependencies[j])
@@ -1043,16 +964,80 @@ function ResolveDependencyAndCopy(proj, plat, conf)
         ResolveDependency(proj, other_proj, plat, conf)
       end
     end
-
-    -- resources from executable itself must be visible	
-    CopyResourceFiles(proj, proj, plat, conf) 
   end
 end
 
 for i in pairs(MYPROJECTS) do
   local proj = MYPROJECTS[i]
   AllTargets(function(plat, conf)
-    ResolveDependencyAndCopy(proj, plat, conf)
+    ResolveDependencies(proj, plat, conf)
+  end)
+end
+
+-- =============================================================================
+-- Resources copying
+-- =============================================================================
+
+-- Dependencies resources are copied in reverse order so that last declared dependencies are overriden by first dependencies
+-- The application PATH is build in reverse order so that direct file access is coherent with that
+
+function CopyResourceFiles(dst_proj, src_proj, plat, conf) -- dst_proj is the project that wants resources
+
+  if (dst_proj.proj_type == TYPE_EXECUTABLE) then
+
+    local p = project()
+	project(GetDependantResourceProjName(p.name)) -- files are copied only when the "resource project" is being build
+  
+    local all_files = src_proj.tocopy[plat][conf]
+    if (all_files) then
+	
+      filter { "configurations:" .. conf, "platforms:" .. plat}
+      for v, data in ipairs(all_files) do
+        local filename      = data[1]
+        local full_filename = data[2]
+        local dst_name      = path.join(dst_proj.targetdir[plat][conf], filename)
+        -- commands
+		local build_command_str = QuotationMarks(COPY_SCRIPT, full_filename, dst_name)
+        buildcommands (build_command_str)
+		local clean_command_str = QuotationMarks(CLEAN_SCRIPT, dst_name)
+		cleancommands (clean_command_str)
+      end
+    end
+
+    project(p.name)
+	
+  end
+end
+
+function ResolveCopyDependency(proj, other_proj, plat, conf)
+  if (other_proj.proj_type == TYPE_RESOURCES) then -- for resources, only copy required data
+    CopyResourceFiles(proj, other_proj, plat, conf)
+  end
+end
+
+function ResolveCopyDependencies(proj, plat, conf)
+
+  if (proj.proj_type == TYPE_EXECUTABLE) then  
+    project(proj.name)
+	
+    local count = #proj.dependencies
+	for j = 1, count do
+      local other_proj = FindProject(proj.dependencies[count - j + 1])	  
+      if (other_proj) then
+        CopyResourceFiles(proj, other_proj, plat, conf)
+      end
+    end
+	
+    -- resources from executable itself must be visible	
+    CopyResourceFiles(proj, proj, plat, conf) 
+  end
+end
+
+
+for i in pairs(MYPROJECTS) do
+  local proj = MYPROJECTS[i]
+  AllTargets(function(plat, conf)
+	ResolveCopyDependencies(proj, plat, conf)
   end)
 end
 
@@ -1069,7 +1054,7 @@ for i in pairs(MYPROJECTS) do
 		filter { "configurations:" .. conf, "platforms:" .. plat}	
 		
 		local resource_path = ""
-		
+				
 		for d in pairs(proj.dependencies) do
 		  local other_proj = FindProject(proj.dependencies[d])
 		  if (other_proj and other_proj.proj_type == TYPE_RESOURCES) then
@@ -1080,7 +1065,10 @@ for i in pairs(MYPROJECTS) do
 		  end	
 		end	
 		if (resource_path ~= "") then		
-			Output("LA " .. resource_path)
+		
+
+
+		Output("LA " .. resource_path)
 		end
 		
 		
@@ -1180,14 +1168,3 @@ for i in pairs(MYPROJECTS) do
 	end)
   end
 end
-
-
-
-
-local x = {1,2,3,4}
-
-for i=1,#x do
-  Output(""..x[#x - i + 1])
-end
-
---Output(""..#x)

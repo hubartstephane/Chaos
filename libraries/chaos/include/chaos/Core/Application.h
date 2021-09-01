@@ -159,7 +159,7 @@ namespace chaos
 		if (application != nullptr)
 		{
 			// XXX : under normal circonstances, you should not use CHAOS_PROJECT_SRC_PATH, CHAOS_PROJECT_BUILD_PATH in libraries
-			//       here, this is an exception because this function is a template and so is not compiled in libraries by caller code instead
+			//       here, this is an exception because this function is a template and so is not compiled in libraries but by caller code instead
 #if CHAOS_CAN_REDIRECT_RESOURCE_FILES
 			static boost::filesystem::path src_path = CHAOS_PROJECT_SRC_PATH;
 			static boost::filesystem::path build_path = CHAOS_PROJECT_BUILD_PATH;

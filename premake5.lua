@@ -441,12 +441,10 @@ function GenZIP()
 end
 
 -- =============================================================================
--- onConfig
+-- OnConfig
 -- =============================================================================
 
-function onConfig(in_kind, plat, conf, proj)
-
-   postbuildcommands  ("echo pppp")
+function OnConfig(in_kind, proj_type, plat, conf, proj)
 
    -- where the result EXE/LIB is been saved
    local targ = path.join(PROJECT_BUILD_PATH, conf, plat)
@@ -462,7 +460,11 @@ function onConfig(in_kind, plat, conf, proj)
    defines('CHAOS_PROJECT_PATH=\"'.. PROJECT_PATH..'\"')
    defines('CHAOS_PROJECT_SRC_PATH=\"'.. PROJECT_SRC_PATH..'\"')
    defines('CHAOS_PROJECT_BUILD_PATH=\"'.. targ .. '\"')
-
+   if (proj_type == TYPE_EXECUTABLE) then   
+     prebuildcommands('echo CHAOS_PROJECT_PATH       = \"'.. PROJECT_PATH..'\"')
+     prebuildcommands('echo CHAOS_PROJECT_SRC_PATH   = \"'.. PROJECT_SRC_PATH..'\"')
+     prebuildcommands('echo CHAOS_PROJECT_BUILD_PATH = \"'.. targ .. '\"') 
+   end
 
    characterset("ASCII")
 
@@ -548,7 +550,7 @@ function CppProject(in_kind, proj_type)
 	  else
 	    ReleaseConf(plat)
 	  end
-	  onConfig(in_kind, plat, conf, result)
+	  OnConfig(in_kind, proj_type, plat, conf, result)
 	end)
 
     result.inc_path     = GetPlatConfArray(inc_path)
@@ -1080,25 +1082,6 @@ for i in pairs(MYPROJECTS) do
 	
   end)
 end
---[[
-
-    result.name             = string.upper(PROJ_NAME)
-    result.proj_type        = TYPE_RESOURCES
-    result.path             = PROJECT_PATH
-    result.root_path        = PROJECT_SRC_PATH
-    result.build_path       = PROJECT_BUILD_PATH
-    result.lua_project      = project()
-    --result.targetdir        = GetPlatConfArray(nil);
-    --result.includedirs      = GetPlatConfArray(nil);
-    result.tocopy           = GetPlatConfArray({});
-    result.gendoxygen       = false
-    result.genzip           = false
-    result.group_name       = group_name
-    result.proj_location    = proj_location
-	result.dependencies = {}
-    --result.additionnal_libs = GetPlatConfArray({});
-
-]]--
 
    --defines('CHAOS_PROJECT_PATH=\"'.. PROJECT_PATH..'\"')
    --defines('CHAOS_PROJECT_SRC_PATH=\"'.. PROJECT_SRC_PATH..'\"')

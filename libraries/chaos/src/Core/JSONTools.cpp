@@ -6,6 +6,20 @@ namespace chaos
 	// EXTERNAL FUNCTION
 	// =================
 
+	bool LoadFromJSON(nlohmann::json const& json_entry, boost::filesystem::path& dst)
+	{
+		std::string result;
+		if (!LoadFromJSON(json_entry, result))
+			return false;
+		dst = result;
+		return true;
+	}
+
+	bool SaveIntoJSON(nlohmann::json& json_entry, boost::filesystem::path const& src)
+	{
+		return SaveIntoJSON(json_entry, src.string());
+	}
+
 	bool LoadFromJSON(nlohmann::json const & entry, bool & dst)
 	{
 		try

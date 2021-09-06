@@ -36,6 +36,8 @@ bool SaveIntoJSON(nlohmann::json& json_entry, enum_type const& src)\
 
 	/** loading a bool (because we try to read an int as a fallback) */
 	bool LoadFromJSON(nlohmann::json const& entry, bool& dst);
+	/** serialize a path from json */
+	bool LoadFromJSON(nlohmann::json const& json_entry, boost::filesystem::path& dst);
 
 	/** an utility function to create an object from a json object */
 	template<typename T>
@@ -54,6 +56,8 @@ bool SaveIntoJSON(nlohmann::json& json_entry, enum_type const& src)\
 	template<typename T>
 	bool LoadFromJSON(nlohmann::json const& entry, std::vector<T>& dst);
 
+	/** serialize a path into json */
+	bool SaveIntoJSON(nlohmann::json& json_entry, boost::filesystem::path const& src);
 	/** basic types */
 	template<typename T>
 	bool SaveIntoJSON(nlohmann::json& entry, T const& src);

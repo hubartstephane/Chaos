@@ -155,7 +155,7 @@ namespace chaos
 		GLFWHints glfw_hints;
 		nlohmann::json const* glfw_configuration = JSONTools::GetStructure(configuration, "glfw");
 		if (glfw_configuration != nullptr)
-			LoadFromJSON(glfw_configuration, glfw_hints);
+			LoadFromJSON(*glfw_configuration, glfw_hints);
 		glfw_hints.ApplyHints();
 
 		// create a hidden window whose purpose is to provide a sharable context for all others		

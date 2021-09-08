@@ -14,7 +14,9 @@ namespace chaos
 		Buffer<char> LoadFile(FilePathParam const & path, bool ascii, bool * success_open = nullptr);
 
 		/** try path redirection and call func (until it returns true) */
-		bool ForEachRedirectedPath(boost::filesystem::path const& p, std::function<bool(boost::filesystem::path const& p)> func);
+		bool ForEachRedirectedPath(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func);
+		/** iterate over all entries in all possible directories (until func returns true) */
+		bool ForEachRedirectedDirectoryContent(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func);
 
 		/** returns an iterator over a directory (can use resource direct access) */
 		boost::filesystem::directory_iterator GetDirectoryIterator(FilePathParam const & path);

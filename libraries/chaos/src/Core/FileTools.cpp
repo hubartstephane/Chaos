@@ -98,15 +98,17 @@ namespace chaos
 
 		CHAOS_HELP_TEXT(CMD, "-NoDirectResourceFiles")
 
-		bool ForEachRedirectedPath(boost::filesystem::path const& p, std::function<bool(boost::filesystem::path const& p)> func)
+		bool ForEachRedirectedPath(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func)
 		{
+			boost::filesystem::path const& resolved_path = path.GetResolvedPath();
+
 #if _DEBUG // we cannot use 'CHAOS_CAN_REDIRECT_RESOURCE_FILES' inside libraries !!!
 			if (Application const* application = Application::GetConstInstance())
 			{
 				if (!application->HasCommandLineFlag("-NoDirectResourceFiles")) // CMDLINE
 				{
 					boost::filesystem::path redirected_path;
-					if (GetRedirectedPath(p, redirected_path))
+					if (GetRedirectedPath(resolved_path, redirected_path))
 					{
 						if (func(redirected_path))
 							return true;
@@ -114,7 +116,7 @@ namespace chaos
 				}
 			}
 #endif
-			return func(p);
+			return func(resolved_path);
 		}
 
 #if _DEBUG // we cannot use 'CHAOS_CAN_REDIRECT_RESOURCE_FILES' inside libraries !!!
@@ -173,12 +175,44 @@ namespace chaos
 		}
 #endif // _DEBUG
 
+
+		bool ForEachRedirectedDirectoryContent(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func)
+		{
+			boost::filesystem::directory_iterator it;
+			ForEachRedirectedPath(path, [&it](boost::filesystem::path const& p)
+			{
+				try
+				{
+					if (boost::filesystem::is_directory(p))
+					{
+						it = boost::filesystem::directory_iterator(p);
+						if (it != boost::filesystem::directory_iterator())
+							return true;
+					}
+				}
+				catch (...)
+				{
+				}
+				return false;
+			});
+
+			// iterate until functor returns true
+			while (it != boost::filesystem::directory_iterator())
+			{
+				if (func(it->path()))
+					return true;
+				++it;
+			}
+			return false;
+		}
+
+
+
+
 		boost::filesystem::directory_iterator GetDirectoryIterator(FilePathParam const& path)
 		{
 			boost::filesystem::directory_iterator result;
-
-			boost::filesystem::path const& resolved_path = path.GetResolvedPath();
-			ForEachRedirectedPath(resolved_path, [&result](boost::filesystem::path const& p)
+			ForEachRedirectedPath(path, [&result](boost::filesystem::path const& p)
 			{
 				try
 				{
@@ -212,10 +246,7 @@ namespace chaos
 			*success_open = false;
 
 			Buffer<char> result;
-
-			// resolve the path & try each possible corresponding files
-			boost::filesystem::path const& resolved_path = path.GetResolvedPath();
-			ForEachRedirectedPath(resolved_path, [&result, ascii, &success_open](boost::filesystem::path const&p) 
+			ForEachRedirectedPath(path, [&result, ascii, &success_open](boost::filesystem::path const&p) 
 			{
 				result = DoLoadFile(p, ascii, success_open);
 				return *success_open;
@@ -248,9 +279,7 @@ namespace chaos
 			*success_open = false;
 
 			std::vector<std::string> result;
-
-			boost::filesystem::path const& resolved_path = path.GetResolvedPath();
-			ForEachRedirectedPath(resolved_path, [&result, &success_open](boost::filesystem::path const&p) 
+			ForEachRedirectedPath(path, [&result, &success_open](boost::filesystem::path const&p) 
 			{
 				result = DoReadFileLines(p, success_open);
 				return *success_open;

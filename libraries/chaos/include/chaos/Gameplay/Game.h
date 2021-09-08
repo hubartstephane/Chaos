@@ -274,8 +274,8 @@ namespace chaos
 		template<typename FUNC>
 		bool DoGenerateTiledMapEntity(nlohmann::json const& config, char const* property_name, char const* default_value, char const* extension, FUNC func);
 
-		/** read in config file an entry and open in resource directory a directory iterator on that target */
-		boost::filesystem::directory_iterator GetResourceDirectoryIteratorFromConfig(nlohmann::json const& config, char const* config_name, char const* default_path) const;
+		/** read in config file for the path of the resource directory. */
+		boost::filesystem::path GetResourceDirectoryFromConfig(nlohmann::json const& config, char const* config_name, char const* default_path) const;
 
 		/** load all the levels from the game (can be simple data) */
 		virtual bool LoadLevels(nlohmann::json const& config, boost::filesystem::path const& config_path);

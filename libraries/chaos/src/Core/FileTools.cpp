@@ -96,18 +96,42 @@ namespace chaos
 			return result;
 		}
 
+		CHAOS_HELP_TEXT(CMD, "-NoDirectResourceFiles")
+
+		bool ForEachRedirectedPath(boost::filesystem::path const& p, std::function<bool(boost::filesystem::path const& p)> func)
+		{
+#if _DEBUG // we cannot use 'CHAOS_CAN_REDIRECT_RESOURCE_FILES' inside libraries !!!
+			if (Application const* application = Application::GetConstInstance())
+			{
+				if (!application->HasCommandLineFlag("-NoDirectResourceFiles")) // CMDLINE
+				{
+					boost::filesystem::path redirected_path;
+					if (GetRedirectedPath(p, redirected_path))
+					{
+						if (func(redirected_path))
+							return true;
+					}
+				}
+			}
+#endif
+			return func(p);
+		}
+
 #if _DEBUG // we cannot use 'CHAOS_CAN_REDIRECT_RESOURCE_FILES' inside libraries !!!
 
-		CHAOS_HELP_TEXT(CMD, "-NoDirectResourceFiles")
+
+
+
+
+
+
+
 
 		bool GetRedirectedPath(boost::filesystem::path const& p, boost::filesystem::path& redirected_path)
 		{
 			Application const* application = Application::GetConstInstance();
 			if (application == nullptr)
 				return false;
-			if (application->HasCommandLineFlag("-NoDirectResourceFiles")) // CMDLINE
-				return false;
-
 			// try to get the source and build directories
 			boost::filesystem::path const& src_path = application->GetRedirectionSourcePath();
 			if (src_path.empty())
@@ -122,6 +146,10 @@ namespace chaos
 
 			while (it1 != p.end() && it2 != build_path.end())
 			{
+				auto u = *it1;
+				auto v = *it2;
+
+
 				if (*it1 != *it2)
 					return false;
 				++it1;
@@ -131,6 +159,14 @@ namespace chaos
 				return false;
 
 			// make substitution, build_path prefix to src_path prefix
+
+			auto a = src_path;
+			auto b = build_path;
+			auto c = p;
+			auto d = p.lexically_relative(build_path);
+
+
+
 			redirected_path = (src_path / p.lexically_relative(build_path));
 			redirected_path.normalize();
 			return true;
@@ -139,36 +175,26 @@ namespace chaos
 
 		boost::filesystem::directory_iterator GetDirectoryIterator(FilePathParam const& path)
 		{
-			boost::filesystem::path const& resolved_path = path.GetResolvedPath();
+			boost::filesystem::directory_iterator result;
 
-			// try the alternative
-#if _DEBUG // we cannot use 'CHAOS_CAN_REDIRECT_RESOURCE_FILES' inside libraries !!!
-			boost::filesystem::path redirected_path;
-			if (GetRedirectedPath(resolved_path, redirected_path))
+			boost::filesystem::path const& resolved_path = path.GetResolvedPath();
+			ForEachRedirectedPath(resolved_path, [&result](boost::filesystem::path const& p)
 			{
 				try
 				{
-					if (boost::filesystem::is_directory(redirected_path))
+					if (boost::filesystem::is_directory(p))
 					{
-						boost::filesystem::directory_iterator result = boost::filesystem::directory_iterator(redirected_path);
+						result = boost::filesystem::directory_iterator(p);
 						if (result != boost::filesystem::directory_iterator())
-							return result;
+							return true;
 					}
 				}
 				catch (...)
 				{
 				}
-			}
-#endif // _DEBUG 
-			try
-			{
-				if (boost::filesystem::is_directory(resolved_path))
-					return boost::filesystem::directory_iterator(resolved_path);
-			}
-			catch (...)
-			{
-			}
-			return boost::filesystem::directory_iterator();
+				return false;
+			});
+			return result;
 		}
 
 		bool IsTypedFile(FilePathParam const& path, char const* expected_ext)
@@ -187,20 +213,14 @@ namespace chaos
 
 			Buffer<char> result;
 
-			// resolve the path
+			// resolve the path & try each possible corresponding files
 			boost::filesystem::path const& resolved_path = path.GetResolvedPath();
-
-			// try the alternative
-#if _DEBUG // we cannot use 'CHAOS_CAN_REDIRECT_RESOURCE_FILES' inside libraries !!!
-			boost::filesystem::path redirected_path;
-			if (GetRedirectedPath(resolved_path, redirected_path))
+			ForEachRedirectedPath(resolved_path, [&result, ascii, &success_open](boost::filesystem::path const&p) 
 			{
-				result = DoLoadFile(redirected_path, ascii, success_open);
-				if (*success_open)
-					return result;
-			}
-#endif // _DEBUG 
-			return DoLoadFile(resolved_path, ascii, success_open);
+				result = DoLoadFile(p, ascii, success_open);
+				return *success_open;
+			});
+			return result;
 		}
 
 		bool CreateTemporaryDirectory(char const* pattern, boost::filesystem::path& result)
@@ -230,18 +250,12 @@ namespace chaos
 			std::vector<std::string> result;
 
 			boost::filesystem::path const& resolved_path = path.GetResolvedPath();
-
-			// try the alternative
-#if _DEBUG // we cannot use 'CHAOS_CAN_REDIRECT_RESOURCE_FILES' inside libraries !!!
-			boost::filesystem::path redirected_path;
-			if (GetRedirectedPath(resolved_path, redirected_path))
+			ForEachRedirectedPath(resolved_path, [&result, &success_open](boost::filesystem::path const&p) 
 			{
-				result = DoReadFileLines(redirected_path, success_open);
-				if (*success_open)
-					return result;
-			}
-#endif // _DEBUG 
-			return DoReadFileLines(resolved_path, success_open);
+				result = DoReadFileLines(p, success_open);
+				return *success_open;
+			});
+			return result;
 		}
 
 

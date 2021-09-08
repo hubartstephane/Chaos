@@ -31,6 +31,9 @@ namespace chaos
 		std::vector<Class *> classes;
 
 		// Step 1 : load all classes (no full initialization, ignore parent). Register them (without inheritance data in classes list)
+
+
+
 		boost::filesystem::directory_iterator end;
 		for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(path); it != end; ++it)
 		{

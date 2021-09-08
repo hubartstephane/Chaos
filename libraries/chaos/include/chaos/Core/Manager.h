@@ -47,12 +47,12 @@ namespace chaos
 			{
 				std::string directory_name = json.get<std::string>();
 
-				boost::filesystem::directory_iterator end;
-				for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(directory_name); it != end; ++it)
+				FileTools::ForEachRedirectedDirectoryContent(directory_name, [&loader](boost::filesystem::path const& p)
 				{
 					LOADER other_loader = loader;
-					other_loader.LoadObject(it->path().string());
-				}
+					other_loader.LoadObject(p.string());
+					return false; // don't stop
+				});
 			}
 		}
 

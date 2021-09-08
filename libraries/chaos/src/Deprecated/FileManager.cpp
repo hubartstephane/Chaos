@@ -60,9 +60,11 @@ namespace chaos
 		// recursive action
 		if (recursive)
 		{
-			boost::filesystem::directory_iterator end;
-			for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(p); it != end; ++it)
-				AddDirectory(*it, recursive);
+			FileTools::ForEachRedirectedDirectoryContent(p, [this, recursive](boost::filesystem::path const& p)
+			{
+				AddDirectory(p, recursive);
+				return false; // don't stop
+			});
 		}
 	}
 

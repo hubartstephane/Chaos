@@ -161,19 +161,17 @@ namespace chaos
 				return;
 
 			// iterate over wanted directory
-			boost::filesystem::directory_iterator end;
-			for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(directory_path); it != end; ++it)
-			{
-				boost::filesystem::path const& p = it->path();
 
+			FileTools::ForEachRedirectedDirectoryContent(directory_path, [this](boost::filesystem::path const& p)
+			{
 				boost::filesystem::file_status status = boost::filesystem::status(p);
 
 				if (status.type() == boost::filesystem::file_type::regular_file)
 					files.push_back(p);
 				else if (status.type() == boost::filesystem::file_type::directory_file)
 					directories.push_back(p);
-			}
-
+				return false; // don't stop
+			});
 			processed_done = true;
 		}
 
@@ -452,24 +450,23 @@ namespace chaos
             std::vector<size_t> child_path_index;
 
             // search the images (and their path)
-            boost::filesystem::directory_iterator end;
-            for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(directory_path); it != end; ++it)
-            {
-                boost::filesystem::path const& p = it->path();
-				if (boost::filesystem::status(p).type() != boost::filesystem::file_type::regular_file)
-					continue;
 
-                FIBITMAP* image = ImageTools::LoadImageFromFile(p); // XXX : do not call LoadMultipleImagesFromFile(...) because we are already considering all images in that directory as an animation (ignore animated GIF)
-                if (image != nullptr)
-                {
-                    child_images.push_back(image);
+			FileTools::ForEachRedirectedDirectoryContent(directory_path, [&child_images, &child_path_index](boost::filesystem::path const& p)
+			{
+				if (boost::filesystem::status(p).type() == boost::filesystem::file_type::regular_file)
+				{
+					FIBITMAP* image = ImageTools::LoadImageFromFile(p); // XXX : do not call LoadMultipleImagesFromFile(...) because we are already considering all images in that directory as an animation (ignore animated GIF)
+					if (image != nullptr)
+					{
+						child_images.push_back(image);
 
-                    boost::filesystem::path noext_path = p;
-                    noext_path.replace_extension();
-                    child_path_index.push_back(StringTools::GetStringNumSuffix(noext_path.string())); // only store the filename without the extension
-                }
-            }
-
+						boost::filesystem::path noext_path = p;
+						noext_path.replace_extension();
+						child_path_index.push_back(StringTools::GetStringNumSuffix(noext_path.string())); // only store the filename without the extension
+					}
+				}
+				return false; // don't stop
+			});
             // sort the images by path
             if (child_images.size() > 0)
             {
@@ -490,16 +487,6 @@ namespace chaos
             }
            return child_images;
         }
-
-
-
-
-
-
-
-
-
-
 
         BitmapInfoInput* FolderInfoInput::AddBitmapFileImpl(FilePathParam const& path, char const* name, TagType tag, AddFilesToFolderData& add_data)
         {

@@ -340,12 +340,12 @@ namespace chaos
 		return nullptr;
 	}
 
-	boost::filesystem::directory_iterator Game::GetResourceDirectoryIteratorFromConfig(nlohmann::json const & config, char const * config_name, char const * default_path) const
+	boost::filesystem::path Game::GetResourceDirectoryFromConfig(nlohmann::json const & config, char const * config_name, char const * default_path) const
 	{
 		// read in the config file the whole path
-		std::string directory;
-		if (JSONTools::GetAttribute(config, config_name, directory))
-			return FileTools::GetDirectoryIterator(directory);
+		boost::filesystem::path result;
+		if (JSONTools::GetAttribute(config, config_name, result))
+			return result;
 		// concat the argument path with 'resources'
 		if (default_path != nullptr)
 		{
@@ -356,23 +356,20 @@ namespace chaos
 				// compute resource path
 				boost::filesystem::path resources_path = application->GetResourcesPath();
 				boost::filesystem::path result_path = resources_path / default_path;
-
-				return FileTools::GetDirectoryIterator(result_path);
+				return result_path;
 			}
 		}
-		return boost::filesystem::directory_iterator();
+		return {};
 	}
 
 	template<typename FUNC>
 	bool Game::DoGenerateTiledMapEntity(nlohmann::json const & config, char const * property_name, char const * default_value, char const * extension, FUNC func)
 	{
 		// iterate the files and load the tilesets
-		boost::filesystem::directory_iterator end;
+		boost::filesystem::path path = GetResourceDirectoryFromConfig(config, property_name, default_value);
 
-		for (boost::filesystem::directory_iterator it = GetResourceDirectoryIteratorFromConfig(config, property_name, default_value); it != end; ++it)
+		return !FileTools::ForEachRedirectedDirectoryContent(path, [this, extension, func](boost::filesystem::path const &p)
 		{
-			boost::filesystem::path p = it->path();
-
 			if (FileTools::IsTypedFile(p, extension))
 			{
 				// create the tiledmap manager if necessary
@@ -380,13 +377,13 @@ namespace chaos
 				{
 					tiled_map_manager = new TiledMap::Manager;
 					if (tiled_map_manager == nullptr)
-						return false;
+						return true;
 				}
 				if (!func(tiled_map_manager.get(), p))
-					return false;
+					return true;
 			}
-		}
-		return true;
+			return false; // don't stop
+		});
 	}
 
 	bool Game::GenerateObjectTypeSets(nlohmann::json const & config, boost::filesystem::path const& config_path)
@@ -410,23 +407,24 @@ namespace chaos
 	bool Game::LoadLevels(nlohmann::json const & config, boost::filesystem::path const& config_path)
 	{
 		// iterate the files and load the levels
-		boost::filesystem::directory_iterator end;
-		for (boost::filesystem::directory_iterator it = GetResourceDirectoryIteratorFromConfig(config, "levels_directory", "levels"); it != end; ++it)
+		boost::filesystem::path path = GetResourceDirectoryFromConfig(config, "levels_directory", "levels");
+
+		FileTools::ForEachRedirectedDirectoryContent(path, [this](boost::filesystem::path const& p)
 		{
-			int level_index = StringTools::SkipAndAtoi(it->path().filename().string().c_str());
+			int level_index = StringTools::SkipAndAtoi(p.filename().string().c_str());
 
 			// create the level
-			Level * level = DoLoadLevel(it->path());
-			if (level == nullptr)
-				continue;
-			// initialize it
-			level->SetName(BoostTools::PathToName(it->path()).c_str());
-			level->SetPath(it->path());
-			level->level_index = level_index;
-			// store it
-			levels.push_back(level);
-		}
-
+			if (Level * level = DoLoadLevel(p))
+			{
+				// initialize it
+				level->SetName(BoostTools::PathToName(p).c_str());
+				level->SetPath(p);
+				level->level_index = level_index;
+				// store it
+				levels.push_back(level);
+			}
+			return false; // don't stop
+		});
 		// sort the levels
 		std::sort(levels.begin(), levels.end(),
 			[](shared_ptr<Level> & l1, shared_ptr<Level> & l2)

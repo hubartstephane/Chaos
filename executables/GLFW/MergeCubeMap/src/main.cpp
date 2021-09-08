@@ -135,14 +135,14 @@ protected:
 	bool LoadSkyboxBitmaps(boost::filesystem::path const & resources_path)
 	{
 		// load the images
-		boost::filesystem::directory_iterator end;
-		for (boost::filesystem::directory_iterator it = chaos::FileTools::GetDirectoryIterator(resources_path / "images"); it != end; ++it)
+		chaos::FileTools::ForEachRedirectedDirectoryContent(resources_path / "images", [this](boost::filesystem::path const &p) 
 		{
-			FIBITMAP * bitmap = chaos::ImageTools::LoadImageFromFile(it->path());
-			if (bitmap == nullptr)
-				continue;
-			skybox_bitmaps.push_back(bitmap);		
-		}
+			FIBITMAP * bitmap = chaos::ImageTools::LoadImageFromFile(p);
+			if (bitmap != nullptr)
+				skybox_bitmaps.push_back(bitmap);
+			return false; // don't stop
+		});
+
 		if (skybox_bitmaps.size() != 6)
 			return false;
 

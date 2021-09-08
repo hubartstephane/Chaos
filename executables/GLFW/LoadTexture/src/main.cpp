@@ -109,10 +109,11 @@ protected:
 		boost::filesystem::path image_path = resources_path / "Images";
 
 
-		boost::filesystem::directory_iterator end;
-		for (boost::filesystem::directory_iterator it = chaos::FileTools::GetDirectoryIterator(image_path); it != end; ++it)
-			texture_paths.push_back(it->path());
-
+		chaos::FileTools::ForEachRedirectedDirectoryContent(image_path, [this](boost::filesystem::path const& p)
+		{
+			texture_paths.push_back(p);
+			return false; // do not stop
+		});
 		texture = GenerateTexture(texture_index);
 		if (texture == nullptr)
 			return false;

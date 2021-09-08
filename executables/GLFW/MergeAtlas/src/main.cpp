@@ -51,14 +51,13 @@ void LoadBitmaps(std::vector<FIBITMAP*> & atlas_bitmaps)
 	// iterate on the directory
 	boost::filesystem::path resources_path = application->GetResourcesPath();
 
-	boost::filesystem::directory_iterator end;
-	for (boost::filesystem::directory_iterator it = chaos::FileTools::GetDirectoryIterator(resources_path / "images"); it != end; ++it)
+	chaos::FileTools::ForEachRedirectedDirectoryContent(resources_path / "images", [&atlas_bitmaps](boost::filesystem::path const &p)
 	{
-		FIBITMAP * bitmap = chaos::ImageTools::LoadImageFromFile(it->path());
-		if (bitmap == nullptr)
-			continue;
-		atlas_bitmaps.push_back(bitmap);		
-	}
+		FIBITMAP * bitmap = chaos::ImageTools::LoadImageFromFile(p);
+		if (bitmap != nullptr)
+			atlas_bitmaps.push_back(bitmap);	
+		return false; // do not stop
+	});
 }
 
 void ReleaseBitmaps(std::vector<FIBITMAP*> & atlas_bitmaps)

@@ -135,12 +135,18 @@ namespace chaos
 			if (application == nullptr)
 				return false;
 			// try to get the source and build directories
-			boost::filesystem::path const& src_path = application->GetRedirectionSourcePath();
-			if (src_path.empty())
+			std::vector<boost::filesystem::path> const& src_paths = application->GetRedirectionSourcePaths();
+			if (src_paths.empty())
 				return false;
 			boost::filesystem::path const& build_path = application->GetRedirectionBuildPath();
 			if (build_path.empty())
 				return false;
+
+
+			auto src_path = src_paths[0];
+
+
+
 
 			// search whether incomming path is inside the build_path
 			auto it1 = p.begin();

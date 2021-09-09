@@ -75,9 +75,9 @@ namespace chaos
 
 #if _DEBUG
 		/** set redirection file directories */
-		void SetFileRedirectionDirectories(boost::filesystem::path const& build_path, boost::filesystem::path const& src_path);
-		/** get the redirected source directory */
-		boost::filesystem::path const& GetRedirectionSourcePath() const { return redirection_source_path; };
+		void SetFileRedirectionDirectories( boost::filesystem::path & build_path, boost::filesystem::path & src_path, std::string const & extra_path);
+		/** get the redirected source directories */
+		std::vector<boost::filesystem::path> const& GetRedirectionSourcePaths() const { return redirection_source_paths; };
 		/** get the redirected build directory */
 		boost::filesystem::path const& GetRedirectionBuildPath() const { return redirection_build_path; };
 #endif
@@ -140,8 +140,8 @@ namespace chaos
 
 		/** redirection source directories */
 #if _DEBUG
-		boost::filesystem::path redirection_source_path;
 		boost::filesystem::path redirection_build_path;
+		std::vector<boost::filesystem::path> redirection_source_paths;
 #endif
 
 		/** whether to show the console by default (can be overriden in constructor) */
@@ -158,12 +158,29 @@ namespace chaos
 		shared_ptr<APPLICATION_TYPE> application = new APPLICATION_TYPE(params...);
 		if (application != nullptr)
 		{
-			// XXX : under normal circonstances, you should not use CHAOS_PROJECT_SRC_PATH, CHAOS_PROJECT_BUILD_PATH in libraries
-			//       here, this is an exception because this function is a template and so is not compiled in libraries but by caller code instead
+			// XXX: under normal circonstances, you should not use CHAOS_PROJECT_SRC_PATH, CHAOS_PROJECT_BUILD_PATH in libraries
+			//      here, this is an exception because this function is a template and so is not compiled in libraries but by caller code instead
+			//
+			// XXX: premake defines {...} function produces errors whenever the string contains some special characters like ';'
+			//      that why they are encoded in Base64
 #if CHAOS_CAN_REDIRECT_RESOURCE_FILES
-			static boost::filesystem::path src_path = CHAOS_PROJECT_SRC_PATH;
-			static boost::filesystem::path build_path = CHAOS_PROJECT_BUILD_PATH;
-			application->SetFileRedirectionDirectories(build_path, src_path);
+			// build directory
+			Buffer<char> decoded_build_path = MyBase64().Decode(CHAOS_PROJECT_BUILD_PATH);
+			boost::filesystem::path build_path = std::string(decoded_build_path.data, decoded_build_path.bufsize);
+			// source directory
+			boost::filesystem::path src_path;
+#if defined CHAOS_PROJECT_SRC_PATH
+			Buffer<char> decoded_src_path = MyBase64().Decode(CHAOS_PROJECT_SRC_PATH);
+			src_path = std::string(decoded_src_path.data, decoded_src_path.bufsize);
+#endif
+			// extra sources directories
+			std::string extra_path;
+#if defined CHAOS_PROJECT_DIRECT_RESOURCE_PATH
+			Buffer<char> decoded_extra_path = MyBase64().Decode(CHAOS_PROJECT_DIRECT_RESOURCE_PATH);
+			extra_path = std::string(decoded_extra_path.data, decoded_extra_path.bufsize);
+#endif
+			// prepare the application for direct access
+			application->SetFileRedirectionDirectories(build_path, src_path, extra_path);
 #endif
 			return application->Run(argc, argv, env);
 		}

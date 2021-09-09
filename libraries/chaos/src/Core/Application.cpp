@@ -275,10 +275,19 @@ namespace chaos
 	}
 
 #if _DEBUG
-	void Application::SetFileRedirectionDirectories(boost::filesystem::path const & build_path, boost::filesystem::path const & src_path)
+	void Application::SetFileRedirectionDirectories(boost::filesystem::path & build_path, boost::filesystem::path & src_path, std::string const & extra_path)
 	{
-		redirection_build_path = build_path;
-		redirection_source_path = src_path;		
+		redirection_build_path = std::move(build_path);
+		if (!src_path.empty())
+			redirection_source_paths.push_back(std::move(src_path));
+
+		std::vector<std::string> extra = StringTools::Split(extra_path.c_str(), ';');
+		for (std::string & e : extra)
+		{
+			boost::filesystem::path p = std::move(e);
+			if (!p.empty())
+				redirection_source_paths.push_back(std::move(e));
+		}
 	}
 #endif // _DEBUG
 

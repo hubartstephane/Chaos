@@ -31,20 +31,18 @@ namespace chaos
 		std::vector<Class *> classes;
 
 		// Step 1 : load all classes (no full initialization, ignore parent). Register them (without inheritance data in classes list)
-
-
-
-		boost::filesystem::directory_iterator end;
-		for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(path); it != end; ++it)
+		FileTools::ForEachRedirectedDirectoryContent(path, [this, &classes](boost::filesystem::path const & p) 
 		{
-			Class* cls = DoLoadClassHelper<Class *>(it->path(), [] (char const* class_name, nlohmann::json const& json)
+			Class* cls = DoLoadClassHelper<Class *>(p, [] (char const* class_name, nlohmann::json const& json)
 			{
 				return Class::DoDeclareSpecialClassStep1(class_name, json); // a 2 steps operation 
 			});
 			// remember the class
 			if (cls != nullptr)
-				classes.push_back(cls);
-		}
+				classes.push_back(cls);		
+		
+			return false; // don't stop
+		});
 
 		// Step 2 : fix parent classes
 		std::vector<Class*> failing_parent_classes;

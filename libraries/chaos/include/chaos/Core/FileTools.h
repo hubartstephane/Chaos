@@ -18,8 +18,6 @@ namespace chaos
 		/** iterate over all entries in all possible directories (until func returns true) */
 		bool ForEachRedirectedDirectoryContent(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func);
 
-		/** returns an iterator over a directory (can use resource direct access) */
-		boost::filesystem::directory_iterator GetDirectoryIterator(FilePathParam const & path);
 		/** returns a filepath that is unused */
 		boost::filesystem::path GetUniquePath(FilePathParam const & path, char const * format, bool create_empty_file, int max_iterations = -1);
 

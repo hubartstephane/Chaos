@@ -206,31 +206,6 @@ namespace chaos
 			return false;
 		}
 
-
-
-
-		boost::filesystem::directory_iterator GetDirectoryIterator(FilePathParam const& path)
-		{
-			boost::filesystem::directory_iterator result;
-			ForEachRedirectedPath(path, [&result](boost::filesystem::path const& p)
-			{
-				try
-				{
-					if (boost::filesystem::is_directory(p))
-					{
-						result = boost::filesystem::directory_iterator(p);
-						if (result != boost::filesystem::directory_iterator())
-							return true;
-					}
-				}
-				catch (...)
-				{
-				}
-				return false;
-			});
-			return result;
-		}
-
 		bool IsTypedFile(FilePathParam const& path, char const* expected_ext)
 		{
 			boost::filesystem::path const& resolved_path = path.GetResolvedPath();

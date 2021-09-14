@@ -116,6 +116,10 @@ namespace chaos
 
 	bool GameHUDComponent::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
+		bool visible = true;
+		JSONTools::GetAttribute(json, "visible", visible);
+		if (!visible)
+			Show(false);
 		return true;
 	}
 

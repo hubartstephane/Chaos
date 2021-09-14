@@ -10,7 +10,6 @@
   },
 
 
-
   "INSTRUCTIONS_ID": {
     "generator_params": {
       "line_height": 40
@@ -60,13 +59,7 @@
 
   "SCORE_ID": {
 
-    "format": "[LEFTSCOREICON] %04d [RIGHTSCOREICON]",
-    "generator_params": {
-      "hotpoint": "bottom",
-      "line_height": 100,
-      "position": [ 0.0, 20.0 ]
-    }
-
+    "visible": false
   },
   "LEVEL_TITLE_ID": {
 

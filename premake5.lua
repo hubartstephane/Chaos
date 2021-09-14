@@ -863,8 +863,8 @@ solution "Chaos"
   CURRENT_GROUP = "executables"
   ProcessSubPremake("executables")
 
-  CURRENT_GROUP = "resources"
-  ProcessSubPremake("resources")
+  CURRENT_GROUP = "shared_resources"
+  ProcessSubPremake("shared_resources")
 
 -- =============================================================================
 -- Propagate all dependencies

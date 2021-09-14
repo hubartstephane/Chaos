@@ -4,6 +4,6 @@
 
   WindowedApp()
   DependOnLib("CHAOS")
-  DependOnLib("SharedImages")
-  DependOnLib("SharedImages2")
+  DependOnLib("CommonFonts")
+  DependOnLib("CommonIcons")
   DeclareToCopyFile("resources")

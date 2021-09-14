@@ -96,6 +96,37 @@ namespace chaos
 			return result;
 		}
 
+#if _DEBUG // we cannot use 'CHAOS_CAN_REDIRECT_RESOURCE_FILES' inside libraries !!!
+
+		bool GetRedirectedPath(boost::filesystem::path const& p, boost::filesystem::path const & build_path, boost::filesystem::path const& src_path, boost::filesystem::path& redirected_path)
+		{
+			// work with absolute path
+			if (p.is_relative())
+			{
+				return GetRedirectedPath(boost::filesystem::current_path() / p, build_path, src_path, redirected_path);
+			}
+			// search whether incomming path is inside the build_path
+			auto it1 = p.begin();
+			auto it2 = build_path.begin();
+
+			while (it1 != p.end() && it2 != build_path.end())
+			{
+				if (*it1 != *it2)
+					return false;
+				++it1;
+				++it2;
+			}
+			if (it2 != build_path.end()) // has all directories of build_path been consummed ?
+				return false;
+
+			// make substitution, build_path prefix to src_path prefix
+			boost::filesystem::path relative_path = p.lexically_relative(build_path);
+			redirected_path = (src_path / relative_path);
+			redirected_path.normalize();
+			return true;
+		}
+#endif // _DEBUG
+
 		CHAOS_HELP_TEXT(CMD, "-NoDirectResourceFiles")
 
 		bool ForEachRedirectedPath(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func)
@@ -107,109 +138,50 @@ namespace chaos
 			{
 				if (!application->HasCommandLineFlag("-NoDirectResourceFiles")) // CMDLINE
 				{
-					boost::filesystem::path redirected_path;
-					if (GetRedirectedPath(resolved_path, redirected_path))
+					boost::filesystem::path const& build_path = application->GetRedirectionBuildPath();
+					if (!build_path.empty())
 					{
-						if (func(redirected_path))
-							return true;
+						std::vector<boost::filesystem::path> const& src_paths = application->GetRedirectionSourcePaths();
+						for (boost::filesystem::path const& src_path : src_paths)
+						{
+							boost::filesystem::path redirected_path;
+							if (GetRedirectedPath(resolved_path, build_path, src_path, redirected_path))
+							{
+								if (func(redirected_path))
+									return true;
+							}
+						}
 					}
 				}
 			}
-#endif
+#endif // _DEBUG
 			return func(resolved_path);
 		}
 
-#if _DEBUG // we cannot use 'CHAOS_CAN_REDIRECT_RESOURCE_FILES' inside libraries !!!
-
-
-
-
-
-
-
-
-
-		bool GetRedirectedPath(boost::filesystem::path const& p, boost::filesystem::path& redirected_path)
+		bool ForEachRedirectedDirectoryContent(FilePathParam const& p, std::function<bool(boost::filesystem::path const& p)> func)
 		{
-			Application const* application = Application::GetConstInstance();
-			if (application == nullptr)
-				return false;
-			// try to get the source and build directories
-			std::vector<boost::filesystem::path> const& src_paths = application->GetRedirectionSourcePaths();
-			if (src_paths.empty())
-				return false;
-			boost::filesystem::path const& build_path = application->GetRedirectionBuildPath();
-			if (build_path.empty())
-				return false;
+			std::vector<boost::filesystem::path> processed_relative_paths;
 
-
-			auto src_path = src_paths[0];
-
-
-
-
-			// search whether incomming path is inside the build_path
-			auto it1 = p.begin();
-			auto it2 = build_path.begin();
-
-			while (it1 != p.end() && it2 != build_path.end())
+			auto process_path_func = [&processed_relative_paths, func](boost::filesystem::path const& p)
 			{
-				auto u = *it1;
-				auto v = *it2;
-
-
-				if (*it1 != *it2)
-					return false;
-				++it1;
-				++it2;
-			}
-			if (it2 != build_path.end()) // has all directories of build_path been consummed ?
-				return false;
-
-			// make substitution, build_path prefix to src_path prefix
-
-			auto a = src_path;
-			auto b = build_path;
-			auto c = p;
-			auto d = p.lexically_relative(build_path);
-
-
-
-			redirected_path = (src_path / p.lexically_relative(build_path));
-			redirected_path.normalize();
-			return true;
-		}
-#endif // _DEBUG
-
-
-		bool ForEachRedirectedDirectoryContent(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func)
-		{
-			boost::filesystem::directory_iterator it;
-			ForEachRedirectedPath(path, [&it](boost::filesystem::path const& p)
-			{
-				try
+				if (boost::filesystem::is_directory(p))
 				{
-					if (boost::filesystem::is_directory(p))
+					for (auto it = boost::filesystem::directory_iterator(p) ; it != boost::filesystem::directory_iterator(); ++it)
 					{
-						it = boost::filesystem::directory_iterator(p);
-						if (it != boost::filesystem::directory_iterator())
+#if _DEBUG // we cannot use 'CHAOS_CAN_REDIRECT_RESOURCE_FILES' inside libraries !!!
+						boost::filesystem::path relative_path = it->path().lexically_relative(p);
+						if (std::find(processed_relative_paths.begin(), processed_relative_paths.end(), relative_path) != processed_relative_paths.end())
+							continue;
+						processed_relative_paths.push_back(relative_path);
+#endif
+						if (func(it->path()))
 							return true;
 					}
 				}
-				catch (...)
-				{
-				}
 				return false;
-			});
+			};
 
-			// iterate until functor returns true
-			while (it != boost::filesystem::directory_iterator())
-			{
-				if (func(it->path()))
-					return true;
-				++it;
-			}
-			return false;
+			return ForEachRedirectedPath(p, process_path_func);
 		}
 
 		bool IsTypedFile(FilePathParam const& path, char const* expected_ext)

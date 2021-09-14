@@ -466,6 +466,9 @@ function OnConfig(in_kind, proj_type, plat, conf, proj)
    local targ = path.join(PROJECT_BUILD_PATH, conf, plat)
    targetdir(targ)
    proj.targetdir[plat][conf] = targ
+   
+   -- by default, the editor start the exe in the source path. We prefere to start where it has been build
+   debugdir('$(TargetDir)')
 
    -- where the includes are for the project
    local inc = path.join(PROJECT_SRC_PATH, "include")

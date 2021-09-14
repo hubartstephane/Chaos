@@ -75,7 +75,7 @@ namespace chaos
 
 #if _DEBUG
 		/** set redirection file directories */
-		void SetFileRedirectionDirectories( boost::filesystem::path & build_path, boost::filesystem::path & src_path, std::string const & extra_path);
+		void SetFileRedirectionDirectories( boost::filesystem::path const & build_path, boost::filesystem::path const & src_path, std::string const & extra_path);
 		/** get the redirected source directories */
 		std::vector<boost::filesystem::path> const& GetRedirectionSourcePaths() const { return redirection_source_paths; };
 		/** get the redirected build directory */
@@ -162,7 +162,7 @@ namespace chaos
 			//      here, this is an exception because this function is a template and so is not compiled in libraries but by caller code instead
 			//
 			// XXX: premake defines {...} function produces errors whenever the string contains some special characters like ';'
-			//      that why they are encoded in Base64
+			//      that's why they are encoded in Base64
 #if CHAOS_CAN_REDIRECT_RESOURCE_FILES
 			// build directory
 			Buffer<char> decoded_build_path = MyBase64().Decode(CHAOS_PROJECT_BUILD_PATH);

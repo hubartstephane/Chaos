@@ -2,5 +2,5 @@
 -- ROOT_PATH/shared_resources
 -- =============================================================================
 
-ProcessSubPremake("SharedImages")
-ProcessSubPremake("SharedImages2")
+ProcessSubPremake("CommonFonts")
+ProcessSubPremake("CommonIcons")

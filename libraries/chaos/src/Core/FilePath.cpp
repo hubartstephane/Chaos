@@ -43,7 +43,7 @@ namespace chaos
 
 		boost::filesystem::path const * p = nullptr; // a pointer on a boost path
 
-													 // ensure we have a boost path object on which we can work
+		// ensure we have a boost path object on which we can work
 		if (basic_path != nullptr)
 		{
 			temp_path = basic_path;

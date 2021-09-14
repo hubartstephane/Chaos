@@ -30,8 +30,8 @@ namespace chaos
 		bool WriteFileLines(FilePathParam const & path, std::vector<std::string> const & lines);
 
 		/** redirect any access (under conditions) to the direct resources path of the project (not the build directory) */
-#if CHAOS_CAN_REDIRECT_RESOURCE_FILES
-		bool GetRedirectedPath(boost::filesystem::path const & p, boost::filesystem::path & redirected_path);
+#if _DEBUG
+		bool GetRedirectedPath(boost::filesystem::path const & p, boost::filesystem::path const & build_path, boost::filesystem::path const& src_path, boost::filesystem::path & redirected_path);
 #endif
 
 #endif

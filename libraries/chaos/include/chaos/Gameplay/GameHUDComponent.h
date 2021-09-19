@@ -16,6 +16,7 @@ namespace chaos
 
 	class GameHUDNotificationComponent;
 	class GameHUDScoreComponent;
+	class GameHUDBestScoreComponent;
 	class GameHUDFramerateComponent;
 	class GameHUDTimeoutComponent;
 	class GameHUDLifeComponent;
@@ -244,6 +245,26 @@ namespace chaos
 		float lifetime = -1.0f;
 		/** the current time */
 		float current_time = 0.0f;
+	};
+
+	// ====================================================================
+	// GameHUDBestScoreComponent
+	// ====================================================================
+
+	class GameHUDBestScoreComponent : public GameHUDCacheValueTextComponent<int>
+	{
+	public:
+
+		/** constructor */
+		GameHUDBestScoreComponent(char const* in_text = "Best score: %d");
+		/** constructor */
+		GameHUDBestScoreComponent(char const* in_text, ParticleTextGenerator::GeneratorParams const& in_params) :
+			GameHUDCacheValueTextComponent<int>(in_text, in_params) {}
+
+	protected:
+
+		/** override */
+		virtual bool QueryValue(int& result) const override;
 	};
 
 	// ====================================================================

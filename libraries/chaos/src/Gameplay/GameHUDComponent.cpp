@@ -275,6 +275,29 @@ namespace chaos
 	}
 
 	// ====================================================================
+	// GameHUDBestScoreComponent
+	// ====================================================================
+
+	GameHUDBestScoreComponent::GameHUDBestScoreComponent(char const* in_text) :
+		GameHUDCacheValueTextComponent<int>(in_text)
+	{
+		generator_params.line_height = 60.0f;
+		generator_params.font_info_name = "normal";
+		generator_params.position = glm::vec2(0.0f, -110.0f);
+		generator_params.hotpoint = Hotpoint::CENTER;
+	}
+
+	bool GameHUDBestScoreComponent::QueryValue(int & result) const
+	{
+		if (Game const * game = GetGame())
+		{
+			result = game->GetBestScore();
+			return true;
+		}
+		return false;
+	}
+
+	// ====================================================================
 	// GameHUDScoreComponent
 	// ====================================================================
 

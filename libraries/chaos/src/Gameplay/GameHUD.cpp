@@ -224,10 +224,7 @@ namespace chaos
 		// the best score
 		if (game->GetBestScore() > 0)
 		{
-			std::string best_score = StringTools::Printf("Best score: %d", game->GetBestScore());
-			RegisterComponent(GameHUDKeys::BEST_SCORE_ID, new GameHUDTextComponent(
-				best_score.c_str(),
-				ParticleTextGenerator::GeneratorParams("normal", 60.0f, glm::vec2(0.0f, -110.0f), Hotpoint::CENTER)));
+			RegisterComponent(GameHUDKeys::BEST_SCORE_ID, new GameHUDBestScoreComponent());
 		}
 		// the instructions
 		char const * game_instructions = game->GetGameInstructions();

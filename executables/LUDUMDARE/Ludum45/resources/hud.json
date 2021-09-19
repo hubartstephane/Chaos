@@ -1,6 +1,6 @@
 {
   "BEST_SCORE_ID": {
-    "format": "[LEFTSCOREICON] %s [RIGHTSCOREICON]",
+    "format": "[LEFTSCOREICON] Best score: %d [RIGHTSCOREICON]",
     "generator_params": {
       "hotpoint": "top",
       "line_height": 60,

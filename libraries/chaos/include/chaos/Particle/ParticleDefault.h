@@ -24,7 +24,7 @@ namespace chaos
 		static constexpr int TEXTURE_HORIZONTAL_FLIP = (1 << 0);
 		static constexpr int TEXTURE_VERTICAL_FLIP = (1 << 1);
 		static constexpr int TEXTURE_DIAGONAL_FLIP = (1 << 2);
-		static constexpr int HEIGHT_BITS_MODE = (1 << 4); // whether we want to interpolate texel or have an old 8BIT MODE
+		static constexpr int EIGHT_BITS_MODE = (1 << 4); // whether we want to interpolate texel or have an old 8BIT MODE
 	};
 
 	namespace VertexFlags
@@ -35,10 +35,10 @@ namespace chaos
 		static constexpr int TOP_RIGHT = 4;
 		static constexpr int CORNER_MASK = 7;
 
-		static constexpr int HEIGHT_BITS_MODE = (1 << 4);
+		static constexpr int EIGHT_BITS_MODE = (1 << 4);
 	};
 
-	static_assert(ParticleFlags::HEIGHT_BITS_MODE == VertexFlags::HEIGHT_BITS_MODE);
+	static_assert(ParticleFlags::EIGHT_BITS_MODE == VertexFlags::EIGHT_BITS_MODE);
 
 	/** ParticleCorners : represents 2 corners of a particle */
 	class ParticleCorners

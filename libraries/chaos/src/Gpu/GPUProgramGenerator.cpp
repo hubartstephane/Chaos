@@ -15,7 +15,7 @@ namespace chaos
 		const int TOP_LEFT     = 3;
 		const int TOP_RIGHT    = 4;		
 		const int CORNER_MASK  = 7;
-		const int HEIGHT_BITS_MODE = (1 << 4);			
+		const int EIGHT_BITS_MODE = (1 << 4);			
 		)SHAREDSHADERCODE");
 
 		// some functions to extract flags from the Z component of texcoord and apply half pixel correction
@@ -44,7 +44,7 @@ namespace chaos
 		}
 		int ExtractFragmentFlags(int flags)
 		{
-			return (flags & HEIGHT_BITS_MODE); // remove all other flags (keep only 8bit)
+			return (flags & EIGHT_BITS_MODE); // remove all other flags (keep only 8bit)
 		}
 		)SHAREDSHADERCODE");
 	}

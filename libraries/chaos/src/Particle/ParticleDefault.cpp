@@ -56,8 +56,8 @@ namespace chaos
 
 	void GenerateVertexFlagAttributes(int flags, int* vertex_flags) // in order BL, BR, TR, TL
 	{
-		// just keep the HEIGHT_BITS_MODE flag (VertexFlags::HEIGHT_BITS_MODE == ParticleFlags::HEIGHT_BITS_MODE)
-		int output_flags = (flags & ParticleFlags::HEIGHT_BITS_MODE);
+		// just keep the EIGHT_BITS_MODE flag (VertexFlags::EIGHT_BITS_MODE == ParticleFlags::EIGHT_BITS_MODE)
+		int output_flags = (flags & ParticleFlags::EIGHT_BITS_MODE);
 
 		vertex_flags[0] = VertexFlags::BOTTOM_LEFT | output_flags;
 		vertex_flags[1] = VertexFlags::BOTTOM_RIGHT | output_flags;

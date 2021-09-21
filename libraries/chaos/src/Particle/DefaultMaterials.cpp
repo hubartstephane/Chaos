@@ -57,7 +57,7 @@ namespace chaos
 				if (vs_texcoord.z >= 0.0)
 				{
 					// Using texel interpolation
-					if ((vs_flags & HEIGHT_BITS_MODE) == 0)
+					if ((vs_flags & EIGHT_BITS_MODE) == 0)
 					{
 						color = texture(material, vs_texcoord);
 					}

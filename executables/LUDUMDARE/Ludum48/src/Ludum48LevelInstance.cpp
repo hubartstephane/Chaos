@@ -190,7 +190,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 			if (player_particle != nullptr)
 			{
 				box2 player_box = player_particle->bounding_box;
-				player_box.position += player_particle->offset * glm::vec2(32.0f, 32.0f); // HACK shu48
+				player_box.position += player_particle->offset * glm::vec2(32.0f, 32.0f); // HACK 
 				player_box.half_size *= 0.01f;
 
 				TMTileCollisionIterator it = GetTileCollisionIterator(player_box, COLLISION_GATE, false);

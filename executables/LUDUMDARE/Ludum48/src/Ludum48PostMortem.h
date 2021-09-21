@@ -174,7 +174,7 @@ Dans GameHUD la notion de text/format n'est pas tres claire'
 
 		Particle Spawner ... voir si on ne peut pas avoir
 
-		HEIGHT_BIT_FLAG AUTOMATIQUEMENT ... voir d autres choses
+		EIGHT_BIT_FLAG AUTOMATIQUEMENT ... voir d autres choses
 
 		BitmapInfo a coller dans une particle ou GID
 

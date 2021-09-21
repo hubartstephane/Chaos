@@ -802,7 +802,7 @@ void LudumLevelInstance::CreatePendingDiamonds()
 					{
 						particle.bounding_box = grid_info.GetBoundingBox(cell);
 						particle.type = GameObjectType::Diamond;
-						particle.flags |= ParticleFlags::HEIGHT_BITS_MODE;
+						particle.flags |= ParticleFlags::EIGHT_BITS_MODE;
 					}
 				});
 				cell.create_diamond = false;

@@ -177,7 +177,7 @@ namespace chaos
 		std::string collision_mask = layer->GetPropertyValueString("COLLISION_MASK", "");
 		ComputeLayerCollisionMask(collision_mask.c_str());
 
-		height_bits_mode = layer->GetPropertyValueBool("HEIGHT_BITS_MODE", height_bits_mode);
+		eight_bits_mode = layer->GetPropertyValueBool("EIGHT_BITS_MODE", eight_bits_mode);
 
 		// copy the offset / name
 		offset = layer->offset;

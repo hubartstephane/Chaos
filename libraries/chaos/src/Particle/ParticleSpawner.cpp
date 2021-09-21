@@ -95,6 +95,10 @@ namespace chaos
 		if (!generator->Generate(in_text, generator_result, params))
 			return {};
 
+		// shu48
+
+
+
 		//return SpawnParticles()
 
 

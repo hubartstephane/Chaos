@@ -177,7 +177,7 @@ namespace chaos
 			return false;
 		}
 
-		if (!layer_instance->height_bits_mode)
+		if (!layer_instance->eight_bits_mode)
 		{
 			for (size_t i = 0; i < particle_count; ++i)
 				accessor[i] = particles[i];
@@ -188,7 +188,7 @@ namespace chaos
 			{
 				TMParticle& dst = accessor[i];
 				dst = particles[i];
-				dst.flags |= ParticleFlags::HEIGHT_BITS_MODE;
+				dst.flags |= ParticleFlags::EIGHT_BITS_MODE;
 			}
 		}
 		return true;

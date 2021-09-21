@@ -68,11 +68,12 @@ namespace chaos
 
 	bool Class::DoDeclareSpecialClassStep3()
 	{
-		if (parent->create_instance_func != nullptr) // check whether is instanciable !
+		// check whether it is instanciable
+		if (parent->CanCreateInstance()) 
 		{
 			create_instance_func = [this]()
 			{
-				Object* result = parent->CreateInstance();
+				Object* result = parent->create_instance_func();
 				if (result != nullptr)
 				{
 					JSONSerializable* serializable = auto_cast(result);
@@ -80,6 +81,21 @@ namespace chaos
 						serializable->SerializeFromJSON(json_data);
 				}
 				return result;
+			};
+		}
+
+		// check whether it is temp instanciable
+		if (parent->CanCreateTempInstance()) 
+		{
+			create_temp_instance_func = [this](std::function<void(Object*)> func)
+			{
+				parent->create_temp_instance_func([this, func](Object * instance)
+				{
+					JSONSerializable* serializable = auto_cast(instance);
+					if (serializable != nullptr)
+						serializable->SerializeFromJSON(json_data);
+					func(instance);
+				});
 			};
 		}
 		return true;
@@ -97,14 +113,18 @@ namespace chaos
 
 	Object * Class::CreateInstance() const
 	{
-		if (!CanCreateInstance())
-		{
-			Log::Error("Class::CreateInstance : the class [%s] cannot be instanciated", class_name.c_str());
-			return nullptr;
-		}
-		if (create_instance_func)
+		if (CanCreateInstance())
 			return create_instance_func();
+		Log::Error("Class::CreateInstance : the class [%s] cannot be instanciated", class_name.c_str());
 		return nullptr;
+	}
+
+	void Class::WithTempInstance(std::function<void(Object*)> func) const
+	{
+		if (CanCreateTempInstance())
+			create_temp_instance_func(func);
+		else
+			Log::Error("Class::WithTempInstance : the class [%s] cannot be instanciated", class_name.c_str());
 	}
 
 	bool Class::IsDeclared() const

@@ -39,6 +39,8 @@ namespace chaos
 
 		/** method to create an instance of the object */
 		Object* CreateInstance() const;
+		/** create a temporary instance on the stack an call the functor on it */
+		void WithTempInstance(std::function<void(Object*)> func) const;
 		/** returns whether the class has been registered */
 		bool IsDeclared() const;
 		/** gets the class size */
@@ -49,6 +51,8 @@ namespace chaos
 		std::string const& GetClassName() const { return class_name; }
 		/** returns whether we can create instances */
 		bool CanCreateInstance() const { return create_instance_func != nullptr; }
+		/** returns whether we can create instances */
+		bool CanCreateTempInstance() const { return create_temp_instance_func != nullptr; }
 		/** gets the depth of the class in the inheritance hierarchy */
 		size_t GetDepth() const;
 
@@ -90,7 +94,15 @@ namespace chaos
 				result->declared = true;
 				// instance constructible only if derives from Object
 				if constexpr (std::is_base_of_v<Object, CLASS_TYPE>)
+				{
 					result->create_instance_func = []() { return new CLASS_TYPE; };
+
+					result->create_temp_instance_func = [](std::function<void(Object*)> func)
+					{
+						CLASS_TYPE instance;
+						func(&instance);
+					};
+				}
 				// the parent is accessed, but not necessaraly initialized yet
 				if (!std::is_same_v<PARENT_CLASS_TYPE, EmptyClass>)
 					result->parent = GetClassInstance<PARENT_CLASS_TYPE>();
@@ -141,6 +153,8 @@ namespace chaos
 		bool declared = false;
 		/** create an instance of the object delegate */
 		std::function<Object* ()> create_instance_func;
+		/** delegate to create a temporary instance of the object on the stack and call a functor on it */
+		std::function<void(std::function<void(Object*)>)> create_temp_instance_func;
 		/** additionnal initialization for JSONSerializable objects */
 		nlohmann::json json_data;
 	};

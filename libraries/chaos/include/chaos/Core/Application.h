@@ -104,10 +104,8 @@ namespace chaos
 
 		/** loading the configuration file */
 		bool LoadConfigurationFile();
-
 		/** load the extra classes */
 		virtual bool LoadClasses();
-
 		/** log some application information */
 		virtual void LogExecutionInformation();
 

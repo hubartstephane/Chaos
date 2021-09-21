@@ -20,6 +20,21 @@ public:
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
+#if 0
+	chaos::ClassLoader loader;
+	loader.LoadClassesInDirectory("resources/classes");
+
+
+			auto ccc = chaos::Class::FindClass("classes2");
+		
+		ccc->WithTempInstance([](chaos::Object* ob)
+		{
+			ob = ob;
+		});
+#endif
+
+
+
 	chaos::WindowParams params;
 	params.monitor = nullptr;
 	params.width = 500;

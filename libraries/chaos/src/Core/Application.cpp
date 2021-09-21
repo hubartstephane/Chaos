@@ -69,21 +69,6 @@ namespace chaos
 				loader.LoadClassesInDirectory(classes_directory);
 			}
 		}
-
-		auto ccc = Class::FindClass("classes2");
-		
-		ccc->WithTempInstance([](Object* ob)
-		{
-			ob = ob;
-		});
-
-
-
-
-
-
-
-
 		return true;
 	}
 

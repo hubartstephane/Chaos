@@ -85,11 +85,11 @@ namespace chaos
 		}
 
 		// check whether it is temp instanciable
-		if (parent->CanCreateTempInstance()) 
+		if (parent->CanCreateInstanceOnStack()) 
 		{
-			create_temp_instance_func = [this](std::function<void(Object*)> func)
+			create_instance_on_stack_func = [this](std::function<void(Object*)> func)
 			{
-				parent->create_temp_instance_func([this, func](Object * instance)
+				parent->create_instance_on_stack_func([this, func](Object * instance)
 				{
 					JSONSerializable* serializable = auto_cast(instance);
 					if (serializable != nullptr)
@@ -119,12 +119,15 @@ namespace chaos
 		return nullptr;
 	}
 
-	void Class::WithTempInstance(std::function<void(Object*)> func) const
+	bool Class::CreateInstanceOnStack(std::function<void(Object*)> func) const
 	{
-		if (CanCreateTempInstance())
-			create_temp_instance_func(func);
-		else
-			Log::Error("Class::WithTempInstance : the class [%s] cannot be instanciated", class_name.c_str());
+		if (!CanCreateInstanceOnStack())
+		{
+			Log::Error("Class::CreateInstanceOnStack : the class [%s] cannot be instanciated", class_name.c_str());
+			return false;
+		}
+		create_instance_on_stack_func(func);
+		return true;			
 	}
 
 	bool Class::IsDeclared() const

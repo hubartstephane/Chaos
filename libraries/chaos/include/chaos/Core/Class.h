@@ -40,7 +40,34 @@ namespace chaos
 		/** method to create an instance of the object */
 		Object* CreateInstance() const;
 		/** create a temporary instance on the stack an call the functor on it */
-		void WithTempInstance(std::function<void(Object*)> func) const;
+		bool CreateInstanceOnStack(std::function<void(Object*)> func) const;
+		/** create a temporary instance on the stack an call the functor on it */
+#if 0
+		template<typename T, typename RESULT_TYPE>
+		RESULT_TYPE CreateInstanceOnStack2(std::function<RESULT_TYPE(T*)> func) const
+		{
+			static_assert(std::is_base_of_v<Object, T>);
+
+			RESULT_TYPE result;
+			CreateInstanceOnStack([func, &result](Object * object)
+			{
+				result = func(auto_cast(object));
+			});
+			return result;
+		}
+#endif
+
+		template<typename T>
+		void CreateInstanceOnStack2(std::function<void(T*)> func) const
+		{
+			static_assert(std::is_base_of_v<Object, T>);
+
+			CreateInstanceOnStack([func](Object * object)
+			{
+				func(auto_cast(object));
+			});
+		}
+
 		/** returns whether the class has been registered */
 		bool IsDeclared() const;
 		/** gets the class size */
@@ -52,7 +79,7 @@ namespace chaos
 		/** returns whether we can create instances */
 		bool CanCreateInstance() const { return create_instance_func != nullptr; }
 		/** returns whether we can create instances */
-		bool CanCreateTempInstance() const { return create_temp_instance_func != nullptr; }
+		bool CanCreateInstanceOnStack() const { return create_instance_on_stack_func != nullptr; }
 		/** gets the depth of the class in the inheritance hierarchy */
 		size_t GetDepth() const;
 
@@ -97,7 +124,7 @@ namespace chaos
 				{
 					result->create_instance_func = []() { return new CLASS_TYPE; };
 
-					result->create_temp_instance_func = [](std::function<void(Object*)> func)
+					result->create_instance_on_stack_func = [](std::function<void(Object*)> func)
 					{
 						CLASS_TYPE instance;
 						func(&instance);
@@ -154,7 +181,7 @@ namespace chaos
 		/** create an instance of the object delegate */
 		std::function<Object* ()> create_instance_func;
 		/** delegate to create a temporary instance of the object on the stack and call a functor on it */
-		std::function<void(std::function<void(Object*)>)> create_temp_instance_func;
+		std::function<void(std::function<void(Object*)>)> create_instance_on_stack_func;
 		/** additionnal initialization for JSONSerializable objects */
 		nlohmann::json json_data;
 	};

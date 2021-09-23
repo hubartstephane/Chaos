@@ -4,8 +4,7 @@ namespace chaos
 {
 	bool ColorFilter::Filter(glm::vec4 const& color) const
 	{
-		float d2 = glm::distance2(color * color_mask, color_reference);
-
+		float d2 = glm::distance2(color * color_mask, color_reference * color_mask);
 		return Compare(distance_operator, d2, distance * distance);
 	}
 

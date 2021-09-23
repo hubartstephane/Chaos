@@ -98,6 +98,13 @@ namespace chaos
 		virtual bool SerializeIntoJSON(nlohmann::json& json_entry) const override;
 		/** the processor may save its configuration from a JSON file */
 		virtual bool SerializeFromJSON(nlohmann::json const& json_entry) override;
+
+
+
+	protected:
+
+		/** the strength of the effect */
+		float strength = 1.0f;
 	};
 
 	/**

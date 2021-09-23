@@ -250,96 +250,35 @@ namespace chaos
 
 				using pixel_type = typename accessor_type::type;
 
-				float dist = 1.4f;
-
-				int d2 = (int)(255.0f * 255.0f * dist * dist);
-
 				for (int j = 0; j < src_desc.height; ++j)
 				{
 					for (int i = 0; i < src_desc.width; ++i)
 					{
 						pixel_type p = src_accessor(i, j);
 
+						// compute the distance to black
+						PixelRGBAFloat c;
+						PixelConverter::Convert(c, p);
+						float l = std::min(strength * (c.R * c.R + c.G * c.G + c.B * c.B), 1.0f);
+
+						// the distance to black is considered as alpha
 						PixelBGRA p2;
 						PixelConverter::Convert(p2, p);
+						p2.A = char(255.0f * l);
 
-						
-
-						if (p2.R * p2.R + p2.G * p2.G + p2.B * p2.B < d2)
-							p2.A = p2.R = 255;
 						dst_accessor(i, j) = p2;
 					}
 				}
-
-#if 0
-
-
-
-
-
-
-
-
-				PixelRGBAFloat o = color;
-				PixelRGBAFloat e = empty_color;
-
-				pixel_type outline, empty;
-				PixelConverter::Convert(outline, o);
-				PixelConverter::Convert(empty, e);
-
-				int d2 = distance * distance;
-
-				// all pixels on destination images
-				for (int y = 0; y < dest_height; ++y)
-				{
-					for (int x = 0; x < dest_width; ++x)
-					{
-						int src_x = x - distance;
-						int src_y = y - distance;
-
-						// search whether we must add an outline
-						int min_src_x = std::max(0, src_x - distance);
-						int max_src_x = std::min(src_x + distance, src_desc.width - 1);
-
-						int min_src_y = std::max(0, src_y - distance);
-						int max_src_y = std::min(src_y + distance, src_desc.height - 1);
-
-						bool all_neighboor_empty = true;
-						for (int sy = min_src_y; (sy <= max_src_y) && all_neighboor_empty; ++sy)
-						{
-							for (int sx = min_src_x; (sx <= max_src_x) && all_neighboor_empty; ++sx)
-							{
-								int dx = src_x - sx;
-								int dy = src_y - sy;
-								if (dx * dx + dy * dy <= d2)
-									all_neighboor_empty = !color_filter.Filter(src_accessor(sx, sy));
-							}
-						}
-
-						// put the pixel on destination
-						if (all_neighboor_empty)
-							dst_accessor(x, y) = empty;
-						else if (src_x >= 0 && src_x < src_desc.width && src_y >= 0 && src_y < src_desc.height && color_filter.Filter(src_accessor(src_x, src_y)))
-							dst_accessor(x, y) = src_accessor(src_x, src_y);
-						else
-							dst_accessor(x, y) = outline;
-					}
-				}
-
-
-#endif
 			}
 			return result;
 		});
 	}
 
-
 	bool ImageProcessorAddAlpha::SerializeIntoJSON(nlohmann::json& json_entry) const
 	{
 		if (!ImageProcessor::SerializeIntoJSON(json_entry))
 			return false;
-
-
+		JSONTools::SetAttribute(json_entry, "strength", strength);
 		return true;
 	}
 
@@ -347,8 +286,7 @@ namespace chaos
 	{
 		if (!ImageProcessor::SerializeFromJSON(json_entry))
 			return false;
-
-
+		JSONTools::GetAttribute(json_entry, "strength", strength);
 		return true;
 	}
 

@@ -1,8 +1,6 @@
 {
-
   "image_processors": {
     "classname": "ImageProcessorAddAlpha",
-    "color": [ 1.0, 0.0, 0.0, 1.0 ],
-    "distance": 4
+    "strength": 1.0
   }
  }

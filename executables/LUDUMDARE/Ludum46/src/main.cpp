@@ -18,9 +18,97 @@ public:
 	int myvalue = 12345;
 };
 
+#if 0
 
+
+	ExecutionContext BuildChildSequence(std::function<void(ExecutionContext context_sequence)> build_func)
+	{
+		Lock();
+		ExecutionContext result = AddChildSequence();
+		result.Lock();
+		build_func(result);
+		result.Unlock();
+		Unlock();
+		return result;
+	}
+
+
+
+	// prevent the dispatch of completion event
+	void Lock()
+	{
+		ConditionalCreateData();
+		++context_data->lock_count;
+
+	}
+
+	void Unlock()
+	{
+		ConditionalCreateData();
+		if (--context_data->lock_count == 0)
+		{
+
+		}
+	}
+
+
+#endif
 
 // ============================================================================
+
+class ExecutionContextData;
+
+class ExecutionContext
+{
+
+protected:
+
+	/** constructor with data */
+	ExecutionContext(ExecutionContextData* in_context_data): 
+		context_data(in_context_data){}
+
+public:
+
+	/** default constructor */
+	ExecutionContext() = default;
+	/** copy constructor */
+	ExecutionContext(ExecutionContext const &) = default;
+	/** default constructor */
+	ExecutionContext(ExecutionContext &&) = default;
+
+
+	/** set the task to be completed */
+	void CompleteTask();
+	/** create a child task */
+	ExecutionContext AddChildTask();
+	/** create a child sequence task */
+	ExecutionContext AddChildSequenceTask();
+
+	/** add (or call directly) a delegate whenever the task is being finished */
+	void AddCompletionDelegate(std::function<void()> func);
+
+	/** returns whether the task is already completed */
+	bool IsCompleted() const;
+	/** returns whether the task is already completed */
+	operator bool() const;
+
+	/** prevent the dispatch of completion event */
+	void Lock();
+	/** enable the dispatch of completion event */
+	void Unlock();
+
+protected:
+
+	/** the context data */
+	chaos::shared_ptr<ExecutionContextData> context_data;
+};
+
+
+
+// ======================================================
+
+class ExecutionContextData;
+class ExecutionContextDataSequence;
 
 class ExecutionContextData : public chaos::Object
 {
@@ -28,140 +116,316 @@ class ExecutionContextData : public chaos::Object
 
 protected:
 
-	std::vector<std::function<void()>> completion_function;
+	ExecutionContextData(ExecutionContextData* in_parent_context = nullptr) :
+		parent_context(in_parent_context) {}
 
-	std::atomic<int> pending_task;
+	virtual void OnChildTaskCompleted(ExecutionContextData* child_task);
+
+	bool IsCompleted() const;
+
+	ExecutionContextData * AddChildTask();
+
+	ExecutionContextDataSequence * AddChildSequenceTask();
+
+	void Lock();
+	void Unlock();
+
+	void CompleteTask();
+
+	void OnCompletion();
+	
+protected:
+
+	/** the parent of the task */
+	ExecutionContextData* parent_context = nullptr;
+
+	/** count the number of time the object has been locked */
+	int lock_count = 0;
+	/** whenever the task has been completed during its lock */
+	bool completed_during_lock = false;
+	
+	/** all child pending tasks */
+	std::vector<ExecutionContextData *> child_tasks;
+
+	/** delegates to call whenever the task is completed */
+	std::vector<std::function<void()>> completion_functions;
 };
 
-class ExecutionContext
+// ======================================================
+
+class ExecutionContextDataSequence : public ExecutionContextData
 {
 public:
 
-	void AddTask()
-	{
-		ConditionalCreateData();
-		++context_data->pending_task;
-	}
+	using ExecutionContextData::ExecutionContextData;
 
-	void CompleteTask()
-	{
-		if (!IsCompleted())
-		{
-			if (--context_data->pending_task == 0)
-			{
-				for (auto func : context_data->completion_function)
-					func();
-			}
-		}
-	}
+	virtual void OnChildTaskCompleted(ExecutionContextData* child_task) override;
 
-	bool IsCompleted() const
-	{
-		if (context_data == nullptr)
-			return true;
-		if (context_data->pending_task == 0)
-			return true;
-		return false;
-	}
-
-	void OnCompleted(std::function<void()> func)
-	{
-		if (IsCompleted())
-			func();
-		else
-			context_data->completion_function.push_back(func);
-	}
-
-protected:
-
-	void ConditionalCreateData()
-	{
-		if (context_data == nullptr)
-			context_data = new ExecutionContextData;
-	}
-
-
-protected:
-
-	chaos::shared_ptr<ExecutionContextData> context_data;
 };
+
+
+
+
+
+// ======================================================
+
+
+// ======================================================
+
+
+
+
+
+ExecutionContext ExecutionContext::AddChildTask()
+{
+	if (context_data == nullptr)
+		context_data = new ExecutionContextData;
+	return ExecutionContext(context_data->AddChildTask());
+}
+
+ExecutionContext ExecutionContext::AddChildSequenceTask()
+{
+	if (context_data == nullptr)
+		context_data = new ExecutionContextData;
+	return ExecutionContext(context_data->AddChildSequenceTask());
+}
+
+void ExecutionContext::AddCompletionDelegate(std::function<void()> func)
+{
+	if (IsCompleted())
+		func();
+	else
+		context_data->completion_functions.push_back(func);
+}
+
+void ExecutionContext::CompleteTask()
+{
+	if (context_data != nullptr)
+		context_data->CompleteTask();
+}
+
+bool ExecutionContext::IsCompleted() const
+{
+	if (context_data == nullptr)
+		return true;
+	return context_data->IsCompleted();
+}
+
+ExecutionContext::operator bool() const
+{
+	return IsCompleted();
+}
+
+void ExecutionContext::Lock()
+{
+	if (context_data == nullptr)
+		context_data = new ExecutionContextData;
+	context_data->Lock();
+}
+
+void ExecutionContext::Unlock()
+{
+	assert(context_data != nullptr);
+	context_data->Unlock();
+}
+
+// ======================================================
+
+void ExecutionContextData::OnCompletion()
+{
+	for (auto& f : completion_functions)
+		f();
+	completion_functions.clear();
+	if (parent_context != nullptr)
+		parent_context->OnChildTaskCompleted(this);
+}
+
+void ExecutionContextData::Lock()
+{
+	++lock_count;
+}
+
+void ExecutionContextData::Unlock()
+{
+	if (--lock_count == 0)
+	{
+		bool cdl = completed_during_lock;
+		completed_during_lock = false;
+		if (child_tasks.size() == 0 && cdl)
+			OnCompletion();
+	}
+}
+
+void ExecutionContextData::CompleteTask()
+{
+	assert(child_tasks.size() == 0);
+	OnCompletion();
+}
+
+
+ExecutionContextData * ExecutionContextData::AddChildTask()
+{
+	ExecutionContextData * result = new ExecutionContextData(this);
+	child_tasks.push_back(result);
+	return result;
+}
+
+ExecutionContextDataSequence * ExecutionContextData::AddChildSequenceTask()
+{
+	ExecutionContextDataSequence * result = new ExecutionContextDataSequence(this);
+	child_tasks.push_back(result);
+	return result;
+}
+
+bool ExecutionContextData::IsCompleted() const
+{
+	if (child_tasks.size() > 0)
+		return false;
+	if (lock_count > 0)
+		return false;
+	return true;
+}
+
+void ExecutionContextData::OnChildTaskCompleted(ExecutionContextData* child_task)
+{
+	child_tasks.erase(std::find(child_tasks.begin(), child_tasks.end(), child_task));
+	if (child_tasks.size() == 0)
+	{
+		if (lock_count > 0)
+			completed_during_lock = true;
+		else
+			OnCompletion();
+	}
+}
+
+void ExecutionContextDataSequence::OnChildTaskCompleted(ExecutionContextData* child_task)
+{
+	// a task being finished should always be the very first one on the list
+	assert(std::find(child_tasks.begin(), child_tasks.end(), child_task) == child_tasks.begin());
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if 1
+
 
 // quand on detruit le future d un async, c 'est bloquant
 
 
-ExecutionContext F()
+ExecutionContext TestSimple1()
 {
 	ExecutionContext result;
-
 	
-
-	for (int i = 1; i < 3; ++i)
+	for (int i = 0; i < 2; ++i)
 	{
-		result.AddTask();
-		std::thread t([result, i]() mutable
+		ExecutionContext child = result.AddChildTask();
+		std::thread t([child, i]() mutable
 		{
-			std::this_thread::sleep_for(std::chrono::seconds(5*i));
-			result.CompleteTask();
+			std::this_thread::sleep_for(std::chrono::seconds(5 * i + 5));
+			child.CompleteTask();
 		});
-		t.detach();
+		t.detach(); // because thread is on stack and assert
 	}
-
-
-
-	int i = 0;
-	++i;
-
-
 	return result;
 }
 
 
 
 
-class FFF
-{
-	template<typename T, typename R>
-	void fff(std::function<R(T)> func)
-	{
 
-	}
+#endif
 
-
-};
 
 
 // ============================================================================
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
+	ExecutionContext task1;
 
-	auto glambda = [](auto a, auto b) { return a + b; };
-
-	auto fm = glambda(1.0f, 2.0f);
-	auto fg = glambda(1, 2);
-
-	[=] {};
-
-#if 0
-void (*foo)(bool, int);
-foo = [argc](bool, int) 
-{
-	//argc = argc;
-
-
-};
-	FFF().fff([](int *)
+	task1.AddCompletionDelegate([]()
 	{
-		return 3;
+		int i = 0;
+		++i;
 	});
 
-#endif
+
+
+	ExecutionContext root_task = TestSimple1();
+
+	root_task.AddCompletionDelegate([]()
+	{
+		int i = 0;
+		++i;
+	});
 
 
 
 
 
 
+
+
+
+
+
+
+
+#if 0
+
+	// ==============================================
+
+	root_task.BuildSequence([](ExecutionContext sequence_task)
+	{
+		ExecutionContext B = sequence_task.AddTask([](ExecutionContext B)
+		{
+			...
+			B.Complete();
+		});
+
+		ExecutionContext C = sequence_task.AddTask([](ExecutionContext C)
+		{
+			...
+			C.Complete();
+		});
+
+
+
+	});
+
+	// ==============================================
+
+	ExecutionSequenceContext sequence_task = root_task.CreateSequenceTask();
+
+	sequence_task.Lock(); // pour eviter si B se termine immediatement que sequence_task et root_task se termine avant la construction de C
+
+	ExecutionContext B = sequence_task.AddTask([](ExecutionContext B)
+	{
+		...
+		B.Complete();
+	});
+
+	ExecutionContext C = sequence_task.AddTask([](ExecutionContext C)
+	{
+		...
+		C.Complete();
+	});
+
+	sequence_task.Unlock(); // 
 
 
 
@@ -173,6 +437,13 @@ foo = [argc](bool, int)
 		++i;
 	
 	});
+
+	// ==============================================
+
+
+
+#endif
+
 
 
 #if 0
@@ -249,50 +520,6 @@ foo = [argc](bool, int)
 	
 	bool b2 = f.valid();
 	//f.get();
-#endif
-
-#if 0
-
-	FFF().fff([](int *)
-	{
-		return 3;
-	});
-
-
-
-
-	chaos::ClassLoader loader;
-	loader.LoadClassesInDirectory("resources/classes");
-
-	auto fffx = [](toto* ob)
-	{
-		ob = ob;
-	};
-
-	std::function<void(toto *)> fff = [](toto* ob)
-	{
-		ob = ob;
-	};
-
-			auto ccc = chaos::Class::FindClass("classes2");
-
-
-			chaos::SubClassOf<chaos::Object> sc = ccc;
-
-		sc.CreateInstanceOnStack([](chaos::Object * obj)
-		{
-			obj = obj;
-
-		});
-		
-#if 0
-		ccc->CreateInstanceOnStack2([](toto * ob)
-		{
-			ob = ob;
-		});
-#endif
-
-		ccc->CreateInstanceOnStack2(fff);
 #endif
 
 

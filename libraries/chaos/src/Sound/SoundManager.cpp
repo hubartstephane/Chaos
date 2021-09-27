@@ -1186,21 +1186,19 @@ namespace chaos
 
 	bool SoundManager::LoadCategoriesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
-		return LoadObjectsFromConfiguration(
+		return LoadObjectsFromConfiguration<false>( // no [recurse] reading
 			"categories",
 			json,
 			config_path,
-			boost::mpl::false_(), // no [recurse] reading
 			SoundCategoryLoader(this));
 	}
 
 	bool SoundManager::LoadSourcesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
-		return LoadObjectsFromConfiguration(
+		return LoadObjectsFromConfiguration<true>(
 			"sources",
 			json,
 			config_path,
-			boost::mpl::true_(),
 			SoundSourceLoader(this));
 	}
 

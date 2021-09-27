@@ -57,9 +57,18 @@ namespace chaos
 		}
 
 		/** an utility method to initialize a single object in an JSON array/object */
-		template<typename LOADER>
-		static auto DoLoadObjectsFromConfiguration(char const* name, nlohmann::json const& json, boost::filesystem::path const& config_path, boost::mpl::false_ recurse_enabled, LOADER loader) -> typename LOADER::resource_type* // LOADER passed by copy is important to ensure reset for all loaded objects
+		template<bool RECURSE, typename LOADER>
+		static auto DoLoadObjectsFromConfiguration(char const* name, nlohmann::json const& json, boost::filesystem::path const& config_path, LOADER loader) -> typename LOADER::resource_type* // LOADER passed by copy is important to ensure reset for all loaded objects
 		{
+			// 1 - recurse over some directories
+			if constexpr (RECURSE)
+			{
+				if (name != nullptr && StringTools::Stricmp(name, "[recurse]") == 0)
+				{
+					DoLoadObjectsRecurseDirectories(json, config_path, loader);
+					return nullptr;
+				}
+			}
 			// 2 - we receive a key and its is valid (starts with '@')
 			if (name != nullptr && name[0] == '@' && name[1] != 0)
 			{
@@ -77,21 +86,9 @@ namespace chaos
 			return loader.LoadObject(nullptr, json, config_path);
 		}
 
-		template<typename LOADER>
-		static auto DoLoadObjectsFromConfiguration(char const* name, nlohmann::json const& json, boost::filesystem::path const& config_path, boost::mpl::true_ recurse_enabled, LOADER loader) -> typename LOADER::resource_type* // LOADER passed by copy is important to ensure reset for all loaded objects
-		{
-			// 1 - recurse over some directories
-			if (name != nullptr && StringTools::Stricmp(name, "[recurse]") == 0)
-			{
-				DoLoadObjectsRecurseDirectories(json, config_path, loader);
-				return nullptr;
-			}
-			return DoLoadObjectsFromConfiguration(name, json, config_path, boost::mpl::false_(), loader);
-		}
-
 		/** an utility method to initialize a list of objects from a JSON object or array */
-		template<typename LOADER, typename RECURSE_FLAG>
-		static bool LoadObjectsFromConfiguration(char const* object_names, nlohmann::json const& json, boost::filesystem::path const& config_path, RECURSE_FLAG recurse_flag, LOADER loader) // LOADER passed by copy is important to ensure reset for all loaded objects
+		template<bool RECURSE, typename LOADER>
+		static bool LoadObjectsFromConfiguration(char const* object_names, nlohmann::json const& json, boost::filesystem::path const& config_path, LOADER loader) // LOADER passed by copy is important to ensure reset for all loaded objects
 		{
 			nlohmann::json const* objects_json = JSONTools::GetStructure(json, object_names);
 			if (objects_json != nullptr)
@@ -99,9 +96,9 @@ namespace chaos
 				for (nlohmann::json::const_iterator it = objects_json->begin(); it != objects_json->end(); ++it)
 				{
 					if (objects_json->is_array())
-						DoLoadObjectsFromConfiguration(nullptr, *it, config_path, recurse_flag, loader);
+						DoLoadObjectsFromConfiguration<RECURSE>(nullptr, *it, config_path, loader);
 					else if (objects_json->is_object())
-						DoLoadObjectsFromConfiguration(it.key().c_str(), *it, config_path, recurse_flag, loader);
+						DoLoadObjectsFromConfiguration<RECURSE>(it.key().c_str(), *it, config_path, loader);
 				}
 			}
 			return true;

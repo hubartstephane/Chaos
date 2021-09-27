@@ -60,6 +60,7 @@ class ExecutionContextData;
 
 class ExecutionContext
 {
+	friend class ExecutionContextData;
 
 protected:
 
@@ -82,7 +83,7 @@ public:
 	/** create a child task */
 	ExecutionContext AddChildTask();
 	/** create a child sequence task */
-	ExecutionContext AddChildSequenceTask();
+	void AddChildSequenceTask(std::function<void(ExecutionContext)> func);
 
 	/** add (or call directly) a delegate whenever the task is being finished */
 	void AddCompletionDelegate(std::function<void()> func);
@@ -107,9 +108,6 @@ protected:
 
 // ======================================================
 
-class ExecutionContextData;
-class ExecutionContextDataSequence;
-
 class ExecutionContextData : public chaos::Object
 {
 	friend class ExecutionContext;
@@ -125,7 +123,7 @@ protected:
 
 	ExecutionContextData * AddChildTask();
 
-	ExecutionContextDataSequence * AddChildSequenceTask();
+	void AddChildSequenceTask(std::function<void(ExecutionContext)> func);
 
 	void Lock();
 	void Unlock();
@@ -147,34 +145,13 @@ protected:
 	/** all child pending tasks */
 	std::vector<ExecutionContextData *> child_tasks;
 
+	std::vector < std::function<void(ExecutionContext)>> pending_execution;
+
 	/** delegates to call whenever the task is completed */
 	std::vector<std::function<void()>> completion_functions;
 };
 
 // ======================================================
-
-class ExecutionContextDataSequence : public ExecutionContextData
-{
-public:
-
-	using ExecutionContextData::ExecutionContextData;
-
-	virtual void OnChildTaskCompleted(ExecutionContextData* child_task) override;
-
-};
-
-
-
-
-
-// ======================================================
-
-
-// ======================================================
-
-
-
-
 
 ExecutionContext ExecutionContext::AddChildTask()
 {
@@ -183,11 +160,11 @@ ExecutionContext ExecutionContext::AddChildTask()
 	return ExecutionContext(context_data->AddChildTask());
 }
 
-ExecutionContext ExecutionContext::AddChildSequenceTask()
+void ExecutionContext::AddChildSequenceTask(std::function<void(ExecutionContext)> func)
 {
 	if (context_data == nullptr)
 		context_data = new ExecutionContextData;
-	return ExecutionContext(context_data->AddChildSequenceTask());
+	context_data->AddChildSequenceTask(func);
 }
 
 void ExecutionContext::AddCompletionDelegate(std::function<void()> func)
@@ -233,11 +210,29 @@ void ExecutionContext::Unlock()
 
 void ExecutionContextData::OnCompletion()
 {
-	for (auto& f : completion_functions)
-		f();
-	completion_functions.clear();
-	if (parent_context != nullptr)
-		parent_context->OnChildTaskCompleted(this);
+	if (child_tasks.size() > 0)
+		return;
+	// start new sequence execution
+	if (pending_execution.size() > 0)
+	{
+		auto next_execution = *pending_execution.begin();
+		pending_execution.erase(pending_execution.begin());
+
+		ExecutionContext other_context = ExecutionContext(AddChildTask());
+		next_execution(other_context);
+		return;
+	}
+	// or really complete
+	else
+	{
+		// the completion delegates
+		for (auto& f : completion_functions)
+			f();
+		completion_functions.clear();
+		// notify parent for the end
+		if (parent_context != nullptr)
+			parent_context->OnChildTaskCompleted(this);
+	}
 }
 
 void ExecutionContextData::Lock()
@@ -247,19 +242,24 @@ void ExecutionContextData::Lock()
 
 void ExecutionContextData::Unlock()
 {
-	if (--lock_count == 0)
+	if (--lock_count == 0 && completed_during_lock)
 	{
-		bool cdl = completed_during_lock;
 		completed_during_lock = false;
-		if (child_tasks.size() == 0 && cdl)
-			OnCompletion();
+		OnCompletion();
 	}
 }
 
 void ExecutionContextData::CompleteTask()
 {
+	// should only be called manually on a leaf task
 	assert(child_tasks.size() == 0);
-	OnCompletion();
+	assert(pending_execution.size() == 0);
+	assert(parent_context != nullptr);
+
+	if (lock_count > 0)
+		completed_during_lock = true;
+	else
+		OnCompletion();
 }
 
 
@@ -270,16 +270,24 @@ ExecutionContextData * ExecutionContextData::AddChildTask()
 	return result;
 }
 
-ExecutionContextDataSequence * ExecutionContextData::AddChildSequenceTask()
+void ExecutionContextData::AddChildSequenceTask(std::function<void(ExecutionContext)> func)
 {
-	ExecutionContextDataSequence * result = new ExecutionContextDataSequence(this);
-	child_tasks.push_back(result);
-	return result;
+	if (IsCompleted()) // include lock
+	{
+		ExecutionContext other_context = ExecutionContext(AddChildTask());
+		func(other_context);
+	}
+	else
+	{
+		pending_execution.push_back(func);
+	}
 }
 
 bool ExecutionContextData::IsCompleted() const
 {
 	if (child_tasks.size() > 0)
+		return false;
+	if (pending_execution.size() > 0)
 		return false;
 	if (lock_count > 0)
 		return false;
@@ -289,25 +297,11 @@ bool ExecutionContextData::IsCompleted() const
 void ExecutionContextData::OnChildTaskCompleted(ExecutionContextData* child_task)
 {
 	child_tasks.erase(std::find(child_tasks.begin(), child_tasks.end(), child_task));
-	if (child_tasks.size() == 0)
-	{
-		if (lock_count > 0)
-			completed_during_lock = true;
-		else
-			OnCompletion();
-	}
+	if (lock_count > 0)
+		completed_during_lock = true;
+	else
+		OnCompletion();
 }
-
-void ExecutionContextDataSequence::OnChildTaskCompleted(ExecutionContextData* child_task)
-{
-	// a task being finished should always be the very first one on the list
-	assert(std::find(child_tasks.begin(), child_tasks.end(), child_task) == child_tasks.begin());
-
-
-}
-
-
-
 
 
 
@@ -335,7 +329,7 @@ ExecutionContext TestSimple1()
 		ExecutionContext child = result.AddChildTask();
 		std::thread t([child, i]() mutable
 		{
-			std::this_thread::sleep_for(std::chrono::seconds(5 * i + 5));
+			std::this_thread::sleep_for(std::chrono::seconds(3 * i + 3));
 			child.CompleteTask();
 		});
 		t.detach(); // because thread is on stack and assert
@@ -373,11 +367,41 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 		++i;
 	});
 
+	root_task.AddChildSequenceTask([](ExecutionContext context) 
+	{
+		std::thread t([context]() mutable
+		{
+			std::this_thread::sleep_for(std::chrono::seconds(2));
+			context.CompleteTask();
+		});
+		t.detach(); // because thread is on stack and assert
+	});
 
+	root_task.AddChildSequenceTask([](ExecutionContext context) 
+	{
+		context.CompleteTask();
+	});
 
+	root_task.AddChildSequenceTask([](ExecutionContext context) 
+	{
+		std::thread t([context]() mutable
+		{
+			std::this_thread::sleep_for(std::chrono::seconds(2));
+			context.CompleteTask();
+		});
+		t.detach(); // because thread is on stack and assert
+	});
 
+	root_task.Lock();
 
+	std::this_thread::sleep_for(std::chrono::seconds(10));
 
+	root_task.Unlock();
+
+		int i = 0;
+		++i;
+
+	while (true);
 
 
 

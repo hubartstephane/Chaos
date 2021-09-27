@@ -169,21 +169,19 @@ namespace chaos
 
 	bool GPUResourceManager::LoadTexturesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
-		return LoadObjectsFromConfiguration(
+		return LoadObjectsFromConfiguration<true>(
 			"textures",
 			json,
 			config_path,
-			boost::mpl::true_(),
 			GPUTextureLoader(this));
 	}
 
 	bool GPUResourceManager::LoadProgramsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
-		return LoadObjectsFromConfiguration(
+		return LoadObjectsFromConfiguration<true>(
 			"programs", 
 			json, 
 			config_path, 
-			boost::mpl::true_(),
 			GPUProgramLoader(this));
 	}
 
@@ -191,11 +189,10 @@ namespace chaos
 	{
 		GPURenderMaterialLoaderReferenceSolver solver; // finalize the missing references
 
-		bool result = LoadObjectsFromConfiguration(
+		bool result = LoadObjectsFromConfiguration<true>(
 			"rendermaterials",
 			json,
 			config_path,
-			boost::mpl::true_(),
 			GPURenderMaterialLoader(this, &solver));
 		if (result)
 			solver.ResolveReferences(this);

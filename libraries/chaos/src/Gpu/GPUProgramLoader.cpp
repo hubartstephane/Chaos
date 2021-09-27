@@ -5,15 +5,12 @@ namespace chaos
 
 	GPUProgram * GPUProgramLoader::LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const
 	{
-		// check for name
-		if (!CheckResourceName(nullptr, name, &json))
-			return nullptr;
-		// load the texture
-		GPUProgram * result = GenProgramObject(json, config_path);
+		GPUProgram* result = LoadObjectHelper(name, json, config_path, [this](nlohmann::json const & json, boost::filesystem::path const & config_path)
+		{
+			return GenProgramObject(json, config_path);
+		});
 		if (result != nullptr)
 		{
-			ApplyNameToLoadedResource(result);
-			ApplyPathToLoadedResource(result);
 			if (manager != nullptr)
 				if (!StringTools::IsEmpty(result->GetName())) // would like to insert the resource in manager, but name is empty
 					manager->programs.push_back(result);
@@ -23,18 +20,12 @@ namespace chaos
 
 	GPUProgram * GPUProgramLoader::LoadObject(FilePathParam const & path, char const * name) const
 	{
-		// check for path
-		if (!CheckResourcePath(path))
-			return nullptr;
-		// check for name
-		if (!CheckResourceName(&path.GetResolvedPath(), name, nullptr))
-			return nullptr;
-		// load the texture
-		GPUProgram * result = GenProgramObject(path);
+		GPUProgram* result = LoadObjectHelper(path, name, [this](FilePathParam const& path)
+		{
+			return GenProgramObject(path);
+		});
 		if (result != nullptr)
 		{
-			ApplyNameToLoadedResource(result);
-			ApplyPathToLoadedResource(result);
 			if (manager != nullptr)
 				if (!StringTools::IsEmpty(result->GetName())) // would like to insert the resource in manager, but name is empty
 					manager->programs.push_back(result);

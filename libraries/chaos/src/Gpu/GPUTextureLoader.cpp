@@ -6,15 +6,12 @@ namespace chaos
 
 	GPUTexture * GPUTextureLoader::LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters) const
 	{
-		// check for name
-		if (!CheckResourceName(nullptr, name, &json))
-			return nullptr;
-		// load the texture
-		GPUTexture * result = GenTextureObject(json, config_path, parameters);
+		GPUTexture* result = LoadObjectHelper(name, json, config_path, [this, &parameters](nlohmann::json const & json, boost::filesystem::path const & config_path) 
+		{
+			return GenTextureObject(json, config_path, parameters);
+		});
 		if (result != nullptr)
 		{
-			ApplyNameToLoadedResource(result);
-			ApplyPathToLoadedResource(result);
 			if (manager != nullptr)
 				if (!StringTools::IsEmpty(result->GetName())) // would like to insert the resource in manager, but name is empty
 					manager->textures.push_back(result);
@@ -24,18 +21,12 @@ namespace chaos
 
 	GPUTexture * GPUTextureLoader::LoadObject(FilePathParam const & path, char const * name, GenTextureParameters const & parameters) const
 	{
-		// check for path
-		if (!CheckResourcePath(path))
-			return nullptr;
-		// check for name
-		if (!CheckResourceName(&path.GetResolvedPath(), name, nullptr))
-			return nullptr;
-		// load the texture
-		GPUTexture * result = GenTextureObject(path, parameters);
+		GPUTexture* result = LoadObjectHelper(path, name, [this, &parameters](FilePathParam const& path) 
+		{
+			return GenTextureObject(path, parameters);
+		});
 		if (result != nullptr)
 		{
-			ApplyNameToLoadedResource(result);
-			ApplyPathToLoadedResource(result);
 			if (manager != nullptr)
 				if (!StringTools::IsEmpty(result->GetName())) // would like to insert the resource in manager, but name is empty
 					manager->textures.push_back(result);

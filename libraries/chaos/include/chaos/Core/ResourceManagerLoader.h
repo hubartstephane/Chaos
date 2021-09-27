@@ -68,6 +68,41 @@ namespace chaos
 
 	protected:
 
+		RESOURCE_TYPE * LoadObjectHelper(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, std::function<RESOURCE_TYPE *(nlohmann::json const &, boost::filesystem::path const &)> LoadFunc) const
+		{
+			// check for name
+			if (!CheckResourceName(nullptr, name, &json))
+				return nullptr;
+			// load the object
+			RESOURCE_TYPE * result = LoadFunc(json, config_path);
+			if (result != nullptr)
+			{
+				ApplyNameToLoadedResource(result);
+				ApplyPathToLoadedResource(result);
+			}
+			return result;
+		}
+
+		RESOURCE_TYPE * LoadObjectHelper(FilePathParam const & path, char const * name, std::function<RESOURCE_TYPE *(FilePathParam const&)> LoadFunc) const
+		{
+			// check for path
+			if (!CheckResourcePath(path))
+				return nullptr;
+			// check for name
+			if (!CheckResourceName(&path.GetResolvedPath(), name, nullptr))
+				return nullptr;
+			// load the object
+			RESOURCE_TYPE * result = LoadFunc(path);
+			if (result != nullptr)
+			{
+				ApplyNameToLoadedResource(result);
+				ApplyPathToLoadedResource(result);
+			}
+			return result;
+		}
+
+	protected:
+
 		/** the resource manager of interest */
 		MANAGER_TYPE* manager = nullptr;
 	};

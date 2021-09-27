@@ -147,7 +147,7 @@ protected:
 	/** whenever the task has been completed during its lock */
 	bool completed_during_lock = false;
 	/** all child pending tasks */
-	std::vector<ExecutionContextData *> child_tasks;
+	int child_task_count = 0;
 	/** all sequencial execution */
 	std::vector < std::function<void(ExecutionContext)>> pending_execution;
 	/** delegates to call whenever the task is completed */
@@ -223,7 +223,7 @@ void ExecutionContextData::AddCompletionDelegate(std::function<void()> func)
 void ExecutionContextData::OnCompletion()
 {
 	std::unique_lock lock(critical_section);
-	if (child_tasks.size() > 0)
+	if (child_task_count > 0)
 		return;
 	// start new sequence execution
 	if (pending_execution.size() > 0)
@@ -268,7 +268,7 @@ void ExecutionContextData::CompleteTask()
 {
 	std::unique_lock lock(critical_section);
 	// should only be called manually on a leaf task
-	assert(child_tasks.size() == 0);
+	assert(child_task_count == 0);
 	assert(pending_execution.size() == 0);
 	assert(parent_context != nullptr);
 
@@ -282,9 +282,8 @@ void ExecutionContextData::CompleteTask()
 ExecutionContextData * ExecutionContextData::AddChildTask()
 {
 	std::unique_lock lock(critical_section);
-	ExecutionContextData * result = new ExecutionContextData(this);
-	child_tasks.push_back(result);
-	return result;
+	++child_task_count;
+	return new ExecutionContextData(this);
 }
 
 void ExecutionContextData::AddChildSequenceTask(std::function<void(ExecutionContext)> func)
@@ -304,7 +303,7 @@ void ExecutionContextData::AddChildSequenceTask(std::function<void(ExecutionCont
 bool ExecutionContextData::IsCompleted() const
 {
 	std::unique_lock lock(critical_section);
-	if (child_tasks.size() > 0)
+	if (child_task_count > 0)
 		return false;
 	if (pending_execution.size() > 0)
 		return false;
@@ -316,7 +315,7 @@ bool ExecutionContextData::IsCompleted() const
 void ExecutionContextData::OnChildTaskCompleted(ExecutionContextData* child_task)
 {
 	std::unique_lock lock(critical_section);
-	child_tasks.erase(std::find(child_tasks.begin(), child_tasks.end(), child_task));
+	--child_task_count;
 	if (lock_count > 0)
 		completed_during_lock = true;
 	else
@@ -369,255 +368,6 @@ ExecutionContext TestSimple1()
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
-	ExecutionContext t1;
-
-	ExecutionContext c1 = t1.AddChildTask();
-	ExecutionContext d1 = c1.AddChildTask();
-	ExecutionContext d2 = c1.AddChildTask();
-
-	c1.Lock();
-	c1.AddCompletionDelegate([]() 
-	{
-		int i = 0;
-		++i;
-	});
-
-		std::thread th1([d1]() mutable
-		{
-			std::this_thread::sleep_for(std::chrono::seconds(2));
-			d1.CompleteTask();
-		});
-		th1.detach();
-	
-		std::thread th2([d2]() mutable
-		{
-			std::this_thread::sleep_for(std::chrono::seconds(2));
-			d2.CompleteTask();
-		});
-		th2.detach();
-
-	c1.Unlock();
-
-
-
-	while (1);
-
-
-
-
-
-
-
-
-
-
-
-
-	//
-
-
-
-
-
-	ExecutionContext task1;
-
-	task1.AddCompletionDelegate([]()
-	{
-		int i = 0;
-		++i;
-	});
-
-
-
-	ExecutionContext root_task = TestSimple1();
-
-	root_task.AddCompletionDelegate([]()
-	{
-		int i = 0;
-		++i;
-	});
-
-	root_task.AddChildSequenceTask([](ExecutionContext context) 
-	{
-		std::thread t([context]() mutable
-		{
-			std::this_thread::sleep_for(std::chrono::seconds(2));
-			context.CompleteTask();
-		});
-		t.detach(); // because thread is on stack and assert
-	});
-
-	root_task.AddChildSequenceTask([](ExecutionContext context) 
-	{
-		context.CompleteTask();
-	});
-
-	root_task.AddChildSequenceTask([](ExecutionContext context) 
-	{
-		std::thread t([context]() mutable
-		{
-			std::this_thread::sleep_for(std::chrono::seconds(2));
-			context.CompleteTask();
-		});
-		t.detach(); // because thread is on stack and assert
-	});
-
-	root_task.Lock();
-
-	std::this_thread::sleep_for(std::chrono::seconds(10));
-
-	root_task.Unlock();
-
-		int i = 0;
-		++i;
-
-	while (true);
-
-
-
-
-
-
-
-#if 0
-
-	// ==============================================
-
-	root_task.BuildSequence([](ExecutionContext sequence_task)
-	{
-		ExecutionContext B = sequence_task.AddTask([](ExecutionContext B)
-		{
-			...
-			B.Complete();
-		});
-
-		ExecutionContext C = sequence_task.AddTask([](ExecutionContext C)
-		{
-			...
-			C.Complete();
-		});
-
-
-
-	});
-
-	// ==============================================
-
-	ExecutionSequenceContext sequence_task = root_task.CreateSequenceTask();
-
-	sequence_task.Lock(); // pour eviter si B se termine immediatement que sequence_task et root_task se termine avant la construction de C
-
-	ExecutionContext B = sequence_task.AddTask([](ExecutionContext B)
-	{
-		...
-		B.Complete();
-	});
-
-	ExecutionContext C = sequence_task.AddTask([](ExecutionContext C)
-	{
-		...
-		C.Complete();
-	});
-
-	sequence_task.Unlock(); // 
-
-
-
-
-	ExecutionContext context = F();
-	context.OnCompleted([]() 
-	{
-		int i = 0;
-		++i;
-	
-	});
-
-	// ==============================================
-
-
-
-#endif
-
-
-
-#if 0
-
-	std::promise<int> promise;
-
-	std::thread t([]()
-	{
-		int i = 0;
-		++i;
-
-	});
-
-	t.join();
-
-	auto ff = std::async(std::launch::async, [&promise]()
-	{
-		auto t = std::this_thread::get_id();
-
-
-		std::this_thread::sleep_for(std::chrono::seconds(10));
-		promise.set_value(1234);	
-	
-	});
-
-
-	auto t2 = std::this_thread::get_id();
-
-	std::this_thread::sleep_for(std::chrono::seconds(3));
-	ff.get();
-
-
-
-	auto fprom = promise.get_future();
-	auto iii = fprom.get();
-
-	std::this_thread::sleep_for(std::chrono::seconds(3));
-
-	
-
-
-
-	std::future<float> f = std::async([]()
-	{
-		throw (new std::exception("toto was here"));
-		std::this_thread::sleep_for(std::chrono::seconds(10));
-		return 6.0f;
-	});
-
-	int i = 0;
-	try
-	{
-		f.get();
-		++i;
-
-	}
-	catch (std::exception const * e)
-	{
-		
-		++i;
-
-
-	}
-
-	std::shared_future<float> sf = f.share();
-
-
-
-	bool b1 = f.valid();
-
-	std::future_status st = f.wait_for(std::chrono::seconds(0));
-	f.wait();
-
-	
-	bool b2 = f.valid();
-	//f.get();
-#endif
-
-
-
 	chaos::WindowParams params;
 	params.monitor = nullptr;
 	params.width = 500;

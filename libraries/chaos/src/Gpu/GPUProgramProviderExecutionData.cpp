@@ -44,7 +44,6 @@ namespace chaos
 		searched_name(in_searched_name),
 		action(in_action)
 	{
-		assert(in_searched_name != nullptr);
 		if (base_execution == nullptr)
 		{
 			deduced_searches = &internal_deduced_searches; // point to our own vector
@@ -58,6 +57,8 @@ namespace chaos
 
 	bool GPUProgramProviderExecutionData::Match(char const* other_name) const
 	{
+		if (StringTools::IsEmpty(searched_name))
+			return true;
 		return (StringTools::Strcmp(other_name, searched_name) == 0);
 	}
 

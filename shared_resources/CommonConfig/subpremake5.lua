@@ -1,7 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/shared_resources
+-- ROOT_PATH/resources/CommonConfig
 -- =============================================================================
-
-ProcessSubPremake("CommonFonts")
-ProcessSubPremake("CommonIcons")
-ProcessSubPremake("CommonConfig")
+   
+  ResourceLib()

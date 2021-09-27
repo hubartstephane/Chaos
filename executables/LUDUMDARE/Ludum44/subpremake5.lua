@@ -3,7 +3,8 @@
 -- =============================================================================
 
   WindowedApp()
+  DeclareToCopyFile("resources")  
   DependOnLib("CHAOS")
   DependOnLib("CommonFonts")
   DependOnLib("CommonIcons")
-  DeclareToCopyFile("resources")
+  DependOnLib("CommonConfig")

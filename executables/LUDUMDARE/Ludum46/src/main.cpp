@@ -114,39 +114,42 @@ class ExecutionContextData : public chaos::Object
 
 protected:
 
+	/** constructor */
 	ExecutionContextData(ExecutionContextData* in_parent_context = nullptr) :
 		parent_context(in_parent_context) {}
-
-	virtual void OnChildTaskCompleted(ExecutionContextData* child_task);
-
+	/** check whether the task is completed */
 	bool IsCompleted() const;
-
+	/** create a child task */
 	ExecutionContextData * AddChildTask();
-
+	/** create a sequence pending task */
 	void AddChildSequenceTask(std::function<void(ExecutionContext)> func);
-
+	/** lock the context */
 	void Lock();
+	/** unlock the context (pending actions started) */
 	void Unlock();
-
+	/** complete leaf task */
 	void CompleteTask();
-
+	/** called to continue processing */
 	void OnCompletion();
-	
+	/** called whenever a child task is being completed */
+	void OnChildTaskCompleted(ExecutionContextData* child_task);
+	/** add a delegate at completion */
+	void AddCompletionDelegate(std::function<void()> func);
+
 protected:
 
+	/** a mutex to protect for concurrency actions */
+	mutable std::recursive_mutex critical_section;
 	/** the parent of the task */
 	ExecutionContextData* parent_context = nullptr;
-
 	/** count the number of time the object has been locked */
 	int lock_count = 0;
 	/** whenever the task has been completed during its lock */
 	bool completed_during_lock = false;
-	
 	/** all child pending tasks */
 	std::vector<ExecutionContextData *> child_tasks;
-
+	/** all sequencial execution */
 	std::vector < std::function<void(ExecutionContext)>> pending_execution;
-
 	/** delegates to call whenever the task is completed */
 	std::vector<std::function<void()>> completion_functions;
 };
@@ -169,10 +172,10 @@ void ExecutionContext::AddChildSequenceTask(std::function<void(ExecutionContext)
 
 void ExecutionContext::AddCompletionDelegate(std::function<void()> func)
 {
-	if (IsCompleted())
+	if (context_data == nullptr)
 		func();
 	else
-		context_data->completion_functions.push_back(func);
+		context_data->AddCompletionDelegate(func);
 }
 
 void ExecutionContext::CompleteTask()
@@ -208,8 +211,18 @@ void ExecutionContext::Unlock()
 
 // ======================================================
 
+void ExecutionContextData::AddCompletionDelegate(std::function<void()> func)
+{
+	std::unique_lock lock(critical_section);
+	if (IsCompleted())
+		func();
+	else
+		completion_functions.push_back(func);
+}
+
 void ExecutionContextData::OnCompletion()
 {
+	std::unique_lock lock(critical_section);
 	if (child_tasks.size() > 0)
 		return;
 	// start new sequence execution
@@ -237,11 +250,13 @@ void ExecutionContextData::OnCompletion()
 
 void ExecutionContextData::Lock()
 {
+	std::unique_lock lock(critical_section);
 	++lock_count;
 }
 
 void ExecutionContextData::Unlock()
 {
+	std::unique_lock lock(critical_section);
 	if (--lock_count == 0 && completed_during_lock)
 	{
 		completed_during_lock = false;
@@ -251,6 +266,7 @@ void ExecutionContextData::Unlock()
 
 void ExecutionContextData::CompleteTask()
 {
+	std::unique_lock lock(critical_section);
 	// should only be called manually on a leaf task
 	assert(child_tasks.size() == 0);
 	assert(pending_execution.size() == 0);
@@ -265,6 +281,7 @@ void ExecutionContextData::CompleteTask()
 
 ExecutionContextData * ExecutionContextData::AddChildTask()
 {
+	std::unique_lock lock(critical_section);
 	ExecutionContextData * result = new ExecutionContextData(this);
 	child_tasks.push_back(result);
 	return result;
@@ -272,6 +289,7 @@ ExecutionContextData * ExecutionContextData::AddChildTask()
 
 void ExecutionContextData::AddChildSequenceTask(std::function<void(ExecutionContext)> func)
 {
+	std::unique_lock lock(critical_section);
 	if (IsCompleted()) // include lock
 	{
 		ExecutionContext other_context = ExecutionContext(AddChildTask());
@@ -285,6 +303,7 @@ void ExecutionContextData::AddChildSequenceTask(std::function<void(ExecutionCont
 
 bool ExecutionContextData::IsCompleted() const
 {
+	std::unique_lock lock(critical_section);
 	if (child_tasks.size() > 0)
 		return false;
 	if (pending_execution.size() > 0)
@@ -296,6 +315,7 @@ bool ExecutionContextData::IsCompleted() const
 
 void ExecutionContextData::OnChildTaskCompleted(ExecutionContextData* child_task)
 {
+	std::unique_lock lock(critical_section);
 	child_tasks.erase(std::find(child_tasks.begin(), child_tasks.end(), child_task));
 	if (lock_count > 0)
 		completed_during_lock = true;
@@ -349,6 +369,56 @@ ExecutionContext TestSimple1()
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
+	ExecutionContext t1;
+
+	ExecutionContext c1 = t1.AddChildTask();
+	ExecutionContext d1 = c1.AddChildTask();
+	ExecutionContext d2 = c1.AddChildTask();
+
+	c1.Lock();
+	c1.AddCompletionDelegate([]() 
+	{
+		int i = 0;
+		++i;
+	});
+
+		std::thread th1([d1]() mutable
+		{
+			std::this_thread::sleep_for(std::chrono::seconds(2));
+			d1.CompleteTask();
+		});
+		th1.detach();
+	
+		std::thread th2([d2]() mutable
+		{
+			std::this_thread::sleep_for(std::chrono::seconds(2));
+			d2.CompleteTask();
+		});
+		th2.detach();
+
+	c1.Unlock();
+
+
+
+	while (1);
+
+
+
+
+
+
+
+
+
+
+
+
+	//
+
+
+
+
+
 	ExecutionContext task1;
 
 	task1.AddCompletionDelegate([]()

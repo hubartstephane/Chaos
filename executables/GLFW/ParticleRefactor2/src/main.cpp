@@ -199,7 +199,7 @@ protected:
 
 		chaos::GPUResourceManager * gpu_manager = chaos::WindowApplication::GetGPUResourceManagerInstance();
 		if (gpu_manager == nullptr)
-			return nullptr;
+			return false;
 
 		chaos::GPURenderMaterial * RM1 = gpu_manager->FindRenderMaterial("mat1");
 		chaos::GPURenderMaterial * RM2 = gpu_manager->FindRenderMaterial("mat2");

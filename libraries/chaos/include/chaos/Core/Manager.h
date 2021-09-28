@@ -24,7 +24,7 @@ namespace chaos
 		bool IsManagerStarted() const;
 
 		/** initialize the manager from a configuration file */
-		virtual bool InitializeFromConfiguration(nlohmann::json const& config, boost::filesystem::path const& config_path);
+		virtual bool InitializeFromConfiguration(JSONConfig const & config);
 
 	protected:
 
@@ -35,17 +35,17 @@ namespace chaos
 
 		/** an utility method to initialize a single object in an JSON array/object */
 		template<typename LOADER>
-		static void DoLoadObjectsRecurseDirectories(nlohmann::json const& json, boost::filesystem::path const& config_path, LOADER const& loader)
+		static void DoLoadObjectsRecurseDirectories(JSONConfig const & config, LOADER const& loader)
 		{
-			if (json.is_array())
+			if (config.json.is_array())
 			{
-				for (nlohmann::json::const_iterator it = json.begin(); it != json.end(); ++it)
+				for (nlohmann::json::const_iterator it = config.json.begin(); it != config.json.end(); ++it)
 					if (it->is_string())
-						DoLoadObjectsRecurseDirectories(*it, config_path, loader); // recursive call to this function
+						DoLoadObjectsRecurseDirectories(JSONConfig(*it, config.config_path), loader); // recursive call to this function
 			}
-			else if (json.is_string())
+			else if (config.json.is_string())
 			{
-				std::string directory_name = json.get<std::string>();
+				std::string directory_name = config.json.get<std::string>();
 
 				FileTools::ForEachRedirectedDirectoryContent(directory_name, [&loader](boost::filesystem::path const& p)
 				{
@@ -58,52 +58,51 @@ namespace chaos
 
 		/** an utility method to initialize a single object in an JSON array/object */
 		template<bool RECURSE, typename LOADER>
-		static auto DoLoadObjectsFromConfiguration(char const* name, nlohmann::json const& json, boost::filesystem::path const& config_path, LOADER loader) -> typename LOADER::resource_type* // LOADER passed by copy is important to ensure reset for all loaded objects
+		static auto DoLoadObjectsFromConfiguration(char const* name, JSONConfig const & config, LOADER loader) -> typename LOADER::resource_type* // LOADER passed by copy is important to ensure reset for all loaded objects
 		{
 			// 1 - recurse over some directories
 			if constexpr (RECURSE)
 			{
 				if (name != nullptr && StringTools::Stricmp(name, "[recurse]") == 0)
 				{
-					DoLoadObjectsRecurseDirectories(json, config_path, loader);
+					DoLoadObjectsRecurseDirectories(config, loader);
 					return nullptr;
 				}
 			}
 			// 2 - we receive a key and its is valid (starts with '@')
 			if (name != nullptr && name[0] == '@' && name[1] != 0)
 			{
-				return loader.LoadObject(name + 1, json, config_path);
+				return loader.LoadObject(name + 1, config);
 			}
 			// 3 - try to find a member 'name'
-			nlohmann::json::const_iterator name_json_it = json.find("name");
-			if (name_json_it != json.end() && name_json_it->is_string())
+			nlohmann::json::const_iterator name_json_it = config.json.find("name");
+			if (name_json_it != config.json.end() && name_json_it->is_string())
 			{
 				std::string name = name_json_it->get<std::string>();
 				if (!name.empty())
-					return loader.LoadObject(name.c_str(), json, config_path);
+					return loader.LoadObject(name.c_str(), config);
 			}
 			// 4 - anonymous object
-			return loader.LoadObject(nullptr, json, config_path);
+			return loader.LoadObject(nullptr, config);
 		}
 
 		/** an utility method to initialize a list of objects from a JSON object or array */
 		template<bool RECURSE, typename LOADER>
-		static bool LoadObjectsFromConfiguration(char const* object_names, nlohmann::json const& json, boost::filesystem::path const& config_path, LOADER loader) // LOADER passed by copy is important to ensure reset for all loaded objects
+		static bool LoadObjectsFromConfiguration(char const* object_names, JSONConfig const & config, LOADER loader) // LOADER passed by copy is important to ensure reset for all loaded objects
 		{
-			nlohmann::json const* objects_json = JSONTools::GetStructure(json, object_names);
+			nlohmann::json const* objects_json = JSONTools::GetStructure(config.json, object_names);
 			if (objects_json != nullptr)
 			{
 				for (nlohmann::json::const_iterator it = objects_json->begin(); it != objects_json->end(); ++it)
 				{
 					if (objects_json->is_array())
-						DoLoadObjectsFromConfiguration<RECURSE>(nullptr, *it, config_path, loader);
+						DoLoadObjectsFromConfiguration<RECURSE>(nullptr, JSONConfig(*it, config.config_path), loader);
 					else if (objects_json->is_object())
-						DoLoadObjectsFromConfiguration<RECURSE>(it.key().c_str(), *it, config_path, loader);
+						DoLoadObjectsFromConfiguration<RECURSE>(it.key().c_str(), JSONConfig(*it, config.config_path), loader);
 				}
 			}
 			return true;
 		}
-
 
 		/** utility function to remove an object from a list */
 		template<typename T, typename FUNC>

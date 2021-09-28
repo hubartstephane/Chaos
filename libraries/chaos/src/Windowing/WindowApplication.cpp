@@ -479,7 +479,7 @@ namespace chaos
 		// get JSON section and load all requested resources
 		nlohmann::json const* gpu_config = JSONTools::GetStructure(configuration, "gpu");
 		if (gpu_config != nullptr)
-			if (!gpu_resource_manager->InitializeFromConfiguration(*gpu_config, configuration_path))
+			if (!gpu_resource_manager->InitializeFromConfiguration(JSONConfig(*gpu_config, configuration_path)))
 				return false;
 		return true;
 	}
@@ -506,7 +506,7 @@ namespace chaos
 			if (!other_gpu_resource_manager->StartManager())
 				return false;
 			// reload all resources ... (even unchanged)
-			if (other_gpu_resource_manager->InitializeFromConfiguration(*gpu_config, configuration_path))
+			if (other_gpu_resource_manager->InitializeFromConfiguration(JSONConfig(*gpu_config, configuration_path)))
 				gpu_resource_manager->RefreshGPUResources(other_gpu_resource_manager.get());
 			other_gpu_resource_manager->StopManager();
 			return true;
@@ -548,7 +548,7 @@ namespace chaos
 		sound_manager->StartManager();
 		nlohmann::json const* sound_config = JSONTools::GetStructure(configuration, "sounds");
 		if (sound_config != nullptr)
-			sound_manager->InitializeFromConfiguration(*sound_config, configuration_path);
+			sound_manager->InitializeFromConfiguration(JSONConfig(*sound_config, configuration_path));
 
 		return true;
 	}

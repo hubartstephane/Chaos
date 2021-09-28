@@ -71,15 +71,15 @@ namespace chaos
 		return true;
 	}
 	
-	bool GPURenderMaterialLoader::InitializeProgramFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	bool GPURenderMaterialLoader::InitializeProgramFromJSON(GPURenderMaterialInfo * material_info, JSONConfig const & config) const
 	{
 		// does the JSON have a "program" string ?
 		std::string program_name;
-		if (JSONTools::GetAttribute(json, "program", program_name))
+		if (JSONTools::GetAttribute(config.json, "program", program_name))
 			return InitializeProgramFromName(material_info, program_name.c_str());
 
 		// if there is a program it has to be under the form of a structure
-		nlohmann::json const * json_program = JSONTools::GetStructure(json, "program");
+		nlohmann::json const * json_program = JSONTools::GetStructure(config.json, "program");
 		if (json_program == nullptr || !json_program->is_object())
 			return false;
 
@@ -92,14 +92,14 @@ namespace chaos
 		std::string program_path;
 		if (JSONTools::GetAttribute(*json_program, "path", program_path))
 		{
-			FilePathParam path(program_path, config_path);
+			FilePathParam path(program_path, config.config_path);
 			if (InitializeProgramFromPath(material_info, path))
 				return true;
 		}
 
 		// inplace declared program 
 		GPUProgramLoader program_loader(manager);
-		GPUProgram * program = program_loader.LoadObject(nullptr, *json_program, config_path);
+		GPUProgram * program = program_loader.LoadObject(nullptr, JSONConfig(*json_program, config.config_path));
 		if (program == nullptr)
 			return false;
 
@@ -131,10 +131,10 @@ namespace chaos
 		return true;
 	}
 
-	bool GPURenderMaterialLoader::InitializeTexturesFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	bool GPURenderMaterialLoader::InitializeTexturesFromJSON(GPURenderMaterialInfo * material_info, JSONConfig const & config) const
 	{
 		// search the texture object
-		nlohmann::json const * json_textures = JSONTools::GetStructure(json, "textures");
+		nlohmann::json const * json_textures = JSONTools::GetStructure(config.json, "textures");
 		if (json_textures == nullptr || !json_textures->is_object())
 			return false;
 		// enumerate all textures
@@ -171,14 +171,14 @@ namespace chaos
 			std::string texture_path;
 			if (JSONTools::GetAttribute(*it, "path", texture_path))
 			{
-				FilePathParam path(texture_path, config_path);
+				FilePathParam path(texture_path, config.config_path);
 				if (InitializeTextureFromPath(material_info, texture_uniform_name.c_str(), texture_path.c_str()))
 					continue;
 			}
 
 			// inplace declared texture 
 			GPUTextureLoader texture_loader(manager);
-			GPUTexture * texture = texture_loader.LoadObject(nullptr, *it, config_path);
+			GPUTexture * texture = texture_loader.LoadObject(nullptr, JSONConfig(*it, config.config_path));
 			if (texture == nullptr)
 				continue;
 			material_info->uniform_provider.AddTexture(texture_uniform_name.c_str(), texture);
@@ -270,10 +270,10 @@ namespace chaos
 		return false;
 	}
 
-	bool GPURenderMaterialLoader::InitializeUniformsFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	bool GPURenderMaterialLoader::InitializeUniformsFromJSON(GPURenderMaterialInfo * material_info, JSONConfig const & config) const
 	{
 		// search the uniform object
-		nlohmann::json const * json_uniforms = JSONTools::GetStructure(json, "uniforms");
+		nlohmann::json const * json_uniforms = JSONTools::GetStructure(config.json, "uniforms");
 		if (json_uniforms == nullptr || !json_uniforms->is_object())
 			return false;
 		// enumerate all uniforms
@@ -286,10 +286,10 @@ namespace chaos
 		return true;
 	}
 
-	bool GPURenderMaterialLoader::InitializeRenderPassesFromJSON(GPURenderMaterial * render_material, GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	bool GPURenderMaterialLoader::InitializeRenderPassesFromJSON(GPURenderMaterial * render_material, GPURenderMaterialInfo * material_info, JSONConfig const & config) const
 	{
 		// iterate over all properties
-		for (nlohmann::json::const_iterator it = json.begin(); it != json.end(); it++)
+		for (nlohmann::json::const_iterator it = config.json.begin(); it != config.json.end(); it++)
 		{
 			// a renderpass must be an object
 			if (!it->is_object())
@@ -304,7 +304,7 @@ namespace chaos
 			GPURenderMaterialInfo * other_material_info = new GPURenderMaterialInfo;
 			if (other_material_info == nullptr)
 				continue;
-			if (!InitializeMaterialInfoFromJSON(render_material, other_material_info, it.value(), config_path))
+			if (!InitializeMaterialInfoFromJSON(render_material, other_material_info, JSONConfig(it.value(), config.config_path)))
 			{
 				delete (other_material_info);
 				continue;
@@ -322,30 +322,30 @@ namespace chaos
 		return true;
 	}
 
-	bool GPURenderMaterialLoader::InitializeMaterialInfoFromJSON(GPURenderMaterial * render_material, GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	bool GPURenderMaterialLoader::InitializeMaterialInfoFromJSON(GPURenderMaterial * render_material, GPURenderMaterialInfo * material_info, JSONConfig const & config) const
 	{
 		assert(render_material != nullptr);
 		assert(material_info != nullptr);
 
-		if (!json.is_object())
+		if (!config.json.is_object())
 			return false;
 
 		// search material parent
 		std::string parent_name;
-		if (reference_solver != nullptr &&  JSONTools::GetAttribute(json, "parent_material", parent_name) && !parent_name.empty())
+		if (reference_solver != nullptr &&  JSONTools::GetAttribute(config.json, "parent_material", parent_name) && !parent_name.empty())
 			reference_solver->AddInheritance(render_material, material_info, std::move(parent_name));
 		// read filter names
-		material_info->filter_specified = JSONTools::GetAttribute(json, "filter", material_info->filter);
+		material_info->filter_specified = JSONTools::GetAttribute(config.json, "filter", material_info->filter);
 		// search whether the material is hidden
-		material_info->hidden_specified = JSONTools::GetAttribute(json, "hidden", material_info->hidden, false);
+		material_info->hidden_specified = JSONTools::GetAttribute(config.json, "hidden", material_info->hidden, false);
 		// search program
-		InitializeProgramFromJSON(material_info, json, config_path);
+		InitializeProgramFromJSON(material_info, config);
 		// look at textures
-		InitializeTexturesFromJSON(material_info, json, config_path);
+		InitializeTexturesFromJSON(material_info, config);
 		// look at uniforms
-		InitializeUniformsFromJSON(material_info, json, config_path);
+		InitializeUniformsFromJSON(material_info, config);
 		// look at renderpasses
-		InitializeRenderPassesFromJSON(render_material, material_info, json, config_path);
+		InitializeRenderPassesFromJSON(render_material, material_info, config);
 
 		return true;
 	}
@@ -360,15 +360,15 @@ namespace chaos
 		return (manager != nullptr && manager->FindRenderMaterial(request) != nullptr);
 	}
 
-	GPURenderMaterial * GPURenderMaterialLoader::LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	GPURenderMaterial * GPURenderMaterialLoader::LoadObject(char const * name, JSONConfig const & config) const
 	{
 		// check for name
-		if (!CheckResourceName(nullptr, name, &json))
+		if (!CheckResourceName(nullptr, name, &config.json))
 			return nullptr;
 
 		// indirect call
 		std::string path;
-		if (JSONTools::GetAttribute(json, "path", path))
+		if (JSONTools::GetAttribute(config.json, "path", path))
 			return LoadObject(path);
 
 		// create a new material
@@ -377,7 +377,7 @@ namespace chaos
 			return nullptr;
 
 		// Initialize the material_info from JSON
-		InitializeMaterialInfoFromJSON(result, result->material_info.get(), json, config_path);
+		InitializeMaterialInfoFromJSON(result, result->material_info.get(), config);
 
 		// finalize : give name / path to the new resource
 		ApplyNameToLoadedResource(result);
@@ -400,7 +400,7 @@ namespace chaos
 		// the file for material is in JSON format
 		nlohmann::json json;
 		if (JSONTools::LoadJSONFile(path, json, true))
-			return LoadObject(nullptr, json, path.GetResolvedPath());
+			return LoadObject(nullptr, JSONConfig(json, path.GetResolvedPath()));
 		return nullptr;
 	}
 

@@ -20,12 +20,12 @@ namespace chaos
 			ResourceManagerLoader<GPUTexture, GPUResourceManager>(in_resource_manager) {}
 
 		/** load an object from JSON */
-		virtual GPUTexture* LoadObject(char const* name, nlohmann::json const& json, boost::filesystem::path const& config_path, GenTextureParameters const& parameters = {}) const;
+		virtual GPUTexture* LoadObject(char const* name, JSONConfig const & config, GenTextureParameters const& parameters = {}) const;
 		/** texture loading from path */
 		virtual GPUTexture* LoadObject(FilePathParam const& path, char const* name = nullptr, GenTextureParameters const& parameters = {}) const;
 
 		/** Generate a texture from a json content */
-		virtual GPUTexture* GenTextureObject(nlohmann::json const& json, boost::filesystem::path const& config_path, GenTextureParameters const& parameters = {}) const;
+		virtual GPUTexture* GenTextureObject(JSONConfig const & config, GenTextureParameters const& parameters = {}) const;
 		/** Generate a 1D/2D/rectangle texture from an file */
 		virtual GPUTexture* GenTextureObject(FilePathParam const& path, GenTextureParameters const& parameters = {}) const;
 		/** Generate a 1D/2D/rectangle texture from an image */

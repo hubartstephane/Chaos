@@ -3,11 +3,11 @@
 namespace chaos
 {
 
-	GPUProgram * GPUProgramLoader::LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	GPUProgram * GPUProgramLoader::LoadObject(char const * name, JSONConfig const & config) const
 	{
-		GPUProgram* result = LoadObjectHelper(name, json, config_path, [this](nlohmann::json const & json, boost::filesystem::path const & config_path)
+		GPUProgram* result = LoadObjectHelper(name, config, [this](JSONConfig const & config)
 		{
-			return GenProgramObject(json, config_path);
+			return GenProgramObject(config);
 		});
 		if (result != nullptr)
 		{
@@ -43,17 +43,17 @@ namespace chaos
 		return (manager != nullptr && manager->FindProgram(request) != nullptr);
 	}
 
-	GPUProgram * GPUProgramLoader::GenProgramObject(nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	GPUProgram * GPUProgramLoader::GenProgramObject(JSONConfig const & config) const
 	{
 		// can only work with json object
-		if (!json.is_object())
+		if (!config.json.is_object())
 			return nullptr;
 
 		// the entry has a reference to another file => recursive call
 		std::string p;
-		if (JSONTools::GetAttribute(json, "path", p))
+		if (JSONTools::GetAttribute(config.json, "path", p))
 		{
-			FilePathParam path(p, config_path);
+			FilePathParam path(p, config.config_path);
 			return GenProgramObject(path);
 		}
 
@@ -97,16 +97,16 @@ namespace chaos
 		for (size_t i = 0; i < shader_type_count; ++i)
 		{
 			std::string source_path;
-			if (!JSONTools::GetAttribute(json, shader_json_names[i], source_path))
+			if (!JSONTools::GetAttribute(config.json, shader_json_names[i], source_path))
 				continue;
-			FilePathParam path(source_path, config_path);
+			FilePathParam path(source_path, config.config_path);
 			program_generator.AddShaderSourceFile(shader_types[i], path);
 		}
 
 		// iterate over every shader types for array
 		for (size_t i = 0; i < shader_type_count; ++i)
 		{
-			nlohmann::json const * sources = JSONTools::GetStructure(json, shader_json_array_names[i]);
+			nlohmann::json const * sources = JSONTools::GetStructure(config.json, shader_json_array_names[i]);
 			if (sources == nullptr)
 				continue;
 			if (!sources->is_array())
@@ -118,7 +118,7 @@ namespace chaos
 				std::string source_path;
 				if (!JSONTools::GetAttributeByIndex(*sources, j, source_path))
 					continue;
-				FilePathParam path(source_path, config_path);
+				FilePathParam path(source_path, config.config_path);
 				program_generator.AddShaderSourceFile(shader_types[i], path);
 			}
 		}
@@ -135,7 +135,7 @@ namespace chaos
 		// load the file
 		nlohmann::json json;
 		if (JSONTools::LoadJSONFile(path, json, true))
-			return GenProgramObject(json, path.GetResolvedPath());	
+			return GenProgramObject(JSONConfig(json, path.GetResolvedPath()));	
 		return nullptr;
 	}
 

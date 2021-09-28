@@ -4,11 +4,11 @@ namespace chaos
 {
 
 
-	GPUTexture * GPUTextureLoader::LoadObject(char const * name, JSONConfig const & config, GenTextureParameters const & parameters) const
+	GPUTexture * GPUTextureLoader::LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters) const
 	{
-		GPUTexture* result = LoadObjectHelper(name, config, [this, &parameters](JSONConfig const & config) 
+		GPUTexture* result = LoadObjectHelper(name, json, config_path, [this, &parameters](nlohmann::json const & json, boost::filesystem::path const & config_path) 
 		{
-			return GenTextureObject(config, parameters);
+			return GenTextureObject(json, config_path, parameters);
 		});
 		if (result != nullptr)
 		{
@@ -141,7 +141,7 @@ namespace chaos
 			{
 				nlohmann::json json;
 				if (JSONTools::ParseRecursive(ascii_buffer, path.GetResolvedPath(), json))
-					result = GenTextureObject(JSONConfig(json, path.GetResolvedPath()), parameters);
+					result = GenTextureObject(json, path.GetResolvedPath(), parameters);
 			}
 		}
 		return result;
@@ -391,18 +391,18 @@ namespace chaos
 		return result;
 	}
 
-	GPUTexture * GPUTextureLoader::GenTextureObject(JSONConfig const & config, GenTextureParameters const & parameters) const
+	GPUTexture * GPUTextureLoader::GenTextureObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters) const
 	{
 		// the entry has a reference to another file => recursive call
 		std::string p;
-		if (JSONTools::GetAttribute(config.json, "path", p))
+		if (JSONTools::GetAttribute(json, "path", p))
 		{
-			FilePathParam path(p, config.config_path);
+			FilePathParam path(p, config_path);
 			return GenTextureObject(path, parameters);
 		}
 
 		// skybox descriptions ?
-		nlohmann::json const * faces = JSONTools::GetStructure(config.json, "faces");
+		nlohmann::json const * faces = JSONTools::GetStructure(json, "faces");
 		if (faces != nullptr)
 		{
 			if (faces->is_array() || faces->is_object())
@@ -454,23 +454,24 @@ namespace chaos
 				{
 					if (single_image)
 					{
-						FilePathParam single_path(single, config.config_path);
+						FilePathParam single_path(single, config_path);
 						skybox = SkyBoxTools::LoadSingleSkyBox(single_path);
 					}
 					else if (multiple_image)
 					{
-						FilePathParam left_path(left, config.config_path);
-						FilePathParam right_path(right, config.config_path);
-						FilePathParam top_path(top, config.config_path);
-						FilePathParam bottom_path(bottom, config.config_path);
-						FilePathParam front_path(front, config.config_path);
-						FilePathParam back_path(back, config.config_path);
+						FilePathParam left_path(left, config_path);
+						FilePathParam right_path(right, config_path);
+						FilePathParam top_path(top, config_path);
+						FilePathParam bottom_path(bottom, config_path);
+						FilePathParam front_path(front, config_path);
+						FilePathParam back_path(back, config_path);
 						skybox = SkyBoxTools::LoadMultipleSkyBox(left_path, right_path, top_path, bottom_path, front_path, back_path);
 					}
 					return GenTextureObject(&skybox, PixelFormatMergeParams(), parameters);
 				}
 			}
 		}
+
 		return nullptr;
 	}
 

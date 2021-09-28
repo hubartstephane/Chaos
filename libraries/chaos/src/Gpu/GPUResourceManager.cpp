@@ -153,43 +153,46 @@ namespace chaos
 		nlohmann::json json;
 		if (!JSONTools::LoadJSONFile(path, json, true))
 			return true;
-		return InitializeFromConfiguration(JSONConfig(json, path.GetResolvedPath()));	
+		return InitializeFromConfiguration(json, path.GetResolvedPath());	
 	}
 
-	bool GPUResourceManager::InitializeFromConfiguration(JSONConfig const & config)
+	bool GPUResourceManager::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
-		if (!LoadTexturesFromConfiguration(config))
+		if (!LoadTexturesFromConfiguration(json, config_path))
 			return false;
-		if (!LoadProgramsFromConfiguration(config))
+		if (!LoadProgramsFromConfiguration(json, config_path))
 			return false;
-		if (!LoadMaterialsFromConfiguration(config))
+		if (!LoadMaterialsFromConfiguration(json, config_path))
 			return false;
 		return true;
 	}
 
-	bool GPUResourceManager::LoadTexturesFromConfiguration(JSONConfig const & config)
+	bool GPUResourceManager::LoadTexturesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
 		return LoadObjectsFromConfiguration<true>(
 			"textures",
-			config,
+			json,
+			config_path,
 			GPUTextureLoader(this));
 	}
 
-	bool GPUResourceManager::LoadProgramsFromConfiguration(JSONConfig const & config)
+	bool GPUResourceManager::LoadProgramsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
 		return LoadObjectsFromConfiguration<true>(
 			"programs", 
-			config, 
+			json, 
+			config_path, 
 			GPUProgramLoader(this));
 	}
 
-	bool GPUResourceManager::LoadMaterialsFromConfiguration(JSONConfig const & config)
+	bool GPUResourceManager::LoadMaterialsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
 		GPURenderMaterialLoaderReferenceSolver solver; // finalize the missing references
 
 		bool result = LoadObjectsFromConfiguration<true>(
 			"rendermaterials",
-			config,
+			json,
+			config_path,
 			GPURenderMaterialLoader(this, &solver));
 		if (result)
 			solver.ResolveReferences(this);

@@ -59,19 +59,22 @@ namespace chaos
 
 		/** constructor */
 		ResourceManagerLoader(MANAGER_TYPE* in_manager = nullptr) :
-			manager(in_manager){}
+			manager(in_manager)
+		{
+		}
+
 		/** returns the manager */
 		manager_type* GetManager() const { return manager; }
 
 	protected:
 
-		RESOURCE_TYPE * LoadObjectHelper(char const * name, JSONConfig const & config, std::function<RESOURCE_TYPE *(JSONConfig const &)> LoadFunc) const
+		RESOURCE_TYPE * LoadObjectHelper(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, std::function<RESOURCE_TYPE *(nlohmann::json const &, boost::filesystem::path const &)> LoadFunc) const
 		{
 			// check for name
-			if (!CheckResourceName(nullptr, name, &config.json))
+			if (!CheckResourceName(nullptr, name, &json))
 				return nullptr;
 			// load the object
-			RESOURCE_TYPE * result = LoadFunc(config);
+			RESOURCE_TYPE * result = LoadFunc(json, config_path);
 			if (result != nullptr)
 			{
 				ApplyNameToLoadedResource(result);

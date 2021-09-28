@@ -71,7 +71,7 @@ namespace chaos
 		return true;
 	}
 	
-	bool GPURenderMaterialLoader::InitializeProgramFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	bool GPURenderMaterialLoader::InitializeProgramFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json) const
 	{
 		// does the JSON have a "program" string ?
 		std::string program_name;
@@ -92,14 +92,14 @@ namespace chaos
 		std::string program_path;
 		if (JSONTools::GetAttribute(*json_program, "path", program_path))
 		{
-			FilePathParam path(program_path, config_path);
+			FilePathParam path(program_path);
 			if (InitializeProgramFromPath(material_info, path))
 				return true;
 		}
 
 		// inplace declared program 
 		GPUProgramLoader program_loader(manager);
-		GPUProgram * program = program_loader.LoadObject(nullptr, *json_program, config_path);
+		GPUProgram * program = program_loader.LoadObject(nullptr, *json_program);
 		if (program == nullptr)
 			return false;
 
@@ -131,7 +131,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GPURenderMaterialLoader::InitializeTexturesFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	bool GPURenderMaterialLoader::InitializeTexturesFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json) const
 	{
 		// search the texture object
 		nlohmann::json const * json_textures = JSONTools::GetStructure(json, "textures");
@@ -171,14 +171,14 @@ namespace chaos
 			std::string texture_path;
 			if (JSONTools::GetAttribute(*it, "path", texture_path))
 			{
-				FilePathParam path(texture_path, config_path);
+				FilePathParam path(texture_path);
 				if (InitializeTextureFromPath(material_info, texture_uniform_name.c_str(), texture_path.c_str()))
 					continue;
 			}
 
 			// inplace declared texture 
 			GPUTextureLoader texture_loader(manager);
-			GPUTexture * texture = texture_loader.LoadObject(nullptr, *it, config_path);
+			GPUTexture * texture = texture_loader.LoadObject(nullptr, *it);
 			if (texture == nullptr)
 				continue;
 			material_info->uniform_provider.AddTexture(texture_uniform_name.c_str(), texture);
@@ -270,7 +270,7 @@ namespace chaos
 		return false;
 	}
 
-	bool GPURenderMaterialLoader::InitializeUniformsFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	bool GPURenderMaterialLoader::InitializeUniformsFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json) const
 	{
 		// search the uniform object
 		nlohmann::json const * json_uniforms = JSONTools::GetStructure(json, "uniforms");
@@ -286,7 +286,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GPURenderMaterialLoader::InitializeRenderPassesFromJSON(GPURenderMaterial * render_material, GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	bool GPURenderMaterialLoader::InitializeRenderPassesFromJSON(GPURenderMaterial * render_material, GPURenderMaterialInfo * material_info, nlohmann::json const & json) const
 	{
 		// iterate over all properties
 		for (nlohmann::json::const_iterator it = json.begin(); it != json.end(); it++)
@@ -304,7 +304,7 @@ namespace chaos
 			GPURenderMaterialInfo * other_material_info = new GPURenderMaterialInfo;
 			if (other_material_info == nullptr)
 				continue;
-			if (!InitializeMaterialInfoFromJSON(render_material, other_material_info, it.value(), config_path))
+			if (!InitializeMaterialInfoFromJSON(render_material, other_material_info, it.value()))
 			{
 				delete (other_material_info);
 				continue;
@@ -322,7 +322,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GPURenderMaterialLoader::InitializeMaterialInfoFromJSON(GPURenderMaterial * render_material, GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	bool GPURenderMaterialLoader::InitializeMaterialInfoFromJSON(GPURenderMaterial * render_material, GPURenderMaterialInfo * material_info, nlohmann::json const & json) const
 	{
 		assert(render_material != nullptr);
 		assert(material_info != nullptr);
@@ -339,13 +339,13 @@ namespace chaos
 		// search whether the material is hidden
 		material_info->hidden_specified = JSONTools::GetAttribute(json, "hidden", material_info->hidden, false);
 		// search program
-		InitializeProgramFromJSON(material_info, json, config_path);
+		InitializeProgramFromJSON(material_info, json);
 		// look at textures
-		InitializeTexturesFromJSON(material_info, json, config_path);
+		InitializeTexturesFromJSON(material_info, json);
 		// look at uniforms
-		InitializeUniformsFromJSON(material_info, json, config_path);
+		InitializeUniformsFromJSON(material_info, json);
 		// look at renderpasses
-		InitializeRenderPassesFromJSON(render_material, material_info, json, config_path);
+		InitializeRenderPassesFromJSON(render_material, material_info, json);
 
 		return true;
 	}
@@ -360,7 +360,7 @@ namespace chaos
 		return (manager != nullptr && manager->FindRenderMaterial(request) != nullptr);
 	}
 
-	GPURenderMaterial * GPURenderMaterialLoader::LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	GPURenderMaterial * GPURenderMaterialLoader::LoadObject(char const * name, nlohmann::json const & json) const
 	{
 		// check for name
 		if (!CheckResourceName(nullptr, name, &json))
@@ -377,7 +377,7 @@ namespace chaos
 			return nullptr;
 
 		// Initialize the material_info from JSON
-		InitializeMaterialInfoFromJSON(result, result->material_info.get(), json, config_path);
+		InitializeMaterialInfoFromJSON(result, result->material_info.get(), json);
 
 		// finalize : give name / path to the new resource
 		ApplyNameToLoadedResource(result);
@@ -400,7 +400,7 @@ namespace chaos
 		// the file for material is in JSON format
 		nlohmann::json json;
 		if (JSONTools::LoadJSONFile(path, json, true))
-			return LoadObject(nullptr, json, path.GetResolvedPath());
+			return LoadObject(nullptr, json);
 		return nullptr;
 	}
 

@@ -343,7 +343,7 @@ namespace chaos
 		return (blend_desc.blend_type != SoundBlendType::BLEND_NONE);
 	}
 
-	bool SoundObject::InitializeFromJSON(nlohmann::json const & json, boost::filesystem::path const & config_path)
+	bool SoundObject::InitializeFromJSON(nlohmann::json const & json)
 	{
 		assert(IsAttachedToManager());
 		float json_volume = 1.0f;
@@ -474,9 +474,9 @@ namespace chaos
 		return true;
 	}
 
-	bool SoundSource::InitializeFromJSON(nlohmann::json const & json, boost::filesystem::path const & config_path)
+	bool SoundSource::InitializeFromJSON(nlohmann::json const & json)
 	{
-		if (!SoundObject::InitializeFromJSON(json, config_path))
+		if (!SoundObject::InitializeFromJSON(json))
 			return false;
 		// update the default category
 		std::vector<std::string> category_names;
@@ -1160,7 +1160,7 @@ namespace chaos
 	// "key": {"name":"myname"}   => name given by the member 'name'
 	// "@key" : {}                => the key begins with @ => the name is the key (with @removed)
 
-	SoundCategory * SoundManager::AddJSONCategory(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path)
+	SoundCategory * SoundManager::AddJSONCategory(char const * name, nlohmann::json const & json)
 	{
 		// no anonymous category
 		if (name == nullptr)
@@ -1169,36 +1169,34 @@ namespace chaos
 		SoundCategory * category = AddCategory(name);
 		// initialize the new object
 		if (category != nullptr)
-			category->InitializeFromJSON(json, config_path);
+			category->InitializeFromJSON(json);
 		return category;
 	}
 
-	bool SoundManager::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+	bool SoundManager::InitializeFromConfiguration(nlohmann::json const & json)
 	{
 		// initialize the categories
-		if (!LoadCategoriesFromConfiguration(json, config_path))
+		if (!LoadCategoriesFromConfiguration(json))
 			return false;
 		// Initialize the sources
-		if (!LoadSourcesFromConfiguration(json, config_path))
+		if (!LoadSourcesFromConfiguration(json))
 			return false;
 		return true;
 	}
 
-	bool SoundManager::LoadCategoriesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+	bool SoundManager::LoadCategoriesFromConfiguration(nlohmann::json const & json)
 	{
 		return LoadObjectsFromConfiguration<false>( // no [recurse] reading
 			"categories",
 			json,
-			config_path,
 			SoundCategoryLoader(this));
 	}
 
-	bool SoundManager::LoadSourcesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+	bool SoundManager::LoadSourcesFromConfiguration(nlohmann::json const & json)
 	{
 		return LoadObjectsFromConfiguration<true>(
 			"sources",
 			json,
-			config_path,
 			SoundSourceLoader(this));
 	}
 
@@ -1263,18 +1261,18 @@ namespace chaos
 	// SOUND SOURCE LOADER
 	// ==============================================================
 
-	SoundSource * SoundSourceLoader::LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	SoundSource * SoundSourceLoader::LoadObject(char const * name, nlohmann::json const & json) const
 	{
 		SoundSource * result = nullptr;
 		// the entry has a reference to another file => recursive call
 		std::string p;
 		if (JSONTools::GetAttribute(json, "path", p))
 		{
-			FilePathParam path(p, config_path);
+			FilePathParam path(p);
 
 			result = LoadObject(path, name);
 			if (result != nullptr)
-				result->InitializeFromJSON(json, config_path);			
+				result->InitializeFromJSON(json);			
 		}
 		return result;
 	}
@@ -1336,7 +1334,7 @@ namespace chaos
 	// SOUND CATEGORY LOADER
 	// ==============================================================
 
-	SoundCategory * SoundCategoryLoader::LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	SoundCategory * SoundCategoryLoader::LoadObject(char const * name, nlohmann::json const & json) const
 	{
 		// no anonymous category
 		if (name == nullptr)
@@ -1345,7 +1343,7 @@ namespace chaos
 		SoundCategory * result = manager->AddCategory(name);
 		// initialize the new object
 		if (result != nullptr)
-			result->InitializeFromJSON(json, config_path);
+			result->InitializeFromJSON(json);
 		return result;
 	}
 

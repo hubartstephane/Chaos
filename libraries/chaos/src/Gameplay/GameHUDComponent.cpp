@@ -114,7 +114,7 @@ namespace chaos
 		return result;
 	}
 
-	bool GameHUDComponent::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+	bool GameHUDComponent::InitializeFromConfiguration(nlohmann::json const & json)
 	{
 		bool visible = true;
 		JSONTools::GetAttribute(json, "visible", visible);
@@ -187,9 +187,9 @@ namespace chaos
 	{
 	}
 
-	bool GameHUDTextComponent::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+	bool GameHUDTextComponent::InitializeFromConfiguration(nlohmann::json const & json)
 	{
-		if (!GameHUDMeshComponent::InitializeFromConfiguration(json, config_path))
+		if (!GameHUDMeshComponent::InitializeFromConfiguration(json))
 			return true;
 		JSONTools::GetAttribute(json, "format", text);
 		JSONTools::GetAttribute(json, "generator_params", generator_params);
@@ -419,9 +419,9 @@ namespace chaos
 		final_params.default_color = (cached_value >= 10.0f) ? normal_color : final_color;
 	}
 
-	bool GameHUDTimeoutComponent::InitializeFromConfiguration(nlohmann::json const& json, boost::filesystem::path const& config_path)
+	bool GameHUDTimeoutComponent::InitializeFromConfiguration(nlohmann::json const& json)
 	{
-		if (!GameHUDCacheValueTextComponent<float>::InitializeFromConfiguration(json, config_path))
+		if (!GameHUDCacheValueTextComponent<float>::InitializeFromConfiguration(json))
 			return true;
 		JSONTools::GetAttribute(json, "digit_count", digit_count);
 		JSONTools::GetAttribute(json, "normal_color", normal_color);
@@ -433,9 +433,9 @@ namespace chaos
 	// GameHUDLifeComponent
 	// ====================================================================
 
-	bool GameHUDLifeComponent::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+	bool GameHUDLifeComponent::InitializeFromConfiguration(nlohmann::json const & json)
 	{
-		if (!GameHUDMeshComponent::InitializeFromConfiguration(json, config_path))
+		if (!GameHUDMeshComponent::InitializeFromConfiguration(json))
 			return true;
 		
 		JSONTools::GetAttribute(json, "hotpoint", hotpoint);
@@ -680,9 +680,9 @@ namespace chaos
 		should_update_mesh = true;
 	}
 
-	bool GameHUDDebugValuesComponent::InitializeFromConfiguration(nlohmann::json const& json, boost::filesystem::path const& config_path)
+	bool GameHUDDebugValuesComponent::InitializeFromConfiguration(nlohmann::json const& json)
 	{
-		if (!GameHUDMeshComponent::InitializeFromConfiguration(json, config_path))
+		if (!GameHUDMeshComponent::InitializeFromConfiguration(json))
 			return true;
 		JSONTools::GetAttribute(json, "generator_params", generator_params);
 		return true;

@@ -27,10 +27,12 @@ namespace chaos
 		game = game_class.CreateInstance();
 		if (game == nullptr)
 			return false;
+		game->configuration_path = configuration_path;
+
 		// initialize the game from configuration
 		nlohmann::json const* game_config = JSONTools::GetStructure(configuration, "game");
 		if (game_config != nullptr)
-			if (!game->InitializeFromConfiguration(*game_config, configuration_path))
+			if (!game->InitializeFromConfiguration(*game_config))
 				return false;
 		// super method : need to be done game initialization ! (because atlas creation requires the game to have loaded its levels)
 		if (!WindowApplication::PreMessageLoop())

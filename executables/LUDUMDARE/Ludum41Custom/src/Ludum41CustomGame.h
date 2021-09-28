@@ -42,18 +42,18 @@ protected:
 	virtual void OnEnterMainMenu(bool very_first) override;
 
 	/** initialize the dictionnary */
-	bool InitializeDictionnary(nlohmann::json const & config, boost::filesystem::path const & config_path);
+	bool InitializeDictionnary(nlohmann::json const & config);
 	/** replace some special */
 	void ReplaceSpecialLetters(std::string & word) const;
 	/** test whether a word only has the common letters (no accent) */
 	bool IsWordValid(std::string const & word) const;
 
 	/** override */
-	virtual bool InitializeFromConfiguration(nlohmann::json const& config, boost::filesystem::path const& config_path) override;
+	virtual bool InitializeFromConfiguration(nlohmann::json const& config) override;
 	/** initialize the particle manager */
 	virtual int AddParticleLayers() override;
 	/** initialize the game variables */
-	virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload) override;
+	virtual bool InitializeGameValues(nlohmann::json const & config, bool hot_reload) override;
 	/** fullfill the lists of rewards an punishments */
 	bool InitializeRewardsAndPunishments();
 	

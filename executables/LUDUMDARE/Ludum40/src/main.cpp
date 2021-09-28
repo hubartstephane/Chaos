@@ -47,9 +47,9 @@ protected:
 		chaos::Window::Finalize();
 	}
 
-	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
+	virtual bool InitializeFromConfiguration(nlohmann::json const & config) override
 	{   
-		if (!chaos::Window::InitializeFromConfiguration(config, config_path))
+		if (!chaos::Window::InitializeFromConfiguration(config))
 			return false;
 
 		// open user temp directory and dump the config file
@@ -68,7 +68,7 @@ protected:
 
 		float WORLD_X = 1000.0f;
 		glm::vec2 world_size = glm::vec2(WORLD_X, WORLD_X / VIEWPORT_WANTED_ASPECT);
-		if (!game->Initialize(this, chaos::JSONTools::GetStructure(config, "game"), config_path, world_size))
+		if (!game->Initialize(this, chaos::JSONTools::GetStructure(config, "game"), world_size))
 			return false;
 
 		return true;

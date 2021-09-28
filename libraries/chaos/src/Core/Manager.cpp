@@ -40,7 +40,7 @@ namespace chaos
 		return manager_started;
 	}
 
-	bool Manager::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
+	bool Manager::InitializeFromConfiguration(nlohmann::json const & config)
 	{
 		return true;
 	}

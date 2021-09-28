@@ -40,7 +40,7 @@ public:
 	LudumGame();
 
 	/** override */
-	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
+	virtual bool InitializeFromConfiguration(nlohmann::json const & config) override;
 
 
 	EnemyType * FindEnemyType(char const * name);
@@ -53,7 +53,7 @@ protected:
 	virtual bool OnEnterGame(chaos::PhysicalGamepad * in_physical_gamepad) override;
 
 	/** initialize the game variables */
-	virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload) override;
+	virtual bool InitializeGameValues(nlohmann::json const & config, bool hot_reload) override;
 
 	/** override level creation */
 	chaos::TMLevel * CreateTMLevel() override;

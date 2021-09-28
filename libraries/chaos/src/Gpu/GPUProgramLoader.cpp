@@ -3,11 +3,11 @@
 namespace chaos
 {
 
-	GPUProgram * GPUProgramLoader::LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	GPUProgram * GPUProgramLoader::LoadObject(char const * name, nlohmann::json const & json) const
 	{
-		GPUProgram* result = LoadObjectHelper(name, json, config_path, [this](nlohmann::json const & json, boost::filesystem::path const & config_path)
+		GPUProgram* result = LoadObjectHelper(name, json, [this](nlohmann::json const & json)
 		{
-			return GenProgramObject(json, config_path);
+			return GenProgramObject(json);
 		});
 		if (result != nullptr)
 		{
@@ -43,7 +43,7 @@ namespace chaos
 		return (manager != nullptr && manager->FindProgram(request) != nullptr);
 	}
 
-	GPUProgram * GPUProgramLoader::GenProgramObject(nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	GPUProgram * GPUProgramLoader::GenProgramObject(nlohmann::json const & json) const
 	{
 		// can only work with json object
 		if (!json.is_object())
@@ -53,7 +53,7 @@ namespace chaos
 		std::string p;
 		if (JSONTools::GetAttribute(json, "path", p))
 		{
-			FilePathParam path(p, config_path);
+			FilePathParam path(p);
 			return GenProgramObject(path);
 		}
 
@@ -99,7 +99,7 @@ namespace chaos
 			std::string source_path;
 			if (!JSONTools::GetAttribute(json, shader_json_names[i], source_path))
 				continue;
-			FilePathParam path(source_path, config_path);
+			FilePathParam path(source_path);
 			program_generator.AddShaderSourceFile(shader_types[i], path);
 		}
 
@@ -118,7 +118,7 @@ namespace chaos
 				std::string source_path;
 				if (!JSONTools::GetAttributeByIndex(*sources, j, source_path))
 					continue;
-				FilePathParam path(source_path, config_path);
+				FilePathParam path(source_path);
 				program_generator.AddShaderSourceFile(shader_types[i], path);
 			}
 		}
@@ -135,7 +135,7 @@ namespace chaos
 		// load the file
 		nlohmann::json json;
 		if (JSONTools::LoadJSONFile(path, json, true))
-			return GenProgramObject(json, path.GetResolvedPath());	
+			return GenProgramObject(json);	
 		return nullptr;
 	}
 

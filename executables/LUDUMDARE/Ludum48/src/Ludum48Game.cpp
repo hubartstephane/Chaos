@@ -38,9 +38,9 @@ GameHUD * LudumGame::DoCreatePlayingHUD()
 	return new LudumPlayingHUD();
 }
 
-bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload)
+bool LudumGame::InitializeGameValues(nlohmann::json const & config, bool hot_reload)
 {
-	if (!Game::InitializeGameValues(config, config_path, hot_reload))
+	if (!Game::InitializeGameValues(config, hot_reload))
 		return false;
 						
 	return true;
@@ -51,9 +51,9 @@ TMLevel * LudumGame::CreateTMLevel()
 	return new LudumLevel();
 }
 
-bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
+bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config)
 {
-	if (!Game::InitializeFromConfiguration(config, config_path))
+	if (!Game::InitializeFromConfiguration(config))
 		return false;
 
 

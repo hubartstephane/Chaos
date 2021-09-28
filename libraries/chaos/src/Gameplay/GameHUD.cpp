@@ -69,7 +69,7 @@ namespace chaos
 		if (component_config == nullptr)
 			return;
 		// initialize the component from JSON
-		component->InitializeFromConfiguration(*component_config, application->GetConfigurationPath());
+		component->InitializeFromConfiguration(*component_config);
 	}
 
 	bool GameHUD::Initialize(Game* in_game)

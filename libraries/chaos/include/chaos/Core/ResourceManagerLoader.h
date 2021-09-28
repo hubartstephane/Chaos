@@ -68,13 +68,13 @@ namespace chaos
 
 	protected:
 
-		RESOURCE_TYPE * LoadObjectHelper(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, std::function<RESOURCE_TYPE *(nlohmann::json const &, boost::filesystem::path const &)> LoadFunc) const
+		RESOURCE_TYPE * LoadObjectHelper(char const * name, nlohmann::json const & json, std::function<RESOURCE_TYPE *(nlohmann::json const &)> LoadFunc) const
 		{
 			// check for name
 			if (!CheckResourceName(nullptr, name, &json))
 				return nullptr;
 			// load the object
-			RESOURCE_TYPE * result = LoadFunc(json, config_path);
+			RESOURCE_TYPE * result = LoadFunc(json);
 			if (result != nullptr)
 			{
 				ApplyNameToLoadedResource(result);

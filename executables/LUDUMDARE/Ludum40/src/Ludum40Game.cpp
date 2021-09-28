@@ -290,7 +290,7 @@ bool Game::OnCollision(Particle & p, SpriteLayer & layer)
 
 
 
-bool Game::Initialize(chaos::Window * in_window, nlohmann::json const * config, boost::filesystem::path const & config_path, glm::vec2 const & in_world_size)
+bool Game::Initialize(chaos::Window * in_window, nlohmann::json const * config, glm::vec2 const & in_world_size)
 {
   chaos::Application * application = chaos::Application::GetInstance();
   if (application == nullptr)
@@ -301,7 +301,7 @@ bool Game::Initialize(chaos::Window * in_window, nlohmann::json const * config, 
 
 
   if (config != nullptr)
-	  InitializeFromConfiguration(*config, config_path);
+	  InitializeFromConfiguration(*config);
 
   window = in_window;
 
@@ -890,7 +890,7 @@ glm::vec2 Game::GetPlayerInitialScreenPosition() const
 	return glm::vec2(0.0f, 0.0f);	
 }
 
-void Game::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
+void Game::InitializeFromConfiguration(nlohmann::json const & config)
 {
   chaos::JSONTools::GetAttribute(config, "level_particle_increment", level_particle_increment, 10);
   chaos::JSONTools::GetAttribute(config, "max_particles_per_frame", max_particles_per_frame, 100);

@@ -26,7 +26,7 @@ namespace chaos
 		Game* game = GetGame();
 		if (game != nullptr)
 		{
-			if (!InitializeGameValues(in_game_instance->player_configuration, game->configuration_path, false)) // false => not hot relead
+			if (!InitializeGameValues(in_game_instance->player_configuration, false)) // false => not hot relead
 				return false;
 			OnGameValuesChanged(false);
 		}
@@ -353,7 +353,7 @@ namespace chaos
 		return InputEventReceiver::DoCheckButtonPressed(button, previous_frame);
     }
 
-	bool Player::InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload)
+	bool Player::InitializeGameValues(nlohmann::json const& config, bool hot_reload)
 	{
 		CHAOS_JSON_ATTRIBUTE(config, life_count);
 		CHAOS_JSON_ATTRIBUTE(config, max_health);

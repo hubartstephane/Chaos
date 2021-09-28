@@ -35,23 +35,23 @@ chaos::GameHUD * LudumGame::DoCreatePlayingHUD()
 }
 
 template<typename T>
-static bool InitializeGameValueVector(char const * json_name, nlohmann::json const & config, boost::filesystem::path const & config_path, std::vector<T> & result)
+static bool InitializeGameValueVector(char const * json_name, nlohmann::json const & config, std::vector<T> & result)
 {
 	chaos::JSONTools::GetAttribute(config, json_name, result);
 	return (result.size() > 0);
 }
 
-bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload)
+bool LudumGame::InitializeGameValues(nlohmann::json const & config, bool hot_reload)
 {
-	if (!chaos::Game::InitializeGameValues(config, config_path, hot_reload))
+	if (!chaos::Game::InitializeGameValues(config, hot_reload))
 		return false;
-	if (!InitializeGameValueVector("player_speeds", config, config_path, player_speeds))
+	if (!InitializeGameValueVector("player_speeds", config, player_speeds))
 		return false;
-	if (!InitializeGameValueVector("player_damages", config, config_path, player_damages))
+	if (!InitializeGameValueVector("player_damages", config, player_damages))
 		return false;
-	if (!InitializeGameValueVector("player_charged_damages", config, config_path, player_charged_damages))
+	if (!InitializeGameValueVector("player_charged_damages", config, player_charged_damages))
 		return false;
-	if (!InitializeGameValueVector("player_fire_rates", config, config_path, player_fire_rates))
+	if (!InitializeGameValueVector("player_fire_rates", config, player_fire_rates))
 		return false;
 	
 	CHAOS_JSON_ATTRIBUTE(config, min_player_max_health);
@@ -81,19 +81,19 @@ chaos::TMLevel * LudumGame::CreateTMLevel()
 	return new LudumLevel();
 }
 
-bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
+bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config)
 {
-	if (!chaos::Game::InitializeFromConfiguration(config, config_path))
+	if (!chaos::Game::InitializeFromConfiguration(config))
 		return false;
-	if (!PopulatePowerUps(config, config_path))
+	if (!PopulatePowerUps(config))
 		return false;
 
 	return true;
 }
 
-bool LudumGame::PopulatePowerOneUp(LudumPowerUp * power_up, char const * json_name, nlohmann::json const & config, boost::filesystem::path const & config_path)
+bool LudumGame::PopulatePowerOneUp(LudumPowerUp * power_up, char const * json_name, nlohmann::json const & config)
 {
-	if (!power_up->InitializeFromConfiguration(json_name, config, config_path))
+	if (!power_up->InitializeFromConfiguration(json_name, config))
 	{
 		delete(power_up);
 		return false;
@@ -102,15 +102,15 @@ bool LudumGame::PopulatePowerOneUp(LudumPowerUp * power_up, char const * json_na
 	return true;
 }
 
-bool LudumGame::PopulatePowerUps(nlohmann::json const & config, boost::filesystem::path const & config_path)
+bool LudumGame::PopulatePowerUps(nlohmann::json const & config)
 {
-	if (!PopulatePowerOneUp(new LudumSpeedUp("speed_up"), "speed_up", config, config_path))
+	if (!PopulatePowerOneUp(new LudumSpeedUp("speed_up"), "speed_up", config))
 		return false;
-	if (!PopulatePowerOneUp(new LudumDamageUp("power_up", false), "damage_up", config, config_path))
+	if (!PopulatePowerOneUp(new LudumDamageUp("power_up", false), "damage_up", config))
 		return false;
-	//if (!PopulatePowerOneUp(new LudumDamageUp("blast_improved", true), "charged_damage_up", config, config_path))
+	//if (!PopulatePowerOneUp(new LudumDamageUp("blast_improved", true), "charged_damage_up", config))
 	//	return false;
-	if (!PopulatePowerOneUp(new LudumFireRateUp("augmented_fire"), "fire_rate_up", config, config_path))
+	if (!PopulatePowerOneUp(new LudumFireRateUp("augmented_fire"), "fire_rate_up", config))
 		return false;
 	return true;
 }

@@ -41,7 +41,7 @@ public:
 	LudumGame();
 
 	/** override */
-	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
+	virtual bool InitializeFromConfiguration(nlohmann::json const & config) override;
 
 	float GetBuyUpgradeTime() const { return buy_upgrade_time; }
 
@@ -51,7 +51,7 @@ protected:
 	virtual bool OnEnterGame(chaos::PhysicalGamepad * in_physical_gamepad) override;
 
 	/** initialize the game variables */
-	virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload) override;
+	virtual bool InitializeGameValues(nlohmann::json const & config, bool hot_reload) override;
 
 	/** override level creation */
 	chaos::TMLevel * CreateTMLevel() override;
@@ -59,9 +59,9 @@ protected:
 	/** move the player */
 	virtual chaos::GameHUD * DoCreatePlayingHUD() override;
 
-	bool PopulatePowerUps(nlohmann::json const & config, boost::filesystem::path const & config_path);
+	bool PopulatePowerUps(nlohmann::json const & config);
 
-	bool PopulatePowerOneUp(LudumPowerUp * power_up, char const * json_name, nlohmann::json const & config, boost::filesystem::path const & config_path);
+	bool PopulatePowerOneUp(LudumPowerUp * power_up, char const * json_name, nlohmann::json const & config);
 
 protected:
 

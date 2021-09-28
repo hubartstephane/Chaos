@@ -799,7 +799,7 @@ namespace chaos
 		return false;	
 	}
 
-	bool Window::InitializeFromConfiguration(nlohmann::json const& config, boost::filesystem::path const& config_path)
+	bool Window::InitializeFromConfiguration(nlohmann::json const& config)
 	{
 		return true;
 	}

@@ -209,7 +209,7 @@ namespace chaos
 		// initialize the main with any configuration data window (once GPUResourceManager is fully initialized)
 		if (!WithGLContext<bool>(main_window->GetGLFWHandler(), [this]()
 		{
-			return main_window->InitializeFromConfiguration(configuration, configuration_path);
+			return main_window->InitializeFromConfiguration(configuration);
 		}))
 		{
 			return false;
@@ -479,7 +479,7 @@ namespace chaos
 		// get JSON section and load all requested resources
 		nlohmann::json const* gpu_config = JSONTools::GetStructure(configuration, "gpu");
 		if (gpu_config != nullptr)
-			if (!gpu_resource_manager->InitializeFromConfiguration(*gpu_config, configuration_path))
+			if (!gpu_resource_manager->InitializeFromConfiguration(*gpu_config))
 				return false;
 		return true;
 	}
@@ -506,7 +506,7 @@ namespace chaos
 			if (!other_gpu_resource_manager->StartManager())
 				return false;
 			// reload all resources ... (even unchanged)
-			if (other_gpu_resource_manager->InitializeFromConfiguration(*gpu_config, configuration_path))
+			if (other_gpu_resource_manager->InitializeFromConfiguration(*gpu_config))
 				gpu_resource_manager->RefreshGPUResources(other_gpu_resource_manager.get());
 			other_gpu_resource_manager->StopManager();
 			return true;
@@ -539,7 +539,7 @@ namespace chaos
 			return false;
 		nlohmann::json const* clock_config = JSONTools::GetStructure(configuration, "clocks");
 		if (clock_config != nullptr)
-			main_clock->InitializeFromConfiguration(*clock_config, configuration_path);
+			main_clock->InitializeFromConfiguration(*clock_config);
 
 		// initialize the sound manager
 		sound_manager = new SoundManager();
@@ -548,7 +548,7 @@ namespace chaos
 		sound_manager->StartManager();
 		nlohmann::json const* sound_config = JSONTools::GetStructure(configuration, "sounds");
 		if (sound_config != nullptr)
-			sound_manager->InitializeFromConfiguration(*sound_config, configuration_path);
+			sound_manager->InitializeFromConfiguration(*sound_config);
 
 		return true;
 	}

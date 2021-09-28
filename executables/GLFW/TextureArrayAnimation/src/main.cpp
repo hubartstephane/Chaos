@@ -105,9 +105,9 @@ protected:
 		return generator.ComputeResult(input, params);
 	}
 
-	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
+	virtual bool InitializeFromConfiguration(nlohmann::json const & config) override
 	{
-		if (!chaos::Window::InitializeFromConfiguration(config, config_path))
+		if (!chaos::Window::InitializeFromConfiguration(config))
 			return false;
 
 		chaos::Application * application = chaos::Application::GetInstance();

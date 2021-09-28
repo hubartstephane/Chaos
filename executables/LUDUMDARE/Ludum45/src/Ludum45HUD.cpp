@@ -101,9 +101,9 @@ void GameHUDShroudLifeComponent::UpdateMesh()
 	mesh = DI.ExtractMesh();
 }
 
-bool GameHUDShroudLifeComponent::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+bool GameHUDShroudLifeComponent::InitializeFromConfiguration(nlohmann::json const & json)
 {
-	if (!GameHUDMeshComponent::InitializeFromConfiguration(json, config_path))
+	if (!GameHUDMeshComponent::InitializeFromConfiguration(json))
 		return true;
 
 	chaos::JSONTools::GetAttribute(json, "hotpoint", hotpoint);

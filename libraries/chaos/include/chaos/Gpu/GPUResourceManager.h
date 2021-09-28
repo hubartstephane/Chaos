@@ -122,7 +122,7 @@ namespace chaos
 		/** initialize the manager from a file */
 		virtual bool LoadManager(FilePathParam const& path);
 		/** loading from a JSON object */
-		virtual bool InitializeFromConfiguration(nlohmann::json const& json, boost::filesystem::path const& config_path);
+		virtual bool InitializeFromConfiguration(nlohmann::json const& json);
 		/** merge all resources with incomming manager */
 		virtual bool RefreshGPUResources(GPUResourceManager* other_gpu_manager);
 
@@ -136,11 +136,11 @@ namespace chaos
 	protected:
 
 		/** load the textures from configuration */
-		virtual bool LoadTexturesFromConfiguration(nlohmann::json const& json, boost::filesystem::path const& config_path);
+		virtual bool LoadTexturesFromConfiguration(nlohmann::json const& json);
 		/** load the programs from configuration */
-		virtual bool LoadProgramsFromConfiguration(nlohmann::json const& json, boost::filesystem::path const& config_path);
+		virtual bool LoadProgramsFromConfiguration(nlohmann::json const& json);
 		/** load the materials from configuration */
-		virtual bool LoadMaterialsFromConfiguration(nlohmann::json const& json, boost::filesystem::path const& config_path);
+		virtual bool LoadMaterialsFromConfiguration(nlohmann::json const& json);
 
 		/** merge all resources with incomming manager */
 		virtual bool RefreshTextures(GPUResourceManager* other_gpu_manager, GPUResourceManagerReloadData& reload_data);

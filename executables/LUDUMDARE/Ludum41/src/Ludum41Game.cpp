@@ -37,9 +37,9 @@ void LudumGame::OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode o
 		ludum_game_instance->OnInputModeChanged(new_mode, old_mode);
 }
 
-bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload)
+bool LudumGame::InitializeGameValues(nlohmann::json const & config, bool hot_reload)
 {
-	if (!chaos::Game::InitializeGameValues(config, config_path, hot_reload))
+	if (!chaos::Game::InitializeGameValues(config, hot_reload))
 		return false;
 
 	CHAOS_JSON_ATTRIBUTE(config, max_ball_count);
@@ -139,12 +139,12 @@ chaos::Level * LudumGame::DoLoadLevel(chaos::FilePathParam const & path)
 	return result;
 }
 
-bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
+bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config)
 {
-	if (!chaos::Game::InitializeFromConfiguration(config, config_path))
+	if (!chaos::Game::InitializeFromConfiguration(config))
 		return false;
 	// the dictionnary
-	if (!InitializeDictionnary(config, config_path))
+	if (!InitializeDictionnary(config))
 		return false;
 	// build the rewards/punishment values
 	if (!InitializeRewardsAndPunishments())
@@ -188,7 +188,7 @@ void LudumGame::ReplaceSpecialLetters(std::string & word) const
 	}
 }
 
-bool LudumGame::InitializeDictionnary(nlohmann::json const & config, boost::filesystem::path const & config_path)
+bool LudumGame::InitializeDictionnary(nlohmann::json const & config)
 {
 	// detect whether the language is french
 

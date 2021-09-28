@@ -386,7 +386,7 @@ namespace chaos
 		});
 	}
 
-	bool Game::GenerateObjectTypeSets(nlohmann::json const & config, boost::filesystem::path const& config_path)
+	bool Game::GenerateObjectTypeSets(nlohmann::json const & config)
 	{
 		return DoGenerateTiledMapEntity(config, "objecttypesets_directory", "objecttypesets", "xml", [](TiledMap::Manager * manager, boost::filesystem::path const & path) {
 			if (!manager->LoadObjectTypeSet(path))
@@ -395,7 +395,7 @@ namespace chaos
 		});
 	}
 
-	bool Game::GenerateTileSets(nlohmann::json const & config, boost::filesystem::path const& config_path)
+	bool Game::GenerateTileSets(nlohmann::json const & config)
 	{
 		return DoGenerateTiledMapEntity(config, "tilesets_directory", "tilesets", "tsx", [](TiledMap::Manager * manager, boost::filesystem::path const & path) {
 			if (!manager->LoadTileSet(path))
@@ -404,7 +404,7 @@ namespace chaos
 		});
 	}
 
-	bool Game::LoadLevels(nlohmann::json const & config, boost::filesystem::path const& config_path)
+	bool Game::LoadLevels(nlohmann::json const & config)
 	{
 		// iterate the files and load the levels
 		boost::filesystem::path path = GetResourceDirectoryFromConfig(config, "levels_directory", "levels");
@@ -568,7 +568,7 @@ namespace chaos
 		return true;
 	}
 
-	bool Game::CreateClocks(nlohmann::json const& config, boost::filesystem::path const& config_path)
+	bool Game::CreateClocks(nlohmann::json const& config)
 	{
 		Clock* application_clock = GetApplicationClock();
 		if (application_clock == nullptr)
@@ -580,7 +580,7 @@ namespace chaos
 		return true;
 	}
 
-	bool Game::CreateGamepadManager(nlohmann::json const& config, boost::filesystem::path const& config_path)
+	bool Game::CreateGamepadManager(nlohmann::json const& config)
 	{
 		bool gamepad_enabled = true;
 		JSONTools::GetAttribute(config, "gamepad_enabled", gamepad_enabled, true);
@@ -593,29 +593,29 @@ namespace chaos
 		return true;
 	}
 
-	bool Game::InitializeFromConfiguration(nlohmann::json const& config, boost::filesystem::path const& config_path)
+	bool Game::InitializeFromConfiguration(nlohmann::json const& config)
 	{
 		// initialize the gamepad manager
-		if (!CreateGamepadManager(config, config_path))
+		if (!CreateGamepadManager(config))
 			return false;
 		// create game state_machine
-		if (!CreateGameStateMachine(config, config_path))
+		if (!CreateGameStateMachine(config))
 			return false;
 		// initialize clocks
-		if (!CreateClocks(config, config_path))
+		if (!CreateClocks(config))
 			return false;
 		// initialize game values
-		if (!InitializeGameValues(config, config_path, false)) // false => not hot_reload
+		if (!InitializeGameValues(config, false)) // false => not hot_reload
 			return false;
 		OnGameValuesChanged(false);
 		// loading object type sets
-		if (!GenerateObjectTypeSets(config, config_path))
+		if (!GenerateObjectTypeSets(config))
 			return false;
 		// loading tilemapset
-		if (!GenerateTileSets(config, config_path))
+		if (!GenerateTileSets(config))
 			return false;
 		// load exisiting levels
-		if (!LoadLevels(config, config_path))
+		if (!LoadLevels(config))
 			return false;
 
 		// load the best score if any
@@ -794,7 +794,7 @@ namespace chaos
 		return PlaySound(name, play_desc, category_tag);
 	}
 
-	bool Game::CreateGameStateMachine(nlohmann::json const& config, boost::filesystem::path const& config_path)
+	bool Game::CreateGameStateMachine(nlohmann::json const& config)
 	{
 		game_sm = DoCreateGameStateMachine();
 		if (game_sm == nullptr)
@@ -847,11 +847,8 @@ namespace chaos
 		return true;
 	}
 
-	bool Game::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload)
+	bool Game::InitializeGameValues(nlohmann::json const & config, bool hot_reload)
 	{
-		// keep a reference on the configuration path
-		configuration_path = config_path;
-
 		// capture the game instance configuration
 		nlohmann::json const* gi_config = JSONTools::GetStructure(config, "game_instance");
 		if (gi_config != nullptr && gi_config->is_object())
@@ -869,7 +866,7 @@ namespace chaos
 	void Game::OnGameValuesChanged(bool hot_reload)
 	{
 		if (game_instance != nullptr)
-			if (game_instance->InitializeGameValues(game_instance_configuration, configuration_path, hot_reload))
+			if (game_instance->InitializeGameValues(game_instance_configuration, hot_reload))
 				game_instance->OnGameValuesChanged(hot_reload);
 	}
 
@@ -1347,7 +1344,7 @@ namespace chaos
 		if (game_config == nullptr)
 			return false;
 		// update game values
-		if (!InitializeGameValues(*game_config, application->GetConfigurationPath(), true)) // true => hot_reload
+		if (!InitializeGameValues(*game_config, true)) // true => hot_reload
 			return false;
 		OnGameValuesChanged(true);
 		return true;

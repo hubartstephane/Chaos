@@ -79,7 +79,7 @@ namespace chaos
 		/** called whenever the hud is beeing removed into the hud */
 		virtual void OnRemovedFromHUD();
 		/** initialization method from JSON */
-		virtual bool InitializeFromConfiguration(nlohmann::json const& json, boost::filesystem::path const& config_path);
+		virtual bool InitializeFromConfiguration(nlohmann::json const& json);
 		/** set the HUD */
 		virtual void SetHUD(GameHUD* in_hud);
 
@@ -135,7 +135,7 @@ namespace chaos
 		/** override */
 		virtual void UpdateMesh() override;
 		/** override */
-		virtual bool InitializeFromConfiguration(nlohmann::json const& json, boost::filesystem::path const& config_path) override;
+		virtual bool InitializeFromConfiguration(nlohmann::json const& json) override;
 		/** override */
 		virtual void OnInsertedInHUD() override;
 
@@ -368,7 +368,7 @@ namespace chaos
 		/** override */
 		virtual void TweakTextGeneratorParams(ParticleTextGenerator::GeneratorParams& final_params) const override;
 		/** override */
-		virtual bool InitializeFromConfiguration(nlohmann::json const& json, boost::filesystem::path const& config_path) override;
+		virtual bool InitializeFromConfiguration(nlohmann::json const& json) override;
 
 	protected:
 
@@ -404,7 +404,7 @@ namespace chaos
 		/** override */
 		virtual void UpdateMesh() override;
 		/** override */
-		virtual bool InitializeFromConfiguration(nlohmann::json const& json, boost::filesystem::path const& config_path) override;
+		virtual bool InitializeFromConfiguration(nlohmann::json const& json) override;
 
 	protected:
 
@@ -506,7 +506,7 @@ namespace chaos
 		/** override */
 		virtual void OnInsertedInHUD() override;
 		/** override */
-		virtual bool InitializeFromConfiguration(nlohmann::json const& json, boost::filesystem::path const& config_path) override;
+		virtual bool InitializeFromConfiguration(nlohmann::json const& json) override;
 
 	protected:
 

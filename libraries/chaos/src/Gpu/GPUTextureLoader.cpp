@@ -4,11 +4,11 @@ namespace chaos
 {
 
 
-	GPUTexture * GPUTextureLoader::LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters) const
+	GPUTexture * GPUTextureLoader::LoadObject(char const * name, nlohmann::json const & json, GenTextureParameters const & parameters) const
 	{
-		GPUTexture* result = LoadObjectHelper(name, json, config_path, [this, &parameters](nlohmann::json const & json, boost::filesystem::path const & config_path) 
+		GPUTexture* result = LoadObjectHelper(name, json, [this, &parameters](nlohmann::json const & json) 
 		{
-			return GenTextureObject(json, config_path, parameters);
+			return GenTextureObject(json, parameters);
 		});
 		if (result != nullptr)
 		{
@@ -141,7 +141,7 @@ namespace chaos
 			{
 				nlohmann::json json;
 				if (JSONTools::ParseRecursive(ascii_buffer, path.GetResolvedPath(), json))
-					result = GenTextureObject(json, path.GetResolvedPath(), parameters);
+					result = GenTextureObject(json, parameters);
 			}
 		}
 		return result;
@@ -391,13 +391,13 @@ namespace chaos
 		return result;
 	}
 
-	GPUTexture * GPUTextureLoader::GenTextureObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters) const
+	GPUTexture * GPUTextureLoader::GenTextureObject(nlohmann::json const & json, GenTextureParameters const & parameters) const
 	{
 		// the entry has a reference to another file => recursive call
 		std::string p;
 		if (JSONTools::GetAttribute(json, "path", p))
 		{
-			FilePathParam path(p, config_path);
+			FilePathParam path(p);
 			return GenTextureObject(path, parameters);
 		}
 
@@ -454,17 +454,17 @@ namespace chaos
 				{
 					if (single_image)
 					{
-						FilePathParam single_path(single, config_path);
+						FilePathParam single_path(single);
 						skybox = SkyBoxTools::LoadSingleSkyBox(single_path);
 					}
 					else if (multiple_image)
 					{
-						FilePathParam left_path(left, config_path);
-						FilePathParam right_path(right, config_path);
-						FilePathParam top_path(top, config_path);
-						FilePathParam bottom_path(bottom, config_path);
-						FilePathParam front_path(front, config_path);
-						FilePathParam back_path(back, config_path);
+						FilePathParam left_path(left);
+						FilePathParam right_path(right);
+						FilePathParam top_path(top);
+						FilePathParam bottom_path(bottom);
+						FilePathParam front_path(front);
+						FilePathParam back_path(back);
 						skybox = SkyBoxTools::LoadMultipleSkyBox(left_path, right_path, top_path, bottom_path, front_path, back_path);
 					}
 					return GenTextureObject(&skybox, PixelFormatMergeParams(), parameters);

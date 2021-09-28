@@ -153,46 +153,43 @@ namespace chaos
 		nlohmann::json json;
 		if (!JSONTools::LoadJSONFile(path, json, true))
 			return true;
-		return InitializeFromConfiguration(json, path.GetResolvedPath());	
+		return InitializeFromConfiguration(json);	
 	}
 
-	bool GPUResourceManager::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+	bool GPUResourceManager::InitializeFromConfiguration(nlohmann::json const & json)
 	{
-		if (!LoadTexturesFromConfiguration(json, config_path))
+		if (!LoadTexturesFromConfiguration(json))
 			return false;
-		if (!LoadProgramsFromConfiguration(json, config_path))
+		if (!LoadProgramsFromConfiguration(json))
 			return false;
-		if (!LoadMaterialsFromConfiguration(json, config_path))
+		if (!LoadMaterialsFromConfiguration(json))
 			return false;
 		return true;
 	}
 
-	bool GPUResourceManager::LoadTexturesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+	bool GPUResourceManager::LoadTexturesFromConfiguration(nlohmann::json const & json)
 	{
 		return LoadObjectsFromConfiguration<true>(
 			"textures",
 			json,
-			config_path,
 			GPUTextureLoader(this));
 	}
 
-	bool GPUResourceManager::LoadProgramsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+	bool GPUResourceManager::LoadProgramsFromConfiguration(nlohmann::json const & json)
 	{
 		return LoadObjectsFromConfiguration<true>(
 			"programs", 
 			json, 
-			config_path, 
 			GPUProgramLoader(this));
 	}
 
-	bool GPUResourceManager::LoadMaterialsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+	bool GPUResourceManager::LoadMaterialsFromConfiguration(nlohmann::json const & json)
 	{
 		GPURenderMaterialLoaderReferenceSolver solver; // finalize the missing references
 
 		bool result = LoadObjectsFromConfiguration<true>(
 			"rendermaterials",
 			json,
-			config_path,
 			GPURenderMaterialLoader(this, &solver));
 		if (result)
 			solver.ResolveReferences(this);

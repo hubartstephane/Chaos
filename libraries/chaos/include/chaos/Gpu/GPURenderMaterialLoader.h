@@ -56,14 +56,14 @@ namespace chaos
 		}
 
 		/** load an object from JSON */
-		virtual GPURenderMaterial* LoadObject(char const* name, nlohmann::json const& json, boost::filesystem::path const& config_path) const;
+		virtual GPURenderMaterial* LoadObject(char const* name, nlohmann::json const& json) const;
 		/** Generate a render material from an file */
 		virtual GPURenderMaterial* LoadObject(FilePathParam const& path, char const* name = nullptr) const;
 
 	protected:
 
 		/** initialize the material_info */
-		bool InitializeMaterialInfoFromJSON(GPURenderMaterial* render_material, GPURenderMaterialInfo* material_info, nlohmann::json const& json, boost::filesystem::path const& config_path) const;
+		bool InitializeMaterialInfoFromJSON(GPURenderMaterial* render_material, GPURenderMaterialInfo* material_info, nlohmann::json const& json) const;
 		/** initialize a texture from its name */
 		bool InitializeTextureFromName(GPURenderMaterialInfo* material_info, char const* uniform_name, char const* texture_name) const;
 		/** initialize a texture from its path */
@@ -78,13 +78,13 @@ namespace chaos
 		bool AddUniformToRenderMaterial(GPURenderMaterialInfo* material_info, char const* uniform_name, nlohmann::json const& json) const;
 
 		/** get the program from JSON */
-		bool InitializeProgramFromJSON(GPURenderMaterialInfo* material_info, nlohmann::json const& json, boost::filesystem::path const& config_path) const;
+		bool InitializeProgramFromJSON(GPURenderMaterialInfo* material_info, nlohmann::json const& json) const;
 		/** get the textures from JSON */
-		bool InitializeTexturesFromJSON(GPURenderMaterialInfo* material_info, nlohmann::json const& json, boost::filesystem::path const& config_path) const;
+		bool InitializeTexturesFromJSON(GPURenderMaterialInfo* material_info, nlohmann::json const& json) const;
 		/** get the uniforms from JSON */
-		bool InitializeUniformsFromJSON(GPURenderMaterialInfo* material_info, nlohmann::json const& json, boost::filesystem::path const& config_path) const;
+		bool InitializeUniformsFromJSON(GPURenderMaterialInfo* material_info, nlohmann::json const& json) const;
 		/** get the renderpasses from JSON */
-		bool InitializeRenderPassesFromJSON(GPURenderMaterial* render_material, GPURenderMaterialInfo* material_info, nlohmann::json const& json, boost::filesystem::path const& config_path) const;
+		bool InitializeRenderPassesFromJSON(GPURenderMaterial* render_material, GPURenderMaterialInfo* material_info, nlohmann::json const& json) const;
 
 		/** search whether the path is already in used in the manager */
 		virtual bool IsPathAlreadyUsedInManager(FilePathParam const& path) const override;

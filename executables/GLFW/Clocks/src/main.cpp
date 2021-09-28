@@ -191,9 +191,9 @@ protected:
 		return program_generator.GenProgramObject();
 	}
 
-	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
+	virtual bool InitializeFromConfiguration(nlohmann::json const & config) override
 	{
-		if (!chaos::Window::InitializeFromConfiguration(config, config_path))
+		if (!chaos::Window::InitializeFromConfiguration(config))
 			return false;
 
 		chaos::WindowApplication * application = chaos::Application::GetInstance();

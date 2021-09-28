@@ -177,7 +177,7 @@ namespace chaos
 		game = in_game;
 
 		// initialize from configuration
-		if (!InitializeGameValues(in_game->game_instance_configuration, in_game->configuration_path, false)) // false for not hot reload
+		if (!InitializeGameValues(in_game->game_instance_configuration, false)) // false for not hot reload
 			return false;
 		OnGameValuesChanged(false);
 
@@ -449,7 +449,7 @@ namespace chaos
 		return sound_category.get();
 	}
 
-	bool GameInstance::InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload)
+	bool GameInstance::InitializeGameValues(nlohmann::json const& config, bool hot_reload)
 	{
 		// capture the player configuration
 		nlohmann::json const* p_config = JSONTools::GetStructure(config, "player");
@@ -469,7 +469,7 @@ namespace chaos
 			Player* player = players[i].get();
 			if (player == nullptr)
 				continue;
-			if (player->InitializeGameValues(player_configuration, game->configuration_path, hot_reload))
+			if (player->InitializeGameValues(player_configuration, hot_reload))
 				player->OnGameValuesChanged(hot_reload);
 		}
 	}

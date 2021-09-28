@@ -1281,18 +1281,12 @@ namespace chaos
 
 	SoundSource * SoundSourceLoader::LoadObject(FilePathParam const & path, char const * name) const
 	{
-		// check for path
-		if (!CheckResourcePath(path))
-			return nullptr;
-		// check for name
-		if (!CheckResourceName(&path.GetResolvedPath(), name, nullptr))
-			return nullptr;
-		// create the source
-		SoundSource * result = GenSourceObject(path, name);
+		SoundSource* result = LoadObjectHelper(path, name, [this](FilePathParam const & path)
+		{
+			return GenSourceObject(path);
+		});
 		if (result != nullptr)
 		{
-			ApplyNameToLoadedResource(result);
-			ApplyPathToLoadedResource(result);
 			if (manager != nullptr)
 				if (!StringTools::IsEmpty(result->GetName())) // would like to insert the resource in manager, but name is empty
 					manager->sources.push_back(result);
@@ -1300,7 +1294,7 @@ namespace chaos
 		return result;
 	}
 
-	SoundSource * SoundSourceLoader::GenSourceObject(FilePathParam const & path, char const * name) const
+	SoundSource * SoundSourceLoader::GenSourceObject(FilePathParam const & path) const
 	{
 		// get the irrklang engine
 		irrklang::ISoundEngine * engine = manager->GetIrrklangEngine();

@@ -244,7 +244,7 @@ namespace chaos
 		virtual void DoUpdateEffectivePause(bool effective_pause);
 
 		/** loading from a JSON object */
-		virtual bool InitializeFromJSON(JSONConfig const & config);
+		virtual bool InitializeFromJSON(nlohmann::json const& json, boost::filesystem::path const& config_path);
 
 	protected:
 
@@ -294,7 +294,7 @@ namespace chaos
 		virtual Sound* GenerateSound();
 
 		/** loading from a JSON object */
-		virtual bool InitializeFromJSON(JSONConfig const & config) override;
+		virtual bool InitializeFromJSON(nlohmann::json const& json, boost::filesystem::path const& config_path) override;
 
 	protected:
 
@@ -444,7 +444,7 @@ namespace chaos
 		}
 
 		/** load an object from JSON */
-		virtual SoundSource* LoadObject(char const* name, JSONConfig const & config) const;
+		virtual SoundSource* LoadObject(char const* name, nlohmann::json const& json, boost::filesystem::path const& config_path) const;
 		/** program loading from path */
 		virtual SoundSource* LoadObject(FilePathParam const& path, char const* name = nullptr) const;
 
@@ -477,7 +477,7 @@ namespace chaos
 		}
 
 		/** load an object from JSON */
-		virtual SoundCategory* LoadObject(char const* name, JSONConfig const & config) const;
+		virtual SoundCategory* LoadObject(char const* name, nlohmann::json const& json, boost::filesystem::path const& config_path) const;
 
 	protected:
 
@@ -530,7 +530,7 @@ namespace chaos
 		bool SetListenerPosition(glm::vec3 const& position, glm::vec3 const& velocity = { 0.0f, 0.0f, 0.0f });
 
 		/** initialize the manager from a configuration file */
-		virtual bool InitializeFromConfiguration(JSONConfig const & config) override;
+		virtual bool InitializeFromConfiguration(nlohmann::json const& config, boost::filesystem::path const& config_path) override;
 
 		/** getters on sound */
 		size_t GetSoundCount() const;
@@ -633,12 +633,12 @@ namespace chaos
 		void UpdateAllSoundVolumePerSource(SoundSource* source);
 
 		/** add a category from a JSON object */
-		SoundCategory* AddJSONCategory(char const* name, JSONConfig const & config);
+		SoundCategory* AddJSONCategory(char const* name, nlohmann::json const& json, boost::filesystem::path const& config_path);
 
 		/** load the categories from configuration */
-		bool LoadCategoriesFromConfiguration(JSONConfig const & config);
+		bool LoadCategoriesFromConfiguration(nlohmann::json const& json, boost::filesystem::path const& config_path);
 		/** load the sources from configuration */
-		bool LoadSourcesFromConfiguration(JSONConfig const & config);
+		bool LoadSourcesFromConfiguration(nlohmann::json const& json, boost::filesystem::path const& config_path);
 
 	protected:
 

@@ -451,7 +451,7 @@ namespace chaos
 	protected:
 
 		/** internal method to load a source */
-		SoundSource* GenSourceObject(FilePathParam const& path, char const* name) const;
+		SoundSource* GenSourceObject(FilePathParam const& path) const;
 
 	protected:
 

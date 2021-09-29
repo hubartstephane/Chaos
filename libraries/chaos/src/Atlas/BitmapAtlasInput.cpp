@@ -48,27 +48,27 @@ namespace chaos
 		// FontInfoInputParams functions
 		// ========================================================================
 
-		bool SaveIntoJSON(nlohmann::json& json_entry, FontInfoInputParams const& src)
+		bool SaveIntoJSON(nlohmann::json& json, FontInfoInputParams const& src)
 		{
-			if (!json_entry.is_object())
-				json_entry = nlohmann::json::object();
-			JSONTools::SetAttribute(json_entry, "characters", src.characters);
-			JSONTools::SetAttribute(json_entry, "grid_size", src.grid_size);
-			JSONTools::SetAttribute(json_entry, "glyph_width", src.glyph_width);
-			JSONTools::SetAttribute(json_entry, "glyph_height", src.glyph_height);
-			JSONTools::SetAttribute(json_entry, "image_processors", src.image_processors);
+			if (!json.is_object())
+				json = nlohmann::json::object();
+			JSONTools::SetAttribute(json, "characters", src.characters);
+			JSONTools::SetAttribute(json, "grid_size", src.grid_size);
+			JSONTools::SetAttribute(json, "glyph_width", src.glyph_width);
+			JSONTools::SetAttribute(json, "glyph_height", src.glyph_height);
+			JSONTools::SetAttribute(json, "image_processors", src.image_processors);
 			return true;
 		}
 
-		bool LoadFromJSON(nlohmann::json const& json_entry, FontInfoInputParams& dst)
+		bool LoadFromJSON(nlohmann::json const& json, FontInfoInputParams& dst)
 		{
-			if (!json_entry.is_object())
+			if (!json.is_object())
 				return false;
-			JSONTools::GetAttribute(json_entry, "characters", dst.characters);
-			JSONTools::GetAttribute(json_entry, "grid_size", dst.grid_size);
-			JSONTools::GetAttribute(json_entry, "glyph_width", dst.glyph_width);
-			JSONTools::GetAttribute(json_entry, "glyph_height", dst.glyph_height);
-			JSONTools::GetAttribute(json_entry, "image_processors", dst.image_processors);
+			JSONTools::GetAttribute(json, "characters", dst.characters);
+			JSONTools::GetAttribute(json, "grid_size", dst.grid_size);
+			JSONTools::GetAttribute(json, "glyph_width", dst.glyph_width);
+			JSONTools::GetAttribute(json, "glyph_height", dst.glyph_height);
+			JSONTools::GetAttribute(json, "image_processors", dst.image_processors);
 			return true;
 		}
 
@@ -95,29 +95,29 @@ namespace chaos
 			std::vector<shared_ptr<ImageProcessor>> image_processors;
 		};
 
-		bool SaveIntoJSON(nlohmann::json & json_entry, BitmapInfoInputManifest const & src)
+		bool SaveIntoJSON(nlohmann::json & json, BitmapInfoInputManifest const & src)
 		{
-			if (!json_entry.is_object())
-				json_entry = nlohmann::json::object();
-			JSONTools::SetAttribute(json_entry, "grid_data", src.grid_data);
-			JSONTools::SetAttribute(json_entry, "images_path", src.images_path);
-			JSONTools::SetAttribute(json_entry, "frame_duration", src.frame_duration);
-			JSONTools::SetAttribute(json_entry, "anim_duration", src.anim_duration);
-			JSONTools::SetAttribute(json_entry, "default_wrap_mode", src.default_wrap_mode);
-			JSONTools::SetAttribute(json_entry, "image_processors", src.image_processors);
+			if (!json.is_object())
+				json = nlohmann::json::object();
+			JSONTools::SetAttribute(json, "grid_data", src.grid_data);
+			JSONTools::SetAttribute(json, "images_path", src.images_path);
+			JSONTools::SetAttribute(json, "frame_duration", src.frame_duration);
+			JSONTools::SetAttribute(json, "anim_duration", src.anim_duration);
+			JSONTools::SetAttribute(json, "default_wrap_mode", src.default_wrap_mode);
+			JSONTools::SetAttribute(json, "image_processors", src.image_processors);
 			return true;
 		}
 
-		bool LoadFromJSON(nlohmann::json const & json_entry, BitmapInfoInputManifest & dst)
+		bool LoadFromJSON(nlohmann::json const & json, BitmapInfoInputManifest & dst)
 		{
-			if (!json_entry.is_object())
+			if (!json.is_object())
 				return false;
-			JSONTools::GetAttribute(json_entry, "grid_data", dst.grid_data);
-			JSONTools::GetAttribute(json_entry, "images_path", dst.images_path);
-			JSONTools::GetAttribute(json_entry, "frame_duration", dst.frame_duration);
-			JSONTools::GetAttribute(json_entry, "anim_duration", dst.anim_duration);
-			JSONTools::GetAttribute(json_entry, "default_wrap_mode", dst.default_wrap_mode);
-			JSONTools::GetAttribute(json_entry, "image_processors", dst.image_processors);
+			JSONTools::GetAttribute(json, "grid_data", dst.grid_data);
+			JSONTools::GetAttribute(json, "images_path", dst.images_path);
+			JSONTools::GetAttribute(json, "frame_duration", dst.frame_duration);
+			JSONTools::GetAttribute(json, "anim_duration", dst.anim_duration);
+			JSONTools::GetAttribute(json, "default_wrap_mode", dst.default_wrap_mode);
+			JSONTools::GetAttribute(json, "image_processors", dst.image_processors);
 			return true;
 		}
 

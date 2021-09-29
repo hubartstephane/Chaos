@@ -74,21 +74,21 @@ namespace chaos
 		return !operator == (other);
 	}
 
-	bool LoadFromJSON(nlohmann::json const& json_entry, PixelFormat& dst)
+	bool LoadFromJSON(nlohmann::json const& json, PixelFormat& dst)
 	{
-		if (!json_entry.is_object())
+		if (!json.is_object())
 			return false;
-		JSONTools::GetAttribute(json_entry, "component_type", dst.component_type);
-		JSONTools::GetAttribute(json_entry, "component_count", dst.component_count);
+		JSONTools::GetAttribute(json, "component_type", dst.component_type);
+		JSONTools::GetAttribute(json, "component_count", dst.component_count);
 		return true;
 	}
 
-	bool SaveIntoJSON(nlohmann::json& json_entry, PixelFormat const& src)
+	bool SaveIntoJSON(nlohmann::json& json, PixelFormat const& src)
 	{
-		if (!json_entry.is_object())
-			json_entry = nlohmann::json::object();
-		JSONTools::SetAttribute(json_entry, "component_type", src.component_type);
-		JSONTools::SetAttribute(json_entry, "component_count", src.component_count);
+		if (!json.is_object())
+			json = nlohmann::json::object();
+		JSONTools::SetAttribute(json, "component_type", src.component_type);
+		JSONTools::SetAttribute(json, "component_count", src.component_count);
 		return true;
 	}
 

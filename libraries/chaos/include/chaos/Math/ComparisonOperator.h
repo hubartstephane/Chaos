@@ -47,9 +47,9 @@ namespace chaos
 		return false;
 	}
 
-	bool SaveIntoJSON(nlohmann::json& json_entry, ComparisonOperator const& src);
+	bool SaveIntoJSON(nlohmann::json& json, ComparisonOperator const& src);
 
-	bool LoadFromJSON(nlohmann::json const& json_entry, ComparisonOperator& dst);
+	bool LoadFromJSON(nlohmann::json const& json, ComparisonOperator& dst);
 
 #endif
 

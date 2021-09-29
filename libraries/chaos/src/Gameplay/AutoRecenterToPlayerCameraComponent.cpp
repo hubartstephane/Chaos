@@ -261,29 +261,29 @@ namespace chaos
 		return player_pawn->GetBoundingBox();
 	}
 
-	bool AutoRecenterToPlayerCameraComponent::SerializeIntoJSON(nlohmann::json& json_entry) const
+	bool AutoRecenterToPlayerCameraComponent::SerializeIntoJSON(nlohmann::json& json) const
 	{
-		if (!CameraComponent::SerializeIntoJSON(json_entry))
+		if (!CameraComponent::SerializeIntoJSON(json))
 			return false;
-		JSONTools::SetAttribute(json_entry, "fast_pawn_speed", fast_pawn_speed);
-		JSONTools::SetAttribute(json_entry, "idle_pawn_speed", idle_pawn_speed);
-		JSONTools::SetAttribute(json_entry, "limit_speed", limit_speed);
-		JSONTools::SetAttribute(json_entry, "manual_limit_speed", manual_limit_speed);
-		JSONTools::SetAttribute(json_entry, "recenter_limit_speed", recenter_limit_speed);
-		JSONTools::SetAttribute(json_entry, "idle_delay", idle_delay);
+		JSONTools::SetAttribute(json, "fast_pawn_speed", fast_pawn_speed);
+		JSONTools::SetAttribute(json, "idle_pawn_speed", idle_pawn_speed);
+		JSONTools::SetAttribute(json, "limit_speed", limit_speed);
+		JSONTools::SetAttribute(json, "manual_limit_speed", manual_limit_speed);
+		JSONTools::SetAttribute(json, "recenter_limit_speed", recenter_limit_speed);
+		JSONTools::SetAttribute(json, "idle_delay", idle_delay);
 		return true;
 	}
 
-	bool AutoRecenterToPlayerCameraComponent::SerializeFromJSON(nlohmann::json const& json_entry)
+	bool AutoRecenterToPlayerCameraComponent::SerializeFromJSON(nlohmann::json const& json)
 	{
-		if (!CameraComponent::SerializeFromJSON(json_entry))
+		if (!CameraComponent::SerializeFromJSON(json))
 			return false;
-		JSONTools::GetAttribute(json_entry, "fast_pawn_speed", fast_pawn_speed);
-		JSONTools::GetAttribute(json_entry, "idle_pawn_speed", idle_pawn_speed);
-		JSONTools::GetAttribute(json_entry, "limit_speed", limit_speed);
-		JSONTools::GetAttribute(json_entry, "manual_limit_speed", manual_limit_speed);
-		JSONTools::GetAttribute(json_entry, "recenter_limit_speed", recenter_limit_speed);
-		JSONTools::GetAttribute(json_entry, "idle_delay", idle_delay);
+		JSONTools::GetAttribute(json, "fast_pawn_speed", fast_pawn_speed);
+		JSONTools::GetAttribute(json, "idle_pawn_speed", idle_pawn_speed);
+		JSONTools::GetAttribute(json, "limit_speed", limit_speed);
+		JSONTools::GetAttribute(json, "manual_limit_speed", manual_limit_speed);
+		JSONTools::GetAttribute(json, "recenter_limit_speed", recenter_limit_speed);
+		JSONTools::GetAttribute(json, "idle_delay", idle_delay);
 		return true;
 	}
 

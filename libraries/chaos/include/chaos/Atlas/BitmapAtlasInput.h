@@ -40,9 +40,9 @@ namespace chaos
 			std::vector<shared_ptr<ImageProcessor>> image_processors;
 		};
 
-		bool SaveIntoJSON(nlohmann::json& json_entry, FontInfoInputParams const& src);
+		bool SaveIntoJSON(nlohmann::json& json, FontInfoInputParams const& src);
 
-		bool LoadFromJSON(nlohmann::json const& json_entry, FontInfoInputParams& dst);
+		bool LoadFromJSON(nlohmann::json const& json, FontInfoInputParams& dst);
 
 		/**
 		* ObjectBaseInput : base object for inputs

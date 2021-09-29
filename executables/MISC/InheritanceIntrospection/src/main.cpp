@@ -37,21 +37,21 @@ public:
 
 };
 
-bool SaveIntoJSON(nlohmann::json& json_entry, BBB const& src)
+bool SaveIntoJSON(nlohmann::json& json, BBB const& src)
 {
-	if (!json_entry.is_object())
-		json_entry = nlohmann::json::object();
-	chaos::JSONTools::SetAttribute(json_entry, "value", src.value);
-	chaos::JSONTools::SetAttribute(json_entry, "aaa", src.aaa);
+	if (!json.is_object())
+		json = nlohmann::json::object();
+	chaos::JSONTools::SetAttribute(json, "value", src.value);
+	chaos::JSONTools::SetAttribute(json, "aaa", src.aaa);
 	return true;
 }
 
-bool LoadFromJSON(nlohmann::json const & json_entry, BBB & dst)
+bool LoadFromJSON(nlohmann::json const & json, BBB & dst)
 {
-	if (!json_entry.is_object())
+	if (!json.is_object())
 		return false;
-	chaos::JSONTools::GetAttribute(json_entry, "value", dst.value);
-	chaos::JSONTools::GetAttribute(json_entry, "aaa", dst.aaa);
+	chaos::JSONTools::GetAttribute(json, "value", dst.value);
+	chaos::JSONTools::GetAttribute(json, "aaa", dst.aaa);
 	return true;
 }
 
@@ -65,18 +65,18 @@ bool LoadFromJSON(nlohmann::json const & json_entry, BBB & dst)
 #if 0
 
 template<typename T>
-bool LoadFromJSON(nlohmann::json const& json_entry, SubClassOf<T>& dst)
+bool LoadFromJSON(nlohmann::json const& json, SubClassOf<T>& dst)
 {
-	if (!json_entry.is_string())
+	if (!json.is_string())
 		return false;
-	json_entry
+	json
 	return true;
 }
 
 #if 0
-if (!json_entry.is_object())
+if (!json.is_object())
 return false;
-JSONTools::GetAttribute(json_entry, "bitmap_index", dst.bitmap_index);
+JSONTools::GetAttribute(json, "bitmap_index", dst.bitmap_index);
 #endif
 
 #endif

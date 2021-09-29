@@ -102,19 +102,19 @@ namespace chaos
 
 
 	template<typename T>
-	bool SaveIntoJSON(nlohmann::json& json_entry, SubClassOf<T> const& src)
+	bool SaveIntoJSON(nlohmann::json& json, SubClassOf<T> const& src)
 	{
 		Class const* cls = src.GetInternalClass();
 
-		json_entry = (cls == nullptr || !cls->IsDeclared()) ? "" : cls->GetClassName().c_str();
+		json = (cls == nullptr || !cls->IsDeclared()) ? "" : cls->GetClassName().c_str();
 		return true;
 	}
 
 	template<typename T>
-	bool LoadFromJSON(nlohmann::json const& json_entry, SubClassOf<T>& src)
+	bool LoadFromJSON(nlohmann::json const& json, SubClassOf<T>& src)
 	{
 		std::string classname;
-		if (!LoadFromJSON(json_entry, classname))
+		if (!LoadFromJSON(json, classname))
 			return false;
 		src = SubClassOf<T>(Class::FindClass(classname.c_str()));
 		return true;

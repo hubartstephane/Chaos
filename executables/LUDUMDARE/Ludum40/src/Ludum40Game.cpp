@@ -315,9 +315,9 @@ bool Game::Initialize(chaos::Window * in_window, nlohmann::json const * config, 
 		return false;
 
   // parse JSON structures
-  nlohmann::json json_entry; 
-  if (chaos::JSONTools::Parse(buf, json_entry))
-    return DoInitialize(resources_path, object_path, json_entry);
+  nlohmann::json json; 
+  if (chaos::JSONTools::Parse(buf, json))
+    return DoInitialize(resources_path, object_path, json);
 	return false;
 }
 
@@ -343,13 +343,13 @@ bool Game::InitializeSounds(boost::filesystem::path const & resource_path)
 	return true;
 }
 
-bool Game::DoInitialize(boost::filesystem::path const & resource_path, boost::filesystem::path const & object_path, nlohmann::json const & json_entry)
+bool Game::DoInitialize(boost::filesystem::path const & resource_path, boost::filesystem::path const & object_path, nlohmann::json const & json)
 {
 	if (!InitializeSounds(resource_path))
 		return false;
-	if (!LoadSpriteLayerInfo(json_entry))
+	if (!LoadSpriteLayerInfo(json))
 		return false;
-	if (!LoadObjectDefinition(json_entry))
+	if (!LoadObjectDefinition(json))
 		return false;
 	if (!GenerateAtlas(object_path))
 		return false;
@@ -416,9 +416,9 @@ SpriteLayer const * Game::FindSpriteLayer(int layer) const
 	return nullptr;
 }
 
-bool Game::LoadSpriteLayerInfo(nlohmann::json const & json_entry)
+bool Game::LoadSpriteLayerInfo(nlohmann::json const & json)
 {
-	nlohmann::json const * layers = chaos::JSONTools::GetStructure(json_entry, "layers"); 
+	nlohmann::json const * layers = chaos::JSONTools::GetStructure(json, "layers"); 
 	if (layers != nullptr)
 	{
 		for (auto const & json_layer : *layers)
@@ -567,9 +567,9 @@ ObjectDefinition const * Game::FindObjectDefinition(int id) const
 	return nullptr;
 }
 
-bool Game::LoadObjectDefinition(nlohmann::json const & json_entry)
+bool Game::LoadObjectDefinition(nlohmann::json const & json)
 {
-	nlohmann::json const * objects = chaos::JSONTools::GetStructure(json_entry, "objects");
+	nlohmann::json const * objects = chaos::JSONTools::GetStructure(json, "objects");
 	if (objects != nullptr)
 	{
 		for (auto const & json_obj : *objects)

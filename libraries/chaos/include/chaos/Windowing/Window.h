@@ -51,9 +51,9 @@ namespace chaos
 		int alpha_bits = 8;
 	};
 
-	bool SaveIntoJSON(nlohmann::json& json_entry, WindowHints const& src);
+	bool SaveIntoJSON(nlohmann::json& json, WindowHints const& src);
 
-	bool LoadFromJSON(nlohmann::json const& json_entry, WindowHints& dst);
+	bool LoadFromJSON(nlohmann::json const& json, WindowHints& dst);
 
 	/**
 	* WindowParams : parameters for playing single window application
@@ -75,9 +75,9 @@ namespace chaos
 		int height = 0;
 	};
 
-	bool SaveIntoJSON(nlohmann::json& json_entry, WindowParams const& src);
+	bool SaveIntoJSON(nlohmann::json& json, WindowParams const& src);
 
-	bool LoadFromJSON(nlohmann::json const& json_entry, WindowParams& dst);
+	bool LoadFromJSON(nlohmann::json const& json, WindowParams& dst);
 
 	/**
 	* Window : a binding class between chaos and GLFW to handle window (beware the prefix "My")

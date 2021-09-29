@@ -36,9 +36,9 @@ namespace chaos
 		int opengl_profile = GLFW_OPENGL_CORE_PROFILE;
 	};
 
-	bool SaveIntoJSON(nlohmann::json& json_entry, GLFWHints const& src);
+	bool SaveIntoJSON(nlohmann::json& json, GLFWHints const& src);
 
-	bool LoadFromJSON(nlohmann::json const& json_entry, GLFWHints& dst);
+	bool LoadFromJSON(nlohmann::json const& json, GLFWHints& dst);
 
 	/**
 	* WindowApplication

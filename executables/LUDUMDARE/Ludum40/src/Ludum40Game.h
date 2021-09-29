@@ -74,9 +74,9 @@ protected:
 
 
 
-	bool DoInitialize(boost::filesystem::path const & resource_path, boost::filesystem::path const & object_path, nlohmann::json const & json_entry);
+	bool DoInitialize(boost::filesystem::path const & resource_path, boost::filesystem::path const & object_path, nlohmann::json const & json);
 
-	bool LoadObjectDefinition(nlohmann::json const & json_entry);
+	bool LoadObjectDefinition(nlohmann::json const & json);
 
 	bool GenerateAtlas(boost::filesystem::path const & path);
 
@@ -84,7 +84,7 @@ protected:
 
 	bool InitializeSpriteManagers();
 
-	bool LoadSpriteLayerInfo(nlohmann::json const & json_entry);
+	bool LoadSpriteLayerInfo(nlohmann::json const & json);
 
 	bool InitializeGamepadManager();
 

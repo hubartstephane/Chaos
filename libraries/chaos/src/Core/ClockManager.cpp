@@ -428,19 +428,19 @@ namespace chaos
 	}
 
 	
-	bool Clock::SerializeIntoJSON(nlohmann::json& json_entry) const
+	bool Clock::SerializeIntoJSON(nlohmann::json& json) const
 	{
-		if (!JSONSerializable::SerializeIntoJSON(json_entry))
+		if (!JSONSerializable::SerializeIntoJSON(json))
 			return false;
-		JSONTools::SetAttribute(json_entry, "CLOCK_TIME", clock_time);
+		JSONTools::SetAttribute(json, "CLOCK_TIME", clock_time);
 		return true;
 	}
 	
-	bool Clock::SerializeFromJSON(nlohmann::json const& json_entry) 
+	bool Clock::SerializeFromJSON(nlohmann::json const& json) 
 	{
-		if (!JSONSerializable::SerializeFromJSON(json_entry))
+		if (!JSONSerializable::SerializeFromJSON(json))
 			return false;
-		JSONTools::GetAttribute(json_entry, "CLOCK_TIME", clock_time);
+		JSONTools::GetAttribute(json, "CLOCK_TIME", clock_time);
 		return true;
 	}
 

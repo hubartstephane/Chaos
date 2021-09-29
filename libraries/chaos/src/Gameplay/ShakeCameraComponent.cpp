@@ -47,27 +47,27 @@ namespace chaos
 		return true;
 	}
 
-	bool ShakeCameraComponent::SerializeIntoJSON(nlohmann::json& json_entry) const
+	bool ShakeCameraComponent::SerializeIntoJSON(nlohmann::json& json) const
 	{
-		if (!CameraComponent::SerializeIntoJSON(json_entry))
+		if (!CameraComponent::SerializeIntoJSON(json))
 			return false;
-		JSONTools::SetAttribute(json_entry, "modifier_duration", modifier_duration);
-		JSONTools::SetAttribute(json_entry, "modifier_range", modifier_range);
-		JSONTools::SetAttribute(json_entry, "modifier_frequency", modifier_frequency);
-		JSONTools::SetAttribute(json_entry, "use_damping", use_damping);
-		JSONTools::SetAttribute(json_entry, "zoom_effect", zoom_effect);
+		JSONTools::SetAttribute(json, "modifier_duration", modifier_duration);
+		JSONTools::SetAttribute(json, "modifier_range", modifier_range);
+		JSONTools::SetAttribute(json, "modifier_frequency", modifier_frequency);
+		JSONTools::SetAttribute(json, "use_damping", use_damping);
+		JSONTools::SetAttribute(json, "zoom_effect", zoom_effect);
 		return true;
 	}
 
-	bool ShakeCameraComponent::SerializeFromJSON(nlohmann::json const& json_entry)
+	bool ShakeCameraComponent::SerializeFromJSON(nlohmann::json const& json)
 	{
-		if (!CameraComponent::SerializeFromJSON(json_entry))
+		if (!CameraComponent::SerializeFromJSON(json))
 			return false;
-		JSONTools::GetAttribute(json_entry, "modifier_duration", modifier_duration);
-		JSONTools::GetAttribute(json_entry, "modifier_range", modifier_range);
-		JSONTools::GetAttribute(json_entry, "modifier_frequency", modifier_frequency);
-		JSONTools::GetAttribute(json_entry, "use_damping", use_damping);
-		JSONTools::GetAttribute(json_entry, "zoom_effect", zoom_effect);
+		JSONTools::GetAttribute(json, "modifier_duration", modifier_duration);
+		JSONTools::GetAttribute(json, "modifier_range", modifier_range);
+		JSONTools::GetAttribute(json, "modifier_frequency", modifier_frequency);
+		JSONTools::GetAttribute(json, "use_damping", use_damping);
+		JSONTools::GetAttribute(json, "zoom_effect", zoom_effect);
 		return true;
 	}
 

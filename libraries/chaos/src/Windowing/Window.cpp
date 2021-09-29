@@ -23,44 +23,44 @@ namespace chaos
 		glfwWindowHint(GLFW_FOCUSED, focused);
 	}
 
-	bool SaveIntoJSON(nlohmann::json& json_entry, WindowHints const& src)
+	bool SaveIntoJSON(nlohmann::json& json, WindowHints const& src)
 	{
-		if (!json_entry.is_object())
-			json_entry = nlohmann::json::object();
-		JSONTools::SetAttribute(json_entry, "resizable", src.resizable);
-		JSONTools::SetAttribute(json_entry, "start_visible", src.start_visible);
-		JSONTools::SetAttribute(json_entry, "decorated", src.decorated);
-		JSONTools::SetAttribute(json_entry, "toplevel", src.toplevel);
-		JSONTools::SetAttribute(json_entry, "focused", src.focused);
-		JSONTools::SetAttribute(json_entry, "samples", src.samples);
-		JSONTools::SetAttribute(json_entry, "double_buffer", src.double_buffer);
-		JSONTools::SetAttribute(json_entry, "depth_bits", src.depth_bits);
-		JSONTools::SetAttribute(json_entry, "stencil_bits", src.stencil_bits);
-		JSONTools::SetAttribute(json_entry, "red_bits", src.red_bits);
-		JSONTools::SetAttribute(json_entry, "green_bits", src.green_bits);
-		JSONTools::SetAttribute(json_entry, "blue_bits", src.blue_bits);
-		JSONTools::SetAttribute(json_entry, "alpha_bits", src.alpha_bits);
+		if (!json.is_object())
+			json = nlohmann::json::object();
+		JSONTools::SetAttribute(json, "resizable", src.resizable);
+		JSONTools::SetAttribute(json, "start_visible", src.start_visible);
+		JSONTools::SetAttribute(json, "decorated", src.decorated);
+		JSONTools::SetAttribute(json, "toplevel", src.toplevel);
+		JSONTools::SetAttribute(json, "focused", src.focused);
+		JSONTools::SetAttribute(json, "samples", src.samples);
+		JSONTools::SetAttribute(json, "double_buffer", src.double_buffer);
+		JSONTools::SetAttribute(json, "depth_bits", src.depth_bits);
+		JSONTools::SetAttribute(json, "stencil_bits", src.stencil_bits);
+		JSONTools::SetAttribute(json, "red_bits", src.red_bits);
+		JSONTools::SetAttribute(json, "green_bits", src.green_bits);
+		JSONTools::SetAttribute(json, "blue_bits", src.blue_bits);
+		JSONTools::SetAttribute(json, "alpha_bits", src.alpha_bits);
 
 		return true;
 	}
 
-	bool LoadFromJSON(nlohmann::json const& json_entry, WindowHints& dst)
+	bool LoadFromJSON(nlohmann::json const& json, WindowHints& dst)
 	{
-		if (!json_entry.is_object())
+		if (!json.is_object())
 			return false;
-		JSONTools::GetAttribute(json_entry, "resizable", dst.resizable);
-		JSONTools::GetAttribute(json_entry, "start_visible", dst.start_visible);
-		JSONTools::GetAttribute(json_entry, "decorated", dst.decorated);
-		JSONTools::GetAttribute(json_entry, "toplevel", dst.toplevel);
-		JSONTools::GetAttribute(json_entry, "focused", dst.focused);
-		JSONTools::GetAttribute(json_entry, "samples", dst.samples);
-		JSONTools::GetAttribute(json_entry, "double_buffer", dst.double_buffer);
-		JSONTools::GetAttribute(json_entry, "depth_bits", dst.depth_bits);
-		JSONTools::GetAttribute(json_entry, "stencil_bits", dst.stencil_bits);
-		JSONTools::GetAttribute(json_entry, "red_bits", dst.red_bits);
-		JSONTools::GetAttribute(json_entry, "green_bits", dst.green_bits);
-		JSONTools::GetAttribute(json_entry, "blue_bits", dst.blue_bits);
-		JSONTools::GetAttribute(json_entry, "alpha_bits", dst.alpha_bits);
+		JSONTools::GetAttribute(json, "resizable", dst.resizable);
+		JSONTools::GetAttribute(json, "start_visible", dst.start_visible);
+		JSONTools::GetAttribute(json, "decorated", dst.decorated);
+		JSONTools::GetAttribute(json, "toplevel", dst.toplevel);
+		JSONTools::GetAttribute(json, "focused", dst.focused);
+		JSONTools::GetAttribute(json, "samples", dst.samples);
+		JSONTools::GetAttribute(json, "double_buffer", dst.double_buffer);
+		JSONTools::GetAttribute(json, "depth_bits", dst.depth_bits);
+		JSONTools::GetAttribute(json, "stencil_bits", dst.stencil_bits);
+		JSONTools::GetAttribute(json, "red_bits", dst.red_bits);
+		JSONTools::GetAttribute(json, "green_bits", dst.green_bits);
+		JSONTools::GetAttribute(json, "blue_bits", dst.blue_bits);
+		JSONTools::GetAttribute(json, "alpha_bits", dst.alpha_bits);
 		return true;
 	}
 
@@ -68,23 +68,23 @@ namespace chaos
 	* WindowParams
 	*/
 
-	bool SaveIntoJSON(nlohmann::json& json_entry, WindowParams const& src)
+	bool SaveIntoJSON(nlohmann::json& json, WindowParams const& src)
 	{
-		if (!json_entry.is_object())
-			json_entry = nlohmann::json::object();
-		JSONTools::SetAttribute(json_entry, "monitor_index", src.monitor_index);
-		JSONTools::SetAttribute(json_entry, "width", src.width);
-		JSONTools::SetAttribute(json_entry, "height", src.height);
+		if (!json.is_object())
+			json = nlohmann::json::object();
+		JSONTools::SetAttribute(json, "monitor_index", src.monitor_index);
+		JSONTools::SetAttribute(json, "width", src.width);
+		JSONTools::SetAttribute(json, "height", src.height);
 		return true;
 	}
 
-	bool LoadFromJSON(nlohmann::json const& json_entry, WindowParams& dst)
+	bool LoadFromJSON(nlohmann::json const& json, WindowParams& dst)
 	{
-		if (!json_entry.is_object())
+		if (!json.is_object())
 			return false;
-		JSONTools::GetAttribute(json_entry, "monitor_index", dst.monitor_index);
-		JSONTools::GetAttribute(json_entry, "width", dst.width);
-		JSONTools::GetAttribute(json_entry, "height", dst.height);
+		JSONTools::GetAttribute(json, "monitor_index", dst.monitor_index);
+		JSONTools::GetAttribute(json, "width", dst.width);
+		JSONTools::GetAttribute(json, "height", dst.height);
 		return true;
 	}
 

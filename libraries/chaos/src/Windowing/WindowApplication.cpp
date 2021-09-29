@@ -15,27 +15,27 @@ namespace chaos
 		glfwWindowHint(GLFW_OPENGL_PROFILE, opengl_profile);
 	}
 
-	bool SaveIntoJSON(nlohmann::json& json_entry, GLFWHints const& src)
+	bool SaveIntoJSON(nlohmann::json& json, GLFWHints const& src)
 	{
-		if (!json_entry.is_object())
-			json_entry = nlohmann::json::object();
-		JSONTools::SetAttribute(json_entry, "debug_context", src.debug_context);
-		JSONTools::SetAttribute(json_entry, "major_version", src.major_version);
-		JSONTools::SetAttribute(json_entry, "minor_version", src.minor_version);
-		JSONTools::SetAttribute(json_entry, "refresh_rate", src.refresh_rate);
-		JSONTools::SetAttribute(json_entry, "opengl_profile", src.opengl_profile);
+		if (!json.is_object())
+			json = nlohmann::json::object();
+		JSONTools::SetAttribute(json, "debug_context", src.debug_context);
+		JSONTools::SetAttribute(json, "major_version", src.major_version);
+		JSONTools::SetAttribute(json, "minor_version", src.minor_version);
+		JSONTools::SetAttribute(json, "refresh_rate", src.refresh_rate);
+		JSONTools::SetAttribute(json, "opengl_profile", src.opengl_profile);
 		return true;
 	}
 
-	bool LoadFromJSON(nlohmann::json const& json_entry, GLFWHints& dst)
+	bool LoadFromJSON(nlohmann::json const& json, GLFWHints& dst)
 	{
-		if (!json_entry.is_object())
+		if (!json.is_object())
 			return false;
-		JSONTools::GetAttribute(json_entry, "debug_context", dst.debug_context);
-		JSONTools::GetAttribute(json_entry, "major_version", dst.major_version);
-		JSONTools::GetAttribute(json_entry, "minor_version", dst.minor_version);
-		JSONTools::GetAttribute(json_entry, "refresh_rate", dst.refresh_rate);
-		JSONTools::GetAttribute(json_entry, "opengl_profile", dst.opengl_profile);
+		JSONTools::GetAttribute(json, "debug_context", dst.debug_context);
+		JSONTools::GetAttribute(json, "major_version", dst.major_version);
+		JSONTools::GetAttribute(json, "minor_version", dst.minor_version);
+		JSONTools::GetAttribute(json, "refresh_rate", dst.refresh_rate);
+		JSONTools::GetAttribute(json, "opengl_profile", dst.opengl_profile);
 		return true;
 	}
 

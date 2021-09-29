@@ -47,11 +47,11 @@ namespace chaos
 
 	bool Application::LoadConfigurationFile()
 	{		
-		FilePathParam path = GetResourcesPath() / "config.json";
+		boost::filesystem::path path = GetResourcesPath() / "config.json";
 
 		if (JSONTools::LoadJSONFile(path, configuration, true))
 		{
-			configuration_path = path.GetResolvedPath();		
+			configuration_path = std::move(path);
 			return true;
 		}
 		return false;

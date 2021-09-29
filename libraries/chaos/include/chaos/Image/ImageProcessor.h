@@ -65,9 +65,9 @@ namespace chaos
 		virtual FIBITMAP* ProcessImage(ImageDescription const& src_desc) const override;
 
 		/** the processor may save its configuration into a JSON file */
-		virtual bool SerializeIntoJSON(nlohmann::json& json_entry) const override;
+		virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
 		/** the processor may save its configuration from a JSON file */
-		virtual bool SerializeFromJSON(nlohmann::json const& json_entry) override;
+		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
 
 	public:
 
@@ -95,9 +95,9 @@ namespace chaos
 		virtual FIBITMAP* ProcessImage(ImageDescription const& src_desc) const override;
 
 		/** the processor may save its configuration into a JSON file */
-		virtual bool SerializeIntoJSON(nlohmann::json& json_entry) const override;
+		virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
 		/** the processor may save its configuration from a JSON file */
-		virtual bool SerializeFromJSON(nlohmann::json const& json_entry) override;
+		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
 
 
 
@@ -121,9 +121,9 @@ namespace chaos
 		virtual FIBITMAP* ProcessImage(ImageDescription const& src_desc) const override;
 
 		/** the processor may save its configuration into a JSON file */
-		virtual bool SerializeIntoJSON(nlohmann::json& json_entry) const override;
+		virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
 		/** the processor may save its configuration from a JSON file */
-		virtual bool SerializeFromJSON(nlohmann::json const& json_entry) override;
+		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
 
 	public:
 

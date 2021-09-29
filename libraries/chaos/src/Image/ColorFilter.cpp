@@ -8,25 +8,25 @@ namespace chaos
 		return Compare(distance_operator, d2, distance * distance);
 	}
 
-	bool SaveIntoJSON(nlohmann::json& json_entry, ColorFilter const& src)
+	bool SaveIntoJSON(nlohmann::json& json, ColorFilter const& src)
 	{
-		if (!json_entry.is_object())
-			json_entry = nlohmann::json::object();
-		JSONTools::SetAttribute(json_entry, "distance_operator", src.distance_operator);
-		JSONTools::SetAttribute(json_entry, "distance", src.distance);
-		JSONTools::SetAttribute(json_entry, "color_reference", src.color_reference);
-		JSONTools::SetAttribute(json_entry, "color_mask", src.color_mask);
+		if (!json.is_object())
+			json = nlohmann::json::object();
+		JSONTools::SetAttribute(json, "distance_operator", src.distance_operator);
+		JSONTools::SetAttribute(json, "distance", src.distance);
+		JSONTools::SetAttribute(json, "color_reference", src.color_reference);
+		JSONTools::SetAttribute(json, "color_mask", src.color_mask);
 		return true;
 	}
 
-	bool LoadFromJSON(nlohmann::json const& json_entry, ColorFilter& dst)
+	bool LoadFromJSON(nlohmann::json const& json, ColorFilter& dst)
 	{
-		if (!json_entry.is_object())
+		if (!json.is_object())
 			return false;
-		JSONTools::GetAttribute(json_entry, "distance_operator", dst.distance_operator);
-		JSONTools::GetAttribute(json_entry, "distance", dst.distance);
-		JSONTools::GetAttribute(json_entry, "color_reference", dst.color_reference);
-		JSONTools::GetAttribute(json_entry, "color_mask", dst.color_mask);
+		JSONTools::GetAttribute(json, "distance_operator", dst.distance_operator);
+		JSONTools::GetAttribute(json, "distance", dst.distance);
+		JSONTools::GetAttribute(json, "color_reference", dst.color_reference);
+		JSONTools::GetAttribute(json, "color_mask", dst.color_mask);
 		return true;
 	}
 

@@ -400,40 +400,40 @@ namespace chaos
 		return sound_category.get();
 	}
 
-	bool LevelInstance::SerializeIntoJSON(nlohmann::json& json_entry) const
+	bool LevelInstance::SerializeIntoJSON(nlohmann::json& json) const
 	{
-		if (!JSONSerializable::SerializeIntoJSON(json_entry))
+		if (!JSONSerializable::SerializeIntoJSON(json))
 			return false;
 
 		// level index (just to be sure this is valid to apply a checkpoint on this level)
-		JSONTools::SetAttribute(json_entry, "LEVEL_INDEX", level->GetLevelIndex());		
+		JSONTools::SetAttribute(json, "LEVEL_INDEX", level->GetLevelIndex());		
 		// attributes
-		JSONTools::SetAttribute(json_entry, "LEVEL_TIMEOUT", level_timeout);		
+		JSONTools::SetAttribute(json, "LEVEL_TIMEOUT", level_timeout);		
 		// the camera 0
 		Camera const * camera = DoGetCamera(0, false); // do not accept free camera
 		if (camera != nullptr)
-			JSONTools::SetAttribute(json_entry, "CAMERA0", *camera);
+			JSONTools::SetAttribute(json, "CAMERA0", *camera);
 
 		return true;
 	}
 	
-	bool LevelInstance::SerializeFromJSON(nlohmann::json const& json_entry)
+	bool LevelInstance::SerializeFromJSON(nlohmann::json const& json)
 	{
-		if (!JSONSerializable::SerializeFromJSON(json_entry))
+		if (!JSONSerializable::SerializeFromJSON(json))
 			return false;
 
 		// check for level index
 		int index = 0;
-		if (JSONTools::GetAttribute(json_entry, "LEVEL_INDEX", index))
+		if (JSONTools::GetAttribute(json, "LEVEL_INDEX", index))
 			if (level->GetLevelIndex() != index)
 				return false;
 
 		// attributes
-		JSONTools::GetAttribute(json_entry, "LEVEL_TIMEOUT", level_timeout);
+		JSONTools::GetAttribute(json, "LEVEL_TIMEOUT", level_timeout);
 		// the camera 0
 		Camera * camera = DoGetCamera(0, false); // do not accept free camera
 		if (camera != nullptr)
-			JSONTools::GetAttribute(json_entry, "CAMERA0", *camera); // XXX : indirection is important to avoid a reallocation the object
+			JSONTools::GetAttribute(json, "CAMERA0", *camera); // XXX : indirection is important to avoid a reallocation the object
 
 		return true;
 	}

@@ -229,39 +229,39 @@ namespace chaos
 		life_count = std::max(life_count, 0);
 	}
 
-	bool Player::SerializeIntoJSON(nlohmann::json& json_entry) const
+	bool Player::SerializeIntoJSON(nlohmann::json& json) const
 	{
-		if (!JSONSerializable::SerializeIntoJSON(json_entry))
+		if (!JSONSerializable::SerializeIntoJSON(json))
 			return false;
 
-		JSONTools::SetAttribute(json_entry, "LIFE_COUNT", life_count);
-		JSONTools::SetAttribute(json_entry, "HEALTH", health);
-		JSONTools::SetAttribute(json_entry, "MAX_HEALTH", max_health);
-		JSONTools::SetAttribute(json_entry, "INVULNERABILITY_TIMER", invulnerability_timer);
-		JSONTools::SetAttribute(json_entry, "INVULNERABILITY_DURATION", invulnerability_duration);
-		JSONTools::SetAttribute(json_entry, "SCORE", score);
+		JSONTools::SetAttribute(json, "LIFE_COUNT", life_count);
+		JSONTools::SetAttribute(json, "HEALTH", health);
+		JSONTools::SetAttribute(json, "MAX_HEALTH", max_health);
+		JSONTools::SetAttribute(json, "INVULNERABILITY_TIMER", invulnerability_timer);
+		JSONTools::SetAttribute(json, "INVULNERABILITY_DURATION", invulnerability_duration);
+		JSONTools::SetAttribute(json, "SCORE", score);
 
 		if (pawn != nullptr)
-			JSONTools::SetAttribute(json_entry, "PAWN", *pawn);
+			JSONTools::SetAttribute(json, "PAWN", *pawn);
 
 		return true;
 	}
 
-	bool Player::SerializeFromJSON(nlohmann::json const& json_entry)
+	bool Player::SerializeFromJSON(nlohmann::json const& json)
 	{
-		if (!JSONSerializable::SerializeFromJSON(json_entry))
+		if (!JSONSerializable::SerializeFromJSON(json))
 			return false;
 
-		JSONTools::GetAttribute(json_entry, "LIFE_COUNT", life_count);
-		JSONTools::GetAttribute(json_entry, "HEALTH", health);
-		JSONTools::GetAttribute(json_entry, "MAX_HEALTH", max_health);
-		JSONTools::GetAttribute(json_entry, "INVULNERABILITY_TIMER", invulnerability_timer);
-		JSONTools::GetAttribute(json_entry, "INVULNERABILITY_DURATION", invulnerability_duration);
-		JSONTools::GetAttribute(json_entry, "SCORE", score);
+		JSONTools::GetAttribute(json, "LIFE_COUNT", life_count);
+		JSONTools::GetAttribute(json, "HEALTH", health);
+		JSONTools::GetAttribute(json, "MAX_HEALTH", max_health);
+		JSONTools::GetAttribute(json, "INVULNERABILITY_TIMER", invulnerability_timer);
+		JSONTools::GetAttribute(json, "INVULNERABILITY_DURATION", invulnerability_duration);
+		JSONTools::GetAttribute(json, "SCORE", score);
 
 		// XXX : the indirection is important to avoid a reallocation of the pawn
 		if (pawn != nullptr)
-			JSONTools::GetAttribute(json_entry, "PAWN", *pawn);
+			JSONTools::GetAttribute(json, "PAWN", *pawn);
 
 		return true;
 	}

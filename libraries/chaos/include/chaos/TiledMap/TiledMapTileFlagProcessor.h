@@ -32,9 +32,9 @@ namespace chaos
 			/** override */
 			virtual void Process(TileLayer* in_layer) override;
 			/** override */
-			virtual bool SerializeIntoJSON(nlohmann::json& json_entry) const override;
+			virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
 			/** override */
-			virtual bool SerializeFromJSON(nlohmann::json const& json_entry) override;
+			virtual bool SerializeFromJSON(nlohmann::json const& json) override;
 
 		protected:
 
@@ -62,9 +62,9 @@ namespace chaos
 		};
 
 		/** JSON serialization */
-		bool SaveIntoJSON(nlohmann::json& json_entry, ComputeCustomFlagProcessorEntry const& src);
+		bool SaveIntoJSON(nlohmann::json& json, ComputeCustomFlagProcessorEntry const& src);
 		/** JSON serialization */
-		bool LoadFromJSON(nlohmann::json const& json_entry, ComputeCustomFlagProcessorEntry& dst);
+		bool LoadFromJSON(nlohmann::json const& json, ComputeCustomFlagProcessorEntry& dst);
 
 
 		class ComputeCustomFlagProcessor : public TileFlagProcessor
@@ -76,9 +76,9 @@ namespace chaos
 			/** override */
 			virtual void Process(TileLayer* in_layer) override;
 			/** override */
-			virtual bool SerializeIntoJSON(nlohmann::json& json_entry) const override;
+			virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
 			/** override */
-			virtual bool SerializeFromJSON(nlohmann::json const& json_entry) override;
+			virtual bool SerializeFromJSON(nlohmann::json const& json) override;
 
 		protected:
 

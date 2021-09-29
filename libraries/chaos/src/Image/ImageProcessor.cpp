@@ -193,25 +193,25 @@ namespace chaos
 		});
 	}
 
-	bool ImageProcessorOutline::SerializeIntoJSON(nlohmann::json& json_entry) const
+	bool ImageProcessorOutline::SerializeIntoJSON(nlohmann::json& json) const
 	{
-		if (!ImageProcessor::SerializeIntoJSON(json_entry))
+		if (!ImageProcessor::SerializeIntoJSON(json))
 			return false;
-		JSONTools::SetAttribute(json_entry, "distance", distance);
-		JSONTools::SetAttribute(json_entry, "color_filter", color_filter);
-		JSONTools::SetAttribute(json_entry, "color", color);
-		JSONTools::SetAttribute(json_entry, "empty_color", empty_color);
+		JSONTools::SetAttribute(json, "distance", distance);
+		JSONTools::SetAttribute(json, "color_filter", color_filter);
+		JSONTools::SetAttribute(json, "color", color);
+		JSONTools::SetAttribute(json, "empty_color", empty_color);
 		return true;
 	}
 
-	bool ImageProcessorOutline::SerializeFromJSON(nlohmann::json const& json_entry)
+	bool ImageProcessorOutline::SerializeFromJSON(nlohmann::json const& json)
 	{
-		if (!ImageProcessor::SerializeFromJSON(json_entry))
+		if (!ImageProcessor::SerializeFromJSON(json))
 			return false;
-		JSONTools::GetAttribute(json_entry, "distance", distance);
-		JSONTools::GetAttribute(json_entry, "color_filter", color_filter);
-		JSONTools::GetAttribute(json_entry, "color", color);
-		JSONTools::GetAttribute(json_entry, "empty_color", empty_color);
+		JSONTools::GetAttribute(json, "distance", distance);
+		JSONTools::GetAttribute(json, "color_filter", color_filter);
+		JSONTools::GetAttribute(json, "color", color);
+		JSONTools::GetAttribute(json, "empty_color", empty_color);
 		return true;
 	}
 
@@ -274,19 +274,19 @@ namespace chaos
 		});
 	}
 
-	bool ImageProcessorAddAlpha::SerializeIntoJSON(nlohmann::json& json_entry) const
+	bool ImageProcessorAddAlpha::SerializeIntoJSON(nlohmann::json& json) const
 	{
-		if (!ImageProcessor::SerializeIntoJSON(json_entry))
+		if (!ImageProcessor::SerializeIntoJSON(json))
 			return false;
-		JSONTools::SetAttribute(json_entry, "strength", strength);
+		JSONTools::SetAttribute(json, "strength", strength);
 		return true;
 	}
 
-	bool ImageProcessorAddAlpha::SerializeFromJSON(nlohmann::json const& json_entry)
+	bool ImageProcessorAddAlpha::SerializeFromJSON(nlohmann::json const& json)
 	{
-		if (!ImageProcessor::SerializeFromJSON(json_entry))
+		if (!ImageProcessor::SerializeFromJSON(json))
 			return false;
-		JSONTools::GetAttribute(json_entry, "strength", strength);
+		JSONTools::GetAttribute(json, "strength", strength);
 		return true;
 	}
 
@@ -394,25 +394,25 @@ namespace chaos
 #endif
 	}
 
-	bool ImageProcessorShadow::SerializeIntoJSON(nlohmann::json& json_entry) const
+	bool ImageProcessorShadow::SerializeIntoJSON(nlohmann::json& json) const
 	{
-		if (!ImageProcessor::SerializeIntoJSON(json_entry))
+		if (!ImageProcessor::SerializeIntoJSON(json))
 			return false;
-		JSONTools::SetAttribute(json_entry, "offset", offset);
-		JSONTools::SetAttribute(json_entry, "color_filter", color_filter);
-		JSONTools::SetAttribute(json_entry, "color", color);
-		JSONTools::SetAttribute(json_entry, "empty_color", empty_color);
+		JSONTools::SetAttribute(json, "offset", offset);
+		JSONTools::SetAttribute(json, "color_filter", color_filter);
+		JSONTools::SetAttribute(json, "color", color);
+		JSONTools::SetAttribute(json, "empty_color", empty_color);
 		return true;
 	}
 
-	bool ImageProcessorShadow::SerializeFromJSON(nlohmann::json const& json_entry)
+	bool ImageProcessorShadow::SerializeFromJSON(nlohmann::json const& json)
 	{
-		if (!ImageProcessor::SerializeFromJSON(json_entry))
+		if (!ImageProcessor::SerializeFromJSON(json))
 			return false;
-		JSONTools::GetAttribute(json_entry, "offset", offset);
-		JSONTools::GetAttribute(json_entry, "color_filter", color_filter);
-		JSONTools::GetAttribute(json_entry, "color", color);
-		JSONTools::GetAttribute(json_entry, "empty_color", empty_color);
+		JSONTools::GetAttribute(json, "offset", offset);
+		JSONTools::GetAttribute(json, "color_filter", color_filter);
+		JSONTools::GetAttribute(json, "color", color);
+		JSONTools::GetAttribute(json, "empty_color", empty_color);
 		return true;
 	}
 

@@ -15,9 +15,9 @@ namespace chaos
 	};
 
 	/** JSON loading method */
-	bool LoadFromJSON(nlohmann::json const& json_entry, TextAlignment& dst);
+	bool LoadFromJSON(nlohmann::json const& json, TextAlignment& dst);
 	/** JSON saving method */
-	bool SaveIntoJSON(nlohmann::json& json_entry, TextAlignment const& src);
+	bool SaveIntoJSON(nlohmann::json& json, TextAlignment const& src);
 
 #endif
 

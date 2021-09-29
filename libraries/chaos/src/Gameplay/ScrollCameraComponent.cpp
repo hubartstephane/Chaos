@@ -101,21 +101,21 @@ namespace chaos
 		return true;
 	}
 
-	bool ScrollCameraComponent::SerializeIntoJSON(nlohmann::json& json_entry) const
+	bool ScrollCameraComponent::SerializeIntoJSON(nlohmann::json& json) const
 	{
-		if (!CameraComponent::SerializeIntoJSON(json_entry))
+		if (!CameraComponent::SerializeIntoJSON(json))
 			return false;
-		JSONTools::SetAttribute(json_entry, "scroll_speed", scroll_speed);
-		JSONTools::SetAttribute(json_entry, "axis", axis);
+		JSONTools::SetAttribute(json, "scroll_speed", scroll_speed);
+		JSONTools::SetAttribute(json, "axis", axis);
 		return true;
 	}
 
-	bool ScrollCameraComponent::SerializeFromJSON(nlohmann::json const& json_entry)
+	bool ScrollCameraComponent::SerializeFromJSON(nlohmann::json const& json)
 	{
-		if (!CameraComponent::SerializeFromJSON(json_entry))
+		if (!CameraComponent::SerializeFromJSON(json))
 			return false;
-		JSONTools::GetAttribute(json_entry, "scroll_speed", scroll_speed);
-		JSONTools::GetAttribute(json_entry, "axis", axis);
+		JSONTools::GetAttribute(json, "scroll_speed", scroll_speed);
+		JSONTools::GetAttribute(json, "axis", axis);
 		return true;
 	}
 

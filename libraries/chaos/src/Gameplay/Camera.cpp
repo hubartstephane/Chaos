@@ -113,20 +113,20 @@ namespace chaos
 		safe_zone = in_safe_zone;
 	}
 	
-	bool Camera::SerializeIntoJSON(nlohmann::json& json_entry) const
+	bool Camera::SerializeIntoJSON(nlohmann::json& json) const
 	{
-		if (!JSONSerializable::SerializeIntoJSON(json_entry))
+		if (!JSONSerializable::SerializeIntoJSON(json))
 			return false;
-		JSONTools::SetAttribute(json_entry, "CAMERA_BOX", GetCameraBox(false));
+		JSONTools::SetAttribute(json, "CAMERA_BOX", GetCameraBox(false));
 		return true;
 	}
 	
-	bool Camera::SerializeFromJSON(nlohmann::json const& json_entry)
+	bool Camera::SerializeFromJSON(nlohmann::json const& json)
 	{
-		if (!JSONSerializable::SerializeFromJSON(json_entry))
+		if (!JSONSerializable::SerializeFromJSON(json))
 			return false;
 		box2 b;
-		if (JSONTools::GetAttribute(json_entry, "CAMERA_BOX", b))
+		if (JSONTools::GetAttribute(json, "CAMERA_BOX", b))
 			SetCameraBox(b);
 		return true;
 	}

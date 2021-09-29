@@ -39,9 +39,9 @@ namespace chaos
 		glm::vec4 color_mask = { 0.0f, 0.0f, 0.0f, 1.0f };
 	};
 
-	bool SaveIntoJSON(nlohmann::json& json_entry, ColorFilter const& src);
+	bool SaveIntoJSON(nlohmann::json& json, ColorFilter const& src);
 
-	bool LoadFromJSON(nlohmann::json const& json_entry, ColorFilter& dst);
+	bool LoadFromJSON(nlohmann::json const& json, ColorFilter& dst);
 
 #endif
 

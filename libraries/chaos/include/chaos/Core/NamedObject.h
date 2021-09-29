@@ -50,9 +50,9 @@ namespace chaos
 	};
 
 	/** function to serialize into JSON */
-	bool SaveIntoJSON(nlohmann::json& json_entry, NamedObject const& src);
+	bool SaveIntoJSON(nlohmann::json& json, NamedObject const& src);
 	/** function to serialize from JSON */
-	bool LoadFromJSON(nlohmann::json const& json_entry, NamedObject& dst);
+	bool LoadFromJSON(nlohmann::json const& json, NamedObject& dst);
 
 #endif
 

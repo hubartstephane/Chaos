@@ -184,45 +184,45 @@ namespace chaos
 	// JSON functions
 	// ========================================================================
 
-	bool SaveIntoJSON(nlohmann::json & json_entry, BitmapGridAnimationInfo const & src)
+	bool SaveIntoJSON(nlohmann::json & json, BitmapGridAnimationInfo const & src)
 	{
-		if (!json_entry.is_object())
-			json_entry = nlohmann::json::object();
-		JSONTools::SetAttribute(json_entry, "grid_size", src.grid_size);
-		JSONTools::SetAttribute(json_entry, "skip_lasts", src.skip_lasts);
+		if (!json.is_object())
+			json = nlohmann::json::object();
+		JSONTools::SetAttribute(json, "grid_size", src.grid_size);
+		JSONTools::SetAttribute(json, "skip_lasts", src.skip_lasts);
 		return true;
 	}
 
-	bool LoadFromJSON(nlohmann::json const & json_entry, BitmapGridAnimationInfo & dst)
+	bool LoadFromJSON(nlohmann::json const & json, BitmapGridAnimationInfo & dst)
 	{
-		if (!json_entry.is_object())
+		if (!json.is_object())
 			return false;
-		JSONTools::GetAttribute(json_entry, "grid_size", dst.grid_size);
-		JSONTools::GetAttribute(json_entry, "skip_lasts", dst.skip_lasts);
+		JSONTools::GetAttribute(json, "grid_size", dst.grid_size);
+		JSONTools::GetAttribute(json, "skip_lasts", dst.skip_lasts);
 		return true;
 	}
 
-	bool SaveIntoJSON(nlohmann::json & json_entry, ImageAnimationDescription const & src)
+	bool SaveIntoJSON(nlohmann::json & json, ImageAnimationDescription const & src)
 	{
-		if (!json_entry.is_object())
-			json_entry = nlohmann::json::object();
-		JSONTools::SetAttribute(json_entry, "grid_data", src.grid_data);
-		JSONTools::SetAttribute(json_entry, "child_frame_count", src.child_frame_count);
-		JSONTools::SetAttribute(json_entry, "frame_duration", src.frame_duration);
-		JSONTools::SetAttribute(json_entry, "anim_duration", src.anim_duration);
-		JSONTools::SetAttribute(json_entry, "default_wrap_mode", src.default_wrap_mode);
+		if (!json.is_object())
+			json = nlohmann::json::object();
+		JSONTools::SetAttribute(json, "grid_data", src.grid_data);
+		JSONTools::SetAttribute(json, "child_frame_count", src.child_frame_count);
+		JSONTools::SetAttribute(json, "frame_duration", src.frame_duration);
+		JSONTools::SetAttribute(json, "anim_duration", src.anim_duration);
+		JSONTools::SetAttribute(json, "default_wrap_mode", src.default_wrap_mode);
 		return true;
 	}
 
-	bool LoadFromJSON(nlohmann::json const & json_entry, ImageAnimationDescription & dst)
+	bool LoadFromJSON(nlohmann::json const & json, ImageAnimationDescription & dst)
 	{
-		if (!json_entry.is_object())
+		if (!json.is_object())
 			return false;
-		JSONTools::GetAttribute(json_entry, "grid_data", dst.grid_data);
-		JSONTools::GetAttribute(json_entry, "child_frame_count", dst.child_frame_count);
-		JSONTools::GetAttribute(json_entry, "frame_duration", dst.frame_duration);
-		JSONTools::GetAttribute(json_entry, "anim_duration", dst.anim_duration);
-		JSONTools::GetAttribute(json_entry, "default_wrap_mode", dst.default_wrap_mode);
+		JSONTools::GetAttribute(json, "grid_data", dst.grid_data);
+		JSONTools::GetAttribute(json, "child_frame_count", dst.child_frame_count);
+		JSONTools::GetAttribute(json, "frame_duration", dst.frame_duration);
+		JSONTools::GetAttribute(json, "anim_duration", dst.anim_duration);
+		JSONTools::GetAttribute(json, "default_wrap_mode", dst.default_wrap_mode);
 		return true;
 	}
 

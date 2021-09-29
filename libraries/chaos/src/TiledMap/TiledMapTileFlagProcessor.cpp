@@ -81,22 +81,22 @@ namespace chaos
 			}
 		}
 
-		bool ComputeNeighbourFlagProcessor::SerializeIntoJSON(nlohmann::json& json_entry) const
+		bool ComputeNeighbourFlagProcessor::SerializeIntoJSON(nlohmann::json& json) const
 		{
-			if (!TileFlagProcessor::SerializeIntoJSON(json_entry))
+			if (!TileFlagProcessor::SerializeIntoJSON(json))
 				return false;
 			// insert all key-flag
 			if (types.size())
-				JSONTools::SetAttribute(json_entry, "types", types);
+				JSONTools::SetAttribute(json, "types", types);
 			return true;
 		}
 
-		bool ComputeNeighbourFlagProcessor::SerializeFromJSON(nlohmann::json const& json_entry)
+		bool ComputeNeighbourFlagProcessor::SerializeFromJSON(nlohmann::json const& json)
 		{
-			if (!TileFlagProcessor::SerializeFromJSON(json_entry))
+			if (!TileFlagProcessor::SerializeFromJSON(json))
 				return false;
 			// get the types of interrest
-			JSONTools::GetAttribute(json_entry, "types", types);
+			JSONTools::GetAttribute(json, "types", types);
 			// decrypt the strings
 			if (types.size() > 0)
 			{
@@ -127,21 +127,21 @@ namespace chaos
 		//
 		//  => an array of simple objects (a single KEY-VALUE pair in each object)
 
-		bool SaveIntoJSON(nlohmann::json& json_entry, ComputeCustomFlagProcessorEntry const& src)
+		bool SaveIntoJSON(nlohmann::json& json, ComputeCustomFlagProcessorEntry const& src)
 		{
-			if (!json_entry.is_object())
-				json_entry = nlohmann::json::object();
-			JSONTools::SetAttribute(json_entry, src.type.c_str(), src.flag);
+			if (!json.is_object())
+				json = nlohmann::json::object();
+			JSONTools::SetAttribute(json, src.type.c_str(), src.flag);
 			return true;
 		}
 
-		bool LoadFromJSON(nlohmann::json const& json_entry, ComputeCustomFlagProcessorEntry& dst)
+		bool LoadFromJSON(nlohmann::json const& json, ComputeCustomFlagProcessorEntry& dst)
 		{
-			if (!json_entry.is_object())
+			if (!json.is_object())
 				return false;
 
-			auto it = json_entry.begin();
-			if (it != json_entry.end())
+			auto it = json.begin();
+			if (it != json.end())
 			{
 				try
 				{
@@ -177,22 +177,22 @@ namespace chaos
 			}
 		}
 
-		bool ComputeCustomFlagProcessor::SerializeIntoJSON(nlohmann::json& json_entry) const
+		bool ComputeCustomFlagProcessor::SerializeIntoJSON(nlohmann::json& json) const
 		{
-			if (!TileFlagProcessor::SerializeIntoJSON(json_entry))
+			if (!TileFlagProcessor::SerializeIntoJSON(json))
 				return false;
 			// insert all key-flag
 			if (custom_flags.size())
-				JSONTools::SetAttribute(json_entry, "custom_flags", custom_flags);
+				JSONTools::SetAttribute(json, "custom_flags", custom_flags);
 			return true;
 		}
 		
-		bool ComputeCustomFlagProcessor::SerializeFromJSON(nlohmann::json const& json_entry)
+		bool ComputeCustomFlagProcessor::SerializeFromJSON(nlohmann::json const& json)
 		{
-			if (!TileFlagProcessor::SerializeFromJSON(json_entry))
+			if (!TileFlagProcessor::SerializeFromJSON(json))
 				return false;
 			// extract all flag key-flag
-			JSONTools::GetAttribute(json_entry, "custom_flags", custom_flags);
+			JSONTools::GetAttribute(json, "custom_flags", custom_flags);
 			// decrypt all data (a key may be a comma separated value)
 			std::vector<ComputeCustomFlagProcessorEntry> final_custom_flags;
 			for (ComputeCustomFlagProcessorEntry& old_entry : custom_flags)

@@ -22,9 +22,9 @@ namespace chaos
 
 
 	/** JSON loading method */
-	bool LoadFromJSON(nlohmann::json const& json_entry, PixelComponentType& dst);
+	bool LoadFromJSON(nlohmann::json const& json, PixelComponentType& dst);
 	/** JSON saving method */
-	bool SaveIntoJSON(nlohmann::json& json_entry, PixelComponentType const& src);
+	bool SaveIntoJSON(nlohmann::json& json, PixelComponentType const& src);
 
 	/**
 	* PixelFormat : the accepted pixel formats
@@ -94,9 +94,9 @@ namespace chaos
 		int component_count = 0;
 	};
 
-	bool LoadFromJSON(nlohmann::json const& json_entry, PixelFormat& dst);
+	bool LoadFromJSON(nlohmann::json const& json, PixelFormat& dst);
 
-	bool SaveIntoJSON(nlohmann::json& json_entry, PixelFormat const& src);
+	bool SaveIntoJSON(nlohmann::json& json, PixelFormat const& src);
 
 #endif
 

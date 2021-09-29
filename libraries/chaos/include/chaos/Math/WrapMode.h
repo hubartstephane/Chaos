@@ -85,9 +85,9 @@ namespace chaos
 	}
 
 	/** JSON loading method */
-	bool LoadFromJSON(nlohmann::json const& json_entry, WrapMode& dst);
+	bool LoadFromJSON(nlohmann::json const& json, WrapMode& dst);
 	/** JSON saving method */
-	bool SaveIntoJSON(nlohmann::json& json_entry, WrapMode const& src);
+	bool SaveIntoJSON(nlohmann::json& json, WrapMode const& src);
 
 #endif
 

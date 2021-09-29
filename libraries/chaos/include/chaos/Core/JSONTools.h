@@ -7,13 +7,13 @@ namespace chaos
 	// =================================
 
 #define CHAOS_IMPLEMENT_ENUMJSON_METHOD(enum_type, table_name)\
-bool LoadFromJSON(nlohmann::json const& json_entry, enum_type& dst)\
+bool LoadFromJSON(nlohmann::json const& json, enum_type& dst)\
 {\
-	return LoadEnumFromJSON(json_entry, table_name, dst);\
+	return LoadEnumFromJSON(json, table_name, dst);\
 }\
-bool SaveIntoJSON(nlohmann::json& json_entry, enum_type const& src)\
+bool SaveIntoJSON(nlohmann::json& json, enum_type const& src)\
 {\
-	return SaveEnumIntoJSON(json_entry, table_name, src);\
+	return SaveEnumIntoJSON(json, table_name, src);\
 }\
 
 #define CHAOS_JSON_ATTRIBUTE(config, x) chaos::JSONTools::GetAttribute(config, #x, x)
@@ -37,7 +37,7 @@ bool SaveIntoJSON(nlohmann::json& json_entry, enum_type const& src)\
 	/** loading a bool (because we try to read an int as a fallback) */
 	bool LoadFromJSON(nlohmann::json const& entry, bool& dst);
 	/** serialize a path from json */
-	bool LoadFromJSON(nlohmann::json const& json_entry, boost::filesystem::path& dst);
+	bool LoadFromJSON(nlohmann::json const& json, boost::filesystem::path& dst);
 
 	/** an utility function to create an object from a json object */
 	template<typename T>
@@ -57,7 +57,7 @@ bool SaveIntoJSON(nlohmann::json& json_entry, enum_type const& src)\
 	bool LoadFromJSON(nlohmann::json const& entry, std::vector<T>& dst);
 
 	/** serialize a path into json */
-	bool SaveIntoJSON(nlohmann::json& json_entry, boost::filesystem::path const& src);
+	bool SaveIntoJSON(nlohmann::json& json, boost::filesystem::path const& src);
 	/** basic types */
 	template<typename T>
 	bool SaveIntoJSON(nlohmann::json& entry, T const& src);
@@ -73,10 +73,10 @@ bool SaveIntoJSON(nlohmann::json& json_entry, enum_type const& src)\
 
 	/** enumeration method */
 	template<typename T, typename ENCODE_TABLE>
-	bool SaveEnumIntoJSON(nlohmann::json& json_entry, ENCODE_TABLE const& encode_table, T const& src);
+	bool SaveEnumIntoJSON(nlohmann::json& json, ENCODE_TABLE const& encode_table, T const& src);
 	/** enumeration method */
 	template<typename T, typename ENCODE_TABLE>
-	bool LoadEnumFromJSON(nlohmann::json const& json_entry, ENCODE_TABLE const& encode_table, T& dst);
+	bool LoadEnumFromJSON(nlohmann::json const& json, ENCODE_TABLE const& encode_table, T& dst);
 
 	// =================
 	// JSONTools
@@ -269,10 +269,10 @@ bool SaveIntoJSON(nlohmann::json& json_entry, enum_type const& src)\
 		// input is an array		
 		if (entry.is_array())
 		{
-			for (auto const& json_entry : entry)
+			for (auto const& json : entry)
 			{
 				T element;
-				if (LoadFromJSON(json_entry, element))
+				if (LoadFromJSON(json, element))
 					dst.push_back(std::move(element));
 			}
 			return true;
@@ -377,20 +377,20 @@ bool SaveIntoJSON(nlohmann::json& json_entry, enum_type const& src)\
 
 	/** enumeration method */
 	template<typename T, typename ENCODE_TABLE>
-	bool SaveEnumIntoJSON(nlohmann::json& json_entry, ENCODE_TABLE const& encode_table, T const& src)
+	bool SaveEnumIntoJSON(nlohmann::json& json, ENCODE_TABLE const& encode_table, T const& src)
 	{
 		std::string encoded_str;
 		if (!EnumTools::EnumToString(src, encode_table, encoded_str))
 			return false;
-		return SaveIntoJSON(json_entry, encoded_str);
+		return SaveIntoJSON(json, encoded_str);
 	}
 
 	/** enumeration method */
 	template<typename T, typename ENCODE_TABLE>
-	bool LoadEnumFromJSON(nlohmann::json const& json_entry, ENCODE_TABLE const& encode_table, T& dst)
+	bool LoadEnumFromJSON(nlohmann::json const& json, ENCODE_TABLE const& encode_table, T& dst)
 	{
 		std::string encoded_str;
-		if (!LoadFromJSON(json_entry, encoded_str))
+		if (!LoadFromJSON(json, encoded_str))
 			return false;
 		if (!EnumTools::StringToEnum(encoded_str.c_str(), encode_table, dst))
 			return false;

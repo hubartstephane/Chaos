@@ -17,9 +17,9 @@ namespace chaos
 		static char const name_separator = ',';
 
 		/** JSON saving method */
-		friend bool SaveIntoJSON(nlohmann::json& json_entry, NameFilter const& src);
+		friend bool SaveIntoJSON(nlohmann::json& json, NameFilter const& src);
 		/** JSON loading method */
-		friend bool LoadFromJSON(nlohmann::json const& json_entry, NameFilter& dst);
+		friend bool LoadFromJSON(nlohmann::json const& json, NameFilter& dst);
 
 	public:
 

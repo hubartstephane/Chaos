@@ -68,9 +68,9 @@ namespace chaos
 		box2 GetSafeCameraBox(bool apply_modifiers = true) const;
 
 		/** the processor may save its configuration into a JSON file */
-		virtual bool SerializeIntoJSON(nlohmann::json& json_entry) const override;
+		virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
 		/** the processor may save its configuration from a JSON file */
-		virtual bool SerializeFromJSON(nlohmann::json const& json_entry) override;
+		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
 
 		/** Camera is a CameraComponent owner */
 		CHAOS_DECLARE_COMPONENT_OWNER(CameraComponent, Component, components)

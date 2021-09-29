@@ -460,33 +460,33 @@ namespace chaos
 		* Some JSON utility functions
 		*/
 
-		bool SaveIntoJSON(nlohmann::json& json_entry, BitmapAnimationInfo const& src);
+		bool SaveIntoJSON(nlohmann::json& json, BitmapAnimationInfo const& src);
 
-		bool LoadFromJSON(nlohmann::json const& json_entry, BitmapAnimationInfo& dst);
+		bool LoadFromJSON(nlohmann::json const& json, BitmapAnimationInfo& dst);
 
-		bool SaveIntoJSON(nlohmann::json& json_entry, BitmapLayout const& src);
+		bool SaveIntoJSON(nlohmann::json& json, BitmapLayout const& src);
 
-		bool LoadFromJSON(nlohmann::json const& json_entry, BitmapLayout& dst);
+		bool LoadFromJSON(nlohmann::json const& json, BitmapLayout& dst);
 
-		bool SaveIntoJSON(nlohmann::json& json_entry, CharacterLayout const& src);
+		bool SaveIntoJSON(nlohmann::json& json, CharacterLayout const& src);
 
-		bool LoadFromJSON(nlohmann::json const& json_entry, CharacterLayout& dst);
+		bool LoadFromJSON(nlohmann::json const& json, CharacterLayout& dst);
 
-		bool SaveIntoJSON(nlohmann::json& json_entry, BitmapInfo const& src);
+		bool SaveIntoJSON(nlohmann::json& json, BitmapInfo const& src);
 
-		bool LoadFromJSON(nlohmann::json const& json_entry, BitmapInfo& dst);
+		bool LoadFromJSON(nlohmann::json const& json, BitmapInfo& dst);
 
-		bool SaveIntoJSON(nlohmann::json& json_entry, CharacterInfo const& src);
+		bool SaveIntoJSON(nlohmann::json& json, CharacterInfo const& src);
 
-		bool LoadFromJSON(nlohmann::json const& json_entry, CharacterInfo& dst);
+		bool LoadFromJSON(nlohmann::json const& json, CharacterInfo& dst);
 
-		bool SaveIntoJSON(nlohmann::json& json_entry, FolderInfo const& src);
+		bool SaveIntoJSON(nlohmann::json& json, FolderInfo const& src);
 
-		bool LoadFromJSON(nlohmann::json const& json_entry, FolderInfo& dst);
+		bool LoadFromJSON(nlohmann::json const& json, FolderInfo& dst);
 
-		bool SaveIntoJSON(nlohmann::json& json_entry, FontInfo const& src);
+		bool SaveIntoJSON(nlohmann::json& json, FontInfo const& src);
 
-		bool LoadFromJSON(nlohmann::json const& json_entry, FontInfo& dst);
+		bool LoadFromJSON(nlohmann::json const& json, FontInfo& dst);
 
 
 #endif

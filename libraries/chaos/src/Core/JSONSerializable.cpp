@@ -5,15 +5,15 @@
 namespace chaos
 {
 
-	bool JSONSerializable::SerializeIntoJSON(nlohmann::json& json_entry) const
+	bool JSONSerializable::SerializeIntoJSON(nlohmann::json& json) const
 	{
-		assert(json_entry.is_object());
+		assert(json.is_object());
 		return true;
 	}
 
-	bool JSONSerializable::SerializeFromJSON(nlohmann::json const& json_entry)
+	bool JSONSerializable::SerializeFromJSON(nlohmann::json const& json)
 	{
-		assert(json_entry.is_object());
+		assert(json.is_object());
 		return true;
 	}
 

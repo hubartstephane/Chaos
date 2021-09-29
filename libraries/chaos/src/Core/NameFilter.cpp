@@ -100,28 +100,28 @@ namespace chaos
 	// JSON methods
 	// ============================================================
 
-	bool SaveIntoJSON(nlohmann::json & json_entry, NameFilter const & src)
+	bool SaveIntoJSON(nlohmann::json & json, NameFilter const & src)
 	{
-		if (!json_entry.is_object())
-			json_entry = nlohmann::json::object();
-		JSONTools::SetAttribute(json_entry, "enabled_names", src.enabled_names);
-		JSONTools::SetAttribute(json_entry, "disabled_names", src.disabled_names);
+		if (!json.is_object())
+			json = nlohmann::json::object();
+		JSONTools::SetAttribute(json, "enabled_names", src.enabled_names);
+		JSONTools::SetAttribute(json, "disabled_names", src.disabled_names);
 		return true;
 	}
 
-	bool LoadFromJSON(nlohmann::json const & json_entry, NameFilter & dst)
+	bool LoadFromJSON(nlohmann::json const & json, NameFilter & dst)
 	{
 		// the simplest format is with string and ',' as separator 
-		if (json_entry.is_string())
+		if (json.is_string())
 		{
-			dst.AddEnabledNames(json_entry.get<std::string>().c_str());
+			dst.AddEnabledNames(json.get<std::string>().c_str());
 			return true;
 		}
-		else if (json_entry.is_object())
+		else if (json.is_object())
 		{
 			// "enabled_names" can be a string with ';' as separator or an array of string
-			nlohmann::json::const_iterator it_enabled = json_entry.find("enabled_names");
-			if (it_enabled != json_entry.end())
+			nlohmann::json::const_iterator it_enabled = json.find("enabled_names");
+			if (it_enabled != json.end())
 			{
 				if (it_enabled->is_string())
 					dst.AddEnabledNames(it_enabled->get<std::string>().c_str());
@@ -130,8 +130,8 @@ namespace chaos
 			}
 
 			// "disabled_names" can be a string with ',' as separator or an array of string
-			nlohmann::json::const_iterator it_disabled = json_entry.find("disabled_names");
-			if (it_disabled != json_entry.end())
+			nlohmann::json::const_iterator it_disabled = json.find("disabled_names");
+			if (it_disabled != json.end())
 			{
 				if (it_disabled->is_string())
 					dst.AddDisabledNames(it_disabled->get<std::string>().c_str());

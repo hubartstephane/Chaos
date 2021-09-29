@@ -29,7 +29,7 @@ public:
 	static constexpr int SPAWN_TYPE_OUTASCREEN = 1;
 	static constexpr int SPAWN_TYPE_OUTASCREEN_TESTCOLLISION = 2;
 
-	bool LoadFromJSON(nlohmann::json const & json_entry);
+	bool LoadFromJSON(nlohmann::json const & json);
 
 public:
 
@@ -80,7 +80,7 @@ public:
 	
 	void SetVisible(bool in_visible);
 
-	bool LoadFromJSON(nlohmann::json const & json_entry);
+	bool LoadFromJSON(nlohmann::json const & json);
 
 protected:
 

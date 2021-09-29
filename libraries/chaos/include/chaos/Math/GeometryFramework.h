@@ -767,178 +767,178 @@ namespace chaos
 		// vectors
 
 	template<typename T, glm::precision P>
-	bool SaveIntoJSON(nlohmann::json& json_entry, glm::tvec2<T, P> const& src)
+	bool SaveIntoJSON(nlohmann::json& json, glm::tvec2<T, P> const& src)
 	{
-		if (!json_entry.is_array())
-			json_entry = nlohmann::json::array();
-		JSONTools::SetAttributeByIndex(json_entry, 0, src.x);
-		JSONTools::SetAttributeByIndex(json_entry, 1, src.y);
+		if (!json.is_array())
+			json = nlohmann::json::array();
+		JSONTools::SetAttributeByIndex(json, 0, src.x);
+		JSONTools::SetAttributeByIndex(json, 1, src.y);
 		return true;
 	}
 
 	template<typename T, glm::precision P>
-	bool LoadFromJSON(nlohmann::json const& json_entry, glm::tvec2<T, P>& dst)
+	bool LoadFromJSON(nlohmann::json const& json, glm::tvec2<T, P>& dst)
 	{
-		if (json_entry.is_object())
+		if (json.is_object())
 		{
-			JSONTools::GetAttribute(json_entry, "x", dst.x);
-			JSONTools::GetAttribute(json_entry, "y", dst.y);
+			JSONTools::GetAttribute(json, "x", dst.x);
+			JSONTools::GetAttribute(json, "y", dst.y);
 			return true;
 		}
-		else if (json_entry.is_array())
+		else if (json.is_array())
 		{
-			size_t count = std::min(json_entry.size(), (size_t)dst.length());
+			size_t count = std::min(json.size(), (size_t)dst.length());
 			for (size_t i = 0; i < count; ++i)
-				dst[i] = json_entry[i].get<T>();
+				dst[i] = json[i].get<T>();
 			return true;
 		}
 		return false;
 	}
 
 	template<typename T, glm::precision P>
-	bool SaveIntoJSON(nlohmann::json& json_entry, glm::tvec3<T, P> const& src)
+	bool SaveIntoJSON(nlohmann::json& json, glm::tvec3<T, P> const& src)
 	{
-		if (!json_entry.is_array())
-			json_entry = nlohmann::json::array();
-		JSONTools::SetAttributeByIndex(json_entry, 0, src.x);
-		JSONTools::SetAttributeByIndex(json_entry, 1, src.y);
-		JSONTools::SetAttributeByIndex(json_entry, 2, src.z);
+		if (!json.is_array())
+			json = nlohmann::json::array();
+		JSONTools::SetAttributeByIndex(json, 0, src.x);
+		JSONTools::SetAttributeByIndex(json, 1, src.y);
+		JSONTools::SetAttributeByIndex(json, 2, src.z);
 		return true;
 	}
 
 	template<typename T, glm::precision P>
-	bool LoadFromJSON(nlohmann::json const& json_entry, glm::tvec3<T, P>& dst)
+	bool LoadFromJSON(nlohmann::json const& json, glm::tvec3<T, P>& dst)
 	{
-		if (json_entry.is_object())
+		if (json.is_object())
 		{
-			JSONTools::GetAttribute(json_entry, "x", dst.x);
-			JSONTools::GetAttribute(json_entry, "y", dst.y);
-			JSONTools::GetAttribute(json_entry, "z", dst.z);
+			JSONTools::GetAttribute(json, "x", dst.x);
+			JSONTools::GetAttribute(json, "y", dst.y);
+			JSONTools::GetAttribute(json, "z", dst.z);
 			return true;
 		}
-		else if (json_entry.is_array())
+		else if (json.is_array())
 		{
-			size_t count = std::min(json_entry.size(), (size_t)dst.length());
+			size_t count = std::min(json.size(), (size_t)dst.length());
 			for (size_t i = 0; i < count; ++i)
-				dst[i] = json_entry[i].get<T>();
+				dst[i] = json[i].get<T>();
 			return true;
 		}
 		return false;
 	}
 
 	template<typename T, glm::precision P>
-	bool SaveIntoJSON(nlohmann::json& json_entry, glm::tvec4<T, P> const& src)
+	bool SaveIntoJSON(nlohmann::json& json, glm::tvec4<T, P> const& src)
 	{
-		if (!json_entry.is_array())
-			json_entry = nlohmann::json::array();
-		JSONTools::SetAttributeByIndex(json_entry, 0, src.x);
-		JSONTools::SetAttributeByIndex(json_entry, 1, src.y);
-		JSONTools::SetAttributeByIndex(json_entry, 2, src.z);
-		JSONTools::SetAttributeByIndex(json_entry, 3, src.w);
+		if (!json.is_array())
+			json = nlohmann::json::array();
+		JSONTools::SetAttributeByIndex(json, 0, src.x);
+		JSONTools::SetAttributeByIndex(json, 1, src.y);
+		JSONTools::SetAttributeByIndex(json, 2, src.z);
+		JSONTools::SetAttributeByIndex(json, 3, src.w);
 		return true;
 	}
 
 	template<typename T, glm::precision P>
-	bool LoadFromJSON(nlohmann::json const& json_entry, glm::tvec4<T, P>& dst)
+	bool LoadFromJSON(nlohmann::json const& json, glm::tvec4<T, P>& dst)
 	{
-		if (json_entry.is_object())
+		if (json.is_object())
 		{
-			JSONTools::GetAttribute(json_entry, "x", dst.x);
-			JSONTools::GetAttribute(json_entry, "y", dst.y);
-			JSONTools::GetAttribute(json_entry, "z", dst.z);
-			JSONTools::GetAttribute(json_entry, "w", dst.w);
+			JSONTools::GetAttribute(json, "x", dst.x);
+			JSONTools::GetAttribute(json, "y", dst.y);
+			JSONTools::GetAttribute(json, "z", dst.z);
+			JSONTools::GetAttribute(json, "w", dst.w);
 			return true;
 		}
-		else if (json_entry.is_array())
+		else if (json.is_array())
 		{
-			size_t count = std::min(json_entry.size(), (size_t)dst.length());
+			size_t count = std::min(json.size(), (size_t)dst.length());
 			for (size_t i = 0; i < count; ++i)
-				dst[i] = json_entry[i].get<T>();
+				dst[i] = json[i].get<T>();
 			return true;
 		}
 		return false;
 	}
 
 	template<typename T, int dimension>
-	bool SaveIntoJSON(nlohmann::json& json_entry, type_box<T, dimension> const& src)
+	bool SaveIntoJSON(nlohmann::json& json, type_box<T, dimension> const& src)
 	{
-		if (!json_entry.is_object())
-			json_entry = nlohmann::json::object();
-		JSONTools::SetAttribute(json_entry, "position", src.position);
-		JSONTools::SetAttribute(json_entry, "half_size", src.half_size);
+		if (!json.is_object())
+			json = nlohmann::json::object();
+		JSONTools::SetAttribute(json, "position", src.position);
+		JSONTools::SetAttribute(json, "half_size", src.half_size);
 		return true;
 	}
 
 	template<typename T, int dimension>
-	bool LoadFromJSON(nlohmann::json const& json_entry, type_box<T, dimension>& dst)
+	bool LoadFromJSON(nlohmann::json const& json, type_box<T, dimension>& dst)
 	{
-		if (!json_entry.is_object())
+		if (!json.is_object())
 			return false;
-		JSONTools::GetAttribute(json_entry, "position", dst.position);
-		JSONTools::GetAttribute(json_entry, "half_size", dst.half_size);
+		JSONTools::GetAttribute(json, "position", dst.position);
+		JSONTools::GetAttribute(json, "half_size", dst.half_size);
 		return true;
 	}
 
 	template<typename T, int dimension>
-	bool SaveIntoJSON(nlohmann::json& json_entry, type_obox<T, dimension> const& src)
+	bool SaveIntoJSON(nlohmann::json& json, type_obox<T, dimension> const& src)
 	{
-		if (!json_entry.is_object())
-			json_entry = nlohmann::json::object();
-		JSONTools::SetAttribute(json_entry, "position", src.position);
-		JSONTools::SetAttribute(json_entry, "half_size", src.half_size);
-		JSONTools::SetAttribute(json_entry, "rotation", src.rotation);
+		if (!json.is_object())
+			json = nlohmann::json::object();
+		JSONTools::SetAttribute(json, "position", src.position);
+		JSONTools::SetAttribute(json, "half_size", src.half_size);
+		JSONTools::SetAttribute(json, "rotation", src.rotation);
 		return true;
 	}
 
 	template<typename T, int dimension>
-	bool LoadFromJSON(nlohmann::json const& json_entry, type_obox<T, dimension>& dst)
+	bool LoadFromJSON(nlohmann::json const& json, type_obox<T, dimension>& dst)
 	{
-		if (!json_entry.is_object())
+		if (!json.is_object())
 			return false;
-		JSONTools::GetAttribute(json_entry, "position", dst.position);
-		JSONTools::GetAttribute(json_entry, "half_size", dst.half_size);
-		JSONTools::GetAttribute(json_entry, "rotation", dst.rotation);
+		JSONTools::GetAttribute(json, "position", dst.position);
+		JSONTools::GetAttribute(json, "half_size", dst.half_size);
+		JSONTools::GetAttribute(json, "rotation", dst.rotation);
 		return true;
 	}
 
 
 	template<typename T, int dimension>
-	bool SaveIntoJSON(nlohmann::json& json_entry, type_sphere<T, dimension> const& src)
+	bool SaveIntoJSON(nlohmann::json& json, type_sphere<T, dimension> const& src)
 	{
-		if (!json_entry.is_object())
-			json_entry = nlohmann::json::object();
-		JSONTools::SetAttribute(json_entry, "position", src.position);
-		JSONTools::SetAttribute(json_entry, "radius", src.radius);
+		if (!json.is_object())
+			json = nlohmann::json::object();
+		JSONTools::SetAttribute(json, "position", src.position);
+		JSONTools::SetAttribute(json, "radius", src.radius);
 		return true;
 	}
 
 	template<typename T, int dimension>
-	bool LoadFromJSON(nlohmann::json const& json_entry, type_sphere<T, dimension>& dst)
+	bool LoadFromJSON(nlohmann::json const& json, type_sphere<T, dimension>& dst)
 	{
-		if (!json_entry.is_object())
+		if (!json.is_object())
 			return false;
-		JSONTools::GetAttribute(json_entry, "position", dst.position);
-		JSONTools::GetAttribute(json_entry, "radius", dst.radius);
+		JSONTools::GetAttribute(json, "position", dst.position);
+		JSONTools::GetAttribute(json, "radius", dst.radius);
 		return true;
 	}
 
 	template<typename T, int dimension>
-	bool SaveIntoJSON(nlohmann::json& json_entry, type_ray<T, dimension> const& src)
+	bool SaveIntoJSON(nlohmann::json& json, type_ray<T, dimension> const& src)
 	{
-		if (!json_entry.is_object())
-			json_entry = nlohmann::json::object();
-		JSONTools::SetAttribute(json_entry, "position", src.position);
-		JSONTools::SetAttribute(json_entry, "direction", src.direction);
+		if (!json.is_object())
+			json = nlohmann::json::object();
+		JSONTools::SetAttribute(json, "position", src.position);
+		JSONTools::SetAttribute(json, "direction", src.direction);
 		return true;
 	}
 
 	template<typename T, int dimension>
-	bool LoadFromJSON(nlohmann::json const& json_entry, type_ray<T, dimension>& dst)
+	bool LoadFromJSON(nlohmann::json const& json, type_ray<T, dimension>& dst)
 	{
-		if (!json_entry.is_object())
+		if (!json.is_object())
 			return false;
-		JSONTools::GetAttribute(json_entry, "position", dst.position);
-		JSONTools::GetAttribute(json_entry, "direction", dst.direction);
+		JSONTools::GetAttribute(json, "position", dst.position);
+		JSONTools::GetAttribute(json, "direction", dst.direction);
 		return true;
 	}
 

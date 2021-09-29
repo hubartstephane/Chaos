@@ -96,11 +96,10 @@ namespace chaos
 		// iterate over every shader types (single string)
 		for (size_t i = 0; i < shader_type_count; ++i)
 		{
-			std::string source_path;
+			boost::filesystem::path source_path;
 			if (!JSONTools::GetAttribute(json, shader_json_names[i], source_path))
 				continue;
-			FilePathParam path(source_path);
-			program_generator.AddShaderSourceFile(shader_types[i], path);
+			program_generator.AddShaderSourceFile(shader_types[i], source_path);
 		}
 
 		// iterate over every shader types for array
@@ -115,11 +114,10 @@ namespace chaos
 			// iterate over all sources for the given shader type
 			for (size_t j = 0; j < sources->size(); ++j)
 			{
-				std::string source_path;
+				boost::filesystem::path source_path;
 				if (!JSONTools::GetAttributeByIndex(*sources, j, source_path))
 					continue;
-				FilePathParam path(source_path);
-				program_generator.AddShaderSourceFile(shader_types[i], path);
+				program_generator.AddShaderSourceFile(shader_types[i], source_path);
 			}
 		}
 

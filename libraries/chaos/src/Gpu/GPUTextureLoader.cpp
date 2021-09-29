@@ -407,14 +407,14 @@ namespace chaos
 		{
 			if (faces->is_array() || faces->is_object())
 			{
-				std::string left;
-				std::string right;
-				std::string top;
-				std::string bottom;
-				std::string front;
-				std::string back;
+				boost::filesystem::path left_path;
+				boost::filesystem::path right_path;
+				boost::filesystem::path top_path;
+				boost::filesystem::path bottom_path;
+				boost::filesystem::path front_path;
+				boost::filesystem::path back_path;
 
-				std::string single;
+				boost::filesystem::path single_path;
 
 				bool single_image = false;
 				bool multiple_image = false;
@@ -424,29 +424,29 @@ namespace chaos
 				{
 					if (faces->size() == 1)
 					{
-						single_image |= JSONTools::GetAttributeByIndex(*faces, 0, single);
+						single_image |= JSONTools::GetAttributeByIndex(*faces, 0, single_path);
 					}
 					else
 					{
-						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 0, left);
-						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 1, right);
-						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 2, top);
-						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 3, bottom);
-						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 4, front);
-						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 5, back);
+						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 0, left_path);
+						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 1, right_path);
+						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 2, top_path);
+						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 3, bottom_path);
+						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 4, front_path);
+						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 5, back_path);
 					}
 				}
 				else
 				{
-					single_image |= JSONTools::GetAttribute(*faces, "single", single);
+					single_image |= JSONTools::GetAttribute(*faces, "single", single_path);
 					if (!single_image)
 					{
-						multiple_image |= JSONTools::GetAttribute(*faces, "left", left);
-						multiple_image |= JSONTools::GetAttribute(*faces, "right", right);
-						multiple_image |= JSONTools::GetAttribute(*faces, "top", top);
-						multiple_image |= JSONTools::GetAttribute(*faces, "bottom", bottom);
-						multiple_image |= JSONTools::GetAttribute(*faces, "front", front);
-						multiple_image |= JSONTools::GetAttribute(*faces, "back", back);
+						multiple_image |= JSONTools::GetAttribute(*faces, "left", left_path);
+						multiple_image |= JSONTools::GetAttribute(*faces, "right", right_path);
+						multiple_image |= JSONTools::GetAttribute(*faces, "top", top_path);
+						multiple_image |= JSONTools::GetAttribute(*faces, "bottom", bottom_path);
+						multiple_image |= JSONTools::GetAttribute(*faces, "front", front_path);
+						multiple_image |= JSONTools::GetAttribute(*faces, "back", back_path);
 					}
 				}
 
@@ -454,24 +454,16 @@ namespace chaos
 				{
 					if (single_image)
 					{
-						FilePathParam single_path(single);
 						skybox = SkyBoxTools::LoadSingleSkyBox(single_path);
 					}
 					else if (multiple_image)
 					{
-						FilePathParam left_path(left);
-						FilePathParam right_path(right);
-						FilePathParam top_path(top);
-						FilePathParam bottom_path(bottom);
-						FilePathParam front_path(front);
-						FilePathParam back_path(back);
 						skybox = SkyBoxTools::LoadMultipleSkyBox(left_path, right_path, top_path, bottom_path, front_path, back_path);
 					}
 					return GenTextureObject(&skybox, PixelFormatMergeParams(), parameters);
 				}
 			}
 		}
-
 		return nullptr;
 	}
 

@@ -89,13 +89,10 @@ namespace chaos
 				return true;
 
 		// does the object has a "path" member ?
-		std::string program_path;
+		boost::filesystem::path program_path;
 		if (JSONTools::GetAttribute(*json_program, "path", program_path))
-		{
-			FilePathParam path(program_path);
-			if (InitializeProgramFromPath(material_info, path))
+			if (InitializeProgramFromPath(material_info, program_path))
 				return true;
-		}
 
 		// inplace declared program 
 		GPUProgramLoader program_loader(manager);
@@ -168,13 +165,10 @@ namespace chaos
 			}
 
 			// does the object have a "Path" => try to find already loaded texture or load the texture
-			std::string texture_path;
+			boost::filesystem::path texture_path;
 			if (JSONTools::GetAttribute(*it, "path", texture_path))
-			{
-				FilePathParam path(texture_path);
-				if (InitializeTextureFromPath(material_info, texture_uniform_name.c_str(), texture_path.c_str()))
+				if (InitializeTextureFromPath(material_info, texture_uniform_name.c_str(), texture_path))
 					continue;
-			}
 
 			// inplace declared texture 
 			GPUTextureLoader texture_loader(manager);

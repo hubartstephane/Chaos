@@ -53,7 +53,7 @@ namespace chaos
 		{
 			if (result[1] == '@') // escaped characters ?
 			{
-				result = result.c_str() + 2; // skip the 2 escaped characters
+				result = result.c_str() + 1; // skip the first
 			}
 			else
 			{

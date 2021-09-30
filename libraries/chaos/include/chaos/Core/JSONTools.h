@@ -159,6 +159,7 @@ bool SaveIntoJSON(nlohmann::json& json, enum_type const& src)\
 	template<typename T>
 	bool LoadFromJSON(nlohmann::json const& entry, T& dst)
 	{
+#if 0
 		if constexpr (std::is_pointer_v<T>)
 		{
 			using T2 = std::remove_pointer_t<T>;
@@ -175,8 +176,9 @@ bool SaveIntoJSON(nlohmann::json& json, enum_type const& src)\
 			dst = other;
 			return true;
 		}
+#endif
 		// class has its own implementation
-		else if constexpr (check_method_SerializeFromJSON_v<T, nlohmann::json const&>)
+		if constexpr (check_method_SerializeFromJSON_v<T, nlohmann::json const&>)
 		{
 			// check whether data is an object
 			if (!entry.is_object())
@@ -290,6 +292,7 @@ bool SaveIntoJSON(nlohmann::json& json, enum_type const& src)\
 	template<typename T>
 	bool SaveIntoJSON(nlohmann::json& entry, T const& src)
 	{
+#if 0
 		// check for pointer
 		if constexpr (std::is_pointer_v<T>)
 		{
@@ -297,8 +300,9 @@ bool SaveIntoJSON(nlohmann::json& json, enum_type const& src)\
 				return true;
 			return SaveIntoJSON(entry, *src);
 		}
+#endif
 		// class has its own implementation
-		else if constexpr (std::is_class_v<T> && !std::is_same_v<T, std::string>) // string is to be handled in the native json way
+		if constexpr (std::is_class_v<T> && !std::is_same_v<T, std::string>) // string is to be handled in the native json way
 		{
 			if constexpr (check_method_SerializeIntoJSON_v<T const, nlohmann::json&>)
 			{

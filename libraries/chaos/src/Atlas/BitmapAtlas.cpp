@@ -659,9 +659,10 @@ namespace chaos
 			nlohmann::json const * json_files = JSONTools::GetStructure(json, "bitmaps");
 			if (json_files != nullptr)
 			{
-				for (auto const json_filename : *json_files)
+				for (nlohmann::json const & json_filename : *json_files)
 				{
-					std::string const & filename = json_filename;
+					std::string filename;
+					chaos::LoadFromJSON(json_filename, filename);
 
 					FIBITMAP * bitmap = ImageTools::LoadImageFromFile(target_dir / filename);
 					if (bitmap == nullptr)

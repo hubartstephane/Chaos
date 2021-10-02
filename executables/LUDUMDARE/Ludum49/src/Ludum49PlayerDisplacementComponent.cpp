@@ -210,14 +210,22 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 		if (glm::dot(pawn_box.position - m, glm::vec2(N)) < 0.0f)
 			N = -N;
 
+		glm::vec2 R = glm::reflect(pawn_box.position - pawn_box_before.position, glm::vec2(N));
 
-		LinePrimitive<VertexDefault> line = DI->AddLines(2);
+		//pawn_box.position += glm::reflect(pawn_box.position - pawn_box_before.position, glm::vec2(N));
+
+
+
+		LinePrimitive<VertexDefault> line = DI->AddLines(3);
 		line[0].position = col.a;
 		line[1].position = col.b;
 
 		
 		line[2].position = m;
 		line[3].position = m + glm::vec2(N) * 50.0f;
+
+		line[4].position = m;
+		line[5].position = m + glm::normalize(R) * 50.0f;
 
 
 

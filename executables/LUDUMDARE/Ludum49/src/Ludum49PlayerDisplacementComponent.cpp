@@ -16,10 +16,10 @@
 
 bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 {
-	chaos::PlayerDisplacementComponent::DoTick(delta_time);
+	PlayerDisplacementComponent::DoTick(delta_time);
 
 	// early exit
-	chaos::PlayerPawn* pawn = player->GetPawn();
+	PlayerPawn* pawn = player->GetPawn();
 	if (pawn == nullptr)
 		return true;
 
@@ -33,11 +33,11 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 
 
-	chaos::Key const left_buttons[] = { chaos::KeyboardButton::LEFT, chaos::Key() };
+	Key const left_buttons[] = { KeyboardButton::LEFT, Key() };
 	bool run_pressed = player->CheckButtonPressed(left_buttons);
 
 
-	chaos::box2 pawn_box = pawn->GetBoundingBox();
+	box2 pawn_box = pawn->GetBoundingBox();
 
 	pawn_box.position += pawn_velocity * delta_time;
 

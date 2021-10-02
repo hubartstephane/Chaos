@@ -22,36 +22,36 @@ LudumGame::LudumGame()
 	game_instance_class = LudumGameInstance::GetStaticClass();
 }
 
-bool LudumGame::OnEnterGame(chaos::PhysicalGamepad * in_physical_gamepad)
+bool LudumGame::OnEnterGame(PhysicalGamepad * in_physical_gamepad)
 {
-	if (!chaos::Game::OnEnterGame(in_physical_gamepad))
+	if (!Game::OnEnterGame(in_physical_gamepad))
 		return false;
-    PlaySound("start", false, false, 0.0f, chaos::SoundContext::GAME);
+    PlaySound("start", false, false, 0.0f, SoundContext::GAME);
 	return true;
 }
 
 
-chaos::GameHUD * LudumGame::DoCreatePlayingHUD()
+GameHUD * LudumGame::DoCreatePlayingHUD()
 {
 	return new LudumPlayingHUD();
 }
 
 bool LudumGame::InitializeGameValues(nlohmann::json const & config, bool hot_reload)
 {
-	if (!chaos::Game::InitializeGameValues(config, hot_reload))
+	if (!Game::InitializeGameValues(config, hot_reload))
 		return false;
 						
 	return true;
 }
 
-chaos::TMLevel * LudumGame::CreateTMLevel()
+TMLevel * LudumGame::CreateTMLevel()
 {
 	return new LudumLevel();
 }
 
 bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config)
 {
-	if (!chaos::Game::InitializeFromConfiguration(config))
+	if (!Game::InitializeFromConfiguration(config))
 		return false;
 
 
@@ -61,9 +61,9 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config)
 	return true;
 }
 
-void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params)
+void LudumGame::DoDisplayGame(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 {
-	chaos::GPUProgramProviderChain update_provider(uniform_provider);
+	GPUProgramProviderChain update_provider(uniform_provider);
 
 	LudumLevelInstance const* ludum_level_instance = GetLevelInstance();
 	if (ludum_level_instance != nullptr)
@@ -74,7 +74,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 	}
 	
 
-	chaos::Game::DoDisplayGame(renderer, &update_provider, render_params);
+	Game::DoDisplayGame(renderer, &update_provider, render_params);
 }
 
 

@@ -1,25 +1,24 @@
 #pragma once
 
-#include <chaos/Chaos.h>
-
+#include "Ludum49.h"
 #include "Ludum49Particles.h"
 
 // =========================================================
 // LudumGameInstance
 // =========================================================
 
-class LudumGameInstance : public chaos::GameInstance
+class LudumGameInstance : public GameInstance
 {
 
 public:
 
 	CHAOS_DECLARE_GAMEPLAY_FRIENDSHIPS(Ludum);
 
-	CHAOS_DECLARE_OBJECT_CLASS2(LudumGameInstance, chaos::GameInstance);
+	CHAOS_DECLARE_OBJECT_CLASS2(LudumGameInstance, GameInstance);
 
 	LudumGameInstance();
 
 protected:
 
-	virtual void OnLevelChanged(chaos::Level * new_level, chaos::Level * old_level, chaos::LevelInstance * new_level_instance) override;
+	virtual void OnLevelChanged(Level * new_level, Level * old_level, LevelInstance * new_level_instance) override;
 };

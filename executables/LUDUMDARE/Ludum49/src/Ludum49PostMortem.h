@@ -26,7 +26,7 @@ class BiValue
 
    };
 
-   chaos::pi = BiValue(3.14) ..
+   pi = BiValue(3.14) ..
 
 	   probleme sur les arrithmetique
 

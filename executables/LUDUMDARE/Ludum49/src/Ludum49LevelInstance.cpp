@@ -304,3 +304,13 @@ int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgra
 
 	return chaos::TMLevelInstance::DoDisplay(renderer, uniform_provider, render_params);
 }
+
+uint64_t LudumLevelInstance::GetCollisionFlagByName(char const* name) const
+{
+	assert(name != nullptr);
+
+	if (chaos::StringTools::Stricmp(name, "Landscape") == 0)
+		return COLLISION_LANDSCAPE;
+
+	return TMLevelInstance::GetCollisionFlagByName(name);
+}

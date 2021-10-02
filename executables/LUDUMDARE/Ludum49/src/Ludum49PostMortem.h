@@ -58,3 +58,19 @@ ne pas l'utiliser dans chaos, optimiser les dependances'
 -TM BoundingBox, oriented BoundingBox pour les collisions
 
 - position initiale du pawn semble foireuse
+
+
+- camera_class
+- player_pawn_class devrait etre editable dans TiledMap (=> LEVEL ou Player Start)
+- player_displacement_component_class aussi
+- faire une petite doc, meme en .h pour indiquer quelles sont les données disponibles dans TiledMap
+- les types mode TMObject ne sont ils pas obsoletes ? (compte tenu du system de class instanciation))
+
+-gestion des inputs merdiques
+que faire si on veut utiliser autre chose que les DPAD pour les directions
+
+-reload du player hot ... + souclassement (duplicatat)
+
+-maintenant qu on a un system de classe. revoir peut etre la gestion du HUD. Eviter les choses instanciées en code. Utiliser a fond le hud.json
+
+-exception Microsoft C++ : boost::filesystem::filesystem_error à l'emplacement de mémoire 0x000000E2E25CB5F0.

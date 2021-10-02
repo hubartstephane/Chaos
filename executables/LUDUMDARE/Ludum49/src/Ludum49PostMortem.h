@@ -74,3 +74,7 @@ que faire si on veut utiliser autre chose que les DPAD pour les directions
 -maintenant qu on a un system de classe. revoir peut etre la gestion du HUD. Eviter les choses instanciées en code. Utiliser a fond le hud.json
 
 -exception Microsoft C++ : boost::filesystem::filesystem_error à l'emplacement de mémoire 0x000000E2E25CB5F0.
+
+- ajouter un autocast au TMObjectCollisionIterator etc...
+
+-autocastable ... erreur de compilation quand rien ne correspond (impossible)

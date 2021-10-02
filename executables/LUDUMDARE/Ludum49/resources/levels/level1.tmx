@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="57" nextobjectid="2231">
+<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="57" nextobjectid="2233">
  <editorsettings>
   <chunksize width="37" height="37"/>
  </editorsettings>
@@ -34,7 +34,13 @@
     <properties>
      <property name="classname" value="Landscape"/>
     </properties>
-    <polygon points="0,0 81.8182,169.697 172.727,296.97 272.727,393.939 433.333,500 724.242,636.364 1024.24,718.182 1312.12,751.515 1709.09,742.424 1993.94,700 2318.18,593.939 2460.61,490.909 2569.7,384.848 2648.48,384.848 2654.55,718.182 2809.09,712.121 2803.03,-333.333 2906.06,-330.303 2918.18,830.303 1412.12,954.545 -187.879,793.939"/>
+    <polygon points="-140,-316 81.8182,169.697 172.727,296.97 272.727,393.939 433.333,500 724.242,636.364 1024.24,718.182 1312.12,751.515 1709.09,742.424 1993.94,700 2318.18,593.939 2460.61,490.909 2569.7,384.848 2628.48,208.848 2654.55,-201.818 2673.09,-1055.88 2711.03,-1693.33 2906.06,-330.303 2918.18,830.303 1412.12,954.545 -187.879,793.939"/>
+   </object>
+   <object id="2232" x="-580" y="-84">
+    <properties>
+     <property name="classname" value="Landscape"/>
+    </properties>
+    <polygon points="0,0 -100,-340 -132,-584 -120,-728 -88,-856 -20,-972 64,-1064 176,-1152 308,-1224 512,-1284 656,-1308 808,-1312 952,-1288 1056,-1252 1124,-1184 1152,-1116 1160,-1064 1144,-908 1100,-760 1024,-612 972,-516 896,-384 1004,-412 1192,-576 1416,-824 1504,-1132 1412,-1492 1088,-1720 472,-1784 -180,-1628 -584,-1304 -676,-1064 -796,-588 -788,-272 -496,100"/>
    </object>
   </objectgroup>
  </group>

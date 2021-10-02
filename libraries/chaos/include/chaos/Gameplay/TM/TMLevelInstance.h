@@ -108,11 +108,11 @@ namespace chaos
 		virtual box2 GetBoundingBox() const override;
 
 		/** Get a collision iterator for tiles */
-		TMTileCollisionIterator GetTileCollisionIterator(box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry);
+		TMTileCollisionIterator GetTileCollisionIterator(box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry = false);
 		/** Get a collision iterator for triggers */
-		TMTriggerCollisionIterator GetTriggerCollisionIterator(box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry);
+		TMTriggerCollisionIterator GetTriggerCollisionIterator(box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry = false);
 		/** Get a collision iterator for objects */
-		TMObjectCollisionIterator GetObjectCollisionIterator(box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry);
+		TMObjectCollisionIterator GetObjectCollisionIterator(box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry = false);
 
 		/** purge all collisions with object deleted */
 		void PurgeCollisionInfo();

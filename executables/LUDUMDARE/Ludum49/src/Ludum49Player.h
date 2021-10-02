@@ -46,7 +46,8 @@ public:
     float gravity = 10.0f;
 
     float acceleration = 10.0f;
-
+    float slow_down = 10.0f;
+    float slow_down_factor = 0.05f;
     glm::vec2 max_velocity = { 0.0f, 0.0f };
 
     

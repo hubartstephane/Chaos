@@ -21,8 +21,11 @@ public:
 
 	virtual bool Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, chaos::TMObjectReferenceSolver& reference_solver) override;
 
+	virtual int DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params) override;
 
 
+
+	chaos::shared_ptr<chaos::GPUDynamicMesh> mesh;
 
 	std::vector<glm::vec2> points;
 };

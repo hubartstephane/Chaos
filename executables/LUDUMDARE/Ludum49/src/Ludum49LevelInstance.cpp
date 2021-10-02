@@ -14,6 +14,34 @@ Landscape::Landscape()
 
 }
 
+int Landscape::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params)
+{
+	int result = 0;
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glDisable(GL_DEPTH_TEST);
+			glDisable(GL_CULL_FACE);
+
+	if (mesh != nullptr)
+		result += mesh->Display(renderer, uniform_provider, render_params);
+
+
+			glDisable(GL_BLEND);
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_CULL_FACE);
+			glPolygonMode(GL_FRONT_AND_BACK,  GL_FILL);
+
+
+
+
+
+
+
+
+	return result;
+}
 
 
 
@@ -112,7 +140,8 @@ bool Landscape::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::Til
 
 		int toto = in_geometric_object->GetPropertyValueInt("toto", 0);
 
-		if (toto == 2 || toto == 3)
+		glm::vec2 offset = GetBoundingBox(false).position;
+		
 		while (v.size() > 2)
 		{
 			bool new_triangle = false;
@@ -146,7 +175,7 @@ bool Landscape::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::Til
 				if (j == count - 3)
 				{
 					new_triangle = true;
-					triangles.push_back({ a, b, c });
+					triangles.push_back({ a + offset, b + offset, c + offset });
 					v.erase(v.begin() + index);
 				}
 			}
@@ -157,13 +186,28 @@ bool Landscape::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::Til
 			}
 		}
 
+		if (triangles.size() == 0)
+			accum = accum;
 
+		chaos::GPURenderMaterial * RM = in_layer_instance->GetRenderMaterial();
 
+		chaos::GPUDrawInterface<chaos::VertexDefault> DI(RM, 3 * triangles.size());
 
+		std::vector<glm::vec2> vvv = { {-10000.f,-10000.f}, {10000, -10000.f}, {-10000.f, 10000.f} };
 
+		for (auto const& t : triangles)
+		{
+			auto p = DI.AddTriangles(1);
 
-
-
+			for (int i = 0; i < 3; ++i)
+			{
+				p[i].position = t[i];
+				p[i].color = { 1.0f, 0.0f, 0.0f, 1.0f };
+				p[i].texcoord = { -1.0f, -1.0f, -1.0f };
+				p[i].flags = 0;
+			}
+		}
+		mesh = DI.ExtractMesh();
 
 
 

@@ -31,3 +31,24 @@ class BiValue
 	   probleme sur les arrithmetique
 
 	   pi * pi -> c'est quoi le type
+
+
+
+
+
+-Est ce que le background ne pourrait pas etre juste une layer dans TM ?
+
+
+-Pour TiledMap::GeometricObjectPolygon/GeometricObjectPolyline
+
+le bounding box a une taille de 0.!!
+cependant, la position correspond au premier point   points[0] (qui est donc toujours 0,0)
+ca serait peut etre bien de calculer la bounding box pour de vrai (quitte a deplacer tous les points)
+
+
+
+
+
+- faire un single include pour lexterieur
+<chaos/chaos.h>
+ne pas l'utiliser dans chaos, optimiser les dependances'

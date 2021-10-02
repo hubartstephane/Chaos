@@ -119,10 +119,15 @@ namespace chaos
 		/** handle all collision for a given object (TriggerObject) */
 		void HandleTriggerCollisions(float delta_time, Object* object, box2 const& box, int mask);
 
+
 		/** override */
 		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
 		/** override */
 		virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
+
+
+
+		// shu49. Ces getters sont bizarres. On peut modifier les objects dedans ?
 
 		/** get the child layer instances */
 		std::vector<shared_ptr<TMLayerInstance>>& GetLayerInstances() { return layer_instances; }

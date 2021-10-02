@@ -5,6 +5,28 @@
 #include "Ludum49Game.h"
 #include "Ludum49Level.h"
 
+// =================================================
+// Landscape
+// =================================================
+
+class Landscape : public chaos::TMObject
+{
+	CHAOS_DECLARE_GAMEPLAY_FRIENDSHIPS(Ludum);
+
+	CHAOS_DECLARE_OBJECT_CLASS2(Landscape, chaos::TMObject);
+
+public:
+
+	Landscape();
+
+	virtual bool Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, chaos::TMObjectReferenceSolver& reference_solver) override;
+
+
+
+
+	std::vector<glm::vec2> points;
+};
+
 
 // =================================================
 // LudumLevelInstance
@@ -37,6 +59,7 @@ protected:
 
 	virtual bool CanCompleteLevel() const override;
 
+	virtual int DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params) override;
 
 	
 

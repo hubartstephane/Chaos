@@ -79,6 +79,44 @@ float GetAngle(glm::vec2 const & a, glm::vec2 const & b, glm::vec2 const & c)
 	return std::atan2(cross, dot);
 }
 
+std::vector<glm::vec2> SmoothBoundary(std::vector<glm::vec2> src, size_t loop_count)
+{
+	for (size_t loop = 0 ; loop < loop_count ; ++loop)
+	{
+		for (size_t i = 0; i < src.size() ; ++i)
+		{
+			size_t count = src.size();
+			size_t index1 = (i + 1) % count;
+			size_t index2 = (i + 2) % count;
+
+			glm::vec2 & a = src[i];
+			glm::vec2 & b = src[index1];
+			glm::vec2 & c = src[index2];
+
+			if (a == b || b == c || c == a)
+				continue;
+
+			//if (GetAngle(a, b, c) < 0.01
+
+			glm::vec2 extra1 = b + (a - b) * 0.3f;
+			glm::vec2 extra2 = b + (c - b) * 0.3f;
+			
+			b = extra1;
+			src.insert(src.begin() + index2, extra2);
+
+			++i;
+
+			//break;
+		}
+
+
+
+	}
+
+
+	return src;
+}
+
 bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
 {
 	if (!TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
@@ -87,7 +125,7 @@ bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::Geometr
 	// capture the points
 	if (TiledMap::GeometricObjectPolygon const* pn = auto_cast(in_geometric_object))
 	{
-		points = pn->points;
+		points = SmoothBoundary(pn->points, 3);
 
 		std::vector<triangle2> triangles;
 
@@ -211,13 +249,6 @@ bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::Geometr
 
 
 		mesh = DI.ExtractMesh();
-
-
-
-
-	//	points = pn->points;
-	//	if (points.size() > 0)
-	//		points.push_back(points[0]);
 	}
 
 

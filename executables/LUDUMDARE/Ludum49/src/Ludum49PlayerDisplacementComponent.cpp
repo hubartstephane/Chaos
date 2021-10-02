@@ -132,6 +132,9 @@ std::vector<CollisionEntry> ComputeCollisions(box2 const box, LudumLevelInstance
 
 bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 {
+	GPUDrawInterface<VertexDefault> * DI = GetDebugDrawInterface();
+
+
 	PlayerDisplacementComponent::DoTick(delta_time);
 
 	// early exit
@@ -159,16 +162,20 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 #else	
 
-	if(0)
-	if (direction.x == 0.0f || direction.x * pawn_velocity.x < 0.0f)
+		if (direction.x == 0.0f || direction.x * pawn_velocity.x < 0.0f)
 	{
 		pawn_velocity.x *= std::pow(ludum_player->slow_down_factor, delta_time);
-		if (std::abs(pawn_velocity.x) < ludum_player->stop_velocity && pawn_velocity.x != 0.0f)
-			pawn_velocity.x = 0.0f;
+		//if (std::abs(pawn_velocity.x) < ludum_player->stop_velocity && pawn_velocity.x != 0.0f)
+		//	pawn_velocity.x = 0.0f;
 	}
 
-	float acceleration_factor = (direction.x * pawn_velocity.x < 1.0f) ? 2.0f : 1.0f;
-	pawn_velocity.x += acceleration_factor * direction.x * ludum_player->acceleration * delta_time;
+	if (touching_ground)
+	{
+		float acceleration_factor = (direction.x * pawn_velocity.x < 1.0f) ? 2.0f : 1.0f;
+		pawn_velocity.x += acceleration_factor * direction.x * ludum_player->acceleration * delta_time;
+	}
+
+
 
 	pawn_velocity.y += ludum_player->gravity * delta_time;
 
@@ -185,10 +192,37 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	std::vector<CollisionEntry> collisions = ComputeCollisions(pawn_box, ludum_level);
 
+	touching_ground = false;
 	if (collisions.size() > 0)
 	{
 		CollisionEntry const col = collisions[0];
+		
+		// GOOD
 		pawn_box.position += glm::normalize(pawn_box.position - col.proj) * (pawn_sphere.radius - std::sqrt(col.l2));
+
+		// TEST
+		glm::vec2 m = (col.a + col.b) * 0.5f;
+
+		glm::vec3 n = { col.b - col.a, 0.0f };
+		glm::vec3 Z = { 0.0f, 0.0f, 1.0f };
+		glm::vec3 N = glm::normalize(glm::cross(n, Z));
+
+		if (glm::dot(pawn_box.position - m, glm::vec2(N)) < 0.0f)
+			N = -N;
+
+
+		LinePrimitive<VertexDefault> line = DI->AddLines(2);
+		line[0].position = col.a;
+		line[1].position = col.b;
+
+		
+		line[2].position = m;
+		line[3].position = m + glm::vec2(N) * 50.0f;
+
+
+
+
+		touching_ground = true;
 	}
 
 	if (can_move)

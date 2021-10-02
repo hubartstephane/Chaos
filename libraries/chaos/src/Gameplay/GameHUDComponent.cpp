@@ -721,12 +721,14 @@ namespace chaos
 
 		// shu49
 		glPointSize(5.0f);
+		glLineWidth(3.0f);
 
 
 		int result = draw_interface.GetDynamicMesh().Display(renderer, uniform_provider, render_params);
 
 
 		glPointSize(1.0f);
+		glLineWidth(1.0f);
 
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);

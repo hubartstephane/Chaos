@@ -43,6 +43,8 @@ bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, bool hot_re
 	CHAOS_JSON_ATTRIBUTE(config, max_velocity);
 	CHAOS_JSON_ATTRIBUTE(config, slow_down);
 	CHAOS_JSON_ATTRIBUTE(config, slow_down_factor);
+	CHAOS_JSON_ATTRIBUTE(config, stop_velocity);
+	
 
 	
 

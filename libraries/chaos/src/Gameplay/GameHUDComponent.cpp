@@ -718,7 +718,16 @@ namespace chaos
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
+
+		// shu49
+		glPointSize(5.0f);
+
+
 		int result = draw_interface.GetDynamicMesh().Display(renderer, uniform_provider, render_params);
+
+
+		glPointSize(1.0f);
+
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);

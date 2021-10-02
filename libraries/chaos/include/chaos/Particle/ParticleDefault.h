@@ -85,7 +85,7 @@ namespace chaos
 		/** the position of the vertex */
 		glm::vec2 position;
 		/** the texcoord of the vertex */
-		glm::vec3 texcoord;
+		glm::vec3 texcoord = { 0.0f, 0.0f, -1.0f }; // no texturing by default
 		/** the color of the vertex */
 		glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 		/** some flags */

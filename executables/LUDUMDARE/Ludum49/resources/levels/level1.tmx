@@ -18,8 +18,12 @@
   <properties>
    <property name="HEIGHT_BITS_MODE" type="bool" value="false"/>
   </properties>
-  <objectgroup id="26" name="PlayerAndCamera" locked="1">
-   <object id="2114" name="Camera1" type="Camera" x="-193.85" y="-81.17" width="1177.03" height="831.636"/>
+  <objectgroup id="26" name="PlayerAndCamera">
+   <object id="2114" name="Camera1" type="Camera" x="-193.85" y="-81.17" width="1177.03" height="831.636">
+    <properties>
+     <property name="CAMERA_COMPONENTSxxx" value="AutoRecenterToPlayerCameraComponent"/>
+    </properties>
+   </object>
    <object id="2186" name="PlayerStart" gid="2" x="111.909" y="127.878" width="64" height="64" rotation="180">
     <properties>
      <property name="BITMAP_NAME" value="Player"/>

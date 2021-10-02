@@ -14,9 +14,36 @@ Landscape::Landscape()
 
 }
 
+bool Landscape::DoTick(float delta_time)
+{
+	TMObject::DoTick(delta_time);
+
+	if (0 && id == 2233)
+	{
+		internal_t += delta_time * 0.5f;
+
+		float c = std::cos(internal_t);
+		float s = std::sin(internal_t);
+
+		bounding_box.position = ori_bounding_box.position + glm::vec2(0.0f, 1.0f) * GLMTools::Rotate(glm::vec2(100.0f), c, s);
+
+
+	}
+
+	//bounding_box.position
+
+
+	return true;
+}
+
 int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
 {
 	int result = 0;
+
+	chaos::GPUProgramProviderChain main_provider(uniform_provider);
+
+	glm::mat4 local_to_world = glm::translate(glm::vec3(GetBoundingBox(true).position, 0.0f));
+	main_provider.AddVariable("local_to_world", local_to_world);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			glEnable(GL_BLEND);
@@ -24,8 +51,12 @@ int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* un
 			glDisable(GL_DEPTH_TEST);
 			glDisable(GL_CULL_FACE);
 
+	//uniform_provider.
+
+
+
 	if (mesh != nullptr)
-		result += mesh->Display(renderer, uniform_provider, render_params);
+		result += mesh->Display(renderer, &main_provider, render_params);
 
 
 			glDisable(GL_BLEND);
@@ -121,7 +152,7 @@ bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::Geometr
 	smooth_factor = in_geometric_object->GetPropertyValueFloat("SMOOTH_FACTOR", smooth_factor);
 	smooth_factor = std::clamp(smooth_factor, 0.0f, 1.0f);
 	
-
+	ori_bounding_box = bounding_box;
 
 
 
@@ -178,7 +209,11 @@ bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::Geometr
 
 		box2 bbox = GetBoundingBox(true);
 
+		//glm::vec2 offset = bbox.position;
 		glm::vec2 offset = bbox.position;
+
+
+		offset = offset * 0.0f;
 		
 		while (v.size() > 2)
 		{
@@ -234,7 +269,7 @@ bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::Geometr
 
 			for (int i = 0; i < 3; ++i)
 			{
-				tri[i].position = t[i];
+				tri[i].position = t[i] - offset;
 				tri[i].color = { 1.0f, 0.0f, 0.0f, 0.8f };
 			}
 		}

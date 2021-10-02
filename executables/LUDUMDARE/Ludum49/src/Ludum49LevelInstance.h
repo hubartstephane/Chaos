@@ -22,9 +22,14 @@ public:
 
 	virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params) override;
 
+	virtual bool DoTick(float delta_time) override;
 
 	int smooth_count = 0;
 	float smooth_factor = 0.3f;
+
+	float internal_t = 0.0f;
+
+	box2 ori_bounding_box;
 
 	shared_ptr<GPUDynamicMesh> mesh;
 

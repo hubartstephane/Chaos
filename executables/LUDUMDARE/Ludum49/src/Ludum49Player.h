@@ -26,12 +26,6 @@ public:
     class ParticlePlayer const* GetPlayerParticle() const;
 
 
-    void Honk();
-
-    void SoundCollision();
-
-    static void SpawnSmokeParticles(size_t count, LudumLevelInstance* li, chaos::obox2 const& ob);
-
 protected:
 
     virtual bool DoTick(float delta_time) override;
@@ -50,25 +44,9 @@ protected:
 
 public:
 
-    chaos::shared_ptr<LudumRoad> road;
-
-    chaos::shared_ptr<chaos::Sound> honk_sound;
-    bool was_honk_pressed_keyboard = false;
-    bool was_honk_pressed_gamepad = false;
 
 
 
-    float velocity_collision_factor = 0.7f;
-
-    RacePosition race_position;
-
-    float sound_collision_timer = 0.0f;
-
-    float collision_health_lost = 1.0f;
-
-    CarData car_data;
-
-    ParticleSpawnerDelay spawner_delay;
 
 };
 

@@ -6,12 +6,6 @@ class LudumPlayerDisplacementComponent : public chaos::PlayerDisplacementCompone
 {
 	CHAOS_DECLARE_OBJECT_CLASS2(LudumPlayerDisplacementComponent, chaos::PlayerDisplacementComponent);
 
-
-public:
-
-	static bool ComputeBorderCollision(class ParticleBase& particle, class LudumLevelInstance* li, class CarData const& car_data);
-
-
 protected:
 
 	/** override */

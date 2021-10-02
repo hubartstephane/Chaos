@@ -8,10 +8,116 @@ namespace chaos
 		// GeometricObject methods
 		// ==========================================
 
-		std::vector<glm::vec2> GeometricObject::GetPointArray(tinyxml2::XMLElement const * element, char const * attribute_name)
+		bool GeometricObject::DoLoad(tinyxml2::XMLElement const * element)
+		{
+			if (!TypedObject::DoLoad(element))
+				return false;
+			XMLTools::ReadAttribute(element, "id", id);
+			XMLTools::ReadAttribute(element, "name", name);
+			XMLTools::ReadAttribute(element, "visible", visible);
+			XMLTools::ReadAttribute(element, "x", position.x);
+			XMLTools::ReadAttribute(element, "y", position.y);
+			XMLTools::ReadAttribute(element, "rotation", rotation); // clockwise rotation in degree
+
+			// convert to trigonometric rotation in rads
+			rotation = -MathTools::DegreeToRadian(rotation);
+
+			// remove useless space in type
+			if (type.length() > 0)
+				type = StringTools::TrimSpaces(type.c_str(), true, true);
+
+			// reverse the Y axis
+			position = position * REVERSE_Y_AXIS;
+
+			return true;
+		}
+
+		box2 GeometricObject::GetBoundingBox(bool world_system) const
+		{
+			box2 result = DoGetBoundingBox();
+			if (world_system)
+			{
+				LayerBase const* parent_layer = auto_cast(owner);
+				while (parent_layer != nullptr)
+				{
+					result.position += parent_layer->offset;
+					parent_layer = auto_cast(parent_layer->owner);
+				}
+			}
+			return result;
+		}
+
+		box2 GeometricObject::DoGetBoundingBox() const
+		{
+			box2 result;
+			result.position = position;
+			result.half_size = glm::vec2(0.0f, 0.0f);
+			return result;
+		}
+
+		// ==========================================
+		// GeometricObjectSurface methods
+		// ==========================================
+
+		bool GeometricObjectSurface::DoLoad(tinyxml2::XMLElement const* element)
+		{
+			if (!GeometricObject::DoLoad(element))
+				return false;
+			XMLTools::ReadAttribute(element, "width", size.x);
+			XMLTools::ReadAttribute(element, "height", size.y);
+			return true;
+		}
+
+		box2 GeometricObjectSurface::DoGetBoundingBox() const
+		{
+			// TOP-LEFT
+			glm::vec2 p1 = position;
+			glm::vec2 p2 = position + size * REVERSE_Y_AXIS;
+			return box2(std::make_pair(p1, p2));
+		}
+
+		// ==========================================
+		// GeometricObjectPoint methods
+		// ==========================================
+
+		bool GeometricObjectPoint::DoLoad(tinyxml2::XMLElement const * element)
+		{
+			if (!GeometricObject::DoLoad(element))
+				return false;
+			return true;
+		}
+
+		// ==========================================
+		// GeometricObjectRectangle methods
+		// ==========================================
+
+		bool GeometricObjectRectangle::DoLoad(tinyxml2::XMLElement const * element)
+		{
+			if (!GeometricObjectSurface::DoLoad(element))
+				return false;
+			return true;
+		}
+
+		// ==========================================
+		// GeometricObjectEllipse methods
+		// ==========================================
+
+		bool GeometricObjectEllipse::DoLoad(tinyxml2::XMLElement const * element)
+		{
+			if (!GeometricObjectSurface::DoLoad(element))
+				return false;
+			return true;
+		}
+
+		// ==========================================
+		// Utility methods
+		// ==========================================
+
+		static std::vector<glm::vec2> GetPointArray(tinyxml2::XMLElement const * element, char const * attribute_name, glm::vec2 & position, glm::vec2 & size)
 		{
 			std::vector<glm::vec2> result;
 
+			// read the points
 			tinyxml2::XMLAttribute const * attribute = element->FindAttribute(attribute_name);
 			if (attribute != nullptr)
 			{
@@ -42,80 +148,80 @@ namespace chaos
 						result.push_back(p * REVERSE_Y_AXIS);
 				}
 			}
+			// extract the bounding box, correct the points
+			if (result.size() > 0)
+			{
+				glm::vec2 min_position = result[0];
+				glm::vec2 max_position = result[0];
+				for (glm::vec2 const& p : result)
+				{
+					min_position = glm::min(min_position, p);
+					max_position = glm::max(max_position, p);
+				}			
+				glm::vec2 center = (max_position + min_position) / 2.0f;
+				for (glm::vec2 & p : result)
+					p -= center;
+
+				// correct the position & compute bounding box
+				position += center;
+				size = max_position - min_position;
+			}
 			return result;
 		}
 
-		bool GeometricObject::DoLoad(tinyxml2::XMLElement const * element)
-		{
-			if (!TypedObject::DoLoad(element))
-				return false;
-			XMLTools::ReadAttribute(element, "id", id);
-			XMLTools::ReadAttribute(element, "name", name);
-			XMLTools::ReadAttribute(element, "visible", visible);
-			XMLTools::ReadAttribute(element, "x", position.x);
-			XMLTools::ReadAttribute(element, "y", position.y);
-			XMLTools::ReadAttribute(element, "rotation", rotation); // clockwise rotation in degree
-
-			// convert to trigonometric rotation in rads
-			rotation = -MathTools::DegreeToRadian(rotation);
-
-			// remove useless space in type
-			if (type.length() > 0)
-				type = StringTools::TrimSpaces(type.c_str(), true, true);
-
-			// reverse the Y axis
-			position = position * REVERSE_Y_AXIS;
-
-			return true;
-		}
-
-		bool GeometricObjectSurface::DoLoad(tinyxml2::XMLElement const* element)
-		{
-			if (!GeometricObject::DoLoad(element))
-				return false;
-			XMLTools::ReadAttribute(element, "width", size.x);
-			XMLTools::ReadAttribute(element, "height", size.y);
-			return true;
-		}
-
-		bool GeometricObjectPoint::DoLoad(tinyxml2::XMLElement const * element)
-		{
-			if (!GeometricObject::DoLoad(element))
-				return false;
-			return true;
-		}
-
-		bool GeometricObjectRectangle::DoLoad(tinyxml2::XMLElement const * element)
-		{
-			if (!GeometricObjectSurface::DoLoad(element))
-				return false;
-			return true;
-		}
-
-		bool GeometricObjectEllipse::DoLoad(tinyxml2::XMLElement const * element)
-		{
-			if (!GeometricObjectSurface::DoLoad(element))
-				return false;
-			return true;
-		}
+		// ==========================================
+		// GeometricObjectPolygon methods
+		// ==========================================
 
 		bool GeometricObjectPolygon::DoLoad(tinyxml2::XMLElement const * element)
 		{
 			if (!GeometricObject::DoLoad(element))
 				return false;
 			tinyxml2::XMLElement const * polygon_element = element->FirstChildElement("polygon");
-			points = GetPointArray(polygon_element, "points");
+			points = GetPointArray(polygon_element, "points", position, size);
+
+			// shu49 update bounding box et points ici
+
+
 			return true;
 		}
+
+		box2 GeometricObjectPolygon::DoGetBoundingBox() const
+		{
+			box2 result;
+			result.position = position;
+			result.half_size = size * 0.5f;
+			return result;
+		}
+
+		// ==========================================
+		// GeometricObjectPolyline methods
+		// ==========================================
 
 		bool GeometricObjectPolyline::DoLoad(tinyxml2::XMLElement const * element)
 		{
 			if (!GeometricObject::DoLoad(element))
 				return false;
 			tinyxml2::XMLElement const * polygon_element = element->FirstChildElement("polyline");
-			points = GetPointArray(polygon_element, "points");
+			points = GetPointArray(polygon_element, "points", position, size);
+
+			// shu49 update bounding box et points ici
+
+
 			return true;
 		}
+
+		box2 GeometricObjectPolyline::DoGetBoundingBox() const
+		{
+			box2 result;
+			result.position = position;
+			result.half_size = size * 0.5f;
+			return result;
+		}
+
+		// ==========================================
+		// GeometricObjectText methods
+		// ==========================================
 
 		bool GeometricObjectText::DoLoad(tinyxml2::XMLElement const * element)
 		{
@@ -153,6 +259,10 @@ namespace chaos
 			return true;
 		}
 
+		// ==========================================
+		// GeometricObjectTile methods
+		// ==========================================
+
 		bool GeometricObjectTile::DoLoad(tinyxml2::XMLElement const * element)
 		{
 			if (!GeometricObjectSurface::DoLoad(element))
@@ -165,37 +275,6 @@ namespace chaos
 			gid = DecodeTileGID(pseudo_gid, &particle_flags);
 
 			return true;
-		}
-
-		box2 GeometricObject::GetBoundingBox(bool world_system) const
-		{
-			box2 result = DoGetBoundingBox();
-			if (world_system)
-			{
-				LayerBase const* parent_layer = auto_cast(owner);
-				while (parent_layer != nullptr)
-				{
-					result.position += parent_layer->offset;
-					parent_layer = auto_cast(parent_layer->owner);
-				}
-			}
-			return result;
-		}
-
-		box2 GeometricObject::DoGetBoundingBox() const
-		{
-			box2 result;
-			result.position = position;
-			result.half_size = glm::vec2(0.0f, 0.0f);
-			return result;
-		}
-
-		box2 GeometricObjectSurface::DoGetBoundingBox() const
-		{
-			// TOP-LEFT
-			glm::vec2 p1 = position;
-			glm::vec2 p2 = position + size * REVERSE_Y_AXIS;
-			return box2(std::make_pair(p1, p2));
 		}
 
 		box2 GeometricObjectTile::DoGetBoundingBox() const

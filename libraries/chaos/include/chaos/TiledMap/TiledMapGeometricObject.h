@@ -33,11 +33,8 @@ namespace chaos
 			/** override */
 			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
 
-			/** get the local bouding box */
+			/** get the local bounding box */
 			virtual box2 DoGetBoundingBox() const;
-
-			/** loading method from XML */
-			std::vector<glm::vec2> GetPointArray(tinyxml2::XMLElement const* element, char const* attribute_name);
 
 		public:
 
@@ -149,11 +146,15 @@ namespace chaos
 
 			/** loading method from XML */
 			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
+			/** override */
+			virtual box2 DoGetBoundingBox() const override;
 
 		public:
 
 			/** object information */
 			std::vector<glm::vec2> points;
+			/** object information */
+			glm::vec2 size = glm::vec2(0.0f, 0.0f);
 		};
 
 		// ==========================================
@@ -171,11 +172,15 @@ namespace chaos
 
 			/** loading method from XML */
 			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
+			/** override */
+			virtual box2 DoGetBoundingBox() const override;
 
 		public:
 
 			/** object information */
 			std::vector<glm::vec2> points;
+			/** object information */
+			glm::vec2 size = glm::vec2(0.0f, 0.0f);
 		};
 
 		// ==========================================

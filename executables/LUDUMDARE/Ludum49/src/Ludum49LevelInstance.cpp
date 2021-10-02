@@ -98,9 +98,9 @@ bool Landscape::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::Til
 
 
 		// orientation of the polygon
+
+
 		size_t count = v.size();
-
-
 		for (size_t i = 0; i < count; ++i)
 		{
 			glm::vec2 const& a = v[i];
@@ -130,17 +130,9 @@ bool Landscape::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::Til
 			accum += angle;
 		}
 
-		accum = accum;
+		chaos::box2 bbox = GetBoundingBox(true);
 
-
-
-
-
-
-
-		int toto = in_geometric_object->GetPropertyValueInt("toto", 0);
-
-		glm::vec2 offset = GetBoundingBox(false).position;
+		glm::vec2 offset = bbox.position;
 		
 		while (v.size() > 2)
 		{
@@ -186,9 +178,6 @@ bool Landscape::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::Til
 			}
 		}
 
-		if (triangles.size() == 0)
-			accum = accum;
-
 		chaos::GPURenderMaterial * RM = in_layer_instance->GetRenderMaterial();
 
 		chaos::GPUDrawInterface<chaos::VertexDefault> DI(RM, 3 * triangles.size());
@@ -197,16 +186,34 @@ bool Landscape::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::Til
 
 		for (auto const& t : triangles)
 		{
-			auto p = DI.AddTriangles(1);
+			auto tri = DI.AddTriangles(1);
 
 			for (int i = 0; i < 3; ++i)
 			{
-				p[i].position = t[i];
-				p[i].color = { 1.0f, 0.0f, 0.0f, 1.0f };
-				p[i].texcoord = { -1.0f, -1.0f, -1.0f };
-				p[i].flags = 0;
+				tri[i].position = t[i];
+				tri[i].color = { 1.0f, 0.0f, 0.0f, 1.0f };
+				tri[i].texcoord = { -1.0f, -1.0f, -1.0f };
+				tri[i].flags = 0;
 			}
 		}
+
+		std::pair<glm::vec2, glm::vec2> corners = chaos::GetBoxCorners(bbox);
+
+		auto quad = DI.AddQuads();
+		for (auto& v : quad)
+		{			
+			v.color = { 1.0f, 0.0f, 0.0f, 1.0f };
+			v.texcoord = { -1.0f, -1.0f, -1.0f };
+			v.flags = 0;
+		}
+
+		quad[0].position = { corners.first.x, corners.first.y };
+		quad[1].position = { corners.second.x, corners.first.y };
+		quad[2].position = { corners.second.x, corners.second.y };
+		quad[3].position = { corners.first.x, corners.second.y };
+		
+
+
 		mesh = DI.ExtractMesh();
 
 
@@ -217,7 +224,6 @@ bool Landscape::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::Til
 	//		points.push_back(points[0]);
 	}
 
-	auto b = GetBoundingBox(true);
 
 	return true;
 }

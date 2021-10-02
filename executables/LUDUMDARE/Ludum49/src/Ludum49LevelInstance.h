@@ -23,6 +23,8 @@ public:
 	virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params) override;
 
 
+	int smooth_count = 0;
+	float smooth_factor = 0.3f;
 
 	shared_ptr<GPUDynamicMesh> mesh;
 

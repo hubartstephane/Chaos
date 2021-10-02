@@ -49,7 +49,7 @@ public:
     float slow_down = 10.0f;
     float slow_down_factor = 0.05f;
     float stop_velocity = 0.0f;
-    glm::vec2 max_velocity = { 0.0f, 0.0f };
+    float max_velocity = 1000.0f;;
 
     
 

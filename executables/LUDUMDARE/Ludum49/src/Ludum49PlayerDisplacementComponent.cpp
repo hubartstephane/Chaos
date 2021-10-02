@@ -118,6 +118,11 @@ std::vector<CollisionEntry> ComputeCollisions(box2 const box, LudumLevelInstance
 			min_l2 = std::min(min_l2, entry.l2);
 			nearest_collision = entry;
 		}
+
+		std::sort(result.begin(), result.end(), [](CollisionEntry const& src1, CollisionEntry const& src2)
+		{
+			return src1.l2 < src2.l2;
+		});
 	}
 
 	return result;
@@ -169,9 +174,14 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 #endif
 
 
+	bool can_move = true;
+
+#if 0
+
+
+
 	std::vector<CollisionEntry> collisions = ComputeCollisions(pawn_box_before, ludum_level);
 
-	bool can_move = true;
 	for (CollisionEntry const& entry : collisions)
 	{
 		glm::vec2 p = ClosestPoint(pawn_box.position, entry.a, entry.b);
@@ -183,6 +193,65 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 		}
 
 	}
+
+#endif
+
+	sphere2 pawn_sphere = GetInnerSphere(pawn_box);
+
+	std::vector<CollisionEntry> collisions = ComputeCollisions(pawn_box, ludum_level);
+
+	if (collisions.size() > 0)
+	{
+		CollisionEntry const col = collisions[0];
+
+//		if (col.proj == col.a)
+		{
+
+		}
+	//	else if (col.proj == col.b)
+		{
+
+		}
+		//else
+		{
+			pawn_box.position += glm::normalize(pawn_box.position - col.proj) * (pawn_sphere.radius - std::sqrt(col.l2));
+
+		}
+
+
+
+
+
+	}
+
+
+	for (CollisionEntry const& entry : collisions)
+	{
+
+
+
+		/*
+		glm::vec2 p = ClosestPoint(pawn_box.position, entry.a, entry.b);
+
+		if (glm::length2(p - pawn_box.position) < glm::length2(p - pawn_box_before.position))
+		{
+			can_move = false;
+			break;
+		}*/
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+
 	if (can_move)
 		pawn->SetPosition(pawn_box.position);
 

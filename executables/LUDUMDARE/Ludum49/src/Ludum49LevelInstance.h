@@ -5,29 +5,6 @@
 #include "Ludum49Game.h"
 #include "Ludum49Level.h"
 
-// =================================================
-// LudumCameraComponent
-// =================================================
-
-class LudumCameraComponent : public chaos::CameraComponent
-{
-	CHAOS_DECLARE_GAMEPLAY_FRIENDSHIPS(Ludum);
-
-	CHAOS_DECLARE_OBJECT_CLASS2(LudumCameraComponent, chaos::CameraComponent);
-
-protected:
-
-	virtual bool DoTick(float delta_time) override;
-
-	virtual chaos::box2 ApplyModifier(chaos::box2 const& src) const override;
-
-	float max_zoom = 2.0f;
-	float min_zoom = 1.0f;
-	float zoom = 1.0f;
-	float zoom_increase = 0.2f;
-	float zoom_decrease = 0.1f;
-};
-
 
 // =================================================
 // LudumLevelInstance
@@ -43,9 +20,6 @@ public:
 
 	LudumLevelInstance();
 
-	glm::ivec2 GetPlayerRacePosition(LudumPlayer const* player) const;
-
-	void OnOpponentArrived();
 
 protected:
 
@@ -72,20 +46,8 @@ protected:
 
 public:
 
-	chaos::shared_ptr<LudumRoad> road;
-
 	/** pointer on game */
 	class LudumGame * game = nullptr;
-
-
-	float effective_start_timer = 5.0f;
-
-	size_t opponent_arrived_count = 0;
-	size_t opponent_count = 0;
-
-	float lost_timer = -1.0f;
-
-
 
 
 	mutable float completion_timer = -1.0f; // shu49 : due to Checkcomplete constness !!

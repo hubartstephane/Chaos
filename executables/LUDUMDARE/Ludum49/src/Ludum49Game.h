@@ -2,6 +2,7 @@
 
 #include <chaos/Chaos.h>
 
+#include "Ludum49.h"
 #include "Ludum49Particles.h"
 #include "Ludum49Level.h"
 

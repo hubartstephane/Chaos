@@ -27,6 +27,9 @@
    </object>
   </objectgroup>
   <objectgroup id="56" name="Landscape">
+   <properties>
+    <property name="COLLISION_MASK" value="LANDSCAPE"/>
+   </properties>
    <object id="2217" x="549.33" y="152">
     <properties>
      <property name="classname" value="Landscape"/>

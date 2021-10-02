@@ -14,5 +14,5 @@ protected:
 
 
 
-
+	glm::vec2 pawn_velocity = glm::vec2(0.0f, 0.0f);
 };

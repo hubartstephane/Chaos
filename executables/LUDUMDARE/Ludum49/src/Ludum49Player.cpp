@@ -38,6 +38,10 @@ bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, bool hot_re
 	if (!Player::InitializeGameValues(config, hot_reload))
 		return false;
 
+	CHAOS_JSON_ATTRIBUTE(config, gravity);
+	CHAOS_JSON_ATTRIBUTE(config, acceleration);
+	CHAOS_JSON_ATTRIBUTE(config, max_velocity);
+
 	
 
 	return true;
@@ -74,3 +78,28 @@ bool LudumPlayer::DoTick(float delta_time)
 
 	return true;
 }
+
+#if 0
+int LudumPlayer::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params)
+{
+	int result = 0;
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glDisable(GL_DEPTH_TEST);
+			glDisable(GL_CULL_FACE);
+
+	if (mesh != nullptr)
+		result += mesh->Display(renderer, uniform_provider, render_params);
+
+
+			glDisable(GL_BLEND);
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_CULL_FACE);
+			glPolygonMode(GL_FRONT_AND_BACK,  GL_FILL);
+	return result;
+}
+#endif
+
+

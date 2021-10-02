@@ -42,11 +42,20 @@ protected:
     /** override */
     virtual bool InitializeGameValues(nlohmann::json const& config, bool hot_reload) override;
 
+
 public:
 
+    float gravity = 10.0f;
+
+    float acceleration = 10.0f;
+
+    glm::vec2 max_velocity = { 0.0f, 0.0f };
+
+    
 
 
 
 
+    chaos::shared_ptr<chaos::GPUDynamicMesh> mesh;
 };
 

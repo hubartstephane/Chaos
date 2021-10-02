@@ -64,7 +64,7 @@ protected:
 
 	virtual int DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params) override;
 
-	
+	virtual uint64_t GetCollisionFlagByName(char const* name) const override;
 
 
 

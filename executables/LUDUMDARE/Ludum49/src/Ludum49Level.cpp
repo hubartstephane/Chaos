@@ -39,6 +39,8 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(chaos::TMLayerInsta
 
 chaos::TMObjectFactory LudumLevel::DoGetObjectFactory(chaos::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
 {
+
+
 #if 0
 	if (in_typed_object->IsObjectOfType("Road"))
 		return CHAOS_TM_MAKE_OBJECT_FACTORY(return new LudumRoad(););

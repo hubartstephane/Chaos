@@ -316,6 +316,11 @@ namespace chaos
 	// ray intersections
 	// ==============================================================================================
 
+
+
+	// shu49 le passage de parametre est pourri. pourquoi pas directement type_plane et type_vec
+	
+
 	template<typename T, int dimension>
 	int GetIntersection(type_ray<T, dimension> const& r, typename type_ray<T, dimension>::plane_type const& p, typename type_ray<T, dimension>::vec_type& res)
 	{

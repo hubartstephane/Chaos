@@ -10,7 +10,10 @@ namespace chaos
 	// GameEntity
 	// =============================================
 
-	class GameEntity : public Tickable, public JSONSerializable
+	//class GameEntity : public Tickable, public JSONSerializable
+
+	// shu49
+	class GameEntity : public GPURenderable, public JSONSerializable
 	{
 
 		CHAOS_DECLARE_OBJECT_CLASS2(GameEntity, Tickable);

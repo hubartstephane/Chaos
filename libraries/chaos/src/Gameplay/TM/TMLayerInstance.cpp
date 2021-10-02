@@ -841,6 +841,19 @@ namespace chaos
 			if (layer != nullptr)
 				result += layer->Display(renderer, uniform_provider, render_params);
 
+
+
+
+		// shu 49 rendre les objets ??
+		for (auto& object : objects)
+			if (object != nullptr)
+				result += object->Display(renderer, uniform_provider, render_params);
+
+
+
+
+
+
 		return result;
 	}
 	

@@ -64,6 +64,10 @@ namespace chaos
 
 	TMObjectFactory TMLevel::DoGetExplicitObjectFactory(TMLayerInstance* in_layer_instance, TiledMap::TypedObject const * in_typed_object)
 	{	
+		// shu49 ca vaut peut etre le coup de tester type en plus de classname
+		 
+		 
+		
 		// get the 'classname' property
 		std::string const* classname = in_typed_object->FindPropertyString("classname");
 		if (classname == nullptr)

@@ -78,3 +78,5 @@ que faire si on veut utiliser autre chose que les DPAD pour les directions
 - ajouter un autocast au TMObjectCollisionIterator etc...
 
 -autocastable ... erreur de compilation quand rien ne correspond (impossible)
+
+- polygon : orienter les points dans le sens trigo automatiquement ?

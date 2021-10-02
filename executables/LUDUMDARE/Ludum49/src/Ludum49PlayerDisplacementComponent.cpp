@@ -66,6 +66,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	LudumPlayer* ludum_player = GetPlayer();
 
 	box2 pawn_box = pawn->GetBoundingBox();
+	box2 pawn_box_before = pawn_box;
 
 	GPUDrawInterface<VertexDefault> * DI = GetDebugDrawInterface();
 	
@@ -98,8 +99,14 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	glm::vec2 direction = player->GetLeftStickPosition(false);
 	direction.x = MathTools::AnalogicToDiscret(direction.x);
 	direction.y = MathTools::AnalogicToDiscret(direction.y);
-	
-#if 0
+
+
+#if 1 // DEBUG_DISPLACEMENT
+
+	pawn_box.position += 0.3f * delta_time * ludum_player->acceleration * direction;
+
+#else	
+
 	if (direction.x == 0.0f || direction.x * pawn_velocity.x < 0.0f)
 	{
 		pawn_velocity.x *= std::pow(ludum_player->slow_down_factor, delta_time);
@@ -111,19 +118,9 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	pawn_velocity.x += acceleration_factor * direction.x * ludum_player->acceleration * delta_time;
 	
 
-	if (direction.y == 0.0f || direction.y * pawn_velocity.y < 0.0f)
-	{
-		pawn_velocity.y *= std::pow(ludum_player->slow_down_factor, delta_time);
-		if (std::abs(pawn_velocity.y) < ludum_player->stop_velocity && pawn_velocity.y != 0.0f)
-			pawn_velocity.y = 0.0f;
-	}
-
-	float acceleration_factory = (direction.y * pawn_velocity.y < 1.0f) ? 2.0f : 1.0f;
-	pawn_velocity.y += acceleration_factor * direction.y * ludum_player->acceleration * delta_time;
-
 #endif
 
-	pawn_box.position += 0.3f * delta_time * ludum_player->acceleration * direction;
+
 
 
 
@@ -136,6 +133,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	bool run_pressed = player->CheckButtonPressed(left_buttons);
 
 
+
 	
 
 	//pawn_box.position += pawn_velocity * delta_time;
@@ -143,15 +141,22 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	LudumLevelInstance* ludum_level = GetLevelInstance();
 
-	float  min_distance2 = std::numeric_limits<float>::max();
-	size_t min_distance_index = 0;
+	struct CollisionEntry
+	{
+		glm::vec2 a;
+		glm::vec2 b;
+		glm::vec2 proj;
+		float l2;
+	};
+
+
+	std::vector<CollisionEntry> collisions;
 
 	sphere2 pawn_sphere = GetInnerSphere(pawn_box);
 
-	TMObjectCollisionIterator Iterator =ludum_level->GetObjectCollisionIterator(pawn_box, COLLISION_LANDSCAPE, false);
+	TMObjectCollisionIterator Iterator = ludum_level->GetObjectCollisionIterator(pawn_box, COLLISION_LANDSCAPE, false);
 	while (Iterator)
 	{
-		
 		TMObject & object = *Iterator;
 
 		if (Landscape* landscape = auto_cast(&object))
@@ -164,37 +169,51 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 				glm::vec2 const& a = landscape->points[i] + offset;
 				glm::vec2 const& b = landscape->points[(i + 1) % count] + offset;
 
-				
 				glm::vec2 proj = ClosestPoint(pawn_sphere.position, a, b);
 
-					PointPrimitive<VertexDefault> P = DI->AddPoints(1);
-					P[0].position = proj;
-					P[0].color = { 1.0f, 1.0f, 1.0f, 1.0f };
-					P[0].flags = 0;
-					P[0].texcoord = { -1.0f, -1.0f, -1.0f };
-
 				float l2 = glm::length2(proj - pawn_sphere.position);
-				if (min_distance2 > l2)
+				if (l2 <= pawn_sphere.radius * pawn_sphere.radius)
 				{
-
-
-
-
-					min_distance2 = l2;
-					min_distance_index = i;
+					collisions.push_back({ a, b, proj, l2 });
 				}
 			}
+		}
+		++Iterator;
+	}
 
-			if (min_distance2 <= pawn_sphere.radius * pawn_sphere.radius)
+	if (collisions.size() > 0)
+	{
+		float min_l2 = std::numeric_limits<float>::max();
 
+		CollisionEntry nearest_collision;
+		for (auto const& entry : collisions)
+		{
+			PointPrimitive<VertexDefault> P = DI->AddPoints(1);
+			P[0].position = entry.proj;
+			P[0].color = { 1.0f, 1.0f, 1.0f, 1.0f };
+			P[0].flags = 0;
+			P[0].texcoord = { -1.0f, -1.0f, -1.0f };
 
-
-				landscape = landscape;
+			min_l2 = std::min(min_l2, entry.l2);
+			nearest_collision = entry;
 		}
 
+		float D = glm::length(pawn_box_before.position - pawn_box.position);
+
+		glm::vec2 ProjBefore = Project(pawn_box_before.position, nearest_collision.a, nearest_collision.b);
+
+		float H = glm::length(pawn_box_before.position - ProjBefore);
+
+		float min_l = std::sqrt(min_l2);
+		float d = D * (pawn_sphere.radius - min_l) / (H - min_l);
 
 
-		++Iterator;
+
+		pawn_box.position = pawn_box.position + glm::normalize(pawn_box_before.position - pawn_box.position) * d;
+
+		//pawn_box.position = pawn_box_before.position + glm::normalize(pawn_box.position - pawn_box_before.position) * std::sqrt(min_l2);
+
+
 	}
 
 

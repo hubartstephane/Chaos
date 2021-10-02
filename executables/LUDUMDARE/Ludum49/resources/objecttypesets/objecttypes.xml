@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objecttypes>
+ <objecttype name="Camera" color="#ff00ff">
+  <property name="CAMERA" type="bool" default="true"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
+ </objecttype>
+ <objecttype name="Checkpoint" color="#a4970a">
+  <property name="OBJECT_REFERENCE" type="object" default="0"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
+ </objecttype>
+ <objecttype name="CollisionBound" color="#a0a0a4">
+  <property name="classname" type="string" default="LudumCollision"/>
+ </objecttype>
+ <objecttype name="Finish" color="#a0a0a4">
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
+ </objecttype>
+ <objecttype name="Notification" color="#34a404">
+  <property name="LIFETIME" type="float" default="5"/>
+  <property name="NOTIFICATION" type="string" default="toto"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
+  <property name="PLAYER_COLLISION" type="bool" default="true"/>
+  <property name="STOP_WHEN_COLLISION_OVER" type="bool" default="false"/>
+  <property name="TRIGGER_ONCE" type="bool" default="true"/>
+ </objecttype>
+ <objecttype name="Opponent" color="#a0a0a4">
+  <property name="ACCELERATION" type="float" default="800"/>
+  <property name="ANGULAR_VELOCITY" type="float" default="3.5"/>
+  <property name="BREAK_DECELERATION" type="float" default="800"/>
+  <property name="MAX_HEALTH" type="float" default="4"/>
+  <property name="MAX_VELOCITY" type="float" default="800"/>
+  <property name="MIN_VELOCITY" type="float" default="-200"/>
+  <property name="NORMAL_DECELERATION" type="float" default="800"/>
+  <property name="REACTION_DECREASE" type="float" default="2000"/>
+  <property name="REACTION_VALUE" type="float" default="0.5"/>
+  <property name="classname" type="string" default="LudumOpponent"/>
+ </objecttype>
+ <objecttype name="PlayerStart" color="#a0a0a4">
+  <property name="BITMAP_NAME" type="string"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
+  <property name="PLAYER_START" type="bool" default="true"/>
+ </objecttype>
+ <objecttype name="Road" color="#a0a0a4">
+  <property name="CHECKPOINT_LONG_DISTANCE" type="float" default="128"/>
+  <property name="CHECKPOINT_SHORT_DISTANCE" type="float" default="40"/>
+  <property name="LAP_COUNT" type="int" default="3"/>
+  <property name="OPPONENT_ANGULAR_TWEAK" type="float" default="1"/>
+  <property name="OPPONENT_VELOCITY_TWEAK" type="float" default="1"/>
+  <property name="PLAYER_ANGULAR_TWEAK" type="float" default="1"/>
+  <property name="PLAYER_VELOCITY_TWEAK" type="float" default="1"/>
+  <property name="POINT_SPEED_FACTOR" type="float" default="0.7"/>
+  <property name="classname" type="string" default="LudumRoad"/>
+ </objecttype>
+ <objecttype name="SpeedIndication" color="#a0a0a4">
+  <property name="SPEED_FACTOR" type="float" default="1"/>
+  <property name="classname" type="string" default="LudumSpeedIndication"/>
+ </objecttype>
+</objecttypes>

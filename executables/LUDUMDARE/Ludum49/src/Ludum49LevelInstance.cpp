@@ -79,35 +79,34 @@ float GetAngle(glm::vec2 const & a, glm::vec2 const & b, glm::vec2 const & c)
 	return std::atan2(cross, dot);
 }
 
-std::vector<glm::vec2> SmoothBoundary(std::vector<glm::vec2> src, size_t loop_count, float smooth_factor)
+std::vector<glm::vec2> SmoothBoundary(std::vector<glm::vec2> const & src, size_t loop_count, float smooth_factor)
 {
-	for (size_t loop = 0 ; loop < loop_count ; ++loop)
-	{
-		for (size_t i = 0; i < src.size() ; ++i)
-		{
-			size_t count = src.size();
-			size_t index1 = (i + 1) % count;
-			size_t index2 = (i + 2) % count;
+	if (loop_count == 0 || src.size() == 0)
+		return src;
 
-			glm::vec2 & a = src[i];
-			glm::vec2 & b = src[index1];
-			glm::vec2 & c = src[index2];
+	std::vector<glm::vec2> result;
+	result.reserve(src.size() * 2);
 
-			if (a == b || b == c || c == a)
-				continue;
+	size_t count = src.size();
+	for (size_t i = 0; i < src.size() ; ++i)
+	{		
+		size_t prev_index = (i - 1 + count) % count;
+		size_t next_index = (i + 1) % count;
 
-		//	if (GetAngle(a, b, c) < 0.01
+		glm::vec2 const & a = src[i];
+		glm::vec2 const & prev = src[prev_index];
+		glm::vec2 const & next = src[next_index];
 
-			glm::vec2 extra1 = b + (a - b) * smooth_factor;
-			glm::vec2 extra2 = b + (c - b) * smooth_factor;
-			
-			b = extra1;
-			src.insert(src.begin() + index2, extra2);
+		assert(a != prev && prev != next && next != a);
 
-			i += 1;
-		}
+		glm::vec2 extra_next = a + (next - a) * smooth_factor;
+		glm::vec2 extra_prev = a + (prev - a) * smooth_factor;
+
+		result.push_back(extra_prev);
+		result.push_back(extra_next);
+
 	}
-	return src;
+	return SmoothBoundary(result, loop_count - 1, smooth_factor);
 }
 
 bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)

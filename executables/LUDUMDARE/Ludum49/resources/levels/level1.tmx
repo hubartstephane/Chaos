@@ -46,8 +46,8 @@
    </object>
    <object id="2233" x="896" y="752">
     <properties>
-     <property name="SMOOTH_COUNT" type="int" value="1"/>
-     <property name="SMOOTH_FACTOR" type="float" value="0.1"/>
+     <property name="SMOOTH_COUNT" type="int" value="3"/>
+     <property name="SMOOTH_FACTOR" type="float" value="0.3"/>
      <property name="classname" value="Landscape"/>
     </properties>
     <polygon points="160,100 168,352 408,360 428,108"/>

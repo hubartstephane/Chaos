@@ -110,7 +110,7 @@ namespace chaos
 		return TMTools::FindLayerInstance(this, layer_instances, request, recursive);
 	}
 
-	GPURenderMaterial* TMLayerInstance::FindOrCreateRenderMaterial(char const* material_name)
+	GPURenderMaterial* TMLayerInstance::FindOrCreateRenderMaterial(char const* material_name) const
 	{
 		if (material_name != nullptr && material_name[0] != 0) // unamed material ?
 		{
@@ -528,6 +528,14 @@ namespace chaos
 		return particle_layer->SpawnParticles(count, new_allocation);
 	}
 
+	// shu49 mieux a faire qu une fonction qui va recreer un material a chaque fois non ?
+
+
+	GPURenderMaterial* TMLayerInstance::GetRenderMaterial() const
+	{
+		return FindOrCreateRenderMaterial(material_name.c_str());
+	}
+
 	ParticleLayerBase* TMLayerInstance::CreateParticleLayer()
 	{
 
@@ -544,7 +552,7 @@ namespace chaos
 			if (window_application == nullptr)
 				return nullptr;
 			// find render material
-			GPURenderMaterial* render_material = FindOrCreateRenderMaterial(material_name.c_str());
+			GPURenderMaterial* render_material = GetRenderMaterial();
 			if (render_material == nullptr)
 				return nullptr;
 			// create a particle layer (it is not attached to any particle manager !)

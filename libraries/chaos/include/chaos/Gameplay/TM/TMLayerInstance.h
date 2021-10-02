@@ -160,6 +160,11 @@ namespace chaos
 		/** get the parent layer */
 		TMLayerInstance const * GetParentLayerInstance() const { return parent_layer.get(); }
 
+		/** get the rendermaterial */
+
+		// shu49
+		GPURenderMaterial* GetRenderMaterial() const;
+
 		/** override */
 		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
 		/** override */
@@ -175,7 +180,7 @@ namespace chaos
 		virtual void OnRestart();
 
 		/** find render material according to its name (or create the default) */
-		GPURenderMaterial* FindOrCreateRenderMaterial(char const* material_name);
+		GPURenderMaterial* FindOrCreateRenderMaterial(char const* material_name) const;
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;

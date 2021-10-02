@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="57" nextobjectid="2222">
+<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="57" nextobjectid="2229">
  <editorsettings>
   <chunksize width="37" height="37"/>
  </editorsettings>
@@ -18,50 +18,55 @@
   <properties>
    <property name="HEIGHT_BITS_MODE" type="bool" value="false"/>
   </properties>
-  <objectgroup id="26" name="PlayerAndCamera" locked="1">
-   <object id="2114" name="Camera1" type="Camera" x="3978.15" y="2902.83" width="1177.03" height="831.636"/>
-   <object id="2186" name="PlayerStart" gid="2" x="4257.97" y="3391.03" width="32" height="16" rotation="180">
+  <objectgroup id="26" name="PlayerAndCamera">
+   <object id="2114" name="Camera1" type="Camera" x="-213.85" y="-217.17" width="1177.03" height="831.636"/>
+   <object id="2186" name="PlayerStart" gid="2" x="111.909" y="127.878" width="64" height="64" rotation="180">
     <properties>
      <property name="BITMAP_NAME" value="Player"/>
     </properties>
    </object>
-   <object id="2188" name="WBB" type="WorldBoundingBox" x="152" y="695" width="7000" height="4232"/>
   </objectgroup>
   <objectgroup id="56" name="Landscape">
-   <object id="2217" x="4437.33" y="3192">
+   <object id="2217" x="549.33" y="152">
     <properties>
      <property name="classname" value="Landscape"/>
      <property name="toto" type="int" value="0"/>
     </properties>
     <polygon points="0,0 62.6667,-74.6667 185.333,0 110.667,98.6667"/>
    </object>
-   <object id="2218" x="4524" y="3422.67">
+   <object id="2218" x="636" y="382.67">
     <properties>
      <property name="classname" value="Landscape"/>
      <property name="toto" type="int" value="1"/>
     </properties>
     <polygon points="0,0 -76,98.6667 41.3333,200 124,65.3333"/>
    </object>
-   <object id="2219" x="4086.67" y="3085.33">
+   <object id="2219" x="198.67" y="45.33">
     <properties>
      <property name="classname" value="Landscape"/>
      <property name="toto" type="int" value="2"/>
     </properties>
     <polygon points="0,0 221.333,8 148,24 230.667,161.333"/>
    </object>
-   <object id="2220" x="4292" y="3457.33">
+   <object id="2220" x="404" y="417.33">
     <properties>
      <property name="classname" value="Landscape"/>
      <property name="toto" type="int" value="3"/>
     </properties>
     <polygon points="0,0 -253.333,4 -138.667,32 -253.333,166.667"/>
    </object>
-   <object id="2221" x="4422.67" y="2998.67">
+   <object id="2221" x="534.67" y="-41.33">
     <properties>
      <property name="classname" value="Landscape"/>
      <property name="toto" type="int" value="5"/>
     </properties>
     <polygon points="0,0 32,-50.6667 81.3333,-50.6667 121.333,-21.3333 125.333,25.3333 97.3333,68 44,69.3333 5.33333,46.6667"/>
+   </object>
+   <object id="2228" x="-52" y="360">
+    <properties>
+     <property name="classname" value="Landscape"/>
+    </properties>
+    <polygon points="0,0 40,-44 128,-64 168,-32 252,-60 264,-152 204,-204 272,-216 308,-156 316,-56 524,-36 336,0 208,12 88,160 108,36"/>
    </object>
   </objectgroup>
  </group>

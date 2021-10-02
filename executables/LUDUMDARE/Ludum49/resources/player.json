@@ -5,6 +5,7 @@
   "max_velocity": [ 1000.0, 1000.0 ],
   "acceleration": 400,
   "slow_down": 800,
-  "slow_down_factor": 0.05
+  "slow_down_factor": 0.30,
+  "stop_velocity": 2.0
 
 }

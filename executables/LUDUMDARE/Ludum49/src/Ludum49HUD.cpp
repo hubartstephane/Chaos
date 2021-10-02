@@ -14,7 +14,7 @@
 
 bool LudumPlayingHUD::FillHUDContent()
 {
-	if (!chaos::PlayingHUD::FillHUDContent())
+	if (!PlayingHUD::FillHUDContent())
 		return false;	
 
 

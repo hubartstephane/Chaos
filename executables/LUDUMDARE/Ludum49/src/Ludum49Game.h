@@ -1,7 +1,5 @@
 #pragma once
 
-#include <chaos/Chaos.h>
-
 #include "Ludum49.h"
 #include "Ludum49Particles.h"
 #include "Ludum49Level.h"
@@ -10,7 +8,7 @@
 // LudumGame
 // =================================================
 
-class LudumGame : public chaos::Game
+class LudumGame : public Game
 {	
 	friend class ParticlePlayerLayerTrait;
 
@@ -31,7 +29,7 @@ public:
 
 	CHAOS_DECLARE_GAMEPLAY_FRIENDSHIPS(Ludum);
 
-	CHAOS_DECLARE_OBJECT_CLASS2(LudumGame, chaos::Game);
+	CHAOS_DECLARE_OBJECT_CLASS2(LudumGame, Game);
 
 	/** constructor */
 	LudumGame();
@@ -43,18 +41,18 @@ public:
 protected:
 
 	/** override */
-	virtual bool OnEnterGame(chaos::PhysicalGamepad * in_physical_gamepad) override;
+	virtual bool OnEnterGame(PhysicalGamepad * in_physical_gamepad) override;
 
 	/** initialize the game variables */
 	virtual bool InitializeGameValues(nlohmann::json const & config, bool hot_reload) override;
 
 	/** override level creation */
-	chaos::TMLevel * CreateTMLevel() override;
+	TMLevel * CreateTMLevel() override;
 
 	/** move the player */
-	virtual chaos::GameHUD * DoCreatePlayingHUD() override;
+	virtual GameHUD * DoCreatePlayingHUD() override;
 
-	virtual void DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params) override;
+	virtual void DoDisplayGame(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) override;
 
 protected:
 

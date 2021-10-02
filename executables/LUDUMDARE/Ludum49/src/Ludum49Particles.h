@@ -1,6 +1,6 @@
 #pragma once
 
-#include <chaos/Chaos.h>
+#include "Ludum49.h"
 
 
 
@@ -8,9 +8,9 @@
 // VertexBase and ParticleBase
 // ===========================================================================
 
-using VertexBase = chaos::VertexDefault;
+using VertexBase = VertexDefault;
 
-class ParticleBase : public  chaos::TMParticle
+class ParticleBase : public  TMParticle
 {
 public:
 
@@ -31,15 +31,15 @@ public:
 };
 
 
-class ParticlePlayerLayerTrait : public chaos::ParticleLayerTrait<ParticlePlayer, VertexBase>
+class ParticlePlayerLayerTrait : public ParticleLayerTrait<ParticlePlayer, VertexBase>
 {
 public:
 
 	bool UpdateParticle(float delta_time, ParticlePlayer & particle) const;
 
-	void ParticleToPrimitives(ParticlePlayer const& particle, chaos::PrimitiveOutput<chaos::VertexDefault>& output) const;
+	void ParticleToPrimitives(ParticlePlayer const& particle, PrimitiveOutput<VertexDefault>& output) const;
 
-	void UpdateRenderingStates(chaos::GPURenderer* renderer, bool begin) const
+	void UpdateRenderingStates(GPURenderer* renderer, bool begin) const
 	{
 		if (begin)
 		{
@@ -61,7 +61,7 @@ public:
 	class LudumGame* game = nullptr;
 };
 
-CHAOS_REGISTER_CLASS2(ParticleBase, chaos::TMParticle);
+CHAOS_REGISTER_CLASS2(ParticleBase, TMParticle);
 CHAOS_REGISTER_CLASS2(ParticlePlayer, ParticleBase);
 
 

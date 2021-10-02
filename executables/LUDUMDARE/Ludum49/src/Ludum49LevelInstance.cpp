@@ -14,7 +14,7 @@ Landscape::Landscape()
 
 }
 
-int Landscape::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params)
+int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
 {
 	int result = 0;
 
@@ -79,17 +79,17 @@ float GetAngle(glm::vec2 const & a, glm::vec2 const & b, glm::vec2 const & c)
 	return std::atan2(cross, dot);
 }
 
-bool Landscape::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, chaos::TMObjectReferenceSolver& reference_solver)
+bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
 {
-	if (!chaos::TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
+	if (!TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
 		return false;
 
 	// capture the points
-	if (chaos::TiledMap::GeometricObjectPolygon const* pn = auto_cast(in_geometric_object))
+	if (TiledMap::GeometricObjectPolygon const* pn = auto_cast(in_geometric_object))
 	{
 		points = pn->points;
 
-		std::vector<chaos::triangle2> triangles;
+		std::vector<triangle2> triangles;
 
 		std::vector<glm::vec2> v = points;
 
@@ -130,7 +130,7 @@ bool Landscape::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::Til
 			accum += angle;
 		}
 
-		chaos::box2 bbox = GetBoundingBox(true);
+		box2 bbox = GetBoundingBox(true);
 
 		glm::vec2 offset = bbox.position;
 		
@@ -178,9 +178,9 @@ bool Landscape::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::Til
 			}
 		}
 
-		chaos::GPURenderMaterial * RM = in_layer_instance->GetRenderMaterial();
+		GPURenderMaterial * RM = in_layer_instance->GetRenderMaterial();
 
-		chaos::GPUDrawInterface<chaos::VertexDefault> DI(RM, 3 * triangles.size());
+		GPUDrawInterface<VertexDefault> DI(RM, 3 * triangles.size());
 
 		std::vector<glm::vec2> vvv = { {-10000.f,-10000.f}, {10000, -10000.f}, {-10000.f, 10000.f} };
 
@@ -197,7 +197,7 @@ bool Landscape::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::Til
 			}
 		}
 
-		std::pair<glm::vec2, glm::vec2> corners = chaos::GetBoxCorners(bbox);
+		std::pair<glm::vec2, glm::vec2> corners = GetBoxCorners(bbox);
 
 		auto quad = DI.AddQuads();
 		for (auto& v : quad)
@@ -238,19 +238,19 @@ LudumLevelInstance::LudumLevelInstance()
 	player_displacement_component_class = LudumPlayerDisplacementComponent::GetStaticClass();
 }
 
-void LudumLevelInstance::CreateCameraComponents(chaos::Camera* camera, chaos::TMCameraTemplate* camera_template)
+void LudumLevelInstance::CreateCameraComponents(Camera* camera, TMCameraTemplate* camera_template)
 {
-	chaos::TMLevelInstance::CreateCameraComponents(camera, camera_template);
+	TMLevelInstance::CreateCameraComponents(camera, camera_template);
 
 	camera->SetSafeZone(glm::vec2(0.0f, 0.0f));
-	camera->AddComponent(new chaos::FollowPlayerCameraComponent(0));
-	camera->AddComponent(new chaos::ShakeCameraComponent(0.15f, 0.05f, 0.15f, true, true));
-	camera->AddComponent(new chaos::SoundListenerCameraComponent());
+	camera->AddComponent(new FollowPlayerCameraComponent(0));
+	camera->AddComponent(new ShakeCameraComponent(0.15f, 0.05f, 0.15f, true, true));
+	camera->AddComponent(new SoundListenerCameraComponent());
 }
 
 bool LudumLevelInstance::DoTick(float delta_time)
 {
-	chaos::TMLevelInstance::DoTick(delta_time);
+	TMLevelInstance::DoTick(delta_time);
 
 
 	
@@ -258,9 +258,9 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	return true;
 }
 
-bool LudumLevelInstance::Initialize(chaos::Game * in_game, chaos::Level * in_level)
+bool LudumLevelInstance::Initialize(Game * in_game, Level * in_level)
 {
-	if (!chaos::TMLevelInstance::Initialize(in_game, in_level))
+	if (!TMLevelInstance::Initialize(in_game, in_level))
 		return false;
 
 
@@ -269,9 +269,9 @@ bool LudumLevelInstance::Initialize(chaos::Game * in_game, chaos::Level * in_lev
 }
 
 
-bool LudumLevelInstance::IsPlayerDead(chaos::Player* player)
+bool LudumLevelInstance::IsPlayerDead(Player* player)
 {
-	if (chaos::TMLevelInstance::IsPlayerDead(player))
+	if (TMLevelInstance::IsPlayerDead(player))
 		return true;
 
 	return false;
@@ -297,19 +297,19 @@ bool LudumLevelInstance::CanCompleteLevel() const
 	return false;
 }
 
-int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params)
+int LudumLevelInstance::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
 {
 
 
 
-	return chaos::TMLevelInstance::DoDisplay(renderer, uniform_provider, render_params);
+	return TMLevelInstance::DoDisplay(renderer, uniform_provider, render_params);
 }
 
 uint64_t LudumLevelInstance::GetCollisionFlagByName(char const* name) const
 {
 	assert(name != nullptr);
 
-	if (chaos::StringTools::Stricmp(name, "Landscape") == 0)
+	if (StringTools::Stricmp(name, "Landscape") == 0)
 		return COLLISION_LANDSCAPE;
 
 	return TMLevelInstance::GetCollisionFlagByName(name);

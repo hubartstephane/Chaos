@@ -1,6 +1,6 @@
 #pragma once
 
-#include <chaos/Chaos.h>
+#include "Ludum49.h"
 
 namespace chaos
 {
@@ -13,13 +13,13 @@ namespace chaos
 // LudumPlayingHUD
 // ====================================================================
 
-class LudumPlayingHUD : public chaos::PlayingHUD
+class LudumPlayingHUD : public PlayingHUD
 {
 public:
 
 	CHAOS_DECLARE_GAMEPLAY_FRIENDSHIPS(Ludum);
 
-	CHAOS_DECLARE_OBJECT_CLASS2(LudumPlayingHUD, chaos::PlayingHUD);
+	CHAOS_DECLARE_OBJECT_CLASS2(LudumPlayingHUD, PlayingHUD);
 
 protected:
 

@@ -17,27 +17,27 @@ LudumLevel::LudumLevel()
 	level_instance_class = LudumLevelInstance::GetStaticClass();
 }
 
-chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(chaos::TMLayerInstance * layer_instance)
+ParticleLayerBase * LudumLevel::DoCreateParticleLayer(TMLayerInstance * layer_instance)
 {
 	LudumGame * ludum_game = auto_cast(layer_instance->GetGame());
 
 	std::string const & layer_name = layer_instance->GetTiledLayer()->name;
 
-	if (chaos::StringTools::Stricmp(layer_name, "PlayerAndCamera") == 0)
+	if (StringTools::Stricmp(layer_name, "PlayerAndCamera") == 0)
 	{
 		ParticlePlayerLayerTrait layer_trait;
 		layer_trait.game = ludum_game;
-		return new chaos::ParticleLayer<ParticlePlayerLayerTrait>(layer_trait);
+		return new ParticleLayer<ParticlePlayerLayerTrait>(layer_trait);
 	}
 
 
 
 
-	return chaos::TMLevel::DoCreateParticleLayer(layer_instance);
+	return TMLevel::DoCreateParticleLayer(layer_instance);
 }
 
 
-chaos::TMObjectFactory LudumLevel::DoGetObjectFactory(chaos::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
+TMObjectFactory LudumLevel::DoGetObjectFactory(TMLayerInstance * in_layer_instance, TiledMap::TypedObject const * in_typed_object)
 {
 
 
@@ -49,13 +49,13 @@ chaos::TMObjectFactory LudumLevel::DoGetObjectFactory(chaos::TMLayerInstance * i
 		return CHAOS_TM_MAKE_OBJECT_FACTORY(return new LudumSpeedIndication(););
 #endif
 
-	return chaos::TMLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
+	return TMLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
 }
 
 
-bool LudumLevel::Initialize(chaos::TiledMap::Map* in_tiled_map)
+bool LudumLevel::Initialize(TiledMap::Map* in_tiled_map)
 {
-	if (!chaos::TMLevel::Initialize(in_tiled_map))
+	if (!TMLevel::Initialize(in_tiled_map))
 		return false;
 
 

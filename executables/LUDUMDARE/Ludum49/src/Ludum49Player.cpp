@@ -21,9 +21,9 @@ ParticlePlayer const * LudumPlayer::GetPlayerParticle() const
 	return pawn->GetParticle<ParticlePlayer>(0);
 }
 
-bool LudumPlayer::Initialize(chaos::GameInstance * in_game_instance)
+bool LudumPlayer::Initialize(GameInstance * in_game_instance)
 {
-	if (!chaos::Player::Initialize(in_game_instance))
+	if (!Player::Initialize(in_game_instance))
 		return false;
 
 
@@ -47,9 +47,9 @@ bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, bool hot_re
 	return true;
 }
 
-void LudumPlayer::HandleInputs(float delta_time, chaos::GamepadState const* gpd)
+void LudumPlayer::HandleInputs(float delta_time, GamepadState const* gpd)
 {
-	chaos::Player::HandleInputs(delta_time, gpd);
+	Player::HandleInputs(delta_time, gpd);
 
 
 }
@@ -58,29 +58,29 @@ void LudumPlayer::HandleInputs(float delta_time, chaos::GamepadState const* gpd)
 
 void LudumPlayer::OnLifeLost()
 {
-	chaos::Player::OnLifeLost();
+	Player::OnLifeLost();
 	
 
 
 
 }
 
-void LudumPlayer::OnLevelChanged(chaos::Level * new_level, chaos::Level * old_level, chaos::LevelInstance * new_level_instance)
+void LudumPlayer::OnLevelChanged(Level * new_level, Level * old_level, LevelInstance * new_level_instance)
 {
-	chaos::Player::OnLevelChanged(new_level, old_level, new_level_instance);
+	Player::OnLevelChanged(new_level, old_level, new_level_instance);
 
 }
 
 bool LudumPlayer::DoTick(float delta_time)
 {
-	if (!chaos::Player::DoTick(delta_time))
+	if (!Player::DoTick(delta_time))
 		return false;
 
 	return true;
 }
 
 #if 0
-int LudumPlayer::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params)
+int LudumPlayer::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
 {
 	int result = 0;
 

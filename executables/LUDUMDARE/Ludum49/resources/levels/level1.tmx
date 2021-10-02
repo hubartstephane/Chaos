@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="57" nextobjectid="2229">
+<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="57" nextobjectid="2230">
  <editorsettings>
   <chunksize width="37" height="37"/>
  </editorsettings>
@@ -70,6 +70,12 @@
      <property name="classname" value="Landscape"/>
     </properties>
     <polygon points="0,0 40,-44 128,-64 168,-32 252,-60 264,-152 204,-204 272,-216 308,-156 316,-56 524,-36 336,0 208,12 88,160 108,36"/>
+   </object>
+   <object id="2229" x="-180" y="192">
+    <properties>
+     <property name="classname" value="Landscape"/>
+    </properties>
+    <polygon points="0,0 256,-208 228,-488 508,-384 448,-684 -156,-628"/>
    </object>
   </objectgroup>
  </group>

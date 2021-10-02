@@ -80,3 +80,8 @@ que faire si on veut utiliser autre chose que les DPAD pour les directions
 -autocastable ... erreur de compilation quand rien ne correspond (impossible)
 
 - polygon : orienter les points dans le sens trigo automatiquement ?
+
+-revoir l autorenderToPlayerCameraComponent :
+   que se passe t'il avec une safe zone a zero !!
+
+la safe zone devrait etre configurable dans l editeur

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="57" nextobjectid="2230">
+<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="57" nextobjectid="2231">
  <editorsettings>
   <chunksize width="37" height="37"/>
  </editorsettings>
@@ -30,52 +30,11 @@
    <properties>
     <property name="COLLISION_MASK" value="LANDSCAPE"/>
    </properties>
-   <object id="2217" x="825.33" y="272">
-    <properties>
-     <property name="classname" value="Landscape"/>
-     <property name="toto" type="int" value="0"/>
-    </properties>
-    <polygon points="0,0 62.6667,-74.6667 185.333,0 110.667,98.6667"/>
-   </object>
-   <object id="2218" x="912" y="502.67">
-    <properties>
-     <property name="classname" value="Landscape"/>
-     <property name="toto" type="int" value="1"/>
-    </properties>
-    <polygon points="0,0 -76,98.6667 41.3333,200 124,65.3333"/>
-   </object>
-   <object id="2219" x="398.67" y="101.33">
-    <properties>
-     <property name="classname" value="Landscape"/>
-     <property name="toto" type="int" value="2"/>
-    </properties>
-    <polygon points="0,0 221.333,8 148,24 230.667,161.333"/>
-   </object>
-   <object id="2220" x="604" y="473.33">
-    <properties>
-     <property name="classname" value="Landscape"/>
-     <property name="toto" type="int" value="3"/>
-    </properties>
-    <polygon points="0,0 -253.333,4 -138.667,32 -253.333,166.667"/>
-   </object>
-   <object id="2221" x="810.67" y="78.67">
-    <properties>
-     <property name="classname" value="Landscape"/>
-     <property name="toto" type="int" value="5"/>
-    </properties>
-    <polygon points="0,0 32,-50.6667 81.3333,-50.6667 121.333,-21.3333 125.333,25.3333 97.3333,68 44,69.3333 5.33333,46.6667"/>
-   </object>
-   <object id="2228" x="148" y="416">
+   <object id="2230" x="-257.576" y="506.061">
     <properties>
      <property name="classname" value="Landscape"/>
     </properties>
-    <polygon points="0,0 40,-44 128,-64 168,-32 252,-60 264,-152 204,-204 272,-216 308,-156 316,-56 524,-36 336,0 208,12 88,160 108,36"/>
-   </object>
-   <object id="2229" x="-180" y="192">
-    <properties>
-     <property name="classname" value="Landscape"/>
-    </properties>
-    <polygon points="0,0 256,-208 228,-488 508,-384 448,-684 -156,-628"/>
+    <polygon points="0,0 81.8182,169.697 172.727,296.97 272.727,393.939 433.333,500 724.242,636.364 1024.24,718.182 1312.12,751.515 1709.09,742.424 1993.94,700 2318.18,593.939 2460.61,490.909 2569.7,384.848 2648.48,384.848 2654.55,718.182 2809.09,712.121 2803.03,-333.333 2906.06,-330.303 2918.18,830.303 1412.12,954.545 -187.879,793.939"/>
    </object>
   </objectgroup>
  </group>

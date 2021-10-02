@@ -1,9 +1,9 @@
 {
   "life_count": 1,
   "max_health": 4.0,
-  "gravity": -50.0,
+  "gravity": -1000.0,
   "max_velocity": [ 1000.0, 1000.0 ],
-  "acceleration": 400,
+  "acceleration": 800,
   "slow_down": 800,
   "slow_down_factor": 0.30,
   "stop_velocity": 2.0

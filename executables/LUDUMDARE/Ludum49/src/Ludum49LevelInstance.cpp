@@ -18,7 +18,7 @@ int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* un
 {
 	int result = 0;
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glDisable(GL_DEPTH_TEST);
@@ -31,7 +31,7 @@ int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* un
 			glDisable(GL_BLEND);
 			glEnable(GL_DEPTH_TEST);
 			glEnable(GL_CULL_FACE);
-			glPolygonMode(GL_FRONT_AND_BACK,  GL_FILL);
+			//glPolygonMode(GL_FRONT_AND_BACK,  GL_FILL);
 
 
 
@@ -182,8 +182,6 @@ bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::Geometr
 
 		GPUDrawInterface<VertexDefault> DI(RM, 3 * triangles.size());
 
-		std::vector<glm::vec2> vvv = { {-10000.f,-10000.f}, {10000, -10000.f}, {-10000.f, 10000.f} };
-
 		for (auto const& t : triangles)
 		{
 			auto tri = DI.AddTriangles(1);
@@ -191,12 +189,10 @@ bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::Geometr
 			for (int i = 0; i < 3; ++i)
 			{
 				tri[i].position = t[i];
-				tri[i].color = { 1.0f, 0.0f, 0.0f, 1.0f };
-				tri[i].texcoord = { -1.0f, -1.0f, -1.0f };
-				tri[i].flags = 0;
+				tri[i].color = { 1.0f, 0.0f, 0.0f, 0.8f };
 			}
 		}
-
+#if 0
 		std::pair<glm::vec2, glm::vec2> corners = GetBoxCorners(bbox);
 
 		auto quad = DI.AddQuads();
@@ -211,7 +207,7 @@ bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::Geometr
 		quad[1].position = { corners.second.x, corners.first.y };
 		quad[2].position = { corners.second.x, corners.second.y };
 		quad[3].position = { corners.first.x, corners.second.y };
-		
+#endif	
 
 
 		mesh = DI.ExtractMesh();

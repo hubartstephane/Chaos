@@ -52,3 +52,9 @@ ca serait peut etre bien de calculer la bounding box pour de vrai (quitte a depl
 - faire un single include pour lexterieur
 <chaos/chaos.h>
 ne pas l'utiliser dans chaos, optimiser les dependances'
+
+
+
+-TM BoundingBox, oriented BoundingBox pour les collisions
+
+- position initiale du pawn semble foireuse

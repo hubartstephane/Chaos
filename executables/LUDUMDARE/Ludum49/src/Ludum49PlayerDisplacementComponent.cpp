@@ -239,5 +239,9 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	if (delta_time != 0.0f)
 		pawn_velocity = (pawn_box.position - pawn_box_before.position) / delta_time;
 
+	float len2 = glm::length2(pawn_velocity);
+	if (len2 > ludum_player->max_velocity * ludum_player->max_velocity)
+		pawn_velocity = ludum_player->max_velocity * glm::normalize(pawn_velocity);
+
 	return true;
 }

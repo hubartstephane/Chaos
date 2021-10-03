@@ -43,8 +43,9 @@
    <object id="2238" type="Landscape" x="-800" y="172">
     <properties>
      <property name="MORPH_CLASSES" value="LandscapeMorphCircle"/>
+     <property name="MORPH_RADIUS" type="float" value="300"/>
     </properties>
-    <polygon points="0,0 -76,144 -80,272 -24,344 100,376 272,364 368,256 392,124 356,24 252,-76 116,-56"/>
+    <polygon points="80,72 164,228 -80,272 -24,344 100,376 272,364 368,256 264,160 356,24 236,36 172,-4"/>
    </object>
   </objectgroup>
  </group>

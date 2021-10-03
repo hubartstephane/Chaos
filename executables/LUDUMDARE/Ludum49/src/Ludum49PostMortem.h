@@ -89,3 +89,11 @@ la safe zone devrait etre configurabl
 
 -question: 
    le SetPath(...) devrait il stocker le path apres redirection ?
+
+
+
+- dans TMObject, differencier la notion de position et de BoundingBox.
+  Il n y a pas de raison pour que la BBox soit centree sur la position
+
+
+--verifier quels shaders utilsent local_to_world

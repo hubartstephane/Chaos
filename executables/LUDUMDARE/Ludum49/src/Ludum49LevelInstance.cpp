@@ -18,6 +18,9 @@ bool Landscape::DoTick(float delta_time)
 {
 	TMObject::DoTick(delta_time);
 
+
+
+
 	if (0 && id == 2233)
 	{
 		internal_t += delta_time * 0.5f;
@@ -45,31 +48,60 @@ int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* un
 	glm::mat4 local_to_world = glm::translate(glm::vec3(GetBoundingBox(true).position, 0.0f));
 	main_provider.AddVariable("local_to_world", local_to_world);
 
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			glDisable(GL_DEPTH_TEST);
-			glDisable(GL_CULL_FACE);
-
-	//uniform_provider.
-
-
+	
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	glPointSize(5.0f);
 
 	if (mesh != nullptr)
 		result += mesh->Display(renderer, &main_provider, render_params);
 
 
-			glDisable(GL_BLEND);
-			glEnable(GL_DEPTH_TEST);
-			glEnable(GL_CULL_FACE);
-		//	glPolygonMode(GL_FRONT_AND_BACK,  GL_FILL);
+	box2 box = GetBoundingBox(false);
+	glm::vec2 box_v[4];
+	GetBoxVertices(box, box_v, false); // shu49 false -> want the box in local (shader applies the transforms) ... but in that case, layer transform (that here is null) is ignored
 
+	// shu49. ca pourrait etre partique d avoir une fonction d affichage de bounding box
 
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	GPUDrawInterface<VertexDefault> DI(DefaultParticleProgram::GetMaterial(), 4);
+	QuadPrimitive<VertexDefault> quad = DI.AddQuads(1);
+	quad[0].position = box_v[0];
+	quad[1].position = box_v[1];
+	quad[2].position = box_v[3];
+	quad[3].position = box_v[2];
+		
+	PointPrimitive<VertexDefault> smooth_prim = DI.AddPoints(smoothed_points.size());
+	for (auto& p : smoothed_points)
+	{
+		smooth_prim[0].position = p;
+		smooth_prim[0].color = { 0.0f,1.0f,0.0f,1.0f };
+		++smooth_prim;
+	}
 
+	PointPrimitive<VertexDefault> prim_p = DI.AddPoints(points.size());
+	for (auto& p : points)
+	{
+		prim_p[0].position = p;
+		prim_p[0].color = { 0.0f,0.0f,1.0f,1.0f };
+		++prim_p;
+	}
 
+	// shu49 attention. il ne faudrait pas faire un shared_ptr<> p = GetDynamicMesh();
+	//
+	// template<typename T> class ForbidSmartReference : ...
+	//
+	DI.Flush();
 
-
-
+	debug_mesh = DI.ExtractMesh();
+	debug_mesh->Display(renderer, &main_provider, render_params);
+	//DI.GetDynamicMesh().Display(renderer, &main_provider, render_params); // shu49 problematique de detruire l interface a la fin de la fonction
+	glPolygonMode(GL_FRONT_AND_BACK,  GL_FILL);
+	glDisable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 
 	return result;
 }
@@ -140,11 +172,128 @@ std::vector<glm::vec2> SmoothBoundary(std::vector<glm::vec2> const & src, size_t
 	return SmoothBoundary(result, loop_count - 1, smooth_factor);
 }
 
+
+#if 0
+	ori_bounding_box = bounding_box;
+	bounding_box = std::make_pair(min_position, max_position);
+
+
+	for (glm::vec2& p : points)
+		p -= (bounding_box.position - ori_bounding_box.position);
+	for (glm::vec2& p : smoothed_points)
+		p -= (bounding_box.position - ori_bounding_box.position);
+
+	ori_bounding_box = bounding_box;
+
+#endif
+
+void Landscape::BuildMesh()
+{
+	smoothed_points = SmoothBoundary(points, smooth_count, smooth_factor);
+
+	std::vector<glm::vec2> v = smoothed_points;
+
+	// orientation of the polygon
+	float accum = 0.0f;
+
+	size_t count = v.size();
+	for (size_t i = 0; i < count; ++i)
+	{
+		glm::vec2 const& a = v[i];
+		glm::vec2 const& b = v[(i + 1) % count];
+		glm::vec2 const& c = v[(i + 2) % count];
+
+		if (a == b || b == c || c == a)
+			continue;
+
+		float abc = GetAngle(a, b, c);
+
+		// the angle that interest us is not the abc, but the signed angle with the along direction
+
+		//         | angle
+		//  -PI    |       C   +PI
+		//           --  /
+		//         |   /
+		//           /
+		//       B + 
+		//         |
+		//         |
+		//         |
+		//         A
+		//
+
+		float angle = (abc > 0.0f) ? (float)M_PI - abc : -(float)M_PI - abc;
+		accum += angle;
+	}
+
+
+	std::vector<triangle2> triangles;
+	while (v.size() > 2)
+	{
+		bool new_triangle = false;
+		for (size_t i = v.size(); i > 0; --i) // to remove at the end of vector more frequently
+		{
+			size_t count = v.size();
+			size_t index = i - 1;
+			size_t prev = (index - 1 + count) % count;
+			size_t next = (index + 1 + count) % count;
+
+			glm::vec2 const& a = v[index];
+			glm::vec2 const& b = v[prev];
+			glm::vec2 const& c = v[next];
+
+			if (a == b || b == c || c == a)
+				continue;
+
+			if (GetAngle(b, a, c) * accum < 0.0f) // angle in opposite direction of the polygon orientation
+				continue;
+
+			size_t j = 0;
+			for (; j < count - 3; ++j)
+			{
+				size_t test_index = (next + 1 + j) % count;
+
+				if (PointInTriangle(v[test_index], a, b, c))
+					break;
+			}
+
+			// no other point inside the triangle found (can remove the 'index')
+			if (j == count - 3)
+			{
+				new_triangle = true;
+				triangles.push_back({ a, b, c });
+				v.erase(v.begin() + index);
+			}
+		}
+
+		if (!new_triangle)
+		{
+			assert(0);
+		}
+	}
+
+	GPURenderMaterial * RM = GetLayerInstance()->GetRenderMaterial();
+
+	GPUDrawInterface<VertexDefault> DI(RM, 3 * triangles.size());
+
+	for (auto const& t : triangles)
+	{
+		auto tri = DI.AddTriangles(1);
+
+		for (int i = 0; i < 3; ++i)
+		{
+			tri[i].position = t[i];
+			tri[i].color = { 1.0f, 0.0f, 0.0f, 0.8f };
+		}
+	}
+	mesh = DI.ExtractMesh();
+}
+
+
 bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
 {
 	if (!TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
 		return false;
-
 
 	smooth_count = in_geometric_object->GetPropertyValueInt("SMOOTH_COUNT", smooth_count);
 	smooth_count = std::clamp(smooth_count, 0, 5);
@@ -154,146 +303,12 @@ bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::Geometr
 	
 	ori_bounding_box = bounding_box;
 
-
-
-
-
-
-
-
 	// capture the points
 	if (TiledMap::GeometricObjectPolygon const* pn = auto_cast(in_geometric_object))
 	{
-		points = SmoothBoundary(pn->points, smooth_count, smooth_factor);
-
-		std::vector<triangle2> triangles;
-
-		std::vector<glm::vec2> v = points;
-
-
-		float accum = 0.0f;
-
-
-		// orientation of the polygon
-
-
-		size_t count = v.size();
-		for (size_t i = 0; i < count; ++i)
-		{
-			glm::vec2 const& a = v[i];
-			glm::vec2 const& b = v[(i + 1) % count];
-			glm::vec2 const& c = v[(i + 2) % count];
-
-			if (a == b || b == c || c == a)
-				continue;
-
-			float abc = GetAngle(a, b, c);
-
-			// the angle that interest us is not the abc, but the signed angle with the along direction
-
-			//         | angle
-			//  -PI    |       C   +PI
-			//           --  /
-			//         |   /
-			//           /
-			//       B + 
-			//         |
-			//         |
-			//         |
-			//         A
-			//
-
-			float angle = (abc > 0.0f) ? (float)M_PI - abc : -(float)M_PI - abc;
-			accum += angle;
-		}
-
-		box2 bbox = GetBoundingBox(true);
-
-		//glm::vec2 offset = bbox.position;
-		glm::vec2 offset = bbox.position;
-
-
-		offset = offset * 0.0f;
-		
-		while (v.size() > 2)
-		{
-			bool new_triangle = false;
-			for (size_t i = v.size(); i > 0; --i) // to remove at the end of vector more frequently
-			{
-				size_t count = v.size();
-				size_t index = i - 1;
-				size_t prev = (index - 1 + count) % count;
-				size_t next = (index + 1 + count) % count;
-
-				glm::vec2 const& a = v[index];
-				glm::vec2 const& b = v[prev];
-				glm::vec2 const& c = v[next];
-
-				if (a == b || b == c || c == a)
-					continue;
-
-				if (GetAngle(b, a, c) * accum < 0.0f) // angle in opposite direction of the polygon orientation
-					continue;
-
-				size_t j = 0;
-				for (; j < count - 3; ++j)
-				{
-					size_t test_index = (next + 1 + j) % count;
-
-					if (PointInTriangle(v[test_index], a, b, c))
-						break;
-				}
-
-				// no other point inside the triangle found (can remove the 'index')
-				if (j == count - 3)
-				{
-					new_triangle = true;
-					triangles.push_back({ a + offset, b + offset, c + offset });
-					v.erase(v.begin() + index);
-				}
-			}
-
-			if (!new_triangle)
-			{
-				assert(0);
-			}
-		}
-
-		GPURenderMaterial * RM = in_layer_instance->GetRenderMaterial();
-
-		GPUDrawInterface<VertexDefault> DI(RM, 3 * triangles.size());
-
-		for (auto const& t : triangles)
-		{
-			auto tri = DI.AddTriangles(1);
-
-			for (int i = 0; i < 3; ++i)
-			{
-				tri[i].position = t[i] - offset;
-				tri[i].color = { 1.0f, 0.0f, 0.0f, 0.8f };
-			}
-		}
-#if 0
-		std::pair<glm::vec2, glm::vec2> corners = GetBoxCorners(bbox);
-
-		auto quad = DI.AddQuads();
-		for (auto& v : quad)
-		{			
-			v.color = { 1.0f, 0.0f, 0.0f, 1.0f };
-			v.texcoord = { -1.0f, -1.0f, -1.0f };
-			v.flags = 0;
-		}
-
-		quad[0].position = { corners.first.x, corners.first.y };
-		quad[1].position = { corners.second.x, corners.first.y };
-		quad[2].position = { corners.second.x, corners.second.y };
-		quad[3].position = { corners.first.x, corners.second.y };
-#endif	
-
-
-		mesh = DI.ExtractMesh();
+		points = pn->points;
+		BuildMesh();
 	}
-
 
 	return true;
 }

@@ -24,6 +24,8 @@ public:
 
 	virtual bool DoTick(float delta_time) override;
 
+	void BuildMesh();
+
 	int smooth_count = 0;
 	float smooth_factor = 0.3f;
 
@@ -32,8 +34,10 @@ public:
 	box2 ori_bounding_box;
 
 	shared_ptr<GPUDynamicMesh> mesh;
+	shared_ptr<GPUDynamicMesh> debug_mesh;
 
 	std::vector<glm::vec2> points;
+	std::vector<glm::vec2> smoothed_points;
 };
 
 

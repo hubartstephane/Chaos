@@ -23,7 +23,7 @@ bool LPMorph::GetPoints(Landscape* landscape, std::vector<glm::vec2>& mutable_po
 
 float LPMorph::GetStrength(Landscape* landscape)
 {
-	return 0.5f;
+	return 1.0f;
 }
 
 
@@ -187,8 +187,22 @@ bool LPMorph_Mix::GetPoints(Landscape* landscape, std::vector<glm::vec2> & mutab
 	return true;
 }
 
+// =================================================================================
 
+float LPMorph_CosStrength::GetStrength(Landscape * landscape)
+{
+	return offset + radius * std::cos(speed * internal_time + time_offset);
+}
 
+bool LPMorph_CosStrength::Initialize(int index, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
+{
+	LPMorph::Initialize(index, in_geometric_object, reference_solver);
+	offset  = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("OFFSET"), offset);
+	radius = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("RADIUS"), radius);
+	time_offset = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("TIME_OFFSET"), time_offset);
+	speed = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("SPEED"), speed);
+	return true;
+}
 
 
 

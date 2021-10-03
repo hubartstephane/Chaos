@@ -128,6 +128,27 @@ protected:
 
 };
 
+// =================================================
+
+class LPMorph_CosStrength : public LPMorph
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_CosStrength, LPMorph);
+
+protected:
+
+	virtual float GetStrength(Landscape * landscape) override;
+
+	virtual bool Initialize(int index, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+
+	float speed = 1.0f;
+	float radius = 1.0f;
+	float offset = 0.0f;
+	float time_offset = 0.0f;
+
+};
+
+
+
 
 #if 0
 

@@ -386,6 +386,9 @@ namespace chaos
 		});
 	}
 
+
+	// shu49 c 'est un peut bizarre d'avoir ce genre de code ici
+
 	bool Game::GenerateObjectTypeSets(nlohmann::json const & config)
 	{
 		return DoGenerateTiledMapEntity(config, "objecttypesets_directory", "objecttypesets", "xml", [](TiledMap::Manager * manager, boost::filesystem::path const & path) {
@@ -394,6 +397,8 @@ namespace chaos
 			return true;
 		});
 	}
+
+	// shu49 c 'est un peut bizarre d'avoir ce genre de code ici
 
 	bool Game::GenerateTileSets(nlohmann::json const & config)
 	{
@@ -608,6 +613,11 @@ namespace chaos
 		if (!InitializeGameValues(config, false)) // false => not hot_reload
 			return false;
 		OnGameValuesChanged(false);
+
+
+		// shu49 c'est bizare d avoir le type sets ici
+
+
 		// loading object type sets
 		if (!GenerateObjectTypeSets(config))
 			return false;

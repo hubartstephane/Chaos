@@ -188,14 +188,22 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	//	if (glm::dot(pawn_box.position - m, glm::vec2(N)) < 0.0f)
 	//		N = -N;
 
-		float fff = glm::dot(pawn_box.position - m, glm::vec2(N));
 		if (glm::dot(pawn_box.position - m, glm::vec2(N)) < 0.0f)
 		{
-			N = N;
-		}
-		else
-		{
-			N = N;
+			if (col.proj == col.a || col.proj == col.b)
+			{
+				// no problem
+			}
+			else
+			{
+				// interpenetration
+
+				N = N;
+			}
+
+
+
+
 		}
 			
 

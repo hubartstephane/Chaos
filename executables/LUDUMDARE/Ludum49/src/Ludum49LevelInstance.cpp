@@ -38,7 +38,8 @@ void ReadDataMap(int& value, MORPH_DATA_MAP data_map, char const* name)
 
 float linearstep(float t, float a, float b)
 {
-	assert(b != a);
+	if (a == b)
+		return (t < a) ? 0.0f : 1.0f;
 	return std::clamp((t - a) / (b - a), 0.0f, 1.0f);
 }
 
@@ -229,18 +230,36 @@ bool LPMorph_Circle::Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferen
 
 bool LPMorph_Rectangle::GetPoints(Landscape* landscape, std::vector<glm::vec2> & mutable_points)
 {
-	size_t count = mutable_points.size();
 
+	size_t count = mutable_points.size();
 	for (size_t i = 0; i < count; ++i)
 	{
 		glm::vec2& v = mutable_points[i];
 
+		if (i < count / 2)
+		{
+			v.x = 0.5f * width - width * MathTools::CastAndDiv<float>(i, count / 2 - 1);
+			v.y = height * 0.5f;
+		}
+		else
+		{
+			size_t other_i = i - count / 2;
+
+			size_t remainder_count = count - (count / 2);
+
+			v.x = -0.5f * width + width * MathTools::CastAndDiv<float>(other_i, remainder_count - 1);
+			v.y = -height * 0.5f;
+		}
+
+
+#if 0
 		float alpha = (float)i * 2.0f * (float)M_PI / (float)count;
 
 		float scale_y = (std::sin(alpha) >= 0.0f) ? 1.0f : -1.0f;
 
 		v.x = 0.5f * width  * std::cos(alpha);
 		v.y = 0.5f * height * scale_y;
+#endif
 	}
 	return true;
 }
@@ -439,6 +458,14 @@ int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* un
 	glm::mat4 local_to_world = glm::translate(glm::vec3(GetBoundingBox(true).position, 0.0f));
 	main_provider.AddVariable("local_to_world", local_to_world);
 
+#if _DEBUG
+		
+	if (chaos::Application::HasApplicationCommandLineFlag("-Wireframe")) // CMDLINE
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+#endif
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDisable(GL_DEPTH_TEST);
@@ -491,7 +518,7 @@ int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* un
 		debug_mesh->Display(renderer, &main_provider, render_params);
 		//DI.GetDynamicMesh().Display(renderer, &main_provider, render_params); // shu49 problematique de detruire l interface a la fin de la fonction
 
-		glPolygonMode(GL_FRONT_AND_BACK,  GL_FILL);
+		
 	}
 #endif
 
@@ -499,6 +526,8 @@ int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* un
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
+
+	glPolygonMode(GL_FRONT_AND_BACK,  GL_FILL);
 
 	return result;
 }
@@ -670,6 +699,7 @@ void Landscape::BuildMesh(std::vector<glm::vec2> const & src)
 		{
 			tri[i].position = t[i];
 			tri[i].color = color;
+			tri[i].color.a = 0.2f;
 		}
 	}
 	mesh = DI.ExtractMesh();

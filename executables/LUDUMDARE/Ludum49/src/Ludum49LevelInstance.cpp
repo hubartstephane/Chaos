@@ -87,6 +87,19 @@ bool LandscapeMorphMorph::Initialize(TMLayerInstance* in_layer_instance, TiledMa
 
 
 // =======================================================
+
+box2 BoxFromPoints(std::vector<glm::vec2> const& v)
+{
+	glm::vec2 min_position = v[0];
+	glm::vec2 max_position = v[0];
+	for (glm::vec2 const& p : v)
+	{
+		min_position = glm::min(min_position, p);
+		max_position = glm::max(max_position, p);
+	}		
+	return std::make_pair(min_position, max_position);
+}
+
 Landscape::Landscape()
 {
 
@@ -105,39 +118,10 @@ bool Landscape::DoTick(float delta_time)
 			changed |= morph->Tick(this, delta_time, mutable_points);
 		if (changed)
 		{
-			glm::vec2 min_position = mutable_points[0];
-			glm::vec2 max_position = mutable_points[0];
-			for (glm::vec2 const& p : mutable_points)
-			{
-				min_position = glm::min(min_position, p);
-				max_position = glm::max(max_position, p);
-			}		
-
-			glm::vec2 old_position = bounding_box.position;
-			bounding_box = { min_position, max_position };
-			for (glm::vec2& p : mutable_points)
-				p -= (bounding_box.position - old_position);
-
-
-
+			point_bounding_box = BoxFromPoints(mutable_points);
 			BuildMesh(mutable_points);
-
-
 		}
 	}
-
-#if 0
-
-	for (glm::vec2& p : points)
-		p -= (bounding_box.position - ori_bounding_box.position);
-	for (glm::vec2& p : smoothed_points)
-		p -= (bounding_box.position - ori_bounding_box.position);
-
-
-#endif
-
-
-
 	return true;
 }
 
@@ -163,15 +147,14 @@ int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* un
 	static bool DEBUG_DISPLAY = true;
 	if (DEBUG_DISPLAY)
 	{
-		box2 box = GetBoundingBox(false);
-		glm::vec2 box_v[4];
-		GetBoxVertices(box, box_v, false); // shu49 false -> want the box in local (shader applies the transforms) ... but in that case, layer transform (that here is null) is ignored
-
 		// shu49. ca pourrait etre partique d avoir une fonction d affichage de bounding box
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		GPUDrawInterface<VertexDefault> DI(DefaultParticleProgram::GetMaterial(), 4);
 		QuadPrimitive<VertexDefault> quad = DI.AddQuads(1);
+
+		glm::vec2 box_v[4];
+		GetBoxVertices(point_bounding_box, box_v, true); // shu49 false -> want the box in local (shader applies the transforms) ... but in that case, layer transform (that here is null) is ignored
 		quad[0].position = box_v[0];
 		quad[1].position = box_v[1];
 		quad[2].position = box_v[3];
@@ -395,6 +378,18 @@ void Landscape::BuildMesh(std::vector<glm::vec2> const & src)
 	mesh = DI.ExtractMesh();
 }
 
+box2 Landscape::GetBoundingBox(bool world_system) const
+{
+	box2 result = point_bounding_box;
+
+
+	result.position += bounding_box.position;
+
+	if (world_system)
+		result.position += layer_instance->GetLayerOffset();
+	return result;
+
+}
 
 bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
 {
@@ -426,6 +421,7 @@ bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::Geometr
 	if (TiledMap::GeometricObjectPolygon const* pn = auto_cast(in_geometric_object))
 	{
 		points = pn->points;
+		point_bounding_box = BoxFromPoints(points);
 		BuildMesh(points);
 	}
 

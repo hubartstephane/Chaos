@@ -30,7 +30,11 @@ namespace chaos
 		int GetObjectID() const { return id; }
 
 		/** get the object bounding box */
-		box2 GetBoundingBox(bool world_system) const;
+
+		// shu49 ce n'est pas une bonne idée mais bon
+
+
+		virtual box2 GetBoundingBox(bool world_system) const;
 
 		/** override */
 		virtual bool SerializeFromJSON(nlohmann::json const& json) override;

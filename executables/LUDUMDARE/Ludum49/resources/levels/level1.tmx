@@ -36,9 +36,10 @@
    </properties>
    <object id="2240" name="b" type="Landscape" x="-418.182" y="290.909">
     <properties>
-     <property name="CIRCLE:RADIUS" type="float" value="401"/>
      <property name="COLOR" type="color" value="#ff5500ff"/>
-     <property name="MORPH_CLASSES">LPMorph_ScaleY
+     <property name="MORPH_CLASSES">LPMorph_Circle radius=100
+
+LPMorph_ScaleY   calue=3.0   value2=3.17f   value=3666.   value4=55
   LPMorph_Mod
     LPMorph_Time
  LPMorph
@@ -55,9 +56,6 @@
 
 </property>
      <property name="SMOOTH_COUNT" type="int" value="5"/>
-     <property name="STRENGTH:offset" type="float" value="0.9"/>
-     <property name="STRENGTH:radius" type="float" value="0.1"/>
-     <property name="STRENGTH:speed" type="float" value="1"/>
     </properties>
     <polygon points="80,72 164,228 -80,272 -24,344 100,376 272,364 368,256 264,160 343.879,-72.9697 283.879,-66.9697 236,36 172,-4"/>
    </object>

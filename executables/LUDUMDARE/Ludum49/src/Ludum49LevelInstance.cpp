@@ -344,6 +344,24 @@ bool LPMorph_LinearStep::Initialize(MORPH_DATA_MAP const & data_map, TMObjectRef
 	return true;
 }
 
+// =================================================================================
+
+float LPMorph_LinearStepTwice::GetStrength(Landscape * landscape)
+{
+	float value = arg1->GetStrength(landscape);
+
+	return linearstep(value, A, B) * (1.0f - linearstep(value, C, D));
+}
+
+bool LPMorph_LinearStepTwice::Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver)
+{
+	LPMorph_Unary::Initialize(data_map, reference_solver);
+	ReadDataMap(A, data_map, "A");
+	ReadDataMap(B, data_map, "B");
+	ReadDataMap(C, data_map, "C");
+	ReadDataMap(D, data_map, "D");
+	return true;
+}
 
 
 // =================================================================================
@@ -590,6 +608,7 @@ void Landscape::BuildMesh(std::vector<glm::vec2> const & src)
 		accum += angle;
 	}
 
+	polygon_orientation = (accum > 0.0f)? 1.0f : -1.0f;
 
 	std::vector<triangle2> triangles;
 	while (v.size() > 2)

@@ -85,7 +85,7 @@ bool LandscapeMorphScale::DoTick(Landscape* landscape,float delta_time, std::vec
 		float scale_y = (std::sin(alpha) >= 0.0f) ? 1.0f : -1.0f;
 
 		v.x = radius * std::cos(alpha);
-		v.y = 0.5f * radius * scale_y;
+		v.y = 0.3f * radius * scale_y;
 	}
 
 

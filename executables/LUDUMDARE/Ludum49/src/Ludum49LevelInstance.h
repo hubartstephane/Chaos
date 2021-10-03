@@ -9,35 +9,136 @@
 // =================================================
 
 class Landscape;
+class LPMorph;
 
-class LandscapeMorph : public Object
+using MORPH_TREE_IT = std::vector<shared_ptr<LPMorph>>::iterator;
+
+class LPMorph : public Object
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LandscapeMorph, Object);
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph, Object);
 
 public:
 
-	bool Tick(Landscape* landscape,float delta_time, std::vector<glm::vec2> & mutable_points);
+	bool Tick(Landscape* landscape,float delta_time);
 
 	float GetInternalTime() const;
 
+	virtual bool ComposeTree(MORPH_TREE_IT& it, MORPH_TREE_IT end);
+
 	virtual bool Initialize(int index, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver);
+
+	virtual bool GetPoints(Landscape* landscape, std::vector<glm::vec2>& mutable_points);
+
+	virtual float GetStrength(Landscape* landscape);
 
 protected:
 
-	virtual bool DoTick(Landscape* landscape, float delta_time, std::vector<glm::vec2> & mutable_points);
+	virtual bool DoTick(Landscape* landscape, float delta_time);
 
 protected:
 
 	float internal_time = 0.0f;
+};
 
+// =================================================
+
+class LPMorph_Unary : public LPMorph
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Unary, LPMorph);
+
+public:
+
+	virtual bool ComposeTree(MORPH_TREE_IT& it, MORPH_TREE_IT end);
+
+	virtual bool DoTick(Landscape* landscape, float delta_time) override;
+
+	shared_ptr<LPMorph> arg1;
+};
+
+// =================================================
+
+class LPMorph_Binary : public LPMorph_Unary
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Binary, LPMorph_Unary);
+
+public:
+
+	virtual bool ComposeTree(MORPH_TREE_IT& it, MORPH_TREE_IT end);
+
+	virtual bool DoTick(Landscape* landscape, float delta_time) override;
+
+	shared_ptr<LPMorph> arg2;
+};
+
+// =================================================
+
+class LPMorph_Ternary : public LPMorph_Binary
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Ternary, LPMorph_Binary);
+
+public:
+
+	virtual bool ComposeTree(MORPH_TREE_IT& it, MORPH_TREE_IT end);
+
+	virtual bool DoTick(Landscape* landscape, float delta_time) override;
+
+	shared_ptr<LPMorph> arg3;
+};
+
+// =================================================
+
+class LPMorph_Circle : public LPMorph
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Circle, LPMorph);
+
+protected:
+
+	virtual bool GetPoints(Landscape* landscape, std::vector<glm::vec2> & mutable_points) override;
+
+	virtual bool Initialize(int index, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+
+	float radius = 100;
+};
+
+// =================================================
+
+class LPMorph_Rectangle : public LPMorph
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Rectangle, LPMorph);
+
+protected:
+
+	virtual bool GetPoints(Landscape* landscape, std::vector<glm::vec2> & mutable_points) override;
+
+	virtual bool Initialize(int index, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+
+	float width = 100;
+	float height = 100;
+};
+
+// =================================================
+
+class LPMorph_Mix : public LPMorph_Ternary
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Mix, LPMorph_Ternary);
+
+protected:
+
+	virtual bool GetPoints(Landscape* landscape, std::vector<glm::vec2> & mutable_points) override;
 
 };
 
+
+#if 0
+
+
+
+
 // ----------------
 
-class LandscapeMorphCircle : public LandscapeMorph
+class LPMorphCircle : public LPMorph
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LandscapeMorphCircle, LandscapeMorph);
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorphCircle, LPMorph);
 
 protected:
 
@@ -50,9 +151,9 @@ protected:
 
 // ----------------
 
-class LandscapeMorphScale : public LandscapeMorph
+class LPMorphScale : public LPMorph
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LandscapeMorphScale, LandscapeMorph);
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorphScale, LPMorph);
 
 protected:
 
@@ -66,9 +167,9 @@ protected:
 
 // ----------------
 
-class LandscapeMorphMorph : public LandscapeMorph
+class LPMorphMorph : public LPMorph
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LandscapeMorphMorph, LandscapeMorph);
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorphMorph, LPMorph);
 
 protected:
 
@@ -79,7 +180,7 @@ protected:
 	float speed = 1.0f;
 
 };
-
+#endif
 
 // =================================================
 // Landscape
@@ -114,7 +215,9 @@ public:
 
 	box2 point_bounding_box;
 
-	std::vector<shared_ptr<LandscapeMorph>> morphs;
+	shared_ptr<LPMorph> morph;
+
+	//std::vector<shared_ptr<LPMorph>> morphs;
 
 	shared_ptr<GPUDynamicMesh> mesh;
 	shared_ptr<GPUDynamicMesh> debug_mesh;

@@ -38,8 +38,17 @@
     <properties>
      <property name="1:RADIUS" type="float" value="201"/>
      <property name="COLOR" type="color" value="#ff5500ff"/>
-     <property name="MORPH_CLASSES" value="LandscapeMorphScale"/>
-     <property name="SMOOTH_COUNT" type="int" value="0"/>
+     <property name="MORPH_CLASSES">
+
+LPMorph_Mix
+  LPMorph
+  LPMorph_Rectangle
+
+LPMorph_Circle
+
+
+</property>
+     <property name="SMOOTH_COUNT" type="int" value="2"/>
     </properties>
     <polygon points="80,72 164,228 -80,272 -24,344 100,376 272,364 368,256 264,160 343.879,-72.9697 283.879,-66.9697 236,36 172,-4"/>
    </object>

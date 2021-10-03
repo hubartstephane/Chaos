@@ -465,6 +465,23 @@ namespace chaos
 		return !(b1 == b2);
 	}
 
+
+
+
+
+
+	// shu49. Ca vaut le coup de savoir dans quel ordre on genere ces vertex
+
+	//  0    1                    0    1  
+	//                    ou
+	//  2    3                    3    2
+	//  
+	// histoire de faire du rendu plus facilement
+
+
+
+
+
 	template<typename T>
 	auto GetBoxVertices(type_obox<T, 2> const& b, typename type_box_base<T, 2>::vec_type* result, bool global = true) // expect an array of 4 elements
 	{

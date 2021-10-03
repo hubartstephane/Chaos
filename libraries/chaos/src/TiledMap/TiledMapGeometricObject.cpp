@@ -151,6 +151,10 @@ namespace chaos
 			// extract the bounding box, correct the points
 			if (result.size() > 0)
 			{
+
+				// shu49. Ca vaut le coup d externaliser ce bout de code non ?
+
+
 				glm::vec2 min_position = result[0];
 				glm::vec2 max_position = result[0];
 				for (glm::vec2 const& p : result)
@@ -158,6 +162,10 @@ namespace chaos
 					min_position = glm::min(min_position, p);
 					max_position = glm::max(max_position, p);
 				}			
+
+
+
+
 				glm::vec2 center = (max_position + min_position) / 2.0f;
 				for (glm::vec2 & p : result)
 					p -= center;

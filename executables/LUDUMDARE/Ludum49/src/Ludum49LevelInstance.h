@@ -25,7 +25,7 @@ public:
 
 	virtual bool ComposeTree(MORPH_TREE_IT& it, MORPH_TREE_IT end);
 
-	virtual bool Initialize(int index, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver);
+	virtual bool Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver);
 
 	virtual bool GetPoints(Landscape* landscape, std::vector<glm::vec2>& mutable_points);
 
@@ -95,7 +95,7 @@ protected:
 
 	virtual bool GetPoints(Landscape* landscape, std::vector<glm::vec2> & mutable_points) override;
 
-	virtual bool Initialize(int index, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+	virtual bool Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
 
 	float radius = 100;
 };
@@ -110,7 +110,7 @@ protected:
 
 	virtual bool GetPoints(Landscape* landscape, std::vector<glm::vec2> & mutable_points) override;
 
-	virtual bool Initialize(int index, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+	virtual bool Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
 
 	float width = 100;
 	float height = 100;
@@ -138,7 +138,7 @@ protected:
 
 	virtual float GetStrength(Landscape * landscape) override;
 
-	virtual bool Initialize(int index, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+	virtual bool Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
 
 	float speed = 1.0f;
 	float radius = 1.0f;
@@ -150,58 +150,6 @@ protected:
 
 
 
-#if 0
-
-
-
-
-// ----------------
-
-class LPMorphCircle : public LPMorph
-{
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorphCircle, LPMorph);
-
-protected:
-
-	virtual bool DoTick(Landscape* landscape, float delta_time, std::vector<glm::vec2> & mutable_points) override;
-
-	virtual bool Initialize(int index, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
-
-	float radius = 100;
-};
-
-// ----------------
-
-class LPMorphScale : public LPMorph
-{
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorphScale, LPMorph);
-
-protected:
-
-	virtual bool DoTick(Landscape* landscape, float delta_time, std::vector<glm::vec2> & mutable_points) override;
-
-
-	virtual bool Initialize(int index, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
-
-	float radius = 100;
-};
-
-// ----------------
-
-class LPMorphMorph : public LPMorph
-{
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorphMorph, LPMorph);
-
-protected:
-
-	virtual bool DoTick(Landscape* landscape, float delta_time, std::vector<glm::vec2> & mutable_points) override;
-
-	virtual bool Initialize(int index, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
-
-	float speed = 1.0f;
-
-};
-#endif
 
 // =================================================
 // Landscape

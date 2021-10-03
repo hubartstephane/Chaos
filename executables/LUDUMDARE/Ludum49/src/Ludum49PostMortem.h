@@ -149,7 +149,9 @@ ca pourrait etre utile dans des zone de texte genre TiledMap editor
 
 LPMorph_Circle radius=3  
 
+- revoir StringTools::Split()
 
+etudier tokenizer
 
 
 #endif

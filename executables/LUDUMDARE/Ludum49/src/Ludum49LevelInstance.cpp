@@ -8,7 +8,7 @@
 #include "Ludum49PlayerDisplacementComponent.h"
 #include "Ludum49Particles.h"
 
-#define MORPH_PARAM(name) StringTools::Printf("%d:%s", index, name).c_str()
+#define MORPH_PARAM(prop_name) StringTools::Printf("%s:%s", name, prop_name).c_str()
 
 bool LPMorph::Tick(Landscape* landscape, float delta_time)
 {
@@ -37,7 +37,7 @@ bool LPMorph::DoTick(Landscape* landscape,float delta_time)
 	return false;
 }
 
-bool LPMorph::Initialize(int index, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
+bool LPMorph::Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
 {
 	return true;
 }
@@ -131,9 +131,9 @@ bool LPMorph_Circle::GetPoints(Landscape* landscape, std::vector<glm::vec2> & mu
 	return true;
 }
 
-bool LPMorph_Circle::Initialize(int index, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
+bool LPMorph_Circle::Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
 {
-	LPMorph::Initialize(index, in_geometric_object, reference_solver);
+	LPMorph::Initialize(name, in_geometric_object, reference_solver);
 	radius = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("RADIUS"), radius);
 	return true;
 }
@@ -159,9 +159,9 @@ bool LPMorph_Rectangle::GetPoints(Landscape* landscape, std::vector<glm::vec2> &
 	return true;
 }
 
-bool LPMorph_Rectangle::Initialize(int index, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
+bool LPMorph_Rectangle::Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
 {
-	LPMorph::Initialize(index, in_geometric_object, reference_solver);
+	LPMorph::Initialize(name, in_geometric_object, reference_solver);
 	width  = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("WIDTH"), width);
 	height = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("HEIGHT"), height);
 	return true;
@@ -194,9 +194,9 @@ float LPMorph_CosStrength::GetStrength(Landscape * landscape)
 	return offset + radius * std::cos(speed * internal_time + time_offset);
 }
 
-bool LPMorph_CosStrength::Initialize(int index, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
+bool LPMorph_CosStrength::Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
 {
-	LPMorph::Initialize(index, in_geometric_object, reference_solver);
+	LPMorph::Initialize(name, in_geometric_object, reference_solver);
 	offset  = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("OFFSET"), offset);
 	radius = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("RADIUS"), radius);
 	time_offset = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("TIME_OFFSET"), time_offset);
@@ -207,109 +207,11 @@ bool LPMorph_CosStrength::Initialize(int index, TiledMap::GeometricObject const*
 
 
 
-#if 0
-
-// =================================================================================
-
-bool LPMorphCircle::DoTick(Landscape* landscape,float delta_time, std::vector<glm::vec2> & mutable_points)
-{
-	size_t count = mutable_points.size();
-
-	for (size_t i = 0; i < count; ++i)
-	{
-		glm::vec2& v = mutable_points[i];
-
-		float alpha = (float)i * 2.0f * (float)M_PI / (float)count;
-
-		v.x = radius * std::cos(alpha);
-		v.y = radius * std::sin(alpha);
-	}
-	return true;
-}
-
-bool LPMorphCircle::Initialize(int index, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
-{
-	LPMorph::Initialize(index, in_geometric_object, reference_solver);
-	radius = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("RADIUS"), radius);
-	return true;
-}
-
-// =================================================================================
-
-
-bool LPMorphScale::DoTick(Landscape* landscape,float delta_time, std::vector<glm::vec2> & mutable_points)
-{
-	size_t count = mutable_points.size();
-#if 0
-	for (size_t i = 0; i < count; ++i)
-	{
-		glm::vec2& v = mutable_points[i];
-
-		float alpha = (float)i * 2.0f * (float)M_PI / (float)count;
-
-		float factor = std::cos(GetInternalTime() * 0.5f);
-
-		v.y = v.y * 1.2f * (1.2f - std::cos(factor));
-	}
-#endif
-
-
-	for (size_t i = 0; i < count; ++i)
-	{
-		glm::vec2& v = mutable_points[i];
-
-		float alpha = (float)i * 2.0f * (float)M_PI / (float)count;
-
-		float scale_y = (std::sin(alpha) >= 0.0f) ? 1.0f : -1.0f;
-
-		v.x = radius * std::cos(alpha);
-		v.y = 0.3f * radius * scale_y;
-	}
 
 
 
 
 
-
-
-
-
-	return true;
-}
-
-bool LPMorphScale::Initialize(int index, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
-{
-	LPMorph::Initialize(index, in_geometric_object, reference_solver);
-	radius = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("RADIUS"), radius);
-	return true;
-}
-
-
-// =================================================================================
-
-
-bool LPMorphMorph::DoTick(Landscape* landscape,float delta_time, std::vector<glm::vec2> & mutable_points)
-{
-	size_t count = mutable_points.size();
-
-	for (size_t i = 0; i < count; ++i)
-	{
-		glm::vec2& v = mutable_points[i];
-
-		float factor = std::cos(GetInternalTime() * speed);
-		v = (1.0f - factor) * v + landscape->points[i] * factor;
-	}
-	return true;
-}
-
-bool LPMorphMorph::Initialize(int index, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
-{
-	LPMorph::Initialize(index, in_geometric_object, reference_solver);
-	speed = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("SPEED"), speed);
-	return true;
-}
-
-#endif
 
 
 // =======================================================
@@ -613,6 +515,48 @@ box2 Landscape::GetBoundingBox(bool world_system) const
 
 }
 
+
+
+	template<typename T>
+	std::vector<std::pair<SubClassOf<T>, std::string>> LD49GetSubClassesAndNameFromString(char const* src, char separator = '\n')
+	{
+		std::vector<std::pair<SubClassOf<T>, std::string>>  result;
+
+		std::vector<std::string> class_names = StringTools::Split(src, separator);
+		class_names.erase(std::remove_if(class_names.begin(), class_names.end(), [](std::string const& s) { return s.size() == 0; }), class_names.end());
+
+		for (auto& class_name : class_names)
+		{
+			std::vector<std::string> tokens = StringTools::Split(class_name.c_str(), ' ');
+			tokens.erase(std::remove_if(tokens.begin(), tokens.end(), [](std::string const& s) { return s.size() == 0; }), tokens.end());
+			
+			if (tokens.size() == 0)
+				continue;
+
+			std::string name;
+			if (tokens.size() >= 2)
+				name = tokens[1];
+
+			SubClassOf<T> cls = Class::FindClass(tokens[0].c_str());
+			if (cls.IsValid())
+				result.push_back({ cls, name });
+		}
+		return result;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
 {
 	if (!TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
@@ -629,12 +573,24 @@ bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::Geometr
 
 		std::vector<shared_ptr<LPMorph>> morphs;
 
+#if 0
 		std::vector<SubClassOf<LPMorph>> morph_classes = GetSubClassesFromString<LPMorph>(names->c_str(), '\n');
 		for (auto cls : morph_classes)
 		{
 			if (LPMorph* m = cls.CreateInstance())
 			{
 				m->Initialize(int(morphs.size()) + 1, in_geometric_object, reference_solver);
+				morphs.push_back(m);
+			}
+		}
+#endif
+
+		std::vector<std::pair<SubClassOf<LPMorph>, std::string>> morph_classes = LD49GetSubClassesAndNameFromString<LPMorph>(names->c_str(), '\n');
+		for (auto cls : morph_classes)
+		{
+			if (LPMorph* m = cls.first.CreateInstance())
+			{
+				m->Initialize(cls.second.c_str(), in_geometric_object, reference_solver);
 				morphs.push_back(m);
 			}
 		}

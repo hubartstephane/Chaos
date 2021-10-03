@@ -137,7 +137,10 @@ on pourrait utiliser un json pour des classes differentes .. juste les valeurs q
 - SubClass(...) ajouter un conxstructeur avec un char const * pour aller chercher directement la classe
 
 
-
+-TMObject a deux methods GetBoundingBox
+ (une deuxieme qui vient de GameEntity !)
 
 
 #endif
+
+

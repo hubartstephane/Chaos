@@ -85,6 +85,8 @@ public:
 
 	virtual bool DoTick(float delta_time) override;
 
+	virtual box2 GetBoundingBox(bool world_system) const override;
+
 	void BuildMesh(std::vector<glm::vec2> const & src);
 
 	int smooth_count = 0;
@@ -93,6 +95,8 @@ public:
 	float internal_t = 0.0f;
 
 	box2 ori_bounding_box;
+
+	box2 point_bounding_box;
 
 	std::vector<shared_ptr<LandscapeMorph>> morphs;
 

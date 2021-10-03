@@ -46,6 +46,19 @@ protected:
 	virtual bool Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
 
 	float morph_radius = 100;
+};
+
+// ----------------
+
+class LandscapeMorphMorph : public LandscapeMorph
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LandscapeMorphMorph, LandscapeMorph);
+
+protected:
+
+	virtual bool DoTick(Landscape* landscape, float delta_time, std::vector<glm::vec2> & mutable_points) override;
+
+	virtual bool Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
 
 	float morph_speed = 1.0f;
 

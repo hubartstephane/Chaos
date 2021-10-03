@@ -19,7 +19,7 @@
    <property name="HEIGHT_BITS_MODE" type="bool" value="false"/>
   </properties>
   <objectgroup id="26" name="PlayerAndCamera">
-   <object id="2186" name="PlayerStart" gid="2" x="71.909" y="-164.122" width="64" height="64" rotation="180">
+   <object id="2186" name="PlayerStart" gid="2" x="27.909" y="-224.122" width="64" height="64" rotation="180">
     <properties>
      <property name="BITMAP_NAME" value="Player"/>
     </properties>
@@ -42,8 +42,9 @@
    </object>
    <object id="2238" type="Landscape" x="-800" y="172">
     <properties>
-     <property name="MORPH_CLASSES" value="LandscapeMorphCircle"/>
+     <property name="MORPH_CLASSES" value="LandscapeMorphCircle,LandscapeMorphMorph"/>
      <property name="MORPH_RADIUS" type="float" value="300"/>
+     <property name="MORPH_SPEED" type="float" value="0.05"/>
     </properties>
     <polygon points="80,72 164,228 -80,272 -24,344 100,376 272,364 368,256 264,160 356,24 236,36 172,-4"/>
    </object>

@@ -8,6 +8,45 @@
 // Landscape
 // =================================================
 
+class Landscape;
+
+class LandscapeMorph : public Object
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LandscapeMorph, Object);
+
+public:
+
+	bool Tick(Landscape* landscape,float delta_time);
+
+	float GetInternalTime() const;
+
+protected:
+
+	virtual bool DoTick(Landscape* landscape, float delta_time);
+
+protected:
+
+	float internal_time = 0.0f;
+
+
+};
+
+// ----------------
+
+class LandscapeMorphCircle : public LandscapeMorph
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LandscapeMorphCircle, LandscapeMorph);
+
+protected:
+
+	virtual bool DoTick(Landscape* landscape, float delta_time) override;
+};
+
+
+// =================================================
+// Landscape
+// =================================================
+
 class Landscape : public TMObject
 {
 	CHAOS_DECLARE_GAMEPLAY_FRIENDSHIPS(Ludum);
@@ -32,6 +71,8 @@ public:
 	float internal_t = 0.0f;
 
 	box2 ori_bounding_box;
+
+	std::vector<shared_ptr<LandscapeMorph>> morphs;
 
 	shared_ptr<GPUDynamicMesh> mesh;
 	shared_ptr<GPUDynamicMesh> debug_mesh;

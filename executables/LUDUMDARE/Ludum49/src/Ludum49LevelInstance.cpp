@@ -10,6 +10,20 @@
 
 #define MORPH_PARAM(prop_name) StringTools::Printf("%s:%s", name, prop_name).c_str()
 
+//         +---- 1
+//        /|
+//       / |
+// 0 ---+  |
+//      |  |
+//      a  b
+
+float linearstep(float t, float a, float b)
+{
+	assert(b != a);
+	return std::clamp((t - a) / (b - a), 0.0f, 1.0f);
+}
+
+
 bool LPMorph::Tick(Landscape* landscape, float delta_time)
 {
 	internal_time += delta_time;
@@ -117,6 +131,8 @@ bool LPMorph_Ternary::DoTick(Landscape* landscape, float delta_time)
 
 bool LPMorph_Circle::GetPoints(Landscape* landscape, std::vector<glm::vec2> & mutable_points)
 {
+
+
 	size_t count = mutable_points.size();
 
 	for (size_t i = 0; i < count; ++i)
@@ -128,6 +144,7 @@ bool LPMorph_Circle::GetPoints(Landscape* landscape, std::vector<glm::vec2> & mu
 		v.x = radius * std::cos(alpha);
 		v.y = radius * std::sin(alpha);
 	}
+
 	return true;
 }
 
@@ -189,14 +206,79 @@ bool LPMorph_Mix::GetPoints(Landscape* landscape, std::vector<glm::vec2> & mutab
 
 // =================================================================================
 
-float LPMorph_CosStrength::GetStrength(Landscape * landscape)
+bool LPMorph_BaseMesh::GetPoints(Landscape* landscape, std::vector<glm::vec2>& mutable_points)
 {
-	return offset + radius * std::cos(speed * internal_time + time_offset);
+	mutable_points = landscape->points;
+	return true;
 }
 
-bool LPMorph_CosStrength::Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
+// =================================================================================
+
+bool LPMorph_ScaleY::GetPoints(Landscape* landscape, std::vector<glm::vec2>& mutable_points)
 {
-	LPMorph::Initialize(name, in_geometric_object, reference_solver);
+	float strength = arg1->GetStrength(landscape);
+
+	arg2->GetPoints(landscape, mutable_points);
+	for (auto& p : mutable_points)
+		p = p * strength;
+	return true;
+}
+
+// =================================================================================
+
+float LPMorph_Time::GetStrength(Landscape * landscape)
+{
+	return internal_time;
+}
+
+// =================================================================================
+
+float LPMorph_Mod::GetStrength(Landscape * landscape)
+{
+	float value = arg1->GetStrength(landscape);
+
+	return A + MathTools::Modulo(value, B - A);
+}
+
+bool LPMorph_Mod::Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
+{
+	LPMorph_Unary::Initialize(name, in_geometric_object, reference_solver);
+	A = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("A"), A);
+	B = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("B"), B);
+	return true;
+}
+
+
+// =================================================================================
+
+float LPMorph_LinearStep::GetStrength(Landscape * landscape)
+{
+	float value = arg1->GetStrength(landscape);
+
+	return linearstep(value, A, B);
+}
+
+bool LPMorph_LinearStep::Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
+{
+	LPMorph_Unary::Initialize(name, in_geometric_object, reference_solver);
+	A = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("A"), A);
+	B = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("B"), B);
+	return true;
+}
+
+
+
+// =================================================================================
+
+float LPMorph_Cos::GetStrength(Landscape * landscape)
+{
+	float value = arg1->GetStrength(landscape);
+	return offset + radius * std::cos(speed * value + time_offset);
+}
+
+bool LPMorph_Cos::Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
+{
+	LPMorph_Unary::Initialize(name, in_geometric_object, reference_solver);
 	offset  = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("OFFSET"), offset);
 	radius = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("RADIUS"), radius);
 	time_offset = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("TIME_OFFSET"), time_offset);
@@ -228,18 +310,6 @@ box2 BoxFromPoints(std::vector<glm::vec2> const& v)
 	return std::make_pair(min_position, max_position);
 }
 
-//         +---- 1
-//        /|
-//       / |
-// 0 ---+  |
-//      |  |
-//      a  b
-
-float linearstep(float t, float a, float b)
-{
-	assert(b != a);
-	return std::clamp((t - a) / (b - a), 0.0f, 1.0f);
-}
 
 Landscape::Landscape()
 {

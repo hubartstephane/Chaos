@@ -128,11 +128,79 @@ protected:
 
 };
 
+
 // =================================================
 
-class LPMorph_CosStrength : public LPMorph
+class LPMorph_ScaleY : public LPMorph_Binary
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_CosStrength, LPMorph);
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_ScaleY, LPMorph_Binary);
+
+protected:
+
+	virtual bool GetPoints(Landscape* landscape, std::vector<glm::vec2> & mutable_points) override;
+
+};
+
+// =================================================
+
+class LPMorph_BaseMesh : public LPMorph
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_BaseMesh, LPMorph);
+
+protected:
+
+	virtual bool GetPoints(Landscape* landscape, std::vector<glm::vec2> & mutable_points) override;
+
+};
+
+// =================================================
+
+class LPMorph_Time : public LPMorph
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Time, LPMorph);
+
+public:
+
+	virtual float GetStrength(Landscape * landscape) override;
+};
+
+// =================================================
+
+class LPMorph_Mod : public LPMorph_Unary
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Mod, LPMorph_Unary);
+
+public:
+
+	virtual bool Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+
+	virtual float GetStrength(Landscape * landscape) override;
+
+	float A = 0.0f;
+	float B = 1.0f;
+};
+
+// =================================================
+
+class LPMorph_LinearStep : public LPMorph_Unary
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_LinearStep, LPMorph_Unary);
+
+public:
+
+	virtual bool Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+
+	virtual float GetStrength(Landscape * landscape) override;
+
+	float A = 0.0f;
+	float B = 1.0f;
+};
+
+// =================================================
+
+class LPMorph_Cos : public LPMorph_Unary
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Cos, LPMorph_Unary);
 
 protected:
 

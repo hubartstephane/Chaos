@@ -98,7 +98,7 @@ la safe zone devrait etre configurabl
   Il n y a pas de raison pour que la BBox soit centree sur la position
 
 
---verifier quels shaders utilsent local_to_world
+--verifier quels shaders utilsent local_to_world -> attention aux valeurs generee  (local_to_camera, camera_to_world ...)
 
 -se poser la question sur les singletons du system
  pb OpenGL marche avec un etat global, mais si on veut passer sous Vulkan, on ne pourra pas utiliser comme ca des singletons sans reference au Device
@@ -116,5 +116,28 @@ la safe zone devrait etre configurabl
 
 
    }
+
+- std::string morph_type = in_geometric_object->GetPropertyValueString("MORPH_TYPE", nullptr); ca crash !! remplacer nullpre par ""
+
+- GetPropertyValueString ca ressemble a JSON mais ce n'est pas du JSOON. Si on pouvait enrichir tout ca avec des getter pour
+
+  subclas, vector, objet particulier ... ca serait super
+
+
+
+- idee: est ce que le le system de class.json pourrait se passer de la class parent
+
+TSubClassOf<TTT> t = machin.json()
+
+on applique le json directement a l objet creer par TsubClassT()
+
+on pourrait utiliser un json pour des classes differentes .. juste les valeurs qui nous interresse
+
+
+- SubClass(...) ajouter un conxstructeur avec un char const * pour aller chercher directement la classe
+
+
+
+
 
 #endif

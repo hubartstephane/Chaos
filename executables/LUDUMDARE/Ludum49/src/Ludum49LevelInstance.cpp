@@ -9,18 +9,39 @@
 #include "Ludum49Particles.h"
 
 
-Landscape::Landscape()
+bool LandscapeMorph::Tick(Landscape* landscape, float delta_time)
 {
-
+	internal_time += delta_time;
+	return DoTick(landscape, delta_time);
 }
 
-bool Landscape::DoTick(float delta_time)
+float LandscapeMorph::GetInternalTime() const
+{ 
+	return internal_time; 
+}
+
+bool LandscapeMorph::DoTick(Landscape* landscape,float delta_time)
 {
-	TMObject::DoTick(delta_time);
+
+	return false;
+}
 
 
+// =================================================================================
 
 
+bool LandscapeMorphCircle::DoTick(Landscape* landscape,float delta_time)
+{
+	std::vector<glm::vec2>& v = landscape->points;
+	
+
+	return true;
+}
+
+
+// =================================================================================
+
+#if 0
 	if (0 && id == 2233)
 	{
 		internal_t += delta_time * 0.5f;
@@ -34,6 +55,28 @@ bool Landscape::DoTick(float delta_time)
 	}
 
 	//bounding_box.position
+#endif
+
+Landscape::Landscape()
+{
+
+}
+
+bool Landscape::DoTick(float delta_time)
+{
+	TMObject::DoTick(delta_time);
+
+	bool changed = false;
+	for (auto& morph : morphs)
+		changed |= morph->Tick(this, delta_time);
+	if (changed)
+	{
+		BuildMesh();
+
+
+	}
+
+
 
 
 	return true;
@@ -58,46 +101,50 @@ int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* un
 	if (mesh != nullptr)
 		result += mesh->Display(renderer, &main_provider, render_params);
 
+	static bool DEBUG_DISPLAY = false;
+	if (DEBUG_DISPLAY)
+	{
+		box2 box = GetBoundingBox(false);
+		glm::vec2 box_v[4];
+		GetBoxVertices(box, box_v, false); // shu49 false -> want the box in local (shader applies the transforms) ... but in that case, layer transform (that here is null) is ignored
 
-	box2 box = GetBoundingBox(false);
-	glm::vec2 box_v[4];
-	GetBoxVertices(box, box_v, false); // shu49 false -> want the box in local (shader applies the transforms) ... but in that case, layer transform (that here is null) is ignored
+		// shu49. ca pourrait etre partique d avoir une fonction d affichage de bounding box
 
-	// shu49. ca pourrait etre partique d avoir une fonction d affichage de bounding box
-
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	GPUDrawInterface<VertexDefault> DI(DefaultParticleProgram::GetMaterial(), 4);
-	QuadPrimitive<VertexDefault> quad = DI.AddQuads(1);
-	quad[0].position = box_v[0];
-	quad[1].position = box_v[1];
-	quad[2].position = box_v[3];
-	quad[3].position = box_v[2];
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		GPUDrawInterface<VertexDefault> DI(DefaultParticleProgram::GetMaterial(), 4);
+		QuadPrimitive<VertexDefault> quad = DI.AddQuads(1);
+		quad[0].position = box_v[0];
+		quad[1].position = box_v[1];
+		quad[2].position = box_v[3];
+		quad[3].position = box_v[2];
 		
-	PointPrimitive<VertexDefault> smooth_prim = DI.AddPoints(smoothed_points.size());
-	for (auto& p : smoothed_points)
-	{
-		smooth_prim[0].position = p;
-		smooth_prim[0].color = { 0.0f,1.0f,0.0f,1.0f };
-		++smooth_prim;
+		PointPrimitive<VertexDefault> smooth_prim = DI.AddPoints(smoothed_points.size());
+		for (auto& p : smoothed_points)
+		{
+			smooth_prim[0].position = p;
+			smooth_prim[0].color = { 0.0f,1.0f,0.0f,1.0f };
+			++smooth_prim;
+		}
+
+		PointPrimitive<VertexDefault> prim_p = DI.AddPoints(points.size());
+		for (auto& p : points)
+		{
+			prim_p[0].position = p;
+			prim_p[0].color = { 0.0f,0.0f,1.0f,1.0f };
+			++prim_p;
+		}
+
+		// shu49 attention. il ne faudrait pas faire un shared_ptr<> p = GetDynamicMesh();
+		//
+		// template<typename T> class ForbidSmartReference : ...
+		//
+		DI.Flush();
+
+		debug_mesh = DI.ExtractMesh();
+		debug_mesh->Display(renderer, &main_provider, render_params);
+		//DI.GetDynamicMesh().Display(renderer, &main_provider, render_params); // shu49 problematique de detruire l interface a la fin de la fonction
 	}
 
-	PointPrimitive<VertexDefault> prim_p = DI.AddPoints(points.size());
-	for (auto& p : points)
-	{
-		prim_p[0].position = p;
-		prim_p[0].color = { 0.0f,0.0f,1.0f,1.0f };
-		++prim_p;
-	}
-
-	// shu49 attention. il ne faudrait pas faire un shared_ptr<> p = GetDynamicMesh();
-	//
-	// template<typename T> class ForbidSmartReference : ...
-	//
-	DI.Flush();
-
-	debug_mesh = DI.ExtractMesh();
-	debug_mesh->Display(renderer, &main_provider, render_params);
-	//DI.GetDynamicMesh().Display(renderer, &main_provider, render_params); // shu49 problematique de detruire l interface a la fin de la fonction
 	glPolygonMode(GL_FRONT_AND_BACK,  GL_FILL);
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
@@ -300,7 +347,15 @@ bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::Geometr
 
 	smooth_factor = in_geometric_object->GetPropertyValueFloat("SMOOTH_FACTOR", smooth_factor);
 	smooth_factor = std::clamp(smooth_factor, 0.0f, 1.0f);
-	
+
+	if (std::string const* names = in_geometric_object->FindPropertyString("MORPH_CLASSES"))
+	{
+		std::vector<SubClassOf<LandscapeMorph>> morph_classes = GetSubClassesFromString<LandscapeMorph>(names->c_str(), ',');
+		for (auto cls : morph_classes)
+			if (LandscapeMorph * morph = cls.CreateInstance())
+				morphs.push_back(morph);
+	}
+
 	ori_bounding_box = bounding_box;
 
 	// capture the points

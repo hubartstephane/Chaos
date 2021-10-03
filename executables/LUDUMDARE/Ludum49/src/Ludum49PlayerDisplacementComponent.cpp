@@ -5,6 +5,10 @@
 #include "Ludum49Player.h"
 #include "Ludum49LevelInstance.h"
 
+#if _DEBUG
+CHAOS_HELP_TEXT(CMD, "-DebugDisplay");
+#endif
+
 //
 //       a                    b
 //       +---------x----------+
@@ -169,6 +173,8 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 		// GOOD
 		pawn_box.position += glm::normalize(pawn_box.position - col.proj) * (pawn_sphere.radius - std::sqrt(col.l2));
 
+
+
 		// TEST
 		glm::vec2 m = (col.a + col.b) * 0.5f;
 
@@ -179,11 +185,18 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 		if (glm::dot(pawn_box.position - m, glm::vec2(N)) < 0.0f)
 			N = -N;
 
-		LinePrimitive<VertexDefault> line = DI->AddLines(2);
-		line[0].position = col.a;
-		line[1].position = col.b;
-		line[2].position = m;
-		line[3].position = m + glm::vec2(N) * 100.0f;
+#if _DEBUG
+		if (chaos::Application::HasApplicationCommandLineFlag("-DebugDisplay")) // CMDLINE
+		{
+			LinePrimitive<VertexDefault> line = DI->AddLines(2);
+			line[0].position = col.a;
+			line[1].position = col.b;
+			line[2].position = m;
+			line[3].position = m + glm::vec2(N) * 100.0f;
+		}
+#endif
+
+
 
 		touching_ground_timer = ludum_player->touching_ground_lapse_time;
 	}

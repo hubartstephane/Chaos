@@ -37,13 +37,18 @@
    <object id="2240" name="b" type="Landscape" x="-627.273" y="193.939">
     <properties>
      <property name="COLOR" type="color" value="#ff5500ff"/>
-     <property name="MORPH_CLASSES">
-LPMorph_Scale ignore_x=1
+     <property name="MORPH_CLASSES">LPMorph_Scale ignore_x=1
 	LPMorph_Add
 		LPMorph_Const value=1
-		LPMorph_LinearStep A=1  B=1.2
-			LPMorph_Mod A=0 B=5
-				LPMorph_Time
+		LPMorph_Mul
+			LPMorph_Const value=2
+			LPMorph_Mul
+				LPMorph_LinearStep A=4  B=4.1
+					LPMorph_Mod A=0 B=5
+						LPMorph_Time
+				LPMorph_LinearStep A=4.4  B=4.3
+					LPMorph_Mod A=0 B=5
+						LPMorph_Time
 	LPMorph_Rectangle width=500 height=100
 
 </property>

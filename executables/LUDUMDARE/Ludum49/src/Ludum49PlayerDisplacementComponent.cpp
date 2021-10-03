@@ -51,6 +51,7 @@ struct CollisionEntry
 	glm::vec2 b;
 	glm::vec2 proj;
 	float l2;
+	Landscape* landscape = nullptr;
 };
 
 std::vector<CollisionEntry> ComputeCollisions(box2 const box, LudumLevelInstance* ludum_level)
@@ -83,7 +84,7 @@ std::vector<CollisionEntry> ComputeCollisions(box2 const box, LudumLevelInstance
 				float l2 = glm::length2(proj - pawn_sphere.position);
 				if (l2 <= pawn_sphere.radius * pawn_sphere.radius)
 				{
-					result.push_back({ a, b, proj, l2 });
+					result.push_back({ a, b, proj, l2 , landscape});
 				}
 			}
 		}
@@ -170,8 +171,10 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	{
 		CollisionEntry const col = collisions[0];
 		
+
+
 		// GOOD
-		pawn_box.position += glm::normalize(pawn_box.position - col.proj) * (pawn_sphere.radius - std::sqrt(col.l2));
+
 
 
 
@@ -179,11 +182,24 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 		glm::vec2 m = (col.a + col.b) * 0.5f;
 
 		glm::vec3 n = { col.b - col.a, 0.0f };
-		glm::vec3 Z = { 0.0f, 0.0f, 1.0f };
+		glm::vec3 Z = glm::vec3(0.0f, 0.0f, -1.0f) *col.landscape->polygon_orientation;
 		glm::vec3 N = glm::normalize(glm::cross(n, Z));
 
+	//	if (glm::dot(pawn_box.position - m, glm::vec2(N)) < 0.0f)
+	//		N = -N;
+
+		float fff = glm::dot(pawn_box.position - m, glm::vec2(N));
 		if (glm::dot(pawn_box.position - m, glm::vec2(N)) < 0.0f)
-			N = -N;
+		{
+			N = N;
+		}
+		else
+		{
+			N = N;
+		}
+			
+
+		pawn_box.position += glm::normalize(pawn_box.position - col.proj) * (pawn_sphere.radius - std::sqrt(col.l2));
 
 #if _DEBUG
 		if (chaos::Application::HasApplicationCommandLineFlag("-DebugDisplay")) // CMDLINE

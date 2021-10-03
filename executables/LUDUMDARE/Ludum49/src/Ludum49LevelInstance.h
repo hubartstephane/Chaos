@@ -202,6 +202,22 @@ public:
 	float B = 1.0f;
 };
 
+class LPMorph_LinearStepTwice : public LPMorph_Unary
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_LinearStepTwice, LPMorph_Unary);
+
+public:
+
+	virtual bool Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver) override;
+
+	virtual float GetStrength(Landscape * landscape) override;
+
+	float A = 0.0f;
+	float B = 1.0f;
+	float C = 2.0f;
+	float D = 3.0f;
+};
+
 // =================================================
 
 class LPMorph_Const : public LPMorph
@@ -325,6 +341,8 @@ public:
 	std::vector<glm::vec2> smoothed_points;
 
 	glm::vec4 color = { 1.0f, 0.0f, 0.0f, 1.0f };
+
+	float polygon_orientation = 1.0f;
 };
 
 

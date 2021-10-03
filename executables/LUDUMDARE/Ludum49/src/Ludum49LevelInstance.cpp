@@ -421,7 +421,6 @@ int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* un
 	glm::mat4 local_to_world = glm::translate(glm::vec3(GetBoundingBox(true).position, 0.0f));
 	main_provider.AddVariable("local_to_world", local_to_world);
 
-	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDisable(GL_DEPTH_TEST);
@@ -431,8 +430,9 @@ int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* un
 	if (mesh != nullptr)
 		result += mesh->Display(renderer, &main_provider, render_params);
 
-	static bool DEBUG_DISPLAY = true;
-	if (DEBUG_DISPLAY)
+#if _DEBUG
+		
+	if (chaos::Application::HasApplicationCommandLineFlag("-DebugDisplay")) // CMDLINE
 	{
 		// shu49. ca pourrait etre partique d avoir une fonction d affichage de bounding box
 
@@ -472,9 +472,12 @@ int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* un
 		debug_mesh = DI.ExtractMesh();
 		debug_mesh->Display(renderer, &main_provider, render_params);
 		//DI.GetDynamicMesh().Display(renderer, &main_provider, render_params); // shu49 problematique de detruire l interface a la fin de la fonction
-	}
 
-	glPolygonMode(GL_FRONT_AND_BACK,  GL_FILL);
+		glPolygonMode(GL_FRONT_AND_BACK,  GL_FILL);
+	}
+#endif
+
+
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
@@ -536,7 +539,7 @@ std::vector<glm::vec2> SmoothBoundary(std::vector<glm::vec2> const & src, size_t
 		glm::vec2 const & prev = src[prev_index];
 		glm::vec2 const & next = src[next_index];
 
-		assert(a != prev && prev != next && next != a);
+		//assert(a != prev && prev != next && next != a);
 
 		glm::vec2 extra_next = a + (next - a) * smooth_factor;
 		glm::vec2 extra_prev = a + (prev - a) * smooth_factor;
@@ -604,7 +607,10 @@ void Landscape::BuildMesh(std::vector<glm::vec2> const & src)
 			glm::vec2 const& c = v[next];
 
 			if (a == b || b == c || c == a)
+			{
+				v.erase(v.begin() + index);
 				continue;
+			}
 
 			if (GetAngle(b, a, c) * accum < 0.0f) // angle in opposite direction of the polygon orientation
 				continue;
@@ -629,7 +635,7 @@ void Landscape::BuildMesh(std::vector<glm::vec2> const & src)
 
 		if (!new_triangle)
 		{
-			assert(0);
+			//assert(0);
 		}
 	}
 

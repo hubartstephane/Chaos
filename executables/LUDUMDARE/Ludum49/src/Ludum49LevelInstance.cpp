@@ -8,6 +8,7 @@
 #include "Ludum49PlayerDisplacementComponent.h"
 #include "Ludum49Particles.h"
 
+#define MORPH_PARAM(name) StringTools::Printf("%d:%s", index, name).c_str()
 
 bool LandscapeMorph::Tick(Landscape* landscape, float delta_time, std::vector<glm::vec2> & mutable_points)
 {
@@ -22,17 +23,13 @@ float LandscapeMorph::GetInternalTime() const
 
 bool LandscapeMorph::DoTick(Landscape* landscape,float delta_time, std::vector<glm::vec2> & mutable_points)
 {
-
 	return false;
 }
 
-bool LandscapeMorph::Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
+bool LandscapeMorph::Initialize(int index, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
 {
-
-
 	return true;
 }
-
 
 // =================================================================================
 
@@ -46,16 +43,16 @@ bool LandscapeMorphCircle::DoTick(Landscape* landscape,float delta_time, std::ve
 
 		float alpha = (float)i * 2.0f * (float)M_PI / (float)count;
 
-		v.x = morph_radius * std::cos(alpha);
-		v.y = morph_radius * std::sin(alpha);
+		v.x = radius * std::cos(alpha);
+		v.y = radius * std::sin(alpha);
 	}
 	return true;
 }
 
-bool LandscapeMorphCircle::Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
+bool LandscapeMorphCircle::Initialize(int index, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
 {
-	LandscapeMorph::Initialize(in_layer_instance, in_geometric_object, reference_solver);
-	morph_radius = in_geometric_object->GetPropertyValueFloat("MORPH_RADIUS", morph_radius);
+	LandscapeMorph::Initialize(index, in_geometric_object, reference_solver);
+	radius = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("RADIUS"), radius);
 	return true;
 }
 
@@ -87,8 +84,8 @@ bool LandscapeMorphScale::DoTick(Landscape* landscape,float delta_time, std::vec
 
 		float scale_y = (std::sin(alpha) >= 0.0f) ? 1.0f : -1.0f;
 
-		v.x = morph_radius * std::cos(alpha);
-		v.y = 0.5f * morph_radius * scale_y;
+		v.x = radius * std::cos(alpha);
+		v.y = 0.5f * radius * scale_y;
 	}
 
 
@@ -102,10 +99,10 @@ bool LandscapeMorphScale::DoTick(Landscape* landscape,float delta_time, std::vec
 	return true;
 }
 
-bool LandscapeMorphScale::Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
+bool LandscapeMorphScale::Initialize(int index, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
 {
-	LandscapeMorph::Initialize(in_layer_instance, in_geometric_object, reference_solver);
-	morph_radius = in_geometric_object->GetPropertyValueFloat("MORPH_RADIUS", morph_radius);
+	LandscapeMorph::Initialize(index, in_geometric_object, reference_solver);
+	radius = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("RADIUS"), radius);
 	return true;
 }
 
@@ -121,16 +118,16 @@ bool LandscapeMorphMorph::DoTick(Landscape* landscape,float delta_time, std::vec
 	{
 		glm::vec2& v = mutable_points[i];
 
-		float factor = std::cos(GetInternalTime() * morph_speed);
+		float factor = std::cos(GetInternalTime() * speed);
 		v = (1.0f - factor) * v + landscape->points[i] * factor;
 	}
 	return true;
 }
 
-bool LandscapeMorphMorph::Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
+bool LandscapeMorphMorph::Initialize(int index, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
 {
-	LandscapeMorph::Initialize(in_layer_instance, in_geometric_object, reference_solver);
-	morph_speed = in_geometric_object->GetPropertyValueFloat("MORPH_SPEED", morph_speed);
+	LandscapeMorph::Initialize(index, in_geometric_object, reference_solver);
+	speed = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("SPEED"), speed);
 	return true;
 }
 
@@ -460,7 +457,7 @@ bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::Geometr
 		{
 			if (LandscapeMorph* morph = cls.CreateInstance())
 			{
-				morph->Initialize(in_layer_instance, in_geometric_object, reference_solver);
+				morph->Initialize(int(morphs.size()) + 1, in_geometric_object, reference_solver);
 				morphs.push_back(morph);
 			}
 		}

@@ -42,10 +42,9 @@
    </object>
    <object id="2238" type="Landscape" x="-800" y="172">
     <properties>
+     <property name="1:RADIUS" type="float" value="401"/>
      <property name="COLOR" type="color" value="#ff5500ff"/>
-     <property name="MORPH_CLASSES" value="LandscapeMorphCirclexx,LandscapeMorphScale"/>
-     <property name="MORPH_RADIUS" type="float" value="300"/>
-     <property name="MORPH_SPEED" type="float" value="0.05"/>
+     <property name="MORPH_CLASSES" value="LandscapeMorphCircle"/>
     </properties>
     <polygon points="80,72 164,228 -80,272 -24,344 100,376 272,364 368,256 264,160 356,24 236,36 172,-4"/>
    </object>

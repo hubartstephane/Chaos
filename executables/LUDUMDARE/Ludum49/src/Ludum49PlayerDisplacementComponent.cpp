@@ -66,11 +66,13 @@ std::vector<CollisionEntry> ComputeCollisions(box2 const box, LudumLevelInstance
 		{
 			glm::vec2 offset = landscape->GetBoundingBox(true).position;
 
-			size_t count = landscape->points.size();
+			std::vector<glm::vec2> & v = landscape->smoothed_points;
+
+			size_t count = v.size();
 			for (size_t i = 0; i < count; ++i)
 			{
-				glm::vec2 const& a = landscape->points[i] + offset;
-				glm::vec2 const& b = landscape->points[(i + 1) % count] + offset;
+				glm::vec2 const& a = v[i] + offset;
+				glm::vec2 const& b = v[(i + 1) % count] + offset;
 
 				glm::vec2 proj = ClosestPoint(pawn_sphere.position, a, b);
 

@@ -19,7 +19,7 @@
    <property name="HEIGHT_BITS_MODE" type="bool" value="false"/>
   </properties>
   <objectgroup id="26" name="PlayerAndCamera">
-   <object id="2186" name="PlayerStart" gid="2" x="111.909" y="127.878" width="64" height="64" rotation="180">
+   <object id="2186" name="PlayerStart" gid="2" x="119.909" y="-664.122" width="64" height="64" rotation="180">
     <properties>
      <property name="BITMAP_NAME" value="Player"/>
     </properties>
@@ -34,7 +34,7 @@
    <properties>
     <property name="COLLISION_MASK" value="LANDSCAPE"/>
    </properties>
-   <object id="2234" type="Landscape" x="-1228" y="520">
+   <object id="2234" type="Landscape" x="-980" y="816">
     <polygon points="0,0 40.6667,9.33333 81.3333,18.6667 140,50.6667 181.333,93.3333 209.333,118.667 241.333,133.333 332,169.333 385.333,178.667 458.667,177.333 537.333,165.333 592,150.667 644,121.333 689.333,84 736,50.6667 761.333,33.3333 766.667,84 777.333,106.667 812,144 870.667,178.667 938.667,189.333 985.333,189.333 1022.67,177.333 1038.67,161.333 1052,141.333 1058.67,114.667 1064,84 1181.33,124 1230.67,148 1273.33,168 1360,192 1401.33,182.667 1456,140 1474.67,93.3333 1505.33,-70.6667 1510.67,-124 1610.67,-124 1618.67,644 -134.667,610.667"/>
    </object>
    <object id="2237" type="Landscape" x="-196" y="412">

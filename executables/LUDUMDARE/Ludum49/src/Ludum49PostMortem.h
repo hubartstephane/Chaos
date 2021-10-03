@@ -1,3 +1,5 @@
+#if 0
+
 - on a du code dans TMObject du genre
 
    std::string const* classname = in_typed_object->FindPropertyString("classname");
@@ -97,3 +99,22 @@ la safe zone devrait etre configurabl
 
 
 --verifier quels shaders utilsent local_to_world
+
+-se poser la question sur les singletons du system
+ pb OpenGL marche avec un etat global, mais si on veut passer sous Vulkan, on ne pourra pas utiliser comme ca des singletons sans reference au Device
+	   (ex: Default Materials)
+
+-voir pour la creation d'un CPUMesh
+
+-TMObject revoir ca. Pas de necessité que cela s'appelle TM (le lien avec TiledMap pourrait peut etre sauter. Resterait un Loader qui utilise TiledMap, point barre)
+
+-pb 
+   {
+	   DI = GetDrawInterface()
+
+	   DI.GetDynamicMesh().Display() est problematique parce que la draw interface est detruite dans la foulée alors que le rendu n'est pas effectif'
+
+
+   }
+
+#endif

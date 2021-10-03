@@ -13,6 +13,8 @@ class LPMorph;
 
 using MORPH_TREE_IT = std::vector<shared_ptr<LPMorph>>::iterator;
 
+using MORPH_DATA_MAP = std::map<std::string, float>;
+
 class LPMorph : public Object
 {
 	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph, Object);
@@ -25,7 +27,7 @@ public:
 
 	virtual bool ComposeTree(MORPH_TREE_IT& it, MORPH_TREE_IT end);
 
-	virtual bool Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver);
+	virtual bool Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver);
 
 	virtual bool GetPoints(Landscape* landscape, std::vector<glm::vec2>& mutable_points);
 
@@ -95,7 +97,7 @@ protected:
 
 	virtual bool GetPoints(Landscape* landscape, std::vector<glm::vec2> & mutable_points) override;
 
-	virtual bool Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+	virtual bool Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver) override;
 
 	float radius = 100;
 };
@@ -110,7 +112,7 @@ protected:
 
 	virtual bool GetPoints(Landscape* landscape, std::vector<glm::vec2> & mutable_points) override;
 
-	virtual bool Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+	virtual bool Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver) override;
 
 	float width = 100;
 	float height = 100;
@@ -172,7 +174,7 @@ class LPMorph_Mod : public LPMorph_Unary
 
 public:
 
-	virtual bool Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+	virtual bool Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver) override;
 
 	virtual float GetStrength(Landscape * landscape) override;
 
@@ -188,7 +190,7 @@ class LPMorph_LinearStep : public LPMorph_Unary
 
 public:
 
-	virtual bool Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+	virtual bool Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver) override;
 
 	virtual float GetStrength(Landscape * landscape) override;
 
@@ -206,7 +208,7 @@ protected:
 
 	virtual float GetStrength(Landscape * landscape) override;
 
-	virtual bool Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+	virtual bool Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver) override;
 
 	float speed = 1.0f;
 	float radius = 1.0f;

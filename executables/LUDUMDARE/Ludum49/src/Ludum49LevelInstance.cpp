@@ -10,6 +10,18 @@
 
 #define MORPH_PARAM(prop_name) StringTools::Printf("%s:%s", name, prop_name).c_str()
 
+void ReadDataMap(float& value, MORPH_DATA_MAP data_map, char const* name)
+{
+	for (auto const& entry : data_map)
+	{
+		if (StringTools::Stricmp(entry.first, name) == 0)
+		{
+			value = entry.second;
+			return;
+		}
+	}
+}
+
 //         +---- 1
 //        /|
 //       / |
@@ -51,7 +63,7 @@ bool LPMorph::DoTick(Landscape* landscape,float delta_time)
 	return false;
 }
 
-bool LPMorph::Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
+bool LPMorph::Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver)
 {
 	return true;
 }
@@ -148,10 +160,11 @@ bool LPMorph_Circle::GetPoints(Landscape* landscape, std::vector<glm::vec2> & mu
 	return true;
 }
 
-bool LPMorph_Circle::Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
+
+bool LPMorph_Circle::Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver)
 {
-	LPMorph::Initialize(name, in_geometric_object, reference_solver);
-	radius = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("RADIUS"), radius);
+	LPMorph::Initialize(data_map, reference_solver);
+	ReadDataMap(radius, data_map, "RADIUS");
 	return true;
 }
 
@@ -176,11 +189,11 @@ bool LPMorph_Rectangle::GetPoints(Landscape* landscape, std::vector<glm::vec2> &
 	return true;
 }
 
-bool LPMorph_Rectangle::Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
+bool LPMorph_Rectangle::Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver)
 {
-	LPMorph::Initialize(name, in_geometric_object, reference_solver);
-	width  = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("WIDTH"), width);
-	height = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("HEIGHT"), height);
+	LPMorph::Initialize(data_map, reference_solver);
+	ReadDataMap(width, data_map, "WIDTH");
+	ReadDataMap(height, data_map, "HEIGHT");
 	return true;
 }
 
@@ -240,11 +253,11 @@ float LPMorph_Mod::GetStrength(Landscape * landscape)
 	return A + MathTools::Modulo(value, B - A);
 }
 
-bool LPMorph_Mod::Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
+bool LPMorph_Mod::Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver)
 {
-	LPMorph_Unary::Initialize(name, in_geometric_object, reference_solver);
-	A = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("A"), A);
-	B = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("B"), B);
+	LPMorph_Unary::Initialize(data_map, reference_solver);
+	ReadDataMap(A, data_map, "A");
+	ReadDataMap(B, data_map, "B");
 	return true;
 }
 
@@ -258,11 +271,11 @@ float LPMorph_LinearStep::GetStrength(Landscape * landscape)
 	return linearstep(value, A, B);
 }
 
-bool LPMorph_LinearStep::Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
+bool LPMorph_LinearStep::Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver)
 {
-	LPMorph_Unary::Initialize(name, in_geometric_object, reference_solver);
-	A = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("A"), A);
-	B = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("B"), B);
+	LPMorph_Unary::Initialize(data_map, reference_solver);
+	ReadDataMap(A, data_map, "A");
+	ReadDataMap(B, data_map, "B");
 	return true;
 }
 
@@ -276,13 +289,19 @@ float LPMorph_Cos::GetStrength(Landscape * landscape)
 	return offset + radius * std::cos(speed * value + time_offset);
 }
 
-bool LPMorph_Cos::Initialize(char const * name, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
+bool LPMorph_Cos::Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver)
 {
-	LPMorph_Unary::Initialize(name, in_geometric_object, reference_solver);
+	LPMorph_Unary::Initialize(data_map, reference_solver);
+	ReadDataMap(offset, data_map, "OFFSET");
+	ReadDataMap(radius, data_map, "RADIUS");
+	ReadDataMap(time_offset, data_map, "TIME_OFFSET");
+	ReadDataMap(speed, data_map, "SPEED");
+#if 0
 	offset  = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("OFFSET"), offset);
 	radius = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("RADIUS"), radius);
 	time_offset = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("TIME_OFFSET"), time_offset);
 	speed = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("SPEED"), speed);
+#endif
 	return true;
 }
 
@@ -588,9 +607,9 @@ box2 Landscape::GetBoundingBox(bool world_system) const
 
 
 	template<typename T>
-	std::vector<std::pair<SubClassOf<T>, std::string>> LD49GetSubClassesAndNameFromString(char const* src, char separator = '\n')
+	std::vector<std::pair<SubClassOf<T>, MORPH_DATA_MAP>> LD49GetSubClassesAndNameFromString(char const* src, char separator = '\n')
 	{
-		std::vector<std::pair<SubClassOf<T>, std::string>>  result;
+		std::vector<std::pair<SubClassOf<T>, MORPH_DATA_MAP>>  result;
 
 		std::vector<std::string> class_names = StringTools::Split(src, separator);
 		class_names.erase(std::remove_if(class_names.begin(), class_names.end(), [](std::string const& s) { return s.size() == 0; }), class_names.end());
@@ -600,16 +619,36 @@ box2 Landscape::GetBoundingBox(bool world_system) const
 			std::vector<std::string> tokens = StringTools::Split(class_name.c_str(), ' ');
 			tokens.erase(std::remove_if(tokens.begin(), tokens.end(), [](std::string const& s) { return s.size() == 0; }), tokens.end());
 			
+			
+
 			if (tokens.size() == 0)
 				continue;
 
+			MORPH_DATA_MAP data_map;
+			// expected syntax
+			//
+			// classname  value=13.f (tout accroche)
 			std::string name;
-			if (tokens.size() >= 2)
-				name = tokens[1];
+			float value;
+			for (size_t i = 1; i < tokens.size() ; ++i)
+			{
+				std::string const& tok = tokens[i];
+				
+				char const * sep = strchr(tok.c_str(), '=');
+				if (sep != nullptr && sep != tok.c_str())
+				{
+					name = std::string(tok.c_str(), sep - tok.c_str());
+					data_map[name] = (float)atof(sep + 1);
+				}
+			}
 
+			
 			SubClassOf<T> cls = Class::FindClass(tokens[0].c_str());
 			if (cls.IsValid())
-				result.push_back({ cls, name });
+			{
+				result.emplace_back(cls, std::move(data_map));
+			}
+				
 		}
 		return result;
 	}
@@ -643,24 +682,12 @@ bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::Geometr
 
 		std::vector<shared_ptr<LPMorph>> morphs;
 
-#if 0
-		std::vector<SubClassOf<LPMorph>> morph_classes = GetSubClassesFromString<LPMorph>(names->c_str(), '\n');
-		for (auto cls : morph_classes)
-		{
-			if (LPMorph* m = cls.CreateInstance())
-			{
-				m->Initialize(int(morphs.size()) + 1, in_geometric_object, reference_solver);
-				morphs.push_back(m);
-			}
-		}
-#endif
-
-		std::vector<std::pair<SubClassOf<LPMorph>, std::string>> morph_classes = LD49GetSubClassesAndNameFromString<LPMorph>(names->c_str(), '\n');
+		std::vector<std::pair<SubClassOf<LPMorph>, MORPH_DATA_MAP>> morph_classes = LD49GetSubClassesAndNameFromString<LPMorph>(names->c_str(), '\n');
 		for (auto cls : morph_classes)
 		{
 			if (LPMorph* m = cls.first.CreateInstance())
 			{
-				m->Initialize(cls.second.c_str(), in_geometric_object, reference_solver);
+				m->Initialize(cls.second, reference_solver);
 				morphs.push_back(m);
 			}
 		}

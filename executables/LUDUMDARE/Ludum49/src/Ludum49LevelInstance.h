@@ -133,13 +133,17 @@ protected:
 
 // =================================================
 
-class LPMorph_ScaleY : public LPMorph_Binary
+class LPMorph_Scale : public LPMorph_Binary
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_ScaleY, LPMorph_Binary);
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Scale, LPMorph_Binary);
 
 protected:
 
 	virtual bool GetPoints(Landscape* landscape, std::vector<glm::vec2> & mutable_points) override;
+	virtual bool Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver) override;
+
+	int ignore_x = 0;
+	int ignore_y = 0;
 
 };
 
@@ -200,6 +204,25 @@ public:
 
 // =================================================
 
+class LPMorph_Const : public LPMorph
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Const, LPMorph);
+
+protected:
+
+	virtual float GetStrength(Landscape * landscape) override;
+
+	virtual bool Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver) override;
+
+	float value = 0.0f;
+
+};
+
+
+
+
+// =================================================
+
 class LPMorph_Cos : public LPMorph_Unary
 {
 	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Cos, LPMorph_Unary);
@@ -217,6 +240,43 @@ protected:
 
 };
 
+// =================================================
+
+class LPMorph_Add : public LPMorph_Binary
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Add, LPMorph_Binary);
+
+protected:
+
+	virtual float GetStrength(Landscape * landscape) override;
+};
+
+class LPMorph_Mul : public LPMorph_Binary
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Mul, LPMorph_Binary);
+
+protected:
+
+	virtual float GetStrength(Landscape * landscape) override;
+};
+
+class LPMorph_Sub : public LPMorph_Binary
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Sub, LPMorph_Binary);
+
+protected:
+
+	virtual float GetStrength(Landscape * landscape) override;
+};
+
+class LPMorph_Div : public LPMorph_Binary
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Div, LPMorph_Binary);
+
+protected:
+
+	virtual float GetStrength(Landscape * landscape) override;
+};
 
 
 

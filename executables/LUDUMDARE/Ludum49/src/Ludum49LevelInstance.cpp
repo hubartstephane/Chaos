@@ -22,6 +22,13 @@ void ReadDataMap(float& value, MORPH_DATA_MAP data_map, char const* name)
 	}
 }
 
+void ReadDataMap(int& value, MORPH_DATA_MAP data_map, char const* name)
+{
+	float tmp = 0.0f;
+	ReadDataMap(tmp, data_map, name);
+	value = (int)tmp;
+}
+
 //         +---- 1
 //        /|
 //       / |
@@ -135,6 +142,55 @@ bool LPMorph_Ternary::DoTick(Landscape* landscape, float delta_time)
 }
 
 
+// =================================================================================
+
+float LPMorph_Const::GetStrength(Landscape* landscape)
+{
+	return value;
+}
+
+bool LPMorph_Const::Initialize(MORPH_DATA_MAP const& data_map, TMObjectReferenceSolver& reference_solver)
+{
+	ReadDataMap(value, data_map, "VALUE");
+	return true;
+}
+
+// =================================================================================
+
+float LPMorph_Add::GetStrength(Landscape* landscape)
+{
+	float value1 = arg1->GetStrength(landscape);
+	float value2 = arg2->GetStrength(landscape);
+	return value1 + value2;
+}
+
+float LPMorph_Sub::GetStrength(Landscape* landscape)
+{
+	float value1 = arg1->GetStrength(landscape);
+	float value2 = arg2->GetStrength(landscape);
+	return value1 - value2;
+}
+
+
+float LPMorph_Mul::GetStrength(Landscape* landscape)
+{
+	float value1 = arg1->GetStrength(landscape);
+	float value2 = arg2->GetStrength(landscape);
+	return value1 * value2;
+}
+
+
+float LPMorph_Div::GetStrength(Landscape* landscape)
+{
+	float value1 = arg1->GetStrength(landscape);
+	float value2 = arg2->GetStrength(landscape);
+	return value1 / value2;
+}
+
+float LPMorph_Time::GetStrength(Landscape * landscape)
+{
+	return internal_time;
+}
 
 
 
@@ -227,22 +283,31 @@ bool LPMorph_BaseMesh::GetPoints(Landscape* landscape, std::vector<glm::vec2>& m
 
 // =================================================================================
 
-bool LPMorph_ScaleY::GetPoints(Landscape* landscape, std::vector<glm::vec2>& mutable_points)
+bool LPMorph_Scale::GetPoints(Landscape* landscape, std::vector<glm::vec2>& mutable_points)
 {
 	float strength = arg1->GetStrength(landscape);
 
+	glm::vec2 scale = { strength, strength };
+	if (ignore_x != 0)
+		scale.x = 1.0f;
+	if (ignore_y != 0)
+		scale.y = 1.0f;
+
 	arg2->GetPoints(landscape, mutable_points);
 	for (auto& p : mutable_points)
-		p = p * strength;
+		p = p * scale;
 	return true;
 }
 
-// =================================================================================
-
-float LPMorph_Time::GetStrength(Landscape * landscape)
+bool LPMorph_Scale::Initialize(MORPH_DATA_MAP const& data_map, TMObjectReferenceSolver& reference_solver)
 {
-	return internal_time;
+	LPMorph::Initialize(data_map, reference_solver);
+	ReadDataMap(ignore_x, data_map, "IGNORE_X");
+	ReadDataMap(ignore_y, data_map, "IGNORE_Y");
+	return true;
 }
+
+
 
 // =================================================================================
 
@@ -296,12 +361,6 @@ bool LPMorph_Cos::Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceS
 	ReadDataMap(radius, data_map, "RADIUS");
 	ReadDataMap(time_offset, data_map, "TIME_OFFSET");
 	ReadDataMap(speed, data_map, "SPEED");
-#if 0
-	offset  = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("OFFSET"), offset);
-	radius = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("RADIUS"), radius);
-	time_offset = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("TIME_OFFSET"), time_offset);
-	speed = in_geometric_object->GetPropertyValueFloat(MORPH_PARAM("SPEED"), speed);
-#endif
 	return true;
 }
 
@@ -606,6 +665,7 @@ box2 Landscape::GetBoundingBox(bool world_system) const
 
 
 
+
 	template<typename T>
 	std::vector<std::pair<SubClassOf<T>, MORPH_DATA_MAP>> LD49GetSubClassesAndNameFromString(char const* src, char separator = '\n')
 	{
@@ -616,7 +676,11 @@ box2 Landscape::GetBoundingBox(bool world_system) const
 
 		for (auto& class_name : class_names)
 		{
-			std::vector<std::string> tokens = StringTools::Split(class_name.c_str(), ' ');
+			char const* t = class_name.c_str();
+			while (*t == '\t')
+				++t;
+
+			std::vector<std::string> tokens = StringTools::Split(t, ' ');
 			tokens.erase(std::remove_if(tokens.begin(), tokens.end(), [](std::string const& s) { return s.size() == 0; }), tokens.end());
 			
 			
@@ -629,7 +693,6 @@ box2 Landscape::GetBoundingBox(bool world_system) const
 			//
 			// classname  value=13.f (tout accroche)
 			std::string name;
-			float value;
 			for (size_t i = 1; i < tokens.size() ; ++i)
 			{
 				std::string const& tok = tokens[i];

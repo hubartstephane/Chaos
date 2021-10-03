@@ -16,13 +16,15 @@ class LandscapeMorph : public Object
 
 public:
 
-	bool Tick(Landscape* landscape,float delta_time);
+	bool Tick(Landscape* landscape,float delta_time, std::vector<glm::vec2> & mutable_points);
 
 	float GetInternalTime() const;
 
+	virtual bool Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver);
+
 protected:
 
-	virtual bool DoTick(Landscape* landscape, float delta_time);
+	virtual bool DoTick(Landscape* landscape, float delta_time, std::vector<glm::vec2> & mutable_points);
 
 protected:
 
@@ -39,7 +41,14 @@ class LandscapeMorphCircle : public LandscapeMorph
 
 protected:
 
-	virtual bool DoTick(Landscape* landscape, float delta_time) override;
+	virtual bool DoTick(Landscape* landscape, float delta_time, std::vector<glm::vec2> & mutable_points) override;
+
+	virtual bool Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+
+	float morph_radius = 100;
+
+	float morph_speed = 1.0f;
+
 };
 
 
@@ -63,7 +72,7 @@ public:
 
 	virtual bool DoTick(float delta_time) override;
 
-	void BuildMesh();
+	void BuildMesh(std::vector<glm::vec2> const & src);
 
 	int smooth_count = 0;
 	float smooth_factor = 0.3f;
@@ -77,7 +86,7 @@ public:
 	shared_ptr<GPUDynamicMesh> mesh;
 	shared_ptr<GPUDynamicMesh> debug_mesh;
 
-	std::vector<glm::vec2> points;
+	std::vector<glm::vec2> points; // do not modified this, keep track of original
 	std::vector<glm::vec2> smoothed_points;
 };
 

@@ -9,10 +9,10 @@
 #include "Ludum49Particles.h"
 
 
-bool LandscapeMorph::Tick(Landscape* landscape, float delta_time)
+bool LandscapeMorph::Tick(Landscape* landscape, float delta_time, std::vector<glm::vec2> & mutable_points)
 {
 	internal_time += delta_time;
-	return DoTick(landscape, delta_time);
+	return DoTick(landscape, delta_time, mutable_points);
 }
 
 float LandscapeMorph::GetInternalTime() const
@@ -20,20 +20,51 @@ float LandscapeMorph::GetInternalTime() const
 	return internal_time; 
 }
 
-bool LandscapeMorph::DoTick(Landscape* landscape,float delta_time)
+bool LandscapeMorph::DoTick(Landscape* landscape,float delta_time, std::vector<glm::vec2> & mutable_points)
 {
 
 	return false;
+}
+
+bool LandscapeMorph::Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
+{
+
+
+	return true;
 }
 
 
 // =================================================================================
 
 
-bool LandscapeMorphCircle::DoTick(Landscape* landscape,float delta_time)
+bool LandscapeMorphCircle::DoTick(Landscape* landscape,float delta_time, std::vector<glm::vec2> & mutable_points)
 {
-	std::vector<glm::vec2>& v = landscape->points;
-	
+	size_t count = mutable_points.size();
+
+	for (size_t i = 0; i < count; ++i)
+	{
+		glm::vec2& v = mutable_points[i];
+
+		float alpha = (float)i * 2.0f * (float)M_PI / (float)count;
+
+		v.x = morph_radius * std::cos(alpha);
+		v.y = morph_radius * std::sin(alpha);
+
+
+	}
+
+
+
+
+	return true;
+}
+
+bool LandscapeMorphCircle::Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
+{
+	LandscapeMorph::Initialize(in_layer_instance, in_geometric_object, reference_solver);
+
+	morph_speed = in_geometric_object->GetPropertyValueFloat("MORPH_SPEED", morph_speed);
+	morph_radius = in_geometric_object->GetPropertyValueFloat("MORPH_RADIUS", morph_radius);
 
 	return true;
 }
@@ -66,15 +97,21 @@ bool Landscape::DoTick(float delta_time)
 {
 	TMObject::DoTick(delta_time);
 
-	bool changed = false;
-	for (auto& morph : morphs)
-		changed |= morph->Tick(this, delta_time);
-	if (changed)
+	if (morphs.size() > 0)
 	{
-		BuildMesh();
+		bool changed = false;
+
+		std::vector<glm::vec2> mutable_points = points;
+		for (auto& morph : morphs)
+			changed |= morph->Tick(this, delta_time, mutable_points);
+		if (changed)
+		{
+			BuildMesh(mutable_points);
 
 
+		}
 	}
+
 
 
 
@@ -101,7 +138,7 @@ int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* un
 	if (mesh != nullptr)
 		result += mesh->Display(renderer, &main_provider, render_params);
 
-	static bool DEBUG_DISPLAY = false;
+	static bool DEBUG_DISPLAY = true;
 	if (DEBUG_DISPLAY)
 	{
 		box2 box = GetBoundingBox(false);
@@ -234,9 +271,9 @@ std::vector<glm::vec2> SmoothBoundary(std::vector<glm::vec2> const & src, size_t
 
 #endif
 
-void Landscape::BuildMesh()
+void Landscape::BuildMesh(std::vector<glm::vec2> const & src)
 {
-	smoothed_points = SmoothBoundary(points, smooth_count, smooth_factor);
+	smoothed_points = SmoothBoundary(src, smooth_count, smooth_factor);
 
 	std::vector<glm::vec2> v = smoothed_points;
 
@@ -352,8 +389,13 @@ bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::Geometr
 	{
 		std::vector<SubClassOf<LandscapeMorph>> morph_classes = GetSubClassesFromString<LandscapeMorph>(names->c_str(), ',');
 		for (auto cls : morph_classes)
-			if (LandscapeMorph * morph = cls.CreateInstance())
+		{
+			if (LandscapeMorph* morph = cls.CreateInstance())
+			{
+				morph->Initialize(in_layer_instance, in_geometric_object, reference_solver);
 				morphs.push_back(morph);
+			}
+		}
 	}
 
 	ori_bounding_box = bounding_box;
@@ -362,7 +404,7 @@ bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::Geometr
 	if (TiledMap::GeometricObjectPolygon const* pn = auto_cast(in_geometric_object))
 	{
 		points = pn->points;
-		BuildMesh();
+		BuildMesh(points);
 	}
 
 	return true;

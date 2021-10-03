@@ -36,7 +36,6 @@ bool LandscapeMorph::Initialize(TMLayerInstance* in_layer_instance, TiledMap::Ge
 
 // =================================================================================
 
-
 bool LandscapeMorphCircle::DoTick(Landscape* landscape,float delta_time, std::vector<glm::vec2> & mutable_points)
 {
 	size_t count = mutable_points.size();
@@ -49,45 +48,45 @@ bool LandscapeMorphCircle::DoTick(Landscape* landscape,float delta_time, std::ve
 
 		v.x = morph_radius * std::cos(alpha);
 		v.y = morph_radius * std::sin(alpha);
-
-
 	}
-
-
-
-
 	return true;
 }
 
 bool LandscapeMorphCircle::Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
 {
 	LandscapeMorph::Initialize(in_layer_instance, in_geometric_object, reference_solver);
-
-	morph_speed = in_geometric_object->GetPropertyValueFloat("MORPH_SPEED", morph_speed);
 	morph_radius = in_geometric_object->GetPropertyValueFloat("MORPH_RADIUS", morph_radius);
+	return true;
+}
 
+// =================================================================================
+
+
+bool LandscapeMorphMorph::DoTick(Landscape* landscape,float delta_time, std::vector<glm::vec2> & mutable_points)
+{
+	size_t count = mutable_points.size();
+
+	for (size_t i = 0; i < count; ++i)
+	{
+		glm::vec2& v = mutable_points[i];
+
+		float factor = std::cos(GetInternalTime() * morph_speed);
+		v = (1.0f - factor) * v + landscape->points[i] * factor;
+	}
+	return true;
+}
+
+bool LandscapeMorphMorph::Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
+{
+	LandscapeMorph::Initialize(in_layer_instance, in_geometric_object, reference_solver);
+	morph_speed = in_geometric_object->GetPropertyValueFloat("MORPH_SPEED", morph_speed);
 	return true;
 }
 
 
-// =================================================================================
-
-#if 0
-	if (0 && id == 2233)
-	{
-		internal_t += delta_time * 0.5f;
-
-		float c = std::cos(internal_t);
-		float s = std::sin(internal_t);
-
-		bounding_box.position = ori_bounding_box.position + glm::vec2(0.0f, 1.0f) * GLMTools::Rotate(glm::vec2(100.0f), c, s);
 
 
-	}
-
-	//bounding_box.position
-#endif
-
+// =======================================================
 Landscape::Landscape()
 {
 
@@ -106,13 +105,36 @@ bool Landscape::DoTick(float delta_time)
 			changed |= morph->Tick(this, delta_time, mutable_points);
 		if (changed)
 		{
+			glm::vec2 min_position = mutable_points[0];
+			glm::vec2 max_position = mutable_points[0];
+			for (glm::vec2 const& p : mutable_points)
+			{
+				min_position = glm::min(min_position, p);
+				max_position = glm::max(max_position, p);
+			}		
+
+			glm::vec2 old_position = bounding_box.position;
+			bounding_box = { min_position, max_position };
+			for (glm::vec2& p : mutable_points)
+				p -= (bounding_box.position - old_position);
+
+
+
 			BuildMesh(mutable_points);
 
 
 		}
 	}
 
+#if 0
 
+	for (glm::vec2& p : points)
+		p -= (bounding_box.position - ori_bounding_box.position);
+	for (glm::vec2& p : smoothed_points)
+		p -= (bounding_box.position - ori_bounding_box.position);
+
+
+#endif
 
 
 

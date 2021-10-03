@@ -50,6 +50,7 @@ public:
     float slow_down_factor = 0.05f;
     float stop_velocity = 0.0f;
     float max_velocity = 1000.0f;;
+    float touching_ground_lapse_time = 0.05f;
 
     
 

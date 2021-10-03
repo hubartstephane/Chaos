@@ -6,6 +6,10 @@ namespace chaos
 {
 	void FileResource::SetPath(boost::filesystem::path const & in_path)
 	{
+		// shu49
+		// si on test toute les redirections pour la date, on va se retrouver avec un timestamp qui ne correspond pas du tout au fichier considere
+
+
 		FileTools::ForEachRedirectedPath(in_path, [this](boost::filesystem::path const& p)
 		{
 			try
@@ -13,7 +17,7 @@ namespace chaos
 				file_timestamp = boost::filesystem::last_write_time(p);
 				return true;
 			}
-			catch (boost::filesystem::filesystem_error &)
+			catch (boost::filesystem::filesystem_error const &)
 			{
 			}
 			return false;

@@ -84,4 +84,8 @@ que faire si on veut utiliser autre chose que les DPAD pour les directions
 -revoir l autorenderToPlayerCameraComponent :
    que se passe t'il avec une safe zone a zero !!
 
-la safe zone devrait etre configurable dans l editeur
+la safe zone devrait etre configurabl
+
+
+-question: 
+   le SetPath(...) devrait il stocker le path apres redirection ?

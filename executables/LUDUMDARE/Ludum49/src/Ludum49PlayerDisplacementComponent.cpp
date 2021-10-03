@@ -41,22 +41,6 @@ glm::vec2 ClosestPoint(glm::vec2 const& p, glm::vec2 const& a, glm::vec2 const& 
 	return proj;
 }
 
-
-
-#if 0
-
-	Key const left_buttons[] = { KeyboardButton::LEFT, Key() };
-	bool run_pressed = player->CheckButtonPressed(left_buttons);
-
-
-		if (pawn_velocity.x > 0.0f)
-			pawn_velocity.x = std::max(0.0f, pawn_velocity.x - ludum_player->slow_down * delta_time);
-		else
-			pawn_velocity.x = std::min(0.0f, pawn_velocity.x + ludum_player->slow_down * delta_time);
-#endif
-		
-
-
 struct CollisionEntry
 {
 	glm::vec2 a;
@@ -64,7 +48,6 @@ struct CollisionEntry
 	glm::vec2 proj;
 	float l2;
 };
-
 
 std::vector<CollisionEntry> ComputeCollisions(box2 const box, LudumLevelInstance* ludum_level)
 {
@@ -108,13 +91,6 @@ std::vector<CollisionEntry> ComputeCollisions(box2 const box, LudumLevelInstance
 		CollisionEntry nearest_collision;
 		for (auto const& entry : result)
 		{
-#if 1
-			PointPrimitive<VertexDefault> P = DI->AddPoints(1);
-			P[0].position = entry.proj;
-			P[0].color = { 1.0f, 1.0f, 1.0f, 1.0f };
-			P[0].flags = 0;
-			P[0].texcoord = { -1.0f, -1.0f, -1.0f };
-#endif
 			min_l2 = std::min(min_l2, entry.l2);
 			nearest_collision = entry;
 		}
@@ -132,8 +108,9 @@ std::vector<CollisionEntry> ComputeCollisions(box2 const box, LudumLevelInstance
 
 bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 {
-	GPUDrawInterface<VertexDefault> * DI = GetDebugDrawInterface();
+	touching_ground_timer = std::max(0.0f, touching_ground_timer - delta_time);
 
+	GPUDrawInterface<VertexDefault> * DI = GetDebugDrawInterface();
 
 	PlayerDisplacementComponent::DoTick(delta_time);
 
@@ -149,8 +126,6 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	LudumLevelInstance* ludum_level = GetLevelInstance();
 
-//	
-
 	glm::vec2 direction = player->GetLeftStickPosition(false);
 	direction.x = MathTools::AnalogicToDiscret(direction.x);
 	direction.y = MathTools::AnalogicToDiscret(direction.y);
@@ -162,37 +137,29 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 #else	
 
-		if (direction.x == 0.0f || direction.x * pawn_velocity.x < 0.0f)
+	if (direction.x == 0.0f || direction.x * pawn_velocity.x < 0.0f)
 	{
 		pawn_velocity.x *= std::pow(ludum_player->slow_down_factor, delta_time);
 		//if (std::abs(pawn_velocity.x) < ludum_player->stop_velocity && pawn_velocity.x != 0.0f)
 		//	pawn_velocity.x = 0.0f;
 	}
 
-	if (touching_ground)
+	if (touching_ground_timer > 0.0f)
 	{
 		float acceleration_factor = (direction.x * pawn_velocity.x < 1.0f) ? 2.0f : 1.0f;
 		pawn_velocity.x += acceleration_factor * direction.x * ludum_player->acceleration * delta_time;
 	}
 
-
-
 	pawn_velocity.y += ludum_player->gravity * delta_time;
 
 	pawn_box.position += pawn_velocity * delta_time;
 
-
-
 #endif
-
-
-	bool can_move = true;
 
 	sphere2 pawn_sphere = GetInnerSphere(pawn_box);
 
 	std::vector<CollisionEntry> collisions = ComputeCollisions(pawn_box, ludum_level);
 
-	touching_ground = false;
 	if (collisions.size() > 0)
 	{
 		CollisionEntry const col = collisions[0];
@@ -213,15 +180,13 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 		LinePrimitive<VertexDefault> line = DI->AddLines(2);
 		line[0].position = col.a;
 		line[1].position = col.b;
-
 		line[2].position = m;
 		line[3].position = m + glm::vec2(N) * 100.0f;
 
-		touching_ground = true;
+		touching_ground_timer = ludum_player->touching_ground_lapse_time;
 	}
 
-	if (can_move)
-		pawn->SetPosition(pawn_box.position);
+	pawn->SetPosition(pawn_box.position);
 
 	if (delta_time != 0.0f)
 		pawn_velocity = (pawn_box.position - pawn_box_before.position) / delta_time;

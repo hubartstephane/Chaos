@@ -13,7 +13,7 @@ protected:
 
 
 
-	bool touching_ground = false;
+	float touching_ground_timer = 0.0f;
 
 	glm::vec2 pawn_velocity = glm::vec2(0.0f, 0.0f);
 };

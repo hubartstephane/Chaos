@@ -62,6 +62,57 @@ bool LandscapeMorphCircle::Initialize(TMLayerInstance* in_layer_instance, TiledM
 // =================================================================================
 
 
+bool LandscapeMorphScale::DoTick(Landscape* landscape,float delta_time, std::vector<glm::vec2> & mutable_points)
+{
+	size_t count = mutable_points.size();
+#if 0
+	for (size_t i = 0; i < count; ++i)
+	{
+		glm::vec2& v = mutable_points[i];
+
+		float alpha = (float)i * 2.0f * (float)M_PI / (float)count;
+
+		float factor = std::cos(GetInternalTime() * 0.5f);
+
+		v.y = v.y * 1.2f * (1.2f - std::cos(factor));
+	}
+#endif
+
+
+	for (size_t i = 0; i < count; ++i)
+	{
+		glm::vec2& v = mutable_points[i];
+
+		float alpha = (float)i * 2.0f * (float)M_PI / (float)count;
+
+		float scale_y = (std::sin(alpha) >= 0.0f) ? 1.0f : -1.0f;
+
+		v.x = morph_radius * std::cos(alpha);
+		v.y = 0.5f * morph_radius * scale_y;
+	}
+
+
+
+
+
+
+
+
+
+	return true;
+}
+
+bool LandscapeMorphScale::Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
+{
+	LandscapeMorph::Initialize(in_layer_instance, in_geometric_object, reference_solver);
+	morph_radius = in_geometric_object->GetPropertyValueFloat("MORPH_RADIUS", morph_radius);
+	return true;
+}
+
+
+// =================================================================================
+
+
 bool LandscapeMorphMorph::DoTick(Landscape* landscape,float delta_time, std::vector<glm::vec2> & mutable_points)
 {
 	size_t count = mutable_points.size();
@@ -372,7 +423,7 @@ void Landscape::BuildMesh(std::vector<glm::vec2> const & src)
 		for (int i = 0; i < 3; ++i)
 		{
 			tri[i].position = t[i];
-			tri[i].color = { 1.0f, 0.0f, 0.0f, 0.8f };
+			tri[i].color = color;
 		}
 	}
 	mesh = DI.ExtractMesh();
@@ -414,6 +465,13 @@ bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::Geometr
 			}
 		}
 	}
+
+
+	color = in_geometric_object->GetPropertyValueColor("COLOR", color);
+
+
+
+
 
 	ori_bounding_box = bounding_box;
 

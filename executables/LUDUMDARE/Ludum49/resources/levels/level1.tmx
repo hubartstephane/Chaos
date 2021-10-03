@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="57" nextobjectid="2239">
+<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="57" nextobjectid="2240">
  <editorsettings>
   <chunksize width="37" height="37"/>
  </editorsettings>
@@ -19,7 +19,7 @@
    <property name="HEIGHT_BITS_MODE" type="bool" value="false"/>
   </properties>
   <objectgroup id="26" name="PlayerAndCamera">
-   <object id="2186" name="PlayerStart" gid="2" x="27.909" y="-220.122" width="64" height="64" rotation="180">
+   <object id="2186" name="PlayerStart" gid="2" x="-514.515" y="-214.061" width="64" height="64" rotation="180">
     <properties>
      <property name="BITMAP_NAME" value="Player"/>
     </properties>
@@ -42,11 +42,15 @@
    </object>
    <object id="2238" type="Landscape" x="-800" y="172">
     <properties>
-     <property name="MORPH_CLASSES" value="LandscapeMorphCircle,LandscapeMorphMorph"/>
+     <property name="COLOR" type="color" value="#ff5500ff"/>
+     <property name="MORPH_CLASSES" value="LandscapeMorphCirclexx,LandscapeMorphScale"/>
      <property name="MORPH_RADIUS" type="float" value="300"/>
      <property name="MORPH_SPEED" type="float" value="0.05"/>
     </properties>
     <polygon points="80,72 164,228 -80,272 -24,344 100,376 272,364 368,256 264,160 356,24 236,36 172,-4"/>
+   </object>
+   <object id="2239" type="Landscape" x="-196" y="412">
+    <polygon points="-90,-27 0.6667,-14.6667 28.3333,-20.3333 44,-35.6667 59.3333,-72.6667 68,-106.667 80,-158.667 85.3333,-189.333 104,-238.667 120,-253.333 144,-260 156,-260 166.667,-254.667 182.667,-238.667 193.333,-216 204,-196 218,-156 229.333,-127 241.667,-92.3333 255.333,-60 272,-37.6667 301.333,-7 318.667,1 344,3.6667 380,2.3333 407.667,-6 437.333,-33.6667 459.333,-70.3333 480.333,-114.333 490,-180.667 496,-229.333 506.667,-250.667 528,-268 572,-273.333 602.667,-261.333 624,-233.333 636,-201.333 645.333,-165.333 652,-137.333 654.667,-113.333 665.333,-77.3333 672,-40 689.333,-5.33333 714.667,62.6667 732,126.667 4,165.333"/>
    </object>
   </objectgroup>
  </group>

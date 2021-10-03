@@ -50,6 +50,22 @@ protected:
 
 // ----------------
 
+class LandscapeMorphScale : public LandscapeMorph
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LandscapeMorphScale, LandscapeMorph);
+
+protected:
+
+	virtual bool DoTick(Landscape* landscape, float delta_time, std::vector<glm::vec2> & mutable_points) override;
+
+
+	virtual bool Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+
+	float morph_radius = 100;
+};
+
+// ----------------
+
 class LandscapeMorphMorph : public LandscapeMorph
 {
 	CHAOS_DECLARE_OBJECT_CLASS2(LandscapeMorphMorph, LandscapeMorph);
@@ -105,6 +121,8 @@ public:
 
 	std::vector<glm::vec2> points; // do not modified this, keep track of original
 	std::vector<glm::vec2> smoothed_points;
+
+	glm::vec4 color = { 1.0f, 0.0f, 0.0f, 1.0f };
 };
 
 

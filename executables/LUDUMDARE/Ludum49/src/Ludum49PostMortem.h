@@ -140,6 +140,17 @@ on pourrait utiliser un json pour des classes differentes .. juste les valeurs q
 -TMObject a deux methods GetBoundingBox
  (une deuxieme qui vient de GameEntity !)
 
+-ca vaudrait le coup d'avoir un parseur'
+
+VAR=1,2,3   TRUC=MACHIN ...
+
+on pourrait parser des arguments de ligne de commande (eventuellement avoir des enum automatiquement ...)
+ca pourrait etre utile dans des zone de texte genre TiledMap editor
+
+LPMorph_Circle radius=3  
+
+
+
 
 #endif
 

@@ -375,8 +375,12 @@ bool LPMorph_Gear::Initialize(MORPH_DATA_MAP const & data_map, TMObjectReference
 
 bool LPMorph_Rectangle::GetPoints(Landscape* landscape, std::vector<glm::vec2> & mutable_points)
 {
-	if (vertice_count > 0)
-		mutable_points.resize(size_t(vertice_count));
+	if (vertice_count <= 0)
+		vertice_count = 4;
+	mutable_points.resize(size_t(vertice_count));
+
+	float width = landscape->ori_bounding_box.half_size.x * 2.0f;
+	float height = landscape->ori_bounding_box.half_size.y * 2.0f;
 
 	size_t count = mutable_points.size();
 	for (size_t i = 0; i < count; ++i)
@@ -387,7 +391,7 @@ bool LPMorph_Rectangle::GetPoints(Landscape* landscape, std::vector<glm::vec2> &
 		{
 			float factor = MathTools::CastAndDiv<float>(i, count / 2 - 1);
 			v.x = 0.5f * width - width * factor;
-			v.y = height * 0.5f + 100.0f * factor;
+			v.y = height * 0.5f;
 		}
 		else
 		{
@@ -405,11 +409,7 @@ bool LPMorph_Rectangle::GetPoints(Landscape* landscape, std::vector<glm::vec2> &
 
 bool LPMorph_Rectangle::Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver)
 {
-
-
 	LPMorph::Initialize(data_map, reference_solver);
-	ReadDataMap(width, data_map, "WIDTH");
-	ReadDataMap(height, data_map, "HEIGHT");
 	ReadDataMap(vertice_count, data_map, "VERTICE_COUNT");
 	return true;
 }
@@ -422,6 +422,11 @@ bool LPMorph_Function::GetPoints(Landscape* landscape, std::vector<glm::vec2> & 
 		mutable_points.resize(size_t(vertice_count));
 
 	float strength = arg1->GetStrength(landscape);
+
+	box2 bx = landscape->ori_bounding_box;
+
+	float width  = bx.half_size.x * 2.0f;
+	float height = bx.half_size.y * 2.0f;
 
 	size_t count = mutable_points.size();
 	for (size_t i = 0; i < count; ++i)
@@ -450,8 +455,6 @@ bool LPMorph_Function::GetPoints(Landscape* landscape, std::vector<glm::vec2> & 
 bool LPMorph_Function::Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver)
 {
 	LPMorph_Unary::Initialize(data_map, reference_solver);
-	ReadDataMap(width, data_map, "WIDTH");
-	ReadDataMap(height, data_map, "HEIGHT");
 	ReadDataMap(vertice_count, data_map, "VERTICE_COUNT");
 	return true;
 }
@@ -460,8 +463,9 @@ bool LPMorph_Function::Initialize(MORPH_DATA_MAP const & data_map, TMObjectRefer
 
 float LPMorph_Wave::GetHeightValue(float x, float strength)
 {
+	float A = std::sin(x * float(M_PI));
 
-	return amplitude * std::cos(2.0f * float(M_PI) * x / wave_length + strength);
+	return amplitude + A * amplitude * std::cos(2.0f * float(M_PI) * x / wave_length + strength);
 }
 
 bool LPMorph_Wave::Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver)

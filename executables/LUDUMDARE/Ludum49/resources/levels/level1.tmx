@@ -19,7 +19,7 @@
    <property name="HEIGHT_BITS_MODE" type="bool" value="false"/>
   </properties>
   <objectgroup id="26" name="PlayerAndCamera">
-   <object id="2186" name="PlayerStart" gid="2" x="-750" y="-307.94" width="64" height="64" rotation="180">
+   <object id="2186" name="PlayerStart" gid="2" x="-1000" y="-309.94" width="64" height="64" rotation="180">
     <properties>
      <property name="BITMAP_NAME" value="Player"/>
     </properties>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="58" nextobjectid="2254">
+<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="58" nextobjectid="2255">
  <editorsettings>
   <chunksize width="37" height="37"/>
  </editorsettings>
@@ -36,13 +36,15 @@
    </properties>
    <object id="2240" name="b" type="Landscape" x="-1085.27" y="-182.061">
     <properties>
-     <property name="COLOR" type="color" value=""/>
-     <property name="MORPH_CLASSES">LPMorph_Rectangle width=-1000 height=100 vertice_count=10
-
+     <property name="MORPH_CLASSES">
 LPMorph_Wave width=500 vertice_count=40 wave_length=0.25 amplitude=10
 	LPMorph_Mul
 		LPMorph_Const value=3
 		LPMorph_Time
+
+
+LPMorph_Rectangle width=-1000 height=100 vertice_count=10
+
 
 
 
@@ -75,14 +77,10 @@ LPMorph_Scale ignore_x=1
 
 LPMorph_Rectangle width=1000 height=100
 </property>
-     <property name="SMOOTH_COUNT" type="int" value="0"/>
     </properties>
     <polygon points="80,72 164,228 -80,272 -24,344 100,376 272,364 368,256 264,160 303.94,43.5151 343.879,-72.9697 283.879,-66.9697 236,36 172,-4"/>
    </object>
    <object id="2252" type="Landscape" x="-572" y="300">
-    <properties>
-     <property name="SMOOTH_COUNT" type="int" value="0"/>
-    </properties>
     <polygon points="0,0 -1096,-8 -1092,180 36,160"/>
    </object>
    <object id="2253" type="Landscape" x="-2662" y="-362">
@@ -98,15 +96,9 @@ LPMorph_Rectangle width=1000 height=100
     <property name="COLLISION_MASK" value="LANDSCAPE"/>
    </properties>
    <object id="2234" name="d" type="Landscape" x="-980" y="816">
-    <properties>
-     <property name="SMOOTH_COUNT" type="int" value="0"/>
-    </properties>
     <polygon points="0,0 40.6667,9.33333 81.3333,18.6667 140,50.6667 181.333,93.3333 209.333,118.667 241.333,133.333 332,169.333 385.333,178.667 458.667,177.333 537.333,165.333 592,150.667 644,121.333 689.333,84 736,50.6667 761.333,33.3333 766.667,84 777.333,106.667 812,144 870.667,178.667 938.667,189.333 985.333,189.333 1022.67,177.333 1038.67,161.333 1052,141.333 1058.67,114.667 1064,84 1181.33,124 1230.67,148 1273.33,168 1360,192 1401.33,182.667 1456,140 1474.67,93.3333 1505.33,-70.6667 1510.67,-124 1610.67,-124 1618.67,644 -134.667,610.667"/>
    </object>
    <object id="2246" type="Landscape" x="-302" y="448">
-    <properties>
-     <property name="SMOOTH_COUNT" type="int" value="1"/>
-    </properties>
     <polygon points="0,0 36,4 56,0 72,-4 82,-14 108,-42 148,-112 180,-226 216,-324 270,-362 326,-358 350,-328 368,-276 380,-210 394,-138 422,-80 488,-8 552,24 622,22 688,0 714,-42 752,-110 772,-202 778,-270 810,-310 866,-316 902,-244 924,-134 930,-34 936,94 908,162 886,192 -24,202"/>
    </object>
   </objectgroup>

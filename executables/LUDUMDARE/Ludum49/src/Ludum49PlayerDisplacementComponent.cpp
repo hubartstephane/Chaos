@@ -49,7 +49,9 @@ glm::vec2 ClosestPoint(glm::vec2 const& p, glm::vec2 const& a, glm::vec2 const& 
 
 std::vector<CollisionEntry> ComputeCollisions(box2 box, LudumLevelInstance* ludum_level)
 {
+#if _DEBUG
 	GPUDrawInterface<VertexDefault> * DI = GetDebugDrawInterface();
+#endif
 
 	std::vector<CollisionEntry> result;
 
@@ -116,7 +118,9 @@ CollisionEntry LudumPlayerDisplacementComponent::ProcessCollision(box2 & pawn_bo
 {
 	LudumPlayer* ludum_player = GetPlayer();
 
+#if _DEBUG
 	GPUDrawInterface<VertexDefault> * DI = GetDebugDrawInterface();
+#endif
 
 	LudumLevelInstance* ludum_level = GetLevelInstance();
 
@@ -165,7 +169,9 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 {
 	touching_ground_timer = std::max(0.0f, touching_ground_timer - delta_time);
 
+#if _DEBUG
 	GPUDrawInterface<VertexDefault> * DI = GetDebugDrawInterface();
+#endif
 
 	PlayerDisplacementComponent::DoTick(delta_time);
 

@@ -465,7 +465,7 @@ float LPMorph_Wave::GetHeightValue(float x, float strength)
 {
 	float A = std::sin(x * float(M_PI));
 
-	return amplitude + A * amplitude * std::cos(2.0f * float(M_PI) * x / wave_length + strength);
+	return A * amplitude * (1.0f + std::cos(2.0f * float(M_PI) * x / wave_length + strength));
 }
 
 bool LPMorph_Wave::Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver)

@@ -157,6 +157,7 @@ etudier tokenizer
 - SubClass pour des class sur des templates ?
 
 
+- s assurer qu on debut du jeu on a Tick(..) appele au moins une fois avant le Display(...)
 
 #endif
 

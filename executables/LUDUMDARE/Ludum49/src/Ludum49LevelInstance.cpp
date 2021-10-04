@@ -242,8 +242,15 @@ bool LPMorph_Rectangle::GetPoints(Landscape* landscape, std::vector<glm::vec2> &
 
 		if (i < count / 2)
 		{
-			v.x = 0.5f * width - width * MathTools::CastAndDiv<float>(i, count / 2 - 1);
-			v.y = height * 0.5f;
+			float factor = MathTools::CastAndDiv<float>(i, count / 2 - 1);
+
+			factor = 1.0f - factor;
+
+			v.x = 0.5f * width - width * factor;
+
+			v.y = height * 0.5f + 40 * factor;
+
+			//v.y = height * 0.5f + 20 * std::cos(factor * 2.0f * float(M_PI) + 2.0f);
 		}
 		else
 		{
@@ -251,7 +258,11 @@ bool LPMorph_Rectangle::GetPoints(Landscape* landscape, std::vector<glm::vec2> &
 
 			size_t remainder_count = count - (count / 2);
 
-			v.x = -0.5f * width + width * MathTools::CastAndDiv<float>(other_i, remainder_count - 1);
+			float factor = MathTools::CastAndDiv<float>(other_i, remainder_count - 1);
+
+			factor = 1.0f - factor;
+
+			v.x = -0.5f * width + width * factor;
 			v.y = -height * 0.5f;
 		}
 
@@ -506,11 +517,9 @@ bool Landscape::DoTick(float delta_time)
 		morph->Tick(this, delta_time);
 
 		std::vector<glm::vec2> mutable_points = points;
-		if (morph->GetPoints(this, mutable_points))
-		{
-			point_bounding_box = BoxFromPoints(mutable_points);
-			BuildMesh(mutable_points);
-		}
+		morph->GetPoints(this, mutable_points);
+		point_bounding_box = BoxFromPoints(mutable_points);
+		BuildMesh(mutable_points);
 	}
 	return true;
 }
@@ -900,7 +909,13 @@ bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::Geometr
 	{
 		points = pn->points;
 		point_bounding_box = BoxFromPoints(points);
-		BuildMesh(points);
+
+		// pas optimize quand il n y a pas de morph mais bon
+		std::vector<glm::vec2> mutable_points = points;
+		if (morph != nullptr)
+			morph->GetPoints(this, mutable_points);
+		point_bounding_box = BoxFromPoints(mutable_points);
+		BuildMesh(mutable_points);			
 	}
 
 	return true;

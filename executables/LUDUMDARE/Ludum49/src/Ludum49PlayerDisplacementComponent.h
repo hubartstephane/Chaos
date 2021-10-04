@@ -11,6 +11,7 @@ protected:
 	/** override */
 	virtual bool DoTick(float delta_time) override;
 
+	void ProcessCollision(box2& pawn_box);
 
 
 	float touching_ground_timer = 0.0f;

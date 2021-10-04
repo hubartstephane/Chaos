@@ -248,7 +248,7 @@ bool LPMorph_Rectangle::GetPoints(Landscape* landscape, std::vector<glm::vec2> &
 
 			v.x = 0.5f * width - width * factor;
 
-			v.y = height * 0.5f + 40 * factor;
+			v.y = height * 0.5f + 100.0f * factor;
 
 			//v.y = height * 0.5f + 20 * std::cos(factor * 2.0f * float(M_PI) + 2.0f);
 		}

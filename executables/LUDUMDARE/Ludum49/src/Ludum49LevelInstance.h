@@ -100,6 +100,8 @@ protected:
 	virtual bool Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver) override;
 
 	float radius = 100;
+
+	int vertice_count = 0;
 };
 
 // =================================================
@@ -116,7 +118,46 @@ protected:
 
 	float width = 100;
 	float height = 100;
+
+	int vertice_count = 0;
 };
+
+// =================================================
+
+class LPMorph_Function : public LPMorph_Unary
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Function, LPMorph_Unary);
+
+protected:
+
+	virtual bool GetPoints(Landscape* landscape, std::vector<glm::vec2> & mutable_points) override;
+
+	virtual bool Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver) override;
+
+	virtual float GetHeightValue(float x, float strength) { return 0; }
+
+	float width = 100;
+	float height = 100;
+
+	int vertice_count = 0;
+};
+
+// =================================================
+
+class LPMorph_Wave : public LPMorph_Function
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Wave, LPMorph_Function);
+
+protected:
+
+	virtual bool Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver) override;
+
+	virtual float GetHeightValue(float x, float strength) override;
+
+	float amplitude = 50.0f;
+	float wave_length = 1.0f;
+};
+
 
 // =================================================
 

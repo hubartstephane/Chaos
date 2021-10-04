@@ -182,32 +182,35 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 		glm::vec2 m = (col.a + col.b) * 0.5f;
 
 		glm::vec3 n = { col.b - col.a, 0.0f };
-		glm::vec3 Z = glm::vec3(0.0f, 0.0f, -1.0f) *col.landscape->polygon_orientation;
+		//glm::vec3 Z = glm::vec3(0.0f, 0.0f, -1.0f) *col.landscape->polygon_orientation;
+
+		// polygon_orientation is not a good idea due to scale -1
+
+		glm::vec3 Z = glm::vec3(0.0f, 0.0f, -1.0f);
 		glm::vec3 N = glm::normalize(glm::cross(n, Z));
 
-	//	if (glm::dot(pawn_box.position - m, glm::vec2(N)) < 0.0f)
-	//		N = -N;
+		if (glm::dot(pawn_box.position - m, glm::vec2(N)) < 0.0f)
+			N = -N;
 
 		if (glm::dot(pawn_box.position - m, glm::vec2(N)) < 0.0f)
 		{
-			if (col.proj == col.a || col.proj == col.b)
-			{
-				// no problem
-			}
-			else
-			{
-				// interpenetration
 
-				N = N;
-			}
 
 
 
 
 		}
+
+			if (col.proj != col.a && col.proj != col.b)
+			{
+				
+			}
+
+			pawn_box.position += glm::normalize(pawn_box.position - col.proj) * (pawn_sphere.radius - std::sqrt(col.l2));
+		
 			
 
-		pawn_box.position += glm::normalize(pawn_box.position - col.proj) * (pawn_sphere.radius - std::sqrt(col.l2));
+		
 
 #if _DEBUG
 		if (chaos::Application::HasApplicationCommandLineFlag("-DebugDisplay")) // CMDLINE

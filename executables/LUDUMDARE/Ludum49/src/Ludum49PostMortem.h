@@ -154,6 +154,10 @@ LPMorph_Circle radius=3
 etudier tokenizer
 
 
+- SubClass pour des class sur des templates ?
+
+
+
 #endif
 
 

@@ -200,7 +200,8 @@ float LPMorph_Time::GetStrength(Landscape * landscape)
 
 bool LPMorph_Circle::GetPoints(Landscape* landscape, std::vector<glm::vec2> & mutable_points)
 {
-
+	if (vertice_count > 0)
+		mutable_points.resize(size_t(vertice_count));
 
 	size_t count = mutable_points.size();
 
@@ -222,6 +223,7 @@ bool LPMorph_Circle::Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferen
 {
 	LPMorph::Initialize(data_map, reference_solver);
 	ReadDataMap(radius, data_map, "RADIUS");
+	ReadDataMap(vertice_count, data_map, "VERTICE_COUNT");
 	return true;
 }
 
@@ -230,6 +232,8 @@ bool LPMorph_Circle::Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferen
 
 bool LPMorph_Rectangle::GetPoints(Landscape* landscape, std::vector<glm::vec2> & mutable_points)
 {
+	if (vertice_count > 0)
+		mutable_points.resize(size_t(vertice_count));
 
 	size_t count = mutable_points.size();
 	for (size_t i = 0; i < count; ++i)
@@ -266,11 +270,73 @@ bool LPMorph_Rectangle::GetPoints(Landscape* landscape, std::vector<glm::vec2> &
 
 bool LPMorph_Rectangle::Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver)
 {
+
+
 	LPMorph::Initialize(data_map, reference_solver);
 	ReadDataMap(width, data_map, "WIDTH");
 	ReadDataMap(height, data_map, "HEIGHT");
+	ReadDataMap(vertice_count, data_map, "VERTICE_COUNT");
 	return true;
 }
+
+// =================================================================================
+
+bool LPMorph_Function::GetPoints(Landscape* landscape, std::vector<glm::vec2> & mutable_points)
+{
+	if (vertice_count > 0)
+		mutable_points.resize(size_t(vertice_count));
+
+	float strength = arg1->GetStrength(landscape);
+
+	size_t count = mutable_points.size();
+	for (size_t i = 0; i < count; ++i)
+	{
+		glm::vec2& v = mutable_points[i];
+
+		if (i < count / 2)
+		{
+			float f = 1.0f - MathTools::CastAndDiv<float>(i, count / 2 - 1);
+			v.x = 0.5f * width - width * MathTools::CastAndDiv<float>(i, count / 2 - 1);
+			v.y = height * 0.5f + GetHeightValue(f, strength);
+		}
+		else
+		{
+			size_t other_i = i - count / 2;
+
+			size_t remainder_count = count - (count / 2);
+
+			v.x = -0.5f * width + width * MathTools::CastAndDiv<float>(other_i, remainder_count - 1);
+			v.y = -height * 0.5f;
+		}
+	}
+	return true;
+}
+
+bool LPMorph_Function::Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver)
+{
+	LPMorph_Unary::Initialize(data_map, reference_solver);
+	ReadDataMap(width, data_map, "WIDTH");
+	ReadDataMap(height, data_map, "HEIGHT");
+	ReadDataMap(vertice_count, data_map, "VERTICE_COUNT");
+	return true;
+}
+
+// =================================================================================
+
+float LPMorph_Wave::GetHeightValue(float x, float strength)
+{
+
+	return amplitude * std::cos(2.0f * float(M_PI) * x / wave_length + strength);
+}
+
+bool LPMorph_Wave::Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver)
+{
+	LPMorph_Function::Initialize(data_map, reference_solver);
+	ReadDataMap(amplitude, data_map, "AMPLITUDE");
+	ReadDataMap(wave_length, data_map, "WAVE_LENGTH");
+	return true;
+}
+
 
 // =================================================================================
 

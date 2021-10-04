@@ -36,8 +36,9 @@
    </properties>
    <object id="2240" name="b" type="Landscape" x="-697.273" y="-104.061">
     <properties>
-     <property name="COLOR" type="color" value="#ff5500ff"/>
-     <property name="MORPH_CLASSES">LPMorph_Rectangle width=1000 height=100
+     <property name="COLOR" type="color" value=""/>
+     <property name="MORPH_CLASSES">LPMorph_Wave width=500 vertice_count=40 wave_length=0.5
+	LPMorph_Time 
 
 LPMorph_Scale ignore_x=1
 	LPMorph_Add
@@ -49,6 +50,9 @@ LPMorph_Scale ignore_x=1
 					LPMorph_Time
 	LPMorph_Rectangle width=1000 height=100
 
+
+
+LPMorph_Rectangle width=1000 height=100
 </property>
      <property name="SMOOTH_COUNT" type="int" value="0"/>
     </properties>

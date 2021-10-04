@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="58" nextobjectid="2260">
+<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="58" nextobjectid="2263">
  <editorsettings>
   <chunksize width="37" height="37"/>
  </editorsettings>
@@ -18,8 +18,8 @@
   <properties>
    <property name="HEIGHT_BITS_MODE" type="bool" value="false"/>
   </properties>
-  <objectgroup id="26" name="PlayerAndCamera">
-   <object id="2186" name="PlayerStart" gid="2" x="1178" y="1558.06" width="64" height="64" rotation="180">
+  <objectgroup id="26" name="PlayerAndCamera" locked="1">
+   <object id="2186" name="PlayerStart" gid="2" x="-2564" y="1678.06" width="64" height="64" rotation="180">
     <properties>
      <property name="BITMAP_NAME" value="Player"/>
     </properties>
@@ -29,7 +29,7 @@
      <property name="CAMERA_COMPONENTSxxx" value="AutoRecenterToPlayerCameraComponent"/>
     </properties>
    </object>
-   <object id="2257" name="WorldBoundingBox" type="WorldBoundingBox" x="-3040" y="40" width="5736" height="3384"/>
+   <object id="2257" name="WorldBoundingBox" type="WorldBoundingBox" x="-3040" y="40" width="12328" height="9736"/>
    <object id="2258" x="-2360" y="-312"/>
   </objectgroup>
   <objectgroup id="57" name="Landscape1">
@@ -103,11 +103,13 @@ LPMorph_Rectangle width=1000 height=100
    </object>
    <object id="2259" type="Landscape" x="1378" y="1614">
     <properties>
-     <property name="MORPH_CLASSES">Rotate
+     <property name="MORPH_CLASSES">c
+
+Rotate
    Mul
      Const value=-0.3
      Time
-   Gear gear_count=10 r2=200</property>
+   Gearx</property>
      <property name="SMOOTH_COUNT" type="int" value="0"/>
     </properties>
     <polygon points="0,0 -42,48 6,92 -32,134 -82,124 -98,182 -52,194 -44,254 -78,286 -42,334 4,300 62,318 68,362 140,362 134,308 158,274 212,304 242,264 180,224 184,166 244,160 240,96 172,108 122,72 142,14 86,2 70,54 44,60"/>
@@ -120,11 +122,14 @@ LPMorph_Rectangle width=1000 height=100
    <object id="2246" type="Landscape" x="-302" y="448">
     <polygon points="0,0 36,4 56,0 72,-4 82,-14 108,-42 148,-112 180,-226 216,-324 270,-362 326,-358 350,-328 368,-276 380,-210 394,-138 422,-80 488,-8 552,24 622,22 688,0 714,-42 752,-110 772,-202 778,-270 810,-310 866,-316 902,-244 924,-134 930,-34 936,94 908,162 886,192 -24,202"/>
    </object>
-   <object id="2255" type="Landscape" x="-3112" y="2392">
-    <polygon points="0,0 -12,-1896 160,-1896 172,-1792 248,-1392 436,-820 776,-392 1128,-252 1668,-208 1872,-220 2272,-308 2464,-384 2452,-288 2484,-196 2588,-124 2816,-136 2924,-236 2968,-392 3492,-296 4012,-352 4076,-428 4252,-540 4420,-576 4600,-580 4760,-540 5004,-508 5288,-640 5468,-788 5584,-1084 5660,-1856 5856,-1864 5864,1108 -8,1116"/>
-   </object>
    <object id="2256" type="Landscape" x="-604" y="1788">
     <polygon points="0,0 140,-148 268,-212 416,-264 584,-236 684,-212 764,-240 800,-296 780,-380 696,-464 580,-548 372,-636 176,-616 12,-564 -232,-380 -264,-292 -276,-216 -284,-136 -268,-52 -204,48"/>
+   </object>
+   <object id="2262" type="Landscape" x="-3614" y="1488">
+    <properties>
+     <property name="SMOOTH_COUNT" type="int" value="3"/>
+    </properties>
+    <polygon points="0,0 960,32 1056,3424 1216,5424 1504,6944 2064,7616 2960,7920 3952,8064 5008,8080 6560,8048 10656,7872 11584,7536 11968,6864 12480,5280 12624,3424 12656,1536 12672,400 12704,-16 13168,-16 13136,992 13168,1936 13152,3280 13152,4800 13184,6272 13152,7680 13120,8688 11760,8784 9968,8848 7792,8848 6192,8928 3968,8864 1904,8816 448,8832 -64,8768"/>
    </object>
   </objectgroup>
  </group>

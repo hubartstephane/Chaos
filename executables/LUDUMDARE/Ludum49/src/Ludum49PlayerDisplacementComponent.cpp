@@ -113,6 +113,74 @@ std::vector<CollisionEntry> ComputeCollisions(box2 const box, LudumLevelInstance
 
 
 
+
+
+void LudumPlayerDisplacementComponent::ProcessCollision(box2 & pawn_box)
+{
+	LudumPlayer* ludum_player = GetPlayer();
+
+	GPUDrawInterface<VertexDefault> * DI = GetDebugDrawInterface();
+
+	LudumLevelInstance* ludum_level = GetLevelInstance();
+
+	sphere2 pawn_sphere = GetInnerSphere(pawn_box);
+
+	std::vector<CollisionEntry> collisions = ComputeCollisions(pawn_box, ludum_level);
+
+	if (collisions.size() > 0)
+	{
+		CollisionEntry const& col = collisions[0];
+
+		glm::vec2 m = (col.a + col.b) * 0.5f;
+		glm::vec3 n = { col.b - col.a, 0.0f };
+
+		//glm::vec3 Z = glm::vec3(0.0f, 0.0f, -1.0f) *col.landscape->polygon_orientation;
+		// polygon_orientation is not a good idea due to scale -1
+
+		glm::vec3 Z = glm::vec3(0.0f, 0.0f, -1.0f);
+		glm::vec3 N = glm::normalize(glm::cross(n, Z));
+
+		if (glm::dot(pawn_box.position - m, glm::vec2(N)) < 0.0f)
+			N = -N;
+
+		glm::vec2 direction;
+
+		//if (col.proj == col.a || col.proj == col.b)
+		{
+			direction = glm::normalize(pawn_box.position - col.proj);
+
+			//
+		}
+		//else
+		{
+			//pawn_box.position = col.proj + glm::vec2(N) * pawn_sphere.radius;
+		}
+
+			pawn_box.position = col.proj + direction * pawn_sphere.radius;
+
+#if _DEBUG
+		if (chaos::Application::HasApplicationCommandLineFlag("-DebugDisplay")) // CMDLINE
+		{
+			LinePrimitive<VertexDefault> line = DI->AddLines(2);
+			line[0].position = col.a;
+			line[1].position = col.b;
+			line[2].position = col.proj;
+			line[3].position = col.proj + direction * 100.0f;
+		}
+#endif
+
+		touching_ground_timer = ludum_player->touching_ground_lapse_time;
+	}
+}
+
+
+
+
+
+
+
+
+
 bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 {
 	touching_ground_timer = std::max(0.0f, touching_ground_timer - delta_time);
@@ -127,22 +195,20 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 		return true;
 
 	LudumPlayer* ludum_player = GetPlayer();
+	
 
 	box2 pawn_box = pawn->GetBoundingBox();
+
+	
 	box2 pawn_box_before = pawn_box;
 
-	LudumLevelInstance* ludum_level = GetLevelInstance();
+	// - - - - - - - - - -
+
 
 	glm::vec2 direction = player->GetLeftStickPosition(false);
 	direction.x = MathTools::AnalogicToDiscret(direction.x);
 	direction.y = MathTools::AnalogicToDiscret(direction.y);
 
-
-#if 0 // DEBUG_DISPLACEMENT
-
-	pawn_box.position += 0.3f * delta_time * ludum_player->acceleration * direction;
-
-#else	
 
 	if (direction.x == 0.0f || direction.x * pawn_velocity.x < 0.0f)
 	{
@@ -161,72 +227,24 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	pawn_box.position += pawn_velocity * delta_time;
 
-#endif
-
-	sphere2 pawn_sphere = GetInnerSphere(pawn_box);
-
-	std::vector<CollisionEntry> collisions = ComputeCollisions(pawn_box, ludum_level);
-
-	if (collisions.size() > 0)
-	{
-		CollisionEntry const col = collisions[0];
-		
-
-
-		// GOOD
-
-
-
-
-		// TEST
-		glm::vec2 m = (col.a + col.b) * 0.5f;
-
-		glm::vec3 n = { col.b - col.a, 0.0f };
-		//glm::vec3 Z = glm::vec3(0.0f, 0.0f, -1.0f) *col.landscape->polygon_orientation;
-
-		// polygon_orientation is not a good idea due to scale -1
-
-		glm::vec3 Z = glm::vec3(0.0f, 0.0f, -1.0f);
-		glm::vec3 N = glm::normalize(glm::cross(n, Z));
-
-		if (glm::dot(pawn_box.position - m, glm::vec2(N)) < 0.0f)
-			N = -N;
-
-		if (glm::dot(pawn_box.position - m, glm::vec2(N)) < 0.0f)
-		{
 
 
 
 
 
-		}
-
-			if (col.proj != col.a && col.proj != col.b)
-			{
-				
-			}
-
-			pawn_box.position += glm::normalize(pawn_box.position - col.proj) * (pawn_sphere.radius - std::sqrt(col.l2));
-		
-			
-
-		
-
-#if _DEBUG
-		if (chaos::Application::HasApplicationCommandLineFlag("-DebugDisplay")) // CMDLINE
-		{
-			LinePrimitive<VertexDefault> line = DI->AddLines(2);
-			line[0].position = col.a;
-			line[1].position = col.b;
-			line[2].position = m;
-			line[3].position = m + glm::vec2(N) * 100.0f;
-		}
-#endif
 
 
 
-		touching_ground_timer = ludum_player->touching_ground_lapse_time;
-	}
+
+
+	// - - - - - - - - - - - -
+
+	ProcessCollision(pawn_box);
+
+	
+
+	// - - - - - - - - - - - -
+
 
 	pawn->SetPosition(pawn_box.position);
 
@@ -236,6 +254,17 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	float len2 = glm::length2(pawn_velocity);
 	if (len2 > ludum_player->max_velocity * ludum_player->max_velocity)
 		pawn_velocity = ludum_player->max_velocity * glm::normalize(pawn_velocity);
+
+
+
+	static float lim = 2.0f;
+	if (pawn_velocity.y > 2.0)
+		lim = lim;
+
+
+
+
+
 
 	return true;
 }

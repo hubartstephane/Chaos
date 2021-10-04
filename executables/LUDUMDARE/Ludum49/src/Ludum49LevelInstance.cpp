@@ -755,7 +755,7 @@ void Landscape::BuildMesh(std::vector<glm::vec2> const & src)
 		{
 			tri[i].position = t[i];
 			tri[i].color = color;
-			tri[i].color.a = 0.2f;
+			//tri[i].color.a = 0.2f;
 		}
 	}
 	mesh = DI.ExtractMesh();
@@ -876,12 +876,8 @@ bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::Geometr
 		}
 	}
 
-
 	color = in_geometric_object->GetPropertyValueColor("COLOR", color);
-
-
-
-
+	color.a = 1.0f;
 
 	ori_bounding_box = bounding_box;
 

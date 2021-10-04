@@ -123,10 +123,7 @@ protected:
 
 	virtual bool Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver) override;
 
-	float width = 100;
-	float height = 100;
-
-	int vertice_count = 0;
+	int vertice_count = 4;
 };
 
 // =================================================
@@ -186,9 +183,6 @@ protected:
 	virtual bool Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver) override;
 
 	virtual float GetHeightValue(float x, float strength) { return 0; }
-
-	float width = 100;
-	float height = 100;
 
 	int vertice_count = 0;
 };

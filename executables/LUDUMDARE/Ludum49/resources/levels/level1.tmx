@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="59" nextobjectid="2293">
+<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="59" nextobjectid="2295">
  <editorsettings>
   <chunksize width="37" height="37"/>
  </editorsettings>
@@ -20,7 +20,7 @@
   </properties>
   <objectgroup id="58" name="landscape decort" locked="1"/>
   <objectgroup id="26" name="PlayerAndCamera">
-   <object id="2186" name="PlayerStart" gid="2" x="-267.138" y="845.07" width="80" height="92" rotation="47.1598">
+   <object id="2186" name="PlayerStart" gid="2" x="24.3772" y="8867.74" width="80" height="92">
     <properties>
      <property name="BITMAP_NAME" value="Player"/>
     </properties>
@@ -111,63 +111,10 @@
     </properties>
     <polygon points="0,0 -42,48 6,92 -32,134 -82,124 -98,182 -52,194 -44,254 -78,286 -42,334 4,300 62,318 68,362 140,362 134,308 158,274 212,304 242,264 180,224 184,166 244,160 240,96 172,108 122,72 142,14 86,2 70,54 44,60"/>
    </object>
-   <object id="2285" name="jump" type="Landscape" x="726" y="9494">
+   <object id="2288" name="jump" type="Landscape" x="30.0603" y="9493.7">
     <properties>
-     <property name="MORPH_CLASSES">Scale ignore_x=1
-  Add 
-  Const value=1
-    Mul 
-      Const value=0.4
-      LinearStepTwice A= 0 B=0.1 C=2 D=3
-        Mod A=0 B=7
-          Add
-            Const value=4
-            Time
-  ID
-</property>
-     <property name="SMOOTH_COUNT" type="int" value="0"/>
-    </properties>
-    <polygon points="0,0 308,0.666667 305.953,142 0,144"/>
-   </object>
-   <object id="2286" name="jump" type="Landscape" x="436" y="9492">
-    <properties>
-     <property name="MORPH_CLASSES">Scale ignore_x=1
-  Add 
-  Const value=1
-    Mul 
-      Const value=0.4
-      LinearStepTwice A= 0 B=0.1 C=2 D=3
-        Mod A=0 B=7
-          Add
-            Const value=2
-            Time
-  ID
-</property>
-     <property name="SMOOTH_COUNT" type="int" value="0"/>
-    </properties>
-    <polygon points="0,0 308,0.666667 305.953,142 0,144"/>
-   </object>
-   <object id="2287" name="jump" type="Landscape" x="140.848" y="9490.91">
-    <properties>
-     <property name="MORPH_CLASSES">Scale ignore_x=1
-  Add 
-  Const value=1
-    Mul 
-      Const value=0.4
-      LinearStepTwice A= 0 B=0.1 C=2 D=3
-        Mod A=0 B=7
-          Add
-            Const value=3
-            Time
-  ID
-</property>
-     <property name="SMOOTH_COUNT" type="int" value="0"/>
-    </properties>
-    <polygon points="0,0 308,0.666667 305.953,142 0,144"/>
-   </object>
-   <object id="2288" name="jump" type="Landscape" x="-154.667" y="9489.58">
-    <properties>
-     <property name="MORPH_CLASSES">Scale ignore_x=1
+     <property name="MORPH_CLASSES">
+Scale ignore_x=1
   Add 
   Const value=1
     Mul 
@@ -177,23 +124,33 @@
           Add
             Const value=1
             Time
-  ID
+  Rectangle
+
 </property>
      <property name="SMOOTH_COUNT" type="int" value="0"/>
     </properties>
-    <polygon points="0,0 308,0.666667 305.953,142 0,144"/>
-   </object>
-   <object id="2290" name="stairs" type="Landscape" x="1776" y="9640">
-    <properties>
-     <property name="SMOOTH_COUNT" type="int" value="0"/>
-    </properties>
-    <polygon points="0,0 -491.286,91.2128 -647.795,-52.6658 -451.363,-139.27 -191.045,-79.4829 11.0303,-105.697 228,-109.697 228.97,-135.576 412,-138.545 413.03,-163.576 559.939,-163.515 562.97,-188.485 760,-190.424 1400,-32"/>
+    <polygon points="0,0 874.667,1.25589 868.854,267.505 0,271.273"/>
    </object>
    <object id="2291" type="Landscape" x="-1152" y="5424">
     <polygon points="112,-164 -12,-300 -168,-328 -240,-436 -324,-512 -684,-628 -1052,-556 -1164,-408 -1228,-152 -1192,160 -1136,436 -1060,700 -996,836 -860,944 -728,904 -692,720 -644,504 -520,292 -412,136 -239.93,34.2898 -32,-44 140,0"/>
    </object>
    <object id="2292" type="Landscape" x="952" y="5140">
     <polygon points="224,-156 20,-80 -136,132 -196,424 -356,668 -623.849,821.269 -928,736 -1140,628 -1324,432 -1472,184 -1552,8 -1496,-160 -1308,-248 -1064,-316 -916,-412 -820,-524 -692,-660 -560,-704 -340,-568 -196,-420 -88,-336"/>
+   </object>
+   <object id="2293" type="Landscape" x="1168" y="9639.58">
+    <properties>
+     <property name="MORPH_CLASSES">Wave vertice_count=100 Amplitude=100 wave_length=0.25
+  Time
+</property>
+     <property name="SMOOTH_COUNT" type="int" value="0"/>
+    </properties>
+    <polygon points="0,0 11.24,352.416 2248,330.39 2236.76,-71.5844"/>
+   </object>
+   <object id="2294" type="Landscape" x="6.06061" y="9378.79">
+    <properties>
+     <property name="SMOOTH_COUNT" type="int" value="0"/>
+    </properties>
+    <polygon points="0,0 87.8788,51.5152 87.8788,293.939 824.242,309.091 830.303,57.5758 924.242,15.1515 1345.45,203.03 1215.15,500 1118.18,503.03 821.212,481.818 72.7273,454.545 -218.182,439.394 -351.515,81.8182"/>
    </object>
   </objectgroup>
   <objectgroup id="56" name="Landscape2" locked="1">

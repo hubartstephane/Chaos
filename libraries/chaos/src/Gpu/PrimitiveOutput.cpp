@@ -249,6 +249,15 @@ namespace chaos
         }
 
         char * result = AllocateBufferMemory(requested_size); // this may set current_primitive_type to NONE
+
+
+        // shu49
+
+        if (result==  nullptr)
+            result = AllocateBufferMemory(requested_size); 
+
+
+
         current_primitive_type = primitive_type;
 
         return result;

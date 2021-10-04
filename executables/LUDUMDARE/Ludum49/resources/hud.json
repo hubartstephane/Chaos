@@ -3,6 +3,10 @@
     "visible": false
   },
 
+  "FPS_ID": {
+    "visible": false
+  },
+
   "INSTRUCTIONS_ID": {
     "visible": false
   },

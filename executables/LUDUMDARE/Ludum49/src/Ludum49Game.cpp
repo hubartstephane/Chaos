@@ -11,7 +11,7 @@
 LudumGame::LudumGame()
 {		
 	// 	Don't let the Flames of Hell die
-	game_name = "No Game Today\n(but have a look)";
+	game_name = "Not Today\n(but have a look)";
 	looping_levels = false;
 
 	game_instance_class = LudumGameInstance::GetStaticClass();

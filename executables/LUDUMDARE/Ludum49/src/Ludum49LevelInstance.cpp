@@ -193,8 +193,43 @@ float LPMorph_Time::GetStrength(Landscape * landscape)
 	return internal_time;
 }
 
+// =================================================================================
 
+bool LPMorph_Rotate::GetPoints(Landscape* landscape, std::vector<glm::vec2>& mutable_points)
+{
+	float angle = arg1->GetStrength(landscape);	
+	float c = std::cos(angle);
+	float s = std::sin(angle);
 
+	arg2->GetPoints(landscape, mutable_points);
+
+	for (auto& p : mutable_points)
+		p = GLMTools::Rotate(p, c, s);
+
+	return true;
+}
+
+float LPMorph_Neg::GetStrength(Landscape* landscape)
+{
+	return -arg1->GetStrength(landscape);	
+}
+
+// =================================================================================
+
+bool LPMorph_Translate::GetPoints(Landscape* landscape, std::vector<glm::vec2>& mutable_points)
+{
+	glm::vec2 delta = {
+		arg1->GetStrength(landscape),
+		arg2->GetStrength(landscape)
+	};
+
+	arg3->GetPoints(landscape, mutable_points);
+
+	for (auto& p : mutable_points)
+		p += delta;
+
+	return true;
+}
 
 // =================================================================================
 
@@ -227,6 +262,77 @@ bool LPMorph_Circle::Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferen
 	return true;
 }
 
+// =================================================================================
+
+bool LPMorph_Gear::GetPoints(Landscape* landscape, std::vector<glm::vec2> & mutable_points)
+{
+	auto MyRot = [](glm::vec2 const& src, float alpha)
+	{
+		return GLMTools::Rotate(src, std::cos(alpha), std::sin(alpha));
+	};
+
+
+	
+	if (gear_count < 3)
+		gear_count = 3;
+
+	mutable_points.reserve(4 * size_t(gear_count));
+	mutable_points.clear();
+
+	float gear_angle = 2.0f * float(M_PI) / float(gear_count);
+
+	float half_angle = 0.5f * gear_angle;
+
+
+	glm::vec2 T = {0.0f, r1};
+
+
+	glm::vec2 A = MyRot(T, -0.5f * half_angle);
+	glm::vec2 D = MyRot(T,  0.5f * half_angle);
+
+
+	float c = std::cos(gear_angle);
+	float s = std::sin(gear_angle);
+
+	for (size_t i = 0; i < gear_count; ++i)
+	{
+		glm::vec2 N = glm::vec2(
+			glm::cross(
+				glm::vec3(D, 0.0f) - glm::vec3(A, 0.0f), 
+				glm::vec3(0.0f, 0.0f, 1.0f)
+			));
+		N = glm::normalize(N);
+
+		glm::vec2 B = A + N * r2;
+		glm::vec2 C = D + N * r2;
+
+
+		mutable_points.push_back(A);
+		mutable_points.push_back(B);
+		mutable_points.push_back(C);
+		mutable_points.push_back(D);
+
+		A = GLMTools::Rotate(A, c, s);
+		D = GLMTools::Rotate(D, c, s);
+
+	}
+	//mutable_points.pop_back();
+	//mutable_points[mutable_points.size() - 1] = mutable_points[0];
+
+
+
+
+	return true;
+}
+
+bool LPMorph_Gear::Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver)
+{
+	LPMorph::Initialize(data_map, reference_solver);
+	ReadDataMap(r1, data_map, "r1");
+	ReadDataMap(r2, data_map, "r2");
+	ReadDataMap(gear_count, data_map, "gear_count");
+	return true;
+}
 
 // =================================================================================
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="58" nextobjectid="2259">
+<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="58" nextobjectid="2260">
  <editorsettings>
   <chunksize width="37" height="37"/>
  </editorsettings>
@@ -19,7 +19,7 @@
    <property name="HEIGHT_BITS_MODE" type="bool" value="false"/>
   </properties>
   <objectgroup id="26" name="PlayerAndCamera">
-   <object id="2186" name="PlayerStart" gid="2" x="516" y="1582.06" width="64" height="64" rotation="180">
+   <object id="2186" name="PlayerStart" gid="2" x="1178" y="1558.06" width="64" height="64" rotation="180">
     <properties>
      <property name="BITMAP_NAME" value="Player"/>
     </properties>
@@ -100,6 +100,17 @@ LPMorph_Rectangle width=1000 height=100
      <property name="SMOOTH_COUNT" type="int" value="0"/>
     </properties>
     <polygon points="0,0 265.766,4 547.639,10 865.753,20 1204,32 1199.97,142 0,144"/>
+   </object>
+   <object id="2259" type="Landscape" x="1378" y="1614">
+    <properties>
+     <property name="MORPH_CLASSES">Rotate
+   Mul
+     Const value=-0.3
+     Time
+   Gear gear_count=10 r2=200</property>
+     <property name="SMOOTH_COUNT" type="int" value="0"/>
+    </properties>
+    <polygon points="0,0 -42,48 6,92 -32,134 -82,124 -98,182 -52,194 -44,254 -78,286 -42,334 4,300 62,318 68,362 140,362 134,308 158,274 212,304 242,264 180,224 184,166 244,160 240,96 172,108 122,72 142,14 86,2 70,54 44,60"/>
    </object>
   </objectgroup>
   <objectgroup id="56" name="Landscape2">

@@ -5,7 +5,7 @@
   },
 
   "max_tick_duration": 1.0,
-  "forced_tick_durationxxx": 0.0001,
+  "forced_tick_duration": 0.003,
 
   "gpu": { "@filename": "@gpu.json" },
   "game": { "@filename": "@game.json" },

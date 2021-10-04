@@ -45,22 +45,28 @@ glm::vec2 ClosestPoint(glm::vec2 const& p, glm::vec2 const& a, glm::vec2 const& 
 	return proj;
 }
 
-struct CollisionEntry
-{
-	glm::vec2 a;
-	glm::vec2 b;
-	glm::vec2 proj;
-	float l2;
-	Landscape* landscape = nullptr;
-};
 
-std::vector<CollisionEntry> ComputeCollisions(box2 const box, LudumLevelInstance* ludum_level)
+
+std::vector<CollisionEntry> ComputeCollisions(box2 box, LudumLevelInstance* ludum_level)
 {
 	GPUDrawInterface<VertexDefault> * DI = GetDebugDrawInterface();
 
 	std::vector<CollisionEntry> result;
 
 	sphere2 pawn_sphere = GetInnerSphere(box);
+
+
+	// The CollisionIterator does not correctly detect
+	//   pawn / landscape collision
+	//   it does it to late
+	//   at this point, the sphere already interpenetrate the landscape
+	//   but by too much. 
+	//   
+	//   -> one of the 2 box are wrongs
+	//   -> increase pawn bbox to increase early detection
+	//
+
+	box.half_size *= 4.0f;
 
 	TMObjectCollisionIterator Iterator = ludum_level->GetObjectCollisionIterator(box, COLLISION_LANDSCAPE, false);
 	while (Iterator)
@@ -93,15 +99,6 @@ std::vector<CollisionEntry> ComputeCollisions(box2 const box, LudumLevelInstance
 
 	if (result.size() > 0)
 	{
-		float min_l2 = std::numeric_limits<float>::max();
-
-		CollisionEntry nearest_collision;
-		for (auto const& entry : result)
-		{
-			min_l2 = std::min(min_l2, entry.l2);
-			nearest_collision = entry;
-		}
-
 		std::sort(result.begin(), result.end(), [](CollisionEntry const& src1, CollisionEntry const& src2)
 		{
 			return src1.l2 < src2.l2;
@@ -115,7 +112,7 @@ std::vector<CollisionEntry> ComputeCollisions(box2 const box, LudumLevelInstance
 
 
 
-void LudumPlayerDisplacementComponent::ProcessCollision(box2 & pawn_box)
+CollisionEntry LudumPlayerDisplacementComponent::ProcessCollision(box2 & pawn_box)
 {
 	LudumPlayer* ludum_player = GetPlayer();
 
@@ -143,20 +140,8 @@ void LudumPlayerDisplacementComponent::ProcessCollision(box2 & pawn_box)
 		if (glm::dot(pawn_box.position - m, glm::vec2(N)) < 0.0f)
 			N = -N;
 
-		glm::vec2 direction;
-
-		//if (col.proj == col.a || col.proj == col.b)
-		{
-			direction = glm::normalize(pawn_box.position - col.proj);
-
-			//
-		}
-		//else
-		{
-			//pawn_box.position = col.proj + glm::vec2(N) * pawn_sphere.radius;
-		}
-
-			pawn_box.position = col.proj + direction * pawn_sphere.radius;
+		glm::vec2 direction = glm::normalize(pawn_box.position - col.proj);
+		pawn_box.position = col.proj + direction * pawn_sphere.radius;
 
 #if _DEBUG
 		if (chaos::Application::HasApplicationCommandLineFlag("-DebugDisplay")) // CMDLINE
@@ -170,16 +155,11 @@ void LudumPlayerDisplacementComponent::ProcessCollision(box2 & pawn_box)
 #endif
 
 		touching_ground_timer = ludum_player->touching_ground_lapse_time;
+
+		return collisions[0];
 	}
+	return {};
 }
-
-
-
-
-
-
-
-
 
 bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 {
@@ -227,21 +207,9 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	pawn_box.position += pawn_velocity * delta_time;
 
-
-
-
-
-
-
-
-
-
-
 	// - - - - - - - - - - - -
 
-	ProcessCollision(pawn_box);
-
-	
+	CollisionEntry col = ProcessCollision(pawn_box);
 
 	// - - - - - - - - - - - -
 
@@ -254,17 +222,6 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	float len2 = glm::length2(pawn_velocity);
 	if (len2 > ludum_player->max_velocity * ludum_player->max_velocity)
 		pawn_velocity = ludum_player->max_velocity * glm::normalize(pawn_velocity);
-
-
-
-	static float lim = 2.0f;
-	if (pawn_velocity.y > 2.0)
-		lim = lim;
-
-
-
-
-
 
 	return true;
 }

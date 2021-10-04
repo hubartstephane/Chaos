@@ -159,6 +159,8 @@ etudier tokenizer
 
 - s assurer qu on debut du jeu on a Tick(..) appele au moins une fois avant le Display(...)
 
+- documenter les config.json
+
 #endif
 
 

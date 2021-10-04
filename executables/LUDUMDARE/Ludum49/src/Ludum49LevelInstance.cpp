@@ -10,6 +10,54 @@
 
 #define MORPH_PARAM(prop_name) StringTools::Printf("%s:%s", name, prop_name).c_str()
 
+
+float GetAngle(glm::vec2 const & a, glm::vec2 const & b, glm::vec2 const & c)
+{
+	glm::vec2 ab = b - a;
+	glm::vec2 cb = b - c;
+
+	float dot = (ab.x * cb.x + ab.y * cb.y); // dot product
+	float cross = (ab.x * cb.y - ab.y * cb.x); // cross product
+
+	return std::atan2(cross, dot);
+}
+
+float GetPolygonOrientation(std::vector<glm::vec2> const& v)
+{
+	float result = 0.0f;
+
+	size_t count = v.size();
+	for (size_t i = 0; i < count; ++i)
+	{
+		glm::vec2 const& a = v[i];
+		glm::vec2 const& b = v[(i + 1) % count];
+		glm::vec2 const& c = v[(i + 2) % count];
+
+		if (a == b || b == c || c == a)
+			continue;
+
+		float abc = GetAngle(a, b, c);
+
+		// the angle that interest us is not the abc, but the signed angle with the along direction
+
+		//         | angle
+		//  -PI    |       C   +PI
+		//           --  /
+		//         |   /
+		//           /
+		//       B + 
+		//         |
+		//         |
+		//         |
+		//         A
+		//
+
+		float angle = (abc > 0.0f) ? (float)M_PI - abc : -(float)M_PI - abc;
+		result += angle;
+	}
+	return result;
+}
+
 void ReadDataMap(float& value, MORPH_DATA_MAP data_map, char const* name)
 {
 	for (auto const& entry : data_map)
@@ -24,7 +72,7 @@ void ReadDataMap(float& value, MORPH_DATA_MAP data_map, char const* name)
 
 void ReadDataMap(int& value, MORPH_DATA_MAP data_map, char const* name)
 {
-	float tmp = 0.0f;
+	float tmp = float(value);
 	ReadDataMap(tmp, data_map, name);
 	value = (int)tmp;
 }
@@ -271,8 +319,6 @@ bool LPMorph_Gear::GetPoints(Landscape* landscape, std::vector<glm::vec2> & muta
 		return GLMTools::Rotate(src, std::cos(alpha), std::sin(alpha));
 	};
 
-
-	
 	if (gear_count < 3)
 		gear_count = 3;
 
@@ -283,9 +329,7 @@ bool LPMorph_Gear::GetPoints(Landscape* landscape, std::vector<glm::vec2> & muta
 
 	float half_angle = 0.5f * gear_angle;
 
-
 	glm::vec2 T = {0.0f, r1};
-
 
 	glm::vec2 A = MyRot(T, -0.5f * half_angle);
 	glm::vec2 D = MyRot(T,  0.5f * half_angle);
@@ -306,7 +350,6 @@ bool LPMorph_Gear::GetPoints(Landscape* landscape, std::vector<glm::vec2> & muta
 		glm::vec2 B = A + N * r2;
 		glm::vec2 C = D + N * r2;
 
-
 		mutable_points.push_back(A);
 		mutable_points.push_back(B);
 		mutable_points.push_back(C);
@@ -314,12 +357,9 @@ bool LPMorph_Gear::GetPoints(Landscape* landscape, std::vector<glm::vec2> & muta
 
 		A = GLMTools::Rotate(A, c, s);
 		D = GLMTools::Rotate(D, c, s);
-
 	}
-	//mutable_points.pop_back();
-	//mutable_points[mutable_points.size() - 1] = mutable_points[0];
 
-
+	float orientation = GetPolygonOrientation(mutable_points);
 
 
 	return true;
@@ -719,16 +759,6 @@ bool PointInTriangle (glm::vec2 const & pt, glm::vec2 const & v1, glm::vec2 cons
 }
 
 
-float GetAngle(glm::vec2 const & a, glm::vec2 const & b, glm::vec2 const & c)
-{
-	glm::vec2 ab = b - a;
-	glm::vec2 cb = b - c;
-
-	float dot = (ab.x * cb.x + ab.y * cb.y); // dot product
-	float cross = (ab.x * cb.y - ab.y * cb.x); // cross product
-
-	return std::atan2(cross, dot);
-}
 
 std::vector<glm::vec2> SmoothBoundary(std::vector<glm::vec2> const & src, size_t loop_count, float smooth_factor)
 {
@@ -767,37 +797,8 @@ void Landscape::BuildMesh(std::vector<glm::vec2> const & src)
 	std::vector<glm::vec2> v = smoothed_points;
 
 	// orientation of the polygon
-	float accum = 0.0f;
 
-	size_t count = v.size();
-	for (size_t i = 0; i < count; ++i)
-	{
-		glm::vec2 const& a = v[i];
-		glm::vec2 const& b = v[(i + 1) % count];
-		glm::vec2 const& c = v[(i + 2) % count];
-
-		if (a == b || b == c || c == a)
-			continue;
-
-		float abc = GetAngle(a, b, c);
-
-		// the angle that interest us is not the abc, but the signed angle with the along direction
-
-		//         | angle
-		//  -PI    |       C   +PI
-		//           --  /
-		//         |   /
-		//           /
-		//       B + 
-		//         |
-		//         |
-		//         |
-		//         A
-		//
-
-		float angle = (abc > 0.0f) ? (float)M_PI - abc : -(float)M_PI - abc;
-		accum += angle;
-	}
+	float accum = GetPolygonOrientation(v);
 
 	polygon_orientation = (accum > 0.0f)? 1.0f : -1.0f;
 

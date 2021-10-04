@@ -20,7 +20,7 @@
   </properties>
   <objectgroup id="58" name="landscape decort" locked="1"/>
   <objectgroup id="26" name="PlayerAndCamera">
-   <object id="2186" name="PlayerStart" gid="2" x="24.3772" y="8867.74" width="80" height="92">
+   <object id="2186" name="PlayerStart" gid="2" x="-199.865" y="809.676" width="80" height="92">
     <properties>
      <property name="BITMAP_NAME" value="Player"/>
     </properties>
@@ -111,7 +111,7 @@
     </properties>
     <polygon points="0,0 -42,48 6,92 -32,134 -82,124 -98,182 -52,194 -44,254 -78,286 -42,334 4,300 62,318 68,362 140,362 134,308 158,274 212,304 242,264 180,224 184,166 244,160 240,96 172,108 122,72 142,14 86,2 70,54 44,60"/>
    </object>
-   <object id="2288" name="jump" type="Landscape" x="30.0603" y="9493.7">
+   <object id="2288" name="jump" type="Landscape" x="23.9997" y="9514.91">
     <properties>
      <property name="MORPH_CLASSES">
 Scale ignore_x=1
@@ -137,9 +137,9 @@ Scale ignore_x=1
    <object id="2292" type="Landscape" x="952" y="5140">
     <polygon points="224,-156 20,-80 -136,132 -196,424 -356,668 -623.849,821.269 -928,736 -1140,628 -1324,432 -1472,184 -1552,8 -1496,-160 -1308,-248 -1064,-316 -916,-412 -820,-524 -692,-660 -560,-704 -340,-568 -196,-420 -88,-336"/>
    </object>
-   <object id="2293" type="Landscape" x="1168" y="9639.58">
+   <object id="2293" type="Landscape" x="1645.7" y="9840.8">
     <properties>
-     <property name="MORPH_CLASSES">Wave vertice_count=100 Amplitude=100 wave_length=0.25
+     <property name="MORPH_CLASSES">Wave vertice_count=100 Amplitude=60 wave_length=0.25
   Time
 </property>
      <property name="SMOOTH_COUNT" type="int" value="0"/>
@@ -150,10 +150,10 @@ Scale ignore_x=1
     <properties>
      <property name="SMOOTH_COUNT" type="int" value="0"/>
     </properties>
-    <polygon points="0,0 87.8788,51.5152 87.8788,293.939 824.242,309.091 830.303,57.5758 924.242,15.1515 1345.45,203.03 1215.15,500 1118.18,503.03 821.212,481.818 72.7273,454.545 -218.182,439.394 -351.515,81.8182"/>
+    <polygon points="-12.1212,48.4848 87.8788,51.5152 87.8788,293.939 824.242,309.091 830.303,57.5758 945.455,57.5758 1206.06,193.939 1215.15,500 1118.18,503.03 821.212,481.818 72.7273,454.545 -218.182,439.394 -351.515,81.8182"/>
    </object>
   </objectgroup>
-  <objectgroup id="56" name="Landscape2" locked="1">
+  <objectgroup id="56" name="Landscape2">
    <properties>
     <property name="COLLISION_MASK" value="LANDSCAPE"/>
    </properties>
@@ -161,7 +161,7 @@ Scale ignore_x=1
     <properties>
      <property name="SMOOTH_COUNT" type="int" value="3"/>
     </properties>
-    <polygon points="0,0 960,32 1056,3424 1216,5424 1504,6944 2064,7616 2960,7920 3952,8064 5008,8080 6560,8048 10656,7872 11584,7536 11968,6864 12480,5280 12624,3424 12656,1536 12672,400 12704,-16 13168,-16 13136,992 13168,1936 13152,3280 13152,4800 13184,6272 13152,7680 13120,8688 11760,8784 9968,8848 7792,8848 6192,8928 3968,8864 1904,8816 448,8832 -64,8768"/>
+    <polygon points="0,0 960,32 1056,3424 1216,5424 1504,6944 2064,7616 2960,7920 3952,8064 4668.74,8050.62 4947.39,8080 5493.96,8262.99 7264,8224 8020.1,7946.15 8453.86,7836.81 9070.88,7801.84 10005.3,7934.59 10960,7688 11664,7344 12024,6744 12480,5280 12624,3424 12656,1536 12672,400 12704,-16 13168,-16 13136,992 13168,1936 13152,3280 13152,4800 13184,6272 13152,7680 13120,8688 11760,8784 9968,8848 7792,8848 6192,8928 3968,8864 1904,8816 448,8832 -64,8768"/>
    </object>
   </objectgroup>
  </group>

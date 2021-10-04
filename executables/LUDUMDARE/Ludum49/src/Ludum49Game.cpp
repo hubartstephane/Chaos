@@ -11,12 +11,7 @@
 LudumGame::LudumGame()
 {		
 	// 	Don't let the Flames of Hell die
-	game_name = "Aouf Run";
-	game_instructions = R"INSTRUCTIONS(
-[ButtonA] or [KEYBOARD SPACE]       : Accelerate
-[ButtonB] or [KEYBOARD CTRL]        : Break
-[ButtonX] or [KEYBOARD LEFT SHIFT] : Special)INSTRUCTIONS";
-
+	game_name = "No Game Today\n(but have a look)";
 	looping_levels = false;
 
 	game_instance_class = LudumGameInstance::GetStaticClass();

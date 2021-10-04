@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="58" nextobjectid="2255">
+<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="58" nextobjectid="2259">
  <editorsettings>
   <chunksize width="37" height="37"/>
  </editorsettings>
@@ -19,7 +19,7 @@
    <property name="HEIGHT_BITS_MODE" type="bool" value="false"/>
   </properties>
   <objectgroup id="26" name="PlayerAndCamera">
-   <object id="2186" name="PlayerStart" gid="2" x="-1000" y="-309.94" width="64" height="64" rotation="180">
+   <object id="2186" name="PlayerStart" gid="2" x="516" y="1582.06" width="64" height="64" rotation="180">
     <properties>
      <property name="BITMAP_NAME" value="Player"/>
     </properties>
@@ -29,6 +29,8 @@
      <property name="CAMERA_COMPONENTSxxx" value="AutoRecenterToPlayerCameraComponent"/>
     </properties>
    </object>
+   <object id="2257" name="WorldBoundingBox" type="WorldBoundingBox" x="-3040" y="40" width="5736" height="3384"/>
+   <object id="2258" x="-2360" y="-312"/>
   </objectgroup>
   <objectgroup id="57" name="Landscape1">
    <properties>
@@ -83,9 +85,18 @@ LPMorph_Rectangle width=1000 height=100
    <object id="2252" type="Landscape" x="-572" y="300">
     <polygon points="0,0 -1096,-8 -1092,180 36,160"/>
    </object>
-   <object id="2253" type="Landscape" x="-2662" y="-362">
+   <object id="2253" type="Landscape" x="-142" y="1758">
     <properties>
-     <property name="MORPH_CLASSES" value=""/>
+     <property name="MORPH_CLASSES">Scale ignore_x=1
+  Add 
+  Const value=1
+    Mul 
+      Const value=2
+      LinearStepTwice A= 0 B=0.2 C=2 D=3
+        Mod A=0 B=7
+          Time
+  ID
+</property>
      <property name="SMOOTH_COUNT" type="int" value="0"/>
     </properties>
     <polygon points="0,0 265.766,4 547.639,10 865.753,20 1204,32 1199.97,142 0,144"/>
@@ -95,11 +106,14 @@ LPMorph_Rectangle width=1000 height=100
    <properties>
     <property name="COLLISION_MASK" value="LANDSCAPE"/>
    </properties>
-   <object id="2234" name="d" type="Landscape" x="-980" y="816">
-    <polygon points="0,0 40.6667,9.33333 81.3333,18.6667 140,50.6667 181.333,93.3333 209.333,118.667 241.333,133.333 332,169.333 385.333,178.667 458.667,177.333 537.333,165.333 592,150.667 644,121.333 689.333,84 736,50.6667 761.333,33.3333 766.667,84 777.333,106.667 812,144 870.667,178.667 938.667,189.333 985.333,189.333 1022.67,177.333 1038.67,161.333 1052,141.333 1058.67,114.667 1064,84 1181.33,124 1230.67,148 1273.33,168 1360,192 1401.33,182.667 1456,140 1474.67,93.3333 1505.33,-70.6667 1510.67,-124 1610.67,-124 1618.67,644 -134.667,610.667"/>
-   </object>
    <object id="2246" type="Landscape" x="-302" y="448">
     <polygon points="0,0 36,4 56,0 72,-4 82,-14 108,-42 148,-112 180,-226 216,-324 270,-362 326,-358 350,-328 368,-276 380,-210 394,-138 422,-80 488,-8 552,24 622,22 688,0 714,-42 752,-110 772,-202 778,-270 810,-310 866,-316 902,-244 924,-134 930,-34 936,94 908,162 886,192 -24,202"/>
+   </object>
+   <object id="2255" type="Landscape" x="-3112" y="2392">
+    <polygon points="0,0 -12,-1896 160,-1896 172,-1792 248,-1392 436,-820 776,-392 1128,-252 1668,-208 1872,-220 2272,-308 2464,-384 2452,-288 2484,-196 2588,-124 2816,-136 2924,-236 2968,-392 3492,-296 4012,-352 4076,-428 4252,-540 4420,-576 4600,-580 4760,-540 5004,-508 5288,-640 5468,-788 5584,-1084 5660,-1856 5856,-1864 5864,1108 -8,1116"/>
+   </object>
+   <object id="2256" type="Landscape" x="-604" y="1788">
+    <polygon points="0,0 140,-148 268,-212 416,-264 584,-236 684,-212 764,-240 800,-296 780,-380 696,-464 580,-548 372,-636 176,-616 12,-564 -232,-380 -264,-292 -276,-216 -284,-136 -268,-52 -204,48"/>
    </object>
   </objectgroup>
  </group>

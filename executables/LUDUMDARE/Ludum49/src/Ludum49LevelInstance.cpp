@@ -243,14 +243,8 @@ bool LPMorph_Rectangle::GetPoints(Landscape* landscape, std::vector<glm::vec2> &
 		if (i < count / 2)
 		{
 			float factor = MathTools::CastAndDiv<float>(i, count / 2 - 1);
-
-			factor = 1.0f - factor;
-
 			v.x = 0.5f * width - width * factor;
-
 			v.y = height * 0.5f + 100.0f * factor;
-
-			//v.y = height * 0.5f + 20 * std::cos(factor * 2.0f * float(M_PI) + 2.0f);
 		}
 		else
 		{
@@ -259,22 +253,9 @@ bool LPMorph_Rectangle::GetPoints(Landscape* landscape, std::vector<glm::vec2> &
 			size_t remainder_count = count - (count / 2);
 
 			float factor = MathTools::CastAndDiv<float>(other_i, remainder_count - 1);
-
-			factor = 1.0f - factor;
-
 			v.x = -0.5f * width + width * factor;
 			v.y = -height * 0.5f;
 		}
-
-
-#if 0
-		float alpha = (float)i * 2.0f * (float)M_PI / (float)count;
-
-		float scale_y = (std::sin(alpha) >= 0.0f) ? 1.0f : -1.0f;
-
-		v.x = 0.5f * width  * std::cos(alpha);
-		v.y = 0.5f * height * scale_y;
-#endif
 	}
 	return true;
 }

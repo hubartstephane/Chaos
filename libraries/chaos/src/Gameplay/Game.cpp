@@ -888,6 +888,9 @@ namespace chaos
 			menu_music = nullptr;
 		else
 #endif
+
+			// shu49 ca vaudrait le coup que ca soit en fichier de conf non ?
+
 		menu_music = PlaySound("menu_music", false, true, 0.0f, SoundContext::MAINMENU);
 		game_music = nullptr;
 		pause_music = nullptr;
@@ -906,6 +909,7 @@ namespace chaos
 			menu_music = nullptr;
 		}
 	}
+
 
 	void Game::OnGameOver()
 	{
@@ -926,6 +930,8 @@ namespace chaos
 			pause_music = nullptr;
 		else
 #endif
+
+			// shu49 ca vaudrait le coup de mettre ca en fichier de conf
 		pause_music = PlaySound("pause_music", false, true, 0.0f, SoundContext::PAUSEMENU);
 		// internal code
 		CreatePauseMenuHUD();

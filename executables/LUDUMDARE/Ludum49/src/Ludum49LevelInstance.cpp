@@ -359,9 +359,6 @@ bool LPMorph_Gear::GetPoints(Landscape* landscape, std::vector<glm::vec2> & muta
 		D = GLMTools::Rotate(D, c, s);
 	}
 
-	float orientation = GetPolygonOrientation(mutable_points);
-
-
 	return true;
 }
 

@@ -131,6 +131,50 @@ protected:
 
 // =================================================
 
+class LPMorph_Gear : public LPMorph
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Gear, LPMorph);
+
+protected:
+
+	virtual bool GetPoints(Landscape* landscape, std::vector<glm::vec2> & mutable_points) override;
+
+	virtual bool Initialize(MORPH_DATA_MAP const & data_map, TMObjectReferenceSolver& reference_solver) override;
+
+	float r1 = 100;
+	float r2 = 50;
+
+	int gear_count = 7;
+};
+
+
+
+// =================================================
+
+class LPMorph_Rotate : public LPMorph_Binary
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Rotate, LPMorph_Binary);
+
+protected:
+
+	virtual bool GetPoints(Landscape* landscape, std::vector<glm::vec2>& mutable_points) override;
+};
+
+// =================================================
+
+class LPMorph_Translate : public LPMorph_Ternary
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Translate, LPMorph_Ternary);
+
+protected:
+
+	virtual bool GetPoints(Landscape* landscape, std::vector<glm::vec2>& mutable_points) override;
+};
+
+
+
+// =================================================
+
 class LPMorph_Function : public LPMorph_Unary
 {
 	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Function, LPMorph_Unary);
@@ -177,6 +221,8 @@ protected:
 	virtual bool GetPoints(Landscape* landscape, std::vector<glm::vec2> & mutable_points) override;
 
 };
+
+
 
 
 // =================================================
@@ -282,8 +328,43 @@ protected:
 
 };
 
+class LPMorph_One : public LPMorph
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_One, LPMorph);
 
+protected:
 
+	virtual float GetStrength(Landscape* landscape) override { return 1.0f; }
+};
+
+class LPMorph_Zero : public LPMorph
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Zero, LPMorph);
+
+protected:
+
+	virtual float GetStrength(Landscape* landscape) override { return 0.0f; }
+};
+
+class LPMorph_PI : public LPMorph
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_PI, LPMorph);
+
+protected:
+
+	virtual float GetStrength(Landscape* landscape) override { return (float)M_PI; }
+};
+
+// =================================================
+
+class LPMorph_Neg : public LPMorph_Unary
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Neg, LPMorph_Unary);
+
+protected:
+
+	virtual float GetStrength(Landscape* landscape) override;
+};
 
 // =================================================
 

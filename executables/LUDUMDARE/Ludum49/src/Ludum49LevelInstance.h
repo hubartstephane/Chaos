@@ -42,6 +42,13 @@ protected:
 	float internal_time = 0.0f;
 };
 
+class LPMorph_ID : public LPMorph
+{
+	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_ID, LPMorph);
+
+
+};
+
 // =================================================
 
 class LPMorph_Unary : public LPMorph

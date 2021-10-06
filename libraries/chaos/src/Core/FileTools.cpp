@@ -133,7 +133,7 @@ namespace chaos
 		{
 			boost::filesystem::path const& resolved_path = path.GetResolvedPath();
 
-#if _DEBUG // we cannot use 'CHAOS_CAN_REDIRECT_RESOURCE_FILES' inside libraries !!!
+#if 0 && _DEBUG // we cannot use 'CHAOS_CAN_REDIRECT_RESOURCE_FILES' inside libraries !!!
 			if (Application const* application = Application::GetConstInstance())
 			{
 				if (!application->HasCommandLineFlag("-NoDirectResourceFiles")) // CMDLINE

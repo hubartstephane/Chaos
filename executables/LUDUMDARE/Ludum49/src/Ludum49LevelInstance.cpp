@@ -719,6 +719,7 @@ int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* un
 
 		debug_mesh = DI.ExtractMesh();
 		debug_mesh->Display(renderer, &main_provider, render_params);
+		debug_mesh = nullptr;
 		//DI.GetDynamicMesh().Display(renderer, &main_provider, render_params); // shu49 problematique de detruire l interface a la fin de la fonction
 
 		

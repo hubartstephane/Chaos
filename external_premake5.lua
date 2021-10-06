@@ -75,28 +75,51 @@ DeclareExternalLib("GLFW", GLFW_INC_PATH, GLFW_LIB_PATH, "glfw3.lib")
   
 MSVC_BASELIB_PATH = path.join("MSVC_Redist", "14.23.27820")   
   
-MSVC_LIB_PATH_X32 = path.join(MSVC_BASELIB_PATH, "x86", "Microsoft.VC142.CRT")
-MSVC_LIB_PATH_X64 = path.join(MSVC_BASELIB_PATH, "x64", "Microsoft.VC142.CRT") 
+MSVC_LIB_PATH_X32_RELEASE = path.join(MSVC_BASELIB_PATH, "x86", "Microsoft.VC142.CRT")
+MSVC_LIB_PATH_X64_RELEASE = path.join(MSVC_BASELIB_PATH, "x64", "Microsoft.VC142.CRT") 
+MSVC_LIB_PATH_X32_DEBUG = path.join(MSVC_BASELIB_PATH, "debug_nonredist", "x86", "Microsoft.VC142.DebugCRT")
+MSVC_LIB_PATH_X64_DEBUG = path.join(MSVC_BASELIB_PATH, "debug_nonredist", "x64", "Microsoft.VC142.DebugCRT") 
+
+local MSVC_DLL_DEBUG = {
+    "concrt140d.dll",
+	"msvcp140d.dll",
+    "msvcp140_1d.dll",
+    "msvcp140_2d.dll",
+    "msvcp140d_codecvt_ids.dll",
+    "vccorlib140d.dll",
+    "vcruntime140d.dll",
+    "vcruntime140_1d.dll" -- not for x32, but copy should be ignored
+}
+
+local MSVC_DLL_RELEASE = {
+    "concrt140.dll",
+	"msvcp140.dll",
+    "msvcp140_1.dll",
+    "msvcp140_2.dll",
+    "msvcp140_codecvt_ids.dll",
+    "vccorlib140.dll",
+    "vcruntime140.dll",
+    "vcruntime140_1.dll"  -- not for x32, but copy should be ignored
+}
+
+
+function GenerateMSVCDLLs(base_path, dlls)
+
+  local result = {}
+  for k, v in ipairs(dlls) do
+    table.insert(result, "@" .. path.join(base_path, v))
+  end
+  return result
+end
 
 local MSVC_TOCOPY  = { -- @ because this copies the file directly in
   x32 = {
-    "@" .. path.join(MSVC_LIB_PATH_X32, "concrt140.dll"),
-    "@" .. path.join(MSVC_LIB_PATH_X32, "msvcp140.dll"),
-    "@" .. path.join(MSVC_LIB_PATH_X32, "msvcp140_1.dll"),
-    "@" .. path.join(MSVC_LIB_PATH_X32, "msvcp140_2.dll"),
-    "@" .. path.join(MSVC_LIB_PATH_X32, "msvcp140_codecvt_ids.dll"),
-    "@" .. path.join(MSVC_LIB_PATH_X32, "vccorlib140.dll"),
-    "@" .. path.join(MSVC_LIB_PATH_X32, "vcruntime140.dll")
+   DEBUG = GenerateMSVCDLLs(MSVC_LIB_PATH_X32_DEBUG, MSVC_DLL_DEBUG),
+   RELEASE = GenerateMSVCDLLs(MSVC_LIB_PATH_X32_RELEASE, MSVC_DLL_RELEASE)
   },
   x64 = {
-    "@" .. path.join(MSVC_LIB_PATH_X64, "concrt140.dll"),
-    "@" .. path.join(MSVC_LIB_PATH_X64, "msvcp140.dll"),
-    "@" .. path.join(MSVC_LIB_PATH_X64, "msvcp140_1.dll"),
-    "@" .. path.join(MSVC_LIB_PATH_X64, "msvcp140_2.dll"),
-    "@" .. path.join(MSVC_LIB_PATH_X64, "msvcp140_codecvt_ids.dll"),
-    "@" .. path.join(MSVC_LIB_PATH_X64, "vccorlib140.dll"),
-    "@" .. path.join(MSVC_LIB_PATH_X64, "vcruntime140.dll"),
-    "@" .. path.join(MSVC_LIB_PATH_X64, "vcruntime140_1.dll")
+   DEBUG = GenerateMSVCDLLs(MSVC_LIB_PATH_X64_DEBUG, MSVC_DLL_DEBUG),
+   RELEASE = GenerateMSVCDLLs(MSVC_LIB_PATH_X64_RELEASE, MSVC_DLL_RELEASE)
   }                  
 } 
   

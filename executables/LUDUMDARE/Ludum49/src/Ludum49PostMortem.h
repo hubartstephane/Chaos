@@ -161,6 +161,32 @@ etudier tokenizer
 
 - documenter les config.json
 
+
+-generation de class avec plusieurs noms
+
+-multiple instances de ClassManager
+
+-- gestion des touches
+{
+	"layout":"Azerty"
+
+
+"F10":"Unsubclass daction"
+
+voire
+
+"F10":"TakeScreenShot --res 10, 3  --fullscreen"
+
+-> ca necessiterait d avoir le parseur d'argument qui ne soit pas lié uniquement a l'application
+
+plutot que
+
+"nom de l'action":"F10"
+
+??
+
+}
+
 #endif
 
 

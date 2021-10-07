@@ -259,7 +259,7 @@
 // GLFW
 
 
-
+#if WITH_VULKAN
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_win32.h>
 
@@ -268,10 +268,9 @@
 #include <GLFW/glfw3.h>
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
+#else // WITH_VULKAN
 
-#if 0 // ORI
 #include <GLFW/glfw3.h>
-
 #define GLFW_EXPOSE_NATIVE_WIN32
 #define GLFW_EXPOSE_NATIVE_WGL
 #include <GLFW/glfw3native.h>

@@ -5,8 +5,21 @@ namespace chaos
 
 	namespace DebugTools
 	{
-		// code inspired from OpenGL insights : chapter 33
-		void DisplayCallStack(std::ostream& stream)
+		std::vector<CallStackEntry> ExtractCallStack()
+		{
+			std::vector<CallStackEntry> result;
+			ProcessCallStack([&result](char const* symbol_name, char const* filename, int line_number)
+			{
+				CallStackEntry entry;
+				entry.symbol_name = symbol_name;
+				entry.filename = filename;
+				entry.line_number = line_number;
+				result.push_back(std::move(entry));
+			});
+			return result;
+		}
+
+		void ProcessCallStack(std::function<void(char const *, char const *, int)> func)
 		{
 			// Note on CaptureStackBackTrace : https://msdn.microsoft.com/fr-fr/library/windows/desktop/bb204633(v=vs.85).aspx
 
@@ -40,20 +53,28 @@ namespace chaos
 				{
 					SymFromAddr(process, (DWORD64)(stack[i]), 0, symbol);
 
-					if (strstr(symbol->Name, "DebugTools::DisplayCallStack") == symbol->Name) // ignore current function from the callstack
+					if (strstr(symbol->Name, "DebugTools") != nullptr) // ignore all function in DebugTools namespace from the callstack
 						continue;
 
 					IMAGEHLP_LINE64 line;
 					DWORD           dwDisplacement;
-
 					line.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
 
 					if (SymGetLineFromAddr64(process, (DWORD64)(stack[i]), &dwDisplacement, &line))
 					{
-						stream << "- " << line.FileName << "(" << line.LineNumber << ")    : " << symbol->Name << '\n';
+						func(symbol->Name, line.FileName, line.LineNumber);
 					}
 				}
 			}
+		}
+
+		// code inspired from OpenGL insights : chapter 33
+		void DisplayCallStack(std::ostream& stream)
+		{
+			ProcessCallStack([&stream](char const* symbol_name, char const* filename, int line_number)
+			{
+				stream << "- " << filename << "(" << line_number << ")    : " << symbol_name << '\n';
+			});
 		}
 
 	}; // namespace DebugTools

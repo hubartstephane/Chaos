@@ -84,7 +84,7 @@ void GameHUDHealthBarComponent::UpdateMesh()
 	ParticleToPrimitive(particle, quads);
 	++quads;
 
-	mesh = DI.ExtractMesh();
+	mesh = DI.GetDynamicMesh();
 }
 
 // ====================================================================

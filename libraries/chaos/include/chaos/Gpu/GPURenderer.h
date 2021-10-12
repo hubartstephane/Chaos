@@ -41,6 +41,8 @@ namespace chaos
 		/** called at the start of rendering on a framebuffer */
 		bool PopFramebufferRenderContext();
 
+		/** get the last delta_time */
+		float GetLastDeltaTime() const { return LastDeltaTime; }
 		/** get the average frame rate */
 		float GetAverageFrameRate() const;
 		/** get the number of average draw calls */
@@ -67,6 +69,8 @@ namespace chaos
 		uint64_t rendering_timestamp = 0;
 		/** the fence for current frame */
 		shared_ptr<GPUFence> rendering_fence;
+		/** the duration of the last tick */
+		float LastDeltaTime = 0.0f;
 		/** for counting frame per seconds */
 		TimedAccumulator<float> framerate_counter;
 		/** for counting drawcall per seconds */

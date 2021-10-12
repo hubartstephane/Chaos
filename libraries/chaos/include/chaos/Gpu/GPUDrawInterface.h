@@ -35,7 +35,7 @@ namespace chaos
 		/** destructor */
 		virtual ~GPUDrawInterface()
 		{
-			dynamic_mesh.Clear(GetBufferPool());
+			Clear();
 		}
 
 		/** flush and display the pending content */
@@ -48,36 +48,32 @@ namespace chaos
 		}
 
 		/** extract the mesh for external purpose */
-		GPUDynamicMesh* ExtractMesh()
+		GPUDynamicMesh* GetDynamicMesh(GPUDynamicMesh * result = nullptr)
 		{
-			GPUDynamicMesh* result = new GPUDynamicMesh();
+			assert(result != &dynamic_mesh);
+			if (result != nullptr)
+				result->Clear(GetBufferPool());
+			else
+				result = new GPUDynamicMesh();
+
 			if (result != nullptr)
 			{
 				this->Flush();
 				swap(*result, dynamic_mesh);
-				dynamic_mesh.SetVertexArrayCache(GetVertexArrayCache());
+				dynamic_mesh.SetVertexArrayCache(GetVertexArrayCache()); // restore the cache that may have been lost
 			}
 			return result;
 		}
 
-		/** getter on the mesh */
-		GPUDynamicMesh& GetDynamicMesh() { return dynamic_mesh; }
-		/** getter on the mesh */
-		GPUDynamicMesh const& GetDynamicMesh() const { return dynamic_mesh; }
 		/** clear the dynamic mesh */
 		void Clear()
 		{
+			this->Flush(); // to unmap pending mapped buffer
 			dynamic_mesh.Clear(GetBufferPool());
 		}
 
 	protected:
 
-		/** gets the shared GPUBufferPool to improve GPUBuffer allocation */
-		static GPUBufferPool* GetBufferPool()
-		{
-			static shared_ptr<GPUBufferPool> result = new GPUBufferPool();
-			return result.get();
-		}
 		/** gets the shared GPUVertexDeclaration */
 		static GPUVertexDeclaration* GetVertexDeclaration()
 		{
@@ -89,6 +85,14 @@ namespace chaos
 			}
 			return result.get();
 		}
+
+		/** gets the shared GPUBufferPool to improve GPUBuffer allocation */
+		static GPUBufferPool* GetBufferPool()
+		{
+			static shared_ptr<GPUBufferPool> result = new GPUBufferPool();
+			return result.get();
+		}
+
 		/** gets the shared GPUVertexArrayCache */
 		static GPUVertexArrayCache* GetVertexArrayCache()
 		{

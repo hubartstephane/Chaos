@@ -59,6 +59,10 @@ namespace chaos
     void PrimitiveOutputBase::GiveBufferToInternalCache(GPUBuffer* in_buffer, char* in_buffer_start, char* in_buffer_position, char* in_buffer_end)
     {
         assert(in_buffer != nullptr);
+        assert(in_buffer_start != nullptr);
+        assert(in_buffer_position != nullptr);
+        assert(in_buffer_end != nullptr);
+
         for (GPUPrimitiveBufferCacheEntry& entry : internal_buffer_pool)
         {
             if (entry.buffer == in_buffer)
@@ -249,17 +253,8 @@ namespace chaos
         }
 
         char * result = AllocateBufferMemory(requested_size); // this may set current_primitive_type to NONE
-
-
-        // shu49
-
-        if (result==  nullptr)
-            result = AllocateBufferMemory(requested_size); 
-
-
-
-        current_primitive_type = primitive_type;
-
+        if (result != nullptr)
+            current_primitive_type = primitive_type;
         return result;
     }
 

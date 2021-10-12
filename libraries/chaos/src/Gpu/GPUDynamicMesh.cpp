@@ -17,8 +17,27 @@ namespace chaos
         // XXX : shu on pourrait aussi donner les IndexBuffer => ATTENTION, l index buffer GPURenderer::QUADIndexBuffer ne doit pas etre donné !
 
         if (buffer_pool != nullptr) // give buffers to pool if we want that
-            for (GPUDynamicMeshElement& element : elements)
-                buffer_pool->GiveBuffer(element.vertex_buffer, last_rendered_fence.get());
+        {
+            size_t count = elements.size();
+            for (size_t i = 0; i < count; ++i)
+            {
+                GPUDynamicMeshElement const& element = elements[i];
+                if (element.vertex_buffer != nullptr)
+                {
+                    // we don't want to give the buffer twice to the pool
+                    // in reverse order because this is more likely to find the same buffer just before this
+                    size_t j = i;
+                    for (; j > 0; --j)
+                        if (elements[j - 1].vertex_buffer == element.vertex_buffer)
+                            break;
+                    if (j == 0)
+                    {
+                        assert(!element.vertex_buffer->IsMapped());
+                        buffer_pool->GiveBuffer(element.vertex_buffer.get(), last_rendered_fence.get());
+                    }
+                }
+            }
+        }
         elements.clear();
         last_rendered_fence = nullptr;
     }

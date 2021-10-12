@@ -77,7 +77,7 @@ void GameHUDPowerUpComponent::UpdateMesh()
 
 	chaos::GPUDrawInterface<chaos::VertexDefault> DI(nullptr);
 	DrawText(DI, title.c_str(), params);
-	mesh = DI.ExtractMesh();
+	mesh = DI.GetDynamicMesh();
 }
 
 // ====================================================================
@@ -163,7 +163,7 @@ void GameHUDHealthBarComponent::UpdateMesh()
 	ParticleToPrimitive(particle, quads);
 	++quads;
 
-	mesh = DI.ExtractMesh();
+	mesh = DI.GetDynamicMesh();
 }
 
 // ====================================================================

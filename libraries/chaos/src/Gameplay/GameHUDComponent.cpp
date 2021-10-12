@@ -222,7 +222,7 @@ namespace chaos
 
 			GPUDrawInterface<VertexDefault> DI(nullptr);
 			DrawText(DI, in_text, other_params);
-			mesh = DI.ExtractMesh();
+			mesh = DI.GetDynamicMesh(mesh.get());
 		}
 	}
 
@@ -537,7 +537,7 @@ namespace chaos
 				particle_position += glm::abs(particle_offset);
 				++quads; // next quad
 			}
-			mesh = DI.ExtractMesh();
+			mesh = DI.GetDynamicMesh(mesh.get());
 		}
 	}
 
@@ -660,7 +660,7 @@ namespace chaos
 				TweakTextHotpointWithCanvas(GetGame()->GetCanvasBox(), other_params);
 				DrawText(DI, stream.str().c_str(), other_params);
 
-				mesh = DI.ExtractMesh();
+				mesh = DI.GetDynamicMesh(mesh.get());
 			}
 
 			// decrease time for all entries
@@ -723,9 +723,7 @@ namespace chaos
 		glPointSize(5.0f);
 		glLineWidth(3.0f);
 
-
-		int result = draw_interface.GetDynamicMesh().Display(renderer, uniform_provider, render_params);
-
+		int result = draw_interface.Display(renderer, uniform_provider, render_params);
 
 		glPointSize(1.0f);
 		glLineWidth(1.0f);
@@ -733,8 +731,6 @@ namespace chaos
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
-		
-		draw_interface.Clear();
 		return result;
 	}
 

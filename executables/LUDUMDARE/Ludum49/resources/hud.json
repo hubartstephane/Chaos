@@ -3,18 +3,11 @@
     "visible": false
   },
 
-  "FPS_ID": {
-    "visible": false
-  },
-
   "INSTRUCTIONS_ID": {
     "visible": false
   },
 
   "SCORE_ID": {
-    "visible": false
-  },
-  "PERFS_ID": {
     "visible": false
   },
   "LEVEL_TITLE_ID": {

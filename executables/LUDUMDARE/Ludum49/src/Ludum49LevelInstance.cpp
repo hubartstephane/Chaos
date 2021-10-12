@@ -639,7 +639,6 @@ Landscape::Landscape()
 bool Landscape::DoTick(float delta_time)
 {
 	TMObject::DoTick(delta_time);
-
 	if (morph != nullptr)
 	{
 		morph->Tick(this, delta_time);
@@ -647,6 +646,7 @@ bool Landscape::DoTick(float delta_time)
 		std::vector<glm::vec2> mutable_points = points;
 		morph->GetPoints(this, mutable_points);
 		point_bounding_box = BoxFromPoints(mutable_points);
+
 		BuildMesh(mutable_points);
 	}
 	return true;
@@ -662,7 +662,6 @@ int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* un
 	main_provider.AddVariable("local_to_world", local_to_world);
 
 #if _DEBUG
-		
 	if (chaos::Application::HasApplicationCommandLineFlag("-Wireframe")) // CMDLINE
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -711,21 +710,9 @@ int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* un
 			++prim_p;
 		}
 
-		// shu49 attention. il ne faudrait pas faire un shared_ptr<> p = GetDynamicMesh();
-		//
-		// template<typename T> class ForbidSmartReference : ...
-		//
-		DI.Flush();
-
-		debug_mesh = DI.ExtractMesh();
-		debug_mesh->Display(renderer, &main_provider, render_params);
-		debug_mesh = nullptr;
-		//DI.GetDynamicMesh().Display(renderer, &main_provider, render_params); // shu49 problematique de detruire l interface a la fin de la fonction
-
-		
+		DI.Display(renderer, &main_provider, render_params);	
 	}
 #endif
-
 
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
@@ -864,10 +851,9 @@ void Landscape::BuildMesh(std::vector<glm::vec2> const & src)
 		{
 			tri[i].position = t[i];
 			tri[i].color = color;
-			//tri[i].color.a = 0.2f;
 		}
 	}
-	mesh = DI.ExtractMesh();
+	mesh = DI.GetDynamicMesh(mesh.get());
 }
 
 box2 Landscape::GetBoundingBox(bool world_system) const
@@ -903,8 +889,6 @@ box2 Landscape::GetBoundingBox(bool world_system) const
 			std::vector<std::string> tokens = StringTools::Split(t, ' ');
 			tokens.erase(std::remove_if(tokens.begin(), tokens.end(), [](std::string const& s) { return s.size() == 0; }), tokens.end());
 			
-			
-
 			if (tokens.size() == 0)
 				continue;
 
@@ -935,19 +919,6 @@ box2 Landscape::GetBoundingBox(bool world_system) const
 		}
 		return result;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
 {

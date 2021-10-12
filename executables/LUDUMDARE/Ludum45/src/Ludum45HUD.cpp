@@ -98,7 +98,7 @@ void GameHUDShroudLifeComponent::UpdateMesh()
 
 	ParticleToPrimitives(particle, DI);
 
-	mesh = DI.ExtractMesh();
+	mesh = DI.GetDynamicMesh();
 }
 
 bool GameHUDShroudLifeComponent::InitializeFromConfiguration(nlohmann::json const & json)

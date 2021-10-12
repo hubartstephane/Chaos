@@ -127,6 +127,7 @@ namespace chaos
 
 	bool GPURenderer::DoTick(float delta_time)
 	{
+		LastDeltaTime = delta_time;
 		// update counters
 		framerate_counter.Tick(delta_time);
 		drawcall_counter.Tick(delta_time);

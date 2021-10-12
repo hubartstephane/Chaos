@@ -11,10 +11,9 @@ namespace chaos
         for (size_t i = 0; i < count; ++i)
         {
             GPUBuffer * buffer = buffers[i].get();
-
             // buffer too small ? 
             size_t buffer_size = buffer->GetBufferSize();
-            if (buffer_size < required_size)            
+            if (buffer_size < required_size)
                 continue;
             // or too big ?
             if (max_accepted_size > 0 && buffer_size > max_accepted_size) // we do not want to waste to much memory => that why we use a max_accepted_size
@@ -27,9 +26,15 @@ namespace chaos
         return false;
     }
 
-    bool GPUBufferPool::GiveBuffer(shared_ptr<GPUBuffer> & buffer, GPUFence* fence)
+    bool GPUBufferPool::GiveBuffer(GPUBuffer * buffer, GPUFence* fence)
     {
         assert(buffer != nullptr);
+        assert(!buffer->IsMapped());
+#if _DEBUG // ensure no duplication
+        for (GPUBufferPoolEntries const& entry : entries)
+            for (auto const& entry_buffer : entry.buffers)
+                assert(entry_buffer != buffer);
+#endif
         GPUBufferPoolEntries* cache_entry = GetCacheEntryForFence(fence);
         if (cache_entry == nullptr)
             return false;

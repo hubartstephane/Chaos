@@ -15,6 +15,7 @@ namespace chaos
 
 	GPUBuffer::~GPUBuffer()
 	{
+		assert(!mapped);
 		Release();
 	}
 
@@ -142,6 +143,7 @@ namespace chaos
 
 	char * GPUBuffer::MapBuffer(size_t start, size_t count, bool read, bool write)
 	{
+		assert(!mapped);
 		assert(read || write);
 
 		// early exit
@@ -171,13 +173,18 @@ namespace chaos
 		else if (start + count > buffer_size) // map all what required or nothing
 			return nullptr;
 		// do the mapping
-		return (char*)glMapNamedBufferRange(buffer_id, start, count , map_type);
+		char* result = (char*)glMapNamedBufferRange(buffer_id, start, count, map_type);
+		if (result != nullptr)
+			mapped = true;
+		return result;
 	}
 
 	void GPUBuffer::UnMapBuffer()
 	{
+		assert(mapped);
 		if (buffer_id == 0)
-			return;			
+			return;
+		mapped = false;
 		glUnmapNamedBuffer(buffer_id);
 	}
 

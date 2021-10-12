@@ -38,6 +38,9 @@ namespace chaos
 		/** unmap the buffer */
 		void UnMapBuffer();
 
+		/** returns whether the buffer has been mapped */
+		bool IsMapped() const { return mapped; }
+
 	protected:
 
 		/** cleaning the object */
@@ -53,8 +56,9 @@ namespace chaos
 		bool ownership = true;
 		/** whether the data is dynamic or not (this is a restrict of GL_ STATIC/STREAM/DYNAMIC ... DRAW/COPY/READ => considere only GL_STATIC_DRAW and GL_DYNAMIC_DRAW */
 		bool dynamic = false;
+		/** whether the buffer is mapped */
+		bool mapped = false;
 	};
-
 #endif
 
 }; // namespace chaos

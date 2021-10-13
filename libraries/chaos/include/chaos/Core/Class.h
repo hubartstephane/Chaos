@@ -80,8 +80,7 @@ namespace chaos
 		bool CanCreateInstance() const { return create_instance_func != nullptr; }
 		/** returns whether we can create instances */
 		bool CanCreateInstanceOnStack() const { return create_instance_on_stack_func != nullptr; }
-		/** gets the depth of the class in the inheritance hierarchy */
-		size_t GetDepth() const;
+
 
 	public:
 
@@ -136,26 +135,12 @@ namespace chaos
 			}
 			return result;
 		}
-
-		/** declare a pseudo class, that is a class with additionnal json initialization */
-		static Class const* DeclareSpecialClass(char const* class_name, nlohmann::json const& json);
-
 		/** static inheritance method */
 		static InheritanceType InheritsFrom(Class const* child_class, Class const* parent_class, bool accept_equal = false);
 		/** returns whether the class inherits from parent */
 		InheritanceType InheritsFrom(Class const* parent_class, bool accept_equal = false) const;
 
 	protected:
-
-		/** internal method to declare a class without finding yet its parent (used for directory iteration) */
-		static Class* DoDeclareSpecialClassStep1(char const* class_name, nlohmann::json const& json); // XXX : no const return value here !! (for Finalization of special class)
-		/** finalization of a special class (called from ClassLoader) : find parent */
-		bool DoDeclareSpecialClassStep2();
-		/** finalization of a special class (called from ClassLoader) : creation delegate */
-		bool DoDeclareSpecialClassStep3();
-
-		/** internal method called from ClassLoader to abord a failed loaded class */
-		static void DoInvalidateSpecialClass(Class const* cls);
 
 		/** return the class for a type even if not initialized */
 		template<typename CLASS_TYPE>

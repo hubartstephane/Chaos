@@ -290,11 +290,11 @@ namespace chaos
 		public:
 
 			/** the colors to use, indexed by a joker name */
-			std::map<std::string, glm::vec4, StringTools::ci_less> colors;
+			std::map<std::string, glm::vec4, StringTools::RawStringILess> colors;
 			/** the bitmaps to use, indexed by a joker name */
-			std::map<std::string, BitmapAtlas::BitmapInfo const*, StringTools::ci_less> bitmaps;
+			std::map<std::string, BitmapAtlas::BitmapInfo const*, StringTools::RawStringILess> bitmaps;
 			/** the font_info to use, indexed by a joker name */
-			std::map<std::string, BitmapAtlas::FontInfo const*, StringTools::ci_less> font_infos;
+			std::map<std::string, BitmapAtlas::FontInfo const*, StringTools::RawStringILess> font_infos;
 
 			/** the atlas where to find entries */
 			BitmapAtlas::AtlasBase const& atlas;

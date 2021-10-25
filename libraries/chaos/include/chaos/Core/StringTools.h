@@ -97,33 +97,44 @@ namespace chaos
 		/** returns true whether the string is null or as 0 length */
 		bool IsEmpty(std::string const & src);
 
-		/** ci_less : a case insensitive comparator */
-		struct ci_less
+		/** string comparator class base */
+		template<typename COMPARE, int (&Func)(char const *, char const *)>
+		class RawStringCompareBase
 		{
-			bool operator ()(std::string const & s1, std::string const & s2) const
-			{		
-				return (StringTools::Stricmp(s1, s2) < 0);
+		public:
+
+			bool operator ()(char const* src1, char const* src2) const
+			{
+				return comparator(Func(src1, src2), 0);
 			}
 
-			bool operator ()(char const * s1, char const * s2) const
-			{		
-				return (StringTools::Stricmp(s1, s2) < 0);
+			bool operator ()(char const* src1, std::string const & src2) const
+			{
+				return operator()(src1, src2.c_str());
 			}
+
+			bool operator ()(std::string const & src1, char const * src2) const
+			{
+				return operator()(src1.c_str(), src2);
+			}
+
+			bool operator ()(std::string const & src1, std::string const & src2) const
+			{
+				return operator()(src1.c_str(), src2.c_str());
+			}
+
+		protected:
+
+			COMPARE comparator;
 		};
 
-		/** ci_greater : a case insensitive comparator */
-		struct ci_greater
-		{
-			bool operator ()(std::string const & s1, std::string const & s2) const
-			{		
-				return (StringTools::Stricmp(s1, s2) > 0);
-			}
+		using RawStringLess = RawStringCompareBase<std::less<int>, &StringTools::Strcmp>;
+		using RawStringGreater = RawStringCompareBase<std::greater<int>, &StringTools::Strcmp>;
+		using RawStringEqualTo = RawStringCompareBase<std::equal_to<int>, &StringTools::Strcmp>;
 
-			bool operator ()(char const * s1, char const * s2) const
-			{		
-				return (StringTools::Stricmp(s1, s2) > 0);
-			}
-		};
+		using RawStringILess = RawStringCompareBase<std::less<int>, &StringTools::Stricmp>;
+		using RawStringIGreater = RawStringCompareBase<std::greater<int>, &StringTools::Stricmp>;
+		using RawStringIEqualTo = RawStringCompareBase<std::equal_to<int>, &StringTools::Stricmp>;
 
 #endif
 

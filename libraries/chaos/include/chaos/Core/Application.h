@@ -161,7 +161,7 @@ namespace chaos
 			//
 			// XXX: premake defines {...} function produces errors whenever the string contains some special characters like ';'
 			//      that's why they are encoded in Base64
-#if CHAOS_CAN_REDIRECT_RESOURCE_FILES
+#if (_DEBUG && defined CHAOS_PROJECT_BUILD_PATH && (defined CHAOS_PROJECT_SRC_PATH || defined CHAOS_PROJECT_DIRECT_RESOURCE_PATH)) // File Reditction
 			// build directory
 			Buffer<char> decoded_build_path = MyBase64().Decode(CHAOS_PROJECT_BUILD_PATH);
 			boost::filesystem::path build_path = std::string(decoded_build_path.data, decoded_build_path.bufsize);

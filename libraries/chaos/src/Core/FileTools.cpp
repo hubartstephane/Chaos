@@ -96,7 +96,7 @@ namespace chaos
 			return result;
 		}
 
-#if _DEBUG // we cannot use 'CHAOS_CAN_REDIRECT_RESOURCE_FILES' inside libraries !!!
+#if _DEBUG // File Redirection
 
 		bool GetRedirectedPath(boost::filesystem::path const& p, boost::filesystem::path const & build_path, boost::filesystem::path const& src_path, boost::filesystem::path& redirected_path)
 		{
@@ -133,7 +133,8 @@ namespace chaos
 		{
 			boost::filesystem::path const& resolved_path = path.GetResolvedPath();
 
-#if _DEBUG // we cannot use 'CHAOS_CAN_REDIRECT_RESOURCE_FILES' inside libraries !!!
+#if _DEBUG // File Redirection
+
 			if (Application const* application = Application::GetConstInstance())
 			{
 				if (!application->HasCommandLineFlag("-NoDirectResourceFiles")) // CMDLINE
@@ -168,7 +169,8 @@ namespace chaos
 				{
 					for (auto it = boost::filesystem::directory_iterator(p) ; it != boost::filesystem::directory_iterator(); ++it)
 					{
-#if _DEBUG // we cannot use 'CHAOS_CAN_REDIRECT_RESOURCE_FILES' inside libraries !!!
+#if _DEBUG // File Redirection
+
 						boost::filesystem::path relative_path = it->path().lexically_relative(p);
 						if (std::find(processed_relative_paths.begin(), processed_relative_paths.end(), relative_path) != processed_relative_paths.end())
 							continue;

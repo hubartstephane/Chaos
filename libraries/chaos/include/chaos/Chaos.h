@@ -1,32 +1,6 @@
 #pragma once
 
 /**
-* Note on file redirection:
-*
-*   The projects are split into 2 parts:
-*     - the executable
-*     - the resource files
-*
-*   Under normal circonstances, you have to 'build' the resource files (make a copy into to exe directory) in order to access them at runtime
-*   As a side effect, every time you change one file in the resource project, you have to make a copy again of all files into exe directory
-*   This prevent direct edition and further hot-reloading of resources
-*
-*   That why i added a redirect resources mecanim.
-*   in DEBUG, we try to match files in BUILD_PATH and files in SRC_PATH to make a direct access from the SOURCE
-*
-*   premake5.lua defines some helpful macro for that.
-*
-*   You can prevent this in _DEBUG with the command swith "-NoDirectResourceFiles"
-*
-*   You can only use this features if 'CHAOS_PROJECT_SRC_PATH' and 'CHAOS_PROJECT_BUILD_PATH' are defined (and in _DEBUG)
-*
-*   Beware do not use this macro in CHAOS library because it would be related to the library path.
-*   Use it in EXE code instead
-*/
-
-#define CHAOS_CAN_REDIRECT_RESOURCE_FILES (_DEBUG && defined CHAOS_PROJECT_BUILD_PATH && (defined CHAOS_PROJECT_SRC_PATH || defined CHAOS_PROJECT_DIRECT_RESOURCE_PATH))
-
-/**
 * Common "macros"
 */
 

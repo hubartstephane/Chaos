@@ -4,7 +4,7 @@
 
 class LudumAutoRecenterToPlayerCameraComponent : public AutoRecenterToPlayerCameraComponent
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LudumAutoRecenterToPlayerCameraComponent, AutoRecenterToPlayerCameraComponent);
+	CHAOS_DECLARE_OBJECT_CLASS(LudumAutoRecenterToPlayerCameraComponent, AutoRecenterToPlayerCameraComponent);
 
 public:
 

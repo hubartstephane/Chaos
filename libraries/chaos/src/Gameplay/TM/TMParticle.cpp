@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h>
+#include <chaos/chaos.h>
 
 namespace chaos
 {

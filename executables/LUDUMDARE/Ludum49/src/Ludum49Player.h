@@ -16,7 +16,7 @@ public:
     CHAOS_DECLARE_GAMEPLAY_FRIENDSHIPS(Ludum);
     friend class LudumCameraComponent;
 
-	CHAOS_DECLARE_OBJECT_CLASS2(LudumPlayer, Player);
+	CHAOS_DECLARE_OBJECT_CLASS(LudumPlayer, Player);
 
 
     class ParticlePlayer* GetPlayerParticle();

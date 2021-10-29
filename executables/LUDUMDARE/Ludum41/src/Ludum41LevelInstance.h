@@ -17,7 +17,7 @@ public:
 
 	CHAOS_DECLARE_GAMEPLAY_FRIENDSHIPS(Ludum);
 
-	CHAOS_DECLARE_OBJECT_CLASS2(LudumLevelInstance, chaos::LevelInstance);
+	CHAOS_DECLARE_OBJECT_CLASS(LudumLevelInstance, chaos::LevelInstance);
 
 	/** override */
 	virtual bool CheckLevelCompletion() const override;

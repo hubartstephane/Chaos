@@ -197,9 +197,9 @@ public:
 
 
 
-CHAOS_REGISTER_CLASS2(ParticleSmoke, chaos::TMParticle);
-CHAOS_REGISTER_CLASS2(ParticleBase, chaos::TMParticle);
-CHAOS_REGISTER_CLASS2(ParticlePlayer, ParticleBase);
-CHAOS_REGISTER_CLASS2(ParticleOpponent, ParticleBase);
+CHAOS_REGISTER_CLASS(ParticleSmoke, chaos::TMParticle);
+CHAOS_REGISTER_CLASS(ParticleBase, chaos::TMParticle);
+CHAOS_REGISTER_CLASS(ParticlePlayer, ParticleBase);
+CHAOS_REGISTER_CLASS(ParticleOpponent, ParticleBase);
 
 

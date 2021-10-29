@@ -19,7 +19,7 @@ public:
 	float remaining_time;
 };
 
-CHAOS_REGISTER_CLASS1(ParticleExample);
+CHAOS_REGISTER_CLASS(ParticleExample);
 
 using VertexExample = chaos::VertexDefault;
 
@@ -84,7 +84,7 @@ class WindowOpenGLTest : public chaos::Window
 	float VIEWPORT_WANTED_ASPECT = (16.0f / 9.0f);
 	float WORLD_X = 1000.0f;
 
-	CHAOS_DECLARE_OBJECT_CLASS2(WindowOpenGLTest, chaos::Window);
+	CHAOS_DECLARE_OBJECT_CLASS(WindowOpenGLTest, chaos::Window);
 
 protected:
 

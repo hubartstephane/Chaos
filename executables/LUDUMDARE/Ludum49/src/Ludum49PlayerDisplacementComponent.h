@@ -13,7 +13,7 @@ struct CollisionEntry
 
 class LudumPlayerDisplacementComponent : public PlayerDisplacementComponent
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LudumPlayerDisplacementComponent, PlayerDisplacementComponent);
+	CHAOS_DECLARE_OBJECT_CLASS(LudumPlayerDisplacementComponent, PlayerDisplacementComponent);
 
 protected:
 

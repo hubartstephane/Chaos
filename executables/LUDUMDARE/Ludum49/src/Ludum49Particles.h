@@ -61,7 +61,7 @@ public:
 	class LudumGame* game = nullptr;
 };
 
-CHAOS_REGISTER_CLASS2(ParticleBase, TMParticle);
-CHAOS_REGISTER_CLASS2(ParticlePlayer, ParticleBase);
 
+CHAOS_REGISTER_CLASS(ParticleBase, TMParticle);
+CHAOS_REGISTER_CLASS(ParticlePlayer, ParticleBase);
 

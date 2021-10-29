@@ -4,26 +4,17 @@
  * Macros for declaring classes in object derivated classes
  */
 
-#define CHAOS_DECLARE_OBJECT_CLASS1(classname)\
-private:\
-static inline chaos::Class const * classname##_class = chaos::Class::DeclareClass<classname>(#classname);\
+// It's important that last line is:    static inline .... DeclareClass ... (no comma)
+// so that we can use the short class name syntax
+//    CHAOS_DECLARE_OBJECT_CLASS(child_class, parent_class)("short_name");
+// 
+// That's why the class member is not private (because users will have to redefines the privacy)
+//
+#define CHAOS_DECLARE_OBJECT_CLASS(CLASS, ...)\
 public:\
-static chaos::Class const * GetStaticClass(){ return classname##_class;}\
-virtual chaos::Class const * GetClass() const { return classname##_class; }
-
-#define CHAOS_DECLARE_OBJECT_CLASS2(classname, parent_classname)\
-private:\
-static inline chaos::Class const * classname##_class = chaos::Class::DeclareClass<classname, parent_classname>(#classname);\
-public:\
-static chaos::Class const * GetStaticClass(){ return classname##_class;}\
-virtual chaos::Class const * GetClass() const { return classname##_class; }
-
-#define CHAOS_DECLARE_TEMPLATE_OBJECT_CLASS2(classname, parent_classname)\
-private:\
-static inline chaos::Class const * classname##_class = chaos::Class::DeclareClass<classname, parent_classname>(nullptr);\
-public:\
-static chaos::Class const * GetStaticClass(){ return classname##_class;}\
-virtual chaos::Class const * GetClass() const { return classname##_class; }
+static chaos::Class const * GetStaticClass(){ return CLASS##_class;}\
+virtual chaos::Class const * GetClass() const { return CLASS##_class; }\
+static inline chaos::Class const * CLASS##_class = chaos::Class::DeclareClass<CLASS, __VA_ARGS__>(#CLASS)
 
 namespace chaos
 {
@@ -82,7 +73,7 @@ namespace chaos
 		friend class SharedPointerPolicy;
 		friend class WeakPointerPolicy;
 
-		CHAOS_DECLARE_OBJECT_CLASS1(Object);
+		CHAOS_DECLARE_OBJECT_CLASS(Object);
 
 	public:
 

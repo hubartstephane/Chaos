@@ -11,7 +11,7 @@ namespace chaos
 
 		class TileFlagProcessor : public Object, public JSONSerializable
 		{
-			CHAOS_DECLARE_OBJECT_CLASS2(TileFlagProcessor, Object);
+			CHAOS_DECLARE_OBJECT_CLASS(TileFlagProcessor, Object);
 
 		public:
 
@@ -25,7 +25,7 @@ namespace chaos
 
 		class ComputeNeighbourFlagProcessor : public TileFlagProcessor
 		{
-			CHAOS_DECLARE_OBJECT_CLASS2(ComputeNeighbourFlagProcessor, TileFlagProcessor);
+			CHAOS_DECLARE_OBJECT_CLASS(ComputeNeighbourFlagProcessor, TileFlagProcessor);
 
 		public:
 
@@ -69,7 +69,7 @@ namespace chaos
 
 		class ComputeCustomFlagProcessor : public TileFlagProcessor
 		{
-			CHAOS_DECLARE_OBJECT_CLASS2(ComputeCustomFlagProcessor, TileFlagProcessor);
+			CHAOS_DECLARE_OBJECT_CLASS(ComputeCustomFlagProcessor, TileFlagProcessor);
 
 		public:
 

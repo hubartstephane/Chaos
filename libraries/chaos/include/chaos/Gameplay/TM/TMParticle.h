@@ -22,7 +22,7 @@ namespace chaos
 		BitmapAtlas::BitmapInfo const* bitmap_info = nullptr;
 	};
 
-	CHAOS_REGISTER_CLASS2(TMParticle, ParticleDefault);
+	CHAOS_REGISTER_CLASS(TMParticle, ParticleDefault);
 
 #endif
 

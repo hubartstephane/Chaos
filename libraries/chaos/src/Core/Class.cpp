@@ -4,11 +4,33 @@
 
 namespace chaos
 {
+
+	Class * ClassRegistration::operator()(char const * in_alias)
+	{
+		assert(!StringTools::IsEmpty(in_alias));
+		class_ptr->SetAlias(in_alias);
+		return class_ptr;
+	}
+
+	// XXX: we don't use a class static data but a class static function because we don't know when static data will be created
+	//      (and it can happens after static class declaration)
+	std::map<char const*, Class*, StringTools::RawStringLess>& Class::GetClasses()
+	{
+		static std::map<char const *, Class*, StringTools::RawStringLess> classes;
+		return classes;
+	}
+
+	std::multimap<char const*, Class*, StringTools::RawStringLess>& Class::GetAliases()
+	{
+		static std::multimap<char const *, Class*, StringTools::RawStringLess> aliases;
+		return aliases;
+	}
+
 	Object * Class::CreateInstance() const
 	{
 		if (CanCreateInstance())
 			return create_instance_func();
-		Log::Error("Class::CreateInstance : the class [%s] cannot be instanciated", class_name.c_str());
+		Log::Error("Class::CreateInstance : the class [%s] cannot be instanciated", name.c_str());
 		return nullptr;
 	}
 
@@ -16,7 +38,7 @@ namespace chaos
 	{
 		if (!CanCreateInstanceOnStack())
 		{
-			Log::Error("Class::CreateInstanceOnStack : the class [%s] cannot be instanciated", class_name.c_str());
+			Log::Error("Class::CreateInstanceOnStack : the class [%s] cannot be instanciated", name.c_str());
 			return false;
 		}
 		create_instance_on_stack_func(func);
@@ -28,21 +50,41 @@ namespace chaos
 		return declared;
 	}
 
-	Class const * Class::FindClass(char const* class_name)
+	Class const * Class::FindClass(char const* name, Class const * check_class)
 	{
-		if (class_name != nullptr && strlen(class_name) > 0)
+		assert(name != nullptr);
+
+		auto& classes = GetClasses();
+		auto& aliases = GetAliases();
+
+		/** find the class by name first */
+		auto it = classes.find(name);
+		if (it != classes.end())
+			if (check_class == nullptr || it->second->InheritsFrom(check_class, true) == InheritanceType::YES)
+				return it->second;
+		/** find class by alias */
+		auto it1 = aliases.lower_bound(name);
+		auto it2 = aliases.upper_bound(name);
+	
+		auto found = aliases.end();
+		for (auto it = it1; it != it2; ++it)
 		{
-			for (Class const* cls : GetClassesList())
+			if (check_class == nullptr || it->second->InheritsFrom(check_class, true) == InheritanceType::YES)
 			{
-				if (StringTools::Strcmp(class_name, cls->class_name) == 0)
+	#if _DEBUG
+				// continue matching search to ensure this there is no ambiguity
+				if (found != aliases.end())
 				{
-					if (!cls->IsDeclared()) // useless, but keep it for sanity
-						return nullptr;
-					return cls;
+					Log::Error("request for ambiguous alias %s", name);
+					return nullptr;
 				}
+				found = it;
+	#else
+				return it->second;
+	#endif
 			}
 		}
-		return nullptr;
+		return (found == aliases.end()) ? nullptr : found->second;
 	}
 
 	// static
@@ -82,10 +124,23 @@ namespace chaos
 		return InheritanceType::NO;
 	}
 
-	std::vector<Class *>& Class::GetClassesList()
+	void Class::SetAlias(char const* in_alias)
 	{
-		static std::vector<Class *> result;
-		return result;
+		assert(!StringTools::IsEmpty(in_alias));
+		assert(StringTools::IsEmpty(alias));
+
+		auto& aliases = GetAliases();
+
+	#if _DEBUG
+		// search whether this exact alias does not exists
+		auto it1 = aliases.lower_bound(in_alias);
+		auto it2 = aliases.upper_bound(in_alias);
+		for (auto it = it1; it != it2; ++it)
+			assert(it->second != this);
+	#endif
+		// create the alias
+		alias = in_alias;
+		aliases.emplace(alias.c_str(), this); // the key is the pointer on the std::string
 	}
 
 }; // namespace chaos

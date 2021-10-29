@@ -30,7 +30,7 @@ public:
 
 	CHAOS_DECLARE_GAMEPLAY_FRIENDSHIPS(Ludum);
 
-	CHAOS_DECLARE_OBJECT_CLASS2(LudumGame, Game);
+	CHAOS_DECLARE_OBJECT_CLASS(LudumGame, Game);
 
 	/** constructor */
 	LudumGame();

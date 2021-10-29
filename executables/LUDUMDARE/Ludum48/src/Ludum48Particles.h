@@ -199,12 +199,11 @@ public:
 bool UpdateParticlePositionInGrid(GameObjectParticle* particle, float delta_time, class GridInfo& grid_info);
 
 
+CHAOS_REGISTER_CLASS(ParticleBase, TMParticle);
+CHAOS_REGISTER_CLASS(GateParticle, ParticleBase);
+CHAOS_REGISTER_CLASS(SmokeParticle, ParticleBase);
+CHAOS_REGISTER_CLASS(GameObjectParticle, ParticleBase);
+CHAOS_REGISTER_CLASS(ParticleAnimated, GameObjectParticle);
+CHAOS_REGISTER_CLASS(ParticlePlayer, ParticleAnimated);
 
-
-CHAOS_REGISTER_CLASS2(ParticleBase, TMParticle);
-CHAOS_REGISTER_CLASS2(GateParticle, ParticleBase);
-CHAOS_REGISTER_CLASS2(SmokeParticle, ParticleBase);
-CHAOS_REGISTER_CLASS2(GameObjectParticle, ParticleBase);
-CHAOS_REGISTER_CLASS2(ParticleAnimated, GameObjectParticle);
-CHAOS_REGISTER_CLASS2(ParticlePlayer, ParticleAnimated);
 

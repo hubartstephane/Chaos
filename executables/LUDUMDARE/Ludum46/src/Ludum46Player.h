@@ -16,7 +16,7 @@ public:
 
     CHAOS_DECLARE_GAMEPLAY_FRIENDSHIPS(Ludum);
 
-	CHAOS_DECLARE_OBJECT_CLASS2(LudumPlayer, chaos::Player);
+	CHAOS_DECLARE_OBJECT_CLASS(LudumPlayer, chaos::Player);
 
 	void AddBurnedSouls(int count) { burned_souls += count; }
 

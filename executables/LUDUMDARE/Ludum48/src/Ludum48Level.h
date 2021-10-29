@@ -11,7 +11,7 @@ class LudumLevel : public TMLevel
 {
 	friend class LudumLevelInstance;
 
-	CHAOS_DECLARE_OBJECT_CLASS2(LudumLevel, TMLevel);
+	CHAOS_DECLARE_OBJECT_CLASS(LudumLevel, TMLevel);
 
 	LudumLevel();
 

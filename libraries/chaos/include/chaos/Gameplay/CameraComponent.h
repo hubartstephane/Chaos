@@ -14,7 +14,7 @@ namespace chaos
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(CameraComponent, Tickable);
+		CHAOS_DECLARE_OBJECT_CLASS(CameraComponent, Tickable);
 
 	public:
 

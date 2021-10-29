@@ -7,7 +7,7 @@ chaos::shared_ptr<chaos::GPUFence> render_fence;
 
 class WindowOpenGLTest : public chaos::Window
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(WindowOpenGLTest, chaos::Window);
+	CHAOS_DECLARE_OBJECT_CLASS(WindowOpenGLTest, chaos::Window);
 
 protected:
 

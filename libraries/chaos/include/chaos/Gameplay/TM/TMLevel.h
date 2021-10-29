@@ -36,7 +36,7 @@ namespace chaos
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(TMLevel, Level);
+		CHAOS_DECLARE_OBJECT_CLASS(TMLevel, Level);
 
 	public:
 

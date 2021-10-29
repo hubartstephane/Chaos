@@ -60,7 +60,7 @@ class WindowOpenGLTest : public chaos::Window
 
 	double const SILENCE_DURATION = 1.0;
 
-	CHAOS_DECLARE_OBJECT_CLASS2(WindowOpenGLTest, chaos::Window);
+	CHAOS_DECLARE_OBJECT_CLASS(WindowOpenGLTest, chaos::Window);
 
 protected:
 

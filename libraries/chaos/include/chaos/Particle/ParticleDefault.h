@@ -75,7 +75,7 @@ namespace chaos
 		int flags = 0;
 	};
 
-	CHAOS_REGISTER_CLASS1(ParticleDefault);
+	CHAOS_REGISTER_CLASS(ParticleDefault);
 
 	/** Vertex : vertex for default particle */
 	class VertexDefault

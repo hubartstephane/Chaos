@@ -18,7 +18,7 @@ namespace chaos
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(GameHUD, GPURenderable);
+		CHAOS_DECLARE_OBJECT_CLASS(GameHUD, GPURenderable);
 
 	public:
 
@@ -120,7 +120,7 @@ namespace chaos
 
 	class MainMenuHUD : public GameHUD
 	{
-		CHAOS_DECLARE_OBJECT_CLASS2(MainMenuHUD, GameHUD);
+		CHAOS_DECLARE_OBJECT_CLASS(MainMenuHUD, GameHUD);
 
 	protected:
 
@@ -135,7 +135,7 @@ namespace chaos
 	class PauseMenuHUD : public GameHUD
 	{
 
-		CHAOS_DECLARE_OBJECT_CLASS2(PauseMenuHUD, GameHUD);
+		CHAOS_DECLARE_OBJECT_CLASS(PauseMenuHUD, GameHUD);
 
 	protected:
 
@@ -150,7 +150,7 @@ namespace chaos
 	class GameOverHUD : public GameHUD
 	{
 
-		CHAOS_DECLARE_OBJECT_CLASS2(GameOverHUD, GameHUD);
+		CHAOS_DECLARE_OBJECT_CLASS(GameOverHUD, GameHUD);
 
 	protected:
 
@@ -165,7 +165,7 @@ namespace chaos
 	class PlayingHUD : public GameHUD
 	{
 
-		CHAOS_DECLARE_OBJECT_CLASS2(PlayingHUD, GameHUD);
+		CHAOS_DECLARE_OBJECT_CLASS(PlayingHUD, GameHUD);
 
 	protected:
 

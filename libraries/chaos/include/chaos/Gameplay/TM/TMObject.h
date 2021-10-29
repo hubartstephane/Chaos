@@ -10,7 +10,7 @@ namespace chaos
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(TMObject, GameEntity);
+		CHAOS_DECLARE_OBJECT_CLASS(TMObject, GameEntity);
 
 	public:
 
@@ -67,7 +67,7 @@ namespace chaos
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(TMPath, TMObject);
+		CHAOS_DECLARE_OBJECT_CLASS(TMPath, TMObject);
 
 	protected:
 
@@ -84,7 +84,7 @@ namespace chaos
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(TMCameraTemplate, TMObject);
+		CHAOS_DECLARE_OBJECT_CLASS(TMCameraTemplate, TMObject);
 
 	protected:
 
@@ -105,7 +105,7 @@ namespace chaos
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(TMPlayerStart, TMObject);
+		CHAOS_DECLARE_OBJECT_CLASS(TMPlayerStart, TMObject);
 
 	protected:
 
@@ -130,7 +130,7 @@ namespace chaos
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(TMTrigger, TMObject);
+		CHAOS_DECLARE_OBJECT_CLASS(TMTrigger, TMObject);
 
 	public:
 
@@ -180,7 +180,7 @@ namespace chaos
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(TMNotificationTrigger, TMTrigger);
+		CHAOS_DECLARE_OBJECT_CLASS(TMNotificationTrigger, TMTrigger);
 
 	public:
 
@@ -218,7 +218,7 @@ namespace chaos
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(TMCheckpointTrigger, TMTrigger);
+		CHAOS_DECLARE_OBJECT_CLASS(TMCheckpointTrigger, TMTrigger);
 
 	public:
 
@@ -241,7 +241,7 @@ namespace chaos
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(TMSoundTrigger, TMTrigger);
+		CHAOS_DECLARE_OBJECT_CLASS(TMSoundTrigger, TMTrigger);
 
 	public:
 
@@ -291,7 +291,7 @@ namespace chaos
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(TMChangeLevelTrigger, TMTrigger);
+		CHAOS_DECLARE_OBJECT_CLASS(TMChangeLevelTrigger, TMTrigger);
 
 	public:
 

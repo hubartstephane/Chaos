@@ -13,7 +13,7 @@ namespace chaos
 	class Tickable : public Object, public NamedObject
 	{
 
-		CHAOS_DECLARE_OBJECT_CLASS2(Tickable, Object);
+		CHAOS_DECLARE_OBJECT_CLASS(Tickable, Object);
 
 	public:
 

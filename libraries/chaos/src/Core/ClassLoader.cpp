@@ -120,10 +120,10 @@ namespace chaos
 		Class* result = new Class;
 		if (result != nullptr)
 		{
-			result->class_name = class_name;
+			result->name = class_name;
 			result->json_data = json;
 			result->declared = true;
-			Class::GetClassesList().push_back(result);
+			Class::GetClasses()[result->name.c_str()] = result; // the key is a pointer aliased on the 'name' member
 			return result;
 		}
 		return nullptr;
@@ -135,14 +135,14 @@ namespace chaos
 		std::string parent_class_name;
 		if (!JSONTools::GetAttribute(cls->json_data, "parent_class", parent_class_name))
 		{
-			Log::Error("Class::DoDeclareSpecialClassStep2 : special class [%s] require a parent class", cls->class_name.c_str());
+			Log::Error("Class::DoDeclareSpecialClassStep2 : special class [%s] require a parent class", cls->name.c_str());
 			return false;
 		}
 		// parent class is MANDATORY for Special objects
 		cls->parent = Class::FindClass(parent_class_name.c_str());
 		if (cls->parent == nullptr)
 		{
-			Log::Error("Class::DoDeclareSpecialClassStep2 : special class [%s] has unknown parent class [%s]", cls->class_name.c_str(), parent_class_name.c_str());
+			Log::Error("Class::DoDeclareSpecialClassStep2 : special class [%s] has unknown parent class [%s]", cls->name.c_str(), parent_class_name.c_str());
 			return false;
 		}
 		// initialize missing data (size, creation_delegate)
@@ -189,8 +189,13 @@ namespace chaos
 	{
 		assert(cls != nullptr);
 		// remove class from the list
-		std::vector<Class*>& classes = Class::GetClassesList();
-		classes.erase(std::remove(classes.begin(), classes.end(), cls));
+		//Class::classes.erase()
+
+
+
+
+
+		//Class::classes.erase(std::remove(Class::classes.begin(), Class::classes.end(), cls));
 		// delete the special class 
 		delete(cls);
 	}

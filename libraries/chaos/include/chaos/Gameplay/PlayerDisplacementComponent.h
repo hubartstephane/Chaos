@@ -10,7 +10,7 @@ namespace chaos
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(PlayerDisplacementComponent, Tickable);
+		CHAOS_DECLARE_OBJECT_CLASS(PlayerDisplacementComponent, Tickable);
 
 	public:
 

@@ -12,7 +12,7 @@ namespace chaos
 
 	class SoundListenerCameraComponent : public CameraComponent
 	{
-		CHAOS_DECLARE_OBJECT_CLASS2(SoundListenerCameraComponent, CameraComponent);
+		CHAOS_DECLARE_OBJECT_CLASS(SoundListenerCameraComponent, CameraComponent);
 
 	protected:
 

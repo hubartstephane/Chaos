@@ -154,7 +154,7 @@ namespace chaos
 	{
 		friend class Game;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(GameStateMachine, SM::StateMachine);
+		CHAOS_DECLARE_OBJECT_CLASS(GameStateMachine, SM::StateMachine);
 
 	public:
 

@@ -47,7 +47,7 @@ class Spawner : public chaos::TMObject
 
 public:
 
-	CHAOS_DECLARE_OBJECT_CLASS2(Spawner, chaos::TMObject);
+	CHAOS_DECLARE_OBJECT_CLASS(Spawner, chaos::TMObject);
 
 	/** override */
 	virtual bool DoTick(float delta_time);
@@ -94,7 +94,7 @@ class FireSpawner : public Spawner, public EffectorObject
 {
 	CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-	CHAOS_DECLARE_OBJECT_CLASS2(FireSpawner, Spawner);
+	CHAOS_DECLARE_OBJECT_CLASS(FireSpawner, Spawner);
 
 public:
 
@@ -115,7 +115,7 @@ class SoulSpawner : public Spawner
 {
 	CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-	CHAOS_DECLARE_OBJECT_CLASS2(SoulSpawner, Spawner);
+	CHAOS_DECLARE_OBJECT_CLASS(SoulSpawner, Spawner);
 
 
 
@@ -130,7 +130,7 @@ class SpikeBar : public chaos::TMObject, public EffectorObject
 {
 	CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-	CHAOS_DECLARE_OBJECT_CLASS2(SpikeBar, chaos::TMObject);
+	CHAOS_DECLARE_OBJECT_CLASS(SpikeBar, chaos::TMObject);
 
 public:
 
@@ -159,7 +159,7 @@ class SoulTrigger : public chaos::TMObject
 {
 	CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-	CHAOS_DECLARE_OBJECT_CLASS2(SoulTrigger, chaos::TMObject);
+	CHAOS_DECLARE_OBJECT_CLASS(SoulTrigger, chaos::TMObject);
 
 public:
 
@@ -196,7 +196,7 @@ class SoulBurnTrigger : public SoulTrigger
 {
 	CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-	CHAOS_DECLARE_OBJECT_CLASS2(SoulBurnTrigger, SoulTrigger);
+	CHAOS_DECLARE_OBJECT_CLASS(SoulBurnTrigger, SoulTrigger);
 
 public:
 
@@ -213,7 +213,7 @@ class LudumLevel : public chaos::TMLevel
 {
 	friend class LudumLevelInstance;
 
-	CHAOS_DECLARE_OBJECT_CLASS2(LudumLevel, chaos::TMLevel);
+	CHAOS_DECLARE_OBJECT_CLASS(LudumLevel, chaos::TMLevel);
 
 	LudumLevel();
 

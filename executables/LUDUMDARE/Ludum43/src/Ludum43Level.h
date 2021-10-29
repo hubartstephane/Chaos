@@ -11,7 +11,7 @@
 class MyChangeLevelTrigger : public chaos::TMTrigger
 {
 
-	CHAOS_DECLARE_OBJECT_CLASS2(MyChangeLevelTrigger, chaos::TMTrigger);
+	CHAOS_DECLARE_OBJECT_CLASS(MyChangeLevelTrigger, chaos::TMTrigger);
 
 protected:
 
@@ -29,7 +29,7 @@ class LudumLevel : public chaos::TMLevel
 {
 	friend class LudumLevelInstance;
 
-	CHAOS_DECLARE_OBJECT_CLASS2(LudumLevel, chaos::TMLevel);
+	CHAOS_DECLARE_OBJECT_CLASS(LudumLevel, chaos::TMLevel);
 
 	LudumLevel();
 

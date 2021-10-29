@@ -16,7 +16,7 @@ namespace chaos
 	class GameEntity : public GPURenderable, public JSONSerializable
 	{
 
-		CHAOS_DECLARE_OBJECT_CLASS2(GameEntity, Tickable);
+		CHAOS_DECLARE_OBJECT_CLASS(GameEntity, Tickable);
 
 	public:
 

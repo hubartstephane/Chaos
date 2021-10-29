@@ -12,7 +12,7 @@ namespace chaos
 
 	class ShakeCameraComponent : public CameraComponent
 	{
-		CHAOS_DECLARE_OBJECT_CLASS2(ShakeCameraComponent, CameraComponent);
+		CHAOS_DECLARE_OBJECT_CLASS(ShakeCameraComponent, CameraComponent);
 
 	public:
 

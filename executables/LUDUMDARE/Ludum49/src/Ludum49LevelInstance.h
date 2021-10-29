@@ -17,7 +17,7 @@ using MORPH_DATA_MAP = std::map<std::string, float>;
 
 class LPMorph : public Object
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph, Object);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph, Object);
 
 public:
 
@@ -44,7 +44,7 @@ protected:
 
 class LPMorph_ID : public LPMorph
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_ID, LPMorph);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_ID, LPMorph);
 
 
 };
@@ -53,7 +53,7 @@ class LPMorph_ID : public LPMorph
 
 class LPMorph_Unary : public LPMorph
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Unary, LPMorph);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_Unary, LPMorph);
 
 public:
 
@@ -68,7 +68,7 @@ public:
 
 class LPMorph_Binary : public LPMorph_Unary
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Binary, LPMorph_Unary);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_Binary, LPMorph_Unary);
 
 public:
 
@@ -83,7 +83,7 @@ public:
 
 class LPMorph_Ternary : public LPMorph_Binary
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Ternary, LPMorph_Binary);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_Ternary, LPMorph_Binary);
 
 public:
 
@@ -98,7 +98,7 @@ public:
 
 class LPMorph_Circle : public LPMorph
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Circle, LPMorph);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_Circle, LPMorph);
 
 protected:
 
@@ -115,7 +115,7 @@ protected:
 
 class LPMorph_Rectangle : public LPMorph
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Rectangle, LPMorph);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_Rectangle, LPMorph);
 
 protected:
 
@@ -130,7 +130,7 @@ protected:
 
 class LPMorph_Gear : public LPMorph
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Gear, LPMorph);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_Gear, LPMorph);
 
 protected:
 
@@ -150,7 +150,7 @@ protected:
 
 class LPMorph_Rotate : public LPMorph_Binary
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Rotate, LPMorph_Binary);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_Rotate, LPMorph_Binary);
 
 protected:
 
@@ -161,7 +161,7 @@ protected:
 
 class LPMorph_Translate : public LPMorph_Ternary
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Translate, LPMorph_Ternary);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_Translate, LPMorph_Ternary);
 
 protected:
 
@@ -174,7 +174,7 @@ protected:
 
 class LPMorph_Function : public LPMorph_Unary
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Function, LPMorph_Unary);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_Function, LPMorph_Unary);
 
 protected:
 
@@ -191,7 +191,7 @@ protected:
 
 class LPMorph_Wave : public LPMorph_Function
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Wave, LPMorph_Function);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_Wave, LPMorph_Function);
 
 protected:
 
@@ -208,7 +208,7 @@ protected:
 
 class LPMorph_Mix : public LPMorph_Ternary
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Mix, LPMorph_Ternary);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_Mix, LPMorph_Ternary);
 
 protected:
 
@@ -223,7 +223,7 @@ protected:
 
 class LPMorph_Scale : public LPMorph_Binary
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Scale, LPMorph_Binary);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_Scale, LPMorph_Binary);
 
 protected:
 
@@ -239,7 +239,7 @@ protected:
 
 class LPMorph_BaseMesh : public LPMorph
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_BaseMesh, LPMorph);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_BaseMesh, LPMorph);
 
 protected:
 
@@ -251,7 +251,7 @@ protected:
 
 class LPMorph_Time : public LPMorph
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Time, LPMorph);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_Time, LPMorph);
 
 public:
 
@@ -262,7 +262,7 @@ public:
 
 class LPMorph_Mod : public LPMorph_Unary
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Mod, LPMorph_Unary);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_Mod, LPMorph_Unary);
 
 public:
 
@@ -278,7 +278,7 @@ public:
 
 class LPMorph_LinearStep : public LPMorph_Unary
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_LinearStep, LPMorph_Unary);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_LinearStep, LPMorph_Unary);
 
 public:
 
@@ -292,7 +292,7 @@ public:
 
 class LPMorph_LinearStepTwice : public LPMorph_Unary
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_LinearStepTwice, LPMorph_Unary);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_LinearStepTwice, LPMorph_Unary);
 
 public:
 
@@ -310,7 +310,7 @@ public:
 
 class LPMorph_Const : public LPMorph
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Const, LPMorph);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_Const, LPMorph);
 
 protected:
 
@@ -324,7 +324,7 @@ protected:
 
 class LPMorph_One : public LPMorph
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_One, LPMorph);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_One, LPMorph);
 
 protected:
 
@@ -333,7 +333,7 @@ protected:
 
 class LPMorph_Zero : public LPMorph
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Zero, LPMorph);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_Zero, LPMorph);
 
 protected:
 
@@ -342,7 +342,7 @@ protected:
 
 class LPMorph_PI : public LPMorph
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_PI, LPMorph);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_PI, LPMorph);
 
 protected:
 
@@ -353,7 +353,7 @@ protected:
 
 class LPMorph_Neg : public LPMorph_Unary
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Neg, LPMorph_Unary);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_Neg, LPMorph_Unary);
 
 protected:
 
@@ -364,7 +364,7 @@ protected:
 
 class LPMorph_Cos : public LPMorph_Unary
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Cos, LPMorph_Unary);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_Cos, LPMorph_Unary);
 
 protected:
 
@@ -383,7 +383,7 @@ protected:
 
 class LPMorph_Add : public LPMorph_Binary
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Add, LPMorph_Binary);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_Add, LPMorph_Binary);
 
 protected:
 
@@ -392,7 +392,7 @@ protected:
 
 class LPMorph_Mul : public LPMorph_Binary
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Mul, LPMorph_Binary);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_Mul, LPMorph_Binary);
 
 protected:
 
@@ -401,7 +401,7 @@ protected:
 
 class LPMorph_Sub : public LPMorph_Binary
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Sub, LPMorph_Binary);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_Sub, LPMorph_Binary);
 
 protected:
 
@@ -410,7 +410,7 @@ protected:
 
 class LPMorph_Div : public LPMorph_Binary
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(LPMorph_Div, LPMorph_Binary);
+	CHAOS_DECLARE_OBJECT_CLASS(LPMorph_Div, LPMorph_Binary);
 
 protected:
 
@@ -428,7 +428,7 @@ class Landscape : public TMObject
 {
 	CHAOS_DECLARE_GAMEPLAY_FRIENDSHIPS(Ludum);
 
-	CHAOS_DECLARE_OBJECT_CLASS2(Landscape, TMObject);
+	CHAOS_DECLARE_OBJECT_CLASS(Landscape, TMObject);
 
 public:
 
@@ -476,7 +476,7 @@ public:
 
 	CHAOS_DECLARE_GAMEPLAY_FRIENDSHIPS(Ludum);
 
-	CHAOS_DECLARE_OBJECT_CLASS2(LudumLevelInstance, TMLevelInstance);
+	CHAOS_DECLARE_OBJECT_CLASS(LudumLevelInstance, TMLevelInstance);
 
 	LudumLevelInstance();
 

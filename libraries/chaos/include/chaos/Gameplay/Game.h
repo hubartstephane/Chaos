@@ -32,9 +32,9 @@ namespace chaos
 
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
-	public:
+		CHAOS_DECLARE_OBJECT_CLASS(Game, Object);
 
-		CHAOS_DECLARE_OBJECT_CLASS2(Game, Object);
+	public:
 
 		CHAOS_DECLARE_GAMEPLAY_GETTERS();
 

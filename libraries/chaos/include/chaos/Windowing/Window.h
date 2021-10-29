@@ -87,7 +87,7 @@ namespace chaos
 	{
 		friend class WindowApplication;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(Window, Object);
+		CHAOS_DECLARE_OBJECT_CLASS(Window, Object);
 
 	public:
 

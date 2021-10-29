@@ -127,7 +127,7 @@ public:
 };
 
 
-CHAOS_REGISTER_CLASS1(ParticleObject)
-CHAOS_REGISTER_CLASS2(ParticleBrick, ParticleObject)
-CHAOS_REGISTER_CLASS2(ParticleMovableObject, ParticleObject)
-CHAOS_REGISTER_CLASS2(ParticleChallenge, ParticleObject)
+CHAOS_REGISTER_CLASS(ParticleObject)
+CHAOS_REGISTER_CLASS(ParticleBrick, ParticleObject)
+CHAOS_REGISTER_CLASS(ParticleMovableObject, ParticleObject)
+CHAOS_REGISTER_CLASS(ParticleChallenge, ParticleObject)

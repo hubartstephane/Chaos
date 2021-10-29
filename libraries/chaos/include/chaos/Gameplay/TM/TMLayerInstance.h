@@ -10,7 +10,7 @@ namespace chaos
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(TMLayerInstance, GPURenderable);
+		CHAOS_DECLARE_OBJECT_CLASS(TMLayerInstance, GPURenderable);
 
 	public:
 

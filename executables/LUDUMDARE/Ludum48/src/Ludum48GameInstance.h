@@ -14,7 +14,7 @@ public:
 
 	CHAOS_DECLARE_GAMEPLAY_FRIENDSHIPS(Ludum);
 
-	CHAOS_DECLARE_OBJECT_CLASS2(LudumGameInstance, GameInstance);
+	CHAOS_DECLARE_OBJECT_CLASS(LudumGameInstance, GameInstance);
 
 	LudumGameInstance();
 

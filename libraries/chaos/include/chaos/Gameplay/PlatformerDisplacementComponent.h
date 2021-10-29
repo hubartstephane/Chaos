@@ -103,7 +103,7 @@ namespace chaos
 
 	class ComputePlatformerFlagProcessor : public TiledMap::ComputeCustomFlagProcessor
 	{
-		CHAOS_DECLARE_OBJECT_CLASS2(ComputePlatformerFlagProcessor, TiledMap::ComputeCustomFlagProcessor);
+		CHAOS_DECLARE_OBJECT_CLASS(ComputePlatformerFlagProcessor, TiledMap::ComputeCustomFlagProcessor);
 
 	public:
 
@@ -123,7 +123,7 @@ namespace chaos
 
 	public:
 
-		CHAOS_DECLARE_OBJECT_CLASS2(PlatformerDisplacementComponent, PlayerDisplacementComponent);
+		CHAOS_DECLARE_OBJECT_CLASS(PlatformerDisplacementComponent, PlayerDisplacementComponent);
 
 		/** constructor */
 		using PlayerDisplacementComponent::PlayerDisplacementComponent;

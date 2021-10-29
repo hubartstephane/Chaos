@@ -20,6 +20,8 @@ namespace chaos
         glm::vec4 color;
     };
 
+    CHAOS_REGISTER_CLASS(ParticleBackground);
+
     class ParticleBackgroundLayerTrait : public ParticleLayerTrait<ParticleBackground, VertexDefault>
     {
     public:
@@ -39,9 +41,6 @@ namespace chaos
     /** generates 1 triangle pair from one particle */
     template<typename VERTEX_TYPE>
     void ParticleToPrimitive(ParticleBackground const& particle, TrianglePairPrimitive<VERTEX_TYPE>& primitive);
-
-    CHAOS_REGISTER_CLASS1(ParticleBackground);
-
 
 #else
 

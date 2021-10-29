@@ -18,7 +18,7 @@ public:
 
 	CHAOS_DECLARE_GAMEPLAY_FRIENDSHIPS(Ludum);
 
-	CHAOS_DECLARE_OBJECT_CLASS2(LudumPlayer, chaos::Player);
+	CHAOS_DECLARE_OBJECT_CLASS(LudumPlayer, chaos::Player);
 
 	/** change the length of the player */
 	void SetPlayerLength(float in_length, bool increment);

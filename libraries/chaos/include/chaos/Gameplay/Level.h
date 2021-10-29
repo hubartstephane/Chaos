@@ -14,7 +14,7 @@ namespace chaos
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(Level, Object);
+		CHAOS_DECLARE_OBJECT_CLASS(Level, Object);
 
 	public:
 

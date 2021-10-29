@@ -10,7 +10,6 @@
 #include "Ludum48Level.h"
 #include "Ludum48PlayerDisplacementComponent.h"
 
-
 // ===========================================================================
 // ParticleGateLayerTrait
 // ===========================================================================

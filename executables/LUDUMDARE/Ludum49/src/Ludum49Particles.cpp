@@ -10,9 +10,6 @@
 #include "Ludum49Level.h"
 #include "Ludum49PlayerDisplacementComponent.h"
 
-
-
-
 // ===========================================================================
 // ParticlePlayerLayerTrait
 // ===========================================================================

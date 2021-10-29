@@ -19,7 +19,7 @@ public:
 
 	CHAOS_DECLARE_GAMEPLAY_FRIENDSHIPS(Ludum);
 
-	CHAOS_DECLARE_OBJECT_CLASS2(LudumPlayingHUD, PlayingHUD);
+	CHAOS_DECLARE_OBJECT_CLASS(LudumPlayingHUD, PlayingHUD);
 
 protected:
 

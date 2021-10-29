@@ -10,7 +10,7 @@ namespace chaos
 	{
 		friend class GameApplication;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(GameWindow, Window);
+		CHAOS_DECLARE_OBJECT_CLASS(GameWindow, Window);
 
 	protected:
 

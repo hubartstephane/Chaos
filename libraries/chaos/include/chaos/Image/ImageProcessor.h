@@ -15,7 +15,7 @@ namespace chaos
 
 	class ImageProcessor : public Object, public JSONSerializable
 	{
-		CHAOS_DECLARE_OBJECT_CLASS2(ImageProcessor, Object);
+		CHAOS_DECLARE_OBJECT_CLASS(ImageProcessor, Object);
 
 	public:
 
@@ -57,7 +57,7 @@ namespace chaos
 
 	class ImageProcessorOutline : public ImageProcessor
 	{
-		CHAOS_DECLARE_OBJECT_CLASS2(ImageProcessorOutline, ImageProcessor);
+		CHAOS_DECLARE_OBJECT_CLASS(ImageProcessorOutline, ImageProcessor);
 
 	public:
 
@@ -87,7 +87,7 @@ namespace chaos
 
 	class ImageProcessorAddAlpha : public ImageProcessor
 	{
-		CHAOS_DECLARE_OBJECT_CLASS2(ImageProcessorAddAlpha, ImageProcessor);
+		CHAOS_DECLARE_OBJECT_CLASS(ImageProcessorAddAlpha, ImageProcessor);
 
 	public:
 
@@ -113,7 +113,7 @@ namespace chaos
 
 	class ImageProcessorShadow : public ImageProcessor
 	{
-		CHAOS_DECLARE_OBJECT_CLASS2(ImageProcessorShadow, ImageProcessor);
+		CHAOS_DECLARE_OBJECT_CLASS(ImageProcessorShadow, ImageProcessor);
 
 	public:
 

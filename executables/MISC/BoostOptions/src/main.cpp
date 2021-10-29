@@ -1,87 +1,5 @@
 #include <chaos/Chaos.h>
 
-#if 0
-		{ "position", VertexAttributeSemantic::POSITION },
-		{ "color",      VertexAttributeSemantic::COLOR },
-		{ "normal",     VertexAttributeSemantic::NORMAL },
-		{ "binormal",   VertexAttributeSemantic::BINORMAL },
-		{ "tangent",    VertexAttributeSemantic::TANGENT },
-		{ "texcoord",   VertexAttributeSemantic::TEXCOORD },
-		{ "boneindex",  VertexAttributeSemantic::BONEINDEX },
-		{ "boneweight", VertexAttributeSemantic::BONEWEIGHT },
-		{ "userdata",   VertexAttributeSemantic::USERDATA },
-
-
-			//BOOST_TTI_HAS_MEMBER_FUNCTION(AMemberFunction)
-
-
-
-			BOOST_TTI_HAS_MEMBER_DATA(positionX)
-
-			BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_position_tag, position, true)
-
-
-
-
-			class A
-		{
-		public:
-			typedef float position;
-		};
-
-		class A2 : public A
-		{
-
-
-		};
-
-		class B
-		{
-		public:
-			A2 positionX;
-		};
-
-		template<typename T, typename HAS_DATA = has_member_data_positionX<A2>::type>
-		void FF();
-
-		template<typename T>
-		void FF<T, boost::mpl::false_>()
-		{
-
-		}
-
-		template<typename T>
-		void FF<T, boost::mpl::true_>()
-		{
-
-		}
-
-
-		class P
-		{
-		public:
-
-			int x;
-
-
-		};
-
-
-		bool b1 = has_position_tag<A>::value;
-		bool b2 = has_position_tag<B>::value;
-
-		bool b3 = has_member_data_positionX<A, float>::value;
-		bool b4 = has_member_data_positionX<B, float>::value;
-		bool b5 = has_member_data_positionX<B, A>::value;
-		bool b6 = has_member_data_positionX<B, A2>::value;
-
-
-		FF<A>();
-		FF<B>();
-
-#endif
-
-
 // options
 // -------
 // 
@@ -91,216 +9,6 @@
 // IGNORE-ENV
 //
 //
-/*
-void f()
-{
-    ProgramOptionBuilder boot_builder;    
-    BootProgramOptionProvider().ProvideOptions(boot_builder);
-    boot_builder.Parse(argc, argv);
-
-    if (boot_builder.HasBooleanOption("help"))
-        boot_builder.LogHelp();
-    else
-    {
-
-
-
-
-
-    }
-
-    
-    
-    
-
-
-
-
-
-}
-*/
-
-class ProgramOptionCategory
-{
-    friend class ProgramOptionBuilder;
-
-    ProgramOptionCategory(class ProgramOptionBuilder * in_builder, char const * category_name) : builder(in_builder), name(category_name){}
-
-    ~ProgramOptionCategory(){}
-
-public:
-
-    bool AddBooleanOption(char const * option_name, char const * option_desc, bool default_value)
-    {
-        return true;
-    }
-
-    std::string const & GetName() const { return name;}
-
-private:
-
-    class ProgramOptionBuilder * builder;
-
-    std::string name;
-
-    
-};
-
-
-class ProgramOptionBuilder
-{
-
-public:
-
-    ~ProgramOptionBuilder(){ Clear(); }
-
-    void Clear()
-    {
-        for(auto cat:categories)
-            delete(cat);
-        categories.clear();
-    }
-
-    ProgramOptionCategory * FindCategory(char const * category_name)
-    {
-        for(auto cat:categories)
-            if (cat->GetName() == category_name)
-                return cat;
-        return nullptr;
-    }
-
-    ProgramOptionCategory const * FindCategory(char const * category_name) const
-    {
-        for(auto cat:categories)
-            if (cat->GetName() == category_name)
-                return cat;
-        return nullptr;
-    }
-
-    ProgramOptionCategory * AddCategory(char const * category_name)
-    {
-        ProgramOptionCategory * result = FindCategory(category_name);
-        if (result == nullptr)
-        {
-            result = new ProgramOptionCategory(this, category_name);
-            if (result != nullptr)
-                categories.push_back(result);
-        }
-        return result;
-    }
-
-
-private:
-
-    std::vector<ProgramOptionCategory *> categories;
-
-};
-
-
-
-
-
-class ProgramOptionProvider
-{
-
-};
-
-
-
-
-
-
-class BootProgramOptionProvider : public ProgramOptionProvider
-{
-public:
-
-    virtual bool ProvideOptions(ProgramOptionBuilder & builder)
-    {
-        ProgramOptionCategory * category = builder.AddCategory("generic options");
-        if (category != nullptr)
-            return category->AddBooleanOption("help", "Produce help message", true);
-        return false;
-    }
-
-
-};
-
-
-
-
-
-
-#if 0
-
-
-class FileReader
-{
-public:
-
-    virtual ~FileReader(){}
-    
-    virtual bool ReadFile(char const * url, size_t len, size_t offset) = 0;
-};
-
-class Win32FileReader : public FileReader
-{
-public:
-
-    virtual bool ReadFile(char const * url, size_t len, size_t offset)
-    {
-
-
-        return true;
-    }
-};
-
-class ResourceFinder
-{
-public:
-
-    virtual FileReader * FindReader(char const * url);
-};
-
-class Logger
-{
-
-}
- 
-
-class Options
-{
-    OptionCategory * AddCategory(char const * category_name);
-
-
-
-
-
-
-};
-
-
-
-
-class OptionProvider
-{
-public:
-
-    virtual void ProvideOptions(
-};
-
-
-
-int f()
-{
-    
-
-
-
-}
-
-
-
-#endif
 
 // XXX le programme a du mal a comprendre les arguments negatifs
 
@@ -392,43 +100,8 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
   bool c3 = c.is_relative();
 
 
-  
-  if (p1 == p2)
-    env = env;
 
 
-
-
-
-  return 0;
-
-
-
-
-
-
-
-
-
-
-
-    long l = strtol("0x17", NULL,  16);
-
-    l =l;
-
-#if 0
-    if (env != nullptr)
-    {
-        int i = 0;
-        while (env[i] != nullptr)
-        {
-            char * e = env[i];
-
-            std::cout << "ENV[" << i << "] = [" << e << "]" << std::endl;
-            ++i;
-        }
-    }
-#endif
 
     std::cout << "==============================" << std::endl;
 
@@ -459,18 +132,14 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 
     boost::program_options::options_description other_options("other options");
     other_options.add_options()
-        ("compression1,a", boost::program_options::value<int>()->default_value(20)->implicit_value(10), "set compression level")
-
-
-        ("compression5,t", boost::program_options::value<TTT>(), "set compression level")
-
-        ("compression2", boost::program_options::value<std::string>()->implicit_value("toto"), "set compression level")
-        ("compression3", boost::program_options::value<std::vector<std::string>>()->multitoken(), "set compression level")
-        ("compression4", boost::program_options::value<std::vector<std::string>>()->multitoken(), "set compression level");
+        ("A,a", boost::program_options::value<int>()->default_value(20)->implicit_value(10), "set compression level")
+        ("B,t", boost::program_options::value<TTT>(), "set compression level")
+        ("C", boost::program_options::value<std::string>()->implicit_value("toto"), "set compression level")
+        ("D", boost::program_options::value<std::vector<std::string>>()->multitoken(), "set compression level");
 
     boost::program_options::positional_options_description pos_options;
-    pos_options.add("compression3", 2);  // take the 2 first positionals
-    pos_options.add("compression4", -1); // redirect position argument to other entries
+  //  pos_options.add("E", 2);  // take the 2 first positionals
+  //  pos_options.add("F", -1); // redirect position argument to other entries
 
 
     boost::program_options::options_description all_options("all options"); // creer une ligne vide dans l'aide !!
@@ -486,9 +155,9 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 
     boost::program_options::parsed_options parsed = 
         boost::program_options::command_line_parser(argc, argv).
-        extra_parser(reg_foo).
+       // extra_parser(reg_foo).
         options(all_options).
-        positional(pos_options).
+ //       positional(pos_options).
         allow_unregistered().
         run();   
     boost::program_options::store(parsed, vm);
@@ -525,45 +194,37 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 
     }
 
-    if (vm.count("compression1"))
+    if (vm.count("A"))
     {
-        int value = vm["compression1"].as<int>();
+        int value = vm["A"].as<int>();
 
-        std::cout << "compression1 = " << value << std::endl;
+        std::cout << "A = " << value << std::endl;
         
     }
 
-    if (vm.count("compression2"))
+    if (vm.count("C"))
     {
-        std::string value = vm["compression2"].as<std::string>();
+        std::string value = vm["C"].as<std::string>();
 
-        std::cout << "compression2 = " << value << std::endl;
+        std::cout << "C = " << value << std::endl;
 
     }
 
-    if (vm.count("compression3"))
+    if (vm.count("D"))
     {
-        std::vector<std::string> value = vm["compression3"].as<std::vector<std::string>>();
+        std::vector<std::string> value = vm["D"].as<std::vector<std::string>>();
 
         for (size_t i = 0 ; i < value.size() ; ++i)
-            std::cout << "compression3[" << i << "] = " << value[i] << std::endl;
-    }
-
-    if (vm.count("compression4"))
-    {
-        std::vector<std::string> value = vm["compression4"].as<std::vector<std::string>>();
-
-        for (size_t i = 0 ; i < value.size() ; ++i)
-            std::cout << "compression4[" << i << "] = " << value[i] << std::endl;
-
+            std::cout << "D[" << i << "] = " << value[i] << std::endl;
     }
 
 
-    if (vm.count("compression5"))
-    {
-        TTT value = vm["compression5"].as<TTT>();
 
-        std::cout << "compression5 = " << value.value << std::endl;
+    if (vm.count("B"))
+    {
+        TTT value = vm["B"].as<TTT>();
+
+        std::cout << "B = " << value.value << std::endl;
 
     }
 

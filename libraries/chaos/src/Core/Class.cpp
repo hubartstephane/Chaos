@@ -124,22 +124,22 @@ namespace chaos
 		return InheritanceType::NO;
 	}
 
-	void Class::SetAlias(char const* in_alias)
+	void Class::SetAlias(std::string in_alias)
 	{
-		assert(!StringTools::IsEmpty(in_alias));
 		assert(StringTools::IsEmpty(alias));
-
+		assert(!StringTools::IsEmpty(in_alias));
+		
 		auto& aliases = GetAliases();
 
 	#if _DEBUG
 		// search whether this exact alias does not exists
-		auto it1 = aliases.lower_bound(in_alias);
-		auto it2 = aliases.upper_bound(in_alias);
+		auto it1 = aliases.lower_bound(in_alias.c_str());
+		auto it2 = aliases.upper_bound(in_alias.c_str());
 		for (auto it = it1; it != it2; ++it)
 			assert(it->second != this);
 	#endif
 		// create the alias
-		alias = in_alias;
+		alias = std::move(in_alias);
 		aliases.emplace(alias.c_str(), this); // the key is the pointer on the std::string
 	}
 

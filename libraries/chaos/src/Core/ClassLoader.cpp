@@ -13,16 +13,20 @@ namespace chaos
 			if (!JSONTools::GetAttribute(json, "class_name", class_name))
 				class_name = BoostTools::PathToName(path.GetResolvedPath());
 			if (!class_name.empty())
-				return func(class_name.c_str(), json);
+			{
+				std::string short_name;
+				JSONTools::GetAttribute(json, "short_name", short_name);			
+				return func(std::move(class_name), std::move(short_name), json);
+			}
 		}
 		return nullptr;
 	}
 
 	Class const * ClassLoader::LoadClass(FilePathParam const& path)
 	{
-		return DoLoadClassHelper<Class const *>(path, [this](char const * class_name, nlohmann::json const & json)
+		return DoLoadClassHelper<Class const *>(path, [this](std::string && class_name, std::string && short_name, nlohmann::json const & json)
 		{
-			return DeclareSpecialClass(class_name, json); // a single step operation
+			return DeclareSpecialClass(std::move(class_name), std::move(short_name), json); // a single step operation
 		});
 	}
 
@@ -33,9 +37,9 @@ namespace chaos
 		// Step 1 : load all classes (no full initialization, ignore parent). Register them (without inheritance data in classes list)
 		FileTools::ForEachRedirectedDirectoryContent(path, [this, &classes](boost::filesystem::path const & p) 
 		{
-			Class* cls = DoLoadClassHelper<Class *>(p, [this] (char const* class_name, nlohmann::json const& json)
+			Class* cls = DoLoadClassHelper<Class *>(p, [this] (std::string && class_name, std::string && short_name, nlohmann::json const& json)
 			{
-				return DoDeclareSpecialClassStep1(class_name, json); // a 3 steps operation 
+				return DoDeclareSpecialClassStep1(std::move(class_name), std::move(short_name), json); // a 3 steps operation 
 			});
 			// remember the class
 			if (cls != nullptr)
@@ -97,9 +101,9 @@ namespace chaos
 		return result;
 	}
 
-	Class const* ClassLoader::DeclareSpecialClass(char const* class_name, nlohmann::json const & json)
+	Class const* ClassLoader::DeclareSpecialClass(std::string && class_name, std::string && short_name, nlohmann::json const & json)
 	{
-		Class* result = DoDeclareSpecialClassStep1(class_name, json);
+		Class* result = DoDeclareSpecialClassStep1(std::move(class_name), std::move(short_name), json);
 		if (result != nullptr)
 		{
 			if (!DoDeclareSpecialClassStep2(result) || !DoDeclareSpecialClassStep3(result))
@@ -111,19 +115,23 @@ namespace chaos
 		return result;
 	}
 
-	Class * ClassLoader::DoDeclareSpecialClassStep1(char const* class_name, nlohmann::json const & json)
+	Class * ClassLoader::DoDeclareSpecialClassStep1(std::string && class_name, std::string && short_name, nlohmann::json const & json)
 	{
 		// check parameter and not already registered
-		assert(class_name != nullptr && strlen(class_name) > 0);
-		assert(Class::FindClass(class_name) == nullptr);
+		assert(!StringTools::IsEmpty(class_name));
+		assert(Class::FindClass(class_name.c_str()) == nullptr);
 
 		Class* result = new Class;
 		if (result != nullptr)
 		{
-			result->name = class_name;
+			auto& classes = Class::GetClasses();
+			result->name = std::move(class_name);
 			result->json_data = json;
 			result->declared = true;
-			Class::GetClasses()[result->name.c_str()] = result; // the key is a pointer aliased on the 'name' member
+			classes[result->name.c_str()] = result; // the key is a pointer aliased on the 'name' member
+
+			if (!StringTools::IsEmpty(short_name))
+				result->SetAlias(std::move(short_name));
 			return result;
 		}
 		return nullptr;
@@ -188,15 +196,24 @@ namespace chaos
 	void ClassLoader::DoInvalidateSpecialClass(Class const* cls)
 	{
 		assert(cls != nullptr);
-		// remove class from the list
-		//Class::classes.erase()
-
-
-
-
-
-		//Class::classes.erase(std::remove(Class::classes.begin(), Class::classes.end(), cls));
-		// delete the special class 
+		// remove alias
+		if (!StringTools::IsEmpty(cls->alias))
+		{
+			auto& aliases = Class::GetAliases();
+			auto it1 = aliases.lower_bound(cls->alias.c_str());
+			auto it2 = aliases.upper_bound(cls->alias.c_str());
+			for (auto it = it1; it != it2; ++it)
+			{
+				if (it->second == cls) // only the alias corresponding to current class
+				{
+					aliases.erase(it);
+					break;
+				}
+			}
+		}
+		// remove & delete the class
+		auto& classes = Class::GetClasses();
+		classes.erase(classes.find(cls->name.c_str()));
 		delete(cls);
 	}
 

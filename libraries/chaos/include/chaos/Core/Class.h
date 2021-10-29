@@ -26,6 +26,9 @@ namespace chaos
 		YES = 1
 	};
 
+	/**
+	 * ClassRegistration : the kind if inheritance that can exist between 2 classes
+	 */
 
 	class ClassRegistration
 	{
@@ -132,7 +135,7 @@ namespace chaos
 
 		/** declare a class */
 		template<typename CLASS_TYPE, typename PARENT_CLASS_TYPE = EmptyClass>
-		static ClassRegistration DeclareClass(char const* name)
+		static ClassRegistration DeclareClass(std::string name)
 		{
 			assert((std::is_same_v<PARENT_CLASS_TYPE, EmptyClass> || std::is_base_of_v<PARENT_CLASS_TYPE, CLASS_TYPE>));
 			assert(!StringTools::IsEmpty(name));
@@ -144,7 +147,7 @@ namespace chaos
 				if (result->declared)
 					return result;
 
-				result->name = name;
+				result->name = std::move(name);
 				result->class_size = sizeof(CLASS_TYPE);
 				result->declared = true;
 
@@ -176,7 +179,7 @@ namespace chaos
 	protected:
 
 		/** set the alias */
-		void SetAlias(char const* in_alias);
+		void SetAlias(std::string in_alias);
 		/** return the class for a type even if not initialized */
 		template<typename CLASS_TYPE>
 		static Class* GetClassInstance()

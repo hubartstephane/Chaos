@@ -469,7 +469,8 @@ bool Game::LoadBackgroundTexture(size_t index)
 
   index = index % background_paths.size();
 
-  chaos::shared_ptr<chaos::GPUTexture> new_background = chaos::GPUTextureLoader().GenTextureObject(background_paths[index]);
+  chaos::FilePathParam path(background_paths[index]);
+  chaos::shared_ptr<chaos::GPUTexture> new_background = chaos::GPUTextureLoader().GenTextureObject(path);
   if (new_background == nullptr)
     return false;
   background_texture = new_background;
@@ -493,7 +494,8 @@ bool Game::GenerateBackgroundResources(boost::filesystem::path const & path)
 		return false;
 
 	// generate the control texture
-	control_texture = chaos::GPUTextureLoader().GenTextureObject(path / "controls.png");
+	chaos::FilePathParam p = path / "controls.png";
+	control_texture = chaos::GPUTextureLoader().GenTextureObject(p);
 	if (control_texture == nullptr)
 		return false;
 

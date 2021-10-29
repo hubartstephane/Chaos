@@ -207,12 +207,12 @@ public:
 	class LudumGame* game = nullptr;
 };
 
-CHAOS_REGISTER_CLASS(ParticleBase, chaos::TMParticle)
-CHAOS_REGISTER_CLASS(ParticlePowerUpZone, chaos::TMParticle)
-CHAOS_REGISTER_CLASS(ParticlePlayer, ParticleBase)
-CHAOS_REGISTER_CLASS(ParticleEnemy, ParticleBase)
-CHAOS_REGISTER_CLASS(ParticleFire, ParticleBase)
-CHAOS_REGISTER_CLASS(ParticleLife, chaos::ParticleDefault)
-CHAOS_REGISTER_CLASS(ParticleExplosion, chaos::ParticleDefault)
+CHAOS_REGISTER_CLASS(ParticleBase, chaos::TMParticle);
+CHAOS_REGISTER_CLASS(ParticlePowerUpZone, chaos::TMParticle);
+CHAOS_REGISTER_CLASS(ParticlePlayer, ParticleBase);
+CHAOS_REGISTER_CLASS(ParticleEnemy, ParticleBase);
+CHAOS_REGISTER_CLASS(ParticleFire, ParticleBase);
+CHAOS_REGISTER_CLASS(ParticleLife, chaos::ParticleDefault);
+CHAOS_REGISTER_CLASS(ParticleExplosion, chaos::ParticleDefault);
 
 

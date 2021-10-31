@@ -111,8 +111,8 @@ namespace chaos
 			// return back the slices values
 			if (entry.slice_info != nullptr)
 			{
-				entry.slice_info->first_slice = (int)c1;
-				entry.slice_info->slice_count = (int)(c2 - c1);
+				entry.slice_info->first_slice = int(c1);
+				entry.slice_info->slice_count = int(c2 - c1);
 			}
 
 			slice_counts.push_back(c2 - c1); // insert the count of slices inserted for that generator
@@ -244,7 +244,7 @@ namespace chaos
 			texture_description.type = array_target;
 			texture_description.width = width;
 			texture_description.height = height;
-			texture_description.depth = (int)slice_count;
+			texture_description.depth = int(slice_count);
 			texture_description.pixel_format = final_pixel_format;
 
 			GLTextureTools::GenTextureApplyParameters(texture_id, texture_description, parameters);

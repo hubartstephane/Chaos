@@ -402,7 +402,7 @@ namespace chaos
 
 		glm::ivec2 TileLayer::GetTileCoordinate(TileLayerChunk const & chunk, size_t index) const
 		{
-			int tmp = (int)index;
+			int tmp = int(index);
 			return chunk.offset + glm::ivec2(tmp % chunk.size.x, tmp / chunk.size.x);
 		}
 

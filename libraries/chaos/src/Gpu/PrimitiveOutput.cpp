@@ -51,7 +51,7 @@ namespace chaos
     GPUPrimitiveBufferCacheEntry * PrimitiveOutputBase::GetInternalCachedBuffer(size_t required_size)
     {
         for (GPUPrimitiveBufferCacheEntry& cache_entry : internal_buffer_pool)
-            if (cache_entry.buffer_end - cache_entry.buffer_position >= (int)required_size)
+            if (cache_entry.buffer_end - cache_entry.buffer_position >= int(required_size))
                 return &cache_entry;
         return nullptr;
     }
@@ -103,7 +103,7 @@ namespace chaos
 
     char* PrimitiveOutputBase::AllocateBufferMemory(size_t in_size)
     {
-        if (buffer_start == nullptr || (buffer_end - buffer_position) < (int)in_size) // not enough memory in current buffer ?
+        if (buffer_start == nullptr || (buffer_end - buffer_position) < int(in_size)) // not enough memory in current buffer ?
         {
             // give previous buffer (if any) to internal cache
             if (vertex_buffer != nullptr)

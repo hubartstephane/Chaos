@@ -100,7 +100,7 @@ namespace chaos
 		static constexpr int MIN_PREFIX_SIZE = 4;
 
 		// get the length
-		int len = (int)strlen(name);
+		int len = int(strlen(name));
 		if (len < 1 + MIN_PREFIX_SIZE) // +1 for at least one character
 			return false;
 

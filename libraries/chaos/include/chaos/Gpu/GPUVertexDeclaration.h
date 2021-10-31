@@ -39,30 +39,30 @@ namespace chaos
 	/** the possible vector types */
 	enum class VertexAttributeType : int
 	{
-		FLOAT1 = ((int)VertexAttributeComponentType::FLOAT << 3) | 1,
-		FLOAT2 = ((int)VertexAttributeComponentType::FLOAT << 3) | 2,
-		FLOAT3 = ((int)VertexAttributeComponentType::FLOAT << 3) | 3,
-		FLOAT4 = ((int)VertexAttributeComponentType::FLOAT << 3) | 4,
+		FLOAT1 = (int(VertexAttributeComponentType::FLOAT) << 3) | 1,
+		FLOAT2 = (int(VertexAttributeComponentType::FLOAT) << 3) | 2,
+		FLOAT3 = (int(VertexAttributeComponentType::FLOAT) << 3) | 3,
+		FLOAT4 = (int(VertexAttributeComponentType::FLOAT) << 3) | 4,
 
-		DOUBLE1 = ((int)VertexAttributeComponentType::DOUBLE << 3) | 1,
-		DOUBLE2 = ((int)VertexAttributeComponentType::DOUBLE << 3) | 2,
-		DOUBLE3 = ((int)VertexAttributeComponentType::DOUBLE << 3) | 3,
-		DOUBLE4 = ((int)VertexAttributeComponentType::DOUBLE << 3) | 4,
+		DOUBLE1 = (int(VertexAttributeComponentType::DOUBLE) << 3) | 1,
+		DOUBLE2 = (int(VertexAttributeComponentType::DOUBLE) << 3) | 2,
+		DOUBLE3 = (int(VertexAttributeComponentType::DOUBLE) << 3) | 3,
+		DOUBLE4 = (int(VertexAttributeComponentType::DOUBLE) << 3) | 4,
 
-		HALF1 = ((int)VertexAttributeComponentType::HALF << 3) | 1,
-		HALF2 = ((int)VertexAttributeComponentType::HALF << 3) | 2,
-		HALF3 = ((int)VertexAttributeComponentType::HALF << 3) | 3,
-		HALF4 = ((int)VertexAttributeComponentType::HALF << 3) | 4,
+		HALF1 = (int(VertexAttributeComponentType::HALF) << 3) | 1,
+		HALF2 = (int(VertexAttributeComponentType::HALF) << 3) | 2,
+		HALF3 = (int(VertexAttributeComponentType::HALF) << 3) | 3,
+		HALF4 = (int(VertexAttributeComponentType::HALF) << 3) | 4,
 
-		BYTE1 = ((int)VertexAttributeComponentType::BYTE << 3) | 1,
-		BYTE2 = ((int)VertexAttributeComponentType::BYTE << 3) | 2,
-		BYTE3 = ((int)VertexAttributeComponentType::BYTE << 3) | 3,
-		BYTE4 = ((int)VertexAttributeComponentType::BYTE << 3) | 4,
+		BYTE1 = (int(VertexAttributeComponentType::BYTE) << 3) | 1,
+		BYTE2 = (int(VertexAttributeComponentType::BYTE) << 3) | 2,
+		BYTE3 = (int(VertexAttributeComponentType::BYTE) << 3) | 3,
+		BYTE4 = (int(VertexAttributeComponentType::BYTE) << 3) | 4,
 
-		INT1 = ((int)VertexAttributeComponentType::INT << 3) | 1,
-		INT2 = ((int)VertexAttributeComponentType::INT << 3) | 2,
-		INT3 = ((int)VertexAttributeComponentType::INT << 3) | 3,
-		INT4 = ((int)VertexAttributeComponentType::INT << 3) | 4,
+		INT1 = (int(VertexAttributeComponentType::INT) << 3) | 1,
+		INT2 = (int(VertexAttributeComponentType::INT) << 3) | 2,
+		INT3 = (int(VertexAttributeComponentType::INT) << 3) | 3,
+		INT4 = (int(VertexAttributeComponentType::INT) << 3) | 4,
 	};
 
 	/**

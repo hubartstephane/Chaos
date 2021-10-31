@@ -183,7 +183,7 @@ namespace chaos
 					result = false;
 				}
 				// test whether all info's bitmap_index are valid
-				else if (layout->bitmap_index >= (int)bitmap_count)
+				else if (layout->bitmap_index >= int(bitmap_count))
 				{
 					stream << "Info encoutered with invalid bitmap_index : [" << named->GetName() << " , " << named->GetTag() << "]" << '\n';
 					result = false;
@@ -395,7 +395,7 @@ namespace chaos
 					{
 						// copy the animation
 						animation_info->grid_data = animation_info_input->animation_description.grid_data;
-						animation_info->child_frame_count = (int)animation_info_input->child_frames.size();
+						animation_info->child_frame_count = int(animation_info_input->child_frames.size());
 						animation_info->frame_duration = animation_info_input->animation_description.frame_duration;
 						animation_info->anim_duration = animation_info_input->animation_description.anim_duration;
 						animation_info->default_wrap_mode = animation_info_input->animation_description.default_wrap_mode;
@@ -543,7 +543,7 @@ namespace chaos
 #endif // _DEBUG
 				{
 					output->bitmaps = GenerateBitmaps(entries, final_pixel_format);
-					output->atlas_count = (int)output->bitmaps.size();
+					output->atlas_count = int(output->bitmaps.size());
 					output->dimension = glm::ivec2(params.atlas_width, params.atlas_height);					
 					return true;
 				}
@@ -597,7 +597,7 @@ namespace chaos
 					{
 						best_score       = score;
 						best_position    = position;
-						best_atlas_index = (int)j;
+						best_atlas_index = int(j);
 					}
 
 					if (score == 0.0f) // no need to search any more in any atlases
@@ -610,7 +610,7 @@ namespace chaos
 
 					def.potential_bottomleft_corners.push_back(glm::ivec2(0, 0));
 
-					best_atlas_index = (int)atlas_definitions.size();
+					best_atlas_index = int(atlas_definitions.size());
 					best_position = glm::ivec2(0, 0);
 
 					atlas_definitions.push_back(std::move(def));
@@ -661,7 +661,7 @@ namespace chaos
 
 		void AtlasGenerator::InsertBitmapLayoutInAtlas(BitmapLayout & layout, AtlasDefinition & atlas_def, glm::ivec2 const & position)
 		{
-			layout.bitmap_index = (int)(&atlas_def - &atlas_definitions[0]);
+			layout.bitmap_index = int(&atlas_def - &atlas_definitions[0]);
 			layout.x = position.x + params.atlas_padding;
 			layout.y = position.y + params.atlas_padding;
 

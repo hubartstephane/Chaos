@@ -30,7 +30,7 @@ namespace chaos
 					*particle_flags |= ParticleFlags::TEXTURE_DIAGONAL_FLIP;
 			}
 
-			return (int)gid;
+			return int(gid);
 		}
 
 		int GetHEXCharacterCount(char const * c)

@@ -45,8 +45,8 @@ namespace chaos
 
 		// number of time to decal the layer box, to be directly left of the scissor box
 		glm::ivec2 offset_count = glm::ivec2(
-			(int)std::ceil((scissor_bottomleft.x - target_bottomleft.x - target_size.x) / target_size.x),
-			(int)std::ceil((scissor_bottomleft.y - target_bottomleft.y - target_size.y) / target_size.y)
+			int(std::ceil((scissor_bottomleft.x - target_bottomleft.x - target_size.x) / target_size.x)),
+			int(std::ceil((scissor_bottomleft.y - target_bottomleft.y - target_size.y) / target_size.y))
 		);
 
 		// the bottomleft corner of the decaled box
@@ -55,8 +55,8 @@ namespace chaos
 		glm::vec2  tmp = ((scissor_bottomleft - virtual_target_bottomleft + scissor_size) / target_size);
 
 		glm::ivec2 repetition_count = glm::ivec2(
-			(int)std::ceil(tmp.x),
-			(int)std::ceil(tmp.y)
+			int(std::ceil(tmp.x)),
+			int(std::ceil(tmp.y))
 		);
 
 		// unwrap case, then only visible instance is 0 (we previsously tested for visibility)

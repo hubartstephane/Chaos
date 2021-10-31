@@ -24,11 +24,11 @@ namespace chaos
 
 		static constexpr float offset_factor[] = { -0.5f, 0.0f, -1.0f, 0.0f };
 
-		int initial_h_part = ((int)initial_hotpoint >> 0) & 3;
-		int initial_v_part = ((int)initial_hotpoint >> 2) & 3;
+		int initial_h_part = (int(initial_hotpoint) >> 0) & 3;
+		int initial_v_part = (int(initial_hotpoint) >> 2) & 3;
 
-		int final_h_part = ((int)final_hotpoint >> 0) & 3;
-		int final_v_part = ((int)final_hotpoint >> 2) & 3;
+		int final_h_part = (int(final_hotpoint) >> 0) & 3;
+		int final_v_part = (int(final_hotpoint) >> 2) & 3;
 
 		assert(initial_h_part != 3); // not both LEFT and RIGHT, nor TOP and BOTTOM at the same time
 		assert(initial_v_part != 3);
@@ -46,8 +46,8 @@ namespace chaos
 	{
 		static constexpr float offset_factor[] = { -0.5f, 0.0f, -1.0f, 0.0f };
 
-		int h_part = ((int)hotpoint >> 0) & 3;
-		int v_part = ((int)hotpoint >> 2) & 3;
+		int h_part = (int(hotpoint) >> 0) & 3;
+		int v_part = (int(hotpoint) >> 2) & 3;
 
 		assert(h_part != 3); // not both LEFT and RIGHT, nor TOP and BOTTOM at the same time
 		assert(v_part != 3);

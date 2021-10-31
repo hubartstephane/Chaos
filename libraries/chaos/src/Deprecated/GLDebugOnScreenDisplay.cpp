@@ -33,7 +33,7 @@ namespace chaos
 
 	bool GLDebugOnScreenDisplay::Tick(float delta_time)
 	{
-		int count = (int)lines.size();
+		int count = int(lines.size());
 		for (int i = count - 1; i >= 0; --i)
 		{
 			auto & l = lines[i];

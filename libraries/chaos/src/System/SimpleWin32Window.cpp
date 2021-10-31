@@ -154,7 +154,7 @@ namespace chaos
 
 #define CHAOS_CATCH_WND_MSG(MSG, FUNC)\
     case MSG:\
-      return FUNC((int)GET_X_LPARAM(lParam), (int)GET_Y_LPARAM(lParam), (int)GET_KEYSTATE_WPARAM(wParam));
+      return FUNC(int(GET_X_LPARAM(lParam)), int(GET_Y_LPARAM(lParam)), int(GET_KEYSTATE_WPARAM(wParam)));
 			CHAOS_CATCH_WND_MSG(WM_MOUSEMOVE,   OnMouseMove);
 			CHAOS_CATCH_WND_MSG(WM_LBUTTONDOWN, OnLButtonDown);
 			CHAOS_CATCH_WND_MSG(WM_LBUTTONUP,   OnLButtonUp);
@@ -165,10 +165,10 @@ namespace chaos
 #undef CHAOS_CATCH_WND_MSG
 
 		case WM_MOUSEWHEEL:
-			return OnMouseWheel((int)GET_X_LPARAM(lParam), (int)GET_Y_LPARAM(lParam), (int)GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA, (int)GET_KEYSTATE_WPARAM(wParam)); 
+			return OnMouseWheel(int(GET_X_LPARAM(lParam)), int(GET_Y_LPARAM(lParam)), int(GET_WHEEL_DELTA_WPARAM(wParam)) / WHEEL_DELTA, int(GET_KEYSTATE_WPARAM(wParam))); 
 
 		case WM_SIZE:
-			return OnWindowSize((int)LOWORD(lParam), (int)HIWORD(lParam));
+			return OnWindowSize(int(LOWORD(lParam)), int(HIWORD(lParam)));
 
 		case WM_DROPFILES:
 			return OnDropFile((HDROP)wParam);

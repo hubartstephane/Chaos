@@ -4,6 +4,9 @@
 
 namespace chaos
 {
+	// ==========================================================
+	// ClassRegistration functions
+	// ==========================================================
 
 	Class * ClassRegistration::operator()(char const * in_alias)
 	{
@@ -11,6 +14,59 @@ namespace chaos
 		class_ptr->SetAlias(in_alias);
 		return class_ptr;
 	}
+
+	// ==========================================================
+	// ClassFindResult functions
+	// ==========================================================
+
+	ClassFindResult::operator Class* () const
+	{
+		return Resolve(nullptr);
+	}
+
+	Class* ClassFindResult::Resolve(Class const * check_class) const
+	{
+		// something found in classes
+		auto& classes = Class::GetClasses();
+		if (class_it != classes.end())
+			return class_it->second;
+		// something found in aliases
+		auto& aliases = Class::GetAliases();
+		if (alias_it != aliases.end())
+		{
+			auto alias_it2 = aliases.upper_bound(alias_it->first); // search then upper_bound (alias_it is the lower bound)
+
+			
+#if _DEBUG  // in this search we ensure there is no ambiguity
+			auto found = aliases.end();
+			for (auto it = alias_it; it != alias_it2; ++it)
+			{
+				if (check_class == nullptr || it->second->InheritsFrom(check_class, true) == InheritanceType::YES)
+				{
+					// continue matching search to ensure this there is no ambiguity
+					assert(found == aliases.end());
+					found = it;
+				}
+			}
+			if (found != aliases.end())
+				return found->second;
+#else		// in this search we return the very first matching element
+			for (auto it = alias_it; it != alias_it2; ++it)
+			{
+				if (check_class == nullptr || it->second->InheritsFrom(check_class, true) == InheritanceType::YES)
+				{
+					return it->second;
+				}
+			}
+#endif
+		}
+		// nothing found
+		return nullptr;
+	}
+
+	// ==========================================================
+	// Class functions
+	// ==========================================================
 
 	// XXX: we don't use a class static data but a class static function because we don't know when static data will be created
 	//      (and it can happens after static class declaration)
@@ -50,41 +106,21 @@ namespace chaos
 		return declared;
 	}
 
-	Class const * Class::FindClass(char const* name, Class const * check_class)
+	ClassFindResult Class::FindClass(char const* name)
 	{
 		assert(name != nullptr);
 
-		auto& classes = GetClasses();
-		auto& aliases = GetAliases();
+		ClassFindResult result;
 
 		/** find the class by name first */
-		auto it = classes.find(name);
-		if (it != classes.end())
-			if (check_class == nullptr || it->second->InheritsFrom(check_class, true) == InheritanceType::YES)
-				return it->second;
+		auto& classes = GetClasses();
+		result.class_it = classes.find(name);
+		if (result.class_it != classes.end())
+			return result;
 		/** find class by alias */
-		auto it1 = aliases.lower_bound(name);
-		auto it2 = aliases.upper_bound(name);
-	
-		auto found = aliases.end();
-		for (auto it = it1; it != it2; ++it)
-		{
-			if (check_class == nullptr || it->second->InheritsFrom(check_class, true) == InheritanceType::YES)
-			{
-	#if _DEBUG
-				// continue matching search to ensure this there is no ambiguity
-				if (found != aliases.end())
-				{
-					Log::Error("request for ambiguous alias %s", name);
-					return nullptr;
-				}
-				found = it;
-	#else
-				return it->second;
-	#endif
-			}
-		}
-		return (found == aliases.end()) ? nullptr : found->second;
+		auto& aliases = GetAliases();
+		result.alias_it = aliases.lower_bound(name);
+		return result;
 	}
 
 	// static

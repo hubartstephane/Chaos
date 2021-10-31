@@ -6,6 +6,7 @@ namespace chaos
 
 	class Class;
 	class ClassRegistration;
+	class ClassFindResult;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -61,12 +62,43 @@ namespace chaos
 	};
 
 	/**
+	 * ClassFindResult : Intermediate object for class searching.
+	 *                   While there may be several classes with the same alias, we have to select the good one when searching
+	 *                   We so want that the search is affected by the Subclass affectation that requires it
+	 */
+
+	class ClassFindResult
+	{
+		friend class Class;
+
+	public:
+
+		/** gets the result of the class */
+		operator Class* () const;
+		/** finalize the search */
+		Class* Resolve(Class const* check_class) const;
+
+	protected:
+
+		// XXX : we have to store somehow the named used in the Class:Find(name) call
+		//       we could copy it in a std::string, but this would be very costly
+		//       instead we will initialize 'class_it' or 'alias_it' (whatever produce result first)
+		//       then we know that the object pointed by the iterator has the name we want
+
+		/** iterator on found class */
+		std::map<char const*, Class*, StringTools::RawStringLess>::iterator class_it;
+		/** iterator on first found alias */
+		std::multimap<char const*, Class*, StringTools::RawStringLess>::iterator alias_it;
+	};
+
+	/**
 	 * Class : a registered class
 	 */
 	class Class
 	{
 		friend class ClassLoader;
 		friend class ClassRegistration;
+		friend class ClassFindResult;
 
 	public:
 
@@ -119,7 +151,7 @@ namespace chaos
 	public:
 
 		/** find a class by name */
-		static Class const* FindClass(char const* name, Class const * check_class = nullptr);
+		static ClassFindResult FindClass(char const* name);
 
 		/** find a class by type */
 		template<typename CLASS_TYPE>

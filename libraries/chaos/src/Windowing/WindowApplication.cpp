@@ -709,14 +709,14 @@ namespace chaos
 
 	void WindowApplication::SetKeyboardButtonState(KeyboardButton key, int action)
 	{
-		int raw_value = (int)key;
+		int raw_value = int(key);
 		if (raw_value >= 0 && raw_value < keyboard_state.size())
 			keyboard_state[raw_value].SetValue(action == GLFW_PRESS || action == GLFW_REPEAT);
 	}
 
 	void WindowApplication::SetMouseButtonState(MouseButton key, int action)
 	{
-		int raw_value = (int)key;
+		int raw_value = int(key);
 		if (raw_value >= 0 && raw_value < mouse_button_state.size())
 			mouse_button_state[raw_value].SetValue(action == GLFW_PRESS || action == GLFW_REPEAT);
 	}

@@ -5,13 +5,13 @@ namespace chaos
 
 	int GPUVertexDeclarationEntry::GetComponentCount() const
 	{
-		int component_count = ((int)type & 7);
+		int component_count = int(type) & 7;
 		return component_count; 
 	}
 
 	GLenum GPUVertexDeclarationEntry::GetComponentType() const
 	{
-		VertexAttributeComponentType component_type = (VertexAttributeComponentType)(((int)type >> 3) & 7);
+		VertexAttributeComponentType component_type = VertexAttributeComponentType((int(type) >> 3) & 7);
 
 		if (component_type == VertexAttributeComponentType::FLOAT)
 			return GL_FLOAT;
@@ -28,7 +28,7 @@ namespace chaos
 
 	int GPUVertexDeclarationEntry::GetEntrySize() const
 	{
-		VertexAttributeComponentType component_type = (VertexAttributeComponentType)(((int)type >> 3) & 7);
+		VertexAttributeComponentType component_type = VertexAttributeComponentType((int(type) >> 3) & 7);
 
 		int component_size = 0;
 		if (component_type == VertexAttributeComponentType::FLOAT)
@@ -42,7 +42,7 @@ namespace chaos
 		else if (component_type == VertexAttributeComponentType::INT)
 			component_size = sizeof(int32_t);
 
-		int component_count = ((int)type & 7);
+		int component_count = int(type) & 7;
 
 		return component_count * component_size; 
 	}

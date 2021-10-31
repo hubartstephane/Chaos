@@ -330,7 +330,7 @@ namespace chaos
 			glTextureStorage2D(texture_id, level_count, gl_final_pixel_format.internal_format, size, size);
 
 			// fill the faces in GPU with the images of SkyBox
-			for (size_t i = (int)SkyBoxImageType::IMAGE_LEFT; i <= (int)SkyBoxImageType::IMAGE_BACK; ++i)
+			for (size_t i = int(SkyBoxImageType::IMAGE_LEFT); i <= int(SkyBoxImageType::IMAGE_BACK); ++i)
 			{
 				// ensure the image is valid and not empty
 				if (!face_valid[i])

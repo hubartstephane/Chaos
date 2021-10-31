@@ -45,7 +45,7 @@ namespace chaos
 			for (TileLayerChunk& chunk : in_layer->tile_chunks)
 			{
 				// iterate over all tiles in current chunk
-				int count = (int)chunk.tile_indices.size();
+				int count = int(chunk.tile_indices.size());
 				for (int i = 0; i < count; ++i)
 				{
 					Tile& tile = chunk.tile_indices[i];

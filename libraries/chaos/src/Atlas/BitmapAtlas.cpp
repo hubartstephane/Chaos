@@ -168,7 +168,7 @@ namespace chaos
 				return BitmapLayout();
 
 			// transform time into an index
-			int index = (int)(time / frame_duration);
+			int index = int(time / frame_duration);
 			return GetAnimationLayout(index, mode);
 		}
 
@@ -508,7 +508,7 @@ namespace chaos
 		{
 			size_t count = atlas_count;
 			for (size_t i = 0; i < count; ++i)
-				OutputAtlasSpaceOccupation((int)i, stream);
+				OutputAtlasSpaceOccupation(int(i), stream);
 		}
 
 		void AtlasBase::OutputAtlasSpaceOccupation(int bitmap_index, std::ostream & stream) const
@@ -525,7 +525,7 @@ namespace chaos
 		{
 			float atlas_surface = (float)(dimension.x * dimension.y);
 			float full_surface = ComputeSurface(-1);
-			int   min_atlas_count = (int)std::ceil(full_surface / atlas_surface);
+			int   min_atlas_count = int(std::ceil(full_surface / atlas_surface));
 
 			stream << "Full used surface  : " << full_surface << '\n';
 			stream << "Atlas surface      : " << atlas_surface << '\n';
@@ -585,7 +585,7 @@ namespace chaos
 
 				FREE_IMAGE_FORMAT image_format = ImageTools::GetFreeImageFormat(image_desc.pixel_format);
 
-				boost::filesystem::path dst_filename = target_dir / GetBitmapFilename(image_format, bitmap_filename, (int)i);
+				boost::filesystem::path dst_filename = target_dir / GetBitmapFilename(image_format, bitmap_filename, int(i));
 
 				result = (FreeImage_Save(image_format, image, dst_filename.string().c_str(), 0) != 0);
 
@@ -616,7 +616,7 @@ namespace chaos
 
 					FREE_IMAGE_FORMAT image_format = ImageTools::GetFreeImageFormat(image_desc.pixel_format);
 
-					json["bitmaps"].push_back(GetBitmapFilename(image_format, bitmap_filename, (int)i).string());
+					json["bitmaps"].push_back(GetBitmapFilename(image_format, bitmap_filename, int(i)).string());
 				}
 				// insert the entries
 				json["root_folder"] = nlohmann::json::object();				
@@ -671,8 +671,8 @@ namespace chaos
 						break;
 					}
 
-					int width = (int)FreeImage_GetWidth(bitmap);
-					int height = (int)FreeImage_GetHeight(bitmap);
+					int width = int(FreeImage_GetWidth(bitmap));
+					int height = int(FreeImage_GetHeight(bitmap));
 					if (bitmaps.size() == 0) // when reading the very first bitmap store the dimension
 					{
 						dimension.x = width;
@@ -692,7 +692,7 @@ namespace chaos
 				if (result)
 				{
 					JSONTools::GetAttribute(json, "root_folder", root_folder);
-					atlas_count = (int)bitmaps.size();
+					atlas_count = int(bitmaps.size());
 				}			
 			}
 			// in case of failure, reset the whole atlas once more

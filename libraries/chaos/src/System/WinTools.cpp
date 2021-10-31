@@ -463,8 +463,8 @@ namespace chaos
 			if (::GetBitmapDimensionEx(hBitmap, &bitmap_size))
 			{
 				WindowPixelCaptureResult result;
-				result.width = (int)bitmap_size.cx;
-				result.height = (int)bitmap_size.cy;
+				result.width = int(bitmap_size.cx);
+				result.height = int(bitmap_size.cy);
 
 				result.pixels = SharedBufferPolicy<char>::NewBuffer(result.width * result.height * 3);
 
@@ -517,8 +517,8 @@ namespace chaos
 				SIZE bitmap_size;
 				if (::GetBitmapDimensionEx(hBitmap, &bitmap_size))
 				{
-					int width = (int)bitmap_size.cx;
-					int height = (int)bitmap_size.cy;
+					int width = int(bitmap_size.cx);
+					int height = int(bitmap_size.cy);
 
 					result = FreeImage_Allocate(width, height, 24);
 					if (result != nullptr)

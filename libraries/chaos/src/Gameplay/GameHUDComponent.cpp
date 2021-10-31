@@ -97,16 +97,16 @@ namespace chaos
 
 		glm::vec2 result;
 		// search the X position
-		if ((int)hotpoint & (int)Hotpoint::LEFT)
+		if (int(hotpoint) & int(Hotpoint::LEFT))
 			result.x = corners.first.x;
-		else if ((int)hotpoint & (int)Hotpoint::RIGHT)
+		else if (int(hotpoint) & int(Hotpoint::RIGHT))
 			result.x = corners.second.x;
 		else
 			result.x = canvas_box.position.x;
 		// search the Y position
-		if ((int)hotpoint & (int)Hotpoint::BOTTOM)
+		if (int(hotpoint) & int(Hotpoint::BOTTOM))
 			result.y = corners.first.y;
-		else if ((int)hotpoint & (int)Hotpoint::TOP)
+		else if (int(hotpoint) & int(Hotpoint::TOP))
 			result.y = corners.second.y;
 		else
 			result.y = canvas_box.position.y;

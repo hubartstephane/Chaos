@@ -26,12 +26,12 @@ namespace chaos
 
 		int WangTile::GetCornerValue(Corner corner) const
 		{
-			return (int)((wang_id >> ((int)corner * 8 + 4)) & 0xF); // each byte encode a CORNER + EDGE (so, x 8)
+			return int((wang_id >> (int(corner) * 8 + 4)) & 0xF); // each byte encode a CORNER + EDGE (so, x 8)
 		}
 
 		int WangTile::GetEdgeValue(Edge edge) const
 		{
-			return (int)((wang_id >> ((int)edge * 8)) & 0xF); // each byte encode a CORNER + EDGE (so, x 8)
+			return int((wang_id >> (int(edge) * 8)) & 0xF); // each byte encode a CORNER + EDGE (so, x 8)
 		}
 
 		void WangTile::ApplyParticleFlags(int flags)

@@ -51,14 +51,14 @@ namespace chaos
 					auto e = monitors.end();
 					auto it = std::find(b, e, result);
 
-					base_monitor_index = (int)(it - b); // we want to offset it with positive or negative values (cast it into signed)
+					base_monitor_index = int(it - b); // we want to offset it with positive or negative values (cast it into signed)
 				}
 				// compute the index of the monitor we are interested in (and clamp)
 				int result_index = base_monitor_index + monitor_index;
 				if (result_index < 0)
 					result_index = 0;
-				else if (result_index >= (int)monitors.size())
-					result_index = (int)monitors.size() - 1;
+				else if (result_index >= int(monitors.size()))
+					result_index = int(monitors.size() - 1);
 
 				result = monitors[(size_t)result_index];
 			}

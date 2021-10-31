@@ -41,6 +41,14 @@ namespace chaos
 		SubClassOf(SubClassOf<U> const& src) : SubClassOf(src.GetInternalClass())
 		{
 		}
+		/** constructor with search */
+		SubClassOf(ClassFindResult find_result) : SubClassOf(find_result.Resolve(Class::FindClass<T>()))
+		{
+		}
+		/** constructor with search */
+		SubClassOf(char const* name) : SubClassOf(Class::FindClass(name)) 
+		{
+		}
 
 		/** validity operator */
 		operator bool() const { return IsValid(); }

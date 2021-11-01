@@ -439,62 +439,6 @@ namespace chaos
 		return true;
 	}
 
-#define CHAOS_FIND_RENDERABLE_CHILD(result, funcname, constness, param_type)\
-	result constness * Game::funcname(param_type param, GPURenderableLayerSystem constness * root) constness\
-	{\
-		if (root == nullptr)\
-		{\
-			root = root_render_layer.get();\
-			if (root == nullptr)\
-				return nullptr;\
-		}\
-		return auto_cast(root->FindChildRenderable(param));\
-	}
-#define CHAOS_FIND_RENDERABLE_CHILD_ALL(result, funcname)\
-	CHAOS_FIND_RENDERABLE_CHILD(result, funcname, BOOST_PP_EMPTY(), char const *);\
-	CHAOS_FIND_RENDERABLE_CHILD(result, funcname, BOOST_PP_EMPTY(), TagType);\
-	CHAOS_FIND_RENDERABLE_CHILD(result, funcname, const, char const *);\
-	CHAOS_FIND_RENDERABLE_CHILD(result, funcname, const, TagType);\
-
-	CHAOS_FIND_RENDERABLE_CHILD_ALL(GPURenderableLayerSystem, FindRenderableLayer);
-	CHAOS_FIND_RENDERABLE_CHILD_ALL(ParticleLayerBase, FindParticleLayer);
-
-#undef CHAOS_FIND_RENDERABLE_CHILD_ALL
-#undef CHAOS_FIND_RENDERABLE_CHILD
-
-	GPURenderableLayerSystem * Game::AddChildRenderLayer(char const * layer_name, TagType layer_tag, int render_order)
-	{
-		GPURenderableLayerSystem * result = new GPURenderableLayerSystem();
-		if (root_render_layer == nullptr)
-			return result;
-		result->SetName(layer_name);
-		result->SetTag(layer_tag);
-		root_render_layer->AddChildRenderable(result, render_order);
-		return result;
-	}
-
-	bool Game::CreateRootRenderLayer()
-	{
-		root_render_layer = new GPURenderableLayerSystem();
-		if (root_render_layer == nullptr)
-			return false;
-
-
-
-		// shuwww
-
-
-
-		if (AddChildRenderLayer("GAME", GameHUDKeys::GAME_LAYER_ID, 1) == nullptr)
-			return false;
-		if (AddChildRenderLayer("PLAYER", GameHUDKeys::PLAYER_LAYER_ID, 2) == nullptr) // maybe the player will go in another layer
-			return false;
-		if (AddChildRenderLayer("HUD", GameHUDKeys::HUD_LAYER_ID, 3) == nullptr)
-			return false;
-
-		return true;
-	}
-
 	bool Game::CreateParticleManager()
 	{
 		// get the application for atlas
@@ -635,9 +579,6 @@ namespace chaos
 
 	bool Game::CreateGPUResources()
 	{
-		// initialize the root render system
-		if (!CreateRootRenderLayer())
-			return false;
 		// initialize the particle manager
 		if (!CreateParticleManager())
 			return false;

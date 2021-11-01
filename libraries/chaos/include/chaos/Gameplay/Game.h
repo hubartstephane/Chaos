@@ -78,16 +78,6 @@ namespace chaos
 		/** returns root clock */
 		Clock const* GetRootClock() const { return root_clock.get(); }
 
-		// GPURenderable layers
-#define CHAOS_FIND_RENDERABLE_CHILD(result, funcname)\
-		result * funcname(char const * name, GPURenderableLayerSystem * root = nullptr);\
-		result const * funcname(char const * name, GPURenderableLayerSystem const * root = nullptr) const;\
-		result * funcname(TagType tag, GPURenderableLayerSystem * root = nullptr);\
-		result const * funcname(TagType tag, GPURenderableLayerSystem const * root = nullptr) const;
-		CHAOS_FIND_RENDERABLE_CHILD(GPURenderableLayerSystem, FindRenderableLayer);
-		CHAOS_FIND_RENDERABLE_CHILD(ParticleLayerBase, FindParticleLayer);
-#undef CHAOS_FIND_RENDERABLE_CHILD
-
 		/** utility function to get the sound manager */
 		SoundManager* GetSoundManager();
 
@@ -254,13 +244,8 @@ namespace chaos
 
 		/** initialize the particle manager */
 		virtual bool CreateParticleManager();
-		/** initialize the render layer */
-		virtual bool CreateRootRenderLayer();
-
 		/** create the layers in the particle manager (returns the number of layer inserted => -1 for error) */
 		virtual int AddParticleLayers();
-		/** insert a rendering layering */
-		GPURenderableLayerSystem* AddChildRenderLayer(char const* layer_name, TagType layer_tag, int render_order);
 
 		/** fill atlas generation input from the tiled map manager */
 		virtual bool FillAtlasGeneratorInput(BitmapAtlas::AtlasInput& input);
@@ -372,8 +357,6 @@ namespace chaos
 		shared_ptr<GamepadManager> gamepad_manager;
 		/** the particle manager */
 		shared_ptr<ParticleManager> particle_manager;
-		/** the rendering layer system */
-		shared_ptr<GPURenderableLayerSystem> root_render_layer;
 
 		/** the background mesh */
 		shared_ptr<GPUDynamicMesh> background_mesh;

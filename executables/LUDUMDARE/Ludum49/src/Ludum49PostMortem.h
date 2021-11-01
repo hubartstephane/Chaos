@@ -134,7 +134,6 @@ on applique le json directement a l objet creer par TsubClassT()
 on pourrait utiliser un json pour des classes differentes .. juste les valeurs qui nous interresse
 
 
-- SubClass(...) ajouter un conxstructeur avec un char const * pour aller chercher directement la classe
 
 
 -TMObject a deux methods GetBoundingBox

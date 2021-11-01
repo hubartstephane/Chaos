@@ -76,6 +76,12 @@ namespace chaos
 			return *this;
 		}
 		/** assign operator */
+		SubClassOf<T>& operator = (ClassFindResult find_result)
+		{
+			*this = SubClassOf<T>(find_result);
+			return *this;
+		}
+		/** assign operator */
 		template<typename U>
 		SubClassOf<T>& operator = (SubClassOf<U> const& src)
 		{

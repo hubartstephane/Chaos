@@ -63,7 +63,8 @@ namespace chaos
 			return (T*)internal_class->CreateInstance();
 		}
 		/** create a temporary instance on the stack an call the functor on it */
-		bool CreateInstanceOnStack(std::function<void(Object*)> func) const
+		template<typename FUNC>
+		void CreateInstanceOnStack(FUNC func) const
 		{
 			if (internal_class == nullptr)
 				return false;

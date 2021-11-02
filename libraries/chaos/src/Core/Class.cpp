@@ -90,17 +90,6 @@ namespace chaos
 		return nullptr;
 	}
 
-	bool Class::CreateInstanceOnStack(std::function<void(Object*)> func) const
-	{
-		if (!CanCreateInstanceOnStack())
-		{
-			Log::Error("Class::CreateInstanceOnStack : the class [%s] cannot be instanciated", name.c_str());
-			return false;
-		}
-		create_instance_on_stack_func(func);
-		return true;			
-	}
-
 	bool Class::IsDeclared() const
 	{
 		return declared;

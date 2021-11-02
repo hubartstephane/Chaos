@@ -105,32 +105,19 @@ namespace chaos
 		/** method to create an instance of the object */
 		Object* CreateInstance() const;
 		/** create a temporary instance on the stack an call the functor on it */
-		bool CreateInstanceOnStack(std::function<void(Object*)> func) const;
-		/** create a temporary instance on the stack an call the functor on it */
-#if 0
-		template<typename T, typename RESULT_TYPE>
-		RESULT_TYPE CreateInstanceOnStack2(std::function<RESULT_TYPE(T*)> func) const
+		template<typename FUNC>
+		bool CreateInstanceOnStack(FUNC func) const
 		{
-			static_assert(std::is_base_of_v<Object, T>);
-
-			RESULT_TYPE result;
-			CreateInstanceOnStack([func, &result](Object * object)
+			if (!CanCreateInstanceOnStack())
 			{
-				result = func(auto_cast(object));
-			});
-			return result;
-		}
-#endif
-
-		template<typename T>
-		void CreateInstanceOnStack2(std::function<void(T*)> func) const
-		{
-			static_assert(std::is_base_of_v<Object, T>);
-
-			CreateInstanceOnStack([func](Object * object)
+				Log::Error("Class::CreateInstanceOnStack : the class [%s] cannot be instanciated", name.c_str());
+				return false;
+			}
+			create_instance_on_stack_func([func](Object * object)
 			{
 				func(auto_cast(object));
 			});
+			return true;
 		}
 
 		/** returns whether the class has been registered */

@@ -115,7 +115,7 @@ namespace chaos
 			}
 			create_instance_on_stack_func([func](Object * object)
 			{
-				func(auto_cast(object));
+				func(auto_cast_checked(object));
 			});
 			return true;
 		}

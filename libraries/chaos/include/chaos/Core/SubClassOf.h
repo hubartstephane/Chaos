@@ -64,7 +64,7 @@ namespace chaos
 		}
 		/** create a temporary instance on the stack an call the functor on it */
 		template<typename FUNC>
-		void CreateInstanceOnStack(FUNC func) const
+		bool CreateInstanceOnStack(FUNC func) const
 		{
 			if (internal_class == nullptr)
 				return false;

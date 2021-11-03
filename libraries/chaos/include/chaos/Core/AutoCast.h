@@ -2,16 +2,16 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	template<typename T>
+	template<typename T, bool checked = false>
 	class AutoConstCastable;
 
-	template<typename T>
+	template<typename T, bool checked = false>
 	class AutoCastable;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/** AutoConstCastable : an object that provide dynamic_cast on demand */
-	template<typename T>
+	template<typename T, bool checked>
 	class AutoConstCastable
 	{
 	public:
@@ -28,9 +28,17 @@ namespace chaos
 			if constexpr (std::is_base_of_v<U, T>)
 				return ptr;
 			if constexpr (!std::is_polymorphic_v<T>)
+			{
+				assert(!checked);
 				return nullptr;
+			}
 			else
-				return dynamic_cast<const U*>(ptr);
+			{
+				auto result = dynamic_cast<const U*>(ptr);
+				if constexpr (checked)
+					assert(result != nullptr);
+				return result;
+			}
 		}
 
 		/** indirection operator */
@@ -51,7 +59,7 @@ namespace chaos
 	};
 
 	/** AutoCastable : an object that provide dynamic_cast on demand */
-	template<typename T>
+	template<typename T, bool checked>
 	class AutoCastable
 	{
 	public:
@@ -73,9 +81,17 @@ namespace chaos
 			if constexpr (std::is_base_of_v<U, T>)
 				return ptr;
 			if constexpr (!std::is_polymorphic_v<T>)
+			{
+				assert(!checked);
 				return nullptr;
+			}
 			else
-				return dynamic_cast<U*>(ptr);
+			{
+				auto result = dynamic_cast<U*>(ptr);
+				if constexpr (checked)
+					assert(result != nullptr);
+				return result;
+			}
 		}
 		/** indirection operator */
 		T* operator -> () const { return ptr; }
@@ -106,6 +122,19 @@ namespace chaos
 	/** create a delayed dynamic_cast<> */
 	template<typename T>
 	AutoConstCastable<T> auto_cast(T const* ptr) { return AutoConstCastable<T>(ptr); }
+
+	/** create a delayed dynamic_cast<> */
+	template<typename T>
+	AutoCastable<T, true> auto_cast_checked(AutoCastable<T> const& src) { return src; }
+	/** create a delayed dynamic_cast<> */
+	template<typename T>
+	AutoConstCastable<T, true> auto_cast_checked(AutoConstCastable<T> const& src) { return src; }
+	/** create a delayed dynamic_cast<> */
+	template<typename T>
+	AutoCastable<T, true> auto_cast_checked(T* ptr) { return AutoCastable<T, true>(ptr); }
+	/** create a delayed dynamic_cast<> */
+	template<typename T>
+	AutoConstCastable<T, true> auto_cast_checked(T const* ptr) { return AutoConstCastable<T, true>(ptr); }
 
 #endif
 

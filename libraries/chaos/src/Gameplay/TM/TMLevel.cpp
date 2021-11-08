@@ -63,23 +63,20 @@ namespace chaos
 
 
 	TMObjectFactory TMLevel::DoGetExplicitObjectFactory(TMLayerInstance* in_layer_instance, TiledMap::TypedObject const * in_typed_object)
-	{	
-		// shu49 ca vaut peut etre le coup de tester type en plus de classname
-		 
-		 
-		
-		// get the 'classname' property
-		std::string const* classname = in_typed_object->FindPropertyString("classname");
-		if (classname == nullptr)
-			return nullptr;
-		// find wanted class
-		Class const* wanted_class = Class::FindClass(classname->c_str());
-		if (wanted_class == nullptr)
-			return nullptr;
-		// get the subclass
-		SubClassOf<TMObject> subclass = { wanted_class };
+	{
+		// search the subclass of the object (by type or classname member)
+		SubClassOf<TMObject> subclass = Class::FindClass(in_typed_object->type.c_str());
+		if (!subclass.IsValid())
+		{
+			if (std::string const* classname = in_typed_object->FindPropertyString("classname"))
+			{
+				subclass = Class::FindClass(classname->c_str());
+			}
+		}
+		// failure ?
 		if (!subclass.IsValid())
 			return nullptr;
+
 		// return the factory based on this subclass
 		return [this, in_layer_instance, subclass](TiledMap::GeometricObject const * in_geometric_object, TMObjectReferenceSolver & in_reference_solver)
 		{

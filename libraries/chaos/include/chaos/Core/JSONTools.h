@@ -159,24 +159,6 @@ bool SaveIntoJSON(nlohmann::json& json, enum_type const& src)\
 	template<typename T>
 	bool LoadFromJSON(nlohmann::json const& entry, T& dst)
 	{
-#if 0
-		if constexpr (std::is_pointer_v<T>)
-		{
-			using T2 = std::remove_pointer_t<T>;
-
-			// object instanciation
-			T2* other = LoadFromJSONCreateObject<T2>(entry); // XXX : use classname to generate the object
-			if (other == nullptr)
-				return false;
-			if (!LoadFromJSON(entry, *other)) // XXX: in that case, there is a useless check for classname again, not a big deal
-			{
-				delete(other);
-				return false;
-			}
-			dst = other;
-			return true;
-		}
-#endif
 		// class has its own implementation
 		if constexpr (check_method_SerializeFromJSON_v<T, nlohmann::json const&>)
 		{
@@ -186,19 +168,14 @@ bool SaveIntoJSON(nlohmann::json& json, enum_type const& src)\
 			// check for strict class equality between target and JSON data
 			if constexpr (check_method_GetClass_v<T const>)
 			{
-				// shu48
-				// peut etre qu on devrait accepter les entrées ou classname n est pas specifiée ?
-
-				Class const* dst_class = dst.GetClass();
-				if (dst_class == nullptr || !dst_class->IsDeclared())
-					return false;
-
+				// check classname only if provided
 				std::string classname;
-				JSONTools::GetAttribute(entry, "classname", classname);
-
-				Class const* json_class = Class::FindClass(classname.c_str());
-				if (json_class == nullptr || !json_class->IsDeclared() || json_class != dst_class)
-					return false;
+				if (JSONTools::GetAttribute(entry, "classname", classname))
+				{
+					SubClassOf<T> subclass = Class::FindClass(classname.c_str());
+					if (!subclass.IsValid())
+						return false;
+				}
 			}
 			return dst.SerializeFromJSON(entry);
 		}
@@ -292,15 +269,6 @@ bool SaveIntoJSON(nlohmann::json& json, enum_type const& src)\
 	template<typename T>
 	bool SaveIntoJSON(nlohmann::json& entry, T const& src)
 	{
-#if 0
-		// check for pointer
-		if constexpr (std::is_pointer_v<T>)
-		{
-			if (src == nullptr)
-				return true;
-			return SaveIntoJSON(entry, *src);
-		}
-#endif
 		// class has its own implementation
 		if constexpr (std::is_class_v<T> && !std::is_same_v<T, std::string>) // string is to be handled in the native json way
 		{
@@ -321,10 +289,8 @@ bool SaveIntoJSON(nlohmann::json& json, enum_type const& src)\
 				if (src_class == nullptr || !src_class->IsDeclared())
 					src_class = Class::FindClass<T>();
 				// write the class into the json object
-
 				if (src_class != nullptr && src_class->IsDeclared())
 					JSONTools::SetAttribute(entry, "classname", src_class->GetClassName());
-
 				// save into JSON
 				return src.SerializeIntoJSON(entry);
 			}

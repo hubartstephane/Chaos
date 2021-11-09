@@ -34,12 +34,9 @@ namespace chaos
 	using triangle2 = type_triangle<float, 2>;
 	using triangle3 = type_triangle<float, 3>;
 	
-	//using rotator2 = float; // this are ROTATION here (angle or quaternion)
-	//using rotator3 = glm::quat; //
+	using rotator2 = float; // this are ROTATION here (angle or quaternion)
+	using rotator3 = glm::quat;
 	
-	//using rotator2 = typename type_rotator2<float>::type; // this are ROTATION here (angle or quaternion)
-	//using rotator3 = typename type_rotator3<float>::type; //
-
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// ==============================================================================================
@@ -96,6 +93,8 @@ namespace chaos
 
 		/** the type of the components */
 		using type = T;
+		/** the type for matrix */
+		using mat_type = glm::tmat4x4<T, glm::highp>;
 		/** the type of vector */
 		using vec_type = glm::tvec2<type>;
 		/** the type of plane */
@@ -120,9 +119,11 @@ namespace chaos
 	public:
 		/** the dimension of the space */
 		static constexpr int dimension = 3;
+
 		/** the type of the components */
 		using type = T;
-
+		/** the type for matrix */
+		using mat_type = glm::tmat4x4<T, glm::defaultp>;
 		/** the type of vector */
 		using vec_type = glm::tvec3<type>;
 		/** the type of plane */
@@ -146,7 +147,7 @@ namespace chaos
 	// ==============================================================================================
 
 	template<typename T, int dimension>
-	class type_box_base : public type_geometric<T, dimension>
+	class type_box_base
 	{
 	public:
 
@@ -165,7 +166,7 @@ namespace chaos
 		/** the center of the box */
 		vec_type position;
 		/** the half size the box */
-		vec_type half_size = vec_type(T(-1));
+		vec_type half_size = vec_type(-1);
 	};
 
 	// ==============================================================================================
@@ -177,8 +178,8 @@ namespace chaos
 	{
 	public:
 
-		using vec_type = typename type_box_base<T, dimension>::vec_type;
-		using type     = typename type_box_base<T, dimension>::type;
+		using vec_type = typename type_geometric<T, dimension>::vec_type;
+		using type     = typename type_geometric<T, dimension>::type;
 
 		/** constructor (empty box) */
 		type_box() = default;
@@ -209,9 +210,9 @@ namespace chaos
 	{
 	public:
 
-		using vec_type = typename type_box_base<T, dimension>::vec_type;
-		using type     = typename type_box_base<T, dimension>::type;
-		using rot_type = typename type_box_base<T, dimension>::rot_type;
+		using vec_type = typename type_geometric<T, dimension>::vec_type;
+		using type     = typename type_geometric<T, dimension>::type;
+		using rot_type = typename type_geometric<T, dimension>::rot_type;
 
 		/** constructor (empty box) */
 		type_obox() = default;
@@ -233,7 +234,7 @@ namespace chaos
 	// ==============================================================================================
 
 	template<typename T, int dimension>
-	class type_sphere : public type_geometric<T, dimension>
+	class type_sphere
 	{
 	public:
 
@@ -260,7 +261,7 @@ namespace chaos
 	// ==============================================================================================
 
 	template<typename T, int dimension>
-	class type_triangle : public type_geometric<T, dimension>
+	class type_triangle
 	{
 	public:
 
@@ -303,7 +304,7 @@ namespace chaos
 	// ==============================================================================================
 
 	template<typename T, int dimension>
-	class type_ray : public type_geometric<T, dimension>
+	class type_ray
 	{
 	public:
 
@@ -330,8 +331,3 @@ namespace chaos
 #endif
 
 }; // namespace chaos
-
-
-
-
-

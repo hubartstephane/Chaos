@@ -12,16 +12,17 @@ namespace chaos
 	{
 		using vec_type = typename type_geometric<T, dimension>::vec_type;
 		using rot_type = typename type_geometric<T, dimension>::rot_type;
+		using mat_type = typename type_geometric<T, dimension>::mat_type;
 
 	public:
 
 		/** gets the local to parent transform */
-		glm::mat4 const& GetLocalToParent() const
+		mat_type const& GetLocalToParent() const
 		{
 			return {};
 		}
 		/** gets the parent to local */
-		glm::mat4 const& GetParentToLocal() const
+		mat_type const& GetParentToLocal() const
 		{
 
 			return {};

@@ -1,6 +1,7 @@
 #include <chaos/Gameplay/GameFramework.h>
 #include <chaos/Gameplay/ComponentOwner.h>
 #include <chaos/Gameplay/GameParticles.h>
+#include <chaos/Gameplay/SceneTransform.h>
 #include <chaos/Gameplay/SceneNode.h>
 #include <chaos/Gameplay/SceneRenderer.h>
 #include <chaos/Gameplay/GameEntity.h>

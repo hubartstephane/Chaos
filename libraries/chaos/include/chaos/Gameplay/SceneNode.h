@@ -27,11 +27,11 @@ namespace chaos
 		glm::mat4 GetLocalToWorld() const;
 
 		/** get the position of the node */
-		glm::vec2 const& GetPosition() const { return position; }
+		glm::vec2 const& GetPosition() const { return transform.position; }
 		/** get the scale of the node */
-		glm::vec2 const& GetScale() const { return scale; }
+		glm::vec2 const& GetScale() const { return transform.scale; }
 		/** get the rotation of the node */
-		float GetRotator() const { return rotator; }
+		float GetRotator() const { return transform.rotator; }
 
 		/** set the position of the node */
 		void SetPosition(glm::vec2 const& in_position);
@@ -57,12 +57,8 @@ namespace chaos
 
 	protected:
 
-		/** the position of the node */
-		glm::vec2 position = glm::vec2(0.0f, 0.0f);
-		/** the scale of the node */
-		glm::vec2 scale = glm::vec2(1.0f, 1.0f);
-		/** the rotator of the node */
-		float rotator = 0.0f;
+		/** the transform */
+		SceneTransform<float, 2> transform;
 
 		/** the cached local to parent matrix */
 		mutable glm::mat4 local_to_parent;

@@ -17,32 +17,45 @@ namespace chaos
 	public:
 
 		/** gets the local to parent transform */
-		mat_type const& GetLocalToParent() const
+		mat_type GetLocalToParent() const
 		{
-			return {};
+			mat_type t, r, s;
+
+			if constexpr (dimension == 2)
+				t = glm::translate(glm::tvec3<T>(position, 0));
+			else if constexpr (dimension == 2)
+				t = glm::translate(position);
+
+			r = GetRotatorMatrix(rotator);
+
+			if constexpr (dimension == 2)
+				t = glm::scale(glm::tvec3<T>(scale, 1));
+			else if constexpr (dimension == 2)
+				t = glm::scale(position);
+
+			return t * r * s;
 		}
 		/** gets the parent to local */
-		mat_type const& GetParentToLocal() const
+		mat_type GetParentToLocal() const
 		{
+			mat_type s, r, t;
 
-			return {};
+			if constexpr (dimension == 2)
+				t = glm::scale(glm::tvec3<T>(T(1) / scale, 1));
+			else if constexpr (dimension == 2)
+				t = glm::scale(T(1) / scale);
+
+			r = GetRotatorMatrix(-rotator);
+
+			if constexpr (dimension == 2)
+				t = glm::translate(glm::tvec3<T>(-position, 0));
+			else if constexpr (dimension == 2)
+				t = glm::translate(-position);
+
+			return s * r * t;
 		}
 
-		/** get the position */
-		vec_type const& GetPosition() const { return position; }
-		/** get the scale */
-		vec_type const& GetScale() const { return scale; }
-		/** get the rotation */
-		rot_type const& GetRotator() const { return rotator; }
-
-		/** set the position */
-		void SetPosition(vec_type const& in_position) { position = in_position; }
-		/** set the scale */
-		void SetScale(vec_type const& in_scale) { scale = in_scale; }
-		/** set the rotation */
-		void SetRotator(rot_type const &in_rotator) { rotator = in_rotator; }
-
-	protected:
+	public:
 
 		/** the position */
 		vec_type position = vec_type(0);
@@ -51,7 +64,6 @@ namespace chaos
 		/** the rotator */
 		rot_type rotator = zero_rotator();
 	};
-
 
 #endif
 

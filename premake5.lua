@@ -518,18 +518,16 @@ function CppProject(in_kind, proj_type)
 		if (CURRENT_GROUP ~= nil) then
 				group(group_name)
 		end
-		-- create a project for the resources (except for libs)
-		if (proj_type ~= TYPE_LIBRARY) then
-				local resource_proj_name = GetDependantResourceProjName(PROJ_NAME)
-				project(resource_proj_name)
-				kind("Makefile")
+		-- create a project for the resources
+		local resource_proj_name = GetDependantResourceProjName(PROJ_NAME)
+		project(resource_proj_name)
+		kind("Makefile")
 
-				local proj_location = path.join(SOLUTION_PATH, "resources")
-				location(proj_location)
+		local proj_location = path.join(SOLUTION_PATH, "resources")
+		location(proj_location)
 
-				local res_path = path.join(PROJECT_SRC_PATH, "resources")
-				files {path.join(res_path, "**")}
-		end
+		local res_path = path.join(PROJECT_SRC_PATH, "resources")
+		files {path.join(res_path, "**")}
 
 		-- create the project it self
 		project(PROJ_NAME)

@@ -2,6 +2,20 @@
 
 namespace chaos
 {
+	static std::vector<std::pair<ShaderType, char const *>> const shader_type_encoding =
+	{
+		{ ShaderType::ANY, "any" },
+		{ ShaderType::VERTEX, "vertex" },
+		{ ShaderType::FRAGMENT, "fragment" },
+		{ ShaderType::GEOMETRY, "geometry" },
+		{ ShaderType::TESS_EVALUATION, "tess_evaluation" },
+		{ ShaderType::TESS_CONTROL, "tess_control" },
+		{ ShaderType::COMPUTE, "compute" }
+	};
+
+	CHAOS_IMPLEMENT_ENUMJSON_METHOD(ShaderType, shader_type_encoding);
+
+
 	void GPUProgramGenerator::AddFrameworkSources(GLenum shader_type, std::vector<char const*> & sources, std::vector<Buffer<char>> & buffers) const
 	{
 		// XXX : this must be the very first line of the program. 

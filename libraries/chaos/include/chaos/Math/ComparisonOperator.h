@@ -47,9 +47,7 @@ namespace chaos
 		return false;
 	}
 
-	bool SaveIntoJSON(nlohmann::json& json, ComparisonOperator const& src);
-
-	bool LoadFromJSON(nlohmann::json const& json, ComparisonOperator& dst);
+	CHAOS_DECLARE_ENUMJSON_METHOD(ComparisonOperator);
 
 #endif
 

@@ -20,11 +20,7 @@ namespace chaos
 		DEPTH_STENCIL = 3
 	};
 
-
-	/** JSON loading method */
-	bool LoadFromJSON(nlohmann::json const& json, PixelComponentType& dst);
-	/** JSON saving method */
-	bool SaveIntoJSON(nlohmann::json& json, PixelComponentType const& src);
+	CHAOS_DECLARE_ENUMJSON_METHOD(PixelComponentType);
 
 	/**
 	* PixelFormat : the accepted pixel formats

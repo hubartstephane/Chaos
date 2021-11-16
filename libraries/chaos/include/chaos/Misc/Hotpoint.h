@@ -28,11 +28,7 @@ namespace chaos
 	/** given a hotpoint and a hotpoint, returns any other hotpoint position */
 	glm::vec2 ConvertHotpoint(glm::vec2 const& pt, glm::vec2 const& size, Hotpoint initial_hotpoint, Hotpoint final_hotpoint);
 
-	/** JSON loading method */
-	bool LoadFromJSON(nlohmann::json const& json, Hotpoint& dst);
-	/** JSON saving method */
-	bool SaveIntoJSON(nlohmann::json& json, Hotpoint const& src);
-
+	CHAOS_DECLARE_ENUMJSON_METHOD(Hotpoint);
 
 #endif
 

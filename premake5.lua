@@ -618,6 +618,7 @@ function StaticLib()
 		local result = CppProject("StaticLib", TYPE_LIBRARY)
 		result.libname = GetPlatConfArray(result.name)
 		DisplayEnvironment()
+		DeclareToCopyFile("resources")
 		GenDoxygen()
 		return result
 end
@@ -630,6 +631,7 @@ function SharedLib()
 		local result = CppProject("SharedLib", TYPE_LIBRARY)
 		result.libname = GetPlatConfArray(result.name)
 		DisplayEnvironment()
+		DeclareToCopyFile("resources")
 		GenDoxygen()
 		return result
 end
@@ -1060,7 +1062,7 @@ function CopyResourceFiles(dst_proj, src_proj, plat, conf) -- dst_proj is the pr
 end
 
 function ResolveCopyDependency(proj, other_proj, plat, conf)
-		if (other_proj.proj_type == TYPE_RESOURCES) then -- for resources, only copy required data
+		if (other_proj.proj_type == TYPE_RESOURCES or other_proj.proj_type == TYPE_LIBRARY) then -- for resources, only copy required data
 				CopyResourceFiles(proj, other_proj, plat, conf)
 		end
 end
@@ -1108,7 +1110,7 @@ for i in pairs(MYPROJECTS) do
 
 								for d in pairs(proj.dependencies) do
 										local other_proj = FindProject(proj.dependencies[d])
-										if (other_proj and other_proj.proj_type == TYPE_RESOURCES) then
+										if (other_proj and (other_proj.proj_type == TYPE_RESOURCES or other_proj.proj_type == TYPE_LIBRARY)) then
 												if (resource_path ~= "") then
 														resource_path = resource_path .. ";"
 												end

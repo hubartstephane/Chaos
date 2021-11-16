@@ -14,10 +14,7 @@ namespace chaos
 		JUSTIFY = 3
 	};
 
-	/** JSON loading method */
-	bool LoadFromJSON(nlohmann::json const& json, TextAlignment& dst);
-	/** JSON saving method */
-	bool SaveIntoJSON(nlohmann::json& json, TextAlignment const& src);
+	CHAOS_DECLARE_ENUMJSON_METHOD(TextAlignment);
 
 #endif
 

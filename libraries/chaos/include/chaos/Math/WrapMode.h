@@ -84,10 +84,7 @@ namespace chaos
 		return true;
 	}
 
-	/** JSON loading method */
-	bool LoadFromJSON(nlohmann::json const& json, WrapMode& dst);
-	/** JSON saving method */
-	bool SaveIntoJSON(nlohmann::json& json, WrapMode const& src);
+	CHAOS_DECLARE_ENUMJSON_METHOD(WrapMode);
 
 #endif
 

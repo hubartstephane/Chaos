@@ -2,9 +2,27 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
+	enum class ShaderType;
 	class GPUProgramGenerator;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+	/**
+	 * The types of possible shaders
+	 */
+
+	enum class ShaderType
+	{
+		ANY = GL_NONE,
+		VERTEX = GL_VERTEX_SHADER,
+		FRAGMENT = GL_FRAGMENT_SHADER,
+		GEOMETRY = GL_GEOMETRY_SHADER,
+		TESS_EVALUATION = GL_TESS_EVALUATION_SHADER,
+		TESS_CONTROL = GL_TESS_CONTROL_SHADER,
+		COMPUTE = GL_COMPUTE_SHADER
+	};
+
+	CHAOS_DECLARE_ENUMJSON_METHOD(ShaderType);
 
 	/**
 	* GPUProgramGenerator : this class deserves to generate GPU programs from sources.

@@ -6,6 +6,10 @@ namespace chaos
 	// Some macros for enum json reading
 	// =================================
 
+#define CHAOS_DECLARE_ENUMJSON_METHOD(enum_type)\
+bool LoadFromJSON(nlohmann::json const& json, enum_type& dst);\
+bool SaveIntoJSON(nlohmann::json& json, enum_type const& src);
+
 #define CHAOS_IMPLEMENT_ENUMJSON_METHOD(enum_type, table_name)\
 bool LoadFromJSON(nlohmann::json const& json, enum_type& dst)\
 {\

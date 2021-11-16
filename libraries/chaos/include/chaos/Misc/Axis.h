@@ -14,10 +14,7 @@ namespace chaos
 		AXIS_Z = 2
 	};
 
-	/** JSON loading method */
-	bool LoadFromJSON(nlohmann::json const& json, Axis& dst);
-	/** JSON saving method */
-	bool SaveIntoJSON(nlohmann::json& json, Axis const& src);
+	CHAOS_DECLARE_ENUMJSON_METHOD(Axis);
 
 #endif
 

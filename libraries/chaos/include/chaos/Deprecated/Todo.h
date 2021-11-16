@@ -711,4 +711,49 @@ ExecutionContext TestSimple1()
 
 
 
+
+
+#if 0
+
+  int workgroup_count[3];
+  int workgroup_size[3];
+  int workgroup_invocations;
+
+  glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 0, &workgroup_count[0]);
+  glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 1, &workgroup_count[1]);
+  glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 2, &workgroup_count[2]);
+
+glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 0, &workgroup_size[0]);
+  glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 1, &workgroup_size[1]);
+  glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 2, &workgroup_size[2]);
+
+  // glBindImageTexture 
+  // glDispatchCompute -> number of workgroup
+  // glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT); -- bloque le CPU
+  // glFinish block until all GL execution is complete
+
+  // layout (local_size_x = 16, local_size_y = 16) in; --> size of a work group
+
+  // gl_LocalInvocationID.xy * gl_WorkGroupID.xy == gl_GlobalInvocationID
+
+
+
+  gl_NumWorkGroups
+	  This variable contains the number of work groups passed to the dispatch function.
+	  gl_WorkGroupID
+	  This is the current work group for this shader invocation.Each of the XYZ components will be on the half - open range[0, gl_NumWorkGroups.XYZ).
+	  gl_LocalInvocationID
+	  This is the current invocation of the shader within the work group.Each of the XYZ components will be on the half - open range[0, gl_WorkGroupSize.XYZ).
+	  gl_GlobalInvocationID
+
+	  int size[3];
+  glGetProgramiv(ComputeShaderID, GL_COMPUTE_WORK_GROUP_SIZE, size);
+
+#endif
+
+
+
+
+
+
 #endif

@@ -122,7 +122,7 @@ namespace chaos
 				html.PushAttribute(RECT, "y", y);
 				html.PushAttribute(RECT, "width", w);
 				html.PushAttribute(RECT, "height", h);
-				html.PushAttribute(RECT, "style", rect_props);
+				html.PushAttribute(RECT, "style", &rect_props[0]); // because the rect_props = char[1024]  and not   char const *
 			}
 		}
 

@@ -4,6 +4,23 @@ namespace chaos
 {
 	namespace TiledMap
 	{
+		static std::vector<std::pair<HorizontalTextAlignment, char const*>> const halign_map = {
+			{ HorizontalTextAlignment::LEFT, "left" }, // default
+			{ HorizontalTextAlignment::CENTER, "center" },
+			{ HorizontalTextAlignment::RIGHT, "right" },
+			{ HorizontalTextAlignment::JUSTIFY, "justify" }
+		};
+
+		CHAOS_IMPLEMENT_ENUM_METHOD(HorizontalTextAlignment, halign_map);
+
+		static std::vector<std::pair<VerticalTextAlignment, char const*>> const valign_map = {
+			{ VerticalTextAlignment::TOP, "top" }, // default
+			{ VerticalTextAlignment::CENTER, "center" },
+			{ VerticalTextAlignment::BOTTOM, "bottom" }
+		};
+
+		CHAOS_IMPLEMENT_ENUM_METHOD(VerticalTextAlignment, valign_map);
+
 		// ==========================================
 		// GeometricObject methods
 		// ==========================================
@@ -238,23 +255,10 @@ namespace chaos
 
 			tinyxml2::XMLElement const * text_element = element->FirstChildElement("text");
 
-			static std::vector<std::pair<HorizontalTextAlignment, char const*>> const halign_map = {
-				{ HorizontalTextAlignment::LEFT, "left" },
-				{ HorizontalTextAlignment::CENTER, "center" },
-				{ HorizontalTextAlignment::RIGHT, "right" },
-				{ HorizontalTextAlignment::JUSTIFY, "justify" },
-				{ HorizontalTextAlignment::LEFT, nullptr }
-			};
-			XMLTools::ReadEnumAttribute(text_element, "halign", halign_map, halign);
-
-			static std::vector<std::pair<VerticalTextAlignment, char const*>> const valign_map = {
-				{ VerticalTextAlignment::TOP, "top" },
-				{ VerticalTextAlignment::CENTER, "center" },
-				{ VerticalTextAlignment::BOTTOM, "bottom" },
-				{ VerticalTextAlignment::TOP, nullptr  }
-			};
-			XMLTools::ReadEnumAttribute(text_element, "valign", valign_map, valign);
-
+			halign = HorizontalTextAlignment::LEFT;
+			XMLTools::ReadAttribute(text_element, "halign", halign);
+			valign = VerticalTextAlignment::TOP;
+			XMLTools::ReadAttribute(text_element, "valign", valign);
 			XMLTools::ReadAttribute(text_element, "pixelsize", pixelsize);
 			XMLTools::ReadAttribute(text_element, "wrap", wrap);
 			XMLTools::ReadAttribute(text_element, "fontfamily", fontfamily);

@@ -89,6 +89,8 @@ namespace chaos
 			TOPDOWN = 1
 		};
 
+		CHAOS_DECLARE_ENUM_METHOD(DrawOrder);
+
 		class ObjectLayer : public LayerBase
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS

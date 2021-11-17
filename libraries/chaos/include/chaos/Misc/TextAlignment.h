@@ -14,7 +14,7 @@ namespace chaos
 		JUSTIFY = 3
 	};
 
-	CHAOS_DECLARE_ENUMJSON_METHOD(TextAlignment);
+	CHAOS_DECLARE_ENUM_METHOD(TextAlignment);
 
 #endif
 

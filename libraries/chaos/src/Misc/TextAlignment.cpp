@@ -10,6 +10,6 @@ namespace chaos
 		{ TextAlignment::JUSTIFY, "justify" }
 	};
 
-	CHAOS_IMPLEMENT_ENUMJSON_METHOD(TextAlignment, alignment_encoding);
+	CHAOS_IMPLEMENT_ENUM_METHOD(TextAlignment, alignment_encoding);
 
 }; // namespace chaos

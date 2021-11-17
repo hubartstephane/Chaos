@@ -37,6 +37,6 @@ namespace chaos
 		return op;
 	}
 
-	CHAOS_IMPLEMENT_ENUMJSON_METHOD(ComparisonOperator, comparison_operator_encoding);
+	CHAOS_IMPLEMENT_ENUM_METHOD(ComparisonOperator, comparison_operator_encoding);
 
 }; // namespace chaos

@@ -47,7 +47,7 @@ namespace chaos
 		return false;
 	}
 
-	CHAOS_DECLARE_ENUMJSON_METHOD(ComparisonOperator);
+	CHAOS_DECLARE_ENUM_METHOD(ComparisonOperator);
 
 #endif
 

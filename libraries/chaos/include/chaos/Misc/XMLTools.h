@@ -22,17 +22,26 @@ namespace chaos
 		tinyxml2::XMLText* PushText(tinyxml2::XMLNode* parent, char const* txt);
 
 		/** create an attribute for a given element */
-		void PushAttribute(tinyxml2::XMLElement* element, char const* name, char const* value);
+		static void PushAttribute(tinyxml2::XMLElement* element, char const* name, char const* value);
 		/** create an attribute for a given element */
-		void PushAttribute(tinyxml2::XMLElement* element, char const* name, int value);
+		static void PushAttribute(tinyxml2::XMLElement* element, char const* name, int value);
 		/** create an attribute for a given element */
-		void PushAttribute(tinyxml2::XMLElement* element, char const* name, float value);
+		static void PushAttribute(tinyxml2::XMLElement* element, char const* name, float value);
 		/** create an attribute for a given element */
-		void PushAttribute(tinyxml2::XMLElement* element, char const* name, double value);
+		static void PushAttribute(tinyxml2::XMLElement* element, char const* name, double value);
 		/** create an attribute for a given element */
-		void PushAttribute(tinyxml2::XMLElement* element, char const* name, bool value);
+		static void PushAttribute(tinyxml2::XMLElement* element, char const* name, bool value);
 		/** create an attribute for a given element */
-		void PushAttribute(tinyxml2::XMLElement* element, char const* name, unsigned int value);
+		static void PushAttribute(tinyxml2::XMLElement* element, char const* name, unsigned int value);
+
+		/** create an attribute for a given enum */
+		template<typename T, typename = std::enable_if<std::is_enum_v<T>>>
+		static bool PushAttribute(tinyxml2::XMLElement * element, char const* name, T& value)
+		{
+			std::string str;
+			EnumToString(value, str);
+			PushAttribute(element, name, str);
+		}
 
 		/** Find an attribute a read into result */
 		static bool ReadAttribute(tinyxml2::XMLAttribute const* attribute, int& result);
@@ -64,19 +73,13 @@ namespace chaos
 		/** Find an attribute a read into result */
 		static bool ReadAttribute(tinyxml2::XMLElement const* element, char const* attribute_name, boost::filesystem::path& result);
 		/** Find an attribute, read it as a string an find corresponding value in translation map (returns very last value in case of failure) */
-		template<typename T, typename ENCODE_TABLE>
-		static bool ReadEnumAttribute(tinyxml2::XMLElement const* element, char const* attribute_name, ENCODE_TABLE const& encode_table, T& dst)
+		template<typename T, typename = std::enable_if<std::is_enum_v<T>>>
+		static bool ReadAttribute(tinyxml2::XMLElement const* element, char const* attribute_name, T& dst)
 		{
 			// read attribute and convert into enum
 			std::string str;
 			if (ReadAttribute(element, attribute_name, str))
-				return EnumTools::StringToEnum(str.c_str(), encode_table, dst);
-			// find the very last entry to get the default value
-			size_t i = 0;
-			while (i < encode_table.size() && encode_table[i].second != nullptr)
-				++i;
-			if (i < encode_table.size())
-				dst = encode_table[i].first;
+				return StringToEnum(str.c_str(), dst);
 			return false;
 		}
 

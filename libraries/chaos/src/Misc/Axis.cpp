@@ -9,6 +9,6 @@ namespace chaos
 		{ Axis::AXIS_Z, "axis_z" }
 	};
 
-	CHAOS_IMPLEMENT_ENUMJSON_METHOD(Axis, axis_encoding);
+	CHAOS_IMPLEMENT_ENUM_METHOD(Axis, axis_encoding);
 
 }; // namespace chaos

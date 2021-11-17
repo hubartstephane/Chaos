@@ -4,6 +4,13 @@ namespace chaos
 {
 	namespace TiledMap
 	{
+		static std::vector<std::pair<TileSetOrientation, char const*>> const orientation_map = {
+			{ TileSetOrientation::ISOMETRIC, "isometric" },
+			{ TileSetOrientation::ORTHOGONAL, "orthogonal" } // default
+		};
+
+		CHAOS_IMPLEMENT_ENUM_METHOD(TileSetOrientation, orientation_map);
+
 		// ==========================================
 		// Wangset methods
 		// ==========================================
@@ -291,24 +298,26 @@ namespace chaos
 				{ Hotpoint::RIGHT, "right" },
 				{ Hotpoint::TOP_LEFT, "topleft" },
 				{ Hotpoint::TOP_RIGHT, "topright" },
-				{ Hotpoint::BOTTOM_LEFT, "bottomleft" },
+				{ Hotpoint::BOTTOM_LEFT, "bottomleft" }, // default
 				{ Hotpoint::BOTTOM_RIGHT, "bottomright" },
-				{ Hotpoint::CENTER, "center" },
-				{ Hotpoint::BOTTOM_LEFT, nullptr }				
+				{ Hotpoint::CENTER, "center" }
 			};
-			XMLTools::ReadEnumAttribute(element, "objectalignment", hotpoint_map, object_alignment);
+
+			// do our own conversion to enum here because the names are alternative
+			object_alignment = Hotpoint::BOTTOM_LEFT;
+			std::string object_alignment_str;
+			if (XMLTools::ReadAttribute(element, "objectalignment", object_alignment_str))
+			{
+				StringToEnum(object_alignment_str.c_str(), object_alignment);
+			}
 
 			ReadXMLColor(element, "backgroundcolor", background_color);
 
 			tinyxml2::XMLElement const * grid_element = element->FirstChildElement("grid");
 			if (grid_element != nullptr)
 			{
-				static std::vector<std::pair<TileSetOrientation, char const*>> const orientation_map = {
-					{ TileSetOrientation::ISOMETRIC, "isometric" },
-					{ TileSetOrientation::ORTHOGONAL, nullptr }
-				};
-				XMLTools::ReadEnumAttribute(grid_element, "orientation", orientation_map, orientation);
-
+				orientation = TileSetOrientation::ORTHOGONAL;
+				XMLTools::ReadAttribute(grid_element, "orientation", orientation);
 				XMLTools::ReadAttribute(grid_element, "width", size.x);
 				XMLTools::ReadAttribute(grid_element, "height", size.y);
 			}

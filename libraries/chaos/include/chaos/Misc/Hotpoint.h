@@ -28,7 +28,7 @@ namespace chaos
 	/** given a hotpoint and a hotpoint, returns any other hotpoint position */
 	glm::vec2 ConvertHotpoint(glm::vec2 const& pt, glm::vec2 const& size, Hotpoint initial_hotpoint, Hotpoint final_hotpoint);
 
-	CHAOS_DECLARE_ENUMJSON_METHOD(Hotpoint);
+	CHAOS_DECLARE_ENUM_METHOD(Hotpoint);
 
 #endif
 

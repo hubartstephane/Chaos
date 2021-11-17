@@ -195,12 +195,16 @@ namespace chaos
 			JUSTIFY = 3
 		};
 
+		CHAOS_DECLARE_ENUM_METHOD(HorizontalTextAlignment);
+
 		enum class VerticalTextAlignment : int
 		{
 			TOP = 0,
 			CENTER = 1,
 			BOTTOM = 2
 		};
+
+		CHAOS_DECLARE_ENUM_METHOD(VerticalTextAlignment);
 
 		// XXX : The GeometricObjectText is to be considered as a rectangle containing a text. 
 		//       The size of that rectangle may be greater than the size of the text

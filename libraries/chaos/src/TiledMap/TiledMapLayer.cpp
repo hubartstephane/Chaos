@@ -4,6 +4,13 @@ namespace chaos
 {
 	namespace TiledMap
 	{
+		static std::vector<std::pair<DrawOrder, char const*>> const draw_order_map = {
+			{ DrawOrder::MANUAL, "index"  },
+			{ DrawOrder::TOPDOWN, "topdown" } // default
+		};
+
+		CHAOS_IMPLEMENT_ENUM_METHOD(DrawOrder, draw_order_map);
+
 		// ==========================================
 		// LayerBase methods
 		// ==========================================
@@ -75,12 +82,8 @@ namespace chaos
 
 			ReadXMLColor(element, "color", color);
 
-			static std::vector<std::pair<DrawOrder, char const*>> const draw_order_map = {
-				{ DrawOrder::MANUAL, "index"  },
-				{ DrawOrder::TOPDOWN, nullptr }
-			};
-			XMLTools::ReadEnumAttribute(element, "draworder", draw_order_map, draw_order);
-
+			draw_order = DrawOrder::TOPDOWN;
+			XMLTools::ReadAttribute(element, "draworder", draw_order);
 			if (!DoLoadObjects(element))
 				return false;
 

@@ -4,45 +4,54 @@ namespace chaos
 {
 	namespace TiledMap
 	{
+		static std::vector<std::pair<MapOrientation, char const*>> const orient_map = {
+			{ MapOrientation::ORTHOGONAL, "orthogonal" }, //default
+			{ MapOrientation::ISOMETRIC, "isometric" },
+			{ MapOrientation::STAGGERED, "staggered" },
+			{ MapOrientation::HEXAGONAL, "hexagonal" }
+		};
+
+		CHAOS_IMPLEMENT_ENUM_METHOD(MapOrientation, orient_map);
+
+		static std::vector < std::pair<StaggerAxis, char const*>> const stagger_axis_map = {
+			{ StaggerAxis::AXIS_X, "X",  }, // default
+			{ StaggerAxis::AXIS_Y, "Y",  }
+		};
+
+		CHAOS_IMPLEMENT_ENUM_METHOD(StaggerAxis, stagger_axis_map);
+
+		static std::vector<std::pair<StaggerIndex, char const*>> const stagger_index_map = {
+			{ StaggerIndex::ODD, "odd" }, // default
+			{ StaggerIndex::EVEN, "even" }
+		};
+
+		CHAOS_IMPLEMENT_ENUM_METHOD(StaggerIndex, stagger_index_map);
+
+		static std::vector<std::pair<RenderOrder, char const*>> const render_order_map = {
+			{ RenderOrder::RIGHT_UP, "right-up" }, // default
+			{ RenderOrder::RIGHT_DOWN, "right-down" },
+			{ RenderOrder::LEFT_UP, "left-up" },
+			{ RenderOrder::LEFT_DOWN, "left-down" }
+		};
+
+		CHAOS_IMPLEMENT_ENUM_METHOD(RenderOrder, render_order_map);
+
 		// ==========================================
 		// Map methods
 		// ==========================================
 
 		bool Map::DoLoadMembers(tinyxml2::XMLElement const * element)
 		{
-			static std::vector<std::pair<MapOrientation, char const*>> const orient_map = {
-				{ MapOrientation::ORTHOGONAL, "orthogonal" },
-				{ MapOrientation::ISOMETRIC, "isometric" },
-				{ MapOrientation::STAGGERED, "staggered" },
-				{ MapOrientation::HEXAGONAL, "hexagonal" },
-				{ MapOrientation::ORTHOGONAL, nullptr }
-			};
-			XMLTools::ReadEnumAttribute(element, "orientation", orient_map, orientation);
 
-			static std::vector < std::pair<StaggerAxis, char const*>> const stagger_axis_map = {
-				{ StaggerAxis::AXIS_X, "X",  },
-				{ StaggerAxis::AXIS_Y, "Y",  },
-				{ StaggerAxis::AXIS_X, nullptr }
-			};
-			XMLTools::ReadEnumAttribute(element, "staggeraxis", stagger_axis_map, stagger_axis);
-
-			static std::vector<std::pair<StaggerIndex, char const*>> const stagger_index_map = {
-				{ StaggerIndex::ODD, "odd" },
-				{ StaggerIndex::EVEN, "even" },				
-				{ StaggerIndex::ODD, nullptr }
-			};
-			XMLTools::ReadEnumAttribute(element, "staggerindex", stagger_index_map, stagger_index);
-
-			static std::vector<std::pair<RenderOrder, char const*>> const render_order_map = {
-				{ RenderOrder::RIGHT_UP, "right-up" },
-				{ RenderOrder::RIGHT_DOWN, "right-down" },
-				{ RenderOrder::LEFT_UP, "left-up" },
-				{ RenderOrder::LEFT_DOWN, "left-down" },
-				{ RenderOrder::RIGHT_UP, nullptr }
-			};
-			XMLTools::ReadEnumAttribute(element, "renderorder", render_order_map, render_order);
-
-            XMLTools::ReadAttribute(element, "compressionlevel", compressionlevel);
+			orientation = MapOrientation::ORTHOGONAL;
+			XMLTools::ReadAttribute(element, "orientation", orientation);
+			stagger_axis = StaggerAxis::AXIS_X;
+			XMLTools::ReadAttribute(element, "staggeraxis", stagger_axis);
+			stagger_index = StaggerIndex::ODD;
+			XMLTools::ReadAttribute(element, "staggerindex", stagger_index);
+			render_order = RenderOrder::RIGHT_UP;
+			XMLTools::ReadAttribute(element, "renderorder", render_order);
+			XMLTools::ReadAttribute(element, "compressionlevel", compressionlevel);
 			XMLTools::ReadAttribute(element, "version", version);
 			XMLTools::ReadAttribute(element, "width", size.x);
 			XMLTools::ReadAttribute(element, "height", size.y);

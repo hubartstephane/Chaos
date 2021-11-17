@@ -23,17 +23,23 @@ namespace chaos
 			HEXAGONAL = 3,
 		};
 
+		CHAOS_DECLARE_ENUM_METHOD(MapOrientation);
+
 		enum class StaggerAxis : int
 		{
 			AXIS_X = 0,
 			AXIS_Y = 1
 		};
 
+		CHAOS_DECLARE_ENUM_METHOD(StaggerAxis);
+
 		enum class StaggerIndex : int
 		{
 			ODD = 0,
 			EVEN = 1
 		};
+
+		CHAOS_DECLARE_ENUM_METHOD(StaggerIndex);
 
 		enum class RenderOrder : int
 		{
@@ -42,6 +48,8 @@ namespace chaos
 			LEFT_UP = 2,
 			LEFT_DOWN = 3
 		};
+
+		CHAOS_DECLARE_ENUM_METHOD(RenderOrder);
 
 		// ==========================================
 		// TileSetData

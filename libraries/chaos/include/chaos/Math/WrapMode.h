@@ -84,7 +84,7 @@ namespace chaos
 		return true;
 	}
 
-	CHAOS_DECLARE_ENUMJSON_METHOD(WrapMode);
+	CHAOS_DECLARE_ENUM_METHOD(WrapMode);
 
 #endif
 

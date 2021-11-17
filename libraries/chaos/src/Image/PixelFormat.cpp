@@ -15,7 +15,7 @@ namespace chaos
 		{ PixelComponentType::DEPTH_STENCIL, "DEPTH_STENCIL" }
 	};
 
-	CHAOS_IMPLEMENT_ENUMJSON_METHOD(PixelComponentType, pixel_component_type_encoding);
+	CHAOS_IMPLEMENT_ENUM_METHOD(PixelComponentType, pixel_component_type_encoding);
 
 	// ==============================================================================================
 	// PixelFormat methods

@@ -66,11 +66,61 @@ namespace MathConst
 
 }
 
+enum Toto
+{
+	Titi,
+	Truc
+};
+
+class AAA
+{
+};
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
-	auto a = 2.0f + MathConst::PI;
-	auto b = MathConst::PI + 3.0f;
+	{
+		bool b1 = std::is_enum_v<chaos::ShaderType>;
+		bool b2 = std::is_enum_v<Toto>;
+		bool b3 = std::is_enum_v<int>;
+		bool b4 = std::is_enum_v<AAA>;
+
+		b1 = b1;
+	}
+	
+
+
+#if 0
+			//	glm::translate(glm::vec3(position, 0.0f)) * 
+			//	GetRotatorMatrix(rotator) * 
+			//	glm::scale(glm::vec3(scale, 1.0f));
+#endif
+
+	chaos::SceneTransform<float, 2> a;
+	chaos::SceneTransform<float, 3> b;
+	chaos::SceneTransform<double, 2> c;
+	chaos::SceneTransform<double, 3> d;
+
+	{
+
+		auto ma1 = a.GetLocalToParent();
+		auto mb1 = b.GetLocalToParent();
+		auto mc1 = c.GetLocalToParent();
+		auto md1 = d.GetLocalToParent();
+
+		auto ma2 = a.GetParentToLocal();
+		auto mb2 = b.GetParentToLocal();
+		auto mc2 = c.GetParentToLocal();
+		auto md2 = d.GetParentToLocal();
+
+		ma2 = ma2;
+	}
+
+	glm::vec3 v = glm::vec3(0);
+	glm::vec3 v1 = glm::vec3(1);
+
+
+	//auto a = 2.0f + MathConst::PI;
+	//auto b = MathConst::PI + 3.0f;
 
 	chaos::WindowParams params;
 	params.monitor = nullptr;

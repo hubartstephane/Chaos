@@ -163,8 +163,13 @@ bool SaveIntoJSON(nlohmann::json& json, enum_type const& src)\
 	template<typename T>
 	bool LoadFromJSON(nlohmann::json const& entry, T& dst)
 	{
+		// target is an enum
+		if constexpr (std::is_enum_v<T>)
+		{
+
+		}
 		// class has its own implementation
-		if constexpr (check_method_SerializeFromJSON_v<T, nlohmann::json const&>)
+		else if constexpr (check_method_SerializeFromJSON_v<T, nlohmann::json const&>)
 		{
 			// check whether data is an object
 			if (!entry.is_object())
@@ -273,8 +278,13 @@ bool SaveIntoJSON(nlohmann::json& json, enum_type const& src)\
 	template<typename T>
 	bool SaveIntoJSON(nlohmann::json& entry, T const& src)
 	{
+		// target is an enum
+		if constexpr (std::is_enum_v<T>)
+		{
+
+		}
 		// class has its own implementation
-		if constexpr (std::is_class_v<T> && !std::is_same_v<T, std::string>) // string is to be handled in the native json way
+		else if constexpr (std::is_class_v<T> && !std::is_same_v<T, std::string>) // string is to be handled in the native json way
 		{
 			if constexpr (check_method_SerializeIntoJSON_v<T const, nlohmann::json&>)
 			{

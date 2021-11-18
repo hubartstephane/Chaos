@@ -58,13 +58,13 @@ namespace chaos
 		}
 
 		// the possible types of shaders
-		static GLenum const shader_types[] = 
+		static ShaderType const shader_types[] = 
 		{ 
-			GL_FRAGMENT_SHADER, 
-			GL_VERTEX_SHADER,
-			GL_GEOMETRY_SHADER,
-			GL_TESS_EVALUATION_SHADER,
-			GL_TESS_CONTROL_SHADER
+			ShaderType::FRAGMENT,
+			ShaderType::VERTEX,
+			ShaderType::GEOMETRY,
+			ShaderType::TESS_EVALUATION,
+			ShaderType::TESS_CONTROL
 		};
 
 		// the attribute names associated

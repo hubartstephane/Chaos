@@ -9,8 +9,8 @@ namespace chaos
 
 	void DefaultParticleProgramSource::GetSources(GPUProgramGenerator & program_generator)
 	{
-		program_generator.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);
-		program_generator.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
+		program_generator.AddShaderSource(ShaderType::VERTEX, vertex_shader_source);
+		program_generator.AddShaderSource(ShaderType::FRAGMENT, pixel_shader_source);
 	}
 
 	char const* DefaultParticleProgramSource::vertex_shader_source = R"VERTEXSHADERCODE(
@@ -83,8 +83,8 @@ namespace chaos
 
 	void DefaultScreenSpaceProgramGenerator::GetSources(GPUProgramGenerator& program_generator)
 	{
-		program_generator.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);
-		program_generator.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
+		program_generator.AddShaderSource(ShaderType::VERTEX, vertex_shader_source);
+		program_generator.AddShaderSource(ShaderType::FRAGMENT, pixel_shader_source);
 	}
 
 	char const* DefaultScreenSpaceProgramGenerator::vertex_shader_source = R"VERTEXSHADERCODE(

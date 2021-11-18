@@ -119,8 +119,8 @@ protected:
 			return false;
 
 		chaos::GPUProgramGenerator program_generator;
-		program_generator.AddShaderSourceFile(GL_FRAGMENT_SHADER, fragment_shader_path);
-		program_generator.AddShaderSourceFile(GL_VERTEX_SHADER,   vertex_shader_path);
+		program_generator.AddShaderSourceFile(ShaderType::FRAGMENT, fragment_shader_path);
+		program_generator.AddShaderSourceFile(ShaderType::VERTEX,   vertex_shader_path);
 
 		program = program_generator.GenProgramObject();
 		if (program == nullptr)

@@ -185,8 +185,8 @@ protected:
 	chaos::shared_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
 	{
 		chaos::GPUProgramGenerator program_generator;
-		program_generator.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / ps_filename);
-		program_generator.AddShaderSourceFile(GL_VERTEX_SHADER, resources_path / vs_filename);
+		program_generator.AddShaderSourceFile(ShaderType::FRAGMENT, resources_path / ps_filename);
+		program_generator.AddShaderSourceFile(ShaderType::VERTEX, resources_path / vs_filename);
 
 		return program_generator.GenProgramObject();
 	}

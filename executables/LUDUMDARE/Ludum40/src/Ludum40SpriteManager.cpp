@@ -81,8 +81,8 @@ bool SpriteManager::DoInitialize(SpriteManagerInitParams& params)
 	else
 	{
 		chaos::GPUProgramGenerator program_generator;
-		program_generator.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);
-		program_generator.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
+		program_generator.AddShaderSource(ShaderType::VERTEX, vertex_shader_source);
+		program_generator.AddShaderSource(ShaderType::FRAGMENT, pixel_shader_source);
 
 		program = program_generator.GenProgramObject();
 		if (program == nullptr)

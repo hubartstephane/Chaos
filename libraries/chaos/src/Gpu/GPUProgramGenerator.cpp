@@ -16,7 +16,7 @@ namespace chaos
 	CHAOS_IMPLEMENT_ENUM_METHOD(ShaderType, shader_type_encoding);
 
 
-	void GPUProgramGenerator::AddFrameworkSources(GLenum shader_type, std::vector<char const*> & sources, std::vector<Buffer<char>> & buffers) const
+	void GPUProgramGenerator::AddFrameworkSources(ShaderType shader_type, std::vector<char const*> & sources, std::vector<Buffer<char>> & buffers) const
 	{
 		// XXX : this must be the very first line of the program. 
 		//       do it here and not in files because it would be difficult to insert macro just after elsewhere    
@@ -63,10 +63,10 @@ namespace chaos
 		)SHAREDSHADERCODE");
 	}
 
-	GLuint GPUProgramGenerator::DoGenerateShader(GLenum shader_type, std::vector<char const *> const & sources) const
+	GLuint GPUProgramGenerator::DoGenerateShader(ShaderType shader_type, std::vector<char const *> const & sources) const
 	{
 		// create a shader
-		GLuint result = glCreateShader(shader_type);
+		GLuint result = glCreateShader((GLenum)shader_type);
 		if (result == 0)
 		{
 			Log::Error("glCreateShader failed");
@@ -88,7 +88,6 @@ namespace chaos
 		{
 			GLchar log_buffer[4096];
 			glGetShaderInfoLog(result, sizeof(log_buffer) - 1, nullptr, log_buffer);
-
 			Log::Error("Shader compilation failure : %s", log_buffer);
 		}
 		glDeleteShader(result);
@@ -96,14 +95,14 @@ namespace chaos
 		return 0;
 	}
 
-	GLuint GPUProgramGenerator::DoGenerateShader(GLenum shader_type, GeneratorSet const & generators, DefinitionSet const & definitions, std::string const & definitions_string) const
+	GLuint GPUProgramGenerator::DoGenerateShader(ShaderType shader_type, GeneratorSet const & generators, DefinitionSet const & definitions, std::string const & definitions_string) const
 	{
 		bool success = false;
 
 		// shared generators 
 		GeneratorSet const * global_generators = nullptr;
 
-		std::map<GLenum, GeneratorSet>::const_iterator global_generators_it = shaders.find(GL_NONE);
+		std::map<ShaderType, GeneratorSet>::const_iterator global_generators_it = shaders.find(ShaderType::ANY);
 		if (global_generators_it != shaders.cend())
 			global_generators = &global_generators_it->second;
 
@@ -114,7 +113,6 @@ namespace chaos
 
 		std::vector<char const *> sources;
 		std::vector<Buffer<char>> buffers; // this is important !!!! the GenerateSource(...) function returns Buffer<> whose lifetime is assured because of that
-
 
 		// extra sources
 		AddFrameworkSources(shader_type, sources, buffers);
@@ -155,7 +153,7 @@ namespace chaos
 			return 0;
 
 		// tweak the pixel shader source
-		if (shader_type == GL_FRAGMENT_SHADER)
+		if (shader_type == ShaderType::FRAGMENT)
 		{
 
 
@@ -165,7 +163,7 @@ namespace chaos
 		return DoGenerateShader(shader_type, sources);
 	}
 
-	GLuint GPUProgramGenerator::GenerateShader(GLuint program, GLenum shader_type, GeneratorSet const & generators, DefinitionSet const & definitions, std::string const & definitions_string) const
+	GLuint GPUProgramGenerator::GenerateShader(GLuint program, ShaderType shader_type, GeneratorSet const & generators, DefinitionSet const & definitions, std::string const & definitions_string) const
 	{
 		GLuint result = DoGenerateShader(shader_type, generators, definitions, definitions_string);
 		if (result != 0)
@@ -235,12 +233,12 @@ namespace chaos
 		bool has_vertex_shader = false;
 		for (auto const & shader_generators : shaders)
 		{
-			GLenum shader_type = shader_generators.first;
+			ShaderType shader_type = shader_generators.first;
 			// this type is a joker and does not deserve to generate a shader
-			if (shader_type == GL_NONE)
+			if (shader_type == ShaderType::ANY)
 				continue;
 			// keep trace whether a vertex shader is provided
-			if (shader_type == GL_VERTEX_SHADER)
+			if (shader_type == ShaderType::VERTEX)
 				has_vertex_shader = true;
 			// generate the shader for this TYPE
 			GLuint shader_id = GenerateShader(result, shader_type, shader_generators.second, definitions, definitions_string);
@@ -300,45 +298,25 @@ namespace chaos
 		shaders.clear();
 	}
 
-	bool GPUProgramGenerator::IsShaderTypeValid(GLenum shader_type)
-	{
-		return
-			(shader_type == GL_NONE) ||  // this is a special value that serves as a joker
-			(shader_type == GL_VERTEX_SHADER) ||
-			(shader_type == GL_FRAGMENT_SHADER) ||
-			(shader_type == GL_GEOMETRY_SHADER) ||
-			(shader_type == GL_TESS_EVALUATION_SHADER) ||
-			(shader_type == GL_TESS_CONTROL_SHADER) ||
-			(shader_type == GL_COMPUTE_SHADER);
-	}
-
-	bool GPUProgramGenerator::AddSourceGenerator(GLenum shader_type, GPUProgramSourceGenerator * generator)
+	bool GPUProgramGenerator::AddSourceGenerator(ShaderType shader_type, GPUProgramSourceGenerator * generator)
 	{
 		assert(generator != nullptr);
-		if (!IsShaderTypeValid(shader_type))
-			return false;
 		shaders[shader_type].push_back(generator);
 		return true;
 	}
 
-	bool GPUProgramGenerator::AddShaderSource(GLenum shader_type, Buffer<char> buffer)
+	bool GPUProgramGenerator::AddShaderSource(ShaderType shader_type, Buffer<char> buffer)
 	{
-		if (!IsShaderTypeValid(shader_type))
-			return false;
 		return AddSourceGenerator(shader_type, new GPUProgramStringSourceGenerator(buffer));
 	}
 
-	bool GPUProgramGenerator::AddShaderSource(GLenum shader_type, char const * src)
+	bool GPUProgramGenerator::AddShaderSource(ShaderType shader_type, char const * src)
 	{
-		if (!IsShaderTypeValid(shader_type))
-			return false;
 		return AddSourceGenerator(shader_type, new GPUProgramStringSourceGenerator(src));
 	}
 
-	bool GPUProgramGenerator::AddShaderSourceFile(GLenum shader_type, FilePathParam const & path)
+	bool GPUProgramGenerator::AddShaderSourceFile(ShaderType shader_type, FilePathParam const & path)
 	{
-		if (!IsShaderTypeValid(shader_type))
-			return false;
 		return AddSourceGenerator(shader_type, new GPUProgramFileSourceGenerator(path));
 	}
 

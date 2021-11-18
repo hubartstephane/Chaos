@@ -113,8 +113,8 @@ protected:
 
     // create shader
     chaos::GPUProgramGenerator program_generator;
-    program_generator.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader.txt");
-    program_generator.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / "vertex_shader.txt");
+    program_generator.AddShaderSourceFile(ShaderType::FRAGMENT, resources_path / "pixel_shader.txt");
+    program_generator.AddShaderSourceFile(ShaderType::VERTEX,   resources_path / "vertex_shader.txt");
 
     chaos::GPUProgramGenerator::DefinitionSet definitions;
     definitions["SKELETAL_BONE_COUNT"] = SKELETAL_BONE_COUNT;   

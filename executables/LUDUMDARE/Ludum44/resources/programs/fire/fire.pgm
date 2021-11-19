@@ -1,9 +1,9 @@
 {
-	"pixel_sources":
+	"fragment":
 	[
 		"@fire.psh"
 	],
-	"vertex_sources":
+	"vertex":
 	[
 		"@fire.vsh"
 	]

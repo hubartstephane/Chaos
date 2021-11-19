@@ -292,7 +292,7 @@ namespace chaos
 					if (!it->is_string())
 						continue;
 					// read information
-					std::string font_name = it.key();
+					std::string const & font_name = it.key();
 					std::string font_path = it->get<std::string>();
 					if (input.AddFont(font_path.c_str(), nullptr, true, font_name.c_str(), 0, font_params) == nullptr)
 						return false;
@@ -394,7 +394,7 @@ namespace chaos
 					{
 						if (!it->is_string())
 							continue;
-						std::string bitmap_name = it.key();
+						std::string const & bitmap_name = it.key();
 						std::string bitmap_path = it->get<std::string>();
 						BitmapAtlas::BitmapInfo const* info = folder_info->GetBitmapInfo(bitmap_path.c_str());
 						if (info == nullptr)
@@ -416,7 +416,7 @@ namespace chaos
 					glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);  // initialization for if input is smaller than 4
 					if (!LoadFromJSON(*it, color))
 						continue;
-					std::string color_name = it.key();
+					std::string const & color_name = it.key();
 					particle_text_generator->AddColor(color_name.c_str(), color);
 				}
 			}

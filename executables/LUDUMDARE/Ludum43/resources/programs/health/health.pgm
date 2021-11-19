@@ -1,9 +1,9 @@
 {
-	"pixel_sources":
+	"fragment":
 	[
 		"@health.psh"
 	],
-  "vertex_sources": [
+  "vertex": [
     "@health.vsh"
   ]
 }

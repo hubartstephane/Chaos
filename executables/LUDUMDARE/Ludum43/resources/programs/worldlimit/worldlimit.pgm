@@ -1,9 +1,9 @@
 {
-	"pixel_sources":
+	"fragment":
 	[
 		"@worldlimit.psh"
 	],
-	"vertex_sources":
+	"vertex":
 	[
 		"@worldlimit.vsh"
 	]

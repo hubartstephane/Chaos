@@ -1,9 +1,9 @@
 {
-	"pixel_sources":
+	"fragment":
 	[
 		"@challenge.psh"
 	],
-	"vertex_sources":
+	"vertex":
 	[
 		"@challenge.vsh"
 	]

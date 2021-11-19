@@ -1,9 +1,9 @@
 {
-	"pixel_sources":
+	"fragment":
 	[
 		"@player.psh"
 	],
-	"vertex_sources":
+	"vertex":
 	[
 		"@player.vsh"
 	]

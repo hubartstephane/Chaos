@@ -1,9 +1,9 @@
 {
-	"pixel_sources":
+	"fragment":
 	[
 		"@postprocess.psh"
 	],
-	"vertex_sources":
+	"vertex":
 	[
 		"@postprocess.vsh"
 	]

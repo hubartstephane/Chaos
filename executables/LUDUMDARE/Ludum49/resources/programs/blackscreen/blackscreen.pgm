@@ -1,9 +1,9 @@
 {
-	"pixel_sources":
+	"fragment":
 	[
 		"@blackscreen.psh"
 	],
-	"vertex_sources":
+	"vertex":
 	[
 		"@blackscreen.vsh"
 	]

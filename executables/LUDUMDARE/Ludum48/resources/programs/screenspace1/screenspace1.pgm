@@ -1,9 +1,9 @@
 {
-	"pixel_sources":
+	"fragment":
 	[
 		"@screenspace1.psh"
 	],
-	"vertex_sources":
+	"vertex":
 	[
 		"@screenspace1.vsh"
 	]

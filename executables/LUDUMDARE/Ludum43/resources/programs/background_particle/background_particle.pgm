@@ -1,9 +1,9 @@
 {
-	"pixel_sources":
+	"fragment":
 	[
 		"@background_particle.psh"
 	],
-	"vertex_sources":
+	"vertex":
 	[
 		"@background_particle.vsh"
 	]

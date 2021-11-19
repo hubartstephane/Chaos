@@ -43,7 +43,7 @@ namespace chaos
 		void Reset();
 
 		/** generate a program from the sources */
-		virtual GPUProgram* GenProgramObject(DefinitionSet const& definitions = DefinitionSet()) const;
+		virtual GPUProgram* GenProgramObject(DefinitionSet const& definitions = {}) const;
 
 		/** add a generator a given shader */
 		bool AddSourceGenerator(ShaderType shader_type, GPUProgramSourceGenerator* generator);

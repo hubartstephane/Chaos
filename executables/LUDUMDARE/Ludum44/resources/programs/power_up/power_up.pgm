@@ -1,9 +1,9 @@
 {
-	"pixel_sources":
+	"fragment":
 	[
 		"@power_up.psh"
 	],
-	"vertex_sources":
+	"vertex":
 	[
 		"@power_up.vsh"
 	]

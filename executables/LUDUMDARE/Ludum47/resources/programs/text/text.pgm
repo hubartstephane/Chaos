@@ -1,9 +1,9 @@
 {
-	"pixel_sources":
+	"fragment":
 	[
 		"@text.psh"
 	],
-	"vertex_sources":
+	"vertex":
 	[
 		"@text.vsh"
 	]

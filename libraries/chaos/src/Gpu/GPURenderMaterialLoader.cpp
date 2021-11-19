@@ -138,7 +138,7 @@ namespace chaos
 		for (nlohmann::json::const_iterator it = json_textures->begin(); it != json_textures->end(); ++it)
 		{
 			// get the name of the uniform
-			std::string texture_uniform_name = it.key();
+			std::string const & texture_uniform_name = it.key();
 			if (texture_uniform_name.empty())
 				continue;
 
@@ -273,7 +273,7 @@ namespace chaos
 		// enumerate all uniforms
 		for (nlohmann::json::const_iterator it = json_uniforms->begin(); it != json_uniforms->end(); ++it)
 		{
-			std::string uniform_name = it.key();
+			std::string const & uniform_name = it.key();
 			if (!uniform_name.empty())
 				AddUniformToRenderMaterial(material_info, uniform_name.c_str(), *it);
 		}
@@ -290,7 +290,7 @@ namespace chaos
 				continue;
 
 			// search whether property is a renderpass
-			std::string property_name = it.key();
+			std::string const & property_name = it.key();
 			if (StringTools::Strncmp(property_name, "renderpass:", 11) != 0)
 				continue;
 

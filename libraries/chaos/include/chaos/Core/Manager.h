@@ -37,22 +37,18 @@ namespace chaos
 		template<typename LOADER>
 		static void DoLoadObjectsRecurseDirectories(nlohmann::json const& json, LOADER const& loader)
 		{
-			if (json.is_array())
+			std::vector<std::string> paths;
+			if (LoadFromJSON(json, paths))
 			{
-				for (nlohmann::json::const_iterator it = json.begin(); it != json.end(); ++it)
-					if (it->is_string())
-						DoLoadObjectsRecurseDirectories(*it, loader); // recursive call to this function
-			}
-			else if (json.is_string())
-			{
-				std::string directory_name = json.get<std::string>();
-
-				FileTools::ForEachRedirectedDirectoryContent(directory_name, [&loader](boost::filesystem::path const& p)
+				for (std::string const& directory_name : paths)
 				{
-					LOADER other_loader = loader;
-					other_loader.LoadObject(p.string());
-					return false; // don't stop
-				});
+					FileTools::ForEachRedirectedDirectoryContent(directory_name, [&loader](boost::filesystem::path const& p)
+					{
+						LOADER other_loader = loader;
+						other_loader.LoadObject(p.string());
+						return false; // don't stop
+					});
+				}
 			}
 		}
 
@@ -75,12 +71,11 @@ namespace chaos
 				return loader.LoadObject(name + 1, json);
 			}
 			// 3 - try to find a member 'name'
-			nlohmann::json::const_iterator name_json_it = json.find("name");
-			if (name_json_it != json.end() && name_json_it->is_string())
+			std::string resource_name;
+			if (JSONTools::GetAttribute(json, "name", resource_name))
 			{
-				std::string name = name_json_it->get<std::string>();
-				if (!name.empty())
-					return loader.LoadObject(name.c_str(), json);
+				if (!resource_name.empty())
+					return loader.LoadObject(resource_name.c_str(), json);
 			}
 			// 4 - anonymous object
 			return loader.LoadObject(nullptr, json);
@@ -90,6 +85,12 @@ namespace chaos
 		template<bool RECURSE, typename LOADER>
 		static bool LoadObjectsFromConfiguration(char const* object_names, nlohmann::json const& json, LOADER loader) // LOADER passed by copy is important to ensure reset for all loaded objects
 		{
+			// search in json for
+			//
+			// "object_names": {...} -> read all entries inside as "resource_name":data
+			// or
+			// "object_names": [...] -> read all entries inside as anonymous data
+			//
 			nlohmann::json const* objects_json = JSONTools::GetStructure(json, object_names);
 			if (objects_json != nullptr)
 			{

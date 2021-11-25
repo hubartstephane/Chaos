@@ -33,28 +33,38 @@ namespace chaos
 		/** internally stops the manager */
 		virtual bool DoStopManager();
 
-		/** an utility method to initialize a single object in an JSON array/object */
+		/** load all files from a directory */
+		template<typename LOADER>
+		static void LoadObjectsInDirectory(FilePathParam const & path, LOADER const& loader, bool recurse = false)
+		{
+			FileTools::ForEachRedirectedDirectoryContent(path, [&loader, recurse](boost::filesystem::path const& p)
+			{
+				// copy loader to ensure content is reset for all loaded objects
+				LOADER other_loader = loader;
+				if (other_loader.LoadObject(p) == nullptr && recurse) // let loader decides whether it accepts a directory as a valid path
+				{
+					// if it is a directory and loader fails, recurse inside it
+					boost::filesystem::file_status status = boost::filesystem::status(p);
+					if (status.type() == boost::filesystem::file_type::directory_file)
+						LoadObjectsInDirectory(p, loader);
+				}
+				return false; // don't stop
+			});
+		}
+
+		/** an utility method to load a whole directory from a json entry */
 		template<typename LOADER>
 		static void DoLoadObjectsRecurseDirectories(nlohmann::json const& json, LOADER const& loader)
 		{
 			std::vector<std::string> paths;
 			if (LoadFromJSON(json, paths))
-			{
 				for (std::string const& directory_name : paths)
-				{
-					FileTools::ForEachRedirectedDirectoryContent(directory_name, [&loader](boost::filesystem::path const& p)
-					{
-						LOADER other_loader = loader;
-						other_loader.LoadObject(p.string());
-						return false; // don't stop
-					});
-				}
-			}
+					LoadObjectsInDirectory(directory_name, loader, true);
 		}
 
 		/** an utility method to initialize a single object in an JSON array/object */
 		template<bool RECURSE, typename LOADER>
-		static auto DoLoadObjectsFromConfiguration(char const* name, nlohmann::json const& json, LOADER loader) -> typename LOADER::resource_type* // LOADER passed by copy is important to ensure reset for all loaded objects
+		static auto DoLoadObjectsFromConfiguration(char const* name, nlohmann::json const& json, LOADER const & loader) -> typename LOADER::resource_type* // LOADER passed by copy is important to ensure reset for all loaded objects
 		{
 			// 1 - recurse over some directories
 			if constexpr (RECURSE)
@@ -68,7 +78,9 @@ namespace chaos
 			// 2 - we receive a key and its is valid (starts with '@')
 			if (name != nullptr && name[0] == '@' && name[1] != 0)
 			{
-				return loader.LoadObject(name + 1, json);
+				// copy loader to ensure content is reset for all loaded objects
+				LOADER other_loader = loader;
+				return other_loader.LoadObject(name + 1, json);
 			}
 			// 3 - try to find a member 'name'
 			std::string resource_name;
@@ -83,7 +95,7 @@ namespace chaos
 
 		/** an utility method to initialize a list of objects from a JSON object or array */
 		template<bool RECURSE, typename LOADER>
-		static bool LoadObjectsFromConfiguration(char const* object_names, nlohmann::json const& json, LOADER loader) // LOADER passed by copy is important to ensure reset for all loaded objects
+		static bool LoadObjectsFromConfiguration(char const* object_names, nlohmann::json const& json, LOADER const & loader)
 		{
 			// search in json for
 			//

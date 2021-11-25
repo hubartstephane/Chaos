@@ -83,9 +83,19 @@ namespace chaos
 		if (!CheckResourcePath(path))
 			return nullptr;
 		// load the file
-		nlohmann::json json;
-		if (JSONTools::LoadJSONFile(path, json, true))
-			return GenProgramObject(json);	
+		boost::filesystem::file_status status = boost::filesystem::status(path.GetResolvedPath());
+		if (status.type() == boost::filesystem::file_type::directory_file)
+		{
+			int i = 0;
+			++i;
+
+		}
+		else if (status.type() == boost::filesystem::file_type::regular_file)
+		{
+			nlohmann::json json;
+			if (JSONTools::LoadJSONFile(path, json, true))
+				return GenProgramObject(json);	
+		}
 		return nullptr;
 	}
 

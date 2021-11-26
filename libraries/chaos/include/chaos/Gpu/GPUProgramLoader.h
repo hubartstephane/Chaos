@@ -35,6 +35,8 @@ namespace chaos
 		virtual bool IsPathAlreadyUsedInManager(FilePathParam const& path) const override;
 		/** search whether the name is already in used in the manager */
 		virtual bool IsNameAlreadyUsedInManager(ObjectRequest request) const override;
+		/** Generate a program from a directory */
+		virtual GPUProgram* GenProgramObjectFromDirectory(boost::filesystem::path const & p) const;
 	};
 
 #endif

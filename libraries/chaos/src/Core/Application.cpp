@@ -88,7 +88,6 @@ namespace chaos
 		else if (HasCommandLineFlag("-HideConsole"))
 			will_show_console = false;
 
-		will_show_console = false;
 		if (will_show_console)
 			WinTools::AllocConsoleAndRedirectStdOutput();
 

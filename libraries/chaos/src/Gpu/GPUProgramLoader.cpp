@@ -86,9 +86,7 @@ namespace chaos
 		boost::filesystem::file_status status = boost::filesystem::status(path.GetResolvedPath());
 		if (status.type() == boost::filesystem::file_type::directory_file)
 		{
-			int i = 0;
-			++i;
-
+			return GenProgramObjectFromDirectory(path.GetResolvedPath());
 		}
 		else if (status.type() == boost::filesystem::file_type::regular_file)
 		{
@@ -97,6 +95,55 @@ namespace chaos
 				return GenProgramObject(json);	
 		}
 		return nullptr;
+	}
+
+	GPUProgram* GPUProgramLoader::GenProgramObjectFromDirectory(boost::filesystem::path const & p) const
+	{
+		static std::map<char const*, ShaderType, StringTools::RawStringILess> extension_map =
+		{
+			{".vsh", ShaderType::VERTEX},
+			{".psh", ShaderType::FRAGMENT},
+			{".gsh", ShaderType::GEOMETRY},
+			{".tcsh", ShaderType::TESS_CONTROL},
+			{".tesh", ShaderType::TESS_EVALUATION},
+			{".tcsh", ShaderType::ANY},
+			{".csh", ShaderType::COMPUTE}
+		};
+
+		GPUProgramGenerator program_generator;
+
+		bool has_compute_shader = false;
+		bool has_rendering_shader = false;
+
+		for (auto it = boost::filesystem::directory_iterator(p); it != boost::filesystem::directory_iterator(); ++it)
+		{
+			if (it->status().type() == boost::filesystem::file_type::regular_file)
+			{
+				boost::filesystem::path file_path = it->path();
+				std::string ext = file_path.extension().string();
+
+				auto ext_it = extension_map.find(ext.c_str());
+				if (ext_it != extension_map.end())
+				{
+					ShaderType shader_type = ext_it->second;
+
+					// cannot have both compute shaders and rendering shaders
+					if (shader_type == ShaderType::COMPUTE)
+						has_compute_shader = true;
+					else if (shader_type != ShaderType::ANY)
+						has_rendering_shader = true;
+
+					if (has_compute_shader && has_rendering_shader)
+					{
+						Log::Error("GPUProgramLoader::GenProgramObjectFromDirectory(...) cannot have both compute and rendering shaders [%s]", p.c_str());
+						return nullptr;
+					}
+					// add source to the generator
+					program_generator.AddShaderSourceFile(shader_type, file_path);
+				}
+			}
+		}
+		return program_generator.GenProgramObject();
 	}
 
 }; // namespace chaos

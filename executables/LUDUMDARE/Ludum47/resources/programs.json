@@ -1,5 +1,3 @@
 {
-  "@background": { "path": "@programs/background/background.pgm" },
-  "@text": { "path": "@programs/text/text.pgm" },
-  "@blackscreen": { "path": "@programs/blackscreen/blackscreen.pgm" }
+  "[recurse]": [ "@programs" ]
 }

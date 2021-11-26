@@ -164,6 +164,29 @@ namespace chaos
 			return false;
 		if (!LoadMaterialsFromConfiguration(json))
 			return false;
+		if (!CreateExtraMaterialsForPrograms())
+			return false;
+		return true;
+	}
+
+	bool GPUResourceManager::CreateExtraMaterialsForPrograms()
+	{
+		for (auto const& program : programs)
+		{
+			if (program->GetProgramType() == GPUProgramType::RENDER)
+			{
+				if (FindRenderMaterial(program->GetName()) == nullptr)
+				{
+					if (GPURenderMaterial* render_material = new GPURenderMaterial)
+					{
+						render_material->material_info = new GPURenderMaterialInfo;
+						render_material->material_info->program = program;
+						render_material->SetName(program->GetName());
+						render_materials.push_back(render_material);
+					}
+				}
+			}
+		}
 		return true;
 	}
 

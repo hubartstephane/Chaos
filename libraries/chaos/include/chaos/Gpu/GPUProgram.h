@@ -2,9 +2,17 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
+	enum class GPUProgramType;
+
 	class GPUProgram;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+	enum class GPUProgramType
+	{
+		RENDER,
+		COMPUTE
+	};
 
 	class GPUProgram : public GPUFileResource
 	{
@@ -13,7 +21,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgram(GLuint in_id = 0);
+		GPUProgram(GLuint in_id = 0, GPUProgramType in_type = GPUProgramType::RENDER);
 		/** destructor */
 		virtual ~GPUProgram();
 
@@ -26,6 +34,8 @@ namespace chaos
 		bool IsValid() const { return glIsProgram(program_id) == GL_TRUE; }
 		/** get the program data */
 		GPUProgramData const& GetProgramData() const { return program_data; }
+		/** get the type of the program */
+		GPUProgramType GetProgramType() const { return type; }
 
 		/** override */
 		virtual void Release() override;
@@ -34,6 +44,8 @@ namespace chaos
 
 		/** the resource id */
 		GLuint program_id = 0;
+		/** the type of program */
+		GPUProgramType type = GPUProgramType::RENDER;
 		/** the program data */
 		GPUProgramData program_data;
 	};

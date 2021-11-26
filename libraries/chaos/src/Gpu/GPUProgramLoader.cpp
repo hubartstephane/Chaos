@@ -99,6 +99,8 @@ namespace chaos
 
 	GPUProgram* GPUProgramLoader::GenProgramObjectFromDirectory(boost::filesystem::path const & p) const
 	{
+		// search whether a pgm files does exists
+
 		static std::map<char const*, ShaderType, StringTools::RawStringILess> extension_map =
 		{
 			{".vsh", ShaderType::VERTEX},

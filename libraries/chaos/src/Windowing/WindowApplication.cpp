@@ -182,7 +182,7 @@ namespace chaos
 			// some generic information
 			GLTools::DisplayGenericInformation();
 
-			// initialize the GPU resource Manager (first window/OpenGL context must have been created)
+			// initialize the GPU resource ResourceManager (first window/OpenGL context must have been created)
 			if (!CreateGPUResourceManager())
 				return false;
 			return true;

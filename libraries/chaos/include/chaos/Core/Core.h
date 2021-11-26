@@ -36,7 +36,7 @@
 #include <chaos/Core/InputMode.h>
 #include <chaos/Core/InputEventReceiver.h>
 #include <chaos/Core/Application.h>
-#include <chaos/Core/Manager.h>
+#include <chaos/Core/ResourceManager.h>
 #include <chaos/Core/ResourceManagerLoader.h>
 #include <chaos/Core/Tickable.h>
 #include <chaos/Core/ClockManager.h>

@@ -827,7 +827,7 @@ namespace chaos
 	bool SoundManager::DoStartManager()
 	{
 		// super method
-		if (!Manager::DoStartManager())
+		if (!ResourceManager::DoStartManager())
 			return false;
 		// get the list of all devices
 		irrklang_devices = irrklang::createSoundDeviceList();
@@ -864,7 +864,7 @@ namespace chaos
 	bool SoundManager::DoStopManager()
 	{
 		// super method
-		Manager::DoStopManager();
+		ResourceManager::DoStopManager();
 
 		// empty the managed objects list (destroy sounds first to make other list destructions faster)
 		RemoveAllObjectsFromList(sounds, &SoundManager::OnObjectRemovedFromManager);

@@ -51,7 +51,7 @@ namespace chaos
 	* GPUResourceManager : a manager to store different kinds of (can be depend) resources
 	**/
 
-	class GPUResourceManager : public Manager
+	class GPUResourceManager : public ResourceManager
 	{
 		friend class GPUTextureLoader;
 		friend class GPUProgramLoader;

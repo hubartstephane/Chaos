@@ -4,4 +4,3 @@
 
 ProcessSubPremake("CommonFonts")
 ProcessSubPremake("CommonIcons")
-ProcessSubPremake("CommonConfig")

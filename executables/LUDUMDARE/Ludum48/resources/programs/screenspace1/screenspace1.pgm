@@ -1,7 +1,7 @@
 {
 	"fragment":
 	[
-		"@screenspace1.psh"
+		"@screenspace1.fsh"
 	],
 	"vertex":
 	[

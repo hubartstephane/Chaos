@@ -1,7 +1,7 @@
 {
 	"fragment":
 	[
-		"@postprocess.psh"
+		"@postprocess.fsh"
 	],
 	"vertex":
 	[

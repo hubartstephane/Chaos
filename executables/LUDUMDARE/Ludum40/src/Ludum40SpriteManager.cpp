@@ -4,7 +4,7 @@
 #include "Ludum40Game.h"
 
 
-char const* SpriteManager::vertex_shader_source = R"VERTEXSHADERCODE(
+char const* SpriteManager::vertex_shader_source = R"VERTEX_SHADER(
     in vec2 position;
     in vec3 texcoord;
     in vec3 color;
@@ -20,9 +20,9 @@ char const* SpriteManager::vertex_shader_source = R"VERTEXSHADERCODE(
       vs_color    = color;
       gl_Position = local_to_cam * vec4(position.x, position.y, 0.0, 1.0);
     };											
-	)VERTEXSHADERCODE";
+	)VERTEX_SHADER";
 
-char const* SpriteManager::pixel_shader_source = R"PIXELSHADERCODE(
+char const* SpriteManager::fragment_shader_source = R"FRAGMENT_SHADER(
     in vec3 vs_texcoord;
     in vec3 vs_color;
 
@@ -38,7 +38,7 @@ char const* SpriteManager::pixel_shader_source = R"PIXELSHADERCODE(
       output_color.xyz = color.xyz * vs_color;
       output_color.a   = color.a;
     };
-	)PIXELSHADERCODE";
+	)FRAGMENT_SHADER";
 
 void SpriteManager::Finalize()
 {
@@ -82,7 +82,7 @@ bool SpriteManager::DoInitialize(SpriteManagerInitParams& params)
 	{
 		chaos::GPUProgramGenerator program_generator;
 		program_generator.AddShaderSource(ShaderType::VERTEX, vertex_shader_source);
-		program_generator.AddShaderSource(ShaderType::FRAGMENT, pixel_shader_source);
+		program_generator.AddShaderSource(ShaderType::FRAGMENT, fragment_shader_source);
 
 		program = program_generator.GenProgramObject();
 		if (program == nullptr)

@@ -1,7 +1,7 @@
 {
 	"fragment":
 	[
-		"@brightsideoflife.psh"
+		"@brightsideoflife.fsh"
 	],
 	"vertex":
 	[

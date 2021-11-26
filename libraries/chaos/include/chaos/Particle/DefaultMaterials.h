@@ -81,7 +81,7 @@ namespace chaos
 		/** the vertex shader source */
 		static char const* vertex_shader_source;
 		/** the pixel shader source */
-		static char const* pixel_shader_source;
+		static char const* fragment_shader_source;
 	};
 
 	/**
@@ -100,7 +100,7 @@ namespace chaos
 		/** the vertex shader source */
 		static char const* vertex_shader_source;
 		/** the pixel shader source */
-		static char const* pixel_shader_source;
+		static char const* fragment_shader_source;
 	};
 
 #endif

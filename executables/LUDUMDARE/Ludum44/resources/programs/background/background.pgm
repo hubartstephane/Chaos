@@ -1,7 +1,7 @@
 {
 	"fragment":
 	[
-		"@background.psh"
+		"@background.fsh"
 	],
 	"vertex":
 	[

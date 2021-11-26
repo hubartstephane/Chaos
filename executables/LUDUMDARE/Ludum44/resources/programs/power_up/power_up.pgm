@@ -1,7 +1,7 @@
 {
 	"fragment":
 	[
-		"@power_up.psh"
+		"@power_up.fsh"
 	],
 	"vertex":
 	[

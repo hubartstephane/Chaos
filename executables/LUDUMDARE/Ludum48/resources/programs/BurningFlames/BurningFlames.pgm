@@ -1,7 +1,7 @@
 {
 	"fragment":
 	[
-		"@BurningFlames.psh"
+		"@BurningFlames.fsh"
 	],
   "vertex": 
   [

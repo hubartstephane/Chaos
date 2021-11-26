@@ -1,7 +1,7 @@
 {
 	"fragment":
 	[
-		"@text.psh"
+		"@text.fsh"
 	],
 	"vertex":
 	[

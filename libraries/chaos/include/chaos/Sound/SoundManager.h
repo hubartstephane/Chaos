@@ -489,7 +489,7 @@ namespace chaos
 	// MANAGER
 	// ==============================================================
 
-	class SoundManager : public Manager
+	class SoundManager : public ResourceManager
 	{
 		CHAOS_SOUND_ALL_FRIENDS
 

@@ -3,7 +3,7 @@
 namespace chaos
 {
 
-	bool Manager::StartManager()
+	bool ResourceManager::StartManager()
 	{
 		if (IsManagerStarted())
 			return true;
@@ -16,7 +16,7 @@ namespace chaos
 		return true;
 	}
 
-	bool Manager::StopManager()
+	bool ResourceManager::StopManager()
 	{
 		if (!IsManagerStarted())
 			return false;
@@ -25,27 +25,27 @@ namespace chaos
 		return true;
 	}
 
-	bool Manager::DoStartManager()
+	bool ResourceManager::DoStartManager()
 	{
 		return true;
 	}
 
-	bool Manager::DoStopManager()
+	bool ResourceManager::DoStopManager()
 	{
 		return true;
 	}
 
-	bool Manager::IsManagerStarted() const
+	bool ResourceManager::IsManagerStarted() const
 	{
 		return manager_started;
 	}
 
-	bool Manager::InitializeFromConfiguration(nlohmann::json const & config)
+	bool ResourceManager::InitializeFromConfiguration(nlohmann::json const & config)
 	{
 		return true;
 	}
 
-	bool Manager::CanAddObject(ObjectRequest request, std::function<bool(ObjectRequest)> can_add_func) const
+	bool ResourceManager::CanAddObject(ObjectRequest request, std::function<bool(ObjectRequest)> can_add_func) const
 	{
 		// manager initialized ?
 		if (!IsManagerStarted())

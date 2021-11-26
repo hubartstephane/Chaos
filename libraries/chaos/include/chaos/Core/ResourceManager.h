@@ -2,7 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class Manager;
+	class ResourceManager;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -10,7 +10,7 @@ namespace chaos
 	// MANAGER
 	// ==============================================================
 
-	class Manager : public Object
+	class ResourceManager : public Object
 	{
 
 	public:

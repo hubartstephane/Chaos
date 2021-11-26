@@ -501,8 +501,8 @@ bool Game::GenerateBackgroundResources(boost::filesystem::path const & path)
 
 	// generate the background program
 	chaos::GPUProgramGenerator background_program_generator;
-	background_program_generator.AddShaderSourceFile(ShaderType::VERTEX, path / "background_vertex_shader.txt");
-	background_program_generator.AddShaderSourceFile(ShaderType::FRAGMENT, path / "background_pixel_shader.txt");
+	background_program_generator.AddShaderSourceFile(chaos::ShaderType::VERTEX, path / "background_vertex_shader.txt");
+	background_program_generator.AddShaderSourceFile(chaos::ShaderType::FRAGMENT, path / "background_pixel_shader.txt");
 
 	background_program = background_program_generator.GenProgramObject();
 	if (background_program == nullptr)
@@ -510,8 +510,8 @@ bool Game::GenerateBackgroundResources(boost::filesystem::path const & path)
 
 	// generate the controls program
 	chaos::GPUProgramGenerator control_program_generator;
-	control_program_generator.AddShaderSourceFile(ShaderType::VERTEX, path / "control_vertex_shader.txt");
-	control_program_generator.AddShaderSourceFile(ShaderType::FRAGMENT, path / "control_pixel_shader.txt");
+	control_program_generator.AddShaderSourceFile(chaos::ShaderType::VERTEX, path / "control_vertex_shader.txt");
+	control_program_generator.AddShaderSourceFile(chaos::ShaderType::FRAGMENT, path / "control_pixel_shader.txt");
 
 	control_program = control_program_generator.GenProgramObject();
 	if (control_program == nullptr)

@@ -1,7 +1,7 @@
 {
 	"fragment":
 	[
-		"@worldlimit.psh"
+		"@worldlimit.fsh"
 	],
 	"vertex":
 	[

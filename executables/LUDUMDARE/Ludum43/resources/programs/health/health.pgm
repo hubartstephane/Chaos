@@ -1,7 +1,7 @@
 {
 	"fragment":
 	[
-		"@health.psh"
+		"@health.fsh"
 	],
   "vertex": [
     "@health.vsh"

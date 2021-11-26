@@ -1,7 +1,7 @@
 {
 	"fragment":
 	[
-		"@challenge.psh"
+		"@challenge.fsh"
 	],
 	"vertex":
 	[

@@ -10,10 +10,10 @@ namespace chaos
 	void DefaultParticleProgramSource::GetSources(GPUProgramGenerator & program_generator)
 	{
 		program_generator.AddShaderSource(ShaderType::VERTEX, vertex_shader_source);
-		program_generator.AddShaderSource(ShaderType::FRAGMENT, pixel_shader_source);
+		program_generator.AddShaderSource(ShaderType::FRAGMENT, fragment_shader_source);
 	}
 
-	char const* DefaultParticleProgramSource::vertex_shader_source = R"VERTEXSHADERCODE(
+	char const* DefaultParticleProgramSource::vertex_shader_source = R"VERTEX_SHADER(
 			in vec2 position;
 			in vec3 texcoord;
 			in vec4 color;
@@ -39,9 +39,9 @@ namespace chaos
 
 				gl_Position = projection_matrix * local_to_camera * vec4(position.x, position.y, 0.0, 1.0);
 			}									
-		)VERTEXSHADERCODE";
+		)VERTEX_SHADER";
 
-	char const* DefaultParticleProgramSource::pixel_shader_source = R"PIXELSHADERCODE(
+	char const* DefaultParticleProgramSource::fragment_shader_source = R"FRAGMENT_SHADER(
 			out vec4 output_color; // "output_color" replaces "gl_FragColor" because glBindFragDataLocation(...) has been called
 
 			in vec2 vs_position;
@@ -75,7 +75,7 @@ namespace chaos
 				output_color.xyz = color.xyz * vs_color.xyz;
 				output_color.a   = vs_color.a * color.a;
 			};
-		)PIXELSHADERCODE";
+		)FRAGMENT_SHADER";
 
 	/*
 	 * DefaultScreenSpaceProgramGenerator implementation
@@ -84,10 +84,10 @@ namespace chaos
 	void DefaultScreenSpaceProgramGenerator::GetSources(GPUProgramGenerator& program_generator)
 	{
 		program_generator.AddShaderSource(ShaderType::VERTEX, vertex_shader_source);
-		program_generator.AddShaderSource(ShaderType::FRAGMENT, pixel_shader_source);
+		program_generator.AddShaderSource(ShaderType::FRAGMENT, fragment_shader_source);
 	}
 
-	char const* DefaultScreenSpaceProgramGenerator::vertex_shader_source = R"VERTEXSHADERCODE(
+	char const* DefaultScreenSpaceProgramGenerator::vertex_shader_source = R"VERTEX_SHADER(
 		in vec2 position;
 		in vec3 texcoord;
 		in vec4 color;
@@ -113,9 +113,9 @@ namespace chaos
 			gl_Position.z = 0.0;
 			gl_Position.w = 1.0;
 		}								
-		)VERTEXSHADERCODE";
+		)VERTEX_SHADER";
 
-	char const* DefaultScreenSpaceProgramGenerator::pixel_shader_source = DefaultParticleProgramSource::pixel_shader_source;
+	char const* DefaultScreenSpaceProgramGenerator::fragment_shader_source = DefaultParticleProgramSource::fragment_shader_source;
 
 
 }; // namespace chaos

@@ -1,7 +1,7 @@
 {
 	"fragment":
 	[
-		"@blackscreen.psh"
+		"@blackscreen.fsh"
 	],
 	"vertex":
 	[

@@ -1,7 +1,7 @@
 {
 	"fragment":
 	[
-		"@fire.psh"
+		"@fire.fsh"
 	],
 	"vertex":
 	[

@@ -2,7 +2,7 @@
 
 namespace chaos
 {
-	char const * GLDebugOnScreenDisplay::vertex_shader_source = R"VERTEXSHADERCODE(
+	char const * GLDebugOnScreenDisplay::vertex_shader_source = R"VERTEX_SHADER(
 	in vec2 position;
 	in vec2 texcoord;
 	uniform vec2 position_factor;
@@ -13,11 +13,11 @@ namespace chaos
 		vec2 pos    = (position * position_factor) + vec2(-1.0, 1.0);
 		gl_Position = vec4(pos, 0.0, 1.0);
 	}
-	)VERTEXSHADERCODE";
+	)VERTEX_SHADER";
 
 	// XXX : discarding pixels => the texture we use is WRITTEN in BLACK on a WHITE background
 	//       any pixel that is 'TOO' white is beeing discarded
-	char const * GLDebugOnScreenDisplay::pixel_shader_source = R"PIXELSHADERCODE(
+	char const * GLDebugOnScreenDisplay::fragment_shader_source = R"FRAGMENT_SHADER(
 	out vec4 output_color;
 	in vec2 tex_coord;
 	uniform sampler2D material;
@@ -29,7 +29,7 @@ namespace chaos
 			discard;
 		output_color = vec4(1.0, 1.0, 1.0, alpha);
 	}
-	)PIXELSHADERCODE";
+	)FRAGMENT_SHADER";
 
 	bool GLDebugOnScreenDisplay::Tick(float delta_time)
 	{
@@ -183,7 +183,7 @@ namespace chaos
 		// create GPU-Program
 		GPUProgramGenerator program_generator;
 		program_generator.AddShaderSource(ShaderType::VERTEX, vertex_shader_source);
-		program_generator.AddShaderSource(ShaderType::FRAGMENT, pixel_shader_source);
+		program_generator.AddShaderSource(ShaderType::FRAGMENT, fragment_shader_source);
 
 		program = program_generator.GenProgramObject();
 		if (program == nullptr)

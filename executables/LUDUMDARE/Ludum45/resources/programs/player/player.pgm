@@ -1,7 +1,7 @@
 {
 	"fragment":
 	[
-		"@player.psh"
+		"@player.fsh"
 	],
 	"vertex":
 	[

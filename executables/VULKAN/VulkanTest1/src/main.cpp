@@ -1367,7 +1367,7 @@ static const TBuiltInResource builtin_resources = {
 
 
 
-char const* pixel_sourceXXX = R"PIXELSHADERCODE(
+char const* pixel_sourceXXX = R"FRAGMENT_SHADER(
     #version 450
     #extension GL_ARB_separate_shader_objects : require
     in vec3 vs_texcoord;
@@ -1387,11 +1387,11 @@ char const* pixel_sourceXXX = R"PIXELSHADERCODE(
       output_color.xyz = color.xyz * vs_color;
       output_color.a   = color.a;
     };
-	)PIXELSHADERCODE";
+	)FRAGMENT_SHADER";
 
 
 
-char const* pixel_source = R"PIXELSHADERCODE(
+char const* pixel_source = R"FRAGMENT_SHADER(
     #version 450
     #extension GL_ARB_separate_shader_objects : require
 
@@ -1408,10 +1408,10 @@ char const* pixel_source = R"PIXELSHADERCODE(
     {
       output_color = vec4(zzz.x, bbb.y, 1.0, 1.0);
     }
-	)PIXELSHADERCODE";
+	)FRAGMENT_SHADER";
 
 
-char const* vertex_source = R"VERTEXSHADERCODE(
+char const* vertex_source = R"VERTEX_SHADER(
     #version 450
     #extension GL_ARB_separate_shader_objects : require
     in vec2 position;
@@ -1432,7 +1432,7 @@ char const* vertex_source = R"VERTEXSHADERCODE(
       vs_color    = color;
       gl_Position = local_to_cam * vec4(position.x + zzz.x, position.y, 0.0, 1.0);
     }							
-	)VERTEXSHADERCODE";
+	)VERTEX_SHADER";
 
 
 

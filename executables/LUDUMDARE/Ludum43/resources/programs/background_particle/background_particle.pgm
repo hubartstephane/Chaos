@@ -1,7 +1,7 @@
 {
 	"fragment":
 	[
-		"@background_particle.psh"
+		"@background_particle.fsh"
 	],
 	"vertex":
 	[

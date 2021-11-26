@@ -102,7 +102,7 @@ namespace chaos
 		static std::map<char const*, ShaderType, StringTools::RawStringILess> extension_map =
 		{
 			{".vsh", ShaderType::VERTEX},
-			{".psh", ShaderType::FRAGMENT},
+			{".fsh", ShaderType::FRAGMENT},
 			{".gsh", ShaderType::GEOMETRY},
 			{".tcsh", ShaderType::TESS_CONTROL},
 			{".tesh", ShaderType::TESS_EVALUATION},

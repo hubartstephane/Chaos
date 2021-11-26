@@ -124,9 +124,9 @@ namespace chaos
 		// shared sources
 		if (global_generators != nullptr)
 		{
-			for (size_t i = 0; i < global_generators->size(); ++i)
+			for (auto const & generator : *global_generators)
 			{
-				Buffer<char> buffer = global_generators->operator [] (i)->GenerateSource(definitions);
+				Buffer<char> buffer = generator->GenerateSource(definitions);
 				if (buffer == nullptr || buffer.size() == 0)
 					continue;
 				buffers.push_back(buffer);
@@ -135,22 +135,14 @@ namespace chaos
 		}
 
 		// standard sources
-		size_t previous_source_size = sources.size();
-
-		for (size_t i = 0; i < generators.size(); ++i)
+		for (auto const & generator : generators)
 		{
-			Buffer<char> buffer = generators[i]->GenerateSource(definitions);
+			Buffer<char> buffer = generator->GenerateSource(definitions);
 			if (buffer == nullptr || buffer.size() == 0)
 				continue;
 			buffers.push_back(buffer);
 			sources.push_back(buffer.data);
 		}
-
-
-
-		// no explicit source => early exit
-		if (previous_source_size == sources.size())
-			return 0;
 
 		// tweak the pixel shader source
 		if (shader_type == ShaderType::FRAGMENT)
@@ -177,9 +169,12 @@ namespace chaos
 
 	bool GPUProgramGenerator::PreLinkProgram(GLuint program) const
 	{
-		// frag data location
-		GLuint color_number = 0;
-		glBindFragDataLocation(program, color_number, "output_color");
+		// frag data location (not valid for compute program)
+		if (HasRenderShaderSources())
+		{
+			GLuint color_number = 0;
+			glBindFragDataLocation(program, color_number, "output_color");
+		}
 
 		// XXX : we could force attribute location with glBindAttribLocation(.. name ..) before the link
 		//       but we cannot use introspection methods in GPUProgramData::GetData(...) before link
@@ -217,13 +212,24 @@ namespace chaos
 
 	GLuint GPUProgramGenerator::GenProgram(DefinitionSet const & definitions) const
 	{
+		// early exit
+		if (!has_compute_shader && !has_render_shader)
+		{
+			Log::Error("GPUProgramGenerator::GenProgram(...) no COMPUTE shader nor RENDER shader");
+			return 0;
+		}
+		if (has_compute_shader && has_render_shader)
+		{
+			Log::Error("GPUProgramGenerator::GenProgram(...) cannot create a program with both COMPUTE shader and both RENDER shader");
+			return 0;
+		}
+		// create openGL program
 		GLuint result = glCreateProgram();
 		if (result == 0)
 		{
 			Log::Error("glCreateProgram failed");
 			return 0;
 		}
-
 		// create a string to contains all definitions
 		std::string definitions_string = DefinitionsToString(definitions);
 
@@ -249,9 +255,9 @@ namespace chaos
 			}
 		}
 
-
 		// complete the program with default vertex shader if not provided
-		if (success && !has_vertex_shader)
+		// a rendering program requires at least a vertex shader (for Transform & Feedback)
+		if (success && !has_vertex_shader && !has_compute_shader)
 		{
 
 
@@ -270,11 +276,6 @@ namespace chaos
 			{
 				glLinkProgram(result);
 				success = (GLShaderTools::CheckProgramStatus(result, GL_LINK_STATUS, "Program link failure : %s") == GL_TRUE);
-
-#if 0 && _DEBUG
-				if (success)
-					GLShaderTools::DisplayProgramDiagnostic(result);
-#endif
 			}
 		}
 
@@ -289,8 +290,12 @@ namespace chaos
 
 	GPUProgram * GPUProgramGenerator::GenProgramObject(DefinitionSet const & definitions) const
 	{
-		GLuint program_id = GenProgram(definitions);
-		return (program_id == 0) ? nullptr : new GPUProgram(program_id);
+		if (GLuint program_id = GenProgram(definitions))
+		{
+			GPUProgramType program_type = (HasComputeShaderSources()) ? GPUProgramType::COMPUTE : GPUProgramType::RENDER;
+			return new GPUProgram(program_id, program_type);
+		}
+		return nullptr;
 	}
 
 	void GPUProgramGenerator::Reset()
@@ -302,20 +307,16 @@ namespace chaos
 	bool GPUProgramGenerator::AddSourceGenerator(ShaderType shader_type, GPUProgramSourceGenerator * generator)
 	{
 		assert(generator != nullptr);
+		// insert the shader (even in case of error -> this will produce an error at program creation)
+		shaders[shader_type].push_back(generator);
 		// check whether there is both a compute and a rendering shader
-		bool is_render  = (shader_type != ShaderType::COMPUTE && shader_type != ShaderType::ANY);
-		bool is_compute = (shader_type == ShaderType::COMPUTE);
-		has_compute_shader |= is_compute;
-		has_render_shader  |= is_render;
+		has_compute_shader |= (shader_type == ShaderType::COMPUTE);
+		has_render_shader  |= (shader_type != ShaderType::COMPUTE && shader_type != ShaderType::ANY);
 		if (has_compute_shader && has_render_shader)
 		{
-			Log::Error("GPUProgramGenerator::AddSourceGenerator(...) cannot have both compute and rendering shaders");
+			Log::Warning("GPUProgramGenerator::AddSourceGenerator(...) cannot have both compute and rendering shaders");
 			return false;
 		}
-		has_compute_shader |= is_compute;
-		has_render_shader  |= is_render;
-		// insert the shader
-		shaders[shader_type].push_back(generator);
 		return true;
 	}
 

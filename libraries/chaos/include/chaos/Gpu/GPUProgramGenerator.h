@@ -55,6 +55,11 @@ namespace chaos
 		/** add a source file for a given shader */
 		bool AddShaderSourceFile(ShaderType shader_type, FilePathParam const& path);
 
+		/** returns whether there are compute sources */
+		bool HasComputeShaderSources() const { return has_compute_shader; }
+		/** returns whether there are rendering sources */
+		bool HasRenderShaderSources() const { return has_render_shader; }
+
 		/** generate a string for all definitions */
 		static std::string DefinitionsToString(DefinitionSet const& definitions);
 

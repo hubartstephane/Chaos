@@ -99,8 +99,14 @@ namespace chaos
 
 	GPUProgram* GPUProgramLoader::GenProgramObjectFromDirectory(boost::filesystem::path const & p) const
 	{
-		// search whether a pgm files does exists
+		// search whether a .pgm files does exists (with the same name than the directory)
+		boost::filesystem::path pgm_filename = p / p.filename().replace_extension("pgm");
 
+		nlohmann::json json;
+		if (JSONTools::LoadJSONFile(pgm_filename, json, true))
+			return GenProgramObject(json);	
+
+		// search all files in the directory
 		static std::map<char const*, ShaderType, StringTools::RawStringILess> extension_map =
 		{
 			{".vsh", ShaderType::VERTEX},
@@ -114,9 +120,6 @@ namespace chaos
 
 		GPUProgramGenerator program_generator;
 
-		bool has_compute_shader = false;
-		bool has_rendering_shader = false;
-
 		for (auto it = boost::filesystem::directory_iterator(p); it != boost::filesystem::directory_iterator(); ++it)
 		{
 			if (it->status().type() == boost::filesystem::file_type::regular_file)
@@ -127,21 +130,13 @@ namespace chaos
 				auto ext_it = extension_map.find(ext.c_str());
 				if (ext_it != extension_map.end())
 				{
+					// add source to the generator
 					ShaderType shader_type = ext_it->second;
-
-					// cannot have both compute shaders and rendering shaders
-					if (shader_type == ShaderType::COMPUTE)
-						has_compute_shader = true;
-					else if (shader_type != ShaderType::ANY)
-						has_rendering_shader = true;
-
-					if (has_compute_shader && has_rendering_shader)
+					if (!program_generator.AddShaderSourceFile(shader_type, file_path))
 					{
-						Log::Error("GPUProgramLoader::GenProgramObjectFromDirectory(...) cannot have both compute and rendering shaders [%s]", p.c_str());
+						Log::Error("GPUProgramLoader::GenProgramObjectFromDirectory(...) fails to add source [%s]", p.c_str());
 						return nullptr;
 					}
-					// add source to the generator
-					program_generator.AddShaderSourceFile(shader_type, file_path);
 				}
 			}
 		}

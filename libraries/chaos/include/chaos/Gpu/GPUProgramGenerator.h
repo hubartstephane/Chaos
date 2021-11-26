@@ -77,6 +77,10 @@ namespace chaos
 
 		/** the shaders */
 		std::map<ShaderType, GeneratorSet> shaders;
+		/** whether a render shader has been inserted (nor ANY nor COMPUTE) */
+		bool has_render_shader = false;
+		/** whether a compute shader has been inserted */
+		bool has_compute_shader = false;
 	};
 
 #endif

@@ -23,17 +23,17 @@ namespace chaos
 		sources.push_back("#version 450\n");
 
 		// some flags for each vertex of a particle. Usefull for Half pixel correction 
-		sources.push_back(R"SHAREDSHADERCODE(
+		sources.push_back(R"SHARED_SHADER(
 		const int BOTTOM_LEFT  = 1;
 		const int BOTTOM_RIGHT = 2;
 		const int TOP_LEFT     = 3;
 		const int TOP_RIGHT    = 4;		
 		const int CORNER_MASK  = 7;
 		const int EIGHT_BITS_MODE = (1 << 4);			
-		)SHAREDSHADERCODE");
+		)SHARED_SHADER");
 
 		// some functions to extract flags from the Z component of texcoord and apply half pixel correction
-		sources.push_back(R"SHAREDSHADERCODE(
+		sources.push_back(R"SHARED_SHADER(
 		vec2 GetHalfPixelCorrectionOffset(int flags)
 		{
 			// only values 1, 2, 3 and 4 are valid corners
@@ -60,7 +60,7 @@ namespace chaos
 		{
 			return (flags & EIGHT_BITS_MODE); // remove all other flags (keep only 8bit)
 		}
-		)SHAREDSHADERCODE");
+		)SHARED_SHADER");
 	}
 
 	GLuint GPUProgramGenerator::DoGenerateShader(ShaderType shader_type, std::vector<char const *> const & sources) const
@@ -296,11 +296,25 @@ namespace chaos
 	void GPUProgramGenerator::Reset()
 	{
 		shaders.clear();
+		has_render_shader = has_compute_shader = false;
 	}
 
 	bool GPUProgramGenerator::AddSourceGenerator(ShaderType shader_type, GPUProgramSourceGenerator * generator)
 	{
 		assert(generator != nullptr);
+		// check whether there is both a compute and a rendering shader
+		bool is_render  = (shader_type != ShaderType::COMPUTE && shader_type != ShaderType::ANY);
+		bool is_compute = (shader_type == ShaderType::COMPUTE);
+		has_compute_shader |= is_compute;
+		has_render_shader  |= is_render;
+		if (has_compute_shader && has_render_shader)
+		{
+			Log::Error("GPUProgramGenerator::AddSourceGenerator(...) cannot have both compute and rendering shaders");
+			return false;
+		}
+		has_compute_shader |= is_compute;
+		has_render_shader  |= is_render;
+		// insert the shader
 		shaders[shader_type].push_back(generator);
 		return true;
 	}

@@ -7,7 +7,7 @@
     1,2,3, "encore une chaine", 
     {
       "test3":{
-        "@filename":"test3.json"  
+        "@include":"test3.json"  
       }    
     }
   

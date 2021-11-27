@@ -15,9 +15,9 @@
   ],
   
   "test2":{
-    "@filename":"test2.json"  
+    "@include":"test2.json"  
   },  
   "test3":{
-    "@filename":"test3.json"  
+    "@include":"test3.json"  
   } 
 }

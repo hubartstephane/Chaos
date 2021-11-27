@@ -4,9 +4,9 @@
     "height": 600
   },
 
-  "gpu":{"@filename":"@gpu.json"},
+  "gpu":{"@include":"@gpu.json"},
 
-  "game":{"@filename":"@game.json"},
+  "game":{"@include":"@game.json"},
 
   "verify_caracter_escape":"@@escaped",
 

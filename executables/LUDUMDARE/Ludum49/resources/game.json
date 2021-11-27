@@ -3,5 +3,5 @@
   "tilesets_directory": "@tilesets",
   "objecttypesets_directory": "@objecttypesets",
 
-  "game_instance": { "@filename": "game_instance.json" }
+  "game_instance": { "@include": "game_instance.json" }
 }

@@ -6,7 +6,7 @@
 
   "levels_directory": "@levels",
 
-  "game_instance": { "@filename": "game_instance.json" },
+  "game_instance": { "@include": "game_instance.json" },
 
   "min_word_size": 4,
   "max_word_size": 10,

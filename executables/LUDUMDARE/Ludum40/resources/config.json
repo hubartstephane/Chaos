@@ -5,7 +5,7 @@
     "height": 600
   },
 
-  "game":{ "@filename":"game.json"},
+  "game":{ "@include":"game.json"},
 
-  "sounds":{ "@filename":"sounds.json"}
+  "sounds":{ "@include":"sounds.json"}
 }

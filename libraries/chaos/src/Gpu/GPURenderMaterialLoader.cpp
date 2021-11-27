@@ -97,7 +97,7 @@ namespace chaos
 		// inplace declared program 
 		GPUProgramLoader program_loader(manager);
 		GPUProgram * program = program_loader.LoadObject(nullptr, *json_program);
-		if (program == nullptr)
+		if (program == nullptr || program->GetProgramType() != GPUProgramType::RENDER)
 			return false;
 
 		// initialize the program

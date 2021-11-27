@@ -1,4 +1,4 @@
 {
-  "player": { "@filename": "player.json" }
+  "player": { "@include": "player.json" }
 
 }

@@ -1,5 +1,5 @@
 {
-	"textures":{"@filename":"@textures.json"},
-	"programs":{"@filename":"@programs.json"},
-	"rendermaterials":{"@filename":"@rendermaterials.json"}
+	"textures":{"@include":"@textures.json"},
+	"programs":{"@include":"@programs.json"},
+	"rendermaterials":{"@include":"@rendermaterials.json"}
 }

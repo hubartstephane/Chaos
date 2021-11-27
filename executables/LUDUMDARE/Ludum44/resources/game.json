@@ -7,7 +7,7 @@
   "mouse_sensitivity": 1.0,
   "gamepad_sensitivity": 1.0,
 
-  "game_instance": { "@filename": "game_instance.json" },
+  "game_instance": { "@include": "game_instance.json" },
 
   "min_player_max_health": 0.1,
 

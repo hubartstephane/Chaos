@@ -4,5 +4,5 @@
     "height": 600
   },
 
-  "gpu":{"@filename":"@gpu.json"}
+  "gpu":{"@include":"@gpu.json"}
 }

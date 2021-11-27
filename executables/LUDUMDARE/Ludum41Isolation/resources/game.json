@@ -8,7 +8,7 @@
 
   "levels_directory": "@levels",
 
-  "game_instance": { "@filename": "game_instance.json" },
+  "game_instance": { "@include": "game_instance.json" },
   "viewport_wanted_aspect": 1.15,
 
 

@@ -16,6 +16,6 @@
 [submodule "external/glew"]
 	path = external/glew
 	url = https://github.com/hubartstephane/glew.git
-[submodule "external/glm"]
-	path = external/glm
-	url = https://github.com/hubartstephane/glm.git
+[submodule "external/freetype2"]
+	path = external/freetype2
+	url = https://github.com/hubartstephane/freetype2.git

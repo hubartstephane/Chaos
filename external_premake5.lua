@@ -2,6 +2,11 @@
 -- ROOT_PATH/../external
 -- =============================================================================
 
+
+NEW_EXTERNAL_PATH = path.join(ROOT_PATH, "external")
+
+
+
 local WINDOWS = (os.target() == "windows")
 local LINUX = (os.target() == "linux")
 
@@ -15,8 +20,11 @@ DeclareExternalLib("OPENGL", GL_INC_PATH, nil, "OpenGL32")
                                              
   -- GLM
 local GLM_INC_PATH = "glm"
-DeclareExternalLib("GLM", GLM_INC_PATH, nil, nil)
 
+local tmp = EXTERNAL_PATH
+EXTERNAL_PATH = NEW_EXTERNAL_PATH
+DeclareExternalLib("GLM", GLM_INC_PATH, nil, nil)
+EXTERNAL_PATH = tmp
   -- BOOST
 local BOOST_PATH     = "boost_1_72_0"
 local BOOST_LIB_PATH =  {x32 = path.join(BOOST_PATH, "stage", "lib"), x64 = path.join(BOOST_PATH, "stage", "lib")}
@@ -150,7 +158,7 @@ DeclareExternalLib("GLEW", GLEW_INC_PATH, GLEW_LIB_PATH, GLEW_LIBNAME)
 
   -- FREETYPE2 
 
-local FREETYPE2_PATH = "freetype-2.6.5"
+local FREETYPE2_PATH = "freetype2"
 local FREETYPE2_INC_PATH = path.join(FREETYPE2_PATH, "include") 
 local FREETYPE2_LIB_PATH = {
   x32 = path.join(FREETYPE2_PATH, "lib", "vc2015", win32),
@@ -160,7 +168,14 @@ local FREETYPE2_LIBNAME = {
   DEBUG   = "freetyped.lib",
   RELEASE = "freetype.lib"
 }      
+
+local tmp = EXTERNAL_PATH
+EXTERNAL_PATH = NEW_EXTERNAL_PATH
 DeclareExternalLib("FREETYPE2", FREETYPE2_INC_PATH, FREETYPE2_LIB_PATH, FREETYPE2_LIBNAME)
+EXTERNAL_PATH = tmp
+
+
+
 
   -- IRRKLANG   
 local IRRKLANG_X32_PATH = "irrKlang-1.6.0.WIN32"
@@ -336,7 +351,7 @@ DeclareExternalLib("TRISTRIPPER", TRISTRIPPER_INC_PATH, TRISTRIPPER_LIB_PATH, "t
 local JSON_PATH     = "json"
 local JSON_INC_PATH = path.join(JSON_PATH, "single_include", "nlohmann")  
 local tmp = EXTERNAL_PATH
-EXTERNAL_PATH = ""
+EXTERNAL_PATH = NEW_EXTERNAL_PATH
 DeclareExternalLib("JSON", JSON_INC_PATH, nil, nil)
 EXTERNAL_PATH = tmp
 

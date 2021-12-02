@@ -138,40 +138,33 @@ local GLI_PATH = "gli-0.5.1.0"
 DeclareExternalLib("GLI", GLI_PATH, nil, nil)
 
   -- GLEW 
-local GLEW_PATH     = "glew-1.12.0"
+local GLEW_PATH     = "glew-2.2.0"
 local GLEW_INC_PATH = path.join(GLEW_PATH, "include")
 local GLEW_LIB_PATH = {
-  x32 = {
-    DEBUG   = path.join(GLEW_PATH, "lib", DEBUG,   win32),   
-    RELEASE = path.join(GLEW_PATH, "lib", RELEASE, win32)
-  },
-  x64 = {
-    DEBUG   = path.join(GLEW_PATH, "lib", DEBUG,   x64),   
-    RELEASE = path.join(GLEW_PATH, "lib", RELEASE, x64)  
-  },
+  x32 = path.join(GLEW_PATH, "lib", RELEASE, win32),
+  x64 = path.join(GLEW_PATH, "lib", RELEASE, x64)
 }    
-local GLEW_LIBNAME = {
-  DEBUG   = "glew32sd.lib",
-  RELEASE = "glew32s.lib"  
-}  
+local GLEW_LIBNAME = "glew32s.lib"
+
+local tmp = EXTERNAL_PATH
+EXTERNAL_PATH = NEW_EXTERNAL_PATH
 DeclareExternalLib("GLEW", GLEW_INC_PATH, GLEW_LIB_PATH, GLEW_LIBNAME)
+EXTERNAL_PATH = tmp
+
+
 
   -- FREETYPE2 
 
 local FREETYPE2_PATH = "freetype2"
 local FREETYPE2_INC_PATH = path.join(FREETYPE2_PATH, "include") 
 local FREETYPE2_LIB_PATH = {
-  x32 = path.join(FREETYPE2_PATH, "lib", "vc2015", win32),
-  x64 = path.join(FREETYPE2_PATH, "lib", "vc2015", x64)
+  x32 = path.join(FREETYPE2_PATH, "objs", win32, "Release Static"),
+  x64 = path.join(FREETYPE2_PATH, "objs", x64, "Release Static")
 }
-local FREETYPE2_LIBNAME = {
-  DEBUG   = "freetyped.lib",
-  RELEASE = "freetype.lib"
-}      
 
 local tmp = EXTERNAL_PATH
 EXTERNAL_PATH = NEW_EXTERNAL_PATH
-DeclareExternalLib("FREETYPE2", FREETYPE2_INC_PATH, FREETYPE2_LIB_PATH, FREETYPE2_LIBNAME)
+DeclareExternalLib("FREETYPE2", FREETYPE2_INC_PATH, FREETYPE2_LIB_PATH, "freetype.lib")
 EXTERNAL_PATH = tmp
 
 
@@ -394,144 +387,3 @@ DeclareExternalLib("GLSLANG", GLSLANG_INC_PATH, GLSLANG_LIB_PATH, GLSLANG_LIBNAM
 
 
 
-
-
-
-
-
-  -- FMODSTUDIO
---[[
-local FMODSTUDIO_PATH     = path.join("FMOD SoundSystem", "FMOD Studio API Windows", "api")
-local FMODSTUDIO_INC_PATH = path.join(FMODSTUDIO_PATH, "lowlevel", "inc")
-local FMODSTUDIO_LIB_PATH = path.join(FMODSTUDIO_PATH, "lowlevel", "lib")
-local FMODSTUDIO_LIBNAME = {
-  x32 = {DEBUG = "fmodL_vc.lib",   RELEASE = "fmod_vc.lib"},
-  x64 = {DEBUG = "fmodL64_vc.lib", RELEASE = "fmod64_vc.lib"} 
-}
-
-local FMOD_TOCOPY  = { -- @ because this copies the file directly in
-  x32 = {
-    DEBUG   = "@" .. path.join(FMODSTUDIO_LIB_PATH, "fmodL.dll"),     
-    RELEASE = "@" .. path.join(FMODSTUDIO_LIB_PATH, "fmod.dll"),
-  },
-  x64 = {
-    DEBUG   = "@" .. path.join(FMODSTUDIO_LIB_PATH, "fmodL64.dll"),     
-    RELEASE = "@" .. path.join(FMODSTUDIO_LIB_PATH, "fmod64.dll"),
-  }                  
-} 
-
-DeclareExternalLib("FMODSTUDIO", FMODSTUDIO_INC_PATH, FMODSTUDIO_LIB_PATH, FMODSTUDIO_LIBNAME, FMOD_TOCOPY)    
---]]
-
-
-
-
-
-   -- OCULUS SDK (OVR)
---[[
-local OVR_PATH = "OculusSDK"
-
-local OVR_INC_PATH = path.join(OVR_PATH, "LibOVR", "Include")
-
-local OVR_LIB_PATH = path.join(OVR_PATH, "LibOVR", "Lib", "Windows")
-
-OVR_LIB_PATH = {
-  x32 = path.join(OVR_LIB_PATH, "Win32", "Release", BUILD_TARGET),
-  x64 = path.join(OVR_LIB_PATH, "x64", "Release", BUILD_TARGET),
-} 
-
-DeclareExternalLib("OVR", OVR_INC_PATH, OVR_LIB_PATH, "LibOVR.lib", nil)
---]]
-
-
-
-
--- ESCAPI
-
---[[
-
-local ESCAPI_PATH = "escapi"
-local ESCAPI_INC_PATH = path.join(ESCAPI_PATH, "common")
-
-local ESCAPI_LIB_PATH = {
-  x32 = {
-    DEBUG   = path.join(ESCAPI_PATH, "bin", win32, DEBUG),   
-    RELEASE = path.join(ESCAPI_PATH, "bin", win32, RELEASE)
-  },
-  x64 = {
-    DEBUG   = path.join(ESCAPI_PATH, "bin", x64, DEBUG),   
-    RELEASE = path.join(ESCAPI_PATH, "bin", x64, RELEASE)  
-  }
-} 
-
-local ESCAPI_LIBNAME = "escapi.lib"
-
-local ESCAPI_TOCOPY  = { -- @ because this copies the file directly in
-  x32 = {
-    DEBUG = "@" .. path.join(ESCAPI_LIB_PATH[x32][DEBUG], "escapi.dll"),
-    RELEASE = "@" .. path.join(ESCAPI_LIB_PATH[x32][RELEASE], "escapi.dll")   
-  },
-  x64 = {
-    DEBUG = "@" .. path.join(ESCAPI_LIB_PATH[x64][DEBUG], "escapi.dll"),
-    RELEASE = "@" .. path.join(ESCAPI_LIB_PATH[x64][RELEASE], "escapi.dll")   
-  }              
-} 
-
-DeclareExternalLib("ESCAPI", ESCAPI_INC_PATH, ESCAPI_LIB_PATH, ESCAPI_LIBNAME, ESCAPI_TOCOPY )
-
---]]
-
-
-  -- FFMPEG
---[[
-local FFMPEG_PATH     = "ffmpeg"
-local FFMPEG_INC_PATH = {
-  x32 = path.join(FFMPEG_PATH, "win32", "include"),
-  x64 = path.join(FFMPEG_PATH, "win64", "include")
-} 
-local FFMPEG_LIB_PATH = {
-  x32 = path.join(FFMPEG_PATH, "win32", "lib"),
-  x64 = path.join(FFMPEG_PATH, "win64", "lib")
-} 
---DeclareExternalLib("FFMPEG", FFMPEG_INC_PATH, FFMPEG_LIB_PATH, {"avcodec.lib", "avdevice.lib", "avfilter.lib", "avformat.lib", "avutil.lib", "postproc.lib", "swresample.lib", "swscale.lib"}) 
---]]
-
-
-
-
-
-
-  -- OPENCV  
-  
-  --[[
-  
-local OPENCV_PATH     = "opencv"
-local OPENCV_INC_PATH = path.join(OPENCV_PATH, "build", "include")
-local OPENCV_LIB_PATH = {
-  x32 = {
-    DEBUG   = path.join(OPENCV_PATH, "build", "win32", "vc15", "lib"),   
-    RELEASE = path.join(OPENCV_PATH, "build", "win32", "vc15", "lib")  
-  },
-  x64 = {
-    DEBUG   = path.join(OPENCV_PATH, "build", "x64", "vc15", "lib"),   
-    RELEASE = path.join(OPENCV_PATH, "build", "x64", "vc15", "lib")  
-  },
-} 
-
-local OPENCV_LIBNAME = {
-  DEBUG   = "opencv_world400d.lib",
-  RELEASE = "opencv_world400.lib"  
-}
-local OPENCV_TOCOPY  = {   -- @ because this copies the file directly in
-  x32 = {
-    DEBUG   = "@" .. path.join(OPENCV_PATH, "build", "x32", "vc15", "bin", "opencv_world400d.dll"), 
-    RELEASE = "@" .. path.join(OPENCV_PATH, "build", "x32", "vc15", "bin", "opencv_world400.dll"), 
-  },
-  x64 = {
-    DEBUG   = "@" .. path.join(OPENCV_PATH, "build", "x64", "vc15", "bin", "opencv_world400d.dll"), 
-    RELEASE = "@" .. path.join(OPENCV_PATH, "build", "x64", "vc15", "bin", "opencv_world400.dll"), 
-  }
-} 
-DeclareExternalLib("OPENCV", OPENCV_INC_PATH, OPENCV_LIB_PATH, OPENCV_LIBNAME, OPENCV_TOCOPY)
-
---]]  

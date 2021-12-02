@@ -13,9 +13,6 @@
 [submodule "external/tinyxml2"]
 	path = external/tinyxml2
 	url = https://github.com/hubartstephane/tinyxml2.git
-[submodule "external/glew"]
-	path = external/glew
-	url = https://github.com/hubartstephane/glew.git
 [submodule "external/freetype2"]
 	path = external/freetype2
 	url = https://github.com/hubartstephane/freetype2.git

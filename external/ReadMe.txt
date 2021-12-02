@@ -21,3 +21,11 @@ GLEW
 		https://github.com/nigels-com/glew/releases/download/glew-2.2.0/glew-2.2.0-win32.zip
 		
 	(instead of having a fork or clone)
+	
+TINYXML2
+========
+
+  solution in tinyxml2/vs are incorrect (build an executable and no library)
+	recreate solution
+	
+	  cmake -S . -B build  -> generate solution in build

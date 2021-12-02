@@ -293,18 +293,23 @@ local FREEIMAGE_TOCOPY  = { -- @ because this copies the file directly in
 DeclareExternalLib("FREEIMAGE", FREEIMAGE_INC_PATH, FREEIMAGE_LIB_PATH, FREEIMAGE_LIBNAME, FREEIMAGE_TOCOPY)  
 
   -- LIBXML2
-local LIBTINYXML2_PATH = "tinyxml2-master"
+local LIBTINYXML2_PATH = "tinyxml2"
 
 local LIBTINYXML2_INC_PATH = LIBTINYXML2_PATH
 
-local LIBTINYXML2_LIB_PATH = path.join(LIBTINYXML2_PATH, "tinyxml2", "bin")
+local LIBTINYXML2_LIB_PATH = path.join(LIBTINYXML2_PATH, "build")
 
 LIBTINYXML2_LIB_PATH = {
-  x32 = {DEBUG = path.join(LIBTINYXML2_LIB_PATH, "win32-Debug-Lib"), RELEASE = path.join(LIBTINYXML2_LIB_PATH, "win32-Release-Lib")},
-  x64 = {DEBUG = path.join(LIBTINYXML2_LIB_PATH, "x64-Debug-Lib"),   RELEASE = path.join(LIBTINYXML2_LIB_PATH, "x64-Release-Lib")}
+
+	DEBUG = path.join(LIBTINYXML2_LIB_PATH, "Debug"),
+	RELEASE = path.join(LIBTINYXML2_LIB_PATH, "Release")
 } 
 
+local tmp = EXTERNAL_PATH
+EXTERNAL_PATH = NEW_EXTERNAL_PATH
 DeclareExternalLib("TINYXML2", LIBTINYXML2_PATH, LIBTINYXML2_LIB_PATH, "tinyxml2.lib", nil)
+EXTERNAL_PATH = tmp
+
 
   -- NANA
   

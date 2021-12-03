@@ -26,9 +26,13 @@ EXTERNAL_PATH = NEW_EXTERNAL_PATH
 DeclareExternalLib("GLM", GLM_INC_PATH, nil, nil)
 EXTERNAL_PATH = tmp
   -- BOOST
-local BOOST_PATH     = "boost_1_72_0"
-local BOOST_LIB_PATH =  {x32 = path.join(BOOST_PATH, "stage", "lib"), x64 = path.join(BOOST_PATH, "stage", "lib")}
+local BOOST_PATH     = "boost_1_77_0"
+local BOOST_LIB_PATH =  path.join(BOOST_PATH, "stage", "lib")
+
+EXTERNAL_PATH = NEW_EXTERNAL_PATH
 DeclareExternalLib("BOOST", BOOST_PATH, BOOST_LIB_PATH, nil)
+EXTERNAL_PATH = tmp
+
 
   -- LUA
 if (LINUX) then

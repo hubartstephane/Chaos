@@ -21,6 +21,8 @@ GLEW
 		https://github.com/nigels-com/glew/releases/download/glew-2.2.0/glew-2.2.0-win32.zip
 		
 	(instead of having a fork or clone)
+
+  I even tryed to use cmake with no success. Source project seems corrupted
 	
 TINYXML2
 ========
@@ -29,3 +31,14 @@ TINYXML2
 	recreate solution
 	
 	  cmake -S . -B build  -> generate solution in build
+
+BOOST
+=====
+
+  boost has submodules inside. I forked boost but i should probably fork its submodules too. Maybe it isn't even the good solution
+  so i use a ZIP download
+	
+	to build. From Visual studio start a console
+	bootstrap msvc
+	b2 toolset=msvc library=static
+	

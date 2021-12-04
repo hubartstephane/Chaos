@@ -30,7 +30,7 @@ TINYXML2
   solution in tinyxml2/vs are incorrect (build an executable and no library)
 	recreate solution
 	
-	  cmake -S . -B build  -> generate solution in build
+	  cmake -S . -B projects  -> generate solution in build
 
 BOOST
 =====

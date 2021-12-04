@@ -27,7 +27,7 @@ DeclareExternalLib("GLM", GLM_INC_PATH, nil, nil)
 EXTERNAL_PATH = tmp
   -- BOOST
 local BOOST_PATH     = "boost_1_77_0"
-local BOOST_LIB_PATH =  path.join(BOOST_PATH, "stage", "lib")
+local BOOST_LIB_PATH =  path.join(BOOST_PATH, "stage", "lib")  	
 
 EXTERNAL_PATH = NEW_EXTERNAL_PATH
 DeclareExternalLib("BOOST", BOOST_PATH, BOOST_LIB_PATH, nil)
@@ -53,35 +53,22 @@ elseif (WINDOWS) then
 	} 
 	DeclareExternalLib("LUA", LUA_INC_PATH, LUA_LIB_PATH, "mylualibrary.lib")
 end
+
   -- GLFW  
-local GLFW_X32_PATH = "glfw-3.3.bin.WIN32"     
-local GLFW_X64_PATH = "glfw-3.3.bin.WIN64"
-local GLFW_INC_PATH = {
-  x32 = path.join(GLFW_X32_PATH, "include"),
-  x64 = path.join(GLFW_X64_PATH, "include")  
+local GLFW_PATH = "glfw"     
+local GLFW_INC_PATH = path.join(GLFW_PATH, "include")
+
+local GLFW_LIB_PATH = {
+  DEBUG   = path.join(GLFW_PATH, "build", "src", DEBUG),   
+  RELEASE = path.join(GLFW_PATH, "build", "src", RELEASE)  
 }
 
-local GLFW_LIB_PATH
-
-local GLFW_LIB_VCPATH
-if (BUILD_TARGET == "vs2019") then 
-  GLFW_LIB_VCPATH = "lib-vc2019"      -- beware confusion vS2019 & vC2019 ('c' & 's')
-elseif (BUILD_TARGET == "vs2015") then
-  GLFW_LIB_VCPATH = "lib-vc2015"
-elseif (BUILD_TARGET == "vs2013") then
-  GLFW_LIB_VCPATH = "lib-vc2013"
-elseif (BUILD_TARGET == "vs2012") then
-  GLFW_LIB_VCPATH = "lib-vc2012"
-elseif (BUILD_TARGET == "vs2010") then
-  GLFW_LIB_VCPATH = "lib-vc2010"
-end  
-
-GLFW_LIB_PATH = {
-  x32 = path.join(GLFW_X32_PATH, GLFW_LIB_VCPATH),
-  x64 = path.join(GLFW_X64_PATH, GLFW_LIB_VCPATH) 
-}
-
+EXTERNAL_PATH = NEW_EXTERNAL_PATH
 DeclareExternalLib("GLFW", GLFW_INC_PATH, GLFW_LIB_PATH, "glfw3.lib")
+EXTERNAL_PATH = tmp
+
+
+
 
   -- VISUAL STUDIO REDISTRIBUABLE
   

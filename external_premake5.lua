@@ -276,7 +276,9 @@ local FREEIMAGE_TOCOPY  = { -- @ because this copies the file directly in
   x64 = "@" .. path.join(FREEIMAGE_LIB_PATH[x64], "FreeImage.dll")                  
 } 
 
+EXTERNAL_PATH = NEW_EXTERNAL_PATH
 DeclareExternalLib("FREEIMAGE", FREEIMAGE_INC_PATH, FREEIMAGE_LIB_PATH, FREEIMAGE_LIBNAME, FREEIMAGE_TOCOPY)  
+EXTERNAL_PATH = tmp
 
   -- LIBXML2
 local LIBTINYXML2_PATH = "tinyxml2"

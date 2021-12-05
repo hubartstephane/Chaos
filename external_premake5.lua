@@ -16,7 +16,10 @@ DeclareExternalLib("range-v3", RANGE_V3_INC_PATH, nil, nil)
 
   -- OPENGL
 local GL_INC_PATH = "openGL"
+local tmp = EXTERNAL_PATH
+EXTERNAL_PATH = NEW_EXTERNAL_PATH
 DeclareExternalLib("OPENGL", GL_INC_PATH, nil, "OpenGL32")  
+EXTERNAL_PATH = tmp
                                              
   -- GLM
 local GLM_INC_PATH = "glm"
@@ -160,22 +163,17 @@ EXTERNAL_PATH = tmp
 
 
   -- IRRKLANG   
-local IRRKLANG_X32_PATH = "irrKlang-1.6.0.WIN32"
-local IRRKLANG_X64_PATH = "irrKlang-1.6.0.WIN64"
-local IRRKLANG_INC_PATH = {
-  x32 = path.join(IRRKLANG_X32_PATH, "include"),
-  x64 = path.join(IRRKLANG_X64_PATH, "include")  
-}  
-local IRRKLANG_LIB_PATH = {
-  x32 = path.join(IRRKLANG_X32_PATH, "lib", "Win32-visualStudio"),
-  x64 = path.join(IRRKLANG_X64_PATH, "lib", "Winx64-visualStudio")  
-}     
+local IRRKLANG_PATH = "irrKlang"
+local IRRKLANG_INC_PATH = path.join(IRRKLANG_PATH, "include")
+local IRRKLANG_LIB_PATH = path.join(IRRKLANG_PATH, "lib", "Winx64-visualStudio")
 local IRRKLANG_LIBNAME = "irrKlang.lib"
-local IRRKLANG_TOCOPY  = {   -- @ because this copies the file directly in
-  x32 = "@" .. path.join(IRRKLANG_X32_PATH, "bin", "win32-visualStudio", "irrKlang.dll"), 
-  x64 = "@" .. path.join(IRRKLANG_X64_PATH, "bin", "winx64-visualStudio" , "irrKlang.dll")  
-} 
+local IRRKLANG_TOCOPY  = "@" .. path.join(IRRKLANG_PATH, "bin", "winx64-visualStudio" , "irrKlang.dll")  
+
+local tmp = EXTERNAL_PATH
+EXTERNAL_PATH = NEW_EXTERNAL_PATH
 DeclareExternalLib("IRRKLANG", IRRKLANG_INC_PATH, IRRKLANG_LIB_PATH, IRRKLANG_LIBNAME, IRRKLANG_TOCOPY)
+EXTERNAL_PATH = tmp
+
 
   -- FBX 
 

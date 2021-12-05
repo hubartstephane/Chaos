@@ -35,7 +35,7 @@ MYPROJECTS = {}
 
 DISPLAY_ROOT_ENVIRONMENT = true
 DISPLAY_ENVIRONMENT = false
-DISPLAY_DEPENDENCIES = true
+DISPLAY_DEPENDENCIES = false
 
 DEBUG = "DEBUG"
 RELEASE = "RELEASE"
@@ -87,6 +87,19 @@ function AllTargets(fun)
 						fun(PLATFORMS[pi], CONFIGS[pc])
 				end
 		end
+end
+
+function ForEachElement(src, fun)
+
+  if not IsNil(src) then
+    if IsTable(src) then
+	    for k,v in ipairs(src) do
+		    fun(v)
+		  end
+	  else
+	    fun(src)
+		end
+	end
 end
 
 -- =============================================================================
@@ -368,7 +381,8 @@ function PrefixPathArray(src, prefix)
 end
 
 function DeclareExternalLib(external_name, inc_path, lib_path, libname, tocopy)
-		Output("DECLARE EXTERNAL LIB [" .. external_name .. "]")
+
+  Output("DECLARE EXTERNAL LIB [" .. external_name .. "]")
 
 		local result = {}
 		table.insert(MYPROJECTS, result)
@@ -380,14 +394,33 @@ function DeclareExternalLib(external_name, inc_path, lib_path, libname, tocopy)
 		result.targetdir = PrefixPathArray(GetPlatConfArray(lib_path), EXTERNAL_PATH)
 		result.libname = GetPlatConfArray(libname)
 		result.additionnal_libs = GetPlatConfArray({})
-
 		result.dependencies = {}
-
 		result.tocopy = GetPlatConfArray({})
 
 		if (not IsNil(tocopy)) then
 				DeclareToCopyFile(tocopy, result)
-		end
+		end		
+
+    -- check for library file existence
+		AllTargets(
+			function(plat, conf)
+			  ForEachElement(result.libname[plat][conf], 
+				  function(libname)
+						ForEachElement(result.targetdir[plat][conf], 
+							function(dir)
+						    local fullpath = dir .. "/" .. libname	
+								if not os.isfile(fullpath) then 
+								  assert(false, "library does not exit: " .. fullpath)
+								end
+							end	
+						)				
+				  end
+				)
+			end
+	  )
+
+				
+
 
 		return result
 end

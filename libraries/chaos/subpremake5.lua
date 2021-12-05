@@ -24,19 +24,9 @@
   DependOnLib("JSON")
   DependOnLib("ZLIB")
   DependOnLib("MSVC")
-  --DependOnLib("ESCAPI")
-  
-  --DependOnLib("OVR")  
-  --DependOnLib("OPENCV")
-  --DependOnLib("FFMPEG")                  
-  --DependOnLib("FMODSTUDIO")  
-  --DependOnLib("GLI")  
-  --DependOnLib("LIBXML2")    
-     
+
   DependOnStandardLib("Dbghelp.lib")  -- used on windows for call stack introspection 
   DependOnStandardLib("winmm.lib")    -- used for midi
-
-
 
   -- pchheader "StandardHeaders.h"
    --pchsource "StandardHeaders.cpp"

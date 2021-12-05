@@ -42,3 +42,12 @@ BOOST
 	bootstrap msvc
 	b2 toolset=msvc library=static
 	
+	
+ASSIMP
+======
+
+  see https://github.com/assimp/assimp/blob/master/Build.md
+	
+	cmake CMakeLists.txt 
+	cmake --build .
+	

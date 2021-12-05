@@ -234,35 +234,32 @@ local ZLIB_LIBNAME = {
 DeclareExternalLib("ZLIB", ZLIB_PATH, ZLIB_LIB_PATH, ZLIB_LIBNAME, nil)     
     
   -- ASSIMP
-local ASSIMP_PATH      = "assimp-3.1.1"
+local ASSIMP_PATH      = "assimp"
 local ASSIMP_INC_PATH  = path.join(ASSIMP_PATH, "include")
 local ASSIMP_LIB_PATH  = {
-  x32 = {
-    DEBUG   = path.join(ASSIMP_PATH, "lib32", "Debug"),     
-    RELEASE = path.join(ASSIMP_PATH, "lib32", "Release"),
-  },
-  x64 = {
-    DEBUG   = path.join(ASSIMP_PATH, "lib64", "Debug"),     
-    RELEASE = path.join(ASSIMP_PATH, "lib64", "Release"),
-  }                  
+  DEBUG   = path.join(ASSIMP_PATH, "build", "lib", "Debug"),     
+  RELEASE = path.join(ASSIMP_PATH, "build", "lib", "Release")            
 }
-local ASSIMP_LIBNAME = {
-  DEBUG   = "assimpd.lib",
-  RELEASE = "assimp.lib"  
+local ASSIMP_LIBNAME  = {
+  DEBUG   = "assimp-vc142-mtd.lib",     
+  RELEASE = "assimp-vc142-mt.lib"            
+}
+
+local ASSIMP_BIN_PATH  = {
+  DEBUG   = path.join(ASSIMP_PATH, "build", "bin", "Debug"),     
+  RELEASE = path.join(ASSIMP_PATH, "build", "bin", "Release")            
 }
 
 local ASSIMP_TOCOPY  = { -- @ because this copies the file directly in
-  x32 = {
-    DEBUG   = "@" .. path.join(ASSIMP_LIB_PATH[x32][DEBUG],   "assimpd.dll"),     
-    RELEASE = "@" .. path.join(ASSIMP_LIB_PATH[x32][RELEASE], "assimp.dll"),
-  },
-  x64 = {
-    DEBUG   = "@" .. path.join(ASSIMP_LIB_PATH[x64][DEBUG],   "assimpd.dll"),     
-    RELEASE = "@" .. path.join(ASSIMP_LIB_PATH[x64][RELEASE], "assimp.dll"),
-  }                  
+	DEBUG   = "@" .. path.join(ASSIMP_BIN_PATH[DEBUG],   "assimp-vc142-mtd.dll"),     
+  RELEASE = "@" .. path.join(ASSIMP_BIN_PATH[RELEASE], "assimp-vc142-mt.dll")            
 } 
 
+local tmp = EXTERNAL_PATH
+EXTERNAL_PATH = NEW_EXTERNAL_PATH
 DeclareExternalLib("ASSIMP", ASSIMP_INC_PATH, ASSIMP_LIB_PATH, ASSIMP_LIBNAME, ASSIMP_TOCOPY)
+EXTERNAL_PATH = tmp
+
 
   -- FREEIMAGE
 local FREEIMAGE_PATH       = path.join("FreeImage", "Dist")
@@ -346,6 +343,9 @@ EXTERNAL_PATH = tmp
 
 
   -- VULKAN   
+	
+	--[[
+	
 local VULKAN_PATH = path.join("VulkanSDK", "1.2.162.0")
 local VULKAN_INC_PATH = path.join(VULKAN_PATH, "Include")
 local VULKAN_LIB_PATH = path.join(VULKAN_PATH, "Lib")
@@ -379,7 +379,7 @@ local GLSLANG_LIBNAME =
 
 DeclareExternalLib("GLSLANG", GLSLANG_INC_PATH, GLSLANG_LIB_PATH, GLSLANG_LIBNAME)
 
-
+]]--
 
 
 

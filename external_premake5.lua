@@ -121,12 +121,10 @@ local MSVC_TOCOPY  = { -- @ because this copies the file directly in
    RELEASE = GenerateMSVCDLLs(MSVC_LIB_PATH_X64_RELEASE, MSVC_DLL_RELEASE)
   }                  
 } 
-  
-DeclareExternalLib("MSVC", nil, nil, nil, MSVC_TOCOPY)  
 
-  -- GLI          
-local GLI_PATH = "gli-0.5.1.0"
-DeclareExternalLib("GLI", GLI_PATH, nil, nil)
+EXTERNAL_PATH = NEW_EXTERNAL_PATH
+DeclareExternalLib("MSVC", nil, nil, nil, MSVC_TOCOPY)  
+EXTERNAL_PATH = tmp
 
   -- GLEW 
 local GLEW_PATH     = "glew-2.2.0"

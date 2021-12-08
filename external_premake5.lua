@@ -36,26 +36,16 @@ EXTERNAL_PATH = NEW_EXTERNAL_PATH
 DeclareExternalLib("BOOST", BOOST_PATH, BOOST_LIB_PATH, nil)
 EXTERNAL_PATH = tmp
 
-
   -- LUA
-if (LINUX) then
-	local LUA_INC_PATH = "/usr/include/lua5.3"
-	DeclareExternalLib("LUA", LUA_INC_PATH, nil, "lua5.3")
-elseif (WINDOWS) then
-	local LUA_PATH     = "lua-5.3.0"
-	local LUA_INC_PATH = path.join(LUA_PATH, "src")
-	local LUA_LIB_PATH = {
-	  x32 = {
-	    DEBUG   = path.join(LUA_PATH, "build", BUILD_TARGET, x32, DEBUG),   
-	    RELEASE = path.join(LUA_PATH, "build", BUILD_TARGET, x32, RELEASE)
-	  },
-	  x64 = {
-	    DEBUG   = path.join(LUA_PATH, "build", BUILD_TARGET, x64, DEBUG),   
-	    RELEASE = path.join(LUA_PATH, "build", BUILD_TARGET, x64, RELEASE)  
-	  },
-	} 
-	DeclareExternalLib("LUA", LUA_INC_PATH, LUA_LIB_PATH, "mylualibrary.lib")
-end
+local LUA_PATH     = "lua-5.4.2"
+local LUA_INC_PATH = path.join(LUA_PATH, "include")
+local LUA_LIB_PATH = LUA_PATH
+
+	
+EXTERNAL_PATH = NEW_EXTERNAL_PATH
+DeclareExternalLib("LUA", LUA_INC_PATH, LUA_LIB_PATH, "lua54.lib")
+EXTERNAL_PATH = tmp
+
 
   -- GLFW  
 local GLFW_PATH = "glfw"     

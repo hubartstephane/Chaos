@@ -4,3 +4,4 @@ MSVC_Redist/**
 FreeImage/**
 Irrklang/**
 lua-5.4.2/**
+zlib-1.2.11/**

@@ -201,23 +201,16 @@ local FBX_TOCOPY  = {   -- @ because this copies the file directly in
 DeclareExternalLib("FBX", FBX_INC_PATH, FBX_LIB_PATH, FBX_LIBNAME, FBX_TOCOPY)
 
   -- ZLIB    
-local ZLIB_PATH     = "zlib-1.2.8"
-local ZLIB_LIB_PATH  = {
-  x32 = {
-    DEBUG   = path.join(ZLIB_PATH, "Debug",   "x32"),     
-    RELEASE = path.join(ZLIB_PATH, "Release", "x32"),
-  },
-  x64 = {
-    DEBUG   = path.join(ZLIB_PATH, "Debug",   "x64"),     
-    RELEASE = path.join(ZLIB_PATH, "Release", "x64"),
-  }                  
-}
-local ZLIB_LIBNAME = {
-  DEBUG   = "zlibstaticd.lib",
-  RELEASE = "zlibstatic.lib"  
-}
+local ZLIB_PATH     = "zlib-1.2.11"
+local ZLIB_INC_PATH = ZLIB_PATH
+local ZLIB_LIB_PATH = path.join(ZLIB_PATH, "contrib",   "vstudio", "vc14", "x64", "ZlibStatRelease")
+--local ZLIB_LIB_PATH = path.join(ZLIB_PATH, "contrib",   "vstudio", "vc14", "x64", "ZlibDllRelease")
 
-DeclareExternalLib("ZLIB", ZLIB_PATH, ZLIB_LIB_PATH, ZLIB_LIBNAME, nil)     
+EXTERNAL_PATH = NEW_EXTERNAL_PATH
+DeclareExternalLib("ZLIB", ZLIB_INC_PATH, ZLIB_LIB_PATH, "zlibstat.lib", nil)     
+EXTERNAL_PATH = tmp
+
+
     
   -- ASSIMP
 local ASSIMP_PATH      = "assimp"

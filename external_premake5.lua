@@ -12,9 +12,11 @@ local LINUX = (os.target() == "linux")
 
   -- RANGE-V3
 local RANGE_V3_INC_PATH =  path.join("range-v3", "include")
+
+local tmp = EXTERNAL_PATH
+EXTERNAL_PATH = NEW_EXTERNAL_PATH
 DeclareExternalLib("range-v3", RANGE_V3_INC_PATH, nil, nil)  
-
-
+EXTERNAL_PATH = tmp
 
 
 

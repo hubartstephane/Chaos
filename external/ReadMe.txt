@@ -56,3 +56,8 @@ Zlib
 
   there is the solution zlib-1.2.11\contrib\vstudio\vc14
 	build zlibstat for static library
+	
+NANA
+====
+
+  solution is here ./build/vc2019/nana.sln

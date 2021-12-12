@@ -16,3 +16,6 @@
 [submodule "external/glm"]
 	path = external/glm
 	url = https://github.com/hubartstephane/glm.git
+[submodule "external/range-v3"]
+	path = external/range-v3
+	url = https://github.com/hubartstephane/range-v3.git

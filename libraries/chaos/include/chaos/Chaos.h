@@ -72,17 +72,17 @@
 #include <boost/program_options/variables_map.hpp>
 #include <boost/program_options/parsers.hpp>
 #include <boost/call_traits.hpp>
-//#include <boost/crc.hpp> 
 #include <boost/type_traits.hpp>
 #include <boost/algorithm/string.hpp>
-
 #include <boost/range/irange.hpp>
-
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 #include <boost/intrusive_ptr.hpp>
-
 #include <boost/log/utility/functional/nop.hpp>
+#include <boost/tti/has_member_data.hpp>
+#include <boost/tti/has_member_function.hpp>
+#include <boost/convert/detail/has_member.hpp>
+#include <boost/type_traits/add_const.hpp>
 
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/eval_if.hpp>
@@ -107,11 +107,7 @@
 #include <boost/mpl/for_each.hpp>
 #include <boost/mpl/apply_wrap.hpp>
 #include <boost/mpl/has_xxx.hpp>
-#include <boost/tti/has_member_data.hpp>
-#include <boost/tti/has_member_function.hpp>
-#include <boost/convert/detail/has_member.hpp>
 #include <boost/mpl/aux_/has_type.hpp>
-#include <boost/type_traits/add_const.hpp>
 
 #include <boost/preprocessor/repetition/enum_params.hpp>
 #include <boost/preprocessor/repetition/enum_binary_params.hpp>
@@ -131,7 +127,6 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/norm.hpp>
 #include <glm/gtx/quaternion.hpp>
-//#include <glm/detail/precision.hpp>
 #include <glm/detail/type_vec1.hpp>
 #include <glm/detail/type_vec2.hpp>
 #include <glm/detail/type_vec3.hpp>
@@ -183,8 +178,8 @@
 #include <nana/gui/widgets/button.hpp>
 #include <nana/gui/widgets/listbox.hpp>
 #include <nana/gui/widgets/label.hpp>
-#include <nana/gui/widgets/frame.hpp>
-#include <nana/gui/wvl.hpp>
+//#include <nana/gui/widgets/frame.hpp>
+//#include <nana/gui/wvl.hpp>
 
 #include <assimp/Importer.hpp> 
 #include <assimp/scene.h>           
@@ -232,8 +227,6 @@
 #include <GL/GLU.h>
 
 // GLFW
-
-
 #if WITH_VULKAN
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_win32.h>

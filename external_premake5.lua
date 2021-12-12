@@ -14,6 +14,12 @@ local LINUX = (os.target() == "linux")
 local RANGE_V3_INC_PATH =  path.join("range-v3", "include")
 DeclareExternalLib("range-v3", RANGE_V3_INC_PATH, nil, nil)  
 
+
+
+
+
+
+
   -- OPENGL
 local GL_INC_PATH = "openGL"
 local tmp = EXTERNAL_PATH
@@ -200,6 +206,12 @@ local FBX_TOCOPY  = {   -- @ because this copies the file directly in
 
 DeclareExternalLib("FBX", FBX_INC_PATH, FBX_LIB_PATH, FBX_LIBNAME, FBX_TOCOPY)
 
+
+
+
+
+
+
   -- ZLIB    
 local ZLIB_PATH     = "zlib-1.2.11"
 local ZLIB_INC_PATH = ZLIB_PATH
@@ -287,17 +299,18 @@ local NANA_INC_PATH = path.join(NANA_PATH, "include")
 
 local NANA_LIB_PATH = path.join(NANA_PATH, "build", "bin")
 
-local NANA_LIBNAME = {
-  x32 = {
-    DEBUG   = "nana_v140_Debug_x86.lib",   
-    RELEASE = "nana_v140_Release_x86.lib"  
-  },
-  x64 = {
-    DEBUG   = "nana_v140_Debug_x64.lib",     
-    RELEASE = "nana_v140_Release_x64.lib"  
-  }
-} 
+local NANA_LIBNAME = "nana_v142_Release_x64.lib"
+
+local tmp = EXTERNAL_PATH
+EXTERNAL_PATH = NEW_EXTERNAL_PATH
 DeclareExternalLib("NANA", NANA_INC_PATH, NANA_LIB_PATH, NANA_LIBNAME)
+EXTERNAL_PATH = tmp
+
+
+
+
+
+
 
   -- TRISTRIPPER
 local TRISTRIPPER_PATH     = "tristripper-master"

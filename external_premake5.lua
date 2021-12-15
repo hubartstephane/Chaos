@@ -32,10 +32,7 @@ DeclareExternalLib("LUA", LUA_INC_PATH, LUA_LIB_PATH, "lua54.lib")
 local GLFW_PATH = "glfw"     
 local GLFW_INC_PATH = path.join(GLFW_PATH, "include")
 
-local GLFW_LIB_PATH = {
-  DEBUG   = path.join(GLFW_PATH, "build", "src", DEBUG),   
-  RELEASE = path.join(GLFW_PATH, "build", "src", RELEASE)  
-}
+local GLFW_LIB_PATH = path.join(GLFW_PATH, "build", "src", RELEASE)  
 DeclareExternalLib("GLFW", GLFW_INC_PATH, GLFW_LIB_PATH, "glfw3.lib")
 
   -- VISUAL STUDIO REDISTRIBUABLE
@@ -108,18 +105,9 @@ DeclareExternalLib("IRRKLANG", IRRKLANG_INC_PATH, IRRKLANG_LIB_PATH, IRRKLANG_LI
   -- FBX 
 local FBX_PATH = path.join("FBX_2020.0.1") 
 local FBX_INC_PATH = path.join(FBX_PATH, "include")        
-local FBX_X64_PATH = path.join(FBX_PATH, "lib", "vs2017", "x64")
-
-local FBX_LIB_PATH = {
-    DEBUG   = path.join(FBX_X64_PATH, "debug"),   
-    RELEASE = path.join(FBX_X64_PATH, "release")
-}
+local FBX_LIB_PATH = path.join(FBX_PATH, "lib", "vs2017", "x64", "release")
 local FBX_LIBNAME = "libfbxsdk.lib"
-local FBX_TOCOPY  = {   -- @ because this copies the file directly in
-    DEBUG   = "@" .. path.join(FBX_LIB_PATH[DEBUG], "libfbxsdk.dll"),   
-    RELEASE = "@" .. path.join(FBX_LIB_PATH[RELEASE], "libfbxsdk.dll")
-}
-
+local FBX_TOCOPY  = "@" .. path.join(FBX_LIB_PATH, "libfbxsdk.dll")   -- @ because this copies the file directly in    
 DeclareExternalLib("FBX", FBX_INC_PATH, FBX_LIB_PATH, FBX_LIBNAME, FBX_TOCOPY)
 
   -- ZLIB    
@@ -129,24 +117,12 @@ local ZLIB_LIB_PATH = path.join(ZLIB_PATH, "contrib",   "vstudio", "vc14", "x64"
 DeclareExternalLib("ZLIB", ZLIB_INC_PATH, ZLIB_LIB_PATH, "zlibstat.lib", nil)     
     
   -- ASSIMP
-local ASSIMP_PATH      = "assimp"
-local ASSIMP_INC_PATH  = path.join(ASSIMP_PATH, "include")
-local ASSIMP_LIB_PATH  = {
-  DEBUG   = path.join(ASSIMP_PATH, "build", "lib", "Debug"),     
-  RELEASE = path.join(ASSIMP_PATH, "build", "lib", "Release")            
-}
-local ASSIMP_LIBNAME  = {
-  DEBUG   = "assimp-vc142-mtd.lib",     
-  RELEASE = "assimp-vc142-mt.lib"            
-}
-local ASSIMP_BIN_PATH  = {
-  DEBUG   = path.join(ASSIMP_PATH, "build", "bin", "Debug"),     
-  RELEASE = path.join(ASSIMP_PATH, "build", "bin", "Release")            
-}
-local ASSIMP_TOCOPY  = { -- @ because this copies the file directly in
-	DEBUG   = "@" .. path.join(ASSIMP_BIN_PATH[DEBUG],   "assimp-vc142-mtd.dll"),     
-  RELEASE = "@" .. path.join(ASSIMP_BIN_PATH[RELEASE], "assimp-vc142-mt.dll")            
-} 
+local ASSIMP_PATH     = "assimp"
+local ASSIMP_INC_PATH = path.join(ASSIMP_PATH, "include")
+local ASSIMP_LIB_PATH = path.join(ASSIMP_PATH, "build", "lib", "Release")
+local ASSIMP_LIBNAME  = "assimp-vc142-mt.lib"
+local ASSIMP_BIN_PATH = path.join(ASSIMP_PATH, "build", "bin", "Release") 
+local ASSIMP_TOCOPY  = "@" .. path.join(ASSIMP_BIN_PATH, "assimp-vc142-mt.dll") -- @ because this copies the file directly in
 DeclareExternalLib("ASSIMP", ASSIMP_INC_PATH, ASSIMP_LIB_PATH, ASSIMP_LIBNAME, ASSIMP_TOCOPY)
 
 
@@ -156,7 +132,7 @@ local FREEIMAGE_DIST_PATH  = path.join(FREEIMAGE_PATH, "x64")
 local FREEIMAGE_INC_PATH = FREEIMAGE_DIST_PATH
 local FREEIMAGE_LIB_PATH = FREEIMAGE_DIST_PATH
 local FREEIMAGE_LIBNAME = "FreeImage.lib"
-local FREEIMAGE_TOCOPY  = "@" .. path.join(FREEIMAGE_LIB_PATH[x64], "FreeImage.dll")  -- @ because this copies the file directly in
+local FREEIMAGE_TOCOPY  = "@" .. path.join(FREEIMAGE_LIB_PATH, "FreeImage.dll")  -- @ because this copies the file directly in
 DeclareExternalLib("FREEIMAGE", FREEIMAGE_INC_PATH, FREEIMAGE_LIB_PATH, FREEIMAGE_LIBNAME, FREEIMAGE_TOCOPY)  
 
   -- LIBXML2
@@ -164,10 +140,9 @@ local LIBTINYXML2_PATH = "tinyxml2"
 local LIBTINYXML2_INC_PATH = LIBTINYXML2_PATH
 local LIBTINYXML2_LIB_PATH = path.join(LIBTINYXML2_PATH, "build")
 LIBTINYXML2_LIB_PATH = {
-
 	DEBUG = path.join(LIBTINYXML2_LIB_PATH, "Debug"),
 	RELEASE = path.join(LIBTINYXML2_LIB_PATH, "Release")
-} 
+}
 DeclareExternalLib("TINYXML2", LIBTINYXML2_PATH, LIBTINYXML2_LIB_PATH, "tinyxml2.lib", nil)
 
 

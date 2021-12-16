@@ -68,22 +68,26 @@ namespace chaos
 
 	protected:
 
-		RESOURCE_TYPE * LoadObjectHelper(char const * name, nlohmann::json const & json, std::function<RESOURCE_TYPE *(nlohmann::json const &)> LoadFunc) const
+		RESOURCE_TYPE * LoadObjectHelper(char const * name, nlohmann::json const & json, std::function<RESOURCE_TYPE *(nlohmann::json const &)> load_func, std::function<void(RESOURCE_TYPE*)> insert_func) const
 		{
 			// check for name
 			if (!CheckResourceName(nullptr, name, &json))
 				return nullptr;
 			// load the object
-			RESOURCE_TYPE * result = LoadFunc(json);
+			RESOURCE_TYPE * result = load_func(json);
 			if (result != nullptr)
 			{
 				ApplyNameToLoadedResource(result);
 				ApplyPathToLoadedResource(result);
+
+				if (manager != nullptr)
+					if (!StringTools::IsEmpty(result->GetName())) 
+						insert_func(result);
 			}
 			return result;
 		}
 
-		RESOURCE_TYPE * LoadObjectHelper(FilePathParam const & path, char const * name, std::function<RESOURCE_TYPE *(FilePathParam const&)> LoadFunc) const
+		RESOURCE_TYPE * LoadObjectHelper(FilePathParam const & path, char const * name, std::function<RESOURCE_TYPE *(FilePathParam const&)> load_func, std::function<void(RESOURCE_TYPE*)> insert_func) const
 		{
 			// check for path
 			if (!CheckResourcePath(path))
@@ -92,11 +96,15 @@ namespace chaos
 			if (!CheckResourceName(&path.GetResolvedPath(), name, nullptr))
 				return nullptr;
 			// load the object
-			RESOURCE_TYPE * result = LoadFunc(path);
+			RESOURCE_TYPE * result = load_func(path);
 			if (result != nullptr)
 			{
 				ApplyNameToLoadedResource(result);
 				ApplyPathToLoadedResource(result);
+
+				if (manager != nullptr)
+					if (!StringTools::IsEmpty(result->GetName())) 
+						insert_func(result);
 			}
 			return result;
 		}

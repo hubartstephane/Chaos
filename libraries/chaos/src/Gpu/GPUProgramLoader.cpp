@@ -2,35 +2,28 @@
 
 namespace chaos
 {
-
 	GPUProgram * GPUProgramLoader::LoadObject(char const * name, nlohmann::json const & json) const
 	{
-		GPUProgram* result = LoadObjectHelper(name, json, [this](nlohmann::json const & json)
+		return LoadObjectHelper(name, json, [this](nlohmann::json const & json)
 		{
 			return GenProgramObject(json);
-		});
-		if (result != nullptr)
+		},
+		[this](GPUProgram* program)
 		{
-			if (manager != nullptr)
-				if (!StringTools::IsEmpty(result->GetName())) // would like to insert the resource in manager, but name is empty
-					manager->programs.push_back(result);
-		}
-		return result;
+			manager->programs.push_back(program);
+		});
 	}
 
 	GPUProgram * GPUProgramLoader::LoadObject(FilePathParam const & path, char const * name) const
 	{
-		GPUProgram* result = LoadObjectHelper(path, name, [this](FilePathParam const& path)
+		return LoadObjectHelper(path, name, [this](FilePathParam const& path)
 		{
 			return GenProgramObject(path);
-		});
-		if (result != nullptr)
+		},
+		[this](GPUProgram * program)
 		{
-			if (manager != nullptr)
-				if (!StringTools::IsEmpty(result->GetName())) // would like to insert the resource in manager, but name is empty
-					manager->programs.push_back(result);
-		}
-		return result;
+			manager->programs.push_back(program);
+		});
 	}
 
 	bool GPUProgramLoader::IsPathAlreadyUsedInManager(FilePathParam const & path) const

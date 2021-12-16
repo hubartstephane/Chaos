@@ -169,6 +169,7 @@ namespace chaos
 		return true;
 	}
 
+	// shuxxx
 	bool GPUResourceManager::CreateExtraMaterialsForPrograms()
 	{
 		for (auto const& program : programs)

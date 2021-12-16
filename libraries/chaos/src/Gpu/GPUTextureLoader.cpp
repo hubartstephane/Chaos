@@ -6,32 +6,26 @@ namespace chaos
 
 	GPUTexture * GPUTextureLoader::LoadObject(char const * name, nlohmann::json const & json, GenTextureParameters const & parameters) const
 	{
-		GPUTexture* result = LoadObjectHelper(name, json, [this, &parameters](nlohmann::json const & json) 
+		return LoadObjectHelper(name, json, [this, &parameters](nlohmann::json const& json)
 		{
 			return GenTextureObject(json, parameters);
-		});
-		if (result != nullptr)
+		},
+		[this](GPUTexture* texture)
 		{
-			if (manager != nullptr)
-				if (!StringTools::IsEmpty(result->GetName())) // would like to insert the resource in manager, but name is empty
-					manager->textures.push_back(result);
-		}
-		return result;
+			manager->textures.push_back(texture);
+		});
 	}
 
 	GPUTexture * GPUTextureLoader::LoadObject(FilePathParam const & path, char const * name, GenTextureParameters const & parameters) const
 	{
-		GPUTexture* result = LoadObjectHelper(path, name, [this, &parameters](FilePathParam const& path) 
+		return LoadObjectHelper(path, name, [this, &parameters](FilePathParam const& path) 
 		{
 			return GenTextureObject(path, parameters);
-		});
-		if (result != nullptr)
+		},
+		[this](GPUTexture* texture)
 		{
-			if (manager != nullptr)
-				if (!StringTools::IsEmpty(result->GetName())) // would like to insert the resource in manager, but name is empty
-					manager->textures.push_back(result);
-		}
-		return result;
+			manager->textures.push_back(texture);
+		});
 	}
 
 	bool GPUTextureLoader::IsPathAlreadyUsedInManager(FilePathParam const & path) const

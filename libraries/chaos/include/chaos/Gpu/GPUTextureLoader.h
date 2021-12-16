@@ -14,7 +14,6 @@ namespace chaos
 	{
 	public:
 
-
 		/** constructor */
 		GPUTextureLoader(GPUResourceManager* in_resource_manager = nullptr) :
 			ResourceManagerLoader<GPUTexture, GPUResourceManager>(in_resource_manager) {}

@@ -8,7 +8,7 @@ namespace chaos
 		// path already known, nothing to do
 		if (!resolved_path.empty())
 			return true;
-		// path already exising in manager : failure
+		// path already existing in manager : failure
 		if (IsPathAlreadyUsedInManager(path))
 			return false;
 		// the currently loaded resource has now a path

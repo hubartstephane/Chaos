@@ -1279,17 +1279,14 @@ namespace chaos
 
 	SoundSource * SoundSourceLoader::LoadObject(FilePathParam const & path, char const * name) const
 	{
-		SoundSource* result = LoadObjectHelper(path, name, [this](FilePathParam const & path)
+		return LoadObjectHelper(path, name, [this](FilePathParam const & path)
 		{
 			return GenSourceObject(path);
-		});
-		if (result != nullptr)
+		},
+		[this](SoundSource* source)
 		{
-			if (manager != nullptr)
-				if (!StringTools::IsEmpty(result->GetName())) // would like to insert the resource in manager, but name is empty
-					manager->sources.push_back(result);
-		}
-		return result;
+			manager->sources.push_back(source);
+		});
 	}
 
 	SoundSource * SoundSourceLoader::GenSourceObject(FilePathParam const & path) const

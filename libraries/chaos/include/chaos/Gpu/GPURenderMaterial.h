@@ -49,7 +49,6 @@ namespace chaos
 			return false; // continue traversal
 		}
 	};
-
 	/**
 	* GPURenderMaterialInfoEntry : a 'pair' filter => material_info
 	*/
@@ -71,7 +70,6 @@ namespace chaos
 
 	class GPURenderMaterialInfo : public Object
 	{
-
 	public:
 
 		/** the program */
@@ -117,7 +115,7 @@ namespace chaos
 		GPUProgram const* UseMaterial(GPUProgramProviderBase const* in_uniform_provider, GPURenderParams const& render_params) const;
 
 		/** set the program */
-		bool SetProgram(GPUProgram* in_program);
+		bool SetProgram(GPUProgram* in_program, bool default_program_material = false);
 		/** set the parent material */
 		bool SetParentMaterial(GPURenderMaterial* in_parent);
 
@@ -133,7 +131,7 @@ namespace chaos
 		bool Traverse(GPURenderMaterialInfoTraverseFunc& traverse_func, char const* renderpass_name) const;
 
 		/** create a RenderMaterial from a simple program */
-		static GPURenderMaterial* GenRenderMaterialObject(GPUProgram* program);
+		static GPURenderMaterial* GenRenderMaterialObject(GPUProgram* program, bool default_program_material = false);
 
 		/** override */
 		virtual void Release() override;
@@ -145,9 +143,10 @@ namespace chaos
 		/** search some cycles throught parent_material (returning true is an error) */
 		static bool SearchRenderMaterialCycle(GPURenderMaterialInfo const* material_info, GPURenderMaterial const* searched_material);
 
-
 	protected:
 
+		/** a program whose current material is the default (use a weak pointer to avoid cyclic references) */
+		weak_ptr<GPUProgram> default_material_program;
 		/** all the information for the material */
 		shared_ptr<GPURenderMaterialInfo> material_info;
 	};

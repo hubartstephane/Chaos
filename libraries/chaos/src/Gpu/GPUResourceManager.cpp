@@ -110,12 +110,20 @@ namespace chaos
 
 	GPURenderMaterial * GPUResourceManager::FindRenderMaterial(ObjectRequest request)
 	{
-		return request.FindObject(render_materials);
+		if (GPURenderMaterial* result = request.FindObject(render_materials))
+			return result;
+		if (GPUProgram* program = request.FindObject(programs))
+			return program->GetDefaultMaterial();
+		return nullptr;
 	}
 
 	GPURenderMaterial const * GPUResourceManager::FindRenderMaterial(ObjectRequest request) const
 	{
-		return request.FindObject(render_materials);
+		if (GPURenderMaterial const* result = request.FindObject(render_materials))
+			return result;
+		if (GPUProgram const* program = request.FindObject(programs))
+			return program->GetDefaultMaterial();
+		return nullptr;
 	}
 
 	GPURenderMaterial * GPUResourceManager::FindRenderMaterialByPath(FilePathParam const & path)
@@ -164,30 +172,6 @@ namespace chaos
 			return false;
 		if (!LoadMaterialsFromConfiguration(json))
 			return false;
-		if (!CreateExtraMaterialsForPrograms())
-			return false;
-		return true;
-	}
-
-	// shuxxx
-	bool GPUResourceManager::CreateExtraMaterialsForPrograms()
-	{
-		for (auto const& program : programs)
-		{
-			if (program->GetProgramType() == GPUProgramType::RENDER)
-			{
-				if (FindRenderMaterial(program->GetName()) == nullptr)
-				{
-					if (GPURenderMaterial* render_material = new GPURenderMaterial)
-					{
-						render_material->material_info = new GPURenderMaterialInfo;
-						render_material->material_info->program = program;
-						render_material->SetName(program->GetName());
-						render_materials.push_back(render_material);
-					}
-				}
-			}
-		}
 		return true;
 	}
 

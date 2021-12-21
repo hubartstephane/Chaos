@@ -351,7 +351,11 @@ namespace chaos
 
 	bool GPURenderMaterialLoader::IsNameAlreadyUsedInManager(ObjectRequest request) const
 	{
-		return (manager != nullptr && manager->FindRenderMaterial(request) != nullptr);
+		// XXX: do not use:   manager->FindRenderMaterial(request)
+		// 
+		//      because it will search for materials owned by programs
+		//      (they are default materials, we do not want to prevent the creation of the good material)
+		return (manager != nullptr && request.FindObject(manager->render_materials) != nullptr);
 	}
 
 	GPURenderMaterial * GPURenderMaterialLoader::LoadObject(char const * name, nlohmann::json const & json) const

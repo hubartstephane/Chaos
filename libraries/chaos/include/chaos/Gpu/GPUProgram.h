@@ -17,6 +17,7 @@ namespace chaos
 	class GPUProgram : public GPUFileResource
 	{
 		friend class GPUResourceManager;
+		friend class GPUProgramGenerator;
 
 	public:
 
@@ -36,6 +37,9 @@ namespace chaos
 		GPUProgramData const& GetProgramData() const { return program_data; }
 		/** get the type of the program */
 		GPUProgramType GetProgramType() const { return type; }
+		
+		/** the default material */
+		GPURenderMaterial* GetDefaultMaterial() const;
 
 		/** override */
 		virtual void Release() override;
@@ -48,6 +52,8 @@ namespace chaos
 		GPUProgramType type = GPUProgramType::RENDER;
 		/** the program data */
 		GPUProgramData program_data;
+		/** the default material */
+		shared_ptr<GPURenderMaterial> default_material;
 	};
 
 #endif

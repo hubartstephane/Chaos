@@ -142,9 +142,6 @@ namespace chaos
 		/** load the materials from configuration */
 		virtual bool LoadMaterialsFromConfiguration(nlohmann::json const& json);
 
-		/** create an extra material for all programs that does not have a materials with the same name */
-		virtual bool CreateExtraMaterialsForPrograms();
-
 		/** merge all resources with incomming manager */
 		virtual bool RefreshTextures(GPUResourceManager* other_gpu_manager, GPUResourceManagerReloadData& reload_data);
 		/** merge all resources with incomming manager */

@@ -59,9 +59,12 @@ namespace chaos
 		material_info->renderpasses.clear();
 	}
 
-	bool GPURenderMaterial::SetProgram(GPUProgram * in_program)
+	bool GPURenderMaterial::SetProgram(GPUProgram * in_program, bool default_program_material)
 	{
-		material_info->program = in_program;
+		if (default_program_material)
+			default_material_program = in_program;
+		else
+			material_info->program = in_program;
 		return true;
 	}
 
@@ -114,7 +117,7 @@ namespace chaos
 		return effective_program;
 	}
 
-	GPURenderMaterial * GPURenderMaterial::GenRenderMaterialObject(GPUProgram * program)
+	GPURenderMaterial * GPURenderMaterial::GenRenderMaterialObject(GPUProgram * program, bool default_program_material)
 	{
 		if (program == nullptr)
 			return nullptr;
@@ -123,7 +126,7 @@ namespace chaos
 		if (result == nullptr)
 			return nullptr;
 		// initialize the program
-		result->SetProgram(program);
+		result->SetProgram(program, default_program_material);
 		return result;
 	}
 
@@ -154,57 +157,59 @@ namespace chaos
 		return false; // continue recursion
 	}
 
-	GPUProgram const * GPURenderMaterial::GetEffectiveProgram(GPURenderParams const & render_params) const
+	class GPURenderMaterialInfoGetProgramTraverseFunc : public GPURenderMaterialInfoTraverseFunc
 	{
-		class GPURenderMaterialInfoGetProgramTraverseFunc : public GPURenderMaterialInfoTraverseFunc
+	public:
+
+		virtual bool OnRenderMaterial(GPURenderMaterial const * render_material, GPURenderMaterialInfo const * material_info, char const * renderpass_name) override
 		{
-		public:
-
-			virtual bool OnRenderMaterial(GPURenderMaterial const * render_material, GPURenderMaterialInfo const * material_info, char const * renderpass_name) override
+			// use the traversal as an opportunity to know whether the object is visible (HIDDEN flag)
+			if (check_hidden_flag && material_info->hidden_specified)
 			{
-				// use the traversal as an opportunity to know whether the object is visible (HIDDEN flag)
-				if (check_hidden_flag && material_info->hidden_specified)
+				check_hidden_flag = false; // no need to search HIDDEN anymore
+				if (material_info->hidden)
 				{
-					check_hidden_flag = false; // no need to search HIDDEN anymore
-					if (material_info->hidden)
-					{
-						program = nullptr; // considere as if there is no program => invisible
-						return true;       // stop traversal
-					}
-					if (program != nullptr && !check_filter) // we already know the program => can stop traversal
-						return true;
+					program = nullptr; // considere as if there is no program => invisible
+					return true;       // stop traversal
 				}
-
-				// use the traversal as an opportunity to know whether the object is visible (FILTER data)
-				if (check_filter && material_info->filter_specified)
-				{
-					check_filter = false; // no need to search FILTER anymore
-					if (!material_info->filter.IsNameEnabled(renderpass_name))
-					{
-						program = nullptr; // considere as if there is no program => invisible
-						return true;       // stop traversal
-					}
-					if (program != nullptr && !check_hidden_flag) // we already know the program => can stop traversal
-						return true;
-				}
-				// search program
-				if (program == nullptr && material_info->program != nullptr)
-				{
-					program = material_info->program.get();
-					if (!check_hidden_flag && !check_filter)
-						return true; // Already know all what we need => stop traversal
-				}
-				return false; // continue traversal
+				if (program != nullptr && !check_filter) // we already know the program => can stop traversal
+					return true;
 			}
 
-			/** result program */
-			shared_ptr<GPUProgram> program;
-			/** search whether the hidden state is known */
-			bool check_hidden_flag = true;
-			/** search whether we encoutered a filter */
-			bool check_filter = true;
-		};
+			// use the traversal as an opportunity to know whether the object is visible (FILTER data)
+			if (check_filter && material_info->filter_specified)
+			{
+				check_filter = false; // no need to search FILTER anymore
+				if (!material_info->filter.IsNameEnabled(renderpass_name))
+				{
+					program = nullptr; // considere as if there is no program => invisible
+					return true;       // stop traversal
+				}
+				if (program != nullptr && !check_hidden_flag) // we already know the program => can stop traversal
+					return true;
+			}
+			// search program
+			if (program == nullptr && material_info->program != nullptr)
+			{
+				program = material_info->program.get();
+				if (!check_hidden_flag && !check_filter)
+					return true; // Already know all what we need => stop traversal
+			}
+			return false; // continue traversal
+		}
 
+		/** result program */
+		shared_ptr<GPUProgram> program;
+		/** search whether the hidden state is known */
+		bool check_hidden_flag = true;
+		/** search whether we encoutered a filter */
+		bool check_filter = true;
+	};
+
+	GPUProgram const * GPURenderMaterial::GetEffectiveProgram(GPURenderParams const & render_params) const
+	{
+		if (default_material_program != nullptr)
+			return default_material_program.get();
 		GPURenderMaterialInfoGetProgramTraverseFunc traversal_func;
 		Traverse(traversal_func, render_params.renderpass_name.c_str()); // this may return TRUE or FALSE depending on the fact that HIDDEN may be specified or NOT
 		return traversal_func.program.get();

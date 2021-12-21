@@ -23,6 +23,7 @@ namespace chaos
 			glDeleteProgram(program_id);
 			program_id = 0;
 			program_data.Clear();
+			default_material = nullptr;
 		}
 	}
 
@@ -33,6 +34,11 @@ namespace chaos
 		glUseProgram(program_id);
 		program_data.BindUniforms(uniform_provider);
 		return true;
+	}
+
+	GPURenderMaterial* GPUProgram::GetDefaultMaterial() const
+	{ 
+		return default_material.get();
 	}
 
 }; // namespace chaos

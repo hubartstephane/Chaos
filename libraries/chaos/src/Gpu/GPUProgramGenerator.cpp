@@ -293,7 +293,12 @@ namespace chaos
 		if (GLuint program_id = GenProgram(definitions))
 		{
 			GPUProgramType program_type = (HasComputeShaderSources()) ? GPUProgramType::COMPUTE : GPUProgramType::RENDER;
-			return new GPUProgram(program_id, program_type);
+			if (GPUProgram* result = new GPUProgram(program_id, program_type))
+			{
+				if (program_type == GPUProgramType::RENDER)
+					result->default_material = GPURenderMaterial::GenRenderMaterialObject(result, true);
+				return result;
+			}
 		}
 		return nullptr;
 	}

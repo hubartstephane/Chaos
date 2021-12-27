@@ -53,8 +53,6 @@ namespace chaos
 	//  This is not possible due to non-uniform scale (see how scale values are spread in column for first matrix, but in row for second one)
 	// 
 
-	// glCopyImageSubData 
-
 	template<typename T, int dimension>
 	class SceneTransform
 	{

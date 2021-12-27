@@ -597,9 +597,6 @@ namespace chaos
 		for (TiledMap::TileLayerChunk const& chunk : tile_layer->tile_chunks)
 		{
 			size_t count = chunk.tile_indices.size();
-			if (count == 0)
-				continue;
-
 			for (size_t i = 0; i < count; ++i)
 			{
 				int gid = chunk.tile_indices[i].gid;

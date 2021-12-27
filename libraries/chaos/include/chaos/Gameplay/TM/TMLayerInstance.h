@@ -254,9 +254,6 @@ namespace chaos
 		/** the current offset */
 		glm::vec2 offset = glm::vec2(0.0f, 0.0f);
 
-		/** whether the layer is to be rendered as 8 bit mode (XXX: this only affects particles the initial particles created) */
-		bool eight_bits_mode = false;
-
 		/** the parent layer */
 		weak_ptr<TMLayerInstance> parent_layer;
 		/** the child layers */

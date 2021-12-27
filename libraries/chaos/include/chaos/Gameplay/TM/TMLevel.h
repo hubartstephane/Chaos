@@ -53,9 +53,6 @@ namespace chaos
 
 	protected:
 
-		/** called to flush some particles into a layer allocation */
-		virtual bool FlushParticlesIntoAllocation(TMLayerInstance* layer_instance, ParticleAllocationBase* allocation, TMParticle const* particles, size_t particle_count);
-
 		/** create a typed object based of a 'classname' property */
 		virtual TMObjectFactory DoGetExplicitObjectFactory(TMLayerInstance* in_layer_instance, TiledMap::TypedObject const* in_typed_object);
 		/** create a typed object specializable method */

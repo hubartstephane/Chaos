@@ -4,6 +4,25 @@ namespace chaos
 {
 	namespace TiledMap
 	{
+
+		// ==========================================
+		// ComputeNeighbourFlagProcessor
+		// ==========================================
+
+		void EightBitsModeTileFlagProcessor::Process(TileLayer* in_layer)
+		{
+			for (TileLayerChunk& chunk : in_layer->tile_chunks)
+			{
+				// iterate over all tiles in current chunk
+				int count = int(chunk.tile_indices.size());
+				for (int i = 0; i < count; ++i)
+				{
+					Tile& tile = chunk.tile_indices[i];
+					tile.flags |= ParticleFlags::EIGHT_BITS_MODE;
+				}
+			}
+		}
+
 		// ==========================================
 		// ComputeNeighbourFlagProcessor
 		// ==========================================

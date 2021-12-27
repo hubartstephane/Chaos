@@ -168,31 +168,4 @@ namespace chaos
 		return true; 
 	}
 
-	bool TMLevel::FlushParticlesIntoAllocation(TMLayerInstance* layer_instance, ParticleAllocationBase * allocation, TMParticle const * particles, size_t particle_count)
-	{
-		ParticleAccessor<TMParticle> accessor = allocation->AddParticles(particle_count);
-
-		if (!accessor.IsValid())
-		{
-			Log::Error("TMLevel::FlushParticlesIntoAllocation => invalid accessor");
-			return false;
-		}
-
-		if (!layer_instance->eight_bits_mode)
-		{
-			for (size_t i = 0; i < particle_count; ++i)
-				accessor[i] = particles[i];
-		}
-		else
-		{
-			for (size_t i = 0; i < particle_count; ++i)
-			{
-				TMParticle& dst = accessor[i];
-				dst = particles[i];
-				dst.flags |= ParticleFlags::EIGHT_BITS_MODE;
-			}
-		}
-		return true;
-	}
-
 }; // namespace chaos

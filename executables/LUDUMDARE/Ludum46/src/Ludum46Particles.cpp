@@ -336,11 +336,12 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 
 
 
-
+#if 0
 		if (displacement_component->displacement_state == chaos::PlatformerDisplacementState::GROUNDED)
 			particle.color = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 		else
 			particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+#endif
 
 
 

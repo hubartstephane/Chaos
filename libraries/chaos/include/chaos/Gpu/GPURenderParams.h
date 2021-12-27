@@ -32,11 +32,13 @@ namespace chaos
 
 		// shu48
 
+#if 0
 		glm::mat4 projection_matrix;
 
 		glm::mat4 local_to_world;
 
 		glm::mat4 world_to_local;
+#endif
 
 
 

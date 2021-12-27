@@ -38,7 +38,18 @@ namespace chaos
 
 	bool TMParticlePopulator::FlushCachedParticlesToAllocation()
 	{
-		return level->FlushParticlesIntoAllocation(layer_instance, allocation, particles, particle_count);
+		ParticleAccessor<TMParticle> accessor = allocation->AddParticles(particle_count);
+
+		if (!accessor.IsValid())
+		{
+			Log::Error("TMParticlePopulator::FlushCachedParticlesToAllocation => invalid accessor");
+			return false;
+		}
+
+		for (size_t i = 0; i < particle_count; ++i)
+			accessor[i] = particles[i];
+
+		return true;
 	}
 
 	bool TMParticlePopulator::FlushParticles()

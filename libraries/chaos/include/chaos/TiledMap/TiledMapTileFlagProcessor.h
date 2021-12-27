@@ -20,12 +20,26 @@ namespace chaos
 		};
 
 		// ==========================================
+		// EightBitsModeTileFlagProcessor
+		// ==========================================
+
+		class EightBitsModeTileFlagProcessor : public TileFlagProcessor
+		{
+			CHAOS_DECLARE_OBJECT_CLASS(EightBitsModeTileFlagProcessor, TileFlagProcessor)("EightBitsMode");
+
+		public:
+
+			/** the method to be apply on the layer */
+			virtual void Process(TileLayer* in_layer);
+		};
+
+		// ==========================================
 		// ComputeNeighbourFlagProcessor
 		// ==========================================
 
 		class ComputeNeighbourFlagProcessor : public TileFlagProcessor
 		{
-			CHAOS_DECLARE_OBJECT_CLASS(ComputeNeighbourFlagProcessor, TileFlagProcessor);
+			CHAOS_DECLARE_OBJECT_CLASS(ComputeNeighbourFlagProcessor, TileFlagProcessor)("ComputeNeighbour");
 
 		public:
 

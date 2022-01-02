@@ -325,7 +325,7 @@ protected:
 
 
 		chaos::sphere2 s(glm::vec2(0.0f, 0.0f), 1.0f);
-		mesh = chaos::GPUCircleMeshGenerator(s, glm::mat4x4(), 30).GenerateMesh();
+		mesh = chaos::GPUCircleMeshGenerator(s, glm::mat4x4(1.0f), 30).GenerateMesh();
 		if (mesh == nullptr)
 			return false;
 

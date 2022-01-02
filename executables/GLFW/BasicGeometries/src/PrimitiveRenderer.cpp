@@ -30,8 +30,8 @@ bool PrimitiveRenderer::Initialize()
 	chaos::sphere3   s = chaos::sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 
 	chaos::GPUMultiMeshGenerator generators;
-	generators.AddGenerator(new chaos::GPUSphereMeshGenerator(s, glm::mat4x4(), 30), mesh_sphere);
-	generators.AddGenerator(new chaos::GPUCircleMeshGenerator(c, glm::mat4x4(), 30), mesh_circle);
+	generators.AddGenerator(new chaos::GPUSphereMeshGenerator(s, glm::mat4x4(1.0f), 30), mesh_sphere);
+	generators.AddGenerator(new chaos::GPUCircleMeshGenerator(c, glm::mat4x4(1.0f), 30), mesh_circle);
 	generators.AddGenerator(new chaos::GPUQuadMeshGenerator(b2), mesh_quad);
 	generators.AddGenerator(new chaos::GPUCubeMeshGenerator(b3), mesh_box);
 	generators.AddGenerator(new chaos::GPUTriangleMeshGenerator(t), mesh_triangle);
@@ -45,8 +45,8 @@ bool PrimitiveRenderer::Initialize()
 chaos::shared_ptr<chaos::GPUProgram> PrimitiveRenderer::LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
 {
 	chaos::GPUProgramGenerator program_generator;
-	program_generator.AddShaderSourceFile(ShaderType::FRAGMENT, resources_path / ps_filename);
-	program_generator.AddShaderSourceFile(ShaderType::VERTEX, resources_path / vs_filename);
+	program_generator.AddShaderSourceFile(chaos::ShaderType::FRAGMENT, resources_path / ps_filename);
+	program_generator.AddShaderSourceFile(chaos::ShaderType::VERTEX, resources_path / vs_filename);
 
 	return program_generator.GenProgramObject();
 }

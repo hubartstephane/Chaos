@@ -194,9 +194,9 @@ namespace chaos
 		/** index in buttons of RIGHT for XBOX like pad (the one behind the RIGHT TRIGGER) */
 		RIGHT_BUMPER = GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER,
 		/** index in buttons of SELECT for XBOX like pad */
-		SELECT = GLFW_GAMEPAD_BUTTON_BACK,
+		SPECIAL_LEFT = GLFW_GAMEPAD_BUTTON_BACK,
 		/** index in buttons of START for XBOX like pad */
-		START = GLFW_GAMEPAD_BUTTON_START,
+		SPECIAL_RIGHT = GLFW_GAMEPAD_BUTTON_START,
 		/** index in buttons of SELECT for XBOX like pad */
 		GUIDE = GLFW_GAMEPAD_BUTTON_GUIDE,
 		/** index in buttons of LEFT-STICK-CLICKED for XBOX like pad */

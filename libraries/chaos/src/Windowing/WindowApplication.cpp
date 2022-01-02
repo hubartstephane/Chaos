@@ -752,6 +752,21 @@ namespace chaos
 		return nullptr;
 	}
 
+	size_t WindowApplication::GetWindowCount() const
+	{
+		return windows.size();
+	}
+
+	AutoCastable<Window> WindowApplication::GetWindow(size_t index)
+	{
+		return windows[index].get();
+	}
+
+	AutoConstCastable<Window> WindowApplication::GetWindow(size_t index) const
+	{
+		return windows[index].get();
+	}
+
 
 
 }; // namespace chaos

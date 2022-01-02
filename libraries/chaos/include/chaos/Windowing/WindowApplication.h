@@ -196,6 +196,13 @@ namespace chaos
 		/** called after window creation */
 		virtual void OnWindowCreated(Window* window);
 
+		/** gets the number of windows */
+		size_t GetWindowCount() const;
+		/** get the window per index */
+		AutoCastable<Window> GetWindow(size_t index);
+		/** get the window per index */
+		AutoConstCastable<Window> GetWindow(size_t index) const;
+
 	protected:
 
 		/** the main clock of the manager */

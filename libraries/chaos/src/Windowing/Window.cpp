@@ -804,6 +804,4 @@ namespace chaos
 		return true;
 	}
 
-
-
 }; // namespace chaos

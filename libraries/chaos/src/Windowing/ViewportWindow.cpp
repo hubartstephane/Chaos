@@ -18,6 +18,16 @@ namespace chaos
 		return viewports[index].get();
 	}
 
+	AutoCastable<Viewport> ViewportWindow::FindViewport(ObjectRequest request)
+	{
+		return request.FindObject(viewports);
+	}
+
+	AutoConstCastable<Viewport> ViewportWindow::FindViewport(ObjectRequest request) const
+	{
+		return request.FindObject(viewports);
+	}
+
 	ViewportLayout* ViewportWindow::GetViewportLayout()
 	{
 		return viewport_layout.get();

@@ -16,6 +16,10 @@ namespace chaos
 		AutoCastable<Viewport> GetViewport(size_t index);
 		/** gets a viewport by its index */
 		AutoConstCastable<Viewport> GetViewport(size_t index) const;
+		/** find viewport by name */
+		AutoCastable<Viewport> FindViewport(ObjectRequest request);
+		/** find viewport by name */
+		AutoConstCastable<Viewport> FindViewport(ObjectRequest request) const;
 
 		/** gets the viewport layout */
 		ViewportLayout* GetViewportLayout();

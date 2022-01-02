@@ -53,6 +53,17 @@ namespace chaos
 		/** constructor */
 		WindowApplication(SubClassOf<Window> in_main_window_class, WindowParams const& in_window_params = {}, WindowHints const& in_window_hints = {});
 
+		/** gets the number of windows */
+		size_t GetWindowCount() const;
+		/** get the window per index */
+		AutoCastable<Window> GetWindow(size_t index);
+		/** get the window per index */
+		AutoConstCastable<Window> GetWindow(size_t index) const;
+		/** get the window per name */
+		AutoCastable<Window> FindWindow(ObjectRequest request);
+		/** get the window per name */
+		AutoConstCastable<Window> FindWindow(ObjectRequest request) const;
+
 		/** getter of the main clock */
 		static Clock* GetMainClockInstance();
 		/** getter of the main clock */
@@ -85,16 +96,18 @@ namespace chaos
 
 		/** getter on the texture atlas */
 		BitmapAtlas::TextureArrayAtlas* GetTextureAtlas() { return texture_atlas.get(); }
+		/** getter on the texture atlas */
 		BitmapAtlas::TextureArrayAtlas const* GetTextureAtlas() const { return texture_atlas.get(); }
 
 		/** getter on the text generator */
 		ParticleTextGenerator::Generator* GetTextGenerator() { return particle_text_generator.get(); }
+		/** getter on the text generator */
 		ParticleTextGenerator::Generator const* GetTextGenerator() const { return particle_text_generator.get(); }
 
 		/** get the button map */
 		std::map<GamepadButton, std::pair<std::string, std::string>>& GetGamepadButtonMap() { return gamepad_button_map; }
+		/** get the button map */
 		std::map<GamepadButton, std::pair<std::string, std::string>> const& GetGamepadButtonMap() const { return gamepad_button_map; }
-
 
 		/** used to force for one frame the duration of tick function to 0 : usefull for function that are long and would block the game for some time */
 		void FreezeNextFrameTickDuration();
@@ -195,13 +208,6 @@ namespace chaos
 
 		/** called after window creation */
 		virtual void OnWindowCreated(Window* window);
-
-		/** gets the number of windows */
-		size_t GetWindowCount() const;
-		/** get the window per index */
-		AutoCastable<Window> GetWindow(size_t index);
-		/** get the window per index */
-		AutoConstCastable<Window> GetWindow(size_t index) const;
 
 	protected:
 

@@ -767,6 +767,14 @@ namespace chaos
 		return windows[index].get();
 	}
 
+	AutoCastable<Window> WindowApplication::FindWindow(ObjectRequest request)
+	{
+		return request.FindObject(windows);
+	}
 
+	AutoConstCastable<Window> WindowApplication::FindWindow(ObjectRequest request) const
+	{
+		return request.FindObject(windows);
+	}
 
 }; // namespace chaos

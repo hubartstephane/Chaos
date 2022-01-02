@@ -83,7 +83,7 @@ namespace chaos
 	* Window : a binding class between chaos and GLFW to handle window (beware the prefix "My")
 	*/
 
-	class Window : public Object, public InputEventReceiver
+	class Window : public Object, public InputEventReceiver, public NamedObject
 	{
 		friend class WindowApplication;
 

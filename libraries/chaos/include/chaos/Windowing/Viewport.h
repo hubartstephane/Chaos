@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class Viewport : public Object
+	class Viewport : public Object, public NamedObject
 	{
 	public:
 

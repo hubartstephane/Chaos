@@ -489,7 +489,7 @@ namespace chaos
 
 			if (optimize_vertices.bufsize > 0 && index_buffer.size())
 			{
-				GPUSimpleMesh * m = DoCreateMesh(vertex_declaration, optimize_vertices, index_buffer);
+				GPUDynamicMesh * m = DoCreateMesh(vertex_declaration, optimize_vertices, index_buffer);
 				if (m != nullptr)
 				{
 					output->meshes.push_back(m);
@@ -500,9 +500,9 @@ namespace chaos
 			return true;
 		}
 
-		GPUSimpleMesh * MyFbxImporter::DoCreateMesh(GPUVertexDeclaration const & vertex_declaration, Buffer<char> vertices, std::vector<int> const & index_buffer)
+		GPUDynamicMesh * MyFbxImporter::DoCreateMesh(GPUVertexDeclaration const & vertex_declaration, Buffer<char> vertices, std::vector<int> const & index_buffer)
 		{
-			GPUSimpleMesh * result = new GPUSimpleMesh;
+			GPUDynamicMesh * result = new GPUDynamicMesh;
 			if (result != nullptr)
 			{
 				GLuint va = 0;

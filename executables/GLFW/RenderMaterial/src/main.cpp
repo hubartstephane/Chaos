@@ -218,7 +218,7 @@ protected:
 
 	std::vector<std::string> renderpass_names = {"", "renderpass1", "renderpass2", "renderpass3", "renderpass4"};
 
-	chaos::shared_ptr<chaos::GPUSimpleMesh> mesh;
+	chaos::shared_ptr<chaos::GPUDynamicMesh> mesh;
 
 	chaos::FPSViewInputController fps_view_controller;
 

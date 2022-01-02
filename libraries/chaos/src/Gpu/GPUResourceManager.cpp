@@ -445,7 +445,7 @@ namespace chaos
 		return quad_index_buffer.get();
 	}
 
-	GPUSimpleMesh* GPUResourceManager::GetQuadMesh()
+	GPUDynamicMesh* GPUResourceManager::GetQuadMesh()
 	{
 		return quad_mesh.get();
 	}

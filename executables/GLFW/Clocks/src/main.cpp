@@ -86,7 +86,7 @@ protected:
 		uniform_provider.AddVariable("color", prim_ctx.color);
 	}
 
-	void DrawPrimitiveImpl(RenderingContext const & ctx, chaos::GPUSimpleMesh * mesh, chaos::GPUProgram * program, glm::vec4 const & color, glm::mat4 const & local_to_world)
+	void DrawPrimitiveImpl(RenderingContext const & ctx, chaos::GPUDynamicMesh * mesh, chaos::GPUProgram * program, glm::vec4 const & color, glm::mat4 const & local_to_world)
 	{
 		glm::vec4 final_color = color;
 
@@ -354,7 +354,7 @@ protected:
 protected:
 
 	// rendering for the box  
-	chaos::shared_ptr<chaos::GPUSimpleMesh> mesh_box;
+	chaos::shared_ptr<chaos::GPUDynamicMesh> mesh_box;
 	chaos::shared_ptr<chaos::GPUProgram>  program_box;
 
 	chaos::shared_ptr<chaos::Clock> clock1;

@@ -1,23 +1,36 @@
 namespace chaos
 {
+
+
+
+
+
+
+#if 0
+
+
+
+
+
+
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class GPUSimpleMesh;
+	class GPUDynamicMesh;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* GPUSimpleMesh : how it says
+	* GPUDynamicMesh : how it says
 	*/
 
-	class GPUSimpleMesh : public GPUResource
+	class GPUDynamicMesh : public GPUResource
 	{
 	public:
 
 		/** constructor */
-		GPUSimpleMesh() = default;
+		GPUDynamicMesh() = default;
 		/** destructor */
-		~GPUSimpleMesh();
+		~GPUDynamicMesh();
 
 		/** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
 		void Render(GPURenderer* renderer, GPUProgram const* program, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
@@ -58,5 +71,15 @@ namespace chaos
 	};
 
 #endif
+
+
+
+
+#endif
+
+
+
+
+
 
 }; // namespace chaos

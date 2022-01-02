@@ -29,6 +29,7 @@ bool PrimitiveRenderer::Initialize()
 	chaos::sphere2   c = chaos::sphere2(glm::vec2(0.0f, 0.0f), 1.0f);
 	chaos::sphere3   s = chaos::sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 
+#if 0
 	chaos::GPUMultiMeshGenerator generators;
 	generators.AddGenerator(new chaos::GPUSphereMeshGenerator(s, glm::mat4x4(1.0f), 30), mesh_sphere);
 	generators.AddGenerator(new chaos::GPUCircleMeshGenerator(c, glm::mat4x4(1.0f), 30), mesh_circle);
@@ -38,6 +39,14 @@ bool PrimitiveRenderer::Initialize()
 
 	if (!generators.GenerateMeshes())
 		return false;
+#endif
+
+	mesh_sphere = (new chaos::GPUSphereMeshGenerator(s, glm::mat4x4(1.0f), 30))->GenerateMesh();
+
+	mesh_circle = (new chaos::GPUCircleMeshGenerator(c, glm::mat4x4(1.0f), 30))->GenerateMesh();
+	mesh_quad = (new chaos::GPUQuadMeshGenerator(b2))->GenerateMesh();
+	mesh_box = (new chaos::GPUCubeMeshGenerator(b3))->GenerateMesh();
+	mesh_triangle = (new chaos::GPUTriangleMeshGenerator(t))->GenerateMesh();
 
 	return true;
 }
@@ -78,7 +87,7 @@ void PrimitiveRenderer::PrepareObjectProgram(chaos::GPUProgramProvider & uniform
 }
 
 void PrimitiveRenderer::DrawPrimitiveImpl(
-	chaos::GPUSimpleMesh * mesh,
+	chaos::GPUDynamicMesh * mesh,
 	chaos::GPUProgram  * program,
 	glm::vec4 const & color,
 	glm::mat4 const & local_to_world,
@@ -101,7 +110,7 @@ void PrimitiveRenderer::DrawPrimitiveImpl(
 	PrepareObjectProgram(uniform_provider, prim_ctx, next_provider);
 
 	chaos::GPURenderParams render_params;
-	mesh->Render(renderer, program, &uniform_provider, render_params);
+	mesh->DisplayWithProgram(program, renderer, &uniform_provider, render_params);
 
 	if (is_translucent)
 		EndTranslucency();

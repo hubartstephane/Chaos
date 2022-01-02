@@ -25,7 +25,7 @@ namespace chaos
 	public:
 
 		/** the meshes that have been read */
-		std::vector<GPUSimpleMesh*> meshes;
+		std::vector<GPUDynamicMesh*> meshes;
 		/** the skeleton hierarchies that have been read */
 		std::vector<GPUSkeletonHierarchyDef*> skeleton_defs;
 	};
@@ -146,7 +146,7 @@ namespace chaos
 		virtual bool DoImportLightNode(FbxLight* light, FbxNode* node, int level);
 
 		/** internal method to create a mesh */
-		GPUSimpleMesh* DoCreateMesh(GPUVertexDeclaration const& vertex_declaration, Buffer<char> vertices, std::vector<int> const& index_buffer);
+		GPUDynamicMesh* DoCreateMesh(GPUVertexDeclaration const& vertex_declaration, Buffer<char> vertices, std::vector<int> const& index_buffer);
 
 		/** get assoication table, CTRL_POINT => BONE INFO */
 		static BoneTableType GetBoneData(FbxMesh* mesh);

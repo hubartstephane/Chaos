@@ -97,10 +97,10 @@ namespace chaos
 	}
 
 	// =====================================================================
-	// GPUSimpleMeshGenerator
+	// GPUMeshGenerator
 	// =====================================================================
 
-	bool GPUSimpleMeshGenerator::FillMeshData(GPUSimpleMesh* mesh) const
+	bool GPUMeshGenerator::FillMeshData(GPUDynamicMesh* mesh) const
 	{
 		assert(mesh != nullptr);
 
@@ -141,24 +141,30 @@ namespace chaos
 		char* ib_ptr = (index_buffer != nullptr) ? index_buffer->MapBuffer(0, 0, false, true) : nullptr;
 
 		// prepare the mesh
-		mesh->Release();
-		mesh->vertex_buffer = vertex_buffer;
-		mesh->index_buffer = index_buffer;
+		mesh->Clear(nullptr);
+
+		GPUDynamicMeshElement& Element = mesh->AddMeshElement();
+		Element.vertex_buffer = vertex_buffer;
+		Element.index_buffer = index_buffer;
 
 		// generate the indices and the vertices
 		MemoryBufferWriter vertices_writer(vb_ptr, vb_size);
 		MemoryBufferWriter indices_writer(ib_ptr, ib_size);
-		GenerateMeshData(mesh->primitives, vertices_writer, indices_writer);
+		GenerateMeshData(Element.primitives, vertices_writer, indices_writer);
 
 		assert(vertices_writer.GetRemainingBufferSize() == 0);
 		assert(indices_writer.GetRemainingBufferSize() == 0);
 
 		// get the vertex declaration
-		mesh->vertex_declaration = GenerateVertexDeclaration();
-		assert(mesh->vertex_declaration->GetVertexSize() == requirement.vertex_size);
+		Element.vertex_declaration = GenerateVertexDeclaration();
+		assert(Element.vertex_declaration->GetVertexSize() == requirement.vertex_size);
 
 		// initialize the vertex array and validate
-		mesh->SetVertexBufferOffset(0);
+		//mesh->SetVertexBufferOffset(0);
+
+
+
+
 
 		// unmap buffers
 		if (vertex_buffer != nullptr)
@@ -169,9 +175,9 @@ namespace chaos
 		return true;
 	}
 
-	shared_ptr<GPUSimpleMesh> GPUSimpleMeshGenerator::GenerateMesh() const
+	shared_ptr<GPUDynamicMesh> GPUMeshGenerator::GenerateMesh() const
 	{
-		shared_ptr<GPUSimpleMesh> mesh = new GPUSimpleMesh();
+		shared_ptr<GPUDynamicMesh> mesh = new GPUDynamicMesh();
 		if (mesh != nullptr)
 		{
 			if (!FillMeshData(mesh.get())) // automatic destruction in case of failure

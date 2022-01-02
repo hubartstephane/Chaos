@@ -20,7 +20,7 @@ namespace chaos
 		virtual ~GPUMultiMeshGenerator();
 
 		/** the insertion method */
-		void AddGenerator(GPUSimpleMeshGenerator* generator, shared_ptr<GPUSimpleMesh>& target_ptr);
+		void AddGenerator(GPUMeshGenerator* generator, shared_ptr<GPUDynamicMesh>& target_ptr);
 		/** clean all generators */
 		void Clean();
 		/** generate all meshes */
@@ -29,7 +29,7 @@ namespace chaos
 	protected:
 
 		/** the registered element to generate */
-		std::vector<std::pair<shared_ptr<GPUSimpleMeshGenerator>, shared_ptr<GPUSimpleMesh>*>> generators;
+		std::vector<std::pair<shared_ptr<GPUMeshGenerator>, shared_ptr<GPUDynamicMesh>*>> generators;
 	};
 
 #endif

@@ -279,7 +279,7 @@ protected:
 	chaos::SkyBoxImages skybox;
 			
 	chaos::shared_ptr<chaos::GPUProgram>  program;
-	chaos::shared_ptr<chaos::GPUSimpleMesh> mesh;
+	chaos::shared_ptr<chaos::GPUDynamicMesh> mesh;
 	chaos::shared_ptr<chaos::GPUTexture>    texture;
 
 	chaos::FPSViewInputController fps_view_controller;

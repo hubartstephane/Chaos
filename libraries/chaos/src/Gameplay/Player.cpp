@@ -65,8 +65,8 @@ namespace chaos
 		if (gamepad_state == nullptr)
 			return;
 		// maybe a game/pause resume
-		if ((gamepad_state->GetButtonStateChange(GamepadButton::SELECT) == ButtonStateChange::BECOME_PRESSED) ||
-			(gamepad_state->GetButtonStateChange(GamepadButton::START) == ButtonStateChange::BECOME_PRESSED))
+		if ((gamepad_state->GetButtonStateChange(GamepadButton::SPECIAL_LEFT) == ButtonStateChange::BECOME_PRESSED) ||
+			(gamepad_state->GetButtonStateChange(GamepadButton::SPECIAL_RIGHT) == ButtonStateChange::BECOME_PRESSED))
 		{
 			Game* game = GetGame();
 			if (game != nullptr)

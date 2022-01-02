@@ -3,4 +3,3 @@
 -- =============================================================================
 
 ProcessSubPremake("CommonFonts")
-ProcessSubPremake("CommonIcons")

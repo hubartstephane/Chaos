@@ -232,16 +232,14 @@ namespace chaos
 	bool WindowApplication::InitializeGamepadButtonMap()
 	{
 		// the map [button ID] => [bitmap name + text generator alias]
-#define CHAOS_ADD_BUTTONMAP(x, y) gamepad_button_map[GamepadButton::x] = {"xboxController" #y, #y}
-		CHAOS_ADD_BUTTONMAP(A, ButtonA);
-		CHAOS_ADD_BUTTONMAP(B, ButtonB);
-		CHAOS_ADD_BUTTONMAP(X, ButtonX);
-		CHAOS_ADD_BUTTONMAP(Y, ButtonY);
-		CHAOS_ADD_BUTTONMAP(LEFT_BUMPER, LeftShoulder);
-		CHAOS_ADD_BUTTONMAP(RIGHT_BUMPER, RightShoulder);
-		CHAOS_ADD_BUTTONMAP(LEFT_TRIGGER, LeftTrigger);
-		CHAOS_ADD_BUTTONMAP(RIGHT_TRIGGER, RightTrigger);
-#undef CHAOS_ADD_BUTTONMAP
+		gamepad_button_map[GamepadButton::A] = { "XboxOne_A", "ButtonA" };
+		gamepad_button_map[GamepadButton::B] = { "XboxOne_B", "ButtonB" };
+		gamepad_button_map[GamepadButton::X] = { "XboxOne_X", "ButtonX" };
+		gamepad_button_map[GamepadButton::Y] = { "XboxOne_Y", "ButtonY" };
+		gamepad_button_map[GamepadButton::LEFT_BUMPER] = { "XboxOne_LB", "LeftShoulder" };
+		gamepad_button_map[GamepadButton::RIGHT_BUMPER] = { "XboxOne_RB", "RightShoulder" };
+		gamepad_button_map[GamepadButton::LEFT_TRIGGER] = { "XboxOne_LT", "LeftTrigger" };
+		gamepad_button_map[GamepadButton::RIGHT_TRIGGER] = { "XboxOne_RT", "RightTrigger" };
 
 		return true;
 	}

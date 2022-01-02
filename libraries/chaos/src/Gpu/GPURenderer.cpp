@@ -191,7 +191,7 @@ namespace chaos
 		int instance_count = (instancing.instance_count > 1) ? instancing.instance_count : 1;
 		vertices_counter.Accumulate(primitive.count * instance_count);
 
-		drawcall_counter.Accumulate(1);		
+		drawcall_counter.Accumulate(1);
 	}
 
 	void GPURenderer::DrawFullscreenQuad(GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
@@ -201,10 +201,10 @@ namespace chaos
 		GPUResourceManager* gpu_resource_manager = WindowApplication::GetGPUResourceManagerInstance();
 		if (gpu_resource_manager != nullptr)
 		{
-			GPUSimpleMesh* quad_mesh = gpu_resource_manager->GetQuadMesh();
+			GPUDynamicMesh* quad_mesh = gpu_resource_manager->GetQuadMesh();
 			if (quad_mesh != nullptr)
-				quad_mesh->Render(this, material, uniform_provider, render_params);
-		}		
+				quad_mesh->DisplayWithMaterial(material, this, uniform_provider, render_params);
+		}
 	}
 
 }; // namespace chaos

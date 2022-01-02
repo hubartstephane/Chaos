@@ -12,11 +12,11 @@ namespace chaos
 		Clean();
 	}
 
-	void GPUMultiMeshGenerator::AddGenerator(GPUSimpleMeshGenerator * generator, shared_ptr<GPUSimpleMesh> & target_ptr)
+	void GPUMultiMeshGenerator::AddGenerator(GPUMeshGenerator * generator, shared_ptr<GPUDynamicMesh> & target_ptr)
 	{
 		assert(generator != nullptr);
 
-		shared_ptr<GPUSimpleMeshGenerator> generator_ptr = generator;
+		shared_ptr<GPUMeshGenerator> generator_ptr = generator;
 
 		generators.push_back(std::make_pair(generator_ptr, &target_ptr));
 	}
@@ -80,26 +80,28 @@ namespace chaos
 			size_t written_vertices_count = vertices_writer.GetWrittenCount();
 			size_t written_indices_count = indices_writer.GetWrittenCount();
 
-			shared_ptr<GPUSimpleMesh> mesh = (*it.second);
+			shared_ptr<GPUDynamicMesh> mesh = (*it.second);
 			if (mesh == nullptr)
 			{
-				mesh = new GPUSimpleMesh; // generate the mesh
+				mesh = new GPUDynamicMesh; // generate the mesh
 				if (mesh == nullptr)
 					continue;
 			}
 			else
-				mesh->Release(); // reuse existing mesh
+				mesh->Clear(nullptr); // reuse existing mesh
+
+			GPUDynamicMeshElement& element = mesh->AddMeshElement();
 
 			if (requirement.vertices_count > 0)
-				mesh->vertex_buffer = vertex_buffer;
+				element.vertex_buffer = vertex_buffer;
 			if (requirement.indices_count > 0)
-				mesh->index_buffer = index_buffer;
+				element.index_buffer = index_buffer;
 #if _DEBUG
 			size_t vc1 = vertices_writer.GetWrittenCount();
 			size_t ic1 = indices_writer.GetWrittenCount();
 #endif
-			it.first->GenerateMeshData(mesh->primitives, vertices_writer, indices_writer); // generate the buffers and primitives and declaration
-			mesh->vertex_declaration = it.first->GenerateVertexDeclaration();
+			it.first->GenerateMeshData(element.primitives, vertices_writer, indices_writer); // generate the buffers and primitives and declaration
+			element.vertex_declaration = it.first->GenerateVertexDeclaration();
 
 #if _DEBUG
 			size_t vc2 = vertices_writer.GetWrittenCount();
@@ -109,11 +111,11 @@ namespace chaos
 			assert(ic2 - ic1 == requirement.indices_count * sizeof(std::uint32_t));
 #endif
 
-			assert(requirement.vertex_size == mesh->vertex_declaration->GetVertexSize());
+			assert(requirement.vertex_size == element.vertex_declaration->GetVertexSize());
 
-			mesh->ShiftPrimitivesIndexAndVertexPosition(0, (int)(written_indices_count / sizeof(GLuint)));  // shift the position of vertices/indices for this mesh
+			//mesh->ShiftPrimitivesIndexAndVertexPosition(0, (int)(written_indices_count / sizeof(GLuint)));  // shift the position of vertices/indices for this mesh
 
-			mesh->SetVertexBufferOffset(written_vertices_count);
+			//mesh->SetVertexBufferOffset(written_vertices_count);
 
 			(*it.second) = mesh; // store the mesh as an output          
 		}

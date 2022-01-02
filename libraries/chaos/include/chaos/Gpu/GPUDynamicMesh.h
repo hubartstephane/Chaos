@@ -73,6 +73,11 @@ namespace chaos
             std::swap(src1.vertex_array_cache, src2.vertex_array_cache);
         }
 
+        /** override the material for the mesh and display */
+        int DisplayWithMaterial(GPURenderMaterial const* material, GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
+        /** override the program for the mesh and display */
+        int DisplayWithProgram(GPUProgram const* program, GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
+
     protected:
 
         /** override */

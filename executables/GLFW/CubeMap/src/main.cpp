@@ -260,7 +260,7 @@ protected:
 protected:
 
 	chaos::shared_ptr<chaos::GPUProgram>  program;
-	chaos::shared_ptr<chaos::GPUSimpleMesh> mesh;
+	chaos::shared_ptr<chaos::GPUDynamicMesh> mesh;
 	chaos::shared_ptr<chaos::GPUTexture>    texture;
 
 	chaos::shared_ptr<chaos::GPUQuery> query;

@@ -1,20 +1,24 @@
 #include <chaos/Chaos.h>
 
+
+#if 0
+
+
 namespace chaos
 {
-	GPUSimpleMesh::~GPUSimpleMesh()
+	GPUDynamicMesh::~GPUDynamicMesh()
 	{
 		Release();
 	}
 
-	void GPUSimpleMesh::ShiftPrimitivesIndexAndVertexPosition(int vb_offset, int ib_offset)
+	void GPUDynamicMesh::ShiftPrimitivesIndexAndVertexPosition(int vb_offset, int ib_offset)
 	{
 		if (vb_offset != 0 || ib_offset != 0)
 			for (auto & primitive : primitives)
 				primitive.ShiftIndexAndVertexPosition(vb_offset, ib_offset);
 	}
 
-	void GPUSimpleMesh::Release()
+	void GPUDynamicMesh::Release()
 	{
 		vertex_buffer = nullptr;
 		index_buffer = nullptr;
@@ -24,7 +28,7 @@ namespace chaos
 		primitives.clear();
 	}
 
-	void GPUSimpleMesh::Render(GPURenderer * renderer, GPUProgram const * program, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
+	void GPUDynamicMesh::Render(GPURenderer * renderer, GPUProgram const * program, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{
 		// early exit
 		if (program == nullptr)
@@ -37,7 +41,7 @@ namespace chaos
 		glUseProgram(0);
 	}
 
-	void GPUSimpleMesh::Render(GPURenderer * renderer, GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
+	void GPUDynamicMesh::Render(GPURenderer * renderer, GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{
 		// early exit
         if (vertex_declaration == nullptr)
@@ -54,7 +58,7 @@ namespace chaos
 		glUseProgram(0);
 	}
 
-	void GPUSimpleMesh::DoRender(GPURenderer * renderer, GPUProgram const * program, GPURenderParams const & render_params)
+	void GPUDynamicMesh::DoRender(GPURenderer * renderer, GPUProgram const * program, GPURenderParams const & render_params)
 	{
 		assert(program != nullptr);
         // create a vertex array cache if necessary
@@ -73,9 +77,12 @@ namespace chaos
 		glBindVertexArray(0);
 	}
 
-	void GPUSimpleMesh::SetVertexBufferOffset(GLintptr in_vertex_buffer_offset)
+	void GPUDynamicMesh::SetVertexBufferOffset(GLintptr in_vertex_buffer_offset)
 	{
 		vertex_buffer_offset = in_vertex_buffer_offset;
 	}
 
 }; // namespace chaos
+
+
+#endif

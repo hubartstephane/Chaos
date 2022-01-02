@@ -3,7 +3,7 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	class GPUMeshGenerationRequirement;
-	class GPUSimpleMeshGenerator;
+	class GPUMeshGenerator;
 
 	template<typename T>
 	class GPUPrimitiveMeshGenerator;
@@ -38,15 +38,15 @@ namespace chaos
 	};
 
 	/**
-	* GPUSimpleMeshGenerator : an object that is responsible for generating the mesh data
+	* GPUMeshGenerator : an object that is responsible for generating the mesh data
 	*/
 
-	class GPUSimpleMeshGenerator : public Object
+	class GPUMeshGenerator : public Object
 	{
 	public:
 
 		/** the destructor */
-		virtual ~GPUSimpleMeshGenerator() = default;
+		virtual ~GPUMeshGenerator() = default;
 
 		/** get requirement */
 		virtual GPUMeshGenerationRequirement GetRequirement() const = 0;
@@ -56,9 +56,9 @@ namespace chaos
 		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive>& primitives, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const = 0;
 
 		/** generation function */
-		shared_ptr<GPUSimpleMesh> GenerateMesh() const;
+		shared_ptr<GPUDynamicMesh> GenerateMesh() const;
 		/** population function */
-		bool FillMeshData(GPUSimpleMesh* mesh) const;
+		bool FillMeshData(GPUDynamicMesh* mesh) const;
 	};
 
 	/**
@@ -66,7 +66,7 @@ namespace chaos
 	*/
 
 	template<typename T>
-	class GPUPrimitiveMeshGenerator : public GPUSimpleMeshGenerator
+	class GPUPrimitiveMeshGenerator : public GPUMeshGenerator
 	{
 	public:
 

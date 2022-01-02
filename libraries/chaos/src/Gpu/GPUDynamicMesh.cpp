@@ -89,5 +89,21 @@ namespace chaos
         return result;
     }
 
+    int GPUDynamicMesh::DisplayWithMaterial(GPURenderMaterial const* material, GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+    {
+		DisableReferenceCount<GPUConstantMaterialProvider> material_provider(material);  // while on stack, use DisableReferenceCount<...>
+		GPURenderParams other_render_params = render_params;
+		other_render_params.material_provider = &material_provider;
+		return Display(renderer, uniform_provider, other_render_params);
+    }
+
+    int GPUDynamicMesh::DisplayWithProgram(GPUProgram const* program, GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+    {
+        return 0;
+        //GPURenderMaterial material;
+        //material.SetProgram(program);
+        //return DisplayWithMaterial(material, renderer, uniform_provider, render_params);
+    }
+
 }; // namespace chaos
 

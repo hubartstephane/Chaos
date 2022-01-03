@@ -34,13 +34,15 @@ namespace chaos
 		/** context window */
 		weak_ptr<Window> context_window; // VertexArrays are not shared between different contexts
 
-
 		/** the index of the program */
 		GLuint program_id = 0;
 		/** the vertex buffer */
 		GLuint vertex_buffer_id = 0;
 		/** the index buffer */
 		GLuint index_buffer_id = 0;
+		/** the offset for the vertex buffer */
+		GLintptr vertex_buffer_offset = 0;
+
 		/** the context */
 		GLFWwindow* context = nullptr;
 
@@ -58,7 +60,7 @@ namespace chaos
 	public:
 
 		/** find vertex array for the program */
-		GPUVertexArray const* FindVertexArray(GPURenderer* renderer, GPUProgram const* program, GPUBuffer const* vertex_buffer, GPUBuffer const* index_buffer) const;
+		GPUVertexArray const* FindVertexArray(GPURenderer* renderer, GPUProgram const* program, GPUBuffer const* vertex_buffer, GPUBuffer const* index_buffer, GLintptr offset) const;
 		/** create or return exisiting vertex array for a given program */
 		GPUVertexArray const* FindOrCreateVertexArray(GPURenderer* renderer, GPUProgram const* program, GPUBuffer const* vertex_buffer, GPUBuffer const* index_buffer, GPUVertexDeclaration const* declaration, GLintptr offset = 0);
 		/** reset the whole object */
@@ -70,7 +72,6 @@ namespace chaos
 		mutable double last_purge_time = 0;
 		/** the cache content */
 		mutable std::vector<GPUVertexArrayCacheEntry> entries;
-
 	};
 
 #endif

@@ -48,7 +48,7 @@ namespace chaos
         if (vertex_array_cache == nullptr)
             vertex_array_cache = new GPUVertexArrayCache;
         // display the elements
-        int result = 0;       
+        int result = 0;
         for (GPUMeshElement & element : elements)
         {
             // early skip
@@ -61,7 +61,7 @@ namespace chaos
             GPUProgram const* program = final_material->UseMaterial(uniform_provider, render_params);
             if (program == nullptr)
                 continue;
-            GPUVertexArray const* vertex_array = vertex_array_cache->FindOrCreateVertexArray(renderer, program, element.vertex_buffer.get(), element.index_buffer.get(), element.vertex_declaration.get(), 0);
+            GPUVertexArray const* vertex_array = vertex_array_cache->FindOrCreateVertexArray(renderer, program, element.vertex_buffer.get(), element.index_buffer.get(), element.vertex_declaration.get(), element.vertex_buffer_offset);
             if (vertex_array == nullptr)
                 continue;
 

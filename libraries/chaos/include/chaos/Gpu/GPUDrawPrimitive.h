@@ -14,10 +14,6 @@ namespace chaos
 
 	class GPUDrawPrimitive
 	{
-	public:
-
-		/** offset the index or vertex position */
-		void ShiftIndexAndVertexPosition(int vb_offset, int ib_offset);
 
 	public:
 

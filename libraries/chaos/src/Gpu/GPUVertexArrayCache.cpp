@@ -27,7 +27,7 @@ namespace chaos
 		// check index buffer
 		if (index_buffer == nullptr)
 		{
-			if (index_buffer_id != 0) // there was a vertex buffer. It has been deleted
+			if (index_buffer_id != 0) // there was an index buffer. It has been deleted
 				return false;
 		}
 		else if (index_buffer_id != index_buffer->GetResourceID()) // the index buffer OpenGL resource has changed. it is invalid
@@ -35,7 +35,7 @@ namespace chaos
 		// OK
 		return true;
 	}
-	GPUVertexArray const * GPUVertexArrayCache::FindVertexArray(GPURenderer* renderer, GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer) const
+	GPUVertexArray const* GPUVertexArrayCache::FindVertexArray(GPURenderer* renderer, GPUProgram const* program, GPUBuffer const* vertex_buffer, GPUBuffer const* index_buffer, GLintptr offset) const
 	{
 		GLFWwindow* current_context = glfwGetCurrentContext();
 
@@ -47,10 +47,10 @@ namespace chaos
 		if (program == nullptr)
 			return nullptr;
 
-		// whether to purge during this pas or not
+		// whether to purge during this pass or not
 		bool purge = false;
 
-		double t = glfwGetTime();		
+		double t = glfwGetTime();
 		if (t - last_purge_time > 10.0)
 		{
 			last_purge_time = t;
@@ -75,9 +75,13 @@ namespace chaos
 			else if (result == nullptr)
 			{				
 				// check whether this is expected entry
-				if (entry.program == program && entry.vertex_buffer == vertex_buffer && entry.index_buffer == index_buffer && entry.context_window == renderer->GetWindow())
+				if (entry.program == program && 
+					entry.vertex_buffer == vertex_buffer && 
+					entry.index_buffer == index_buffer && 
+					entry.context_window == renderer->GetWindow() &&
+					entry.vertex_buffer_offset == offset)
 				{
-					result = entry.vertex_array.get();					
+					result = entry.vertex_array.get();
 					if (!purge && result != nullptr)
 						return result;
 				}
@@ -103,7 +107,7 @@ namespace chaos
 			return nullptr;
 
 		// find exisiting data
-		GPUVertexArray const * result = FindVertexArray(renderer, program, vertex_buffer, index_buffer);
+		GPUVertexArray const * result = FindVertexArray(renderer, program, vertex_buffer, index_buffer, offset);
 		if (result != nullptr)
 			return result;
 
@@ -141,6 +145,7 @@ namespace chaos
 			new_entry.vertex_buffer_id = (vertex_buffer != nullptr) ? vertex_buffer->GetResourceID() : 0;
 			new_entry.index_buffer_id = (index_buffer != nullptr) ? index_buffer->GetResourceID() : 0;
 			new_entry.context_window = renderer->GetWindow();
+			new_entry.vertex_buffer_offset = offset;
 			new_entry.context = renderer->GetWindow()->GetGLFWHandler();
 
 			entries.push_back(std::move(new_entry));

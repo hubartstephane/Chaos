@@ -359,7 +359,7 @@ namespace chaos
 		shared_ptr<ParticleManager> particle_manager;
 
 		/** the background mesh */
-		shared_ptr<GPUDynamicMesh> background_mesh;
+		shared_ptr<GPUMesh> background_mesh;
 
 		/** the sounds being played */
 		shared_ptr<Sound> menu_music;

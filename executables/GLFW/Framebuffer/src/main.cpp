@@ -153,7 +153,7 @@ protected:
 
 	chaos::shared_ptr<chaos::GPUFramebuffer> framebuffer;
 
-	chaos::shared_ptr<chaos::GPUDynamicMesh> mesh;
+	chaos::shared_ptr<chaos::GPUMesh> mesh;
 
 	chaos::FPSViewInputController fps_view_controller;
 };

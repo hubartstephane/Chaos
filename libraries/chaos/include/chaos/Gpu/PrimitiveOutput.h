@@ -41,9 +41,9 @@ namespace chaos
         static constexpr size_t MIN_VERTEX_ALLOCATION = 100;
 
         /** constructor */
-        PrimitiveOutputBase(GPUDynamicMesh* in_dynamic_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION);
+        PrimitiveOutputBase(GPUMesh* in_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION);
         /** constructor */
-        PrimitiveOutputBase(GPUDynamicMesh* in_dynamic_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION);
+        PrimitiveOutputBase(GPUMesh* in_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION);
         /** destructor */
         ~PrimitiveOutputBase();
 
@@ -52,7 +52,7 @@ namespace chaos
 
         /** gets the size of one vertice of the generated primitive */
         size_t GetVertexSize() const { return vertex_size; }
-        /** flush all pending Draws into the GPUDynamicMesh */
+        /** flush all pending Draws into the GPUMesh */
         void Flush();
         /** change the material for the next primitives */
         void SetRenderMaterial(GPURenderMaterial* in_render_material);
@@ -77,7 +77,7 @@ namespace chaos
     protected:
 
         /** the dynamic mesh we are working on (to store primitives to render) */
-        GPUDynamicMesh* dynamic_mesh = nullptr;
+        GPUMesh* mesh = nullptr;
         /** a buffer pool */
         GPUBufferPool* buffer_pool = nullptr;
         /** the vertex declaration for all buffers */
@@ -126,8 +126,8 @@ namespace chaos
         using vertex_type = VERTEX_TYPE;
 
         /** constructor */
-        PrimitiveOutput(GPUDynamicMesh* in_dynamic_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION) :
-            PrimitiveOutputBase(in_dynamic_mesh, in_buffer_pool, in_vertex_declaration, in_render_material, in_vertex_requirement_evaluation)
+        PrimitiveOutput(GPUMesh* in_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION) :
+            PrimitiveOutputBase(in_mesh, in_buffer_pool, in_vertex_declaration, in_render_material, in_vertex_requirement_evaluation)
         {
             vertex_size = sizeof(vertex_type);
             if (vertex_declaration == nullptr)
@@ -138,8 +138,8 @@ namespace chaos
             }
         }
         /** constructor */
-        PrimitiveOutput(GPUDynamicMesh* in_dynamic_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION) :
-            PrimitiveOutputBase(in_dynamic_mesh, in_buffer_pool, in_vertex_declaration, in_render_material_request, in_vertex_requirement_evaluation)
+        PrimitiveOutput(GPUMesh* in_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION) :
+            PrimitiveOutputBase(in_mesh, in_buffer_pool, in_vertex_declaration, in_render_material_request, in_vertex_requirement_evaluation)
         {
             vertex_size = sizeof(vertex_type);
             if (vertex_declaration == nullptr)

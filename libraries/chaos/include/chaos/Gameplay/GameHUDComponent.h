@@ -110,7 +110,7 @@ namespace chaos
 	protected:
 
 		/** the mesh for this component */
-		shared_ptr<GPUDynamicMesh> mesh;
+		shared_ptr<GPUMesh> mesh;
 	};
 
 	// ====================================================================

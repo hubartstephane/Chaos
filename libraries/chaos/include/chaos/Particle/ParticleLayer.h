@@ -111,7 +111,7 @@ namespace chaos
 		}
 
 		/** generate the mesh corresponding to this layer. not related to the cached mesh */
-		GPUDynamicMesh* GenerateMesh();
+		GPUMesh* GenerateMesh();
 
 	protected:
 
@@ -143,12 +143,12 @@ namespace chaos
 		virtual bool DoUpdateGPUResources(GPURenderer* renderer) override;
 
 		/** select the PrimitiveOutput and update the rendering GPU resources */
-		virtual void GenerateMeshData(GPUDynamicMesh* in_dynamic_mesh, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t previous_frame_vertices_count) {}
+		virtual void GenerateMeshData(GPUMesh* in_mesh, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t previous_frame_vertices_count) {}
 
 		/** returns the number of vertices used in a dynamic mesh */
-		size_t GetDynamicMeshVertexCount(GPUDynamicMesh const* in_dynamic_mesh) const;
-		/** evaluate how much memory will be required for GPUDynamicMesh (returns number of vertices) */
-		size_t EvaluateGPUVertexMemoryRequirement(GPUDynamicMesh const* in_dynamic_mesh) const;
+		size_t GetDynamicMeshVertexCount(GPUMesh const* in_mesh) const;
+		/** evaluate how much memory will be required for GPUMesh (returns number of vertices) */
+		size_t EvaluateGPUVertexMemoryRequirement(GPUMesh const* in_mesh) const;
 
 	protected:
 
@@ -167,7 +167,7 @@ namespace chaos
 		/** the vertex cache (used when the layer is NOT in a manager) */
 		GPUBufferPool buffer_pool;
 		/** the corresponding dynamic mesh */
-		shared_ptr<GPUDynamicMesh> dynamic_mesh;
+		shared_ptr<GPUMesh> mesh;
 		/** whether there was changes in particles, and a vertex array need to be recomputed */
 		bool require_GPU_update = false;
 };
@@ -256,7 +256,7 @@ namespace chaos
 		}
 
 		/** override */
-		virtual void GenerateMeshData(GPUDynamicMesh* in_dynamic_mesh, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t vertex_requirement_evaluation) override;
+		virtual void GenerateMeshData(GPUMesh* in_mesh, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t vertex_requirement_evaluation) override;
 
 		// convert particles into vertices
 		void ParticlesToPrimitivesLoop(PrimitiveOutput<vertex_type>& output);
@@ -266,12 +266,12 @@ namespace chaos
 #elif defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	template<typename LAYER_TRAIT>
-	void ParticleLayer<LAYER_TRAIT>::GenerateMeshData(GPUDynamicMesh* in_dynamic_mesh, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t vertex_requirement_evaluation)
+	void ParticleLayer<LAYER_TRAIT>::GenerateMeshData(GPUMesh* in_mesh, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t vertex_requirement_evaluation)
 	{
 		// some layers are in a manager, some not (see TiledMap)
 		GPUBufferPool* cache = (particle_manager == nullptr) ? &buffer_pool : &particle_manager->GetBufferPool();
 
-		PrimitiveOutput<vertex_type> output(in_dynamic_mesh, cache, in_vertex_declaration, in_render_material, vertex_requirement_evaluation);
+		PrimitiveOutput<vertex_type> output(in_mesh, cache, in_vertex_declaration, in_render_material, vertex_requirement_evaluation);
 		ParticlesToPrimitivesLoop(output);
 	}
 

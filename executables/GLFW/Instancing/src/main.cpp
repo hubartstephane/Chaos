@@ -104,7 +104,7 @@ protected:
 
 	chaos::shared_ptr<chaos::GPUProgram> program;
 
-	chaos::shared_ptr<chaos::GPUDynamicMesh> mesh;
+	chaos::shared_ptr<chaos::GPUMesh> mesh;
 
 	chaos::FPSViewInputController fps_view_controller;
 };

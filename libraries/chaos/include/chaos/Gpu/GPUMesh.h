@@ -2,25 +2,25 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-    class GPUDynamicMeshElement;
-    class GPUDynamicMesh;
+    class GPUMeshElement;
+    class GPUMesh;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
     /**
-      * GPUDynamicMeshElement : a renderable element
+      * GPUMeshElement : a renderable element
       */
 
-    class GPUDynamicMeshElement
+    class GPUMeshElement
     {
-        friend class GPUDynamicMesh;
+        friend class GPUMesh;
 
     public:
 
         /** constructor */
-        GPUDynamicMeshElement() = default;
+        GPUMeshElement() = default;
         /** copy constructor */
-        GPUDynamicMeshElement(GPUDynamicMeshElement const& src) : // XXX : do not copy GPUVertexArrayCache
+        GPUMeshElement(GPUMeshElement const& src) : // XXX : do not copy GPUVertexArrayCache
             vertex_declaration(src.vertex_declaration),
             render_material(src.render_material),
             vertex_buffer(src.vertex_buffer),
@@ -40,10 +40,10 @@ namespace chaos
     };
 
     /**
-     * GPUDynamicMesh : a mesh to be dynamicly constructed
+     * GPUMesh : a mesh to be dynamicly constructed
      */
 
-    class GPUDynamicMesh : public GPURenderable
+    class GPUMesh : public GPURenderable
     {
     public:
 
@@ -57,16 +57,16 @@ namespace chaos
         /** gets the number of mesh element */
         size_t GetMeshElementCount() const { return elements.size(); }
         /** access any mesh element */
-        GPUDynamicMeshElement& GetMeshElement(size_t index) { return elements[index]; }
+        GPUMeshElement& GetMeshElement(size_t index) { return elements[index]; }
         /** access any mesh element */
-        GPUDynamicMeshElement const& GetMeshElement(size_t index) const { return elements[index]; }
+        GPUMeshElement const& GetMeshElement(size_t index) const { return elements[index]; }
         /** add an rendering element */
-        GPUDynamicMeshElement& AddMeshElement();
+        GPUMeshElement& AddMeshElement();
 
         /** change the vertex array cache */
         void SetVertexArrayCache(GPUVertexArrayCache* in_vertex_array_cache);
 
-        friend void swap(GPUDynamicMesh& src1, GPUDynamicMesh& src2)
+        friend void swap(GPUMesh& src1, GPUMesh& src2)
         {
             std::swap(src1.elements, src2.elements);
             std::swap(src1.last_rendered_fence, src2.last_rendered_fence);
@@ -86,7 +86,7 @@ namespace chaos
     protected:
 
         /** the element to render */
-        std::vector<GPUDynamicMeshElement> elements;
+        std::vector<GPUMeshElement> elements;
         /** the last time the dynamic mesh was rendered with current elements */
         shared_ptr<GPUFence> last_rendered_fence;
         /** the vertex array cache */

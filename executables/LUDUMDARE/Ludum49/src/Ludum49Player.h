@@ -57,6 +57,6 @@ public:
 
 
 
-    shared_ptr<GPUDynamicMesh> mesh;
+    shared_ptr<GPUMesh> mesh;
 };
 

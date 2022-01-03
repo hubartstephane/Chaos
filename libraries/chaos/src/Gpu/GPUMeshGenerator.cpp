@@ -143,28 +143,24 @@ namespace chaos
 		// prepare the mesh
 		mesh->Clear(nullptr);
 
-		GPUMeshElement& Element = mesh->AddMeshElement();
-		Element.vertex_buffer = vertex_buffer;
-		Element.index_buffer = index_buffer;
+		GPUMeshElement& element = mesh->AddMeshElement();
+		element.vertex_buffer = vertex_buffer;
+		element.index_buffer = index_buffer;
 
 		// generate the indices and the vertices
 		MemoryBufferWriter vertices_writer(vb_ptr, vb_size);
 		MemoryBufferWriter indices_writer(ib_ptr, ib_size);
-		GenerateMeshData(Element.primitives, vertices_writer, indices_writer);
+		GenerateMeshData(element.primitives, vertices_writer, indices_writer);
 
 		assert(vertices_writer.GetRemainingBufferSize() == 0);
 		assert(indices_writer.GetRemainingBufferSize() == 0);
 
 		// get the vertex declaration
-		Element.vertex_declaration = GenerateVertexDeclaration();
-		assert(Element.vertex_declaration->GetVertexSize() == requirement.vertex_size);
+		element.vertex_declaration = GenerateVertexDeclaration();
+		assert(element.vertex_declaration->GetVertexSize() == requirement.vertex_size);
 
 		// initialize the vertex array and validate
-		//mesh->SetVertexBufferOffset(0);
-
-
-
-
+		element.vertex_buffer_offset = 0;
 
 		// unmap buffers
 		if (vertex_buffer != nullptr)
@@ -334,7 +330,6 @@ namespace chaos
 	// =====================================================================
 	// GPUCircleMeshGenerator
 	// =====================================================================
-
 
 	GPUMeshGenerationRequirement GPUCircleMeshGenerator::GetRequirement() const 
 	{

@@ -65,9 +65,22 @@ namespace chaos
 			index_buffer->SetBufferData(nullptr, ib_size);
 		}
 
-		// map the buffers		
-		char* vb_ptr = (vertex_buffer != nullptr)? vertex_buffer->MapBuffer(0, 0, false, true) : nullptr;
-		char* ib_ptr = (index_buffer != nullptr)?  index_buffer->MapBuffer(0, 0, false, true) : nullptr;
+		// map the buffers
+		char* vb_ptr = nullptr;
+		if (vertex_buffer != nullptr)
+		{
+			vb_ptr = vertex_buffer->MapBuffer(0, 0, false, true);
+			if (vb_ptr == nullptr)
+				return false;
+		}
+
+		char* ib_ptr = nullptr;
+		if (index_buffer != nullptr)
+		{
+			ib_ptr = index_buffer->MapBuffer(0, 0, false, true);
+			if (ib_ptr == nullptr)
+				return false;
+		}
 
 		// generate the indices and the vertices
 		MemoryBufferWriter vertices_writer(vb_ptr, vb_size);
@@ -96,6 +109,8 @@ namespace chaos
 				element.vertex_buffer = vertex_buffer;
 			if (requirement.indices_count > 0)
 				element.index_buffer = index_buffer;
+			element.vertex_buffer_offset = written_vertices_count;
+
 #if _DEBUG
 			size_t vc1 = vertices_writer.GetWrittenCount();
 			size_t ic1 = indices_writer.GetWrittenCount();
@@ -113,11 +128,14 @@ namespace chaos
 
 			assert(requirement.vertex_size == element.vertex_declaration->GetVertexSize());
 
-			//mesh->ShiftPrimitivesIndexAndVertexPosition(0, (int)(written_indices_count / sizeof(GLuint)));  // shift the position of vertices/indices for this mesh
+			// shift the position of indices for this mesh
+			int ib_offset = (int)(written_indices_count / sizeof(GLuint));
+			if (ib_offset > 0)
+				for (GPUDrawPrimitive& primitive : element.primitives)
+					if (primitive.indexed)
+						primitive.start += ib_offset;
 
-			//mesh->SetVertexBufferOffset(written_vertices_count);
-
-			(*it.second) = mesh; // store the mesh as an output          
+			(*it.second) = mesh; // store the mesh as an output
 		}
 
 		assert(vertices_writer.GetRemainingBufferSize() == 0);

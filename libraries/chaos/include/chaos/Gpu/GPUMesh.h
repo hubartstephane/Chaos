@@ -37,6 +37,8 @@ namespace chaos
         shared_ptr<GPUBuffer> index_buffer;
         /** the primitive to render */
         std::vector<GPUDrawPrimitive> primitives;
+        /** the vertex buffer offset */
+        GLintptr vertex_buffer_offset = 0;
     };
 
     /**

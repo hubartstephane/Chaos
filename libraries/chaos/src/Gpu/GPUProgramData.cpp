@@ -594,7 +594,8 @@ namespace chaos
 				glVertexArrayAttribLFormat(vertex_array, attrib.location, count, type, relative_offset);
 			else if (type == GL_INT)
 				glVertexArrayAttribIFormat(vertex_array, attrib.location, count, type, relative_offset);
-			else assert(0);
+			else 
+				assert(0);
 
 			glEnableVertexArrayAttrib(vertex_array, attrib.location);
 		}

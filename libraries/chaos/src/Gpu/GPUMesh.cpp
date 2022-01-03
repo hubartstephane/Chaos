@@ -2,17 +2,17 @@
 
 namespace chaos
 {
-    void GPUDynamicMesh::SetVertexArrayCache(GPUVertexArrayCache* in_vertex_array_cache)
+    void GPUMesh::SetVertexArrayCache(GPUVertexArrayCache* in_vertex_array_cache)
     {
         vertex_array_cache = in_vertex_array_cache;
     }
 
-    GPUDynamicMeshElement & GPUDynamicMesh::AddMeshElement()
+    GPUMeshElement & GPUMesh::AddMeshElement()
     {
         return elements.emplace_back();
     }
 
-    void GPUDynamicMesh::Clear(GPUBufferPool* buffer_pool)
+    void GPUMesh::Clear(GPUBufferPool* buffer_pool)
     {
         // XXX : shu on pourrait aussi donner les IndexBuffer => ATTENTION, l index buffer GPURenderer::QUADIndexBuffer ne doit pas etre donné !
 
@@ -21,7 +21,7 @@ namespace chaos
             size_t count = elements.size();
             for (size_t i = 0; i < count; ++i)
             {
-                GPUDynamicMeshElement const& element = elements[i];
+                GPUMeshElement const& element = elements[i];
                 if (element.vertex_buffer != nullptr)
                 {
                     // we don't want to give the buffer twice to the pool
@@ -42,14 +42,14 @@ namespace chaos
         last_rendered_fence = nullptr;
     }
 
-    int GPUDynamicMesh::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+    int GPUMesh::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
     {
         // create a vertex array cache if necessary
         if (vertex_array_cache == nullptr)
             vertex_array_cache = new GPUVertexArrayCache;
         // display the elements
         int result = 0;       
-        for (GPUDynamicMeshElement & element : elements)
+        for (GPUMeshElement & element : elements)
         {
             // early skip
             if (element.primitives.size() == 0)
@@ -89,7 +89,7 @@ namespace chaos
         return result;
     }
 
-    int GPUDynamicMesh::DisplayWithMaterial(GPURenderMaterial const* material, GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+    int GPUMesh::DisplayWithMaterial(GPURenderMaterial const* material, GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
     {
 		DisableReferenceCount<GPUConstantMaterialProvider> material_provider(material);  // while on stack, use DisableReferenceCount<...>
 		GPURenderParams other_render_params = render_params;
@@ -97,7 +97,7 @@ namespace chaos
 		return Display(renderer, uniform_provider, other_render_params);
     }
 
-    int GPUDynamicMesh::DisplayWithProgram(GPUProgram const* program, GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+    int GPUMesh::DisplayWithProgram(GPUProgram const* program, GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
     {
         return DisplayWithMaterial(program->GetDefaultMaterial(), renderer, uniform_provider, render_params);
     }

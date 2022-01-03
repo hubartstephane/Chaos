@@ -87,7 +87,7 @@ void PrimitiveRenderer::PrepareObjectProgram(chaos::GPUProgramProvider & uniform
 }
 
 void PrimitiveRenderer::DrawPrimitiveImpl(
-	chaos::GPUDynamicMesh * mesh,
+	chaos::GPUMesh * mesh,
 	chaos::GPUProgram  * program,
 	glm::vec4 const & color,
 	glm::mat4 const & local_to_world,

@@ -178,7 +178,7 @@ protected:
 protected:
 
 	// rendering for the box  
-	chaos::shared_ptr<chaos::GPUDynamicMesh> mesh_box;
+	chaos::shared_ptr<chaos::GPUMesh> mesh_box;
 	chaos::shared_ptr<chaos::GPUProgram>  program_box;
 
 	chaos::shared_ptr<chaos::BitmapAtlas::TextureArrayAtlas> atlas;

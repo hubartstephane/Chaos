@@ -8,7 +8,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	 * GPUDrawInterface : this is a primitive that have its own GPUDynamicMesh embedded for directed drawing
+	 * GPUDrawInterface : this is a primitive that have its own GPUMesh embedded for directed drawing
 	 */
 
 	template<typename VERTEX_TYPE>
@@ -21,15 +21,15 @@ namespace chaos
 
 		/** constructor */
 		GPUDrawInterface(ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION) :
-			PrimitiveOutput<VERTEX_TYPE>(&dynamic_mesh, GetBufferPool(), GetVertexDeclaration(), in_render_material_request, in_vertex_requirement_evaluation)
+			PrimitiveOutput<VERTEX_TYPE>(&mesh, GetBufferPool(), GetVertexDeclaration(), in_render_material_request, in_vertex_requirement_evaluation)
 		{
-			dynamic_mesh.SetVertexArrayCache(GetVertexArrayCache());
+			mesh.SetVertexArrayCache(GetVertexArrayCache());
 		}
 		/** constructor */
 		GPUDrawInterface(GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION) :
-			PrimitiveOutput<VERTEX_TYPE>(&dynamic_mesh, GetBufferPool(), GetVertexDeclaration(), (in_render_material != nullptr) ? in_render_material : DefaultScreenSpaceProgram::GetMaterial(), in_vertex_requirement_evaluation)
+			PrimitiveOutput<VERTEX_TYPE>(&mesh, GetBufferPool(), GetVertexDeclaration(), (in_render_material != nullptr) ? in_render_material : DefaultScreenSpaceProgram::GetMaterial(), in_vertex_requirement_evaluation)
 		{
-			dynamic_mesh.SetVertexArrayCache(GetVertexArrayCache());
+			mesh.SetVertexArrayCache(GetVertexArrayCache());
 		}
 
 		/** destructor */
@@ -42,25 +42,25 @@ namespace chaos
 		int Display(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
 		{
 			this->Flush();
-			int result = dynamic_mesh.Display(renderer, uniform_provider, render_params);
-			dynamic_mesh.Clear(GetBufferPool());
+			int result = mesh.Display(renderer, uniform_provider, render_params);
+			mesh.Clear(GetBufferPool());
 			return result;
 		}
 
 		/** extract the mesh for external purpose */
-		GPUDynamicMesh* GetDynamicMesh(GPUDynamicMesh * result = nullptr)
+		GPUMesh* GetDynamicMesh(GPUMesh * result = nullptr)
 		{
-			assert(result != &dynamic_mesh);
+			assert(result != &mesh);
 			if (result != nullptr)
 				result->Clear(GetBufferPool());
 			else
-				result = new GPUDynamicMesh();
+				result = new GPUMesh();
 
 			if (result != nullptr)
 			{
 				this->Flush();
-				swap(*result, dynamic_mesh);
-				dynamic_mesh.SetVertexArrayCache(GetVertexArrayCache()); // restore the cache that may have been lost
+				swap(*result, mesh);
+				mesh.SetVertexArrayCache(GetVertexArrayCache()); // restore the cache that may have been lost
 			}
 			return result;
 		}
@@ -69,7 +69,7 @@ namespace chaos
 		void Clear()
 		{
 			this->Flush(); // to unmap pending mapped buffer
-			dynamic_mesh.Clear(GetBufferPool());
+			mesh.Clear(GetBufferPool());
 		}
 
 	protected:
@@ -103,7 +103,7 @@ namespace chaos
 	protected:
 
 		/** the internal buffer */
-		GPUDynamicMesh dynamic_mesh;
+		GPUMesh mesh;
 	};
 
 #endif

@@ -105,7 +105,7 @@ namespace chaos
 	int ParticleLayerBase::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{
         // early exit
-        if (dynamic_mesh == nullptr || dynamic_mesh->IsEmpty())
+        if (mesh == nullptr || mesh->IsEmpty())
             return 0;
 		// search the material
 		GPURenderMaterial const * final_material = render_params.GetMaterial(this, render_material.get());
@@ -125,18 +125,18 @@ namespace chaos
 
     int ParticleLayerBase::DoDisplayHelper(GPURenderer* renderer, GPURenderMaterial const* final_material, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
     {
-        // create a new GPURenderParams that override the Material for inside the GPUDynamicMesh
+        // create a new GPURenderParams that override the Material for inside the GPUMesh
         DisableReferenceCount<GPUConstantMaterialProvider> material_provider(final_material);  // while on stack, use DisableReferenceCount<...>
 
         GPURenderParams other_render_params = render_params;
         other_render_params.material_provider = &material_provider;
         // let the dynamic mesh render itself
-        return dynamic_mesh->Display(renderer, uniform_provider, other_render_params);
+        return mesh->Display(renderer, uniform_provider, other_render_params);
     }
 
-    size_t ParticleLayerBase::EvaluateGPUVertexMemoryRequirement(GPUDynamicMesh const * in_dynamic_mesh) const
+    size_t ParticleLayerBase::EvaluateGPUVertexMemoryRequirement(GPUMesh const * in_mesh) const
     {
-        size_t result = GetDynamicMeshVertexCount(in_dynamic_mesh);
+        size_t result = GetDynamicMeshVertexCount(in_mesh);
         if (result == 0) // happens whenever the mesh is empty (first call for example)
         {
             result = GetParticleCount() * 4; // XXX : by default, suppose the particles will be rendered has quads
@@ -157,35 +157,35 @@ namespace chaos
 				return true;
 		}
 		// create the mesh
-		if (dynamic_mesh == nullptr)
+		if (mesh == nullptr)
 		{
-			dynamic_mesh = new GPUDynamicMesh();
-			if (dynamic_mesh == nullptr)
+			mesh = new GPUMesh();
+			if (mesh == nullptr)
 				return true;
 		}
         // evaluate how much memory should be allocated for buffers (count in vertices)
-        size_t vertex_requirement_evaluation = EvaluateGPUVertexMemoryRequirement(dynamic_mesh.get());
+        size_t vertex_requirement_evaluation = EvaluateGPUVertexMemoryRequirement(mesh.get());
         // clear previous dynamic mesh (and give buffers back for further usage)       
         if (particle_manager != nullptr)
-			dynamic_mesh->Clear(&particle_manager->GetBufferPool());
+			mesh->Clear(&particle_manager->GetBufferPool());
         else
-			dynamic_mesh->Clear(&buffer_pool);
+			mesh->Clear(&buffer_pool);
         // select PrimitiveOutput and collect vertices        
-		GenerateMeshData(dynamic_mesh.get(), vertex_declaration.get(), render_material.get(), vertex_requirement_evaluation);
+		GenerateMeshData(mesh.get(), vertex_declaration.get(), render_material.get(), vertex_requirement_evaluation);
         // mark as up to date
         require_GPU_update = false;
 
         return true;
     }
 
-	GPUDynamicMesh* ParticleLayerBase::GenerateMesh()
+	GPUMesh* ParticleLayerBase::GenerateMesh()
 	{
 		// get the vertex declaration for the mesh
 		shared_ptr<GPUVertexDeclaration> declaration = GetVertexDeclaration();
 		if (declaration == nullptr)
 			return nullptr;
 		// generate the resulting mesh
-		GPUDynamicMesh* result = new GPUDynamicMesh();
+		GPUMesh* result = new GPUMesh();
 		if (result == nullptr)
 			return result;
 		// evaluate how much memory should be allocated for buffers (count in vertices)
@@ -254,15 +254,15 @@ namespace chaos
 			particles_allocations[i - 1]->Resize(0);
 	}
 
-    size_t ParticleLayerBase::GetDynamicMeshVertexCount(GPUDynamicMesh const * in_dynamic_mesh) const
+    size_t ParticleLayerBase::GetDynamicMeshVertexCount(GPUMesh const * in_mesh) const
     {
         size_t result = 0;
-		if (in_dynamic_mesh != nullptr)
+		if (in_mesh != nullptr)
 		{
-			size_t count = in_dynamic_mesh->GetMeshElementCount();
+			size_t count = in_mesh->GetMeshElementCount();
 			for (size_t i = 0; i < count; ++i)
 			{
-				GPUDynamicMeshElement const& element = in_dynamic_mesh->GetMeshElement(i);
+				GPUMeshElement const& element = in_mesh->GetMeshElement(i);
 				for (GPUDrawPrimitive const& primitive : element.primitives)
 					result += primitive.count;
 			}

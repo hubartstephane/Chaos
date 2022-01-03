@@ -455,7 +455,7 @@ public:
 
 	shared_ptr<LPMorph> morph;
 
-	shared_ptr<GPUDynamicMesh> mesh;
+	shared_ptr<GPUMesh> mesh;
 
 	std::vector<glm::vec2> points; // do not modified this, keep track of original
 	std::vector<glm::vec2> smoothed_points;

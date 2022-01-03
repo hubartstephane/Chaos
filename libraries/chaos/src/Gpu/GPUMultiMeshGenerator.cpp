@@ -12,7 +12,7 @@ namespace chaos
 		Clean();
 	}
 
-	void GPUMultiMeshGenerator::AddGenerator(GPUMeshGenerator * generator, shared_ptr<GPUDynamicMesh> & target_ptr)
+	void GPUMultiMeshGenerator::AddGenerator(GPUMeshGenerator * generator, shared_ptr<GPUMesh> & target_ptr)
 	{
 		assert(generator != nullptr);
 
@@ -80,17 +80,17 @@ namespace chaos
 			size_t written_vertices_count = vertices_writer.GetWrittenCount();
 			size_t written_indices_count = indices_writer.GetWrittenCount();
 
-			shared_ptr<GPUDynamicMesh> mesh = (*it.second);
+			shared_ptr<GPUMesh> mesh = (*it.second);
 			if (mesh == nullptr)
 			{
-				mesh = new GPUDynamicMesh; // generate the mesh
+				mesh = new GPUMesh; // generate the mesh
 				if (mesh == nullptr)
 					continue;
 			}
 			else
 				mesh->Clear(nullptr); // reuse existing mesh
 
-			GPUDynamicMeshElement& element = mesh->AddMeshElement();
+			GPUMeshElement& element = mesh->AddMeshElement();
 
 			if (requirement.vertices_count > 0)
 				element.vertex_buffer = vertex_buffer;

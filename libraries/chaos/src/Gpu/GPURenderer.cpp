@@ -201,7 +201,7 @@ namespace chaos
 		GPUResourceManager* gpu_resource_manager = WindowApplication::GetGPUResourceManagerInstance();
 		if (gpu_resource_manager != nullptr)
 		{
-			GPUDynamicMesh* quad_mesh = gpu_resource_manager->GetQuadMesh();
+			GPUMesh* quad_mesh = gpu_resource_manager->GetQuadMesh();
 			if (quad_mesh != nullptr)
 				quad_mesh->DisplayWithMaterial(material, this, uniform_provider, render_params);
 		}

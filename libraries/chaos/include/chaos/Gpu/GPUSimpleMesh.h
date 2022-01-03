@@ -15,22 +15,22 @@ namespace chaos
 
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class GPUDynamicMesh;
+	class GPUMesh;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* GPUDynamicMesh : how it says
+	* GPUMesh : how it says
 	*/
 
-	class GPUDynamicMesh : public GPUResource
+	class GPUMesh : public GPUResource
 	{
 	public:
 
 		/** constructor */
-		GPUDynamicMesh() = default;
+		GPUMesh() = default;
 		/** destructor */
-		~GPUDynamicMesh();
+		~GPUMesh();
 
 		/** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
 		void Render(GPURenderer* renderer, GPUProgram const* program, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);

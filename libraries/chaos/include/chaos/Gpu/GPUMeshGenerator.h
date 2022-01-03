@@ -56,9 +56,9 @@ namespace chaos
 		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive>& primitives, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const = 0;
 
 		/** generation function */
-		shared_ptr<GPUDynamicMesh> GenerateMesh() const;
+		shared_ptr<GPUMesh> GenerateMesh() const;
 		/** population function */
-		bool FillMeshData(GPUDynamicMesh* mesh) const;
+		bool FillMeshData(GPUMesh* mesh) const;
 	};
 
 	/**

@@ -340,7 +340,7 @@ protected:
 protected:
 
 	chaos::shared_ptr<chaos::GPUProgram>  program;
-	chaos::shared_ptr<chaos::GPUDynamicMesh> mesh;
+	chaos::shared_ptr<chaos::GPUMesh> mesh;
 	chaos::shared_ptr<chaos::GPUTexture>    texture;
 
 	int font_index = 0;

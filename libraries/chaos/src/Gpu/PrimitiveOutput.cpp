@@ -2,14 +2,14 @@
 
 namespace chaos
 {
-    PrimitiveOutputBase::PrimitiveOutputBase(GPUDynamicMesh* in_dynamic_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation) :
-        dynamic_mesh(in_dynamic_mesh),
+    PrimitiveOutputBase::PrimitiveOutputBase(GPUMesh* in_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation) :
+        mesh(in_mesh),
         buffer_pool(in_buffer_pool),
         vertex_declaration(in_vertex_declaration),
         render_material(in_render_material),
         vertex_requirement_evaluation(in_vertex_requirement_evaluation)
     {
-        assert(in_dynamic_mesh != nullptr);
+        assert(in_mesh != nullptr);
 
         // get the index buffer for quads
         GPUResourceManager* gpu_resource_manager = WindowApplication::GetGPUResourceManagerInstance();
@@ -18,8 +18,8 @@ namespace chaos
         assert((quad_index_buffer != nullptr) && (max_quad_count != 0));
     }
 
-    PrimitiveOutputBase::PrimitiveOutputBase(GPUDynamicMesh* in_dynamic_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation):
-        PrimitiveOutputBase(in_dynamic_mesh, in_buffer_pool, in_vertex_declaration, nullptr, in_vertex_requirement_evaluation)
+    PrimitiveOutputBase::PrimitiveOutputBase(GPUMesh* in_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation):
+        PrimitiveOutputBase(in_mesh, in_buffer_pool, in_vertex_declaration, nullptr, in_vertex_requirement_evaluation)
     {
         GPUResourceManager* resource_manager = WindowApplication::GetGPUResourceManagerInstance();
         if (resource_manager != nullptr)
@@ -174,7 +174,7 @@ namespace chaos
         {
             assert(current_primitive_type != PrimitiveType::NONE);
 
-            GPUDynamicMeshElement& element = dynamic_mesh->AddMeshElement();
+            GPUMeshElement& element = mesh->AddMeshElement();
             element.primitives = std::move(pending_primitives);
             element.vertex_buffer = vertex_buffer;
             element.vertex_declaration = vertex_declaration;

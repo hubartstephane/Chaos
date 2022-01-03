@@ -86,7 +86,7 @@ protected:
 	chaos::shared_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename);
 
 	void DrawPrimitiveImpl(
-		chaos::GPUDynamicMesh * mesh,
+		chaos::GPUMesh * mesh,
 		chaos::GPUProgram  * program,
 		glm::vec4 const & color,
 		glm::mat4 const & local_to_world,
@@ -104,11 +104,11 @@ public:
 	glm::mat4 world_to_camera;
 
 	// the meshes
-	chaos::shared_ptr<chaos::GPUDynamicMesh> mesh_box;
-	chaos::shared_ptr<chaos::GPUDynamicMesh> mesh_triangle;
-	chaos::shared_ptr<chaos::GPUDynamicMesh> mesh_sphere;
-	chaos::shared_ptr<chaos::GPUDynamicMesh> mesh_circle;
-	chaos::shared_ptr<chaos::GPUDynamicMesh> mesh_quad;
+	chaos::shared_ptr<chaos::GPUMesh> mesh_box;
+	chaos::shared_ptr<chaos::GPUMesh> mesh_triangle;
+	chaos::shared_ptr<chaos::GPUMesh> mesh_sphere;
+	chaos::shared_ptr<chaos::GPUMesh> mesh_circle;
+	chaos::shared_ptr<chaos::GPUMesh> mesh_quad;
 
 	// the programs
 	chaos::shared_ptr<chaos::GPUProgram>  program_common;

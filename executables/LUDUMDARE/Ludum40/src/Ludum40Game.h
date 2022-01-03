@@ -179,7 +179,7 @@ protected:
 	glm::vec2 stick_position = glm::vec2(0.0f, 0.0f);
 
 	// background data
-	chaos::shared_ptr<chaos::GPUDynamicMesh> fullscreen_mesh;
+	chaos::shared_ptr<chaos::GPUMesh> fullscreen_mesh;
 
 	chaos::shared_ptr<chaos::GPUProgram>  background_program;	
 	chaos::shared_ptr<chaos::GPUTexture>    background_texture;

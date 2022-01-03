@@ -100,7 +100,7 @@ namespace chaos
 	// GPUMeshGenerator
 	// =====================================================================
 
-	bool GPUMeshGenerator::FillMeshData(GPUDynamicMesh* mesh) const
+	bool GPUMeshGenerator::FillMeshData(GPUMesh* mesh) const
 	{
 		assert(mesh != nullptr);
 
@@ -143,7 +143,7 @@ namespace chaos
 		// prepare the mesh
 		mesh->Clear(nullptr);
 
-		GPUDynamicMeshElement& Element = mesh->AddMeshElement();
+		GPUMeshElement& Element = mesh->AddMeshElement();
 		Element.vertex_buffer = vertex_buffer;
 		Element.index_buffer = index_buffer;
 
@@ -175,9 +175,9 @@ namespace chaos
 		return true;
 	}
 
-	shared_ptr<GPUDynamicMesh> GPUMeshGenerator::GenerateMesh() const
+	shared_ptr<GPUMesh> GPUMeshGenerator::GenerateMesh() const
 	{
-		shared_ptr<GPUDynamicMesh> mesh = new GPUDynamicMesh();
+		shared_ptr<GPUMesh> mesh = new GPUMesh();
 		if (mesh != nullptr)
 		{
 			if (!FillMeshData(mesh.get())) // automatic destruction in case of failure

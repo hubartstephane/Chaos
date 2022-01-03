@@ -98,7 +98,7 @@ protected:
 		PrepareObjectProgram(uniform_provider, ctx, prim_ctx);
 
 		chaos::GPURenderParams render_params;
-		mesh->Render(ctx.renderer, program, &uniform_provider, render_params);
+		mesh->DisplayWithProgram(program, ctx.renderer, &uniform_provider, render_params);
 	}
 
 	void GPUDrawPrimitive(RenderingContext const & ctx, chaos::box3 const & b, glm::vec4 const & color)
@@ -185,8 +185,8 @@ protected:
 	chaos::shared_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
 	{
 		chaos::GPUProgramGenerator program_generator;
-		program_generator.AddShaderSourceFile(ShaderType::FRAGMENT, resources_path / ps_filename);
-		program_generator.AddShaderSourceFile(ShaderType::VERTEX, resources_path / vs_filename);
+		program_generator.AddShaderSourceFile(chaos::ShaderType::FRAGMENT, resources_path / ps_filename);
+		program_generator.AddShaderSourceFile(chaos::ShaderType::VERTEX, resources_path / vs_filename);
 
 		return program_generator.GenProgramObject();
 	}

@@ -136,7 +136,7 @@ protected:
 		if (rm == nullptr)
 			return true;
 		if (mesh != nullptr)
-			mesh->Render(renderer, rm, &uniform_provider, render_params);
+			mesh->DisplayWithMaterial(rm, renderer, &uniform_provider, render_params);
 
 		debug_display.Display(renderer, (int)(2.0f * viewport.half_size.x), (int)(2.0f * viewport.half_size.y));
 

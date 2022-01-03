@@ -42,7 +42,7 @@ protected:
 		chaos::GPURenderParams render_params;
 		render_params.instancing.instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
 		render_params.instancing.base_instance = 0;
-		mesh->Render(renderer, program.get(), &uniform_provider, render_params);
+		mesh->DisplayWithProgram(program.get(), renderer, &uniform_provider, render_params);
 
 		return true;
 	}
@@ -73,8 +73,8 @@ protected:
 
 		// create shader
 		chaos::GPUProgramGenerator program_generator;
-		program_generator.AddShaderSourceFile(ShaderType::FRAGMENT, resources_path / "pixel_shader_cube.txt");
-		program_generator.AddShaderSourceFile(ShaderType::VERTEX, resources_path / "vertex_shader.txt");
+		program_generator.AddShaderSourceFile(chaos::ShaderType::FRAGMENT, resources_path / "pixel_shader_cube.txt");
+		program_generator.AddShaderSourceFile(chaos::ShaderType::VERTEX, resources_path / "vertex_shader.txt");
 
 		program = program_generator.GenProgramObject();
 		if (program == nullptr)

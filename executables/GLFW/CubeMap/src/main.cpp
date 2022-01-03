@@ -160,7 +160,7 @@ protected:
 		chaos::GPURenderParams render_params;
 
 		query->BeginQuery();
-		mesh->Render(renderer, program.get(), &uniform_provider, render_params);
+		mesh->DisplayWithProgram(program.get(), renderer, &uniform_provider, render_params);
 		query->EndQuery();
 
 		return true;
@@ -210,8 +210,8 @@ protected:
 			return false;
 
 		chaos::GPUProgramGenerator program_generator;
-		program_generator.AddShaderSourceFile(ShaderType::FRAGMENT, resources_path / "pixel_shader_cube.txt");
-		program_generator.AddShaderSourceFile(ShaderType::VERTEX, resources_path / "vertex_shader.txt");
+		program_generator.AddShaderSourceFile(chaos::ShaderType::FRAGMENT, resources_path / "pixel_shader_cube.txt");
+		program_generator.AddShaderSourceFile(chaos::ShaderType::VERTEX, resources_path / "vertex_shader.txt");
 
 		program = program_generator.GenProgramObject();
 		if (program == nullptr)

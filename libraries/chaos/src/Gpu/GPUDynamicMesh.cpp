@@ -99,10 +99,7 @@ namespace chaos
 
     int GPUDynamicMesh::DisplayWithProgram(GPUProgram const* program, GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
     {
-        return 0;
-        //GPURenderMaterial material;
-        //material.SetProgram(program);
-        //return DisplayWithMaterial(material, renderer, uniform_provider, render_params);
+        return DisplayWithMaterial(program->GetDefaultMaterial(), renderer, uniform_provider, render_params);
     }
 
 }; // namespace chaos

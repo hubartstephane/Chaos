@@ -33,7 +33,7 @@ protected:
 		uniform_provider.AddTexture("material", texture);
 
 		chaos::GPURenderParams render_params;
-		mesh_box->Render(renderer, program_box.get(), &uniform_provider, render_params);
+		mesh_box->DisplayWithProgram(program_box.get(), renderer, &uniform_provider, render_params);
 
 		debug_display.Display(renderer, (int)(2.0f * viewport.half_size.x), (int)(2.0f * viewport.half_size.y));
 
@@ -55,8 +55,8 @@ protected:
 	chaos::shared_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
 	{
 		chaos::GPUProgramGenerator program_generator;
-		program_generator.AddShaderSourceFile(ShaderType::FRAGMENT, resources_path / ps_filename);
-		program_generator.AddShaderSourceFile(ShaderType::VERTEX, resources_path / vs_filename);
+		program_generator.AddShaderSourceFile(chaos::ShaderType::FRAGMENT, resources_path / ps_filename);
+		program_generator.AddShaderSourceFile(chaos::ShaderType::VERTEX, resources_path / vs_filename);
 
 		return program_generator.GenProgramObject();
 	}

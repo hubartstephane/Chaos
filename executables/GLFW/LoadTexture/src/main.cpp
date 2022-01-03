@@ -80,7 +80,7 @@ protected:
 		uniform_provider.AddTexture("material", texture);
 
 		chaos::GPURenderParams render_params;
-		mesh->Render(renderer, program.get(), &uniform_provider, render_params);
+		mesh->DisplayWithProgram(program.get(), renderer, &uniform_provider, render_params);
 
 		return true;
 	}
@@ -119,8 +119,8 @@ protected:
 			return false;
 
 		chaos::GPUProgramGenerator program_generator;
-		program_generator.AddShaderSourceFile(ShaderType::FRAGMENT, fragment_shader_path);
-		program_generator.AddShaderSourceFile(ShaderType::VERTEX,   vertex_shader_path);
+		program_generator.AddShaderSourceFile(chaos::ShaderType::FRAGMENT, fragment_shader_path);
+		program_generator.AddShaderSourceFile(chaos::ShaderType::VERTEX,   vertex_shader_path);
 
 		program = program_generator.GenProgramObject();
 		if (program == nullptr)

@@ -37,9 +37,9 @@
 #include <chaos/Gpu/GPURenderable.h>
 #include <chaos/Gpu/GPURenderableFilter.h>
 #include <chaos/Gpu/GPURenderableLayerSystem.h>
-#include <chaos/Gpu/GPUDynamicMesh.h>
+#include <chaos/Gpu/GPUMesh.h>
 #include <chaos/Gpu/GPUMultiMeshGenerator.h>
-#include <chaos/Gpu/GPUSimpleMeshGenerator.h>
+#include <chaos/Gpu/GPUMeshGenerator.h>
 #include <chaos/Gpu/GPUSkeletonHierarchyDef.h>
 #include <chaos/Gpu/GLShaderTools.h>
 #include <chaos/Gpu/GLTools.h>

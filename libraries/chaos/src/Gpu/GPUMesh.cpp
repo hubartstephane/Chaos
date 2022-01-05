@@ -2,39 +2,65 @@
 
 namespace chaos
 {
+	GPUMeshElement::GPUMeshElement(GPUMeshElement const& src):
+		vertex_declaration(src.vertex_declaration),
+		render_material(src.render_material),
+		vertex_buffer(src.vertex_buffer),
+		index_buffer(src.index_buffer),
+		primitives(src.primitives),
+		vertex_buffer_offset(src.vertex_buffer_offset)
+	{
+		if (vertex_buffer != nullptr)
+			vertex_buffer->IncrementUsageCount();
+		if (index_buffer != nullptr)
+			index_buffer->IncrementUsageCount();
+	}
+
+	GPUMeshElement::~GPUMeshElement()
+	{
+		if (vertex_buffer != nullptr)
+			vertex_buffer->DecrementUsageCount();
+		if (index_buffer != nullptr)
+			index_buffer->DecrementUsageCount();
+	}
+
 	void GPUMesh::SetVertexArrayCache(GPUVertexArrayCache* in_vertex_array_cache)
 	{
 		vertex_array_cache = in_vertex_array_cache;
 	}
 
-	GPUMeshElement & GPUMesh::AddMeshElement()
+	GPUMeshElement & GPUMesh::AddMeshElement(GPUBuffer * vertex_buffer, GPUBuffer * index_buffer)
 	{
-		return elements.emplace_back();
+		if (vertex_buffer != nullptr)
+			vertex_buffer->IncrementUsageCount();
+		if (index_buffer != nullptr)
+			index_buffer->IncrementUsageCount();
+
+		GPUMeshElement & result = elements.emplace_back();
+		result.vertex_buffer = vertex_buffer;
+		result.index_buffer = index_buffer;
+		return result;
 	}
 
 	void GPUMesh::Clear(GPUBufferPool* buffer_pool)
 	{
-		// XXX : shu on pourrait aussi donner les IndexBuffer => ATTENTION, l index buffer GPURenderer::QUADIndexBuffer ne doit pas etre donné !
-
 		if (buffer_pool != nullptr) // give buffers to pool if we want that
 		{
-			size_t count = elements.size();
-			for (size_t i = 0; i < count; ++i)
+			for (GPUMeshElement& element : elements)
 			{
-				GPUMeshElement const& element = elements[i];
-				if (element.vertex_buffer != nullptr)
+				if (GPUBuffer * vb = element.vertex_buffer.get())
 				{
-					// we don't want to give the buffer twice to the pool
-					// in reverse order because this is more likely to find the same buffer just before this
-					size_t j = i;
-					for (; j > 0; --j)
-						if (elements[j - 1].vertex_buffer == element.vertex_buffer)
-							break;
-					if (j == 0)
-					{
-						assert(!element.vertex_buffer->IsMapped());
-						buffer_pool->GiveBuffer(element.vertex_buffer.get(), last_rendered_fence.get());
-					}
+					assert(!vb->IsMapped());
+					if (vb->DecrementUsageCount() == 0)
+						buffer_pool->GiveBuffer(vb, last_rendered_fence.get());
+					element.vertex_buffer = nullptr; // prevent GPUMeshElement destructor do decrement usage one more time (call this only after given to avoid destruction)
+				}
+				if (GPUBuffer * ib = element.index_buffer.get())
+				{
+					assert(!ib->IsMapped());
+					if (ib->DecrementUsageCount() == 0)
+						buffer_pool->GiveBuffer(ib, last_rendered_fence.get());
+					element.index_buffer = nullptr;  // prevent GPUMeshElement destructor do decrement usage one more time (call this only after given to avoid destruction)
 				}
 			}
 		}

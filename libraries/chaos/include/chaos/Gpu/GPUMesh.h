@@ -20,12 +20,9 @@ namespace chaos
         /** constructor */
         GPUMeshElement() = default;
         /** copy constructor */
-        GPUMeshElement(GPUMeshElement const& src) : // XXX : do not copy GPUVertexArrayCache
-            vertex_declaration(src.vertex_declaration),
-            render_material(src.render_material),
-            vertex_buffer(src.vertex_buffer),
-            index_buffer(src.index_buffer),
-            primitives(src.primitives) {}
+        GPUMeshElement(GPUMeshElement const& src);
+        /** destructor */
+        ~GPUMeshElement();
 
         /** the vertex declaration for this element */
         shared_ptr<GPUVertexDeclaration> vertex_declaration;
@@ -63,7 +60,7 @@ namespace chaos
         /** access any mesh element */
         GPUMeshElement const& GetMeshElement(size_t index) const { return elements[index]; }
         /** add an rendering element */
-        GPUMeshElement& AddMeshElement();
+        GPUMeshElement& AddMeshElement(GPUBuffer * vertex_buffer, GPUBuffer * index_buffer);
 
         /** change the vertex array cache */
         void SetVertexArrayCache(GPUVertexArrayCache* in_vertex_array_cache);

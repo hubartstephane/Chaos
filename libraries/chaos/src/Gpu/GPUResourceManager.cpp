@@ -433,6 +433,8 @@ namespace chaos
 			buffer += 6;
 		}
 		quad_index_buffer->UnMapBuffer();
+		// this buffer will never be given to any GPUBufferPool
+		quad_index_buffer->IncrementUsageCount();
 
 		return true;
 

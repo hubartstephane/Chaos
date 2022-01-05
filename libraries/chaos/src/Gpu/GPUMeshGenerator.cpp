@@ -143,9 +143,7 @@ namespace chaos
 		// prepare the mesh
 		mesh->Clear(nullptr);
 
-		GPUMeshElement& element = mesh->AddMeshElement();
-		element.vertex_buffer = vertex_buffer;
-		element.index_buffer = index_buffer;
+		GPUMeshElement& element = mesh->AddMeshElement(vertex_buffer.get(), index_buffer.get());
 
 		// generate the indices and the vertices
 		MemoryBufferWriter vertices_writer(vb_ptr, vb_size);

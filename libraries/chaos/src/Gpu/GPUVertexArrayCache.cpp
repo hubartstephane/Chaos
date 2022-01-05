@@ -96,7 +96,7 @@ namespace chaos
 		assert(renderer->GetWindow() != nullptr);
 		assert(renderer->GetWindow()->GetGLFWHandler() != nullptr);
 		assert(renderer->GetWindow()->GetGLFWHandler() == glfwGetCurrentContext());
-        assert(declaration != nullptr);
+		assert(declaration != nullptr);
 
 		// early exit
 		if (program == nullptr || program->GetResourceID() == 0)

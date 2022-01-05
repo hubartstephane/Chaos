@@ -2,16 +2,6 @@
 
 namespace chaos
 {
-
-	GPUMultiMeshGenerator::GPUMultiMeshGenerator()
-	{
-	}
-
-	GPUMultiMeshGenerator::~GPUMultiMeshGenerator()
-	{
-		Clean();
-	}
-
 	void GPUMultiMeshGenerator::AddGenerator(GPUMeshGenerator * generator, shared_ptr<GPUMesh> & target_ptr)
 	{
 		assert(generator != nullptr);

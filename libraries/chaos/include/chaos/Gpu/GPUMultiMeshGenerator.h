@@ -14,11 +14,6 @@ namespace chaos
 	{
 	public:
 
-		/** constructor */
-		GPUMultiMeshGenerator();
-		/** destructor */
-		virtual ~GPUMultiMeshGenerator();
-
 		/** the insertion method */
 		void AddGenerator(GPUMeshGenerator* generator, shared_ptr<GPUMesh>& target_ptr);
 		/** clean all generators */

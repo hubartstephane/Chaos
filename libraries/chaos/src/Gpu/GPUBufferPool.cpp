@@ -30,6 +30,7 @@ namespace chaos
     {
         assert(buffer != nullptr);
         assert(!buffer->IsMapped());
+        assert(buffer->GetUsageCount() == 0);
 #if _DEBUG // ensure no duplication
         for (GPUBufferPoolEntries const& entry : entries)
             for (auto const& entry_buffer : entry.buffers)

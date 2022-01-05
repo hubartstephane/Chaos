@@ -93,12 +93,7 @@ namespace chaos
 			else
 				mesh->Clear(nullptr); // reuse existing mesh
 
-			GPUMeshElement& element = mesh->AddMeshElement();
-
-			if (requirement.vertices_count > 0)
-				element.vertex_buffer = vertex_buffer;
-			if (requirement.indices_count > 0)
-				element.index_buffer = index_buffer;
+			GPUMeshElement& element = mesh->AddMeshElement(vertex_buffer.get(), index_buffer.get());
 			element.vertex_buffer_offset = written_vertices_count;
 
 #if _DEBUG

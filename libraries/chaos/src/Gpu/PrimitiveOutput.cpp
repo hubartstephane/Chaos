@@ -174,15 +174,10 @@ namespace chaos
         {
             assert(current_primitive_type != PrimitiveType::NONE);
 
-            GPUMeshElement& element = mesh->AddMeshElement();
+            GPUMeshElement& element = mesh->AddMeshElement(vertex_buffer.get(), (current_primitive_type == PrimitiveType::QUAD)? quad_index_buffer : nullptr);
             element.primitives = std::move(pending_primitives);
-            element.vertex_buffer = vertex_buffer;
             element.vertex_declaration = vertex_declaration;
             element.render_material = render_material;
-
-            if (current_primitive_type == PrimitiveType::QUAD)
-                element.index_buffer = quad_index_buffer;
-
             current_primitive_type = PrimitiveType::NONE;
         }
     }

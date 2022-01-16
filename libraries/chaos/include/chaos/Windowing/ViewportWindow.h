@@ -26,6 +26,21 @@ namespace chaos
 		/** gets the viewport layout */
 		ViewportLayout const * GetViewportLayout() const;
 
+		/** insert a viewport inside the window */
+		void AddViewport(Viewport* viewport, bool compute_viewport_surfaces = true);
+		/** remove a viewport inside the window */
+		void RemoveViewport(Viewport* viewport, bool compute_viewport_surfaces = true);
+
+		/** update the surface allocation for all viewports */
+		void ComputeViewportSurfaces(glm::ivec2 size);
+
+	protected:
+
+		/** override */
+		virtual bool OnDraw(GPURenderer* renderer, box2 const& viewport, glm::ivec2 window_size) override;
+		/** override */
+		virtual void OnWindowResize(glm::ivec2 size) override;
+
 	protected:
 
 		/** the viewports */

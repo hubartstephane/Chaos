@@ -29,10 +29,10 @@ namespace chaos
 		/** insert a viewport inside the window */
 		void AddViewport(Viewport* viewport, bool compute_viewport_surfaces = true);
 		/** remove a viewport inside the window */
-		void RemoveViewport(Viewport* viewport, bool compute_viewport_surfaces = true);
+		void RemoveViewport(Viewport* viewport, bool compute_viewport_surfaces = true, bool keep_empty_place = false);
 
 		/** update the surface allocation for all viewports */
-		void ComputeViewportSurfaces(glm::ivec2 size);
+		void ComputeViewportPlacements(glm::ivec2 size);
 
 	protected:
 

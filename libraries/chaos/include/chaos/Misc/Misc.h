@@ -3,6 +3,7 @@
 #include <chaos/Misc/RepeatedBoxScissor.h>
 #include <chaos/Misc/RawDataBufferAccessor.h>
 #include <chaos/Misc/RawDataBufferIterator.h>
+#include <chaos/Misc/Orientation.h>
 #include <chaos/Misc/Hotpoint.h>
 #include <chaos/Misc/TextAlignment.h>
 #include <chaos/Misc/Corner.h>

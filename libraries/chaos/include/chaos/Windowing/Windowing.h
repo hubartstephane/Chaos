@@ -1,4 +1,5 @@
 #include <chaos/Windowing/Window.h>
+#include <chaos/Windowing/ViewportPlacement.h>
 #include <chaos/Windowing/Viewport.h>
 #include <chaos/Windowing/ViewportLayout.h>
 #include <chaos/Windowing/ViewportWindow.h>

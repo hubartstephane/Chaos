@@ -22,11 +22,12 @@ ProcessSubPremake("FreeType")
 ProcessSubPremake("TextureArray")
 ProcessSubPremake("TextureArrayAtlas")
 ProcessSubPremake("TextureArrayAnimation")
-ProcessSubPremake("TextureArrayAtlasSprite") 
+ProcessSubPremake("TextureArrayAtlasSprite")
 ProcessSubPremake("TextSpriteFormat")
 ProcessSubPremake("Clocks")
 ProcessSubPremake("Sound3D")
 ProcessSubPremake("Spriter")
+ProcessSubPremake("ViewportWindow")
 
 
 

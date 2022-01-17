@@ -8,6 +8,8 @@ namespace chaos
 
 	class ViewportWindow : public Window
 	{
+		CHAOS_DECLARE_OBJECT_CLASS(ViewportWindow, Window);
+
 	public:
 
 		/** gets the number of viewport */

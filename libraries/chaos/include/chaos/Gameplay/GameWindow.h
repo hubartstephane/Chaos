@@ -27,7 +27,7 @@ namespace chaos
 		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
 
 		/** override */
-		virtual bool OnDraw(GPURenderer* renderer, box2 const& viewport, glm::ivec2 window_size) override;
+		virtual bool OnDraw(GPURenderer* renderer, box2 const& viewport, glm::ivec2 window_size, GPUProgramProviderBase const* uniform_provider) override;
 		/** override */
 		virtual void Finalize() override;
 		/** override */

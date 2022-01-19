@@ -17,7 +17,7 @@ namespace chaos
 	public:
 
 		/** gives set hints to GLFW */
-		void ApplyHints();
+		void ApplyHints() const;
 
 	public:
 
@@ -194,7 +194,7 @@ namespace chaos
 		bool IsMousePositionValid() const;
 
 		/** the drawing specialization method */
-		virtual bool OnDraw(GPURenderer* renderer, box2 const& viewport, glm::ivec2 window_size);
+		virtual bool OnDraw(GPURenderer* renderer, box2 const& viewport, glm::ivec2 window_size, GPUProgramProviderBase const* uniform_provider);
 
 	private:
 

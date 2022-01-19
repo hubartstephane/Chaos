@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h> 
+#include <chaos/Chaos.h>
 
 class WindowOpenGLTest : public chaos::Window
 {
@@ -6,7 +6,7 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderBase const* uniform_provider) override
 	{
 		glClearColor(0.0f, 0.0, 0.0, 0.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -56,14 +56,14 @@ protected:
 		// "texture1.bmp" already loaded directly in the GPU.json
 		TexturePtr failed_load_texture = gpu_manager->LoadTexture(resource_path / "textures" / "texture1.bmp");
 		TexturePtr already_exisiting   = gpu_manager->FindTextureByPath(resource_path / "textures" / "texture1.bmp");
-		
-		// "texture1.json" already loaded directly in the GPU.json		
+
+		// "texture1.json" already loaded directly in the GPU.json
 		TexturePtr failed_texture1 = gpu_manager->LoadTexture(resource_path / "textures" / "texture1.json");
-		
+
 		// in GPU.json there is already a texture named "toto"
 		TexturePtr failed_texture3 = gpu_manager->LoadTexture(resource_path / "textures" / "texture3.json", "toto");
 
-		// none of the following textures has been loaded into GPU.json 
+		// none of the following textures has been loaded into GPU.json
 		TexturePtr success_texture2 = gpu_manager->LoadTexture(resource_path / "textures" / "texture2.json", "titi");
 		TexturePtr success_texture4 = gpu_manager->LoadTexture(resource_path / "textures" / "texture4.json");
 		TexturePtr success_texture5 = gpu_manager->LoadTexture(resource_path / "textures" / "texture5.json");

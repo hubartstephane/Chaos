@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h> 
+#include <chaos/Chaos.h>
 
 // --------------------------------------------------------------------
 
@@ -8,7 +8,7 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderBase const* uniform_provider) override
 	{
 		glm::vec4 clear_color(0.0f, 0.0f, 0.7f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -27,9 +27,10 @@ protected:
 		glm::mat4 world_to_camera = fps_view_controller.GlobalToLocal();
 		glm::mat4 local_to_world = glm::translate(b.position) * glm::scale(b.half_size);
 
+
 		class MyProvider : public chaos::GPUProgramProviderBase
 		{
-		protected: 
+		protected:
 
 			virtual bool DoProcessAction(chaos::GPUProgramProviderExecutionData const& execution_data) const override
 			{
@@ -41,7 +42,7 @@ protected:
 					if (execution_data.GetValue<glm::mat4>("translate_mat", translate_mat))
 						if (execution_data.GetValue<glm::mat4>("scale_mat", scale_mat))
 							return execution_data.Process(translate_mat * scale_mat, this);
-				}         
+				}
 				return false;
 			}
 		};
@@ -51,50 +52,15 @@ protected:
 		glm::vec3 scale = glm::vec3(2.0f / w, 2.0f / h, 1.0f);
 		glm::vec3 tr = glm::vec3(-1.0f, -1.0f, 0.0f);
 
-    chaos::shared_ptr<MyProvider> dynamic_provider = new MyProvider;
-    chaos::shared_ptr<chaos::GPUProgramProvider> uniform_provider = new chaos::GPUProgramProvider;
-		uniform_provider->AddVariable("translate_mat", glm::translate(tr));
-		uniform_provider->AddVariable("scale_mat", glm::scale(scale));
-		uniform_provider->AddVariable("toto", glm::vec2(5.0f, 6.0f));
-    uniform_provider->AddProvider(dynamic_provider.get());
-
-#if 0
-		glm::mat4 m1;
-		glm::dmat4 m2;
-		glm::mat3x2 m3;
-		glm::dmat4x2 m4;
-		glm::mat4 m5;
-		glm::dmat4 m6;
-		glm::mat3x2 m7;
-		glm::dmat4x2 m8;
-		glm::vec2    v1;
-		glm::vec2    v2;
-		glm::vec3    v3;
-		glm::vec4    v4;
-		glm::tvec2<GLint> v5;
-		glm::tvec3<GLint> v6;
-		glm::tvec4<GLint> v7;
-
-		bool b1 = uniform_provider->GetValue("local_to_cam", m1);
-		bool b2 = uniform_provider->GetValue("local_to_cam", m2);
-		bool b3 = uniform_provider->GetValue("local_to_cam", m3);
-		bool b4 = uniform_provider->GetValue("local_to_cam", m4);
-		bool b5 = uniform_provider->GetValue("local_to_cam", v1);
-
-		bool b6 = uniform_provider->GetValue("toto", m5);
-		bool b7 = uniform_provider->GetValue("toto", m6);
-		bool b8 = uniform_provider->GetValue("toto", m7);
-		bool b9 = uniform_provider->GetValue("toto", m8);
-		bool b10 = uniform_provider->GetValue("toto", v2);
-		bool b11 = uniform_provider->GetValue("toto", v3);
-		bool b12 = uniform_provider->GetValue("toto", v4);
-		bool b13 = uniform_provider->GetValue("toto", v5);
-		bool b14 = uniform_provider->GetValue("toto", v6);
-		bool b15 = uniform_provider->GetValue("toto", v7);
-#endif
+		chaos::shared_ptr<MyProvider> dynamic_provider = new MyProvider;
+		chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
+		main_uniform_provider.AddVariable("translate_mat", glm::translate(tr));
+		main_uniform_provider.AddVariable("scale_mat", glm::scale(scale));
+		main_uniform_provider.AddVariable("toto", glm::vec2(5.0f, 6.0f));
+		main_uniform_provider.AddProvider(dynamic_provider.get());
 
 		chaos::GPURenderParams render_params;
-		particle_manager->Display(renderer, uniform_provider.get(), render_params);
+		particle_manager->Display(renderer, &main_uniform_provider, render_params);
 
 		return true;
 	}
@@ -147,7 +113,7 @@ protected:
 			if (bitmap != nullptr)
 				generator.AddBitmap("BUTTON", bitmap);
 		}
-		
+
 		generator.AddFontInfo("C1", atlas->GetFontInfo("font_info1"));
 		generator.AddFontInfo("C2", atlas->GetFontInfo("font_info2"));
 

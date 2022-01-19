@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h> 
+#include <chaos/Chaos.h>
 
 static constexpr int MAX_BONE_COUNT = 10;
 static constexpr int SKELETAL_BONE_COUNT = 250;
@@ -24,17 +24,17 @@ protected:
       GLint mode = 0;
       glGetIntegerv(GL_POLYGON_MODE, &mode);
       if (mode == GL_LINE)
-        glPolygonMode(GL_FRONT_AND_BACK, GL_POINT); 
+        glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
       else if (mode == GL_POINT)
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); 
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
       else if (mode == GL_FILL)
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);     
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			return true;
-    }  
+    }
 		return false;
   }
 
-  virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
+  virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderBase const* uniform_provider) override
   {
     glm::vec4 clear_color(0.2f, 0.0f, 0.0f, 0.0f);
     glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -44,16 +44,16 @@ protected:
 
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);   // when viewer is inside the cube
-    
+
     for (auto const & mesh : imported_data.meshes)
     {
       int bone_count = mesh->declaration.GetBoneCount();
       if (bone_count < 0 || bone_count >= MAX_BONE_COUNT)
         continue;
-           
+
       glUseProgram(program[bone_count]);
 
-      // XXX : the scaling is used to avoid the near plane clipping      
+      // XXX : the scaling is used to avoid the near plane clipping
       static float FOV =  60.0f;
       glm::mat4 projection_matrix = glm::perspectiveFov(FOV * (float)M_PI / 180.0f,(float)size.x, (float)size.y, 1.0f, far_plane);
 
@@ -72,19 +72,19 @@ protected:
         {
           glm::mat4 * m = new glm::mat4[SKELETAL_BONE_COUNT];
           if (m != nullptr)
-          {          
+          {
             for (int i = 0 ; i < SKELETAL_BONE_COUNT ; ++i)
               m[i] = glm::mat4(1.0f);
 
             glUniformMatrix4fv(info->location, SKELETAL_BONE_COUNT, false, (float const *)m);
-            delete [] m;     
-          }                                   
-        }     
+            delete [] m;
+          }
+        }
       }
 
       float color = (float)(&mesh - &imported_data.meshes[0]) / (float)imported_data.meshes.size();
       program_data[bone_count].SetUniform("mesh_color", color);
-      mesh->Render(program_data[bone_count], nullptr);  
+      mesh->Render(program_data[bone_count], nullptr);
     }
 
     return true;
@@ -101,7 +101,7 @@ protected:
   }
 
   virtual bool InitializeFromConfiguration(nlohmann::json const & config) override
-  {   
+  {
 		if (!chaos::Window::InitializeFromConfiguration(config))
 			return false;
 
@@ -117,16 +117,16 @@ protected:
     program_generator.AddShaderSourceFile(chaos::ShaderType::VERTEX,   resources_path / "vertex_shader.txt");
 
     chaos::GPUProgramGenerator::DefinitionSet definitions;
-    definitions["SKELETAL_BONE_COUNT"] = SKELETAL_BONE_COUNT;   
+    definitions["SKELETAL_BONE_COUNT"] = SKELETAL_BONE_COUNT;
 
     for (int i = 0 ; i < MAX_BONE_COUNT ; ++i)
     {
-      definitions["BONE_COUNT"] = i;   
+      definitions["BONE_COUNT"] = i;
 
       program[i] = loader.GenProgram(definitions);
       if (program[i] == 0)
         return false;
-    
+
       program_data[i] = chaos::GPUProgramData::GetData(program[i]);
     }
 
@@ -140,17 +140,17 @@ protected:
       model_path = resources_path / "house.fbx";
     else if (MODEL_INDEX % 3 == 2)
       model_path = resources_path / "watcher.fbx";
-    
+
     chaos::MyFbxImporterParams params;
     params.vertex_transforms = glm::mat4(0.05f);
 
     chaos::MyFbxImporter importer;
     if (!importer.ImportScene(model_path, imported_data, params))
       return false;
- 
+
     if (imported_data.meshes.size() == 0)
       return false;
-   
+
     return true;
   }
 
@@ -174,11 +174,11 @@ protected:
   GLuint program[MAX_BONE_COUNT];
 
   chaos::GPUProgramData program_data[MAX_BONE_COUNT];
-  
+
   chaos::FPSViewInputController fps_view_controller;
 
   chaos::MyFbxImporterOutput imported_data;
-}; 
+};
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {

@@ -6,7 +6,7 @@ namespace chaos
 	* WindowHints
 	*/
 
-	void WindowHints::ApplyHints()
+	void WindowHints::ApplyHints() const
 	{
 		glfwWindowHint(GLFW_RESIZABLE, resizable);
 		glfwWindowHint(GLFW_VISIBLE, start_visible);
@@ -508,20 +508,24 @@ namespace chaos
 
 			box2 viewport = GetRequiredViewport(window_size);
 			GLTools::SetViewport(viewport);
+
+			// data provider
+			GPUProgramProvider provider;
+
+
 			// render
-			if (OnDraw(renderer.get(), viewport, window_size))
+			if (OnDraw(renderer.get(), viewport, window_size, &provider))
 			{
 				if (double_buffer)
 					glfwSwapBuffers(glfw_window);
-				// XXX : seems useless
-				//else
-				//	glFlush(); 
+				else
+					glFlush(); // seems useless ?
 			}
 			renderer->EndRenderingFrame();
 		}
 	}
 
-	bool Window::OnDraw(GPURenderer* renderer, box2 const& viewport, glm::ivec2 window_size)
+	bool Window::OnDraw(GPURenderer* renderer, box2 const& viewport, glm::ivec2 window_size, GPUProgramProviderBase const* uniform_provider)
 	{
 		assert(glfw_window == glfwGetCurrentContext());
 		return true;
@@ -559,7 +563,7 @@ namespace chaos
 #if !_DEBUG
 		if (Application::HasApplicationCommandLineFlag("-UnlimitedFPS")) // CMDLINE
 			hints.unlimited_fps = true;
-#else 
+#else
 		hints.unlimited_fps = true;
 #endif
 	}
@@ -690,7 +694,7 @@ namespace chaos
 		if (glfw_window == nullptr || renderer == nullptr)
 			return false;
 
-		return WithGLContext<bool>([this]() 
+		return WithGLContext<bool>([this]()
 		{
 			// this call may take a while causing a jump in 'delta_time'
 			WindowApplication* application = Application::GetInstance();
@@ -717,10 +721,13 @@ namespace chaos
 				return false;
 
 			// render in the frame buffer
+			GPUProgramProvider provider;
+
+
 			renderer->BeginRenderingFrame();
 			renderer->PushFramebufferRenderContext(framebuffer.get(), false);
 			GLTools::SetViewport(viewport);
-			OnDraw(renderer.get(), viewport, framebuffer_size);
+			OnDraw(renderer.get(), viewport, framebuffer_size, &provider);
 			renderer->PopFramebufferRenderContext();
 			renderer->EndRenderingFrame();
 
@@ -796,7 +803,7 @@ namespace chaos
 		// super method
 		if (InputEventReceiver::OnKeyEventImpl(event))
 			return true;
-		return false;	
+		return false;
 	}
 
 	bool Window::InitializeFromConfiguration(nlohmann::json const& config)

@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h> 
+#include <chaos/Chaos.h>
 
 class WindowOpenGLTest : public chaos::Window
 {
@@ -96,7 +96,7 @@ protected:
 		return nullptr;
 	}
 
-	virtual bool OnDraw(chaos::GPURenderer* renderer, chaos::box2 const& viewport, glm::ivec2 window_size) override
+	virtual bool OnDraw(chaos::GPURenderer* renderer, chaos::box2 const& viewport, glm::ivec2 window_size, chaos::GPUProgramProviderBase const* uniform_provider) override
 	{
 		if (query->IsEnded())
 		{
@@ -116,17 +116,17 @@ protected:
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);   // when viewer is inside the cube
 
-		// XXX : the scaling is used to avoid the near plane clipping      
+		// XXX : the scaling is used to avoid the near plane clipping
 		static float FOV = 60.0f;
 		glm::mat4 projection_matrix = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, 2.0f * viewport.half_size.x, 2.0f * viewport.half_size.y, 1.0f, far_plane);
 		glm::mat4 local_to_world_matrix = glm::scale(glm::vec3(10.0f, 10.0f, 10.0f));
 		glm::mat4 world_to_camera_matrix = fps_view_controller.GlobalToLocal();
 
-		chaos::GPUProgramProvider uniform_provider;
-		uniform_provider.AddVariable("projection", projection_matrix);
-		uniform_provider.AddVariable("local_to_world", local_to_world_matrix);
-		uniform_provider.AddVariable("world_to_camera", world_to_camera_matrix);
-		uniform_provider.AddTexture("material", texture);
+		chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
+		main_uniform_provider.AddVariable("projection", projection_matrix);
+		main_uniform_provider.AddVariable("local_to_world", local_to_world_matrix);
+		main_uniform_provider.AddVariable("world_to_camera", world_to_camera_matrix);
+		main_uniform_provider.AddTexture("material", texture);
 
 		// XXX : conditional rendering may fail if all conditions are not meet
 		//       the rendering will be processed has normal
@@ -160,7 +160,7 @@ protected:
 		chaos::GPURenderParams render_params;
 
 		query->BeginQuery();
-		mesh->DisplayWithProgram(program.get(), renderer, &uniform_provider, render_params);
+		mesh->DisplayWithProgram(program.get(), renderer, &main_uniform_provider, render_params);
 		query->EndQuery();
 
 		return true;

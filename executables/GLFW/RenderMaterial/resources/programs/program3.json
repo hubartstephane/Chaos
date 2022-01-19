@@ -1,9 +1,9 @@
 {
-	"pixel_sources":
+	"fragment":
 	[
 		"@pixel_shader3.txt"
 	],
-	"vertex_sources":
+	"vertex":
 	[
 		"@vertex_shader3.txt"
 	]

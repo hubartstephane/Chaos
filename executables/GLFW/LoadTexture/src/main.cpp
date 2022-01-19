@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h> 
+#include <chaos/Chaos.h>
 
 class WindowOpenGLTest : public chaos::Window
 {
@@ -65,7 +65,7 @@ protected:
 		return result;
 	}
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderBase const* uniform_provider) override
 	{
 		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -76,11 +76,11 @@ protected:
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 
-		chaos::GPUProgramProvider uniform_provider;
-		uniform_provider.AddTexture("material", texture);
+		chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
+		main_uniform_provider.AddTexture("material", texture);
 
 		chaos::GPURenderParams render_params;
-		mesh->DisplayWithProgram(program.get(), renderer, &uniform_provider, render_params);
+		mesh->DisplayWithProgram(program.get(), renderer, &main_uniform_provider, render_params);
 
 		return true;
 	}
@@ -94,7 +94,7 @@ protected:
 	}
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config) override
-	{   
+	{
 		if (!chaos::Window::InitializeFromConfiguration(config))
 			return false;
 

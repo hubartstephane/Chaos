@@ -1,11 +1,11 @@
-#include <chaos/Chaos.h> 
-#include <typeinfo> 
+#include <chaos/Chaos.h>
+#include <typeinfo>
 #include <boost/convert/detail/has_member.hpp>
 
 static bool destroy_all_particles = false;
 
 // ==============================================================
-// Particles 
+// Particles
 // ==============================================================
 
 class ParticleExample
@@ -28,11 +28,11 @@ class ParticleExampleLayerTrait : public chaos::ParticleLayerTrait<ParticleExamp
 public:
 
 	bool Tick(float delta_time, chaos::ParticleAllocationBase * allocation)
-	{		
+	{
 		time += delta_time;
 
 		return destroy_all_particles;
-	
+
 	}
 
 	bool UpdateParticle(float delta_time, ParticleExample & particle) const
@@ -73,7 +73,7 @@ public:
 };
 
 // ==============================================================
-// Application 
+// Application
 // ==============================================================
 
 class WindowOpenGLTest : public chaos::Window
@@ -88,7 +88,7 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderBase const* uniform_provider) override
 	{
 		// clear the buffers
 		glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
@@ -96,23 +96,23 @@ protected:
 
 		float far_plane = 1000.0f;
 		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
-		
-		// change  the viewport 
-		chaos::DisableReferenceCount<chaos::GPUProgramProvider> uniform_provider;
+
+		// change  the viewport
+		chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
 
 		glm::vec2 world_size     = glm::vec2(WORLD_X, WORLD_X / VIEWPORT_WANTED_ASPECT);
 		glm::vec2 world_position = glm::vec2(0.0f, 0.0f);
 
 		glm::vec3 scale = glm::vec3(2.0f / world_size.x, 2.0f / world_size.y, 1.0f);
-		glm::vec3 tr    = glm::vec3(-world_position.x, -world_position.y, 0.0f); 
+		glm::vec3 tr    = glm::vec3(-world_position.x, -world_position.y, 0.0f);
 
 		glm::mat4 local_to_cam =  glm::scale(scale) * glm::translate(tr);
 
-		uniform_provider.AddVariable("local_to_cam", local_to_cam);
+		main_uniform_provider.AddVariable("local_to_cam", local_to_cam);
 
 		// draw
 		chaos::GPURenderParams render_params;
-		particle_manager->Display(renderer, &uniform_provider, render_params);
+		particle_manager->Display(renderer, &main_uniform_provider, render_params);
 
 		return true;
 	}
@@ -224,7 +224,7 @@ protected:
 
 	void InitializeParticles(ParticleExample & particle, glm::vec2 const & center)
 	{
-		
+
 		float WORLD_HEIGHT = 0.5f * WORLD_X / VIEWPORT_WANTED_ASPECT;
 
         float size = WORLD_HEIGHT * chaos::MathTools::RandFloat() * 0.04f;

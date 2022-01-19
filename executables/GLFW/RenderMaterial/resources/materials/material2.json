@@ -3,18 +3,18 @@
 	"parent_material":"mat1",
 	"program":
 	{
-		"pixel_sources":
+		"fragment":
 		[
 			"@../programs/pixel_shader2.txt"
 		],
-		"vertex_sources":
+		"vertex":
 		[
 			"@../programs/vertex_shader2.txt"
-		]	
+		]
 	},
 	"renderpass:renderpass1":
 	{
-		"hidden":true		
+		"hidden":true
 	},
 	"renderpass:renderpass2, renderpass3, renderpass4":
 	{
@@ -27,7 +27,7 @@
 			"cube_texture":{"name":"texture2"}
 		},
 
-		"renderpass:renderpass3":			
+		"renderpass:renderpass3":
 		{
 			"parent_material":"mat3"
 		},
@@ -36,20 +36,20 @@
 		{
 			"uniforms":
 			{
-				"color":[1.0, 0.0, 1.0]			
+				"color":[1.0, 0.0, 1.0]
 			},
 
 			"program":
 			{
-				"pixel_sources":
+				"fragment":
 				[
 					"@../programs/pixel_shader3.txt"
 				],
-				"vertex_sources":
+				"vertex":
 				[
 					"@../programs/vertex_shader3.txt"
-				]					
-			}	
+				]
+			}
 		}
 	}
 }

@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h> 
+#include <chaos/Chaos.h>
 
 class WindowOpenGLTest : public chaos::Window
 {
@@ -38,7 +38,7 @@ protected:
 				chaos::shared_ptr<chaos::GPUTexture> new_texture = chaos::GPUTextureLoader().GenTextureObject(desc.GetSubImageDescription(0, 0, desc.width - 7, desc.height - 7));
 				if (new_texture != nullptr)
 					texture = new_texture;
-			
+
 				delete [](buffer);
 			}
 		}
@@ -63,7 +63,8 @@ protected:
 
 	bool GenerateTextureFromFilename(char const * filename)
 	{
-		chaos::shared_ptr<chaos::GPUTexture> new_texture = chaos::GPUTextureLoader().GenTextureObject(filename);
+		chaos::FilePathParam file_path(filename);
+		chaos::shared_ptr<chaos::GPUTexture> new_texture = chaos::GPUTextureLoader().GenTextureObject(file_path);
 		if (new_texture == nullptr)
 			return false;
 		texture = new_texture;
@@ -196,7 +197,7 @@ protected:
 					{
 						line[j].R = chaos::MathTools::CastAndDiv<float>(j, desc.width);
 						line[j].G = 0.0f;
-						line[j].B = chaos::MathTools::CastAndDiv<float>(i, desc.height); 
+						line[j].B = chaos::MathTools::CastAndDiv<float>(i, desc.height);
 						line[j].A = 1.0f;
 					}
 				}
@@ -264,7 +265,7 @@ protected:
 		return false;
 	}
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderBase const* uniform_provider) override
 	{
 		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -275,12 +276,12 @@ protected:
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 
-		chaos::GPUProgramProvider uniform_provider;
-		uniform_provider.AddTexture("material", texture);
-		uniform_provider.AddVariable("screen_size", glm::vec2((float)window_size.x, (float)window_size.y));
-		
+		chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
+		main_uniform_provider.AddTexture("material", texture);
+		main_uniform_provider.AddVariable("screen_size", glm::vec2((float)window_size.x, (float)window_size.y));
+
 		chaos::GPURenderParams render_params;
-		mesh->DisplayWithProgram(program.get(), renderer, &uniform_provider, render_params);
+		mesh->DisplayWithProgram(program.get(), renderer, &main_uniform_provider, render_params);
 
 		return true;
 	}
@@ -294,7 +295,7 @@ protected:
 	}
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config) override
-	{   
+	{
 		if (!chaos::Window::InitializeFromConfiguration(config))
 			return false;
 

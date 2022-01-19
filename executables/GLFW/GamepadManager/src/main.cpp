@@ -1,5 +1,5 @@
 
-#include <chaos/Chaos.h> 
+#include <chaos/Chaos.h>
 
 class TestGamepadCallbacks : public chaos::GamepadCallbacks
 {
@@ -70,7 +70,7 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderBase const* uniform_provider) override
 	{
 		glm::vec4 clear_color(0.1f, 0.0f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -149,7 +149,7 @@ protected:
 			for (int i = 0; i < axis_count; ++i)
 			{
 				float value = main_gamepad->GetAxisValue(i);
-				if (value != 0.0f) 
+				if (value != 0.0f)
 					debug_display.AddLine(chaos::StringTools::Printf("AXIS [%d] = %f", i, value).c_str(), 1.0f);
 			}
 
@@ -157,7 +157,7 @@ protected:
 				debug_display.AddLine("AXIS ACTION", 1.0f);
 
 #else
-			
+
 #define TEST_BUTTON(x) if (main_gamepad->IsButtonPressed(chaos::GamepadButton::x))\
 debug_display.AddLine("Pressed : " #x, 1.0f);
 
@@ -168,8 +168,8 @@ debug_display.AddLine("Pressed : " #x, 1.0f);
 
 			TEST_BUTTON(LEFT_BUMPER);
 			TEST_BUTTON(RIGHT_BUMPER);
-			TEST_BUTTON(SELECT);
-			TEST_BUTTON(START);
+			TEST_BUTTON(SPECIAL_LEFT);
+			TEST_BUTTON(SPECIAL_RIGHT);
 
 			TEST_BUTTON(LEFT_TRIGGER);
 			TEST_BUTTON(RIGHT_TRIGGER);

@@ -11,6 +11,24 @@ class WindowOpenGLTest : public chaos::ViewportWindow
 
 protected:
 
+	virtual bool InitializeFromConfiguration(nlohmann::json const& config) override
+	{
+		if (!chaos::ViewportWindow::InitializeFromConfiguration(config))
+			return false;
+
+		if (chaos::ViewportGridLayout* layout = new chaos::ViewportGridLayout)
+		{
+			SetViewportLayout(layout);
+
+
+			AddViewport(new chaos::Viewport);
+			AddViewport(new chaos::Viewport);
+			AddViewport(new chaos::Viewport);
+
+		}
+		return true;
+	}
+
 
 #if 0
 

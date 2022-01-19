@@ -33,12 +33,12 @@ namespace chaos
 			void main()
 			{
 				vs_position = position;
-				vs_texcoord = HalfPixelCorrection(texcoord, flags, material);				
+				vs_texcoord = HalfPixelCorrection(texcoord, flags, material);
 				vs_flags    = ExtractFragmentFlags(flags);
 				vs_color    = color;
 
 				gl_Position = projection_matrix * local_to_camera * vec4(position.x, position.y, 0.0, 1.0);
-			}									
+			}
 		)VERTEX_SHADER";
 
 	char const* DefaultParticleProgramSource::fragment_shader_source = R"FRAGMENT_SHADER(
@@ -63,11 +63,11 @@ namespace chaos
 					}
 					// Not using texel interpolation
 					else
-					{					
+					{
 						ivec3 size = textureSize(material, 0);
 						ivec3 coord;
 						coord.xy = ivec2((vs_texcoord.xy * vec2(size.xy)));
-						coord.z = int(vs_texcoord.z);	
+						coord.z = int(vs_texcoord.z);
 						color = texelFetch(material, coord, 0);
 					}
 				}
@@ -102,7 +102,7 @@ namespace chaos
 
 		uniform sampler2DArray material; // texture required in VS for Half pixel correction
 
-		void main() 
+		void main()
 		{
 			vs_position = position;
 			vs_texcoord = HalfPixelCorrection(texcoord, flags, material);
@@ -112,7 +112,7 @@ namespace chaos
 			gl_Position.xy = position / canvas_box.zw;
 			gl_Position.z = 0.0;
 			gl_Position.w = 1.0;
-		}								
+		}
 		)VERTEX_SHADER";
 
 	char const* DefaultScreenSpaceProgramGenerator::fragment_shader_source = DefaultParticleProgramSource::fragment_shader_source;

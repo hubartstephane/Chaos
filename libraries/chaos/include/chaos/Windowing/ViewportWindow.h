@@ -28,6 +28,9 @@ namespace chaos
 		/** gets the viewport layout */
 		ViewportLayout const * GetViewportLayout() const;
 
+		/** change the viewport layout */
+		void SetViewportLayout(ViewportLayout* in_viewport_layout);
+
 		/** insert a viewport inside the window */
 		void AddViewport(Viewport* viewport, bool compute_viewport_surfaces = true);
 		/** remove a viewport inside the window */

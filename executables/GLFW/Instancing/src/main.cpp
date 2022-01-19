@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h> 
+#include <chaos/Chaos.h>
 
 class WindowOpenGLTest : public chaos::Window
 {
@@ -6,7 +6,7 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderBase const* uniform_provider) override
 	{
 		float     far_plane = 1000.0f;
 		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
@@ -16,7 +16,7 @@ protected:
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 
-		// XXX : the scaling is used to avoid the near plane clipping      
+		// XXX : the scaling is used to avoid the near plane clipping
 		static float FOV = 60.0f;
 		glm::mat4 projection_matrix = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, 2.0f * viewport.half_size.x, 2.0f * viewport.half_size.y, 1.0f, far_plane);
 
@@ -32,17 +32,17 @@ protected:
 		if (clock != nullptr)
 			clock->GetClockTime();
 
-		chaos::GPUProgramProvider uniform_provider;
-		uniform_provider.AddVariable("projection", projection_matrix);
-		uniform_provider.AddVariable("local_to_world", local_to_world_matrix);
-		uniform_provider.AddVariable("world_to_camera", world_to_camera_matrix);
-		uniform_provider.AddVariable("instance_cube_size", instance_cube_size);
-		uniform_provider.AddVariable("realtime", realtime);
+		chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
+		main_uniform_provider.AddVariable("projection", projection_matrix);
+		main_uniform_provider.AddVariable("local_to_world", local_to_world_matrix);
+		main_uniform_provider.AddVariable("world_to_camera", world_to_camera_matrix);
+		main_uniform_provider.AddVariable("instance_cube_size", instance_cube_size);
+		main_uniform_provider.AddVariable("realtime", realtime);
 
 		chaos::GPURenderParams render_params;
 		render_params.instancing.instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
 		render_params.instancing.base_instance = 0;
-		mesh->DisplayWithProgram(program.get(), renderer, &uniform_provider, render_params);
+		mesh->DisplayWithProgram(program.get(), renderer, &main_uniform_provider, render_params);
 
 		return true;
 	}

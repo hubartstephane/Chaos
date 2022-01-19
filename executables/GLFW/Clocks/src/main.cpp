@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h> 
+#include <chaos/Chaos.h>
 
 
 class WindowOpenGLTest;
@@ -13,8 +13,8 @@ class MyEvent : public chaos::ClockEvent
 {
 public:
 
-	MyEvent(char const * in_message, int in_type, WindowOpenGLTest * in_application) : 
-		message(in_message), 
+	MyEvent(char const * in_message, int in_type, WindowOpenGLTest * in_application) :
+		message(in_message),
 		type(in_type),
 		application(in_application) {}
 
@@ -136,7 +136,7 @@ protected:
 			GPUDrawPrimitive(ctx, b4, white);
 	}
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderBase const* uniform_provider) override
 	{
 		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -204,7 +204,7 @@ protected:
 		boost::filesystem::path resources_path = application->GetResourcesPath();
 		boost::filesystem::path image_path = resources_path / "font.png";
 
-		// initialize debug font display 
+		// initialize debug font display
 		chaos::GLDebugOnScreenDisplay::Params debug_params;
 		debug_params.texture_path = image_path;
 		debug_params.font_characters = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
@@ -217,7 +217,7 @@ protected:
 		if (!debug_display.Initialize(debug_params))
 			return false;
 
-		// load programs      
+		// load programs
 		program_box = LoadProgram(resources_path, "pixel_shader_box.txt", "vertex_shader_box.txt");
 		if (program_box == nullptr)
 			return false;
@@ -294,7 +294,7 @@ protected:
 			if (clock_event != nullptr)
 			{
 				clock_event->RemoveFromClock();
-				clock_event = nullptr;			
+				clock_event = nullptr;
 			}
 
 			// add new event
@@ -335,7 +335,7 @@ protected:
 		else
 		{
 			if (UpdateClockTimeScaleWithKeys(clock1.get(), event, GLFW_KEY_KP_1, GLFW_KEY_KP_2))
-				return true;				
+				return true;
 			if (UpdateClockTimeScaleWithKeys(clock2.get(), event, GLFW_KEY_KP_4, GLFW_KEY_KP_5))
 				return true;
 			if (UpdateClockTimeScaleWithKeys(clock3.get(), event, GLFW_KEY_KP_7, GLFW_KEY_KP_8))
@@ -353,7 +353,7 @@ protected:
 
 protected:
 
-	// rendering for the box  
+	// rendering for the box
 	chaos::shared_ptr<chaos::GPUMesh> mesh_box;
 	chaos::shared_ptr<chaos::GPUProgram>  program_box;
 
@@ -414,7 +414,7 @@ chaos::ClockEventTickResult MyEvent::Tick(chaos::ClockEventTickData const & tick
 	}
 
 	application->debug_display.AddLine(chaos::StringTools::Printf("MyEvent [%s] tick [%d] execution [%d]", message.c_str(), GetTickCount(), GetExecutionCount()).c_str(), 0.1f);
-	return ContinueExecution(); 
+	return ContinueExecution();
 }
 
 // ====================================================================

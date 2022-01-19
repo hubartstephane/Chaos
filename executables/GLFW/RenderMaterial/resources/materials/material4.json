@@ -3,13 +3,13 @@
     "parent_material":"mat1",
 		"program":
 		{
-			"pixel_sources":
+			"fragment":
 			[
 				"@../programs/pixel_shader2.txt"
 			],
-			"vertex_sources":
+			"vertex":
 			[
 				"@../programs/vertex_shader2.txt"
-			]	
+			]
 		}
 }

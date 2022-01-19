@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h> 
+#include <chaos/Chaos.h>
 
 // ================================================================
 
@@ -64,13 +64,13 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderBase const* uniform_provider) override
 	{
 		glClearColor(0.0f, 0.0, 0.0, 0.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		return true;
 	}
-	
+
 	static void CALLBACK OnMidiInEvent(HMIDIIN hMidiIn, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2)
 	{
 		WindowOpenGLTest * self = (WindowOpenGLTest *)dwInstance;
@@ -128,7 +128,7 @@ protected:
 
 		// stop the current replay
 		if (current_state == STATE_PLAYING)
-		{			
+		{
 			track_clock->Reset();
 			track_clock->RemoveAllPendingEvents();
 		}
@@ -139,7 +139,7 @@ protected:
 		// record the event
 		DoRecordCommand(command);
 		track_clock->EnableTickEvents(false);
-		current_state = STATE_RECORDING; 
+		current_state = STATE_RECORDING;
 
 		chaos::Log::Message("[STATE_RECORDING] : %lf", track_clock->GetClockTime());
 	}
@@ -150,7 +150,7 @@ protected:
 		{
 			DWORD dwMidiMessage = dwParam1;
 			DWORD dwTimestamp = dwParam2; // milliseconds
-			chaos::MIDICommand command((uint32_t)dwMidiMessage);			
+			chaos::MIDICommand command((uint32_t)dwMidiMessage);
 			OnCommandReceived(command);
 		}
 	}
@@ -218,7 +218,7 @@ protected:
 	}
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config) override
-	{	
+	{
 		if (!chaos::Window::InitializeFromConfiguration(config))
 			return false;
 
@@ -238,7 +238,7 @@ protected:
 			return false;
 		if (!InitializeMIDIOut())
 			return false;
-		return true;		
+		return true;
 	}
 
 	void FinalizeMIDIIn()

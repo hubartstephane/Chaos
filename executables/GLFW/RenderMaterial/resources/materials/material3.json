@@ -5,13 +5,13 @@
 
 	"program":
 	{
-		"pixel_sources":
+		"fragment":
 		[
 			"@../programs/pixel_shader3.txt"
 		],
-		"vertex_sources":
+		"vertex":
 		[
 			"@../programs/vertex_shader3.txt"
-		]	
+		]
 	}
 }

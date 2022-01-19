@@ -1,5 +1,5 @@
 
-#include <chaos/Chaos.h> 
+#include <chaos/Chaos.h>
 
 uint64_t render_stamp = 0;
 
@@ -11,9 +11,9 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderBase const* uniform_provider) override
 	{
-		
+
 		uint64_t ts = renderer->GetTimestamp();
 
 		if (render_fence == nullptr)

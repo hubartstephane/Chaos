@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h> 
+#include <chaos/Chaos.h>
 
 class WindowOpenGLTest : public chaos::Window
 {
@@ -6,7 +6,7 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-  virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
+  virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderBase const* uniform_provider) override
   {
     glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
     glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -16,20 +16,20 @@ protected:
 
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);   // when viewer is inside the cube
-   
-    // XXX : the scaling is used to avoid the near plane clipping      
+
+    // XXX : the scaling is used to avoid the near plane clipping
     static float FOV =  60.0f;
     glm::mat4 projection_matrix      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, 2.0f * viewport.half_size.x, 2.0f * viewport.half_size.y, 1.0f, far_plane);
     glm::mat4 local_to_world_matrix  = glm::translate(GetBoxPosition());
     glm::mat4 world_to_camera_matrix = fps_view_controller.GlobalToLocal();
-      
-    chaos::GPUProgramProvider uniform_provider;
-    uniform_provider.AddVariable("projection",      projection_matrix);
-    uniform_provider.AddVariable("local_to_world",  local_to_world_matrix);
-    uniform_provider.AddVariable("world_to_camera", world_to_camera_matrix);
+
+    chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
+    main_uniform_provider.AddVariable("projection",      projection_matrix);
+    main_uniform_provider.AddVariable("local_to_world",  local_to_world_matrix);
+    main_uniform_provider.AddVariable("world_to_camera", world_to_camera_matrix);
 
 		chaos::GPURenderParams render_params;
-    mesh->DisplayWithProgram(program.get(), renderer, &uniform_provider, render_params);
+    mesh->DisplayWithProgram(program.get(), renderer, &main_uniform_provider, render_params);
 
 		debug_display.Display(renderer, (int)(2.0f * viewport.half_size.x), (int)(2.0f * viewport.half_size.y));
 
@@ -49,7 +49,7 @@ protected:
   }
 
   virtual bool InitializeFromConfiguration(nlohmann::json const & config) override
-  {   
+  {
 		if (!chaos::Window::InitializeFromConfiguration(config))
 			return false;
 
@@ -91,17 +91,17 @@ protected:
     chaos::GPUProgramGenerator program_generator;
     program_generator.AddShaderSourceFile(chaos::ShaderType::FRAGMENT, resources_path / "pixel_shader_cube.txt");
     program_generator.AddShaderSourceFile(chaos::ShaderType::VERTEX,   resources_path / "vertex_shader.txt");
-    
+
     program = program_generator.GenProgramObject();
     if (program == nullptr)
       return false;
 
     chaos::box3 b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-    mesh = chaos::GPUCubeMeshGenerator(b).GenerateMesh(); 
+    mesh = chaos::GPUCubeMeshGenerator(b).GenerateMesh();
     if (mesh == nullptr)
       return false;
-   
+
     return true;
   }
 
@@ -119,7 +119,7 @@ protected:
     {
     //  glm::mat4 view = fps_view_controller.GlobalToLocal();
       glm::mat4 view = fps_view_controller.LocalToGlobal();
-      sound_manager->SetListenerPosition(view[3]); // ??? 
+      sound_manager->SetListenerPosition(view[3]); // ???
       sound_manager->Tick(delta_time);
     }
 
@@ -136,7 +136,7 @@ protected:
     sound->SetPosition(pos);
 
     debug_display.Tick(delta_time);
-    
+
     return true; // refresh
   }
 
@@ -165,10 +165,10 @@ protected:
   chaos::shared_ptr<chaos::SoundManager> sound_manager;
   chaos::shared_ptr<chaos::SoundSource> sound_source;
   chaos::shared_ptr<chaos::Sound> sound;
-  
+
   chaos::shared_ptr<chaos::GPUProgram>  program;
   chaos::shared_ptr<chaos::GPUMesh> mesh;
- 
+
   chaos::FPSViewInputController fps_view_controller;
 
   chaos::GLDebugOnScreenDisplay debug_display;

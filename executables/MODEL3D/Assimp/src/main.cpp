@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h> 
+#include <chaos/Chaos.h>
 
 
 class WindowOpenGLTest : public chaos::Window
@@ -7,7 +7,7 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-  virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
+  virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderBase const* uniform_provider) override
   {
     glm::vec4 clear_color(0.1f, 0.0f, 0.0f, 0.0f);
     glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -44,7 +44,7 @@ protected:
     importer.SetExtraVerbose(true);
 
 
-    unsigned int load_flags = 
+    unsigned int load_flags =
       aiProcess_CalcTangentSpace |
       aiProcess_Triangulate |
       aiProcess_JoinIdenticalVertices |
@@ -178,7 +178,7 @@ protected:
       result &= ImportSceneNodes(scene, node->mChildren[i]);
       if (!result)
         break;
-    }		  
+    }
     return result;
   }
 
@@ -187,7 +187,7 @@ protected:
 
 
   virtual bool InitializeFromConfiguration(nlohmann::json const & config) override
-  {   
+  {
 		if (!chaos::Window::InitializeFromConfiguration(config))
 			return false;
 

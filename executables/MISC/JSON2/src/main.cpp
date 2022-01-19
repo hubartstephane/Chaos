@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h> 
+#include <chaos/Chaos.h>
 
 class WindowOpenGLTest : public chaos::Window
 {
@@ -6,7 +6,7 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-  virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
+  virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderBase const* uniform_provider) override
   {
     glClearColor(0.0f, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -21,7 +21,7 @@ protected:
 
   virtual bool OnMouseButtonImpl(int button, int action, int modifier) override
   {
-		return false; 
+		return false;
   }
 
   void Test1()
@@ -46,7 +46,7 @@ protected:
 		chaos::JSONTools::GetAttributeByIndex(*ar, 1, b);
 
 		nlohmann::json const * ar2 = chaos::JSONTools::GetStructureByIndex(*ar, 3);
-	
+
 		bool c;
 		chaos::JSONTools::GetAttributeByIndex(*ar, 4, c);
 
@@ -91,7 +91,7 @@ protected:
     }
 
     c1["INCORPORATION_C2"] = c2; // deep copy ?
-	
+
 	c2["APRES_INSERTION_DANS_C1"] = 123456; // won't be visible in the generated file => means previous line is a deep copy
 #endif
 

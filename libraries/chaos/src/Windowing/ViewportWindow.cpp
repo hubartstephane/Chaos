@@ -93,7 +93,7 @@ namespace chaos
 		}
 	}
 
-	bool ViewportWindow::OnDraw(GPURenderer* renderer, box2 const& viewport, glm::ivec2 window_size)
+	bool ViewportWindow::OnDraw(GPURenderer* renderer, box2 const& viewport, glm::ivec2 window_size, GPUProgramProviderBase const* uniform_provider)
 	{
 		// clear the color buffers
 		glm::vec4 clear_color = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);

@@ -52,7 +52,7 @@ namespace chaos
 		return Window::GetRequiredViewport(size);
 	}
 
-	bool GameWindow::OnDraw(GPURenderer * renderer, box2 const & viewport, glm::ivec2 window_size)
+	bool GameWindow::OnDraw(GPURenderer * renderer, box2 const & viewport, glm::ivec2 window_size, GPUProgramProviderBase const * uniform_provider)
 	{
 		if (game != nullptr)
 		{
@@ -60,7 +60,7 @@ namespace chaos
 
 
 			// shu48 ???
-#if 1
+#if 0
 			WindowApplication* application = Application::GetInstance();
 			if (application != nullptr)
 				if (application->GetTextureAtlas() != nullptr)
@@ -70,7 +70,7 @@ namespace chaos
 			GPURenderParams render_params;
 			render_params.viewport = viewport;
 			render_params.screen_size = window_size;
-			game->Display(renderer, &provider, render_params);
+			game->Display(renderer, uniform_provider, render_params);
 		}
 		return true;
 	}

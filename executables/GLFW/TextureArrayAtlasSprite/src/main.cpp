@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h> 
+#include <chaos/Chaos.h>
 
 class WindowOpenGLTest : public chaos::Window
 {
@@ -42,7 +42,7 @@ protected:
 
 			glm::vec2 position = screen_size * chaos::GLMTools::RandVec2();
 			glm::vec2 size = glm::vec2(particle_size * (0.01f + 0.05f * chaos::MathTools::RandFloat()));
-			glm::vec3 color = 
+			glm::vec3 color =
 				((i & 1) == 0)? glm::vec3(1.0f, 1.0f, 1.0f) : chaos::GLMTools::RandVec3();
 
 			p.bounding_box.position = position;
@@ -56,7 +56,7 @@ protected:
 		}
   }
 
-  virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
+  virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderBase const* uniform_provider) override
   {
     glm::vec4 clear_color(0.0f, 0.0f, 0.7f, 0.0f);
     glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -84,11 +84,11 @@ protected:
 
     glm::mat4 local_to_cam = glm::translate(tr) * glm::scale(scale);
 
-    chaos::DisableReferenceCount<chaos::GPUProgramProvider> uniform_provider;
-    uniform_provider.AddVariable("local_to_cam", local_to_cam);
-		
+    chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
+	main_uniform_provider.AddVariable("local_to_cam", local_to_cam);
+
 		chaos::GPURenderParams render_params;
-		particle_manager->Display(renderer, &uniform_provider, render_params);
+		particle_manager->Display(renderer, &main_uniform_provider, render_params);
 
     return true;
   }
@@ -169,7 +169,7 @@ protected:
   virtual bool Tick(float delta_time) override
   {
 		particle_manager->Tick(delta_time);
-    fps_view_controller.Tick(glfw_window, delta_time);		
+    fps_view_controller.Tick(glfw_window, delta_time);
 
     return true; // refresh
   }

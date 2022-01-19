@@ -42,7 +42,7 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual bool OnDraw(GPURenderer* renderer, box2 const& viewport, glm::ivec2 window_size) override;
+		virtual bool OnDraw(GPURenderer* renderer, box2 const& viewport, glm::ivec2 window_size, GPUProgramProviderBase const* uniform_provider) override;
 		/** override */
 		virtual void OnWindowResize(glm::ivec2 size) override;
 

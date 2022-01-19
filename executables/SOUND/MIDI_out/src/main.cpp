@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h> 
+#include <chaos/Chaos.h>
 
 // ================================================================
 
@@ -25,7 +25,7 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderBase const* uniform_provider) override
 	{
 		glClearColor(0.0f, 0.0, 0.0, 0.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -130,7 +130,7 @@ chaos::ClockEventTickResult MIDIPlaySoundEvent::Tick(chaos::ClockEventTickData c
 	PlayNote(application->hMidiOutDevice, note, volume, 0);
 	PlayNote(application->hMidiOutDevice, note + 1, volume, 1);
 
-	return ContinueExecution(); 
+	return ContinueExecution();
 }
 
 // ================================================================

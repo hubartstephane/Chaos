@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h> 
+#include <chaos/Chaos.h>
 
 class WindowOpenGLTest : public chaos::Window
 {
@@ -6,7 +6,7 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-  virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
+  virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderBase const* uniform_provider) override
   {
     glClearColor(0.0f, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -14,7 +14,7 @@ protected:
   }
 
   virtual void Finalize() override
-  {   
+  {
     sound1    = nullptr;
     category1 = nullptr;
     source1   = nullptr;
@@ -52,7 +52,7 @@ protected:
         desc.blend_type = chaos::SoundBlendType::BLEND_OUT;
         desc.blend_time = 2.0f;
         desc.kill_at_end = true;
-        sound1->StartBlend(desc, true);   
+        sound1->StartBlend(desc, true);
       }
 			return true;
     }

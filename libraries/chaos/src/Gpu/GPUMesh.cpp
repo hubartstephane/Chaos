@@ -84,7 +84,7 @@ namespace chaos
 			// early skip
 			if (element.primitives.size() == 0)
 				continue;
-			
+
 			// gets the effective_material
 			GPURenderMaterial const* effective_material = nullptr;
 
@@ -132,7 +132,7 @@ namespace chaos
 		// XXX : make code slower
 
 		//if (result > 0)
-		// last_rendered_fence = renderer->GetCurrentFrameFence(); 
+		// last_rendered_fence = renderer->GetCurrentFrameFence();
 
 		// restore an 'empty' state
 		glUseProgram(0);

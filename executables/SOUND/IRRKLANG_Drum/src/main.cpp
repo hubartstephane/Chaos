@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h> 
+#include <chaos/Chaos.h>
 
 class WindowOpenGLTest : public chaos::Window
 {
@@ -6,7 +6,7 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderBase const* uniform_provider) override
 	{
 		glClearColor(0.0f, 0.0, 0.0, 0.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -31,7 +31,7 @@ protected:
 			if (sound_source1 != nullptr)
 				engine->removeSoundSource(sound_source1.get());
 			if (sound_source2 != nullptr)
-				engine->removeSoundSource(sound_source2.get());		
+				engine->removeSoundSource(sound_source2.get());
 		}
 
 		engine = nullptr;
@@ -113,15 +113,15 @@ protected:
 		if (sound_source1 == nullptr)
 			return false;
 		// XXX :  Not from IRRKLANG   addSoundSourceFromFile(...)
-		// 
-		// DONOT CALL  sound_source1->drop(); 
+		//
+		// DONOT CALL  sound_source1->drop();
 
 		sound_source2 = engine->addSoundSourceFromFile(src2_path.string().c_str(), irrklang::ESM_NO_STREAMING, true);
 		if (sound_source2 == nullptr)
 			return false;
 		// XXX :  Not from IRRKLANG   addSoundSourceFromFile(...)
-		// 
-		// DONOT CALL  sound_source2->drop(); 
+		//
+		// DONOT CALL  sound_source2->drop();
 
 		return true;
 	}

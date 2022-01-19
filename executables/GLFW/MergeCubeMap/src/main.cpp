@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h> 
+#include <chaos/Chaos.h>
 
 std::vector<chaos::PixelFormat> pixel_formats =
 {
@@ -48,7 +48,7 @@ protected:
 			debug_display.Clear();
 
 			chaos::PixelFormat pf = pixel_formats[index];
-		
+
 			char const * component_type = (pf.component_type == chaos::PixelComponentType::UNSIGNED_CHAR) ? "unsigned char" : "float";
 
 			debug_display.AddLine(chaos::StringTools::Printf("format : index = [%d] component = [%d] type = [%s]", index, pf.component_count, component_type).c_str());
@@ -66,26 +66,26 @@ protected:
 
 		chaos::PixelFormatMergeParams merge_params;
 		merge_params.pixel_format = pixel_format;
-		
+
 #if 0
 
 		// let OpenGL do the conversion
 		return chaos::GPUTextureLoader().GenTextureObject(&skybox, merge_params);
 
 #else
-		
+
 		// do the conversion ourselves
 		chaos::SkyBoxImages single_skybox = skybox.ToSingleImage(true, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), merge_params);
 
 		if (!single_skybox.IsEmpty())
-			return chaos::GPUTextureLoader().GenTextureObject(&single_skybox);				
+			return chaos::GPUTextureLoader().GenTextureObject(&single_skybox);
 
 #endif
 
 		return nullptr;
 	}
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderBase const* uniform_provider) override
 	{
 		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -96,20 +96,20 @@ protected:
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);   // when viewer is inside the cube
 
-		// XXX : the scaling is used to avoid the near plane clipping      
+		// XXX : the scaling is used to avoid the near plane clipping
 		static float FOV =  60.0f;
 		glm::mat4 projection_matrix      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, 2.0f * viewport.half_size.x, 2.0f * viewport.half_size.y, 1.0f, far_plane);
 		glm::mat4 local_to_world_matrix  = glm::scale(glm::vec3(10.0f, 10.0f, 10.0f));
 		glm::mat4 world_to_camera_matrix = fps_view_controller.GlobalToLocal();
 
-		chaos::GPUProgramProvider uniform_provider;
-		uniform_provider.AddVariable("projection",      projection_matrix);
-		uniform_provider.AddVariable("local_to_world",  local_to_world_matrix);
-		uniform_provider.AddVariable("world_to_camera", world_to_camera_matrix);
-		uniform_provider.AddTexture("material", texture);
+		chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
+		main_uniform_provider.AddVariable("projection",      projection_matrix);
+		main_uniform_provider.AddVariable("local_to_world",  local_to_world_matrix);
+		main_uniform_provider.AddVariable("world_to_camera", world_to_camera_matrix);
+		main_uniform_provider.AddTexture("material", texture);
 
 		chaos::GPURenderParams render_params;
-		mesh->DisplayWithProgram(program.get(), renderer, &uniform_provider, render_params);
+		mesh->DisplayWithProgram(program.get(), renderer, &main_uniform_provider, render_params);
 
 		debug_display.Display(renderer, (int)(2.0f * viewport.half_size.x), (int)(2.0f * viewport.half_size.y));
 
@@ -135,7 +135,7 @@ protected:
 	bool LoadSkyboxBitmaps(boost::filesystem::path const & resources_path)
 	{
 		// load the images
-		chaos::FileTools::ForEachRedirectedDirectoryContent(resources_path / "images", [this](boost::filesystem::path const &p) 
+		chaos::FileTools::ForEachRedirectedDirectoryContent(resources_path / "images", [this](boost::filesystem::path const &p)
 		{
 			FIBITMAP * bitmap = chaos::ImageTools::LoadImageFromFile(p);
 			if (bitmap != nullptr)
@@ -154,7 +154,7 @@ protected:
 			if (size < 0 || desc.width > size)
 				size = desc.width;
 			if (size < 0 || desc.height > size)
-				size = desc.height;		
+				size = desc.height;
 		}
 		if (size <= 0)
 			return false;
@@ -195,7 +195,7 @@ protected:
 	}
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config) override
-	{   
+	{
 		if (!chaos::Window::InitializeFromConfiguration(config))
 			return false;
 
@@ -238,7 +238,7 @@ protected:
 
 		chaos::box3 b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-		mesh = chaos::GPUCubeMeshGenerator(b).GenerateMesh(); 
+		mesh = chaos::GPUCubeMeshGenerator(b).GenerateMesh();
 		if (mesh == nullptr)
 			return false;
 
@@ -277,7 +277,7 @@ protected:
 	std::vector<FIBITMAP*> skybox_bitmaps;
 
 	chaos::SkyBoxImages skybox;
-			
+
 	chaos::shared_ptr<chaos::GPUProgram>  program;
 	chaos::shared_ptr<chaos::GPUMesh> mesh;
 	chaos::shared_ptr<chaos::GPUTexture>    texture;

@@ -10,7 +10,7 @@ namespace chaos
 	// GameInstance
 	// =============================================
 
-	class GameInstance : public Tickable, public InputEventReceiver, public CheckpointObject<GameCheckpoint>
+	class GameInstance : public Tickable, public InputEventReceiver, public GPUProgramProviderInterface, public CheckpointObject<GameCheckpoint>
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
@@ -29,7 +29,7 @@ namespace chaos
 		/** get the best score among players */
 		int GetBestPlayerScore() const;
 
-		// The clocks: 
+		// The clocks:
 		//   - root  clock : the top level clock. never reseted, never paused
 		//   - main  clock : reseted whenever a new game starts/ends. never paused
 		//   - game  clock : reseted whenever a new game starts/ends. paused in MainMenu and Pause
@@ -75,6 +75,9 @@ namespace chaos
 
 	protected:
 
+		/** override */
+		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override;
+
 		/** initialize the game instance */
 		virtual bool Initialize(Game* in_game);
 
@@ -97,9 +100,6 @@ namespace chaos
 
 		/** return a new player */
 		virtual Player* DoCreatePlayer();
-
-		/** fill the rendering params before rendering */
-		virtual void FillUniformProvider(GPUProgramProvider& main_uniform_provider);
 
 		/** state changes */
 		virtual void OnEnterPause();

@@ -39,7 +39,7 @@ namespace chaos
 		return true;
 	}
 
-	// 
+	//
 	// WindowApplication
 	//
 
@@ -80,7 +80,7 @@ namespace chaos
 				else if (max_tick_duration > 0.0f)
 					delta_time = std::min(delta_time, max_tick_duration);
 			}
-			// internal tick 
+			// internal tick
 			WithGLContext<void>(shared_context, [this, delta_time]()
 			{
 				Tick(delta_time);
@@ -93,11 +93,11 @@ namespace chaos
 				if (window != nullptr && window->ShouldClose())
 				{
 					// destroy the internal GLFW window
-					WithGLContext<void>(window->GetGLFWHandler(), [window]() 
+					WithGLContext<void>(window->GetGLFWHandler(), [window]()
 					{
 						window->Finalize();
 						window->DestroyGLFWWindow();
-					});	
+					});
 					// remove the window for the list
 					windows[i - 1] = windows[windows.size() - 1];
 					windows.pop_back();
@@ -158,7 +158,7 @@ namespace chaos
 			LoadFromJSON(*glfw_configuration, glfw_hints);
 		glfw_hints.ApplyHints();
 
-		// create a hidden window whose purpose is to provide a sharable context for all others		
+		// create a hidden window whose purpose is to provide a sharable context for all others
 		window_hints.ApplyHints();
 		glfwWindowHint(GLFW_VISIBLE, 0);
 		shared_context = glfwCreateWindow(100, 100, "", nullptr, nullptr);
@@ -222,7 +222,7 @@ namespace chaos
 		}))
 		{
 			return false;
-		}		
+		}
 		// the main loop
 		MessageLoop();
 
@@ -319,7 +319,7 @@ namespace chaos
 	{
 		char const* CachedAtlasFilename = "CachedAtlas";
 
-		// Try to load already computed data 
+		// Try to load already computed data
 		if (Application::HasApplicationCommandLineFlag("-UseCachedAtlas")) // CMDLINE
 		{
 			BitmapAtlas::TextureArrayAtlas* tmp_texture_atlas = new BitmapAtlas::TextureArrayAtlas;
@@ -381,7 +381,7 @@ namespace chaos
 		BitmapAtlas::FolderInfo const* folder_info = texture_atlas->GetFolderInfo("sprites");
 		if (folder_info != nullptr)
 		{
-			// for each bitmap, that correspond to a button, register a [NAME] in the generator	
+			// for each bitmap, that correspond to a button, register a [NAME] in the generator
 			for (auto it = gamepad_button_map.begin(); it != gamepad_button_map.end(); ++it)
 			{
 				std::string const& bitmap_name = it->second.first;
@@ -493,7 +493,7 @@ namespace chaos
 
 	bool WindowApplication::ReloadGPUResources()
 	{
-		return WithGLContext<bool>(shared_context, [this]() 
+		return WithGLContext<bool>(shared_context, [this]()
 		{
 			// this call may block for too much time
 			FreezeNextFrameTickDuration();
@@ -592,7 +592,7 @@ namespace chaos
 	}
 
 	bool WindowApplication::Finalize()
-	{	
+	{
 		// destroy the resources
 		FinalizeGPUResourceManager();
 		// destroy all windows
@@ -620,7 +620,7 @@ namespace chaos
 	{
 		if (!Application::InitializeStandardLibraries())
 			return false;
-		FreeImage_Initialise(); // glew will be initialized 
+		FreeImage_Initialise(); // glew will be initialized
 		FreeImage_SetOutputMessage(&FreeImageOutputMessageFunc);
 		glfwInit();
 		return true;
@@ -694,7 +694,7 @@ namespace chaos
 
 	bool WindowApplication::OnKeyEventImpl(KeyEvent const& event)
 	{
-		// reloading GPU resources		
+		// reloading GPU resources
 #if _DEBUG
 		if (event.IsKeyPressed(GLFW_KEY_F8))
 		{
@@ -782,6 +782,21 @@ namespace chaos
 	AutoConstCastable<Window> WindowApplication::FindWindow(ObjectRequest request) const
 	{
 		return request.FindObject(windows);
+	}
+
+	bool WindowApplication::DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const
+	{
+		if (StringTools::Stricmp("material", execution_data.GetSearchedName()))
+		{
+			int i = 0;
+				++i;
+		}
+
+		if (execution_data.Match("material", GPUProgramProviderPassType::FALLBACK))
+		{
+			return execution_data.Process(GetTextureAtlas()->GetTexture());
+		}
+		return false;
 	}
 
 }; // namespace chaos

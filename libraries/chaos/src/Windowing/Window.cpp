@@ -510,8 +510,15 @@ namespace chaos
 			GLTools::SetViewport(viewport);
 
 			// data provider
-			GPUProgramProvider provider;
+			GPUProgramProviderCommonTransforms common_transforms;
+			GPUProgramProviderChain provider(this, (WindowApplication*)Application::GetInstance(), common_transforms);
 
+#if 0
+			WindowApplication* application = Application::GetInstance();
+			if (application != nullptr)
+				 if (application->GetTextureAtlas() != nullptr)
+				 provider.AddTexture("material", application->GetTextureAtlas()->GetTexture());
+#endif
 
 			// render
 			if (OnDraw(renderer.get(), viewport, window_size, &provider))
@@ -721,8 +728,7 @@ namespace chaos
 				return false;
 
 			// render in the frame buffer
-			GPUProgramProvider provider;
-
+			GPUProgramProviderChain provider(this, (WindowApplication*)Application::GetInstance());
 
 			renderer->BeginRenderingFrame();
 			renderer->PushFramebufferRenderContext(framebuffer.get(), false);
@@ -809,6 +815,11 @@ namespace chaos
 	bool Window::InitializeFromConfiguration(nlohmann::json const& config)
 	{
 		return true;
+	}
+
+	bool Window::DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const
+	{
+		return false;
 	}
 
 }; // namespace chaos

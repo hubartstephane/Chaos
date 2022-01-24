@@ -13,26 +13,31 @@ namespace chaos
 	using GPUProgramProviderReference = GPUProgramProviderVariableBase<T, T const&>;
 
 	class GPUProgramProviderTexture;
+	class GPUProgramProviderCustom;
 	class GPUProgramProvider;
+	class GPUProgramProviderChainEntry;
 	class GPUProgramProviderChain;
 	class GPUProgramProviderCommonTransforms;
+
+	using GPUProgramProviderFunc = std::function<bool(GPUProgramProviderExecutionData const&)>;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* GPUProgramProviderBase : a base class for filling uniforms or attributes in a program. The purpose is to take responsability to start an ACTION
+	* GPUProgramProviderInterface : a base class for filling uniforms or attributes in a program. The purpose is to take responsability to start an ACTION
 	*/
 
-	class GPUProgramProviderBase : public Object
+	class GPUProgramProviderInterface
 	{
 		friend class GPUProgramProvider; // WTF : GPUProgramProvider could not call DoProcessAction(...) an another instance without that !!
+		friend class GPUProgramProviderChainEntry;
 		friend class GPUProgramProviderChain;
 		friend class GPUProgramProviderExecutionData;
 		friend class GPUProgramRenderMaterialProvider;
 
 	public:
 
-		/** the main method : returns try whether tha action has been handled (even if failed) */
+		/** the main method : returns true whether the action has been handled (even if failed) */
 		bool ProcessAction(char const* name, GPUProgramAction& action) const;
 
 		/** utility function that deserve to set uniform */
@@ -52,6 +57,14 @@ namespace chaos
 		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const;
 	};
 
+	/**
+	* GPUProgramProviderInterface : an object that implements GPUProgramProviderInterface
+	*/
+
+	class GPUProgramProviderBase : public Object, public GPUProgramProviderInterface
+	{
+
+	};
 
 	/**
 	* GPUProgramProviderVariableBase : used to fill GPUProgram binding for uniforms / attribute with simple values
@@ -71,7 +84,7 @@ namespace chaos
 		/** the main method */
 		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override
 		{
-			if (execution_data.GetPassType() == pass_type && execution_data.Match(handled_name))
+			if (execution_data.Match(handled_name.c_str(), pass_type))
 				return execution_data.Process(value, this);
 			return false;
 		}
@@ -115,6 +128,36 @@ namespace chaos
 		GPUProgramProviderPassType pass_type = GPUProgramProviderPassType::EXPLICIT;
 	};
 
+
+
+	/**
+	* GPUProgramProviderCustom : used to fill GPUProgram binding with a lambda
+	*/
+
+	class GPUProgramProviderCustom : public GPUProgramProviderBase
+	{
+		friend class GPUResourceManager;
+		friend class GPUProgramRenderMaterialProvider;
+
+	public:
+
+		/** constructor */
+		GPUProgramProviderCustom(GPUProgramProviderFunc const& in_process_func) :
+			process_func(in_process_func)
+		{
+		}
+
+	protected:
+
+		/** the main method */
+		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override;
+
+	protected:
+
+		/** some in place code */
+		GPUProgramProviderFunc process_func;
+	};
+
 	/**
 	* GPUProgramProvider : used to fill GPUProgram binding for multiple uniforms / uniforms
 	*/
@@ -125,12 +168,6 @@ namespace chaos
 		friend class GPUProgramRenderMaterialProvider;
 
 	public:
-
-		/** constructor */
-		GPUProgramProvider(std::function<bool(GPUProgramProviderExecutionData const& execution_data)> const& in_process_func = nullptr) :
-			process_func(in_process_func)
-		{
-		}
 
 		/** register a uniform value */
 		template<typename T>
@@ -164,7 +201,37 @@ namespace chaos
 		/** the uniforms to be set */
 		std::vector<shared_ptr<GPUProgramProviderBase>> children_providers;
 		/** some in place code */
-		std::function<bool(GPUProgramProviderExecutionData const& execution_data)> process_func;
+		GPUProgramProviderFunc process_func;
+	};
+
+
+	/**
+	* GPUProgramProviderChainEntry : an entry for the chain provider
+	*/
+
+	class GPUProgramProviderChainEntry
+	{
+		friend class GPUProgramProviderChain;
+
+	public:
+
+		/** default constructor */
+		GPUProgramProviderChainEntry() = default;
+		/** copy constructor */
+		GPUProgramProviderChainEntry(GPUProgramProviderChainEntry const& src) = default;
+		/** constructor with functor */
+		GPUProgramProviderChainEntry(GPUProgramProviderFunc const& in_process_func) : process_func(in_process_func) {}
+		/** constructor with a provider */
+		GPUProgramProviderChainEntry(GPUProgramProviderInterface const * in_provider) : provider(in_provider) {}
+		/** constructor with a provider */
+		GPUProgramProviderChainEntry(GPUProgramProviderInterface const & in_provider) : provider(&in_provider) {}
+
+	protected:
+
+		/** functor */
+		GPUProgramProviderFunc process_func;
+		/** provider */
+		GPUProgramProviderInterface const* provider = nullptr;
 	};
 
 	/**
@@ -172,14 +239,26 @@ namespace chaos
 	*                           the reference count of this object is disabled. It deserves to be used on the stack
 	*/
 
+#define CHAOS_PROVIDER_CHAIN_COUNT 10
+
+#define CHAOS_PROVIDER_CHAIN_ARGUMENT_PARAMS(z, n, unused)\
+BOOST_PP_COMMA_IF(n) GPUProgramProviderChainEntry const BOOST_PP_CAT(in_param, n) = {}
+
+#define CHAOS_PROVIDER_CHAIN_ARGUMENT_INITS(z, n, unused)\
+entries[n] = BOOST_PP_CAT(in_param, n);
+
 	class GPUProgramProviderChain : public DisableReferenceCount<GPUProgramProvider>
 	{
+
 	public:
 
 		/** constructor */
-		GPUProgramProviderChain(GPUProgramProviderBase const* in_fallback_provider, std::function<bool(GPUProgramProviderExecutionData const& execution_data)> const& in_process_func = nullptr) :
-			DisableReferenceCount<GPUProgramProvider>(in_process_func),
-			fallback_provider(in_fallback_provider) {}
+		GPUProgramProviderChain(
+			BOOST_PP_REPEAT(CHAOS_PROVIDER_CHAIN_COUNT, CHAOS_PROVIDER_CHAIN_ARGUMENT_PARAMS, ~)
+		)
+		{
+			BOOST_PP_REPEAT(CHAOS_PROVIDER_CHAIN_COUNT, CHAOS_PROVIDER_CHAIN_ARGUMENT_INITS, ~);
+		}
 
 	protected:
 
@@ -188,9 +267,13 @@ namespace chaos
 
 	protected:
 
-		/** another provider (use a non intrusive reference !!!) */
-		GPUProgramProviderBase const* fallback_provider = nullptr;
+		/** the other provider/functors */
+		std::array<GPUProgramProviderChainEntry, CHAOS_PROVIDER_CHAIN_COUNT> entries;
 	};
+
+#undef CHAOS_PROVIDER_CHAIN_ARGUMENT_PARAMS
+#undef CHAOS_PROVIDER_CHAIN_ARGUMENT_INITS
+#undef CHAOS_PROVIDER_CHAIN_COUNT
 
 	/**
 	* GPUProgramProviderCommonTransforms : a provider that help finding world_to_local, local_to_world ... transformations

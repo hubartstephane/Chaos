@@ -83,7 +83,7 @@ namespace chaos
 	* Window : a binding class between chaos and GLFW to handle window (beware the prefix "My")
 	*/
 
-	class Window : public Object, public InputEventReceiver, public NamedObject
+	class Window : public Object, public InputEventReceiver, public NamedObject, public GPUProgramProviderInterface
 	{
 		friend class WindowApplication;
 
@@ -162,6 +162,9 @@ namespace chaos
 		}
 
 	protected:
+
+		/** override */
+		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override;
 
 		/** get the hints for new GLFW window */
 		virtual void TweakHints(WindowHints& hints, GLFWmonitor* monitor, bool pseudo_fullscreen) const;

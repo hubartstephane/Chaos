@@ -16,37 +16,30 @@ namespace chaos
 		return level_clock->GetClockTime();
 	}
 
-	void LevelInstance::FillUniformProvider(GPUProgramProvider & main_uniform_provider)
+	bool LevelInstance::DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const
 	{
-		// the timers
-		double level_time = GetLevelClockTime();
-		main_uniform_provider.AddVariable("level_time", level_time);
-
-
-
-		Camera* camera = GetCamera(0);
-		if (camera != nullptr)
+		if (execution_data.Match("level_time", GPUProgramProviderPassType::EXPLICIT))
 		{
-
-		//	glm::mat4 world_to_camera = camera->GetWorldToLocal();
-		//	main_uniform_provider.AddVariable("world_to_camera", world_to_camera);
-
+			double level_time = GetLevelClockTime();
+			return execution_data.Process(level_time);
 		}
 
+		if (execution_data.Match("world_to_camera", GPUProgramProviderPassType::EXPLICIT))
+		{
+			obox2 camera_obox = GetCameraOBox(0);
+			return execution_data.Process(CameraTools::GetCameraTransform(camera_obox));
+		}
 
+		if (execution_data.Match("projection_matrix", GPUProgramProviderPassType::EXPLICIT))
+		{
+			obox2 camera_obox = GetCameraOBox(0);
+			box2 camera_box;
+			camera_box.position = camera_obox.position;
+			camera_box.half_size = camera_obox.half_size;
+			return execution_data.Process(CameraTools::GetProjectionMatrix(camera_obox));
+		}
 
-
-
-
-
-		// the main camera
-		obox2 camera_obox = GetCameraOBox(0);
-		main_uniform_provider.AddVariable("world_to_camera", CameraTools::GetCameraTransform(camera_obox));
-		// convert OBOX into BOX
-		box2 camera_box;
-		camera_box.position  = camera_obox.position;
-		camera_box.half_size = camera_obox.half_size;
-		main_uniform_provider.AddVariable("projection_matrix", CameraTools::GetProjectionMatrix(camera_obox));
+		return false;
 	}
 
 	void LevelInstance::OnPlayerEntered(Player * player)
@@ -67,7 +60,7 @@ namespace chaos
 	void LevelInstance::OnPlayerLeaved(Player * player)
 	{
 		assert(player != nullptr);
-		DestroyPlayerPawn(player);	
+		DestroyPlayerPawn(player);
 		DestroyPlayerDisplacementComponent(player);
 	}
 
@@ -167,7 +160,7 @@ namespace chaos
 			sound_category = nullptr;
 		}
 	}
-	
+
 	void LevelInstance::OnLevelStarted()
 	{
 		GameInstance * game_instance = GetGameInstance();
@@ -186,7 +179,7 @@ namespace chaos
 		// players entering the level
 		size_t player_count = game_instance->GetPlayerCount();
 		for (size_t i = 0; i < player_count; ++i)
-			OnPlayerEntered(game_instance->GetPlayer(i));		
+			OnPlayerEntered(game_instance->GetPlayer(i));
 	}
 
 	void LevelInstance::CreateBackgroundImage()
@@ -207,13 +200,13 @@ namespace chaos
 		assert(in_level != nullptr);
 		assert(level == nullptr);
 		game  = in_game;
-		level = in_level;		
+		level = in_level;
 		// create the level clock
 		Clock * root_clock = in_game->GetRootClock();
 		if (root_clock == nullptr)
 			return false;
 		// note : this can fails if the named clock already exists
-		level_clock = root_clock->CreateChildClock("level_clock"); 
+		level_clock = root_clock->CreateChildClock("level_clock");
 		if (level_clock == nullptr)
 			return false;
 		// create a sound category
@@ -268,7 +261,7 @@ namespace chaos
 		box2 world = GetBoundingBox();
 		if (IsGeometryEmpty(world))
 			return;
-		std::optional<box2> box_opt = ParticleTools::GetParticleBox(allocation, index);		
+		std::optional<box2> box_opt = ParticleTools::GetParticleBox(allocation, index);
 		if (box_opt)
 		{
 			RestrictToInside(world, *box_opt, false);
@@ -298,7 +291,7 @@ namespace chaos
 	}
 
 	bool LevelInstance::DoTick(float delta_time)
-	{	
+	{
 		// update the current camera
 		Camera * current_camera = GetCamera(0);
 		if (current_camera != nullptr)
@@ -316,14 +309,14 @@ namespace chaos
 
 		// update the timeout
 		if (level_timeout > 0.0f && !CheckLevelCompletion()  // shu46 -> use a flag and store the value. a single call should be nice
-#if _DEBUG	
+#if _DEBUG
 			&& !game->GetCheatMode()
 #endif
 		){
 			level_timeout -= delta_time;
 			if (level_timeout < 0.0f)
 				level_timeout = 0.0f;
-		}	
+		}
 		return true;
 	}
 
@@ -358,7 +351,7 @@ namespace chaos
 	}
 
 	obox2 LevelInstance::GetInitialCameraOBox(size_t index) const
-	{ 
+	{
 		Camera const * camera = GetCamera(index);
 		if (camera == nullptr)
 			return obox2();
@@ -406,9 +399,9 @@ namespace chaos
 			return false;
 
 		// level index (just to be sure this is valid to apply a checkpoint on this level)
-		JSONTools::SetAttribute(json, "LEVEL_INDEX", level->GetLevelIndex());		
+		JSONTools::SetAttribute(json, "LEVEL_INDEX", level->GetLevelIndex());
 		// attributes
-		JSONTools::SetAttribute(json, "LEVEL_TIMEOUT", level_timeout);		
+		JSONTools::SetAttribute(json, "LEVEL_TIMEOUT", level_timeout);
 		// the camera 0
 		Camera const * camera = DoGetCamera(0, false); // do not accept free camera
 		if (camera != nullptr)
@@ -416,7 +409,7 @@ namespace chaos
 
 		return true;
 	}
-	
+
 	bool LevelInstance::SerializeFromJSON(nlohmann::json const& json)
 	{
 		if (!JSONSerializable::SerializeFromJSON(json))

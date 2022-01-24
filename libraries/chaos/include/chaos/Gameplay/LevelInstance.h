@@ -10,7 +10,7 @@ namespace chaos
 	// LevelInstance : this is the runtime part of a level
 	// =====================================
 
-	class LevelInstance : public GPURenderable, public JSONSerializable
+	class LevelInstance : public GPURenderable, public JSONSerializable, public GPUProgramProviderInterface
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
@@ -77,6 +77,9 @@ namespace chaos
 
 	protected:
 
+		/** override */
+		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override;
+
 		/** the camera instanciation method */
 		virtual Camera* DoCreateCamera();
 		/** create a camera and initialize it */
@@ -118,9 +121,6 @@ namespace chaos
 		virtual void DestroyPlayerPawn(Player* player);
 		/** delete the displacement component for the player */
 		virtual void DestroyPlayerDisplacementComponent(Player* player);
-
-		/** fill the rendering params before rendering */
-		virtual void FillUniformProvider(GPUProgramProvider& main_uniform_provider);
 
 		/** state changes */
 		virtual void OnEnterPause();

@@ -19,7 +19,7 @@ namespace chaos
 	{
 		assert(in_physical_gamepad != nullptr);
 		// try to give the gamepad to a player
-		if (GivePhysicalGamepadToPlayer(in_physical_gamepad) != nullptr) 
+		if (GivePhysicalGamepadToPlayer(in_physical_gamepad) != nullptr)
 			return true;
 		// try to have another player enter the game (not in pause)
 		if (!game->IsPaused())
@@ -84,7 +84,7 @@ namespace chaos
 		// insert the player in our list
 		result->player_index = players.size();
 		players.push_back(result);
-		
+
 		// give the physical device to the player
 		result->CapturePhysicalGamepad(in_physical_gamepad);
 
@@ -150,22 +150,37 @@ namespace chaos
 		return pause_clock->GetClockTime();
 	}
 
-	void GameInstance::FillUniformProvider(GPUProgramProvider & main_uniform_provider)
+	bool GameInstance::DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const
 	{
-		// the clocks
-		double main_time = GetMainClockTime();
-		main_uniform_provider.AddVariable("main_time", main_time);
-		double game_time = GetGameClockTime();
-		main_uniform_provider.AddVariable("game_time", game_time);
-		double pause_time = GetPauseClockTime();
-		main_uniform_provider.AddVariable("pause_time", pause_time);
-		// the main player pawn box
-		PlayerPawn const * player_pawn = GetPlayerPawn(0);
-		if (player_pawn != nullptr)
+		if (execution_data.Match("main_time", GPUProgramProviderPassType::EXPLICIT))
 		{
-			box2 pawn_box = player_pawn->GetBoundingBox();
-			main_uniform_provider.AddVariable("pawn_box", EncodeBoxToVector(pawn_box));
+			double main_time = GetMainClockTime();
+			return execution_data.Process(main_time);
 		}
+		if (execution_data.Match("game_time", GPUProgramProviderPassType::EXPLICIT))
+		{
+			double game_time = GetGameClockTime();
+			return execution_data.Process(game_time);
+		}
+		if (execution_data.Match("pause_time", GPUProgramProviderPassType::EXPLICIT))
+		{
+			double pause_time = GetPauseClockTime();
+			return execution_data.Process(pause_time);
+		}
+		if (execution_data.Match("pause_time", GPUProgramProviderPassType::EXPLICIT))
+		{
+			double pause_time = GetPauseClockTime();
+			return execution_data.Process(pause_time);
+		}
+		if (execution_data.Match("pawn_box", GPUProgramProviderPassType::EXPLICIT))
+		{
+			if (PlayerPawn const* player_pawn = GetPlayerPawn(0))
+			{
+				box2 pawn_box = player_pawn->GetBoundingBox();
+				return execution_data.Process(EncodeBoxToVector(pawn_box));
+			}
+		}
+		return false;
 	}
 
 	bool GameInstance::Initialize(Game * in_game)
@@ -209,7 +224,7 @@ namespace chaos
 			if (pause_clock == nullptr)
 				return false;
 		}
-		// create a sound category 
+		// create a sound category
 		SoundManager * sound_manager = game->GetSoundManager();
 		if (sound_manager != nullptr)
 			sound_category = sound_manager->AddCategory("game_instance");
@@ -250,7 +265,7 @@ namespace chaos
 		{
 			Clock * level_clock = level_instance->GetLevelClock();
 			if (level_clock != nullptr)
-				level_clock->SetPause(enter_pause);		
+				level_clock->SetPause(enter_pause);
 		}
 	}
 
@@ -296,7 +311,7 @@ namespace chaos
 				player_dead = level_instance->IsPlayerDead(player);
 
 			// player still alive
-			if (!player_dead) 
+			if (!player_dead)
 			{
 				any_player_alive = true;
 			}
@@ -325,12 +340,12 @@ namespace chaos
 			player->OnLevelChanged(new_level, old_level, new_level_instance);
 		}
 	}
-	
+
 	void GameInstance::OnPlayerEntered(Player * player)
 	{
 		assert(player != nullptr);
 	}
-	
+
 	void GameInstance::OnPlayerLeaved(Player * player)
 	{
 		assert(player != nullptr);
@@ -345,7 +360,7 @@ namespace chaos
 	bool GameInstance::RestartFromRespawnCheckpoint()
 	{
 		if (respawn_checkpoint == nullptr)
-			return false;		
+			return false;
 		// prepare respawn
 		LevelInstance * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
@@ -473,5 +488,5 @@ namespace chaos
 				player->OnGameValuesChanged(hot_reload);
 		}
 	}
-	
+
 }; // namespace chaos

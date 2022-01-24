@@ -26,7 +26,7 @@ namespace chaos
 
 	class GPUProgramProviderExecutionData
 	{
-		friend class GPUProgramProviderBase;
+		friend class GPUProgramProviderInterface;
 		friend class GPUProgramProviderDeduceLock;
 
 	public:
@@ -47,17 +47,15 @@ namespace chaos
 		/** get the wanted action */
 		GPUProgramAction& GetAction() { return action; }
 
-		/** returns whether the proposed name match the initial request */
-		bool Match(char const* other_name) const;
-		/** returns whether the proposed name match the initial request */
-		bool Match(std::string const& other_name) const;
+		/** returns whether the proposed name + type match the initial request */
+		bool Match(char const* other_name, GPUProgramProviderPassType in_pass_type = GPUProgramProviderPassType::EXPLICIT) const;
 
 		/** gets the pass type */
 		GPUProgramProviderPassType GetPassType() const { return pass_type; }
 
 		/** process the action with any data */
 		template<typename T>
-		bool Process(T const& value, GPUProgramProviderBase const* provider) const
+		bool Process(T const& value, GPUProgramProviderBase const* provider = nullptr) const
 		{
 			return action.Process(searched_name, value, provider);
 		}
@@ -68,7 +66,7 @@ namespace chaos
 	protected:
 
 		/** the top level provider, used for deduction */
-		GPUProgramProviderBase const* top_provider = nullptr;
+		GPUProgramProviderInterface const* top_provider = nullptr;
 		/** the type of provider we want to work on */
 		GPUProgramProviderPassType pass_type = GPUProgramProviderPassType::EXPLICIT;
 		/** the vector on which the search is effectively done (it may comes from another execution_data) */

@@ -41,7 +41,7 @@ protected:
 
 					if (execution_data.GetValue<glm::mat4>("translate_mat", translate_mat))
 						if (execution_data.GetValue<glm::mat4>("scale_mat", scale_mat))
-							return execution_data.Process(translate_mat * scale_mat, this);
+							return execution_data.Process(translate_mat * scale_mat);
 				}
 				return false;
 			}

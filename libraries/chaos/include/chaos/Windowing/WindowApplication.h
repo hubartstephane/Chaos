@@ -44,7 +44,7 @@ namespace chaos
 	* WindowApplication
 	*/
 
-	class WindowApplication : public Application
+	class WindowApplication : public Application, public GPUProgramProviderInterface
 	{
 		friend class Window;
 
@@ -153,6 +153,9 @@ namespace chaos
 		virtual bool PreMessageLoop();
 		/** Window Loop */
 		virtual bool MessageLoop();
+
+		/** override */
+		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override;
 
 		/** an error callback */
 		static void OnGLFWError(int code, const char* msg);

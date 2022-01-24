@@ -23,6 +23,8 @@ namespace chaos
 
 			/* get the array texture */
 			GPUTexture* GetTexture() { return texture.get(); }
+			/* get the array texture */
+			GPUTexture const* GetTexture() const { return texture.get(); }
 
 		protected:
 

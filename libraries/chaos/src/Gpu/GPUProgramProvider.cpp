@@ -8,11 +8,6 @@ namespace chaos
 
 	bool GPUProgramProviderInterface::ProcessAction(char const* name, GPUProgramAction& action) const
 	{
-		if (StringTools::Strcmp(name, "local_to_camera") == 0)
-		{
-			name = name;
-		}
-
 		GPUProgramProviderExecutionData execution_data(name, action);
 		execution_data.top_provider = this;
 

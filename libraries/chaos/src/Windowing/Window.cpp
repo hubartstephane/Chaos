@@ -513,13 +513,6 @@ namespace chaos
 			GPUProgramProviderCommonTransforms common_transforms;
 			GPUProgramProviderChain provider(this, (WindowApplication*)Application::GetInstance(), common_transforms);
 
-#if 0
-			WindowApplication* application = Application::GetInstance();
-			if (application != nullptr)
-				 if (application->GetTextureAtlas() != nullptr)
-				 provider.AddTexture("material", application->GetTextureAtlas()->GetTexture());
-#endif
-
 			// render
 			if (OnDraw(renderer.get(), viewport, window_size, &provider))
 			{

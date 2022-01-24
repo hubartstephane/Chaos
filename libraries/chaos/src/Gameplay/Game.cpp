@@ -67,7 +67,7 @@ namespace chaos
 			game_sm_instance->Tick(delta_time, nullptr);
 		// update the game instance
 		if (game_instance != nullptr)
-			game_instance->Tick(delta_time);		
+			game_instance->Tick(delta_time);
 		// tick the particle manager
 		if (particle_manager != nullptr)
 			particle_manager->Tick(delta_time);
@@ -95,7 +95,7 @@ namespace chaos
 			return true;
 		}
 
-		// give opportunity to game instance to response		
+		// give opportunity to game instance to response
 		if (game_instance != nullptr)
 			if (game_instance->OnKeyEvent(event))
 				return true;
@@ -117,8 +117,8 @@ namespace chaos
 		}
 		// CHEAT CODE TO SKIP LEVEL
 #if _DEBUG
-			
-		// CMD GLFW_KEY_F1  : SetCheatSkipLevelRequired(...)	
+
+		// CMD GLFW_KEY_F1  : SetCheatSkipLevelRequired(...)
 		if (event.IsKeyPressed(GLFW_KEY_F1))
 		{
 			SetCheatSkipLevelRequired(true);
@@ -203,36 +203,28 @@ namespace chaos
 
 	void Game::Display(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{
-		GPUProgramProviderChain main_uniform_provider(uniform_provider);
-		// fill the provider(last inserted have greater precedence)
-		FillUniformProvider(main_uniform_provider);
-		if (game_instance != nullptr)
-			game_instance->FillUniformProvider(main_uniform_provider);
-		if (level_instance != nullptr)
-			level_instance->FillUniformProvider(main_uniform_provider);
-		// rendering
+		GPUProgramProviderChain main_uniform_provider(this, game_instance.get(), level_instance.get(), uniform_provider);
 		DoDisplay(renderer, &main_uniform_provider, render_params);
 	}
 
-	void Game::FillUniformProvider(GPUProgramProvider & main_uniform_provider)
+	bool Game::DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const
 	{
-		// the view box
-		box2 view = GetCanvasBox();
-		main_uniform_provider.AddVariable("canvas_box", EncodeBoxToVector(view));
-
-
-
-
-
-		// the world
-		box2 world = GetWorldBox();
-		main_uniform_provider.AddVariable("world_box", EncodeBoxToVector(world));
-		// the time
-		double root_time = GetRootClockTime();
-		main_uniform_provider.AddVariable("root_time", root_time);
-
-		// some deduced transformations
-		main_uniform_provider.AddProvider(new GPUProgramProviderCommonTransforms);
+		if (execution_data.Match("canvas_box", GPUProgramProviderPassType::EXPLICIT))
+		{
+			box2 view = GetCanvasBox();
+			return execution_data.Process(EncodeBoxToVector(view));
+		}
+		if (execution_data.Match("world_box", GPUProgramProviderPassType::EXPLICIT))
+		{
+			box2 world = GetWorldBox();
+			return execution_data.Process(EncodeBoxToVector(world));
+		}
+		if (execution_data.Match("root_time", GPUProgramProviderPassType::EXPLICIT))
+		{
+			double root_time = GetRootClockTime();
+			return execution_data.Process(root_time);
+		}
+		return false;
 	}
 
 	void Game::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
@@ -261,7 +253,7 @@ namespace chaos
 		glDisable(GL_CULL_FACE);
 	}
 
-	
+
 	void Game::DoDisplayBackground(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
 	{
 		if (background_mesh != nullptr)
@@ -269,7 +261,7 @@ namespace chaos
 	}
 
 	void Game::DoDisplayGame(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
-	{		
+	{
 		// display the background
 		DoDisplayBackground(renderer, uniform_provider, render_params);
 
@@ -281,7 +273,7 @@ namespace chaos
 	}
 
 	void Game::DoDisplayHUD(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
-	{	
+	{
 		if (hud != nullptr)
 			hud->Display(renderer, uniform_provider, render_params);
 	}
@@ -393,7 +385,7 @@ namespace chaos
 	{
 		return DoGenerateTiledMapEntity(config, "objecttypesets_directory", "objecttypesets", "xml", [](TiledMap::Manager * manager, boost::filesystem::path const & path) {
 			if (!manager->LoadObjectTypeSet(path))
-				return false; 
+				return false;
 			return true;
 		});
 	}
@@ -659,7 +651,7 @@ namespace chaos
 		}
 		// load the game data
 		else
-		{	
+		{
 			if (!JSONTools::LoadJSONFile(filepath, game_data, false))
 				return false;
 			return LoadPersistentGameData(game_data);
@@ -676,7 +668,7 @@ namespace chaos
 		if (Application::HasApplicationCommandLineFlag("-MuteMusic")) // CMDLINE
 			return nullptr;
 #endif
-		
+
 		// ensure there is a real music change
 		if (game_music != nullptr && !game_music->IsPendingKill())
 		{
@@ -860,7 +852,7 @@ namespace chaos
 		if (level_instance != nullptr)
 			level_instance->OnGameOver();
 		if (game_instance != nullptr)
-			game_instance->OnGameOver();		
+			game_instance->OnGameOver();
 	}
 
 	bool Game::OnEnterPause()
@@ -955,7 +947,7 @@ namespace chaos
 			return false;
 		// create other resources
 		game_instance->OnEnterGame();
-		// game entered			
+		// game entered
 		CreatePlayingHUD();
 		// start the level
 		SetNextLevel(true);
@@ -972,10 +964,10 @@ namespace chaos
 		// save the best score (and other values)
 		SerializePersistentGameData(true);
 		// restore main menu condition (level, music ...)
-		SetCurrentLevel(nullptr);	
+		SetCurrentLevel(nullptr);
 		// game instance stop
 		game_instance->OnLeaveGame();
-		// destroy the game instance 
+		// destroy the game instance
 		game_instance = nullptr;
 		return true;
 	}
@@ -1025,7 +1017,7 @@ namespace chaos
 		return true;
 	}
 
-	
+
 
 	bool Game::TickGameLoop(float delta_time)
 	{
@@ -1036,7 +1028,7 @@ namespace chaos
 		// level finished
 		if (CheckLevelCompletion())
 		{
-			bool can_complete = 
+			bool can_complete =
 #if _DEBUG
 				GetCheatSkipLevelRequired() ||
 #endif
@@ -1212,7 +1204,7 @@ namespace chaos
 		// default
 		return SetCurrentLevel(levels[i + 1].get());
 	}
-	
+
 	AutoCastable<Level> Game::FindLevel(ObjectRequest request)
 	{
 		return request.FindObject(levels);
@@ -1316,7 +1308,7 @@ namespace chaos
 		assert(old_level != nullptr);
 
 		// reload the level
-		shared_ptr<Level> level = DoLoadLevel(old_level->GetPath()); 
+		shared_ptr<Level> level = DoLoadLevel(old_level->GetPath());
 		if (level == nullptr)
 			return false;
 		// initialize it
@@ -1353,12 +1345,12 @@ namespace chaos
 	}
 
 	Camera * Game::GetFreeCamera()
-	{		
+	{
 		if (free_camera == nullptr)
 			free_camera = CreateFreeCamera();
 		return free_camera.get();
 	}
-	
+
 	Camera const * Game::GetFreeCamera() const
 	{
 		if (free_camera == nullptr)
@@ -1401,7 +1393,7 @@ namespace chaos
 			{
 				new_free_camera_component->SetZoomValue(zoom_value);
 				result->AddComponent(new_free_camera_component);
-			}			
+			}
 
 			result->AddComponent(new SoundListenerCameraComponent());
 		}

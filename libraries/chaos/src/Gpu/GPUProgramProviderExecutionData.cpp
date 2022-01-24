@@ -55,16 +55,13 @@ namespace chaos
 		}
 	}
 
-	bool GPUProgramProviderExecutionData::Match(char const* other_name) const
+	bool GPUProgramProviderExecutionData::Match(char const* other_name, GPUProgramProviderPassType in_pass_type) const
 	{
+		if (in_pass_type != GetPassType())
+			return false;
 		if (StringTools::IsEmpty(searched_name))
 			return true;
 		return (StringTools::Strcmp(other_name, searched_name) == 0);
-	}
-
-	bool GPUProgramProviderExecutionData::Match(std::string const& other_name) const
-	{
-		return Match(other_name.c_str());
 	}
 
 	bool GPUProgramProviderExecutionData::Process(GPUTexture const* value, GPUProgramProviderBase const* provider) const
@@ -82,7 +79,7 @@ namespace chaos
 			return {};
 		// already searching this name (avoid infinite recursion, may search in lower priority providers)
 		auto it = std::find_if(deduced_searches->begin(), deduced_searches->end(), [searched_name](char const * other_name)
-		{ 
+		{
 			return (StringTools::Strcmp(other_name, searched_name) == 0);
 		});
 		if (it != deduced_searches->end())

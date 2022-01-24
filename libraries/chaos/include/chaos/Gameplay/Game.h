@@ -8,7 +8,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class Game : public Object, public InputEventReceiver
+	class Game : public Object, public InputEventReceiver, public GPUProgramProviderInterface
 	{
 		friend class GameGamepadManager;
 		friend class GameWindow;
@@ -68,7 +68,7 @@ namespace chaos
 		ParticleManager* GetParticleManager() { return particle_manager.get(); }
 		ParticleManager const* GetParticleManager() const { return particle_manager.get(); }
 
-		// The clocks: 
+		// The clocks:
 		//   - root  clock : the top level clock. never reseted, never paused
 
 		/** returns the root time */
@@ -104,7 +104,7 @@ namespace chaos
 		/** change the in game music (fadeout previous music) */
 		Sound* SetInGameMusic(char const* music_name);
 
-#if _DEBUG	
+#if _DEBUG
 		/** declare we want to skip level */
 		void SetCheatSkipLevelRequired(bool value);
 		/** test whether we want to skip level */
@@ -170,6 +170,9 @@ namespace chaos
 
 	protected:
 
+		/** override */
+		virtual bool DoProcessAction(chaos::GPUProgramProviderExecutionData const& execution_data) const override;
+
 		/** the tick method */
 		virtual void Tick(float delta_time);
 		/** tick the game inputs */
@@ -199,9 +202,6 @@ namespace chaos
 		virtual void DoDisplayGame(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
 		/** internal  method to display the HUD */
 		virtual void DoDisplayHUD(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
-
-		/** fill the rendering params before rendering */
-		virtual void FillUniformProvider(GPUProgramProvider& main_uniform_provider);
 
 		/** initialization from the config file */
 		virtual bool InitializeFromConfiguration(nlohmann::json const& config);

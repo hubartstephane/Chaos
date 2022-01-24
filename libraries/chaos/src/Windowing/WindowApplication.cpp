@@ -786,12 +786,6 @@ namespace chaos
 
 	bool WindowApplication::DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const
 	{
-		if (StringTools::Stricmp("material", execution_data.GetSearchedName()))
-		{
-			int i = 0;
-				++i;
-		}
-
 		if (execution_data.Match("material", GPUProgramProviderPassType::FALLBACK))
 		{
 			return execution_data.Process(GetTextureAtlas()->GetTexture());

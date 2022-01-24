@@ -23,13 +23,11 @@ namespace chaos
 			double level_time = GetLevelClockTime();
 			return execution_data.Process(level_time);
 		}
-
 		if (execution_data.Match("world_to_camera", GPUProgramProviderPassType::EXPLICIT))
 		{
 			obox2 camera_obox = GetCameraOBox(0);
 			return execution_data.Process(CameraTools::GetCameraTransform(camera_obox));
 		}
-
 		if (execution_data.Match("projection_matrix", GPUProgramProviderPassType::EXPLICIT))
 		{
 			obox2 camera_obox = GetCameraOBox(0);
@@ -38,7 +36,6 @@ namespace chaos
 			camera_box.half_size = camera_obox.half_size;
 			return execution_data.Process(CameraTools::GetProjectionMatrix(camera_obox));
 		}
-
 		return false;
 	}
 

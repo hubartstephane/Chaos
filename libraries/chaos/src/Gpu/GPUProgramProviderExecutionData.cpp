@@ -71,11 +71,8 @@ namespace chaos
 
 	GPUProgramProviderDeduceLock GPUProgramProviderExecutionData::CanDeduce(char const* searched_name) const
 	{
-		// can only deduce for this pass
-		if (pass_type != GPUProgramProviderPassType::DEDUCED)
-			return {};
 		// is that what we are searching ?
-		if (!Match(searched_name))
+		if (!Match(searched_name, pass_type))
 			return {};
 		// already searching this name (avoid infinite recursion, may search in lower priority providers)
 		auto it = std::find_if(deduced_searches->begin(), deduced_searches->end(), [searched_name](char const * other_name)

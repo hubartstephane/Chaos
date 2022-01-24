@@ -99,7 +99,7 @@ namespace chaos
 		}
 	}
 
-	int SceneNode::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+	int SceneNode::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
 
 		return 0;

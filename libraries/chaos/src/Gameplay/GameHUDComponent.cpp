@@ -160,7 +160,7 @@ namespace chaos
 		mesh = nullptr;
 	}
 
-	int GameHUDMeshComponent::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+	int GameHUDMeshComponent::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
 		int result = GameHUDComponent::DoDisplay(renderer, uniform_provider, render_params);
 		if (mesh != nullptr)
@@ -332,7 +332,7 @@ namespace chaos
 		generator_params.hotpoint = Hotpoint::TOP_RIGHT;
 	}
 
-	int GameHUDFramerateComponent::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+	int GameHUDFramerateComponent::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
 		average_framerate = renderer->GetAverageFrameRate();
 		return GameHUDCacheValueTextComponent<float>::DoDisplay(renderer, uniform_provider, render_params);
@@ -360,7 +360,7 @@ namespace chaos
 		generator_params.hotpoint = Hotpoint::TOP_RIGHT;
 	}
 
-	int GameHUDPerfsComponent::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+	int GameHUDPerfsComponent::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
 		average_drawcall = renderer->GetAverageDrawCalls();
 		average_vertices = renderer->GetAverageVertices();
@@ -710,7 +710,7 @@ namespace chaos
 	{
 	}
 
-	int GameHUDDebugDrawComponent::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+	int GameHUDDebugDrawComponent::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
 		draw_interface.Flush();
 

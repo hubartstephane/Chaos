@@ -102,7 +102,7 @@ namespace chaos
 		return { allocation, allocation->GetParticleCount() - count, count };
 	}
 
-	int ParticleLayerBase::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
+	int ParticleLayerBase::DoDisplay(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
 	{
         // early exit
         if (mesh == nullptr || mesh->IsEmpty())
@@ -123,7 +123,7 @@ namespace chaos
 		return result;
 	}
 
-    int ParticleLayerBase::DoDisplayHelper(GPURenderer* renderer, GPURenderMaterial const* final_material, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+    int ParticleLayerBase::DoDisplayHelper(GPURenderer* renderer, GPURenderMaterial const* final_material, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
     {
         // create a new GPURenderParams that override the Material for inside the GPUMesh
         DisableReferenceCount<GPUConstantMaterialProvider> material_provider(final_material);  // while on stack, use DisableReferenceCount<...>

@@ -88,7 +88,7 @@ namespace chaos
 		/** tick the manager */
 		virtual bool DoTick(float delta_time) override;
 		/** display all the particles */
-		virtual int DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) override;
+		virtual int DoDisplay(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params) override;
 
 		/** insert layer with some initialization */
 		void DoAddLayer(ParticleLayerBase * layer, int render_order, ObjectRequest layer_id);

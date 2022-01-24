@@ -142,7 +142,7 @@ EnemyType const * LudumGame::FindEnemyType(char const * name) const
 }
 
 
-void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params)
+void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::GPURenderParams const & render_params)
 {
 	chaos::Game::DoDisplayGame(renderer, uniform_provider, render_params);
 

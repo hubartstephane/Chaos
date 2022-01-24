@@ -25,7 +25,7 @@ void LudumLevelInstance::CreateCameraComponents(chaos::Camera* camera, chaos::TM
 	camera->AddComponent(new chaos::SoundListenerCameraComponent());
 }
 
-int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params)
+int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::GPURenderParams const& render_params)
 {
 	return chaos::TMLevelInstance::DoDisplay(renderer, uniform_provider, render_params);
 }

@@ -18,11 +18,11 @@ namespace chaos
 	public:
 
 		/** public method to render the object (Display = PrepareDisplay + DoDisplay) */
-		int Display(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
+		int Display(GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, GPURenderParams const& render_params);
 		/** check whether the object may be displayed, and update resources if necessary (this method is already integrated into Display method) */
-		bool PrepareDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
+		bool PrepareDisplay(GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, GPURenderParams const& render_params);
 		/** the user defined method to display the object (this method is already integrated into Display method) */
-		virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
+		virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, GPURenderParams const& render_params);
 
 		/** show or hide the object */
 		void Show(bool in_visible = true);

@@ -745,7 +745,7 @@ namespace chaos
 		return true;
 	}
 
-	int TMLayerInstance::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+	int TMLayerInstance::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
 		// display this layer particles
 		int result = 0;

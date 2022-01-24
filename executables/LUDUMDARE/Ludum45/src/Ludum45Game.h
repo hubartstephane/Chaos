@@ -61,7 +61,7 @@ protected:
 	/** move the player */
 	virtual chaos::GameHUD * DoCreatePlayingHUD() override;
 
-	virtual void DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const & render_params) override;
+	virtual void DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::GPURenderParams const & render_params) override;
 
 	
 

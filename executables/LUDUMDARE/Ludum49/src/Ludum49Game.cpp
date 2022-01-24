@@ -56,7 +56,7 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config)
 	return true;
 }
 
-void LudumGame::DoDisplayGame(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
+void LudumGame::DoDisplayGame(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
 {
 	GPUProgramProviderChain update_provider(uniform_provider);
 

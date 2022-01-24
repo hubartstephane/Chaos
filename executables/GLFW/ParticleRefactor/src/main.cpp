@@ -94,7 +94,7 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderBase const* uniform_provider) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderInterface const * uniform_provider) override
 	{
 		bool bbb1 = chaos::has_AllocationTrait_v< ParticleExampleLayerTrait>;
 		bool bbb2 = chaos::has_AllocationTrait_v< WindowOpenGLTest>;

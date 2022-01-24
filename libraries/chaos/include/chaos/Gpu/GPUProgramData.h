@@ -139,9 +139,9 @@ namespace chaos
 			return true;
 		}
 		/** try to bind all uniforms */
-		void BindUniforms(class GPUProgramProviderBase const* provider) const;
+		void BindUniforms(class GPUProgramProviderInterface const* provider) const;
 		/** try to bind all uniforms using multiples provider */
-		void BindUniforms(class GPUProgramProviderBase const* const* providers, int count) const;
+		void BindUniforms(class GPUProgramProviderInterface const* const* providers, int count) const;
 
 		/** clear the program data object */
 		void Clear();

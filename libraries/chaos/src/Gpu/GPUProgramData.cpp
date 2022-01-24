@@ -293,25 +293,21 @@ namespace chaos
 		attributes.clear();
 	}
 
-	void GPUProgramData::BindUniforms(GPUProgramProviderBase const * provider) const
+	void GPUProgramData::BindUniforms(GPUProgramProviderInterface const * provider) const
 	{
 		if (provider != nullptr)
 			BindUniforms(&provider, 1);
 	}
 
-	void GPUProgramData::BindUniforms(GPUProgramProviderBase const * const * providers, int count) const
+	void GPUProgramData::BindUniforms(GPUProgramProviderInterface const * const * providers, int count) const
 	{
 		if (providers == nullptr)
 			return;
 		for (GLUniformInfo const & uniform : uniforms)
-		{
 			for (int i = 0; i < count; ++i)
-			{
-				GPUProgramProviderBase const * provider = providers[i];
-				if (provider != nullptr && provider->BindUniform(uniform))
-					break;
-			}
-		}
+				if (GPUProgramProviderInterface const * provider = providers[i])
+					if (provider->BindUniform(uniform))
+						break;
 	}
 
 	GLUniformInfo * GPUProgramData::FindUniform(char const * name)
@@ -403,7 +399,7 @@ namespace chaos
 	{
 		GPUProgramData result;
 
-		// compute the length of a buffer to hold the longest name string 
+		// compute the length of a buffer to hold the longest name string
 		GLint max_attrib_length = 0;
 		GLint max_uniform_length = 0;
 		GLint max_block_length = 0;
@@ -459,12 +455,12 @@ namespace chaos
 					{
 						attribute.location = location + i;
 						attribute.semantic_index = i;
-						result.attributes.push_back(attribute);    // insert an attribute for the each element of the array           
+						result.attributes.push_back(attribute);    // insert an attribute for the each element of the array
 					}
 				}
 			}
 
-			// read the uniforms     
+			// read the uniforms
 			GLuint sampler_index = 0;
 			GLint  uniform_count = 0;
 			glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &uniform_count);
@@ -554,10 +550,10 @@ namespace chaos
 			else
 			{
 				// first  : use semantic_index
-				// second : ignore semantic_index			
+				// second : ignore semantic_index
 				entry = declaration.GetEntry(attrib.semantic, attrib.semantic_index);
 				if (entry == nullptr)
-					entry = declaration.GetEntry(attrib.semantic, -1); 
+					entry = declaration.GetEntry(attrib.semantic, -1);
 			}
 
 			// no matching entry found : try to find a global default-attribute from the name
@@ -594,7 +590,7 @@ namespace chaos
 				glVertexArrayAttribLFormat(vertex_array, attrib.location, count, type, relative_offset);
 			else if (type == GL_INT)
 				glVertexArrayAttribIFormat(vertex_array, attrib.location, count, type, relative_offset);
-			else 
+			else
 				assert(0);
 
 			glEnableVertexArrayAttrib(vertex_array, attrib.location);

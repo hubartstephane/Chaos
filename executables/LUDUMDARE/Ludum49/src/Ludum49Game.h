@@ -52,7 +52,7 @@ protected:
 	/** move the player */
 	virtual GameHUD * DoCreatePlayingHUD() override;
 
-	virtual void DoDisplayGame(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) override;
+	virtual void DoDisplayGame(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params) override;
 
 protected:
 

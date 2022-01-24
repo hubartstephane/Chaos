@@ -26,10 +26,6 @@ namespace chaos
 			/** the current execution */
 			GPUProgramProviderExecutionData const & execution_data;
 		};
-		// use extra provider
-		if (other_provider != nullptr)
-			if (other_provider->DoProcessAction(execution_data))
-				return true;
 		// traverse the material for finding uniform
 		GPURenderMaterialProviderTraverseFunc traversal_func(execution_data);
 		if (render_material->Traverse(traversal_func, render_params->renderpass_name.c_str()))
@@ -94,24 +90,26 @@ namespace chaos
 		return false;
 	}
 
-	GPUProgramProvider & GPURenderMaterial::GetUniformProvider() 
-	{ 
-		return material_info->uniform_provider;
-	}
-	
-	GPUProgramProvider const & GPURenderMaterial::GetUniformProvider() const 
-	{ 
+	GPUProgramProvider & GPURenderMaterial::GetUniformProvider()
+	{
 		return material_info->uniform_provider;
 	}
 
-	GPUProgram const * GPURenderMaterial::UseMaterial(GPUProgramProviderBase const * in_uniform_provider, GPURenderParams const & render_params) const
+	GPUProgramProvider const & GPURenderMaterial::GetUniformProvider() const
+	{
+		return material_info->uniform_provider;
+	}
+
+	GPUProgram const * GPURenderMaterial::UseMaterial(GPUProgramProviderInterface const * in_uniform_provider, GPURenderParams const & render_params) const
 	{
 		// go through the hierarchy until we get the program
 		GPUProgram const * effective_program = GetEffectiveProgram(render_params);
 		if (effective_program == nullptr)
 			return nullptr;
 		// use the program
-		GPUProgramRenderMaterialProvider provider(this, in_uniform_provider, &render_params);
+		GPUProgramRenderMaterialProvider material_provider(this, &render_params);
+
+		GPUProgramProviderChain provider(material_provider, in_uniform_provider);
 		effective_program->UseProgram(&provider);
 
 		return effective_program;

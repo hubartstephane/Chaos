@@ -52,7 +52,7 @@ namespace chaos
 		return Window::GetRequiredViewport(size);
 	}
 
-	bool GameWindow::OnDraw(GPURenderer * renderer, box2 const & viewport, glm::ivec2 window_size, GPUProgramProviderBase const * uniform_provider)
+	bool GameWindow::OnDraw(GPURenderer * renderer, box2 const & viewport, glm::ivec2 window_size, GPUProgramProviderInterface const * uniform_provider)
 	{
 		if (game != nullptr)
 		{

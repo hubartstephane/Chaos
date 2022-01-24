@@ -7,7 +7,7 @@ namespace chaos
 	// GPURenderable implementation
 	// ========================================================
 
-	int GPURenderable::Display(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
+	int GPURenderable::Display(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
 	{
 		assert(renderer != nullptr);
 		if (!PrepareDisplay(renderer, uniform_provider, render_params))
@@ -15,7 +15,7 @@ namespace chaos
 		return DoDisplay(renderer, uniform_provider, render_params);
 	}
 
-	bool GPURenderable::PrepareDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+	bool GPURenderable::PrepareDisplay(GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, GPURenderParams const& render_params)
 	{
 		if (!IsVisible())
 			return false;
@@ -37,10 +37,10 @@ namespace chaos
 		return true;
 	}
 
-	int GPURenderable::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
+	int GPURenderable::DoDisplay(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
 	{
 		return 0;
-	}	
+	}
 
 	bool GPURenderable::DoUpdateGPUResources(GPURenderer * renderer)
 	{
@@ -88,7 +88,7 @@ namespace chaos
 	{
 		return renderpass_filter.IsNameEnabled(renderpass_name);
 	}
-	
+
 	void GPURenderable::AddEnabledRenderPasses(char const * renderpass_names)
 	{
 		renderpass_filter.AddEnabledNames(renderpass_names);

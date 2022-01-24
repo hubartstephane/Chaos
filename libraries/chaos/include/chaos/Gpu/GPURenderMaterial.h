@@ -19,9 +19,8 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramRenderMaterialProvider(class GPURenderMaterial const* in_render_material, GPUProgramProviderBase const* in_other_provider, GPURenderParams const* in_render_params) :
+		GPUProgramRenderMaterialProvider(class GPURenderMaterial const* in_render_material, GPURenderParams const* in_render_params) :
 			render_material(in_render_material),
-			other_provider(in_other_provider),
 			render_params(in_render_params)
 		{}
 
@@ -34,8 +33,6 @@ namespace chaos
 
 		/** the render material as base for the chain */
 		GPURenderMaterial const* render_material = nullptr;
-		/** another provider (use a non intrusive reference !!!) */
-		GPUProgramProviderBase const* other_provider = nullptr;
 		/** the render params used */
 		GPURenderParams const* render_params = nullptr;
 	};
@@ -112,7 +109,7 @@ namespace chaos
 		virtual ~GPURenderMaterial();
 
 		/** prepare the rendering (find the program, use it, fills its uniforms and returns the program) */
-		GPUProgram const* UseMaterial(GPUProgramProviderBase const* in_uniform_provider, GPURenderParams const& render_params) const;
+		GPUProgram const* UseMaterial(GPUProgramProviderInterface const* in_uniform_provider, GPURenderParams const& render_params) const;
 
 		/** set the program */
 		bool SetProgram(GPUProgram* in_program, bool default_program_material = false);

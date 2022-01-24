@@ -68,7 +68,7 @@ namespace chaos
 		last_rendered_fence = nullptr;
 	}
 
-	int GPUMesh::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+	int GPUMesh::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
 		// create a vertex array cache if necessary
 		if (vertex_array_cache == nullptr)
@@ -140,7 +140,7 @@ namespace chaos
 		return result;
 	}
 
-	int GPUMesh::DisplayWithMaterial(GPURenderMaterial const* material, GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+	int GPUMesh::DisplayWithMaterial(GPURenderMaterial const* material, GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
 		DisableReferenceCount<GPUConstantMaterialProvider> material_provider(material);  // while on stack, use DisableReferenceCount<...>
 		GPURenderParams other_render_params = render_params;
@@ -148,7 +148,7 @@ namespace chaos
 		return Display(renderer, uniform_provider, other_render_params);
 	}
 
-	int GPUMesh::DisplayWithProgram(GPUProgram const* program, GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+	int GPUMesh::DisplayWithProgram(GPUProgram const* program, GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
 		return DisplayWithMaterial(program->GetDefaultMaterial(), renderer, uniform_provider, render_params);
 	}

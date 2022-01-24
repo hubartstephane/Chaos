@@ -194,7 +194,7 @@ namespace chaos
 		drawcall_counter.Accumulate(1);
 	}
 
-	void GPURenderer::DrawFullscreenQuad(GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
+	void GPURenderer::DrawFullscreenQuad(GPURenderMaterial const * material, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
 	{
 		assert(material != nullptr);
 	

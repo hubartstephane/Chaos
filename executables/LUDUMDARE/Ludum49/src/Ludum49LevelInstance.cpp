@@ -652,7 +652,7 @@ bool Landscape::DoTick(float delta_time)
 	return true;
 }
 
-int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 {
 	int result = 0;
 
@@ -1047,7 +1047,7 @@ bool LudumLevelInstance::CanCompleteLevel() const
 	return false;
 }
 
-int LudumLevelInstance::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+int LudumLevelInstance::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 {
 
 

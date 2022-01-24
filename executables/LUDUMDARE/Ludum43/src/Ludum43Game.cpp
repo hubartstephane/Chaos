@@ -28,7 +28,7 @@ bool LudumGame::OnEnterGame(chaos::PhysicalGamepad * in_physical_gamepad)
 	return true;
 }
 
-void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params)
+void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::GPURenderParams const & render_params)
 {
 	chaos::TMLevelInstance * ludum_level_instance = GetLevelInstance();
 
@@ -107,7 +107,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 			filter.name_filter.enable_names.push_back("Enemies");
 			other_render_params.object_filter = &filter;
 #endif
-			
+
 			chaos::GPUProgramProviderChain enlarged_provider(uniform_provider);
 			enlarged_provider.AddVariable("position_blend_ratio", 0.0f);
 
@@ -145,7 +145,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 
 		// display the background
 		DoDisplayBackground(renderer, uniform_provider, render_params);
-		// draw particle system 
+		// draw particle system
 		//if (particle_manager != nullptr)
 		//	particle_manager->Display(renderer, uniform_provider, other_render_params);
 		level_instance->Display(renderer, uniform_provider, other_render_params);

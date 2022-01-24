@@ -102,7 +102,7 @@ void LudumLevelInstance::CreateCameraComponents(Camera* camera, TMCameraTemplate
 	camera->AddComponent(new SoundListenerCameraComponent());
 }
 
-int LudumLevelInstance::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+int LudumLevelInstance::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 {
 	return TMLevelInstance::DoDisplay(renderer, uniform_provider, render_params);
 }

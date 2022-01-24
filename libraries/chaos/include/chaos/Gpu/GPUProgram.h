@@ -27,7 +27,7 @@ namespace chaos
 		virtual ~GPUProgram();
 
 		/** use the program */
-		bool UseProgram(class GPUProgramProviderBase const* uniform_provider) const;
+		bool UseProgram(class GPUProgramProviderInterface const * uniform_provider) const;
 
 		/** returns the GL name of the resource */
 		GLuint GetResourceID() const { return program_id; }

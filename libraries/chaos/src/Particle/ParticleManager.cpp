@@ -52,7 +52,7 @@ namespace chaos
 		return true;
 	}
 
-	int ParticleManager::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
+	int ParticleManager::DoDisplay(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
 	{
 		return layer_system.Display(renderer, uniform_provider, render_params);
 	}

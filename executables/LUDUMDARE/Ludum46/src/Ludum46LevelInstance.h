@@ -32,7 +32,7 @@ protected:
 	virtual void CreateCameraComponents(chaos::Camera* camera, chaos::TMCameraTemplate* camera_template) override;
 
 
-	virtual int DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params) override;
+	virtual int DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::GPURenderParams const& render_params) override;
 
 	/** override */
 	virtual bool IsPlayerDead(chaos::Player* player) override;

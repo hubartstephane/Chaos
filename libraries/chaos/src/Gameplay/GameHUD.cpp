@@ -193,7 +193,7 @@ namespace chaos
 		return true;
 	}
 
-	int GameHUD::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
+	int GameHUD::DoDisplay(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
 	{
 		int result = 0; 
 		// display components (most of them should do nothing while they re using the particle_manager

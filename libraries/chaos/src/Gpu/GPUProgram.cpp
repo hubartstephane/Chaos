@@ -27,7 +27,7 @@ namespace chaos
 		}
 	}
 
-	bool GPUProgram::UseProgram(class GPUProgramProviderBase const * uniform_provider) const
+	bool GPUProgram::UseProgram(class GPUProgramProviderInterface const * uniform_provider) const
 	{
 		if (!IsValid())
 			return false;

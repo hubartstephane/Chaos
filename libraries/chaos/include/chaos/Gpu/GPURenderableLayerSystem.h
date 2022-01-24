@@ -46,7 +46,7 @@ namespace chaos
 	protected:
 
 		/** the main rendering method */
-		virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params) override;
+		virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params) override;
 		/** find a renderable */
 		RenderableLayerInfo* FindChildRenderableInfo(GPURenderable* renderable);
 		/** find a renderable */

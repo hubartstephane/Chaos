@@ -86,7 +86,7 @@ bool LudumPlayer::DoTick(float delta_time)
 }
 
 #if 0
-int LudumPlayer::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+int LudumPlayer::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 {
 	int result = 0;
 

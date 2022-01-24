@@ -197,7 +197,7 @@ namespace chaos
 		bool IsMousePositionValid() const;
 
 		/** the drawing specialization method */
-		virtual bool OnDraw(GPURenderer* renderer, box2 const& viewport, glm::ivec2 window_size, GPUProgramProviderBase const* uniform_provider);
+		virtual bool OnDraw(GPURenderer* renderer, box2 const& viewport, glm::ivec2 window_size, GPUProgramProviderInterface const * uniform_provider);
 
 	private:
 

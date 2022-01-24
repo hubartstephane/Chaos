@@ -2,7 +2,7 @@
 
 namespace chaos
 {
-	void SceneRenderer::DisplayScene(SceneNode* root_node, GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+	void SceneRenderer::DisplayScene(SceneNode* root_node, GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
 		if (root_node != nullptr)
 		{
@@ -14,7 +14,7 @@ namespace chaos
 		}
 	}
 
-	void SceneRenderer::DisplayNode(SceneNode* node, GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+	void SceneRenderer::DisplayNode(SceneNode* node, GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
 		assert(node != nullptr);
 

@@ -191,17 +191,17 @@ namespace chaos
 		virtual box2 GetRequiredViewport(glm::ivec2 const& size) const;
 
 		/** the rendering method */
-		virtual void Display(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
+		virtual void Display(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
 		/** the user defined rendering function */
-		virtual void DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
+		virtual void DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
 		/** internal method to prepare rendering */
-		virtual void DoPreDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
+		virtual void DoPreDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
 		/** internal method to display the background */
-		virtual void DoDisplayBackground(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
+		virtual void DoDisplayBackground(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
 		/** internal  method to display the game content */
-		virtual void DoDisplayGame(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
+		virtual void DoDisplayGame(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
 		/** internal  method to display the HUD */
-		virtual void DoDisplayHUD(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
+		virtual void DoDisplayHUD(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
 
 		/** initialization from the config file */
 		virtual bool InitializeFromConfiguration(nlohmann::json const& config);

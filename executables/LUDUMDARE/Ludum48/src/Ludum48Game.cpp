@@ -64,7 +64,7 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config)
 }
 
 
-void LudumGame::DoDisplayGame(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+void LudumGame::DoDisplayGame(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 {
 	GPUProgramProviderChain update_provider(uniform_provider);
 
@@ -126,7 +126,7 @@ void LudumGame::DoDisplayGame(GPURenderer* renderer, GPUProgramProviderBase cons
 	}
 }
 
-void LudumGame::SetFadeEffect(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params, bool fade_to_black, float ratio)
+void LudumGame::SetFadeEffect(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params, bool fade_to_black, float ratio)
 {
 	GPUResourceManager* resource_manager = WindowApplication::GetGPUResourceManagerInstance();
 	if (resource_manager == nullptr)

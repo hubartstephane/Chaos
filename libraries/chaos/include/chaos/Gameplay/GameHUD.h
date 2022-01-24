@@ -104,7 +104,7 @@ namespace chaos
 		/** override */
 		virtual bool DoTick(float delta_time) override;
 		/** override */
-		virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params) override;
+		virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params) override;
 
 	protected:
 

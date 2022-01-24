@@ -525,7 +525,7 @@ namespace chaos
 		}
 	}
 
-	bool Window::OnDraw(GPURenderer* renderer, box2 const& viewport, glm::ivec2 window_size, GPUProgramProviderBase const* uniform_provider)
+	bool Window::OnDraw(GPURenderer* renderer, box2 const& viewport, glm::ivec2 window_size, GPUProgramProviderInterface const * uniform_provider)
 	{
 		assert(glfw_window == glfwGetCurrentContext());
 		return true;

@@ -29,7 +29,7 @@ namespace chaos
 		/** draw a primitive */
 		void Draw(GPUDrawPrimitive const& primitive, GPUInstancingInfo const& instancing = {});
 		/** render a full screen quad */
-		void DrawFullscreenQuad(GPURenderMaterial const* material, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
+		void DrawFullscreenQuad(GPURenderMaterial const* material, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
 
 		/** called at the start of a new frame */
 		void BeginRenderingFrame();

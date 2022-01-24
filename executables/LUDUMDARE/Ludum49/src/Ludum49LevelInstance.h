@@ -436,7 +436,7 @@ public:
 
 	virtual bool Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
 
-	virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params) override;
+	virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params) override;
 
 	virtual bool DoTick(float delta_time) override;
 
@@ -497,7 +497,7 @@ protected:
 
 	virtual bool CanCompleteLevel() const override;
 
-	virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params) override;
+	virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params) override;
 
 	virtual uint64_t GetCollisionFlagByName(char const* name) const override;
 

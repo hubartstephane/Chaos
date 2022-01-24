@@ -118,7 +118,7 @@ namespace chaos
 		/** ticking the particle system */
 		virtual bool DoTick(float delta_time) override;
 		/** draw the layer */
-		virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params) override;
+		virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params) override;
 
 		/** change the GL rendering state */
 		virtual void UpdateRenderingStates(GPURenderer* renderer, bool begin) const;
@@ -132,7 +132,7 @@ namespace chaos
 		virtual ParticleAllocationBase* DoCreateParticleAllocation() { return nullptr; }
 
 		/** the effective rendering */
-		int DoDisplayHelper(GPURenderer* renderer, GPURenderMaterial const* final_material, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
+		int DoDisplayHelper(GPURenderer* renderer, GPURenderMaterial const* final_material, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
 
 		/** internal method to update particles (returns true whether there was real changes) */
 		bool TickAllocations(float delta_time);

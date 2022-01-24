@@ -20,7 +20,7 @@ size_t LudumGameInstance::CanStartChallengeBallIndex(bool going_down) const
 		if (balls != nullptr)
 		{
 			chaos::box2 level_box = GetLevelInstance()->GetBoundingBox();
-			
+
 			for (size_t i = 0; i < ball_count; ++i)
 			{
 				if (going_down ^ (balls->velocity.y <= 0.0f)) // going up
@@ -102,22 +102,23 @@ void LudumGameInstance::TickBackgroundFillRatio(float delta_time)
 		complete_level_timer += delta_time;
 }
 
-void LudumGameInstance::FillUniformProvider(chaos::GPUProgramProvider& main_uniform_provider)
+bool LudumGameInstance::DoProcessAction(chaos::GPUProgramProviderExecutionData const& execution_data) const
 {
-	chaos::GameInstance::FillUniformProvider(main_uniform_provider);
+	if (execution_data.Match("fill_ratio", chaos::GPUProgramProviderPassType::EXPLICIT))
+	{
+		if (LudumGame const* ludum_game = GetGame())
+		{
+			float delay = 0.5f * ludum_game->delay_before_next_level;
 
-    LudumGame const* ludum_game = GetGame();
-    if (ludum_game == nullptr)
-        return;
+			float fill_ratio =
+				current_background_fillratio * 0.5f +
+				0.5f * std::max((delay - complete_level_timer) / delay, 0.0f);
 
-    float delay = 0.5f * ludum_game->delay_before_next_level;
-
-    float fill_ratio =
-        current_background_fillratio * 0.5f +
-        0.5f * std::max((delay - complete_level_timer) / delay, 0.0f);
-	main_uniform_provider.AddVariable("fill_ratio", fill_ratio);
+			return execution_data.Process(fill_ratio);
+		}
+	}
+	return chaos::GameInstance::DoProcessAction(execution_data);
 }
-
 
 void LudumGameInstance::TickBallSplit(float delta_time)
 {
@@ -192,7 +193,7 @@ void LudumGameInstance::OnChallengeCompleted(LudumChallenge * challenge, bool su
 	auto const & rewards_punishments = (success) ? ludum_game->rewards : ludum_game->punishments;
 
 	LudumChallengeRewardPunishment * selected_rp = nullptr;
-	   	 
+
 	// reset some values
 	sequence_challenge = nullptr;
 	ball_time_dilation = 1.0f;
@@ -512,7 +513,7 @@ glm::vec2 LudumGameInstance::GenerateBallRandomDirection() const
 	float direction = (rand() % 2) ? 1.0f : -1.0f;
 
 	// direction upward
-	float angle = 
+	float angle =
 		3.14f * 0.5f +									// up
 		direction * 3.14f * 0.125f +    // small base angle to the left or the right
 		direction * chaos::MathTools::RandFloat(0, 3.14f * 0.125f); // final adjustement
@@ -560,7 +561,7 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateBalls(size_t count, boo
 ParticleMovableObject * LudumGameInstance::GetBallParticles()
 {
 	if (balls_allocations == nullptr)
-		return nullptr;	
+		return nullptr;
 	chaos::ParticleAccessor<ParticleMovableObject> particles = balls_allocations->GetParticleAccessor();
 	if (particles.GetDataCount() == 0)
 		return nullptr;
@@ -581,7 +582,7 @@ ParticleMovableObject const * LudumGameInstance::GetBallParticles() const
 size_t LudumGameInstance::GetBallCount() const
 {
 	if (balls_allocations == nullptr)
-		return 0;	
+		return 0;
 	return balls_allocations->GetParticleCount();
 }
 
@@ -601,7 +602,7 @@ LudumChallenge * LudumGameInstance::CreateSequenceChallenge()
 {
 	LudumGame const * ludum_game = GetGame();
 	LudumLevel const * ludum_level = GetLevel();
-	LudumLevelInstance * ludum_level_instance = GetLevelInstance();	
+	LudumLevelInstance * ludum_level_instance = GetLevelInstance();
 
 	// if the level has a dedicated text, use it
 	if (ludum_level != nullptr && ludum_level_instance != nullptr)
@@ -622,7 +623,7 @@ LudumChallenge * LudumGameInstance::CreateSequenceChallenge()
 
 	auto it = ludum_game->dictionnary.find(len);
 
-	// no word of this size (search a word with the lengh the more near the request) 
+	// no word of this size (search a word with the lengh the more near the request)
 	if (it == ludum_game->dictionnary.end())
 	{
 		auto better_it = ludum_game->dictionnary.begin();

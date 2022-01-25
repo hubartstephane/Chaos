@@ -120,7 +120,7 @@ namespace chaos
 		GLint GetLocation(VertexAttributeSemantic semantic, int semantic_index) const;
 
 		/** bind the attributes */
-		void BindAttributes(GLuint vertex_array, GPUVertexDeclaration const& declaration, class GPUProgramProviderBase const* attribute_provider = nullptr) const;
+		void BindAttributes(GLuint vertex_array, GPUVertexDeclaration const& declaration, class GPUProgramProviderInterface const* attribute_provider = nullptr) const;
 
 		/** find a uniform */
 		GLUniformInfo* FindUniform(char const* name);

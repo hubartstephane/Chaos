@@ -55,13 +55,13 @@ namespace chaos
 
 		/** process the action with any data */
 		template<typename T>
-		bool Process(T const& value, GPUProgramProviderBase const* provider = nullptr) const
+		bool Process(T const& value, GPUProgramProviderInterface const* provider = nullptr) const
 		{
 			return action.Process(searched_name, value, provider);
 		}
 
 		/** process the action with texture */
-		bool Process(GPUTexture const* value, GPUProgramProviderBase const* provider) const;
+		bool Process(GPUTexture const* value, GPUProgramProviderInterface const* provider) const;
 
 	protected:
 

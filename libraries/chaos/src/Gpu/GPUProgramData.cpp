@@ -529,7 +529,7 @@ namespace chaos
 		return -1;
 	}
 
-	void GPUProgramData::BindAttributes(GLuint vertex_array, GPUVertexDeclaration const & declaration, GPUProgramProviderBase const * attribute_provider) const
+	void GPUProgramData::BindAttributes(GLuint vertex_array, GPUVertexDeclaration const & declaration, GPUProgramProviderInterface const * attribute_provider) const
 	{
 		int vertex_size = declaration.GetVertexSize();
 

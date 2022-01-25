@@ -64,7 +64,7 @@ namespace chaos
 		return (StringTools::Strcmp(other_name, searched_name) == 0);
 	}
 
-	bool GPUProgramProviderExecutionData::Process(GPUTexture const* value, GPUProgramProviderBase const* provider) const
+	bool GPUProgramProviderExecutionData::Process(GPUTexture const* value, GPUProgramProviderInterface const* provider) const
 	{
 		return action.Process(searched_name, value, provider);
 	}

@@ -81,7 +81,7 @@ int LuaFuncCallImplxxx(lua_State * state)
 
 template<typename RET, typename P1, typename P2>
 void RegisterGlobalCFunc(lua_State * state, char const * function_name, RET (*func)(P1 p1, P2 p2))
-{ 
+{
 	assert(state         != nullptr);
 	assert(function_name != nullptr);
 	assert(func          != nullptr);
@@ -96,7 +96,7 @@ void RegisterGlobalCFunc(lua_State * state, char const * function_name, RET (*fu
 
 template<typename RET, typename P1, typename P2>
 void RegisterGlobalCFunc(lua_State * state, char const * function_name, RET (*func)(P1 p1, P2 p2))
-{ 
+{
 	assert(state         != nullptr);
 	assert(function_name != nullptr);
 	assert(func          != nullptr);
@@ -198,7 +198,7 @@ int myff(int p1, int p2)
 
 /*
 template<typename RET>
-class 
+class
 */
 
 
@@ -257,9 +257,9 @@ protected:
 		if (l != nullptr)
 		{
 
-			RegisterCFunc(l, "x0", myff0); 
-			RegisterCFunc(l, "x1", myff1); 
-			RegisterCFunc(l, "x2", myff2); 
+			RegisterCFunc(l, "x0", myff0);
+			RegisterCFunc(l, "x1", myff1);
+			RegisterCFunc(l, "x2", myff2);
 
 
 
@@ -274,8 +274,8 @@ protected:
 
 			chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(rp / "test.lua", true);
 			if (buffer != nullptr)
-			{     
-				chaos::LuaTools::ExecBuffer(l, buffer, false);       
+			{
+				chaos::LuaTools::ExecBuffer(l, buffer, false);
 			}
 
 			lua_close(l);

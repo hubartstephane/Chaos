@@ -133,7 +133,7 @@ namespace chaos
 	// Standalone functions
 	// ====================================================================
 
-	void TweakTextHotpointWithCanvas(box2 const & canvas_box, ParticleTextGenerator::GeneratorParams& final_params)
+	static void TweakTextHotpointWithCanvas(box2 const & canvas_box, ParticleTextGenerator::GeneratorParams& final_params)
 	{
 		// XXX : for text generation, we use a HOTPOINT that describe where is the origin of the set of particles (LEFT, RIGHT, TOP, BOTTOM, CENTER)
 		//       It makes sence to use the same HOTPOINT to give the position on SCREEN as a reference
@@ -388,7 +388,7 @@ namespace chaos
 	// ====================================================================
 
 	GameHUDTimeoutComponent::GameHUDTimeoutComponent(char const * in_text) :
-		GameHUDCacheValueTextComponent<float>(in_text) 
+		GameHUDCacheValueTextComponent<float>(in_text)
 	{
 		generator_params.line_height = 60.0f;
 		generator_params.font_info_name = "normal";
@@ -437,7 +437,7 @@ namespace chaos
 	{
 		if (!GameHUDMeshComponent::InitializeFromConfiguration(json))
 			return true;
-		
+
 		JSONTools::GetAttribute(json, "hotpoint", hotpoint);
 		JSONTools::GetAttribute(json, "position", position);
 		JSONTools::GetAttribute(json, "particle_size", particle_size);
@@ -448,7 +448,7 @@ namespace chaos
 		JSONTools::GetAttribute(json, "heart_beat_frequency", heart_beat_frequency);
 
 		JSONTools::GetAttribute(json, "fadeout_warning_base", fadeout_warning_base);
-		
+
 		return true;
 	}
 
@@ -497,7 +497,7 @@ namespace chaos
 		result = player->GetLifeCount();
 		return true;
 	}
-	
+
 	void GameHUDLifeComponent::UpdateMesh()
 	{
 		GPUDrawInterface<VertexDefault> DI(nullptr);
@@ -563,7 +563,7 @@ namespace chaos
 			return false;
 		// hide title after 4.0 seconds (considere level is now null)
 		LevelInstance const* level_instance = GetLevelInstance();
-		if (level_instance != nullptr && level_instance->GetLevelClockTime() > 4.0) 
+		if (level_instance != nullptr && level_instance->GetLevelClockTime() > 4.0)
 			return false;
 		result = level;
 		return true;

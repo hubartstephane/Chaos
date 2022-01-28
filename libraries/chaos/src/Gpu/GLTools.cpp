@@ -2,16 +2,32 @@
 
 namespace chaos
 {
-	box2 GLTools::SetViewportWithAspect(glm::ivec2 const & size, float aspect)
+	void GLTools::SetViewport(ViewportPlacement const& viewport)
 	{
-		box2 viewport = box2(std::make_pair(
-			glm::vec2(0.0f, 0.0f),
-			RecastVector<glm::vec2>(size)		
-		));
+		glViewport(viewport.position.x, viewport.position.y, viewport.size.x, viewport.size.y);
+	}
 
-		viewport = ShrinkBoxToAspect(viewport, aspect);
-		SetViewport(viewport);
-		return viewport;
+	ViewportPlacement GLTools::ShrinkViewportToAspect(ViewportPlacement const& src, float aspect)
+	{
+		ViewportPlacement result = src;
+		if (src.size.x != 0 && src.size.y != 0)
+		{
+			float viewport_aspect = float(src.size.x) / float(src.size.y);
+			if (viewport_aspect != aspect)
+			{
+				if (viewport_aspect > aspect) // width too large
+				{
+					result.size.x = int(float(result.size.y) * aspect);
+					result.position.x += (src.size.x - result.size.x) / 2;
+				}
+				else // height too large
+				{
+					result.size.y = int(float(result.size.x) / aspect);
+					result.position.y += (src.size.y - result.size.y) / 2;
+				}
+			}
+		}
+		return result;
 	}
 
 	bool GLTools::IsMatrixType(GLenum type)
@@ -21,7 +37,7 @@ namespace chaos
 			GL_FLOAT_MAT2, GL_FLOAT_MAT3, GL_FLOAT_MAT4,
 			GL_FLOAT_MAT2x3, GL_FLOAT_MAT2x4, GL_FLOAT_MAT3x2, GL_FLOAT_MAT3x4, GL_FLOAT_MAT4x2, GL_FLOAT_MAT4x3,
 			GL_DOUBLE_MAT2, GL_DOUBLE_MAT3, GL_DOUBLE_MAT4,
-			GL_DOUBLE_MAT2x3, GL_DOUBLE_MAT2x4, GL_DOUBLE_MAT3x2, GL_DOUBLE_MAT3x4, GL_DOUBLE_MAT4x2, GL_DOUBLE_MAT4x3, 
+			GL_DOUBLE_MAT2x3, GL_DOUBLE_MAT2x4, GL_DOUBLE_MAT3x2, GL_DOUBLE_MAT3x4, GL_DOUBLE_MAT4x2, GL_DOUBLE_MAT4x3,
 			GL_NONE
 		};
 

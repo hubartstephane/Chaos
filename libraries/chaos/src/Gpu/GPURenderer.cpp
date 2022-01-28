@@ -11,9 +11,9 @@ namespace chaos
 
 	bool GPURenderer::PushFramebufferRenderContext(GPUFramebuffer * framebuffer, bool generate_mipmaps)
 	{
-#if _DEBUG 
+#if _DEBUG
 		assert(rendering_started);
-#endif 
+#endif
 		// check parameter validity
 		if (framebuffer == nullptr || !framebuffer->IsValid())
 			return false;
@@ -25,19 +25,24 @@ namespace chaos
 		GPUFramebufferRenderData frd;
 		frd.framebuffer = framebuffer;
 		frd.generate_mipmaps = generate_mipmaps;
-		glGetIntegerv(GL_VIEWPORT, frd.viewport_to_restore);
+
+		GLint viewport_data[4];
+		glGetIntegerv(GL_VIEWPORT, viewport_data);
+		frd.viewport_to_restore.position = { viewport_data[0], viewport_data[1] };
+		frd.viewport_to_restore.size = { viewport_data[2], viewport_data[3] };
+
 		framebuffer_stack.push_back(frd);
 		// update GL state machine
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer->GetResourceID());
 		return true;
 	}
-	
+
 	bool GPURenderer::PopFramebufferRenderContext()
 	{
-#if _DEBUG 
+#if _DEBUG
 		assert(rendering_started);
 #endif
-		assert(framebuffer_stack.size() > 0); // logic error 
+		assert(framebuffer_stack.size() > 0); // logic error
 
 		// check for release version
 		if (framebuffer_stack.size() == 0)
@@ -60,16 +65,16 @@ namespace chaos
 		if (framebuffer_stack.size() > 0 && framebuffer_stack[framebuffer_stack.size() - 1].framebuffer->IsValid())
 			previous_framebuffer = framebuffer_stack[framebuffer_stack.size() - 1].framebuffer.get();
 
-		glBindFramebuffer(GL_FRAMEBUFFER, (previous_framebuffer == nullptr)? 0 : previous_framebuffer->GetResourceID()); 
+		glBindFramebuffer(GL_FRAMEBUFFER, (previous_framebuffer == nullptr)? 0 : previous_framebuffer->GetResourceID());
 
-		glViewport(frd.viewport_to_restore[0], frd.viewport_to_restore[1], frd.viewport_to_restore[2], frd.viewport_to_restore[3]);
+		GLTools::SetViewport(frd.viewport_to_restore);
 
 		return true;
 	}
 
 	void GPURenderer::BeginRenderingFrame()
 	{
-#if _DEBUG 
+#if _DEBUG
 		assert(!rendering_started);
 		rendering_started = true;
 #endif
@@ -82,11 +87,11 @@ namespace chaos
 
 	void GPURenderer::EndRenderingFrame()
 	{
-#if _DEBUG 
+#if _DEBUG
 		assert(rendering_started);
 		rendering_started = false;
 #endif
-		assert(framebuffer_stack.size() == 0); // logic error 
+		assert(framebuffer_stack.size() == 0); // logic error
 		// in release, pop all previous context
 		while(framebuffer_stack.size() > 0)
 			PopFramebufferRenderContext();
@@ -98,8 +103,8 @@ namespace chaos
 			rendering_fence->CreateGPUFence();
 	}
 
-	float GPURenderer::GetAverageFrameRate() const 
-	{ 
+	float GPURenderer::GetAverageFrameRate() const
+	{
 		return framerate_counter.GetCurrentValue();
 	}
 
@@ -120,9 +125,9 @@ namespace chaos
 		return rendering_fence.get();
 	}
 
-	uint64_t GPURenderer::GetTimestamp() const 
-	{ 
-		return rendering_timestamp; 
+	uint64_t GPURenderer::GetTimestamp() const
+	{
+		return rendering_timestamp;
 	}
 
 	bool GPURenderer::DoTick(float delta_time)
@@ -138,11 +143,11 @@ namespace chaos
 
 	void GPURenderer::Draw(GPUDrawPrimitive const & primitive, GPUInstancingInfo const & instancing)
 	{
-#if _DEBUG 
+#if _DEBUG
 		assert(rendering_started);
 #endif
 
-		// This function is able to render : 
+		// This function is able to render :
 		//   -normal primitives
 		//   -indexed primitives
 		//   -instanced primitives
@@ -197,7 +202,7 @@ namespace chaos
 	void GPURenderer::DrawFullscreenQuad(GPURenderMaterial const * material, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
 	{
 		assert(material != nullptr);
-	
+
 		GPUResourceManager* gpu_resource_manager = WindowApplication::GetGPUResourceManagerInstance();
 		if (gpu_resource_manager != nullptr)
 		{

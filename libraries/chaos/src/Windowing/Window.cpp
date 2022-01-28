@@ -495,26 +495,29 @@ namespace chaos
 			assert(glfw_window == glfwGetCurrentContext());
 
 			// XXX : not sure whether i should call glfwGetWindowSize(..) or glfwGetFramebufferSize(..)
-			int width = 0;
-			int height = 0;
-			glfwGetWindowSize(glfw_window, &width, &height); // framebuffer size is in pixel ! (not glfwGetWindowSize)
+			glm::ivec2 window_size = { 0, 0 };
+			glfwGetWindowSize(glfw_window, &window_size.x, &window_size.y); // framebuffer size is in pixel ! (not glfwGetWindowSize)
 
-			if (width <= 0 || height <= 0) // some crash to expect in drawing elsewhere
+			if (window_size.x <= 0 || window_size.y <= 0) // some crash to expect in drawing elsewhere
 				return;
 
 			renderer->BeginRenderingFrame();
 			// compute viewport
-			glm::vec2 window_size = glm::ivec2(width, height);
 
-			box2 viewport = GetRequiredViewport(window_size);
-			GLTools::SetViewport(viewport);
+
+			// shurender
+
+			WindowDrawParams draw_params;
+			draw_params.viewport = GetRequiredViewport(window_size);
+			draw_params.full_size = window_size;
+			GLTools::SetViewport(draw_params.viewport);
 
 			// data provider
 			GPUProgramProviderCommonTransforms common_transforms;
 			GPUProgramProviderChain provider(this, (WindowApplication*)Application::GetInstance(), common_transforms);
 
 			// render
-			if (OnDraw(renderer.get(), viewport, window_size, &provider))
+			if (OnDraw(renderer.get(), draw_params, &provider))
 			{
 				if (double_buffer)
 					glfwSwapBuffers(glfw_window);
@@ -525,7 +528,7 @@ namespace chaos
 		}
 	}
 
-	bool Window::OnDraw(GPURenderer* renderer, box2 const& viewport, glm::ivec2 window_size, GPUProgramProviderInterface const * uniform_provider)
+	bool Window::OnDraw(GPURenderer* renderer, WindowDrawParams const& draw_params, GPUProgramProviderInterface const * uniform_provider)
 	{
 		assert(glfw_window == glfwGetCurrentContext());
 		return true;
@@ -705,9 +708,8 @@ namespace chaos
 			// compute rendering size
 			// in normal case, we work with the window_size then apply a viewport cropping
 			// here we want exactly to work with no cropping
-			box2 viewport = GetRequiredViewport(GetWindowSize());
-			viewport.position = viewport.half_size;
-			glm::ivec2 framebuffer_size = auto_cast_vector(viewport.half_size * 2.0f);
+			ViewportPlacement viewport = GetRequiredViewport(GetWindowSize());
+			glm::ivec2 framebuffer_size = viewport.size;
 
 			// generate a framebuffer
 			GPUFramebufferGenerator framebuffer_generator;
@@ -721,12 +723,20 @@ namespace chaos
 				return false;
 
 			// render in the frame buffer
-			GPUProgramProviderChain provider(this, (WindowApplication*)Application::GetInstance());
+			GPUProgramProviderCommonTransforms common_transforms;
+			GPUProgramProviderChain provider(this, (WindowApplication*)Application::GetInstance(), common_transforms);
 
 			renderer->BeginRenderingFrame();
 			renderer->PushFramebufferRenderContext(framebuffer.get(), false);
-			GLTools::SetViewport(viewport);
-			OnDraw(renderer.get(), viewport, framebuffer_size, &provider);
+
+			WindowDrawParams draw_params;
+			draw_params.viewport.position = { 0, 0 };
+			draw_params.viewport.size = framebuffer_size;
+			draw_params.full_size = framebuffer_size;
+
+			GLTools::SetViewport(draw_params.viewport); // use the draw_params' viewport because its position is {0, 0} and that's what we want for drawing on Render Target
+			OnDraw(renderer.get(), draw_params, &provider);
+
 			renderer->PopFramebufferRenderContext();
 			renderer->EndRenderingFrame();
 
@@ -758,13 +768,12 @@ namespace chaos
 		});
 	}
 
-	box2 Window::GetRequiredViewport(glm::ivec2 const& size) const
+	ViewportPlacement Window::GetRequiredViewport(glm::ivec2 const& size) const
 	{
-		box2 viewport = box2(std::make_pair(
-			glm::vec2(0.0f, 0.0f),
-			RecastVector<glm::vec2>(size)
-		));
-		return ShrinkBoxToAspect(viewport, 16.0f / 9.0f);
+		ViewportPlacement result;
+		result.position = { 0, 0 };
+		result.size = size;
+		return GLTools::ShrinkViewportToAspect(result, 16.0f / 9.0f);
 	}
 
 	CHAOS_HELP_TEXT(SHORTCUTS, "F9  : ScreenCapture");

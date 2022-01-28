@@ -20,36 +20,15 @@ namespace chaos
 
 	public:
 
-		/** the viewport */
-		box2 viewport;
-		/** the screen size */
-		glm::ivec2 screen_size = glm::ivec2(0, 0);
+		/** the used viewport */
+		ViewportPlacement viewport;
+		/** the rendering full size */
+		glm::ivec2 full_size = { 0, 0 };
+
 		/** material provider */
 		shared_ptr<GPUMaterialProvider> material_provider;
 		/** some filters */
 		shared_ptr<GPURenderableFilter> object_filter;
-
-
-		// shu48
-
-#if 0
-		glm::mat4 projection_matrix;
-
-		glm::mat4 local_to_world;
-
-		glm::mat4 world_to_local;
-#endif
-
-
-
-
-		/** pointer on the current camera */
-		Camera* camera = nullptr;
-
-
-
-
-
 		/** material specialization */
 		std::string renderpass_name;
 		/** the instancing information */

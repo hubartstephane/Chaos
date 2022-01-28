@@ -188,7 +188,7 @@ namespace chaos
 		virtual bool OnMouseMoveImpl(double x, double y) override;
 
 		/** getting the required viewport for given window */
-		virtual box2 GetRequiredViewport(glm::ivec2 const& size) const;
+		virtual ViewportPlacement GetRequiredViewport(glm::ivec2 const& size) const;
 
 		/** the rendering method */
 		virtual void Display(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);

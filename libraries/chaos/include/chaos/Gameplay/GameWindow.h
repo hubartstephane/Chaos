@@ -27,7 +27,7 @@ namespace chaos
 		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
 
 		/** override */
-		virtual bool OnDraw(GPURenderer* renderer, box2 const& viewport, glm::ivec2 window_size, GPUProgramProviderInterface const * uniform_provider) override;
+		virtual bool OnDraw(GPURenderer* renderer, WindowDrawParams const & draw_params, GPUProgramProviderInterface const * uniform_provider) override;
 		/** override */
 		virtual void Finalize() override;
 		/** override */
@@ -37,7 +37,7 @@ namespace chaos
 		/** override */
 		virtual void OnFocusStateChange(bool gain_focus) override;
 		/** override */
-		virtual box2 GetRequiredViewport(glm::ivec2 const& size) const override;
+		virtual ViewportPlacement GetRequiredViewport(glm::ivec2 const& size) const override;
 
 
 	protected:

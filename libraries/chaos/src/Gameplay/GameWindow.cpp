@@ -45,20 +45,22 @@ namespace chaos
 		return Window::OnMouseMoveImpl(x, y);
 	}
 
-	box2 GameWindow::GetRequiredViewport(glm::ivec2 const & size) const
+	ViewportPlacement GameWindow::GetRequiredViewport(glm::ivec2 const & size) const
 	{
 		if (game != nullptr)
 			return game->GetRequiredViewport(size);
 		return Window::GetRequiredViewport(size);
 	}
 
-	bool GameWindow::OnDraw(GPURenderer * renderer, box2 const & viewport, glm::ivec2 window_size, GPUProgramProviderInterface const * uniform_provider)
+	bool GameWindow::OnDraw(GPURenderer * renderer, WindowDrawParams const& draw_params, GPUProgramProviderInterface const * uniform_provider)
 	{
+		// shurender
+
 		if (game != nullptr)
 		{
 			GPURenderParams render_params;
-			render_params.viewport = viewport;
-			render_params.screen_size = window_size;
+			render_params.viewport = draw_params.viewport;
+			render_params.full_size = draw_params.full_size;
 			game->Display(renderer, uniform_provider, render_params);
 		}
 		return true;

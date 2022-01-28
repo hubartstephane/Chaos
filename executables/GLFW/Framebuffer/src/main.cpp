@@ -6,14 +6,14 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderInterface const * uniform_provider) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::WindowDrawParams const& draw_params, chaos::GPUProgramProviderInterface const * uniform_provider) override
 	{
 
 		for (int pass = 0; pass < 2; ++pass)
 		{
 			glm::ivec2 size = (pass == 0) ?
 				framebuffer->GetSize():
-				window_size;
+				draw_params.viewport.size;
 
 			if (pass == 0)
 				renderer->PushFramebufferRenderContext(framebuffer.get(), true);
@@ -31,7 +31,7 @@ protected:
 
 			// XXX : the scaling is used to avoid the near plane clipping
 			static float FOV = 60.0f;
-			glm::mat4 projection_matrix = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, 2.0f * viewport.half_size.x, 2.0f * viewport.half_size.y, 1.0f, far_plane);
+			glm::mat4 projection_matrix = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, float(draw_params.viewport.size.x), float(draw_params.viewport.size.y), 1.0f, far_plane);
 
 			glm::mat4 local_to_world_matrix = glm::mat4(10.0f);
 

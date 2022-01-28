@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h> 
+#include <chaos/Chaos.h>
 
 #include "PrimitiveRenderer.h"
 
@@ -135,7 +135,7 @@ protected:
 			return result.c_str();
 		}
 
-		
+
 
 
 #if 0
@@ -151,7 +151,7 @@ protected:
 		if (example == TestID::RESTRICT_BOX_INSIDE_4_TEST)     return "restrict box displacement to inside : move smaller (smaller is REAL bigger)";
 		if (example == TestID::RESTRICT_SPHERE_INSIDE_1_TEST)  return "restrict sphere displacement to inside : move bigger";
 		if (example == TestID::RESTRICT_SPHERE_INSIDE_2_TEST)  return "restrict sphere displacement to inside : move smaller";
-		
+
 		if (example == TestID::SPHERE_INTERSECTION_TEST)       return "sphere intersection";
 		if (example == TestID::SPHERE_UNION_TEST)              return "sphere union";
 		if (example == TestID::INNER_SPHERE_TEST)              return "inner sphere";
@@ -173,7 +173,7 @@ protected:
 		if (example == TestID::OBOX_BOUNDING_BOX_TEST)         return "obox bounding box";
 		if (example == TestID::OBOX_INNER_SPHERE_TEST)         return "obox inner sphere";
 		if (example == TestID::POINT_INSIDE_OBOX_TEST)         return "point inside obox";
-		
+
 #endif
 
 		return nullptr;
@@ -189,14 +189,14 @@ protected:
 		debug_display.AddLine("  T         : freeze time");
 
 		if (display_example == TestID::COLLISION_2D_TEST || display_example == TestID::COLLISION_3D_TEST)
-		{			
+		{
 			debug_display.AddLine("  LEFT CTRL : select object modified");
 			debug_display.AddLine("  NUM 5     : change primitive type");
 			debug_display.AddLine("  NUM 4-6   : move X");
 			debug_display.AddLine("  NUM 1-7   : move Y");
 			debug_display.AddLine("  NUM 2-8   : move Z");
 			debug_display.AddLine("  NUM 3-9   : rotation");
-		}		
+		}
 	}
 
 	template<typename T>
@@ -220,7 +220,7 @@ protected:
 			primitive_renderer->GPUDrawPrimitive(p2, blue, false);
 
 			primitive_renderer->GPUDrawPrimitive(primitive_renderer->SlightIncreaseSize(p1 | p2), white, true);
-		}  
+		}
 	}
 
 	template<typename T>
@@ -480,7 +480,7 @@ protected:
 
 	void GetCollisionPrimitive(chaos::sphere2 & res, glm::vec3 const & p, float r)
 	{
-		res.position = Get2DVector(p); 
+		res.position = Get2DVector(p);
 		res.radius = 1.0f;
 	}
 
@@ -512,8 +512,8 @@ protected:
 
 	void GetCollisionPrimitive(chaos::triangle3 & res, glm::vec3 const & p, float r)
 	{
-		
-		res.a = glm::vec3(5.0f, 7.0f, 0.0f);				
+
+		res.a = glm::vec3(5.0f, 7.0f, 0.0f);
 		res.b = glm::vec3(-5.0f, 6.0f, 0.0f);
 		res.c = glm::vec3(0.0f, 8.0f, 5.0f);
 
@@ -729,7 +729,7 @@ protected:
 		}
 		// bounding box
 		if (display_example == TestID::BOUNDING_BOX_TEST)
-		{      
+		{
 			chaos::sphere3 s(glm::vec3(1.0f, 2.0f, 3.0f), 3.0f);
 
 			chaos::box3 b = GetBoundingBox(s);
@@ -951,7 +951,7 @@ protected:
 
 	}
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderInterface const * uniform_provider) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::WindowDrawParams const& draw_params, chaos::GPUProgramProviderInterface const * uniform_provider) override
 	{
 		glm::vec4 clear_color(0.0f, 0.7f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -964,13 +964,13 @@ protected:
 
 		// XXX : the scaling is used to avoid the near plane clipping
 		static float FOV = 60.0f;
-		primitive_renderer->projection      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, 2.0f * viewport.half_size.x, 2.0f * viewport.half_size.y, 1.0f, far_plane);
+		primitive_renderer->projection      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, float(draw_params.viewport.size.x), float(draw_params.viewport.size.y), 1.0f, far_plane);
 		primitive_renderer->world_to_camera = fps_view_controller.GlobalToLocal();
 		primitive_renderer->renderer        = renderer;
 
 		DrawGeometryObjects();
 
-		debug_display.Display(renderer, (int)(2.0f * viewport.half_size.x), (int)(2.0f * viewport.half_size.y));
+		debug_display.Display(renderer, (int)(draw_params.viewport.size.x), (int)(draw_params.viewport.size.y));
 
 		return true;
 	}
@@ -1000,7 +1000,7 @@ protected:
 		boost::filesystem::path resources_path = application->GetResourcesPath();
 		boost::filesystem::path image_path = resources_path / "font.png";
 
-		// initialize debug font display 
+		// initialize debug font display
 		chaos::GLDebugOnScreenDisplay::Params debug_params;
 		debug_params.texture_path               = image_path;
 		debug_params.font_characters            = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
@@ -1121,7 +1121,7 @@ protected:
 		else if (event.IsKeyReleased(GLFW_KEY_KP_SUBTRACT))
 		{
 			SetExample((TestID)((int)display_example - 1));
-			DebugDisplayExampleTitle();     
+			DebugDisplayExampleTitle();
 			return true;
 		}
 		else if (event.IsKeyReleased(GLFW_KEY_KP_5))
@@ -1148,7 +1148,7 @@ protected:
 			position_object2 = glm::vec3( 5.0f, 0.0f, 0.0f);
 			rotation_object1 = 0.0f;
 			rotation_object2 = 0.0f;
-		}		
+		}
 	}
 
 protected:

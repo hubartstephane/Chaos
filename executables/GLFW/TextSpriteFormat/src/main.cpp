@@ -8,7 +8,7 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderInterface const * uniform_provider) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::WindowDrawParams const& draw_params, chaos::GPUProgramProviderInterface const * uniform_provider) override
 	{
 		glm::vec4 clear_color(0.0f, 0.0f, 0.7f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -23,7 +23,7 @@ protected:
 		chaos::box3 b(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
 		static float FOV = 60.0f;
-		glm::mat4 projection = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, 2.0f * viewport.half_size.x, 2.0f * viewport.half_size.y, 1.0f, far_plane);
+		glm::mat4 projection = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, float(draw_params.viewport.size.x), float(draw_params.viewport.size.y), 1.0f, far_plane);
 		glm::mat4 world_to_camera = fps_view_controller.GlobalToLocal();
 		glm::mat4 local_to_world = glm::translate(b.position) * glm::scale(b.half_size);
 
@@ -47,8 +47,8 @@ protected:
 			}
 		};
 
-		float w = (float)window_size.x;
-		float h = (float)window_size.y;
+		float w = (float)draw_params.full_size.x;
+		float h = (float)draw_params.full_size.y;
 		glm::vec3 scale = glm::vec3(2.0f / w, 2.0f / h, 1.0f);
 		glm::vec3 tr = glm::vec3(-1.0f, -1.0f, 0.0f);
 

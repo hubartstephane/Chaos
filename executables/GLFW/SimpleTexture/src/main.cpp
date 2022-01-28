@@ -265,7 +265,7 @@ protected:
 		return false;
 	}
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size, chaos::GPUProgramProviderInterface const * uniform_provider) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::WindowDrawParams const& draw_params, chaos::GPUProgramProviderInterface const * uniform_provider) override
 	{
 		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -278,7 +278,7 @@ protected:
 
 		chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
 		main_uniform_provider.AddTexture("material", texture);
-		main_uniform_provider.AddVariable("screen_size", glm::vec2((float)window_size.x, (float)window_size.y));
+		main_uniform_provider.AddVariable("screen_size", glm::vec2(float(draw_params.viewport.size.x), float(draw_params.viewport.size.y)));
 
 		chaos::GPURenderParams render_params;
 		mesh->DisplayWithProgram(program.get(), renderer, &main_uniform_provider, render_params);

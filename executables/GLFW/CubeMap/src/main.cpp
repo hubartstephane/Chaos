@@ -96,7 +96,7 @@ protected:
 		return nullptr;
 	}
 
-	virtual bool OnDraw(chaos::GPURenderer* renderer, chaos::box2 const& viewport, glm::ivec2 window_size, chaos::GPUProgramProviderInterface const * uniform_provider) override
+	virtual bool OnDraw(chaos::GPURenderer* renderer, chaos::WindowDrawParams const& draw_params, chaos::GPUProgramProviderInterface const* uniform_provider) override
 	{
 		if (query->IsEnded())
 		{
@@ -118,7 +118,7 @@ protected:
 
 		// XXX : the scaling is used to avoid the near plane clipping
 		static float FOV = 60.0f;
-		glm::mat4 projection_matrix = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, 2.0f * viewport.half_size.x, 2.0f * viewport.half_size.y, 1.0f, far_plane);
+		glm::mat4 projection_matrix = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, float(draw_params.viewport.size.x), float(draw_params.viewport.size.y), 1.0f, far_plane);
 		glm::mat4 local_to_world_matrix = glm::scale(glm::vec3(10.0f, 10.0f, 10.0f));
 		glm::mat4 world_to_camera_matrix = fps_view_controller.GlobalToLocal();
 
@@ -144,7 +144,7 @@ protected:
 		// XXX : the stencil is here to ensure that the debug strings is not erased by the sky box
 		//       (debug string needs to be rendered first so it can use the conditional rendering from previous frame)
 		query->BeginConditionalRendering(true, false);
-		debug_display.Display(renderer, (int)(2.0f * viewport.half_size.x), (int)(2.0f * viewport.half_size.y));
+		debug_display.Display(renderer, draw_params.viewport.size.x, draw_params.viewport.size.y);
 		query->EndConditionalRendering();
 
 		// XXX : render the skybox. Use previous frame query for conditinal rendering

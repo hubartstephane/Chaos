@@ -14,20 +14,24 @@ namespace chaos
 	{
 	public:
 
-		/** Set the viewport with an aspect */
-		static box2 SetViewportWithAspect(glm::ivec2 const& size, float aspect);
-
+#if 0
 		/** set the viewport */
 		template<typename T>
 		static void SetViewport(type_box<T, 2> const& viewport)
 		{
 			auto corners = GetBoxCorners(viewport);
 			glViewport(
-				(GLint)corners.first.x,
-				(GLint)corners.first.y,
-				2 * (GLsizei)(viewport.half_size.x),
-				2 * (GLsizei)(viewport.half_size.y));
+				GLint(corners.first.x),
+				GLint(corners.first.y),
+				GLsizei(2.0f * viewport.half_size.x),
+				GLsizei(2.0f * viewport.half_size.y));
 		}
+#endif
+
+		/** set the viewport */
+		static void SetViewport(ViewportPlacement const& viewport);
+		/** force an aspect for a viewport */
+		static ViewportPlacement ShrinkViewportToAspect(ViewportPlacement const& src, float aspect);
 
 		/** display generic information on the OpenGL driver */
 		static void DisplayGenericInformation();

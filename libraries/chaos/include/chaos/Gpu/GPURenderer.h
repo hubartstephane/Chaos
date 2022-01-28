@@ -16,7 +16,7 @@ namespace chaos
 		/** whether mipmaps should be generated at the end of rendering */
 		bool generate_mipmaps = false;
 		/** the viewport to restore */
-		GLint viewport_to_restore[4];
+		ViewportPlacement viewport_to_restore;
 	};
 
 	class GPURenderer : public Tickable

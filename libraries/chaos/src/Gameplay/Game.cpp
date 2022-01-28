@@ -192,13 +192,12 @@ namespace chaos
 		return false;
 	}
 
-	box2 Game::GetRequiredViewport(glm::ivec2 const & size) const
+	ViewportPlacement Game::GetRequiredViewport(glm::ivec2 const & size) const
 	{
-		box2 viewport = box2(std::make_pair(
-			glm::vec2(0.0f, 0.0f),
-			RecastVector<glm::vec2>(size)
-		));
-		return ShrinkBoxToAspect(viewport, viewport_wanted_aspect);
+		ViewportPlacement result;
+		result.position = { 0, 0 };
+		result.size = size;
+		return GLTools::ShrinkViewportToAspect(result, viewport_wanted_aspect);
 	}
 
 	void Game::Display(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)

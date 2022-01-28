@@ -93,7 +93,7 @@ namespace chaos
 		}
 	}
 
-	bool ViewportWindow::OnDraw(GPURenderer* renderer, box2 const& viewport, glm::ivec2 window_size, GPUProgramProviderInterface const * uniform_provider)
+	bool ViewportWindow::OnDraw(GPURenderer* renderer, WindowDrawParams const& draw_params, GPUProgramProviderInterface const * uniform_provider)
 	{
 		// clear the color buffers
 		glm::vec4 clear_color = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
@@ -105,15 +105,22 @@ namespace chaos
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
 
-		glViewport(0, 0, window_size.x, window_size.y);
 
 		GPUDrawInterface<VertexDefault> DI(nullptr);
+
+		box2 view = box2(std::make_pair(glm::vec2(0.0f, 0.0f), glm::vec2(100.0f , 100.0f)));
+
+		GPUProgramProvider provider;
+		provider.AddVariable("canvas_box", EncodeBoxToVector(view), GPUProgramProviderPassType::EXPLICIT);
 
 		for (auto& viewport : viewports)
 		{
 			if (viewport != nullptr)
 			{
 				ViewportPlacement const & placement = viewport->GetViewportPlacement();
+
+
+				glViewport(placement.position.x, placement.position.y, placement.size.x, placement.size.y);
 
 				glm::vec4 color(MathTools::RandFloat(), 0.0f, 0.0f, 1.0f);
 
@@ -124,9 +131,9 @@ namespace chaos
 				quad[2].color = color;
 				quad[3].color = color;
 				quad[0].position = { 0.0f,0.0f };
-				quad[1].position = { 0.0f,100.0f };
-				quad[2].position = { 100.0f,100.0f };
-				quad[3].position = { 100.0f,0.0f };
+				quad[1].position = { 0.0f,40.0f };
+				quad[2].position = { 50.0f,50.0f };
+				quad[3].position = { 50.0f,0.0f };
 				quad[0].flags = 0;
 				quad[1].flags = 0;
 				quad[2].flags = 0;
@@ -137,6 +144,10 @@ namespace chaos
 				quad[3].texcoord = { 0.0f, 0.0f, -1.0f };
 
 
+				GPURenderParams render_params;
+			//	render_params.viewport = viewport;
+				//render_params.screen_size = window_size;
+				DI.Display(renderer, &provider, render_params);
 #if 0
 				renderer->DrawFullscreenQuad()
 
@@ -151,10 +162,7 @@ namespace chaos
 			}
 		}
 
-		GPURenderParams render_params;
-		render_params.viewport = viewport;
-		render_params.screen_size = window_size;
-		DI.Display(renderer, nullptr, render_params);
+
 
 
 		return true;

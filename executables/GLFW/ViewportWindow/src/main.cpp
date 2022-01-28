@@ -18,6 +18,8 @@ protected:
 
 		if (chaos::ViewportGridLayout* layout = new chaos::ViewportGridLayout)
 		{
+			//layout->SetMaxViewportCount(2);
+			layout->SetOrientation(chaos::Orientation::VERTICAL);
 			SetViewportLayout(layout);
 
 

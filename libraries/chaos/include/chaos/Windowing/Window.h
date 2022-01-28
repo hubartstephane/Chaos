@@ -4,6 +4,7 @@ namespace chaos
 
 	class WindowHints;
 	class WindowParams;
+	class WindowDrawParams;
 	class Window;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -79,6 +80,19 @@ namespace chaos
 
 	bool LoadFromJSON(nlohmann::json const& json, WindowParams& dst);
 
+	// ========================================================
+	// WindowDrawParams : some data for the window rendering
+	// ========================================================
+
+	class WindowDrawParams
+	{
+	public:
+		/** the viewport */
+		ViewportPlacement viewport;
+		/** the rendering full size */
+		glm::ivec2 full_size = { 0, 0 };
+	};
+
 	/**
 	* Window : a binding class between chaos and GLFW to handle window (beware the prefix "My")
 	*/
@@ -133,7 +147,7 @@ namespace chaos
 		bool ScreenCapture();
 
 		/** getting the required viewport for given window */
-		virtual box2 GetRequiredViewport(glm::ivec2 const& size) const;
+		virtual ViewportPlacement GetRequiredViewport(glm::ivec2 const& size) const;
 
 		/** override */
 		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
@@ -197,7 +211,7 @@ namespace chaos
 		bool IsMousePositionValid() const;
 
 		/** the drawing specialization method */
-		virtual bool OnDraw(GPURenderer* renderer, box2 const& viewport, glm::ivec2 window_size, GPUProgramProviderInterface const * uniform_provider);
+		virtual bool OnDraw(GPURenderer* renderer, WindowDrawParams const & DrawParams, GPUProgramProviderInterface const * uniform_provider);
 
 	private:
 

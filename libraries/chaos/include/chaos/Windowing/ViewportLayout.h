@@ -55,6 +55,8 @@ namespace chaos
 		Orientation orientation = Orientation::HORIZONTAL;
 		/** the max number of viewports along the orientation (0 for infinite) */
 		size_t max_viewport_count = 0;
+		/** whether all viewports are to have the same size even for incomplete lines/rows */
+		bool uniform_disposition = true;
 		/** some padding */
 		ViewportPadding padding;
 	};

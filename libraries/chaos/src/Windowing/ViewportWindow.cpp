@@ -113,8 +113,11 @@ namespace chaos
 		GPUProgramProvider provider;
 		provider.AddVariable("canvas_box", EncodeBoxToVector(view), GPUProgramProviderPassType::EXPLICIT);
 
+
+		size_t index = 0;
 		for (auto& viewport : viewports)
 		{
+			++index;
 			if (viewport != nullptr)
 			{
 				ViewportPlacement const & placement = viewport->GetViewportPlacement();
@@ -122,18 +125,17 @@ namespace chaos
 
 				glViewport(placement.position.x, placement.position.y, placement.size.x, placement.size.y);
 
-				glm::vec4 color(MathTools::RandFloat(), 0.0f, 0.0f, 1.0f);
-
+				glm::vec4 color(float(index) / float(viewports.size()), 0.0f, 0.0f, 1.0f);
 
 				auto quad = DI.AddQuads();
 				quad[0].color = color;
 				quad[1].color = color;
 				quad[2].color = color;
 				quad[3].color = color;
-				quad[0].position = { 0.0f,0.0f };
-				quad[1].position = { 0.0f,40.0f };
-				quad[2].position = { 50.0f,50.0f };
-				quad[3].position = { 50.0f,0.0f };
+				quad[0].position = { -50.0f,-50.0f };
+				quad[1].position = { -50.0f, 50.0f };
+				quad[2].position = {  50.0f, 50.0f };
+				quad[3].position = {  50.0f,-50.0f };
 				quad[0].flags = 0;
 				quad[1].flags = 0;
 				quad[2].flags = 0;

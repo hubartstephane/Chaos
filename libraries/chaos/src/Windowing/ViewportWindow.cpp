@@ -28,12 +28,12 @@ namespace chaos
 		return request.FindObject(viewports);
 	}
 
-	ViewportLayout* ViewportWindow::GetViewportLayout()
+	AutoCastable<ViewportLayout> ViewportWindow::GetViewportLayout()
 	{
 		return viewport_layout.get();
 	}
 
-	ViewportLayout const* ViewportWindow::GetViewportLayout() const
+	AutoConstCastable<ViewportLayout> ViewportWindow::GetViewportLayout() const
 	{
 		return viewport_layout.get();
 	}

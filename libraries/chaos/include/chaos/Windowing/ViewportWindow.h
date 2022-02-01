@@ -24,9 +24,9 @@ namespace chaos
 		AutoConstCastable<Viewport> FindViewport(ObjectRequest request) const;
 
 		/** gets the viewport layout */
-		ViewportLayout* GetViewportLayout();
+		AutoCastable<ViewportLayout> GetViewportLayout();
 		/** gets the viewport layout */
-		ViewportLayout const * GetViewportLayout() const;
+		AutoConstCastable<ViewportLayout> GetViewportLayout() const;
 
 		/** change the viewport layout */
 		void SetViewportLayout(ViewportLayout* in_viewport_layout);

@@ -42,6 +42,13 @@ namespace chaos
 			UpdateWindowViewportPlacements();
 	}
 
+	void ViewportGridLayout::SetMode(ViewportGridMode in_mode, bool update_placements)
+	{
+		mode = in_mode;
+		if (update_placements)
+			UpdateWindowViewportPlacements();
+	}
+
 	ViewportPlacement ViewportGridLayout::ComputeViewportPlacement(Viewport* viewport, glm::ivec2 const& window_size, size_t viewport_index, size_t viewport_count) const
 	{
 		ViewportPlacement result;
@@ -59,7 +66,7 @@ namespace chaos
 			std::swap(reverse_horizontal, reverse_vertical);
 
 		// compute the result as if the orientation was horizontal
-		if (size <= 0 || viewport_count <= size) // a single line/row
+		if (size <= 0) // a single line/row
 		{
 			size_t x = viewport_index;
 			if (reverse_horizontal)
@@ -68,10 +75,10 @@ namespace chaos
 			float p = float(x);
 			float next_p = float(x + 1);
 
-			float viewport_size = ws.x / float(viewport_count);
+			float cell_size = ws.x / float(viewport_count);
 
-			int position = int(p * viewport_size);
-			int next_position = int(next_p * viewport_size);
+			int position = int(p * cell_size);
+			int next_position = int(next_p * cell_size);
 
 			result.size.y = window_size_copy.y;
 			result.size.x = next_position - position;
@@ -85,26 +92,44 @@ namespace chaos
 			size_t x = viewport_index % size;
 			size_t y = viewport_index / size;
 
+			size_t cell_on_line = (y == line_count - 1) ? // the number of cells for this line
+				viewport_count - y * size :
+				size;
+
+			glm::vec2 cell_size = { 0.0f, 0.0f };
+			int offset = 0;
+
+			if (mode == ViewportGridMode::EXPANDED)
+			{
+				cell_size = ws / glm::vec2(float(cell_on_line), float(line_count));
+			}
+			else
+			{
+				cell_size = ws / glm::vec2(float(size), float(line_count));
+				if (mode == ViewportGridMode::UNIFORM_CENTERED)
+					offset = int((ws.x - cell_size.x * cell_on_line) * 0.5f);
+			}
+
+			glm::vec2 p = { float(x), float(y) };
+			glm::ivec2 position = auto_cast_vector(p * cell_size);
+			glm::ivec2 next_position = auto_cast_vector(p * cell_size + cell_size);
+
 			if (reverse_horizontal)
-				x = (size - 1) - x;
+			{
+				std::swap(position.x, next_position.x);
+				position.x = window_size_copy.x - position.x;
+				next_position.x = window_size_copy.x - next_position.x;
+			}
+
 			if (reverse_vertical)
-				y = (line_count - 1) - y;
+			{
+				std::swap(position.y, next_position.y);
+				position.y = window_size_copy.y - position.y;
+				next_position.y = window_size_copy.y - next_position.y;
+			}
 
-			size_t viewport_on_line = (y != line_count - 1)? // the number of viewports for this line
-				size :
-				viewport_count - y * size;
-
-			glm::vec2 p      = {float(x), float(y)};
-			glm::vec2 next_p = {float(x + 1), float(y + 1) };
-			glm::vec2 grid   = {float(size), float(line_count)};
-
-			glm::vec2 viewport_size = ws / grid;
-
-			glm::ivec2 position = auto_cast_vector(p * viewport_size);
-			glm::ivec2 next_position = auto_cast_vector(next_p * viewport_size);
-
-			result.position = position;
 			result.size = next_position - position;
+			result.position = position + glm::ivec2(offset, 0);
 		}
 
 		// correct orientation

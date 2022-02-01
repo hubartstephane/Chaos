@@ -18,15 +18,20 @@ protected:
 
 		if (chaos::ViewportGridLayout* layout = new chaos::ViewportGridLayout)
 		{
-			layout->SetMaxViewportCount(17, false);
-			layout->SetHorizontalFillMode(chaos::ViewportGridHorizontalFillMode::RIGHT_TO_LEFT, false);
+			layout->SetMaxViewportCount(6, false);
+			//layout->SetHorizontalFillMode(chaos::ViewportGridHorizontalFillMode::RIGHT_TO_LEFT, false);
 			//layout->SetHorizontalFillMode(chaos::ViewportGridHorizontalFillMode::LEFT_TO_RIGHT, false);
-			layout->SetVerticalFillMode(chaos::ViewportGridVerticalFillMode::TOP_TO_BOTTOM, false);
-			//layout->SetVerticalFillMode(chaos::ViewportGridVerticalFillMode::BOTTOM_TO_TOP, false);
-			layout->SetOrientation(chaos::Orientation::VERTICAL);
+			//layout->SetVerticalFillMode(chaos::ViewportGridVerticalFillMode::TOP_TO_BOTTOM, false);
+			layout->SetVerticalFillMode(chaos::ViewportGridVerticalFillMode::BOTTOM_TO_TOP, false);
+			//layout->SetOrientation(chaos::Orientation::VERTICAL);
+
+			layout->SetMode(chaos::ViewportGridMode::EXPANDED);
+			//layout->SetMode(chaos::ViewportGridMode::UNIFORM_PACKED);
+			//layout->SetMode(chaos::ViewportGridMode::UNIFORM_CENTERED);
+
 			SetViewportLayout(layout);
 
-			for (int i = 0 ; i < 8; ++i)
+			for (int i = 0 ; i < 9; ++i)
 				AddViewport(new chaos::Viewport, false);
 
 			layout->UpdateWindowViewportPlacements();
@@ -34,49 +39,70 @@ protected:
 		return true;
 	}
 
-
-#if 0
-
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::WindowDrawParams const& draw_params, chaos::GPUProgramProviderInterface const * uniform_provider) override
+	virtual bool OnKeyEventImpl(chaos::KeyEvent const& event) override
 	{
-		uint64_t ts = renderer->GetTimestamp();
+		chaos::ViewportGridLayout* layout = GetViewportLayout();
 
-		if (render_fence == nullptr)
+		if (event.key == (int)chaos::KeyboardButton::E)
 		{
-			render_fence = renderer->GetCurrentFrameFence();
-			render_stamp = ts;
+			layout->SetMode(chaos::ViewportGridMode::EXPANDED);
 		}
-		else
+		if (event.key == (int)chaos::KeyboardButton::P)
 		{
-			if (render_fence->WaitForCompletion(0.0f))
-			{
-				uint64_t dt = ts - render_stamp;
-				render_fence = nullptr;
-				render_stamp = 0;
-			}
+			layout->SetMode(chaos::ViewportGridMode::UNIFORM_PACKED);
+		}
+		if (event.key == (int)chaos::KeyboardButton::C)
+		{
+			layout->SetMode(chaos::ViewportGridMode::UNIFORM_CENTERED);
 		}
 
-		glm::vec4 clear_color(0.1f, 0.0f, 0.0f, 0.0f);
-		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
+		if (event.key == (int)chaos::KeyboardButton::V)
+		{
+			layout->SetOrientation(chaos::Orientation::VERTICAL);
+		}
+		if (event.key == (int)chaos::KeyboardButton::H)
+		{
+			layout->SetOrientation(chaos::Orientation::HORIZONTAL);
+		}
 
-		float far_plane = 1000.0f;
-		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
+		if (event.key == (int)chaos::KeyboardButton::LEFT)
+		{
+			layout->SetHorizontalFillMode(chaos::ViewportGridHorizontalFillMode::RIGHT_TO_LEFT);
+		}
+
+		if (event.key == (int)chaos::KeyboardButton::RIGHT)
+		{
+			layout->SetHorizontalFillMode(chaos::ViewportGridHorizontalFillMode::LEFT_TO_RIGHT);
+		}
+
+		if (event.key == (int)chaos::KeyboardButton::UP)
+		{
+			layout->SetVerticalFillMode(chaos::ViewportGridVerticalFillMode::BOTTOM_TO_TOP);
+		}
+
+		if (event.key == (int)chaos::KeyboardButton::DOWN)
+		{
+			layout->SetVerticalFillMode(chaos::ViewportGridVerticalFillMode::TOP_TO_BOTTOM);
+		}
+
+		if (event.key == (int)chaos::KeyboardButton::NUM_0)
+		{
+			layout->SetMaxViewportCount(0);
+		}
+
+		if (event.key == (int)chaos::KeyboardButton::NUM_1)
+		{
+			layout->SetMaxViewportCount(7);
+		}
+
+		if (event.key == (int)chaos::KeyboardButton::NUM_2)
+		{
+			layout->SetMaxViewportCount(11);
+		}
+
+
 		return true;
 	}
-
-	virtual void TweakHints(chaos::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
-	{
-		chaos::Window::TweakHints(hints, monitor, pseudo_fullscreen);
-
-	//	hints.toplevel = 1;
-		hints.decorated = 1;
-		hints.resizable = 1;
-	}
-
-#endif
-
-
-
 };
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)

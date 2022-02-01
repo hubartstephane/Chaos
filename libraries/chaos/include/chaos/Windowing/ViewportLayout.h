@@ -35,6 +35,27 @@ namespace chaos
 		ViewportWindow* window = nullptr;
 	};
 
+
+
+	enum class ViewportGridHorizontalFillMode : int
+	{
+		LEFT_TO_RIGHT,
+		RIGHT_TO_LEFT
+	};
+
+	enum class ViewportGridVerticalFillMode : int
+	{
+		TOP_TO_BOTTOM,
+		BOTTOM_TO_TOP
+	};
+
+	enum class ViewportGridMode : int
+	{
+		EXPANDED, // viewports take as many size on their line/row as possible
+		UNIFORM_PACKED, // all viewports have same size. for incomplete line/row the viewports are packed alltogether
+		UNIFORM_CENTERED, // all viewports have same size. for incomplete line/row the viewports are centered
+	};
+
 	class ViewportGridLayout : public ViewportLayout
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(ViewportGridLayout, ViewportLayout);
@@ -45,18 +66,26 @@ namespace chaos
 		virtual ViewportPlacement ComputeViewportPlacement(Viewport* viewport, glm::ivec2 const& window_size, size_t viewport_index, size_t viewport_count) const override;
 
 		/** change the max number of viewport along the orientation */
-		void SetMaxViewportCount(size_t in_max_viewport_count, bool update_placements = true);
+		void SetMaxViewportCount(size_t in_size, bool update_placements = true);
 		/** change the orientation */
 		void SetOrientation(Orientation in_orientation, bool update_placements = true);
+		/** change horizontal fill mode */
+		void SetHorizontalFillMode(ViewportGridHorizontalFillMode in_mode, bool update_placements = true);
+		/** change vertical fill mode */
+		void SetVerticalFillMode(ViewportGridVerticalFillMode in_mode, bool update_placements = true);
 
 	protected:
 
 		/** the orientation of the viewports */
 		Orientation orientation = Orientation::HORIZONTAL;
 		/** the max number of viewports along the orientation (0 for infinite) */
-		size_t max_viewport_count = 0;
+		size_t size = 0;
+		/** fill mode */
+		ViewportGridHorizontalFillMode horizontal_fill_mode = ViewportGridHorizontalFillMode::LEFT_TO_RIGHT;
+		/** fill mode */
+		ViewportGridVerticalFillMode vertical_fill_mode = ViewportGridVerticalFillMode::TOP_TO_BOTTOM;
 		/** whether all viewports are to have the same size even for incomplete lines/rows */
-		bool uniform_disposition = true;
+		ViewportGridMode mode = ViewportGridMode::EXPANDED;
 		/** some padding */
 		ViewportPadding padding;
 	};

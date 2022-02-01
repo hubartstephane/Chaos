@@ -18,15 +18,16 @@ protected:
 
 		if (chaos::ViewportGridLayout* layout = new chaos::ViewportGridLayout)
 		{
-			layout->SetMaxViewportCount(7);
-			//layout->SetOrientation(chaos::Orientation::VERTICAL);
+			layout->SetMaxViewportCount(17, false);
+			layout->SetHorizontalFillMode(chaos::ViewportGridHorizontalFillMode::RIGHT_TO_LEFT, false);
+			//layout->SetHorizontalFillMode(chaos::ViewportGridHorizontalFillMode::LEFT_TO_RIGHT, false);
+			layout->SetVerticalFillMode(chaos::ViewportGridVerticalFillMode::TOP_TO_BOTTOM, false);
+			//layout->SetVerticalFillMode(chaos::ViewportGridVerticalFillMode::BOTTOM_TO_TOP, false);
+			layout->SetOrientation(chaos::Orientation::VERTICAL);
 			SetViewportLayout(layout);
 
 			for (int i = 0 ; i < 8; ++i)
-			AddViewport(new chaos::Viewport, false);
-			//AddViewport(new chaos::Viewport);
-			//AddViewport(new chaos::Viewport);
-
+				AddViewport(new chaos::Viewport, false);
 
 			layout->UpdateWindowViewportPlacements();
 		}

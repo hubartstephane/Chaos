@@ -49,6 +49,24 @@ namespace chaos
 		BOTTOM_TO_TOP
 	};
 
+	//          max = 6
+	// <----------------------->
+	// +-----+-----+-----+-----+
+	// |  X  |  X  |  X  |  X  | EXPANDED: all space for empty cells is occupied
+	// +-----+-----+-----+-----+
+	//
+	//          max = 6
+	// <----------------------->
+	// +---+---+---+---+---+---+
+	// | X | X | X | X |   |   | UNIFORM_PACKED: all cells have same size. there are packed alltogether in filling direction
+	// +---+---+---+---+---+---+
+	//
+	//          max = 6
+	// <----------------------->
+	// +---+---+---+---+---+---+
+	// |   | X | X | X | X |   | UNIFORM_CENTERED: all cells have same size. there are packed alltogether but centered on lined
+	// +---+---+---+---+---+---+
+
 	enum class ViewportGridMode : int
 	{
 		EXPANDED, // viewports take as many size on their line/row as possible
@@ -73,6 +91,8 @@ namespace chaos
 		void SetHorizontalFillMode(ViewportGridHorizontalFillMode in_mode, bool update_placements = true);
 		/** change vertical fill mode */
 		void SetVerticalFillMode(ViewportGridVerticalFillMode in_mode, bool update_placements = true);
+		/** change the mode */
+		void SetMode(ViewportGridMode in_mode, bool update_placements = true);
 
 	protected:
 

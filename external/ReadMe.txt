@@ -61,3 +61,5 @@ NANA
 ====
 
   solution is here ./build/vc2019/nana.sln
+	
+	then the lib is here ./build/bin/nana_v142_Release_x64.lib

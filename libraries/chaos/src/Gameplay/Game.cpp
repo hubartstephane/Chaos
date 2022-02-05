@@ -924,6 +924,11 @@ namespace chaos
 
 	GameInstance* Game::CreateGameInstance()
 	{
+		// shuxxx
+
+
+
+
 		// create the game instance
 		GameInstance * result = DoCreateGameInstance();
 		if (result == nullptr)
@@ -939,6 +944,11 @@ namespace chaos
 
 	bool Game::OnEnterGame(PhysicalGamepad * in_physical_gamepad)
 	{
+
+		// shuxxx
+
+
+
 		assert(game_instance == nullptr);
 		// create the game instance
 		game_instance = CreateGameInstance();

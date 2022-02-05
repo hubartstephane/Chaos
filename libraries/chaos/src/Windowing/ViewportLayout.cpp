@@ -119,6 +119,7 @@ namespace chaos
 				std::swap(position.x, next_position.x);
 				position.x = window_size_copy.x - position.x;
 				next_position.x = window_size_copy.x - next_position.x;
+				offset = -offset;
 			}
 
 			if (reverse_vertical)

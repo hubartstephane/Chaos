@@ -104,6 +104,11 @@ namespace chaos
 		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_CULL_FACE);
+
 
 
 		GPUDrawInterface<VertexDefault> DI(nullptr);
@@ -125,7 +130,7 @@ namespace chaos
 
 				glViewport(placement.position.x, placement.position.y, placement.size.x, placement.size.y);
 
-				glm::vec4 color(float(index) / float(viewports.size()), 0.0f, 0.0f, 1.0f);
+				glm::vec4 color(float(index) / float(viewports.size()), 0.0f, 0.0f, 0.5f);
 
 				auto quad = DI.AddQuads();
 				quad[0].color = color;

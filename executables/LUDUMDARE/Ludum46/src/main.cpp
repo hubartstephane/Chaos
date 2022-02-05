@@ -43,6 +43,11 @@ public:
 		class_id = GetClassUniqueID<T>();
 	}
 
+	ApplicationArgument(T in_value): value(in_value)
+	{
+		class_id = GetClassUniqueID<T>();
+	}
+
 	virtual void RegisterProgramOption(boost::program_options::options_description& desc) override
 	{
 		if constexpr (is_vector_type_v<T>)
@@ -59,7 +64,7 @@ public:
 
 protected:
 
-	T value;
+	T value = {};
 };
 
 class ApplicationArgumentManager : public Singleton<ApplicationArgumentManager>
@@ -67,27 +72,14 @@ class ApplicationArgumentManager : public Singleton<ApplicationArgumentManager>
 public:
 
 	template<typename T>
-	ApplicationArgument<T>* FindArgument(char const* name)
-	{
-		if (ApplicationArgumentBase* result = ObjectRequest(name).FindObject(arguments))
-		{
-			if (result->GetClassID() == GetClassUniqueID<T>())
-			{
-				return (ApplicationArgument<T>*)result;
-			}
-		}
-		return nullptr;
-	}
-
-	template<typename T>
-	T const& RegisterArgument(char const* name)
+	T const& RegisterArgument(char const* name, T default_value = {})
 	{
 		if (ApplicationArgument<T>* result = FindArgument<T>(name))
 		{
 			return result->value;
 		}
 
-		ApplicationArgument<T>* result = new ApplicationArgument<T>();
+		ApplicationArgument<T>* result = new ApplicationArgument<T>(default_value);
 		assert(result != nullptr);
 		result->SetName(name);
 		arguments.push_back(result);
@@ -103,7 +95,6 @@ public:
 				argument->RegisterProgramOption(desc);
 
 			boost::program_options::variables_map vm;
-			//store(parse_command_line(argc, argv, desc), vm);
 			store(boost::program_options::command_line_parser(argc, argv).options(desc).allow_unregistered().run(), vm);
 			notify(vm);
 		}
@@ -113,6 +104,16 @@ public:
 		}
 	}
 
+protected:
+
+	template<typename T>
+	ApplicationArgument<T>* FindArgument(char const* name)
+	{
+		if (ApplicationArgumentBase* result = ObjectRequest(name).FindObject(arguments))
+			if (result->GetClassID() == GetClassUniqueID<T>())
+				return (ApplicationArgument<T>*)result;
+		return nullptr;
+	}
 
 protected:
 
@@ -123,14 +124,15 @@ protected:
 
 
 
-#define CHAOS_APPLICATION_ARG(ARGNAME, TYPE) static TYPE const & ARGNAME = ApplicationArgumentManager::GetInstance()->RegisterArgument<TYPE>(#ARGNAME);
+#define CHAOS_APPLICATION_ARG(ARGNAME, TYPE, ...) static TYPE const & ARGNAME = ApplicationArgumentManager::GetInstance()->RegisterArgument<TYPE>(#ARGNAME, __VA_ARGS__);
 
 
-CHAOS_APPLICATION_ARG(TOTO, bool);
+//CHAOS_APPLICATION_ARG(TOTO, int, 12345);
+//CHAOS_APPLICATION_ARG(TITI, std::vector<std::string>, {"ght", "ytu"});
+
+CHAOS_APPLICATION_ARG(TOTO, int);
 CHAOS_APPLICATION_ARG(TITI, std::vector<std::string>);
-//CHAOS_APPLICATION_ARG(TOTO, int);
 
-//#include <unistd.h>
 #include <boost/program_options.hpp>
 
 void on_age(int age)
@@ -146,47 +148,10 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 
 	ApplicationArgumentManager::GetInstance()->ParseArguments(argc, argv);
 
-	bool X = TOTO;
+	auto X = TOTO;
 
 	auto Y = TITI;
 
-	try
-	{
-
-		float ppp = 0.0f;
-
-		std::vector<std::string> Lists;
-
-		boost::program_options::options_description desc{ "Options" };
-		desc.add_options()
-			("help,h", "Help screen");
-		desc.add_options()
-			("pi", boost::program_options::value<float>(&ppp)->default_value(3.14f), "Pi");
-		desc.add_options()
-		//	("list", boost::program_options::value<std::vector<std::string>>(&Lists[0])->multitoken() , "list");
-			("list", boost::program_options::value<std::vector<std::string>>(&Lists)->multitoken(), "list");
-		desc.add_options()
-			("age", boost::program_options::value<int>()->notifier(on_age), "Age");
-
-		boost::program_options::variables_map vm;
-		store(parse_command_line(argc, argv, desc), vm);
-		notify(vm);
-
-		auto x = vm["pi"].as<float>();
-
-		auto y = vm["list"].as<std::vector<std::string>>();
-
-		if (vm.count("help"))
-			std::cout << desc << '\n';
-		else if (vm.count("age"))
-			std::cout << "Age: " << vm["age"].as<int>() << '\n';
-		else if (vm.count("pi"))
-			std::cout << "Pi: " << vm["pi"].as<float>() << '\n';
-	}
-	catch (const boost::program_options::error& ex)
-	{
-		std::cerr << ex.what() << '\n';
-	}
 
 
 

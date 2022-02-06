@@ -5,7 +5,7 @@
 	//   - has_TRAITNAME<...> => boost::mpl::bool_
 	//   - get_TRAITNAME<...> => the TRAIT if it exists
 	//                           EmptyClass elsewhere
-	// create 1 CONSTEXP bool 
+	// create 1 CONSTEXP bool
 	//
 	//   - has_TRAITNAME_t<...> => true/false
 
@@ -35,7 +35,7 @@ BOOST_DECLARE_HAS_MEMBER(has_##member_name, member_name);\
 template<typename T>\
 auto constexpr has_##member_name##_v = has_##member_name<T>::value;
 
-	// creates 1 metaclass 
+	// creates 1 metaclass
 	//
 	//  - has_FUNCTIONNAME<...> => boost::mpl::bool_
 	//
@@ -59,7 +59,7 @@ template<typename T>\
 auto constexpr has_function_##function_name##_v = has_function_##function_name<T>::value;
 
 	// ====================================================================================================
-	// CHAOS_GENERATE_CHECK_METHOD(toto) generates 
+	// CHAOS_GENERATE_CHECK_METHOD(toto) generates
 	//
 	// - function returning BOOL whether the class 'T' (the very first template parameter) has a callable method called 'toto'
 	//
@@ -115,7 +115,7 @@ using typeof_method_##funcname = decltype(meta::FakeInstance<T>().funcname(meta:
 
 
 	// ====================================================================================================
-	// CHAOS_GENERATE_CHECK_FUNCTION(toto) generates 
+	// CHAOS_GENERATE_CHECK_FUNCTION(toto) generates
 	//
 	// - function returning BOOL whether there is a function 'toto" that can be called with following parameters
 	//
@@ -175,7 +175,7 @@ template<typename ...PARAMS>\
 using typeof_function_##funcname = typename details::check_function_##funcname##_type<PARAMS...>::type;
 
 	// ====================================================================================================
-	// CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(toto) generates 
+	// CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(toto) generates
 	// ====================================================================================================
 
 #define CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(funcname)\
@@ -311,6 +311,13 @@ namespace chaos
 		{
 			details::for_each_internal<boost::mpl::begin<ELEMENTS>::type, boost::mpl::end<ELEMENTS>::type>(func);
 		}
+
+		/** check whether class type is vector */
+		template<typename T>
+		bool constexpr is_vector_type_v = false;
+		/** check whether class type is vector */
+		template<typename T>
+		bool constexpr is_vector_type_v<std::vector<T>> = true;
 
 
 	}; // namespace meta

@@ -36,11 +36,11 @@ namespace chaos
 		cheat_mode = value;
 	}
 
-	CHAOS_HELP_TEXT(CMD, "-CheatMode");
+	CHAOS_APPLICATION_ARG(bool, CheatMode);
 
 	bool Game::GetCheatMode() const
 	{
-		if (Application::HasApplicationCommandLineFlag("-CheatMode")) // CMDLINE
+		if (Arguments::CheatMode)
 			return true;
 		if (IsFreeCameraMode())
 			return true;
@@ -657,14 +657,16 @@ namespace chaos
 		}
 	}
 
-	CHAOS_HELP_TEXT(CMD, "-MuteMusic");
+#if _DEBUG
+	CHAOS_APPLICATION_ARG(bool, MuteMusic);
+#endif
 
 	Sound * Game::SetInGameMusic(char const * music_name)
 	{
 		assert(music_name != nullptr);
 
 #if _DEBUG
-		if (Application::HasApplicationCommandLineFlag("-MuteMusic")) // CMDLINE
+		if (Arguments::MuteMusic)
 			return nullptr;
 #endif
 
@@ -816,7 +818,7 @@ namespace chaos
 	{
 		// start the music
 #if _DEBUG
-		if (Application::HasApplicationCommandLineFlag("-MuteMusic")) // CMDLINE
+		if (Arguments::MuteMusic)
 			menu_music = nullptr;
 		else
 #endif
@@ -858,7 +860,7 @@ namespace chaos
 	{
 		// start sound
 #if _DEBUG
-		if (Application::HasApplicationCommandLineFlag("-MuteMusic")) // CMDLINE
+		if (Arguments::MuteMusic) // CMDLINE
 			pause_music = nullptr;
 		else
 #endif

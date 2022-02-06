@@ -2,6 +2,10 @@
 
 namespace chaos
 {
+#if _DEBUG
+	CHAOS_APPLICATION_ARG(bool, Mute)
+#endif
+
 	// ==============================================================
 	// Standalone function
 	// ==============================================================
@@ -247,7 +251,7 @@ namespace chaos
 		in_volume = std::clamp(in_volume, 0.0f, 1.0f);
 		// early exit
 		if (!IsAttachedToManager())
-			return;		
+			return;
 		if (in_volume == volume)
 			return;
 		// change the volume state
@@ -301,7 +305,7 @@ namespace chaos
 		{
 			blend_desc.kill_when_paused |= desc.kill_when_paused;
 			if (desc.kill_when_paused && IsEffectivePaused())
-				Stop();			
+				Stop();
 			return false;
 		}
 		// do not start a blend if there is a blend
@@ -314,7 +318,7 @@ namespace chaos
 			return false;
 		// copy the blend
 		blend_desc = desc;
-		// immediate blending (special case)		
+		// immediate blending (special case)
 		if (desc.blend_time == 0.0f)
 		{
 			if (desc.blend_type == SoundBlendType::BLEND_IN)
@@ -323,7 +327,7 @@ namespace chaos
 				blend_value = 0.0f;
 			if (desc.callbacks != nullptr)
 				desc.callbacks->OnFinished(this);
-		} 
+		}
 
 		// update the sound volume (before the tick is processed to avoid sound artifact)
 		DoUpdateEffectiveVolume(GetEffectiveVolume());
@@ -373,7 +377,7 @@ namespace chaos
 
 		// compute required categories
 		std::vector<SoundCategory *> categories = default_categories;
-		
+
 		for (std::string const & category_name : play_desc.category_names)
 		{
 			if (category_name.length() > 0)
@@ -384,7 +388,7 @@ namespace chaos
 						categories.push_back(category);
 			}
 		}
-		
+
 		for (SoundCategory * category : play_desc.categories)
 			if (category != nullptr && category->sound_manager == sound_manager)
 				if (std::find(categories.begin(), categories.end(), category) == categories.end())
@@ -398,7 +402,7 @@ namespace chaos
 			result->categories = std::move(categories);
 			result->sound_manager = sound_manager;
 			result->source = this;
-			
+
 			result->is_3D_sound = play_desc.IsSound3D();
 			result->position = play_desc.position;
 			result->velocity = play_desc.velocity;
@@ -412,7 +416,7 @@ namespace chaos
 
 			// store the sound
 			sound_manager->sounds.push_back(result);
-			
+
 			// play the sound
 			result->DoPlaySound(play_desc);
 		}
@@ -468,7 +472,7 @@ namespace chaos
 					return false;
 				if (sound_manager != category->sound_manager) // source and category must have the same manager
 					return false;
-			}				
+			}
 		}
 		default_categories = categories;
 		return true;
@@ -489,7 +493,7 @@ namespace chaos
 				if (category != nullptr)
 				{
 					if (std::find(categories.begin(), categories.end(), category) == categories.end()) // no duplicate
-						categories.push_back(category);					
+						categories.push_back(category);
 				}
 			}
 			default_categories = std::move(categories);
@@ -530,12 +534,12 @@ namespace chaos
 	// ==============================================================
 	// SOUND
 	// ==============================================================
-	
+
 	bool Sound::IsOfCategory(SoundCategory const * category) const
 	{
 		assert(category != nullptr);
-		
-		return (std::find(categories.begin(), categories.end(), category) != categories.end());			
+
+		return (std::find(categories.begin(), categories.end(), category) != categories.end());
 	}
 
 	bool Sound::IsSound3D() const
@@ -691,7 +695,7 @@ namespace chaos
 		float effective_volume = GetEffectiveVolume();
 
 #if _DEBUG
-		if (Application::HasApplicationCommandLineFlag("-Mute")) // CMDLINE
+		if (Arguments::Mute)
 			effective_volume = 0.0f;
 #endif
 		// play sound
@@ -722,8 +726,8 @@ namespace chaos
 				track,
 				sound_effect);
 		}
-							
-		if (irrklang_sound == nullptr)						
+
+		if (irrklang_sound == nullptr)
 			return false;
 
 		// update volume
@@ -745,12 +749,10 @@ namespace chaos
 		DoUpdateIrrklangPause(effective_pause);
 	}
 
-	CHAOS_HELP_TEXT(CMD, "-Mute");
-
 	void Sound::DoUpdateEffectiveVolume(float effective_volume)
 	{
 #if _DEBUG
-		if (Application::HasApplicationCommandLineFlag("-Mute")) // CMDLINE
+		if (Arguments::Mute)
 			effective_volume = 0.0f;
 #endif
 		if (irrklang_sound != nullptr)
@@ -845,7 +847,7 @@ namespace chaos
 		//       for our purpose, we do not want to have infinite distance sound
 		//
 		//       we can use   setRolloffFactor(...) to indicate to irrklang how volume decrease with distance
-		//       (0 means that volume does not decrease at all => we can compute ourselves how to fixe the volume, 
+		//       (0 means that volume does not decrease at all => we can compute ourselves how to fixe the volume,
 		//       and so we can choose a finite limite after which sound can not be heard anymore)
 		//
 		//       So, why still use 3D sounds ???
@@ -856,7 +858,7 @@ namespace chaos
 		//       It is for the whole engine !
 		irrklang_engine->setRolloffFactor(0.0f);
 		// suppress the extra reference
-		irrklang_engine->drop(); 
+		irrklang_engine->drop();
 
 		return true;
 	}
@@ -990,7 +992,7 @@ namespace chaos
 			SoundSource * source = sources[i].get();
 			if (source == nullptr)
 				continue;
-				
+
 			// notify the source that its default category is being destroyed
 			auto it = std::find(source->default_categories.begin(), source->default_categories.end(), category);
 			if (it != source->default_categories.end())
@@ -1099,7 +1101,7 @@ namespace chaos
 	}
 
 	void SoundManager::UpdateAllSoundPausePerCategory(SoundCategory * category)
-	{			
+	{
 		size_t count = sounds.size();
 		for (size_t i = 0; i < count; ++i)
 		{
@@ -1200,9 +1202,9 @@ namespace chaos
 			SoundSourceLoader(this));
 	}
 
-	size_t SoundManager::GetSoundCount() const 
-	{ 
-		return sounds.size(); 
+	size_t SoundManager::GetSoundCount() const
+	{
+		return sounds.size();
 	}
 
 	Sound * SoundManager::GetSound(size_t index)
@@ -1219,9 +1221,9 @@ namespace chaos
 		return sounds[index].get();
 	}
 
-	size_t SoundManager::GetCategoryCount() const 
-	{ 
-		return categories.size(); 
+	size_t SoundManager::GetCategoryCount() const
+	{
+		return categories.size();
 	}
 
 	SoundCategory * SoundManager::GetCategory(size_t index)
@@ -1238,9 +1240,9 @@ namespace chaos
 		return categories[index].get();
 	}
 
-	size_t SoundManager::GetSourceCount() const 
-	{ 
-		return sources.size(); 
+	size_t SoundManager::GetSourceCount() const
+	{
+		return sources.size();
 	}
 
 	SoundSource * SoundManager::GetSource(size_t index)
@@ -1272,7 +1274,7 @@ namespace chaos
 
 			result = LoadObject(path, name);
 			if (result != nullptr)
-				result->InitializeFromJSON(json);			
+				result->InitializeFromJSON(json);
 		}
 		return result;
 	}
@@ -1313,7 +1315,7 @@ namespace chaos
 		// last initializations
 		result->sound_manager = manager;
 		result->irrklang_source = irrklang_source;
-		
+
 		return result;
 	}
 

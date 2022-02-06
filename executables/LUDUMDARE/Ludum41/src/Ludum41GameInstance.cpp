@@ -37,13 +37,13 @@ size_t LudumGameInstance::CanStartChallengeBallIndex(bool going_down) const
 
 
 #if _DEBUG
-CHAOS_HELP_TEXT(CMD, "-NoChallenge");
+CHAOS_APPLICATION_ARG(bool, NoChallenge);
 #endif
 
 void LudumGameInstance::TickChallenge(float delta_time)
 {
 #if _DEBUG
-	if (chaos::Application::HasApplicationCommandLineFlag("-NoChallenge")) // CMDLINE
+	if (Arguments::NoChallenge)
 		return;
 #endif
 
@@ -418,7 +418,7 @@ glm::vec2 LudumGameInstance::GenerateBallRandomDirection() const
 	float direction = (rand() % 2) ? 1.0f : -1.0f;
 
 	// direction upward
-	float angle = 
+	float angle =
 		3.14f * 0.5f +									// up
 		direction * 3.14f * 0.125f +    // small base angle to the left or the right
 		direction * chaos::MathTools::RandFloat(0, 3.14f * 0.125f); // final adjustement
@@ -447,11 +447,11 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateBalls(size_t count, boo
 		return nullptr;
 
 	for (size_t i = 0 ; i < count ; ++i)
-	{	
+	{
 		particles[i].color         = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 		particles[i].bounding_box.position  = glm::vec2(0.0f, 0.0f);
 		particles[i].bounding_box.half_size = 0.5f * glm::vec2(ludum_game->ball_size, ludum_game->ball_size);
-		
+
 		if (full_init)
 		{
 			particles[i].delay_before_move = ludum_game->delay_before_ball_move;
@@ -464,7 +464,7 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateBalls(size_t count, boo
 ParticleMovableObject * LudumGameInstance::GetBallParticles()
 {
 	if (balls_allocations == nullptr)
-		return nullptr;	
+		return nullptr;
 	chaos::ParticleAccessor<ParticleMovableObject> particles = balls_allocations->GetParticleAccessor();
 	if (particles.GetDataCount() == 0)
 		return nullptr;
@@ -484,7 +484,7 @@ ParticleMovableObject const * LudumGameInstance::GetBallParticles() const
 size_t LudumGameInstance::GetBallCount() const
 {
 	if (balls_allocations == nullptr)
-		return 0;	
+		return 0;
 	return balls_allocations->GetParticleCount();
 }
 
@@ -504,7 +504,7 @@ LudumChallenge * LudumGameInstance::CreateSequenceChallenge()
 {
 	LudumGame const * ludum_game = GetGame();
 	LudumLevel const * ludum_level = GetLevel();
-	LudumLevelInstance * ludum_level_instance = GetLevelInstance();	
+	LudumLevelInstance * ludum_level_instance = GetLevelInstance();
 
 	// if the level has a dedicated text, use it
 	if (ludum_level != nullptr && ludum_level_instance != nullptr)
@@ -525,7 +525,7 @@ LudumChallenge * LudumGameInstance::CreateSequenceChallenge()
 
 	auto it = ludum_game->dictionnary.find(len);
 
-	// no word of this size (search a word with the lengh the more near the request) 
+	// no word of this size (search a word with the lengh the more near the request)
 	if (it == ludum_game->dictionnary.end())
 	{
 		auto better_it = ludum_game->dictionnary.begin();

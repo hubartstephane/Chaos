@@ -32,6 +32,7 @@
 #include <chaos/Core/NamedObject.h>
 #include <chaos/Core/NamedObjectFilter.h>
 #include <chaos/Core/NameFilter.h>
+#include <chaos/Core/ApplicationArguments.h>
 #include <chaos/Core/Key.h>
 #include <chaos/Core/InputMode.h>
 #include <chaos/Core/InputEventReceiver.h>

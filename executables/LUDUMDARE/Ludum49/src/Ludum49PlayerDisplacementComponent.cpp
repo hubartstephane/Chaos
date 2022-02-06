@@ -6,7 +6,7 @@
 #include "Ludum49LevelInstance.h"
 
 #if _DEBUG
-CHAOS_HELP_TEXT(CMD, "-DebugDisplay");
+CHAOS_APPLICATION_ARG(bool, DebugDisplay);
 #endif
 
 //
@@ -62,8 +62,8 @@ std::vector<CollisionEntry> ComputeCollisions(box2 box, LudumLevelInstance* ludu
 	//   pawn / landscape collision
 	//   it does it to late
 	//   at this point, the sphere already interpenetrate the landscape
-	//   but by too much. 
-	//   
+	//   but by too much.
+	//
 	//   -> one of the 2 box are wrongs
 	//   -> increase pawn bbox to increase early detection
 	//
@@ -148,7 +148,7 @@ CollisionEntry LudumPlayerDisplacementComponent::ProcessCollision(box2 & pawn_bo
 		pawn_box.position = col.proj + direction * pawn_sphere.radius;
 
 #if _DEBUG
-		if (chaos::Application::HasApplicationCommandLineFlag("-DebugDisplay")) // CMDLINE
+		if (Arguments::DebugDisplay)
 		{
 			LinePrimitive<VertexDefault> line = DI->AddLines(2);
 			line[0].position = col.a;
@@ -181,11 +181,11 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 		return true;
 
 	LudumPlayer* ludum_player = GetPlayer();
-	
+
 
 	box2 pawn_box = pawn->GetBoundingBox();
 
-	
+
 	box2 pawn_box_before = pawn_box;
 
 	// - - - - - - - - - -

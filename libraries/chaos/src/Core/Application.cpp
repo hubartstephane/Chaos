@@ -42,11 +42,11 @@ namespace chaos
 
 	bool Application::ReloadConfigurationFile(nlohmann::json & result) const
 	{
-		return JSONTools::LoadJSONFile(configuration_path, result, true);	
+		return JSONTools::LoadJSONFile(configuration_path, result, true);
 	}
 
 	bool Application::LoadConfigurationFile()
-	{		
+	{
 		boost::filesystem::path path = GetResourcesPath() / "config.json";
 
 		if (JSONTools::LoadJSONFile(path, configuration, true))
@@ -58,7 +58,7 @@ namespace chaos
 	}
 
 	bool Application::LoadClasses()
-	{	
+	{
 		nlohmann::json const * classes_json = JSONTools::GetStructure(configuration, "classes");
 		if (classes_json != nullptr && classes_json->is_object())
 		{
@@ -72,20 +72,20 @@ namespace chaos
 		return true;
 	}
 
-	CHAOS_HELP_TEXT(CMD, "-ShowConsole");
-	CHAOS_HELP_TEXT(CMD, "-HideConsole");
-	CHAOS_HELP_TEXT(CMD, "-DumpConfigFile");
-	CHAOS_HELP_TEXT(CMD, "-ShowDirectories");
-	CHAOS_HELP_TEXT(CMD, "-ShowUserTempDirectory");
-	CHAOS_HELP_TEXT(CMD, "-ShowInstalledResourcesDirectory");
+	CHAOS_APPLICATION_ARG(bool, ShowConsole);
+	CHAOS_APPLICATION_ARG(bool, HideConsole);
+	CHAOS_APPLICATION_ARG(bool, DumpConfigFile);
+	CHAOS_APPLICATION_ARG(bool, ShowDirectories);
+	CHAOS_APPLICATION_ARG(bool, ShowUserTempDirectory);
+	CHAOS_APPLICATION_ARG(bool, ShowInstalledResourcesDirectory);
 
 	bool Application::Initialize()
 	{
 		// show console
 		bool will_show_console = show_console;
-		if (HasCommandLineFlag("-ShowConsole"))
+		if (Arguments::ShowConsole)
 			will_show_console = true;
-		else if (HasCommandLineFlag("-HideConsole"))
+		else if (Arguments::HideConsole)
 			will_show_console = false;
 
 		if (will_show_console)
@@ -105,13 +105,13 @@ namespace chaos
 		boost::filesystem::path user_temp = CreateUserLocalTempDirectory(); // XXX : this directory is necessary for some per application data
 #if _DEBUG
 		// display the directories to help debugging
-		bool dump_config = HasCommandLineFlag("-DumpConfigFile"); // CMDLINE
+		bool dump_config = Arguments::DumpConfigFile;
 		if (dump_config)
 			JSONTools::DumpConfigFile(configuration);
-		if (dump_config || HasCommandLineFlag("-ShowDirectories") || HasCommandLineFlag("-ShowUserTempDirectory")) // CMDLINE
+		if (dump_config || Arguments::ShowDirectories || Arguments::ShowUserTempDirectory)
 			WinTools::ShowFile(user_temp);
-		if (HasCommandLineFlag("-ShowDirectories") || HasCommandLineFlag("-ShowInstalledResourcesDirectory")) // CMDLINE
-			WinTools::ShowFile(GetResourcesPath()); 			
+		if (Arguments::ShowDirectories || Arguments::ShowInstalledResourcesDirectory)
+			WinTools::ShowFile(GetResourcesPath());
 #endif
 		return true;
 	}
@@ -132,6 +132,9 @@ namespace chaos
 		bool result = false;
 		if (InitializeStandardLibraries())
 		{
+			// parse the parameters
+			ApplicationArgumentManager::GetInstance()->ParseArguments(argc, argv);
+
 			// store a copy of the parameters
 			StoreParameters(argc, argv, env);
 			// load the configuration file (ignore return value because there is no obligation to use a configuration file)
@@ -215,7 +218,7 @@ namespace chaos
 		Application const * application = Application::GetInstance();
 		if (application == nullptr)
 			return nullptr;
-		return application->GetEnvironment(key);	
+		return application->GetEnvironment(key);
 	}
 
 	char const * Application::GetEnvironment(char const * key) const
@@ -246,7 +249,7 @@ namespace chaos
 	{
 		Application const * application = Application::GetConstInstance();
 		if (application != nullptr)
-			return application->GetInputMode();	
+			return application->GetInputMode();
 		return InputMode::KEYBOARD;
 	}
 
@@ -254,7 +257,7 @@ namespace chaos
 	{
 		Application * application = Application::GetInstance();
 		if (application != nullptr)
-			application->SetInputMode(new_mode);	
+			application->SetInputMode(new_mode);
 	}
 
 	bool Application::HasApplicationCommandLineFlag(char const * flag_name)
@@ -262,7 +265,7 @@ namespace chaos
 		Application const * application = Application::GetInstance();
 		if (application == nullptr)
 			return false;
-		return application->HasCommandLineFlag(flag_name);	
+		return application->HasCommandLineFlag(flag_name);
 	}
 
 	bool Application::HasCommandLineFlag(char const * flag_name) const
@@ -271,7 +274,7 @@ namespace chaos
 		for (std::string const & arg : arguments)
 			if (StringTools::Stricmp(arg, flag_name) == 0)
 				return true;
-		return false;	
+		return false;
 	}
 
 #if _DEBUG

@@ -319,6 +319,13 @@ namespace chaos
 		template<typename T>
 		bool constexpr is_vector_type_v<std::vector<T>> = true;
 
+		/** get a unique identifier from a class */
+		template<typename T>
+		static uintptr_t GetClassUniqueID()
+		{
+			static uintptr_t result = 0;
+			return (uintptr_t)&result;
+		}
 
 	}; // namespace meta
 

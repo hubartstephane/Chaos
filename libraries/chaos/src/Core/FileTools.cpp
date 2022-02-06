@@ -54,7 +54,9 @@ namespace chaos
 			return result;
 		}
 
-		CHAOS_HELP_TEXT(CMD, "-ShowLoadedFile");
+#if _DEBUG
+		CHAOS_APPLICATION_ARG(bool, ShowLoadedFile);
+#endif
 
 		static Buffer<char> DoLoadFile(boost::filesystem::path const& resolved_path, bool ascii, bool* success_open)
 		{
@@ -88,7 +90,7 @@ namespace chaos
 			}
 
 #if _DEBUG
-			if (Application::HasApplicationCommandLineFlag("-ShowLoadedFile")) // CMDLINE
+			if (Arguments::ShowLoadedFile)
 			{
 				Log::Message("LoadFile [%s]    size = [%d]", resolved_path.string().c_str(), result.bufsize);
 			}
@@ -127,7 +129,9 @@ namespace chaos
 		}
 #endif // _DEBUG
 
-		CHAOS_HELP_TEXT(CMD, "-NoDirectResourceFiles")
+#if _DEBUG
+		CHAOS_APPLICATION_ARG(bool, NoDirectResourceFiles);
+#endif
 
 		bool ForEachRedirectedPath(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func)
 		{
@@ -137,7 +141,7 @@ namespace chaos
 
 			if (Application const* application = Application::GetConstInstance())
 			{
-				if (!application->HasCommandLineFlag("-NoDirectResourceFiles")) // CMDLINE
+				if (!Arguments::NoDirectResourceFiles)
 				{
 					boost::filesystem::path const& build_path = application->GetRedirectionBuildPath();
 					if (!build_path.empty())
@@ -201,7 +205,7 @@ namespace chaos
 			*success_open = false;
 
 			Buffer<char> result;
-			ForEachRedirectedPath(path, [&result, ascii, &success_open](boost::filesystem::path const&p) 
+			ForEachRedirectedPath(path, [&result, ascii, &success_open](boost::filesystem::path const&p)
 			{
 				result = DoLoadFile(p, ascii, success_open);
 				return *success_open;
@@ -234,7 +238,7 @@ namespace chaos
 			*success_open = false;
 
 			std::vector<std::string> result;
-			ForEachRedirectedPath(path, [&result, &success_open](boost::filesystem::path const&p) 
+			ForEachRedirectedPath(path, [&result, &success_open](boost::filesystem::path const&p)
 			{
 				result = DoReadFileLines(p, success_open);
 				return *success_open;

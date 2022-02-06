@@ -120,7 +120,7 @@ namespace chaos
 
 		// early exit
 		if (stick == GamepadStick::UNKNOWN)
-			return result;		
+			return result;
 		if (stick == GamepadStick::LEFT_STICK)
 		{
 			result.x = GetAxisValue(GamepadAxis::LEFT_AXIS_X, previous_frame);
@@ -154,7 +154,7 @@ namespace chaos
 		char const* n1 = glfwGetGamepadName(stick_index);
 		char const* n2 = glfwGetJoystickGUID(stick_index);
 		char const* n3 = glfwGetJoystickName(stick_index);
-		
+
 		JOYCAPS joycaps;
 		memset(&joycaps, 0, sizeof(JOYCAPS));
 		joyGetDevCaps(0, &joycaps, sizeof(JOYCAPS));
@@ -168,7 +168,7 @@ namespace chaos
 		{
 			float value = state.axes[i];
 			// renormalize icomming value [-1 .. +1] => [0 .. 1]
-			if (i == (size_t)GamepadAxis::LEFT_TRIGGER || i == (size_t)GamepadAxis::RIGHT_TRIGGER)  
+			if (i == (size_t)GamepadAxis::LEFT_TRIGGER || i == (size_t)GamepadAxis::RIGHT_TRIGGER)
 				value = (value * 0.5f + 0.5f);
 			// want positive Y when stick is UP
 			else if (i == (size_t)GamepadAxis::LEFT_AXIS_Y || i == (size_t)GamepadAxis::RIGHT_AXIS_Y)
@@ -481,12 +481,14 @@ namespace chaos
 			TickForceFeedbackEffects(0.0f);
 	}
 
-	CHAOS_HELP_TEXT(CMD, "-NoForceFeedback");
+#if _DEBUG
+	CHAOS_APPLICATION_ARG(bool, NoForceFeedback);
+#endif
 
 	void Gamepad::DoUpdateForceFeedbackDevice(float max_left_value, float max_right_value)
 	{
 #if _DEBUG
-		if (Application::HasApplicationCommandLineFlag("-NoForceFeedback")) // CMDLINE
+		if (Arguments::NoForceFeedback)
 		{
 			max_left_value = 0.0f;
 			max_right_value = 0.0f;
@@ -538,7 +540,7 @@ namespace chaos
 				}
 			}
 		}
-		// reduce feedback to 0 (do not skip GetForceFeedbackValues(...) calls so the effects tick themselves even if muted 
+		// reduce feedback to 0 (do not skip GetForceFeedbackValues(...) calls so the effects tick themselves even if muted
 		if (ShouldReduceForceFeedbackToZero())
 		{
 			max_left_value = 0.0f;
@@ -679,7 +681,7 @@ namespace chaos
 				continue;
 
 			// the 1st best is to find a physical PRESENT gamepad and that has any input
-			// the 2nd best is to find a physical PRESENT gamepad (even if no input)    
+			// the 2nd best is to find a physical PRESENT gamepad (even if no input)
 
 			if (physical_gamepad->IsAnyAction(false))
 				return physical_gamepad; // no better choice can be expected => immediate returns

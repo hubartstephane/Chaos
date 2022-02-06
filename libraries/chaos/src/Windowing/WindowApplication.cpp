@@ -310,9 +310,9 @@ namespace chaos
 		return true;
 	}
 
-	CHAOS_HELP_TEXT(CMD, "-UseCachedAtlas");
+	CHAOS_APPLICATION_ARG(bool, UseCachedAtlas);
 #if !_DEBUG
-	CHAOS_HELP_TEXT(CMD, "-DumpCachedAtlas");
+	CHAOS_APPLICATION_ARG(bool, DumpCachedAtlas);
 #endif
 
 	bool WindowApplication::CreateTextureAtlas()
@@ -320,7 +320,7 @@ namespace chaos
 		char const* CachedAtlasFilename = "CachedAtlas";
 
 		// Try to load already computed data
-		if (Application::HasApplicationCommandLineFlag("-UseCachedAtlas")) // CMDLINE
+		if (Arguments::UseCachedAtlas)
 		{
 			BitmapAtlas::TextureArrayAtlas* tmp_texture_atlas = new BitmapAtlas::TextureArrayAtlas;
 			if (tmp_texture_atlas != nullptr)
@@ -354,7 +354,7 @@ namespace chaos
 #if _DEBUG
 		dump_atlas_dirname = CachedAtlasFilename;
 #else
-		if (Application::HasApplicationCommandLineFlag("-DumpCachedAtlas")) // CMDLINE
+		if (Arguments::DumpCachedAtlas)
 			dump_atlas_dirname = CachedAtlasFilename;
 #endif
 

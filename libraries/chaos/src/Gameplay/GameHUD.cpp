@@ -7,13 +7,13 @@ namespace chaos
 	// =============================================
 
 	AutoCastable<GameInstance> GameHUD::GetGameInstance()
-	{ 
-		return game->GetGameInstance(); 
+	{
+		return game->GetGameInstance();
 	}
 
 	AutoConstCastable<GameInstance> GameHUD::GetGameInstance() const
-	{ 
-		return game->GetGameInstance(); 
+	{
+		return game->GetGameInstance();
 	}
 
 	AutoCastable<Level> GameHUD::GetLevel()
@@ -83,29 +83,29 @@ namespace chaos
 			return false;
 		return true;
 	}
-		
+
 #if !_DEBUG
-	CHAOS_HELP_TEXT(CMD, "-ShowFPS");
-	CHAOS_HELP_TEXT(CMD, "-ShowPerfs");
+	CHAOS_APPLICATION_ARG(bool, ShowFPS);
+	CHAOS_APPLICATION_ARG(bool, ShowPerfs);
 #endif
-	CHAOS_HELP_TEXT(CMD, "-HideFPS");
-	CHAOS_HELP_TEXT(CMD, "-HidePerfs");
+	CHAOS_APPLICATION_ARG(bool,HideFPS);
+	CHAOS_APPLICATION_ARG(bool, HidePerfs);
 
 	bool GameHUD::FillHUDContent()
-	{		
+	{
 		// FPS
 #if !_DEBUG
-		if (Application::HasApplicationCommandLineFlag("-ShowFPS")) // CMDLINE
+		if (Arguments::ShowFPS) // CMDLINE
 #endif
-			if (!Application::HasApplicationCommandLineFlag("-HideFPS")) // CMDLINE
+			if (!Arguments::HideFPS) // CMDLINE
 				RegisterComponent(GameHUDKeys::FPS_ID, new GameHUDFramerateComponent());
 		// PERFS
 #if !_DEBUG
-		if (Application::HasApplicationCommandLineFlag("-ShowPerfs")) // CMDLINE
+		if (Arguments::ShowPerfs) // CMDLINE
 #endif
-			if (!Application::HasApplicationCommandLineFlag("-HidePerfs")) // CMDLINE
+			if (!Arguments::HidePerfs) // CMDLINE
 				RegisterComponent(GameHUDKeys::PERFS_ID, new GameHUDPerfsComponent());
-		
+
 #if _DEBUG
 		// FREECAMERA
 		RegisterComponent(GameHUDKeys::FREECAMERA_ID, new GameHUDFreeCameraComponent());
@@ -175,7 +175,7 @@ namespace chaos
 			return nullptr;
 		return it->second.get();
 	}
-		
+
 	void GameHUD::Clear()
 	{
 		components.clear();
@@ -195,7 +195,7 @@ namespace chaos
 
 	int GameHUD::DoDisplay(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
 	{
-		int result = 0; 
+		int result = 0;
 		// display components (most of them should do nothing while they re using the particle_manager
 		for (auto & it : components)
 		{
@@ -281,5 +281,5 @@ namespace chaos
 
 		return true;
 	}
-	
+
 }; // namespace chaos

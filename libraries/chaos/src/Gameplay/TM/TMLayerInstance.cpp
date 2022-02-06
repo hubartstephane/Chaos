@@ -3,7 +3,7 @@
 namespace chaos
 {
 	// ==========================================
-	// PropertyOwnerOverride : an utility class to capture the properties of a source 
+	// PropertyOwnerOverride : an utility class to capture the properties of a source
 	// ==========================================
 
 	template<typename T>
@@ -77,7 +77,7 @@ namespace chaos
 		if (!infinite_bounding_box)
 		{
 			// get the layer own content bounding box
-			result = content_bounding_box; 
+			result = content_bounding_box;
 
 			// get child layers bounding box
 			if (recursive)
@@ -208,7 +208,7 @@ namespace chaos
 		{
 			return false;
 		}
-		return FinalizeParticles(nullptr);		
+		return FinalizeParticles(nullptr);
 	}
 
 	void TMLayerInstance::OnRestart()
@@ -251,7 +251,7 @@ namespace chaos
 		}
 		return true;
 	}
-	
+
 	bool TMLayerInstance::SerializeFromJSON(nlohmann::json const& json)
 	{
 		if (!JSONSerializable::SerializeFromJSON(json))
@@ -260,7 +260,7 @@ namespace chaos
 		TMTools::SerializeLayersFromJSON(this, json);
 		return true;
 	}
-	
+
 	bool TMLayerInstance::SerializeIntoJSON(nlohmann::json& json) const
 	{
 		if (!JSONSerializable::SerializeIntoJSON(json))
@@ -280,7 +280,7 @@ namespace chaos
 	{
 		TiledMap::Map* tiled_map = level_instance->GetTiledMap();
 
-		// does the object wants the ownership of the particles		
+		// does the object wants the ownership of the particles
 		bool particle_ownership = false;
 		if (object != nullptr)
 			particle_ownership = in_geometric_object->GetPropertyValueBool("PARTICLE_OWNERSHIP", true); // by default, an object wants to have its particles
@@ -310,12 +310,12 @@ namespace chaos
 			WindowApplication* window_application = Application::GetInstance();
 			if (window_application != nullptr)
 				window_application->GetTextGenerator()->Generate(text->text.c_str(), result, params);
-			
+
 			ParticleAllocationBase* allocation = ParticleTextGenerator::CreateTextAllocation(particle_layer.get(), result);
 			if (particle_ownership)
 				object->allocations = allocation;
 		}
-		// create additionnal particles (TILES)		
+		// create additionnal particles (TILES)
 		else if (TiledMap::GeometricObjectTile const* tile = auto_cast(in_geometric_object))
 		{
 			TMParticlePopulator object_particle_populator = particle_populator;
@@ -324,13 +324,13 @@ namespace chaos
 
 			int gid = tile->gid;
 
-			// search the tile information 
+			// search the tile information
 			TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
 			if (tile_info.tiledata == nullptr)
 				return;
 
 			// create a simple particle
-			box2 particle_box = tile->GetBoundingBox(true); 
+			box2 particle_box = tile->GetBoundingBox(true);
 			if (object != nullptr)
 			{
 				TiledMap::GeometricObjectSurface const* surface_object = auto_cast(in_geometric_object);
@@ -342,13 +342,13 @@ namespace chaos
 
 			bool keep_aspect_ratio = false;
 			effective_particle_populator->AddParticle(
-				tile_info.tiledata->atlas_key.c_str(), 
-				hotpoint, 
-				particle_box, 
-				glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 
-				tile->rotation, 
-				tile->particle_flags, 
-				gid, 
+				tile_info.tiledata->atlas_key.c_str(),
+				hotpoint,
+				particle_box,
+				glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
+				tile->rotation,
+				tile->particle_flags,
+				gid,
 				keep_aspect_ratio);
 
 			// gives the particles to the object
@@ -365,14 +365,16 @@ namespace chaos
 		}
 	}
 
-	CHAOS_HELP_TEXT(CMD, "-TM::ForceParticleCreation");
+#if _DEBUG
+	CHAOS_APPLICATION_ARG(bool, TMForceParticleCreation);
+#endif
 
 	bool TMLayerInstance::ShouldCreateParticleForObject(TiledMap::PropertyOwner const * property_owner, TMObject* object) const
 	{
 #if _DEBUG
-		if (Application::HasApplicationCommandLineFlag("-TM::ForceParticleCreation")) // CMDLINE
+		if (Arguments::TMForceParticleCreation)
 			return true;
-#endif			
+#endif
 		return property_owner->GetPropertyValueBool("PARTICLE_CREATION", (object != nullptr) ? object->IsParticleCreationEnabled() : true);
 	}
 
@@ -422,7 +424,7 @@ namespace chaos
 				TiledMap::GeometricObjectSurface const* object_surface = auto_cast(geometric_object);
 				if (object_surface != nullptr)
 				{
-					level_instance->explicit_bounding_box = object_surface->GetBoundingBox(true); // in world coordinate	
+					level_instance->explicit_bounding_box = object_surface->GetBoundingBox(true); // in world coordinate
 					level_instance->has_explicit_bounding_box = true;
 				}
 			}
@@ -431,7 +433,7 @@ namespace chaos
 			{
 				TiledMap::GeometricObjectSurface const* object_surface = auto_cast(geometric_object);
 				if (object_surface != nullptr)
-					explicit_bounding_box = object_surface->GetBoundingBox(false); // in layer coordinates	
+					explicit_bounding_box = object_surface->GetBoundingBox(false); // in layer coordinates
 			}
 
 			// get factory + create the object
@@ -445,7 +447,7 @@ namespace chaos
 					continue; // we have a factory, but fails to create the object
 			}
 
-			// create tile if no object created 
+			// create tile if no object created
 			// (XXX : no way yet to know whether this a normal situation because user does not want to create object or whether an error happened)
 			if (object == nullptr || ShouldCreateParticleForObject(geometric_object, object))
 				CreateObjectParticles(geometric_object, object, particle_populator);
@@ -562,7 +564,7 @@ namespace chaos
 			InitializeParticleLayer(particle_layer.get());
 			// set the material
 			particle_layer->SetRenderMaterial(render_material);
-			// set the atlas			
+			// set the atlas
 			particle_layer->SetTextureAtlas(window_application->GetTextureAtlas());
 			// set some flags for the layer
 			ParticleLayerTraitBase* layer_trait = particle_layer->GetLayerTrait();
@@ -579,7 +581,7 @@ namespace chaos
 	{
 		TMLevel* level = GetLevel();
 
-		// create particle layer 
+		// create particle layer
 		if (CreateParticleLayer() == nullptr)
 			return false;
 		// prepare the populator
@@ -609,7 +611,7 @@ namespace chaos
 				if (gid == 0)
 					continue;
 
-				// search the tile information 
+				// search the tile information
 				TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
 				if (tile_info.tiledata == nullptr)
 					continue;
@@ -643,8 +645,8 @@ namespace chaos
 				{
 					// to avoid the creation of a TMObject, use a wrapper on the properties
 					PropertyOwnerOverride<TiledMap::GeometricObjectTile> tile_object = { nullptr, tile_info.tiledata };
-				
-					// compute an ID base on 'tile_coord' 
+
+					// compute an ID base on 'tile_coord'
 					// TiledMap gives positive ID
 					// we want a negative ID to avoid conflicts
 					// for a 32 bits integer
@@ -652,7 +654,7 @@ namespace chaos
 					// 15 bits for Y
 					// 1  unused
 					// 1  bit for sign
-					
+
 					int int_bit_count = 8 * sizeof(int);
 					int per_component_bit_count = (int_bit_count - 1) / 2;
 					int mask = ~((unsigned int)-1 << per_component_bit_count);
@@ -808,7 +810,7 @@ namespace chaos
 					last_instance = glm::ivec2(1, 1); // always see fully the layer without clamp => repetition not working
 				}
 			}
-				
+
 			// new provider for camera override (will be fullfill only if necessary)
 			GPUProgramProviderChain main_uniform_provider(uniform_provider);
 			main_uniform_provider.AddVariable("world_to_camera", CameraTools::GetCameraTransform(final_camera_obox));
@@ -820,7 +822,7 @@ namespace chaos
 
 			glm::mat4 local_to_world = glm::translate(glm::vec3(offset.x, offset.y, 0.0f));
 
-			// draw instances 
+			// draw instances
 			for (int x = start_instance.x; x < last_instance.x; ++x)
 			{
 				for (int y = start_instance.y; y < last_instance.y; ++y)
@@ -832,7 +834,7 @@ namespace chaos
 					local_to_world[3][0] = instance_offset.x + offset.x;
 					local_to_world[3][1] = instance_offset.y + offset.y;
 					instance_uniform_provider.AddVariable("local_to_world", local_to_world);
-					
+
 					// draw call
 					result += particle_layer->Display(renderer, &instance_uniform_provider, render_params);
 				}
@@ -859,7 +861,7 @@ namespace chaos
 
 		return result;
 	}
-	
+
 	size_t TMLayerInstance::GetObjectCount() const
 	{
 		return objects.size();

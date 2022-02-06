@@ -548,7 +548,9 @@ namespace chaos
 			InvalidateRect(hWnd, NULL, false); // this cause flickering
 	}
 
-	CHAOS_HELP_TEXT(CMD, "-UnlimitedFPS");
+#if !_DEBUG
+	CHAOS_APPLICATION_ARG(bool, UnlimitedFPS);
+#endif
 
 	void Window::TweakHints(WindowHints& hints, GLFWmonitor* monitor, bool pseudo_fullscreen) const
 	{
@@ -564,7 +566,7 @@ namespace chaos
 		//hints.refresh_rate = mode->refreshRate;
 
 #if !_DEBUG
-		if (Application::HasApplicationCommandLineFlag("-UnlimitedFPS")) // CMDLINE
+		if (Arguments::UnlimitedFPS)
 			hints.unlimited_fps = true;
 #else
 		hints.unlimited_fps = true;

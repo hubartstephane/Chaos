@@ -45,7 +45,7 @@ float GetPolygonOrientation(std::vector<glm::vec2> const& v)
 		//           --  /
 		//         |   /
 		//           /
-		//       B + 
+		//       B +
 		//         |
 		//         |
 		//         |
@@ -110,8 +110,8 @@ float LPMorph::GetStrength(Landscape* landscape)
 
 
 float LPMorph::GetInternalTime() const
-{ 
-	return internal_time; 
+{
+	return internal_time;
 }
 
 bool LPMorph::DoTick(Landscape* landscape,float delta_time)
@@ -245,7 +245,7 @@ float LPMorph_Time::GetStrength(Landscape * landscape)
 
 bool LPMorph_Rotate::GetPoints(Landscape* landscape, std::vector<glm::vec2>& mutable_points)
 {
-	float angle = arg1->GetStrength(landscape);	
+	float angle = arg1->GetStrength(landscape);
 	float c = std::cos(angle);
 	float s = std::sin(angle);
 
@@ -259,7 +259,7 @@ bool LPMorph_Rotate::GetPoints(Landscape* landscape, std::vector<glm::vec2>& mut
 
 float LPMorph_Neg::GetStrength(Landscape* landscape)
 {
-	return -arg1->GetStrength(landscape);	
+	return -arg1->GetStrength(landscape);
 }
 
 // =================================================================================
@@ -342,7 +342,7 @@ bool LPMorph_Gear::GetPoints(Landscape* landscape, std::vector<glm::vec2> & muta
 	{
 		glm::vec2 N = glm::vec2(
 			glm::cross(
-				glm::vec3(D, 0.0f) - glm::vec3(A, 0.0f), 
+				glm::vec3(D, 0.0f) - glm::vec3(A, 0.0f),
 				glm::vec3(0.0f, 0.0f, 1.0f)
 			));
 		N = glm::normalize(N);
@@ -626,7 +626,7 @@ box2 BoxFromPoints(std::vector<glm::vec2> const& v)
 	{
 		min_position = glm::min(min_position, p);
 		max_position = glm::max(max_position, p);
-	}		
+	}
 	return std::make_pair(min_position, max_position);
 }
 
@@ -652,6 +652,11 @@ bool Landscape::DoTick(float delta_time)
 	return true;
 }
 
+#if _DEBUG
+CHAOS_APPLICATION_ARG(bool, Wireframe);
+CHAOS_APPLICATION_ARG(bool, DebugDisplay);
+#endif
+
 int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 {
 	int result = 0;
@@ -662,7 +667,7 @@ int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface cons
 	main_provider.AddVariable("local_to_world", local_to_world);
 
 #if _DEBUG
-	if (chaos::Application::HasApplicationCommandLineFlag("-Wireframe")) // CMDLINE
+	if (Arguments::Wireframe)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
@@ -678,8 +683,8 @@ int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface cons
 		result += mesh->Display(renderer, &main_provider, render_params);
 
 #if _DEBUG
-		
-	if (chaos::Application::HasApplicationCommandLineFlag("-DebugDisplay")) // CMDLINE
+
+	if (Arguments::DebugDisplay)
 	{
 		// shu49. ca pourrait etre partique d avoir une fonction d affichage de bounding box
 
@@ -693,7 +698,7 @@ int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface cons
 		quad[1].position = box_v[1];
 		quad[2].position = box_v[3];
 		quad[3].position = box_v[2];
-		
+
 		PointPrimitive<VertexDefault> smooth_prim = DI.AddPoints(smoothed_points.size());
 		for (auto& p : smoothed_points)
 		{
@@ -710,7 +715,7 @@ int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface cons
 			++prim_p;
 		}
 
-		DI.Display(renderer, &main_provider, render_params);	
+		DI.Display(renderer, &main_provider, render_params);
 	}
 #endif
 
@@ -759,7 +764,7 @@ std::vector<glm::vec2> SmoothBoundary(std::vector<glm::vec2> const & src, size_t
 
 	size_t count = src.size();
 	for (size_t i = 0; i < src.size() ; ++i)
-	{		
+	{
 		size_t prev_index = (i - 1 + count) % count;
 		size_t next_index = (i + 1) % count;
 
@@ -888,7 +893,7 @@ box2 Landscape::GetBoundingBox(bool world_system) const
 
 			std::vector<std::string> tokens = StringTools::Split(t, ' ');
 			tokens.erase(std::remove_if(tokens.begin(), tokens.end(), [](std::string const& s) { return s.size() == 0; }), tokens.end());
-			
+
 			if (tokens.size() == 0)
 				continue;
 
@@ -900,7 +905,7 @@ box2 Landscape::GetBoundingBox(bool world_system) const
 			for (size_t i = 1; i < tokens.size() ; ++i)
 			{
 				std::string const& tok = tokens[i];
-				
+
 				char const * sep = strchr(tok.c_str(), '=');
 				if (sep != nullptr && sep != tok.c_str())
 				{
@@ -909,13 +914,13 @@ box2 Landscape::GetBoundingBox(bool world_system) const
 				}
 			}
 
-			
+
 			SubClassOf<T> cls = Class::FindClass((std::string("LPMorph_") + tokens[0]).c_str());
 			if (cls.IsValid())
 			{
 				result.emplace_back(cls, std::move(data_map));
 			}
-				
+
 		}
 		return result;
 	}
@@ -972,7 +977,7 @@ bool Landscape::Initialize(TMLayerInstance* in_layer_instance, TiledMap::Geometr
 		if (morph != nullptr)
 			morph->GetPoints(this, mutable_points);
 		point_bounding_box = BoxFromPoints(mutable_points);
-		BuildMesh(mutable_points);			
+		BuildMesh(mutable_points);
 	}
 
 	return true;
@@ -1003,7 +1008,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	TMLevelInstance::DoTick(delta_time);
 
 
-	
+
 
 	return true;
 }
@@ -1035,7 +1040,7 @@ bool LudumLevelInstance::CheckLevelCompletion() const
 	LudumPlayer const * ludum_player = GetPlayer(0);
 	if (ludum_player != nullptr && ludum_level != nullptr)
 	{
-	
+
 	}
 	return false;
 }

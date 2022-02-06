@@ -75,14 +75,15 @@ namespace chaos
 	{
 		game = nullptr;
 	}
-
-	CHAOS_HELP_TEXT(CMD, "-NoAutoPause");
+#if _DEBUG
+	CHAOS_APPLICATION_ARG(bool, NoAutoPause);
+#endif
 
 	void GameWindow::OnIconifiedStateChange(bool iconified)
 	{
 		// do not execute following code in debug because it does not fit well with debugger
 #if _DEBUG
-		if (!Application::HasApplicationCommandLineFlag("-NoAutoPause"))
+		if (!Arguments::NoAutoPause)
 #endif
 		if (iconified)
 			game->RequirePauseGame();
@@ -92,7 +93,7 @@ namespace chaos
 	{
 		// do not execute following code in debug because it does not fit well with debugger
 #if _DEBUG
-		if (!Application::HasApplicationCommandLineFlag("-NoAutoPause"))
+		if (!Arguments::NoAutoPause)
 #endif
 		if (!gain_focus)
 			game->RequirePauseGame();

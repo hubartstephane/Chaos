@@ -35,13 +35,13 @@ size_t LudumGameInstance::CanStartChallengeBallIndex(bool going_down) const
 
 
 #if _DEBUG
-CHAOS_HELP_TEXT(CMD, "-NoChallenge");
+CHAOS_APPLICATION_ARG(bool, NoChallenge);
 #endif
 
 void LudumGameInstance::TickChallenge(float delta_time)
 {
 #if _DEBUG
-	if (chaos::Application::HasApplicationCommandLineFlag("-NoChallenge")) // CMDLINE
+	if (Arguments::NoChallenge)
 		return;
 #endif
 

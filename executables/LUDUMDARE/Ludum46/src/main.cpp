@@ -1,6 +1,9 @@
 #include <chaos/Chaos.h>
 #include "Ludum46Game.h"
 
+#include <boost/program_options.hpp>
+#include <sstream>
+
 using namespace chaos;
 
 
@@ -25,11 +28,7 @@ protected:
 };
 
 
-template<typename T>
-bool constexpr is_vector_type_v = false;
 
-template<typename T>
-bool constexpr is_vector_type_v<std::vector<T>> = true;
 
 template<typename T>
 class ApplicationArgument : public ApplicationArgumentBase
@@ -38,22 +37,33 @@ class ApplicationArgument : public ApplicationArgumentBase
 
 public:
 
-	ApplicationArgument()
-	{
-		class_id = GetClassUniqueID<T>();
-	}
-
-	ApplicationArgument(T in_value): value(in_value)
+	ApplicationArgument(T in_value = {}) : value(in_value)
 	{
 		class_id = GetClassUniqueID<T>();
 	}
 
 	virtual void RegisterProgramOption(boost::program_options::options_description& desc) override
 	{
-		if constexpr (is_vector_type_v<T>)
+		if constexpr (meta::is_vector_type_v<T>)
 		{
+			// zero_tokens
+			//   accepts empty lists as
+			//     --PARAM
+			// composing
+			//    --PARAM a b c --PARAM d e
+			//   is equivalent to
+			//    --PARAM a b c d e
 			desc.add_options()
-				(GetName(), boost::program_options::value<T>(&value)->multitoken(), GetName());
+				(GetName(), boost::program_options::value<T>(&value)->multitoken()->zero_tokens()->composing(), GetName());
+		}
+		else if constexpr (std::is_same_v<T, bool>)
+		{
+			// implicit value:
+			//     --PARAM
+			//   is equivalent to
+			//     --PARAM true
+			desc.add_options()
+				(GetName(), boost::program_options::value<T>(&value)->implicit_value(true), GetName());
 		}
 		else
 		{
@@ -123,41 +133,31 @@ protected:
 
 
 
+void func(int X, char const* n, char const* a = nullptr)
+{
+	n = n;
+}
+
+#define FUNC(X, ...) func(X, __VA_ARGS__, __FUNCTION__)
+
+
 
 #define CHAOS_APPLICATION_ARG(ARGNAME, TYPE, ...) static TYPE const & ARGNAME = ApplicationArgumentManager::GetInstance()->RegisterArgument<TYPE>(#ARGNAME, __VA_ARGS__);
 
+CHAOS_APPLICATION_ARG(_INT, int, 44);
+CHAOS_APPLICATION_ARG(_VECTOR, std::vector<std::string>);
+CHAOS_APPLICATION_ARG(_BOOL, bool, false);
 
-//CHAOS_APPLICATION_ARG(TOTO, int, 12345);
-//CHAOS_APPLICATION_ARG(TITI, std::vector<std::string>, {"ght", "ytu"});
 
-CHAOS_APPLICATION_ARG(TOTO, int);
-CHAOS_APPLICATION_ARG(TITI, std::vector<std::string>);
-
-#include <boost/program_options.hpp>
-
-void on_age(int age)
-{
-	std::cout << "On age: " << age << '\n';
-}
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
-	auto a = is_vector_type_v<int>;
-
-	auto c = is_vector_type_v<std::vector<std::string>>;
 
 	ApplicationArgumentManager::GetInstance()->ParseArguments(argc, argv);
 
-	auto X = TOTO;
-
-	auto Y = TITI;
-
-
-
-
-
-
-
+	auto X = _INT; // int
+	auto Y = _VECTOR; // vector
+	auto Z = _BOOL; // bool
 
 	chaos::WindowParams params;
 	params.monitor = nullptr;

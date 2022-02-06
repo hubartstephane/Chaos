@@ -11,7 +11,7 @@ namespace chaos
 #define CHAOS_APPLICATION_ARG(TYPE, ARGNAME, ...)\
 namespace Arguments\
 {\
-static TYPE const & ARGNAME = ApplicationArgumentManager::GetInstance()->RegisterArgument<TYPE>(#ARGNAME, __VA_ARGS__);\
+static TYPE const & ARGNAME = chaos::ApplicationArgumentManager::GetInstance()->RegisterArgument<TYPE>(#ARGNAME, __VA_ARGS__);\
 };
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -65,7 +65,7 @@ static TYPE const & ARGNAME = ApplicationArgumentManager::GetInstance()->Registe
 				//   is equivalent to
 				//    --PARAM a b c d e
 				desc.add_options()
-					(GetName(), boost::program_options::value<T>(&value)->multitoken()->zero_tokens()->composing(), GetName());
+					(GetName(), boost::program_options::value<T>(&value)->multitoken()->zero_tokens()->composing(), "");
 			}
 			else if constexpr (std::is_same_v<T, bool>)
 			{
@@ -74,12 +74,12 @@ static TYPE const & ARGNAME = ApplicationArgumentManager::GetInstance()->Registe
 				//   is equivalent to
 				//     --PARAM true
 				desc.add_options()
-					(GetName(), boost::program_options::value<T>(&value)->implicit_value(true), GetName());
+					(GetName(), boost::program_options::value<T>(&value)->implicit_value(true), "");
 			}
 			else
 			{
 				desc.add_options()
-					(GetName(), boost::program_options::value<T>(&value), GetName());
+					(GetName(), boost::program_options::value<T>(&value), "");
 			}
 		}
 
@@ -116,6 +116,9 @@ static TYPE const & ARGNAME = ApplicationArgumentManager::GetInstance()->Registe
 		/** parse all arguments */
 		void ParseArguments(int argc, char** argv);
 
+		/** gets the option string */
+		char const* GetOptionString() const;
+
 	protected:
 
 		/** find whether an argument with given name and type is already existing */
@@ -130,6 +133,8 @@ static TYPE const & ARGNAME = ApplicationArgumentManager::GetInstance()->Registe
 
 	protected:
 
+		/** options descriptions */
+		std::string options_string;
 		/** list of all arguments */
 		std::vector<ApplicationArgumentBase*> arguments;
 	};

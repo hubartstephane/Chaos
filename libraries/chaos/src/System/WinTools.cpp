@@ -177,7 +177,6 @@ namespace chaos
 				// starting a new family
 				if (message == nullptr)
 				{
-					std::cout << '\n';
 					std::cout << "==========================================" << '\n';
 					std::cout << "== " << family << '\n';
 					std::cout << "==========================================" << '\n';
@@ -189,8 +188,6 @@ namespace chaos
 					std::cout << "  " << message << '\n';
 				}
 			});
-			if (flushed_message_count > 0)
-				std::cout << '\n' << "-------------------------------" << '\n' << '\n';
 		}
 
 		// XXX : WindowedApp(...) required, does not work with ConsoleApp(...)

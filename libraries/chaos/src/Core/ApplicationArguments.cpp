@@ -2,6 +2,11 @@
 
 namespace chaos
 {
+	char const* ApplicationArgumentManager::GetOptionString() const
+	{
+		return options_string.c_str();
+	}
+
 	void ApplicationArgumentManager::ParseArguments(int argc, char** argv)
 	{
 		try
@@ -13,10 +18,14 @@ namespace chaos
 			boost::program_options::variables_map vm;
 			store(boost::program_options::command_line_parser(argc, argv).options(desc).allow_unregistered().run(), vm);
 			notify(vm);
+
+			std::ostringstream stream;
+			stream << desc;
+			options_string = std::move(stream.str());
 		}
 		catch (const boost::program_options::error& ex)
 		{
-			std::cerr << ex.what() << '\n';
+			Log::Output(LogType::Error, false, ex.what());
 		}
 	}
 

@@ -81,7 +81,7 @@ namespace chaos
 			if (!ApplyWrapMode(grid_index, glm::ivec2(0, 0), grid_data.grid_size - glm::ivec2(1, 1), mode, grid_index)) // -1 because the max_range belongs to the wanted values
 				return BitmapLayout();
 
-			// check linear index and skip_lasts 
+			// check linear index and skip_lasts
 			//
 			// Indexing a grid with skip images may cause indexation of invalid cell
 			//
@@ -99,7 +99,7 @@ namespace chaos
 			// BUT, a grid with skip image probably means you want to access cell in a 1D way (just an index)
 			// for that reason, we transform the 2D grid coord into a 1D index coord and then apply the wrapping on that new index
 
-			if (grid_data.skip_lasts > 0) 
+			if (grid_data.skip_lasts > 0)
 			{
 				int index = grid_index.x + grid_index.y * grid_data.grid_size.x;
 
@@ -111,7 +111,7 @@ namespace chaos
 						return BitmapLayout();
 					grid_index.x = (index % grid_data.grid_size.x);
 					grid_index.y = (index / grid_data.grid_size.x);
-				}			
+				}
 			}
 
 			// XXX : for OpenGL, texture Y = 0 is bottom
@@ -261,9 +261,9 @@ namespace chaos
 
 			result.reserve(result.size() + count);
 			for (size_t i = 0; i < count; ++i)
-				result.push_back(bitmaps[i]);		
+				result.push_back(bitmaps[i]);
 		}
-		
+
 		void FolderInfo::DoCollectEntries(std::vector<CharacterInfo> & result)
 		{
 			size_t font_count = fonts.size();
@@ -278,7 +278,7 @@ namespace chaos
 					result.push_back(font_info.elements[j]);
 			}
 		}
-		
+
 		void FolderInfo::DoCollectEntries(std::vector<BitmapLayout> & result, bool collect_bitmaps, bool collect_characters)
 		{
 			if (collect_bitmaps)
@@ -287,7 +287,7 @@ namespace chaos
 
 				result.reserve(result.size() + count);
 				for (size_t i = 0; i < count; ++i)
-					result.push_back(bitmaps[i]);	
+					result.push_back(bitmaps[i]);
 			}
 
 			if (collect_characters)
@@ -547,7 +547,7 @@ namespace chaos
 		void Atlas::Clear()
 		{
 			AtlasBase::Clear();
-			// destroy the bitmaps      
+			// destroy the bitmaps
 			bitmaps.clear();
 		}
 
@@ -559,7 +559,7 @@ namespace chaos
 			boost::filesystem::path bitmap_filename;
 			SplitFilename(path, target_dir, index_filename, bitmap_filename);
 
-			// create a target directory if necessary   
+			// create a target directory if necessary
 			if (!boost::filesystem::is_directory(target_dir))
 				if (!boost::filesystem::create_directories(target_dir))
 					return false;
@@ -619,7 +619,7 @@ namespace chaos
 					json["bitmaps"].push_back(GetBitmapFilename(image_format, bitmap_filename, int(i)).string());
 				}
 				// insert the entries
-				json["root_folder"] = nlohmann::json::object();				
+				json["root_folder"] = nlohmann::json::object();
 				SaveIntoJSON(json["root_folder"], root_folder);
 
 				// format the JSON into string and insert it into stream
@@ -637,13 +637,16 @@ namespace chaos
 			boost::filesystem::path bitmap_filename;
 			SplitFilename(path, target_dir, index_filename, bitmap_filename); // will be ignored during loading, real name is read from .JSON index
 			// load the file into memory
-			Buffer<char> buf = FileTools::LoadFile(index_filename, true);
-			if (buf == nullptr)
+			Buffer<char> buffer = FileTools::LoadFile(index_filename, true);
+			if (buffer == nullptr)
+			{
+				Log::Error("Atlas::LoadAtlas: fail to load [%s]", index_filename.string().c_str());
 				return false;
+			}
 
 			// parse JSON file
 			nlohmann::json json;
-			if (JSONTools::Parse(buf.data, json))
+			if (JSONTools::Parse(buffer.data, json))
 				return LoadAtlas(json, target_dir);
 			return false;
 		}
@@ -693,7 +696,7 @@ namespace chaos
 				{
 					JSONTools::GetAttribute(json, "root_folder", root_folder);
 					atlas_count = int(bitmaps.size());
-				}			
+				}
 			}
 			// in case of failure, reset the whole atlas once more
 			if (!result)

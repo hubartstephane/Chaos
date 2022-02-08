@@ -1271,7 +1271,6 @@ namespace chaos
 		if (JSONTools::GetAttribute(json, "path", p))
 		{
 			FilePathParam path(p);
-
 			result = LoadObject(path, name);
 			if (result != nullptr)
 				result->InitializeFromJSON(json);
@@ -1297,14 +1296,18 @@ namespace chaos
 		irrklang::ISoundEngine * engine = manager->GetIrrklangEngine();
 		if (engine == nullptr)
 			return nullptr;
+
 		// load the file
+		boost::filesystem::path const& resolved_path = path.GetResolvedPath();
+
 		Buffer<char> buffer = FileTools::LoadFile(path, false);
 		if (buffer == nullptr)
+		{
+			Log::Error("SoundSourceLoader::GenSourceObject: fail to load [%s]", resolved_path.string().c_str());
 			return nullptr;
+		}
 		// create the source on irrklang side
 		// XXX : we give filename even if the file is already loaded because it helps irrklangs to find the data format
-		boost::filesystem::path const & resolved_path = path.GetResolvedPath();
-
 		shared_ptr<irrklang::ISoundSource> irrklang_source = engine->addSoundSourceFromMemory(buffer.data, (irrklang::ik_s32)buffer.bufsize, resolved_path.string().c_str(), true);
 		if (irrklang_source == nullptr)
 			return nullptr;

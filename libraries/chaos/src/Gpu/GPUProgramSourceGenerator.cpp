@@ -9,7 +9,7 @@ namespace chaos
 		{
 			buffer = SharedBufferPolicy<char>::NewBuffer(len + 1);
 			if (buffer != nullptr)
-				memcpy(buffer.data, src, len + 1);      
+				memcpy(buffer.data, src, len + 1);
 		}
 	}
 
@@ -20,7 +20,9 @@ namespace chaos
 
 	GPUProgramFileSourceGenerator::GPUProgramFileSourceGenerator(FilePathParam const & path)
 	{
-		buffer = FileTools::LoadFile(path, true);  
+		buffer = FileTools::LoadFile(path, true);
+		if (buffer == nullptr)
+			Log::Error("GPUProgramFileSourceGenerator: fail to load [%s]", path.GetResolvedPath().string().c_str());
 	}
 
 }; // namespace chaos

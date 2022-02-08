@@ -297,6 +297,8 @@ namespace chaos
 			FT_Face face = nullptr;
 
 			Buffer<char> buffer = FileTools::LoadFile(path, false); // for direct access to resource directory
+			if (buffer == nullptr)
+				Log::Error("FolderInfoInput::AddFontFileWithManifestImpl: fail to load [%s]", path.GetResolvedPath().string().c_str());
 			if (buffer != nullptr)
 				FT_New_Memory_Face(library, (FT_Byte const*)buffer.data, (FT_Long)buffer.bufsize, 0, &face);
 

@@ -122,9 +122,12 @@ namespace chaos
 			if (!recursive)
 			{
 				Buffer<char> buffer = FileTools::LoadFile(path, true);
-				if (buffer != nullptr)
-					return Parse(buffer.data, result);
-				return false; // loading failure
+				if (buffer == nullptr)
+				{
+					Log::Error("JSONTools::LoadJSONFile: fail to load [%s]", path.GetResolvedPath().string().c_str());
+					return false;
+				}
+				return Parse(buffer.data, result);
 			}
 			else
 			{

@@ -18,7 +18,7 @@ namespace chaos
 
 	GPUTexture * GPUTextureLoader::LoadObject(FilePathParam const & path, char const * name, GenTextureParameters const & parameters) const
 	{
-		return LoadObjectHelper(path, name, [this, &parameters](FilePathParam const& path) 
+		return LoadObjectHelper(path, name, [this, &parameters](FilePathParam const& path)
 		{
 			return GenTextureObject(path, parameters);
 		},
@@ -34,10 +34,10 @@ namespace chaos
 	}
 
 	bool GPUTextureLoader::IsNameAlreadyUsedInManager(ObjectRequest request) const
-	{ 
+	{
 		return (manager != nullptr && manager->FindTexture(request) != nullptr);
 	}
-	
+
 	GPUTexture * GPUTextureLoader::GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters) const
 	{
 		GPUTexture * result = nullptr;
@@ -50,15 +50,15 @@ namespace chaos
 		GLuint texture_id = 0;
 		glCreateTextures(target, 1, &texture_id);
 		if (texture_id > 0)
-		{  
+		{
 			// choose format and internal format (beware FreeImage is BGR/BGRA)
 			GLPixelFormat gl_formats = GLTextureTools::GetGLPixelFormat(image.pixel_format);
 			assert(gl_formats.IsValid());
 
 			GLenum format          = gl_formats.format;
 			GLenum internal_format = gl_formats.internal_format;
-			GLenum type            = (image.pixel_format.component_type == PixelComponentType::UNSIGNED_CHAR)? 
-				GL_UNSIGNED_BYTE : 
+			GLenum type            = (image.pixel_format.component_type == PixelComponentType::UNSIGNED_CHAR)?
+				GL_UNSIGNED_BYTE :
 				GL_FLOAT;
 
 			// get the buffer for the pixels
@@ -81,7 +81,7 @@ namespace chaos
 			else
 			{
 				int level_count = (parameters.reserve_mipmaps) ?
-					GLTextureTools::GetMipmapLevelCount(image.width, image.height) : 
+					GLTextureTools::GetMipmapLevelCount(image.width, image.height) :
 					1;
 				glTextureStorage2D(texture_id, level_count, internal_format, image.width, image.height);
 				if (texture_buffer != nullptr)
@@ -116,27 +116,30 @@ namespace chaos
 		// load the buffer
 		GPUTexture * result = nullptr;
 
-		Buffer<char> ascii_buffer = FileTools::LoadFile(path, true); // ascii mode for JSON 
-		if (ascii_buffer != nullptr)
+		Buffer<char> ascii_buffer = FileTools::LoadFile(path, true); // ascii mode for JSON
+		if (ascii_buffer == nullptr)
 		{
-			// while i am not sure an additionnal 0 in buffer wont be treated as a corruption by Free_Image
-			// i work with a clamped buffer without this ascii 0 terminal
-			Buffer<char> noascii_buffer;
-			noascii_buffer.data = ascii_buffer.data;
-			noascii_buffer.bufsize = ascii_buffer.bufsize - 1; 
+			Log::Error("GPUTextureLoader::GenTextureObject: fail to load [%s]", path.GetResolvedPath().string().c_str());
+			return nullptr;
+		}
+		// while i am not sure an additionnal 0 in buffer wont be treated as a corruption by Free_Image
+		// i work with a clamped buffer without this ascii 0 terminal
+		Buffer<char> noascii_buffer;
+		noascii_buffer.data = ascii_buffer.data;
+		noascii_buffer.bufsize = ascii_buffer.bufsize - 1;
 
-			FIBITMAP * image = ImageTools::LoadImageFromBuffer(noascii_buffer);
-			if (image != nullptr)
-			{
-				result = GenTextureObject(image, parameters);
-				FreeImage_Unload(image); 
-			}
+		if (FIBITMAP* image = ImageTools::LoadImageFromBuffer(noascii_buffer))
+		{
+			result = GenTextureObject(image, parameters);
+			FreeImage_Unload(image);
+		}
+		else
+		{
+			nlohmann::json json;
+			if (JSONTools::ParseRecursive(ascii_buffer, path.GetResolvedPath(), json))
+				result = GenTextureObject(json, parameters);
 			else
-			{
-				nlohmann::json json;
-				if (JSONTools::ParseRecursive(ascii_buffer, path.GetResolvedPath(), json))
-					result = GenTextureObject(json, parameters);
-			}
+				Log::Error("GPUTextureLoader: unknown format for [%s]", path.GetResolvedPath().string().c_str());
 		}
 		return result;
 	}
@@ -145,7 +148,7 @@ namespace chaos
 	// Most of pictures found one GoogleImage do not correspond to OpenGL but DirectX
 	// There are differences between OpenGL & DirectX implementation
 	//
-	// I found this one that seems to work almost fine with OpenGL 
+	// I found this one that seems to work almost fine with OpenGL
 	//  - horizontal skybox OK
 	//  - vertical   skybox OK
 	//  - multiple   skybox OK
@@ -181,7 +184,7 @@ namespace chaos
 	//
 	// Differences between comes from the fact that OpenGL & Direct have different axis
 	//   +Y / -Y   are to be swapped (from one implementation to the other)
-	//   +Z / -Z   are to be swapped 
+	//   +Z / -Z   are to be swapped
 	//
 	// Textures for OpenGL are oriented :
 	//
@@ -206,7 +209,7 @@ namespace chaos
 		// previous code was using GL_enum
 		GLenum targets[] = {
 			GL_TEXTURE_CUBE_MAP_NEGATIVE_X, // LEFT
-			GL_TEXTURE_CUBE_MAP_POSITIVE_X, // RIGHT      
+			GL_TEXTURE_CUBE_MAP_POSITIVE_X, // RIGHT
 			GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, // BOTTOM
 			GL_TEXTURE_CUBE_MAP_POSITIVE_Y, // TOP
 			GL_TEXTURE_CUBE_MAP_POSITIVE_Z, // FRONT
@@ -261,12 +264,12 @@ namespace chaos
 		// There are 2 kinds of alterations to do :
 		//  - if there is a central symetry to do, will have to make a special 'copy'
 		//
-		//  - LUMINANCE textures are obsolet in GL 4. The texture give RED pixels except if we use 
+		//  - LUMINANCE textures are obsolet in GL 4. The texture give RED pixels except if we use
 		//    glTextureParameteri( ..., GL_TEXTURE_SWIZZLE_XXX, GL_RED)
 		//
 		//    That is possible if the whole cubemap is LUMINANCE
-		//    But if some face are LUMINANCE and some not, we ll have to do 
-		//    the conversion ourselves because we can not apply GL_TEXTURE_SWIZZLE_XXX on 
+		//    But if some face are LUMINANCE and some not, we ll have to do
+		//    the conversion ourselves because we can not apply GL_TEXTURE_SWIZZLE_XXX on
 		//    independant face
 		//
 		bool is_single_image = skybox->IsSingleImage();
@@ -338,7 +341,7 @@ namespace chaos
 					image;
 
 				// fill glPixelStorei(...)
-				// do not remove this line from the loop. Maybe future implementation will accept image with same size but different pitch          
+				// do not remove this line from the loop. Maybe future implementation will accept image with same size but different pitch
 
 				char * texture_buffer = GLTextureTools::PrepareGLTextureTransfert(effective_image);
 				if (texture_buffer != nullptr)
@@ -356,7 +359,7 @@ namespace chaos
 						gl_face_pixel_format.format,
 						effective_image.pixel_format.component_type == PixelComponentType::UNSIGNED_CHAR ? GL_UNSIGNED_BYTE : GL_FLOAT,
 						texture_buffer
-					);								
+					);
 				}
 			}
 

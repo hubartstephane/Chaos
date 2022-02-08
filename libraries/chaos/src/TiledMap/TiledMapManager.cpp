@@ -3,7 +3,7 @@
 namespace chaos
 {
 	namespace TiledMap
-	{		
+	{
 			// ==========================================
 			// Manager methods
 			// ==========================================
@@ -21,9 +21,9 @@ return_type * Manager::function_name(func_params, bool store_object)\
 	CHAOS_IMPL_MANAGER_LOAD(function_name, find_function_name, return_type, FilePathParam const & path, path)\
 	CHAOS_IMPL_MANAGER_LOAD(function_name, find_function_name, return_type, FilePathParam const & path BOOST_PP_COMMA() Buffer<char> buffer, path BOOST_PP_COMMA() buffer)\
 	CHAOS_IMPL_MANAGER_LOAD(function_name, find_function_name, return_type, FilePathParam const & path BOOST_PP_COMMA() tinyxml2::XMLDocument const * doc, path BOOST_PP_COMMA() doc)
-				
+
 	CHAOS_IMPL_MANAGER_LOAD_ALL(LoadMap, FindMap, Map);
-	CHAOS_IMPL_MANAGER_LOAD_ALL(LoadTileSet, FindTileSet, TileSet);	
+	CHAOS_IMPL_MANAGER_LOAD_ALL(LoadTileSet, FindTileSet, TileSet);
 	CHAOS_IMPL_MANAGER_LOAD_ALL(LoadObjectTypeSet, FindObjectTypeSet, ObjectTypeSet);
 
 #undef CHAOS_IMPL_MANAGER_LOAD_ALL
@@ -41,17 +41,17 @@ return_type constness * Manager::funcname(FilePathParam const & path) constness\
 		CHAOS_IMPL_MANAGER_FIND(FindMap, Map, maps, BOOST_PP_EMPTY());
 		CHAOS_IMPL_MANAGER_FIND(FindMap, Map, maps, const);
 		CHAOS_IMPL_MANAGER_FIND(FindTileSet, TileSet, tile_sets, BOOST_PP_EMPTY());
-		CHAOS_IMPL_MANAGER_FIND(FindTileSet, TileSet, tile_sets, const);		
-		CHAOS_IMPL_MANAGER_FIND(FindObjectTypeSet, ObjectTypeSet, object_type_sets, BOOST_PP_EMPTY());	
+		CHAOS_IMPL_MANAGER_FIND(FindTileSet, TileSet, tile_sets, const);
+		CHAOS_IMPL_MANAGER_FIND(FindObjectTypeSet, ObjectTypeSet, object_type_sets, BOOST_PP_EMPTY());
 		CHAOS_IMPL_MANAGER_FIND(FindObjectTypeSet, ObjectTypeSet, object_type_sets, const);
 #undef CHAOS_IMPL_MANAGER_FIND
 
 #define CHAOS_IMPL_MANAGER_DOLOAD(funcname, return_type, member_name)\
 return_type * Manager::funcname(FilePathParam const & path, bool store_object)\
 {\
-	Buffer<char> buffer = FileTools::LoadFile(path, true);\
-	if (buffer != nullptr)\
+	if (Buffer<char> buffer = FileTools::LoadFile(path, true))\
 		return funcname(path, buffer, store_object);\
+	Log::Error("Manager::" #funcname ": fail to load [%s]", path.GetResolvedPath().string().c_str());\
 	return nullptr;\
 }\
 return_type * Manager::funcname(FilePathParam const & path, Buffer<char> buffer, bool store_object)\
@@ -105,7 +105,7 @@ return_type * Manager::funcname(FilePathParam const & path, tinyxml2::XMLDocumen
 					return nullptr;
 				Property const * result = ots->FindObjectProperty(type, name, type_id);
 				if (result != nullptr)
-					return result;		
+					return result;
 			}
 			return nullptr;
 		}

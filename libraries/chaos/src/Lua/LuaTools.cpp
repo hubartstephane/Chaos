@@ -63,19 +63,19 @@ namespace chaos
 			error_condition = "luaL_loadstring(...)";
 
 		// handle errors from luaL_loadstring(...) or lua_pcall(...)
-		if (result != 0) 
+		if (result != 0)
 		{
 			// there should be an argument on the stack corresponding to an error (may be a string, may be nil)
 			if (lua_isstring(state, -1))
 			{
-				std::string err = lua_tolstring(state, -1, NULL); 
+				std::string err = lua_tolstring(state, -1, NULL);
 				Log::Message("LuaTools::ExecBuffer error due to %s : %s", error_condition, err.c_str());
 			}
 			lua_pop(state, 1); // whatever the ErrorHandler do, there will always be one data on the stack (probably a string)
 		}
 
-		// if we put an error function on the stack, it should still be top 
-		assert(error_func == nullptr || lua_tocfunction(state, errfunc) == error_func); 
+		// if we put an error function on the stack, it should still be top
+		assert(error_func == nullptr || lua_tocfunction(state, errfunc) == error_func);
 		if (error_func != nullptr)
 			lua_pop(state, 1);
 
@@ -99,14 +99,18 @@ namespace chaos
 
 		// load file and execute
 		Buffer<char> buffer = FileTools::LoadFile(path, true);
-		if (buffer != nullptr)
+		if (buffer == nullptr)
+		{
+			Log::Error("LuaTools::ExecFile: fail to load [%s]", path.GetResolvedPath().string().c_str());
+		}
+		else
 		{
 			if (chunkname != nullptr)
 				result = ExecBuffer(state, buffer, compiled, chunkname, error_func);
 			else
 			{
 				boost::filesystem::path const & resolved_path = path.GetResolvedPath();
-				result = ExecBuffer(state, buffer, compiled, resolved_path.string().c_str(), error_func);			
+				result = ExecBuffer(state, buffer, compiled, resolved_path.string().c_str(), error_func);
 			}
 		}
 
@@ -116,9 +120,9 @@ namespace chaos
 		return result;
 	}
 
-	void * LuaTools::DefaultAllocFunction(void *ud, void *ptr, size_t /* osize */, size_t nsize) 
+	void * LuaTools::DefaultAllocFunction(void *ud, void *ptr, size_t /* osize */, size_t nsize)
 	{
-		if (nsize == 0) 
+		if (nsize == 0)
 		{
 			free(ptr);
 			return nullptr;

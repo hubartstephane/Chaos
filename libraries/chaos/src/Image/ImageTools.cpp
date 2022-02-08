@@ -8,7 +8,7 @@ namespace chaos
 	//  - for FIMULTIBITMAP, it seems that you should not destroy the MEMORY until you have finished accessing the pages
 	//
 	//   Lifetime(buffer) > Lifetime(MEMORY)
-	//   Lifetime(MEMORY) < or > Lifetime(BITMAP)  (unrelated)	
+	//   Lifetime(MEMORY) < or > Lifetime(BITMAP)  (unrelated)
 	//   Lifetime(MEMORY) > Lifetime(MULTIBITMAP)
 	//
 	// XXX : FreeImage_LoadMultiBitmap...(...) functions
@@ -41,7 +41,7 @@ namespace chaos
 				return false;
 
 			// take the color with the most precision ...
-			PixelRGBAFloat rgba_color; 
+			PixelRGBAFloat rgba_color;
 			rgba_color.R = color.x;
 			rgba_color.G = color.y;
 			rgba_color.B = color.z;
@@ -49,7 +49,7 @@ namespace chaos
 
 			// ... convert it into the wanted PixelType
 			pixel_type dst_color;
-			PixelConverter::Convert(dst_color, rgba_color); 
+			PixelConverter::Convert(dst_color, rgba_color);
 
 			// step 1 : fill line 1 (with standard assignement)
 			ImagePixelAccessor<pixel_type> dst_acc(image_description);
@@ -66,7 +66,7 @@ namespace chaos
 			}
 
 			return true;
-				
+
 		}, false);
 
 #if 0 // keep for example, but the template implementation should fix the alpha issue
@@ -325,7 +325,7 @@ namespace chaos
 						}
 					}
 				}
-				// copy with central symetry 
+				// copy with central symetry
 				//   no interest to test if source type and dest types are identical because we cannot use memcpy(...) due to symetry
 				else if (image_transform == ImageTransform::CENTRAL_SYMETRY)
 				{
@@ -467,7 +467,7 @@ namespace chaos
 						FreeImage_Unload(image);
 					return other;
 				}
-				return image; // ok					
+				return image; // ok
 			}
 			else if (bpp == 16) // don't want 16 bpp any more
 			{
@@ -510,17 +510,25 @@ namespace chaos
 
 	FIBITMAP * ImageTools::LoadImageFromFile(FilePathParam const & path)
 	{
-		return LoadImageFromBuffer(FileTools::LoadFile(path, false));
+		Buffer<char> buffer = FileTools::LoadFile(path, false);
+		if (buffer == nullptr)
+		{
+			Log::Error("LoadImageFromFile: fail to load image [%s]", path.GetResolvedPath().string().c_str());
+			return {};
+		}
+		return LoadImageFromBuffer(buffer);
 	}
 
 	std::vector<FIBITMAP*> ImageTools::LoadMultipleImagesFromFile(FilePathParam const & path, ImageAnimationDescription * anim_description)
 	{
-		std::vector<FIBITMAP*> result;
 		// load the image and get multi image
 		Buffer<char> buffer = FileTools::LoadFile(path, false);
-		if (buffer != nullptr)
-			result = LoadMultipleImagesFromBuffer(buffer, anim_description);
-		return result;
+		if (buffer == nullptr)
+		{
+			Log::Error("LoadMultipleImagesFromFile: fail to load image [%s]", path.GetResolvedPath().string().c_str());
+			return {};
+		}
+		return LoadMultipleImagesFromBuffer(buffer, anim_description);
 	}
 
 	std::vector<FIBITMAP*> ImageTools::LoadMultipleImagesFromBuffer(Buffer<char> buffer, ImageAnimationDescription * anim_description)
@@ -551,7 +559,7 @@ namespace chaos
 					if (bitmap != nullptr)
 						result.push_back(bitmap);
 				}
-			}				
+			}
 			FreeImage_CloseMemory(memory);
 		}
 		return result;
@@ -586,24 +594,24 @@ namespace chaos
 						result.push_back(FreeImage_Clone(page)); // we cannot store a reference to locked page : make a costly clone !!!
 				}
 				FreeImage_UnlockPage(multi_bitmap, page, false);
-			}			
+			}
 		}
 		return result;
 	}
 
 	bool ImageTools::GetImageAnimDescription(FIBITMAP * image, ImageAnimationDescription & result)
 	{
-		int frame_duration_ms = 0;		
+		int frame_duration_ms = 0;
 		if (ReadMetaData(image, FIMD_ANIMATION, "FrameTime", frame_duration_ms))
 		{
 			result.frame_duration = 0.001f * (float)frame_duration_ms;
 			return true;
 		}
 		return false;
-		
+
 
 		// Some metadata (GIF ?) FreeImage library read them
-#if 0 
+#if 0
 		std::int32_t frame_duration = 0;
 		ReadMetaData(image, FIMD_ANIMATION, "FrameTime", frame_duration);
 

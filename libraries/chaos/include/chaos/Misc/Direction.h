@@ -2,12 +2,12 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	enum Direction;
+	enum class Direction;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/** the possible direction */
-	enum Direction : int // XXX: no class, so this can be implicitly converted to int
+	enum class Direction : int
 	{
 		POSITIVE_X = (1 << 0),
 		NEGATIVE_X = (1 << 1),
@@ -16,6 +16,8 @@ namespace chaos
 		POSITIVE_Z = (1 << 4),
 		NEGATIVE_Z = (1 << 5)
 	};
+
+	CHAOS_DECLARE_ENUM_METHOD(Direction);
 
 #endif
 

@@ -13,7 +13,7 @@ namespace chaos
 	* GPUProgramProviderPassType : the type of search we are currently on
 	*/
 
-	enum class GPUProgramProviderPassType
+	enum class GPUProgramProviderPassType : int
 	{
 		FALLBACK = 1,
 		DEDUCED = 2,

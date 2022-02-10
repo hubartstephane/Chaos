@@ -8,7 +8,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	enum class GPUProgramType
+	enum class GPUProgramType : int
 	{
 		RENDER,
 		COMPUTE
@@ -37,7 +37,7 @@ namespace chaos
 		GPUProgramData const& GetProgramData() const { return program_data; }
 		/** get the type of the program */
 		GPUProgramType GetProgramType() const { return type; }
-		
+
 		/** the default material */
 		GPURenderMaterial* GetDefaultMaterial() const;
 

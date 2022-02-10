@@ -206,7 +206,7 @@ namespace chaos
 
 		CHAOS_DECLARE_ENUM_METHOD(VerticalTextAlignment);
 
-		// XXX : The GeometricObjectText is to be considered as a rectangle containing a text. 
+		// XXX : The GeometricObjectText is to be considered as a rectangle containing a text.
 		//       The size of that rectangle may be greater than the size of the text
 		//       The halign/valign members indicate where to place the text inside that rectangle
 
@@ -237,7 +237,7 @@ namespace chaos
 			/** object information */
 			int wrap = 0;
 			/** object information */
-			glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+			glm::vec4 color = { 0.0f, 0.0f, 0.0f, 1.0f };
 		};
 
 		// ==========================================
@@ -279,5 +279,5 @@ namespace chaos
 #endif
 
 	}; // namespace TiledMap
-	
+
 }; // namespace chaos

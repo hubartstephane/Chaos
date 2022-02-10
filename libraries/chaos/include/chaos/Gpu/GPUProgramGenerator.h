@@ -11,7 +11,7 @@ namespace chaos
 	 * The types of possible shaders
 	 */
 
-	enum class ShaderType
+	enum class ShaderType : int
 	{
 		ANY = GL_NONE,
 		VERTEX = GL_VERTEX_SHADER,

@@ -10,6 +10,12 @@ namespace chaos
 	template<typename T, typename ENCODE_TABLE>
 	bool ConvertEnumToString(T src, ENCODE_TABLE const& encode_table, std::string& dst);
 
+#define CHAOS_DECLARE_ENUM_FLAG_METHOD(enum_type)\
+inline enum_type operator|(enum_type a, enum_type b)\
+{\
+	return static_cast<enum_type>(static_cast<int>(a) | static_cast<int>(b));\
+}\
+
 #define CHAOS_DECLARE_ENUM_METHOD(enum_type)\
 bool StringToEnum(char const * src, enum_type& dst);\
 bool EnumToString(enum_type src, std::string & dst);

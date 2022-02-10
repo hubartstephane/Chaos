@@ -22,6 +22,7 @@ namespace chaos
 		TOP_RIGHT = TOP | RIGHT,
 		CENTER = VMIDDLE | HMIDDLE
 	};
+	CHAOS_DECLARE_ENUM_FLAG_METHOD(Hotpoint)
 
 	/** given a hotpoint and a hotpoint, returns the BottomLeft hotpoint position */
 	glm::vec2 ConvertHotpointToBottomLeft(glm::vec2 const& pt, glm::vec2 const& size, Hotpoint hotpoint);

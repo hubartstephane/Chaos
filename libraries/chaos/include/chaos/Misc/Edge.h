@@ -15,6 +15,8 @@ namespace chaos
 		LEFT = 3
 	};
 
+	CHAOS_DECLARE_ENUM_METHOD(Edge);
+
 #endif
 
 }; // namespace chaos

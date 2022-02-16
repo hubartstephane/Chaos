@@ -296,7 +296,7 @@ namespace chaos
 			// load the face and set pixel size
 			FT_Face face = nullptr;
 
-			Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::NONE); // for direct access to resource directory
+			Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::NO_ERROR_TRACE); // for direct access to resource directory
 			if (buffer == nullptr)
 				Log::Error("FolderInfoInput::AddFontFileWithManifestImpl: fail to load [%s]", path.GetResolvedPath().string().c_str());
 			if (buffer != nullptr)

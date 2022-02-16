@@ -25,7 +25,7 @@ bool LoadTileMap(chaos::TiledMap::Manager & manager)
 	boost::filesystem::path set_path = resource_path / "Example1" / "tile set 1.tsx";
 	boost::filesystem::path map_path = resource_path / "Example1" / "tiled_map.tmx";
 
-	chaos::Buffer<char> buffer1 = chaos::FileTools::LoadFile(set_path, LoadFileFlag::NONE);
+	chaos::Buffer<char> buffer1 = chaos::FileTools::LoadFile(set_path);
 	if (buffer1 != nullptr)
 		map_set = manager.LoadTileSet(set_path, buffer1);
 
@@ -35,7 +35,7 @@ bool LoadTileMap(chaos::TiledMap::Manager & manager)
 
 #endif
 
-	chaos::Buffer<char> buffer2 = chaos::FileTools::LoadFile(map_path, LoadFileFlag::NONE);
+	chaos::Buffer<char> buffer2 = chaos::FileTools::LoadFile(map_path);
 	if (buffer2 != nullptr)
 		map = manager.LoadMap(map_path, buffer2);
 

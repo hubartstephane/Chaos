@@ -14,7 +14,7 @@ protected:
 		{
 			std::string filename = chaos::StringTools::Printf("test%d.lua", i);
 
-			chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(rp / filename, LoadFileFlag::ASCII);
+			chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(rp / filename, chaos::LoadFileFlag::ASCII);
 			if (buffer == nullptr)
 				break;
 

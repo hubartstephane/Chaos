@@ -18,7 +18,7 @@ void TestValue(std::ofstream & file, nlohmann::json j, char const * title)
 
 void Test1(boost::filesystem::path const & filename, boost::filesystem::path const & dst_dir)
 {
-  chaos::Buffer<char> buf = chaos::FileTools::LoadFile(filename, LoadFileFlag::ASCII);
+  chaos::Buffer<char> buf = chaos::FileTools::LoadFile(filename, chaos::LoadFileFlag::ASCII);
   if (buf != nullptr)
   {
     std::ofstream file;
@@ -126,7 +126,7 @@ void Test2(boost::filesystem::path const & dst_dir)
 
 void Test3(boost::filesystem::path const & filename, boost::filesystem::path const & dst_dir)
 {
-  chaos::Buffer<char> buf = chaos::FileTools::LoadFile(filename, LoadFileFlag::ASCII);
+  chaos::Buffer<char> buf = chaos::FileTools::LoadFile(filename, chaos::LoadFileFlag::ASCII);
   if (buf != nullptr)
   {
     std::ofstream file;

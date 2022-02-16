@@ -68,7 +68,7 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
-  chaos::Buffer<char> f = chaos::FileTools::LoadFile("C:\\Users\\s.hubart\\Desktop\\totosave.txt", LoadFileFlag::NONE);
+  chaos::Buffer<char> f = chaos::FileTools::LoadFile("C:\\Users\\s.hubart\\Desktop\\totosave.txt");
 
   std::string str = f.data;
 

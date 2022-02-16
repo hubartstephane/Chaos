@@ -310,7 +310,7 @@ bool Game::Initialize(chaos::Window * in_window, nlohmann::json const * config, 
 	boost::filesystem::path object_path = resources_path / "objects" / "objects.json";
 
 	// Load the file
-	chaos::Buffer<char> buf = chaos::FileTools::LoadFile(object_path, LoadFileFlag::ASCII);
+	chaos::Buffer<char> buf = chaos::FileTools::LoadFile(object_path, chaos::LoadFileFlag::ASCII);
 	if (buf == nullptr)
 		return false;
 

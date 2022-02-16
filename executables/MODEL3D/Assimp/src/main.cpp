@@ -29,7 +29,7 @@ protected:
 
   bool InitializeScene(boost::filesystem::path const & model_path)
   {
-    chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(model_path, LoadFileFlag::NONE);
+    chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(model_path);
     if (buffer == nullptr)
       return false;
 

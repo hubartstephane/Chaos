@@ -1300,7 +1300,7 @@ namespace chaos
 		// load the file
 		boost::filesystem::path const& resolved_path = path.GetResolvedPath();
 
-		Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::NONE);
+		Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::NO_ERROR_TRACE);
 		if (buffer == nullptr)
 		{
 			Log::Error("SoundSourceLoader::GenSourceObject: fail to load [%s]", resolved_path.string().c_str());

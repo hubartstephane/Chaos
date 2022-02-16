@@ -272,7 +272,7 @@ protected:
 			//   lua_setglobal(l, "ff");
 
 
-			chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(rp / "test.lua", LoadFileFlag::ASCII);
+			chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(rp / "test.lua", chaos::LoadFileFlag::ASCII);
 			if (buffer != nullptr)
 			{
 				chaos::LuaTools::ExecBuffer(l, buffer, false);

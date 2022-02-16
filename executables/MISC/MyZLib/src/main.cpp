@@ -72,7 +72,7 @@ void TestFromFile()
 
 	boost::filesystem::path const & resource_path = application->GetResourcesPath();
 
-	chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(resource_path / "Ipsum.zip", LoadFileFlag::NONE);
+	chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(resource_path / "Ipsum.zip");
 	if (buffer != nullptr)
 	{
 		chaos::Buffer<char> uncompressed = chaos::MyZLib().Decode(buffer);

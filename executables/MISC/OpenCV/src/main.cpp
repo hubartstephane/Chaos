@@ -37,7 +37,7 @@ public:
 
 		chaos::Buffer<char> * buffer = new chaos::Buffer<char>;
 		{
-			chaos::Buffer<char> b = chaos::FileTools::LoadFile(filepath, LoadFileFlag::NONE);
+			chaos::Buffer<char> b = chaos::FileTools::LoadFile(filepath);
 			*buffer = b;
 		}
 

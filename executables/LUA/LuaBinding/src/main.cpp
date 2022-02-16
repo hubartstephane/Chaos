@@ -294,7 +294,7 @@ void StartLuaFile(boost::filesystem::path const & p, void (*WorkWithLua)(chaos::
 		chaos::LuaState L(state);
 		EnrichLuaState(L);
 
-		chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(p, LoadFileFlag::ASCII);
+		chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(p, chaos::LoadFileFlag::ASCII);
 		if (buffer)
 		{
 			if (chaos::LuaTools::ExecBuffer(L, buffer, false) == 0)

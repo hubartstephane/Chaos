@@ -637,7 +637,7 @@ namespace chaos
 			boost::filesystem::path bitmap_filename;
 			SplitFilename(path, target_dir, index_filename, bitmap_filename); // will be ignored during loading, real name is read from .JSON index
 			// load the file into memory
-			Buffer<char> buffer = FileTools::LoadFile(index_filename, LoadFileFlag::ASCII);
+			Buffer<char> buffer = FileTools::LoadFile(index_filename, LoadFileFlag::ASCII | LoadFileFlag::NO_ERROR_TRACE);
 			if (buffer == nullptr)
 			{
 				Log::Error("Atlas::LoadAtlas: fail to load [%s]", index_filename.string().c_str());

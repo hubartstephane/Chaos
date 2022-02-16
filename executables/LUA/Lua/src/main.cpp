@@ -70,7 +70,7 @@ void WorkWithLua1(chaos::LuaState & L)
 	if (L.Get(17, another_number2, -1))
 		std::cout << "_G[17]  : " << another_number2 << std::endl;
 
-	lua_pop(L, 1); // remove the table 
+	lua_pop(L, 1); // remove the table
 
 	L.DebugOutputStack(std::cout);
 }
@@ -90,7 +90,7 @@ int myCFunc(lua_State * state)
 
 		lua_pushinteger(state, 666); // return value 1
 		lua_pushinteger(state, 667); // return value 2
-		return 2; // number of result  
+		return 2; // number of result
 	}
 	return 0;
 }
@@ -106,7 +106,7 @@ int myCFuncClosure(lua_State * state)
 		lua_pushinteger(state, closure + 1);
 		lua_replace(state, upvalue_index);
 		// the return value
-		lua_pushinteger(state, closure); 
+		lua_pushinteger(state, closure);
 		return 1;
 	}
 	return 0;
@@ -175,7 +175,7 @@ void WorkWithLua5(chaos::LuaState & L)
 	lua_getglobal(L, "LuaFunction"); // the function on the stack is consumed by the pcall(..) ... but not the error handler
 	if (lua_isfunction(L, -1))
 	{
-		lua_pushinteger(L, 1); 
+		lua_pushinteger(L, 1);
 		lua_pushinteger(L, 2);
 		lua_pcall(L, 2, 1, error);
 	}
@@ -184,13 +184,13 @@ void WorkWithLua5(chaos::LuaState & L)
 	if (lua_isinteger(L, -1))
 	{
 		lua_Integer result = lua_tointeger(L, -1);
-		std::cout << "result = " << result << std::endl;    
+		std::cout << "result = " << result << std::endl;
 	}
 	lua_pop(L, 1); // remove the result
 
 				   // remove the error function from the stack
 	assert(lua_tocfunction(L, error) == chaos::LuaTools::DefaultErrorFunction); // the error function is still on the stack
-	lua_pop(L, 1); 
+	lua_pop(L, 1);
 
 	L.DebugOutputStack(std::cout); // display nothing
 }
@@ -278,7 +278,7 @@ void StartLuaFile(boost::filesystem::path const & p, void (*WorkWithLua)(chaos::
 
 		EnrichLuaState(L);
 
-		chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(p, true);
+		chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(p, LoadFileFlag::ASCII);
 		if (buffer)
 		{
 			if (chaos::LuaTools::ExecBuffer(state, buffer, false) == 0)

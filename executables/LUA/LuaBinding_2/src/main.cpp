@@ -65,7 +65,7 @@ void StartLuaFile(boost::filesystem::path const & p, void (*WorkWithLua)(chaos::
 		chaos::LuaState L(state);
 		EnrichLuaState(L);
 
-		chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(p, true);
+		chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(p, LoadFileFlag::ASCII);
 		if (buffer)
 		{
 			if (chaos::LuaTools::ExecBuffer(L, buffer, false) == 0)
@@ -162,7 +162,7 @@ T * GetStackArgument(LuaState & L, int index)
 
 	// try conversion
 	if (lua_isuserdata(L, index)) // considered object on the stack is user data, good
-	{   
+	{
 		lua_getmetatable(L, index); // gets its MT
 		lua_pushstring(L, ID_KEY);  // search  MT["ID"] to get the class ID of considered object
 		lua_rawget(L, -2);
@@ -175,7 +175,7 @@ T * GetStackArgument(LuaState & L, int index)
 			if (InheritanceIntrospection::InheritsFrom(&object_ID, &expected_ID)) // if class is good, returns the userdata
 				return (T *)lua_touserdata(L, index);
 		}
-	} 
+	}
 	return nullptr;
 }
 
@@ -213,7 +213,7 @@ void DeclareClass(LuaState & L, char const * classname, int index = 0)
 
 	int mt_index = lua_gettop(L);
 
-	// register inside the all MT table 
+	// register inside the all MT table
 	L.PushUserData(ID);            // KEY
 	lua_pushvalue(L, mt_index);    // VALUE = duplicate the MT table
 	lua_settable(L, all_mt_index);
@@ -233,8 +233,8 @@ void DeclareClass(LuaState & L, char const * classname, int index = 0)
 
 
 
-	// Create the CLASS table  
-	lua_newtable(L);              
+	// Create the CLASS table
+	lua_newtable(L);
 
 	int class_index = lua_gettop(L);
 
@@ -262,7 +262,7 @@ template<typename BASE, typename PARENT>
 void DeclareClass(LuaState & L, char const * classname, int index = 0)
 {
 	// know the introspection system knows BASE => PARENT
-	InheritanceIntrospection::DeclareInheritance<BASE, PARENT>(); 
+	InheritanceIntrospection::DeclareInheritance<BASE, PARENT>();
 	// create evey thing that is required
 	DeclareClass<BASE>(L, classname, index);
 }
@@ -302,7 +302,7 @@ MyClass * MyClass_CheckOnStack(lua_State * state, int idx)
 
 int MyClass_IndexFunction(lua_State * state)
 {
-	MyClass * self = MyClass_CheckOnStack(state, 1); 
+	MyClass * self = MyClass_CheckOnStack(state, 1);
 	if (self == nullptr)
 		return 0;
 
@@ -362,7 +362,7 @@ int MyClass_NewBinding(lua_State * state)
 		return 0;
 	int MT = lua_gettop(state);
 
-	// read construction parameter : a string 
+	// read construction parameter : a string
 	if (!lua_isstring(state, 1))
 		return 0;
 	char const * name = lua_tostring(state, 1);
@@ -388,7 +388,7 @@ int MyClass_GC(lua_State * state)
 	if (self == nullptr)
 		return 0;
 
-	self->~MyClass();    
+	self->~MyClass();
 
 	return 0;
 }

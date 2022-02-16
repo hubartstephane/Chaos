@@ -23,7 +23,7 @@ chaos::Buffer<char> GenerateRandomBuffer()
 		for (size_t i = 0 ; i < 256 ; ++i)
 			result.data[i] = (char)(i + 1); // ensure all numbers appear at least once
 		for (size_t i = 256 ; i < 256 + size ; ++i)
-			result.data[i] = (char)(rand() % 32); // % 32 just to make sur some characters do not happen, and so is the compression better				
+			result.data[i] = (char)(rand() % 32); // % 32 just to make sur some characters do not happen, and so is the compression better
 	}
 	return result;
 }
@@ -72,7 +72,7 @@ void TestFromFile()
 
 	boost::filesystem::path const & resource_path = application->GetResourcesPath();
 
-	chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(resource_path / "Ipsum.zip", false);
+	chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(resource_path / "Ipsum.zip", LoadFileFlag::NONE);
 	if (buffer != nullptr)
 	{
 		chaos::Buffer<char> uncompressed = chaos::MyZLib().Decode(buffer);

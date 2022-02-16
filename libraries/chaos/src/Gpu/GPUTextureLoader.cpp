@@ -116,7 +116,7 @@ namespace chaos
 		// load the buffer
 		GPUTexture * result = nullptr;
 
-		Buffer<char> ascii_buffer = FileTools::LoadFile(path, true); // ascii mode for JSON
+		Buffer<char> ascii_buffer = FileTools::LoadFile(path, LoadFileFlag::ASCII); // ascii mode for JSON
 		if (ascii_buffer == nullptr)
 		{
 			Log::Error("GPUTextureLoader::GenTextureObject: fail to load [%s]", path.GetResolvedPath().string().c_str());

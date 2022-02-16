@@ -27,6 +27,7 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	enum class LoadFileFlag;
+	CHAOS_DECLARE_ENUM_FLAG_METHOD(LoadFileFlag);
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -36,17 +37,17 @@ namespace chaos
 
 	enum class LoadFileFlag
 	{
+		NONE = 0,
 		ASCII = 1,
 		NO_ERROR_TRACE = 2
 	};
-	CHAOS_DECLARE_ENUM_FLAG_METHOD(LoadFileFlag);
 
 	namespace FileTools
 	{
 		/** returns true if the extension of a file correspond to a string */
 		bool IsTypedFile(FilePathParam const& path, char const* expected_ext);
 		/** loading a whole file into memory */
-		Buffer<char> LoadFile(FilePathParam const& path, bool ascii, bool* success_open = nullptr);
+		Buffer<char> LoadFile(FilePathParam const& path, LoadFileFlag flags = LoadFileFlag::NONE);
 
 		/** try path redirection and call func (until it returns true) */
 		bool ForEachRedirectedPath(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func);
@@ -60,7 +61,7 @@ namespace chaos
 		bool CreateTemporaryDirectory(char const* pattern, boost::filesystem::path& result);
 
 		/** read file as a vector of strings */
-		std::vector<std::string> ReadFileLines(FilePathParam const& path, bool* success_open = nullptr);
+		std::vector<std::string> ReadFileLines(FilePathParam const& path, LoadFileFlag flags = LoadFileFlag::NONE);
 		/** write a file with a vector of strings */
 		bool WriteFileLines(FilePathParam const& path, std::vector<std::string> const& lines);
 

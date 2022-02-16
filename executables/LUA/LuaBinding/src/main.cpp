@@ -7,17 +7,17 @@ public:
 
 	MyClass(char const * in_name) : x(666) , name(in_name)
 	{
-		std::cout << "MyClass constructor : " << name << std::endl; 
+		std::cout << "MyClass constructor : " << name << std::endl;
 	}
 	~MyClass()
-	{ 
-		std::cout << "MyClass destructor : "  << name << std::endl; 
+	{
+		std::cout << "MyClass destructor : "  << name << std::endl;
 	}
 
 	void Func1(int value)
 	{
 		x = value;
-		std::cout << name << ".Func1(...) x = " << x << std::endl; 
+		std::cout << name << ".Func1(...) x = " << x << std::endl;
 	}
 
 	int x;
@@ -52,7 +52,7 @@ MyClass * MyClass_CheckOnStack(lua_State * state, int idx)
 
 int MyClass_IndexFunction(lua_State * state)
 {
-	MyClass * self = MyClass_CheckOnStack(state, 1); 
+	MyClass * self = MyClass_CheckOnStack(state, 1);
 	if (self == nullptr)
 		return 0;
 
@@ -109,7 +109,7 @@ int MyClass_Func1Binding(lua_State * state)
 		return 0;
 
 	// get function parameter
-	if (!lua_isinteger(state, 2))    
+	if (!lua_isinteger(state, 2))
 		return 0;
 
 	// call the function
@@ -128,7 +128,7 @@ int MyClass_NewBinding(lua_State * state)
 		return 0;
 	int MT = lua_gettop(state);
 
-	// read construction parameter : a string 
+	// read construction parameter : a string
 	if (!lua_isstring(state, 1))
 		return 0;
 	char const * name = lua_tostring(state, 1);
@@ -154,7 +154,7 @@ int MyClass_GC(lua_State * state)
 	if (self == nullptr)
 		return 0;
 
-	self->~MyClass();    
+	self->~MyClass();
 
 	return 0;
 }
@@ -181,7 +181,7 @@ void EnrichLuaState1(chaos::LuaState & state)
 	lua_pushvalue(state, MyClassTable); // duplicate the table and consums it with lua_setglobal
 	lua_setglobal(state, "MyClass");
 
-	// declare operator New 
+	// declare operator New
 	lua_pushstring(state, "New");
 	lua_pushcfunction(state, MyClass_NewBinding);
 	lua_settable(state, MyClassTable);
@@ -209,7 +209,7 @@ void EnrichLuaState1(chaos::LuaState & state)
 
 
 	lua_pop(state, 1); // pop MT
-	lua_pop(state, 1); // pop MyClassTable 
+	lua_pop(state, 1); // pop MyClassTable
 
 
 
@@ -231,7 +231,7 @@ void EnrichLuaState1(chaos::LuaState & state)
 					   // Metatable for Member access (index = 1)
 	luaL_newmetatable(state, "MyClass_Member");
 
-	int MemberMT = lua_gettop(state); 
+	int MemberMT = lua_gettop(state);
 
 	lua_pushstring(state, "__index");
 	lua_pushcfunction(state, MyClass_IndexFunction); // Read method
@@ -266,14 +266,14 @@ void EnrichLuaState1(chaos::LuaState & state)
 	lua_pushvalue(state, MyClassTable); // duplicate the table and consums it with lua_setglobal
 	lua_setglobal(state, "MyClass");
 
-	// declare operator New 
+	// declare operator New
 	lua_pushstring(state, "New");
 	lua_pushcfunction(state, MyClass_NewBinding);
 	lua_settable(state, MyClassTable);
 
-	lua_pop(state, 1); // pop MyClassTable 
+	lua_pop(state, 1); // pop MyClassTable
 	lua_pop(state, 1); // pop MT
-	lua_pop(state, 1); // pop Member MT  
+	lua_pop(state, 1); // pop Member MT
 
 #endif
 }
@@ -294,7 +294,7 @@ void StartLuaFile(boost::filesystem::path const & p, void (*WorkWithLua)(chaos::
 		chaos::LuaState L(state);
 		EnrichLuaState(L);
 
-		chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(p, true);
+		chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(p, LoadFileFlag::ASCII);
 		if (buffer)
 		{
 			if (chaos::LuaTools::ExecBuffer(L, buffer, false) == 0)

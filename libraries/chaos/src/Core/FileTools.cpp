@@ -2,8 +2,14 @@
 
 namespace chaos
 {
+	CHAOS_IMPLEMENT_ENUM_FLAG_METHOD(LoadFileFlag);
+
 	namespace FileTools
 	{
+#if _DEBUG
+		CHAOS_APPLICATION_ARG(bool, ShowLoadedFile);
+#endif
+
 		static bool DoIsTypedFile(char const* filename, char const* expected_ext)
 		{
 			assert(filename != nullptr);
@@ -29,17 +35,13 @@ namespace chaos
 			return (StringTools::Stricmp(expected_ext, extension) == 0);
 		}
 
-		static std::vector<std::string> DoReadFileLines(boost::filesystem::path const& path, bool* success_open)
+		static std::vector<std::string> DoReadFileLines(boost::filesystem::path const& path)
 		{
-			assert(success_open != nullptr && *success_open == false); // caller responsability
-
 			std::vector<std::string> result;
 
 			std::ifstream file(path.string().c_str());
 			if (file)
 			{
-				*success_open = true;
-
 				std::string str;
 				while (std::getline(file, str))
 					result.push_back(std::move(str));
@@ -54,22 +56,14 @@ namespace chaos
 			return result;
 		}
 
-#if _DEBUG
-		CHAOS_APPLICATION_ARG(bool, ShowLoadedFile);
-#endif
-
-		static Buffer<char> DoLoadFile(boost::filesystem::path const& resolved_path, bool ascii, bool* success_open)
+		static Buffer<char> DoLoadFile(boost::filesystem::path const& resolved_path, LoadFileFlag flags)
 		{
-			assert(success_open != nullptr && *success_open == false); // caller responsability
-
 			Buffer<char> result;
 
 			// load the content
 			std::ifstream file(resolved_path.string().c_str(), std::ifstream::binary);
 			if (file)
 			{
-				*success_open = true;
-
 				std::streampos start = file.tellg();
 				file.seekg(0, std::ios::end);
 				std::streampos end = file.tellg();
@@ -77,7 +71,9 @@ namespace chaos
 
 				size_t file_size = (size_t)(end - start);
 
-				result = SharedBufferPolicy<char>::NewBuffer(file_size + (ascii ? 1 : 0));
+				bool ascii = ((flags & LoadFileFlag::ASCII) == LoadFileFlag::ASCII);
+
+				result = SharedBufferPolicy<char>::NewBuffer(file_size + ((ascii) ? 1 : 0));
 
 				if (result != nullptr)
 				{
@@ -88,13 +84,6 @@ namespace chaos
 						result.data[file_size] = 0;
 				}
 			}
-
-#if _DEBUG
-			if (Arguments::ShowLoadedFile)
-			{
-				Log::Message("LoadFile [%s]    size = [%d]", resolved_path.string().c_str(), result.bufsize);
-			}
-#endif
 			return result;
 		}
 
@@ -196,20 +185,24 @@ namespace chaos
 			return DoIsTypedFile(resolved_path.string().c_str(), expected_ext); // use an utility function because path to string give a volatile object
 		}
 
-		Buffer<char> LoadFile(FilePathParam const& path, bool ascii, bool* success_open)
+		Buffer<char> LoadFile(FilePathParam const& path, LoadFileFlag flags)
 		{
-			// use a temporary open result, if not provided
-			bool default_success_open = false;
-			if (success_open == nullptr)
-				success_open = &default_success_open;
-			*success_open = false;
-
 			Buffer<char> result;
-			ForEachRedirectedPath(path, [&result, ascii, &success_open](boost::filesystem::path const&p)
+			ForEachRedirectedPath(path, [&result, &path, flags](boost::filesystem::path const&p)
 			{
-				result = DoLoadFile(p, ascii, success_open);
-				return *success_open;
+				result = DoLoadFile(p, flags);
+#if _DEBUG
+				if (result && Arguments::ShowLoadedFile)
+				{
+					Log::Message("LoadFile [%s] -> [%s]    size = [%d]", path.GetResolvedPath().string().c_str(), p.string().c_str(), result.bufsize);
+				}
+#endif
+				return result; // convert to bool
 			});
+			if (result == nullptr && int(flags & LoadFileFlag::NO_ERROR_TRACE) == 0)
+			{
+				Log::Error("LoadFile fails [%s]", path.GetResolvedPath().string().c_str());
+			}
 			return result;
 		}
 
@@ -229,24 +222,28 @@ namespace chaos
 			return false;
 		}
 
-		std::vector<std::string> ReadFileLines(FilePathParam const& path, bool* success_open)
+		std::vector<std::string> ReadFileLines(FilePathParam const& path, LoadFileFlag flags)
 		{
-			// use a temporary open result, if not provided
-			bool default_success_open = false;
-			if (success_open == nullptr)
-				success_open = &default_success_open;
-			*success_open = false;
-
 			std::vector<std::string> result;
-			ForEachRedirectedPath(path, [&result, &success_open](boost::filesystem::path const&p)
+			ForEachRedirectedPath(path, [&result, &path](boost::filesystem::path const&p)
 			{
-				result = DoReadFileLines(p, success_open);
-				return *success_open;
+				result = DoReadFileLines(p);
+#if _DEBUG
+				if ((result.size() > 0) && Arguments::ShowLoadedFile)
+				{
+					Log::Message("ReadFileLines [%s] -> [%s]    line count = [%d]", path.GetResolvedPath().string().c_str(), p.string().c_str(), result.size());
+				}
+#endif
+				return (result.size() > 0); // convert to bool
 			});
+
+			if ((result.size() == 0) && int(flags & LoadFileFlag::NO_ERROR_TRACE) == 0)
+			{
+				Log::Error("ReadFileLines fails [%s]", path.GetResolvedPath().string().c_str());
+			}
+
 			return result;
 		}
-
-
 
 		bool WriteFileLines(FilePathParam const& path, std::vector<std::string> const& lines)
 		{

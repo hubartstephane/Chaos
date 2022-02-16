@@ -1,7 +1,7 @@
 #include <chaos/Chaos.h>
 
 // tiled_map : it use tile set that are ordered
-//             each tile as a number that correspond to 
+//             each tile as a number that correspond to
 //             - a tileset.
 //             - a tile in the tileset
 // in a tile_set
@@ -25,7 +25,7 @@ bool LoadTileMap(chaos::TiledMap::Manager & manager)
 	boost::filesystem::path set_path = resource_path / "Example1" / "tile set 1.tsx";
 	boost::filesystem::path map_path = resource_path / "Example1" / "tiled_map.tmx";
 
-	chaos::Buffer<char> buffer1 = chaos::FileTools::LoadFile(set_path, false);
+	chaos::Buffer<char> buffer1 = chaos::FileTools::LoadFile(set_path, LoadFileFlag::NONE);
 	if (buffer1 != nullptr)
 		map_set = manager.LoadTileSet(set_path, buffer1);
 
@@ -35,7 +35,7 @@ bool LoadTileMap(chaos::TiledMap::Manager & manager)
 
 #endif
 
-	chaos::Buffer<char> buffer2 = chaos::FileTools::LoadFile(map_path, false);
+	chaos::Buffer<char> buffer2 = chaos::FileTools::LoadFile(map_path, LoadFileFlag::NONE);
 	if (buffer2 != nullptr)
 		map = manager.LoadMap(map_path, buffer2);
 

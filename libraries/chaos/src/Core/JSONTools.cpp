@@ -121,7 +121,7 @@ namespace chaos
 		{
 			if (!recursive)
 			{
-				Buffer<char> buffer = FileTools::LoadFile(path, true);
+				Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::ASCII | LoadFileFlag::NO_ERROR_TRACE);
 				if (buffer == nullptr)
 				{
 					Log::Error("JSONTools::LoadJSONFile: fail to load [%s]", path.GetResolvedPath().string().c_str());

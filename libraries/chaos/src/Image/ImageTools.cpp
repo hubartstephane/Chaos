@@ -510,7 +510,7 @@ namespace chaos
 
 	FIBITMAP * ImageTools::LoadImageFromFile(FilePathParam const & path)
 	{
-		Buffer<char> buffer = FileTools::LoadFile(path, false);
+		Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::NONE);
 		if (buffer == nullptr)
 		{
 			Log::Error("LoadImageFromFile: fail to load image [%s]", path.GetResolvedPath().string().c_str());
@@ -522,7 +522,7 @@ namespace chaos
 	std::vector<FIBITMAP*> ImageTools::LoadMultipleImagesFromFile(FilePathParam const & path, ImageAnimationDescription * anim_description)
 	{
 		// load the image and get multi image
-		Buffer<char> buffer = FileTools::LoadFile(path, false);
+		Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::NONE);
 		if (buffer == nullptr)
 		{
 			Log::Error("LoadMultipleImagesFromFile: fail to load image [%s]", path.GetResolvedPath().string().c_str());

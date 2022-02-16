@@ -42,10 +42,10 @@ void Game::Tick(float delta_time)
 	if (pending_gameover || pending_restart_game)
 	{
 		GameOver();
-	}		
+	}
 	else
 	{
-		
+
 
 		GameInfo game_info(*this);
 		if (game_started && !game_paused)
@@ -54,11 +54,11 @@ void Game::Tick(float delta_time)
 			UpdatePlayerDisplacement(delta_time);
 			FindPlayerCollision();
 		}
-		
-		for(size_t i = 0 ; i < sprite_layers.size() ; ++i)
-			sprite_layers[i].Tick(delta_time, game_info);		
 
-		
+		for(size_t i = 0 ; i < sprite_layers.size() ; ++i)
+			sprite_layers[i].Tick(delta_time, game_info);
+
+
 	}
 	ResetPlayerCachedInputs();
 }
@@ -71,11 +71,11 @@ void Game::SpawnExtraParticles(GameInfo game_info, float delta_time)
 		if ((int)layer.particles.size() >= layer.max_particle_count) // already too much particles
 			continue;
 
-		// number of particles we would like to have at the end (with LEVEL consideration)		
-		int count = layer.min_particle_count + (level * level_particle_increment); 
+		// number of particles we would like to have at the end (with LEVEL consideration)
+		int count = layer.min_particle_count + (level * level_particle_increment);
 
 		// clamp to the max count (singleton will remains singletons)
-		if (count > layer.max_particle_count) 
+		if (count > layer.max_particle_count)
 			count = layer.max_particle_count;
 
 		int particles_to_spawn = (count - (int)layer.particles.size());
@@ -84,7 +84,7 @@ void Game::SpawnExtraParticles(GameInfo game_info, float delta_time)
 			particles_to_spawn = max_particles_per_frame;
 
 		if (particles_to_spawn > 0)
-			layer.PopulateSprites(game_info, particles_to_spawn);		
+			layer.PopulateSprites(game_info, particles_to_spawn);
 	}
 }
 
@@ -95,17 +95,17 @@ chaos::box2 Game::GetWorldBox(bool use_padding) const
 	{
 		if (world_padding_ratio.x > 0.0f && world_padding_ratio.y > 0.0f)
 		{
-			float min_x = world_position.x - (0.5f * world_size.x) - (world_size.x * world_padding_ratio.x); 
-			float max_x = world_position.x + (0.5f * world_size.x) + (world_size.x * world_padding_ratio.x); 
-		
+			float min_x = world_position.x - (0.5f * world_size.x) - (world_size.x * world_padding_ratio.x);
+			float max_x = world_position.x + (0.5f * world_size.x) + (world_size.x * world_padding_ratio.x);
+
 			float min_y = world_position.y - (0.5f * world_size.y);
-			float max_y = world_position.y + (0.5f * world_size.y) + (world_size.y * world_padding_ratio.y); 
+			float max_y = world_position.y + (0.5f * world_size.y) + (world_size.y * world_padding_ratio.y);
 
 			glm::vec2 bottom_left = glm::vec2(min_x, min_y);
 			glm::vec2 top_right   = glm::vec2(max_x, max_y);
 
-			return chaos::box2(std::make_pair(bottom_left, top_right));		
-		}	
+			return chaos::box2(std::make_pair(bottom_left, top_right));
+		}
 	}
 	return chaos::box2(world_position, 0.5f * world_size);;
 }
@@ -138,7 +138,7 @@ void Game::UpdatePlayerDisplacement(float delta_time)
 			simulated_stick.y -= 1.0f;
 		if (glfwGetKey(glfw_window, GLFW_KEY_UP))
 			simulated_stick.y += 1.0f;
-	
+
 		stick_to_apply = simulated_stick;
 	}
 
@@ -157,9 +157,9 @@ void Game::UpdateWorldAndPlayerPosition(float delta_time, glm::vec2 const & dire
 	chaos::box2 world_box = GetWorldBox(false);
 	world_box.position = glm::vec2(0.0f, 0.0f);
 	world_box.half_size *= screen_safe_aera;
-		
+
 	// apply joystick displacement
-	glm::vec2 player_screen_position = player_particle->position; 
+	glm::vec2 player_screen_position = player_particle->position;
 
   player_speed = direction * max_speed;
 
@@ -167,7 +167,7 @@ void Game::UpdateWorldAndPlayerPosition(float delta_time, glm::vec2 const & dire
 
 	// restrict the player displacement
 	chaos::box2 player_box = chaos::box2(player_screen_position, player_particle->half_size);
-	
+
 	float p1 = 0.0f;
 	float p2 = 0.0f;
 
@@ -185,9 +185,9 @@ void Game::UpdateWorldAndPlayerPosition(float delta_time, glm::vec2 const & dire
 	glm::vec2 wp2 = world_position;
 	UpdateParticlesPosition(0.0f, -(wp2 - wp1));
 
-	// FIX !!! we only use screen space coordinate, the having a world that is still at 0 position is not a bad idea 
+	// FIX !!! we only use screen space coordinate, the having a world that is still at 0 position is not a bad idea
 	//         to avoid float issues
-	world_position = glm::vec2(0.0f, 0.0f); 
+	world_position = glm::vec2(0.0f, 0.0f);
 }
 
 bool Game::FindPlayerCollision()
@@ -224,7 +224,7 @@ bool Game::FindPlayerCollision()
 			chaos::box2 particle_box = chaos::box2(p.position, p.half_size);
 
 			if (chaos::Collide(player_box, particle_box)) // raw collision detection
-			{				
+			{
 				chaos::sphere2 particle_sphere = chaos::GetInnerSphere(particle_box);
 
 				if (chaos::Collide(player_triangle, particle_sphere)) // more precise
@@ -234,10 +234,10 @@ bool Game::FindPlayerCollision()
 						result = true;
 						layer.particles[j] = layer.particles.back();
 						layer.particles.pop_back();
-						continue;				
-					}				
+						continue;
+					}
 				}
-			}				
+			}
 			++j;
 		}
 	}
@@ -263,15 +263,15 @@ bool Game::OnCollision(Particle & p, SpriteLayer & layer)
 			else
 			{
 				if (collision_source != nullptr)
-					collision_source->Play(chaos::PlaySoundDesc());				
+					collision_source->Play(chaos::PlaySoundDesc());
 			}
 		}
 		else
 		{
 			if (collision_source != nullptr)
-				collision_source->Play(chaos::PlaySoundDesc());		
+				collision_source->Play(chaos::PlaySoundDesc());
 		}
-			
+
 	}
 	else if (layer.collision_type == SpriteLayer::COLLISION_LEVELUP)
 	{
@@ -310,12 +310,12 @@ bool Game::Initialize(chaos::Window * in_window, nlohmann::json const * config, 
 	boost::filesystem::path object_path = resources_path / "objects" / "objects.json";
 
 	// Load the file
-	chaos::Buffer<char> buf = chaos::FileTools::LoadFile(object_path, true);
+	chaos::Buffer<char> buf = chaos::FileTools::LoadFile(object_path, LoadFileFlag::ASCII);
 	if (buf == nullptr)
 		return false;
 
   // parse JSON structures
-  nlohmann::json json; 
+  nlohmann::json json;
   if (chaos::JSONTools::Parse(buf, json))
     return DoInitialize(resources_path, object_path, json);
 	return false;
@@ -326,7 +326,7 @@ bool Game::InitializeSounds(boost::filesystem::path const & resource_path)
 	sound_manager = chaos::WindowApplication::GetSoundManagerInstance(); // copy shared reference to the manager
 	if (sound_manager == nullptr)
 		return false;
-  
+
 	chaos::PlaySoundDesc desc;
 	desc.looping = true;
 
@@ -381,12 +381,12 @@ void Game::Finalize()
 
 	fullscreen_mesh = nullptr;
 
-	background_program = nullptr;	
+	background_program = nullptr;
 	background_texture = nullptr;
 
 	control_program = nullptr;
 	control_texture = nullptr;
-	
+
 	gamepad_manager = nullptr;
 
 	music_source = nullptr;
@@ -418,16 +418,16 @@ SpriteLayer const * Game::FindSpriteLayer(int layer) const
 
 bool Game::LoadSpriteLayerInfo(nlohmann::json const & json)
 {
-	nlohmann::json const * layers = chaos::JSONTools::GetStructure(json, "layers"); 
+	nlohmann::json const * layers = chaos::JSONTools::GetStructure(json, "layers");
 	if (layers != nullptr)
 	{
 		for (auto const & json_layer : *layers)
 		{
 			SpriteLayer sprite_layer;
 			if (!sprite_layer.LoadFromJSON(json_layer))
-				continue;			
+				continue;
 			if (FindSpriteLayer(sprite_layer.layer) != nullptr) // already existing
-				continue;				
+				continue;
 			sprite_layers.push_back(sprite_layer);
 		}
 	}
@@ -442,12 +442,12 @@ bool Game::InitializeSpriteManagers()
 	for (size_t i = 0 ; i < sprite_layers.size() ; ++i)
 	{
 		SpriteLayer & layer = sprite_layers[i];
-	
+
 		chaos::shared_ptr<SpriteManager> sprite_manager = new SpriteManager();
 		if (sprite_manager == nullptr)
-			return false;			
+			return false;
 		if (!sprite_manager->Initialize(this, sprite_params))
-			return false;	
+			return false;
 
 		sprite_params.program = sprite_manager->GetProgram(); // reuse the program of the first manager into the other managers
 
@@ -455,8 +455,8 @@ bool Game::InitializeSpriteManagers()
 	}
 
 	// sort the layers
-	std::sort(sprite_layers.begin(), sprite_layers.end(), [](SpriteLayer const & obj1, SpriteLayer const & obj2){	
-		return (obj1.layer < obj2.layer);			
+	std::sort(sprite_layers.begin(), sprite_layers.end(), [](SpriteLayer const & obj1, SpriteLayer const & obj2){
+		return (obj1.layer < obj2.layer);
 	});
 
 	return true;
@@ -582,7 +582,7 @@ bool Game::LoadObjectDefinition(nlohmann::json const & json)
 			if (FindSpriteLayer(def.layer) == nullptr) // layer not existing
 				continue;
 			object_definitions.push_back(std::move(def));
-		}	
+		}
 	}
 	return true;
 }
@@ -601,7 +601,7 @@ void Game::DisplayControls(chaos::GPURenderer * renderer, glm::ivec2 viewport_si
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
-	DisplayFullscreen(renderer, viewport_size, control_texture, control_program);	
+	DisplayFullscreen(renderer, viewport_size, control_texture, control_program);
 }
 
 void Game::DisplayFullscreen(chaos::GPURenderer * renderer, glm::ivec2 viewport_size, chaos::shared_ptr<chaos::GPUTexture> texture, chaos::shared_ptr<chaos::GPUProgram> program)
@@ -668,7 +668,7 @@ void Game::DisplaySprites(chaos::GPURenderer * renderer, glm::ivec2 viewport_siz
   chaos::shared_ptr<chaos::GPUProgramProvider> uniform_provider = new chaos::GPUProgramProvider;
 
 	glm::vec3 scale = glm::vec3(2.0f / world_size.x, 2.0f / world_size.y, 1.0f);
-	glm::vec3 tr    = glm::vec3(-world_position.x, -world_position.y, 0.0f); 
+	glm::vec3 tr    = glm::vec3(-world_position.x, -world_position.y, 0.0f);
 
 	glm::mat4 local_to_cam =  glm::scale(scale) /* * glm::translate(tr)*/; // SCREEN SPACE particles, no TRANSATION
 
@@ -690,7 +690,7 @@ void Game::Display(chaos::GPURenderer * renderer, glm::ivec2 viewport_size)
 	//       (world_size.x / 2, world_size.y) are limits of the the viewport
 
 	DisplayBackground(renderer, viewport_size);
-			
+
 	DisplaySprites(renderer, viewport_size);
 
 	DisplayControls(renderer, viewport_size);
@@ -699,7 +699,7 @@ void Game::Display(chaos::GPURenderer * renderer, glm::ivec2 viewport_size)
 bool Game::OnPhysicalGamepadInput(chaos::PhysicalGamepad * physical_gamepad)
 {
 	if (!game_started)
-	{		
+	{
 		if (physical_gamepad->IsAnyButtonPressed())
 			StartGame();
 	}
@@ -707,8 +707,8 @@ bool Game::OnPhysicalGamepadInput(chaos::PhysicalGamepad * physical_gamepad)
 	{
 		if ((physical_gamepad->GetButtonStateChange(chaos::GamepadButton::SPECIAL_LEFT) == chaos::ButtonStateChange::BECOME_PRESSED) ||
 			(physical_gamepad->GetButtonStateChange(chaos::GamepadButton::SPECIAL_RIGHT) == chaos::ButtonStateChange::BECOME_PRESSED))
-			SetPause(!game_paused);		
-	}		
+			SetPause(!game_paused);
+	}
 
 	glm::vec2 left_stick_position  = physical_gamepad->GetStickValue(chaos::GamepadStick::LEFT_STICK);
 	glm::vec2 right_stick_position = physical_gamepad->GetStickValue(chaos::GamepadStick::RIGHT_STICK);
@@ -728,17 +728,17 @@ bool Game::OnKeyEvent(int key, int action)
 	{
 		if (action == GLFW_PRESS)
 		{
-			StartGame();	
+			StartGame();
 			return true;
-		}	
+		}
 	}
 	else
 	{
 		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		{    
+		{
 			pending_restart_game = true;
 			return true;
-		}		
+		}
 	}
 
 	if (key == GLFW_KEY_P && action == GLFW_PRESS)
@@ -757,7 +757,7 @@ void Game::GameOver()
 
 	bool old_pending_gameover = pending_gameover;
 	bool old_pending_restart_game = pending_restart_game;
-	
+
 	game_started = false;
 	game_paused  = false;
 
@@ -773,7 +773,7 @@ void Game::GameOver()
 
 void Game::ResetWorld()
 {
-	pending_restart_game = pending_gameover = false;	
+	pending_restart_game = pending_gameover = false;
 
 	world_position = GetWorldInitialPosition();
 
@@ -782,18 +782,18 @@ void Game::ResetWorld()
 	life  = initial_life;
 	level = initial_level;
 	player_speed = glm::vec2(0.0f, 0.0f);
-	
+
 	GameInfo game_info(*this);
 	for (SpriteLayer & layer : sprite_layers)
 	{
 		layer.SetVisible(layer.start_visible);
 		layer.DestroyAllParticles();
-		layer.PopulateSprites(game_info, layer.min_particle_count);	
+		layer.PopulateSprites(game_info, layer.min_particle_count);
 	}
 
 	glm::vec2 screen_space_position = GetPlayerInitialScreenPosition();
 
-	glm::vec2 player_position = world_position + screen_space_position; 
+	glm::vec2 player_position = world_position + screen_space_position;
 	SetPlayerScreenPosition(screen_space_position);
 }
 
@@ -886,10 +886,10 @@ glm::vec2 Game::GetPlayerInitialScreenPosition() const
 	{
 		return glm::vec2(
 			0.0f,
-			0.75f * (-0.5f * world_size.y + player_particle->half_size.y)		
-		);		
+			0.75f * (-0.5f * world_size.y + player_particle->half_size.y)
+		);
 	}
-	return glm::vec2(0.0f, 0.0f);	
+	return glm::vec2(0.0f, 0.0f);
 }
 
 void Game::InitializeFromConfiguration(nlohmann::json const & config)
@@ -905,5 +905,5 @@ void Game::InitializeFromConfiguration(nlohmann::json const & config)
   chaos::JSONTools::GetAttribute(config, "slowdown_factor", slowdown_factor, 500.0f);
   chaos::JSONTools::GetAttribute(config, "acceleration_factor", acceleration_factor, 500.0f);
 
-  
+
 }

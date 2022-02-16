@@ -49,7 +49,7 @@ return_type constness * Manager::funcname(FilePathParam const & path) constness\
 #define CHAOS_IMPL_MANAGER_DOLOAD(funcname, return_type, member_name)\
 return_type * Manager::funcname(FilePathParam const & path, bool store_object)\
 {\
-	if (Buffer<char> buffer = FileTools::LoadFile(path, true))\
+	if (Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::ASCII))\
 		return funcname(path, buffer, store_object);\
 	Log::Error("Manager::" #funcname ": fail to load [%s]", path.GetResolvedPath().string().c_str());\
 	return nullptr;\

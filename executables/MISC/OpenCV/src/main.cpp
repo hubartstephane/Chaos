@@ -37,7 +37,7 @@ public:
 
 		chaos::Buffer<char> * buffer = new chaos::Buffer<char>;
 		{
-			chaos::Buffer<char> b = chaos::FileTools::LoadFile(filepath, false);
+			chaos::Buffer<char> b = chaos::FileTools::LoadFile(filepath, LoadFileFlag::NONE);
 			*buffer = b;
 		}
 
@@ -70,7 +70,7 @@ public:
 			{
 				FIBITMAP * page = FreeImage_LockPage(multi_bitmap, 0);
 
-				
+
 
 				if (page != nullptr)
 				{
@@ -78,7 +78,7 @@ public:
 					int w   = FreeImage_GetWidth(page);
 					int h = FreeImage_GetHeight(page);
 
-					
+
 					//multi_bitmap = nullptr;
 
 					//

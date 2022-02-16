@@ -98,7 +98,7 @@ namespace chaos
 			new_state = state;
 
 		// load file and execute
-		Buffer<char> buffer = FileTools::LoadFile(path, true);
+		Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::ASCII);
 		if (buffer == nullptr)
 		{
 			Log::Error("LuaTools::ExecFile: fail to load [%s]", path.GetResolvedPath().string().c_str());

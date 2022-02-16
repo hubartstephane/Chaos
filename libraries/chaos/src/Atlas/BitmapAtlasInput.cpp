@@ -296,7 +296,7 @@ namespace chaos
 			// load the face and set pixel size
 			FT_Face face = nullptr;
 
-			Buffer<char> buffer = FileTools::LoadFile(path, false); // for direct access to resource directory
+			Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::NONE); // for direct access to resource directory
 			if (buffer == nullptr)
 				Log::Error("FolderInfoInput::AddFontFileWithManifestImpl: fail to load [%s]", path.GetResolvedPath().string().c_str());
 			if (buffer != nullptr)
@@ -341,7 +341,7 @@ namespace chaos
 			result->glyph_width = params.glyph_width;
 			result->glyph_height = params.glyph_height;
 			result->ascender = face->size->metrics.ascender / 64;     // take the FT_Pixel_Size(...) into consideration
-			result->descender = face->size->metrics.descender / 64;   // take the FT_Pixel_Size(...) into consideration 
+			result->descender = face->size->metrics.descender / 64;   // take the FT_Pixel_Size(...) into consideration
 			result->face_height = face->size->metrics.height / 64;    // take the FT_Pixel_Size(...) into consideration
 
 			RegisterResource(library, release_library);
@@ -365,7 +365,7 @@ namespace chaos
 				int h = glyph.second.bitmap_glyph->bitmap.rows;
 
 				FIBITMAP * bitmap = FontTools::GenerateImage(glyph.second.bitmap_glyph->bitmap, PixelFormat::BGRA);
-				if (bitmap != nullptr || w <= 0 || h <= 0)  // if bitmap is zero sized (whitespace, the allocation failed). The info is still interesting                                          
+				if (bitmap != nullptr || w <= 0 || h <= 0)  // if bitmap is zero sized (whitespace, the allocation failed). The info is still interesting
 				{
 					// apply filters (for glyph that have an image)
 					if (bitmap != nullptr)
@@ -400,7 +400,7 @@ namespace chaos
 				}
 			}
 
-			// release the glyph cache 
+			// release the glyph cache
 			for (auto & glyph : glyph_cache)
 				FT_Done_Glyph((FT_Glyph)glyph.second.bitmap_glyph);
 
@@ -423,7 +423,7 @@ namespace chaos
 			{
 				// skip already handled path
 				if (std::find(add_data.ignore_files.begin(), add_data.ignore_files.end(), p) != add_data.ignore_files.end())
-					continue;					
+					continue;
 				// add bitmap
 				AddBitmapFileImpl(p, nullptr, 0, add_data);
 			}
@@ -539,7 +539,7 @@ namespace chaos
                 return nullptr;
             }
             // normal file
-            else            
+            else
             {
                 // search whether a manifest for the file exists
                 nlohmann::json json_manifest;
@@ -571,7 +571,7 @@ namespace chaos
 			if (name == nullptr)
 			{
 				if (!animated_name.empty())
-					generated_name = BoostTools::PathToName(animated_name);				
+					generated_name = BoostTools::PathToName(animated_name);
 				else
 					generated_name = BoostTools::PathToName(resolved_path);
 				name = generated_name.c_str();
@@ -590,7 +590,7 @@ namespace chaos
                 LoadFromJSON(*json_manifest, input_manifest);
 
 			// load all pages for the bitmap
-            std::vector<FIBITMAP*> pages;            
+            std::vector<FIBITMAP*> pages;
             if (images == nullptr)
             {
                 pages = ImageTools::LoadMultipleImagesFromFile(path, &animation_description); // extract frame_rate from META DATA
@@ -615,7 +615,7 @@ namespace chaos
                 animation_description.grid_data = input_manifest.grid_data;
 
 			animation_description.default_wrap_mode = input_manifest.default_wrap_mode; // default_wrap_mode is nor encoded into file nor in metadata
-		
+
 			// not clear what to do (we have both a grid and a per frame animation). Abord
 			if (count > 1 && input_manifest.grid_data.GetFrameCount() > 1)
 			{
@@ -628,7 +628,7 @@ namespace chaos
 			if (!ApplyProcessors(*images, input_manifest.image_processors, animation_description.grid_data))
 				return nullptr;
 
-            // register resources for destructions			
+            // register resources for destructions
 			for (size_t i = 0; i < count; ++i)
 				RegisterResource(images->operator[](i), true);
 
@@ -707,14 +707,14 @@ namespace chaos
 					if (animation_description != nullptr)
 						animation_info->animation_description = *animation_description;
 					result->animation_info = animation_info;
-		
+
 					// animated images with frames (all child frames are stored consecutively)
 					if (page_count > 1)
 					{
 						for (size_t i = 1; i < page_count; ++i)
 						{
 							// create the child frame
-							BitmapInfoInput * child_frame = new BitmapInfoInput; 
+							BitmapInfoInput * child_frame = new BitmapInfoInput;
 							if (child_frame == nullptr)
 								continue;
 							// insert the child frames inside the folder (as unamed, untagged)
@@ -722,18 +722,18 @@ namespace chaos
 							child_frame->description = ImageTools::GetImageDescription(pages[i]);
 							bitmaps.push_back(std::move(std::unique_ptr<BitmapInfoInput>(child_frame)));
 							// insert the child frame inside the animation block
-							animation_info->child_frames.push_back(child_frame);							
+							animation_info->child_frames.push_back(child_frame);
 						}
 					}
 				}
 			}
 			return result;
-		}		
+		}
 
 		// ========================================================================
 		// AtlasInput implementation
 		// ========================================================================
-		
+
 		AtlasInput::AtlasInput()
 		{
 			root_folder.atlas_input = this;

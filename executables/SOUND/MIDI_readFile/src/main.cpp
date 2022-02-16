@@ -31,7 +31,7 @@ protected:
 
 		boost::filesystem::path const & resource_path = application->GetResourcesPath();
 
-		chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(resource_path / "Blues Breaker - 8 Bars" / "BluesBreaker_8Bars_01.mid", false);
+		chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(resource_path / "Blues Breaker - 8 Bars" / "BluesBreaker_8Bars_01.mid", LoadFileFlag::NONE);
 		if (buffer == nullptr)
 			return false;
 

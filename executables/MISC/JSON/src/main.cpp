@@ -18,7 +18,7 @@ void TestValue(std::ofstream & file, nlohmann::json j, char const * title)
 
 void Test1(boost::filesystem::path const & filename, boost::filesystem::path const & dst_dir)
 {
-  chaos::Buffer<char> buf = chaos::FileTools::LoadFile(filename, true);
+  chaos::Buffer<char> buf = chaos::FileTools::LoadFile(filename, LoadFileFlag::ASCII);
   if (buf != nullptr)
   {
     std::ofstream file;
@@ -30,7 +30,7 @@ void Test1(boost::filesystem::path const & filename, boost::filesystem::path con
       {
         nlohmann::json j = nlohmann::json::parse(buf.data);
         file << j << std::endl;
-        
+
         // read a bool
         bool v1 = j["happy"].get<bool>();
 
@@ -71,14 +71,14 @@ void Test1(boost::filesystem::path const & filename, boost::filesystem::path con
 
         auto v6 = v5["currency"];
         auto v7 = v5["value"];
-        
+
         file << "currency = " << v6 << std::endl;
         TestValue(file, v6, "v6");
         file << "value    = " << v7 << std::endl;
         TestValue(file, v7, "v7");
 
         // use iterators
-        for (nlohmann::json::iterator it = j.begin(); it != j.end(); ++it) 
+        for (nlohmann::json::iterator it = j.begin(); it != j.end(); ++it)
           file << "ITERATOR 1 : " << *it << '\n';
 
         // use iterators
@@ -101,7 +101,7 @@ void Test1(boost::filesystem::path const & filename, boost::filesystem::path con
         char const * error = e.what();
         file << "EXCEPTION : " << e.what() << std::endl;
       }
-    }   
+    }
   }
 }
 
@@ -112,7 +112,7 @@ void Test2(boost::filesystem::path const & dst_dir)
   j["pi"]      = 3.141;
   j["happy"]   = true;
   j["name"]    = "Niels";
-  j["nothing"] = nullptr;  
+  j["nothing"] = nullptr;
   j["list"]    = { 1, 0, 2 };
   j["object"]  = { { "currency", "USD" },{ "value", 42.99 } };
   j["answer"]["everything"] = 42;
@@ -126,7 +126,7 @@ void Test2(boost::filesystem::path const & dst_dir)
 
 void Test3(boost::filesystem::path const & filename, boost::filesystem::path const & dst_dir)
 {
-  chaos::Buffer<char> buf = chaos::FileTools::LoadFile(filename, true);
+  chaos::Buffer<char> buf = chaos::FileTools::LoadFile(filename, LoadFileFlag::ASCII);
   if (buf != nullptr)
   {
     std::ofstream file;
@@ -143,25 +143,25 @@ void Test3(boost::filesystem::path const & filename, boost::filesystem::path con
           /// the parser read `{` and started to process a JSON object
           if (event == nlohmann::json::parse_event_t::object_start)
             file << "object_start]";
-          /// the parser read `}` and finished processing a JSON object            
+          /// the parser read `}` and finished processing a JSON object
           if (event == nlohmann::json::parse_event_t::object_end)
             file << "object_end]";
-            /// the parser read `[` and started to process a JSON array              
-          if (event == nlohmann::json::parse_event_t::array_start)          
+            /// the parser read `[` and started to process a JSON array
+          if (event == nlohmann::json::parse_event_t::array_start)
             file << "array_start]";
-          /// the parser read `]` and finished processing a JSON array          
-          if (event == nlohmann::json::parse_event_t::array_end)                  
-            file << "array_end]";            
-          /// the parser read a key of a value in an object                  
-          if (event == nlohmann::json::parse_event_t::key)                    
-            file << "key]";            
-          /// the parser finished reading a JSON value                                      
-          if (event == nlohmann::json::parse_event_t::value)                      
+          /// the parser read `]` and finished processing a JSON array
+          if (event == nlohmann::json::parse_event_t::array_end)
+            file << "array_end]";
+          /// the parser read a key of a value in an object
+          if (event == nlohmann::json::parse_event_t::key)
+            file << "key]";
+          /// the parser finished reading a JSON value
+          if (event == nlohmann::json::parse_event_t::value)
             file << "value]";
-                      
-          if (parsed == nlohmann::json("currency"))              
+
+          if (parsed == nlohmann::json("currency"))
             file << "   CURRENCY FOUND !!!";
- 
+
           file << std::endl;
 
           return true;

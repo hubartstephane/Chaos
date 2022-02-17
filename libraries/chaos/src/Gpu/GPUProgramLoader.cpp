@@ -32,7 +32,7 @@ namespace chaos
 	}
 
 	bool GPUProgramLoader::IsNameAlreadyUsedInManager(ObjectRequest request) const
-	{ 
+	{
 		return (manager != nullptr && manager->FindProgram(request) != nullptr);
 	}
 
@@ -52,8 +52,8 @@ namespace chaos
 
 		// gather all shaders
 		GPUProgramGenerator program_generator;
-		
-		for (auto it = json.begin(); it != json.end(); ++it) // search of all keys 
+
+		for (auto it = json.begin(); it != json.end(); ++it) // search of all keys
 		{
 			std::string const & property_name = it.key();
 
@@ -84,8 +84,8 @@ namespace chaos
 		else if (status.type() == boost::filesystem::file_type::regular_file)
 		{
 			nlohmann::json json;
-			if (JSONTools::LoadJSONFile(path, json, true))
-				return GenProgramObject(json);	
+			if (JSONTools::LoadJSONFile(path, json, LoadFileFlag::RECURSIVE))
+				return GenProgramObject(json);
 		}
 		return nullptr;
 	}
@@ -96,8 +96,8 @@ namespace chaos
 		boost::filesystem::path pgm_filename = p / p.filename().replace_extension("pgm");
 
 		nlohmann::json json;
-		if (JSONTools::LoadJSONFile(pgm_filename, json, true))
-			return GenProgramObject(json);	
+		if (JSONTools::LoadJSONFile(pgm_filename, json, LoadFileFlag::RECURSIVE))
+			return GenProgramObject(json);
 
 		// search all files in the directory
 		static std::map<char const*, ShaderType, StringTools::RawStringILess> extension_map =

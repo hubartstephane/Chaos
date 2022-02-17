@@ -222,7 +222,7 @@ namespace chaos
 			{
 				// load the manifest
 				nlohmann::json json_manifest;
-				if (!JSONTools::LoadJSONFile(path, json_manifest, false))
+				if (!JSONTools::LoadJSONFile(path, json_manifest))
 				{
 					Log::Error("FolderInfoInput::AddFontFileImpl => failed to load json file [%s]", resolved_path.string().c_str());
 					return nullptr;
@@ -257,7 +257,7 @@ namespace chaos
 
 				boost::filesystem::path json_path = resolved_path;
 				json_path.replace_extension("json");
-				JSONTools::LoadJSONFile(json_path, json_manifest, false);
+				JSONTools::LoadJSONFile(json_path, json_manifest);
 
 				// do not individually load the manifest in recursive calls
 				add_data.ignore_files.push_back(json_path);
@@ -500,7 +500,7 @@ namespace chaos
             {
                 // load the manifest
                 nlohmann::json json_manifest;
-				if (!JSONTools::LoadJSONFile(path, json_manifest, false))
+				if (!JSONTools::LoadJSONFile(path, json_manifest))
 				{
 					Log::Error("FolderInfoInput::AddBitmapFileImpl => failed to load json file [%s]", resolved_path.string().c_str());
 					return nullptr;
@@ -546,7 +546,7 @@ namespace chaos
 
                 boost::filesystem::path json_path = resolved_path;
                 json_path.replace_extension("json");
-                JSONTools::LoadJSONFile(json_path, json_manifest, false);
+                JSONTools::LoadJSONFile(json_path, json_manifest, LoadFileFlag::NO_ERROR_TRACE);
 
                 // do not individually load the manifest in recursive calls
                 add_data.ignore_files.push_back(json_path);

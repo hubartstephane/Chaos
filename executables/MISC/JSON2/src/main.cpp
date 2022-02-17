@@ -35,7 +35,7 @@ protected:
     boost::filesystem::path configuration_path = application->GetResourcesPath() / "test1.json";
 
     nlohmann::json c1;
-    chaos::JSONTools::LoadJSONFile(configuration_path, c1, true);
+    chaos::JSONTools::LoadJSONFile(configuration_path, c1, chaos::LoadFileFlag::RECURSIVE);
 
 	nlohmann::json const * ar = chaos::JSONTools::GetStructure(c1, "value_array");
 
@@ -61,7 +61,7 @@ protected:
 
 #if 0
     nlohmann::json c2;
-    chaos::JSONTools::LoadJSONFile(configuration_path, c2, false);
+    chaos::JSONTools::LoadJSONFile(configuration_path, c2);
 
     for (nlohmann::json::const_iterator it = c1.begin(); it != c1.end(); ++it)
     {

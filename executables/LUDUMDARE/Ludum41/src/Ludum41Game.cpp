@@ -78,7 +78,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, bool hot_rel
 chaos::Level * LudumGame::DoLoadLevel(chaos::FilePathParam const & path)
 {
 	nlohmann::json level_content;
-	if (!chaos::JSONTools::LoadJSONFile(path, level_content, false))
+	if (!chaos::JSONTools::LoadJSONFile(path, level_content))
 		return nullptr;
 
 	std::vector<std::string> lines;
@@ -133,8 +133,8 @@ chaos::Level * LudumGame::DoLoadLevel(chaos::FilePathParam const & path)
 		{
 			std::vector<std::string> words = chaos::StringTools::Split(dictionnary_line.c_str(), ' ');
 			for (std::string const & word : words)
-				result->dictionnary.push_back(word);		
-		}	
+				result->dictionnary.push_back(word);
+		}
 	}
 	return result;
 }
@@ -235,7 +235,7 @@ bool LudumGame::InitializeDictionnary(nlohmann::json const & config)
 			continue;
 		// replace accents (not all special characters handled)
 		ReplaceSpecialLetters(word);
-		// keep words with only simple characters 
+		// keep words with only simple characters
 		if (!IsWordValid(word))
 			continue;
 		// add the word into the map

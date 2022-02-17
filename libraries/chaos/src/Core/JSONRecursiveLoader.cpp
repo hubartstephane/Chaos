@@ -2,17 +2,17 @@
 
 namespace chaos
 {
-
-
-	bool JSONRecursiveLoader::LoadJSONFile(FilePathParam const & path, nlohmann::json & result)
+	bool JSONRecursiveLoader::LoadJSONFile(FilePathParam const & path, nlohmann::json & result, LoadFileFlag flag)
 	{
-		ComputeSubstitutionChain(path);
+		flag &= ~LoadFileFlag::RECURSIVE;
+		ComputeSubstitutionChain(path, flag);
 		return FinalizeSubstitutions(result);
 	}
 
-	bool JSONRecursiveLoader::ParseJSONFile(char const * buffer, boost::filesystem::path const & config_path, nlohmann::json & result)
+	bool JSONRecursiveLoader::ParseJSONFile(char const * buffer, boost::filesystem::path const & config_path, nlohmann::json & result, LoadFileFlag flag)
 	{
-		ComputeSubstitutionChain(buffer, config_path);
+		flag &= ~LoadFileFlag::RECURSIVE;
+		ComputeSubstitutionChain(buffer, config_path, flag);
 		return FinalizeSubstitutions(result);
 	}
 
@@ -28,22 +28,22 @@ namespace chaos
 		return false;
 	}
 
-	void JSONRecursiveLoader::ComputeSubstitutionChain(char const * buffer, boost::filesystem::path const & config_path)
+	void JSONRecursiveLoader::ComputeSubstitutionChain(char const * buffer, boost::filesystem::path const & config_path, LoadFileFlag flag)
 	{
-		ComputeSubstitutionChainHelper(CreateEntry(buffer, config_path));
+		ComputeSubstitutionChainHelper(CreateEntry(buffer, config_path), flag);
 	}
 
-	void JSONRecursiveLoader::ComputeSubstitutionChain(FilePathParam const & path)
+	void JSONRecursiveLoader::ComputeSubstitutionChain(FilePathParam const & path, LoadFileFlag flag)
 	{
-		ComputeSubstitutionChainHelper(CreateEntry(path));
+		ComputeSubstitutionChainHelper(CreateEntry(path, flag), flag);
 	}
 
-	void JSONRecursiveLoader::ComputeSubstitutionChainHelper(LoaderEntry * entry)
+	void JSONRecursiveLoader::ComputeSubstitutionChainHelper(LoaderEntry * entry, LoadFileFlag flag)
 	{
 		if (entry == nullptr)
 			return;
 		stacked_entries.push_back(entry);
-		DoComputeSubstitutionChain(entry, entry->json);
+		DoComputeSubstitutionChain(entry, entry->json, flag);
 		stacked_entries.pop_back();
 	}
 
@@ -72,7 +72,7 @@ namespace chaos
 			root = str;
 	}
 
-	void JSONRecursiveLoader::DoComputeSubstitutionChain(LoaderEntry * entry, nlohmann::json & root)
+	void JSONRecursiveLoader::DoComputeSubstitutionChain(LoaderEntry * entry, nlohmann::json & root, LoadFileFlag flag)
 	{
 		assert(entry != nullptr);
 		if (root.is_string())
@@ -95,7 +95,7 @@ namespace chaos
 						boost::filesystem::path const & resolved_path = replacement_path.GetResolvedPath();
 
 						bool infinite_recursion = false;
-						LoaderEntry * new_entry = FindOrCreateEntry(replacement_path, infinite_recursion);
+						LoaderEntry * new_entry = FindOrCreateEntry(replacement_path, infinite_recursion, flag);
 						if (infinite_recursion)
 						{
 #if _DEBUG
@@ -108,7 +108,7 @@ namespace chaos
 							new_entry->to_replaced_nodes.push_back(&root);
 							// recurse to new file
 							stacked_entries.push_back(new_entry);
-							DoComputeSubstitutionChain(new_entry, new_entry->json);
+							DoComputeSubstitutionChain(new_entry, new_entry->json, flag);
 							stacked_entries.pop_back();
 						}
 						else
@@ -123,7 +123,7 @@ namespace chaos
 			}
 			// recursive part for array and objects
 			for (nlohmann::json::iterator it = root.begin(); it != root.end(); ++it)
-				DoComputeSubstitutionChain(entry, *it);
+				DoComputeSubstitutionChain(entry, *it, flag);
 		}
 	}
 
@@ -145,7 +145,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	JSONRecursiveLoader::LoaderEntry * JSONRecursiveLoader::FindOrCreateEntry(FilePathParam const & path, bool & infinite_recursion)
+	JSONRecursiveLoader::LoaderEntry * JSONRecursiveLoader::FindOrCreateEntry(FilePathParam const & path, bool & infinite_recursion, LoadFileFlag flag)
 	{
 		infinite_recursion = false;
 
@@ -159,13 +159,13 @@ namespace chaos
 			}
 			return result;
 		}
-		return CreateEntry(path);
+		return CreateEntry(path, flag);
 	}
 
-	JSONRecursiveLoader::LoaderEntry * JSONRecursiveLoader::CreateEntry(FilePathParam const & path)
+	JSONRecursiveLoader::LoaderEntry * JSONRecursiveLoader::CreateEntry(FilePathParam const & path, LoadFileFlag flag)
 	{
 		nlohmann::json new_json;
-		if (!JSONTools::LoadJSONFile(path, new_json, false))
+		if (!JSONTools::LoadJSONFile(path, new_json, flag))
 			return nullptr;
 		return DoCreateEntry(new_json, path.GetResolvedPath());
 	}

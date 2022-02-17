@@ -66,9 +66,9 @@ namespace chaos
 		/** parsing a JSON file (catch exceptions) */
 		bool Parse(char const* buffer, nlohmann::json& result);
 		/** parsing a JSON file from a buffer (load any dependant files) */
-		bool ParseRecursive(char const* buffer, boost::filesystem::path const& config_path, nlohmann::json& result);
+		bool ParseRecursive(char const* buffer, boost::filesystem::path const& config_path, nlohmann::json& result, LoadFileFlag flag = LoadFileFlag::NONE);
 		/** Load a JSON file in a recursive whay */
-		bool LoadJSONFile(FilePathParam const& path, nlohmann::json& result, bool recursive = false);
+		bool LoadJSONFile(FilePathParam const& path, nlohmann::json& result, LoadFileFlag flag = LoadFileFlag::NONE);
 		/** create a temporary directory to hold the configuration (returns the path of the directory where the file is) */
 		boost::filesystem::path DumpConfigFile(nlohmann::json const& json, char const* filename = "myconfig.json");
 
@@ -185,7 +185,7 @@ namespace chaos
 	template<typename T, typename DELETER>
 	bool LoadFromJSON(nlohmann::json const& entry, std::unique_ptr<T, DELETER>& dst)
 	{
-		std::unique_ptr<T, DELETER> other(LoadFromJSONCreateObject<T>(entry)); // force to use another smart pointer and swap due to lake of copy 
+		std::unique_ptr<T, DELETER> other(LoadFromJSONCreateObject<T>(entry)); // force to use another smart pointer and swap due to lake of copy
 		if (other == nullptr)
 			return false;
 		if (!LoadFromJSON(entry, *other))
@@ -210,7 +210,7 @@ namespace chaos
 	bool LoadFromJSON(nlohmann::json const& entry, std::vector<T>& dst)
 	{
 		dst.clear();
-		// input is an array		
+		// input is an array
 		if (entry.is_array())
 		{
 			for (auto const& json : entry)

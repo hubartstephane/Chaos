@@ -27,7 +27,7 @@ namespace chaos
 		for (GPURenderMaterialParentReference & ref : parent_references)
 		{
 			// reference already resolved
-			if (ref.material_info->parent_material != nullptr) 
+			if (ref.material_info->parent_material != nullptr)
 				continue;
 			// find parent
 			GPURenderMaterial * parent_material = resource_manager->FindRenderMaterial(ref.parent_name.c_str());
@@ -70,7 +70,7 @@ namespace chaos
 		material_info->program = program;
 		return true;
 	}
-	
+
 	bool GPURenderMaterialLoader::InitializeProgramFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json) const
 	{
 		// does the JSON have a "program" string ?
@@ -94,7 +94,7 @@ namespace chaos
 			if (InitializeProgramFromPath(material_info, program_path))
 				return true;
 
-		// inplace declared program 
+		// inplace declared program
 		GPUProgramLoader program_loader(manager);
 		GPUProgram * program = program_loader.LoadObject(nullptr, *json_program);
 		if (program == nullptr || program->GetProgramType() != GPUProgramType::RENDER)
@@ -170,7 +170,7 @@ namespace chaos
 				if (InitializeTextureFromPath(material_info, texture_uniform_name.c_str(), texture_path))
 					continue;
 
-			// inplace declared texture 
+			// inplace declared texture
 			GPUTextureLoader texture_loader(manager);
 			GPUTexture * texture = texture_loader.LoadObject(nullptr, *it);
 			if (texture == nullptr)
@@ -352,7 +352,7 @@ namespace chaos
 	bool GPURenderMaterialLoader::IsNameAlreadyUsedInManager(ObjectRequest request) const
 	{
 		// XXX: do not use:   manager->FindRenderMaterial(request)
-		// 
+		//
 		//      because it will search for materials owned by programs
 		//      (they are default materials, we do not want to prevent the creation of the good material)
 		return (manager != nullptr && request.FindObject(manager->render_materials) != nullptr);
@@ -397,7 +397,7 @@ namespace chaos
 			return nullptr;
 		// the file for material is in JSON format
 		nlohmann::json json;
-		if (JSONTools::LoadJSONFile(path, json, true))
+		if (JSONTools::LoadJSONFile(path, json, LoadFileFlag::RECURSIVE))
 			return LoadObject(nullptr, json);
 		return nullptr;
 	}

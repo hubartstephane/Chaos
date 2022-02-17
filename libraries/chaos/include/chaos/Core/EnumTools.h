@@ -12,11 +12,17 @@ namespace chaos
 
 #define CHAOS_DECLARE_ENUM_FLAG_METHOD(enum_type)\
 enum_type operator|(enum_type a, enum_type b);\
-enum_type operator&(enum_type a, enum_type b);
+enum_type operator&(enum_type a, enum_type b);\
+enum_type operator~(enum_type a);\
+enum_type & operator|=(enum_type & a, enum_type b);\
+enum_type & operator&=(enum_type & a, enum_type b);
 
 #define CHAOS_IMPLEMENT_ENUM_FLAG_METHOD(enum_type)\
 enum_type operator|(enum_type a, enum_type b){ return static_cast<enum_type>(static_cast<int>(a) | static_cast<int>(b));}\
-enum_type operator&(enum_type a, enum_type b){ return static_cast<enum_type>(static_cast<int>(a) & static_cast<int>(b));};
+enum_type operator&(enum_type a, enum_type b){ return static_cast<enum_type>(static_cast<int>(a) & static_cast<int>(b));};\
+enum_type operator~(enum_type a){ return static_cast<enum_type>(~static_cast<int>(a));}\
+enum_type& operator|=(enum_type& a, enum_type b) { a = a | b; return a; }\
+enum_type& operator&=(enum_type& a, enum_type b) { a = a & b; return a; }
 
 #define CHAOS_DECLARE_ENUM_METHOD(enum_type)\
 bool StringToEnum(char const * src, enum_type& dst);\

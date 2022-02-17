@@ -54,14 +54,14 @@ namespace chaos
 
 	bool Application::ReloadConfigurationFile(nlohmann::json & result) const
 	{
-		return JSONTools::LoadJSONFile(configuration_path, result, true);
+		return JSONTools::LoadJSONFile(configuration_path, result, LoadFileFlag::RECURSIVE);
 	}
 
 	bool Application::LoadConfigurationFile()
 	{
 		boost::filesystem::path path = GetResourcesPath() / "config.json";
 
-		if (JSONTools::LoadJSONFile(path, configuration, true))
+		if (JSONTools::LoadJSONFile(path, configuration, LoadFileFlag::RECURSIVE))
 		{
 			configuration_path = std::move(path);
 			return true;

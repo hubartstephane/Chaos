@@ -18,8 +18,6 @@
 
     { "path": "@sounds/menu_music.ogg" , "categories" :  ["music","too_loud"] },
     { "path": "@sounds/pause_music.ogg" , "categories" :  "music" },
-    { "path": "@sounds/game_music.ogg" , "categories" :  "music"},
-		{ "path": "@sounds/game_music2.ogg" , "categories" :  "music"},
 
     { "path": "@sounds/music_level1.ogg" , "categories" :  "music"},
     { "path": "@sounds/music_level2.ogg" , "categories" :  "music"},

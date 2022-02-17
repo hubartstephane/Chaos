@@ -651,7 +651,7 @@ namespace chaos
 		// load the game data
 		else
 		{
-			if (!JSONTools::LoadJSONFile(filepath, game_data, false))
+			if (!JSONTools::LoadJSONFile(filepath, game_data))
 				return false;
 			return LoadPersistentGameData(game_data);
 		}

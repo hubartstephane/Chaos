@@ -35,11 +35,12 @@ namespace chaos
 * FileTools is namespace-class for methods to handle files
 */
 
-	enum class LoadFileFlag
+	enum class LoadFileFlag // depending on the function, some flags may not be relevant
 	{
 		NONE = 0,
 		ASCII = 1,
-		NO_ERROR_TRACE = 2
+		NO_ERROR_TRACE = 2,
+		RECURSIVE = 4
 	};
 
 	namespace FileTools

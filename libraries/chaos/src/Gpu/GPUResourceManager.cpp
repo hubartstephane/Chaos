@@ -159,9 +159,9 @@ namespace chaos
 	bool GPUResourceManager::LoadManager(FilePathParam const & path)
 	{
 		nlohmann::json json;
-		if (!JSONTools::LoadJSONFile(path, json, true))
+		if (!JSONTools::LoadJSONFile(path, json, LoadFileFlag::RECURSIVE))
 			return true;
-		return InitializeFromConfiguration(json);	
+		return InitializeFromConfiguration(json);
 	}
 
 	bool GPUResourceManager::InitializeFromConfiguration(nlohmann::json const & json)
@@ -186,8 +186,8 @@ namespace chaos
 	bool GPUResourceManager::LoadProgramsFromConfiguration(nlohmann::json const & json)
 	{
 		return LoadObjectsFromConfiguration<true>(
-			"programs", 
-			json, 
+			"programs",
+			json,
 			GPUProgramLoader(this));
 	}
 
@@ -227,7 +227,7 @@ namespace chaos
 	// We have now to patch all resources. All internal references to an object that has been stolen must be replaced
 	// (GPURenderMaterial is the only concerned while it can have reference to textures and programs)
 
-	template<typename FIND_BY_REQUEST, typename FIND_BY_PATH, typename RESOURCE_VECTOR, typename SWAP_OBJECTS_FUNC> 
+	template<typename FIND_BY_REQUEST, typename FIND_BY_PATH, typename RESOURCE_VECTOR, typename SWAP_OBJECTS_FUNC>
 	void RefreshObjects(FIND_BY_REQUEST find_by_request, FIND_BY_PATH find_by_path, RESOURCE_VECTOR resource_vector, GPUResourceManager * gpu_manager, GPUResourceManager * other_gpu_manager, SWAP_OBJECTS_FUNC swap_objects)
 	{
 		auto & ori_objects = gpu_manager->*resource_vector;
@@ -274,7 +274,7 @@ namespace chaos
 		}
 		// resources that have been destroyed are simply ignored (we have no real way to be sure they are not used)
 	}
-		
+
 
 	bool GPUResourceManager::RefreshTextures(GPUResourceManager * other_gpu_manager, GPUResourceManagerReloadData & reload_data)
 	{
@@ -282,12 +282,12 @@ namespace chaos
 
 		GPUTexture * (GPUResourceManager::*find_by_request)(ObjectRequest) = &GPUResourceManager::FindTexture;
 		GPUTexture * (GPUResourceManager::*find_by_path)(FilePathParam const &) = &GPUResourceManager::FindTextureByPath;
-		 
+
 		std::vector<shared_ptr<GPUTexture>> GPUResourceManager::*resource_vector = &GPUResourceManager::textures;
 
 		RefreshObjects(find_by_request, find_by_path, resource_vector, this, other_gpu_manager, [&reload_data](GPUTexture * ori_object, GPUTexture * other_object)
 		{
-			// each time there is a reference to other_object, replace it with ori_object 
+			// each time there is a reference to other_object, replace it with ori_object
 			// (while ori_object has capture other's data)
 			reload_data.texture_map[other_object] = ori_object;
 
@@ -310,9 +310,9 @@ namespace chaos
 
 		RefreshObjects(find_by_request, find_by_path, resource_vector, this, other_gpu_manager, [&reload_data](GPUProgram * ori_object, GPUProgram * other_object)
 		{
-			// each time there is a reference to other_object, replace it with ori_object 
+			// each time there is a reference to other_object, replace it with ori_object
 			// (while ori_object has capture other's data)
-			reload_data.program_map[other_object] = ori_object; 
+			reload_data.program_map[other_object] = ori_object;
 
 			// XXX : we cannot simply copy program_id => this would produce a double deletion of OpenGL resource
 			std::swap(ori_object->program_id, other_object->program_id);
@@ -371,7 +371,7 @@ namespace chaos
 
 		RefreshObjects(find_by_request, find_by_path, resource_vector, this, other_gpu_manager, [&reload_data](GPURenderMaterial * ori_object, GPURenderMaterial * other_object)
 		{
-			// each time there is a reference to other_object, replace it with ori_object 
+			// each time there is a reference to other_object, replace it with ori_object
 			// (while ori_object has capture other's data)
 			reload_data.render_material_map[other_object] = ori_object;
 
@@ -380,7 +380,7 @@ namespace chaos
 			std::swap(ori_object->material_info, other_object->material_info);
 #if 0
 			std::swap(ori_object->material_info->parent_material, other_object->material_info->parent_material);
-			std::swap(ori_object->material_info->program, other_object->material_info->program);			
+			std::swap(ori_object->material_info->program, other_object->material_info->program);
 			std::swap(ori_object->material_info->uniform_provider.children_providers, other_object->material_info->uniform_provider.children_providers);
 			std::swap(ori_object->material_info->renderpasses, other_object->material_info->renderpasses);
 			std::swap(ori_object->material_info->hidden, other_object->material_info->hidden);

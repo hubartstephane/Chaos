@@ -110,29 +110,32 @@ namespace chaos
 			return false;
 		}
 
-		bool ParseRecursive(char const* buffer, boost::filesystem::path const& config_path, nlohmann::json& result)
+		bool ParseRecursive(char const* buffer, boost::filesystem::path const& config_path, nlohmann::json& result, LoadFileFlag flag)
 		{
 			assert(buffer != nullptr);
 			JSONRecursiveLoader loader;
-			return loader.ParseJSONFile(buffer, config_path, result);
+			return loader.ParseJSONFile(buffer, config_path, result, flag);
 		}
 
-		bool LoadJSONFile(FilePathParam const& path, nlohmann::json& result, bool recursive)
+		bool LoadJSONFile(FilePathParam const& path, nlohmann::json& result, LoadFileFlag flag)
 		{
-			if (!recursive)
+			if (int(flag & LoadFileFlag::RECURSIVE) != 0)
+			{
+				JSONRecursiveLoader loader;
+				return loader.LoadJSONFile(path, result, flag);
+			}
+			else
 			{
 				Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::ASCII | LoadFileFlag::NO_ERROR_TRACE);
 				if (buffer == nullptr)
 				{
-					Log::Error("JSONTools::LoadJSONFile: fail to load [%s]", path.GetResolvedPath().string().c_str());
+					if (int(flag & LoadFileFlag::NO_ERROR_TRACE) == 0)
+					{
+						Log::Error("JSONTools::LoadJSONFile: fail to load [%s]", path.GetResolvedPath().string().c_str());
+					}
 					return false;
 				}
 				return Parse(buffer.data, result);
-			}
-			else
-			{
-				JSONRecursiveLoader loader;
-				return loader.LoadJSONFile(path, result);
 			}
 		}
 

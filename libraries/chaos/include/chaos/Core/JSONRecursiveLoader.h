@@ -30,26 +30,26 @@ namespace chaos
 	public:
 
 		/** entry point to parse recursively a JSON file from its path */
-		bool LoadJSONFile(FilePathParam const& path, nlohmann::json& result);
+		bool LoadJSONFile(FilePathParam const& path, nlohmann::json& result, LoadFileFlag flag);
 		/** entry point to parse recursively a JSON file from an already loaded buffer in memory */
-		bool ParseJSONFile(char const* buffer, boost::filesystem::path const& config_path, nlohmann::json& result);
+		bool ParseJSONFile(char const* buffer, boost::filesystem::path const& config_path, nlohmann::json& result, LoadFileFlag flag);
 
 	protected:
 
 		/** internal method */
 		bool FinalizeSubstitutions(nlohmann::json& result);
 		/** internal method */
-		void ComputeSubstitutionChain(char const* buffer, boost::filesystem::path const& config_path);
+		void ComputeSubstitutionChain(char const* buffer, boost::filesystem::path const& config_path, LoadFileFlag flag);
 		/** internal method */
-		void ComputeSubstitutionChain(FilePathParam const& path);
+		void ComputeSubstitutionChain(FilePathParam const& path, LoadFileFlag flag);
 		/** internal method */
-		void ComputeSubstitutionChainHelper(LoaderEntry* entry);
+		void ComputeSubstitutionChainHelper(LoaderEntry* entry, LoadFileFlag flag);
 		/** internal method */
 		bool DoMakeStringSubstitution(LoaderEntry* entry, std::string& result);
 		/** internal method */
 		void MakeStringSubstitution(LoaderEntry* entry, nlohmann::json& root);
 		/** internal method */
-		void DoComputeSubstitutionChain(LoaderEntry* entry, nlohmann::json& root);
+		void DoComputeSubstitutionChain(LoaderEntry* entry, nlohmann::json& root, LoadFileFlag flag);
 		/** internal method */
 		void MakeSubstitutions();
 		/** internal method */
@@ -58,9 +58,9 @@ namespace chaos
 		/** internal method */
 		LoaderEntry* FindEntry(FilePathParam const& path);
 		/** internal method */
-		LoaderEntry* FindOrCreateEntry(FilePathParam const& path, bool& infinite_recursion);
+		LoaderEntry* FindOrCreateEntry(FilePathParam const& path, bool& infinite_recursion, LoadFileFlag flag);
 		/** internal method */
-		LoaderEntry* CreateEntry(FilePathParam const& path);
+		LoaderEntry* CreateEntry(FilePathParam const& path, LoadFileFlag flag);
 		/** internal method */
 		LoaderEntry* CreateEntry(char const* buffer, boost::filesystem::path const& config_path);
 		/** internal method */

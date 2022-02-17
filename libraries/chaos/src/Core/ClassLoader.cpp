@@ -7,7 +7,7 @@ namespace chaos
 	static T DoLoadClassHelper(FilePathParam const& path, FUNC func)
 	{
 		nlohmann::json json;
-		if (JSONTools::LoadJSONFile(path, json, false))
+		if (JSONTools::LoadJSONFile(path, json))
 		{
 			std::string class_name;
 			if (!JSONTools::GetAttribute(json, "class_name", class_name))
@@ -15,7 +15,7 @@ namespace chaos
 			if (!class_name.empty())
 			{
 				std::string short_name;
-				JSONTools::GetAttribute(json, "short_name", short_name);			
+				JSONTools::GetAttribute(json, "short_name", short_name);
 				return func(std::move(class_name), std::move(short_name), json);
 			}
 		}
@@ -35,16 +35,16 @@ namespace chaos
 		std::vector<Class *> classes;
 
 		// Step 1 : load all classes (no full initialization, ignore parent). Register them (without inheritance data in classes list)
-		FileTools::ForEachRedirectedDirectoryContent(path, [this, &classes](boost::filesystem::path const & p) 
+		FileTools::ForEachRedirectedDirectoryContent(path, [this, &classes](boost::filesystem::path const & p)
 		{
 			Class* cls = DoLoadClassHelper<Class *>(p, [this] (std::string && class_name, std::string && short_name, nlohmann::json const& json)
 			{
-				return DoDeclareSpecialClassStep1(std::move(class_name), std::move(short_name), json); // a 3 steps operation 
+				return DoDeclareSpecialClassStep1(std::move(class_name), std::move(short_name), json); // a 3 steps operation
 			});
 			// remember the class
 			if (cls != nullptr)
-				classes.push_back(cls);		
-		
+				classes.push_back(cls);
+
 			return false; // don't stop
 		});
 
@@ -66,7 +66,7 @@ namespace chaos
 					if (cls->InheritsFrom(failing_cls, true) == InheritanceType::YES) // failing class
 					{
 						DoInvalidateSpecialClass(cls);
-						cls = nullptr; 
+						cls = nullptr;
 						break;
 					}
 				}
@@ -84,12 +84,12 @@ namespace chaos
 		{
 			return (class_depth[c1] < class_depth[c2]);
 		});
-			
+
 		// now that we are sorted by depth, we can compute create delegate (create delegate of one Class depends on this parent (lower depth))
 		for (Class * cls : classes)
 			if (!DoDeclareSpecialClassStep3(cls))
 				DoInvalidateSpecialClass(cls);
-		
+
 		return true;
 	}
 
@@ -161,7 +161,7 @@ namespace chaos
 	bool ClassLoader::DoDeclareSpecialClassStep3(Class* cls)
 	{
 		// check whether it is instanciable
-		if (cls->parent->CanCreateInstance()) 
+		if (cls->parent->CanCreateInstance())
 		{
 			cls->create_instance_func = [cls]()
 			{
@@ -177,7 +177,7 @@ namespace chaos
 		}
 
 		// check whether it is temp instanciable
-		if (cls->parent->CanCreateInstanceOnStack()) 
+		if (cls->parent->CanCreateInstanceOnStack())
 		{
 			cls->create_instance_on_stack_func = [cls](std::function<void(Object*)> func)
 			{
@@ -192,7 +192,7 @@ namespace chaos
 		}
 		return true;
 	}
-		
+
 	void ClassLoader::DoInvalidateSpecialClass(Class const* cls)
 	{
 		assert(cls != nullptr);

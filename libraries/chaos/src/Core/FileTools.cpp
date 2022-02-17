@@ -199,6 +199,7 @@ namespace chaos
 #endif
 				return result; // convert to bool
 			});
+
 			if (result == nullptr && int(flags & LoadFileFlag::NO_ERROR_TRACE) == 0)
 			{
 				Log::Error("LoadFile fails [%s]", path.GetResolvedPath().string().c_str());

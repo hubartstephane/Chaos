@@ -4,7 +4,7 @@ REM Go to the directory where the batch is
 PUSHD "%~dp0
 
 REM Search target in arguments (beware case sensitive)
-SET TARGET=vs2019
+SET TARGET=vs2022
 
 REM Search the target
 IF "%1" == "" GOTO CONTINUE

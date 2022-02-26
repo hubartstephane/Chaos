@@ -31,3 +31,6 @@ ProcessSubPremake("MODEL3D")
 CURRENT_GROUP = BASE_GROUP .. "/VULKAN"
 ProcessSubPremake("VULKAN")
 
+CURRENT_GROUP = BASE_GROUP .. "/C++"
+ProcessSubPremake("C++")
+

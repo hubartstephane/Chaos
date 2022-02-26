@@ -1,7 +1,8 @@
 -- =============================================================================
--- ROOT_PATH/executables/MISC/C++17
+-- ROOT_PATH/executables/C++
 -- =============================================================================
 
-  WindowedApp()
-  DependOnLib("CHAOS")  
-                       
+ProcessSubPremake("C++11")
+ProcessSubPremake("C++17")
+ProcessSubPremake("C++20_Concepts")
+ProcessSubPremake("C++20_Coroutine")

@@ -1,9 +1,0 @@
-{
-	"Hello":"Test3",
-	"test_infinite_recursion":{
-        "@include":"test1.json"  
-	},    
-	"test_loading_error":{
-        "@include":"test_error.json"  
-	}   
-}

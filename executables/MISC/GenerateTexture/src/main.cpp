@@ -1,47 +1,5 @@
 #include <chaos/Chaos.h>
 
-template<typename VECTOR_TYPE>
-class RecastVectorData
-{
-public:
-
-	RecastVectorData(VECTOR_TYPE const& in_value) : value(in_value) {}
-
-	template<typename DST_VECTOR_TYPE>
-	operator DST_VECTOR_TYPE () const
-	{
-		DST_VECTOR_TYPE result(0);
-		size_t count = std::min(result.length(), value.length());
-		for (size_t i = 0; i < count; ++i)
-			result[i] = static_cast<typename DST_VECTOR_TYPE::value_type>(value[i]);
-		return result;
-	}
-
-public:
-
-	VECTOR_TYPE value;
-};
-
-template<typename T>
-RecastVectorData<T> RecastVector(T const& in_value)
-{
-	return RecastVectorData<T>(in_value);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class MyApplication : public chaos::Application
 {
 protected:

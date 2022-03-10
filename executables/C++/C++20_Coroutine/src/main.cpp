@@ -3,13 +3,13 @@
 #include <coroutine>
 
 
-// =====================================
-template<typename T, typename G>
-struct promise_type_base
-{
-	T mValue = 666;
 
-	float fValue = 666.6f;
+
+// =====================================
+template<typename T, typename G, typename ...BASES>
+struct promise_type_base : public BASES...
+{
+	T mValue;
 
 	auto yield_value(T value)
 	{
@@ -18,18 +18,10 @@ struct promise_type_base
 		return std::suspend_always{};
 	}
 
-	auto yield_value(float value)
+
+	G get_return_object()
 	{
-
-		fValue = std::move(value);
-
-		return std::suspend_always{};
-
-	}
-
-	G get_return_object() 
-	{ 
-		return G(this); 
+		return G(this);
 	}
 
 
@@ -39,9 +31,9 @@ struct promise_type_base
 
 	void return_void() {}
 
-	void unhandled_exception() 
-	{ 
-		std::terminate(); 
+	void unhandled_exception()
+	{
+		std::terminate();
 	}
 #if 0
 	static auto get_return_object_on_allocation_failure()
@@ -50,6 +42,108 @@ struct promise_type_base
 	}
 #endif
 
+};
+
+// =====================================
+
+class UU
+{
+public:
+
+	UU(int i) :value(i) {}
+
+	int value = 0;
+};
+
+template<typename T>
+struct awaitable_promise_type_base
+{
+	std::optional<T> mRecentSignal;
+
+	struct awaiter
+	{
+		std::optional<T> & mRecentSignal;
+
+		bool await_ready()
+		{
+			return mRecentSignal.has_value();
+		}
+
+		void await_suspend(std::coroutine_handle<>)
+		{
+		}
+
+		T await_resume()
+		{
+			assert(mRecentSignal.has_value());
+			auto tmp = *mRecentSignal;
+			mRecentSignal.reset();
+			return tmp;
+		}
+	};
+
+
+
+	[[nodiscard]] awaiter await_transform(UU uu)
+	{
+		return awaiter{ mRecentSignal };
+	}
+
+};
+
+// =====================================
+
+template<typename T, typename U>
+struct [[nodiscard]] async_generator
+{
+	using promise_type = promise_type_base<
+		T,
+		async_generator,
+		awaitable_promise_type_base<U>>;
+
+	using PromiseTypeHandle = std::coroutine_handle<promise_type>;
+
+	T operator ()()
+	{
+		auto tmp{ std::move(mCoroHdl.promise().mValue) };
+
+		mCoroHdl.promise().mValue.clear();
+
+		return tmp;
+	}
+
+	
+	void SendSignal(U signal)
+	{
+		mCoroHdl.promise().mRecentSignal = signal;
+		if (!mCoroHdl.done())
+			mCoroHdl.resume();
+	}
+
+	async_generator(async_generator const&) = delete;
+
+	async_generator(async_generator&& rhs) :
+		mCoroHdl{ std::exchange(rhs.mCoroHdl, nullptr) }
+	{
+	}
+
+	~async_generator()
+	{
+		if (mCoroHdl)
+			mCoroHdl.destroy();
+
+	}
+
+
+//private:
+
+	friend promise_type;
+
+	explicit async_generator(promise_type* p) :
+		mCoroHdl(PromiseTypeHandle::from_promise(*p))
+	{}
+
+	PromiseTypeHandle mCoroHdl;
 };
 
 
@@ -107,10 +201,10 @@ struct generator
 
 
 
-	//using iterator = coro_iterator::iterator<promise_type>;
+	using iterator = coro_iterator::iterator<promise_type>;
 
-	//iterator begin() { return {mCoroHdl}; }
-	//iterator end() { return {}; }
+	iterator begin() { return {mCoroHdl}; }
+	iterator end() { return {}; }
 
 
 
@@ -134,7 +228,8 @@ public:
 
 	friend promise_type;
 
-	explicit generator(promise_type * p):
+	//explicit
+		generator(promise_type * p):
 		mCoroHdl(PromiseTypeHandle::from_promise(*p))
 	{}
 
@@ -153,13 +248,11 @@ public:
 
 	IntGenerator counter(int start, int end)
 	{
-		auto p = this;
+		auto p = this; // it compiles, but this is invalid after the co_yield
 
 		while (start < end)
 		{
-			//		co_yield start;	
-
-			co_yield (float)start;
+			co_yield start;	
 			++start;
 		}
 
@@ -171,33 +264,26 @@ public:
 
 
 
-
-
-
-int CHAOS_MAIN(int argc, char** argv, char** env)
+void Test1()
 {
 	A a(4);
 
 	auto c = a.counter(3, 5);
 
 	int x = c.mCoroHdl.promise().mValue;
-	float y = c.mCoroHdl.promise().fValue;
 
 
 	c.mCoroHdl.resume();
 
 	x = c.mCoroHdl.promise().mValue;
-	y = c.mCoroHdl.promise().fValue;
 
 	c.mCoroHdl.resume();
 
 	x = c.mCoroHdl.promise().mValue;
-	y = c.mCoroHdl.promise().fValue;
 
 	c.mCoroHdl.resume();
 
 	x = c.mCoroHdl.promise().mValue;
-	y = c.mCoroHdl.promise().fValue;
 
 #if 0
 	c.mCoroHdl.resume();
@@ -207,7 +293,93 @@ int CHAOS_MAIN(int argc, char** argv, char** env)
 		i = i;
 	}
 #endif
+}
 
+
+using FSM = async_generator<std::string, byte>;
+
+auto dble(auto p)
+{
+	return  p * p;
+}
+
+generator<byte> sender(std::vector<byte> v)
+{
+	for (auto b : v)
+		co_yield dble(b);
+}
+
+FSM Parse()
+{
+	byte b = co_await 3;
+	co_yield "toto";
+	b = co_await byte{};
+	co_yield "toto2";
+	b = co_await byte{};
+	co_yield "toto3";
+
+
+
+};
+
+#if 1
+void ProcessString(generator<byte>& stream, FSM& parse)
+{
+	for (auto b : stream)
+	{
+		parse.SendSignal(b);
+
+		if (const auto& res = parse(); res.length())
+		{
+			int i = 0;
+			++i;
+		}
+
+	}
+
+}
+#endif
+
+int CHAOS_MAIN(int argc, char** argv, char** env)
+{
+//Test1();
+
+#if 1
+
+
+	auto s = sender({5,1,3,7,9,8});
+
+	auto p = Parse();
+
+	ProcessString(s, p);
+
+
+	generator<byte> g = sender({ 1, 4, 8 });
+
+	
+
+#else
+
+
+	generator<int> g = ([]()
+	{
+		co_yield 1;
+		co_yield 3;
+		co_yield 5;
+	});
+
+	
+
+
+
+
+#endif
+
+	
+	for (auto i : g)
+	{
+		//i = i;
+	}
 
 
 	return 0;

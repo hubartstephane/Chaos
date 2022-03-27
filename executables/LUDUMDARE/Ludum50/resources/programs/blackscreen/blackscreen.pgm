@@ -1,0 +1,10 @@
+{
+	"fragment":
+	[
+		"@blackscreen.fsh"
+	],
+	"vertex":
+	[
+		"@blackscreen.vsh"
+	]
+}

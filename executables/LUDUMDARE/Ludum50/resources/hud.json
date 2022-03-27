@@ -1,0 +1,25 @@
+{
+  "BEST_SCORE_ID": {
+    "visible": false
+  },
+
+  "INSTRUCTIONS_ID": {
+    "visible": false
+  },
+
+  "SCORE_ID": {
+    "visible": false
+  },
+  "LEVEL_TITLE_ID": {
+    "visible": false
+  },
+
+  "TITLE_ID": {
+
+    "generator_params": {
+      "alignment": "center",
+      "position": [ 0.0, 0.0 ],
+      "line_height": 150
+    }
+  }
+}

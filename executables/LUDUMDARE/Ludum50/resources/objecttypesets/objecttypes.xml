@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objecttypes>
+ <objecttype name="Landscape" color="#a0a0a4">
+  <property name="COLOR" type="color" default="#ff000000"/>
+  <property name="MORPH_CLASSES" type="string" default=""/>
+  <property name="SMOOTH_COUNT" type="int" default="2"/>
+  <property name="SMOOTH_FACTOR" type="float" default="0.3"/>
+  <property name="classname" type="string" default="Landscape"/>
+ </objecttype>
+</objecttypes>

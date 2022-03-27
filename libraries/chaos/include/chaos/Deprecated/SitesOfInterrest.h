@@ -66,4 +66,10 @@ C++ Weekly With Jason Turner
 Pixel Pete
 Brandon James Greer
 
+// reflexion/introspection library
+www.rttr.org
+
+// list of interresing projects
+https ://github.com/Caerind/AwesomeCppGameDev
+
 #endif

@@ -322,7 +322,7 @@ end
 -- LinkTimeOptimization -> see /LTCG
 
 function DebugConf(plat)
-		configuration {DEBUG, plat}
+		filter {"configurations:" .. DEBUG, "platforms:" .. plat}
 		--staticruntime "on"
 		--runtime "debug"
 		defines {DEBUG}
@@ -337,7 +337,7 @@ end
 -- =============================================================================
 
 function ReleaseConf(plat)
-		configuration {RELEASE, plat}
+		filter {"configurations:" .. RELEASE, "platforms:" .. plat}
 		--staticruntime "on"
 		runtime "release"
 		defines {"NDEBUG"}
@@ -609,7 +609,14 @@ function CppProject(in_kind, proj_type)
 		local src_hpp = path.join(PROJECT_SRC_PATH, "**.hpp")
 		local src_c = path.join(PROJECT_SRC_PATH, "**.c")
 		local src_cpp = path.join(PROJECT_SRC_PATH, "**.cpp")
-		files {src_h, src_hpp, src_c, src_cpp}
+		local src_ixx = path.join(PROJECT_SRC_PATH, "**.ixx")
+		
+		filter {"files:**.ixx" }
+		  buildaction "ClCompile"
+		  compileas "Module"				
+		filter { }
+		
+		files {src_h, src_hpp, src_c, src_cpp, src_ixx}
 
 		AllTargets(
 				function(plat, conf)
@@ -1177,7 +1184,7 @@ for i in pairs(MYPROJECTS) do
 
 				AllTargets(
 						function(plat, conf)
-								configuration {conf, plat}
+								filter {"configurations:" .. conf, "platforms:" .. plat}
 								buildcommands(build_command_str)
 								rebuildcommands(build_command_str)
 								cleancommands(clean_command_str)
@@ -1203,7 +1210,7 @@ for i in pairs(MYPROJECTS) do
 
 				AllTargets(
 						function(plat, conf)
-								configuration {conf, plat}
+								filter {"configurations:" .. conf, "platforms:" .. plat}
 
 								local zip_path = path.join(ZIP_PATH, proj.name) .. "_" .. conf .. "_" .. plat .. ".zip"
 

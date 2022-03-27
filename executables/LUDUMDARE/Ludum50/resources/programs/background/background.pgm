@@ -1,0 +1,10 @@
+{
+	"fragment":
+	[
+		"@background.fsh"
+	],
+	"vertex":
+	[
+		"@background.vsh"
+	]
+}

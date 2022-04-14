@@ -1,0 +1,4 @@
+#! /bin/bash
+
+git status | sed -e '0,/Untrac/d' | sed '1d' | grep -v 'no changes' | grep -v "^$"
+

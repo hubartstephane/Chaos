@@ -1,0 +1,3 @@
+#! /bin/bash
+
+mygitmodified | xargs -n 1 git add

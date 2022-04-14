@@ -32,11 +32,6 @@ ECHO PREMAKE PATH : %PREMAKE_PATH%\premake5.exe
 
 %PREMAKE_PATH%\premake5.exe %TARGET%
 
-REM the characterset(...) instruction in premake does not work with "NotSet" (VS2015 force unicode)
-REM we are forced to directly patch the .vcxproj directly the XML
-
-REM %TOOLS_PATH%\PatchProjects.py ..\premaked_solutions\%TARGET%
-
 REM go back to initial directory
 :END
 POPD

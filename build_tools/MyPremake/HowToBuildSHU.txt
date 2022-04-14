@@ -1,0 +1,64 @@
+--------------------
+Note
+--------------------
+
+The .Zz file is modified. It contains the module for codeblocks
+
+--------------------
+Basics
+--------------------
+
+1. download source
+
+	https://github.com/premake/premake-core/releases/download/v5.0.0-beta1/premake-5.0.0-beta1-src.zip
+	
+2. unzip source
+
+--------------------
+I. Use Visual Studio
+--------------------
+
+1. from Visual Studio, open a developper windows (so that environmment is ready for compilation)
+
+2. enter the following command
+
+	nmake bootstrap.mak windows
+
+----------------------------------------------------------
+II. Use an already build premake5.exe to rebuild premake !
+----------------------------------------------------------
+
+1. Add any modules in modules directory. You may add codeblocks module for example
+
+		https://github.com/chris-be/premake-codeblocks.git
+	
+2. Regenerate the scripts.c file to embed all modules in the sources (only necessary if you added some modules)
+	
+	premake5.exe embed
+	
+3. generate the solution
+
+  premake5.exe vs2022
+
+-------------------------------
+III. Use premake5 with debugger
+-------------------------------
+
+1. copy into TARGET DIRECTORY, files from bin/release
+
+  premake5.exe
+	luasocket.dll
+	
+2. copy into TARGET DIRECTORY, file from .
+
+  mobdebug.lua
+		
+3. Start remote debugger (even if local host) with ZBraneStudio
+  
+	Project->Start Debugger Server
+
+4. you are ready to use premake5 with debugger
+
+  premake5.exe vs2022 --debugger
+	
+	

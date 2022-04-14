@@ -239,8 +239,21 @@ void myfunc(T const& t)
 	++i;
 }
 
+
+template<typename ...ARGS>
+void MLOG(ARGS ...args)
+{
+	(std::clog << ... << args);
+
+}
+
+
 int CHAOS_MAIN(int argc, char** argv, char** env)
 {
+	chaos::WinTools::AllocConsoleAndRedirectStdOutput();
+	MLOG("toto", 3, 9, 5.0f, "titi");
+
+
 	auto a = identity(3);
 	auto b = identity(A());
 	auto c = sum(1, 2, 3, 4, 5);

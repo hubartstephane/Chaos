@@ -1,0 +1,12 @@
+1/ Download lua sources
+
+	https://www.lua.org/ftp/lua-5.4.4.tar.gz
+	
+2/ Unzip
+
+
+3/ Create the project with premake (the premake5.lua file is mine)
+
+	premake5.exe vs2022       
+	
+4/ open solution with visual studio and build

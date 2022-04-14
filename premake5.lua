@@ -9,6 +9,7 @@
 -- MKLINK /J   new_dir    src_dir                   (link between directories)
 
 TYPE_EXECUTABLE = 0
+TYPE_EXECUTABLE = 0
 TYPE_LIBRARY = 1
 TYPE_EXTERNAL_LIBRARY = 2
 TYPE_RESOURCES = 3
@@ -244,15 +245,15 @@ DisplayEnvironment()
 -- =============================================================================
 
 function GetDependantDocumentationProjName(proj_name)
-		return "Documentation of " .. proj_name
+		return "Documentation_of_" .. proj_name
 end
 
 function GetDependantZipProjName(proj_name)
-		return "ZIP of " .. proj_name
+		return "ZIP_of_" .. proj_name
 end
 
 function GetDependantResourceProjName(proj_name)
-		return "Resources of " .. proj_name
+		return "Resources_of_" .. proj_name
 end
 
 -- =============================================================================
@@ -309,7 +310,8 @@ function DeclareToCopyFile(filename, proj)
 end
 
 -- =============================================================================
--- Function to initialize project for DEBUG
+-- Function to initialize project for 
+
 -- =============================================================================
 
 -- note on staticruntime -> dll or static
@@ -589,8 +591,7 @@ function CppProject(in_kind, proj_type)
 		kind(in_kind)
 
 		language "C++"
-		cppdialect "C++latest"
-		--cppdialect "C++17"
+		cppdialect "C++20"
 		--staticruntime "on"
 
 		-- change entry point for windows (avoid WinMain to main)
@@ -679,6 +680,7 @@ end
 -- =============================================================================
 
 function ResourceLib()
+
 		-- the name of the group
 		local group_name = path.join(CURRENT_GROUP, PROJ_NAME)
 		if (CURRENT_GROUP ~= nil) then
@@ -839,7 +841,7 @@ function ProcessSubPremake(proj_name, sub_path, filename)
 		end
 
 		filename = filename or "subpremake5.lua"
-		ProcessFile(path.join(PROJECT_SRC_PATH, filename), false)
+		include(path.join(PROJECT_SRC_PATH, filename))
 		RestoreEnvironment(env)
 
 		INDENT = INDENT - 1

@@ -5,6 +5,8 @@
 local WINDOWS = (os.target() == "windows")
 local LINUX = (os.target() == "linux")
 
+
+
   -- RANGE-V3
 local RANGE_V3_INC_PATH =  path.join("range-v3", "include")
 DeclareExternalLib("range-v3", RANGE_V3_INC_PATH, nil, nil)  
@@ -43,25 +45,25 @@ MSVC_LIB_PATH_X64_RELEASE = path.join(MSVC_BASELIB_PATH, "x64", "Microsoft.VC142
 MSVC_LIB_PATH_X64_DEBUG = path.join(MSVC_BASELIB_PATH, "debug_nonredist", "x64", "Microsoft.VC142.DebugCRT") 
 
 local MSVC_DLL_DEBUG = {
-    "concrt140d.dll",
+	"concrt140d.dll",
 	"msvcp140d.dll",
-    "msvcp140_1d.dll",
-    "msvcp140_2d.dll",
-    "msvcp140d_codecvt_ids.dll",
-    "vccorlib140d.dll",
-    "vcruntime140d.dll",
-    "vcruntime140_1d.dll" -- not for x32, but copy should be ignored
+	"msvcp140_1d.dll",
+	"msvcp140_2d.dll",
+	"msvcp140d_codecvt_ids.dll",
+	"vccorlib140d.dll",
+	"vcruntime140d.dll",
+	"vcruntime140_1d.dll" -- not for x32, but copy should be ignored
 }
 
 local MSVC_DLL_RELEASE = {
-    "concrt140.dll",
+	"concrt140.dll",
 	"msvcp140.dll",
-    "msvcp140_1.dll",
-    "msvcp140_2.dll",
-    "msvcp140_codecvt_ids.dll",
-    "vccorlib140.dll",
-    "vcruntime140.dll",
-    "vcruntime140_1.dll"
+	"msvcp140_1.dll",
+	"msvcp140_2.dll",
+	"msvcp140_codecvt_ids.dll",
+	"vccorlib140.dll",
+	"vcruntime140.dll",
+	"vcruntime140_1.dll"
 }
 
 
@@ -74,7 +76,7 @@ function GenerateMSVCDLLs(base_path, dlls)
   return result
 end
 
-local MSVC_TOCOPY  = { -- @ because this copies the file directly in
+local MSVC_TOCOPY  = { -- @ because this copies the file directly in target directory
    DEBUG = GenerateMSVCDLLs(MSVC_LIB_PATH_X64_DEBUG, MSVC_DLL_DEBUG),
    RELEASE = GenerateMSVCDLLs(MSVC_LIB_PATH_X64_RELEASE, MSVC_DLL_RELEASE)                
 } 

@@ -4,4 +4,3 @@
 
   WindowedApp()
   DependOnLib("CHAOS")  
-                       

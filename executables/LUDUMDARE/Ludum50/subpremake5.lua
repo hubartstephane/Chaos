@@ -6,5 +6,3 @@
   DeclareToCopyFile("resources")  
   DependOnLib("CHAOS")
   DependOnLib("CommonFonts")
-  DependOnLib("CommonIcons")
-  DependOnLib("CommonConfig")

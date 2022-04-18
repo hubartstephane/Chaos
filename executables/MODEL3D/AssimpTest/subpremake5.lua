@@ -1,8 +1,7 @@
 -- =============================================================================
--- ROOT_PATH/executables/LUA/Lua
+-- ROOT_PATH/executables/MODEL3D/AssimpTest
 -- =============================================================================
 
   WindowedApp()
-  DependOnLib("CHAOS")  
+  DependOnLib("CHAOS")
   DeclareToCopyFile("resources")
-                       

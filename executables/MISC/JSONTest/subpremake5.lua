@@ -1,10 +1,7 @@
 -- =============================================================================
--- ROOT_PATH/executables/MODEL3D/Assimp
+-- ROOT_PATH/executables/MISC/JSONTest
 -- =============================================================================
 
   WindowedApp()
-  DependOnLib("CHAOS")
+  DependOnLib("CHAOS")  
   DeclareToCopyFile("resources")
-    
-
-                       

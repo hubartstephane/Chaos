@@ -2,9 +2,5 @@
 -- ROOT_PATH/executables/MODEL3D
 -- =============================================================================
 
-ProcessSubPremake("Assimp")
-ProcessSubPremake("FBX")
-
-
-
-
+ProcessSubPremake("AssimpTest")
+ProcessSubPremake("FBXTest")

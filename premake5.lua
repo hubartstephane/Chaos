@@ -7,6 +7,55 @@
 --
 -- MKLINK /H   new_file   src_file                  (link between files)
 -- MKLINK /J   new_dir    src_dir                   (link between directories)
+-- =============================================================================
+-- Project description
+--
+-- in some commands we can use some jockers such as
+--   %{sln.name}
+--   %{prj.location}
+--
+-- they are listed below:
+--  sln.name
+--
+--  prj.name
+--  prj.language
+--
+--  cfg.architecture
+--  cfg.buildcfg
+--  cfg.buildtarget
+--  cfg.kind
+--  cfg.linktarget
+--  cfg.longname
+--  cfg.objdir
+--  cfg.platform
+--  cfg.shortname
+--  cfg.system
+--
+--  file.abspath
+--  file.basename
+--  file.name
+--  file.relpath
+--       These values are available on build and link targets
+--  target.abspath
+--  target.basename
+--  target.bundlename
+--  target.bundlepath
+--  target.directory
+--  target.extension
+--  target.name
+--  target.prefix
+--  target.relpath
+--  target.suffix
+--
+-- And generic strings for portable commands:
+--  {CHDIR}
+--  {COPY}
+--  {DELETE}
+--  {ECHO}
+--  {MKDIR}
+--  {MOVE}
+--  {RMDIR}
+--  {TOUCH}
 
 -- =============================================================================
 -- global variables
@@ -61,57 +110,6 @@ DisplayRootEnvironment()
 DisplayEnvironment()
 
 -- =============================================================================
--- Project description
---
--- in some commands we can use some jockers such as
---   %{sln.name}
---   %{prj.location}
---
--- they are listed below:
---  sln.name
---
---  prj.name
---  prj.language
---
---  cfg.architecture
---  cfg.buildcfg
---  cfg.buildtarget
---  cfg.kind
---  cfg.linktarget
---  cfg.longname
---  cfg.objdir
---  cfg.platform
---  cfg.shortname
---  cfg.system
---
---  file.abspath
---  file.basename
---  file.name
---  file.relpath
---       These values are available on build and link targets
---  target.abspath
---  target.basename
---  target.bundlename
---  target.bundlepath
---  target.directory
---  target.extension
---  target.name
---  target.prefix
---  target.relpath
---  target.suffix
---
--- And generic strings for portable commands:
---  {CHDIR}
---  {COPY}
---  {DELETE}
---  {ECHO}
---  {MKDIR}
---  {MOVE}
---  {RMDIR}
---  {TOUCH}
--- =============================================================================
-
--- =============================================================================
 -- Entry point
 -- =============================================================================
 
@@ -129,10 +127,10 @@ solution "Chaos"
 	if os.target() == "linux" then
 		defines {"LINUX"}
 	end
-	
+
 	for k, v in pairs({"libraries", "executables", "shared_resources"}) do
 		CURRENT_GROUP = v
-		ProcessSubPremake(v)	
+		ProcessSubPremake(v)
 	end
 
 -- =============================================================================
@@ -140,13 +138,13 @@ solution "Chaos"
 -- =============================================================================
 
 function CollectDependencies(proj, collect_dependencies)
-	if (IsTable(proj.dependencies)) then	
-		for k, v in pairs(proj.dependencies) do			
+	if (IsTable(proj.dependencies)) then
+		for k, v in pairs(proj.dependencies) do
 			local other_proj = FindProject(v)
 			if (not IsNil(other_proj)) then
-				if (not SearchElementInTable(collect_dependencies, other_proj)) then				
+				if (not SearchElementInTable(collect_dependencies, other_proj)) then
 					table.insert(collect_dependencies, other_proj)
-					CollectDependencies(other_proj, collect_dependencies)							
+					CollectDependencies(other_proj, collect_dependencies)
 				end
 			else
 				assert(false, "Dependency not found :" .. v .. " (for project " .. proj.name ..")")
@@ -162,10 +160,10 @@ for k, proj in pairs(MYPROJECTS) do
 	if (DISPLAY_DEPENDENCIES) then
 		Output("=======================================================================")
 		Output("[" .. proj.name .. "] Dependencies")
-		Output("=======================================================================")	
+		Output("=======================================================================")
 		for k, d in pairs(proj.full_dependencies) do
 			Output("  " .. d.name)
-		end		
+		end
 	end
 end
 
@@ -174,9 +172,9 @@ end
 -- =============================================================================
 
 function ResolveDependency(proj, other_proj, plat, conf)
-
 	-- resolve with TYPE_LIBRARY or TYPE_EXTERNAL_LIBRARY
 	if (other_proj.proj_type == TYPE_LIBRARY or other_proj.proj_type == TYPE_EXTERNAL_LIBRARY) then -- only resolve dependencies with libraries
+
 		filter {"configurations:" .. conf, "platforms:" .. plat}
 
 		-- includes
@@ -186,48 +184,50 @@ function ResolveDependency(proj, other_proj, plat, conf)
 				includedirs(dir)
 			end
 		)
-
 		-- libdirs
 		local lib_dir = other_proj.targetdir[plat][conf] -- where is compiled the library
 		ForEachElement(lib_dir,
 			function(dir)
 				libdirs(dir)
 			end
-		)		
-		
-		if (proj.proj_type == TYPE_EXECUTABLE) then
-			-- links (additionnal libs)
-			local lib_names = other_proj.libname[plat][conf]
-			ForEachElement(lib_names,
-				function(dir)
-					links(dir)
-				end
-			)				
-				
-			-- links (additionnal libs)
-			local additionnal_libs = other_proj.additionnal_libs[plat][conf]		
-			ForEachElement(additionnal_libs,
-				function(dir)
-					links(dir)
-				end
-			)				
-		end
-		
+		)
+		-- links (additionnal libs)
+		local lib_names = other_proj.libname[plat][conf]
+		ForEachElement(lib_names,
+			function(dir)
+				links(dir)
+			end
+		)
+		-- links (additionnal libs)
+		local additionnal_libs = other_proj.additionnal_libs[plat][conf]
+		ForEachElement(additionnal_libs,
+			function(dir)
+				links(dir)
+			end
+		)
 	end
 end
 
 for k, proj in pairs(MYPROJECTS) do
 	if (proj.proj_type == TYPE_EXECUTABLE or proj.proj_type == TYPE_LIBRARY) then -- only compilable projects need some special link & include
-		project(proj.name)	
+		project(proj.name)
 		AllTargets(
 			function(plat, conf)
+				-- required libs for this project
+				local additionnal_libs = proj.additionnal_libs[plat][conf]
+				ForEachElement(additionnal_libs,
+					function(dir)
+						links(dir)
+					end
+				)
+				-- dependencies
 				for k, other_proj in pairs(proj.full_dependencies) do
 					if (other_proj) then
 						ResolveDependency(proj, other_proj, plat, conf)
 					end
 				end
 			end
-		)			
+		)
 	end
 end
 
@@ -237,7 +237,7 @@ end
 
 for k, proj in pairs(MYPROJECTS) do
 	if (proj.proj_type == TYPE_EXECUTABLE) then
-		project(proj.name)	
+		project(proj.name)
 		AllTargets(
 			function(plat, conf)
 				filter {"configurations:" .. conf, "platforms:" .. plat}
@@ -256,7 +256,7 @@ for k, proj in pairs(MYPROJECTS) do
 				end
 			end
 		)
-	end		
+	end
 end
 
 -- =============================================================================
@@ -298,7 +298,7 @@ for k, proj in pairs(MYPROJECTS) do
 		group(proj.group_name) -- same group than the library
 		project(zip_proj_name)
 		kind("Makefile")
-		
+
 		AllTargets(
 			function(plat, conf)
 				filter {"configurations:" .. conf, "platforms:" .. plat}
@@ -353,9 +353,9 @@ for k, proj in pairs(MYPROJECTS) do
 		AllTargets(
 			function(plat, conf)
 				-- copy resources from direct dependencies (in reverse order)
-				local count = #proj.dependencies
+				local count = #proj.full_dependencies
 				for j = 1, count do
-						local other_proj = FindProject(proj.dependencies[count - j + 1])
+						local other_proj = proj.full_dependencies[count - j + 1]
 						if (other_proj) then
 								CopyResourceFiles(proj, other_proj, plat, conf)
 						end

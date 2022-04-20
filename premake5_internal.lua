@@ -83,10 +83,10 @@ end
 
 -- if input is an array, returns a copy of it. return the input unchanged elsewhere
 function DeepCopy(value)
-		if (IsTable(value)) then
-				return table.deepcopy(value)
-		end
-		return value
+	if (IsTable(value)) then
+			return table.deepcopy(value)
+	end
+	return value
 end
 
 -- if the input is not an array return it unchanged
@@ -109,7 +109,7 @@ end
 -- transform a value (array or not) in the form of [PLATFORM][CONFIG]
 function GetPlatConfArray(value)
 	local result = {}
-	for k, platform in pairs(PLATFORMS) do		
+	for k, platform in pairs(PLATFORMS) do
 		result[platform] = {}
 		for k, config in pairs(CONFIGS) do
 			result[platform][config] = DeepCopy(ReadValueFromPlatformConfigArray(value, platform, config))
@@ -297,7 +297,7 @@ end
 
 -- add input (whether it is a string or a table) into TO_COPY
 function DeclareToCopyFileHelper(proj, filenames, plat, conf)
-	ForEachElement(filenames, 
+	ForEachElement(filenames,
 		function(filename)
 			local src_path = ""
 			if (string.sub(filename, 1, 1) == "@") then -- the file is to be copied directly in the same directory than the executable itself
@@ -307,7 +307,7 @@ function DeclareToCopyFileHelper(proj, filenames, plat, conf)
 			else
 				src_path = path.join(proj.root_path, filename)
 			end
-			table.insert(proj.tocopy[plat][conf], {filename, src_path})		
+			table.insert(proj.tocopy[plat][conf], {filename, src_path})
 		end
 	)
 end
@@ -324,7 +324,7 @@ function DeclareToCopyFile(filename, proj)
 end
 
 -- =============================================================================
--- Function to initialize project for 
+-- Function to initialize project for
 -- =============================================================================
 
 -- note on staticruntime -> dll or static
@@ -337,7 +337,7 @@ end
 -- LinkTimeOptimization -> see /LTCG
 
 	--staticruntime "on"
-	--runtime "debug"	
+	--runtime "debug"
 	--flags {"LinkTimeOptimization"}
 
 function DebugConf(plat)
@@ -370,7 +370,7 @@ end
 -- =============================================================================
 
 function FindProject(name) -- by default, this returns the current project
-	name = string.upper(name or PROJ_NAME)	
+	name = string.upper(name or PROJ_NAME)
 	return MYPROJECTS[name]
 end
 
@@ -399,7 +399,7 @@ function DeclareExternalLib(external_name, inc_path, lib_path, libname, tocopy)
 		assert(false, "Project " .. external_name .. " already definied")
 	end
 
-	local result = {	
+	local result = {
 		name = external_name,
 		proj_type = TYPE_EXTERNAL_LIBRARY,
 		root_path = EXTERNAL_PATH,
@@ -410,32 +410,33 @@ function DeclareExternalLib(external_name, inc_path, lib_path, libname, tocopy)
 		dependencies = {},
 		tocopy = GetPlatConfArray({})
 	}
-	
+
 	MYPROJECTS[result.name] = result
 
 	if (not IsNil(tocopy)) then
+		Output("to copy " .. external_name)
 		DeclareToCopyFile(tocopy, result)
-	end		
+	end
 
 	-- check for library file existence
 	AllTargets(
 		function(plat, conf)
-			ForEachElement(result.libname[plat][conf], 
+			ForEachElement(result.libname[plat][conf],
 				function(libname)
-					ForEachElement(result.targetdir[plat][conf], 
+					ForEachElement(result.targetdir[plat][conf],
 						function(dir)
-							local fullpath = dir .. "/" .. libname	
-							if not os.isfile(fullpath) then 
+							local fullpath = dir .. "/" .. libname
+							if not os.isfile(fullpath) then
 								assert(false, "library does not exit: " .. fullpath)
 							end
-						end	
-					)				
+						end
+					)
 				end
 			)
 		end
 	)
 	return result
-	
+
 end
 
 -- =============================================================================
@@ -477,7 +478,7 @@ function OnConfig(in_kind, proj_type, plat, conf, proj)
 	if (proj_type == TYPE_EXECUTABLE) then
 		defines('CHAOS_PROJECT_PATH="' .. Base64Encode(PROJECT_PATH) .. '"')
 		defines('CHAOS_PROJECT_SRC_PATH="' .. Base64Encode(PROJECT_SRC_PATH) .. '"')
-		defines('CHAOS_PROJECT_BUILD_PATH="' .. Base64Encode(targ) .. '"')	
+		defines('CHAOS_PROJECT_BUILD_PATH="' .. Base64Encode(targ) .. '"')
 		prebuildcommands('{ECHO} CHAOS_PROJECT_PATH       = "' .. PROJECT_PATH .. '"')
 		prebuildcommands('{ECHO} CHAOS_PROJECT_SRC_PATH   = "' .. PROJECT_SRC_PATH .. '"')
 		prebuildcommands('{ECHO} CHAOS_PROJECT_BUILD_PATH = "' .. targ .. '"')
@@ -491,41 +492,41 @@ end
 -- =============================================================================
 
 function CppProject(in_kind, proj_type)
-				
+
 	local name = string.upper(PROJ_NAME)
 
   Output("CppProject [" .. name .. "]")
 	if (MYPROJECTS[name]) then
 		assert(false, "Project " .. name .. " already definied")
-	end		
-		
+	end
+
 	-- the name of the group
 	local group_name = path.join(CURRENT_GROUP, PROJ_NAME)
 	if (CURRENT_GROUP ~= nil) then
 		group(group_name)
 	end
-	
+
 	-- create a project for the resources
 	local proj_location = path.join(SOLUTION_PATH, "resources")
-	local res_path = path.join(PROJECT_SRC_PATH, "resources")	
-	
+	local res_path = path.join(PROJECT_SRC_PATH, "resources")
+
 	local resource_proj_name = GetDependantResourceProjName(PROJ_NAME)
 	project(resource_proj_name)
-	kind("Makefile")		
+	kind("Makefile")
 	location(proj_location)
 	files {path.join(res_path, "**")}
-				
-	-- create the project itself		
-	project(PROJ_NAME)	
-	kind(in_kind)		
+
+	-- create the project itself
+	project(PROJ_NAME)
+	kind(in_kind)
 	location(proj_location)
-			
+
 	local proj_location = path.join(SOLUTION_PATH, PROJECT_PATH)
 	local inc_path = path.join(PROJECT_SRC_PATH, "include")
 	local src_path = path.join(PROJECT_SRC_PATH, "src")
 	local res_path = path.join(PROJECT_SRC_PATH, "resources")
 
-	local result = {		
+	local result = {
 		name = name,
 		proj_type = proj_type,
 		path = PROJECT_PATH,
@@ -533,7 +534,7 @@ function CppProject(in_kind, proj_type)
 		build_path = PROJECT_BUILD_PATH,
 		lua_project = project(),
 		targetdir = GetPlatConfArray({}),
-		includedirs = GetPlatConfArray({}),		
+		includedirs = GetPlatConfArray({}),
 		tocopy = GetPlatConfArray({}),
 		gendoxygen = false,
 		genzip = false,
@@ -543,11 +544,11 @@ function CppProject(in_kind, proj_type)
 		inc_path = GetPlatConfArray(inc_path),
 		src_path = GetPlatConfArray(src_path),
 		res_path = GetPlatConfArray(res_path),
-		dependencies = {}			
+		dependencies = {}
 	}
-		
+
 	MYPROJECTS[result.name] = result
-	
+
 	language "C++"
 	cppdialect "C++20"
 		--staticruntime "on"
@@ -564,13 +565,13 @@ function CppProject(in_kind, proj_type)
 	local src_hpp = path.join(PROJECT_SRC_PATH, "**.hpp")
 	local src_c = path.join(PROJECT_SRC_PATH, "**.c")
 	local src_cpp = path.join(PROJECT_SRC_PATH, "**.cpp")
-	local src_ixx = path.join(PROJECT_SRC_PATH, "**.ixx")		
+	local src_ixx = path.join(PROJECT_SRC_PATH, "**.ixx")
 	files {src_h, src_hpp, src_c, src_cpp, src_ixx}
 
 	-- handle C++ modules
 	filter {"files:**.ixx" }
 		buildaction "ClCompile"
-		compileas "Module"				
+		compileas "Module"
 	filter { }
 
 	-- release/debug settings
@@ -603,22 +604,21 @@ end
 -- Library
 -- =============================================================================
 
-function Library(shared)
-
-	local kind_library
-	if (shared) then
-		kind_library = "SharedLib" 
-	else 
-		kind_library = "StaticLib" 
-	end
-
+function Library(kind_library)
 	local result = CppProject(kind_library, TYPE_LIBRARY)
 	result.libname = GetPlatConfArray(result.name)
 	DisplayEnvironment()
 	DeclareToCopyFile("resources")
 	GenDoxygen()
 	return result
-	
+end
+
+function StaticLibrary()
+	Library("StaticLib")
+end
+
+function SharedLibrary()
+	Library("SharedLib")
 end
 
 -- =============================================================================
@@ -642,8 +642,8 @@ function ResourceLib()
 
 	-- create the project it self
 	local proj_location = path.join(SOLUTION_PATH, PROJECT_PATH)
-	local res_path = path.join(PROJECT_SRC_PATH, "resources")	
-	
+	local res_path = path.join(PROJECT_SRC_PATH, "resources")
+
 	project(PROJ_NAME)
 	location(proj_location)
 	files {path.join(res_path, "**")}
@@ -673,7 +673,7 @@ function ResourceLib()
 	DeclareToCopyFile("resources")
 
 	return result
-	
+
 end
 
 -- =============================================================================
@@ -684,34 +684,29 @@ function DependOnStandardLib(libname)
 	if os.target() ~= "windows" then
 		return
 	end
-	-- libname is a table
-	if (IsTable(libname)) then
-		for k, v in pairs(libname) do
-			DependOnStandardLib(v)
+
+	ForEachElement(libname,
+		function(lib)
+			local proj = FindProject()
+			AllTargets(
+				function(plat, conf)
+					table.insert(proj.additionnal_libs[plat][conf], libname)
+				end
+			)
 		end
-	-- libname is a string				
-	else
-		local proj = FindProject()
-		AllTargets(
-			function(plat, conf)
-				table.insert(proj.additionnal_libs[plat][conf], libname)
-			end
-		)
-		end
+	)
 end
 
 -- =============================================================================
 -- DependOnLib : declare a dependency
 -- =============================================================================
 
-function DependOnLib(libname)
-	if (IsTable(libname)) then
-		for k, v in pairs(libname) do
-			DependOnLib(v)
+function DependOnLib(libnames)
+	ForEachElement(libnames,
+		function(libname)
+			table.insert(FindProject().dependencies, string.upper(libname))
 		end
-	else
-		table.insert(FindProject().dependencies, string.upper(libname))
-	end
+	)
 end
 
 -- =============================================================================

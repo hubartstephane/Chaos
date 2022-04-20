@@ -1,8 +1,8 @@
 -- =============================================================================
 -- ROOT_PATH/libraries/chaos
 -- =============================================================================
-   
-  Library(false) -- shared
+
+  StaticLibrary()
 
   DependOnLib("LUA")
   DependOnLib("GLM")
@@ -23,8 +23,8 @@
   DependOnLib("FBX")
   --DependOnLib("TRISTRIPPER")
   DependOnLib("RANGE-V3")
-  --DependOnLib("VULKAN")  
-  --DependOnLib("GLSLANG")  	
+  --DependOnLib("VULKAN")
+  --DependOnLib("GLSLANG")
 
   DependOnStandardLib("Dbghelp.lib")  -- used on windows for call stack introspection 
   DependOnStandardLib("winmm.lib")    -- used for midi

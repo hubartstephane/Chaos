@@ -3,7 +3,7 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	class Application;
-
+		
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**

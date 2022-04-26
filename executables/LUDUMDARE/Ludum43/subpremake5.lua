@@ -5,4 +5,5 @@
   WindowedApp()
   DeclareToCopyFile("resources")  
   DependOnLib("CHAOS")
+	DependOnLib("TestDll")
   DependOnLib("CommonFonts")

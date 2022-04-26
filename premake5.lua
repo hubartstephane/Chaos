@@ -62,10 +62,10 @@
 -- =============================================================================
 
 TYPE_EXECUTABLE = 0
-TYPE_EXECUTABLE = 0
-TYPE_LIBRARY = 1
-TYPE_EXTERNAL_LIBRARY = 2
-TYPE_RESOURCES = 3
+TYPE_STATIC_LIBRARY = 1
+TYPE_SHARED_LIBRARY = 2
+TYPE_EXTERNAL_LIBRARY = 3
+TYPE_RESOURCES = 4
 
 BUILD_TARGET = _ACTION
 ROOT_PATH = path.getdirectory(_SCRIPT)
@@ -89,7 +89,7 @@ MYPROJECTS = {}
 
 DISPLAY_ROOT_ENVIRONMENT = true
 DISPLAY_ENVIRONMENT = false
-DISPLAY_DEPENDENCIES = true
+DISPLAY_DEPENDENCIES = false
 
 DEBUG = "DEBUG"
 RELEASE = "RELEASE"
@@ -105,8 +105,12 @@ INDENT = 1
 
 require 'premake5_internal'
 require 'external_premake5'
+--require 'codeblocks'
 
 DisplayRootEnvironment()
+
+term.setTextColor(term.green)
+
 DisplayEnvironment()
 
 -- =============================================================================
@@ -172,8 +176,8 @@ end
 -- =============================================================================
 
 function ResolveDependency(proj, other_proj, plat, conf)
-	-- resolve with TYPE_LIBRARY or TYPE_EXTERNAL_LIBRARY
-	if (other_proj.proj_type == TYPE_LIBRARY or other_proj.proj_type == TYPE_EXTERNAL_LIBRARY) then -- only resolve dependencies with libraries
+	-- resolve with TYPE_STATIC_LIBRARY or TYPE_SHARED_LIBRARY or TYPE_EXTERNAL_LIBRARY
+	if (other_proj.proj_type == TYPE_STATIC_LIBRARY or other_proj.proj_type == TYPE_SHARED_LIBRARY or other_proj.proj_type == TYPE_EXTERNAL_LIBRARY) then -- only resolve dependencies with libraries
 
 		filter {"configurations:" .. conf, "platforms:" .. plat}
 
@@ -183,7 +187,7 @@ function ResolveDependency(proj, other_proj, plat, conf)
 			function(dir)
 				includedirs(dir)
 			end
-		)
+		)		
 		-- libdirs
 		local lib_dir = other_proj.targetdir[plat][conf] -- where is compiled the library
 		ForEachElement(lib_dir,
@@ -209,7 +213,7 @@ function ResolveDependency(proj, other_proj, plat, conf)
 end
 
 for k, proj in pairs(MYPROJECTS) do
-	if (proj.proj_type == TYPE_EXECUTABLE or proj.proj_type == TYPE_LIBRARY) then -- only compilable projects need some special link & include
+	if (proj.proj_type == TYPE_EXECUTABLE or proj.proj_type == TYPE_STATIC_LIBRARY or proj.proj_type == TYPE_SHARED_LIBRARY) then -- only compilable projects need some special link & include
 		project(proj.name)
 		AllTargets(
 			function(plat, conf)
@@ -243,7 +247,7 @@ for k, proj in pairs(MYPROJECTS) do
 				filter {"configurations:" .. conf, "platforms:" .. plat}
 				local resource_path = ""
 				for k, other_proj in pairs(proj.full_dependencies) do
-					if (other_proj and (other_proj.proj_type == TYPE_RESOURCES or other_proj.proj_type == TYPE_LIBRARY)) then
+					if (other_proj and (other_proj.proj_type == TYPE_RESOURCES or other_proj.proj_type == TYPE_STATIC_LIBRARY or other_proj.proj_type == TYPE_SHARED_LIBRARY)) then
 						if (resource_path ~= "") then
 							resource_path = resource_path .. ";"
 						end
@@ -269,6 +273,7 @@ for k, proj in pairs(MYPROJECTS) do
 
 		group(proj.group_name) -- same group than the library
 		project(resources_proj_name)
+		location(proj.proj_location)
 		kind("Makefile")
 
 		local build_command_str = QuotationMarks(DOXYGEN_SCRIPT, proj.root_path, proj.build_path, proj.name)
@@ -297,6 +302,7 @@ for k, proj in pairs(MYPROJECTS) do
 
 		group(proj.group_name) -- same group than the library
 		project(zip_proj_name)
+		location(proj.proj_location)
 		kind("Makefile")
 
 		AllTargets(
@@ -328,23 +334,42 @@ end
 
 function CopyResourceFiles(dst_proj, src_proj, plat, conf) -- dst_proj is the project that wants resources
 	local p = project()
-	project(GetDependantResourceProjName(p.name)) -- files are copied only when the "resource project" is being build
-
-	local all_files = src_proj.tocopy[plat][conf]
-	if (all_files) then
-		filter {"configurations:" .. conf, "platforms:" .. plat}
-		for v, data in pairs(all_files) do
-			local filename = data[1]
-			local full_filename = data[2]
-			local dst_name = path.join(dst_proj.targetdir[plat][conf], filename)
-			-- commands
-			local build_command_str = QuotationMarks(COPY_SCRIPT, full_filename, dst_name)
-			buildcommands(build_command_str)
-			local clean_command_str = QuotationMarks(CLEAN_SCRIPT, dst_name)
-			cleancommands(clean_command_str)
+	
+	for k, resource_project in pairs({ false, true }) do
+	
+		-- select whether files are to be copied for "resource_project" or "base_project"
+		if (resource_project) then	
+			project(GetDependantResourceProjName(p.name))
+		else
+			project(p.name)
 		end
+
+		-- add copy commands
+		local all_files = src_proj.tocopy[plat][conf]
+		if (all_files) then			
+			filter {"configurations:" .. conf, "platforms:" .. plat}
+			for v, data in pairs(all_files) do
+				local filename = data[1]
+				local full_filename = data[2]
+				local dst_name = path.join(dst_proj.targetdir[plat][conf], filename)
+				
+				local is_dll = (string.upper(path.getextension(filename)) == ".DLL")				
+				-- dll files are only copied for non-resources project
+				-- non dll files are only copyed for resources project				
+				if (is_dll ~= resource_project) then
+					local build_command_str = QuotationMarks(COPY_SCRIPT, full_filename, dst_name)
+					buildcommands(build_command_str)
+					local clean_command_str = QuotationMarks(CLEAN_SCRIPT, dst_name)
+					cleancommands(clean_command_str)
+				end
+			end
+		end
+		project(p.name) -- restore the project	
+	
 	end
-	project(p.name) -- restore the project
+	
+	
+
 end
 
 for k, proj in pairs(MYPROJECTS) do

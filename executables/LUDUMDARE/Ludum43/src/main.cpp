@@ -2,8 +2,13 @@
 
 #include "Ludum43Game.h"
 
+import MyClass;
+
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
+	MyClass c;
+	int ii = c.f();
+
 	chaos::WindowParams params;
 	params.monitor = nullptr;
 	params.width = 500;

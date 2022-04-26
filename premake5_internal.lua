@@ -507,7 +507,7 @@ function CppProject(in_kind, proj_type)
 	end
 
 	-- create a project for the resources
-	local proj_location = path.join(SOLUTION_PATH, "resources")
+	local proj_location = path.join(SOLUTION_PATH, PROJECT_PATH)
 	local res_path = path.join(PROJECT_SRC_PATH, "resources")
 
 	local resource_proj_name = GetDependantResourceProjName(PROJ_NAME)
@@ -517,14 +517,14 @@ function CppProject(in_kind, proj_type)
 	files {path.join(res_path, "**")}
 
 	-- create the project itself
-	project(PROJ_NAME)
-	kind(in_kind)
-	location(proj_location)
-
 	local proj_location = path.join(SOLUTION_PATH, PROJECT_PATH)
 	local inc_path = path.join(PROJECT_SRC_PATH, "include")
 	local src_path = path.join(PROJECT_SRC_PATH, "src")
 	local res_path = path.join(PROJECT_SRC_PATH, "resources")
+	
+	project(PROJ_NAME)
+	kind(in_kind)
+	location(proj_location)	
 
 	local result = {
 		name = name,
@@ -604,21 +604,26 @@ end
 -- Library
 -- =============================================================================
 
-function Library(kind_library)
-	local result = CppProject(kind_library, TYPE_LIBRARY)
+function Library(kind_library, type)
+	local result = CppProject(kind_library, type)
 	result.libname = GetPlatConfArray(result.name)
 	DisplayEnvironment()
 	DeclareToCopyFile("resources")
+	if (type == TYPE_SHARED_LIBRARY) then
+		DeclareToCopyFile("@" .. path.join(result.targetdir[x64][DEBUG], result.name .. ".dll"))
+	end
 	GenDoxygen()
 	return result
 end
 
 function StaticLibrary()
-	Library("StaticLib")
+	Library("StaticLib", TYPE_STATIC_LIBRARY)
 end
 
 function SharedLibrary()
-	Library("SharedLib")
+	Library("SharedLib", TYPE_SHARED_LIBRARY)
+	filter {}
+	defines('CHAOS_BUILD_DLL')
 end
 
 -- =============================================================================
@@ -667,7 +672,7 @@ function ResourceLib()
 
 	MYPROJECTS[result.name] = result
 
-	kind("None")
+	kind("Makefile")
 
 	DisplayEnvironment()
 	DeclareToCopyFile("resources")

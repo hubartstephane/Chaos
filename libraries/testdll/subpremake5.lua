@@ -1,6 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/libraries
+-- ROOT_PATH/libraries/testdll
 -- =============================================================================
 
-ProcessSubPremake("chaos")
-ProcessSubPremake("testdll")
+  SharedLibrary()

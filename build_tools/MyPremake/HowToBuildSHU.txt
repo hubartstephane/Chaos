@@ -14,6 +14,11 @@ Basics
 	
 2. unzip source
 
+
+	-> to have "allmodulespublic" function, we have to directly download git sources instead of premake-5.0.0-beta1-src.zip
+	   beta1 has not yet this function available
+		 this function is necessary to have DLL+modules
+
 --------------------
 I. Use Visual Studio
 --------------------

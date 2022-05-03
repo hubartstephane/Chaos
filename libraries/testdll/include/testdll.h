@@ -1,14 +1,12 @@
 #pragma once
 
+// __declspec(dllexport) seems necessary
+// not __declspec(dllimport)
 
 #ifndef TESTDLL_API
-#if 1
 	#if defined CHAOS_BUILD_DLL
 		#define TESTDLL_API __declspec(dllexport)
 	#else
-		#define TESTDLL_API __declspec(dllimport)
+		//#define TESTDLL_API __declspec(dllimport)
 	#endif
-#else
-	#define TESTDLL_API
-#endif
 #endif

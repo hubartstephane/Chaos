@@ -103,6 +103,9 @@ CONFIGS = {DEBUG, RELEASE}
 
 INDENT = 1
 
+SPECIAL_PROJECT="Makefile"
+
+
 -- =============================================================================
 -- Encode a string into a base 64 (code coming from internet)
 -- =============================================================================
@@ -519,7 +522,6 @@ function DeclareExternalLib(external_name, inc_path, lib_path, libname, tocopy)
 	MYPROJECTS[result.name] = result
 
 	if (not IsNil(tocopy)) then
-		Output("to copy " .. external_name)
 		DeclareToCopyFile(tocopy, result)
 	end
 
@@ -617,7 +619,7 @@ function CppProject(in_kind, proj_type)
 
 	local resource_proj_name = GetDependantResourceProjName(PROJ_NAME)
 	project(resource_proj_name)
-	kind("Makefile")
+	kind(SPECIAL_PROJECT)
 	location(proj_location)
 	files {path.join(res_path, "**")}
 
@@ -626,10 +628,11 @@ function CppProject(in_kind, proj_type)
 	local inc_path = path.join(PROJECT_SRC_PATH, "include")
 	local src_path = path.join(PROJECT_SRC_PATH, "src")
 	local res_path = path.join(PROJECT_SRC_PATH, "resources")
-	
+
 	project(PROJ_NAME)
 	kind(in_kind)
-	location(proj_location)	
+	location(proj_location)
+	--rules {"LocalCopyDll"}
 
 	local result = {
 		name = name,
@@ -691,6 +694,13 @@ function CppProject(in_kind, proj_type)
 		end
 	)
 
+	-- special filter for copying dll
+	filter 'files:**.dll'
+	  buildmessage 'DLL HANDLING %{file.basename}.dll'
+		build_command_str = QuotationMarks(COPY_SCRIPT, '%{file.abspath}', '%{cfg.targetdir}/%{file.basename}.dll')
+		buildcommands(build_command_str)
+		buildoutputs '%{cfg.targetdir}/%{file.basename}.dll'
+
 	return result
 end
 
@@ -729,6 +739,7 @@ function SharedLibrary()
 	Library("SharedLib", TYPE_SHARED_LIBRARY)
 	filter {}
 	defines('CHAOS_BUILD_DLL')
+	allmodulespublic "on" -- required for DLL+modules (requires at least premake 5.0.0-beta2)
 end
 
 -- =============================================================================
@@ -777,7 +788,7 @@ function ResourceLib()
 
 	MYPROJECTS[result.name] = result
 
-	kind("Makefile")
+	kind(SPECIAL_PROJECT)
 
 	DisplayEnvironment()
 	DeclareToCopyFile("resources")
@@ -862,7 +873,7 @@ end
 -- =============================================================================
 
 require 'external_premake5'
---require 'codeblocks'
+require 'codeblocks'
 
 DisplayRootEnvironment()
 
@@ -916,6 +927,7 @@ end
 for k, proj in pairs(MYPROJECTS) do
 
 	proj.full_dependencies = CollectDependencies(proj, {}) -- replace the array of string with an array of projects
+
 	if (DISPLAY_DEPENDENCIES) then
 		Output("=======================================================================")
 		Output("[" .. proj.name .. "] Dependencies")
@@ -942,7 +954,7 @@ function ResolveDependency(proj, other_proj, plat, conf)
 			function(dir)
 				includedirs(dir)
 			end
-		)		
+		)
 		-- libdirs
 		local lib_dir = other_proj.targetdir[plat][conf] -- where is compiled the library
 		ForEachElement(lib_dir,
@@ -1029,7 +1041,7 @@ for k, proj in pairs(MYPROJECTS) do
 		group(proj.group_name) -- same group than the library
 		project(resources_proj_name)
 		location(proj.proj_location)
-		kind("Makefile")
+		kind(SPECIAL_PROJECT)
 
 		local build_command_str = QuotationMarks(DOXYGEN_SCRIPT, proj.root_path, proj.build_path, proj.name)
 		local doc_path = path.join(proj.build_path, "html")
@@ -1058,7 +1070,7 @@ for k, proj in pairs(MYPROJECTS) do
 		group(proj.group_name) -- same group than the library
 		project(zip_proj_name)
 		location(proj.proj_location)
-		kind("Makefile")
+		kind(SPECIAL_PROJECT)
 
 		AllTargets(
 			function(plat, conf)
@@ -1088,42 +1100,35 @@ end
 -- The application PATH is build in reverse order so that direct file access is coherent with that
 
 function CopyResourceFiles(dst_proj, src_proj, plat, conf) -- dst_proj is the project that wants resources
-	local p = project()
-	
-	for k, resource_project in pairs({ false, true }) do
-	
-		-- select whether files are to be copied for "resource_project" or "base_project"
-		if (resource_project) then	
-			project(GetDependantResourceProjName(p.name))
-		else
-			project(p.name)
-		end
 
-		-- add copy commands
-		local all_files = src_proj.tocopy[plat][conf]
-		if (all_files) then			
-			filter {"configurations:" .. conf, "platforms:" .. plat}
-			for v, data in pairs(all_files) do
-				local filename = data[1]
-				local full_filename = data[2]
-				local dst_name = path.join(dst_proj.targetdir[plat][conf], filename)
-				
-				local is_dll = (string.upper(path.getextension(filename)) == ".DLL")				
-				-- dll files are only copied for non-resources project
-				-- non dll files are only copyed for resources project				
-				if (is_dll ~= resource_project) then
-					local build_command_str = QuotationMarks(COPY_SCRIPT, full_filename, dst_name)
-					buildcommands(build_command_str)
-					local clean_command_str = QuotationMarks(CLEAN_SCRIPT, dst_name)
-					cleancommands(clean_command_str)
-				end
+	local p = project()
+
+	-- add copy commands
+	local all_files = src_proj.tocopy[plat][conf]
+	if (all_files) then
+		for v, data in pairs(all_files) do
+			local filename = data[1]
+			local full_filename = data[2]
+			local dst_name = path.join(dst_proj.targetdir[plat][conf], filename)
+
+			local is_dll = (string.upper(path.getextension(filename)) == ".DLL")
+			-- dll files are bound to normal project (and will be copyed into builddir)
+			-- non dll files are handled by resource subproject
+			if (not is_dll) then
+				project(GetDependantResourceProjName(p.name))
+				filter {"configurations:" .. conf, "platforms:" .. plat}
+				local build_command_str = QuotationMarks(COPY_SCRIPT, full_filename, dst_name)
+				buildcommands(build_command_str)
+				local clean_command_str = QuotationMarks(CLEAN_SCRIPT, dst_name)
+				cleancommands(clean_command_str)
+			else
+				project(p.name)
+				filter {"configurations:" .. conf, "platforms:" .. plat}
+				files {full_filename}
 			end
 		end
-		project(p.name) -- restore the project	
-	
 	end
-	
-	
+	project(p.name) -- restore the project
 
 end
 
@@ -1135,10 +1140,10 @@ for k, proj in pairs(MYPROJECTS) do
 				-- copy resources from direct dependencies (in reverse order)
 				local count = #proj.full_dependencies
 				for j = 1, count do
-						local other_proj = proj.full_dependencies[count - j + 1]
-						if (other_proj) then
-								CopyResourceFiles(proj, other_proj, plat, conf)
-						end
+					local other_proj = proj.full_dependencies[count - j + 1]
+					if (other_proj) then
+						CopyResourceFiles(proj, other_proj, plat, conf)
+					end
 				end
 				-- resources from executable itself must be visible
 				CopyResourceFiles(proj, proj, plat, conf)

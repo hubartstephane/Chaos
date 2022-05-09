@@ -5,6 +5,5 @@
   "@background4": { "path": "@textures/background4.png" },
   "@background5": { "path": "@textures/background5.png" },
   "@background6": { "path": "@textures/background6.png" },
-  "@noise": { "path": "@textures/noise.png" },
-  "@fire": { "path": "@textures/fire.png" }
+  "@noise": { "path": "@textures/noise.png" }
 }

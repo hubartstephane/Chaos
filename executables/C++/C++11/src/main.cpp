@@ -1,23 +1,11 @@
-#include <chaos/Chaos.h>
+//#define _SILENCE_CLANG_CONCEPTS_MESSAGE
+#include <iostream>
 
-int CHAOS_MAIN(int argc, char ** argv, char ** env)
+int main(int argc, char ** argv, char ** env)
 {
-  chaos::WinTools::AllocConsoleAndRedirectStdOutput();
+	std::cout << "Hello World" << std::endl;
 
-
-
-  const char * literal_string = R"BEGIN(
-hello tout le monde
-essai 1
-truc
-)BEGIN";
-
-  std::cout << literal_string << std::endl;
-  std::cout << "======================" << std::endl;
-
-  chaos::WinTools::PressToContinue();
-
-  return 0;
+	return 0;
 }
 
 

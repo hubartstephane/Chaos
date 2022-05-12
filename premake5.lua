@@ -58,6 +58,15 @@
 --  {TOUCH}
 
 -- =============================================================================
+-- options
+-- =============================================================================
+
+newoption {
+   trigger = "arch",
+   description = "the architecture for the build"
+}
+
+-- =============================================================================
 -- Fix crashing premake for codelite
 -- =============================================================================
 
@@ -898,8 +907,8 @@ end
 -- Entry point
 -- =============================================================================
 
-require 'external_premake5'
-require 'codeblocks'
+--require 'external_premake5'
+--require 'codeblocks'
 
 DisplayRootEnvironment()
 
@@ -913,6 +922,12 @@ solution "Chaos"
 
 	platforms {table.unpack(PLATFORMS)}
 	configurations {table.unpack(CONFIGS)}
+	
+	local arch = _OPTIONS['arch']
+	if arch then
+		Output("Architecture: " .. arch)
+		architecture(arch)
+	end
 
 	location(SOLUTION_PATH) -- where the visual studio project file is been created
 

@@ -58,6 +58,20 @@
 --  {TOUCH}
 
 -- =============================================================================
+-- Fix crashing premake for codelite
+-- =============================================================================
+
+-- see https://github.com/premake/premake-core/issues/1299
+
+premake.override(premake.fileconfig, "getconfig", function(oldFn, fcfg, cfg)
+    if fcfg.configs ~= nil then
+        return fcfg.configs[cfg]
+    else
+        return nil
+    end
+end)
+
+-- =============================================================================
 -- global variables
 -- =============================================================================
 
@@ -617,11 +631,16 @@ function CppProject(in_kind, proj_type)
 	local proj_location = path.join(SOLUTION_PATH, PROJECT_PATH)
 	local res_path = path.join(PROJECT_SRC_PATH, "resources")
 
+
+--[[
+
 	local resource_proj_name = GetDependantResourceProjName(PROJ_NAME)
 	project(resource_proj_name)
 	kind(SPECIAL_PROJECT)
 	location(proj_location)
 	files {path.join(res_path, "**")}
+	
+	]]--
 
 	-- create the project itself
 	local proj_location = path.join(SOLUTION_PATH, PROJECT_PATH)
@@ -658,7 +677,14 @@ function CppProject(in_kind, proj_type)
 	MYPROJECTS[result.name] = result
 
 	language "C++"
-	cppdialect "C++20"
+	
+
+	if (_ACTION == "codelite") then
+		cppdialect "C++2a"
+	else
+		cppdialect "C++20"
+	end
+	
 		--staticruntime "on"
 
 	-- change entry point for windows (avoid WinMain to main)
@@ -898,7 +924,8 @@ solution "Chaos"
 		defines {"LINUX"}
 	end
 
-	for k, v in pairs({"libraries", "executables", "shared_resources"}) do
+	--for k, v in pairs({"libraries", "executables", "shared_resources"}) do
+	for k, v in pairs({"executables"}) do
 		CURRENT_GROUP = v
 		ProcessSubPremake(v)
 	end
@@ -1086,7 +1113,7 @@ for k, proj in pairs(MYPROJECTS) do
 				cleancommands(clean_command_str)
 
 				links(proj.name)
-				links(GetDependantResourceProjName(proj.name))
+				--links(GetDependantResourceProjName(proj.name))
 			end
 		)
 	end
@@ -1115,12 +1142,20 @@ function CopyResourceFiles(dst_proj, src_proj, plat, conf) -- dst_proj is the pr
 			-- dll files are bound to normal project (and will be copyed into builddir)
 			-- non dll files are handled by resource subproject
 			if (not is_dll) then
+			
+			--[[
+			
 				project(GetDependantResourceProjName(p.name))
 				filter {"configurations:" .. conf, "platforms:" .. plat}
 				local build_command_str = QuotationMarks(COPY_SCRIPT, full_filename, dst_name)
 				buildcommands(build_command_str)
 				local clean_command_str = QuotationMarks(CLEAN_SCRIPT, dst_name)
 				cleancommands(clean_command_str)
+				
+				]]--
+				
+				is_dll = is_dll
+				
 			else
 				project(p.name)
 				filter {"configurations:" .. conf, "platforms:" .. plat}

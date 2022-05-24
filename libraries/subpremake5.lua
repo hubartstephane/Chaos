@@ -3,4 +3,5 @@
 -- =============================================================================
 
 ProcessSubPremake("chaos")
+ProcessSubPremake("chaos2")
 ProcessSubPremake("testdll")

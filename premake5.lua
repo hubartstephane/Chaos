@@ -640,16 +640,11 @@ function CppProject(in_kind, proj_type)
 	local proj_location = path.join(SOLUTION_PATH, PROJECT_PATH)
 	local res_path = path.join(PROJECT_SRC_PATH, "resources")
 
-
---[[
-
 	local resource_proj_name = GetDependantResourceProjName(PROJ_NAME)
 	project(resource_proj_name)
 	kind(SPECIAL_PROJECT)
 	location(proj_location)
 	files {path.join(res_path, "**")}
-	
-	]]--
 
 	-- create the project itself
 	local proj_location = path.join(SOLUTION_PATH, PROJECT_PATH)
@@ -660,7 +655,6 @@ function CppProject(in_kind, proj_type)
 	project(PROJ_NAME)
 	kind(in_kind)
 	location(proj_location)
-	--rules {"LocalCopyDll"}
 
 	local result = {
 		name = name,
@@ -773,7 +767,7 @@ end
 function SharedLibrary()
 	Library("SharedLib", TYPE_SHARED_LIBRARY)
 	filter {}
-	defines('CHAOS_BUILD_DLL')
+	defines('CHAOS_IS_BUILDING_DLL')
 	allmodulespublic "on" -- required for DLL+modules (requires at least premake 5.0.0-beta2)
 end
 
@@ -907,7 +901,7 @@ end
 -- Entry point
 -- =============================================================================
 
---require 'external_premake5'
+require 'external_premake5'
 --require 'codeblocks'
 
 DisplayRootEnvironment()
@@ -939,8 +933,8 @@ solution "Chaos"
 		defines {"LINUX"}
 	end
 
-	--for k, v in pairs({"libraries", "executables", "shared_resources"}) do
-	for k, v in pairs({"executables"}) do
+	for k, v in pairs({"libraries", "executables", "shared_resources"}) do
+	--for k, v in pairs({"executables"}) do
 		CURRENT_GROUP = v
 		ProcessSubPremake(v)
 	end
@@ -1128,7 +1122,7 @@ for k, proj in pairs(MYPROJECTS) do
 				cleancommands(clean_command_str)
 
 				links(proj.name)
-				--links(GetDependantResourceProjName(proj.name))
+				links(GetDependantResourceProjName(proj.name))
 			end
 		)
 	end
@@ -1157,20 +1151,12 @@ function CopyResourceFiles(dst_proj, src_proj, plat, conf) -- dst_proj is the pr
 			-- dll files are bound to normal project (and will be copyed into builddir)
 			-- non dll files are handled by resource subproject
 			if (not is_dll) then
-			
-			--[[
-			
 				project(GetDependantResourceProjName(p.name))
 				filter {"configurations:" .. conf, "platforms:" .. plat}
 				local build_command_str = QuotationMarks(COPY_SCRIPT, full_filename, dst_name)
 				buildcommands(build_command_str)
 				local clean_command_str = QuotationMarks(CLEAN_SCRIPT, dst_name)
 				cleancommands(clean_command_str)
-				
-				]]--
-				
-				is_dll = is_dll
-				
 			else
 				project(p.name)
 				filter {"configurations:" .. conf, "platforms:" .. plat}

@@ -207,7 +207,7 @@ namespace chaos
 					auto result = func(boost::mpl::identity<VALUE>()); // wrap with identity to avoid potentially costly instanciation (and maybe not possible) ... we do not need an instance anyway
 					if (result)
 						return result;
-					return for_each_internal<boost::mpl::next<IT>::type, END>(func, default_result);
+					return for_each_internal<typename boost::mpl::next<IT>::type, END>(func, default_result);
 				}
 			}
 
@@ -222,7 +222,7 @@ namespace chaos
 					using VALUE = typename boost::mpl::deref<IT>::type;
 
 					func(boost::mpl::identity<VALUE>());
-					for_each_internal<boost::mpl::next<IT>::type, END>(func);
+					for_each_internal<typename boost::mpl::next<IT>::type, END>(func);
 				}
 			}
 
@@ -302,14 +302,14 @@ namespace chaos
 		template<typename ELEMENTS, typename FUNC, typename DEFAULT_RESULT>
 		auto for_each(FUNC func, DEFAULT_RESULT default_result)
 		{
-			return details::for_each_internal<boost::mpl::begin<ELEMENTS>::type, boost::mpl::end<ELEMENTS>::type>(func, default_result);
+			return details::for_each_internal<typename boost::mpl::begin<ELEMENTS>::type, typename boost::mpl::end<ELEMENTS>::type>(func, default_result);
 		}
 
 		/** apply a functor on a boost::mpl::vector<> */
 		template<typename ELEMENTS, typename FUNC>
 		auto for_each(FUNC func)
 		{
-			details::for_each_internal<boost::mpl::begin<ELEMENTS>::type, boost::mpl::end<ELEMENTS>::type>(func);
+			details::for_each_internal<typename boost::mpl::begin<ELEMENTS>::type, typename boost::mpl::end<ELEMENTS>::type>(func);
 		}
 
 		/** check whether class type is vector */

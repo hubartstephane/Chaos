@@ -515,7 +515,7 @@ private:
 
 
 template<typename T, bool InitialSuspend = true>
-struct generator
+class generator
 {
 	using promise_type = promise_type_base<
 		T,
@@ -524,6 +524,7 @@ struct generator
 
 	using PromiseTypeHandle = std::coroutine_handle<promise_type>;
 	
+public:
 
 	generator(generator const&) = delete;
 

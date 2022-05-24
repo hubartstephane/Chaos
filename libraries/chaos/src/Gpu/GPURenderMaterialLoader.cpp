@@ -185,7 +185,7 @@ namespace chaos
 	{
 		size_t count = json.size();
 		for (size_t i = 0; i < count; ++i)
-			value[i] = json[i].get<VECTOR_TYPE::value_type>();
+			value[i] = json[i].get<typename VECTOR_TYPE::value_type>();
 		material_info->uniform_provider.AddVariable(uniform_name, value);
 		return true;
 	}

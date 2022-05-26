@@ -2,6 +2,6 @@
 -- ROOT_PATH/executables/C++/C++11
 -- =============================================================================
 
-  WindowedApp()
-  --DependOnLib("CHAOS")  
-                       
+WindowedApp()
+--DependOnLib("CHAOS")
+DependOnLib("CHAOS2")

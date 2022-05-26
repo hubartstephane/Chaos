@@ -3,591 +3,270 @@
 #include <coroutine>
 
 
-#if 0
 
-// =====================================
-template<typename T, typename G, typename ...BASES>
-struct promise_type_base : public BASES...
-{
-	T mValue;
+template<typename RET_TYPE = void, bool START_SUSPENDED = true>
+class Task;
 
-	auto yield_value(T value)
-	{
-		mValue = std::move(value);
+//////////////////////////////////////////
 
-		return std::suspend_always{};
-	}
-
-
-	G get_return_object()
-	{
-		return G(this);
-	}
-
-
-	std::suspend_always initial_suspend() { return {}; }
-
-	std::suspend_always final_suspend() noexcept { return {}; }
-
-	void return_void() {}
-
-	void unhandled_exception()
-	{
-		std::terminate();
-	}
-#if 0
-	static auto get_return_object_on_allocation_failure()
-	{
-		return G(nullptr);
-	}
-#endif
-
-};
-
-// =====================================
-
-class UU
+template<typename RET_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
+class TaskPromise
 {
 public:
 
-	UU(int i) :value(i) {}
-
-	UU() = default;
-
-	int value = 0;
-};
-
-class AA {};
-
-template<typename T>
-struct awaitable_promise_type_base
-{
-	std::optional<T> mRecentSignal;
-
-	struct awaiter
+	bool HasYieldValue() const
 	{
-		std::optional<T> & mRecentSignal;
-
-		bool await_ready()
-		{
-			return mRecentSignal.has_value();
-		}
-
-		void await_suspend(std::coroutine_handle<>)
-		{
-		}
-
-		T await_resume()
-		{
-			assert(mRecentSignal.has_value());
-			auto tmp = *mRecentSignal;
-			mRecentSignal.reset();
-			return tmp;
-		}
-	};
-
-
-
-	[[nodiscard]] awaiter await_transform(UU uu)
-	{
-		return awaiter{ mRecentSignal };
+		return y_value.has_value();
 	}
 
-	[[nodiscard]] awaiter await_transform(AA, int)
+	RET_TYPE const& GetYieldValue() const
 	{
-		return awaiter{ mRecentSignal };
+		assert(HasYieldValue());
+		return y_value.value();
 	}
 
-};
-
-// =====================================
-
-template<typename T, typename U>
-struct [[nodiscard]] async_generator
-{
-	using promise_type = promise_type_base<
-		T,
-		async_generator,
-		awaitable_promise_type_base<U>>;
-
-	using PromiseTypeHandle = std::coroutine_handle<promise_type>;
-
-	T operator ()()
+	bool HasReturnValue() const
 	{
-		auto tmp{ std::move(mCoroHdl.promise().mValue) };
-
-		mCoroHdl.promise().mValue.clear();
-
-		return tmp;
+		return r_value.has_value();
 	}
 
-	
-	void SendSignal(U signal)
+	RET_TYPE const& GetReturnValue() const
 	{
-		mCoroHdl.promise().mRecentSignal = signal;
-		if (!mCoroHdl.done())
-			mCoroHdl.resume();
+		assert(HasReturnValue());
+		return r_value.value();
 	}
 
-	async_generator(async_generator const&) = delete;
-
-	async_generator(async_generator&& rhs) :
-		mCoroHdl{ std::exchange(rhs.mCoroHdl, nullptr) }
+	auto yield_value(RET_TYPE value)
 	{
+		y_value = std::move(value);
+		return std::suspend_always {};
 	}
 
-	~async_generator()
+	TASK_TYPE get_return_object()
 	{
-		if (mCoroHdl)
-			mCoroHdl.destroy();
-
-	}
-
-
-//private:
-
-	friend promise_type;
-
-	explicit async_generator(promise_type* p) :
-		mCoroHdl(PromiseTypeHandle::from_promise(*p))
-	{}
-
-	PromiseTypeHandle mCoroHdl;
-};
-
-
-// =====================================
-
-namespace coro_iterator
-{
-	template<typename PT>
-	struct iterator
-	{
-		std::coroutine_handle<PT> mCoroHdl{ nullptr };
-
-		void resume()
-		{
-			if (!mCoroHdl.done())
-			{
-				mCoroHdl.resume();
-			}
-		}
-
-		iterator() = default;
-
-		iterator(std::coroutine_handle<PT> hco) :mCoroHdl(hco)
-		{
-
-			resume();
-		}
-
-		void operator ++()
-		{
-			resume();
-		}
-
-		bool operator == (const iterator&) const
-		{
-			return mCoroHdl.done();
-		}
-
-		const auto& operator *() const
-		{
-			return mCoroHdl.promise().mValue;
-		}
-	};
-};
-
-
-// =====================================
-
-template<typename T>
-struct generator
-{
-	using promise_type = promise_type_base<T, generator>;
-
-	using PromiseTypeHandle = std::coroutine_handle<promise_type>;
-
-
-
-	using iterator = coro_iterator::iterator<promise_type>;
-
-	iterator begin() { return {mCoroHdl}; }
-	iterator end() { return {}; }
-
-
-
-
-
-
-
-	generator(generator const&) = delete;
-
-	generator(generator&& rhs) :mCoroHdl(std::exchange(rhs.mCoroHdl, nullptr)) 
-	{}
-
-	~generator()
-	{
-		if (mCoroHdl)
-			mCoroHdl.destroy();
-	}
-
-private:
-public:
-
-	friend promise_type;
-
-	//explicit
-		generator(promise_type * p):
-		mCoroHdl(PromiseTypeHandle::from_promise(*p))
-	{}
-
-	PromiseTypeHandle mCoroHdl;
-};
-
-// =====================================
-
-using IntGenerator = generator<int>;
-
-class A
-{
-public:
-
-	A(int ii): i(ii) {}
-
-	IntGenerator counter(int start, int end)
-	{
-		auto p = this; // it compiles, but this is invalid after the co_yield
-
-		while (start < end)
-		{
-			co_yield start;	
-			++start;
-		}
-
-	}
-
-	int i = 0;
-
-};
-
-
-
-void Test1()
-{
-	A a(4);
-
-	auto c = a.counter(3, 5);
-
-	int x = c.mCoroHdl.promise().mValue;
-
-
-	c.mCoroHdl.resume();
-
-	x = c.mCoroHdl.promise().mValue;
-
-	c.mCoroHdl.resume();
-
-	x = c.mCoroHdl.promise().mValue;
-
-	c.mCoroHdl.resume();
-
-	x = c.mCoroHdl.promise().mValue;
-
-#if 0
-	c.mCoroHdl.resume();
-
-	for (auto i : c)
-	{
-		i = i;
-	}
-#endif
-}
-
-
-using FSM = async_generator<std::string, byte>;
-
-auto dble(auto p)
-{
-	return  p * p;
-}
-
-generator<byte> sender(std::vector<byte> v)
-{
-	for (auto b : v)
-		co_yield dble(b);
-}
-
-FSM Parse()
-{
-	byte b = co_await 3;
-	co_yield "toto";
-	b = co_await UU{};
-	co_yield "toto2";
-	b = co_await (AA{}, 1);
-	co_yield "toto3";
-
-
-
-};
-
-
-
-FSM Parse2(DataStreamReader& stream)
-{
-	while (true)
-	{
-		byte 
-
-	}
-}
-
-
-
-
-
-
-
-
-
-
-
-#if 1
-void ProcessString(generator<byte>& stream, FSM& parse)
-{
-	for (auto b : stream)
-	{
-		parse.SendSignal(b);
-
-		if (const auto& res = parse(); res.length())
-		{
-			int i = 0;
-			++i;
-		}
-
-	}
-
-}
-#endif
-
-int CHAOS_MAIN(int argc, char** argv, char** env)
-{
-//Test1();
-
-#if 1
-
-
-	auto s = sender({5,1,3,7,9,8});
-
-	auto p = Parse();
-
-	ProcessString(s, p);
-
-
-	generator<byte> g = sender({ 1, 4, 8 });
-
-	
-
-#else
-
-
-	generator<int> g = ([]()
-	{
-		co_yield 1;
-		co_yield 3;
-		co_yield 5;
-	});
-
-	
-
-
-
-
-#endif
-
-	
-	for (auto i : g)
-	{
-		//i = i;
-	}
-
-
-	return 0;
-}
-
-#endif
-
-// ====================================================================
-
-template<typename T, typename G, bool InitialSuspend>
-struct promise_type_base
-{
-	T mValue;
-
-	std::suspend_always yield_value(T value)
-	{
-		mValue = value;
-		return {};
+		return TASK_TYPE(this);
 	}
 
 	auto initial_suspend()
 	{
-		if constexpr (InitialSuspend)
+		if constexpr (START_SUSPENDED)
 			return std::suspend_always{};
 		else
 			return std::suspend_never{};
 	}
 
-	std::suspend_always final_suspend() noexcept { return {}; }
-	G get_return_object() { return G(this); }
-	void unhandled_exception();
-	void return_void();
+	auto final_suspend() noexcept
+	{
+		return std::suspend_always{};
+	}
 
-};
+	void return_void()
+	{
+		int i = 3;
+		++i;
+
+	}
+#if 0
+	void return_value(int value)
+	{
+		r_value = std::move(value);
+		int i = 3;
+		++i;
+	}
+
+	void return_value(char const * value)
+	{
+		int i = 3;
+		++i;
+	}
+#endif
+	void unhandled_exception()
+	{
+		int i = 3;
+		++i;
+	}
 
 
-class DataStreamReader
-{
 
-public:
 
-	DataStreamReader() = default;
 
-	DataStreamReader& operator=(DataStreamReader&&) noexcept = delete;
 
-	// ---
+
+
 	struct Awaiter
 	{
-		Awaiter& operator = (Awaiter&&) noexcept = delete;
-
-		Awaiter(DataStreamReader& event) noexcept:
-			mEvent(event)
+		bool await_ready()
 		{
-			mEvent.mAwaiter = this;
+			return false;
 		}
 
-		void await_suspend(std::coroutine_handle<> coroHdl)
+		void await_suspend(std::coroutine_handle<> p)
 		{
-			mCoroHdl = coroHdl;
+			int i = 0;
+			++i;
 		}
 
-		byte await_resume() noexcept
+		int await_resume()
 		{
-			assert(mEvent.mData.has_value());
-			return *std::exchange(mEvent.mData, std::nullopt);
+			return 666;
 		}
-
-		void resume()
-		{
-			mCoroHdl.resume();
-		}
-
-	private:
-
-		DataStreamReader& mEvent;
-		std::coroutine_handle<> mCoroHdl{};
-
 	};
-	// ---
 
-	auto operator co_await() noexcept
+
+
+
+	template<typename OTHER_RET_TYPE, bool OTHER_START_SUSPENDED>
+	Awaiter await_transform(Task<OTHER_RET_TYPE, OTHER_START_SUSPENDED>& other_task)
 	{
-		return Awaiter(*this);
+		return {};
 	}
 
-	void set(byte b)
-	{
-		mData.emplace(b);
-		if (mAwaiter)
-			mAwaiter->resume();
-	}
-
-private:
-
-	friend struct Awaiter;
-
-	Awaiter* mAwaiter{};
-
-	std::optional<byte> mData;
-};
 
 
 
 
-template<typename T, bool InitialSuspend = true>
-class generator
-{
-	using promise_type = promise_type_base<
-		T,
-		generator,
-		InitialSuspend>;
 
-	using PromiseTypeHandle = std::coroutine_handle<promise_type>;
-	
-public:
 
-	generator(generator const&) = delete;
 
-	generator(generator&& rhs) :
-		mCoroHdl(std::exchange(rhs.mCoroHdl, nullptr)) {}
-
-	~generator()
-	{
-		if (mCoroHdl)
-			mCoroHdl.destroy();
-	}
-
-	T operator()
-	{
-		T tmp{};
-		std::swap(tmp, mCoroHdl.promise().mValue);
-		return tmp;
-	}
-
-private:
-
-	friend promise_type;
-	
-	explicit generator(promise_type* p):mCoroHdl(PromiseTypeHandle::from_promise(*p))
-	{
-
-	}
 
 protected:
 
-	PromiseTypeHandle mCoroHdl;
+	std::optional<RET_TYPE> y_value;
 
-
+	std::optional<RET_TYPE> r_value;
 };
 
-using FSM = generator<std::string, false>;
+
+//////////////////////////////////////////
 
 
-DataStreamReader GetReader(std::vector<byte>& v)
+template<typename RET_TYPE, bool START_SUSPENDED>
+class Task
 {
-	for (auto b : v)
-		co_yield b;
-}
 
-FSM Parse(DataStreamReader& reader)
-{
-	while (true)
+public:
+
+	using promise_type = TaskPromise<RET_TYPE, START_SUSPENDED, Task>;
+
+	using promise_handle = std::coroutine_handle<promise_type>;
+
+	friend class promise_type;
+
+
+
+	~Task()
 	{
-		byte b = co_await reader;
+		if (handle)
+			handle.destroy();
+	}
 
-		co_yield "toto";
+	void Resume()
+	{
+		handle.resume();
+	}
 
+	bool IsDone() const
+	{
+		return handle.done();
+	}
+
+	bool HasYieldValue() const
+	{
+		return handle.promise().HasYieldValue();
+	}
+
+	bool HasReturnValue() const
+	{
+		return handle.promise().HasReturnValue();
 	}
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+protected:
+
+	explicit Task(promise_type* p) :
+		handle(promise_handle::from_promise(*p)) {}
+
+protected:
+
+	promise_handle handle;
+
+};
+
+
+Task<int> Generates()
+{
+	co_yield 1;
+	co_yield 2;
+	co_yield 3;
+	co_yield 4;
 }
 
+Task<int> MyTask(int value, Task<int> & getter)
+{
+	for (int i = 0; i < 5; ++i)
+	{
+
+		int x = co_await getter;
+
+		co_yield (3 * value);
+		co_yield (3 * value);
+	}
+}
 
 
 
 int CHAOS_MAIN(int argc, char** argv, char** env)
 {
+	Task<int> g = Generates();
 
+	Task<int> f = MyTask(6, g);
+
+
+	while (!f.IsDone())
+	{
+		f.Resume();
+
+	}
+
+
+
+#if 0
+
+	Task<int> t = MyTask(666);
+	bool a1 = t.HasYieldValue();
+	bool b1 = t.HasReturnValue();
+	bool c1 = t.IsDone();
+	t.Resume();
+	bool a2 = t.HasYieldValue();
+	bool b2 = t.HasReturnValue();
+	bool c2 = t.IsDone();
+	t.Resume();
+	bool a3 = t.HasYieldValue();
+	bool b3 = t.HasReturnValue();
+	bool c3 = t.IsDone();
+	t.Resume();
+	bool a4 = t.HasYieldValue();
+	bool b4 = t.HasReturnValue();
+	bool c4 = t.IsDone();
+
+
+
+#endif
 
 	return 0;
 }

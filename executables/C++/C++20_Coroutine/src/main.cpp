@@ -4,39 +4,17 @@
 
 
 
-template<typename RET_TYPE = void, bool START_SUSPENDED = true>
+template<typename YIELD_TYPE = void, typename RETURN_TYPE = void, bool START_SUSPENDED = true>
 class Task;
 
 //////////////////////////////////////////
 
-template<typename RET_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
+template<typename YIELD_TYPE, typename RETURN_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
 class TaskPromise
 {
 public:
 
-	bool HasYieldValue() const
-	{
-		return y_value.has_value();
-	}
-
-	RET_TYPE const& GetYieldValue() const
-	{
-		assert(HasYieldValue());
-		return y_value.value();
-	}
-
-	bool HasReturnValue() const
-	{
-		return r_value.has_value();
-	}
-
-	RET_TYPE const& GetReturnValue() const
-	{
-		assert(HasReturnValue());
-		return r_value.value();
-	}
-
-	auto yield_value(RET_TYPE value)
+	auto yield_value(YIELD_TYPE value)
 	{
 		y_value = std::move(value);
 		return std::suspend_always {};
@@ -59,100 +37,96 @@ public:
 	{
 		return std::suspend_always{};
 	}
-
-	void return_void()
-	{
-		int i = 3;
-		++i;
-
-	}
 #if 0
-	void return_value(int value)
+
+	void return_void() requires(std::is_same_v<RETURN_TYPE, void>)
 	{
-		r_value = std::move(value);
-		int i = 3;
-		++i;
 	}
 
-	void return_value(char const * value)
+#else
+
+
+	void return_value(RETURN_TYPE result) requires (!std::is_same_v<RETURN_TYPE, void>)
 	{
-		int i = 3;
-		++i;
+		r_value = std::move(result);
 	}
 #endif
+
 	void unhandled_exception()
 	{
-		int i = 3;
-		++i;
 	}
 
 
 
 
 
-
-
-
+	template<typename OTHER_YIELD_TYPE, typename OTHER_RETURN_TYPE, bool OTHER_START_SUSPENDED>
 	struct Awaiter
 	{
+		Awaiter(Task<OTHER_YIELD_TYPE, OTHER_RETURN_TYPE, OTHER_START_SUSPENDED>& in_other_task):
+			other_task(in_other_task)
+		{
+
+		}
+
 		bool await_ready()
 		{
 			return false;
 		}
 
-		void await_suspend(std::coroutine_handle<> p)
+		auto await_suspend(std::coroutine_handle<> in_p)
 		{
 			int i = 0;
 			++i;
+
+			p = in_p;
+
+			return other_task.handle;
 		}
 
-		int await_resume()
+		auto await_resume()
 		{
-			return 666;
+
+			return other_task.GetYieldValue();
 		}
+
+		Task<OTHER_YIELD_TYPE, OTHER_RETURN_TYPE, OTHER_START_SUSPENDED> & other_task;
+
+		std::coroutine_handle<> p = nullptr;
 	};
 
 
 
 
-	template<typename OTHER_RET_TYPE, bool OTHER_START_SUSPENDED>
-	Awaiter await_transform(Task<OTHER_RET_TYPE, OTHER_START_SUSPENDED>& other_task)
+	template<typename OTHER_YIELD_TYPE, typename OTHER_RETURN_TYPE, bool OTHER_START_SUSPENDED>
+	Awaiter<OTHER_YIELD_TYPE, OTHER_RETURN_TYPE, OTHER_START_SUSPENDED> await_transform(Task<OTHER_YIELD_TYPE, OTHER_RETURN_TYPE, OTHER_START_SUSPENDED>& other_task)
 	{
-		return {};
+		return { other_task };
 	}
 
 
 
 
+	std::optional<YIELD_TYPE> y_value;
 
-
-
-
-
-protected:
-
-	std::optional<RET_TYPE> y_value;
-
-	std::optional<RET_TYPE> r_value;
+	std::optional<RETURN_TYPE> r_value;
 };
 
 
 //////////////////////////////////////////
 
 
-template<typename RET_TYPE, bool START_SUSPENDED>
+template<typename YIELD_TYPE, typename RETURN_TYPE, bool START_SUSPENDED>
 class Task
 {
 
 public:
 
-	using promise_type = TaskPromise<RET_TYPE, START_SUSPENDED, Task>;
+	using promise_type = TaskPromise<YIELD_TYPE, RETURN_TYPE, START_SUSPENDED, Task>;
 
 	using promise_handle = std::coroutine_handle<promise_type>;
 
 	friend class promise_type;
-
-
 
 	~Task()
 	{
@@ -160,63 +134,80 @@ public:
 			handle.destroy();
 	}
 
+	/** resume the coroutine */
 	void Resume()
 	{
 		handle.resume();
 	}
 
+	/** check whether coroutine is completed */
 	bool IsDone() const
 	{
 		return handle.done();
 	}
 
+	/** check whether coroutine has a yielded value */
 	bool HasYieldValue() const
 	{
-		return handle.promise().HasYieldValue();
+		return handle.promise().y_value.has_value();
 	}
 
+	/** check whether coroutine has a returned value */
 	bool HasReturnValue() const
 	{
-		return handle.promise().HasReturnValue();
+		return handle.promise().r_value.has_value();
 	}
 
+	/** read yielded value + destruction */
+	YIELD_TYPE GetYieldValue() const
+	{
+		assert(HasYieldValue());
+		YIELD_TYPE result = std::move(*handle.promise().y_value);
+		handle.promise().y_value.reset();
+		return result;
+	}
 
+	/** read yielded value without destroying it */
+	YIELD_TYPE PeekYieldValue() const
+	{
+		assert(HasYieldValue());
+		return *handle.promise().y_value;
+	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+	/** read returned value*/
+	RETURN_TYPE GetReturnValue() const
+	{
+		assert(HasReturnValue());
+		return *handle.promise().r_value;
+	}
 
 protected:
 
+	/** constructor */
 	explicit Task(promise_type* p) :
 		handle(promise_handle::from_promise(*p)) {}
 
-protected:
+public:
 
 	promise_handle handle;
 
 };
 
 
-Task<int> Generates()
+Task<int, int> Generates()
 {
 	co_yield 1;
 	co_yield 2;
+
+
+
 	co_yield 3;
 	co_yield 4;
+
+	co_return 3;
 }
 
-Task<int> MyTask(int value, Task<int> & getter)
+Task<int, int> MyTask(int value, Task<int, int> & getter)
 {
 	for (int i = 0; i < 5; ++i)
 	{
@@ -226,20 +217,25 @@ Task<int> MyTask(int value, Task<int> & getter)
 		co_yield (3 * value);
 		co_yield (3 * value);
 	}
+
+	co_return 3;
 }
 
 
 
 int CHAOS_MAIN(int argc, char** argv, char** env)
 {
-	Task<int> g = Generates();
+	Task<int, int> g = Generates();
 
-	Task<int> f = MyTask(6, g);
+	Task<int, int> f = MyTask(6, g);
 
 
 	while (!f.IsDone())
 	{
 		f.Resume();
+		int a = f.GetYieldValue();
+
+		argc = argc;
 
 	}
 

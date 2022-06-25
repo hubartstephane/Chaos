@@ -45,6 +45,11 @@ public:
 
 #else
 
+	template<typename T>
+	void return_value(T t)
+	{
+		t = t;
+	}
 
 	void return_value(RETURN_TYPE result) requires (!std::is_same_v<RETURN_TYPE, void>)
 	{
@@ -74,19 +79,18 @@ public:
 			return false;
 		}
 
-		auto await_suspend(std::coroutine_handle<> in_p)
+		auto await_suspend(std::coroutine_handle<> in_p /* the coroutine about to be suspended */)
 		{
 			int i = 0;
 			++i;
 
 			p = in_p;
 
-			return other_task.handle;
+			return other_task.handle; // enter other Task
 		}
 
 		auto await_resume()
 		{
-
 			return other_task.GetYieldValue();
 		}
 
@@ -193,76 +197,88 @@ public:
 
 };
 
-
-Task<int, int> Generates()
+class A
 {
-	co_yield 1;
-	co_yield 2;
+public:
 
-
-
-	co_yield 3;
-	co_yield 4;
-
-	co_return 3;
-}
-
-Task<int, int> MyTask(int value, Task<int, int> & getter)
-{
-	for (int i = 0; i < 5; ++i)
+	int f()
 	{
-
-		int x = co_await getter;
-
-		co_yield (3 * value);
-		co_yield (3 * value);
+		return 8;
 	}
 
-	co_return 3;
-}
+	Task<int, int> Generates()
+	{
+		auto X = this;
 
+		co_yield f();
+
+		auto Y = this;
+
+		f();
+
+		co_yield 9;
+		co_yield 13;
+		co_yield 17;
+
+		co_return 3;
+	}
+
+	Task<int, int> MyTask(int value, Task<int, int>& getter)
+	{
+		auto X = this;
+		 
+		for (int i = 0; i < 3; ++i)
+		{
+
+			int x = co_await getter;
+
+
+			auto Y = this;
+
+			f();
+
+			co_yield (3 * x);
+			co_yield (3 * value);
+		}
+
+		float xx = chaos::MathTools::RandFloat();
+		if (xx > 0.5f)
+			co_return *this;
+		co_return 3;
+	}
+
+
+	int XXX = 666;
+
+};
+
+auto operator co_await (A a)
+{
+	return std::suspend_always{};
+}
 
 
 int CHAOS_MAIN(int argc, char** argv, char** env)
 {
-	Task<int, int> g = Generates();
+	A a;
 
-	Task<int, int> f = MyTask(6, g);
+	chaos::MathTools::ResetRandSeed();
+
+	Task<int, int> g = a.Generates();
+
+	Task<int, int> f = a.MyTask(6, g);
 
 
 	while (!f.IsDone())
 	{
 		f.Resume();
-		int a = f.GetYieldValue();
+
+		a.f();
+		//int a = f.GetYieldValue();
 
 		argc = argc;
 
 	}
-
-
-
-#if 0
-
-	Task<int> t = MyTask(666);
-	bool a1 = t.HasYieldValue();
-	bool b1 = t.HasReturnValue();
-	bool c1 = t.IsDone();
-	t.Resume();
-	bool a2 = t.HasYieldValue();
-	bool b2 = t.HasReturnValue();
-	bool c2 = t.IsDone();
-	t.Resume();
-	bool a3 = t.HasYieldValue();
-	bool b3 = t.HasReturnValue();
-	bool c3 = t.IsDone();
-	t.Resume();
-	bool a4 = t.HasYieldValue();
-	bool b4 = t.HasReturnValue();
-	bool c4 = t.IsDone();
-
-
-
-#endif
 
 	return 0;
 }

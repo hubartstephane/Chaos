@@ -2,4 +2,4 @@
 -- ROOT_PATH/executables/VULKAN
 -- =============================================================================
 
-ProcessSubPremake("VulkanTest1")
+build:ProcessSubPremake("VulkanTest1")

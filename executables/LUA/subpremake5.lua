@@ -2,10 +2,10 @@
 -- ROOT_PATH/executables/LUA
 -- =============================================================================
 
-ProcessSubPremake("LuaTest")
-ProcessSubPremake("LuaFiles")
-ProcessSubPremake("LuaBinding")
-ProcessSubPremake("LuaBinding_2")
-ProcessSubPremake("LuaBindingPreprocess")
+build:ProcessSubPremake("LuaTest")
+build:ProcessSubPremake("LuaFiles")
+build:ProcessSubPremake("LuaBinding")
+build:ProcessSubPremake("LuaBinding_2")
+build:ProcessSubPremake("LuaBindingPreprocess")
 
 

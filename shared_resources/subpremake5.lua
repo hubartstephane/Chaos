@@ -2,4 +2,4 @@
 -- ROOT_PATH/shared_resources
 -- =============================================================================
 
-ProcessSubPremake("CommonFonts")
+build:ProcessSubPremake("CommonFonts")

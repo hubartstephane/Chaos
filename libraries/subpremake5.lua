@@ -2,6 +2,6 @@
 -- ROOT_PATH/libraries
 -- =============================================================================
 
-ProcessSubPremake("chaos")
-ProcessSubPremake("chaos2")
-ProcessSubPremake("testdll")
+build:ProcessSubPremake("chaos")
+build:ProcessSubPremake("chaos2")
+build:ProcessSubPremake("testdll")

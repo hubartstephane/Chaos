@@ -115,3 +115,49 @@ function Utility:AllTargets(fun)
 		end
 	end
 end
+
+function Utility:GetDebugString(obj)
+	if (self:IsBool(obj)) then
+		if (obj) then
+			return "true"
+		else
+			return "false"
+		end
+	end
+	if (self:IsNil(obj)) then
+		return "nil"
+	end
+	if (self:IsNumber(obj)) then
+		return tostring(obj)
+	end
+	if (self:IsString(obj)) then
+		return '"' .. obj .. '"'
+	end
+	if (self:IsTable(obj)) then
+		local result = "{"
+		local first = true
+		for k, v in pairs(obj) do
+			if (not first) then
+				result = result .. ", "
+			end
+			result = result .. self:GetDebugString(k) .. " => " .. self:GetDebugString(v)
+			first = false
+		end
+		result = result .. "}"
+		return result
+	end
+	return "???"
+end
+
+function Utility:QuotationMarks(...)
+	local arg = {...}
+
+	local result = ""
+	for k, v in pairs(arg) do
+		if (result ~= "") then
+			result = result .. " "
+		end
+		result = result .. '"' .. tostring(v) .. '"'
+	end
+	return result
+end

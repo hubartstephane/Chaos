@@ -2,9 +2,6 @@
 -- ROOT_PATH/executables/SOUND/IRRKLANG_Manager
 -- =============================================================================
 
-  WindowedApp()
-  DependOnLib("CHAOS")
-  DeclareToCopyFile("resources")
-    
-
-                       
+local project = build:WindowedApp()
+project:DependOnLib("CHAOS")
+project:AddFileToCopy("resources")

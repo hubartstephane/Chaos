@@ -2,6 +2,5 @@
 -- ROOT_PATH/executables/TOOLS/ResizeAtlas
 -- =============================================================================
 
-  WindowedApp()
-  DependOnLib("CHAOS")  
-                       
+local project = build:WindowedApp()
+project:DependOnLib("CHAOS")

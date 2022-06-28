@@ -2,7 +2,5 @@
 -- ROOT_PATH/executables/MISC/Screenshot
 -- =============================================================================
 
-  WindowedApp()
-  DependOnLib("CHAOS")  
- 
-                       
+local project = build:WindowedApp()
+project:DependOnLib("CHAOS")

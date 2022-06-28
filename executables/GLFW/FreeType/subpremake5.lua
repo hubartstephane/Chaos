@@ -2,9 +2,6 @@
 -- ROOT_PATH/executables/GLFW/FreeType
 -- =============================================================================
 
-  WindowedApp()
-  DependOnLib("CHAOS")
-  DeclareToCopyFile("resources")
-    
-
-                       
+local project = build:WindowedApp()
+project:DependOnLib("CHAOS")
+project:AddFileToCopy("resources")

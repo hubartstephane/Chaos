@@ -73,6 +73,10 @@ ZIP_SCRIPT = path.join(BUILD_TOOLS_PATH, "myzip.py")
 DOXYGEN_SCRIPT = path.join(BUILD_TOOLS_PATH, "mydoxygen.py")
 CLEAN_SCRIPT = path.join(BUILD_TOOLS_PATH, "myclean.py")
 
+DISPLAY_ROOT_ENVIRONMENT = true
+DISPLAY_ENVIRONMENT = true
+DISPLAY_DEPENDENCIES = false
+
 DEBUG = "DEBUG"
 RELEASE = "RELEASE"
 x32 = "x32"
@@ -127,8 +131,6 @@ end)
 -- =============================================================================
 -- Solution
 -- =============================================================================
-
-Log:Output("toto")
 
 solution "Chaos"
 

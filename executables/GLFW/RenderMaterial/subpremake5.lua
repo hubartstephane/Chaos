@@ -2,6 +2,6 @@
 -- ROOT_PATH/executables/GLFW/RenderMaterial
 -- =============================================================================
 
-  WindowedApp()
-  DependOnLib("CHAOS")
-  DeclareToCopyFile("resources")
+local project = build:WindowedApp()
+project:DependOnLib("CHAOS")
+project:AddFileToCopy("resources")

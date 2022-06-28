@@ -10,6 +10,35 @@ BuildSystem = Object:new({
 	projects = {}
 })
 
+function BuildSystem:DisplayRootEnvironment()
+	if (DISPLAY_ROOT_ENVIRONMENT) then
+		Log:Output("=======================================================================")
+		Log:Output("PREMAKE5 VERSION   : " .. _PREMAKE_VERSION)
+		Log:Output("BUILD_TARGET       : " .. BUILD_TARGET)
+		Log:Output("ROOT_PATH          : " .. ROOT_PATH)
+		Log:Output("ZIP_PATH           : " .. ZIP_PATH)
+		Log:Output("EXTERNAL_PATH      : " .. EXTERNAL_PATH)
+		Log:Output("BUILD_TOOLS_PATH   : " .. BUILD_TOOLS_PATH)
+		Log:Output("COPY_SCRIPT        : " .. COPY_SCRIPT)
+		Log:Output("ZIP_SCRIPT         : " .. ZIP_SCRIPT)
+		Log:Output("DOXYGEN_SCRIPT     : " .. DOXYGEN_SCRIPT)
+		Log:Output("CLEAN_SCRIPT       : " .. CLEAN_SCRIPT)
+		Log:Output("=======================================================================")
+	end
+end
+
+function BuildSystem:DisplayEnvironment()
+	if (DISPLAY_ENVIRONMENT) then
+		Log:Output("=======================================================================")
+		Log:Output("SCRIPT             : " .. _SCRIPT)
+		Log:Output("PROJ_NAME          : " .. self.project_name)
+		Log:Output("PROJECT_PATH       : " .. self.project_path)
+		Log:Output("PROJECT_SRC_PATH   : " .. self.project_src_path)
+		Log:Output("PROJECT_BUILD_PATH : " .. self.project_build_path)
+		Log:Output("=======================================================================")
+	end
+end
+
 function BuildSystem:ProcessSubPremake(dir_name, create_sub_group)
 
 	Utility:ForEachElement(dir_name, 
@@ -65,14 +94,9 @@ function BuildSystem:DeclareExternalLib(external_name, inc_path, lib_path, libna
 		tocopy = Utility:GetPlatConfArray({})
 	})
 
-
---[[
-
-	if (not Object::IsNil(tocopy)) then
-		DeclareToCopyFile(tocopy, result)
+	if (not Utility:IsNil(tocopy)) then
+		result:AddFileToCopy(tocopy)
 	end
-
-]]--
 
 	-- check for library file existence
 	Utility:AllTargets(
@@ -95,8 +119,49 @@ function BuildSystem:DeclareExternalLib(external_name, inc_path, lib_path, libna
 
 end
 
+function Project:DependOnLib(libnames)
+	Utility:ForEachElement(libnames,
+		function(libname)
+			table.insert(self.dependencies, string.upper(libname))
+		end
+	)
+end
+
+function Project:DependOnStandardLib(libname)
+	if os.target() ~= "windows" then
+		return
+	end
+
+	Utility::ForEachElement(libname,
+		function(lib)
+			Utility::AllTargets(
+				function(plat, conf)
+					table.insert(self.additionnal_libs[plat][conf], libname)
+				end
+			)
+		end
+	)
+end
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+function BuildSystem:WindowedApp()
+	--local result = self:CppProject("WindowedApp", ProjectType.EXECUTABLE)
+	self:DisplayEnvironment()
+	--result:GenZIP()
+	--return result
+end
 
 
 

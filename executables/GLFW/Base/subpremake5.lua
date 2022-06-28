@@ -2,5 +2,5 @@
 -- ROOT_PATH/executables/GLFW/Base
 -- =============================================================================
 
-  WindowedApp()
-  DependOnLib("CHAOS")
+local project = build:WindowedApp()
+project:DependOnLib("CHAOS")

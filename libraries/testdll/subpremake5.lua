@@ -2,4 +2,4 @@
 -- ROOT_PATH/libraries/testdll
 -- =============================================================================
 
-  SharedLibrary()
+local project = build:SharedLibrary()

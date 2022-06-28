@@ -2,7 +2,6 @@
 -- ROOT_PATH/executables/LUA/LuaFiles
 -- =============================================================================
 
-  WindowedApp()
-  DependOnLib("CHAOS")  
-  DeclareToCopyFile("resources")
-                       
+local project = build:WindowedApp()
+project:DependOnLib("CHAOS")
+project:AddFileToCopy("resources")

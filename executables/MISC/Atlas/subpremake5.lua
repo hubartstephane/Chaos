@@ -2,7 +2,6 @@
 -- ROOT_PATH/executables/MISC/Atlas
 -- =============================================================================
 
-  WindowedApp()
-  DependOnLib("CHAOS") 
-  DeclareToCopyFile("resources")  
-                       
+local project = build:WindowedApp()
+project:DependOnLib("CHAOS")
+project:AddFileToCopy("resources")

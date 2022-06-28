@@ -2,8 +2,7 @@
 -- ROOT_PATH/executables/LUDUM/Ludum43
 -- =============================================================================
 
-  WindowedApp()
-  DeclareToCopyFile("resources")  
-  DependOnLib("CHAOS")
-	DependOnLib("TestDll")
-  DependOnLib("CommonFonts")
+local project = build:WindowedApp()
+project:DependOnLib("CHAOS")
+project:AddFileToCopy("resources")
+project:DependOnLib("CommonFonts")

@@ -2,6 +2,5 @@
 -- ROOT_PATH/executables/C++/C++17
 -- =============================================================================
 
-  WindowedApp()
-  DependOnLib("CHAOS")  
-                       
+local project = build:WindowedApp()
+project:DependOnLib("CHAOS")

@@ -2,6 +2,6 @@
 -- ROOT_PATH/executables/MISC/BufferPolicy
 -- =============================================================================
 
-  WindowedApp()
-  DependOnLib("CHAOS")  
-                       
+local project = build:WindowedApp()
+project:DependOnLib("CHAOS")
+project:AddFileToCopy("resources")

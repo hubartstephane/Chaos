@@ -2,6 +2,5 @@
 -- ROOT_PATH/executables/NANA/Nana_8
 -- =============================================================================
 
-  WindowedApp()
-  DependOnLib("CHAOS")  
-                       
+local project = build:WindowedApp()
+project:DependOnLib("CHAOS")

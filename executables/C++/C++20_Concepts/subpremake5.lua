@@ -2,5 +2,5 @@
 -- ROOT_PATH/executables/C++/C++20_Concepts
 -- =============================================================================
 
-  WindowedApp()
-  DependOnLib("CHAOS")  
+local project = build:WindowedApp()
+project:DependOnLib("CHAOS")

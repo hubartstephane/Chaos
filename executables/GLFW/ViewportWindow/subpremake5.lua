@@ -2,5 +2,6 @@
 -- ROOT_PATH/executables/GLFW/ViewportWindow
 -- =============================================================================
 
-  WindowedApp()
-  DependOnLib("CHAOS")
+local project = build:WindowedApp()
+project:DependOnLib("CHAOS")
+project:AddFileToCopy("resources")

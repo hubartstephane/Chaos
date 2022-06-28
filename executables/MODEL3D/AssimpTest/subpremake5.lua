@@ -2,6 +2,6 @@
 -- ROOT_PATH/executables/MODEL3D/AssimpTest
 -- =============================================================================
 
-  WindowedApp()
-  DependOnLib("CHAOS")
-  DeclareToCopyFile("resources")
+local project = build:WindowedApp()
+project:DependOnLib("CHAOS")
+project:AddFileToCopy("resources")

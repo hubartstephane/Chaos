@@ -2,6 +2,5 @@
 -- ROOT_PATH/executables/MISC/CRC32
 -- =============================================================================
 
-  WindowedApp()
-  DependOnLib("CHAOS")  
-                       
+local project = build:WindowedApp()
+project:DependOnLib("CHAOS")

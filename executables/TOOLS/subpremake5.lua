@@ -2,4 +2,4 @@
 -- ROOT_PATH/executables/TOOLS
 -- =============================================================================
 
-ProcessSubPremake("ResizeAtlas")
+build:ProcessSubPremake("ResizeAtlas")

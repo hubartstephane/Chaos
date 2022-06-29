@@ -1,28 +1,49 @@
 
 require 'Object'
 
+--------------------------------------------
+-- Class declaration
+--------------------------------------------
 Utility = Object:new()
 
+--------------------------------------------
+-- check whether the src is a bool
+--------------------------------------------
 function Utility:IsBool(value)
 	return (type(value) == "boolean")
 end
 
+--------------------------------------------
+-- check whether the src is a table
+--------------------------------------------
 function Utility:IsTable(value)
 	return (type(value) == "table")
 end
 
+--------------------------------------------
+-- check whether the src is nil
+--------------------------------------------
 function Utility:IsNil(value)
 	return (type(value) == "nil")
 end
 
+--------------------------------------------
+-- check whether the src is a string
+--------------------------------------------
 function Utility:IsString(value)
 	return (type(value) == "string")
 end
 
+--------------------------------------------
+-- check whether the src is a number
+--------------------------------------------
 function Utility:IsNumber(value)
 	return (type(value) == "number")
 end
 
+--------------------------------------------
+-- call the callback for all elements of src if it is a table, or on src elsewhere
+--------------------------------------------
 function Utility:ForEachElement(src, fun)
 	if not self:IsNil(src) then
 		if self:IsTable(src) then
@@ -35,7 +56,9 @@ function Utility:ForEachElement(src, fun)
 	end
 end
 
+--------------------------------------------
 -- returns true whether value is a table with PLATFORM/CONFIGS key
+--------------------------------------------
 function Utility:HasCategoryKey(src, categories)
 	if (not self:IsTable(src)) then
 		return false
@@ -49,17 +72,23 @@ function Utility:HasCategoryKey(src, categories)
 	return false
 end
 
+--------------------------------------------
 -- returns true whether value is a table with PLATFORM key
+--------------------------------------------
 function Utility:HasPlatformKey(src)
 	return self:HasCategoryKey(src, PLATFORMS)
 end
 
+--------------------------------------------
 -- returns true whether value is a table with CONFIG key
+--------------------------------------------
 function Utility:HasConfigKey(src)
 	return self:HasCategoryKey(src, CONFIGS)
 end
 
+--------------------------------------------
 -- if input is an array, returns a copy of it. return the input unchanged elsewhere
+--------------------------------------------
 function Utility:DeepCopy(value)
 	if (self:IsTable(value)) then
 			return table.deepcopy(value)
@@ -67,8 +96,10 @@ function Utility:DeepCopy(value)
 	return value
 end
 
+--------------------------------------------
 -- if the input is not an array return it unchanged
 -- elsewhere, read in that array the value corresponding to PLATFORM/CONFIG
+--------------------------------------------
 function Utility:ReadValueFromPlatformConfigArray(value, plat, conf)
 	if (self:HasPlatformKey(value)) then
 		if (self:HasConfigKey(value[plat])) then
@@ -84,7 +115,9 @@ function Utility:ReadValueFromPlatformConfigArray(value, plat, conf)
 	return value
 end
 
+--------------------------------------------
 -- transform a value (array or not) in the form of [PLATFORM][CONFIG]
+--------------------------------------------
 function Utility:GetPlatConfArray(value)
 	local result = {}
 	for k, platform in pairs(PLATFORMS) do
@@ -96,7 +129,9 @@ function Utility:GetPlatConfArray(value)
 	return result
 end
 
+--------------------------------------------
 -- add a prefix to a path (the path is a table[PLATFORM][CONFIG] format)
+--------------------------------------------
 function Utility:PrefixPathArray(src, prefix)
 	self:AllTargets(
 		function(plat, conf)
@@ -108,6 +143,9 @@ function Utility:PrefixPathArray(src, prefix)
 	return src
 end
 
+--------------------------------------------
+-- apply all combinaison of platform/config to a given callback
+--------------------------------------------
 function Utility:AllTargets(fun)
 	for k, platform in pairs(PLATFORMS) do
 		for k, config in pairs(CONFIGS) do
@@ -116,6 +154,9 @@ function Utility:AllTargets(fun)
 	end
 end
 
+--------------------------------------------
+-- output a string representation of any object
+--------------------------------------------
 function Utility:GetDebugString(obj)
 	if (self:IsBool(obj)) then
 		if (obj) then
@@ -149,6 +190,9 @@ function Utility:GetDebugString(obj)
 	return "???"
 end
 
+--------------------------------------------
+-- concat some strings wrapping them with "
+--------------------------------------------
 function Utility:QuotationMarks(...)
 	local arg = {...}
 

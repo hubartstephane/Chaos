@@ -1,6 +1,9 @@
 require "Object"
 require "Utility"
 
+--------------------------------------------
+-- Class declaration
+--------------------------------------------
 BuildSystem = Object:new({
 	current_group = "",
 	project_name = "",
@@ -10,6 +13,9 @@ BuildSystem = Object:new({
 	projects = {}
 })
 
+--------------------------------------------
+-- display the environment
+--------------------------------------------
 function BuildSystem:DisplayRootEnvironment()
 	if (DISPLAY_ROOT_ENVIRONMENT) then
 		Log:Output("=======================================================================")
@@ -39,6 +45,9 @@ function BuildSystem:DisplayEnvironment()
 	end
 end
 
+--------------------------------------------
+-- process a subpremake file (store then restore environment)
+--------------------------------------------
 function BuildSystem:ProcessSubPremake(dir_name, create_sub_group)
 
 	Utility:ForEachElement(dir_name, 
@@ -65,6 +74,9 @@ function BuildSystem:ProcessSubPremake(dir_name, create_sub_group)
   )
 end
 
+--------------------------------------------
+-- ensure a project does not already exist then create it
+--------------------------------------------
 function BuildSystem:AddProject(name, data)
 	
 	if (self.projects[name]) then
@@ -76,6 +88,9 @@ function BuildSystem:AddProject(name, data)
 	end
 end
 
+--------------------------------------------
+-- declare an external library (not described by any premake project)
+--------------------------------------------
 function BuildSystem:DeclareExternalLib(external_name, inc_path, lib_path, libname, tocopy)
 
 	external_name = string.upper(external_name)
@@ -88,10 +103,7 @@ function BuildSystem:DeclareExternalLib(external_name, inc_path, lib_path, libna
 		root_path = EXTERNAL_PATH,
 		includedirs = Utility:PrefixPathArray(Utility:GetPlatConfArray(inc_path), EXTERNAL_PATH),
 		targetdir = Utility:PrefixPathArray(Utility:GetPlatConfArray(lib_path), EXTERNAL_PATH),
-		libname = Utility:GetPlatConfArray(libname),
-		additionnal_libs = Utility:GetPlatConfArray({}),
-		dependencies = {},
-		tocopy = Utility:GetPlatConfArray({})
+		libname = Utility:GetPlatConfArray(libname)
 	})
 
 	if (not Utility:IsNil(tocopy)) then
@@ -119,28 +131,178 @@ function BuildSystem:DeclareExternalLib(external_name, inc_path, lib_path, libna
 
 end
 
-function Project:DependOnLib(libnames)
-	Utility:ForEachElement(libnames,
-		function(libname)
-			table.insert(self.dependencies, string.upper(libname))
-		end
-	)
+--------------------------------------------
+-- function to create any kind of library
+--------------------------------------------
+function BuildSystem:LibraryHelper(kind_library, type)
+	local result = selft:CppProject(kind_library, type)
+	result.libname = GetPlatConfArray(result.name)
+	result:AddFileToCopy("resources")
+	if (type == ProjectType.SHARED_LIBRARY) then
+		result:AddFileToCopy("@" .. path.join(result.targetdir[x64][DEBUG], result.name .. ".dll"))
+	end
+	result:GenDoxygen()
+	return result
 end
 
-function Project:DependOnStandardLib(libname)
-	if os.target() ~= "windows" then
-		return
+--------------------------------------------
+-- declare a static library
+--------------------------------------------
+function BuildSystem:StaticLibrary()
+	return self:LibraryHelper("StaticLib", ProjectType.STATIC_LIBRARY)
+end
+
+--------------------------------------------
+-- declare a shared library
+--------------------------------------------
+function BuildSystem:SharedLibrary()
+	local result = self:LibraryHelper("SharedLib", ProjectType.SHARED_LIBRARY)
+	filter {}
+	defines('CHAOS_IS_BUILDING_DLL')
+	allmodulespublic "on" -- required for DLL+modules (requires at least premake 5.0.0-beta2)
+	return result
+end
+
+
+
+function BuildSystem:CppProject(in_kind, proj_type)
+
+	local name = string.upper(self.project_name)
+
+	local result = self:AddProject(name, {
+	
+	
+	
+	
+	--[[
+	
+	
+	
+		name = project_name,
+		proj_type = ProjectType.EXTERNAL_LIBRARY,
+		root_path = EXTERNAL_PATH,
+		includedirs = Utility:PrefixPathArray(Utility:GetPlatConfArray(inc_path), EXTERNAL_PATH),
+		targetdir = Utility:PrefixPathArray(Utility:GetPlatConfArray(lib_path), EXTERNAL_PATH),
+		libname = Utility:GetPlatConfArray(libname),
+		additionnal_libs = Utility:GetPlatConfArray({}),
+		dependencies = {},
+		tocopy = Utility:GetPlatConfArray({})
+		
+		]]--
+	})
+
+
+
+	
+
+
+
+	-- the name of the group
+	local group_name = path.join(CURRENT_GROUP, PROJ_NAME)
+	if (CURRENT_GROUP ~= nil) then
+		group(group_name)
 	end
 
-	Utility::ForEachElement(libname,
-		function(lib)
-			Utility::AllTargets(
-				function(plat, conf)
-					table.insert(self.additionnal_libs[plat][conf], libname)
-				end
-			)
+	-- create a project for the resources
+	local proj_location = path.join(SOLUTION_PATH, self.project_path)
+	local res_path = path.join(self.project_src_path, "resources")
+
+	local resource_proj_name = GetDependantResourceProjName(PROJ_NAME)
+	project(resource_proj_name)
+	kind(SPECIAL_PROJECT)
+	location(proj_location)
+	files {path.join(res_path, "**")}
+
+	-- create the project itself
+	local proj_location = path.join(SOLUTION_PATH, self.project_path)
+	local inc_path = path.join(self.project_src_path, "include")
+	local src_path = path.join(self.project_src_path, "src")
+	local res_path = path.join(self.project_src_path, "resources")
+
+	project(PROJ_NAME)
+	kind(in_kind)
+	location(proj_location)
+
+	local result = {
+		name = name,
+		proj_type = proj_type,
+		path = PROJECT_PATH,
+		root_path = PROJECT_SRC_PATH,
+		build_path = PROJECT_BUILD_PATH,
+		lua_project = project(),
+		targetdir = GetPlatConfArray({}),
+		includedirs = GetPlatConfArray({}),
+		tocopy = GetPlatConfArray({}),
+		gendoxygen = false,
+		genzip = false,
+		group_name = group_name,
+		proj_location = proj_location,
+		additionnal_libs = GetPlatConfArray({}),
+		inc_path = GetPlatConfArray(inc_path),
+		src_path = GetPlatConfArray(src_path),
+		res_path = GetPlatConfArray(res_path),
+		dependencies = {}
+	}
+
+	MYPROJECTS[result.name] = result
+
+
+
+
+
+
+
+	language "C++"
+
+	if (_ACTION == "codelite") then
+		cppdialect "C++2a"
+	else
+		cppdialect "C++20"
+	end
+	
+		--staticruntime "on"
+
+	-- change entry point for windows (avoid WinMain to main)
+	if (os.target() == "windows") then
+		if (proj_type == ProjectType.EXECUTABLE) then
+			entrypoint "mainCRTStartup"
+		end
+	end
+
+	-- some files including *.cpp, *.c, *.hpp, *.h
+	local src_h = path.join(PROJECT_SRC_PATH, "**.h")
+	local src_hpp = path.join(PROJECT_SRC_PATH, "**.hpp")
+	local src_c = path.join(PROJECT_SRC_PATH, "**.c")
+	local src_cpp = path.join(PROJECT_SRC_PATH, "**.cpp")
+	local src_ixx = path.join(PROJECT_SRC_PATH, "**.ixx")
+	files {src_h, src_hpp, src_c, src_cpp, src_ixx}
+
+	-- handle C++ modules
+	filter {"files:**.ixx" }
+		buildaction "ClCompile"
+		compileas "Module"
+	filter { }
+
+	-- release/debug settings
+	AllTargets(
+		function(plat, conf)
+			if (conf == DEBUG) then
+				DebugConf(plat)
+			else
+				ReleaseConf(plat)
+			end
+			OnConfig(in_kind, proj_type, plat, conf, result)
 		end
 	)
+
+	-- special filter for copying dll
+	filter 'files:**.dll'
+	  buildmessage 'DLL HANDLING %{file.basename}.dll'
+		build_command_str = Utility:QuotationMarks(COPY_SCRIPT, '%{file.abspath}', '%{cfg.targetdir}/%{file.basename}.dll')
+		buildcommands(build_command_str)
+		buildoutputs '%{cfg.targetdir}/%{file.basename}.dll'
+
+	return result
 end
 
 
@@ -152,15 +314,13 @@ end
 
 
 
-
-
-
-
+--------------------------------------------
+-- Create a windowed application
+--------------------------------------------
 function BuildSystem:WindowedApp()
-	--local result = self:CppProject("WindowedApp", ProjectType.EXECUTABLE)
-	self:DisplayEnvironment()
-	--result:GenZIP()
-	--return result
+	local result = self:CppProject("WindowedApp", ProjectType.EXECUTABLE)
+	result:GenZIP()
+	return result
 end
 
 
@@ -177,12 +337,3 @@ end
 
 
 
-
-
-
-
-function WindowedApp()
-  
-  local result = Project.new()
-  
-end

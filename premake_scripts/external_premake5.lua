@@ -5,37 +5,52 @@
 local WINDOWS = (os.target() == "windows")
 local LINUX = (os.target() == "linux")
 
-  -- RANGE-V3
+--------------------------------------------
+-- RANGE-V3
+--------------------------------------------
 local RANGE_V3_INC_PATH =  path.join("range-v3", "include")
-build:DeclareExternalLib("range-v3", RANGE_V3_INC_PATH, nil, nil)  
+build:DeclareExternalLib("range-v3", RANGE_V3_INC_PATH, nil, nil)
 
-  -- OPENGL
+--------------------------------------------
+-- OPENGL
+--------------------------------------------
 local GL_INC_PATH = "openGL"
-build:DeclareExternalLib("OPENGL", GL_INC_PATH, nil, "OpenGL32")  
-                                             
-  -- GLM
+build:DeclareExternalLib("OPENGL", GL_INC_PATH, nil, "OpenGL32")
+
+--------------------------------------------
+-- GLM
+--------------------------------------------
 local GLM_INC_PATH = "glm"
 
 build:DeclareExternalLib("GLM", GLM_INC_PATH, nil, nil)
-  -- BOOST
+
+--------------------------------------------
+-- BOOST
+--------------------------------------------
 local BOOST_PATH     = "boost_1_77_0"
-local BOOST_LIB_PATH =  path.join(BOOST_PATH, "stage", "lib")  	
+local BOOST_LIB_PATH =  path.join(BOOST_PATH, "stage", "lib")
 build:DeclareExternalLib("BOOST", BOOST_PATH, BOOST_LIB_PATH, nil)
 
-  -- LUA
+--------------------------------------------
+-- LUA
+--------------------------------------------
 local LUA_PATH     = "lua-5.4.2"
 local LUA_INC_PATH = path.join(LUA_PATH, "include")
 local LUA_LIB_PATH = LUA_PATH
 build:DeclareExternalLib("LUA", LUA_INC_PATH, LUA_LIB_PATH, "lua54.lib")
 
-  -- GLFW  
-local GLFW_PATH = "glfw"     
+--------------------------------------------
+-- GLFW
+--------------------------------------------
+local GLFW_PATH = "glfw"
 local GLFW_INC_PATH = path.join(GLFW_PATH, "include")
 
 local GLFW_LIB_PATH = path.join(GLFW_PATH, "build", "src", RELEASE)  
 build:DeclareExternalLib("GLFW", GLFW_INC_PATH, GLFW_LIB_PATH, "glfw3.lib")
 
-  -- VISUAL STUDIO REDISTRIBUABLE  
+--------------------------------------------
+-- VISUAL STUDIO REDISTRIBUABLE
+--------------------------------------------
 local MSVC_BASELIB_PATH = path.join("MSVC_Redist", "14.23.27820")   
 local MSVC_LIB_PATH_X64_RELEASE = path.join(MSVC_BASELIB_PATH, "x64", "Microsoft.VC142.CRT") 
 local MSVC_LIB_PATH_X64_DEBUG = path.join(MSVC_BASELIB_PATH, "debug_nonredist", "x64", "Microsoft.VC142.DebugCRT") 
@@ -73,24 +88,30 @@ end
 
 local MSVC_TOCOPY  = { -- @ because this copies the file directly in target directory
    DEBUG = GenerateMSVCDLLs(MSVC_LIB_PATH_X64_DEBUG, MSVC_DLL_DEBUG),
-   RELEASE = GenerateMSVCDLLs(MSVC_LIB_PATH_X64_RELEASE, MSVC_DLL_RELEASE)                
+   RELEASE = GenerateMSVCDLLs(MSVC_LIB_PATH_X64_RELEASE, MSVC_DLL_RELEASE)
 } 
-build:DeclareExternalLib("MSVC", nil, nil, nil, MSVC_TOCOPY)  
+build:DeclareExternalLib("MSVC", nil, nil, nil, MSVC_TOCOPY)
 
-  -- GLEW 
+--------------------------------------------
+-- GLEW
+--------------------------------------------
 local GLEW_PATH     = "glew-2.2.0"
 local GLEW_INC_PATH = path.join(GLEW_PATH, "include")
 local GLEW_LIB_PATH = path.join(GLEW_PATH, "lib", RELEASE, x64)
 local GLEW_LIBNAME = "glew32s.lib"
 build:DeclareExternalLib("GLEW", GLEW_INC_PATH, GLEW_LIB_PATH, GLEW_LIBNAME)
 
-  -- FREETYPE2 
+--------------------------------------------
+-- FREETYPE2
+--------------------------------------------
 local FREETYPE2_PATH = "freetype2"
 local FREETYPE2_INC_PATH = path.join(FREETYPE2_PATH, "include") 
 local FREETYPE2_LIB_PATH = path.join(FREETYPE2_PATH, "objs", x64, "Release Static")
 build:DeclareExternalLib("FREETYPE2", FREETYPE2_INC_PATH, FREETYPE2_LIB_PATH, "freetype.lib")
 
-  -- IRRKLANG   
+--------------------------------------------
+-- IRRKLANG
+--------------------------------------------
 local IRRKLANG_PATH = "irrKlang"
 local IRRKLANG_INC_PATH = path.join(IRRKLANG_PATH, "include")
 local IRRKLANG_LIB_PATH = path.join(IRRKLANG_PATH, "lib", "Winx64-visualStudio")
@@ -99,21 +120,27 @@ local IRRKLANG_TOCOPY  = "@" .. path.join(IRRKLANG_PATH, "bin", "winx64-visualSt
 
 build:DeclareExternalLib("IRRKLANG", IRRKLANG_INC_PATH, IRRKLANG_LIB_PATH, IRRKLANG_LIBNAME, IRRKLANG_TOCOPY)
 
-  -- FBX 
+--------------------------------------------
+-- FBX
+--------------------------------------------
 local FBX_PATH = path.join("FBX_2020.0.1") 
-local FBX_INC_PATH = path.join(FBX_PATH, "include")        
+local FBX_INC_PATH = path.join(FBX_PATH, "include")
 local FBX_LIB_PATH = path.join(FBX_PATH, "lib", "vs2017", "x64", "release")
 local FBX_LIBNAME = "libfbxsdk.lib"
 local FBX_TOCOPY  = "@" .. path.join(FBX_LIB_PATH, "libfbxsdk.dll")   -- @ because this copies the file directly in    
 build:DeclareExternalLib("FBX", FBX_INC_PATH, FBX_LIB_PATH, FBX_LIBNAME, FBX_TOCOPY)
 
-  -- ZLIB    
+--------------------------------------------
+-- ZLIB
+--------------------------------------------
 local ZLIB_PATH     = "zlib-1.2.11"
 local ZLIB_INC_PATH = ZLIB_PATH
 local ZLIB_LIB_PATH = path.join(ZLIB_PATH, "contrib",   "vstudio", "vc14", "x64", "ZlibStatRelease")
-build:DeclareExternalLib("ZLIB", ZLIB_INC_PATH, ZLIB_LIB_PATH, "zlibstat.lib", nil)     
-    
-  -- ASSIMP
+build:DeclareExternalLib("ZLIB", ZLIB_INC_PATH, ZLIB_LIB_PATH, "zlibstat.lib", nil)
+
+--------------------------------------------
+-- ASSIMP
+--------------------------------------------
 local ASSIMP_PATH     = "assimp"
 local ASSIMP_INC_PATH = path.join(ASSIMP_PATH, "include")
 local ASSIMP_LIB_PATH = path.join(ASSIMP_PATH, "build", "lib", "Release")
@@ -122,17 +149,20 @@ local ASSIMP_BIN_PATH = path.join(ASSIMP_PATH, "build", "bin", "Release")
 local ASSIMP_TOCOPY  = "@" .. path.join(ASSIMP_BIN_PATH, "assimp-vc142-mt.dll") -- @ because this copies the file directly in
 build:DeclareExternalLib("ASSIMP", ASSIMP_INC_PATH, ASSIMP_LIB_PATH, ASSIMP_LIBNAME, ASSIMP_TOCOPY)
 
-
-  -- FREEIMAGE
+--------------------------------------------
+-- FREEIMAGE
+--------------------------------------------
 local FREEIMAGE_PATH       = path.join("FreeImage", "Dist")
 local FREEIMAGE_DIST_PATH  = path.join(FREEIMAGE_PATH, "x64")
 local FREEIMAGE_INC_PATH = FREEIMAGE_DIST_PATH
 local FREEIMAGE_LIB_PATH = FREEIMAGE_DIST_PATH
 local FREEIMAGE_LIBNAME = "FreeImage.lib"
 local FREEIMAGE_TOCOPY  = "@" .. path.join(FREEIMAGE_LIB_PATH, "FreeImage.dll")  -- @ because this copies the file directly in
-build:DeclareExternalLib("FREEIMAGE", FREEIMAGE_INC_PATH, FREEIMAGE_LIB_PATH, FREEIMAGE_LIBNAME, FREEIMAGE_TOCOPY)  
+build:DeclareExternalLib("FREEIMAGE", FREEIMAGE_INC_PATH, FREEIMAGE_LIB_PATH, FREEIMAGE_LIBNAME, FREEIMAGE_TOCOPY)
 
-  -- LIBXML2
+--------------------------------------------
+-- LIBXML2
+--------------------------------------------
 local LIBTINYXML2_PATH = "tinyxml2"
 local LIBTINYXML2_INC_PATH = LIBTINYXML2_PATH
 local LIBTINYXML2_LIB_PATH = path.join(LIBTINYXML2_PATH, "build")
@@ -142,23 +172,28 @@ LIBTINYXML2_LIB_PATH = {
 }
 build:DeclareExternalLib("TINYXML2", LIBTINYXML2_PATH, LIBTINYXML2_LIB_PATH, "tinyxml2.lib", nil)
 
-
-  -- NANA
+--------------------------------------------
+-- NANA
+--------------------------------------------
 local NANA_PATH     = "nana"
 local NANA_INC_PATH = path.join(NANA_PATH, "include")
 local NANA_LIB_PATH = path.join(NANA_PATH, "build", "bin")
 local NANA_LIBNAME = "nana_v142_Release_x64.lib"
 build:DeclareExternalLib("NANA", NANA_INC_PATH, NANA_LIB_PATH, NANA_LIBNAME)
 
-  -- JSON
+--------------------------------------------
+-- JSON
+--------------------------------------------
 local JSON_PATH     = "json"
-local JSON_INC_PATH = path.join(JSON_PATH, "single_include", "nlohmann")  
+local JSON_INC_PATH = path.join(JSON_PATH, "single_include", "nlohmann")
 build:DeclareExternalLib("JSON", JSON_INC_PATH, nil, nil)
 
 
-  -- VULKAN   
+
 	
 	--[[
+	
+  -- VULKAN   
 	
 local VULKAN_PATH = path.join("VulkanSDK", "1.2.162.0")
 local VULKAN_INC_PATH = path.join(VULKAN_PATH, "Include")

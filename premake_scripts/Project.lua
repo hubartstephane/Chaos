@@ -1,30 +1,41 @@
 require "Object"
 
-ProjectType = {  
+--------------------------------------------
+-- The types of projects
+--------------------------------------------
+ProjectType = {
 	EXECUTABLE = {},
 	STATIC_LIBRARY = {},
 	SHARED_LIBRARY = {},
 	EXTERNAL_LIBRARY = {},
-	RESOURCES = {}    
+	RESOURCES = {}
 }
 
+--------------------------------------------
+-- Class declaration
+--------------------------------------------
 Project = Object:new({
-  gen_zip = false,
-  gen_doxygen = false  
+	additionnal_libs = Utility:GetPlatConfArray({}),
+	dependencies = {},
+	tocopy = Utility:GetPlatConfArray({}),
+	gen_zip = false,
+	gen_doxygen = false
 })
 
+--------------------------------------------
 -- for file copying (from src to build directory),
 -- some paths start with @ -> in that case, the file is copied in the build directory directly (no matter what SRC relative path is) (useful for DLL)
 --
---      src/toto/titi/file.txt => build/file.txt
+--		src/toto/titi/file.txt => build/file.txt
 --
 -- some does not -> they are copied in the equivalent path
 --
---      src/toto/titi/file.txt => build/toto/titi/file.txt
+-- 		src/toto/titi/file.txt => build/toto/titi/file.txt
 --
 -- TO_COPY is an array of {dst_path, src_path}
 
 -- add input (whether it is a string or a table) into TO_COPY
+--------------------------------------------
 function Project:AddFileToCopyHelper(filenames, plat, conf)
 	Utility:ForEachElement(filenames,
 		function(filename)
@@ -41,7 +52,9 @@ function Project:AddFileToCopyHelper(filenames, plat, conf)
 	)
 end
 
+--------------------------------------------
 -- add a file/directory in the TO_COPY list
+--------------------------------------------
 function Project:AddFileToCopy(filename)
 	local tmp = Utility:GetPlatConfArray(filename)
 	Utility:AllTargets(
@@ -51,13 +64,45 @@ function Project:AddFileToCopy(filename)
 	)
 end
 
+--------------------------------------------
 -- require documentation generation
+--------------------------------------------
 function Project:GenDoxygen()
 	self.gen_doxygen = true
 end
+--------------------------------------------
 -- require ZIP generation
-function Gen_ZIP()
+--------------------------------------------
+function Project:GenZIP()
 	self.genzip = true
 end
 
+--------------------------------------------
+-- declare a dependency
+--------------------------------------------
+function Project:DependOnLib(libnames)
+	Utility:ForEachElement(libnames,
+		function(libname)
+			table.insert(self.dependencies, string.upper(libname))
+		end
+	)
+end
+
+--------------------------------------------
+-- declare some additionnal dependencies (does not depend on any project)
+--------------------------------------------
+function Project:DependOnStandardLib(libname)
+	if os.target() ~= "windows" then
+		return
+	end
+	Utility:ForEachElement(libname,
+		function(lib)
+			Utility:AllTargets(
+				function(plat, conf)
+					table.insert(self.additionnal_libs[plat][conf], libname)
+				end
+			)
+		end
+	)
+end
 

@@ -1,6 +1,6 @@
---------------------------------------------
+--------------------------------------------------------------------
 -- Class declaration
---------------------------------------------
+--------------------------------------------------------------------
 Object = {}
 
 function Object:new(data)
@@ -10,9 +10,9 @@ function Object:new(data)
 	return data
 end
 
---------------------------------------------
+--------------------------------------------------------------------
 -- returns an ENV array that contains all required members from self
---------------------------------------------
+--------------------------------------------------------------------
 function Object:StoreEnvironment(names, result)
 	result = result or {}
 	for k, v in pairs(names) do
@@ -21,9 +21,9 @@ function Object:StoreEnvironment(names, result)
 	return result
 end
 
---------------------------------------------
+--------------------------------------------------------------------
 -- take an ENV and write back all members to self
---------------------------------------------
+--------------------------------------------------------------------
 function Object:RestoreEnvironment(env)
 	for k, v in pairs(env) do
 		self[k] = v

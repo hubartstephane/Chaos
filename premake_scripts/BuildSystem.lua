@@ -1,9 +1,9 @@
 require "Object"
 require "Utility"
 
---------------------------------------------
+--------------------------------------------------------------------
 -- Class declaration
---------------------------------------------
+--------------------------------------------------------------------
 BuildSystem = Object:new({
 	current_group = "",
 	project_name = "",
@@ -13,9 +13,9 @@ BuildSystem = Object:new({
 	projects = {}
 })
 
---------------------------------------------
+--------------------------------------------------------------------
 -- display the environment
---------------------------------------------
+--------------------------------------------------------------------
 function BuildSystem:DisplayRootEnvironment()
 	if (DISPLAY_ROOT_ENVIRONMENT) then
 		Log:Output("=======================================================================")
@@ -45,9 +45,9 @@ function BuildSystem:DisplayEnvironment()
 	end
 end
 
---------------------------------------------
+--------------------------------------------------------------------
 -- process a subpremake file (store then restore environment)
---------------------------------------------
+--------------------------------------------------------------------
 function BuildSystem:ProcessSubPremake(dir_name, create_sub_group)
 
 	Utility:ForEachElement(dir_name, 
@@ -74,9 +74,9 @@ function BuildSystem:ProcessSubPremake(dir_name, create_sub_group)
   )
 end
 
---------------------------------------------
+--------------------------------------------------------------------
 -- ensure a project does not already exist then create it
---------------------------------------------
+--------------------------------------------------------------------
 function BuildSystem:AddProject(name, data)
 	
 	if (self.projects[name]) then
@@ -88,9 +88,9 @@ function BuildSystem:AddProject(name, data)
 	end
 end
 
---------------------------------------------
+--------------------------------------------------------------------
 -- declare an external library (not described by any premake project)
---------------------------------------------
+--------------------------------------------------------------------
 function BuildSystem:DeclareExternalLib(external_name, inc_path, lib_path, libname, tocopy)
 
 	external_name = string.upper(external_name)
@@ -131,9 +131,9 @@ function BuildSystem:DeclareExternalLib(external_name, inc_path, lib_path, libna
 
 end
 
---------------------------------------------
+--------------------------------------------------------------------
 -- function to create any kind of library
---------------------------------------------
+--------------------------------------------------------------------
 function BuildSystem:LibraryHelper(kind_library, type)
 	local result = selft:CppProject(kind_library, type)
 	result.libname = GetPlatConfArray(result.name)
@@ -145,16 +145,16 @@ function BuildSystem:LibraryHelper(kind_library, type)
 	return result
 end
 
---------------------------------------------
+--------------------------------------------------------------------
 -- declare a static library
---------------------------------------------
+--------------------------------------------------------------------
 function BuildSystem:StaticLibrary()
 	return self:LibraryHelper("StaticLib", ProjectType.STATIC_LIBRARY)
 end
 
---------------------------------------------
+--------------------------------------------------------------------
 -- declare a shared library
---------------------------------------------
+--------------------------------------------------------------------
 function BuildSystem:SharedLibrary()
 	local result = self:LibraryHelper("SharedLib", ProjectType.SHARED_LIBRARY)
 	filter {}
@@ -314,9 +314,9 @@ end
 
 
 
---------------------------------------------
+--------------------------------------------------------------------
 -- Create a windowed application
---------------------------------------------
+--------------------------------------------------------------------
 function BuildSystem:WindowedApp()
 	local result = self:CppProject("WindowedApp", ProjectType.EXECUTABLE)
 	result:GenZIP()

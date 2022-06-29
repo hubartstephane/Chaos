@@ -1,8 +1,8 @@
 require "Object"
 
---------------------------------------------
+--------------------------------------------------------------------
 -- The types of projects
---------------------------------------------
+--------------------------------------------------------------------
 ProjectType = {
 	EXECUTABLE = {},
 	STATIC_LIBRARY = {},
@@ -11,9 +11,9 @@ ProjectType = {
 	RESOURCES = {}
 }
 
---------------------------------------------
+--------------------------------------------------------------------
 -- Class declaration
---------------------------------------------
+--------------------------------------------------------------------
 Project = Object:new({
 	additionnal_libs = Utility:GetPlatConfArray({}),
 	dependencies = {},
@@ -22,7 +22,7 @@ Project = Object:new({
 	gen_doxygen = false
 })
 
---------------------------------------------
+--------------------------------------------------------------------
 -- for file copying (from src to build directory),
 -- some paths start with @ -> in that case, the file is copied in the build directory directly (no matter what SRC relative path is) (useful for DLL)
 --
@@ -35,7 +35,7 @@ Project = Object:new({
 -- TO_COPY is an array of {dst_path, src_path}
 
 -- add input (whether it is a string or a table) into TO_COPY
---------------------------------------------
+--------------------------------------------------------------------
 function Project:AddFileToCopyHelper(filenames, plat, conf)
 	Utility:ForEachElement(filenames,
 		function(filename)
@@ -52,9 +52,9 @@ function Project:AddFileToCopyHelper(filenames, plat, conf)
 	)
 end
 
---------------------------------------------
+--------------------------------------------------------------------
 -- add a file/directory in the TO_COPY list
---------------------------------------------
+--------------------------------------------------------------------
 function Project:AddFileToCopy(filename)
 	local tmp = Utility:GetPlatConfArray(filename)
 	Utility:AllTargets(
@@ -64,22 +64,22 @@ function Project:AddFileToCopy(filename)
 	)
 end
 
---------------------------------------------
+--------------------------------------------------------------------
 -- require documentation generation
---------------------------------------------
+--------------------------------------------------------------------
 function Project:GenDoxygen()
 	self.gen_doxygen = true
 end
---------------------------------------------
+--------------------------------------------------------------------
 -- require ZIP generation
---------------------------------------------
+--------------------------------------------------------------------
 function Project:GenZIP()
-	self.genzip = true
+	self.gen_zip = true
 end
 
---------------------------------------------
+--------------------------------------------------------------------
 -- declare a dependency
---------------------------------------------
+--------------------------------------------------------------------
 function Project:DependOnLib(libnames)
 	Utility:ForEachElement(libnames,
 		function(libname)
@@ -88,9 +88,9 @@ function Project:DependOnLib(libnames)
 	)
 end
 
---------------------------------------------
+--------------------------------------------------------------------
 -- declare some additionnal dependencies (does not depend on any project)
---------------------------------------------
+--------------------------------------------------------------------
 function Project:DependOnStandardLib(libname)
 	if os.target() ~= "windows" then
 		return

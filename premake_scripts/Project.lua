@@ -15,9 +15,6 @@ ProjectType = {
 -- Class declaration
 --------------------------------------------------------------------
 Project = Object:new({
-	additionnal_libs = Utility:GetPlatConfArray({}),
-	dependencies = {},
-	tocopy = Utility:GetPlatConfArray({}),
 	gen_zip = false,
 	gen_doxygen = false
 })
@@ -70,6 +67,7 @@ end
 function Project:GenDoxygen()
 	self.gen_doxygen = true
 end
+
 --------------------------------------------------------------------
 -- require ZIP generation
 --------------------------------------------------------------------
@@ -104,5 +102,26 @@ function Project:DependOnStandardLib(libname)
 			)
 		end
 	)
+end
+
+--------------------------------------------------------------------
+-- gets the name of the premake project for documentation
+--------------------------------------------------------------------
+function Project:GetDocumentationProjectName()
+	return "Documentation_of_" .. self.proj_name
+end
+
+--------------------------------------------------------------------
+-- gets the name of the premake project for ZIP
+--------------------------------------------------------------------
+function Project:GetZipProjectName()
+	return "ZIP_of_" .. self.proj_name
+end
+
+--------------------------------------------------------------------
+-- gets the name of the premake project for resources
+--------------------------------------------------------------------
+function Project:GetResourceProjectName()
+	return "Resources_of_" .. self.proj_name
 end
 

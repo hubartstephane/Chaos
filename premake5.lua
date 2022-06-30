@@ -98,14 +98,6 @@ require 'premake_scripts/BuildSystem'
 require 'premake_scripts/Project'
 
 -- =============================================================================
--- create the some object
--- =============================================================================
-
-build = BuildSystem:new()
-
-require 'premake_scripts/external_premake5'
-
--- =============================================================================
 -- options
 -- =============================================================================
 
@@ -127,6 +119,15 @@ premake.override(premake.fileconfig, "getconfig", function(oldFn, fcfg, cfg)
 		return nil
 	end
 end)
+
+-- =============================================================================
+-- create the some object
+-- =============================================================================
+
+build = BuildSystem:new()
+build:DisplayRootEnvironment()
+
+require 'premake_scripts/external_premake5' -- declare external libraries
 
 -- =============================================================================
 -- Solution
@@ -156,4 +157,4 @@ solution "Chaos"
 	--local sub_directories = {"libraries", "executables", "shared_resources"}
 	local sub_directories = {'executables'}
 	build:ProcessSubPremake(sub_directories, true) -- create sub groups
-  
+

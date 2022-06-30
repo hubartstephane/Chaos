@@ -89,7 +89,7 @@ end
 local MSVC_TOCOPY  = { -- @ because this copies the file directly in target directory
    DEBUG = GenerateMSVCDLLs(MSVC_LIB_PATH_X64_DEBUG, MSVC_DLL_DEBUG),
    RELEASE = GenerateMSVCDLLs(MSVC_LIB_PATH_X64_RELEASE, MSVC_DLL_RELEASE)
-} 
+}
 build:DeclareExternalLib("MSVC", nil, nil, nil, MSVC_TOCOPY)
 
 --------------------------------------------------------------------

@@ -72,13 +72,14 @@ function BuildSystem:AddProject(name, data)
 		assert(false, "Project " .. upper_name .. " already definied")
 	else
 		local result = Project:new(data)
-		result.name = name
+		result.project_name = name
 		result.targetdir = result.targetdir or Utility:GetPlatConfArray({})
 		result.includedirs = result.includedirs or Utility:GetPlatConfArray({})
-		result.additionnal_libs = Utility:GetPlatConfArray({})
+		result.additionnal_libs = result.additionnal_libs or Utility:GetPlatConfArray({})
 		result.dependencies = {}
-		result.tocopy = Utility:GetPlatConfArray({})
+		result.tocopy = result.tocopy or Utility:GetPlatConfArray({})
 		self.projects[upper_name] = result
+		
 		return result
 	end
 end
@@ -203,7 +204,7 @@ function BuildSystem:CollectDependencies()
 	local changes = true
 	while changes do
 		changes = false
-		for k, proj in ipairs(self.projects) do
+		for k, proj in pairs(self.projects) do
 		
 			for k, v in ipairs(proj.dependencies) do
 		
@@ -264,7 +265,7 @@ function BuildSystem:MakeSolution()
 		Log:Output("Architecture: " .. arch)
 		architecture(arch)
 	end
-
+	
 	location(SOLUTION_PATH) -- where the visual studio project file is been created
 
 	if os.target() == "windows" then
@@ -274,10 +275,10 @@ function BuildSystem:MakeSolution()
 	if os.target() == "linux" then
 		defines {"LINUX"}
 	end
-		
-	for k, proj in ipairs(self.projects) do
-		proj.DisplayInformation()
-		proj.AddProjectToSolution()
+	
+	for k, proj in pairs(self.projects) do
+		proj:DisplayInformation()
+		proj:AddProjectToSolution()
 	end
 
 end

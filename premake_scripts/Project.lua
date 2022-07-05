@@ -4,11 +4,11 @@ require "Object"
 -- The types of projects
 --------------------------------------------------------------------
 ProjectType = {
-	EXECUTABLE = {},
-	STATIC_LIBRARY = {},
-	SHARED_LIBRARY = {},
+	EXECUTABLE = "WindowedApp",
+	STATIC_LIBRARY = "StaticLib",
+	SHARED_LIBRARY = "SharedLib",
 	EXTERNAL_LIBRARY = {},
-	RESOURCES = {}
+	RESOURCES = "Makefile"
 }
 
 --------------------------------------------------------------------
@@ -18,6 +18,20 @@ Project = Object:new({
 	gen_zip = false,
 	gen_doxygen = false
 })
+
+--------------------------------------------------------------------
+-- Display project information
+--------------------------------------------------------------------
+
+function Project:DisplayInformation()
+	Log:Output("=======================================================================")
+	Log:Output("PROJECT_NAME       : " .. self.project_name)
+	Log:Output("PROJECT_PATH       : " .. self.project_path)
+	Log:Output("PROJECT_SRC_PATH   : " .. self.project_src_path)
+	Log:Output("PROJECT_BUILD_PATH : " .. self.project_build_path)
+	Log:Output("CURRENT_GROUP      : " .. self.current_group)
+	Log:Output("=======================================================================")
+end
 
 --------------------------------------------------------------------
 -- for file copying (from src to build directory),
@@ -153,9 +167,6 @@ end
 --------------------------------------------------------------------
 -- function to initialize project for RELEASE
 --------------------------------------------------------------------
-
--- staticruntime "on"
-
 function Project:ReleaseConf(plat)
 	filter {"configurations:" .. RELEASE, "platforms:" .. plat}
 	runtime "release"
@@ -171,34 +182,76 @@ end
 -- generic initializations
 --------------------------------------------------------------------
 
-function Project:OnConfig(in_kind, proj_type, plat, conf, proj)
+function Project:OnConfig(plat, conf)
+
+	Log:Output("X")
+
+	targetdir(self.targetdir[plat][conf])
+	includedirs(self.includedirs[plat][conf])
+	-- some definition for FILE REDIRECTION
+	if (self.proj_type == ProjectType.EXECUTABLE) then
+		defines('CHAOS_PROJECT_PATH="' .. Utility:Base64Encode(self.project_path) .. '"')
+		defines('CHAOS_PROJECT_SRC_PATH="' .. Utility:Base64Encode(self.project_src_path) .. '"')
+		defines('CHAOS_PROJECT_BUILD_PATH="' .. Utility:Base64Encode(self.targetdir[plat][conf]) .. '"')
+		prebuildcommands('{ECHO} CHAOS_PROJECT_PATH       = "' .. self.project_path .. '"')
+		prebuildcommands('{ECHO} CHAOS_PROJECT_SRC_PATH   = "' .. self.project_src_path .. '"')
+		prebuildcommands('{ECHO} CHAOS_PROJECT_BUILD_PATH = "' .. self.proj.targetdir[plat][conf] .. '"')
+	end	
+	
+		Log:Output("Y")
+end
+
+
+
+
+--[[
+
+
 
 	-- where the result EXE/LIB is been saved
 	local targ = path.join(self.project_build_path, plat, conf)
 	targetdir(targ)
-	proj.targetdir[plat][conf] = targ
-
-	-- by default, the editor start the exe in the source path. We prefere to start where it has been build
-	debugdir("$(TargetDir)")
+	self.targetdir[plat][conf] = targ
 
 	-- where the includes are for the project
 	local inc = path.join(self.project_src_path, "include")
 	includedirs(inc)
-	proj.includedirs[plat][conf] = inc
+	self.includedirs[plat][conf] = inc
 
-	-- some definition for FILE REDIRECTION
-	if (proj_type == ProjectType.EXECUTABLE) then
-		defines('CHAOS_PROJECT_PATH="' .. Utility:Base64Encode(self.project_path) .. '"')
-		defines('CHAOS_PROJECT_SRC_PATH="' .. Utility:Base64Encode(self.project_src_path) .. '"')
-		defines('CHAOS_PROJECT_BUILD_PATH="' .. Utility:Base64Encode(targ) .. '"')
-		prebuildcommands('{ECHO} CHAOS_PROJECT_PATH       = "' .. self.project_path .. '"')
-		prebuildcommands('{ECHO} CHAOS_PROJECT_SRC_PATH   = "' .. self.project_src_path .. '"')
-		prebuildcommands('{ECHO} CHAOS_PROJECT_BUILD_PATH = "' .. targ .. '"')
-	end
-
-	characterset("ASCII")
 end
 
+]]--
+
+--------------------------------------------------------------------
+-- Create a sub-premake project for ZIP
+--------------------------------------------------------------------
+function Project:AddZipProjectToSolution()
+
+	-- only if requested
+	if (not self.gen_zip) then
+		return
+	end
+
+
+end
+
+--------------------------------------------------------------------
+-- Create a sub-premake project for DOC
+--------------------------------------------------------------------
+function Project:AddZipProjectToSolution()
+
+	-- only if requested
+	if (not self.gen_documentation) then
+		return
+	end
+	
+	
+
+end
+
+--------------------------------------------------------------------
+-- Add the project into premake solution
+--------------------------------------------------------------------
 
 function Project:AddProjectToSolution()
 
@@ -209,19 +262,19 @@ function Project:AddProjectToSolution()
 	
 	-- declare project
 	project(self.proj_name)
-		
-	-- type
-	if (self.proj_type == ProjectType.EXECUTABLE) then
-		kind("WindowedApp")
-	elseif (self.proj_type == ProjectType.STATIC_LIBRARY) then
-		kind("StaticLib")
-	elseif (self.proj_type == ProjectType.SHARED_LIBRARY) then
-		kind("SharedLib")
+	
+	
+	
+	
+		Log:Output("X")	
+	-- kind		
+	kind(self.proj_type)		
+	if (self.proj_type == ProjectType.SHARED_LIBRARY) then
 		defines('CHAOS_IS_BUILDING_DLL')
 		allmodulespublic "on" -- required for DLL+modules (requires at least premake 5.0.0-beta2)		
-	elseif (self.proj_type == ProjectType.RESOURCES) then	
-		kind("Makefile")
 	end
+	
+		Log:Output("X2")
 	
 	-- language/dialect
 	language "C++"
@@ -232,8 +285,8 @@ function Project:AddProjectToSolution()
 		cppdialect "C++20"
 	end
 	
-		--staticruntime "on"
-
+		Log:Output("X3")
+	
 	-- entry point (avoid WinMain to main)
 	if (os.target() == "windows") then
 		if (proj_type == ProjectType.EXECUTABLE) then
@@ -249,11 +302,15 @@ function Project:AddProjectToSolution()
 	local src_ixx = path.join(self.project_src_path, "**.ixx")
 	files {src_h, src_hpp, src_c, src_cpp, src_ixx}
 
+	Log:Output("X4")
+
 	-- handle C++ modules
 	filter {"files:**.ixx" }
 		buildaction "ClCompile"
 		compileas "Module"
-	filter { }
+	filter {}
+
+	Log:Output("X5")
 
 	-- release/debug settings
 	AllTargets(
@@ -263,9 +320,20 @@ function Project:AddProjectToSolution()
 			else
 				self:ReleaseConf(plat)
 			end
-			self:OnConfig(plat, conf)
+
 		end
 	)
+	filter {}
+		
+	Log:Output("X6")		
+		
+	-- by default, the editor start the exe in the source path. We prefere to start where it has been build
+	debugdir("$(TargetDir)")
+
+
+
+	-- characterset
+	characterset("ASCII")	
 
 	-- special filter for copying dll
 	filter 'files:**.dll'
@@ -274,8 +342,10 @@ function Project:AddProjectToSolution()
 		buildcommands(build_command_str)
 		buildoutputs '%{cfg.targetdir}/%{file.basename}.dll'
 
-
-
+	-- special
+	self.AddZipProjectToSolution()
+	self.AddDocProjectToSolution()
+	
 end
 
 

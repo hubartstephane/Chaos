@@ -16,34 +16,20 @@ BuildSystem = Object:new({
 --------------------------------------------------------------------
 -- display the environment
 --------------------------------------------------------------------
-function BuildSystem:DisplayRootEnvironment()
-	if (DISPLAY_ROOT_ENVIRONMENT) then
-		Log:Output("=======================================================================")
-		Log:Output("SCRIPT             : " .. _SCRIPT)
-		Log:Output("PREMAKE5 VERSION   : " .. _PREMAKE_VERSION)
-		Log:Output("BUILD_TARGET       : " .. BUILD_TARGET)
-		Log:Output("ROOT_PATH          : " .. ROOT_PATH)
-		Log:Output("ZIP_PATH           : " .. ZIP_PATH)
-		Log:Output("EXTERNAL_PATH      : " .. EXTERNAL_PATH)
-		Log:Output("BUILD_TOOLS_PATH   : " .. BUILD_TOOLS_PATH)
-		Log:Output("COPY_SCRIPT        : " .. COPY_SCRIPT)
-		Log:Output("ZIP_SCRIPT         : " .. ZIP_SCRIPT)
-		Log:Output("DOXYGEN_SCRIPT     : " .. DOXYGEN_SCRIPT)
-		Log:Output("CLEAN_SCRIPT       : " .. CLEAN_SCRIPT)
-		Log:Output("=======================================================================")
-	end
-end
-
-function BuildSystem:DisplayEnvironment()
-	if (DISPLAY_ENVIRONMENT) then
-		Log:Output("=======================================================================")
-		Log:Output("PROJECT_NAME       : " .. self.project_name)
-		Log:Output("PROJECT_PATH       : " .. self.project_path)
-		Log:Output("PROJECT_SRC_PATH   : " .. self.project_src_path)
-		Log:Output("PROJECT_BUILD_PATH : " .. self.project_build_path)
-		Log:Output("CURRENT_GROUP      : " .. self.current_group)
-		Log:Output("=======================================================================")
-	end
+function BuildSystem:DisplayInformation()
+	Log:Output("=======================================================================")
+	Log:Output("SCRIPT             : " .. _SCRIPT)
+	Log:Output("PREMAKE5 VERSION   : " .. _PREMAKE_VERSION)
+	Log:Output("BUILD_TARGET       : " .. BUILD_TARGET)
+	Log:Output("ROOT_PATH          : " .. ROOT_PATH)
+	Log:Output("ZIP_PATH           : " .. ZIP_PATH)
+	Log:Output("EXTERNAL_PATH      : " .. EXTERNAL_PATH)
+	Log:Output("BUILD_TOOLS_PATH   : " .. BUILD_TOOLS_PATH)
+	Log:Output("COPY_SCRIPT        : " .. COPY_SCRIPT)
+	Log:Output("ZIP_SCRIPT         : " .. ZIP_SCRIPT)
+	Log:Output("DOXYGEN_SCRIPT     : " .. DOXYGEN_SCRIPT)
+	Log:Output("CLEAN_SCRIPT       : " .. CLEAN_SCRIPT)
+	Log:Output("=======================================================================")
 end
 
 --------------------------------------------------------------------
@@ -79,9 +65,7 @@ end
 -- ensure a project does not already exist then create it
 --------------------------------------------------------------------
 function BuildSystem:AddProject(name, data)
-	
-	self:DisplayEnvironment()
-	
+		
 	local upper_name = string.upper(name)
 	
 	if (self.projects[upper_name]) then
@@ -89,8 +73,8 @@ function BuildSystem:AddProject(name, data)
 	else
 		local result = Project:new(data)
 		result.name = name
-		result.targetdir = Utility:GetPlatConfArray({})
-		result.includedirs = Utility:GetPlatConfArray({})
+		result.targetdir = result.targetdir or Utility:GetPlatConfArray({})
+		result.includedirs = result.includedirs or Utility:GetPlatConfArray({})
 		result.additionnal_libs = Utility:GetPlatConfArray({})
 		result.dependencies = {}
 		result.tocopy = Utility:GetPlatConfArray({})
@@ -108,7 +92,6 @@ function BuildSystem:DeclareExternalLib(external_name, inc_path, lib_path, libna
 
 	local result = self:AddProject(external_name, {
 		proj_type = ProjectType.EXTERNAL_LIBRARY,
-		root_path = EXTERNAL_PATH,
 		includedirs = Utility:PrefixPathArray(Utility:GetPlatConfArray(inc_path), EXTERNAL_PATH),
 		targetdir = Utility:PrefixPathArray(Utility:GetPlatConfArray(lib_path), EXTERNAL_PATH),
 		libname = Utility:GetPlatConfArray(libname)
@@ -139,30 +122,38 @@ function BuildSystem:DeclareExternalLib(external_name, inc_path, lib_path, libna
 
 end
 
-
-
-
-
-
-
-
 --------------------------------------------------------------------
 -- function to create any kind of project
 --------------------------------------------------------------------
-
 function BuildSystem:CppProject(proj_type)
 
+	-- basics
 	local result = self:AddProject(self.project_name, {
+		proj_type = proj_type,
 		current_group = self.current_group,
 		project_path = self.project_path,
 		project_src_path = self.current_group,
 		project_build_path = self.project_build_path
-	})
+	})	
+	
+	-- per conf/plat
+	Utility:AllTargets(
+		function(plat, conf)
+			-- where the result EXE/LIB is been saved
+			local targ = path.join(result.project_build_path, plat, conf)
+			table.insert(result.targetdir[plat][conf], targ)
+			-- where the includes are for the project
+			local inc = path.join(result.project_src_path, "include")
+			table.insert(result.includedirs[plat][conf], inc)		
+		end
+	)
+	
+	-- for EXECUTABLE/SHARED LIB/STATIC LIB, always considere copying 'resources'
+	result:AddFileToCopy("resources") 
 	
 	return result
 
 end
-
 
 --------------------------------------------------------------------
 -- function to create any kind of library
@@ -170,11 +161,17 @@ end
 function BuildSystem:LibraryHelper(proj_type)
 	local result = selft:CppProject(proj_type)
 	result.libname = GetPlatConfArray(result.name)
-	result:AddFileToCopy("resources")
+	
+	
+	-- !!! HERE [x64][DEBUG] copy ???
+	
+	
 	if (proj_type == ProjectType.SHARED_LIBRARY) then
-		result:AddFileToCopy("@" .. path.join(result.targetdir[x64][DEBUG], result.name .. ".dll"))
+		result:AddFileToCopy("@" .. path.join(result.targetdir[x64][DEBUG], result.name .. ".dll")) 
 	end
-	result:GenDoxygen()
+	
+	
+	result:GenDoxygen() -- automatic documentation for libraries
 	return result
 end
 
@@ -277,8 +274,9 @@ function BuildSystem:MakeSolution()
 	if os.target() == "linux" then
 		defines {"LINUX"}
 	end
-	
+		
 	for k, proj in ipairs(self.projects) do
+		proj.DisplayInformation()
 		proj.AddProjectToSolution()
 	end
 

@@ -129,32 +129,8 @@ build:DisplayRootEnvironment()
 
 require 'premake_scripts/external_premake5' -- declare external libraries
 
--- =============================================================================
--- Solution
--- =============================================================================
+local sub_directories = {'executables'}
+build:ProcessSubPremake(sub_directories, true) -- create sub groups
 
-solution "Chaos"
-
-	platforms {table.unpack(PLATFORMS)}
-	configurations {table.unpack(CONFIGS)}
-	
-	local arch = _OPTIONS['arch']
-	if arch then
-		Log:Output("Architecture: " .. arch)
-		architecture(arch)
-	end
-
-	location(SOLUTION_PATH) -- where the visual studio project file is been created
-
-	if os.target() == "windows" then
-		defines {"WINDOWS"}
-	end
-
-	if os.target() == "linux" then
-		defines {"LINUX"}
-	end
-
-	--local sub_directories = {"libraries", "executables", "shared_resources"}
-	local sub_directories = {'executables'}
-	build:ProcessSubPremake(sub_directories, true) -- create sub groups
-
+build:CollectDependencies()
+build:MakeSolution()

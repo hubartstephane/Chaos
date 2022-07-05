@@ -15,6 +15,11 @@ ProjectType = {
 -- Class declaration
 --------------------------------------------------------------------
 Project = Object:new({
+	project_name = "",
+	project_path = "",
+	project_src_path = "",
+	project_build_path = "",
+	current_group = "",
 	gen_zip = false,
 	gen_doxygen = false
 })
@@ -122,21 +127,21 @@ end
 -- gets the name of the premake project for documentation
 --------------------------------------------------------------------
 function Project:GetDocumentationProjectName()
-	return "Documentation_of_" .. self.proj_name
+	return "Documentation_of_" .. self.project_name
 end
 
 --------------------------------------------------------------------
 -- gets the name of the premake project for ZIP
 --------------------------------------------------------------------
 function Project:GetZipProjectName()
-	return "ZIP_of_" .. self.proj_name
+	return "ZIP_of_" .. self.project_name
 end
 
 --------------------------------------------------------------------
 -- gets the name of the premake project for resources
 --------------------------------------------------------------------
 function Project:GetResourceProjectName()
-	return "Resources_of_" .. self.proj_name
+	return "Resources_of_" .. self.project_name
 end
 
 --------------------------------------------------------------------
@@ -238,7 +243,7 @@ end
 --------------------------------------------------------------------
 -- Create a sub-premake project for DOC
 --------------------------------------------------------------------
-function Project:AddZipProjectToSolution()
+function Project:AddDocProjectToSolution()
 
 	-- only if requested
 	if (not self.gen_documentation) then
@@ -261,21 +266,15 @@ function Project:AddProjectToSolution()
 	end
 	
 	-- declare project
-	project(self.proj_name)
-	
-	
-	
-	
-		Log:Output("X")	
+	project(self.project_name)
+
 	-- kind		
 	kind(self.proj_type)		
 	if (self.proj_type == ProjectType.SHARED_LIBRARY) then
 		defines('CHAOS_IS_BUILDING_DLL')
 		allmodulespublic "on" -- required for DLL+modules (requires at least premake 5.0.0-beta2)		
 	end
-	
-		Log:Output("X2")
-	
+
 	-- language/dialect
 	language "C++"
 
@@ -302,18 +301,14 @@ function Project:AddProjectToSolution()
 	local src_ixx = path.join(self.project_src_path, "**.ixx")
 	files {src_h, src_hpp, src_c, src_cpp, src_ixx}
 
-	Log:Output("X4")
-
 	-- handle C++ modules
 	filter {"files:**.ixx" }
 		buildaction "ClCompile"
 		compileas "Module"
 	filter {}
 
-	Log:Output("X5")
-
 	-- release/debug settings
-	AllTargets(
+	Utility:AllTargets(
 		function(plat, conf)
 			if (conf == DEBUG) then
 				self:DebugConf(plat)
@@ -324,9 +319,7 @@ function Project:AddProjectToSolution()
 		end
 	)
 	filter {}
-		
-	Log:Output("X6")		
-		
+				
 	-- by default, the editor start the exe in the source path. We prefere to start where it has been build
 	debugdir("$(TargetDir)")
 
@@ -343,8 +336,8 @@ function Project:AddProjectToSolution()
 		buildoutputs '%{cfg.targetdir}/%{file.basename}.dll'
 
 	-- special
-	self.AddZipProjectToSolution()
-	self.AddDocProjectToSolution()
+	self:AddZipProjectToSolution()
+	self:AddDocProjectToSolution()
 	
 end
 

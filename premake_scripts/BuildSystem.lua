@@ -88,8 +88,6 @@ end
 -- declare an external library (not described by any premake project)
 --------------------------------------------------------------------
 function BuildSystem:DeclareExternalLib(external_name, inc_path, lib_path, libname, tocopy)
-
-	Log:Output("DeclareExternalLib [" .. external_name .. "]")
 	
 	local result = self:AddProject(external_name, {
 		project_type = ProjectType.EXTERNAL_LIBRARY,
@@ -218,9 +216,11 @@ function BuildSystem:CollectDependencies()
 
 	-- the array dependencies becomes an array of Projects instead of an array of strings
 	for k, proj in pairs(self.projects) do
-		for _, depend_project_name in ipairs(proj.dependencies) do
-			proj.dependencies[k] = self.projects[depend_project_name]
-		end
+		table.transform(proj.dependencies,
+			function(depend_project_name)
+				return self.projects[depend_project_name]
+			end
+		)
 	end
 
 end

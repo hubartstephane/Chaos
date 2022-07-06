@@ -31,7 +31,7 @@ Project = Object:new({
 
 function Project:DisplayInformation()
 	Log:Output("=======================================================================")
-	
+
 	-- depend generic information
 	Log:Output("PROJECT_NAME       : " .. self.project_name)
 	Log:Output("PROJECT_TYPE       : " .. self.project_type)
@@ -40,11 +40,17 @@ function Project:DisplayInformation()
 	Log:Output("PROJECT_BUILD_PATH : " .. self.project_build_path)
 	Log:Output("CURRENT_GROUP      : " .. self.current_group)
 
+	-- some configurations
+	Utility:DisplayPlatConfArray(self.targetdir, "targetdir")
+	Utility:DisplayPlatConfArray(self.includedirs, "includedir")
+	Utility:DisplayPlatConfArray(self.libname, "libname")
+
 	-- display dependencies
 	for _, proj in ipairs(self.dependencies) do
-		Log:Output("depend on: " .. proj)	
+		Log:Output("depend on: " .. proj.project_name)
 	end
-	Log:Output("=======================================================================")	
+
+	Log:Output("=======================================================================")
 end
 
 --------------------------------------------------------------------
@@ -55,7 +61,7 @@ end
 --
 -- some does not -> they are copied in the equivalent path
 --
--- 		src/toto/titi/file.txt => build/toto/titi/file.txt
+--		src/toto/titi/file.txt => build/toto/titi/file.txt
 --
 -- TO_COPY is an array of {dst_path, src_path}
 
@@ -158,10 +164,10 @@ end
 --------------------------------------------------------------------
 
 -- note on staticruntime -> dll or static
---         runtime       -> debug or rekease
+--				 runtime			 -> debug or rekease
 -- /MT static multithread
 -- /MTd static debug multithread
--- /MD  DLL
+-- /MD	DLL
 -- /MDd DLL debug
 --
 -- LinkTimeOptimization -> see /LTCG
@@ -205,10 +211,10 @@ function Project:OnConfig(plat, conf)
 		defines('CHAOS_PROJECT_PATH="' .. Utility:Base64Encode(self.project_path) .. '"')
 		defines('CHAOS_PROJECT_SRC_PATH="' .. Utility:Base64Encode(self.project_src_path) .. '"')
 		defines('CHAOS_PROJECT_BUILD_PATH="' .. Utility:Base64Encode(self.targetdir[plat][conf]) .. '"')
-		prebuildcommands('{ECHO} CHAOS_PROJECT_PATH       = "' .. self.project_path .. '"')
-		prebuildcommands('{ECHO} CHAOS_PROJECT_SRC_PATH   = "' .. self.project_src_path .. '"')
+		prebuildcommands('{ECHO} CHAOS_PROJECT_PATH				= "' .. self.project_path .. '"')
+		prebuildcommands('{ECHO} CHAOS_PROJECT_SRC_PATH		= "' .. self.project_src_path .. '"')
 		prebuildcommands('{ECHO} CHAOS_PROJECT_BUILD_PATH = "' .. self.targetdir[plat][conf] .. '"')
-	end	
+	end
 
 end
 
@@ -234,8 +240,8 @@ function Project:AddDocProjectToSolution()
 	if (not self.gen_documentation) then
 		return
 	end
-	
-	
+
+
 
 end
 
@@ -249,15 +255,15 @@ function Project:AddProjectToSolution()
 	if (self.project_type == ProjectType.EXTERNAL_LIBRARY) then
 		return
 	end
-	
+
 	-- declare project
 	project(self.project_name)
 
-	-- kind		
-	kind(self.project_type)		
+	-- kind
+	kind(self.project_type)
 	if (self.project_type == ProjectType.SHARED_LIBRARY) then
 		defines('CHAOS_IS_BUILDING_DLL')
-		allmodulespublic "on" -- required for DLL+modules (requires at least premake 5.0.0-beta2)		
+		allmodulespublic "on" -- required for DLL+modules (requires at least premake 5.0.0-beta2)
 	end
 
 	-- language/dialect
@@ -302,18 +308,18 @@ function Project:AddProjectToSolution()
 		end
 	)
 	filter {}
-				
+
 	-- by default, the editor start the exe in the source path. We prefere to start where it has been build
 	debugdir("$(TargetDir)")
 
 
 
 	-- characterset
-	characterset("ASCII")	
+	characterset("ASCII")
 
 	-- special filter for copying dll
 	filter 'files:**.dll'
-	  buildmessage 'DLL HANDLING %{file.basename}.dll'
+		buildmessage 'DLL HANDLING %{file.basename}.dll'
 		build_command_str = Utility:QuotationMarks(COPY_SCRIPT, '%{file.abspath}', '%{cfg.targetdir}/%{file.basename}.dll')
 		buildcommands(build_command_str)
 		buildoutputs '%{cfg.targetdir}/%{file.basename}.dll'
@@ -321,7 +327,7 @@ function Project:AddProjectToSolution()
 	-- special
 	self:AddZipProjectToSolution()
 	self:AddDocProjectToSolution()
-	
+
 end
 
 
@@ -340,7 +346,7 @@ end
 
 
 	-- the name of the group
-	
+
 	local group_name = nil
 	if (self.current_group ~= nil) then
 		group_name = path.join(self.current_group, self.project_name)
@@ -368,16 +374,16 @@ end
 	project(PROJ_NAME)
 	kind(in_kind)
 	location(proj_location)
-	
+
 	local lua_project = project()
 
 	---------------------------------
 	-- IMPORTANT
-	---------------------------------	
+	---------------------------------
 	-- path = self.project_path,
 	-- root_path = self.project_src_path,
 	-- build_path = self.project_build_path,
-	---------------------------------	
+	---------------------------------
 
 
 
@@ -386,8 +392,8 @@ end
 		path = self.project_path,
 		root_path = self.project_src_path,
 		build_path = self.project_build_path,
-		
-		
+
+
 
 		targetdir = GetPlatConfArray({}),
 		includedirs = GetPlatConfArray({}),

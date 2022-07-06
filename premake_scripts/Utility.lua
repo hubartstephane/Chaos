@@ -47,7 +47,7 @@ end
 function Utility:ForEachElement(src, fun)
 	if not self:IsNil(src) then
 		if self:IsTable(src) then
-			for k, v in pairs(src) do
+			for _, v in ipairs(src) do
 				fun(v)
 			end
 		else
@@ -64,7 +64,7 @@ function Utility:HasCategoryKey(src, categories)
 		return false
 	end
 
-	for k, category in pairs(categories) do
+	for _, category in ipairs(categories) do
 		if (not self:IsNil(src[category])) then
 			return true
 		end
@@ -120,13 +120,30 @@ end
 --------------------------------------------------------------------
 function Utility:GetPlatConfArray(value)
 	local result = {}
-	for k, platform in pairs(PLATFORMS) do
+	for _, platform in ipairs(PLATFORMS) do
 		result[platform] = {}
-		for k, config in pairs(CONFIGS) do
+		for _, config in ipairs(CONFIGS) do
 			result[platform][config] = self:DeepCopy(self:ReadValueFromPlatformConfigArray(value, platform, config))
 		end
 	end
 	return result
+end
+
+--------------------------------------------------------------------
+-- display a platform/conf array
+--------------------------------------------------------------------
+function Utility:DisplayPlatConfArray(src, title)
+	if (src) then
+		self:AllTargets(
+			function(plat, conf)
+				self:ForEachElement(src[plat][conf],
+					function(elem)
+						Log:Output(title .. "[" .. plat .. "][" .. conf .. "]: " .. elem)
+					end
+				)
+			end
+		)
+	end
 end
 
 --------------------------------------------------------------------
@@ -147,8 +164,8 @@ end
 -- apply all combinaison of platform/config to a given callback
 --------------------------------------------------------------------
 function Utility:AllTargets(fun)
-	for k, platform in pairs(PLATFORMS) do
-		for k, config in pairs(CONFIGS) do
+	for _, platform in ipairs(PLATFORMS) do
+		for _, config in ipairs(CONFIGS) do
 			fun(platform, config)
 		end
 	end
@@ -254,5 +271,11 @@ function table.append(t, other_table)
 		if (not table.find(t, v)) then
 			table.insert(t, v)
 		end
+	end
+end
+
+function table.transform(t, fun)
+	for k, v in ipairs(t) do
+		t[k] = fun(v)
 	end
 end

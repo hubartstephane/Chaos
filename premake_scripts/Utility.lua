@@ -236,3 +236,23 @@ function Utility:Base64Encode(data)
 			end
 		) .. ({"", "==", "="})[#data % 3 + 1])
 end
+
+--------------------------------------------------------------------
+-- extend table
+--------------------------------------------------------------------
+function table.find(t, elem)
+  for _, v in ipairs(t) do
+    if (v == elem) then
+      return true
+    end
+  end
+  return false
+end
+
+function table.append(t, other_table)
+	for _, v in ipairs(other_table) do
+		if (not table.find(t, v)) then
+			table.insert(t, v)
+		end
+	end
+end

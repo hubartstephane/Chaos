@@ -1,13 +1,13 @@
 require "Object"
 
 --------------------------------------------------------------------
--- The types of projects
+-- The types of projects (the values are valid strings for premake5.kind(...) function)
 --------------------------------------------------------------------
 ProjectType = {
 	EXECUTABLE = "WindowedApp",
 	STATIC_LIBRARY = "StaticLib",
 	SHARED_LIBRARY = "SharedLib",
-	EXTERNAL_LIBRARY = {},
+	EXTERNAL_LIBRARY = "External Library", -- except for this
 	RESOURCES = "Makefile"
 }
 
@@ -16,6 +16,7 @@ ProjectType = {
 --------------------------------------------------------------------
 Project = Object:new({
 	project_name = "",
+	project_type = "",
 	project_path = "",
 	project_src_path = "",
 	project_build_path = "",
@@ -30,12 +31,20 @@ Project = Object:new({
 
 function Project:DisplayInformation()
 	Log:Output("=======================================================================")
+	
+	-- depend generic information
 	Log:Output("PROJECT_NAME       : " .. self.project_name)
+	Log:Output("PROJECT_TYPE       : " .. self.project_type)
 	Log:Output("PROJECT_PATH       : " .. self.project_path)
 	Log:Output("PROJECT_SRC_PATH   : " .. self.project_src_path)
 	Log:Output("PROJECT_BUILD_PATH : " .. self.project_build_path)
 	Log:Output("CURRENT_GROUP      : " .. self.current_group)
-	Log:Output("=======================================================================")
+
+	-- display dependencies
+	for _, proj in ipairs(self.dependencies) do
+		Log:Output("depend on: " .. proj)	
+	end
+	Log:Output("=======================================================================")	
 end
 
 --------------------------------------------------------------------
@@ -189,43 +198,19 @@ end
 
 function Project:OnConfig(plat, conf)
 
-	Log:Output("X")
-
 	targetdir(self.targetdir[plat][conf])
 	includedirs(self.includedirs[plat][conf])
 	-- some definition for FILE REDIRECTION
-	if (self.proj_type == ProjectType.EXECUTABLE) then
+	if (self.project_type == ProjectType.EXECUTABLE) then
 		defines('CHAOS_PROJECT_PATH="' .. Utility:Base64Encode(self.project_path) .. '"')
 		defines('CHAOS_PROJECT_SRC_PATH="' .. Utility:Base64Encode(self.project_src_path) .. '"')
 		defines('CHAOS_PROJECT_BUILD_PATH="' .. Utility:Base64Encode(self.targetdir[plat][conf]) .. '"')
 		prebuildcommands('{ECHO} CHAOS_PROJECT_PATH       = "' .. self.project_path .. '"')
 		prebuildcommands('{ECHO} CHAOS_PROJECT_SRC_PATH   = "' .. self.project_src_path .. '"')
-		prebuildcommands('{ECHO} CHAOS_PROJECT_BUILD_PATH = "' .. self.proj.targetdir[plat][conf] .. '"')
+		prebuildcommands('{ECHO} CHAOS_PROJECT_BUILD_PATH = "' .. self.targetdir[plat][conf] .. '"')
 	end	
-	
-		Log:Output("Y")
-end
-
-
-
-
---[[
-
-
-
-	-- where the result EXE/LIB is been saved
-	local targ = path.join(self.project_build_path, plat, conf)
-	targetdir(targ)
-	self.targetdir[plat][conf] = targ
-
-	-- where the includes are for the project
-	local inc = path.join(self.project_src_path, "include")
-	includedirs(inc)
-	self.includedirs[plat][conf] = inc
 
 end
-
-]]--
 
 --------------------------------------------------------------------
 -- Create a sub-premake project for ZIP
@@ -261,7 +246,7 @@ end
 function Project:AddProjectToSolution()
 
 	-- ignore external project
-	if (self.proj_type == ProjectType.EXTERNAL_LIBRARY) then
+	if (self.project_type == ProjectType.EXTERNAL_LIBRARY) then
 		return
 	end
 	
@@ -269,8 +254,8 @@ function Project:AddProjectToSolution()
 	project(self.project_name)
 
 	-- kind		
-	kind(self.proj_type)		
-	if (self.proj_type == ProjectType.SHARED_LIBRARY) then
+	kind(self.project_type)		
+	if (self.project_type == ProjectType.SHARED_LIBRARY) then
 		defines('CHAOS_IS_BUILDING_DLL')
 		allmodulespublic "on" -- required for DLL+modules (requires at least premake 5.0.0-beta2)		
 	end
@@ -283,12 +268,10 @@ function Project:AddProjectToSolution()
 	else
 		cppdialect "C++20"
 	end
-	
-		Log:Output("X3")
-	
+
 	-- entry point (avoid WinMain to main)
 	if (os.target() == "windows") then
-		if (proj_type == ProjectType.EXECUTABLE) then
+		if (project_type == ProjectType.EXECUTABLE) then
 			entrypoint "mainCRTStartup"
 		end
 	end
@@ -315,7 +298,7 @@ function Project:AddProjectToSolution()
 			else
 				self:ReleaseConf(plat)
 			end
-
+			self:OnConfig(plat, conf)
 		end
 	)
 	filter {}
@@ -399,7 +382,7 @@ end
 
 
 	local result = {
-		proj_type = proj_type,
+		project_type = project_type,
 		path = self.project_path,
 		root_path = self.project_src_path,
 		build_path = self.project_build_path,

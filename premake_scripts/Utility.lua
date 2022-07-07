@@ -132,15 +132,11 @@ end
 --------------------------------------------------------------------
 -- display a platform/conf array
 --------------------------------------------------------------------
-function Utility:DisplayPlatConfArray(src, title)
+function Utility:DisplayPlatConfArray(src, title, plat, conf)
 	if (src) then
-		self:AllTargets(
-			function(plat, conf)
-				self:ForEachElement(src[plat][conf],
-					function(elem)
-						Log:Output(title .. "[" .. plat .. "][" .. conf .. "]: " .. elem)
-					end
-				)
+		self:ForEachElement(src[plat][conf],
+			function(elem)
+				Log:Output(title .. ": " .. elem)
 			end
 		)
 	end

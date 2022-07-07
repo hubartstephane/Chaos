@@ -41,9 +41,20 @@ function Project:DisplayInformation()
 	Log:Output("CURRENT_GROUP      : " .. self.current_group)
 
 	-- some configurations
-	Utility:DisplayPlatConfArray(self.targetdir, "targetdir")
-	Utility:DisplayPlatConfArray(self.includedirs, "includedir")
-	Utility:DisplayPlatConfArray(self.libname, "libname")
+	if (self.targetdir or self.includedirs or self.libname or self.tocopy) then
+		Log:Output("")
+		Utility:AllTargets(
+			function(plat, conf)
+				Log:Output("[" .. plat .. "][" .. conf .. "]")
+				Utility:DisplayPlatConfArray(self.targetdir,        "targetdir  ", plat, conf)
+				Utility:DisplayPlatConfArray(self.includedirs,      "includedirs", plat, conf)
+				Utility:DisplayPlatConfArray(self.libname,          "libname    ", plat, conf)
+				Utility:DisplayPlatConfArray(self.additionnal_libs, "extra libs ", plat, conf)
+				--Utility:DisplayPlatConfArray(self.tocopy,           "tocopy     ", plat, conf)
+				Log:Output("")
+			end
+		)
+	end	
 
 	-- display dependencies
 	for _, proj in ipairs(self.dependencies) do

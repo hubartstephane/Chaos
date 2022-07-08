@@ -150,6 +150,17 @@ function Project:DependOnStandardLib(libname)
 end
 
 --------------------------------------------------------------------
+-- Iterate over project and its dependencies
+--------------------------------------------------------------------
+
+function Project:ForProjectAndDependencies(func)
+	func(self)
+	for _, depend_project in ipairs(self.dependencies) do
+		func(depend_project)
+	end
+end
+
+--------------------------------------------------------------------
 -- gets the name of the premake project for documentation
 --------------------------------------------------------------------
 function Project:GetDocumentationProjectName()
@@ -268,7 +279,9 @@ function Project:AddProjectToSolution()
 	end
 
 	-- declare project
+	local proj_location = path.join(SOLUTION_PATH, self.project_path)
 	project(self.project_name)
+	location(proj_location)
 
 	-- kind
 	kind(self.project_type)
@@ -307,6 +320,8 @@ function Project:AddProjectToSolution()
 		compileas "Module"
 	filter {}
 
+	Log:Output(self.project_name)
+
 	-- release/debug settings
 	Utility:AllTargets(
 		function(plat, conf)
@@ -316,9 +331,43 @@ function Project:AddProjectToSolution()
 				self:ReleaseConf(plat)
 			end
 			self:OnConfig(plat, conf)
-		end
+			
+			filter {"configurations:" .. conf, "platforms:" .. plat}
+			
+			self:ForProjectAndDependencies(
+				function(p)
+					Log:Output("  => " .. p.project_name)
+					-- include path
+					Utility:ForEachElement(p.includedirs[plat][conf],
+						function(elem)
+							includedirs(elem)
+						end
+					)
+					-- link
+					if (self.project_type == ProjectType.EXECUTABLE) then -- only executable should link to other libraries
+						Utility:ForEachElement(p.additionnal_libs[plat][conf],
+							function(elem)
+								links(elem)
+							end
+						)			
+						Utility:ForEachElement(p.libname[plat][conf],
+							function(elem)
+								links(elem)
+							end
+						)	
+						Utility:ForEachElement(p.targetdir[plat][conf],
+							function(elem)
+								libdirs(elem)
+							end
+						)			
+					end
+				end
+			)								
+		end		
 	)
 	filter {}
+	
+	
 
 	-- by default, the editor start the exe in the source path. We prefere to start where it has been build
 	debugdir("$(TargetDir)")

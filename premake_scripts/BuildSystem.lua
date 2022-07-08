@@ -76,6 +76,7 @@ function BuildSystem:AddProject(name, data)
 		result.targetdir = result.targetdir or Utility:GetPlatConfArray("")
 		result.includedirs = result.includedirs or Utility:GetPlatConfArray({})
 		result.additionnal_libs = result.additionnal_libs or Utility:GetPlatConfArray({})
+		result.libname = result.libname or Utility:GetPlatConfArray({})
 		result.dependencies = {}
 		result.tocopy = result.tocopy or Utility:GetPlatConfArray({})
 		self.projects[upper_name] = result

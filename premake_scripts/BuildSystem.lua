@@ -191,7 +191,11 @@ end
 -- Create a windowed application
 --------------------------------------------------------------------
 function BuildSystem:WindowedApp()
-	return self:CppProject(ProjectType.EXECUTABLE)
+	return self:CppProject(ProjectType.WINDOW_EXE)
+end
+
+function BuildSystem:ConsoleApp()
+	return self:CppProject(ProjectType.CONSOLE_EXE)
 end
 
 --------------------------------------------------------------------

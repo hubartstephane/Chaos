@@ -4,12 +4,21 @@ require "Object"
 -- The types of projects (the values are valid strings for premake5.kind(...) function)
 --------------------------------------------------------------------
 ProjectType = {
-	EXECUTABLE = "WindowedApp",
+	WINDOW_EXE = "WindowedApp",
+	CONSOLE_EXE = "ConsoleApp",
 	STATIC_LIBRARY = "StaticLib",
 	SHARED_LIBRARY = "SharedLib",
 	EXTERNAL_LIBRARY = "External Library", -- except for this
 	RESOURCES = "Makefile"
 }
+
+function ProjectType:IsExecutable(type)
+	return (type == ProjectType.WINDOW_EXE or type == ProjectType.CONSOLE_EXE)
+end
+
+function ProjectType:IsLibrary(type)
+	return (type == ProjectType.STATIC_LIBRARY or type == ProjectType.SHARED_LIBRARY)
+end
 
 --------------------------------------------------------------------
 -- Class declaration
@@ -229,7 +238,7 @@ function Project:OnConfig(plat, conf)
 	targetdir(self.targetdir[plat][conf])
 	includedirs(self.includedirs[plat][conf])
 	-- some definition for FILE REDIRECTION
-	if (self.project_type == ProjectType.EXECUTABLE) then
+	if (ProjectType:IsExecutable(self.project_type)) then
 		defines('CHAOS_PROJECT_PATH="' .. Utility:Base64Encode(self.project_path) .. '"')
 		defines('CHAOS_PROJECT_SRC_PATH="' .. Utility:Base64Encode(self.project_src_path) .. '"')
 		defines('CHAOS_PROJECT_BUILD_PATH="' .. Utility:Base64Encode(self.targetdir[plat][conf]) .. '"')
@@ -301,7 +310,7 @@ function Project:AddProjectToSolution()
 
 	-- entry point (avoid WinMain to main)
 	if (os.target() == "windows") then
-		if (project_type == ProjectType.EXECUTABLE) then
+		if (ProjectType:IsExecutable(project_type)) then
 			entrypoint "mainCRTStartup"
 		end
 	end
@@ -336,7 +345,6 @@ function Project:AddProjectToSolution()
 			
 			self:ForProjectAndDependencies(
 				function(p)
-					Log:Output("  => " .. p.project_name)
 					-- include path
 					Utility:ForEachElement(p.includedirs[plat][conf],
 						function(elem)
@@ -344,7 +352,7 @@ function Project:AddProjectToSolution()
 						end
 					)
 					-- link
-					if (self.project_type == ProjectType.EXECUTABLE) then -- only executable should link to other libraries
+					if (ProjectType:IsExecutable(self.project_type)) then -- only executable should link to other libraries
 						Utility:ForEachElement(p.additionnal_libs[plat][conf],
 							function(elem)
 								links(elem)

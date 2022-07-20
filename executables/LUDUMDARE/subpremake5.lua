@@ -2,6 +2,12 @@
 -- ROOT_PATH/executables/LUDUMDARE
 -- =============================================================================
 
+for k, v in ipairs({"Ludum40"})   do
+	build:ProcessSubPremake(v, true) -- create a sub groups
+end
+
+--[[
+
 build:ProcessSubPremake("Ludum40")
 build:ProcessSubPremake("Ludum41")
 build:ProcessSubPremake("Ludum41Custom")
@@ -15,3 +21,4 @@ build:ProcessSubPremake("Ludum48")
 build:ProcessSubPremake("Ludum49")
 build:ProcessSubPremake("Ludum50")
 
+]]--

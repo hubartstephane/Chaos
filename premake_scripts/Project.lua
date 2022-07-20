@@ -252,6 +252,67 @@ end
 --------------------------------------------------------------------
 -- Create a sub-premake project for ZIP
 --------------------------------------------------------------------
+
+function Project:AddResourceProjectToSolution()
+
+	local resource_proj_name = self:GetResourceProjectName()
+	project(resource_proj_name)
+	
+	local proj_location = path.join(SOLUTION_PATH, self.project_path)
+	location(proj_location)
+	
+	kind("Makefile")	
+	
+	local res_path = path.join(self.project_src_path, "resources")
+	files {path.join(res_path, "**")}
+	
+	Utility:AllTargets(
+		function(plat, conf)
+			self:ForProjectAndDependencies(
+				function(p)
+					local all_files = p.tocopy[plat][conf] -- copy from linked project
+					if (all_files) then
+						for v, data in pairs(all_files) do
+							local filename = data[1]
+							local full_filename = data[2]
+							local dst_name = path.join(self.targetdir[plat][conf], filename) -- into self.targetdir
+							
+							Log:Output("Copy filename     : " .. filename)
+							Log:Output("Copy full_filename: " .. full_filename)
+							Log:Output("Copy dst_name     : " .. dst_name)
+							Log:Output("--")
+
+							local is_dll = (string.upper(path.getextension(filename)) == ".DLL")
+							-- dll files are bound to normal project (and will be copyed into builddir)
+							-- non dll files are handled by resource subproject
+							if (not is_dll) then
+								project(resource_proj_name) -- for resource project
+								filter {"configurations:" .. conf, "platforms:" .. plat}
+								local build_command_str = Utility:QuotationMarks(COPY_SCRIPT, full_filename, dst_name)
+								buildcommands(build_command_str)
+								local clean_command_str = Utility:QuotationMarks(CLEAN_SCRIPT, dst_name)
+								cleancommands(clean_command_str)
+									
+									
+									
+							else
+								project(self.project_name) -- for main project
+								filter {"configurations:" .. conf, "platforms:" .. plat}
+								files {full_filename}
+							end
+						end
+					end
+				end
+			)
+		end
+	)
+	
+
+end
+
+--------------------------------------------------------------------
+-- Create a sub-premake project for ZIP
+--------------------------------------------------------------------
 function Project:AddZipProjectToSolution()
 
 	-- only if requested
@@ -287,9 +348,12 @@ function Project:AddProjectToSolution()
 		return
 	end
 
-	-- declare project
-	local proj_location = path.join(SOLUTION_PATH, self.project_path)
+	group(self.current_group)	-- valid for main project and dependant ones (resources, zip, doc)
+
+	-- declare project	
 	project(self.project_name)
+	
+	local proj_location = path.join(SOLUTION_PATH, self.project_path)
 	location(proj_location)
 
 	-- kind
@@ -311,7 +375,7 @@ function Project:AddProjectToSolution()
 	-- entry point (avoid WinMain to main)
 	if (os.target() == "windows") then
 		if (ProjectType:IsExecutable(project_type)) then
-			entrypoint "mainCRTStartup"
+			--entrypoint "mainCRTStartup"
 		end
 	end
 
@@ -374,13 +438,9 @@ function Project:AddProjectToSolution()
 		end		
 	)
 	filter {}
-	
-	
 
 	-- by default, the editor start the exe in the source path. We prefere to start where it has been build
 	debugdir("$(TargetDir)")
-
-
 
 	-- characterset
 	characterset("ASCII")
@@ -392,107 +452,9 @@ function Project:AddProjectToSolution()
 		buildcommands(build_command_str)
 		buildoutputs '%{cfg.targetdir}/%{file.basename}.dll'
 
-	-- special
+	-- depend projects
+	self:AddResourceProjectToSolution()
 	self:AddZipProjectToSolution()
 	self:AddDocProjectToSolution()
 
 end
-
-
-
-
-
-
-
-
-
-
---[[
-
-
-
-
-
-	-- the name of the group
-
-	local group_name = nil
-	if (self.current_group ~= nil) then
-		group_name = path.join(self.current_group, self.project_name)
-		group(group_name)
-	end
-
-	-- create a project for the resources
-	local proj_location = path.join(SOLUTION_PATH, self.project_path)
-	local res_path = path.join(self.project_src_path, "resources")
-
-	local resource_proj_name = result:GetResourceProjectName()
-	project(resource_proj_name)
-	kind(SPECIAL_PROJECT)
-	location(proj_location)
-	files {path.join(res_path, "**")}
-
-	local resource_project = project()
-
-	-- create the project itself
-	local proj_location = path.join(SOLUTION_PATH, self.project_path)
-	local inc_path = path.join(self.project_src_path, "include")
-	local src_path = path.join(self.project_src_path, "src")
-	local res_path = path.join(self.project_src_path, "resources")
-
-	project(PROJ_NAME)
-	kind(in_kind)
-	location(proj_location)
-
-	local lua_project = project()
-
-	---------------------------------
-	-- IMPORTANT
-	---------------------------------
-	-- path = self.project_path,
-	-- root_path = self.project_src_path,
-	-- build_path = self.project_build_path,
-	---------------------------------
-
-
-
-	local result = {
-		project_type = project_type,
-		path = self.project_path,
-		root_path = self.project_src_path,
-		build_path = self.project_build_path,
-
-
-
-		targetdir = GetPlatConfArray({}),
-		includedirs = GetPlatConfArray({}),
-		group_name = group_name,
-		proj_location = proj_location,
-		inc_path = GetPlatConfArray(inc_path),
-		src_path = GetPlatConfArray(src_path),
-		res_path = GetPlatConfArray(res_path)
-	}
-
-
-		lua_project = lua_project,
-		resource_project = resource_project,
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	return result
-end
-
-
-]]--

@@ -27,7 +27,7 @@ build:DeclareExternalLib("GLM", GLM_INC_PATH, nil, nil)
 --------------------------------------------------------------------
 -- BOOST
 --------------------------------------------------------------------
-local BOOST_PATH     = "boost_1_77_0"
+local BOOST_PATH     = "boost_1_80_0"
 local BOOST_LIB_PATH =  path.join(BOOST_PATH, "stage", "lib")
 build:DeclareExternalLib("BOOST", BOOST_PATH, BOOST_LIB_PATH, nil)
 

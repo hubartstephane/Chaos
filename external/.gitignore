@@ -1,9 +1,9 @@
 glew-2.2.0/**
-boost_1_77_0/**
+boost_1_80_0/**
 MSVC_Redist/**
-FreeImage/**
-Irrklang/**
+FreeImage-3.18/**
+Irrklang-64bit-1.6.0/**
 lua-5.4.2/**
 zlib-1.2.11/**
-nana/**
-FBX_2020.0.1/**
+nana-1.7.4/**
+FBX-2020.0.1/**

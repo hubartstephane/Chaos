@@ -81,12 +81,12 @@ function GenerateMSVCDLLs(base_path, dlls)
 
   local result = {}
   for k, v in ipairs(dlls) do
-    table.insert(result, "@" .. path.join(base_path, v))
+    table.insert(result, path.join(base_path, v))
   end
   return result
 end
 
-local MSVC_TOCOPY  = { -- @ because this copies the file directly in target directory
+local MSVC_TOCOPY  = {
    DEBUG = GenerateMSVCDLLs(MSVC_LIB_PATH_X64_DEBUG, MSVC_DLL_DEBUG),
    RELEASE = GenerateMSVCDLLs(MSVC_LIB_PATH_X64_RELEASE, MSVC_DLL_RELEASE)
 }
@@ -116,7 +116,7 @@ local IRRKLANG_PATH = "irrKlang-64bit-1.6.0"
 local IRRKLANG_INC_PATH = path.join(IRRKLANG_PATH, "include")
 local IRRKLANG_LIB_PATH = path.join(IRRKLANG_PATH, "lib", "Winx64-visualStudio")
 local IRRKLANG_LIBNAME = "irrKlang.lib"
-local IRRKLANG_TOCOPY  = "@" .. path.join(IRRKLANG_PATH, "bin", "winx64-visualStudio" , "irrKlang.dll")  
+local IRRKLANG_TOCOPY  = path.join(IRRKLANG_PATH, "bin", "winx64-visualStudio" , "irrKlang.dll")  
 
 build:DeclareExternalLib("IRRKLANG", IRRKLANG_INC_PATH, IRRKLANG_LIB_PATH, IRRKLANG_LIBNAME, IRRKLANG_TOCOPY)
 
@@ -127,7 +127,7 @@ local FBX_PATH = path.join("FBX-2020.0.1")
 local FBX_INC_PATH = path.join(FBX_PATH, "include")
 local FBX_LIB_PATH = path.join(FBX_PATH, "lib", "vs2017", "x64", "release")
 local FBX_LIBNAME = "libfbxsdk.lib"
-local FBX_TOCOPY  = "@" .. path.join(FBX_LIB_PATH, "libfbxsdk.dll")   -- @ because this copies the file directly in    
+local FBX_TOCOPY  = path.join(FBX_LIB_PATH, "libfbxsdk.dll")
 build:DeclareExternalLib("FBX", FBX_INC_PATH, FBX_LIB_PATH, FBX_LIBNAME, FBX_TOCOPY)
 
 --------------------------------------------------------------------
@@ -146,7 +146,7 @@ local ASSIMP_INC_PATH = path.join(ASSIMP_PATH, "include")
 local ASSIMP_LIB_PATH = path.join(ASSIMP_PATH, "lib", "Release")
 local ASSIMP_LIBNAME  = "assimp-vc143-mt.lib"
 local ASSIMP_BIN_PATH = path.join(ASSIMP_PATH, "bin", "Release") 
-local ASSIMP_TOCOPY  = "@" .. path.join(ASSIMP_BIN_PATH, "assimp-vc143-mt.dll") -- @ because this copies the file directly in
+local ASSIMP_TOCOPY   = path.join(ASSIMP_BIN_PATH, "assimp-vc143-mt.dll")
 build:DeclareExternalLib("ASSIMP", ASSIMP_INC_PATH, ASSIMP_LIB_PATH, ASSIMP_LIBNAME, ASSIMP_TOCOPY)
 
 --------------------------------------------------------------------
@@ -157,7 +157,7 @@ local FREEIMAGE_DIST_PATH  = path.join(FREEIMAGE_PATH, "x64")
 local FREEIMAGE_INC_PATH = FREEIMAGE_DIST_PATH
 local FREEIMAGE_LIB_PATH = FREEIMAGE_DIST_PATH
 local FREEIMAGE_LIBNAME = "FreeImage.lib"
-local FREEIMAGE_TOCOPY  = "@" .. path.join(FREEIMAGE_LIB_PATH, "FreeImage.dll")  -- @ because this copies the file directly in
+local FREEIMAGE_TOCOPY  = path.join(FREEIMAGE_LIB_PATH, "FreeImage.dll")
 build:DeclareExternalLib("FREEIMAGE", FREEIMAGE_INC_PATH, FREEIMAGE_LIB_PATH, FREEIMAGE_LIBNAME, FREEIMAGE_TOCOPY)
 
 --------------------------------------------------------------------

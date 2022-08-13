@@ -91,7 +91,7 @@ end
 --------------------------------------------------------------------
 function Utility:DeepCopy(value)
 	if (self:IsTable(value)) then
-			return table.deepcopy(value)
+		return table.deepcopy(value)
 	end
 	return value
 end
@@ -148,7 +148,13 @@ end
 function Utility:PrefixPathArray(src, prefix)
 	self:AllTargets(
 		function(plat, conf)
-			if (src[plat][conf]) then
+			if (self:IsTable(src[plat][conf])) then
+				local result = {}
+				for k, v in ipairs(src[plat][conf]) do
+					table.insert(result, path.join(prefix, v))
+				end
+				src[plat][conf] = result
+			elseif (src[plat][conf]) then
 				src[plat][conf] = path.join(prefix, src[plat][conf])
 			end
 		end

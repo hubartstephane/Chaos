@@ -251,9 +251,16 @@ function Project:AddResourceProjectToSolution()
 				function(p)
 					local all_files = p.tocopy[plat][conf] -- copy from linked project
 					if (all_files) then
-						for v, data in pairs(all_files) do
+						for v, filename in pairs(all_files) do
 						
-							print ("file:" .. data)
+							print ("file:" .. filename)
+							
+							local is_dll = (string.upper(path.getextension(filename)) == ".DLL")
+							if (is_dll) then
+								print ("DLL !!")
+							else
+								print ("NOT DLL !!")
+							end
 						
 						--[[
 						

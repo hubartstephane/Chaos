@@ -165,7 +165,7 @@ function BuildSystem:LibraryHelper(project_type)
 	
 	
 	if (project_type == ProjectType.SHARED_LIBRARY) then
-		result:AddFileToCopy("@" .. path.join(result.targetdir[x64][DEBUG], result.name .. ".dll")) 
+		result:AddFileToCopy(path.join(result.targetdir[x64][DEBUG], result.name .. ".dll")) 
 	end
 	
 	

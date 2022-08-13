@@ -59,7 +59,7 @@ function Project:DisplayInformation()
 				Utility:DisplayPlatConfArray(self.includedirs,      "includedirs", plat, conf)
 				Utility:DisplayPlatConfArray(self.libname,          "libname    ", plat, conf)
 				Utility:DisplayPlatConfArray(self.additionnal_libs, "extra libs ", plat, conf)
-				--Utility:DisplayPlatConfArray(self.tocopy,           "tocopy     ", plat, conf)
+				Utility:DisplayPlatConfArray(self.tocopy,           "tocopy     ", plat, conf)
 				Log:Output("")
 			end
 		)
@@ -74,38 +74,17 @@ function Project:DisplayInformation()
 end
 
 --------------------------------------------------------------------
--- for file copying (from src to build directory),
--- some paths start with @ -> in that case, the file is copied in the build directory directly (no matter what SRC relative path is) (useful for DLL)
---
---		src/toto/titi/file.txt => build/file.txt
---
--- some does not -> they are copied in the equivalent path
---
---		src/toto/titi/file.txt => build/toto/titi/file.txt
---
--- TO_COPY is an array of {dst_path, src_path}
-
--- add input (whether it is a string or a table) into TO_COPY
+-- add a file/directory in the TO_COPY list
 --------------------------------------------------------------------
+
 function Project:AddFileToCopyHelper(filenames, plat, conf)
 	Utility:ForEachElement(filenames,
 		function(filename)
-			local src_path = ""
-			if (string.sub(filename, 1, 1) == "@") then -- the file is to be copied directly in the same directory than the executable itself
-				filename = string.sub(filename, 2)
-				src_path = path.join(self.root_path, filename)
-				filename = path.getname(filename) -- remove the path before the filename
-			else
-				src_path = path.join(self.root_path, filename)
-			end
-			table.insert(self.tocopy[plat][conf], {filename, src_path})
+			table.insert(self.tocopy[plat][conf], filename)
 		end
 	)
 end
 
---------------------------------------------------------------------
--- add a file/directory in the TO_COPY list
---------------------------------------------------------------------
 function Project:AddFileToCopy(filename)
 	local tmp = Utility:GetPlatConfArray(filename)
 	Utility:AllTargets(
@@ -273,6 +252,11 @@ function Project:AddResourceProjectToSolution()
 					local all_files = p.tocopy[plat][conf] -- copy from linked project
 					if (all_files) then
 						for v, data in pairs(all_files) do
+						
+							print ("file:" .. data)
+						
+						--[[
+						
 							local filename = data[1]
 							local full_filename = data[2]
 							local dst_name = path.join(self.targetdir[plat][conf], filename) -- into self.targetdir
@@ -300,6 +284,13 @@ function Project:AddResourceProjectToSolution()
 								filter {"configurations:" .. conf, "platforms:" .. plat}
 								files {full_filename}
 							end
+							
+							]]--
+							
+							
+							
+							
+							
 						end
 					end
 				end

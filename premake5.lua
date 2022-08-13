@@ -132,3 +132,14 @@ build:ProcessSubPremake(sub_directories, true) -- create sub groups
 
 build:CollectDependencies()
 build:MakeSolution()
+
+
+
+local src = Utility:GetPlatConfArray{"aa" , "bb"}
+
+local prefix = "toto"
+
+local t = Utility:PrefixPathArray(src, prefix)
+
+print (Utility:GetDebugString(t))
+

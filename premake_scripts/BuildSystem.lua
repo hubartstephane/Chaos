@@ -88,12 +88,15 @@ end
 --------------------------------------------------------------------
 -- declare an external library (not described by any premake project)
 --------------------------------------------------------------------
-function BuildSystem:DeclareExternalLib(external_name, inc_path, lib_path, libname, tocopy)
+function BuildSystem:DeclareExternalLib(external_name, src_path, inc_path, lib_path, libname, tocopy)
+	
+	src_path = path.join(EXTERNAL_PATH, src_path)
 	
 	local result = self:AddProject(external_name, {
+		project_src_path = src_path,
 		project_type = ProjectType.EXTERNAL_LIBRARY,
-		includedirs = Utility:PrefixPathArray(Utility:GetPlatConfArray(inc_path), EXTERNAL_PATH),
-		targetdir = Utility:PrefixPathArray(Utility:GetPlatConfArray(lib_path), EXTERNAL_PATH),
+		includedirs = Utility:PrefixPathArray(Utility:GetPlatConfArray(inc_path), src_path),
+		targetdir = Utility:PrefixPathArray(Utility:GetPlatConfArray(lib_path), src_path),
 		libname = Utility:GetPlatConfArray(libname)
 	})
 

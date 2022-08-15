@@ -66,7 +66,7 @@ namespace chaos
 				XMLTools::ReadAttribute(image_source, "height", size.y);
 
 				XMLTools::ReadAttribute(image_source, "source", image_path);
-				image_path = BoostTools::FindAbsolutePath(GetOwnerPath(), image_path);
+				image_path = PathTools::FindAbsolutePath(GetOwnerPath(), image_path);
 			}
 			return true;
 		}

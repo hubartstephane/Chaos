@@ -413,7 +413,7 @@ namespace chaos
 			if (Level * level = DoLoadLevel(p))
 			{
 				// initialize it
-				level->SetName(BoostTools::PathToName(p).c_str());
+				level->SetName(PathTools::PathToName(p).c_str());
 				level->SetPath(p);
 				level->level_index = level_index;
 				// store it

@@ -14,7 +14,7 @@
 #include <chaos/Core/JSONParam.h>
 #include <chaos/Core/FilePathParam.h>
 #include <chaos/Core/FileTools.h>
-#include <chaos/Core/BoostTools.h>
+#include <chaos/Core/PathTools.h>
 #include <chaos/Core/JSONRecursiveLoader.h>
 #include <chaos/Core/JSONSerializable.h>
 #include <chaos/Core/AutoCast.h>

@@ -275,7 +275,7 @@ namespace chaos
 			std::string generated_name;
 			if (name == nullptr)
 			{
-				generated_name = BoostTools::PathToName(resolved_path);
+				generated_name = PathTools::PathToName(resolved_path);
 				name = generated_name.c_str();
 			}
 
@@ -437,7 +437,7 @@ namespace chaos
 					if (std::find(add_data.ignore_directories.begin(), add_data.ignore_directories.end(), p) != add_data.ignore_directories.end())
 						continue;
 					// recurse
-					FolderInfoInput* child_folder = AddFolder(BoostTools::PathToName(p).c_str(), 0);
+					FolderInfoInput* child_folder = AddFolder(PathTools::PathToName(p).c_str(), 0);
 					if (child_folder == nullptr)
 						continue;
 					child_folder->AddBitmapFilesFromDirectory(p, recursive);
@@ -571,9 +571,9 @@ namespace chaos
 			if (name == nullptr)
 			{
 				if (!animated_name.empty())
-					generated_name = BoostTools::PathToName(animated_name);
+					generated_name = PathTools::PathToName(animated_name);
 				else
-					generated_name = BoostTools::PathToName(resolved_path);
+					generated_name = PathTools::PathToName(resolved_path);
 				name = generated_name.c_str();
 			}
 

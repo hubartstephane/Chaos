@@ -1,6 +1,6 @@
 namespace chaos
 {
-	namespace BoostTools
+	namespace PathTools
 	{
 #if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -12,6 +12,6 @@ namespace chaos
 
 #endif
 
-	}; // namespace BoostTools
+	}; // namespace PathTools
 
 }; // namespace chaos

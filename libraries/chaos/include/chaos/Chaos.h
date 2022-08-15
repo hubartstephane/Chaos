@@ -13,8 +13,8 @@
 #endif
 
 // not sure whether the entry point on windows must be _main, main, _tmain ... : create a macro to change this once for all
-#ifndef CHAOS_MAIN
-#  define CHAOS_MAIN main
+#ifndef main
+#  define main main
 #endif
 
 /**

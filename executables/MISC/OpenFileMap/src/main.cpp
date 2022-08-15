@@ -1,6 +1,6 @@
 #include <chaos/Chaos.h>
 
-int CHAOS_MAIN(int argc, char ** argv, char ** env)
+int main(int argc, char ** argv, char ** env)
 {
   boost::filesystem::path application_path = boost::filesystem::path(argv[0]);
   application_path = application_path.parent_path();

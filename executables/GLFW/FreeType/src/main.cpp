@@ -348,7 +348,7 @@ protected:
 	int font_index = 0;
 };
 
-int CHAOS_MAIN(int argc, char** argv, char** env)
+int main(int argc, char** argv, char** env)
 {
 	chaos::WindowParams params;
 	params.monitor = nullptr;

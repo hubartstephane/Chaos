@@ -64,7 +64,7 @@ void TestCompression(chaos::Buffer<char> initial_buffer, char const * title)
   }
 }
 
-int CHAOS_MAIN(int argc, char ** argv, char ** env)
+int main(int argc, char ** argv, char ** env)
 {
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 

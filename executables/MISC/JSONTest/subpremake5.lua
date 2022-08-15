@@ -2,6 +2,6 @@
 -- ROOT_PATH/executables/MISC/JSONTest
 -- =============================================================================
 
-local project = build:WindowedApp()
+local project = build:ConsoleApp()
 project:DependOnLib("CHAOS")
 project:AddFileToCopy("resources")

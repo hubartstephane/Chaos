@@ -382,22 +382,34 @@ namespace chaos
 
 	bool Game::GenerateObjectTypeSets(nlohmann::json const & config)
 	{
-		return DoGenerateTiledMapEntity(config, "objecttypesets_directory", "objecttypesets", "xml", [](TiledMap::Manager * manager, boost::filesystem::path const & path) {
-			if (!manager->LoadObjectTypeSet(path))
-				return false;
-			return true;
-		});
+		return DoGenerateTiledMapEntity(
+			config, 
+			"objecttypesets_directory", 
+			"objecttypesets", 
+			"xml", 
+			[](TiledMap::Manager * manager, boost::filesystem::path const & path)
+			{
+				if (!manager->LoadObjectTypeSet(path))
+					return false;
+				return true;
+			});
 	}
 
 	// shu49 c 'est un peut bizarre d'avoir ce genre de code ici
 
 	bool Game::GenerateTileSets(nlohmann::json const & config)
 	{
-		return DoGenerateTiledMapEntity(config, "tilesets_directory", "tilesets", "tsx", [](TiledMap::Manager * manager, boost::filesystem::path const & path) {
-			if (!manager->LoadTileSet(path))
-				return false;
-			return true;
-		});
+		return DoGenerateTiledMapEntity(
+			config, 
+			"tilesets_directory", 
+			"tilesets", 
+			"tsx", 
+			[](TiledMap::Manager * manager, boost::filesystem::path const & path) 
+			{
+				if (!manager->LoadTileSet(path))
+					return false;
+				return true;
+			});
 	}
 
 	bool Game::LoadLevels(nlohmann::json const & config)

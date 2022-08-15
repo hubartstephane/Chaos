@@ -252,7 +252,7 @@ protected:
 	chaos::GLDebugOnScreenDisplay debug_display;
 };
 
-int CHAOS_MAIN(int argc, char ** argv, char ** env)
+int main(int argc, char ** argv, char ** env)
 {
 	chaos::WindowParams params;
 	params.monitor = nullptr;

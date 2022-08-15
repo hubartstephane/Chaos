@@ -109,7 +109,7 @@ protected:
 	chaos::FPSViewInputController fps_view_controller;
 };
 
-int CHAOS_MAIN(int argc, char ** argv, char ** env)
+int main(int argc, char ** argv, char ** env)
 {
 	chaos::WindowParams params;
 	params.monitor = nullptr;

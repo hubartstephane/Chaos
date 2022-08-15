@@ -481,7 +481,7 @@ bool Game::LoadBackgroundTexture(size_t index)
 bool Game::GenerateBackgroundResources(boost::filesystem::path const & path)
 {
   // get the different background paths
-	chaos::FileTools::ForEachRedirectedDirectoryContent(path / "backgrounds", [this](boost::filesystem::path const& p)
+	chaos::FileTools::WithDirectoryContent(path / "backgrounds", [this](boost::filesystem::path const& p)
 	{
 		background_paths.push_back(p);
 		return false; // don't stop

@@ -51,7 +51,7 @@ void LoadBitmaps(std::vector<FIBITMAP*> & atlas_bitmaps)
 	// iterate on the directory
 	boost::filesystem::path resources_path = application->GetResourcesPath();
 
-	chaos::FileTools::ForEachRedirectedDirectoryContent(resources_path / "images", [&atlas_bitmaps](boost::filesystem::path const &p)
+	chaos::FileTools::WithDirectoryContent(resources_path / "images", [&atlas_bitmaps](boost::filesystem::path const &p)
 	{
 		FIBITMAP * bitmap = chaos::ImageTools::LoadImageFromFile(p);
 		if (bitmap != nullptr)

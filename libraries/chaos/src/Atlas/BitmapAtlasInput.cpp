@@ -161,8 +161,7 @@ namespace chaos
 				return;
 
 			// iterate over wanted directory
-
-			FileTools::ForEachRedirectedDirectoryContent(directory_path, [this](boost::filesystem::path const& p)
+			FileTools::WithDirectoryContent(directory_path, [this](boost::filesystem::path const& p)
 			{
 				boost::filesystem::file_status status = boost::filesystem::status(p);
 
@@ -453,7 +452,7 @@ namespace chaos
 
             // search the images (and their path)
 
-			FileTools::ForEachRedirectedDirectoryContent(directory_path, [&child_images, &child_path_index](boost::filesystem::path const& p)
+			FileTools::WithDirectoryContent(directory_path, [&child_images, &child_path_index](boost::filesystem::path const& p)
 			{
 				if (boost::filesystem::status(p).type() == boost::filesystem::file_type::regular_file)
 				{

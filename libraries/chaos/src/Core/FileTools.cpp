@@ -89,12 +89,12 @@ namespace chaos
 
 #if _DEBUG // File Redirection
 
-		bool GetRedirectedPath(boost::filesystem::path const& p, boost::filesystem::path const & build_path, boost::filesystem::path const& src_path, boost::filesystem::path& redirected_path)
+		static boost::filesystem::path BuildRedirectedPath(boost::filesystem::path const& p, boost::filesystem::path const & build_path, boost::filesystem::path const& src_path)
 		{
 			// work with absolute path
 			if (p.is_relative())
 			{
-				return GetRedirectedPath(boost::filesystem::current_path() / p, build_path, src_path, redirected_path);
+				return BuildRedirectedPath(boost::filesystem::current_path() / p, build_path, src_path);
 			}
 			// search whether incomming path is inside the build_path
 			auto it1 = p.begin();
@@ -103,18 +103,18 @@ namespace chaos
 			while (it1 != p.end() && it2 != build_path.end())
 			{
 				if (*it1 != *it2)
-					return false;
+					return {};
 				++it1;
 				++it2;
 			}
 			if (it2 != build_path.end()) // has all directories of build_path been consummed ?
-				return false;
+				return {};
 
 			// make substitution, build_path prefix to src_path prefix
 			boost::filesystem::path relative_path = p.lexically_relative(build_path);
-			redirected_path = (src_path / relative_path);
-			redirected_path.normalize();
-			return true;
+			boost::filesystem::path result = (src_path / relative_path);
+			result.normalize();
+			return result;
 		}
 #endif // _DEBUG
 
@@ -122,9 +122,10 @@ namespace chaos
 		CHAOS_APPLICATION_ARG(bool, NoDirectResourceFiles);
 #endif
 
-		bool ForEachRedirectedPath(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func)
+		bool WithFile(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func)
 		{
 			boost::filesystem::path const& resolved_path = path.GetResolvedPath();
+
 			// File Redirection
 #if _DEBUG 
 
@@ -138,23 +139,26 @@ namespace chaos
 						std::vector<boost::filesystem::path> const& direct_access_paths = application->GetRedirectionSourcePaths();
 						for (boost::filesystem::path const& direct_access_path : direct_access_paths)
 						{
-							boost::filesystem::path redirected_path;
-							if (GetRedirectedPath(resolved_path, build_path, direct_access_path, redirected_path))
-								if (func(redirected_path))
-									return true;
+							boost::filesystem::path redirected_path = BuildRedirectedPath(resolved_path, build_path, direct_access_path);
+							if (!redirected_path.empty())
+								if (boost::filesystem::exists(redirected_path))
+									if (func(redirected_path))
+										return true;
 						}
 					}
 				}
 			}
 #endif // _DEBUG
+
 			// normal access
-			if (func(resolved_path))
-				return true;
+			if (boost::filesystem::exists(resolved_path))
+				if (func(resolved_path))
+					return true;
 			// failure
 			return false;
 		}
 
-		bool ForEachRedirectedDirectoryContent(FilePathParam const& p, std::function<bool(boost::filesystem::path const& p)> func)
+		bool WithDirectoryContent(FilePathParam const& p, std::function<bool(boost::filesystem::path const& p)> func)
 		{
 			std::vector<boost::filesystem::path> processed_relative_paths;
 
@@ -178,7 +182,18 @@ namespace chaos
 				return false;
 			};
 
-			return ForEachRedirectedPath(p, process_path_func);
+			return WithFile(p, process_path_func);
+		}
+
+		boost::filesystem::path GetRedirectedPath(boost::filesystem::path const& p)
+		{
+			boost::filesystem::path result;
+			WithFile(p, [&result](boost::filesystem::path const & p)
+			{
+				result = p;
+				return true; // stops
+			});
+			return result;
 		}
 
 		bool IsTypedFile(FilePathParam const& path, char const* expected_ext)
@@ -190,7 +205,7 @@ namespace chaos
 		Buffer<char> LoadFile(FilePathParam const& path, LoadFileFlag flags)
 		{
 			Buffer<char> result;
-			ForEachRedirectedPath(path, [&result, &path, flags](boost::filesystem::path const&p)
+			WithFile(path, [&result, &path, flags](boost::filesystem::path const&p)
 			{
 				result = DoLoadFile(p, flags);
 #if _DEBUG
@@ -228,7 +243,7 @@ namespace chaos
 		std::vector<std::string> ReadFileLines(FilePathParam const& path, LoadFileFlag flags)
 		{
 			std::vector<std::string> result;
-			ForEachRedirectedPath(path, [&result, &path](boost::filesystem::path const&p)
+			WithFile(path, [&result, &path](boost::filesystem::path const&p)
 			{
 				result = DoReadFileLines(p);
 #if _DEBUG

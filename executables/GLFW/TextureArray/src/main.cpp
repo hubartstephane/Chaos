@@ -214,7 +214,7 @@ protected:
 	{
 		ReleaseBitmaps();
 
-		chaos::FileTools::ForEachRedirectedDirectoryContent(resources_path / "images", [this](boost::filesystem::path const& p)
+		chaos::FileTools::WithDirectoryContent(resources_path / "images", [this](boost::filesystem::path const& p)
 		{
 			FIBITMAP* bitmap = chaos::ImageTools::LoadImageFromFile(p);
 			if (bitmap != nullptr)

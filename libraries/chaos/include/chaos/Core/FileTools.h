@@ -51,9 +51,9 @@ namespace chaos
 		Buffer<char> LoadFile(FilePathParam const& path, LoadFileFlag flags = LoadFileFlag::NONE);
 
 		/** try path redirection and call func (until it returns true) */
-		bool ForEachRedirectedPath(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func);
+		bool WithFile(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func);
 		/** iterate over all entries in all possible directories (until func returns true) */
-		bool ForEachRedirectedDirectoryContent(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func);
+		bool WithDirectoryContent(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func);
 
 		/** returns a filepath that is unused */
 		boost::filesystem::path GetUniquePath(FilePathParam const& path, char const* format, bool create_empty_file, int max_iterations = -1);
@@ -67,10 +67,7 @@ namespace chaos
 		bool WriteFileLines(FilePathParam const& path, std::vector<std::string> const& lines);
 
 		/** redirect any access (under conditions) to the direct resources path of the project (not the build directory) */
-#if _DEBUG
-		bool GetRedirectedPath(boost::filesystem::path const& p, boost::filesystem::path const& build_path, boost::filesystem::path const& src_path, boost::filesystem::path& redirected_path);
-#endif
-
+		boost::filesystem::path GetRedirectedPath(boost::filesystem::path const& p);
 
 	}; // namespace FileTools
 

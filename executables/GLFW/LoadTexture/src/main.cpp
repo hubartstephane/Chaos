@@ -109,7 +109,7 @@ protected:
 		boost::filesystem::path image_path = resources_path / "Images";
 
 
-		chaos::FileTools::ForEachRedirectedDirectoryContent(image_path, [this](boost::filesystem::path const& p)
+		chaos::FileTools::WithDirectoryContent(image_path, [this](boost::filesystem::path const& p)
 		{
 			texture_paths.push_back(p);
 			return false; // do not stop

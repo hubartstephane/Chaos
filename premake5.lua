@@ -127,7 +127,7 @@ build:DisplayInformation()
 
 require 'premake_scripts/external_premake5' -- declare external libraries
 
-local sub_directories = {'libraries', 'executables'}
+local sub_directories = {'libraries', 'executables','shared_resources'}
 build:ProcessSubPremake(sub_directories, true) -- create sub groups
 
 build:CollectDependencies()

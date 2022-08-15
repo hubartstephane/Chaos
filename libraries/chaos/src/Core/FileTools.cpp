@@ -125,8 +125,8 @@ namespace chaos
 		bool ForEachRedirectedPath(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func)
 		{
 			boost::filesystem::path const& resolved_path = path.GetResolvedPath();
-
-#if _DEBUG // File Redirection
+			// File Redirection
+#if _DEBUG 
 
 			if (Application const* application = Application::GetConstInstance())
 			{
@@ -135,21 +135,23 @@ namespace chaos
 					boost::filesystem::path const& build_path = application->GetRedirectionBuildPath();
 					if (!build_path.empty())
 					{
-						std::vector<boost::filesystem::path> const& src_paths = application->GetRedirectionSourcePaths();
-						for (boost::filesystem::path const& src_path : src_paths)
+						std::vector<boost::filesystem::path> const& direct_access_paths = application->GetRedirectionSourcePaths();
+						for (boost::filesystem::path const& direct_access_path : direct_access_paths)
 						{
 							boost::filesystem::path redirected_path;
-							if (GetRedirectedPath(resolved_path, build_path, src_path, redirected_path))
-							{
+							if (GetRedirectedPath(resolved_path, build_path, direct_access_path, redirected_path))
 								if (func(redirected_path))
 									return true;
-							}
 						}
 					}
 				}
 			}
 #endif // _DEBUG
-			return func(resolved_path);
+			// normal access
+			if (func(resolved_path))
+				return true;
+			// failure
+			return false;
 		}
 
 		bool ForEachRedirectedDirectoryContent(FilePathParam const& p, std::function<bool(boost::filesystem::path const& p)> func)

@@ -220,13 +220,27 @@ function Project:OnConfig(plat, conf)
 	includedirs(self.includedirs[plat][conf])
 	-- some definition for FILE REDIRECTION
 	if (ProjectType:IsExecutable(self.project_type)) then
-		defines('CHAOS_PROJECT_PATH="' .. Utility:Base64Encode(self.project_path) .. '"')
-		defines('CHAOS_PROJECT_SRC_PATH="' .. Utility:Base64Encode(self.project_src_path) .. '"')
+
+		local resource_path = ""
+		self:ForProjectAndDependencies(
+			function(p)
+				if (p.project_type == ProjectType.RESOURCES or ProjectType:IsExecutable(p.project_type) or ProjectType:IsLibrary(p.project_type)) then
+					if (resource_path == "") then
+						resource_path = p.project_src_path					
+					else
+						resource_path = resource_path .. ";" .. p.project_src_path
+					end
+				end
+			end
+		)
+		
 		defines('CHAOS_PROJECT_BUILD_PATH="' .. Utility:Base64Encode(self.targetdir[plat][conf]) .. '"')
-		prebuildcommands('{ECHO} CHAOS_PROJECT_PATH				= "' .. self.project_path .. '"')
-		prebuildcommands('{ECHO} CHAOS_PROJECT_SRC_PATH		= "' .. self.project_src_path .. '"')
-		prebuildcommands('{ECHO} CHAOS_PROJECT_BUILD_PATH = "' .. self.targetdir[plat][conf] .. '"')
-	end
+		defines('CHAOS_PROJECT_DIRECT_RESOURCE_PATH="' .. Utility:Base64Encode(resource_path) .. '"')
+		
+		prebuildcommands('{ECHO} CHAOS_PROJECT_BUILD_PATH		    = "' .. self.targetdir[plat][conf] .. '"')
+		prebuildcommands('{ECHO} CHAOS_PROJECT_DIRECT_RESOURCE_PATH = "' .. resource_path .. '"')		
+	
+	end	
 
 end
 
@@ -257,17 +271,12 @@ function Project:AddResourceProjectToSolution()
 						
 							local src_path = path.join(p.project_src_path, filename)
 
-							print ("filename:" .. filename)
-							print ("src_path:" .. src_path)
-							
 							local is_dll = (string.upper(path.getextension(filename)) == ".DLL")
 							
 							-- copy for standard files
 							if (not is_dll) then
 							
 								local dst_path = path.join(self.project_build_path, plat, conf, path.getname(filename))
-								print ("dst_path:" .. dst_path)
-							
 								project(resource_proj_name) -- for resource project
 								filter {"configurations:" .. conf, "platforms:" .. plat}
 								local build_command_str = Utility:QuotationMarks(COPY_SCRIPT, src_path, dst_path)
@@ -378,15 +387,16 @@ function Project:AddProjectToSolution()
 	-- release/debug settings
 	Utility:AllTargets(
 		function(plat, conf)
+		
+			filter {"configurations:" .. conf, "platforms:" .. plat}		
+		
 			if (conf == DEBUG) then
 				self:DebugConf(plat)
 			else
 				self:ReleaseConf(plat)
 			end
 			self:OnConfig(plat, conf)
-			
-			filter {"configurations:" .. conf, "platforms:" .. plat}
-			
+						
 			self:ForProjectAndDependencies(
 				function(p)
 					-- include path

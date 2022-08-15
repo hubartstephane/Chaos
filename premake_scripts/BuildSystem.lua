@@ -202,6 +202,15 @@ function BuildSystem:ConsoleApp()
 end
 
 --------------------------------------------------------------------
+-- Create a resource library
+--------------------------------------------------------------------
+function BuildSystem:ResourceLib()
+	local result = self:CppProject(ProjectType.RESOURCES)
+	return result
+end
+
+
+--------------------------------------------------------------------
 -- Collect all dependencies
 --------------------------------------------------------------------
 function BuildSystem:CollectDependencies()

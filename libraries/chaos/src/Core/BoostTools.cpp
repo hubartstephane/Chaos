@@ -17,6 +17,10 @@ namespace chaos
 
             boost::filesystem::file_status status = boost::filesystem::status(reference_path);
 
+			// SHU remake: here status does not take redirection into account
+
+
+
 			if (status.type() == boost::filesystem::file_type::directory_file)
 			{
 				return (reference_path / path).lexically_normal().make_preferred();

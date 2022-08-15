@@ -167,7 +167,10 @@ build:DeclareExternalLib("FREEIMAGE", FREEIMAGE_PATH, FREEIMAGE_INC_PATH, FREEIM
 --------------------------------------------------------------------
 local LIBTINYXML2_PATH = "tinyxml2"
 local LIBTINYXML2_INC_PATH = ""
-local LIBTINYXML2_LIB_PATH = path.join("projects", RELEASE)
+local LIBTINYXML2_LIB_PATH = {
+	DEBUG = path.join("projects", DEBUG),
+	RELEASE = path.join("projects", RELEASE)
+}
 build:DeclareExternalLib("TINYXML2", LIBTINYXML2_PATH, LIBTINYXML2_INC_PATH, LIBTINYXML2_LIB_PATH, "tinyxml2.lib", nil)
 
 --------------------------------------------------------------------
@@ -176,7 +179,10 @@ build:DeclareExternalLib("TINYXML2", LIBTINYXML2_PATH, LIBTINYXML2_INC_PATH, LIB
 local NANA_PATH     = "nana-1.7.4"
 local NANA_INC_PATH = "include"
 local NANA_LIB_PATH = path.join("build", "bin")
-local NANA_LIBNAME = "nana_v143_Release_x64.lib"
+local NANA_LIBNAME = {
+	DEBUG = "nana_v143_Debug_x64.lib",
+	RELEASE = "nana_v143_Release_x64.lib"
+}
 build:DeclareExternalLib("NANA", NANA_PATH, NANA_INC_PATH, NANA_LIB_PATH, NANA_LIBNAME)
 
 --------------------------------------------------------------------

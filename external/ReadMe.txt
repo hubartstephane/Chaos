@@ -65,6 +65,8 @@ NANA
 	then the lib is here ./build/bin/nana_v142_Release_x64.lib
 	
 	beware, a temp directory is created in external
+	
+	change runtime to DLL in project settings for a correct linkage
 
 GLFW
 ====

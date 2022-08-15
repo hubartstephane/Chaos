@@ -189,6 +189,7 @@ function Project:DebugConf(plat)
 	filter {"configurations:" .. DEBUG, "platforms:" .. plat}
 	defines {DEBUG}
 	defines {"_DEBUG"}
+	staticruntime "off"
 	symbols "On"
 	flags {"MultiProcessorCompile"}
 end
@@ -203,6 +204,7 @@ function Project:ReleaseConf(plat)
 	defines {"NDEBUG"}
 	defines {RELEASE}
 	defines {"_RELEASE"}
+	staticruntime "off"
 	optimize "On"
 	symbols "Off"
 	flags {"MultiProcessorCompile"}

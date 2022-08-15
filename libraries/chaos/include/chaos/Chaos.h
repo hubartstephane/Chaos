@@ -12,11 +12,6 @@
 #  undef max
 #endif
 
-// not sure whether the entry point on windows must be _main, main, _tmain ... : create a macro to change this once for all
-#ifndef main
-#  define main main
-#endif
-
 /**
 * This file only deserve to include most external common includes
 */

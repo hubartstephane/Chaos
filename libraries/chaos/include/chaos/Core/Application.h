@@ -75,7 +75,7 @@ namespace chaos
 
 #if _DEBUG
 		/** set redirection file directories */
-		void SetFileRedirectionDirectories( boost::filesystem::path const & build_path, boost::filesystem::path const & src_path, std::string const & extra_path);
+		void SetFileRedirectionDirectories( boost::filesystem::path const & build_path, std::string const & direct_access_paths);
 		/** get the redirected source directories */
 		std::vector<boost::filesystem::path> const& GetRedirectionSourcePaths() const { return redirection_source_paths; };
 		/** get the redirected build directory */
@@ -156,29 +156,24 @@ namespace chaos
 		shared_ptr<APPLICATION_TYPE> application = new APPLICATION_TYPE(params...);
 		if (application != nullptr)
 		{
-			// XXX: under normal circonstances, you should not use CHAOS_PROJECT_SRC_PATH, CHAOS_PROJECT_BUILD_PATH in libraries
+
+#if (_DEBUG && defined CHAOS_PROJECT_BUILD_PATH && defined CHAOS_PROJECT_DIRECT_RESOURCE_PATH) // File Redirection
+
+			// XXX: under normal circonstances, you should not use CHAOS_PROJECT_BUILD_PATH, CHAOS_PROJECT_DIRECT_RESOURCE_PATH in libraries
 			//      here, this is an exception because this function is a template and so is not compiled in libraries but by caller code instead
 			//
 			// XXX: premake defines {...} function produces errors whenever the string contains some special characters like ';'
 			//      that's why they are encoded in Base64
-#if (_DEBUG && defined CHAOS_PROJECT_BUILD_PATH && (defined CHAOS_PROJECT_SRC_PATH || defined CHAOS_PROJECT_DIRECT_RESOURCE_PATH)) // File Reditction
+
 			// build directory
 			Buffer<char> decoded_build_path = MyBase64().Decode(CHAOS_PROJECT_BUILD_PATH);
 			boost::filesystem::path build_path = std::string(decoded_build_path.data, decoded_build_path.bufsize);
-			// source directory
-			boost::filesystem::path src_path;
-#if defined CHAOS_PROJECT_SRC_PATH
-			Buffer<char> decoded_src_path = MyBase64().Decode(CHAOS_PROJECT_SRC_PATH);
-			src_path = std::string(decoded_src_path.data, decoded_src_path.bufsize);
-#endif
-			// extra sources directories
-			std::string extra_path;
-#if defined CHAOS_PROJECT_DIRECT_RESOURCE_PATH
-			Buffer<char> decoded_extra_path = MyBase64().Decode(CHAOS_PROJECT_DIRECT_RESOURCE_PATH);
-			extra_path = std::string(decoded_extra_path.data, decoded_extra_path.bufsize);
-#endif
+			// source directories
+			Buffer<char> decoded_direct_access_paths = MyBase64().Decode(CHAOS_PROJECT_DIRECT_RESOURCE_PATH);
+			std::string direct_access_paths = std::string(decoded_direct_access_paths.data, decoded_direct_access_paths.bufsize);
 			// prepare the application for direct access
-			application->SetFileRedirectionDirectories(build_path, src_path, extra_path);
+			application->SetFileRedirectionDirectories(build_path, direct_access_paths);
+
 #endif
 			return application->Run(argc, argv, env);
 		}

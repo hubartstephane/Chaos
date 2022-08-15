@@ -290,13 +290,11 @@ namespace chaos
 	}
 
 #if _DEBUG
-	void Application::SetFileRedirectionDirectories(boost::filesystem::path const & build_path, boost::filesystem::path const & src_path, std::string const & extra_path)
+	void Application::SetFileRedirectionDirectories(boost::filesystem::path const & build_path, std::string const & direct_access_paths)
 	{
 		redirection_build_path = build_path.lexically_normal();
-		if (!src_path.empty())
-			redirection_source_paths.push_back(src_path.lexically_normal());
 
-		std::vector<std::string> extra = StringTools::Split(extra_path.c_str(), ';');
+		std::vector<std::string> extra = StringTools::Split(direct_access_paths.c_str(), ';');
 		for (std::string & e : extra)
 		{
 			boost::filesystem::path p = std::move(e);

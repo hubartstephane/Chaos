@@ -2,7 +2,7 @@
 
 #include <OVR_CAPI.h>
 
-int CHAOS_MAIN(int argc, char ** argv, char ** env)
+int main(int argc, char ** argv, char ** env)
 {
   ovrResult result = ovr_Initialize(nullptr);
   if (!OVR_FAILURE(result))

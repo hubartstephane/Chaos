@@ -136,7 +136,7 @@ void opkey_pressed(stateinfo& state, const arg_click& arg)
 	if (outstr.empty()) outstr += '0';
 	state.result.caption(outstr);
 }
-int CHAOS_MAIN(int argc, char ** argv, char ** env)
+int main(int argc, char ** argv, char ** env)
 {
 	form fm;
 	fm.caption(("Calculator"));

@@ -1180,7 +1180,7 @@ protected:
 	PrimitiveType prim_type_object2 = PrimitiveType::PRIMITIVE_TYPE_BOX;
 };
 
-int CHAOS_MAIN(int argc, char ** argv, char ** env)
+int main(int argc, char ** argv, char ** env)
 {
 	chaos::WindowParams params;
 	params.monitor = nullptr;

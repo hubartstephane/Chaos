@@ -104,7 +104,7 @@ protected:
 	}
 };
 
-int CHAOS_MAIN(int argc, char ** argv, char ** env)
+int main(int argc, char ** argv, char ** env)
 {
 	chaos::RunApplication<MyApplication>(argc, argv, env);
 	return 0;

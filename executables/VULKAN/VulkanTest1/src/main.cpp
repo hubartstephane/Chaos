@@ -1467,7 +1467,7 @@ void f(int i, int j, int k)
 #define MAC(...) f(1, ##__VA_ARGS__)
 
 
-int CHAOS_MAIN(int argc, char ** argv, char ** env)
+int main(int argc, char ** argv, char ** env)
 {
     MAC();
     MAC(2);

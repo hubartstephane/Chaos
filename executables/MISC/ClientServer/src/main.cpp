@@ -224,7 +224,7 @@ void RunServer(char const * url, int port, std::string & output_string)
 }
 
 
-int CHAOS_MAIN(int argc, char ** argv, char ** env)
+int main(int argc, char ** argv, char ** env)
 {
 
 #if 0

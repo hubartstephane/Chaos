@@ -2,5 +2,5 @@
 -- ROOT_PATH/executables/NANA/Nana_7
 -- =============================================================================
 
-local project = build:WindowedApp()
+local project = build:ConsoleApp()
 project:DependOnLib("CHAOS")

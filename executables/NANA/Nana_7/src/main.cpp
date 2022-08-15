@@ -4,7 +4,7 @@ using namespace nana;
 
 
 
-int CHAOS_MAIN(int argc, char ** argv, char ** env)
+int main(int argc, char ** argv, char ** env)
 {
  
   bool has_decoration = true;

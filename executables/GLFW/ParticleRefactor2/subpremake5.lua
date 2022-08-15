@@ -2,6 +2,6 @@
 -- ROOT_PATH/executables/GLFW/ParticleRefactor2
 -- =============================================================================
 
-local project = build:WindowedApp()
+local project = build:ConsoleApp()
 project:DependOnLib("CHAOS")
 project:AddFileToCopy("resources")

@@ -248,7 +248,7 @@ void MLOG(ARGS ...args)
 }
 
 
-int CHAOS_MAIN(int argc, char** argv, char** env)
+int main(int argc, char** argv, char** env)
 {
 	chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 	MLOG("toto", 3, 9, 5.0f, "titi");

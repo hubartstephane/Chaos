@@ -258,7 +258,7 @@ auto operator co_await (A a)
 }
 
 
-int CHAOS_MAIN(int argc, char** argv, char** env)
+int main(int argc, char** argv, char** env)
 {
 	A a;
 

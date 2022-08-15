@@ -1,7 +1,7 @@
 #include <chaos/Chaos.h>
 #include "Ludum49Game.h"
 
-int CHAOS_MAIN(int argc, char ** argv, char ** env)
+int main(int argc, char ** argv, char ** env)
 {
 	WindowParams params;
 	params.monitor = nullptr;

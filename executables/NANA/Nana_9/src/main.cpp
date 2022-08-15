@@ -11,7 +11,7 @@ struct T
 };
 
 
-int CHAOS_MAIN(int argc, char ** argv, char ** env)
+int main(int argc, char ** argv, char ** env)
 {
 
 
@@ -87,7 +87,7 @@ void on_menu_item(nana::menu::item_proxy& ip)
 }
 
 
-int CHAOS_MAIN(int argc, char ** argv, char ** env)
+int main(int argc, char ** argv, char ** env)
 {
 
   using namespace nana;

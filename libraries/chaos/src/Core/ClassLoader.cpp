@@ -11,7 +11,7 @@ namespace chaos
 		{
 			std::string class_name;
 			if (!JSONTools::GetAttribute(json, "class_name", class_name))
-				class_name = BoostTools::PathToName(path.GetResolvedPath());
+				class_name = PathTools::PathToName(path.GetResolvedPath());
 			if (!class_name.empty())
 			{
 				std::string short_name;

@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	namespace BoostTools
+	namespace PathTools
 	{
 		std::string PathToName(boost::filesystem::path const & path)
 		{
@@ -33,6 +33,6 @@ namespace chaos
             return boost::filesystem::path();
 		}
 
-	}; // namespace BoostTools
+	}; // namespace PathTools
 
 }; // namespace chaos

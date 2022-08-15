@@ -159,8 +159,8 @@ namespace chaos
 				if (!XMLTools::ReadAttribute(image_element, "height", image_size.y))
 					return false;
 
-				image_path = BoostTools::FindAbsolutePath(GetOwnerPath(), image_path);
-				atlas_key = BoostTools::PathToName(image_path);
+				image_path = PathTools::FindAbsolutePath(GetOwnerPath(), image_path);
+				atlas_key = PathTools::PathToName(image_path);
 			}
 
 			DoLoadObjectListHelper(element, object_layers, "objectgroup", nullptr, this);
@@ -326,7 +326,7 @@ namespace chaos
 			if (image_element != nullptr)
 			{
 				XMLTools::ReadAttribute(image_element, "source", image_path);
-				image_path = BoostTools::FindAbsolutePath(GetOwnerPath(), image_path);
+				image_path = PathTools::FindAbsolutePath(GetOwnerPath(), image_path);
 
 				ReadXMLColor(image_element, "trans", transparent_color);
 

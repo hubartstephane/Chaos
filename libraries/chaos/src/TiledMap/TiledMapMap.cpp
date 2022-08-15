@@ -99,7 +99,7 @@ namespace chaos
 
 				if (XMLTools::ReadAttribute(tileset_element, "source", source)) // source is mandatory (map would be incomplete)
 				{
-					boost::filesystem::path tileset_path = BoostTools::FindAbsolutePath(path, source); // compute the path of the tileset relative to this
+					boost::filesystem::path tileset_path = PathTools::FindAbsolutePath(path, source); // compute the path of the tileset relative to this
 
 					tileset = manager->LoadTileSet(tileset_path);
 					if (tileset == nullptr)

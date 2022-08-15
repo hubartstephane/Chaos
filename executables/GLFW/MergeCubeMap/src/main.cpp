@@ -135,7 +135,7 @@ protected:
 	bool LoadSkyboxBitmaps(boost::filesystem::path const & resources_path)
 	{
 		// load the images
-		chaos::FileTools::ForEachRedirectedDirectoryContent(resources_path / "images", [this](boost::filesystem::path const &p)
+		chaos::FileTools::WithDirectoryContent(resources_path / "images", [this](boost::filesystem::path const &p)
 		{
 			FIBITMAP * bitmap = chaos::ImageTools::LoadImageFromFile(p);
 			if (bitmap != nullptr)

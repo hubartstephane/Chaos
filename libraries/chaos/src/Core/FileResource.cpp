@@ -10,7 +10,7 @@ namespace chaos
 		// si on test toute les redirections pour la date, on va se retrouver avec un timestamp qui ne correspond pas du tout au fichier considere
 
 
-		FileTools::ForEachRedirectedPath(in_path, [this](boost::filesystem::path const& p)
+		FileTools::WithFile(in_path, [this](boost::filesystem::path const& p)
 		{
 			try
 			{

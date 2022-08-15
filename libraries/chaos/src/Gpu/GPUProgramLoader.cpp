@@ -76,18 +76,23 @@ namespace chaos
 		if (!CheckResourcePath(path))
 			return nullptr;
 		// load the file
-		boost::filesystem::file_status status = boost::filesystem::status(path.GetResolvedPath());
-		if (status.type() == boost::filesystem::file_type::directory_file)
+		GPUProgram* result = nullptr;
+		FileTools::WithFile(path.GetResolvedPath(), [this, &result](boost::filesystem::path const& p)
 		{
-			return GenProgramObjectFromDirectory(path.GetResolvedPath());
-		}
-		else if (status.type() == boost::filesystem::file_type::regular_file)
-		{
-			nlohmann::json json;
-			if (JSONTools::LoadJSONFile(path, json, LoadFileFlag::RECURSIVE))
-				return GenProgramObject(json);
-		}
-		return nullptr;
+			boost::filesystem::file_status status = boost::filesystem::status(p);
+			if (status.type() == boost::filesystem::file_type::directory_file)
+			{
+				result = GenProgramObjectFromDirectory(p);
+			}
+			else if (status.type() == boost::filesystem::file_type::regular_file)
+			{
+				nlohmann::json json;
+				if (JSONTools::LoadJSONFile(p, json, LoadFileFlag::RECURSIVE))
+					result = GenProgramObject(json);
+			}
+			return (result != nullptr); // stops as soon some result is found
+		});
+		return result;
 	}
 
 	GPUProgram* GPUProgramLoader::GenProgramObjectFromDirectory(boost::filesystem::path const & p) const

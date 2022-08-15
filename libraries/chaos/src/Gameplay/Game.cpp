@@ -359,7 +359,7 @@ namespace chaos
 		// iterate the files and load the tilesets
 		boost::filesystem::path path = GetResourceDirectoryFromConfig(config, property_name, default_value);
 
-		return !FileTools::ForEachRedirectedDirectoryContent(path, [this, extension, func](boost::filesystem::path const &p)
+		return !FileTools::WithDirectoryContent(path, [this, extension, func](boost::filesystem::path const &p)
 		{
 			if (FileTools::IsTypedFile(p, extension))
 			{
@@ -417,7 +417,7 @@ namespace chaos
 		// iterate the files and load the levels
 		boost::filesystem::path path = GetResourceDirectoryFromConfig(config, "levels_directory", "levels");
 
-		FileTools::ForEachRedirectedDirectoryContent(path, [this](boost::filesystem::path const& p)
+		FileTools::WithDirectoryContent(path, [this](boost::filesystem::path const& p)
 		{
 			int level_index = StringTools::SkipAndAtoi(p.filename().string().c_str());
 

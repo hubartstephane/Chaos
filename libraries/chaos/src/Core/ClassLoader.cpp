@@ -35,7 +35,7 @@ namespace chaos
 		std::vector<Class *> classes;
 
 		// Step 1 : load all classes (no full initialization, ignore parent). Register them (without inheritance data in classes list)
-		FileTools::ForEachRedirectedDirectoryContent(path, [this, &classes](boost::filesystem::path const & p)
+		FileTools::WithDirectoryContent(path, [this, &classes](boost::filesystem::path const & p)
 		{
 			Class* cls = DoLoadClassHelper<Class *>(p, [this] (std::string && class_name, std::string && short_name, nlohmann::json const& json)
 			{

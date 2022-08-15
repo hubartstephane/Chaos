@@ -15,22 +15,25 @@ namespace chaos
 			if (path.is_absolute())
 				return path.lexically_normal().make_preferred();
 
-            boost::filesystem::file_status status = boost::filesystem::status(reference_path);
-
-			// SHU remake: here status does not take redirection into account
-
-
-
-			if (status.type() == boost::filesystem::file_type::directory_file)
+			boost::filesystem::path result;
+			FileTools::WithFile(reference_path, [&result, &path](boost::filesystem::path const & p)
 			{
-				return (reference_path / path).lexically_normal().make_preferred();
-			}
-			else if (status.type() == boost::filesystem::file_type::regular_file)
-			{
-				boost::filesystem::path p = reference_path.parent_path();
-				return (p / path).lexically_normal().make_preferred();
-			}
-            return boost::filesystem::path();
+				boost::filesystem::file_status status = boost::filesystem::status(p);
+
+				if (status.type() == boost::filesystem::file_type::directory_file)
+				{
+					result = (p / path).lexically_normal().make_preferred();
+					return true;
+				}
+				else if (status.type() == boost::filesystem::file_type::regular_file)
+				{
+					boost::filesystem::path parent_path = p.parent_path();
+					result = (parent_path / path).lexically_normal().make_preferred();
+					return true;
+				}
+				return false; // don't stop
+			});
+            return result;
 		}
 
 	}; // namespace PathTools

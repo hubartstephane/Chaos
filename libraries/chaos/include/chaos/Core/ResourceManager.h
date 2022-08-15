@@ -37,7 +37,7 @@ namespace chaos
 		template<typename LOADER>
 		static void LoadObjectsInDirectory(FilePathParam const & path, LOADER const& loader, bool recurse = false)
 		{
-			FileTools::ForEachRedirectedDirectoryContent(path, [&loader, recurse](boost::filesystem::path const& p)
+			FileTools::WithDirectoryContent(path, [&loader, recurse](boost::filesystem::path const& p)
 			{
 				// copy loader to ensure content is reset for all loaded objects
 				LOADER other_loader = loader;

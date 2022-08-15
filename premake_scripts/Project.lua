@@ -251,53 +251,33 @@ function Project:AddResourceProjectToSolution()
 				function(p)
 					local all_files = p.tocopy[plat][conf] -- copy from linked project
 					if (all_files) then
-						for v, filename in pairs(all_files) do
+						for _, filename in pairs(all_files) do
 						
-							print ("file:" .. filename)
-							
-							local is_dll = (string.upper(path.getextension(filename)) == ".DLL")
-							if (is_dll) then
-								print ("DLL !!")
-							else
-								print ("NOT DLL !!")
-							end
-						
-						--[[
-						
-							local filename = data[1]
-							local full_filename = data[2]
-							local dst_name = path.join(self.targetdir[plat][conf], filename) -- into self.targetdir
-							
-							Log:Output("Copy filename     : " .. filename)
-							Log:Output("Copy full_filename: " .. full_filename)
-							Log:Output("Copy dst_name     : " .. dst_name)
-							Log:Output("--")
+							local src_path = path.join(p.project_src_path, filename)
 
+							print ("filename:" .. filename)
+							print ("src_path:" .. src_path)
+							
 							local is_dll = (string.upper(path.getextension(filename)) == ".DLL")
-							-- dll files are bound to normal project (and will be copyed into builddir)
-							-- non dll files are handled by resource subproject
+							
+							-- copy for standard files
 							if (not is_dll) then
+							
+								local dst_path = path.join(self.project_build_path, plat, conf, path.getname(filename))
+								print ("dst_path:" .. dst_path)
+							
 								project(resource_proj_name) -- for resource project
 								filter {"configurations:" .. conf, "platforms:" .. plat}
-								local build_command_str = Utility:QuotationMarks(COPY_SCRIPT, full_filename, dst_name)
+								local build_command_str = Utility:QuotationMarks(COPY_SCRIPT, src_path, dst_path)
 								buildcommands(build_command_str)
-								local clean_command_str = Utility:QuotationMarks(CLEAN_SCRIPT, dst_name)
+								local clean_command_str = Utility:QuotationMarks(CLEAN_SCRIPT, dst_path)
 								cleancommands(clean_command_str)
-									
-									
-									
+							-- create a dependancy for dll
 							else
 								project(self.project_name) -- for main project
 								filter {"configurations:" .. conf, "platforms:" .. plat}
-								files {full_filename}
-							end
-							
-							]]--
-							
-							
-							
-							
-							
+								files {src_path}								
+							end						
 						end
 					end
 				end

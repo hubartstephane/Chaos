@@ -337,7 +337,7 @@ function Project:AddProjectToSolution()
 		return
 	end
 
-	group(self.current_group)	-- valid for main project and dependant ones (resources, zip, doc)
+	group(path.join(self.current_group, self.project_name))	-- valid for main project and dependant ones (resources, zip, doc)
 
 	-- declare project	
 	project(self.project_name)

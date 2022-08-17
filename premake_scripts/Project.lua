@@ -63,7 +63,7 @@ function Project:DisplayInformation()
 				Log:Output("")
 			end
 		)
-	end	
+	end
 
 	-- display dependencies
 	for _, proj in ipairs(self.dependencies) do
@@ -226,21 +226,21 @@ function Project:OnConfig(plat, conf)
 			function(p)
 				if (p.project_type == ProjectType.RESOURCES or ProjectType:IsExecutable(p.project_type) or ProjectType:IsLibrary(p.project_type)) then
 					if (resource_path == "") then
-						resource_path = p.project_src_path					
+						resource_path = p.project_src_path
 					else
 						resource_path = resource_path .. ";" .. p.project_src_path
 					end
 				end
 			end
 		)
-		
+
 		defines('CHAOS_PROJECT_BUILD_PATH="' .. Utility:Base64Encode(self.targetdir[plat][conf]) .. '"')
 		defines('CHAOS_PROJECT_DIRECT_RESOURCE_PATH="' .. Utility:Base64Encode(resource_path) .. '"')
-		
+
 		prebuildcommands('{ECHO} CHAOS_PROJECT_BUILD_PATH		    = "' .. self.targetdir[plat][conf] .. '"')
-		prebuildcommands('{ECHO} CHAOS_PROJECT_DIRECT_RESOURCE_PATH = "' .. resource_path .. '"')		
-	
-	end	
+		prebuildcommands('{ECHO} CHAOS_PROJECT_DIRECT_RESOURCE_PATH = "' .. resource_path .. '"')
+
+	end
 
 end
 
@@ -252,15 +252,15 @@ function Project:AddResourceProjectToSolution()
 
 	local resource_proj_name = self:GetResourceProjectName()
 	project(resource_proj_name)
-	
+
 	local proj_location = path.join(SOLUTION_PATH, self.project_path)
 	location(proj_location)
-	
-	kind("Makefile")	
-	
+
+	kind("Makefile")
+
 	local res_path = path.join(self.project_src_path, "resources")
 	files {path.join(res_path, "**")}
-	
+
 	Utility:AllTargets(
 		function(plat, conf)
 			self:ForProjectAndDependencies(
@@ -268,14 +268,14 @@ function Project:AddResourceProjectToSolution()
 					local all_files = p.tocopy[plat][conf] -- copy from linked project
 					if (all_files) then
 						for _, filename in pairs(all_files) do
-						
+
 							local src_path = path.join(p.project_src_path, filename)
 
 							local is_dll = (string.upper(path.getextension(filename)) == ".DLL")
-							
+
 							-- copy for standard files
 							if (not is_dll) then
-							
+
 								local dst_path = path.join(self.project_build_path, plat, conf, path.getname(filename))
 								project(resource_proj_name) -- for resource project
 								filter {"configurations:" .. conf, "platforms:" .. plat}
@@ -287,15 +287,15 @@ function Project:AddResourceProjectToSolution()
 							else
 								project(self.project_name) -- for main project
 								filter {"configurations:" .. conf, "platforms:" .. plat}
-								files {src_path}								
-							end						
+								files {src_path}
+							end
 						end
 					end
 				end
 			)
 		end
 	)
-	
+
 
 end
 
@@ -306,14 +306,14 @@ function Project:AddZipProjectToSolution()
 
 	if (ProjectType:IsExecutable(self.project_type) and self.gen_zip) then
 
-		local zip_project_name = self:GetZipProjectName()		
+		local zip_project_name = self:GetZipProjectName()
 		project(zip_project_name)
 
 		local proj_location = path.join(SOLUTION_PATH, self.project_path)
 		location(proj_location)
-		
+
 		kind("Makefile")
-		
+
 		Utility:AllTargets(
 			function(plat, conf)
 				filter {"configurations:" .. conf, "platforms:" .. plat}
@@ -330,7 +330,7 @@ function Project:AddZipProjectToSolution()
 				links(self.project_name)
 				links(self:GetResourceProjectName())
 			end
-		)		
+		)
 
 	end
 end
@@ -362,9 +362,9 @@ function Project:AddProjectToSolution()
 
 	group(path.join(self.current_group, self.project_name))	-- valid for main project and dependant ones (resources, zip, doc)
 
-	-- declare project	
+	-- declare project
 	project(self.project_name)
-	
+
 	local proj_location = path.join(SOLUTION_PATH, self.project_path)
 	location(proj_location)
 
@@ -410,16 +410,16 @@ function Project:AddProjectToSolution()
 	-- release/debug settings
 	Utility:AllTargets(
 		function(plat, conf)
-		
-			filter {"configurations:" .. conf, "platforms:" .. plat}		
-		
+
+			filter {"configurations:" .. conf, "platforms:" .. plat}
+
 			if (conf == DEBUG) then
 				self:DebugConf(plat)
 			else
 				self:ReleaseConf(plat)
 			end
 			self:OnConfig(plat, conf)
-						
+
 			self:ForProjectAndDependencies(
 				function(p)
 					-- include path
@@ -434,21 +434,21 @@ function Project:AddProjectToSolution()
 							function(elem)
 								links(elem)
 							end
-						)			
+						)
 						Utility:ForEachElement(p.libname[plat][conf],
 							function(elem)
 								links(elem)
 							end
-						)	
+						)
 						Utility:ForEachElement(p.targetdir[plat][conf],
 							function(elem)
 								libdirs(elem)
 							end
-						)			
+						)
 					end
 				end
-			)								
-		end		
+			)
+		end
 	)
 	filter {}
 

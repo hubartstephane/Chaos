@@ -172,7 +172,7 @@ function BuildSystem:LibraryHelper(project_type)
 	end
 	
 	
-	result:GenDoxygen() -- automatic documentation for libraries
+
 	return result
 end
 
@@ -180,25 +180,33 @@ end
 -- declare a static library
 --------------------------------------------------------------------
 function BuildSystem:StaticLibrary()
-	return self:LibraryHelper(ProjectType.STATIC_LIBRARY)
+	local result = self:LibraryHelper(ProjectType.STATIC_LIBRARY)
+	result:GenDoxygen() -- automatic documentation for libraries
+	return result
 end
 
 --------------------------------------------------------------------
 -- declare a shared library
 --------------------------------------------------------------------
 function BuildSystem:SharedLibrary()
-	return self:LibraryHelper(ProjectType.SHARED_LIBRARY)
+	local result = self:LibraryHelper(ProjectType.SHARED_LIBRARY)
+	result:GenDoxygen() -- automatic documentation for libraries
+	return result	
 end
 
 --------------------------------------------------------------------
 -- Create a windowed application
 --------------------------------------------------------------------
 function BuildSystem:WindowedApp()
-	return self:CppProject(ProjectType.WINDOW_EXE)
+	local result = self:CppProject(ProjectType.WINDOW_EXE)
+	result:GenZIP() -- automatic zip for executables
+	return result
 end
 
 function BuildSystem:ConsoleApp()
-	return self:CppProject(ProjectType.CONSOLE_EXE)
+	local result = self:CppProject(ProjectType.CONSOLE_EXE)
+	result:GenZIP() -- automatic zip for executables
+	return result	
 end
 
 --------------------------------------------------------------------

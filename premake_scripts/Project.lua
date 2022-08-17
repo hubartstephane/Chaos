@@ -304,12 +304,35 @@ end
 --------------------------------------------------------------------
 function Project:AddZipProjectToSolution()
 
-	-- only if requested
-	if (not self.gen_zip) then
-		return
+	if (ProjectType:IsExecutable(self.project_type) and self.gen_zip) then
+
+		local zip_project_name = self:GetZipProjectName()		
+		project(zip_project_name)
+
+		local proj_location = path.join(SOLUTION_PATH, self.project_path)
+		location(proj_location)
+		
+		kind("Makefile")
+		
+		Utility:AllTargets(
+			function(plat, conf)
+				filter {"configurations:" .. conf, "platforms:" .. plat}
+
+				local zip_path = path.join(ZIP_PATH, self.project_name) .. "_" .. conf .. "_" .. plat .. ".zip"
+
+				local zip_command_str = Utility:QuotationMarks(ZIP_SCRIPT, self.targetdir[plat][conf], zip_path)
+				buildcommands(zip_command_str)
+				rebuildcommands(zip_command_str)
+
+				local clean_command_str = Utility:QuotationMarks(CLEAN_SCRIPT, zip_path)
+				cleancommands(clean_command_str)
+
+				links(self.project_name)
+				links(self:GetResourceProjectName())
+			end
+		)		
+
 	end
-
-
 end
 
 --------------------------------------------------------------------

@@ -40,6 +40,8 @@ Project = Object:new({
 
 function Project:DisplayInformation()
 	Log:Output("=======================================================================")
+	Log:Output("== " .. self.project_name)
+	Log:Output("=======================================================================")
 
 	-- depend generic information
 	Log:Output("PROJECT_NAME       : " .. self.project_name)
@@ -70,7 +72,7 @@ function Project:DisplayInformation()
 		Log:Output("depend on: " .. proj.project_name)
 	end
 
-	Log:Output("=======================================================================")
+	Log:Output("")
 end
 
 --------------------------------------------------------------------
@@ -340,13 +342,11 @@ end
 --------------------------------------------------------------------
 function Project:AddDocProjectToSolution()
 
-	-- only if requested
-	if (not self.gen_documentation) then
-		return
+	if (ProjectType:IsLibrary(self.project_type) and self.gen_documentation) then
+
+		print("Library")
+
 	end
-
-
-
 end
 
 --------------------------------------------------------------------
@@ -404,8 +404,6 @@ function Project:AddProjectToSolution()
 		buildaction "ClCompile"
 		compileas "Module"
 	filter {}
-
-	Log:Output(self.project_name)
 
 	-- release/debug settings
 	Utility:AllTargets(

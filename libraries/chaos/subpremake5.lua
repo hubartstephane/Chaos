@@ -29,5 +29,3 @@ project:DependOnStandardLib("Dbghelp.lib")  -- used on windows for call stack in
 project:DependOnStandardLib("winmm.lib")    -- used for midi
 -- pchheader "StandardHeaders.h"
 --pchsource "StandardHeaders.cpp"
-
-project:AddFileToCopy("resources")

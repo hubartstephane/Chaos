@@ -37,14 +37,14 @@ end
 --------------------------------------------------------------------
 function BuildSystem:ProcessSubPremake(dir_name, create_sub_group)
 
-	Utility:ForEachElement(dir_name, 
+	Utility:ForEachElement(dir_name,
 		function(name)
 			Log:Output("SUBDIRECTORY [" .. name .. "]")
 
 			local env = self:StoreEnvironment({"current_group", "project_path", "project_name", "project_src_path", "project_build_path"})
 
 			Log:IncrementIndent()
-			
+
 			if (create_sub_group) then
 				self.current_group = path.join(self.current_group, name)
 			end
@@ -65,9 +65,9 @@ end
 -- ensure a project does not already exist then create it
 --------------------------------------------------------------------
 function BuildSystem:AddProject(name, data)
-		
+
 	local upper_name = string.upper(name)
-	
+
 	if (self.projects[upper_name]) then
 		assert(false, "Project " .. upper_name .. " already definied")
 	else
@@ -80,7 +80,7 @@ function BuildSystem:AddProject(name, data)
 		result.dependencies = {}
 		result.tocopy = result.tocopy or Utility:GetPlatConfArray({})
 		self.projects[upper_name] = result
-		
+
 		return result
 	end
 end
@@ -89,9 +89,9 @@ end
 -- declare an external library (not described by any premake project)
 --------------------------------------------------------------------
 function BuildSystem:DeclareExternalLib(external_name, src_path, inc_path, lib_path, libname, tocopy)
-	
+
 	src_path = path.join(EXTERNAL_PATH, src_path)
-	
+
 	local result = self:AddProject(external_name, {
 		project_src_path = src_path,
 		project_type = ProjectType.EXTERNAL_LIBRARY,
@@ -107,16 +107,16 @@ function BuildSystem:DeclareExternalLib(external_name, src_path, inc_path, lib_p
 	-- check for library file existence
 	Utility:AllTargets(
 		function(plat, conf)
-			if (result.targetdir[plat][conf]) then -- in some cases there may be a library to link with but no directory specified (ex OpenGL)		
+			if (result.targetdir[plat][conf]) then -- in some cases there may be a library to link with but no directory specified (ex OpenGL)
 				Utility:ForEachElement(result.libname[plat][conf],
 					function(libname)
 						local fullpath = result.targetdir[plat][conf] .. "/" .. libname
 						if not os.isfile(fullpath) then
 							assert(false, "library does not exit: " .. fullpath)
 						end
-					end				
+					end
 				)
-			end			
+			end
 		end
 	)
 	return result
@@ -135,7 +135,7 @@ function BuildSystem:CppProject(project_type)
 		project_path = self.project_path,
 		project_src_path = self.project_src_path,
 		project_build_path = self.project_build_path
-	})	
+	})
 
 	-- per conf/plat
 	Utility:AllTargets(
@@ -148,10 +148,10 @@ function BuildSystem:CppProject(project_type)
 			table.insert(result.includedirs[plat][conf], inc)
 		end
 	)
-	
+
 	-- for EXECUTABLE/SHARED LIB/STATIC LIB, always considere copying 'resources'
 	result:AddFileToCopy("resources")
-	
+
 	return result
 
 end
@@ -162,16 +162,16 @@ end
 function BuildSystem:LibraryHelper(project_type)
 	local result = self:CppProject(project_type)
 	result.libname = Utility:GetPlatConfArray(result.project_name)
-	
-	
+
+
 	-- !!! HERE [x64][DEBUG] copy ???
-	
-	
+
+
 	if (project_type == ProjectType.SHARED_LIBRARY) then
-		result:AddFileToCopy(path.join(result.targetdir[x64][DEBUG], result.name .. ".dll")) 
+		result:AddFileToCopy(path.join(result.targetdir[x64][DEBUG], result.name .. ".dll"))
 	end
-	
-	
+
+
 
 	return result
 end
@@ -191,7 +191,7 @@ end
 function BuildSystem:SharedLibrary()
 	local result = self:LibraryHelper(ProjectType.SHARED_LIBRARY)
 	result:GenDoxygen() -- automatic documentation for libraries
-	return result	
+	return result
 end
 
 --------------------------------------------------------------------
@@ -206,7 +206,7 @@ end
 function BuildSystem:ConsoleApp()
 	local result = self:CppProject(ProjectType.CONSOLE_EXE)
 	result:GenZIP() -- automatic zip for executables
-	return result	
+	return result
 end
 
 --------------------------------------------------------------------
@@ -231,12 +231,12 @@ function BuildSystem:CollectDependencies()
 			local count1 = #proj.dependencies
 			for _, depend_project_name in ipairs(proj.dependencies) do
 				table.append(proj.dependencies, self.projects[depend_project_name].dependencies)
-			end				
+			end
 			local count2 = #proj.dependencies
 			if (count2 ~= count1) then
 				changes = true
 			end
-		end		
+		end
 	end
 
 	-- the array dependencies becomes an array of Projects instead of an array of strings
@@ -260,13 +260,13 @@ function BuildSystem:MakeSolution()
 
 	platforms {table.unpack(PLATFORMS)}
 	configurations {table.unpack(CONFIGS)}
-	
+
 	local arch = _OPTIONS['arch']
 	if arch then
 		Log:Output("Architecture: " .. arch)
 		architecture(arch)
 	end
-	
+
 	location(SOLUTION_PATH) -- where the visual studio project file is been created
 
 	if os.target() == "windows" then
@@ -276,7 +276,7 @@ function BuildSystem:MakeSolution()
 	if os.target() == "linux" then
 		defines {"LINUX"}
 	end
-	
+
 	for k, proj in pairs(self.projects) do
 		proj:DisplayInformation()
 		proj:AddProjectToSolution()

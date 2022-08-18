@@ -12,14 +12,6 @@ ProjectType = {
 	RESOURCES = "Makefile"
 }
 
-function ProjectType:IsExecutable(type)
-	return (type == ProjectType.WINDOW_EXE or type == ProjectType.CONSOLE_EXE)
-end
-
-function ProjectType:IsLibrary(type)
-	return (type == ProjectType.STATIC_LIBRARY or type == ProjectType.SHARED_LIBRARY)
-end
-
 --------------------------------------------------------------------
 -- Class declaration
 --------------------------------------------------------------------
@@ -33,6 +25,22 @@ Project = Object:new({
 	gen_zip = false,
 	gen_doxygen = false
 })
+
+--------------------------------------------------------------------
+-- type of the project
+--------------------------------------------------------------------
+
+function Project:IsExecutable()
+	return (self.project_type == ProjectType.WINDOW_EXE or self.project_type == ProjectType.CONSOLE_EXE)
+end
+
+function Project:IsLibrary()
+	return (self.project_type == ProjectType.STATIC_LIBRARY or self.project_type == ProjectType.SHARED_LIBRARY)
+end
+
+function Project:IsResources()
+	return (self.project_type == ProjectType.RESOURCES)
+end
 
 --------------------------------------------------------------------
 -- Display project information
@@ -50,6 +58,8 @@ function Project:DisplayInformation()
 	Log:Output("PROJECT_SRC_PATH   : " .. self.project_src_path)
 	Log:Output("PROJECT_BUILD_PATH : " .. self.project_build_path)
 	Log:Output("CURRENT_GROUP      : " .. self.current_group)
+	Log:Output("GEN_DOXYGEN        : " .. tostring(self.gen_doxygen))
+	Log:Output("GEN_ZIP            : " .. tostring(self.gen_zip))
 
 	-- some configurations
 	if (self.targetdir or self.includedirs or self.libname or self.tocopy) then
@@ -221,12 +231,12 @@ function Project:OnConfig(plat, conf)
 	targetdir(self.targetdir[plat][conf])
 	includedirs(self.includedirs[plat][conf])
 	-- some definition for FILE REDIRECTION
-	if (ProjectType:IsExecutable(self.project_type)) then
+	if (self:IsExecutable()) then
 
 		local resource_path = ""
 		self:ForProjectAndDependencies(
 			function(p)
-				if (p.project_type == ProjectType.RESOURCES or ProjectType:IsExecutable(p.project_type) or ProjectType:IsLibrary(p.project_type)) then
+				if (p:IsResources() or p:IsExecutable() or p:IsLibrary()) then
 					if (resource_path == "") then
 						resource_path = p.project_src_path
 					else
@@ -306,7 +316,7 @@ end
 --------------------------------------------------------------------
 function Project:AddZipProjectToSolution()
 
-	if (ProjectType:IsExecutable(self.project_type) and self.gen_zip) then
+	if (self:IsExecutable() and self.gen_zip) then
 
 		local zip_project_name = self:GetZipProjectName()
 		project(zip_project_name)
@@ -342,9 +352,9 @@ end
 --------------------------------------------------------------------
 function Project:AddDocProjectToSolution()
 
-	if (ProjectType:IsLibrary(self.project_type) and self.gen_documentation) then
+	if (self:IsLibrary() and self.gen_doxygen) then
 
-		print("Library")
+		print("AddDocProjectToSolution")
 
 	end
 end
@@ -386,7 +396,7 @@ function Project:AddProjectToSolution()
 
 	-- entry point (avoid WinMain to main)
 	if (os.target() == "windows") then
-		if (ProjectType:IsExecutable(project_type)) then
+		if (self:IsExecutable()) then
 			--entrypoint "mainCRTStartup"
 		end
 	end
@@ -427,7 +437,7 @@ function Project:AddProjectToSolution()
 						end
 					)
 					-- link
-					if (ProjectType:IsExecutable(self.project_type)) then -- only executable should link to other libraries
+					if (self:IsExecutable()) then -- only executable should link to other libraries
 						Utility:ForEachElement(p.additionnal_libs[plat][conf],
 							function(elem)
 								links(elem)

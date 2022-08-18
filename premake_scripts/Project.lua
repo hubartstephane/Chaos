@@ -354,7 +354,27 @@ function Project:AddDocProjectToSolution()
 
 	if (self:IsLibrary() and self.gen_doxygen) then
 
-		print("AddDocProjectToSolution")
+		local zip_project_name = self:GetDocumentationProjectName()
+		project(zip_project_name)
+
+		local proj_location = path.join(SOLUTION_PATH, self.project_path)
+		location(proj_location)
+
+		kind("Makefile")
+
+		local build_command_str = Utility:QuotationMarks(DOXYGEN_SCRIPT, self.project_src_path, self.project_build_path, self.project_name)
+		local doc_path = path.join(self.project_build_path, "html")
+		local clean_command_str = Utility:QuotationMarks(CLEAN_SCRIPT, doc_path)
+
+		Utility:AllTargets(
+			function(plat, conf)
+				filter {"configurations:" .. conf, "platforms:" .. plat}
+				buildcommands(build_command_str)
+				rebuildcommands(build_command_str)
+				cleancommands(clean_command_str)
+			end
+		)
+		links(self.project_name)
 
 	end
 end

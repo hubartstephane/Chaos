@@ -3,5 +3,4 @@
 -- =============================================================================
 
 build:ProcessSubPremake("chaos")
---build:ProcessSubPremake("chaos2")
---build:ProcessSubPremake("testdll")
+build:ProcessSubPremake("testdll")

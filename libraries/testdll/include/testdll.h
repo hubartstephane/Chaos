@@ -4,9 +4,9 @@
 // not __declspec(dllimport)
 
 #ifndef TESTDLL_API
-	#if defined CHAOS_BUILD_DLL
+	#if defined CHAOS_IS_BUILDING_DLL
 		#define TESTDLL_API __declspec(dllexport)
 	#else
-		//#define TESTDLL_API __declspec(dllimport)
+		#define TESTDLL_API __declspec(dllimport)
 	#endif
 #endif

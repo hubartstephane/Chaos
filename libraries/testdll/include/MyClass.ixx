@@ -1,8 +1,9 @@
 module;
 
-export module MyClass;
 
 #include "testdll.h"
+
+export module MyClass;
 
 export class TESTDLL_API MyClass
 {

@@ -161,17 +161,14 @@ end
 --------------------------------------------------------------------
 function BuildSystem:LibraryHelper(project_type)
 	local result = self:CppProject(project_type)
-	result.libname = Utility:GetPlatConfArray(result.project_name)
-
-
-	-- !!! HERE [x64][DEBUG] copy ???
-
 
 	if (project_type == ProjectType.SHARED_LIBRARY) then
-		result:AddFileToCopy(path.join(result.targetdir[x64][DEBUG], result.name .. ".dll"))
+		Utility:AllTargets(
+			function(plat, conf)
+				result:AddFileToCopyExt(path.join(result.targetdir[plat][conf], result.project_name .. ".dll"), plat, conf)
+			end
+		)
 	end
-
-
 
 	return result
 end

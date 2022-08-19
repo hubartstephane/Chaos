@@ -89,7 +89,7 @@ end
 -- add a file/directory in the TO_COPY list
 --------------------------------------------------------------------
 
-function Project:AddFileToCopyHelper(filenames, plat, conf)
+function Project:AddFileToCopyExt(filenames, plat, conf)
 	Utility:ForEachElement(filenames,
 		function(filename)
 			table.insert(self.tocopy[plat][conf], filename)
@@ -101,7 +101,7 @@ function Project:AddFileToCopy(filename)
 	local tmp = Utility:GetPlatConfArray(filename)
 	Utility:AllTargets(
 		function(plat, conf)
-			self:AddFileToCopyHelper(tmp[plat][conf], plat, conf)
+			self:AddFileToCopyExt(tmp[plat][conf], plat, conf)
 		end
 	)
 end
@@ -307,7 +307,6 @@ function Project:AddResourceProjectToSolution()
 			)
 		end
 	)
-
 
 end
 

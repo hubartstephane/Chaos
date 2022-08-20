@@ -161,6 +161,7 @@ end
 --------------------------------------------------------------------
 function BuildSystem:LibraryHelper(project_type)
 	local result = self:CppProject(project_type)
+	result.libname = Utility:GetPlatConfArray(result.project_name)
 
 	if (project_type == ProjectType.SHARED_LIBRARY) then
 		Utility:AllTargets(

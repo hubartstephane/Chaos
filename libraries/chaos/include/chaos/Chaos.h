@@ -172,21 +172,6 @@
 #include <fbxsdk/fileio/fbxiosettings.h>
 #include <fbxsdk/scene/fbxscene.h>
 
-// XXX : escapi is very special library. The functional code is inside a dll with which the application is already bound
-//       nevertheless, to get pointers on functions we use some LoadLibrary(...) (see setupESCAPI)
-//       the setupESCAPI(...) function is inside escapi.cpp but it is not inside any library, so we directly get the code
-//
-// XXX : escapi does not work on linux
-//#include "escapi.cpp"
-
-// ==========================================================================================
-// Some library link : prefer to use libraries/chaos/subpremake5 for that
-// ==========================================================================================
-
-//#pragma comment(lib, "winmm.lib")
-//#pragma comment(lib, "Dbghelp.lib")
-
-
 // ==========================================================================================
 // The usage of openGL and its libraries can be tedious (mainly for the different inclusions)
 // The files deserve to simplify the process into a single inclusion of this file

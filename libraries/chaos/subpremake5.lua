@@ -17,15 +17,9 @@ project:DependOnLib("FREETYPE2")
 project:DependOnLib("JSON")
 project:DependOnLib("ZLIB")
 project:DependOnLib("MSVC")
---project:DependOnLib("NANA")
 project:DependOnLib("ASSIMP")
 project:DependOnLib("FBX")
-
---project:DependOnLib("RANGE-V3")
 --project:DependOnLib("VULKAN")
 --project:DependOnLib("GLSLANG")
 
-project:DependOnStandardLib("Dbghelp.lib")  -- used on windows for call stack introspection 
-project:DependOnStandardLib("winmm.lib")    -- used for midi
--- pchheader "StandardHeaders.h"
---pchsource "StandardHeaders.cpp"
+project:PrecompiledHeader("chaos/ChaosPCH.h", "ChaosPCH.cpp")

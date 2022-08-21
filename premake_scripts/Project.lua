@@ -60,6 +60,12 @@ function Project:DisplayInformation()
 	Log:Output("CURRENT_GROUP      : " .. self.current_group)
 	Log:Output("GEN_DOXYGEN        : " .. tostring(self.gen_doxygen))
 	Log:Output("GEN_ZIP            : " .. tostring(self.gen_zip))
+	if (self.pch_header) then
+		Log:Output("PCH_HEADER         : " .. self.pch_header)
+	end
+	if (self.pch_source) then
+		Log:Output("PCH_SOURCE         : " .. self.pch_source)
+	end	
 
 	-- some configurations
 	if (self.targetdir or self.includedirs or self.libname or self.tocopy) then
@@ -307,6 +313,9 @@ function Project:AddResourceProjectToSolution()
 			)
 		end
 	)
+	
+	project(self.project_name) -- restore base project
+	filter {}
 
 end
 
@@ -344,6 +353,10 @@ function Project:AddZipProjectToSolution()
 		)
 
 	end
+	
+	project(self.project_name) -- restore base project
+	filter {}	
+	
 end
 
 --------------------------------------------------------------------
@@ -376,6 +389,10 @@ function Project:AddDocProjectToSolution()
 		links(self.project_name)
 
 	end
+	
+	project(self.project_name) -- restore base project
+	filter {}	
+	
 end
 
 --------------------------------------------------------------------
@@ -496,5 +513,23 @@ function Project:AddProjectToSolution()
 	self:AddResourceProjectToSolution()
 	self:AddZipProjectToSolution()
 	self:AddDocProjectToSolution()
+	
+	-- add precompiled headers
+	self:HandlePrecompiledHeader()
+end
 
+function Project:HandlePrecompiledHeader()
+	
+	if (self.pch_header) then
+		pchheader(self.pch_header)
+	end
+	
+	if (self.pch_source) then
+		pchsource(self.pch_source)
+	end	
+end
+
+function Project:PrecompiledHeader(header, source)
+	--self.pch_header = header
+	--self.pch_source = source
 end

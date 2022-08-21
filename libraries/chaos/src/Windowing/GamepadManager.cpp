@@ -150,20 +150,6 @@ namespace chaos
 		GLFWgamepadstate state;
 		glfwGetGamepadState(stick_index, &state);
 
-#if 1
-		char const* n1 = glfwGetGamepadName(stick_index);
-		char const* n2 = glfwGetJoystickGUID(stick_index);
-		char const* n3 = glfwGetJoystickName(stick_index);
-
-		JOYCAPS joycaps;
-		memset(&joycaps, 0, sizeof(JOYCAPS));
-		joyGetDevCaps(0, &joycaps, sizeof(JOYCAPS));
-		// joycaps MM_SONICFOUNDRY / MM_LOGITECH / MM_MICROSOFT
-		// https://docs.microsoft.com/fr-fr/windows/win32/multimedia/manufacturer-identifiers
-		// https://docs.microsoft.com/fr-fr/windows/win32/multimedia/product-identifiers
-		//
-#endif
-
 		for (size_t i = 0; i < AXIS_COUNT; ++i)
 		{
 			float value = state.axes[i];

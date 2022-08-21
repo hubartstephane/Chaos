@@ -530,6 +530,6 @@ function Project:HandlePrecompiledHeader()
 end
 
 function Project:PrecompiledHeader(header, source)
-	--self.pch_header = header
-	--self.pch_source = source
+	self.pch_header = header
+	self.pch_source = source
 end

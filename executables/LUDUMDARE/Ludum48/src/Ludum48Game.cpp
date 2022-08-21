@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h>
+#include "chaos/Chaos.h"
 
 #include "Ludum48Game.h"
 #include "Ludum48Particles.h"

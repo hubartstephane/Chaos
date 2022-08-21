@@ -7,7 +7,7 @@
 #include "Ludum41LevelInstance.h"
 #include "Ludum41Challenge.h"
 
-#include <chaos/Chaos.h>
+#include "chaos/Chaos.h"
 
 // ===========================================================================
 // Object particle system

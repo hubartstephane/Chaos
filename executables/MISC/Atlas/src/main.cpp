@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h>
+#include "chaos/Chaos.h"
 
 static int ATLAS_BPP = 0;
 static int ATLAS_PADDING = 10;

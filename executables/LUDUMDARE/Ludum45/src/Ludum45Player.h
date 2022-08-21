@@ -1,6 +1,6 @@
 #pragma once
 
-#include <chaos/Chaos.h>
+#include "chaos/Chaos.h"
 
 #include "Ludum45Particles.h"
 #include "Ludum45Upgrades.h"

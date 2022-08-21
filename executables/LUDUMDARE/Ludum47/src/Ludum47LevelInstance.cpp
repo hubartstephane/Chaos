@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h>
+#include "chaos/Chaos.h"
 
 #include "Ludum47Level.h"
 #include "Ludum47LevelInstance.h"

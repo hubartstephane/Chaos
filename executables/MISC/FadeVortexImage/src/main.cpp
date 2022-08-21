@@ -1,6 +1,6 @@
 
 
-#include <chaos/Chaos.h>
+#include "chaos/Chaos.h"
 
 template<typename VECTOR_TYPE>
 class RecastVectorData

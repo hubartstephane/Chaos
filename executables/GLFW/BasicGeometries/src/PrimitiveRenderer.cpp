@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h> 
+#include "chaos/Chaos.h" 
 #include "PrimitiveRenderer.h"
 
 static glm::vec4 const solid = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);

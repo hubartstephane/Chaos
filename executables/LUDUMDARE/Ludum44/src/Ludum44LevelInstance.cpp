@@ -4,7 +4,7 @@
 #include "Ludum44Player.h"
 #include "Ludum44GameInstance.h"
 
-#include <chaos/Chaos.h>
+#include "chaos/Chaos.h"
 
 // =============================================================
 // LudumLevelInstance implementation

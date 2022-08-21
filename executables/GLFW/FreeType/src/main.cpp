@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h>
+#include "chaos/Chaos.h"
 
 static constexpr int TESTS_PER_FONT = 4;
 

@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h>
+#include "chaos/Chaos.h"
 
 template<typename FUNC, typename CONTAINER>
 void Combine(FUNC func, CONTAINER container)

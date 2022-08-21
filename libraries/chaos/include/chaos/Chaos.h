@@ -172,6 +172,8 @@
 #include <fbxsdk/fileio/fbxiosettings.h>
 #include <fbxsdk/scene/fbxscene.h>
 
+#include <ranges>
+
 // ==========================================================================================
 // The usage of openGL and its libraries can be tedious (mainly for the different inclusions)
 // The files deserve to simplify the process into a single inclusion of this file

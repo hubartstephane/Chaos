@@ -1,5 +1,5 @@
 
-#include <chaos/Chaos.h>
+#include "chaos/Chaos.h"
 
 
 #define CHAOS_LUABIND_MAXFUNC_PARAMETERS 10

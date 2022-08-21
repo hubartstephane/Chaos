@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h>
+#include "chaos/Chaos.h"
 
 CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(toto)
 

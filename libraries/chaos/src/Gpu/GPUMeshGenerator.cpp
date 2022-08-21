@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h>
+#include "chaos/Chaos.h"
 
 // OpenGL coordinates for a fullscreen representation
 //   -1          +1

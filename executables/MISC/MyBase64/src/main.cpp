@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h>
+#include "chaos/Chaos.h"
 
 bool AreBuffersEquals(chaos::Buffer<char> const & b1, chaos::Buffer<char> const & b2)
 {

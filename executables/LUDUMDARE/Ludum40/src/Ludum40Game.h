@@ -1,6 +1,6 @@
 #pragma once
 
-#include <chaos/Chaos.h>
+#include "chaos/Chaos.h"
 
 #include "Ludum40SpriteManager.h"
 #include "Ludum40SpriteLayer.h"

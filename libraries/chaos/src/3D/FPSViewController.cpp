@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h>
+#include "chaos/Chaos.h"
 
 //
 // In OpenGL, the camera system is oriented as follow

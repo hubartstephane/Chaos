@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h>
+#include "chaos/Chaos.h"
 
 std::vector<chaos::PixelFormat> pixel_formats =
 {

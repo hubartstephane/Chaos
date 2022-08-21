@@ -114,15 +114,15 @@ namespace chaos
 
 #endif
 
-#include <chaos/Particle/ParticleLayerTrait.h>
-#include <chaos/Particle/ParticleDefault.h>
-#include <chaos/Particle/ParticleAccessor.h>
-#include <chaos/Particle/ParticleTraitTools.h>
-#include <chaos/Particle/ParticleAllocation.h>
-#include <chaos/Particle/ParticleLayer.h>
-#include <chaos/Particle/ParticleManager.h>
-#include <chaos/Particle/ParticleSpawner.h>
-#include <chaos/Particle/ParticleTextGenerator.h>
-#include <chaos/Particle/ParticleTools.h>
-#include <chaos/Particle/SpawnParticleResult.h>
-#include <chaos/Particle/DefaultMaterials.h>
+#include "chaos/Particle/ParticleLayerTrait.h"
+#include "chaos/Particle/ParticleDefault.h"
+#include "chaos/Particle/ParticleAccessor.h"
+#include "chaos/Particle/ParticleTraitTools.h"
+#include "chaos/Particle/ParticleAllocation.h"
+#include "chaos/Particle/ParticleLayer.h"
+#include "chaos/Particle/ParticleManager.h"
+#include "chaos/Particle/ParticleSpawner.h"
+#include "chaos/Particle/ParticleTextGenerator.h"
+#include "chaos/Particle/ParticleTools.h"
+#include "chaos/Particle/SpawnParticleResult.h"
+#include "chaos/Particle/DefaultMaterials.h"

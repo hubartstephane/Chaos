@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h>
+#include "chaos/Chaos.h"
 
 #include <typeinfo>
 #include <boost/convert/detail/has_member.hpp>

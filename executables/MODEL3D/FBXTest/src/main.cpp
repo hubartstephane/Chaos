@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h>
+#include "chaos/Chaos.h"
 
 static constexpr int MAX_BONE_COUNT = 10;
 static constexpr int SKELETAL_BONE_COUNT = 250;

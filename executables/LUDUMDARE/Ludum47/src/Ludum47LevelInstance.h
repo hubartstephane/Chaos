@@ -1,6 +1,6 @@
 #pragma once
 
-#include <chaos/Chaos.h>
+#include "chaos/Chaos.h"
 
 #include "Ludum47Game.h"
 #include "Ludum47Level.h"

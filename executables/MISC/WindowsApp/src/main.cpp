@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h>
+#include "chaos/Chaos.h"
 
 class MyWindow : public chaos::SimpleWin32Window
 {

@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h>
+#include "chaos/Chaos.h"
 
 #include <nana/gui.hpp>
 #include <nana/gui/widgets/menubar.hpp>

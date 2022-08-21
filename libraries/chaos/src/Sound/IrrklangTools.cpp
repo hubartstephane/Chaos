@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h>
+#include "chaos/Chaos.h"
 
 /** boost/chaos smart pointer adapter */
 void intrusive_ptr_add_ref(irrklang::IVirtualRefCounted * obj)

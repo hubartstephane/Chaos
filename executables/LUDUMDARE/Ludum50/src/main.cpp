@@ -1,4 +1,4 @@
-#include <chaos/Chaos.h>
+#include "chaos/Chaos.h"
 #include "Ludum50Game.h"
 
 int main(int argc, char ** argv, char ** env)

@@ -22,4 +22,7 @@ project:DependOnLib("FBX")
 --project:DependOnLib("VULKAN")
 --project:DependOnLib("GLSLANG")
 
-project:PrecompiledHeader("chaos/ChaosPCH.h", "ChaosPCH.cpp")
+project:PrecompiledHeader(
+	path.join("chaos","ChaosPCH.h"),
+	path.join("libraries","chaos","src","ChaosPCH.cpp")
+)

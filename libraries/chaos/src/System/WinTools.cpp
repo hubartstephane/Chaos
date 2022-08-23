@@ -1,3 +1,4 @@
+#include "chaos/ChaosPCH.h"
 #include <Chaos/Chaos.h>
 
 namespace chaos

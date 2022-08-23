@@ -1,3 +1,4 @@
+#include "chaos/ChaosPCH.h"
 #include "chaos/Chaos.h"
 
 /** boost/chaos smart pointer adapter */

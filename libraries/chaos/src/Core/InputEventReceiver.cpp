@@ -1,6 +1,6 @@
 #include "chaos/ChaosPCH.h"
 
-#include "chaos/Chaos.h"
+#include "chaos/ChaosInternals.h"
 
 namespace chaos
 {

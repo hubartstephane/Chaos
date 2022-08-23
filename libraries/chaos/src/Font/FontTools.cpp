@@ -1,5 +1,5 @@
 #include "chaos/ChaosPCH.h"
-#include "chaos/Chaos.h"
+#include "chaos/ChaosInternals.h"
 
 
 // XXX : for Freetype, a glyph in memory is organised up to down

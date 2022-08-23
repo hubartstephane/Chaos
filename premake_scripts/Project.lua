@@ -525,7 +525,7 @@ function Project:HandlePrecompiledHeader()
 	end
 	
 	if (self.pch_source) then
-		pchsource(self.pch_source)
+		pchsource(path.join(self.project_path,self.pch_source))
 	end	
 end
 

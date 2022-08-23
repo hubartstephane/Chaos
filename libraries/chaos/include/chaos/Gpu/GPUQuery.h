@@ -1,4 +1,4 @@
-﻿namespace chaos
+namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 

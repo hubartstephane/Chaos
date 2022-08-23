@@ -24,5 +24,5 @@ project:DependOnLib("FBX")
 
 project:PrecompiledHeader(
 	path.join("chaos","ChaosPCH.h"),
-	path.join("libraries","chaos","src","ChaosPCH.cpp")
+	path.join("src","ChaosPCH.cpp")
 )

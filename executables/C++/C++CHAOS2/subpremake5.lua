@@ -1,7 +1,6 @@
 -- =============================================================================
--- ROOT_PATH/libraries
+-- ROOT_PATH/executables/C++/C++CHAOS2
 -- =============================================================================
 
-build:ProcessSubPremake("chaos")
-build:ProcessSubPremake("chaos2")
-build:ProcessSubPremake("testdll")
+local project = build:ConsoleApp()
+project:DependOnLib("CHAOS2")

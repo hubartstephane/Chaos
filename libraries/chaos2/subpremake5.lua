@@ -26,3 +26,5 @@ project:PrecompiledHeader(
 	path.join("chaos2","Chaos2PCH.h"),
 	path.join("src","Chaos2PCH.cpp")
 )
+
+project:GenerateConfigFile(path.join("include", "chaos2", "Config.h"))

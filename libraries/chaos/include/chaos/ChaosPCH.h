@@ -35,8 +35,8 @@
 #include <cstdlib>
 #include <functional>
 #include <algorithm>
-#include <stdarg.h> 
-#include <string> 
+#include <stdarg.h>
+#include <string>
 #include <iostream>
 #include <utility>
 #include <fstream>
@@ -56,6 +56,12 @@
 #include <forward_list>
 #include <type_traits>
 
+// boost is full of #pragma comment(lib, ...)
+// ignore theses link directive for STATIC_LIBRARIES that would use this header
+#if !defined CHAOS_BUILDING_SHARED_LIBRARY && !defined CHAOS_BUILDING_EXECUTABLE
+#define BOOST_ALL_NO_LIB
+#endif
+#define BOOST_LIB_DIAGNOSTIC // display all #pragma comment(lib, ...) directives
 #include <boost/static_assert.hpp>
 #include <boost/thread.hpp>
 #include <boost/atomic.hpp>
@@ -115,7 +121,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #define GLM_FORCE_SIZE_T_LENGTH
 #include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp> 
+#include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/euler_angles.hpp>
@@ -125,14 +131,14 @@
 #include <glm/detail/type_vec1.hpp>
 #include <glm/detail/type_vec2.hpp>
 #include <glm/detail/type_vec3.hpp>
-#include <glm/detail/type_vec4.hpp> 
+#include <glm/detail/type_vec4.hpp>
 
 #define _USE_MATH_DEFINES
 #include <math.h>
 
 #if _WIN32
 #  include <intrin.h>
-#  include <tchar.h> 
+#  include <tchar.h>
 #  include <windows.h>
 #  include <Windowsx.h>
 #  include <Mmsystem.h>
@@ -151,7 +157,7 @@
 #include FT_GLYPH_H
 #include FT_BITMAP_H
 
-// implicit conversion  
+// implicit conversion
 // type variable = myjson;
 //#define JSON_USE_IMPLICIT_CONVERSIONS 0
 #include <json.hpp>
@@ -164,9 +170,9 @@
 
 #include <irrKlang.h>
 
-#include <assimp/Importer.hpp> 
-#include <assimp/scene.h>           
-#include <assimp/postprocess.h>   
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 #include <fbxsdk.h>
 #include <fbxsdk/fileio/fbxiosettings.h>
@@ -182,10 +188,10 @@
 // XXX : glew.h MUST be included before GL.h
 //       There are 2 interesting macro:
 //         - GLEW_MX : replace some functions by macro
-//         - GLEW_STATIC : indicates whether the library is statically linked or not 
+//         - GLEW_STATIC : indicates whether the library is statically linked or not
 //           => this toggle key words for inclusions as
 //              - extern
-//              - extern __declspec(dllimport)          
+//              - extern __declspec(dllimport)
 //              - extern __declspec(dllexport)   => at library compilation
 
 #define GLEW_STATIC

@@ -72,6 +72,7 @@ COPY_SCRIPT = path.join(BUILD_TOOLS_PATH, "mycopy.py")
 ZIP_SCRIPT = path.join(BUILD_TOOLS_PATH, "myzip.py")
 DOXYGEN_SCRIPT = path.join(BUILD_TOOLS_PATH, "mydoxygen.py")
 CLEAN_SCRIPT = path.join(BUILD_TOOLS_PATH, "myclean.py")
+CONFIG_TEMPLATE_PATH = path.join(ROOT_PATH, "premake_scripts", "ConfigTemplate.h")
 
 DISPLAY_DEPENDENCIES = false
 

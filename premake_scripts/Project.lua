@@ -34,8 +34,16 @@ function Project:IsExecutable()
 	return (self.project_type == ProjectType.WINDOW_EXE or self.project_type == ProjectType.CONSOLE_EXE)
 end
 
+function Project:IsStaticLibrary()
+	return (self.project_type == ProjectType.STATIC_LIBRARY)
+end
+
+function Project:IsSharedLibrary()
+	return (self.project_type == ProjectType.SHARED_LIBRARY)
+end
+
 function Project:IsLibrary()
-	return (self.project_type == ProjectType.STATIC_LIBRARY or self.project_type == ProjectType.SHARED_LIBRARY)
+	return (self:IsStaticLibrary() or self:IsSharedLibrary())
 end
 
 function Project:IsResources()
@@ -65,7 +73,7 @@ function Project:DisplayInformation()
 	end
 	if (self.pch_source) then
 		Log:Output("PCH_SOURCE         : " .. self.pch_source)
-	end	
+	end
 
 	-- some configurations
 	if (self.targetdir or self.includedirs or self.libname or self.tocopy) then
@@ -160,9 +168,9 @@ end
 --------------------------------------------------------------------
 
 function Project:ForProjectAndDependencies(func)
-	func(self)
+	func(self, true)
 	for _, depend_project in ipairs(self.dependencies) do
-		func(depend_project)
+		func(depend_project, false)
 	end
 end
 
@@ -241,7 +249,7 @@ function Project:OnConfig(plat, conf)
 
 		local resource_path = ""
 		self:ForProjectAndDependencies(
-			function(p)
+			function(p, is_self)
 				if (p:IsResources() or p:IsExecutable() or p:IsLibrary()) then
 					if (resource_path == "") then
 						resource_path = p.project_src_path
@@ -282,7 +290,7 @@ function Project:AddResourceProjectToSolution()
 	Utility:AllTargets(
 		function(plat, conf)
 			self:ForProjectAndDependencies(
-				function(p)
+				function(p, is_self)
 					local all_files = p.tocopy[plat][conf] -- copy from linked project
 					if (all_files) then
 						for _, filename in pairs(all_files) do
@@ -313,7 +321,7 @@ function Project:AddResourceProjectToSolution()
 			)
 		end
 	)
-	
+
 	project(self.project_name) -- restore base project
 	filter {}
 
@@ -353,10 +361,10 @@ function Project:AddZipProjectToSolution()
 		)
 
 	end
-	
+
 	project(self.project_name) -- restore base project
-	filter {}	
-	
+	filter {}
+
 end
 
 --------------------------------------------------------------------
@@ -389,10 +397,10 @@ function Project:AddDocProjectToSolution()
 		links(self.project_name)
 
 	end
-	
+
 	project(self.project_name) -- restore base project
-	filter {}	
-	
+	filter {}
+
 end
 
 --------------------------------------------------------------------
@@ -416,10 +424,19 @@ function Project:AddProjectToSolution()
 
 	-- kind
 	kind(self.project_type)
-	if (self.project_type == ProjectType.SHARED_LIBRARY) then
-		defines('CHAOS_IS_BUILDING_DLL')
-		allmodulespublic "on" -- required for DLL+modules (requires at least premake 5.0.0-beta2)
+	allmodulespublic "on" -- required for DLL+modules (requires at least premake 5.0.0-beta2)
+
+	if (self:IsSharedLibrary()) then
+		defines('CHAOS_BUILDING_SHARED_LIBRARY') -- indicates whether we are building a SHARED_LIBRARY (it does not indicate how a given project has been built)
 	end
+	if (self:IsStaticLibrary()) then
+		defines('CHAOS_BUILDING_STATIC_LIBRARY') -- indicates whether we are building a STATIC_LIBRARY (it does not indicate how a given project has been built)
+	end
+	if (self:IsExecutable()) then
+		defines('CHAOS_BUILDING_EXECUTABLE') -- indicates whether we are building an EXECUTABLE (it does not indicate how a given project has been built)
+	end
+
+	defines('CHAOS_BUILDING_="' .. self.project_name) -- the name of the the project beeing built
 
 	-- language/dialect
 	language "C++"
@@ -435,6 +452,11 @@ function Project:AddProjectToSolution()
 		if (self:IsExecutable()) then
 			--entrypoint "mainCRTStartup"
 		end
+	end
+
+	-- config file
+	if (self.generated_config_file) then
+		self:HandleGeneratedConfigFile()
 	end
 
 	-- files to handle: *.cpp, *.c, *.hpp, *.h, *.ixx
@@ -465,7 +487,7 @@ function Project:AddProjectToSolution()
 			self:OnConfig(plat, conf)
 
 			self:ForProjectAndDependencies(
-				function(p)
+				function(p, is_self)
 					-- include path
 					Utility:ForEachElement(p.includedirs[plat][conf],
 						function(elem)
@@ -473,23 +495,29 @@ function Project:AddProjectToSolution()
 						end
 					)
 					-- link
-					if (self:IsExecutable()) then -- only executable should link to other libraries
+					if (self:IsExecutable() or self:IsSharedLibrary()) then -- only executable/shared library should link to other libraries
 						Utility:ForEachElement(p.additionnal_libs[plat][conf],
 							function(elem)
 								links(elem)
 							end
 						)
-						Utility:ForEachElement(p.libname[plat][conf],
-							function(elem)
-								links(elem)
-							end
-						)
-						Utility:ForEachElement(p.targetdir[plat][conf],
-							function(elem)
-								libdirs(elem)
-							end
-						)
+						if (not self:IsSharedLibrary() or not is_self) then
+							Utility:ForEachElement(p.libname[plat][conf],
+								function(elem)
+									links(elem)
+								end
+
+							)
+						end
 					end
+
+					-- libraries/exe may face a #pragma comment(lib, ...) directive to require a link
+					-- the path is needed in that case
+					Utility:ForEachElement(p.targetdir[plat][conf],
+						function(elem)
+							libdirs(elem)
+						end
+					)
 				end
 			)
 		end
@@ -513,23 +541,62 @@ function Project:AddProjectToSolution()
 	self:AddResourceProjectToSolution()
 	self:AddZipProjectToSolution()
 	self:AddDocProjectToSolution()
-	
+
 	-- add precompiled headers
 	self:HandlePrecompiledHeader()
+
+end
+
+function Project:HandleGeneratedConfigFile()
+
+	local patterns = { PROJECT_NAME = self.project_name}
+
+	if (self:IsExecutable()) then
+		patterns["PROJECT_BUILD_TYPE"] = self.project_name .. "_IS_EXECUTABLE"
+	elseif (self:IsStaticLibrary()) then
+		patterns["PROJECT_BUILD_TYPE"] = self.project_name .. "_IS_STATIC_LIBRARY"
+	elseif (self:IsSharedLibrary()) then
+		patterns["PROJECT_BUILD_TYPE"] = self.project_name .. "_IS_SHARED_LIBRARY"
+	end
+
+	if (os.isfile(CONFIG_TEMPLATE_PATH)) then
+
+		local result = ""
+
+		-- read the config template file, split into line, make replacements
+		local content = io.readfile(CONFIG_TEMPLATE_PATH)
+		local lines = string.explode(content, "\n")
+
+		for _, line in ipairs(lines) do
+			for k, v in pairs(patterns) do
+				local pattern = '%$' .. k .. '%$'
+				line = line:gsub(pattern, v)
+			end
+			result = result .. line
+		end
+
+		-- write into destination file
+		local dst_file = path.join(self.project_src_path,self.generated_config_file)
+		io.writefile(dst_file, result)
+	end
 end
 
 function Project:HandlePrecompiledHeader()
-	
+
 	if (self.pch_header) then
 		pchheader(self.pch_header)
 	end
-	
+
 	if (self.pch_source) then
 		pchsource(path.join(self.project_path,self.pch_source))
-	end	
+	end
 end
 
 function Project:PrecompiledHeader(header, source)
 	self.pch_header = header
 	self.pch_source = source
+end
+
+function Project:GenerateConfigFile(file)
+	self.generated_config_file = file
 end

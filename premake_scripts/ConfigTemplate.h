@@ -2,16 +2,16 @@
 
 #pragma once
 
-// what kind of project this correspond
+// kind of project
 #define $PROJECT_BUILD_TYPE$
 
-// defines an import/export universal token
-#if !defined $PROJECT_NAME$_IS_SHARED_LIBRARY
-#  define $PROJECT_NAME$_API // no import/export unless for shared library
-#else
-#  if defined CHAOS_BUILDING_$PROJECT_NAME$ // are we building the project, or this file is included from external ?
+// defines an import/export token
+#if defined $PROJECT_NAME$_IS_SHARED_LIBRARY
+#  if defined DEATH_IS_BUILDING_$PROJECT_NAME$ // are we building the project, or this file is included from external ?
 #    define $PROJECT_NAME$_API __declspec(dllexport)
 #  else
 #    define $PROJECT_NAME$_API __declspec(dllimport)
 #  endif
+#else
+#  define $PROJECT_NAME$_API // no import/export unless for shared library
 #endif

@@ -254,7 +254,7 @@ end
 
 function BuildSystem:MakeSolution()
 
-	solution "Chaos"
+	solution "Death"
 
 	platforms {table.unpack(PLATFORMS)}
 	configurations {table.unpack(CONFIGS)}

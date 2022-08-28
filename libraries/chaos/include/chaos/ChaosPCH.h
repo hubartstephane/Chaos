@@ -58,7 +58,7 @@
 
 // boost is full of #pragma comment(lib, ...)
 // ignore theses link directive for STATIC_LIBRARIES that would use this header
-#if !defined CHAOS_BUILDING_SHARED_LIBRARY && !defined CHAOS_BUILDING_EXECUTABLE
+#if !defined DEATH_BUILDING_SHARED_LIBRARY && !defined DEATH_BUILDING_EXECUTABLE
 #define BOOST_ALL_NO_LIB
 #endif
 #define BOOST_LIB_DIAGNOSTIC // display all #pragma comment(lib, ...) directives

@@ -116,7 +116,7 @@
 
 // boost is full of #pragma comment(lib, ...)
 // ignore theses link directive for STATIC_LIBRARIES that would use this header
-#if defined CHAOS_BUILDING_STATIC_LIBRARY
+#if defined DEATH_BUILDING_STATIC_LIBRARY
 #define BOOST_ALL_NO_LIB
 #endif
 #define BOOST_LIB_DIAGNOSTIC // display all #pragma comment(lib, ...) directives

@@ -18,7 +18,7 @@ namespace chaos
 *
 *   You can prevent this in _DEBUG with the command swith "-NoDirectResourceFiles"
 *
-*   You can only use this features if 'CHAOS_PROJECT_SRC_PATH' and 'CHAOS_PROJECT_BUILD_PATH' are defined (and in _DEBUG)
+*   You can only use this features if 'DEATH_PROJECT_SRC_PATH' and 'DEATH_PROJECT_BUILD_PATH' are defined (and in _DEBUG)
 *
 *   Beware do not use this macro in CHAOS library because it would be related to the library path.
 *   Use it in EXE code instead

@@ -260,11 +260,11 @@ function Project:OnConfig(plat, conf)
 			end
 		)
 
-		defines('CHAOS_PROJECT_BUILD_PATH="' .. Utility:Base64Encode(self.targetdir[plat][conf]) .. '"')
-		defines('CHAOS_PROJECT_DIRECT_RESOURCE_PATH="' .. Utility:Base64Encode(resource_path) .. '"')
+		defines('DEATH_PROJECT_BUILD_PATH="' .. Utility:Base64Encode(self.targetdir[plat][conf]) .. '"')
+		defines('DEATH_PROJECT_DIRECT_RESOURCE_PATH="' .. Utility:Base64Encode(resource_path) .. '"')
 
-		prebuildcommands('{ECHO} CHAOS_PROJECT_BUILD_PATH		    = "' .. self.targetdir[plat][conf] .. '"')
-		prebuildcommands('{ECHO} CHAOS_PROJECT_DIRECT_RESOURCE_PATH = "' .. resource_path .. '"')
+		prebuildcommands('{ECHO} DEATH_PROJECT_BUILD_PATH		    = "' .. self.targetdir[plat][conf] .. '"')
+		prebuildcommands('{ECHO} DEATH_PROJECT_DIRECT_RESOURCE_PATH = "' .. resource_path .. '"')
 
 	end
 
@@ -427,16 +427,16 @@ function Project:AddProjectToSolution()
 	allmodulespublic "on" -- required for DLL+modules (requires at least premake 5.0.0-beta2)
 
 	if (self:IsSharedLibrary()) then
-		defines('CHAOS_BUILDING_SHARED_LIBRARY') -- indicates whether we are building a SHARED_LIBRARY (it does not indicate how a given project has been built)
+		defines('DEATH_BUILDING_SHARED_LIBRARY') -- indicates whether we are building a SHARED_LIBRARY (it does not indicate how a given project has been built)
 	end
 	if (self:IsStaticLibrary()) then
-		defines('CHAOS_BUILDING_STATIC_LIBRARY') -- indicates whether we are building a STATIC_LIBRARY (it does not indicate how a given project has been built)
+		defines('DEATH_BUILDING_STATIC_LIBRARY') -- indicates whether we are building a STATIC_LIBRARY (it does not indicate how a given project has been built)
 	end
 	if (self:IsExecutable()) then
-		defines('CHAOS_BUILDING_EXECUTABLE') -- indicates whether we are building an EXECUTABLE (it does not indicate how a given project has been built)
+		defines('DEATH_BUILDING_EXECUTABLE') -- indicates whether we are building an EXECUTABLE (it does not indicate how a given project has been built)
 	end
 
-	defines('CHAOS_BUILDING_="' .. self.project_name) -- the name of the the project beeing built
+	defines('DEATH_IS_BUILDING_="' .. self.project_name) -- the name of the the project beeing built
 
 	-- language/dialect
 	language "C++"

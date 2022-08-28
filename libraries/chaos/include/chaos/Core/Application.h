@@ -3,7 +3,7 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	class Application;
-		
+
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
@@ -157,19 +157,19 @@ namespace chaos
 		if (application != nullptr)
 		{
 
-#if (_DEBUG && defined CHAOS_PROJECT_BUILD_PATH && defined CHAOS_PROJECT_DIRECT_RESOURCE_PATH) // File Redirection
+#if (_DEBUG && defined DEATH_PROJECT_BUILD_PATH && defined DEATH_PROJECT_DIRECT_RESOURCE_PATH) // File Redirection
 
-			// XXX: under normal circonstances, you should not use CHAOS_PROJECT_BUILD_PATH, CHAOS_PROJECT_DIRECT_RESOURCE_PATH in libraries
+			// XXX: under normal circonstances, you should not use DEATH_PROJECT_BUILD_PATH, DEATH_PROJECT_DIRECT_RESOURCE_PATH in libraries
 			//      here, this is an exception because this function is a template and so is not compiled in libraries but by caller code instead
 			//
 			// XXX: premake defines {...} function produces errors whenever the string contains some special characters like ';'
 			//      that's why they are encoded in Base64
 
 			// build directory
-			Buffer<char> decoded_build_path = MyBase64().Decode(CHAOS_PROJECT_BUILD_PATH);
+			Buffer<char> decoded_build_path = MyBase64().Decode(DEATH_PROJECT_BUILD_PATH);
 			boost::filesystem::path build_path = std::string(decoded_build_path.data, decoded_build_path.bufsize);
 			// source directories
-			Buffer<char> decoded_direct_access_paths = MyBase64().Decode(CHAOS_PROJECT_DIRECT_RESOURCE_PATH);
+			Buffer<char> decoded_direct_access_paths = MyBase64().Decode(DEATH_PROJECT_DIRECT_RESOURCE_PATH);
 			std::string direct_access_paths = std::string(decoded_direct_access_paths.data, decoded_direct_access_paths.bufsize);
 			// prepare the application for direct access
 			application->SetFileRedirectionDirectories(build_path, direct_access_paths);

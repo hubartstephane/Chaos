@@ -1,4 +1,4 @@
-#include "MyOtherClass.h"
+#include "testdll/MyOtherClass.h"
 
 void MyOtherClass::f()
 {

@@ -1,7 +1,6 @@
 module;
 
-
-#include "testdll.h"
+#include "testdll/Config.h"
 
 export module MyClass;
 

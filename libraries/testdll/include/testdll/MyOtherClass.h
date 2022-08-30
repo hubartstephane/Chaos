@@ -1,4 +1,4 @@
-#include "testdll.h"
+#include "testdll/Config.h"
 
 class TESTDLL_API MyOtherClass
 {

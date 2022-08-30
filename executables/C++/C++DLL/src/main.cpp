@@ -1,7 +1,7 @@
 //#define _SILENCE_CLANG_CONCEPTS_MESSAGE
 #include <iostream>
 
-#include "MyOtherClass.h"
+#include "testdll/MyOtherClass.h"
 
 import MyClass;
 

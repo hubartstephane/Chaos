@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum44PCH.h"
 #include "Ludum44PowerUp.h"
 #include "Ludum44Player.h"
 #include "Ludum44Game.h"
@@ -58,7 +57,7 @@ bool LudumPowerUp::CanPowerUp(LudumGame * game, LudumPlayer * player, bool decre
 	else
 	{
 		if (player->max_health - life_cost > game->min_player_max_health)
-			return true;	
+			return true;
 	}
 	return false;
 }
@@ -85,12 +84,12 @@ bool LudumSpeedUp::CanPowerUp(LudumGame * game, LudumPlayer * player, bool decre
 	if (decreasing_power_up)
 	{
 		if (player->current_speed_index > 0)
-			return true;	
+			return true;
 	}
 	else
 	{
 		if (player->current_speed_index < game->player_speeds.size() - 1)
-			return true;		
+			return true;
 	}
 	return false;
 }
@@ -114,7 +113,7 @@ bool LudumDamageUp::ApplyPowerUp(LudumGame * game, LudumPlayer * player, bool de
 	if (!charged_fire)
 		player->current_damage_index += offset;
 	else
-		player->current_charged_damage_index += offset;	
+		player->current_charged_damage_index += offset;
 	return true;
 }
 
@@ -128,7 +127,7 @@ bool LudumDamageUp::CanPowerUp(LudumGame * game, LudumPlayer * player, bool decr
 		if (decreasing_power_up)
 		{
 			if (player->current_damage_index > 0)
-				return true;		
+				return true;
 		}
 		else
 		{
@@ -177,12 +176,12 @@ bool LudumFireRateUp::CanPowerUp(LudumGame * game, LudumPlayer * player, bool de
 	if (decreasing_power_up)
 	{
 		if (player->current_fire_rate_index > 0)
-			return true;	
+			return true;
 	}
 	else
 	{
 		if (player->current_fire_rate_index < game->player_fire_rates.size() - 1)
-			return true;	
+			return true;
 	}
 	return false;
 }

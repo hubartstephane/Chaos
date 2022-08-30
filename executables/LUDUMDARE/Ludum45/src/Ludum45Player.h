@@ -1,7 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
-
+#include "Ludum45PCH.h"
 #include "Ludum45Particles.h"
 #include "Ludum45Upgrades.h"
 
@@ -36,14 +35,14 @@ public:
 	size_t GetPowerSpreadLevel() const;
 	size_t GetSpecialPowerLevel() const;
 
-	float GetCurrentSpeedValue() const; 
-	float GetCurrentDamageValue() const; 
-	float GetCurrentDashValue() const; 
-	bool  GetCurrentGhostValue() const; 
-	float GetCurrentPowerRateValue() const; 
-	int   GetCurrentPowerSpreadValue() const; 
-	float GetCurrentSpecialPowerValue() const; 
-	
+	float GetCurrentSpeedValue() const;
+	float GetCurrentDamageValue() const;
+	float GetCurrentDashValue() const;
+	bool  GetCurrentGhostValue() const;
+	float GetCurrentPowerRateValue() const;
+	int   GetCurrentPowerSpreadValue() const;
+	float GetCurrentSpecialPowerValue() const;
+
 	template<typename T>
 	T GetPlayerUpgradedValue(chaos::TagType upgrade_type, std::vector<T> const & values) const;
 
@@ -89,9 +88,9 @@ protected:
 
 	std::vector<chaos::shared_ptr<PlayerUpgrade>> upgrades;
 
-	float fire_timer = 0.0f; 
-	float dash_timer = 0.0f; 
-	float dash_cooldown = 0.0f; 
+	float fire_timer = 0.0f;
+	float dash_timer = 0.0f;
+	float dash_cooldown = 0.0f;
 
 	bool  dash_locked = false; // locked until key is released
 };

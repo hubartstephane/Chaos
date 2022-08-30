@@ -1,7 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
-
+#include "Ludum41IsolationPCH.h"
 #include "Ludum41IsolationChallenge.h"
 #include "Ludum41IsolationParticles.h"
 #include "Ludum41IsolationChallengeRewardPunishment.h"
@@ -54,7 +53,7 @@ protected:
 	virtual bool InitializeGameValues(nlohmann::json const & config, bool hot_reload) override;
 	/** fullfill the lists of rewards an punishments */
 	bool InitializeRewardsAndPunishments();
-	
+
 	/** load one level */
 	virtual chaos::Level * DoLoadLevel(chaos::FilePathParam const & path) override;
 
@@ -80,10 +79,10 @@ protected:
 	float brick_offset_speed = 0.0f;
 	float brick_offset_increment = 0.0f;
 
-	float player_max_length       = 200.0f; 
-	float player_min_length       = 70.0f; 
-	float player_initial_length   = 100.0f; 
-	float player_length_increment = 50.0f; 
+	float player_max_length       = 200.0f;
+	float player_min_length       = 70.0f;
+	float player_initial_length   = 100.0f;
+	float player_length_increment = 50.0f;
 	float player_length_decrement = 50.0f;
 
 	float ball_size          = 25.0f;
@@ -98,7 +97,7 @@ protected:
 	float challenge_time_dilation = 0.5f;
 	float challenge_frequency = 10.0f;
 	float challenge_duration   = 5.0f;
-	
+
 	float delay_before_ball_move = 2.0f;
 
 	float background_fillratio_changespeed = 0.01f;

@@ -1,7 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
-
+#include "Ludum41PCH.h"
 #include "Ludum41Particles.h"
 
 // =================================================
@@ -39,19 +38,19 @@ protected:
 protected:
 
 	chaos::ParticleAllocationBase * CreateBricks();
-	
+
 	/** get the bricks */
 	ParticleBrick * GetBricks();
 	/** get the bricks */
 	ParticleBrick const * GetBricks() const;
 
 	/** get the number of bricks */
-	size_t GetBrickCount() const;	
-	
+	size_t GetBrickCount() const;
+
 public:
 
-	/** some sprites */	
-	chaos::shared_ptr<chaos::ParticleAllocationBase> bricks_allocations;	
+	/** some sprites */
+	chaos::shared_ptr<chaos::ParticleAllocationBase> bricks_allocations;
 	/** the current word */
 	size_t word_index = 0;
 };

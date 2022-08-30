@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Ludum41PCH.h"
 #include "Ludum41ChallengeRewardPunishment.h"
 #include "Ludum41Game.h"
 #include "Ludum41GameInstance.h"
@@ -118,9 +119,9 @@ void LudumChallengeRewardPunishment_SplitBall::OnRewardPunishment(LudumGameInsta
 char const * LudumChallengeRewardPunishment_BallPower::GetTitleName(LudumGameInstance * game_instance, bool reward) const
 {
 	if (reward)
-		return "Power Up"; 
+		return "Power Up";
 	else
-		return "Power Down";		
+		return "Power Down";
 }
 
 bool LudumChallengeRewardPunishment_BallPower::IsRewardPunishmentValid(LudumGameInstance * game_instance, bool reward) const

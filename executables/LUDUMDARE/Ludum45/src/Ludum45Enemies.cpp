@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum45PCH.h"
 #include "Ludum45Enemies.h"
 
 bool EnemyPattern::Initialize(chaos::TiledMap::PropertyOwner const * def)
@@ -21,7 +20,7 @@ bool EnemyPattern::UpdateParticle(float delta_time, ParticleEnemy * particle, ch
 	float base_offset = particle_initial_range * particle_ratio;
 
 	float t = (base_offset + particle_speed * particle->time);
-	
+
 
 	glm::vec2 spawner_position  = particle->spawner_box.position;
 	glm::vec2 spawner_half_size = particle->spawner_box.half_size;
@@ -37,13 +36,13 @@ bool EnemyPattern::UpdateParticle(float delta_time, ParticleEnemy * particle, ch
 
 	bool spawner_out = (spawner_position.x + spawner_half_size.x + particle_half_size.x < min_camera_x);
 	bool particle_out = (particle_position.x + particle_half_size.x < min_camera_x);
-		
+
 	bool result = false;
 	if (pattern_index == 1)
 	{
 
 		// CIRCLE
-		
+
 		float R = spawner_radius - particle_half_size.x;
 		particle_position = spawner_position;
 		particle_position.x += R * std::cos(t);
@@ -72,11 +71,11 @@ bool EnemyPattern::UpdateParticle(float delta_time, ParticleEnemy * particle, ch
 	}
 	else if (pattern_index == 4)
 	{
-	
+
 		// RANDOM + droit devant
 		if (particle->time == 0.0f)
 		{
-			particle_position = spawner_position + (spawner_half_size - particle_half_size) * (2.0f * chaos::GLMTools::RandVec2() - glm::vec2(1.0f, 1.0f));			
+			particle_position = spawner_position + (spawner_half_size - particle_half_size) * (2.0f * chaos::GLMTools::RandVec2() - glm::vec2(1.0f, 1.0f));
 			particle->velocity.x = -particle_speed;
 		}
 
@@ -88,7 +87,7 @@ bool EnemyPattern::UpdateParticle(float delta_time, ParticleEnemy * particle, ch
 		particle_position.x = spawner_position.x + spawner_half_size.x * (particle_ratio * 2.0f - 1.0f);
 		particle_position.y = spawner_position.y + spawner_half_size.y * (particle_ratio * 2.0f - 1.0f);
 		particle->velocity.x = -particle_speed;
-	
+
 		result = particle_out;
 	}
 

@@ -1,21 +1,19 @@
 #pragma once
 
-
+#include "Ludum41PCH.h"
 #include "Ludum41Particles.h"
 #include "Ludum41Game.h"
 #include "Ludum41GameInstance.h"
 #include "Ludum41LevelInstance.h"
 #include "Ludum41Challenge.h"
 
-#include "chaos/Chaos.h"
-
 // ===========================================================================
 // Object particle system
 // ===========================================================================
 
 bool ParticleObjectLayerTrait::UpdateParticle(float delta_time, ParticleObject& particle) const
-{ 
-	return false; 
+{
+	return false;
 }
 
 // ===========================================================================
@@ -125,7 +123,7 @@ bool ParticleMovableObjectLayerTrait::UpdateParticle(float delta_time, ParticleM
 
 	// update the velocity of the ball
 	glm::vec2 velocity = glm::normalize(particle.velocity);
-	
+
 	// moving the particle
 	particle.bounding_box.position += velocity *
 		(game_instance->ball_collision_speed + game_instance->ball_speed) *
@@ -135,7 +133,7 @@ bool ParticleMovableObjectLayerTrait::UpdateParticle(float delta_time, ParticleM
 
 	chaos::box2 canvas_box = game->GetCanvasBox();
 	chaos::box2 ball_box = particle.bounding_box;
-		
+
 
 	// bounce against the world borders
 	chaos::box2 new_ball_box = ball_box;
@@ -148,7 +146,7 @@ bool ParticleMovableObjectLayerTrait::UpdateParticle(float delta_time, ParticleM
 
 		if (old_velocity.y < 0.0f && velocity.y > 0.0f)
 		{
-		
+
 			return true; // ball lost
 		}
 	}
@@ -185,7 +183,7 @@ bool ParticleMovableObjectLayerTrait::UpdateParticle(float delta_time, ParticleM
 
 				float const PI_2 = (float)M_PI_2;
 
-				
+
 				float const GOOD_LIMIT = 0.3f;
 				float const BAD_LIMIT  = 0.6f;
 
@@ -194,29 +192,29 @@ bool ParticleMovableObjectLayerTrait::UpdateParticle(float delta_time, ParticleM
 					bound_factor = std::abs(bound_factor);
 					if (angle > PI_2)
 						angle = angle - rebound_angle_decrease * (1.0f - bound_factor / GOOD_LIMIT);
-					else 
+					else
 						angle = angle + rebound_angle_decrease * (1.0f - bound_factor / GOOD_LIMIT);
-				}	
+				}
 				else if (bound_factor > BAD_LIMIT)
 				{
 					bound_factor = std::abs(bound_factor);
-					if (angle > PI_2)						
+					if (angle > PI_2)
 						angle = angle + rebound_angle_increase * (bound_factor - BAD_LIMIT) / (1.0f - BAD_LIMIT);
 					else
 						angle = PI_2 - (angle - PI_2);
 				}
 
 				else if (bound_factor < -BAD_LIMIT)
-				{				
+				{
 					bound_factor = std::abs(bound_factor);
 					if (angle > PI_2)
 						angle = PI_2 - (angle - PI_2);
-					else						
+					else
 						angle = angle - rebound_angle_increase * (bound_factor - BAD_LIMIT) / (1.0f - BAD_LIMIT);
 				}
 				velocity = MakeVelocityFromAngle(angle);
 			}
-			
+
 			ball_box.position = new_ball_box.position;
 			game_instance->OnBallCollide(false);
 		}
@@ -234,28 +232,28 @@ bool ParticleMovableObjectLayerTrait::UpdateParticle(float delta_time, ParticleM
 		{
 			chaos::box2 brick_box = bricks[i].bounding_box;
 			brick_box.position.y -= game_instance->brick_offset;
-		
+
 			if (chaos::RestrictToOutside(brick_box, new_ball_box))
 			{
 				if (bricks[i].indestructible || bricks[i].life >= game_instance->ball_power)
 				{
 					chaos::UpdateVelocityFromCollision(ball_box.position, new_ball_box.position, velocity);
-					ball_box.position = new_ball_box.position;					
+					ball_box.position = new_ball_box.position;
 				}
 
 				if (!bricks[i].indestructible)
 					bricks[i].life -= game_instance->ball_power;
 				game_instance->OnBallCollide(true);
-			
-			}				
-		}	
+
+			}
+		}
 	}
 
 	// recenter the particle
 	particle.velocity = RestrictParticleVelocityToAngle(glm::normalize(velocity));
 	particle.bounding_box = ball_box;
 
-	return false; 
+	return false;
 }
 
 
@@ -283,7 +281,7 @@ float ClampAngleToNearestRange(float angle, std::pair<float, float> const* range
 		float max_angle = ranges[i].second;
 
 		// degree to rad
-		
+
 		min_angle = min_angle * TO_RAD;
 		max_angle = max_angle * TO_RAD;
 		if (min_angle > max_angle)
@@ -309,7 +307,7 @@ glm::vec2 ParticleMovableObjectLayerTrait::RestrictParticleVelocityToAngle(glm::
 		return v;
 
 	float angle = atan2(v.y, v.x); // => [-PI , +PI]
-	
+
 	std::pair<float, float> ranges[] =
 	{
 		std::make_pair(180.0f - ball_angle_max,  90.0f + ball_angle_min),
@@ -317,7 +315,7 @@ glm::vec2 ParticleMovableObjectLayerTrait::RestrictParticleVelocityToAngle(glm::
 		std::make_pair(-180.0f + ball_angle_max,  -90.0f - ball_angle_min),
 		std::make_pair(-90.0f + ball_angle_min, -ball_angle_max)
 	};
-		
+
 	angle = ClampAngleToNearestRange(angle, ranges, sizeof(ranges) / sizeof(ranges[0]));
 	return MakeVelocityFromAngle(angle);
 }

@@ -1,7 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
-
+#include "Ludum49PCH.h"
 #include "Ludum49Particles.h"
 #include "Ludum49Game.h"
 #include "Ludum49GameInstance.h"
@@ -16,7 +15,7 @@
 
 bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer & particle) const
 {
-	
+
 
 	return false;
 }

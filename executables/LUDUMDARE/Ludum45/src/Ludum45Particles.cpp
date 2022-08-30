@@ -1,7 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
-
+#include "Ludum45PCH.h"
 #include "Ludum45Particles.h"
 #include "Ludum45Game.h"
 #include "Ludum45GameInstance.h"
@@ -23,7 +22,7 @@ static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame
 	// play sound
 	if (enemy->enemy_health > 0.0f)
 		game->PlaySound("metallic", false, false, 0.0f, chaos::SoundContext::LEVEL);
-	else 
+	else
 	{
 		if (!collision_with_player)
 			game->GetPlayer(0)->SetScore(10, true);
@@ -59,8 +58,8 @@ static void FindEnemiesOnMap(LudumGame * game, std::vector<ParticleEnemy*> & res
 					size_t count = enemies.GetDataCount();
 					for (size_t j = 0 ; j < count ; ++j)
 						result.push_back(&enemies[j]);
-				}				
-			}			
+				}
+			}
 		}
 	}
 }
@@ -153,7 +152,7 @@ bool ParticleEnemyLayerTrait::UpdateParticle(float delta_time, ParticleEnemy & p
 	particle.time += delta_time;
 
 	particle.bounding_box.position += particle.velocity * delta_time;
-	
+
 	if (particle.pattern != nullptr)
 	{
 		chaos::Camera const* camera = game->GetCamera(0);
@@ -258,7 +257,7 @@ ParticleFireUpdateData ParticleFireLayerTrait::BeginUpdateParticles(float delta_
 	ParticleFireUpdateData result;
 	if (particle_accessor.GetDataCount() > 0)
 	{
-		// get the camera box 
+		// get the camera box
 		chaos::Camera const* camera = game->GetCamera(0);
 		if (camera != nullptr)
 		{
@@ -286,7 +285,7 @@ bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire& part
 		return true;
 
 	if (particle.player_ownership && !chaos::Collide(update_data.camera_box, particle.bounding_box)) // destroy the particle outside the camera frustum (works for empty camera)
-		return true;	
+		return true;
 
 
 	// search for collisions
@@ -300,11 +299,11 @@ bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire& part
 			{
 				chaos::box2 b1 = particle.bounding_box;
 				chaos::box2 b2 = enemy->bounding_box;
-				
+
 				b1.half_size *= COLLISION_FIRE_TWEAK;
 				b2.half_size *= COLLISION_FIRE_TWEAK;
-				
-				
+
+
 				if (chaos::Collide(b1, b2))
 				{
 
@@ -316,9 +315,9 @@ bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire& part
 						return true;
 					if (!particle.trample)
 						return true;
-				}			
+				}
 			}
-		}	
+		}
 	}
 
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
+#include "Ludum41IsolationPCH.h"
 
 // =================================================
 // Levels
@@ -12,14 +12,14 @@ class LudumLevel : public chaos::Level
 
 public:
 
-	
+
 	static constexpr int INDESTRUCTIBLE = -4;
 	static constexpr int FOUR_LIFE = -3;
 	static constexpr int TWO_LIFE = -2;
 	static constexpr int NONE = -1;
 
 	LudumLevel();
-	
+
 	/** get the number of brick in the level */
 	size_t GetBrickCount() const;
 

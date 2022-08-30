@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum47PCH.h"
 #include "Ludum47HUD.h"
 #include "Ludum47Game.h"
 #include "Ludum47Level.h"
@@ -89,7 +88,7 @@ bool GameHUDRaceLapsComponent::QueryValue(glm::ivec2 & result) const
 		return false;
 	result = { player->race_position.current_lap, li->road->lap_count };
 	return true;
-		
+
 }
 
 void GameHUDRaceLapsComponent::UpdateMesh()
@@ -106,7 +105,7 @@ bool LudumPlayingHUD::FillHUDContent()
 	// directely call GameHUD super instead of PlayingHUD to avoid the score
 #if 0
 	if (!chaos::PlayingHUD::FillHUDContent())
-		return false;	
+		return false;
 #else
 	// call super method
 	if (!chaos::GameHUD::FillHUDContent())

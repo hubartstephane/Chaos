@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum44PCH.h"
 #include "Ludum44HUD.h"
 #include "Ludum44Game.h"
 #include "Ludum44Level.h"
@@ -12,7 +11,7 @@
 // ====================================================================
 
 GameHUDLifeCountComponent::GameHUDLifeCountComponent() :
-	GameHUDCacheValueTextComponent<int>("Life: %d") 
+	GameHUDCacheValueTextComponent<int>("Life: %d")
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
@@ -173,7 +172,7 @@ void GameHUDHealthBarComponent::UpdateMesh()
 bool LudumPlayingHUD::FillHUDContent()
 {
 	if (!chaos::PlayingHUD::FillHUDContent())
-		return false;	
+		return false;
 	RegisterComponent(chaos::GameHUDKeys::LIFE_HEALTH_ID, new GameHUDHealthBarComponent());
 	RegisterComponent(chaos::GameHUDKeys::LEVEL_TITLE_ID, new chaos::GameHUDLevelTitleComponent());
 	RegisterComponent(chaos::GameHUDKeys::POWER_UP_ID, new GameHUDPowerUpComponent());

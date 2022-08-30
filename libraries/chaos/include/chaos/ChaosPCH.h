@@ -1,5 +1,7 @@
 #pragma once
 
+#include "chaos/Config.h"
+
 /**
 * Common "macros"
 */

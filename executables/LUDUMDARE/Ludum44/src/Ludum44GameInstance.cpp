@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum44PCH.h"
 #include "Ludum44GameInstance.h"
 #include "Ludum44Game.h"
 #include "Ludum44Level.h"
@@ -61,14 +60,14 @@ void LudumGameInstance::OnPowerUpZone(chaos::Player * player, bool enter, PowerU
 		current_powerup_trigger = nullptr;
 	}
 	else
-	{		
+	{
 		int value = rand() % count;
 		for (int i = 0 ; i < count ; ++i)
 		{
 			int index = (i + value) % count;
 			if (ludum_game->power_ups[index]->CanPowerUp(ludum_game, ludum_player, powerup_trigger->decrease_power))
 			{
-				current_power_up = ludum_game->power_ups[index].get();	
+				current_power_up = ludum_game->power_ups[index].get();
 				current_powerup_trigger = powerup_trigger;
 				return;
 			}

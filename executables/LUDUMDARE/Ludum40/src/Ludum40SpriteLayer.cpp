@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum40PCH.h"
 #include "Ludum40Game.h"
 #include "Ludum40SpriteManager.h"
 #include "Ludum40SpriteLayer.h"
@@ -63,7 +62,7 @@ void SpriteLayer::Tick(float delta_time, GameInfo game_info)
 	UpdateParticleLifetime(delta_time);
 	UpdateParticleVelocity(delta_time);
 	DestroyParticleByClipRect(game_info);
-	UpdateGPUBuffer(game_info);	
+	UpdateGPUBuffer(game_info);
 }
 
 void SpriteLayer::SetVisible(bool in_visible)
@@ -85,7 +84,7 @@ void SpriteLayer::UpdateParticleLifetime(float delta_time)
 				particles.pop_back();
 				continue;
 			}
-		}				
+		}
 		++i;
 	}
 }
@@ -134,7 +133,7 @@ std::vector<std::pair<int, size_t>> SpriteLayer::GetSpritePopulationStats(GameIn
 		ObjectDefinition const & def = game_info.object_definitions[i];
 		if (def.layer != layer)
 			continue;
-		stats[def.id] = 0;	
+		stats[def.id] = 0;
 	}
 
 	// count the number of particles per object type
@@ -163,7 +162,7 @@ std::vector<std::pair<int, size_t>> SpriteLayer::GetSpritePopulationStats(GameIn
 	using Obj = std::pair<int, size_t>;
 
 	std::sort(result.begin(), result.end(), [](Obj const & obj1, Obj const & obj2){
-		return (obj1.second < obj2.second);			
+		return (obj1.second < obj2.second);
 	});
 
 	return result;
@@ -219,7 +218,7 @@ void SpriteLayer::PopulateSpritesWithDef(GameInfo game_info, int & count, Object
 			p.position = glm::vec2(0.0f, 0.0f); // screen space particle at center
 			particles.push_back(p);
 			--count;
-		}		
+		}
 	}
 	else if (def.spawn_type == ObjectDefinition::SPAWN_TYPE_OUTASCREEN || def.spawn_type == ObjectDefinition::SPAWN_TYPE_OUTASCREEN_TESTCOLLISION)
 	{
@@ -227,7 +226,7 @@ void SpriteLayer::PopulateSpritesWithDef(GameInfo game_info, int & count, Object
 		chaos::box2 world_box         = game_info.world_box;
 		chaos::box2 world_box_padding = game_info.world_box_padding;
 
-		float half_world_x = world_box.half_size.x; 
+		float half_world_x = world_box.half_size.x;
 		float half_world_y = world_box.half_size.y;
 
 		float extra_x = (1.0f * world_box_padding.half_size.x) - (1.0f * half_world_x);
@@ -235,15 +234,15 @@ void SpriteLayer::PopulateSpritesWithDef(GameInfo game_info, int & count, Object
 		float world_x = (2.0f * half_world_x);
 		float world_y = (2.0f * half_world_y);
 
-		float half_extra_x = 0.5f * extra_x; 
-		float half_extra_y = 0.5f * extra_y; 
+		float half_extra_x = 0.5f * extra_x;
+		float half_extra_y = 0.5f * extra_y;
 
 		chaos::box2 zones[5];
 
 		// compute zone x
 		zones[0].position.x = zones[3].position.x =
 			world_box.position.x - half_world_x - half_extra_x;
-		zones[1].position.x = 
+		zones[1].position.x =
 			world_box.position.x;
 		zones[2].position.x = zones[4].position.x =
 			world_box.position.x + half_world_x + half_extra_x;
@@ -262,11 +261,11 @@ void SpriteLayer::PopulateSpritesWithDef(GameInfo game_info, int & count, Object
 		zones[4].position += p.half_size * glm::vec2(+1.0f, 0.0f);
 
 		// compute the half_size
-		zones[0].half_size = zones[2].half_size = 
+		zones[0].half_size = zones[2].half_size =
 			glm::vec2(half_extra_x, half_extra_y);
-		zones[1].half_size = 
+		zones[1].half_size =
 			glm::vec2(half_world_x, half_extra_y);
-		zones[3].half_size = zones[4].half_size = 
+		zones[3].half_size = zones[4].half_size =
 			glm::vec2(half_extra_x, half_world_y);
 
 		// compute the surfaces and sum then renormalize to have a propability repartition
@@ -277,10 +276,10 @@ void SpriteLayer::PopulateSpritesWithDef(GameInfo game_info, int & count, Object
 		{
 			float s = chaos::GetSurface(zones[i]);
 			surfaces[i] = s;
-			surface_sum += s;			
+			surface_sum += s;
 		}
 
-		for (int i = 0 ; i < 5 ; ++i)  // renormalize 
+		for (int i = 0 ; i < 5 ; ++i)  // renormalize
 			surfaces[i] /= surface_sum;
 
 		while (count > 0)
@@ -291,16 +290,16 @@ void SpriteLayer::PopulateSpritesWithDef(GameInfo game_info, int & count, Object
 			int surface_index = 0;
 			while (surface_index < 5 && surface_rand > surfaces[surface_index])
 			{
-				surface_rand -= surfaces[surface_index]; 
-				++surface_index;				
+				surface_rand -= surfaces[surface_index];
+				++surface_index;
 			}
 			if (surface_index == 5)
 				continue;
 
 			glm::vec2 random = 2.0f * chaos::GLMTools::RandVec2() - glm::vec2(1.0f, 1.0f);  // random numbers between -1 and +1
 
-			p.position = 
-				zones[surface_index].position + 
+			p.position =
+				zones[surface_index].position +
 				zones[surface_index].half_size * random - world_box.position; // screen space position
 
 			--count; // decrement even if the particle is refused
@@ -315,18 +314,18 @@ void SpriteLayer::PopulateSpritesWithDef(GameInfo game_info, int & count, Object
 					{
 						add_particle = false;
 						break;
-					}				
-				}									
+					}
+				}
 			}
 
 			if (add_particle)
 				particles.push_back(p);
-		}		
+		}
 	}
 }
 
 void SpriteLayer::UpdateGPUBuffer(GameInfo game_info)
-{	
+{
 	sprite_manager->ClearSprites(); // remove all GPU buffer data
 
 									// the buffer stores particles that share the layer value, but not the 'type'
@@ -339,7 +338,7 @@ void SpriteLayer::UpdateGPUBuffer(GameInfo game_info)
 
 	for (ObjectDefinition const & def : game_info.object_definitions)  // take all object definitions of the whole GAME
 	{
-		if (def.layer != layer) // manage only the ones of concerns (layer number consideration) 
+		if (def.layer != layer) // manage only the ones of concerns (layer number consideration)
 			continue;
 
 		int id = def.id;

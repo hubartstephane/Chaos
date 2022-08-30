@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum47PCH.h"
 #include "Ludum47Level.h"
 #include "Ludum47LevelInstance.h"
 #include "Ludum47Game.h"
@@ -33,7 +32,7 @@ int ParticleSpawnerDelay::GetSpawnCount(float delta_time)
 	}
 	return count;
 }
-	
+
 
 
 
@@ -57,17 +56,17 @@ bool LudumOpponent::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos:
 	car_data.angular_velocity = in_geometric_object->GetPropertyValueFloat("ANGULAR_VELOCITY", car_data.angular_velocity);
 	car_data.normal_deceleration = in_geometric_object->GetPropertyValueFloat("NORMAL_DECELERATION", car_data.normal_deceleration);
 	car_data.break_deceleration = in_geometric_object->GetPropertyValueFloat("BREAK_DECELERATION", car_data.break_deceleration);
-	
+
 
 
 	car_data.reaction_value = in_geometric_object->GetPropertyValueFloat("REACTION_VALUE", car_data.reaction_value);
 	car_data.reaction_decrease = in_geometric_object->GetPropertyValueFloat("REACTION_DECREASE", car_data.reaction_decrease);
-	
+
 	max_health = in_geometric_object->GetPropertyValueFloat("MAX_HEALTH", max_health);
 
 
 
-	
+
 	health = max_health;
 
 	spawner_delay.spawn_per_second = 20.0f;
@@ -129,13 +128,13 @@ bool LudumOpponent::DoTick(float delta_time)
 			if (particle->collision_reaction_intensity > 0.0f)
 			{
 				glm::vec2 velocity_vector = particle->collision_direction * particle->collision_reaction_intensity;
-				
-				
+
+
 				//particle->bounding_box.position += velocity_vector * delta_time;
 
 				bounding_box.position += velocity_vector * delta_time;
-				
-				
+
+
 			}
 		}
 
@@ -154,7 +153,7 @@ bool LudumOpponent::DoTick(float delta_time)
 		float angular_tweak = road->opponent_angular_tweak;
 
 		rotation = chaos::MathTools::UpdateRotationForTargetAngle(rotation, wr, delta_time * car_data.angular_velocity * angular_tweak);
-				
+
 		chaos::ApplyWrapMode(rotation, -(float)M_PI, (float)M_PI, chaos::WrapMode::WRAP, rotation);
 
 
@@ -212,7 +211,7 @@ bool LudumRoad::DoTick(float delta_time)
 	if (level_instance == nullptr)
 		return true;
 
-	
+
 	if (level_instance->effective_start_timer > 0.0f)
 		return true;
 
@@ -226,7 +225,7 @@ bool LudumRoad::DoTick(float delta_time)
 		return true;
 
 	std::vector<LudumOpponent*> opponents;
-	
+
 	size_t object_count = li->GetObjectCount();
 	for (size_t i = 0; i < object_count; ++i)
 	{
@@ -248,7 +247,7 @@ bool LudumRoad::DoTick(float delta_time)
 
 
 
-	
+
 
 	// for each pair of opponents
 	size_t opponent_count = opponents.size();
@@ -287,9 +286,9 @@ bool LudumRoad::DoTick(float delta_time)
 			ob2.half_size = b2.half_size;
 			ob2.rotator = opp2->GetRotation();
 
-			// raw evaluation 
+			// raw evaluation
 			if (!Collide(GetBoundingSphere(ob1), GetBoundingSphere(ob2)))   // shu47 : peut etre faire une fonction dediée pour eviter les [2 x sqrtf] pour les creations de bounding sphere
-				continue;		
+				continue;
 			if (!Collide(ob1, ob2))
 				continue;
 
@@ -358,10 +357,10 @@ bool LudumRoad::DoTick(float delta_time)
 		{
 			glm::vec2 vel_dir1 = p1->velocity * glm::vec2(std::cos(p1->rotation), std::sin(p1->rotation));
 			glm::vec2 vel_dir2 = player_particle->velocity * glm::vec2(std::cos(player_particle->rotation), std::sin(player_particle->rotation));
-			
-			
+
+
 			// TRUC
-			
+
 			//if (glm::dot(vel_dir1, vel_dir2) < 0.0f) // already getting away from one another
 		//		continue;
 
@@ -378,7 +377,7 @@ bool LudumRoad::DoTick(float delta_time)
 			ob2.half_size = b2.half_size;
 			ob2.rotator = player_particle->rotation;
 
-			// raw evaluation 
+			// raw evaluation
 			if (!Collide(GetBoundingSphere(ob1), GetBoundingSphere(ob2)))   // shu47 : peut etre faire une fonction dediée pour eviter les [2 x sqrtf] pour les creations de bounding sphere
 				continue;
 			if (!Collide(ob1, ob2))
@@ -495,7 +494,7 @@ void LudumRoad::OnLevelStarted()
 			if (li != nullptr)
 			{
 				size_t count = li->GetObjectCount();
-				for (size_t i = 0 ; i < count ; ++i)					
+				for (size_t i = 0 ; i < count ; ++i)
 				{
 					LudumSpeedIndication* indication = auto_cast(li->GetObject(i));
 					if (indication != nullptr)

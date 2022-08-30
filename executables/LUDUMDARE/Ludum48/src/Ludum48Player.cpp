@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum48PCH.h"
 #include "Ludum48Player.h"
 #include "Ludum48Level.h"
 #include "Ludum48LevelInstance.h"
@@ -67,7 +66,7 @@ bool LudumPlayer::DoTick(float delta_time)
 		Key const suicidal_buttons[] = { KeyboardButton::SPACE, GamepadButton::Y, Key() };
 		if (CheckButtonPressed(suicidal_buttons))
 		{
-			suicidal_timer = std::min(std::max(suicidal_timer, 0.0f) + delta_time, max_suicidal_timer); 
+			suicidal_timer = std::min(std::max(suicidal_timer, 0.0f) + delta_time, max_suicidal_timer);
 			if (suicidal_timer == max_suicidal_timer)
 			{
 				death_timer = 0.0f; // kill the player
@@ -77,7 +76,7 @@ bool LudumPlayer::DoTick(float delta_time)
 		{
 			suicidal_timer = -1.0f;
 
-			
+
 
 		}
 

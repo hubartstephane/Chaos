@@ -1,7 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
-
+#include "Ludum45PCH.h"
 #include "Ludum45Particles.h"
 
 
@@ -13,7 +12,7 @@ public:
 	virtual bool Initialize(chaos::TiledMap::PropertyOwner const * def);
 
 
-	
+
 	bool UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::box2 const & camera_box);
 
 public:

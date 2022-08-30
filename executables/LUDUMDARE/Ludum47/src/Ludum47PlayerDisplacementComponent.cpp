@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum47PCH.h"
 #include "Ludum47PlayerDisplacementComponent.h"
 #include "Ludum47Particles.h"
 #include "Ludum47Player.h"
@@ -182,7 +181,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	glm::vec2 velocity_vector = particle.velocity * glm::vec2(std::cos(particle.rotation), std::sin(particle.rotation));
 
 	float clamped_rotation = chaos::MathTools::DegreeToRadian(
-		
+
 		6.0f * std::floor(chaos::MathTools::RadianToDegree(particle.rotation) / 6.0f)
 	);
 
@@ -201,14 +200,14 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 		particle.rotation += car_data.angular_velocity * delta_time * -stick_position.x * angular_tweak;
 
 		velocity_vector = particle.velocity * glm::vec2(std::cos(clamped_rotation), std::sin(clamped_rotation));
-	
+
 		chaos::ApplyWrapMode(particle.rotation, -(float)M_PI, (float)M_PI, chaos::WrapMode::WRAP, particle.rotation);
-		
+
 		particle.bounding_box.position += velocity_vector * delta_time;
 	}
-	
-	
-	// compute wanted velocity 
+
+
+	// compute wanted velocity
 
 	if (particle.accelerate_pressed)
 	{
@@ -228,7 +227,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 			if (particle.velocity > 0.0f)
 				particle.velocity = std::max(0.0f, particle.velocity - delta_time * car_data.normal_deceleration * velocity_tweak);
 			else if (particle.velocity < 0.0f)
-				particle.velocity = std::min(0.0f, particle.velocity + delta_time * car_data.normal_deceleration * velocity_tweak);			
+				particle.velocity = std::min(0.0f, particle.velocity + delta_time * car_data.normal_deceleration * velocity_tweak);
 		}
 	}
 
@@ -239,6 +238,6 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	if (ComputeBorderCollision(particle, li, car_data))
 		player->SoundCollision();
-	
+
 	return true;
 }

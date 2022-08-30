@@ -1,7 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
-
+#include "Ludum44PCH.h"
 #include "Ludum44Particles.h"
 
 // =========================================================
@@ -38,16 +37,16 @@ protected:
 
 	/** update player displacement with the stick values that are stored */
 	virtual void UpdatePlayerAcceleration(float delta_time);
-	
+
 	/** test whether the player is firing */
 	void UpdatePlayerFire(float delta_time);
 	/** test whether the player wants to by an item */
 	void UpdatePlayerBuyingItem(float delta_time);
 
 	/** fire a charged projectile */
-	void FireChargedProjectile();	
+	void FireChargedProjectile();
 	/** fire a normal projectile */
-	void FireNormalProjectile();		
+	void FireNormalProjectile();
 
 protected:
 

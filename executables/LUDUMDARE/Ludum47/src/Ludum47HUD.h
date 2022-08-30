@@ -1,13 +1,13 @@
 #pragma once
 
-#include "chaos/Chaos.h"
+#include "Ludum47PCH.h"
 
 namespace chaos
 {
 	namespace GameHUDKeys
 	{
 		CHAOS_DECLARE_TAG(RACE_POSITION_ID);
-		CHAOS_DECLARE_TAG(RACE_LAPS_ID);		
+		CHAOS_DECLARE_TAG(RACE_LAPS_ID);
 	};
 };
 

@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum45PCH.h"
 #include "Ludum45Level.h"
 #include "Ludum45LevelInstance.h"
 #include "Ludum45Game.h"
@@ -38,7 +37,7 @@ bool BonusSpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * obj
 	{
 		LudumPlayer * ludum_player = ludum_game->GetPlayer(0);
 		if (ludum_player != nullptr)
-			ludum_player->OnPlayerUpgrade(bonus_type);	
+			ludum_player->OnPlayerUpgrade(bonus_type);
 	}
 	return true;
 }
@@ -95,7 +94,7 @@ bool EnemySpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * obj
         return true;
 
     chaos::BitmapAtlas::BitmapInfo const* bitmap_info = spawner.GetBitmapInfo();
-  
+
     EnemyPattern * p = pattern;
     EnemyType* t = type;
 
@@ -115,7 +114,7 @@ bool EnemySpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * obj
             particle.spawner_box = spawner_box;
             particle.time = 0.0f;
             p->UpdateParticle(0.0f, &particle, camera_box);
-        }    
+        }
     });
     return true;
 }

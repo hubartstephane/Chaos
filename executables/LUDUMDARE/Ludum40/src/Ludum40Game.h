@@ -1,7 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
-
+#include "Ludum40PCH.h"
 #include "Ludum40SpriteManager.h"
 #include "Ludum40SpriteLayer.h"
 
@@ -25,8 +24,8 @@ protected:
 // ======================================================================================
 
 class Game : public chaos::Object
-{	
-	static constexpr int PLAYER_LAYER = -1;	
+{
+	static constexpr int PLAYER_LAYER = -1;
 	static constexpr int PAUSED_OBJECT_LAYER = -3;
 	static constexpr int TITLE_OBJECT_LAYER = -2;
 	static constexpr int GAMEOVER_OBJECT_LAYER = -4;
@@ -123,10 +122,10 @@ protected:
 	void ResetPlayerCachedInputs();
 
 	bool InitializeSounds(boost::filesystem::path const & resource_path);
-	
+
   bool LoadBackgroundTexture(size_t index);
 
-	chaos::box2 GetWorldBox(bool use_padding) const; 
+	chaos::box2 GetWorldBox(bool use_padding) const;
 
 
 protected:
@@ -147,14 +146,14 @@ protected:
 	// game values
 	int   life  = 0;
 	int   level = 0;
-	float player_screen_speed = 0.0f;   
-	float player_absolute_speed = 0.0f; 
+	float player_screen_speed = 0.0f;
+	float player_absolute_speed = 0.0f;
   float max_speed = 500.0f;
   float acceleration_factor = 500.0f;
   float slowdown_factor = 500.0f;
-	glm::vec2 world_position = glm::vec2(0.0f, 0.0f); 
+	glm::vec2 world_position = glm::vec2(0.0f, 0.0f);
   glm::vec2 player_speed = glm::vec2(0.0f, 0.0f);
-	
+
 	// initial values
 	int   level_particle_increment = 10;
 	int   max_particles_per_frame = 100;
@@ -163,7 +162,7 @@ protected:
 	float initial_player_screen_speed = 500.0f;   // speed at which the player may move on screen
 	float initial_player_absolute_speed = 50.0f; // speed at which the player is push forward by its engine
 	float delta_speed = 7.0f;                    // the 'absolute_speed' increase that is applyed when power up is taken
-	
+
 	glm::vec2 screen_safe_aera = glm::vec2(0.5f, 0.9f);
 
 	// game state
@@ -181,7 +180,7 @@ protected:
 	// background data
 	chaos::shared_ptr<chaos::GPUMesh> fullscreen_mesh;
 
-	chaos::shared_ptr<chaos::GPUProgram>  background_program;	
+	chaos::shared_ptr<chaos::GPUProgram>  background_program;
 	chaos::shared_ptr<chaos::GPUTexture>    background_texture;
 	chaos::shared_ptr<chaos::GPUProgram>  control_program;
 	chaos::shared_ptr<chaos::GPUTexture>    control_texture;

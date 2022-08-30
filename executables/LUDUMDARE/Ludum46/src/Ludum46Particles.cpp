@@ -1,7 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
-
+#include "Ludum46PCH.h"
 #include "Ludum46Particles.h"
 #include "Ludum46Game.h"
 #include "Ludum46GameInstance.h"
@@ -85,7 +84,7 @@ bool ParticleSoulLayerTrait::UpdateParticle(float delta_time, ParticleSoul & par
 					if (update_data.ludum_level_instance != nullptr)
 						update_data.ludum_level_instance->SpawnBloodParticles(particle.bounding_box, 10);
 
-					return true; // touching fire 
+					return true; // touching fire
 				}
 			}
 		}
@@ -183,7 +182,7 @@ bool UpdateParticle(float delta_time, ParticleAnimated & particle)
 {
 	particle.animation_timer += delta_time;
 
-	// destroy the particles ? 
+	// destroy the particles ?
 	if (!UpdateAnimatedParticleTexcoords(particle))
 		return true;
 
@@ -194,7 +193,7 @@ bool ParticleAnimated::UpdateParticle(float delta_time)
 {
 	animation_timer += delta_time;
 
-	// destroy the particles ? 
+	// destroy the particles ?
 	if (!UpdateAnimatedParticleTexcoords(*this))
 		return true;
 
@@ -206,7 +205,7 @@ bool ParticleAnimatedLayerTrait::UpdateParticle(float delta_time, ParticleAnimat
 {
 	particle.animation_timer += delta_time;
 
-	// destroy the particles ? 
+	// destroy the particles ?
 	if (!UpdateAnimatedParticleTexcoords(particle))
 		return true;
 
@@ -232,7 +231,7 @@ static bool DoUpdateBloodParticle(float delta_time, ParticleAnimated & particle)
 	}
 	particle.animation_timer += delta_time;
 
-	// destroy the particles ? 
+	// destroy the particles ?
 	if (!UpdateAnimatedParticleTexcoords(particle))
 		return true;
 

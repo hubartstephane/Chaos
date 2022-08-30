@@ -1,9 +1,6 @@
 #pragma once
-
-#include "chaos/Chaos.h"
-
+#include "Ludum40PCH.h"
 #include "Ludum40SpriteManager.h"
-
 
 // ======================================================================================
 
@@ -39,7 +36,7 @@ public:
 	float min_lifetime = 0.0f;
 	float max_lifetime = 0.0f;
 	int   spawn_type = SPAWN_TYPE_CENTER;
-	
+
 	boost::filesystem::path bitmap_path;
 };
 
@@ -77,7 +74,7 @@ public:
 	void DestroyAllParticles();
 
 	void PopulateSprites(GameInfo game_info, int count);
-	
+
 	void SetVisible(bool in_visible);
 
 	bool LoadFromJSON(nlohmann::json const & json);
@@ -99,12 +96,12 @@ public:
 	std::vector<Particle> particles;
 
 
-	// current state	
+	// current state
 	bool visible = true;
-	
+
 	// properties
 	std::string name;
-	
+
 	float relative_speed = 1.0f;
 	bool  start_visible = true;
 	int   collision_type = 0;

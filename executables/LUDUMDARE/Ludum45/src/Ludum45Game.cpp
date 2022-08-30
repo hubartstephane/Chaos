@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum45PCH.h"
 #include "Ludum45Game.h"
 #include "Ludum45Particles.h"
 #include "Ludum45Level.h"
@@ -9,7 +8,7 @@
 #include "Ludum45GameInstance.h"
 
 LudumGame::LudumGame()
-{		
+{
 	game_name = "Jesaouf\nVI";
 	game_instructions = R"INSTRUCTIONS(
 	[ButtonA] or [KEYBOARD SPACE] : Fire
@@ -43,21 +42,21 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, bool hot_rel
 	CHAOS_JSON_ATTRIBUTE(config, player_speed_factor);
 	CHAOS_JSON_ATTRIBUTE(config, player_speed_damping);
 	CHAOS_JSON_ATTRIBUTE(config, player_tan_speed_damping);
-	CHAOS_JSON_ATTRIBUTE(config, player_dash_velocity_boost);	
+	CHAOS_JSON_ATTRIBUTE(config, player_dash_velocity_boost);
 	CHAOS_JSON_ATTRIBUTE(config, player_dash_duration);
 
-	CHAOS_JSON_ATTRIBUTE(config, fire_size_ratio);	
-	CHAOS_JSON_ATTRIBUTE(config, fire_velocity);	
-	
+	CHAOS_JSON_ATTRIBUTE(config, fire_size_ratio);
+	CHAOS_JSON_ATTRIBUTE(config, fire_velocity);
+
 	CHAOS_JSON_ATTRIBUTE(config, scroll_factor);
-	
+
 	CHAOS_JSON_ATTRIBUTE(config, player_speeds);
 	CHAOS_JSON_ATTRIBUTE(config, player_damages);
 	CHAOS_JSON_ATTRIBUTE(config, player_dash_cooldowns);
 	CHAOS_JSON_ATTRIBUTE(config, player_power_rates);
 	CHAOS_JSON_ATTRIBUTE(config, player_power_spreads);
 	CHAOS_JSON_ATTRIBUTE(config, player_specialpowers);
-						
+
 	return true;
 }
 
@@ -98,8 +97,8 @@ void LudumGame::RegisterObjectTypeDefinition(char const * prefix, FUNC func)
 			chaos::TiledMap::ObjectTypeDefinition const * def = ots->GetObjectTypeDefinition(j);
 			if (def != nullptr)
 				if (chaos::StringTools::Strnicmp(prefix, def->name, prefix_length) == 0)
-					func(def);				
-		}	
+					func(def);
+		}
 	}
 }
 
@@ -159,7 +158,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 
 		glEnable(GL_BLEND);
 		glDisable(GL_DEPTH_TEST);
-		renderer->DrawFullscreenQuad(postprocess_material, uniform_provider, render_params);	
+		renderer->DrawFullscreenQuad(postprocess_material, uniform_provider, render_params);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 	}

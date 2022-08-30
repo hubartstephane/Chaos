@@ -1,7 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
-
+#include "Ludum47PCH.h"
 #include "Ludum47Particles.h"
 #include "Ludum47Game.h"
 #include "Ludum47GameInstance.h"
@@ -67,7 +66,7 @@ void ParticlePlayerLayerTrait::ParticleToPrimitives(ParticlePlayer const& partic
 bool ParticleOpponentLayerTrait::UpdateParticle(float delta_time, ParticleOpponent& particle) const
 {
 
-	
+
 
 	return false;
 }

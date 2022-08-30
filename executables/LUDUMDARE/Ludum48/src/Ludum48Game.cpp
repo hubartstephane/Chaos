@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum48PCH.h"
 #include "Ludum48Game.h"
 #include "Ludum48Particles.h"
 #include "Ludum48Level.h"
@@ -9,7 +8,7 @@
 #include "Ludum48GameInstance.h"
 
 LudumGame::LudumGame()
-{		
+{
 	// 	Don't let the Flames of Hell die
 
 	game_name = "Bouldaouf Dash\n";
@@ -42,7 +41,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, bool hot_rel
 {
 	if (!Game::InitializeGameValues(config, hot_reload))
 		return false;
-						
+
 	return true;
 }
 
@@ -96,7 +95,7 @@ void LudumGame::DoDisplayGame(GPURenderer* renderer, GPUProgramProviderInterface
 			glEnable(GL_DEPTH_TEST);
 			glEnable(GL_CULL_FACE);
 
-			
+
 		}
 
 		LudumLevelInstance const * li = GetLevelInstance();
@@ -106,7 +105,7 @@ void LudumGame::DoDisplayGame(GPURenderer* renderer, GPUProgramProviderInterface
 
 
 
-		
+
 
 		if (player->death_timer >= 0.0f)
 		{

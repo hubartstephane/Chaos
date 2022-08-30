@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum44PCH.h"
 #include "Ludum44Level.h"
 #include "Ludum44LevelInstance.h"
 #include "Ludum44Game.h"
@@ -170,7 +169,7 @@ bool SpawnerTrigger::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos
 {
 	if (!chaos::TMTrigger::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
 		return false;
-	
+
 	scale_factor = in_geometric_object->GetPropertyValueFloat("ENEMY_SCALE_FACTOR", 1.0f);
 	life_factor = in_geometric_object->GetPropertyValueFloat("ENEMY_HEALTH_FACTOR", 1.0f);
 	count = in_geometric_object->GetPropertyValueInt("ENEMY_COUNT", 10);
@@ -187,7 +186,7 @@ bool SpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
 	chaos::Camera* camera = auto_cast(object);
 	if (camera == nullptr)
 		return false;
-	
+
 	// only the first time collision is detected
 	if (event_type != chaos::CollisionType::STARTED)
 		return false;
@@ -222,7 +221,7 @@ bool SpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
 	chaos::BitmapAtlas::FolderInfo const * folder_info = atlas->GetFolderInfo("sprites");
 	if (folder_info == nullptr)
 		return true;
-	
+
 	// create an allocation for all enemies we are about to create
 	chaos::ParticleAllocationBase * allocation = enemy_layer_instance->SpawnParticles(0);
 	if (allocation == nullptr)
@@ -235,7 +234,7 @@ bool SpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
 		fire_frequency = ludum_game->enemy_fire_rate;
 
 	// extract zone parametes
-	
+
 	chaos::box2 surface_box = GetBoundingBox(true);
 
 	static constexpr int SPAWN_ENEMY_METEORS          = 0;
@@ -247,7 +246,7 @@ bool SpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
 
 	static constexpr int SPAWN_MOVE_STATIC  = 0;
 	static constexpr int SPAWN_MOVE_FORWARD = 1;
-	static constexpr int SPAWN_MOVE_RANDOM  = 2;	
+	static constexpr int SPAWN_MOVE_RANDOM  = 2;
 	static constexpr int SPAWN_MOVE_LAST    = 3;
 	spawn_move_type = (spawn_move_type % SPAWN_MOVE_LAST);
 
@@ -267,7 +266,7 @@ bool SpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
     {
         size_t i = accessor.GetDataIndex(&particle);
 
-        // fill position & velocity			
+        // fill position & velocity
         if (spawn_curve_type == SPAWN_CURVE_RANDOM)
         {
             particle.bounding_box.position = surface_box.position + (2.0f * chaos::GLMTools::RandVec2() - glm::vec2(1.0f, 1.0f)) * surface_box.half_size;

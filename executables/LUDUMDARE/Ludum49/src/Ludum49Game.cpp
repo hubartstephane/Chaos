@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum49PCH.h"
 #include "Ludum49Game.h"
 #include "Ludum49Particles.h"
 #include "Ludum49Level.h"
@@ -9,7 +8,7 @@
 #include "Ludum49GameInstance.h"
 
 LudumGame::LudumGame()
-{		
+{
 	// 	Don't let the Flames of Hell die
 	game_name = "Not Today\n(but have a look)";
 	looping_levels = false;
@@ -35,7 +34,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, bool hot_rel
 {
 	if (!Game::InitializeGameValues(config, hot_reload))
 		return false;
-						
+
 	return true;
 }
 
@@ -63,11 +62,11 @@ void LudumGame::DoDisplayGame(GPURenderer * renderer, GPUProgramProviderInterfac
 	LudumLevelInstance const* ludum_level_instance = GetLevelInstance();
 	if (ludum_level_instance != nullptr)
 	{
-	
+
 
 
 	}
-	
+
 
 	Game::DoDisplayGame(renderer, &update_provider, render_params);
 }

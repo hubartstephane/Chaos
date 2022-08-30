@@ -1,7 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
-
+#include "Ludum44PCH.h"
 #include "Ludum44Particles.h"
 #include "Ludum44Game.h"
 #include "Ludum44GameInstance.h"
@@ -44,8 +43,8 @@ static void FindEnemiesOnMap(LudumGame * game, std::vector<ParticleEnemy*> & res
 					size_t count = enemies.GetDataCount();
 					for (size_t j = 0 ; j < count ; ++j)
 						result.push_back(&enemies[j]);
-				}				
-			}			
+				}
+			}
 		}
 	}
 }
@@ -61,7 +60,7 @@ static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame
 	// play sound
 	if (enemy->life > 0.0f)
 		game->PlaySound("metallic", false, false, 0.0f, chaos::SoundContext::LEVEL);
-	else 
+	else
 	{
 		if (!collision_with_player)
 			game->GetPlayer(0)->SetScore(enemy->score, true);
@@ -93,7 +92,7 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer& 
 			if (chaos::Collide(particle.bounding_box, enemy->bounding_box))
 			{
 				float life_lost = OnCollisionWithEnemy(enemy, enemy->life, game, true, enemy->bounding_box); // destroy the enemy always
-			
+
 				LudumPlayer * player = game->GetPlayer(0);
 				player->SetHealth(-life_lost, true);
 			}
@@ -129,7 +128,7 @@ bool PowerUpZoneParticleLayerTrait::UpdateParticle(float delta_time, ParticlePow
 	{
 		particle.color.a -= delta_time;
 		if (particle.color.a <= 0.0f) // fade out the particle
-			return true;	
+			return true;
 	}
 	return false;
 }
@@ -196,13 +195,13 @@ bool ParticleExplosionLayerTrait::UpdateParticle(float delta_time, ParticleExplo
 	chaos::box2 particle_box = ref_box;
 
 	particle_box.half_size = ratio_to_box * ref_box.half_size;
-	
+
 	particle_box.position = ref_box.position;
 
 	// compute texcoords for all particles
 #endif
 	particle.texcoords = bitmap_layout.GetTexcoords();
-	
+
 
 
 	return false;
@@ -229,7 +228,7 @@ ParticleFireUpdateData ParticleFireLayerTrait::BeginUpdateParticles(float delta_
 	ParticleFireUpdateData result;
 	if (particle_accessor.GetDataCount() > 0)
 	{
-		// get the camera box 
+		// get the camera box
 		chaos::Camera const* camera = game->GetCamera(0);
 		if (camera != nullptr)
 			result.camera_box = camera->GetCameraBox(true);
@@ -256,7 +255,7 @@ bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire& part
 		return true;
 
 	if (particle.player_ownership && !chaos::Collide(update_data.camera_box, particle.bounding_box)) // destroy the particle outside the camera frustum (works for empty camera)
-		return true;	
+		return true;
 
 	if (!particle.player_ownership && ObjectBesideCamera(update_data.camera_box, particle.bounding_box))
 		return true;
@@ -284,9 +283,9 @@ bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire& part
 						return true;
 					if (!particle.trample)
 						return true;
-				}			
+				}
 			}
-		}	
+		}
 	}
 	// enemy bullet
 
@@ -297,12 +296,12 @@ bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire& part
 	if (!particle.player_ownership && update_data.player != nullptr)
 	{
 		if (chaos::Collide(particle.bounding_box, pawn_box)) // destroy the particle outside the camera frustum (works for empty camera)
-		{				
+		{
 			update_data.player->SetHealth(-particle.damage, true);
 			particle.damage = 0.0f;
-			
+
 			game->PlaySound("player_touched", false, false, 0.0f, chaos::SoundContext::LEVEL);
-		}	
+		}
 	}
 
 	// update position velocity
@@ -345,7 +344,7 @@ bool ParticleEnemyLayerTrait::UpdateParticle(float delta_time, ParticleEnemy& pa
 
 	// shuxxx
 	//if (!chaos::Collide(update_data.camera_box, particle.bounding_box)) // destroy the particle outside the camera frustum (works for empty camera)
-	//	return true;	
+	//	return true;
 
 	if (ObjectBesideCamera(update_data.camera_box, particle.bounding_box))
 		return true;
@@ -353,12 +352,12 @@ bool ParticleEnemyLayerTrait::UpdateParticle(float delta_time, ParticleEnemy& pa
 	// apply velocity
 	particle.bounding_box.position += delta_time * particle.velocity;
 	// apply rotation
-	
+
 	if (particle.rotation_following_player)
 	{
 		chaos::PlayerPawn * player_pawn = game->GetPlayerPawn(0);
 		if (player_pawn != nullptr)
-		{		
+		{
 			glm::vec2 delta_pos = player_pawn->GetPosition() - particle.bounding_box.position;
 			particle.rotation = atan2f(delta_pos.y, delta_pos.x) - (float)M_PI_2;
 		}

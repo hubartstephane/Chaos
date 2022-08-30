@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum50PCH.h"
 #include "Ludum50Player.h"
 #include "Ludum50Level.h"
 #include "Ludum50LevelInstance.h"
@@ -27,7 +26,7 @@ bool LudumPlayer::Initialize(GameInstance * in_game_instance)
 		return false;
 
 
-	
+
 
 
 	return true;
@@ -39,10 +38,10 @@ bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, bool hot_re
 		return false;
 
 
-	
-	
 
-	
+
+
+
 
 	return true;
 }
@@ -59,7 +58,7 @@ void LudumPlayer::HandleInputs(float delta_time, GamepadState const* gpd)
 void LudumPlayer::OnLifeLost()
 {
 	Player::OnLifeLost();
-	
+
 
 
 

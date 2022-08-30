@@ -1,7 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
-
+#include "Ludum47PCH.h"
 #include "Ludum47Game.h"
 #include "Ludum47Particles.h"
 
@@ -25,7 +24,7 @@ public:
 
 	bool emission_started = true;
 
-	
+
 };
 
 

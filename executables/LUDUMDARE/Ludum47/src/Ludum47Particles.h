@@ -1,6 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
+#include "Ludum47PCH.h"
 
 // ===========================================================================
 // the car values
@@ -8,7 +8,7 @@
 
 class CarData
 {
-public: 
+public:
 
 	float min_velocity = -50.0f;
 	float max_velocity = 200.0f;
@@ -181,7 +181,7 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticleOpponent& particle) const;
 
-	
+
 
 public:
 

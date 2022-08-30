@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum43PCH.h"
 #include "Ludum43Level.h"
 #include "Ludum43LevelInstance.h"
 #include "Ludum43Game.h"
@@ -35,7 +34,7 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(chaos::TMLayerInsta
 	{
 		ParticleEnemyLayerTrait layer_trait;
 		layer_trait.game = ludum_game;
-		layer_trait.dynamic_particles = is_enemy; // shuxxx : optimization 
+		layer_trait.dynamic_particles = is_enemy; // shuxxx : optimization
 		layer_trait.dynamic_vertices = is_enemy;
 		return new chaos::ParticleLayer<ParticleEnemyLayerTrait>(layer_trait);
 	}

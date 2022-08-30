@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum47PCH.h"
 #include "Ludum47Player.h"
 #include "Ludum47Level.h"
 #include "Ludum47LevelInstance.h"
@@ -28,7 +27,7 @@ bool LudumPlayer::Initialize(chaos::GameInstance * in_game_instance)
 
 	spawner_delay.spawn_per_second = 20.0f;
 
-	
+
 
 
 	return true;
@@ -39,7 +38,7 @@ bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, bool hot_re
 	if (!Player::InitializeGameValues(config, hot_reload))
 		return false;
 
-	
+
 
 	chaos::JSONTools::GetAttribute(config, "min_velocity", car_data.min_velocity);
 	chaos::JSONTools::GetAttribute(config, "max_velocity", car_data.max_velocity);
@@ -53,7 +52,7 @@ bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, bool hot_re
 	chaos::JSONTools::GetAttribute(config, "reaction_decrease", car_data.reaction_decrease);
 
 	CHAOS_JSON_ATTRIBUTE(config, velocity_collision_factor);
-	
+
 
 	CHAOS_JSON_ATTRIBUTE(config, collision_health_lost);
 
@@ -155,7 +154,7 @@ void LudumPlayer::SoundCollision()
 void LudumPlayer::OnLifeLost()
 {
 	chaos::Player::OnLifeLost();
-	
+
 
 
 

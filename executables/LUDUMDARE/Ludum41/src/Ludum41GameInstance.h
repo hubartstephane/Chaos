@@ -1,7 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
-
+#include "Ludum41PCH.h"
 #include "Ludum41Challenge.h"
 #include "Ludum41Particles.h"
 
@@ -19,11 +18,11 @@ class LudumGameInstance : public chaos::GameInstance
 	friend class LudumChallengeRewardPunishment_SplitBall;
 	friend class LudumChallengeRewardPunishment_BallPower;
 	friend class LudumChallengeRewardPunishment_BrickOffset;
-	
+
 	friend class LudumChallenge;
 	friend class ParticleMovableObjectLayerTrait;
 	friend class ParticleLifeLayerTrait;
-	friend class ParticleBrickLayerTrait;	
+	friend class ParticleBrickLayerTrait;
 
 protected:
 
@@ -108,39 +107,39 @@ protected:
 	ParticleMovableObject * GetBallParticles();
 	/** get the balls */
 	ParticleMovableObject const * GetBallParticles() const;
-	/** get the number of balls */	
+	/** get the number of balls */
 	size_t GetBallCount() const;
-	
-	
+
+
 	/** get a random button in existing list */
-	int GetRandomButtonID() const;	
+	int GetRandomButtonID() const;
 	/** create a text for the challenge */
 	chaos::ParticleAllocationBase * CreateChallengeParticles(LudumChallenge * challenge);
 	/** create a string for a gamepad challenge */
-	std::string GenerateGamepadChallengeString(std::vector<int> const & gamepad_challenge);	
-	
+	std::string GenerateGamepadChallengeString(std::vector<int> const & gamepad_challenge);
+
 	virtual bool Initialize(chaos::Game * in_game) override;
 
 	/** called whenever a ball collide */
-	void OnBallCollide(bool collide_brick);	
-	
+	void OnBallCollide(bool collide_brick);
+
 	/** destroying game objects*/
-	void DestroyGameObjects();	
+	void DestroyGameObjects();
 
 protected:
 
 	/** current game values */
 	float brick_offset = 0.0f;
 	float target_brick_offset = 0.0f;
-	int   combo_multiplier = 0;	
+	int   combo_multiplier = 0;
 	float ball_time_dilation = 1.0f;
 	float challenge_timer = 0.0f;
 	float ball_collision_speed    = 0.5f;
 	float ball_power         = 1.0f;
-	float ball_speed         = 5.0f;	
+	float ball_speed         = 5.0f;
 
 	int pending_split_count = 0;
-	
+
 	/** some sprites */
 	chaos::shared_ptr<chaos::ParticleAllocationBase> balls_allocations;
 	/** current the challenge */

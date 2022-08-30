@@ -1,6 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
+#include "Ludum45PCH.h"
 
 // ====================================================================
 // LudumPlayingHUD
@@ -44,7 +44,7 @@ protected:
 	virtual bool QueryValue(std::string & result) const override;
 	/** override */
 	virtual void UpdateMesh() override;
-};	
+};
 
 // ====================================================================
 // GameHUDShroudLifeComponent
@@ -95,6 +95,6 @@ protected:
 	chaos::Hotpoint hotpoint = chaos::Hotpoint::BOTTOM_LEFT;
 	glm::vec2 particle_size = glm::vec2(0.0f, 0.0f);
 	glm::vec2 position = glm::vec2(0.0f, 0.0f);
-};	
+};
 
 

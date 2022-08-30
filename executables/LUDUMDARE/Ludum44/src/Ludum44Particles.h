@@ -1,6 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
+#include "Ludum44PCH.h"
 
 static constexpr float DANGER_RADIUS_RATIO = 0.3f;
 static constexpr float WAKEN_RADIUS_RATIO  = 1.0f;
@@ -26,7 +26,7 @@ class ParticlePowerUpZone : public chaos::TMParticle
 {
 public:
 
-	ParticlePowerUpZone() 
+	ParticlePowerUpZone()
 	{
 	}
 
@@ -38,14 +38,14 @@ public:
 	// texcoord(1) is used for bottom_left corner or sprite in atlas.
 	// texcoord2   is used for top_left corner or sprite in atlas.
 	// texcoord3   is use to indicate in [0..1] where we are
-	glm::vec3 texcoord2; 
+	glm::vec3 texcoord2;
 	glm::vec2 texcoord3;
 };
 
 void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexPowerUpZone>);
 
 
-class PowerUpZoneParticleLayerTrait : public chaos::ParticleLayerTrait<ParticlePowerUpZone, VertexPowerUpZone> 
+class PowerUpZoneParticleLayerTrait : public chaos::ParticleLayerTrait<ParticlePowerUpZone, VertexPowerUpZone>
 {
 public:
 
@@ -192,7 +192,7 @@ class ParticlePlayer : public ParticleBase
 {
 public:
 
-	
+
 
 };
 

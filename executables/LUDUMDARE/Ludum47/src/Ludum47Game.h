@@ -1,7 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
-
+#include "Ludum47PCH.h"
 #include "Ludum47Particles.h"
 #include "Ludum47Level.h"
 
@@ -10,7 +9,7 @@
 // =================================================
 
 class LudumGame : public chaos::Game
-{	
+{
 	friend class ParticlePlayerLayerTrait;
 
 	friend class LudumWindow;

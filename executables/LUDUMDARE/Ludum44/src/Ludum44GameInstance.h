@@ -1,7 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
-
+#include "Ludum44PCH.h"
 #include "Ludum44PowerUp.h"
 
 // =========================================================
@@ -14,8 +13,8 @@ class LudumGameInstance : public chaos::GameInstance
 public:
 
 	friend class GameHUDHealthBarComponent;
-	friend class GameHUDPowerUpComponent;	
-	friend class PowerUpTrigger;	
+	friend class GameHUDPowerUpComponent;
+	friend class PowerUpTrigger;
 
 	CHAOS_DECLARE_GAMEPLAY_FRIENDSHIPS(Ludum);
 

@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum40PCH.h"
 #include "Ludum40SpriteManager.h"
 #include "Ludum40Game.h"
 
@@ -10,16 +9,16 @@ char const* SpriteManager::vertex_shader_source = R"VERTEX_SHADER(
     in vec3 color;
 
     uniform mat4 local_to_cam;
-    
+
     out vec3 vs_texcoord;
     out vec3 vs_color;
-    
+
     void main()
     {
       vs_texcoord = texcoord;
       vs_color    = color;
       gl_Position = local_to_cam * vec4(position.x, position.y, 0.0, 1.0);
-    };											
+    };
 	)VERTEX_SHADER";
 
 char const* SpriteManager::fragment_shader_source = R"FRAGMENT_SHADER(
@@ -32,8 +31,8 @@ char const* SpriteManager::fragment_shader_source = R"FRAGMENT_SHADER(
 
     void main()
     {
-	vec4 color = (vs_texcoord.z < 0.0)? 
-		vec4(1.0, 1.0, 1.0, 1.0) : 
+	vec4 color = (vs_texcoord.z < 0.0)?
+		vec4(1.0, 1.0, 1.0, 1.0) :
 		texture(material, vs_texcoord);
       output_color.xyz = color.xyz * vs_color;
       output_color.a   = color.a;
@@ -214,7 +213,7 @@ void SpriteManager::Display(chaos::GPUProgramProviderBase* uniform_provider)
 
 	program->UseProgram(&main_uniform_provider);
 
-	// The drawing   
+	// The drawing
 	glDrawArrays(GL_TRIANGLES, 0, (GLsizei)sprites.size());
 
 	// restore states

@@ -1,3 +1,4 @@
+#include "Ludum41CustomPCH.h"
 #include "Ludum41CustomLevel.h"
 #include "Ludum41CustomLevelInstance.h"
 #include "Ludum41CustomGame.h"
@@ -94,7 +95,7 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 		GetHexColor("01FF00FF"), // 5: green
 		GetHexColor("FF6A00FF"), // 6: orange
 		GetHexColor("FFFFFFFF"), // 7: white
-		GetHexColor("FF00FEFF"), // 8: pink		
+		GetHexColor("FF00FEFF"), // 8: pink
 		GetHexColor("000000FF")  // 9: black
 	};
 
@@ -211,7 +212,7 @@ ParticleBrick * LudumLevelInstance::GetBricks()
 	return &particles[0];
 }
 
-ParticleBrick const * LudumLevelInstance::GetBricks() const 
+ParticleBrick const * LudumLevelInstance::GetBricks() const
 {
 	if (bricks_allocations == nullptr)
 		return nullptr;

@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum46PCH.h"
 #include "Ludum46Game.h"
 #include "Ludum46Particles.h"
 #include "Ludum46Level.h"
@@ -9,7 +8,7 @@
 #include "Ludum46GameInstance.h"
 
 LudumGame::LudumGame()
-{		
+{
 	// 	Don't let the Flames of Hell die
 
 	game_name = "Burnaouf Paradise\nVII";
@@ -41,7 +40,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, bool hot_rel
 {
 	if (!chaos::Game::InitializeGameValues(config, hot_reload))
 		return false;
-						
+
 	return true;
 }
 
@@ -76,7 +75,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 
 		update_provider.AddVariable("burning_decrease_step", burning_decrease_step);
 	}
-	
+
 
 	chaos::Game::DoDisplayGame(renderer, &update_provider, render_params);
 

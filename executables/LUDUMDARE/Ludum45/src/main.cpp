@@ -1,9 +1,8 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum45PCH.h"
 #include "Ludum45Game.h"
 
 int main(int argc, char ** argv, char ** env)
-{	
+{
 	chaos::WindowParams params;
 	params.monitor = nullptr;
 	params.width = 500;

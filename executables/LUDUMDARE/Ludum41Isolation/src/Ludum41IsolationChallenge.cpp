@@ -1,7 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
-
+#include "Ludum41IsolationPCH.h"
 #include "Ludum41IsolationChallenge.h"
 #include "Ludum41IsolationGame.h"
 #include "Ludum41IsolationGameInstance.h"
@@ -47,13 +46,13 @@ void LudumChallenge::OnGamepadButtonReceived(chaos::GamepadState const * in_game
 		{
 			if (it->first == (chaos::GamepadButton)expected_key)
 				continue;
-		
+
 			if (in_gamepad_state->GetButtonStateChange(it->first) == chaos::ButtonStateChange::BECOME_PRESSED)
 			{
 				OnChallengeError(false);
 				return;
 			}
-		}	
+		}
 	}
 }
 
@@ -68,7 +67,7 @@ void LudumChallenge::AdvanceChallenge()
 	// compute success for gamepad (much simpler)
 	++gamepad_challenge_position;
 	if (gamepad_challenge_position == gamepad_challenge.size())
-	{			
+	{
 		game->PlaySound("challenge_success", false, false, 0.0f, chaos::SoundContext::GAME);
 
 		game_instance->OnChallengeCompleted(this, true,  gamepad_challenge.size()); // remove the challenge from pending list
@@ -99,7 +98,7 @@ int LudumChallenge::GetTimeSoundIndex(float t) const
 
 	int count = sizeof(times) / sizeof(times[0]);
 
-	// greater values give 0, 1 .. 
+	// greater values give 0, 1 ..
 	if (t > times[count - 1])
 		return (int)t;
 
@@ -118,18 +117,18 @@ void LudumChallenge::Tick(float delta_time)
 	if (timeout > 0.0f)
 	{
 		int time_sound_index1 = GetTimeSoundIndex(timeout);
-	
+
 		timeout = timeout - delta_time;
 		if (timeout <= 0.0f)
 		{
-			OnChallengeError(true);		
+			OnChallengeError(true);
 		}
 		else
 		{
 			int time_sound_index2 = GetTimeSoundIndex(timeout);
 			if (time_sound_index1 != time_sound_index2)
 				game->PlaySound("challenge_bip", false, false, 0.0f, chaos::SoundContext::GAME);
-		}			
+		}
 	}
 }
 
@@ -145,8 +144,8 @@ std::string LudumChallenge::NoSpaceKeyboardChallenge(std::string const & keyboar
 	return result;
 }
 
-size_t LudumChallenge::GetChallengePosition(bool gamepad) const 
-{ 
+size_t LudumChallenge::GetChallengePosition(bool gamepad) const
+{
 	return (gamepad)?
 		gamepad_challenge_position:
 		keyboard_challenge_position;

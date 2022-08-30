@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum47PCH.h"
 #include "Ludum47Game.h"
 #include "Ludum47Particles.h"
 #include "Ludum47Level.h"
@@ -9,7 +8,7 @@
 #include "Ludum47GameInstance.h"
 
 LudumGame::LudumGame()
-{		
+{
 	// 	Don't let the Flames of Hell die
 	game_name = "Aouf Run";
 	game_instructions = R"INSTRUCTIONS(
@@ -40,7 +39,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, bool hot_rel
 {
 	if (!chaos::Game::InitializeGameValues(config, hot_reload))
 		return false;
-						
+
 	return true;
 }
 
@@ -68,11 +67,11 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 	LudumLevelInstance const* ludum_level_instance = GetLevelInstance();
 	if (ludum_level_instance != nullptr)
 	{
-	
+
 
 
 	}
-	
+
 
 	chaos::Game::DoDisplayGame(renderer, &update_provider, render_params);
 }

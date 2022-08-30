@@ -1,6 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
+#include "Ludum41PCH.h"
 
 class LudumChallenge : public chaos::Object
 {
@@ -57,7 +57,7 @@ protected:
 	size_t keyboard_challenge_position = 0;
 
 	/** time out (no time out by default) */
-	float timeout = -1.0f; 
+	float timeout = -1.0f;
 
 	/** the game */
 	class LudumGameInstance * game_instance = nullptr;

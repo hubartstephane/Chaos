@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum45PCH.h"
 #include "Ludum45GameInstance.h"
 #include "Ludum45Game.h"
 #include "Ludum45Level.h"
@@ -20,7 +19,7 @@ void LudumGameInstance::FireExplosion(chaos::box2 const & ref_box)
 
     chaos::BitmapAtlas::BitmapInfo const* explosion_info = spawner.GetBitmapInfo();
 
-    spawner.SpawnParticles(1, false).Process([ref_box, explosion_info](chaos::ParticleAccessor<ParticleExplosion> accessor) 
+    spawner.SpawnParticles(1, false).Process([ref_box, explosion_info](chaos::ParticleAccessor<ParticleExplosion> accessor)
     {
         for (ParticleExplosion& particle : accessor)
         {

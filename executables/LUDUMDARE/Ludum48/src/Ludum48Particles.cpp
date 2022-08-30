@@ -1,7 +1,5 @@
 #pragma once
-
-#include "chaos/Chaos.h"
-
+#include "Ludum48PCH.h"
 #include "Ludum48Particles.h"
 #include "Ludum48Game.h"
 #include "Ludum48GameInstance.h"
@@ -156,7 +154,7 @@ bool ParticleAnimatedLayerTrait::UpdateParticle(float delta_time, ParticleAnimat
 
 	particle.animation_timer += delta_time;
 
-	// destroy the particles ? 
+	// destroy the particles ?
 	if (!UpdateAnimatedParticleTexcoords(particle))
 		return true;
 
@@ -228,7 +226,7 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 			particle.flags |= ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
 
 	}
-	else 
+	else
 	{
 		idle_timer = std::min(idle_timer + delta_time, 1.0f);
 		if (idle_timer == 1.0f)

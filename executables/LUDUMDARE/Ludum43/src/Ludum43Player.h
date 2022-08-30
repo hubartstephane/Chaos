@@ -1,7 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
-
+#include "Ludum43PCH.h"
 #include "Ludum43Particles.h"
 
 // =========================================================
@@ -45,7 +44,7 @@ protected:
 
 	/** read the health back from the particle */
 	void GetHealthFromParticle();
-	
+
 protected:
 
 	float current_cooldown = 0.1f;

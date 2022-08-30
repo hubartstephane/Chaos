@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum46PCH.h"
 #include "Ludum46Level.h"
 #include "Ludum46LevelInstance.h"
 #include "Ludum46Game.h"
@@ -180,7 +179,7 @@ bool Spawner::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::Tiled
 	emission_started = in_geometric_object->GetPropertyValueBool("EMISSION_STARTED", emission_started);
 	// update internals (used whenever checkpoint is reloaded)
 	spawned_count = 0;
-	nospawn_time_cumulated = 0.0f; 
+	nospawn_time_cumulated = 0.0f;
 
 	return true;
 }
@@ -226,7 +225,7 @@ bool Spawner::DoTick(float delta_time)
 {
 	chaos::TMObject::DoTick(delta_time);
 
-	// whether the emission is enabled 
+	// whether the emission is enabled
 	if (!emission_started)
 		return true;
 	// nothing to spawn
@@ -262,8 +261,8 @@ bool Spawner::DoTick(float delta_time)
 }
 
 void Spawner::SpawnParticles(chaos::ParticleSpawner & spawner, int count)
-{	
-	spawner.SpawnParticles(count, false).Process([this](chaos::ParticleAccessor<ParticleBase> accessor) 
+{
+	spawner.SpawnParticles(count, false).Process([this](chaos::ParticleAccessor<ParticleBase> accessor)
 	{
 		chaos::box2 bx = GetBoundingBox(false);
 
@@ -273,7 +272,7 @@ void Spawner::SpawnParticles(chaos::ParticleSpawner & spawner, int count)
 			p.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 			p.velocity = particle_start_velocity;
 			p.duration = particle_duration;
-		}	
+		}
 	});
 }
 
@@ -383,7 +382,7 @@ chaos::TMObjectFactory LudumLevel::DoGetObjectFactory(chaos::TMLayerInstance * i
 		else
 			return CHAOS_TM_MAKE_OBJECT_FACTORY(return new SoulTrigger(););
 	}
-		
+
 	if (in_typed_object->IsObjectOfType("SpikeBar"))
 		return CHAOS_TM_MAKE_OBJECT_FACTORY(return new SpikeBar(););
 

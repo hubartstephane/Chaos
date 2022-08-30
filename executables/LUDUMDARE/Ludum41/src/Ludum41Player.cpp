@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum41PCH.h"
 #include "Ludum41Player.h"
 #include "Ludum41Game.h"
 #include "Ludum41GameInstance.h"
@@ -159,7 +158,7 @@ void LudumPlayer::OnLifeLost()
 	ludum_game_instance->target_brick_offset = 0.0f;
 	ludum_game_instance->ball_time_dilation = 1.0f;
 	ludum_game_instance->challenge_timer = ludum_game->challenge_frequency;
-	
+
 	SetPlayerLength(ludum_game->player_initial_length, false);
 
 	ludum_game_instance->balls_allocations = ludum_game_instance->CreateBalls(1, true);

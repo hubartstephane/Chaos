@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum46PCH.h"
 #include "Ludum46Level.h"
 #include "Ludum46LevelInstance.h"
 #include "Ludum46Game.h"
@@ -55,7 +54,7 @@ bool LudumLevelInstance::Initialize(chaos::Game * in_game, chaos::Level * in_lev
 		flame_health = ludum_level->flame_initial_health;
 		flame_initial_health = ludum_level->flame_initial_health;
 		flame_health_lost_per_second = ludum_level->flame_health_lost_per_second;
-	}	
+	}
 	return true;
 }
 
@@ -164,7 +163,7 @@ void LudumLevelInstance::SpawnBloodParticles(chaos::box2 const& box, int particl
 				p.duration = 3.0f;
 				p.life = 0.0f;
 				p.acceleration.y = -30.0f;
-			}		
+			}
 		});
 	}
 

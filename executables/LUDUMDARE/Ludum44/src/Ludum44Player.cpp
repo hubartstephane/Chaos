@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum44PCH.h"
 #include "Ludum44Player.h"
 #include "Ludum44Level.h"
 #include "Ludum44LevelInstance.h"
@@ -17,7 +16,7 @@ void LudumPlayer::TickInternal(float delta_time)
 {
 	chaos::Player::TickInternal(delta_time);
 
-	// fire 
+	// fire
 	UpdatePlayerFire(delta_time);
 	// buy items
 	UpdatePlayerBuyingItem(delta_time);
@@ -46,7 +45,7 @@ void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 			left_stick_position / std::sqrt(left_length_2) :
 			right_stick_position / std::sqrt(right_length_2);
 
-		player_particle->velocity = ludum_game->player_speeds[current_speed_index] * ludum_game->player_speed_factor * speed; 
+		player_particle->velocity = ludum_game->player_speeds[current_speed_index] * ludum_game->player_speed_factor * speed;
 	}
 }
 
@@ -82,7 +81,7 @@ void LudumPlayer::UpdatePlayerFire(float delta_time)
 	fire_timer -= delta_time;
 	if (fire_timer < 0.0f)
 		fire_timer = 0.0f;
-	
+
 	LudumGame * ludum_game = GetGame();
 	if (ludum_game == nullptr)
 		return;
@@ -95,13 +94,13 @@ void LudumPlayer::UpdatePlayerFire(float delta_time)
 	{
 		charged_fire_timer += delta_time;
 		if (charged_fire_timer >= ludum_game->charged_fire_time)
-			charged_fire_timer = ludum_game->charged_fire_time;	
+			charged_fire_timer = ludum_game->charged_fire_time;
 	}
 	else
 	{
 		if (charged_fire_timer >= ludum_game->charged_fire_time) // charged fire is only fired when button is UP
 		{
-			FireChargedProjectile();		
+			FireChargedProjectile();
 			charged_fire_timer = 0.0f;
 		}
 		else
@@ -112,10 +111,10 @@ void LudumPlayer::UpdatePlayerFire(float delta_time)
 				bool fire_pressed = CheckButtonPressed(fire_key_buttons);
 				if (fire_pressed)
 				{
-					FireNormalProjectile();					
+					FireNormalProjectile();
 					fire_timer = ludum_game->normal_fire_time;
-				}								
-			}			
+				}
+			}
 		}
 	}
 }

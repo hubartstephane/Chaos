@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum45PCH.h"
 #include "Ludum45HUD.h"
 #include "Ludum45Game.h"
 #include "Ludum45Level.h"
@@ -23,7 +22,7 @@ namespace chaos
 bool LudumPlayingHUD::FillHUDContent()
 {
 	if (!chaos::PlayingHUD::FillHUDContent())
-		return false;	
+		return false;
 	RegisterComponent(chaos::GameHUDKeys::SHROUDLIFE_ID, new GameHUDShroudLifeComponent("LifeGrid"));
 	RegisterComponent(chaos::GameHUDKeys::LIFE_ID, new chaos::GameHUDLifeComponent());
 	RegisterComponent(chaos::GameHUDKeys::UPGRADE_ID, new GameHUDUpgradeComponent());
@@ -36,7 +35,7 @@ bool LudumPlayingHUD::FillHUDContent()
 // ====================================================================
 
 GameHUDUpgradeComponent::GameHUDUpgradeComponent() :
-	chaos::GameHUDCacheValueTextComponent<std::string>("%s") 
+	chaos::GameHUDCacheValueTextComponent<std::string>("%s")
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";

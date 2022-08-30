@@ -1,7 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
-
+#include "Ludum45PCH.h"
 #include "Ludum45Particles.h"
 #include "Ludum45Level.h"
 #include "Ludum45Enemies.h"
@@ -13,7 +12,7 @@
 class LudumGame : public chaos::Game
 {
 
-	
+
 	friend class ParticlePlayerLayerTrait;
 
 
@@ -63,7 +62,7 @@ protected:
 
 	virtual void DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::GPURenderParams const & render_params) override;
 
-	
+
 
 	void RegisterEnemyTypes();
 
@@ -86,12 +85,12 @@ protected:
 	float fire_velocity = 800.0f;
 
 	float scroll_factor = 1.0f;
-	
+
 	std::vector<float> player_speeds;
 	std::vector<float> player_damages;
 	std::vector<float> player_dash_cooldowns;
 	std::vector<float> player_power_rates;
-	std::vector<int>   player_power_spreads;	
-	std::vector<float> player_specialpowers;	
+	std::vector<int>   player_power_spreads;
+	std::vector<float> player_specialpowers;
 };
 

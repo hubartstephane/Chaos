@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include "Ludum48PCH.h"
 #include "Ludum48.h"
 
 class LudumPlayerDisplacementComponent : public PlayerDisplacementComponent

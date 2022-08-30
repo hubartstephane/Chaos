@@ -1,7 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
-
+#include "Ludum43PCH.h"
 #include "Ludum43Particles.h"
 #include "Ludum43Level.h"
 
@@ -44,7 +43,7 @@ protected:
 
 	/** initialize the game variables */
 	virtual bool InitializeGameValues(nlohmann::json const & config, bool hot_reload) override;
-	
+
 	/** override level creation */
 	chaos::TMLevel * CreateTMLevel() override;
 
@@ -73,7 +72,7 @@ public:
 	float player_tangent_force        = 500000.0f;
 	float player_attraction_force     = 20.0f;
 	float player_repulsion_force      = 20.0f;
-	
+
 	float player_slowing_factor       = 0.5f;
 	float player_max_velocity         = 20.0f;
 	float player_acceleration         = 2000.0f;
@@ -91,13 +90,13 @@ public:
 	float enemy_tangent_force        = 500000.0f;
 	float enemy_attraction_force     = 20.0f;
 	float enemy_repulsion_force      = 20.0f;
-	
+
 
 
 	float particle_slowing_factor     = 0.5f;
 	float particle_min_radius_factor = 1.0f;
 	float particle_max_radius_factor = 3.0f;
-	
+
 	float particle_max_velocity = 20.0f;
 
 	float world_clamp_radius = 3000.0f;

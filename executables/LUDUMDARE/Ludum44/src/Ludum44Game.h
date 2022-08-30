@@ -1,7 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
-
+#include "Ludum44PCH.h"
 #include "Ludum44Particles.h"
 #include "Ludum44Level.h"
 #include "Ludum44PowerUp.h"
@@ -72,7 +71,7 @@ protected:
 	std::vector<float> player_charged_damages;
 	std::vector<int>   player_fire_rates;
 
-	
+
 
 
 	/** a multiplier for speed */
@@ -101,7 +100,7 @@ protected:
 	float meteor_health = 3.0f;
 	float alien_health = 3.0f;
 	float turret_health = 3.0f;
-		
+
 	float meteor_damage_for_player = 0.5f;
 	float alien_damage_for_player = 0.5f;
 	float turret_damage_for_player = 0.5f;

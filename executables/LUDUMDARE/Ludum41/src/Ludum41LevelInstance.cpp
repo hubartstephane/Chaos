@@ -1,3 +1,4 @@
+#include "Ludum41PCH.h"
 #include "Ludum41Level.h"
 #include "Ludum41LevelInstance.h"
 #include "Ludum41Game.h"
@@ -156,7 +157,7 @@ ParticleBrick * LudumLevelInstance::GetBricks()
 	return &particles[0];
 }
 
-ParticleBrick const * LudumLevelInstance::GetBricks() const 
+ParticleBrick const * LudumLevelInstance::GetBricks() const
 {
 	if (bricks_allocations == nullptr)
 		return nullptr;

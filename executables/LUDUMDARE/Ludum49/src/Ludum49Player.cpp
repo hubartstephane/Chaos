@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum49PCH.h"
 #include "Ludum49Player.h"
 #include "Ludum49Level.h"
 #include "Ludum49LevelInstance.h"
@@ -27,7 +26,7 @@ bool LudumPlayer::Initialize(GameInstance * in_game_instance)
 		return false;
 
 
-	
+
 
 
 	return true;
@@ -45,10 +44,10 @@ bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, bool hot_re
 	CHAOS_JSON_ATTRIBUTE(config, slow_down_factor);
 	CHAOS_JSON_ATTRIBUTE(config, stop_velocity);
 	CHAOS_JSON_ATTRIBUTE(config, touching_ground_lapse_time);
-	
-	
 
-	
+
+
+
 
 	return true;
 }
@@ -65,7 +64,7 @@ void LudumPlayer::HandleInputs(float delta_time, GamepadState const* gpd)
 void LudumPlayer::OnLifeLost()
 {
 	Player::OnLifeLost();
-	
+
 
 
 

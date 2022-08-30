@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum45PCH.h"
 #include "Ludum45Player.h"
 #include "Ludum45Level.h"
 #include "Ludum45LevelInstance.h"
@@ -37,7 +36,7 @@ void LudumPlayer::DoUpdateBrightSideOfLife(bool value)
 	{
 		GetGame()->SetInGameMusic("brightsideoflife");
 
-	}	
+	}
 	brightsideoflife = value;
 }
 
@@ -83,9 +82,9 @@ void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 	if (dash_cooldown < 0.0f)
 		dash_cooldown = 0.0f;
 
-	// get the dash input 
+	// get the dash input
 
-	float left_length_2 = glm::length2(left_stick_position);	
+	float left_length_2 = glm::length2(left_stick_position);
 	float right_length_2 = glm::length2(right_stick_position);
 
 	chaos::Key const dash_key_buttons[] = { chaos::KeyboardButton::LEFT_CONTROL, chaos::KeyboardButton::RIGHT_CONTROL, chaos::GamepadButton::B, chaos::Key()};
@@ -101,16 +100,16 @@ void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 				if (dash_cooldown <= 0.0f && !dash_locked)
 				{
 					dash_timer = ludum_game->player_dash_duration;
-					dash_cooldown = GetCurrentDashValue();			
+					dash_cooldown = GetCurrentDashValue();
 					GetGame()->PlaySound("dash", false, false, 0.0f, chaos::SoundContext::LEVEL);
-				}		
+				}
 			}
 			dash_locked = true; // dash is locked until the key is released
 		}
 	}
 	else
 	{
-		dash_locked = false;	
+		dash_locked = false;
 	}
 
 	// compute max velocity and extra dash boost
@@ -140,7 +139,7 @@ void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 		{
 			direction = (left_length_2 > right_length_2) ?
 				left_stick_position / std::sqrt(left_length_2) :
-				right_stick_position / std::sqrt(right_length_2);	
+				right_stick_position / std::sqrt(right_length_2);
 		}
 		else
 		{
@@ -159,20 +158,20 @@ void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 		if (glm::length2(player_velocity) > 0.0f)
 		{
 			normal_velocity      = player_velocity * glm::dot(glm::normalize(player_velocity), direction);
-			tangeantial_velocity = player_velocity - normal_velocity;				
+			tangeantial_velocity = player_velocity - normal_velocity;
 		}
 
-		player_velocity = 
-			input_factor * input_max_velocity * direction 
+		player_velocity =
+			input_factor * input_max_velocity * direction
 			+
 			dash_velocity_boost * direction
-			+ 
+			+
 			tangeantial_velocity * powf(ludum_game->player_tan_speed_damping, delta_time);
 	}
 	else
 		player_velocity *= powf(ludum_game->player_speed_damping, delta_time);
 
-	// clamp the final velocity		
+	// clamp the final velocity
 	float len = glm::length(player_velocity);
 	if (len > max_velocity)
 		player_velocity *= max_velocity / len;
@@ -201,8 +200,8 @@ void LudumPlayer::UpdatePlayerFire(float delta_time)
 		{
             FireProjectiles();
 			fire_timer = GetCurrentPowerRateValue();
-		}								
-	}			
+		}
+	}
 }
 
 void LudumPlayer::FireProjectiles()
@@ -251,7 +250,7 @@ void LudumPlayer::FireProjectiles()
     fire_spawner.SpawnParticles(count, false).Process([velocity, damage, particle_box](chaos::ParticleAccessor<ParticleFire> accessor)
     {
         float delta_rotation  = 0.1f;
-        float offset_rotation = -(float)M_PI_2; 
+        float offset_rotation = -(float)M_PI_2;
 
         for (ParticleFire & particle : accessor)
         {
@@ -329,7 +328,7 @@ PlayerUpgrade * LudumPlayer::FindPlayerUpgrade(chaos::TagType upgrade_type)
 		if (upgrade == nullptr)
 			continue;
 		if (upgrade->type == upgrade_type)
-			return upgrade;	
+			return upgrade;
 	}
 	return nullptr;
 }
@@ -343,7 +342,7 @@ PlayerUpgrade const * LudumPlayer::FindPlayerUpgrade(chaos::TagType upgrade_type
 		if (upgrade == nullptr)
 			continue;
 		if (upgrade->type == upgrade_type)
-			return upgrade;	
+			return upgrade;
 	}
 	return nullptr;
 }
@@ -387,7 +386,7 @@ size_t LudumPlayer::GetUpgradeLevel(chaos::TagType upgrade_type) const
 
 template<typename T>
 T LudumPlayer::GetPlayerUpgradedValue(chaos::TagType upgrade_type, std::vector<T> const & values) const
-{	
+{
 	size_t count = values.size();
 	if (count == 0)
 		return T();

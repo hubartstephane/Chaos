@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum48PCH.h"
 #include "Ludum48HUD.h"
 #include "Ludum48Game.h"
 #include "Ludum48Level.h"
@@ -22,7 +21,7 @@ namespace chaos
 bool LudumPlayingHUD::FillHUDContent()
 {
 	if (!PlayingHUD::FillHUDContent())
-		return false;	
+		return false;
 	RegisterComponent(GameHUDKeys::LEVEL_TIMEOUT_ID, new GameHUDTimeoutComponent());
 	RegisterComponent(GameHUDKeys::DIAMOND_ID, new LudumHUDDiamondComponent());
 	RegisterComponent(GameHUDKeys::LIFE_ID, new LudumHUDLifeComponent());

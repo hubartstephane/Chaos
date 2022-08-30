@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum44PCH.h"
 #include "Ludum44Game.h"
 #include "Ludum44Particles.h"
 #include "Ludum44Level.h"
@@ -9,7 +8,7 @@
 #include "Ludum44GameInstance.h"
 
 LudumGame::LudumGame()
-{		
+{
 	game_name = "Kill Paouf V";
 	game_instructions = R"INSTRUCTIONS(
 	[ButtonA] or [KEYBOARD SPACE] : Fire
@@ -53,12 +52,12 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, bool hot_rel
 		return false;
 	if (!InitializeGameValueVector("player_fire_rates", config, player_fire_rates))
 		return false;
-	
+
 	CHAOS_JSON_ATTRIBUTE(config, min_player_max_health);
 	CHAOS_JSON_ATTRIBUTE(config, player_speed_factor);
 	CHAOS_JSON_ATTRIBUTE(config, buy_upgrade_time);
 	CHAOS_JSON_ATTRIBUTE(config, charged_fire_time);
-	CHAOS_JSON_ATTRIBUTE(config, normal_fire_time);	
+	CHAOS_JSON_ATTRIBUTE(config, normal_fire_time);
 	CHAOS_JSON_ATTRIBUTE(config, scroll_factor);
 	CHAOS_JSON_ATTRIBUTE(config, fire_velocity);
 	CHAOS_JSON_ATTRIBUTE(config, enemy_fire_velocity);
@@ -72,7 +71,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, bool hot_rel
 	CHAOS_JSON_ATTRIBUTE(config, meteor_damage_for_player);
 	CHAOS_JSON_ATTRIBUTE(config, alien_damage_for_player);
 	CHAOS_JSON_ATTRIBUTE(config, turret_damage_for_player);
-			
+
 	return true;
 }
 

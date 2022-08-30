@@ -1,6 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
+#include "Ludum41IsolationPCH.h"
 
 class LudumChallengeRewardPunishment : public chaos::Object
 {

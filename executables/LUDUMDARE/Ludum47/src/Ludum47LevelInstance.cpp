@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum47PCH.h"
 #include "Ludum47Level.h"
 #include "Ludum47LevelInstance.h"
 #include "Ludum47Game.h"
@@ -95,7 +94,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	if (lost_timer > 0.0f)
 		lost_timer = std::max(0.0f, lost_timer - delta_time);
 
-	
+
 
 	return true;
 }
@@ -116,7 +115,7 @@ bool LudumLevelInstance::Initialize(chaos::Game * in_game, chaos::Level * in_lev
 
 
 
-	}	
+	}
 	return true;
 }
 
@@ -188,7 +187,7 @@ bool LudumLevelInstance::CanCompleteLevel() const
 
 glm::ivec2 LudumLevelInstance::GetPlayerRacePosition(LudumPlayer const* player) const
 {
-	glm::ivec2 result = { 0, 0 }; 
+	glm::ivec2 result = { 0, 0 };
 
 	size_t point_count = road->points.size();
 	if (point_count == 0)
@@ -215,7 +214,7 @@ glm::ivec2 LudumLevelInstance::GetPlayerRacePosition(LudumPlayer const* player) 
 		chaos::TMParticle const* particle_opponent = opponent->GetParticle<chaos::TMParticle>(0);
 		if (particle_opponent == nullptr)
 			continue;
-		
+
 		// alive opponent
 		++result.y;
 

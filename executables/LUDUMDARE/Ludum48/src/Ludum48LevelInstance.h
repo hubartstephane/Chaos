@@ -1,5 +1,5 @@
 #pragma once
-
+#include "Ludum48PCH.h"
 #include "Ludum48.h"
 #include "Ludum48Game.h"
 
@@ -22,7 +22,7 @@ class GridInfo
 {
 public:
 
-	~GridInfo() 
+	~GridInfo()
 	{
 		delete[] cells;
 	}
@@ -103,7 +103,7 @@ protected:
 	GridInfo const & GetGridInfo() const { return grid_info; }
 	GridInfo& GetGridInfo(){ return grid_info; }
 
-	
+
 
 protected:
 

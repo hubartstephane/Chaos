@@ -1,7 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
-
+#include "Ludum43PCH.h"
 #include "Ludum43Particles.h"
 #include "Ludum43Game.h"
 #include "Ludum43GameInstance.h"
@@ -343,7 +342,7 @@ ParticleAtomLayerTrait::UpdateAtomData ParticleAtomLayerTrait::BeginUpdatePartic
 {
 	ParticleAtomLayerTrait::UpdateAtomData result;
 
-	
+
 
 	LudumPlayer const* ludum_player = game->GetPlayer(0);
 	if (ludum_player == nullptr)

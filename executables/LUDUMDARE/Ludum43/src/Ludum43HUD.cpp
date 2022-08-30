@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum43PCH.h"
 #include "Ludum43HUD.h"
 #include "Ludum43Game.h"
 #include "Ludum43Level.h"
@@ -12,7 +11,7 @@
 // ====================================================================
 
 GameHUDWakenParticleComponent::GameHUDWakenParticleComponent() :
-	chaos::GameHUDCacheValueTextComponent<int>("Particles: %d") 
+	chaos::GameHUDCacheValueTextComponent<int>("Particles: %d")
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";

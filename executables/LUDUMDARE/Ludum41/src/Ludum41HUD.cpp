@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum41PCH.h"
 #include "Ludum41HUD.h"
 #include "Ludum41Game.h"
 #include "Ludum41GameInstance.h"
@@ -7,14 +6,12 @@
 #include "Ludum41LevelInstance.h"
 #include "Ludum41Player.h"
 
-
-
 // ====================================================================
 // GameHUDComboComponent
 // ====================================================================
 
 GameHUDComboComponent::GameHUDComboComponent() :
-	chaos::GameHUDCacheValueTextComponent<int>("Combo: %d x") 
+	chaos::GameHUDCacheValueTextComponent<int>("Combo: %d x")
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";

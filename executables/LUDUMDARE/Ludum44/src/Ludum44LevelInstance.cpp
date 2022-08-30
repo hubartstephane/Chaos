@@ -1,10 +1,9 @@
+#include "Ludum44PCH.h"
 #include "Ludum44Level.h"
 #include "Ludum44LevelInstance.h"
 #include "Ludum44Game.h"
 #include "Ludum44Player.h"
 #include "Ludum44GameInstance.h"
-
-#include "chaos/Chaos.h"
 
 // =============================================================
 // LudumLevelInstance implementation
@@ -86,12 +85,12 @@ bool LudumLevelInstance::SerializeIntoJSON(nlohmann::json & json) const
 	return true;
 }
 
-void LudumLevelInstance::SetScrollFactor(float in_scroll_factor) 
-{ 
-	scroll_factor = in_scroll_factor; 
+void LudumLevelInstance::SetScrollFactor(float in_scroll_factor)
+{
+	scroll_factor = in_scroll_factor;
 }
 
-float LudumLevelInstance::GetScrollFactor() const 
-{ 
-	return scroll_factor; 
+float LudumLevelInstance::GetScrollFactor() const
+{
+	return scroll_factor;
 }

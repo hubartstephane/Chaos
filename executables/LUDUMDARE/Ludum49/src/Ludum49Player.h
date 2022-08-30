@@ -1,4 +1,5 @@
 #pragma once
+#include "Ludum49PCH.h"
 #include "Ludum49.h"
 #include "Ludum49Particles.h"
 #include "Ludum49Level.h"
@@ -52,7 +53,7 @@ public:
     float max_velocity = 1000.0f;;
     float touching_ground_lapse_time = 0.05f;
 
-    
+
 
 
 

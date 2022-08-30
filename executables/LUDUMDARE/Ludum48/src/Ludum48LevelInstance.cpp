@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum48PCH.h"
 #include "Ludum48.h"
 #include "Ludum48Level.h"
 #include "Ludum48LevelInstance.h"
@@ -190,7 +189,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 			if (player_particle != nullptr)
 			{
 				box2 player_box = player_particle->bounding_box;
-				player_box.position += player_particle->offset * glm::vec2(32.0f, 32.0f); // HACK 
+				player_box.position += player_particle->offset * glm::vec2(32.0f, 32.0f); // HACK
 				player_box.half_size *= 0.01f;
 
 				TMTileCollisionIterator it = GetTileCollisionIterator(player_box, COLLISION_GATE, false);
@@ -204,7 +203,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	}
 
 	// some particle may have been destroyed during each frames (so must recollect, but do not destroy the locked_by !
-	CollectObjects(); 
+	CollectObjects();
 
 	// very first frame
 	if (frame_timer == 0.0f)
@@ -213,7 +212,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 		FlushPlayerInputs();
 	}
 
-	// normal frames	
+	// normal frames
 	CapturePlayerInputs();
 	DisplaceObjects(delta_time);
 
@@ -222,7 +221,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	if (frame_timer >= frame_duration)
 	{
 		CommitDisplacements();
-		CollectObjects(); // get corrects Particles on the grid 
+		CollectObjects(); // get corrects Particles on the grid
 		DisplacementConsequences();
 		CreatePendingDiamonds(); // XXX : create particles only at the end, not to break all particles pointers in grid_info
 		frame_timer = 0.0f;
@@ -415,7 +414,7 @@ void LudumLevelInstance::NegociatePlayerDisplacement(glm::ivec2 const& p, GridCe
 		{
 			can_move = other_cell.CanLock(cell.particle);
 		}
-		
+
 		if (can_move)
 		{
 			if (!cached_fake_move)
@@ -615,7 +614,7 @@ bool LudumLevelInstance::Initialize(Game * in_game, Level * in_level)
 	if (ludum_level != nullptr)
 	{
 
-	}	
+	}
 	return true;
 }
 
@@ -684,7 +683,7 @@ void LudumLevelInstance::CollectObjects()
 		grid_info.cells = new GridCellInfo[size_t(grid_info.size.x * grid_info.size.y)];
 	}
 
-	// clear 
+	// clear
 	for (int i = 0; i < grid_info.size.x * grid_info.size.y; ++i)
 	{
 		grid_info.cells[i].locked_by_type = GameObjectType::None;
@@ -732,7 +731,7 @@ void LudumLevelInstance::DestroyNeighboorsAndCreateDiamonds(glm::ivec2 const & p
 		{
 			glm::ivec2 other_p = p + glm::ivec2(dx, dy);
 			if (grid_info.IsInside(other_p))
-			{		
+			{
 				bool create_smoke = false;
 
 				GameObjectParticle* other = grid_info(other_p).particle;

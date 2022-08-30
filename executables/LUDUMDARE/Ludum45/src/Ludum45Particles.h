@@ -1,6 +1,6 @@
 #pragma once
 
-#include "chaos/Chaos.h"
+#include "Ludum45PCH.h"
 
 // ===========================================================================
 // VertexBase and ParticleBase
@@ -38,7 +38,7 @@ class ParticleBonus : public ParticleBase
 {
 public:
 
-	
+
 
 	chaos::TagType bonus_type;
 };
@@ -84,7 +84,7 @@ public:
 	chaos::box2 spawner_box;
 
 	class EnemyPattern * pattern = nullptr;
-	
+
 };
 
 class ParticleEnemyLayerTrait : public chaos::ParticleLayerTrait<ParticleEnemy, VertexBase>
@@ -112,7 +112,7 @@ public:
 
 	float  image_timer = 0.0f;
 	int current_frame = 0;
-	
+
 
 };
 

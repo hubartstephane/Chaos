@@ -1,5 +1,4 @@
-#include "chaos/Chaos.h"
-
+#include "Ludum46PCH.h"
 #include "Ludum46HUD.h"
 #include "Ludum46Game.h"
 #include "Ludum46Level.h"
@@ -14,6 +13,6 @@
 bool LudumPlayingHUD::FillHUDContent()
 {
 	if (!chaos::PlayingHUD::FillHUDContent())
-		return false;	
+		return false;
 	return true;
 }

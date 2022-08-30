@@ -4,8 +4,7 @@ module;
 
 export module MyClass;
 
-
-export class MyClass
+export class CHAOS2_API MyClass
 {
 public:
 

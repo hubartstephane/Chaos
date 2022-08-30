@@ -234,3 +234,5 @@
 #ifdef _MSC_VER
 #  pragma warning(pop)
 #endif
+
+#include "chaos2/Config.h"

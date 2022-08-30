@@ -436,7 +436,7 @@ function Project:AddProjectToSolution()
 		defines('DEATH_BUILDING_EXECUTABLE') -- indicates whether we are building an EXECUTABLE (it does not indicate how a given project has been built)
 	end
 
-	defines('DEATH_IS_BUILDING_="' .. self.project_name) -- the name of the the project beeing built
+	defines('DEATH_IS_BUILDING_' .. self.project_name) -- the name of the the project beeing built
 
 	-- language/dialect
 	language "C++"
@@ -561,23 +561,15 @@ function Project:HandleGeneratedConfigFile()
 
 	if (os.isfile(CONFIG_TEMPLATE_PATH)) then
 
-		local result = ""
-
 		-- read the config template file, split into line, make replacements
 		local content = io.readfile(CONFIG_TEMPLATE_PATH)
-		local lines = string.explode(content, "\n")
-
-		for _, line in ipairs(lines) do
-			for k, v in pairs(patterns) do
-				local pattern = '%$' .. k .. '%$'
-				line = line:gsub(pattern, v)
-			end
-			result = result .. line
+		for k, v in pairs(patterns) do
+			local pattern = '%$' .. k .. '%$'
+			content = content:gsub(pattern, v)
 		end
-
 		-- write into destination file
 		local dst_file = path.join(self.project_src_path,self.generated_config_file)
-		io.writefile(dst_file, result)
+		io.writefile(dst_file, content)
 	end
 end
 

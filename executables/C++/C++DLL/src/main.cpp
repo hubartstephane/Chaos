@@ -8,8 +8,12 @@ import MyClass;
 int main(int argc, char ** argv, char ** env)
 {
 
-	MyClass().f();
-	MyOtherClass().f();
+	MyClass m;
+	m.f();
+	MyOtherClass mm;
+	mm.f();
+
+	auto x = mm.name;
 
 	std::cout << "Hello World Again" << std::endl;
 

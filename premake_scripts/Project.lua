@@ -234,6 +234,7 @@ function Project:ReleaseConf(plat)
 	optimize "On"
 	symbols "Off"
 	flags {"MultiProcessorCompile"}
+	flags {"LinkTimeOptimization"}
 end
 
 --------------------------------------------------------------------

@@ -4,10 +4,14 @@ module;
 
 export module MyClass;
 
+
+
 export class CHAOS2_API MyClass
 {
 public:
 
 	void f();
 
+	std::string name;
 };
+

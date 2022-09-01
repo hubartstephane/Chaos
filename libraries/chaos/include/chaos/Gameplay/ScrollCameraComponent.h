@@ -10,7 +10,7 @@ namespace chaos
 	// ScrollCameraComponent
 	// =============================================
 
-	class ScrollCameraComponent : public CameraComponent
+	class CHAOS_API ScrollCameraComponent : public CameraComponent
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(ScrollCameraComponent, CameraComponent);
 

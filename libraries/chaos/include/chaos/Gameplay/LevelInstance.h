@@ -10,7 +10,7 @@ namespace chaos
 	// LevelInstance : this is the runtime part of a level
 	// =====================================
 
-	class LevelInstance : public GPURenderable, public JSONSerializable, public GPUProgramProviderInterface
+	class CHAOS_API LevelInstance : public GPURenderable, public JSONSerializable, public GPUProgramProviderInterface
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 

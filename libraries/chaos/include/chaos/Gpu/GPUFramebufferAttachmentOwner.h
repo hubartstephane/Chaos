@@ -8,7 +8,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	template<typename ATTACHMENT_TYPE>
-	class GPUFramebufferAttachmentOwner
+	class CHAOS_API GPUFramebufferAttachmentOwner
 	{
 	public:
 
@@ -36,7 +36,7 @@ namespace chaos
 			GLint max_color_attachment = 0;
 			glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &max_color_attachment);
 			assert(color_index - GL_COLOR_ATTACHMENT0 < max_color_attachment);
-#endif			
+#endif
 			return GetAttachment(color_index + GL_COLOR_ATTACHMENT0);
 		}
 		/** get the depth stencil attachment */

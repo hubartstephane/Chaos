@@ -10,16 +10,16 @@ namespace chaos
 	// NameFilter : an object that handles enabled/disabled name lists
 	// ============================================================
 
-	class NameFilter
+	class CHAOS_API NameFilter
 	{
 
 		/** the separator to use */
 		static char const name_separator = ',';
 
 		/** JSON saving method */
-		friend bool SaveIntoJSON(nlohmann::json& json, NameFilter const& src);
+		friend CHAOS_API bool SaveIntoJSON(nlohmann::json& json, NameFilter const& src);
 		/** JSON loading method */
-		friend bool LoadFromJSON(nlohmann::json const& json, NameFilter& dst);
+		friend CHAOS_API bool LoadFromJSON(nlohmann::json const& json, NameFilter& dst);
 
 	public:
 

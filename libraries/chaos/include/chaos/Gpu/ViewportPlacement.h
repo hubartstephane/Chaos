@@ -9,7 +9,7 @@ namespace chaos
 	/**
 	 * The viewport position and size in its ViewportWindow
 	 */
-	class ViewportPlacement
+	class CHAOS_API ViewportPlacement
 	{
 	public:
 

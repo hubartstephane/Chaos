@@ -10,7 +10,7 @@ namespace chaos
 	// RepeatedBoxScissor : an utility object to compute instances in 2D of a box that collide a given scissor
 	// =====================================
 
-	class RepeatedBoxScissor
+	class CHAOS_API RepeatedBoxScissor
 	{
 	public:
 

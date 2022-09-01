@@ -10,7 +10,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/** function to generate a TagType from a name (XXX : not thread safe) */
-	TagType DeclareTag(char const* name);
+	CHAOS_API TagType DeclareTag(char const* name);
 
 #endif
 

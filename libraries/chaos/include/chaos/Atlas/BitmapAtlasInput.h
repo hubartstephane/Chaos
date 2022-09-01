@@ -20,7 +20,7 @@ namespace chaos
 		* FontInfoInputParams : when inserting FontInfoInput into AtlasInput, some glyphs are rendered into bitmaps. This controls the process
 		*/
 
-		class FontInfoInputParams
+		class CHAOS_API FontInfoInputParams
 		{
 		public:
 
@@ -40,15 +40,15 @@ namespace chaos
 			std::vector<shared_ptr<ImageProcessor>> image_processors;
 		};
 
-		bool SaveIntoJSON(nlohmann::json& json, FontInfoInputParams const& src);
+		CHAOS_API bool SaveIntoJSON(nlohmann::json& json, FontInfoInputParams const& src);
 
-		bool LoadFromJSON(nlohmann::json const& json, FontInfoInputParams& dst);
+		CHAOS_API bool LoadFromJSON(nlohmann::json const& json, FontInfoInputParams& dst);
 
 		/**
 		* ObjectBaseInput : base object for inputs
 		*/
 
-		class ObjectBaseInput : public NamedObject
+		class CHAOS_API ObjectBaseInput : public NamedObject
 		{
 		public:
 
@@ -71,7 +71,7 @@ namespace chaos
 		* BitmapAnimationInfoInput : Describe an animation for a BitmapInfoInput
 		*/
 
-		class BitmapAnimationInfoInput : public Object
+		class CHAOS_API BitmapAnimationInfoInput : public Object
 		{
 
 		public:
@@ -86,7 +86,7 @@ namespace chaos
 		* BitmapInfoInput : Will produced a BitmapInfo in the final Atlas
 		*/
 
-		class BitmapInfoInput : public ObjectBaseInput
+		class CHAOS_API BitmapInfoInput : public ObjectBaseInput
 		{
 		public:
 
@@ -106,7 +106,7 @@ namespace chaos
 		* CharacterInfoInput : an info in FontInfoInput. Will produced a CharacterInfo in the final Atlas
 		*/
 
-		class CharacterInfoInput : public BitmapInfoInput
+		class CHAOS_API CharacterInfoInput : public BitmapInfoInput
 		{
 		public:
 
@@ -122,7 +122,7 @@ namespace chaos
 		* FontInfoInput : this info will produced in the final Atlas a FontInfo (a set of glyphs generated from FreeType)
 		*/
 
-		class FontInfoInput : public FontInfoTemplate<CharacterInfoInput, ObjectBaseInput, std::unique_ptr<boost::mpl::_1>>
+		class CHAOS_API FontInfoInput : public FontInfoTemplate<CharacterInfoInput, ObjectBaseInput, std::unique_ptr<boost::mpl::_1>>
 		{
 
 		};
@@ -131,7 +131,7 @@ namespace chaos
 		* AddFilesToFolderData : structure used when inserting multiple files in a FolderInfoInput
 		*/
 
-		class AddFilesToFolderData
+		class CHAOS_API AddFilesToFolderData
 		{
 		public:
 
@@ -170,7 +170,7 @@ namespace chaos
 		* FolderInfoInput :  this info will produced in the final Atlas a FolderInfo
 		*/
 
-		class FolderInfoInput : public FolderInfoTemplate<BitmapInfoInput, FontInfoInput, FolderInfoInput, ObjectBaseInput, std::unique_ptr<boost::mpl::_1>>
+		class CHAOS_API FolderInfoInput : public FolderInfoTemplate<BitmapInfoInput, FontInfoInput, FolderInfoInput, ObjectBaseInput, std::unique_ptr<boost::mpl::_1>>
 		{
 			friend class AtlasInput;
 			friend class AtlasGenerator;
@@ -239,7 +239,7 @@ namespace chaos
 		* AtlasInput : this hold the bitmaps / glyphs used for Atlas generation
 		*/
 
-		class AtlasInput : public AtlasBaseTemplate<BitmapInfoInput, FontInfoInput, FolderInfoInput, Object>
+		class CHAOS_API AtlasInput : public AtlasBaseTemplate<BitmapInfoInput, FontInfoInput, FolderInfoInput, Object>
 		{
 			friend class ObjectBaseInput;
 			friend class AtlasGenerator;

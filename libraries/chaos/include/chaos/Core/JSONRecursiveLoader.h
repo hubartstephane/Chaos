@@ -14,7 +14,7 @@ namespace chaos
 	//
 	// -any string (excluding keys for objects)   "@XXX" is replaced into "PATH_OF_CURRENT_SUBJSON_FILE/XXX"
 
-	class JSONRecursiveLoader
+	class CHAOS_API JSONRecursiveLoader
 	{
 		class LoaderEntry
 		{

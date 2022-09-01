@@ -8,13 +8,13 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	enum class GPUProgramType : int
+	enum class CHAOS_API GPUProgramType : int
 	{
 		RENDER,
 		COMPUTE
 	};
 
-	class GPUProgram : public GPUFileResource
+	class CHAOS_API GPUProgram : public GPUFileResource
 	{
 		friend class GPUResourceManager;
 		friend class GPUProgramGenerator;

@@ -10,7 +10,7 @@ namespace chaos
 	* GPUInstancingInfo
 	*/
 
-	class GPUInstancingInfo
+	class CHAOS_API GPUInstancingInfo
 	{
 	public:
 

@@ -13,7 +13,7 @@ namespace chaos
 
 	// the template
 	template<typename TYPE>
-	class DataOwner
+	class CHAOS_API DataOwner
 	{
 	public:
 

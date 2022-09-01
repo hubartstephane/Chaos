@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class GameGamepadManager : public GamepadManager
+	class CHAOS_API GameGamepadManager : public GamepadManager
 	{
 	public:
 

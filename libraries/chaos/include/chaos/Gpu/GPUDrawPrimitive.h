@@ -12,7 +12,7 @@ namespace chaos
 	* GPUDrawPrimitive : a draw call
 	*/
 
-	class GPUDrawPrimitive
+	class CHAOS_API GPUDrawPrimitive
 	{
 
 	public:
@@ -29,11 +29,11 @@ namespace chaos
 		int    base_vertex_index = 0;
 	};
 
-	// For indirect rendering. 
+	// For indirect rendering.
 	//
 	// https://www.khronos.org/opengl/wiki/Vertex_Rendering
 
-	class GPUIndirectDrawArraysCommand
+	class CHAOS_API GPUIndirectDrawArraysCommand
 	{
 	public:
 
@@ -43,7 +43,7 @@ namespace chaos
 		GLuint  BaseInstance;
 	};
 
-	class GPUIndirectDrawElementsCommand
+	class CHAOS_API GPUIndirectDrawElementsCommand
 	{
 	public:
 

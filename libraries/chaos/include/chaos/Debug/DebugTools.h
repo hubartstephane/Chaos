@@ -8,7 +8,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-		class CallStackEntry
+		class CHAOS_API CallStackEntry
 		{
 		public:
 
@@ -21,11 +21,11 @@ namespace chaos
 		};
 
 		/** call a functor on all elements of the callstack (parameters are symbol name, filename, linenumber) */
-		void ProcessCallStack(std::function<void(char const*, char const*, int)> func);
+		CHAOS_API void ProcessCallStack(std::function<void(char const*, char const*, int)> func);
 		/** extract the callstack */
-		std::vector<CallStackEntry> ExtractCallStack();
+		CHAOS_API std::vector<CallStackEntry> ExtractCallStack();
 		/** display the callstack of the current application */
-		void DisplayCallStack(std::ostream & stream);
+		CHAOS_API void DisplayCallStack(std::ostream & stream);
 
 #endif
 

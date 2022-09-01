@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class SceneNode : public GPURenderable
+	class CHAOS_API SceneNode : public GPURenderable
 	{
 		static constexpr int INVALID_LOCAL_TO_PARENT = 1;
 		static constexpr int INVALID_PARENT_TO_LOCAL = 2;

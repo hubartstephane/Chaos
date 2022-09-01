@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class GLPixelFormat
+	class CHAOS_API GLPixelFormat
 	{
 	public:
 

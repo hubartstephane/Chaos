@@ -10,7 +10,7 @@ namespace chaos
 	* GLDebugOnScreenDisplay : used to display some text on screen with timeout from a bitmap font (a texture)
 	**/
 
-	class GLDebugOnScreenDisplay
+	class CHAOS_API GLDebugOnScreenDisplay
 	{
 	public:
 
@@ -92,5 +92,5 @@ namespace chaos
 	};
 
 #endif
-	
+
 }; // namespace chaos

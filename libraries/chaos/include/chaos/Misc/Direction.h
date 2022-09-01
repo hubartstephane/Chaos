@@ -7,7 +7,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/** the possible direction */
-	enum class Direction : int
+	enum class CHAOS_API Direction : int
 	{
 		POSITIVE_X = (1 << 0),
 		NEGATIVE_X = (1 << 1),

@@ -14,7 +14,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	enum class ImageTransform : int
+	enum class CHAOS_API ImageTransform : int
 	{
 		NO_TRANSFORM = 0,
 		CENTRAL_SYMETRY = 1
@@ -24,7 +24,7 @@ namespace chaos
 	* FIBITMAPDeleter : deleter for FIBITMAP
 	*/
 
-	class FIBITMAPDeleter
+	class CHAOS_API FIBITMAPDeleter
 	{
 	public:
 
@@ -37,6 +37,7 @@ namespace chaos
 			if (release)
 				FreeImage_Unload(bitmap);
 		}
+
 	protected:
 
 		/** whether the resource is to be destroyed or not */
@@ -47,7 +48,7 @@ namespace chaos
 	* FIBITMAPDeleter : deleter for FIBITMAP
 	*/
 
-	class FIMULTIBITMAPDeleter
+	class CHAOS_API FIMULTIBITMAPDeleter
 	{
 	public:
 
@@ -60,6 +61,7 @@ namespace chaos
 			if (release)
 				FreeImage_CloseMultiBitmap(multi_bitmap);
 		}
+
 	protected:
 
 		/** whether the resource is to be destroyed or not */
@@ -70,7 +72,7 @@ namespace chaos
 	* ImageTools : deserve to load some images
 	*/
 
-	class ImageTools
+	class CHAOS_API ImageTools
 	{
 
 	public:

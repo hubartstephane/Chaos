@@ -10,7 +10,7 @@ namespace chaos
 	// SoundListenerCameraComponent
 	// =============================================
 
-	class SoundListenerCameraComponent : public CameraComponent
+	class CHAOS_API SoundListenerCameraComponent : public CameraComponent
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(SoundListenerCameraComponent, CameraComponent);
 

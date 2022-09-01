@@ -10,7 +10,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 		/** a class that deserves to insert whitespaces into a output stream */
-		class Whitespaces
+		class CHAOS_API Whitespaces
 		{
 		public:
 

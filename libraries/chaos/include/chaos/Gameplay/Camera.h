@@ -13,7 +13,7 @@ namespace chaos
 	// CameraTools
 	// =============================================
 
-	class CameraTools
+	class CHAOS_API CameraTools
 	{
 	public:
 
@@ -30,7 +30,7 @@ namespace chaos
 	// Camera
 	// =============================================
 
-	class Camera : public Tickable, public JSONSerializable
+	class CHAOS_API Camera : public Tickable, public JSONSerializable
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 

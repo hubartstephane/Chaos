@@ -10,7 +10,7 @@ namespace chaos
 	// GPURenderable : base class for all object that can be rendered
 	// ========================================================
 
-	class GPURenderable : public Tickable
+	class CHAOS_API GPURenderable : public Tickable
 	{
 
 		CHAOS_DECLARE_OBJECT_CLASS(GPURenderable, Tickable);

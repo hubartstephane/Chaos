@@ -1,5 +1,5 @@
 namespace chaos
-{	
+{
 	namespace TiledMap
 	{
 
@@ -10,7 +10,7 @@ namespace chaos
 		// ==========================================
 
 			/** types of particle */
-		enum class PropertyType : int
+		enum class CHAOS_API PropertyType : int
 		{
 			ANY = 0,
 			INT = 1,
@@ -21,7 +21,7 @@ namespace chaos
 			OBJECT = 6
 		};
 
-		class Property : public BaseObject
+		class CHAOS_API Property : public BaseObject
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
@@ -74,7 +74,7 @@ namespace chaos
 		// ==========================================
 
 		template<typename T, PropertyType TYPE_ID>
-		class PropertyTemplate : public Property
+		class CHAOS_API PropertyTemplate : public Property
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
@@ -114,7 +114,7 @@ namespace chaos
 		// PropertyOwner : some objects that have dynamic properties
 		// ==========================================
 
-		class PropertyOwner : public BaseObject
+		class CHAOS_API PropertyOwner : public BaseObject
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
@@ -191,7 +191,7 @@ namespace chaos
 		// TypedObject
 		// ==========================================
 
-		class TypedObject : public PropertyOwner
+		class CHAOS_API TypedObject : public PropertyOwner
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 

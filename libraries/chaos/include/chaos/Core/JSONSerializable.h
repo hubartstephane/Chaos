@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class JSONSerializable
+	class CHAOS_API JSONSerializable
 	{
 	public:
 

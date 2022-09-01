@@ -17,7 +17,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class GPUQuery : public GPUResource
+	class CHAOS_API GPUQuery : public GPUResource
 	{
 	public:
 
@@ -89,7 +89,7 @@ namespace chaos
 
 
 	template<GLenum QUERY_TARGET>
-	class GLTypedQuery : public GPUQuery
+	class CHAOS_API GLTypedQuery : public GPUQuery
 	{
 	public:
 

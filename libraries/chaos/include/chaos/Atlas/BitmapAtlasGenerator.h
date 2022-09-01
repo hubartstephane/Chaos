@@ -15,7 +15,7 @@ namespace chaos
 		* AtlasGeneratorParams : parameters used when generating an atlas
 		*/
 
-		class AtlasGeneratorParams
+		class CHAOS_API AtlasGeneratorParams
 		{
 		public:
 
@@ -58,7 +58,7 @@ namespace chaos
 		* Rectangle : a class to represents rectangles
 		*/
 
-		class Rectangle
+		class CHAOS_API Rectangle
 		{
 		public:
 			/** the top-left corner of the rectangle */
@@ -87,7 +87,7 @@ namespace chaos
 		*   it select the best position as the one that minimize space at left, right, top and bottom
 		*/
 
-		class AtlasGenerator
+		class CHAOS_API AtlasGenerator
 		{
 			/** an definition is a set of vertical and horizontal lines that split the space */
 			class AtlasDefinition
@@ -172,7 +172,7 @@ namespace chaos
 		* TextureArrayAtlasGenerator
 		*/
 
-		class TextureArrayAtlasGenerator
+		class CHAOS_API TextureArrayAtlasGenerator
 		{
 
 		public:
@@ -184,9 +184,9 @@ namespace chaos
 		};
 
 		/** load from JSON */
-		bool LoadFromJSON(nlohmann::json const& json, AtlasGeneratorParams& dst);
+		CHAOS_API bool LoadFromJSON(nlohmann::json const& json, AtlasGeneratorParams& dst);
 		/** save into JSON */
-		bool SaveIntoJSON(nlohmann::json& json, AtlasGeneratorParams const& src);
+		CHAOS_API bool SaveIntoJSON(nlohmann::json& json, AtlasGeneratorParams const& src);
 
 
 #endif

@@ -6,23 +6,23 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class MIDICommand
+	class CHAOS_API MIDICommand
 	{
 	public:
 
 		//
-		// XXX : the CMD given by MIDI (extracted from Petzol, windows programming 5e. p 1478) 
+		// XXX : the CMD given by MIDI (extracted from Petzol, windows programming 5e. p 1478)
 		//
 		// CMD_NOTE_OFF : 0x80 kk vv
-		//    kk : key 
+		//    kk : key
 		//    vv : velocity
 		//
 		// CMD_NOTE_ON  : 0x90 kk vv
-		//    kk : key 
+		//    kk : key
 		//    vv : velocity
 		//
 		// CMD_POLYPHONIC_AFTER_TOUCH : 0xA0 kk tt
-		//    kk : key 
+		//    kk : key
 		//    tt : after touch
 		//
 		// CMD_CONTROL_CHANGE : 0xB0 cc xx
@@ -38,7 +38,7 @@ namespace chaos
 		//
 		// CMD_CHANNEL_AFTER_TOUCH : 0xD0 tt
 		//    tt : after touch
-		// 
+		//
 		// CMD_PITCH_WHEEL_CHANGE : 0xE0 ll hh
 		//    ll : low 7 bits
 		//    hh : high 7 bits
@@ -55,7 +55,7 @@ namespace chaos
 		//
 		//   CMD = 0xUV (except for SYSTEM MESSAGES 0xF0 - 0xFF that have no channel)
 		//      U = message type
-		//      V = channel concerned 
+		//      V = channel concerned
 		//
 		static unsigned int const CMD_NOTE_OFF = 0x80;
 		static unsigned int const CMD_NOTE_ON = 0x90;
@@ -161,5 +161,5 @@ namespace chaos
 	};
 
 #endif
-	
+
 }; // namespace chaos

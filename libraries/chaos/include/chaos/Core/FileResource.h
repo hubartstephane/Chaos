@@ -7,7 +7,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/** an object that have a path and a timestamp */
-	class FileResource
+	class CHAOS_API FileResource
 	{
 	public:
 

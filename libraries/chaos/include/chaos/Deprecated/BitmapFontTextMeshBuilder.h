@@ -10,7 +10,7 @@ namespace chaos
 	* BitmapFontTextMeshBuilder : this class is used to generate quads to represents characters for a text using a bitmap font
 	*/
 
-	class BitmapFontTextMeshBuilder
+	class CHAOS_API BitmapFontTextMeshBuilder
 	{
 	public:
 
@@ -59,5 +59,5 @@ namespace chaos
 	};
 
 #endif
-	
+
 }; // namespace chaos

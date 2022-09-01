@@ -20,7 +20,7 @@ namespace chaos
 	 * InheritanceType : the kind if inheritance that can exist between 2 classes
 	 */
 
-	enum class InheritanceType : int
+	enum class CHAOS_API InheritanceType : int
 	{
 		UNKNOWN = -1,
 		NO = 0,
@@ -31,7 +31,7 @@ namespace chaos
 	 * ClassRegistration : the kind if inheritance that can exist between 2 classes
 	 */
 
-	class ClassRegistration
+	class CHAOS_API ClassRegistration
 	{
 		friend class Class;
 
@@ -67,7 +67,7 @@ namespace chaos
 	 *                   We so want that the search is affected by the Subclass affectation that requires it
 	 */
 
-	class ClassFindResult
+	class CHAOS_API ClassFindResult
 	{
 		friend class Class;
 
@@ -94,7 +94,7 @@ namespace chaos
 	/**
 	 * Class : a registered class
 	 */
-	class Class
+	class CHAOS_API Class
 	{
 		friend class ClassLoader;
 		friend class ClassRegistration;
@@ -172,7 +172,7 @@ namespace chaos
 
 				auto& classes = GetClasses();
 				classes[result->name.c_str()] = result; // the key is a pointer aliased on the 'name' member
-			
+
 				// instance constructible only if derives from Object
 				if constexpr (std::is_base_of_v<Object, CLASS_TYPE>)
 				{

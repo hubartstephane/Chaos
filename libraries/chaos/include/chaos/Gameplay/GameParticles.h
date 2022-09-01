@@ -13,7 +13,7 @@ namespace chaos
     // Background particle system
     // ===========================================================================
 
-    class ParticleBackground
+    class CHAOS_API ParticleBackground
     {
     public:
 
@@ -22,7 +22,7 @@ namespace chaos
 
     CHAOS_REGISTER_CLASS(ParticleBackground);
 
-    class ParticleBackgroundLayerTrait : public ParticleLayerTrait<ParticleBackground, VertexDefault>
+    class CHAOS_API ParticleBackgroundLayerTrait : public ParticleLayerTrait<ParticleBackground, VertexDefault>
     {
     public:
 
@@ -34,13 +34,13 @@ namespace chaos
 
     /** output primitive */
     template<typename VERTEX_TYPE>
-    void ParticleToPrimitives(ParticleBackground const& particle, PrimitiveOutput<VERTEX_TYPE>& output);
+    CHAOS_API void ParticleToPrimitives(ParticleBackground const& particle, PrimitiveOutput<VERTEX_TYPE>& output);
     /** generates 1 quad from one particle */
     template<typename VERTEX_TYPE>
-    void ParticleToPrimitive(ParticleBackground const& particle, QuadPrimitive<VERTEX_TYPE>& primitive);
+    CHAOS_API void ParticleToPrimitive(ParticleBackground const& particle, QuadPrimitive<VERTEX_TYPE>& primitive);
     /** generates 1 triangle pair from one particle */
     template<typename VERTEX_TYPE>
-    void ParticleToPrimitive(ParticleBackground const& particle, TrianglePairPrimitive<VERTEX_TYPE>& primitive);
+    CHAOS_API void ParticleToPrimitive(ParticleBackground const& particle, TrianglePairPrimitive<VERTEX_TYPE>& primitive);
 
 #else
 

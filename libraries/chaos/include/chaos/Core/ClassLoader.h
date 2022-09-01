@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class ClassLoader
+	class CHAOS_API ClassLoader
 	{
 	public:
 

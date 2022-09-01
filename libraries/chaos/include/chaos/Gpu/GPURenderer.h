@@ -7,7 +7,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class GPUFramebufferRenderData
+	class CHAOS_API GPUFramebufferRenderData
 	{
 	public:
 
@@ -19,7 +19,7 @@ namespace chaos
 		ViewportPlacement viewport_to_restore;
 	};
 
-	class GPURenderer : public Tickable
+	class CHAOS_API GPURenderer : public Tickable
 	{
 	public:
 

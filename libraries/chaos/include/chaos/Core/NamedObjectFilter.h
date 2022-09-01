@@ -8,7 +8,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/** NamedObjectFilter : a class to filter objects by their name */
-	class NamedObjectFilter : public Object
+	class CHAOS_API NamedObjectFilter : public Object
 	{
 	public:
 
@@ -16,7 +16,7 @@ namespace chaos
 	};
 
 	/** NamedObjectFilterList : filter objects with a list */
-	class NamedObjectFilterList : public NamedObjectFilter
+	class CHAOS_API NamedObjectFilterList : public NamedObjectFilter
 	{
 	public:
 

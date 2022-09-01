@@ -22,12 +22,12 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// XXX : -shared_ptr<> is more or less a clone of boost::intrusive_ptr<>. It can be used on any class as soon as there are the 2 following functions
-	//        	 
+	//
 	//           intrusive_ptr_add_ref(...) and intrusive_ptr_release(...)
 	//
 	//       -weak_ptr<> use an intermediate structure that points on the target object
 	//
-	//        weak_ptr 
+	//        weak_ptr
 	//            |
 	//            +-----> WeakPointerData <-----+
 	//                          |               |
@@ -46,7 +46,7 @@ namespace chaos
 	 * WeakPointerData : an utility structure used to handle weak pointers
 	 */
 
-	class WeakPointerData
+	class CHAOS_API WeakPointerData
 	{
 	public:
 
@@ -67,7 +67,7 @@ namespace chaos
 	 * SharedPointerPolicy : policy used for shared_ptr
 	 */
 
-	class SharedPointerPolicy
+	class CHAOS_API SharedPointerPolicy
 	{
 	public:
 
@@ -106,7 +106,7 @@ namespace chaos
 	 * SharedPointerPolicy : policy used for weak_ptr
 	 */
 
-	class WeakPointerPolicy
+	class CHAOS_API WeakPointerPolicy
 	{
 	public:
 
@@ -154,7 +154,7 @@ namespace chaos
 	 */
 
 	template<typename T, typename POLICY>
-	class SmartPointerBase
+	class CHAOS_API SmartPointerBase
 	{
 		friend class SharedPointerPolicy;
 		friend class WeakPointerPolicy;
@@ -295,7 +295,7 @@ namespace chaos
 			// XXX : add reference before destroying to be sure that by chain reaction we do not destroy the object we want to point first
 			auto old_target = target;
 
-			// 1 - add reference 
+			// 1 - add reference
 			if (src != nullptr)
 				target = POLICY::AddReference(src);
 			else
@@ -316,25 +316,25 @@ namespace chaos
 	*/
 
 	template<typename T, typename POLICY, typename U>
-	bool operator == (SmartPointerBase<T, POLICY> const& src1, U* src2)
+	CHAOS_API bool operator == (SmartPointerBase<T, POLICY> const& src1, U* src2)
 	{
 		return (src1.get() == src2);
 	}
 
 	template<typename T, typename POLICY, typename U>
-	bool operator != (SmartPointerBase<T, POLICY> const& src1, U* src2)
+	CHAOS_API bool operator != (SmartPointerBase<T, POLICY> const& src1, U* src2)
 	{
 		return (src1.get() != src2);
 	}
 
 	template<typename T, typename POLICY, typename U>
-	bool operator == (U* src1, SmartPointerBase<T, POLICY> const& src2)
+	CHAOS_API bool operator == (U* src1, SmartPointerBase<T, POLICY> const& src2)
 	{
 		return (src1 == src2.get());
 	}
 
 	template<typename T, typename POLICY, typename U>
-	bool operator != (U* src1, SmartPointerBase<T, POLICY> const& src2)
+	CHAOS_API bool operator != (U* src1, SmartPointerBase<T, POLICY> const& src2)
 	{
 		return (src1 != src2.get());
 	}
@@ -344,25 +344,25 @@ namespace chaos
 	*/
 
 	template<typename T, typename POLICY>
-	bool operator == (SmartPointerBase<T, POLICY> const& src1, nullptr_t src2)
+	CHAOS_API bool operator == (SmartPointerBase<T, POLICY> const& src1, nullptr_t src2)
 	{
 		return (src1.get() == src2);
 	}
 
 	template<typename T, typename POLICY>
-	bool operator != (SmartPointerBase<T, POLICY> const& src1, nullptr_t src2)
+	CHAOS_API bool operator != (SmartPointerBase<T, POLICY> const& src1, nullptr_t src2)
 	{
 		return (src1.get() != src2);
 	}
 
 	template<typename T, typename POLICY>
-	bool operator == (nullptr_t src1, SmartPointerBase<T, POLICY> const& src2)
+	CHAOS_API bool operator == (nullptr_t src1, SmartPointerBase<T, POLICY> const& src2)
 	{
 		return (src1 == src2.get());
 	}
 
 	template<typename T, typename POLICY>
-	bool operator != (nullptr_t src1, SmartPointerBase<T, POLICY> const& src2)
+	CHAOS_API bool operator != (nullptr_t src1, SmartPointerBase<T, POLICY> const& src2)
 	{
 		return (src1 != src2.get());
 	}
@@ -372,13 +372,13 @@ namespace chaos
 	*/
 
 	template<typename T, typename POLICY, typename U, typename POLICY2>
-	bool operator == (SmartPointerBase<T, POLICY> const& src1, SmartPointerBase<U, POLICY2> const& src2)
+	CHAOS_API bool operator == (SmartPointerBase<T, POLICY> const& src1, SmartPointerBase<U, POLICY2> const& src2)
 	{
 		return (src1.get() == src2.get());
 	}
 
 	template<typename T, typename POLICY, typename U, typename POLICY2>
-	bool operator != (SmartPointerBase<T, POLICY> const& src1, SmartPointerBase<U, POLICY2> const& src2)
+	CHAOS_API bool operator != (SmartPointerBase<T, POLICY> const& src1, SmartPointerBase<U, POLICY2> const& src2)
 	{
 		return (src1.get() != src2.get());
 	}
@@ -388,7 +388,7 @@ namespace chaos
 	*/
 
 	template<typename T, typename POLICY>
-	void swap(SmartPointerBase<T, POLICY>& src1, SmartPointerBase<T, POLICY>& src2)
+	CHAOS_API void swap(SmartPointerBase<T, POLICY>& src1, SmartPointerBase<T, POLICY>& src2)
 	{
 		src1.swap(src2);
 	}
@@ -398,13 +398,13 @@ namespace chaos
 	*/
 
 	template<typename T>
-	struct is_weak_ptr
+	struct CHAOS_API is_weak_ptr
 	{
 		static constexpr bool value = false;
 	};
 
 	template<typename T>
-	struct is_weak_ptr<weak_ptr<T>>
+	struct CHAOS_API is_weak_ptr<weak_ptr<T>>
 	{
 		static constexpr bool value = true;
 	};
@@ -417,13 +417,13 @@ namespace chaos
 	*/
 
 	template<typename T>
-	struct is_shared_ptr
+	struct CHAOS_API is_shared_ptr
 	{
 		static constexpr bool value = false;
 	};
 
 	template<typename T>
-	struct is_shared_ptr<shared_ptr<T>>
+	struct CHAOS_API is_shared_ptr<shared_ptr<T>>
 	{
 		static constexpr bool value = true;
 	};

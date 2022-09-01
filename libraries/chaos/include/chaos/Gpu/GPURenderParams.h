@@ -10,7 +10,7 @@ namespace chaos
 	// GPURenderParams : some data for the rendering
 	// ========================================================
 
-	class GPURenderParams
+	class CHAOS_API GPURenderParams
 	{
 
 	public:

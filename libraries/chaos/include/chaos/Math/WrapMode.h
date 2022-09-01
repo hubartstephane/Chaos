@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	enum class WrapMode : int
+	enum class CHAOS_API WrapMode : int
 	{
 		NONE = 0,
 		CLAMP = 1,
@@ -16,7 +16,7 @@ namespace chaos
 
 	// apply the wrap mode (return whether this is not an out of bounds)
 	template<typename T>
-	bool ApplyWrapMode(T src, T min_value, T max_value, WrapMode mode, T& result)
+	CHAOS_API bool ApplyWrapMode(T src, T min_value, T max_value, WrapMode mode, T& result)
 	{
 		if (mode == WrapMode::NONE)
 		{
@@ -45,11 +45,11 @@ namespace chaos
 				return false;
 			result = src;
 		}
-		return true; // except for ranges, this function should always be successful 
+		return true; // except for ranges, this function should always be successful
 	}
 
 	template<typename T>
-	bool ApplyWrapMode(glm::tvec1<T> const& src, glm::tvec1<T> const& min_value, glm::tvec1<T> const& max_value, WrapMode mode, glm::tvec1<T>& result)
+	CHAOS_API bool ApplyWrapMode(glm::tvec1<T> const& src, glm::tvec1<T> const& min_value, glm::tvec1<T> const& max_value, WrapMode mode, glm::tvec1<T>& result)
 	{
 		for (size_t i = 0; i < src.length(); ++i)
 			if (!ApplyWrapMode(src[i], min_value[i], max_value[i], mode, result[i]))
@@ -58,7 +58,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	bool ApplyWrapMode(glm::tvec2<T> const& src, glm::tvec2<T> const& min_value, glm::tvec2<T> const& max_value, WrapMode mode, glm::tvec2<T>& result)
+	CHAOS_API bool ApplyWrapMode(glm::tvec2<T> const& src, glm::tvec2<T> const& min_value, glm::tvec2<T> const& max_value, WrapMode mode, glm::tvec2<T>& result)
 	{
 		for (size_t i = 0; i < src.length(); ++i)
 			if (!ApplyWrapMode(src[i], min_value[i], max_value[i], mode, result[i]))
@@ -67,7 +67,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	bool ApplyWrapMode(glm::tvec3<T> const& src, glm::tvec3<T> const& min_value, glm::tvec3<T> const& max_value, WrapMode mode, glm::tvec3<T>& result)
+	CHAOS_API bool ApplyWrapMode(glm::tvec3<T> const& src, glm::tvec3<T> const& min_value, glm::tvec3<T> const& max_value, WrapMode mode, glm::tvec3<T>& result)
 	{
 		for (size_t i = 0; i < src.length(); ++i)
 			if (!ApplyWrapMode(src[i], min_value[i], max_value[i], mode, result[i]))
@@ -76,7 +76,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	bool ApplyWrapMode(glm::tvec4<T> src, glm::tvec4<T> const& min_value, glm::tvec4<T> const& max_value, WrapMode mode, glm::tvec4<T>& result)
+	CHAOS_API bool ApplyWrapMode(glm::tvec4<T> src, glm::tvec4<T> const& min_value, glm::tvec4<T> const& max_value, WrapMode mode, glm::tvec4<T>& result)
 	{
 		for (size_t i = 0; i < src.length(); ++i)
 			if (!ApplyWrapMode(src[i], min_value[i], max_value[i], mode, result[i]))

@@ -26,7 +26,7 @@ namespace chaos
 	// =========================================================
 
 	/** the states for the displacement */
-	enum class PlatformerDisplacementState : int
+	enum class CHAOS_API PlatformerDisplacementState : int
 	{
 		GROUNDED,     // player is on the ground
 		FALLING,      // player in the air and going down
@@ -56,7 +56,7 @@ namespace chaos
 
 
 	/** the settings for the component */
-	class PlatformerDisplacementComponentInfo
+	class CHAOS_API PlatformerDisplacementComponentInfo
 	{
 	public:
 
@@ -101,7 +101,7 @@ namespace chaos
 	// ComputePlatformerFlagProcessor
 	// ==========================================
 
-	class ComputePlatformerFlagProcessor : public TiledMap::ComputeCustomFlagProcessor
+	class CHAOS_API ComputePlatformerFlagProcessor : public TiledMap::ComputeCustomFlagProcessor
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(ComputePlatformerFlagProcessor, TiledMap::ComputeCustomFlagProcessor);
 
@@ -118,7 +118,7 @@ namespace chaos
 	// =========================================================
 
 	/** component for platformer */
-	class PlatformerDisplacementComponent : public PlayerDisplacementComponent
+	class CHAOS_API PlatformerDisplacementComponent : public PlayerDisplacementComponent
 	{
 
 	public:

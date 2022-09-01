@@ -19,7 +19,7 @@ namespace chaos
 	* ButtonStateChange
 	*/
 
-	enum class ButtonStateChange : int
+	enum class CHAOS_API ButtonStateChange : int
 	{
 		/** unknown value */
 		NONE = 0,
@@ -38,7 +38,7 @@ namespace chaos
 	*/
 
 	template<typename T>
-	class InputState
+	class CHAOS_API InputState
 	{
 	public:
 
@@ -70,7 +70,7 @@ namespace chaos
 	* ButtonState
 	*/
 
-	class ButtonState : public InputState<bool>
+	class CHAOS_API ButtonState : public InputState<bool>
 	{
 	public:
 
@@ -94,7 +94,7 @@ namespace chaos
 	* AxisState : while max and min values for sticks are not always 1 (some controllers has value lesser that 1.0),
 	*            we have to store the upper and lower values to renormalize the output
 	*/
-	class AxisState : public InputState<float>
+	class CHAOS_API AxisState : public InputState<float>
 	{
 	public:
 
@@ -115,7 +115,7 @@ namespace chaos
 	* KeyEvent
 	*/
 
-	class KeyEvent
+	class CHAOS_API KeyEvent
 	{
 	public:
 
@@ -148,7 +148,7 @@ namespace chaos
 	* InputEventReceiver
 	*/
 
-	class InputEventReceiver
+	class CHAOS_API InputEventReceiver
 	{
 
 	public:

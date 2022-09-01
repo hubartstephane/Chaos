@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class GPUTexture : public GPUSurface
+	class CHAOS_API GPUTexture : public GPUSurface
 	{
 		friend class GPUResourceManager;
 

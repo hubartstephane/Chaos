@@ -20,7 +20,7 @@ namespace chaos
 (StateMachineInstance)
 
 		// forward declaration
-#define CHAOS_STATEMACHINE_FORWARD_DECL(r, data, elem) class elem;		
+#define CHAOS_STATEMACHINE_FORWARD_DECL(r, data, elem) class elem;
 
 		// friendship macro
 #define CHAOS_STATEMACHINE_FRIEND_DECL(r, data, elem) friend class elem;
@@ -34,7 +34,7 @@ namespace chaos
 		// State
 		// ==================================================
 
-		class StateBase : public Object, public NamedObject
+		class CHAOS_API StateBase : public Object, public NamedObject
 		{
 			CHAOS_STATEMACHINE_ALL_FRIENDS
 
@@ -73,7 +73,7 @@ namespace chaos
 		// State
 		// ==================================================
 
-		class State : public StateBase
+		class CHAOS_API State : public StateBase
 		{
 			CHAOS_STATEMACHINE_ALL_FRIENDS
 
@@ -114,7 +114,7 @@ namespace chaos
 		// Transition
 		// ==================================================
 
-		class Transition : public StateBase
+		class CHAOS_API Transition : public StateBase
 		{
 			CHAOS_STATEMACHINE_ALL_FRIENDS
 
@@ -156,7 +156,7 @@ namespace chaos
 		// StateMachineInstance
 		// ==================================================
 
-		class StateMachineInstance : public Object
+		class CHAOS_API StateMachineInstance : public Object
 		{
 			CHAOS_STATEMACHINE_ALL_FRIENDS
 
@@ -206,7 +206,7 @@ namespace chaos
 		// StateMachine
 		// ==================================================
 
-		class StateMachine : public Object
+		class CHAOS_API StateMachine : public Object
 		{
 			CHAOS_STATEMACHINE_ALL_FRIENDS
 

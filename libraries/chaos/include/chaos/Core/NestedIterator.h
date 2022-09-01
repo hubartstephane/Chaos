@@ -8,7 +8,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	template<typename OUTER_ITERATOR, typename INNER_ITERATOR, std::pair<INNER_ITERATOR, INNER_ITERATOR>(*GetInnerIterators)(OUTER_ITERATOR)>
-	class NestedIterator
+	class CHAOS_API NestedIterator
 	{
 	public:
 
@@ -27,7 +27,7 @@ namespace chaos
 				std::tie(inner_it, inner_end_it) = GetInnerIterators(outer_it);
 				FindElement(false);
 			}
-			// finalize the iterators. 
+			// finalize the iterators.
 			// make sure that an iterator default constructed, is equal to an iterator that reached 'end'
 			else
 			{
@@ -36,13 +36,13 @@ namespace chaos
 		}
 
 		/** comparaison operator */
-		friend bool operator == (NestedIterator const& src1, NestedIterator const& src2)
+		friend CHAOS_API bool operator == (NestedIterator const& src1, NestedIterator const& src2)
 		{
 			return (src1.outer_it == src2.outer_it) && (src1.inner_it == src2.inner_it);
 		}
 
 		/** comparaison operator */
-		friend bool operator != (NestedIterator const& src1, NestedIterator const& src2)
+		friend CHAOS_API bool operator != (NestedIterator const& src1, NestedIterator const& src2)
 		{
 			return !(src1 != src2);
 		}

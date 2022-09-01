@@ -7,7 +7,7 @@ namespace chaos
 
 	using library_ptr = std::unique_ptr<struct FT_LibraryRec_, FTLibraryDeleter>; // FT_Library = struct FT_LibraryRec_ *
 
-	using face_ptr = std::unique_ptr<struct FT_FaceRec_, FTFaceDeleter>; // FT_Face = struct FT_FaceRec_  
+	using face_ptr = std::unique_ptr<struct FT_FaceRec_, FTFaceDeleter>; // FT_Face = struct FT_FaceRec_
 
 	namespace FontTools
 	{
@@ -22,7 +22,7 @@ namespace chaos
 	* A smart pointer for FT_Library
 	*/
 
-	class FTLibraryDeleter
+	class CHAOS_API FTLibraryDeleter
 	{
 	public:
 
@@ -35,6 +35,7 @@ namespace chaos
 			if (release)
 				FT_Done_FreeType(library);
 		}
+
 	protected:
 
 		/** whether the resource is to be destroyed or not */
@@ -45,7 +46,7 @@ namespace chaos
 	* A smart pointer for FT_Face
 	*/
 
-	class FTFaceDeleter
+	class CHAOS_API FTFaceDeleter
 	{
 	public:
 
@@ -58,6 +59,7 @@ namespace chaos
 			if (release)
 				FT_Done_Face(face);
 		}
+
 	protected:
 
 		/** whether the resource is to be destroyed or not */
@@ -71,7 +73,7 @@ namespace chaos
 	namespace FontTools
 	{
 		/** Metrics of a character */
-		class CharacterMetrics
+		class CHAOS_API CharacterMetrics
 		{
 		public:
 
@@ -94,7 +96,7 @@ namespace chaos
 		};
 
 		/** Bitmap + Metrics of a character */
-		class CharacterBitmapGlyph : public CharacterMetrics
+		class CHAOS_API CharacterBitmapGlyph : public CharacterMetrics
 		{
 		public:
 
@@ -111,20 +113,20 @@ namespace chaos
 		};
 
 		/** get an image description from a FT_Bitmap object */
-		ImageDescription GetImageDescription(FT_Bitmap& bitmap);
+		CHAOS_API ImageDescription GetImageDescription(FT_Bitmap& bitmap);
 
 		/** generate a bitmap from a glyph slot */
-		FIBITMAP* GenerateImage(FT_GlyphSlot glyph, PixelFormat const& pixel_format = PixelFormat::Gray);
+		CHAOS_API FIBITMAP* GenerateImage(FT_GlyphSlot glyph, PixelFormat const& pixel_format = PixelFormat::Gray);
 		/** generate a bitmap from a bitmap */
-		FIBITMAP* GenerateImage(FT_Bitmap& bitmap, PixelFormat const& pixel_format = PixelFormat::Gray);
+		CHAOS_API FIBITMAP* GenerateImage(FT_Bitmap& bitmap, PixelFormat const& pixel_format = PixelFormat::Gray);
 		/** generate a bitmap from a font an a string */
-		FIBITMAP* GenerateImage(FT_Face face, char const* str, PixelFormat const& pixel_format = PixelFormat::Gray);
+		CHAOS_API FIBITMAP* GenerateImage(FT_Face face, char const* str, PixelFormat const& pixel_format = PixelFormat::Gray);
 		/** generate a bitmap from a font an a character */
-		FIBITMAP* GenerateImage(FT_Face face, char c, PixelFormat const& pixel_format = PixelFormat::Gray);
+		CHAOS_API FIBITMAP* GenerateImage(FT_Face face, char c, PixelFormat const& pixel_format = PixelFormat::Gray);
 		/** generate a bitmap glyph from a character */
-		FT_BitmapGlyph GetBitmapGlyph(FT_Face face, char c, bool accept_notfound_glyph);
+		CHAOS_API FT_BitmapGlyph GetBitmapGlyph(FT_Face face, char c, bool accept_notfound_glyph);
 		/** generate a cache with all glyph required for a string */
-		std::map<char, CharacterBitmapGlyph> GetGlyphCacheForString(FT_Face face, char const* str);
+		CHAOS_API std::map<char, CharacterBitmapGlyph> GetGlyphCacheForString(FT_Face face, char const* str);
 
 	}; // namespace FontTools
 

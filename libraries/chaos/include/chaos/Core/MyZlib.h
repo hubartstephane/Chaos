@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class MyZLib
+	class CHAOS_API MyZLib
 	{
 	public:
 

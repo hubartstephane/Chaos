@@ -3,7 +3,7 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	template<
-		typename T, 
+		typename T,
 		typename _Pr = std::less<T>
 	>
 	class PriorityQueue;
@@ -43,7 +43,7 @@ namespace chaos
 		typename T,
 		typename _Pr
 	>
-		class PriorityQueue
+		class CHAOS_API PriorityQueue
 	{
 
 	public:
@@ -165,7 +165,7 @@ namespace chaos
 
 				size_type parent_index =
 					(heap_baselevel(level - 1)) +    // the base of previous level
-					(index - base) / 2;              // due to storage consideration, the first_child of the 4th node of a level 
+					(index - base) / 2;              // due to storage consideration, the first_child of the 4th node of a level
 													 // is the 8h node of next level
 				if (comp(c[index], c[parent_index]))
 					break;
@@ -180,7 +180,7 @@ namespace chaos
 			while (true)
 			{
 				size_type base = heap_baselevel(level); // the index of the first element of the same level
-				size_type first_child = heap_baselevel(level + 1) + (index - base) * 2;  // due to storage, the first child of 2nd node of a 
+				size_type first_child = heap_baselevel(level + 1) + (index - base) * 2;  // due to storage, the first child of 2nd node of a
 
 				if (first_child < count)
 				{

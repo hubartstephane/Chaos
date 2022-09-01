@@ -20,7 +20,7 @@ namespace chaos
 	* A class to describe requirement for a mesh
 	*/
 
-	class GPUMeshGenerationRequirement
+	class CHAOS_API GPUMeshGenerationRequirement
 	{
 	public:
 
@@ -41,7 +41,7 @@ namespace chaos
 	* GPUMeshGenerator : an object that is responsible for generating the mesh data
 	*/
 
-	class GPUMeshGenerator : public Object
+	class CHAOS_API GPUMeshGenerator : public Object
 	{
 	public:
 
@@ -66,7 +66,7 @@ namespace chaos
 	*/
 
 	template<typename T>
-	class GPUPrimitiveMeshGenerator : public GPUMeshGenerator
+	class CHAOS_API GPUPrimitiveMeshGenerator : public GPUMeshGenerator
 	{
 	public:
 
@@ -89,7 +89,7 @@ namespace chaos
 	* GPUQuadMeshGenerator : help defines mesh as simple quad
 	*/
 
-	class GPUQuadMeshGenerator : public GPUPrimitiveMeshGenerator<box2>
+	class CHAOS_API GPUQuadMeshGenerator : public GPUPrimitiveMeshGenerator<box2>
 	{
 
 	public:
@@ -115,7 +115,7 @@ namespace chaos
 	* GPUTriangleMeshGenerator : help defines mesh as simple traingle
 	*/
 
-	class GPUTriangleMeshGenerator : public GPUPrimitiveMeshGenerator<triangle3>
+	class CHAOS_API GPUTriangleMeshGenerator : public GPUPrimitiveMeshGenerator<triangle3>
 	{
 
 	public:
@@ -134,7 +134,7 @@ namespace chaos
 	* GPUCubeMeshGenerator : help defines cube mesh
 	*/
 
-	class GPUCubeMeshGenerator : public GPUPrimitiveMeshGenerator<box3>
+	class CHAOS_API GPUCubeMeshGenerator : public GPUPrimitiveMeshGenerator<box3>
 	{
 
 	public:
@@ -160,7 +160,7 @@ namespace chaos
 	* GPUCircleMeshGenerator : help defines mesh as simple 2D circle
 	*/
 
-	class GPUCircleMeshGenerator : public GPUPrimitiveMeshGenerator<sphere2>
+	class CHAOS_API GPUCircleMeshGenerator : public GPUPrimitiveMeshGenerator<sphere2>
 	{
 
 	public:
@@ -188,7 +188,7 @@ namespace chaos
 	* GPUSphereMeshGenerator : help defines mesh as simple sphere
 	*/
 
-	class GPUSphereMeshGenerator : public GPUPrimitiveMeshGenerator<sphere3>
+	class CHAOS_API GPUSphereMeshGenerator : public GPUPrimitiveMeshGenerator<sphere3>
 	{
 
 	public:

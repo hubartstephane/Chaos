@@ -12,7 +12,7 @@ namespace chaos
 	* GPUProgramSourceGenerator : used to generate GLSL source (or part of source) code from a set of definitions
 	*/
 
-	class GPUProgramSourceGenerator : public Object
+	class CHAOS_API GPUProgramSourceGenerator : public Object
 	{
 	public:
 
@@ -26,7 +26,7 @@ namespace chaos
 		}
 	};
 
-	class GPUProgramStringSourceGenerator : public GPUProgramSourceGenerator
+	class CHAOS_API GPUProgramStringSourceGenerator : public GPUProgramSourceGenerator
 	{
 
 	public:
@@ -48,7 +48,7 @@ namespace chaos
 		Buffer<char> buffer;
 	};
 
-	class GPUProgramFileSourceGenerator : public GPUProgramSourceGenerator
+	class CHAOS_API GPUProgramFileSourceGenerator : public GPUProgramSourceGenerator
 	{
 	public:
 

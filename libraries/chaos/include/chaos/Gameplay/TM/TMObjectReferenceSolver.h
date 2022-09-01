@@ -8,7 +8,7 @@ namespace chaos
 	// ==========================================
 
 	/** store wanted reference to further resolving */
-	class TMObjectReferenceEntryClassSolverBase
+	class CHAOS_API TMObjectReferenceEntryClassSolverBase
 	{
 	public:
 
@@ -21,7 +21,7 @@ namespace chaos
 	// ==========================================
 
 	template<typename T>
-	class TMObjectReferenceEntryClassSolver : public TMObjectReferenceEntryClassSolverBase
+	class CHAOS_API TMObjectReferenceEntryClassSolver : public TMObjectReferenceEntryClassSolverBase
 	{
 	public:
 
@@ -33,7 +33,7 @@ namespace chaos
 	// TMObjectReferenceEntry
 	// ==========================================
 
-	class TMObjectReferenceEntry
+	class CHAOS_API TMObjectReferenceEntry
 	{
 	public:
 
@@ -49,7 +49,7 @@ namespace chaos
 	// TMObjectReferenceSolver
 	// ==========================================
 
-	class TMObjectReferenceSolver
+	class CHAOS_API TMObjectReferenceSolver
 	{
 	public:
 

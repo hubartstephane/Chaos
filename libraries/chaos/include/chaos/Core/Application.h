@@ -9,7 +9,7 @@ namespace chaos
 	/**
 	* Application : used to store generic application data
 	*/
-	class Application : public Object, public InputEventReceiver
+	class CHAOS_API Application : public Object, public InputEventReceiver
 	{
 
 	public:
@@ -151,7 +151,7 @@ namespace chaos
 	};
 
 	template<typename APPLICATION_TYPE, typename ...PARAMS>
-	bool RunApplication(int argc, char** argv, char** env, PARAMS... params)
+	CHAOS_API bool RunApplication(int argc, char** argv, char** env, PARAMS... params)
 	{
 		shared_ptr<APPLICATION_TYPE> application = new APPLICATION_TYPE(params...);
 		if (application != nullptr)

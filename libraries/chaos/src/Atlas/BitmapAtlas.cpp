@@ -317,7 +317,7 @@ namespace chaos
 			atlas_count = 0;
 			dimension = glm::ivec2(0, 0);
 			// destroy the root folder
-			AtlasBaseTemplate<BitmapInfo, FontInfo, FolderInfo, Object>::Clear();
+			AtlasBaseTemplate<Object, BitmapInfo, FontInfo, FolderInfo>::Clear();
 		}
 
 		float AtlasBase::ComputeSurface(int bitmap_index) const

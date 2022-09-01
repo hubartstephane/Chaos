@@ -14,13 +14,13 @@ namespace chaos
 		class AtlasBase;
 		class Atlas;
 
-		template<typename CHARACTER_INFO_TYPE, typename PARENT_CLASS, typename META_WRAPPER_TYPE>
+		template<typename PARENT_CLASS, typename CHARACTER_INFO_TYPE, typename META_WRAPPER_TYPE>
 		class FontInfoTemplate;
 
-		template<typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE, typename PARENT_CLASS, typename META_WRAPPER_TYPE>
+		template<typename PARENT_CLASS, typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE, typename META_WRAPPER_TYPE>
 		class FolderInfoTemplate;
 
-		template<typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE, typename PARENT_CLASS>
+		template<typename PARENT_CLASS, typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE>
 		class AtlasBaseTemplate;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -134,7 +134,7 @@ namespace chaos
 		* FontInfoTemplate : a base template for FontInfo and FontInfoInput
 		*/
 
-		template<typename CHARACTER_INFO_TYPE, typename PARENT_CLASS, typename META_WRAPPER_TYPE>
+		template<typename PARENT_CLASS, typename CHARACTER_INFO_TYPE, typename META_WRAPPER_TYPE>
 		class CHAOS_API FontInfoTemplate : public PARENT_CLASS
 		{
 		public:
@@ -170,7 +170,7 @@ namespace chaos
 		* FontInfo : this is a named group of Characters (CharacterInfo)
 		*/
 
-		class CHAOS_API FontInfo : public FontInfoTemplate<CharacterInfo, NamedObject, boost::mpl::identity<boost::mpl::_1>>
+		class CHAOS_API FontInfo : public FontInfoTemplate<NamedObject, CharacterInfo, boost::mpl::identity<boost::mpl::_1>>
 		{
 		};
 
@@ -178,7 +178,7 @@ namespace chaos
 		* FolderInfoTemplate : a base template for FolderInfo and FolderInfoInput
 		*/
 
-		template<typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE, typename PARENT_CLASS, typename META_WRAPPER_TYPE>
+		template<typename PARENT_CLASS, typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE, typename META_WRAPPER_TYPE>
 		class CHAOS_API FolderInfoTemplate : public PARENT_CLASS
 		{
 		public:
@@ -235,7 +235,7 @@ namespace chaos
 		* FolderInfo : contains bitmpas, font and other folders
 		*/
 
-		class CHAOS_API FolderInfo : public FolderInfoTemplate<BitmapInfo, FontInfo, FolderInfo, NamedObject, boost::mpl::identity<boost::mpl::_1>>
+		class CHAOS_API FolderInfo : public FolderInfoTemplate<NoCopy<NamedObject>, BitmapInfo, FontInfo, FolderInfo, boost::mpl::identity<boost::mpl::_1>>
 		{
 		public:
 
@@ -264,7 +264,7 @@ namespace chaos
 		/**
 		* AtlasBaseTemplate : a base template for AtlasBase and AtlasInput
 		*/
-		template<typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE, typename PARENT_CLASS>
+		template<typename PARENT_CLASS, typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE>
 		class CHAOS_API AtlasBaseTemplate : public PARENT_CLASS
 		{
 		public:
@@ -331,7 +331,7 @@ namespace chaos
 		* AtlasBase : base class for Atlas and TextureArrayAtlas
 		*/
 
-		class CHAOS_API AtlasBase : public  AtlasBaseTemplate<BitmapInfo, FontInfo, FolderInfo, Object>
+		class CHAOS_API AtlasBase : public AtlasBaseTemplate<Object, BitmapInfo, FontInfo, FolderInfo>
 		{
 
 			friend class AtlasGenerator;

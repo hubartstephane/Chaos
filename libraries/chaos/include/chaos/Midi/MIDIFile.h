@@ -95,7 +95,7 @@ namespace chaos
 	* MidiTrack : A track in midi files
 	*/
 
-	class CHAOS_API MidiTrack
+	class CHAOS_API MidiTrack : public NoCopyClass
 	{
 	public:
 
@@ -137,9 +137,12 @@ namespace chaos
 	* MidiLoader : the class for reading MIDI file
 	*/
 
-	class CHAOS_API MidiLoader
+	class CHAOS_API MidiLoader : public NoCopyClass
 	{
 	public:
+
+		/** destructor */
+		virtual ~MidiLoader() = default;
 
 		/** the entry point for reading a MIDI file */
 		bool LoadBuffer(Buffer<char> const& buffer);

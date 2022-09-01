@@ -10,7 +10,7 @@ namespace chaos
 	* ComparisonOperator
 	*/
 
-	enum class ComparisonOperator : int
+	enum class CHAOS_API ComparisonOperator : int
 	{
 		NEVER,
 		ALWAYS,
@@ -22,10 +22,10 @@ namespace chaos
 		LESS_EQUAL
 	};
 
-	ComparisonOperator operator ! (ComparisonOperator op);
+	CHAOS_API ComparisonOperator operator ! (ComparisonOperator op);
 
 	template<typename T>
-	bool Compare(ComparisonOperator op, T const& src1, T const& src2)
+	CHAOS_API bool Compare(ComparisonOperator op, T const& src1, T const& src2)
 	{
 		if (op == ComparisonOperator::NEVER)
 			return false;

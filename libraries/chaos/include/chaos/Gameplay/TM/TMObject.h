@@ -3,10 +3,10 @@ namespace chaos
 #if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// =====================================
-	// TMObject 
+	// TMObject
 	// =====================================
 
-	class TMObject : public GameEntity
+	class CHAOS_API TMObject : public GameEntity
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
@@ -63,7 +63,7 @@ namespace chaos
 	// TMPath : a path around which objects may evolve
 	// =====================================
 
-	class TMPath : public TMObject
+	class CHAOS_API TMPath : public TMObject
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
@@ -80,7 +80,7 @@ namespace chaos
 	// TMCameraTemplate : where the player may start
 	// =====================================
 
-	class TMCameraTemplate : public TMObject
+	class CHAOS_API TMCameraTemplate : public TMObject
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
@@ -101,7 +101,7 @@ namespace chaos
 	// TMPlayerStart : where the player may start
 	// =====================================
 
-	class TMPlayerStart : public TMObject
+	class CHAOS_API TMPlayerStart : public TMObject
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
@@ -126,7 +126,7 @@ namespace chaos
 	// TMTrigger : an object player can collide with (for moment, rectangle)
 	// =====================================
 
-	class TMTrigger : public TMObject
+	class CHAOS_API TMTrigger : public TMObject
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
@@ -176,7 +176,7 @@ namespace chaos
 	// TMNotificationTrigger
 	// =================================================
 
-	class TMNotificationTrigger : public TMTrigger
+	class CHAOS_API TMNotificationTrigger : public TMTrigger
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
@@ -214,7 +214,7 @@ namespace chaos
 	// TMCheckpointTrigger
 	// =================================================
 
-	class TMCheckpointTrigger : public TMTrigger
+	class CHAOS_API TMCheckpointTrigger : public TMTrigger
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
@@ -237,7 +237,7 @@ namespace chaos
 	// TMSoundTrigger : an object that play a sound
 	// =================================================
 
-	class TMSoundTrigger : public TMTrigger
+	class CHAOS_API TMSoundTrigger : public TMTrigger
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
@@ -287,7 +287,7 @@ namespace chaos
 	// TMChangeLevelTrigger
 	// =================================================
 
-	class TMChangeLevelTrigger : public TMTrigger
+	class CHAOS_API TMChangeLevelTrigger : public TMTrigger
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 

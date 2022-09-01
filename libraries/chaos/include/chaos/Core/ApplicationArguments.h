@@ -20,7 +20,7 @@ static TYPE const & ARGNAME = chaos::ApplicationArgumentManager::GetInstance()->
 	 * ApplicationArgumentBase: the base class for stored arguments
 	 */
 
-	class ApplicationArgumentBase : public NamedObject
+	class CHAOS_API ApplicationArgumentBase : public NamedObject
 	{
 	public:
 
@@ -40,7 +40,7 @@ static TYPE const & ARGNAME = chaos::ApplicationArgumentManager::GetInstance()->
 	 */
 
 	template<typename T>
-	class ApplicationArgument : public ApplicationArgumentBase
+	class CHAOS_API ApplicationArgument : public ApplicationArgumentBase
 	{
 		friend class ApplicationArgumentManager;
 
@@ -93,7 +93,7 @@ static TYPE const & ARGNAME = chaos::ApplicationArgumentManager::GetInstance()->
 	 * ApplicationArgumentManager: a singleton to manage all arguments
 	 */
 
-	class ApplicationArgumentManager : public Singleton<ApplicationArgumentManager>
+	class CHAOS_API ApplicationArgumentManager : public Singleton<ApplicationArgumentManager>
 	{
 	public:
 

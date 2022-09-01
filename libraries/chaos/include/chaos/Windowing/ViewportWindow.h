@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class ViewportWindow : public Window
+	class CHAOS_API ViewportWindow : public Window
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(ViewportWindow, Window);
 

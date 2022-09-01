@@ -11,7 +11,7 @@ namespace chaos
 	* GLFWHints : this represents hints for the application
 	*/
 
-	class GLFWHints
+	class CHAOS_API GLFWHints
 	{
 	public:
 
@@ -36,15 +36,15 @@ namespace chaos
 		int opengl_profile = GLFW_OPENGL_CORE_PROFILE;
 	};
 
-	bool SaveIntoJSON(nlohmann::json& json, GLFWHints const& src);
+	CHAOS_API bool SaveIntoJSON(nlohmann::json& json, GLFWHints const& src);
 
-	bool LoadFromJSON(nlohmann::json const& json, GLFWHints& dst);
+	CHAOS_API bool LoadFromJSON(nlohmann::json const& json, GLFWHints& dst);
 
 	/**
 	* WindowApplication
 	*/
 
-	class WindowApplication : public Application, public GPUProgramProviderInterface
+	class CHAOS_API WindowApplication : public Application, public GPUProgramProviderInterface
 	{
 		friend class Window;
 
@@ -262,7 +262,7 @@ namespace chaos
 	*/
 
 	template<typename WINDOW_TYPE, typename ...PARAMS>
-	bool RunWindowApplication(int argc, char** argv, char** env, PARAMS... params)
+	CHAOS_API bool RunWindowApplication(int argc, char** argv, char** env, PARAMS... params)
 	{
 		return RunApplication<WindowApplication>(argc, argv, env, WINDOW_TYPE::GetStaticClass(), params...);
 	}

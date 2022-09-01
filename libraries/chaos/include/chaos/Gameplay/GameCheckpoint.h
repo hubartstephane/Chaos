@@ -14,7 +14,7 @@ namespace chaos
 	// =============================================
 
 	template<typename T>
-	class CheckpointObject
+	class CHAOS_API CheckpointObject
 	{
 	public:
 
@@ -63,7 +63,7 @@ namespace chaos
 	// GameCheckpoint
 	// =============================================
 
-	class GameCheckpoint : public Object
+	class CHAOS_API GameCheckpoint : public Object
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 

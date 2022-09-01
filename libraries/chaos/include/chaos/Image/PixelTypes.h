@@ -20,7 +20,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// FreeImage produces
-	// 
+	//
 	//   - BGR(A) pixels for UNSIGNED CHAR images
 	//   - RGB(A) pixels for FLOAT images
 	//
@@ -33,7 +33,7 @@ namespace chaos
 	* PixelBGR : a structure that helps manipulating 24 bit pixel
 	**/
 
-	class PixelBGR // FreeImage produce BGR pixels by default (for unsigned char)
+	class CHAOS_API PixelBGR // FreeImage produce BGR pixels by default (for unsigned char)
 	{
 	public:
 
@@ -62,7 +62,7 @@ namespace chaos
 	* PixelBGRA : a structure that helps manipulating 32 bit pixel
 	**/
 
-	class PixelBGRA // FreeImage produce BGRA pixels by default (for unsigned char)
+	class CHAOS_API PixelBGRA // FreeImage produce BGRA pixels by default (for unsigned char)
 	{
 	public:
 
@@ -95,7 +95,7 @@ namespace chaos
 	* PixelRGBFloat : a structure that helps manipulating 3 x float pixels
 	**/
 
-	class PixelRGBFloat // FreeImage produce RGB pixels by default (for float) !!!
+	class CHAOS_API PixelRGBFloat // FreeImage produce RGB pixels by default (for float) !!!
 	{
 	public:
 
@@ -133,7 +133,7 @@ namespace chaos
 	* PixelRGBAFloat : a structure that helps manipulating 4 x float pixels
 	**/
 
-	class PixelRGBAFloat // FreeImage produce RGBA pixels by default (for float) !!!
+	class CHAOS_API PixelRGBAFloat // FreeImage produce RGBA pixels by default (for float) !!!
 	{
 	public:
 
@@ -174,7 +174,7 @@ namespace chaos
 	* PixelDepthStencil : a structure that helps depth24+stencil8 pixels
 	**/
 
-	class PixelDepthStencil // FreeImage produce RGBA pixels by default (for float) !!!
+	class CHAOS_API PixelDepthStencil // FreeImage produce RGBA pixels by default (for float) !!!
 	{
 	public:
 
@@ -193,7 +193,7 @@ namespace chaos
 	* Class to make basic pixel component conversions
 	*/
 
-	class PixelComponentConverter
+	class CHAOS_API PixelComponentConverter
 	{
 	public:
 
@@ -227,7 +227,7 @@ namespace chaos
 	//
 	// => we select the 'average' method because it is faster (and does not use float values)
 
-	class PixelConverter
+	class CHAOS_API PixelConverter
 	{
 	public:
 

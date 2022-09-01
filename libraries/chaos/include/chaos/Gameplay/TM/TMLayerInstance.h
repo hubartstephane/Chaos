@@ -6,7 +6,7 @@ namespace chaos
 	// TMLayerInstance : instance of a Layer
 	// =====================================
 
-	class TMLayerInstance : public GPURenderable, public JSONSerializable
+	class CHAOS_API TMLayerInstance : public GPURenderable, public JSONSerializable
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
@@ -62,7 +62,7 @@ namespace chaos
 		/** find the object from its name */
 		template<typename CHECK_CLASS = EmptyClass>
 		AutoConstCastable<TMObject> FindObject(ObjectRequest request, bool recursive = false) const
-		{			
+		{
 			if (AutoConstCastable<TMObject> result = request.FindObject<CHECK_CLASS>(objects))
 				return result;
 			if (recursive)
@@ -195,7 +195,7 @@ namespace chaos
 		bool InitializeTileLayer(TiledMap::TileLayer const * tile_layer, TMObjectReferenceSolver& reference_solver);
 		/** specialized layer */
 		bool InitializeGroupLayer(TiledMap::GroupLayer const* group_layer, TMObjectReferenceSolver& reference_solver);
-	
+
 		/** create an object in an object layer */
 		TMObjectFactory GetObjectFactory(TiledMap::TypedObject const * in_typed_object);
 

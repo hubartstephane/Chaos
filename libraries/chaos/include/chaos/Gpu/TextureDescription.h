@@ -11,7 +11,7 @@ namespace chaos
 	* SurfaceDescription : used to describe an openGL surface
 	*/
 
-	class SurfaceDescription
+	class CHAOS_API SurfaceDescription
 	{
 	public:
 
@@ -37,7 +37,7 @@ namespace chaos
 	* TextureDescription : used to describe an openGL texture
 	*/
 
-	class TextureDescription : public SurfaceDescription
+	class CHAOS_API TextureDescription : public SurfaceDescription
 	{
 	public:
 

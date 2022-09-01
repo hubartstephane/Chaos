@@ -14,7 +14,7 @@ namespace chaos
 	* GPUProgramRenderMaterialProvider : this is a variable provider dedicated for RenderMaterials
 	*/
 
-	class GPUProgramRenderMaterialProvider : public GPUProgramProvider
+	class CHAOS_API GPUProgramRenderMaterialProvider : public GPUProgramProvider
 	{
 	public:
 
@@ -37,7 +37,7 @@ namespace chaos
 		GPURenderParams const* render_params = nullptr;
 	};
 
-	class GPURenderMaterialInfoTraverseFunc
+	class CHAOS_API GPURenderMaterialInfoTraverseFunc
 	{
 	public:
 
@@ -50,7 +50,7 @@ namespace chaos
 	* GPURenderMaterialInfoEntry : a 'pair' filter => material_info
 	*/
 
-	class GPURenderMaterialInfoEntry
+	class CHAOS_API GPURenderMaterialInfoEntry
 	{
 
 	public:
@@ -65,7 +65,7 @@ namespace chaos
 	* GPURenderMaterialInfo : the data for a material
 	*/
 
-	class GPURenderMaterialInfo : public Object
+	class CHAOS_API GPURenderMaterialInfo : public Object
 	{
 	public:
 
@@ -93,7 +93,7 @@ namespace chaos
 	* GPURenderMaterial : this is the combinaison of some uniforms and a program
 	*/
 
-	class GPURenderMaterial : public GPUFileResource
+	class CHAOS_API GPURenderMaterial : public GPUFileResource
 	{
 		friend class GPUProgramData;
 		friend class GPUProgramRenderMaterialProvider;

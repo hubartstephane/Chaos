@@ -11,5 +11,5 @@ namespace chaos
 	};
 
 #endif
-	
+
 }; // namespace chaos

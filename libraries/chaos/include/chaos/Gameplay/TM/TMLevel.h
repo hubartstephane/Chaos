@@ -8,7 +8,7 @@ namespace chaos
 
 	// XXX : while we want to create GeometricObject during tile creation we will need a fake 'geometric_object' (or a geometric_object on the fly)
 	//       we cannot afford to create such a costly object for each tile (considering that 99% of the tiles should not require such a fake object)
-	// 
+	//
 	//       that's why we use factories (even for non tile layers).
 	//       for a tile we:
 	//         - get a factory
@@ -18,7 +18,7 @@ namespace chaos
 	// XXX : the functions to get factories receive a : TypedObject         (because we just need some properties and a type to know which object we would like to create (and that's what we get in Tile generation method))
 	//       the factories receive a                  : GeometricObjectType (because for the real object creation we need more than a TypedObject)
 	//
-	// XXX : beware, the CHAOS_TM_MAKE_OBJECT_FACTORY(...) macro hide the complexity of lambda parameters capture. Use with caution 
+	// XXX : beware, the CHAOS_TM_MAKE_OBJECT_FACTORY(...) macro hide the complexity of lambda parameters capture. Use with caution
 	//
 
 	/** a functor for geometric object factory */
@@ -32,7 +32,7 @@ namespace chaos
 	// TMLevel : a level described by a tiledmap
 	// =====================================
 
-	class TMLevel : public Level
+	class CHAOS_API TMLevel : public Level
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 

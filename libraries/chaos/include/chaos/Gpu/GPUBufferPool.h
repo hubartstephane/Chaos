@@ -11,7 +11,7 @@ namespace chaos
       * GPUBufferPoolEntries : an entry that match several GPUBuffers to a GPUFence
       */
 
-    class GPUBufferPoolEntries
+    class CHAOS_API GPUBufferPoolEntries
     {
         friend class GPUBufferPool;
 
@@ -32,7 +32,7 @@ namespace chaos
      * GPUBufferPool : a cache that contains several GPU buffers with a pending fence (the resource is not valid until the fence is over)
      */
 
-    class GPUBufferPool : public Object
+    class CHAOS_API GPUBufferPool : public Object
     {
     public:
 

@@ -11,7 +11,7 @@ namespace chaos
 	* LogType : severity of the message
 	*/
 
-	enum class LogType : int
+	enum class CHAOS_API LogType : int
 	{
 		Message,
 		Warning,
@@ -22,7 +22,7 @@ namespace chaos
 	* Log : deserve to output some logs
 	*/
 
-	class Log : public Object
+	class CHAOS_API Log : public Object
 	{
 	public:
 

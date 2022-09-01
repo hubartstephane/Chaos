@@ -13,7 +13,7 @@ namespace chaos
 	* ImageProcessor : take an image as an entry and returns a new image as output
 	*/
 
-	class ImageProcessor : public Object, public JSONSerializable
+	class CHAOS_API ImageProcessor : public Object, public JSONSerializable
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(ImageProcessor, Object);
 
@@ -55,7 +55,7 @@ namespace chaos
 	* ImageProcessorOutline : add an outline to any image
 	*/
 
-	class ImageProcessorOutline : public ImageProcessor
+	class CHAOS_API ImageProcessorOutline : public ImageProcessor
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(ImageProcessorOutline, ImageProcessor);
 
@@ -85,7 +85,7 @@ namespace chaos
 	* ImageProcessorOutline : add an alpha channel according to RGB value
 	*/
 
-	class ImageProcessorAddAlpha : public ImageProcessor
+	class CHAOS_API ImageProcessorAddAlpha : public ImageProcessor
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(ImageProcessorAddAlpha, ImageProcessor);
 
@@ -111,7 +111,7 @@ namespace chaos
 	* ImageProcessorShadow : add a shadow to an image
 	*/
 
-	class ImageProcessorShadow : public ImageProcessor
+	class CHAOS_API ImageProcessorShadow : public ImageProcessor
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(ImageProcessorShadow, ImageProcessor);
 

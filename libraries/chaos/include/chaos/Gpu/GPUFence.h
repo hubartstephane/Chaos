@@ -12,7 +12,7 @@ namespace chaos
 	//         -that why there is a constructor that DOESNOT create the OpenGL resource
 	//         -there is a CreateGPUFence function to push the fence in the queue
 
-	class GPUFence : public GPUResource
+	class CHAOS_API GPUFence : public GPUResource
 	{
 	public:
 

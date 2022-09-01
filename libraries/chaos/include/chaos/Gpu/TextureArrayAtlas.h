@@ -8,7 +8,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-		class TextureArrayAtlas : public AtlasBase
+		class CHAOS_API TextureArrayAtlas : public AtlasBase
 		{
 		public:
 

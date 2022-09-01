@@ -12,7 +12,7 @@ namespace chaos
 	// GPURenderMaterialLoaderReferenceSolver : some references may not be resolved when loading (register them to resolve them when possible)
 	// ===========================================================================
 
-	class GPURenderMaterialParentReference
+	class CHAOS_API GPURenderMaterialParentReference
 	{
 	public:
 
@@ -24,7 +24,7 @@ namespace chaos
 		std::string parent_name;
 	};
 
-	class GPURenderMaterialLoaderReferenceSolver
+	class CHAOS_API GPURenderMaterialLoaderReferenceSolver
 	{
 	public:
 
@@ -43,7 +43,7 @@ namespace chaos
 	// GPURenderMaterialLoader
 	// ===========================================================================
 
-	class GPURenderMaterialLoader : public ResourceManagerLoader<GPURenderMaterial, GPUResourceManager>
+	class CHAOS_API GPURenderMaterialLoader : public ResourceManagerLoader<GPURenderMaterial, GPUResourceManager>
 	{
 	public:
 

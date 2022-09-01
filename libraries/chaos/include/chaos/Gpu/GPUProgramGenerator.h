@@ -11,7 +11,7 @@ namespace chaos
 	 * The types of possible shaders
 	 */
 
-	enum class ShaderType : int
+	enum class CHAOS_API ShaderType : int
 	{
 		ANY = GL_NONE,
 		VERTEX = GL_VERTEX_SHADER,
@@ -29,7 +29,7 @@ namespace chaos
 	*                       It is possible to use cache system and to add some definitions so we can generate multiple programs with small macro differences.
 	*/
 
-	class GPUProgramGenerator
+	class CHAOS_API GPUProgramGenerator
 	{
 	public:
 

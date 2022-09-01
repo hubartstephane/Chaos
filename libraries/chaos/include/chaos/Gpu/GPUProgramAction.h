@@ -15,7 +15,7 @@ namespace chaos
 	* GPUProgramAction : base class action to be applyed to Providers
 	*/
 
-	class GPUProgramAction
+	class CHAOS_API GPUProgramAction
 	{
 	public:
 
@@ -88,7 +88,7 @@ namespace chaos
 	* GPUProgramSetUniformAction : action used to initialize an uniform
 	*/
 
-	class GPUProgramSetUniformAction : public GPUProgramAction
+	class CHAOS_API GPUProgramSetUniformAction : public GPUProgramAction
 	{
 	public:
 
@@ -117,7 +117,7 @@ namespace chaos
 	* GPUProgramSetUniformAction : action used to initialize an attribute with a default value
 	*/
 
-	class GPUProgramSetAttributeAction : public GPUProgramAction
+	class CHAOS_API GPUProgramSetAttributeAction : public GPUProgramAction
 	{
 	public:
 
@@ -147,7 +147,7 @@ namespace chaos
 	*/
 
 	template<typename T>
-	class GPUProgramGetValueAction : public GPUProgramAction
+	class CHAOS_API GPUProgramGetValueAction : public GPUProgramAction
 	{
 	public:
 

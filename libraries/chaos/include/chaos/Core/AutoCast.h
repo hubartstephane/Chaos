@@ -12,7 +12,7 @@ namespace chaos
 
 	/** AutoConstCastable : an object that provide dynamic_cast on demand */
 	template<typename T, bool checked>
-	class AutoConstCastable
+	class CHAOS_API AutoConstCastable
 	{
 	public:
 
@@ -60,7 +60,7 @@ namespace chaos
 
 	/** AutoCastable : an object that provide dynamic_cast on demand */
 	template<typename T, bool checked>
-	class AutoCastable
+	class CHAOS_API AutoCastable
 	{
 	public:
 
@@ -112,29 +112,29 @@ namespace chaos
 
 	/** create a delayed dynamic_cast<> */
 	template<typename T>
-	AutoCastable<T> auto_cast(AutoCastable<T> const& src) { return src; }
+	CHAOS_API AutoCastable<T> auto_cast(AutoCastable<T> const& src) { return src; }
 	/** create a delayed dynamic_cast<> */
 	template<typename T>
-	AutoConstCastable<T> auto_cast(AutoConstCastable<T> const& src) { return src; }
+	CHAOS_API AutoConstCastable<T> auto_cast(AutoConstCastable<T> const& src) { return src; }
 	/** create a delayed dynamic_cast<> */
 	template<typename T>
-	AutoCastable<T> auto_cast(T* ptr) { return AutoCastable<T>(ptr); }
+	CHAOS_API AutoCastable<T> auto_cast(T* ptr) { return AutoCastable<T>(ptr); }
 	/** create a delayed dynamic_cast<> */
 	template<typename T>
-	AutoConstCastable<T> auto_cast(T const* ptr) { return AutoConstCastable<T>(ptr); }
+	CHAOS_API AutoConstCastable<T> auto_cast(T const* ptr) { return AutoConstCastable<T>(ptr); }
 
 	/** create a delayed dynamic_cast<> */
 	template<typename T>
-	AutoCastable<T, true> auto_cast_checked(AutoCastable<T> const& src) { return src; }
+	CHAOS_API AutoCastable<T, true> auto_cast_checked(AutoCastable<T> const& src) { return src; }
 	/** create a delayed dynamic_cast<> */
 	template<typename T>
-	AutoConstCastable<T, true> auto_cast_checked(AutoConstCastable<T> const& src) { return src; }
+	CHAOS_API AutoConstCastable<T, true> auto_cast_checked(AutoConstCastable<T> const& src) { return src; }
 	/** create a delayed dynamic_cast<> */
 	template<typename T>
-	AutoCastable<T, true> auto_cast_checked(T* ptr) { return AutoCastable<T, true>(ptr); }
+	CHAOS_API AutoCastable<T, true> auto_cast_checked(T* ptr) { return AutoCastable<T, true>(ptr); }
 	/** create a delayed dynamic_cast<> */
 	template<typename T>
-	AutoConstCastable<T, true> auto_cast_checked(T const* ptr) { return AutoConstCastable<T, true>(ptr); }
+	CHAOS_API AutoConstCastable<T, true> auto_cast_checked(T const* ptr) { return AutoConstCastable<T, true>(ptr); }
 
 #endif
 

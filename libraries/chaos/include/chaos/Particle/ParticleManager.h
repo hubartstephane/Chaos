@@ -6,7 +6,7 @@ namespace chaos
 	// ParticleManager
 	// ==============================================================
 
-	class ParticleManager : public GPURenderable
+	class CHAOS_API ParticleManager : public GPURenderable
 	{
 		CHAOS_PARTICLE_ALL_FRIENDS
 
@@ -52,7 +52,7 @@ namespace chaos
 			if (result == nullptr)
 				return nullptr;
 			result->SetRenderMaterial(render_material);
-			DoAddLayer(result, render_order, layer_id);			
+			DoAddLayer(result, render_order, layer_id);
 			return result;
 		}
 
@@ -84,7 +84,7 @@ namespace chaos
         GPUBufferPool const& GetBufferPool() const { return buffer_pool; }
 
 	protected:
-		
+
 		/** tick the manager */
 		virtual bool DoTick(float delta_time) override;
 		/** display all the particles */

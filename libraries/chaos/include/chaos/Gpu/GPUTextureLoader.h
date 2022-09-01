@@ -10,7 +10,7 @@ namespace chaos
 	* GPUTextureLoader : used to have some loading texture functions for OpenGL
 	**/
 
-	class GPUTextureLoader : public ResourceManagerLoader<GPUTexture, GPUResourceManager>
+	class CHAOS_API GPUTextureLoader : public ResourceManagerLoader<GPUTexture, GPUResourceManager>
 	{
 	public:
 

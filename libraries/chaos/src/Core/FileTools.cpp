@@ -128,7 +128,7 @@ namespace chaos
 			boost::filesystem::path const& resolved_path = path.GetResolvedPath();
 
 			// File Redirection
-#if _DEBUG 
+#if _DEBUG
 
 			if (Application const* application = Application::GetConstInstance())
 			{

@@ -13,7 +13,7 @@ namespace chaos
 	* GPUProgramProviderPassType : the type of search we are currently on
 	*/
 
-	enum class GPUProgramProviderPassType : int
+	enum class CHAOS_API GPUProgramProviderPassType : int
 	{
 		FALLBACK = 1,
 		DEDUCED = 2,
@@ -24,7 +24,7 @@ namespace chaos
 	* GPUProgramProviderExecutionData : some data used for deduction
 	*/
 
-	class GPUProgramProviderExecutionData
+	class CHAOS_API GPUProgramProviderExecutionData
 	{
 		friend class GPUProgramProviderInterface;
 		friend class GPUProgramProviderDeduceLock;
@@ -79,7 +79,7 @@ namespace chaos
 		GPUProgramAction& action;
 	};
 
-	class GPUProgramProviderDeduceLock
+	class CHAOS_API GPUProgramProviderDeduceLock
 	{
 		friend class GPUProgramProviderExecutionData;
 

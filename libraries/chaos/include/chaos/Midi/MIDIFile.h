@@ -16,7 +16,7 @@ namespace chaos
 	/**
 	* MidiChunk : this is a chunk of memory that contains MIDI data
 	*/
-	class MidiChunk : public Buffer<char>
+	class CHAOS_API MidiChunk : public Buffer<char>
 	{
 	public:
 
@@ -36,7 +36,7 @@ namespace chaos
 	* MidiEvent : an event in MIDI file
 	*/
 
-	class MidiEvent
+	class CHAOS_API MidiEvent
 	{
 	public:
 
@@ -57,7 +57,7 @@ namespace chaos
 	* MidiSystemExclusiveEvent : an event in MIDI file
 	*/
 
-	class MidiSystemExclusiveEvent : public MidiEvent
+	class CHAOS_API MidiSystemExclusiveEvent : public MidiEvent
 	{
 	public:
 
@@ -71,7 +71,7 @@ namespace chaos
 	* MidiMetaEvent : an event in MIDI file
 	*/
 
-	class MidiMetaEvent : public MidiEvent
+	class CHAOS_API MidiMetaEvent : public MidiEvent
 	{
 	public:
 
@@ -81,7 +81,7 @@ namespace chaos
 		virtual bool InitializeEventFromChunk(BufferReader& reader) override;
 	};
 
-	class MidiCommandEvent : public MidiEvent
+	class CHAOS_API MidiCommandEvent : public MidiEvent
 	{
 	public:
 
@@ -95,7 +95,7 @@ namespace chaos
 	* MidiTrack : A track in midi files
 	*/
 
-	class MidiTrack
+	class CHAOS_API MidiTrack
 	{
 	public:
 
@@ -112,7 +112,7 @@ namespace chaos
 	* MidiHeader : The midi file header
 	*/
 
-	class MidiHeader
+	class CHAOS_API MidiHeader
 	{
 	public:
 
@@ -137,7 +137,7 @@ namespace chaos
 	* MidiLoader : the class for reading MIDI file
 	*/
 
-	class MidiLoader
+	class CHAOS_API MidiLoader
 	{
 	public:
 
@@ -172,5 +172,5 @@ namespace chaos
 
 
 #endif
-	
+
 }; // namespace chaos

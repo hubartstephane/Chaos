@@ -39,12 +39,12 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	* GamepadState : the states contained in the device
 	*/
 
-	class GamepadState
+	class CHAOS_API GamepadState
 	{
 		CHAOS_GAMEPAD_ALL_FRIENDS
 
-			/** number of axis in a gamepad */
-			static constexpr size_t AXIS_COUNT = sizeof(meta::FakeInstance<GLFWgamepadstate>().axes) / sizeof(meta::FakeInstance<GLFWgamepadstate>().axes[0]);
+		/** number of axis in a gamepad */
+		static constexpr size_t AXIS_COUNT = sizeof(meta::FakeInstance<GLFWgamepadstate>().axes) / sizeof(meta::FakeInstance<GLFWgamepadstate>().axes[0]);
 		/** number of button in a gamepad */
 		static constexpr size_t BUTTON_COUNT = sizeof(meta::FakeInstance<GLFWgamepadstate>().buttons) / sizeof(meta::FakeInstance<GLFWgamepadstate>().buttons[0]);
 
@@ -90,7 +90,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	* GamepadCallbacks : some callbacks that may be plugged into a gamepad
 	*/
 
-	class GamepadCallbacks : public Object
+	class CHAOS_API GamepadCallbacks : public Object
 	{
 		CHAOS_GAMEPAD_ALL_FRIENDS
 
@@ -114,7 +114,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	/**
 	* PhysicalGamepad : the physical device. Client do not directly use it
 	*/
-	class PhysicalGamepad
+	class CHAOS_API PhysicalGamepad
 	{
 		CHAOS_GAMEPAD_ALL_FRIENDS
 
@@ -184,7 +184,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	 * ForceFeedbackEffect : the feedback effects
 	 */
 
-	class ForceFeedbackEffect : public Object
+	class CHAOS_API ForceFeedbackEffect : public Object
 	{
 		CHAOS_GAMEPAD_ALL_FRIENDS
 
@@ -207,7 +207,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	 * DefaultForceFeedbackEffect : a simple constant effect with a timer
 	 */
 
-	class DefaultForceFeedbackEffect : public ForceFeedbackEffect
+	class CHAOS_API DefaultForceFeedbackEffect : public ForceFeedbackEffect
 	{
 		CHAOS_GAMEPAD_ALL_FRIENDS
 
@@ -237,7 +237,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	/**
 	* Gamepad : this is a logical gamepad .. may change the physical gamepad it is bound on
 	*/
-	class Gamepad : public Object
+	class CHAOS_API Gamepad : public Object
 	{
 	public:
 
@@ -342,7 +342,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	* GamepadManager : used to handle gamepads, there allocation, the dynamic change of their index ...
 	*/
 
-	class GamepadManager : public Object
+	class CHAOS_API GamepadManager : public Object
 	{
 		CHAOS_GAMEPAD_ALL_FRIENDS;
 

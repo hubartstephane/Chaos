@@ -10,7 +10,7 @@ namespace chaos
 	// AutoRecenterToPlayerCameraComponent
 	// =============================================
 
-	class AutoRecenterToPlayerCameraComponent : public CameraComponent
+	class CHAOS_API AutoRecenterToPlayerCameraComponent : public CameraComponent
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(AutoRecenterToPlayerCameraComponent, CameraComponent);
 

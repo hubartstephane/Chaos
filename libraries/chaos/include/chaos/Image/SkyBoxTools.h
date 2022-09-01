@@ -10,7 +10,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	enum class SkyBoxImageType : int
+	enum class CHAOS_API SkyBoxImageType : int
 	{
 		IMAGE_LEFT = 0,
 		IMAGE_RIGHT = 1,
@@ -28,7 +28,7 @@ namespace chaos
 	* SkyBoxSingleDisposition : the disposition of each individual face inside the single image
 	*/
 
-	class SkyBoxSingleDisposition
+	class CHAOS_API SkyBoxSingleDisposition
 	{
 	public:
 
@@ -49,7 +49,7 @@ namespace chaos
 		glm::ivec3 image_position[6];
 	};
 
-	class SkyBoxImages
+	class CHAOS_API SkyBoxImages
 	{
 	public:
 
@@ -130,7 +130,7 @@ namespace chaos
 	* SkyBoxTools : deserve to load skybox files
 	*/
 
-	class SkyBoxTools
+	class CHAOS_API SkyBoxTools
 	{
 	public:
 

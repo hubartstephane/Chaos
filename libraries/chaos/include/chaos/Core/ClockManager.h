@@ -3,10 +3,10 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	//
-	//                                      TICK RANGE 
+	//                                      TICK RANGE
 	//                                   +--------------+
 	//                                   v              v
-	//                           EXECUTION RANGE 
+	//                           EXECUTION RANGE
 	//                +---------------------------------+
 	//                v                                 v
 	// ----+-----------------------------+-----------------------------+ Tick system
@@ -35,7 +35,7 @@ namespace chaos
 	* ClockEventTickData : describe all information for ticking an event
 	*/
 
-	class ClockEventTickData
+	class CHAOS_API ClockEventTickData
 	{
 
 	public:
@@ -62,7 +62,7 @@ namespace chaos
 	* ClockEventTickRegistration : events to tick are registered inside that structure
 	*/
 
-	class ClockEventTickRegistration : public ClockEventTickData
+	class CHAOS_API ClockEventTickRegistration : public ClockEventTickData
 	{
 	public:
 
@@ -76,7 +76,7 @@ namespace chaos
 	* ClockEventRepetitionInfo
 	*/
 
-	class ClockEventRepetitionInfo
+	class CHAOS_API ClockEventRepetitionInfo
 	{
 	public:
 
@@ -125,7 +125,7 @@ namespace chaos
 	* ClockEventInfo : some information that describes the event
 	*/
 
-	class ClockEventInfo : public ClockEventRepetitionInfo
+	class CHAOS_API ClockEventInfo : public ClockEventRepetitionInfo
 	{
 	public:
 
@@ -181,7 +181,7 @@ namespace chaos
 	* ClockEventTickResult
 	*/
 
-	class ClockEventTickResult
+	class CHAOS_API ClockEventTickResult
 	{
 	protected:
 
@@ -232,7 +232,7 @@ namespace chaos
 	* Event that can be triggered by clock
 	*/
 
-	class ClockEvent : public Object
+	class CHAOS_API ClockEvent : public Object
 	{
 		friend class Clock;
 
@@ -287,7 +287,7 @@ namespace chaos
 	* ClockEventTickSort : used to sort events by start time
 	*/
 
-	class ClockEventTickSort
+	class CHAOS_API ClockEventTickSort
 	{
 	public:
 
@@ -301,7 +301,7 @@ namespace chaos
 	* ClockCreateParams : data for clock creation
 	*/
 
-	class ClockCreateParams
+	class CHAOS_API ClockCreateParams
 	{
 	public:
 
@@ -315,7 +315,7 @@ namespace chaos
 	* This represents a clock that may paused or have a different time scale than absolute time. It can have inner clocks
 	*/
 
-	class Clock : public Object, public JSONSerializable
+	class CHAOS_API Clock : public Object, public JSONSerializable
 	{
 		friend class ClockEvent;
 

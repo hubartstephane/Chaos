@@ -196,7 +196,7 @@ namespace chaos
 		{
 			/** internal method */
 			template<typename IT, typename END, typename FUNC, typename DEFAULT_RESULT>
-			auto for_each_internal(FUNC func, DEFAULT_RESULT default_result)
+			CHAOS_API auto for_each_internal(FUNC func, DEFAULT_RESULT default_result)
 			{
 				if constexpr (std::is_same_v<IT, END>) // constexpr is important for compilation
 					return default_result;
@@ -213,7 +213,7 @@ namespace chaos
 
 			/** internal method */
 			template<typename IT, typename END, typename FUNC>
-			void for_each_internal(FUNC func)
+			CHAOS_API void for_each_internal(FUNC func)
 			{
 				if constexpr (std::is_same_v<IT, END>)
 					return;
@@ -234,51 +234,51 @@ namespace chaos
 
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		T* get_raw_pointer(T* src)
+		CHAOS_API T* get_raw_pointer(T* src)
 		{
 			return src;
 		}
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		T const* get_raw_pointer(T const* src)
+		CHAOS_API T const* get_raw_pointer(T const* src)
 		{
 			return src;
 		}
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		T* get_raw_pointer(T& src)
+		CHAOS_API T* get_raw_pointer(T& src)
 		{
 			return &src;
 		}
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		T const* get_raw_pointer(T const& src)
+		CHAOS_API T const* get_raw_pointer(T const& src)
 		{
 			return &src;
 		}
 
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		T* get_raw_pointer(shared_ptr<T>& src)
+		CHAOS_API T* get_raw_pointer(shared_ptr<T>& src)
 		{
 			return src.get();
 		}
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		T const* get_raw_pointer(shared_ptr<T> const& src)
+		CHAOS_API T const* get_raw_pointer(shared_ptr<T> const& src)
 		{
 			return src.get();
 		}
 
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		T* get_raw_pointer(std::unique_ptr<T>& src)
+		CHAOS_API T* get_raw_pointer(std::unique_ptr<T>& src)
 		{
 			return src.get();
 		}
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		T const* get_raw_pointer(std::unique_ptr<T> const& src)
+		CHAOS_API T const* get_raw_pointer(std::unique_ptr<T> const& src)
 		{
 			return src.get();
 		}
@@ -288,26 +288,26 @@ namespace chaos
 		struct get_type;
 		/** specialisation get_type */
 		template<typename T>
-		struct get_type<T, boost::mpl::true_> : public get_type<typename T::type> {};
+		struct CHAOS_API get_type<T, boost::mpl::true_> : public get_type<typename T::type> {};
 		/** specialisation get_type */
 		template<typename T>
-		struct get_type<T, boost::mpl::false_> : public boost::mpl::identity<T> {};
+		struct CHAOS_API get_type<T, boost::mpl::false_> : public boost::mpl::identity<T> {};
 
 
 		/** a fake function (not implemented) that pretends to return a reference to an instance of T (does not deserve to be called) */
 		template<typename T>
-		constexpr T& FakeInstance();
+		CHAOS_API constexpr T& FakeInstance();
 
 		/** apply a functor on a boost::mpl::vector<>. Stop whenever some kind of result is found */
 		template<typename ELEMENTS, typename FUNC, typename DEFAULT_RESULT>
-		auto for_each(FUNC func, DEFAULT_RESULT default_result)
+		CHAOS_API auto for_each(FUNC func, DEFAULT_RESULT default_result)
 		{
 			return details::for_each_internal<typename boost::mpl::begin<ELEMENTS>::type, typename boost::mpl::end<ELEMENTS>::type>(func, default_result);
 		}
 
 		/** apply a functor on a boost::mpl::vector<> */
 		template<typename ELEMENTS, typename FUNC>
-		auto for_each(FUNC func)
+		CHAOS_API auto for_each(FUNC func)
 		{
 			details::for_each_internal<typename boost::mpl::begin<ELEMENTS>::type, typename boost::mpl::end<ELEMENTS>::type>(func);
 		}
@@ -321,7 +321,7 @@ namespace chaos
 
 		/** get a unique identifier from a class */
 		template<typename T>
-		static uintptr_t GetClassUniqueID()
+		CHAOS_API uintptr_t GetClassUniqueID()
 		{
 			static uintptr_t result = 0;
 			return (uintptr_t)&result;

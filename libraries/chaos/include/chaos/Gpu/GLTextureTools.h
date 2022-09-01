@@ -10,7 +10,7 @@ namespace chaos
 	* GenTextureParameters : some parameters to load textures
 	**/
 
-	class GenTextureParameters
+	class CHAOS_API GenTextureParameters
 	{
 	public:
 
@@ -49,36 +49,36 @@ namespace chaos
 	namespace GLTextureTools
 	{
 		/** get buffer containing the texture data */
-		char* GetTextureImage(GLuint texture_id, GLint level, ImageDescription& desc);
+		CHAOS_API char* GetTextureImage(GLuint texture_id, GLint level, ImageDescription& desc);
 		/** get the pixel format of the texture */
-		PixelFormat GetTexturePixelFormat(GLuint texture_id, GLint level);
+		CHAOS_API PixelFormat GetTexturePixelFormat(GLuint texture_id, GLint level);
 		/** get the pixel format from an internal format */
-		PixelFormat GetPixelFormat(GLenum internal_format);
+		CHAOS_API PixelFormat GetPixelFormat(GLenum internal_format);
 
 		/** returns true whether type is an array texture type */
-		bool IsArrayTextureType(GLenum type);
+		CHAOS_API bool IsArrayTextureType(GLenum type);
 		/** returns true whether type is not an array texture type */
-		bool IsFlatTextureType(GLenum type);
+		CHAOS_API bool IsFlatTextureType(GLenum type);
 
 		/** transform a texture type into an array type */
-		GLenum ToArrayTextureType(GLenum type);
+		CHAOS_API GLenum ToArrayTextureType(GLenum type);
 		/** transform a texture type into a flat type */
-		GLenum ToFlatTextureType(GLenum type);
+		CHAOS_API GLenum ToFlatTextureType(GLenum type);
 
 		/** returns the maximum number of mipmap */
-		int GetMipmapLevelCount(int width, int height);
-		int GetMipmapLevelCount(int width);
+		CHAOS_API int GetMipmapLevelCount(int width, int height);
+		CHAOS_API int GetMipmapLevelCount(int width);
 		/** Get Format/Internal Format pair from the description */
-		GLPixelFormat GetGLPixelFormat(PixelFormat const& pixel_format);
+		CHAOS_API GLPixelFormat GetGLPixelFormat(PixelFormat const& pixel_format);
 
 		/** utility function to compute target (GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_RECTANGLE) from dimension */
-		GLenum GetTextureTargetFromSize(int width, int height, bool rectangle_texture);
+		CHAOS_API GLenum GetTextureTargetFromSize(int width, int height, bool rectangle_texture);
 
 		/** prepare store parameters */
-		char* PrepareGLTextureTransfert(ImageDescription const& desc);
+		CHAOS_API char* PrepareGLTextureTransfert(ImageDescription const& desc);
 
 		/** utility function for texture loading */
-		void GenTextureApplyParameters(GLuint texture_id, TextureDescription const& texture_description, GenTextureParameters const& parameters);
+		CHAOS_API void GenTextureApplyParameters(GLuint texture_id, TextureDescription const& texture_description, GenTextureParameters const& parameters);
 
 	}; // namespace GLTextureTools
 

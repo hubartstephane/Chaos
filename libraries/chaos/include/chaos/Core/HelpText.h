@@ -14,9 +14,9 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 		/** post a message when STD is available */
-		size_t PushMessage(char const* family, char const* message);
+		CHAOS_API size_t PushMessage(char const* family, char const* message);
 		/** flush pending messages (returns number of message flushed). The callback receives (Family, Message). for each Family, it is called first with an empty message */
-		size_t FlushMessages(std::function<void(char const*, char const*)> function);
+		CHAOS_API size_t FlushMessages(std::function<void(char const*, char const*)> function);
 
 #endif
 

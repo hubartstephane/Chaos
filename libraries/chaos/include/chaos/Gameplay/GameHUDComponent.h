@@ -34,7 +34,7 @@ namespace chaos
 	// GameHUDComponent
 	// ====================================================================
 
-	class GameHUDComponent : public GPURenderable
+	class CHAOS_API GameHUDComponent : public GPURenderable
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
@@ -94,7 +94,7 @@ namespace chaos
 	// ====================================================================
 
 	/** a HUD component with a mesh */
-	class GameHUDMeshComponent : public GameHUDComponent
+	class CHAOS_API GameHUDMeshComponent : public GameHUDComponent
 	{
 	protected:
 
@@ -117,7 +117,7 @@ namespace chaos
 	// GameHUDTextComponent
 	// ====================================================================
 
-	class GameHUDTextComponent : public GameHUDMeshComponent
+	class CHAOS_API GameHUDTextComponent : public GameHUDMeshComponent
 	{
 		friend class GameHUD;
 
@@ -152,7 +152,7 @@ namespace chaos
 	// ====================================================================
 
 	template<typename T, typename BASE>
-	class GameHUDCacheValueComponent : public BASE
+	class CHAOS_API GameHUDCacheValueComponent : public BASE
 	{
 		using type = T;
 
@@ -200,7 +200,7 @@ namespace chaos
 	// ====================================================================
 
 	template<typename T>
-	class GameHUDCacheValueTextComponent : public GameHUDCacheValueComponent<T, GameHUDTextComponent>
+	class CHAOS_API GameHUDCacheValueTextComponent : public GameHUDCacheValueComponent<T, GameHUDTextComponent>
 	{
 	protected:
 
@@ -218,7 +218,7 @@ namespace chaos
 	// GameHUDNotificationComponent
 	// ====================================================================
 
-	class GameHUDNotificationComponent : public GameHUDTextComponent
+	class CHAOS_API GameHUDNotificationComponent : public GameHUDTextComponent
 	{
 		friend class GameHUD;
 
@@ -251,7 +251,7 @@ namespace chaos
 	// GameHUDBestScoreComponent
 	// ====================================================================
 
-	class GameHUDBestScoreComponent : public GameHUDCacheValueTextComponent<int>
+	class CHAOS_API GameHUDBestScoreComponent : public GameHUDCacheValueTextComponent<int>
 	{
 	public:
 
@@ -271,7 +271,7 @@ namespace chaos
 	// GameHUDScoreComponent
 	// ====================================================================
 
-	class GameHUDScoreComponent : public GameHUDCacheValueTextComponent<int>
+	class CHAOS_API GameHUDScoreComponent : public GameHUDCacheValueTextComponent<int>
 	{
 	public:
 
@@ -291,7 +291,7 @@ namespace chaos
 	// GameHUDFramerateComponent
 	// ====================================================================
 
-	class GameHUDFramerateComponent : public GameHUDCacheValueTextComponent<float>
+	class CHAOS_API GameHUDFramerateComponent : public GameHUDCacheValueTextComponent<float>
 	{
 	public:
 
@@ -318,7 +318,7 @@ namespace chaos
 	// GameHUDPerfsComponent
 	// ====================================================================
 
-	class GameHUDPerfsComponent : public GameHUDCacheValueTextComponent<std::pair<int, int>>
+	class CHAOS_API GameHUDPerfsComponent : public GameHUDCacheValueTextComponent<std::pair<int, int>>
 	{
 	public:
 
@@ -351,7 +351,7 @@ namespace chaos
 	// GameHUDTimeoutComponent
 	// ====================================================================
 
-	class GameHUDTimeoutComponent : public GameHUDCacheValueTextComponent<float>
+	class CHAOS_API GameHUDTimeoutComponent : public GameHUDCacheValueTextComponent<float>
 	{
 	public:
 
@@ -385,7 +385,7 @@ namespace chaos
 	// GameHUDLifeComponent
 	// ====================================================================
 
-	class GameHUDLifeComponent : public GameHUDCacheValueMeshComponent<int>
+	class CHAOS_API GameHUDLifeComponent : public GameHUDCacheValueMeshComponent<int>
 	{
 	public:
 
@@ -433,7 +433,7 @@ namespace chaos
 	// GameHUDLevelTitleComponent
 	// ====================================================================
 
-	class GameHUDLevelTitleComponent : public GameHUDCacheValueTextComponent<Level const*>
+	class CHAOS_API GameHUDLevelTitleComponent : public GameHUDCacheValueTextComponent<Level const*>
 	{
 		friend class GameHUD;
 
@@ -457,7 +457,7 @@ namespace chaos
 	// GameHUDFreeCameraComponent
 	// ====================================================================
 
-	class GameHUDFreeCameraComponent : public GameHUDTextComponent
+	class CHAOS_API GameHUDFreeCameraComponent : public GameHUDTextComponent
 	{
 
 	public:
@@ -479,7 +479,7 @@ namespace chaos
 
 #if _DEBUG
 
-	class GameHUDDebugValuesComponent : public GameHUDMeshComponent
+	class CHAOS_API GameHUDDebugValuesComponent : public GameHUDMeshComponent
 	{
 		class Entry
 		{
@@ -521,10 +521,10 @@ namespace chaos
 	};
 
 	/** display a variable for 1 frame */
-	void DebugValue(char const* title, char const* value, float life_time = 0.0f);
+	CHAOS_API void DebugValue(char const* title, char const* value, float life_time = 0.0f);
 	/** display a variable for 1 frame */
 	template<typename T>
-	void DebugValue(char const* title, T const& value, float life_time = 0.0f)
+	CHAOS_API void DebugValue(char const* title, T const& value, float life_time = 0.0f)
 	{
 		std::string str = StringTools::ToString(value);
 		DebugValue(title, str.c_str(), life_time);
@@ -538,7 +538,7 @@ namespace chaos
 
 #if _DEBUG
 
-	class GameHUDDebugDrawComponent : public GameHUDComponent
+	class CHAOS_API GameHUDDebugDrawComponent : public GameHUDComponent
 	{
 	public:
 
@@ -559,7 +559,7 @@ namespace chaos
 	};
 
 	/** display a variable for 1 frame */
-	GPUDrawInterface<VertexDefault>* GetDebugDrawInterface();
+	CHAOS_API GPUDrawInterface<VertexDefault>* GetDebugDrawInterface();
 
 
 #endif // #if _DEBUG

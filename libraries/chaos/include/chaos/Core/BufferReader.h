@@ -7,7 +7,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class BufferReader
+	class CHAOS_API BufferReader
 	{
 	public:
 
@@ -52,5 +52,5 @@ namespace chaos
 	};
 
 #endif
-	
+
 }; // namespace chaos

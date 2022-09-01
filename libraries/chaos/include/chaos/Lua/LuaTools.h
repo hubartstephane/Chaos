@@ -8,7 +8,7 @@ namespace chaos
 	/** utility macro to ensure TOP of lua stack is the same at scope exit at an offset*/
 #define ensure_luatop_offset(x, offset) chaos::LuaTools::ensure_luatop_const_class ensure_luatop_const_##__LINE__(x, offset)
 	/** utility macro to force TOP of lua stack to be constant at scope exit */
-#define force_luatop_const(x) chaos::LuaTools::force_luatop_const_class force_luatop_const_##__LINE__(x)	
+#define force_luatop_const(x) chaos::LuaTools::force_luatop_const_class force_luatop_const_##__LINE__(x)
 
 	class LuaTools;
 
@@ -18,7 +18,7 @@ namespace chaos
 	* LuaTools is namespace-class for methods to handle lua
 	*/
 
-	class LuaTools
+	class CHAOS_API LuaTools
 	{
 	public:
 

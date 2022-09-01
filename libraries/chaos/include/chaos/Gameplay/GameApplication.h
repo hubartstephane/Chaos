@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class GameApplication : public WindowApplication
+	class CHAOS_API GameApplication : public WindowApplication
 	{
 	public:
 
@@ -38,7 +38,7 @@ namespace chaos
 	};
 
 	template<typename GAME_TYPE, typename ...PARAMS>
-	bool RunGame(int argc, char** argv, char** env, PARAMS... params)
+	CHAOS_API bool RunGame(int argc, char** argv, char** env, PARAMS... params)
 	{
 		return RunApplication<GameApplication>(argc, argv, env, GAME_TYPE::GetStaticClass(), GameWindow::GetStaticClass(), params...);
 	}

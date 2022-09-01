@@ -27,7 +27,7 @@ namespace chaos
 	* GPUProgramProviderInterface : a base class for filling uniforms or attributes in a program. The purpose is to take responsability to start an ACTION
 	*/
 
-	class GPUProgramProviderInterface
+	class CHAOS_API GPUProgramProviderInterface
 	{
 		friend class GPUProgramProvider; // WTF : GPUProgramProvider could not call DoProcessAction(...) an another instance without that !!
 		friend class GPUProgramProviderChainEntry;
@@ -61,7 +61,7 @@ namespace chaos
 	* GPUProgramProviderInterface : an object that implements GPUProgramProviderInterface
 	*/
 
-	class GPUProgramProviderBase : public Object, public GPUProgramProviderInterface
+	class CHAOS_API GPUProgramProviderBase : public Object, public GPUProgramProviderInterface
 	{
 
 	};
@@ -71,7 +71,7 @@ namespace chaos
 	*/
 
 	template<typename T, typename MEMBER_TYPE>
-	class GPUProgramProviderVariableBase : public GPUProgramProviderBase
+	class CHAOS_API GPUProgramProviderVariableBase : public GPUProgramProviderBase
 	{
 	public:
 
@@ -103,7 +103,7 @@ namespace chaos
 	* GPUProgramProviderTexture : used to fill GPUProgram binding for a texture
 	*/
 
-	class GPUProgramProviderTexture : public GPUProgramProviderBase
+	class CHAOS_API GPUProgramProviderTexture : public GPUProgramProviderBase
 	{
 		friend class GPUProgramReplaceTextureAction;
 
@@ -134,7 +134,7 @@ namespace chaos
 	* GPUProgramProviderCustom : used to fill GPUProgram binding with a lambda
 	*/
 
-	class GPUProgramProviderCustom : public GPUProgramProviderBase
+	class CHAOS_API GPUProgramProviderCustom : public GPUProgramProviderBase
 	{
 		friend class GPUResourceManager;
 		friend class GPUProgramRenderMaterialProvider;
@@ -162,7 +162,7 @@ namespace chaos
 	* GPUProgramProvider : used to fill GPUProgram binding for multiple uniforms / uniforms
 	*/
 
-	class GPUProgramProvider : public GPUProgramProviderBase
+	class CHAOS_API GPUProgramProvider : public GPUProgramProviderBase
 	{
 		friend class GPUResourceManager;
 		friend class GPUProgramRenderMaterialProvider;
@@ -209,7 +209,7 @@ namespace chaos
 	* GPUProgramProviderChainEntry : an entry for the chain provider
 	*/
 
-	class GPUProgramProviderChainEntry
+	class CHAOS_API GPUProgramProviderChainEntry
 	{
 		friend class GPUProgramProviderChain;
 
@@ -247,7 +247,7 @@ BOOST_PP_COMMA_IF(n) GPUProgramProviderChainEntry const BOOST_PP_CAT(in_param, n
 #define CHAOS_PROVIDER_CHAIN_ARGUMENT_INITS(z, n, unused)\
 entries[n] = BOOST_PP_CAT(in_param, n);
 
-	class GPUProgramProviderChain : public DisableReferenceCount<GPUProgramProvider>
+	class CHAOS_API GPUProgramProviderChain : public DisableReferenceCount<GPUProgramProvider>
 	{
 
 	public:
@@ -279,7 +279,7 @@ entries[n] = BOOST_PP_CAT(in_param, n);
 	* GPUProgramProviderCommonTransforms : a provider that help finding world_to_local, local_to_world ... transformations
 	*/
 
-	class GPUProgramProviderCommonTransforms : public GPUProgramProvider
+	class CHAOS_API GPUProgramProviderCommonTransforms : public GPUProgramProvider
 	{
 	public:
 

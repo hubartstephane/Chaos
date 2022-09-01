@@ -6,7 +6,7 @@ namespace chaos
 		// ParticleAllocationBase
 		// ==============================================================
 
-	class ParticleAllocationBase : public Object
+	class CHAOS_API ParticleAllocationBase : public Object
 	{
 		CHAOS_PARTICLE_ALL_FRIENDS
 
@@ -156,7 +156,7 @@ namespace chaos
 	// ==============================================================
 
 	template<typename LAYER_TRAIT>
-	class ParticleAllocation : public ParticleAllocationBase, public DataOwner<typename get_AllocationTrait<LAYER_TRAIT>::type>
+	class CHAOS_API ParticleAllocation : public ParticleAllocationBase, public DataOwner<typename get_AllocationTrait<LAYER_TRAIT>::type>
 	{
         friend class ParticleLayer<LAYER_TRAIT>;
 
@@ -182,12 +182,12 @@ namespace chaos
 
         /** override */
         virtual void* GetParticleBuffer() override
-        { 
+        {
             return (particles.size() == 0) ? nullptr : &particles[0];
         }
         /** override */
         virtual void const* GetParticleBuffer() const override
-        { 
+        {
             return (particles.size() == 0) ? nullptr : &particles[0];
         }
 		/** override */
@@ -200,7 +200,7 @@ namespace chaos
 		{
 			return sizeof(particle_type);
 		}
-		
+
 		/** override */
 		virtual AutoCastedParticleAccessor Resize(size_t new_count) override
 		{
@@ -224,7 +224,7 @@ namespace chaos
 
         /** transforms the particles into vertices in the buffer */
         void ParticlesToPrimitives(PrimitiveOutput<vertex_type>& output, layer_trait_type const* layer_trait) const
-        {		
+        {
 			using Flags = ParticleToPrimitive_ImplementationFlags;
 
 			constexpr int implementation_type = ParticleTraitTools::GetParticleToPrimitivesImplementationType<layer_trait_type>();
@@ -275,14 +275,14 @@ namespace chaos
 			}
 			else if constexpr (default_implementation != 0)
 			{
-				DoParticlesToPrimitivesLoop_DefaultImplementation(output); 
+				DoParticlesToPrimitivesLoop_DefaultImplementation(output);
 			}
         }
 
     protected:
 
 		bool TickAllocation(float delta_time, layer_trait_type const * layer_trait)
-		{ 
+		{
             bool destroy_allocation = false;
 			if (particles.size() > 0)
 				destroy_allocation = UpdateParticles(delta_time, layer_trait);
@@ -313,7 +313,7 @@ namespace chaos
 				{
 					if constexpr (with_begin_call != 0)
 					{
-						remaining_particles = DoUpdateParticlesLoop(							
+						remaining_particles = DoUpdateParticlesLoop(
 							delta_time,
 							layer_trait,
 							particle_accessor,
@@ -327,7 +327,7 @@ namespace chaos
 				}
 				else if constexpr (with_begin_call != 0)
 				{
-					remaining_particles = DoUpdateParticlesLoop(						
+					remaining_particles = DoUpdateParticlesLoop(
 						delta_time,
 						layer_trait,
 						particle_accessor,
@@ -370,7 +370,7 @@ namespace chaos
 			// tick all particles. overide all particles that have been destroyed by next on the array
 			size_t j = 0;
 			for (size_t i = 0; i < particle_count; ++i)
-			{			
+			{
 				particle_type& particle = particle_accessor[i];
 
 				bool destroy_particle = false;
@@ -380,7 +380,7 @@ namespace chaos
 					destroy_particle = particle.UpdateParticle(delta_time, params ...);
 				else if constexpr (default_implementation != 0)
 					destroy_particle = UpdateParticle(delta_time, particle, params ...);
-				
+
 				if (!destroy_particle)
 				{
 					if (i != j)

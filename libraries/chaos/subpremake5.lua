@@ -2,7 +2,7 @@
 -- ROOT_PATH/libraries/chaos
 -- =============================================================================
 
-local project = build:StaticLibrary()
+local project = build:SharedLibrary()
 
 project:DependOnLib("LUA")
 project:DependOnLib("GLM")

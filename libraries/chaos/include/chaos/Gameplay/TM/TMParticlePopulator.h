@@ -7,7 +7,7 @@ namespace chaos
 	// TMParticlePopulator : utility class to generate particles for a layer with a cache
 	// =====================================
 
-	class TMParticlePopulator
+	class CHAOS_API TMParticlePopulator
 	{
 		static size_t const PARTICLE_BUFFER_SIZE = 256;
 

@@ -12,7 +12,7 @@ namespace chaos
 		// LayerBase
 		// ==========================================
 
-		class LayerBase : public PropertyOwner
+		class CHAOS_API LayerBase : public PropertyOwner
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
@@ -57,7 +57,7 @@ namespace chaos
 		// ImageLayer
 		// ==========================================
 
-		class ImageLayer : public LayerBase
+		class CHAOS_API ImageLayer : public LayerBase
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
@@ -83,7 +83,7 @@ namespace chaos
 		// ObjectLayer
 		// ==========================================
 
-		enum class DrawOrder : int
+		enum class CHAOS_API DrawOrder : int
 		{
 			MANUAL = 0,
 			TOPDOWN = 1
@@ -91,7 +91,7 @@ namespace chaos
 
 		CHAOS_DECLARE_ENUM_METHOD(DrawOrder);
 
-		class ObjectLayer : public LayerBase
+		class CHAOS_API ObjectLayer : public LayerBase
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
@@ -122,7 +122,7 @@ namespace chaos
 		// Tile
 		// ==========================================
 
-		class Tile
+		class CHAOS_API Tile
 		{
 		public:
 
@@ -136,7 +136,7 @@ namespace chaos
 		// TileLayerChunk
 		// ==========================================
 
-		class TileLayerChunk
+		class CHAOS_API TileLayerChunk
 		{
 		public:
 
@@ -159,7 +159,7 @@ namespace chaos
 		// TileLayer
 		// ==========================================
 
-		class TileLayer : public LayerBase
+		class CHAOS_API TileLayer : public LayerBase
 		{
 
 			CHAOS_TILEDMAP_ALL_FRIENDS
@@ -210,7 +210,7 @@ namespace chaos
 		// GroupLayer
 		// ==========================================
 
-		class GroupLayer : public LayerBase
+		class CHAOS_API GroupLayer : public LayerBase
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 

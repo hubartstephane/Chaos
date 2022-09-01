@@ -7,7 +7,7 @@
 // It's important that last line is:    static inline .... DeclareClass ... (no comma)
 // so that we can use the short class name syntax
 //    CHAOS_DECLARE_OBJECT_CLASS(child_class, parent_class)("short_name");
-// 
+//
 // That's why the class member is not private (because users will have to redefines the privacy)
 //
 #define CHAOS_DECLARE_OBJECT_CLASS(CLASS, ...)\
@@ -42,7 +42,7 @@ namespace chaos
 	//       the destructor operator calls   free(p) : p must point to the beginning of the allocated buffer
 	//
 	//
-	//   case 1 : BAD !!! 
+	//   case 1 : BAD !!!
 	//
 	//
 	//                  +--- this (from the point of view of Object)
@@ -68,7 +68,7 @@ namespace chaos
 	//
 	//   operator delete(this) <==> free(this)   ===> we call free with a GOOD pointer
 
-	class Object
+	class CHAOS_API Object
 	{
 		friend class SharedPointerPolicy;
 		friend class WeakPointerPolicy;
@@ -107,7 +107,7 @@ namespace chaos
 	*/
 
 	template<typename T>
-	class DisableReferenceCount : public T
+	class CHAOS_API DisableReferenceCount : public T
 	{
 	public:
 
@@ -118,7 +118,7 @@ namespace chaos
 
 		/** disable all reference count functions */
 		virtual void AddReference() override { }
-		virtual void SubReference() override { }		
+		virtual void SubReference() override { }
 		virtual void OnLastReferenceLost() override { }
 	};
 
@@ -127,7 +127,7 @@ namespace chaos
 	*/
 
 	template<typename T>
-	class ReferencedObjectDataWrapper : public DisableReferenceCount<Object>
+	class CHAOS_API ReferencedObjectDataWrapper : public DisableReferenceCount<Object>
 	{
 		using type = T;
 
@@ -147,7 +147,7 @@ namespace chaos
 	};
 
 	template<typename T, typename ...PARAMS>
-	auto MakeReferencedObjectWrapper(PARAMS... params)
+	CHAOS_API auto MakeReferencedObjectWrapper(PARAMS... params)
 	{
 		return ReferencedObjectDataWrapper<T>(params...);
 	}
@@ -162,9 +162,9 @@ namespace chaos
 	*/
 
 	/** utility method for shared_ptr */
-void intrusive_ptr_add_ref(chaos::Object* obj); // should work with boost::intrusive_ptr<>
+CHAOS_API void intrusive_ptr_add_ref(chaos::Object* obj); // should work with boost::intrusive_ptr<>
 
 	/** utility method for shared_ptr */
-void intrusive_ptr_release(chaos::Object* obj); // should work with boost::intrusive_ptr<>
+CHAOS_API void intrusive_ptr_release(chaos::Object* obj); // should work with boost::intrusive_ptr<>
 
 #endif

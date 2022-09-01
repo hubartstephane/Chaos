@@ -10,7 +10,7 @@ namespace chaos
 	* SimpleWin32Window : a class handle some on-the-shelve window
 	*/
 
-	class SimpleWin32Window
+	class CHAOS_API SimpleWin32Window
 	{
 	public:
 
@@ -79,5 +79,5 @@ namespace chaos
 	};
 
 #endif
-	
+
 }; // namespace chaos

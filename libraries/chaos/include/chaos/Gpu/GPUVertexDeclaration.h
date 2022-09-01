@@ -12,7 +12,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/** the possible semantics */
-	enum class VertexAttributeSemantic : int
+	enum class CHAOS_API VertexAttributeSemantic : int
 	{
 		NONE = -1,
 		POSITION = 0,
@@ -27,7 +27,7 @@ namespace chaos
 	};
 
 	/** the possible component types */
-	enum class VertexAttributeComponentType : int
+	enum class CHAOS_API VertexAttributeComponentType : int
 	{
 		FLOAT = 1,
 		DOUBLE = 2,
@@ -37,7 +37,7 @@ namespace chaos
 	};
 
 	/** the possible vector types */
-	enum class VertexAttributeType : int
+	enum class CHAOS_API VertexAttributeType : int
 	{
 		FLOAT1 = (int(VertexAttributeComponentType::FLOAT) << 3) | 1,
 		FLOAT2 = (int(VertexAttributeComponentType::FLOAT) << 3) | 2,
@@ -68,7 +68,7 @@ namespace chaos
 	/**
 	* Declaration of one component of a vertex
 	*/
-	class GPUVertexDeclarationEntry
+	class CHAOS_API GPUVertexDeclarationEntry
 	{
 	public:
 
@@ -96,7 +96,7 @@ namespace chaos
 	/**
 	* Declaration of a full vertex
 	*/
-	class GPUVertexDeclaration : public Object
+	class CHAOS_API GPUVertexDeclaration : public Object
 	{
 	public:
 

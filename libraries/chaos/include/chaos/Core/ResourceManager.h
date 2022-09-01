@@ -10,7 +10,7 @@ namespace chaos
 	// MANAGER
 	// ==============================================================
 
-	class ResourceManager : public Object
+	class CHAOS_API ResourceManager : public Object
 	{
 
 	public:

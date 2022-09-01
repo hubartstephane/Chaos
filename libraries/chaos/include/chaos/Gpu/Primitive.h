@@ -10,7 +10,7 @@ namespace chaos
     //     |      |
     //     +------+
     //     0      1
-    // 
+    //
     // TRIANGLE PAIR
     // -------------
     //
@@ -20,13 +20,13 @@ namespace chaos
     //     | /    |
     //     +------+
     //    0,3     1
-    // 
+    //
 
     /**
      * PrimitiveType : the type of primitives that can be rendered
      */
 
-    enum class PrimitiveType : int
+    enum class CHAOS_API PrimitiveType : int
     {
         NONE,
         POINT,
@@ -62,7 +62,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
     /** returns the OpenGL primitive type corresponding to the primitive */
-    constexpr GLenum GetGLPrimitiveType(PrimitiveType primitive_type)
+    CHAOS_API constexpr GLenum GetGLPrimitiveType(PrimitiveType primitive_type)
     {
         if (primitive_type == PrimitiveType::POINT)
             return GL_POINTS;
@@ -97,7 +97,7 @@ namespace chaos
      */
 
     template<typename VERTEX_TYPE>
-    class Primitive
+    class CHAOS_API Primitive
     {
     public:
 
@@ -191,9 +191,9 @@ namespace chaos
     };
 
     // TypedPrimitive : this class helps making difference with functions that works with QUADs and thoses that works with TRIANGLE_PAIR ... (and so one).
-    //                  despite of that, it has no real additionnal value uppon its class base 
+    //                  despite of that, it has no real additionnal value uppon its class base
     template<typename VERTEX_TYPE, PrimitiveType PRIMITIVE_TYPE>
-    class TypedPrimitive : public Primitive<VERTEX_TYPE>
+    class CHAOS_API TypedPrimitive : public Primitive<VERTEX_TYPE>
     {
     public:
         using Primitive<VERTEX_TYPE>::Primitive;

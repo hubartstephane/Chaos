@@ -3,10 +3,10 @@ namespace chaos
 #if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// =====================================
-	// TMTriggerCollisionInfo 
+	// TMTriggerCollisionInfo
 	// =====================================
 
-	class TMTriggerCollisionInfo
+	class CHAOS_API TMTriggerCollisionInfo
 	{
 	public:
 
@@ -25,7 +25,7 @@ namespace chaos
 	// TMLevelInstance : instance of a Level
 	// =====================================
 
-	class TMLevelInstance : public LevelInstance
+	class CHAOS_API TMLevelInstance : public LevelInstance
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 

@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	enum class InputMode : int
+	enum class CHAOS_API InputMode : int
 	{
 		/** the mode for keyboard */
 		KEYBOARD = 0,
@@ -17,11 +17,11 @@ namespace chaos
 	};
 
 	/** returns true whether given mode correspond to mouse or keyboard */
-	bool IsPCMode(InputMode mode);
+	CHAOS_API bool IsPCMode(InputMode mode);
 	/** returns true whether given mode correspond to gamepad */
-	bool IsConsoleMode(InputMode mode);
+	CHAOS_API bool IsConsoleMode(InputMode mode);
 	/** returns true whether we change platform (PC to console or inverse) */
-	bool IsPlatformChanged(InputMode new_mode, InputMode old_mode);
+	CHAOS_API bool IsPlatformChanged(InputMode new_mode, InputMode old_mode);
 
 #endif
 

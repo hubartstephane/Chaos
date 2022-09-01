@@ -18,7 +18,7 @@ namespace chaos
 	/**
 	 * KeyboardButton : A keyboard key
 	 */
-	enum class KeyboardButton : int
+	enum class CHAOS_API KeyboardButton : int
 	{
 		CHAOS_KEYDEF(UNKNOWN),
 		CHAOS_KEYDEF(SPACE),
@@ -147,7 +147,7 @@ namespace chaos
 	/**
 	 * MouseButton
 	 */
-	enum class MouseButton : int
+	enum class CHAOS_API MouseButton : int
 	{
 		UNKNOWN = -1,
 		BUTTON_1 = GLFW_MOUSE_BUTTON_1,
@@ -166,18 +166,18 @@ namespace chaos
 	//  -XBOX_RIGHT_AXIS_X and XBOX_RIGHT_AXIS_Y : are bound to other indices.
 	//
 	//  -in GLFW 3.1, LEFT and RIGHT triggers were bound to the same index
-	//                LEFT  giving a value in [-1 .. 0] 
-	//                RIGHT giving a value in [0 .. +1] 
+	//                LEFT  giving a value in [-1 .. 0]
+	//                RIGHT giving a value in [0 .. +1]
 	//
-	//  -in GLFW 3.3, LEFT are RIGHT TRIGGERS are now bound to different indices 
-	//                LEFT  giving a value in [-1 .. +1] 
-	//                RIGHT giving a value in [-1 .. +1] 
+	//  -in GLFW 3.3, LEFT are RIGHT TRIGGERS are now bound to different indices
+	//                LEFT  giving a value in [-1 .. +1]
+	//                RIGHT giving a value in [-1 .. +1]
 	//
 	//                while they are not bound to the same index, you can check both values
 
 	// shuxxx see glfw3.h => some values seem to differ    GLFW_GAMEPAD_BUTTON_LEFT_THUMB ? etc
 
-	enum class GamepadButton : int
+	enum class CHAOS_API GamepadButton : int
 	{
 		/** undefined value */
 		UNKNOWN = -1,
@@ -218,7 +218,7 @@ namespace chaos
 		RIGHT_TRIGGER = 102
 	};
 
-	enum class GamepadAxis : int
+	enum class CHAOS_API GamepadAxis : int
 	{
 		/** undefined value */
 		UNKNOWN = -1,
@@ -238,7 +238,7 @@ namespace chaos
 		RIGHT_TRIGGER = GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER,
 	};
 
-	enum class GamepadStick : int
+	enum class CHAOS_API GamepadStick : int
 	{
 		/** undefined value */
 		UNKNOWN = -1,
@@ -248,7 +248,7 @@ namespace chaos
 		RIGHT_STICK = 1
 	};
 
-	enum class KeyType : int
+	enum class CHAOS_API KeyType : int
 	{
 		/** undefined value */
 		UNKNOWN = -1,
@@ -263,7 +263,7 @@ namespace chaos
 	/**
 	 * Key : a generic key (gamepad, keyboard or mouse)
 	 */
-	class Key
+	class CHAOS_API Key
 	{
 	public:
 

@@ -44,7 +44,7 @@ namespace chaos
 
 		/** convert endianness */
 		template<typename T>
-		CHAOS_API T HostToLittleEndian(T src)
+		/*CHAOS_API*/ T HostToLittleEndian(T src)
 		{
 			if (IsHostBigEndian())
 				return EndianSwap(src);
@@ -53,14 +53,14 @@ namespace chaos
 
 		/** convert endianness */
 		template<typename T>
-		CHAOS_API T LittleEndianToHost(T src)
+		/*CHAOS_API*/ T LittleEndianToHost(T src)
 		{
 			return HostToLittleEndian(src);
 		}
 
 		/** convert endianness */
 		template<typename T>
-		CHAOS_API T HostToBigEndian(T src)
+		/*CHAOS_API*/ T HostToBigEndian(T src)
 		{
 			if (IsHostLittleEndian())
 				return EndianSwap(src);
@@ -68,7 +68,7 @@ namespace chaos
 		}
 		/** convert endianness */
 		template<typename T>
-		CHAOS_API T BigEndianToHost(T src)
+		/*CHAOS_API*/ T BigEndianToHost(T src)
 		{
 			return HostToBigEndian(src);
 		}

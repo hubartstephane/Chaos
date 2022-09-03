@@ -17,7 +17,7 @@ namespace chaos
     // ==============================================================
 
     template<typename TYPE>
-    class CHAOS_API RawDataBufferAccessorBase
+    class /*CHAOS_API*/ RawDataBufferAccessorBase
     {
     public:
 

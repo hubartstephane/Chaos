@@ -34,7 +34,7 @@ namespace chaos
 
 	// The default template
 	template<typename PARTICLE_TYPE, typename VERTEX_TYPE, typename ALLOCATION_TYPE>
-	class CHAOS_API ParticleLayerTrait : public ParticleLayerTraitBase
+	class /*CHAOS_API*/ ParticleLayerTrait : public ParticleLayerTraitBase
 	{
 	public:
 
@@ -48,7 +48,7 @@ namespace chaos
 
 	// the specialization
 	template<typename PARTICLE_TYPE, typename VERTEX_TYPE>
-	class CHAOS_API ParticleLayerTrait<PARTICLE_TYPE, VERTEX_TYPE, EmptyClass> : public ParticleLayerTraitBase
+	class /*CHAOS_API*/ ParticleLayerTrait<PARTICLE_TYPE, VERTEX_TYPE, EmptyClass> : public ParticleLayerTraitBase
 	{
 	public:
 

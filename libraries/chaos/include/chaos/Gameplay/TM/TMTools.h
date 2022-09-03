@@ -6,7 +6,7 @@ namespace chaos
 
 		/** serialize layers into JSON */
 		template<typename T>
-		CHAOS_API void SerializeLayersFromJSON(T* object, nlohmann::json const& json)
+		/*CHAOS_API*/ void SerializeLayersFromJSON(T* object, nlohmann::json const& json)
 		{
 			nlohmann::json const* layers_json = JSONTools::GetStructure(json, "LAYERS");
 			if (layers_json != nullptr && layers_json->is_array())
@@ -30,7 +30,7 @@ namespace chaos
 
 		/** search a layer inside an object by ID */
 		template<typename T, typename U>
-		CHAOS_API auto FindLayerInstanceByID(T* object, U& layer_instances, int in_id, bool recursive) -> decltype(layer_instances[0].get())
+		/*CHAOS_API*/ auto FindLayerInstanceByID(T* object, U& layer_instances, int in_id, bool recursive) -> decltype(layer_instances[0].get())
 		{
 			for (auto& layer : layer_instances)
 			{
@@ -48,7 +48,7 @@ namespace chaos
 
 		/** search a layer inside an object by request */
 		template<typename T, typename U>
-		CHAOS_API auto FindLayerInstance(T* object, U& layer_instances, ObjectRequest request, bool recursive) -> decltype(layer_instances[0].get())
+		/*CHAOS_API*/ auto FindLayerInstance(T* object, U& layer_instances, ObjectRequest request, bool recursive) -> decltype(layer_instances[0].get())
 		{
 			for (auto& layer : layer_instances)
 			{

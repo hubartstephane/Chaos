@@ -262,7 +262,7 @@ namespace chaos
 	*/
 
 	template<typename WINDOW_TYPE, typename ...PARAMS>
-	CHAOS_API bool RunWindowApplication(int argc, char** argv, char** env, PARAMS... params)
+	/*CHAOS_API*/ bool RunWindowApplication(int argc, char** argv, char** env, PARAMS... params)
 	{
 		return RunApplication<WindowApplication>(argc, argv, env, WINDOW_TYPE::GetStaticClass(), params...);
 	}

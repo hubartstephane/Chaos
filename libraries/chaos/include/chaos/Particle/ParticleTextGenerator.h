@@ -309,7 +309,7 @@ namespace chaos
 
 		/** output primitives corresponding to generated text */
 		template<typename VERTEX_TYPE>
-		CHAOS_API QuadPrimitive<VERTEX_TYPE> TextToPrimitives(PrimitiveOutput<VERTEX_TYPE>& output, GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params = {});
+		/*CHAOS_API*/ QuadPrimitive<VERTEX_TYPE> TextToPrimitives(PrimitiveOutput<VERTEX_TYPE>& output, GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params = {});
 
 #else
 

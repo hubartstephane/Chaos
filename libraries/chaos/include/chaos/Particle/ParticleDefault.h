@@ -94,13 +94,13 @@ namespace chaos
 
 	/** output primitive */
 	template<typename VERTEX_TYPE>
-	CHAOS_API void ParticleToPrimitives(ParticleDefault const& particle, PrimitiveOutput<VERTEX_TYPE>& output);
+	/*CHAOS_API*/ void ParticleToPrimitives(ParticleDefault const& particle, PrimitiveOutput<VERTEX_TYPE>& output);
 	/** generates 1 quad from one particle */
 	template<typename VERTEX_TYPE>
-	CHAOS_API void ParticleToPrimitive(ParticleDefault const& particle, QuadPrimitive<VERTEX_TYPE>& primitive);
+	/*CHAOS_API*/ void ParticleToPrimitive(ParticleDefault const& particle, QuadPrimitive<VERTEX_TYPE>& primitive);
 	/** generates 1 triangle pair from one particle */
 	template<typename VERTEX_TYPE>
-	CHAOS_API void ParticleToPrimitive(ParticleDefault const& particle, TrianglePairPrimitive<VERTEX_TYPE>& primitive);
+	/*CHAOS_API*/ void ParticleToPrimitive(ParticleDefault const& particle, TrianglePairPrimitive<VERTEX_TYPE>& primitive);
 
 	/** utility method to have position for a quad (in order BL, BR, TR, TL) */
 	CHAOS_API void GenerateVertexPositionAttributes(box2 const& bounding_box, float rotation, glm::vec2* vertex_positions);

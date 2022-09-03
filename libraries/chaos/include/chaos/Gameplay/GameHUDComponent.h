@@ -152,7 +152,7 @@ namespace chaos
 	// ====================================================================
 
 	template<typename T, typename BASE>
-	class CHAOS_API GameHUDCacheValueComponent : public BASE
+	class /*CHAOS_API*/ GameHUDCacheValueComponent : public BASE
 	{
 		using type = T;
 
@@ -200,7 +200,7 @@ namespace chaos
 	// ====================================================================
 
 	template<typename T>
-	class CHAOS_API GameHUDCacheValueTextComponent : public GameHUDCacheValueComponent<T, GameHUDTextComponent>
+	class /*CHAOS_API*/ GameHUDCacheValueTextComponent : public GameHUDCacheValueComponent<T, GameHUDTextComponent>
 	{
 	protected:
 

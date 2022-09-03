@@ -27,35 +27,35 @@ namespace chaos
 
 	/** an utility function to create an object from a json object */
 	template<typename T>
-	CHAOS_API T* LoadFromJSONCreateObject(nlohmann::json const& entry);
+	/*CHAOS_API*/ T* LoadFromJSONCreateObject(nlohmann::json const& entry);
 
 	/** default template loading (catch exceptions) */
 	template<typename T>
-	CHAOS_API bool LoadFromJSON(nlohmann::json const& entry, T& dst);
+	/*CHAOS_API*/ bool LoadFromJSON(nlohmann::json const& entry, T& dst);
 	/** template for unique_ptr */
 	template<typename T, typename DELETER>
-	CHAOS_API bool LoadFromJSON(nlohmann::json const& entry, std::unique_ptr<T, DELETER>& dst);
+	/*CHAOS_API*/ bool LoadFromJSON(nlohmann::json const& entry, std::unique_ptr<T, DELETER>& dst);
 	/** template for shared_ptr */
 	template<typename T>
-	CHAOS_API bool LoadFromJSON(nlohmann::json const& entry, shared_ptr<T>& dst);
+	/*CHAOS_API*/ bool LoadFromJSON(nlohmann::json const& entry, shared_ptr<T>& dst);
 	/** loading specialization for vector */
 	template<typename T>
-	CHAOS_API bool LoadFromJSON(nlohmann::json const& entry, std::vector<T>& dst);
+	/*CHAOS_API*/ bool LoadFromJSON(nlohmann::json const& entry, std::vector<T>& dst);
 
 	/** serialize a path into json */
 	CHAOS_API bool SaveIntoJSON(nlohmann::json& json, boost::filesystem::path const& src);
 	/** basic types */
 	template<typename T>
-	CHAOS_API bool SaveIntoJSON(nlohmann::json& entry, T const& src);
+	/*CHAOS_API*/ bool SaveIntoJSON(nlohmann::json& entry, T const& src);
 	/** template for unique_ptr */
 	template<typename T, typename DELETER>
-	CHAOS_API bool SaveIntoJSON(nlohmann::json& entry, std::unique_ptr<T, DELETER> const& src);
+	/*CHAOS_API*/ bool SaveIntoJSON(nlohmann::json& entry, std::unique_ptr<T, DELETER> const& src);
 	/** template for shared_ptr */
 	template<typename T>
-	CHAOS_API bool SaveIntoJSON(nlohmann::json& entry, shared_ptr<T> const& src);
+	/*CHAOS_API*/ bool SaveIntoJSON(nlohmann::json& entry, shared_ptr<T> const& src);
 	/** specialization for vector */
 	template<typename T>
-	CHAOS_API bool SaveIntoJSON(nlohmann::json& entry, std::vector<T> const& src);
+	/*CHAOS_API*/ bool SaveIntoJSON(nlohmann::json& entry, std::vector<T> const& src);
 
 	// =================
 	// JSONTools
@@ -84,27 +84,27 @@ namespace chaos
 
 		/** set an attribute in a json structure */
 		template<typename T>
-		CHAOS_API bool SetAttribute(nlohmann::json& entry, char const* name, T const& src);
+		/*CHAOS_API*/ bool SetAttribute(nlohmann::json& entry, char const* name, T const& src);
 
 		/** set an attribute in a json array */
 		template<typename T>
-		CHAOS_API bool SetAttributeByIndex(nlohmann::json& entry, size_t index, T const& src);
+		/*CHAOS_API*/ bool SetAttributeByIndex(nlohmann::json& entry, size_t index, T const& src);
 
 		/** reading an attribute from a JSON structure */
 		template<typename T>
-		CHAOS_API bool GetAttribute(nlohmann::json const& entry, char const* name, T& result);
+		/*CHAOS_API*/ bool GetAttribute(nlohmann::json const& entry, char const* name, T& result);
 
 		/** reading an attribute from a JSON array */
 		template<typename T>
-		CHAOS_API bool GetAttributeByIndex(nlohmann::json const& entry, size_t index, T& result);
+		/*CHAOS_API*/ bool GetAttributeByIndex(nlohmann::json const& entry, size_t index, T& result);
 
 		/** reading an attribute with default value */
 		template<typename T, typename Y>
-		CHAOS_API bool GetAttribute(nlohmann::json const& entry, char const* name, T& result, Y default_value);
+		/*CHAOS_API*/ bool GetAttribute(nlohmann::json const& entry, char const* name, T& result, Y default_value);
 
 		/** reading an attribute with default value */
 		template<typename T, typename Y>
-		CHAOS_API bool GetAttributeByIndex(nlohmann::json const& entry, size_t index, T& result, Y default_value);
+		/*CHAOS_API*/ bool GetAttributeByIndex(nlohmann::json const& entry, size_t index, T& result, Y default_value);
 
 	}; // namespace JSONTools
 

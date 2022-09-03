@@ -11,7 +11,7 @@ namespace chaos
 
 		/** this function is used to have multiple object constructed on a continus chunk of memory */
 		template<typename T1, typename T2>
-		CHAOS_API std::tuple<T1*,T2*> SingleAllocMultipleObjects(size_t count1, size_t count2)
+		/*CHAOS_API*/ std::tuple<T1*, T2*> SingleAllocMultipleObjects(size_t count1, size_t count2)
 		{
 			std::tuple<T1*,T2*> result(nullptr, nullptr);
 

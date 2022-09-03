@@ -36,7 +36,7 @@ namespace chaos
 
 		/** create an attribute for a given enum */
 		template<typename T, typename = std::enable_if<std::is_enum_v<T>>>
-		static CHAOS_API bool PushAttribute(tinyxml2::XMLElement * element, char const* name, T& value)
+		static /*CHAOS_API*/ bool PushAttribute(tinyxml2::XMLElement * element, char const* name, T& value)
 		{
 			std::string str;
 			EnumToString(value, str);
@@ -74,7 +74,7 @@ namespace chaos
 		static CHAOS_API bool ReadAttribute(tinyxml2::XMLElement const* element, char const* attribute_name, boost::filesystem::path& result);
 		/** Find an attribute, read it as a string an find corresponding value in translation map (returns very last value in case of failure) */
 		template<typename T, typename = std::enable_if<std::is_enum_v<T>>>
-		static CHAOS_API bool ReadAttribute(tinyxml2::XMLElement const* element, char const* attribute_name, T& dst)
+		static /*CHAOS_API*/ bool ReadAttribute(tinyxml2::XMLElement const* element, char const* attribute_name, T& dst)
 		{
 			// read attribute and convert into enum
 			std::string str;

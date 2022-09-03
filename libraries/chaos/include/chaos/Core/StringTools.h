@@ -11,7 +11,7 @@ namespace chaos
 
 		/** transform any object that have stream operator into a string */
 		template<typename T>
-		CHAOS_API std::string ToString(T const & value)
+		/*CHAOS_API*/ std::string ToString(T const & value)
 		{
 			std::stringstream stream;
 			stream << value;

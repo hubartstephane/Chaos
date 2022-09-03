@@ -151,7 +151,7 @@ namespace chaos
 	};
 
 	template<typename APPLICATION_TYPE, typename ...PARAMS>
-	CHAOS_API bool RunApplication(int argc, char** argv, char** env, PARAMS... params)
+	/*CHAOS_API*/ bool RunApplication(int argc, char** argv, char** env, PARAMS... params)
 	{
 		shared_ptr<APPLICATION_TYPE> application = new APPLICATION_TYPE(params...);
 		if (application != nullptr)

@@ -177,7 +177,7 @@ namespace chaos
 	// ==============================================================
 
 	template<typename LAYER_TRAIT>
-	class CHAOS_API ParticleLayer : public ParticleLayerBase, public DataOwner<LAYER_TRAIT>
+	class /*CHAOS_API*/ ParticleLayer : public ParticleLayerBase, public DataOwner<LAYER_TRAIT>
 	{
 		static_assert(std::is_base_of_v<ParticleLayerTraitBase, LAYER_TRAIT>);
 

@@ -5,10 +5,10 @@ namespace chaos
 #if defined CHAOS_FORWARD_DECLARATION
 
 	template<typename T, typename ENCODE_TABLE>
-	CHAOS_API bool ConvertStringToEnum(char const* src, ENCODE_TABLE const& encode_table, T& dst);
+	/*CHAOS_API*/ bool ConvertStringToEnum(char const* src, ENCODE_TABLE const& encode_table, T& dst);
 
 	template<typename T, typename ENCODE_TABLE>
-	CHAOS_API bool ConvertEnumToString(T src, ENCODE_TABLE const& encode_table, std::string& dst);
+	/*CHAOS_API*/ bool ConvertEnumToString(T src, ENCODE_TABLE const& encode_table, std::string& dst);
 
 #define CHAOS_DECLARE_ENUM_FLAG_METHOD(enum_type)\
 CHAOS_API enum_type operator|(enum_type a, enum_type b);\

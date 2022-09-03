@@ -524,7 +524,7 @@ namespace chaos
 	CHAOS_API void DebugValue(char const* title, char const* value, float life_time = 0.0f);
 	/** display a variable for 1 frame */
 	template<typename T>
-	CHAOS_API void DebugValue(char const* title, T const& value, float life_time = 0.0f)
+	/*CHAOS_API*/ void DebugValue(char const* title, T const& value, float life_time = 0.0f)
 	{
 		std::string str = StringTools::ToString(value);
 		DebugValue(title, str.c_str(), life_time);

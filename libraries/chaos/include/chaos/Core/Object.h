@@ -147,7 +147,7 @@ namespace chaos
 	};
 
 	template<typename T, typename ...PARAMS>
-	CHAOS_API auto MakeReferencedObjectWrapper(PARAMS... params)
+	/*CHAOS_API*/ auto MakeReferencedObjectWrapper(PARAMS... params)
 	{
 		return ReferencedObjectDataWrapper<T>(params...);
 	}

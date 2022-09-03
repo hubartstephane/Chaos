@@ -46,7 +46,7 @@ namespace chaos
 
 	/** a generic function to find an object in a list by its path */
 	template<typename U>
-	CHAOS_API auto FindObjectByPath(FilePathParam const& in_path, U& objects) -> decltype(objects[0].get())
+	/*CHAOS_API*/ auto FindObjectByPath(FilePathParam const& in_path, U& objects) -> decltype(objects[0].get())
 	{
 		boost::filesystem::path const& resolved_path = in_path.GetResolvedPath();
 

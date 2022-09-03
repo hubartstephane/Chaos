@@ -119,7 +119,7 @@ namespace chaos
      */
 
     template<typename VERTEX_TYPE>
-    class CHAOS_API PrimitiveOutput : public PrimitiveOutputBase
+    class /*CHAOS_API*/ PrimitiveOutput : public PrimitiveOutputBase
     {
     public:
 

@@ -97,7 +97,7 @@ namespace chaos
      */
 
     template<typename VERTEX_TYPE>
-    class CHAOS_API Primitive
+    class /*CHAOS_API*/ Primitive
     {
     public:
 
@@ -193,7 +193,7 @@ namespace chaos
     // TypedPrimitive : this class helps making difference with functions that works with QUADs and thoses that works with TRIANGLE_PAIR ... (and so one).
     //                  despite of that, it has no real additionnal value uppon its class base
     template<typename VERTEX_TYPE, PrimitiveType PRIMITIVE_TYPE>
-    class CHAOS_API TypedPrimitive : public Primitive<VERTEX_TYPE>
+    class /*CHAOS_API*/ TypedPrimitive : public Primitive<VERTEX_TYPE>
     {
     public:
         using Primitive<VERTEX_TYPE>::Primitive;

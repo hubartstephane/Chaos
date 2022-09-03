@@ -135,7 +135,7 @@ namespace chaos
 		*/
 
 		template<typename PARENT_CLASS, typename CHARACTER_INFO_TYPE, typename META_WRAPPER_TYPE>
-		class CHAOS_API FontInfoTemplate : public PARENT_CLASS
+		class /*CHAOS_API*/ FontInfoTemplate : public PARENT_CLASS
 		{
 		public:
 
@@ -179,7 +179,7 @@ namespace chaos
 		*/
 
 		template<typename PARENT_CLASS, typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE, typename META_WRAPPER_TYPE>
-		class CHAOS_API FolderInfoTemplate : public PARENT_CLASS
+		class /*CHAOS_API*/ FolderInfoTemplate : public PARENT_CLASS
 		{
 		public:
 
@@ -265,7 +265,7 @@ namespace chaos
 		* AtlasBaseTemplate : a base template for AtlasBase and AtlasInput
 		*/
 		template<typename PARENT_CLASS, typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE>
-		class CHAOS_API AtlasBaseTemplate : public PARENT_CLASS
+		class /*CHAOS_API*/ AtlasBaseTemplate : public PARENT_CLASS
 		{
 		public:
 

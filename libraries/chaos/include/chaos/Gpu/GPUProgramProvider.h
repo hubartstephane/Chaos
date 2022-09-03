@@ -71,7 +71,7 @@ namespace chaos
 	*/
 
 	template<typename T, typename MEMBER_TYPE>
-	class CHAOS_API GPUProgramProviderVariableBase : public GPUProgramProviderBase
+	class /*CHAOS_API*/ GPUProgramProviderVariableBase : public GPUProgramProviderBase
 	{
 	public:
 

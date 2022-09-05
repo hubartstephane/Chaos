@@ -17,12 +17,12 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	template<typename PARENT_CLASS>
-	class CHAOS_API Copyable<PARENT_CLASS, true> : public PARENT_CLASS
+	class /*CHAOS_API*/ Copyable<PARENT_CLASS, true> : public PARENT_CLASS
 	{
 	};
 
 	template<typename PARENT_CLASS>
-	class CHAOS_API Copyable<PARENT_CLASS, false> : public PARENT_CLASS
+	class /*CHAOS_API*/ Copyable<PARENT_CLASS, false> : public PARENT_CLASS
 	{
 	public:
 

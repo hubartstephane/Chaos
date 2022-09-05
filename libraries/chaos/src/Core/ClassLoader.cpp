@@ -129,7 +129,7 @@ namespace chaos
 			result->name = std::move(class_name);
 			result->json_data = json;
 			result->declared = true;
-			classes[result->name.c_str()] = result; // the key is a pointer aliased on the 'name' member
+			classes.push_back(result);
 
 			if (!StringTools::IsEmpty(short_name))
 				result->SetAlias(std::move(short_name));
@@ -214,7 +214,11 @@ namespace chaos
 		}
 		// remove & delete the class
 		auto& classes = Class::GetClasses();
-		classes.erase(classes.find(cls->name.c_str()));
+		//classes.erase(classes.find(cls->name.c_str()));
+
+
+
+
 		delete(cls);
 	}
 

@@ -9,16 +9,22 @@ namespace chaos
 	// ClassRegistration functions
 	// ==========================================================
 
-	Class * ClassRegistration::operator()(char const * in_alias)
+	ClassRegistration & ClassRegistration::operator()(char const * in_alias)
 	{
 		assert(!StringTools::IsEmpty(in_alias));
 		class_ptr->SetAlias(in_alias);
-		return class_ptr;
+		return *this;
 	}
 
 	// ==========================================================
 	// ClassFindResult functions
 	// ==========================================================
+
+	ClassFindResult::ClassFindResult(Class* in_result, alias_iterator_type in_alias_iterator) :
+		result(in_result),
+		alias_iterator(in_alias_iterator)
+	{
+	}
 
 	ClassFindResult::operator Class* () const
 	{
@@ -28,19 +34,19 @@ namespace chaos
 	Class* ClassFindResult::Resolve(Class const * check_class) const
 	{
 		// something found in classes
-		auto& classes = Class::GetClasses();
-		if (class_it != classes.end())
-			return class_it->second;
+		if (result != nullptr)
+			return result;
+
 		// something found in aliases
 		auto& aliases = Class::GetAliases();
-		if (alias_it != aliases.end())
+		if (alias_iterator != aliases.end())
 		{
-			auto alias_it2 = aliases.upper_bound(alias_it->first); // search then upper_bound (alias_it is the lower bound)
+			auto alias_it2 = aliases.upper_bound(alias_iterator->first); // search then upper_bound (alias_it is the lower bound)
 
-			
+
 #if _DEBUG  // in this search we ensure there is no ambiguity
 			auto found = aliases.end();
-			for (auto it = alias_it; it != alias_it2; ++it)
+			for (auto it = alias_iterator; it != alias_it2; ++it)
 			{
 				if (check_class == nullptr || it->second->InheritsFrom(check_class, true) == InheritanceType::YES)
 				{
@@ -52,7 +58,7 @@ namespace chaos
 			if (found != aliases.end())
 				return found->second;
 #else		// in this search we return the very first matching element
-			for (auto it = alias_it; it != alias_it2; ++it)
+			for (auto it = alias_iterator; it != alias_it2; ++it)
 			{
 				if (check_class == nullptr || it->second->InheritsFrom(check_class, true) == InheritanceType::YES)
 				{
@@ -71,9 +77,10 @@ namespace chaos
 
 	// XXX: we don't use a class static data but a class static function because we don't know when static data will be created
 	//      (and it can happens after static class declaration)
-	std::map<char const*, Class*, StringTools::RawStringLess>& Class::GetClasses()
+
+	std::vector<Class*>& Class::GetClasses()
 	{
-		static std::map<char const *, Class*, StringTools::RawStringLess> classes;
+		static std::vector<Class*> classes;
 		return classes;
 	}
 
@@ -100,17 +107,20 @@ namespace chaos
 	{
 		assert(name != nullptr);
 
-		ClassFindResult result;
-
-		/** find the class by name first */
-		auto& classes = GetClasses();
-		result.class_it = classes.find(name);
-		if (result.class_it != classes.end())
-			return result;
-		/** find class by alias */
 		auto& aliases = GetAliases();
-		result.alias_it = aliases.lower_bound(name);
-		return result;
+
+		/* find the class by name first */
+		auto it = std::find_if(GetClasses().begin(), GetClasses().end(), [name](Class const * cls)
+		{
+			return (StringTools::Stricmp(cls->GetClassName(), name) == 0);
+		});
+
+		if (it != GetClasses().end())
+			return { *it ,GetAliases().end()};
+
+		/* find class by alias */
+
+		return { nullptr, aliases.lower_bound(name) };
 	}
 
 	// static
@@ -154,7 +164,7 @@ namespace chaos
 	{
 		assert(StringTools::IsEmpty(alias));
 		assert(!StringTools::IsEmpty(in_alias));
-		
+
 		auto& aliases = GetAliases();
 
 	#if _DEBUG

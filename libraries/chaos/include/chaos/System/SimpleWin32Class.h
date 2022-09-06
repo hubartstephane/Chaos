@@ -53,7 +53,7 @@ namespace chaos
 	*/
 
 	template<typename WIN_CLASS>
-	class CHAOS_API SimpleWin32Class : public SimpleWin32ClassBase
+	class /*CHAOS_API*/ SimpleWin32Class : public SimpleWin32ClassBase
 	{
 	public:
 

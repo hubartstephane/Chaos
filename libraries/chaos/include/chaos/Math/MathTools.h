@@ -21,7 +21,7 @@ namespace chaos
 
 		/** a functor used to repeatly map a range to another */
 		template<typename T, typename U>
-		class CHAOS_API RangeMapper
+		class /*CHAOS_API*/ RangeMapper
 		{
 		public:
 
@@ -250,10 +250,10 @@ namespace chaos
 
 		/** the structure for polynomial solutions */
 		template<typename T>
-		struct CHAOS_API Polynome2Solution
+		struct /*CHAOS_API*/ Polynome2Solution
 		{
 			/** the number of solutions (0, 1 or 2) */
-			size_t solution_count;
+			size_t solution_count = 0;
 			/** the solutions */
 			T      solutions[2];
 		};

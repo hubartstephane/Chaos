@@ -89,7 +89,7 @@ namespace chaos
 
 
 	template<GLenum QUERY_TARGET>
-	class CHAOS_API GLTypedQuery : public GPUQuery
+	class /*CHAOS_API*/ GLTypedQuery : public GPUQuery
 	{
 	public:
 

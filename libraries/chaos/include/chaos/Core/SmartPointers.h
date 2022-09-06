@@ -398,13 +398,13 @@ namespace chaos
 	*/
 
 	template<typename T>
-	struct CHAOS_API is_weak_ptr
+	struct /*CHAOS_API*/ is_weak_ptr
 	{
 		static constexpr bool value = false;
 	};
 
 	template<typename T>
-	struct CHAOS_API is_weak_ptr<weak_ptr<T>>
+	struct /*CHAOS_API*/ is_weak_ptr<weak_ptr<T>>
 	{
 		static constexpr bool value = true;
 	};
@@ -417,13 +417,13 @@ namespace chaos
 	*/
 
 	template<typename T>
-	struct CHAOS_API is_shared_ptr
+	struct /*CHAOS_API*/ is_shared_ptr
 	{
 		static constexpr bool value = false;
 	};
 
 	template<typename T>
-	struct CHAOS_API is_shared_ptr<shared_ptr<T>>
+	struct /*CHAOS_API*/ is_shared_ptr<shared_ptr<T>>
 	{
 		static constexpr bool value = true;
 	};

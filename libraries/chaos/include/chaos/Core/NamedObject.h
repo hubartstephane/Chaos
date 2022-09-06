@@ -34,7 +34,7 @@ namespace chaos
 
 	/** NamedObjectWrapper : this is a wrapper to ba able to use NamedObject's static methods */
 	template<typename T>
-	class CHAOS_API NamedObjectWrapper
+	class /*CHAOS_API*/ NamedObjectWrapper
 	{
 	public:
 

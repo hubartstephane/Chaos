@@ -38,7 +38,7 @@ namespace chaos
 	*/
 
 	template<typename T>
-	class CHAOS_API InputState
+	class /*CHAOS_API*/ InputState
 	{
 	public:
 

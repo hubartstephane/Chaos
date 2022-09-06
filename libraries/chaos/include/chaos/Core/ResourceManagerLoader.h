@@ -50,7 +50,7 @@ namespace chaos
 	**/
 
 	template<typename RESOURCE_TYPE, typename MANAGER_TYPE>
-	class CHAOS_API ResourceManagerLoader : public ResourceManagerLoaderBase
+	class /*CHAOS_API*/ ResourceManagerLoader : public ResourceManagerLoaderBase
 	{
 	public:
 
@@ -77,8 +77,10 @@ namespace chaos
 			RESOURCE_TYPE * result = load_func(json);
 			if (result != nullptr)
 			{
-				ApplyNameToLoadedResource(result);
-				ApplyPathToLoadedResource(result);
+				if constexpr (std::is_base_of_v<NamedObject, RESOURCE_TYPE>)
+					ApplyNameToLoadedResource(result);
+				if constexpr (std::is_base_of_v<FileResource, RESOURCE_TYPE>)
+					ApplyPathToLoadedResource(result);
 
 				if (manager != nullptr)
 					if (!StringTools::IsEmpty(result->GetName()))
@@ -99,8 +101,10 @@ namespace chaos
 			RESOURCE_TYPE * result = load_func(path);
 			if (result != nullptr)
 			{
-				ApplyNameToLoadedResource(result);
-				ApplyPathToLoadedResource(result);
+				if constexpr (std::is_base_of_v<NamedObject, RESOURCE_TYPE>)
+					ApplyNameToLoadedResource(result);
+				if constexpr (std::is_base_of_v<FileResource, RESOURCE_TYPE>)
+					ApplyPathToLoadedResource(result);
 
 				if (manager != nullptr)
 					if (!StringTools::IsEmpty(result->GetName()))

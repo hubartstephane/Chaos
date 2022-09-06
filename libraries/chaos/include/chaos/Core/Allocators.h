@@ -11,7 +11,7 @@ namespace chaos
 	*/
 
 	template<typename T>
-	class CHAOS_API ArrayAllocator
+	class /*CHAOS_API*/ ArrayAllocator
 	{
 	public:
 

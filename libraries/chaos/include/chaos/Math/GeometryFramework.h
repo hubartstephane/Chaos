@@ -51,7 +51,7 @@ namespace chaos
 	}
 
 	template<typename VECTOR_TYPE>
-	class CHAOS_API AutoCastableVector
+	class /*CHAOS_API*/ AutoCastableVector
 	{
 	public:
 

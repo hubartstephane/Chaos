@@ -90,11 +90,11 @@ namespace chaos
 				DoInvalidateSpecialClass(cls);
 
 			// Step 3.3: clean the classes array from nullptr
-			auto it = std::remove_if(classes.begin(), classes.end(), [](Class* cls)
+			auto it = std::ranges::remove_if(classes, [](Class* cls)
 			{
 				return (cls == nullptr);
 			});
-			classes.erase(it, classes.end());
+			classes.erase(it.begin(), it.end());
 		}
 
 		// Step 4: sort the classes by depth (use a temp depth map)

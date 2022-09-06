@@ -25,20 +25,28 @@ namespace chaos
 
 	Class const * ClassLoader::LoadClass(FilePathParam const& path)
 	{
-		return DoLoadClassHelper<Class const *>(path, [this](std::string && class_name, std::string && short_name, nlohmann::json const & json)
+		return DoLoadClassHelper<Class const *>(path, [this](std::string class_name, std::string short_name, nlohmann::json const & json)
 		{
 			return DeclareSpecialClass(std::move(class_name), std::move(short_name), json); // a single step operation
 		});
+	}
+
+	static size_t GetClassDepth(Class const* p)
+	{
+		size_t result = 0;
+		for (; p->GetParentClass() != nullptr; p = p->GetParentClass())
+			++result;
+		return result;
 	}
 
 	bool ClassLoader::LoadClassesInDirectory(FilePathParam const& path)
 	{
 		std::vector<Class *> classes;
 
-		// Step 1 : load all classes (no full initialization, ignore parent). Register them (without inheritance data in classes list)
+		// Step 1: load all classes (no full initialization, ignore parent). Register them (without inheritance data in classes list)
 		FileTools::WithDirectoryContent(path, [this, &classes](boost::filesystem::path const & p)
 		{
-			Class* cls = DoLoadClassHelper<Class *>(p, [this] (std::string && class_name, std::string && short_name, nlohmann::json const& json)
+			Class* cls = DoLoadClassHelper<Class *>(p, [this] (std::string class_name, std::string short_name, nlohmann::json const& json)
 			{
 				return DoDeclareSpecialClassStep1(std::move(class_name), std::move(short_name), json); // a 3 steps operation
 			});
@@ -49,44 +57,57 @@ namespace chaos
 			return false; // don't stop
 		});
 
-		// Step 2 : fix parent classes
+		// Step 2: fix parent classes (all classes coming from json files should have a valid C++ at least or even JSON parent class)
 		std::vector<Class*> failing_parent_classes;
 
 		for (Class* cls : classes)
 			if (!DoDeclareSpecialClassStep2(cls))
 				failing_parent_classes.push_back(cls);
 
-		// Step 3 : find invalid classes and remove them
+		// Step 3: find invalid classes and remove them
 		if (failing_parent_classes.size() > 0)
 		{
-			// 2 loops order is important because we may set cls to 0
-			for (Class*& cls : classes) // reference so we can invalidate the pointer
+			std::vector<Class*> all_failing_classes;
+			all_failing_classes.reserve(classes.size());
+
+			// Step 3.1: construct a vector that owns all failure (direct or indirect)
+			for (Class * & cls : classes)
 			{
 				for (Class* failing_cls : failing_parent_classes)
 				{
 					if (cls->InheritsFrom(failing_cls, true) == InheritanceType::YES) // failing class
 					{
-						DoInvalidateSpecialClass(cls);
+						Log::Error("Class::LoadClassesInDirectory : special class [%s] as no valid parent.", cls->GetClassName().c_str());
+						all_failing_classes.push_back(cls); // this will push classes that fails for parent as well as their children
 						cls = nullptr;
 						break;
 					}
 				}
 			}
-			auto it = std::remove(classes.begin(), classes.end(), nullptr);
+
+			// Step 3.2: remove all failing class (direct or indirect)
+			for (Class* cls : all_failing_classes)
+				DoInvalidateSpecialClass(cls);
+
+			// Step 3.3: clean the classes array from nullptr
+			auto it = std::remove_if(classes.begin(), classes.end(), [](Class* cls)
+			{
+				return (cls == nullptr);
+			});
 			classes.erase(it, classes.end());
 		}
 
-		// Step 4 : sort the classes by depth (use a temp depth map)
-		std::map<Class*, size_t> class_depth;
+		// Step 4: sort the classes by depth (use a temp depth map)
+		std::map<Class const*, size_t> class_depth;
 		for (Class* cls : classes)
-			class_depth[cls] = GetDepth(cls);
+			class_depth[cls] = GetClassDepth(cls);
 
-		std::sort(classes.begin(), classes.end(), [&class_depth](Class * c1, Class * c2)
+		std::ranges::sort(classes, [&class_depth](Class const * c1, Class const * c2)
 		{
 			return (class_depth[c1] < class_depth[c2]);
 		});
 
-		// now that we are sorted by depth, we can compute create delegate (create delegate of one Class depends on this parent (lower depth))
+		// Step 5: now that we are sorted by depth, we can compute create delegate (create delegate of one Class depends on this parent (lower depth))
 		for (Class * cls : classes)
 			if (!DoDeclareSpecialClassStep3(cls))
 				DoInvalidateSpecialClass(cls);
@@ -94,15 +115,7 @@ namespace chaos
 		return true;
 	}
 
-	size_t ClassLoader::GetDepth(Class const * p) const
-	{
-		size_t result = 0;
-		for (; p->parent != nullptr; p = p->parent)
-			++result;
-		return result;
-	}
-
-	Class const* ClassLoader::DeclareSpecialClass(std::string && class_name, std::string && short_name, nlohmann::json const & json)
+	Class const* ClassLoader::DeclareSpecialClass(std::string class_name, std::string short_name, nlohmann::json const & json)
 	{
 		Class* result = DoDeclareSpecialClassStep1(std::move(class_name), std::move(short_name), json);
 		if (result != nullptr)
@@ -116,7 +129,7 @@ namespace chaos
 		return result;
 	}
 
-	Class * ClassLoader::DoDeclareSpecialClassStep1(std::string && class_name, std::string && short_name, nlohmann::json const & json)
+	Class * ClassLoader::DoDeclareSpecialClassStep1(std::string class_name, std::string short_name, nlohmann::json const & json)
 	{
 		// check parameter and not already registered
 		assert(!StringTools::IsEmpty(class_name));
@@ -132,7 +145,7 @@ namespace chaos
 			classes.push_back(result);
 
 			if (!StringTools::IsEmpty(short_name))
-				result->SetAlias(std::move(short_name));
+				result->SetShortName(std::move(short_name));
 			return result;
 		}
 		return nullptr;
@@ -197,28 +210,10 @@ namespace chaos
 	void ClassLoader::DoInvalidateSpecialClass(Class const* cls)
 	{
 		assert(cls != nullptr);
-		// remove alias
-		if (!StringTools::IsEmpty(cls->alias))
-		{
-			auto& aliases = Class::GetAliases();
-			auto it1 = aliases.lower_bound(cls->alias.c_str());
-			auto it2 = aliases.upper_bound(cls->alias.c_str());
-			for (auto it = it1; it != it2; ++it)
-			{
-				if (it->second == cls) // only the alias corresponding to current class
-				{
-					aliases.erase(it);
-					break;
-				}
-			}
-		}
+
 		// remove & delete the class
 		auto& classes = Class::GetClasses();
-		//classes.erase(classes.find(cls->name.c_str()));
-
-
-
-
+		classes.erase(std::ranges::find(classes, cls));
 		delete(cls);
 	}
 

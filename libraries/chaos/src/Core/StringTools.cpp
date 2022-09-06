@@ -35,11 +35,11 @@ namespace chaos
 			// format string
 			return StringTools::Printf(
 				(full_string)? "%04d%02d%02d_%02dh%02dm%02ds" : "%04d%02d%02d",
-				tm.tm_year + 1900, 
-				tm.tm_mon + 1, 
-				tm.tm_mday, 
-				tm.tm_hour, 
-				tm.tm_min, 
+				tm.tm_year + 1900,
+				tm.tm_mon + 1,
+				tm.tm_mday,
+				tm.tm_hour,
+				tm.tm_min,
 				tm.tm_sec);
 		}
 
@@ -66,7 +66,7 @@ namespace chaos
 			return (std::isalnum(c) || c == '_');
 		}
 
-		bool IsVariableName(char const * name, bool strict) 
+		bool IsVariableName(char const * name, bool strict)
 		{
 			assert(name != nullptr);
 
@@ -77,7 +77,7 @@ namespace chaos
 			int start_character = 0;
 			if (strict)
 			{
-				if (!std::isalpha(name[0]) && name[0] != '_') 
+				if (!std::isalpha(name[0]) && name[0] != '_')
 					return false;
 				start_character = 1;
 			}
@@ -100,10 +100,10 @@ namespace chaos
 		}
 
 		std::string VPrintf(char const * format, va_list va) // well, this function needs to have a smarted behavior for too long output
-		{  
+		{
 			assert(format != nullptr);
 			char buffer[4096];
-			vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, va); // doesn't count for the zero  
+			vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, va); // doesn't count for the zero
 			return buffer;
 		}
 
@@ -123,7 +123,7 @@ namespace chaos
 		std::string IndentString(size_t count)
 		{
 			return std::string().insert(0, count, ' ');
-		}	
+		}
 
 		char const * SkipHEXPrefix(char const * c)
 		{
@@ -211,8 +211,8 @@ namespace chaos
 				else
 				{
 					result.push_back(std::string(src, separator)); // last string
-					src = separator + 1;				
-				}			
+					src = separator + 1;
+				}
 			}
 
 			//boost::split(result, src, [](char c){return c == ';';});		 // only works with std::string as src

@@ -9,10 +9,10 @@ namespace chaos
 	// ClassRegistration functions
 	// ==========================================================
 
-	ClassRegistration & ClassRegistration::operator()(char const * in_alias)
+	ClassRegistration & ClassRegistration::operator()(std::string in_short_name)
 	{
-		assert(!StringTools::IsEmpty(in_alias));
-		class_ptr->SetAlias(in_alias);
+		assert(!StringTools::IsEmpty(in_short_name));
+		class_ptr->SetShortName(std::move(in_short_name));
 		return *this;
 	}
 
@@ -20,9 +20,9 @@ namespace chaos
 	// ClassFindResult functions
 	// ==========================================================
 
-	ClassFindResult::ClassFindResult(Class* in_result, alias_iterator_type in_alias_iterator) :
+	ClassFindResult::ClassFindResult(Class* in_result, short_name_iterator_type in_short_name_iterator) :
 		result(in_result),
-		alias_iterator(in_alias_iterator)
+		short_name_iterator(in_short_name_iterator)
 	{
 	}
 
@@ -37,34 +37,35 @@ namespace chaos
 		if (result != nullptr)
 			return result;
 
-		// something found in aliases
-		auto& aliases = Class::GetAliases();
-		if (alias_iterator != aliases.end())
+		// something found in aliases (but this may be the wrong type)
+		// the first iterator is helpfull to keep trace of the searched name
+		auto& classes = Class::GetClasses();
+
+		if (short_name_iterator != classes.end())
 		{
-			auto alias_it2 = aliases.upper_bound(alias_iterator->first); // search then upper_bound (alias_it is the lower bound)
+			std::string const& searched_name = (*short_name_iterator)->GetShortName();
 
+			auto found_it = classes.end();
 
-#if _DEBUG  // in this search we ensure there is no ambiguity
-			auto found = aliases.end();
-			for (auto it = alias_iterator; it != alias_it2; ++it)
+			for (auto it = short_name_iterator; it != classes.end() ; ++it)
 			{
-				if (check_class == nullptr || it->second->InheritsFrom(check_class, true) == InheritanceType::YES)
+				if (StringTools::Stricmp(searched_name, (*it)->GetShortName()) == 0)
 				{
-					// continue matching search to ensure this there is no ambiguity
-					assert(found == aliases.end());
-					found = it;
+					if (check_class == nullptr || (*it)->InheritsFrom(check_class, true) == InheritanceType::YES)
+					{
+#if _DEBUG  // ensure no ambiguity in debug and continue the search
+						assert(found_it == classes.end());
+						found_it = it;
+#else
+						return *it;
+#endif
+					}
 				}
 			}
-			if (found != aliases.end())
-				return found->second;
-#else		// in this search we return the very first matching element
-			for (auto it = alias_iterator; it != alias_it2; ++it)
-			{
-				if (check_class == nullptr || it->second->InheritsFrom(check_class, true) == InheritanceType::YES)
-				{
-					return it->second;
-				}
-			}
+
+#if _DEBUG
+			if (found_it != classes.end())
+				return *found_it;
 #endif
 		}
 		// nothing found
@@ -84,12 +85,6 @@ namespace chaos
 		return classes;
 	}
 
-	std::multimap<char const*, Class*, StringTools::RawStringLess>& Class::GetAliases()
-	{
-		static std::multimap<char const *, Class*, StringTools::RawStringLess> aliases;
-		return aliases;
-	}
-
 	Object * Class::CreateInstance() const
 	{
 		if (CanCreateInstance())
@@ -107,20 +102,36 @@ namespace chaos
 	{
 		assert(name != nullptr);
 
-		auto& aliases = GetAliases();
+		auto& classes = GetClasses();
+
+		/** early exit */
+		if (StringTools::IsEmpty(name))
+			return {nullptr, classes.end()};
 
 		/* find the class by name first */
-		auto it = std::find_if(GetClasses().begin(), GetClasses().end(), [name](Class const * cls)
 		{
-			return (StringTools::Stricmp(cls->GetClassName(), name) == 0);
-		});
-
-		if (it != GetClasses().end())
-			return { *it ,GetAliases().end()};
-
-		/* find class by alias */
-
-		return { nullptr, aliases.lower_bound(name) };
+			auto it = std::ranges::find_if(classes, [name](Class const * cls)
+			{
+				return (StringTools::Stricmp(cls->GetClassName(), name) == 0);
+			});
+			if (it != classes.end())
+				return { *it ,classes.end()};
+		}
+		/* find class by short name */
+		{
+			auto it = std::ranges::find_if(classes, [name](Class const * cls)
+			{
+				return (StringTools::Stricmp(cls->GetShortName(), name) == 0);
+			});
+			// note: the iterator points on a class that have the same short name as the one been searched
+			// (this may nevertheless not be the one searched)
+			// the ClassFindResult will continue the search if the class does not match and will use the short name accessed throught this iterator
+			// (to avoid an extra allocating for the searched name)
+			if (it != classes.end())
+				return { nullptr , it};
+		}
+		/* no class, no possible alias */
+		return { nullptr, classes.end()};
 	}
 
 	// static
@@ -160,23 +171,11 @@ namespace chaos
 		return InheritanceType::NO;
 	}
 
-	void Class::SetAlias(std::string in_alias)
+	void Class::SetShortName(std::string in_short_name)
 	{
-		assert(StringTools::IsEmpty(alias));
-		assert(!StringTools::IsEmpty(in_alias));
-
-		auto& aliases = GetAliases();
-
-	#if _DEBUG
-		// search whether this exact alias does not exists
-		auto it1 = aliases.lower_bound(in_alias.c_str());
-		auto it2 = aliases.upper_bound(in_alias.c_str());
-		for (auto it = it1; it != it2; ++it)
-			assert(it->second != this);
-	#endif
-		// create the alias
-		alias = std::move(in_alias);
-		aliases.emplace(alias.c_str(), this); // the key is the pointer on the std::string
+		assert(StringTools::IsEmpty(short_name));
+		assert(!StringTools::IsEmpty(in_short_name));
+		short_name = std::move(in_short_name);
 	}
 
 }; // namespace chaos

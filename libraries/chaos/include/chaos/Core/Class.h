@@ -46,8 +46,8 @@ namespace chaos
 
 	public:
 
-		/** set the alias for the class */
-		ClassRegistration & operator()(char const* in_alias);
+		/** set the short name for the class */
+		ClassRegistration & operator()(std::string in_short_name);
 
 		/** convert the registration to the class */
 		operator Class const * () const
@@ -63,7 +63,7 @@ namespace chaos
 
 	/**
 	 * ClassFindResult : Intermediate object for class searching.
-	 *                   While there may be several classes with the same alias, we have to select the good one when searching
+	 *                   While there may be several classes with the same short_name, we have to select the good one when searching
 	 *                   We so want that the search is affected by the Subclass affectation that requires it.
 	 */
 
@@ -71,7 +71,7 @@ namespace chaos
 	{
 		friend class Class;
 
-		using alias_iterator_type = std::multimap<char const*, Class*, StringTools::RawStringLess>::iterator;
+		using short_name_iterator_type = std::vector<Class*>::iterator;
 
 	public:
 
@@ -83,12 +83,12 @@ namespace chaos
 	protected:
 
 		/** constructor */
-		ClassFindResult(Class* in_result, alias_iterator_type in_alias_iterator);
+		ClassFindResult(Class* in_result, short_name_iterator_type in_short_name_iterator);
 
 		/** if the result of the search is found by class name, directly store this here */
 		Class * result = nullptr;
-		/** the very first alias matching the request. we can use it for further reserch instead to store the name somehow (that would be costly) */
-		alias_iterator_type alias_iterator;
+		/** the very first short name matching the request. we can use it for further reserch instead to store the name somehow (that would be costly) */
+		short_name_iterator_type short_name_iterator;
 	};
 
 	/**
@@ -128,8 +128,8 @@ namespace chaos
 		Class const* GetParentClass() const { return parent; }
 		/** gets the class name */
 		std::string const& GetClassName() const { return name; }
-		/** gets the alias */
-		std::string const& GetAlias() const { return alias; }
+		/** gets the short name */
+		std::string const& GetShortName() const { return short_name; }
 		/** returns whether we can create instances */
 		bool CanCreateInstance() const { return create_instance_func != nullptr; }
 		/** returns whether we can create instances */
@@ -169,8 +169,6 @@ namespace chaos
 				result->declared = true;
 				result->info = &typeid(CLASS_TYPE);
 
-				GetClasses().push_back(result);
-
 				// instance constructible only if derives from Object
 				if constexpr (std::is_base_of_v<Object, CLASS_TYPE>)
 				{
@@ -195,8 +193,8 @@ namespace chaos
 
 	protected:
 
-		/** set the alias */
-		void SetAlias(std::string in_alias);
+		/** set the short name */
+		void SetShortName(std::string in_short_name);
 		/** return the class of a class with its given info */
 		template<typename CLASS_TYPE>
 		static Class* FindOrCreateClassInstance()
@@ -221,8 +219,8 @@ namespace chaos
 		size_t class_size = 0;
 		/** the optional name of the class */
 		std::string name;
-		/** the optional alias of the class */
-		std::string alias;
+		/** the optional short name of the class */
+		std::string short_name;
 		/** whether the class has been fully declared */
 		bool declared = false;
 		/** create an instance of the object delegate */
@@ -238,8 +236,6 @@ namespace chaos
 
 		/** get the static data for classes */
 		static std::vector<Class*> & GetClasses();
-		/** get the static data for aliases */
-		static std::multimap<char const*, Class*, StringTools::RawStringLess> & GetAliases();
 	};
 
 #endif

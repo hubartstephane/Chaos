@@ -9,34 +9,34 @@ namespace chaos
 	/**
 	* HTML is a set of utility function to create HTML document with tinyxml2
 	*/
-	class XMLTools
+	class CHAOS_API XMLTools
 	{
 	public:
 
 		/** constructor */
-		CHAOS_API XMLTools(tinyxml2::XMLDocument* in_doc) : doc(in_doc) { assert(doc != nullptr); }
+		XMLTools(tinyxml2::XMLDocument* in_doc) : doc(in_doc) { assert(doc != nullptr); }
 
 		/** create an element an give it to its parent */
-		CHAOS_API tinyxml2::XMLElement* PushElement(tinyxml2::XMLNode* parent, char const* name);
+		tinyxml2::XMLElement* PushElement(tinyxml2::XMLNode* parent, char const* name);
 		/** create a text an give it to its parent */
-		CHAOS_API tinyxml2::XMLText* PushText(tinyxml2::XMLNode* parent, char const* txt);
+		tinyxml2::XMLText* PushText(tinyxml2::XMLNode* parent, char const* txt);
 
 		/** create an attribute for a given element */
-		static CHAOS_API void PushAttribute(tinyxml2::XMLElement* element, char const* name, char const* value);
+		static void PushAttribute(tinyxml2::XMLElement* element, char const* name, char const* value);
 		/** create an attribute for a given element */
-		static CHAOS_API void PushAttribute(tinyxml2::XMLElement* element, char const* name, int value);
+		static void PushAttribute(tinyxml2::XMLElement* element, char const* name, int value);
 		/** create an attribute for a given element */
-		static CHAOS_API void PushAttribute(tinyxml2::XMLElement* element, char const* name, float value);
+		static void PushAttribute(tinyxml2::XMLElement* element, char const* name, float value);
 		/** create an attribute for a given element */
-		static CHAOS_API void PushAttribute(tinyxml2::XMLElement* element, char const* name, double value);
+		static void PushAttribute(tinyxml2::XMLElement* element, char const* name, double value);
 		/** create an attribute for a given element */
-		static CHAOS_API void PushAttribute(tinyxml2::XMLElement* element, char const* name, bool value);
+		static void PushAttribute(tinyxml2::XMLElement* element, char const* name, bool value);
 		/** create an attribute for a given element */
-		static CHAOS_API void PushAttribute(tinyxml2::XMLElement* element, char const* name, unsigned int value);
+		static void PushAttribute(tinyxml2::XMLElement* element, char const* name, unsigned int value);
 
 		/** create an attribute for a given enum */
 		template<typename T, typename = std::enable_if<std::is_enum_v<T>>>
-		static /*CHAOS_API*/ bool PushAttribute(tinyxml2::XMLElement * element, char const* name, T& value)
+		static bool PushAttribute(tinyxml2::XMLElement * element, char const* name, T& value)
 		{
 			std::string str;
 			EnumToString(value, str);
@@ -44,37 +44,37 @@ namespace chaos
 		}
 
 		/** Find an attribute a read into result */
-		static CHAOS_API bool ReadAttribute(tinyxml2::XMLAttribute const* attribute, int& result);
+		static bool ReadAttribute(tinyxml2::XMLAttribute const* attribute, int& result);
 		/** Find an attribute a read into result */
-		static CHAOS_API bool ReadAttribute(tinyxml2::XMLAttribute const* attribute, float& result);
+		static bool ReadAttribute(tinyxml2::XMLAttribute const* attribute, float& result);
 		/** Find an attribute a read into result */
-		static CHAOS_API bool ReadAttribute(tinyxml2::XMLAttribute const* attribute, double& result);
+		static bool ReadAttribute(tinyxml2::XMLAttribute const* attribute, double& result);
 		/** Find an attribute a read into result */
-		static CHAOS_API bool ReadAttribute(tinyxml2::XMLAttribute const* attribute, bool& result);
+		static bool ReadAttribute(tinyxml2::XMLAttribute const* attribute, bool& result);
 		/** Find an attribute a read into result */
-		static CHAOS_API bool ReadAttribute(tinyxml2::XMLAttribute const* attribute, unsigned int& result);
+		static bool ReadAttribute(tinyxml2::XMLAttribute const* attribute, unsigned int& result);
 		/** Find an attribute a read into result */
-		static CHAOS_API bool ReadAttribute(tinyxml2::XMLAttribute const* attribute, std::string& result);
+		static bool ReadAttribute(tinyxml2::XMLAttribute const* attribute, std::string& result);
 		/** Find an attribute a read into result */
-		static CHAOS_API bool ReadAttribute(tinyxml2::XMLAttribute const* attribute, boost::filesystem::path& result);
+		static bool ReadAttribute(tinyxml2::XMLAttribute const* attribute, boost::filesystem::path& result);
 
 		/** Find an attribute a read into result */
-		static CHAOS_API bool ReadAttribute(tinyxml2::XMLElement const* element, char const* attribute_name, int& result);
+		static bool ReadAttribute(tinyxml2::XMLElement const* element, char const* attribute_name, int& result);
 		/** Find an attribute a read into result */
-		static CHAOS_API bool ReadAttribute(tinyxml2::XMLElement const* element, char const* attribute_name, float& result);
+		static bool ReadAttribute(tinyxml2::XMLElement const* element, char const* attribute_name, float& result);
 		/** Find an attribute a read into result */
-		static CHAOS_API bool ReadAttribute(tinyxml2::XMLElement const* element, char const* attribute_name, double& result);
+		static bool ReadAttribute(tinyxml2::XMLElement const* element, char const* attribute_name, double& result);
 		/** Find an attribute a read into result */
-		static CHAOS_API bool ReadAttribute(tinyxml2::XMLElement const* element, char const* attribute_name, bool& result);
+		static bool ReadAttribute(tinyxml2::XMLElement const* element, char const* attribute_name, bool& result);
 		/** Find an attribute a read into result */
-		static CHAOS_API bool ReadAttribute(tinyxml2::XMLElement const* element, char const* attribute_name, unsigned int& result);
+		static bool ReadAttribute(tinyxml2::XMLElement const* element, char const* attribute_name, unsigned int& result);
 		/** Find an attribute a read into result */
-		static CHAOS_API bool ReadAttribute(tinyxml2::XMLElement const* element, char const* attribute_name, std::string& result);
+		static bool ReadAttribute(tinyxml2::XMLElement const* element, char const* attribute_name, std::string& result);
 		/** Find an attribute a read into result */
-		static CHAOS_API bool ReadAttribute(tinyxml2::XMLElement const* element, char const* attribute_name, boost::filesystem::path& result);
+		static bool ReadAttribute(tinyxml2::XMLElement const* element, char const* attribute_name, boost::filesystem::path& result);
 		/** Find an attribute, read it as a string an find corresponding value in translation map (returns very last value in case of failure) */
 		template<typename T, typename = std::enable_if<std::is_enum_v<T>>>
-		static /*CHAOS_API*/ bool ReadAttribute(tinyxml2::XMLElement const* element, char const* attribute_name, T& dst)
+		static bool ReadAttribute(tinyxml2::XMLElement const* element, char const* attribute_name, T& dst)
 		{
 			// read attribute and convert into enum
 			std::string str;

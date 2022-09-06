@@ -33,7 +33,7 @@ namespace chaos
 	// ========================================================
 
 	template<typename T>
-	class CHAOS_API GPUTypedRenderableFilter : public GPURenderableFilter
+	class /*CHAOS_API*/ GPUTypedRenderableFilter : public GPURenderableFilter
 	{
 	public:
 

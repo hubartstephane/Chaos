@@ -288,10 +288,10 @@ namespace chaos
 		struct get_type;
 		/** specialisation get_type */
 		template<typename T>
-		struct CHAOS_API get_type<T, boost::mpl::true_> : public get_type<typename T::type> {};
+		struct /*CHAOS_API*/ get_type<T, boost::mpl::true_> : public get_type<typename T::type> {};
 		/** specialisation get_type */
 		template<typename T>
-		struct CHAOS_API get_type<T, boost::mpl::false_> : public boost::mpl::identity<T> {};
+		struct /*CHAOS_API*/ get_type<T, boost::mpl::false_> : public boost::mpl::identity<T> {};
 
 
 		/** a fake function (not implemented) that pretends to return a reference to an instance of T (does not deserve to be called) */

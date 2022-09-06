@@ -66,7 +66,7 @@ namespace chaos
 	*/
 
 	template<typename T>
-	class CHAOS_API GPUPrimitiveMeshGenerator : public GPUMeshGenerator
+	class /*CHAOS_API*/ GPUPrimitiveMeshGenerator : public GPUMeshGenerator
 	{
 	public:
 

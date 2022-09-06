@@ -23,7 +23,7 @@ namespace chaos
 	// ============================================================================
 
 	template<typename ALLOCATOR = ArrayAllocator<uintptr_t> >
-	class CHAOS_API SparseWriteBuffer
+	class /*CHAOS_API*/ SparseWriteBuffer
 	{
 		using alloc_type = uintptr_t;
 		using allocator_type = ALLOCATOR;

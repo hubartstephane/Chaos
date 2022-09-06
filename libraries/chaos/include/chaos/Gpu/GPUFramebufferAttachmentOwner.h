@@ -8,7 +8,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	template<typename ATTACHMENT_TYPE>
-	class CHAOS_API GPUFramebufferAttachmentOwner
+	class /*CHAOS_API*/ GPUFramebufferAttachmentOwner
 	{
 	public:
 

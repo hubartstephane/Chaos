@@ -107,7 +107,7 @@ namespace chaos
 	*/
 
 	template<typename T>
-	class CHAOS_API DisableReferenceCount : public T
+	class /*CHAOS_API*/ DisableReferenceCount : public T
 	{
 	public:
 
@@ -127,7 +127,7 @@ namespace chaos
 	*/
 
 	template<typename T>
-	class CHAOS_API ReferencedObjectDataWrapper : public DisableReferenceCount<Object>
+	class /*CHAOS_API*/ ReferencedObjectDataWrapper : public DisableReferenceCount<Object>
 	{
 		using type = T;
 

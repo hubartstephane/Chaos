@@ -38,7 +38,7 @@ namespace chaos
 	*/
 
 	template<typename ZONE_TYPE>
-	class CHAOS_API DoubleZone
+	class /*CHAOS_API*/ DoubleZone
 	{
 	public:
 

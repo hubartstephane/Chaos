@@ -17,7 +17,7 @@ namespace chaos
 	 * DefaultMaterialBase : base class to have default material
 	 */
 	template<typename SOURCE>
-	class CHAOS_API DefaultMaterialBase
+	class /*CHAOS_API*/ DefaultMaterialBase
 	{
 	public:
 

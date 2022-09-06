@@ -14,7 +14,7 @@ namespace chaos
 	// =============================================
 
 	template<typename T>
-	class CHAOS_API CheckpointObject
+	class /*CHAOS_API*/ CheckpointObject
 	{
 	public:
 

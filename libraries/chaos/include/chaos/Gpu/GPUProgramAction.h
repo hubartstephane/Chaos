@@ -147,7 +147,7 @@ namespace chaos
 	*/
 
 	template<typename T>
-	class CHAOS_API GPUProgramGetValueAction : public GPUProgramAction
+	class /*CHAOS_API*/ GPUProgramGetValueAction : public GPUProgramAction
 	{
 	public:
 

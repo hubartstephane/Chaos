@@ -99,7 +99,7 @@ namespace chaos
 
 		/** string comparator class base */
 		template<typename COMPARE, int (&Func)(char const *, char const *)>
-		class CHAOS_API RawStringCompareBase
+		class /*CHAOS_API*/ RawStringCompareBase
 		{
 		public:
 

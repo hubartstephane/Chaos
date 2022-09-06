@@ -40,7 +40,7 @@ static TYPE const & ARGNAME = chaos::ApplicationArgumentManager::GetInstance()->
 	 */
 
 	template<typename T>
-	class CHAOS_API ApplicationArgument : public ApplicationArgumentBase
+	class /*CHAOS_API*/ ApplicationArgument : public ApplicationArgumentBase
 	{
 		friend class ApplicationArgumentManager;
 

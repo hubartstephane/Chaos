@@ -66,26 +66,26 @@ namespace chaos
 
 	// base template
 	template<typename T, int dimension>
-	class CHAOS_API type_rotator;
+	class /*CHAOS_API*/ type_rotator;
 	// specialization
 	template<>
-	class CHAOS_API type_rotator<float, 2> : public boost::mpl::identity<float> {};
+	class /*CHAOS_API*/ type_rotator<float, 2> : public boost::mpl::identity<float> {};
 	// specialization
 	template<>
-	class CHAOS_API type_rotator<double, 2> : public boost::mpl::identity<double> {};
+	class /*CHAOS_API*/ type_rotator<double, 2> : public boost::mpl::identity<double> {};
 	// specialization
 	template<>
-	class CHAOS_API type_rotator<float, 3> : public boost::mpl::identity<glm::quat> {};
+	class /*CHAOS_API*/ type_rotator<float, 3> : public boost::mpl::identity<glm::quat> {};
 	// specialization
 	template<>
-	class CHAOS_API type_rotator<double, 3> : public boost::mpl::identity<glm::dquat> {};
+	class /*CHAOS_API*/ type_rotator<double, 3> : public boost::mpl::identity<glm::dquat> {};
 
 	// ==============================================================================================
 	// geometric class
 	// ==============================================================================================
 
 	template<typename T>
-	class CHAOS_API type_geometric<T, 2>
+	class /*CHAOS_API*/ type_geometric<T, 2>
 	{
 	public:
 		/** the dimension of the space */
@@ -114,7 +114,7 @@ namespace chaos
 	};
 
 	template<typename T>
-	class CHAOS_API type_geometric<T, 3>
+	class /*CHAOS_API*/ type_geometric<T, 3>
 	{
 	public:
 		/** the dimension of the space */
@@ -147,7 +147,7 @@ namespace chaos
 	// ==============================================================================================
 
 	template<typename T, int dimension>
-	class CHAOS_API type_box_base
+	class /*CHAOS_API*/ type_box_base
 	{
 	public:
 
@@ -174,7 +174,7 @@ namespace chaos
 	// ==============================================================================================
 
 	template<typename T, int dimension>
-	class CHAOS_API type_box : public type_box_base<T, dimension>
+	class /*CHAOS_API*/ type_box : public type_box_base<T, dimension>
 	{
 	public:
 
@@ -206,7 +206,7 @@ namespace chaos
 
 	/** an oriented bounding box */
 	template<typename T, int dimension>
-	class CHAOS_API type_obox : public type_box_base<T, dimension>
+	class /*CHAOS_API*/ type_obox : public type_box_base<T, dimension>
 	{
 	public:
 
@@ -234,7 +234,7 @@ namespace chaos
 	// ==============================================================================================
 
 	template<typename T, int dimension>
-	class CHAOS_API type_sphere
+	class /*CHAOS_API*/ type_sphere
 	{
 	public:
 
@@ -261,7 +261,7 @@ namespace chaos
 	// ==============================================================================================
 
 	template<typename T, int dimension>
-	class CHAOS_API type_triangle
+	class /*CHAOS_API*/ type_triangle
 	{
 	public:
 
@@ -304,7 +304,7 @@ namespace chaos
 	// ==============================================================================================
 
 	template<typename T, int dimension>
-	class CHAOS_API type_ray
+	class /*CHAOS_API*/ type_ray
 	{
 	public:
 

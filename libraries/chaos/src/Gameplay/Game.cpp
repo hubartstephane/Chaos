@@ -873,7 +873,7 @@ namespace chaos
 	{
 		// start sound
 #if _DEBUG
-		if (Arguments::MuteMusic.Get()) // CMDLINE
+		if (Arguments::MuteMusic.Get())
 			pause_music = nullptr;
 		else
 #endif

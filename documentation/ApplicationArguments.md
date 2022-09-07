@@ -18,14 +18,14 @@ For example,
 >	CHAOS_APPLICATION_ARG(std::string,  mystring)  
 >	CHAOS_APPLICATION_ARG(std::vector<int>,  myvectorint)  
 
-this will generate some data (in namespace **Arguments**) that will help you get the values from command line.  
+this will generate some data that will help you get the values from command line.  
 Then in any function you may get the values.
 >
 > int main(int argc, char **argv)  
 > {  
 > &ensp;&ensp;chaos::ApplicationArgumentManager::GetInstance()->ParseArguments(argc, argv);  
 >   
-> &ensp;&ensp;if(**Arguments::mybool.Get()**)  
+> &ensp;&ensp;if(**mybool.Get()**)  
 > &ensp;&ensp;{  
 > &ensp;&ensp;&ensp;&ensp;..  
 > &ensp;&ensp;}  
@@ -37,7 +37,7 @@ Then in any function you may get the values.
 
 - If you use the class **chaos::Application** this will automatically be done for you.
 
-- The macro **CHAOS_APPLICATION_ARG(...)** creates a variable in the namespace **Arguments**. This variable is a getter on the parameter that has been passed to the program.
+- The macro **CHAOS_APPLICATION_ARG(...)** creates a variable This variable is a getter on the parameter that has been passed to the program.
 
 - You may register multiple times the same name in different files, as soon as they have the same type. This will produce multiple getters, but they will all references the same parameter
 

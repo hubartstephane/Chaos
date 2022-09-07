@@ -366,9 +366,12 @@ namespace chaos
 		}
 	}
 
+	namespace Arguments
+	{
 #if _DEBUG
-	CHAOS_APPLICATION_ARG(bool, TMForceParticleCreation);
+		CHAOS_APPLICATION_ARG(bool, TMForceParticleCreation);
 #endif
+	};
 
 	bool TMLayerInstance::ShouldCreateParticleForObject(TiledMap::PropertyOwner const * property_owner, TMObject* object) const
 	{

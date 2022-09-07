@@ -651,10 +651,13 @@ bool Landscape::DoTick(float delta_time)
 	return true;
 }
 
+namespace Arguments
+{
 #if _DEBUG
-CHAOS_APPLICATION_ARG(bool, Wireframe);
-CHAOS_APPLICATION_ARG(bool, DebugDisplay);
+	CHAOS_APPLICATION_ARG(bool, Wireframe);
+	CHAOS_APPLICATION_ARG(bool, DebugDisplay);
 #endif
+};
 
 int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 {

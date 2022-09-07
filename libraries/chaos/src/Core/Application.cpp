@@ -85,12 +85,15 @@ namespace chaos
 		return true;
 	}
 
-	CHAOS_APPLICATION_ARG(bool, ShowConsole);
-	CHAOS_APPLICATION_ARG(bool, HideConsole);
-	CHAOS_APPLICATION_ARG(bool, DumpConfigFile);
-	CHAOS_APPLICATION_ARG(bool, ShowDirectories);
-	CHAOS_APPLICATION_ARG(bool, ShowUserTempDirectory);
-	CHAOS_APPLICATION_ARG(bool, ShowInstalledResourcesDirectory);
+	namespace Arguments
+	{
+		CHAOS_APPLICATION_ARG(bool, ShowConsole);
+		CHAOS_APPLICATION_ARG(bool, HideConsole);
+		CHAOS_APPLICATION_ARG(bool, DumpConfigFile);
+		CHAOS_APPLICATION_ARG(bool, ShowDirectories);
+		CHAOS_APPLICATION_ARG(bool, ShowUserTempDirectory);
+		CHAOS_APPLICATION_ARG(bool, ShowInstalledResourcesDirectory);
+	};
 
 	bool Application::Initialize()
 	{

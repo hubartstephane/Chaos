@@ -4,9 +4,12 @@
 #include "Ludum49Player.h"
 #include "Ludum49LevelInstance.h"
 
+namespace Arguments
+{
 #if _DEBUG
-CHAOS_APPLICATION_ARG(bool, DebugDisplay);
+	CHAOS_APPLICATION_ARG(bool, DebugDisplay);
 #endif
+};
 
 //
 //       a                    b

@@ -41,7 +41,7 @@ namespace chaos
 
 	bool Game::GetCheatMode() const
 	{
-		if (Arguments::CheatMode)
+		if (Arguments::CheatMode.Get())
 			return true;
 		if (IsFreeCameraMode())
 			return true;
@@ -384,10 +384,10 @@ namespace chaos
 	bool Game::GenerateObjectTypeSets(nlohmann::json const & config)
 	{
 		return DoGenerateTiledMapEntity(
-			config, 
-			"objecttypesets_directory", 
-			"objecttypesets", 
-			"xml", 
+			config,
+			"objecttypesets_directory",
+			"objecttypesets",
+			"xml",
 			[](TiledMap::Manager * manager, boost::filesystem::path const & path)
 			{
 				if (!manager->LoadObjectTypeSet(path))
@@ -401,11 +401,11 @@ namespace chaos
 	bool Game::GenerateTileSets(nlohmann::json const & config)
 	{
 		return DoGenerateTiledMapEntity(
-			config, 
-			"tilesets_directory", 
-			"tilesets", 
-			"tsx", 
-			[](TiledMap::Manager * manager, boost::filesystem::path const & path) 
+			config,
+			"tilesets_directory",
+			"tilesets",
+			"tsx",
+			[](TiledMap::Manager * manager, boost::filesystem::path const & path)
 			{
 				if (!manager->LoadTileSet(path))
 					return false;
@@ -679,7 +679,7 @@ namespace chaos
 		assert(music_name != nullptr);
 
 #if _DEBUG
-		if (Arguments::MuteMusic)
+		if (Arguments::MuteMusic.Get())
 			return nullptr;
 #endif
 
@@ -831,7 +831,7 @@ namespace chaos
 	{
 		// start the music
 #if _DEBUG
-		if (Arguments::MuteMusic)
+		if (Arguments::MuteMusic.Get())
 			menu_music = nullptr;
 		else
 #endif
@@ -873,7 +873,7 @@ namespace chaos
 	{
 		// start sound
 #if _DEBUG
-		if (Arguments::MuteMusic) // CMDLINE
+		if (Arguments::MuteMusic.Get()) // CMDLINE
 			pause_music = nullptr;
 		else
 #endif

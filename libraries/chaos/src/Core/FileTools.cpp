@@ -132,7 +132,7 @@ namespace chaos
 
 			if (Application const* application = Application::GetConstInstance())
 			{
-				if (!Arguments::NoDirectResourceFiles)
+				if (!Arguments::NoDirectResourceFiles.Get())
 				{
 					boost::filesystem::path const& build_path = application->GetRedirectionBuildPath();
 					if (!build_path.empty())
@@ -210,7 +210,7 @@ namespace chaos
 			{
 				result = DoLoadFile(p, flags);
 #if _DEBUG
-				if (result && Arguments::ShowLoadedFile)
+				if (result && Arguments::ShowLoadedFile.Get())
 				{
 					Log::Message("LoadFile [%s] -> [%s]    size = [%d]", path.GetResolvedPath().string().c_str(), p.string().c_str(), result.bufsize);
 				}
@@ -248,7 +248,7 @@ namespace chaos
 			{
 				result = DoReadFileLines(p);
 #if _DEBUG
-				if ((result.size() > 0) && Arguments::ShowLoadedFile)
+				if ((result.size() > 0) && Arguments::ShowLoadedFile.Get())
 				{
 					Log::Message("ReadFileLines [%s] -> [%s]    line count = [%d]", path.GetResolvedPath().string().c_str(), p.string().c_str(), result.size());
 				}

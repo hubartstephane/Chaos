@@ -11,7 +11,7 @@ namespace chaos
 #define CHAOS_APPLICATION_ARG(TYPE, ARGNAME, ...)\
 namespace Arguments\
 {\
-static TYPE const & ARGNAME = chaos::ApplicationArgumentManager::GetInstance()->RegisterArgument<TYPE>(#ARGNAME, __VA_ARGS__);\
+static inline chaos::ApplicationArgument<TYPE> const & ARGNAME = *chaos::ApplicationArgumentManager::GetInstance()->RegisterArgument<TYPE>(#ARGNAME, __VA_ARGS__);\
 };
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -24,15 +24,15 @@ static TYPE const & ARGNAME = chaos::ApplicationArgumentManager::GetInstance()->
 	{
 	public:
 
-		/** gets the class id for this entry */
-		uintptr_t GetClassID() const { return class_id; }
+		/** gets the type_info for this entry */
+		std::type_info const * GetTypeInfo() const { return type_info; }
 		/** register an option into a description */
 		virtual void RegisterProgramOption(boost::program_options::options_description& desc) = 0;
 
 	protected:
 
 		/** an id for class checking */
-		uintptr_t class_id = 0;
+		std::type_info const* type_info = nullptr;
 	};
 
 	/**
@@ -49,8 +49,11 @@ static TYPE const & ARGNAME = chaos::ApplicationArgumentManager::GetInstance()->
 		/** constructor */
 		ApplicationArgument(T in_value = {}) : value(in_value)
 		{
-			class_id = meta::GetClassUniqueID<T>();
+			type_info = &typeid(T);
 		}
+
+		/** destructor */
+		virtual ~ApplicationArgument() = default;
 
 		/** override */
 		virtual void RegisterProgramOption(boost::program_options::options_description& desc) override
@@ -83,6 +86,17 @@ static TYPE const & ARGNAME = chaos::ApplicationArgumentManager::GetInstance()->
 			}
 		}
 
+		/** const getter */
+		T const& Get() const
+		{
+			return value;
+		}
+		/** getter */
+		T& Get()
+		{
+			return value;
+		}
+
 	protected:
 
 		/** the value where the argument is being stored */
@@ -99,18 +113,29 @@ static TYPE const & ARGNAME = chaos::ApplicationArgumentManager::GetInstance()->
 
 		/** register an argument */
 		template<typename T>
-		T const& RegisterArgument(char const* name, T default_value = {})
+		ApplicationArgument<T> const * RegisterArgument(char const* name, T default_value = {})
 		{
-			if (ApplicationArgument<T>* result = FindArgument<T>(name))
+			// an argument with the same name already exists ?
+			if (ApplicationArgumentBase* result = ObjectRequest(name).FindObject(arguments))
 			{
-				return result->value;
+				// the type matches ?
+				// (you may use CHAOS_APPLICATION_ARG(XXX) several times with the same string in several places. They will all point the same data)
+				if (*result->GetTypeInfo() == typeid(T))
+				{
+					return dynamic_cast<ApplicationArgument<T>*>(result);
+				}
+				else
+				{
+					assert(0);
+					return nullptr;
+				}
 			}
-
+			// create an new entry
 			ApplicationArgument<T>* result = new ApplicationArgument<T>(default_value);
 			assert(result != nullptr);
 			result->SetName(name);
 			arguments.push_back(result);
-			return result->value;
+			return result;
 		}
 
 		/** parse all arguments */
@@ -118,18 +143,6 @@ static TYPE const & ARGNAME = chaos::ApplicationArgumentManager::GetInstance()->
 
 		/** gets the option string */
 		char const* GetOptionString() const;
-
-	protected:
-
-		/** find whether an argument with given name and type is already existing */
-		template<typename T>
-		ApplicationArgument<T>* FindArgument(char const* name)
-		{
-			if (ApplicationArgumentBase* result = ObjectRequest(name).FindObject(arguments))
-				if (result->GetClassID() == meta::GetClassUniqueID<T>())
-					return (ApplicationArgument<T>*)result;
-			return nullptr;
-		}
 
 	protected:
 

@@ -10,21 +10,28 @@ namespace chaos
 
 	void ApplicationArgumentManager::ParseArguments(int argc, char** argv)
 	{
+		namespace po = boost::program_options;
+
 		try
 		{
-			boost::program_options::options_description desc{ "Options" };
+			po::options_description desc{ "Options" };
 			for (ApplicationArgumentBase* argument : arguments)
 				argument->RegisterProgramOption(desc);
 
-			boost::program_options::variables_map vm;
-			store(boost::program_options::command_line_parser(argc, argv).options(desc).allow_unregistered().run(), vm);
+			po::variables_map vm;
+			store(
+				po::command_line_parser(argc, argv).
+				options(desc).
+				allow_unregistered().
+				style(po::command_line_style::default_style | po::command_line_style::case_insensitive).
+				run(), vm);
 			notify(vm);
 
 			std::ostringstream stream;
 			stream << desc;
 			options_string = std::move(stream.str());
 		}
-		catch (const boost::program_options::error& ex)
+		catch (const po::error& ex)
 		{
 			Log::Output(LogType::Error, false, ex.what());
 		}

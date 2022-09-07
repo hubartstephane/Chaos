@@ -40,7 +40,7 @@ CHAOS_APPLICATION_ARG(bool, NoChallenge);
 void LudumGameInstance::TickChallenge(float delta_time)
 {
 #if _DEBUG
-	if (Arguments::NoChallenge)
+	if (Arguments::NoChallenge.Get())
 		return;
 #endif
 

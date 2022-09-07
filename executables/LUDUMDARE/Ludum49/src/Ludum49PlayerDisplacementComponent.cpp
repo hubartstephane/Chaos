@@ -147,7 +147,7 @@ CollisionEntry LudumPlayerDisplacementComponent::ProcessCollision(box2 & pawn_bo
 		pawn_box.position = col.proj + direction * pawn_sphere.radius;
 
 #if _DEBUG
-		if (Arguments::DebugDisplay)
+		if (Arguments::DebugDisplay.Get())
 		{
 			LinePrimitive<VertexDefault> line = DI->AddLines(2);
 			line[0].position = col.a;

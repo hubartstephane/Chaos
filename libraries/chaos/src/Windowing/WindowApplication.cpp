@@ -321,7 +321,7 @@ namespace chaos
 		char const* CachedAtlasFilename = "CachedAtlas";
 
 		// Try to load already computed data
-		if (Arguments::UseCachedAtlas)
+		if (Arguments::UseCachedAtlas.Get())
 		{
 			BitmapAtlas::TextureArrayAtlas* tmp_texture_atlas = new BitmapAtlas::TextureArrayAtlas;
 			if (tmp_texture_atlas != nullptr)
@@ -355,7 +355,7 @@ namespace chaos
 #if _DEBUG
 		dump_atlas_dirname = CachedAtlasFilename;
 #else
-		if (Arguments::DumpCachedAtlas)
+		if (Arguments::DumpCachedAtlas.Get())
 			dump_atlas_dirname = CachedAtlasFilename;
 #endif
 

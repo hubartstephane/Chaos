@@ -96,15 +96,15 @@ namespace chaos
 	{
 		// FPS
 #if !_DEBUG
-		if (Arguments::ShowFPS) // CMDLINE
+		if (Arguments::ShowFPS.Get()) // CMDLINE
 #endif
-			if (!Arguments::HideFPS) // CMDLINE
+			if (!Arguments::HideFPS.Get()) // CMDLINE
 				RegisterComponent(GameHUDKeys::FPS_ID, new GameHUDFramerateComponent());
 		// PERFS
 #if !_DEBUG
-		if (Arguments::ShowPerfs) // CMDLINE
+		if (Arguments::ShowPerfs.Get()) // CMDLINE
 #endif
-			if (!Arguments::HidePerfs) // CMDLINE
+			if (!Arguments::HidePerfs.Get()) // CMDLINE
 				RegisterComponent(GameHUDKeys::PERFS_ID, new GameHUDPerfsComponent());
 
 #if _DEBUG

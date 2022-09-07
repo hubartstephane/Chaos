@@ -80,6 +80,10 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 		// World limits on RED
 		// ---------------------------------------------
 		{
+			auto f = render_params.full_size;
+			auto a = render_params.material_provider;
+			auto b = render_params.object_filter;
+
 			chaos::GPURenderParams other_render_params = render_params;
 			other_render_params.renderpass_name = "WORLD_LIMITS_ONLY";
 

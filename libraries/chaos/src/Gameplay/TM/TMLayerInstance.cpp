@@ -373,7 +373,7 @@ namespace chaos
 	bool TMLayerInstance::ShouldCreateParticleForObject(TiledMap::PropertyOwner const * property_owner, TMObject* object) const
 	{
 #if _DEBUG
-		if (Arguments::TMForceParticleCreation)
+		if (Arguments::TMForceParticleCreation.Get())
 			return true;
 #endif
 		return property_owner->GetPropertyValueBool("PARTICLE_CREATION", (object != nullptr) ? object->IsParticleCreationEnabled() : true);

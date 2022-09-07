@@ -666,7 +666,7 @@ int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface cons
 	main_provider.AddVariable("local_to_world", local_to_world);
 
 #if _DEBUG
-	if (Arguments::Wireframe)
+	if (Arguments::Wireframe.Get())
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
@@ -683,7 +683,7 @@ int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface cons
 
 #if _DEBUG
 
-	if (Arguments::DebugDisplay)
+	if (Arguments::DebugDisplay.Get())
 	{
 		// shu49. ca pourrait etre partique d avoir une fonction d affichage de bounding box
 

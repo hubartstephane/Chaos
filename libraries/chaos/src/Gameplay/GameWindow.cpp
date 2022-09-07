@@ -84,7 +84,7 @@ namespace chaos
 	{
 		// do not execute following code in debug because it does not fit well with debugger
 #if _DEBUG
-		if (!Arguments::NoAutoPause)
+		if (!Arguments::NoAutoPause.Get())
 #endif
 		if (iconified)
 			game->RequirePauseGame();
@@ -94,7 +94,7 @@ namespace chaos
 	{
 		// do not execute following code in debug because it does not fit well with debugger
 #if _DEBUG
-		if (!Arguments::NoAutoPause)
+		if (!Arguments::NoAutoPause.Get())
 #endif
 		if (!gain_focus)
 			game->RequirePauseGame();

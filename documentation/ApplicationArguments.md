@@ -4,14 +4,14 @@
 ## Use ApplicationArguments inside your program
 
 
-you may easily work with arguments from command line with the class **ApplicationArgumentManager**
+You may easily work with arguments from command line with the class **ApplicationArgumentManager**
 
 In your code, you just have to declare in **global scope** any variable you want and use it inside functions.
 
 >	CHAOS_APPLICATION_ARG(type, name) or  
 >	CHAOS_APPLICATION_ARG(type, name, default_value)
 
-for example,
+For example,
 
 >	CHAOS_APPLICATION_ARG(bool, mybool)  
 >	CHAOS_APPLICATION_ARG(int,  myint)  
@@ -33,22 +33,27 @@ Then in any function you may get the values.
 
 <ins>Notes</ins>  
 
-- you only have to call **chaos::ApplicationArgumentManager::ParseArguments(...)** once.
+- You only have to call **chaos::ApplicationArgumentManager::ParseArguments(...)** once.
 
-- if you use the class **chaos::Application** this will automatically be done for you.
+- If you use the class **chaos::Application** this will automatically be done for you.
 
-- the macro **CHAOS_APPLICATION_ARG(...)** creates a variable in the namespace **Arguments**.
+- The macro **CHAOS_APPLICATION_ARG(...)** creates a variable in the namespace **Arguments**. This variable is a getter on the parameter that has been passed to the program.
 
-- using the macro in global scope is important. This registers some function at application initialization. In another scope, this would not happen.
+- You may register multiple times the same name in different files, as soon as they have the same type. This will produce multiple getters, but they will all references the same parameter
 
-- you may register multiple time the same variable in different files, as soon as they have the same type.
+- The system is case insensitive. You can do this  
 
-- you may register variables in **.h** or **.cpp**
+> &ensp;&ensp;CHAOS_APPLICATION_ARG(bool, mybool)&ensp;&ensp;&ensp;&ensp;in file1.cpp  
+> &ensp;&ensp;CHAOS_APPLICATION_ARG(bool, MYBOOL)&ensp;&ensp;&ensp;&ensp;in file2.cpp  
+
+- Using the macro in global scope is important. This registers some function at application initialization. In another scope, this would not happen.
+
+- You may register variables in **.h** or **.cpp**
 
 ## Starting the application
 
 
-you may then start the application as follow:
+You may then start the application as follow:
 > application.exe --mybool     (this set value to true)
 > application.exe --mybool true  
 > application.exe --mybool=true  

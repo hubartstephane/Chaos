@@ -7,9 +7,13 @@ namespace chaos
 
 	namespace FileTools
 	{
+		namespace Arguments
+		{
 #if _DEBUG
-		CHAOS_APPLICATION_ARG(bool, ShowLoadedFile);
+			CHAOS_APPLICATION_ARG(bool, ShowLoadedFile);
+			CHAOS_APPLICATION_ARG(bool, NoDirectResourceFiles);
 #endif
+		};
 
 		static bool DoIsTypedFile(char const* filename, char const* expected_ext)
 		{
@@ -119,9 +123,6 @@ namespace chaos
 		}
 #endif // _DEBUG
 
-#if _DEBUG
-		CHAOS_APPLICATION_ARG(bool, NoDirectResourceFiles);
-#endif
 
 		bool WithFile(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func)
 		{

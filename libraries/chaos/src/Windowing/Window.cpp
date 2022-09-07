@@ -549,9 +549,12 @@ namespace chaos
 			InvalidateRect(hWnd, NULL, false); // this cause flickering
 	}
 
+	namespace Arguments
+	{
 #if !_DEBUG
-	CHAOS_APPLICATION_ARG(bool, UnlimitedFPS);
+		CHAOS_APPLICATION_ARG(bool, UnlimitedFPS);
 #endif
+	};
 
 	void Window::TweakHints(WindowHints& hints, GLFWmonitor* monitor, bool pseudo_fullscreen) const
 	{

@@ -468,9 +468,12 @@ namespace chaos
 			TickForceFeedbackEffects(0.0f);
 	}
 
+	namespace Arguments
+	{
 #if _DEBUG
-	CHAOS_APPLICATION_ARG(bool, NoForceFeedback);
+		CHAOS_APPLICATION_ARG(bool, NoForceFeedback);
 #endif
+	};
 
 	void Gamepad::DoUpdateForceFeedbackDevice(float max_left_value, float max_right_value)
 	{

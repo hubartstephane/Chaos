@@ -32,10 +32,12 @@ size_t LudumGameInstance::CanStartChallengeBallIndex(bool going_down) const
 	return std::numeric_limits<size_t>::max();
 }
 
-
+namespace Arguments
+{
 #if _DEBUG
-CHAOS_APPLICATION_ARG(bool, NoChallenge);
+	CHAOS_APPLICATION_ARG(bool, NoChallenge);
 #endif
+};
 
 void LudumGameInstance::TickChallenge(float delta_time)
 {

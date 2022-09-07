@@ -3,10 +3,14 @@
 
 namespace chaos
 {
-	CHAOS_APPLICATION_ARG(bool, GLDebugNotifications);
+	namespace Arguments
+	{
+		CHAOS_APPLICATION_ARG(bool, GLDebugNotifications);
 #if _WIN32 || _WIN64
-	CHAOS_APPLICATION_ARG(bool, GLDebugBreak);
+		CHAOS_APPLICATION_ARG(bool, GLDebugBreak);
 #endif
+	};
+
 
 	void GLTools::SetViewport(ViewportPlacement const& viewport)
 	{

@@ -3,9 +3,12 @@
 
 namespace chaos
 {
+	namespace Arguments
+	{
 #if _DEBUG
-	CHAOS_APPLICATION_ARG(bool, Mute)
+		CHAOS_APPLICATION_ARG(bool, Mute)
 #endif
+	};
 
 	// ==============================================================
 	// Standalone function

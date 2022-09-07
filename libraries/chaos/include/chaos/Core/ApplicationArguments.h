@@ -9,10 +9,7 @@ namespace chaos
 	class ApplicationArgument;
 
 #define CHAOS_APPLICATION_ARG(TYPE, ARGNAME, ...)\
-namespace Arguments\
-{\
 static inline chaos::ApplicationArgument<TYPE> const & ARGNAME = *chaos::ApplicationArgumentManager::GetInstance()->RegisterArgument<TYPE>(#ARGNAME, __VA_ARGS__);\
-};
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -47,7 +44,7 @@ static inline chaos::ApplicationArgument<TYPE> const & ARGNAME = *chaos::Applica
 	public:
 
 		/** constructor */
-		ApplicationArgument(T in_value = {}) : value(in_value)
+		ApplicationArgument(T in_value = {}) : value(std::move(in_value))
 		{
 			type_info = &typeid(T);
 		}
@@ -131,7 +128,7 @@ static inline chaos::ApplicationArgument<TYPE> const & ARGNAME = *chaos::Applica
 				}
 			}
 			// create an new entry
-			ApplicationArgument<T>* result = new ApplicationArgument<T>(default_value);
+			ApplicationArgument<T>* result = new ApplicationArgument<T>(std::move(default_value));
 			assert(result != nullptr);
 			result->SetName(name);
 			arguments.push_back(result);

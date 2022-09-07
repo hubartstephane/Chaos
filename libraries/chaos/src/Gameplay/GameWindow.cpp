@@ -76,9 +76,12 @@ namespace chaos
 	{
 		game = nullptr;
 	}
+	namespace Arguments
+	{
 #if _DEBUG
-	CHAOS_APPLICATION_ARG(bool, NoAutoPause);
+		CHAOS_APPLICATION_ARG(bool, NoAutoPause);
 #endif
+	};
 
 	void GameWindow::OnIconifiedStateChange(bool iconified)
 	{

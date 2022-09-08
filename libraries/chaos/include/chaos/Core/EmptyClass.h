@@ -14,7 +14,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/** an 'empty' base class with a VTABLE */
-	class EmptyClassVTable
+	class CHAOS_API EmptyClassVTable
 	{
 	public:
 

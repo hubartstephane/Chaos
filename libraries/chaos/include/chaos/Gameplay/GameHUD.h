@@ -14,7 +14,7 @@ namespace chaos
 	// GameHUD
 	// =============================================
 
-	class GameHUD : public GPURenderable
+	class CHAOS_API GameHUD : public GPURenderable
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
@@ -118,7 +118,7 @@ namespace chaos
 	// MainMenuHUD
 	// =============================================
 
-	class MainMenuHUD : public GameHUD
+	class CHAOS_API MainMenuHUD : public GameHUD
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(MainMenuHUD, GameHUD);
 
@@ -132,7 +132,7 @@ namespace chaos
 	// PauseMenuHUD
 	// =============================================
 
-	class PauseMenuHUD : public GameHUD
+	class CHAOS_API PauseMenuHUD : public GameHUD
 	{
 
 		CHAOS_DECLARE_OBJECT_CLASS(PauseMenuHUD, GameHUD);
@@ -147,7 +147,7 @@ namespace chaos
 	// GameOverHUD
 	// =============================================
 
-	class GameOverHUD : public GameHUD
+	class CHAOS_API GameOverHUD : public GameHUD
 	{
 
 		CHAOS_DECLARE_OBJECT_CLASS(GameOverHUD, GameHUD);
@@ -162,7 +162,7 @@ namespace chaos
 	// PlayingHUD
 	// =============================================
 
-	class PlayingHUD : public GameHUD
+	class CHAOS_API PlayingHUD : public GameHUD
 	{
 
 		CHAOS_DECLARE_OBJECT_CLASS(PlayingHUD, GameHUD);

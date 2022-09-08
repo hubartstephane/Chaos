@@ -13,7 +13,7 @@ namespace chaos
 	// XXX : An object that is used to convert common objects (C string, C++ string, boost path) into a boost path object
 	//       (apply a reference path if needed)
 
-	class FilePathParam
+	class CHAOS_API FilePathParam
 	{
 	public:
 
@@ -46,7 +46,7 @@ namespace chaos
 
 	/** a generic function to find an object in a list by its path */
 	template<typename U>
-	auto FindObjectByPath(FilePathParam const& in_path, U& objects) -> decltype(objects[0].get())
+	/*CHAOS_API*/ auto FindObjectByPath(FilePathParam const& in_path, U& objects) -> decltype(objects[0].get())
 	{
 		boost::filesystem::path const& resolved_path = in_path.GetResolvedPath();
 

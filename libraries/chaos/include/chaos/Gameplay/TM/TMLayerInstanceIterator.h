@@ -3,7 +3,7 @@ namespace chaos
 #if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	template<typename CONSTNESS_OPERATOR> // should be add_const<_1> or identity<_1>
-	class TMLayerInstanceIteratorBase
+	class /*CHAOS_API*/ TMLayerInstanceIteratorBase
 	{
 	public:
 
@@ -35,7 +35,7 @@ namespace chaos
 		}
 
 		/** comparaison operator */
-		friend bool operator == (TMLayerInstanceIteratorBase const& src1, TMLayerInstanceIteratorBase const& src2)
+		friend CHAOS_API bool operator == (TMLayerInstanceIteratorBase const& src1, TMLayerInstanceIteratorBase const& src2)
 		{
 			// pointing on different origin/vectors (maybe one is null)
 			if (src1.search_root != src2.search_root)
@@ -50,7 +50,7 @@ namespace chaos
 		}
 
 		/** comparaison operator */
-		friend bool operator != (TMLayerInstanceIteratorBase const& src1, TMLayerInstanceIteratorBase const& src2)
+		friend CHAOS_API bool operator != (TMLayerInstanceIteratorBase const& src1, TMLayerInstanceIteratorBase const& src2)
 		{
 			return !(src1 == src2);
 		}
@@ -198,6 +198,6 @@ protected:
 	using TMLayerInstanceConstIterator = TMLayerInstanceIteratorBase<boost::add_const<boost::mpl::_1>>;
 
 #endif
-	
+
 }; // namespace chaos
 

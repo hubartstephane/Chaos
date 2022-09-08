@@ -85,20 +85,23 @@ namespace chaos
 		return true;
 	}
 
-	CHAOS_APPLICATION_ARG(bool, ShowConsole);
-	CHAOS_APPLICATION_ARG(bool, HideConsole);
-	CHAOS_APPLICATION_ARG(bool, DumpConfigFile);
-	CHAOS_APPLICATION_ARG(bool, ShowDirectories);
-	CHAOS_APPLICATION_ARG(bool, ShowUserTempDirectory);
-	CHAOS_APPLICATION_ARG(bool, ShowInstalledResourcesDirectory);
+	namespace Arguments
+	{
+		CHAOS_APPLICATION_ARG(bool, ShowConsole);
+		CHAOS_APPLICATION_ARG(bool, HideConsole);
+		CHAOS_APPLICATION_ARG(bool, DumpConfigFile);
+		CHAOS_APPLICATION_ARG(bool, ShowDirectories);
+		CHAOS_APPLICATION_ARG(bool, ShowUserTempDirectory);
+		CHAOS_APPLICATION_ARG(bool, ShowInstalledResourcesDirectory);
+	};
 
 	bool Application::Initialize()
 	{
 		// show console
 		bool will_show_console = show_console;
-		if (Arguments::ShowConsole)
+		if (Arguments::ShowConsole.Get())
 			will_show_console = true;
-		else if (Arguments::HideConsole)
+		else if (Arguments::HideConsole.Get())
 			will_show_console = false;
 
 		if (will_show_console)
@@ -118,12 +121,12 @@ namespace chaos
 		boost::filesystem::path user_temp = CreateUserLocalTempDirectory(); // XXX : this directory is necessary for some per application data
 #if _DEBUG
 		// display the directories to help debugging
-		bool dump_config = Arguments::DumpConfigFile;
+		bool dump_config = Arguments::DumpConfigFile.Get();
 		if (dump_config)
 			JSONTools::DumpConfigFile(configuration);
-		if (dump_config || Arguments::ShowDirectories || Arguments::ShowUserTempDirectory)
+		if (dump_config || Arguments::ShowDirectories.Get() || Arguments::ShowUserTempDirectory.Get())
 			WinTools::ShowFile(user_temp);
-		if (Arguments::ShowDirectories || Arguments::ShowInstalledResourcesDirectory)
+		if (Arguments::ShowDirectories.Get() || Arguments::ShowInstalledResourcesDirectory.Get())
 			WinTools::ShowFile(GetResourcesPath());
 #endif
 		return true;

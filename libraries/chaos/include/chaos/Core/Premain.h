@@ -7,9 +7,9 @@
 namespace chaos
 {
 	/** register a Premain code */
-	bool RegisterPremainCode(int order, std::function<void()> func);
+	CHAOS_API bool RegisterPremainCode(int order, std::function<void()> func);
 	/** call code for all code in premain */
-	void FlushPremainCalls();
+	CHAOS_API void FlushPremainCalls();
 
 }; // namespace chaos
 

@@ -12,7 +12,7 @@ namespace chaos
 	* MyFbxImporterOutput : a class to hold all data results from the importation
 	*/
 
-	class MyFbxImporterOutput
+	class CHAOS_API MyFbxImporterOutput
 	{
 	public:
 
@@ -34,7 +34,7 @@ namespace chaos
 	* MyFbxImporterParams : parameters for the importation
 	*/
 
-	class MyFbxImporterParams
+	class CHAOS_API MyFbxImporterParams
 	{
 	public:
 
@@ -81,7 +81,7 @@ namespace chaos
 	* MyFbxImporter : a base class to import FBX file
 	*/
 
-	class MyFbxImporter
+	class CHAOS_API MyFbxImporter
 	{
 		/** information for skinning */
 		using SkinDataType = std::vector<std::pair<int32_t, float>>;

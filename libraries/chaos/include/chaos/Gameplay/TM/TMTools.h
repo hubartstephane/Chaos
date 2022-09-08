@@ -6,7 +6,7 @@ namespace chaos
 
 		/** serialize layers into JSON */
 		template<typename T>
-		void SerializeLayersFromJSON(T* object, nlohmann::json const& json)
+		/*CHAOS_API*/ void SerializeLayersFromJSON(T* object, nlohmann::json const& json)
 		{
 			nlohmann::json const* layers_json = JSONTools::GetStructure(json, "LAYERS");
 			if (layers_json != nullptr && layers_json->is_array())
@@ -30,7 +30,7 @@ namespace chaos
 
 		/** search a layer inside an object by ID */
 		template<typename T, typename U>
-		auto FindLayerInstanceByID(T* object, U& layer_instances, int in_id, bool recursive) -> decltype(layer_instances[0].get())
+		/*CHAOS_API*/ auto FindLayerInstanceByID(T* object, U& layer_instances, int in_id, bool recursive) -> decltype(layer_instances[0].get())
 		{
 			for (auto& layer : layer_instances)
 			{
@@ -48,7 +48,7 @@ namespace chaos
 
 		/** search a layer inside an object by request */
 		template<typename T, typename U>
-		auto FindLayerInstance(T* object, U& layer_instances, ObjectRequest request, bool recursive) -> decltype(layer_instances[0].get())
+		/*CHAOS_API*/ auto FindLayerInstance(T* object, U& layer_instances, ObjectRequest request, bool recursive) -> decltype(layer_instances[0].get())
 		{
 			for (auto& layer : layer_instances)
 			{
@@ -65,37 +65,37 @@ namespace chaos
 		}
 
 		/** fill BitmapAtlasInput from a TiledMap manager */
-		bool AddIntoAtlasInput(TiledMap::Manager const * manager, BitmapAtlas::AtlasInput & input);
+		CHAOS_API bool AddIntoAtlasInput(TiledMap::Manager const * manager, BitmapAtlas::AtlasInput & input);
 		/** fill BitmapAtlasInput from a TileSet */
-		bool AddIntoAtlasInput(TiledMap::TileSet const * tile_set, BitmapAtlas::AtlasInput & input);
+		CHAOS_API bool AddIntoAtlasInput(TiledMap::TileSet const * tile_set, BitmapAtlas::AtlasInput & input);
 		/** fill BitmapAtlasInput from a Map */
-		bool AddIntoAtlasInput(TiledMap::Map const * map, BitmapAtlas::AtlasInput & input);
+		CHAOS_API bool AddIntoAtlasInput(TiledMap::Map const * map, BitmapAtlas::AtlasInput & input);
 
 		/** fill BitmapAtlasInput from a TiledMap manager */
-		bool AddIntoAtlasInput(TiledMap::Manager const * manager, BitmapAtlas::FolderInfoInput * folder_input);
+		CHAOS_API bool AddIntoAtlasInput(TiledMap::Manager const * manager, BitmapAtlas::FolderInfoInput * folder_input);
 		/** fill BitmapAtlasInput from a TileSet */
-		bool AddIntoAtlasInput(TiledMap::TileSet const * tile_set, BitmapAtlas::FolderInfoInput * folder_input);
+		CHAOS_API bool AddIntoAtlasInput(TiledMap::TileSet const * tile_set, BitmapAtlas::FolderInfoInput * folder_input);
 		/** fill BitmapAtlasInput from a Map */
-		bool AddIntoAtlasInput(TiledMap::Map const * map, BitmapAtlas::FolderInfoInput * folder_input);
+		CHAOS_API bool AddIntoAtlasInput(TiledMap::Map const * map, BitmapAtlas::FolderInfoInput * folder_input);
 		/** fill BitmapAtlasInput from a Layer */
-		bool AddIntoAtlasInput(TiledMap::LayerBase const* layer, BitmapAtlas::FolderInfoInput* folder_input);
+		CHAOS_API bool AddIntoAtlasInput(TiledMap::LayerBase const* layer, BitmapAtlas::FolderInfoInput* folder_input);
 
 		/** returns true whether the object defines an explicit world bounding */
-		bool IsWorldBoundingBox(TiledMap::TypedObject const* typed_object);
+		CHAOS_API bool IsWorldBoundingBox(TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object defines an explicit layer bounding */
-		bool IsLayerBoundingBox(TiledMap::TypedObject const* typed_object);
+		CHAOS_API bool IsLayerBoundingBox(TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object is a player start */
-		bool IsPlayerStart(TiledMap::TypedObject const* typed_object);
+		CHAOS_API bool IsPlayerStart(TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object is a camera template */
-		bool IsCameraTemplate(TiledMap::TypedObject const* typed_object);
+		CHAOS_API bool IsCameraTemplate(TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object is a finish trigger */
-		bool IsFinishTrigger(TiledMap::TypedObject const* typed_object);
+		CHAOS_API bool IsFinishTrigger(TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object is a checpoint trigger */
-		bool IsCheckpointTrigger(TiledMap::TypedObject const* typed_object);
+		CHAOS_API bool IsCheckpointTrigger(TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object is a notification trigger */
-		bool IsNotificationTrigger(TiledMap::TypedObject const* typed_object);
+		CHAOS_API bool IsNotificationTrigger(TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object is a sound */
-		bool IsSoundTrigger(TiledMap::TypedObject const* typed_object);
+		CHAOS_API bool IsSoundTrigger(TiledMap::TypedObject const* typed_object);
 
 #endif
 

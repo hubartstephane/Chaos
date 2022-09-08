@@ -13,7 +13,7 @@ namespace chaos
 	//class GameEntity : public Tickable, public JSONSerializable
 
 	// shu49
-	class GameEntity : public GPURenderable, public JSONSerializable
+	class CHAOS_API GameEntity : public GPURenderable, public JSONSerializable
 	{
 
 		CHAOS_DECLARE_OBJECT_CLASS(GameEntity, Tickable);
@@ -30,7 +30,7 @@ namespace chaos
 		virtual void SetBoundingBox(box2 const& in_bounding_box);
 
 
-		// shu47 
+		// shu47
 
 
 		obox2 GetOBox() const;

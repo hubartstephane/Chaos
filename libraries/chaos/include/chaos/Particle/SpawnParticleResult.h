@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class SpawnParticleResult
+	class CHAOS_API SpawnParticleResult
 	{
 	public:
 

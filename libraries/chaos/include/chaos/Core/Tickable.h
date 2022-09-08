@@ -8,9 +8,9 @@ namespace chaos
 
 	// ========================================================
 	// Tickable : an object that deserve to be ticked
-	// ========================================================	
+	// ========================================================
 
-	class Tickable : public Object, public NamedObject
+	class CHAOS_API Tickable : public Object, public NamedObject
 	{
 
 		CHAOS_DECLARE_OBJECT_CLASS(Tickable, Object);

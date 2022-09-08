@@ -6,7 +6,7 @@ namespace chaos
 	// ParticleLayerBase
 	// ==============================================================
 
-	class ParticleLayerBase : public GPURenderable
+	class CHAOS_API ParticleLayerBase : public GPURenderable
 	{
 		CHAOS_PARTICLE_ALL_FRIENDS
 
@@ -177,7 +177,7 @@ namespace chaos
 	// ==============================================================
 
 	template<typename LAYER_TRAIT>
-	class ParticleLayer : public ParticleLayerBase, public DataOwner<LAYER_TRAIT>
+	class /*CHAOS_API*/ ParticleLayer : public ParticleLayerBase, public DataOwner<LAYER_TRAIT>
 	{
 		static_assert(std::is_base_of_v<ParticleLayerTraitBase, LAYER_TRAIT>);
 
@@ -193,7 +193,7 @@ namespace chaos
 		ParticleLayer(layer_trait_type const& in_layer_trait = {}) :
 			DataOwner<layer_trait_type>(in_layer_trait)
 		{
-			assert(Class::FindClass<particle_type>() != nullptr); // ensure class is declared		
+			assert(Class::FindClass<particle_type>() != nullptr); // ensure class is declared
 		}
 
 		/** returns the size in memory of a particle */

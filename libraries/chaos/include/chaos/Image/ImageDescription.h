@@ -10,7 +10,7 @@ namespace chaos
 	* ImageFaceDescription : data to work with pixels
 	*/
 
-	class ImageDescription
+	class CHAOS_API ImageDescription
 	{
 	public:
 

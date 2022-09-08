@@ -4,9 +4,12 @@
 #include "Ludum49Player.h"
 #include "Ludum49LevelInstance.h"
 
+namespace Arguments
+{
 #if _DEBUG
-CHAOS_APPLICATION_ARG(bool, DebugDisplay);
+	CHAOS_APPLICATION_ARG(bool, DebugDisplay);
 #endif
+};
 
 //
 //       a                    b
@@ -147,7 +150,7 @@ CollisionEntry LudumPlayerDisplacementComponent::ProcessCollision(box2 & pawn_bo
 		pawn_box.position = col.proj + direction * pawn_sphere.radius;
 
 #if _DEBUG
-		if (Arguments::DebugDisplay)
+		if (Arguments::DebugDisplay.Get())
 		{
 			LinePrimitive<VertexDefault> line = DI->AddLines(2);
 			line[0].position = col.a;

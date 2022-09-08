@@ -13,7 +13,7 @@ namespace chaos
 		// GeometricObject
 		// ==========================================
 
-		class GeometricObject : public TypedObject
+		class CHAOS_API GeometricObject : public TypedObject
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
@@ -60,7 +60,7 @@ namespace chaos
 		// GeometricObjectPoint
 		// ==========================================
 
-		class GeometricObjectPoint : public GeometricObject
+		class CHAOS_API GeometricObjectPoint : public GeometricObject
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
@@ -77,7 +77,7 @@ namespace chaos
 		// GeometricObjectSurface
 		// ==========================================
 
-		class GeometricObjectSurface : public GeometricObject
+		class CHAOS_API GeometricObjectSurface : public GeometricObject
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
@@ -101,7 +101,7 @@ namespace chaos
 		// GeometricObjectRectangle
 		// ==========================================
 
-		class GeometricObjectRectangle : public GeometricObjectSurface
+		class CHAOS_API GeometricObjectRectangle : public GeometricObjectSurface
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
@@ -118,7 +118,7 @@ namespace chaos
 		// GeometricObjectEllipse
 		// ==========================================
 
-		class GeometricObjectEllipse : public GeometricObjectSurface
+		class CHAOS_API GeometricObjectEllipse : public GeometricObjectSurface
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
@@ -135,7 +135,7 @@ namespace chaos
 		// GeometricObjectPolygon
 		// ==========================================
 
-		class GeometricObjectPolygon : public GeometricObject
+		class CHAOS_API GeometricObjectPolygon : public GeometricObject
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
@@ -161,7 +161,7 @@ namespace chaos
 		// GeometricObjectPolyline
 		// ==========================================
 
-		class GeometricObjectPolyline : public GeometricObject
+		class CHAOS_API GeometricObjectPolyline : public GeometricObject
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
@@ -187,7 +187,7 @@ namespace chaos
 		// GeometricObjectText
 		// ==========================================
 
-		enum class HorizontalTextAlignment : int
+		enum class CHAOS_API HorizontalTextAlignment : int
 		{
 			LEFT = 0,
 			CENTER = 1,
@@ -197,7 +197,7 @@ namespace chaos
 
 		CHAOS_DECLARE_ENUM_METHOD(HorizontalTextAlignment);
 
-		enum class VerticalTextAlignment : int
+		enum class CHAOS_API VerticalTextAlignment : int
 		{
 			TOP = 0,
 			CENTER = 1,
@@ -210,7 +210,7 @@ namespace chaos
 		//       The size of that rectangle may be greater than the size of the text
 		//       The halign/valign members indicate where to place the text inside that rectangle
 
-		class GeometricObjectText : public GeometricObjectSurface
+		class CHAOS_API GeometricObjectText : public GeometricObjectSurface
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
@@ -244,7 +244,7 @@ namespace chaos
 		// GeometricObjectTile
 		// ==========================================
 
-		class GeometricObjectTile : public GeometricObjectSurface
+		class CHAOS_API GeometricObjectTile : public GeometricObjectSurface
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 

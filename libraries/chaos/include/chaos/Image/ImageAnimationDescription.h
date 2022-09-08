@@ -11,7 +11,7 @@ namespace chaos
 	* BitmapGridAnimationInfo : some bitmaps represent a uniform grid of individual animation frames
 	*/
 
-	class BitmapGridAnimationInfo
+	class CHAOS_API BitmapGridAnimationInfo
 	{
 	public:
 
@@ -44,7 +44,7 @@ namespace chaos
 	* ImageAnimationDescription : data to work with animation
 	*/
 
-	class ImageAnimationDescription
+	class CHAOS_API ImageAnimationDescription
 	{
 	public:
 
@@ -79,13 +79,13 @@ namespace chaos
 	* Some JSON utility functions
 	*/
 
-	bool SaveIntoJSON(nlohmann::json& json, BitmapGridAnimationInfo const& src);
+	CHAOS_API bool SaveIntoJSON(nlohmann::json& json, BitmapGridAnimationInfo const& src);
 
-	bool LoadFromJSON(nlohmann::json const& json, BitmapGridAnimationInfo& dst);
+	CHAOS_API bool LoadFromJSON(nlohmann::json const& json, BitmapGridAnimationInfo& dst);
 
-	bool SaveIntoJSON(nlohmann::json& json, ImageAnimationDescription const& src);
+	CHAOS_API bool SaveIntoJSON(nlohmann::json& json, ImageAnimationDescription const& src);
 
-	bool LoadFromJSON(nlohmann::json const& json, ImageAnimationDescription& dst);
+	CHAOS_API bool LoadFromJSON(nlohmann::json const& json, ImageAnimationDescription& dst);
 
 
 #endif

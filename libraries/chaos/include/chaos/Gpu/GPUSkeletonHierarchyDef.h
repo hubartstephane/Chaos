@@ -11,7 +11,7 @@ namespace chaos
 	* GPUSkeletonHierarchyBoneDef : defines a bone in the hierarchy
 	*/
 
-	class GPUSkeletonHierarchyBoneDef
+	class CHAOS_API GPUSkeletonHierarchyBoneDef
 	{
 	public:
 
@@ -29,7 +29,7 @@ namespace chaos
 	* GPUSkeletonHierarchyDef : defines the chain of bones
 	*/
 
-	class GPUSkeletonHierarchyDef
+	class CHAOS_API GPUSkeletonHierarchyDef
 	{
 	public:
 

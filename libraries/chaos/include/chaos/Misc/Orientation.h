@@ -7,7 +7,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/** the possible axis */
-	enum class Orientation : int
+	enum class CHAOS_API Orientation : int
 	{
 		HORIZONTAL = 0,
 		VERTICAL = 1

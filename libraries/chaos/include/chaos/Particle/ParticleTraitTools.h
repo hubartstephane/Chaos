@@ -7,7 +7,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	// function detection 
+	// function detection
 	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(Tick);
 	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(UpdateParticle);
 	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(BeginUpdateParticles);
@@ -22,7 +22,7 @@ namespace chaos
 
 // XXX: no enum so this can be implicitly converted to int
 // XXX: no namespace so we can use 'using' to have more concise code
-	struct ParticleToPrimitive_ImplementationFlags
+	struct CHAOS_API ParticleToPrimitive_ImplementationFlags
 	{
 		// whether the trait has the implementation to use
 		static constexpr int TRAIT_IMPLEMENTATION = 1;
@@ -43,7 +43,7 @@ namespace chaos
 
 // XXX: no enum so this can be implicitly converted to int
 // XXX: no namespace so we can use 'using' to have more concise code
-	struct UpdateParticle_ImplementationFlags
+	struct CHAOS_API UpdateParticle_ImplementationFlags
 	{
 		// no update required
 		static constexpr int NONE = 0;
@@ -67,9 +67,9 @@ namespace chaos
 	{
 		/** returns the kind of implementation required for the particle rendering */
 		template<typename TRAIT_TYPE>
-		constexpr int GetParticleToPrimitivesImplementationType()
+		/*CHAOS_API*/ constexpr int GetParticleToPrimitivesImplementationType()
 		{
-			// the types used 
+			// the types used
 			using trait = TRAIT_TYPE;
 
 			using particle = typename trait::particle_type;
@@ -127,11 +127,11 @@ namespace chaos
 
 		/** returns the kind of implementation required for the particle update */
 		template<typename TRAIT_TYPE>
-		constexpr int GetUpdateParticleImplementationFlags()
+		/*CHAOS_API*/ constexpr int GetUpdateParticleImplementationFlags()
 		{
 			using Flags = UpdateParticle_ImplementationFlags;
 
-			// the types used 
+			// the types used
 			using trait = TRAIT_TYPE;
 
 			using particle = typename trait::particle_type;

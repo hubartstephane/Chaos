@@ -4,7 +4,7 @@ namespace chaos
 
 	class SimpleWin32CreateParam;
 	class SimpleWin32ClassBase;
-	
+
 	template<typename WIN_CLASS>
 	class SimpleWin32Class;
 
@@ -14,7 +14,7 @@ namespace chaos
 	* SimpleWin32CreateParam : a class to hold the creation parameters
 	*/
 
-	class SimpleWin32CreateParam
+	class CHAOS_API SimpleWin32CreateParam
 	{
 	public:
 
@@ -30,7 +30,7 @@ namespace chaos
 	* SimpleWin32Window : an handler for on-the-shelve window class
 	*/
 
-	class SimpleWin32ClassBase
+	class CHAOS_API SimpleWin32ClassBase
 	{
 	public:
 
@@ -53,7 +53,7 @@ namespace chaos
 	*/
 
 	template<typename WIN_CLASS>
-	class SimpleWin32Class : public SimpleWin32ClassBase
+	class /*CHAOS_API*/ SimpleWin32Class : public SimpleWin32ClassBase
 	{
 	public:
 
@@ -77,5 +77,5 @@ namespace chaos
 	};
 
 #endif
-	
+
 }; // namespace chaos

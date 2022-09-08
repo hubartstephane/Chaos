@@ -4,7 +4,7 @@
 //
 // XXX : remark on ParticleAllocation
 //
-//         The ParticleAllocation life time is special. see ReferenceCount remark in .cpp !!! 
+//         The ParticleAllocation life time is special. see ReferenceCount remark in .cpp !!!
 //
 //
 // ParticleAllocation<...> use a template class to define particles behavior
@@ -19,9 +19,9 @@
 //
 //    bool UpdateParticle(...) const;    => returns true if the particle must be destroyed
 //
-// and 
+// and
 //
-//    void ParticleToPrimitives(...) const;  
+//    void ParticleToPrimitives(...) const;
 //
 //
 // ... but you could simply have
@@ -34,7 +34,7 @@
 //    particle.ParticleToPrimitives(...)
 //
 //
-// 1.b - have simple independant function 
+// 1.b - have simple independant function
 //
 //    ParticleToPrimitive(... particle ...)
 //
@@ -64,7 +64,7 @@
 //
 // in that case, the previous functions have an additionnal argument (just for 1.1 cases)
 //
-//    UpdateParticle(... TYPE_XXX, AllocationTrait) 
+//    UpdateParticle(... TYPE_XXX, AllocationTrait)
 //
 //    ParticleToPrimitives(... TYPE_YYY, AllocationTrait)
 //

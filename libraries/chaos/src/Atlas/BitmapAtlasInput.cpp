@@ -745,7 +745,7 @@ namespace chaos
 			multi_bitmaps.clear();
 			faces.clear(); // XXX : face / library destruction is important
 			libraries.clear();
-			AtlasBaseTemplate<BitmapInfoInput, FontInfoInput, FolderInfoInput, Object>::Clear();
+			super::Clear();
 		}
 
 		void AtlasInput::RegisterResource(FIBITMAP * bitmap, bool release)

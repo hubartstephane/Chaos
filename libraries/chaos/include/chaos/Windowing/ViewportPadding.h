@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class ViewportPadding
+	class CHAOS_API ViewportPadding
 	{
 	public:
 

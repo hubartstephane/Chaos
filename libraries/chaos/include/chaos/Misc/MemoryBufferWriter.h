@@ -10,7 +10,7 @@ namespace chaos
 	* MemoryBufferWriter : used to write untyped data in a buffer
 	*/
 
-	class MemoryBufferWriter
+	class CHAOS_API MemoryBufferWriter
 	{
 	public:
 

@@ -11,7 +11,7 @@ namespace chaos
       * GPUMeshElement : a renderable element
       */
 
-    class GPUMeshElement
+    class CHAOS_API GPUMeshElement
     {
         friend class GPUMesh;
 
@@ -42,7 +42,7 @@ namespace chaos
      * GPUMesh : a mesh to be dynamicly constructed
      */
 
-    class GPUMesh : public GPURenderable
+    class CHAOS_API GPUMesh : public GPURenderable
     {
     public:
 

@@ -13,7 +13,7 @@ namespace chaos
 	* WindowHints : this represents hints for GLFWwindow creation
 	*/
 
-	class WindowHints
+	class CHAOS_API WindowHints
 	{
 	public:
 
@@ -52,15 +52,15 @@ namespace chaos
 		int alpha_bits = 8;
 	};
 
-	bool SaveIntoJSON(nlohmann::json& json, WindowHints const& src);
+	CHAOS_API bool SaveIntoJSON(nlohmann::json& json, WindowHints const& src);
 
-	bool LoadFromJSON(nlohmann::json const& json, WindowHints& dst);
+	CHAOS_API bool LoadFromJSON(nlohmann::json const& json, WindowHints& dst);
 
 	/**
 	* WindowParams : parameters for playing single window application
 	*/
 
-	class WindowParams
+	class CHAOS_API WindowParams
 	{
 	public:
 
@@ -76,15 +76,15 @@ namespace chaos
 		int height = 0;
 	};
 
-	bool SaveIntoJSON(nlohmann::json& json, WindowParams const& src);
+	CHAOS_API bool SaveIntoJSON(nlohmann::json& json, WindowParams const& src);
 
-	bool LoadFromJSON(nlohmann::json const& json, WindowParams& dst);
+	CHAOS_API bool LoadFromJSON(nlohmann::json const& json, WindowParams& dst);
 
 	// ========================================================
 	// WindowDrawParams : some data for the window rendering
 	// ========================================================
 
-	class WindowDrawParams
+	class CHAOS_API WindowDrawParams
 	{
 	public:
 		/** the viewport */
@@ -97,7 +97,7 @@ namespace chaos
 	* Window : a binding class between chaos and GLFW to handle window (beware the prefix "My")
 	*/
 
-	class Window : public Object, public InputEventReceiver, public NamedObject, public GPUProgramProviderInterface
+	class CHAOS_API Window : public Object, public InputEventReceiver, public NamedObject, public GPUProgramProviderInterface
 	{
 		friend class WindowApplication;
 

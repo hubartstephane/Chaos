@@ -14,7 +14,7 @@ namespace chaos
 
 
 		/** a structure that contains the result of a capture of a window */
-		class WindowPixelCaptureResult
+		class CHAOS_API WindowPixelCaptureResult
 		{
 		public:
 
@@ -27,66 +27,66 @@ namespace chaos
 		};
 
 		/** returns true whether the application has focus */
-		bool IsApplicationForeground();
+		CHAOS_API bool IsApplicationForeground();
 
 		/** returns true whether the keyboard is AZERTY */
-		bool IsAzertyKeyboard();
+		CHAOS_API bool IsAzertyKeyboard();
 
 		/** create a "Press to continue ..." pause console */
-		void PressToContinue();
+		CHAOS_API void PressToContinue();
 
 		/** create input/output console */
-		bool AllocConsoleAndRedirectStdOutput();
+		CHAOS_API bool AllocConsoleAndRedirectStdOutput();
 
 		/** test whether there is an error, display the message into the logs */
-		void DisplayErrorMessage(char const* title = nullptr);
+		CHAOS_API void DisplayErrorMessage(char const* title = nullptr);
 
 		/** get the string from an error code */
-		std::string GetErrorString(DWORD errCode);
+		CHAOS_API std::string GetErrorString(DWORD errCode);
 
 		/** use the windows register to "open" a file */
-		void ShowFile(FilePathParam const& path);
+		CHAOS_API void ShowFile(FilePathParam const& path);
 
 		/** returns the current user Document path */
-		boost::filesystem::path GetUserDocumentPath();
+		CHAOS_API boost::filesystem::path GetUserDocumentPath();
 
 		/** returns the current use local path */
-		boost::filesystem::path GetUserLocalPath();
+		CHAOS_API boost::filesystem::path GetUserLocalPath();
 
 		/** returns the current user Desktop path */
-		boost::filesystem::path GetUserDesktopPath();
+		CHAOS_API boost::filesystem::path GetUserDesktopPath();
 
 		/** copies a string into the clipboard */
-		bool CopyStringToClipboard(char const* str);
+		CHAOS_API bool CopyStringToClipboard(char const* str);
 
 		/** copies a HBITMAP into clipboard */
-		bool CopyBitmapToClipboard(HBITMAP hbitmap);
+		CHAOS_API bool CopyBitmapToClipboard(HBITMAP hbitmap);
 		/** copies a FIBITMAP into clipboard */
-		bool CopyBitmapToClipboard(FIBITMAP* bitmap);
+		CHAOS_API bool CopyBitmapToClipboard(FIBITMAP* bitmap);
 
 		/** capture a windows inside a HBITMAP */
-		HBITMAP CaptureWindowToBitmap(HWND hWnd);
+		CHAOS_API HBITMAP CaptureWindowToBitmap(HWND hWnd);
 		/** capture a windows inside a HBITMAP */
-		HBITMAP CaptureWindowToBitmap(HDC hDC);
+		CHAOS_API HBITMAP CaptureWindowToBitmap(HDC hDC);
 
 		/** capture a windows inside the clipboard */
-		bool CaptureWindowToClipboard(HWND hWnd);
+		CHAOS_API bool CaptureWindowToClipboard(HWND hWnd);
 		/** capture a windows inside the clipboard */
-		bool CaptureWindowToClipboard(HDC hDC);
+		CHAOS_API bool CaptureWindowToClipboard(HDC hDC);
 
 		/** capture a windows inside a buffer */
-		WindowPixelCaptureResult CaptureBitmapToPixelBuffer(HBITMAP hBitmap, HDC hDC);
+		CHAOS_API WindowPixelCaptureResult CaptureBitmapToPixelBuffer(HBITMAP hBitmap, HDC hDC);
 		/** capture a windows inside a buffer */
-		WindowPixelCaptureResult CaptureWindowToPixelBuffer(HWND hWnd);
+		CHAOS_API WindowPixelCaptureResult CaptureWindowToPixelBuffer(HWND hWnd);
 		/** capture a windows inside a buffer */
-		WindowPixelCaptureResult CaptureWindowToPixelBuffer(HDC hDC);
+		CHAOS_API WindowPixelCaptureResult CaptureWindowToPixelBuffer(HDC hDC);
 		/** capture a windows inside an image */
-		FIBITMAP* CaptureWindowToImage(HWND hWnd);
+		CHAOS_API FIBITMAP* CaptureWindowToImage(HWND hWnd);
 		/** capture a windows inside an image */
-		FIBITMAP* CaptureWindowToImage(HDC hDC);
+		CHAOS_API FIBITMAP* CaptureWindowToImage(HDC hDC);
 
 		/** enumerate the monitors (ordered left to right) */
-		std::vector<MONITORINFOEX> EnumerateMonitors();
+		CHAOS_API std::vector<MONITORINFOEX> EnumerateMonitors();
 
 #endif
 

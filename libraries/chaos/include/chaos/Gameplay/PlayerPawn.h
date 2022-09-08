@@ -10,7 +10,7 @@ namespace chaos
 	// PlayerPawn
 	// =============================================
 
-	class PlayerPawn : public GameEntity
+	class CHAOS_API PlayerPawn : public GameEntity
 	{
 
 		CHAOS_GAMEPLAY_ALLFRIENDS;

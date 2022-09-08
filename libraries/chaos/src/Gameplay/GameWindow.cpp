@@ -76,15 +76,18 @@ namespace chaos
 	{
 		game = nullptr;
 	}
+	namespace Arguments
+	{
 #if _DEBUG
-	CHAOS_APPLICATION_ARG(bool, NoAutoPause);
+		CHAOS_APPLICATION_ARG(bool, NoAutoPause);
 #endif
+	};
 
 	void GameWindow::OnIconifiedStateChange(bool iconified)
 	{
 		// do not execute following code in debug because it does not fit well with debugger
 #if _DEBUG
-		if (!Arguments::NoAutoPause)
+		if (!Arguments::NoAutoPause.Get())
 #endif
 		if (iconified)
 			game->RequirePauseGame();
@@ -94,7 +97,7 @@ namespace chaos
 	{
 		// do not execute following code in debug because it does not fit well with debugger
 #if _DEBUG
-		if (!Arguments::NoAutoPause)
+		if (!Arguments::NoAutoPause.Get())
 #endif
 		if (!gain_focus)
 			game->RequirePauseGame();

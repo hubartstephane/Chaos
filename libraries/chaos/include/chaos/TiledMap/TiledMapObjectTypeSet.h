@@ -1,5 +1,5 @@
 namespace chaos
-{	
+{
 	namespace TiledMap
 	{
 #if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -8,7 +8,7 @@ namespace chaos
 		// ObjectTypeDefinition
 		// ==========================================
 
-		class ObjectTypeDefinition : public PropertyOwner
+		class CHAOS_API ObjectTypeDefinition : public PropertyOwner
 		{
 
 			CHAOS_TILEDMAP_ALL_FRIENDS
@@ -23,10 +23,10 @@ namespace chaos
 			/** override */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 			/** override */
-			virtual tinyxml2::XMLElement const * GetPropertiesChildNode(tinyxml2::XMLElement const * element) const override 
-			{ 
+			virtual tinyxml2::XMLElement const * GetPropertiesChildNode(tinyxml2::XMLElement const * element) const override
+			{
 				return element; // XXX: the properties are not contained by a 'properties' node
-			} 
+			}
 
 		public:
 
@@ -40,7 +40,7 @@ namespace chaos
 		// ObjectTypeSet
 		// ==========================================
 
-		class ObjectTypeSet : public ManagerObject
+		class CHAOS_API ObjectTypeSet : public ManagerObject
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 

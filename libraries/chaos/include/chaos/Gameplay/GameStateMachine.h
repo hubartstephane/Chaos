@@ -34,7 +34,7 @@ namespace chaos
 	// GameState
 	// =========================================================
 
-	class GameState : public SM::State
+	class CHAOS_API GameState : public SM::State
 	{
 	public:
 
@@ -50,7 +50,7 @@ namespace chaos
 	// GameTransition
 	// =========================================================
 
-	class GameTransition : public SM::Transition
+	class CHAOS_API GameTransition : public SM::Transition
 	{
 	public:
 
@@ -66,7 +66,7 @@ namespace chaos
 	// All states
 	// =========================================================
 
-	class MainMenuState : public GameState
+	class CHAOS_API MainMenuState : public GameState
 	{
 	public:
 
@@ -78,7 +78,7 @@ namespace chaos
 		virtual bool OnLeaveImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* to, Object* extra_data) override;
 	};
 
-	class PlayingState : public GameState
+	class CHAOS_API PlayingState : public GameState
 	{
 	public:
 
@@ -88,7 +88,7 @@ namespace chaos
 		virtual bool TickImpl(SM::StateMachineInstance* sm_instance, float delta_time, Object* extra_data) override;
 	};
 
-	class PauseState : public GameState
+	class CHAOS_API PauseState : public GameState
 	{
 	public:
 
@@ -104,7 +104,7 @@ namespace chaos
 	// Transitions
 	// =========================================================
 
-	class MainMenuToPlayingTransition : public GameTransition
+	class CHAOS_API MainMenuToPlayingTransition : public GameTransition
 	{
 	public:
 
@@ -116,7 +116,7 @@ namespace chaos
 		virtual bool OnEnterImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* from, Object* extra_data) override;
 	};
 
-	class PlayingToMainMenuTransition : public GameTransition
+	class CHAOS_API PlayingToMainMenuTransition : public GameTransition
 	{
 
 	public:
@@ -129,7 +129,7 @@ namespace chaos
 		virtual bool OnEnterImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* from, Object* extra_data) override;
 	};
 
-	class PlayingToGameOverTransition : public GameTransition
+	class CHAOS_API PlayingToGameOverTransition : public GameTransition
 	{
 
 	public:
@@ -150,7 +150,7 @@ namespace chaos
 	// GameStateMachine
 	// =========================================================
 
-	class GameStateMachine : public SM::StateMachine
+	class CHAOS_API GameStateMachine : public SM::StateMachine
 	{
 		friend class Game;
 
@@ -180,7 +180,7 @@ namespace chaos
 	// GameStateMachineInstance
 	// =========================================================
 
-	class GameStateMachineInstance : public SM::StateMachineInstance
+	class CHAOS_API GameStateMachineInstance : public SM::StateMachineInstance
 	{
 	public:
 

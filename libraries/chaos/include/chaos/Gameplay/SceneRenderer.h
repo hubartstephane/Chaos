@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class SceneRenderer
+	class CHAOS_API SceneRenderer
 	{
 	public:
 

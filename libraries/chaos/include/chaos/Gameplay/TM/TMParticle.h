@@ -12,7 +12,7 @@ namespace chaos
 	// TMParticle
 	// =====================================
 
-	class TMParticle : public ParticleDefault
+	class CHAOS_API TMParticle : public ParticleDefault
 	{
 	public:
 

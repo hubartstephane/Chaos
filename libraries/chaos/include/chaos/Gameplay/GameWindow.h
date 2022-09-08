@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class GameWindow : public Window
+	class CHAOS_API GameWindow : public Window
 	{
 		friend class GameApplication;
 

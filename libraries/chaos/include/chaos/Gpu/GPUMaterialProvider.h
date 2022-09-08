@@ -9,9 +9,9 @@ namespace chaos
 
     // ========================================================
     // GPUMaterialProvider : used to override the material used
-    // ========================================================	
+    // ========================================================
 
-    class GPUMaterialProvider : public Object
+    class CHAOS_API GPUMaterialProvider : public Object
     {
     public:
 
@@ -21,9 +21,9 @@ namespace chaos
 
     // ========================================================
     // GPUConstantMaterialProvider : a material provider that always returns the same material
-    // ========================================================	
+    // ========================================================
 
-    class GPUConstantMaterialProvider : public GPUMaterialProvider
+    class CHAOS_API GPUConstantMaterialProvider : public GPUMaterialProvider
     {
     public:
 

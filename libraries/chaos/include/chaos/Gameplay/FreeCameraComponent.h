@@ -10,7 +10,7 @@ namespace chaos
 	// FreeCameraComponent
 	// =============================================
 
-	class FreeCameraComponent : public CameraComponent
+	class CHAOS_API FreeCameraComponent : public CameraComponent
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(FreeCameraComponent, CameraComponent);
 

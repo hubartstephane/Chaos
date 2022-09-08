@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class GPURenderbuffer : public GPUSurface
+	class CHAOS_API GPURenderbuffer : public GPUSurface
 	{
 	public:
 

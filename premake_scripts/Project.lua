@@ -502,7 +502,7 @@ function Project:AddProjectToSolution()
 								links(elem)
 							end
 						)
-						if (not self:IsSharedLibrary() or not is_self) then
+						if (not self:IsSharedLibrary() or not is_self) then -- a shared directory does not link to itself
 							Utility:ForEachElement(p.libname[plat][conf],
 								function(elem)
 									links(elem)

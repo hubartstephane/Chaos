@@ -10,7 +10,7 @@ namespace chaos
 	* LuaState is class to handle some function of lua (beware, this does not destroy the state !!)
 	*/
 
-	class LuaState
+	class CHAOS_API LuaState
 	{
 	public:
 
@@ -142,8 +142,8 @@ namespace chaos
 													 // we have to do it ourselves
 			lua_getglobal(state, "_G");
 			Push(var_key);
-			lua_pushvalue(state, -3); // copy the value (the one that will be consumed by lua_settable (...)    
-									  // write the table 
+			lua_pushvalue(state, -3); // copy the value (the one that will be consumed by lua_settable (...)
+									  // write the table
 			lua_settable(state, table_index);
 			// consume the copy of table and the value
 			lua_pop(state, 2);
@@ -234,5 +234,5 @@ namespace chaos
 	};
 
 #endif
-	
+
 }; // namespace chaos

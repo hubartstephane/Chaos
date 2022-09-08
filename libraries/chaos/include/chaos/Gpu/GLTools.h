@@ -10,7 +10,7 @@ namespace chaos
 	* GLTools : used to have some generic functions for OpenGL
 	**/
 
-	class GLTools
+	class CHAOS_API GLTools
 	{
 	public:
 

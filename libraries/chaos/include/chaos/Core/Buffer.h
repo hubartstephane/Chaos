@@ -6,10 +6,10 @@ namespace chaos
 	class BufferBase;
 	class BufferPolicyBase;
 
-	template<typename T> 
+	template<typename T>
 	class Buffer;
 
-	template<typename T> 
+	template<typename T>
 	class BufferPolicy;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -18,7 +18,7 @@ namespace chaos
 	* BufferBase : base class for buffer
 	*/
 
-	class BufferBase
+	class CHAOS_API BufferBase
 	{
 		friend class BufferPolicyBase;
 
@@ -51,7 +51,7 @@ namespace chaos
 	* BufferPolicyBase : base class for the Policy
 	*/
 
-	class BufferPolicyBase
+	class CHAOS_API BufferPolicyBase
 	{
 
 		friend class BufferBase;
@@ -74,7 +74,7 @@ namespace chaos
 	*/
 
 	template<typename T>
-	class SharedBufferPolicy : public BufferPolicyBase
+	class /*CHAOS_API*/ SharedBufferPolicy : public BufferPolicyBase
 	{
 
 	public:
@@ -133,7 +133,7 @@ namespace chaos
 	*/
 
 	template<typename T>
-	class SharedNonOptimizedBufferPolicy : public SharedBufferPolicy<T>
+	class /*CHAOS_API*/ SharedNonOptimizedBufferPolicy : public SharedBufferPolicy<T>
 	{
 
 	public:
@@ -165,7 +165,7 @@ namespace chaos
 	*/
 
 	template<typename TYPE = char>
-	class Buffer : public BufferBase
+	class /*CHAOS_API*/ Buffer : public BufferBase
 	{
 		friend class BufferPolicyBase;
 

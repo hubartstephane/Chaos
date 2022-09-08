@@ -13,7 +13,7 @@ namespace chaos
 	* GLVariableInfo : a base class for uniforms and attributes
 	*/
 
-	class GLVariableInfo
+	class CHAOS_API GLVariableInfo
 	{
 	public:
 
@@ -31,7 +31,7 @@ namespace chaos
 	* GLUniformInfo : definition of an uniform in the program
 	*/
 
-	class GLUniformInfo : public GLVariableInfo
+	class CHAOS_API GLUniformInfo : public GLVariableInfo
 	{
 	public:
 
@@ -92,7 +92,7 @@ namespace chaos
 	* GLAttributeInfo : definition of an attribute in the program
 	*/
 
-	class GLAttributeInfo : public GLVariableInfo
+	class CHAOS_API GLAttributeInfo : public GLVariableInfo
 	{
 	public:
 
@@ -106,7 +106,7 @@ namespace chaos
 	* GPUProgramData : used to register attributes, uniforms in a given program
 	*/
 
-	class GPUProgramData
+	class CHAOS_API GPUProgramData
 	{
 	public:
 

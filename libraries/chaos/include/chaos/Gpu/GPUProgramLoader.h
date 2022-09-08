@@ -11,7 +11,7 @@ namespace chaos
 	*                    It is possible to use cache system and to add some definitions so we can generate multiple programs with small macro differences.
 	*/
 
-	class GPUProgramLoader : public ResourceManagerLoader<GPUProgram, GPUResourceManager>
+	class CHAOS_API GPUProgramLoader : public ResourceManagerLoader<GPUProgram, GPUResourceManager>
 	{
 	public:
 

@@ -35,7 +35,7 @@ namespace chaos
 * FileTools is namespace-class for methods to handle files
 */
 
-	enum class LoadFileFlag // depending on the function, some flags may not be relevant
+	enum class CHAOS_API LoadFileFlag // depending on the function, some flags may not be relevant
 	{
 		NONE = 0,
 		ASCII = 1,
@@ -46,28 +46,28 @@ namespace chaos
 	namespace FileTools
 	{
 		/** returns true if the extension of a file correspond to a string */
-		bool IsTypedFile(FilePathParam const& path, char const* expected_ext);
+		CHAOS_API bool IsTypedFile(FilePathParam const& path, char const* expected_ext);
 		/** loading a whole file into memory */
-		Buffer<char> LoadFile(FilePathParam const& path, LoadFileFlag flags = LoadFileFlag::NONE);
+		CHAOS_API Buffer<char> LoadFile(FilePathParam const& path, LoadFileFlag flags = LoadFileFlag::NONE);
 
 		/** try path redirection and call func (until it returns true) */
-		bool WithFile(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func);
+		CHAOS_API bool WithFile(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func);
 		/** iterate over all entries in all possible directories (until func returns true) */
-		bool WithDirectoryContent(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func);
+		CHAOS_API bool WithDirectoryContent(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func);
 
 		/** returns a filepath that is unused */
-		boost::filesystem::path GetUniquePath(FilePathParam const& path, char const* format, bool create_empty_file, int max_iterations = -1);
+		CHAOS_API boost::filesystem::path GetUniquePath(FilePathParam const& path, char const* format, bool create_empty_file, int max_iterations = -1);
 
 		/** create a temporary directory */
-		bool CreateTemporaryDirectory(char const* pattern, boost::filesystem::path& result);
+		CHAOS_API bool CreateTemporaryDirectory(char const* pattern, boost::filesystem::path& result);
 
 		/** read file as a vector of strings */
-		std::vector<std::string> ReadFileLines(FilePathParam const& path, LoadFileFlag flags = LoadFileFlag::NONE);
+		CHAOS_API std::vector<std::string> ReadFileLines(FilePathParam const& path, LoadFileFlag flags = LoadFileFlag::NONE);
 		/** write a file with a vector of strings */
-		bool WriteFileLines(FilePathParam const& path, std::vector<std::string> const& lines);
+		CHAOS_API bool WriteFileLines(FilePathParam const& path, std::vector<std::string> const& lines);
 
 		/** redirect any access (under conditions) to the direct resources path of the project (not the build directory) */
-		boost::filesystem::path GetRedirectedPath(boost::filesystem::path const& p);
+		CHAOS_API boost::filesystem::path GetRedirectedPath(boost::filesystem::path const& p);
 
 	}; // namespace FileTools
 

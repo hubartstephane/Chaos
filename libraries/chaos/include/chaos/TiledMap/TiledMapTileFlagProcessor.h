@@ -1,5 +1,5 @@
 namespace chaos
-{	
+{
 	namespace TiledMap
 	{
 
@@ -9,7 +9,7 @@ namespace chaos
 		// TileFlagProcessor
 		// ==========================================
 
-		class TileFlagProcessor : public Object, public JSONSerializable
+		class CHAOS_API TileFlagProcessor : public Object, public JSONSerializable
 		{
 			CHAOS_DECLARE_OBJECT_CLASS(TileFlagProcessor, Object);
 
@@ -23,7 +23,7 @@ namespace chaos
 		// EightBitsModeTileFlagProcessor
 		// ==========================================
 
-		class EightBitsModeTileFlagProcessor : public TileFlagProcessor
+		class CHAOS_API EightBitsModeTileFlagProcessor : public TileFlagProcessor
 		{
 			CHAOS_DECLARE_OBJECT_CLASS(EightBitsModeTileFlagProcessor, TileFlagProcessor)("EightBitsMode");
 
@@ -37,7 +37,7 @@ namespace chaos
 		// ComputeNeighbourFlagProcessor
 		// ==========================================
 
-		class ComputeNeighbourFlagProcessor : public TileFlagProcessor
+		class CHAOS_API ComputeNeighbourFlagProcessor : public TileFlagProcessor
 		{
 			CHAOS_DECLARE_OBJECT_CLASS(ComputeNeighbourFlagProcessor, TileFlagProcessor)("ComputeNeighbour");
 
@@ -65,7 +65,7 @@ namespace chaos
 		// ComputeNeighbourFlagProcessor
 		// ==========================================
 
-		class ComputeCustomFlagProcessorEntry
+		class CHAOS_API ComputeCustomFlagProcessorEntry
 		{
 		public:
 
@@ -76,12 +76,12 @@ namespace chaos
 		};
 
 		/** JSON serialization */
-		bool SaveIntoJSON(nlohmann::json& json, ComputeCustomFlagProcessorEntry const& src);
+		CHAOS_API bool SaveIntoJSON(nlohmann::json& json, ComputeCustomFlagProcessorEntry const& src);
 		/** JSON serialization */
-		bool LoadFromJSON(nlohmann::json const& json, ComputeCustomFlagProcessorEntry& dst);
+		CHAOS_API bool LoadFromJSON(nlohmann::json const& json, ComputeCustomFlagProcessorEntry& dst);
 
 
-		class ComputeCustomFlagProcessor : public TileFlagProcessor
+		class CHAOS_API ComputeCustomFlagProcessor : public TileFlagProcessor
 		{
 			CHAOS_DECLARE_OBJECT_CLASS(ComputeCustomFlagProcessor, TileFlagProcessor);
 

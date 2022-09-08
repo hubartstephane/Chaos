@@ -3,15 +3,15 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	enum class ZonePartitionType;
-	
+
 	enum class ZonePartitionChangeType;
-	
-	template<typename ZONE_TYPE> 
+
+	template<typename ZONE_TYPE>
 	class DoubleZone;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	enum class ZonePartitionType : int
+	enum class CHAOS_API ZonePartitionType : int
 	{
 		/** point is inside inner zone */
 		NEAR_ZONE = 0,
@@ -21,7 +21,7 @@ namespace chaos
 		FAR_ZONE = 2
 	};
 
-	enum class ZonePartitionChangeType : int
+	enum class CHAOS_API ZonePartitionChangeType : int
 	{
 		/** no zone of change */
 		NOCHANGE = 0,
@@ -38,7 +38,7 @@ namespace chaos
 	*/
 
 	template<typename ZONE_TYPE>
-	class DoubleZone
+	class /*CHAOS_API*/ DoubleZone
 	{
 	public:
 

@@ -1,5 +1,5 @@
 namespace chaos
-{	
+{
 	namespace TiledMap
 	{
 #if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -8,7 +8,7 @@ namespace chaos
 		// Manager : container for maps and tileset
 		// ==========================================
 
-		class Manager : public BaseObject
+		class CHAOS_API Manager : public BaseObject
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 

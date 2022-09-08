@@ -20,7 +20,7 @@ namespace chaos
     // ==============================================================
 
     template<typename ALLOCATION_TYPE>
-    class AutoCastedParticleAccessorBase
+    class /*CHAOS_API*/ AutoCastedParticleAccessorBase
     {
     public:
 
@@ -67,7 +67,7 @@ namespace chaos
     // AutoCastedParticleAccessor
     // ==============================================================
 
-    class AutoCastedParticleAccessor : public AutoCastedParticleAccessorBase<ParticleAllocationBase>
+    class CHAOS_API AutoCastedParticleAccessor : public AutoCastedParticleAccessorBase<ParticleAllocationBase>
     {
         friend class AutoCastedParticleConstAccessor;
 
@@ -96,7 +96,7 @@ namespace chaos
     // AutoCastedParticleConstAccessor
     // ==============================================================
 
-    class AutoCastedParticleConstAccessor : public AutoCastedParticleAccessorBase<ParticleAllocationBase const>
+    class CHAOS_API AutoCastedParticleConstAccessor : public AutoCastedParticleAccessorBase<ParticleAllocationBase const>
     {
     public:
 

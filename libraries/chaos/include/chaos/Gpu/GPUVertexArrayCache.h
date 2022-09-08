@@ -14,7 +14,7 @@ namespace chaos
 	// XXX : OpenGL contexts do not share 'CONTAINER OBJECTS' has VertexArrays or FrameBuffers
 	//       That's why we use a Window entry in the cache system
 
-	class GPUVertexArrayCacheEntry
+	class CHAOS_API GPUVertexArrayCacheEntry
 	{
 		friend class GPUVertexArrayCache;
 
@@ -54,7 +54,7 @@ namespace chaos
 	// GPUVertexArrayCache : a binding between GPUProgram/GPUVertexArray that support destruction of both side
 	// =================================================================================================
 
-	class GPUVertexArrayCache : public Object
+	class CHAOS_API GPUVertexArrayCache : public Object
 	{
 
 	public:

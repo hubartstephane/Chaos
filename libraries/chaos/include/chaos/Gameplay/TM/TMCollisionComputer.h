@@ -6,7 +6,7 @@ namespace chaos
 	// TileCollisionComputer
 	// =====================================
 
-	class TileCollisionComputer
+	class CHAOS_API TileCollisionComputer
 	{
 	public:
 

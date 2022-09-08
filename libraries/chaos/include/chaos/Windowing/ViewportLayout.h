@@ -10,7 +10,7 @@ namespace chaos
 	 * The layout is responsible for computing the surface to reserve for all viewports owned by a ViewportWindow
 	 */
 
-	class ViewportLayout : public Object
+	class CHAOS_API ViewportLayout : public Object
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(ViewportLayout, Object);
 
@@ -37,13 +37,13 @@ namespace chaos
 
 
 
-	enum class ViewportGridHorizontalFillMode : int
+	enum class CHAOS_API ViewportGridHorizontalFillMode : int
 	{
 		LEFT_TO_RIGHT,
 		RIGHT_TO_LEFT
 	};
 
-	enum class ViewportGridVerticalFillMode : int
+	enum class CHAOS_API ViewportGridVerticalFillMode : int
 	{
 		TOP_TO_BOTTOM,
 		BOTTOM_TO_TOP
@@ -67,14 +67,14 @@ namespace chaos
 	// |   | X | X | X | X |   | UNIFORM_CENTERED: all cells have same size. there are packed alltogether but centered on lined
 	// +---+---+---+---+---+---+
 
-	enum class ViewportGridMode : int
+	enum class CHAOS_API ViewportGridMode : int
 	{
 		EXPANDED, // viewports take as many size on their line/row as possible
 		UNIFORM_PACKED, // all viewports have same size. for incomplete line/row the viewports are packed alltogether
 		UNIFORM_CENTERED, // all viewports have same size. for incomplete line/row the viewports are centered
 	};
 
-	class ViewportGridLayout : public ViewportLayout
+	class CHAOS_API ViewportGridLayout : public ViewportLayout
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(ViewportGridLayout, ViewportLayout);
 

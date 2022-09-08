@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class GPUSurface : public GPUFileResource
+	class CHAOS_API GPUSurface : public GPUFileResource
 	{
 	public:
 

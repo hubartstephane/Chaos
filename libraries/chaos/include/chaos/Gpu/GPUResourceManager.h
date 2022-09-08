@@ -12,7 +12,7 @@ namespace chaos
 	 * GPUResourceManagerReloadData : a structure used whenever we can to reload all data in manager
 	 */
 
-	class GPUResourceManagerReloadData
+	class CHAOS_API GPUResourceManagerReloadData
 	{
 	public:
 
@@ -28,7 +28,7 @@ namespace chaos
 	* GPUProgramReplaceTextureAction : an action used to replace any texture in TextureProvider by one in the replacement map
 	*/
 
-	class GPUProgramReplaceTextureAction : public GPUProgramAction
+	class CHAOS_API GPUProgramReplaceTextureAction : public GPUProgramAction
 	{
 	public:
 
@@ -51,7 +51,7 @@ namespace chaos
 	* GPUResourceManager : a manager to store different kinds of (can be depend) resources
 	**/
 
-	class GPUResourceManager : public ResourceManager
+	class CHAOS_API GPUResourceManager : public ResourceManager
 	{
 		friend class GPUTextureLoader;
 		friend class GPUProgramLoader;

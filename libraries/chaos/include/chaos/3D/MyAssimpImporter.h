@@ -10,12 +10,12 @@ namespace chaos
 	* MyAssimpImporter : a base class to import ASSIMP file
 	*/
 
-	class MyAssimpImporter
+	class CHAOS_API MyAssimpImporter
 	{
 	public:
 
 	};
-	
+
 #endif
 
 }; // namespace chaos

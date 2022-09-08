@@ -20,7 +20,7 @@ namespace chaos
 	 * InheritanceType : the kind if inheritance that can exist between 2 classes
 	 */
 
-	enum class InheritanceType : int
+	enum class CHAOS_API InheritanceType : int
 	{
 		UNKNOWN = -1,
 		NO = 0,
@@ -31,7 +31,7 @@ namespace chaos
 	 * ClassRegistration : the kind if inheritance that can exist between 2 classes
 	 */
 
-	class ClassRegistration
+	class CHAOS_API ClassRegistration
 	{
 		friend class Class;
 
@@ -46,8 +46,8 @@ namespace chaos
 
 	public:
 
-		/** set the alias for the class */
-		Class * operator()(char const* in_alias);
+		/** set the short name for the class */
+		ClassRegistration & operator()(std::string in_short_name);
 
 		/** convert the registration to the class */
 		operator Class const * () const
@@ -63,13 +63,15 @@ namespace chaos
 
 	/**
 	 * ClassFindResult : Intermediate object for class searching.
-	 *                   While there may be several classes with the same alias, we have to select the good one when searching
-	 *                   We so want that the search is affected by the Subclass affectation that requires it
+	 *                   While there may be several classes with the same short_name, we have to select the good one when searching
+	 *                   We so want that the search is affected by the Subclass affectation that requires it.
 	 */
 
-	class ClassFindResult
+	class CHAOS_API ClassFindResult
 	{
 		friend class Class;
+
+		using short_name_iterator_type = std::vector<Class*>::iterator;
 
 	public:
 
@@ -80,21 +82,19 @@ namespace chaos
 
 	protected:
 
-		// XXX : we have to store somehow the named used in the Class:Find(name) call
-		//       we could copy it in a std::string, but this would be very costly
-		//       instead we will initialize 'class_it' or 'alias_it' (whatever produce result first)
-		//       then we know that the object pointed by the iterator has the name we want
+		/** constructor */
+		ClassFindResult(Class* in_result, short_name_iterator_type in_short_name_iterator);
 
-		/** iterator on found class */
-		std::map<char const*, Class*, StringTools::RawStringLess>::iterator class_it;
-		/** iterator on first found alias */
-		std::multimap<char const*, Class*, StringTools::RawStringLess>::iterator alias_it;
+		/** if the result of the search is found by class name, directly store this here */
+		Class * result = nullptr;
+		/** the very first short name matching the request. we can use it for further reserch instead to store the name somehow (that would be costly) */
+		short_name_iterator_type short_name_iterator;
 	};
 
 	/**
 	 * Class : a registered class
 	 */
-	class Class
+	class CHAOS_API Class
 	{
 		friend class ClassLoader;
 		friend class ClassRegistration;
@@ -128,8 +128,8 @@ namespace chaos
 		Class const* GetParentClass() const { return parent; }
 		/** gets the class name */
 		std::string const& GetClassName() const { return name; }
-		/** gets the alias */
-		std::string const& GetAlias() const { return alias; }
+		/** gets the short name */
+		std::string const& GetShortName() const { return short_name; }
 		/** returns whether we can create instances */
 		bool CanCreateInstance() const { return create_instance_func != nullptr; }
 		/** returns whether we can create instances */
@@ -144,12 +144,10 @@ namespace chaos
 		template<typename CLASS_TYPE>
 		static Class const* FindClass()
 		{
-			auto& c = GetClasses();
-
-			Class const* result = GetClassInstance<CLASS_TYPE>();
-			if (!result->IsDeclared())
-				return nullptr;
-			return result;
+			if (Class* result = FindOrCreateClassInstance<CLASS_TYPE>())
+				if (result->IsDeclared())
+					return result;
+			return nullptr;
 		}
 
 		/** declare a class */
@@ -159,7 +157,7 @@ namespace chaos
 			assert((std::is_same_v<PARENT_CLASS_TYPE, EmptyClass> || std::is_base_of_v<PARENT_CLASS_TYPE, CLASS_TYPE>));
 			assert(!StringTools::IsEmpty(name));
 
-			Class* result = GetClassInstance<CLASS_TYPE>();
+			Class* result = FindOrCreateClassInstance<CLASS_TYPE>();
 			if (result != nullptr)
 			{
 				// already declared, returns (this may happens with multiple .h inclusions)
@@ -169,10 +167,8 @@ namespace chaos
 				result->name = std::move(name);
 				result->class_size = sizeof(CLASS_TYPE);
 				result->declared = true;
+				result->info = &typeid(CLASS_TYPE);
 
-				auto& classes = GetClasses();
-				classes[result->name.c_str()] = result; // the key is a pointer aliased on the 'name' member
-			
 				// instance constructible only if derives from Object
 				if constexpr (std::is_base_of_v<Object, CLASS_TYPE>)
 				{
@@ -186,7 +182,7 @@ namespace chaos
 				}
 				// the parent is accessed, but not necessaraly initialized yet
 				if (!std::is_same_v<PARENT_CLASS_TYPE, EmptyClass>)
-					result->parent = GetClassInstance<PARENT_CLASS_TYPE>();
+					result->parent = FindOrCreateClassInstance<PARENT_CLASS_TYPE>();
 			}
 			return {result};
 		}
@@ -197,14 +193,22 @@ namespace chaos
 
 	protected:
 
-		/** set the alias */
-		void SetAlias(std::string in_alias);
-		/** return the class for a type even if not initialized */
+		/** set the short name */
+		void SetShortName(std::string in_short_name);
+		/** return the class of a class with its given info */
 		template<typename CLASS_TYPE>
-		static Class* GetClassInstance()
+		static Class* FindOrCreateClassInstance()
 		{
-			static Class result;
-			return &result;
+			// search if the class as already been registered
+			std::type_info const & info = typeid(CLASS_TYPE);
+			for (Class * cls : GetClasses())
+				if (*cls->info == info)
+					return cls;
+			// register the class
+			static Class cls;
+			cls.info = &info;
+			GetClasses().push_back(&cls);
+			return &cls;
 		}
 
 	protected:
@@ -215,8 +219,8 @@ namespace chaos
 		size_t class_size = 0;
 		/** the optional name of the class */
 		std::string name;
-		/** the optional alias of the class */
-		std::string alias;
+		/** the optional short name of the class */
+		std::string short_name;
 		/** whether the class has been fully declared */
 		bool declared = false;
 		/** create an instance of the object delegate */
@@ -225,13 +229,13 @@ namespace chaos
 		std::function<void(std::function<void(Object*)>)> create_instance_on_stack_func;
 		/** additionnal initialization for JSONSerializable objects */
 		nlohmann::json json_data;
+		/** the type_info for the class */
+		std::type_info const* info = nullptr;
 
 	protected:
 
 		/** get the static data for classes */
-		static std::map<char const*, Class*, StringTools::RawStringLess> & GetClasses();
-		/** get the static data for aliases */
-		static std::multimap<char const*, Class*, StringTools::RawStringLess> & GetAliases();
+		static std::vector<Class*> & GetClasses();
 	};
 
 #endif

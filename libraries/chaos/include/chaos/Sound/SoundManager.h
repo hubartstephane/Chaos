@@ -32,7 +32,7 @@ namespace chaos
 	// SoundBlendType
 	// ==============================================================
 
-	enum class SoundBlendType : int
+	enum class CHAOS_API SoundBlendType : int
 	{
 		BLEND_NONE = 0,
 		BLEND_IN = 1,
@@ -43,7 +43,7 @@ namespace chaos
 	// CALLBACKS
 	// ==============================================================
 
-	class SoundCallbacks : public Object
+	class CHAOS_API SoundCallbacks : public Object
 	{
 		CHAOS_SOUND_ALL_FRIENDS
 
@@ -55,7 +55,7 @@ namespace chaos
 		virtual void OnRemovedFromManager(SoundObject* object);
 	};
 
-	class SoundAutoCallbacks : public SoundCallbacks
+	class CHAOS_API SoundAutoCallbacks : public SoundCallbacks
 	{
 		CHAOS_SOUND_ALL_FRIENDS
 
@@ -90,7 +90,7 @@ namespace chaos
 	// BLEND VOLUME DESC
 	// ==============================================================
 
-	class BlendVolumeDesc
+	class CHAOS_API BlendVolumeDesc
 	{
 	public:
 
@@ -119,7 +119,7 @@ namespace chaos
 	// PLAY SOUND DESC
 	// =============================================================
 
-	class PlaySoundDesc
+	class CHAOS_API PlaySoundDesc
 	{
 		CHAOS_SOUND_ALL_FRIENDS
 
@@ -173,7 +173,7 @@ namespace chaos
 	// SOUND OBJECT
 	// ==============================================================
 
-	class SoundObject : public Object, public NamedObject
+	class CHAOS_API SoundObject : public Object, public NamedObject
 	{
 		CHAOS_SOUND_ALL_FRIENDS
 
@@ -268,7 +268,7 @@ namespace chaos
 	// SOURCE
 	// ==============================================================
 
-	class SoundSource : public SoundObject, public FileResource
+	class CHAOS_API SoundSource : public SoundObject, public FileResource
 	{
 		CHAOS_SOUND_ALL_FRIENDS
 
@@ -308,7 +308,7 @@ namespace chaos
 	// CATEGORY
 	// ==============================================================
 
-	class SoundCategory : public SoundObject
+	class CHAOS_API SoundCategory : public SoundObject
 	{
 		CHAOS_SOUND_ALL_FRIENDS
 
@@ -329,7 +329,7 @@ namespace chaos
 	// SOUND
 	// ==============================================================
 
-	class Sound : public SoundObject
+	class CHAOS_API Sound : public SoundObject
 	{
 		CHAOS_SOUND_ALL_FRIENDS
 
@@ -432,7 +432,7 @@ namespace chaos
 	// SoundSourceLoader
 	// ==============================================================
 
-	class SoundSourceLoader : public ResourceManagerLoader<SoundSource, SoundManager>
+	class CHAOS_API SoundSourceLoader : public ResourceManagerLoader<SoundSource, SoundManager>
 	{
 	public:
 
@@ -465,7 +465,7 @@ namespace chaos
 	// SoundCategoryLoader
 	// ==============================================================
 
-	class SoundCategoryLoader : public ResourceManagerLoader<SoundCategory, SoundManager>
+	class CHAOS_API SoundCategoryLoader : public ResourceManagerLoader<SoundCategory, SoundManager>
 	{
 	public:
 
@@ -489,7 +489,7 @@ namespace chaos
 	// MANAGER
 	// ==============================================================
 
-	class SoundManager : public ResourceManager
+	class CHAOS_API SoundManager : public ResourceManager
 	{
 		CHAOS_SOUND_ALL_FRIENDS
 
@@ -592,7 +592,7 @@ namespace chaos
 			size_t count = objects.size();
 			for (size_t i = 0; i < count; ++i)
 			{
-				auto object = objects[i]; // copy the intrusive_ptr to prevent the destruction 
+				auto object = objects[i]; // copy the intrusive_ptr to prevent the destruction
 				if (object == nullptr || !object->IsAttachedToManager())
 					continue;
 
@@ -600,7 +600,7 @@ namespace chaos
 				bool finished = object->IsFinished();
 				bool paused = object->IsEffectivePaused();
 
-				// call tick if required 
+				// call tick if required
 				if (!finished && !paused)
 				{
 					object->TickObject(delta_time);

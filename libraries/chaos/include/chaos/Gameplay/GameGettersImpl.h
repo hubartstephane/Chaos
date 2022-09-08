@@ -5,7 +5,7 @@
 //      ^
 //      |
 //      v
-//    Player <----> GameInstance <----> Game <----> LevelInstance <----> Camera 
+//    Player <----> GameInstance <----> Game <----> LevelInstance <----> Camera
 //      ^                                                |                 ^
 //      |                                                |                 |
 //      v                                                v                 v
@@ -19,7 +19,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class GameGettersTools
+	class CHAOS_API GameGettersTools
 	{
 	public:
 

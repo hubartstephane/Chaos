@@ -12,7 +12,7 @@ namespace chaos
 	* FPSViewMovementSpeed : a class that describes displacement speed for the FPS view
 	*/
 
-	class FPSViewMovementSpeed
+	class CHAOS_API FPSViewMovementSpeed
 	{
 	public:
 
@@ -36,7 +36,7 @@ namespace chaos
 		float pitch = 90.0f;
 	};
 
-	class FPSViewMovementKeyboardConfiguration
+	class CHAOS_API FPSViewMovementKeyboardConfiguration
 	{
 	public:
 
@@ -67,7 +67,7 @@ namespace chaos
 	* FPSViewInputController : an utility class to simply handle a FPS camera in a GLFW application. Handle keys ...
 	*/
 
-	class FPSViewInputController
+	class CHAOS_API FPSViewInputController
 	{
 		static double constexpr INVALID_MOUSE_VALUE = std::numeric_limits<double>::max();
 

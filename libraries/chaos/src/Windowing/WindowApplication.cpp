@@ -44,7 +44,7 @@ namespace chaos
 	// WindowApplication
 	//
 
-	WindowApplication::WindowApplication(SubClassOf<Window> in_main_window_class, WindowParams const& in_window_params, WindowHints const & in_window_hints) :
+	WindowApplication::WindowApplication(SubClassOf<Window> in_main_window_class, WindowParams const& in_window_params, WindowHints const& in_window_hints) :
 		main_window_class(in_main_window_class),
 		window_params(in_window_params),
 		window_hints(in_window_hints)
@@ -61,7 +61,7 @@ namespace chaos
 	{
 		double t1 = glfwGetTime();
 
-		while(windows.size() > 0)
+		while (windows.size() > 0)
 		{
 			glfwPollEvents();
 
@@ -123,7 +123,7 @@ namespace chaos
 
 	Window* WindowApplication::CreateTypedWindow(SubClassOf<Window> window_class, WindowParams const& params, WindowHints const& hints)
 	{
-		return WithGLContext<Window*>(nullptr, [this, window_class, params, hints]() -> Window *
+		return WithGLContext<Window*>(nullptr, [this, window_class, params, hints]() -> Window*
 		{
 			// create the window class
 			Window* result = window_class.CreateInstance();
@@ -169,7 +169,7 @@ namespace chaos
 		if (!WithGLContext<bool>(shared_context, [this]()
 		{
 			// XXX : seems to be mandatory for some functions like : glGenVertexArrays(...)
-				//       see https://www.opengl.org/wiki/OpenGL_Loading_Library
+			//       see https://www.opengl.org/wiki/OpenGL_Loading_Library
 			glewExperimental = GL_TRUE;
 			// create the context
 			GLenum err = glewInit();
@@ -182,7 +182,6 @@ namespace chaos
 			GLTools::SetDebugMessageHandler();
 			// some generic information
 			GLTools::DisplayGenericInformation();
-
 			// initialize the GPU resource ResourceManager (first window/OpenGL context must have been created)
 			if (!CreateGPUResourceManager())
 				return false;
@@ -226,7 +225,6 @@ namespace chaos
 		}
 		// the main loop
 		MessageLoop();
-
 		return true;
 	}
 
@@ -300,7 +298,7 @@ namespace chaos
 					if (!it->is_string())
 						continue;
 					// read information
-					std::string const & font_name = it.key();
+					std::string const& font_name = it.key();
 					std::string font_path = it->get<std::string>();
 					if (input.AddFont(font_path.c_str(), nullptr, true, font_name.c_str(), 0, font_params) == nullptr)
 						return false;
@@ -311,17 +309,20 @@ namespace chaos
 		return true;
 	}
 
-	CHAOS_APPLICATION_ARG(bool, UseCachedAtlas);
+	namespace Arguments
+	{
+		CHAOS_APPLICATION_ARG(bool, UseCachedAtlas);
 #if !_DEBUG
-	CHAOS_APPLICATION_ARG(bool, DumpCachedAtlas);
+		CHAOS_APPLICATION_ARG(bool, DumpCachedAtlas);
 #endif
+	};
 
 	bool WindowApplication::CreateTextureAtlas()
 	{
 		char const* CachedAtlasFilename = "CachedAtlas";
 
 		// Try to load already computed data
-		if (Arguments::UseCachedAtlas)
+		if (Arguments::UseCachedAtlas.Get())
 		{
 			BitmapAtlas::TextureArrayAtlas* tmp_texture_atlas = new BitmapAtlas::TextureArrayAtlas;
 			if (tmp_texture_atlas != nullptr)
@@ -355,7 +356,7 @@ namespace chaos
 #if _DEBUG
 		dump_atlas_dirname = CachedAtlasFilename;
 #else
-		if (Arguments::DumpCachedAtlas)
+		if (Arguments::DumpCachedAtlas.Get())
 			dump_atlas_dirname = CachedAtlasFilename;
 #endif
 

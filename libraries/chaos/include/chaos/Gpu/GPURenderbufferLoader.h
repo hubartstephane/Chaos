@@ -10,7 +10,7 @@ namespace chaos
 	* GPURenderbufferLoader : used to have some generic functions for OpenGL
 	**/
 
-	class GPURenderbufferLoader
+	class CHAOS_API GPURenderbufferLoader
 	{
 	public:
 

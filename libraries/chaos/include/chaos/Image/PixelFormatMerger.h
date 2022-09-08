@@ -11,7 +11,7 @@ namespace chaos
 	* PixelFormatMergeParams
 	*/
 
-	class PixelFormatMergeParams
+	class CHAOS_API PixelFormatMergeParams
 	{
 
 	public:
@@ -26,15 +26,15 @@ namespace chaos
 		bool accept_float = true;
 	};
 
-	bool LoadFromJSON(nlohmann::json const& json, PixelFormatMergeParams& dst);
+	CHAOS_API bool LoadFromJSON(nlohmann::json const& json, PixelFormatMergeParams& dst);
 
-	bool SaveIntoJSON(nlohmann::json& json, PixelFormatMergeParams const& src);
+	CHAOS_API bool SaveIntoJSON(nlohmann::json& json, PixelFormatMergeParams const& src);
 
 	/**
 	* PixelFormatMerger : utility function to find a common PixelFormat for multiple images
 	*/
 
-	class PixelFormatMerger
+	class CHAOS_API PixelFormatMerger
 	{
 
 	public:

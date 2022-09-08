@@ -3,9 +3,12 @@
 
 namespace chaos
 {
+	namespace Arguments
+	{
 #if _DEBUG
-	CHAOS_APPLICATION_ARG(bool, Mute)
+		CHAOS_APPLICATION_ARG(bool, Mute)
 #endif
+	};
 
 	// ==============================================================
 	// Standalone function
@@ -696,7 +699,7 @@ namespace chaos
 		float effective_volume = GetEffectiveVolume();
 
 #if _DEBUG
-		if (Arguments::Mute)
+		if (Arguments::Mute.Get())
 			effective_volume = 0.0f;
 #endif
 		// play sound
@@ -753,7 +756,7 @@ namespace chaos
 	void Sound::DoUpdateEffectiveVolume(float effective_volume)
 	{
 #if _DEBUG
-		if (Arguments::Mute)
+		if (Arguments::Mute.Get())
 			effective_volume = 0.0f;
 #endif
 		if (irrklang_sound != nullptr)

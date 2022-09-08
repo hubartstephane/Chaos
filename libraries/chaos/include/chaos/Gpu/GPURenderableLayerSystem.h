@@ -10,7 +10,7 @@ namespace chaos
 	// GPURenderableLayerSystem : used as a sorted container for renderers
 	// ========================================================
 
-	class GPURenderableLayerSystem : public GPURenderable
+	class CHAOS_API GPURenderableLayerSystem : public GPURenderable
 	{
 	protected:
 

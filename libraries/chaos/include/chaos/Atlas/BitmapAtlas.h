@@ -14,13 +14,13 @@ namespace chaos
 		class AtlasBase;
 		class Atlas;
 
-		template<typename CHARACTER_INFO_TYPE, typename PARENT_CLASS, typename META_WRAPPER_TYPE>
+		template<typename PARENT_CLASS, typename CHARACTER_INFO_TYPE, typename META_WRAPPER_TYPE>
 		class FontInfoTemplate;
 
-		template<typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE, typename PARENT_CLASS, typename META_WRAPPER_TYPE>
+		template<typename PARENT_CLASS, typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE, typename META_WRAPPER_TYPE>
 		class FolderInfoTemplate;
 
-		template<typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE, typename PARENT_CLASS>
+		template<typename PARENT_CLASS, typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE>
 		class AtlasBaseTemplate;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -29,7 +29,7 @@ namespace chaos
 		* BitmapLayout : were the bitmap lies in the atlas
 		*/
 
-		class BitmapLayout
+		class CHAOS_API BitmapLayout
 		{
 		public:
 
@@ -63,7 +63,7 @@ namespace chaos
 		* CharacterLayout : were the character lies in the atlas
 		*/
 
-		class CharacterLayout : public BitmapLayout
+		class CHAOS_API CharacterLayout : public BitmapLayout
 		{
 		public:
 			FT_Vector advance{ 0, 0 };
@@ -75,7 +75,7 @@ namespace chaos
 		 * BitmapAnimationInfo : represents animation data inside a bitmap/character
 		 */
 
-		class BitmapAnimationInfo : public Object, public ImageAnimationDescription // XXX: inheritance order is important
+		class CHAOS_API BitmapAnimationInfo : public Object, public ImageAnimationDescription // XXX: inheritance order is important
 		{
 		};
 
@@ -83,7 +83,7 @@ namespace chaos
 		* BitmapInfo : represents an Bitmap info in the atlas
 		*/
 
-		class BitmapInfo : public BitmapLayout, public NamedObject
+		class CHAOS_API BitmapInfo : public BitmapLayout, public NamedObject
 		{
 		public:
 
@@ -126,7 +126,7 @@ namespace chaos
 		* CharacterInfo : represents a Character info in the atlas. Contained in a FontInfo. It is a BitmapInfo with additionnal information
 		*/
 
-		class CharacterInfo : public CharacterLayout, public NamedObject
+		class CHAOS_API CharacterInfo : public CharacterLayout, public NamedObject
 		{
 		};
 
@@ -134,8 +134,8 @@ namespace chaos
 		* FontInfoTemplate : a base template for FontInfo and FontInfoInput
 		*/
 
-		template<typename CHARACTER_INFO_TYPE, typename PARENT_CLASS, typename META_WRAPPER_TYPE>
-		class FontInfoTemplate : public PARENT_CLASS
+		template<typename PARENT_CLASS, typename CHARACTER_INFO_TYPE, typename META_WRAPPER_TYPE>
+		class /*CHAOS_API*/ FontInfoTemplate : public PARENT_CLASS
 		{
 		public:
 
@@ -170,7 +170,7 @@ namespace chaos
 		* FontInfo : this is a named group of Characters (CharacterInfo)
 		*/
 
-		class FontInfo : public FontInfoTemplate<CharacterInfo, NamedObject, boost::mpl::identity<boost::mpl::_1>>
+		class CHAOS_API FontInfo : public FontInfoTemplate<NamedObject, CharacterInfo, boost::mpl::identity<boost::mpl::_1>>
 		{
 		};
 
@@ -178,8 +178,8 @@ namespace chaos
 		* FolderInfoTemplate : a base template for FolderInfo and FolderInfoInput
 		*/
 
-		template<typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE, typename PARENT_CLASS, typename META_WRAPPER_TYPE>
-		class FolderInfoTemplate : public PARENT_CLASS
+		template<typename PARENT_CLASS, typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE, typename META_WRAPPER_TYPE>
+		class /*CHAOS_API*/ FolderInfoTemplate : public PARENT_CLASS
 		{
 		public:
 
@@ -235,7 +235,7 @@ namespace chaos
 		* FolderInfo : contains bitmpas, font and other folders
 		*/
 
-		class FolderInfo : public FolderInfoTemplate<BitmapInfo, FontInfo, FolderInfo, NamedObject, boost::mpl::identity<boost::mpl::_1>>
+		class CHAOS_API FolderInfo : public FolderInfoTemplate<NoCopy<NamedObject>, BitmapInfo, FontInfo, FolderInfo, boost::mpl::identity<boost::mpl::_1>>
 		{
 		public:
 
@@ -264,8 +264,8 @@ namespace chaos
 		/**
 		* AtlasBaseTemplate : a base template for AtlasBase and AtlasInput
 		*/
-		template<typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE, typename PARENT_CLASS>
-		class AtlasBaseTemplate : public PARENT_CLASS
+		template<typename PARENT_CLASS, typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE>
+		class /*CHAOS_API*/ AtlasBaseTemplate : public PARENT_CLASS
 		{
 		public:
 
@@ -331,7 +331,7 @@ namespace chaos
 		* AtlasBase : base class for Atlas and TextureArrayAtlas
 		*/
 
-		class AtlasBase : public  AtlasBaseTemplate<BitmapInfo, FontInfo, FolderInfo, Object>
+		class CHAOS_API AtlasBase : public AtlasBaseTemplate<Object, BitmapInfo, FontInfo, FolderInfo>
 		{
 
 			friend class AtlasGenerator;
@@ -417,7 +417,7 @@ namespace chaos
 		* Atlas : a group of bitmap and characters, ordered in named set (BitmapSet & FontInfo)
 		*/
 
-		class Atlas : public AtlasBase
+		class CHAOS_API Atlas : public AtlasBase
 		{
 			friend class AtlasGenerator;
 
@@ -460,33 +460,33 @@ namespace chaos
 		* Some JSON utility functions
 		*/
 
-		bool SaveIntoJSON(nlohmann::json& json, BitmapAnimationInfo const& src);
+		CHAOS_API bool SaveIntoJSON(nlohmann::json& json, BitmapAnimationInfo const& src);
 
-		bool LoadFromJSON(nlohmann::json const& json, BitmapAnimationInfo& dst);
+		CHAOS_API bool LoadFromJSON(nlohmann::json const& json, BitmapAnimationInfo& dst);
 
-		bool SaveIntoJSON(nlohmann::json& json, BitmapLayout const& src);
+		CHAOS_API bool SaveIntoJSON(nlohmann::json& json, BitmapLayout const& src);
 
-		bool LoadFromJSON(nlohmann::json const& json, BitmapLayout& dst);
+		CHAOS_API bool LoadFromJSON(nlohmann::json const& json, BitmapLayout& dst);
 
-		bool SaveIntoJSON(nlohmann::json& json, CharacterLayout const& src);
+		CHAOS_API bool SaveIntoJSON(nlohmann::json& json, CharacterLayout const& src);
 
-		bool LoadFromJSON(nlohmann::json const& json, CharacterLayout& dst);
+		CHAOS_API bool LoadFromJSON(nlohmann::json const& json, CharacterLayout& dst);
 
-		bool SaveIntoJSON(nlohmann::json& json, BitmapInfo const& src);
+		CHAOS_API bool SaveIntoJSON(nlohmann::json& json, BitmapInfo const& src);
 
-		bool LoadFromJSON(nlohmann::json const& json, BitmapInfo& dst);
+		CHAOS_API bool LoadFromJSON(nlohmann::json const& json, BitmapInfo& dst);
 
-		bool SaveIntoJSON(nlohmann::json& json, CharacterInfo const& src);
+		CHAOS_API bool SaveIntoJSON(nlohmann::json& json, CharacterInfo const& src);
 
-		bool LoadFromJSON(nlohmann::json const& json, CharacterInfo& dst);
+		CHAOS_API bool LoadFromJSON(nlohmann::json const& json, CharacterInfo& dst);
 
-		bool SaveIntoJSON(nlohmann::json& json, FolderInfo const& src);
+		CHAOS_API bool SaveIntoJSON(nlohmann::json& json, FolderInfo const& src);
 
-		bool LoadFromJSON(nlohmann::json const& json, FolderInfo& dst);
+		CHAOS_API bool LoadFromJSON(nlohmann::json const& json, FolderInfo& dst);
 
-		bool SaveIntoJSON(nlohmann::json& json, FontInfo const& src);
+		CHAOS_API bool SaveIntoJSON(nlohmann::json& json, FontInfo const& src);
 
-		bool LoadFromJSON(nlohmann::json const& json, FontInfo& dst);
+		CHAOS_API bool LoadFromJSON(nlohmann::json const& json, FontInfo& dst);
 
 
 #endif

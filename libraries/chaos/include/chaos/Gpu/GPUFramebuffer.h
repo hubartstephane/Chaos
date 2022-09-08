@@ -7,7 +7,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class GPUFramebufferAttachmentInfo
+	class CHAOS_API GPUFramebufferAttachmentInfo
 	{
 	public:
 
@@ -23,7 +23,7 @@ namespace chaos
 		shared_ptr<GPURenderbuffer> renderbuffer;
 	};
 
-	class GPUFramebuffer : public GPUResource, public GPUFramebufferAttachmentOwner<GPUFramebufferAttachmentInfo>
+	class CHAOS_API GPUFramebuffer : public GPUResource, public GPUFramebufferAttachmentOwner<GPUFramebufferAttachmentInfo>
 	{
 		friend class GPUFramebufferGenerator;
 		friend class GPURenderer;

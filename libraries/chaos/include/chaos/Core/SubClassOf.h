@@ -12,7 +12,7 @@ namespace chaos
 	 */
 
 	template<typename T>
-	class SubClassOf
+	class /*CHAOS_API*/ SubClassOf
 	{
 	public:
 
@@ -46,7 +46,7 @@ namespace chaos
 		{
 		}
 		/** constructor with search */
-		SubClassOf(char const* name) : SubClassOf(Class::FindClass(name)) 
+		SubClassOf(char const* name) : SubClassOf(Class::FindClass(name))
 		{
 		}
 
@@ -100,7 +100,7 @@ namespace chaos
 	};
 
 	template<typename T>
-	std::vector<SubClassOf<T>> GetSubClassesFromString(char const* src, char separator = ',')
+	/*CHAOS_API*/ std::vector<SubClassOf<T>> GetSubClassesFromString(char const* src, char separator = ',')
 	{
 		std::vector<SubClassOf<T>> result;
 
@@ -117,7 +117,7 @@ namespace chaos
 
 
 	template<typename T>
-	bool SaveIntoJSON(nlohmann::json& json, SubClassOf<T> const& src)
+	/*CHAOS_API*/ bool SaveIntoJSON(nlohmann::json& json, SubClassOf<T> const& src)
 	{
 		Class const* cls = src.GetInternalClass();
 
@@ -126,7 +126,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	bool LoadFromJSON(nlohmann::json const& json, SubClassOf<T>& src)
+	/*CHAOS_API*/ bool LoadFromJSON(nlohmann::json const& json, SubClassOf<T>& src)
 	{
 		std::string classname;
 		if (!LoadFromJSON(json, classname))

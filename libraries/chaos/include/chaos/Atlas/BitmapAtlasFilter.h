@@ -14,7 +14,7 @@ namespace chaos
 		* BitmapAtlasFilterCondition : a condition to know whether the bitmap is to be processed
 		*/
 
-		class BitmapAtlasFilterCondition : public Object, public JSONSerializable
+		class CHAOS_API BitmapAtlasFilterCondition : public Object, public JSONSerializable
 		{
 			CHAOS_DECLARE_OBJECT_CLASS(BitmapAtlasFilterCondition, Object);
 
@@ -35,7 +35,7 @@ namespace chaos
 		* BitmapAtlasFilter : check condition on an entry and start the processor
 		*/
 
-		class BitmapAtlasFilter
+		class CHAOS_API BitmapAtlasFilter
 		{
 
 		public:
@@ -47,15 +47,15 @@ namespace chaos
 		};
 
 		/** loading method from JSON */
-		bool LoadFromJSON(nlohmann::json const& entry, BitmapAtlasFilter& dst);
+		CHAOS_API bool LoadFromJSON(nlohmann::json const& entry, BitmapAtlasFilter& dst);
 		/** saving method from JSON */
-		bool SaveIntoJSON(nlohmann::json& entry, BitmapAtlasFilter const& src);
+		CHAOS_API bool SaveIntoJSON(nlohmann::json& entry, BitmapAtlasFilter const& src);
 
 		/**
 		* BitmapAtlasFilterSet : a whole set of condition/image processor
 		*/
 
-		class BitmapAtlasFilterSet
+		class CHAOS_API BitmapAtlasFilterSet
 		{
 		public:
 
@@ -64,9 +64,9 @@ namespace chaos
 		};
 
 		/** loading method from JSON */
-		bool LoadFromJSON(nlohmann::json const& entry, BitmapAtlasFilterSet& dst);
+		CHAOS_API bool LoadFromJSON(nlohmann::json const& entry, BitmapAtlasFilterSet& dst);
 		/** saving method from JSON */
-		bool SaveIntoJSON(nlohmann::json& entry, BitmapAtlasFilterSet const& src);
+		CHAOS_API bool SaveIntoJSON(nlohmann::json& entry, BitmapAtlasFilterSet const& src);
 
 #endif
 

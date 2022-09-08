@@ -41,7 +41,7 @@ namespace chaos
 	static_assert(ParticleFlags::EIGHT_BITS_MODE == VertexFlags::EIGHT_BITS_MODE);
 
 	/** ParticleCorners : represents 2 corners of a particle */
-	class ParticleCorners
+	class CHAOS_API ParticleCorners
 	{
 	public:
 
@@ -50,7 +50,7 @@ namespace chaos
 	};
 
 	/** ParticleTexcoords : an object usefull for getting the texture coordinates of a sprite */
-	class ParticleTexcoords : public ParticleCorners
+	class CHAOS_API ParticleTexcoords : public ParticleCorners
 	{
 	public:
 
@@ -59,7 +59,7 @@ namespace chaos
 
 
 	/** Particle : a default particle, with simpler data */
-	class ParticleDefault
+	class CHAOS_API ParticleDefault
 	{
 	public:
 
@@ -78,7 +78,7 @@ namespace chaos
 	CHAOS_REGISTER_CLASS(ParticleDefault);
 
 	/** Vertex : vertex for default particle */
-	class VertexDefault
+	class CHAOS_API VertexDefault
 	{
 	public:
 
@@ -94,23 +94,23 @@ namespace chaos
 
 	/** output primitive */
 	template<typename VERTEX_TYPE>
-	void ParticleToPrimitives(ParticleDefault const& particle, PrimitiveOutput<VERTEX_TYPE>& output);
+	/*CHAOS_API*/ void ParticleToPrimitives(ParticleDefault const& particle, PrimitiveOutput<VERTEX_TYPE>& output);
 	/** generates 1 quad from one particle */
 	template<typename VERTEX_TYPE>
-	void ParticleToPrimitive(ParticleDefault const& particle, QuadPrimitive<VERTEX_TYPE>& primitive);
+	/*CHAOS_API*/ void ParticleToPrimitive(ParticleDefault const& particle, QuadPrimitive<VERTEX_TYPE>& primitive);
 	/** generates 1 triangle pair from one particle */
 	template<typename VERTEX_TYPE>
-	void ParticleToPrimitive(ParticleDefault const& particle, TrianglePairPrimitive<VERTEX_TYPE>& primitive);
+	/*CHAOS_API*/ void ParticleToPrimitive(ParticleDefault const& particle, TrianglePairPrimitive<VERTEX_TYPE>& primitive);
 
 	/** utility method to have position for a quad (in order BL, BR, TR, TL) */
-	void GenerateVertexPositionAttributes(box2 const& bounding_box, float rotation, glm::vec2* vertex_positions);
+	CHAOS_API void GenerateVertexPositionAttributes(box2 const& bounding_box, float rotation, glm::vec2* vertex_positions);
 	/** utility method to have texture coordinate for a quad (in order BL, BR, TR, TL) */
-	void GenerateVertexTextureAttributes(ParticleTexcoords const& texcoords, int flags, glm::vec3* vertex_texcoords);
+	CHAOS_API void GenerateVertexTextureAttributes(ParticleTexcoords const& texcoords, int flags, glm::vec3* vertex_texcoords);
 	/** utility method to have vertex flags from particle flags for a quad (in order BL, BR, TR, TL) */
-	void GenerateVertexFlagAttributes(int flags, int* vertex_flags);
+	CHAOS_API void GenerateVertexFlagAttributes(int flags, int* vertex_flags);
 
 	/** the default vertex declaration */
-	void GetTypedVertexDeclaration(GPUVertexDeclaration* result, boost::mpl::identity<VertexDefault>);
+	CHAOS_API void GetTypedVertexDeclaration(GPUVertexDeclaration* result, boost::mpl::identity<VertexDefault>);
 
 
 #else

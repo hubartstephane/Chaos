@@ -52,21 +52,21 @@ namespace chaos
 		return game->GetPlayerCount();
 	}
 
-	void GameHUD::InitializeComponentFromConfiguration(TagType key, GameHUDComponent * component)
+	void GameHUD::InitializeComponentFromConfiguration(TagType key, GameHUDComponent* component)
 	{
 		assert(component != nullptr);
 
-		Application const * application = Application::GetInstance();
+		Application const* application = Application::GetInstance();
 		if (application == nullptr)
 			return;
 
-		nlohmann::json const & config = application->GetConfiguration();
+		nlohmann::json const& config = application->GetConfiguration();
 		// get the hud config
-		nlohmann::json const * hud_config = JSONTools::GetStructure(config, "hud");
+		nlohmann::json const* hud_config = JSONTools::GetStructure(config, "hud");
 		if (hud_config == nullptr)
 			return;
 		// get the component config (if existing)
-		nlohmann::json const * component_config = JSONTools::GetStructure(*hud_config, (char const *)key);
+		nlohmann::json const* component_config = JSONTools::GetStructure(*hud_config, (char const*)key);
 		if (component_config == nullptr)
 			return;
 		// initialize the component from JSON
@@ -85,26 +85,29 @@ namespace chaos
 		return true;
 	}
 
+	namespace Arguments
+	{
 #if !_DEBUG
-	CHAOS_APPLICATION_ARG(bool, ShowFPS);
-	CHAOS_APPLICATION_ARG(bool, ShowPerfs);
+		CHAOS_APPLICATION_ARG(bool, ShowFPS);
+		CHAOS_APPLICATION_ARG(bool, ShowPerfs);
 #endif
-	CHAOS_APPLICATION_ARG(bool,HideFPS);
-	CHAOS_APPLICATION_ARG(bool, HidePerfs);
+		CHAOS_APPLICATION_ARG(bool, HideFPS);
+		CHAOS_APPLICATION_ARG(bool, HidePerfs);
+	};
 
 	bool GameHUD::FillHUDContent()
 	{
 		// FPS
 #if !_DEBUG
-		if (Arguments::ShowFPS) // CMDLINE
+		if (Arguments::ShowFPS.Get())
 #endif
-			if (!Arguments::HideFPS) // CMDLINE
+			if (!Arguments::HideFPS.Get())
 				RegisterComponent(GameHUDKeys::FPS_ID, new GameHUDFramerateComponent());
 		// PERFS
 #if !_DEBUG
-		if (Arguments::ShowPerfs) // CMDLINE
+		if (Arguments::ShowPerfs.Get())
 #endif
-			if (!Arguments::HidePerfs) // CMDLINE
+			if (!Arguments::HidePerfs.Get())
 				RegisterComponent(GameHUDKeys::PERFS_ID, new GameHUDPerfsComponent());
 
 #if _DEBUG

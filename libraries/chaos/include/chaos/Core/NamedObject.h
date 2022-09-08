@@ -7,7 +7,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/** a class that describe an object that can be reference by tag and by name */
-	class NamedObject
+	class CHAOS_API NamedObject
 	{
 	public:
 
@@ -34,7 +34,7 @@ namespace chaos
 
 	/** NamedObjectWrapper : this is a wrapper to ba able to use NamedObject's static methods */
 	template<typename T>
-	class NamedObjectWrapper
+	class /*CHAOS_API*/ NamedObjectWrapper
 	{
 	public:
 
@@ -50,9 +50,9 @@ namespace chaos
 	};
 
 	/** function to serialize into JSON */
-	bool SaveIntoJSON(nlohmann::json& json, NamedObject const& src);
+	CHAOS_API bool SaveIntoJSON(nlohmann::json& json, NamedObject const& src);
 	/** function to serialize from JSON */
-	bool LoadFromJSON(nlohmann::json const& json, NamedObject& dst);
+	CHAOS_API bool LoadFromJSON(nlohmann::json const& json, NamedObject& dst);
 
 #endif
 

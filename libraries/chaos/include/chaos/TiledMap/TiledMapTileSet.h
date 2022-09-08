@@ -12,7 +12,7 @@ namespace chaos
 		// GroundData
 		// ==========================================
 
-		class GroundData : public PropertyOwner
+		class CHAOS_API GroundData : public PropertyOwner
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
@@ -36,7 +36,7 @@ namespace chaos
 		// WangEdgeColor/WangCornerColor
 		// ==========================================
 
-		class WangEdgeColor
+		class CHAOS_API WangEdgeColor
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
@@ -68,7 +68,7 @@ namespace chaos
 		// wangid: The Wang ID, which is a 32-bit unsigned integer stored in the format 0xCECECECE (where each C is a corner color and each E is an edge color, from right to left clockwise, starting with the top edge)
 		//
 
-		class WangTile
+		class CHAOS_API WangTile
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
@@ -102,7 +102,7 @@ namespace chaos
 		// Wangset
 		// ==========================================
 
-		class Wangset : public PropertyOwner
+		class CHAOS_API Wangset : public PropertyOwner
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
@@ -137,7 +137,7 @@ namespace chaos
 		// TileData
 		// ==========================================
 
-		class TileData : public TypedObject
+		class CHAOS_API TileData : public TypedObject
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
@@ -178,7 +178,7 @@ namespace chaos
 		// TileSetOrientation
 		// ==========================================
 
-		enum class TileSetOrientation : int
+		enum class CHAOS_API TileSetOrientation : int
 		{
 			ORTHOGONAL = 0,
 			ISOMETRIC = 1
@@ -190,7 +190,7 @@ namespace chaos
 		// TileSet
 		// ==========================================
 
-		class TileSet : public ManagerObject
+		class CHAOS_API TileSet : public ManagerObject
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 

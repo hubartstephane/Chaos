@@ -12,7 +12,7 @@ namespace chaos
 	 * the type of each component of each pixels
 	 */
 
-	enum class PixelComponentType : int
+	enum class CHAOS_API PixelComponentType : int
 	{
 		UNKNOWN = 0,
 		UNSIGNED_CHAR = 1,
@@ -26,7 +26,7 @@ namespace chaos
 	* PixelFormat : the accepted pixel formats
 	*/
 
-	class PixelFormat
+	class CHAOS_API PixelFormat
 	{
 
 	public:
@@ -90,9 +90,9 @@ namespace chaos
 		int component_count = 0;
 	};
 
-	bool LoadFromJSON(nlohmann::json const& json, PixelFormat& dst);
+	CHAOS_API bool LoadFromJSON(nlohmann::json const& json, PixelFormat& dst);
 
-	bool SaveIntoJSON(nlohmann::json& json, PixelFormat const& src);
+	CHAOS_API bool SaveIntoJSON(nlohmann::json& json, PixelFormat const& src);
 
 #endif
 

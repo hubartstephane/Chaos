@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class GPUVertexArray : public GPUResource
+	class CHAOS_API GPUVertexArray : public GPUResource
 	{
 	public:
 

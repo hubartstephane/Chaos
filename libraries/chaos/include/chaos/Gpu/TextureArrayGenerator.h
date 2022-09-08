@@ -15,7 +15,7 @@ namespace chaos
 	* TextureArraySliceRegistryEntry : an entry in the registry of slices
 	*/
 
-	class TextureArraySliceRegistryEntry
+	class CHAOS_API TextureArraySliceRegistryEntry
 	{
 	public:
 
@@ -29,7 +29,7 @@ namespace chaos
 	* TextureArraySliceRegistry : utility function that serves to registry a slice into a vector
 	*/
 
-	class TextureArraySliceRegistry
+	class CHAOS_API TextureArraySliceRegistry
 	{
 		friend class TextureArrayGenerator;
 
@@ -53,7 +53,7 @@ namespace chaos
 	* TextureArraySliceGenerator : base class for slice generators
 	*/
 
-	class TextureArraySliceGenerator : public Object
+	class CHAOS_API TextureArraySliceGenerator : public Object
 	{
 	public:
 
@@ -70,7 +70,7 @@ namespace chaos
 	* TextureArraySliceGenerator_Image : a generator that use a FBITMAP, or a path
 	*/
 
-	class TextureArraySliceGenerator_Image : public TextureArraySliceGenerator
+	class CHAOS_API TextureArraySliceGenerator_Image : public TextureArraySliceGenerator
 	{
 	public:
 
@@ -107,7 +107,7 @@ namespace chaos
 	* TextureArrayGenerator : an helper class that is used to generate texture array    GL_TEXTURE_1D_ARRAY,    GL_TEXTURE_2D_ARRAY or    GL_TEXTURE_CUBE_ARRAY
 	*/
 
-	class TextureArrayGenerator
+	class CHAOS_API TextureArrayGenerator
 	{
 	public:
 

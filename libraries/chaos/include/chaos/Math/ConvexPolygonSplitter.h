@@ -2,7 +2,7 @@ namespace chaos
 {
 #if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class LineIntersectionResult
+	class CHAOS_API LineIntersectionResult
 	{
 	public:
 
@@ -21,7 +21,7 @@ namespace chaos
 
 	};
 
-	class PolygonInfo
+	class CHAOS_API PolygonInfo
 	{
 	public:
 
@@ -31,7 +31,7 @@ namespace chaos
 		size_t count = 0;
 	};
 
-	class PolygonSet
+	class CHAOS_API PolygonSet
 	{
 	public:
 
@@ -42,7 +42,7 @@ namespace chaos
 	};
 
 
-	class ConvexPolygonCollision
+	class CHAOS_API ConvexPolygonCollision
 	{
 
 	public:
@@ -125,7 +125,7 @@ namespace chaos
 	};
 
 
-	class ConvexPolygonSplitter
+	class CHAOS_API ConvexPolygonSplitter
 	{
 	public:
 
@@ -139,7 +139,7 @@ namespace chaos
 			YZ' - ZY'
 			ZX' - XZ'
 			XY' - YX'
-#endif  
+#endif
 
 
 			/** search whether C and D are in the same sie relatively to [A, B] */
@@ -227,7 +227,7 @@ namespace chaos
 			float t1 = 0.0f;
 			float t2 = 0.0f;
 
-			// Simple case : cannot divide CD.x 
+			// Simple case : cannot divide CD.x
 			if (CD.x == 0.0f)
 			{
 				assert(AB.x != 0.0f); // else lines would be colinear
@@ -345,6 +345,6 @@ namespace chaos
 
 	};
 
-#endif 
+#endif
 
 }; // namespace chaos

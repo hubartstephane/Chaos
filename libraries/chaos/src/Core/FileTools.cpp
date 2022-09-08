@@ -7,9 +7,13 @@ namespace chaos
 
 	namespace FileTools
 	{
+		namespace Arguments
+		{
 #if _DEBUG
-		CHAOS_APPLICATION_ARG(bool, ShowLoadedFile);
+			CHAOS_APPLICATION_ARG(bool, ShowLoadedFile);
+			CHAOS_APPLICATION_ARG(bool, NoDirectResourceFiles);
 #endif
+		};
 
 		static bool DoIsTypedFile(char const* filename, char const* expected_ext)
 		{
@@ -119,20 +123,17 @@ namespace chaos
 		}
 #endif // _DEBUG
 
-#if _DEBUG
-		CHAOS_APPLICATION_ARG(bool, NoDirectResourceFiles);
-#endif
 
 		bool WithFile(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func)
 		{
 			boost::filesystem::path const& resolved_path = path.GetResolvedPath();
 
 			// File Redirection
-#if _DEBUG 
+#if _DEBUG
 
 			if (Application const* application = Application::GetConstInstance())
 			{
-				if (!Arguments::NoDirectResourceFiles)
+				if (!Arguments::NoDirectResourceFiles.Get())
 				{
 					boost::filesystem::path const& build_path = application->GetRedirectionBuildPath();
 					if (!build_path.empty())
@@ -210,7 +211,7 @@ namespace chaos
 			{
 				result = DoLoadFile(p, flags);
 #if _DEBUG
-				if (result && Arguments::ShowLoadedFile)
+				if (result && Arguments::ShowLoadedFile.Get())
 				{
 					Log::Message("LoadFile [%s] -> [%s]    size = [%d]", path.GetResolvedPath().string().c_str(), p.string().c_str(), result.bufsize);
 				}
@@ -248,7 +249,7 @@ namespace chaos
 			{
 				result = DoReadFileLines(p);
 #if _DEBUG
-				if ((result.size() > 0) && Arguments::ShowLoadedFile)
+				if ((result.size() > 0) && Arguments::ShowLoadedFile.Get())
 				{
 					Log::Message("ReadFileLines [%s] -> [%s]    line count = [%d]", path.GetResolvedPath().string().c_str(), p.string().c_str(), result.size());
 				}

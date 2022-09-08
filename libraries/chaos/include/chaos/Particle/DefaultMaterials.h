@@ -17,7 +17,7 @@ namespace chaos
 	 * DefaultMaterialBase : base class to have default material
 	 */
 	template<typename SOURCE>
-	class DefaultMaterialBase
+	class /*CHAOS_API*/ DefaultMaterialBase
 	{
 	public:
 
@@ -69,7 +69,7 @@ namespace chaos
 	 * DefaultParticleProgramGenerator : generator for default particle program/material
 	 */
 
-	class DefaultParticleProgramSource
+	class CHAOS_API DefaultParticleProgramSource
 	{
 	public:
 
@@ -88,7 +88,7 @@ namespace chaos
 	 * DefaultScreenSpaceProgramGenerator : generator for particle in screen space
 	 */
 
-	class DefaultScreenSpaceProgramGenerator
+	class CHAOS_API DefaultScreenSpaceProgramGenerator
 	{
 	public:
 

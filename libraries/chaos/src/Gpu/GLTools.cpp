@@ -3,10 +3,14 @@
 
 namespace chaos
 {
-	CHAOS_APPLICATION_ARG(bool, GLDebugNotifications);
+	namespace Arguments
+	{
+		CHAOS_APPLICATION_ARG(bool, GLDebugNotifications);
 #if _WIN32 || _WIN64
-	CHAOS_APPLICATION_ARG(bool, GLDebugBreak);
+		CHAOS_APPLICATION_ARG(bool, GLDebugBreak);
 #endif
+	};
+
 
 	void GLTools::SetViewport(ViewportPlacement const& viewport)
 	{
@@ -227,7 +231,7 @@ namespace chaos
 
 	static void GLAPIENTRY DebugMessageHandler(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * msg, const void * user_data)
 	{
-		if (severity != GL_DEBUG_SEVERITY_NOTIFICATION || Arguments::GLDebugNotifications)
+		if (severity != GL_DEBUG_SEVERITY_NOTIFICATION || Arguments::GLDebugNotifications.Get())
 		{
 			char const* source_str = GLTools::GLenumToString(source);
 			char const * type_str = GLTools::GLenumToString(type);
@@ -242,7 +246,7 @@ namespace chaos
 			//DebugTools::DisplayCallStack(std::cout);
 
 #if _WIN32 || _WIN64
-			if (Arguments::GLDebugBreak)
+			if (Arguments::GLDebugBreak.Get())
 				DebugBreak();
 #endif
 		}

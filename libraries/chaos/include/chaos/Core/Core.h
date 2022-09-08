@@ -20,6 +20,7 @@
 #include "chaos/Core/AutoCast.h"
 #include "chaos/Core/SmartPointers.h"
 #include "chaos/Core/Class.h"
+#include "chaos/Core/Copyable.h"
 #include "chaos/Core/MetaProgramming.h"
 #include "chaos/Core/JSONTools.h"
 #include "chaos/Core/SubClassOf.h"

@@ -5,11 +5,11 @@ namespace chaos
 	class XMLTools;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
-	
+
 	/**
 	* HTML is a set of utility function to create HTML document with tinyxml2
 	*/
-	class XMLTools
+	class CHAOS_API XMLTools
 	{
 	public:
 

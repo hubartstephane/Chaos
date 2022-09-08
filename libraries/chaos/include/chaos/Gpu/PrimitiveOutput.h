@@ -15,7 +15,7 @@ namespace chaos
     * GPUPrimitiveBufferCacheEntry : the PrimitiveOutput has its own cache because we do not want to waste too much space whenever a new big strip/fan is requested (thoses buffers have been mapped in memory)
     */
 
-    class GPUPrimitiveBufferCacheEntry
+    class CHAOS_API GPUPrimitiveBufferCacheEntry
     {
     public:
 
@@ -33,7 +33,7 @@ namespace chaos
      * PrimitiveOutputBase : a primitive generator (the base class)
      */
 
-    class PrimitiveOutputBase
+    class CHAOS_API PrimitiveOutputBase
     {
     public:
 
@@ -119,7 +119,7 @@ namespace chaos
      */
 
     template<typename VERTEX_TYPE>
-    class PrimitiveOutput : public PrimitiveOutputBase
+    class /*CHAOS_API*/ PrimitiveOutput : public PrimitiveOutputBase
     {
     public:
 
@@ -239,17 +239,17 @@ namespace chaos
      */
 
     template<typename VERTEX_TYPE>
-    void DrawLine(PrimitiveOutput<VERTEX_TYPE>& output, glm::vec2 const& p1, glm::vec2 const& p2, glm::vec4 const& color);
+    /*CHAOS_API*/ void DrawLine(PrimitiveOutput<VERTEX_TYPE>& output, glm::vec2 const& p1, glm::vec2 const& p2, glm::vec4 const& color);
 
     template<typename VERTEX_TYPE>
-    void DrawBox(PrimitiveOutput<VERTEX_TYPE>& output, obox2 const& b, glm::vec4 const& color, bool fill);
+    /*CHAOS_API*/ void DrawBox(PrimitiveOutput<VERTEX_TYPE>& output, obox2 const& b, glm::vec4 const& color, bool fill);
 
     template<typename VERTEX_TYPE>
-    void DrawSphere(PrimitiveOutput<VERTEX_TYPE>& output, sphere2 const& s, glm::vec4 const& color, bool fill);
+    /*CHAOS_API*/ void DrawSphere(PrimitiveOutput<VERTEX_TYPE>& output, sphere2 const& s, glm::vec4 const& color, bool fill);
 
     /** text creation */
     template<typename VERTEX_TYPE>
-    QuadPrimitive<VERTEX_TYPE> DrawText(PrimitiveOutput<VERTEX_TYPE>& output, char const* in_text, ParticleTextGenerator::GeneratorParams const& params = {}, ParticleTextGenerator::CreateTextAllocationParams const& allocation_params = {});
+    /*CHAOS_API*/ QuadPrimitive<VERTEX_TYPE> DrawText(PrimitiveOutput<VERTEX_TYPE>& output, char const* in_text, ParticleTextGenerator::GeneratorParams const& params = {}, ParticleTextGenerator::CreateTextAllocationParams const& allocation_params = {});
 
 
 #else // => defined CHAOS_TEMPLATE_IMPLEMENTATION

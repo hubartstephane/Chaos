@@ -10,7 +10,7 @@ namespace chaos
 	* FPSViewController : this is a class to help handling FPS system with simple actions like go forward or strafe
 	*/
 
-	class FPSViewController
+	class CHAOS_API FPSViewController
 	{
 
 	public:

@@ -8,7 +8,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	template<typename T>
-	class TimedAccumulator
+	class /*CHAOS_API*/ TimedAccumulator
 	{
 	public:
 

@@ -19,7 +19,7 @@ namespace chaos
 	//
 	//       so, the PATH that is kept is "file1.json" (and not "file2.xxx" even it is the final call)
 
-	class ResourceManagerLoaderBase
+	class CHAOS_API ResourceManagerLoaderBase
 	{
 	protected:
 
@@ -50,7 +50,7 @@ namespace chaos
 	**/
 
 	template<typename RESOURCE_TYPE, typename MANAGER_TYPE>
-	class ResourceManagerLoader : public ResourceManagerLoaderBase
+	class /*CHAOS_API*/ ResourceManagerLoader : public ResourceManagerLoaderBase
 	{
 	public:
 
@@ -77,11 +77,13 @@ namespace chaos
 			RESOURCE_TYPE * result = load_func(json);
 			if (result != nullptr)
 			{
-				ApplyNameToLoadedResource(result);
-				ApplyPathToLoadedResource(result);
+				if constexpr (std::is_base_of_v<NamedObject, RESOURCE_TYPE>)
+					ApplyNameToLoadedResource(result);
+				if constexpr (std::is_base_of_v<FileResource, RESOURCE_TYPE>)
+					ApplyPathToLoadedResource(result);
 
 				if (manager != nullptr)
-					if (!StringTools::IsEmpty(result->GetName())) 
+					if (!StringTools::IsEmpty(result->GetName()))
 						insert_func(result);
 			}
 			return result;
@@ -99,11 +101,13 @@ namespace chaos
 			RESOURCE_TYPE * result = load_func(path);
 			if (result != nullptr)
 			{
-				ApplyNameToLoadedResource(result);
-				ApplyPathToLoadedResource(result);
+				if constexpr (std::is_base_of_v<NamedObject, RESOURCE_TYPE>)
+					ApplyNameToLoadedResource(result);
+				if constexpr (std::is_base_of_v<FileResource, RESOURCE_TYPE>)
+					ApplyPathToLoadedResource(result);
 
 				if (manager != nullptr)
-					if (!StringTools::IsEmpty(result->GetName())) 
+					if (!StringTools::IsEmpty(result->GetName()))
 						insert_func(result);
 			}
 			return result;

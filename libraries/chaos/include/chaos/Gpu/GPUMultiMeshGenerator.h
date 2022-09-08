@@ -10,7 +10,7 @@ namespace chaos
 	* GPUMultiMeshGenerator : this class is used to generator multiple mesh in a row, shared vertex and index buffer
 	*/
 
-	class GPUMultiMeshGenerator
+	class CHAOS_API GPUMultiMeshGenerator
 	{
 	public:
 

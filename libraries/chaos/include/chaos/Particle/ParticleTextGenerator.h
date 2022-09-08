@@ -19,7 +19,7 @@ namespace chaos
 		* some parameters used during text parsing
 		*/
 
-		class GeneratorParams
+		class CHAOS_API GeneratorParams
 		{
 		public:
 
@@ -60,15 +60,15 @@ namespace chaos
 		};
 
 		/** json functions */
-		bool SaveIntoJSON(nlohmann::json& json, GeneratorParams const& src);
+		CHAOS_API bool SaveIntoJSON(nlohmann::json& json, GeneratorParams const& src);
 		/** json functions */
-		bool LoadFromJSON(nlohmann::json const& json, GeneratorParams& dst);
+		CHAOS_API bool LoadFromJSON(nlohmann::json const& json, GeneratorParams& dst);
 
 		/**
 		* some parameters used during the final particle generation
 		*/
 
-		class CreateTextAllocationParams
+		class CHAOS_API CreateTextAllocationParams
 		{
 		public:
 
@@ -84,7 +84,7 @@ namespace chaos
 		* Particle : a base particle class
 		*/
 
-		class Particle
+		class CHAOS_API Particle
 		{
 		public:
 
@@ -100,7 +100,7 @@ namespace chaos
 		* Token : a token that is computed by the generator
 		*/
 
-		class Token : public Particle
+		class CHAOS_API Token : public Particle
 		{
 
 		public:
@@ -132,7 +132,7 @@ namespace chaos
 		* GeneratorResult : the result of the parsing
 		*/
 
-		class GeneratorResult
+		class CHAOS_API GeneratorResult
 		{
 		public:
 
@@ -155,7 +155,7 @@ namespace chaos
 		* Style : during parsing, some 'commands' are put on the stack for text formating, Style is such a command
 		*/
 
-		class Style
+		class CHAOS_API Style
 		{
 		public:
 
@@ -169,7 +169,7 @@ namespace chaos
 		* GeneratorData : an utility structure used during particles generation
 		*/
 
-		class GeneratorData
+		class CHAOS_API GeneratorData
 		{
 
 		public:
@@ -229,7 +229,7 @@ namespace chaos
 		* Generator : the text generator
 		*/
 
-		class Generator : public Object
+		class CHAOS_API Generator : public Object
 		{
 			friend class GeneratorData;
 
@@ -301,15 +301,15 @@ namespace chaos
 		};
 
 		/** transform a token into a particle */
-		ParticleDefault TokenToParticle(ParticleTextGenerator::Token const& token);
+		CHAOS_API ParticleDefault TokenToParticle(ParticleTextGenerator::Token const& token);
 		/** get particles corresponding to the background */
-		ParticleDefault GetBackgroundParticle(GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params);
+		CHAOS_API ParticleDefault GetBackgroundParticle(GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params);
 		/** generate an allocation for a generated text */
-		SpawnParticleResult CreateTextAllocation(ParticleLayerBase* layer, GeneratorResult const& generator_result, bool new_allocation = true, CreateTextAllocationParams const& allocation_params = {});
+		CHAOS_API SpawnParticleResult CreateTextAllocation(ParticleLayerBase* layer, GeneratorResult const& generator_result, bool new_allocation = true, CreateTextAllocationParams const& allocation_params = {});
 
 		/** output primitives corresponding to generated text */
 		template<typename VERTEX_TYPE>
-		QuadPrimitive<VERTEX_TYPE> TextToPrimitives(PrimitiveOutput<VERTEX_TYPE>& output, GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params = {});
+		/*CHAOS_API*/ QuadPrimitive<VERTEX_TYPE> TextToPrimitives(PrimitiveOutput<VERTEX_TYPE>& output, GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params = {});
 
 #else
 
@@ -334,7 +334,7 @@ namespace chaos
 				ParticleToPrimitive(particle, current_primitive);
 				current_primitive++;
 			}
-			// convert the text			
+			// convert the text
 			for (size_t i = 0; i < generator_result.token_lines.size(); ++i)
 			{
 				ParticleTextGenerator::TokenLine const& line = generator_result.token_lines[i];

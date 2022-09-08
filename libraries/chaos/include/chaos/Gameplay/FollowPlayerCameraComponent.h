@@ -10,7 +10,7 @@ namespace chaos
 	// FollowPlayerCameraComponent
 	// =============================================
 
-	class FollowPlayerCameraComponent : public CameraComponent
+	class CHAOS_API FollowPlayerCameraComponent : public CameraComponent
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(FollowPlayerCameraComponent, CameraComponent);
 

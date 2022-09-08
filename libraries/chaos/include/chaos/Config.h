@@ -3,7 +3,7 @@
 #pragma once
 
 // kind of project
-#define CHAOS_IS_STATIC_LIBRARY
+#define CHAOS_IS_SHARED_LIBRARY
 
 // defines an import/export token
 #if defined CHAOS_IS_SHARED_LIBRARY

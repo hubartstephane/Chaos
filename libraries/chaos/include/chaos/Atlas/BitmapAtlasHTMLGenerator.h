@@ -13,7 +13,7 @@ namespace chaos
 		* AtlasHTMLOutputParams : settings to output an atlas into an HTML file
 		*/
 
-		class AtlasHTMLOutputParams
+		class CHAOS_API AtlasHTMLOutputParams
 		{
 		public:
 
@@ -35,7 +35,7 @@ namespace chaos
 		* AtlasHTMLGenerator : use to generate HTML from an atlas
 		*/
 
-		class AtlasHTMLGenerator
+		class CHAOS_API AtlasHTMLGenerator
 		{
 		public:
 

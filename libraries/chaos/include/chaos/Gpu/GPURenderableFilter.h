@@ -15,7 +15,7 @@ namespace chaos
 	// GPURenderableFilter : filter-out some objects frome rendering
 	// ========================================================
 
-	class GPURenderableFilter : public Object
+	class CHAOS_API GPURenderableFilter : public Object
 	{
 	public:
 
@@ -33,7 +33,7 @@ namespace chaos
 	// ========================================================
 
 	template<typename T>
-	class GPUTypedRenderableFilter : public GPURenderableFilter
+	class /*CHAOS_API*/ GPUTypedRenderableFilter : public GPURenderableFilter
 	{
 	public:
 

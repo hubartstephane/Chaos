@@ -10,7 +10,7 @@ namespace chaos
 	// JSONParam
 	// ==============================================================
 
-	class JSONParam
+	class CHAOS_API JSONParam
 	{
 	public:
 

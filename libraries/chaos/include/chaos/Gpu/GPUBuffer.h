@@ -7,7 +7,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/** GPUBuffer : self explaning */
-	class GPUBuffer : public GPUResource
+	class CHAOS_API GPUBuffer : public GPUResource
 	{
 	public:
 

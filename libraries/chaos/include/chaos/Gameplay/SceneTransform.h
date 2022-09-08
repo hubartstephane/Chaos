@@ -13,21 +13,21 @@ namespace chaos
 	//   Translation.Rotation =
 	//
 	//  |  1  0  0 |   | a  b  0 |   | a  b  0 |       X = a.tx + c.ty
-	//  |  0  1  1 | x | c  d  0 | = | c  d  0 |  with 
+	//  |  0  1  1 | x | c  d  0 | = | c  d  0 |  with
 	//  | tx ty  1 |   | 0  0  1 |   | X  Y  1 |       Y = b.tx + d.ty
 	//
-	//   Translation.Rotation.Scaling = 
-	// 
+	//   Translation.Rotation.Scaling =
+	//
 	//  | a  b  0 |   | sx  0  0 |   | sx.a  sy.b  0 |
 	//  | c  d  0 | x |  0 sy  0 | = | sx.c  sy.d  0 |
 	//  | X  Y  1 |   |  0  0  1 |   | sx.X  sy.Y  1 |
 	//
-	// 
+	//
 	// Scaling.Rotation.Translation
 	// ----------------------------
 	//
-	//  Scaling.Rotation = 
-	// 
+	//  Scaling.Rotation =
+	//
 	//  | sx  0  0 |   | a  b  0 |   | sx.a  sx.b  0 |
 	//  |  0 sy  0 | x | c  d  0 | = | sy.c  sy.d  0 |
 	//  |  0  0  1 |   | 0  0  1 |   |    0     0  1 |
@@ -43,18 +43,18 @@ namespace chaos
 	// by definition, the Inverse(SceneTransform) is a S.R.T with
 	//
 	// Translation(V).Rotation(A).Scaling(S)    x    Scaling(1/S).Rotation(-A).Translation(-V) = identity
-	// 
+	//
 	// To convert T.R.S into S.R.T we should be able to transform
-	// 
+	//
 	//  | sx.a  sy.b  0 |      |  sx'.a'  sx'.b'  0 |
 	//  | sx.c  sy.d  0 | into |  sy'.c'  sy'.d'  0 |
 	//  | sx.X  sy.Y  1 |      |     tx'      ty  1 |
-	// 
+	//
 	//  This is not possible due to non-uniform scale (see how scale values are spread in column for first matrix, but in row for second one)
-	// 
+	//
 
 	template<typename T, int dimension>
-	class SceneTransform
+	class /*CHAOS_API*/ SceneTransform
 	{
 		using vec_type = typename type_geometric<T, dimension>::vec_type;
 		using rot_type = typename type_geometric<T, dimension>::rot_type;

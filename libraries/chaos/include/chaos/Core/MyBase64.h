@@ -9,7 +9,7 @@ namespace chaos
 	//
 	// Implementation is coming from : https://stackoverflow.com/questions/180947/base64-decode-snippet-in-c
 	//
-	class MyBase64
+	class CHAOS_API MyBase64
 	{
 	public:
 

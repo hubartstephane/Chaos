@@ -15,7 +15,7 @@ namespace chaos
 		// Map
 		// ==========================================
 
-		enum class MapOrientation : int
+		enum class CHAOS_API MapOrientation : int
 		{
 			ORTHOGONAL = 0,
 			ISOMETRIC = 1,
@@ -25,7 +25,7 @@ namespace chaos
 
 		CHAOS_DECLARE_ENUM_METHOD(MapOrientation);
 
-		enum class StaggerAxis : int
+		enum class CHAOS_API StaggerAxis : int
 		{
 			AXIS_X = 0,
 			AXIS_Y = 1
@@ -33,7 +33,7 @@ namespace chaos
 
 		CHAOS_DECLARE_ENUM_METHOD(StaggerAxis);
 
-		enum class StaggerIndex : int
+		enum class CHAOS_API StaggerIndex : int
 		{
 			ODD = 0,
 			EVEN = 1
@@ -41,7 +41,7 @@ namespace chaos
 
 		CHAOS_DECLARE_ENUM_METHOD(StaggerIndex);
 
-		enum class RenderOrder : int
+		enum class CHAOS_API RenderOrder : int
 		{
 			RIGHT_UP = 0,
 			RIGHT_DOWN = 1,
@@ -55,7 +55,7 @@ namespace chaos
 		// TileSetData
 		// ==========================================
 
-		class TileSetData
+		class CHAOS_API TileSetData
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
@@ -76,7 +76,7 @@ namespace chaos
 		// TileInfo
 		// ==========================================
 
-		class TileInfo
+		class CHAOS_API TileInfo
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
@@ -105,7 +105,7 @@ namespace chaos
 		// Map
 		// ==========================================
 
-		class Map : public ManagerObject
+		class CHAOS_API Map : public ManagerObject
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 

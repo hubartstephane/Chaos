@@ -5,35 +5,35 @@ namespace chaos
 #if defined CHAOS_FORWARD_DECLARATION
 
 	template<typename T, typename ENCODE_TABLE>
-	bool ConvertStringToEnum(char const* src, ENCODE_TABLE const& encode_table, T& dst);
+	/*CHAOS_API*/ bool ConvertStringToEnum(char const* src, ENCODE_TABLE const& encode_table, T& dst);
 
 	template<typename T, typename ENCODE_TABLE>
-	bool ConvertEnumToString(T src, ENCODE_TABLE const& encode_table, std::string& dst);
+	/*CHAOS_API*/ bool ConvertEnumToString(T src, ENCODE_TABLE const& encode_table, std::string& dst);
 
 #define CHAOS_DECLARE_ENUM_FLAG_METHOD(enum_type)\
-enum_type operator|(enum_type a, enum_type b);\
-enum_type operator&(enum_type a, enum_type b);\
-enum_type operator~(enum_type a);\
-enum_type & operator|=(enum_type & a, enum_type b);\
-enum_type & operator&=(enum_type & a, enum_type b);
+CHAOS_API enum_type operator|(enum_type a, enum_type b);\
+CHAOS_API enum_type operator&(enum_type a, enum_type b);\
+CHAOS_API enum_type operator~(enum_type a);\
+CHAOS_API enum_type & operator|=(enum_type & a, enum_type b);\
+CHAOS_API enum_type & operator&=(enum_type & a, enum_type b);
 
 #define CHAOS_IMPLEMENT_ENUM_FLAG_METHOD(enum_type)\
-enum_type operator|(enum_type a, enum_type b){ return static_cast<enum_type>(static_cast<int>(a) | static_cast<int>(b));}\
-enum_type operator&(enum_type a, enum_type b){ return static_cast<enum_type>(static_cast<int>(a) & static_cast<int>(b));};\
-enum_type operator~(enum_type a){ return static_cast<enum_type>(~static_cast<int>(a));}\
-enum_type& operator|=(enum_type& a, enum_type b) { a = a | b; return a; }\
-enum_type& operator&=(enum_type& a, enum_type b) { a = a & b; return a; }
+CHAOS_API enum_type operator|(enum_type a, enum_type b){ return static_cast<enum_type>(static_cast<int>(a) | static_cast<int>(b));}\
+CHAOS_API enum_type operator&(enum_type a, enum_type b){ return static_cast<enum_type>(static_cast<int>(a) & static_cast<int>(b));};\
+CHAOS_API enum_type operator~(enum_type a){ return static_cast<enum_type>(~static_cast<int>(a));}\
+CHAOS_API enum_type& operator|=(enum_type& a, enum_type b) { a = a | b; return a; }\
+CHAOS_API enum_type& operator&=(enum_type& a, enum_type b) { a = a & b; return a; }
 
 #define CHAOS_DECLARE_ENUM_METHOD(enum_type)\
-bool StringToEnum(char const * src, enum_type& dst);\
-bool EnumToString(enum_type src, std::string & dst);
+CHAOS_API bool StringToEnum(char const * src, enum_type& dst);\
+CHAOS_API bool EnumToString(enum_type src, std::string & dst);
 
 #define CHAOS_IMPLEMENT_ENUM_METHOD(enum_type, table_name)\
-bool StringToEnum(char const * src, enum_type& dst)\
+CHAOS_API bool StringToEnum(char const * src, enum_type& dst)\
 {\
 	return EnumTools::ConvertStringToEnum(src, table_name, dst);\
 }\
-bool EnumToString(enum_type src, std::string & dst)\
+CHAOS_API bool EnumToString(enum_type src, std::string & dst)\
 {\
 	return EnumTools::ConvertEnumToString(src, table_name, dst);\
 }

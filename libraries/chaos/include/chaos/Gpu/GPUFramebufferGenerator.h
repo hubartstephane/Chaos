@@ -7,7 +7,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class GPUFramebufferGeneratorAttachmentInfo : public GPUFramebufferAttachmentInfo
+	class CHAOS_API GPUFramebufferGeneratorAttachmentInfo : public GPUFramebufferAttachmentInfo
 	{
 	public:
 
@@ -19,7 +19,7 @@ namespace chaos
 		GenTextureParameters gen_texture_parameters;
 	};
 
-	class GPUFramebufferGenerator : public GPUFramebufferAttachmentOwner<GPUFramebufferGeneratorAttachmentInfo>
+	class CHAOS_API GPUFramebufferGenerator : public GPUFramebufferAttachmentOwner<GPUFramebufferGeneratorAttachmentInfo>
 	{
 
 	public:

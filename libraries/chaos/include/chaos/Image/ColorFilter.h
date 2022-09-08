@@ -10,7 +10,7 @@ namespace chaos
 	* ColorFilter : filter out some pixel
 	*/
 
-	class ColorFilter
+	class CHAOS_API ColorFilter
 	{
 
 	public:
@@ -39,9 +39,9 @@ namespace chaos
 		glm::vec4 color_mask = { 0.0f, 0.0f, 0.0f, 1.0f };
 	};
 
-	bool SaveIntoJSON(nlohmann::json& json, ColorFilter const& src);
+	CHAOS_API bool SaveIntoJSON(nlohmann::json& json, ColorFilter const& src);
 
-	bool LoadFromJSON(nlohmann::json const& json, ColorFilter& dst);
+	CHAOS_API bool LoadFromJSON(nlohmann::json const& json, ColorFilter& dst);
 
 #endif
 

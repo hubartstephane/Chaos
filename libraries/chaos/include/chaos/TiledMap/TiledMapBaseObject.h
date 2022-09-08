@@ -1,5 +1,5 @@
 namespace chaos
-{	
+{
 	namespace TiledMap
 	{
 #if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -8,14 +8,14 @@ namespace chaos
 		// TileParticleFlags
 		// ==========================================
 
-	// XXX : see ParticleFlags to avoid flag collisions
-	namespace TileParticleFlags
-	{		
-		static constexpr int NEIGHBOUR_LEFT   = (1 << 5);
-		static constexpr int NEIGHBOUR_RIGHT  = (1 << 6);
-		static constexpr int NEIGHBOUR_TOP    = (1 << 7);
-		static constexpr int NEIGHBOUR_BOTTOM = (1 << 8);
-	};
+		// XXX : see ParticleFlags to avoid flag collisions
+		namespace TileParticleFlags
+		{
+			static constexpr int NEIGHBOUR_LEFT   = (1 << 5);
+			static constexpr int NEIGHBOUR_RIGHT  = (1 << 6);
+			static constexpr int NEIGHBOUR_TOP    = (1 << 7);
+			static constexpr int NEIGHBOUR_BOTTOM = (1 << 8);
+		};
 
 		// ==========================================
 		// Global
@@ -28,15 +28,15 @@ namespace chaos
 		// ==========================================
 
 		/** split the tile pseudo GID into GID/H-FLIP/V-FLIP */
-		int DecodeTileGID(int pseudo_gid, int* particle_flags = nullptr);
+		CHAOS_API int DecodeTileGID(int pseudo_gid, int* particle_flags = nullptr);
 		/** returns the number of hexadecimal character from position */
-		int GetHEXCharacterCount(char const* c);
+		CHAOS_API int GetHEXCharacterCount(char const* c);
 		/** read an attribute as color */
-		bool ReadAttributeHEX(tinyxml2::XMLElement const* element, char const* attribute_name, unsigned int& result);
+		CHAOS_API bool ReadAttributeHEX(tinyxml2::XMLElement const* element, char const* attribute_name, unsigned int& result);
 		/** read a string as color */
-		bool ReadXMLColor(std::string const& str, glm::vec4& result);
+		CHAOS_API bool ReadXMLColor(std::string const& str, glm::vec4& result);
 		/** read an attribute as color */
-		bool ReadXMLColor(tinyxml2::XMLElement const* element, char const* attribute_name, glm::vec4& result);
+		CHAOS_API bool ReadXMLColor(tinyxml2::XMLElement const* element, char const* attribute_name, glm::vec4& result);
 
 		// ==========================================
 		// TiledMap coordinate system
@@ -51,15 +51,15 @@ namespace chaos
 		//  |tile|            |
 		//  | 0  |            |
 		//  o----+------------+
-		//  | \ 
-		//  |  \ 
+		//  | \
+		//  |  \
 		//  |   +-> on object on tile (0, 0) has its bottom left corner here
 		//  |       (beware, this point is were Y is max)
 		//  |
 		//  v
 		//
 
-		class BaseObject : public Object
+		class CHAOS_API BaseObject : public Object
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
@@ -69,7 +69,7 @@ namespace chaos
 			boost::filesystem::path GetOwnerPath() const;
 
 			/** get a parent in the hierarchy by class */
-			template<typename T> 
+			template<typename T>
 			T * GetOwner(bool recursive = true)
 			{
 				BaseObject * object = this;

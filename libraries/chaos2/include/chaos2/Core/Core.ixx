@@ -4,4 +4,5 @@ module;
 
 export module Core;
 
-export import MyClass;
+export import :MyClass;
+export import :MyOtherClass;

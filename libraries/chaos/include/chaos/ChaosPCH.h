@@ -195,8 +195,16 @@
 //              - extern
 //              - extern __declspec(dllimport)
 //              - extern __declspec(dllexport)   => at library compilation
+//
+// If chaos is compiled as a DLL, glew cannot be used as a STATIC LIBRARY
+// This is because, glew defines somes global variables as pointers on function
+// Theses variables are initialized with glewInit(...) function
+//
+// If chaos is a DLL and glew is STATIC, both executable and chaos will linked to glew
+// there will be 2 sets of thoses global variables (duplication), and only the set used in chaos with DLL will be initialized
+// If you call in your executable some OpenGL function this would crash
 
-#define GLEW_STATIC
+//#define GLEW_STATIC
 #include <GL/glew.h>
 #include <GL/wglew.h>
 

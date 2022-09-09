@@ -101,8 +101,9 @@ build:DeclareExternalLib("MSVC", MSVC_PATH, nil, nil, nil, MSVC_TOCOPY)
 local GLEW_PATH     = "glew-2.2.0"
 local GLEW_INC_PATH = "include"
 local GLEW_LIB_PATH = path.join("lib", RELEASE, x64)
-local GLEW_LIBNAME = "glew32s.lib"
-build:DeclareExternalLib("GLEW", GLEW_PATH, GLEW_INC_PATH, GLEW_LIB_PATH, GLEW_LIBNAME)
+local GLEW_LIBNAME = "glew32.lib"
+local GLEW_TOCOPY  = path.join("bin", RELEASE, x64, "glew32.dll")  
+build:DeclareExternalLib("GLEW", GLEW_PATH, GLEW_INC_PATH, GLEW_LIB_PATH, GLEW_LIBNAME, GLEW_TOCOPY)
 
 --------------------------------------------------------------------
 -- FREETYPE2

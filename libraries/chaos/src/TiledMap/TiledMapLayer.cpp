@@ -224,7 +224,7 @@ namespace chaos
 				for (std::string const& name : processor_names)
 				{
 					// get the processor class
-					SubClassOf<TileFlagProcessor> processor_class = Class::FindClass(name.c_str());
+					SubClassOf<TileFlagProcessor> processor_class = ClassManager::GetDefaultInstance()->FindClass(name.c_str());
 					if (processor_class)
 					{
 						// create the processor and run it

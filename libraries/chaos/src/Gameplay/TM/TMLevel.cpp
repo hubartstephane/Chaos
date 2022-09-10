@@ -66,12 +66,12 @@ namespace chaos
 	TMObjectFactory TMLevel::DoGetExplicitObjectFactory(TMLayerInstance* in_layer_instance, TiledMap::TypedObject const * in_typed_object)
 	{
 		// search the subclass of the object (by type or classname member)
-		SubClassOf<TMObject> subclass = Class::FindClass(in_typed_object->type.c_str());
+		SubClassOf<TMObject> subclass = ClassManager::GetDefaultInstance()->FindClass(in_typed_object->type.c_str());
 		if (!subclass.IsValid())
 		{
 			if (std::string const* classname = in_typed_object->FindPropertyString("classname"))
 			{
-				subclass = Class::FindClass(classname->c_str());
+				subclass = ClassManager::GetDefaultInstance()->FindClass(classname->c_str());
 			}
 		}
 		// failure ?

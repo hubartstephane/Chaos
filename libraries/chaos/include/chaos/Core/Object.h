@@ -14,7 +14,7 @@
 public:\
 static chaos::Class const * GetStaticClass(){ return CLASS##_class;}\
 virtual chaos::Class const * GetClass() const { return CLASS##_class; }\
-static inline chaos::Class const * CLASS##_class = chaos::Class::DeclareClass<CLASS, __VA_ARGS__>(#CLASS)
+static inline chaos::Class const * CLASS##_class = chaos::ClassManager::GetDefaultInstance()->DeclareClass<CLASS, __VA_ARGS__>(#CLASS)
 
 namespace chaos
 {

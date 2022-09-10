@@ -917,7 +917,7 @@ box2 Landscape::GetBoundingBox(bool world_system) const
 			}
 
 
-			SubClassOf<T> cls = Class::FindClass((std::string("LPMorph_") + tokens[0]).c_str());
+			SubClassOf<T> cls = ClassManager::GetDefaultInstance()->FindClass((std::string("LPMorph_") + tokens[0]).c_str());
 			if (cls.IsValid())
 			{
 				result.emplace_back(cls, std::move(data_map));

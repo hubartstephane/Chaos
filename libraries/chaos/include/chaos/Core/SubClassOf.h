@@ -27,7 +27,7 @@ namespace chaos
 		{
 			if (src != nullptr)
 			{
-				Class const* base_class = Class::FindClass<T>();
+				Class const* base_class = ClassManager::GetDefaultInstance()->FindClass<T>();
 				if (base_class == nullptr)
 					Log::Error("SubClassOf constructor : FindClass<T> failure");
 				else if (src->InheritsFrom(base_class, true) != InheritanceType::YES)
@@ -42,11 +42,11 @@ namespace chaos
 		{
 		}
 		/** constructor with search */
-		SubClassOf(ClassFindResult find_result) : SubClassOf(find_result.Resolve(Class::FindClass<T>()))
+		SubClassOf(ClassFindResult find_result) : SubClassOf(find_result.Resolve(ClassManager::GetDefaultInstance()->FindClass<T>()))
 		{
 		}
 		/** constructor with search */
-		SubClassOf(char const* name) : SubClassOf(Class::FindClass(name))
+		SubClassOf(char const* name) : SubClassOf(ClassManager::GetDefaultInstance()->FindClass(name))
 		{
 		}
 
@@ -108,7 +108,7 @@ namespace chaos
 		for (auto& class_name : class_names)
 		{
 			class_name.erase(std::remove_if(class_name.begin(), class_name.end(), isspace), class_name.end());
-			SubClassOf<T> cls = Class::FindClass(class_name.c_str());
+			SubClassOf<T> cls = ClassManager::GetDefaultInstance()->FindClass(class_name.c_str());
 			if (cls.IsValid())
 				result.push_back(cls);
 		}
@@ -131,7 +131,7 @@ namespace chaos
 		std::string classname;
 		if (!LoadFromJSON(json, classname))
 			return false;
-		src = SubClassOf<T>(Class::FindClass(classname.c_str()));
+		src = SubClassOf<T>(ClassManager::GetDefaultInstance()->FindClass(classname.c_str()));
 		return true;
 	}
 

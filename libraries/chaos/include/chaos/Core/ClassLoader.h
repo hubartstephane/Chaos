@@ -11,23 +11,23 @@ namespace chaos
 	public:
 
 		/** load one class by its path */
-		virtual Class const* LoadClass(FilePathParam const& path);
+		virtual Class const* LoadClass(ClassManager * manager, FilePathParam const& path);
 		/** load all classes in one directory */
-		virtual bool LoadClassesInDirectory(FilePathParam const& path);
+		virtual bool LoadClassesInDirectory(ClassManager* manager, FilePathParam const& path);
 
 	protected:
 
 		/** internal method to declare a class without finding yet its parent (used for directory iteration) */
-		Class* DoDeclareSpecialClassStep1(std::string class_name, std::string short_name, nlohmann::json const& json); // XXX : no const return value here !! (for Finalization of special class)
+		Class* DoDeclareSpecialClassStep1(ClassManager* manager, std::string class_name, std::string short_name, nlohmann::json const& json); // XXX : no const return value here !! (for Finalization of special class)
 		/** finalization of a special class (called from ClassLoader) : find parent */
-		bool DoDeclareSpecialClassStep2(Class* cls);
+		bool DoDeclareSpecialClassStep2(ClassManager* manager, Class* cls);
 		/** finalization of a special class (called from ClassLoader) : creation delegate */
-		bool DoDeclareSpecialClassStep3(Class* cls);
+		bool DoDeclareSpecialClassStep3(ClassManager* manager, Class* cls);
 		/** declare a pseudo class, that is a class with additionnal json initialization */
-		Class const* DeclareSpecialClass(std::string class_name, std::string short_name, nlohmann::json const& json);
+		Class const* DeclareSpecialClass(ClassManager* manager, std::string class_name, std::string short_name, nlohmann::json const& json);
 
 		/** internal method called from ClassLoader to abord a failed loaded class */
-		 void DoInvalidateSpecialClass(Class const* cls);
+		 void DoInvalidateSpecialClass(ClassManager* manager, Class const* cls);
 	};
 
 #endif

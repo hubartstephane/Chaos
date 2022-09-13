@@ -89,7 +89,7 @@ box2 GridInfo::GetBoundingBox(GridCellInfo const& cell) const
 
 LudumLevelInstance::LudumLevelInstance()
 {
-	player_displacement_component_class = Class::FindClass("MyDisplacementComponent");
+	player_displacement_component_class = ClassManager::GetDefaultInstance()->FindClass("MyDisplacementComponent");
 }
 
 void LudumLevelInstance::CreateCameraComponents(Camera* camera, TMCameraTemplate* camera_template)

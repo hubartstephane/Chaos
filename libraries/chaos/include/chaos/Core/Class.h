@@ -100,6 +100,8 @@ namespace chaos
 		nlohmann::json json_data;
 		/** the type_info for the class */
 		std::type_info const* info = nullptr;
+		/** the manager for this class */
+		ClassManager* manager = nullptr;
 	};
 
 #endif

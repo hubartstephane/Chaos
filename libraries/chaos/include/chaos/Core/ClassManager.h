@@ -10,7 +10,7 @@ namespace chaos
 	 * ClassManager: an object that registered some classes, C++ or JSON
 	 */
 
-	class CHAOS_API ClassManager// : public Object
+	class CHAOS_API ClassManager : public Object
 	{
 	public:
 
@@ -25,13 +25,9 @@ namespace chaos
 		static ClassManager* GetDefaultInstance();
 
 		/** gets the parent manager */
-		//ClassManager* GetParentManager() { return parent_manager.get(); }
-
-		ClassManager* GetParentManager() { return parent_manager; }
+		ClassManager* GetParentManager() { return parent_manager.get(); }
 		/** gets the parent manager */
-		//ClassManager const * GetParentManager() const { return parent_manager.get(); }
-
-		ClassManager const* GetParentManager() const { return parent_manager; }
+		ClassManager const * GetParentManager() const { return parent_manager.get(); }
 
 		/** find a class by name */
 		ClassFindResult FindClass(char const* name);
@@ -101,7 +97,7 @@ namespace chaos
 				for (Class* cls : manager->classes)
 					if (*cls->info == info)
 						return cls;
-				manager = manager->parent_manager;
+				manager = manager->parent_manager.get();
 			}
 			// register the class
 			Class * result = new Class;
@@ -114,9 +110,7 @@ namespace chaos
 	protected:
 
 		/* the parent class manager */
-		//shared_ptr<ClassManager> parent_manager;
-
-		ClassManager* parent_manager = nullptr;
+		shared_ptr<ClassManager> parent_manager;
 		/** the classes owned by this manager */
 		std::vector<Class*> classes;
 	};

@@ -53,7 +53,7 @@ namespace chaos
 				}
 			}
 			// next manager in chain
-			class_manager = class_manager->parent_manager;
+			class_manager = class_manager->parent_manager.get();
 			if (class_manager != nullptr)
 				iterator = class_manager->classes.begin();
 		}

@@ -14,7 +14,7 @@
 public:\
 static chaos::Class const * GetStaticClass(){ return CLASS##_class;}\
 virtual chaos::Class const * GetClass() const { return CLASS##_class; }\
-static inline chaos::Class const * CLASS##_class = chaos::ClassManager::GetDefaultInstance()->DeclareClass<CLASS, __VA_ARGS__>(#CLASS)
+static inline chaos::Class const * CLASS##_class = DeclareObjectClass<CLASS, __VA_ARGS__>(#CLASS)
 
 namespace chaos
 {
@@ -72,6 +72,15 @@ namespace chaos
 	{
 		friend class SharedPointerPolicy;
 		friend class WeakPointerPolicy;
+
+	protected:
+
+		/** declare the class in the default C++ ClassManager (must be declared before the CHAOS_DECLARE_OBJECT_CLASS usage) */
+		template<typename CLASS_TYPE, typename PARENT_CLASS_TYPE = EmptyClass>
+		static ClassRegistration DeclareObjectClass(std::string name)
+		{
+			return chaos::ClassManager::GetDefaultInstance()->DeclareClass<CLASS_TYPE, PARENT_CLASS_TYPE>(std::move(name));
+		}
 
 		CHAOS_DECLARE_OBJECT_CLASS(Object);
 

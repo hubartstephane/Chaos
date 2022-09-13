@@ -36,7 +36,7 @@ namespace chaos
 
 	void Object::OnLastReferenceLost()
 	{
-		delete(this); 		
+		delete(this);
 	}
 
 }; // namespace chaos

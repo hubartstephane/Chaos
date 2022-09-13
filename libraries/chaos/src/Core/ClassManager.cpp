@@ -12,9 +12,7 @@ namespace chaos
 
 	ClassManager* ClassManager::GetDefaultInstance()
 	{
-		//static DisableReferenceCount<ClassManager> default_instance;
-
-		static ClassManager default_instance;
+		static DisableReferenceCount<ClassManager> default_instance;
 		return &default_instance;
 	}
 
@@ -51,7 +49,7 @@ namespace chaos
 			if (it != manager->classes.end())
 				return { this, it, matching_name };
 
-			manager = manager->parent_manager;
+			manager = manager->parent_manager.get();
 		}
 		/* no class, no possible alias */
 		return { nullptr, classes.end(), false };

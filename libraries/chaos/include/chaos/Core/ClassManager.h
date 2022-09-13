@@ -3,78 +3,8 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	class ClassManager;
-	class ClassRegistration;
-	class ClassFindResult;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-	/**
-	 * ClassRegistration : the kind if inheritance that can exist between 2 classes
-	 */
-
-	class CHAOS_API ClassRegistration
-	{
-		friend class ClassManager;
-
-	protected:
-
-		/** constructor (may only be called from Class) */
-		ClassRegistration(Class* in_class_ptr) :
-			class_ptr(in_class_ptr)
-		{
-			assert(in_class_ptr != nullptr);
-		}
-
-	public:
-
-		/** set the short name for the class */
-		ClassRegistration & operator()(std::string in_short_name);
-
-		/** convert the registration to the class */
-		operator Class const * () const
-		{
-			return class_ptr;
-		}
-
-	protected:
-
-		/** the class */
-		Class * class_ptr = nullptr;
-	};
-
-	/**
-	 * ClassFindResult : Intermediate object for class searching.
-	 *                   While there may be several classes with the same short_name, we have to select the good one when searching
-	 *                   We so want that the search is affected by the Subclass affectation that requires it.
-	 */
-
-	class CHAOS_API ClassFindResult
-	{
-		friend class ClassManager;
-
-		using iterator_type = std::vector<Class*>::iterator;
-
-	public:
-
-		/** gets the result of the class */
-		operator Class* () const;
-		/** finalize the search */
-		Class* Resolve(Class const* check_class) const;
-
-	protected:
-
-		/** constructor */
-		ClassFindResult(ClassManager* in_class_manager, iterator_type in_iterator, bool in_matching_name);
-
-		/** cache the resolved result */
-		mutable Class* result = nullptr;
-		/** the class manager where to search */
-		mutable ClassManager* class_manager = nullptr;
-		/** the very first name matching the request. we can use it for further research instead to store the name somehow (that would be costly) */
-		mutable iterator_type iterator;
-		/** whether the iterator correspond to a matching name or a matching short name */
-		bool matching_name = true;
-	};
 
 	/**
 	 * ClassManager: an object that registered some classes, C++ or JSON

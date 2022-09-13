@@ -21,6 +21,8 @@
 #include "chaos/Core/SmartPointers.h"
 
 #include "chaos/Core/Class.h"
+#include "chaos/Core/ClassRegistration.h"
+#include "chaos/Core/ClassFindResult.h"
 #include "chaos/Core/ClassManager.h"
 #include "chaos/Core/Object.h"
 #include "chaos/Core/Copyable.h"

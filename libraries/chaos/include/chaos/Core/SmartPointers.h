@@ -154,7 +154,7 @@ namespace chaos
 	 */
 
 	template<typename T, typename POLICY>
-	class /*CHAOS_API */SmartPointerBase
+	class /*CHAOS_API*/ SmartPointerBase
 	{
 		friend class SharedPointerPolicy;
 		friend class WeakPointerPolicy;

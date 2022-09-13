@@ -11,7 +11,6 @@ namespace chaos
 
 	ClassRegistration & ClassRegistration::operator()(std::string in_short_name)
 	{
-		assert(!StringTools::IsEmpty(in_short_name));
 		class_ptr->SetShortName(std::move(in_short_name));
 		return *this;
 	}
@@ -20,10 +19,10 @@ namespace chaos
 	// ClassFindResult functions
 	// ==========================================================
 
-	ClassFindResult::ClassFindResult(Class* in_result, ClassManager* in_class_manager, short_name_iterator_type in_short_name_iterator) :
-		result(in_result),
+	ClassFindResult::ClassFindResult(ClassManager* in_class_manager, iterator_type in_iterator, bool in_matching_name):
 		class_manager(in_class_manager),
-		short_name_iterator(in_short_name_iterator)
+		iterator(in_iterator),
+		matching_name(in_matching_name)
 	{
 	}
 
@@ -34,42 +33,40 @@ namespace chaos
 
 	Class* ClassFindResult::Resolve(Class const * check_class) const
 	{
-		// something found in classes
-		if (result != nullptr)
+		// check for cached result or stop if class_manager
+		if (result != nullptr || class_manager == nullptr)
 			return result;
 
-		// something found in aliases (but this may be the wrong type)
-		// the first iterator is helpfull to keep trace of the searched name
-		auto& classes = class_manager->classes;
+		// we know that the iterator points on a valid entry. get the string that made this entry a good one
+		std::string const& searched_name = (matching_name) ?
+			(*iterator)->GetClassName() :
+			(*iterator)->GetShortName();
 
-		if (short_name_iterator != classes.end())
+		// check for the very first entry (string comparaison not necessary)
+		if (check_class == nullptr || (*iterator)->InheritsFrom(check_class, true) == InheritanceType::YES)
 		{
-			std::string const& searched_name = (*short_name_iterator)->GetShortName();
+			result = *iterator;
+			return result;
+		}
 
-			auto found_it = classes.end();
-
-			for (auto it = short_name_iterator; it != classes.end() ; ++it)
+		// process manager chain
+		while (class_manager != nullptr)
+		{
+			// search all classes of the manager
+			for (; iterator != class_manager->classes.end(); ++iterator)
 			{
-				if (StringTools::Stricmp(searched_name, (*it)->GetShortName()) == 0)
+				if ((StringTools::Stricmp((*iterator)->GetClassName(), searched_name) == 0) ||
+					(StringTools::Stricmp((*iterator)->GetShortName(), searched_name) == 0))
 				{
-					if (check_class == nullptr || (*it)->InheritsFrom(check_class, true) == InheritanceType::YES)
-					{
-#if _DEBUG  // ensure no ambiguity in debug and continue the search
-						assert(found_it == classes.end());
-						found_it = it;
-#else
-						return *it;
-#endif
-					}
+					result = *iterator;
+					return result;
 				}
 			}
-
-#if _DEBUG
-			if (found_it != classes.end())
-				return *found_it;
-#endif
+			// next manager in chain
+			class_manager = class_manager->parent_manager;
+			if (class_manager != nullptr)
+				iterator = class_manager->classes.begin();
 		}
-		// nothing found
 		return nullptr;
 	}
 
@@ -94,34 +91,39 @@ namespace chaos
 	{
 		assert(name != nullptr);
 
-		/** early exit */
+		// early exit
 		if (StringTools::IsEmpty(name))
-			return {nullptr, this, classes.end()};
+			return {nullptr, classes.end(), false};
 
-		/* find the class by name first */
+		// search in manager chain
+		ClassManager* manager = this;
+		while (manager != nullptr)
 		{
-			auto it = std::ranges::find_if(classes, [name](Class const * cls)
+			bool matching_name = false;
+			auto it = std::ranges::find_if(manager->classes, [name, &matching_name](Class const* cls)
 			{
-				return (StringTools::Stricmp(cls->GetClassName(), name) == 0);
+				if (StringTools::Stricmp(cls->GetClassName(), name) == 0)
+				{
+					matching_name = true;
+					return true;
+				}
+				else if (StringTools::Stricmp(cls->GetShortName(), name) == 0)
+				{
+					matching_name = false;
+					return true;
+				}
+				else
+				{
+					return false;
+				}
 			});
-			if (it != classes.end())
-				return { *it, this, classes.end()};
-		}
-		/* find class by short name */
-		{
-			auto it = std::ranges::find_if(classes, [name](Class const * cls)
-			{
-				return (StringTools::Stricmp(cls->GetShortName(), name) == 0);
-			});
-			// note: the iterator points on a class that have the same short name as the one been searched
-			// (this may nevertheless not be the one searched)
-			// the ClassFindResult will continue the search if the class does not match and will use the short name accessed throught this iterator
-			// (to avoid an extra allocating for the searched name)
-			if (it != classes.end())
-				return { nullptr, this, it};
+			if (it != manager->classes.end())
+				return { this, it, matching_name };
+
+			manager = manager->parent_manager;
 		}
 		/* no class, no possible alias */
-		return { nullptr, this, classes.end()};
+		return { nullptr, classes.end(), false };
 	}
 
 }; // namespace chaos

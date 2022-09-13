@@ -52,7 +52,7 @@ namespace chaos
 	{
 		friend class ClassManager;
 
-		using short_name_iterator_type = std::vector<Class*>::iterator;
+		using iterator_type = std::vector<Class*>::iterator;
 
 	public:
 
@@ -64,14 +64,16 @@ namespace chaos
 	protected:
 
 		/** constructor */
-		ClassFindResult(Class* in_result, ClassManager * in_class_manager, short_name_iterator_type in_short_name_iterator);
+		ClassFindResult(ClassManager* in_class_manager, iterator_type in_iterator, bool in_matching_name);
 
-		/** if the result of the search is found by class name, directly store this here */
-		Class * result = nullptr;
+		/** cache the resolved result */
+		mutable Class* result = nullptr;
 		/** the class manager where to search */
-		ClassManager* class_manager = nullptr;
-		/** the very first short name matching the request. we can use it for further reserch instead to store the name somehow (that would be costly) */
-		short_name_iterator_type short_name_iterator;
+		mutable ClassManager* class_manager = nullptr;
+		/** the very first name matching the request. we can use it for further research instead to store the name somehow (that would be costly) */
+		mutable iterator_type iterator;
+		/** whether the iterator correspond to a matching name or a matching short name */
+		bool matching_name = true;
 	};
 
 	/**
@@ -136,7 +138,10 @@ namespace chaos
 				// instance constructible only if derives from Object
 				if constexpr (std::is_base_of_v<Object, CLASS_TYPE>)
 				{
-					result->create_instance_func = []() { return new CLASS_TYPE; };
+					result->create_instance_func = []()
+					{
+						return new CLASS_TYPE;
+					};
 
 					result->create_instance_on_stack_func = [](std::function<void(Object*)> func)
 					{
@@ -157,16 +162,23 @@ namespace chaos
 		template<typename CLASS_TYPE>
 		Class* FindOrCreateClassInstance()
 		{
-			// search if the class as already been registered
 			std::type_info const& info = typeid(CLASS_TYPE);
-			for (Class* cls : classes)
-				if (*cls->info == info)
-					return cls;
+
+			// search if the class as already been registered in manager chain
+			ClassManager* manager = this;
+			while (manager != nullptr)
+			{
+				for (Class* cls : manager->classes)
+					if (*cls->info == info)
+						return cls;
+				manager = manager->parent_manager;
+			}
 			// register the class
-			static Class cls;
-			cls.info = &info;
-			classes.push_back(&cls);
-			return &cls;
+			Class * result = new Class;
+			result->info = &info;
+			result->manager = this;
+			classes.push_back(result);
+			return result;
 		}
 
 	protected:

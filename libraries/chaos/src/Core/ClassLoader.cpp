@@ -45,10 +45,10 @@ namespace chaos
 	{
 		assert(manager != nullptr);
 
-		std::vector<Class *> classes;
+		std::vector<Class *> loaded_classes;
 
 		// Step 1: load all classes (no full initialization, ignore parent). Register them (without inheritance data in classes list)
-		FileTools::WithDirectoryContent(path, [this, manager, &classes](boost::filesystem::path const & p)
+		FileTools::WithDirectoryContent(path, [this, manager, &loaded_classes](boost::filesystem::path const & p)
 		{
 			Class* cls = DoLoadClassHelper<Class *>(p, [this, manager] (std::string class_name, std::string short_name, nlohmann::json const& json)
 			{
@@ -56,7 +56,7 @@ namespace chaos
 			});
 			// remember the class
 			if (cls != nullptr)
-				classes.push_back(cls);
+				loaded_classes.push_back(cls);
 
 			return false; // don't stop
 		});
@@ -64,7 +64,7 @@ namespace chaos
 		// Step 2: fix parent classes (all classes coming from json files should have a valid C++ at least or even JSON parent class)
 		std::vector<Class*> failing_parent_classes;
 
-		for (Class* cls : classes)
+		for (Class* cls : loaded_classes)
 			if (!DoDeclareSpecialClassStep2(manager, cls))
 				failing_parent_classes.push_back(cls);
 
@@ -72,10 +72,10 @@ namespace chaos
 		if (failing_parent_classes.size() > 0)
 		{
 			std::vector<Class*> all_failing_classes;
-			all_failing_classes.reserve(classes.size());
+			all_failing_classes.reserve(loaded_classes.size());
 
 			// Step 3.1: construct a vector that owns all failure (direct or indirect)
-			for (Class * & cls : classes)
+			for (Class * & cls : loaded_classes)
 			{
 				for (Class* failing_cls : failing_parent_classes)
 				{
@@ -94,25 +94,25 @@ namespace chaos
 				DoInvalidateSpecialClass(manager, cls);
 
 			// Step 3.3: clean the classes array from nullptr
-			auto it = std::ranges::remove_if(classes, [](Class* cls)
+			auto it = std::ranges::remove_if(loaded_classes, [](Class* cls)
 			{
 				return (cls == nullptr);
 			});
-			classes.erase(it.begin(), it.end());
+			loaded_classes.erase(it.begin(), it.end());
 		}
 
 		// Step 4: sort the classes by depth (use a temp depth map)
 		std::map<Class const*, size_t> class_depth;
-		for (Class* cls : classes)
+		for (Class* cls : loaded_classes)
 			class_depth[cls] = GetClassDepth(cls);
 
-		std::ranges::sort(classes, [&class_depth](Class const * c1, Class const * c2)
+		std::ranges::sort(loaded_classes, [&class_depth](Class const * c1, Class const * c2)
 		{
 			return (class_depth[c1] < class_depth[c2]);
 		});
 
 		// Step 5: now that we are sorted by depth, we can compute create delegate (create delegate of one Class depends on this parent (lower depth))
-		for (Class * cls : classes)
+		for (Class * cls : loaded_classes)
 			if (!DoDeclareSpecialClassStep3(manager, cls))
 				DoInvalidateSpecialClass(manager, cls);
 
@@ -139,14 +139,13 @@ namespace chaos
 		assert(!StringTools::IsEmpty(class_name));
 		assert(manager->FindClass(class_name.c_str()) == nullptr);
 
-		Class* result = new Class;
-		if (result != nullptr)
+		if (Class* result = new Class)
 		{
-			auto& classes = manager->classes;
 			result->name = std::move(class_name);
 			result->json_data = json;
 			result->declared = true;
-			classes.push_back(result);
+			result->manager = manager;
+			manager->classes.push_back(result);
 
 			if (!StringTools::IsEmpty(short_name))
 				result->SetShortName(std::move(short_name));

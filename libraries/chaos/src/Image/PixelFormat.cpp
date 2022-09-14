@@ -41,7 +41,7 @@ namespace chaos
 			if (component_type == PixelComponentType::DEPTH_STENCIL)
 				return sizeof(PixelDepthStencil);
 		}
-		return 0;	
+		return 0;
 	}
 
 	bool PixelFormat::IsValid() const
@@ -67,12 +67,7 @@ namespace chaos
 
 	bool PixelFormat::operator == (PixelFormat const & other) const
 	{
-		return (component_type == other.component_type) && (component_count == other.component_count);	
-	}
-
-	bool PixelFormat::operator != (PixelFormat const & other) const
-	{
-		return !operator == (other);
+		return (component_type == other.component_type) && (component_count == other.component_count);
 	}
 
 	bool LoadFromJSON(nlohmann::json const& json, PixelFormat& dst)

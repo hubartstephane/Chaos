@@ -130,11 +130,6 @@ namespace chaos
         {
             return (position == src.position);
         }
-        /** comparaison */
-        bool operator != (RawDataBufferIteratorBase<TYPE, DIRECTION> const& src) const
-        {
-            return (position != src.position);
-        }
 
     protected:
 

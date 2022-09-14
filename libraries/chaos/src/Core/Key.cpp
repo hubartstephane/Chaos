@@ -159,7 +159,7 @@ std::make_pair(GamepadButton::LEFT_TRIGGER, "GAMEPAD_LEFT_TRIGGER"),
 std::make_pair(GamepadButton::RIGHT_TRIGGER, "GAMEPAD_RIGHT_TRIGGER")
 	};
 #undef CHAOS_KEYBOARD_DEF
-	
+
 	Key::Key(char const* name) :
 		type(KeyType::UNKNOWN),
 		gamepad_button(GamepadButton::UNKNOWN) // due to union aliasing, this works fine
@@ -174,8 +174,8 @@ std::make_pair(GamepadButton::RIGHT_TRIGGER, "GAMEPAD_RIGHT_TRIGGER")
 			{
 				*this = entry.first;
 				break;
-			}				
-		}			
+			}
+		}
 	}
 
 	Key::Key() :
@@ -219,11 +219,6 @@ std::make_pair(GamepadButton::RIGHT_TRIGGER, "GAMEPAD_RIGHT_TRIGGER")
 		return false;
 	}
 
-	bool Key::operator != (Key const& src) const
-	{
-		return !operator == (src);
-	}
-
 	char const* Key::GetName() const
 	{
 		for (auto const& entry : key_map)
@@ -231,19 +226,19 @@ std::make_pair(GamepadButton::RIGHT_TRIGGER, "GAMEPAD_RIGHT_TRIGGER")
 				return entry.second;
 		return nullptr;
 	}
-	
+
 	bool Key::IsValid() const
 	{
 		if (type == KeyType::UNKNOWN)
 			return false;
-		if (keyboard_button == KeyboardButton::UNKNOWN) // this works for all types due to union aliasing 
+		if (keyboard_button == KeyboardButton::UNKNOWN) // this works for all types due to union aliasing
 			return false;
 		return true;
 	}
 
 	KeyType Key::GetType() const
 	{
-		if (keyboard_button == KeyboardButton::UNKNOWN) // this works for all types due to union aliasing 
+		if (keyboard_button == KeyboardButton::UNKNOWN) // this works for all types due to union aliasing
 			return KeyType::UNKNOWN;
 		return type;
 	}
@@ -273,7 +268,7 @@ std::make_pair(GamepadButton::RIGHT_TRIGGER, "GAMEPAD_RIGHT_TRIGGER")
 	{
 		if (type == KeyType::UNKNOWN)
 			return -1;
-		return int(keyboard_button); // this works for all types due to union aliasing  
+		return int(keyboard_button); // this works for all types due to union aliasing
 	}
 
 }; // namespace chaos

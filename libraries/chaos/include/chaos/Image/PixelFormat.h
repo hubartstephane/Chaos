@@ -51,8 +51,6 @@ namespace chaos
 
 		/** returns true whether the pixel format are same */
 		bool operator == (PixelFormat const& other) const;
-		/** returns true whether the pixel format are different */
-		bool operator != (PixelFormat const& other) const;
 
 		/** a static instance of all pixel formats */
 		static PixelFormat const Gray;

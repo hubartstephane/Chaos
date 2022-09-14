@@ -289,8 +289,6 @@ namespace chaos
 
 		/** comparaison operator */
 		bool operator == (Key const& src) const;
-		/** comparaison operator */
-		bool operator != (Key const& src) const;
 
 		/** get the keyboard value for the key (UNKNOWN if it is not a keyboard key) */
 		KeyboardButton GetKeyboardButton() const;

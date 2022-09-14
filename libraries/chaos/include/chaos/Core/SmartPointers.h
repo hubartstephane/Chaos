@@ -322,21 +322,9 @@ namespace chaos
 	}
 
 	template<typename T, typename POLICY, typename U>
-	/*CHAOS_API*/ bool operator != (SmartPointerBase<T, POLICY> const& src1, U* src2)
-	{
-		return (src1.get() != src2);
-	}
-
-	template<typename T, typename POLICY, typename U>
 	/*CHAOS_API*/ bool operator == (U* src1, SmartPointerBase<T, POLICY> const& src2)
 	{
 		return (src1 == src2.get());
-	}
-
-	template<typename T, typename POLICY, typename U>
-	/*CHAOS_API*/ bool operator != (U* src1, SmartPointerBase<T, POLICY> const& src2)
-	{
-		return (src1 != src2.get());
 	}
 
 	/**
@@ -350,21 +338,9 @@ namespace chaos
 	}
 
 	template<typename T, typename POLICY>
-	/*CHAOS_API*/ bool operator != (SmartPointerBase<T, POLICY> const& src1, nullptr_t src2)
-	{
-		return (src1.get() != src2);
-	}
-
-	template<typename T, typename POLICY>
 	/*CHAOS_API*/ bool operator == (nullptr_t src1, SmartPointerBase<T, POLICY> const& src2)
 	{
 		return (src1 == src2.get());
-	}
-
-	template<typename T, typename POLICY>
-	/*CHAOS_API*/ bool operator != (nullptr_t src1, SmartPointerBase<T, POLICY> const& src2)
-	{
-		return (src1 != src2.get());
 	}
 
 	/**
@@ -375,12 +351,6 @@ namespace chaos
 	/*CHAOS_API*/ bool operator == (SmartPointerBase<T, POLICY> const& src1, SmartPointerBase<U, POLICY2> const& src2)
 	{
 		return (src1.get() == src2.get());
-	}
-
-	template<typename T, typename POLICY, typename U, typename POLICY2>
-	/*CHAOS_API*/ bool operator != (SmartPointerBase<T, POLICY> const& src1, SmartPointerBase<U, POLICY2> const& src2)
-	{
-		return (src1.get() != src2.get());
 	}
 
 	/**

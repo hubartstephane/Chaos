@@ -47,8 +47,6 @@ namespace chaos
 		T const& operator * () const { return *ptr; }
 		/** checking whether this is valid */
 		bool operator == (nullptr_t) const { return (ptr == nullptr); }
-		/** checking whether this is valid */
-		bool operator != (nullptr_t) const { return (ptr != nullptr); }
 		/** bool operator (to be used in if statement */
 		operator bool() const { return (ptr != nullptr); }
 
@@ -99,8 +97,6 @@ namespace chaos
 		T& operator * () const { return *ptr; }
 		/** checking whether this is valid */
 		bool operator == (nullptr_t) const { return (ptr == nullptr); }
-		/** checking whether this is valid */
-		bool operator != (nullptr_t) const { return (ptr != nullptr); }
 		/** bool operator (to be used in if statement */
 		operator bool() const { return (ptr != nullptr); }
 

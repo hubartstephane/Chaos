@@ -136,30 +136,23 @@ namespace chaos
 	*/
 
 	template<typename T>
-	class /*CHAOS_API*/ ReferencedObjectDataWrapper : public DisableReferenceCount<Object>
+	class /*CHAOS_API*/ ReferencedObjectDataWrapper : public Object
 	{
 		using type = T;
 
 	public:
 
-		/** copy constructor */
-		ReferencedObjectDataWrapper(ReferencedObjectDataWrapper const & src) : data(src.data){}
-
 		/** constructor */
 		template<typename ...PARAMS>
-		ReferencedObjectDataWrapper(PARAMS... params) : data(params...){}
+		ReferencedObjectDataWrapper(PARAMS && ...params) : data(std::forward<PARAMS>(params)...)
+		{
+		}
 
 	public:
 
 		/** the wrapped data */
 		T data;
 	};
-
-	template<typename T, typename ...PARAMS>
-	/*CHAOS_API*/ auto MakeReferencedObjectWrapper(PARAMS... params)
-	{
-		return ReferencedObjectDataWrapper<T>(params...);
-	}
 
 }; // namespace chaos
 

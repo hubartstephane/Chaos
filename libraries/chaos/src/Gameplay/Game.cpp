@@ -1144,7 +1144,7 @@ namespace chaos
 
 	bool Game::RequireStartGame(PhysicalGamepad * physical_gamepad)
 	{
-		PhysicalGamepadWrapper game_pad_wrapper = PhysicalGamepadWrapper(physical_gamepad);
+		DisableReferenceCount<PhysicalGamepadWrapper> game_pad_wrapper = DisableReferenceCount<PhysicalGamepadWrapper>(physical_gamepad);
 
 		if (game_sm_instance->SendEvent(GameStateMachineKeys::EVENT_START_GAME, &game_pad_wrapper))
 			return true;

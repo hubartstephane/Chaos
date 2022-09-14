@@ -31,20 +31,20 @@ namespace chaos
 
 		/** output a message */
 		template<typename ...PARAMS>
-		static void Message(PARAMS... params) { Output(LogType::Message, true, params...); }
+		static void Message(PARAMS && ...params) { Output(LogType::Message, true, std::forward<PARAMS>(params)...); }
 		/** output a warning */
 		template<typename ...PARAMS>
-		static void Warning(PARAMS... params) { Output(LogType::Warning, true, params...); }
+		static void Warning(PARAMS && ...params) { Output(LogType::Warning, true, std::forward<PARAMS>(params)...); }
 		/** output an error */
 		template<typename ...PARAMS>
-		static void Error(PARAMS... params) { Output(LogType::Error, true, params...); }
+		static void Error(PARAMS && ...params) { Output(LogType::Error, true, std::forward<PARAMS>(params)...); }
 
 		/** generic log function */
 		template<typename ...PARAMS>
-		static void Output(LogType type, bool add_line_jump, PARAMS... params)
+		static void Output(LogType type, bool add_line_jump, PARAMS && ...params)
 		{
 			if (Log* log = GetInstance())
-				log->DoFormatAndOuput(type, add_line_jump, params...);
+				log->DoFormatAndOuput(type, add_line_jump, std::forward<PARAMS>(params)...);
 		}
 
 		/** display a box with a text */

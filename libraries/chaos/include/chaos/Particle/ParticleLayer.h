@@ -64,16 +64,16 @@ namespace chaos
 
 		/** create a particle spawner */
 		template<typename ...PARAMS>
-		ParticleSpawner* CreateParticleSpawner(PARAMS... params)
+		ParticleSpawner* CreateParticleSpawner(PARAMS && ...params)
 		{
-			return new ParticleSpawner(GetTextureAtlas(), this, params...);
+			return new ParticleSpawner(GetTextureAtlas(), this, std::forward<PARAMS>(params)...);
 		}
 
 		/** create a particle spawner */
 		template<typename ...PARAMS>
-		ParticleSpawner GetParticleSpawner(PARAMS... params)
+		ParticleSpawner GetParticleSpawner(PARAMS && ...params)
 		{
-			return ParticleSpawner(GetTextureAtlas(), this, params...);
+			return ParticleSpawner(GetTextureAtlas(), this, std::forward<PARAMS>(params)...);
 		}
 
 		/** get the number of allocations */

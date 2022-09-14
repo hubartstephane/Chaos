@@ -38,9 +38,9 @@ namespace chaos
 	};
 
 	template<typename GAME_TYPE, typename ...PARAMS>
-	/*CHAOS_API*/ bool RunGame(int argc, char** argv, char** env, PARAMS... params)
+	/*CHAOS_API*/ bool RunGame(int argc, char** argv, char** env, PARAMS && ...params)
 	{
-		return RunApplication<GameApplication>(argc, argv, env, GAME_TYPE::GetStaticClass(), GameWindow::GetStaticClass(), params...);
+		return RunApplication<GameApplication>(argc, argv, env, GAME_TYPE::GetStaticClass(), GameWindow::GetStaticClass(), std::forward<PARAMS>(params)...);
 	}
 
 #endif

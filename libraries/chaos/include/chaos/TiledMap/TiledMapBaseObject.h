@@ -125,9 +125,9 @@ namespace chaos
 				for (; e != nullptr; e = e->NextSiblingElement(element_name))
 				{
 					if constexpr (is_shared_ptr_v<T>)
-						DoLoadObjectAndInsertInList<std::remove_reference_t<decltype(*result[0].get())>>(e, result, params...); // decltype returns a REFERENCE !! this must be removed from function template argument
+						DoLoadObjectAndInsertInList<std::remove_reference_t<decltype(*result[0].get())>>(e, result, std::forward<PARAMS>(params)...); // decltype returns a REFERENCE !! this must be removed from function template argument
 					else
-						DoLoadObjectAndInsertInList<T>(e, result, params...);
+						DoLoadObjectAndInsertInList<T>(e, result, std::forward<PARAMS>(params)...);
 				}
 				return true;
 			}
@@ -147,7 +147,7 @@ namespace chaos
 			template<typename T, typename U, typename ...PARAMS>
 			static T* DoLoadObjectAndInsertInList(tinyxml2::XMLElement const* element, std::vector<shared_ptr<U>>& result_vector, PARAMS...params)
 			{
-				T * result = new T(params...);
+				T * result = new T(std::forward<PARAMS>(params)...);
 				if (result == nullptr)
 					return nullptr;
 				if (!result->DoLoad(element))

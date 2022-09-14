@@ -152,20 +152,20 @@ namespace chaos
 
 		/** create a particle spawner */
 		template<typename ...PARAMS>
-		ParticleSpawner* CreateParticleSpawner(PARAMS... params)
+		ParticleSpawner* CreateParticleSpawner(PARAMS && ...params)
 		{
 			if (particle_manager == nullptr)
 				return nullptr;
-			return particle_manager->CreateParticleSpawner(params...);
+			return particle_manager->CreateParticleSpawner(std::forward<PARAMS>(params)...);
 		}
 
 		/** get particle spawner */
 		template<typename ...PARAMS>
-		ParticleSpawner GetParticleSpawner(PARAMS... params)
+		ParticleSpawner GetParticleSpawner(PARAMS && ...params)
 		{
 			if (particle_manager == nullptr)
 				return {};
-			return particle_manager->GetParticleSpawner(params...);
+			return particle_manager->GetParticleSpawner(std::forward<PARAMS>(params)...);
 		}
 
 	protected:

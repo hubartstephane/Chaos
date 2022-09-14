@@ -11,18 +11,18 @@ void Combine(FUNC func, CONTAINER container)
 
 
 template<size_t CONTAINER_INDEX, typename FUNC, typename ...CONTAINERS, typename ...VALUES>
-auto constexpr CombineHelper(FUNC func, std::tuple<CONTAINERS & ...>& containers, VALUES & ... values)
+auto constexpr CombineHelper(FUNC func, std::tuple<CONTAINERS & ...>& containers, VALUES & ... params)
 {
 	if constexpr (CONTAINER_INDEX < sizeof...(CONTAINERS))
 	{
 		for (auto& value : std::get<CONTAINER_INDEX>(containers))
 		{
-			CombineHelper<CONTAINER_INDEX + 1>(func, containers, values..., value);
+			CombineHelper<CONTAINER_INDEX + 1>(func, containers, params..., value);
 		}
 	}
 	else
 	{
-		func(values...);
+		func(params...);
 	}
 }
 
@@ -48,19 +48,19 @@ bool Stop(bool result)
 }
 
 template<int COUNT, typename FUNC, typename IT, typename ...VALUES>
-auto constexpr AllCombinaisonHelper(FUNC func, IT it, IT end, VALUES & ...values)
+auto constexpr AllCombinaisonHelper(FUNC func, IT it, IT end, VALUES & ...params)
 {
 	if constexpr (COUNT > sizeof...(VALUES))
 	{
 		while (it != end)
 		{
 			auto tmp = it;
-			AllCombinaisonHelper<COUNT>(func, ++it, end, values..., *tmp);
+			AllCombinaisonHelper<COUNT>(func, ++it, end, params..., *tmp);
 		}
 	}
 	else
 	{
-		func(values...);
+		func(params...);
 	}
 }
 
@@ -287,7 +287,7 @@ int main(int argc, char** argv, char** env)
 	{
 
 		// v.validate(); // on devrait pouvoir compiler avec cette ligne decommente
-						 // car on a 
+						 // car on a
 						 // m == false     +    constexpr
 						 // ce code devrait etre elimine
 	}

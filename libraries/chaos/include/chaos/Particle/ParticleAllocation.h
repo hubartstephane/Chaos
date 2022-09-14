@@ -355,7 +355,7 @@ namespace chaos
 		}
 
 		template<typename ...PARAMS>
-		size_t DoUpdateParticlesLoop(float delta_time, layer_trait_type const* layer_trait, ParticleAccessor<particle_type> particle_accessor, PARAMS... params)
+		size_t DoUpdateParticlesLoop(float delta_time, layer_trait_type const* layer_trait, ParticleAccessor<particle_type> particle_accessor, PARAMS && ...params)
 		{
 			using Flags = UpdateParticle_ImplementationFlags;
 
@@ -375,11 +375,11 @@ namespace chaos
 
 				bool destroy_particle = false;
 				if constexpr (trait_implementation != 0)
-					destroy_particle = layer_trait->UpdateParticle(delta_time, particle, params...);
+					destroy_particle = layer_trait->UpdateParticle(delta_time, particle, std::forward<PARAMS>(params)...);
 				else if constexpr (particle_implementation != 0)
-					destroy_particle = particle.UpdateParticle(delta_time, params...);
+					destroy_particle = particle.UpdateParticle(delta_time, std::forward<PARAMS>(params)...);
 				else if constexpr (default_implementation != 0)
-					destroy_particle = UpdateParticle(delta_time, particle, params...);
+					destroy_particle = UpdateParticle(delta_time, particle, std::forward<PARAMS>(params)...);
 
 				if (!destroy_particle)
 				{
@@ -392,30 +392,30 @@ namespace chaos
 		}
 
         template<typename ...PARAMS>
-		void DoParticlesToPrimitivesLoop_LayerTraitImplementation(layer_trait_type const * layer_trait, PrimitiveOutput<vertex_type>& output, PARAMS... params) const
+		void DoParticlesToPrimitivesLoop_LayerTraitImplementation(layer_trait_type const * layer_trait, PrimitiveOutput<vertex_type>& output, PARAMS && ...params) const
         {
             ParticleConstAccessor<particle_type> particle_accessor = GetParticleAccessor();
 
 			for (particle_type const & particle : particle_accessor)
-				layer_trait->ParticleToPrimitives(particle, output, params...);
+				layer_trait->ParticleToPrimitives(particle, output, std::forward<PARAMS>(params)...);
         }
 
 		template<typename ...PARAMS>
-		void DoParticlesToPrimitivesLoop_ParticleImplementation(PrimitiveOutput<vertex_type>& output, PARAMS... params) const
+		void DoParticlesToPrimitivesLoop_ParticleImplementation(PrimitiveOutput<vertex_type>& output, PARAMS && ...params) const
 		{
 			ParticleConstAccessor<particle_type> particle_accessor = GetParticleAccessor();
 
 			for (particle_type const& particle : particle_accessor)
-				particle.ParticleToPrimitives(output, params...);
+				particle.ParticleToPrimitives(output, std::forward<PARAMS>(params)...);
 		}
 
 		template<typename ...PARAMS>
-		void DoParticlesToPrimitivesLoop_DefaultImplementation(PrimitiveOutput<vertex_type>& output, PARAMS... params) const
+		void DoParticlesToPrimitivesLoop_DefaultImplementation(PrimitiveOutput<vertex_type>& output, PARAMS && ...params) const
 		{
 			ParticleConstAccessor<particle_type> particle_accessor = GetParticleAccessor();
 
 			for (particle_type const& particle : particle_accessor)
-				ParticleToPrimitives(particle, output, params...);
+				ParticleToPrimitives(particle, output, std::forward<PARAMS>(params)...);
 		}
 
 	protected:

@@ -108,19 +108,19 @@ namespace chaos
 
 		/** create a particle spawner */
 		template<typename ...PARAMS>
-		ParticleSpawner* CreateParticleSpawner(PARAMS... params)
+		ParticleSpawner* CreateParticleSpawner(PARAMS && ...params)
 		{
 			if (!CreateParticleLayer())
 				return nullptr;
-			return particle_layer->CreateParticleSpawner(params...);
+			return particle_layer->CreateParticleSpawner(std::forward<PARAMS>(params)...);
 		}
 
 		template<typename ...PARAMS>
-		ParticleSpawner GetParticleSpawner(PARAMS... params)
+		ParticleSpawner GetParticleSpawner(PARAMS && ...params)
 		{
 			if (!CreateParticleLayer())
 				return ParticleSpawner(nullptr);
-			return particle_layer->GetParticleSpawner(params...);
+			return particle_layer->GetParticleSpawner(std::forward<PARAMS>(params)...);
 		}
 
 		/** create a particle allocation for the layer */

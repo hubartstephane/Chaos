@@ -92,7 +92,7 @@ auto constexpr has_function_##function_name##_v = has_function_##function_name<T
 namespace details\
 {\
 	template<typename T, typename ...PARAMS>\
-	auto constexpr check_method_##funcname##_helper(T & t, PARAMS... params) -> decltype(t.funcname(params...)) *;\
+	auto constexpr check_method_##funcname##_helper(T & t, PARAMS && ...params) -> decltype(t.funcname(std::forward<PARAMS>(params)...)) *;\
 	char constexpr check_method_##funcname##_helper(...);\
 }\
 template<typename T, typename ...PARAMS>\
@@ -151,7 +151,7 @@ using typeof_method_##funcname = decltype(meta::FakeInstance<T>().funcname(meta:
 namespace details\
 {\
 	template<typename T, typename ...PARAMS>\
-	auto constexpr check_function_##funcname##_helper(T t, PARAMS... params) -> decltype(funcname(params...)) *;\
+	auto constexpr check_function_##funcname##_helper(T t, PARAMS && ...params) -> decltype(funcname(std::forward<PARAMS>(params)...)) *;\
 	char constexpr check_function_##funcname##_helper(...);\
 	template<typename ...PARAMS>\
 	struct check_function_##funcname##_type {using type = decltype(funcname(meta::FakeInstance<PARAMS>()...));};\

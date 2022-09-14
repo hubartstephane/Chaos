@@ -27,7 +27,7 @@ namespace chaos
 
 		/** templated method to add a layer and set some values */
 		template<typename LAYER_TRAIT, typename ...PARAMS>
-		ParticleLayer<LAYER_TRAIT>* AddLayer(int render_order, ObjectRequest layer_id, ObjectRequest material_request, PARAMS... params)
+		ParticleLayer<LAYER_TRAIT>* AddLayer(int render_order, ObjectRequest layer_id, ObjectRequest material_request, PARAMS && ...params)
 		{
 			// find the optional GPURenderMaterial
 			GPURenderMaterial * render_material = nullptr;
@@ -41,14 +41,14 @@ namespace chaos
 					return nullptr;
 			}
 			// create the layer
-			return AddLayer<LAYER_TRAIT>(render_order, layer_id, render_material, params...);
+			return AddLayer<LAYER_TRAIT>(render_order, layer_id, render_material, std::forward<PARAMS>(params)...);
 		}
 
 		/** templated method to add a layer and set some values */
 		template<typename LAYER_TRAIT, typename ...PARAMS>
-		ParticleLayer<LAYER_TRAIT> * AddLayer(int render_order, ObjectRequest layer_id, GPURenderMaterial * render_material, PARAMS... params)
+		ParticleLayer<LAYER_TRAIT> * AddLayer(int render_order, ObjectRequest layer_id, GPURenderMaterial * render_material, PARAMS && ...params)
 		{
-			ParticleLayer<LAYER_TRAIT> * result = new ParticleLayer<LAYER_TRAIT>(params...);
+			ParticleLayer<LAYER_TRAIT> * result = new ParticleLayer<LAYER_TRAIT>(std::forward<PARAMS>(params)...);
 			if (result == nullptr)
 				return nullptr;
 			result->SetRenderMaterial(render_material);
@@ -58,21 +58,21 @@ namespace chaos
 
         /** create a particle spawner */
         template<typename ...PARAMS>
-        ParticleSpawner* CreateParticleSpawner(ObjectRequest layer_name, PARAMS... params)
+        ParticleSpawner* CreateParticleSpawner(ObjectRequest layer_name, PARAMS && ...params)
         {
             ParticleLayerBase* layer = FindLayer(layer_name);
             if (layer == nullptr)
                 return nullptr;
-            return layer->CreateParticleSpawner(params...);
+            return layer->CreateParticleSpawner(std::forward<PARAMS>(params)...);
         }
 
         template<typename ...PARAMS>
-        ParticleSpawner GetParticleSpawner(ObjectRequest layer_name, PARAMS... params)
+        ParticleSpawner GetParticleSpawner(ObjectRequest layer_name, PARAMS && ...params)
         {
             ParticleLayerBase* layer = FindLayer(layer_name);
             if (layer == nullptr)
 				return {};
-            return layer->GetParticleSpawner(params...);
+            return layer->GetParticleSpawner(std::forward<PARAMS>(params)...);
         }
 
 		/** remove a layer from the manager */

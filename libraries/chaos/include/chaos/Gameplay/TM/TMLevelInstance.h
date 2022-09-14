@@ -87,21 +87,21 @@ namespace chaos
 
 		/** create a particle spawner */
 		template<typename ...PARAMS>
-		ParticleSpawner* CreateParticleSpawner(ObjectRequest layer_instance_name, PARAMS... params)
+		ParticleSpawner* CreateParticleSpawner(ObjectRequest layer_instance_name, PARAMS && ...params)
 		{
 			TMLayerInstance* layer_instance = FindLayerInstance(layer_instance_name, true);
 			if (layer_instance == nullptr)
 				return nullptr;
-			return layer_instance->CreateParticleSpawner(params...);
+			return layer_instance->CreateParticleSpawner(std::forward<PARAMS>(params)...);
 		}
 
 		template<typename ...PARAMS>
-		ParticleSpawner GetParticleSpawner(ObjectRequest layer_instance_name, PARAMS... params)
+		ParticleSpawner GetParticleSpawner(ObjectRequest layer_instance_name, PARAMS && ...params)
 		{
 			TMLayerInstance* layer_instance = FindLayerInstance(layer_instance_name, true);
 			if (layer_instance == nullptr)
 				return {};
-			return layer_instance->GetParticleSpawner(params...);
+			return layer_instance->GetParticleSpawner(std::forward<PARAMS>(params)...);
 		}
 
 		/** get the bounding box for the level (in worls system obviously) */

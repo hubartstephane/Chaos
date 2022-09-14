@@ -241,14 +241,14 @@ namespace chaos
 
 			/** get all entries from the root folder */
 			template<typename T, typename ...PARAMS>
-			void CollectEntries(T& result, bool recursive, PARAMS... params)
+			void CollectEntries(T& result, bool recursive, PARAMS && ...params)
 			{
-				DoCollectEntries(result, params...);
+				DoCollectEntries(result, std::forward<PARAMS>(params)...);
 				if (recursive)
 				{
 					size_t folder_count = folders.size();
 					for (size_t i = 0; i < folder_count; ++i)
-						folders[i]->CollectEntries(result, recursive, params...);
+						folders[i]->CollectEntries(result, recursive, std::forward<PARAMS>(params)...);
 				}
 			}
 
@@ -367,9 +367,9 @@ namespace chaos
 
 			/** get all entries from the root folder */
 			template<typename T, typename ...PARAMS>
-			void CollectEntries(T& result, bool recursive, PARAMS... params)
+			void CollectEntries(T& result, bool recursive, PARAMS && ...params)
 			{
-				root_folder.CollectEntries(result, recursive, params...);
+				root_folder.CollectEntries(result, recursive, std::forward<PARAMS>(params)...);
 			}
 
 		protected:

@@ -17,19 +17,19 @@ auto constexpr CombineHelper(FUNC func, std::tuple<CONTAINERS & ...>& containers
 	{
 		for (auto& value : std::get<CONTAINER_INDEX>(containers))
 		{
-			CombineHelper<CONTAINER_INDEX + 1>(func, containers, params..., value);
+			CombineHelper<CONTAINER_INDEX + 1>(func, containers, std::forward<PARAMS>(params)..., value);
 		}
 	}
 	else
 	{
-		func(params...);
+		func(std::forward<PARAMS>(params)...);
 	}
 }
 
 template<typename FUNC, typename ...PARAMS>
-auto constexpr Combine(FUNC func, PARAMS & ... params)
+auto constexpr Combine(FUNC func, PARAMS && ... params)
 {
-	std::tuple<PARAMS & ...> containers = { params... }; // zip all containers into a tuple
+	std::tuple<PARAMS && ...> containers = { std::forward<PARAMS>(params)... }; // zip all containers into a tuple
 	return CombineHelper<0>(func, containers);
 }
 
@@ -55,12 +55,12 @@ auto constexpr AllCombinaisonHelper(FUNC func, IT it, IT end, VALUES & ...params
 		while (it != end)
 		{
 			auto tmp = it;
-			AllCombinaisonHelper<COUNT>(func, ++it, end, params..., *tmp);
+			AllCombinaisonHelper<COUNT>(func, ++it, end, std::forward<PARAMS>(params)..., *tmp);
 		}
 	}
 	else
 	{
-		func(params...);
+		func(std::forward<PARAMS>(params)...);
 	}
 }
 

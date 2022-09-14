@@ -9,10 +9,18 @@ int main(int argc, char** argv, char** env)
 {
 	chaos::ApplicationArgumentManager::GetInstance()->ParseArguments(argc, argv);
 
-	auto  b = Arguments::mybool.Get();
-	auto  i = Arguments::myint.Get();
-	auto  s = Arguments::mystring.Get();
-	auto vi = Arguments::myvectorint.Get();
+	auto  b = mybool.Get();
+	auto  i = myint.Get();
+	auto  s = mystring.Get();
+	auto vi = myvectorint.Get();
+
+
+#if 0
+	chaos::Object o1, o2;
+	o1.AddReference();
+
+	o1 = o2;
+#endif
 
 
 	return 0;

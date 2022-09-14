@@ -377,9 +377,9 @@ namespace chaos
 				if constexpr (trait_implementation != 0)
 					destroy_particle = layer_trait->UpdateParticle(delta_time, particle, params...);
 				else if constexpr (particle_implementation != 0)
-					destroy_particle = particle.UpdateParticle(delta_time, params ...);
+					destroy_particle = particle.UpdateParticle(delta_time, params...);
 				else if constexpr (default_implementation != 0)
-					destroy_particle = UpdateParticle(delta_time, particle, params ...);
+					destroy_particle = UpdateParticle(delta_time, particle, params...);
 
 				if (!destroy_particle)
 				{

@@ -1,76 +1,5 @@
 #include "chaos/Chaos.h"
 
-template<typename FUNC, typename CONTAINER>
-void Combine(FUNC func, CONTAINER container)
-{
-	for (auto& value : container)
-		func(value);
-}
-
-
-
-
-template<size_t CONTAINER_INDEX, typename FUNC, typename ...CONTAINERS, typename ...VALUES>
-auto constexpr CombineHelper(FUNC func, std::tuple<CONTAINERS & ...>& containers, VALUES & ... params)
-{
-	if constexpr (CONTAINER_INDEX < sizeof...(CONTAINERS))
-	{
-		for (auto& value : std::get<CONTAINER_INDEX>(containers))
-		{
-			CombineHelper<CONTAINER_INDEX + 1>(func, containers, std::forward<PARAMS>(params)..., value);
-		}
-	}
-	else
-	{
-		func(std::forward<PARAMS>(params)...);
-	}
-}
-
-template<typename FUNC, typename ...PARAMS>
-auto constexpr Combine(FUNC func, PARAMS && ... params)
-{
-	std::tuple<PARAMS && ...> containers = { std::forward<PARAMS>(params)... }; // zip all containers into a tuple
-	return CombineHelper<0>(func, containers);
-}
-
-// -------------------------------------------------------
-
-bool Stop()
-{
-	return false;
-
-}
-
-bool Stop(bool result)
-{
-	return result;
-
-}
-
-template<int COUNT, typename FUNC, typename IT, typename ...VALUES>
-auto constexpr AllCombinaisonHelper(FUNC func, IT it, IT end, VALUES & ...params)
-{
-	if constexpr (COUNT > sizeof...(VALUES))
-	{
-		while (it != end)
-		{
-			auto tmp = it;
-			AllCombinaisonHelper<COUNT>(func, ++it, end, std::forward<PARAMS>(params)..., *tmp);
-		}
-	}
-	else
-	{
-		func(std::forward<PARAMS>(params)...);
-	}
-}
-
-
-template<int COUNT, typename FUNC, typename CONTAINER>
-auto constexpr AllCombinaison(FUNC func, CONTAINER& container)
-{
-	return AllCombinaisonHelper<COUNT>(func, container.begin(), container.end());
-}
-
 template<typename T>
 concept is_int = requires(T t)
 {
@@ -315,24 +244,9 @@ int main(int argc, char** argv, char** env)
 
 
 	std::vector<int> v1 = { 1, 2, 3, 4, 5, 6 };
-#if 1
-	AllCombinaison<3>([](int a, int b, int c)
-		{
-			a = a;
-
-
-		}, v1);
-#endif
 
 	std::vector<int> v2 = { 10, 20, 30 };
 	std::vector<int> v3 = { 100, 200, 300 };
-
-	Combine([](auto a, auto b, auto c)
-		{
-			auto sum = a + b + c;
-			sum = sum;
-
-		}, v1, v2, v3);
 
 	return 0;
 }

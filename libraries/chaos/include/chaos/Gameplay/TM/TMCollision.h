@@ -122,12 +122,6 @@ namespace chaos
 			return false;
 		}
 
-		/** comparaison operator */
-		friend /*CHAOS_API*/ bool operator != (TMTileCollisionIteratorBase const& src1, TMTileCollisionIteratorBase const& src2)
-		{
-			return !(src1 == src2);
-		}
-
 		/** indirection method */
 		collision_info const& operator *() const
 		{
@@ -286,12 +280,6 @@ namespace chaos
 			if (src1.object_index != src2.object_index)
 				return false;
 			return false;
-		}
-
-		/** comparaison operator */
-		friend /*CHAOS_API*/ bool operator != (TMObjectCollisionIteratorBase const& src1, TMObjectCollisionIteratorBase const& src2)
-		{
-			return !(src1 == src2);
 		}
 
 		/** indirection method */

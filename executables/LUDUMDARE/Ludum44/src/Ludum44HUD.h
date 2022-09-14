@@ -43,10 +43,6 @@ public:
 	{
 		return (src1.health == src2.health) && (src1.max_health == src2.max_health);
 	}
-	friend bool operator != (GameHUDHealthInfo const& src1, GameHUDHealthInfo const& src2)
-	{
-		return !(src1 == src2);
-	}
 
 public:
 

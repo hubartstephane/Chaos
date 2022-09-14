@@ -49,12 +49,6 @@ namespace chaos
 			return false;
 		}
 
-		/** comparaison operator */
-		friend CHAOS_API bool operator != (TMLayerInstanceIteratorBase const& src1, TMLayerInstanceIteratorBase const& src2)
-		{
-			return !(src1 == src2);
-		}
-
 		/** returns whether the iterator is still valid */
 		operator bool() const
 		{

@@ -41,12 +41,6 @@ namespace chaos
 			return (src1.outer_it == src2.outer_it) && (src1.inner_it == src2.inner_it);
 		}
 
-		/** comparaison operator */
-		friend CHAOS_API bool operator != (NestedIterator const& src1, NestedIterator const& src2)
-		{
-			return !(src1 != src2);
-		}
-
 		/** pre increment iterator */
 		NestedIterator& operator ++()
 		{

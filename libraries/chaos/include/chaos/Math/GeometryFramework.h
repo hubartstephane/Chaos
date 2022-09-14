@@ -265,13 +265,6 @@ namespace chaos
 		return (b1.position == b1.position) && (b1.half_size == b2.half_size);
 	}
 
-	/** difference function for box */
-	template<typename T, int dimension>
-	/*CHAOS_API*/ bool operator != (type_box<T, dimension> const& b1, type_box<T, dimension> const& b2)
-	{
-		return !(b1 == b2);
-	}
-
 	/** intersection of 2 boxes */
 	template<typename T, int dimension>
 	/*CHAOS_API*/ type_box<T, dimension> operator & (type_box<T, dimension> const& b1, type_box<T, dimension> const& b2)
@@ -458,17 +451,6 @@ namespace chaos
 		return (b1.position == b1.position) && (b1.half_size == b2.half_size) && (b1.rotator == b2.rotator);
 	}
 
-	/** difference function for obox */
-	template<typename T, int dimension>
-	/*CHAOS_API*/ bool operator != (type_obox<T, dimension> const& b1, type_obox<T, dimension> const& b2)
-	{
-		return !(b1 == b2);
-	}
-
-
-
-
-
 
 	// shu49. Ca vaut le coup de savoir dans quel ordre on genere ces vertex
 
@@ -590,13 +572,6 @@ namespace chaos
 		return false;
 	}
 
-	/** difference test function for triangle */
-	template<typename T, int dimension>
-	/*CHAOS_API*/ bool operator != (type_triangle<T, dimension> const& t1, type_triangle<T, dimension> const& t2)
-	{
-		return !(t1 == t2);
-	}
-
 	/** returns true whether the triangle is empty */
 	template<typename T, int dimension>
 	/*CHAOS_API*/ bool IsGeometryEmpty(type_triangle<T, dimension> const& t)
@@ -624,13 +599,6 @@ namespace chaos
 		return (r1.position == r2.position) && (r1.direction == r2.direction);
 	}
 
-	/** difference function for ray */
-	template<typename T, int dimension>
-	/*CHAOS_API*/ bool operator != (type_ray<T, dimension> const& r1, type_ray<T, dimension> const& r2)
-	{
-		return !(r1 == r2);
-	}
-
 	// ==============================================================================================
 	// sphere/circle functions
 	// ==============================================================================================
@@ -647,13 +615,6 @@ namespace chaos
 	/*CHAOS_API*/ bool operator == (type_sphere<T, dimension> const& c1, type_sphere<T, dimension> const& c2)
 	{
 		return (c1.position == c1.position) && (c1.radius == c2.radius);
-	}
-
-	/** difference function for circle */
-	template<typename T, int dimension>
-	/*CHAOS_API*/ bool operator != (type_sphere<T, dimension> const& c1, type_sphere<T, dimension> const& c2)
-	{
-		return !(c1 == c2);
 	}
 
 	/** returns the perimeter of the circle */

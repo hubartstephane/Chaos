@@ -21,7 +21,7 @@ namespace chaos
 		template<typename PARTICLE_TYPE>
 		bool IsParticleClassCompatible() const
 		{
-			return Class::InheritsFrom(GetParticleClass(), ClassManager::GetDefaultInstance()->FindClass<PARTICLE_TYPE>(), true) == InheritanceType::YES;
+			return Class::InheritsFrom(GetParticleClass(), ClassManager::GetDefaultInstance()->FindCPPClass<PARTICLE_TYPE>(), true) == InheritanceType::YES;
 		}
 
 		/** returns the number of particle count */
@@ -46,7 +46,7 @@ namespace chaos
 		template<typename T>
 		bool IsParticleType() const
 		{
-			return (GetParticleClass() == ClassManager::GetDefaultInstance()->FindClass<T>());
+			return (GetParticleClass() == ClassManager::GetDefaultInstance()->FindCPPClass<T>());
 		}
 
 		/** change the atlas */
@@ -193,7 +193,7 @@ namespace chaos
 		ParticleLayer(layer_trait_type const& in_layer_trait = {}) :
 			DataOwner<layer_trait_type>(in_layer_trait)
 		{
-			assert(ClassManager::GetDefaultInstance()->FindClass<particle_type>() != nullptr); // ensure class is declared
+			assert(ClassManager::GetDefaultInstance()->FindCPPClass<particle_type>() != nullptr); // ensure class is declared
 		}
 
 		/** returns the size in memory of a particle */
@@ -215,7 +215,7 @@ namespace chaos
 			return this->data.dynamic_vertices;
 		}
 		/** override */
-		virtual Class const* GetParticleClass() const override { return ClassManager::GetDefaultInstance()->FindClass<particle_type>(); }
+		virtual Class const* GetParticleClass() const override { return ClassManager::GetDefaultInstance()->FindCPPClass<particle_type>(); }
 		/** override */
 		virtual GPUVertexDeclaration* GetVertexDeclaration() const override
 		{

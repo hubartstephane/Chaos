@@ -16,43 +16,62 @@ namespace chaos
 		return &default_instance;
 	}
 
-	ClassFindResult ClassManager::FindClass(char const* name)
+	Class* ClassManager::CreateClass(std::string name, Class * in_parent_class)
+	{
+		// search in current manager (but not parents) for a class that have same name
+		auto it = std::ranges::find_if(classes, [&name](Class const* cls)
+		{
+			if (StringTools::Stricmp(cls->GetClassName(), name) == 0)
+			{
+				return true;
+			}
+			return false;
+		});
+		// cannot have a class with same name in the same manager (but not in parent manager)
+		if (it != classes.end())
+		{
+			Log::Error("ClassManager::CreateClass(...): class already existing [%s]", name.c_str());
+			return nullptr;
+		}
+		// create the class
+		return new Class(this, std::move(name), in_parent_class);
+	}
+
+	ClassFindResult ClassManager::FindClass(char const* name, bool search_manager_hierarchy)
 	{
 		assert(name != nullptr);
 
 		// early exit
 		if (StringTools::IsEmpty(name))
-			return {nullptr, classes.end(), false};
+			return {nullptr, classes.end(), ClassMatchType::MATCH_NAME};
 
 		// search in manager chain
 		ClassManager* manager = this;
 		while (manager != nullptr)
 		{
-			bool matching_name = false;
-			auto it = std::ranges::find_if(manager->classes, [name, &matching_name](Class const* cls)
+			ClassMatchType match_type = ClassMatchType::MATCH_NAME;
+			auto it = std::ranges::find_if(manager->classes, [name, &match_type](Class const* cls)
 			{
 				if (StringTools::Stricmp(cls->GetClassName(), name) == 0)
 				{
-					matching_name = true;
+					match_type = ClassMatchType::MATCH_NAME;
 					return true;
 				}
 				else if (StringTools::Stricmp(cls->GetShortName(), name) == 0)
 				{
-					matching_name = false;
+					match_type = ClassMatchType::MATCH_SHORTNAME;
 					return true;
 				}
-				else
-				{
-					return false;
-				}
+				return false;
 			});
 			if (it != manager->classes.end())
-				return { this, it, matching_name };
-
+				return { this, it, match_type };
+			if (!search_manager_hierarchy)
+				break;
 			manager = manager->parent_manager.get();
 		}
 		/* no class, no possible alias */
-		return { nullptr, classes.end(), false };
+		return { nullptr, classes.end(), ClassMatchType::MATCH_NAME };
 	}
 
 }; // namespace chaos

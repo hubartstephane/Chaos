@@ -17,6 +17,7 @@ namespace chaos
 		friend class ClassLoader;
 		friend class ClassRegistration;
 		friend class ClassFindResult;
+		friend class Class;
 
 		/** constructor */
 		ClassManager(ClassManager* in_parent_manager = nullptr);
@@ -29,14 +30,17 @@ namespace chaos
 		/** gets the parent manager */
 		ClassManager const * GetParentManager() const { return parent_manager.get(); }
 
+		/** create a class */
+		Class* CreateClass(std::string name, Class *in_parent_class = nullptr);
+
 		/** find a class by name */
-		ClassFindResult FindClass(char const* name);
+		ClassFindResult FindClass(char const* name, bool search_manager_hierarchy = true);
 
 		/** find a class by type */
 		template<typename CLASS_TYPE>
-		Class const* FindClass()
+		Class const* FindCPPClass(bool search_manager_hierarchy = true)
 		{
-			if (Class* result = FindOrCreateClassInstance<CLASS_TYPE>())
+			if (Class* result = FindOrCreateCPPClassInstance<CLASS_TYPE>(search_manager_hierarchy))
 				if (result->IsDeclared())
 					return result;
 			return nullptr;
@@ -44,17 +48,17 @@ namespace chaos
 
 		/** declare a class */
 		template<typename CLASS_TYPE, typename PARENT_CLASS_TYPE = EmptyClass>
-		ClassRegistration DeclareClass(std::string name)
+		ClassRegistration DeclareCPPClass(std::string name)
 		{
 			assert((std::is_same_v<PARENT_CLASS_TYPE, EmptyClass> || std::is_base_of_v<PARENT_CLASS_TYPE, CLASS_TYPE>));
 			assert(!StringTools::IsEmpty(name));
 
-			Class* result = FindOrCreateClassInstance<CLASS_TYPE>();
+			Class* result = FindOrCreateCPPClassInstance<CLASS_TYPE>(false);
 			if (result != nullptr)
 			{
-				// already declared, returns (this may happens with multiple .h inclusions)
+				// already declared, returns (this may happen with multiple .h inclusions)
 				if (result->declared)
-					return result;
+					return { result };
 
 				result->name = std::move(name);
 				result->class_size = sizeof(CLASS_TYPE);
@@ -64,20 +68,20 @@ namespace chaos
 				// instance constructible only if derives from Object
 				if constexpr (std::is_base_of_v<Object, CLASS_TYPE>)
 				{
-					result->create_instance_func = []()
+					result->create_instance = []()
 					{
 						return new CLASS_TYPE;
 					};
 
-					result->create_instance_on_stack_func = [](std::function<void(Object*)> func)
+					result->create_instance_on_stack = [](std::function<void(Object*)> const & func)
 					{
 						CLASS_TYPE instance;
 						func(&instance);
 					};
 				}
-				// the parent is accessed, but not necessaraly initialized yet
+				// the parent is accessed, but not necesseraly initialized yet
 				if (!std::is_same_v<PARENT_CLASS_TYPE, EmptyClass>)
-					result->parent = FindOrCreateClassInstance<PARENT_CLASS_TYPE>();
+					result->parent = FindOrCreateCPPClassInstance<PARENT_CLASS_TYPE>(true);
 			}
 			return { result };
 		}
@@ -86,7 +90,7 @@ namespace chaos
 
 		/** return the class of a class with its given info */
 		template<typename CLASS_TYPE>
-		Class* FindOrCreateClassInstance()
+		Class* FindOrCreateCPPClassInstance(bool search_manager_hierarchy)
 		{
 			std::type_info const& info = typeid(CLASS_TYPE);
 
@@ -95,16 +99,19 @@ namespace chaos
 			while (manager != nullptr)
 			{
 				for (Class* cls : manager->classes)
-					if (*cls->info == info)
+					if (cls->info != nullptr && *cls->info == info)
 						return cls;
+				if (!search_manager_hierarchy)
+					break;
 				manager = manager->parent_manager.get();
 			}
 			// register the class
-			Class * result = new Class;
-			result->info = &info;
-			result->manager = this;
-			classes.push_back(result);
-			return result;
+			if (Class* result = new Class(this, std::string()))
+			{
+				result->info = &info;
+				return result;
+			}
+			return nullptr;
 		}
 
 	protected:

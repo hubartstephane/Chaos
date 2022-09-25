@@ -38,9 +38,9 @@ void EnrichLuaState1(chaos::LuaState & L)
 	*/
 
 	/*
-	chaos::DeclareClass<A>(L, "A");
-	chaos::DeclareClass<B, A>(L, "B");
-	chaos::DeclareClass<C, B>(L, "C");
+	chaos::DeclareCPPClass<A>(L, "A");
+	chaos::DeclareCPPClass<B, A>(L, "B");
+	chaos::DeclareCPPClass<C, B>(L, "C");
 
 	A    * a = chaos::GetStackArgument<A>(L, -1);
 	void * v = chaos::GetStackArgument<void>(L, -1);

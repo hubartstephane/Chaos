@@ -3,8 +3,19 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	class ClassFindResult;
+	enum class ClassMatchType;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+	/**
+	 * ClassMatchType: whether the iterator of ClassFindResult has been found with a name or shortname matching
+	 */
+
+	enum class ClassMatchType : int
+	{
+		MATCH_NAME,
+		MATCH_SHORTNAME
+	};
 
 	/**
 	 * ClassFindResult : Intermediate object for class searching.
@@ -28,7 +39,7 @@ namespace chaos
 	protected:
 
 		/** constructor */
-		ClassFindResult(ClassManager* in_class_manager, iterator_type in_iterator, bool in_matching_name);
+		ClassFindResult(ClassManager* in_class_manager, iterator_type in_iterator, ClassMatchType in_match_type);
 
 		/** cache the resolved result */
 		mutable Class* result = nullptr;
@@ -37,7 +48,7 @@ namespace chaos
 		/** the very first name matching the request. we can use it for further research instead to store the name somehow (that would be costly) */
 		mutable iterator_type iterator;
 		/** whether the iterator correspond to a matching name or a matching short name */
-		bool matching_name = true;
+		ClassMatchType match_type = ClassMatchType::MATCH_NAME;
 	};
 
 #endif

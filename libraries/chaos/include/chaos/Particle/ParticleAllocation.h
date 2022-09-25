@@ -67,7 +67,7 @@ namespace chaos
 		template<typename PARTICLE_TYPE>
 		bool IsParticleClassCompatible() const
 		{
-			return Class::InheritsFrom(GetParticleClass(), ClassManager::GetDefaultInstance()->FindClass<PARTICLE_TYPE>(), true) == InheritanceType::YES;
+			return Class::InheritsFrom(GetParticleClass(), ClassManager::GetDefaultInstance()->FindCPPClass<PARTICLE_TYPE>(), true) == InheritanceType::YES;
 		}
 
         /** get an AutoCasting particle accessor */
@@ -172,12 +172,12 @@ namespace chaos
             ParticleAllocationBase(in_layer),
 			DataOwner<allocation_trait_type>(in_allocation_trait)
         {
-			assert(ClassManager::GetDefaultInstance()->FindClass<particle_type>() != nullptr); // ensure class is declared
+			assert(ClassManager::GetDefaultInstance()->FindCPPClass<particle_type>() != nullptr); // ensure class is declared
         }
 		/** override */
 		virtual Class const * GetParticleClass() const override
 		{
-			return ClassManager::GetDefaultInstance()->FindClass<particle_type>();
+			return ClassManager::GetDefaultInstance()->FindCPPClass<particle_type>();
 		}
 
         /** override */

@@ -318,7 +318,7 @@ namespace chaos
 							layer_trait,
 							particle_accessor,
 							layer_trait->BeginUpdateParticles(delta_time, particle_accessor, this->data), // do not use a temp variable, so it can be a left-value reference
-							this->allocation_trait);
+							this->data);
 					}
 					else
 					{

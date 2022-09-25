@@ -46,7 +46,7 @@ ParticleSoulUpdateData ParticleSoulLayerTrait::BeginUpdateParticles(float delta_
 	return result;
 }
 
-bool ParticleSoulLayerTrait::UpdateParticle(float delta_time, ParticleSoul & particle, ParticleSoulUpdateData & update_data) const
+bool ParticleSoulLayerTrait::UpdateParticle(float delta_time, ParticleSoul & particle, ParticleSoulUpdateData const & update_data) const
 {
 	particle.bounding_box.position += delta_time * particle.velocity;
 
@@ -127,7 +127,7 @@ ParticleFireUpdateData ParticleFireLayerTrait::BeginUpdateParticles(float delta_
 	return result;
 }
 
-bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire & particle, ParticleFireUpdateData & update_data) const
+bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire & particle, ParticleFireUpdateData const & update_data) const
 {
 	particle.bounding_box.position += delta_time * particle.velocity;
 

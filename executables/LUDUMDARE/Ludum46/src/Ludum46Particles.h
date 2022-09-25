@@ -54,7 +54,7 @@ public:
 
 	ParticleSoulUpdateData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleSoul>& particle_accessor) const;
 
-	bool UpdateParticle(float delta_time, ParticleSoul & particle, ParticleSoulUpdateData& update_data) const;
+	bool UpdateParticle(float delta_time, ParticleSoul & particle, ParticleSoulUpdateData const& update_data) const;
 
 public:
 
@@ -91,7 +91,7 @@ public:
 
 	ParticleFireUpdateData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleFire>& particle_accessor) const;
 
-	bool UpdateParticle(float delta_time, ParticleFire & particle, ParticleFireUpdateData& update_data) const;
+	bool UpdateParticle(float delta_time, ParticleFire & particle, ParticleFireUpdateData const& update_data) const;
 
 public:
 

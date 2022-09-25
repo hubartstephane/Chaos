@@ -4,64 +4,62 @@
 namespace chaos
 {
 	// an utility function to load a JSON file a find the approriate classname
-	template<typename T, typename FUNC>
-	static T DoLoadClassHelper(FilePathParam const& path, FUNC func)
+	template<typename FUNC>
+	static Class * DoLoadClassHelper(FilePathParam const& path, FUNC func)
 	{
 		nlohmann::json json;
 		if (JSONTools::LoadJSONFile(path, json))
 		{
+			// get or build a class name
 			std::string class_name;
 			if (!JSONTools::GetAttribute(json, "class_name", class_name))
 				class_name = PathTools::PathToName(path.GetResolvedPath());
+			// parent class is MANDATORY for Special objects
+			std::string parent_class_name;
+			if (!JSONTools::GetAttribute(json, "parent_class", parent_class_name))
+			{
+				Log::Error("DoLoadClassHelper : special class [%s] require a parent class", class_name.c_str());
+				return nullptr;
+			}
+			// create the class
 			if (!class_name.empty())
 			{
 				std::string short_name;
 				JSONTools::GetAttribute(json, "short_name", short_name);
-				return func(std::move(class_name), std::move(short_name), json);
+				return func(std::move(class_name), std::move(short_name), std::move(parent_class_name), std::move(json));
 			}
 		}
 		return nullptr;
 	}
 
-	Class const * ClassLoader::LoadClass(ClassManager* manager, FilePathParam const& path)
+	Class * ClassLoader::LoadClass(ClassManager* manager, FilePathParam const& path)
 	{
 		assert(manager != nullptr);
 
-		return DoLoadClassHelper<Class const *>(path, [this, manager](std::string class_name, std::string short_name, nlohmann::json const & json)
+		return DoLoadClassHelper(path, [this, manager](std::string class_name, std::string short_name, std::string parent_class_name, nlohmann::json json)
 		{
-			return DeclareSpecialClass(manager, std::move(class_name), std::move(short_name), json); // a single step operation
+			return DeclareSpecialClass(manager, std::move(class_name), std::move(short_name), parent_class_name, std::move(json)); // a single step operation
 		});
-	}
-
-	static size_t GetClassDepth(Class const* p)
-	{
-		size_t result = 0;
-		for (; p->GetParentClass() != nullptr; p = p->GetParentClass())
-			++result;
-		return result;
 	}
 
 	bool ClassLoader::LoadClassesInDirectory(ClassManager* manager, FilePathParam const& path)
 	{
 		assert(manager != nullptr);
 
-		using class_registration_type = std::pair<Class*, nlohmann::json>;
+		using class_registration_type = std::pair<Class*, std::string>; // <class, parent_class_name>
 
 		std::vector<class_registration_type> loaded_classes;
 
 		// Step 1: load all classes (no full initialization, ignore parent). Register them (without inheritance data in classes list)
 		FileTools::WithDirectoryContent(path, [this, manager, &loaded_classes](boost::filesystem::path const & p)
 		{
-			Class* cls = DoLoadClassHelper<Class *>(p, [this, manager, &loaded_classes] (std::string class_name, std::string short_name, nlohmann::json const& json) -> Class *
+			DoLoadClassHelper(p, [this, manager, &loaded_classes] (std::string class_name, std::string short_name, std::string parent_class_name, nlohmann::json json)
 			{
-				if (Class* result = DoDeclareSpecialClassStep1(manager, std::move(class_name), std::move(short_name), json)) // a 3 steps operation
-				{
-					loaded_classes.push_back({ result, json });
-					return result;
-				}
-				return nullptr;
+				Class* result = DoDeclareSpecialClassCreate(manager, std::move(class_name), std::move(short_name), std::move(json));
+				if (result != nullptr)
+					loaded_classes.push_back({ result, std::move(parent_class_name) });
+				return result;
 			});
-
 			return false; // don't stop
 		});
 
@@ -69,7 +67,7 @@ namespace chaos
 		std::vector<Class*> failing_parent_classes;
 
 		for (class_registration_type & class_registration : loaded_classes)
-			if (!DoDeclareSpecialClassStep2(manager, class_registration.first, class_registration.second))
+			if (!DoDeclareSpecialClassPatchParent(manager, class_registration.first, class_registration.second))
 				failing_parent_classes.push_back(class_registration.first);
 
 		// Step 3: find invalid classes and remove them
@@ -78,16 +76,15 @@ namespace chaos
 			std::vector<Class*> all_failing_classes;
 			all_failing_classes.reserve(loaded_classes.size());
 
-			// Step 3.1: construct a vector that owns all failure (direct or indirect)
-			for (class_registration_type& class_registration : loaded_classes)
+			// Step 3.1: construct a vector that owns all failures (direct or indirect)
+			for (class_registration_type const & class_registration : loaded_classes)
 			{
 				for (Class* failing_cls : failing_parent_classes)
 				{
 					if (class_registration.first->InheritsFrom(failing_cls, true) == InheritanceType::YES) // failing class
 					{
-						Log::Error("Class::LoadClassesInDirectory : special class [%s] as no valid parent.", class_registration.first->GetClassName().c_str());
+						Log::Error("Class::LoadClassesInDirectory : special class [%s] has no valid parent.", class_registration.first->GetClassName().c_str());
 						all_failing_classes.push_back(class_registration.first); // this will push classes that fails for parent as well as their children
-						class_registration.first = nullptr;
 						break;
 					}
 				}
@@ -96,34 +93,16 @@ namespace chaos
 			// Step 3.2: remove all failing class (direct or indirect)
 			for (Class* cls : all_failing_classes)
 				DoInvalidateSpecialClass(manager, cls);
-
-			// Step 3.3: clean the classes array from nullptr
-			auto it = std::remove_if(loaded_classes.begin(), loaded_classes.end(), [](class_registration_type &class_registration)
-			{
-				return (class_registration.first == nullptr);
-			});
-			loaded_classes.erase(it, loaded_classes.end());
 		}
-
-		// Step 4: sort the classes by depth (use a temp depth map)
-		std::map<Class const*, size_t> class_depth;
-		for (class_registration_type & class_registration : loaded_classes)
-			class_depth[class_registration.first] = GetClassDepth(class_registration.first);
-
-		std::sort(loaded_classes.begin(), loaded_classes.end(), [&class_depth](class_registration_type const& r1, class_registration_type const& r2)
-		{
-			return (class_depth[r1.first] < class_depth[r2.first]);
-		});
-
 		return true;
 	}
 
-	Class const* ClassLoader::DeclareSpecialClass(ClassManager* manager, std::string class_name, std::string short_name, nlohmann::json const & json)
+	Class * ClassLoader::DeclareSpecialClass(ClassManager* manager, std::string class_name, std::string short_name, std::string const &parent_class_name, nlohmann::json json)
 	{
-		Class* result = DoDeclareSpecialClassStep1(manager, std::move(class_name), std::move(short_name), json);
+		Class* result = DoDeclareSpecialClassCreate(manager, std::move(class_name), std::move(short_name), std::move(json));
 		if (result != nullptr)
 		{
-			if (!DoDeclareSpecialClassStep2(manager, result, json))
+			if (!DoDeclareSpecialClassPatchParent(manager, result, parent_class_name))
 			{
 				DoInvalidateSpecialClass(manager, result);
 				return nullptr;
@@ -132,7 +111,7 @@ namespace chaos
 		return result;
 	}
 
-	Class * ClassLoader::DoDeclareSpecialClassStep1(ClassManager* manager, std::string class_name, std::string short_name, nlohmann::json const & json)
+	Class * ClassLoader::DoDeclareSpecialClassCreate(ClassManager* manager, std::string class_name, std::string short_name, nlohmann::json json)
 	{
 		// check parameter and not already registered
 		assert(!StringTools::IsEmpty(class_name));
@@ -143,7 +122,7 @@ namespace chaos
 			result->declared = true;
 			if (!StringTools::IsEmpty(short_name))
 				result->SetShortName(std::move(short_name));
-			result->AddObjectInitializationFunction([json](Object * object)
+			result->AddObjectInitializationFunction([json = std::move(json)](Object* object)
 			{
 				if (JSONSerializable* serializable = auto_cast(object))
 					serializable->SerializeFromJSON(json);
@@ -153,20 +132,13 @@ namespace chaos
 		return nullptr;
 	}
 
-	bool ClassLoader::DoDeclareSpecialClassStep2(ClassManager* manager, Class* cls, nlohmann::json const& json)
+	bool ClassLoader::DoDeclareSpecialClassPatchParent(ClassManager* manager, Class* cls, std::string const & parent_class_name)
 	{
-		// parent class is MANDATORY for Special objects
-		std::string parent_class_name;
-		if (!JSONTools::GetAttribute(json, "parent_class", parent_class_name))
-		{
-			Log::Error("Class::DoDeclareSpecialClassStep2 : special class [%s] require a parent class", cls->name.c_str());
-			return false;
-		}
 		// parent class is MANDATORY for Special objects
 		cls->parent = manager->FindClass(parent_class_name.c_str());
 		if (cls->parent == nullptr)
 		{
-			Log::Error("Class::DoDeclareSpecialClassStep2 : special class [%s] has unknown parent class [%s]", cls->name.c_str(), parent_class_name.c_str());
+			Log::Error("Class::DoDeclareSpecialClassPatchParent : special class [%s] has unknown parent class [%s]", cls->name.c_str(), parent_class_name.c_str());
 			return false;
 		}
 		// initialize missing data (size, creation_delegate)

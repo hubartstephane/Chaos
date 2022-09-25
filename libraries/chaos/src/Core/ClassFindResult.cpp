@@ -9,10 +9,10 @@ namespace chaos
 	// ClassFindResult functions
 	// ==========================================================
 
-	ClassFindResult::ClassFindResult(ClassManager* in_class_manager, iterator_type in_iterator, bool in_matching_name):
+	ClassFindResult::ClassFindResult(ClassManager* in_class_manager, iterator_type in_iterator, ClassMatchType in_match_type):
 		class_manager(in_class_manager),
 		iterator(in_iterator),
-		matching_name(in_matching_name)
+		match_type(in_match_type)
 	{
 	}
 
@@ -28,7 +28,7 @@ namespace chaos
 			return result;
 
 		// we know that the iterator points on a valid entry. get the string that made this entry a good one
-		std::string const& searched_name = (matching_name) ?
+		std::string const& searched_name = (match_type == ClassMatchType::MATCH_NAME) ?
 			(*iterator)->GetClassName() :
 			(*iterator)->GetShortName();
 

@@ -4,7 +4,7 @@
  * Macros for declaring classes in object derivated classes
  */
 
-// It's important that last line is:    static inline .... DeclareClass ... (no comma)
+// It's important that last line is:    static inline .... DeclareCPPClass ... (no comma)
 // so that we can use the short class name syntax
 //    CHAOS_DECLARE_OBJECT_CLASS(child_class, parent_class)("short_name");
 //
@@ -79,7 +79,7 @@ namespace chaos
 		template<typename CLASS_TYPE, typename PARENT_CLASS_TYPE = EmptyClass>
 		static ClassRegistration DeclareObjectClass(std::string name)
 		{
-			return chaos::ClassManager::GetDefaultInstance()->DeclareClass<CLASS_TYPE, PARENT_CLASS_TYPE>(std::move(name));
+			return chaos::ClassManager::GetDefaultInstance()->DeclareCPPClass<CLASS_TYPE, PARENT_CLASS_TYPE>(std::move(name));
 		}
 
 		CHAOS_DECLARE_OBJECT_CLASS(Object);

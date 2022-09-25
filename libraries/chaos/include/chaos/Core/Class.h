@@ -12,7 +12,7 @@ namespace chaos
 	 * CHAOS_REGISTER_CLASS : a macro that helps register classes automatically
 	 */
 
-#define CHAOS_REGISTER_CLASS(CLASS, ...) static inline chaos::Class const * CLASS##_class = chaos::ClassManager::GetDefaultInstance()->DeclareClass<CLASS, __VA_ARGS__>(#CLASS)
+#define CHAOS_REGISTER_CLASS(CLASS, ...) static inline chaos::Class const * CLASS##_class = chaos::ClassManager::GetDefaultInstance()->DeclareCPPClass<CLASS, __VA_ARGS__>(#CLASS)
 
 	/**
 	 * InheritanceType : the kind if inheritance that can exist between 2 classes
@@ -35,28 +35,45 @@ namespace chaos
 		friend class ClassFindResult;
 		friend class ClassManager;
 
+	protected:
+
+		/** constructor */
+		Class(ClassManager* in_manager, std::string in_name, Class* in_parent = nullptr);
+
 	public:
+
+		/** the type of the function to allocate an object */
+		using create_instance_function_type = std::function<Object* ()>;
+		/** the type of the function to create an object on the stack an call a function on it */
+		using create_instance_on_stack_function_type = std::function<void(std::function<void(Object*)> const &)>;
+		/** the type of the function to initialize some object */
+		using initialization_function_type = std::function<void(Object*)>;
+
+		/** destructor */
+		virtual ~Class() = default;
 
 		/** method to create an instance of the object */
 		Object* CreateInstance() const;
 		/** create a temporary instance on the stack an call the functor on it */
 		template<typename FUNC>
-		bool CreateInstanceOnStack(FUNC func) const
+		bool CreateInstanceOnStack(FUNC const & func) const
 		{
-			if (!CanCreateInstanceOnStack())
+			if (create_instance_on_stack_function_type const* create_func = GetCreateInstanceOnStackFunc())
+			{
+				create_func([&func](Object * object)
+				{
+					InitializeObjectInstance(this, object);
+					func(auto_cast_checked(object));
+				});
+				return true;
+			}
+			else
 			{
 				Log::Error("Class::CreateInstanceOnStack : the class [%s] cannot be instanciated", name.c_str());
 				return false;
 			}
-			create_instance_on_stack_func([func](Object * object)
-			{
-				func(auto_cast_checked(object));
-			});
-			return true;
 		}
 
-		/** returns whether the class has been registered */
-		bool IsDeclared() const;
 		/** gets the class size */
 		size_t GetClassSize() const { return class_size; }
 		/** gets the parent class */
@@ -66,19 +83,32 @@ namespace chaos
 		/** gets the short name */
 		std::string const& GetShortName() const { return short_name; }
 		/** returns whether we can create instances */
-		bool CanCreateInstance() const { return create_instance_func != nullptr; }
+		bool CanCreateInstance() const;
 		/** returns whether we can create instances */
-		bool CanCreateInstanceOnStack() const { return create_instance_on_stack_func != nullptr; }
+		bool CanCreateInstanceOnStack() const;
+		/** gets the class manager */
+		ClassManager* GetClassManager() const { return manager; } // no need to have a manager const
 
 		/** static inheritance method */
 		static InheritanceType InheritsFrom(Class const* child_class, Class const* parent_class, bool accept_equal = false);
 		/** returns whether the class inherits from parent */
 		InheritanceType InheritsFrom(Class const* parent_class, bool accept_equal = false) const;
 
-	protected:
-
 		/** set the short name */
 		void SetShortName(std::string in_short_name);
+		/** add an extra initialization */
+		void AddObjectInitializationFunction(initialization_function_type func);
+		/** returns whether the class has been registered */
+		bool IsDeclared() const;
+
+	protected:
+
+		/** initialize the object instance */
+		static void InitializeObjectInstance(Class const* cls, Object* object);
+		/** get the create instance function */
+		create_instance_function_type const* GetCreateInstanceFunc() const;
+		/** get the create instance on stack function */
+		create_instance_on_stack_function_type const* GetCreateInstanceOnStackFunc() const;
 
 	protected:
 
@@ -93,15 +123,15 @@ namespace chaos
 		/** whether the class has been fully declared */
 		bool declared = false;
 		/** create an instance of the object delegate */
-		std::function<Object* ()> create_instance_func;
+		create_instance_function_type create_instance;
 		/** delegate to create a temporary instance of the object on the stack and call a functor on it */
-		std::function<void(std::function<void(Object*)>)> create_instance_on_stack_func;
-		/** additionnal initialization for JSONSerializable objects */
-		nlohmann::json json_data;
+		create_instance_on_stack_function_type create_instance_on_stack;
 		/** the type_info for the class */
 		std::type_info const* info = nullptr;
 		/** the manager for this class */
 		ClassManager* manager = nullptr;
+		/** object initialization */
+		std::vector<initialization_function_type> initialization_functions;
 	};
 
 #endif

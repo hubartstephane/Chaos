@@ -171,7 +171,7 @@ namespace chaos
 				Class const* json_class = ClassManager::GetDefaultInstance()->FindClass(classname.c_str());
 				if (json_class != nullptr)
 				{
-					Class const* dst_class = ClassManager::GetDefaultInstance()->FindClass<T>();
+					Class const* dst_class = ClassManager::GetDefaultInstance()->FindCPPClass<T>();
 					if (dst_class != nullptr)
 						if (json_class->InheritsFrom(dst_class, true) == InheritanceType::YES) // accept equal
 							return (T*)json_class->CreateInstance();
@@ -260,7 +260,7 @@ namespace chaos
 				if constexpr (check_method_GetClass_v<T const>)
 					src_class = src.GetClass();
 				if (src_class == nullptr || !src_class->IsDeclared())
-					src_class = ClassManager::GetDefaultInstance()->FindClass<T>();
+					src_class = ClassManager::GetDefaultInstance()->FindCPPClass<T>();
 				// write the class into the json object
 				if (src_class != nullptr && src_class->IsDeclared())
 					JSONTools::SetAttribute(entry, "classname", src_class->GetClassName());

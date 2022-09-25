@@ -17,19 +17,22 @@ namespace chaos
 	public:
 
 		/** constructor */
-		SubClassOf() : SubClassOf(T::GetStaticClass())
+		SubClassOf():
+			SubClassOf(T::GetStaticClass())
 		{
 		}
 		/** constructor */
 		SubClassOf(SubClassOf const& src) = default;
 		/** constructor */
+		SubClassOf(SubClassOf && src) = default;
+		/** constructor */
 		SubClassOf(Class const* src)
 		{
 			if (src != nullptr)
 			{
-				Class const* base_class = ClassManager::GetDefaultInstance()->FindClass<T>();
+				Class const* base_class = ClassManager::GetDefaultInstance()->FindCPPClass<T>();
 				if (base_class == nullptr)
-					Log::Error("SubClassOf constructor : FindClass<T> failure");
+					Log::Error("SubClassOf constructor : FindCPPClass<T> failure");
 				else if (src->InheritsFrom(base_class, true) != InheritanceType::YES)
 					Log::Error("SubClassOf constructor : src class does not inherit from base_class");
 				else
@@ -38,16 +41,51 @@ namespace chaos
 		}
 		/** constructor */
 		template<typename U>
-		SubClassOf(SubClassOf<U> const& src) : SubClassOf(src.GetInternalClass())
+		SubClassOf(SubClassOf<U> && src):
+			SubClassOf(src.GetInternalClass())
 		{
 		}
 		/** constructor with search */
-		SubClassOf(ClassFindResult find_result) : SubClassOf(find_result.Resolve(ClassManager::GetDefaultInstance()->FindClass<T>()))
+		SubClassOf(ClassFindResult find_result):
+			SubClassOf(find_result.Resolve(ClassManager::GetDefaultInstance()->FindCPPClass<T>()))
 		{
 		}
 		/** constructor with search */
-		SubClassOf(char const* name) : SubClassOf(ClassManager::GetDefaultInstance()->FindClass(name))
+		SubClassOf(char const* name, ClassManager * manager = ClassManager::GetDefaultInstance()):
+			SubClassOf(manager->FindClass(name))
 		{
+		}
+
+		/** assign operator */
+		SubClassOf<T>& operator = (Class const* src)
+		{
+			*this = SubClassOf<T>(src);
+			return *this;
+		}
+		/** assign operator */
+		SubClassOf<T>& operator = (ClassFindResult find_result)
+		{
+			*this = SubClassOf<T>(find_result);
+			return *this;
+		}
+		/** assign operator */
+		SubClassOf<T>& operator = (SubClassOf<T> const& src)
+		{
+			internal_class = src.internal_class;
+			return *this;
+		}
+		/** assign operator */
+		SubClassOf<T>& operator = (SubClassOf<T> && src)
+		{
+			internal_class = src.internal_class;
+			return *this;
+		}
+		/** assign operator */
+		template<typename U>
+		SubClassOf<T>& operator = (SubClassOf<U> && src)
+		{
+			*this = SubClassOf<T>(src);
+			return *this;
 		}
 
 		/** validity operator */
@@ -70,26 +108,6 @@ namespace chaos
 				return false;
 			return internal_class->CreateInstanceOnStack(func);
 		}
-		/** assign operator */
-		SubClassOf<T>& operator = (Class const* src)
-		{
-			*this = SubClassOf<T>(src);
-			return *this;
-		}
-		/** assign operator */
-		SubClassOf<T>& operator = (ClassFindResult find_result)
-		{
-			*this = SubClassOf<T>(find_result);
-			return *this;
-		}
-		/** assign operator */
-		template<typename U>
-		SubClassOf<T>& operator = (SubClassOf<U> const& src)
-		{
-			*this = SubClassOf<T>(src);
-			return *this;
-		}
-
 		/** get the internal class */
 		Class const* GetInternalClass() const { return internal_class; }
 

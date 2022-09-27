@@ -7,24 +7,112 @@
 template<typename YIELD_TYPE = void, typename RETURN_TYPE = void, bool START_SUSPENDED = true>
 class Task;
 
-//////////////////////////////////////////
+template<typename YIELD_TYPE, typename RETURN_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
+class TaskPromise;
+
+template<typename YIELD_TYPE, typename RETURN_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
+class TaskInternal;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename YIELD_TYPE, typename RETURN_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
+class TaskInternal : public chaos::Object
+{
+public:
+
+	using task_promise_type = TaskPromise<YIELD_TYPE, RETURN_TYPE, START_SUSPENDED, TASK_TYPE>;
+	using promise_handle = std::coroutine_handle<task_promise_type>;
+
+	/** resume the coroutine */
+	void Resume()
+	{
+		if (handle != nullptr)
+			handle.resume();
+	}
+
+	/** check whether coroutine is completed */
+	bool IsDone() const
+	{
+		return (handle == nullptr) || (handle.done());
+	}
+
+	/** check whether coroutine has a yielded value */
+	bool HasYieldValue() const
+	{
+		return (y_value.has_value());
+	}
+
+	/** check whether coroutine has a returned value */
+	bool HasReturnValue() const
+	{
+		return (r_value.has_value());
+	}
+	/** read yielded value + destruction */
+	YIELD_TYPE ConsumeYieldValue() const
+	{
+		assert(HasYieldValue());
+		YIELD_TYPE result = std::move(*y_value);
+		y_value.reset();
+		return result;
+	}
+
+	/** read yielded value without destroying it */
+	YIELD_TYPE GetYieldValue() const
+	{
+		assert(HasYieldValue());
+		return *y_value;
+	}
+
+	/** read returned value*/
+	RETURN_TYPE GetReturnValue() const
+	{
+		assert(HasReturnValue());
+		return *r_value;
+	}
+
+public:
+
+	/** the last yielded value */
+	std::optional<YIELD_TYPE> y_value;
+	/** the return value */
+	std::optional<RETURN_TYPE> r_value;
+	/** the handle for the coroutine */
+	promise_handle handle;
+};
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename YIELD_TYPE, typename RETURN_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
 class TaskPromise
 {
 public:
 
+	using task_internal_type = TaskInternal<YIELD_TYPE, RETURN_TYPE, START_SUSPENDED, TASK_TYPE>;
+	using task_type = TASK_TYPE;
+
+	/** destructor */
+	~TaskPromise()
+	{
+		task_internal->handle = nullptr;
+	}
+	/** return a value */
+	void return_value(RETURN_TYPE result) requires (!std::is_same_v<RETURN_TYPE, void>)
+	{
+		task_internal->r_value = std::move(result);
+	}
+	/** emit a value */
 	auto yield_value(YIELD_TYPE value)
 	{
-		y_value = std::move(value);
-		return std::suspend_always {};
+		task_internal->y_value = std::move(value);
+		return std::suspend_always{};
 	}
-
-	TASK_TYPE get_return_object()
+	/** uncaught exception */
+	void unhandled_exception()
 	{
-		return TASK_TYPE(this);
 	}
-
+	/** whether the task is initially suspended or not */
 	auto initial_suspend()
 	{
 		if constexpr (START_SUSPENDED)
@@ -32,43 +120,130 @@ public:
 		else
 			return std::suspend_never{};
 	}
-
+	/** whether the task is finally suspended */
 	auto final_suspend() noexcept
 	{
-		return std::suspend_always{};
+		return std::suspend_never{};
 	}
+	/** create the related Task */
+	task_type get_return_object()
+	{
+		task_internal = new task_internal_type();
+		if (task_internal != nullptr)
+			task_internal->handle = std::coroutine_handle<TaskPromise>::from_promise(*this);
+		return task_type(task_internal.get());
+	}
+
+public:
+
+	/** the pointer on the shared internal data */
+	chaos::shared_ptr<task_internal_type> task_internal;
+};
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename YIELD_TYPE, typename RETURN_TYPE, bool START_SUSPENDED>
+class Task
+{
+public:
+
+	using task_internal_type = TaskInternal<YIELD_TYPE, RETURN_TYPE, START_SUSPENDED, Task>;
+	using promise_type = TaskPromise<YIELD_TYPE, RETURN_TYPE, START_SUSPENDED, Task>;
+
+	friend class promise_type;
+
+	/** constructor */
+	Task(task_internal_type* in_task_internal = nullptr) :
+		task_internal(in_task_internal)
+	{
+	}
+	/** resume the coroutine */
+	void Resume()
+	{
+		assert(task_internal != nullptr);
+		task_internal->Resume();
+	}
+	/** check whether coroutine is completed */
+	bool IsDone() const
+	{
+		return (task_internal != nullptr) && (task_internal->IsDone());
+	}
+	/** check whether coroutine has a yielded value */
+	bool HasYieldValue() const
+	{
+		return (task_internal != nullptr) && (task_internal->HasYieldValue());
+	}
+	/** check whether coroutine has a returned value */
+	bool HasReturnValue() const
+	{
+		return (task_internal != nullptr) && (task_internal->HasReturnValue());
+	}
+	/** read yielded value + destruction */
+	YIELD_TYPE ConsumeYieldValue() const
+	{
+		assert(task_internal != nullptr);
+		return task_internal->ConsumeYieldValue();
+	}
+	/** read yielded value without destroying it */
+	YIELD_TYPE GetYieldValue() const
+	{
+		assert(task_internal != nullptr);
+		return task_internal->GetYieldValue();
+	}
+	/** read returned value*/
+	RETURN_TYPE GetReturnValue() const
+	{
+		assert(task_internal != nullptr);
+		return task_internal->GetReturnValue();
+	}
+
+protected:
+
+	/** the pointer to the internal data */
+	chaos::shared_ptr<task_internal_type> task_internal;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#if 0
+
+
 #if 0
 
 	void return_void() requires(std::is_same_v<RETURN_TYPE, void>)
 	{
 	}
 
-#else
-
-	template<typename T>
-	void return_value(T t)
-	{
-		t = t;
-	}
-
-	void return_value(RETURN_TYPE result) requires (!std::is_same_v<RETURN_TYPE, void>)
-	{
-		r_value = std::move(result);
-	}
 #endif
-
-	void unhandled_exception()
-	{
-	}
-
-
 
 
 
 	template<typename OTHER_YIELD_TYPE, typename OTHER_RETURN_TYPE, bool OTHER_START_SUSPENDED>
 	struct Awaiter
 	{
-		Awaiter(Task<OTHER_YIELD_TYPE, OTHER_RETURN_TYPE, OTHER_START_SUSPENDED>& in_other_task):
+		Awaiter(Task<OTHER_YIELD_TYPE, OTHER_RETURN_TYPE, OTHER_START_SUSPENDED> const & in_other_task):
 			other_task(in_other_task)
 		{
 
@@ -86,7 +261,7 @@ public:
 
 			p = in_p;
 
-			return other_task.handle; // enter other Task
+			//return other_task.handle; // enter other Task
 		}
 
 		auto await_resume()
@@ -94,7 +269,7 @@ public:
 			return other_task.GetYieldValue();
 		}
 
-		Task<OTHER_YIELD_TYPE, OTHER_RETURN_TYPE, OTHER_START_SUSPENDED> & other_task;
+		Task<OTHER_YIELD_TYPE, OTHER_RETURN_TYPE, OTHER_START_SUSPENDED> const & other_task;
 
 		std::coroutine_handle<> p = nullptr;
 	};
@@ -103,182 +278,77 @@ public:
 
 
 	template<typename OTHER_YIELD_TYPE, typename OTHER_RETURN_TYPE, bool OTHER_START_SUSPENDED>
-	Awaiter<OTHER_YIELD_TYPE, OTHER_RETURN_TYPE, OTHER_START_SUSPENDED> await_transform(Task<OTHER_YIELD_TYPE, OTHER_RETURN_TYPE, OTHER_START_SUSPENDED>& other_task)
+	Awaiter<OTHER_YIELD_TYPE, OTHER_RETURN_TYPE, OTHER_START_SUSPENDED> await_transform(Task<OTHER_YIELD_TYPE, OTHER_RETURN_TYPE, OTHER_START_SUSPENDED> const& other_task)
 	{
 		return { other_task };
 	}
 
+#endif
 
 
 
-	std::optional<YIELD_TYPE> y_value;
-
-	std::optional<RETURN_TYPE> r_value;
-};
 
 
-//////////////////////////////////////////
 
+#if 0
 
-template<typename YIELD_TYPE, typename RETURN_TYPE, bool START_SUSPENDED>
-class Task
+Task<int, int> Generator()
 {
-
-public:
-
-	using promise_type = TaskPromise<YIELD_TYPE, RETURN_TYPE, START_SUSPENDED, Task>;
-
-	using promise_handle = std::coroutine_handle<promise_type>;
-
-	friend class promise_type;
-
-	~Task()
+	int i = 0;
+	while (true)
 	{
-		if (handle)
-			handle.destroy();
+		std::cout << "Generator: about to yield [" << i << "]" << std::endl;
+		co_yield ++i;
+		std::cout << "Generator: yield done" << std::endl;
+
 	}
+	co_return 666;
+}
 
-	/** resume the coroutine */
-	void Resume()
-	{
-		handle.resume();
-	}
-
-	/** check whether coroutine is completed */
-	bool IsDone() const
-	{
-		return handle.done();
-	}
-
-	/** check whether coroutine has a yielded value */
-	bool HasYieldValue() const
-	{
-		return handle.promise().y_value.has_value();
-	}
-
-	/** check whether coroutine has a returned value */
-	bool HasReturnValue() const
-	{
-		return handle.promise().r_value.has_value();
-	}
-
-	/** read yielded value + destruction */
-	YIELD_TYPE GetYieldValue() const
-	{
-		assert(HasYieldValue());
-		YIELD_TYPE result = std::move(*handle.promise().y_value);
-		handle.promise().y_value.reset();
-		return result;
-	}
-
-	/** read yielded value without destroying it */
-	YIELD_TYPE PeekYieldValue() const
-	{
-		assert(HasYieldValue());
-		return *handle.promise().y_value;
-	}
-
-	/** read returned value*/
-	RETURN_TYPE GetReturnValue() const
-	{
-		assert(HasReturnValue());
-		return *handle.promise().r_value;
-	}
-
-protected:
-
-	/** constructor */
-	explicit Task(promise_type* p) :
-		handle(promise_handle::from_promise(*p)) {}
-
-public:
-
-	promise_handle handle;
-
-};
-
-class A
+Task<int, int> Func()
 {
-public:
-
-	int f()
+	while (true)
 	{
-		return 8;
+		std::cout << "Func: about to co_await" << std::endl;
+		int result = co_await Generator();
+		std::cout << "Func: co_await" << result << std::endl;
+
 	}
-
-	Task<int, int> Generates()
-	{
-		auto X = this;
-
-		co_yield f();
-
-		auto Y = this;
-
-		f();
-
-		co_yield 9;
-		co_yield 13;
-		co_yield 17;
-
-		co_return 3;
-	}
-
-	Task<int, int> MyTask(int value, Task<int, int>& getter)
-	{
-		auto X = this;
-		 
-		for (int i = 0; i < 3; ++i)
-		{
-
-			int x = co_await getter;
+	co_return 777;
+}
+#endif
 
 
-			auto Y = this;
-
-			f();
-
-			co_yield (3 * x);
-			co_yield (3 * value);
-		}
-
-		float xx = chaos::MathTools::RandFloat();
-		if (xx > 0.5f)
-			co_return *this;
-		co_return 3;
-	}
-
-
-	int XXX = 666;
-
-};
-
-auto operator co_await (A a)
+Task<int, int> Generator()
 {
-	return std::suspend_always{};
+	co_yield 1;
+	co_yield 2;
+	co_return 5;
 }
 
 
 int main(int argc, char** argv, char** env)
 {
-	A a;
 
-	chaos::MathTools::ResetRandSeed();
+	Task<int, int> generator = Generator();
 
-	Task<int, int> g = a.Generates();
-
-	Task<int, int> f = a.MyTask(6, g);
-
-
-	while (!f.IsDone())
+	while (!generator.IsDone())
 	{
-		f.Resume();
-
-		a.f();
-		//int a = f.GetYieldValue();
-
-		argc = argc;
-
+		if (generator.HasYieldValue())
+		{
+			int value = generator.GetYieldValue();
+			std::cout << "Yield: " << value << std::endl;
+		}
+		generator.Resume();
 	}
+
+	if (generator.HasReturnValue())
+	{
+		int value = generator.GetReturnValue();
+		std::cout << "Return: " << value << std::endl;
+	}
+	generator.Resume();
+	generator.Resume();
 
 	return 0;
 }

@@ -23,6 +23,13 @@ public:
 	using task_promise_type = TaskPromise<YIELD_TYPE, RETURN_TYPE, START_SUSPENDED, TASK_TYPE>;
 	using promise_handle = std::coroutine_handle<task_promise_type>;
 
+	/** destructor */
+	virtual ~TaskInternal()
+	{
+		if (handle != nullptr)
+			handle.destroy();
+	}
+
 	/** resume the coroutine */
 	void Resume()
 	{
@@ -95,17 +102,20 @@ public:
 	/** destructor */
 	~TaskPromise()
 	{
-		task_internal->handle = nullptr;
+		if (task_internal != nullptr)
+			task_internal->handle = nullptr;
 	}
 	/** return a value */
 	void return_value(RETURN_TYPE result) requires (!std::is_same_v<RETURN_TYPE, void>)
 	{
-		task_internal->r_value = std::move(result);
+		if (task_internal != nullptr)
+			task_internal->r_value = std::move(result);
 	}
 	/** emit a value */
 	auto yield_value(YIELD_TYPE value)
 	{
-		task_internal->y_value = std::move(value);
+		if (task_internal != nullptr)
+			task_internal->y_value = std::move(value);
 		return std::suspend_always{};
 	}
 	/** uncaught exception */
@@ -137,7 +147,7 @@ public:
 public:
 
 	/** the pointer on the shared internal data */
-	chaos::shared_ptr<task_internal_type> task_internal;
+	chaos::weak_ptr<task_internal_type> task_internal;
 };
 
 
@@ -329,7 +339,13 @@ Task<int, int> Generator()
 
 int main(int argc, char** argv, char** env)
 {
+	{
+		Task<int, int> generator = Generator();
 
+		env = env;
+	}
+
+#if 0
 	Task<int, int> generator = Generator();
 
 	while (!generator.IsDone())
@@ -349,6 +365,6 @@ int main(int argc, char** argv, char** env)
 	}
 	generator.Resume();
 	generator.Resume();
-
+#endif
 	return 0;
 }

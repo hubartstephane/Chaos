@@ -4,13 +4,13 @@
 
 
 
-template<typename YIELD_TYPE = void, typename RETURN_TYPE = void, bool START_SUSPENDED = true>
+template<typename RETURN_TYPE = void, typename YIELD_TYPE = void, bool START_SUSPENDED = true>
 class Task;
 
-template<typename YIELD_TYPE, typename RETURN_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
+template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
 class TaskPromise;
 
-template<typename YIELD_TYPE, typename RETURN_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
+template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
 class TaskInternal;
 
 
@@ -24,39 +24,85 @@ concept is_awaiter = requires(T t)
 	{t.await_suspend(std::coroutine_handle<>{})};
 };
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
+class TaskPromiseBase
+{
+public:
+
+	using task_internal_type = TaskInternal<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED, TASK_TYPE>;
+
+public:
+
+	/** the pointer on the shared internal data */
+	chaos::weak_ptr<task_internal_type> task_internal;
+};
+
+template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
+class TaskPromiseBaseReturn : public TaskPromiseBase<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED, TASK_TYPE>
+{
+public:
+
+	/** return a value */
+	void return_value(RETURN_TYPE result)
+	{
+		if (this->task_internal != nullptr)
+			this->task_internal->r_value = std::move(result);
+	}
+};
+
+
+template<typename YIELD_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
+class TaskPromiseBaseReturn<void, YIELD_TYPE, START_SUSPENDED, TASK_TYPE> : public TaskPromiseBase<void, YIELD_TYPE, START_SUSPENDED, TASK_TYPE>
+{
+public:
+
+	/** co routine ends */
+	void return_void()
+	{
+	}
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
+class TaskPromiseBaseReturnAndYield : public TaskPromiseBaseReturn<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED, TASK_TYPE>
+{
+public:
+
+	/** emit a value */
+	auto yield_value(YIELD_TYPE value)
+	{
+		if (this->task_internal != nullptr)
+			this->task_internal->y_value = std::move(value);
+		return std::suspend_always{};
+	}
+};
+
+template<typename RETURN_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
+class TaskPromiseBaseReturnAndYield<RETURN_TYPE, void, START_SUSPENDED, TASK_TYPE> : public TaskPromiseBaseReturn<RETURN_TYPE, void, START_SUSPENDED, TASK_TYPE>
+{
+};
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename YIELD_TYPE, typename RETURN_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
-class TaskPromise
+template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
+class TaskPromise : public TaskPromiseBaseReturnAndYield<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED, TASK_TYPE>
 {
 public:
 
-	using task_internal_type = TaskInternal<YIELD_TYPE, RETURN_TYPE, START_SUSPENDED, TASK_TYPE>;
+	using task_internal_type = TaskInternal<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED, TASK_TYPE>;
 	using task_type = TASK_TYPE;
 
 	/** destructor */
 	~TaskPromise()
 	{
-		if (task_internal != nullptr)
-			task_internal->handle = nullptr;
+		if (this->task_internal != nullptr)
+			this->task_internal->handle = nullptr;
 	}
-	/** return a value */
-	void return_value(RETURN_TYPE result)
-		requires (!std::is_same_v<RETURN_TYPE, void>)
-	{
-		if (task_internal != nullptr)
-			task_internal->r_value = std::move(result);
-	}
-	/** emit a value */
-	auto yield_value(YIELD_TYPE value)
-		requires !is_same_v<void, YIELD_TYPE>
-	{
-		if (task_internal != nullptr)
-			task_internal->y_value = std::move(value);
-		return std::suspend_always{};
-	}
+
 	/** uncaught exception */
 	void unhandled_exception()
 	{
@@ -77,10 +123,10 @@ public:
 	/** create the related Task */
 	task_type get_return_object()
 	{
-		task_internal = new task_internal_type();
-		if (task_internal != nullptr)
-			task_internal->handle = std::coroutine_handle<TaskPromise>::from_promise(*this);
-		return task_type(task_internal.get());
+		this->task_internal = new task_internal_type();
+		if (this->task_internal != nullptr)
+			this->task_internal->handle = std::coroutine_handle<TaskPromise>::from_promise(*this);
+		return task_type(this->task_internal.get());
 	}
 
 
@@ -144,15 +190,12 @@ public:
 	{
 		if (task.task_internal != nullptr)
 		{
-			task_internal->awaited_task_internal = task.task_internal.get();
+			this->task_internal->awaited_task_internal = task.task_internal.get();
 		}
 		return Awaiter();
 	}
 
-public:
 
-	/** the pointer on the shared internal data */
-	chaos::weak_ptr<task_internal_type> task_internal;
 };
 
 
@@ -178,15 +221,86 @@ public:
 	virtual void Resume() = 0;
 };
 
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename YIELD_TYPE, typename RETURN_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
-class TaskInternal : public TaskInternalBase
+template<typename RETURN_TYPE>
+class TaskInternalBaseReturn : public TaskInternalBase
 {
 public:
 
-	using task_promise_type = TaskPromise<YIELD_TYPE, RETURN_TYPE, START_SUSPENDED, TASK_TYPE>;
+	/** check whether coroutine has a returned value */
+	bool HasReturnValue() const
+	{
+		return (r_value.has_value());
+	}
+	/** read returned value*/
+	RETURN_TYPE GetReturnValue() const
+	{
+		assert(HasReturnValue());
+		return *r_value;
+	}
+
+public:
+
+	/** the return value */
+	std::optional<RETURN_TYPE> r_value;
+};
+
+template<>
+class TaskInternalBaseReturn<void> : public TaskInternalBase
+{
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename RETURN_TYPE, typename YIELD_TYPE>
+class TaskInternalBaseReturnAndYield : public TaskInternalBaseReturn<RETURN_TYPE>
+{
+public:
+
+	/** check whether coroutine has a yielded value */
+	bool HasYieldValue() const
+	{
+		return (y_value.has_value());
+	}
+	/** read yielded value + destruction */
+	YIELD_TYPE ConsumeYieldValue() const
+	{
+		assert(HasYieldValue());
+		YIELD_TYPE result = std::move(*y_value);
+		y_value.reset();
+		return result;
+	}
+	/** read yielded value without destroying it */
+	YIELD_TYPE GetYieldValue() const
+	{
+		assert(HasYieldValue());
+		return *y_value;
+	}
+
+public:
+
+	/** the last yielded value */
+	std::optional<YIELD_TYPE> y_value;
+};
+
+
+template<typename RETURN_TYPE>
+class TaskInternalBaseReturnAndYield<RETURN_TYPE, void> : public TaskInternalBaseReturn<RETURN_TYPE>
+{
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
+class TaskInternal : public TaskInternalBaseReturnAndYield<RETURN_TYPE, YIELD_TYPE>
+{
+	template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED>
+	friend class Task;
+
+public:
+
+	using task_promise_type = TaskPromise<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED, TASK_TYPE>;
 	using promise_handle = std::coroutine_handle<task_promise_type>;
 
 	/** destructor */
@@ -234,44 +348,6 @@ public:
 		}
 	}
 
-	/** check whether coroutine has a yielded value */
-	bool HasYieldValue() const
-		requires !is_same_v<void, YIELD_TYPE>
-	{
-		return (y_value.has_value());
-	}
-
-	/** check whether coroutine has a returned value */
-	bool HasReturnValue() const
-		requires (!std::is_same_v<RETURN_TYPE, void>)
-	{
-		return (r_value.has_value());
-	}
-	/** read yielded value + destruction */
-	YIELD_TYPE ConsumeYieldValue() const
-		requires !is_same_v<void, YIELD_TYPE>
-	{
-		assert(HasYieldValue());
-		YIELD_TYPE result = std::move(*y_value);
-		y_value.reset();
-		return result;
-	}
-
-	/** read yielded value without destroying it */
-	YIELD_TYPE GetYieldValue() const
-		requires !is_same_v<void, YIELD_TYPE>
-	{
-		assert(HasYieldValue());
-		return *y_value;
-	}
-
-	/** read returned value*/
-	RETURN_TYPE GetReturnValue() const
-		requires (!std::is_same_v<RETURN_TYPE, void>)
-	{
-		assert(HasReturnValue());
-		return *r_value;
-	}
 	/** add a function to check whether the current coroutine is to be abort */
 	void AddAbortFunction(std::function<bool()> func)
 	{
@@ -284,11 +360,6 @@ public:
 	std::vector<std::function<bool()>> abort_functions;
 	/** a task that is to be woken-up before we are resumed */
 	chaos::shared_ptr<TaskInternalBase> awaited_task_internal;
-
-	/** the last yielded value */
-	std::optional<YIELD_TYPE> y_value;
-	/** the return value */
-	std::optional<RETURN_TYPE> r_value;
 	/** the handle for the coroutine */
 	promise_handle handle;
 };
@@ -297,13 +368,13 @@ public:
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename YIELD_TYPE, typename RETURN_TYPE, bool START_SUSPENDED>
+template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED>
 class Task
 {
 public:
 
-	using task_internal_type = TaskInternal<YIELD_TYPE, RETURN_TYPE, START_SUSPENDED, Task>;
-	using promise_type = TaskPromise<YIELD_TYPE, RETURN_TYPE, START_SUSPENDED, Task>;
+	using task_internal_type = TaskInternal<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED, Task>;
+	using promise_type = TaskPromise<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED, Task>;
 
 	friend class promise_type;
 
@@ -368,6 +439,21 @@ protected:
 	/** the pointer to the internal data */
 	chaos::shared_ptr<task_internal_type> task_internal;
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 static int counter = 0;
@@ -464,8 +550,36 @@ Task<RET_TYPE, RET_TYPE> WaitForAnyYield(std::vector<Task<RET_TYPE, RET_TYPE>>& 
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Task<void, void> Task1()
+{
+	co_return;
+}
+
+
+
+
 int main(int argc, char** argv, char** env)
 {
+
+	Task<void, void> T = Task1();
+
+
+
+
 	bool b1 = is_awaiter<int>;
 	bool b2 = is_awaiter<std::suspend_always>;
 	bool b3 = is_awaiter<std::suspend_never>;

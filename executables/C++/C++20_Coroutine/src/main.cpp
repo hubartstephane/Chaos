@@ -17,11 +17,46 @@ class TaskInternal;
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-concept is_awaiter = requires(T t)
+concept Awaitable = requires(T t)
 {
 	{t.await_resume()};
 	{t.await_ready()};
 	{t.await_suspend(std::coroutine_handle<>{})};
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED>
+class TaskAwaiter
+{
+public:
+
+	using task_type = Task<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED>;
+
+	TaskAwaiter(task_type in_task) :
+		task(in_task)
+	{
+	}
+
+	bool await_ready()
+	{
+		return false;
+	}
+
+	auto await_suspend(std::coroutine_handle<> in_p /* the coroutine about to be suspended */)
+	{
+	}
+
+	auto await_resume()
+	{
+		assert(task.IsDone());
+		return task.GetReturnValue();
+	}
+
+protected:
+
+	/** the task we are waiting for */
+	task_type task;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -85,7 +120,6 @@ class TaskPromiseBaseReturnAndYield<RETURN_TYPE, void, START_SUSPENDED, TASK_TYP
 {
 };
 
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
@@ -129,86 +163,30 @@ public:
 		return task_type(this->task_internal.get());
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-	/////////////////////////////////////////////////////////////////////////
-
-	class Awaiter
-	{
-	public:
-
-		//Awaiter(Task* in_task) :
-		//	task(in_task)
-		Awaiter()
-		{
-			int i = 0;
-			++i;
-		}
-
-		bool await_ready()
-		{
-			return false;
-		}
-
-		auto await_suspend(std::coroutine_handle<> in_p /* the coroutine about to be suspended */)
-		{
-			//while (!task->IsDone())
-			//	task->Resume();
-
-			//return task->task_internal->handle;
-
-			int i = 0;
-			++i;
-
-			//p = in_p;
-
-			//return other_task.handle; // enter other Task
-		}
-
-		auto await_resume()
-		{
-			//	if (!task->IsDone())
-			//		task->Resume();
-			return 777; // other_task.GetYieldValue();
-		}
-
-		//Task* task = nullptr;
-	};
-
-	template<typename OTHER_YIELD_TYPE, typename OTHER_RETURN_TYPE, bool OTHER_START_SUSPENDED>
-	auto await_transform(Task<OTHER_YIELD_TYPE, OTHER_RETURN_TYPE, OTHER_START_SUSPENDED> task)
+	/** create an awaiter from a task */
+	template<typename OTHER_RETURN_TYPE, typename OTHER_YIELD_TYPE, bool OTHER_START_SUSPENDED>
+	auto await_transform(Task<OTHER_RETURN_TYPE, OTHER_YIELD_TYPE, OTHER_START_SUSPENDED> task)
 	{
 		if (task.task_internal != nullptr)
 		{
 			this->task_internal->awaited_task_internal = task.task_internal.get();
 		}
-		return Awaiter();
+		return TaskAwaiter<OTHER_RETURN_TYPE, OTHER_YIELD_TYPE, OTHER_START_SUSPENDED >(task);
 	}
 
-
+	/** if co_await an already Awaitable, no need to create anything */
+	template<Awaitable T>
+	T const & await_transform(T const& awaitable)
+	{
+		return awaitable;
+	}
+	/** if co_await an already Awaitable, no need to create anything */
+	template<Awaitable T>
+	T & await_transform(T & awaitable)
+	{
+		return awaitable;
+	}
 };
-
-
-
-
-
-
-
-
-
-
-
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 class TaskInternalBase : public chaos::Object
@@ -249,6 +227,13 @@ public:
 template<>
 class TaskInternalBaseReturn<void> : public TaskInternalBase
 {
+public:
+
+	/** check whether coroutine has a returned value */
+	bool HasReturnValue() const
+	{
+		return false;
+	}
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -288,6 +273,12 @@ public:
 template<typename RETURN_TYPE>
 class TaskInternalBaseReturnAndYield<RETURN_TYPE, void> : public TaskInternalBaseReturn<RETURN_TYPE>
 {
+public:
+
+	bool HasYieldValue() const
+	{
+		return false;
+	}
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -295,8 +286,6 @@ class TaskInternalBaseReturnAndYield<RETURN_TYPE, void> : public TaskInternalBas
 template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
 class TaskInternal : public TaskInternalBaseReturnAndYield<RETURN_TYPE, YIELD_TYPE>
 {
-	template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED>
-	friend class Task;
 
 public:
 
@@ -392,7 +381,7 @@ public:
 	/** check whether coroutine is completed */
 	bool IsDone() const
 	{
-		return (task_internal != nullptr) && (task_internal->IsDone());
+		return (task_internal == nullptr) || (task_internal->IsDone());
 	}
 	/** check whether coroutine has a yielded value */
 	bool HasYieldValue() const
@@ -469,7 +458,7 @@ Task<int, int> AnotherGenerator(char A)
 Task<int, int> Generator(char A)
 {
 	std::cout << "Generator 1" << A << std::endl;
-	co_await AnotherGenerator('X');
+	auto v = co_await AnotherGenerator('X');
 	//co_yield 1;
 	std::cout << "Generator 2" << A << std::endl;
 	co_await AnotherGenerator('Y');
@@ -566,6 +555,16 @@ Task<RET_TYPE, RET_TYPE> WaitForAnyYield(std::vector<Task<RET_TYPE, RET_TYPE>>& 
 
 Task<void, void> Task1()
 {
+	std::cout << "Task1: A" << std::endl;
+
+	co_await std::suspend_always{};
+
+	std::cout << "Task1: B" << std::endl;
+
+	co_await std::suspend_always{};
+
+	std::cout << "Task1: C" << std::endl;
+
 	co_return;
 }
 
@@ -577,13 +576,20 @@ int main(int argc, char** argv, char** env)
 
 	Task<void, void> T = Task1();
 
+	while (!T.IsDone())
+	{
+		std::cout << "main: A" << std::endl;
+		T.Resume();
+		std::cout << "main: B" << std::endl;
+	}
 
 
 
-	bool b1 = is_awaiter<int>;
-	bool b2 = is_awaiter<std::suspend_always>;
-	bool b3 = is_awaiter<std::suspend_never>;
-	bool b4 = is_awaiter<Task<int, int>>;
+
+	bool b1 = Awaitable<int>;
+	bool b2 = Awaitable<std::suspend_always>;
+	bool b3 = Awaitable<std::suspend_never>;
+	bool b4 = Awaitable<Task<int, int>>;
 
 
 

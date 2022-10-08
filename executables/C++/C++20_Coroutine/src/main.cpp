@@ -43,11 +43,12 @@ public:
 		return false;
 	}
 
-	auto await_suspend(std::coroutine_handle<> in_p /* the coroutine about to be suspended */)
+	auto await_suspend(std::coroutine_handle<> in_coroutine /* the coroutine about to be suspended */)
 	{
+		return task.task_internal->handle; // enter directly into the incomming Task
 	}
 
-	auto await_resume()
+	decltype(auto) await_resume()
 	{
 		assert(task.IsDone());
 		return task.GetReturnValue();
@@ -169,7 +170,7 @@ public:
 	{
 		if (task.task_internal != nullptr)
 		{
-			this->task_internal->awaited_task_internal = task.task_internal.get();
+			this->task_internal->awaited_task_internal = task.task_internal.get(); // current task is now waiting for input task
 		}
 		return TaskAwaiter<OTHER_RETURN_TYPE, OTHER_YIELD_TYPE, OTHER_START_SUSPENDED >(task);
 	}
@@ -365,6 +366,9 @@ public:
 	using task_internal_type = TaskInternal<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED, Task>;
 	using promise_type = TaskPromise<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED, Task>;
 
+	template<typename OTHER_RETURN_TYPE, typename OTHER_YIELD_TYPE, bool OTHER_START_SUSPENDED>
+	friend class TaskAwaiter;
+
 	friend class promise_type;
 
 	/** constructor */
@@ -431,228 +435,77 @@ protected:
 
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-static int counter = 0;
-
-
-Task<int, int> AnotherGenerator(char A)
+Task<int, void> Generator2(int i)
 {
-	std::cout << "AnotherGenerator" << A << std::endl;
-	++counter;
-	co_return 6;
-}
-
-Task<int, int> Generator(char A)
-{
-	std::cout << "Generator 1" << A << std::endl;
-	auto v = co_await AnotherGenerator('X');
-	//co_yield 1;
-	std::cout << "Generator 2" << A << std::endl;
-	co_await AnotherGenerator('Y');
-	//co_yield 2;
-	std::cout << "Generator 3" << A << std::endl;
-	co_await AnotherGenerator('Z');
-	co_return 5;
-}
-
-#if 0
-Task<int, int> WaitFor(float seconds)
-{
-	auto start_time = std::chrono::system_clock::now();
-
-	while (true)
-	{
-		auto t = std::chrono::system_clock::now();
-
-		std::chrono::duration<float> diff = t - start_time;
-		if (diff > seconds)
-			co_return 0;
-	}
-}
-#endif
-
-Task<int, int> OtherGenerator()
-{
-
-	//co_await std::suspend_never;
-
-	std::cout << "OtherGenerator 1" << std::endl;
-	co_await Generator('A').CancelIf([]()
-	{
-		return counter == 2;
-	});
-
-
-	//co_await std::suspend_always{};
-
-	std::cout << "OtherGenerator 2" << std::endl;
-	co_await Generator('B');
-	std::cout << "OtherGenerator 3" << std::endl;
-	co_return 666;
+	std::cout << "Generator2(" << i << ")" << std::endl;
+	co_return 6 * i;
 }
 
 
 
-template<typename RET_TYPE>
-Task<RET_TYPE, RET_TYPE> WaitForAnyReturn(std::vector<Task<RET_TYPE, RET_TYPE>>& tasks)
+Task<int, void> Generator1()
+{
+	int result = 0;
+	std::cout << "Generator1: step 1" << std::endl;
+	result += co_await Generator2(1);
+	std::cout << "Generator1: step 2" << std::endl;
+	result += co_await Generator2(2);
+	std::cout << "Generator1: step 3" << std::endl;
+	result += co_await Generator2(3);
+	std::cout << "Generator1: final step" << std::endl;
+	co_return result;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Task<int, void> Generator3()
 {
 	while (true)
 	{
-		for (auto& task : tasks)
-		{
-			co_await task;
-			if (task.HasReturnValue())
-				co_return task.GetReturnValue();
-		}
+		std::cout << "Generator3" << std::endl;
+		co_await std::suspend_always{};
 	}
-}
-
-template<typename RET_TYPE>
-Task<RET_TYPE, RET_TYPE> WaitForAnyYield(std::vector<Task<RET_TYPE, RET_TYPE>>& tasks)
-{
-
-
-	while (true)
-	{
-		for (auto& task : tasks)
-		{
-			co_await task;
-			if (task.HasReturnValue())
-				co_return task.GetReturnValue();
-			if (task.HasYieldValue())
-				co_yield task.ConsumeYieldValue();
-		}
-	}
+	co_return 1;
 }
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-Task<void, void> Task1()
-{
-	std::cout << "Task1: A" << std::endl;
-
-	co_await std::suspend_always{};
-
-	std::cout << "Task1: B" << std::endl;
-
-	co_await std::suspend_always{};
-
-	std::cout << "Task1: C" << std::endl;
-
-	co_return;
-}
-
-
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main(int argc, char** argv, char** env)
 {
-
-	Task<void, void> T = Task1();
-
-	while (!T.IsDone())
+	// TEST 1 ------------------------------------------------------------------------
 	{
-		std::cout << "main: A" << std::endl;
-		T.Resume();
-		std::cout << "main: B" << std::endl;
-	}
+		Task<int, void> G = Generator1();
 
-
-
-
-	bool b1 = Awaitable<int>;
-	bool b2 = Awaitable<std::suspend_always>;
-	bool b3 = Awaitable<std::suspend_never>;
-	bool b4 = Awaitable<Task<int, int>>;
-
-
-
-
-	auto start_time = std::chrono::system_clock::now();
-
-	while (true)
-	{
-		auto t = std::chrono::system_clock::now();
-
-		std::chrono::duration<float> diff = t - start_time;
-		if (diff.count() > 7.0f)
-			break;
-	}
-
-
-
-
-
-
-
-
-
-
-
-	{
-		Task<int, int> generator = OtherGenerator();
-		while (!generator.IsDone())
+		while (!G.IsDone())
 		{
-			std::cout << "main:" << std::endl;
-			generator.Resume();
+			std::cout << "MAIN" << std::endl;
+			G.Resume();
 		}
-
 	}
-
-#if 0
+	// TEST 2 ------------------------------------------------------------------------
 	{
-		Task<int, int> generator = Generator();
+		auto start_time = std::chrono::system_clock::now();
 
-		env = env;
-	}
-#endif
-
-#if 0
-	Task<int, int> generator = Generator();
-
-	while (!generator.IsDone())
-	{
-		if (generator.HasYieldValue())
+		Task<int, void> G = Generator3().CancelIf([start_time]()
 		{
-			int value = generator.GetYieldValue();
-			std::cout << "Yield: " << value << std::endl;
+			auto t = std::chrono::system_clock::now();
+			std::chrono::duration<float> diff = t - start_time;
+			
+			return (diff.count() > 2.0f);
+		});
+
+		while (!G.IsDone())
+		{
+			std::cout << "MAIN" << std::endl;
+			G.Resume();
 		}
-		generator.Resume();
 	}
 
-	if (generator.HasReturnValue())
-	{
-		int value = generator.GetReturnValue();
-		std::cout << "Return: " << value << std::endl;
-	}
-	generator.Resume();
-	generator.Resume();
-#endif
+
 	return 0;
 }

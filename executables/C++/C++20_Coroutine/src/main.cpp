@@ -13,6 +13,28 @@ class TaskPromise;
 template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED>
 class TaskInternal;
 
+template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED>
+class TaskAwaiter;
+
+template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED>
+class TaskPromiseBase;
+
+template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED>
+class TaskPromiseBaseReturn;
+
+template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED>
+class TaskPromiseBaseReturnAndYield;
+
+class TaskInternalBase;
+
+template<typename RETURN_TYPE>
+class TaskInternalBaseReturn;
+
+template<typename RETURN_TYPE, typename YIELD_TYPE>
+class TaskInternalBaseReturnAndYield;
+
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
@@ -31,6 +53,8 @@ class TaskAwaiter
 public:
 
 	using task_type = Task<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED>;
+	using task_promise_type = TaskPromise<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED>;
+	using promise_handle = std::coroutine_handle<task_promise_type>;
 
 	TaskAwaiter(task_type in_task) :
 		task(in_task)
@@ -42,7 +66,7 @@ public:
 		return false;
 	}
 
-	auto await_suspend(std::coroutine_handle<> in_coroutine /* the coroutine about to be suspended */) -> std::coroutine_handle<TaskPromise<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED>>
+	auto await_suspend(std::coroutine_handle<> in_coroutine /* the coroutine about to be suspended */) -> std::coroutine_handle<>
 	{
 		if (task.task_internal->handle != nullptr)
 		{
@@ -50,8 +74,8 @@ public:
 			if (task.task_internal->CheckAbortFunctions())
 				return nullptr;
 			// call awaited task if any instead of doing our own code
-			//if (TaskInternalBase<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED> * other_task_internal = task.task_internal->GetAwaitedTask())
-			//	return other_task_internal->handle;
+			if (TaskInternalBase * other_task_internal = task.task_internal->GetAwaitedTask())
+				return other_task_internal->GetHandle();
 			// continue our coroutine
 			return task.task_internal->handle; // enter directly into the incomming Task
 		}
@@ -208,6 +232,8 @@ public:
 	virtual bool IsDone() const = 0;
 	/** resume the task */
 	virtual void Resume() = 0;
+	/** gets a generic handle */
+	virtual std::coroutine_handle<> GetHandle() const = 0;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -360,15 +386,17 @@ public:
 		if (awaited_task_internal != nullptr)
 		{
 			if (awaited_task_internal->IsDone())
-			{
 				awaited_task_internal = nullptr;
-			}
 			else
-			{
 				return awaited_task_internal.get();
-			}
 		}
 		return nullptr;
+	}
+
+	/** override */
+	virtual std::coroutine_handle<> GetHandle() const override
+	{
+		return handle;
 	}
 
 public:
@@ -380,7 +408,6 @@ public:
 	/** the handle for the coroutine */
 	promise_handle handle;
 };
-
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////

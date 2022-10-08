@@ -7,10 +7,10 @@
 template<typename RETURN_TYPE = void, typename YIELD_TYPE = void, bool START_SUSPENDED = true>
 class Task;
 
-template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
+template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED>
 class TaskPromise;
 
-template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
+template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED>
 class TaskInternal;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ public:
 		return false;
 	}
 
-	auto await_suspend(std::coroutine_handle<> in_coroutine /* the coroutine about to be suspended */) -> std::coroutine_handle<TaskPromise<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED, task_type>>
+	auto await_suspend(std::coroutine_handle<> in_coroutine /* the coroutine about to be suspended */) -> std::coroutine_handle<TaskPromise<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED>>
 	{
 		if (task.task_internal->handle != nullptr)
 		{
@@ -50,8 +50,8 @@ public:
 			if (task.task_internal->CheckAbortFunctions())
 				return nullptr;
 			// call awaited task if any instead of doing our own code
-			if (TaskInternalBase<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED, task_type> * other_task_internal = task.task_internal->GetAwaitedTask())
-				return other_task_internal->handle;
+			//if (TaskInternalBase<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED> * other_task_internal = task.task_internal->GetAwaitedTask())
+			//	return other_task_internal->handle;
 			// continue our coroutine
 			return task.task_internal->handle; // enter directly into the incomming Task
 		}
@@ -72,12 +72,12 @@ public:
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
+template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED>
 class TaskPromiseBase
 {
 public:
 
-	using task_internal_type = TaskInternal<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED, TASK_TYPE>;
+	using task_internal_type = TaskInternal<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED>;
 
 public:
 
@@ -85,8 +85,8 @@ public:
 	chaos::weak_ptr<task_internal_type> task_internal;
 };
 
-template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
-class TaskPromiseBaseReturn : public TaskPromiseBase<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED, TASK_TYPE>
+template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED>
+class TaskPromiseBaseReturn : public TaskPromiseBase<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED>
 {
 public:
 
@@ -99,8 +99,8 @@ public:
 };
 
 
-template<typename YIELD_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
-class TaskPromiseBaseReturn<void, YIELD_TYPE, START_SUSPENDED, TASK_TYPE> : public TaskPromiseBase<void, YIELD_TYPE, START_SUSPENDED, TASK_TYPE>
+template<typename YIELD_TYPE, bool START_SUSPENDED>
+class TaskPromiseBaseReturn<void, YIELD_TYPE, START_SUSPENDED> : public TaskPromiseBase<void, YIELD_TYPE, START_SUSPENDED>
 {
 public:
 
@@ -112,8 +112,8 @@ public:
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
-class TaskPromiseBaseReturnAndYield : public TaskPromiseBaseReturn<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED, TASK_TYPE>
+template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED>
+class TaskPromiseBaseReturnAndYield : public TaskPromiseBaseReturn<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED>
 {
 public:
 
@@ -126,20 +126,20 @@ public:
 	}
 };
 
-template<typename RETURN_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
-class TaskPromiseBaseReturnAndYield<RETURN_TYPE, void, START_SUSPENDED, TASK_TYPE> : public TaskPromiseBaseReturn<RETURN_TYPE, void, START_SUSPENDED, TASK_TYPE>
+template<typename RETURN_TYPE, bool START_SUSPENDED>
+class TaskPromiseBaseReturnAndYield<RETURN_TYPE, void, START_SUSPENDED> : public TaskPromiseBaseReturn<RETURN_TYPE, void, START_SUSPENDED>
 {
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
-class TaskPromise : public TaskPromiseBaseReturnAndYield<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED, TASK_TYPE>
+template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED>
+class TaskPromise : public TaskPromiseBaseReturnAndYield<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED>
 {
 public:
 
-	using task_internal_type = TaskInternal<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED, TASK_TYPE>;
-	using task_type = TASK_TYPE;
+	using task_internal_type = TaskInternal<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED>;
+	using task_type = Task<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED>;
 
 	/** destructor */
 	~TaskPromise()
@@ -294,12 +294,12 @@ public:
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
+template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED>
 class TaskInternal : public TaskInternalBaseReturnAndYield<RETURN_TYPE, YIELD_TYPE>
 {
 public:
 
-	using task_promise_type = TaskPromise<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED, TASK_TYPE>;
+	using task_promise_type = TaskPromise<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED>;
 	using promise_handle = std::coroutine_handle<task_promise_type>;
 
 	/** destructor */
@@ -390,8 +390,8 @@ class Task
 {
 public:
 
-	using task_internal_type = TaskInternal<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED, Task>;
-	using promise_type = TaskPromise<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED, Task>;
+	using task_internal_type = TaskInternal<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED>;
+	using promise_type = TaskPromise<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED>;
 
 	template<typename OTHER_RETURN_TYPE, typename OTHER_YIELD_TYPE, bool OTHER_START_SUSPENDED>
 	friend class TaskAwaiter;

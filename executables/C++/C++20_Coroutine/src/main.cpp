@@ -13,7 +13,6 @@ class TaskPromise;
 template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
 class TaskInternal;
 
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
@@ -43,9 +42,20 @@ public:
 		return false;
 	}
 
-	auto await_suspend(std::coroutine_handle<> in_coroutine /* the coroutine about to be suspended */)
+	auto await_suspend(std::coroutine_handle<> in_coroutine /* the coroutine about to be suspended */) -> std::coroutine_handle<TaskPromise<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED, task_type>>
 	{
-		return task.task_internal->handle; // enter directly into the incomming Task
+		if (task.task_internal->handle != nullptr)
+		{
+			// check whether the coroutine wants to be abort
+			if (task.task_internal->CheckAbortFunctions())
+				return nullptr;
+			// call awaited task if any instead of doing our own code
+			if (TaskInternalBase<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED, task_type> * other_task_internal = task.task_internal->GetAwaitedTask())
+				return other_task_internal->handle;
+			// continue our coroutine
+			return task.task_internal->handle; // enter directly into the incomming Task
+		}
+		return nullptr;
 	}
 
 	decltype(auto) await_resume()
@@ -54,7 +64,7 @@ public:
 		return task.GetReturnValue();
 	}
 
-protected:
+public:
 
 	/** the task we are waiting for */
 	task_type task;
@@ -287,7 +297,6 @@ public:
 template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED, typename TASK_TYPE>
 class TaskInternal : public TaskInternalBaseReturnAndYield<RETURN_TYPE, YIELD_TYPE>
 {
-
 public:
 
 	using task_promise_type = TaskPromise<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED, TASK_TYPE>;
@@ -312,26 +321,13 @@ public:
 		if (handle != nullptr)
 		{
 			// check whether the coroutine wants to be abort
-			for (auto const& func : abort_functions)
-			{
-				if (func())
-				{
-					handle.destroy();
-					return;
-				}
-			}
+			if (CheckAbortFunctions())
+				return;
 			// call awaited task if any instead of doing our own code
-			if (awaited_task_internal != nullptr)
+			if (TaskInternalBase* other_task_internal = GetAwaitedTask())
 			{
-				if (awaited_task_internal->IsDone())
-				{
-					awaited_task_internal = nullptr;
-				}
-				else
-				{
-					awaited_task_internal->Resume();
-					return;
-				}
+				other_task_internal->Resume();
+				return;
 			}
 			// continue our coroutine
 			handle.resume();
@@ -342,6 +338,37 @@ public:
 	void AddAbortFunction(std::function<bool()> func)
 	{
 		abort_functions.push_back(std::move(func));
+	}
+
+	/** check whether the coroutine should be abort (and destroy handle if necessary) */
+	bool CheckAbortFunctions()
+	{
+		for (auto const& func : abort_functions)
+		{
+			if (func())
+			{
+				handle.destroy();
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/** returns whether the awaited task should be started */
+	TaskInternalBase * GetAwaitedTask()
+	{
+		if (awaited_task_internal != nullptr)
+		{
+			if (awaited_task_internal->IsDone())
+			{
+				awaited_task_internal = nullptr;
+			}
+			else
+			{
+				return awaited_task_internal.get();
+			}
+		}
+		return nullptr;
 	}
 
 public:
@@ -478,6 +505,7 @@ Task<int, void> Generator3()
 int main(int argc, char** argv, char** env)
 {
 	// TEST 1 ------------------------------------------------------------------------
+	if (1)
 	{
 		Task<int, void> G = Generator1();
 
@@ -488,6 +516,7 @@ int main(int argc, char** argv, char** env)
 		}
 	}
 	// TEST 2 ------------------------------------------------------------------------
+	if (1)
 	{
 		auto start_time = std::chrono::system_clock::now();
 

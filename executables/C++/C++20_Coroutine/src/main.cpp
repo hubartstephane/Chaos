@@ -75,7 +75,7 @@ public:
 				return nullptr;
 			// call awaited task if any instead of doing our own code
 			if (TaskInternalBase * other_task_internal = task.task_internal->GetAwaitedTask())
-				return other_task_internal->GetHandle();
+				return other_task_internal->handle;
 			// continue our coroutine
 			return task.task_internal->handle; // enter directly into the incomming Task
 		}
@@ -228,12 +228,79 @@ class TaskInternalBase : public chaos::Object
 {
 public:
 
-	/** check whether the task is done */
-	virtual bool IsDone() const = 0;
-	/** resume the task */
-	virtual void Resume() = 0;
-	/** gets a generic handle */
-	virtual std::coroutine_handle<> GetHandle() const = 0;
+	/** destructor */
+	virtual ~TaskInternalBase()
+	{
+		if (handle != nullptr)
+			handle.destroy();
+	}
+
+	/** check whether coroutine is completed */
+	bool IsDone() const
+	{
+		return (handle == nullptr) || (handle.done());
+	}
+
+	/** resume the coroutine */
+	void Resume()
+	{
+		if (handle != nullptr)
+		{
+			// check whether the coroutine wants to be abort
+			if (CheckAbortFunctions())
+				return;
+			// call awaited task if any instead of doing our own code
+			if (TaskInternalBase* other_task_internal = GetAwaitedTask())
+			{
+				other_task_internal->Resume();
+				return;
+			}
+			// continue our coroutine
+			handle.resume();
+		}
+	}
+
+	/** add a function to check whether the current coroutine is to be abort */
+	void AddAbortFunction(std::function<bool()> func)
+	{
+		abort_functions.push_back(std::move(func));
+	}
+
+	/** check whether the coroutine should be abort (and destroy handle if necessary) */
+	bool CheckAbortFunctions()
+	{
+		for (auto const& func : abort_functions)
+		{
+			if (func())
+			{
+				handle.destroy();
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/** returns whether the awaited task should be started */
+	TaskInternalBase* GetAwaitedTask()
+	{
+		if (awaited_task_internal != nullptr)
+		{
+			if (awaited_task_internal->IsDone())
+				awaited_task_internal = nullptr;
+			else
+				return awaited_task_internal.get();
+		}
+		return nullptr;
+	}
+
+public:
+
+	/** function called each time a task is resumed to know whether the function has been interrupted */
+	std::vector<std::function<bool()>> abort_functions;
+	/** a task that is to be woken-up before we are resumed */
+	chaos::shared_ptr<TaskInternalBase> awaited_task_internal;
+	/** the handle for the coroutine */
+	std::coroutine_handle<> handle;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -323,92 +390,7 @@ public:
 template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED>
 class TaskInternal : public TaskInternalBaseReturnAndYield<RETURN_TYPE, YIELD_TYPE>
 {
-public:
-
-	using task_promise_type = TaskPromise<RETURN_TYPE, YIELD_TYPE, START_SUSPENDED>;
-	using promise_handle = std::coroutine_handle<task_promise_type>;
-
-	/** destructor */
-	virtual ~TaskInternal()
-	{
-		if (handle != nullptr)
-			handle.destroy();
-	}
-
-	/** check whether coroutine is completed */
-	bool IsDone() const
-	{
-		return (handle == nullptr) || (handle.done());
-	}
-
-	/** resume the coroutine */
-	void Resume()
-	{
-		if (handle != nullptr)
-		{
-			// check whether the coroutine wants to be abort
-			if (CheckAbortFunctions())
-				return;
-			// call awaited task if any instead of doing our own code
-			if (TaskInternalBase* other_task_internal = GetAwaitedTask())
-			{
-				other_task_internal->Resume();
-				return;
-			}
-			// continue our coroutine
-			handle.resume();
-		}
-	}
-
-	/** add a function to check whether the current coroutine is to be abort */
-	void AddAbortFunction(std::function<bool()> func)
-	{
-		abort_functions.push_back(std::move(func));
-	}
-
-	/** check whether the coroutine should be abort (and destroy handle if necessary) */
-	bool CheckAbortFunctions()
-	{
-		for (auto const& func : abort_functions)
-		{
-			if (func())
-			{
-				handle.destroy();
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/** returns whether the awaited task should be started */
-	TaskInternalBase * GetAwaitedTask()
-	{
-		if (awaited_task_internal != nullptr)
-		{
-			if (awaited_task_internal->IsDone())
-				awaited_task_internal = nullptr;
-			else
-				return awaited_task_internal.get();
-		}
-		return nullptr;
-	}
-
-	/** override */
-	virtual std::coroutine_handle<> GetHandle() const override
-	{
-		return handle;
-	}
-
-public:
-
-	/** function called each time a task is resumed to know whether the function has been interrupted */
-	std::vector<std::function<bool()>> abort_functions;
-	/** a task that is to be woken-up before we are resumed */
-	chaos::shared_ptr<TaskInternalBase> awaited_task_internal;
-	/** the handle for the coroutine */
-	promise_handle handle;
 };
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 

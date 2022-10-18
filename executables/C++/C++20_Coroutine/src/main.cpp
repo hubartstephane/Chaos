@@ -72,14 +72,14 @@ public:
 		{
 			// check whether the coroutine wants to be abort
 			if (task.task_internal->CheckAbortFunctions())
-				return nullptr;
+				return std::noop_coroutine();
 			// call awaited task if any instead of doing our own code
 			if (TaskInternalBase * other_task_internal = task.task_internal->GetAwaitedTask())
 				return other_task_internal->handle;
 			// continue our coroutine
 			return task.task_internal->handle; // enter directly into the incomming Task
 		}
-		return nullptr;
+		return std::noop_coroutine();
 	}
 
 	decltype(auto) await_resume()
@@ -394,8 +394,21 @@ class TaskInternal : public TaskInternalBaseReturnAndYield<RETURN_TYPE, YIELD_TY
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+class TaskBase
+{
+public:
+
+	/** destructor */
+	virtual ~TaskBase() = default;
+	/** resume the task */
+	virtual void Resume() = 0;
+	/** returns whether the task is done or not */
+	virtual bool IsDone() const = 0;
+};
+
 template<typename RETURN_TYPE, typename YIELD_TYPE, bool START_SUSPENDED>
-class Task
+class Task : public TaskBase
 {
 public:
 
@@ -413,13 +426,13 @@ public:
 	{
 	}
 	/** resume the coroutine */
-	void Resume()
+	virtual void Resume() override
 	{
 		assert(task_internal != nullptr);
 		task_internal->Resume();
 	}
 	/** check whether coroutine is completed */
-	bool IsDone() const
+	virtual bool IsDone() const override
 	{
 		return (task_internal == nullptr) || (task_internal->IsDone());
 	}
@@ -471,6 +484,16 @@ protected:
 
 
 
+
+
+
+
+
+
+
+
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 Task<int, void> Generator2(int i)
@@ -485,7 +508,7 @@ Task<int, void> Generator1()
 {
 	int result = 0;
 	std::cout << "Generator1: step 1" << std::endl;
-	result += co_await Generator2(1);
+	result += co_await Generator2(1).CancelIf([] {return true; });
 	std::cout << "Generator1: step 2" << std::endl;
 	result += co_await Generator2(2);
 	std::cout << "Generator1: step 3" << std::endl;
@@ -516,7 +539,12 @@ int main(int argc, char** argv, char** env)
 	// TEST 1 ------------------------------------------------------------------------
 	if (1)
 	{
-		Task<int, void> G = Generator1();
+		int count = 0;
+
+		Task<int, void> G = Generator1().CancelIf([&count]() 
+		{
+			return (++count == 2); 
+		});
 
 		while (!G.IsDone())
 		{

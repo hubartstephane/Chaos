@@ -2,6 +2,390 @@
 
 #include <coroutine>
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+PlayerInputCommon.json
+{
+	Jump = {GamepadA}
+
+	
+	LongJump = LongPress(GamepadA)
+
+
+	FireBall = simult(down, A) | simult(diag)
+
+}
+
+PlayerInput1.json
+
+{
+  Jump = {A, B, GamepadA}
+
+
+}
+
+PlayerInput2.json
+
+{
+
+
+
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+class FSMStateEntry
+{
+	State *
+};
+
+
+
+
+
+template<typename STATE_TYPE>
+class State : public
+{
+
+};
+
+class FSM
+{
+public:
+
+	virtual bool ReceiveEvent(Object* event)
+	{
+
+	}
+
+	virtual 
+
+
+
+	// equivalent goto
+	GotoState();
+	// equivalent gosub
+	GotoSubState();
+
+	std::vector<
+
+protected:
+
+	State<> InitialState;
+	State<> MainMenu;
+	State<> GameLoop;
+	State<> PauseMenu;
+
+};
+
+State<> FSM()
+{
+	State<> InitialState;
+	State<> MainMenu;
+	State<> GameLoop;
+	State<> PauseMenu;
+
+	co_await InitialState
+
+}
+
+
+WaitForPressStartState()
+{
+	display = []()
+	{
+		GetScreenSize();
+
+	}
+
+}
+
+class UserInputHandlerInterface
+{
+public:
+
+	virtual OnKeyDown();
+	virtual OnMouseKeyDown();
+	virtual OnGamepadKeyDown();
+};
+
+
+class Window : public Object, public UserInputHandlerInterface
+{
+public:
+
+
+};
+
+class ViewportWindow : public Window
+{
+public:
+
+
+
+
+
+
+protected:
+
+	std::vector<shared_ptr<Viewport>> viewports;
+};
+
+class Viewport : public Object, public UserInputHandlerInterface
+{
+public:
+
+
+
+}
+
+
+
+class FSM
+{
+	State()
+	{
+
+	}
+
+
+
+
+};
+
+
+
+
+
+
+
+
+
+InitialState<> InitialState()
+{
+	Begin = [this]()
+	{
+		preference = LoadPreferencesFromPreviousSession();
+
+		window = CreateWindow<ViewportWindow>(preference, 4 x 4, HorizontalFirst);
+
+		viewport = window.CreateViewport();
+
+
+
+		viewport.OnUncached
+
+	};
+
+	Display = []()
+	{
+
+	}
+
+
+
+
+	
+
+	viewport.display = []()
+	{
+		size = GetViewportSize();
+
+		mesh = CreateTextMesh("Title");
+
+		mesh.Draw()
+	}
+
+
+
+	
+
+
+
+	Display("Title");
+
+	int gamepad_id = co_await PressStart();
+
+	NavigateThroughMenu(gamepad_id);
+
+	CreatePlayer(gamepad_id);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void FF(std::function<void(int)> f)
+{
+
+}
+
+
+
+#if 0
+
+Popup::OnButtonPressed()
+{
+	Output.Resume(3);
+}
+
+void RaisePopup(Output)
+{
+	CreatePopup(Output);
+	return; // the task will be woken up later
+}
+
+Task<int> Generator()
+{
+	int popup_value = co_await RaisePopup();
+}
+#endif
+
+#if 0
+
+Task<int> T1() {}
+
+Task<int> Generator()
+{
+	int value = co_await T1(); // on poursuit directement le code dans T1. Des que T1 yield ou return une valeur, Generator reprends avec la bonne valeur
+
+}
+
+Task<int> Generator2()
+{
+	std::optional<int> value = co_await T1().CancelIf(...); // T1 peut etre interrompue avant de lancer une valeur, on retourne donc optional
+
+}
+
+#endif
+
+
+
+#if 0
+
+
+
+
+
+#endif
+
+
+
+
+#if 0
+
+Task<int, int> T1() {}
+
+Task<int> Generator()
+{
+	int value1 = co_await T1(); // attends que T1 yield ou return
+
+	std::optional<int> value2 = co_await Yield(T1()); // atttends que T1 yield. Ca peut ne jamais arriver
+
+	std::optional<int> value3 = co_await Return(T1()); // atttends que T1 return. Ca peut ne jamais arriver (si il y a un cancel)
+
+}
+
+
+
+#endif
+
+
+
+
+
+
+
+#if 0
+
+Task<int> T1() {}
+Task<int> T2() {}
+
+Task<int> Generator()
+{
+	int value = co_await Any(T1, T2); // des que T1 ou T2 envoie une valeur, Generator est resumé avec
+
+}
+
+Task<int> Generator()
+{
+	int value = co_await All(T1, T2); // des que T1 ou T2 envoie une valeur, Generator est resumé avec
+
+}
+
+
+
+
+Task<int> Generator()
+{
+	std::optional<int> value = co_await Any(T1, T2).CancelIf(...); // des que T1 ou T2 envoie une valeur, Generator est resumé avec
+
+}
+
+
+Task<int> Generator()
+{
+	std::optional<int> value = co_await Any(T1, T2).CancelIf(...); // des que T1 ou T2 envoie une valeur, Generator est resumé avec
+
+}
+
+#endif
+
+
+
+
+#if 0
+
+
+
+
+
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 template<typename RETURN_TYPE = void, typename YIELD_TYPE = void, bool START_SUSPENDED = true>
@@ -66,6 +450,7 @@ public:
 		return false;
 	}
 
+#if 0
 	auto await_suspend(std::coroutine_handle<> in_coroutine /* the coroutine about to be suspended */) -> std::coroutine_handle<>
 	{
 		if (task.task_internal->handle != nullptr)
@@ -81,11 +466,20 @@ public:
 		}
 		return std::noop_coroutine();
 	}
+#endif
+
+	auto await_suspend(std::coroutine_handle<> in_coroutine)
+	{
+		int i = 0;
+		++i;
+
+
+	}
 
 	decltype(auto) await_resume()
 	{
-		assert(task.IsDone());
-		return task.GetReturnValue();
+		//assert(task.IsDone());
+		//return task.GetReturnValue();
 	}
 
 public:
@@ -199,6 +593,9 @@ public:
 	}
 
 	/** create an awaiter from a task */
+
+#if 1
+
 	template<typename OTHER_RETURN_TYPE, typename OTHER_YIELD_TYPE, bool OTHER_START_SUSPENDED>
 	auto await_transform(Task<OTHER_RETURN_TYPE, OTHER_YIELD_TYPE, OTHER_START_SUSPENDED> task)
 	{
@@ -208,6 +605,8 @@ public:
 		}
 		return TaskAwaiter<OTHER_RETURN_TYPE, OTHER_YIELD_TYPE, OTHER_START_SUSPENDED >(task);
 	}
+
+
 
 	/** if co_await an already Awaitable, no need to create anything */
 	template<Awaitable T>
@@ -221,6 +620,7 @@ public:
 	{
 		return awaitable;
 	}
+#endif
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -476,6 +876,16 @@ public:
 		return *this;
 	}
 
+
+
+#if 0
+	std::suspend_always operator co_await () const
+	{
+		return {};
+	}
+#endif
+
+
 protected:
 
 	/** the pointer to the internal data */
@@ -498,6 +908,10 @@ protected:
 
 Task<int, void> Generator2(int i)
 {
+	co_await std::suspend_always{};
+	co_await std::suspend_always{};
+	co_await std::suspend_always{};
+
 	std::cout << "Generator2(" << i << ")" << std::endl;
 	co_return 6 * i;
 }
@@ -506,13 +920,20 @@ Task<int, void> Generator2(int i)
 
 Task<int, void> Generator1()
 {
+	auto T = Generator2(2);
+
+
+
+	co_await T;
+
+
 	int result = 0;
 	std::cout << "Generator1: step 1" << std::endl;
-	result += co_await Generator2(1).CancelIf([] {return true; });
+	co_await Generator2(1).CancelIf([] {return true; });
 	std::cout << "Generator1: step 2" << std::endl;
-	result += co_await Generator2(2);
+	co_await Generator2(2);
 	std::cout << "Generator1: step 3" << std::endl;
-	result += co_await Generator2(3);
+	co_await Generator2(3);
 	std::cout << "Generator1: final step" << std::endl;
 	co_return result;
 }
@@ -541,10 +962,15 @@ int main(int argc, char** argv, char** env)
 	{
 		int count = 0;
 
-		Task<int, void> G = Generator1().CancelIf([&count]() 
+		Task<int, void> G = Generator1();
+		
+#if 0
+		.CancelIf([&count]()
 		{
+				return false;
 			return (++count == 2); 
 		});
+#endif
 
 		while (!G.IsDone())
 		{

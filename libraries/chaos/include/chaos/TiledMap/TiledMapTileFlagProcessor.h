@@ -9,7 +9,7 @@ namespace chaos
 		// TileFlagProcessor
 		// ==========================================
 
-		class CHAOS_API TileFlagProcessor : public Object, public JSONSerializable
+		class CHAOS_API TileFlagProcessor : public Object, public JSONSerializableInterface
 		{
 			CHAOS_DECLARE_OBJECT_CLASS(TileFlagProcessor, Object);
 

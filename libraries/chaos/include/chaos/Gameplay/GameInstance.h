@@ -10,7 +10,7 @@ namespace chaos
 	// GameInstance
 	// =============================================
 
-	class CHAOS_API GameInstance : public Tickable, public InputEventReceiver, public GPUProgramProviderInterface, public CheckpointObject<GameCheckpoint>
+	class CHAOS_API GameInstance : public Tickable, public InputEventReceiverInterface, public GPUProgramProviderInterface, public CheckpointObject<GameCheckpoint>
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 

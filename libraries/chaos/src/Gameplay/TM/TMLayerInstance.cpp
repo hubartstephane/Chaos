@@ -255,7 +255,7 @@ namespace chaos
 
 	bool TMLayerInstance::SerializeFromJSON(nlohmann::json const& json)
 	{
-		if (!JSONSerializable::SerializeFromJSON(json))
+		if (!JSONSerializableInterface::SerializeFromJSON(json))
 			return false;
 		SerializeObjectListFromJSON(json, "OBJECTS", objects);
 		TMTools::SerializeLayersFromJSON(this, json);
@@ -264,7 +264,7 @@ namespace chaos
 
 	bool TMLayerInstance::SerializeIntoJSON(nlohmann::json& json) const
 	{
-		if (!JSONSerializable::SerializeIntoJSON(json))
+		if (!JSONSerializableInterface::SerializeIntoJSON(json))
 			return false;
 		JSONTools::SetAttribute(json, "LAYER_ID", GetLayerID());
 		JSONTools::SetAttribute(json, "OBJECTS", objects);

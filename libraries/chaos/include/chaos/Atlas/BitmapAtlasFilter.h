@@ -14,7 +14,7 @@ namespace chaos
 		* BitmapAtlasFilterCondition : a condition to know whether the bitmap is to be processed
 		*/
 
-		class CHAOS_API BitmapAtlasFilterCondition : public Object, public JSONSerializable
+		class CHAOS_API BitmapAtlasFilterCondition : public Object, public JSONSerializableInterface
 		{
 			CHAOS_DECLARE_OBJECT_CLASS(BitmapAtlasFilterCondition, Object);
 

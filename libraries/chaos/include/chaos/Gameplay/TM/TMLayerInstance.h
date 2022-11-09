@@ -6,7 +6,7 @@ namespace chaos
 	// TMLayerInstance : instance of a Layer
 	// =====================================
 
-	class CHAOS_API TMLayerInstance : public GPURenderable, public JSONSerializable
+	class CHAOS_API TMLayerInstance : public GPURenderable, public JSONSerializableInterface
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 

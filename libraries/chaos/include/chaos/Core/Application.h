@@ -9,7 +9,7 @@ namespace chaos
 	/**
 	* Application : used to store generic application data
 	*/
-	class CHAOS_API Application : public Object, public InputEventReceiver
+	class CHAOS_API Application : public Object, public InputEventReceiverInterface
 	{
 
 	public:

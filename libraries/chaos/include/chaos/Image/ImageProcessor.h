@@ -13,7 +13,7 @@ namespace chaos
 	* ImageProcessor : take an image as an entry and returns a new image as output
 	*/
 
-	class CHAOS_API ImageProcessor : public Object, public JSONSerializable
+	class CHAOS_API ImageProcessor : public Object, public JSONSerializableInterface
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(ImageProcessor, Object);
 

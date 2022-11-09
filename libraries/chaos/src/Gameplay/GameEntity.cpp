@@ -136,7 +136,7 @@ namespace chaos
 	
 	bool GameEntity::SerializeFromJSON(nlohmann::json const& entry)
 	{
-		if (!JSONSerializable::SerializeFromJSON(entry))
+		if (!JSONSerializableInterface::SerializeFromJSON(entry))
 			return false;
 
 		box2 b;
@@ -148,7 +148,7 @@ namespace chaos
 
 	bool GameEntity::SerializeIntoJSON(nlohmann::json& entry) const
 	{
-		if (!JSONSerializable::SerializeIntoJSON(entry))
+		if (!JSONSerializableInterface::SerializeIntoJSON(entry))
 			return false;
 		JSONTools::SetAttribute(entry, "BOUNDING_BOX", GetBoundingBox());
 		return true;

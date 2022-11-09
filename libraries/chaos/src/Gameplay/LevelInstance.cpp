@@ -393,7 +393,7 @@ namespace chaos
 
 	bool LevelInstance::SerializeIntoJSON(nlohmann::json& json) const
 	{
-		if (!JSONSerializable::SerializeIntoJSON(json))
+		if (!JSONSerializableInterface::SerializeIntoJSON(json))
 			return false;
 
 		// level index (just to be sure this is valid to apply a checkpoint on this level)
@@ -410,7 +410,7 @@ namespace chaos
 
 	bool LevelInstance::SerializeFromJSON(nlohmann::json const& json)
 	{
-		if (!JSONSerializable::SerializeFromJSON(json))
+		if (!JSONSerializableInterface::SerializeFromJSON(json))
 			return false;
 
 		// check for level index

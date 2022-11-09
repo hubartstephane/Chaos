@@ -431,7 +431,7 @@ namespace chaos
 	
 	bool Clock::SerializeIntoJSON(nlohmann::json& json) const
 	{
-		if (!JSONSerializable::SerializeIntoJSON(json))
+		if (!JSONSerializableInterface::SerializeIntoJSON(json))
 			return false;
 		JSONTools::SetAttribute(json, "CLOCK_TIME", clock_time);
 		return true;
@@ -439,7 +439,7 @@ namespace chaos
 	
 	bool Clock::SerializeFromJSON(nlohmann::json const& json) 
 	{
-		if (!JSONSerializable::SerializeFromJSON(json))
+		if (!JSONSerializableInterface::SerializeFromJSON(json))
 			return false;
 		JSONTools::GetAttribute(json, "CLOCK_TIME", clock_time);
 		return true;

@@ -2,59 +2,11 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class WindowHints;
 	class WindowParams;
 	class WindowDrawParams;
 	class Window;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-	/**
-	* WindowHints : this represents hints for GLFWwindow creation
-	*/
-
-	class CHAOS_API WindowHints
-	{
-	public:
-
-		/** gives set hints to GLFW */
-		void ApplyHints() const;
-
-	public:
-
-		/** true if the window can be resized */
-		int resizable = 1;
-		/** true if the window starts visible */
-		int start_visible = 1;
-		/** true if the window has some decoration */
-		int decorated = 1;
-		/** true if the window is toplevel */
-		int toplevel = 0;
-		/** self description */
-		int focused = 0;
-		/** whether we want the fps to be unlimited */
-		bool unlimited_fps = false;
-		/** number of samples in multisamples (0 for none) */
-		int samples = 0;
-		/** self description */
-		int double_buffer = 1;
-		/** self description */
-		int depth_bits = 24;
-		/** self description */
-		int stencil_bits = 8;
-		/** self description */
-		int red_bits = 8;
-		/** self description */
-		int green_bits = 8;
-		/** self description */
-		int blue_bits = 8;
-		/** self description */
-		int alpha_bits = 8;
-	};
-
-	CHAOS_API bool SaveIntoJSON(nlohmann::json& json, WindowHints const& src);
-
-	CHAOS_API bool LoadFromJSON(nlohmann::json const& json, WindowHints& dst);
 
 	/**
 	* WindowParams : parameters for playing single window application
@@ -93,11 +45,52 @@ namespace chaos
 		glm::ivec2 full_size = { 0, 0 };
 	};
 
+
+
+
+	class CHAOS_API WindowInterface : public TickableInterface, public InputEventReceiverInterface, public NamedInterface, public GPUProgramProviderInterface
+	{
+	public:
+
+		/** called whenever the user try to close window */
+		virtual bool OnWindowClosed() { return true; }
+		/** called whenever the window is resized */
+		virtual void OnWindowResize(glm::ivec2 size) {}
+		/** called whenever the window is redrawn (entry point) */
+		virtual void OnWindowDraw() {}
+
+		/** called whenever a file is dropped */
+		virtual void OnDropFile(int count, char const** paths) {}
+		/** called whenever the window becomes iconified or is restored */
+		virtual void OnIconifiedStateChange(bool iconified) {}
+		/** called whenever the window gain or loose focus */
+		virtual void OnFocusStateChange(bool gain_focus) {}
+
+#if 0
+	protected:
+
+		/** the drawing specialization method */
+		virtual bool OnDraw(GPURenderer* renderer, WindowDrawParams const& DrawParams, GPUProgramProviderInterface const* uniform_provider) { return true; }
+#endif
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
 	/**
 	* Window : a binding class between chaos and GLFW to handle window (beware the prefix "My")
 	*/
 
-	class CHAOS_API Window : public Object, public InputEventReceiverInterface, public NamedInterface, public GPUProgramProviderInterface
+	class CHAOS_API Window : public Object, public WindowInterface
 	{
 		friend class WindowApplication;
 
@@ -124,7 +117,7 @@ namespace chaos
 		/** destroying the window */
 		void DestroyGLFWWindow();
 		/** create the internal window */
-		bool CreateGLFWWindow(WindowParams params, WindowHints hints, GLFWwindow* share_context);
+		bool CreateGLFWWindow(WindowParams params, GLFWWindowHints hints, GLFWwindow* share_context);
 
 		/** toggle to fullscreen mode */
 		void ToggleFullscreen();
@@ -151,6 +144,12 @@ namespace chaos
 
 		/** override */
 		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
+
+
+
+
+		virtual void OnWindowDraw() override;
+
 
 		/** getting the renderer */
 		GPURenderer* GetRenderer() { return renderer.get(); }
@@ -181,37 +180,36 @@ namespace chaos
 		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override;
 
 		/** get the hints for new GLFW window */
-		virtual void TweakHints(WindowHints& hints, GLFWmonitor* monitor, bool pseudo_fullscreen) const;
+		virtual void TweakHints(GLFWWindowHints& hints, GLFWmonitor* monitor, bool pseudo_fullscreen) const;
 		/** bind Window with GLFW */
 		virtual void SetGLFWCallbacks(bool in_double_buffer);
 		/** called every Tick (returns true whenever we want to redraw the window) */
-		virtual bool Tick(float delta_time) { return true; }
+		
+		
+		
+		
+		//virtual bool Tick(float delta_time) { return true; }
+
+
+
+		/** the drawing specialization method */
+		virtual bool OnDraw(GPURenderer* renderer, WindowDrawParams const& DrawParams, GPUProgramProviderInterface const* uniform_provider);
+		
+		
+		
 		/** called at window creation (returns false if the window must be killed) */
 		virtual bool InitializeFromConfiguration(nlohmann::json const& config);
 		/** called at window destruction */
 		virtual void Finalize() { }
 
-		/** called whenever the user try to close window */
-		virtual bool OnWindowClosed() { return true; }
-		/** called whenever the window is resized */
-		virtual void OnWindowResize(glm::ivec2 size) {}
-		/** called whenever the window is redrawn (entry point) */
-		virtual void OnWindowDraw();
 
-		/** called whenever a file is dropped */
-		virtual void OnDropFile(int count, char const** paths) {}
-		/** called whenever the window becomes iconified or is restored */
-		virtual void OnIconifiedStateChange(bool iconified) {}
-		/** called whenever the window gain or loose focus */
-		virtual void OnFocusStateChange(bool gain_focus) {}
 
 		/** get the mouse position */
 		glm::vec2 GetMousePosition() const;
 		/** returns true if the mouse position is valid (very first frame) */
 		bool IsMousePositionValid() const;
 
-		/** the drawing specialization method */
-		virtual bool OnDraw(GPURenderer* renderer, WindowDrawParams const & DrawParams, GPUProgramProviderInterface const * uniform_provider);
+
 
 	private:
 

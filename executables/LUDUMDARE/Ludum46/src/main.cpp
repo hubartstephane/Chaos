@@ -9,7 +9,7 @@ int main(int argc, char ** argv, char ** env)
 	params.height = 500;
 	params.monitor_index = 0;
 
-	chaos::WindowHints hints;
+	chaos::GLFWWindowHints hints;
 
 	return chaos::RunGame<LudumGame>(argc, argv, env, params, hints);
 }

@@ -39,7 +39,7 @@ protected:
 		return loader.LoadBuffer(buffer);
 	}
 
-	virtual void TweakHints(chaos::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
+	virtual void TweakHints(chaos::GLFWWindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
 	{
 		chaos::Window::TweakHints(hints, monitor, pseudo_fullscreen);
 		hints.toplevel = 0;
@@ -58,7 +58,7 @@ int main(int argc, char ** argv, char ** env)
 	params.height = 500;
 	params.monitor_index = 0;
 
-	chaos::WindowHints hints;
+	chaos::GLFWWindowHints hints;
 
 	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, params, hints);
 }

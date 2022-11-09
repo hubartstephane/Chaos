@@ -2,43 +2,9 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class GLFWHints;
 	class WindowApplication;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-	/**
-	* GLFWHints : this represents hints for the application
-	*/
-
-	class CHAOS_API GLFWHints
-	{
-	public:
-
-		/** gives set hints to GLFW */
-		void ApplyHints();
-
-	public:
-
-		/** true if we use an opengl debug context */
-#if _DEBUG
-		int debug_context = 1;
-#else
-		int debug_context = 0;
-#endif
-		/** the major version of opengl */
-		int major_version = 4;
-		/** the major version of opengl */
-		int minor_version = 4;
-		/** the refresh rate (only usefull in fullscreen mode) */
-		int refresh_rate = 60;
-		/** the opengl profile */
-		int opengl_profile = GLFW_OPENGL_CORE_PROFILE;
-	};
-
-	CHAOS_API bool SaveIntoJSON(nlohmann::json& json, GLFWHints const& src);
-
-	CHAOS_API bool LoadFromJSON(nlohmann::json const& json, GLFWHints& dst);
 
 	/**
 	* WindowApplication
@@ -51,7 +17,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		WindowApplication(SubClassOf<Window> in_main_window_class, WindowParams const& in_window_params = {}, WindowHints const& in_window_hints = {});
+		WindowApplication(SubClassOf<Window> in_main_window_class, WindowParams const& in_window_params = {}, GLFWWindowHints const& in_window_hints = {});
 
 		/** gets the number of windows */
 		size_t GetWindowCount() const;
@@ -207,7 +173,7 @@ namespace chaos
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;
 
 		/** create a window */
-		Window* CreateTypedWindow(SubClassOf<Window> window_class, WindowParams const& params = {}, WindowHints const& hints = {});
+		Window* CreateTypedWindow(SubClassOf<Window> window_class, WindowParams const& params = {}, GLFWWindowHints const& hints = {});
 
 		/** called after window creation */
 		virtual void OnWindowCreated(Window* window);
@@ -232,7 +198,7 @@ namespace chaos
 		/** the initial_window param */
 		WindowParams window_params;
 		/** the initial_window hints */
-		WindowHints window_hints;
+		GLFWWindowHints window_hints;
 		/** the class of the main window */
 		SubClassOf<Window> main_window_class;
 

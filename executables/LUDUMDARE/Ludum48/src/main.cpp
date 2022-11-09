@@ -9,7 +9,7 @@ int main(int argc, char ** argv, char ** env)
 	params.height = 500;
 	params.monitor_index = 0;
 
-	WindowHints hints;
+	GLFWWindowHints hints;
 
 	return RunGame<LudumGame>(argc, argv, env, params, hints);
 }

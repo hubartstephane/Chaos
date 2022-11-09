@@ -10,7 +10,7 @@ namespace chaos
 	// Level : a simple game level
 	// =====================================
 
-	class CHAOS_API Level : public Object, public FileResource, public NamedObject
+	class CHAOS_API Level : public Object, public FileResource, public NamedInterface
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 

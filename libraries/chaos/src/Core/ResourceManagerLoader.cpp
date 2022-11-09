@@ -52,7 +52,7 @@ namespace chaos
 		return true;
 	}
 	
-	void ResourceManagerLoaderBase::ApplyNameToLoadedResource(NamedObject* resource) const
+	void ResourceManagerLoaderBase::ApplyNameToLoadedResource(NamedInterface* resource) const
 	{
 		if (resource != nullptr)
 		{

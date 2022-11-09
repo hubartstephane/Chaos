@@ -92,7 +92,7 @@ namespace chaos
 
 		/** test whether the object name/tag match */
 		template<typename T>
-		bool Match(T const& object) const // use template to use NamedObjectWrapper as well as NamedObject
+		bool Match(T const& object) const // use template to use NamedInterfaceWrapper as well as NamedInterface
 		{
 			if (IsNoneRequest())
 				return false;

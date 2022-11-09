@@ -33,7 +33,7 @@
 #include "chaos/Core/FileResource.h"
 #include "chaos/Core/Tag.h"
 #include "chaos/Core/ObjectRequest.h"
-#include "chaos/Core/NamedObject.h"
+#include "chaos/Core/NamedInterface.h"
 #include "chaos/Core/NamedObjectFilter.h"
 #include "chaos/Core/NameFilter.h"
 #include "chaos/Core/ApplicationArguments.h"

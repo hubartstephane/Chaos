@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	bool NamedObjectFilterList::CheckName(NamedObject const & object) const
+	bool NamedObjectFilterList::CheckName(NamedInterface const & object) const
 	{
 		// test for forbidden list
 		char const * object_name = object.GetName();

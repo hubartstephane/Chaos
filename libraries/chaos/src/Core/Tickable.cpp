@@ -7,7 +7,7 @@ namespace chaos
 	// Tickable implementation
 	// ========================================================	
 	
-	void Tickable::SetPause(bool in_pause)
+	void TickableInterface::SetPause(bool in_pause)
 	{
 		if (paused == in_pause)
 			return;
@@ -15,29 +15,29 @@ namespace chaos
 		OnPauseStateChanged(in_pause);
 	}
 		
-	bool Tickable::IsPaused() const
+	bool TickableInterface::IsPaused() const
 	{
 		return paused;
 	}
 
-	bool Tickable::Tick(float delta_time)
+	bool TickableInterface::Tick(float delta_time)
 	{
 		if (!CanTick())
 			return false;
 		return DoTick(delta_time);
 	}
 
-	bool Tickable::CanTick()
+	bool TickableInterface::CanTick()
 	{
 		return !IsPaused();
 	}
 
-	bool Tickable::DoTick(float delta_time)
+	bool TickableInterface::DoTick(float delta_time)
 	{
 		return true;
 	}
 
-	void Tickable::OnPauseStateChanged(bool in_pause)
+	void TickableInterface::OnPauseStateChanged(bool in_pause)
 	{
 
 	}

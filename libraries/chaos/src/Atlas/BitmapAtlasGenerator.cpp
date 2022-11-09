@@ -66,7 +66,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		static NamedObject * GetNamedObject(BitmapInfoInput * info)
+		static NamedInterface * GetNamedObject(BitmapInfoInput * info)
 		{
 			if (info->bitmap_output_info != nullptr)
 				return info->bitmap_output_info;
@@ -75,7 +75,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		static NamedObject const * GetNamedObject(BitmapInfoInput const * info)
+		static NamedInterface const * GetNamedObject(BitmapInfoInput const * info)
 		{
 			if (info->bitmap_output_info != nullptr)
 				return info->bitmap_output_info;
@@ -173,7 +173,7 @@ namespace chaos
 				if (layout == nullptr)
 					continue;
 
-				NamedObject const  * named  = GetNamedObject(entry_input);
+				NamedInterface const  * named  = GetNamedObject(entry_input);
 				if (named == nullptr)
 					continue;
 
@@ -218,8 +218,8 @@ namespace chaos
 
 					if (r1.IsIntersecting(r2))
 					{
-						NamedObject const * named1 = GetNamedObject(entries[i]);
-						NamedObject const * named2 = GetNamedObject(entries[j]);
+						NamedInterface const * named1 = GetNamedObject(entries[i]);
+						NamedInterface const * named2 = GetNamedObject(entries[j]);
 
 						if (named1 != nullptr && named2 != nullptr)
 						{

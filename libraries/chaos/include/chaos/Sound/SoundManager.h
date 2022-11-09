@@ -173,7 +173,7 @@ namespace chaos
 	// SOUND OBJECT
 	// ==============================================================
 
-	class CHAOS_API SoundObject : public Object, public NamedObject
+	class CHAOS_API SoundObject : public Object, public NamedInterface
 	{
 		CHAOS_SOUND_ALL_FRIENDS
 

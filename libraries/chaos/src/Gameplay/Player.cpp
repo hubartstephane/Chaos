@@ -232,7 +232,7 @@ namespace chaos
 
 	bool Player::SerializeIntoJSON(nlohmann::json& json) const
 	{
-		if (!JSONSerializable::SerializeIntoJSON(json))
+		if (!JSONSerializableInterface::SerializeIntoJSON(json))
 			return false;
 
 		JSONTools::SetAttribute(json, "LIFE_COUNT", life_count);
@@ -250,7 +250,7 @@ namespace chaos
 
 	bool Player::SerializeFromJSON(nlohmann::json const& json)
 	{
-		if (!JSONSerializable::SerializeFromJSON(json))
+		if (!JSONSerializableInterface::SerializeFromJSON(json))
 			return false;
 
 		JSONTools::GetAttribute(json, "LIFE_COUNT", life_count);
@@ -351,7 +351,7 @@ namespace chaos
 			return false;
 		}
 		// super call
-		return InputEventReceiver::DoCheckButtonPressed(button, previous_frame);
+		return InputEventReceiverInterface::DoCheckButtonPressed(button, previous_frame);
     }
 
 	bool Player::InitializeGameValues(nlohmann::json const& config, bool hot_reload)

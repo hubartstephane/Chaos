@@ -11,14 +11,14 @@ namespace chaos
 
 		bool BitmapAtlasFilterCondition::SerializeFromJSON(nlohmann::json const& entry)
 		{
-			if (!JSONSerializable::SerializeFromJSON(entry))
+			if (!JSONSerializableInterface::SerializeFromJSON(entry))
 				return false;
 			return true;
 		}
 
 		bool BitmapAtlasFilterCondition::SerializeIntoJSON(nlohmann::json& entry) const
 		{
-			if (!JSONSerializable::SerializeIntoJSON(entry))
+			if (!JSONSerializableInterface::SerializeIntoJSON(entry))
 				return false;
 			return true;
 		}

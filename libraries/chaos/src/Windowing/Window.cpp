@@ -515,6 +515,9 @@ namespace chaos
 
 			// data provider
 			GPUProgramProviderCommonTransforms common_transforms;
+
+
+			// shuxxx cast tres tres moche
 			GPUProgramProviderChain provider(this, (WindowApplication*)Application::GetInstance(), common_transforms);
 
 			// render
@@ -815,7 +818,7 @@ namespace chaos
 			if (application->OnKeyEvent(event))
 				return true;
 		// super method
-		if (InputEventReceiver::OnKeyEventImpl(event))
+		if (InputEventReceiverInterface::OnKeyEventImpl(event))
 			return true;
 		return false;
 	}

@@ -116,7 +116,7 @@ namespace chaos
 	
 	bool Camera::SerializeIntoJSON(nlohmann::json& json) const
 	{
-		if (!JSONSerializable::SerializeIntoJSON(json))
+		if (!JSONSerializableInterface::SerializeIntoJSON(json))
 			return false;
 		JSONTools::SetAttribute(json, "CAMERA_BOX", GetCameraBox(false));
 		return true;
@@ -124,7 +124,7 @@ namespace chaos
 	
 	bool Camera::SerializeFromJSON(nlohmann::json const& json)
 	{
-		if (!JSONSerializable::SerializeFromJSON(json))
+		if (!JSONSerializableInterface::SerializeFromJSON(json))
 			return false;
 		box2 b;
 		if (JSONTools::GetAttribute(json, "CAMERA_BOX", b))

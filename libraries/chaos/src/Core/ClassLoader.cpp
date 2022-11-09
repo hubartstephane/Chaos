@@ -124,7 +124,7 @@ namespace chaos
 				result->SetShortName(std::move(short_name));
 			result->AddObjectInitializationFunction([json = std::move(json)](Object* object)
 			{
-				if (JSONSerializable* serializable = auto_cast(object))
+				if (JSONSerializableInterface* serializable = auto_cast(object))
 					serializable->SerializeFromJSON(json);
 			});
 			return result;

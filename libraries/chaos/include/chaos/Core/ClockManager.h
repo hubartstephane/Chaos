@@ -315,7 +315,7 @@ namespace chaos
 	* This represents a clock that may paused or have a different time scale than absolute time. It can have inner clocks
 	*/
 
-	class CHAOS_API Clock : public Object, public JSONSerializable
+	class CHAOS_API Clock : public Object, public JSONSerializableInterface
 	{
 		friend class ClockEvent;
 

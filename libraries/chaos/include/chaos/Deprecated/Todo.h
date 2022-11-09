@@ -365,7 +365,7 @@ https://www.mapeditor.org/2020/06/20/tiled-1-4-0-released.html
 
 
 
-class toto : public chaos::Object, public chaos::JSONSerializable
+class toto : public chaos::Object, public chaos::JSONSerializableInterface
 {
 public:
 

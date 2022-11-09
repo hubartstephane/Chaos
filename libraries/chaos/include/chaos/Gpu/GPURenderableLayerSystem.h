@@ -15,7 +15,7 @@ namespace chaos
 	protected:
 
 		/** an utility class to store a a GPURenderable with a render order */
-		class RenderableLayerInfo : public NamedObjectWrapper<GPURenderable>
+		class RenderableLayerInfo : public NamedInterfaceWrapper<GPURenderable>
 		{
 		public:
 

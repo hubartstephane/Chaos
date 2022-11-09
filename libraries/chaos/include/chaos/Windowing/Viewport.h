@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class CHAOS_API Viewport : public Object, public NamedObject
+	class CHAOS_API Viewport : public Object, public NamedInterface
 	{
 		friend class ViewportWindow;
 

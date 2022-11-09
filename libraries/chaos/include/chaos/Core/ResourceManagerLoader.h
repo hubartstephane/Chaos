@@ -33,7 +33,7 @@ namespace chaos
 		/** set the name of currently loaded resource if not already set, and if no collision detected */
 		bool CheckResourceName(boost::filesystem::path const* in_path, char const* in_name, nlohmann::json const* json) const;
 		/** apply the name to resource */
-		void ApplyNameToLoadedResource(NamedObject* resource) const;
+		void ApplyNameToLoadedResource(NamedInterface* resource) const;
 		/** apply the path to resource */
 		void ApplyPathToLoadedResource(FileResource* resource) const;
 
@@ -77,7 +77,7 @@ namespace chaos
 			RESOURCE_TYPE * result = load_func(json);
 			if (result != nullptr)
 			{
-				if constexpr (std::is_base_of_v<NamedObject, RESOURCE_TYPE>)
+				if constexpr (std::is_base_of_v<NamedInterface, RESOURCE_TYPE>)
 					ApplyNameToLoadedResource(result);
 				if constexpr (std::is_base_of_v<FileResource, RESOURCE_TYPE>)
 					ApplyPathToLoadedResource(result);
@@ -101,7 +101,7 @@ namespace chaos
 			RESOURCE_TYPE * result = load_func(path);
 			if (result != nullptr)
 			{
-				if constexpr (std::is_base_of_v<NamedObject, RESOURCE_TYPE>)
+				if constexpr (std::is_base_of_v<NamedInterface, RESOURCE_TYPE>)
 					ApplyNameToLoadedResource(result);
 				if constexpr (std::is_base_of_v<FileResource, RESOURCE_TYPE>)
 					ApplyPathToLoadedResource(result);

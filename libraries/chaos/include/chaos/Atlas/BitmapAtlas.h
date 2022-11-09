@@ -83,7 +83,7 @@ namespace chaos
 		* BitmapInfo : represents an Bitmap info in the atlas
 		*/
 
-		class CHAOS_API BitmapInfo : public BitmapLayout, public NamedObject
+		class CHAOS_API BitmapInfo : public BitmapLayout, public NamedInterface
 		{
 		public:
 
@@ -126,7 +126,7 @@ namespace chaos
 		* CharacterInfo : represents a Character info in the atlas. Contained in a FontInfo. It is a BitmapInfo with additionnal information
 		*/
 
-		class CHAOS_API CharacterInfo : public CharacterLayout, public NamedObject
+		class CHAOS_API CharacterInfo : public CharacterLayout, public NamedInterface
 		{
 		};
 
@@ -170,7 +170,7 @@ namespace chaos
 		* FontInfo : this is a named group of Characters (CharacterInfo)
 		*/
 
-		class CHAOS_API FontInfo : public FontInfoTemplate<NamedObject, CharacterInfo, boost::mpl::identity<boost::mpl::_1>>
+		class CHAOS_API FontInfo : public FontInfoTemplate<NamedInterface, CharacterInfo, boost::mpl::identity<boost::mpl::_1>>
 		{
 		};
 
@@ -235,7 +235,7 @@ namespace chaos
 		* FolderInfo : contains bitmpas, font and other folders
 		*/
 
-		class CHAOS_API FolderInfo : public FolderInfoTemplate<NoCopy<NamedObject>, BitmapInfo, FontInfo, FolderInfo, boost::mpl::identity<boost::mpl::_1>>
+		class CHAOS_API FolderInfo : public FolderInfoTemplate<NoCopy<NamedInterface>, BitmapInfo, FontInfo, FolderInfo, boost::mpl::identity<boost::mpl::_1>>
 		{
 		public:
 
@@ -359,7 +359,7 @@ namespace chaos
 			/** display information */
 			std::string GetInfoString() const;
 			/** display information about one named object */
-			static std::string GetInfoString(NamedObject const& info);
+			static std::string GetInfoString(NamedInterface const& info);
 			/** display information about one bitmap info */
 			static std::string GetInfoString(BitmapInfo const& info);
 			/** display information about one character info */
@@ -380,7 +380,7 @@ namespace chaos
 			/** display information */
 			void DoOutputInfo(FolderInfo const& folder_info, std::ostream& stream, int indent = 0) const;
 			/** display information about one named element */
-			static void DoOutputInfo(NamedObject const& info, std::ostream& stream, int indent = 0);
+			static void DoOutputInfo(NamedInterface const& info, std::ostream& stream, int indent = 0);
 			/** display information about one bitmap layout */
 			static void DoOutputInfo(BitmapLayout const& info, std::ostream& stream, int indent = 0);
 			/** display information about one character layout */

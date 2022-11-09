@@ -319,7 +319,7 @@ https://www.mapeditor.org/2020/06/20/tiled-1-4-0-released.html
 
 	- Game::GetLevel(int level_index) => maybe some search to do to have not sequential levels
 
-  -Level => have level_index. We should add a NAME (NamedObject) so we can acces levels by name. Non sequencial level acces
+  -Level => have level_index. We should add a NAME (NamedInterface) so we can acces levels by name. Non sequencial level acces
 
 	-LevelInstance::camera_box : very poor API. We could have more than one camera. Apply effects/post process ...
 		                               we could have a class Camera (like player) and swap from one to another

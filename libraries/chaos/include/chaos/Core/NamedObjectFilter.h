@@ -12,7 +12,7 @@ namespace chaos
 	{
 	public:
 
-		virtual bool CheckName(NamedObject const& object) const { return true; }
+		virtual bool CheckName(NamedInterface const& object) const { return true; }
 	};
 
 	/** NamedObjectFilterList : filter objects with a list */
@@ -21,7 +21,7 @@ namespace chaos
 	public:
 
 		/** override */
-		virtual bool CheckName(NamedObject const& object) const override;
+		virtual bool CheckName(NamedInterface const& object) const override;
 
 	public:
 

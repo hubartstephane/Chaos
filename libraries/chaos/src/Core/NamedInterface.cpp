@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	void NamedObject::SetName(char const * in_name)
+	void NamedInterface::SetName(char const * in_name)
 	{
 		if (in_name == nullptr)
 			name.clear();
@@ -11,7 +11,7 @@ namespace chaos
 			name = in_name;
 	}
 
-	void NamedObject::SetObjectNaming(ObjectRequest request)
+	void NamedInterface::SetObjectNaming(ObjectRequest request)
 	{
 		if (request.IsStringRequest())
 			SetName(request.name);
@@ -19,7 +19,7 @@ namespace chaos
 			SetTag(request.tag);	
 	}
 
-	bool SaveIntoJSON(nlohmann::json& json, NamedObject const& src)
+	bool SaveIntoJSON(nlohmann::json& json, NamedInterface const& src)
 	{
 		if (!json.is_object())
 			json = nlohmann::json::object();
@@ -29,7 +29,7 @@ namespace chaos
 		return true;
 	}
 
-	bool LoadFromJSON(nlohmann::json const& json, NamedObject& dst)
+	bool LoadFromJSON(nlohmann::json const& json, NamedInterface& dst)
 	{
 		if (!json.is_object())
 			return false;

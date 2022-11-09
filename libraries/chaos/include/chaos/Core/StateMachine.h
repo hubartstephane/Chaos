@@ -34,7 +34,7 @@ namespace chaos
 		// State
 		// ==================================================
 
-		class CHAOS_API StateBase : public Object, public NamedObject
+		class CHAOS_API StateBase : public Object, public NamedInterface
 		{
 			CHAOS_STATEMACHINE_ALL_FRIENDS
 

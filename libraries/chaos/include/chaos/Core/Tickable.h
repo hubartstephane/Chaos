@@ -7,13 +7,11 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// ========================================================
-	// Tickable : an object that deserve to be ticked
+	// TickableInterface : an object that deserve to be ticked
 	// ========================================================
 
-	class CHAOS_API Tickable : public Object, public NamedObject
+	class CHAOS_API TickableInterface
 	{
-
-		CHAOS_DECLARE_OBJECT_CLASS(Tickable, Object);
 
 	public:
 
@@ -37,6 +35,15 @@ namespace chaos
 
 		/** the pause state */
 		bool paused = false;
+	};
+
+	// ========================================================
+	// Tickable : an object that deserve to be ticked
+	// ========================================================
+
+	class CHAOS_API Tickable : public Object, public NamedInterface, public TickableInterface
+	{
+		CHAOS_DECLARE_OBJECT_CLASS(Tickable, Object);
 	};
 
 #endif

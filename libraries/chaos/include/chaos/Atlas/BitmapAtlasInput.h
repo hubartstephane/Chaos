@@ -48,7 +48,7 @@ namespace chaos
 		* ObjectBaseInput : base object for inputs
 		*/
 
-		class CHAOS_API ObjectBaseInput : public NamedObject
+		class CHAOS_API ObjectBaseInput : public NamedInterface
 		{
 		public:
 

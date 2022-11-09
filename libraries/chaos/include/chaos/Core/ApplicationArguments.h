@@ -17,7 +17,7 @@ static inline chaos::ApplicationArgument<TYPE> const & ARGNAME = *chaos::Applica
 	 * ApplicationArgumentBase: the base class for stored arguments
 	 */
 
-	class CHAOS_API ApplicationArgumentBase : public NamedObject
+	class CHAOS_API ApplicationArgumentBase : public NamedInterface
 	{
 	public:
 

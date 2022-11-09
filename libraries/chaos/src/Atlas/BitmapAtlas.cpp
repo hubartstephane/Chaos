@@ -359,7 +359,7 @@ namespace chaos
 			StreamTools::Whitespaces whitespaces(indent);
 
 			stream << whitespaces << "Folder:" << '\n';
-			NamedObject const & named_info = folder_info;
+			NamedInterface const & named_info = folder_info;
 			DoOutputInfo(named_info, stream, indent);
 
 			// output the bitmaps in the folder
@@ -390,7 +390,7 @@ namespace chaos
 			}
 		}
 
-		void AtlasBase::DoOutputInfo(NamedObject const & info, std::ostream & stream, int indent)
+		void AtlasBase::DoOutputInfo(NamedInterface const & info, std::ostream & stream, int indent)
 		{
 			StreamTools::Whitespaces whitespaces(indent);
 			stream << whitespaces << "  name         : " << info.GetName() << '\n';
@@ -426,7 +426,7 @@ namespace chaos
 
 		void AtlasBase::DoOutputInfo(BitmapInfo const & info, std::ostream & stream, int indent)
 		{
-			NamedObject const & named_info = info;
+			NamedInterface const & named_info = info;
 			DoOutputInfo(named_info, stream, indent);
 
 			BitmapLayout const & bitmap_layout = info;
@@ -435,7 +435,7 @@ namespace chaos
 
 		void AtlasBase::DoOutputInfo(CharacterInfo const & info, std::ostream & stream, int indent)
 		{
-			NamedObject const & named_info = info;
+			NamedInterface const & named_info = info;
 			DoOutputInfo(named_info, stream, indent);
 
 			CharacterLayout const & character_layout = info;
@@ -444,7 +444,7 @@ namespace chaos
 
 		void AtlasBase::DoOutputInfo(FontInfo const & info, std::ostream & stream, int indent)
 		{
-			NamedObject const & named_info = info;
+			NamedInterface const & named_info = info;
 			DoOutputInfo(named_info, stream, indent);
 
 			StreamTools::Whitespaces whitespaces(indent);
@@ -470,7 +470,7 @@ namespace chaos
 			return out.str();
 		}
 
-		std::string AtlasBase::GetInfoString(NamedObject const & info)
+		std::string AtlasBase::GetInfoString(NamedInterface const & info)
 		{
 			std::ostringstream out;
 			DoOutputInfo(info, out);
@@ -804,7 +804,7 @@ namespace chaos
 
 		bool SaveIntoJSON(nlohmann::json & json, BitmapInfo const & src)
 		{
-			SaveIntoJSON(json, (NamedObject const &)src);  // call 'super' method (implies json = nlohmann::json::object();)
+			SaveIntoJSON(json, (NamedInterface const &)src);  // call 'super' method (implies json = nlohmann::json::object();)
 			SaveIntoJSON(json, (BitmapLayout const &)src); // call 'super' method (implies json = nlohmann::json::object();)
 
 			if (src.animation_info != nullptr)
@@ -820,7 +820,7 @@ namespace chaos
 			if (!json.is_object())
 				return false;
 
-			LoadFromJSON(json, (NamedObject & )dst); // call 'super' method
+			LoadFromJSON(json, (NamedInterface & )dst); // call 'super' method
 			LoadFromJSON(json, (BitmapLayout & )dst); // call 'super' method
 
 			nlohmann::json const * animation_json = JSONTools::GetStructure(json, "animation_info");
@@ -835,7 +835,7 @@ namespace chaos
 
 		bool SaveIntoJSON(nlohmann::json & json, CharacterInfo const & src)
 		{
-			SaveIntoJSON(json, (NamedObject const &)src);     // call 'super' method (implies json = nlohmann::json::object();)
+			SaveIntoJSON(json, (NamedInterface const &)src);     // call 'super' method (implies json = nlohmann::json::object();)
 			SaveIntoJSON(json, (CharacterLayout const &)src); // call 'super' method (implies json = nlohmann::json::object();)
 			return true;
 		}
@@ -844,14 +844,14 @@ namespace chaos
 		{
 			if (!json.is_object())
 				return false;
-			LoadFromJSON(json, (NamedObject &)dst); // call 'super' method
+			LoadFromJSON(json, (NamedInterface &)dst); // call 'super' method
 			LoadFromJSON(json, (CharacterLayout &)dst); // call 'super' method
 			return true;
 		}
 
 		bool SaveIntoJSON(nlohmann::json & json, FontInfo const & src)
 		{
-			SaveIntoJSON(json, (NamedObject const &)src); // call 'super' method (implies json = nlohmann::json::object();)
+			SaveIntoJSON(json, (NamedInterface const &)src); // call 'super' method (implies json = nlohmann::json::object();)
 
 			JSONTools::SetAttribute(json, "glyph_width", src.glyph_width);
 			JSONTools::SetAttribute(json, "glyph_height", src.glyph_height);
@@ -867,7 +867,7 @@ namespace chaos
 			if (!json.is_object())
 				return false;
 
-			LoadFromJSON(json, (NamedObject & )dst); // call 'super' method
+			LoadFromJSON(json, (NamedInterface & )dst); // call 'super' method
 
 			JSONTools::GetAttribute(json, "glyph_width", dst.glyph_width);
 			JSONTools::GetAttribute(json, "glyph_height", dst.glyph_height);
@@ -880,7 +880,7 @@ namespace chaos
 
 		bool SaveIntoJSON(nlohmann::json & json, FolderInfo const & src)
 		{
-			SaveIntoJSON(json, (NamedObject const &)src); // call 'super' method (implies json = nlohmann::json::object();)
+			SaveIntoJSON(json, (NamedInterface const &)src); // call 'super' method (implies json = nlohmann::json::object();)
 			if (src.bitmaps.size())
 				JSONTools::SetAttribute(json, "bitmaps", src.bitmaps);
 			if (src.fonts.size())
@@ -894,7 +894,7 @@ namespace chaos
 		{
 			if (!json.is_object())
 				return false;
-			LoadFromJSON(json, (NamedObject &)dst); // call 'super' method
+			LoadFromJSON(json, (NamedInterface &)dst); // call 'super' method
 
 			JSONTools::GetAttribute(json, "bitmaps", dst.bitmaps);
 			JSONTools::GetAttribute(json, "fonts", dst.fonts);

@@ -54,7 +54,7 @@ protected:
     return true;
   }
 
-  virtual void TweakHints(chaos::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
+  virtual void TweakHints(chaos::GLFWWindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
   {
     chaos::Window::TweakHints(hints, monitor, pseudo_fullscreen);
 
@@ -62,7 +62,7 @@ protected:
     hints.decorated = 1;
   }
 
-  virtual bool Tick(float delta_time) override
+  virtual bool DoTick(float delta_time) override
   {
     debug_display.Clear();
 
@@ -98,7 +98,7 @@ int main(int argc, char ** argv, char ** env)
     params.height = 500;
     params.monitor_index = 0;
 
-    chaos::WindowHints hints;
+    chaos::GLFWWindowHints hints;
 
     return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, params, hints);
 }

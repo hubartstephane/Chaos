@@ -24,7 +24,7 @@ int main(int argc, char ** argv, char ** env)
 	params.height = 500;
 	params.monitor_index = 0;
 
-	chaos::WindowHints hints;
+	chaos::GLFWWindowHints hints;
 
 	chaos::RunApplication<LudumGameApplication>(argc, argv, env, LudumGame::GetStaticClass(), chaos::GameWindow::GetStaticClass(), params, hints);
 	return 0;

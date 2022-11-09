@@ -4,47 +4,10 @@
 namespace chaos
 {
 	//
-	// GLFWHints
-	//
-
-	void GLFWHints::ApplyHints()
-	{
-		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, debug_context);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major_version);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor_version);
-		glfwWindowHint(GLFW_REFRESH_RATE, refresh_rate); // only usefull in fullscreen mode
-		glfwWindowHint(GLFW_OPENGL_PROFILE, opengl_profile);
-	}
-
-	bool SaveIntoJSON(nlohmann::json& json, GLFWHints const& src)
-	{
-		if (!json.is_object())
-			json = nlohmann::json::object();
-		JSONTools::SetAttribute(json, "debug_context", src.debug_context);
-		JSONTools::SetAttribute(json, "major_version", src.major_version);
-		JSONTools::SetAttribute(json, "minor_version", src.minor_version);
-		JSONTools::SetAttribute(json, "refresh_rate", src.refresh_rate);
-		JSONTools::SetAttribute(json, "opengl_profile", src.opengl_profile);
-		return true;
-	}
-
-	bool LoadFromJSON(nlohmann::json const& json, GLFWHints& dst)
-	{
-		if (!json.is_object())
-			return false;
-		JSONTools::GetAttribute(json, "debug_context", dst.debug_context);
-		JSONTools::GetAttribute(json, "major_version", dst.major_version);
-		JSONTools::GetAttribute(json, "minor_version", dst.minor_version);
-		JSONTools::GetAttribute(json, "refresh_rate", dst.refresh_rate);
-		JSONTools::GetAttribute(json, "opengl_profile", dst.opengl_profile);
-		return true;
-	}
-
-	//
 	// WindowApplication
 	//
 
-	WindowApplication::WindowApplication(SubClassOf<Window> in_main_window_class, WindowParams const& in_window_params, WindowHints const& in_window_hints) :
+	WindowApplication::WindowApplication(SubClassOf<Window> in_main_window_class, WindowParams const& in_window_params, GLFWWindowHints const& in_window_hints) :
 		main_window_class(in_main_window_class),
 		window_params(in_window_params),
 		window_hints(in_window_hints)
@@ -121,7 +84,7 @@ namespace chaos
 		return true;
 	}
 
-	Window* WindowApplication::CreateTypedWindow(SubClassOf<Window> window_class, WindowParams const& params, WindowHints const& hints)
+	Window* WindowApplication::CreateTypedWindow(SubClassOf<Window> window_class, WindowParams const& params, GLFWWindowHints const& hints)
 	{
 		return WithGLContext<Window*>(nullptr, [this, window_class, params, hints]() -> Window*
 		{
@@ -193,7 +156,7 @@ namespace chaos
 
 		// the main window params & hints (work on copy)
 		WindowParams params = window_params;
-		WindowHints  hints = window_hints;
+		GLFWWindowHints  hints = window_hints;
 
 		nlohmann::json const* window_configuration = JSONTools::GetStructure(configuration, "window");
 		if (window_configuration != nullptr)

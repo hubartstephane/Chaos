@@ -88,7 +88,7 @@ int main(int argc, char ** argv, char ** env)
 	params.height = 300;
 	params.monitor_index = 0;
 
-	chaos::WindowHints hints;
+	chaos::GLFWWindowHints hints;
 
 	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, params, hints);
 }

@@ -10,7 +10,7 @@ namespace chaos
 	* WindowApplication
 	*/
 
-	class CHAOS_API WindowApplication : public Application, public GPUProgramProviderInterface
+	class CHAOS_API WindowApplication : public Application, public TickableInterface, public GPUProgramProviderInterface
 	{
 		friend class Window;
 
@@ -90,7 +90,7 @@ namespace chaos
 
 		/** get the OpenGL context, call the function, restore previous context after */
 		template<typename T>
-		static T WithGLContext(GLFWwindow* context, std::function<T()> func)
+		static T WithGLContext(GLFWwindow* context, std::function<T()> const & func)
 		{
 			GLFWwindow* previous_context = glfwGetCurrentContext();
 			glfwMakeContextCurrent(context);
@@ -100,7 +100,7 @@ namespace chaos
 		}
 
 		template<>
-		static void WithGLContext(GLFWwindow* context, std::function<void()> func)
+		static void WithGLContext(GLFWwindow* context, std::function<void()> const & func)
 		{
 			GLFWwindow* previous_context = glfwGetCurrentContext();
 			glfwMakeContextCurrent(context);
@@ -166,8 +166,8 @@ namespace chaos
 		/** update the internal timers of keyboard states */
 		void UpdateKeyStates(float delta_time);
 
-		/** custom tick */
-		virtual void Tick(float delta_time);
+		/** override */
+		virtual bool DoTick(float delta_time) override;
 
 		/** the user callback called when current input mode changes */
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;

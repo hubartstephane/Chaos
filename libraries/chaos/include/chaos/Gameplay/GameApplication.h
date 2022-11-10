@@ -23,7 +23,7 @@ namespace chaos
 		/** override */
 		virtual bool PreMessageLoop() override;
 		/** override */
-		virtual void Tick(float delta_time) override;
+		virtual bool DoTick(float delta_time) override;
 		/** override */
 		virtual void OnWindowCreated(Window* window) override;
 		/** override */

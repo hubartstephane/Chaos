@@ -32,7 +32,7 @@ namespace chaos
 			float delta_time = (float)(t2 - t1);
 			float real_delta_time = delta_time;
 
-			if (forced_zero_tick_duration)
+			if (forced_zero_tick_duration) // a single frame with a zero delta_time (used whenever a long operation is beeing done during one frame and we don't want to have big dt)
 			{
 				delta_time = 0.0f;
 				forced_zero_tick_duration = false;
@@ -75,7 +75,10 @@ namespace chaos
 			{
 				WithGLContext<void>(window->GetGLFWHandler(), [window, delta_time, real_delta_time]()
 				{
-					window->MainTick(delta_time, real_delta_time);
+					window->TickRenderer(real_delta_time);
+					
+					if (window->Tick(delta_time))
+						window->RequireWindowRefresh();
 				});
 			}
 			// update time
@@ -418,7 +421,7 @@ namespace chaos
 		return true;
 	}
 
-	void WindowApplication::Tick(float delta_time)
+	bool WindowApplication::DoTick(float delta_time)
 	{
 		assert(glfwGetCurrentContext() == shared_context);
 
@@ -429,6 +432,8 @@ namespace chaos
 			sound_manager->Tick(delta_time);
 		// update keyboard state
 		UpdateKeyStates(delta_time);
+
+		return true;
 	}
 
 	void WindowApplication::OnGLFWError(int code, const char* msg)

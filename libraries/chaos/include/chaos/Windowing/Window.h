@@ -103,8 +103,6 @@ namespace chaos
 		/** destructor */
 		virtual ~Window();
 
-		/** entry point from Application */
-		void MainTick(float delta_time, float real_delta_time);
 		/** called to require the window to close */
 		void RequireWindowClosure();
 		/** called to require the window to refresh */
@@ -156,7 +154,7 @@ namespace chaos
 
 		/** using window context, call functor, then restore previous */
 		template<typename T>
-		T WithGLContext(std::function<T()> func)
+		T WithGLContext(std::function<T()> const & func)
 		{
 			GLFWwindow* previous_context = glfwGetCurrentContext();
 			glfwMakeContextCurrent(glfw_window);
@@ -166,7 +164,7 @@ namespace chaos
 		}
 
 		template<>
-		void WithGLContext(std::function<void()> func)
+		void WithGLContext(std::function<void()> const & func)
 		{
 			GLFWwindow* previous_context = glfwGetCurrentContext();
 			glfwMakeContextCurrent(glfw_window);
@@ -209,7 +207,8 @@ namespace chaos
 		/** returns true if the mouse position is valid (very first frame) */
 		bool IsMousePositionValid() const;
 
-
+		/** tick the renderer of the window with the real framerate (with no time scale) */
+		void TickRenderer(float real_delta_time);
 
 	private:
 
@@ -240,8 +239,6 @@ namespace chaos
 
 		/** the window in GLFW library */
 		GLFWwindow* glfw_window = nullptr;
-		/** is a refresh required */
-		bool refresh_required = false;
 		/** is the window with double buffer */
 		bool double_buffer = true;
 

@@ -196,26 +196,16 @@ namespace chaos
 		return (glfw_window != nullptr && glfwWindowShouldClose(glfw_window) != 0);
 	}
 
-	void Window::MainTick(float delta_time, float real_delta_time)
+	void Window::TickRenderer(float real_delta_time)
 	{
 		// cannot tick a non existing window
-		if (glfw_window == nullptr)
+		if (glfw_window == nullptr || renderer == nullptr)
 			return;
 
-		WithGLContext<void>([this, delta_time, real_delta_time]()
+		WithGLContext<void>([this, real_delta_time]()
 		{
 			// tick the renderer: it has metrics that rely on the real frame_rate (not modified one due to some of our tweaks)
-			if (renderer != nullptr)
-				renderer->Tick(real_delta_time);
-			// special tick method
-			if (Tick(delta_time))
-				RequireWindowRefresh();
-			// refresh the window
-			if (refresh_required)
-			{
-				OnWindowDraw();
-				refresh_required = false;
-			}
+			renderer->Tick(real_delta_time);
 		});
 	}
 
@@ -473,7 +463,6 @@ namespace chaos
 
 	void Window::RequireWindowRefresh()
 	{
-		//  refresh_required = true;
 		HWND hWnd = glfwGetWin32Window(glfw_window);
 		if (hWnd != NULL)
 			InvalidateRect(hWnd, NULL, false); // this cause flickering
@@ -485,6 +474,14 @@ namespace chaos
 		CHAOS_APPLICATION_ARG(bool, UnlimitedFPS);
 #endif
 	};
+
+
+
+
+
+
+
+
 
 	void Window::TweakHints(GLFWWindowHints& hints, GLFWmonitor* monitor, bool pseudo_fullscreen) const
 	{
@@ -506,6 +503,16 @@ namespace chaos
 		hints.unlimited_fps = true;
 #endif
 	}
+
+
+
+
+
+
+
+
+
+
 
 	GLFWmonitor* Window::GetFullscreenMonitor() const
 	{

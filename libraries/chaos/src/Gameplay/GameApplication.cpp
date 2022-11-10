@@ -51,14 +51,15 @@ namespace chaos
 		return true;
 	}
 
-	void GameApplication::Tick(float delta_time)
+	bool GameApplication::DoTick(float delta_time)
 	{
 		assert(glfwGetCurrentContext() == shared_context);
 		// super
-		WindowApplication::Tick(delta_time);
+		WindowApplication::DoTick(delta_time);
 		// update the game
 		if (game != nullptr)
 			game->Tick(delta_time);
+		return true;
 	}
 
 	bool GameApplication::FillAtlasGeneratorInput(BitmapAtlas::AtlasInput& input)

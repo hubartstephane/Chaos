@@ -115,6 +115,8 @@ namespace chaos
 
 		/** Main method */
 		virtual int Main() override;
+		/** create the main window */
+		virtual Window* CreateMainWindow();
 		/** the possibility to have final initialization before the main loop is run */
 		virtual bool PreMessageLoop();
 		/** Window Loop */
@@ -179,9 +181,9 @@ namespace chaos
 		virtual void OnWindowCreated(Window* window);
 
 		/** gets the main window of the application */
-		Window* GetMainWindow() { return main_window.get(); }
+		AutoCastable<Window> GetMainWindow() { return main_window.get(); }
 		/** gets the main window of the application */
-		Window const* GetMainWindow() const { return main_window.get(); }
+		AutoConstCastable<Window> GetMainWindow() const { return main_window.get(); }
 
 	protected:
 

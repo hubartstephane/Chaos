@@ -20,7 +20,7 @@ namespace chaos
 		virtual ~Application();
 
 		/** the user main method */
-		bool Run(int argc, char** argv, char** env);
+		int Run(int argc, char** argv, char** env);
 
 		/** getter of the singleton instance */
 		static AutoCastable<Application> GetInstance() { return singleton_instance; }
@@ -85,7 +85,7 @@ namespace chaos
 	protected:
 
 		/** the method that should be override */
-		virtual bool Main();
+		virtual int Main();
 		/** store the application parameters */
 		virtual void StoreParameters(int argc, char** argv, char** env);
 		/** Initialize the application with the main data */
@@ -151,7 +151,7 @@ namespace chaos
 	};
 
 	template<typename APPLICATION_TYPE, typename ...PARAMS>
-	/*CHAOS_API*/ bool RunApplication(int argc, char** argv, char** env, PARAMS && ...params)
+	/*CHAOS_API*/ int RunApplication(int argc, char** argv, char** env, PARAMS && ...params)
 	{
 		shared_ptr<APPLICATION_TYPE> application = new APPLICATION_TYPE(std::forward<PARAMS>(params)...);
 		if (application != nullptr)

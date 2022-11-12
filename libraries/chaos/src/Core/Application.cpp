@@ -138,12 +138,12 @@ namespace chaos
 		return true;
 	}
 
-	bool Application::Main()
+	int Application::Main()
 	{
-		return true;
+		return 0;
 	}
 
-	bool Application::Run(int argc, char ** argv, char ** env)
+	int Application::Run(int argc, char ** argv, char ** env)
 	{
 		bool result = false;
 		if (InitializeStandardLibraries())

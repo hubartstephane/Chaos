@@ -50,28 +50,20 @@ namespace chaos
 
 	class CHAOS_API WindowInterface : public TickableInterface, public InputEventReceiverInterface, public NamedInterface, public GPUProgramProviderInterface
 	{
-	public:
+	protected:
 
 		/** called whenever the user try to close window */
 		virtual bool OnWindowClosed() { return true; }
 		/** called whenever the window is resized */
 		virtual void OnWindowResize(glm::ivec2 size) {}
-		/** called whenever the window is redrawn (entry point) */
-		virtual void OnWindowDraw() {}
-
 		/** called whenever a file is dropped */
 		virtual void OnDropFile(int count, char const** paths) {}
 		/** called whenever the window becomes iconified or is restored */
 		virtual void OnIconifiedStateChange(bool iconified) {}
 		/** called whenever the window gain or loose focus */
 		virtual void OnFocusStateChange(bool gain_focus) {}
-
-#if 0
-	protected:
-
 		/** the drawing specialization method */
 		virtual bool OnDraw(GPURenderer* renderer, WindowDrawParams const& DrawParams, GPUProgramProviderInterface const* uniform_provider) { return true; }
-#endif
 	};
 
 
@@ -140,15 +132,6 @@ namespace chaos
 		/** getting the required viewport for given window */
 		virtual ViewportPlacement GetRequiredViewport(glm::ivec2 const& size) const;
 
-		/** override */
-		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
-
-
-
-
-		virtual void OnWindowDraw() override;
-
-
 		/** getting the renderer */
 		GPURenderer* GetRenderer() { return renderer.get(); }
 
@@ -181,26 +164,14 @@ namespace chaos
 		virtual void TweakHints(GLFWWindowHints& hints, GLFWmonitor* monitor, bool pseudo_fullscreen) const;
 		/** bind Window with GLFW */
 		virtual void SetGLFWCallbacks(bool in_double_buffer);
-		/** called every Tick (returns true whenever we want to redraw the window) */
-		
-		
-		
-		
-		//virtual bool Tick(float delta_time) { return true; }
 
+		/** called whenever the window is redrawn (entry point) */
+		virtual void OnWindowDraw();
 
-
-		/** the drawing specialization method */
-		virtual bool OnDraw(GPURenderer* renderer, WindowDrawParams const& DrawParams, GPUProgramProviderInterface const* uniform_provider);
-		
-		
-		
 		/** called at window creation (returns false if the window must be killed) */
 		virtual bool InitializeFromConfiguration(nlohmann::json const& config);
 		/** called at window destruction */
 		virtual void Finalize() { }
-
-
 
 		/** get the mouse position */
 		glm::vec2 GetMousePosition() const;
@@ -209,6 +180,9 @@ namespace chaos
 
 		/** tick the renderer of the window with the real framerate (with no time scale) */
 		void TickRenderer(float real_delta_time);
+
+		/** override */
+		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
 
 	private:
 
@@ -243,15 +217,15 @@ namespace chaos
 		bool double_buffer = true;
 
 		/** previous mouse position */
-		glm::vec2 mouse_position;
+		glm::vec2 mouse_position = { std::numeric_limits<float>::max(), std::numeric_limits<float>::max() };
 
 		/** the renderer */
 		shared_ptr<GPURenderer> renderer;
 
 		/** store window position for fullscreen */
-		glm::ivec2 non_fullscreen_window_position = glm::ivec2(0, 0);
+		glm::ivec2 non_fullscreen_window_position = { 0, 0 };
 		/** store window size for fullscreen (-1, -1) for non initialized */
-		glm::ivec2 non_fullscreen_window_size = glm::ivec2(-1, -1);
+		glm::ivec2 non_fullscreen_window_size = { -1, -1 };
 		/** whether the window had decorations before toggling fullscreen */
 		bool non_fullscreen_window_decorated = true;
 	};

@@ -178,6 +178,11 @@ namespace chaos
 		/** called after window creation */
 		virtual void OnWindowCreated(Window* window);
 
+		/** gets the main window of the application */
+		Window* GetMainWindow() { return main_window.get(); }
+		/** gets the main window of the application */
+		Window const* GetMainWindow() const { return main_window.get(); }
+
 	protected:
 
 		/** the main clock of the manager */

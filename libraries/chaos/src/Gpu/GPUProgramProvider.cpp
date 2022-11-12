@@ -110,12 +110,12 @@ namespace chaos
 		// uses the default entries
 		for (GPUProgramProviderChainEntry const & entry : entries)
 		{
-			if (entry.process_func)
+			if (entry.process_func) // can be a function/lambda
 			{
 				if (entry.process_func(execution_data))
 					return true;
 			}
-			else if (entry.provider != nullptr)
+			else if (entry.provider != nullptr) // or can be another provider
 			{
 				if (entry.provider->DoProcessAction(execution_data))
 					return true;

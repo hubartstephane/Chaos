@@ -157,30 +157,10 @@ namespace chaos
 			return false;
 		}
 
-		// the main window params & hints (work on copy)
-		WindowParams params = window_params;
-		GLFWWindowHints  hints = window_hints;
-
-		nlohmann::json const* window_configuration = JSONTools::GetStructure(configuration, "window");
-		if (window_configuration != nullptr)
-		{
-			LoadFromJSON(*window_configuration, params);
-			LoadFromJSON(*window_configuration, hints);
-		}
-
 		// create the main window
-		main_window = CreateTypedWindow(main_window_class, params, hints);
+		main_window = CreateMainWindow();
 		if (main_window == nullptr)
 			return -1;
-
-		// initialize the main with any configuration data window (once GPUResourceManager is fully initialized)
-		if (!WithGLContext<bool>(main_window->GetGLFWHandler(), [this]()
-		{
-			return main_window->InitializeFromConfiguration(configuration);
-		}))
-		{
-			return false;
-		}
 
 		// a final initialization (after main window is constructed ... and OpenGL context)
 		if (!WithGLContext<bool>(shared_context, [this]()
@@ -195,6 +175,37 @@ namespace chaos
 
 		return 0;
 	}
+
+	Window* WindowApplication::CreateMainWindow()
+	{
+		WindowParams params = window_params;
+		GLFWWindowHints  hints = window_hints;
+
+		nlohmann::json const* window_configuration = JSONTools::GetStructure(configuration, "window");
+		if (window_configuration != nullptr)
+		{
+			LoadFromJSON(*window_configuration, params);
+			LoadFromJSON(*window_configuration, hints);
+		}
+
+		// create the main window
+		Window * result = CreateTypedWindow(main_window_class, params, hints);
+		if (result == nullptr)
+			return nullptr;
+
+		// initialize the main with any configuration data window (once GPUResourceManager is fully initialized)
+		if (!WithGLContext<bool>(result->GetGLFWHandler(), [this, result]()
+		{
+			return result->InitializeFromConfiguration(configuration);
+		}))
+		{
+			return nullptr;
+		}
+		return result;
+	}
+
+
+
 
 	bool WindowApplication::InitializeGamepadButtonMap()
 	{

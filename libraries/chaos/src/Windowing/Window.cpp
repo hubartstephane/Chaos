@@ -33,8 +33,6 @@ namespace chaos
 
 	Window::Window()
 	{
-		// mouse position
-		mouse_position.x = mouse_position.y = std::numeric_limits<float>::max();
 		// create the renderer
 		renderer = new GPURenderer(this);
 	}
@@ -420,22 +418,19 @@ namespace chaos
 				return;
 
 			renderer->BeginRenderingFrame();
+
 			// compute viewport
-
-
-			// shurender
-
 			WindowDrawParams draw_params;
 			draw_params.viewport = GetRequiredViewport(window_size);
 			draw_params.full_size = window_size;
 			GLTools::SetViewport(draw_params.viewport);
 
 			// data provider
-			GPUProgramProviderCommonTransforms common_transforms;
+			GPUProgramProviderCommonTransforms common_transforms; // some common deduction rules
 
+			GPUProgramProviderInterface const* application_provider_interface = Application::GetInstance(); // cast the application into a provider_interface
 
-			// shuxxx cast tres tres moche
-			GPUProgramProviderChain provider(this, (WindowApplication*)Application::GetInstance(), common_transforms);
+			GPUProgramProviderChain provider(this, application_provider_interface, common_transforms); // order: window, application, common deduction rules
 
 			// render
 			if (OnDraw(renderer.get(), draw_params, &provider))
@@ -448,13 +443,6 @@ namespace chaos
 			renderer->EndRenderingFrame();
 		}
 	}
-
-	bool Window::OnDraw(GPURenderer* renderer, WindowDrawParams const& draw_params, GPUProgramProviderInterface const * uniform_provider)
-	{
-		assert(glfw_window == glfwGetCurrentContext());
-		return true;
-	}
-
 
 	void Window::RequireWindowClosure()
 	{

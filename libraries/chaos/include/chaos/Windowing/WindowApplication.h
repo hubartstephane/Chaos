@@ -114,7 +114,7 @@ namespace chaos
 	protected:
 
 		/** Main method */
-		virtual bool Main() override;
+		virtual int Main() override;
 		/** the possibility to have final initialization before the main loop is run */
 		virtual bool PreMessageLoop();
 		/** Window Loop */

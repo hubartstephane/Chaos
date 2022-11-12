@@ -116,7 +116,7 @@ namespace chaos
 
 	}
 
-	bool WindowApplication::Main()
+	int WindowApplication::Main()
 	{
 		// the glfw configuration
 		GLFWHints glfw_hints;
@@ -130,7 +130,7 @@ namespace chaos
 		glfwWindowHint(GLFW_VISIBLE, 0);
 		shared_context = glfwCreateWindow(100, 100, "", nullptr, nullptr);
 		if (shared_context == nullptr)
-			return false;
+			return -1;
 
 		if (!WithGLContext<bool>(shared_context, [this]()
 		{
@@ -171,7 +171,8 @@ namespace chaos
 		// create the main window
 		main_window = CreateTypedWindow(main_window_class, params, hints);
 		if (main_window == nullptr)
-			return false;
+			return -1;
+
 		// initialize the main with any configuration data window (once GPUResourceManager is fully initialized)
 		if (!WithGLContext<bool>(main_window->GetGLFWHandler(), [this]()
 		{
@@ -191,7 +192,8 @@ namespace chaos
 		}
 		// the main loop
 		MessageLoop();
-		return true;
+
+		return 0;
 	}
 
 	bool WindowApplication::InitializeGamepadButtonMap()

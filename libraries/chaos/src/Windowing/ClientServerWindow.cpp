@@ -77,4 +77,39 @@ namespace chaos
 		return false;
 	}
 
+	bool ClientServerWindow::OnMouseMoveImpl(double x, double y)
+	{
+		if (client != nullptr)
+			return client->OnMouseMove(x, y);
+		return false;
+	}
+
+	bool ClientServerWindow::OnMouseButtonImpl(int button, int action, int modifier)
+	{
+		if (client != nullptr)
+			return client->OnMouseButton(button, action, modifier);
+		return false;
+	}
+
+	bool ClientServerWindow::OnMouseWheelImpl(double scroll_x, double scroll_y)
+	{
+		if (client != nullptr)
+			return client->OnMouseWheel(scroll_x, scroll_y);
+		return false;
+	}
+	
+	bool ClientServerWindow::OnKeyEventImpl(KeyEvent const& event)
+	{
+		if (client != nullptr)
+			return client->OnKeyEvent(event);
+		return false;
+	}
+
+	bool ClientServerWindow::OnCharEventImpl(unsigned int c)
+	{
+		if (client != nullptr)
+			return client->OnCharEvent(c);
+		return false;
+	}
+
 }; // namespace chaos

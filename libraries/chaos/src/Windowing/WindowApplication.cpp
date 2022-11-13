@@ -7,10 +7,9 @@ namespace chaos
 	// WindowApplication
 	//
 
-	WindowApplication::WindowApplication(SubClassOf<Window> in_main_window_class, WindowParams const& in_window_params, GLFWWindowHints const& in_window_hints) :
+	WindowApplication::WindowApplication(SubClassOf<Window> in_main_window_class, WindowCreateParams const& in_window_create_params):
 		main_window_class(in_main_window_class),
-		window_params(in_window_params),
-		window_hints(in_window_hints)
+		window_create_params(in_window_create_params)
 	{
 		assert(in_main_window_class.IsValid());
 	}
@@ -87,9 +86,9 @@ namespace chaos
 		return true;
 	}
 
-	Window* WindowApplication::CreateTypedWindow(SubClassOf<Window> window_class, WindowParams const& params, GLFWWindowHints const& hints)
+	Window* WindowApplication::CreateTypedWindow(SubClassOf<Window> window_class, WindowCreateParams const& create_params)
 	{
-		return WithGLContext<Window*>(nullptr, [this, window_class, params, hints]() -> Window*
+		return WithGLContext<Window*>(nullptr, [this, window_class, create_params]() -> Window*
 		{
 			// create the window class
 			Window* result = window_class.CreateInstance();
@@ -98,7 +97,7 @@ namespace chaos
 				return nullptr;
 			}
 			// create the GLFW resource
-			if (!result->CreateGLFWWindow(params, hints, shared_context))
+			if (!result->CreateGLFWWindow(create_params, shared_context))
 			{
 				delete(result);
 				return nullptr;
@@ -126,7 +125,6 @@ namespace chaos
 		glfw_hints.ApplyHints();
 
 		// create a hidden window whose purpose is to provide a sharable context for all others
-		window_hints.ApplyHints();
 		glfwWindowHint(GLFW_VISIBLE, 0);
 		shared_context = glfwCreateWindow(100, 100, "", nullptr, nullptr);
 		if (shared_context == nullptr)
@@ -178,18 +176,16 @@ namespace chaos
 
 	Window* WindowApplication::CreateMainWindow()
 	{
-		WindowParams params = window_params;
-		GLFWWindowHints  hints = window_hints;
+		WindowCreateParams create_params = window_create_params;
 
 		nlohmann::json const* window_configuration = JSONTools::GetStructure(configuration, "window");
 		if (window_configuration != nullptr)
 		{
-			LoadFromJSON(*window_configuration, params);
-			LoadFromJSON(*window_configuration, hints);
+			LoadFromJSON(*window_configuration, create_params);
 		}
 
 		// create the main window
-		Window * result = CreateTypedWindow(main_window_class, params, hints);
+		Window * result = CreateTypedWindow(main_window_class, create_params);
 		if (result == nullptr)
 			return nullptr;
 
@@ -203,9 +199,6 @@ namespace chaos
 		}
 		return result;
 	}
-
-
-
 
 	bool WindowApplication::InitializeGamepadButtonMap()
 	{

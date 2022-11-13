@@ -96,8 +96,7 @@ protected:
 
 int main(int argc, char ** argv, char ** env)
 {
-	chaos::RunApplication<MyApplication>(argc, argv, env);
-	return 0;
+	return chaos::RunApplication<MyApplication>(argc, argv, env);
 }
 
 

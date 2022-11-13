@@ -2,17 +2,16 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class WindowParams;
-	class WindowDrawParams;
+	class WindowCreateParams;
 	class Window;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* WindowParams : parameters for playing single window application
+	* WindowCreateParams : parameters for playing single window application
 	*/
 
-	class CHAOS_API WindowParams
+	class CHAOS_API WindowCreateParams
 	{
 	public:
 
@@ -26,11 +25,31 @@ namespace chaos
 		int width = 0;
 		/** window height */
 		int height = 0;
+		/** true if the window can be resized */
+		int resizable = 1;
+		/** true if the window starts visible */
+		int start_visible = 1;
+		/** true if the window has some decoration */
+		int decorated = 1;
+		/** true if the window is toplevel */
+		int toplevel = 0;
+		/** self description */
+		int focused = 0;
+		/** whether we want the fps to be unlimited */
+		bool unlimited_fps = false;
+		/** number of samples in multisamples (0 for none) */
+		int samples = 0;
+		/** self description */
+		int double_buffer = 1;
+		/** self description */
+		int depth_bits = 24;
+		/** self description */
+		int stencil_bits = 8;
 	};
 
-	CHAOS_API bool SaveIntoJSON(nlohmann::json& json, WindowParams const& src);
+	CHAOS_API bool SaveIntoJSON(nlohmann::json& json, WindowCreateParams const& src);
 
-	CHAOS_API bool LoadFromJSON(nlohmann::json const& json, WindowParams& dst);
+	CHAOS_API bool LoadFromJSON(nlohmann::json const& json, WindowCreateParams& dst);
 
 	/**
 	* Window : a binding class between chaos and GLFW to handle window (beware the prefix "My")
@@ -61,7 +80,7 @@ namespace chaos
 		/** destroying the window */
 		void DestroyGLFWWindow();
 		/** create the internal window */
-		bool CreateGLFWWindow(WindowParams params, GLFWWindowHints hints, GLFWwindow* share_context);
+		bool CreateGLFWWindow(WindowCreateParams create_params, GLFWwindow* share_context);
 
 		/** toggle to fullscreen mode */
 		void ToggleFullscreen();
@@ -114,8 +133,8 @@ namespace chaos
 		/** override */
 		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override;
 
-		/** get the hints for new GLFW window */
-		virtual void TweakHints(GLFWWindowHints& hints, GLFWmonitor* monitor, bool pseudo_fullscreen) const;
+		/** get the pixel format for a given monitor */
+		GLFWWindowHints GetWindowCreationPixelFormat(GLFWmonitor* monitor) const;
 		/** bind Window with GLFW */
 		virtual void SetGLFWCallbacks(bool in_double_buffer);
 

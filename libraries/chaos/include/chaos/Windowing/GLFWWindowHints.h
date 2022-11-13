@@ -19,26 +19,6 @@ namespace chaos
 
 	public:
 
-		/** true if the window can be resized */
-		int resizable = 1;
-		/** true if the window starts visible */
-		int start_visible = 1;
-		/** true if the window has some decoration */
-		int decorated = 1;
-		/** true if the window is toplevel */
-		int toplevel = 0;
-		/** self description */
-		int focused = 0;
-		/** whether we want the fps to be unlimited */
-		bool unlimited_fps = false;
-		/** number of samples in multisamples (0 for none) */
-		int samples = 0;
-		/** self description */
-		int double_buffer = 1;
-		/** self description */
-		int depth_bits = 24;
-		/** self description */
-		int stencil_bits = 8;
 		/** self description */
 		int red_bits = 8;
 		/** self description */

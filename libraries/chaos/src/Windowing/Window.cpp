@@ -4,26 +4,44 @@
 namespace chaos
 {
 	/**
-	* WindowParams
+	* WindowCreateParams
 	*/
 
-	bool SaveIntoJSON(nlohmann::json& json, WindowParams const& src)
+	bool SaveIntoJSON(nlohmann::json& json, WindowCreateParams const& src)
 	{
 		if (!json.is_object())
 			json = nlohmann::json::object();
 		JSONTools::SetAttribute(json, "monitor_index", src.monitor_index);
 		JSONTools::SetAttribute(json, "width", src.width);
 		JSONTools::SetAttribute(json, "height", src.height);
+		JSONTools::SetAttribute(json, "resizable", src.resizable);
+		JSONTools::SetAttribute(json, "start_visible", src.start_visible);
+		JSONTools::SetAttribute(json, "decorated", src.decorated);
+		JSONTools::SetAttribute(json, "toplevel", src.toplevel);
+		JSONTools::SetAttribute(json, "focused", src.focused);
+		JSONTools::SetAttribute(json, "samples", src.samples);
+		JSONTools::SetAttribute(json, "double_buffer", src.double_buffer);
+		JSONTools::SetAttribute(json, "depth_bits", src.depth_bits);
+		JSONTools::SetAttribute(json, "stencil_bits", src.stencil_bits);
 		return true;
 	}
 
-	bool LoadFromJSON(nlohmann::json const& json, WindowParams& dst)
+	bool LoadFromJSON(nlohmann::json const& json, WindowCreateParams& dst)
 	{
 		if (!json.is_object())
 			return false;
 		JSONTools::GetAttribute(json, "monitor_index", dst.monitor_index);
 		JSONTools::GetAttribute(json, "width", dst.width);
 		JSONTools::GetAttribute(json, "height", dst.height);
+		JSONTools::GetAttribute(json, "resizable", dst.resizable);
+		JSONTools::GetAttribute(json, "start_visible", dst.start_visible);
+		JSONTools::GetAttribute(json, "decorated", dst.decorated);
+		JSONTools::GetAttribute(json, "toplevel", dst.toplevel);
+		JSONTools::GetAttribute(json, "focused", dst.focused);
+		JSONTools::GetAttribute(json, "samples", dst.samples);
+		JSONTools::GetAttribute(json, "double_buffer", dst.double_buffer);
+		JSONTools::GetAttribute(json, "depth_bits", dst.depth_bits);
+		JSONTools::GetAttribute(json, "stencil_bits", dst.stencil_bits);
 		return true;
 	}
 
@@ -55,69 +73,93 @@ namespace chaos
 		}
 	}
 
-	bool Window::CreateGLFWWindow(WindowParams params, GLFWWindowHints hints, GLFWwindow* share_context_window)
+	namespace Arguments
+	{
+#if !_DEBUG
+		CHAOS_APPLICATION_ARG(bool, UnlimitedFPS);
+#endif
+	};
+
+	bool Window::CreateGLFWWindow(WindowCreateParams create_params, GLFWwindow* share_context_window)
 	{
 		// resource already existing
 		if (glfw_window != nullptr)
 			return false;
 
 		// compute the monitor upon which the window will be : use it for pixel format
-		if (params.monitor == nullptr)
-			params.monitor = GLFWTools::GetMonitorByIndex(params.monitor_index);
+		if (create_params.monitor == nullptr)
+			create_params.monitor = GLFWTools::GetMonitorByIndex(create_params.monitor_index);
 
 		// retrieve the position of the monitor
 		int monitor_x = 0;
 		int monitor_y = 0;
-		glfwGetMonitorPos(params.monitor, &monitor_x, &monitor_y);
+		glfwGetMonitorPos(create_params.monitor, &monitor_x, &monitor_y);
 
 		// compute the position and size of the window
-		bool pseudo_fullscreen = (params.width <= 0 && params.height <= 0);
+		bool pseudo_fullscreen = (create_params.width <= 0 && create_params.height <= 0);
 
 		// prepare window creation
-		TweakHints(hints, params.monitor, pseudo_fullscreen);
-		hints.ApplyHints();
+		glfwWindowHint(GLFW_RESIZABLE, create_params.resizable);
+		glfwWindowHint(GLFW_VISIBLE, create_params.start_visible);
+		glfwWindowHint(GLFW_DECORATED, create_params.decorated);
+		glfwWindowHint(GLFW_FLOATING, create_params.toplevel);
+		glfwWindowHint(GLFW_FOCUSED, create_params.focused);
+		glfwWindowHint(GLFW_SAMPLES, create_params.samples);
+		glfwWindowHint(GLFW_DOUBLEBUFFER, create_params.double_buffer);
+		glfwWindowHint(GLFW_DEPTH_BITS, create_params.depth_bits);
+		glfwWindowHint(GLFW_STENCIL_BITS, create_params.stencil_bits);
+
+		GLFWWindowHints window_pixel_format = GetWindowCreationPixelFormat(create_params.monitor);
+		window_pixel_format.ApplyHints();
 		glfwWindowHint(GLFW_VISIBLE, 0); // override the initial visibility
 
 		// compute window size and position
-		GLFWvidmode const* mode = glfwGetVideoMode(params.monitor);
+		GLFWvidmode const* mode = glfwGetVideoMode(create_params.monitor);
 
 		int x = 0;
 		int y = 0;
 		if (pseudo_fullscreen) // full-screen, the window use the full-size
 		{
-			params.width = mode->width;
-			params.height = mode->height;
+			create_params.width = mode->width;
+			create_params.height = mode->height;
 
 			x = monitor_x;
 			y = monitor_y;
 		}
 		else
 		{
-			if (params.width <= 0)
-				params.width = mode->width;
+			if (create_params.width <= 0)
+				create_params.width = mode->width;
 			else
-				params.width = std::min(mode->width, params.width);
+				create_params.width = std::min(mode->width, create_params.width);
 
-			if (params.height <= 0)
-				params.height = mode->height;
+			if (create_params.height <= 0)
+				create_params.height = mode->height;
 			else
-				params.height = std::min(mode->height, params.height);
+				create_params.height = std::min(mode->height, create_params.height);
 
-			x = monitor_x + (mode->width - params.width) / 2;
-			y = monitor_y + (mode->height - params.height) / 2;
+			x = monitor_x + (mode->width - create_params.width) / 2;
+			y = monitor_y + (mode->height - create_params.height) / 2;
 		}
 
 		// title cannot be null
-		if (params.title == nullptr)
-			params.title = "";
+		if (create_params.title == nullptr)
+			create_params.title = "";
 
 		// we are doing a pseudo fullscreen => monitor parameters of glfwCreateWindow must be null or it will "capture" the screen
-		glfw_window = glfwCreateWindow(params.width, params.height, params.title, nullptr, share_context_window);
+		glfw_window = glfwCreateWindow(create_params.width, create_params.height, create_params.title, nullptr, share_context_window);
 		if (glfw_window == nullptr)
 			return false;
 
 		// vsync ?
-		if (hints.unlimited_fps)
+#if !_DEBUG
+		if (Arguments::UnlimitedFPS.Get())
+			create_params.unlimited_fps = true;
+#else
+		create_params.unlimited_fps = true;
+#endif
+
+		if (create_params.unlimited_fps)
 		{
 			WithGLContext<void>([]()
 			{
@@ -126,7 +168,7 @@ namespace chaos
 		}
 
 		// set the callbacks
-		SetGLFWCallbacks(hints.double_buffer ? true : false);
+		SetGLFWCallbacks(create_params.double_buffer ? true : false);
 
 		// x and y are the coordinates of the client area : when there is a decoration, we want to tweak the window size / position with that
 		int left, top, right, bottom;
@@ -135,9 +177,9 @@ namespace chaos
 		{
 			x += left;
 			y += top;
-			params.width = params.width - left - right;
-			params.height = params.height - top - bottom;
-			glfwSetWindowSize(glfw_window, params.width, params.height);
+			create_params.width = create_params.width - left - right;
+			create_params.height = create_params.height - top - bottom;
+			glfwSetWindowSize(glfw_window, create_params.width, create_params.height);
 		}
 
 		glfwSetWindowPos(glfw_window, x, y);
@@ -148,7 +190,7 @@ namespace chaos
 		glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, 1);
 
 		// now that the window is fully placed ... we can show it
-		if (hints.start_visible)
+		if (create_params.start_visible)
 			glfwShowWindow(glfw_window);
 		return true;
 	}
@@ -456,51 +498,21 @@ namespace chaos
 			InvalidateRect(hWnd, NULL, false); // this cause flickering
 	}
 
-	namespace Arguments
+	GLFWWindowHints Window::GetWindowCreationPixelFormat(GLFWmonitor* monitor) const
 	{
-#if !_DEBUG
-		CHAOS_APPLICATION_ARG(bool, UnlimitedFPS);
-#endif
-	};
+		GLFWWindowHints result;
 
-
-
-
-
-
-
-
-
-	void Window::TweakHints(GLFWWindowHints& hints, GLFWmonitor* monitor, bool pseudo_fullscreen) const
-	{
 		// retrieve the mode of the monitor to deduce pixel format
 		GLFWvidmode const* mode = glfwGetVideoMode(monitor);
 
 		// the pixel format
-		hints.red_bits = mode->redBits;
-		hints.green_bits = mode->greenBits;
-		hints.blue_bits = mode->blueBits;
-		hints.alpha_bits = (hints.red_bits == 8 && hints.green_bits == 8 && hints.blue_bits == 8) ? 8 : 0; // alpha only if RGBA 32bits
+		result.red_bits = mode->redBits;
+		result.green_bits = mode->greenBits;
+		result.blue_bits = mode->blueBits;
+		result.alpha_bits = (result.red_bits == 8 && result.green_bits == 8 && result.blue_bits == 8) ? 8 : 0; // alpha only if RGBA 32bits
 
-		//hints.refresh_rate = mode->refreshRate;
-
-#if !_DEBUG
-		if (Arguments::UnlimitedFPS.Get())
-			hints.unlimited_fps = true;
-#else
-		hints.unlimited_fps = true;
-#endif
+		return result;
 	}
-
-
-
-
-
-
-
-
-
-
 
 	GLFWmonitor* Window::GetFullscreenMonitor() const
 	{

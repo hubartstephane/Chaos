@@ -51,6 +51,17 @@ namespace chaos
 		virtual void OnFocusStateChange(bool gain_focus) override;
 		/** override */
 		virtual bool OnDraw(GPURenderer* renderer, WindowDrawParams const& DrawParams, GPUProgramProviderInterface const* uniform_provider) override;
+
+		/** override */
+		virtual bool OnMouseMoveImpl(double x, double y) override;
+		/** override */
+		virtual bool OnMouseButtonImpl(int button, int action, int modifier) override;
+		/** override */
+		virtual bool OnMouseWheelImpl(double scroll_x, double scroll_y) override;
+		/** override */
+		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
+		/** override */
+		virtual bool OnCharEventImpl(unsigned int c) override;
 	};
 
 #endif

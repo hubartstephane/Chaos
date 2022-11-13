@@ -3,9 +3,9 @@
 
 namespace chaos
 {
-	GameApplication::GameApplication(SubClassOf<Game> in_game_class, SubClassOf<Window> in_main_window_class, WindowParams const& in_window_params, GLFWWindowHints const & in_window_hints) :
+	GameApplication::GameApplication(SubClassOf<Game> in_game_class, SubClassOf<Window> in_main_window_class, WindowCreateParams const& in_window_create_params) :
 		game_class(in_game_class),
-		WindowApplication(in_main_window_class, in_window_params, in_window_hints)
+		WindowApplication(in_main_window_class, in_window_create_params)
 	{
 		assert(game_class.IsValid());
 	}

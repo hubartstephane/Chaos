@@ -265,14 +265,6 @@ protected:
 		chaos::Window::Finalize();
 	}
 
-
-	virtual void TweakHints(chaos::GLFWWindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
-	{
-		chaos::Window::TweakHints(hints, monitor, pseudo_fullscreen);
-		hints.toplevel = 0;
-		hints.decorated = 1;
-	}
-
 protected:
 
 	HMIDIOUT hMidiOutDevice = nullptr;
@@ -332,18 +324,13 @@ chaos::ClockEventTickResult MIDICommandEvent::Tick(chaos::ClockEventTickData con
 
 // ================================================================
 
-
 int main(int argc, char ** argv, char ** env)
 {
-	chaos::WindowParams params;
-	params.monitor = nullptr;
-	params.width = 500;
-	params.height = 500;
-	params.monitor_index = 0;
+	chaos::WindowCreateParams create_params;
+	create_params.monitor = nullptr;
+	create_params.width = 500;
+	create_params.height = 500;
+	create_params.monitor_index = 0;
 
-	chaos::GLFWWindowHints hints;
-
-	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, params, hints);
+	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, create_params);
 }
-
-

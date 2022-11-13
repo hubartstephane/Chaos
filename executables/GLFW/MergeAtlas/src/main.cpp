@@ -72,7 +72,7 @@ class MyApplication : public chaos::Application
 {
 protected:
 
-  virtual bool Main() override
+  virtual int Main() override
   {
     // load the images
     std::vector<FIBITMAP*> atlas_bitmaps;
@@ -94,7 +94,7 @@ protected:
     {
       for (chaos::PixelFormat const & pixel_format : pixel_formats)
       {
-        TestMergedAtlas(atlas_bitmaps, pixel_format, dst_p, &pixel_format - &pixel_formats[0]);
+        TestMergedAtlas(atlas_bitmaps, pixel_format, dst_p, int(&pixel_format - &pixel_formats[0]));
       }
       chaos::WinTools::ShowFile(dst_p);
     }
@@ -102,14 +102,11 @@ protected:
     // release the images
     ReleaseBitmaps(atlas_bitmaps);
 
-    return true;
+    return 0;
   }
 };
 
 int main(int argc, char ** argv, char ** env)
 {
-	chaos::RunApplication<MyApplication>(argc, argv, env);
-	return 0;
+	return chaos::RunApplication<MyApplication>(argc, argv, env);
 }
-
-

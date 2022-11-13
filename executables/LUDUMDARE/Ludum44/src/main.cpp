@@ -3,15 +3,11 @@
 
 int main(int argc, char ** argv, char ** env)
 {
-	chaos::WindowParams params;
-	params.monitor = nullptr;
-	params.width = 500;
-	params.height = 500;
-	params.monitor_index = 0;
+	chaos::WindowCreateParams create_params;
+	create_params.monitor = nullptr;
+	create_params.width = 500;
+	create_params.height = 500;
+	create_params.monitor_index = 0;
 
-	chaos::GLFWWindowHints hints;
-
-	return chaos::RunGame<LudumGame>(argc, argv, env, params, hints);
+	return chaos::RunGame<LudumGame>(argc, argv, env, create_params);
 }
-
-

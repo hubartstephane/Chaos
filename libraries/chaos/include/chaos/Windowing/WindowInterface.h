@@ -2,6 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
+	class WindowDrawParams;
 	class WindowInterface;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION

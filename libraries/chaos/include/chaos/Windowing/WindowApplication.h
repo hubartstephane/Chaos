@@ -17,7 +17,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		WindowApplication(SubClassOf<Window> in_main_window_class, WindowParams const& in_window_params = {}, GLFWWindowHints const& in_window_hints = {});
+		WindowApplication(SubClassOf<Window> in_main_window_class, WindowCreateParams const& in_window_create_params = {});
 
 		/** gets the number of windows */
 		size_t GetWindowCount() const;
@@ -175,7 +175,7 @@ namespace chaos
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;
 
 		/** create a window */
-		Window* CreateTypedWindow(SubClassOf<Window> window_class, WindowParams const& params = {}, GLFWWindowHints const& hints = {});
+		Window* CreateTypedWindow(SubClassOf<Window> window_class, WindowCreateParams const& create_params = {});
 
 		/** called after window creation */
 		virtual void OnWindowCreated(Window* window);
@@ -203,9 +203,7 @@ namespace chaos
 		std::map<GamepadButton, std::pair<std::string, std::string>> gamepad_button_map;
 
 		/** the initial_window param */
-		WindowParams window_params;
-		/** the initial_window hints */
-		GLFWWindowHints window_hints;
+		WindowCreateParams window_create_params;
 		/** the class of the main window */
 		SubClassOf<Window> main_window_class;
 

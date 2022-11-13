@@ -133,8 +133,6 @@ namespace chaos
 		/** override */
 		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override;
 
-		/** get the pixel format for a given monitor */
-		GLFWWindowHints GetWindowCreationPixelFormat(GLFWmonitor* monitor) const;
 		/** bind Window with GLFW */
 		virtual void SetGLFWCallbacks(bool in_double_buffer);
 

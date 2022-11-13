@@ -108,9 +108,10 @@ namespace chaos
 		glfwWindowHint(GLFW_DOUBLEBUFFER, create_params.double_buffer);
 		glfwWindowHint(GLFW_DEPTH_BITS, create_params.depth_bits);
 		glfwWindowHint(GLFW_STENCIL_BITS, create_params.stencil_bits);
-
-		GLFWWindowHints window_pixel_format = GetWindowCreationPixelFormat(create_params.monitor);
-		window_pixel_format.ApplyHints();
+		glfwWindowHint(GLFW_RED_BITS, 8);
+		glfwWindowHint(GLFW_GREEN_BITS, 8);
+		glfwWindowHint(GLFW_BLUE_BITS, 8);
+		glfwWindowHint(GLFW_ALPHA_BITS, 8);
 		glfwWindowHint(GLFW_VISIBLE, 0); // override the initial visibility
 
 		// compute window size and position
@@ -496,22 +497,6 @@ namespace chaos
 		HWND hWnd = glfwGetWin32Window(glfw_window);
 		if (hWnd != NULL)
 			InvalidateRect(hWnd, NULL, false); // this cause flickering
-	}
-
-	GLFWWindowHints Window::GetWindowCreationPixelFormat(GLFWmonitor* monitor) const
-	{
-		GLFWWindowHints result;
-
-		// retrieve the mode of the monitor to deduce pixel format
-		GLFWvidmode const* mode = glfwGetVideoMode(monitor);
-
-		// the pixel format
-		result.red_bits = mode->redBits;
-		result.green_bits = mode->greenBits;
-		result.blue_bits = mode->blueBits;
-		result.alpha_bits = (result.red_bits == 8 && result.green_bits == 8 && result.blue_bits == 8) ? 8 : 0; // alpha only if RGBA 32bits
-
-		return result;
 	}
 
 	GLFWmonitor* Window::GetFullscreenMonitor() const

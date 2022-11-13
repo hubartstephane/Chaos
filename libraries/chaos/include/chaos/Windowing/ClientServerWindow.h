@@ -37,6 +37,7 @@ namespace chaos
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(ClientServerWindow, Window);
 
+
 	protected:
 
 		/** override */
@@ -62,6 +63,12 @@ namespace chaos
 		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
 		/** override */
 		virtual bool OnCharEventImpl(unsigned int c) override;
+
+		/** override */
+		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override;
+
+		/** override */
+		virtual bool DoTick(float delta_time) override;
 	};
 
 #endif

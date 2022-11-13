@@ -112,4 +112,18 @@ namespace chaos
 		return false;
 	}
 
+	bool ClientServerWindow::DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const
+	{
+		if (client != nullptr)
+			return client->DoProcessAction(execution_data);
+		return false;
+	}
+
+	bool ClientServerWindow::DoTick(float delta_time)
+	{
+		if (client != nullptr)
+			return client->Tick(delta_time);
+		return TickableInterface::DoTick(delta_time);
+	}
+
 }; // namespace chaos

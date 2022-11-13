@@ -1,5 +1,4 @@
 #include "chaos/Windowing/GLFWHints.h"
-#include "chaos/Windowing/GLFWWindowHints.h"
 #include "chaos/Windowing/WindowInterface.h"
 #include "chaos/Windowing/Window.h"
 #include "chaos/Windowing/Viewport.h"

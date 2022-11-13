@@ -26,6 +26,8 @@ namespace chaos
 
 	class CHAOS_API WindowInterface : public TickableInterface, public InputEventReceiverInterface, public NamedInterface, public GPUProgramProviderInterface
 	{
+		friend class ClientServerWindow;
+
 	protected:
 
 		/** called whenever the user try to close window */

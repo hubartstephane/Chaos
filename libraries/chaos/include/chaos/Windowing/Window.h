@@ -86,8 +86,11 @@ namespace chaos
 		void ToggleFullscreen();
 		/** returns whether the screen is fullscreen */
 		bool IsFullscreen() const { return GetFullscreenMonitor() != nullptr; }
+
 		/** returns the monitor for which the window is fullscreen (nullptr otherwise) */
 		GLFWmonitor* GetFullscreenMonitor() const;
+		/** returns the monitor where the window is centered */
+		GLFWmonitor* GetPreferredMonitor() const;
 
 		/** returns the position of the window */
 		glm::ivec2 GetWindowPosition() const;

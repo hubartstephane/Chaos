@@ -91,6 +91,8 @@ namespace chaos
 		GLFWmonitor* GetFullscreenMonitor() const;
 		/** returns the monitor where the window is centered */
 		GLFWmonitor* GetPreferredMonitor() const;
+		/** set window to fullscreen or remove */
+		void SetFullscreen(GLFWmonitor* monitor);
 
 		/** returns the position of the window */
 		glm::ivec2 GetWindowPosition() const;
@@ -195,7 +197,7 @@ namespace chaos
 
 		/** the renderer */
 		shared_ptr<GPURenderer> renderer;
-
+		
 		/** store window position for fullscreen */
 		glm::ivec2 non_fullscreen_window_position = { 0, 0 };
 		/** store window size for fullscreen (-1, -1) for non initialized */

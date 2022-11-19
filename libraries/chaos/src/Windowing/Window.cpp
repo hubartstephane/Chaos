@@ -553,67 +553,77 @@ namespace chaos
 		return GLFWTools::GetNearestMonitor(window_center);
 	}
 
-	void Window::ToggleFullscreen()
+	void Window::SetFullscreen(GLFWmonitor* monitor)
 	{
 		if (glfw_window == nullptr)
 			return;
 
-		if (GLFWmonitor* fullscreen_monitor = GetFullscreenMonitor())
+		GLFWmonitor* fullscreen_monitor = GetFullscreenMonitor(); // is the window already fullscreen for a monitor ?
+
+		if (monitor == nullptr) // want to "unfull screen"
 		{
-			// data properly initialized
-			if (non_fullscreen_window_size.x >= 0 && non_fullscreen_window_size.y >= 0)
+			if (fullscreen_monitor != nullptr) // is currently fullscreen
 			{
-				glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, non_fullscreen_window_decorated != 0);
-
-				glfwSetWindowPos(glfw_window, non_fullscreen_window_position.x, non_fullscreen_window_position.y);
-
-				glfwSetWindowSize(glfw_window, non_fullscreen_window_size.x, non_fullscreen_window_size.y);
-			}
-			// window probably started fullscreen
-			else
-			{
-				if (GLFWmonitor * preferred_monitor = GetPreferredMonitor())
+				// data properly initialized
+				if (non_fullscreen_window_size.x >= 0 && non_fullscreen_window_size.y >= 0) // restore previous settings
 				{
-					if (GLFWvidmode const* mode = glfwGetVideoMode(preferred_monitor))
+					glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, non_fullscreen_window_decorated != 0);
+					glfwSetWindowPos(glfw_window, non_fullscreen_window_position.x, non_fullscreen_window_position.y);
+					glfwSetWindowSize(glfw_window, non_fullscreen_window_size.x, non_fullscreen_window_size.y);
+				}
+				// window probably started fullscreen
+				else
+				{
+					if (GLFWmonitor* preferred_monitor = GetPreferredMonitor())
 					{
-						glm::ivec2 monitor_position = glm::ivec2(0, 0);
-						glfwGetMonitorPos(preferred_monitor, &monitor_position.x, &monitor_position.y);
+						if (GLFWvidmode const* mode = glfwGetVideoMode(preferred_monitor))
+						{
+							glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, 1); // default choice
 
-						glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, 1); // default choice
+							glm::ivec2 window_size = { mode->width / 2, mode->height / 2 }; // half monitor size
+							SetWindowSize(window_size);
 
-						glm::ivec2 window_size = glm::ivec2(mode->width, mode->height) / 2;
-						SetWindowSize(window_size);
-
-						glm::ivec2 window_position = monitor_position + window_size / 2;
-						SetWindowPosition(window_position);
+							glm::ivec2 monitor_position = { 0, 0 };
+							glfwGetMonitorPos(preferred_monitor, &monitor_position.x, &monitor_position.y);
+							glm::ivec2 window_position = monitor_position + window_size / 2;
+							SetWindowPosition(window_position);
+						}
 					}
 				}
 			}
 		}
 		else
 		{
-			// store current information
-			non_fullscreen_window_decorated = glfwGetWindowAttrib(glfw_window, GLFW_DECORATED) != 0;
-
-			glfwGetWindowPos(glfw_window, &non_fullscreen_window_position.x, &non_fullscreen_window_position.y);
-
-			glfwGetWindowSize(glfw_window, &non_fullscreen_window_size.x, &non_fullscreen_window_size.y);
-
-			// remove decoration
-			glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, 0);
-			// search the monitor that contains the center of the window
-			if (GLFWmonitor* preferred_monitor = GetPreferredMonitor())
+			if (fullscreen_monitor != monitor) // want to change target monitor
 			{
-				if (GLFWvidmode const* mode = glfwGetVideoMode(preferred_monitor))
+				// store current information (if not already fullscreen)
+				if (fullscreen_monitor == nullptr)
+				{
+					non_fullscreen_window_decorated = glfwGetWindowAttrib(glfw_window, GLFW_DECORATED) != 0;
+					glfwGetWindowPos(glfw_window, &non_fullscreen_window_position.x, &non_fullscreen_window_position.y);
+					glfwGetWindowSize(glfw_window, &non_fullscreen_window_size.x, &non_fullscreen_window_size.y);
+				}
+				// remove decoration
+				glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, 0);
+				// fit window to monitor size and position
+				if (GLFWvidmode const* mode = glfwGetVideoMode(monitor))
 				{
 					// change window size and position
-					glm::ivec2 monitor_position;
-					glfwGetMonitorPos(preferred_monitor, &monitor_position.x, &monitor_position.y);
+					glm::ivec2 monitor_position = { 0, 0 };
+					glfwGetMonitorPos(monitor, &monitor_position.x, &monitor_position.y);
 					SetWindowPosition(monitor_position);
-					SetWindowSize(glm::ivec2(mode->width, mode->height));
+					SetWindowSize({ mode->width, mode->height });
 				}
 			}
 		}
+	}
+
+	void Window::ToggleFullscreen()
+	{
+		if (GLFWmonitor* fullscreen_monitor = GetFullscreenMonitor())
+			SetFullscreen(nullptr);
+		else if (GLFWmonitor* prefered_monitor = GetPreferredMonitor())
+			SetFullscreen(prefered_monitor);
 	}
 
 	bool Window::ScreenCapture()

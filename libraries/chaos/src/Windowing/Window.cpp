@@ -565,11 +565,12 @@ namespace chaos
 			if (fullscreen_monitor != nullptr) // is currently fullscreen
 			{
 				// data properly initialized
-				if (non_fullscreen_window_size.x >= 0 && non_fullscreen_window_size.y >= 0) // restore previous settings
+				//if (non_fullscreen_window_size.x >= 0 && non_fullscreen_window_size.y >= 0) // restore previous settings
+				if (non_fullscreen_data.has_value())
 				{
-					glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, non_fullscreen_window_decorated != 0);
-					glfwSetWindowPos(glfw_window, non_fullscreen_window_position.x, non_fullscreen_window_position.y);
-					glfwSetWindowSize(glfw_window, non_fullscreen_window_size.x, non_fullscreen_window_size.y);
+					glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, non_fullscreen_data->decorated != 0);
+					glfwSetWindowPos(glfw_window, non_fullscreen_data->position.x, non_fullscreen_data->position.y);
+					glfwSetWindowSize(glfw_window, non_fullscreen_data->size.x, non_fullscreen_data->size.y);
 				}
 				// window probably started fullscreen
 				else
@@ -599,9 +600,11 @@ namespace chaos
 				// store current information (if not already fullscreen)
 				if (fullscreen_monitor == nullptr)
 				{
-					non_fullscreen_window_decorated = glfwGetWindowAttrib(glfw_window, GLFW_DECORATED) != 0;
-					glfwGetWindowPos(glfw_window, &non_fullscreen_window_position.x, &non_fullscreen_window_position.y);
-					glfwGetWindowSize(glfw_window, &non_fullscreen_window_size.x, &non_fullscreen_window_size.y);
+					NonFullScreenWindowData data;
+					data.decorated = glfwGetWindowAttrib(glfw_window, GLFW_DECORATED) != 0;
+					glfwGetWindowPos(glfw_window, &data.position.x, &data.position.y);
+					glfwGetWindowSize(glfw_window, &data.size.x, &data.size.y);
+					non_fullscreen_data = data;
 				}
 				// remove decoration
 				glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, 0);

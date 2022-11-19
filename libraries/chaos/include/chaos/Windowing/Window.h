@@ -3,6 +3,7 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	class WindowCreateParams;
+	class NonFullScreenWindowData;
 	class Window;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -50,6 +51,22 @@ namespace chaos
 	CHAOS_API bool SaveIntoJSON(nlohmann::json& json, WindowCreateParams const& src);
 
 	CHAOS_API bool LoadFromJSON(nlohmann::json const& json, WindowCreateParams& dst);
+
+	/**
+	* NonFullScreenWindowData : a binding class between chaos and GLFW to handle window (beware the prefix "My")
+	*/
+
+	class NonFullScreenWindowData
+	{
+	public:
+
+		/** the position of window */
+		glm::ivec2 position = { 0, 0 };
+		/** the size of window */
+		glm::ivec2 size = { 0, -1 };
+		/** whether the window is decorated */
+		bool decorated = true;
+	};
 
 	/**
 	* Window : a binding class between chaos and GLFW to handle window (beware the prefix "My")
@@ -197,13 +214,9 @@ namespace chaos
 
 		/** the renderer */
 		shared_ptr<GPURenderer> renderer;
-		
-		/** store window position for fullscreen */
-		glm::ivec2 non_fullscreen_window_position = { 0, 0 };
-		/** store window size for fullscreen (-1, -1) for non initialized */
-		glm::ivec2 non_fullscreen_window_size = { -1, -1 };
-		/** whether the window had decorations before toggling fullscreen */
-		bool non_fullscreen_window_decorated = true;
+
+		/** used to store data when toggling fullscreen */
+		std::optional<NonFullScreenWindowData> non_fullscreen_data;
 	};
 
 #endif

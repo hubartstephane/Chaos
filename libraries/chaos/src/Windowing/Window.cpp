@@ -546,14 +546,19 @@ namespace chaos
 		return nullptr;
 	}
 
+	GLFWmonitor* Window::GetPreferredMonitor() const
+	{
+		glm::ivec2 window_center = GetWindowPosition() + GetWindowSize() / 2;
+
+		return GLFWTools::GetNearestMonitor(window_center);
+	}
+
 	void Window::ToggleFullscreen()
 	{
 		if (glfw_window == nullptr)
 			return;
 
-		GLFWmonitor* fullscreen_monitor = GetFullscreenMonitor();
-
-		if (fullscreen_monitor != nullptr)
+		if (GLFWmonitor* fullscreen_monitor = GetFullscreenMonitor())
 		{
 			// data properly initialized
 			if (non_fullscreen_window_size.x >= 0 && non_fullscreen_window_size.y >= 0)
@@ -567,16 +572,12 @@ namespace chaos
 			// window probably started fullscreen
 			else
 			{
-				glm::ivec2 window_center = GetWindowPosition() + GetWindowSize() / 2;
-
-				GLFWmonitor* nearest_monitor = GLFWTools::GetNearestMonitor(window_center);
-				if (nearest_monitor != nullptr)
+				if (GLFWmonitor * preferred_monitor = GetPreferredMonitor())
 				{
-					GLFWvidmode const* mode = glfwGetVideoMode(nearest_monitor);
-					if (mode != nullptr)
+					if (GLFWvidmode const* mode = glfwGetVideoMode(preferred_monitor))
 					{
 						glm::ivec2 monitor_position = glm::ivec2(0, 0);
-						glfwGetMonitorPos(nearest_monitor, &monitor_position.x, &monitor_position.y);
+						glfwGetMonitorPos(preferred_monitor, &monitor_position.x, &monitor_position.y);
 
 						glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, 1); // default choice
 
@@ -601,17 +602,13 @@ namespace chaos
 			// remove decoration
 			glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, 0);
 			// search the monitor that contains the center of the window
-			glm::ivec2 window_center = GetWindowPosition() + GetWindowSize() / 2;
-
-			GLFWmonitor* nearest_monitor = GLFWTools::GetNearestMonitor(window_center);
-			if (nearest_monitor != nullptr)
+			if (GLFWmonitor* preferred_monitor = GetPreferredMonitor())
 			{
-				GLFWvidmode const* mode = glfwGetVideoMode(nearest_monitor);
-				if (mode != nullptr)
+				if (GLFWvidmode const* mode = glfwGetVideoMode(preferred_monitor))
 				{
 					// change window size and position
 					glm::ivec2 monitor_position;
-					glfwGetMonitorPos(nearest_monitor, &monitor_position.x, &monitor_position.y);
+					glfwGetMonitorPos(preferred_monitor, &monitor_position.x, &monitor_position.y);
 					SetWindowPosition(monitor_position);
 					SetWindowSize(glm::ivec2(mode->width, mode->height));
 				}
@@ -732,8 +729,7 @@ namespace chaos
 			return true;
 		}
 		// give opportunity to application
-		Application* application = Application::GetInstance();
-		if (application != nullptr)
+		if (Application* application = Application::GetInstance())
 			if (application->OnKeyEvent(event))
 				return true;
 		// super method

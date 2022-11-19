@@ -41,6 +41,14 @@ namespace chaos
 		}
 		/** constructor */
 		template<typename U>
+		requires std::is_base_of_v<T, U>
+		SubClassOf(SubClassOf<U> const & src) :
+			SubClassOf(src.GetInternalClass())
+		{
+		}
+		/** constructor */
+		template<typename U>
+		requires std::is_base_of_v<T, U>
 		SubClassOf(SubClassOf<U> && src):
 			SubClassOf(src.GetInternalClass())
 		{
@@ -82,7 +90,16 @@ namespace chaos
 		}
 		/** assign operator */
 		template<typename U>
-		SubClassOf<T>& operator = (SubClassOf<U> && src)
+		requires std::is_base_of_v<T, U>
+		SubClassOf<T>& operator = (SubClassOf<U> const & src)
+		{
+			*this = SubClassOf<T>(src);
+			return *this;
+		}
+		/** assign operator */
+		template<typename U>
+		requires std::is_base_of_v<T, U>
+		SubClassOf<T>& operator = (SubClassOf<U>&& src)
 		{
 			*this = SubClassOf<T>(src);
 			return *this;
@@ -102,7 +119,7 @@ namespace chaos
 		}
 		/** create a temporary instance on the stack an call the functor on it */
 		template<typename FUNC>
-		bool CreateInstanceOnStack(FUNC func) const
+		bool CreateInstanceOnStack(FUNC const & func) const
 		{
 			if (internal_class == nullptr)
 				return false;

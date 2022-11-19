@@ -2,15 +2,15 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class GameWindow;
+	class GameWindowClient;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class CHAOS_API GameWindow : public Window
+	class CHAOS_API GameWindowClient : public WindowClient
 	{
 		friend class GameApplication;
 
-		CHAOS_DECLARE_OBJECT_CLASS(GameWindow, Window);
+		CHAOS_DECLARE_OBJECT_CLASS(GameWindowClient, WindowClient);
 
 	protected:
 
@@ -28,16 +28,18 @@ namespace chaos
 
 		/** override */
 		virtual bool OnDraw(GPURenderer* renderer, WindowDrawParams const & draw_params, GPUProgramProviderInterface const * uniform_provider) override;
-		/** override */
-		virtual void Finalize() override;
+
 		/** override */
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;
 		/** override */
 		virtual void OnIconifiedStateChange(bool iconified) override;
 		/** override */
 		virtual void OnFocusStateChange(bool gain_focus) override;
+
+#if 0
 		/** override */
 		virtual ViewportPlacement GetRequiredViewport(glm::ivec2 const& size) const override;
+#endif
 
 
 	protected:

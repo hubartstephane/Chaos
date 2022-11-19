@@ -22,9 +22,11 @@ namespace chaos
 		if (in_client != client.get())
 		{
 			// detach previous client
-			client->client_server = nullptr;
 			if (client != nullptr)
+			{
+				client->client_server = nullptr;
 				client->OnClientDetached(this);
+			}
 			// attach new client
 			client = in_client;
 			if (client != nullptr)

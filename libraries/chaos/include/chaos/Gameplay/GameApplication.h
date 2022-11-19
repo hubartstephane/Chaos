@@ -11,7 +11,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GameApplication(SubClassOf<Game> in_game_class, SubClassOf<Window> in_main_window_class, WindowCreateParams const& in_window_create_params = {});
+		GameApplication(SubClassOf<Game> in_game_class, SubClassOf<ClientServerWindow> in_main_window_class, SubClassOf<GameWindowClient> in_window_client_class, WindowCreateParams const& in_window_create_params = {});
 
 		/** gets the game */
 		Game* GetGame() { return game.get(); }
@@ -25,22 +25,29 @@ namespace chaos
 		/** override */
 		virtual bool DoTick(float delta_time) override;
 		/** override */
-		virtual void OnWindowCreated(Window* window) override;
-		/** override */
 		virtual bool FillAtlasGeneratorInput(BitmapAtlas::AtlasInput& input) override;
+		/** override */
+		virtual Window* CreateMainWindow() override;
 
 	protected:
 
 		/** the class for the game */
 		SubClassOf<Game> game_class;
+		/** the class for the game */
+		SubClassOf<GameWindowClient> window_client_class;
 		/** pointer on the game */
 		shared_ptr<Game> game;
 	};
 
-	template<typename GAME_TYPE, typename ...PARAMS>
+	template<typename GAME_TYPE, typename GAME_APPLICATION_TYPE = GameApplication, typename MAIN_WINDOW_CLASS = ClientServerWindow, typename MAIN_WINDOW_CLIENT_CLASS = GameWindowClient, typename ...PARAMS>
 	/*CHAOS_API*/ int RunGame(int argc, char** argv, char** env, PARAMS && ...params)
 	{
-		return RunApplication<GameApplication>(argc, argv, env, GAME_TYPE::GetStaticClass(), GameWindow::GetStaticClass(), std::forward<PARAMS>(params)...);
+		return RunApplication<GAME_APPLICATION_TYPE>(
+			argc, argv, env,
+			GAME_TYPE::GetStaticClass(),
+			MAIN_WINDOW_CLASS::GetStaticClass(),
+			MAIN_WINDOW_CLIENT_CLASS::GetStaticClass(),
+			std::forward<PARAMS>(params)...);
 	}
 
 #endif

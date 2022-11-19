@@ -26,7 +26,7 @@
 #include "chaos/Gameplay/GameCheckpoint.h"
 #include "chaos/Gameplay/Game.h"
 #include "chaos/Gameplay/GameInstance.h"
-#include "chaos/Gameplay/GameWindow.h"
+#include "chaos/Gameplay/GameWindowClient.h"
 #include "chaos/Gameplay/GameGamepadManager.h"
 #include "chaos/Gameplay/GameApplication.h"
 #include "chaos/Gameplay/CollisionMask.h"

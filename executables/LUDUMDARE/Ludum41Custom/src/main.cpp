@@ -24,5 +24,5 @@ int main(int argc, char** argv, char** env)
 	create_params.height = 500;
 	create_params.monitor_index = 0;
 
-	return chaos::RunApplication<LudumGameApplication>(argc, argv, env, LudumGame::GetStaticClass(), chaos::GameWindow::GetStaticClass(), create_params);
+	return chaos::RunGame<LudumGame>(argc, argv, env, create_params);
 }

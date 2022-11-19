@@ -3,27 +3,36 @@
 
 namespace chaos
 {
-	GameApplication::GameApplication(SubClassOf<Game> in_game_class, SubClassOf<Window> in_main_window_class, WindowCreateParams const& in_window_create_params) :
+	GameApplication::GameApplication(SubClassOf<Game> in_game_class, SubClassOf<ClientServerWindow> in_main_window_class, SubClassOf<GameWindowClient> in_window_client_class, WindowCreateParams const& in_window_create_params):
+		WindowApplication(in_main_window_class, in_window_create_params),
 		game_class(in_game_class),
-		WindowApplication(in_main_window_class, in_window_create_params)
+		window_client_class(in_window_client_class)
 	{
-		assert(game_class.IsValid());
+		assert(in_game_class.IsValid());
+		assert(in_window_client_class.IsValid());
 	}
 
-	void GameApplication::OnWindowCreated(Window* window)
+	Window* GameApplication::CreateMainWindow()
 	{
-		// super
-		WindowApplication::OnWindowCreated(window);
-		// set the game
-		GameWindow* game_window = auto_cast(window);
-		if (game_window != nullptr)
-			game_window->SetGame(game.get());
+		Window* result = WindowApplication::CreateMainWindow();
+		if (result != nullptr)
+		{
+			if (ClientServerWindow* client_server_window = auto_cast(result))
+			{
+				if (GameWindowClient* window_client = window_client_class.CreateInstance())
+				{
+					window_client->SetGame(game.get());
+					client_server_window->SetClient(window_client);
+				}
+			}
+		}
+		return result;
 	}
 
 	bool GameApplication::PreMessageLoop()
 	{
 		assert(glfwGetCurrentContext() == shared_context);
-
+		 
 		// create the game
 		game = game_class.CreateInstance();
 		if (game == nullptr)
@@ -41,13 +50,6 @@ namespace chaos
 		// create now some game resources that need application resources to be initialized
 		if (!game->CreateGPUResources())
 			return false;
-		// update all windows and give them the game
-		for (auto& window : windows)
-		{
-			GameWindow* game_window = auto_cast(window.get());
-			if (game_window != nullptr)
-				game_window->SetGame(game.get());
-		}
 		return true;
 	}
 

@@ -152,13 +152,8 @@ namespace chaos
 			return true;
 		}))
 		{
-			return false;
-		}
-
-		// create the main window
-		main_window = CreateMainWindow();
-		if (main_window == nullptr)
 			return -1;
+		}
 
 		// a final initialization (after main window is constructed ... and OpenGL context)
 		if (!WithGLContext<bool>(shared_context, [this]()
@@ -166,8 +161,14 @@ namespace chaos
 			return PreMessageLoop();
 		}))
 		{
-			return false;
+			return -1;
 		}
+
+		// create the main window
+		main_window = CreateMainWindow();
+		if (main_window == nullptr)
+			return -1;
+
 		// the main loop
 		MessageLoop();
 

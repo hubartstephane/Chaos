@@ -2,16 +2,16 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class ViewportServerWindowInterface;
+	class ViewportServerInterface;
 	class ViewportServerWindow;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* ViewportServerWindowInterface : an interface for using some Viewport
+	* ViewportServerInterface : an interface for using some Viewport
 	*/
 
-	class CHAOS_API ViewportServerWindowInterface
+	class CHAOS_API ViewportServerInterface
 	{
 
 	public:
@@ -33,7 +33,7 @@ namespace chaos
 	* ViewportServerWindow : a window that may receive one viewport
 	*/
 
-	class CHAOS_API ViewportServerWindow : public Window, public ViewportServerWindowInterface
+	class CHAOS_API ViewportServerWindow : public Window, public ViewportServerInterface
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(ViewportServerWindow, Window);
 

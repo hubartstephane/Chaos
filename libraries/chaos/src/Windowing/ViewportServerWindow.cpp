@@ -5,19 +5,19 @@ namespace chaos
 {
 
 	/**
-	* ViewportServerWindowInterface implementation
+	* ViewportServerInterface implementation
 	*/
 
-	AutoCastable<Viewport> ViewportServerWindowInterface::GetViewport()
+	AutoCastable<Viewport> ViewportServerInterface::GetViewport()
 	{
 		return viewport.get();
 	}
-	AutoConstCastable<Viewport> ViewportServerWindowInterface::GetViewport() const
+	AutoConstCastable<Viewport> ViewportServerInterface::GetViewport() const
 	{
 		return viewport.get();
 	}
 
-	void ViewportServerWindowInterface::SetViewport(Viewport* in_viewport)
+	void ViewportServerInterface::SetViewport(Viewport* in_viewport)
 	{
 		if (in_viewport != viewport.get())
 		{

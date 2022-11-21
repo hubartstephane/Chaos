@@ -39,14 +39,14 @@ namespace chaos
 		shared_ptr<Game> game;
 	};
 
-	template<typename GAME_TYPE, typename GAME_APPLICATION_TYPE = GameApplication, typename MAIN_WINDOW_CLASS = ViewportServerWindow, typename MAIN_WINDOW_CLIENT_CLASS = GameViewport, typename ...PARAMS>
+	template<typename GAME_TYPE, typename GAME_APPLICATION_TYPE = GameApplication, typename MAIN_WINDOW_CLASS = ViewportServerWindow, typename VIEWPORT_CLASS = GameViewport, typename ...PARAMS>
 	/*CHAOS_API*/ int RunGame(int argc, char** argv, char** env, PARAMS && ...params)
 	{
 		return RunApplication<GAME_APPLICATION_TYPE>(
 			argc, argv, env,
 			GAME_TYPE::GetStaticClass(),
 			MAIN_WINDOW_CLASS::GetStaticClass(),
-			MAIN_WINDOW_CLIENT_CLASS::GetStaticClass(),
+			VIEWPORT_CLASS::GetStaticClass(),
 			std::forward<PARAMS>(params)...);
 	}
 

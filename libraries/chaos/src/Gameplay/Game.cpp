@@ -244,7 +244,7 @@ namespace chaos
 	void Game::DoPreDisplay(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
 	{
 		// clear the color buffers
-		glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+		glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
 		// clear the depth buffers

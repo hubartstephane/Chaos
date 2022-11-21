@@ -11,7 +11,7 @@ namespace chaos
 	class CHAOS_API Game : public Object, public InputEventReceiverInterface, public GPUProgramProviderInterface
 	{
 		friend class GameGamepadManager;
-		friend class GameWindowClient;
+		friend class GameViewport;
 
 		friend class GameStateMachine;
 		friend class GameState;

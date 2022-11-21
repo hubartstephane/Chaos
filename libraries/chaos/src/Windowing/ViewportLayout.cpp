@@ -5,8 +5,8 @@ namespace chaos
 {
 	void ViewportLayout::UpdateWindowViewportPlacements()
 	{
-		if (window != nullptr)
-			window->ComputeViewportPlacements(window->GetWindowSize());
+		//if (viewport_server != nullptr)
+		//	viewport_server->ComputeViewportPlacements(viewport_server->GetWindowSize());
 	}
 
 	ViewportPlacement ViewportLayout::ComputeViewportPlacement(Viewport * viewport, glm::ivec2 const& window_size, size_t viewport_index, size_t viewport_count) const

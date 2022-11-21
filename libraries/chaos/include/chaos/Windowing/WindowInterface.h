@@ -26,7 +26,7 @@ namespace chaos
 
 	class CHAOS_API WindowInterface : public TickableInterface, public InputEventReceiverInterface, public NamedInterface, public GPUProgramProviderInterface
 	{
-		friend class ClientServerWindow;
+		friend class ViewportServerWindow;
 
 	protected:
 

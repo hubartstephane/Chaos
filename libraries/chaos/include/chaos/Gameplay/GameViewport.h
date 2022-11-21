@@ -2,15 +2,15 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class GameWindowClient;
+	class GameViewport;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class CHAOS_API GameWindowClient : public WindowClient
+	class CHAOS_API GameViewport : public Viewport
 	{
 		friend class GameApplication;
 
-		CHAOS_DECLARE_OBJECT_CLASS(GameWindowClient, WindowClient);
+		CHAOS_DECLARE_OBJECT_CLASS(GameViewport, Viewport);
 
 	protected:
 

@@ -14,7 +14,7 @@ namespace chaos
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(ViewportLayout, Object);
 
-		friend class ViewportWindow;
+		friend class ViewportServerWindow;
 
 	public:
 
@@ -22,9 +22,9 @@ namespace chaos
 		virtual ViewportPlacement ComputeViewportPlacement(Viewport* viewport, glm::ivec2 const & window_size, size_t viewport_index, size_t viewport_count) const;
 
 		/** gets the window using the layout */
-		AutoCastable<ViewportWindow> GetWindow() { return window; }
+		AutoCastable<ViewportServerWindow> GetViewportServerWindow() { return viewport_server; }
 		/** gets the window using the layout */
-		AutoConstCastable<ViewportWindow> GetWindow() const { return window; }
+		AutoConstCastable<ViewportServerWindow> GetViewportServerWindow() const { return viewport_server; }
 
 		/** Update the window placements */
 		void UpdateWindowViewportPlacements();
@@ -32,7 +32,7 @@ namespace chaos
 	protected:
 
 		/** the viewport owning this layout */
-		ViewportWindow* window = nullptr;
+		ViewportServerWindow* viewport_server = nullptr;
 	};
 
 

@@ -2,40 +2,40 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class ClientServerWindowInterface;
-	class ClientServerWindow;
+	class ViewportServerWindowInterface;
+	class ViewportServerWindow;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* ClientServerWindowInterface : an interface for using some WindowClient
+	* ViewportServerWindowInterface : an interface for using some Viewport
 	*/
 
-	class CHAOS_API ClientServerWindowInterface
+	class CHAOS_API ViewportServerWindowInterface
 	{
 
 	public:
 
-		/** get current client */
-		AutoCastable<WindowClient> GetClient();
-		/** get current client */
-		AutoConstCastable<WindowClient> GetClient() const;
-		/** set current client */
-		void SetClient(WindowClient* in_client);
+		/** get current viewport */
+		AutoCastable<Viewport> GetViewport();
+		/** get current viewport */
+		AutoConstCastable<Viewport> GetViewport() const;
+		/** set current viewport */
+		void SetViewport(Viewport* in_viewport);
 
 	protected:
 
 		/** the client that receives all  events */
-		shared_ptr<WindowClient> client;
+		shared_ptr<Viewport> viewport;
 	};
 
 	/**
-	* ClientServerWindow : a window that may receive one client
+	* ViewportServerWindow : a window that may receive one viewport
 	*/
 
-	class CHAOS_API ClientServerWindow : public Window, public ClientServerWindowInterface
+	class CHAOS_API ViewportServerWindow : public Window, public ViewportServerWindowInterface
 	{
-		CHAOS_DECLARE_OBJECT_CLASS(ClientServerWindow, Window);
+		CHAOS_DECLARE_OBJECT_CLASS(ViewportServerWindow, Window);
 
 
 	protected:

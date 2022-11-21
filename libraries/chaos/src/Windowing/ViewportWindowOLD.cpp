@@ -1,6 +1,8 @@
 #include "chaos/ChaosPCH.h"
 #include "chaos/ChaosInternals.h"
 
+#if 0
+
 namespace chaos
 {
 
@@ -177,3 +179,6 @@ namespace chaos
 	}
 
 }; // namespace chaos
+
+
+#endif

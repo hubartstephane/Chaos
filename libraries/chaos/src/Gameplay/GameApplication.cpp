@@ -3,13 +3,13 @@
 
 namespace chaos
 {
-	GameApplication::GameApplication(SubClassOf<Game> in_game_class, SubClassOf<ClientServerWindow> in_main_window_class, SubClassOf<GameWindowClient> in_window_client_class, WindowCreateParams const& in_window_create_params):
+	GameApplication::GameApplication(SubClassOf<Game> in_game_class, SubClassOf<ViewportServerWindow> in_main_window_class, SubClassOf<GameViewport> in_viewport_class, WindowCreateParams const& in_window_create_params):
 		WindowApplication(in_main_window_class, in_window_create_params),
 		game_class(in_game_class),
-		window_client_class(in_window_client_class)
+		viewport_class(in_viewport_class)
 	{
 		assert(in_game_class.IsValid());
-		assert(in_window_client_class.IsValid());
+		assert(in_viewport_class.IsValid());
 	}
 
 	Window* GameApplication::CreateMainWindow()
@@ -17,12 +17,12 @@ namespace chaos
 		Window* result = WindowApplication::CreateMainWindow();
 		if (result != nullptr)
 		{
-			if (ClientServerWindow* client_server_window = auto_cast(result))
+			if (ViewportServerWindow* viewport_server_window = auto_cast(result))
 			{
-				if (GameWindowClient* window_client = window_client_class.CreateInstance())
+				if (GameViewport* game_viewport = viewport_class.CreateInstance())
 				{
-					window_client->SetGame(game.get());
-					client_server_window->SetClient(window_client);
+					game_viewport->SetGame(game.get());
+					viewport_server_window->SetViewport(game_viewport);
 				}
 			}
 		}

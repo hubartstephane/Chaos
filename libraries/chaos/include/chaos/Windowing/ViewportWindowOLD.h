@@ -1,3 +1,6 @@
+
+#if 0
+
 namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
@@ -58,3 +61,5 @@ namespace chaos
 #endif
 
 }; // namespace chaos
+
+#endif

@@ -6,6 +6,8 @@
 //#include "chaos/Windowing/ViewportOLD.h"
 #include "chaos/Windowing/ViewportPadding.h"
 #include "chaos/Windowing/ViewportLayout.h"
+#include "chaos/Windowing/ViewportGridLayout.h"
+#include "chaos/Windowing/ViewportComposer.h"
 //#include "chaos/Windowing/ViewportWindowOLD.h"
 #include "chaos/Windowing/GamepadManager.h"
 #include "chaos/Windowing/WindowApplication.h"

@@ -3,7 +3,6 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	class Viewport;
-	class ViewportComposer;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -24,6 +23,11 @@ namespace chaos
 		/** gets the server owning this client */
 		AutoConstCastable<ViewportServerInterface> GetViewportServer() const;
 
+		/** gets the top-level window owning the viewport */
+		AutoCastable<ViewportServerWindow> GetServerWindow();
+		/** gets the top-level window owning the viewport */
+		AutoConstCastable<ViewportServerWindow> GetServerWindow() const;
+
 		/** get the placement */
 		ViewportPlacement const& GetViewportPlacement() const { return placement; }
 		/** set the placement */
@@ -32,9 +36,9 @@ namespace chaos
 	protected:
 
 		/** called whenever the viewport is been detached from a ViewportServer */
-		virtual void OnClientDetached(ViewportServerInterface * in_viewport_server);
+		virtual void OnDetachedFromServer(ViewportServerInterface * in_viewport_server);
 		/** called whenever the viewport is been attached to a ViewportServer */
-		virtual void OnClientAttached(ViewportServerInterface* in_viewport_server);
+		virtual void OnAttachedToServer(ViewportServerInterface* in_viewport_server);
 
 	protected:
 
@@ -43,36 +47,6 @@ namespace chaos
 		/** the placement of the viewport */
 		ViewportPlacement placement;
 	};
-
-
-
-
-
-
-	class CHAOS_API ViewportComposer : public Viewport
-	{
-	public:
-
-		/** gets the viewport layout */
-		AutoCastable<ViewportLayout> GetViewportLayout();
-		/** gets the viewport layout */
-		AutoConstCastable<ViewportLayout> GetViewportLayout() const;
-
-		/** change the viewport layout */
-		void SetViewportLayout(ViewportLayout* in_viewport_layout);
-
-		/** update the surface allocation for all viewports */
-		void ComputeViewportPlacements(glm::ivec2 size);
-
-	protected:
-
-		/** the viewports */
-		std::vector<shared_ptr<Viewport>> viewports;
-		/** the viewport layout */
-		shared_ptr<ViewportLayout> viewport_layout;
-	};
-
-
 
 #endif
 

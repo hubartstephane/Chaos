@@ -109,20 +109,24 @@ namespace chaos
 		template<typename CHECK_CLASS = EmptyClass, typename P>
 		auto FindObject(std::vector<P>& elements) const -> decltype(meta::get_raw_pointer(elements[0]))
 		{
-			// search in the list
-			size_t count = elements.size();
-			for (size_t i = 0; i < count; ++i)
-			{
-				auto e = meta::get_raw_pointer(elements[i]);
-				if (Match(*e))
-					if (CheckClass<CHECK_CLASS>(e))
-						return e;
-			}
+			std::optional<size_t> index = FindObjectIndex<CHECK_CLASS>(elements);
+			if (index.has_value())
+				return meta::get_raw_pointer(elements[*index]);
 			return nullptr;
 		}
 		/** search element in a vector */
 		template<typename CHECK_CLASS = EmptyClass, typename P>
 		auto FindObject(std::vector<P> const& elements) const -> decltype(meta::get_raw_pointer(elements[0]))
+		{
+			std::optional<size_t> index = FindObjectIndex<CHECK_CLASS>(elements);
+			if (index.has_value())
+				return meta::get_raw_pointer(elements[*index]);
+			return nullptr;
+		}
+
+		/** search element in a vector */
+		template<typename CHECK_CLASS = EmptyClass, typename P>
+		std::optional<size_t> FindObjectIndex(std::vector<P>& elements) const
 		{
 			// search in the list
 			size_t count = elements.size();
@@ -131,9 +135,24 @@ namespace chaos
 				auto e = meta::get_raw_pointer(elements[i]);
 				if (Match(*e))
 					if (CheckClass<CHECK_CLASS>(e))
-						return e;
+						return i;
 			}
-			return nullptr;
+			return {};
+		}
+		/** search element in a vector */
+		template<typename CHECK_CLASS = EmptyClass, typename P>
+		std::optional<size_t> FindObjectIndex(std::vector<P> const& elements) const
+		{
+			// search in the list
+			size_t count = elements.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				auto e = meta::get_raw_pointer(elements[i]);
+				if (Match(*e))
+					if (CheckClass<CHECK_CLASS>(e))
+						return i;
+			}
+			return {};
 		}
 
 		/** check whether the element match the wanted class */

@@ -25,14 +25,14 @@ namespace chaos
 			if (viewport != nullptr)
 			{
 				viewport->viewport_server = nullptr;
-				viewport->OnClientDetached(this);
+				viewport->OnDetachedFromServer(this);
 			}
 			// attach new client
 			viewport = in_viewport;
 			if (viewport != nullptr)
 			{
 				viewport->viewport_server = this;
-				viewport->OnClientAttached(this);
+				viewport->OnAttachedToServer(this);
 			}
 		}
 	}

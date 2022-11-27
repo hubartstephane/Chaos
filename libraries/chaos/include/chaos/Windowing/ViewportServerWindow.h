@@ -2,32 +2,9 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class ViewportServerInterface;
 	class ViewportServerWindow;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-	/**
-	* ViewportServerInterface : an interface for using some Viewport
-	*/
-
-	class CHAOS_API ViewportServerInterface
-	{
-
-	public:
-
-		/** get current viewport */
-		AutoCastable<Viewport> GetViewport();
-		/** get current viewport */
-		AutoConstCastable<Viewport> GetViewport() const;
-		/** set current viewport */
-		void SetViewport(Viewport* in_viewport);
-
-	protected:
-
-		/** the client that receives all  events */
-		shared_ptr<Viewport> viewport;
-	};
 
 	/**
 	* ViewportServerWindow : a window that may receive one viewport
@@ -36,7 +13,6 @@ namespace chaos
 	class CHAOS_API ViewportServerWindow : public Window, public ViewportServerInterface
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(ViewportServerWindow, Window);
-
 
 	protected:
 

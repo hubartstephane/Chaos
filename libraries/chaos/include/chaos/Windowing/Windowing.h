@@ -1,6 +1,7 @@
 #include "chaos/Windowing/GLFWHints.h"
 #include "chaos/Windowing/WindowInterface.h"
 #include "chaos/Windowing/Window.h"
+#include "chaos/Windowing/ViewportServerInterface.h"
 #include "chaos/Windowing/ViewportServerWindow.h"
 #include "chaos/Windowing/Viewport.h"
 //#include "chaos/Windowing/ViewportOLD.h"

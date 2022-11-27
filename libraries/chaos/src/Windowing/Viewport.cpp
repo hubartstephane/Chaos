@@ -23,4 +23,34 @@ namespace chaos
 
 	}
 
+	AutoCastable<ViewportServerWindow> Viewport::GetServerWindow()
+	{
+		ViewportServerInterface* parent = viewport_server;
+		while (parent != nullptr)
+		{
+			if (ViewportServerWindow* window = auto_cast(parent))
+				return window;
+			if (Viewport* viewport = auto_cast(parent))
+				parent = viewport->viewport_server;
+			else
+				return nullptr;
+		}
+		return nullptr;
+	}
+
+	AutoConstCastable<ViewportServerWindow> Viewport::GetServerWindow() const
+	{
+		ViewportServerInterface const* parent = viewport_server;
+		while (parent != nullptr)
+		{
+			if (ViewportServerWindow const* window = auto_cast(parent))
+				return window;
+			if (Viewport const* viewport = auto_cast(parent))
+				parent = viewport->viewport_server;
+			else
+				return nullptr;
+		}
+		return nullptr;
+	}
+
 }; // namespace chaos

@@ -7,7 +7,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* ViewportServerInterface : an interface for using some Viewport
+	* ViewportServerInterface : an interface for using some Viewports
 	*/
 
 	class CHAOS_API ViewportServerInterface
@@ -15,17 +15,28 @@ namespace chaos
 
 	public:
 
-		/** get current viewport */
-		AutoCastable<Viewport> GetViewport();
-		/** get current viewport */
-		AutoConstCastable<Viewport> GetViewport() const;
-		/** set current viewport */
-		void SetViewport(Viewport* in_viewport);
+		/** gets the number of viewport */
+		size_t GetViewportCount() const;
+		/** gets a viewport by its index */
+		AutoCastable<Viewport> GetViewport(size_t index);
+		/** gets a viewport by its index */
+		AutoConstCastable<Viewport> GetViewport(size_t index) const;
+		/** find viewport by name */
+		AutoCastable<Viewport> FindViewport(ObjectRequest request);
+		/** find viewport by name */
+		AutoConstCastable<Viewport> FindViewport(ObjectRequest request) const;
 
 	protected:
 
-		/** the client that receives all  events */
-		shared_ptr<Viewport> viewport;
+		/** utility method called whenever a viewport is being attached */
+		void AttachViewport(Viewport* viewport);
+		/** utility method called whenever a viewport is being detached */
+		void DetachViewport(Viewport* viewport);
+
+	protected:
+
+		/** the viewports */
+		std::vector<shared_ptr<Viewport>> viewports;
 	};
 
 #endif

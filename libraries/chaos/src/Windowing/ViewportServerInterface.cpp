@@ -8,33 +8,41 @@ namespace chaos
 	* ViewportServerInterface implementation
 	*/
 
-	AutoCastable<Viewport> ViewportServerInterface::GetViewport()
+	size_t ViewportServerInterface::GetViewportCount() const
 	{
-		return viewport.get();
-	}
-	AutoConstCastable<Viewport> ViewportServerInterface::GetViewport() const
-	{
-		return viewport.get();
+		return viewports.size();
 	}
 
-	void ViewportServerInterface::SetViewport(Viewport* in_viewport)
+	AutoCastable<Viewport> ViewportServerInterface::GetViewport(size_t index)
 	{
-		if (in_viewport != viewport.get())
-		{
-			// detach previous client
-			if (viewport != nullptr)
-			{
-				viewport->viewport_server = nullptr;
-				viewport->OnDetachedFromServer(this);
-			}
-			// attach new client
-			viewport = in_viewport;
-			if (viewport != nullptr)
-			{
-				viewport->viewport_server = this;
-				viewport->OnAttachedToServer(this);
-			}
-		}
+		return viewports[index].get();
+	}
+
+	AutoConstCastable<Viewport> ViewportServerInterface::GetViewport(size_t index) const
+	{
+		return viewports[index].get();
+	}
+
+	AutoCastable<Viewport> ViewportServerInterface::FindViewport(ObjectRequest request)
+	{
+		return request.FindObject(viewports);
+	}
+
+	AutoConstCastable<Viewport> ViewportServerInterface::FindViewport(ObjectRequest request) const
+	{
+		return request.FindObject(viewports);
+	}
+
+	void ViewportServerInterface::AttachViewport(Viewport * viewport)
+	{
+		viewport->viewport_server = this;
+		viewport->OnAttachedToServer(this);
+	}
+
+	void ViewportServerInterface::DetachViewport(Viewport* viewport)
+	{
+		viewport->viewport_server = nullptr;
+		viewport->OnDetachedFromServer(this);
 	}
 
 }; // namespace chaos

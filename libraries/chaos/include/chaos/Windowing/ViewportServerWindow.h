@@ -14,6 +14,15 @@ namespace chaos
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(ViewportServerWindow, Window);
 
+	public:
+
+		/** get current viewport */
+		AutoCastable<Viewport> GetViewport();
+		/** get current viewport */
+		AutoConstCastable<Viewport> GetViewport() const;
+		/** set current viewport */
+		void SetViewport(Viewport* in_viewport);
+
 	protected:
 
 		/** override */

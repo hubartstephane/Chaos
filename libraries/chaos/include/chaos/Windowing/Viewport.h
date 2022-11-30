@@ -44,7 +44,7 @@ namespace chaos
 
 		/** the server owning this viewport */
 		ViewportServerInterface* viewport_server = nullptr;
-		/** the placement of the viewport */
+		/** the placement of the viewport (relative to its parent server) */
 		ViewportPlacement placement;
 	};
 

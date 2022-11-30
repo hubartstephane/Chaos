@@ -33,14 +33,27 @@ namespace chaos
 		return request.FindObject(viewports);
 	}
 
+	size_t ViewportServerInterface::FindViewportIndex(Viewport const * viewport) const
+	{
+		assert(viewport->GetViewportServer() == this); // used by us
+
+		auto it = std::find(viewports.begin(), viewports.end(), viewport);
+		assert(it != viewports.end());
+		return it - viewports.begin();
+	}
+
 	void ViewportServerInterface::AttachViewport(Viewport * viewport)
 	{
+		assert(viewport->GetViewportServer() == nullptr); // not used anywhere
+
 		viewport->viewport_server = this;
 		viewport->OnAttachedToServer(this);
 	}
 
 	void ViewportServerInterface::DetachViewport(Viewport* viewport)
 	{
+		assert(viewport->GetViewportServer() == this); // used by us
+
 		viewport->viewport_server = nullptr;
 		viewport->OnDetachedFromServer(this);
 	}

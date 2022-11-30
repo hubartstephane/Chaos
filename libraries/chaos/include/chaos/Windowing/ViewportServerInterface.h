@@ -25,6 +25,8 @@ namespace chaos
 		AutoCastable<Viewport> FindViewport(ObjectRequest request);
 		/** find viewport by name */
 		AutoConstCastable<Viewport> FindViewport(ObjectRequest request) const;
+		/** find viewport index */
+		size_t FindViewportIndex(Viewport const * viewport) const;
 
 	protected:
 

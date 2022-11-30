@@ -69,7 +69,7 @@ namespace chaos
 		/** whether all viewports are to have the same size even for incomplete lines/rows */
 		ViewportGridMode mode = ViewportGridMode::EXPANDED;
 		/** some padding */
-		ViewportPadding padding;
+		Padding padding;
 	};
 
 

@@ -29,7 +29,6 @@ namespace chaos
 		}
 	}
 
-
 	AutoCastable<ViewportLayout> ViewportComposer::GetViewportLayout()
 	{
 		return viewport_layout.get();
@@ -38,6 +37,34 @@ namespace chaos
 	AutoConstCastable<ViewportLayout> ViewportComposer::GetViewportLayout() const
 	{
 		return viewport_layout.get();
+	}
+
+	void ViewportComposer::AddViewport(Viewport* viewport, bool compute_viewport_surfaces)
+	{
+		assert(viewport != nullptr);
+		assert(viewport->GetViewportServer() == nullptr); // not already in use
+
+		AttachViewport(viewport);
+		//if (compute_viewport_surfaces)
+		//	ComputeViewportPlacements(GetWindowSize());
+	}
+
+	void ViewportComposer::RemoveViewport(Viewport* viewport, bool compute_viewport_surfaces, bool keep_empty_place)
+	{
+		assert(viewport != nullptr);
+		assert(viewport->GetViewportServer() == this); // used by this
+
+
+
+		auto it = std::find(viewports.begin(), viewports.end(), viewport);
+		if (keep_empty_place) // remove the element, but relace it with a empty zone
+			*it = nullptr;
+		else
+			viewports.erase(it);
+
+		DetachViewport(viewport);
+	//	if (compute_viewport_surfaces)
+	//		ComputeViewportPlacements(GetWindowSize());
 	}
 
 

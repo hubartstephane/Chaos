@@ -56,14 +56,14 @@ namespace chaos
 
 	bool GameViewport::OnDraw(GPURenderer * renderer, WindowDrawParams const& draw_params, GPUProgramProviderInterface const * uniform_provider)
 	{
-		// shurender
-
 		if (game != nullptr)
 		{
+			GPUProgramProviderChain main_uniform_provider(this, uniform_provider);
+
 			GPURenderParams render_params;
 			render_params.viewport = draw_params.viewport;
 			render_params.full_size = draw_params.full_size;
-			game->Display(renderer, uniform_provider, render_params);
+			game->Display(renderer, &main_uniform_provider, render_params);
 		}
 		return true;
 	}

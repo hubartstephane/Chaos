@@ -7,12 +7,17 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* ViewportComposer : 
+	* ViewportComposer : An object that is both a Viewport an a ViewportServerInterface
 	*/
 
-	class CHAOS_API ViewportComposer : public Viewport
+	class CHAOS_API ViewportComposer : public Viewport, public ViewportServerInterface
 	{
 	public:
+
+		/** insert a viewport inside the composer */
+		void AddViewport(Viewport* viewport, bool compute_viewport_surfaces);
+		/** remove viewport inside the composer */
+		void RemoveViewport(Viewport* viewport, bool compute_viewport_surfaces, bool keep_empty_place);
 
 		/** gets the viewport layout */
 		AutoCastable<ViewportLayout> GetViewportLayout();
@@ -27,13 +32,9 @@ namespace chaos
 
 	protected:
 
-		/** the viewports */
-		std::vector<shared_ptr<Viewport>> viewports;
 		/** the viewport layout */
 		shared_ptr<ViewportLayout> viewport_layout;
 	};
-
-
 
 #endif
 

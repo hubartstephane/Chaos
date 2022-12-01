@@ -15,12 +15,10 @@ namespace chaos
 
 	void Viewport::OnDetachedFromServer(ViewportServerInterface * in_viewport_server)
 	{
-
 	}
 
 	void Viewport::OnAttachedToServer(ViewportServerInterface* in_viewport_server)
 	{
-
 	}
 
 	AutoCastable<ViewportServerWindow> Viewport::GetServerWindow()
@@ -51,6 +49,42 @@ namespace chaos
 				return nullptr;
 		}
 		return nullptr;
+	}
+
+	ViewportProperties const& Viewport::GetViewportProperties() const
+	{
+		return properties;
+	}
+
+	void Viewport::SetViewportProperties(ViewportProperties const& in_properties, bool update_placement_hierarchy)
+	{
+		properties = in_properties;
+		if (update_placement_hierarchy)
+			UpdateViewportPlacementHierarchy();
+	}
+
+	void Viewport::UpdateViewportPlacementHierarchy()
+	{
+		if (ViewportServerWindow* server_window = GetServerWindow())
+			server_window->UpdateViewportPlacement();
+	}
+
+	void Viewport::SetViewportPlacement(ViewportPlacement const& in_placement)
+	{
+		placement = ApplyModifiersToPlacement(in_placement);
+	}
+
+	ViewportPlacement Viewport::ApplyModifiersToPlacement(ViewportPlacement const& in_placement)
+	{
+		ViewportPlacement result = in_placement;
+
+
+
+
+
+
+
+		return result;
 	}
 
 }; // namespace chaos

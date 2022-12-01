@@ -38,53 +38,61 @@ namespace chaos
 			{
 				viewports.push_back(in_viewport);
 				AttachViewport(in_viewport);
+				UpdateViewportPlacement();
 			}
+		}
+	}
+
+	void ViewportServerWindow::UpdateViewportPlacement()
+	{
+		if (Viewport* viewport = GetViewport())
+		{
+			ViewportPlacement placement;
+			placement.size = GetWindowSize();
+			viewport->SetViewportPlacement(placement);
 		}
 	}
 
 	bool ViewportServerWindow::OnWindowClosed()
 	{
-		bool result = true;
+		bool result = Window::OnWindowClosed();
 		if (Viewport * viewport = GetViewport())
 			result &= viewport->OnWindowClosed();
-		result &= Window::OnWindowClosed();
 		return result;
 	}
 
 	void ViewportServerWindow::OnWindowResize(glm::ivec2 size)
 	{
-		if (Viewport* viewport = GetViewport())
-			viewport->OnWindowResize(size);
 		Window::OnWindowResize(size);
+		UpdateViewportPlacement();
 	}
 
 	void ViewportServerWindow::OnDropFile(int count, char const** paths)
 	{
+		Window::OnDropFile(count, paths);
 		if (Viewport* viewport = GetViewport())
 			viewport->OnDropFile(count, paths);
-		Window::OnDropFile(count, paths);
 	}
 
 	void ViewportServerWindow::OnIconifiedStateChange(bool iconified)
 	{
+		Window::OnIconifiedStateChange(iconified);
 		if (Viewport* viewport = GetViewport())
 			viewport->OnIconifiedStateChange(iconified);
-		Window::OnIconifiedStateChange(iconified);
 	}
 
 	void ViewportServerWindow::OnFocusStateChange(bool gain_focus)
 	{
+		Window::OnFocusStateChange(gain_focus);
 		if (Viewport* viewport = GetViewport())
 			viewport->OnFocusStateChange(gain_focus);
-		Window::OnFocusStateChange(gain_focus);
 	}
 
 	bool ViewportServerWindow::OnDraw(GPURenderer* renderer, WindowDrawParams const& DrawParams, GPUProgramProviderInterface const* uniform_provider)
 	{
-		bool result = false;
+		bool result = Window::OnDraw(renderer, DrawParams, uniform_provider);
 		if (Viewport* viewport = GetViewport())
 			result |= viewport->OnDraw(renderer, DrawParams, uniform_provider);
-		result |= Window::OnDraw(renderer, DrawParams, uniform_provider);
 		return result;
 	}
 
@@ -138,10 +146,9 @@ namespace chaos
 
 	bool ViewportServerWindow::DoTick(float delta_time)
 	{
-		bool result = false;
+		bool result = TickableInterface::DoTick(delta_time);
 		if (Viewport* viewport = GetViewport())
 			result |= viewport->Tick(delta_time);
-		result |= TickableInterface::DoTick(delta_time);
 		return result;
 	}
 

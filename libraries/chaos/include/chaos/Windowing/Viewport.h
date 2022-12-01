@@ -31,7 +31,20 @@ namespace chaos
 		/** get the placement */
 		ViewportPlacement const& GetViewportPlacement() const { return placement; }
 		/** set the placement */
-		void SetViewportPlacement(ViewportPlacement const& in_placement) { placement = in_placement; }
+		virtual void SetViewportPlacement(ViewportPlacement const& in_placement);
+
+		/** gets the viewport properties */
+		ViewportProperties const& GetViewportProperties() const;
+		/** change the viewport properties */
+		void SetViewportProperties(ViewportProperties const& in_properties, bool update_placement_hierarchy = true);
+
+		/** recompute the whole viewport disposition */
+		void UpdateViewportPlacementHierarchy();
+
+	protected:
+
+		/** tweak the input placement according to ViewportProperties */
+		ViewportPlacement ApplyModifiersToPlacement(ViewportPlacement const& in_placement);
 
 	protected:
 
@@ -46,6 +59,8 @@ namespace chaos
 		ViewportServerInterface* viewport_server = nullptr;
 		/** the placement of the viewport (relative to its parent server) */
 		ViewportPlacement placement;
+		/** the properties for this viewport */
+		ViewportProperties properties;
 	};
 
 #endif

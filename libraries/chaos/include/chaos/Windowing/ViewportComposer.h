@@ -14,10 +14,13 @@ namespace chaos
 	{
 	public:
 
+		/** override */
+		virtual void SetViewportPlacement(ViewportPlacement const& in_placement) override;
+
 		/** insert a viewport inside the composer */
-		void AddViewport(Viewport* viewport, bool compute_viewport_surfaces);
+		void AddViewport(Viewport* viewport, bool update_placement_hierarchy = true);
 		/** remove viewport inside the composer */
-		void RemoveViewport(Viewport* viewport, bool compute_viewport_surfaces, bool keep_empty_place);
+		void RemoveViewport(Viewport* viewport, bool keep_empty_place, bool update_placement_hierarchy = true);
 
 		/** gets the viewport layout */
 		AutoCastable<ViewportLayout> GetViewportLayout();
@@ -25,7 +28,7 @@ namespace chaos
 		AutoConstCastable<ViewportLayout> GetViewportLayout() const;
 
 		/** change the viewport layout */
-		void SetViewportLayout(ViewportLayout* in_viewport_layout);
+		void SetViewportLayout(ViewportLayout* in_viewport_layout, bool update_placement_hierarchy = true);
 
 		/** update the surface allocation for all viewports */
 		void ComputeViewportPlacements(glm::ivec2 size);

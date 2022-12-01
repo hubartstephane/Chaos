@@ -14,6 +14,8 @@ namespace chaos
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(ViewportServerWindow, Window);
 
+		friend class Viewport;
+
 	public:
 
 		/** get current viewport */
@@ -54,6 +56,9 @@ namespace chaos
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;
+
+		/** update viewport size according the window size */
+		void UpdateViewportPlacement();
 	};
 
 #endif

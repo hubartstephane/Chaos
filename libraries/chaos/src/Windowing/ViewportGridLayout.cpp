@@ -3,47 +3,51 @@
 
 namespace chaos
 {
-	void ViewportGridLayout::SetSettings(ViewportGridLayoutSettings const& in_settings, bool update_placements)
+	void ViewportGridLayout::SetSettings(ViewportGridLayoutSettings const& in_settings, bool update_placement_hierarchy)
 	{
 		settings = in_settings;
-		if (update_placements)
-			UpdateWindowViewportPlacements();
+		if (update_placement_hierarchy)
+			UpdateViewportPlacementHierarchy();
 	}
 
-	void ViewportGridLayout::SetMaxViewportCount(size_t in_size, bool update_placements)
+	void ViewportGridLayout::SetMaxViewportCount(size_t in_max_count, bool update_placement_hierarchy)
 	{
-		settings.size = in_size;
-		if (update_placements)
-			UpdateWindowViewportPlacements();
+		settings.max_count = in_max_count;
+		if (update_placement_hierarchy)
+			UpdateViewportPlacementHierarchy();
 	}
 
-	void ViewportGridLayout::SetOrientation(Orientation in_orientation, bool update_placements)
+	void ViewportGridLayout::SetOrientation(Orientation in_orientation, bool update_placement_hierarchy)
 	{
 		settings.orientation = in_orientation;
-		if (update_placements)
-			UpdateWindowViewportPlacements();
+		if (update_placement_hierarchy)
+			UpdateViewportPlacementHierarchy();
 	}
 
-	void ViewportGridLayout::SetHorizontalFillMode(ViewportGridHorizontalFillMode in_mode, bool update_placements)
+	void ViewportGridLayout::SetHorizontalInsertionMode(ViewportGridInsertionMode in_insertion_mode, bool update_placement_hierarchy)
 	{
-		settings.horizontal_fill_mode = in_mode;
-		if (update_placements)
-			UpdateWindowViewportPlacements();
+		settings.horizontal_insertion_mode = in_insertion_mode;
+		if (update_placement_hierarchy)
+			UpdateViewportPlacementHierarchy();
 	}
 
-	void ViewportGridLayout::SetVerticalFillMode(ViewportGridVerticalFillMode in_mode, bool update_placements)
+	void ViewportGridLayout::SetVerticalInsertionMode(ViewportGridInsertionMode in_insertion_mode, bool update_placement_hierarchy)
 	{
-		settings.vertical_fill_mode = in_mode;
-		if (update_placements)
-			UpdateWindowViewportPlacements();
+		settings.vertical_insertion_mode = in_insertion_mode;
+		if (update_placement_hierarchy)
+			UpdateViewportPlacementHierarchy();
 	}
 
-	void ViewportGridLayout::SetMode(ViewportGridMode in_mode, bool update_placements)
+	void ViewportGridLayout::SetFillMode(ViewportGridFillMode in_fill_mode, bool update_placement_hierarchy)
 	{
-		settings.mode = in_mode;
-		if (update_placements)
-			UpdateWindowViewportPlacements();
+		settings.fill_mode = in_fill_mode;
+		if (update_placement_hierarchy)
+			UpdateViewportPlacementHierarchy();
 	}
+
+
+
+#if 0
 
 	ViewportPlacement ViewportGridLayout::ComputeViewportPlacement(Viewport* viewport, glm::ivec2 const& window_size, size_t viewport_index, size_t viewport_count) const
 	{
@@ -55,8 +59,8 @@ namespace chaos
 
 		glm::vec2 ws = auto_cast_vector(window_size_copy);
 
-		bool reverse_horizontal = (settings.horizontal_fill_mode == ViewportGridHorizontalFillMode::RIGHT_TO_LEFT);
-		bool reverse_vertical = (settings.vertical_fill_mode == ViewportGridVerticalFillMode::TOP_TO_BOTTOM);
+		bool reverse_horizontal = (settings.horizontal_insertion_mode == ViewportGridHorizontalFillMode::RIGHT_TO_LEFT);
+		bool reverse_vertical = (settings.vertical_insertion_mode == ViewportGridVerticalFillMode::TOP_TO_BOTTOM);
 
 		if (settings.orientation == Orientation::VERTICAL)
 			std::swap(reverse_horizontal, reverse_vertical);
@@ -95,14 +99,14 @@ namespace chaos
 			glm::vec2 cell_size = { 0.0f, 0.0f };
 			int offset = 0;
 
-			if (settings.mode == ViewportGridMode::EXPANDED)
+			if (settings.fill_mode == ViewportGridFillMode::EXPANDED)
 			{
 				cell_size = ws / glm::vec2(float(cell_on_line), float(line_count));
 			}
 			else
 			{
 				cell_size = ws / glm::vec2(float(settings.size), float(line_count));
-				if (settings.mode == ViewportGridMode::UNIFORM_CENTERED)
+				if (settings.fill_mode == ViewportGridFillMode::UNIFORM_CENTERED)
 					offset = int((ws.x - cell_size.x * cell_on_line) * 0.5f);
 			}
 
@@ -137,5 +141,7 @@ namespace chaos
 		}
 		return result;
 	}
+
+#endif
 
 }; // namespace chaos

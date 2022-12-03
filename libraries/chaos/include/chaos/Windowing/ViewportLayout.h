@@ -18,21 +18,21 @@ namespace chaos
 
 	public:
 
-		/** compute the position of all viewport in their viewport window */
-		virtual ViewportPlacement ComputeViewportPlacement(Viewport* viewport, glm::ivec2 const & window_size, size_t viewport_index, size_t viewport_count) const;
+		/** compute placement for all viewports in the list */
+		virtual void SetAllViewportPlacements(ViewportPlacement const& in_placement, std::vector<shared_ptr<Viewport>>& viewports);
 
-		/** gets the window using the layout */
-		AutoCastable<ViewportServerWindow> GetViewportServerWindow() { return viewport_server; }
-		/** gets the window using the layout */
-		AutoConstCastable<ViewportServerWindow> GetViewportServerWindow() const { return viewport_server; }
+		/** gets the composer using the layout */
+		AutoCastable<ViewportComposer> GetViewportComposer() { return viewport_composer; }
+		/** gets the composer using the layout */
+		AutoConstCastable<ViewportComposer> GetViewportComposer() const { return viewport_composer; }
 
 		/** Update the window placements */
-		void UpdateWindowViewportPlacements();
+		void UpdateViewportPlacementHierarchy();
 
 	protected:
 
 		/** the viewport owning this layout */
-		ViewportServerWindow* viewport_server = nullptr;
+		ViewportComposer* viewport_composer = nullptr;
 	};
 
 #endif

@@ -8,36 +8,21 @@ namespace chaos
 	{
 		if (in_viewport_layout != viewport_layout)
 		{
-
-#if 0
-
 			if (viewport_layout != nullptr)
-				viewport_layout->window = nullptr;
+				viewport_layout->viewport_composer = nullptr;
 			viewport_layout = in_viewport_layout;
 			if (viewport_layout != nullptr)
-				viewport_layout->window = this;
-			ComputeViewportPlacements(GetWindowSize());
-#endif
-
-
+				viewport_layout->viewport_composer = this;
 
 			if (update_placement_hierarchy)
 				UpdateViewportPlacementHierarchy();
 		}
 	}
 
-#if 0
-	void ViewportComposer::ComputeViewportPlacements(glm::ivec2 size)
+	void ViewportComposer::SetViewportPlacement(ViewportPlacement const& in_placement)
 	{
-		if (viewport_layout != nullptr)
-		{
-			size_t count = viewports.size();
-			for (size_t i = 0; i < count; ++i)
-				if (Viewport* viewport = viewports[i].get())
-					viewport->SetViewportPlacement(viewport_layout->ComputeViewportPlacement(viewport, size, i, count));
-		}
+		placement = ApplyModifiersToPlacement(in_placement);
 	}
-#endif
 
 	AutoCastable<ViewportLayout> ViewportComposer::GetViewportLayout()
 	{
@@ -78,19 +63,8 @@ namespace chaos
 	void ViewportComposer::SetViewportPlacement(ViewportPlacement const& in_placement)
 	{
 		Viewport::SetViewportPlacement(in_placement);
-
-
-
-
-
-
-
-
-
-
-
-
+		if (viewport_layout != nullptr)
+			viewport_layout->SetAllViewportPlacements(in_placement, viewports);
 	}
-
 
 }; // namespace chaos

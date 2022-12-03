@@ -5,21 +5,14 @@ namespace chaos
 	class ViewportGridLayout;
 	class ViewportGridLayoutSettings;
 
-	enum class ViewportGridHorizontalFillMode;
-	enum class ViewportGridVerticalFillMode;
+	enum class ViewportGridInsertionMode;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	enum class CHAOS_API ViewportGridHorizontalFillMode : int
+	enum class CHAOS_API ViewportGridInsertionMode : int
 	{
-		LEFT_TO_RIGHT,
-		RIGHT_TO_LEFT
-	};
-
-	enum class CHAOS_API ViewportGridVerticalFillMode : int
-	{
-		TOP_TO_BOTTOM,
-		BOTTOM_TO_TOP
+		NORMAL,    // left to right or top to bottom
+		REVERSED   // right to left or bottom to top
 	};
 
 	//          max = 6
@@ -31,13 +24,13 @@ namespace chaos
 	//          max = 6
 	// <----------------------->
 	// +---+---+---+---+---+---+
-	// | X | X | X | X |   |   | UNIFORM_PACKED_LEFT: all cells have same size. there are packed alltogether in filling direction
+	// | X | X | X | X |   |   | UNIFORM_PACKED: all cells have same size. there are packed alltogether in insertion direction
 	// +---+---+---+---+---+---+
 	//
 	//          max = 6
 	// <----------------------->
 	// +---+---+---+---+---+---+
-	// |   |   | X | X | X | X | UNIFORM_PACKED_RIGHT: all cells have same size. there are packed alltogether in filling direction
+	// |   |   | X | X | X | X | UNIFORM_PACKED_REVERSED: all cells have same size. there are packed alltogether in insertion direction
 	// +---+---+---+---+---+---+
 	// 
 	//          max = 6
@@ -46,11 +39,11 @@ namespace chaos
 	// |   | X | X | X | X |   | UNIFORM_CENTERED: all cells have same size. there are packed alltogether but centered on lined
 	// +---+---+---+---+---+---+
 
-	enum class CHAOS_API ViewportGridMode : int
+	enum class CHAOS_API ViewportGridFillMode : int
 	{
 		EXPANDED, // viewports take as many size on their line/row as possible
-		UNIFORM_PACKED_LEFT, // all viewports have same size. for incomplete line/row the viewports are packed alltogether
-		UNIFORM_PACKED_RIGHT, // all viewports have same size. for incomplete line/row the viewports are packed alltogether
+		UNIFORM_PACKED, // all viewports have same size. for incomplete line/row the viewports are packed alltogether
+		UNIFORM_PACKED_REVERSED, // all viewports have same size. for incomplete line/row the viewports are packed alltogether
 		UNIFORM_CENTERED, // all viewports have same size. for incomplete line/row the viewports are centered
 	};
 
@@ -61,19 +54,16 @@ namespace chaos
 		/** the orientation of the viewports */
 		Orientation orientation = Orientation::HORIZONTAL;
 		/** the max number of viewports along the orientation (0 for infinite) */
-		size_t size = 0;
-		/** fill mode */
-		ViewportGridHorizontalFillMode horizontal_fill_mode = ViewportGridHorizontalFillMode::LEFT_TO_RIGHT;
-		/** fill mode */
-		ViewportGridVerticalFillMode vertical_fill_mode = ViewportGridVerticalFillMode::TOP_TO_BOTTOM;
+		size_t max_count = 0;
+		/** insertion mode */
+		ViewportGridInsertionMode horizontal_insertion_mode = ViewportGridInsertionMode::NORMAL;
+		/** insertion mode */
+		ViewportGridInsertionMode vertical_insertion_mode = ViewportGridInsertionMode::NORMAL;
 		/** whether all viewports are to have the same size even for incomplete lines/rows */
-		ViewportGridMode mode = ViewportGridMode::EXPANDED;
+		ViewportGridFillMode fill_mode = ViewportGridFillMode::EXPANDED;
 		/** some padding */
 		Padding padding;
 	};
-
-
-
 
 	class CHAOS_API ViewportGridLayout : public ViewportLayout
 	{
@@ -82,20 +72,20 @@ namespace chaos
 	public:
 
 		/** override */
-		virtual ViewportPlacement ComputeViewportPlacement(Viewport* viewport, glm::ivec2 const& window_size, size_t viewport_index, size_t viewport_count) const override;
+		//virtual ViewportPlacement ComputeViewportPlacement(Viewport* viewport, glm::ivec2 const& window_size, size_t viewport_index, size_t viewport_count) const override;
 
 		/** change the whole settings for that layout */
-		void SetSettings(ViewportGridLayoutSettings const& in_settings, bool update_placements);
+		void SetSettings(ViewportGridLayoutSettings const& in_settings, bool update_placement_hierarchy = true);
 		/** change the max number of viewport along the orientation */
-		void SetMaxViewportCount(size_t in_size, bool update_placements = true);
+		void SetMaxViewportCount(size_t in_max_count, bool update_placement_hierarchy = true);
 		/** change the orientation */
-		void SetOrientation(Orientation in_orientation, bool update_placements = true);
-		/** change horizontal fill mode */
-		void SetHorizontalFillMode(ViewportGridHorizontalFillMode in_mode, bool update_placements = true);
-		/** change vertical fill mode */
-		void SetVerticalFillMode(ViewportGridVerticalFillMode in_mode, bool update_placements = true);
-		/** change the mode */
-		void SetMode(ViewportGridMode in_mode, bool update_placements = true);
+		void SetOrientation(Orientation in_orientation, bool update_placement_hierarchy = true);
+		/** change horizontal insertion mode */
+		void SetHorizontalInsertionMode(ViewportGridInsertionMode in_insertion_mode, bool update_placement_hierarchy = true);
+		/** change vertical insertion mode */
+		void SetVerticalInsertionMode(ViewportGridInsertionMode in_insertion_mode, bool update_placement_hierarchy = true);
+		/** change the fill mode */
+		void SetFillMode(ViewportGridFillMode in_fill_mode, bool update_placement_hierarchy = true);
 
 	protected:
 

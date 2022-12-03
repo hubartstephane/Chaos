@@ -39,6 +39,33 @@ namespace chaos
 		shared_ptr<ViewportLayout> viewport_layout;
 	};
 
+	class CHAOS_API ViewportHorizontalComposer : public ViewportComposer
+	{
+
+	};
+
+	class CHAOS_API ViewportVerticalComposer : public ViewportComposer
+	{
+
+	};
+
+	class CHAOS_API ViewportGridComposer : public ViewportComposer
+	{
+
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
 #endif
 
 }; // namespace chaos

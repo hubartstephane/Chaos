@@ -131,9 +131,12 @@ namespace chaos
 		GPURenderer* GetRenderer() { return renderer.get(); }
 
 		/** get the root widget */
-		WindowRootWidget* GetRootWidget();
+		WindowRootWidget* GetRootWidget() { return root_widget.get(); }
 		/** get the root widget */
-		WindowRootWidget const* GetRootWidget() const;
+		WindowRootWidget const* GetRootWidget() const { return root_widget.get(); }
+
+		/** update the whole widget hierarchy placement */
+		virtual void UpdateWidgetPlacementHierarchy();
 
 		/** using window context, call functor, then restore previous */
 		template<typename T>
@@ -196,9 +199,6 @@ namespace chaos
 		virtual void OnIconifiedStateChange(bool iconified);
 		/** called whenever the window gain or loose focus */
 		virtual void OnFocusStateChange(bool gain_focus);
-
-		/** update the whole widget hierarchy placement */
-		virtual void UpdateWidgetPlacementHierarchy();
 
 	private:
 

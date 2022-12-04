@@ -13,6 +13,7 @@ namespace chaos
 	class CHAOS_API WindowRootWidget : public Widget
 	{
 		friend class Window;
+		friend class Widget;
 
 		CHAOS_DECLARE_OBJECT_CLASS(WindowRootWidget, Widget);
 

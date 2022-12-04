@@ -17,9 +17,9 @@ namespace chaos
 	public:
 
 		/** gets the widget owning this */
-		AutoCastable<Widget> GetParentWidget();
+		AutoCastable<Widget> GetParent();
 		/** gets the widget owning this */
-		AutoConstCastable<Widget> GetParentWidget() const;
+		AutoConstCastable<Widget> GetParent() const;
 
 		/** gets the top-level window owning the widget */
 		AutoCastable<Window> GetWindow();

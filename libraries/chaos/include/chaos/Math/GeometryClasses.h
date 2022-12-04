@@ -254,7 +254,7 @@ namespace chaos
 		/** constructor (empty box) */
 		type_aabox() = default;
 		/** copy constructor */
-		type_aabox(type_box_base const& src) = default;
+		type_aabox(type_aabox const& src) = default;
 		/** other constructor */
 		type_aabox(vec_type const& in_position, vec_type const& in_size) : position(in_position), size(in_size) {}
 		/** construct a box from 2 points */

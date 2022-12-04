@@ -3,6 +3,9 @@
 
 namespace chaos
 {
+
+#if 0
+
 	void ViewportGridLayout::SetSettings(ViewportGridLayoutSettings const& in_settings, bool update_placement_hierarchy)
 	{
 		settings = in_settings;
@@ -141,6 +144,8 @@ namespace chaos
 		}
 		return result;
 	}
+
+#endif
 
 #endif
 

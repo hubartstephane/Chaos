@@ -10,6 +10,8 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+#if 0
+
 	enum class CHAOS_API ViewportGridInsertionMode : int
 	{
 		NORMAL,    // left to right or top to bottom
@@ -93,6 +95,10 @@ namespace chaos
 		/** the behaviour of the viewport layout */
 		ViewportGridLayoutSettings settings;
 	};
+
+#endif
+
+
 
 #endif
 

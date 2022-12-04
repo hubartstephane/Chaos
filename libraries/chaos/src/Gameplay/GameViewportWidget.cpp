@@ -80,6 +80,15 @@ namespace chaos
 #endif
 	};
 
+
+
+
+
+
+
+
+#if 0
+
 	void GameViewportWidget::OnIconifiedStateChange(bool iconified)
 	{
 		// do not execute following code in debug because it does not fit well with debugger
@@ -103,6 +112,16 @@ namespace chaos
 				game->RequirePauseGame();
 		Widget::OnFocusStateChange(gain_focus);
 	}
+
+#endif
+
+
+
+
+
+
+
+
 
 }; // namespace chaos
 

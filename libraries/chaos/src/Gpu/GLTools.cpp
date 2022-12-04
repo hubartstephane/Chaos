@@ -13,7 +13,7 @@ namespace chaos
 
 	void GLTools::SetViewport(aabox2 const& viewport)
 	{
-		glViewport(viewport.position.x, viewport.position.y, viewport.size.x, viewport.size.y);
+		glViewport(GLint(viewport.position.x), GLint(viewport.position.y), GLint(viewport.size.x), GLint(viewport.size.y));
 	}
 
 	bool GLTools::IsMatrixType(GLenum type)

@@ -120,7 +120,7 @@ chaos::ParticleAccessor<ParticleFire> LudumGameInstance::FireProjectile(char con
 
     chaos::box2 particle_box = ref_box;
     particle_box.half_size = ratio_to_box * ref_box.half_size;
-    particle_box = chaos::SetBoxAspect(particle_box, chaos::MathTools::CastAndDiv<float>(layout.width, layout.height), SetBoxAspectMethod::PREFER_WIDTH);
+    particle_box = chaos::SetBoxAspect(particle_box, chaos::MathTools::CastAndDiv<float>(layout.width, layout.height), SetBoxAspectMethod::PREFER_UPDATE_WIDTH);
 
     // spawn the particles and updates
     spawner.SpawnParticles(count, false).Process([offset_rotation, delta_rotation, particle_box, player_ownership, velocity, damage, trample, &result](chaos::ParticleAccessor<ParticleFire> accessor)

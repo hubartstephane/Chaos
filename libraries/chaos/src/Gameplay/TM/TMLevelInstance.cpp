@@ -340,7 +340,7 @@ namespace chaos
 			aspect_ratio = game->GetViewportWantedAspect();
 
 		// compute the surface
-		box2 camera_box = SetBoxAspect(camera_template->GetBoundingBox(true), aspect_ratio, SetBoxAspectMethod::PREFER_WIDTH);
+		box2 camera_box = SetBoxAspect(camera_template->GetBoundingBox(true), aspect_ratio, SetBoxAspectMethod::PREFER_UPDATE_WIDTH);
 
 		// create the real camera
 		Camera* camera = CreateCamera();

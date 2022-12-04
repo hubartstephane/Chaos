@@ -169,8 +169,8 @@ namespace chaos
 	enum class SetBoxAspectMethod : int
 	{
 		SHRINK_BOX,           // shrink the side along the axis that is too long
-		PREFERE_UPDATE_WIDTH, // prefere to modify width whenever possible
-		PREFERE_UPDATE_HEIGHT // prefere to modify height whenever possible
+		PREFER_UPDATE_WIDTH, // prefere to modify width whenever possible
+		PREFER_UPDATE_HEIGHT // prefere to modify height whenever possible
 	};
 
 	/** update a box aspect */
@@ -189,11 +189,11 @@ namespace chaos
 				return src;
 
 			if (effective_aspect > aspect) // width too large
-				method = SetBoxAspectMethod::PREFER_WIDTH;
+				method = SetBoxAspectMethod::PREFER_UPDATE_WIDTH;
 			else if (effective_aspect < aspect) // height too large
-				method = SetBoxAspectMethod::PREFER_HEIGHT;
+				method = SetBoxAspectMethod::PREFER_UPDATE_HEIGHT;
 		}
-		// other method
+		// other methods
 		else
 		{
 			// cannot have no size
@@ -202,18 +202,18 @@ namespace chaos
 
 			// if size is 0 along one axis, force/alter this axis
 			if (src.half_size.x == 0)
-				method = SetBoxAspectMethod::PREFER_WIDTH;
+				method = SetBoxAspectMethod::PREFER_UPDATE_WIDTH;
 			else if (src.half_size.y == 0)
-				method = SetBoxAspectMethod::PREFER_HEIGHT;
+				method = SetBoxAspectMethod::PREFER_UPDATE_HEIGHT;
 		}
 
 		// make the update
-		assert((method == SetBoxAspectMethod::PREFER_WIDTH) || (method == SetBoxAspectMethod::PREFER_HEIGHT));
+		assert((method == SetBoxAspectMethod::PREFER_UPDATE_WIDTH) || (method == SetBoxAspectMethod::PREFER_UPDATE_HEIGHT));
 
 		BOX_TYPE result = src;
-		if (method == SetBoxAspectMethod::PREFER_WIDTH)
+		if (method == SetBoxAspectMethod::PREFER_UPDATE_WIDTH)
 			result.half_size.x = src.half_size.y * aspect;
-		else if (method == SetBoxAspectMethod::PREFER_HEIGHT)
+		else if (method == SetBoxAspectMethod::PREFER_UPDATE_HEIGHT)
 			result.half_size.y = src.half_size.x / aspect;
 
 		return result;
@@ -561,7 +561,7 @@ namespace chaos
 
 	/** update a box aspect */
 	template<typename T>
-	/*CHAOS_API*/ BOX_TYPE SetBoxAspect(type_aabox<T, 2> const& src, typename T aspect, SetBoxAspectMethod method)
+	/*CHAOS_API*/ type_aabox<T, 2> SetBoxAspect(type_aabox<T, 2> const& src, typename T aspect, SetBoxAspectMethod method)
 	{
 		// any negative component
 		if (IsGeometryEmpty(src))
@@ -575,9 +575,9 @@ namespace chaos
 				return src;
 
 			if (effective_aspect > aspect) // width too large
-				method = SetBoxAspectMethod::PREFER_WIDTH;
+				method = SetBoxAspectMethod::PREFER_UPDATE_WIDTH;
 			else if (effective_aspect < aspect) // height too large
-				method = SetBoxAspectMethod::PREFER_HEIGHT;
+				method = SetBoxAspectMethod::PREFER_UPDATE_HEIGHT;
 		}
 		// other method
 		else
@@ -588,21 +588,21 @@ namespace chaos
 
 			// if size is 0 along one axis, force/alter this axis
 			if (src.size.x == 0)
-				method = SetBoxAspectMethod::PREFER_WIDTH;
+				method = SetBoxAspectMethod::PREFER_UPDATE_WIDTH;
 			else if (src.size.y == 0)
-				method = SetBoxAspectMethod::PREFER_HEIGHT;
+				method = SetBoxAspectMethod::PREFER_UPDATE_HEIGHT;
 		}
 
 		// make the update
-		assert((method == SetBoxAspectMethod::PREFER_WIDTH) || (method == SetBoxAspectMethod::PREFER_HEIGHT));
+		assert((method == SetBoxAspectMethod::PREFER_UPDATE_WIDTH) || (method == SetBoxAspectMethod::PREFER_UPDATE_HEIGHT));
 
-		BOX_TYPE result = src;
-		if (method == SetBoxAspectMethod::PREFER_WIDTH)
+		type_aabox<T, 2> result = src;
+		if (method == SetBoxAspectMethod::PREFER_UPDATE_WIDTH)
 		{
 			result.size.x = src.size.y * aspect;
 			result.position.x -= (result.size.x - src.size.x) / static_cast<T>(2);
 		}
-		else if (method == SetBoxAspectMethod::PREFER_HEIGHT)
+		else if (method == SetBoxAspectMethod::PREFER_UPDATE_HEIGHT)
 		{
 			result.size.y = src.size.x / aspect;
 			result.position.y -= (result.size.y - src.size.y) / static_cast<T>(2);

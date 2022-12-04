@@ -6,6 +6,9 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+
+#if 0
+
 	/**
 	 * The layout is responsible for computing the surface to reserve for all viewports owned by a ViewportWindow
 	 */
@@ -35,6 +38,8 @@ namespace chaos
 		/** the viewport owning this layout */
 		ViewportComposer* viewport_composer = nullptr;
 	};
+
+#endif
 
 #endif
 

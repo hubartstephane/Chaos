@@ -239,7 +239,7 @@ namespace chaos
 		shared_ptr<GPURenderer> renderer;
 
 		/** previous mouse position */
-		glm::vec2 mouse_position = { std::numeric_limits<float>::max(), std::numeric_limits<float>::max() };
+		std::optional<glm::vec2> mouse_position;
 
 		/** used to store data when toggling fullscreen */
 		std::optional<NonFullScreenWindowData> non_fullscreen_data;

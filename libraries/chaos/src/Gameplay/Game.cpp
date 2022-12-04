@@ -201,7 +201,7 @@ namespace chaos
 		aabox2 result;
 		result.position = { 0, 0 };
 		result.size = size;
-		return ApplyAspectRatioConstraint(result, viewport_wanted_aspect);
+		return SetBoxAspect(result, viewport_wanted_aspect, SetBoxAspectMethod::SHRINK_BOX);
 	}
 
 	void Game::Display(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)

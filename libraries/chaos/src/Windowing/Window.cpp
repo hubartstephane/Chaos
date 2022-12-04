@@ -358,7 +358,7 @@ namespace chaos
 				if (!my_window->IsMousePositionValid())
 					my_window->OnMouseMove({ 0.0f, 0.0f });
 				else
-					my_window->OnMouseMove(position - my_window->mouse_position);
+					my_window->OnMouseMove(position - my_window->mouse_position.value());
 
 				my_window->mouse_position = position;
 			});

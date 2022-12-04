@@ -105,7 +105,7 @@ namespace chaos
 				if ((particle_flags & ParticleFlags::TEXTURE_DIAGONAL_FLIP) != 0)
 					std::swap(layout_width, layout_height);
 
-				particle_box = SetBoxAspect(particle_box, MathTools::CastAndDiv<float>(layout_width, layout_height), SetBoxAspectMethod::PREFER_WIDTH);
+				particle_box = SetBoxAspect(particle_box, MathTools::CastAndDiv<float>(layout_width, layout_height), SetBoxAspectMethod::PREFER_UPDATE_WIDTH);
 			}
 		}
 

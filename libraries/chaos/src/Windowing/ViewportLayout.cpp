@@ -3,6 +3,8 @@
 
 namespace chaos
 {
+
+#if 0
 	void ViewportLayout::UpdatePlacementHierarchy()
 	{
 		if (viewport_composer != nullptr)
@@ -17,5 +19,6 @@ namespace chaos
 
 
 	}
+#endif
 
 }; // namespace chaos

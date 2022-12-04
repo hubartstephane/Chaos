@@ -21,7 +21,7 @@ namespace chaos
 			{
 				if (GameViewportWidget* game_viewport_widget = game_viewport_widget_class.CreateInstance())
 				{
-					root_widget->AddChild(game_viewport_widget);
+					root_widget->AddChildWidget(game_viewport_widget);
 					game_viewport_widget->SetGame(game.get());
 
 

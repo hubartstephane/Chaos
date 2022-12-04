@@ -83,7 +83,7 @@ namespace chaos
 		WidgetLayout layout;
 
 		/** the child widgets */
-		std::vector<shared_ptr<Viewport>> child_widgets;
+		std::vector<shared_ptr<Widget>> child_widgets;
 	};
 
 #endif

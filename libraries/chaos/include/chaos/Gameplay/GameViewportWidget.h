@@ -31,10 +31,15 @@ namespace chaos
 
 		/** override */
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;
+
+
+#if 0
+
 		/** override */
 		virtual void OnIconifiedStateChange(bool iconified) override;
 		/** override */
 		virtual void OnFocusStateChange(bool gain_focus) override;
+#endif
 
 #if 0
 		/** override */

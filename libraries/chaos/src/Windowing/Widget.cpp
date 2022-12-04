@@ -72,8 +72,8 @@ namespace chaos
 	{
 		aabox2 result;
 
-		result.size.x = std::max(0, in_placement.size.x - layout.padding.left - layout.padding.right);
-		result.size.y = std::max(0, in_placement.size.y - layout.padding.top - layout.padding.bottom);
+		result.size.x = std::max(0.0f, in_placement.size.x - layout.padding.left - layout.padding.right);
+		result.size.y = std::max(0.0f, in_placement.size.y - layout.padding.top - layout.padding.bottom);
 
 		result.position.x = (result.size.x == 0)?
 			0:
@@ -84,7 +84,7 @@ namespace chaos
 			in_placement.position.y + layout.padding.top;
 		
 		if (layout.aspect_ratio >= 0.0f)
-			result = ApplyAspectRatioConstraint(result, layout.aspect_ratio);
+			result = SetBoxAspect(result, layout.aspect_ratio, SetBoxAspectMethod::SHRINK_BOX);
 
 		return result;
 	}

@@ -62,7 +62,7 @@ namespace chaos
 		// apply the aspect ratio
 		Game const * game = GetGame();
 		if (game != nullptr)
-			SetBoxAspect(result, game->GetViewportWantedAspect(), SetBoxAspectMethod::PREFER_WIDTH);
+			SetBoxAspect(result, game->GetViewportWantedAspect(), SetBoxAspectMethod::PREFER_UPDATE_WIDTH);
 
 		// apply the modifiers
 		if (apply_modifiers)

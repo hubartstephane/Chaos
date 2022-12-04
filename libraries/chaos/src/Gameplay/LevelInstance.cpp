@@ -376,7 +376,7 @@ namespace chaos
 
 		// apply the aspect ratio
 		if (game != nullptr)
-			SetBoxAspect(result, game->GetViewportWantedAspect(), SetBoxAspectMethod::PREFER_WIDTH);
+			SetBoxAspect(result, game->GetViewportWantedAspect(), SetBoxAspectMethod::PREFER_UPDATE_WIDTH);
 
 		return result;
 	}

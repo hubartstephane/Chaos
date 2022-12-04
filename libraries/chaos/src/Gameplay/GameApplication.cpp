@@ -3,13 +3,13 @@
 
 namespace chaos
 {
-	GameApplication::GameApplication(SubClassOf<Game> in_game_class, SubClassOf<ViewportServerWindow> in_main_window_class, SubClassOf<GameViewportWidget> in_viewport_class, WindowCreateParams const& in_window_create_params):
+	GameApplication::GameApplication(SubClassOf<Game> in_game_class, SubClassOf<Window> in_main_window_class, SubClassOf<GameViewportWidget> in_game_viewport_widget_class, WindowCreateParams const& in_window_create_params):
 		WindowApplication(in_main_window_class, in_window_create_params),
 		game_class(in_game_class),
-		viewport_class(in_viewport_class)
+		game_viewport_widget_class(in_game_viewport_widget_class)
 	{
 		assert(in_game_class.IsValid());
-		assert(in_viewport_class.IsValid());
+		assert(game_viewport_widget_class.IsValid());
 	}
 
 	Window* GameApplication::CreateMainWindow()
@@ -17,12 +17,12 @@ namespace chaos
 		Window* result = WindowApplication::CreateMainWindow();
 		if (result != nullptr)
 		{
-			if (ViewportServerWindow* viewport_server_window = auto_cast(result))
+			if (WindowRootWidget* root_widget = result->GetRootWidget())
 			{
-				if (GameViewportWidget* game_viewport = viewport_class.CreateInstance())
+				if (GameViewportWidget* game_viewport_widget = game_viewport_widget_class.CreateInstance())
 				{
-					game_viewport->SetGame(game.get());
-					
+					root_widget->SetChild(game_viewport_widget);
+					game_viewport_widget->SetGame(game.get());
 
 
 
@@ -33,14 +33,13 @@ namespace chaos
 
 
 
-					viewport_server_window->SetViewport(game_viewport);
-
-					WidgetLayout prop;
-					prop.padding.left = 200;
-					prop.padding.top = 100;
-					game_viewport->SetViewportProperties(prop);
+					WidgetLayout layout;
+					layout.padding.left = 200;
+					layout.padding.top = 100;
+					game_viewport_widget->SetLayout(layout);
 
 				}
+
 			}
 		}
 		return result;

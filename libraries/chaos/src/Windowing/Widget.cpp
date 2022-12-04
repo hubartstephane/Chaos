@@ -23,26 +23,26 @@ namespace chaos
 
 	AutoCastable<Window> Widget::GetWindow()
 	{
-		Widget* result = this; // do not point to parent so that this function is working for WindowRootWidget 
-		while (result != nullptr)
+		Widget* widget = this; // do not point to parent so that this function is working for WindowRootWidget 
+		while (widget != nullptr)
 		{
-			if (WindowRootWidget* root_widget = auto_cast(result))
+			if (WindowRootWidget* root_widget = auto_cast(widget))
 				return root_widget->window;
-			result = result->parent;
+			widget = widget->parent;
 		}
-		return result;
+		return nullptr;
 	}
 
 	AutoConstCastable<Window> Widget::GetWindow() const
 	{
-		Widget const* result = parent; // do not point to parent so that this function is working for WindowRootWidget 
-		while (result != nullptr)
+		Widget const* widget = this; // do not point to parent so that this function is working for WindowRootWidget 
+		while (widget != nullptr)
 		{
-			if (WindowRootWidget const* root_widget = auto_cast(result))
+			if (WindowRootWidget const* root_widget = auto_cast(widget))
 				return root_widget->window;
-			result = result->parent;
+			widget = widget->parent;
 		}
-		return result;
+		return nullptr;
 	}
 
 	WidgetLayout const& Widget::GetLayout() const

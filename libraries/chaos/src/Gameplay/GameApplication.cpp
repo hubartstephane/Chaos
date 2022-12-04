@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	GameApplication::GameApplication(SubClassOf<Game> in_game_class, SubClassOf<ViewportServerWindow> in_main_window_class, SubClassOf<GameViewport> in_viewport_class, WindowCreateParams const& in_window_create_params):
+	GameApplication::GameApplication(SubClassOf<Game> in_game_class, SubClassOf<ViewportServerWindow> in_main_window_class, SubClassOf<GameViewportWidget> in_viewport_class, WindowCreateParams const& in_window_create_params):
 		WindowApplication(in_main_window_class, in_window_create_params),
 		game_class(in_game_class),
 		viewport_class(in_viewport_class)
@@ -19,10 +19,27 @@ namespace chaos
 		{
 			if (ViewportServerWindow* viewport_server_window = auto_cast(result))
 			{
-				if (GameViewport* game_viewport = viewport_class.CreateInstance())
+				if (GameViewportWidget* game_viewport = viewport_class.CreateInstance())
 				{
 					game_viewport->SetGame(game.get());
+					
+
+
+
+
+
+
+
+
+
+
 					viewport_server_window->SetViewport(game_viewport);
+
+					WidgetLayout prop;
+					prop.padding.left = 200;
+					prop.padding.top = 100;
+					game_viewport->SetViewportProperties(prop);
+
 				}
 			}
 		}

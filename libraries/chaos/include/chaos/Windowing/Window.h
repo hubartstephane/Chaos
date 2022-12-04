@@ -125,10 +125,15 @@ namespace chaos
 		bool ScreenCapture();
 
 		/** getting the required viewport for given window */
-		virtual ViewportPlacement GetRequiredViewport(glm::ivec2 const& size) const;
+		virtual WidgetPlacement GetRequiredViewport(glm::ivec2 const& size) const;
 
 		/** getting the renderer */
 		GPURenderer* GetRenderer() { return renderer.get(); }
+
+		/** get the root widget */
+		WindowRootWidget* GetRootWidget();
+		/** get the root widget */
+		WindowRootWidget const* GetRootWidget() const;
 
 		/** using window context, call functor, then restore previous */
 		template<typename T>
@@ -154,6 +159,8 @@ namespace chaos
 
 		/** override */
 		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override;
+		/** override */
+		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
 
 		/** bind Window with GLFW */
 		virtual void SetGLFWCallbacks(bool in_double_buffer);
@@ -173,9 +180,6 @@ namespace chaos
 
 		/** tick the renderer of the window with the real framerate (with no time scale) */
 		void TickRenderer(float real_delta_time);
-
-		/** override */
-		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
 
 	private:
 
@@ -209,11 +213,14 @@ namespace chaos
 		/** is the window with double buffer */
 		bool double_buffer = true;
 
-		/** previous mouse position */
-		glm::vec2 mouse_position = { std::numeric_limits<float>::max(), std::numeric_limits<float>::max() };
+		/** the root widget for the window */
+		shared_ptr<WindowRootWidget> root_widget;
 
 		/** the renderer */
 		shared_ptr<GPURenderer> renderer;
+
+		/** previous mouse position */
+		glm::vec2 mouse_position = { std::numeric_limits<float>::max(), std::numeric_limits<float>::max() };
 
 		/** used to store data when toggling fullscreen */
 		std::optional<NonFullScreenWindowData> non_fullscreen_data;

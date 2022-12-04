@@ -3,25 +3,25 @@
 
 namespace chaos
 {
-	void GameViewport::OnInputModeChanged(InputMode new_mode, InputMode old_mode)
+	void GameViewportWidget::OnInputModeChanged(InputMode new_mode, InputMode old_mode)
 	{
 		if (game != nullptr)
 			game->OnInputModeChanged(new_mode, old_mode);
 	}
 
-	bool GameViewport::OnCharEventImpl(unsigned int c)
+	bool GameViewportWidget::OnCharEventImpl(unsigned int c)
 	{
 		// give inputs to the game
 		if (game != nullptr)
 			if (game->OnCharEvent(c))
 				return true;
-		return Viewport::OnCharEventImpl(c);
+		return Widget::OnCharEventImpl(c);
 	}
 
-	bool GameViewport::OnKeyEventImpl(KeyEvent const& event)
+	bool GameViewportWidget::OnKeyEventImpl(KeyEvent const& event)
 	{
 		// super method
-		if (Viewport::OnKeyEventImpl(event))
+		if (Widget::OnKeyEventImpl(event))
 			return true;
 		// give inputs to the game
 		if (game != nullptr)
@@ -30,23 +30,23 @@ namespace chaos
 		return false;
 	}
 
-	bool GameViewport::OnMouseButtonImpl(int button, int action, int modifier)
+	bool GameViewportWidget::OnMouseButtonImpl(int button, int action, int modifier)
 	{
 		if (game != nullptr)
 			if (game->OnMouseButton(button, action, modifier))
 				return true;
-		return Viewport::OnMouseButtonImpl(button, action, modifier);
+		return Widget::OnMouseButtonImpl(button, action, modifier);
 	}
 
-	bool GameViewport::OnMouseMoveImpl(double x, double y)
+	bool GameViewportWidget::OnMouseMoveImpl(glm::vec2 const & delta)
 	{
 		if (game != nullptr)
-			if (game->OnMouseMove(x, y))
+			if (game->OnMouseMove(delta))
 				return true;
-		return Viewport::OnMouseMoveImpl(x, y);
+		return Widget::OnMouseMoveImpl(delta);
 	}
 #if 0
-	ViewportPlacement GameViewport::GetRequiredViewport(glm::ivec2 const & size) const
+	WidgetPlacement GameViewportWidget::GetRequiredViewport(glm::ivec2 const & size) const
 	{
 		if (game != nullptr)
 			return game->GetRequiredViewport(size);
@@ -54,7 +54,7 @@ namespace chaos
 	}
 #endif
 
-	bool GameViewport::OnDraw(GPURenderer * renderer, WindowDrawParams const& draw_params, GPUProgramProviderInterface const * uniform_provider)
+	bool GameViewportWidget::OnDraw(GPURenderer * renderer, WindowDrawParams const& draw_params, GPUProgramProviderInterface const * uniform_provider)
 	{
 		if (game != nullptr)
 		{
@@ -68,7 +68,7 @@ namespace chaos
 		return true;
 	}
 
-	void GameViewport::SetGame(Game* in_game)
+	void GameViewportWidget::SetGame(Game* in_game)
 	{
 		game = in_game;
 	}
@@ -80,7 +80,7 @@ namespace chaos
 #endif
 	};
 
-	void GameViewport::OnIconifiedStateChange(bool iconified)
+	void GameViewportWidget::OnIconifiedStateChange(bool iconified)
 	{
 		// do not execute following code in debug because it does not fit well with debugger
 #if _DEBUG
@@ -89,10 +89,10 @@ namespace chaos
 		if (game != nullptr)
 			if (iconified)
 				game->RequirePauseGame();
-		Viewport::OnIconifiedStateChange(iconified);
+		Widget::OnIconifiedStateChange(iconified);
 	}
 
-	void GameViewport::OnFocusStateChange(bool gain_focus)
+	void GameViewportWidget::OnFocusStateChange(bool gain_focus)
 	{
 		// do not execute following code in debug because it does not fit well with debugger
 #if _DEBUG
@@ -101,7 +101,7 @@ namespace chaos
 		if (game != nullptr)
 			if (!gain_focus)
 				game->RequirePauseGame();
-		Viewport::OnFocusStateChange(gain_focus);
+		Widget::OnFocusStateChange(gain_focus);
 	}
 
 }; // namespace chaos

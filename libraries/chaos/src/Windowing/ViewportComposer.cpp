@@ -15,13 +15,8 @@ namespace chaos
 				viewport_layout->viewport_composer = this;
 
 			if (update_placement_hierarchy)
-				UpdateViewportPlacementHierarchy();
+				UpdatePlacementHierarchy();
 		}
-	}
-
-	void ViewportComposer::SetViewportPlacement(ViewportPlacement const& in_placement)
-	{
-		placement = ApplyModifiersToPlacement(in_placement);
 	}
 
 	AutoCastable<ViewportLayout> ViewportComposer::GetViewportLayout()
@@ -41,7 +36,7 @@ namespace chaos
 
 		AttachViewport(viewport);
 		if (update_placement_hierarchy)
-			UpdateViewportPlacementHierarchy();
+			UpdatePlacementHierarchy();
 	}
 
 	void ViewportComposer::RemoveViewport(Viewport* viewport, bool keep_empty_place, bool update_placement_hierarchy)
@@ -57,14 +52,14 @@ namespace chaos
 
 		DetachViewport(viewport);
 		if (update_placement_hierarchy)
-			UpdateViewportPlacementHierarchy();
+			UpdatePlacementHierarchy();
 	}
 
-	void ViewportComposer::SetViewportPlacement(ViewportPlacement const& in_placement)
+	void ViewportComposer::SetViewportPlacement(WidgetPlacement const& in_placement)
 	{
 		Viewport::SetViewportPlacement(in_placement);
 		if (viewport_layout != nullptr)
-			viewport_layout->SetAllViewportPlacements(in_placement, viewports);
+			viewport_layout->SetAllViewportPlacements(placement, viewports);
 	}
 
 }; // namespace chaos

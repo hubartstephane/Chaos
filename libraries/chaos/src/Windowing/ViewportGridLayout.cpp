@@ -7,51 +7,51 @@ namespace chaos
 	{
 		settings = in_settings;
 		if (update_placement_hierarchy)
-			UpdateViewportPlacementHierarchy();
+			UpdatePlacementHierarchy();
 	}
 
 	void ViewportGridLayout::SetMaxViewportCount(size_t in_max_count, bool update_placement_hierarchy)
 	{
 		settings.max_count = in_max_count;
 		if (update_placement_hierarchy)
-			UpdateViewportPlacementHierarchy();
+			UpdatePlacementHierarchy();
 	}
 
 	void ViewportGridLayout::SetOrientation(Orientation in_orientation, bool update_placement_hierarchy)
 	{
 		settings.orientation = in_orientation;
 		if (update_placement_hierarchy)
-			UpdateViewportPlacementHierarchy();
+			UpdatePlacementHierarchy();
 	}
 
 	void ViewportGridLayout::SetHorizontalInsertionMode(ViewportGridInsertionMode in_insertion_mode, bool update_placement_hierarchy)
 	{
 		settings.horizontal_insertion_mode = in_insertion_mode;
 		if (update_placement_hierarchy)
-			UpdateViewportPlacementHierarchy();
+			UpdatePlacementHierarchy();
 	}
 
 	void ViewportGridLayout::SetVerticalInsertionMode(ViewportGridInsertionMode in_insertion_mode, bool update_placement_hierarchy)
 	{
 		settings.vertical_insertion_mode = in_insertion_mode;
 		if (update_placement_hierarchy)
-			UpdateViewportPlacementHierarchy();
+			UpdatePlacementHierarchy();
 	}
 
 	void ViewportGridLayout::SetFillMode(ViewportGridFillMode in_fill_mode, bool update_placement_hierarchy)
 	{
 		settings.fill_mode = in_fill_mode;
 		if (update_placement_hierarchy)
-			UpdateViewportPlacementHierarchy();
+			UpdatePlacementHierarchy();
 	}
 
 
 
 #if 0
 
-	ViewportPlacement ViewportGridLayout::ComputeViewportPlacement(Viewport* viewport, glm::ivec2 const& window_size, size_t viewport_index, size_t viewport_count) const
+	WidgetPlacement ViewportGridLayout::ComputeViewportPlacement(Viewport* viewport, glm::ivec2 const& window_size, size_t viewport_index, size_t viewport_count) const
 	{
-		ViewportPlacement result;
+		WidgetPlacement result;
 
 		glm::ivec2 window_size_copy = window_size;
 		if (settings.orientation == Orientation::VERTICAL)

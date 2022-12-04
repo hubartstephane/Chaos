@@ -36,7 +36,7 @@ protected:
 	/** override */
 	virtual void TickPlayerDisplacement(float delta_time) override;
 	/** override */
-	virtual bool OnMouseMoveImpl(double x, double y) override;
+	virtual bool OnMouseMoveImpl(glm::vec2 const & delta) override;
 	/** override */
 	virtual bool OnCharEventImpl(unsigned int c) override;
 	/** override */

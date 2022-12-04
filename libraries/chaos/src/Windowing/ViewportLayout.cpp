@@ -3,19 +3,13 @@
 
 namespace chaos
 {
-	void ViewportLayout::UpdateViewportPlacementHierarchy()
+	void ViewportLayout::UpdatePlacementHierarchy()
 	{
 		if (viewport_composer != nullptr)
-			viewport_composer->UpdateViewportPlacementHierarchy();
+			viewport_composer->UpdatePlacementHierarchy();
 	}
 
-	ViewportPlacement ViewportLayout::ComputeViewportPlacement(Viewport * viewport, glm::ivec2 const& window_size, size_t viewport_index, size_t viewport_count) const
-	{
-		assert(0);
-		return {};
-	}
-
-	void ViewportLayout::SetAllViewportPlacements(ViewportPlacement const& in_placement, std::vector<shared_ptr<Viewport>> & viewports)
+	void ViewportLayout::SetAllViewportPlacements(WidgetPlacement const& in_placement, std::vector<shared_ptr<Viewport>> & viewports)
 	{
 
 

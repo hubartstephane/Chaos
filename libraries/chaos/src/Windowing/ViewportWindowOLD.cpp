@@ -128,7 +128,7 @@ namespace chaos
 			++index;
 			if (viewport != nullptr)
 			{
-				ViewportPlacement const & placement = viewport->GetViewportPlacement();
+				WidgetPlacement const & placement = viewport->GetViewportPlacement();
 
 
 				glViewport(placement.position.x, placement.position.y, placement.size.x, placement.size.y);

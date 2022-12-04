@@ -2,14 +2,14 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class ViewportPlacement;
+	class WidgetPlacement;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	 * The viewport position and size in its ViewportWindow
 	 */
-	class CHAOS_API ViewportPlacement
+	class CHAOS_API WidgetPlacement
 	{
 	public:
 
@@ -18,6 +18,12 @@ namespace chaos
 		/** the size allocated for the viewport */
 		glm::ivec2 size = { 0, 0 };
 	};
+
+	/**
+	 * utility functions
+	 */
+	
+	WidgetPlacement CHAOS_API ApplyAspectRatioConstraint(WidgetPlacement const& src, float aspect);
 
 #endif
 

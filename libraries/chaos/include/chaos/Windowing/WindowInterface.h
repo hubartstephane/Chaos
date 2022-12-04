@@ -15,7 +15,7 @@ namespace chaos
 	{
 	public:
 		/** the viewport */
-		ViewportPlacement viewport;
+		WidgetPlacement viewport;
 		/** the rendering full size */
 		glm::ivec2 full_size = { 0, 0 };
 	};

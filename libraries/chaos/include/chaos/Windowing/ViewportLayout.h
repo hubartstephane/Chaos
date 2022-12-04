@@ -20,7 +20,7 @@ namespace chaos
 	public:
 
 		/** compute placement for all viewports in the list */
-		virtual void SetAllViewportPlacements(WidgetPlacement const& in_placement, std::vector<shared_ptr<Viewport>>& viewports);
+		virtual void SetAllViewportPlacements(aabox2 const& in_placement, std::vector<shared_ptr<Viewport>>& viewports);
 
 		/** gets the composer using the layout */
 		AutoCastable<ViewportComposer> GetViewportComposer() { return viewport_composer; }

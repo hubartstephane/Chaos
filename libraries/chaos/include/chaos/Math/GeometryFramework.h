@@ -5,6 +5,8 @@ namespace chaos
 	template<typename VECTOR_TYPE>
 	class AutoCastableVector;
 
+	enum class SetBoxAspectMethod;
+
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// ==============================================================================================
@@ -163,96 +165,59 @@ namespace chaos
 		return (b.half_size.y) ? (b.half_size.x / b.half_size.y) : static_cast<T>(1);
 	}
 
-	/** reduce a rectangle with an aspect (we do not use type_box_base<> because we want the result to be the exact type of the entry) */
+	/** how box must be modified to match wanted aspect*/
+	enum class SetBoxAspectMethod : int
+	{
+		SHRINK_BOX,           // shrink the side along the axis that is too long
+		PREFERE_UPDATE_WIDTH, // prefere to modify width whenever possible
+		PREFERE_UPDATE_HEIGHT // prefere to modify height whenever possible
+	};
+
+	/** update a box aspect */
 	template<typename BOX_TYPE>
-	/*CHAOS_API*/ BOX_TYPE ShrinkBoxToAspect(BOX_TYPE const& src, typename BOX_TYPE::type aspect)
+	/*CHAOS_API*/ BOX_TYPE SetBoxAspect(BOX_TYPE const& src, typename BOX_TYPE::type aspect, SetBoxAspectMethod method)
 	{
 		// any negative component
 		if (IsGeometryEmpty(src))
 			return src;
-		// aspect already good
-		auto effective_aspect = GetBoxAspect(src);
-		if (effective_aspect == aspect)
-			return src;
-		// make the update
-		BOX_TYPE result = src;
-		if (effective_aspect > aspect) // width too large
-			result.half_size.x = src.half_size.y * aspect;
-		else if (effective_aspect < aspect) // height too large
-			result.half_size.y = src.half_size.x / aspect;
 
-		return result;
-	}
+		// shrink method
+		if (method == SetBoxAspectMethod::SHRINK_BOX)
+		{
+			auto effective_aspect = GetBoxAspect(src);
+			if (effective_aspect == aspect)
+				return src;
 
-	/** transform rectangle to have desire aspect (if a component is 0, change it, otherwise take more prioritize aspect) */
-	template<typename BOX_TYPE>
-	/*CHAOS_API*/ BOX_TYPE AlterBoxToAspect(BOX_TYPE const& src, typename BOX_TYPE::type aspect, bool prefere_update_width)
-	{
-		using type = typename BOX_TYPE::type;
-
-		// any (non null) negative component
-		if (IsGeometryEmpty(src))
-			return src;
-		// cannot have no size
-		if (src.half_size.x == (type)0 && src.half_size.y == (type)0)
-			return src;
-		// width axis to update ?
-		if (src.half_size.x == (type)0)
-			prefere_update_width = true;
-		else if (src.half_size.y == (type)0)
-			prefere_update_width = false;
-		// make the update
-		BOX_TYPE result = src;
-		if (prefere_update_width)
-			result.half_size.x = src.half_size.y * aspect;
+			if (effective_aspect > aspect) // width too large
+				method = SetBoxAspectMethod::PREFER_WIDTH;
+			else if (effective_aspect < aspect) // height too large
+				method = SetBoxAspectMethod::PREFER_HEIGHT;
+		}
+		// other method
 		else
+		{
+			// cannot have no size
+			if (src.half_size.x == 0 && src.half_size.y == 0)
+				return src;
+
+			// if size is 0 along one axis, force/alter this axis
+			if (src.half_size.x == 0)
+				method = SetBoxAspectMethod::PREFER_WIDTH;
+			else if (src.half_size.y == 0)
+				method = SetBoxAspectMethod::PREFER_HEIGHT;
+		}
+
+		// make the update
+		assert((method == SetBoxAspectMethod::PREFER_WIDTH) || (method == SetBoxAspectMethod::PREFER_HEIGHT));
+
+		BOX_TYPE result = src;
+		if (method == SetBoxAspectMethod::PREFER_WIDTH)
+			result.half_size.x = src.half_size.y * aspect;
+		else if (method == SetBoxAspectMethod::PREFER_HEIGHT)
 			result.half_size.y = src.half_size.x / aspect;
 
 		return result;
 	}
-
-	// shuvvf
-
-	// compute the final size of the particle
-	//
-	// XXX: explanation of 'particle_size' member usage
-	//      -if .x AND .y are 0     => use the particle size in the atlas
-	//      -if .x AND .y are not 0 => override particle size in the atlas
-	//      -if .x OR  .y is  0     => use the particle effective ratio to compute the 0 member value
-
-	template<typename BOX_TYPE>
-	/*CHAOS_API*/ BOX_TYPE MakeBoxMatchAspect(BOX_TYPE const& src, typename BOX_TYPE const& aspect_box, bool prefere_update_with)
-	{
-		// the reference box that gives the aspect may not be empty
-		assert(!IsGeometryEmpty(aspect_box));
-
-		if (IsGeometryEmpty(src))
-			return aspect_box;
-
-
-
-
-
-
-
-
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	// ==============================================================================================
 	// box functions
@@ -536,6 +501,112 @@ namespace chaos
 		for (int i = 0; i < 8; ++i)
 			max_vec = glm::max(max_vec, GLMTools::Mult(transform, vertices[i]));
 		result.half_size = max_vec;
+
+		return result;
+	}
+
+	// ==============================================================================================
+	// aabox functions
+	// ==============================================================================================
+
+	/** equality function for obox */
+	template<typename T, int dimension>
+	/*CHAOS_API*/ bool operator == (type_aabox<T, dimension> const& b1, type_aabox<T, dimension> const& b2)
+	{
+		return (b1.position == b1.position) && (b1.size == b2.size);
+	}
+
+	/** returns true whether the box is empty */
+	template<typename T, int dimension>
+	/*CHAOS_API*/ bool IsGeometryEmpty(type_aabox<T, dimension> const& b)
+	{
+		return glm::any(glm::lessThan(b.size, type_aabox<T, dimension>::vec_type(0)));
+	}
+
+	/** returns the perimeter of the box */
+	template<typename T>
+	/*CHAOS_API*/ T GetPerimeter(type_aabox<T, 2> const& b)
+	{
+		return static_cast<T>(2) * (b.size.x + b.size.y);
+	}
+
+	/** returns the surface of the box */
+	template<typename T>
+	/*CHAOS_API*/ T GetSurface(type_aabox<T, 2> const& b)
+	{
+		return (b.size.x * b.size.y);
+	}
+
+	/** return the volume of the box */
+	template<typename T>
+	/*CHAOS_API*/ T GetVolume(type_aabox<T, 3> const& b)
+	{
+		return b.size.x * b.size.y * b.size.z;
+	}
+
+	/** return the surface of the box */
+	template<typename T>
+	/*CHAOS_API*/ T GetSurface(type_aabox<T, 3> const& b)
+	{
+		return static_cast<T>(2) * ((b.size.x * b.size.y) + (b.size.y * b.size.z) + (b.size.z * b.size.x));
+	};
+
+	/** returns the "aspect" of the box (width/height) */
+	template<typename T>
+	/*CHAOS_API*/ T GetBoxAspect(type_aabox<T, 2> const& b)
+	{
+		return (b.size.y) ? (b.size.x / b.size.y) : static_cast<T>(1);
+	}
+
+
+	/** update a box aspect */
+	template<typename T>
+	/*CHAOS_API*/ BOX_TYPE SetBoxAspect(type_aabox<T, 2> const& src, typename T aspect, SetBoxAspectMethod method)
+	{
+		// any negative component
+		if (IsGeometryEmpty(src))
+			return src;
+
+		// shrink method
+		if (method == SetBoxAspectMethod::SHRINK_BOX)
+		{
+			auto effective_aspect = GetBoxAspect(src);
+			if (effective_aspect == aspect)
+				return src;
+
+			if (effective_aspect > aspect) // width too large
+				method = SetBoxAspectMethod::PREFER_WIDTH;
+			else if (effective_aspect < aspect) // height too large
+				method = SetBoxAspectMethod::PREFER_HEIGHT;
+		}
+		// other method
+		else
+		{
+			// cannot have no size
+			if (src.size.x == 0 && src.size.y == 0)
+				return src;
+
+			// if size is 0 along one axis, force/alter this axis
+			if (src.size.x == 0)
+				method = SetBoxAspectMethod::PREFER_WIDTH;
+			else if (src.size.y == 0)
+				method = SetBoxAspectMethod::PREFER_HEIGHT;
+		}
+
+		// make the update
+		assert((method == SetBoxAspectMethod::PREFER_WIDTH) || (method == SetBoxAspectMethod::PREFER_HEIGHT));
+
+		BOX_TYPE result = src;
+		if (method == SetBoxAspectMethod::PREFER_WIDTH)
+		{
+			result.size.x = src.size.y * aspect;
+			result.position.x -= (result.size.x - src.size.x) / static_cast<T>(2);
+		}
+		else if (method == SetBoxAspectMethod::PREFER_HEIGHT)
+		{
+			result.size.y = src.size.x / aspect;
+			result.position.y -= (result.size.y - src.size.y) / static_cast<T>(2);
+		}
 
 		return result;
 	}
@@ -879,6 +950,25 @@ namespace chaos
 		return true;
 	}
 
+	template<typename T, int dimension>
+	/*CHAOS_API*/ bool SaveIntoJSON(nlohmann::json& json, type_aabox<T, dimension> const& src)
+	{
+		if (!json.is_object())
+			json = nlohmann::json::object();
+		JSONTools::SetAttribute(json, "position", src.position);
+		JSONTools::SetAttribute(json, "size", src.size);
+		return true;
+	}
+
+	template<typename T, int dimension>
+	/*CHAOS_API*/ bool LoadFromJSON(nlohmann::json const& json, type_aabox<T, dimension>& dst)
+	{
+		if (!json.is_object())
+			return false;
+		JSONTools::GetAttribute(json, "position", dst.position);
+		JSONTools::GetAttribute(json, "size", dst.size);
+		return true;
+	}
 
 	template<typename T, int dimension>
 	/*CHAOS_API*/ bool SaveIntoJSON(nlohmann::json& json, type_sphere<T, dimension> const& src)

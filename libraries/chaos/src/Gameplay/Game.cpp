@@ -196,9 +196,9 @@ namespace chaos
 		return false;
 	}
 
-	WidgetPlacement Game::GetRequiredViewport(glm::ivec2 const & size) const
+	aabox2 Game::GetRequiredViewport(glm::ivec2 const & size) const
 	{
-		WidgetPlacement result;
+		aabox2 result;
 		result.position = { 0, 0 };
 		result.size = size;
 		return ApplyAspectRatioConstraint(result, viewport_wanted_aspect);

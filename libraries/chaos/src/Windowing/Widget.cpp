@@ -63,14 +63,14 @@ namespace chaos
 			window->UpdateWidgetPlacementHierarchy();
 	}
 
-	void Widget::SetPlacement(WidgetPlacement const& in_placement)
+	void Widget::SetPlacement(aabox2 const& in_placement)
 	{
 		placement = ApplyModifiersToPlacement(in_placement);
 	}
 
-	WidgetPlacement Widget::ApplyModifiersToPlacement(WidgetPlacement const& in_placement)
+	aabox2 Widget::ApplyModifiersToPlacement(aabox2 const& in_placement)
 	{
-		WidgetPlacement result;
+		aabox2 result;
 
 		result.size.x = std::max(0, in_placement.size.x - layout.padding.left - layout.padding.right);
 		result.size.y = std::max(0, in_placement.size.y - layout.padding.top - layout.padding.bottom);

@@ -49,9 +49,9 @@ namespace chaos
 
 #if 0
 
-	WidgetPlacement ViewportGridLayout::ComputeViewportPlacement(Viewport* viewport, glm::ivec2 const& window_size, size_t viewport_index, size_t viewport_count) const
+	aabox2 ViewportGridLayout::ComputeViewportPlacement(Viewport* viewport, glm::ivec2 const& window_size, size_t viewport_index, size_t viewport_count) const
 	{
-		WidgetPlacement result;
+		aabox2 result;
 
 		glm::ivec2 window_size_copy = window_size;
 		if (settings.orientation == Orientation::VERTICAL)

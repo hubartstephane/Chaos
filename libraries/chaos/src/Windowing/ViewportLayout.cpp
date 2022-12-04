@@ -9,7 +9,7 @@ namespace chaos
 			viewport_composer->UpdatePlacementHierarchy();
 	}
 
-	void ViewportLayout::SetAllViewportPlacements(WidgetPlacement const& in_placement, std::vector<shared_ptr<Viewport>> & viewports)
+	void ViewportLayout::SetAllViewportPlacements(aabox2 const& in_placement, std::vector<shared_ptr<Viewport>> & viewports)
 	{
 
 

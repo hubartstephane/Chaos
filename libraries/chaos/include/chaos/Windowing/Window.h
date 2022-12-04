@@ -161,6 +161,11 @@ namespace chaos
 		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override;
 		/** override */
 		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
+		/** override */
+		virtual bool DoTick(float delta_time) override;
+
+		/** display both the window content and the widget overlay */
+		virtual bool OnDrawInternal(GPURenderer* renderer, WindowDrawParams const& draw_params, GPUProgramProviderInterface const* uniform_provider);
 
 		/** bind Window with GLFW */
 		virtual void SetGLFWCallbacks(bool in_double_buffer);
@@ -180,6 +185,20 @@ namespace chaos
 
 		/** tick the renderer of the window with the real framerate (with no time scale) */
 		void TickRenderer(float real_delta_time);
+
+		/** called whenever the window is resized */
+		virtual void OnWindowResize(glm::ivec2 size);
+		/** called whenever the user try to close window */
+		virtual bool OnWindowClosed();
+		/** called whenever a file is dropped */
+		virtual void OnDropFile(int count, char const** paths);
+		/** called whenever the window becomes iconified or is restored */
+		virtual void OnIconifiedStateChange(bool iconified);
+		/** called whenever the window gain or loose focus */
+		virtual void OnFocusStateChange(bool gain_focus);
+
+		/** update the whole widget hierarchy placement */
+		virtual void UpdateWidgetPlacementHierarchy();
 
 	private:
 

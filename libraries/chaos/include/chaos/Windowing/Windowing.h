@@ -7,6 +7,8 @@
 #include "chaos/Windowing/ViewportServerWindow.h"
 #include "chaos/Windowing/Widget.h"
 #include "chaos/Windowing/WindowRootWidget.h"
+#include "chaos/Windowing/Widget.h"
+#include "chaos/Windowing/WindowRootWidget.h"
 #include "chaos/Windowing/ViewportLayout.h"
 #include "chaos/Windowing/ViewportGridLayout.h"
 #include "chaos/Windowing/ViewportComposer.h"

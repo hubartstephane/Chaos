@@ -13,7 +13,6 @@ protected:
 
 	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::WindowDrawParams const& draw_params, chaos::GPUProgramProviderInterface const * uniform_provider) override
 	{
-
 		uint64_t ts = renderer->GetTimestamp();
 
 		if (render_fence == nullptr)

@@ -60,7 +60,7 @@ namespace chaos
 	void Widget::UpdatePlacementHierarchy()
 	{
 		if (Window* window = GetWindow())
-			window->UpdateWidgetHierarchy();
+			window->UpdateWidgetPlacementHierarchy();
 	}
 
 	void Widget::SetPlacement(WidgetPlacement const& in_placement)

@@ -16,10 +16,13 @@ namespace chaos
 
 	public:
 
+		/** override */
+		virtual bool OnDraw(GPURenderer* renderer, WindowDrawParams const& draw_params, GPUProgramProviderInterface const* uniform_provider) override;
+
 		/** gets the widget owning this */
-		AutoCastable<Widget> GetParent();
+		AutoCastable<Widget> GetParentWidget();
 		/** gets the widget owning this */
-		AutoConstCastable<Widget> GetParent() const;
+		AutoConstCastable<Widget> GetParentWidget() const;
 
 		/** gets the top-level window owning the widget */
 		AutoCastable<Window> GetWindow();
@@ -36,10 +39,29 @@ namespace chaos
 		/** set the layout */
 		void SetLayout(WidgetLayout const& in_layout, bool update_placement_hierarchy = true);
 
+		/** gets the number of children */
+		size_t GetChildWidgetCount() const;
+		/** gets a child by its index */
+		AutoCastable<Widget> GetChildWidget(size_t index);
+		/** gets a child by its index */
+		AutoConstCastable<Widget> GetChildWidget(size_t index) const;
+		/** find child by name */
+		AutoCastable<Widget> FindChildWidget(ObjectRequest request);
+		/** find child by name */
+		AutoConstCastable<Widget> FindChildWidget(ObjectRequest request) const;
+
+		/** find descendant child by name */
+		AutoCastable<Widget> FindDescendantWidget(ObjectRequest request);
+		/** find descendant child by name */
+		AutoConstCastable<Widget> FindDescendantWidget(ObjectRequest request) const;
+
 		/** recompute the disposition for the whole widget hierarchy */
 		void UpdatePlacementHierarchy();
 
 	protected:
+
+		/** override */
+		virtual bool DoTick(float delta_time);
 
 		/** tweak the input placement according to WidgetLayout */
 		WidgetPlacement ApplyModifiersToPlacement(WidgetPlacement const& in_placement);
@@ -59,6 +81,9 @@ namespace chaos
 		WidgetPlacement placement;
 		/** the layout for the widget */
 		WidgetLayout layout;
+
+		/** the child widgets */
+		std::vector<shared_ptr<Viewport>> child_widgets;
 	};
 
 #endif

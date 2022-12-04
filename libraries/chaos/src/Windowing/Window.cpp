@@ -713,7 +713,7 @@ namespace chaos
 		aabox2 result;
 		result.position = { 0, 0 };
 		result.size = size;
-		return ApplyAspectRatioConstraint(result, 16.0f / 9.0f);
+		return SetBoxAspect(result, 16.0f / 9.0f, SetBoxAspectMethod::SHRINK_BOX);
 	}
 
 	CHAOS_HELP_TEXT(SHORTCUTS, "F9  : ScreenCapture");

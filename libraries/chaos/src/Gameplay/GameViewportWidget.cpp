@@ -46,7 +46,7 @@ namespace chaos
 		return Widget::OnMouseMoveImpl(delta);
 	}
 #if 0
-	WidgetPlacement GameViewportWidget::GetRequiredViewport(glm::ivec2 const & size) const
+	aabox2 GameViewportWidget::GetRequiredViewport(glm::ivec2 const & size) const
 	{
 		if (game != nullptr)
 			return game->GetRequiredViewport(size);

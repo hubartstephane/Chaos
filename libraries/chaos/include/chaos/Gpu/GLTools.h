@@ -15,7 +15,7 @@ namespace chaos
 	public:
 
 		/** set the viewport */
-		static void SetViewport(WidgetPlacement const& viewport);
+		static void SetViewport(aabox2 const& viewport);
 
 		/** display generic information on the OpenGL driver */
 		static void DisplayGenericInformation();

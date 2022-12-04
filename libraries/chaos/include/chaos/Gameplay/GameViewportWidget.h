@@ -38,7 +38,7 @@ namespace chaos
 
 #if 0
 		/** override */
-		virtual WidgetPlacement GetRequiredViewport(glm::ivec2 const& size) const override;
+		virtual aabox2 GetRequiredViewport(glm::ivec2 const& size) const override;
 #endif
 
 

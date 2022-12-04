@@ -188,7 +188,7 @@ namespace chaos
 		virtual bool OnMouseMoveImpl(glm::vec2 const & delta) override;
 
 		/** getting the required viewport for given window */
-		virtual WidgetPlacement GetRequiredViewport(glm::ivec2 const& size) const;
+		virtual aabox2 GetRequiredViewport(glm::ivec2 const& size) const;
 
 		/** the rendering method */
 		virtual void Display(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);

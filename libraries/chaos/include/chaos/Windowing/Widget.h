@@ -30,9 +30,9 @@ namespace chaos
 		AutoConstCastable<Window> GetWindow() const;
 
 		/** get the placement */
-		WidgetPlacement const& GetPlacement() const { return placement; }
+		aabox2 const& GetPlacement() const { return placement; }
 		/** set the placement */
-		virtual void SetPlacement(WidgetPlacement const& in_placement);
+		virtual void SetPlacement(aabox2 const& in_placement);
 
 		/** get the layout */
 		WidgetLayout const& GetLayout() const;
@@ -64,7 +64,7 @@ namespace chaos
 		virtual bool DoTick(float delta_time);
 
 		/** tweak the input placement according to WidgetLayout */
-		WidgetPlacement ApplyModifiersToPlacement(WidgetPlacement const& in_placement);
+		aabox2 ApplyModifiersToPlacement(aabox2 const& in_placement);
 
 	protected:
 
@@ -78,7 +78,7 @@ namespace chaos
 		/** the owning widget */
 		Widget* parent = nullptr;
 		/** the placement of the widget (relative to its parent) */
-		WidgetPlacement placement;
+		aabox2 placement;
 		/** the layout for the widget */
 		WidgetLayout layout;
 

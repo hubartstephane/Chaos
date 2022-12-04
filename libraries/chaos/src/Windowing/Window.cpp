@@ -648,7 +648,7 @@ namespace chaos
 			// compute rendering size
 			// in normal case, we work with the window_size then apply a viewport cropping
 			// here we want exactly to work with no cropping
-			WidgetPlacement viewport = GetRequiredViewport(GetWindowSize());
+			aabox2 viewport = GetRequiredViewport(GetWindowSize());
 			glm::ivec2 framebuffer_size = viewport.size;
 
 			// generate a framebuffer
@@ -708,9 +708,9 @@ namespace chaos
 		});
 	}
 
-	WidgetPlacement Window::GetRequiredViewport(glm::ivec2 const& size) const
+	aabox2 Window::GetRequiredViewport(glm::ivec2 const& size) const
 	{
-		WidgetPlacement result;
+		aabox2 result;
 		result.position = { 0, 0 };
 		result.size = size;
 		return ApplyAspectRatioConstraint(result, 16.0f / 9.0f);
@@ -765,7 +765,7 @@ namespace chaos
 	{
 		if (root_widget != nullptr)
 		{
-			WidgetPlacement placement;
+			aabox2 placement;
 			placement.position = { 0, 0 };
 			placement.size = GetWindowSize();
 			root_widget->SetPlacement(placement);

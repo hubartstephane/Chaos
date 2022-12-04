@@ -73,7 +73,7 @@ namespace chaos
 	public:
 
 		/** override */
-		//virtual WidgetPlacement ComputeViewportPlacement(Viewport* viewport, glm::ivec2 const& window_size, size_t viewport_index, size_t viewport_count) const override;
+		//virtual aabox2 ComputeViewportPlacement(Viewport* viewport, glm::ivec2 const& window_size, size_t viewport_index, size_t viewport_count) const override;
 
 		/** change the whole settings for that layout */
 		void SetSettings(ViewportGridLayoutSettings const& in_settings, bool update_placement_hierarchy = true);

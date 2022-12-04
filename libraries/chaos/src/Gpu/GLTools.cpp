@@ -11,7 +11,7 @@ namespace chaos
 #endif
 	};
 
-	void GLTools::SetViewport(WidgetPlacement const& viewport)
+	void GLTools::SetViewport(aabox2 const& viewport)
 	{
 		glViewport(viewport.position.x, viewport.position.y, viewport.size.x, viewport.size.y);
 	}

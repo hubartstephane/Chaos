@@ -15,6 +15,7 @@ namespace chaos
 	template<typename T, int dimension> class type_sphere;
 	template<typename T, int dimension> class type_triangle;
 	template<typename T, int dimension> class type_rotator; // this is not an object that describes a rotation, but a meta object that gives the rotation in a meta function
+	template<typename T, int dimension> class type_aabox; // aligned axis box
 
 	class zero_rotator;
 
@@ -36,6 +37,11 @@ namespace chaos
 
 	using rotator2 = float; // this are ROTATION here (angle or quaternion)
 	using rotator3 = glm::quat;
+
+	using aabox2  = type_aabox<float, 2>;
+	using aabox3  = type_aabox<float, 3>;
+	using aabox2i = type_aabox<int, 2>; // for box and obox it does not make many sense to have an integer specification
+	using aabox3i = type_aabox<int, 3>; // (because half_size does not fit well with int)
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -111,6 +117,8 @@ namespace chaos
 		using obox_type = type_obox<type, dimension>;
 		/** the type of triangle */
 		using triangle_type = type_triangle<type, dimension>;
+		/** the type of aabox */
+		using aabox_type = type_aabox<type, dimension>;
 	};
 
 	template<typename T>
@@ -140,6 +148,8 @@ namespace chaos
 		using obox_type = type_obox<type, dimension>;
 		/** the type of triangle */
 		using triangle_type = type_triangle<type, dimension>;
+		/** the type of aabox */
+		using aabox_type = type_aabox<type, dimension>;
 	};
 
 	// ==============================================================================================
@@ -227,6 +237,42 @@ namespace chaos
 
 		/** the angle/quaternion of rotation to apply to a box to have this obox */
 		rot_type rotator = zero_rotator();
+	};
+
+	// ==============================================================================================
+	// type_aabox class
+	// ==============================================================================================
+
+	template<typename T, int dimension>
+	class /*CHAOS_API*/ type_aabox
+	{
+	public:
+
+		using vec_type = typename type_geometric<T, dimension>::vec_type;
+		using type = typename type_geometric<T, dimension>::type;
+
+		/** constructor (empty box) */
+		type_aabox() = default;
+		/** copy constructor */
+		type_aabox(type_box_base const& src) = default;
+		/** other constructor */
+		type_aabox(vec_type const& in_position, vec_type const& in_size) : position(in_position), size(in_size) {}
+		/** construct a box from 2 points */
+		type_aabox(std::pair<vec_type, vec_type> const& pts)
+		{
+			vec_type a = glm::min(pts.first, pts.second);
+			vec_type b = glm::max(pts.first, pts.second);
+
+			this->position = a;
+			this->size     = (b - a);
+		}
+
+	public:
+
+		/** the min corner of the box */
+		vec_type position;
+		/** the size the box */
+		vec_type size = vec_type(-1);
 	};
 
 	// ==============================================================================================

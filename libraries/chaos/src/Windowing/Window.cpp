@@ -479,7 +479,7 @@ namespace chaos
 			GPUProgramProviderChain provider(this, application_provider_interface, common_transforms); // order: window, application, common deduction rules
 
 			// render
-			if (OnDraw(renderer.get(), draw_params, &provider))
+			if (OnDrawInternal(renderer.get(), draw_params, &provider))
 			{
 				if (double_buffer)
 					glfwSwapBuffers(glfw_window);
@@ -568,7 +568,6 @@ namespace chaos
 			if (fullscreen_monitor != nullptr) // is currently fullscreen
 			{
 				// data properly initialized
-				//if (non_fullscreen_window_size.x >= 0 && non_fullscreen_window_size.y >= 0) // restore previous settings
 				if (non_fullscreen_data.has_value())
 				{
 					glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, non_fullscreen_data->decorated != 0);
@@ -676,7 +675,7 @@ namespace chaos
 			draw_params.full_size = framebuffer_size;
 
 			GLTools::SetViewport(draw_params.viewport); // use the draw_params' viewport because its position is {0, 0} and that's what we want for drawing on Render Target
-			OnDraw(renderer.get(), draw_params, &provider);
+			OnDrawInternal(renderer.get(), draw_params, &provider);
 
 			renderer->PopFramebufferRenderContext();
 			renderer->EndRenderingFrame();
@@ -754,6 +753,33 @@ namespace chaos
 		return false;
 	}
 
+	bool Window::OnDrawInternal(GPURenderer* renderer, WindowDrawParams const& draw_params, GPUProgramProviderInterface const* uniform_provider)
+	{
+		bool result = OnDraw(renderer, draw_params, uniform_provider);
+		if (root_widget != nullptr)
+			result |= root_widget->OnDraw(renderer, draw_params, uniform_provider);
+		return result;
+	}
+
+	void Window::UpdateWidgetPlacementHierarchy()
+	{
+		if (root_widget != nullptr)
+		{
+			WidgetPlacement placement;
+			placement.position = { 0, 0 };
+			placement.size = GetWindowSize();
+			root_widget->SetPlacement(placement);
+		}
+	}
+
+	bool Window::DoTick(float delta_time)
+	{
+		bool result = TickableInterface::DoTick(delta_time);
+		if (root_widget != nullptr)
+			result |= root_widget->Tick(delta_time);
+		return result;
+	}
+
 	bool Window::InitializeFromConfiguration(nlohmann::json const& config)
 	{
 		return true;
@@ -762,6 +788,28 @@ namespace chaos
 	bool Window::DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const
 	{
 		return false;
+	}
+
+	void Window::OnWindowResize(glm::ivec2 size)
+	{
+		UpdateWidgetPlacementHierarchy();
+	}
+
+	bool Window::OnWindowClosed()
+	{ 
+		return true;
+	}
+
+	void Window::OnDropFile(int count, char const** paths)
+	{
+	}
+
+	void Window::OnIconifiedStateChange(bool iconified)
+	{
+	}
+
+	void Window::OnFocusStateChange(bool gain_focus)
+	{
 	}
 
 }; // namespace chaos

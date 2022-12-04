@@ -41,7 +41,7 @@ namespace chaos
 		virtual bool OnDraw(GPURenderer* renderer, WindowDrawParams const& DrawParams, GPUProgramProviderInterface const* uniform_provider) override;
 
 		/** override */
-		virtual bool OnMouseMoveImpl(double x, double y) override;
+		virtual bool OnMouseMoveImpl(glm::vec2 const & delta) override;
 		/** override */
 		virtual bool OnMouseButtonImpl(int button, int action, int modifier) override;
 		/** override */

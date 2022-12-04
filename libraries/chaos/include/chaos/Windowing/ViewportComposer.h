@@ -15,7 +15,7 @@ namespace chaos
 	public:
 
 		/** override */
-		virtual void SetViewportPlacement(ViewportPlacement const& in_placement) override;
+		virtual void SetViewportPlacement(WidgetPlacement const& in_placement) override;
 
 		/** insert a viewport inside the composer */
 		void AddViewport(Viewport* viewport, bool update_placement_hierarchy = true);

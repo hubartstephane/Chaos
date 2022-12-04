@@ -187,21 +187,21 @@ namespace chaos
 		return false;
 	}
 
-	bool Game::OnMouseMoveImpl(double x, double y)
+	bool Game::OnMouseMoveImpl(glm::vec2 const & delta)
 	{
 		// give the game instance opportunity to capture the input
 		if (game_instance != nullptr)
-			if (game_instance->OnMouseMove(x, y))
+			if (game_instance->OnMouseMove(delta))
 				return true;
 		return false;
 	}
 
-	ViewportPlacement Game::GetRequiredViewport(glm::ivec2 const & size) const
+	WidgetPlacement Game::GetRequiredViewport(glm::ivec2 const & size) const
 	{
-		ViewportPlacement result;
+		WidgetPlacement result;
 		result.position = { 0, 0 };
 		result.size = size;
-		return GLTools::ShrinkViewportToAspect(result, viewport_wanted_aspect);
+		return ApplyAspectRatioConstraint(result, viewport_wanted_aspect);
 	}
 
 	void Game::Display(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)

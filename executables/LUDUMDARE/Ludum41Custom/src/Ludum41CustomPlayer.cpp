@@ -45,14 +45,14 @@ void LudumPlayer::DisplacePlayerRacket(float delta_x)
 }
 
 
-bool LudumPlayer::OnMouseMoveImpl(double x, double y)
+bool LudumPlayer::OnMouseMoveImpl(glm::vec2 const & delta)
 {
 	chaos::Game const * game = GetGame();
 	if (game == nullptr)
 		return true;
 	if (game->IsPaused() || game->IsFreeCameraMode())
 		return true;
-	DisplacePlayerRacket(game->GetMouseSensitivity() * (float)x);
+	DisplacePlayerRacket(game->GetMouseSensitivity() * delta.x);
 	return true;
 }
 

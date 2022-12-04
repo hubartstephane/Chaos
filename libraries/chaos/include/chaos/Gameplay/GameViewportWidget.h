@@ -2,15 +2,15 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class GameViewport;
+	class GameViewportWidget;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class CHAOS_API GameViewport : public Viewport
+	class CHAOS_API GameViewportWidget : public Widget
 	{
 		friend class GameApplication;
 
-		CHAOS_DECLARE_OBJECT_CLASS(GameViewport, Viewport);
+		CHAOS_DECLARE_OBJECT_CLASS(GameViewportWidget, Widget);
 
 	protected:
 
@@ -20,7 +20,7 @@ namespace chaos
 		/** override */
 		virtual bool OnMouseButtonImpl(int button, int action, int modifier) override;
 		/** override */
-		virtual bool OnMouseMoveImpl(double x, double y) override;
+		virtual bool OnMouseMoveImpl(glm::vec2 const & delta) override;
 		/** override */
 		virtual bool OnCharEventImpl(unsigned int c) override;
 		/** override */
@@ -38,7 +38,7 @@ namespace chaos
 
 #if 0
 		/** override */
-		virtual ViewportPlacement GetRequiredViewport(glm::ivec2 const& size) const override;
+		virtual WidgetPlacement GetRequiredViewport(glm::ivec2 const& size) const override;
 #endif
 
 

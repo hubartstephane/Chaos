@@ -29,9 +29,7 @@ namespace chaos
 #endif
 
 		/** set the viewport */
-		static void SetViewport(ViewportPlacement const& viewport);
-		/** force an aspect for a viewport */
-		static ViewportPlacement ShrinkViewportToAspect(ViewportPlacement const& src, float aspect);
+		static void SetViewport(WidgetPlacement const& viewport);
 
 		/** display generic information on the OpenGL driver */
 		static void DisplayGenericInformation();

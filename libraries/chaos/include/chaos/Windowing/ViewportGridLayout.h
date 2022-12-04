@@ -6,6 +6,7 @@ namespace chaos
 	class ViewportGridLayoutSettings;
 
 	enum class ViewportGridInsertionMode;
+	enum class ViewportGridFillMode;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -72,7 +73,7 @@ namespace chaos
 	public:
 
 		/** override */
-		//virtual ViewportPlacement ComputeViewportPlacement(Viewport* viewport, glm::ivec2 const& window_size, size_t viewport_index, size_t viewport_count) const override;
+		//virtual WidgetPlacement ComputeViewportPlacement(Viewport* viewport, glm::ivec2 const& window_size, size_t viewport_index, size_t viewport_count) const override;
 
 		/** change the whole settings for that layout */
 		void SetSettings(ViewportGridLayoutSettings const& in_settings, bool update_placement_hierarchy = true);

@@ -167,7 +167,7 @@ namespace chaos
 		bool CheckButtonPressed(Key const* buttons, bool previous_frame = false);
 
 		/** called whenever the mouse is moved */
-		bool OnMouseMove(double x, double y);
+		bool OnMouseMove(glm::vec2 const & delta);
 		/** called whenever the mouse button is down / up */
 		bool OnMouseButton(int button, int action, int modifier);
 		/** called whenever the mouse wheel is changed */
@@ -180,7 +180,7 @@ namespace chaos
 	protected:
 
 		/** called whenever the mouse is moved */
-		virtual bool OnMouseMoveImpl(double x, double y);
+		virtual bool OnMouseMoveImpl(glm::vec2 const& delta);
 		/** called whenever the mouse button is down / up */
 		virtual bool OnMouseButtonImpl(int button, int action, int modifier);
 		/** called whenever the mouse wheel is changed */

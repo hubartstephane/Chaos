@@ -193,6 +193,12 @@ namespace chaos
 		// now that the window is fully placed ... we can show it
 		if (create_params.start_visible)
 			glfwShowWindow(glfw_window);
+
+		// create the root widget
+		root_widget = new WindowRootWidget;
+		if (root_widget != nullptr)
+			root_widget->window = this;
+
 		return true;
 	}
 
@@ -252,18 +258,14 @@ namespace chaos
 
 	bool Window::IsMousePositionValid() const
 	{
-		if (mouse_position.x == std::numeric_limits<float>::max())
-			return false;
-		if (mouse_position.y == std::numeric_limits<float>::max())
-			return false;
-		return true;
+		return mouse_position.has_value();
 	}
 
 	glm::vec2 Window::GetMousePosition() const
 	{
 		if (!IsMousePositionValid())
 			return glm::vec2(0.0f, 0.0f);
-		return mouse_position;
+		return mouse_position.value();
 	}
 
 	void Window::SetGLFWCallbacks(bool in_double_buffer)
@@ -351,13 +353,14 @@ namespace chaos
 		{
 			my_window->WithGLContext<void>([my_window, x, y]()
 			{
-				if (!my_window->IsMousePositionValid())
-					my_window->OnMouseMove(0.0, 0.0);
-				else
-					my_window->OnMouseMove(x - my_window->mouse_position.x, y - my_window->mouse_position.y);
+				glm::vec2 position = { float(x), float(y) };
 
-				my_window->mouse_position.x = (float)x;
-				my_window->mouse_position.y = (float)y;
+				if (!my_window->IsMousePositionValid())
+					my_window->OnMouseMove({ 0.0f, 0.0f });
+				else
+					my_window->OnMouseMove(position - my_window->mouse_position);
+
+				my_window->mouse_position = position;
 			});
 		}
 	}
@@ -646,7 +649,7 @@ namespace chaos
 			// compute rendering size
 			// in normal case, we work with the window_size then apply a viewport cropping
 			// here we want exactly to work with no cropping
-			ViewportPlacement viewport = GetRequiredViewport(GetWindowSize());
+			WidgetPlacement viewport = GetRequiredViewport(GetWindowSize());
 			glm::ivec2 framebuffer_size = viewport.size;
 
 			// generate a framebuffer
@@ -706,12 +709,12 @@ namespace chaos
 		});
 	}
 
-	ViewportPlacement Window::GetRequiredViewport(glm::ivec2 const& size) const
+	WidgetPlacement Window::GetRequiredViewport(glm::ivec2 const& size) const
 	{
-		ViewportPlacement result;
+		WidgetPlacement result;
 		result.position = { 0, 0 };
 		result.size = size;
-		return GLTools::ShrinkViewportToAspect(result, 16.0f / 9.0f);
+		return ApplyAspectRatioConstraint(result, 16.0f / 9.0f);
 	}
 
 	CHAOS_HELP_TEXT(SHORTCUTS, "F9  : ScreenCapture");

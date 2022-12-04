@@ -47,7 +47,7 @@ namespace chaos
 	{
 		if (Viewport* viewport = GetViewport())
 		{
-			ViewportPlacement placement;
+			WidgetPlacement placement;
 			placement.size = GetWindowSize();
 			viewport->SetViewportPlacement(placement);
 		}
@@ -96,7 +96,7 @@ namespace chaos
 		return result;
 	}
 
-	bool ViewportServerWindow::OnMouseMoveImpl(double x, double y)
+	bool ViewportServerWindow::OnMouseMoveImpl(glm::vec2 const & delta)
 	{
 		if (Viewport* viewport = GetViewport())
 			if (viewport->OnMouseMove(x, y))

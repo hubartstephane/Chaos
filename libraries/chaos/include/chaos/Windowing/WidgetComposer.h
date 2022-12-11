@@ -11,7 +11,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* ViewportComposer : An object that is both a Viewport an a ViewportServerInterface
+	* SingleDirectionBoxWidget: a base widget for with some basic insertion method
 	*/
 
 	class CHAOS_API SingleDirectionBoxWidget : public Widget
@@ -26,6 +26,10 @@ namespace chaos
 		virtual void RemoveChildWidget(Widget* widget);
 	};
 
+	/**
+	* HorizontalBoxWidget: a container whose children are horizontally aligned
+	*/
+
 	class CHAOS_API HorizontalBoxWidget : public SingleDirectionBoxWidget
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(HorizontalBoxWidget, SingleDirectionBoxWidget);
@@ -36,6 +40,10 @@ namespace chaos
 
 	};
 
+	/**
+	* VerticalBoxWidget: a container whose children are vertically aligned
+	*/
+
 	class CHAOS_API VerticalBoxWidget : public SingleDirectionBoxWidget
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(VerticalBoxWidget, SingleDirectionBoxWidget);
@@ -44,13 +52,23 @@ namespace chaos
 
 	};
 
+	/**
+	* OverlayWidget: a container whose children are one over the other
+	*/
+
 	class CHAOS_API OverlayWidget : public SingleDirectionBoxWidget
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(OverlayWidget, SingleDirectionBoxWidget);
 
 	public:
 
+		/** override */
+		virtual void SetPlacement(aabox2 const& in_placement) override;
 	};
+
+	/**
+	* GridBoxWidget: a container whose children are dispatched on a grid
+	*/
 
 	class CHAOS_API GridBoxWidget : public Widget
 	{

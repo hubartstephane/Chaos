@@ -168,7 +168,7 @@ namespace chaos
 		virtual bool DoTick(float delta_time) override;
 
 		/** display both the window content and the widget overlay */
-		virtual bool OnDrawInternal(GPURenderer* renderer, WindowDrawParams const& draw_params, GPUProgramProviderInterface const* uniform_provider);
+		virtual bool OnDrawInternal(GPUProgramProviderInterface const* uniform_provider);
 
 		/** bind Window with GLFW */
 		virtual void SetGLFWCallbacks(bool in_double_buffer);

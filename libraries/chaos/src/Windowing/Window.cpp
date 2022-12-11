@@ -675,7 +675,7 @@ namespace chaos
 			draw_params.full_size = framebuffer_size;
 
 			GLTools::SetViewport(draw_params.viewport); // use the draw_params' viewport because its position is {0, 0} and that's what we want for drawing on Render Target
-			OnDrawInternal(renderer.get(), draw_params, &provider);
+			OnDrawInternal(&provider);
 
 			renderer->PopFramebufferRenderContext();
 			renderer->EndRenderingFrame();
@@ -753,7 +753,7 @@ namespace chaos
 		return false;
 	}
 
-	bool Window::OnDrawInternal(GPURenderer* renderer, WindowDrawParams const& draw_params, GPUProgramProviderInterface const* uniform_provider)
+	bool Window::OnDrawInternal(GPUProgramProviderInterface const* uniform_provider)
 	{
 		bool result = OnDraw(renderer, draw_params, uniform_provider);
 		if (root_widget != nullptr)

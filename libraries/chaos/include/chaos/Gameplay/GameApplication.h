@@ -29,6 +29,17 @@ namespace chaos
 		/** override */
 		virtual Window* CreateMainWindow() override;
 
+		/** override */
+		virtual bool OnMouseMoveImpl(glm::vec2 const& delta) override;
+		/** override */
+		virtual bool OnMouseButtonImpl(int button, int action, int modifier) override;
+		/** override */
+		virtual bool OnMouseWheelImpl(double scroll_x, double scroll_y) override;
+		/** override */
+		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
+		/** override */
+		virtual bool OnCharEventImpl(unsigned int c) override;
+
 	protected:
 
 		/** the class for the game */

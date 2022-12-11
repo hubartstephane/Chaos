@@ -37,7 +37,7 @@ namespace chaos
 		/** get the layout */
 		WidgetLayout const& GetLayout() const;
 		/** set the layout */
-		void SetLayout(WidgetLayout const& in_layout, bool update_placement_hierarchy = true);
+		void SetLayout(WidgetLayout const& in_layout, bool immediate_update = true);
 
 		/** gets the number of children */
 		size_t GetChildWidgetCount() const;
@@ -77,9 +77,9 @@ namespace chaos
 		virtual void OnAttachedToParent(Widget* in_parent);
 
 		/** utility method to update widget parent and call dedicated callback */
-		void AttachChild(Widget* widget, bool update_placement_hierarchy);
+		void AttachChild(Widget* widget, bool immediate_update);
 		/** utility method to update widget parent and call dedicated callback */
-		void DetachChild(Widget* widget, bool update_placement_hierarchy);
+		void DetachChild(Widget* widget, bool immediate_update);
 
 	protected:
 

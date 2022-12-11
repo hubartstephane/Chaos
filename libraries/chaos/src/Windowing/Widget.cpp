@@ -50,10 +50,10 @@ namespace chaos
 		return layout;
 	}
 
-	void Widget::SetLayout(WidgetLayout const& in_layout, bool update_placement_hierarchy)
+	void Widget::SetLayout(WidgetLayout const& in_layout, bool immediate_update)
 	{
 		layout = in_layout;
-		UpdatePlacementHierarchy(update_placement_hierarchy);
+		UpdatePlacementHierarchy(immediate_update);
 	}
 
 	void Widget::UpdatePlacementHierarchy(bool immediate_update)
@@ -163,7 +163,7 @@ namespace chaos
 		return result;
 	}
 
-	void Widget::AttachChild(Widget* widget, bool update_placement_hierarchy)
+	void Widget::AttachChild(Widget* widget, bool immediate_update)
 	{
 		assert(widget != nullptr);
 		assert(widget->GetParentWidget() == nullptr);
@@ -172,10 +172,10 @@ namespace chaos
 		widget->parent = this;
 		widget->OnAttachedToParent(this);
 
-		UpdatePlacementHierarchy(update_placement_hierarchy);
+		UpdatePlacementHierarchy(immediate_update);
 	}
 
-	void Widget::DetachChild(Widget* widget, bool update_placement_hierarchy)
+	void Widget::DetachChild(Widget* widget, bool immediate_update)
 	{
 		assert(widget != nullptr);
 		assert(widget->GetParentWidget() == this);
@@ -183,7 +183,7 @@ namespace chaos
 		widget->parent = nullptr;
 		widget->OnDetachedFromParent(this);
 
-		UpdatePlacementHierarchy(update_placement_hierarchy);
+		UpdatePlacementHierarchy(immediate_update);
 	}
 
 }; // namespace chaos

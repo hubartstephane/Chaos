@@ -6,45 +6,45 @@ namespace chaos
 
 #if 0
 
-	void ViewportGridLayout::SetSettings(ViewportGridLayoutSettings const& in_settings, bool update_placement_hierarchy)
+	void ViewportGridLayout::SetSettings(ViewportGridLayoutSettings const& in_settings, bool immediate_update)
 	{
 		settings = in_settings;
-		if (update_placement_hierarchy)
+		if (immediate_update)
 			UpdatePlacementHierarchy();
 	}
 
-	void ViewportGridLayout::SetMaxViewportCount(size_t in_max_count, bool update_placement_hierarchy)
+	void ViewportGridLayout::SetMaxViewportCount(size_t in_max_count, bool immediate_update)
 	{
 		settings.max_count = in_max_count;
-		if (update_placement_hierarchy)
+		if (immediate_update)
 			UpdatePlacementHierarchy();
 	}
 
-	void ViewportGridLayout::SetOrientation(Orientation in_orientation, bool update_placement_hierarchy)
+	void ViewportGridLayout::SetOrientation(Orientation in_orientation, bool immediate_update)
 	{
 		settings.orientation = in_orientation;
-		if (update_placement_hierarchy)
+		if (immediate_update)
 			UpdatePlacementHierarchy();
 	}
 
-	void ViewportGridLayout::SetHorizontalInsertionMode(ViewportGridInsertionMode in_insertion_mode, bool update_placement_hierarchy)
+	void ViewportGridLayout::SetHorizontalInsertionMode(ViewportGridInsertionMode in_insertion_mode, bool immediate_update)
 	{
 		settings.horizontal_insertion_mode = in_insertion_mode;
-		if (update_placement_hierarchy)
+		if (immediate_update)
 			UpdatePlacementHierarchy();
 	}
 
-	void ViewportGridLayout::SetVerticalInsertionMode(ViewportGridInsertionMode in_insertion_mode, bool update_placement_hierarchy)
+	void ViewportGridLayout::SetVerticalInsertionMode(ViewportGridInsertionMode in_insertion_mode, bool immediate_update)
 	{
 		settings.vertical_insertion_mode = in_insertion_mode;
-		if (update_placement_hierarchy)
+		if (immediate_update)
 			UpdatePlacementHierarchy();
 	}
 
-	void ViewportGridLayout::SetFillMode(ViewportGridFillMode in_fill_mode, bool update_placement_hierarchy)
+	void ViewportGridLayout::SetFillMode(ViewportGridFillMode in_fill_mode, bool immediate_update)
 	{
 		settings.fill_mode = in_fill_mode;
-		if (update_placement_hierarchy)
+		if (immediate_update)
 			UpdatePlacementHierarchy();
 	}
 

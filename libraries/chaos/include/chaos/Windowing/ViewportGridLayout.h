@@ -78,17 +78,17 @@ namespace chaos
 		//virtual aabox2 ComputeViewportPlacement(Viewport* viewport, glm::ivec2 const& window_size, size_t viewport_index, size_t viewport_count) const override;
 
 		/** change the whole settings for that layout */
-		void SetSettings(ViewportGridLayoutSettings const& in_settings, bool update_placement_hierarchy = true);
+		void SetSettings(ViewportGridLayoutSettings const& in_settings, bool immediate_update = true);
 		/** change the max number of viewport along the orientation */
-		void SetMaxViewportCount(size_t in_max_count, bool update_placement_hierarchy = true);
+		void SetMaxViewportCount(size_t in_max_count, bool immediate_update = true);
 		/** change the orientation */
-		void SetOrientation(Orientation in_orientation, bool update_placement_hierarchy = true);
+		void SetOrientation(Orientation in_orientation, bool immediate_update = true);
 		/** change horizontal insertion mode */
-		void SetHorizontalInsertionMode(ViewportGridInsertionMode in_insertion_mode, bool update_placement_hierarchy = true);
+		void SetHorizontalInsertionMode(ViewportGridInsertionMode in_insertion_mode, bool immediate_update = true);
 		/** change vertical insertion mode */
-		void SetVerticalInsertionMode(ViewportGridInsertionMode in_insertion_mode, bool update_placement_hierarchy = true);
+		void SetVerticalInsertionMode(ViewportGridInsertionMode in_insertion_mode, bool immediate_update = true);
 		/** change the fill mode */
-		void SetFillMode(ViewportGridFillMode in_fill_mode, bool update_placement_hierarchy = true);
+		void SetFillMode(ViewportGridFillMode in_fill_mode, bool immediate_update = true);
 
 	protected:
 

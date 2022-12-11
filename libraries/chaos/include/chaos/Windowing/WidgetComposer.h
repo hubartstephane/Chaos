@@ -7,8 +7,50 @@ namespace chaos
 	class VerticalBoxWidget;
 	class OverlayWidget;
 	class GridBoxWidget;
+	class SingleDirectionBoxWidgetInsertData;
+
+	enum class SingleDirectionBoxWidgetInsertType;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+	/**
+	* SingleDirectionBoxWidgetInsertType: how a widget must be inserted in its parent
+	*/
+
+	enum class SingleDirectionBoxWidgetInsertType : int
+	{
+		START,               // insert at the beginning of the children list
+		END,                 // insert at the end of the children list
+		POSITIONAL,          // insert at position (all elements after are pushed toward the end)
+		POSITIONAL_REPLACE   // insert at position (if an element already exists at this position it is being removed from the children list)
+	};
+
+	/**
+	* SingleDirectionBoxWidgetInsertData: a base widget for with some basic insertion method
+	*/
+
+	class SingleDirectionBoxWidgetInsertData
+	{
+	public:
+
+		/** constructor */
+		SingleDirectionBoxWidgetInsertData() = default;
+		/** copy constructor */
+		SingleDirectionBoxWidgetInsertData(SingleDirectionBoxWidgetInsertData const &) = default;
+		/** move constructor */
+		SingleDirectionBoxWidgetInsertData(SingleDirectionBoxWidgetInsertData&&) = default;
+		/** constructor from type */
+		SingleDirectionBoxWidgetInsertData(SingleDirectionBoxWidgetInsertType in_type);
+		/** constructor from position */
+		SingleDirectionBoxWidgetInsertData(size_t in_position);
+
+	public:
+
+		/** how the child must be inserted */
+		SingleDirectionBoxWidgetInsertType type = SingleDirectionBoxWidgetInsertType::END;
+		/** where the child must be inserted */
+		size_t position = 0;
+	};
 
 	/**
 	* SingleDirectionBoxWidget: a base widget for with some basic insertion method
@@ -21,9 +63,9 @@ namespace chaos
 
 	public:
 
-		virtual void AddChildWidget(Widget* widget, bool update_placement_hierarchy = true);
+		virtual void AddChildWidget(Widget* widget, SingleDirectionBoxWidgetInsertData insert_data = {}, bool immediate_update = true);
 
-		virtual void RemoveChildWidget(Widget* widget, bool update_placement_hierarchy = true);
+		virtual void RemoveChildWidget(Widget* widget, bool immediate_update = true);
 	};
 
 	/**

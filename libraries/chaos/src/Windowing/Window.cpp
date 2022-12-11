@@ -456,20 +456,7 @@ namespace chaos
 		{
 			assert(glfw_window == glfwGetCurrentContext());
 
-			// XXX : not sure whether i should call glfwGetWindowSize(..) or glfwGetFramebufferSize(..)
-			glm::ivec2 window_size = { 0, 0 };
-			glfwGetWindowSize(glfw_window, &window_size.x, &window_size.y); // framebuffer size is in pixel ! (not glfwGetWindowSize)
-
-			if (window_size.x <= 0 || window_size.y <= 0) // some crash to expect in drawing elsewhere
-				return;
-
 			renderer->BeginRenderingFrame();
-
-			// compute viewport
-			WindowDrawParams draw_params;
-			draw_params.viewport = GetRequiredViewport(window_size);
-			draw_params.full_size = window_size;
-			GLTools::SetViewport(draw_params.viewport);
 
 			// data provider
 			GPUProgramProviderCommonTransforms common_transforms; // some common deduction rules
@@ -479,7 +466,7 @@ namespace chaos
 			GPUProgramProviderChain provider(this, application_provider_interface, common_transforms); // order: window, application, common deduction rules
 
 			// render
-			if (OnDrawInternal(renderer.get(), draw_params, &provider))
+			if (OnDrawInternal(&provider))
 			{
 				if (double_buffer)
 					glfwSwapBuffers(glfw_window);
@@ -646,17 +633,14 @@ namespace chaos
 			application->FreezeNextFrameTickDuration();
 
 			// compute rendering size
-			// in normal case, we work with the window_size then apply a viewport cropping
-			// here we want exactly to work with no cropping
-			aabox2 viewport = GetRequiredViewport(GetWindowSize());
-			glm::ivec2 framebuffer_size = viewport.size;
+			glm::ivec2 window_size = GetWindowSize();
 
 			// generate a framebuffer
 			GPUFramebufferGenerator framebuffer_generator;
-			framebuffer_generator.AddColorAttachment(0, PixelFormat::BGRA, framebuffer_size, "scene");
-			framebuffer_generator.AddDepthStencilAttachment(framebuffer_size, "depth");
+			framebuffer_generator.AddColorAttachment(0, PixelFormat::BGRA, window_size, "scene");
+			framebuffer_generator.AddDepthStencilAttachment(window_size, "depth");
 
-			shared_ptr<GPUFramebuffer> framebuffer = framebuffer_generator.GenerateFramebuffer(framebuffer_size);
+			shared_ptr<GPUFramebuffer> framebuffer = framebuffer_generator.GenerateFramebuffer(window_size);
 			if (framebuffer == nullptr)
 				return false;
 			if (!framebuffer->CheckCompletionStatus())
@@ -669,12 +653,6 @@ namespace chaos
 			renderer->BeginRenderingFrame();
 			renderer->PushFramebufferRenderContext(framebuffer.get(), false);
 
-			WindowDrawParams draw_params;
-			draw_params.viewport.position = { 0, 0 };
-			draw_params.viewport.size = framebuffer_size;
-			draw_params.full_size = framebuffer_size;
-
-			GLTools::SetViewport(draw_params.viewport); // use the draw_params' viewport because its position is {0, 0} and that's what we want for drawing on Render Target
 			OnDrawInternal(&provider);
 
 			renderer->PopFramebufferRenderContext();
@@ -755,9 +733,29 @@ namespace chaos
 
 	bool Window::OnDrawInternal(GPUProgramProviderInterface const* uniform_provider)
 	{
-		bool result = OnDraw(renderer, draw_params, uniform_provider);
+		bool result = false;
+
+		glm::ivec2 window_size = GetWindowSize();
+		if (window_size.x <= 0 || window_size.y <= 0) // some crash to expect in drawing elsewhere
+			return result;
+
+		// some parameters
+		WindowDrawParams draw_params;
+		draw_params.viewport = GetRequiredViewport(window_size);
+
+		// draw the viewport
+		if (!IsGeometryEmpty(draw_params.viewport))
+		{
+			GLTools::SetViewport(draw_params.viewport);
+			result |= OnDraw(renderer.get(), draw_params, uniform_provider);
+		}
+		// draw the root widget
 		if (root_widget != nullptr)
-			result |= root_widget->OnDraw(renderer, draw_params, uniform_provider);
+		{
+			if (root_widget->IsUpdatePlacementHierarchyRequired())
+				UpdateWidgetPlacementHierarchy();
+			result |= root_widget->OnDraw(renderer.get(), draw_params, uniform_provider);
+		}
 		return result;
 	}
 
@@ -776,7 +774,11 @@ namespace chaos
 	{
 		bool result = TickableInterface::DoTick(delta_time);
 		if (root_widget != nullptr)
+		{
+			if (root_widget->IsUpdatePlacementHierarchyRequired())
+				UpdateWidgetPlacementHierarchy();
 			result |= root_widget->Tick(delta_time);
+		}
 		return result;
 	}
 

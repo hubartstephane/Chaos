@@ -53,37 +53,49 @@ namespace chaos
 	void Widget::SetLayout(WidgetLayout const& in_layout, bool update_placement_hierarchy)
 	{
 		layout = in_layout;
-		if (update_placement_hierarchy)
-			UpdatePlacementHierarchy();
+		UpdatePlacementHierarchy(update_placement_hierarchy);
 	}
 
-	void Widget::UpdatePlacementHierarchy()
+	void Widget::UpdatePlacementHierarchy(bool immediate_update)
 	{
-		if (Window* window = GetWindow())
-			window->UpdateWidgetPlacementHierarchy();
+		if (immediate_update)
+		{
+			if (Window* window = GetWindow())
+				window->UpdateWidgetPlacementHierarchy();
+		}
+		else
+		{
+			Widget* widget = this;
+			while (widget != nullptr && !widget->placement_hierarchy_update_required)
+			{
+				widget->placement_hierarchy_update_required = true;
+				widget = widget->GetParentWidget();
+			}
+		}
 	}
 
 	void Widget::SetPlacement(aabox2 const& in_placement)
 	{
 		placement = ApplyModifiersToPlacement(in_placement);
+		placement_hierarchy_update_required = false;
 	}
 
-	aabox2 Widget::ApplyModifiersToPlacement(aabox2 const& in_placement)
+	aabox2 Widget::ApplyModifiersToPlacement(aabox2 const& in_placement) const
 	{
 		aabox2 result;
 
-		result.size.x = std::max(0.0f, in_placement.size.x - layout.padding.left - layout.padding.right);
-		result.size.y = std::max(0.0f, in_placement.size.y - layout.padding.top - layout.padding.bottom);
+		result.size.x = std::max(0.0f, in_placement.size.x - (float)layout.padding.left - (float)layout.padding.right);
+		result.size.y = std::max(0.0f, in_placement.size.y - (float)layout.padding.top - (float)layout.padding.bottom);
 
 		result.position.x = (result.size.x == 0)?
 			0:
-			in_placement.position.x + layout.padding.left;
+			in_placement.position.x + (float)layout.padding.left;
 
 		result.position.y = (result.size.y == 0) ?
 			0 :
-			in_placement.position.y + layout.padding.top;
-		
-		if (layout.aspect_ratio >= 0.0f)
+			in_placement.position.y + (float)layout.padding.bottom;
+
+		if (layout.aspect_ratio > 0.0f)
 			result = SetBoxAspect(result, layout.aspect_ratio, SetBoxAspectMethod::SHRINK_BOX);
 
 		return result;
@@ -151,7 +163,7 @@ namespace chaos
 		return result;
 	}
 
-	void Widget::AttachChild(Widget* widget)
+	void Widget::AttachChild(Widget* widget, bool update_placement_hierarchy)
 	{
 		assert(widget != nullptr);
 		assert(widget->GetParentWidget() == nullptr);
@@ -159,15 +171,19 @@ namespace chaos
 
 		widget->parent = this;
 		widget->OnAttachedToParent(this);
+
+		UpdatePlacementHierarchy(update_placement_hierarchy);
 	}
 
-	void Widget::DetachChild(Widget* widget)
+	void Widget::DetachChild(Widget* widget, bool update_placement_hierarchy)
 	{
 		assert(widget != nullptr);
 		assert(widget->GetParentWidget() == this);
 
 		widget->parent = nullptr;
 		widget->OnDetachedFromParent(this);
+
+		UpdatePlacementHierarchy(update_placement_hierarchy);
 	}
 
 }; // namespace chaos

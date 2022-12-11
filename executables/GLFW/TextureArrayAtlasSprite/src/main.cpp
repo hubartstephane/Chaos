@@ -75,8 +75,8 @@ protected:
     glm::mat4 world_to_camera = fps_view_controller.GlobalToLocal();
     glm::mat4 local_to_world = glm::translate(b.position) * glm::scale(b.half_size);
 
-    float w = (float)draw_params.full_size.x;
-    float h = (float)draw_params.full_size.y;
+    float w = (float)draw_params.viewport.size.x;
+    float h = (float)draw_params.viewport.size.y;
 		GenerateParticles(w, h);
 
     glm::vec3 scale = glm::vec3(2.0f / w, 2.0f / h, 1.0f);

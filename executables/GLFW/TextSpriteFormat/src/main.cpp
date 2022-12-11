@@ -47,8 +47,8 @@ protected:
 			}
 		};
 
-		float w = (float)draw_params.full_size.x;
-		float h = (float)draw_params.full_size.y;
+		float w = (float)draw_params.viewport.size.x;
+		float h = (float)draw_params.viewport.size.y;
 		glm::vec3 scale = glm::vec3(2.0f / w, 2.0f / h, 1.0f);
 		glm::vec3 tr = glm::vec3(-1.0f, -1.0f, 0.0f);
 

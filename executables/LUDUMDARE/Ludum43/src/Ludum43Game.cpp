@@ -80,7 +80,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 		// World limits on RED
 		// ---------------------------------------------
 		{
-			auto f = render_params.full_size;
+			auto f = render_params.viewport.size;
 			auto a = render_params.material_provider;
 			auto b = render_params.object_filter;
 

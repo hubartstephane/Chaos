@@ -73,6 +73,11 @@ namespace chaos
 		/** called whenever the widget becomes child of another widget */
 		virtual void OnAttachedToParent(Widget* in_parent);
 
+		/** utility method to update widget parent and call dedicated callback */
+		void AttachChild(Widget* widget);
+		/** utility method to update widget parent and call dedicated callback */
+		void DetachChild(Widget* widget);
+
 	protected:
 
 		/** the owning widget */

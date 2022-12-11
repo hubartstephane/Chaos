@@ -151,4 +151,23 @@ namespace chaos
 		return result;
 	}
 
+	void Widget::AttachChild(Widget* widget)
+	{
+		assert(widget != nullptr);
+		assert(widget->GetParentWidget() == nullptr);
+		assert(dynamic_cast<WindowRootWidget*>(widget) == nullptr);
+
+		widget->parent = this;
+		widget->OnAttachedToParent(this);
+	}
+
+	void Widget::DetachChild(Widget* widget)
+	{
+		assert(widget != nullptr);
+		assert(widget->GetParentWidget() == this);
+
+		widget->parent = nullptr;
+		widget->OnDetachedFromParent(this);
+	}
+
 }; // namespace chaos

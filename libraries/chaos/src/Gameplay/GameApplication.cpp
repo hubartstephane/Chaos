@@ -80,5 +80,45 @@ namespace chaos
 		return true;
 	}
 
+	bool GameApplication::OnMouseMoveImpl(glm::vec2 const& delta)
+	{
+		if (game != nullptr)
+			if (game->OnMouseMoveImpl(delta))
+				return true;
+		return Application::OnMouseMoveImpl(delta);
+	}
+
+	bool GameApplication::OnMouseButtonImpl(int button, int action, int modifier)
+	{
+		if (game != nullptr)
+			if (game->OnMouseButtonImpl(button, action, modifier))
+				return true;
+		return Application::OnMouseButtonImpl(button, action, modifier);
+	}
+
+	bool GameApplication::OnMouseWheelImpl(double scroll_x, double scroll_y)
+	{
+		if (game != nullptr)
+			if (game->OnMouseWheelImpl(scroll_x, scroll_y))
+				return true;
+		return Application::OnMouseWheelImpl(scroll_x, scroll_y);
+	}
+
+	bool GameApplication::OnKeyEventImpl(KeyEvent const& event)
+	{
+		if (game != nullptr)
+			if (game->OnKeyEventImpl(event))
+				return true;
+		return Application::OnKeyEventImpl(event);
+	}
+
+	bool GameApplication::OnCharEventImpl(unsigned int c)
+	{
+		if (game != nullptr)
+			if (game->OnCharEventImpl(c))
+				return true;
+		return Application::OnCharEventImpl(c);
+	}
+
 }; // namespace chaos
 

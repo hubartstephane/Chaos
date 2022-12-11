@@ -58,6 +58,9 @@ namespace chaos
 	{
 		if (game != nullptr)
 		{
+
+
+
 			GPUProgramProviderChain main_uniform_provider(this, uniform_provider);
 
 			GPURenderParams render_params;

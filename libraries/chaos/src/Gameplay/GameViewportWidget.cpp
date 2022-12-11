@@ -45,14 +45,6 @@ namespace chaos
 				return true;
 		return Widget::OnMouseMoveImpl(delta);
 	}
-#if 0
-	aabox2 GameViewportWidget::GetRequiredViewport(glm::ivec2 const & size) const
-	{
-		if (game != nullptr)
-			return game->GetRequiredViewport(size);
-		return Window::GetRequiredViewport(size);
-	}
-#endif
 
 	bool GameViewportWidget::OnDraw(GPURenderer * renderer, WindowDrawParams const& draw_params, GPUProgramProviderInterface const * uniform_provider)
 	{

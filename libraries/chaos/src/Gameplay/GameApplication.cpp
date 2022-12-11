@@ -22,7 +22,7 @@ namespace chaos
 				if (GameViewportWidget* game_viewport_widget = game_viewport_widget_class.CreateInstance())
 				{
 					WidgetLayout layout;
-					layout.aspect_ratio = 15.0f / 9.0f;
+					layout.aspect_ratio = game->GetViewportWantedAspect();
 					game_viewport_widget->SetLayout(layout);
 					game_viewport_widget->SetGame(game.get());
 

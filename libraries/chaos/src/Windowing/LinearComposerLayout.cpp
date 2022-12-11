@@ -10,42 +10,37 @@ namespace chaos
 	aabox2 LinearComposerLayout::ComputePlacement(aabox2 const& placement, size_t index, size_t count) const
 	{
 		aabox2 result;
-#if 0
+
+		bool reverse_horizontal = (horizontal_mode == LinearComposerLayoutMode::REVERSED);
+		bool reverse_vertical = (vertical_mode == LinearComposerLayoutMode::REVERSED);
+
 		aabox2 placement_copy = placement;
 		if (orientation == Orientation::VERTICAL)
 		{
 			std::swap(placement_copy.position.x, placement_copy.position.y);
 			std::swap(placement_copy.size.x, placement_copy.size.y);
-		}
-		bool reverse_horizontal = (horizontal_mode == LinearComposerLayoutMode::REVERSED);
-		bool reverse_vertical = (vertical_mode == LinearComposerLayoutMode::REVERSED);
-
-		if (orientation == Orientation::VERTICAL)
 			std::swap(reverse_horizontal, reverse_vertical);
+		}
 
 		// compute the result as if the orientation was horizontal
 		if (max_count <= 0) // a single line/row
 		{
-			size_t x = index;
 			if (reverse_horizontal)
-				x = (count - 1) - x;
-
-			float p = float(x);
-			float next_p = float(x + 1);
+				index = (count - 1) - index;
 
 			float cell_size = placement_copy.size.x / float(count);
 
-			int position = int(p * cell_size);
-			int next_position = int(next_p * cell_size);
-
+			result.size.x = cell_size;
 			result.size.y = placement_copy.size.y;
-			result.size.x = next_position - position;
 
+			result.position.x = float(index) * cell_size;
 			result.position.y = 0;
-			result.position.x = position;
+
+			result.position += placement_copy.position;
 		}
 		else
 		{
+#if 0
 			size_t line_count = (count + max_count - 1) / max_count;
 			size_t x = index % max_count;
 			size_t y = index / max_count;
@@ -89,6 +84,8 @@ namespace chaos
 
 			result.size = next_position - position;
 			result.position = position + glm::ivec2(offset, 0);
+
+#endif
 		}
 
 		// correct orientation
@@ -97,7 +94,7 @@ namespace chaos
 			std::swap(result.position.x, result.position.y);
 			std::swap(result.size.x, result.size.y);
 		}
-#endif
+
 		return result;
 	}
 

@@ -90,7 +90,7 @@ namespace chaos
 
 	class CHAOS_API LinearComposerLayoutWidget : public LinearComposerWidget
 	{
-	protected:
+	public:
 
 		/** override */
 		virtual void SetPlacement(aabox2 const& in_placement) override;
@@ -110,8 +110,8 @@ namespace chaos
 
 	public:
 
-
-
+		/** override */
+		virtual LinearComposerLayout GetComposerLayout() override;
 	};
 
 	/**

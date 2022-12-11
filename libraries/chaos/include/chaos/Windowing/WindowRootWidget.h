@@ -10,12 +10,12 @@ namespace chaos
 	* WindowRootWidget : this widget is only here to make link between window and widget
 	*/
 
-	class CHAOS_API WindowRootWidget : public OverlayWidget
+	class CHAOS_API WindowRootWidget : public HorizontalBoxWidget
 	{
 		friend class Window;
 		friend class Widget;
 
-		CHAOS_DECLARE_OBJECT_CLASS(WindowRootWidget, OverlayWidget);
+		CHAOS_DECLARE_OBJECT_CLASS(WindowRootWidget, HorizontalBoxWidget);
 
 	protected:
 

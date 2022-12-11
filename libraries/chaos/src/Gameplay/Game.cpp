@@ -196,14 +196,6 @@ namespace chaos
 		return false;
 	}
 
-	aabox2 Game::GetRequiredViewport(glm::ivec2 const & size) const
-	{
-		aabox2 result;
-		result.position = { 0, 0 };
-		result.size = size;
-		return SetBoxAspect(result, viewport_wanted_aspect, SetBoxAspectMethod::SHRINK_BOX);
-	}
-
 	void Game::Display(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
 	{
 		GPUProgramProviderChain main_uniform_provider(this, game_instance.get(), level_instance.get(), uniform_provider);

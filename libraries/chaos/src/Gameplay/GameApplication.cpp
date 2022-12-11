@@ -3,13 +3,13 @@
 
 namespace chaos
 {
-	GameApplication::GameApplication(SubClassOf<Game> in_game_class, SubClassOf<ViewportServerWindow> in_main_window_class, SubClassOf<GameViewport> in_viewport_class, WindowCreateParams const& in_window_create_params):
+	GameApplication::GameApplication(SubClassOf<Game> in_game_class, SubClassOf<Window> in_main_window_class, SubClassOf<GameViewportWidget> in_game_viewport_widget_class, WindowCreateParams const& in_window_create_params):
 		WindowApplication(in_main_window_class, in_window_create_params),
 		game_class(in_game_class),
-		viewport_class(in_viewport_class)
+		game_viewport_widget_class(in_game_viewport_widget_class)
 	{
 		assert(in_game_class.IsValid());
-		assert(in_viewport_class.IsValid());
+		assert(game_viewport_widget_class.IsValid());
 	}
 
 	Window* GameApplication::CreateMainWindow()
@@ -17,12 +17,16 @@ namespace chaos
 		Window* result = WindowApplication::CreateMainWindow();
 		if (result != nullptr)
 		{
-			if (ViewportServerWindow* viewport_server_window = auto_cast(result))
+			if (WindowRootWidget* root_widget = result->GetRootWidget())
 			{
-				if (GameViewport* game_viewport = viewport_class.CreateInstance())
+				if (GameViewportWidget* game_viewport_widget = game_viewport_widget_class.CreateInstance())
 				{
-					game_viewport->SetGame(game.get());
-					viewport_server_window->SetViewport(game_viewport);
+					WidgetLayout layout;
+					layout.aspect_ratio = 15.0f / 9.0f;
+					game_viewport_widget->SetLayout(layout);
+					game_viewport_widget->SetGame(game.get());
+
+					root_widget->AddChildWidget(game_viewport_widget);
 				}
 			}
 		}
@@ -72,6 +76,46 @@ namespace chaos
 			if (!game->FillAtlasGeneratorInput(input))
 				return false;
 		return true;
+	}
+
+	bool GameApplication::OnMouseMoveImpl(glm::vec2 const& delta)
+	{
+		if (game != nullptr)
+			if (game->OnMouseMoveImpl(delta))
+				return true;
+		return Application::OnMouseMoveImpl(delta);
+	}
+
+	bool GameApplication::OnMouseButtonImpl(int button, int action, int modifier)
+	{
+		if (game != nullptr)
+			if (game->OnMouseButtonImpl(button, action, modifier))
+				return true;
+		return Application::OnMouseButtonImpl(button, action, modifier);
+	}
+
+	bool GameApplication::OnMouseWheelImpl(double scroll_x, double scroll_y)
+	{
+		if (game != nullptr)
+			if (game->OnMouseWheelImpl(scroll_x, scroll_y))
+				return true;
+		return Application::OnMouseWheelImpl(scroll_x, scroll_y);
+	}
+
+	bool GameApplication::OnKeyEventImpl(KeyEvent const& event)
+	{
+		if (game != nullptr)
+			if (game->OnKeyEventImpl(event))
+				return true;
+		return Application::OnKeyEventImpl(event);
+	}
+
+	bool GameApplication::OnCharEventImpl(unsigned int c)
+	{
+		if (game != nullptr)
+			if (game->OnCharEventImpl(c))
+				return true;
+		return Application::OnCharEventImpl(c);
 	}
 
 }; // namespace chaos

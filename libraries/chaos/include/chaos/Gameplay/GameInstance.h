@@ -93,7 +93,7 @@ namespace chaos
 		/** handle mouse input */
 		virtual bool OnMouseButtonImpl(int button, int action, int modifier) override;
 		/** handle mouse movement */
-		virtual bool OnMouseMoveImpl(double x, double y) override;
+		virtual bool OnMouseMoveImpl(glm::vec2 const & delta) override;
 
 		/** returns the maximum number of player */
 		virtual size_t GetMaxPlayerCount() const;

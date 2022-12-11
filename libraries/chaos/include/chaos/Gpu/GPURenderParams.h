@@ -21,9 +21,7 @@ namespace chaos
 	public:
 
 		/** the used viewport */
-		ViewportPlacement viewport;
-		/** the rendering full size */
-		glm::ivec2 full_size = { 0, 0 };
+		aabox2 viewport;
 
 		/** material provider */
 		shared_ptr<GPUMaterialProvider> material_provider;

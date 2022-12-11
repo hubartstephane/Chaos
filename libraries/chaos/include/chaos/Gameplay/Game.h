@@ -11,7 +11,7 @@ namespace chaos
 	class CHAOS_API Game : public Object, public InputEventReceiverInterface, public GPUProgramProviderInterface
 	{
 		friend class GameGamepadManager;
-		friend class GameViewport;
+		friend class GameViewportWidget;
 
 		friend class GameStateMachine;
 		friend class GameState;
@@ -185,10 +185,10 @@ namespace chaos
 		/** whenever a mouse event is received */
 		virtual bool OnMouseButtonImpl(int button, int action, int modifier) override;
 		/** whenever mouse is displaced */
-		virtual bool OnMouseMoveImpl(double x, double y) override;
+		virtual bool OnMouseMoveImpl(glm::vec2 const & delta) override;
 
 		/** getting the required viewport for given window */
-		virtual ViewportPlacement GetRequiredViewport(glm::ivec2 const& size) const;
+		virtual aabox2 GetRequiredViewport(glm::ivec2 const& size) const;
 
 		/** the rendering method */
 		virtual void Display(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);

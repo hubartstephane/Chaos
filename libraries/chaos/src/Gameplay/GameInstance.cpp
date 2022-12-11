@@ -57,11 +57,11 @@ namespace chaos
 		return false;
 	}
 
-	bool GameInstance::OnMouseMoveImpl(double x, double y)
+	bool GameInstance::OnMouseMoveImpl(glm::vec2 const & delta)
 	{
 		size_t count = players.size();
 		for (size_t i = 0; i < count; ++i)
-			if (players[i]->OnMouseMove(x, y))
+			if (players[i]->OnMouseMove(delta))
 				return true;
 		return false;
 	}

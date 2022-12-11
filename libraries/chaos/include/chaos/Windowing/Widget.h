@@ -56,7 +56,10 @@ namespace chaos
 		AutoConstCastable<Widget> FindDescendantWidget(ObjectRequest request) const;
 
 		/** recompute the disposition for the whole widget hierarchy */
-		void UpdatePlacementHierarchy();
+		void UpdatePlacementHierarchy(bool immediate_update);
+
+		/** returns whether the disposition should be updated */
+		bool IsUpdatePlacementHierarchyRequired() const { return placement_hierarchy_update_required; }
 
 	protected:
 
@@ -64,7 +67,7 @@ namespace chaos
 		virtual bool DoTick(float delta_time);
 
 		/** tweak the input placement according to WidgetLayout */
-		aabox2 ApplyModifiersToPlacement(aabox2 const& in_placement);
+		aabox2 ApplyModifiersToPlacement(aabox2 const& in_placement) const;
 
 	protected:
 
@@ -74,9 +77,9 @@ namespace chaos
 		virtual void OnAttachedToParent(Widget* in_parent);
 
 		/** utility method to update widget parent and call dedicated callback */
-		void AttachChild(Widget* widget);
+		void AttachChild(Widget* widget, bool update_placement_hierarchy);
 		/** utility method to update widget parent and call dedicated callback */
-		void DetachChild(Widget* widget);
+		void DetachChild(Widget* widget, bool update_placement_hierarchy);
 
 	protected:
 
@@ -89,6 +92,9 @@ namespace chaos
 
 		/** the child widgets */
 		std::vector<shared_ptr<Widget>> child_widgets;
+
+		/** whether layout should be recomputed */
+		bool placement_hierarchy_update_required = false;
 	};
 
 #endif

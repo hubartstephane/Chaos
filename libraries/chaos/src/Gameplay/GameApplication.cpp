@@ -21,14 +21,12 @@ namespace chaos
 			{
 				if (GameViewportWidget* game_viewport_widget = game_viewport_widget_class.CreateInstance())
 				{
-					root_widget->AddChildWidget(game_viewport_widget);
+					WidgetLayout layout;
+					layout.aspect_ratio = 15.0f / 9.0f;
+					game_viewport_widget->SetLayout(layout);
 					game_viewport_widget->SetGame(game.get());
 
-
-					WidgetLayout layout;
-					layout.padding.left = 200;
-					layout.padding.top = 100;
-					game_viewport_widget->SetLayout(layout);
+					root_widget->AddChildWidget(game_viewport_widget);
 				}
 			}
 		}

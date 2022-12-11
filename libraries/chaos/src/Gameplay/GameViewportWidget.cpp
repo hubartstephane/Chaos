@@ -58,15 +58,16 @@ namespace chaos
 	{
 		if (game != nullptr)
 		{
+			if (placement.size.x > 0.0f && placement.size.y > 0.0f)
+			{
+				GPUProgramProviderChain main_uniform_provider(this, uniform_provider);
 
+				GPURenderParams render_params;
+				render_params.viewport = placement;
+				GLTools::SetViewport(render_params.viewport); // ignore the size from draw_params. use our own placement
 
-
-			GPUProgramProviderChain main_uniform_provider(this, uniform_provider);
-
-			GPURenderParams render_params;
-			render_params.viewport = draw_params.viewport;
-			render_params.full_size = draw_params.full_size;
-			game->Display(renderer, &main_uniform_provider, render_params);
+				game->Display(renderer, &main_uniform_provider, render_params);
+			}
 		}
 		return true;
 	}

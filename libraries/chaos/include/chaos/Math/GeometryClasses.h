@@ -269,7 +269,7 @@ namespace chaos
 
 	public:
 
-		/** the min corner of the box */
+		/** the lower left corner of the box */
 		vec_type position;
 		/** the size the box */
 		vec_type size = vec_type(-1);

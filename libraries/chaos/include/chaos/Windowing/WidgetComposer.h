@@ -21,9 +21,9 @@ namespace chaos
 
 	public:
 
-		virtual void AddChildWidget(Widget* widget);
+		virtual void AddChildWidget(Widget* widget, bool update_placement_hierarchy = true);
 
-		virtual void RemoveChildWidget(Widget* widget);
+		virtual void RemoveChildWidget(Widget* widget, bool update_placement_hierarchy = true);
 	};
 
 	/**

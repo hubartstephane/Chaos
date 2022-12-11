@@ -245,7 +245,7 @@ void LudumPlayer::FireProjectiles()
 
     chaos::box2 particle_box = pawn->GetBoundingBox();
     particle_box.half_size = ratio_to_player * particle_box.half_size;
-    particle_box = chaos::SetBoxAspect(particle_box, chaos::MathTools::CastAndDiv<float>(layout.width, layout.height), SetBoxAspectMethod::PREFER_UPDATE_WIDTH);
+    particle_box = chaos::SetBoxAspect(particle_box, chaos::MathTools::CastAndDiv<float>(layout.width, layout.height), chaos::SetBoxAspectMethod::PREFER_UPDATE_WIDTH);
 
     fire_spawner.SpawnParticles(count, false).Process([velocity, damage, particle_box](chaos::ParticleAccessor<ParticleFire> accessor)
     {

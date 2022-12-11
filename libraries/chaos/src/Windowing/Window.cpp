@@ -726,9 +726,43 @@ namespace chaos
 			if (application->OnKeyEvent(event))
 				return true;
 		// super method
-		if (InputEventReceiverInterface::OnKeyEventImpl(event))
-			return true;
-		return false;
+		return WindowInterface::OnKeyEventImpl(event);
+	}
+
+	bool Window::OnMouseMoveImpl(glm::vec2 const& delta)
+	{
+		// give opportunity to application
+		if (Application* application = Application::GetInstance())
+			if (application->OnMouseMove(delta))
+				return true;
+		return WindowInterface::OnMouseMoveImpl(delta);
+	}
+
+	bool Window::OnMouseButtonImpl(int button, int action, int modifier)
+	{
+		// give opportunity to application
+		if (Application* application = Application::GetInstance())
+			if (application->OnMouseButton(button, action, modifier))
+				return true;
+		return WindowInterface::OnMouseButtonImpl(button, action, modifier);
+	}
+
+	bool Window::OnMouseWheelImpl(double scroll_x, double scroll_y)
+	{
+		// give opportunity to application
+		if (Application* application = Application::GetInstance())
+			if (application->OnMouseWheel(scroll_x, scroll_y))
+				return true;
+		return WindowInterface::OnMouseWheelImpl(scroll_x, scroll_y);
+	}
+
+	bool Window::OnCharEventImpl(unsigned int c)
+	{
+		// give opportunity to application
+		if (Application* application = Application::GetInstance())
+			if (application->OnCharEvent(c))
+				return true;
+		return WindowInterface::OnCharEventImpl(c);
 	}
 
 	bool Window::OnDrawInternal(GPUProgramProviderInterface const* uniform_provider)

@@ -4,30 +4,34 @@
 namespace chaos
 {
 
-	SingleDirectionBoxWidgetInsertData::SingleDirectionBoxWidgetInsertData(SingleDirectionBoxWidgetInsertType in_type):
+	// =====================================================================
+	// LinearComposerWidgetInsertData implementation
+	// =====================================================================
+
+	LinearComposerWidgetInsertData::LinearComposerWidgetInsertData(LinearComposerWidgetInsertType in_type):
 		type(in_type)
 	{}
 
-	SingleDirectionBoxWidgetInsertData::SingleDirectionBoxWidgetInsertData(size_t in_position):
-		type(SingleDirectionBoxWidgetInsertType::POSITIONAL),
+	LinearComposerWidgetInsertData::LinearComposerWidgetInsertData(size_t in_position):
+		type(LinearComposerWidgetInsertType::POSITIONAL),
 		position(in_position)
 	{}
 
 	// =====================================================================
-	// SingleDirectionBoxWidget implementation
+	// LinearComposerWidget implementation
 	// =====================================================================
 
-	void SingleDirectionBoxWidget::AddChildWidget(Widget* widget, SingleDirectionBoxWidgetInsertData insert_data, bool immediate_update)
+	void LinearComposerWidget::AddChildWidget(Widget* widget, LinearComposerWidgetInsertData insert_data, bool immediate_update)
 	{
 		assert(widget != nullptr);
 		assert(widget->GetParentWidget() == nullptr);
 		assert(dynamic_cast<WindowRootWidget*>(widget) == nullptr);
 
-		if (insert_data.type == SingleDirectionBoxWidgetInsertType::END)
+		if (insert_data.type == LinearComposerWidgetInsertType::END)
 		{
 			child_widgets.push_back(widget);
 		}
-		else if (insert_data.type == SingleDirectionBoxWidgetInsertType::START)
+		else if (insert_data.type == LinearComposerWidgetInsertType::START)
 		{
 			child_widgets.insert(child_widgets.begin(), widget);
 		}
@@ -39,11 +43,11 @@ namespace chaos
 			}
 			else
 			{
-				if (insert_data.type == SingleDirectionBoxWidgetInsertType::POSITIONAL)
+				if (insert_data.type == LinearComposerWidgetInsertType::POSITIONAL)
 				{
 					child_widgets.insert(child_widgets.begin() + insert_data.position, widget);
 				}
-				else if (insert_data.type == SingleDirectionBoxWidgetInsertType::POSITIONAL_REPLACE)
+				else if (insert_data.type == LinearComposerWidgetInsertType::POSITIONAL_REPLACE)
 				{
 					// we want to always keep list of children coherent
 					// that's why we have a
@@ -61,7 +65,7 @@ namespace chaos
 		AttachChild(widget, immediate_update);
 	}
 
-	void SingleDirectionBoxWidget::RemoveChildWidget(Widget* widget, bool immediate_update)
+	void LinearComposerWidget::RemoveChildWidget(Widget* widget, bool immediate_update)
 	{
 		assert(widget != nullptr);
 		assert(widget->GetParentWidget() == this);
@@ -84,6 +88,24 @@ namespace chaos
 		for (auto& child : child_widgets)
 			if (child != nullptr)
 				child->SetPlacement(placement); // XXX: use member instead of incoming parameter, because the member take into account the overlay layout
+	}
+
+	// =====================================================================
+	// LinearComposerLayoutWidget implementation
+	// =====================================================================
+
+	void LinearComposerLayoutWidget::SetPlacement(aabox2 const& in_placement)
+	{
+		LinearComposerWidget::SetPlacement(in_placement);
+
+		size_t count = child_widgets.size();
+		if (count > 0)
+		{
+			LinearComposerLayout linear_layout = GetComposerLayout();
+			for (size_t i = 0; i < count; ++i)
+				if (Widget* child = child_widgets[i].get())
+					child->SetPlacement(linear_layout.ComputePlacement(placement, i, count));
+		}
 	}
 
 }; // namespace chaos

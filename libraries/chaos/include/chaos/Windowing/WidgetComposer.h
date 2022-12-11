@@ -2,22 +2,23 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class SingleDirectionBoxWidget;
+	class LinearComposerWidget;
 	class HorizontalBoxWidget;
 	class VerticalBoxWidget;
 	class OverlayWidget;
 	class GridBoxWidget;
-	class SingleDirectionBoxWidgetInsertData;
+	class LinearComposerWidgetInsertData;
+	class LinearComposerLayoutWidget;
 
-	enum class SingleDirectionBoxWidgetInsertType;
+	enum class LinearComposerWidgetInsertType;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* SingleDirectionBoxWidgetInsertType: how a widget must be inserted in its parent
+	* LinearComposerWidgetInsertType: how a widget must be inserted in its parent
 	*/
 
-	enum class SingleDirectionBoxWidgetInsertType : int
+	enum class CHAOS_API LinearComposerWidgetInsertType : int
 	{
 		START,               // insert at the beginning of the children list
 		END,                 // insert at the end of the children list
@@ -26,55 +27,86 @@ namespace chaos
 	};
 
 	/**
-	* SingleDirectionBoxWidgetInsertData: a base widget for with some basic insertion method
+	* LinearComposerWidgetInsertData: a base widget for with some basic insertion method
 	*/
 
-	class SingleDirectionBoxWidgetInsertData
+	class LinearComposerWidgetInsertData
 	{
 	public:
 
 		/** constructor */
-		SingleDirectionBoxWidgetInsertData() = default;
+		LinearComposerWidgetInsertData() = default;
 		/** copy constructor */
-		SingleDirectionBoxWidgetInsertData(SingleDirectionBoxWidgetInsertData const &) = default;
+		LinearComposerWidgetInsertData(LinearComposerWidgetInsertData const &) = default;
 		/** move constructor */
-		SingleDirectionBoxWidgetInsertData(SingleDirectionBoxWidgetInsertData&&) = default;
+		LinearComposerWidgetInsertData(LinearComposerWidgetInsertData&&) = default;
 		/** constructor from type */
-		SingleDirectionBoxWidgetInsertData(SingleDirectionBoxWidgetInsertType in_type);
+		LinearComposerWidgetInsertData(LinearComposerWidgetInsertType in_type);
 		/** constructor from position */
-		SingleDirectionBoxWidgetInsertData(size_t in_position);
+		LinearComposerWidgetInsertData(size_t in_position);
 
 	public:
 
 		/** how the child must be inserted */
-		SingleDirectionBoxWidgetInsertType type = SingleDirectionBoxWidgetInsertType::END;
+		LinearComposerWidgetInsertType type = LinearComposerWidgetInsertType::END;
 		/** where the child must be inserted */
 		size_t position = 0;
 	};
 
 	/**
-	* SingleDirectionBoxWidget: a base widget for with some basic insertion method
+	* LinearComposerWidget: a base widget for with some basic insertion method
 	*/
 
-	class CHAOS_API SingleDirectionBoxWidget : public Widget
+	class CHAOS_API LinearComposerWidget : public Widget
 	{
 
-		CHAOS_DECLARE_OBJECT_CLASS(SingleDirectionBoxWidget, Widget);
+		CHAOS_DECLARE_OBJECT_CLASS(LinearComposerWidget, Widget);
 
 	public:
 
-		virtual void AddChildWidget(Widget* widget, SingleDirectionBoxWidgetInsertData insert_data = {}, bool immediate_update = true);
-
+		/** insert a child inside the widget */
+		virtual void AddChildWidget(Widget* widget, LinearComposerWidgetInsertData insert_data = {}, bool immediate_update = true);
+		/** remove a child from the widget */
 		virtual void RemoveChildWidget(Widget* widget, bool immediate_update = true);
 	};
+
+	/**
+	* OverlayWidget: a container whose children are one over the other
+	*/
+
+	class CHAOS_API OverlayWidget : public LinearComposerWidget
+	{
+		CHAOS_DECLARE_OBJECT_CLASS(OverlayWidget, LinearComposerWidget);
+
+	public:
+
+		/** override */
+		virtual void SetPlacement(aabox2 const& in_placement) override;
+	};
+
+	/**
+	* LinearComposerLayoutWidget: a composer that use the span layout to compute child placement
+	*/
+
+	class CHAOS_API LinearComposerLayoutWidget : public LinearComposerWidget
+	{
+	protected:
+
+		/** override */
+		virtual void SetPlacement(aabox2 const& in_placement) override;
+
+		/** gets the layout for placement computation */
+		virtual LinearComposerLayout GetComposerLayout() { return {}; }
+	};
+
 
 	/**
 	* HorizontalBoxWidget: a container whose children are horizontally aligned
 	*/
 
-	class CHAOS_API HorizontalBoxWidget : public SingleDirectionBoxWidget
+	class CHAOS_API HorizontalBoxWidget : public LinearComposerLayoutWidget
 	{
-		CHAOS_DECLARE_OBJECT_CLASS(HorizontalBoxWidget, SingleDirectionBoxWidget);
+		CHAOS_DECLARE_OBJECT_CLASS(HorizontalBoxWidget, LinearComposerWidget);
 
 	public:
 
@@ -86,27 +118,15 @@ namespace chaos
 	* VerticalBoxWidget: a container whose children are vertically aligned
 	*/
 
-	class CHAOS_API VerticalBoxWidget : public SingleDirectionBoxWidget
+	class CHAOS_API VerticalBoxWidget : public LinearComposerLayoutWidget
 	{
-		CHAOS_DECLARE_OBJECT_CLASS(VerticalBoxWidget, SingleDirectionBoxWidget);
+		CHAOS_DECLARE_OBJECT_CLASS(VerticalBoxWidget, LinearComposerWidget);
 
 	public:
 
 	};
 
-	/**
-	* OverlayWidget: a container whose children are one over the other
-	*/
 
-	class CHAOS_API OverlayWidget : public SingleDirectionBoxWidget
-	{
-		CHAOS_DECLARE_OBJECT_CLASS(OverlayWidget, SingleDirectionBoxWidget);
-
-	public:
-
-		/** override */
-		virtual void SetPlacement(aabox2 const& in_placement) override;
-	};
 
 	/**
 	* GridBoxWidget: a container whose children are dispatched on a grid

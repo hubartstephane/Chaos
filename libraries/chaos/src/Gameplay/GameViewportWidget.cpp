@@ -54,11 +54,24 @@ namespace chaos
 			{
 				GPUProgramProviderChain main_uniform_provider(this, uniform_provider);
 
+				// set the viewport
 				GPURenderParams render_params;
 				render_params.viewport = placement;
 				GLTools::SetViewport(render_params.viewport); // ignore the size from draw_params. use our own placement
 
+				// avoid glClearBufferfv(...) functions to clear the whole screen
+				glScissor(
+					GLint(render_params.viewport.position.x),
+					GLint(render_params.viewport.position.y),
+					GLint(render_params.viewport.size.x),
+					GLint(render_params.viewport.size.y));
+				glEnable(GL_SCISSOR_TEST);
+
 				game->Display(renderer, &main_uniform_provider, render_params);
+
+				// restore scissor
+				glDisable(GL_SCISSOR_TEST);
+
 			}
 		}
 		return true;

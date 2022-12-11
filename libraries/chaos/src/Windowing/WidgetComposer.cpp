@@ -108,4 +108,16 @@ namespace chaos
 		}
 	}
 
+	// =====================================================================
+	// LinearComposerLayoutWidget implementation
+	// =====================================================================
+
+	LinearComposerLayout HorizontalBoxWidget::GetComposerLayout()
+	{
+		LinearComposerLayout result;
+		result.orientation = Orientation::HORIZONTAL;
+		//result.horizontal_mode = LinearComposerLayoutMode::REVERSED;
+		return result;
+	}
+
 }; // namespace chaos

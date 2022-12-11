@@ -6,6 +6,9 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+
+#if 0
+
 	/**
 	 * The layout is responsible for computing the surface to reserve for all viewports owned by a ViewportWindow
 	 */
@@ -15,11 +18,12 @@ namespace chaos
 		CHAOS_DECLARE_OBJECT_CLASS(ViewportLayout, Object);
 
 		friend class ViewportServerWindow;
+		friend class ViewportComposer;
 
 	public:
 
 		/** compute placement for all viewports in the list */
-		virtual void SetAllViewportPlacements(ViewportPlacement const& in_placement, std::vector<shared_ptr<Viewport>>& viewports);
+		virtual void SetAllViewportPlacements(aabox2 const& in_placement, std::vector<shared_ptr<Viewport>>& viewports);
 
 		/** gets the composer using the layout */
 		AutoCastable<ViewportComposer> GetViewportComposer() { return viewport_composer; }
@@ -27,13 +31,15 @@ namespace chaos
 		AutoConstCastable<ViewportComposer> GetViewportComposer() const { return viewport_composer; }
 
 		/** Update the window placements */
-		void UpdateViewportPlacementHierarchy();
+		void UpdatePlacementHierarchy();
 
 	protected:
 
 		/** the viewport owning this layout */
 		ViewportComposer* viewport_composer = nullptr;
 	};
+
+#endif
 
 #endif
 

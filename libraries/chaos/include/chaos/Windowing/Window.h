@@ -125,10 +125,18 @@ namespace chaos
 		bool ScreenCapture();
 
 		/** getting the required viewport for given window */
-		virtual ViewportPlacement GetRequiredViewport(glm::ivec2 const& size) const;
+		virtual aabox2 GetRequiredViewport(glm::ivec2 const& size) const;
 
 		/** getting the renderer */
 		GPURenderer* GetRenderer() { return renderer.get(); }
+
+		/** get the root widget */
+		WindowRootWidget* GetRootWidget() { return root_widget.get(); }
+		/** get the root widget */
+		WindowRootWidget const* GetRootWidget() const { return root_widget.get(); }
+
+		/** update the whole widget hierarchy placement */
+		virtual void UpdateWidgetPlacementHierarchy();
 
 		/** using window context, call functor, then restore previous */
 		template<typename T>
@@ -154,6 +162,13 @@ namespace chaos
 
 		/** override */
 		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override;
+		/** override */
+		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
+		/** override */
+		virtual bool DoTick(float delta_time) override;
+
+		/** display both the window content and the widget overlay */
+		virtual bool OnDrawInternal(GPUProgramProviderInterface const* uniform_provider);
 
 		/** bind Window with GLFW */
 		virtual void SetGLFWCallbacks(bool in_double_buffer);
@@ -174,8 +189,16 @@ namespace chaos
 		/** tick the renderer of the window with the real framerate (with no time scale) */
 		void TickRenderer(float real_delta_time);
 
-		/** override */
-		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
+		/** called whenever the window is resized */
+		virtual void OnWindowResize(glm::ivec2 size);
+		/** called whenever the user try to close window */
+		virtual bool OnWindowClosed();
+		/** called whenever a file is dropped */
+		virtual void OnDropFile(int count, char const** paths);
+		/** called whenever the window becomes iconified or is restored */
+		virtual void OnIconifiedStateChange(bool iconified);
+		/** called whenever the window gain or loose focus */
+		virtual void OnFocusStateChange(bool gain_focus);
 
 	private:
 
@@ -209,11 +232,14 @@ namespace chaos
 		/** is the window with double buffer */
 		bool double_buffer = true;
 
-		/** previous mouse position */
-		glm::vec2 mouse_position = { std::numeric_limits<float>::max(), std::numeric_limits<float>::max() };
+		/** the root widget for the window */
+		shared_ptr<WindowRootWidget> root_widget;
 
 		/** the renderer */
 		shared_ptr<GPURenderer> renderer;
+
+		/** previous mouse position */
+		std::optional<glm::vec2> mouse_position;
 
 		/** used to store data when toggling fullscreen */
 		std::optional<NonFullScreenWindowData> non_fullscreen_data;

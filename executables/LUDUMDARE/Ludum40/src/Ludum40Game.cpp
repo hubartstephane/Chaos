@@ -617,7 +617,7 @@ void Game::DisplayFullscreen(chaos::GPURenderer * renderer, glm::ivec2 viewport_
   float world_aspect = chaos::MathTools::CastAndDiv<float>(world_size.x, world_size.y);
 
   // get a box that fit the texture size and wanted aspect
-  chaos::box2 shrinked_texture_box = chaos::ShrinkBoxToAspect(texture_box, world_aspect);
+  chaos::box2 shrinked_texture_box = chaos::SetBoxAspect(texture_box, world_aspect, chaos::SetBoxAspectMethod::SHRINK_BOX);
 
   glm::vec2 min_texture_coord = glm::vec2(0.0f, 0.0f);
   glm::vec2 max_texture_coord = glm::vec2(1.0f, 1.0f);

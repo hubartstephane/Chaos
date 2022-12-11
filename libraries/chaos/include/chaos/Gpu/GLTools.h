@@ -14,24 +14,8 @@ namespace chaos
 	{
 	public:
 
-#if 0
 		/** set the viewport */
-		template<typename T>
-		static void SetViewport(type_box<T, 2> const& viewport)
-		{
-			auto corners = GetBoxCorners(viewport);
-			glViewport(
-				GLint(corners.first.x),
-				GLint(corners.first.y),
-				GLsizei(2.0f * viewport.half_size.x),
-				GLsizei(2.0f * viewport.half_size.y));
-		}
-#endif
-
-		/** set the viewport */
-		static void SetViewport(ViewportPlacement const& viewport);
-		/** force an aspect for a viewport */
-		static ViewportPlacement ShrinkViewportToAspect(ViewportPlacement const& src, float aspect);
+		static void SetViewport(aabox2 const& viewport);
 
 		/** display generic information on the OpenGL driver */
 		static void DisplayGenericInformation();

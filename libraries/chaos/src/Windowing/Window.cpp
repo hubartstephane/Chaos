@@ -193,6 +193,12 @@ namespace chaos
 		// now that the window is fully placed ... we can show it
 		if (create_params.start_visible)
 			glfwShowWindow(glfw_window);
+
+		// create the root widget
+		root_widget = new WindowRootWidget;
+		if (root_widget != nullptr)
+			root_widget->window = this;
+
 		return true;
 	}
 
@@ -252,18 +258,14 @@ namespace chaos
 
 	bool Window::IsMousePositionValid() const
 	{
-		if (mouse_position.x == std::numeric_limits<float>::max())
-			return false;
-		if (mouse_position.y == std::numeric_limits<float>::max())
-			return false;
-		return true;
+		return mouse_position.has_value();
 	}
 
 	glm::vec2 Window::GetMousePosition() const
 	{
 		if (!IsMousePositionValid())
 			return glm::vec2(0.0f, 0.0f);
-		return mouse_position;
+		return mouse_position.value();
 	}
 
 	void Window::SetGLFWCallbacks(bool in_double_buffer)
@@ -351,13 +353,14 @@ namespace chaos
 		{
 			my_window->WithGLContext<void>([my_window, x, y]()
 			{
-				if (!my_window->IsMousePositionValid())
-					my_window->OnMouseMove(0.0, 0.0);
-				else
-					my_window->OnMouseMove(x - my_window->mouse_position.x, y - my_window->mouse_position.y);
+				glm::vec2 position = { float(x), float(y) };
 
-				my_window->mouse_position.x = (float)x;
-				my_window->mouse_position.y = (float)y;
+				if (!my_window->IsMousePositionValid())
+					my_window->OnMouseMove({ 0.0f, 0.0f });
+				else
+					my_window->OnMouseMove(position - my_window->mouse_position.value());
+
+				my_window->mouse_position = position;
 			});
 		}
 	}
@@ -453,20 +456,7 @@ namespace chaos
 		{
 			assert(glfw_window == glfwGetCurrentContext());
 
-			// XXX : not sure whether i should call glfwGetWindowSize(..) or glfwGetFramebufferSize(..)
-			glm::ivec2 window_size = { 0, 0 };
-			glfwGetWindowSize(glfw_window, &window_size.x, &window_size.y); // framebuffer size is in pixel ! (not glfwGetWindowSize)
-
-			if (window_size.x <= 0 || window_size.y <= 0) // some crash to expect in drawing elsewhere
-				return;
-
 			renderer->BeginRenderingFrame();
-
-			// compute viewport
-			WindowDrawParams draw_params;
-			draw_params.viewport = GetRequiredViewport(window_size);
-			draw_params.full_size = window_size;
-			GLTools::SetViewport(draw_params.viewport);
 
 			// data provider
 			GPUProgramProviderCommonTransforms common_transforms; // some common deduction rules
@@ -476,7 +466,7 @@ namespace chaos
 			GPUProgramProviderChain provider(this, application_provider_interface, common_transforms); // order: window, application, common deduction rules
 
 			// render
-			if (OnDraw(renderer.get(), draw_params, &provider))
+			if (OnDrawInternal(&provider))
 			{
 				if (double_buffer)
 					glfwSwapBuffers(glfw_window);
@@ -565,7 +555,6 @@ namespace chaos
 			if (fullscreen_monitor != nullptr) // is currently fullscreen
 			{
 				// data properly initialized
-				//if (non_fullscreen_window_size.x >= 0 && non_fullscreen_window_size.y >= 0) // restore previous settings
 				if (non_fullscreen_data.has_value())
 				{
 					glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, non_fullscreen_data->decorated != 0);
@@ -644,17 +633,14 @@ namespace chaos
 			application->FreezeNextFrameTickDuration();
 
 			// compute rendering size
-			// in normal case, we work with the window_size then apply a viewport cropping
-			// here we want exactly to work with no cropping
-			ViewportPlacement viewport = GetRequiredViewport(GetWindowSize());
-			glm::ivec2 framebuffer_size = viewport.size;
+			glm::ivec2 window_size = GetWindowSize();
 
 			// generate a framebuffer
 			GPUFramebufferGenerator framebuffer_generator;
-			framebuffer_generator.AddColorAttachment(0, PixelFormat::BGRA, framebuffer_size, "scene");
-			framebuffer_generator.AddDepthStencilAttachment(framebuffer_size, "depth");
+			framebuffer_generator.AddColorAttachment(0, PixelFormat::BGRA, window_size, "scene");
+			framebuffer_generator.AddDepthStencilAttachment(window_size, "depth");
 
-			shared_ptr<GPUFramebuffer> framebuffer = framebuffer_generator.GenerateFramebuffer(framebuffer_size);
+			shared_ptr<GPUFramebuffer> framebuffer = framebuffer_generator.GenerateFramebuffer(window_size);
 			if (framebuffer == nullptr)
 				return false;
 			if (!framebuffer->CheckCompletionStatus())
@@ -667,13 +653,7 @@ namespace chaos
 			renderer->BeginRenderingFrame();
 			renderer->PushFramebufferRenderContext(framebuffer.get(), false);
 
-			WindowDrawParams draw_params;
-			draw_params.viewport.position = { 0, 0 };
-			draw_params.viewport.size = framebuffer_size;
-			draw_params.full_size = framebuffer_size;
-
-			GLTools::SetViewport(draw_params.viewport); // use the draw_params' viewport because its position is {0, 0} and that's what we want for drawing on Render Target
-			OnDraw(renderer.get(), draw_params, &provider);
+			OnDrawInternal(&provider);
 
 			renderer->PopFramebufferRenderContext();
 			renderer->EndRenderingFrame();
@@ -706,12 +686,12 @@ namespace chaos
 		});
 	}
 
-	ViewportPlacement Window::GetRequiredViewport(glm::ivec2 const& size) const
+	aabox2 Window::GetRequiredViewport(glm::ivec2 const& size) const
 	{
-		ViewportPlacement result;
+		aabox2 result;
 		result.position = { 0, 0 };
 		result.size = size;
-		return GLTools::ShrinkViewportToAspect(result, 16.0f / 9.0f);
+		return SetBoxAspect(result, 16.0f / 9.0f, SetBoxAspectMethod::SHRINK_BOX);
 	}
 
 	CHAOS_HELP_TEXT(SHORTCUTS, "F9  : ScreenCapture");
@@ -751,6 +731,57 @@ namespace chaos
 		return false;
 	}
 
+	bool Window::OnDrawInternal(GPUProgramProviderInterface const* uniform_provider)
+	{
+		bool result = false;
+
+		glm::ivec2 window_size = GetWindowSize();
+		if (window_size.x <= 0 || window_size.y <= 0) // some crash to expect in drawing elsewhere
+			return result;
+
+		// some parameters
+		WindowDrawParams draw_params;
+		draw_params.viewport = GetRequiredViewport(window_size);
+
+		// draw the viewport
+		if (!IsGeometryEmpty(draw_params.viewport))
+		{
+			GLTools::SetViewport(draw_params.viewport);
+			result |= OnDraw(renderer.get(), draw_params, uniform_provider);
+		}
+		// draw the root widget
+		if (root_widget != nullptr)
+		{
+			if (root_widget->IsUpdatePlacementHierarchyRequired())
+				UpdateWidgetPlacementHierarchy();
+			result |= root_widget->OnDraw(renderer.get(), draw_params, uniform_provider);
+		}
+		return result;
+	}
+
+	void Window::UpdateWidgetPlacementHierarchy()
+	{
+		if (root_widget != nullptr)
+		{
+			aabox2 placement;
+			placement.position = { 0, 0 };
+			placement.size = GetWindowSize();
+			root_widget->SetPlacement(placement);
+		}
+	}
+
+	bool Window::DoTick(float delta_time)
+	{
+		bool result = TickableInterface::DoTick(delta_time);
+		if (root_widget != nullptr)
+		{
+			if (root_widget->IsUpdatePlacementHierarchyRequired())
+				UpdateWidgetPlacementHierarchy();
+			result |= root_widget->Tick(delta_time);
+		}
+		return result;
+	}
+
 	bool Window::InitializeFromConfiguration(nlohmann::json const& config)
 	{
 		return true;
@@ -759,6 +790,28 @@ namespace chaos
 	bool Window::DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const
 	{
 		return false;
+	}
+
+	void Window::OnWindowResize(glm::ivec2 size)
+	{
+		UpdateWidgetPlacementHierarchy();
+	}
+
+	bool Window::OnWindowClosed()
+	{ 
+		return true;
+	}
+
+	void Window::OnDropFile(int count, char const** paths)
+	{
+	}
+
+	void Window::OnIconifiedStateChange(bool iconified)
+	{
+	}
+
+	void Window::OnFocusStateChange(bool gain_focus)
+	{
 	}
 
 }; // namespace chaos

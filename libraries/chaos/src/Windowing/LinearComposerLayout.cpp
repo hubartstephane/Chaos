@@ -10,7 +10,7 @@ namespace chaos
 	aabox2 LinearComposerLayout::ComputePlacement(aabox2 const& placement, size_t index, size_t count) const
 	{
 		aabox2 result;
-
+#if 0
 		aabox2 placement_copy = placement;
 		if (orientation == Orientation::VERTICAL)
 		{
@@ -97,7 +97,7 @@ namespace chaos
 			std::swap(result.position.x, result.position.y);
 			std::swap(result.size.x, result.size.y);
 		}
-
+#endif
 		return result;
 	}
 

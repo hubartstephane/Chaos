@@ -31,7 +31,7 @@ protected:
 		chaos::GPURenderParams render_params;
     mesh->DisplayWithProgram(program.get(), renderer, &main_uniform_provider, render_params);
 
-		debug_display.Display(renderer, draw_params.viewport.size.x, draw_params.viewport.size.y);
+		debug_display.Display(renderer, int(draw_params.viewport.size.x), int(draw_params.viewport.size.y));
 
     return true;
   }

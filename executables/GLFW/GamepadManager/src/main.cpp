@@ -78,7 +78,7 @@ protected:
 		float far_plane = 1000.0f;
 		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
-		debug_display.Display(renderer, draw_params.viewport.size.x, draw_params.viewport.size.y);
+		debug_display.Display(renderer, int(draw_params.viewport.size.x), int(draw_params.viewport.size.y));
 
 		return true;
 	}

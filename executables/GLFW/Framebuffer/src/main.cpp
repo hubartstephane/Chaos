@@ -13,7 +13,7 @@ protected:
 		{
 			glm::ivec2 size = (pass == 0) ?
 				framebuffer->GetSize():
-				draw_params.viewport.size;
+				glm::ivec2(int(draw_params.viewport.size.x), int(draw_params.viewport.size.y));
 
 			if (pass == 0)
 				renderer->PushFramebufferRenderContext(framebuffer.get(), true);

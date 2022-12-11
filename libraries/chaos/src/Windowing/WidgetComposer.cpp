@@ -22,17 +22,17 @@ namespace chaos
 		assert(widget != nullptr);
 		assert(widget->GetParentWidget() == this);
 
-	//auto it = std::find(child_widgets.begin(), child_widgets.end(), widget);
-	//	child_widgets.erase(std::remove(child_widgets.begin(), child_widgets.end(), it), child_widgets.end());
+		shared_ptr<Widget> prevent_destruction = widget;
+
+		auto it = std::find(child_widgets.begin(), child_widgets.end(), widget);
+		child_widgets.erase(it);
 
 		DetachChild(widget, update_placement_hierarchy);
-
 	}
 
 	// =====================================================================
 	// OverlayWidget implementation
 	// =====================================================================
-
 
 	void OverlayWidget::SetPlacement(aabox2 const& in_placement)
 	{

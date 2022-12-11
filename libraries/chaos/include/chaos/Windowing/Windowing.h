@@ -4,6 +4,7 @@
 #include "chaos/Windowing/Window.h"
 #include "chaos/Windowing/WidgetLayout.h"
 #include "chaos/Windowing/Widget.h"
+#include "chaos/Windowing/LinearComposerLayout.h"
 #include "chaos/Windowing/WidgetComposer.h"
 #include "chaos/Windowing/WindowRootWidget.h"
 #include "chaos/Windowing/ViewportLayout.h"

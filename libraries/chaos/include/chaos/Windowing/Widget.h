@@ -61,6 +61,11 @@ namespace chaos
 		/** returns whether the disposition should be updated */
 		bool IsUpdatePlacementHierarchyRequired() const { return placement_hierarchy_update_required; }
 
+		/** gets the child widget under the mouse */
+		Widget* GetChildWidgetUnderMouse(glm::vec2 const& position);
+		/** gets the child widget under the mouse */
+		Widget const * GetChildWidgetUnderMouse(glm::vec2 const& position) const;
+
 	protected:
 
 		/** override */

@@ -41,6 +41,73 @@ namespace chaos
 	// ==============================================================================================
 
 	template<typename T, int dimension>
+	bool IsPointInside(typename type_box<T, dimension>::vec_type const& pt, type_box<T, dimension> const& b, bool open_geometry = false)
+	{
+		if (IsGeometryEmpty(b))
+			return false;
+
+		if (open_geometry)
+		{
+			return
+				glm::all(glm::lessThanEqual(pt, b.position + b.half_size)) &&
+				glm::all(glm::greaterThanEqual(pt, b.position - b.half_size));
+		}
+		else
+		{
+			return
+				glm::all(glm::lessThan(pt, b.position + b.half_size)) &&
+				glm::all(glm::greaterThan(pt, b.position - b.half_size));
+		}
+	}
+
+	template<typename T, int dimension>
+	bool IsPointInside(typename type_aabox<T, dimension>::vec_type const& pt, type_aabox<T, dimension> const& b, bool open_geometry = false)
+	{
+		if (IsGeometryEmpty(b))
+			return false;
+
+		if (open_geometry)
+		{
+			return
+				glm::all(glm::lessThanEqual(pt, b.position + b.size)) &&
+				glm::all(glm::greaterThanEqual(pt, b.position));
+		}
+		else
+		{
+			return
+				glm::any(glm::lessThan(pt, b.position + b.size)) &&
+				glm::any(glm::greaterThan(pt, b.position));
+		}
+	}
+
+
+	template<typename T, int dimension>
+	bool IsPointInside(typename type_obox<T, dimension>::vec_type const& pt, type_obox<T, dimension> const& b, bool open_geometry = false)
+	{
+
+
+		assert(0); // shuxxx todo
+		return false;
+	}
+
+	template<typename T, int dimension>
+	bool IsPointInside(typename type_sphere<T, dimension>::vec_type const& pt, type_sphere<T, dimension> const& s, bool open_geometry = false)
+	{
+		if (IsGeometryEmpty(s))
+			return false;
+		if (open_geometry)
+			return glm::distance2(pt, s.position) < s.radius * s.radius;
+		else
+			return glm::distance2(pt, s.position) <= s.radius * s.radius;
+	}
+
+
+
+	// ==============================================================================================
+	// Restriction functions
+	// ==============================================================================================
+
+	template<typename T, int dimension>
 	/*CHAOS_API*/ auto GetClosestPoint(type_box<T, dimension> const& b, typename type_box<T, dimension>::vec_type const& src)
 	{
 		// clamp X, Y, Z for all planes

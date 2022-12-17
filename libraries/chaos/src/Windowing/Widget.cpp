@@ -186,4 +186,30 @@ namespace chaos
 		UpdatePlacementHierarchy(immediate_update);
 	}
 
+	Widget* Widget::GetChildWidgetUnderMouse(glm::vec2 const& position)
+	{
+		if (IsPointInside(position, placement))
+		{
+			for (auto& child : child_widgets)
+				if (child != nullptr)
+					if (Widget* result = child->GetChildWidgetUnderMouse(position))
+						return result;
+			return this;
+		}
+		return nullptr;
+	}
+
+	Widget const* Widget::GetChildWidgetUnderMouse(glm::vec2 const& position) const
+	{
+		if (IsPointInside(position, placement))
+		{
+			for (auto& child : child_widgets)
+				if (child != nullptr)
+					if (Widget const* result = child->GetChildWidgetUnderMouse(position))
+						return result;
+			return this;
+		}
+		return nullptr;
+	}
+
 }; // namespace chaos

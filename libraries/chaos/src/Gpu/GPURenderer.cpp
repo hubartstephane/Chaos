@@ -29,12 +29,23 @@ namespace chaos
 
 		GLint viewport_data[4];
 		glGetIntegerv(GL_VIEWPORT, viewport_data);
-		frd.viewport_to_restore.position = { viewport_data[0], viewport_data[1] };
-		frd.viewport_to_restore.size = { viewport_data[2], viewport_data[3] };
+		frd.stored_gpu_state.viewport.position = { viewport_data[0], viewport_data[1] };
+		frd.stored_gpu_state.viewport.size = { viewport_data[2], viewport_data[3] };
+
+		frd.stored_gpu_state.scissor_test = glIsEnabled(GL_SCISSOR_TEST);
+		if (frd.stored_gpu_state.scissor_test)
+		{
+			GLint scissor_data[4];
+			glGetIntegerv(GL_SCISSOR_BOX, scissor_data);
+			frd.stored_gpu_state.scissor.position = { scissor_data[0], scissor_data[1] };
+			frd.stored_gpu_state.scissor.size = { scissor_data[2], scissor_data[3] };
+		}
 
 		framebuffer_stack.push_back(frd);
 		// update GL state machine
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer->GetResourceID());
+		GLTools::SetViewport(framebuffer->GetBox());
+		glDisable(GL_SCISSOR_TEST);
 		return true;
 	}
 
@@ -68,7 +79,15 @@ namespace chaos
 
 		glBindFramebuffer(GL_FRAMEBUFFER, (previous_framebuffer == nullptr)? 0 : previous_framebuffer->GetResourceID());
 
-		GLTools::SetViewport(frd.viewport_to_restore);
+		GLTools::SetViewport(frd.stored_gpu_state.viewport);
+
+		if (frd.stored_gpu_state.scissor_test)
+		{
+			glEnable(GL_SCISSOR_TEST);
+			GLTools::SetScissorBox(frd.stored_gpu_state.scissor);
+		}
+		else
+			glDisable(GL_SCISSOR_TEST);
 
 		return true;
 	}

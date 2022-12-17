@@ -25,7 +25,7 @@ namespace chaos
 	{
 		assert(widget != nullptr);
 		assert(widget->GetParentWidget() == nullptr);
-		assert(dynamic_cast<WindowRootWidget*>(widget) == nullptr);
+		assert(dynamic_cast<WindowRootWidget*>(widget) == nullptr); // may not insert a root widget
 
 		if (insert_data.type == LinearComposerWidgetInsertType::END)
 		{
@@ -109,14 +109,25 @@ namespace chaos
 	}
 
 	// =====================================================================
-	// LinearComposerLayoutWidget implementation
+	// HorizontalBoxWidget implementation
 	// =====================================================================
 
-	LinearComposerLayout HorizontalBoxWidget::GetComposerLayout()
+	LinearComposerLayout HorizontalBoxWidget::GetComposerLayout() const
 	{
 		LinearComposerLayout result;
 		result.orientation = Orientation::HORIZONTAL;
 		//result.horizontal_mode = LinearComposerLayoutMode::REVERSED;
+		return result;
+	}
+
+	// =====================================================================
+	// HorizontalBoxWidget implementation
+	// =====================================================================
+
+	LinearComposerLayout VerticalBoxWidget::GetComposerLayout() const
+	{
+		LinearComposerLayout result;
+		result.orientation = Orientation::VERTICAL;
 		return result;
 	}
 

@@ -19,7 +19,14 @@ namespace chaos
 		{
 			if (WindowRootWidget* root_widget = result->GetRootWidget())
 			{
-				for (int i = 0 ; i < 3 ; ++i)
+
+
+
+
+
+
+
+				for (int i = 0 ; i < 2 ; ++i)
 				if (GameViewportWidget* game_viewport_widget = game_viewport_widget_class.CreateInstance())
 				{
 					WidgetLayout layout;
@@ -29,6 +36,13 @@ namespace chaos
 
 					root_widget->AddChildWidget(game_viewport_widget);
 				}
+
+
+
+
+
+
+
 			}
 		}
 		return result;

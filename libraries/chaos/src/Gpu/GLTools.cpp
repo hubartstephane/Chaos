@@ -16,6 +16,11 @@ namespace chaos
 		glViewport(GLint(viewport.position.x), GLint(viewport.position.y), GLint(viewport.size.x), GLint(viewport.size.y));
 	}
 
+	void GLTools::SetScissorBox(aabox2 const& scissor)
+	{
+		glScissor(GLint(scissor.position.x), GLint(scissor.position.y), GLint(scissor.size.x), GLint(scissor.size.y));
+	}
+
 	bool GLTools::IsMatrixType(GLenum type)
 	{
 		// XXX : samplers type, maybe some error or some missing elements

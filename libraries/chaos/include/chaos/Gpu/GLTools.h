@@ -16,6 +16,8 @@ namespace chaos
 
 		/** set the viewport */
 		static void SetViewport(aabox2 const& viewport);
+		/** set the scissor */
+		static void SetScissorBox(aabox2 const& scissor);
 
 		/** display generic information on the OpenGL driver */
 		static void DisplayGenericInformation();

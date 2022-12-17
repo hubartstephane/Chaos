@@ -2,10 +2,23 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
+	class GPUFramebufferRenderStoredGPUState;
 	class GPUFramebufferRenderData;
 	class GPURenderer;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+	class CHAOS_API GPUFramebufferRenderStoredGPUState
+	{
+	public:
+
+		/** the viewport to restore */
+		aabox2 viewport;
+		/** the scissor to restore */
+		aabox2 scissor;
+		/** the scissor test */
+		bool scissor_test = false;
+	};
 
 	class CHAOS_API GPUFramebufferRenderData
 	{
@@ -15,8 +28,9 @@ namespace chaos
 		shared_ptr<GPUFramebuffer> framebuffer;
 		/** whether mipmaps should be generated at the end of rendering */
 		bool generate_mipmaps = false;
-		/** the viewport to restore */
-		aabox2 viewport_to_restore;
+
+		/** the state that is to be restore at the end of the rendering */
+		GPUFramebufferRenderStoredGPUState stored_gpu_state;
 	};
 
 	class CHAOS_API GPURenderer : public Tickable

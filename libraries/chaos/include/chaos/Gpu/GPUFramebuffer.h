@@ -45,6 +45,8 @@ namespace chaos
 
 		/** a getter on size */
 		glm::ivec2 const& GetSize() const { return size; }
+		/** a getter on size */
+		aabox2 GetBox() const;
 
 		/** override */
 		virtual void Release() override;

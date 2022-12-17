@@ -33,4 +33,12 @@ namespace chaos
 		return true;
 	}
 
+	aabox2 GPUFramebuffer::GetBox() const
+	{
+		aabox2 result;
+		result.position = { 0, 0 };
+		result.size = { float(size.x), float(size.y) };
+		return result;
+	}
+
 }; // namespace chaos

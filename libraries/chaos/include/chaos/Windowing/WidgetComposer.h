@@ -96,7 +96,7 @@ namespace chaos
 		virtual void SetPlacement(aabox2 const& in_placement) override;
 
 		/** gets the layout for placement computation */
-		virtual LinearComposerLayout GetComposerLayout() { return {}; }
+		virtual LinearComposerLayout GetComposerLayout() const { return {}; }
 	};
 
 
@@ -111,7 +111,7 @@ namespace chaos
 	public:
 
 		/** override */
-		virtual LinearComposerLayout GetComposerLayout() override;
+		virtual LinearComposerLayout GetComposerLayout() const override;
 	};
 
 	/**
@@ -124,6 +124,8 @@ namespace chaos
 
 	public:
 
+		/** override */
+		virtual LinearComposerLayout GetComposerLayout() const override;
 	};
 
 

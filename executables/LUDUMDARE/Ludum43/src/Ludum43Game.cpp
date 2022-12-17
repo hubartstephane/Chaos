@@ -72,8 +72,6 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 
 		renderer->PushFramebufferRenderContext(framebuffer_worldlimits.get(), true);
 
-		glViewport(0, 0, viewport_size.x, viewport_size.y);
-
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
 		// ---------------------------------------------
@@ -127,8 +125,6 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 	// ---------------------------------------------
 	{
 		renderer->PushFramebufferRenderContext(framebuffer_deformed.get(), true);
-
-		glViewport(0, 0, viewport_size.x, viewport_size.y);
 
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 

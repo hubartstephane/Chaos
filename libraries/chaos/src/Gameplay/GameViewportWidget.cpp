@@ -59,12 +59,8 @@ namespace chaos
 				render_params.viewport = placement;
 				GLTools::SetViewport(render_params.viewport); // ignore the size from draw_params. use our own placement
 
-				// avoid glClearBufferfv(...) functions to clear the whole screen
-				glScissor(
-					GLint(render_params.viewport.position.x),
-					GLint(render_params.viewport.position.y),
-					GLint(render_params.viewport.size.x),
-					GLint(render_params.viewport.size.y));
+				// scissor: avoid glClearBufferfv(...) functions to clear the whole screen
+				GLTools::SetScissorBox(render_params.viewport);
 				glEnable(GL_SCISSOR_TEST);
 
 				game->Display(renderer, &main_uniform_provider, render_params);

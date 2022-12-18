@@ -46,7 +46,7 @@ namespace chaos
 		return Widget::OnMouseMoveImpl(delta);
 	}
 
-	bool GameViewportWidget::OnDraw(GPURenderer * renderer, WindowDrawParams const& draw_params, GPUProgramProviderInterface const * uniform_provider)
+	bool GameViewportWidget::OnDraw(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, WindowDrawParams const& draw_params)
 	{
 		if (game != nullptr)
 		{

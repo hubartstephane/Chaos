@@ -27,7 +27,7 @@ namespace chaos
 	protected:
 
 		/** the drawing specialization method */
-		virtual bool OnDraw(GPURenderer* renderer, WindowDrawParams const& draw_params, GPUProgramProviderInterface const* uniform_provider) { return true; }
+		virtual bool OnDraw(GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params) { return true; }
 	};
 
 #endif

@@ -6,6 +6,7 @@ namespace chaos
 	class HorizontalBoxWidget;
 	class VerticalBoxWidget;
 	class OverlayWidget;
+	class WrapBoxWidget;
 	class GridBoxWidget;
 	class LinearComposerWidgetInsertData;
 	class LinearComposerLayoutWidget;
@@ -119,6 +120,20 @@ namespace chaos
 	*/
 
 	class CHAOS_API VerticalBoxWidget : public LinearComposerLayoutWidget
+	{
+		CHAOS_DECLARE_OBJECT_CLASS(VerticalBoxWidget, LinearComposerWidget);
+
+	public:
+
+		/** override */
+		virtual LinearComposerLayout GetComposerLayout() const override;
+	};
+
+	/**
+	* WrapBoxWidget: a container whose children are aligned in a direction and change row/colum after number of element
+	*/
+
+	class CHAOS_API WrapBoxWidget : public LinearComposerLayoutWidget
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(VerticalBoxWidget, LinearComposerWidget);
 

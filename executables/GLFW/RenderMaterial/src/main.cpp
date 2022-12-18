@@ -83,7 +83,7 @@ protected:
 		return chaos::Window::OnKeyEventImpl(event);
 	}
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::WindowDrawParams const& draw_params, chaos::GPUProgramProviderInterface const * uniform_provider) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
 		float     far_plane = 10000.0f;
 		glm::vec4 clear_color(0.2f, 0.2f, 0.2f, 0.0f);

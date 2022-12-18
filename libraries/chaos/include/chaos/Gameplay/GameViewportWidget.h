@@ -27,7 +27,7 @@ namespace chaos
 		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
 
 		/** override */
-		virtual bool OnDraw(GPURenderer* renderer, WindowDrawParams const & draw_params, GPUProgramProviderInterface const * uniform_provider) override;
+		virtual bool OnDraw(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, WindowDrawParams const& draw_params) override;
 
 		/** override */
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;

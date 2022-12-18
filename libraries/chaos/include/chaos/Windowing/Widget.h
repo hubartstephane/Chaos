@@ -17,7 +17,7 @@ namespace chaos
 	public:
 
 		/** override */
-		virtual bool OnDraw(GPURenderer* renderer, WindowDrawParams const& draw_params, GPUProgramProviderInterface const* uniform_provider) override;
+		virtual bool OnDraw(GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params) override;
 
 		/** gets the widget owning this */
 		AutoCastable<Widget> GetParentWidget();

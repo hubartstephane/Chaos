@@ -116,12 +116,11 @@ namespace chaos
 	{
 		LinearComposerLayout result;
 		result.orientation = Orientation::HORIZONTAL;
-		//result.horizontal_mode = LinearComposerLayoutMode::REVERSED;
 		return result;
 	}
 
 	// =====================================================================
-	// HorizontalBoxWidget implementation
+	// VerticalBoxWidget implementation
 	// =====================================================================
 
 	LinearComposerLayout VerticalBoxWidget::GetComposerLayout() const
@@ -130,5 +129,26 @@ namespace chaos
 		result.orientation = Orientation::VERTICAL;
 		return result;
 	}
+
+	// =====================================================================
+	// WrapBoxWidget implementation
+	// =====================================================================
+
+	LinearComposerLayout WrapBoxWidget::GetComposerLayout() const
+	{
+		LinearComposerLayout result;
+
+
+
+
+
+
+
+
+
+		return result;
+	}
+
+
 
 }; // namespace chaos

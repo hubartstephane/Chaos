@@ -17,8 +17,17 @@ namespace chaos
 	public:
 
 		/** override */
-		virtual bool OnDraw(GPURenderer* renderer, WindowDrawParams const& draw_params, GPUProgramProviderInterface const* uniform_provider) override;
+		virtual bool OnDraw(GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params) override;
 
+		/** initialize widget content */
+		virtual void Initialize(char const* str);
+
+	protected:
+
+		/** the mesh owning the text */
+		shared_ptr<GPUMesh> mesh;
+		/** the bounding box of the text */
+		ParticleCorners bounding_box;
 	};
 
 #endif

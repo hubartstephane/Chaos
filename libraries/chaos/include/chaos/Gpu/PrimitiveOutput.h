@@ -249,7 +249,7 @@ namespace chaos
 
     /** text creation */
     template<typename VERTEX_TYPE>
-    /*CHAOS_API*/ QuadPrimitive<VERTEX_TYPE> DrawText(PrimitiveOutput<VERTEX_TYPE>& output, char const* in_text, ParticleTextGenerator::GeneratorParams const& params = {}, ParticleTextGenerator::CreateTextAllocationParams const& allocation_params = {});
+    /*CHAOS_API*/ QuadPrimitive<VERTEX_TYPE> DrawText(PrimitiveOutput<VERTEX_TYPE>& output, char const* in_text, ParticleTextGenerator::GeneratorParams const& params = {}, ParticleTextGenerator::CreateTextAllocationParams const& allocation_params = {}, ParticleCorners* out_bounding_box = nullptr);
 
 
 #else // => defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -336,7 +336,7 @@ namespace chaos
 
     /** text creation */
     template<typename VERTEX_TYPE>
-    QuadPrimitive<VERTEX_TYPE> DrawText(PrimitiveOutput<VERTEX_TYPE>& output, char const* in_text, ParticleTextGenerator::GeneratorParams const& params, ParticleTextGenerator::CreateTextAllocationParams const& allocation_params)
+    QuadPrimitive<VERTEX_TYPE> DrawText(PrimitiveOutput<VERTEX_TYPE>& output, char const* in_text, ParticleTextGenerator::GeneratorParams const& params, ParticleTextGenerator::CreateTextAllocationParams const& allocation_params, ParticleCorners * out_bounding_box)
     {
         // get the application
         WindowApplication const* window_application = Application::GetInstance();
@@ -350,6 +350,8 @@ namespace chaos
         ParticleTextGenerator::GeneratorResult generator_result;
         if (!generator->Generate(in_text, generator_result, params))
             return {};
+        if (out_bounding_box != nullptr)
+            *out_bounding_box = generator_result.bounding_box;
         // create the primitives
         return TextToPrimitives(output, generator_result, allocation_params);
     }

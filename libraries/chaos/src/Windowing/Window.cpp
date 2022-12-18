@@ -781,14 +781,14 @@ namespace chaos
 		if (!IsGeometryEmpty(draw_params.viewport))
 		{
 			GLTools::SetViewport(draw_params.viewport);
-			result |= OnDraw(renderer.get(), draw_params, uniform_provider);
+			result |= OnDraw(renderer.get(), uniform_provider, draw_params);
 		}
 		// draw the root widget
 		if (root_widget != nullptr)
 		{
 			if (root_widget->IsUpdatePlacementHierarchyRequired())
 				UpdateWidgetPlacementHierarchy();
-			result |= root_widget->OnDraw(renderer.get(), draw_params, uniform_provider);
+			result |= root_widget->OnDraw(renderer.get(), uniform_provider, draw_params);
 		}
 		return result;
 	}

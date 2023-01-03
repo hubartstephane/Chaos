@@ -63,6 +63,46 @@ namespace chaos
 		virtual void AddChildWidget(Widget* widget, LinearComposerWidgetInsertData insert_data = {}, bool immediate_update = true);
 		/** remove a child from the widget */
 		virtual void RemoveChildWidget(Widget* widget, bool immediate_update = true);
+
+	protected:
+
+		template<bool ADD_X, bool ADD_Y> 
+		WidgetSurfaceRequirement ComputeChildrenSurfaceRequirement() const
+		{
+			auto get_optional_value = [](std::optional<float> const& opt)
+			{
+				return opt.has_value() ? opt.value() : 0.0f;
+			};
+
+			WidgetSurfaceRequirement result;
+
+			for (auto& child : child_widgets)
+			{
+				if (child != nullptr)
+				{
+					WidgetSurfaceRequirement child_requirement = child->GetSurfaceRequirement();
+
+					if (child_requirement.wanted_size_x.has_value())
+					{
+						if constexpr (ADD_X)
+							result.wanted_size_x = get_optional_value(result.wanted_size_x) + child_requirement.wanted_size_x.value();
+						else
+							result.wanted_size_x = std::max(get_optional_value(result.wanted_size_x), child_requirement.wanted_size_x.value());
+					}
+					if (child_requirement.wanted_size_y.has_value())
+					{
+						if constexpr (ADD_Y)
+							result.wanted_size_y = get_optional_value(result.wanted_size_y) + child_requirement.wanted_size_y.value();
+						else
+							result.wanted_size_y = std::max(get_optional_value(result.wanted_size_y), child_requirement.wanted_size_y.value());
+					}
+
+					result.fill_x |= child_requirement.fill_x;
+					result.fill_y |= child_requirement.fill_y;
+				}
+			}
+			return result;
+		}
 	};
 
 #endif

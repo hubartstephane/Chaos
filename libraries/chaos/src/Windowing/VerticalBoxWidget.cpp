@@ -12,13 +12,7 @@ namespace chaos
 
 	WidgetSurfaceRequirement VerticalBoxWidget::GetSurfaceRequirement() const
 	{
-		WidgetSurfaceRequirement result;
-
-
-
-
-
-		return result;
+		return ComputeChildrenSurfaceRequirement<false, true>();
 	}
 
 }; // namespace chaos

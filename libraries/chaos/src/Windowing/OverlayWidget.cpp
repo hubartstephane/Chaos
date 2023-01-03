@@ -13,13 +13,7 @@ namespace chaos
 
 	WidgetSurfaceRequirement OverlayWidget::GetSurfaceRequirement() const
 	{
-		WidgetSurfaceRequirement result;
-
-
-
-
-
-		return result;
+		return ComputeChildrenSurfaceRequirement<false, false>();
 	}
 
 }; // namespace chaos

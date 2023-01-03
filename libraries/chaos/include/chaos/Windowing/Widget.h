@@ -67,15 +67,12 @@ namespace chaos
 		Widget const * GetChildWidgetUnderMouse(glm::vec2 const& position) const;
 
 		/** returns how many space does the widget wants */
-		WidgetDesiredPlacementInfo GetDesiredPlacementInfo() const;
+		virtual WidgetSurfaceRequirement GetSurfaceRequirement() const;
 
 	protected:
 
 		/** override */
 		virtual bool DoTick(float delta_time);
-
-		/** returns the size that wants the widget */
-		virtual WidgetDesiredSize GetDesiredSize() const;
 
 		/** called whenever the widget is orphaned */
 		virtual void OnDetachedFromParent(Widget * in_parent);

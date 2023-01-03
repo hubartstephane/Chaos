@@ -3,6 +3,47 @@
 
 namespace chaos
 {
+
+
+	PlaceHolderWidget::PlaceHolderWidget()
+	{
+		static int color = 0;
+
+		clear_color.x = float((color * 30 + 50) % 256) / float(255.0f);
+		clear_color.y = float((color * 30 + 50) % 256) / float(255.0f);
+		clear_color.z = float((color * 30 + 50) % 256) / float(255.0f);
+		clear_color.w = 1.0f;
+
+		++color;
+	
+	}
+
+
+	bool PlaceHolderWidget::OnDraw(GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params)
+	{
+		GLTools::SetViewport(placement);
+
+		// scissor: avoid glClearBufferfv(...) functions to clear the whole screen
+		GLTools::SetScissorBox(placement);
+		glEnable(GL_SCISSOR_TEST);
+
+		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
+
+		glDisable(GL_SCISSOR_TEST);
+
+		return true;
+	}
+
+
+
+
+
+
+
+
+
+
+
 	void GameViewportWidget::OnInputModeChanged(InputMode new_mode, InputMode old_mode)
 	{
 		if (game != nullptr)

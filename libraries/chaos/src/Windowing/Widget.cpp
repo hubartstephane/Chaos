@@ -212,18 +212,17 @@ namespace chaos
 		return nullptr;
 	}
 
-	WidgetDesiredPlacementInfo Widget::GetDesiredPlacementInfo() const
+	WidgetSurfaceRequirement Widget::GetSurfaceRequirement() const
 	{
+		WidgetSurfaceRequirement result;
+
+#if 0
 		WidgetDesiredPlacementInfo result;
 		(WidgetDesiredSize&)result = GetDesiredSize();
 		result.fill_x = (layout.fill_mode_x == WidgetFillMode::FILL);
 		result.fill_y = (layout.fill_mode_y == WidgetFillMode::FILL);
+#endif
 		return result;
-	}
-
-	WidgetDesiredSize Widget::GetDesiredSize() const
-	{
-		return {};
 	}
 
 }; // namespace chaos

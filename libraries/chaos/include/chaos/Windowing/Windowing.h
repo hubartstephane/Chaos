@@ -3,6 +3,7 @@
 #include "chaos/Windowing/WindowInterface.h"
 #include "chaos/Windowing/Window.h"
 #include "chaos/Windowing/WidgetLayout.h"
+#include "chaos/Windowing/WidgetSurfaceRequirement.h"
 #include "chaos/Windowing/Widget.h"
 #include "chaos/Windowing/TextWidget.h"
 #include "chaos/Windowing/LinearComposerLayout.h"

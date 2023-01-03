@@ -6,6 +6,27 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+	class CHAOS_API PlaceHolderWidget : public Widget
+	{
+		CHAOS_DECLARE_OBJECT_CLASS(PlaceHolderWidget, Widget);
+
+	public:
+
+
+		PlaceHolderWidget();
+
+		/** override */
+		virtual bool OnDraw(GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params) override;
+
+
+		glm::vec4 clear_color;
+
+	};
+
+
+
+
+
 	class CHAOS_API GameViewportWidget : public Widget
 	{
 		friend class GameApplication;

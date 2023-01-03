@@ -22,7 +22,7 @@ namespace chaos
 	/**
 	 * LinearComposerLayoutFillMode: indicates how child widgets should use available size
 	 */
-
+	 
 	//          max = 6
 	// <----------------------->
 	// +-----+-----+-----+-----+

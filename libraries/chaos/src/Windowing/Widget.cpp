@@ -212,4 +212,18 @@ namespace chaos
 		return nullptr;
 	}
 
+	WidgetDesiredPlacementInfo Widget::GetDesiredPlacementInfo() const
+	{
+		WidgetDesiredPlacementInfo result;
+		(WidgetDesiredSize&)result = GetDesiredSize();
+		result.fill_x = (layout.fill_mode_x == WidgetFillMode::FILL);
+		result.fill_y = (layout.fill_mode_y == WidgetFillMode::FILL);
+		return result;
+	}
+
+	WidgetDesiredSize Widget::GetDesiredSize() const
+	{
+		return {};
+	}
+
 }; // namespace chaos

@@ -15,14 +15,14 @@ namespace chaos
 		/** copy constructor */
 		Padding(Padding const & src) = default;
 		/** initialization constructor */
-		Padding(int padding):
+		Padding(float padding):
 			left(padding),
 			right(padding),
 			top(padding),
 			bottom(padding)
 		{}
 		/** initialization constructor */
-		Padding(int l, int r, int t, int b):
+		Padding(float l, float r, float t, float b):
 			left(l),
 			right(r),
 			top(t),
@@ -32,13 +32,13 @@ namespace chaos
 	public:
 
 		/** the left padding */
-		int left = 0;
+		float left = 0.0f;
 		/** the right padding */
-		int right = 0;
+		float right = 0.0f;
 		/** the top padding */
-		int top = 0;
+		float top = 0.0f;
 		/** the bottom padding */
-		int bottom = 0;
+		float bottom = 0.0f;
 	};
 
 #endif

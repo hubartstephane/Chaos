@@ -66,15 +66,16 @@ namespace chaos
 		/** gets the child widget under the mouse */
 		Widget const * GetChildWidgetUnderMouse(glm::vec2 const& position) const;
 
+		/** returns how many space does the widget wants */
+		WidgetDesiredPlacementInfo GetDesiredPlacementInfo() const;
+
 	protected:
 
 		/** override */
 		virtual bool DoTick(float delta_time);
 
-		/** tweak the input placement according to WidgetLayout */
-		aabox2 ApplyModifiersToPlacement(aabox2 const& in_placement) const;
-
-	protected:
+		/** returns the size that wants the widget */
+		virtual WidgetDesiredSize GetDesiredSize() const;
 
 		/** called whenever the widget is orphaned */
 		virtual void OnDetachedFromParent(Widget * in_parent);
@@ -85,6 +86,9 @@ namespace chaos
 		void AttachChild(Widget* widget, bool immediate_update);
 		/** utility method to update widget parent and call dedicated callback */
 		void DetachChild(Widget* widget, bool immediate_update);
+
+		/** tweak the input placement according to WidgetLayout */
+		aabox2 ApplyModifiersToPlacement(aabox2 const& in_placement) const;
 
 	protected:
 

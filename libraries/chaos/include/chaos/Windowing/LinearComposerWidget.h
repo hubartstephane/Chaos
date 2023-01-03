@@ -3,13 +3,7 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	class LinearComposerWidget;
-	class HorizontalBoxWidget;
-	class VerticalBoxWidget;
-	class OverlayWidget;
-	class WrapBoxWidget;
-	class GridBoxWidget;
 	class LinearComposerWidgetInsertData;
-	class LinearComposerLayoutWidget;
 
 	enum class LinearComposerWidgetInsertType;
 
@@ -70,104 +64,6 @@ namespace chaos
 		/** remove a child from the widget */
 		virtual void RemoveChildWidget(Widget* widget, bool immediate_update = true);
 	};
-
-	/**
-	* OverlayWidget: a container whose children are one over the other
-	*/
-
-	class CHAOS_API OverlayWidget : public LinearComposerWidget
-	{
-		CHAOS_DECLARE_OBJECT_CLASS(OverlayWidget, LinearComposerWidget);
-
-	public:
-
-		/** override */
-		virtual void SetPlacement(aabox2 const& in_placement) override;
-	};
-
-	/**
-	* LinearComposerLayoutWidget: a composer that use the span layout to compute child placement
-	*/
-
-	class CHAOS_API LinearComposerLayoutWidget : public LinearComposerWidget
-	{
-	public:
-
-		/** override */
-		virtual void SetPlacement(aabox2 const& in_placement) override;
-
-		/** gets the layout for placement computation */
-		virtual LinearComposerLayout GetComposerLayout() const { return {}; }
-	};
-
-
-	/**
-	* HorizontalBoxWidget: a container whose children are horizontally aligned
-	*/
-
-	class CHAOS_API HorizontalBoxWidget : public LinearComposerLayoutWidget
-	{
-		CHAOS_DECLARE_OBJECT_CLASS(HorizontalBoxWidget, LinearComposerWidget);
-
-	public:
-
-		/** override */
-		virtual LinearComposerLayout GetComposerLayout() const override;
-	};
-
-	/**
-	* VerticalBoxWidget: a container whose children are vertically aligned
-	*/
-
-	class CHAOS_API VerticalBoxWidget : public LinearComposerLayoutWidget
-	{
-		CHAOS_DECLARE_OBJECT_CLASS(VerticalBoxWidget, LinearComposerWidget);
-
-	public:
-
-		/** override */
-		virtual LinearComposerLayout GetComposerLayout() const override;
-	};
-
-	/**
-	* WrapBoxWidget: a container whose children are aligned in a direction and change row/colum after number of element
-	*/
-
-	class CHAOS_API WrapBoxWidget : public LinearComposerLayoutWidget
-	{
-		CHAOS_DECLARE_OBJECT_CLASS(VerticalBoxWidget, LinearComposerWidget);
-
-	public:
-
-		/** override */
-		virtual LinearComposerLayout GetComposerLayout() const override;
-	};
-
-
-
-	/**
-	* GridBoxWidget: a container whose children are dispatched on a grid
-	*/
-
-	class CHAOS_API GridBoxWidget : public Widget
-	{
-
-	public:
-
-
-	};
-
-
-
-
-
-
-
-
-
-
-
-
 
 #endif
 

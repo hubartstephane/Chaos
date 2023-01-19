@@ -1,141 +1,146 @@
 #include "chaos/Chaos.h"
 
-#include <functional>
-#include <memory>
+// https://www.youtube.com/watch?v=pP15kDeXJU0
+// https://www.youtube.com/watch?v=kSWfushlvB8
 
-template <class T, std::size_t N, class Allocator = std::allocator<T>>
-class stack_allocator
+template <typename T, size_t COUNT, typename FALLBACK_ALLOCATOR = std::allocator<T>>
+class InplaceAllocator
 {
 public:
+	typedef size_t size_type;
+	typedef ptrdiff_t difference_type;
+	typedef T* pointer;
+	typedef const T* const_pointer;
+	typedef T& reference;
+	typedef const T& const_reference;
+	typedef T value_type;
 
-    typedef typename std::allocator_traits<Allocator>::value_type value_type;
-    typedef typename std::allocator_traits<Allocator>::pointer pointer;
-    typedef typename std::allocator_traits<Allocator>::const_pointer const_pointer;
-    typedef typename Allocator::reference reference;
-    typedef typename Allocator::const_reference const_reference;
-    typedef typename std::allocator_traits<Allocator>::size_type size_type;
-    typedef typename std::allocator_traits<Allocator>::difference_type difference_type;
+	/** default constructor */
+	InplaceAllocator(FALLBACK_ALLOCATOR const& in_fallback_allocator = {}) :
+		fallback_allocator(in_fallback_allocator) {}
+	/** copy constructor */
+	InplaceAllocator(InplaceAllocator const& src) :
+		fallback_allocator(src.fallback_allocator)
+	{}
+	/** constructor for an instance of allocator with another class */
+	template <typename OTHER_T, size_t OTHER_COUNT, typename OTHER_FALLBACK_ALLOCATOR>
+	InplaceAllocator(InplaceAllocator<OTHER_T, OTHER_COUNT, OTHER_FALLBACK_ALLOCATOR> const& src) :
+		fallback_allocator(src.GetFallbackAllocator())
+	{}
 
-    typedef typename std::allocator_traits<Allocator>::const_void_pointer const_void_pointer;
-    typedef Allocator allocator_type;
+	/** copy operator */
+	InplaceAllocator<T, COUNT, FALLBACK_ALLOCATOR>& operator=(InplaceAllocator<T, COUNT, FALLBACK_ALLOCATOR> const& src)
+	{
+		fallback_allocator = src.fallback_allocator;
+		return *this;
+	}
+	/** copy operator for an instance of allocator with another class */
+	template <typename OTHER_T, size_t OTHER_COUNT, typename OTHER_FALLBACK_ALLOCATOR>
+	InplaceAllocator& operator=(InplaceAllocator<OTHER_T, OTHER_COUNT, OTHER_FALLBACK_ALLOCATOR> const& src)
+	{
+		fallback_allocator = src.GetFallbackAllocator();
+		return *this;
+	}
 
-public:
+	/** reserve some memory */
+	pointer allocate(size_type count)
+	{
+		if (count <= COUNT)
+			return (pointer)buffer;
+		auto result = fallback_allocator.allocate(count);
 
-    explicit stack_allocator(const allocator_type& alloc = allocator_type())
-        : m_allocator(alloc), m_begin(nullptr), m_end(nullptr), m_stack_pointer(nullptr)
-    { }
 
-    explicit stack_allocator(pointer buffer, const allocator_type& alloc = allocator_type())
-        : m_allocator(alloc), m_begin(buffer), m_end(buffer + N),
-        m_stack_pointer(buffer)
-    { }
+		return result;
+	}
 
-    template <class U>
-    stack_allocator(const stack_allocator<U, N, Allocator>& other)
-        : m_allocator(other.m_allocator), m_begin(other.m_begin), m_end(other.m_end),
-        m_stack_pointer(other.m_stack_pointer)
-    { }
+	/** free memory */
+	void deallocate(pointer p, size_type count)
+	{
+		if (p == (pointer)buffer)
+			return;
+		fallback_allocator.deallocate(p, count);
+	}
 
-    constexpr static size_type capacity()
-    {
-        return N;
-    }
 
-    pointer allocate(size_type n, const_void_pointer hint = const_void_pointer())
-    {
-        if (n <= size_type(std::distance(m_stack_pointer, m_end)))
-        {
-            pointer result = m_stack_pointer;
-            m_stack_pointer += n;
-            return result;
-        }
+	template<typename U, typename... ARGS>
+	void construct(U* p, ARGS && ...args)
+	{
+		new (p) U(std::forward<ARGS>(args)...); // in place allocation
+	}
 
-        return m_allocator.allocate(n, hint);
-    }
+	/** destroy an element allocated */
+	void destroy(pointer p)
+	{
+		p->~T();
+	}
 
-    void deallocate(pointer p, size_type n)
-    {
-        if (pointer_to_internal_buffer(p))
-        {
-            m_stack_pointer -= n;
-        }
-        else m_allocator.deallocate(p, n);
-    }
+	/** maximum capacity of the allocator */
+	size_type max_size() const
+	{
+		return std::max(
+			COUNT,
+			typename std::allocator_traits<FALLBACK_ALLOCATOR>::max_size(fallback_allocator)
+		);
+	}
 
-    size_type max_size() const noexcept
-    {
-        return m_allocator.max_size();
-    }
+	/** convert adresses */
+	pointer       address(reference x) const { return &x; }
+	const_pointer address(const_reference x) const { return &x; }
 
-    template <class U, class... Args>
-    void construct(U* p, Args&&... args)
-    {
-        m_allocator.construct(p, std::forward<Args>(args)...);
-    }
+	/** gets the fallback allocator */
+	FALLBACK_ALLOCATOR const& GetFallbackAllocator() const
+	{
+		return fallback_allocator;
+	}
 
-    template <class U>
-    void destroy(U* p)
-    {
-        m_allocator.destroy(p);
-    }
+	/** rebind the alocator */
+	template<typename OTHER_T>
+	struct rebind
+	{
+		using other = InplaceAllocator<
+			OTHER_T,
+			COUNT,
+			typename std::allocator_traits<FALLBACK_ALLOCATOR>::template rebind_alloc<OTHER_T>
+		>;
+	};
 
-    pointer address(reference x) const noexcept
-    {
-        if (pointer_to_internal_buffer(std::addressof(x)))
-        {
-            return std::addressof(x);
-        }
+protected:
 
-        return m_allocator.address(x);
-    }
+	/** internal buffer */
+	char buffer[COUNT * sizeof(T)];
+	/** the fallback allocator */
+	FALLBACK_ALLOCATOR fallback_allocator;
 
-    const_pointer address(const_reference x) const noexcept
-    {
-        if (pointer_to_internal_buffer(std::addressof(x)))
-        {
-            return std::addressof(x);
-        }
-
-        return m_allocator.address(x);
-    }
-
-    template <class U>
-    struct rebind { typedef stack_allocator<U, N, allocator_type> other; };
-
-    pointer buffer() const noexcept
-    {
-        return m_begin;
-    }
-
-private:
-
-    bool pointer_to_internal_buffer(const_pointer p) const
-    {
-        return (!(std::less<const_pointer>()(p, m_begin)) && (std::less<const_pointer>()(p, m_end)));
-    }
-
-    allocator_type m_allocator;
-    pointer m_begin;
-    pointer m_end;
-    pointer m_stack_pointer;
 };
 
-template <class T1, std::size_t N, class Allocator, class T2>
-bool operator == (const stack_allocator<T1, N, Allocator>& lhs,
-    const stack_allocator<T2, N, Allocator>& rhs) noexcept
+
+template <typename T, size_t COUNT, typename FALLBACK_ALLOCATOR, typename OTHER_T, size_t OTHER_COUNT, typename OTHER_FALLBACK_ALLOCATOR>
+bool operator==(InplaceAllocator<T, COUNT, FALLBACK_ALLOCATOR> const& left, InplaceAllocator<OTHER_T, OTHER_COUNT, OTHER_FALLBACK_ALLOCATOR> const& right)
 {
-    return lhs.buffer() == rhs.buffer();
+	return false;
 }
 
-template <class T1, std::size_t N, class Allocator, class T2>
-bool operator != (const stack_allocator<T1, N, Allocator>& lhs,
-    const stack_allocator<T2, N, Allocator>& rhs) noexcept
-{
-    return !(lhs == rhs);
-}
+
+
+
+
+
 
 int main(int argc, char** argv, char** env)
 {
+	std::vector<int, InplaceAllocator<int, 15>> v;
+	v.push_back(3);
+	v.push_back(4);
+	v.push_back(5);
+	v.push_back(6);
+	v.push_back(7);
+	v.push_back(8);
+	v.push_back(9);
+	v.push_back(10);
+
+
+
+
 
 
 	return 0;

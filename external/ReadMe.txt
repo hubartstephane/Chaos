@@ -73,3 +73,14 @@ GLFW
 
 	cmake .
 	
+	
+GLSLANG
+=======
+
+	suivre
+
+    https://github.com/KhronosGroup/glslang
+	
+	(attention, modifier le shebang de update_glslang_sources.py pour trouver python)
+
+	git clone https://github.com/KhronosGroup/glslang.git

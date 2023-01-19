@@ -19,8 +19,8 @@ project:DependOnLib("ZLIB")
 project:DependOnLib("MSVC")
 project:DependOnLib("ASSIMP")
 project:DependOnLib("FBX")
---project:DependOnLib("VULKAN")
---project:DependOnLib("GLSLANG")
+project:DependOnLib("GLSLANG")
+
 project:DependOnStandardLib("Dbghelp.lib")  -- used on windows for call stack introspection 
 project:DependOnStandardLib("winmm.lib")    -- used for midi
 

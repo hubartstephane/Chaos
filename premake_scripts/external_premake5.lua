@@ -51,6 +51,14 @@ local GLFW_LIB_PATH = path.join("src", RELEASE)
 build:DeclareExternalLib("GLFW", GLFW_PATH, GLFW_INC_PATH, GLFW_LIB_PATH, "glfw3.lib")
 
 --------------------------------------------------------------------
+-- GLSLANG
+--------------------------------------------------------------------
+local GLSLANG_PATH = path.join("glslang", "install")
+local GLSLANG_INC_PATH = "include"
+local GLSLANG_LIB_PATH = "lib"
+build:DeclareExternalLib("GLSLANG", GLSLANG_PATH, GLSLANG_INC_PATH, GLSLANG_LIB_PATH, "glslang.lib")
+
+--------------------------------------------------------------------
 -- VISUAL STUDIO REDISTRIBUABLE
 --------------------------------------------------------------------
 local MSVC_PATH = "MSVC_Redist"  

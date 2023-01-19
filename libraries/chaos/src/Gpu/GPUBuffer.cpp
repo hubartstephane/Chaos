@@ -26,9 +26,6 @@ namespace chaos
 		Release();
 		// create new resource
 		glCreateBuffers(1, &buffer_id);
-		
-		//glNamedBufferStorage(buffer_id, 6666, nullptr, /*GL_MAP_READ_BIT | */GL_MAP_WRITE_BIT | GL_DYNAMIC_STORAGE_BIT);
-		// shuxxx
 		if (buffer_id == 0)
 			return false;
 		ownership = true;

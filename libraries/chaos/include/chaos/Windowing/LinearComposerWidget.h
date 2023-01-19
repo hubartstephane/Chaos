@@ -54,7 +54,6 @@ namespace chaos
 
 	class CHAOS_API LinearComposerWidget : public Widget
 	{
-
 		CHAOS_DECLARE_OBJECT_CLASS(LinearComposerWidget, Widget);
 
 	public:
@@ -66,6 +65,7 @@ namespace chaos
 
 	protected:
 
+		/** utility method to compute children surface requirement */
 		template<bool ADD_X, bool ADD_Y> 
 		WidgetSurfaceRequirement ComputeChildrenSurfaceRequirement() const
 		{

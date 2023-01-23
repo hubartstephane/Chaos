@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/VULKAN/GlslangTest1
+-- ROOT_PATH/executables/VULKAN/VulkanTest1
 -- =============================================================================
 
 local project = build:ConsoleApp()

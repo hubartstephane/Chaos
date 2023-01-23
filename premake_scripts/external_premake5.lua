@@ -56,7 +56,48 @@ build:DeclareExternalLib("GLFW", GLFW_PATH, GLFW_INC_PATH, GLFW_LIB_PATH, "glfw3
 local GLSLANG_PATH = path.join("glslang", "install")
 local GLSLANG_INC_PATH = "include"
 local GLSLANG_LIB_PATH = "lib"
-build:DeclareExternalLib("GLSLANG", GLSLANG_PATH, GLSLANG_INC_PATH, GLSLANG_LIB_PATH, "glslang.lib")
+
+local GLSLANG_LIBS = {
+
+	DEBUG = {
+		"glslangd.lib",
+		"MachineIndependentd.lib",
+		"GenericCodeGend.lib",
+		"glslang-default-resource-limitsd.lib",
+		"HLSLd.lib",
+		"OGLCompilerd.lib",
+		"OSDependentd.lib",
+		"SPIRVd.lib",
+		"SPIRV-Toolsd.lib",
+		"SPIRV-Tools-diffd.lib",
+		"SPIRV-Tools-linkd.lib",
+		"SPIRV-Tools-lintd.lib",
+		"SPIRV-Tools-optd.lib",
+		"SPIRV-Tools-reduced.lib",
+		"SPIRV-Tools-sharedd.lib",
+		"SPVRemapperd.lib"
+	},
+	RELEASE = {
+		"glslang.lib",
+		"MachineIndependent.lib",
+		"GenericCodeGen.lib",
+		"glslang-default-resource-limits.lib",
+		"HLSL.lib",
+		"OGLCompiler.lib",
+		"OSDependent.lib",
+		"SPIRV.lib",
+		"SPIRV-Tools.lib",
+		"SPIRV-Tools-diff.lib",
+		"SPIRV-Tools-link.lib",
+		"SPIRV-Tools-lint.lib",
+		"SPIRV-Tools-opt.lib",
+		"SPIRV-Tools-reduce.lib",
+		"SPIRV-Tools-shared.lib",
+		"SPVRemapper.lib"
+	}
+}
+
+build:DeclareExternalLib("GLSLANG", GLSLANG_PATH, GLSLANG_INC_PATH, GLSLANG_LIB_PATH, GLSLANG_LIBS)
 
 --------------------------------------------------------------------
 -- VISUAL STUDIO REDISTRIBUABLE
@@ -221,25 +262,6 @@ local VULKAN_TOCOPY  = { -- @ because this copies the file directly in
 } 
 
 DeclareExternalLib("VULKAN", VULKAN_INC_PATH, VULKAN_LIB_PATH, VULKAN_LIBNAME, VULKAN_TOCOPY)
-
-  -- GLSLANG   
-  
-local GLSLANG_PATH = path.join("VulkanSDK", "1.2.162.0")
-local GLSLANG_INC_PATH = path.join(GLSLANG_PATH, "Include")
-local GLSLANG_LIB_PATH = path.join(GLSLANG_PATH, "Lib")
-local GLSLANG_BIN_PATH = path.join(GLSLANG_PATH, "BIN")
-
-local GLSLANG_COMMON_LIBNAME = {"spirv-cross-core.lib", "spirv-cross-cpp.lib", "spirv-cross-glsl.lib"}
-local GLSLANG_LIBNAME = 
-{
-  DEBUG = {"glslangd.lib", "MachineIndependentd.lib", "GenericCodeGend.lib", "OSDependentd.lib", "OGLCompilerd.lib", "HLSLd.lib", "SPIRVd.lib", table.unpack(GLSLANG_COMMON_LIBNAME)},
-  RELEASE = {"glslang.lib", "MachineIndependent.lib", "GenericCodeGen.lib", "OSDependent.lib", "OGLCompiler.lib", "HLSL.lib", "SPIRV.lib", table.unpack(GLSLANG_COMMON_LIBNAME)}
-}
-
---local GLSLANG_LIBNAME = {"spirv-cross-core.lib", "spirv-cross-cpp.lib", "spirv-cross-glsl.lib", "glslang.lib", "MachineIndependent.lib", "GenericCodeGen.lib", "shaderc.lib", "OSDependent.lib", "OGLCompiler.lib", "HLSL.lib"}
---local GLSLANG_LIBNAME = {"spirv-cross-c.lib", "spirv-cross-core.lib", "spirv-cross-cpp.lib", "spirv-cross-c-shared.lib", "spirv-cross-glsl.lib", "spirv-cross-hlsl.lib", "spirv-cross-msl.lib", "spirv-cross-reflect.lib", "spirv-cross-util.lib"}
-
-DeclareExternalLib("GLSLANG", GLSLANG_INC_PATH, GLSLANG_LIB_PATH, GLSLANG_LIBNAME)
 
 ]]--
 

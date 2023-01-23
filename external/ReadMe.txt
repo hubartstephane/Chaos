@@ -84,3 +84,5 @@ GLSLANG
 	(attention, modifier le shebang de update_glslang_sources.py pour trouver python)
 
 	git clone https://github.com/KhronosGroup/glslang.git
+	
+	(attention, le faut installer DEBUG et RELEASE ... parcequ'on ne peut pas linker CHAOS DEBUG avec GLSLANG RELEASE)

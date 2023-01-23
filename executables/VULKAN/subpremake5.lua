@@ -3,3 +3,4 @@
 -- =============================================================================
 
 build:ProcessSubPremake("VulkanTest1")
+build:ProcessSubPremake("GlslangTest1")

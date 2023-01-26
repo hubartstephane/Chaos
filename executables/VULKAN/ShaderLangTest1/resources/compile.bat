@@ -1,0 +1,2 @@
+F:\Personnel\Programmation\external\VulkanSDK\1.2.162.0\Bin\glslc.exe shader.vert -o vert.spv -mfmt=c
+F:\Personnel\Programmation\external\VulkanSDK\1.2.162.0\Bin\glslc.exe shader.frag -o frag.spv -mfmt=c

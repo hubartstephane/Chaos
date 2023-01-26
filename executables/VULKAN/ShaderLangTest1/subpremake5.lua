@@ -1,7 +1,6 @@
 -- =============================================================================
--- ROOT_PATH/executables/VULKAN
+-- ROOT_PATH/executables/VULKAN/ShaderLangTest1
 -- =============================================================================
 
-build:ProcessSubPremake("VulkanTest1")
-build:ProcessSubPremake("GlslangTest1")
-build:ProcessSubPremake("ShaderLangTest1")
+local project = build:ConsoleApp()
+project:DependOnLib("CHAOS")

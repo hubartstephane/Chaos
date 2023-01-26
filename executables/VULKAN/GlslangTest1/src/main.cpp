@@ -36,17 +36,20 @@ int main(int argc, char ** argv, char ** env)
 		.stage = shader_stage,
 
 
-		//.client = GLSLANG_CLIENT_VULKAN,
-		//.client_version = GLSLANG_TARGET_VULKAN_1_2,
-
-		.client = GLSLANG_CLIENT_OPENGL,
-		
-		.client_version = GLSLANG_TARGET_OPENGL_450,
-
-
-
+		.client = GLSLANG_CLIENT_VULKAN,
+		.client_version = GLSLANG_TARGET_VULKAN_1_2,
 		.target_language = GLSLANG_TARGET_SPV,
 		.target_language_version = GLSLANG_TARGET_SPV_1_5,
+
+		//.client = GLSLANG_CLIENT_OPENGL,		
+		//.client_version = GLSLANG_TARGET_OPENGL_450,
+		// .target_language = GLSLANG_TARGET_SPV,
+		//.target_language_version = GLSLANG_TARGET_SPV_1_0,
+
+
+
+		
+
 		.code = pixel_shader_source,
 		.default_version = 100,
 		.default_profile = GLSLANG_NO_PROFILE,
@@ -98,11 +101,28 @@ int main(int argc, char ** argv, char ** env)
 			return 0;
 		}
 
+		glslang_spv_options_t options =
+		{
+			.generate_debug_info = true,
+			.strip_debug_info = true,
+			.disable_optimizer = true,
+			.optimize_size = true,
+			.disassemble = true,
+			.validate = true,
+			.emit_nonsemantic_shader_debug_info = true,
+			.emit_nonsemantic_shader_debug_source = true
+		};
+
+		//glslang_program_SPIRV_generate_with_options(program, shader_stage, &options);
+
 		glslang_program_SPIRV_generate(program, shader_stage);
 
 
 		std::vector<uint32_t> outShaderModule(glslang_program_SPIRV_get_size(program));
 		glslang_program_SPIRV_get(program, outShaderModule.data());
+
+
+		char const * ccc = glslang_program_SPIRV_get_messages(program);
 
 		auto* aaa = glslang_program_get_info_log(program);
 		auto* bbb = glslang_program_get_info_debug_log(program);

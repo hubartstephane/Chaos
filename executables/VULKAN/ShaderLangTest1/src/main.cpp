@@ -7,6 +7,14 @@
 #include "glslang/public/ResourceLimits.h"
 
 
+//#include "./../glslang/Include/ShHandle.h"
+//#include "./../glslang/Public/ShaderLang.h"
+#include "glslang/SPIRV/GlslangToSpv.h"
+#include "glslang/SPIRV/GLSL.std.450.h"
+#include "glslang/SPIRV/doc.h"
+#include "glslang/SPIRV/disassemble.h"
+
+
 char const * pixel_shader_source= R"SHADER_SOURCE(
 
 	#version 450 core
@@ -22,9 +30,11 @@ char const * pixel_shader_source= R"SHADER_SOURCE(
 		float gray;
 	};
 
+	uniform float alpha;
+
 	void main()
 	{
-		outColor = vec4(gray, gray, gray, 1.0);
+		outColor = vec4(gray, gray, gray, alpha);
 	}
 
 )SHADER_SOURCE";
@@ -146,7 +156,17 @@ glslang::TProgram* CreateProgram(std::map<EShLanguage, char const*> const& shade
 				char const* shader_names[] = { "shader_source1" };
 				
 				shader->setStringsWithLengthsAndNames(shader_strings, shader_strings_length, shader_names, 1);
-				shader->setEnvInput(glslang::EShSourceGlsl, it.first, glslang::EShClientVulkan, 110); // important so that we know how to compile
+				
+				
+				
+				//shader->setEnvInput(glslang::EShSourceGlsl, it.first, glslang::EShClientVulkan, 110); // important so that we know how to compile
+
+				shader->setEnvInput(glslang::EShSourceGlsl, it.first, glslang::EShClientOpenGL, 450); // important so that we know how to compile
+				
+				
+				
+				
+				
 				shader->setEnvTarget(glslang::EShTargetSpv, glslang::EShTargetSpv_1_0); // ??? we have source language below, and client language. what is this ?
 				
 				shader->setEntryPoint("main"); 
@@ -279,7 +299,6 @@ int main(int argc, char ** argv, char ** env)
 {
 	chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
-
 	glslang::InitializeProcess();
 
 	std::map<EShLanguage, char const*> shaders =
@@ -290,6 +309,20 @@ int main(int argc, char ** argv, char ** env)
 
 	if (glslang::TProgram* program = CreateProgram(shaders))
 	{
+		std::vector<unsigned int> spirv;
+		spv::SpvBuildLogger logger;
+		glslang::SpvOptions spvOptions;
+
+		spvOptions.stripDebugInfo = true;
+		spvOptions.disableOptimizer = true;
+		spvOptions.optimizeSize = true;
+		spvOptions.disassemble = true;
+		spvOptions.validate = true;
+		glslang::GlslangToSpv(*program->getIntermediate((EShLanguage)EShLangVertex), spirv, &logger, &spvOptions);
+
+
+		glslang::TIntermediate * inter = program->getIntermediate((EShLanguage)EShLangVertex);
+
 		DumpProgramInternals(program);
 
 

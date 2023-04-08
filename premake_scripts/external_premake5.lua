@@ -242,28 +242,18 @@ local JSON_PATH     = "json"
 local JSON_INC_PATH = path.join("single_include", "nlohmann")
 build:DeclareExternalLib("JSON", JSON_PATH, JSON_INC_PATH, nil, nil)
 
-
-
-	
-	--[[
-	
-  -- VULKAN   
-	
-local VULKAN_PATH = path.join("VulkanSDK", "1.2.162.0")
-local VULKAN_INC_PATH = path.join(VULKAN_PATH, "Include")
-local VULKAN_LIB_PATH = path.join(VULKAN_PATH, "Lib")
-local VULKAN_BIN_PATH = path.join(VULKAN_PATH, "BIN")
+--------------------------------------------------------------------
+-- VULKAN
+--------------------------------------------------------------------
+local VULKAN_PATH = path.join("VulkanSDK", "1.3.236.0")
+local VULKAN_INC_PATH = "Include"
+local VULKAN_LIB_PATH = "Lib"
+local VULKAN_BIN_PATH = "Bin"
 local VULKAN_LIBNAME = {"vulkan-1.lib", "VkLayer_utils.lib"}
 
-
-local VULKAN_TOCOPY  = { -- @ because this copies the file directly in
-    "@" .. path.join(VULKAN_BIN_PATH, "VkLayer_api_dump.*"),
-    "@" .. path.join(VULKAN_BIN_PATH, "VkLayer_khronos_validation.*")
+local VULKAN_TOCOPY  = {
+	path.join(VULKAN_BIN_PATH, "VkLayer_api_dump.dll"),
+	path.join(VULKAN_BIN_PATH, "VkLayer_khronos_validation.dll")
 } 
 
-DeclareExternalLib("VULKAN", VULKAN_INC_PATH, VULKAN_LIB_PATH, VULKAN_LIBNAME, VULKAN_TOCOPY)
-
-]]--
-
-
-
+build:DeclareExternalLib("VULKAN", VULKAN_PATH, VULKAN_INC_PATH, VULKAN_LIB_PATH, VULKAN_LIBNAME, VULKAN_TOCOPY)

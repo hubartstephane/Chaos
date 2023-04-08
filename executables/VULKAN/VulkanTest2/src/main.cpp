@@ -58,12 +58,9 @@ std::vector<VulkanExtensionProperties> GetVulkanExtensionProperties(char const* 
 	return result;
 }
 
-VulkanInstanceInfo GetVulkanInstanceInfo()
+std::vector<VulkanLayerProperties> GetVulkanLayerProperties()
 {
-	VulkanInstanceInfo result;
-
-	// get instance extension
-	result.extension_properties = GetVulkanExtensionProperties(nullptr);
+	std::vector<VulkanLayerProperties> result;
 
 	// get instance layers properties
 	uint32_t layer_property_count = 0;
@@ -71,7 +68,7 @@ VulkanInstanceInfo GetVulkanInstanceInfo()
 	{
 		return {};
 	}
-	
+
 	// get layers and their extensions
 	if (layer_property_count > 0)
 	{
@@ -80,15 +77,23 @@ VulkanInstanceInfo GetVulkanInstanceInfo()
 		{
 			return {};
 		}
-		result.layer_properties.reserve(layer_property_count);
+		result.reserve(layer_property_count);
 		for (VkLayerProperties const& properties : layer_properties)
 		{
 			VulkanLayerProperties p;
 			p.properties = properties;
 			p.extension_properties = GetVulkanExtensionProperties(properties.layerName);
-			result.layer_properties.push_back(std::move(p));
+			result.push_back(std::move(p));
 		}
 	}
+	return result;
+}
+
+VulkanInstanceInfo GetVulkanInstanceInfo()
+{
+	VulkanInstanceInfo result;
+	result.extension_properties = GetVulkanExtensionProperties(nullptr);
+	result.layer_properties = GetVulkanLayerProperties();
 	return result;
 }
 
@@ -115,9 +120,15 @@ public:
 	VkPhysicalDeviceMemoryProperties memory_properties;
 
 	std::vector<VulkanPhysicalDeviceQueueFamilyInfo> queue_family_properties;
+
+	std::vector<VulkanLayerProperties> layer_properties;
+
+	std::vector<VulkanExtensionProperties> extension_properties;
 };
 
-std::vector<VulkanPhysicalDeviceQueueFamilyInfo> GetQueueFamiliesInfo(VkPhysicalDevice device)
+// ====================================================================================
+
+std::vector<VulkanPhysicalDeviceQueueFamilyInfo> GetPhysicalDeviceQueueFamiliesInfo(VkPhysicalDevice device)
 {
 	std::vector<VulkanPhysicalDeviceQueueFamilyInfo> result;
 
@@ -140,6 +151,67 @@ std::vector<VulkanPhysicalDeviceQueueFamilyInfo> GetQueueFamiliesInfo(VkPhysical
 	return result;
 }
 
+std::vector<VulkanExtensionProperties> GetVulkanPhysicalDeviceExtensionProperties(VkPhysicalDevice device, char const* layer_name)
+{
+	std::vector<VulkanExtensionProperties> result;
+
+	uint32_t extension_count = 0;
+	if (vkEnumerateDeviceExtensionProperties(device, layer_name, &extension_count, nullptr) != VK_SUCCESS)
+	{
+		return {};
+	}
+
+	if (extension_count > 0)
+	{
+		std::vector<VkExtensionProperties> extension_properties(extension_count);
+		if (vkEnumerateDeviceExtensionProperties(device, layer_name, &extension_count, &extension_properties[0]) != VK_SUCCESS)
+		{
+			return {};
+		}
+
+		result.reserve(extension_count);
+		for (VkExtensionProperties const& properties : extension_properties)
+		{
+			VulkanExtensionProperties p;
+			p.properties = properties;
+			result.push_back(std::move(p));
+		}
+	}
+	return result;
+}
+
+
+std::vector<VulkanLayerProperties> GetVulkanPhysicalDeviceLayerProperties(VkPhysicalDevice device)
+{
+	std::vector<VulkanLayerProperties> result;
+
+	// get instance layers properties
+	uint32_t layer_property_count = 0;
+	if (vkEnumerateDeviceLayerProperties(device, &layer_property_count, nullptr) != VK_SUCCESS)
+	{
+		return {};
+	}
+
+	// get layers and their extensions
+	if (layer_property_count > 0)
+	{
+		std::vector<VkLayerProperties> layer_properties(layer_property_count);
+		if (vkEnumerateDeviceLayerProperties(device, &layer_property_count, &layer_properties[0]) != VK_SUCCESS)
+		{
+			return {};
+		}
+		result.reserve(layer_property_count);
+		for (VkLayerProperties const& properties : layer_properties)
+		{
+			VulkanLayerProperties p;
+			p.properties = properties;
+			p.extension_properties = GetVulkanPhysicalDeviceExtensionProperties(device, properties.layerName);
+			result.push_back(std::move(p));
+		}
+	}
+
+	return result;
+}
 
 std::vector<VulkanPhysicalDeviceInfo> GetPhysicalDeviceInfo(VkInstance instance)
 {
@@ -162,7 +234,9 @@ std::vector<VulkanPhysicalDeviceInfo> GetPhysicalDeviceInfo(VkInstance instance)
 		{
 			VulkanPhysicalDeviceInfo info;
 			info.physical_device = device;
-			info.queue_family_properties = GetQueueFamiliesInfo(device);
+			info.extension_properties    = GetVulkanPhysicalDeviceExtensionProperties(device, nullptr);
+			info.layer_properties        = GetVulkanPhysicalDeviceLayerProperties(device);
+			info.queue_family_properties = GetPhysicalDeviceQueueFamiliesInfo(device);
 			vkGetPhysicalDeviceProperties(device, &info.properties);
 			vkGetPhysicalDeviceFeatures(device, &info.features);
 			vkGetPhysicalDeviceMemoryProperties(device, &info.memory_properties);
@@ -171,10 +245,6 @@ std::vector<VulkanPhysicalDeviceInfo> GetPhysicalDeviceInfo(VkInstance instance)
 	}
 	return result;
 }
-
-// ====================================================================================
-
-
 
 // ====================================================================================
 

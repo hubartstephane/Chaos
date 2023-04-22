@@ -281,6 +281,15 @@ int main(int argc, char ** argv, char *)
 				if ((queue_family_info.properties.queueFlags & wanted_flags) == wanted_flags)
 				{
 
+
+
+					VkFormatProperties format_properties;
+					vkGetPhysicalDeviceFormatProperties(device.physical_device, VK_FORMAT_R8G8B8A8_UINT, &format_properties);
+
+
+
+
+
 					wanted_flags = wanted_flags;
 				}
 			}
@@ -290,7 +299,7 @@ int main(int argc, char ** argv, char *)
 
 	}
 	
-
+	
 
 
 #if 0

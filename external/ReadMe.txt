@@ -1,3 +1,4 @@
+===================================================================================================================
 Freetype
 ========
 
@@ -11,6 +12,7 @@ solution is in
 
 	freetype2\objs\x64\Release Static\freetype.lib
 	
+===================================================================================================================	
 GLEW
 ====
 
@@ -24,6 +26,7 @@ GLEW
 
   I even tryed to use cmake with no success. Source project seems corrupted
 	
+===================================================================================================================	
 TINYXML2
 ========
 
@@ -32,6 +35,7 @@ TINYXML2
 	
 	  cmake -S . -B projects  -> generate solution in build
 
+===================================================================================================================
 BOOST
 =====
 
@@ -42,7 +46,7 @@ BOOST
 	bootstrap msvc
 	b2 toolset=msvc library=static
 	
-	
+===================================================================================================================	
 ASSIMP
 ======
 
@@ -51,12 +55,14 @@ ASSIMP
 	cmake CMakeLists.txt 
 	cmake --build .
 	
+===================================================================================================================	
 Zlib
 ====
 
   there is the solution zlib-1.2.11\contrib\vstudio\vc14
 	build zlibstat for static library
 	
+===================================================================================================================	
 NANA
 ====
 
@@ -68,12 +74,13 @@ NANA
 	
 	change runtime to DLL in project settings for a correct linkage
 
+===================================================================================================================
 GLFW
 ====
 
 	cmake .
 	
-	
+===================================================================================================================
 GLSLANG
 =======
 
@@ -86,3 +93,37 @@ GLSLANG
 	git clone https://github.com/KhronosGroup/glslang.git
 	
 	(attention, le faut installer DEBUG et RELEASE ... parcequ'on ne peut pas linker CHAOS DEBUG avec GLSLANG RELEASE)
+	
+===================================================================================================================
+IMGUI
+=====
+
+	by default imgui is a set of c++ files with mixed backends (vulkan, openGL ..)
+	There is no real library provided. You rather have to directly insert thoses files into your own project 
+	(with only the backends you are interrested in)
+	I rather created my own ImGUI.sln with the following premake and so was able to have a static library
+	
+		
+workspace "ImGUI"
+   configurations { "Debug", "Release" }
+   
+ project "ImGUIOpenGL"
+   kind "StaticLib"
+   language "C++"
+   architecture "x64"
+   
+   targetdir "bin/%{cfg.buildcfg}"
+   
+   includedirs {"."}
+   files { "*.h", "*.cpp" }
+   files { "backends/*opengl3*.h", "backends/*opengl3*.cpp" }
+
+   filter "configurations:Debug"
+      defines { "DEBUG" }
+      symbols "On"
+
+   filter "configurations:Release"
+      defines { "NDEBUG" }
+      optimize "On"   
+	  
+	  

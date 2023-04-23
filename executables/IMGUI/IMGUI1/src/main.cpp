@@ -13,6 +13,16 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
+	virtual bool DoTick(float delta_time) override
+	{
+		auto a = glfwGetCurrentContext();
+		auto b = GetGLFWHandler();
+
+
+
+		return true;
+	}
+
 	virtual bool OnDraw(chaos::GPURenderer* renderer, chaos::GPUProgramProviderInterface const* uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
 		glm::vec4 clear_color(0.5f, 0.3f, 0.0f, 0.0f);

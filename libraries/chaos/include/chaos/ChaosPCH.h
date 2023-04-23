@@ -230,6 +230,11 @@
 #include <GLFW/glfw3native.h>
 #endif
 
+// IMGUI
+#include "imgui.h"
+#include "backends/imgui_impl_opengl3.h"
+#include "backends/imgui_impl_glfw.h"
+
 // for forcefeedback
 #include "xinput.h"
 #pragma comment(lib, "xinput.lib")

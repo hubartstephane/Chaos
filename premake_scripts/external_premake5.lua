@@ -242,13 +242,15 @@ local JSON_PATH     = "json"
 local JSON_INC_PATH = path.join("single_include", "nlohmann")
 build:DeclareExternalLib("JSON", JSON_PATH, JSON_INC_PATH, nil, nil)
 
-
 --------------------------------------------------------------------
 -- IMGUI
 --------------------------------------------------------------------
 local IMGUI_PATH     = "imgui"
 local IMGUI_INC_PATH = "."
-local IMGUI_LIB_PATH = path.join("bin", "Release")
+local IMGUI_LIB_PATH = {
+	DEBUG = path.join("bin", DEBUG),
+	RELEASE = path.join("bin", RELEASE)
+}
 local IMGUI_LIBNAME = "ImGUIOpenGL.lib"
 
 build:DeclareExternalLib("IMGUI", IMGUI_PATH, IMGUI_INC_PATH, IMGUI_LIB_PATH, IMGUI_LIBNAME)

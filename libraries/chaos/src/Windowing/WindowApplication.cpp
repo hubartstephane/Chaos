@@ -103,6 +103,7 @@ namespace chaos
 				return nullptr;
 			}
 			// post initialization method
+			glfwMakeContextCurrent(result->GetGLFWHandler());
 			OnWindowCreated(result);
 			// store the result
 			windows.push_back(result);

@@ -162,7 +162,7 @@ namespace chaos
 
 		if (create_params.unlimited_fps)
 		{
-			WithGLContext<void>([]()
+			WithGLContext([]()
 			{
 				glfwSwapInterval(0);
 			});
@@ -249,7 +249,7 @@ namespace chaos
 		if (glfw_window == nullptr || renderer == nullptr)
 			return;
 
-		WithGLContext<void>([this, real_delta_time]()
+		WithGLContext([this, real_delta_time]()
 		{
 			// tick the renderer: it has metrics that rely on the real frame_rate (not modified one due to some of our tweaks)
 			renderer->Tick(real_delta_time);
@@ -293,7 +293,7 @@ namespace chaos
 	{
 		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
 		{
-			my_window->WithGLContext<void>([my_window, value]()
+			my_window->WithGLContext([my_window, value]()
 			{
 				my_window->OnIconifiedStateChange(value == GL_TRUE);
 			});
@@ -304,7 +304,7 @@ namespace chaos
 	{
 		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
 		{
-			my_window->WithGLContext<void>([my_window, value]()
+			my_window->WithGLContext([my_window, value]()
 			{
 				my_window->OnFocusStateChange(value == GL_TRUE);
 			});
@@ -315,7 +315,7 @@ namespace chaos
 	{
 		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
 		{
-			my_window->WithGLContext<void>([my_window]()
+			my_window->WithGLContext([my_window]()
 			{
 				if (my_window->OnWindowClosed())
 					my_window->RequireWindowClosure();
@@ -327,7 +327,7 @@ namespace chaos
 	{
 		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
 		{
-			my_window->WithGLContext<void>([my_window, width, height]()
+			my_window->WithGLContext([my_window, width, height]()
 			{
 				my_window->OnWindowResize(glm::ivec2(width, height));
 			});
@@ -338,7 +338,7 @@ namespace chaos
 	{
 		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
 		{
-			my_window->WithGLContext<void>([my_window]()
+			my_window->WithGLContext([my_window]()
 			{
 				my_window->OnWindowDraw();
 			});
@@ -351,7 +351,7 @@ namespace chaos
 
 		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
 		{
-			my_window->WithGLContext<void>([my_window, x, y]()
+			my_window->WithGLContext([my_window, x, y]()
 			{
 				glm::vec2 position = { float(x), float(y) };
 
@@ -379,7 +379,7 @@ namespace chaos
 
 		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
 		{
-			my_window->WithGLContext<void>([my_window, button, action, modifier]()
+			my_window->WithGLContext([my_window, button, action, modifier]()
 			{
 				my_window->OnMouseButton(button, action, modifier);
 			});
@@ -392,7 +392,7 @@ namespace chaos
 
 		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
 		{
-			my_window->WithGLContext<void>([my_window, scroll_x, scroll_y]()
+			my_window->WithGLContext([my_window, scroll_x, scroll_y]()
 			{
 				my_window->OnMouseWheel(scroll_x, scroll_y);
 			});
@@ -419,7 +419,7 @@ namespace chaos
 
 		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
 		{
-			my_window->WithGLContext<void>([my_window, event]()
+			my_window->WithGLContext([my_window, event]()
 			{
 				my_window->OnKeyEvent(event);
 			});
@@ -432,7 +432,7 @@ namespace chaos
 
 		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
 		{
-			my_window->WithGLContext<void>([my_window, c]()
+			my_window->WithGLContext([my_window, c]()
 			{
 				my_window->OnCharEvent(c);
 			});
@@ -443,7 +443,7 @@ namespace chaos
 	{
 		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
 		{
-			my_window->WithGLContext<void>([my_window, count, paths]()
+			my_window->WithGLContext([my_window, count, paths]()
 			{
 				my_window->OnDropFile(count, paths);
 			});
@@ -624,7 +624,7 @@ namespace chaos
 		if (glfw_window == nullptr || renderer == nullptr)
 			return false;
 
-		return WithGLContext<bool>([this]()
+		return WithGLContext([this]()
 		{
 			// this call may take a while causing a jump in 'delta_time'
 			WindowApplication* application = Application::GetInstance();

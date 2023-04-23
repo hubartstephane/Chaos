@@ -139,23 +139,10 @@ namespace chaos
 		virtual void UpdateWidgetPlacementHierarchy();
 
 		/** using window context, call functor, then restore previous */
-		template<typename T>
-		T WithGLContext(std::function<T()> const & func)
+		template<typename FUNC>
+		auto WithGLContext(FUNC const& func)
 		{
-			GLFWwindow* previous_context = glfwGetCurrentContext();
-			glfwMakeContextCurrent(glfw_window);
-			T result = func();
-			glfwMakeContextCurrent(previous_context);
-			return result;
-		}
-
-		template<>
-		void WithGLContext(std::function<void()> const & func)
-		{
-			GLFWwindow* previous_context = glfwGetCurrentContext();
-			glfwMakeContextCurrent(glfw_window);
-			func();
-			glfwMakeContextCurrent(previous_context);
+			return WindowApplication::WithGLContext(glfw_window, func);
 		}
 
 	protected:

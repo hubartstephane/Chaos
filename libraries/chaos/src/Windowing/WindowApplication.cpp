@@ -44,7 +44,7 @@ namespace chaos
 					delta_time = std::min(delta_time, max_tick_duration);
 			}
 			// internal tick
-			WithGLContext<void>(shared_context, [this, delta_time]()
+			WithGLContext(shared_context, [this, delta_time]()
 			{
 				Tick(delta_time);
 			});
@@ -56,7 +56,7 @@ namespace chaos
 				if (window != nullptr && window->ShouldClose())
 				{
 					// destroy the internal GLFW window
-					WithGLContext<void>(window->GetGLFWHandler(), [window]()
+					window->WithGLContext([window]()
 					{
 						window->Finalize();
 						window->DestroyGLFWWindow();
@@ -72,7 +72,7 @@ namespace chaos
 			// tick the windows
 			for (auto& window : windows)
 			{
-				WithGLContext<void>(window->GetGLFWHandler(), [window, delta_time, real_delta_time]()
+				window->WithGLContext([window, delta_time, real_delta_time]()
 				{
 					window->TickRenderer(real_delta_time);
 					
@@ -88,7 +88,7 @@ namespace chaos
 
 	Window* WindowApplication::CreateTypedWindow(SubClassOf<Window> window_class, WindowCreateParams const& create_params)
 	{
-		return WithGLContext<Window*>(nullptr, [this, window_class, create_params]() -> Window*
+		return WithGLContext(nullptr, [this, window_class, create_params]() -> Window*
 		{
 			// create the window class
 			Window* result = window_class.CreateInstance();
@@ -131,7 +131,7 @@ namespace chaos
 		if (shared_context == nullptr)
 			return -1;
 
-		if (!WithGLContext<bool>(shared_context, [this]()
+		if (!WithGLContext(shared_context, [this]()
 		{
 			// XXX : seems to be mandatory for some functions like : glGenVertexArrays(...)
 			//       see https://www.opengl.org/wiki/OpenGL_Loading_Library
@@ -157,7 +157,7 @@ namespace chaos
 		}
 
 		// a final initialization (after main window is constructed ... and OpenGL context)
-		if (!WithGLContext<bool>(shared_context, [this]()
+		if (!WithGLContext(shared_context, [this]()
 		{
 			return PreMessageLoop();
 		}))
@@ -192,7 +192,7 @@ namespace chaos
 			return nullptr;
 
 		// initialize the main with any configuration data window (once GPUResourceManager is fully initialized)
-		if (!WithGLContext<bool>(result->GetGLFWHandler(), [this, result]()
+		if (!result->WithGLContext([this, result]()
 		{
 			return result->InitializeFromConfiguration(configuration);
 		}))
@@ -471,7 +471,7 @@ namespace chaos
 
 	bool WindowApplication::ReloadGPUResources()
 	{
-		return WithGLContext<bool>(shared_context, [this]()
+		return WithGLContext(shared_context, [this]()
 		{
 			// this call may block for too much time
 			FreezeNextFrameTickDuration();

@@ -22,10 +22,10 @@ namespace chaos
 
 
 
+				// shuxxx GameViewportWidget test
 
-
-#if 0
-				for (int i = 0 ; i < 2 ; ++i)
+#if 1
+				for (int i = 0 ; i < 1 ; ++i)
 				if (GameViewportWidget* game_viewport_widget = game_viewport_widget_class.CreateInstance())
 				{
 					WidgetLayout layout;
@@ -35,7 +35,8 @@ namespace chaos
 
 					root_widget->AddChildWidget(game_viewport_widget);
 				}
-#endif
+
+#else
 
 				for (int i = 0; i < 3; ++i)
 				{
@@ -51,7 +52,7 @@ namespace chaos
 					root_widget->AddChildWidget(widget);
 				}
 
-
+#endif
 
 
 

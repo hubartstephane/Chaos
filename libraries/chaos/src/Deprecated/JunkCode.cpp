@@ -16,7 +16,7 @@ GLuint query = 0;
 GLuint renderbuffer = 0;
 GLuint framebuffer = 0;
 
-WithGLContext<void>(shared_context, [&vertex_array, &query, &renderbuffer, &framebuffer]()
+WithGLContext(shared_context, [&vertex_array, &query, &renderbuffer, &framebuffer]()
 {
 	glCreateVertexArrays(1, &vertex_array);
 	glCreateQueries(GL_SAMPLES_PASSED, 1, &query);
@@ -26,7 +26,7 @@ WithGLContext<void>(shared_context, [&vertex_array, &query, &renderbuffer, &fram
 
 Window* w = CreateTypedWindow(main_window_class, window_params, window_hints);
 
-WithGLContext<void>(w->GetGLFWHandler(), [vertex_array, &query, &renderbuffer, &framebuffer]()
+WithGLContext(w->GetGLFWHandler(), [vertex_array, &query, &renderbuffer, &framebuffer]()
 {
 	bool b0 = glIsVertexArray(vertex_array);  // false
 	bool b1 = glIsQuery(query);               // false

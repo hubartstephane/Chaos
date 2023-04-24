@@ -113,7 +113,8 @@ namespace chaos
 
 	void WindowApplication::OnWindowCreated(Window* window)
 	{
-
+		ImGui_ImplGlfw_InitForOpenGL(window->GetGLFWHandler(), true);
+		ImGui_ImplOpenGL3_Init("#version 130");
 	}
 
 	int WindowApplication::Main()
@@ -598,6 +599,14 @@ namespace chaos
 	{
 		if (!Application::InitializeStandardLibraries())
 			return false;
+
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO();
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+		ImGui::StyleColorsDark();
+
 		FreeImage_Initialise(); // glew will be initialized
 		FreeImage_SetOutputMessage(&FreeImageOutputMessageFunc);
 		glfwInit();
@@ -608,6 +617,11 @@ namespace chaos
 	{
 		glfwTerminate();
 		FreeImage_DeInitialise();
+
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		ImGui::DestroyContext();
+
 		Application::FinalizeStandardLibraries();
 		return true;
 	}

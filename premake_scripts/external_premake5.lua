@@ -47,8 +47,9 @@ build:DeclareExternalLib("LUA", LUA_PATH, LUA_INC_PATH, LUA_LIB_PATH, "lua54.lib
 --------------------------------------------------------------------
 local GLFW_PATH = "glfw"
 local GLFW_INC_PATH = "include"
-local GLFW_LIB_PATH = path.join("src", RELEASE)  
-build:DeclareExternalLib("GLFW", GLFW_PATH, GLFW_INC_PATH, GLFW_LIB_PATH, "glfw3.lib")
+local GLFW_LIB_PATH = "lib-vc2022"
+local GLEW_TOCOPY  = path.join(GLFW_LIB_PATH, "glfw3.dll")  
+build:DeclareExternalLib("GLFW", GLFW_PATH, GLFW_INC_PATH, GLFW_LIB_PATH, "glfw3dll.lib", GLEW_TOCOPY)
 
 --------------------------------------------------------------------
 -- GLSLANG
@@ -247,10 +248,7 @@ build:DeclareExternalLib("JSON", JSON_PATH, JSON_INC_PATH, nil, nil)
 --------------------------------------------------------------------
 local IMGUI_PATH     = "imgui"
 local IMGUI_INC_PATH = "."
-local IMGUI_LIB_PATH = {
-	DEBUG = path.join("bin", DEBUG),
-	RELEASE = path.join("bin", RELEASE)
-}
+local IMGUI_LIB_PATH = path.join("bin", RELEASE)
 local IMGUI_LIBNAME = "ImGUIOpenGL.lib"
 
 build:DeclareExternalLib("IMGUI", IMGUI_PATH, IMGUI_INC_PATH, IMGUI_LIB_PATH, IMGUI_LIBNAME)

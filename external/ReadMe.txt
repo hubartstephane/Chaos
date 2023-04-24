@@ -77,8 +77,17 @@ NANA
 ===================================================================================================================
 GLFW
 ====
+	--> telecharger la build DLL windows directement c'est moins compliqué d'avoir header+dll 
 
-	cmake .
+
+#if 0
+	telecharger les sources de glfw dans un repertoire path/to/glfw
+	on va creer une solution .sln dans un repertoire completement different grace a cmake
+
+	cmake -S path/to/glfw -B path/to/build -D BUILD_SHARED_LIBS=ON
+	
+	https://www.glfw.org/docs/3.3/compile.html
+#endif	
 	
 ===================================================================================================================
 GLSLANG

@@ -112,6 +112,9 @@ namespace chaos
 		/** get the OpenGL main context */
 		static GLFWwindow* GetSharedGLContext();
 
+		/** Run the message loop until there are no more windows */
+		virtual bool RunMessageLoop();
+
 	protected:
 
 		/** Main method */
@@ -119,9 +122,7 @@ namespace chaos
 		/** create the main window */
 		virtual Window* CreateMainWindow();
 		/** the possibility to have final initialization before the main loop is run */
-		virtual bool PreMessageLoop();
-		/** Window Loop */
-		virtual bool MessageLoop();
+		virtual bool PostOpenGLContextCreation();
 
 		/** called whenever a monitor is connected or disconnected */
 		virtual void OnMonitorEvent(GLFWmonitor* monitor, int monitor_state);

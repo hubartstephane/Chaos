@@ -21,7 +21,7 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual bool PreMessageLoop() override;
+		virtual bool PostOpenGLContextCreation() override;
 		/** override */
 		virtual bool DoTick(float delta_time) override;
 		/** override */

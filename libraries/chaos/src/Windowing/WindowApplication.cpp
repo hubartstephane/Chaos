@@ -19,7 +19,7 @@ namespace chaos
 		forced_zero_tick_duration = true;
 	}
 
-	bool WindowApplication::MessageLoop()
+	bool WindowApplication::RunMessageLoop()
 	{
 		double t1 = glfwGetTime();
 
@@ -161,8 +161,15 @@ namespace chaos
 		CreateWindowImGuiContext(window);
 	}
 
-	int WindowApplication::Main()
+	bool WindowApplication::Initialize()
 	{
+		// super method
+		if (!Application::Initialize())
+			return false;
+
+		// set error callback
+		glfwSetErrorCallback(OnGLFWError);
+
 		// the glfw configuration
 		GLFWHints glfw_hints;
 		nlohmann::json const* glfw_configuration = JSONTools::GetStructure(configuration, "glfw");
@@ -174,7 +181,7 @@ namespace chaos
 		glfwWindowHint(GLFW_VISIBLE, 0);
 		shared_context = glfwCreateWindow(100, 100, "", nullptr, nullptr);
 		if (shared_context == nullptr)
-			return -1;
+			return false;
 
 		if (!WithGLContext(shared_context, [this]()
 		{
@@ -200,26 +207,27 @@ namespace chaos
 			return true;
 		}))
 		{
-			return -1;
+			return false;
 		}
 
 		// a final initialization (after main window is constructed ... and OpenGL context)
 		if (!WithGLContext(shared_context, [this]()
 		{
-			return PreMessageLoop();
+			return PostOpenGLContextCreation();
 		}))
 		{
-			return -1;
+			return false;
 		}
 
+		return true;
+	}
+
+	int WindowApplication::Main()
+	{
 		// create the main window
 		main_window = CreateMainWindow();
 		if (main_window == nullptr)
 			return -1;
-
-
-
-
 
 
 		// shuxxx
@@ -230,7 +238,7 @@ namespace chaos
 		CreateMainWindow();
 
 		// the main loop
-		MessageLoop();
+		RunMessageLoop();
 
 		return 0;
 	}
@@ -466,7 +474,7 @@ namespace chaos
 		return true;
 	}
 
-	bool WindowApplication::PreMessageLoop()
+	bool WindowApplication::PostOpenGLContextCreation()
 	{
 		assert(glfwGetCurrentContext() == shared_context);
 
@@ -615,16 +623,6 @@ namespace chaos
 		}
 		// super method
 		Application::FinalizeManagers();
-		return true;
-	}
-
-	bool WindowApplication::Initialize()
-	{
-		// super method
-		if (!Application::Initialize())
-			return false;
-		// set error callback
-		glfwSetErrorCallback(OnGLFWError);
 		return true;
 	}
 

@@ -61,7 +61,7 @@ namespace chaos
 		return result;
 	}
 
-	bool GameApplication::PreMessageLoop()
+	bool GameApplication::PostOpenGLContextCreation()
 	{
 		assert(glfwGetCurrentContext() == shared_context);
 		 
@@ -77,7 +77,7 @@ namespace chaos
 			if (!game->InitializeFromConfiguration(*game_config))
 				return false;
 		// super method : need to be done game initialization ! (because atlas creation requires the game to have loaded its levels)
-		if (!WindowApplication::PreMessageLoop())
+		if (!WindowApplication::PostOpenGLContextCreation())
 			return false;
 		// create now some game resources that need application resources to be initialized
 		if (!game->CreateGPUResources())

@@ -1,5 +1,6 @@
 namespace chaos
 {
+
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	class WindowCreateParams;
@@ -142,8 +143,36 @@ namespace chaos
 		template<typename FUNC>
 		auto WithGLContext(FUNC const& func)
 		{
-			return WindowApplication::WithGLContext(glfw_window, func);
+			// save ImGui context
+			ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
+			ImGui::SetCurrentContext(imgui_context);
+			// save GLFW context
+			GLFWwindow* previous_glfw_window = glfwGetCurrentContext();
+			glfwMakeContextCurrent(glfw_window);
+
+			if constexpr (std::is_same_v<void, decltype(func())>)
+			{
+				// call delegate
+				func();
+				// restore GLFW and ImGui contexts
+				glfwMakeContextCurrent(previous_glfw_window);
+				if (previous_imgui_context != nullptr)
+					ImGui::SetCurrentContext(previous_imgui_context);
+			}
+			else
+			{
+				// call delegate
+				auto result = func();
+				// restore GLFW and ImGui contexts
+				glfwMakeContextCurrent(previous_glfw_window);
+				if (previous_imgui_context != nullptr)
+					ImGui::SetCurrentContext(previous_imgui_context);
+				return result;
+			}
 		}
+
+		/** gets the ImGui context */
+		ImGuiContext* GetImGuiContext() const { return imgui_context; }
 
 	protected:
 
@@ -195,6 +224,8 @@ namespace chaos
 		virtual void OnIconifiedStateChange(bool iconified);
 		/** called whenever the window gain or loose focus */
 		virtual void OnFocusStateChange(bool gain_focus);
+		/** called whenever a monitor is connected or disconnected */
+		virtual void OnMonitorEvent(GLFWmonitor* monitor, int monitor_state);
 
 	private:
 
@@ -223,20 +254,18 @@ namespace chaos
 
 	protected:
 
+		/** the context for ImGui */
+		ImGuiContext* imgui_context = nullptr;
 		/** the window in GLFW library */
 		GLFWwindow* glfw_window = nullptr;
 		/** is the window with double buffer */
 		bool double_buffer = true;
-
 		/** the root widget for the window */
 		shared_ptr<WindowRootWidget> root_widget;
-
 		/** the renderer */
 		shared_ptr<GPURenderer> renderer;
-
 		/** previous mouse position */
 		std::optional<glm::vec2> mouse_position;
-
 		/** used to store data when toggling fullscreen */
 		std::optional<NonFullScreenWindowData> non_fullscreen_data;
 	};

@@ -62,10 +62,18 @@ namespace chaos
 
 	void Window::DestroyGLFWWindow()
 	{
-
-		// shuxxx
-
-		if (0 && imgui_context != nullptr)
+		// destroy GLFW window
+		if (glfw_window != nullptr)
+		{
+			GLFWwindow * previous_context = glfwGetCurrentContext();
+			glfwMakeContextCurrent(nullptr);
+			glfwDestroyWindow(glfw_window);
+			if (previous_context != nullptr && previous_context != glfw_window)
+				glfwMakeContextCurrent(previous_context);
+			glfw_window = nullptr;
+		}
+		// destroy ImGui context (must happen after the windows destruction because some GLFW callbacks rely on the existence of the ImGui context)
+		if (imgui_context != nullptr)
 		{
 			ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
 			ImGui::SetCurrentContext(imgui_context);
@@ -77,16 +85,6 @@ namespace chaos
 			if (previous_imgui_context != nullptr && previous_imgui_context != imgui_context) // if there was another context, restore it
 				ImGui::SetCurrentContext(previous_imgui_context);
 			imgui_context = nullptr;
-		}
-
-		if (glfw_window != nullptr)
-		{
-			GLFWwindow * previous_context = glfwGetCurrentContext();
-			glfwMakeContextCurrent(nullptr);
-			glfwDestroyWindow(glfw_window);
-			if (previous_context != nullptr && previous_context != glfw_window)
-				glfwMakeContextCurrent(previous_context);
-			glfw_window = nullptr;
 		}
 	}
 

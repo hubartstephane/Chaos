@@ -183,6 +183,8 @@ namespace chaos
 		/** create a window */
 		Window* CreateTypedWindow(SubClassOf<Window> window_class, WindowCreateParams const& create_params = {});
 
+		/** create an ImGui context for a new windows */
+		void CreateWindowImGuiContext(Window* window);
 		/** called at window creation */
 		virtual void OnWindowCreated(Window* window);
 		/** called at window destruction */

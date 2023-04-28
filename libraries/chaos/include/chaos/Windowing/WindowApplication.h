@@ -112,8 +112,8 @@ namespace chaos
 		/** get the OpenGL main context */
 		static GLFWwindow* GetSharedGLContext();
 
-		/** Run the message loop until there are no more windows */
-		virtual bool RunMessageLoop();
+		/** Run the message loop while the condition is true */
+		virtual void RunMessageLoop(std::function<bool()> const& loop_condition_func = {});
 
 	protected:
 

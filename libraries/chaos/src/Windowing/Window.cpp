@@ -73,7 +73,7 @@ namespace chaos
 			glfw_window = nullptr;
 		}
 		// destroy ImGui context (must happen after the windows destruction because some GLFW callbacks rely on the existence of the ImGui context)
-		if (imgui_context != nullptr)
+		if (0 && imgui_context != nullptr)
 		{
 			ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
 			ImGui::SetCurrentContext(imgui_context);
@@ -200,8 +200,8 @@ namespace chaos
 
 		glfwSetWindowPos(glfw_window, x, y);
 		glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		//glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		//  glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		// GOOD glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		// glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
 		glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, 1);
 

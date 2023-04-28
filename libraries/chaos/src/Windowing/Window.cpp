@@ -62,6 +62,23 @@ namespace chaos
 
 	void Window::DestroyGLFWWindow()
 	{
+
+		// shuxxx
+
+		if (0 && imgui_context != nullptr)
+		{
+			ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
+			ImGui::SetCurrentContext(imgui_context);
+
+			ImGui_ImplOpenGL3_Shutdown();
+			ImGui_ImplGlfw_Shutdown();
+			ImGui::DestroyContext();
+
+			if (previous_imgui_context != nullptr && previous_imgui_context != imgui_context) // if there was another context, restore it
+				ImGui::SetCurrentContext(previous_imgui_context);
+			imgui_context = nullptr;
+		}
+
 		if (glfw_window != nullptr)
 		{
 			GLFWwindow * previous_context = glfwGetCurrentContext();
@@ -306,6 +323,8 @@ namespace chaos
 		{
 			my_window->WithGLContext([my_window, value]()
 			{
+				if (my_window->GetImGuiContext())
+					ImGui_ImplGlfw_WindowFocusCallback(my_window->GetGLFWHandler(), value); // manually call ImGui delegate (see comment in WindowApplication::OnWindowCreated(...)
 				my_window->OnFocusStateChange(value == GL_TRUE);
 			});
 		}
@@ -353,6 +372,9 @@ namespace chaos
 		{
 			my_window->WithGLContext([my_window, x, y]()
 			{
+				if (my_window->GetImGuiContext())
+					ImGui_ImplGlfw_CursorPosCallback(my_window->GetGLFWHandler(), x, y); // manually call ImGui delegate (see comment in WindowApplication::OnWindowCreated(...)
+
 				glm::vec2 position = { float(x), float(y) };
 
 				if (!my_window->IsMousePositionValid())
@@ -381,6 +403,9 @@ namespace chaos
 		{
 			my_window->WithGLContext([my_window, button, action, modifier]()
 			{
+				if (my_window->GetImGuiContext())
+					ImGui_ImplGlfw_MouseButtonCallback(my_window->GetGLFWHandler(), button, action, modifier); // manually call ImGui delegate (see comment in WindowApplication::OnWindowCreated(...)
+
 				my_window->OnMouseButton(button, action, modifier);
 			});
 		}
@@ -394,6 +419,8 @@ namespace chaos
 		{
 			my_window->WithGLContext([my_window, scroll_x, scroll_y]()
 			{
+				if (my_window->GetImGuiContext())
+					ImGui_ImplGlfw_ScrollCallback(my_window->GetGLFWHandler(), scroll_x, scroll_y); // manually call ImGui delegate (see comment in WindowApplication::OnWindowCreated(...)
 				my_window->OnMouseWheel(scroll_x, scroll_y);
 			});
 		}
@@ -419,8 +446,10 @@ namespace chaos
 
 		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
 		{
-			my_window->WithGLContext([my_window, event]()
+			my_window->WithGLContext([my_window, event, key, scan_code, action, modifier]()
 			{
+				if (my_window->GetImGuiContext())
+					ImGui_ImplGlfw_KeyCallback(my_window->GetGLFWHandler(), key, scan_code, action, modifier); // manually call ImGui delegate (see comment in WindowApplication::OnWindowCreated(...)
 				my_window->OnKeyEvent(event);
 			});
 		}
@@ -434,11 +463,13 @@ namespace chaos
 		{
 			my_window->WithGLContext([my_window, c]()
 			{
+				if (my_window->GetImGuiContext())
+					ImGui_ImplGlfw_CharCallback(my_window->GetGLFWHandler(), c); // manually call ImGui delegate (see comment in WindowApplication::OnWindowCreated(...)
 				my_window->OnCharEvent(c);
 			});
 		}
 	}
-
+	
 	void Window::DoOnDropFile(GLFWwindow* in_glfw_window, int count, char const** paths)
 	{
 		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
@@ -845,6 +876,10 @@ namespace chaos
 	}
 
 	void Window::OnFocusStateChange(bool gain_focus)
+	{
+	}
+
+	void Window::OnMonitorEvent(GLFWmonitor* monitor, int monitor_state)
 	{
 	}
 

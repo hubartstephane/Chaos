@@ -56,10 +56,9 @@ namespace chaos
 				if (window != nullptr && window->ShouldClose())
 				{
 					// destroy the internal GLFW window
-					window->WithGLContext([window]()
+					window->WithGLContext([this, window]()
 					{
-						window->Finalize();
-						window->DestroyGLFWWindow();
+						OnWindowDestroyed(window);
 					});
 					// remove the window for the list
 					windows[i - 1] = windows[windows.size() - 1];
@@ -111,10 +110,50 @@ namespace chaos
 		});
 	}
 
+	void WindowApplication::OnWindowDestroyed(Window* window)
+	{
+		window->Finalize();
+		window->DestroyGLFWWindow();
+	}
+
+	// Note on ImGui install Callbacks:
+	//   the callbacks implemented by ImGui uses the current ImGui context
+	//   In a multiple window system we can not rely on such a global variable
+	//   that's why we are not using the ImGui native callback installation but rather call manually the ImGui delegates ourselves
+	//   (with a given GLFWcontext we can get the chaos::Window instance and we so can know the ImGui context to use)
+
+	// here is an excerpt of ImGui_ImplGlfw_InstallCallbacks(...)
+	// this are the delegates ImGui is interest into
+	//
+	// ... = glfwSetWindowFocusCallback(window, ImGui_ImplGlfw_WindowFocusCallback);
+	// ... = glfwSetCursorEnterCallback(window, ImGui_ImplGlfw_CursorEnterCallback);
+	// ... = glfwSetCursorPosCallback(window, ImGui_ImplGlfw_CursorPosCallback);
+	// ... = glfwSetMouseButtonCallback(window, ImGui_ImplGlfw_MouseButtonCallback);
+	// ... = glfwSetScrollCallback(window, ImGui_ImplGlfw_ScrollCallback);
+	// ... = glfwSetKeyCallback(window, ImGui_ImplGlfw_KeyCallback);
+	// ... = glfwSetCharCallback(window, ImGui_ImplGlfw_CharCallback);
+	// ... = glfwSetMonitorCallback(ImGui_ImplGlfw_MonitorCallback);
+
 	void WindowApplication::OnWindowCreated(Window* window)
 	{
-		ImGui_ImplGlfw_InitForOpenGL(window->GetGLFWHandler(), true);
+		// save imgui context
+		ImGuiContext * previous_imgui_context = ImGui::GetCurrentContext();
+
+		// create a new context for this window
+		window->imgui_context = ImGui::CreateContext();
+		ImGui::SetCurrentContext(window->imgui_context);
+		ImGuiIO& io = ImGui::GetIO();
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+		ImGui::StyleColorsDark();
+
+		// initialize the context
+		ImGui_ImplGlfw_InitForOpenGL(window->GetGLFWHandler(), false); // IMPORTANT: do not install callback they will be called manually from our own delegates
 		ImGui_ImplOpenGL3_Init("#version 130");
+
+		// restore previous imgui context
+		if (previous_imgui_context != nullptr)
+			ImGui::SetCurrentContext(previous_imgui_context);
 	}
 
 	int WindowApplication::Main()
@@ -144,6 +183,8 @@ namespace chaos
 				Log::Message("glewInit(...) failure : %s", glewGetErrorString(err));
 				return false;
 			}
+			// callback for monitor events
+			glfwSetMonitorCallback(DoOnMonitorEvent);
 			// set the debug log hander
 			GLTools::SetDebugMessageHandler();
 			// some generic information
@@ -170,6 +211,18 @@ namespace chaos
 		main_window = CreateMainWindow();
 		if (main_window == nullptr)
 			return -1;
+
+
+
+
+
+
+		// shuxxx
+
+
+		CreateMainWindow();
+
+		CreateMainWindow();
 
 		// the main loop
 		MessageLoop();
@@ -579,8 +632,7 @@ namespace chaos
 		{
 			if (window != nullptr)
 			{
-				window->Finalize();
-				window->DestroyGLFWWindow();
+				OnWindowDestroyed(window.get());
 			}
 		}
 		windows.clear();
@@ -601,11 +653,6 @@ namespace chaos
 			return false;
 
 		IMGUI_CHECKVERSION();
-		ImGui::CreateContext();
-		ImGuiIO& io = ImGui::GetIO();
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-		ImGui::StyleColorsDark();
 
 		FreeImage_Initialise(); // glew will be initialized
 		FreeImage_SetOutputMessage(&FreeImageOutputMessageFunc);
@@ -783,6 +830,30 @@ namespace chaos
 			return execution_data.Process(GetTextureAtlas()->GetTexture());
 		}
 		return false;
+	}
+
+	void WindowApplication::OnMonitorEvent(GLFWmonitor* monitor, int monitor_state)
+	{
+		// the GLFW monitor delegate does not send event to any window
+		// that's why we are catching here the event and dispatching to all application's windows
+		for (shared_ptr<Window>& window : windows)
+		{
+			if (window != nullptr)
+			{
+				window->WithGLContext([&window, monitor, monitor_state]()
+				{
+					if (window->GetImGuiContext() != nullptr)
+						ImGui_ImplGlfw_MonitorCallback(monitor, monitor_state); // manually call ImGui delegate (see comment in WindowApplication::OnWindowCreated(...)
+					window->OnMonitorEvent(monitor, monitor_state);
+				});
+			}
+		}
+	}
+
+	void WindowApplication::DoOnMonitorEvent(GLFWmonitor* monitor, int monitor_state)
+	{
+		if (WindowApplication* application = Application::GetInstance())
+			application->OnMonitorEvent(monitor, monitor_state);
 	}
 
 }; // namespace chaos

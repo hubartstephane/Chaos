@@ -123,6 +123,11 @@ namespace chaos
 		/** Window Loop */
 		virtual bool MessageLoop();
 
+		/** called whenever a monitor is connected or disconnected */
+		virtual void OnMonitorEvent(GLFWmonitor* monitor, int monitor_state);
+		/** called whenever a monitor is connected or disconnected */
+		static void DoOnMonitorEvent(GLFWmonitor* monitor, int monitor_state);
+
 		/** override */
 		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override;
 
@@ -178,8 +183,10 @@ namespace chaos
 		/** create a window */
 		Window* CreateTypedWindow(SubClassOf<Window> window_class, WindowCreateParams const& create_params = {});
 
-		/** called after window creation */
+		/** called at window creation */
 		virtual void OnWindowCreated(Window* window);
+		/** called at window destruction */
+		virtual void OnWindowDestroyed(Window* window);
 
 		/** gets the main window of the application */
 		AutoCastable<Window> GetMainWindow() { return main_window.get(); }

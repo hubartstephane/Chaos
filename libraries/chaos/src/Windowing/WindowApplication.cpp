@@ -119,24 +119,6 @@ namespace chaos
 		window->DestroyGLFWWindow();
 	}
 
-	// Note on ImGui install Callbacks:
-	//   the callbacks implemented by ImGui uses the current ImGui context
-	//   In a multiple window system we can not rely on such a global variable
-	//   that's why we are not using the ImGui native callback installation but rather call manually the ImGui delegates ourselves
-	//   (with a given GLFWcontext we can get the chaos::Window instance and we so can know the ImGui context to use)
-
-	// here is an excerpt of ImGui_ImplGlfw_InstallCallbacks(...)
-	// theses are the delegates ImGui is interest into
-	//
-	// ... = glfwSetWindowFocusCallback(window, ImGui_ImplGlfw_WindowFocusCallback);
-	// ... = glfwSetCursorEnterCallback(window, ImGui_ImplGlfw_CursorEnterCallback);
-	// ... = glfwSetCursorPosCallback(window, ImGui_ImplGlfw_CursorPosCallback);
-	// ... = glfwSetMouseButtonCallback(window, ImGui_ImplGlfw_MouseButtonCallback);
-	// ... = glfwSetScrollCallback(window, ImGui_ImplGlfw_ScrollCallback);
-	// ... = glfwSetKeyCallback(window, ImGui_ImplGlfw_KeyCallback);
-	// ... = glfwSetCharCallback(window, ImGui_ImplGlfw_CharCallback);
-	// ... = glfwSetMonitorCallback(ImGui_ImplGlfw_MonitorCallback);
-
 	void WindowApplication::CreateWindowImGuiContext(Window* window)
 	{
 		// save imgui context
@@ -151,12 +133,16 @@ namespace chaos
 		ImGui::StyleColorsDark();
 
 		// initialize the context
-		ImGui_ImplGlfw_InitForOpenGL(window->GetGLFWHandler(), false); // IMPORTANT: do not install callback they will be called manually from our own delegates
+		ImGui_ImplGlfw_InitForOpenGL(window->GetGLFWHandler(), true);
 		ImGui_ImplOpenGL3_Init("#version 130");
 
+		// substitute our own window proc (now that ImGui has inserted its own WindowProc */
+#if _WIN32
+		window->SetImGuiWindowProc(true);
+#endif
+
 		// restore previous imgui context
-		if (previous_imgui_context != nullptr)
-			ImGui::SetCurrentContext(previous_imgui_context);
+		ImGui::SetCurrentContext(previous_imgui_context);
 	}
 
 	void WindowApplication::OnWindowCreated(Window* window)

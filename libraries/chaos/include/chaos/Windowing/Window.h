@@ -143,9 +143,6 @@ namespace chaos
 		template<typename FUNC>
 		auto WithGLContext(FUNC const& func)
 		{
-			// save ImGui context
-			ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
-			ImGui::SetCurrentContext(imgui_context);
 			// save GLFW context
 			GLFWwindow* previous_glfw_window = glfwGetCurrentContext();
 			glfwMakeContextCurrent(glfw_window);
@@ -156,8 +153,6 @@ namespace chaos
 				func();
 				// restore GLFW and ImGui contexts
 				glfwMakeContextCurrent(previous_glfw_window);
-				if (previous_imgui_context != nullptr)
-					ImGui::SetCurrentContext(previous_imgui_context);
 			}
 			else
 			{
@@ -165,8 +160,6 @@ namespace chaos
 				auto result = func();
 				// restore GLFW and ImGui contexts
 				glfwMakeContextCurrent(previous_glfw_window);
-				if (previous_imgui_context != nullptr)
-					ImGui::SetCurrentContext(previous_imgui_context);
 				return result;
 			}
 		}
@@ -227,6 +220,13 @@ namespace chaos
 		/** called whenever a monitor is connected or disconnected */
 		virtual void OnMonitorEvent(GLFWmonitor* monitor, int monitor_state);
 
+#if _WIN32
+		/** set or restore WndProc for ImGui usage */
+		void SetImGuiWindowProc(bool set_proc);
+		/** a dedicated WndProc for ImGui */
+		static LRESULT CALLBACK ImGuiWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+#endif
+
 	private:
 
 		/** binding function with GLFW library */
@@ -268,6 +268,10 @@ namespace chaos
 		std::optional<glm::vec2> mouse_position;
 		/** used to store data when toggling fullscreen */
 		std::optional<NonFullScreenWindowData> non_fullscreen_data;
+
+#ifdef _WIN32
+		WNDPROC WndProc = NULL;
+#endif
 	};
 
 #endif

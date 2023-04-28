@@ -19,11 +19,11 @@ namespace chaos
 		forced_zero_tick_duration = true;
 	}
 
-	bool WindowApplication::RunMessageLoop()
+	void WindowApplication::RunMessageLoop(std::function<bool()> const & loop_condition_func)
 	{
 		double t1 = glfwGetTime();
 
-		while (windows.size() > 0)
+		while (!loop_condition_func || loop_condition_func())
 		{
 			glfwPollEvents();
 
@@ -44,10 +44,14 @@ namespace chaos
 					delta_time = std::min(delta_time, max_tick_duration);
 			}
 			// internal tick
-			WithGLContext(shared_context, [this, delta_time]()
+			bool tick_result = WithGLContext(shared_context, [this, delta_time]()
 			{
-				Tick(delta_time);
+				return Tick(delta_time);
 			});
+			if (!tick_result) // quit the loop if the current tick method requires so
+			{
+				return;
+			}
 
 			// destroy windows that mean to be
 			for (size_t i = windows.size(); i > 0; --i)
@@ -82,7 +86,6 @@ namespace chaos
 			// update time
 			t1 = t2;
 		}
-		return true;
 	}
 
 	Window* WindowApplication::CreateTypedWindow(SubClassOf<Window> window_class, WindowCreateParams const& create_params)
@@ -237,8 +240,8 @@ namespace chaos
 
 		CreateMainWindow();
 
-		// the main loop
-		RunMessageLoop();
+		// run the main loop as long as there are windows
+		RunMessageLoop([this]() { return (windows.size() > 0); });
 
 		return 0;
 	}
@@ -507,7 +510,6 @@ namespace chaos
 			sound_manager->Tick(delta_time);
 		// update keyboard state
 		UpdateKeyStates(delta_time);
-
 		return true;
 	}
 

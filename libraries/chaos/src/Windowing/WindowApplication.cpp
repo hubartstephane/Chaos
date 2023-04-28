@@ -123,7 +123,7 @@ namespace chaos
 	//   (with a given GLFWcontext we can get the chaos::Window instance and we so can know the ImGui context to use)
 
 	// here is an excerpt of ImGui_ImplGlfw_InstallCallbacks(...)
-	// this are the delegates ImGui is interest into
+	// theses are the delegates ImGui is interest into
 	//
 	// ... = glfwSetWindowFocusCallback(window, ImGui_ImplGlfw_WindowFocusCallback);
 	// ... = glfwSetCursorEnterCallback(window, ImGui_ImplGlfw_CursorEnterCallback);
@@ -134,7 +134,7 @@ namespace chaos
 	// ... = glfwSetCharCallback(window, ImGui_ImplGlfw_CharCallback);
 	// ... = glfwSetMonitorCallback(ImGui_ImplGlfw_MonitorCallback);
 
-	void WindowApplication::OnWindowCreated(Window* window)
+	void WindowApplication::CreateWindowImGuiContext(Window* window)
 	{
 		// save imgui context
 		ImGuiContext * previous_imgui_context = ImGui::GetCurrentContext();
@@ -154,6 +154,11 @@ namespace chaos
 		// restore previous imgui context
 		if (previous_imgui_context != nullptr)
 			ImGui::SetCurrentContext(previous_imgui_context);
+	}
+
+	void WindowApplication::OnWindowCreated(Window* window)
+	{
+		CreateWindowImGuiContext(window);
 	}
 
 	int WindowApplication::Main()
@@ -664,11 +669,6 @@ namespace chaos
 	{
 		glfwTerminate();
 		FreeImage_DeInitialise();
-
-		ImGui_ImplOpenGL3_Shutdown();
-		ImGui_ImplGlfw_Shutdown();
-		ImGui::DestroyContext();
-
 		Application::FinalizeStandardLibraries();
 		return true;
 	}

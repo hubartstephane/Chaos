@@ -62,6 +62,23 @@ namespace chaos
 
 	void Window::DestroyGLFWWindow()
 	{
+		// destroy ImGui context (must happen after the windows destruction because some GLFW callbacks rely on the existence of the ImGui context)
+		if (imgui_context != nullptr)
+		{
+#if _WIN32
+			SetImGuiWindowProc(false); // remove our WndProc layer before ImGui may remove its layer
+#endif
+
+			ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
+			ImGui::SetCurrentContext(imgui_context);
+
+			ImGui_ImplGlfw_Shutdown();
+			ImGui_ImplOpenGL3_Shutdown();
+			ImGui::DestroyContext();
+			ImGui::SetCurrentContext((previous_imgui_context != imgui_context) ? previous_imgui_context : nullptr); // if there was another context, restore it
+
+			imgui_context = nullptr;
+		}
 		// destroy GLFW window
 		if (glfw_window != nullptr)
 		{
@@ -71,20 +88,6 @@ namespace chaos
 			if (previous_context != nullptr && previous_context != glfw_window)
 				glfwMakeContextCurrent(previous_context);
 			glfw_window = nullptr;
-		}
-		// destroy ImGui context (must happen after the windows destruction because some GLFW callbacks rely on the existence of the ImGui context)
-		if (0 && imgui_context != nullptr)
-		{
-			ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
-			ImGui::SetCurrentContext(imgui_context);
-
-			ImGui_ImplOpenGL3_Shutdown();
-			ImGui_ImplGlfw_Shutdown();
-			ImGui::DestroyContext();
-
-			if (previous_imgui_context != nullptr && previous_imgui_context != imgui_context) // if there was another context, restore it
-				ImGui::SetCurrentContext(previous_imgui_context);
-			imgui_context = nullptr;
 		}
 	}
 
@@ -283,6 +286,61 @@ namespace chaos
 		return mouse_position.value();
 	}
 
+#ifdef _WIN32
+	LRESULT CALLBACK Window::ImGuiWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+	{
+		if (GLFWwindow* glfw_window = (GLFWwindow*)GetPropW(hWnd, L"GLFW")) // this how GLFW is bound to its WndProc
+		{
+			if (Window* window = (Window*)glfwGetWindowUserPointer(glfw_window))
+			{
+				LRESULT result = 0;
+
+				ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
+				ImGui::SetCurrentContext(window->imgui_context);
+				result = ::CallWindowProc(window->WndProc, hWnd, msg, wParam, lParam); // call "super" WndProc
+				ImGui::SetCurrentContext(previous_imgui_context);
+
+				return result;
+			}
+		}
+		return 0;
+	}
+
+	// Note on ImGui and WndProc
+	//
+	//   first GLFW install its own WndProc to make a bind between WIN32API and GLFW
+	//
+	//   then ImGui install its own WndProc on top of that
+	//
+	//   The issue is that ImGui WndProc relies on the current ImGui context to dispatch events. The current ImGui context does not necessary correspond the the window whose message is being processed
+	//
+	//   That's why we install our own WndProc on top of all to, from a HWND, get a GLFWindow, then get the chaos::Window, then get and set the proper ImGui context
+	//
+	//   Thoses layers of WndProc must be removed in reverse order
+	//
+	//   Our new WndProc does not use glfwMakeCurrentContext(...) to make current GLFW context active because this function is much more costly than ImGui::SetCurrentContext(...)
+
+	void Window::SetImGuiWindowProc(bool set_proc)
+	{
+		// set the WndProc
+		if (set_proc)
+		{
+			assert(WndProc == NULL);
+			HWND hWnd = glfwGetWin32Window(GetGLFWHandler());
+			WndProc = (WNDPROC)::GetWindowLongPtr(hWnd, GWLP_WNDPROC);
+			::SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)&Window::ImGuiWindowProc);
+		}
+		// restore the WndProc
+		else
+		{
+			assert(WndProc != NULL);
+			HWND hWnd = glfwGetWin32Window(GetGLFWHandler());
+			::SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)WndProc);
+			WndProc = NULL;
+		}
+	}
+#endif
+
 	void Window::SetGLFWCallbacks(bool in_double_buffer)
 	{
 		glfwSetWindowUserPointer(glfw_window, this);
@@ -321,8 +379,6 @@ namespace chaos
 		{
 			my_window->WithGLContext([my_window, value]()
 			{
-				if (my_window->GetImGuiContext())
-					ImGui_ImplGlfw_WindowFocusCallback(my_window->GetGLFWHandler(), value); // manually call ImGui delegate (see comment in WindowApplication::OnWindowCreated(...)
 				my_window->OnFocusStateChange(value == GL_TRUE);
 			});
 		}
@@ -370,9 +426,6 @@ namespace chaos
 		{
 			my_window->WithGLContext([my_window, x, y]()
 			{
-				if (my_window->GetImGuiContext())
-					ImGui_ImplGlfw_CursorPosCallback(my_window->GetGLFWHandler(), x, y); // manually call ImGui delegate (see comment in WindowApplication::OnWindowCreated(...)
-
 				glm::vec2 position = { float(x), float(y) };
 
 				if (!my_window->IsMousePositionValid())
@@ -401,9 +454,6 @@ namespace chaos
 		{
 			my_window->WithGLContext([my_window, button, action, modifier]()
 			{
-				if (my_window->GetImGuiContext())
-					ImGui_ImplGlfw_MouseButtonCallback(my_window->GetGLFWHandler(), button, action, modifier); // manually call ImGui delegate (see comment in WindowApplication::OnWindowCreated(...)
-
 				my_window->OnMouseButton(button, action, modifier);
 			});
 		}
@@ -417,8 +467,6 @@ namespace chaos
 		{
 			my_window->WithGLContext([my_window, scroll_x, scroll_y]()
 			{
-				if (my_window->GetImGuiContext())
-					ImGui_ImplGlfw_ScrollCallback(my_window->GetGLFWHandler(), scroll_x, scroll_y); // manually call ImGui delegate (see comment in WindowApplication::OnWindowCreated(...)
 				my_window->OnMouseWheel(scroll_x, scroll_y);
 			});
 		}
@@ -446,8 +494,6 @@ namespace chaos
 		{
 			my_window->WithGLContext([my_window, event, key, scan_code, action, modifier]()
 			{
-				if (my_window->GetImGuiContext())
-					ImGui_ImplGlfw_KeyCallback(my_window->GetGLFWHandler(), key, scan_code, action, modifier); // manually call ImGui delegate (see comment in WindowApplication::OnWindowCreated(...)
 				my_window->OnKeyEvent(event);
 			});
 		}
@@ -461,8 +507,6 @@ namespace chaos
 		{
 			my_window->WithGLContext([my_window, c]()
 			{
-				if (my_window->GetImGuiContext())
-					ImGui_ImplGlfw_CharCallback(my_window->GetGLFWHandler(), c); // manually call ImGui delegate (see comment in WindowApplication::OnWindowCreated(...)
 				my_window->OnCharEvent(c);
 			});
 		}

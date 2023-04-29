@@ -289,17 +289,20 @@ namespace chaos
 #ifdef _WIN32
 	LRESULT CALLBACK Window::ImGuiWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
-		if (GLFWwindow* glfw_window = (GLFWwindow*)GetPropW(hWnd, L"GLFW")) // this how GLFW is bound to its WndProc
+		if (Window* window = (Window*)GetPropW(hWnd, L"CHAOS_WINDOW"))
 		{
-			if (Window* window = (Window*)glfwGetWindowUserPointer(glfw_window))
+			if (WNDPROC previous_wndproc = (WNDPROC)GetPropW(hWnd, L"CHAOS_PREVIOUS_WNDPROC"))
 			{
 				LRESULT result = 0;
 
 				ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
-				ImGui::SetCurrentContext(window->imgui_context);
-				result = ::CallWindowProc(window->WndProc, hWnd, msg, wParam, lParam); // call "super" WndProc
-				ImGui::SetCurrentContext(previous_imgui_context);
+				ImGuiContext* toset_imgui_context = window->imgui_context;
 
+				ImGui::SetCurrentContext(toset_imgui_context);
+				result = ::CallWindowProc(previous_wndproc, hWnd, msg, wParam, lParam); // call "super" WndProc
+
+				if (toset_imgui_context != previous_imgui_context) // maybe previous context was same then window's context and window's context has been deleted
+					ImGui::SetCurrentContext(previous_imgui_context);
 				return result;
 			}
 		}
@@ -314,29 +317,33 @@ namespace chaos
 	//
 	//   The issue is that ImGui WndProc relies on the current ImGui context to dispatch events. The current ImGui context does not necessary correspond the the window whose message is being processed
 	//
-	//   That's why we install our own WndProc on top of all to, from a HWND, get a GLFWindow, then get the chaos::Window, then get and set the proper ImGui context
+	//   That's why we install our own WndProc on top of all to get a ImGui from a HWND
 	//
 	//   Thoses layers of WndProc must be removed in reverse order
 	//
 	//   Our new WndProc does not use glfwMakeCurrentContext(...) to make current GLFW context active because this function is much more costly than ImGui::SetCurrentContext(...)
+	//   There is a huge number of window events and we are only interrested to have a GLFW context in some glfw callback
 
 	void Window::SetImGuiWindowProc(bool set_proc)
 	{
+		HWND hWnd = glfwGetWin32Window(GetGLFWHandler());
 		// set the WndProc
 		if (set_proc)
 		{
-			assert(WndProc == NULL);
-			HWND hWnd = glfwGetWin32Window(GetGLFWHandler());
-			WndProc = (WNDPROC)::GetWindowLongPtr(hWnd, GWLP_WNDPROC);
+			assert((WNDPROC)GetPropW(hWnd, L"CHAOS_WINDOW") == nullptr);
+			assert((WNDPROC)GetPropW(hWnd, L"CHAOS_PREVIOUS_WNDPROC") == nullptr);
+			SetPropW(hWnd, L"CHAOS_WINDOW", this);
+			SetPropW(hWnd, L"CHAOS_PREVIOUS_WNDPROC", (WNDPROC)::GetWindowLongPtr(hWnd, GWLP_WNDPROC));
 			::SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)&Window::ImGuiWindowProc);
 		}
 		// restore the WndProc
 		else
 		{
-			assert(WndProc != NULL);
-			HWND hWnd = glfwGetWin32Window(GetGLFWHandler());
-			::SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)WndProc);
-			WndProc = NULL;
+			assert((WNDPROC)GetPropW(hWnd, L"CHAOS_WINDOW") != nullptr);
+			assert((WNDPROC)GetPropW(hWnd, L"CHAOS_PREVIOUS_WNDPROC") != nullptr);
+			::SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)GetPropW(hWnd, L"CHAOS_PREVIOUS_WNDPROC"));
+			SetPropW(hWnd, L"CHAOS_WINDOW", nullptr);
+			SetPropW(hWnd, L"CHAOS_PREVIOUS_WNDPROC", nullptr);
 		}
 	}
 #endif

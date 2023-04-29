@@ -268,10 +268,6 @@ namespace chaos
 		std::optional<glm::vec2> mouse_position;
 		/** used to store data when toggling fullscreen */
 		std::optional<NonFullScreenWindowData> non_fullscreen_data;
-
-#ifdef _WIN32
-		WNDPROC WndProc = NULL;
-#endif
 	};
 
 #endif

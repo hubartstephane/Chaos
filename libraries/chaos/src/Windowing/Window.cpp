@@ -203,7 +203,9 @@ namespace chaos
 
 		glfwSetWindowPos(glfw_window, x, y);
 		glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, 1);
-		SetCursorMode(CursorMode::Disabled);
+		//SetCursorMode(CursorMode::Disabled);
+
+		SetCursorMode(CursorMode::Normal);
 
 		// now that the window is fully placed ... we can show it
 		if (create_params.start_visible)
@@ -364,11 +366,8 @@ namespace chaos
 		glfwSetScrollCallback(glfw_window, DoOnMouseWheel);
 		glfwSetWindowSizeCallback(glfw_window, DoOnWindowResize);
 		glfwSetKeyCallback(glfw_window, DoOnKeyEvent);
-
 		glfwSetCharCallback(glfw_window, DoOnCharEvent);
-
 		glfwSetWindowCloseCallback(glfw_window, DoOnWindowClosed);
-		glfwSetWindowRefreshCallback(glfw_window, DoOnDraw);
 		glfwSetDropCallback(glfw_window, DoOnDropFile);
 		glfwSetWindowFocusCallback(glfw_window, DoOnFocusStateChange);
 		glfwSetWindowIconifyCallback(glfw_window, DoOnIconifiedStateChange);
@@ -417,17 +416,6 @@ namespace chaos
 			my_window->WithGLContext([my_window, width, height]()
 			{
 				my_window->OnWindowResize(glm::ivec2(width, height));
-			});
-		}
-	}
-
-	void Window::DoOnDraw(GLFWwindow* in_glfw_window)
-	{
-		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
-		{
-			my_window->WithGLContext([my_window]()
-			{
-				my_window->OnWindowDraw();
 			});
 		}
 	}
@@ -537,7 +525,7 @@ namespace chaos
 		}
 	}
 
-	void Window::OnWindowDraw()
+	void Window::DrawWindow()
 	{
 		if (glfw_window != nullptr && renderer != nullptr)
 		{
@@ -553,7 +541,7 @@ namespace chaos
 			GPUProgramProviderChain provider(this, application_provider_interface, common_transforms); // order: window, application, common deduction rules
 
 			// render
-			if (OnDrawInternal(&provider))
+			if (DrawInternal(&provider))
 			{
 				if (double_buffer)
 					glfwSwapBuffers(glfw_window);
@@ -567,13 +555,6 @@ namespace chaos
 	void Window::RequireWindowClosure()
 	{
 		glfwSetWindowShouldClose(glfw_window, 1);
-	}
-
-	void Window::RequireWindowRefresh()
-	{
-		HWND hWnd = glfwGetWin32Window(glfw_window);
-		if (hWnd != NULL)
-			InvalidateRect(hWnd, NULL, false); // this cause flickering
 	}
 
 	GLFWmonitor* Window::GetFullscreenMonitor() const
@@ -740,7 +721,7 @@ namespace chaos
 			renderer->BeginRenderingFrame();
 			renderer->PushFramebufferRenderContext(framebuffer.get(), false);
 
-			OnDrawInternal(&provider);
+			DrawInternal(&provider);
 
 			renderer->PopFramebufferRenderContext();
 			renderer->EndRenderingFrame();
@@ -852,11 +833,11 @@ namespace chaos
 		return WindowInterface::OnCharEventImpl(c);
 	}
 
-	void Window::OnDrawImGui(WindowDrawParams const& draw_params)
+	void Window::DrawImGui(WindowDrawParams const& draw_params)
 	{
 	}
 
-	bool Window::OnDrawInternal(GPUProgramProviderInterface const* uniform_provider)
+	bool Window::DrawInternal(GPUProgramProviderInterface const* uniform_provider)
 	{
 		bool result = false;
 
@@ -882,14 +863,16 @@ namespace chaos
 			result |= root_widget->OnDraw(renderer.get(), uniform_provider, draw_params);
 		}
 		// draw ImGui
+		DrawImGui(draw_params);
+
+		// finalize the rendering
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		// prepare rendering until we come back into this function
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-
-		OnDrawImGui(draw_params);
-
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		return result;
 	}

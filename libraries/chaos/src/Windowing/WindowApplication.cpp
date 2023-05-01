@@ -78,9 +78,8 @@ namespace chaos
 				window->WithGLContext([window, delta_time, real_delta_time]()
 				{
 					window->TickRenderer(real_delta_time);
-					
-					if (window->Tick(delta_time))
-						window->RequireWindowRefresh();
+					window->Tick(delta_time);
+					window->DrawWindow();
 				});
 			}
 			// update time
@@ -140,6 +139,10 @@ namespace chaos
 #if _WIN32
 		window->SetImGuiWindowProc(true);
 #endif
+		// the context is ready for rendering
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
 
 		// restore previous imgui context
 		ImGui::SetCurrentContext(previous_imgui_context);
@@ -222,9 +225,9 @@ namespace chaos
 		// shuxxx
 
 
-		CreateMainWindow();
+	//	CreateMainWindow();
 
-		CreateMainWindow();
+	//	CreateMainWindow();
 
 		// run the main loop as long as there are windows
 		RunMessageLoop([this]() { return (windows.size() > 0); });

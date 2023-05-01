@@ -26,7 +26,6 @@ protected:
 				debug_display.Clear();
 			else
 				debug_display.AddLine(chaos::StringTools::Printf("LINE FROM CLICKED [%d]", click_count++).c_str(), 5.0f);
-			RequireWindowRefresh();
 			return true;
 		}
 		return false;

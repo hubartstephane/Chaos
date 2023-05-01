@@ -101,8 +101,6 @@ namespace chaos
 
 		/** called to require the window to close */
 		void RequireWindowClosure();
-		/** called to require the window to refresh */
-		void RequireWindowRefresh();
 		/** getter on the handler */
 		GLFWwindow* GetGLFWHandler();
 		/** returns whether the window has a pending GLFW close message */
@@ -214,15 +212,15 @@ namespace chaos
 		virtual bool DoTick(float delta_time) override;
 
 		/** display both the window content and the widget overlay */
-		virtual bool OnDrawInternal(GPUProgramProviderInterface const* uniform_provider);
+		virtual bool DrawInternal(GPUProgramProviderInterface const* uniform_provider);
 
 		/** bind Window with GLFW */
 		virtual void SetGLFWCallbacks(bool in_double_buffer);
 
 		/** called whenever the window is redrawn (entry point) */
-		virtual void OnWindowDraw();
+		virtual void DrawWindow();
 		/** draw the ImGui layer */
-		virtual void OnDrawImGui(WindowDrawParams const& draw_params);
+		virtual void DrawImGui(WindowDrawParams const& draw_params);
 
 		/** called at window creation (returns false if the window must be killed) */
 		virtual bool InitializeFromConfiguration(nlohmann::json const& config);
@@ -263,8 +261,6 @@ namespace chaos
 		static void DoOnWindowClosed(GLFWwindow* in_glfw_window);
 		/** binding function with GLFW library */
 		static void DoOnWindowResize(GLFWwindow* in_glfw_window, int width, int height);
-		/** binding function with GLFW library */
-		static void DoOnDraw(GLFWwindow* in_glfw_window);
 		/** binding function with GLFW library */
 		static void DoOnMouseMove(GLFWwindow* in_glfw_window, double x, double y);
 		/** binding function with GLFW library */

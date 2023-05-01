@@ -7,7 +7,20 @@ namespace chaos
 	class NonFullScreenWindowData;
 	class Window;
 
+	enum class CursorMode;
+
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+	/**
+	* CursorMode 
+	*/
+
+	enum class CHAOS_API CursorMode : int
+	{
+		Normal = GLFW_CURSOR_NORMAL,
+		Disabled = GLFW_CURSOR_DISABLED,
+		Hidden = GLFW_CURSOR_HIDDEN
+	};
 
 	/**
 	* WindowCreateParams : parameters for playing single window application
@@ -146,6 +159,10 @@ namespace chaos
 			// save GLFW context
 			GLFWwindow* previous_glfw_window = glfwGetCurrentContext();
 			glfwMakeContextCurrent(glfw_window);
+			// save ImGui context
+			ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
+			ImGuiContext* toset_imgui_context = imgui_context;
+			ImGui::SetCurrentContext(toset_imgui_context);
 
 			if constexpr (std::is_same_v<void, decltype(func())>)
 			{
@@ -153,6 +170,9 @@ namespace chaos
 				func();
 				// restore GLFW and ImGui contexts
 				glfwMakeContextCurrent(previous_glfw_window);
+				// restore ImGui context (if different, because maybe the context has been destroy inside the func() call
+				if (toset_imgui_context != previous_imgui_context)
+					ImGui::SetCurrentContext(previous_imgui_context);
 			}
 			else
 			{
@@ -160,12 +180,20 @@ namespace chaos
 				auto result = func();
 				// restore GLFW and ImGui contexts
 				glfwMakeContextCurrent(previous_glfw_window);
+				// restore ImGui context (if different, because maybe the context has been destroy inside the func() call
+				if (toset_imgui_context != previous_imgui_context)
+					ImGui::SetCurrentContext(previous_imgui_context);
 				return result;
 			}
 		}
 
 		/** gets the ImGui context */
 		ImGuiContext* GetImGuiContext() const { return imgui_context; }
+
+		/** change the cursor mode */
+		void SetCursorMode(CursorMode mode);
+		/** get the cursor mode */
+		CursorMode GetCursorMode() const;
 
 	protected:
 
@@ -193,6 +221,8 @@ namespace chaos
 
 		/** called whenever the window is redrawn (entry point) */
 		virtual void OnWindowDraw();
+		/** draw the ImGui layer */
+		virtual void OnDrawImGui(WindowDrawParams const& draw_params);
 
 		/** called at window creation (returns false if the window must be killed) */
 		virtual bool InitializeFromConfiguration(nlohmann::json const& config);

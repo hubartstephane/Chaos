@@ -202,11 +202,8 @@ namespace chaos
 		}
 
 		glfwSetWindowPos(glfw_window, x, y);
-		glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		// GOOD glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		// glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-
 		glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, 1);
+		SetCursorMode(CursorMode::Disabled);
 
 		// now that the window is fully placed ... we can show it
 		if (create_params.start_visible)
@@ -218,6 +215,16 @@ namespace chaos
 			root_widget->window = this;
 
 		return true;
+	}
+
+	void Window::SetCursorMode(CursorMode mode)
+	{
+		glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)mode);
+	}
+
+	CursorMode Window::GetCursorMode() const
+	{
+		return (CursorMode)glfwGetInputMode(glfw_window, GLFW_CURSOR);
 	}
 
 	glm::ivec2 Window::GetWindowPosition() const
@@ -845,6 +852,10 @@ namespace chaos
 		return WindowInterface::OnCharEventImpl(c);
 	}
 
+	void Window::OnDrawImGui(WindowDrawParams const& draw_params)
+	{
+	}
+
 	bool Window::OnDrawInternal(GPUProgramProviderInterface const* uniform_provider)
 	{
 		bool result = false;
@@ -870,6 +881,16 @@ namespace chaos
 				UpdateWidgetPlacementHierarchy();
 			result |= root_widget->OnDraw(renderer.get(), uniform_provider, draw_params);
 		}
+		// draw ImGui
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+		OnDrawImGui(draw_params);
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 		return result;
 	}
 

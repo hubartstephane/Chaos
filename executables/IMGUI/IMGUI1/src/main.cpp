@@ -33,21 +33,8 @@ protected:
 		return true;
 	}
 
-	virtual bool DoTick(float delta_time) override
+	virtual void OnDrawImGui(chaos::WindowDrawParams const& draw_params) override
 	{
-
-		return true;
-	}
-
-	virtual bool OnDraw(chaos::GPURenderer* renderer, chaos::GPUProgramProviderInterface const* uniform_provider, chaos::WindowDrawParams const& draw_params) override
-	{
-		glm::vec4 clear_color(0.5f, 0.3f, 0.0f, 0.0f);
-		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
-
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-
 		if (id == 0)
 		{
 			ImGui::Begin("##truc1");
@@ -66,9 +53,27 @@ protected:
 			ImGui::Text("bidule");
 			ImGui::End();
 		}
+	}
 
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	virtual bool DoTick(float delta_time) override
+	{
+
+
+
+
+
+
+
+
+		return true;
+	}
+
+	virtual bool OnDraw(chaos::GPURenderer* renderer, chaos::GPUProgramProviderInterface const* uniform_provider, chaos::WindowDrawParams const& draw_params) override
+	{
+		glm::vec4 clear_color(0.5f, 0.3f, 0.0f, 0.0f);
+		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
+
+
 
 		return true;
 	}

@@ -27,18 +27,63 @@ protected:
 
 	virtual bool OnMouseButtonImpl(int button, int action, int modifier) override
 	{
-		if (action == GLFW_PRESS)
+		if (action == GLFW_PRESS || action == GLFW_REPEAT)
 		{
+			if (id == 0)
+			{
+				ImGui::Begin("##truc1");
+				ImGui::Text("Hello");
+				ImGui::End();
+			}
+
 		}
 		return true;
 	}
 
-	virtual void OnDrawImGui(chaos::WindowDrawParams const& draw_params) override
+	virtual bool OnKeyEventImpl(chaos::KeyEvent const& event) override
+	{
+		{
+			ImGui::Begin("##truc1");
+			ImGui::Text("Hello");
+			ImGui::End();
+		}
+
+		if (event.action == GLFW_PRESS || event.action == GLFW_REPEAT)
+		{
+		//	if (id == 0)
+
+
+			col += 0.05f;
+			if (col > 1.0f)
+				col = 0.0f;
+		}
+
+		if (event.IsKeyReleased(GLFW_KEY_ESCAPE))
+		{
+			RequireWindowClosure();
+			return true;
+		}
+		return chaos::Window::OnKeyEventImpl(event);
+	}
+
+	virtual void DrawImGui(chaos::WindowDrawParams const& draw_params) override
 	{
 		if (id == 0)
 		{
 			ImGui::Begin("##truc1");
 			ImGui::Text("Hello");
+			ImGui::End();
+
+			ImGui::Begin("##truc1");
+			ImGui::Text("Machin");
+			ImGui::Text("Machin");
+			ImGui::End();
+
+			ImGui::Begin("##truc1");
+			if (ImGui::Button("Machin"))
+			{
+				id = id;
+			}
 			ImGui::End();
 		}
 		if (id == 1)
@@ -70,7 +115,7 @@ protected:
 
 	virtual bool OnDraw(chaos::GPURenderer* renderer, chaos::GPUProgramProviderInterface const* uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
-		glm::vec4 clear_color(0.5f, 0.3f, 0.0f, 0.0f);
+		glm::vec4 clear_color(col, 0.3f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
 
@@ -78,15 +123,7 @@ protected:
 		return true;
 	}
 
-	virtual bool OnKeyEventImpl(chaos::KeyEvent const& event) override
-	{
-		if (event.IsKeyReleased(GLFW_KEY_ESCAPE))
-		{
-			RequireWindowClosure();
-			return true;
-		}
-		return chaos::Window::OnKeyEventImpl(event);
-	}
+	float col = 0.0f;
 };
 
 

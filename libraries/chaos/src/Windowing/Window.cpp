@@ -835,6 +835,16 @@ namespace chaos
 
 	void Window::DrawImGui(WindowDrawParams const& draw_params)
 	{
+		ImGui::Begin("My First Tool");
+		for (auto arg : chaos::ApplicationArgumentManager::GetInstance()->GetArguments())
+		{
+			if (*arg->GetTypeInfo() == typeid(bool))
+			{
+				chaos::ApplicationArgument<bool>* bool_arg = auto_cast(arg);
+
+				ImGui::Checkbox(arg->GetName(), &bool_arg->Get());
+			}
+		}
 	}
 
 	bool Window::DrawInternal(GPUProgramProviderInterface const* uniform_provider)

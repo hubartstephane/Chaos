@@ -85,31 +85,12 @@ namespace chaos
 		return true;
 	}
 
-	namespace Arguments
-	{
-#if !_DEBUG
-		CHAOS_APPLICATION_ARG(bool, ShowFPS);
-		CHAOS_APPLICATION_ARG(bool, ShowPerfs);
-#endif
-		CHAOS_APPLICATION_ARG(bool, HideFPS);
-		CHAOS_APPLICATION_ARG(bool, HidePerfs);
-	};
-
 	bool GameHUD::FillHUDContent()
 	{
 		// FPS
-#if !_DEBUG
-		if (Arguments::ShowFPS.Get())
-#endif
-			if (!Arguments::HideFPS.Get())
-				RegisterComponent(GameHUDKeys::FPS_ID, new GameHUDFramerateComponent());
+		RegisterComponent(GameHUDKeys::FPS_ID, new GameHUDFramerateComponent());
 		// PERFS
-#if !_DEBUG
-		if (Arguments::ShowPerfs.Get())
-#endif
-			if (!Arguments::HidePerfs.Get())
-				RegisterComponent(GameHUDKeys::PERFS_ID, new GameHUDPerfsComponent());
-
+		RegisterComponent(GameHUDKeys::PERFS_ID, new GameHUDPerfsComponent());
 #if _DEBUG
 		// FREECAMERA
 		RegisterComponent(GameHUDKeys::FREECAMERA_ID, new GameHUDFreeCameraComponent());

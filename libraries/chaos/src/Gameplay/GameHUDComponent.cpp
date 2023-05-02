@@ -324,6 +324,16 @@ namespace chaos
 	// GameHUDFramerateComponent
 	// ====================================================================
 
+	namespace Arguments
+	{
+#if !_DEBUG
+		CHAOS_APPLICATION_ARG(bool, ShowFPS);
+		CHAOS_APPLICATION_ARG(bool, ShowPerfs);
+#endif
+		CHAOS_APPLICATION_ARG(bool, HideFPS);
+		CHAOS_APPLICATION_ARG(bool, HidePerfs);
+	}
+
 	GameHUDFramerateComponent::GameHUDFramerateComponent(char const * in_text):
 		GameHUDCacheValueTextComponent<float>(in_text)
 	{
@@ -335,6 +345,13 @@ namespace chaos
 
 	int GameHUDFramerateComponent::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
+#if !_DEBUG
+		if (!Arguments::ShowFPS.Get())
+			return 0;
+#endif
+		if (Arguments::HideFPS.Get())
+			return 0;
+
 		average_framerate = renderer->GetAverageFrameRate();
 		return GameHUDCacheValueTextComponent<float>::DoDisplay(renderer, uniform_provider, render_params);
 	}
@@ -363,6 +380,13 @@ namespace chaos
 
 	int GameHUDPerfsComponent::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
+#if !_DEBUG
+		if (!Arguments::ShowPerfs.Get())
+			return 0;
+#endif
+		if (Arguments::HidePerfs.Get())
+			return 0;
+
 		average_drawcall = renderer->GetAverageDrawCalls();
 		average_vertices = renderer->GetAverageVertices();
 		average_framerate = renderer->GetAverageFrameRate();

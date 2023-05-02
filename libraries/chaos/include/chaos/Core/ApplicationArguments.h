@@ -141,6 +141,9 @@ static inline chaos::ApplicationArgument<TYPE> const & ARGNAME = *chaos::Applica
 		/** gets the option string */
 		char const* GetOptionString() const;
 
+		/** gets the arguments */
+		std::vector<ApplicationArgumentBase*> const& GetArguments() const { return arguments; }
+
 	protected:
 
 		/** options descriptions */

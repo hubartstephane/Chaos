@@ -117,7 +117,7 @@ namespace chaos
 		if (new_vertex_array == nullptr || !new_vertex_array->IsValid())
 			return nullptr;
 
-		renderer->GetWindow()->WithGLContext([this, new_vertex_array, renderer, program, vertex_buffer, index_buffer, declaration, offset]()
+		renderer->GetWindow()->WithWindowContext([this, new_vertex_array, renderer, program, vertex_buffer, index_buffer, declaration, offset]()
 		{
 			GLuint va = new_vertex_array->GetResourceID();
 

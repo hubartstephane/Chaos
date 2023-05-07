@@ -150,9 +150,26 @@ namespace chaos
 		/** update the whole widget hierarchy placement */
 		virtual void UpdateWidgetPlacementHierarchy();
 
+		#if 0
+		template<typename FUNC>
+		static auto WithWindowContext(ObjectRequest request, FUNC const& func)
+		{
+			if (WindowApplication* application = Application::GetInstance())
+			{
+				if (Window* window = application->FindWindow(request))
+				{
+					if constexpr (std::is_same_v<void, decltype(func())>)
+					{
+						return window->WithWindowContext(func);
+					}
+				}
+			}
+		}
+#endif
+
 		/** using window context, call functor, then restore previous */
 		template<typename FUNC>
-		auto WithGLContext(FUNC const& func)
+		auto WithWindowContext(FUNC const& func)
 		{
 			// save GLFW context
 			GLFWwindow* previous_glfw_window = glfwGetCurrentContext();

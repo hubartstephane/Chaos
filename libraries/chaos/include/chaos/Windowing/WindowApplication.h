@@ -90,7 +90,7 @@ namespace chaos
 
 		/** get the OpenGL context, call the function, restore previous context after */
 		template<typename FUNC>
-		static auto WithGLContext(GLFWwindow* context, FUNC const& func)
+		static auto WithWindowContext(GLFWwindow* context, FUNC const& func)
 		{
 			if constexpr (std::is_same_v<void, decltype(func())>)
 			{

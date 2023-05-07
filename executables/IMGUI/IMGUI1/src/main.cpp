@@ -4,6 +4,9 @@
 
 
 
+CHAOS_APPLICATION_ARG(float, myfloat)
+CHAOS_APPLICATION_ARG(int, myint)
+CHAOS_APPLICATION_ARG(std::string, mystring)
 
 class WindowOpenGLTest : public chaos::Window
 {
@@ -35,7 +38,6 @@ protected:
 				ImGui::Text("Hello");
 				ImGui::End();
 			}
-
 		}
 		return true;
 	}
@@ -75,46 +77,122 @@ protected:
 
 	virtual void DrawImGui(chaos::WindowDrawParams const& draw_params) override
 	{
+		static bool show_demo = false;
+		static bool show_metrics = false;
+		static bool show_debug_log = false;
+		static bool show_stack_tool = false;
+		static bool show_about = false;
+		static bool show_style_editor = false;
+		static bool show_user_guide = false;
 
-		//ImGuiWindowFlags_NoTitleBar
-
-		// Create a window called "My First Tool", with a menu bar.
-
-		if (my_tool_active)
+		if (ImGui::BeginMainMenuBar())
 		{
-
-			ImGui::Begin("My First Tool", &my_tool_active, ImGuiWindowFlags_MenuBar);// | ImGuiWindowFlags_NoTitleBar
-			if (ImGui::BeginMenuBar())
+			if (ImGui::BeginMenu("ImGui"))
 			{
-				if (ImGui::BeginMenu("File"))
-				{
-					if (ImGui::MenuItem("Open..", "Ctrl+O")) { /* Do stuff */ }
-					if (ImGui::MenuItem("Save", "Ctrl+S")) { /* Do stuff */ }
-					if (ImGui::MenuItem("Close", "Ctrl+W")) { my_tool_active = false; }
-					ImGui::EndMenu();
-				}
-				ImGui::EndMenuBar();
+#define CHAOS_IMGUI_MENUITEM(X) if (ImGui::MenuItem(#X, nullptr, X, true)){ X = !X; }
+				CHAOS_IMGUI_MENUITEM(show_demo);
+				CHAOS_IMGUI_MENUITEM(show_metrics);
+				CHAOS_IMGUI_MENUITEM(show_debug_log);
+				CHAOS_IMGUI_MENUITEM(show_stack_tool);
+				CHAOS_IMGUI_MENUITEM(show_about);
+				CHAOS_IMGUI_MENUITEM(show_style_editor);
+				CHAOS_IMGUI_MENUITEM(show_user_guide);
+#undef CHAOS_IMGUI_MENUITEM
+				ImGui::EndMenu();
 			}
 
+			ImGui::EndMainMenuBar();
+		}
 
+		if (show_demo)
+			ImGui::ShowDemoWindow(&show_demo);
+		if (show_metrics)
+			ImGui::ShowMetricsWindow(&show_metrics);
+		if (show_debug_log)
+			ImGui::ShowDebugLogWindow(&show_debug_log);
+		if (show_stack_tool)
+			ImGui::ShowStackToolWindow(&show_stack_tool);
+		if (show_about)
+			ImGui::ShowAboutWindow(&show_about);
+		if (show_style_editor)
+			ImGui::ShowStyleEditor();
+		if (show_user_guide)
+			ImGui::ShowUserGuide();
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0
+		// create menu bar
+		ImGui::SetNextWindowPos({ -1.0f, 0.0f });
+		ImGui::SetNextWindowSize({ float(GetWindowSize().x + 2), 0.0f });
+
+		ImGui::Begin("My First Tool", nullptr, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove);
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				if (ImGui::MenuItem("Open..", "Ctrl+O")) { /* Do stuff */ }
+				if (ImGui::MenuItem("Save", "Ctrl+S")) { /* Do stuff */ }
+				if (ImGui::MenuItem("Close", "Ctrl+W")) { my_tool_active = false; }
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenuBar();
+		}
+		ImGui::End();
+#endif
+
+#if 0
+		// show the command arguments
+		if (my_tool_active)
+		{
+			ImGui::Begin("CommandLineArguments", &my_tool_active);
 			for (auto arg : chaos::ApplicationArgumentManager::GetInstance()->GetArguments())
 			{
 				if (*arg->GetTypeInfo() == typeid(bool))
 				{
-					chaos::ApplicationArgument<bool>* bool_arg = auto_cast(arg);
-
-					ImGui::Checkbox(arg->GetName(), &bool_arg->Get());
+					if (chaos::ApplicationArgument<bool>* bool_arg = auto_cast(arg))
+					{
+						ImGui::Checkbox(arg->GetName(), &bool_arg->Get());
+					}
 				}
 
+
+				if (*arg->GetTypeInfo() == typeid(float))
+				{
+					if (chaos::ApplicationArgument<float>* float_arg = auto_cast(arg))
+					{
+						ImGui::SliderFloat(arg->GetName(), &float_arg->Get(), 0.0f, 1.0f);
+					}
+				}
 			}
 
 
+			float myvector[2] = { 0.0f, 0.0f };
+			ImGui::SliderFloat2("vector", myvector, 0.f, 1.0f);
+			ImGui::End();
+
+			ImGui::BeginGroup();
+			static int radio_index = 0;
+			ImGui::RadioButton("choice1", &radio_index, 0);
+			ImGui::RadioButton("choice2", &radio_index, 1);
+			ImGui::RadioButton("choice3", &radio_index, 2);
+			ImGui::RadioButton("choice4", &radio_index, 3);
+			ImGui::EndGroup();
+		}
+
+#endif
 
 
-
-
-
-
+#if 0
 			float f = 0.3f;
 			char buf[30] = { 0 };
 			ImGui::Text("Hello, world %d", 123);
@@ -145,16 +223,7 @@ protected:
 				ImGui::Text("Other Text");
 			ImGui::EndChild();
 			ImGui::EndChild();
-
-
-
-			ImGui::End();
-
-
-		}
-
-
-
+#endif
 
 
 
@@ -164,7 +233,7 @@ protected:
 
 		if (id == 0)
 		{
-			ImGui::Begin("##truc1", &xxx);
+			ImGui::Begin("##truc1", &xxx, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove);
 			ImGui::Text("Hello");
 			ImGui::End();
 
@@ -172,6 +241,13 @@ protected:
 			ImGui::Text("Machin");
 			ImGui::Text("Machin");
 			ImGui::Text("machinccc %d", xxx);
+
+
+			ImGui::BeginGroup();
+
+			ImGui::EndGroup();
+
+
 			ImGui::End();
 
 			ImGui::Begin("##truc1", &xxx);

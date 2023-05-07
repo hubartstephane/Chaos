@@ -18,6 +18,43 @@ namespace chaos
 		Error
 	};
 
+
+
+
+
+	class CHAOS_API LogBackend : public Object
+	{
+
+
+	};
+
+	class CHAOS_API LogToConsoleBackend : public LogBackend
+	{
+
+	public:
+
+
+
+	protected:
+
+		/** an additionnal output */
+		std::ofstream output_file;
+		/** indicates whether we tryed once to open output_file (when opening fails, do not retry) */
+		bool open_output_file = true;
+	};
+
+	class CHAOS_API LogToImGuiBackend : public LogBackend
+	{
+
+	protected:
+
+		/** the lines that have been displayed */
+		std::vector<std::string> lines;
+	};
+
+
+
+
 	/**
 	* Log : deserve to output some logs
 	*/

@@ -31,7 +31,7 @@ namespace chaos
 		{
 			if (vertex_array_id == 0 && ownership)
 			{
-				WindowApplication::WithGLContext(context, [this]()
+				WindowApplication::WithWindowContext(context, [this]()
 				{
 					glDeleteVertexArrays(1, &vertex_array_id);
 				});
@@ -51,7 +51,7 @@ namespace chaos
 		// create new resource
 		if (in_window != nullptr && in_window->GetGLFWHandler() != nullptr)
 		{
-			return in_window->WithGLContext([this, in_window]()
+			return in_window->WithWindowContext([this, in_window]()
 			{
 				glCreateVertexArrays(1, &vertex_array_id);
 				if (vertex_array_id == 0)
@@ -79,7 +79,7 @@ namespace chaos
 		if (in_id != 0 && in_window != nullptr && in_window->GetGLFWHandler() != nullptr)
 		{
 			// bad incomming resource
-			return in_window->WithGLContext([this, in_window, in_id, in_ownership]()
+			return in_window->WithWindowContext([this, in_window, in_id, in_ownership]()
 			{
 				if (!glIsVertexArray(in_id)) // check for validity ... with the given context !
 					return false;

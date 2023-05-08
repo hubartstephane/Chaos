@@ -32,23 +32,13 @@ protected:
 	{
 		if (action == GLFW_PRESS || action == GLFW_REPEAT)
 		{
-			if (id == 0)
-			{
-				ImGui::Begin("##truc1");
-				ImGui::Text("Hello");
-				ImGui::End();
-			}
+
 		}
 		return true;
 	}
 
 	virtual bool OnKeyEventImpl(chaos::KeyEvent const& event) override
 	{
-		{
-			ImGui::Begin("##truc1");
-			ImGui::Text("Hello");
-			ImGui::End();
-		}
 
 		if (event.action == GLFW_PRESS || event.action == GLFW_REPEAT)
 		{
@@ -72,12 +62,55 @@ protected:
 	glm::vec4 my_color = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 
-	bool xxx = true;
+
+#if 0
+
+	// show the command arguments
+	if (my_tool_active)
+	{
+		ImGui::Begin("CommandLineArguments", &my_tool_active);
+		for (auto arg : chaos::ApplicationArgumentManager::GetInstance()->GetArguments())
+		{
+			if (*arg->GetTypeInfo() == typeid(bool))
+			{
+				if (chaos::ApplicationArgument<bool>* bool_arg = auto_cast(arg))
+				{
+					ImGui::Checkbox(arg->GetName(), &bool_arg->Get());
+				}
+			}
+
+
+			if (*arg->GetTypeInfo() == typeid(float))
+			{
+				if (chaos::ApplicationArgument<float>* float_arg = auto_cast(arg))
+				{
+					ImGui::SliderFloat(arg->GetName(), &float_arg->Get(), 0.0f, 1.0f);
+				}
+			}
+		}
+
+
+		float myvector[2] = { 0.0f, 0.0f };
+		ImGui::SliderFloat2("vector", myvector, 0.f, 1.0f);
+		ImGui::End();
+
+		ImGui::BeginGroup();
+		static int radio_index = 0;
+		ImGui::RadioButton("choice1", &radio_index, 0);
+		ImGui::RadioButton("choice2", &radio_index, 1);
+		ImGui::RadioButton("choice3", &radio_index, 2);
+		ImGui::RadioButton("choice4", &radio_index, 3);
+		ImGui::EndGroup();
+	}
+
+
+#endif
+
 
 
 	virtual void DrawImGui(chaos::WindowDrawParams const& draw_params) override
 	{
-		static bool show_demo = false;
+		static bool show_demo = true;
 		static bool show_metrics = false;
 		static bool show_debug_log = false;
 		static bool show_stack_tool = false;
@@ -85,25 +118,31 @@ protected:
 		static bool show_style_editor = false;
 		static bool show_user_guide = false;
 
+
+		// main menu for ImGUI
 		if (ImGui::BeginMainMenuBar())
 		{
-			if (ImGui::BeginMenu("ImGui"))
+			if (ImGui::BeginMenu("windows"))
 			{
-#define CHAOS_IMGUI_MENUITEM(X) if (ImGui::MenuItem(#X, nullptr, X, true)){ X = !X; }
-				CHAOS_IMGUI_MENUITEM(show_demo);
-				CHAOS_IMGUI_MENUITEM(show_metrics);
-				CHAOS_IMGUI_MENUITEM(show_debug_log);
-				CHAOS_IMGUI_MENUITEM(show_stack_tool);
-				CHAOS_IMGUI_MENUITEM(show_about);
-				CHAOS_IMGUI_MENUITEM(show_style_editor);
-				CHAOS_IMGUI_MENUITEM(show_user_guide);
+				if (ImGui::BeginMenu("ImGui"))
+				{
+#define CHAOS_IMGUI_MENUITEM(X) ImGui::MenuItem(#X, nullptr, &X, true);
+					CHAOS_IMGUI_MENUITEM(show_demo);
+					CHAOS_IMGUI_MENUITEM(show_metrics);
+					CHAOS_IMGUI_MENUITEM(show_debug_log);
+					CHAOS_IMGUI_MENUITEM(show_stack_tool);
+					CHAOS_IMGUI_MENUITEM(show_about);
+					CHAOS_IMGUI_MENUITEM(show_style_editor);
+					CHAOS_IMGUI_MENUITEM(show_user_guide);
 #undef CHAOS_IMGUI_MENUITEM
+					ImGui::EndMenu();
+				}
 				ImGui::EndMenu();
 			}
-
 			ImGui::EndMainMenuBar();
 		}
 
+		// ImGui Window
 		if (show_demo)
 			ImGui::ShowDemoWindow(&show_demo);
 		if (show_metrics)
@@ -120,156 +159,223 @@ protected:
 			ImGui::ShowUserGuide();
 
 
+#if 1
 
-
-
-
-
-
-
-
-
-
-#if 0
-		// create menu bar
-		ImGui::SetNextWindowPos({ -1.0f, 0.0f });
-		ImGui::SetNextWindowSize({ float(GetWindowSize().x + 2), 0.0f });
-
-		ImGui::Begin("My First Tool", nullptr, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove);
-		if (ImGui::BeginMenuBar())
+		auto add_close_personal_window = [](bool& p_open)
 		{
-			if (ImGui::BeginMenu("File"))
+			if (ImGui::BeginMainMenuBar())
 			{
-				if (ImGui::MenuItem("Open..", "Ctrl+O")) { /* Do stuff */ }
-				if (ImGui::MenuItem("Save", "Ctrl+S")) { /* Do stuff */ }
-				if (ImGui::MenuItem("Close", "Ctrl+W")) { my_tool_active = false; }
-				ImGui::EndMenu();
-			}
-			ImGui::EndMenuBar();
-		}
-		ImGui::End();
-#endif
-
-#if 0
-		// show the command arguments
-		if (my_tool_active)
-		{
-			ImGui::Begin("CommandLineArguments", &my_tool_active);
-			for (auto arg : chaos::ApplicationArgumentManager::GetInstance()->GetArguments())
-			{
-				if (*arg->GetTypeInfo() == typeid(bool))
+				if (ImGui::BeginMenu("windows"))
 				{
-					if (chaos::ApplicationArgument<bool>* bool_arg = auto_cast(arg))
+					ImGui::Separator();
+					if (ImGui::BeginMenu("personals"))
 					{
-						ImGui::Checkbox(arg->GetName(), &bool_arg->Get());
+						ImGui::MenuItem("main", nullptr, &p_open, true); // whenever the user select the menu item, the p_open value is being toggled						
+						ImGui::EndMenu();
 					}
+					ImGui::EndMenu();
 				}
-
-
-				if (*arg->GetTypeInfo() == typeid(float))
-				{
-					if (chaos::ApplicationArgument<float>* float_arg = auto_cast(arg))
-					{
-						ImGui::SliderFloat(arg->GetName(), &float_arg->Get(), 0.0f, 1.0f);
-					}
-				}
+				ImGui::EndMainMenuBar();
 			}
+		};
 
 
-			float myvector[2] = { 0.0f, 0.0f };
-			ImGui::SliderFloat2("vector", myvector, 0.f, 1.0f);
-			ImGui::End();
-
-			ImGui::BeginGroup();
-			static int radio_index = 0;
-			ImGui::RadioButton("choice1", &radio_index, 0);
-			ImGui::RadioButton("choice2", &radio_index, 1);
-			ImGui::RadioButton("choice3", &radio_index, 2);
-			ImGui::RadioButton("choice4", &radio_index, 3);
-			ImGui::EndGroup();
-		}
-
-#endif
-
-
-#if 0
-			float f = 0.3f;
-			char buf[30] = { 0 };
-			ImGui::Text("Hello, world %d", 123);
-			if (ImGui::Button("Save"))
-			{
-			}
-			ImGui::InputText("string", buf, IM_ARRAYSIZE(buf));
-			ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-
-			// Edit a color stored as 4 floats
-			ImGui::ColorEdit4("Color", &my_color.x);
-
-			// Generate samples and plot them
-			float samples[100];
-			for (int n = 0; n < 100; n++)
-				samples[n] = sinf(n * 0.2f + ImGui::GetTime() * 1.5f);
-			ImGui::PlotLines("Samples", samples, 100);
-
-			// Display contents in a scrolling region
-			ImGui::TextColored(ImVec4(1, 1, 0, 1), "Important Stuff");
-
-			ImGui::BeginChild("Scrolling");
-			for (int n = 0; n < 5; n++)
-				ImGui::Text("%04d: Some text", n);
-
-			ImGui::BeginChild("Other Scrolling");
-			for (int n = 0; n < 2; n++)
-				ImGui::Text("Other Text");
-			ImGui::EndChild();
-			ImGui::EndChild();
-#endif
-
-
-
-
-
-
-
+		// ---------------------------------------------------------------------------------------------
 		if (id == 0)
 		{
-			ImGui::Begin("##truc1", &xxx, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove);
-			ImGui::Text("Hello");
-			ImGui::End();
+			static bool show_personal_window = true;
+			add_close_personal_window(show_personal_window);
 
-			ImGui::Begin("##truc1", &xxx);
-			ImGui::Text("Machin");
-			ImGui::Text("Machin");
-			ImGui::Text("machinccc %d", xxx);
-
-
-			ImGui::BeginGroup();
-
-			ImGui::EndGroup();
-
-
-			ImGui::End();
-
-			ImGui::Begin("##truc1", &xxx);
-			if (ImGui::Button("Machin"))
+			
+			if (show_personal_window) 
 			{
-				id = id;
+				ImGui::Begin("##truc1", &show_personal_window, ImGuiWindowFlags_NoCollapse);
+
+				if (ImGui::CollapsingHeader("Help"))
+				{
+					ImGui::Text("Hello");
+					ImGui::BulletText("The \"Examples\" menu above leads to more demo contents.");
+					ImGui::Text("Hello");
+				}
+				//ImGui::Dummy({100.0f, 100.0f});
+				ImGui::Indent();
+				if (ImGui::CollapsingHeader("Help 2"))
+				{
+					ImGui::Text("Hello 2");
+					ImGui::Text("Hello 2");
+				}
+
+
+				if (ImGui::CollapsingHeader("Help 3"))
+				{
+					static bool mycheck = false;
+
+					static int mycheckflag = 0;
+
+					ImGui::Text("Hello");
+					ImGui::CheckboxFlags("CheckboxFlags 1", &mycheckflag, 1);
+					ImGui::CheckboxFlags("CheckboxFlags 6", &mycheckflag, 6);
+					ImGui::ArrowButton("Arrow", ImGuiDir_Right);
+					ImGui::Checkbox("Checkbox", &mycheck);
+					ImGui::BulletText("The \"Examples\" menu above leads to more demo contents.");
+					ImGui::Text("Hello");
+				}
+				ImGui::Unindent();
+
+
+				if (ImGui::BeginTabBar("##tabs", ImGuiTabBarFlags_TabListPopupButton))
+				{
+					static bool tb1 = true;
+					static bool tb2 = true;
+					static bool tb3 = true;
+
+					if (ImGui::BeginTabItem("tab1", &tb1, ImGuiTabItemFlags_UnsavedDocument))
+					{
+						ImGui::Text("tab1");
+						ImGui::Text("tab1");
+						ImGui::EndTabItem();
+					}
+
+					if (ImGui::BeginTabItem("tab2", &tb2, ImGuiTabItemFlags_Trailing))
+					{
+						ImGui::Text("tab2");
+						ImGui::Text("tab2");
+						ImGui::EndTabItem();
+					}
+
+					if (ImGui::BeginTabItem("tab3", &tb3, ImGuiTabItemFlags_Leading))
+					{
+						ImGui::Text("tab3");
+						ImGui::Text("tab3");
+
+						if (ImGui::CollapsingHeader("Window options"))
+						{
+							if (ImGui::BeginTable("split", 3))
+							{
+								static bool op1 = false;
+								static bool op2 = false;
+								static bool op3 = false;
+								static bool op4 = false;
+								static bool op5 = false;
+
+								ImGui::TableNextColumn(); ImGui::Checkbox("op1", &op1);
+								if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort) && ImGui::BeginTooltip())
+								{
+									//ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+									ImGui::TextUnformatted("desc");
+									//ImGui::PopTextWrapPos();
+									ImGui::EndTooltip();
+								}
+								ImGui::TableNextColumn(); ImGui::Checkbox("op2", &op2);
+								ImGui::TableNextColumn(); ImGui::Checkbox("op3", &op3);
+								ImGui::TableNextColumn(); ImGui::Checkbox("op4", &op4);
+								ImGui::TableNextColumn(); ImGui::Checkbox("op5", &op5);
+								ImGui::EndTable();
+							}
+
+							//ImGui::SameLine();
+							ImGui::Button("Button 1"); ImGui::SameLine();
+							ImGui::Button("Button 2"); ImGui::SameLine();
+							ImGui::Button("Button 3");
+							ImGui::Button("Button 4"); ImGui::SameLine();
+							ImGui::SmallButton("Button 5");
+
+							static int counter = 0;
+							ImGui::PushButtonRepeat(true);
+							if (ImGui::ArrowButton("##left", ImGuiDir_Left)) { counter--; }
+							ImGui::SameLine();
+							
+							if (ImGui::ArrowButton("##right", ImGuiDir_Right)) { counter++; }
+							ImGui::SameLine();
+
+							ImGui::Text("%d", counter);
+							ImGui::PopButtonRepeat();
+
+							static int current_combo_item = 0;
+							char const* combo_items[] =
+							{
+								"item1",
+								"item2",
+								"item3"
+							};
+
+							ImGui::Combo("mycombo", &current_combo_item, combo_items, 3);
+							
+
+							static float myfloat = 500.0f;
+							ImGui::DragFloat("Myfloatdrag", &myfloat);
+							ImDrawList* draw_list = ImGui::GetWindowDrawList();
+							draw_list->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(255, 255, 0, 255));
+
+							ImGuiIO& io = ImGui::GetIO();
+							ImTextureID my_tex_id = io.Fonts->TexID;
+							float my_tex_w = (float)io.Fonts->TexWidth;
+							float my_tex_h = (float)io.Fonts->TexHeight;
+							ImVec2 uv_min = ImVec2(0.0f, 0.0f);                 // Top-left
+							ImVec2 uv_max = ImVec2(1.0f, 1.0f);                 // Lower-right
+							ImGui::Image(my_tex_id, ImVec2(my_tex_w, my_tex_h * 4), uv_min, uv_max); // , tint_col, border_col);
+
+
+
+						}
+
+
+						ImGui::EndTabItem();
+					}
+
+
+
+
+					ImGui::EndTabBar();
+				}
+
+				ImGui::End();
 			}
-			ImGui::End();
 		}
+
+
+#endif
+
+
+
+
+
+
+
+
+
+
+
+#if 1
+		// ---------------------------------------------------------------------------------------------
 		if (id == 1)
 		{
-			ImGui::Begin("##truc2", &xxx);
-			ImGui::Text("machin");
-			ImGui::Text("machin %d", xxx);
-			ImGui::End();
+			static bool show_personal_window = true;
+			add_close_personal_window(show_personal_window);
+
+			if (show_personal_window)
+			{
+				ImGui::Begin("##truc2", &show_personal_window);
+				ImGui::Text("machin");
+				ImGui::Text("machin %d", show_personal_window);
+				ImGui::End();
+			}
 		}
+
+		// ---------------------------------------------------------------------------------------------
 		if (id == 2)
 		{
-			ImGui::Begin("##truc3", &xxx);
-			ImGui::Text("bidule");
-			ImGui::End();
+			static bool show_personal_window = true;
+			add_close_personal_window(show_personal_window);
+
+			if (show_personal_window)
+			{
+				ImGui::Begin("##truc3", &show_personal_window);
+				ImGui::Text("bidule");
+				ImGui::End();
+			}
 		}
+#endif
 	}
 
 	virtual bool DoTick(float delta_time) override

@@ -220,18 +220,8 @@ namespace chaos
 		main_window = CreateMainWindow();
 		if (main_window == nullptr)
 			return -1;
-
-
-		// shuxxx
-
-
-		CreateMainWindow();
-
-		CreateMainWindow();
-
 		// run the main loop as long as there are windows
 		RunMessageLoop([this]() { return (windows.size() > 0); });
-
 		return 0;
 	}
 

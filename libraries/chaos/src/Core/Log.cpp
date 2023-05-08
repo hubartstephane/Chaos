@@ -27,9 +27,15 @@ namespace chaos
 		va_end(va);
 	}
 
-	void Log::DoOutput(LogType type, bool add_line_jump, char const* buffer)
+	void Log::DoOutput(LogType type, bool add_line_jump, std::string_view buffer)
 	{
-		assert(buffer != nullptr);
+		//assert(buffer != nullptr);
+
+		// register the new line
+		LogLine new_line;
+		new_line.type = type;
+		new_line.content = buffer;
+		lines.push_back(new_line);
 
 		// output in standard output
 		std::ostream& output = (type == LogType::Error) ? std::cerr : std::cout;

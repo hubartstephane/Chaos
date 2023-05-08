@@ -87,9 +87,15 @@ namespace chaos
 		}
 	}
 
-	Window* WindowApplication::CreateTypedWindow(SubClassOf<Window> window_class, WindowCreateParams const& create_params)
+	Window* WindowApplication::CreateTypedWindow(SubClassOf<Window> window_class, WindowCreateParams const& create_params, ObjectRequest request)
 	{
-		return WithWindowContext(nullptr, [this, window_class, create_params]() -> Window*
+		if (FindWindow(request) != nullptr)
+		{
+			chaos::Log::Error("WindowApplication::CreateTypedWindow(...) name already used");
+			return nullptr;
+		}
+
+		return WithWindowContext(nullptr, [this, window_class, create_params, &request]() -> Window*
 		{
 			// create the window class
 			Window* result = window_class.CreateInstance();
@@ -97,6 +103,7 @@ namespace chaos
 			{
 				return nullptr;
 			}
+			result->SetObjectNaming(request);
 			// create the GLFW resource
 			if (!result->CreateGLFWWindow(create_params, shared_context))
 			{
@@ -236,7 +243,7 @@ namespace chaos
 		}
 
 		// create the main window
-		Window * result = CreateTypedWindow(main_window_class, create_params);
+		Window * result = CreateTypedWindow(main_window_class, create_params, "main");
 		if (result == nullptr)
 			return nullptr;
 

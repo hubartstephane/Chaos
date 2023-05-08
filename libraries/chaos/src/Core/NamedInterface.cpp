@@ -16,7 +16,7 @@ namespace chaos
 		if (request.IsStringRequest())
 			SetName(request.name);
 		else if (request.IsTagRequest())
-			SetTag(request.tag);	
+			SetTag(request.tag);
 	}
 
 	bool SaveIntoJSON(nlohmann::json& json, NamedInterface const& src)

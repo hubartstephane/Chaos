@@ -115,6 +115,9 @@ namespace chaos
 		/** Run the message loop while the condition is true */
 		virtual void RunMessageLoop(std::function<bool()> const& loop_condition_func = {});
 
+		/** create a window */
+		Window* CreateTypedWindow(SubClassOf<Window> window_class, WindowCreateParams const& create_params = {}, ObjectRequest = {});
+
 	protected:
 
 		/** Main method */
@@ -180,9 +183,6 @@ namespace chaos
 
 		/** the user callback called when current input mode changes */
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;
-
-		/** create a window */
-		Window* CreateTypedWindow(SubClassOf<Window> window_class, WindowCreateParams const& create_params = {});
 
 		/** create an ImGui context for a new windows */
 		void CreateWindowImGuiContext(Window* window);

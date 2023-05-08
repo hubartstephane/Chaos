@@ -233,6 +233,61 @@ protected:
 					{
 						ImGui::Text("tab1");
 						ImGui::Text("tab1");
+
+						if (ImGui::Button("Stacked Popup"))
+							ImGui::OpenPopup("another popup");
+
+						static float arr[] = { 0.6f, 0.1f, 1.0f, 0.5f, 0.92f, 0.1f, 0.2f };
+						ImGui::PlotHistogram("Histogram", arr, IM_ARRAYSIZE(arr), 0, NULL, 0.0f, 1.0f, ImVec2(0, 180.0f));
+
+
+						if (ImGui::BeginListBox("List"))
+						{
+							static bool b1 = false;
+							static bool b2 = false;
+							static bool b3 = false;
+							ImGui::PushID(0);
+							ImGui::Selectable("Selected", &b1);
+							ImGui::PopID();
+							ImGui::PushID(1);
+							ImGui::Selectable("Not Selected", &b2);
+							ImGui::PopID();
+							ImGui::PushID(2);
+							ImGui::Selectable("Not Selected", &b3);
+							ImGui::PopID();
+							ImGui::EndListBox();
+						}
+
+						if (ImGui::TreeNode("truc"))
+						{
+							if (ImGui::TreeNode("machin"))
+							{
+								ImGui::Text("YYYYYYYYYY");
+								ImGui::TreePop();
+							}
+							ImGui::TreePop();
+						}
+						if (ImGui::TreeNode("truc"))
+						{
+							if (ImGui::TreeNode("machin"))
+							{
+								ImGui::Text("YYYYYYYYYY");
+								ImGui::TreePop();
+							}
+							ImGui::TreePop();
+						}
+
+						bool unused_open = true;
+						if (ImGui::BeginPopupModal("another popup"))
+						{
+
+							ImGui::Text("I am the last one here.");
+							if (ImGui::Button("Close XXX"))
+								ImGui::CloseCurrentPopup();
+							ImGui::EndPopup();
+						}
+
+
 						ImGui::EndTabItem();
 					}
 
@@ -300,10 +355,25 @@ protected:
 							};
 
 							ImGui::Combo("mycombo", &current_combo_item, combo_items, 3);
+
+							static ImGuiTextFilter filter;
+							ImGui::Text("Filter usage:\n"
+								"  \"\"         display all lines\n"
+								"  \"xxx\"      display lines containing \"xxx\"\n"
+								"  \"xxx,yyy\"  display lines containing \"xxx\" or \"yyy\"\n"
+								"  \"-xxx\"     hide lines containing \"xxx\"");
+							filter.Draw();
+							const char* lines[] = { "aaa1.c", "bbb1.c", "ccc1.c", "aaa2.cpp", "bbb2.cpp", "ccc2.cpp", "abc.h", "hello, world" };
+							for (int i = 0; i < IM_ARRAYSIZE(lines); i++)
+								if (filter.PassFilter(lines[i]))
+									ImGui::BulletText("%s", lines[i]);
 							
 
 							static float myfloat = 500.0f;
 							ImGui::DragFloat("Myfloatdrag", &myfloat);
+
+
+							ImGui::Dummy({ 200.0f, 200.0f });
 							ImDrawList* draw_list = ImGui::GetWindowDrawList();
 							draw_list->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(255, 255, 0, 255));
 
@@ -334,6 +404,7 @@ protected:
 		}
 
 
+
 #endif
 
 
@@ -357,6 +428,8 @@ protected:
 			{
 				ImGui::Begin("##truc2", &show_personal_window);
 				ImGui::Text("machin");
+				ImGui::SeparatorText("General");
+
 				ImGui::Text("machin %d", show_personal_window);
 				ImGui::End();
 			}
@@ -372,6 +445,26 @@ protected:
 			{
 				ImGui::Begin("##truc3", &show_personal_window);
 				ImGui::Text("bidule");
+
+				ImGuiWindowFlags window_flags = ImGuiWindowFlags_HorizontalScrollbar;
+
+				ImGui::BeginChild("ChildLX", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, 260), true, window_flags);
+				for (int i = 0; i < 100; i++)
+					ImGui::Text("%04d: scrollable region", i);
+				ImGui::EndChild();
+
+				ImGui::SameLine();
+
+				ImGui::BeginChild("ChildLY", ImVec2(ImGui::GetContentRegionAvail().x, 260), true, window_flags);
+				for (int i = 0; i < 100; i++)
+					ImGui::Text("%04d: truc scrollable region", i);
+				ImGui::EndChild();
+
+
+
+
+
+
 				ImGui::End();
 			}
 		}

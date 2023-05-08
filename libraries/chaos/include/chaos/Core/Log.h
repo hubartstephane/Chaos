@@ -18,7 +18,15 @@ namespace chaos
 		Error
 	};
 
+	class CHAOS_API LogLine
+	{
+	public:
 
+		/** the type of the message */
+		LogType type = LogType::Message;
+		/** the content of the message */
+		std::string content;
+	};
 
 
 
@@ -87,14 +95,23 @@ namespace chaos
 		/** display a box with a text */
 		static void Title(char const* title);
 
+		/** get the entries */
+		static std::vector<LogLine> const & GetLines()
+		{
+			return GetInstance()->lines;
+		}
+
 	protected:
 
 		/** internal method to format then display a log */
 		void DoFormatAndOuput(LogType type, bool add_line_jump, char const* format, ...);
 		/** internal method to display a log */
-		void DoOutput(LogType type, bool add_line_jump, char const* buffer);
+		void DoOutput(LogType type, bool add_line_jump, std::string_view buffer);
 
 	protected:
+
+		/** the line displayed */
+		std::vector<LogLine> lines;
 
 		/** an additionnal output */
 		std::ofstream output_file;

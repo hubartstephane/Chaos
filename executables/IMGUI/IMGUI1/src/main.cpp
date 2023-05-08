@@ -8,6 +8,86 @@ CHAOS_APPLICATION_ARG(float, myfloat)
 CHAOS_APPLICATION_ARG(int, myint)
 CHAOS_APPLICATION_ARG(std::string, mystring)
 
+
+
+class ConsoleWindow : public chaos::Window
+{
+	CHAOS_DECLARE_OBJECT_CLASS(ConsoleWindow, chaos::Window);
+
+protected:
+
+	virtual bool DoTick(float delta_time) override
+	{
+		ImGui::SetNextWindowPos({ 0, 0 });
+		ImGui::SetNextWindowSize({ ImGui::GetMainViewport()->Size.x, ImGui::GetMainViewport()->Size.y });
+		if (ImGui::Begin("##console", nullptr, ImGuiWindowFlags_NoMove  | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground))
+		{
+			if (ImGui::BeginTable("##lines", 2, ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersInnerH | ImGuiTableFlags_BordersInnerV))
+			{
+				ImGui::TableSetupColumn("Type", 0, 1);
+				ImGui::TableSetupColumn("Message", 0);
+				ImGui::TableHeadersRow();
+
+				int index = 0;
+				for (chaos::LogLine const& line : chaos::Log::GetLines())
+				{
+					ImVec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+					char const* message_type = "message";
+					if (line.type == chaos::LogType::Error)
+					{
+						color = { 1.0f, 0.0f, 0.0f, 1.0f };
+						message_type = "error";
+					}
+					else if (line.type == chaos::LogType::Warning)
+					{
+						color = { 1.0f, 0.64f, 0.0f, 1.0f };
+						message_type = "warning";
+					}
+					
+					ImGui::PushID(index++);
+					ImGui::TableNextColumn();
+					ImGui::TextColored(color, message_type);
+					ImGui::PopID();
+
+					ImGui::PushID(index++);
+					ImGui::TableNextColumn();
+					ImGui::TextColored(color, "%s", line.content.c_str());
+					ImGui::PopID();
+					
+				}
+				ImGui::EndTable();
+			}
+			ImGui::End();
+		}
+		return true;
+	}
+};
+
+
+
+
+
+
+
+
+
+
+#if 0
+ImGui::Begin("My First Tool");
+for (auto arg : chaos::ApplicationArgumentManager::GetInstance()->GetArguments())
+{
+	if (*arg->GetTypeInfo() == typeid(bool))
+	{
+		chaos::ApplicationArgument<bool>* bool_arg = auto_cast(arg);
+
+		ImGui::Checkbox(arg->GetName(), &bool_arg->Get());
+	}
+}
+#endif
+
+
+
+
 class WindowOpenGLTest : public chaos::Window
 {
 	friend class MyEvent;
@@ -32,7 +112,7 @@ protected:
 	{
 		if (action == GLFW_PRESS || action == GLFW_REPEAT)
 		{
-
+			chaos::Log::Warning("truc");
 		}
 		return true;
 	}
@@ -106,7 +186,20 @@ protected:
 
 #endif
 
-
+	void ToggleConsoleWindow()
+	{
+		if (chaos::WindowApplication* window_application = chaos::Application::GetInstance())
+		{
+			if (chaos::Window * console = window_application->FindWindow("console"))
+			{
+				console->RequireWindowClosure();
+			}
+			else
+			{
+				window_application->CreateTypedWindow(chaos::SubClassOf<ConsoleWindow>(), {}, "console");
+			}
+		}
+	}
 
 	virtual void DrawImGui(chaos::WindowDrawParams const& draw_params) override
 	{
@@ -137,6 +230,21 @@ protected:
 #undef CHAOS_IMGUI_MENUITEM
 					ImGui::EndMenu();
 				}
+
+				ImGui::Separator();
+
+				bool console_exists = false;
+				if (chaos::WindowApplication* window_application = chaos::Application::GetInstance())
+				{
+					console_exists = (window_application->FindWindow("console") != nullptr);
+				}
+
+				if (ImGui::MenuItem("Show console", nullptr, console_exists, true))
+				{
+					ToggleConsoleWindow();
+				}
+
+
 				ImGui::EndMenu();
 			}
 			ImGui::EndMainMenuBar();

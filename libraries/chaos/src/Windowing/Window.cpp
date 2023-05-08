@@ -835,16 +835,6 @@ namespace chaos
 
 	void Window::DrawImGui(WindowDrawParams const& draw_params)
 	{
-		ImGui::Begin("My First Tool");
-		for (auto arg : chaos::ApplicationArgumentManager::GetInstance()->GetArguments())
-		{
-			if (*arg->GetTypeInfo() == typeid(bool))
-			{
-				chaos::ApplicationArgument<bool>* bool_arg = auto_cast(arg);
-
-				ImGui::Checkbox(arg->GetName(), &bool_arg->Get());
-			}
-		}
 	}
 
 	bool Window::DrawInternal(GPUProgramProviderInterface const* uniform_provider)
@@ -896,6 +886,13 @@ namespace chaos
 			placement.size = GetWindowSize();
 			root_widget->SetPlacement(placement);
 		}
+	}
+
+	bool Window::OnDraw(GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params)
+	{
+		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
+		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
+		return true;
 	}
 
 	bool Window::DoTick(float delta_time)

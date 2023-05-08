@@ -224,6 +224,8 @@ namespace chaos
 		virtual bool OnMouseWheelImpl(double scroll_x, double scroll_y) override;
 		/** override */
 		virtual bool OnCharEventImpl(unsigned int c) override;
+		/** override */
+		virtual bool OnDraw(GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params) override;
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;

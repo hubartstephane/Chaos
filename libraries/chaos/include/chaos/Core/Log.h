@@ -18,12 +18,26 @@ namespace chaos
 		Error
 	};
 
+	CHAOS_DECLARE_ENUM_METHOD(LogType);
+
+
 	class CHAOS_API LogLine
 	{
 	public:
 
+		/** output to string */
+		std::string ToString() const;
+		/** check whether two entries are comparable */
+		bool IsComparable(LogLine const& src) const;
+
+	public:
+
+		/** the date of post */
+		std::chrono::system_clock::time_point time;
 		/** the type of the message */
 		LogType type = LogType::Message;
+		/** the domain of the message */
+		char const * domain = nullptr;
 		/** the content of the message */
 		std::string content;
 	};
@@ -84,6 +98,8 @@ namespace chaos
 		template<typename ...PARAMS>
 		static void Error(PARAMS && ...params) { Output(LogType::Error, true, std::forward<PARAMS>(params)...); }
 
+
+
 		/** generic log function */
 		template<typename ...PARAMS>
 		static void Output(LogType type, bool add_line_jump, PARAMS && ...params)
@@ -101,6 +117,10 @@ namespace chaos
 			return GetInstance()->lines;
 		}
 
+		/** get the log file path */
+		static boost::filesystem::path GetOutputPath();
+
+
 	protected:
 
 		/** internal method to format then display a log */
@@ -112,6 +132,11 @@ namespace chaos
 
 		/** the line displayed */
 		std::vector<LogLine> lines;
+		/** domains. store domains only once */
+		std::vector<std::string> domains;
+
+
+
 
 		/** an additionnal output */
 		std::ofstream output_file;

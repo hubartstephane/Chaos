@@ -4,6 +4,31 @@
 
 namespace chaos
 {
+	static std::vector<std::pair<LogType, char const*>> const log_type_encoding =
+	{
+		{ LogType::Message, "MESSAGE" },
+		{ LogType::Warning, "WARNING" },
+		{ LogType::Error,   "ERROR" }
+	};
+
+	CHAOS_IMPLEMENT_ENUM_METHOD(LogType, log_type_encoding);
+
+	std::string LogLine::ToString() const
+	{
+		//return std::format("{0} {1} {2}", EnumToString(type), 9, 3);
+
+		return {};
+	}
+
+	bool LogLine::IsComparable(LogLine const& src) const
+	{
+		// compare members to members, by comparaison speed (ignore time)
+		return
+			(type == src.type) &&
+			(domain == src.domain) && // raw pointer comparaison
+			(content == src.content);
+	}
+
 	Log* Log::GetInstance()
 	{
 		// XXX : use a share pointer so that we are sure it is being destroyed at the end of the application (and so the output_file is being flushed)
@@ -27,14 +52,22 @@ namespace chaos
 		va_end(va);
 	}
 
+	boost::filesystem::path Log::GetOutputPath()
+	{
+		if (Application* application = Application::GetInstance())
+		{
+			return application->GetUserLocalTempPath() / "logs.txt";
+		}
+		return {};
+	}
+
 	void Log::DoOutput(LogType type, bool add_line_jump, std::string_view buffer)
 	{
-		//assert(buffer != nullptr);
-
 		// register the new line
 		LogLine new_line;
 		new_line.type = type;
 		new_line.content = buffer;
+		new_line.time = std::chrono::system_clock::now();
 		lines.push_back(new_line);
 
 		// output in standard output
@@ -48,11 +81,9 @@ namespace chaos
 			// even in case of failure do not ever try to open the file
 			open_output_file = false; 
 			// open the file
-			Application* application = Application::GetInstance();
-			if (application != nullptr)
+			boost::filesystem::path log_path = GetOutputPath();
+			if (!log_path.empty())
 			{
-				boost::filesystem::path log_path = application->GetUserLocalTempPath() / "logs.txt";
-
 				output_file.open(log_path.c_str(), std::ofstream::binary | std::ofstream::trunc);
 			}
 		}

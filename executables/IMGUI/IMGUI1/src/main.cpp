@@ -10,11 +10,118 @@ CHAOS_APPLICATION_ARG(std::string, mystring)
 
 
 
+
 class ConsoleWindow : public chaos::Window
 {
 	CHAOS_DECLARE_OBJECT_CLASS(ConsoleWindow, chaos::Window);
 
 protected:
+
+	bool show_messages = true;
+	bool show_warnings = true;
+	bool show_errors   = true;
+
+	bool group_identical_lines = true;
+	
+	void ImGuiContent()
+	{
+		auto n = std::chrono::system_clock::now();
+
+		auto sss = std::format("{0:%D %T %Z}\n", n);
+		std::time_t t = std::chrono::system_clock::to_time_t(n);
+		std::string ts = std::ctime(&t);
+
+
+
+		ImGui::Checkbox("messages", &show_messages); ImGui::SameLine();
+		ImGui::Checkbox("warnings", &show_warnings); ImGui::SameLine();
+		ImGui::Checkbox("errors", &show_errors);
+
+		ImGui::Checkbox("group identical lines", &group_identical_lines);
+
+
+		size_t constexpr COLUMN_COUNT = 5;
+
+		if (ImGui::BeginTable("##lines", COLUMN_COUNT, ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersInnerH | ImGuiTableFlags_BordersInnerV))
+		{
+			ImGui::TableSetupColumn("Date", 0);
+			ImGui::TableSetupColumn("Type", 0);
+			ImGui::TableSetupColumn("Count", 0);
+			ImGui::TableSetupColumn("Message", 0);
+			ImGui::TableSetupColumn("Action", 0);
+			ImGui::TableHeadersRow();
+
+			std::vector<chaos::LogLine> const & lines = chaos::Log::GetLines();
+			for (size_t i = 0 ; i < lines.size() ; ++i)
+			{
+				chaos::LogLine const& line = lines[i];
+
+				size_t group_count = 1;
+				if (group_identical_lines)
+				{
+					while (i + 1 < lines.size() && line.IsComparable(lines[i + 1]))
+					{
+						++i;
+						++group_count;
+					}
+				}
+
+				ImVec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+				char const* message_type = nullptr;
+				if (line.type == chaos::LogType::Message)
+				{
+					if (!show_messages)
+						continue;
+					color = { 1.0f, 1.0f, 1.0f, 1.0f };
+					message_type = "message";
+				}
+				else if (line.type == chaos::LogType::Warning)
+				{
+					if (!show_warnings)
+						continue;
+					color = { 1.0f, 0.64f, 0.0f, 1.0f };
+					message_type = "warning";
+				}
+				else if (line.type == chaos::LogType::Error)
+				{
+					if (!show_errors)
+						continue;
+					color = { 1.0f, 0.0f, 0.0f, 1.0f };
+					message_type = "error";
+				}
+
+				ImGui::PushID(int(i * COLUMN_COUNT + 0));
+				ImGui::TableNextColumn();
+				ImGui::TextColored(color, "%d", line.time);
+				ImGui::PopID();
+
+				ImGui::PushID(int(i * COLUMN_COUNT + 1));
+				ImGui::TableNextColumn();
+				ImGui::TextColored(color, message_type);
+				ImGui::PopID();
+
+				ImGui::PushID(int(i * COLUMN_COUNT + 2));
+				ImGui::TableNextColumn();
+				ImGui::TextColored(color, "%d", group_count);
+				ImGui::PopID();
+
+				ImGui::PushID(int(i * COLUMN_COUNT + 3));
+				ImGui::TableNextColumn();
+				ImGui::TextColored(color, "%s", line.content.c_str());
+				ImGui::PopID();
+
+				ImGui::PushID(int(i * COLUMN_COUNT + 4));
+				ImGui::TableNextColumn();
+				if (ImGui::Button("Clipboard"))
+				{
+					ImGui::GetIO().SetClipboardTextFn(nullptr, line.ToString().c_str());
+				}
+				ImGui::PopID();
+
+			}
+			ImGui::EndTable();
+		}
+	}
 
 	virtual bool DoTick(float delta_time) override
 	{
@@ -22,41 +129,7 @@ protected:
 		ImGui::SetNextWindowSize({ ImGui::GetMainViewport()->Size.x, ImGui::GetMainViewport()->Size.y });
 		if (ImGui::Begin("##console", nullptr, ImGuiWindowFlags_NoMove  | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground))
 		{
-			if (ImGui::BeginTable("##lines", 2, ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersInnerH | ImGuiTableFlags_BordersInnerV))
-			{
-				ImGui::TableSetupColumn("Type", 0, 1);
-				ImGui::TableSetupColumn("Message", 0);
-				ImGui::TableHeadersRow();
-
-				int index = 0;
-				for (chaos::LogLine const& line : chaos::Log::GetLines())
-				{
-					ImVec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
-					char const* message_type = "message";
-					if (line.type == chaos::LogType::Error)
-					{
-						color = { 1.0f, 0.0f, 0.0f, 1.0f };
-						message_type = "error";
-					}
-					else if (line.type == chaos::LogType::Warning)
-					{
-						color = { 1.0f, 0.64f, 0.0f, 1.0f };
-						message_type = "warning";
-					}
-					
-					ImGui::PushID(index++);
-					ImGui::TableNextColumn();
-					ImGui::TextColored(color, message_type);
-					ImGui::PopID();
-
-					ImGui::PushID(index++);
-					ImGui::TableNextColumn();
-					ImGui::TextColored(color, "%s", line.content.c_str());
-					ImGui::PopID();
-					
-				}
-				ImGui::EndTable();
-			}
+			ImGuiContent();
 			ImGui::End();
 		}
 		return true;
@@ -196,7 +269,10 @@ protected:
 			}
 			else
 			{
-				window_application->CreateTypedWindow(chaos::SubClassOf<ConsoleWindow>(), {}, "console");
+				chaos::WindowCreateParams create_params;
+				create_params.width = 800;
+				create_params.height = 800;
+				window_application->CreateTypedWindow(chaos::SubClassOf<ConsoleWindow>(), create_params, "console");
 			}
 		}
 	}

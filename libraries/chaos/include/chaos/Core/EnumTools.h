@@ -31,11 +31,11 @@ CHAOS_API bool EnumToString(enum_type src, std::string & dst);
 #define CHAOS_IMPLEMENT_ENUM_METHOD(enum_type, table_name)\
 CHAOS_API bool StringToEnum(char const * src, enum_type& dst)\
 {\
-	return EnumTools::ConvertStringToEnum(src, table_name, dst);\
+	return chaos::EnumTools::ConvertStringToEnum(src, table_name, dst);\
 }\
 CHAOS_API bool EnumToString(enum_type src, std::string & dst)\
 {\
-	return EnumTools::ConvertEnumToString(src, table_name, dst);\
+	return chaos::EnumTools::ConvertEnumToString(src, table_name, dst);\
 }
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION

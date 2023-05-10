@@ -12,14 +12,14 @@ namespace chaos
 	public:
 
 		/** initialize the object */
-		void SetLog(Log const* in_log);
+		void SetLog(Log * in_log);
 		/** override */
 		virtual void DrawImGui() override;
 
 	protected:
 
 		/** the log object to display */
-		Log const* log = nullptr;
+		Log * log = nullptr;
 
 		/** whether the messages are to be displayed */
 		bool show_messages = true;

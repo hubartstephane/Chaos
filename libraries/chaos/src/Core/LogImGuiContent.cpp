@@ -3,8 +3,7 @@
 
 namespace chaos
 {
-
-	void LogImGuiContent::SetLog(Log const* in_log)
+	void LogImGuiContent::SetLog(Log * in_log)
 	{
 		log = in_log;
 	}
@@ -18,11 +17,9 @@ namespace chaos
 		ImGui::Checkbox("errors", &show_errors);
 		ImGui::Checkbox("group identical lines", &group_identical_lines);
 
-#if 0
 		for (size_t i = 0; i < log->GetListenerCount(); ++i)
-			if (ImGuiDrawableInterface* imgui_drawable = auto_cast(log->GetListener(i)))
+			if (ImGuiDrawableInterface * imgui_drawable = auto_cast(log->GetListener(i)))
 				imgui_drawable->DrawImGui();
-#endif
 
 		size_t constexpr COLUMN_COUNT = 5;
 

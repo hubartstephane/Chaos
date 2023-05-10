@@ -50,3 +50,5 @@
 #include "chaos/Core/BitTools.h"
 #include "chaos/Core/PriorityQueue.h"
 #include "chaos/Core/NestedIterator.h"
+#include "chaos/Core/ImGuiDrawableInterface.h"
+#include "chaos/Core/LogImGuiContent.h"

@@ -3,6 +3,9 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	enum class LogType;
+	class LogLine;
+	class LogListener;
+	class FileLogListener;
 	class Log;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -20,6 +23,9 @@ namespace chaos
 
 	CHAOS_DECLARE_ENUM_METHOD(LogType);
 
+	/**
+	* LogLine : an entry in the log system
+	*/
 
 	class CHAOS_API LogLine
 	{
@@ -42,40 +48,78 @@ namespace chaos
 		std::string content;
 	};
 
+	/**
+	* LogListener : an object dedicated to wait for entries
+	*/
 
-
-	class CHAOS_API LogBackend : public Object
+	class CHAOS_API LogListener : public Object
 	{
+		CHAOS_DECLARE_OBJECT_CLASS(LogListener, Object);
 
-
-	};
-
-	class CHAOS_API LogToConsoleBackend : public LogBackend
-	{
+		friend class Log;
 
 	public:
 
+		/** destructor */
+		virtual ~LogListener();
 
+		/** get the log system the listener is attached to */
+		Log* GetLog() { return log; }
+		/** get the log system the listener is attached to */
+		Log const * GetLog() const { return log; }
+		/** change the log system */
+		void SetLog(Log* in_log);
+
+		/** ImGui function */
+		virtual void DrawImGui() const {};
 
 	protected:
 
-		/** an additionnal output */
-		std::ofstream output_file;
-		/** indicates whether we tryed once to open output_file (when opening fails, do not retry) */
-		bool open_output_file = true;
+		/** called whenever the listener is attached to the log object */
+		virtual void OnAttachedToLog(Log* log) {}
+		/** called whenever the listener is detached from the log object */
+		virtual void OnDetachedFromLog(Log* log) {}
+		/** called whenever a new line is emitted from the log object */
+		virtual void OnNewLine(LogLine const& line) {}
+
+	protected:
+
+		/** the log system the listener belongs to */
+		Log* log = nullptr;
 	};
 
-	class CHAOS_API LogToImGuiBackend : public LogBackend
+	/**
+	* FileLogListener : an object dedicated to wait for entries and write them into a file
+	*/
+
+	class CHAOS_API FileLogListener : public LogListener
 	{
+		CHAOS_DECLARE_OBJECT_CLASS(LogListener, Object);
+
+	public:
+
+		/** get the log file path */
+		boost::filesystem::path GetOutputPath() const;
+		/** force flush to file */
+		void Flush() const;
 
 	protected:
 
-		/** the lines that have been displayed */
-		std::vector<std::string> lines;
+		/** override */
+		virtual void OnAttachedToLog(Log* in_log) override;
+		/** override */
+		virtual void OnDetachedFromLog(Log* in_log) override;
+		/** override */
+		virtual void OnNewLine(LogLine const& line) override;
+
+		/** override */
+		virtual void DrawImGui() const override;
+
+	protected:
+
+		/** an additionnal output (mutable so we can flush) */
+		mutable std::ofstream output_file;
 	};
-
-
-
 
 	/**
 	* Log : deserve to output some logs
@@ -83,7 +127,14 @@ namespace chaos
 
 	class CHAOS_API Log : public Object
 	{
+		CHAOS_DECLARE_OBJECT_CLASS(Log, Object);
+
+		friend class LogListener;
+
 	public:
+
+		/** destructor */
+		virtual ~Log();
 
 		/** get the Log instance */
 		static Log* GetInstance();
@@ -112,16 +163,24 @@ namespace chaos
 		static void Title(char const* title);
 
 		/** get the entries */
-		static std::vector<LogLine> const & GetLines()
+		std::vector<LogLine> const& GetLines() const
 		{
 			return GetInstance()->lines;
 		}
 
-		/** get the log file path */
-		static boost::filesystem::path GetOutputPath();
-
+		/** get the number of listeners */
+		size_t GetListenerCount() const { return listeners.size(); }
+		/** get the nth listener */
+		LogListener* GetListener(size_t index) { return listeners[index].get(); }
+		/** get the nth listener */
+		LogListener const * GetListener(size_t index) const { return listeners[index].get(); }
 
 	protected:
+
+		/** add a listener to the log */
+		void AddListener(LogListener* listener);
+		/** remove a listener from the log */
+		void RemoveListener(LogListener* listener);
 
 		/** internal method to format then display a log */
 		void DoFormatAndOuput(LogType type, bool add_line_jump, char const* format, ...);
@@ -134,14 +193,8 @@ namespace chaos
 		std::vector<LogLine> lines;
 		/** domains. store domains only once */
 		std::vector<std::string> domains;
-
-
-
-
-		/** an additionnal output */
-		std::ofstream output_file;
-		/** indicates whether we tryed once to open output_file (when opening fails, do not retry) */
-		bool open_output_file = true;
+		/** listeners */
+		std::vector<shared_ptr<LogListener>> listeners;
 	};
 
 #endif

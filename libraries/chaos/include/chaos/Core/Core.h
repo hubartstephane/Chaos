@@ -20,6 +20,7 @@
 #include "chaos/Core/AutoCast.h"
 #include "chaos/Core/SmartPointers.h"
 #include "chaos/Core/Class.h"
+#include "chaos/Core/ImGuiDrawableInterface.h"
 #include "chaos/Core/ClassRegistration.h"
 #include "chaos/Core/ClassFindResult.h"
 #include "chaos/Core/Object.h"
@@ -50,5 +51,4 @@
 #include "chaos/Core/BitTools.h"
 #include "chaos/Core/PriorityQueue.h"
 #include "chaos/Core/NestedIterator.h"
-#include "chaos/Core/ImGuiDrawableInterface.h"
 #include "chaos/Core/LogImGuiContent.h"

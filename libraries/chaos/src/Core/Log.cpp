@@ -1,7 +1,6 @@
 #include "chaos/ChaosPCH.h"
 #include "chaos/ChaosInternals.h"
 
-
 namespace chaos
 {
 	// ================================================================
@@ -108,7 +107,7 @@ namespace chaos
 		}
 	}
 
-	void FileLogListener::DrawImGui() const
+	void FileLogListener::DrawImGui()
 	{
 		if (ImGui::Button("Show output file"))
 		{

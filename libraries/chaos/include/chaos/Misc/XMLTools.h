@@ -38,8 +38,7 @@ namespace chaos
 		template<typename T, typename = std::enable_if<std::is_enum_v<T>>>
 		static bool PushAttribute(tinyxml2::XMLElement * element, char const* name, T& value)
 		{
-			std::string str;
-			EnumToString(value, str);
+			char const * str = EnumToString(value);
 			PushAttribute(element, name, str);
 		}
 

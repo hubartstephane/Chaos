@@ -8,36 +8,19 @@ CHAOS_APPLICATION_ARG(float, myfloat)
 CHAOS_APPLICATION_ARG(int, myint)
 CHAOS_APPLICATION_ARG(std::string, mystring)
 
-
-
-
-class ConsoleWindow : public chaos::Window
+class ConsoleImGuiContent
 {
-	CHAOS_DECLARE_OBJECT_CLASS(ConsoleWindow, chaos::Window);
+public:
 
-protected:
-
-	bool show_messages = true;
-	bool show_warnings = true;
-	bool show_errors   = true;
-
-	bool group_identical_lines = true;
-	
-	void ImGuiContent()
+	virtual void DrawImGui(chaos::Log const * log)
 	{
-		auto n = std::chrono::system_clock::now();
-
-		auto sss = std::format("{0:%D %T %Z}\n", n);
-		std::time_t t = std::chrono::system_clock::to_time_t(n);
-		std::string ts = std::ctime(&t);
-
-
-
 		ImGui::Checkbox("messages", &show_messages); ImGui::SameLine();
 		ImGui::Checkbox("warnings", &show_warnings); ImGui::SameLine();
 		ImGui::Checkbox("errors", &show_errors);
-
 		ImGui::Checkbox("group identical lines", &group_identical_lines);
+
+		for (size_t i = 0; i < log->GetListenerCount(); ++i)
+			log->GetListener(i)->DrawImGui();
 
 
 		size_t constexpr COLUMN_COUNT = 5;
@@ -51,8 +34,8 @@ protected:
 			ImGui::TableSetupColumn("Action", 0);
 			ImGui::TableHeadersRow();
 
-			std::vector<chaos::LogLine> const & lines = chaos::Log::GetLines();
-			for (size_t i = 0 ; i < lines.size() ; ++i)
+			std::vector<chaos::LogLine> const& lines = log->GetLines();
+			for (size_t i = 0; i < lines.size(); ++i)
 			{
 				chaos::LogLine const& line = lines[i];
 
@@ -67,28 +50,25 @@ protected:
 				}
 
 				ImVec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
-				char const* message_type = nullptr;
 				if (line.type == chaos::LogType::Message)
 				{
 					if (!show_messages)
 						continue;
 					color = { 1.0f, 1.0f, 1.0f, 1.0f };
-					message_type = "message";
 				}
 				else if (line.type == chaos::LogType::Warning)
 				{
 					if (!show_warnings)
 						continue;
 					color = { 1.0f, 0.64f, 0.0f, 1.0f };
-					message_type = "warning";
 				}
 				else if (line.type == chaos::LogType::Error)
 				{
 					if (!show_errors)
 						continue;
 					color = { 1.0f, 0.0f, 0.0f, 1.0f };
-					message_type = "error";
 				}
+				char const* message_type = chaos::EnumToString(line.type);
 
 				ImGui::PushID(int(i * COLUMN_COUNT + 0));
 				ImGui::TableNextColumn();
@@ -123,17 +103,35 @@ protected:
 		}
 	}
 
+protected:
+
+	bool show_messages = true;
+	bool show_warnings = true;
+	bool show_errors = true;
+	bool group_identical_lines = true;
+};
+
+class ConsoleWindow : public chaos::Window
+{
+	CHAOS_DECLARE_OBJECT_CLASS(ConsoleWindow, chaos::Window);
+
+protected:
+
 	virtual bool DoTick(float delta_time) override
 	{
 		ImGui::SetNextWindowPos({ 0, 0 });
 		ImGui::SetNextWindowSize({ ImGui::GetMainViewport()->Size.x, ImGui::GetMainViewport()->Size.y });
 		if (ImGui::Begin("##console", nullptr, ImGuiWindowFlags_NoMove  | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground))
 		{
-			ImGuiContent();
+			console_content.DrawImGui(chaos::Log::GetInstance());
 			ImGui::End();
 		}
 		return true;
 	}
+
+protected:
+
+	ConsoleImGuiContent console_content;
 };
 
 
@@ -185,7 +183,7 @@ protected:
 	{
 		if (action == GLFW_PRESS || action == GLFW_REPEAT)
 		{
-			chaos::Log::Warning("truc");
+			chaos::Log::Warning("Message");
 		}
 		return true;
 	}

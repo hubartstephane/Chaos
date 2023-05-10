@@ -237,10 +237,9 @@ namespace chaos
 		// target is an enum
 		if constexpr (std::is_enum_v<T>)
 		{
-			std::string encoded_str;
-			if (!EnumToString(src, encoded_str))
-				return false;
-			return SaveIntoJSON(entry, encoded_str);
+			if (char const * encoded_str = EnumToString(src))
+				return SaveIntoJSON(entry, encoded_str);
+			return false;
 		}
 		// class has its own implementation
 		else if constexpr (std::is_class_v<T> && !std::is_same_v<T, std::string>) // string is to be handled in the native json way

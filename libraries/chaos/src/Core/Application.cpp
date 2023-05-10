@@ -21,21 +21,21 @@ namespace chaos
 	{
 		// display the options
 #if _DEBUG
-		Log::Output(LogType::Message, false, "==========================================\n");
-		Log::Output(LogType::Message, false, "== Options\n");
-		Log::Output(LogType::Message, false, "==========================================\n\n");
-		Log::Output(LogType::Message, false, ApplicationArgumentManager::GetInstance()->GetOptionString());
+		Log::Output(LogType::Message, true, "==========================================");
+		Log::Output(LogType::Message, true, "== Options");
+		Log::Output(LogType::Message, true, "==========================================\n");
+		Log::Output(LogType::Message, true, ApplicationArgumentManager::GetInstance()->GetOptionString());
 #endif
 		// display the arguments
-		Log::Output(LogType::Message, false, "==========================================\n");
-		Log::Output(LogType::Message, false, "== Command line\n");
-		Log::Output(LogType::Message, false, "==========================================\n\n");
+		Log::Output(LogType::Message, true, "==========================================");
+		Log::Output(LogType::Message, true, "== Command line");
+		Log::Output(LogType::Message, true, "==========================================\n");
 		for (std::string const& arg : GetArguments())
-			Log::Output(LogType::Message, false, "%s ", arg.c_str());
-		Log::Output(LogType::Message, false, "\n");
-		Log::Output(LogType::Message, false, "==========================================\n");
-		Log::Output(LogType::Message, false, "== Informations\n");
-		Log::Output(LogType::Message, false, "==========================================\n\n");
+			Log::Output(LogType::Message, true, "%s ", arg.c_str());
+		Log::Output(LogType::Message, true, "\n");
+		Log::Output(LogType::Message, true, "==========================================");
+		Log::Output(LogType::Message, true, "== Informations");
+		Log::Output(LogType::Message, true, "==========================================\n");
 		// the current directory
 		Log::Message("Working directory: %s", boost::filesystem::current_path().string().c_str());
 		// the date
@@ -97,6 +97,11 @@ namespace chaos
 
 	bool Application::Initialize()
 	{
+		// prepare the logger
+		if (Log* log = Log::GetInstance())
+			if (LogListener* listener = new FileLogListener())
+				listener->SetLog(log);
+
 		// show console
 		bool will_show_console = show_console;
 		if (Arguments::ShowConsole.Get())

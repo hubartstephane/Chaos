@@ -3,22 +3,22 @@
 
 namespace chaos
 {
-	void LogImGuiContent::SetLog(Log * in_log)
+	void LoggerImGuiContent::SetLogger(Logger * in_logger)
 	{
-		log = in_log;
+		logger = in_logger;
 	}
 
-	void LogImGuiContent::DrawImGui()
+	void LoggerImGuiContent::DrawImGui()
 	{
-		assert(log != nullptr);
+		assert(logger != nullptr);
 
 		ImGui::Checkbox("messages", &show_messages); ImGui::SameLine();
 		ImGui::Checkbox("warnings", &show_warnings); ImGui::SameLine();
 		ImGui::Checkbox("errors", &show_errors);
 		ImGui::Checkbox("group identical lines", &group_identical_lines);
 
-		for (size_t i = 0; i < log->GetListenerCount(); ++i)
-			if (ImGuiDrawableInterface * imgui_drawable = auto_cast(log->GetListener(i)))
+		for (size_t i = 0; i < logger->GetListenerCount(); ++i)
+			if (ImGuiDrawableInterface * imgui_drawable = auto_cast(logger->GetListener(i)))
 				imgui_drawable->DrawImGui();
 
 		size_t constexpr COLUMN_COUNT = 5;
@@ -32,7 +32,7 @@ namespace chaos
 			ImGui::TableSetupColumn("Action", 0);
 			ImGui::TableHeadersRow();
 
-			std::vector<LogLine> const& lines = log->GetLines();
+			std::vector<LogLine> const& lines = logger->GetLines();
 			for (size_t i = 0; i < lines.size(); ++i)
 			{
 				LogLine const& line = lines[i];

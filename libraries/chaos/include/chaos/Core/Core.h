@@ -51,4 +51,4 @@
 #include "chaos/Core/BitTools.h"
 #include "chaos/Core/PriorityQueue.h"
 #include "chaos/Core/NestedIterator.h"
-#include "chaos/Core/LogImGuiContent.h"
+#include "chaos/Core/LoggerImGuiContent.h"

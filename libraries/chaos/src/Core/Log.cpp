@@ -34,34 +34,34 @@ namespace chaos
 	}
 
 	// ================================================================
-	// LogListener implementation
+	// LoggerListener implementation
 	// ================================================================
 
-	LogListener::~LogListener()
+	LoggerListener::~LoggerListener()
 	{
-		SetLog(nullptr); // remove listener from log
+		SetLogger(nullptr); // remove listener from log
 	}
 
-	void LogListener::SetLog(Log* in_log)
+	void LoggerListener::SetLogger(Logger* in_logger)
 	{
-		if (in_log != log)
+		if (in_logger != logger)
 		{
-			if (log != nullptr)
+			if (logger != nullptr)
 			{
-				log->RemoveListener(this);
+				logger->RemoveListener(this);
 			}
-			if (in_log != nullptr)
+			if (in_logger != nullptr)
 			{
-				in_log->AddListener(this);
+				in_logger->AddListener(this);
 			}
 		}
 	}
 
 	// ================================================================
-	// FileLogListener implementation
+	// FileLoggerListener implementation
 	// ================================================================
 
-	boost::filesystem::path FileLogListener::GetOutputPath() const
+	boost::filesystem::path FileLoggerListener::GetOutputPath() const
 	{
 		if (Application* application = Application::GetInstance())
 		{
@@ -70,7 +70,7 @@ namespace chaos
 		return {};
 	}
 
-	void FileLogListener::Flush() const
+	void FileLoggerListener::Flush()
 	{
 		if (output_file.is_open())
 		{
@@ -78,7 +78,7 @@ namespace chaos
 		}
 	}
 
-	void FileLogListener::OnAttachedToLog(Log* in_log)
+	void FileLoggerListener::OnAttachedToLogger(Logger* in_logger)
 	{
 		boost::filesystem::path log_path = GetOutputPath();
 		if (!log_path.empty())
@@ -86,7 +86,7 @@ namespace chaos
 			output_file.open(log_path.c_str(), std::ofstream::binary | std::ofstream::trunc);
 			if (output_file.is_open())
 			{
-				for (LogLine const& line : in_log->GetLines())
+				for (LogLine const& line : in_logger->GetLines())
 				{
 					output_file << line.ToString() << "\n";
 				}
@@ -94,12 +94,12 @@ namespace chaos
 		}
 	}
 	
-	void FileLogListener::OnDetachedFromLog(Log* in_log)
+	void FileLoggerListener::OnDetachedFromLogger(Logger* in_logger)
 	{
 		output_file.close();
 	}
 	
-	void FileLogListener::OnNewLine(LogLine const& line)
+	void FileLoggerListener::OnNewLine(LogLine const& line)
 	{
 		if (output_file.is_open())
 		{
@@ -107,7 +107,7 @@ namespace chaos
 		}
 	}
 
-	void FileLogListener::DrawImGui()
+	void FileLoggerListener::DrawImGui()
 	{
 		if (ImGui::Button("Show output file"))
 		{
@@ -124,62 +124,91 @@ namespace chaos
 	// Log implementation
 	// ================================================================
 
-	Log::~Log()
+	Logger::~Logger()
 	{
 		// remove all listeners
 		while (listeners.size() > 0)
 		{
-			listeners[0]->SetLog(nullptr);
+			listeners[0]->SetLogger(nullptr);
 		}
 	}
 
-	Log* Log::GetInstance()
+	Logger* Logger::GetInstance()
 	{
 		// XXX : use a share pointer so that we are sure it is being destroyed at the end of the application (and so the output_file is being flushed)
-		static shared_ptr<Log> result; 
+		static shared_ptr<Logger> result; 
 		if (result == nullptr)
-			result = new Log();
+			result = new Logger();
 		return result.get();
 	}
 
-	void Log::AddListener(LogListener* listener)
+	void Logger::AddListener(LoggerListener* listener)
 	{
 		assert(listener != nullptr);
-		assert(listener->log == nullptr);
-		listener->log = this;
+		assert(listener->logger == nullptr);
+		listener->logger = this;
 		listeners.push_back(listener);
-		listener->OnAttachedToLog(this);
+		listener->OnAttachedToLogger(this);
 	}
 
-	void Log::RemoveListener(LogListener* listener)
+	void Logger::RemoveListener(LoggerListener* listener)
 	{
 		assert(listener != nullptr);
-		assert(listener->log == this);
+		assert(listener->logger == this);
 
-		shared_ptr<LogListener> prevent_destruction = listener;
-		listener->log = nullptr;
+		shared_ptr<LoggerListener> prevent_destruction = listener;
+		listener->logger = nullptr;
 		listeners.erase(std::find(listeners.begin(), listeners.end(), listener));
-		listener->OnDetachedFromLog(this);
+		listener->OnDetachedFromLogger(this);
 	}
 
-	void Log::DoFormatAndOuput(LogType type, bool add_line_jump, char const* format, ...)
+	void Logger::BeginTransaction(LogType type)
+	{
+		assert(!IsTransactionInProgress());
+		transaction_type = type;
+		transaction_content.emplace();
+	}
+
+	void Logger::EndTransaction()
+	{
+		assert(IsTransactionInProgress());
+
+		DoOutput(transaction_type.value(), transaction_content.value());
+		transaction_type.reset();
+		transaction_content.reset();
+	}
+
+	bool Logger::IsTransactionInProgress() const
+	{
+		return transaction_type.has_value();
+	}
+
+	void Logger::DoFormatAndOutput(LogType type, char const* format, ...)
 	{
 		va_list va;
 		va_start(va, format);
-
 		// format the message
 		char buffer[4096];
 		vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, va); // doesn't count for the zero  
 		// output the message
-		DoOutput(type, add_line_jump, buffer);
-
+		DoOutput(type, buffer);
 		va_end(va);
 	}
 
-	void Log::DoOutput(LogType type, bool add_line_jump, std::string_view buffer)
+	void Logger::DoFormatAndConcatToTransaction(char const* format, ...)
 	{
+		va_list va;
+		va_start(va, format);
+		// format the message
+		char buffer[4096];
+		vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, va); // doesn't count for the zero  
+		// output the message
+		transaction_content.value().append(buffer);
+		va_end(va);
+	}
 
-
+	void Logger::DoOutput(LogType type, std::string_view buffer)
+	{
 		// register the new line
 		LogLine new_line;
 		new_line.type = type;
@@ -190,10 +219,10 @@ namespace chaos
 		// notify all listener for this new line
 		for (auto& listener : listeners)
 			listener->OnNewLine(new_line);
-
-
 	}
 
+
+#if 0
 	void Log::Title(char const* title)
 	{
 		assert(title != nullptr);
@@ -212,16 +241,21 @@ namespace chaos
 				line[i] = '=';
 
 		// output
-		log->DoOutput(LogType::Message, true, "");
+		log->DoOutput(LogType::Message, "");
 		if (l < sizeof(line) - 1)
-			log->DoOutput(LogType::Message, true, line);
+			log->DoOutput(LogType::Message, line);
 
-		log->DoOutput(LogType::Message, false, "===   ");
-		log->DoOutput(LogType::Message, false, title);
-		log->DoOutput(LogType::Message, true, "   ===");
+		log->DoOutput(LogType::Message, "===   ");
+		log->DoOutput(LogType::Message, title);
+		log->DoOutput(LogType::Message, "   ===");
 
 		if (l < sizeof(line) - 1)
-			log->DoOutput(LogType::Message, true, line);
-		log->DoOutput(LogType::Message, true, "");
+			log->DoOutput(LogType::Message, line);
+		log->DoOutput(LogType::Message, "");
 	}
+
+#endif
+
+
+
 }; // namespace chaos

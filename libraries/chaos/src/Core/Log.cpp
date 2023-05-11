@@ -165,22 +165,27 @@ namespace chaos
 	void Logger::BeginTransaction(LogType type)
 	{
 		assert(!IsTransactionInProgress());
-		transaction_type = type;
-		transaction_content.emplace();
+		if (transaction_count++ == 0)
+		{
+			transaction_type = type;
+			transaction_content = {};
+		}
 	}
 
 	void Logger::EndTransaction()
 	{
 		assert(IsTransactionInProgress());
-
-		DoOutput(transaction_type.value(), transaction_content.value());
-		transaction_type.reset();
-		transaction_content.reset();
+		if (--transaction_count == 0)
+		{
+			DoOutput(transaction_type, transaction_content);
+			transaction_type = LogType::Message;
+			transaction_content = {};
+		}
 	}
 
 	bool Logger::IsTransactionInProgress() const
 	{
-		return transaction_type.has_value();
+		return (transaction_count > 0);
 	}
 
 	void Logger::DoFormatAndOutput(LogType type, char const* format, ...)
@@ -203,7 +208,7 @@ namespace chaos
 		char buffer[4096];
 		vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, va); // doesn't count for the zero  
 		// output the message
-		transaction_content.value().append(buffer);
+		transaction_content.append(buffer);
 		va_end(va);
 	}
 

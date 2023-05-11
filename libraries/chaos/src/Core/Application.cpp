@@ -19,43 +19,46 @@ namespace chaos
 
 	void Application::LogExecutionInformation()
 	{
-
-
-
-
-
 		// display the options
 #if _DEBUG
-		Log::Output(LogType::Message, "==========================================");
-		Log::Output(LogType::Message, "== Options");
-		Log::Output(LogType::Message, "==========================================\n");
-		Log::Output(LogType::Message, ApplicationArgumentManager::GetInstance()->GetOptionString());
+		Log::BeginTransaction(LogType::Message);
+		Log::TransactionConcat("==========================================\n");
+		Log::TransactionConcat("== Existing Options\n");
+		Log::TransactionConcat("==========================================\n");
+		Log::TransactionConcat(ApplicationArgumentManager::GetInstance()->GetOptionString());
+		Log::EndTransaction();
 #endif
 		// display the arguments
-		Log::Output(LogType::Message, "==========================================");
-		Log::Output(LogType::Message, "== Command line");
-		Log::Output(LogType::Message, "==========================================\n");
+		Log::BeginTransaction(LogType::Message);
+		Log::TransactionConcat("==========================================\n");
+		Log::TransactionConcat("== Command line\n");
+		Log::TransactionConcat("==========================================\n");
 		for (std::string const& arg : GetArguments())
-			Log::Output(LogType::Message, "%s ", arg.c_str());
-		Log::Output(LogType::Message, "\n");
-		Log::Output(LogType::Message, "==========================================");
-		Log::Output(LogType::Message, "== Informations");
-		Log::Output(LogType::Message, "==========================================\n");
+			Log::TransactionConcat("%s\n", arg.c_str());
+		Log::EndTransaction();
+
+		// display some informations
+		Log::BeginTransaction(LogType::Message);
+		Log::TransactionConcat("==========================================\n");
+		Log::TransactionConcat("== Informations\n");
+		Log::TransactionConcat("==========================================\n");
 		// the current directory
-		Log::Message("Working directory: %s", boost::filesystem::current_path().string().c_str());
+		Log::TransactionConcat("Working directory: %s\n", boost::filesystem::current_path().string().c_str());
 		// the date
 		std::time_t t = std::time(0);
 		struct tm tm;
 		localtime_s(&tm, &t);
 
-		Log::Message(
-			"Time: %04d-%02d-%02d %02dh%02dm%02ds",
+		Log::TransactionConcat(
+			"Time: %04d-%02d-%02d %02dh%02dm%02ds\n",
 			tm.tm_year + 1900,
 			tm.tm_mon + 1,
 			tm.tm_mday,
 			tm.tm_hour,
 			tm.tm_min,
 			tm.tm_sec);
+
+		Log::EndTransaction();
 	}
 
 	bool Application::ReloadConfigurationFile(nlohmann::json & result) const

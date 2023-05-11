@@ -22,35 +22,35 @@ namespace chaos
 		// display the options
 #if _DEBUG
 		Log::BeginTransaction(LogType::Message);
-		Log::TransactionConcat("==========================================\n");
-		Log::TransactionConcat("== Existing Options\n");
-		Log::TransactionConcat("==========================================\n");
-		Log::TransactionConcat(ApplicationArgumentManager::GetInstance()->GetOptionString());
+		Log::TransactionConcatLN("==========================================");
+		Log::TransactionConcatLN("== Existing Options");
+		Log::TransactionConcatLN("==========================================");
+		Log::TransactionConcatLN(ApplicationArgumentManager::GetInstance()->GetOptionString());
 		Log::EndTransaction();
 #endif
 		// display the arguments
 		Log::BeginTransaction(LogType::Message);
-		Log::TransactionConcat("==========================================\n");
-		Log::TransactionConcat("== Command line\n");
-		Log::TransactionConcat("==========================================\n");
+		Log::TransactionConcatLN("==========================================");
+		Log::TransactionConcatLN("== Command line");
+		Log::TransactionConcatLN("==========================================");
 		for (std::string const& arg : GetArguments())
-			Log::TransactionConcat("%s\n", arg.c_str());
+			Log::TransactionConcatLN("%s", arg.c_str());
 		Log::EndTransaction();
 
 		// display some informations
 		Log::BeginTransaction(LogType::Message);
-		Log::TransactionConcat("==========================================\n");
-		Log::TransactionConcat("== Informations\n");
-		Log::TransactionConcat("==========================================\n");
+		Log::TransactionConcatLN("==========================================");
+		Log::TransactionConcatLN("== Informations");
+		Log::TransactionConcatLN("==========================================");
 		// the current directory
-		Log::TransactionConcat("Working directory: %s\n", boost::filesystem::current_path().string().c_str());
+		Log::TransactionConcatLN("Working directory: %s", boost::filesystem::current_path().string().c_str());
 		// the date
 		std::time_t t = std::time(0);
 		struct tm tm;
 		localtime_s(&tm, &t);
 
-		Log::TransactionConcat(
-			"Time: %04d-%02d-%02d %02dh%02dm%02ds\n",
+		Log::TransactionConcatLN(
+			"Time: %04d-%02d-%02d %02dh%02dm%02ds",
 			tm.tm_year + 1900,
 			tm.tm_mon + 1,
 			tm.tm_mday,

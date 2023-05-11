@@ -171,6 +171,12 @@ namespace chaos
 		{
 			DoFormatAndConcatToTransaction(std::forward<PARAMS>(params)...);
 		}
+		template<typename ...PARAMS>
+		void TransactionConcatLN(PARAMS && ...params)
+		{
+			DoFormatAndConcatToTransaction(std::forward<PARAMS>(params)...);
+			transaction_content.push_back('\n');
+		}
 		/** end the transaction */
 		void EndTransaction();
 		/** whether a transaction is started */
@@ -268,6 +274,13 @@ namespace chaos
 		{
 			if (Logger* logger = Logger::GetInstance())
 				logger->TransactionConcat(std::forward<PARAMS>(params)...);
+		}
+		/** add some text to the current transaction */
+		template<typename ...PARAMS>
+		static void TransactionConcatLN(PARAMS && ...params)
+		{
+			if (Logger* logger = Logger::GetInstance())
+				logger->TransactionConcatLN(std::forward<PARAMS>(params)...);
 		}
 		/** end the transaction */
 		static void EndTransaction()

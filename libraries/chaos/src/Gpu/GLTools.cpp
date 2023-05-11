@@ -116,19 +116,19 @@ namespace chaos
 
 		GLubyte const * renderer = glGetString(GL_RENDERER);
 		if (renderer != nullptr)
-			Log::TransactionConcat("OpenGL RENDERER        : %s\n", renderer);
+			Log::TransactionConcatLN("OpenGL RENDERER        : %s", renderer);
 
 		GLubyte const * vendor = glGetString(GL_VENDOR);
 		if (vendor != nullptr)
-			Log::TransactionConcat("OpenGL VENDOR          : %s\n", vendor);
+			Log::TransactionConcatLN("OpenGL VENDOR          : %s", vendor);
 
 		GLubyte const * version = glGetString(GL_VERSION);
 		if (version != nullptr)
-			Log::TransactionConcat("OpenGL VERSION         : %s\n", version);
+			Log::TransactionConcatLN("OpenGL VERSION         : %s", version);
 
 		GLubyte const * shading_version = glGetString(GL_SHADING_LANGUAGE_VERSION);
 		if (shading_version != nullptr)
-			Log::TransactionConcat("OpenGL SHADING LANGAGE : %s\n", shading_version);
+			Log::TransactionConcatLN("OpenGL SHADING LANGAGE : %s", shading_version);
 
 		Log::EndTransaction();
 	}

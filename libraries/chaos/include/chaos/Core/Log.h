@@ -4,8 +4,9 @@ namespace chaos
 
 	enum class LogType;
 	class LogLine;
-	class LogListener;
-	class FileLogListener;
+	class LoggerListener;
+	class FileLoggerListener;
+	class Logger;
 	class Log;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -49,63 +50,63 @@ namespace chaos
 	};
 
 	/**
-	* LogListener : an object dedicated to wait for entries
+	* LoggerListener : an object dedicated to wait for entries
 	*/
 
-	class CHAOS_API LogListener : public Object
+	class CHAOS_API LoggerListener : public Object
 	{
-		CHAOS_DECLARE_OBJECT_CLASS(LogListener, Object);
+		CHAOS_DECLARE_OBJECT_CLASS(LoggerListener, Object);
 
-		friend class Log;
+		friend class Logger;
 
 	public:
 
 		/** destructor */
-		virtual ~LogListener();
+		virtual ~LoggerListener();
 
 		/** get the log system the listener is attached to */
-		Log* GetLog() { return log; }
+		Logger* GetLogger() { return logger; }
 		/** get the log system the listener is attached to */
-		Log const * GetLog() const { return log; }
+		Logger const * GetLogger() const { return logger; }
 		/** change the log system */
-		void SetLog(Log* in_log);
+		void SetLogger(Logger* in_logger);
 
 	protected:
 
 		/** called whenever the listener is attached to the log object */
-		virtual void OnAttachedToLog(Log* log) {}
+		virtual void OnAttachedToLogger(Logger* in_logger) {}
 		/** called whenever the listener is detached from the log object */
-		virtual void OnDetachedFromLog(Log* log) {}
+		virtual void OnDetachedFromLogger(Logger* in_logger) {}
 		/** called whenever a new line is emitted from the log object */
 		virtual void OnNewLine(LogLine const& line) {}
 
 	protected:
 
 		/** the log system the listener belongs to */
-		Log* log = nullptr;
+		Logger* logger = nullptr;
 	};
 
 	/**
-	* FileLogListener : an object dedicated to wait for entries and write them into a file
+	* FileLoggerListener : an object dedicated to wait for entries and write them into a file
 	*/
 
-	class CHAOS_API FileLogListener : public LogListener, public ImGuiDrawableInterface
+	class CHAOS_API FileLoggerListener : public LoggerListener, public ImGuiDrawableInterface
 	{
-		CHAOS_DECLARE_OBJECT_CLASS(LogListener, Object);
+		CHAOS_DECLARE_OBJECT_CLASS(FileLoggerListener, LoggerListener);
 
 	public:
 
 		/** get the log file path */
 		boost::filesystem::path GetOutputPath() const;
 		/** force flush to file */
-		void Flush() const;
+		void Flush();
 
 	protected:
 
 		/** override */
-		virtual void OnAttachedToLog(Log* in_log) override;
+		virtual void OnAttachedToLogger(Logger* in_logger) override;
 		/** override */
-		virtual void OnDetachedFromLog(Log* in_log) override;
+		virtual void OnDetachedFromLogger(Logger* in_logger) override;
 		/** override */
 		virtual void OnNewLine(LogLine const& line) override;
 
@@ -114,50 +115,66 @@ namespace chaos
 
 	protected:
 
-		/** an additionnal output (mutable so we can flush) */
-		mutable std::ofstream output_file;
+		/** an additionnal output */
+		std::ofstream output_file;
 	};
 
 	/**
-	* Log : deserve to output some logs
+	* Logger : deserve to output some logs
 	*/
 
-	class CHAOS_API Log : public Object
+	class CHAOS_API Logger : public Object
 	{
-		CHAOS_DECLARE_OBJECT_CLASS(Log, Object);
+		CHAOS_DECLARE_OBJECT_CLASS(Logger, Object);
 
-		friend class LogListener;
+		friend class LoggerListener;
 
 	public:
 
 		/** destructor */
-		virtual ~Log();
+		virtual ~Logger();
 
 		/** get the Log instance */
-		static Log* GetInstance();
+		static Logger* GetInstance();
 
 		/** output a message */
 		template<typename ...PARAMS>
-		static void Message(PARAMS && ...params) { Output(LogType::Message, true, std::forward<PARAMS>(params)...); }
+		void Message(PARAMS && ...params)
+		{
+			Output(LogType::Message, std::forward<PARAMS>(params)...);
+		}
 		/** output a warning */
 		template<typename ...PARAMS>
-		static void Warning(PARAMS && ...params) { Output(LogType::Warning, true, std::forward<PARAMS>(params)...); }
+		void Warning(PARAMS && ...params)
+		{
+			Output(LogType::Warning, std::forward<PARAMS>(params)...);
+		}
 		/** output an error */
 		template<typename ...PARAMS>
-		static void Error(PARAMS && ...params) { Output(LogType::Error, true, std::forward<PARAMS>(params)...); }
-
-
-
-		/** generic log function */
-		template<typename ...PARAMS>
-		static void Output(LogType type, bool add_line_jump, PARAMS && ...params)
+		void Error(PARAMS && ...params)
 		{
-			if (Log* log = GetInstance())
-				log->DoFormatAndOuput(type, add_line_jump, std::forward<PARAMS>(params)...);
+			Output(LogType::Error, std::forward<PARAMS>(params)...);
 		}
 
-		/** display a box with a text */
-		static void Title(char const* title);
+		/** generic log function (non static function) */
+		template<typename ...PARAMS>
+		void Output(LogType type, PARAMS && ...params)
+		{
+			DoFormatAndOutput(type, std::forward<PARAMS>(params)...);
+		}
+
+		/** start a new line of log, but wait until transaction ends to emit the line */
+		void BeginTransaction(LogType type);
+		/** add some text to the current transaction */
+		template<typename ...PARAMS>
+		void TransactionConcat(PARAMS && ...params)
+		{
+			DoFormatAndConcatToTransaction(std::forward<PARAMS>(params)...);
+		}
+		/** end the transaction */
+		void EndTransaction();
+		/** whether a transaction is started */
+		bool IsTransactionInProgress() const;
 
 		/** get the entries */
 		std::vector<LogLine> const& GetLines() const
@@ -168,21 +185,24 @@ namespace chaos
 		/** get the number of listeners */
 		size_t GetListenerCount() const { return listeners.size(); }
 		/** get the nth listener */
-		LogListener* GetListener(size_t index) { return listeners[index].get(); }
+		LoggerListener* GetListener(size_t index) { return listeners[index].get(); }
 		/** get the nth listener */
-		LogListener const * GetListener(size_t index) const { return listeners[index].get(); }
+		LoggerListener const* GetListener(size_t index) const { return listeners[index].get(); }
 
 	protected:
 
 		/** add a listener to the log */
-		void AddListener(LogListener* listener);
+		void AddListener(LoggerListener* listener);
 		/** remove a listener from the log */
-		void RemoveListener(LogListener* listener);
+		void RemoveListener(LoggerListener* listener);
 
 		/** internal method to format then display a log */
-		void DoFormatAndOuput(LogType type, bool add_line_jump, char const* format, ...);
+		void DoFormatAndOutput(LogType type, char const* format, ...);
+		/** format a string and concat to the transaction in progress */
+		void DoFormatAndConcatToTransaction(char const* format, ...);
+
 		/** internal method to display a log */
-		void DoOutput(LogType type, bool add_line_jump, std::string_view buffer);
+		virtual void DoOutput(LogType type, std::string_view buffer);
 
 	protected:
 
@@ -191,7 +211,76 @@ namespace chaos
 		/** domains. store domains only once */
 		std::vector<std::string> domains;
 		/** listeners */
-		std::vector<shared_ptr<LogListener>> listeners;
+		std::vector<shared_ptr<LoggerListener>> listeners;
+
+		/** the transaction information */
+		std::optional<LogType> transaction_type;
+		/** the transaction information */
+		std::optional<std::string> transaction_content;
+	};
+
+	/**
+	* Log: an utility class that gets the singleton logger and push data into it
+	*/
+
+	class CHAOS_API Log
+	{
+	public:
+
+		/** output a message */
+		template<typename ...PARAMS>
+		static void Message(PARAMS && ...params)
+		{
+			Output(LogType::Message, std::forward<PARAMS>(params)...);
+		}
+		/** output a warning */
+		template<typename ...PARAMS>
+		static void Warning(PARAMS && ...params)
+		{
+			Output(LogType::Warning, std::forward<PARAMS>(params)...);
+		}
+		/** output an error */
+		template<typename ...PARAMS>
+		static void Error(PARAMS && ...params)
+		{
+			Output(LogType::Error, std::forward<PARAMS>(params)...);
+		}
+
+		/** generic log function */
+		template<typename ...PARAMS>
+		static void Output(LogType type, PARAMS && ...params)
+		{
+			if (Logger* logger = Logger::GetInstance())
+				logger->Output(type, std::forward<PARAMS>(params)...);
+		}
+
+		/** start a new line of log, but wait until transaction ends to emit the line */
+		static void BeginTransaction(LogType type)
+		{
+			if (Logger* logger = Logger::GetInstance())
+				logger->BeginTransaction(type);
+		}
+		/** add some text to the current transaction */
+		template<typename ...PARAMS>
+		static void TransactionConcat(PARAMS && ...params)
+		{
+			if (Logger* logger = Logger::GetInstance())
+				logger->TransactionConcat(std::forward<PARAMS>(params)...);
+		}
+		/** end the transaction */
+		static void EndTransaction()
+		{
+			if (Logger* logger = Logger::GetInstance())
+				logger->EndTransaction();
+		}
+
+		/** whether a transaction is started (static method) */
+		static bool IsTransactionInProgress()
+		{
+			if (Logger* logger = Logger::GetInstance())
+				return logger->IsTransactionInProgress();
+			return false;
+		}
 	};
 
 #endif

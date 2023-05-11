@@ -33,7 +33,7 @@ namespace chaos
 		}
 		catch (const po::error& ex)
 		{
-			Log::Output(LogType::Error, false, ex.what());
+			Log::Output(LogType::Error, ex.what());
 		}
 	}
 

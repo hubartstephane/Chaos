@@ -19,23 +19,28 @@ namespace chaos
 
 	void Application::LogExecutionInformation()
 	{
+
+
+
+
+
 		// display the options
 #if _DEBUG
-		Log::Output(LogType::Message, true, "==========================================");
-		Log::Output(LogType::Message, true, "== Options");
-		Log::Output(LogType::Message, true, "==========================================\n");
-		Log::Output(LogType::Message, true, ApplicationArgumentManager::GetInstance()->GetOptionString());
+		Log::Output(LogType::Message, "==========================================");
+		Log::Output(LogType::Message, "== Options");
+		Log::Output(LogType::Message, "==========================================\n");
+		Log::Output(LogType::Message, ApplicationArgumentManager::GetInstance()->GetOptionString());
 #endif
 		// display the arguments
-		Log::Output(LogType::Message, true, "==========================================");
-		Log::Output(LogType::Message, true, "== Command line");
-		Log::Output(LogType::Message, true, "==========================================\n");
+		Log::Output(LogType::Message, "==========================================");
+		Log::Output(LogType::Message, "== Command line");
+		Log::Output(LogType::Message, "==========================================\n");
 		for (std::string const& arg : GetArguments())
-			Log::Output(LogType::Message, true, "%s ", arg.c_str());
-		Log::Output(LogType::Message, true, "\n");
-		Log::Output(LogType::Message, true, "==========================================");
-		Log::Output(LogType::Message, true, "== Informations");
-		Log::Output(LogType::Message, true, "==========================================\n");
+			Log::Output(LogType::Message, "%s ", arg.c_str());
+		Log::Output(LogType::Message, "\n");
+		Log::Output(LogType::Message, "==========================================");
+		Log::Output(LogType::Message, "== Informations");
+		Log::Output(LogType::Message, "==========================================\n");
 		// the current directory
 		Log::Message("Working directory: %s", boost::filesystem::current_path().string().c_str());
 		// the date
@@ -98,9 +103,9 @@ namespace chaos
 	bool Application::Initialize()
 	{
 		// prepare the logger
-		if (Log* log = Log::GetInstance())
-			if (LogListener* listener = new FileLogListener())
-				listener->SetLog(log);
+		if (Logger* logger = Logger::GetInstance())
+			if (LoggerListener* listener = new FileLoggerListener())
+				listener->SetLogger(logger);
 
 		// show console
 		bool will_show_console = show_console;

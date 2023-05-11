@@ -16,7 +16,7 @@ public:
 
 	ConsoleWindow()
 	{
-		console_content.SetLog(chaos::Log::GetInstance());
+		console_content.SetLogger(chaos::Logger::GetInstance());
 	}
 
 protected:
@@ -35,7 +35,7 @@ protected:
 
 protected:
 
-	chaos::LogImGuiContent console_content;
+	chaos::LoggerImGuiContent console_content;
 };
 
 
@@ -591,6 +591,34 @@ int main(int argc, char** argv, char** env)
 	create_params.width = 1200;
 	create_params.height = 500;
 	create_params.monitor_index = 0;
+
+
+	std::chrono::time_point tt = std::chrono::system_clock::now();
+
+	std::time_t t = std::chrono::system_clock::to_time_t(tt);
+
+	std::tm tm;
+	gmtime_s(&tm, &t);
+
+	std::string res = std::format("{0}/{1}/{2} {3}:{4}:{5}",
+		tm.tm_mday,
+		tm.tm_mon + 1,
+		tm.tm_year + 1900,
+		tm.tm_hour,
+		tm.tm_min,
+		tm.tm_sec
+	);
+
+
+	//std::string sss = std::chrono::format("%D %T %Z", floor<std::chrono::milliseconds>(tt));
+
+#if 0
+	std::string s = std::format("{:%Y%m%d%H%M}", tt);
+
+	std::string ss = std::format("{:%d-%m-%Y %H:%M:%s}", tt);
+
+	std::string sss = std::format("{:%D %T %Z\n}", tt);
+#endif
 
 	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, create_params);
 }

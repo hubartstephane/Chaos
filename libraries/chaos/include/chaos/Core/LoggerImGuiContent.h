@@ -2,24 +2,24 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class ImGuiDrawableInterface;
+	class LoggerImGuiContent;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class CHAOS_API LogImGuiContent : public ImGuiDrawableInterface
+	class CHAOS_API LoggerImGuiContent : public ImGuiDrawableInterface
 	{
 
 	public:
 
 		/** initialize the object */
-		void SetLog(Log * in_log);
+		void SetLogger(Logger * in_logger);
 		/** override */
 		virtual void DrawImGui() override;
 
 	protected:
 
-		/** the log object to display */
-		Log * log = nullptr;
+		/** the logger object to display */
+		Logger * logger = nullptr;
 
 		/** whether the messages are to be displayed */
 		bool show_messages = true;
@@ -27,7 +27,7 @@ namespace chaos
 		bool show_warnings = true;
 		/** whether the errors are to be displayed */
 		bool show_errors = true;
-		/** whether consecutive identical messages are to be grouped alltogether */
+		/** whether consecutive identical messages are to be grouped altogether */
 		bool group_identical_lines = true;
 	};
 

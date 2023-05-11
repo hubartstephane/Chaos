@@ -213,10 +213,12 @@ namespace chaos
 		/** listeners */
 		std::vector<shared_ptr<LoggerListener>> listeners;
 
+		/** whether a transaction is being started */
+		int transaction_count = 0;
 		/** the transaction information */
-		std::optional<LogType> transaction_type;
+		LogType transaction_type = LogType::Message;
 		/** the transaction information */
-		std::optional<std::string> transaction_content;
+		std::string transaction_content;
 	};
 
 	/**

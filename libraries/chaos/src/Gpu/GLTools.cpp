@@ -112,21 +112,25 @@ namespace chaos
 
 	void GLTools::DisplayGenericInformation()
 	{
+		Log::BeginTransaction(LogType::Message);
+
 		GLubyte const * renderer = glGetString(GL_RENDERER);
 		if (renderer != nullptr)
-			Log::Message("OpenGL RENDERER        : %s", renderer);
+			Log::TransactionConcat("OpenGL RENDERER        : %s\n", renderer);
 
 		GLubyte const * vendor = glGetString(GL_VENDOR);
 		if (vendor != nullptr)
-			Log::Message("OpenGL VENDOR          : %s", vendor);
+			Log::TransactionConcat("OpenGL VENDOR          : %s\n", vendor);
 
 		GLubyte const * version = glGetString(GL_VERSION);
 		if (version != nullptr)
-			Log::Message("OpenGL VERSION         : %s", version);
+			Log::TransactionConcat("OpenGL VERSION         : %s\n", version);
 
 		GLubyte const * shading_version = glGetString(GL_SHADING_LANGUAGE_VERSION);
 		if (shading_version != nullptr)
-			Log::Message("OpenGL SHADING LANGAGE : %s", shading_version);
+			Log::TransactionConcat("OpenGL SHADING LANGAGE : %s\n", shading_version);
+
+		Log::EndTransaction();
 	}
 
 	char const * GLTools::GLenumToString(GLenum type)

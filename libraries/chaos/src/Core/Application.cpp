@@ -42,21 +42,8 @@ namespace chaos
 		Log::TransactionConcatLN("==========================================");
 		Log::TransactionConcatLN("== Informations");
 		Log::TransactionConcatLN("==========================================");
-		// the current directory
 		Log::TransactionConcatLN("Working directory: %s", boost::filesystem::current_path().string().c_str());
-		// the date
-		std::time_t t = std::time(0);
-		struct tm tm;
-		localtime_s(&tm, &t);
-
-		Log::TransactionConcatLN(
-			"Time: %04d-%02d-%02d %02dh%02dm%02ds",
-			tm.tm_year + 1900,
-			tm.tm_mon + 1,
-			tm.tm_mday,
-			tm.tm_hour,
-			tm.tm_min,
-			tm.tm_sec);
+		Log::TransactionConcatLN("%s", StringTools::TimeToString(TimeToStringFormatType::FULL).c_str());
 
 		Log::EndTransaction();
 	}

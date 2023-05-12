@@ -22,19 +22,34 @@ namespace chaos
             return result;
         }
 
-		std::string TimeToString(bool full_string)
+		std::string TimeToString(TimeToStringFormatType format)
 		{
-			return TimeToString(std::time(0), full_string);
+			return TimeToString(std::time(0), format);
 		}
 
-		std::string TimeToString(std::time_t t, bool full_string)
+		std::string TimeToString(std::chrono::system_clock::time_point time_point, TimeToStringFormatType format)
+		{
+			std::time_t t = std::chrono::system_clock::to_time_t(time_point);
+			return TimeToString(t, format);
+		}
+
+		std::string TimeToString(std::time_t t, TimeToStringFormatType format)
 		{
 			// decompose time
 			struct tm tm;
 			localtime_s(&tm, &t);
 			// format string
+			char const* format_str = nullptr;
+			switch (format)
+			{
+				case TimeToStringFormatType::SHORT:    format_str = "%04d/%02d/%02d"; break;
+				case TimeToStringFormatType::FULL:     format_str = "%04d/%02d/%02d %02d:%02d:%02d"; break;
+				case TimeToStringFormatType::FILENAME: format_str = "%04d%02d%02d_%02dh%02dm%02ds"; break;
+				default: assert(0);
+			}
+
 			return StringTools::Printf(
-				(full_string)? "%04d%02d%02d_%02dh%02dm%02ds" : "%04d%02d%02d",
+				format_str,
 				tm.tm_year + 1900,
 				tm.tm_mon + 1,
 				tm.tm_mday,

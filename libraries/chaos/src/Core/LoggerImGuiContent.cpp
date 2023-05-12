@@ -68,26 +68,31 @@ namespace chaos
 				}
 				char const* message_type = EnumToString(line.type);
 
+				// time
 				ImGui::PushID(int(i * COLUMN_COUNT + 0));
 				ImGui::TableNextColumn();
-				ImGui::TextColored(color, "%d", line.time);
+				ImGui::TextColored(color, "%s", StringTools::TimeToString(line.time, TimeToStringFormatType::FULL).c_str());
 				ImGui::PopID();
 
+				// type
 				ImGui::PushID(int(i * COLUMN_COUNT + 1));
 				ImGui::TableNextColumn();
 				ImGui::TextColored(color, message_type);
 				ImGui::PopID();
 
+				// group count
 				ImGui::PushID(int(i * COLUMN_COUNT + 2));
 				ImGui::TableNextColumn();
 				ImGui::TextColored(color, "%d", group_count);
 				ImGui::PopID();
 
+				// message
 				ImGui::PushID(int(i * COLUMN_COUNT + 3));
 				ImGui::TableNextColumn();
 				ImGui::TextColored(color, "%s", line.content.c_str());
 				ImGui::PopID();
 
+				// actions
 				ImGui::PushID(int(i * COLUMN_COUNT + 4));
 				ImGui::TableNextColumn();
 				if (ImGui::Button("Clipboard"))

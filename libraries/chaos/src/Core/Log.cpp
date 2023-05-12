@@ -18,7 +18,8 @@ namespace chaos
 
 	std::string LogLine::ToString() const
 	{
-		return std::format("{0} {1} {2}",
+		return std::format("{} {} {} {}",
+			StringTools::TimeToString(time, TimeToStringFormatType::FULL),
 			EnumToString(type),
 			(domain != nullptr) ? domain : "",
 			content.c_str());

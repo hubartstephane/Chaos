@@ -22,11 +22,6 @@ namespace chaos
             return result;
         }
 
-		std::string TimeToString(TimeToStringFormatType format)
-		{
-			return TimeToString(std::time(0), format);
-		}
-
 		std::string TimeToString(std::chrono::system_clock::time_point time_point, TimeToStringFormatType format)
 		{
 			std::time_t t = std::chrono::system_clock::to_time_t(time_point);

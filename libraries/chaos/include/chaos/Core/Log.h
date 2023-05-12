@@ -12,7 +12,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* LogType : severity of the message
+	* LogType: severity of the message
 	*/
 
 	enum class CHAOS_API LogType : int

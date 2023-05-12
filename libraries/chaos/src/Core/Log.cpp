@@ -18,7 +18,7 @@ namespace chaos
 
 	std::string LogLine::ToString() const
 	{
-		return std::format("{} {} {} {}",
+		return std::format("[{}] [{}] [{}]\n{}",
 			StringTools::TimeToString(time, TimeToStringFormatType::FULL),
 			EnumToString(type),
 			(domain != nullptr) ? domain : "",
@@ -89,7 +89,7 @@ namespace chaos
 			{
 				for (LogLine const& line : in_logger->GetLines())
 				{
-					output_file << line.ToString() << "\n";
+					output_file << line.ToString() << "\n\n";
 				}
 			}
 		}
@@ -104,7 +104,7 @@ namespace chaos
 	{
 		if (output_file.is_open())
 		{
-			output_file << line.ToString() << "\n";
+			output_file << line.ToString() << "\n\n";
 		}
 	}
 

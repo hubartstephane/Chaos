@@ -1,13 +1,29 @@
 namespace chaos
 {
 
+#ifdef CHAOS_FORWARD_DECLARATION
+
+	enum class TimeToStringFormatType;
+
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
 	/**
-	* StringTools : a namespace for string related functions
-	*/
+	 * TimeToStringFormatType: How to format a date
+	 **/
+
+	enum class TimeToStringFormatType : int
+	{
+		SHORT,
+		FULL,
+		FILENAME
+	};
+
+	/**
+	 * StringTools : a namespace for string related functions
+	 */
 
 	namespace StringTools
 	{
-#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 		/** transform any object that have stream operator into a string */
 		template<typename T>
@@ -39,9 +55,11 @@ namespace chaos
 		CHAOS_API std::string IndentString(size_t count);
 
 		/** returns a string representation of now  */
-		CHAOS_API std::string TimeToString(bool full_string);
+		CHAOS_API std::string TimeToString(TimeToStringFormatType format);
 		/** returns a string representation of a date */
-		CHAOS_API std::string TimeToString(std::time_t t, bool full_string);
+		CHAOS_API std::string TimeToString(std::time_t t, TimeToStringFormatType format);
+		/** returns a string representation of a date */
+		CHAOS_API std::string TimeToString(std::chrono::system_clock::time_point time_point, TimeToStringFormatType format);
 
 		/** skip 0x prefix if existing */
 		CHAOS_API char const * SkipHEXPrefix(char const * c);
@@ -136,9 +154,9 @@ namespace chaos
 		using RawStringIGreater = RawStringCompareBase<std::greater<int>, &StringTools::Stricmp>;
 		using RawStringIEqualTo = RawStringCompareBase<std::equal_to<int>, &StringTools::Stricmp>;
 
-#endif
-
 	}; // namespace StringTools
+
+#endif
 
 }; // namespace chaos
 

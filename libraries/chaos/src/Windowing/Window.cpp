@@ -744,7 +744,7 @@ namespace chaos
 			// save the image
 			std::string format = StringTools::Printf(
 				"capture_%s_%%d.png",
-				StringTools::TimeToString(TimeToStringFormatType::FILENAME).c_str());
+				StringTools::TimeToString(std::chrono::system_clock::now(), TimeToStringFormatType::FILENAME).c_str());
 
 			boost::filesystem::path file_path = FileTools::GetUniquePath(capture_directory_path, format.c_str(), true);
 			if (file_path.empty())

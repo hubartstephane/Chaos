@@ -11,7 +11,7 @@ namespace chaos
 	 * TimeToStringFormatType: How to format a date
 	 **/
 
-	enum class TimeToStringFormatType : int
+	enum class CHAOS_API TimeToStringFormatType : int
 	{
 		SHORT,
 		FULL,
@@ -54,8 +54,6 @@ namespace chaos
 		/** returns a spaces made string */
 		CHAOS_API std::string IndentString(size_t count);
 
-		/** returns a string representation of now  */
-		CHAOS_API std::string TimeToString(TimeToStringFormatType format);
 		/** returns a string representation of a date */
 		CHAOS_API std::string TimeToString(std::time_t t, TimeToStringFormatType format);
 		/** returns a string representation of a date */

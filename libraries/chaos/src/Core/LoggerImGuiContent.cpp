@@ -60,6 +60,12 @@ namespace chaos
 						imgui_drawable->DrawImGui();
 				ImGui::EndMenu();
 			}
+			// filter
+			if (ImGui::BeginMenu("Filter"))
+			{
+				filter.Draw();
+				ImGui::EndMenu();
+			}
 			ImGui::EndMenuBar();
 		}
 	}
@@ -127,6 +133,10 @@ namespace chaos
 						continue;
 					color = { 1.0f, 0.0f, 0.0f, 1.0f };
 				}
+
+				// filter by content
+				if (!filter.PassFilter(line.content.c_str()))
+					continue;
 
 				// time
 				ImGui::PushID(int(i * COLUMN_COUNT + 0));

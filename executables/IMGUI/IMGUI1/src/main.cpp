@@ -25,7 +25,7 @@ protected:
 	{
 		ImGui::SetNextWindowPos({ 0, 0 });
 		ImGui::SetNextWindowSize({ ImGui::GetMainViewport()->Size.x, ImGui::GetMainViewport()->Size.y });
-		if (ImGui::Begin("##console", nullptr, ImGuiWindowFlags_NoMove  | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground))
+		if (ImGui::Begin("##console", nullptr, ImGuiWindowFlags_NoMove  | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_MenuBar))
 		{
 			console_content.DrawImGui();
 			ImGui::End();
@@ -90,7 +90,7 @@ protected:
 			chaos::Log::Warning("Message");
 
 			static int i = 0;
-
+#if 1
 			if (i % 7 == 0)
 				chaos::Logger::GetInstance()->Message("truc0", "truc0");
 			if (i % 7 == 1)
@@ -105,7 +105,7 @@ protected:
 				chaos::Logger::GetInstance()->Message("truc5", "truc5");
 			if (i % 7 == 6)
 				chaos::Logger::GetInstance()->Message("truc6", "truc6");
-
+#endif
 
 			++i;
 		}

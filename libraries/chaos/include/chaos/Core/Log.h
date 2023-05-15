@@ -7,6 +7,7 @@ namespace chaos
 	class LoggerListener;
 	class FileLoggerListener;
 	class Logger;
+
 	class Log;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -139,32 +140,32 @@ namespace chaos
 
 		/** output a message */
 		template<typename ...PARAMS>
-		void Message(PARAMS && ...params)
+		void Message(std::string_view domain, PARAMS && ...params)
 		{
-			Output(LogType::Message, std::forward<PARAMS>(params)...);
+			Output(domain, LogType::Message, std::forward<PARAMS>(params)...);
 		}
 		/** output a warning */
 		template<typename ...PARAMS>
-		void Warning(PARAMS && ...params)
+		void Warning(std::string_view domain, PARAMS && ...params)
 		{
-			Output(LogType::Warning, std::forward<PARAMS>(params)...);
+			Output(domain, LogType::Warning, std::forward<PARAMS>(params)...);
 		}
 		/** output an error */
 		template<typename ...PARAMS>
-		void Error(PARAMS && ...params)
+		void Error(std::string_view domain, PARAMS && ...params)
 		{
-			Output(LogType::Error, std::forward<PARAMS>(params)...);
+			Output(domain, LogType::Error, std::forward<PARAMS>(params)...);
 		}
 
 		/** generic log function (non static function) */
 		template<typename ...PARAMS>
-		void Output(LogType type, PARAMS && ...params)
+		void Output(std::string_view domain, LogType type, PARAMS && ...params)
 		{
-			DoFormatAndOutput(type, std::forward<PARAMS>(params)...);
+			DoFormatAndOutput(domain, type, std::forward<PARAMS>(params)...);
 		}
 
 		/** start a new line of log, but wait until transaction ends to emit the line */
-		void BeginTransaction(LogType type);
+		void BeginTransaction(std::string_view domain, LogType type);
 		/** add some text to the current transaction */
 		template<typename ...PARAMS>
 		void TransactionConcat(PARAMS && ...params)
@@ -195,6 +196,11 @@ namespace chaos
 		/** get the nth listener */
 		LoggerListener const* GetListener(size_t index) const { return listeners[index].get(); }
 
+		/** get the number of domains */
+		size_t GetDomainCount() const { return domains.size(); }
+		/** get a given domain */
+		char const * GetDomain(size_t index) const { return domains[index]->c_str(); }
+
 	protected:
 
 		/** add a listener to the log */
@@ -203,19 +209,22 @@ namespace chaos
 		void RemoveListener(LoggerListener* listener);
 
 		/** internal method to format then display a log */
-		void DoFormatAndOutput(LogType type, char const* format, ...);
+		void DoFormatAndOutput(std::string_view domain, LogType type, char const* format, ...);
 		/** format a string and concat to the transaction in progress */
 		void DoFormatAndConcatToTransaction(char const* format, ...);
 
 		/** internal method to display a log */
-		virtual void DoOutput(LogType type, std::string_view buffer);
+		virtual void DoOutput(char const * domain, LogType type, std::string_view buffer);
+
+		/** register a string for domain and gets its internal pointer */
+		char const* RegisterDomain(std::string_view domain);
 
 	protected:
 
 		/** the line displayed */
 		std::vector<LogLine> lines;
 		/** domains. store domains only once */
-		std::vector<std::string> domains;
+		std::vector<std::string *> domains;
 		/** listeners */
 		std::vector<shared_ptr<LoggerListener>> listeners;
 
@@ -223,6 +232,8 @@ namespace chaos
 		int transaction_count = 0;
 		/** the transaction information */
 		LogType transaction_type = LogType::Message;
+		/** the transaction domain */
+		char const* transaction_domain = nullptr;
 		/** the transaction information */
 		std::string transaction_content;
 	};
@@ -234,6 +245,7 @@ namespace chaos
 	class CHAOS_API Log
 	{
 	public:
+
 
 		/** output a message */
 		template<typename ...PARAMS>
@@ -259,14 +271,14 @@ namespace chaos
 		static void Output(LogType type, PARAMS && ...params)
 		{
 			if (Logger* logger = Logger::GetInstance())
-				logger->Output(type, std::forward<PARAMS>(params)...);
+				logger->Output("default", type, std::forward<PARAMS>(params)...);
 		}
 
 		/** start a new line of log, but wait until transaction ends to emit the line */
 		static void BeginTransaction(LogType type)
 		{
 			if (Logger* logger = Logger::GetInstance())
-				logger->BeginTransaction(type);
+				logger->BeginTransaction("default", type);
 		}
 		/** add some text to the current transaction */
 		template<typename ...PARAMS>

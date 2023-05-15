@@ -29,6 +29,9 @@ namespace chaos
 		bool show_errors = true;
 		/** whether consecutive identical messages are to be grouped altogether */
 		bool group_identical_lines = true;
+
+		/** whether some domains are to be visibles */
+		std::map<char const*, bool> domain_visibilities;
 	};
 
 #endif

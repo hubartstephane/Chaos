@@ -9,9 +9,9 @@ namespace chaos
 
 	static std::vector<std::pair<LogType, char const*>> const log_type_encoding =
 	{
-		{ LogType::Message, "MESSAGE" },
-		{ LogType::Warning, "WARNING" },
-		{ LogType::Error,   "ERROR" }
+		{ LogType::Message, "Message" },
+		{ LogType::Warning, "Warning" },
+		{ LogType::Error,   "Error" }
 	};
 
 	CHAOS_IMPLEMENT_ENUM_METHOD(LogType, log_type_encoding);
@@ -132,6 +132,9 @@ namespace chaos
 		{
 			listeners[0]->SetLogger(nullptr);
 		}
+		// remove all domains
+		for (std::string* d : domains)
+			delete(d);
 	}
 
 	Logger* Logger::GetInstance()
@@ -163,13 +166,14 @@ namespace chaos
 		listener->OnDetachedFromLogger(this);
 	}
 
-	void Logger::BeginTransaction(LogType type)
+	void Logger::BeginTransaction(std::string_view domain, LogType type)
 	{
 		assert(!IsTransactionInProgress());
 		if (transaction_count++ == 0)
 		{
 			transaction_type = type;
 			transaction_content = {};
+			transaction_domain = RegisterDomain(domain);
 		}
 	}
 
@@ -178,9 +182,10 @@ namespace chaos
 		assert(IsTransactionInProgress());
 		if (--transaction_count == 0)
 		{
-			DoOutput(transaction_type, transaction_content);
+			DoOutput(transaction_domain, transaction_type, transaction_content);
 			transaction_type = LogType::Message;
 			transaction_content = {};
+			transaction_domain = nullptr;
 		}
 	}
 
@@ -189,7 +194,7 @@ namespace chaos
 		return (transaction_count > 0);
 	}
 
-	void Logger::DoFormatAndOutput(LogType type, char const* format, ...)
+	void Logger::DoFormatAndOutput(std::string_view domain, LogType type, char const* format, ...)
 	{
 		va_list va;
 		va_start(va, format);
@@ -197,7 +202,7 @@ namespace chaos
 		char buffer[4096];
 		vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, va); // doesn't count for the zero  
 		// output the message
-		DoOutput(type, buffer);
+		DoOutput(RegisterDomain(domain), type, buffer);
 		va_end(va);
 	}
 
@@ -213,13 +218,14 @@ namespace chaos
 		va_end(va);
 	}
 
-	void Logger::DoOutput(LogType type, std::string_view buffer)
+	void Logger::DoOutput(char const * domain, LogType type, std::string_view buffer)
 	{
 		// register the new line
 		LogLine new_line;
 		new_line.type = type;
 		new_line.content = buffer;
 		new_line.time = std::chrono::system_clock::now();
+		new_line.domain = domain;
 		lines.push_back(new_line);
 
 		// notify all listener for this new line
@@ -227,41 +233,23 @@ namespace chaos
 			listener->OnNewLine(new_line);
 	}
 
-
-#if 0
-	void Log::Title(char const* title)
+	char const* Logger::RegisterDomain(std::string_view domain)
 	{
-		assert(title != nullptr);
+		// XXX: Lines are using raw pointer on std::string buffer for domains (so there is only a single memory allocation)
+		//      I was hoping that storing domains inside a std::vector<std::string> would be nice
+		//      Due to move semantic at vector reallocation, i was hoping that the raw pointers would be preserved
+		//      For unknown reason, this does not work as intended. That's why i am using
+		//      std::vector<std:string*>
+		//                    instead of
+		//      std::vector<std:string>
 
-		// get the logger
-		Log* log = GetInstance();
-		if (log == nullptr)
-			return;
-
-		// fill separator buffer
-		char line[512] = { 0 };
-
-		size_t l = 12 + strlen(title);
-		if (l < sizeof(line) - 1)
-			for (size_t i = 0; i < l; ++i)
-				line[i] = '=';
-
-		// output
-		log->DoOutput(LogType::Message, "");
-		if (l < sizeof(line) - 1)
-			log->DoOutput(LogType::Message, line);
-
-		log->DoOutput(LogType::Message, "===   ");
-		log->DoOutput(LogType::Message, title);
-		log->DoOutput(LogType::Message, "   ===");
-
-		if (l < sizeof(line) - 1)
-			log->DoOutput(LogType::Message, line);
-		log->DoOutput(LogType::Message, "");
+		// search if domain is already registered
+		for (std::string const * d : domains)
+			if (*d == domain)
+				return d->c_str();
+		// create a new string for the incoming domain
+		domains.push_back(new std::string(domain));
+		return domains[domains.size() - 1]->c_str();
 	}
-
-#endif
-
-
 
 }; // namespace chaos

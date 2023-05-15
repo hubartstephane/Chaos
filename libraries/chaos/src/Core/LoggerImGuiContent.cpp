@@ -12,21 +12,55 @@ namespace chaos
 	{
 		assert(logger != nullptr);
 
+		// options
+		ImGui::SeparatorText("Type");
 		ImGui::Checkbox("messages", &show_messages); ImGui::SameLine();
 		ImGui::Checkbox("warnings", &show_warnings); ImGui::SameLine();
 		ImGui::Checkbox("errors", &show_errors);
+
+		// domains
+		ImGui::SeparatorText("Domains");
+		if (ImGui::BeginTable("split", 3))
+		{
+			for (size_t i = 0 ; i < logger->GetDomainCount() ; ++i)
+			{
+				char const* domain = logger->GetDomain(i);
+				bool * domain_flag = nullptr;
+
+				auto it = domain_visibilities.find(domain);
+				if (it != domain_visibilities.end())
+				{
+					domain_flag = &it->second;
+				}
+				else
+				{
+					domain_visibilities[domain] = true;
+					domain_flag = &domain_visibilities.find(domain)->second;
+				}
+				ImGui::TableNextColumn(); ImGui::Checkbox(domain, domain_flag);
+			}
+			ImGui::EndTable();
+		}
+
+		// miscellaneous
+		ImGui::SeparatorText("Miscellaneous");
 		ImGui::Checkbox("group identical lines", &group_identical_lines);
 
+		// the listeners
+		ImGui::SeparatorText("Listeners");
 		for (size_t i = 0; i < logger->GetListenerCount(); ++i)
 			if (ImGuiDrawableInterface * imgui_drawable = auto_cast(logger->GetListener(i)))
 				imgui_drawable->DrawImGui();
 
-		size_t constexpr COLUMN_COUNT = 5;
+		// the lines
+		size_t constexpr COLUMN_COUNT = 6;
 
+		ImGui::SeparatorText("Logs");
 		if (ImGui::BeginTable("##lines", COLUMN_COUNT, ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersInnerH | ImGuiTableFlags_BordersInnerV))
 		{
 			ImGui::TableSetupColumn("Date", 0);
 			ImGui::TableSetupColumn("Type", 0);
+			ImGui::TableSetupColumn("Domain", 0);
 			ImGui::TableSetupColumn("Count", 0);
 			ImGui::TableSetupColumn("Message", 0);
 			ImGui::TableSetupColumn("Action", 0);
@@ -37,6 +71,7 @@ namespace chaos
 			{
 				LogLine const& line = lines[i];
 
+				// group messages
 				size_t group_count = 1;
 				if (group_identical_lines)
 				{
@@ -47,6 +82,11 @@ namespace chaos
 					}
 				}
 
+				// filter out by domain
+				if (!domain_visibilities[line.domain])
+					continue;
+
+				// search color and filter out by type
 				ImVec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 				if (line.type == LogType::Message)
 				{
@@ -66,7 +106,6 @@ namespace chaos
 						continue;
 					color = { 1.0f, 0.0f, 0.0f, 1.0f };
 				}
-				char const* message_type = EnumToString(line.type);
 
 				// time
 				ImGui::PushID(int(i * COLUMN_COUNT + 0));
@@ -77,23 +116,29 @@ namespace chaos
 				// type
 				ImGui::PushID(int(i * COLUMN_COUNT + 1));
 				ImGui::TableNextColumn();
-				ImGui::TextColored(color, message_type);
+				ImGui::TextColored(color, EnumToString(line.type));
+				ImGui::PopID();
+
+				// domain
+				ImGui::PushID(int(i * COLUMN_COUNT + 2));
+				ImGui::TableNextColumn();
+				ImGui::TextColored(color, "%s", line.domain);
 				ImGui::PopID();
 
 				// group count
-				ImGui::PushID(int(i * COLUMN_COUNT + 2));
+				ImGui::PushID(int(i * COLUMN_COUNT + 3));
 				ImGui::TableNextColumn();
 				ImGui::TextColored(color, "%d", group_count);
 				ImGui::PopID();
 
 				// message
-				ImGui::PushID(int(i * COLUMN_COUNT + 3));
+				ImGui::PushID(int(i * COLUMN_COUNT + 4));
 				ImGui::TableNextColumn();
 				ImGui::TextColored(color, "%s", line.content.c_str());
 				ImGui::PopID();
 
 				// actions
-				ImGui::PushID(int(i * COLUMN_COUNT + 4));
+				ImGui::PushID(int(i * COLUMN_COUNT + 5));
 				ImGui::TableNextColumn();
 				if (ImGui::Button("Clipboard"))
 				{

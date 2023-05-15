@@ -88,6 +88,26 @@ protected:
 		if (action == GLFW_PRESS || action == GLFW_REPEAT)
 		{
 			chaos::Log::Warning("Message");
+
+			static int i = 0;
+
+			if (i % 7 == 0)
+				chaos::Logger::GetInstance()->Message("truc0", "truc0");
+			if (i % 7 == 1)
+				chaos::Logger::GetInstance()->Message("truc1", "truc1");
+			if (i % 7 == 2)
+				chaos::Logger::GetInstance()->Message("truc2", "truc2");
+			if (i % 7 == 3)
+				chaos::Logger::GetInstance()->Message("truc3", "truc3");
+			if (i % 7 == 4)
+				chaos::Logger::GetInstance()->Message("truc4", "truc4");
+			if (i % 7 == 5)
+				chaos::Logger::GetInstance()->Message("truc5", "truc5");
+			if (i % 7 == 6)
+				chaos::Logger::GetInstance()->Message("truc6", "truc6");
+
+
+			++i;
 		}
 		return true;
 	}
@@ -591,34 +611,5 @@ int main(int argc, char** argv, char** env)
 	create_params.width = 1200;
 	create_params.height = 500;
 	create_params.monitor_index = 0;
-
-
-	std::chrono::time_point tt = std::chrono::system_clock::now();
-
-	std::time_t t = std::chrono::system_clock::to_time_t(tt);
-
-	std::tm tm;
-	gmtime_s(&tm, &t);
-
-	std::string res = std::format("{0}/{1}/{2} {3}:{4}:{5}",
-		tm.tm_mday,
-		tm.tm_mon + 1,
-		tm.tm_year + 1900,
-		tm.tm_hour,
-		tm.tm_min,
-		tm.tm_sec
-	);
-
-
-	//std::string sss = std::chrono::format("%D %T %Z", floor<std::chrono::milliseconds>(tt));
-
-#if 0
-	std::string s = std::format("{:%Y%m%d%H%M}", tt);
-
-	std::string ss = std::format("{:%d-%m-%Y %H:%M:%s}", tt);
-
-	std::string sss = std::format("{:%D %T %Z\n}", tt);
-#endif
-
 	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, create_params);
 }

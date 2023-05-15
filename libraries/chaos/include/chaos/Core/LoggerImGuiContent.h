@@ -35,6 +35,9 @@ namespace chaos
 		/** whether consecutive identical messages are to be grouped altogether */
 		bool group_identical_lines = true;
 
+		/** a filter for logs content */
+		ImGuiTextFilter filter;
+
 		/** whether some domains are to be visibles */
 		std::map<char const*, bool> domain_visibilities;
 	};

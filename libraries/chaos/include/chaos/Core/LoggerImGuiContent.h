@@ -16,6 +16,11 @@ namespace chaos
 		/** override */
 		virtual void DrawImGui() override;
 
+	public:
+
+		/** draw the main menu */
+		void DrawMainMenu();
+
 	protected:
 
 		/** the logger object to display */

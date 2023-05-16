@@ -81,7 +81,7 @@ namespace chaos
 		// the lines
 		size_t constexpr COLUMN_COUNT = 6;
 
-		if (ImGui::BeginTable("##lines", COLUMN_COUNT, ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersInnerH | ImGuiTableFlags_BordersInnerV))
+		if (ImGui::BeginTable("##lines", COLUMN_COUNT, ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersInnerH | ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_Reorderable))
 		{
 			ImGui::TableSetupColumn("Date", 0);
 			ImGui::TableSetupColumn("Type", 0);

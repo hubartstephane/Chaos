@@ -8,36 +8,6 @@ CHAOS_APPLICATION_ARG(float, myfloat)
 CHAOS_APPLICATION_ARG(int, myint)
 CHAOS_APPLICATION_ARG(std::string, mystring)
 
-class ConsoleWindow : public chaos::Window
-{
-	CHAOS_DECLARE_OBJECT_CLASS(ConsoleWindow, chaos::Window);
-
-public:
-
-	ConsoleWindow()
-	{
-		console_content.SetLogger(chaos::Logger::GetInstance());
-	}
-
-protected:
-
-	virtual bool DoTick(float delta_time) override
-	{
-		ImGui::SetNextWindowPos({ 0, 0 });
-		ImGui::SetNextWindowSize({ ImGui::GetMainViewport()->Size.x, ImGui::GetMainViewport()->Size.y });
-		if (ImGui::Begin("##console", nullptr, ImGuiWindowFlags_NoMove  | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_MenuBar))
-		{
-			console_content.DrawImGui();
-			ImGui::End();
-		}
-		return true;
-	}
-
-protected:
-
-	chaos::LoggerImGuiContent console_content;
-};
-
 
 
 
@@ -181,76 +151,35 @@ protected:
 
 #endif
 
-	void ToggleConsoleWindow()
+	virtual void DrawImGuiMenu(chaos::WindowDrawParams const& draw_params) override
 	{
-		if (chaos::WindowApplication* window_application = chaos::Application::GetInstance())
+		// main menu for ImGUI
+		if (ImGui::BeginMainMenuBar())
 		{
-			if (chaos::Window * console = window_application->FindWindow("console"))
+			if (ImGui::BeginMenu("windows"))
 			{
-				console->RequireWindowClosure();
+				if (ImGui::BeginMenu("ImGui"))
+				{
+#define CHAOS_IMGUI_MENUITEM(X) ImGui::MenuItem(#X, nullptr, &X, true);
+					CHAOS_IMGUI_MENUITEM(show_demo);
+					CHAOS_IMGUI_MENUITEM(show_metrics);
+					CHAOS_IMGUI_MENUITEM(show_debug_log);
+					CHAOS_IMGUI_MENUITEM(show_stack_tool);
+					CHAOS_IMGUI_MENUITEM(show_about);
+					CHAOS_IMGUI_MENUITEM(show_style_editor);
+					CHAOS_IMGUI_MENUITEM(show_user_guide);
+#undef CHAOS_IMGUI_MENUITEM
+					ImGui::EndMenu();
+				}
+
+				ImGui::EndMenu();
 			}
-			else
-			{
-				chaos::WindowCreateParams create_params;
-				create_params.width = 800;
-				create_params.height = 800;
-				window_application->CreateTypedWindow(chaos::SubClassOf<ConsoleWindow>(), create_params, "console");
-			}
+			ImGui::EndMainMenuBar();
 		}
 	}
 
 	virtual void DrawImGui(chaos::WindowDrawParams const& draw_params) override
 	{
-		static bool show_demo = true;
-		static bool show_metrics = false;
-		static bool show_debug_log = false;
-		static bool show_stack_tool = false;
-		static bool show_about = false;
-		static bool show_style_editor = false;
-		static bool show_user_guide = false;
-
-		if (GetImGuiMenuMode())
-		{
-
-			// main menu for ImGUI
-			if (ImGui::BeginMainMenuBar())
-			{
-				if (ImGui::BeginMenu("windows"))
-				{
-					if (ImGui::BeginMenu("ImGui"))
-					{
-#define CHAOS_IMGUI_MENUITEM(X) ImGui::MenuItem(#X, nullptr, &X, true);
-						CHAOS_IMGUI_MENUITEM(show_demo);
-						CHAOS_IMGUI_MENUITEM(show_metrics);
-						CHAOS_IMGUI_MENUITEM(show_debug_log);
-						CHAOS_IMGUI_MENUITEM(show_stack_tool);
-						CHAOS_IMGUI_MENUITEM(show_about);
-						CHAOS_IMGUI_MENUITEM(show_style_editor);
-						CHAOS_IMGUI_MENUITEM(show_user_guide);
-#undef CHAOS_IMGUI_MENUITEM
-						ImGui::EndMenu();
-					}
-
-					ImGui::Separator();
-
-					bool console_exists = false;
-					if (chaos::WindowApplication* window_application = chaos::Application::GetInstance())
-					{
-						console_exists = (window_application->FindWindow("console") != nullptr);
-					}
-
-					if (ImGui::MenuItem("Show console", nullptr, console_exists, true))
-					{
-						ToggleConsoleWindow();
-					}
-
-
-					ImGui::EndMenu();
-				}
-				ImGui::EndMainMenuBar();
-			}
-		}
-
 		// ImGui Window
 		if (show_demo)
 			ImGui::ShowDemoWindow(&show_demo);
@@ -607,6 +536,14 @@ protected:
 	}
 
 	float col = 0.0f;
+
+	bool show_demo = true;
+	bool show_metrics = false;
+	bool show_debug_log = false;
+	bool show_stack_tool = false;
+	bool show_about = false;
+	bool show_style_editor = false;
+	bool show_user_guide = false;
 };
 
 

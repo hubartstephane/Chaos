@@ -91,7 +91,7 @@ namespace chaos
 	{
 		if (FindWindow(request) != nullptr)
 		{
-			chaos::Log::Error("WindowApplication::CreateTypedWindow(...) name already used");
+			Log::Error("WindowApplication::CreateTypedWindow(...) name already used");
 			return nullptr;
 		}
 
@@ -471,17 +471,17 @@ namespace chaos
 
 		if (!CreateTextureAtlas())
 		{
-			chaos::Log::Error("WindowApplication::CreateTextureAtlas(...) failure");
+			Log::Error("WindowApplication::CreateTextureAtlas(...) failure");
 			return false;
 		}
 		if (!InitializeGamepadButtonMap())
 		{
-			chaos::Log::Error("WindowApplication::InitializeGamepadButtonMap(...) failure");
+			Log::Error("WindowApplication::InitializeGamepadButtonMap(...) failure");
 			return false;
 		}
 		if (!CreateTextGenerator())
 		{
-			chaos::Log::Error("WindowApplication::CreateTextGenerator(...) failure");
+			Log::Error("WindowApplication::CreateTextGenerator(...) failure");
 			return false;
 		}
 		return true;
@@ -865,6 +865,49 @@ namespace chaos
 			{
 				window->SetImGuiMenuMode(mode);
 			}
+		}
+	}
+
+	bool WindowApplication::IsConsoleWindowVisible() const
+	{
+		return (FindWindow("console") != nullptr);
+	}
+
+	void WindowApplication::ShowConsoleWindow(bool visible)
+	{
+		Window* console = FindWindow("console");
+
+		if (visible)
+		{
+			if (console == nullptr)
+			{
+				WindowCreateParams create_params;
+				create_params.width = 800;
+				create_params.height = 800;
+				CreateTypedWindow(SubClassOf<ConsoleWindow>(), create_params, "console");
+			}
+		}
+		else
+		{
+			if (console != nullptr)
+				console->RequireWindowClosure();
+		}
+	}
+
+	void WindowApplication::DrawImGuiMenu(Window* window, WindowDrawParams const& draw_params)
+	{
+		if (ImGui::BeginMainMenuBar())
+		{
+			if (ImGui::BeginMenu("windows"))
+			{
+				bool console_exists = IsConsoleWindowVisible();
+				if (ImGui::MenuItem("console", nullptr, console_exists , true))
+				{
+					ShowConsoleWindow(!console_exists);
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMainMenuBar();
 		}
 	}
 

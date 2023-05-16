@@ -104,6 +104,8 @@ namespace chaos
 				return nullptr;
 			}
 			result->SetObjectNaming(request);
+			// set the mode
+			result->imgui_menu_mode = imgui_menu_mode;
 			// create the GLFW resource
 			if (!result->CreateGLFWWindow(create_params, shared_context))
 			{
@@ -714,13 +716,20 @@ namespace chaos
 	}
 
 #if _DEBUG
+	CHAOS_HELP_TEXT(SHORTCUTS, "F7  : ToggleImGuiMenuMode");
 	CHAOS_HELP_TEXT(SHORTCUTS, "F8  : ReloadGPUResources");
 #endif
 
 	bool WindowApplication::OnKeyEventImpl(KeyEvent const& event)
 	{
-		// reloading GPU resources
+		
 #if _DEBUG
+		if (event.IsKeyPressed(GLFW_KEY_F7))
+		{
+			SetImGuiMenuMode(!GetImGuiMenuMode());
+			return true;
+		}
+		// reloading GPU resources
 		if (event.IsKeyPressed(GLFW_KEY_F8))
 		{
 			// CMD GLFW_KEY_F8 : ReloadGPUResources(...)
@@ -840,6 +849,23 @@ namespace chaos
 	{
 		if (WindowApplication* application = Application::GetInstance())
 			application->OnMonitorEvent(monitor, monitor_state);
+	}
+
+	bool WindowApplication::GetImGuiMenuMode() const
+	{
+		return imgui_menu_mode;
+	}
+
+	void WindowApplication::SetImGuiMenuMode(bool mode)
+	{
+		if (imgui_menu_mode != mode)
+		{
+			imgui_menu_mode = mode;
+			for (shared_ptr<Window>& window : windows)
+			{
+				window->SetImGuiMenuMode(mode);
+			}
+		}
 	}
 
 }; // namespace chaos

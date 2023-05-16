@@ -118,6 +118,11 @@ namespace chaos
 		/** create a window */
 		Window* CreateTypedWindow(SubClassOf<Window> window_class, WindowCreateParams const& create_params = {}, ObjectRequest = {});
 
+		/** enable per window special mode */
+		void SetImGuiMenuMode(bool mode);
+		/** gets the window special mode */
+		bool GetImGuiMenuMode() const;
+
 	protected:
 
 		/** Main method */
@@ -234,6 +239,9 @@ namespace chaos
 		float max_tick_duration = 0.0f;
 		/** whether the delta time is forced to 0 for one frame (usefull for long operations like screen capture or GPU resource reloading) */
 		bool forced_zero_tick_duration = false;
+
+		/** the imgui menu mode */
+		bool imgui_menu_mode = false;
 
 		/** an invisible window that is used as a OpenGL context for all others */
 		GLFWwindow* shared_context = nullptr;

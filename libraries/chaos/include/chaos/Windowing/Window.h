@@ -210,6 +210,11 @@ namespace chaos
 		/** get the cursor mode */
 		CursorMode GetCursorMode() const;
 
+		/** enable per window special mode */
+		void SetImGuiMenuMode(bool mode);
+		/** gets the window special mode */
+		bool GetImGuiMenuMode() const;
+
 	protected:
 
 		/** override */
@@ -313,6 +318,10 @@ namespace chaos
 		std::optional<glm::vec2> mouse_position;
 		/** used to store data when toggling fullscreen */
 		std::optional<NonFullScreenWindowData> non_fullscreen_data;
+		/** the current cursor mode */
+		CursorMode cursor_mode = CursorMode::Normal;
+		/** the imgui menu mode */
+		bool imgui_menu_mode = false;
 	};
 
 #endif

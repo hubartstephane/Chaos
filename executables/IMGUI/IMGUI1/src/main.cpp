@@ -209,43 +209,46 @@ protected:
 		static bool show_style_editor = false;
 		static bool show_user_guide = false;
 
-
-		// main menu for ImGUI
-		if (ImGui::BeginMainMenuBar())
+		if (GetImGuiMenuMode())
 		{
-			if (ImGui::BeginMenu("windows"))
+
+			// main menu for ImGUI
+			if (ImGui::BeginMainMenuBar())
 			{
-				if (ImGui::BeginMenu("ImGui"))
+				if (ImGui::BeginMenu("windows"))
 				{
+					if (ImGui::BeginMenu("ImGui"))
+					{
 #define CHAOS_IMGUI_MENUITEM(X) ImGui::MenuItem(#X, nullptr, &X, true);
-					CHAOS_IMGUI_MENUITEM(show_demo);
-					CHAOS_IMGUI_MENUITEM(show_metrics);
-					CHAOS_IMGUI_MENUITEM(show_debug_log);
-					CHAOS_IMGUI_MENUITEM(show_stack_tool);
-					CHAOS_IMGUI_MENUITEM(show_about);
-					CHAOS_IMGUI_MENUITEM(show_style_editor);
-					CHAOS_IMGUI_MENUITEM(show_user_guide);
+						CHAOS_IMGUI_MENUITEM(show_demo);
+						CHAOS_IMGUI_MENUITEM(show_metrics);
+						CHAOS_IMGUI_MENUITEM(show_debug_log);
+						CHAOS_IMGUI_MENUITEM(show_stack_tool);
+						CHAOS_IMGUI_MENUITEM(show_about);
+						CHAOS_IMGUI_MENUITEM(show_style_editor);
+						CHAOS_IMGUI_MENUITEM(show_user_guide);
 #undef CHAOS_IMGUI_MENUITEM
+						ImGui::EndMenu();
+					}
+
+					ImGui::Separator();
+
+					bool console_exists = false;
+					if (chaos::WindowApplication* window_application = chaos::Application::GetInstance())
+					{
+						console_exists = (window_application->FindWindow("console") != nullptr);
+					}
+
+					if (ImGui::MenuItem("Show console", nullptr, console_exists, true))
+					{
+						ToggleConsoleWindow();
+					}
+
+
 					ImGui::EndMenu();
 				}
-
-				ImGui::Separator();
-
-				bool console_exists = false;
-				if (chaos::WindowApplication* window_application = chaos::Application::GetInstance())
-				{
-					console_exists = (window_application->FindWindow("console") != nullptr);
-				}
-
-				if (ImGui::MenuItem("Show console", nullptr, console_exists, true))
-				{
-					ToggleConsoleWindow();
-				}
-
-
-				ImGui::EndMenu();
+				ImGui::EndMainMenuBar();
 			}
-			ImGui::EndMainMenuBar();
 		}
 
 		// ImGui Window
@@ -267,21 +270,24 @@ protected:
 
 #if 1
 
-		auto add_close_personal_window = [](bool& p_open)
+		auto add_close_personal_window = [this](bool& p_open)
 		{
-			if (ImGui::BeginMainMenuBar())
+			if (GetImGuiMenuMode())
 			{
-				if (ImGui::BeginMenu("windows"))
+				if (ImGui::BeginMainMenuBar())
 				{
-					ImGui::Separator();
-					if (ImGui::BeginMenu("personals"))
+					if (ImGui::BeginMenu("windows"))
 					{
-						ImGui::MenuItem("main", nullptr, &p_open, true); // whenever the user select the menu item, the p_open value is being toggled						
+						ImGui::Separator();
+						if (ImGui::BeginMenu("personals"))
+						{
+							ImGui::MenuItem("main", nullptr, &p_open, true); // whenever the user select the menu item, the p_open value is being toggled						
+							ImGui::EndMenu();
+						}
 						ImGui::EndMenu();
 					}
-					ImGui::EndMenu();
+					ImGui::EndMainMenuBar();
 				}
-				ImGui::EndMainMenuBar();
 			}
 		};
 

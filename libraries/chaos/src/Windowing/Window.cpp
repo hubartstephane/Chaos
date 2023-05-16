@@ -203,9 +203,10 @@ namespace chaos
 
 		glfwSetWindowPos(glfw_window, x, y);
 		glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, 1);
-		//SetCursorMode(CursorMode::Disabled);
 
-		SetCursorMode(CursorMode::Normal);
+		// prepare cursor mode
+		cursor_mode = (CursorMode)glfwGetInputMode(glfw_window, GLFW_CURSOR);
+		SetCursorMode(CursorMode::Disabled);
 
 		// now that the window is fully placed ... we can show it
 		if (create_params.start_visible)
@@ -221,12 +222,34 @@ namespace chaos
 
 	void Window::SetCursorMode(CursorMode mode)
 	{
-		glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)mode);
+		if (cursor_mode != mode)
+		{
+			cursor_mode = mode;
+			if (!imgui_menu_mode)
+				glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)mode); // do not change cursor mode, during imgui mode mode
+		}
 	}
 
 	CursorMode Window::GetCursorMode() const
 	{
-		return (CursorMode)glfwGetInputMode(glfw_window, GLFW_CURSOR);
+		return cursor_mode;
+	}
+
+	bool Window::GetImGuiMenuMode() const
+	{
+		return imgui_menu_mode;
+	}
+
+	void Window::SetImGuiMenuMode(bool mode)
+	{
+		if (imgui_menu_mode != mode)
+		{
+			imgui_menu_mode = mode;
+			if (imgui_menu_mode)
+				glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)CursorMode::Normal);
+			else
+				glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)cursor_mode);
+		}
 	}
 
 	glm::ivec2 Window::GetWindowPosition() const

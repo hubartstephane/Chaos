@@ -244,6 +244,18 @@ namespace chaos
 			LoadFromJSON(*window_configuration, create_params);
 		}
 
+		// gives a title to the window
+		std::string title_storage;
+
+		if (StringTools::IsEmpty(create_params.title))
+		{
+			if (GetArguments().size() > 0)
+			{
+				title_storage = PathTools::PathToName(GetArguments()[0]);
+				create_params.title = title_storage.c_str();
+			}
+		}
+
 		// create the main window
 		Window * result = CreateTypedWindow(main_window_class, create_params, "main");
 		if (result == nullptr)
@@ -882,6 +894,7 @@ namespace chaos
 			if (console == nullptr)
 			{
 				WindowCreateParams create_params;
+				create_params.title = "console";
 				create_params.width = 800;
 				create_params.height = 800;
 				CreateTypedWindow(SubClassOf<ConsoleWindow>(), create_params, "console");

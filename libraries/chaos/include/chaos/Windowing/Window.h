@@ -245,6 +245,8 @@ namespace chaos
 		virtual void DrawWindow();
 		/** draw the ImGui layer */
 		virtual void DrawImGui(WindowDrawParams const& draw_params);
+		/** draw the menu layer */
+		virtual void DrawImGuiMenu(WindowDrawParams const& draw_params);
 
 		/** called at window creation (returns false if the window must be killed) */
 		virtual bool InitializeFromConfiguration(nlohmann::json const& config);

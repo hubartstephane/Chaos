@@ -123,6 +123,11 @@ namespace chaos
 		/** gets the window special mode */
 		bool GetImGuiMenuMode() const;
 
+		/** displaying console window */
+		void ShowConsoleWindow(bool visible);
+		/** check whether the console is visible */
+		bool IsConsoleWindowVisible() const;
+
 	protected:
 
 		/** Main method */
@@ -200,6 +205,9 @@ namespace chaos
 		AutoCastable<Window> GetMainWindow() { return main_window.get(); }
 		/** gets the main window of the application */
 		AutoConstCastable<Window> GetMainWindow() const { return main_window.get(); }
+
+		/** add some items to a windows menu */
+		virtual void DrawImGuiMenu(Window * window, WindowDrawParams const& draw_params);
 
 	protected:
 

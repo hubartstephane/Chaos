@@ -8,7 +8,7 @@ namespace chaos
 		logger = in_logger;
 	}
 
-	void LoggerImGuiContent::DrawMainMenu()
+	void LoggerImGuiContent::DrawImGuiMenu()
 	{
 		if (ImGui::BeginMenuBar())
 		{
@@ -70,13 +70,9 @@ namespace chaos
 		}
 	}
 
-
 	void LoggerImGuiContent::DrawImGui()
 	{
 		assert(logger != nullptr);
-
-		// the main menu
-		DrawMainMenu();
 
 		// the lines
 		size_t constexpr COLUMN_COUNT = 6;

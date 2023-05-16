@@ -22,6 +22,8 @@ namespace chaos
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;
+		/** override */
+		virtual void DrawImGuiMenu(WindowDrawParams const& draw_params) override;
 
 	protected:
 

@@ -153,6 +153,8 @@ protected:
 
 	virtual void DrawImGuiMenu(chaos::WindowDrawParams const& draw_params) override
 	{
+		chaos::Window::DrawImGuiMenu(draw_params);
+
 		// main menu for ImGUI
 		if (ImGui::BeginMainMenuBar())
 		{

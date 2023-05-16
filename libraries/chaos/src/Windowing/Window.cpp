@@ -858,6 +858,11 @@ namespace chaos
 
 	void Window::DrawImGuiMenu(WindowDrawParams const& draw_params)
 	{
+		assert(imgui_menu_mode);
+		if (WindowApplication* window_application = Application::GetInstance())
+		{
+			window_application->DrawImGuiMenu(this, draw_params);
+		}
 	}
 
 	void Window::DrawImGui(WindowDrawParams const& draw_params)
@@ -891,13 +896,7 @@ namespace chaos
 		}
 		// draw ImGui
 		if (imgui_menu_mode)
-		{
 			DrawImGuiMenu(draw_params);
-			if (WindowApplication* window_application = Application::GetInstance())
-			{
-				window_application->DrawImGuiMenu(this, draw_params);
-			}
-		}
 		DrawImGui(draw_params);
 
 		// finalize the rendering

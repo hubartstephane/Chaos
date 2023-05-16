@@ -14,6 +14,8 @@ namespace chaos
 		virtual ~ImGuiDrawableInterface() {};
 		/** the draw method */
 		virtual void DrawImGui() {}
+		/** draw the main menu */
+		virtual void DrawImGuiMenu() {}
 	};
 
 #endif

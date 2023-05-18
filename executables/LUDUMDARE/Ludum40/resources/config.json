@@ -1,11 +1,12 @@
 {
-  "window": {
+	"windows": {
+		"main_window": {
+			"width": 1200,
+			"height": 600
+		}
+	},
 
-    "width": 1200,
-    "height": 600
-  },
+	"game": { "@include": "game.json" },
 
-  "game":{ "@include":"game.json"},
-
-  "sounds":{ "@include":"sounds.json"}
+	"sounds": { "@include": "sounds.json" }
 }

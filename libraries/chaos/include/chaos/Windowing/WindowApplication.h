@@ -116,7 +116,7 @@ namespace chaos
 		virtual void RunMessageLoop(std::function<bool()> const& loop_condition_func = {});
 
 		/** create a window */
-		Window* CreateTypedWindow(SubClassOf<Window> window_class, WindowCreateParams const& create_params = {}, ObjectRequest = {});
+		Window* CreateTypedWindow(SubClassOf<Window> window_class, WindowCreateParams create_params = {}, ObjectRequest = {});
 
 		/** enable per window special mode */
 		void SetImGuiMenuMode(bool mode);

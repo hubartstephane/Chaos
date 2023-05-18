@@ -1,8 +1,10 @@
 {
-  "window": {
-    "width": 1200,
-    "height": 600
-  },
+	"windows": {
+		"main_window": {
+			"width": 1200,
+			"height": 600
+		}
+	},
 
   "max_tick_duration": 0.06,
   "forced_tick_durationxxx": 0.003,

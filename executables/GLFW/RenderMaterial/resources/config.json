@@ -1,8 +1,10 @@
 {
-  "window": {
-    "width": 1200,
-    "height": 600
-  },
+	"windows": {
+		"main_window": {
+			"width": 1200,
+			"height": 600
+		}
+	},
 
-  "gpu":{"@include":"@gpu.json"}
+	"gpu": { "@include": "@gpu.json" }
 }

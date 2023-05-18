@@ -1179,30 +1179,30 @@ namespace chaos
 		return category;
 	}
 
-	bool SoundManager::InitializeFromConfiguration(nlohmann::json const & json)
+	bool SoundManager::InitializeFromConfiguration(nlohmann::json const& config)
 	{
 		// initialize the categories
-		if (!LoadCategoriesFromConfiguration(json))
+		if (!LoadCategoriesFromConfiguration(config))
 			return false;
 		// Initialize the sources
-		if (!LoadSourcesFromConfiguration(json))
+		if (!LoadSourcesFromConfiguration(config))
 			return false;
 		return true;
 	}
 
-	bool SoundManager::LoadCategoriesFromConfiguration(nlohmann::json const & json)
+	bool SoundManager::LoadCategoriesFromConfiguration(nlohmann::json const& config)
 	{
 		return LoadObjectsFromConfiguration<false>( // no [recurse] reading
 			"categories",
-			json,
+			config,
 			SoundCategoryLoader(this));
 	}
 
-	bool SoundManager::LoadSourcesFromConfiguration(nlohmann::json const & json)
+	bool SoundManager::LoadSourcesFromConfiguration(nlohmann::json const& config)
 	{
 		return LoadObjectsFromConfiguration<true>(
 			"sources",
-			json,
+			config,
 			SoundSourceLoader(this));
 	}
 

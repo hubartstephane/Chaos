@@ -165,40 +165,40 @@ namespace chaos
 		return InitializeFromConfiguration(json);
 	}
 
-	bool GPUResourceManager::InitializeFromConfiguration(nlohmann::json const & json)
+	bool GPUResourceManager::InitializeFromConfiguration(nlohmann::json const& config)
 	{
-		if (!LoadTexturesFromConfiguration(json))
+		if (!LoadTexturesFromConfiguration(config))
 			return false;
-		if (!LoadProgramsFromConfiguration(json))
+		if (!LoadProgramsFromConfiguration(config))
 			return false;
-		if (!LoadMaterialsFromConfiguration(json))
+		if (!LoadMaterialsFromConfiguration(config))
 			return false;
 		return true;
 	}
 
-	bool GPUResourceManager::LoadTexturesFromConfiguration(nlohmann::json const & json)
+	bool GPUResourceManager::LoadTexturesFromConfiguration(nlohmann::json const& config)
 	{
 		return LoadObjectsFromConfiguration<true>(
 			"textures",
-			json,
+			config,
 			GPUTextureLoader(this));
 	}
 
-	bool GPUResourceManager::LoadProgramsFromConfiguration(nlohmann::json const & json)
+	bool GPUResourceManager::LoadProgramsFromConfiguration(nlohmann::json const& config)
 	{
 		return LoadObjectsFromConfiguration<true>(
 			"programs",
-			json,
+			config,
 			GPUProgramLoader(this));
 	}
 
-	bool GPUResourceManager::LoadMaterialsFromConfiguration(nlohmann::json const & json)
+	bool GPUResourceManager::LoadMaterialsFromConfiguration(nlohmann::json const& config)
 	{
 		GPURenderMaterialLoaderReferenceSolver solver; // finalize the missing references
 
 		bool result = LoadObjectsFromConfiguration<true>(
 			"rendermaterials",
-			json,
+			config,
 			GPURenderMaterialLoader(this, &solver));
 		if (result)
 			solver.ResolveReferences(this);

@@ -115,10 +115,10 @@ namespace chaos
 		return result;
 	}
 
-	bool GameHUDComponent::InitializeFromConfiguration(nlohmann::json const & json)
+	bool GameHUDComponent::InitializeFromConfiguration(nlohmann::json const& config)
 	{
 		bool visible = true;
-		JSONTools::GetAttribute(json, "visible", visible);
+		JSONTools::GetAttribute(config, "visible", visible);
 		if (!visible)
 			Show(false);
 		return true;
@@ -188,12 +188,12 @@ namespace chaos
 	{
 	}
 
-	bool GameHUDTextComponent::InitializeFromConfiguration(nlohmann::json const & json)
+	bool GameHUDTextComponent::InitializeFromConfiguration(nlohmann::json const& config)
 	{
-		if (!GameHUDMeshComponent::InitializeFromConfiguration(json))
+		if (!GameHUDMeshComponent::InitializeFromConfiguration(config))
 			return true;
-		JSONTools::GetAttribute(json, "format", text);
-		JSONTools::GetAttribute(json, "generator_params", generator_params);
+		JSONTools::GetAttribute(config, "format", text);
+		JSONTools::GetAttribute(config, "generator_params", generator_params);
 		return true;
 	}
 
@@ -444,13 +444,13 @@ namespace chaos
 		final_params.default_color = (cached_value >= 10.0f) ? normal_color : final_color;
 	}
 
-	bool GameHUDTimeoutComponent::InitializeFromConfiguration(nlohmann::json const& json)
+	bool GameHUDTimeoutComponent::InitializeFromConfiguration(nlohmann::json const& config)
 	{
-		if (!GameHUDCacheValueTextComponent<float>::InitializeFromConfiguration(json))
+		if (!GameHUDCacheValueTextComponent<float>::InitializeFromConfiguration(config))
 			return true;
-		JSONTools::GetAttribute(json, "digit_count", digit_count);
-		JSONTools::GetAttribute(json, "normal_color", normal_color);
-		JSONTools::GetAttribute(json, "final_color", final_color);
+		JSONTools::GetAttribute(config, "digit_count", digit_count);
+		JSONTools::GetAttribute(config, "normal_color", normal_color);
+		JSONTools::GetAttribute(config, "final_color", final_color);
 		return true;
 	}
 
@@ -458,21 +458,21 @@ namespace chaos
 	// GameHUDLifeComponent
 	// ====================================================================
 
-	bool GameHUDLifeComponent::InitializeFromConfiguration(nlohmann::json const & json)
+	bool GameHUDLifeComponent::InitializeFromConfiguration(nlohmann::json const& config)
 	{
-		if (!GameHUDMeshComponent::InitializeFromConfiguration(json))
+		if (!GameHUDMeshComponent::InitializeFromConfiguration(config))
 			return true;
 
-		JSONTools::GetAttribute(json, "hotpoint", hotpoint);
-		JSONTools::GetAttribute(json, "position", position);
-		JSONTools::GetAttribute(json, "particle_size", particle_size);
-		JSONTools::GetAttribute(json, "particle_offset", particle_offset);
+		JSONTools::GetAttribute(config, "hotpoint", hotpoint);
+		JSONTools::GetAttribute(config, "position", position);
+		JSONTools::GetAttribute(config, "particle_size", particle_size);
+		JSONTools::GetAttribute(config, "particle_offset", particle_offset);
 
-		JSONTools::GetAttribute(json, "particle_name", particle_name);
-		JSONTools::GetAttribute(json, "heart_beat_sound", heart_beat_sound);
-		JSONTools::GetAttribute(json, "heart_beat_frequency", heart_beat_frequency);
+		JSONTools::GetAttribute(config, "particle_name", particle_name);
+		JSONTools::GetAttribute(config, "heart_beat_sound", heart_beat_sound);
+		JSONTools::GetAttribute(config, "heart_beat_frequency", heart_beat_frequency);
 
-		JSONTools::GetAttribute(json, "fadeout_warning_base", fadeout_warning_base);
+		JSONTools::GetAttribute(config, "fadeout_warning_base", fadeout_warning_base);
 
 		return true;
 	}
@@ -705,11 +705,11 @@ namespace chaos
 		should_update_mesh = true;
 	}
 
-	bool GameHUDDebugValuesComponent::InitializeFromConfiguration(nlohmann::json const& json)
+	bool GameHUDDebugValuesComponent::InitializeFromConfiguration(nlohmann::json const& config)
 	{
-		if (!GameHUDMeshComponent::InitializeFromConfiguration(json))
+		if (!GameHUDMeshComponent::InitializeFromConfiguration(config))
 			return true;
-		JSONTools::GetAttribute(json, "generator_params", generator_params);
+		JSONTools::GetAttribute(config, "generator_params", generator_params);
 		return true;
 	}
 

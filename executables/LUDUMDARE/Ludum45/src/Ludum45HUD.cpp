@@ -100,14 +100,14 @@ void GameHUDShroudLifeComponent::UpdateMesh()
 	mesh = DI.GetDynamicMesh();
 }
 
-bool GameHUDShroudLifeComponent::InitializeFromConfiguration(nlohmann::json const & json)
+bool GameHUDShroudLifeComponent::InitializeFromConfiguration(nlohmann::json const& config)
 {
-	if (!GameHUDMeshComponent::InitializeFromConfiguration(json))
+	if (!GameHUDMeshComponent::InitializeFromConfiguration(config))
 		return true;
 
-	chaos::JSONTools::GetAttribute(json, "hotpoint", hotpoint);
-	chaos::JSONTools::GetAttribute(json, "position", position);
-	chaos::JSONTools::GetAttribute(json, "particle_size", particle_size);
+	chaos::JSONTools::GetAttribute(config, "hotpoint", hotpoint);
+	chaos::JSONTools::GetAttribute(config, "position", position);
+	chaos::JSONTools::GetAttribute(config, "particle_size", particle_size);
 
 	return true;
 }

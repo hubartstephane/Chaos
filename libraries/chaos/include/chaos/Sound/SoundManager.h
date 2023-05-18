@@ -636,9 +636,9 @@ namespace chaos
 		SoundCategory* AddJSONCategory(char const* name, nlohmann::json const& json);
 
 		/** load the categories from configuration */
-		bool LoadCategoriesFromConfiguration(nlohmann::json const& json);
+		bool LoadCategoriesFromConfiguration(nlohmann::json const& config);
 		/** load the sources from configuration */
-		bool LoadSourcesFromConfiguration(nlohmann::json const& json);
+		bool LoadSourcesFromConfiguration(nlohmann::json const& config);
 
 	protected:
 

@@ -129,8 +129,10 @@ namespace chaos
 			glfwMakeContextCurrent(result->GetGLFWHandler());
 			OnWindowCreated(result);
 			// finalize the creation
-			if (window_configuration != nullptr)
-				result->InitializeFromConfiguration(*window_configuration);
+			nlohmann::json default_window_config;
+			if (window_configuration == nullptr)
+				window_configuration = &default_window_config;
+			result->InitializeFromConfiguration(*window_configuration);
 			return result;
 		});
 	}

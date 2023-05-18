@@ -18,12 +18,10 @@ namespace chaos
 		/** constructor */
 		ConsoleWindow();
 
-	protected:
-
 		/** override */
-		virtual bool DoTick(float delta_time) override;
+		virtual void OnDrawImGuiContent() override;
 		/** override */
-		virtual void DrawImGuiMenu(WindowDrawParams const& draw_params) override;
+		virtual void OnDrawImGuiMenu() override;
 
 	protected:
 

@@ -13,10 +13,11 @@ namespace chaos
 
 		/** initialize the object */
 		void SetLogger(Logger * in_logger);
+
 		/** override */
-		virtual void DrawImGui() override;
+		virtual void OnDrawImGuiContent() override;
 		/** override */
-		virtual void DrawImGuiMenu() override;
+		virtual void OnDrawImGuiMenu() override;
 
 	protected:
 

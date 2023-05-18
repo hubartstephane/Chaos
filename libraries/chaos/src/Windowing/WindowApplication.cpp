@@ -907,20 +907,16 @@ namespace chaos
 		}
 	}
 
-	void WindowApplication::DrawImGuiMenu(Window* window, WindowDrawParams const& draw_params)
+	void WindowApplication::OnDrawImGuiMenu(Window* window)
 	{
-		if (ImGui::BeginMainMenuBar())
+		if (ImGui::BeginMenu("Windows"))
 		{
-			if (ImGui::BeginMenu("windows"))
+			bool console_exists = IsConsoleWindowVisible();
+			if (ImGui::MenuItem("console", nullptr, console_exists, true))
 			{
-				bool console_exists = IsConsoleWindowVisible();
-				if (ImGui::MenuItem("console", nullptr, console_exists , true))
-				{
-					ShowConsoleWindow(!console_exists);
-				}
-				ImGui::EndMenu();
+				ShowConsoleWindow(!console_exists);
 			}
-			ImGui::EndMainMenuBar();
+			ImGui::EndMenu();
 		}
 	}
 

@@ -12,9 +12,13 @@ namespace chaos
 
 	public:
 
+		/** override */
+		virtual bool InitializeFromConfiguration(nlohmann::json const& config) override;
 
+	protected:
 
-
+		/** the game being played */
+		shared_ptr<Game> game;
 	};
 
 #endif

@@ -18,6 +18,9 @@ namespace chaos
 		/** gets the game */
 		Game const* GetGame() const { return game.get(); }
 
+		/** gets the viewport class */
+		SubClassOf<GameViewportWidget> GetGameViewportWidgetClass() const { return game_viewport_widget_class; }
+
 		/** whether the game should "ignored" */
 		virtual bool IsGameSuspended() const;
 
@@ -31,8 +34,6 @@ namespace chaos
 		virtual bool DoTick(float delta_time) override;
 		/** override */
 		virtual bool FillAtlasGeneratorInput(BitmapAtlas::AtlasInput& input) override;
-		/** override */
-		virtual Window* CreateMainWindow() override;
 
 		/** override */
 		virtual bool OnMouseMoveImpl(glm::vec2 const& delta) override;

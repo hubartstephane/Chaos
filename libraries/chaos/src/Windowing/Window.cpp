@@ -190,12 +190,19 @@ namespace chaos
 		if (create_params.start_visible)
 			glfwShowWindow(glfw_window);
 
+		return true;
+	}
+
+	bool Window::CreateRootWidget()
+	{
 		// create the root widget
 		root_widget = new WindowRootWidget;
 		if (root_widget != nullptr)
+		{
 			root_widget->window = this;
-
-		return true;
+			return true;
+		}
+		return false;
 	}
 
 	void Window::SetCursorMode(CursorMode mode)

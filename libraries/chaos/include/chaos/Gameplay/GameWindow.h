@@ -17,6 +17,11 @@ namespace chaos
 
 	protected:
 
+		/** override */
+		virtual bool CreateRootWidget() override;
+
+	protected:
+
 		/** the game being played */
 		shared_ptr<Game> game;
 	};

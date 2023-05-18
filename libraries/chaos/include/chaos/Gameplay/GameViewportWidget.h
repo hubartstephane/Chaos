@@ -33,10 +33,12 @@ namespace chaos
 
 		CHAOS_DECLARE_OBJECT_CLASS(GameViewportWidget, Widget);
 
-	protected:
+	public:
 
 		/** initialize game member */
 		void SetGame(Game* in_game);
+
+	protected:
 
 		/** override */
 		virtual bool OnMouseButtonImpl(int button, int action, int modifier) override;

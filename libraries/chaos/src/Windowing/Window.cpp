@@ -19,10 +19,6 @@ namespace chaos
 		JSONTools::SetAttribute(json, "decorated", src.decorated);
 		JSONTools::SetAttribute(json, "toplevel", src.toplevel);
 		JSONTools::SetAttribute(json, "focused", src.focused);
-		JSONTools::SetAttribute(json, "samples", src.samples);
-		JSONTools::SetAttribute(json, "double_buffer", src.double_buffer);
-		JSONTools::SetAttribute(json, "depth_bits", src.depth_bits);
-		JSONTools::SetAttribute(json, "stencil_bits", src.stencil_bits);
 		return true;
 	}
 
@@ -38,10 +34,6 @@ namespace chaos
 		JSONTools::GetAttribute(json, "decorated", dst.decorated);
 		JSONTools::GetAttribute(json, "toplevel", dst.toplevel);
 		JSONTools::GetAttribute(json, "focused", dst.focused);
-		JSONTools::GetAttribute(json, "samples", dst.samples);
-		JSONTools::GetAttribute(json, "double_buffer", dst.double_buffer);
-		JSONTools::GetAttribute(json, "depth_bits", dst.depth_bits);
-		JSONTools::GetAttribute(json, "stencil_bits", dst.stencil_bits);
 		return true;
 	}
 
@@ -93,12 +85,10 @@ namespace chaos
 
 	namespace Arguments
 	{
-#if !_DEBUG
 		CHAOS_APPLICATION_ARG(bool, UnlimitedFPS);
-#endif
 	};
 
-	bool Window::CreateGLFWWindow(WindowCreateParams create_params, GLFWwindow* share_context_window)
+	bool Window::CreateGLFWWindow(WindowCreateParams create_params, GLFWwindow* share_context_window, GLFWHints glfw_hints)
 	{
 		// resource already existing
 		if (glfw_window != nullptr)
@@ -122,14 +112,6 @@ namespace chaos
 		glfwWindowHint(GLFW_DECORATED, create_params.decorated);
 		glfwWindowHint(GLFW_FLOATING, create_params.toplevel);
 		glfwWindowHint(GLFW_FOCUSED, create_params.focused);
-		glfwWindowHint(GLFW_SAMPLES, create_params.samples);
-		glfwWindowHint(GLFW_DOUBLEBUFFER, create_params.double_buffer);
-		glfwWindowHint(GLFW_DEPTH_BITS, create_params.depth_bits);
-		glfwWindowHint(GLFW_STENCIL_BITS, create_params.stencil_bits);
-		glfwWindowHint(GLFW_RED_BITS, 8);
-		glfwWindowHint(GLFW_GREEN_BITS, 8);
-		glfwWindowHint(GLFW_BLUE_BITS, 8);
-		glfwWindowHint(GLFW_ALPHA_BITS, 8);
 		glfwWindowHint(GLFW_VISIBLE, 0); // override the initial visibility
 
 		// compute window size and position
@@ -170,15 +152,11 @@ namespace chaos
 		if (glfw_window == nullptr)
 			return false;
 
-		// vsync ?
-#if !_DEBUG
+		// set vsync
 		if (Arguments::UnlimitedFPS.Get())
-			create_params.unlimited_fps = true;
-#else
-		create_params.unlimited_fps = true;
-#endif
+			glfw_hints.unlimited_fps = true;
 
-		if (create_params.unlimited_fps)
+		if (glfw_hints.unlimited_fps)
 		{
 			WithWindowContext([]()
 			{
@@ -187,7 +165,7 @@ namespace chaos
 		}
 
 		// set the callbacks
-		SetGLFWCallbacks(create_params.double_buffer ? true : false);
+		SetGLFWCallbacks(glfw_hints.double_buffer ? true : false);
 
 		// x and y are the coordinates of the client area : when there is a decoration, we want to tweak the window size / position with that
 		int left, top, right, bottom;

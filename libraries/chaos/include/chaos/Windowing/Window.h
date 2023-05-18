@@ -50,16 +50,6 @@ namespace chaos
 		int toplevel = 0;
 		/** self description */
 		int focused = 0;
-		/** whether we want the fps to be unlimited */
-		bool unlimited_fps = false;
-		/** number of samples in multisamples (0 for none) */
-		int samples = 0;
-		/** self description */
-		int double_buffer = 1;
-		/** self description */
-		int depth_bits = 24;
-		/** self description */
-		int stencil_bits = 8;
 	};
 
 	CHAOS_API bool SaveIntoJSON(nlohmann::json& json, WindowCreateParams const& src);
@@ -114,7 +104,7 @@ namespace chaos
 		/** destroying the window */
 		void DestroyGLFWWindow();
 		/** create the internal window */
-		bool CreateGLFWWindow(WindowCreateParams create_params, GLFWwindow* share_context);
+		bool CreateGLFWWindow(WindowCreateParams create_params, GLFWwindow* share_context, GLFWHints glfw_hints);
 
 		/** toggle to fullscreen mode */
 		void ToggleFullscreen();

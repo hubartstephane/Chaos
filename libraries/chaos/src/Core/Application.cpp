@@ -97,6 +97,8 @@ namespace chaos
 			if (LoggerListener* listener = new FileLoggerListener())
 				listener->SetLogger(logger);
 
+		HelpText::OutputToLogs();
+
 		// show console
 		bool will_show_console = show_console;
 		if (Arguments::ShowConsole.Get())

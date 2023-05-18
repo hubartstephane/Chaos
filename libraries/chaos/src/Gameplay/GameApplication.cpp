@@ -111,7 +111,7 @@ namespace chaos
 		if (game != nullptr)
 			if (game->OnMouseMove(delta))
 				return true;
-		return Application::OnMouseMoveImpl(delta);
+		return WindowApplication::OnMouseMoveImpl(delta);
 	}
 
 	bool GameApplication::OnMouseButtonImpl(int button, int action, int modifier)
@@ -119,7 +119,7 @@ namespace chaos
 		if (game != nullptr)
 			if (game->OnMouseButton(button, action, modifier))
 				return true;
-		return Application::OnMouseButtonImpl(button, action, modifier);
+		return WindowApplication::OnMouseButtonImpl(button, action, modifier);
 	}
 
 	bool GameApplication::OnMouseWheelImpl(double scroll_x, double scroll_y)
@@ -127,7 +127,7 @@ namespace chaos
 		if (game != nullptr)
 			if (game->OnMouseWheel(scroll_x, scroll_y))
 				return true;
-		return Application::OnMouseWheelImpl(scroll_x, scroll_y);
+		return WindowApplication::OnMouseWheelImpl(scroll_x, scroll_y);
 	}
 
 	bool GameApplication::OnKeyEventImpl(KeyEvent const& event)
@@ -135,7 +135,7 @@ namespace chaos
 		if (game != nullptr)
 			if (game->OnKeyEvent(event))
 				return true;
-		return Application::OnKeyEventImpl(event);
+		return WindowApplication::OnKeyEventImpl(event);
 	}
 
 	bool GameApplication::OnCharEventImpl(unsigned int c)
@@ -143,7 +143,7 @@ namespace chaos
 		if (game != nullptr)
 			if (game->OnCharEvent(c))
 				return true;
-		return Application::OnCharEventImpl(c);
+		return WindowApplication::OnCharEventImpl(c);
 	}
 
 }; // namespace chaos

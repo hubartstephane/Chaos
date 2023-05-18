@@ -73,12 +73,21 @@ namespace chaos
 		}
 	}
 
-	void WindowApplication::DestroyAllWindows()
+	void WindowApplication::DestroyAllWindows(bool immediate)
 	{
-		DestroyAllWindowsPredicate([](Window* window)
+		if (immediate)
 		{
-			return true;
-		});
+			DestroyAllWindowsPredicate([](Window* window)
+			{
+				return true;
+			});
+		}
+		else
+		{
+			for (auto& window : windows)
+				if (window != nullptr)
+					window->RequireWindowClosure();
+		}
 	}
 
 	void WindowApplication::DestroyAllWindowsPredicate(std::function<bool(Window*)> const & func)
@@ -891,22 +900,22 @@ namespace chaos
 
 	bool WindowApplication::IsConsoleWindowVisible() const
 	{
-		return (FindWindow("console") != nullptr);
+		return (FindWindow("Console") != nullptr);
 	}
 
 	void WindowApplication::ShowConsoleWindow(bool visible)
 	{
-		Window* console = FindWindow("console");
+		Window* console = FindWindow("Console");
 
 		if (visible)
 		{
 			if (console == nullptr)
 			{
 				WindowCreateParams create_params;
-				create_params.title = "console";
+				create_params.title = "Console";
 				create_params.width = 800;
 				create_params.height = 800;
-				CreateTypedWindow(SubClassOf<ConsoleWindow>(), create_params, "console");
+				CreateTypedWindow(SubClassOf<ConsoleWindow>(), create_params, "Console");
 			}
 		}
 		else
@@ -918,10 +927,24 @@ namespace chaos
 
 	void WindowApplication::OnDrawImGuiMenu(Window* window)
 	{
+		if (ImGui::BeginMenu("Actions"))
+		{
+			if (ImGui::MenuItem("Show Temp Dir.", nullptr, false, true))
+			{
+				ShowUserLocalTempDirectory();
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Quit", nullptr, false, true))
+			{
+				DestroyAllWindows(false);
+			}
+			ImGui::EndMenu();
+		}
+
 		if (ImGui::BeginMenu("Windows"))
 		{
 			bool console_exists = IsConsoleWindowVisible();
-			if (ImGui::MenuItem("console", nullptr, console_exists, true))
+			if (ImGui::MenuItem("Console", nullptr, console_exists, true))
 			{
 				ShowConsoleWindow(!console_exists);
 			}

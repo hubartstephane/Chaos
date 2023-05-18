@@ -12,7 +12,7 @@ public:
 		// super
 		chaos::GameApplication::OnWindowCreated(window);
 		// hidden cursor
-		glfwSetInputMode(window->GetGLFWHandler(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		window->SetCursorMode(chaos::CursorMode::Disabled);
 	}
 };
 

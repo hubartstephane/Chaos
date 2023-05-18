@@ -87,7 +87,7 @@ namespace chaos
 		}
 	}
 
-	Window* WindowApplication::CreateTypedWindow(SubClassOf<Window> window_class, WindowCreateParams const& create_params, ObjectRequest request)
+	Window* WindowApplication::CreateTypedWindow(SubClassOf<Window> window_class, WindowCreateParams create_params, ObjectRequest request)
 	{
 		if (FindWindow(request) != nullptr)
 		{
@@ -95,7 +95,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		return WithWindowContext(nullptr, [this, window_class, create_params, &request]() -> Window*
+		return WithWindowContext(nullptr, [this, window_class, &create_params, &request]() -> Window*
 		{
 			// create the window class
 			Window* result = window_class.CreateInstance();
@@ -104,6 +104,17 @@ namespace chaos
 				return nullptr;
 			}
 			result->SetObjectNaming(request);
+			// override the create params with the JSON configuration (if any)
+			nlohmann::json const* window_configuration = nullptr;
+			if (nlohmann::json const* windows_configuration = JSONTools::GetStructure(configuration, "windows"))
+			{
+				window_configuration = JSONTools::GetStructure(*windows_configuration, result->GetName());
+				if (window_configuration != nullptr)
+				{
+					LoadFromJSON(*window_configuration, create_params);
+				}
+			}
+
 			// set the mode
 			result->imgui_menu_mode = imgui_menu_mode;
 			// create the GLFW resource
@@ -112,11 +123,14 @@ namespace chaos
 				delete(result);
 				return nullptr;
 			}
+			// store the result
+			windows.push_back(result);
 			// post initialization method
 			glfwMakeContextCurrent(result->GetGLFWHandler());
 			OnWindowCreated(result);
-			// store the result
-			windows.push_back(result);
+			// finalize the creation
+			if (window_configuration != nullptr)
+				result->InitializeFromConfiguration(*window_configuration);
 			return result;
 		});
 	}
@@ -236,13 +250,7 @@ namespace chaos
 	{
 		WindowCreateParams create_params = window_create_params;
 
-		nlohmann::json const* window_configuration = JSONTools::GetStructure(configuration, "window");
-		if (window_configuration != nullptr)
-		{
-			LoadFromJSON(*window_configuration, create_params);
-		}
-
-		// gives a title to the window
+		// gives a title to the window (if necessary)
 		std::string title_storage;
 
 		if (StringTools::IsEmpty(create_params.title))
@@ -253,21 +261,8 @@ namespace chaos
 				create_params.title = title_storage.c_str();
 			}
 		}
-
-		// create the main window
-		Window * result = CreateTypedWindow(main_window_class, create_params, "main");
-		if (result == nullptr)
-			return nullptr;
-
-		// initialize the main with any configuration data window (once GPUResourceManager is fully initialized)
-		if (!result->WithWindowContext([this, result]()
-		{
-			return result->InitializeFromConfiguration(configuration);
-		}))
-		{
-			return nullptr;
-		}
-		return result;
+		// create the window
+		return CreateTypedWindow(main_window_class, window_create_params, "main_window");
 	}
 
 	bool WindowApplication::InitializeGamepadButtonMap()

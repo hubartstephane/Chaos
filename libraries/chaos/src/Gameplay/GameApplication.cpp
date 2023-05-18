@@ -91,8 +91,8 @@ namespace chaos
 		// super
 		WindowApplication::DoTick(delta_time);
 		// update the game
-		if (!imgui_menu_mode)
-			if (game != nullptr)
+		if (game != nullptr)
+			if (!IsGameSuspended())
 				game->Tick(delta_time);
 		return true;
 	}
@@ -110,41 +110,51 @@ namespace chaos
 	bool GameApplication::OnMouseMoveImpl(glm::vec2 const& delta)
 	{
 		if (game != nullptr)
-			if (game->OnMouseMove(delta))
-				return true;
+			if (!IsGameSuspended())
+				if (game->OnMouseMove(delta))
+					return true;
 		return WindowApplication::OnMouseMoveImpl(delta);
 	}
 
 	bool GameApplication::OnMouseButtonImpl(int button, int action, int modifier)
 	{
 		if (game != nullptr)
-			if (game->OnMouseButton(button, action, modifier))
-				return true;
+			if (!IsGameSuspended())
+				if (game->OnMouseButton(button, action, modifier))
+					return true;
 		return WindowApplication::OnMouseButtonImpl(button, action, modifier);
 	}
 
 	bool GameApplication::OnMouseWheelImpl(double scroll_x, double scroll_y)
 	{
 		if (game != nullptr)
-			if (game->OnMouseWheel(scroll_x, scroll_y))
-				return true;
+			if (!IsGameSuspended())
+				if (game->OnMouseWheel(scroll_x, scroll_y))
+					return true;
 		return WindowApplication::OnMouseWheelImpl(scroll_x, scroll_y);
 	}
 
 	bool GameApplication::OnKeyEventImpl(KeyEvent const& event)
 	{
 		if (game != nullptr)
-			if (game->OnKeyEvent(event))
-				return true;
+			if (!IsGameSuspended())
+				if (game->OnKeyEvent(event))
+					return true;
 		return WindowApplication::OnKeyEventImpl(event);
 	}
 
 	bool GameApplication::OnCharEventImpl(unsigned int c)
 	{
 		if (game != nullptr)
-			if (game->OnCharEvent(c))
-				return true;
+			if (!IsGameSuspended())
+				if (game->OnCharEvent(c))
+					return true;
 		return WindowApplication::OnCharEventImpl(c);
+	}
+
+	bool GameApplication::IsGameSuspended() const
+	{
+		return imgui_menu_mode;
 	}
 
 }; // namespace chaos

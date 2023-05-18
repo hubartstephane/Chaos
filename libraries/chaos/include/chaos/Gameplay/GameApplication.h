@@ -18,6 +18,9 @@ namespace chaos
 		/** gets the game */
 		Game const* GetGame() const { return game.get(); }
 
+		/** whether the game should "ignored" */
+		virtual bool IsGameSuspended() const;
+
 	protected:
 
 		/** override */

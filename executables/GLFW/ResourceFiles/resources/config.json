@@ -1,14 +1,16 @@
 {
-  "window": {
-    "width": 1200,
-    "height": 600
-  },
+	"windows": {
+		"main_window": {
+			"width": 1200,
+			"height": 600
+		}
+	},
 
-  "gpu":{"@include":"@gpu.json"},
+	"gpu": { "@include": "@gpu.json" },
 
-  "game":{"@include":"@game.json"},
+	"game": { "@include": "@game.json" },
 
-  "verify_caracter_escape":"@@escaped",
+	"verify_caracter_escape": "@@escaped",
 
-  "verify_path_concatenation":"@one_path.txt"
+	"verify_path_concatenation": "@one_path.txt"
 }

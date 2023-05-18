@@ -147,6 +147,8 @@ namespace chaos
 			if (window_configuration == nullptr)
 				window_configuration = &default_window_config;
 			result->InitializeFromConfiguration(*window_configuration);
+			// create the root widget
+			result->CreateRootWidget();
 			return result;
 		});
 	}

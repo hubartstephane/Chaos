@@ -12,55 +12,6 @@ namespace chaos
 		assert(game_viewport_widget_class.IsValid());
 	}
 
-	Window* GameApplication::CreateMainWindow()
-	{
-		Window* result = WindowApplication::CreateMainWindow();
-		if (result != nullptr)
-		{
-			if (WindowRootWidget* root_widget = result->GetRootWidget())
-			{
-
-
-
-				// shuxxx GameViewportWidget test
-
-#if 1
-				for (int i = 0 ; i < 1 ; ++i)
-				if (GameViewportWidget* game_viewport_widget = game_viewport_widget_class.CreateInstance())
-				{
-					WidgetLayout layout;
-					layout.aspect_ratio = game->GetViewportWantedAspect();
-					game_viewport_widget->SetLayout(layout);
-					game_viewport_widget->SetGame(game.get());
-
-					root_widget->AddChildWidget(game_viewport_widget);
-				}
-
-#else
-
-				for (int i = 0; i < 3; ++i)
-				{
-					PlaceHolderWidget* widget = new PlaceHolderWidget;
-
-					WidgetLayout layout;
-					layout.aspect_ratio = 4.0f / 3.0f;
-					layout.padding = Padding(5.0f);
-					layout.fill_mode_x = WidgetFillMode::PACKED_NORMAL;
-
-					widget->SetLayout(layout, false);
-
-					root_widget->AddChildWidget(widget);
-				}
-
-#endif
-
-
-
-			}
-		}
-		return result;
-	}
-
 	bool GameApplication::PostOpenGLContextCreation()
 	{
 		assert(glfwGetCurrentContext() == shared_context);

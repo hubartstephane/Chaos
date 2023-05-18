@@ -209,9 +209,11 @@ namespace chaos
 		virtual bool OnCharEventImpl(unsigned int c) override;
 		/** override */
 		virtual bool OnDraw(GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params) override;
-
 		/** override */
 		virtual bool DoTick(float delta_time) override;
+
+		/** create the root widget */
+		virtual bool CreateRootWidget();
 
 		/** display both the window content and the widget overlay */
 		virtual bool DrawInternal(GPUProgramProviderInterface const* uniform_provider);

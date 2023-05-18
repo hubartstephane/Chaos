@@ -91,16 +91,16 @@ namespace chaos
 		/** Initialize the application with the main data */
 		virtual bool Initialize();
 		/** Finalization method */
-		virtual bool Finalize();
+		virtual void Finalize();
 		/** standard library initialization */
 		virtual bool InitializeStandardLibraries();
 		/** standard library finalization */
-		virtual bool FinalizeStandardLibraries();
+		virtual void FinalizeStandardLibraries();
 
 		/** initialize the managers */
 		virtual bool InitializeManagers();
 		/** finalize the managers */
-		virtual bool FinalizeManagers();
+		virtual void FinalizeManagers();
 
 		/** loading the configuration file */
 		bool LoadConfigurationFile();

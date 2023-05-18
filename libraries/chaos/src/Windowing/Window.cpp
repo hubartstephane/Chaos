@@ -918,7 +918,7 @@ namespace chaos
 
 	bool Window::InitializeFromConfiguration(nlohmann::json const& config)
 	{
-		return true;
+		return true; 
 	}
 
 	bool Window::DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const

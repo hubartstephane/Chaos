@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	GameApplication::GameApplication(SubClassOf<Game> in_game_class, SubClassOf<Window> in_main_window_class, SubClassOf<GameViewportWidget> in_game_viewport_widget_class, WindowCreateParams const& in_window_create_params):
+	GameApplication::GameApplication(SubClassOf<Game> in_game_class, SubClassOf<GameWindow> in_main_window_class, SubClassOf<GameViewportWidget> in_game_viewport_widget_class, WindowCreateParams const& in_window_create_params):
 		WindowApplication(in_main_window_class, in_window_create_params),
 		game_class(in_game_class),
 		game_viewport_widget_class(in_game_viewport_widget_class)
@@ -155,6 +155,24 @@ namespace chaos
 	bool GameApplication::IsGameSuspended() const
 	{
 		return imgui_menu_mode;
+	}
+
+	void GameApplication::OnWindowDestroyed(Window* window)
+	{
+		WindowApplication::OnWindowDestroyed(window);
+
+		// destroy all other windows as soon as there are no more game_window
+		bool has_game_window = false;
+		for (auto& window : windows)
+		{
+			if (GameWindow* game_window = auto_cast(window.get()))
+			{
+				has_game_window = true;
+				break;
+			}
+		}
+		if (!has_game_window)
+			DestroyAllWindows();
 	}
 
 }; // namespace chaos

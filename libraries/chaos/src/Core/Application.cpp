@@ -132,10 +132,9 @@ namespace chaos
 		return true;
 	}
 
-	bool Application::Finalize()
+	void Application::Finalize()
 	{
 		FinalizeManagers();
-		return true;
 	}
 
 	int Application::Main()
@@ -170,9 +169,8 @@ namespace chaos
 		return true;
 	}
 
-	bool Application::FinalizeStandardLibraries()
+	void Application::FinalizeStandardLibraries()
 	{
-		return true;
 	}
 
 	bool Application::InitializeManagers()
@@ -181,9 +179,8 @@ namespace chaos
 		return true;
 	}
 
-	bool Application::FinalizeManagers()
+	void Application::FinalizeManagers()
 	{
-		return true;
 	}
 
 	void Application::StoreParameters(int argc, char ** argv, char ** env)

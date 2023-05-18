@@ -29,9 +29,9 @@ namespace chaos
 			return result;
 		}
 
-		size_t FlushMessages(std::function<void(char const*, char const *)> function)
+		void OutputToLogs()
 		{	
-			size_t result = 0;
+			Log::BeginTransaction(LogType::Message);
 
 			std::map<std::string, std::vector<std::string>> & message_map = GetMessageMap();
 
@@ -43,21 +43,18 @@ namespace chaos
 				size_t message_count = messages.size();
 				if (message_count > 0)
 				{
-					// starting a new family (nullptr as message)
-					function(family.c_str(), nullptr);
-
+					// display the title
+					Log::TransactionConcatLN("==========================================");
+					Log::TransactionConcatLN("== %s", family.c_str());
+					Log::TransactionConcatLN("==========================================");
 					// iterate over all messages of this family
 					std::sort(messages.begin(), messages.end());
 					for (std::string const& str : messages)
-						function(family.c_str(), str.c_str());
+						Log::TransactionConcatLN("%s", str.c_str());
 					messages.clear();
-					// update result
-					result += message_count;
 				}
 			}
-
-			message_map.clear();
-			return result;
+			Log::EndTransaction();
 		}
 	};
 

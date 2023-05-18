@@ -33,6 +33,16 @@ namespace chaos
 		int refresh_rate = 60;
 		/** the opengl profile */
 		int opengl_profile = GLFW_OPENGL_CORE_PROFILE;
+		/** whether we want the fps to be unlimited */
+		bool unlimited_fps = false;
+		/** number of samples in multisamples (0 for none) */
+		int samples = 0;
+		/** self description */
+		int double_buffer = 1;
+		/** self description */
+		int depth_bits = 24;
+		/** self description */
+		int stencil_bits = 8;
 	};
 
 	CHAOS_API bool SaveIntoJSON(nlohmann::json& json, GLFWHints const& src);

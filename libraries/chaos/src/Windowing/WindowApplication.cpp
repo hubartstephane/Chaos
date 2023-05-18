@@ -107,7 +107,7 @@ namespace chaos
 			// set the mode
 			result->imgui_menu_mode = imgui_menu_mode;
 			// create the GLFW resource
-			if (!result->CreateGLFWWindow(create_params, shared_context))
+			if (!result->CreateGLFWWindow(create_params, shared_context, glfw_hints))
 			{
 				delete(result);
 				return nullptr;
@@ -171,10 +171,8 @@ namespace chaos
 		// set error callback
 		glfwSetErrorCallback(OnGLFWError);
 
-		// the glfw configuration
-		GLFWHints glfw_hints;
-		nlohmann::json const* glfw_configuration = JSONTools::GetStructure(configuration, "glfw");
-		if (glfw_configuration != nullptr)
+		// the glfw configuration (valid for all windows)
+		if (nlohmann::json const* glfw_configuration = JSONTools::GetStructure(configuration, "glfw"))
 			LoadFromJSON(*glfw_configuration, glfw_hints);
 		glfw_hints.ApplyHints();
 

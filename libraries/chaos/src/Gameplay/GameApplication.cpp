@@ -91,8 +91,9 @@ namespace chaos
 		// super
 		WindowApplication::DoTick(delta_time);
 		// update the game
-		if (game != nullptr)
-			game->Tick(delta_time);
+		if (!imgui_menu_mode)
+			if (game != nullptr)
+				game->Tick(delta_time);
 		return true;
 	}
 

@@ -251,6 +251,9 @@ namespace chaos
 		/** the imgui menu mode */
 		bool imgui_menu_mode = false;
 
+		/** the hints for all windows */
+		GLFWHints glfw_hints;
+
 		/** an invisible window that is used as a OpenGL context for all others */
 		GLFWwindow* shared_context = nullptr;
 	};

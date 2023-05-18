@@ -54,24 +54,10 @@ namespace chaos
 			}
 
 			// destroy windows that mean to be
-			for (size_t i = windows.size(); i > 0; --i)
+			DestroyAllWindowsPredicate([](Window* window)
 			{
-				Window* window = windows[i - 1].get();
-				if (window != nullptr && window->ShouldClose())
-				{
-					// destroy the internal GLFW window
-					window->WithWindowContext([this, window]()
-					{
-						OnWindowDestroyed(window);
-					});
-					// remove the window for the list
-					windows[i - 1] = windows[windows.size() - 1];
-					windows.pop_back();
-					// check whether it was the main window
-					if (window == main_window)
-						main_window = nullptr;
-				}
-			}
+				return window->ShouldClose();
+			});
 			// tick the windows
 			for (auto& window : windows)
 			{
@@ -84,6 +70,34 @@ namespace chaos
 			}
 			// update time
 			t1 = t2;
+		}
+	}
+
+	void WindowApplication::DestroyAllWindows()
+	{
+		DestroyAllWindowsPredicate([](Window* window)
+		{
+			return true;
+		});
+	}
+
+	void WindowApplication::DestroyAllWindowsPredicate(std::function<bool(Window*)> const & func)
+	{
+		for (size_t i = windows.size(); i > 0; --i)
+		{
+			Window* window = windows[i - 1].get();
+			if (window != nullptr && func(window))
+			{
+				shared_ptr<Window> prevent_destructor = window;
+				// remove the window for the list
+				windows[i - 1] = windows[windows.size() - 1];
+				windows.pop_back();
+				// destroy the internal GLFW window
+				window->WithWindowContext([this, window]()
+				{
+					OnWindowDestroyed(window);
+				});
+			}
 		}
 	}
 
@@ -139,6 +153,8 @@ namespace chaos
 
 	void WindowApplication::OnWindowDestroyed(Window* window)
 	{
+		if (window == main_window)
+			main_window = nullptr;
 		window->Finalize();
 		window->DestroyGLFWWindow();
 	}
@@ -562,7 +578,7 @@ namespace chaos
 		});
 	}
 
-	bool WindowApplication::FinalizeGPUResourceManager()
+	void WindowApplication::FinalizeGPUResourceManager()
 	{
 		// stop the resource manager
 		if (gpu_resource_manager != nullptr)
@@ -570,7 +586,6 @@ namespace chaos
 			gpu_resource_manager->StopManager();
 			gpu_resource_manager = nullptr;
 		}
-		return true;
 	}
 
 	bool WindowApplication::InitializeManagers()
@@ -602,7 +617,7 @@ namespace chaos
 		return true;
 	}
 
-	bool WindowApplication::FinalizeManagers()
+	void WindowApplication::FinalizeManagers()
 	{
 		// stop the clock
 		main_clock = nullptr;
@@ -620,10 +635,9 @@ namespace chaos
 		}
 		// super method
 		Application::FinalizeManagers();
-		return true;
 	}
 
-	bool WindowApplication::Finalize()
+	void WindowApplication::Finalize()
 	{
 		// destroy the resources
 		FinalizeGPUResourceManager();
@@ -639,7 +653,6 @@ namespace chaos
 		main_window = nullptr;
 		// super
 		Application::Finalize();
-		return true;
 	}
 
 	void WindowApplication::FreeImageOutputMessageFunc(FREE_IMAGE_FORMAT fif, const char* msg)
@@ -660,12 +673,11 @@ namespace chaos
 		return true;
 	}
 
-	bool WindowApplication::FinalizeStandardLibraries()
+	void WindowApplication::FinalizeStandardLibraries()
 	{
 		glfwTerminate();
 		FreeImage_DeInitialise();
 		Application::FinalizeStandardLibraries();
-		return true;
 	}
 
 	void WindowApplication::OnInputModeChanged(InputMode new_mode, InputMode old_mode)

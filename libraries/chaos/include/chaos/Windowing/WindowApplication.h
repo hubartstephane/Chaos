@@ -128,6 +128,11 @@ namespace chaos
 		/** check whether the console is visible */
 		bool IsConsoleWindowVisible() const;
 
+		/** destroy all windows */
+		void DestroyAllWindows();
+		/** destroy all windows that satisfy a predicate */
+		void DestroyAllWindowsPredicate(std::function<bool(Window*)> const & func);
+
 	protected:
 
 		/** Main method */
@@ -152,19 +157,19 @@ namespace chaos
 		/** initializing standard libraries */
 		virtual bool InitializeStandardLibraries() override;
 		/** Finalizalizing standard libraries */
-		virtual bool FinalizeStandardLibraries() override;
+		virtual void FinalizeStandardLibraries() override;
 		/** initialize the application */
 		virtual bool Initialize() override;
 		/** finalize the application */
-		virtual bool Finalize() override;
+		virtual void Finalize() override;
 		/** initialize the managers */
 		virtual bool InitializeManagers() override;
 		/** finalize the managers */
-		virtual bool FinalizeManagers() override;
+		virtual void FinalizeManagers() override;
 		/** the GPU manager must be initialized after the OpenGL context is OK. */
 		virtual bool CreateGPUResourceManager();
 		/** finalize the GPU manager */
-		virtual bool FinalizeGPUResourceManager();
+		virtual void FinalizeGPUResourceManager();
 
 		/** initialize a mapping with button names / text generator joker */
 		virtual bool InitializeGamepadButtonMap();

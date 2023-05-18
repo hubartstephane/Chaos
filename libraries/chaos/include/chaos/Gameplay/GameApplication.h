@@ -11,7 +11,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GameApplication(SubClassOf<Game> in_game_class, SubClassOf<Window> in_main_window_class, SubClassOf<GameViewportWidget> in_game_viewport_widget_class, WindowCreateParams const& in_window_create_params = {});
+		GameApplication(SubClassOf<Game> in_game_class, SubClassOf<GameWindow> in_main_window_class, SubClassOf<GameViewportWidget> in_game_viewport_widget_class, WindowCreateParams const& in_window_create_params = {});
 
 		/** gets the game */
 		Game* GetGame() { return game.get(); }
@@ -23,6 +23,8 @@ namespace chaos
 
 	protected:
 
+		/** override */
+		virtual void OnWindowDestroyed(Window* window) override;
 		/** override */
 		virtual bool PostOpenGLContextCreation() override;
 		/** override */
@@ -53,7 +55,7 @@ namespace chaos
 		shared_ptr<Game> game;
 	};
 
-	template<typename GAME_TYPE, typename GAME_APPLICATION_TYPE = GameApplication, typename MAIN_WINDOW_CLASS = Window, typename GAME_VIEWPORT_WIDGET_CLASS = GameViewportWidget, typename ...PARAMS>
+	template<typename GAME_TYPE, typename GAME_APPLICATION_TYPE = GameApplication, typename MAIN_WINDOW_CLASS = GameWindow, typename GAME_VIEWPORT_WIDGET_CLASS = GameViewportWidget, typename ...PARAMS>
 	/*CHAOS_API*/ int RunGame(int argc, char** argv, char** env, PARAMS && ...params)
 	{
 		return RunApplication<GAME_APPLICATION_TYPE>(

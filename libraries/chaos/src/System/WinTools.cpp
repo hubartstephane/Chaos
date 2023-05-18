@@ -175,6 +175,7 @@ namespace chaos
 			// display messages that were pending
 			size_t flushed_message_count = HelpText::FlushMessages([](char const* family, char const* message)
 			{
+				Log::BeginTransaction(LogType::Message);
 				// starting a new family
 				if (message == nullptr)
 				{
@@ -188,6 +189,7 @@ namespace chaos
 				{
 					std::cout << "  " << message << '\n';
 				}
+				Log::EndTransaction();
 			});
 		}
 

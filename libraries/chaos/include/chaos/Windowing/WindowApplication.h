@@ -129,7 +129,7 @@ namespace chaos
 		bool IsConsoleWindowVisible() const;
 
 		/** destroy all windows */
-		void DestroyAllWindows();
+		void DestroyAllWindows(bool immediate = true);
 		/** destroy all windows that satisfy a predicate */
 		void DestroyAllWindowsPredicate(std::function<bool(Window*)> const & func);
 

@@ -151,36 +151,32 @@ protected:
 
 #endif
 
-	virtual void DrawImGuiMenu(chaos::WindowDrawParams const& draw_params) override
+	virtual void OnDrawImGuiMenu() override
 	{
-		chaos::Window::DrawImGuiMenu(draw_params);
+		chaos::Window::OnDrawImGuiMenu();
 
 		// main menu for ImGUI
-		if (ImGui::BeginMainMenuBar())
+		if (ImGui::BeginMenu("Windows"))
 		{
-			if (ImGui::BeginMenu("windows"))
+			if (ImGui::BeginMenu("ImGui"))
 			{
-				if (ImGui::BeginMenu("ImGui"))
-				{
 #define CHAOS_IMGUI_MENUITEM(X) ImGui::MenuItem(#X, nullptr, &X, true);
-					CHAOS_IMGUI_MENUITEM(show_demo);
-					CHAOS_IMGUI_MENUITEM(show_metrics);
-					CHAOS_IMGUI_MENUITEM(show_debug_log);
-					CHAOS_IMGUI_MENUITEM(show_stack_tool);
-					CHAOS_IMGUI_MENUITEM(show_about);
-					CHAOS_IMGUI_MENUITEM(show_style_editor);
-					CHAOS_IMGUI_MENUITEM(show_user_guide);
+				CHAOS_IMGUI_MENUITEM(show_demo);
+				CHAOS_IMGUI_MENUITEM(show_metrics);
+				CHAOS_IMGUI_MENUITEM(show_debug_log);
+				CHAOS_IMGUI_MENUITEM(show_stack_tool);
+				CHAOS_IMGUI_MENUITEM(show_about);
+				CHAOS_IMGUI_MENUITEM(show_style_editor);
+				CHAOS_IMGUI_MENUITEM(show_user_guide);
 #undef CHAOS_IMGUI_MENUITEM
-					ImGui::EndMenu();
-				}
-
 				ImGui::EndMenu();
 			}
-			ImGui::EndMainMenuBar();
+
+			ImGui::EndMenu();
 		}
 	}
 
-	virtual void DrawImGui(chaos::WindowDrawParams const& draw_params) override
+	virtual void OnDrawImGuiContent() override
 	{
 		// ImGui Window
 		if (show_demo)
@@ -207,7 +203,7 @@ protected:
 			{
 				if (ImGui::BeginMainMenuBar())
 				{
-					if (ImGui::BeginMenu("windows"))
+					if (ImGui::BeginMenu("Windows"))
 					{
 						ImGui::Separator();
 						if (ImGui::BeginMenu("personals"))

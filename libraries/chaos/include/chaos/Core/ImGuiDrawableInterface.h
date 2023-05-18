@@ -4,18 +4,65 @@ namespace chaos
 
 	class ImGuiDrawableInterface;
 
+	enum class ImGuiDrawMenuMode;
+
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+	enum class ImGuiDrawMenuMode : int
+	{
+		FullWindow,
+		ImGuiWindow
+	};
 
 	class CHAOS_API ImGuiDrawableInterface
 	{
 	public:
 
 		/** destructor */
-		virtual ~ImGuiDrawableInterface() {};
+		virtual ~ImGuiDrawableInterface() = default;
+		/** draw both ImGui and Menu */
+		void DrawImGui(ImGuiDrawMenuMode menu_mode);
+
 		/** the draw method */
-		virtual void DrawImGui() {}
+		virtual void OnDrawImGuiContent();
 		/** draw the main menu */
-		virtual void DrawImGuiMenu() {}
+		virtual void OnDrawImGuiMenu();
+
+		/** start a menu */
+		template<typename FUNC>
+		static bool MenuBar(ImGuiDrawMenuMode menu_mode, FUNC const& func)
+		{
+			bool show_menu = true;
+			if (WindowApplication* window_application = Application::GetInstance())
+				show_menu = window_application->GetImGuiMenuMode();
+
+			if (show_menu)
+			{
+				switch (menu_mode)
+				{
+				case ImGuiDrawMenuMode::FullWindow:
+					if (ImGui::BeginMainMenuBar())
+					{
+						func();
+						ImGui::EndMainMenuBar();
+						return true;
+					}
+					break;
+				case ImGuiDrawMenuMode::ImGuiWindow:
+					if (ImGui::BeginMenuBar())
+					{
+						func();
+						ImGui::EndMenuBar();
+						return true;
+					}
+					break;
+				default:
+					assert(0);
+					break;
+				}
+			}
+			return false;
+		}
 	};
 
 #endif

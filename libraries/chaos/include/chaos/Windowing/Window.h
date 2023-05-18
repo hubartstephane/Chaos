@@ -86,7 +86,7 @@ namespace chaos
 	* Window : a binding class between chaos and GLFW to handle window (beware the prefix "My")
 	*/
 
-	class CHAOS_API Window : public Object, public WindowInterface
+	class CHAOS_API Window : public Object, public WindowInterface, public ImGuiDrawableInterface
 	{
 		friend class WindowApplication;
 
@@ -98,6 +98,11 @@ namespace chaos
 		Window();
 		/** destructor */
 		virtual ~Window();
+
+		/** override */
+		virtual void OnDrawImGuiContent() override;
+		/** override */
+		virtual void OnDrawImGuiMenu() override;
 
 		/** called to require the window to close */
 		void RequireWindowClosure();
@@ -149,23 +154,6 @@ namespace chaos
 
 		/** update the whole widget hierarchy placement */
 		virtual void UpdateWidgetPlacementHierarchy();
-
-		#if 0
-		template<typename FUNC>
-		static auto WithWindowContext(ObjectRequest request, FUNC const& func)
-		{
-			if (WindowApplication* application = Application::GetInstance())
-			{
-				if (Window* window = application->FindWindow(request))
-				{
-					if constexpr (std::is_same_v<void, decltype(func())>)
-					{
-						return window->WithWindowContext(func);
-					}
-				}
-			}
-		}
-#endif
 
 		/** using window context, call functor, then restore previous */
 		template<typename FUNC>
@@ -243,10 +231,6 @@ namespace chaos
 
 		/** called whenever the window is redrawn (entry point) */
 		virtual void DrawWindow();
-		/** draw the ImGui layer */
-		virtual void DrawImGui(WindowDrawParams const& draw_params);
-		/** draw the menu layer */
-		virtual void DrawImGuiMenu(WindowDrawParams const& draw_params);
 
 		/** called at window creation (returns false if the window must be killed) */
 		virtual bool InitializeFromConfiguration(nlohmann::json const& config);

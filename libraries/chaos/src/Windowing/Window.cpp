@@ -856,16 +856,15 @@ namespace chaos
 		return WindowInterface::OnCharEventImpl(c);
 	}
 
-	void Window::DrawImGuiMenu(WindowDrawParams const& draw_params)
+	void Window::OnDrawImGuiMenu()
 	{
-		assert(imgui_menu_mode);
 		if (WindowApplication* window_application = Application::GetInstance())
 		{
-			window_application->DrawImGuiMenu(this, draw_params);
+			window_application->OnDrawImGuiMenu(this);
 		}
 	}
 
-	void Window::DrawImGui(WindowDrawParams const& draw_params)
+	void Window::OnDrawImGuiContent()
 	{
 	}
 
@@ -895,9 +894,7 @@ namespace chaos
 			result |= root_widget->OnDraw(renderer.get(), uniform_provider, draw_params);
 		}
 		// draw ImGui
-		if (imgui_menu_mode)
-			DrawImGuiMenu(draw_params);
-		DrawImGui(draw_params);
+		DrawImGui(ImGuiDrawMenuMode::FullWindow);
 
 		// finalize the rendering
 		ImGui::Render();

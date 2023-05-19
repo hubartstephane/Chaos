@@ -929,9 +929,17 @@ namespace chaos
 	{
 		if (ImGui::BeginMenu("Actions"))
 		{
-			if (ImGui::MenuItem("Show Temp Dir.", nullptr, false, true))
+			if (ImGui::MenuItem("Open Temp Dir.", nullptr, false, true))
 			{
 				ShowUserLocalTempDirectory();
+			}
+			if (ImGui::MenuItem("Open Resources Dir.", nullptr, false, true))
+			{
+				WinTools::ShowFile(GetResourcesPath());
+			}
+			if (ImGui::MenuItem("Dump Config File", nullptr, false, true))
+			{
+				WinTools::ShowFile(JSONTools::DumpConfigFile(configuration));
 			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Quit", nullptr, false, true))

@@ -142,28 +142,24 @@ namespace chaos
 
 		boost::filesystem::path DumpConfigFile(nlohmann::json const& json, char const* filename)
 		{
-			boost::filesystem::path result;
-			if (filename == nullptr)
-				return result;
-
-			Application* application = Application::GetInstance();
-			if (application != nullptr)
+			if (filename != nullptr)
 			{
-				result = application->CreateUserLocalTempDirectory();
+				boost::filesystem::path result;
+				// get the directory to write to
+				if (Application* application = Application::GetInstance())
+					result = application->CreateUserLocalTempDirectory();
+				else
+					FileTools::CreateTemporaryDirectory("MyTempDirectory_%d", result);
+				// dump to file
+				if (!result.empty())
+				{
+					boost::filesystem::path path = result / filename;
+					std::ofstream stream(path.string().c_str());
+					stream << json.dump(4);
+					return path;
+				}
 			}
-			else
-			{
-				FileTools::CreateTemporaryDirectory("MyTempDirectory_%d", result);
-			}
-
-			if (!result.empty())
-			{
-				boost::filesystem::path path = result / filename;
-				std::ofstream stream(path.string().c_str());
-				stream << json.dump(4);
-			}
-
-			return result;
+			return {};
 		}
 
 	}; // namespace JSONTools

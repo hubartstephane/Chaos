@@ -37,14 +37,14 @@ namespace chaos
 		cheat_mode = value;
 	}
 
-	namespace Arguments
+	namespace GlobalVariables
 	{
 		CHAOS_GLOBAL_VARIABLE(bool, CheatMode);
 	};
 
 	bool Game::GetCheatMode() const
 	{
-		if (Arguments::CheatMode.Get())
+		if (GlobalVariables::CheatMode.Get())
 			return true;
 		if (IsFreeCameraMode())
 			return true;
@@ -665,7 +665,7 @@ namespace chaos
 		}
 	}
 
-	namespace Arguments
+	namespace GlobalVariables
 	{
 #if _DEBUG
 		CHAOS_GLOBAL_VARIABLE(bool, MuteMusic);
@@ -677,7 +677,7 @@ namespace chaos
 		assert(music_name != nullptr);
 
 #if _DEBUG
-		if (Arguments::MuteMusic.Get())
+		if (GlobalVariables::MuteMusic.Get())
 			return nullptr;
 #endif
 
@@ -829,7 +829,7 @@ namespace chaos
 	{
 		// start the music
 #if _DEBUG
-		if (Arguments::MuteMusic.Get())
+		if (GlobalVariables::MuteMusic.Get())
 			menu_music = nullptr;
 		else
 #endif
@@ -871,7 +871,7 @@ namespace chaos
 	{
 		// start sound
 #if _DEBUG
-		if (Arguments::MuteMusic.Get())
+		if (GlobalVariables::MuteMusic.Get())
 			pause_music = nullptr;
 		else
 #endif

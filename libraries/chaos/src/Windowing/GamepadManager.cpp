@@ -468,7 +468,7 @@ namespace chaos
 			TickForceFeedbackEffects(0.0f);
 	}
 
-	namespace Arguments
+	namespace GlobalVariables
 	{
 #if _DEBUG
 		CHAOS_GLOBAL_VARIABLE(bool, NoForceFeedback);
@@ -478,7 +478,7 @@ namespace chaos
 	void Gamepad::DoUpdateForceFeedbackDevice(float max_left_value, float max_right_value)
 	{
 #if _DEBUG
-		if (Arguments::NoForceFeedback.Get())
+		if (GlobalVariables::NoForceFeedback.Get())
 		{
 			max_left_value = 0.0f;
 			max_right_value = 0.0f;

@@ -80,7 +80,7 @@ namespace chaos
 		return true;
 	}
 
-	namespace Arguments
+	namespace GlobalVariables
 	{
 		CHAOS_GLOBAL_VARIABLE(bool, ShowConsole);
 		CHAOS_GLOBAL_VARIABLE(bool, HideConsole);
@@ -101,9 +101,9 @@ namespace chaos
 
 		// show console
 		bool will_show_console = show_console;
-		if (Arguments::ShowConsole.Get())
+		if (GlobalVariables::ShowConsole.Get())
 			will_show_console = true;
-		else if (Arguments::HideConsole.Get())
+		else if (GlobalVariables::HideConsole.Get())
 			will_show_console = false;
 
 		if (will_show_console)
@@ -123,12 +123,12 @@ namespace chaos
 		boost::filesystem::path user_temp = CreateUserLocalTempDirectory(); // XXX : this directory is necessary for some per application data
 #if _DEBUG
 		// display the directories to help debugging
-		bool dump_config = Arguments::DumpConfigFile.Get();
+		bool dump_config = GlobalVariables::DumpConfigFile.Get();
 		if (dump_config)
 			JSONTools::DumpConfigFile(configuration);
-		if (dump_config || Arguments::ShowDirectories.Get() || Arguments::ShowUserTempDirectory.Get())
+		if (dump_config || GlobalVariables::ShowDirectories.Get() || GlobalVariables::ShowUserTempDirectory.Get())
 			WinTools::ShowFile(user_temp);
-		if (Arguments::ShowDirectories.Get() || Arguments::ShowInstalledResourcesDirectory.Get())
+		if (GlobalVariables::ShowDirectories.Get() || GlobalVariables::ShowInstalledResourcesDirectory.Get())
 			WinTools::ShowFile(GetResourcesPath());
 #endif
 		return true;

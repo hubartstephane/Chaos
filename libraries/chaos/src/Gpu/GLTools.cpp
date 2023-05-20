@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	namespace Arguments
+	namespace GlobalVariables
 	{
 		CHAOS_GLOBAL_VARIABLE(bool, GLDebugNotifications);
 #if _WIN32 || _WIN64
@@ -216,7 +216,7 @@ namespace chaos
 
 	static void GLAPIENTRY DebugMessageHandler(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * msg, const void * user_data)
 	{
-		if (severity != GL_DEBUG_SEVERITY_NOTIFICATION || Arguments::GLDebugNotifications.Get())
+		if (severity != GL_DEBUG_SEVERITY_NOTIFICATION || GlobalVariables::GLDebugNotifications.Get())
 		{
 			char const* source_str = GLTools::GLenumToString(source);
 			char const * type_str = GLTools::GLenumToString(type);
@@ -231,7 +231,7 @@ namespace chaos
 			//DebugTools::DisplayCallStack(std::cout);
 
 #if _WIN32 || _WIN64
-			if (Arguments::GLDebugBreak.Get())
+			if (GlobalVariables::GLDebugBreak.Get())
 				DebugBreak();
 #endif
 		}

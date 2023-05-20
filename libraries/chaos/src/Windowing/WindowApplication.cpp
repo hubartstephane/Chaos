@@ -898,6 +898,28 @@ namespace chaos
 		}
 	}
 
+	void WindowApplication::ShowWindowInternal(bool visible, char const * name, SubClassOf<Window> window_class)
+	{
+		Window* existing_window = FindWindow(name);
+
+		if (visible)
+		{
+			if (existing_window == nullptr)
+			{
+				WindowCreateParams create_params;
+				create_params.title = name;
+				create_params.width = 800;
+				create_params.height = 800;
+				CreateTypedWindow(window_class, create_params, name);
+			}
+		}
+		else
+		{
+			if (existing_window != nullptr)
+				existing_window->RequireWindowClosure();
+		}
+	}
+
 	bool WindowApplication::IsConsoleWindowVisible() const
 	{
 		return (FindWindow("Console") != nullptr);
@@ -905,23 +927,29 @@ namespace chaos
 
 	void WindowApplication::ShowConsoleWindow(bool visible)
 	{
-		Window* console = FindWindow("Console");
+		ShowWindowInternal(visible, "Console", SubClassOf<ConsoleWindow>());
+	}
 
-		if (visible)
+#if _DEBUG
+
+	bool WindowApplication::IsImGuiDemoWindowVisible() const
+	{
+		return (FindWindow("ImGuiDemo") != nullptr);
+	}
+
+	void WindowApplication::ShowImGuiDemoWindow(bool visible)
+	{
+		ShowWindowInternal(visible, "ImGuiDemo", SubClassOf<ImGuiDemoWindow>());
+	}
+
+#endif
+
+	void WindowApplication::AddWindowMenuItem(char const* window_name, bool (WindowApplication::*IsWindowVisibleFunc)() const, void (WindowApplication::*ShowWindowFunc)(bool))
+	{
+		bool window_exists = (this->*IsWindowVisibleFunc)();
+		if (ImGui::MenuItem(window_name, nullptr, window_exists, true))
 		{
-			if (console == nullptr)
-			{
-				WindowCreateParams create_params;
-				create_params.title = "Console";
-				create_params.width = 800;
-				create_params.height = 800;
-				CreateTypedWindow(SubClassOf<ConsoleWindow>(), create_params, "Console");
-			}
-		}
-		else
-		{
-			if (console != nullptr)
-				console->RequireWindowClosure();
+			(this->*ShowWindowFunc)(!window_exists);
 		}
 	}
 
@@ -953,11 +981,11 @@ namespace chaos
 
 			if (ImGui::BeginMenu("Windows"))
 			{
-				bool console_exists = IsConsoleWindowVisible();
-				if (ImGui::MenuItem("Console", nullptr, console_exists, true))
-				{
-					ShowConsoleWindow(!console_exists);
-				}
+				AddWindowMenuItem("Console", &WindowApplication::IsConsoleWindowVisible, &WindowApplication::ShowConsoleWindow);
+#if _DEBUG
+				AddWindowMenuItem("ImGuiDemo", &WindowApplication::IsImGuiDemoWindowVisible, &WindowApplication::ShowImGuiDemoWindow);
+#endif
+
 				ImGui::EndMenu();
 			}
 		});

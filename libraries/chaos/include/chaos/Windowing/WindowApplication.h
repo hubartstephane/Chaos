@@ -133,6 +133,13 @@ namespace chaos
 		/** destroy all windows that satisfy a predicate */
 		void DestroyAllWindowsPredicate(std::function<bool(Window*)> const & func);
 
+#if _DEBUG
+		/** displaying ImGuiDemo window */
+		void ShowImGuiDemoWindow(bool visible);
+		/** check whether the ImGuiDemo is visible */
+		bool IsImGuiDemoWindowVisible() const;
+#endif
+
 	protected:
 
 		/** Main method */
@@ -213,6 +220,12 @@ namespace chaos
 
 		/** add some items to a windows menu */
 		virtual void OnDrawWindowImGuiMenu(Window * window);
+
+		/** add a window toggle item in menubar */
+		void AddWindowMenuItem(char const* window_name, bool (WindowApplication::*IsWindowVisibleFunc)() const, void (WindowApplication::* ShowWindowFunc)(bool));
+
+		/** internal method to show or hide a window */
+		void ShowWindowInternal(bool visible, char const* name, SubClassOf<Window> window_class);
 
 	protected:
 

@@ -3,23 +3,18 @@
 
 namespace chaos
 {
-	void ImGuiDrawableInterface::OnDrawImGuiContent()
-	{
-	}
-
-	void ImGuiDrawableInterface::OnDrawImGuiMenu()
-	{
-	}
-
 	void ImGuiDrawableInterface::DrawImGui(ImGuiDrawMenuMode menu_mode)
 	{
-		// show the menu
-		MenuBar(menu_mode, [this]()
-		{
-			OnDrawImGuiMenu();
-		});
-		// show the content
-		OnDrawImGuiContent();
+	}
+
+	int ImGuiDrawableInterface::AddWindowMainMenuFlag(ImGuiDrawMenuMode menu_mode, int flags)
+	{
+		// only add a flags for the menu if it is not the global GLFW window
+		if (menu_mode == ImGuiDrawMenuMode::ImGuiWindow)
+			if (WindowApplication* window_application = Application::GetInstance())
+				if (window_application->GetImGuiMenuMode()) // only add the menu bar if enabled
+					flags |= ImGuiWindowFlags_MenuBar;
+		return flags;
 	}
 
 }; // namespace chaos

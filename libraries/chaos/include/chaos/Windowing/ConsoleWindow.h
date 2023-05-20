@@ -18,10 +18,12 @@ namespace chaos
 		/** constructor */
 		ConsoleWindow();
 
+	protected:
+
 		/** override */
-		virtual void OnDrawImGuiContent() override;
+		virtual void OnDrawImGuiContent(ImGuiDrawMenuMode menu_mode) override;
 		/** override */
-		virtual void OnDrawImGuiMenu() override;
+		virtual void OnDrawImGuiMenu(ImGuiDrawMenuMode menu_mode) override;
 
 	protected:
 

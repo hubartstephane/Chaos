@@ -112,7 +112,7 @@ namespace chaos
 		virtual void OnNewLine(LogLine const& line) override;
 
 		/** override */
-		virtual void OnDrawImGuiMenu() override;
+		virtual void DrawImGui(ImGuiDrawMenuMode menu_mode) override;
 
 	protected:
 

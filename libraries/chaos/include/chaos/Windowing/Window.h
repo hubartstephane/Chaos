@@ -90,9 +90,7 @@ namespace chaos
 		virtual ~Window();
 
 		/** override */
-		virtual void OnDrawImGuiContent() override;
-		/** override */
-		virtual void OnDrawImGuiMenu() override;
+		virtual void DrawImGui(ImGuiDrawMenuMode menu_mode) override;
 
 		/** called to require the window to close */
 		void RequireWindowClosure();
@@ -249,6 +247,11 @@ namespace chaos
 		virtual void OnFocusStateChange(bool gain_focus);
 		/** called whenever a monitor is connected or disconnected */
 		virtual void OnMonitorEvent(GLFWmonitor* monitor, int monitor_state);
+
+		/** draw the main menu */
+		virtual void OnDrawImGuiMenu(ImGuiDrawMenuMode menu_mode);
+		/** draw the content */
+		virtual void OnDrawImGuiContent(ImGuiDrawMenuMode menu_mode);
 
 #if _WIN32
 		/** set or restore WndProc for ImGui usage */

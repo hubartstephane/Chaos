@@ -21,12 +21,10 @@ namespace chaos
 		/** destructor */
 		virtual ~ImGuiDrawableInterface() = default;
 		/** draw both ImGui and Menu */
-		void DrawImGui(ImGuiDrawMenuMode menu_mode);
+		virtual void DrawImGui(ImGuiDrawMenuMode menu_mode);
 
-		/** the draw method */
-		virtual void OnDrawImGuiContent();
-		/** draw the main menu */
-		virtual void OnDrawImGuiMenu();
+		/** conditionally add a flag for main menu */
+		static int AddWindowMainMenuFlag(ImGuiDrawMenuMode menu_mode, int flags);
 
 		/** start a menu */
 		template<typename FUNC>

@@ -927,37 +927,40 @@ namespace chaos
 
 	void WindowApplication::OnDrawImGuiMenu(Window* window)
 	{
-		if (ImGui::BeginMenu("Actions"))
+		ImGuiDrawableInterface::MenuBar(ImGuiDrawMenuMode::FullWindow, [this]()
 		{
-			if (ImGui::MenuItem("Open Temp Dir.", nullptr, false, true))
+			if (ImGui::BeginMenu("Actions"))
 			{
-				ShowUserLocalTempDirectory();
+				if (ImGui::MenuItem("Open Temp Dir.", nullptr, false, true))
+				{
+					ShowUserLocalTempDirectory();
+				}
+				if (ImGui::MenuItem("Open Resources Dir.", nullptr, false, true))
+				{
+					WinTools::ShowFile(GetResourcesPath());
+				}
+				if (ImGui::MenuItem("Dump Config File", nullptr, false, true))
+				{
+					WinTools::ShowFile(JSONTools::DumpConfigFile(configuration));
+				}
+				ImGui::Separator();
+				if (ImGui::MenuItem("Quit", nullptr, false, true))
+				{
+					DestroyAllWindows(false);
+				}
+				ImGui::EndMenu();
 			}
-			if (ImGui::MenuItem("Open Resources Dir.", nullptr, false, true))
-			{
-				WinTools::ShowFile(GetResourcesPath());
-			}
-			if (ImGui::MenuItem("Dump Config File", nullptr, false, true))
-			{
-				WinTools::ShowFile(JSONTools::DumpConfigFile(configuration));
-			}
-			ImGui::Separator();
-			if (ImGui::MenuItem("Quit", nullptr, false, true))
-			{
-				DestroyAllWindows(false);
-			}
-			ImGui::EndMenu();
-		}
 
-		if (ImGui::BeginMenu("Windows"))
-		{
-			bool console_exists = IsConsoleWindowVisible();
-			if (ImGui::MenuItem("Console", nullptr, console_exists, true))
+			if (ImGui::BeginMenu("Windows"))
 			{
-				ShowConsoleWindow(!console_exists);
+				bool console_exists = IsConsoleWindowVisible();
+				if (ImGui::MenuItem("Console", nullptr, console_exists, true))
+				{
+					ShowConsoleWindow(!console_exists);
+				}
+				ImGui::EndMenu();
 			}
-			ImGui::EndMenu();
-		}
+		});
 	}
 
 }; // namespace chaos

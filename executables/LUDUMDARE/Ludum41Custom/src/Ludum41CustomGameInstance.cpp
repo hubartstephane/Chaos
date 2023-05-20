@@ -32,7 +32,7 @@ size_t LudumGameInstance::CanStartChallengeBallIndex(bool going_down) const
 	return std::numeric_limits<size_t>::max();
 }
 
-namespace Arguments
+namespace GlobalVariables
 {
 #if _DEBUG
 	CHAOS_GLOBAL_VARIABLE(bool, NoChallenge);
@@ -42,7 +42,7 @@ namespace Arguments
 void LudumGameInstance::TickChallenge(float delta_time)
 {
 #if _DEBUG
-	if (Arguments::NoChallenge.Get())
+	if (GlobalVariables::NoChallenge.Get())
 		return;
 #endif
 

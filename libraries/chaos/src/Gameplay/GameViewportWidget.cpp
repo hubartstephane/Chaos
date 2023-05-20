@@ -119,7 +119,7 @@ namespace chaos
 		game = in_game;
 	}
 
-	namespace Arguments
+	namespace GlobalVariables
 	{
 #if _DEBUG
 		CHAOS_GLOBAL_VARIABLE(bool, NoAutoPause);
@@ -139,7 +139,7 @@ namespace chaos
 	{
 		// do not execute following code in debug because it does not fit well with debugger
 #if _DEBUG
-		if (!Arguments::NoAutoPause.Get())
+		if (!GlobalVariables::NoAutoPause.Get())
 #endif
 		if (game != nullptr)
 			if (iconified)
@@ -151,7 +151,7 @@ namespace chaos
 	{
 		// do not execute following code in debug because it does not fit well with debugger
 #if _DEBUG
-		if (!Arguments::NoAutoPause.Get())
+		if (!GlobalVariables::NoAutoPause.Get())
 #endif
 		if (game != nullptr)
 			if (!gain_focus)

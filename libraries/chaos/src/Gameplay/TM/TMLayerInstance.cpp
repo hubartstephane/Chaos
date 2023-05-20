@@ -366,7 +366,7 @@ namespace chaos
 		}
 	}
 
-	namespace Arguments
+	namespace GlobalVariables
 	{
 #if _DEBUG
 		CHAOS_GLOBAL_VARIABLE(bool, TMForceParticleCreation);
@@ -376,7 +376,7 @@ namespace chaos
 	bool TMLayerInstance::ShouldCreateParticleForObject(TiledMap::PropertyOwner const * property_owner, TMObject* object) const
 	{
 #if _DEBUG
-		if (Arguments::TMForceParticleCreation.Get())
+		if (GlobalVariables::TMForceParticleCreation.Get())
 			return true;
 #endif
 		return property_owner->GetPropertyValueBool("PARTICLE_CREATION", (object != nullptr) ? object->IsParticleCreationEnabled() : true);

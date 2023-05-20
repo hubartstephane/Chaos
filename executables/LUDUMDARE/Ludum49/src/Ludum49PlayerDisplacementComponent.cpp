@@ -4,7 +4,7 @@
 #include "Ludum49Player.h"
 #include "Ludum49LevelInstance.h"
 
-namespace Arguments
+namespace GlobalVariables
 {
 #if _DEBUG
 	CHAOS_GLOBAL_VARIABLE(bool, DebugDisplay);
@@ -150,7 +150,7 @@ CollisionEntry LudumPlayerDisplacementComponent::ProcessCollision(box2 & pawn_bo
 		pawn_box.position = col.proj + direction * pawn_sphere.radius;
 
 #if _DEBUG
-		if (Arguments::DebugDisplay.Get())
+		if (GlobalVariables::DebugDisplay.Get())
 		{
 			LinePrimitive<VertexDefault> line = DI->AddLines(2);
 			line[0].position = col.a;

@@ -83,7 +83,7 @@ namespace chaos
 		}
 	}
 
-	namespace Arguments
+	namespace GlobalVariables
 	{
 		CHAOS_GLOBAL_VARIABLE(bool, UnlimitedFPS);
 	};
@@ -153,7 +153,7 @@ namespace chaos
 			return false;
 
 		// set vsync
-		if (Arguments::UnlimitedFPS.Get())
+		if (GlobalVariables::UnlimitedFPS.Get())
 			glfw_hints.unlimited_fps = true;
 
 		if (glfw_hints.unlimited_fps)

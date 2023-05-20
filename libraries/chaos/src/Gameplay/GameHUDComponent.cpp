@@ -324,7 +324,7 @@ namespace chaos
 	// GameHUDFramerateComponent
 	// ====================================================================
 
-	namespace Arguments
+	namespace GlobalVariables
 	{
 #if !_DEBUG
 		CHAOS_GLOBAL_VARIABLE(bool, ShowFPS);
@@ -346,10 +346,10 @@ namespace chaos
 	int GameHUDFramerateComponent::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
 #if !_DEBUG
-		if (!Arguments::ShowFPS.Get())
+		if (!GlobalVariables::ShowFPS.Get())
 			return 0;
 #endif
-		if (Arguments::HideFPS.Get())
+		if (GlobalVariables::HideFPS.Get())
 			return 0;
 
 		average_framerate = renderer->GetAverageFrameRate();
@@ -381,10 +381,10 @@ namespace chaos
 	int GameHUDPerfsComponent::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
 #if !_DEBUG
-		if (!Arguments::ShowPerfs.Get())
+		if (!GlobalVariables::ShowPerfs.Get())
 			return 0;
 #endif
-		if (Arguments::HidePerfs.Get())
+		if (GlobalVariables::HidePerfs.Get())
 			return 0;
 
 		average_drawcall = renderer->GetAverageDrawCalls();

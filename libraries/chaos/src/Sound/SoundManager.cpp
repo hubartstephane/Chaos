@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	namespace Arguments
+	namespace GlobalVariables
 	{
 #if _DEBUG
 		CHAOS_GLOBAL_VARIABLE(bool, Mute)
@@ -699,7 +699,7 @@ namespace chaos
 		float effective_volume = GetEffectiveVolume();
 
 #if _DEBUG
-		if (Arguments::Mute.Get())
+		if (GlobalVariables::Mute.Get())
 			effective_volume = 0.0f;
 #endif
 		// play sound
@@ -756,7 +756,7 @@ namespace chaos
 	void Sound::DoUpdateEffectiveVolume(float effective_volume)
 	{
 #if _DEBUG
-		if (Arguments::Mute.Get())
+		if (GlobalVariables::Mute.Get())
 			effective_volume = 0.0f;
 #endif
 		if (irrklang_sound != nullptr)

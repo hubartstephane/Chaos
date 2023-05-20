@@ -7,7 +7,7 @@ namespace chaos
 
 	namespace FileTools
 	{
-		namespace Arguments
+		namespace GlobalVariables
 		{
 #if _DEBUG
 			CHAOS_GLOBAL_VARIABLE(bool, ShowLoadedFile);
@@ -133,7 +133,7 @@ namespace chaos
 
 			if (Application const* application = Application::GetConstInstance())
 			{
-				if (!Arguments::NoDirectResourceFiles.Get())
+				if (!GlobalVariables::NoDirectResourceFiles.Get())
 				{
 					boost::filesystem::path const& build_path = application->GetRedirectionBuildPath();
 					if (!build_path.empty())
@@ -211,7 +211,7 @@ namespace chaos
 			{
 				result = DoLoadFile(p, flags);
 #if _DEBUG
-				if (result && Arguments::ShowLoadedFile.Get())
+				if (result && GlobalVariables::ShowLoadedFile.Get())
 				{
 					Log::Message("LoadFile [%s] -> [%s]    size = [%d]", path.GetResolvedPath().string().c_str(), p.string().c_str(), result.bufsize);
 				}
@@ -249,7 +249,7 @@ namespace chaos
 			{
 				result = DoReadFileLines(p);
 #if _DEBUG
-				if ((result.size() > 0) && Arguments::ShowLoadedFile.Get())
+				if ((result.size() > 0) && GlobalVariables::ShowLoadedFile.Get())
 				{
 					Log::Message("ReadFileLines [%s] -> [%s]    line count = [%d]", path.GetResolvedPath().string().c_str(), p.string().c_str(), result.size());
 				}

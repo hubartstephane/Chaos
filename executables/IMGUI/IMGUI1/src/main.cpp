@@ -151,32 +151,35 @@ protected:
 
 #endif
 
-	virtual void OnDrawImGuiMenu() override
+	virtual void OnDrawImGuiMenu(chaos::ImGuiDrawMenuMode menu_mode) override
 	{
-		chaos::Window::OnDrawImGuiMenu();
+		chaos::Window::OnDrawImGuiMenu(menu_mode);
 
 		// main menu for ImGUI
-		if (ImGui::BeginMenu("Windows"))
+		chaos::ImGuiDrawableInterface::MenuBar(chaos::ImGuiDrawMenuMode::FullWindow, [this]()
 		{
-			if (ImGui::BeginMenu("ImGui"))
+			if (ImGui::BeginMenu("Windows"))
 			{
-#define CHAOS_IMGUI_MENUITEM(X) ImGui::MenuItem(#X, nullptr, &X, true);
-				CHAOS_IMGUI_MENUITEM(show_demo);
-				CHAOS_IMGUI_MENUITEM(show_metrics);
-				CHAOS_IMGUI_MENUITEM(show_debug_log);
-				CHAOS_IMGUI_MENUITEM(show_stack_tool);
-				CHAOS_IMGUI_MENUITEM(show_about);
-				CHAOS_IMGUI_MENUITEM(show_style_editor);
-				CHAOS_IMGUI_MENUITEM(show_user_guide);
-#undef CHAOS_IMGUI_MENUITEM
+				if (ImGui::BeginMenu("ImGui"))
+				{
+	#define CHAOS_IMGUI_MENUITEM(X) ImGui::MenuItem(#X, nullptr, &X, true);
+					CHAOS_IMGUI_MENUITEM(show_demo);
+					CHAOS_IMGUI_MENUITEM(show_metrics);
+					CHAOS_IMGUI_MENUITEM(show_debug_log);
+					CHAOS_IMGUI_MENUITEM(show_stack_tool);
+					CHAOS_IMGUI_MENUITEM(show_about);
+					CHAOS_IMGUI_MENUITEM(show_style_editor);
+					CHAOS_IMGUI_MENUITEM(show_user_guide);
+	#undef CHAOS_IMGUI_MENUITEM
+					ImGui::EndMenu();
+				}
+
 				ImGui::EndMenu();
 			}
-
-			ImGui::EndMenu();
-		}
+		});
 	}
 
-	virtual void OnDrawImGuiContent() override
+	virtual void OnDrawImGuiContent(chaos::ImGuiDrawMenuMode menu_mode) override
 	{
 		// ImGui Window
 		if (show_demo)
@@ -199,7 +202,7 @@ protected:
 
 		auto add_close_personal_window = [this](bool& p_open)
 		{
-			if (GetImGuiMenuMode())
+			chaos::ImGuiDrawableInterface::MenuBar(chaos::ImGuiDrawMenuMode::FullWindow, [this, &p_open]()
 			{
 				if (ImGui::BeginMainMenuBar())
 				{
@@ -215,7 +218,7 @@ protected:
 					}
 					ImGui::EndMainMenuBar();
 				}
-			}
+			});
 		};
 
 

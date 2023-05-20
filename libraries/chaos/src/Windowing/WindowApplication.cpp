@@ -375,7 +375,7 @@ namespace chaos
 		return true;
 	}
 
-	namespace Arguments
+	namespace GlobalVariables
 	{
 		CHAOS_GLOBAL_VARIABLE(bool, UseCachedAtlas);
 #if !_DEBUG
@@ -388,7 +388,7 @@ namespace chaos
 		char const* CachedAtlasFilename = "CachedAtlas";
 
 		// Try to load already computed data
-		if (Arguments::UseCachedAtlas.Get())
+		if (GlobalVariables::UseCachedAtlas.Get())
 		{
 			BitmapAtlas::TextureArrayAtlas* tmp_texture_atlas = new BitmapAtlas::TextureArrayAtlas;
 			if (tmp_texture_atlas != nullptr)
@@ -422,7 +422,7 @@ namespace chaos
 #if _DEBUG
 		dump_atlas_dirname = CachedAtlasFilename;
 #else
-		if (Arguments::DumpCachedAtlas.Get())
+		if (GlobalVariables::DumpCachedAtlas.Get())
 			dump_atlas_dirname = CachedAtlasFilename;
 #endif
 

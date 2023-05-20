@@ -227,6 +227,9 @@ namespace chaos
 		/** internal method to show or hide a window */
 		void ShowWindowInternal(bool visible, char const* name, SubClassOf<Window> window_class);
 
+		/** some window may be removed or created during a loop on 'windows' array itself. this intermediate array helps to detect such issues */
+		std::vector<weak_ptr<Window>> GetWeakWindowArray() const;
+
 	protected:
 
 		/** the main clock of the manager */

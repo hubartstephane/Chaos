@@ -59,14 +59,17 @@ namespace chaos
 				return window->ShouldClose();
 			});
 			// tick the windows
-			for (auto& window : windows)
+			for (weak_ptr<Window> & window : GetWeakWindowArray())
 			{
-				window->WithWindowContext([window, delta_time, real_delta_time]()
+				if (window != nullptr)
 				{
-					window->TickRenderer(real_delta_time);
-					window->Tick(delta_time);
-					window->DrawWindow();
-				});
+					window->WithWindowContext([&window, delta_time, real_delta_time]()
+					{
+						window->TickRenderer(real_delta_time);
+						window->Tick(delta_time);
+						window->DrawWindow();
+					});
+					}
 			}
 			// update time
 			t1 = t2;
@@ -653,7 +656,7 @@ namespace chaos
 		// destroy the resources
 		FinalizeGPUResourceManager();
 		// destroy all windows
-		for (auto& window : windows)
+		for (shared_ptr<Window> & window : windows)
 		{
 			if (window != nullptr)
 			{
@@ -861,7 +864,7 @@ namespace chaos
 	{
 		// the GLFW monitor delegate does not send event to any window
 		// that's why we are catching here the event and dispatching to all application's windows
-		for (shared_ptr<Window>& window : windows)
+		for (shared_ptr<Window> & window : windows)
 		{
 			if (window != nullptr)
 			{
@@ -989,6 +992,15 @@ namespace chaos
 				ImGui::EndMenu();
 			}
 		});
+	}
+
+	std::vector<weak_ptr<Window>> WindowApplication::GetWeakWindowArray() const
+	{
+		std::vector<weak_ptr<Window>> result;
+		result.reserve(windows.size());
+		for (shared_ptr<Window> const& window : windows)
+			result.emplace_back(window.get());
+		return result;
 	}
 
 }; // namespace chaos

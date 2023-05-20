@@ -21,9 +21,9 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual void OnDrawImGuiContent(ImGuiDrawMenuMode menu_mode) override;
+		virtual void OnDrawWindowImGuiContent() override;
 		/** override */
-		virtual void OnDrawImGuiMenu(ImGuiDrawMenuMode menu_mode) override;
+		virtual void OnDrawWindowImGuiMenu() override;
 
 	protected:
 

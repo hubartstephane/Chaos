@@ -76,7 +76,7 @@ namespace chaos
 	* Window : a binding class between chaos and GLFW to handle window (beware the prefix "My")
 	*/
 
-	class CHAOS_API Window : public Object, public WindowInterface, public ImGuiDrawableInterface
+	class CHAOS_API Window : public Object, public WindowInterface
 	{
 		friend class WindowApplication;
 
@@ -90,7 +90,7 @@ namespace chaos
 		virtual ~Window();
 
 		/** override */
-		virtual void DrawImGui(ImGuiDrawMenuMode menu_mode) override;
+		virtual void DrawWindowImGui();
 
 		/** called to require the window to close */
 		void RequireWindowClosure();
@@ -249,9 +249,9 @@ namespace chaos
 		virtual void OnMonitorEvent(GLFWmonitor* monitor, int monitor_state);
 
 		/** draw the main menu */
-		virtual void OnDrawImGuiMenu(ImGuiDrawMenuMode menu_mode);
+		virtual void OnDrawWindowImGuiMenu();
 		/** draw the content */
-		virtual void OnDrawImGuiContent(ImGuiDrawMenuMode menu_mode);
+		virtual void OnDrawWindowImGuiContent();
 
 #if _WIN32
 		/** set or restore WndProc for ImGui usage */

@@ -925,7 +925,7 @@ namespace chaos
 		}
 	}
 
-	void WindowApplication::OnDrawImGuiMenu(Window* window)
+	void WindowApplication::OnDrawWindowImGuiMenu(Window* window)
 	{
 		ImGuiDrawableInterface::MenuBar(ImGuiDrawMenuMode::FullWindow, [this]()
 		{

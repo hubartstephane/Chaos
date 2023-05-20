@@ -25,7 +25,7 @@ namespace chaos
 		Log::TransactionConcatLN("==========================================");
 		Log::TransactionConcatLN("== Existing Options");
 		Log::TransactionConcatLN("==========================================");
-		Log::TransactionConcatLN(ApplicationArgumentManager::GetInstance()->GetOptionString());
+		Log::TransactionConcatLN(GlobalVariableManager::GetInstance()->GetOptionString());
 		Log::EndTransaction();
 #endif
 		// display the arguments
@@ -82,12 +82,12 @@ namespace chaos
 
 	namespace Arguments
 	{
-		CHAOS_APPLICATION_ARG(bool, ShowConsole);
-		CHAOS_APPLICATION_ARG(bool, HideConsole);
-		CHAOS_APPLICATION_ARG(bool, DumpConfigFile);
-		CHAOS_APPLICATION_ARG(bool, ShowDirectories);
-		CHAOS_APPLICATION_ARG(bool, ShowUserTempDirectory);
-		CHAOS_APPLICATION_ARG(bool, ShowInstalledResourcesDirectory);
+		CHAOS_GLOBAL_VARIABLE(bool, ShowConsole);
+		CHAOS_GLOBAL_VARIABLE(bool, HideConsole);
+		CHAOS_GLOBAL_VARIABLE(bool, DumpConfigFile);
+		CHAOS_GLOBAL_VARIABLE(bool, ShowDirectories);
+		CHAOS_GLOBAL_VARIABLE(bool, ShowUserTempDirectory);
+		CHAOS_GLOBAL_VARIABLE(bool, ShowInstalledResourcesDirectory);
 	};
 
 	bool Application::Initialize()
@@ -150,7 +150,7 @@ namespace chaos
 		if (InitializeStandardLibraries())
 		{
 			// parse the parameters
-			ApplicationArgumentManager::GetInstance()->ParseArguments(argc, argv);
+			GlobalVariableManager::GetInstance()->ParseArguments(argc, argv);
 
 			// store a copy of the parameters
 			StoreParameters(argc, argv, env);

@@ -654,8 +654,8 @@ bool Landscape::DoTick(float delta_time)
 namespace Arguments
 {
 #if _DEBUG
-	CHAOS_APPLICATION_ARG(bool, Wireframe);
-	CHAOS_APPLICATION_ARG(bool, DebugDisplay);
+	CHAOS_GLOBAL_VARIABLE(bool, Wireframe);
+	CHAOS_GLOBAL_VARIABLE(bool, DebugDisplay);
 #endif
 };
 

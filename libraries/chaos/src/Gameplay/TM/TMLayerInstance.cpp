@@ -369,7 +369,7 @@ namespace chaos
 	namespace Arguments
 	{
 #if _DEBUG
-		CHAOS_APPLICATION_ARG(bool, TMForceParticleCreation);
+		CHAOS_GLOBAL_VARIABLE(bool, TMForceParticleCreation);
 #endif
 	};
 

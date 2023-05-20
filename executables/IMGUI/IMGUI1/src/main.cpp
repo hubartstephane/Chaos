@@ -4,9 +4,9 @@
 
 
 
-CHAOS_APPLICATION_ARG(float, myfloat)
-CHAOS_APPLICATION_ARG(int, myint)
-CHAOS_APPLICATION_ARG(std::string, mystring)
+CHAOS_GLOBAL_VARIABLE(float, myfloat)
+CHAOS_GLOBAL_VARIABLE(int, myint)
+CHAOS_GLOBAL_VARIABLE(std::string, mystring)
 
 
 
@@ -19,11 +19,11 @@ CHAOS_APPLICATION_ARG(std::string, mystring)
 
 #if 0
 ImGui::Begin("My First Tool");
-for (auto arg : chaos::ApplicationArgumentManager::GetInstance()->GetArguments())
+for (auto arg : chaos::GlobalVariableManager::GetInstance()->GetArguments())
 {
 	if (*arg->GetTypeInfo() == typeid(bool))
 	{
-		chaos::ApplicationArgument<bool>* bool_arg = auto_cast(arg);
+		chaos::GlobalVariable<bool>* bool_arg = auto_cast(arg);
 
 		ImGui::Checkbox(arg->GetName(), &bool_arg->Get());
 	}
@@ -114,11 +114,11 @@ protected:
 	if (my_tool_active)
 	{
 		ImGui::Begin("CommandLineArguments", &my_tool_active);
-		for (auto arg : chaos::ApplicationArgumentManager::GetInstance()->GetArguments())
+		for (auto arg : chaos::GlobalVariableManager::GetInstance()->GetArguments())
 		{
 			if (*arg->GetTypeInfo() == typeid(bool))
 			{
-				if (chaos::ApplicationArgument<bool>* bool_arg = auto_cast(arg))
+				if (chaos::GlobalVariable<bool>* bool_arg = auto_cast(arg))
 				{
 					ImGui::Checkbox(arg->GetName(), &bool_arg->Get());
 				}
@@ -127,7 +127,7 @@ protected:
 
 			if (*arg->GetTypeInfo() == typeid(float))
 			{
-				if (chaos::ApplicationArgument<float>* float_arg = auto_cast(arg))
+				if (chaos::GlobalVariable<float>* float_arg = auto_cast(arg))
 				{
 					ImGui::SliderFloat(arg->GetName(), &float_arg->Get(), 0.0f, 1.0f);
 				}

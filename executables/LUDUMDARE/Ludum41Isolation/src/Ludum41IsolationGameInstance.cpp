@@ -36,7 +36,7 @@ size_t LudumGameInstance::CanStartChallengeBallIndex(bool going_down) const
 namespace Arguments
 {
 #if _DEBUG
-	CHAOS_APPLICATION_ARG(bool, NoChallenge);
+	CHAOS_GLOBAL_VARIABLE(bool, NoChallenge);
 #endif
 };
 

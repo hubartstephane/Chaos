@@ -327,11 +327,11 @@ namespace chaos
 	namespace Arguments
 	{
 #if !_DEBUG
-		CHAOS_APPLICATION_ARG(bool, ShowFPS);
-		CHAOS_APPLICATION_ARG(bool, ShowPerfs);
+		CHAOS_GLOBAL_VARIABLE(bool, ShowFPS);
+		CHAOS_GLOBAL_VARIABLE(bool, ShowPerfs);
 #endif
-		CHAOS_APPLICATION_ARG(bool, HideFPS);
-		CHAOS_APPLICATION_ARG(bool, HidePerfs);
+		CHAOS_GLOBAL_VARIABLE(bool, HideFPS);
+		CHAOS_GLOBAL_VARIABLE(bool, HidePerfs);
 	}
 
 	GameHUDFramerateComponent::GameHUDFramerateComponent(char const * in_text):

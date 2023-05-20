@@ -39,7 +39,7 @@ namespace chaos
 
 	namespace Arguments
 	{
-		CHAOS_APPLICATION_ARG(bool, CheatMode);
+		CHAOS_GLOBAL_VARIABLE(bool, CheatMode);
 	};
 
 	bool Game::GetCheatMode() const
@@ -668,7 +668,7 @@ namespace chaos
 	namespace Arguments
 	{
 #if _DEBUG
-		CHAOS_APPLICATION_ARG(bool, MuteMusic);
+		CHAOS_GLOBAL_VARIABLE(bool, MuteMusic);
 #endif
 	};
 

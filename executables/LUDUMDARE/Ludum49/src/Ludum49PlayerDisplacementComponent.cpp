@@ -7,7 +7,7 @@
 namespace Arguments
 {
 #if _DEBUG
-	CHAOS_APPLICATION_ARG(bool, DebugDisplay);
+	CHAOS_GLOBAL_VARIABLE(bool, DebugDisplay);
 #endif
 };
 

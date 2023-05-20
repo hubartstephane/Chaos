@@ -471,7 +471,7 @@ namespace chaos
 	namespace Arguments
 	{
 #if _DEBUG
-		CHAOS_APPLICATION_ARG(bool, NoForceFeedback);
+		CHAOS_GLOBAL_VARIABLE(bool, NoForceFeedback);
 #endif
 	};
 

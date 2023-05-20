@@ -2,22 +2,22 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class ApplicationArgumentBase;
-	class ApplicationArgumentManager;
+	class GlobalVariableBase;
+	class GlobalVariableManager;
 
 	template<typename T>
-	class ApplicationArgument;
+	class GlobalVariable;
 
-#define CHAOS_APPLICATION_ARG(TYPE, ARGNAME, ...)\
-static inline chaos::ApplicationArgument<TYPE> const & ARGNAME = *chaos::ApplicationArgumentManager::GetInstance()->RegisterArgument<TYPE>(#ARGNAME, __VA_ARGS__);\
+#define CHAOS_GLOBAL_VARIABLE(TYPE, VARIABLE_NAME, ...)\
+static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::GlobalVariableManager::GetInstance()->RegisterVariable<TYPE>(#VARIABLE_NAME, __VA_ARGS__);\
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	 * ApplicationArgumentBase: the base class for stored arguments
+	 * GlobalVariableBase: the base class for global variable
 	 */
 
-	class CHAOS_API ApplicationArgumentBase : public NamedInterface
+	class CHAOS_API GlobalVariableBase : public NamedInterface
 	{
 	public:
 
@@ -33,24 +33,24 @@ static inline chaos::ApplicationArgument<TYPE> const & ARGNAME = *chaos::Applica
 	};
 
 	/**
-	 * ApplicationArgumentBase: the base class for stored arguments
+	 * GlobalVariableBase: the specified class for global variable
 	 */
 
 	template<typename T>
-	class /*CHAOS_API*/ ApplicationArgument : public ApplicationArgumentBase
+	class /*CHAOS_API*/ GlobalVariable : public GlobalVariableBase
 	{
-		friend class ApplicationArgumentManager;
+		friend class GlobalVariableManager;
 
 	public:
 
 		/** constructor */
-		ApplicationArgument(T in_value = {}) : value(std::move(in_value))
+		GlobalVariable(T in_value = {}) : value(std::move(in_value))
 		{
 			type_info = &typeid(T);
 		}
 
 		/** destructor */
-		virtual ~ApplicationArgument() = default;
+		virtual ~GlobalVariable() = default;
 
 		/** override */
 		virtual void RegisterProgramOption(boost::program_options::options_description& desc) override
@@ -96,30 +96,30 @@ static inline chaos::ApplicationArgument<TYPE> const & ARGNAME = *chaos::Applica
 
 	protected:
 
-		/** the value where the argument is being stored */
+		/** the value of the variable */
 		T value = {};
 	};
 
 	/**
-	 * ApplicationArgumentManager: a singleton to manage all arguments
+	 * GlobalVariableManager: a singleton to manage all global variables
 	 */
 
-	class CHAOS_API ApplicationArgumentManager : public Singleton<ApplicationArgumentManager>
+	class CHAOS_API GlobalVariableManager : public Singleton<GlobalVariableManager>
 	{
 	public:
 
-		/** register an argument */
+		/** register a variable */
 		template<typename T>
-		ApplicationArgument<T> const * RegisterArgument(char const* name, T default_value = {})
+		GlobalVariable<T> const * RegisterVariable(char const* name, T default_value = {})
 		{
-			// an argument with the same name already exists ?
-			if (ApplicationArgumentBase* result = ObjectRequest(name).FindObject(arguments))
+			// a variable with the same name already exists ?
+			if (GlobalVariableBase* result = ObjectRequest(name).FindObject(variables))
 			{
 				// the type matches ?
-				// (you may use CHAOS_APPLICATION_ARG(XXX) several times with the same string in several places. They will all point the same data)
+				// (you may use CHAOS_GLOBAL_VARIABLE(XXX) several times with the same string in several places. They will all point the same data)
 				if (*result->GetTypeInfo() == typeid(T))
 				{
-					return dynamic_cast<ApplicationArgument<T>*>(result);
+					return dynamic_cast<GlobalVariable<T>*>(result);
 				}
 				else
 				{
@@ -128,28 +128,28 @@ static inline chaos::ApplicationArgument<TYPE> const & ARGNAME = *chaos::Applica
 				}
 			}
 			// create an new entry
-			ApplicationArgument<T>* result = new ApplicationArgument<T>(std::move(default_value));
+			GlobalVariable<T>* result = new GlobalVariable<T>(std::move(default_value));
 			assert(result != nullptr);
 			result->SetName(name);
-			arguments.push_back(result);
+			variables.push_back(result);
 			return result;
 		}
 
-		/** parse all arguments */
+		/** parse the argument line */
 		void ParseArguments(int argc, char** argv);
 
 		/** gets the option string */
 		char const* GetOptionString() const;
 
-		/** gets the arguments */
-		std::vector<ApplicationArgumentBase*> const& GetArguments() const { return arguments; }
+		/** gets the variables */
+		std::vector<GlobalVariableBase*> const& GetVariables() const { return variables; }
 
 	protected:
 
 		/** options descriptions */
 		std::string options_string;
-		/** list of all arguments */
-		std::vector<ApplicationArgumentBase*> arguments;
+		/** list of all variables */
+		std::vector<GlobalVariableBase*> variables;
 	};
 
 #endif

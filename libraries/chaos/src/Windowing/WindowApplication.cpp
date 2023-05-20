@@ -377,9 +377,9 @@ namespace chaos
 
 	namespace Arguments
 	{
-		CHAOS_APPLICATION_ARG(bool, UseCachedAtlas);
+		CHAOS_GLOBAL_VARIABLE(bool, UseCachedAtlas);
 #if !_DEBUG
-		CHAOS_APPLICATION_ARG(bool, DumpCachedAtlas);
+		CHAOS_GLOBAL_VARIABLE(bool, DumpCachedAtlas);
 #endif
 	};
 

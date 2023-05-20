@@ -212,7 +212,7 @@ namespace chaos
 		AutoConstCastable<Window> GetMainWindow() const { return main_window.get(); }
 
 		/** add some items to a windows menu */
-		virtual void OnDrawImGuiMenu(Window * window);
+		virtual void OnDrawWindowImGuiMenu(Window * window);
 
 	protected:
 

@@ -151,9 +151,9 @@ protected:
 
 #endif
 
-	virtual void OnDrawImGuiMenu(chaos::ImGuiDrawMenuMode menu_mode) override
+	virtual void OnDrawWindowImGuiMenu() override
 	{
-		chaos::Window::OnDrawImGuiMenu(menu_mode);
+		chaos::Window::OnDrawWindowImGuiMenu();
 
 		// main menu for ImGUI
 		chaos::ImGuiDrawableInterface::MenuBar(chaos::ImGuiDrawMenuMode::FullWindow, [this]()
@@ -179,7 +179,7 @@ protected:
 		});
 	}
 
-	virtual void OnDrawImGuiContent(chaos::ImGuiDrawMenuMode menu_mode) override
+	virtual void OnDrawWindowImGuiContent() override
 	{
 		// ImGui Window
 		if (show_demo)

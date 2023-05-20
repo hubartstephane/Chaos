@@ -8,7 +8,7 @@ namespace chaos
 		console_content.SetLogger(Logger::GetInstance());
 	}
 
-	void ConsoleWindow::OnDrawImGuiContent(ImGuiDrawMenuMode menu_mode)
+	void ConsoleWindow::OnDrawWindowImGuiContent()
 	{
 		int window_flags = ImGuiDrawableInterface::AddWindowMainMenuFlag(ImGuiDrawMenuMode::ImGuiWindow, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground);
 
@@ -21,9 +21,9 @@ namespace chaos
 		}
 	}
 
-	void ConsoleWindow::OnDrawImGuiMenu(ImGuiDrawMenuMode menu_mode)
+	void ConsoleWindow::OnDrawWindowImGuiMenu()
 	{
-		// Window::OnDrawImGuiMenu(menu_mode);
+		// Window::OnDrawImGuiMenu();
 		// do not call super so that the application items are not inserted here
 	}
 

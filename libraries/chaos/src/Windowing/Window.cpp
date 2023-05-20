@@ -841,7 +841,13 @@ namespace chaos
 		return WindowInterface::OnCharEventImpl(c);
 	}
 
-	void Window::OnDrawImGuiMenu()
+	void Window::DrawImGui(ImGuiDrawMenuMode menu_mode)
+	{
+		OnDrawImGuiMenu(menu_mode);
+		OnDrawImGuiContent(menu_mode);
+	}
+
+	void Window::OnDrawImGuiMenu(ImGuiDrawMenuMode menu_mode)
 	{
 		if (WindowApplication* window_application = Application::GetInstance())
 		{
@@ -849,7 +855,7 @@ namespace chaos
 		}
 	}
 
-	void Window::OnDrawImGuiContent()
+	void Window::OnDrawImGuiContent(ImGuiDrawMenuMode menu_mode)
 	{
 	}
 

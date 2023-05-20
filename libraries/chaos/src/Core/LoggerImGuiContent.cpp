@@ -8,7 +8,16 @@ namespace chaos
 		logger = in_logger;
 	}
 
-	void LoggerImGuiContent::OnDrawImGuiMenu()
+	void LoggerImGuiContent::DrawImGui(ImGuiDrawMenuMode menu_mode)
+	{
+		ImGuiDrawableInterface::MenuBar(menu_mode, [this, menu_mode]()
+		{
+			OnDrawImGuiMenu(menu_mode);
+		});
+		OnDrawImGuiContent(menu_mode);
+	}
+
+	void LoggerImGuiContent::OnDrawImGuiMenu(ImGuiDrawMenuMode menu_mode)
 	{
 		// the types
 		if (ImGui::BeginMenu("Type"))
@@ -55,7 +64,7 @@ namespace chaos
 		{
 			for (size_t i = 0; i < logger->GetListenerCount(); ++i)
 				if (ImGuiDrawableInterface* imgui_drawable = auto_cast(logger->GetListener(i)))
-					imgui_drawable->OnDrawImGuiMenu();
+					imgui_drawable->DrawImGui(menu_mode);
 			ImGui::EndMenu();
 		}
 		// filter
@@ -66,7 +75,7 @@ namespace chaos
 		}
 	}
 
-	void LoggerImGuiContent::OnDrawImGuiContent()
+	void LoggerImGuiContent::OnDrawImGuiContent(ImGuiDrawMenuMode menu_mode)
 	{
 		assert(logger != nullptr);
 

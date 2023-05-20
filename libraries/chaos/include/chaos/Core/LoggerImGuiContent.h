@@ -15,9 +15,14 @@ namespace chaos
 		void SetLogger(Logger * in_logger);
 
 		/** override */
-		virtual void OnDrawImGuiContent() override;
-		/** override */
-		virtual void OnDrawImGuiMenu() override;
+		virtual void DrawImGui(ImGuiDrawMenuMode menu_mode) override;
+
+	protected:
+
+		/** draw the menu */
+		void OnDrawImGuiMenu(ImGuiDrawMenuMode menu_mode);
+		/** draw the content */
+		void OnDrawImGuiContent(ImGuiDrawMenuMode menu_mode);
 
 	protected:
 

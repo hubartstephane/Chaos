@@ -85,7 +85,7 @@ namespace chaos
 
 	namespace Arguments
 	{
-		CHAOS_APPLICATION_ARG(bool, UnlimitedFPS);
+		CHAOS_GLOBAL_VARIABLE(bool, UnlimitedFPS);
 	};
 
 	bool Window::CreateGLFWWindow(WindowCreateParams create_params, GLFWwindow* share_context_window, GLFWHints glfw_hints)

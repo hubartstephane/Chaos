@@ -5,9 +5,9 @@ namespace chaos
 {
 	namespace Arguments
 	{
-		CHAOS_APPLICATION_ARG(bool, GLDebugNotifications);
+		CHAOS_GLOBAL_VARIABLE(bool, GLDebugNotifications);
 #if _WIN32 || _WIN64
-		CHAOS_APPLICATION_ARG(bool, GLDebugBreak);
+		CHAOS_GLOBAL_VARIABLE(bool, GLDebugBreak);
 #endif
 	};
 

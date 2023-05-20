@@ -122,7 +122,7 @@ namespace chaos
 	namespace Arguments
 	{
 #if _DEBUG
-		CHAOS_APPLICATION_ARG(bool, NoAutoPause);
+		CHAOS_GLOBAL_VARIABLE(bool, NoAutoPause);
 #endif
 	};
 

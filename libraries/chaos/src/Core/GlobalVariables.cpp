@@ -3,20 +3,20 @@
 
 namespace chaos
 {
-	char const* ApplicationArgumentManager::GetOptionString() const
+	char const* GlobalVariableManager::GetOptionString() const
 	{
 		return options_string.c_str();
 	}
 
-	void ApplicationArgumentManager::ParseArguments(int argc, char** argv)
+	void GlobalVariableManager::ParseArguments(int argc, char** argv)
 	{
 		namespace po = boost::program_options;
 
 		try
 		{
 			po::options_description desc{ "Options" };
-			for (ApplicationArgumentBase* argument : arguments)
-				argument->RegisterProgramOption(desc);
+			for (GlobalVariableBase* variable : variables)
+				variable->RegisterProgramOption(desc);
 
 			po::variables_map vm;
 			store(

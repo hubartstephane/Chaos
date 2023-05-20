@@ -10,8 +10,8 @@ namespace chaos
 		namespace Arguments
 		{
 #if _DEBUG
-			CHAOS_APPLICATION_ARG(bool, ShowLoadedFile);
-			CHAOS_APPLICATION_ARG(bool, NoDirectResourceFiles);
+			CHAOS_GLOBAL_VARIABLE(bool, ShowLoadedFile);
+			CHAOS_GLOBAL_VARIABLE(bool, NoDirectResourceFiles);
 #endif
 		};
 

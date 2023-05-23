@@ -97,7 +97,8 @@ protected:
 
 		if (event.IsKeyReleased(GLFW_KEY_ESCAPE))
 		{
-			RequireWindowClosure();
+			Destroy();
+			//RequireWindowClosure();
 			return true;
 		}
 		return chaos::Window::OnKeyEventImpl(event);

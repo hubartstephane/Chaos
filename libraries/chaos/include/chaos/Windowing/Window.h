@@ -184,11 +184,6 @@ namespace chaos
 		/** get the cursor mode */
 		CursorMode GetCursorMode() const;
 
-		/** enable per window special mode */
-		void SetImGuiMenuMode(bool mode);
-		/** gets the window special mode */
-		bool GetImGuiMenuMode() const;
-
 		/** draw ImGui */
 		virtual void DrawWindowImGui();
 
@@ -231,6 +226,11 @@ namespace chaos
 		bool CreateGLFWWindow(WindowCreateParams create_params, GLFWwindow* share_context, GLFWHints glfw_hints);
 		/** destroying the window */
 		void DestroyGLFWWindow();
+
+		/** called whenever the mode is being changed */
+		void OnImGuiMenuModeChanged(bool mode);
+		/** gets the window special mode */
+		bool GetImGuiMenuMode() const;
 
 		/** called whenever the window is redrawn (entry point) */
 		virtual void DrawWindow();
@@ -321,8 +321,6 @@ namespace chaos
 		std::optional<NonFullScreenWindowData> non_fullscreen_data;
 		/** the current cursor mode */
 		CursorMode cursor_mode = CursorMode::Normal;
-		/** the imgui menu mode */
-		bool imgui_menu_mode = false;
 		/** a counter that prevent destruction of the window resources */
 		int window_destruction_guard = 0;
 	};

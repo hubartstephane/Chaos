@@ -50,7 +50,3 @@ void intrusive_ptr_release(chaos::Object* obj)
 {
 	obj->SubReference();
 }
-
-
-
-

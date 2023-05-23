@@ -89,8 +89,8 @@ namespace chaos
 		/** destructor */
 		virtual ~Window();
 
-		/** override */
-		virtual void DrawWindowImGui();
+		/** require the destruction of the window (at least its GLFW resource). this will remove it from the WindowApplication */
+		void Destroy();
 
 		/** called to require the window to close */
 		void RequireWindowClosure();
@@ -98,11 +98,6 @@ namespace chaos
 		GLFWwindow* GetGLFWHandler();
 		/** returns whether the window has a pending GLFW close message */
 		bool ShouldClose();
-
-		/** destroying the window */
-		void DestroyGLFWWindow();
-		/** create the internal window */
-		bool CreateGLFWWindow(WindowCreateParams create_params, GLFWwindow* share_context, GLFWHints glfw_hints);
 
 		/** toggle to fullscreen mode */
 		void ToggleFullscreen();
@@ -147,13 +142,16 @@ namespace chaos
 		template<typename FUNC>
 		auto WithWindowContext(FUNC const& func)
 		{
+			shared_ptr<Window> prevent_destruction = this;
+
+			IncrementWindowDestructionGuard();
+
 			// save GLFW context
 			GLFWwindow* previous_glfw_window = glfwGetCurrentContext();
 			glfwMakeContextCurrent(glfw_window);
 			// save ImGui context
 			ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
-			ImGuiContext* toset_imgui_context = imgui_context;
-			ImGui::SetCurrentContext(toset_imgui_context);
+			ImGui::SetCurrentContext(imgui_context);
 
 			if constexpr (std::is_same_v<void, decltype(func())>)
 			{
@@ -162,8 +160,8 @@ namespace chaos
 				// restore GLFW and ImGui contexts
 				glfwMakeContextCurrent(previous_glfw_window);
 				// restore ImGui context (if different, because maybe the context has been destroy inside the func() call
-				if (toset_imgui_context != previous_imgui_context)
-					ImGui::SetCurrentContext(previous_imgui_context);
+				ImGui::SetCurrentContext(previous_imgui_context);
+				DecrementWindowDestructionGuard();
 			}
 			else
 			{
@@ -172,8 +170,8 @@ namespace chaos
 				// restore GLFW and ImGui contexts
 				glfwMakeContextCurrent(previous_glfw_window);
 				// restore ImGui context (if different, because maybe the context has been destroy inside the func() call
-				if (toset_imgui_context != previous_imgui_context)
-					ImGui::SetCurrentContext(previous_imgui_context);
+				ImGui::SetCurrentContext(previous_imgui_context);
+				DecrementWindowDestructionGuard();
 				return result;
 			}
 		}
@@ -190,6 +188,9 @@ namespace chaos
 		void SetImGuiMenuMode(bool mode);
 		/** gets the window special mode */
 		bool GetImGuiMenuMode() const;
+
+		/** draw ImGui */
+		virtual void DrawWindowImGui();
 
 	protected:
 
@@ -208,7 +209,9 @@ namespace chaos
 		/** override */
 		virtual bool OnDraw(GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params) override;
 		/** override */
-		virtual bool DoTick(float delta_time) override;
+		virtual bool DoTick(float delta_time) override;		
+		/** override */
+		virtual void OnLastReferenceLost() override;
 
 		/** create the root widget */
 		virtual bool CreateRootWidget();
@@ -219,13 +222,23 @@ namespace chaos
 		/** bind Window with GLFW */
 		virtual void SetGLFWCallbacks(bool in_double_buffer);
 
+		/** create an ImGui context */
+		void CreateImGuiContext();
+		/** destroying the ImGui context */
+		void DestroyImGuiContext();
+
+		/** create the internal window */
+		bool CreateGLFWWindow(WindowCreateParams create_params, GLFWwindow* share_context, GLFWHints glfw_hints);
+		/** destroying the window */
+		void DestroyGLFWWindow();
+
 		/** called whenever the window is redrawn (entry point) */
 		virtual void DrawWindow();
 
 		/** called at window creation (returns false if the window must be killed) */
 		virtual bool InitializeFromConfiguration(nlohmann::json const& config);
 		/** called at window destruction */
-		virtual void Finalize() { }
+		virtual void Finalize(){}
 
 		/** get the mouse position */
 		glm::vec2 GetMousePosition() const;
@@ -259,6 +272,13 @@ namespace chaos
 		/** a dedicated WndProc for ImGui */
 		static LRESULT CALLBACK ImGuiWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #endif
+
+		/** increment the counter that prevent window destruction */
+		void IncrementWindowDestructionGuard();
+		/** decrement the counter that prevent window destruction */
+		void DecrementWindowDestructionGuard();
+		/** get the destruction guard count */
+		int GetWindowDestructionGuard() const { return window_destruction_guard; }
 
 	private:
 
@@ -303,6 +323,8 @@ namespace chaos
 		CursorMode cursor_mode = CursorMode::Normal;
 		/** the imgui menu mode */
 		bool imgui_menu_mode = false;
+		/** a counter that prevent destruction of the window resources */
+		int window_destruction_guard = 0;
 	};
 
 #endif

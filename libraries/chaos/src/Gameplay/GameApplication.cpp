@@ -114,7 +114,7 @@ namespace chaos
 
 		// destroy all other windows as soon as there are no more game_window
 		bool has_game_window = false;
-		for (auto& window : windows)
+		for (shared_ptr<Window> & window : windows)
 		{
 			if (GameWindow* game_window = auto_cast(window.get()))
 			{

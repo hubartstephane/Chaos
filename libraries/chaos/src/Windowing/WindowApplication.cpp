@@ -19,6 +19,32 @@ namespace chaos
 		forced_zero_tick_duration = true;
 	}
 
+	bool WindowApplication::IsWindowHandledByApplication(Window const* window) const
+	{
+		for (shared_ptr<Window> const& w : windows)
+			if (w == window)
+				return true;
+		return false;
+	}
+
+	void WindowApplication::DestroyWindow(Window* window)
+	{
+		assert(window != nullptr);
+
+		auto it = std::ranges::find_if(windows, [window](shared_ptr<Window> const& w)
+		{
+			return (w == window);
+		});
+
+		if (it != windows.end())
+		{
+			shared_ptr<Window> prevent_destruction = window;
+			windows.erase(it);
+			if (window->GetWindowDestructionGuard() == 0)
+				OnWindowDestroyed(window);
+		}
+	}
+
 	void WindowApplication::RunMessageLoop(std::function<bool()> const & loop_condition_func)
 	{
 		double t1 = glfwGetTime();
@@ -44,7 +70,7 @@ namespace chaos
 					delta_time = std::min(delta_time, max_tick_duration);
 			}
 			// internal tick
-			bool tick_result = WithWindowContext(shared_context, [this, delta_time]()
+			bool tick_result = WithGLFWContext(shared_context, [this, delta_time]()
 			{
 				return Tick(delta_time);
 			});
@@ -54,10 +80,11 @@ namespace chaos
 			}
 
 			// destroy windows that mean to be
-			DestroyAllWindowsPredicate([](Window* window)
-			{
-				return window->ShouldClose();
-			});
+			for (weak_ptr<Window>& window : GetWeakWindowArray())
+				if (window != nullptr)
+					if (window->ShouldClose())
+						window->Destroy();
+
 			// tick the windows
 			for (weak_ptr<Window> & window : GetWeakWindowArray())
 			{
@@ -76,41 +103,11 @@ namespace chaos
 		}
 	}
 
-	void WindowApplication::DestroyAllWindows(bool immediate)
+	void WindowApplication::DestroyAllWindows()
 	{
-		if (immediate)
-		{
-			DestroyAllWindowsPredicate([](Window* window)
-			{
-				return true;
-			});
-		}
-		else
-		{
-			for (auto& window : windows)
-				if (window != nullptr)
-					window->RequireWindowClosure();
-		}
-	}
-
-	void WindowApplication::DestroyAllWindowsPredicate(std::function<bool(Window*)> const & func)
-	{
-		for (size_t i = windows.size(); i > 0; --i)
-		{
-			Window* window = windows[i - 1].get();
-			if (window != nullptr && func(window))
-			{
-				shared_ptr<Window> prevent_destructor = window;
-				// remove the window for the list
-				windows[i - 1] = windows[windows.size() - 1];
-				windows.pop_back();
-				// destroy the internal GLFW window
-				window->WithWindowContext([this, window]()
-				{
-					OnWindowDestroyed(window);
-				});
-			}
-		}
+		for (weak_ptr<Window> window : GetWeakWindowArray())
+			if (window != nullptr)
+				window->Destroy();
 	}
 
 	Window* WindowApplication::CreateTypedWindow(SubClassOf<Window> window_class, WindowCreateParams create_params, ObjectRequest request)
@@ -121,14 +118,17 @@ namespace chaos
 			return nullptr;
 		}
 
-		return WithWindowContext(nullptr, [this, window_class, &create_params, &request]() -> Window*
+		return WithGLFWContext(nullptr, [this, window_class, &create_params, &request]() -> Window*
 		{
 			// create the window class
-			Window* result = window_class.CreateInstance();
+			shared_ptr<Window> result = window_class.CreateInstance();
 			if (result == nullptr)
 			{
 				return nullptr;
 			}
+			windows.push_back(result.get());
+			result->imgui_menu_mode = imgui_menu_mode;
+			// set the name
 			result->SetObjectNaming(request);
 			// override the create params with the JSON configuration (if any)
 			nlohmann::json const* window_configuration = nullptr;
@@ -140,20 +140,15 @@ namespace chaos
 					LoadFromJSON(*window_configuration, create_params);
 				}
 			}
-
-			// set the mode
-			result->imgui_menu_mode = imgui_menu_mode;
 			// create the GLFW resource
 			if (!result->CreateGLFWWindow(create_params, shared_context, glfw_hints))
 			{
-				delete(result);
-				return nullptr;
+				result->Destroy();
+				return nullptr; // the shared_ptr destruction will handle the object lifetime
 			}
-			// store the result
-			windows.push_back(result);
+			result->CreateImGuiContext();
 			// post initialization method
 			glfwMakeContextCurrent(result->GetGLFWHandler());
-			OnWindowCreated(result);
 			// finalize the creation
 			nlohmann::json default_window_config;
 			if (window_configuration == nullptr)
@@ -161,7 +156,9 @@ namespace chaos
 			result->InitializeFromConfiguration(*window_configuration);
 			// create the root widget
 			result->CreateRootWidget();
-			return result;
+			// notify the application
+			OnWindowCreated(result.get());
+			return result.get();
 		});
 	}
 
@@ -170,42 +167,13 @@ namespace chaos
 		if (window == main_window)
 			main_window = nullptr;
 		window->Finalize();
+		window->DestroyImGuiContext();
 		window->DestroyGLFWWindow();
-	}
-
-	void WindowApplication::CreateWindowImGuiContext(Window* window)
-	{
-		// save imgui context
-		ImGuiContext * previous_imgui_context = ImGui::GetCurrentContext();
-
-		// create a new context for this window
-		window->imgui_context = ImGui::CreateContext();
-		ImGui::SetCurrentContext(window->imgui_context);
-		ImGuiIO& io = ImGui::GetIO();
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-		ImGui::StyleColorsDark();
-
-		// initialize the context
-		ImGui_ImplGlfw_InitForOpenGL(window->GetGLFWHandler(), true);
-		ImGui_ImplOpenGL3_Init("#version 130");
-
-		// substitute our own window proc (now that ImGui has inserted its own WindowProc */
-#if _WIN32
-		window->SetImGuiWindowProc(true);
-#endif
-		// the context is ready for rendering
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-
-		// restore previous imgui context
-		ImGui::SetCurrentContext(previous_imgui_context);
 	}
 
 	void WindowApplication::OnWindowCreated(Window* window)
 	{
-		CreateWindowImGuiContext(window);
+		window->imgui_menu_mode = imgui_menu_mode;
 	}
 
 	bool WindowApplication::Initialize()
@@ -228,7 +196,7 @@ namespace chaos
 		if (shared_context == nullptr)
 			return false;
 
-		if (!WithWindowContext(shared_context, [this]()
+		if (!WithGLFWContext(shared_context, [this]()
 		{
 			// XXX : seems to be mandatory for some functions like : glGenVertexArrays(...)
 			//       see https://www.opengl.org/wiki/OpenGL_Loading_Library
@@ -256,7 +224,7 @@ namespace chaos
 		}
 
 		// a final initialization (after main window is constructed ... and OpenGL context)
-		if (!WithWindowContext(shared_context, [this]()
+		if (!WithGLFWContext(shared_context, [this]()
 		{
 			return PostOpenGLContextCreation();
 		}))
@@ -565,7 +533,7 @@ namespace chaos
 
 	bool WindowApplication::ReloadGPUResources()
 	{
-		return WithWindowContext(shared_context, [this]()
+		return WithGLFWContext(shared_context, [this]()
 		{
 			// this call may block for too much time
 			FreezeNextFrameTickDuration();
@@ -977,7 +945,7 @@ namespace chaos
 				ImGui::Separator();
 				if (ImGui::MenuItem("Quit", nullptr, false, true))
 				{
-					DestroyAllWindows(false);
+					DestroyAllWindows();
 				}
 				ImGui::EndMenu();
 			}

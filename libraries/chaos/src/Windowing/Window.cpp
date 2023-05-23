@@ -49,18 +49,24 @@ namespace chaos
 
 	Window::~Window()
 	{
-		DestroyGLFWWindow();
+		assert(glfw_window == nullptr);
+		assert(imgui_context == nullptr);
 	}
 
-	void Window::DestroyGLFWWindow()
+	void Window::Destroy()
 	{
-		// destroy ImGui context (must happen after the windows destruction because some GLFW callbacks rely on the existence of the ImGui context)
+		if (WindowApplication* WindowApplication = Application::GetInstance())
+			WindowApplication->DestroyWindow(this);
+	}
+
+	void Window::DestroyImGuiContext()
+	{
+		// destroy ImGui context (must happen before the windows destruction because some GLFW callbacks rely on the existence of the ImGui context)
 		if (imgui_context != nullptr)
 		{
 #if _WIN32
 			SetImGuiWindowProc(false); // remove our WndProc layer before ImGui may remove its layer
 #endif
-
 			ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
 			ImGui::SetCurrentContext(imgui_context);
 
@@ -71,13 +77,17 @@ namespace chaos
 
 			imgui_context = nullptr;
 		}
+	}
+
+	void Window::DestroyGLFWWindow()
+	{
 		// destroy GLFW window
 		if (glfw_window != nullptr)
 		{
 			GLFWwindow * previous_context = glfwGetCurrentContext();
 			glfwMakeContextCurrent(nullptr);
 			glfwDestroyWindow(glfw_window);
-			if (previous_context != nullptr && previous_context != glfw_window)
+			if (previous_context != nullptr && previous_context != glfw_window) // restore previous context if it is not the one that has been destroyed
 				glfwMakeContextCurrent(previous_context);
 			glfw_window = nullptr;
 		}
@@ -151,6 +161,7 @@ namespace chaos
 		glfw_window = glfwCreateWindow(create_params.width, create_params.height, create_params.title, nullptr, share_context_window);
 		if (glfw_window == nullptr)
 			return false;
+		glfwMakeContextCurrent(glfw_window);
 
 		// set vsync
 		if (GlobalVariables::UnlimitedFPS.Get())
@@ -193,6 +204,56 @@ namespace chaos
 		return true;
 	}
 
+	void Window::IncrementWindowDestructionGuard()
+	{
+		++window_destruction_guard;
+	}
+
+	void Window::DecrementWindowDestructionGuard()
+	{
+		assert(window_destruction_guard > 0);
+		if (--window_destruction_guard == 0)
+		{
+			if (WindowApplication* window_application = Application::GetInstance())
+			{
+				if (!window_application->IsWindowHandledByApplication(this)) // window already removed from the application's list. just destroy resources
+				{
+					window_application->OnWindowDestroyed(this);
+				}
+			}
+		}
+	}
+
+	void Window::CreateImGuiContext()
+	{
+		// save imgui context
+		ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
+
+		// create a new context for this window
+		imgui_context = ImGui::CreateContext();
+		ImGui::SetCurrentContext(imgui_context);
+		ImGuiIO& io = ImGui::GetIO();
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+		ImGui::StyleColorsDark();
+
+		// initialize the context
+		ImGui_ImplGlfw_InitForOpenGL(GetGLFWHandler(), true);
+		ImGui_ImplOpenGL3_Init("#version 130");
+
+		// substitute our own window proc (now that ImGui has inserted its own WindowProc */
+#if _WIN32
+		SetImGuiWindowProc(true);
+#endif
+		// the context is ready for rendering
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+		// restore previous imgui context
+		ImGui::SetCurrentContext(previous_imgui_context);
+	}
+
 	bool Window::CreateRootWidget()
 	{
 		// create the root widget
@@ -211,7 +272,7 @@ namespace chaos
 		{
 			cursor_mode = mode;
 			if (!imgui_menu_mode)
-				glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)mode); // do not change cursor mode, during imgui mode mode
+				glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)mode); // do not effectively change cursor mode, during imgui_menu_mode
 		}
 	}
 
@@ -239,7 +300,7 @@ namespace chaos
 
 	glm::ivec2 Window::GetWindowPosition() const
 	{
-		glm::ivec2 result = glm::vec2(0, 0);
+		glm::ivec2 result = { 0, 0 };
 		if (glfw_window != nullptr)
 			glfwGetWindowPos(glfw_window, &result.x, &result.y);
 		return result;
@@ -247,7 +308,7 @@ namespace chaos
 
 	glm::ivec2 Window::GetWindowSize() const
 	{
-		glm::ivec2 result = glm::vec2(0, 0);
+		glm::ivec2 result = { 0, 0 };
 		if (glfw_window != nullptr)
 			glfwGetWindowSize(glfw_window, &result.x, &result.y);
 		return result;
@@ -963,6 +1024,12 @@ namespace chaos
 
 	void Window::OnMonitorEvent(GLFWmonitor* monitor, int monitor_state)
 	{
+	}
+
+	void Window::OnLastReferenceLost()
+	{
+
+		Object::OnLastReferenceLost();
 	}
 
 }; // namespace chaos

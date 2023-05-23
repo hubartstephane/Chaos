@@ -271,7 +271,7 @@ namespace chaos
 		if (cursor_mode != mode)
 		{
 			cursor_mode = mode;
-			if (!imgui_menu_mode)
+			if (!GetImGuiMenuMode())
 				glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)mode); // do not effectively change cursor mode, during imgui_menu_mode
 		}
 	}
@@ -283,19 +283,17 @@ namespace chaos
 
 	bool Window::GetImGuiMenuMode() const
 	{
-		return imgui_menu_mode;
+		if (WindowApplication* window_application = Application::GetInstance())
+			return window_application->GetImGuiMenuMode();
+		return false;
 	}
 
-	void Window::SetImGuiMenuMode(bool mode)
+	void Window::OnImGuiMenuModeChanged(bool mode)
 	{
-		if (imgui_menu_mode != mode)
-		{
-			imgui_menu_mode = mode;
-			if (imgui_menu_mode)
-				glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)CursorMode::Normal);
-			else
-				glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)cursor_mode);
-		}
+		if (mode)
+			glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)CursorMode::Normal);
+		else
+			glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)cursor_mode);
 	}
 
 	glm::ivec2 Window::GetWindowPosition() const

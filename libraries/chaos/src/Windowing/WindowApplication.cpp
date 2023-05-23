@@ -40,7 +40,7 @@ namespace chaos
 		{
 			shared_ptr<Window> prevent_destruction = window;
 			windows.erase(it);
-			if (window->GetWindowDestructionGuard() == 0)
+			if (window->GetWindowDestructionGuard() == 0) // can destroy immediatly the window or must wait until no current operation ?
 				OnWindowDestroyed(window);
 		}
 	}
@@ -127,7 +127,6 @@ namespace chaos
 				return nullptr;
 			}
 			windows.push_back(result.get());
-			result->imgui_menu_mode = imgui_menu_mode;
 			// set the name
 			result->SetObjectNaming(request);
 			// override the create params with the JSON configuration (if any)
@@ -173,7 +172,6 @@ namespace chaos
 
 	void WindowApplication::OnWindowCreated(Window* window)
 	{
-		window->imgui_menu_mode = imgui_menu_mode;
 	}
 
 	bool WindowApplication::Initialize()
@@ -864,7 +862,7 @@ namespace chaos
 			imgui_menu_mode = mode;
 			for (shared_ptr<Window>& window : windows)
 			{
-				window->SetImGuiMenuMode(mode);
+				window->OnImGuiMenuModeChanged(mode);
 			}
 		}
 	}

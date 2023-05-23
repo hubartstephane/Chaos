@@ -30,6 +30,10 @@ namespace chaos
 		/** get the window per name */
 		AutoConstCastable<Window> FindWindow(ObjectRequest request) const;
 
+		/** destroy a window */
+		void DestroyWindow(Window* window);
+
+
 		/** getter of the main clock */
 		static Clock* GetMainClockInstance();
 		/** getter of the main clock */
@@ -90,21 +94,20 @@ namespace chaos
 
 		/** get the OpenGL context, call the function, restore previous context after */
 		template<typename FUNC>
-		static auto WithWindowContext(GLFWwindow* context, FUNC const& func)
+		static auto WithGLFWContext(GLFWwindow* glfw_context, FUNC const& func)
 		{
+			GLFWwindow* previous_glfw_context = glfwGetCurrentContext();
+			glfwMakeContextCurrent(glfw_context);
+
 			if constexpr (std::is_same_v<void, decltype(func())>)
 			{
-				GLFWwindow* previous_context = glfwGetCurrentContext();
-				glfwMakeContextCurrent(context);
 				func();
-				glfwMakeContextCurrent(previous_context);
+				glfwMakeContextCurrent(previous_glfw_context);
 			}
 			else
 			{
-				GLFWwindow* previous_context = glfwGetCurrentContext();
-				glfwMakeContextCurrent(context);
 				auto result = func();
-				glfwMakeContextCurrent(previous_context);
+				glfwMakeContextCurrent(previous_glfw_context);
 				return result;
 			}
 		}
@@ -129,9 +132,7 @@ namespace chaos
 		bool IsConsoleWindowVisible() const;
 
 		/** destroy all windows */
-		void DestroyAllWindows(bool immediate = true);
-		/** destroy all windows that satisfy a predicate */
-		void DestroyAllWindowsPredicate(std::function<bool(Window*)> const & func);
+		void DestroyAllWindows();
 
 #if _DEBUG
 		/** displaying ImGuiDemo window */
@@ -206,8 +207,6 @@ namespace chaos
 		/** the user callback called when current input mode changes */
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;
 
-		/** create an ImGui context for a new windows */
-		void CreateWindowImGuiContext(Window* window);
 		/** called at window creation */
 		virtual void OnWindowCreated(Window* window);
 		/** called at window destruction */
@@ -226,6 +225,9 @@ namespace chaos
 
 		/** internal method to show or hide a window */
 		void ShowWindowInternal(bool visible, char const* name, SubClassOf<Window> window_class);
+
+		/** checks whether the window is inside the application windows array */
+		bool IsWindowHandledByApplication(Window const* window) const;
 
 		/** some window may be removed or created during a loop on 'windows' array itself. this intermediate array helps to detect such issues */
 		std::vector<weak_ptr<Window>> GetWeakWindowArray() const;

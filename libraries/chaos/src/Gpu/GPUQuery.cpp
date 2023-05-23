@@ -97,7 +97,7 @@ namespace chaos
 		{
 			if (query_id != 0 && ownership)
 			{
-				WindowApplication::WithWindowContext(context, [this]()
+				WindowApplication::WithGLFWContext(context, [this]()
 				{
 					glDeleteQueries(1, &query_id);
 				});

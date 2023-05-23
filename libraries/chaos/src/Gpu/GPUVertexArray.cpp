@@ -31,7 +31,7 @@ namespace chaos
 		{
 			if (vertex_array_id == 0 && ownership)
 			{
-				WindowApplication::WithWindowContext(context, [this]()
+				WindowApplication::WithGLFWContext(context, [this]()
 				{
 					glDeleteVertexArrays(1, &vertex_array_id);
 				});

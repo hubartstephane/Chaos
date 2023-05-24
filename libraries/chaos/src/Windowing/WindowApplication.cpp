@@ -21,10 +21,11 @@ namespace chaos
 
 	bool WindowApplication::IsWindowHandledByApplication(Window const* window) const
 	{
-		for (shared_ptr<Window> const& w : windows)
-			if (w == window)
-				return true;
-		return false;
+		auto it = std::ranges::find_if(windows, [window](shared_ptr<Window> const& w)
+		{
+			return (w == window);
+		});
+		return (it != windows.end());
 	}
 
 	void WindowApplication::DestroyWindow(Window* window)

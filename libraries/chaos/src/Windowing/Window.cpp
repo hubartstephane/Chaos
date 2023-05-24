@@ -87,8 +87,8 @@ namespace chaos
 			GLFWwindow * previous_context = glfwGetCurrentContext();
 			glfwMakeContextCurrent(nullptr);
 			glfwDestroyWindow(glfw_window);
-			if (previous_context != nullptr && previous_context != glfw_window) // restore previous context if it is not the one that has been destroyed
-				glfwMakeContextCurrent(previous_context);
+			glfwMakeContextCurrent((previous_context != glfw_window)? previous_context : nullptr); // if there was another context, restore it
+
 			glfw_window = nullptr;
 		}
 	}
@@ -213,15 +213,9 @@ namespace chaos
 	{
 		assert(window_destruction_guard > 0);
 		if (--window_destruction_guard == 0)
-		{
 			if (WindowApplication* window_application = Application::GetInstance())
-			{
 				if (!window_application->IsWindowHandledByApplication(this)) // window already removed from the application's list. just destroy resources
-				{
 					window_application->OnWindowDestroyed(this);
-				}
-			}
-		}
 	}
 
 	void Window::CreateImGuiContext()
@@ -418,8 +412,8 @@ namespace chaos
 			assert((WNDPROC)GetPropW(hWnd, L"CHAOS_WINDOW") != nullptr);
 			assert((WNDPROC)GetPropW(hWnd, L"CHAOS_PREVIOUS_WNDPROC") != nullptr);
 			::SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)GetPropW(hWnd, L"CHAOS_PREVIOUS_WNDPROC"));
-			SetPropW(hWnd, L"CHAOS_WINDOW", nullptr);
-			SetPropW(hWnd, L"CHAOS_PREVIOUS_WNDPROC", nullptr);
+			RemovePropW(hWnd, L"CHAOS_WINDOW");
+			RemovePropW(hWnd, L"CHAOS_PREVIOUS_WNDPROC");
 		}
 	}
 #endif
@@ -442,69 +436,64 @@ namespace chaos
 		double_buffer = in_double_buffer;
 	}
 
-	void Window::DoOnIconifiedStateChange(GLFWwindow* in_glfw_window, int value)
+	template<typename FUNC>
+	static void GetWindowAndProcess(GLFWwindow* in_glfw_window, FUNC const& func)
 	{
 		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
 		{
-			my_window->WithWindowContext([my_window, value]()
+			my_window->WithWindowContext([my_window, &func]()
 			{
-				my_window->OnIconifiedStateChange(value == GL_TRUE);
+				func(my_window);
 			});
 		}
+	}
+
+	void Window::DoOnIconifiedStateChange(GLFWwindow* in_glfw_window, int value)
+	{
+		GetWindowAndProcess(in_glfw_window, [value](Window * my_window)
+		{
+			my_window->OnIconifiedStateChange(value == GL_TRUE);
+		});
 	}
 
 	void Window::DoOnFocusStateChange(GLFWwindow* in_glfw_window, int value)
 	{
-		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
+		GetWindowAndProcess(in_glfw_window, [value](Window * my_window)
 		{
-			my_window->WithWindowContext([my_window, value]()
-			{
-				my_window->OnFocusStateChange(value == GL_TRUE);
-			});
-		}
+			my_window->OnFocusStateChange(value == GL_TRUE);
+		});
 	}
 
 	void Window::DoOnWindowClosed(GLFWwindow* in_glfw_window)
 	{
-		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
+		GetWindowAndProcess(in_glfw_window, [](Window* my_window)
 		{
-			my_window->WithWindowContext([my_window]()
-			{
-				if (my_window->OnWindowClosed())
-					my_window->RequireWindowClosure();
-			});
-		}
+			if (my_window->OnWindowClosed())
+				my_window->RequireWindowClosure();
+		});
 	}
 
 	void Window::DoOnWindowResize(GLFWwindow* in_glfw_window, int width, int height)
 	{
-		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
+		GetWindowAndProcess(in_glfw_window, [width, height](Window* my_window)
 		{
-			my_window->WithWindowContext([my_window, width, height]()
-			{
-				my_window->OnWindowResize(glm::ivec2(width, height));
-			});
-		}
+			my_window->OnWindowResize(glm::ivec2(width, height));
+		});
 	}
 
 	void Window::DoOnMouseMove(GLFWwindow* in_glfw_window, double x, double y)
 	{
 		Application::SetApplicationInputMode(InputMode::MOUSE);
 
-		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
+		GetWindowAndProcess(in_glfw_window, [x, y](Window* my_window)
 		{
-			my_window->WithWindowContext([my_window, x, y]()
-			{
-				glm::vec2 position = { float(x), float(y) };
-
-				if (!my_window->IsMousePositionValid())
-					my_window->OnMouseMove({ 0.0f, 0.0f });
-				else
-					my_window->OnMouseMove(position - my_window->mouse_position.value());
-
-				my_window->mouse_position = position;
-			});
-		}
+			glm::vec2 position = { float(x), float(y) };
+			if (!my_window->IsMousePositionValid())
+				my_window->OnMouseMove({ 0.0f, 0.0f });
+			else
+				my_window->OnMouseMove(position - my_window->mouse_position.value());
+			my_window->mouse_position = position;
+		});
 	}
 
 	void Window::DoOnMouseButton(GLFWwindow* in_glfw_window, int button, int action, int modifier)
@@ -519,26 +508,20 @@ namespace chaos
 			application->SetMouseButtonState(mouse_button, action);
 		}
 
-		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
+		GetWindowAndProcess(in_glfw_window, [button, action, modifier](Window* my_window)
 		{
-			my_window->WithWindowContext([my_window, button, action, modifier]()
-			{
-				my_window->OnMouseButton(button, action, modifier);
-			});
-		}
+			my_window->OnMouseButton(button, action, modifier);
+		});
 	}
 
 	void Window::DoOnMouseWheel(GLFWwindow* in_glfw_window, double scroll_x, double scroll_y)
 	{
 		Application::SetApplicationInputMode(InputMode::MOUSE);
 
-		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
+		GetWindowAndProcess(in_glfw_window, [scroll_x, scroll_y](Window* my_window)
 		{
-			my_window->WithWindowContext([my_window, scroll_x, scroll_y]()
-			{
-				my_window->OnMouseWheel(scroll_x, scroll_y);
-			});
-		}
+			my_window->OnMouseWheel(scroll_x, scroll_y);
+		});
 	}
 
 	void Window::DoOnKeyEvent(GLFWwindow* in_glfw_window, int key, int scan_code, int action, int modifier)
@@ -559,37 +542,28 @@ namespace chaos
 		event.action = action;
 		event.modifier = modifier;
 
-		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
+		GetWindowAndProcess(in_glfw_window, [&event](Window* my_window)
 		{
-			my_window->WithWindowContext([my_window, event, key, scan_code, action, modifier]()
-			{
-				my_window->OnKeyEvent(event);
-			});
-		}
+			my_window->OnKeyEvent(event);
+		});
 	}
 
 	void Window::DoOnCharEvent(GLFWwindow* in_glfw_window, unsigned int c)
 	{
 		Application::SetApplicationInputMode(InputMode::KEYBOARD);
 
-		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
+		GetWindowAndProcess(in_glfw_window, [c](Window* my_window)
 		{
-			my_window->WithWindowContext([my_window, c]()
-			{
-				my_window->OnCharEvent(c);
-			});
-		}
+			my_window->OnCharEvent(c);
+		});
 	}
 	
 	void Window::DoOnDropFile(GLFWwindow* in_glfw_window, int count, char const** paths)
 	{
-		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
+		GetWindowAndProcess(in_glfw_window, [count, paths](Window* my_window)
 		{
-			my_window->WithWindowContext([my_window, count, paths]()
-			{
-				my_window->OnDropFile(count, paths);
-			});
-		}
+			my_window->OnDropFile(count, paths);
+		});
 	}
 
 	void Window::DrawWindow()

@@ -213,9 +213,9 @@ namespace chaos
 		virtual void OnWindowDestroyed(Window* window);
 
 		/** gets the main window of the application */
-		AutoCastable<Window> GetMainWindow() { return main_window.get(); }
+		AutoCastable<Window> GetMainWindow() { return FindWindow("main"); }
 		/** gets the main window of the application */
-		AutoConstCastable<Window> GetMainWindow() const { return main_window.get(); }
+		AutoConstCastable<Window> GetMainWindow() const { return FindWindow("main"); }
 
 		/** add some items to a windows menu */
 		virtual void OnDrawWindowImGuiMenu(Window * window);
@@ -253,9 +253,6 @@ namespace chaos
 		WindowCreateParams window_create_params;
 		/** the class of the main window */
 		SubClassOf<Window> main_window_class;
-
-		/** the main window */
-		shared_ptr<Window> main_window;
 		/** the window list */
 		std::vector<shared_ptr<Window>> windows;
 

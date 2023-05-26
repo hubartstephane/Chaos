@@ -164,8 +164,6 @@ namespace chaos
 
 	void WindowApplication::OnWindowDestroyed(Window* window)
 	{
-		if (window == main_window)
-			main_window = nullptr;
 		window->Finalize();
 		window->DestroyImGuiContext();
 		window->DestroyGLFWWindow();
@@ -237,7 +235,7 @@ namespace chaos
 	int WindowApplication::Main()
 	{
 		// create the main window
-		main_window = CreateMainWindow();
+		Window * main_window = CreateMainWindow();
 		if (main_window == nullptr)
 			return -1;
 		// run the main loop as long as there are windows
@@ -655,8 +653,8 @@ namespace chaos
 
 	void WindowApplication::OnInputModeChanged(InputMode new_mode, InputMode old_mode)
 	{
-		if (main_window != nullptr)
-			main_window->OnInputModeChanged(new_mode, old_mode);
+		for (shared_ptr<Window> & window : windows)
+			window->OnInputModeChanged(new_mode, old_mode);
 	}
 
 	Clock* WindowApplication::GetMainClockInstance()

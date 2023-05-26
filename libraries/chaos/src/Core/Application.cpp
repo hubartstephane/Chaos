@@ -50,20 +50,49 @@ namespace chaos
 
 	bool Application::ReloadConfigurationFile(nlohmann::json & result) const
 	{
-		return JSONTools::LoadJSONFile(configuration_path, result, LoadFileFlag::RECURSIVE);
+		return JSONTools::LoadJSONFile(GetConfigurationPath(), result, LoadFileFlag::RECURSIVE);
+	}
+
+	boost::filesystem::path Application::GetConfigurationPath() const
+	{
+		return GetResourcesPath() / "config.json";
 	}
 
 	bool Application::LoadConfigurationFile()
 	{
-		boost::filesystem::path path = GetResourcesPath() / "config.json";
-
-		if (JSONTools::LoadJSONFile(path, configuration, LoadFileFlag::RECURSIVE))
-		{
-			configuration_path = std::move(path);
-			return true;
-		}
-		return false;
+		return JSONTools::LoadJSONFile(GetConfigurationPath(), configuration, LoadFileFlag::RECURSIVE);
 	}
+
+	bool Application::LoadSessionSaveFile()
+	{
+		return JSONTools::LoadJSONFile(GetSessionSavePath(), session_save, LoadFileFlag::RECURSIVE);
+	}
+
+	bool Application::SaveSessionSaveFile() const
+	{
+		return JSONTools::SaveJSONToFile(session_save, GetSessionSavePath());
+	}
+	
+	boost::filesystem::path Application::GetSessionSavePath() const
+	{
+		return GetUserLocalTempPath() / "session_save.json";
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	bool Application::LoadClasses()
 	{
@@ -120,7 +149,7 @@ namespace chaos
 		if (!InitializeManagers())
 			return false;
 		// open user temp directory and dump the config file
-		boost::filesystem::path user_temp = CreateUserLocalTempDirectory(); // XXX : this directory is necessary for some per application data
+		boost::filesystem::path user_temp = GetUserLocalPath(); // XXX : this directory is necessary for some per application data
 #if _DEBUG
 		// display the directories to help debugging
 		bool dump_config = GlobalVariables::DumpConfigFile.Get();
@@ -154,11 +183,17 @@ namespace chaos
 
 			// store a copy of the parameters
 			StoreParameters(argc, argv, env);
+			// create a user temp directory if necessary */
+			CreateUserLocalTempDirectory();
 			// load the configuration file (ignore return value because there is no obligation to use a configuration file)
 			LoadConfigurationFile();
+			// load the session save file (ignore return value because there is no obligation to use a configuration file)
+			LoadSessionSaveFile();
 			// initialize, run, and finalize the application
 			if (Initialize())
 				result = Main();
+			// save the session information
+			SaveSessionSaveFile();
 			// finalization (even if initialization failed)
 			Finalize();
 			FinalizeStandardLibraries();
@@ -250,13 +285,6 @@ namespace chaos
 		boost::filesystem::path const & result = GetUserLocalTempPath();
 		if (!boost::filesystem::is_directory(result))
 			boost::filesystem::create_directories(result);
-		return result;
-	}
-
-	boost::filesystem::path const & Application::ShowUserLocalTempDirectory() const
-	{
-		boost::filesystem::path const & result = CreateUserLocalTempDirectory();
-		WinTools::ShowFile(result);
 		return result;
 	}
 

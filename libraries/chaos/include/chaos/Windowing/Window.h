@@ -206,8 +206,6 @@ namespace chaos
 		virtual bool OnDraw(GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params) override;
 		/** override */
 		virtual bool DoTick(float delta_time) override;		
-		/** override */
-		virtual void OnLastReferenceLost() override;
 
 		/** create the root widget */
 		virtual bool CreateRootWidget();
@@ -239,7 +237,7 @@ namespace chaos
 		/** called at window creation (returns false if the window must be killed) */
 		virtual bool InitializeFromConfiguration(nlohmann::json const& config);
 		/** called at window destruction */
-		virtual void Finalize(){}
+		virtual void Finalize();
 
 		/** get the mouse position */
 		glm::vec2 GetMousePosition() const;

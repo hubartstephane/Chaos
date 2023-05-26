@@ -623,15 +623,7 @@ namespace chaos
 		// destroy the resources
 		FinalizeGPUResourceManager();
 		// destroy all windows
-		for (shared_ptr<Window> & window : windows)
-		{
-			if (window != nullptr)
-			{
-				OnWindowDestroyed(window.get());
-			}
-		}
-		windows.clear();
-		main_window = nullptr;
+		DestroyAllWindows();
 		// super
 		Application::Finalize();
 	}

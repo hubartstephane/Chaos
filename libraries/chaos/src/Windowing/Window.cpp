@@ -359,24 +359,29 @@ namespace chaos
 #ifdef _WIN32
 	LRESULT CALLBACK Window::ImGuiWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
+		LRESULT result = 0;
+
 		if (Window* window = (Window*)GetPropW(hWnd, L"CHAOS_WINDOW"))
 		{
 			if (WNDPROC previous_wndproc = (WNDPROC)GetPropW(hWnd, L"CHAOS_PREVIOUS_WNDPROC"))
 			{
-				LRESULT result = 0;
-
+				// prevent the destruction of the window during windows message function
+				shared_ptr<Window> prevent_destruction = window;
+				window->IncrementWindowDestructionGuard();
+				// set the ImGui context as current
 				ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
 				ImGuiContext* toset_imgui_context = window->imgui_context;
-
 				ImGui::SetCurrentContext(toset_imgui_context);
+				// call "super" window proc
 				result = ::CallWindowProc(previous_wndproc, hWnd, msg, wParam, lParam); // call "super" WndProc
-
+				// restore the previous ImGui context
 				if (toset_imgui_context != previous_imgui_context) // maybe previous context was same then window's context and window's context has been deleted
 					ImGui::SetCurrentContext(previous_imgui_context);
-				return result;
+				// enable window resource destruction back
+				window->DecrementWindowDestructionGuard();
 			}
 		}
-		return 0;
+		return result;
 	}
 
 	// Note on ImGui and WndProc
@@ -400,8 +405,8 @@ namespace chaos
 		// set the WndProc
 		if (set_proc)
 		{
-			assert((WNDPROC)GetPropW(hWnd, L"CHAOS_WINDOW") == nullptr);
-			assert((WNDPROC)GetPropW(hWnd, L"CHAOS_PREVIOUS_WNDPROC") == nullptr);
+			assert(GetPropW(hWnd, L"CHAOS_WINDOW") == nullptr);
+			assert(GetPropW(hWnd, L"CHAOS_PREVIOUS_WNDPROC") == nullptr);
 			SetPropW(hWnd, L"CHAOS_WINDOW", this);
 			SetPropW(hWnd, L"CHAOS_PREVIOUS_WNDPROC", (WNDPROC)::GetWindowLongPtr(hWnd, GWLP_WNDPROC));
 			::SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)&Window::ImGuiWindowProc);
@@ -409,8 +414,8 @@ namespace chaos
 		// restore the WndProc
 		else
 		{
-			assert((WNDPROC)GetPropW(hWnd, L"CHAOS_WINDOW") != nullptr);
-			assert((WNDPROC)GetPropW(hWnd, L"CHAOS_PREVIOUS_WNDPROC") != nullptr);
+			assert(GetPropW(hWnd, L"CHAOS_WINDOW") != nullptr);
+			assert(GetPropW(hWnd, L"CHAOS_PREVIOUS_WNDPROC") != nullptr);
 			::SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)GetPropW(hWnd, L"CHAOS_PREVIOUS_WNDPROC"));
 			RemovePropW(hWnd, L"CHAOS_WINDOW");
 			RemovePropW(hWnd, L"CHAOS_PREVIOUS_WNDPROC");

@@ -653,8 +653,16 @@ namespace chaos
 
 	void WindowApplication::OnInputModeChanged(InputMode new_mode, InputMode old_mode)
 	{
-		for (shared_ptr<Window> & window : windows)
-			window->OnInputModeChanged(new_mode, old_mode);
+		for (weak_ptr<Window> & window : GetWeakWindowArray())
+		{
+			if (window != nullptr)
+			{
+				window->WithWindowContext([&window, new_mode, old_mode]()
+				{
+					window->OnInputModeChanged(new_mode, old_mode);
+				});
+			}
+		}
 	}
 
 	Clock* WindowApplication::GetMainClockInstance()
@@ -821,7 +829,7 @@ namespace chaos
 	{
 		// the GLFW monitor delegate does not send event to any window
 		// that's why we are catching here the event and dispatching to all application's windows
-		for (shared_ptr<Window> & window : windows)
+		for (weak_ptr<Window> & window : GetWeakWindowArray())
 		{
 			if (window != nullptr)
 			{
@@ -851,9 +859,15 @@ namespace chaos
 		if (imgui_menu_mode != mode)
 		{
 			imgui_menu_mode = mode;
-			for (shared_ptr<Window>& window : windows)
+			for (weak_ptr<Window>& window : GetWeakWindowArray())
 			{
-				window->OnImGuiMenuModeChanged(mode);
+				if (window != nullptr)
+				{
+					window->WithWindowContext([&window, mode]()
+					{
+						window->OnImGuiMenuModeChanged(mode);
+					});
+				}
 			}
 		}
 	}

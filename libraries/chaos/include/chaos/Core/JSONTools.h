@@ -71,6 +71,8 @@ namespace chaos
 		CHAOS_API bool LoadJSONFile(FilePathParam const& path, nlohmann::json& result, LoadFileFlag flag = LoadFileFlag::NONE);
 		/** create a temporary directory to hold the configuration (returns the path of the directory where the file is) */
 		CHAOS_API boost::filesystem::path DumpConfigFile(nlohmann::json const& json, char const* filename = "myconfig.json");
+		/** save the json into a file */
+		CHAOS_API bool SaveJSONToFile(nlohmann::json const& json, FilePathParam const & path);
 
 		/** get a sub object from an object */
 		CHAOS_API nlohmann::json* GetStructure(nlohmann::json& entry, char const* name);
@@ -105,6 +107,13 @@ namespace chaos
 		/** reading an attribute with default value */
 		template<typename T, typename Y>
 		/*CHAOS_API*/ bool GetAttributeByIndex(nlohmann::json const& entry, size_t index, T& result, Y default_value);
+
+		template<typename ...PARAMS>
+		/*CHAOS_API*/ nlohmann::json* GetStructureByPath(nlohmann::json& json, std::string_view p, PARAMS && ...params);
+
+		template<typename ...PARAMS>
+		/*CHAOS_API*/ nlohmann::json const* GetStructureByPath(nlohmann::json const& json, std::string_view p, PARAMS && ...params);
+
 
 	}; // namespace JSONTools
 
@@ -228,7 +237,6 @@ namespace chaos
 		dst.push_back(std::move(element));
 		return true;
 	}
-
 
 	/** basic types */
 	template<typename T>
@@ -378,6 +386,39 @@ namespace chaos
 				return true;
 			result = default_value;
 			return false;
+		}
+
+		template<typename ...PARAMS>
+		nlohmann::json* GetStructureByPath(nlohmann::json& json, std::string_view p, PARAMS && ...params)
+		{
+			nlohmann::json* child_structure = GetStructure(json, p.data());
+			if (child_structure == nullptr)
+			{
+				json[p.data()] = nlohmann::json::object();
+			}
+
+			if (nlohmann::json* child_structure = GetStructure(json, p.data()))
+			{
+				if constexpr (sizeof...(params) == 0)
+					return child_structure;
+				else
+					return GetStructureByPath(*child_structure, std::forward<PARAMS>(params)...);
+			}
+			return nullptr;
+		}
+
+
+		template<typename ...PARAMS>
+		nlohmann::json const* GetStructureByPath(nlohmann::json const& json, std::string_view p, PARAMS&& ...params)
+		{
+			if (nlohmann::json const* child_structure = GetStructure(json, p.data()))
+			{
+				if constexpr (sizeof...(params) == 0)
+					return child_structure;
+				else
+					return GetStructureByPath(*child_structure, std::forward<PARAMS>(params)...);
+			}
+			return nullptr;
 		}
 
 	} // namespace JSONTools

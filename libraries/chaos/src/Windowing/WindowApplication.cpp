@@ -116,6 +116,7 @@ namespace chaos
 		if (FindWindow(request) != nullptr)
 		{
 			Log::Error("WindowApplication::CreateTypedWindow(...) name already used");
+			Log::Error("WindowApplication::CreateTypedWindow(...) name already used");
 			return nullptr;
 		}
 
@@ -927,6 +928,11 @@ namespace chaos
 		}
 	}
 
+	void WindowApplication::SerializeSessionInformation(bool save)
+	{
+
+	}
+
 	void WindowApplication::OnDrawWindowImGuiMenu(Window* window)
 	{
 		ImGuiDrawableInterface::MenuBar(ImGuiDrawMenuMode::FullWindow, [this]()
@@ -935,7 +941,7 @@ namespace chaos
 			{
 				if (ImGui::MenuItem("Open Temp Dir.", nullptr, false, true))
 				{
-					ShowUserLocalTempDirectory();
+					WinTools::ShowFile(GetUserLocalTempPath());
 				}
 				if (ImGui::MenuItem("Open Resources Dir.", nullptr, false, true))
 				{
@@ -944,6 +950,11 @@ namespace chaos
 				if (ImGui::MenuItem("Dump Config File", nullptr, false, true))
 				{
 					WinTools::ShowFile(JSONTools::DumpConfigFile(configuration));
+				}
+				if (ImGui::MenuItem("Dump Session File", nullptr, false, true))
+				{
+					SaveSessionSaveFile();
+					WinTools::ShowFile(GetSessionSavePath());
 				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Quit", nullptr, false, true))

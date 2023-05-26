@@ -20,7 +20,6 @@ namespace chaos
 		game = game_class.CreateInstance();
 		if (game == nullptr)
 			return false;
-		game->configuration_path = configuration_path;
 
 		// initialize the game from configuration
 		nlohmann::json const* game_config = JSONTools::GetStructure(configuration, "game");

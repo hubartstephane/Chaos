@@ -1003,10 +1003,19 @@ namespace chaos
 	{
 	}
 
-	void Window::OnLastReferenceLost()
+	void Window::Finalize()
 	{
+		if (Application* application = Application::GetInstance())
+		{
+			if (nlohmann::json* json = application->GetSessionSaveStructure("windows", GetName()))
+			{
 
-		Object::OnLastReferenceLost();
+				JSONTools::SetAttribute(*json, "position", GetWindowPosition());
+				JSONTools::SetAttribute(*json, "size", GetWindowSize());
+			}
+
+		}
+
 	}
 
 }; // namespace chaos

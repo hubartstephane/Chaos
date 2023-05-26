@@ -374,8 +374,6 @@ namespace chaos
 
 		/** the configuration object to use for game instance */
 		nlohmann::json game_instance_configuration;
-		/** the configuration path */
-		boost::filesystem::path configuration_path;
 
 		/** cheating */
 #if _DEBUG

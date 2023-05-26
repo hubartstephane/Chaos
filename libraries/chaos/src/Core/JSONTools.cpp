@@ -140,6 +140,17 @@ namespace chaos
 			}
 		}
 
+		bool SaveJSONToFile(nlohmann::json const& json, FilePathParam const & path)
+		{
+			std::ofstream stream(path.GetResolvedPath().c_str());
+			if (stream)
+			{
+				stream << json.dump(4);
+				return true;
+			}
+			return false;
+		}
+
 		boost::filesystem::path DumpConfigFile(nlohmann::json const& json, char const* filename)
 		{
 			if (filename != nullptr)
@@ -154,9 +165,8 @@ namespace chaos
 				if (!result.empty())
 				{
 					boost::filesystem::path path = result / filename;
-					std::ofstream stream(path.string().c_str());
-					stream << json.dump(4);
-					return path;
+					if (SaveJSONToFile(json, path.string().c_str()))
+						return path;
 				}
 			}
 			return {};

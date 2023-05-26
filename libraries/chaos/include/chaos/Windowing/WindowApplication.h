@@ -33,6 +33,8 @@ namespace chaos
 		/** destroy a window */
 		void DestroyWindow(Window* window);
 
+		/** used when loading or saving session information */
+		void SerializeSessionInformation(bool save);
 
 		/** getter of the main clock */
 		static Clock* GetMainClockInstance();

@@ -52,11 +52,24 @@ namespace chaos
 
 		/** get the configuration */
 		nlohmann::json const& GetConfiguration() const { return configuration; }
-		/** get the configuration file */
-		boost::filesystem::path const& GetConfigurationPath() const { return configuration_path; }
+		/** get the configuration file path */
+		boost::filesystem::path GetConfigurationPath() const;
 
-		/** open the temp local user directory (for debugging purpose) */
-		boost::filesystem::path const& ShowUserLocalTempDirectory() const;
+		/** get the session save data */
+		template<typename ...PARAMS>
+		nlohmann::json const* GetSessionSaveStructure(PARAMS && ...params) const
+		{ 
+			return JSONTools::GetStructureByPath(session_save, std::forward<PARAMS>(params)...);
+		}
+		/** get the session save data (writeable) */
+		template<typename ...PARAMS>
+		nlohmann::json * GetSessionSaveStructure(PARAMS && ...params)
+		{
+			return JSONTools::GetStructureByPath(session_save, std::forward<PARAMS>(params)...);
+		}
+		/** get the session save file path */
+		boost::filesystem::path GetSessionSavePath() const;
+
 		/** create the use local temp directory */
 		boost::filesystem::path const& CreateUserLocalTempDirectory() const;
 
@@ -104,6 +117,10 @@ namespace chaos
 
 		/** loading the configuration file */
 		bool LoadConfigurationFile();
+		/** loading the session save file */
+		bool LoadSessionSaveFile();
+		/** saving the session save file */
+		bool SaveSessionSaveFile() const;
 		/** load the extra classes */
 		virtual bool LoadClasses();
 		/** log some application information */
@@ -133,8 +150,9 @@ namespace chaos
 
 		/** the JSON configuration file if existing */
 		nlohmann::json configuration;
-		/** the path where the configuration file is */
-		boost::filesystem::path configuration_path;
+		/** the JSON session save file if existing */
+		nlohmann::json session_save;
+
 
 		/** redirection source directories */
 #if _DEBUG

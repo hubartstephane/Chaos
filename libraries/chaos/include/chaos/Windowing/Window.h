@@ -142,10 +142,9 @@ namespace chaos
 		template<typename FUNC>
 		auto WithWindowContext(FUNC const& func)
 		{
+			// prevent the window destruction
 			shared_ptr<Window> prevent_destruction = this;
-
 			IncrementWindowDestructionGuard();
-
 			// save GLFW context
 			GLFWwindow* previous_glfw_window = glfwGetCurrentContext();
 			glfwMakeContextCurrent(glfw_window);
@@ -161,6 +160,7 @@ namespace chaos
 				glfwMakeContextCurrent(previous_glfw_window);
 				// restore ImGui context (if different, because maybe the context has been destroy inside the func() call
 				ImGui::SetCurrentContext(previous_imgui_context);
+				// enable window destruction back
 				DecrementWindowDestructionGuard();
 			}
 			else
@@ -171,6 +171,7 @@ namespace chaos
 				glfwMakeContextCurrent(previous_glfw_window);
 				// restore ImGui context (if different, because maybe the context has been destroy inside the func() call
 				ImGui::SetCurrentContext(previous_imgui_context);
+				// enable window destruction back
 				DecrementWindowDestructionGuard();
 				return result;
 			}

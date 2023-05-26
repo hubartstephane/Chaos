@@ -155,69 +155,25 @@ protected:
 	virtual void OnDrawWindowImGuiMenu() override
 	{
 		chaos::Window::OnDrawWindowImGuiMenu();
-
-		// main menu for ImGUI
-		chaos::ImGuiDrawableInterface::MenuBar(chaos::ImGuiDrawMenuMode::FullWindow, [this]()
-		{
-			if (ImGui::BeginMenu("Windows"))
-			{
-				if (ImGui::BeginMenu("ImGui"))
-				{
-	#define CHAOS_IMGUI_MENUITEM(X) ImGui::MenuItem(#X, nullptr, &X, true);
-					CHAOS_IMGUI_MENUITEM(show_demo);
-					CHAOS_IMGUI_MENUITEM(show_metrics);
-					CHAOS_IMGUI_MENUITEM(show_debug_log);
-					CHAOS_IMGUI_MENUITEM(show_stack_tool);
-					CHAOS_IMGUI_MENUITEM(show_about);
-					CHAOS_IMGUI_MENUITEM(show_style_editor);
-					CHAOS_IMGUI_MENUITEM(show_user_guide);
-	#undef CHAOS_IMGUI_MENUITEM
-					ImGui::EndMenu();
-				}
-
-				ImGui::EndMenu();
-			}
-		});
 	}
 
 	virtual void OnDrawWindowImGuiContent() override
 	{
-		// ImGui Window
-		if (show_demo)
-			ImGui::ShowDemoWindow(&show_demo);
-		if (show_metrics)
-			ImGui::ShowMetricsWindow(&show_metrics);
-		if (show_debug_log)
-			ImGui::ShowDebugLogWindow(&show_debug_log);
-		if (show_stack_tool)
-			ImGui::ShowStackToolWindow(&show_stack_tool);
-		if (show_about)
-			ImGui::ShowAboutWindow(&show_about);
-		if (show_style_editor)
-			ImGui::ShowStyleEditor();
-		if (show_user_guide)
-			ImGui::ShowUserGuide();
-
-
 #if 1
 
 		auto add_close_personal_window = [this](bool& p_open)
 		{
 			chaos::ImGuiDrawableInterface::MenuBar(chaos::ImGuiDrawMenuMode::FullWindow, [this, &p_open]()
 			{
-				if (ImGui::BeginMainMenuBar())
+				if (ImGui::BeginMenu("Windows"))
 				{
-					if (ImGui::BeginMenu("Windows"))
+					ImGui::Separator();
+					if (ImGui::BeginMenu("personals"))
 					{
-						ImGui::Separator();
-						if (ImGui::BeginMenu("personals"))
-						{
-							ImGui::MenuItem("main", nullptr, &p_open, true); // whenever the user select the menu item, the p_open value is being toggled						
-							ImGui::EndMenu();
-						}
+						ImGui::MenuItem("main", nullptr, &p_open, true); // whenever the user select the menu item, the p_open value is being toggled						
 						ImGui::EndMenu();
 					}
-					ImGui::EndMainMenuBar();
+					ImGui::EndMenu();
 				}
 			});
 		};
@@ -538,14 +494,6 @@ protected:
 	}
 
 	float col = 0.0f;
-
-	bool show_demo = true;
-	bool show_metrics = false;
-	bool show_debug_log = false;
-	bool show_stack_tool = false;
-	bool show_about = false;
-	bool show_style_editor = false;
-	bool show_user_guide = false;
 };
 
 

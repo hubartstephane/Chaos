@@ -972,6 +972,22 @@ namespace chaos
 		return true; 
 	}
 
+	void Window::ReadPersistentData(nlohmann::json const& json)
+	{
+		glm::ivec2 position = { 0, 0 };
+		glm::ivec2 size = { 0, 0 };
+		JSONTools::GetAttribute(json, "position", position);
+		JSONTools::GetAttribute(json, "size", size);
+		SetWindowPosition(position);
+		SetWindowSize(size);
+	}
+
+	void Window::WritePersistentData(nlohmann::json & json) const
+	{
+		JSONTools::SetAttribute(json, "position", GetWindowPosition());
+		JSONTools::SetAttribute(json, "size", GetWindowSize());
+	}
+
 	bool Window::DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const
 	{
 		return false;
@@ -1005,17 +1021,6 @@ namespace chaos
 
 	void Window::Finalize()
 	{
-		if (Application* application = Application::GetInstance())
-		{
-			if (nlohmann::json* json = application->GetSessionSaveStructure("windows", GetName()))
-			{
-
-				JSONTools::SetAttribute(*json, "position", GetWindowPosition());
-				JSONTools::SetAttribute(*json, "size", GetWindowSize());
-			}
-
-		}
-
 	}
 
 }; // namespace chaos

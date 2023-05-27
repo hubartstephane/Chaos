@@ -279,6 +279,11 @@ namespace chaos
 		/** get the destruction guard count */
 		int GetWindowDestructionGuard() const { return window_destruction_guard; }
 
+		/** read information from persistent storage */
+		virtual void ReadPersistentData(nlohmann::json const& json);
+		/** write information into persistent storage */
+		virtual void WritePersistentData(nlohmann::json & json) const;
+
 	private:
 
 		/** binding function with GLFW library */

@@ -63,9 +63,9 @@ namespace chaos
 		}
 		/** get the session save data (writeable) */
 		template<typename ...PARAMS>
-		nlohmann::json * GetSessionSaveStructure(PARAMS && ...params)
+		nlohmann::json * GetOrCreateSessionSaveStructure(PARAMS && ...params)
 		{
-			return JSONTools::GetStructureByPath(session_save, std::forward<PARAMS>(params)...);
+			return JSONTools::GetOrCreateStructureByPath(session_save, std::forward<PARAMS>(params)...);
 		}
 		/** get the session save file path */
 		boost::filesystem::path GetSessionSavePath() const;

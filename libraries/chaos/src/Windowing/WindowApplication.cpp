@@ -156,7 +156,7 @@ namespace chaos
 				window_configuration = &default_window_config;
 			result->InitializeFromConfiguration(*window_configuration);
 			// read information from session file
-			if (nlohmann::json const* json = GetSessionSaveStructure("windows", result->GetName()))
+			if (nlohmann::json const* json = GetPersistentDataStructure("windows", result->GetName()))
 				result->ReadPersistentData(*json);
 			// create the root widget
 			result->CreateRootWidget();
@@ -168,7 +168,7 @@ namespace chaos
 
 	void WindowApplication::OnWindowDestroyed(Window* window)
 	{
-		if (nlohmann::json * json = GetOrCreateSessionSaveStructure("windows", window->GetName()))
+		if (nlohmann::json * json = GetOrCreatePersistentDataStructure("windows", window->GetName()))
 			window->WritePersistentData(*json);
 		window->Finalize();
 		window->DestroyImGuiContext();
@@ -958,8 +958,8 @@ namespace chaos
 				}
 				if (ImGui::MenuItem("Dump Session File", nullptr, false, true))
 				{
-					SaveSessionSaveFile();
-					WinTools::ShowFile(GetSessionSavePath());
+					SavePersistentDataFile();
+					WinTools::ShowFile(GetPersistentDataPath());
 				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Quit", nullptr, false, true))

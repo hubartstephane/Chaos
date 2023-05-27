@@ -55,20 +55,20 @@ namespace chaos
 		/** get the configuration file path */
 		boost::filesystem::path GetConfigurationPath() const;
 
-		/** get the session save data */
+		/** get the persistent data */
 		template<typename ...PARAMS>
-		nlohmann::json const* GetSessionSaveStructure(PARAMS && ...params) const
+		nlohmann::json const* GetPersistentDataStructure(PARAMS && ...params) const
 		{ 
-			return JSONTools::GetStructureByPath(session_save, std::forward<PARAMS>(params)...);
+			return JSONTools::GetStructureByPath(persistent_data, std::forward<PARAMS>(params)...);
 		}
-		/** get the session save data (writeable) */
+		/** get the persistent data (writeable) */
 		template<typename ...PARAMS>
-		nlohmann::json * GetOrCreateSessionSaveStructure(PARAMS && ...params)
+		nlohmann::json * GetOrCreatePersistentDataStructure(PARAMS && ...params)
 		{
-			return JSONTools::GetOrCreateStructureByPath(session_save, std::forward<PARAMS>(params)...);
+			return JSONTools::GetOrCreateStructureByPath(persistent_data, std::forward<PARAMS>(params)...);
 		}
-		/** get the session save file path */
-		boost::filesystem::path GetSessionSavePath() const;
+		/** get the persistent data file path */
+		boost::filesystem::path GetPersistentDataPath() const;
 
 		/** create the use local temp directory */
 		boost::filesystem::path const& CreateUserLocalTempDirectory() const;
@@ -117,10 +117,10 @@ namespace chaos
 
 		/** loading the configuration file */
 		bool LoadConfigurationFile();
-		/** loading the session save file */
-		bool LoadSessionSaveFile();
-		/** saving the session save file */
-		bool SaveSessionSaveFile() const;
+		/** loading the persistent data file */
+		bool LoadPersistentDataFile();
+		/** saving the persistent data file */
+		bool SavePersistentDataFile() const;
 		/** load the extra classes */
 		virtual bool LoadClasses();
 		/** log some application information */
@@ -150,8 +150,8 @@ namespace chaos
 
 		/** the JSON configuration file if existing */
 		nlohmann::json configuration;
-		/** the JSON session save file if existing */
-		nlohmann::json session_save;
+		/** the JSON persistent data if existing */
+		nlohmann::json persistent_data;
 
 
 		/** redirection source directories */

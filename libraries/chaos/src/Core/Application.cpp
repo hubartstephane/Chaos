@@ -63,19 +63,19 @@ namespace chaos
 		return JSONTools::LoadJSONFile(GetConfigurationPath(), configuration, LoadFileFlag::RECURSIVE);
 	}
 
-	bool Application::LoadSessionSaveFile()
+	bool Application::LoadPersistentDataFile()
 	{
-		return JSONTools::LoadJSONFile(GetSessionSavePath(), session_save, LoadFileFlag::RECURSIVE);
+		return JSONTools::LoadJSONFile(GetPersistentDataPath(), persistent_data, LoadFileFlag::RECURSIVE);
 	}
 
-	bool Application::SaveSessionSaveFile() const
+	bool Application::SavePersistentDataFile() const
 	{
-		return JSONTools::SaveJSONToFile(session_save, GetSessionSavePath());
+		return JSONTools::SaveJSONToFile(persistent_data, GetPersistentDataPath());
 	}
 	
-	boost::filesystem::path Application::GetSessionSavePath() const
+	boost::filesystem::path Application::GetPersistentDataPath() const
 	{
-		return GetUserLocalTempPath() / "session_save.json";
+		return GetUserLocalTempPath() / "persistent_data.json";
 	}
 
 
@@ -187,13 +187,13 @@ namespace chaos
 			CreateUserLocalTempDirectory();
 			// load the configuration file (ignore return value because there is no obligation to use a configuration file)
 			LoadConfigurationFile();
-			// load the session save file (ignore return value because there is no obligation to use a configuration file)
-			LoadSessionSaveFile();
+			// load the persistent data file (ignore return value because there is no obligation to use a configuration file)
+			LoadPersistentDataFile();
 			// initialize, run, and finalize the application
 			if (Initialize())
 				result = Main();
 			// save the session information
-			SaveSessionSaveFile();
+			SavePersistentDataFile();
 			// finalization (even if initialization failed)
 			Finalize();
 			FinalizeStandardLibraries();

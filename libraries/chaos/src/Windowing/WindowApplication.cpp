@@ -933,11 +933,6 @@ namespace chaos
 		}
 	}
 
-	void WindowApplication::SerializeSessionInformation(bool save)
-	{
-
-	}
-
 	void WindowApplication::OnDrawWindowImGuiMenu(Window* window)
 	{
 		ImGuiDrawableInterface::MenuBar(ImGuiDrawMenuMode::FullWindow, [this]()
@@ -952,11 +947,11 @@ namespace chaos
 				{
 					WinTools::ShowFile(GetResourcesPath());
 				}
-				if (ImGui::MenuItem("Dump Config File", nullptr, false, true))
+				if (ImGui::MenuItem("Open Config File", nullptr, false, true))
 				{
 					WinTools::ShowFile(JSONTools::DumpConfigFile(configuration));
 				}
-				if (ImGui::MenuItem("Dump Session File", nullptr, false, true))
+				if (ImGui::MenuItem("Open Persistent File", nullptr, false, true))
 				{
 					SavePersistentDataFile();
 					WinTools::ShowFile(GetPersistentDataPath());

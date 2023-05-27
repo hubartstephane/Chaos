@@ -187,13 +187,17 @@ namespace chaos
 			CreateUserLocalTempDirectory();
 			// load the configuration file (ignore return value because there is no obligation to use a configuration file)
 			LoadConfigurationFile();
-			// load the persistent data file (ignore return value because there is no obligation to use a configuration file)
-			LoadPersistentDataFile();
 			// initialize, run, and finalize the application
 			if (Initialize())
+			{
+				// load the persistent data file (ignore return value because there is no obligation to use a configuration file)
+				LoadPersistentDataFile();
+				ReadPersistentData(persistent_data);
 				result = Main();
-			// save the session information
-			SavePersistentDataFile();
+				// save the persistent data to file
+				WritePersistentData(persistent_data);
+				SavePersistentDataFile();
+			}
 			// finalization (even if initialization failed)
 			Finalize();
 			FinalizeStandardLibraries();
@@ -318,6 +322,14 @@ namespace chaos
 			if (StringTools::Stricmp(arg, flag_name) == 0)
 				return true;
 		return false;
+	}
+
+	void Application::ReadPersistentData(nlohmann::json const& json)
+	{
+	}
+
+	void Application::WritePersistentData(nlohmann::json& json) const
+	{
 	}
 
 #if _DEBUG

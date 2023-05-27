@@ -155,6 +155,9 @@ namespace chaos
 			if (window_configuration == nullptr)
 				window_configuration = &default_window_config;
 			result->InitializeFromConfiguration(*window_configuration);
+			// read information from session file
+			if (nlohmann::json const* json = GetSessionSaveStructure("windows", result->GetName()))
+				result->ReadPersistentData(*json);
 			// create the root widget
 			result->CreateRootWidget();
 			// notify the application
@@ -165,6 +168,8 @@ namespace chaos
 
 	void WindowApplication::OnWindowDestroyed(Window* window)
 	{
+		if (nlohmann::json * json = GetOrCreateSessionSaveStructure("windows", window->GetName()))
+			window->WritePersistentData(*json);
 		window->Finalize();
 		window->DestroyImGuiContext();
 		window->DestroyGLFWWindow();

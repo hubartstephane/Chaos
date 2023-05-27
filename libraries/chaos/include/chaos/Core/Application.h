@@ -126,6 +126,11 @@ namespace chaos
 		/** log some application information */
 		virtual void LogExecutionInformation();
 
+		/** read information from persistent storage */
+		virtual void ReadPersistentData(nlohmann::json const& json);
+		/** write information into persistent storage */
+		virtual void WritePersistentData(nlohmann::json& json) const;
+
 	protected:
 
 		/** the single application instance */

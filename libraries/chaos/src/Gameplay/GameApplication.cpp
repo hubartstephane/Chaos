@@ -125,5 +125,23 @@ namespace chaos
 			DestroyAllWindows();
 	}
 
+
+	void GameApplication::ReadPersistentData(nlohmann::json const& json)
+	{
+		WindowApplication::ReadPersistentData(json);
+		if (game != nullptr)
+		{
+		}
+
+	}
+
+	void GameApplication::WritePersistentData(nlohmann::json& json) const
+	{
+		WindowApplication::WritePersistentData(json);
+		if (game != nullptr)
+		{
+		}
+	}
+
 }; // namespace chaos
 

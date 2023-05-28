@@ -9,7 +9,7 @@ namespace chaos
 	/**
 	* Application : used to store generic application data
 	*/
-	class CHAOS_API Application : public Object, public InputEventReceiverInterface
+	class CHAOS_API Application : public Object, public InputEventReceiverInterface, public PersistentDataInterface
 	{
 
 	public:
@@ -63,7 +63,7 @@ namespace chaos
 		}
 		/** get the persistent data (writeable) */
 		template<typename ...PARAMS>
-		nlohmann::json * GetOrCreatePersistentDataStructure(PARAMS && ...params)
+		nlohmann::json * GetOrCreatePersistentDataStructure(PARAMS && ...params) const
 		{
 			return JSONTools::GetOrCreateStructureByPath(persistent_data, std::forward<PARAMS>(params)...);
 		}
@@ -125,11 +125,15 @@ namespace chaos
 		virtual bool LoadClasses();
 		/** log some application information */
 		virtual void LogExecutionInformation();
-
-		/** read information from persistent storage */
-		virtual void ReadPersistentData(nlohmann::json const& json);
-		/** write information into persistent storage */
-		virtual void WritePersistentData(nlohmann::json& json) const;
+		
+		/** override */
+		virtual nlohmann::json * GetPersistentWriteStorage() const override;
+		/** override */
+		virtual nlohmann::json const* GetPersistentReadStorage() const override;
+		/** override */
+		virtual void OnReadPersistentData(nlohmann::json const& json) override;
+		/** override */
+		virtual void OnWritePersistentData(nlohmann::json& json) const override;
 
 	protected:
 
@@ -156,7 +160,7 @@ namespace chaos
 		/** the JSON configuration file if existing */
 		nlohmann::json configuration;
 		/** the JSON persistent data if existing */
-		nlohmann::json persistent_data;
+		mutable nlohmann::json persistent_data;
 
 
 		/** redirection source directories */

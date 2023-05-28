@@ -156,8 +156,7 @@ namespace chaos
 				window_configuration = &default_window_config;
 			result->InitializeFromConfiguration(*window_configuration);
 			// read information from session file
-			if (nlohmann::json const* json = GetPersistentDataStructure("windows", result->GetName()))
-				result->ReadPersistentData(*json);
+			result->ReadPersistentData();
 			// create the root widget
 			result->CreateRootWidget();
 			// notify the application
@@ -168,8 +167,7 @@ namespace chaos
 
 	void WindowApplication::OnWindowDestroyed(Window* window)
 	{
-		if (nlohmann::json * json = GetOrCreatePersistentDataStructure("windows", window->GetName()))
-			window->WritePersistentData(*json);
+		window->WritePersistentData();
 		window->Finalize();
 		window->DestroyImGuiContext();
 		window->DestroyGLFWWindow();
@@ -247,6 +245,20 @@ namespace chaos
 		// run the main loop as long as there are windows
 		RunMessageLoop([this]() { return (windows.size() > 0); });
 		return 0;
+	}
+
+	void WindowApplication::Quit()
+	{
+		// write the name of the windows that are opened
+		if (nlohmann::json* json = GetPersistentWriteStorage())
+		{
+			std::vector<char const*> names;
+			for (shared_ptr<Window> const& window : windows)
+				names.push_back(window->GetName());
+			JSONTools::SetAttribute(*json, "opened_window", names);
+		}
+		// effectively quit the application
+		DestroyAllWindows();
 	}
 
 	Window* WindowApplication::CreateMainWindow()
@@ -959,7 +971,7 @@ namespace chaos
 				ImGui::Separator();
 				if (ImGui::MenuItem("Quit", nullptr, false, true))
 				{
-					DestroyAllWindows();
+					Quit();
 				}
 				ImGui::EndMenu();
 			}
@@ -983,6 +995,26 @@ namespace chaos
 		for (shared_ptr<Window> const& window : windows)
 			result.emplace_back(window.get());
 		return result;
+	}
+
+
+	void WindowApplication::OnReadPersistentData(nlohmann::json const& json)
+	{
+		Application::OnReadPersistentData(json);
+
+		// open windows that were there at during previous session
+		std::vector<std::string> opened_window;
+		JSONTools::GetAttribute(json, "opened_window", opened_window);
+
+		for (std::string const& name : opened_window)
+		{
+		}
+
+	}
+
+	void WindowApplication::OnWritePersistentData(nlohmann::json & json) const
+	{
+		Application::OnWritePersistentData(json);
 	}
 
 }; // namespace chaos

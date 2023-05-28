@@ -76,7 +76,7 @@ namespace chaos
 	* Window : a binding class between chaos and GLFW to handle window (beware the prefix "My")
 	*/
 
-	class CHAOS_API Window : public Object, public WindowInterface
+	class CHAOS_API Window : public Object, public WindowInterface, public PersistentDataInterface
 	{
 		friend class WindowApplication;
 
@@ -279,10 +279,14 @@ namespace chaos
 		/** get the destruction guard count */
 		int GetWindowDestructionGuard() const { return window_destruction_guard; }
 
-		/** read information from persistent storage */
-		virtual void ReadPersistentData(nlohmann::json const& json);
-		/** write information into persistent storage */
-		virtual void WritePersistentData(nlohmann::json & json) const;
+		/** override */
+		virtual nlohmann::json * GetPersistentWriteStorage() const override;
+		/** override */
+		virtual nlohmann::json const * GetPersistentReadStorage() const override;
+		/** override */
+		virtual void OnReadPersistentData(nlohmann::json const& json) override;
+		/** override */
+		virtual void OnWritePersistentData(nlohmann::json & json) const override;
 
 	private:
 

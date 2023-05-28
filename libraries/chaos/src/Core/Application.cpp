@@ -78,22 +78,6 @@ namespace chaos
 		return GetUserLocalTempPath() / "persistent_data.json";
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	bool Application::LoadClasses()
 	{
 		nlohmann::json const * classes_json = JSONTools::GetStructure(configuration, "classes");
@@ -192,10 +176,10 @@ namespace chaos
 			{
 				// load the persistent data file (ignore return value because there is no obligation to use a configuration file)
 				LoadPersistentDataFile();
-				ReadPersistentData(persistent_data);
+				ReadPersistentData();
 				result = Main();
 				// save the persistent data to file
-				WritePersistentData(persistent_data);
+				WritePersistentData();
 				SavePersistentDataFile();
 			}
 			// finalization (even if initialization failed)
@@ -216,7 +200,6 @@ namespace chaos
 
 	bool Application::InitializeManagers()
 	{
-
 		return true;
 	}
 
@@ -324,11 +307,21 @@ namespace chaos
 		return false;
 	}
 
-	void Application::ReadPersistentData(nlohmann::json const& json)
+	nlohmann::json * Application::GetPersistentWriteStorage() const
+	{
+		return GetOrCreatePersistentDataStructure("application"); 
+	}
+
+	nlohmann::json const * Application::GetPersistentReadStorage() const
+	{
+		return GetPersistentDataStructure("application");
+	}
+
+	void Application::OnReadPersistentData(nlohmann::json const& json)
 	{
 	}
 
-	void Application::WritePersistentData(nlohmann::json& json) const
+	void Application::OnWritePersistentData(nlohmann::json& json) const
 	{
 	}
 

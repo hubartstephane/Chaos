@@ -47,9 +47,9 @@ namespace chaos
 		virtual bool OnCharEventImpl(unsigned int c) override;
 
 		/** override */
-		virtual void ReadPersistentData(nlohmann::json const& json) override;
+		virtual void OnReadPersistentData(nlohmann::json const& json) override;
 		/** override */
-		virtual void WritePersistentData(nlohmann::json& json) const override;
+		virtual void OnWritePersistentData(nlohmann::json& json) const override;
 
 	protected:
 

@@ -41,6 +41,7 @@
 #include "chaos/Core/Key.h"
 #include "chaos/Core/InputMode.h"
 #include "chaos/Core/InputEventReceiverInterface.h"
+#include "chaos/Core/PersistentDataInterface.h"
 #include "chaos/Core/Application.h"
 #include "chaos/Core/ResourceManager.h"
 #include "chaos/Core/ResourceManagerLoader.h"

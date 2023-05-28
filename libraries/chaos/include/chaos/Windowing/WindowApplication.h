@@ -128,20 +128,13 @@ namespace chaos
 		/** gets the window special mode */
 		bool GetImGuiMenuMode() const;
 
-		/** displaying console window */
-		void ShowConsoleWindow(bool visible);
-		/** check whether the console is visible */
-		bool IsConsoleWindowVisible() const;
+		/** search whether a given window exists */
+		bool IsKnownWindowVisible(char const* name) const;
+		/** create a window from its name */
+		bool SetKnownWindowVisibility(char const* name, bool visible);
 
 		/** destroy all windows */
 		void DestroyAllWindows();
-
-#if _DEBUG
-		/** displaying ImGuiDemo window */
-		void ShowImGuiDemoWindow(bool visible);
-		/** check whether the ImGuiDemo is visible */
-		bool IsImGuiDemoWindowVisible() const;
-#endif
 
 	protected:
 
@@ -156,6 +149,9 @@ namespace chaos
 		virtual void OnMonitorEvent(GLFWmonitor* monitor, int monitor_state);
 		/** called whenever a monitor is connected or disconnected */
 		static void DoOnMonitorEvent(GLFWmonitor* monitor, int monitor_state);
+
+		/** enumerate windows that the application can open */
+		virtual bool EnumerateKnownWindows(std::function<bool(char const * name, SubClassOf<Window> window_class)> const& func) const;
 
 		/** override */
 		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override;
@@ -226,11 +222,8 @@ namespace chaos
 		/** add some items to a windows menu */
 		virtual void OnDrawWindowImGuiMenu(Window * window);
 
-		/** add a window toggle item in menubar */
-		void AddWindowMenuItem(char const* window_name, bool (WindowApplication::*IsWindowVisibleFunc)() const, void (WindowApplication::* ShowWindowFunc)(bool));
-
 		/** internal method to show or hide a window */
-		void ShowWindowInternal(bool visible, char const* name, SubClassOf<Window> window_class);
+		void SetWindowInternalVisibility(bool visible, char const* name, SubClassOf<Window> window_class);
 
 		/** checks whether the window is inside the application windows array */
 		bool IsWindowHandledByApplication(Window const* window) const;

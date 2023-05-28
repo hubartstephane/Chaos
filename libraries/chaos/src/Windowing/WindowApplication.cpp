@@ -890,7 +890,7 @@ namespace chaos
 		}
 	}
 
-	void WindowApplication::ShowWindowInternal(bool visible, char const * name, SubClassOf<Window> window_class)
+	void WindowApplication::SetWindowInternalVisibility(bool visible, char const * name, SubClassOf<Window> window_class)
 	{
 		Window* existing_window = FindWindow(name);
 
@@ -912,37 +912,31 @@ namespace chaos
 		}
 	}
 
-	bool WindowApplication::IsConsoleWindowVisible() const
+	bool WindowApplication::IsKnownWindowVisible(char const * name) const
 	{
-		return (FindWindow("Console") != nullptr);
+		return (FindWindow(name) != nullptr);
 	}
 
-	void WindowApplication::ShowConsoleWindow(bool visible)
+	bool WindowApplication::SetKnownWindowVisibility(char const* name, bool visible)
 	{
-		ShowWindowInternal(visible, "Console", SubClassOf<ConsoleWindow>());
-	}
-
-#if _DEBUG
-
-	bool WindowApplication::IsImGuiDemoWindowVisible() const
-	{
-		return (FindWindow("ImGuiDemo") != nullptr);
-	}
-
-	void WindowApplication::ShowImGuiDemoWindow(bool visible)
-	{
-		ShowWindowInternal(visible, "ImGuiDemo", SubClassOf<ImGuiDemoWindow>());
-	}
-
-#endif
-
-	void WindowApplication::AddWindowMenuItem(char const* window_name, bool (WindowApplication::*IsWindowVisibleFunc)() const, void (WindowApplication::*ShowWindowFunc)(bool))
-	{
-		bool window_exists = (this->*IsWindowVisibleFunc)();
-		if (ImGui::MenuItem(window_name, nullptr, window_exists, true))
+		return EnumerateKnownWindows([this, name, visible](char const* window_name, SubClassOf<Window> window_class)
 		{
-			(this->*ShowWindowFunc)(!window_exists);
-		}
+			// is it the window we are searching?
+			if (StringTools::Stricmp(name, window_name) != 0)
+				return false;
+			SetWindowInternalVisibility(visible, window_name, window_class);
+			return true; // stop the search
+		});
+	}
+
+	bool WindowApplication::EnumerateKnownWindows(std::function<bool(char const * name, SubClassOf<Window> window_class)> const& func) const
+	{
+		return
+			func("Console", SubClassOf<ConsoleWindow>())
+#if _DEBUG
+			|| func("ImGuiDemo", SubClassOf<ImGuiDemoWindow>())
+#endif
+			;
 	}
 
 	void WindowApplication::OnDrawWindowImGuiMenu(Window* window)
@@ -978,11 +972,15 @@ namespace chaos
 
 			if (ImGui::BeginMenu("Windows"))
 			{
-				AddWindowMenuItem("Console", &WindowApplication::IsConsoleWindowVisible, &WindowApplication::ShowConsoleWindow);
-#if _DEBUG
-				AddWindowMenuItem("ImGuiDemo", &WindowApplication::IsImGuiDemoWindowVisible, &WindowApplication::ShowImGuiDemoWindow);
-#endif
-
+				EnumerateKnownWindows([this](char const * name, SubClassOf<Window> window_class)
+				{
+					bool window_exists = (FindWindow(name) != nullptr);
+					if (ImGui::MenuItem(name, nullptr, window_exists, true))
+					{
+						SetWindowInternalVisibility(!window_exists, name, window_class);
+					}
+					return false; // don't stop the search
+				});
 				ImGui::EndMenu();
 			}
 		});
@@ -1007,9 +1005,7 @@ namespace chaos
 		JSONTools::GetAttribute(json, "opened_window", opened_window);
 
 		for (std::string const& name : opened_window)
-		{
-		}
-
+			SetKnownWindowVisibility(name.c_str(), true);
 	}
 
 	void WindowApplication::OnWritePersistentData(nlohmann::json & json) const

@@ -1,7 +1,5 @@
 #include "chaos/ChaosPCH.h"
-#pragma once
-
-#include <chaos/chaos.h>
+#include "chaos/ChaosInternals.h"
 
 namespace chaos
 {

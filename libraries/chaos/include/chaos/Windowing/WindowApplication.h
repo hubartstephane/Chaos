@@ -30,6 +30,9 @@ namespace chaos
 		/** get the window per name */
 		AutoConstCastable<Window> FindWindow(ObjectRequest request) const;
 
+		/** require application end */
+		virtual void Quit();
+
 		/** destroy a window */
 		void DestroyWindow(Window* window);
 
@@ -202,6 +205,10 @@ namespace chaos
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;
+		/** override */
+		virtual void OnReadPersistentData(nlohmann::json const& json) override;
+		/** override */
+		virtual void OnWritePersistentData(nlohmann::json& json) const override;
 
 		/** the user callback called when current input mode changes */
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;

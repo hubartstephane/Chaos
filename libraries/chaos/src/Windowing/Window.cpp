@@ -972,7 +972,21 @@ namespace chaos
 		return true; 
 	}
 
-	void Window::ReadPersistentData(nlohmann::json const& json)
+	nlohmann::json * Window::GetPersistentWriteStorage() const
+	{
+		if (Application* application = Application::GetInstance())
+			return application->GetOrCreatePersistentDataStructure("windows", GetName());
+		return nullptr;
+	}
+
+	nlohmann::json const * Window::GetPersistentReadStorage() const
+	{
+		if (Application* application = Application::GetInstance())
+			return application->GetPersistentDataStructure("windows", GetName());
+		return nullptr;
+	}
+
+	void Window::OnReadPersistentData(nlohmann::json const& json)
 	{
 		glm::ivec2 position = { 0, 0 };
 		glm::ivec2 size = { 0, 0 };
@@ -982,7 +996,7 @@ namespace chaos
 		SetWindowSize(size);
 	}
 
-	void Window::WritePersistentData(nlohmann::json & json) const
+	void Window::OnWritePersistentData(nlohmann::json & json) const
 	{
 		JSONTools::SetAttribute(json, "position", GetWindowPosition());
 		JSONTools::SetAttribute(json, "size", GetWindowSize());

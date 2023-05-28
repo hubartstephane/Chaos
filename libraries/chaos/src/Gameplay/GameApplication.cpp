@@ -126,18 +126,18 @@ namespace chaos
 	}
 
 
-	void GameApplication::ReadPersistentData(nlohmann::json const& json)
+	void GameApplication::OnReadPersistentData(nlohmann::json const& json)
 	{
-		WindowApplication::ReadPersistentData(json);
+		WindowApplication::OnReadPersistentData(json);
 		if (game != nullptr)
 		{
 		}
 
 	}
 
-	void GameApplication::WritePersistentData(nlohmann::json& json) const
+	void GameApplication::OnWritePersistentData(nlohmann::json& json) const
 	{
-		WindowApplication::WritePersistentData(json);
+		WindowApplication::OnWritePersistentData(json);
 		if (game != nullptr)
 		{
 		}

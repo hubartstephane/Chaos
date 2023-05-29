@@ -738,13 +738,13 @@ namespace chaos
 
 	bool WindowApplication::OnKeyEventImpl(KeyEvent const& event)
 	{
-		
-#if _DEBUG
 		if (event.IsKeyPressed(GLFW_KEY_F7))
 		{
 			SetImGuiMenuMode(!GetImGuiMenuMode());
 			return true;
 		}
+
+#if _DEBUG
 		// reloading GPU resources
 		if (event.IsKeyPressed(GLFW_KEY_F8))
 		{
@@ -976,9 +976,7 @@ namespace chaos
 				{
 					bool window_exists = (FindWindow(name) != nullptr);
 					if (ImGui::MenuItem(name, nullptr, window_exists, true))
-					{
 						SetWindowInternalVisibility(!window_exists, name, window_class);
-					}
 					return false; // don't stop the search
 				});
 				ImGui::EndMenu();
@@ -1000,7 +998,7 @@ namespace chaos
 	{
 		Application::OnReadPersistentData(json);
 
-		// open windows that were there at during previous session
+		// open windows that were there during previous session
 		std::vector<std::string> opened_window;
 		JSONTools::GetAttribute(json, "opened_window", opened_window);
 

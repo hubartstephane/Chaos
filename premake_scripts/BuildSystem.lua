@@ -76,7 +76,7 @@ function BuildSystem:AddProject(name, data)
 		result.targetdir = result.targetdir or Utility:GetPlatConfArray("")
 		result.includedirs = result.includedirs or Utility:GetPlatConfArray({})
 		result.additionnal_libs = result.additionnal_libs or Utility:GetPlatConfArray({})
-		result.libname = result.libname or Utility:GetPlatConfArray({})
+		result.lib_name = result.lib_name or Utility:GetPlatConfArray({})
 		result.dependencies = {}
 		result.tocopy = result.tocopy or Utility:GetPlatConfArray({})
 		self.projects[upper_name] = result
@@ -88,27 +88,15 @@ end
 --------------------------------------------------------------------
 -- declare an external library (not described by any premake project)
 --------------------------------------------------------------------
---function BuildSystem:DeclareExternalLib(external_name, src_path, inc_path, lib_path, libname, tocopy)
 
 function BuildSystem:DeclareExternalLib(name)
-
---local GLEW_PATH     = "glew-2.2.0"
---local GLEW_INC_PATH = "include"
---local GLEW_LIB_PATH = path.join("lib", RELEASE, x64)
---local GLEW_LIBNAME = "glew32.lib"
---local GLEW_TOCOPY  = path.join("bin", RELEASE, x64, "glew32.dll")  
---build:DeclareExternalLib("GLEW", GLEW_PATH, GLEW_INC_PATH, GLEW_LIB_PATH, GLEW_LIBNAME, GLEW_TOCOPY)
-
 
 	local external_name = name
 	local src_path = _G[name .. "_PATH"]
 	local inc_path = _G[name .. "_INC_PATH"]
 	local lib_path = _G[name .. "_LIB_PATH"]
-	local libname  = _G[name .. "_LIBNAME"]
+	local lib_name = _G[name .. "_LIB_NAME"]
 	local tocopy   = _G[name .. "_TOCOPY"]
-
-
-
 
 	src_path = path.join(EXTERNAL_PATH, src_path)
 
@@ -117,7 +105,7 @@ function BuildSystem:DeclareExternalLib(name)
 		project_type = ProjectType.EXTERNAL_LIBRARY,
 		includedirs = Utility:PrefixPathArray(Utility:GetPlatConfArray(inc_path), src_path),
 		targetdir = Utility:PrefixPathArray(Utility:GetPlatConfArray(lib_path), src_path),
-		libname = Utility:GetPlatConfArray(libname)
+		lib_name = Utility:GetPlatConfArray(lib_name)
 	})
 
 	if (not Utility:IsNil(tocopy)) then
@@ -128,9 +116,9 @@ function BuildSystem:DeclareExternalLib(name)
 	Utility:AllTargets(
 		function(plat, conf)
 			if (result.targetdir[plat][conf]) then -- in some cases there may be a library to link with but no directory specified (ex OpenGL)
-				Utility:ForEachElement(result.libname[plat][conf],
-					function(libname)
-						local fullpath = result.targetdir[plat][conf] .. "/" .. libname
+				Utility:ForEachElement(result.lib_name[plat][conf],
+					function(lib_name)
+						local fullpath = result.targetdir[plat][conf] .. "/" .. lib_name
 						if not os.isfile(fullpath) then
 							assert(false, "library does not exit: " .. fullpath)
 						end
@@ -181,7 +169,7 @@ end
 --------------------------------------------------------------------
 function BuildSystem:LibraryHelper(project_type)
 	local result = self:CppProject(project_type)
-	result.libname = Utility:GetPlatConfArray(result.project_name)
+	result.lib_name = Utility:GetPlatConfArray(result.project_name)
 
 	if (project_type == ProjectType.SHARED_LIBRARY) then
 		Utility:AllTargets(

@@ -17,7 +17,7 @@ build:DeclareExternalLib("RANGE_V3")
 --------------------------------------------------------------------
 OPENGL_PATH = "openGL"
 OPENGL_INC_PATH = ""
-OPENGL_LIBNAME = "OpenGL32"
+OPENGL_LIB_NAME = "OpenGL32"
 build:DeclareExternalLib("OPENGL")
 
 --------------------------------------------------------------------
@@ -41,7 +41,7 @@ build:DeclareExternalLib("BOOST")
 LUA_PATH     = "lua-5.4.2"
 LUA_INC_PATH = "include"
 LUA_LIB_PATH = ""
-LUA_LIBNAME  = "lua54.lib"
+LUA_LIB_NAME  = "lua54.lib"
 build:DeclareExternalLib("LUA")
 
 --------------------------------------------------------------------
@@ -50,7 +50,7 @@ build:DeclareExternalLib("LUA")
 GLFW_PATH = "glfw"
 GLFW_INC_PATH = "include"
 GLFW_LIB_PATH = "lib-vc2022"
-GLFW_LIBNAME = "glfw3dll.lib"
+GLFW_LIB_NAME = "glfw3dll.lib"
 GLFW_TOCOPY  = path.join(GLFW_LIB_PATH, "glfw3.dll")
 build:DeclareExternalLib("GLFW")
 
@@ -154,7 +154,7 @@ build:DeclareExternalLib("MSVC")
 GLEW_PATH     = "glew-2.2.0"
 GLEW_INC_PATH = "include"
 GLEW_LIB_PATH = path.join("lib", RELEASE, x64)
-GLEW_LIBNAME = "glew32.lib"
+GLEW_LIB_NAME = "glew32.lib"
 GLEW_TOCOPY  = path.join("bin", RELEASE, x64, "glew32.dll")  
 build:DeclareExternalLib("GLEW")
 
@@ -164,7 +164,7 @@ build:DeclareExternalLib("GLEW")
 FREETYPE2_PATH = "freetype2"
 FREETYPE2_INC_PATH = "include"
 FREETYPE2_LIB_PATH = path.join("objs", x64, "Release Static")
-FREETYPE2_LIBNAME = "freetype.lib"
+FREETYPE2_LIB_NAME = "freetype.lib"
 build:DeclareExternalLib("FREETYPE2")
 
 --------------------------------------------------------------------
@@ -173,7 +173,7 @@ build:DeclareExternalLib("FREETYPE2")
 IRRKLANG_PATH = "irrKlang-64bit-1.6.0"
 IRRKLANG_INC_PATH = "include"
 IRRKLANG_LIB_PATH = path.join("lib", "Winx64-visualStudio")
-IRRKLANG_LIBNAME = "irrKlang.lib"
+IRRKLANG_LIB_NAME = "irrKlang.lib"
 IRRKLANG_TOCOPY  = path.join("bin", "winx64-visualStudio" , "irrKlang.dll")  
 
 build:DeclareExternalLib("IRRKLANG")
@@ -184,7 +184,7 @@ build:DeclareExternalLib("IRRKLANG")
 FBX_PATH = path.join("FBX-2020.0.1") 
 FBX_INC_PATH = "include"
 FBX_LIB_PATH = path.join("lib", "vs2017", "x64", "release")
-FBX_LIBNAME = "libfbxsdk.lib"
+FBX_LIB_NAME = "libfbxsdk.lib"
 FBX_TOCOPY  = path.join(FBX_LIB_PATH, "libfbxsdk.dll")
 build:DeclareExternalLib("FBX")
 
@@ -194,7 +194,7 @@ build:DeclareExternalLib("FBX")
 ZLIB_PATH     = "zlib-1.2.11"
 ZLIB_INC_PATH = ""
 ZLIB_LIB_PATH = path.join("contrib",   "vstudio", "vc14", "x64", "ZlibStatRelease")
-ZLIB_LIBNAME = "zlibstat.lib"
+ZLIB_LIB_NAME = "zlibstat.lib"
 build:DeclareExternalLib("ZLIB")
 
 --------------------------------------------------------------------
@@ -203,7 +203,7 @@ build:DeclareExternalLib("ZLIB")
 ASSIMP_PATH     = "assimp"
 ASSIMP_INC_PATH = "include"
 ASSIMP_LIB_PATH = path.join("lib", "Release")
-ASSIMP_LIBNAME  = "assimp-vc143-mt.lib"
+ASSIMP_LIB_NAME  = "assimp-vc143-mt.lib"
 ASSIMP_TOCOPY   = path.join("bin", "Release", "assimp-vc143-mt.dll")
 build:DeclareExternalLib("ASSIMP")
 
@@ -214,7 +214,7 @@ FREEIMAGE_PATH       = "FreeImage-3.18"
 FREEIMAGE_DIST_PATH  = path.join("Dist", "x64")
 FREEIMAGE_INC_PATH = FREEIMAGE_DIST_PATH
 FREEIMAGE_LIB_PATH = FREEIMAGE_DIST_PATH
-FREEIMAGE_LIBNAME = "FreeImage.lib"
+FREEIMAGE_LIB_NAME = "FreeImage.lib"
 FREEIMAGE_TOCOPY  = path.join(FREEIMAGE_LIB_PATH, "FreeImage.dll")
 build:DeclareExternalLib("FREEIMAGE")
 
@@ -227,7 +227,7 @@ TINYXML2_LIB_PATH = {
 	DEBUG = path.join("projects", DEBUG),
 	RELEASE = path.join("projects", RELEASE)
 }
-TINYXML2_LIBNAME = "tinyxml2.lib"
+TINYXML2_LIB_NAME = "tinyxml2.lib"
 build:DeclareExternalLib("TINYXML2")
 
 --------------------------------------------------------------------
@@ -236,7 +236,7 @@ build:DeclareExternalLib("TINYXML2")
 NANA_PATH     = "nana-1.7.4"
 NANA_INC_PATH = "include"
 NANA_LIB_PATH = path.join("build", "bin")
-NANA_LIBNAME = {
+NANA_LIB_NAME = {
 	DEBUG = "nana_v143_Debug_x64.lib",
 	RELEASE = "nana_v143_Release_x64.lib"
 }
@@ -255,7 +255,7 @@ build:DeclareExternalLib("JSON")
 IMGUI_PATH     = "imgui"
 IMGUI_INC_PATH = "."
 IMGUI_LIB_PATH = path.join("bin", RELEASE)
-IMGUI_LIBNAME = "ImGUIOpenGL.lib"
+IMGUI_LIB_NAME = "ImGUIOpenGL.lib"
 
 build:DeclareExternalLib("IMGUI")
 
@@ -266,7 +266,7 @@ VULKAN_PATH = path.join("VulkanSDK", "1.3.236.0")
 VULKAN_INC_PATH = "Include"
 VULKAN_LIB_PATH = "Lib"
 VULKAN_BIN_PATH = "Bin"
-VULKAN_LIBNAME = {"vulkan-1.lib", "VkLayer_utils.lib"}
+VULKAN_LIB_NAME = {"vulkan-1.lib", "VkLayer_utils.lib"}
 
 VULKAN_TOCOPY  = {
 	path.join(VULKAN_BIN_PATH, "VkLayer_api_dump.dll"),

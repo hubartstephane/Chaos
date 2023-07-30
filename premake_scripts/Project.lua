@@ -76,14 +76,14 @@ function Project:DisplayInformation()
 	end
 
 	-- some configurations
-	if (self.targetdir or self.includedirs or self.libname or self.tocopy) then
+	if (self.targetdir or self.includedirs or self.lib_name or self.tocopy) then
 		Log:Output("")
 		Utility:AllTargets(
 			function(plat, conf)
 				Log:Output("[" .. plat .. "][" .. conf .. "]")
 				Utility:DisplayPlatConfArray(self.targetdir,        "targetdir  ", plat, conf)
 				Utility:DisplayPlatConfArray(self.includedirs,      "includedirs", plat, conf)
-				Utility:DisplayPlatConfArray(self.libname,          "libname    ", plat, conf)
+				Utility:DisplayPlatConfArray(self.lib_name,         "lib_name    ", plat, conf)
 				Utility:DisplayPlatConfArray(self.additionnal_libs, "extra libs ", plat, conf)
 				Utility:DisplayPlatConfArray(self.tocopy,           "tocopy     ", plat, conf)
 				Log:Output("")
@@ -137,10 +137,10 @@ end
 --------------------------------------------------------------------
 -- declare a dependency
 --------------------------------------------------------------------
-function Project:DependOnLib(libnames)
-	Utility:ForEachElement(libnames,
-		function(libname)
-			table.insert(self.dependencies, string.upper(libname))
+function Project:DependOnLib(lib_names)
+	Utility:ForEachElement(lib_names,
+		function(lib_name)
+			table.insert(self.dependencies, string.upper(lib_name))
 		end
 	)
 end
@@ -148,15 +148,15 @@ end
 --------------------------------------------------------------------
 -- declare some additionnal dependencies (does not depend on any project)
 --------------------------------------------------------------------
-function Project:DependOnStandardLib(libname)
+function Project:DependOnStandardLib(lib_name)
 	if os.target() ~= "windows" then
 		return
 	end
-	Utility:ForEachElement(libname,
+	Utility:ForEachElement(lib_name,
 		function(lib)
 			Utility:AllTargets(
 				function(plat, conf)
-					table.insert(self.additionnal_libs[plat][conf], libname)
+					table.insert(self.additionnal_libs[plat][conf], lib_name)
 				end
 			)
 		end
@@ -503,7 +503,7 @@ function Project:AddProjectToSolution()
 							end
 						)
 						if (not self:IsSharedLibrary() or not is_self) then -- a shared directory does not link to itself
-							Utility:ForEachElement(p.libname[plat][conf],
+							Utility:ForEachElement(p.lib_name[plat][conf],
 								function(elem)
 									links(elem)
 								end

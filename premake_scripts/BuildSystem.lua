@@ -88,7 +88,27 @@ end
 --------------------------------------------------------------------
 -- declare an external library (not described by any premake project)
 --------------------------------------------------------------------
-function BuildSystem:DeclareExternalLib(external_name, src_path, inc_path, lib_path, libname, tocopy)
+--function BuildSystem:DeclareExternalLib(external_name, src_path, inc_path, lib_path, libname, tocopy)
+
+function BuildSystem:DeclareExternalLib(name)
+
+--local GLEW_PATH     = "glew-2.2.0"
+--local GLEW_INC_PATH = "include"
+--local GLEW_LIB_PATH = path.join("lib", RELEASE, x64)
+--local GLEW_LIBNAME = "glew32.lib"
+--local GLEW_TOCOPY  = path.join("bin", RELEASE, x64, "glew32.dll")  
+--build:DeclareExternalLib("GLEW", GLEW_PATH, GLEW_INC_PATH, GLEW_LIB_PATH, GLEW_LIBNAME, GLEW_TOCOPY)
+
+
+	local external_name = name
+	local src_path = _G[name .. "_PATH"]
+	local inc_path = _G[name .. "_INC_PATH"]
+	local lib_path = _G[name .. "_LIB_PATH"]
+	local libname  = _G[name .. "_LIBNAME"]
+	local tocopy   = _G[name .. "_TOCOPY"]
+
+
+
 
 	src_path = path.join(EXTERNAL_PATH, src_path)
 

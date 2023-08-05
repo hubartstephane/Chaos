@@ -34,6 +34,8 @@ public:
 		return configuration.get();
 	}
 
+	void SetConfiguration(ObjectConfiguration* in_configuration);
+
 protected:
 
 	/** called whenever the configuration has been changed */
@@ -50,21 +52,22 @@ protected:
 
 class ObjectConfiguration : public chaos::Object
 {
+	friend class ConfigurableInterface;
+
 public:
 
 	/** destructor */
 	virtual ~ObjectConfiguration();
 
+	/** override */
+	virtual void SubReference() override;
+
 	/** create a child configuration */
 	ObjectConfiguration* CreateChildConfiguration(std::string_view key);
-	/** set the configurable for this object */
-	void SetConfigurable(chaos::Object* in_configurable);
 	/** call this whenever the configuration is being changed */
 	void OnConfigurationChanged();
 
 protected:
-
-	void TriggerChangeNotification();
 
 	void UpdateFromParent();
 
@@ -72,8 +75,10 @@ protected:
 
 	void PropagateNotifications();
 
-	/** called whenever a child is being destroyed */
-	void OnChildConfigDestroyed(ObjectConfiguration* child);
+	void RemoveFromParent();
+
+
+
 
 protected:
 
@@ -87,36 +92,51 @@ protected:
 	/** the path from parent to this configuration */
 	std::string key;
 	/** the children configurations */
-	std::vector<chaos::weak_ptr<ObjectConfiguration>> child_configurations;
+	std::vector<chaos::shared_ptr<ObjectConfiguration>> child_configurations;
 	/** the configurable object owning this */
 	chaos::weak_ptr<chaos::Object> configurable_object;
-
-	/** whether the configuration is being updated */
-	bool update_in_progress = false;
-		/** whether the configuration is being updated */
-	bool pending_child_destroy = false;
 };
+// ---------------------------------------------------------------------
+
+
+void ConfigurableInterface::SetConfiguration(ObjectConfiguration* in_configuration)
+{
+	if (configuration.get() != in_configuration)
+	{
+		// erase previous configuration
+		if (configuration != nullptr)
+			configuration->configurable_object = nullptr;
+		// set new configuration
+		configuration = in_configuration;
+		if (configuration != nullptr)
+			configuration->configurable_object = chaos::auto_cast(this);
+	}
+}
 
 // ---------------------------------------------------------------------
 
 ObjectConfiguration::~ObjectConfiguration()
 {
-	if (parent_configuration != nullptr)
-		parent_configuration->OnChildConfigDestroyed(this);
+	assert(parent_configuration == nullptr);
 }
 
-void ObjectConfiguration::OnChildConfigDestroyed(ObjectConfiguration* child)
+void ObjectConfiguration::SubReference()
 {
-	assert(child != nullptr);
-	assert(child->parent_configuration == this);
-	if (update_in_progress)
-		pending_child_destroy = true;
-	else
-	{
-		//child_configurations.
+	if (parent_configuration == nullptr)
+		Object::SubReference(); // the configuration is handled as usual
+	else if (--shared_count == 1) // the last reference is the one from the parent. Destroy it 
+		RemoveFromParent();
+}
 
-	}
+void ObjectConfiguration::RemoveFromParent()
+{
+	assert(parent_configuration != nullptr);
 
+	auto it = std::ranges::find_if(parent_configuration->child_configurations, [this](auto const& p) { return p == this; }); // search this in our parent's children list
+	if (it != parent_configuration->child_configurations.end())
+		parent_configuration->child_configurations.erase(it);
+
+	parent_configuration = nullptr;
 }
 
 ObjectConfiguration* ObjectConfiguration::CreateChildConfiguration(std::string_view key)
@@ -134,31 +154,11 @@ ObjectConfiguration* ObjectConfiguration::CreateChildConfiguration(std::string_v
 	return nullptr;
 }
 
-void ObjectConfiguration::SetConfigurable(chaos::Object* in_configurable_object)
-{
-	assert(configurable_object == nullptr); // cannot be changed after set
-	assert(in_configurable_object != nullptr);
-
-	if (ConfigurableInterface* configurable = auto_cast(in_configurable_object))
-	{
-		configurable_object = in_configurable_object;
-		if (configurable != nullptr)
-			configurable->configuration = this;
-	}
-}
-
 void ObjectConfiguration::OnConfigurationChanged()
 {
 	assert(parent_configuration == nullptr); // should only be called for top level configuration
 	PropagateUpdates();
 	PropagateNotifications();
-}
-
-
-void ObjectConfiguration::TriggerChangeNotification()
-{
-	if (ConfigurableInterface * configurable = auto_cast(configurable_object.get()))
-		configurable->OnConfigurationChanged();
 }
 
 void ObjectConfiguration::UpdateFromParent()
@@ -173,43 +173,109 @@ void ObjectConfiguration::UpdateFromParent()
 
 void ObjectConfiguration::PropagateUpdates()
 {
+	// update the configuration
 	UpdateFromParent();
-	for (chaos::weak_ptr<ObjectConfiguration>& child : child_configurations)
-		if (child != nullptr)
-			child->PropagateUpdates();
+	// propagate the update to sub hierarchy
+	for (chaos::shared_ptr<ObjectConfiguration>& child : child_configurations)
+		child->PropagateUpdates();
 }
 
 void ObjectConfiguration::PropagateNotifications()
 {
-	TriggerChangeNotification();
-	for (chaos::weak_ptr<ObjectConfiguration>& child : child_configurations)
+	// trigger the change for the configurable
+	if (ConfigurableInterface* configurable = auto_cast(configurable_object.get()))
+		configurable->OnConfigurationChanged();
+	// create a weak copy of the children list. children may be destroyed during this loop
+	std::vector<chaos::weak_ptr<ObjectConfiguration>> child_copy;
+	child_copy.reserve(child_configurations.size());
+	for (auto& child : child_configurations)
+		child_copy.push_back(child.get());
+	// propagate the change to sub hierarchy
+	for (auto & child : child_copy)
 		if (child != nullptr)
 			child->PropagateNotifications();
 }
 
 // ---------------------------------------------------------------------
-
-
-class A
+class B : public chaos::Object, public ConfigurableInterface
 {
 public:
 
-	A(int ii) :i(ii) {}
+	virtual ~B()
+	{
+		int i = 0;
+		++i;
+	}
 
-	int i = 0;
+	void Initialize()
+	{
+		ObjectConfiguration* conf = GetConfiguration();
+
+		conf = conf;
+
+	}
+
+	virtual void OnConfigurationChanged()
+	{
+		int i = 0;
+		++i;
+
+	}
+
 };
 
-bool operator == (A const& src1, A const& src2)
+
+
+
+class A : public chaos::Object, public ConfigurableInterface
 {
-	return (src1.i == src2.i);
-}
+public:
+
+	virtual ~A()
+	{
+		int i = 0;
+		++i;
+	}
+
+	void Initialize()
+	{
+		ObjectConfiguration* conf = GetConfiguration();
+
+		conf = conf;
+
+		b = new B;
+		b->SetConfiguration(conf->CreateChildConfiguration("B"));
+	}
+
+	virtual void OnConfigurationChanged()
+	{
+		int i = 0;
+		++i;
+
+		b = nullptr;
+	}
+
+	chaos::shared_ptr<B> b;
+
+};
+
+
+
 
 int main(int argc, char ** argv, char ** env)
 {
-	bool b1 = (A(3) == A(5));
-	bool b2 = (A(3) != A(5));
+	ObjectConfiguration conf;
 
 
+	chaos::shared_ptr<A> a = new A;
+
+
+	a->SetConfiguration(conf.CreateChildConfiguration("A"));
+	a->Initialize();
+
+	conf.OnConfigurationChanged();
+
+	a = nullptr;
 
 	return 0;
 }

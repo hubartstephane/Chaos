@@ -52,6 +52,9 @@ class ObjectConfiguration : public chaos::Object
 {
 public:
 
+	/** destructor */
+	virtual ~ObjectConfiguration();
+
 	/** create a child configuration */
 	ObjectConfiguration* CreateChildConfiguration(std::string_view key);
 	/** set the configurable for this object */
@@ -69,6 +72,9 @@ protected:
 
 	void PropagateNotifications();
 
+	/** called whenever a child is being destroyed */
+	void OnChildConfigDestroyed(ObjectConfiguration* child);
+
 protected:
 
 	/** the json node to read info from */
@@ -77,30 +83,51 @@ protected:
 	nlohmann::json * write_config = nullptr;
 
 	/** the parent configuration */
-	chaos::weak_ptr<ObjectConfiguration> parent_config;
+	chaos::weak_ptr<ObjectConfiguration> parent_configuration;
 	/** the path from parent to this configuration */
 	std::string key;
 	/** the children configurations */
-	std::vector<chaos::weak_ptr<ObjectConfiguration>> child_configs;
+	std::vector<chaos::weak_ptr<ObjectConfiguration>> child_configurations;
 	/** the configurable object owning this */
 	chaos::weak_ptr<chaos::Object> configurable_object;
+
+	/** whether the configuration is being updated */
+	bool update_in_progress = false;
+		/** whether the configuration is being updated */
+	bool pending_child_destroy = false;
 };
 
 // ---------------------------------------------------------------------
 
+ObjectConfiguration::~ObjectConfiguration()
+{
+	if (parent_configuration != nullptr)
+		parent_configuration->OnChildConfigDestroyed(this);
+}
 
+void ObjectConfiguration::OnChildConfigDestroyed(ObjectConfiguration* child)
+{
+	assert(child != nullptr);
+	assert(child->parent_configuration == this);
+	if (update_in_progress)
+		pending_child_destroy = true;
+	else
+	{
+		//child_configurations.
 
+	}
 
+}
 
 ObjectConfiguration* ObjectConfiguration::CreateChildConfiguration(std::string_view key)
 {
 	if (ObjectConfiguration* result = new ObjectConfiguration)
 	{
-		result->parent_config = this;
+		result->parent_configuration = this;
 		result->key = key;
 		result->UpdateFromParent();
 
-		child_configs.push_back(result);
+		child_configurations.push_back(result);
 
 		return result;
 	}
@@ -122,7 +149,7 @@ void ObjectConfiguration::SetConfigurable(chaos::Object* in_configurable_object)
 
 void ObjectConfiguration::OnConfigurationChanged()
 {
-	assert(parent_config == nullptr); // should only be called for top level configuration
+	assert(parent_configuration == nullptr); // should only be called for top level configuration
 	PropagateUpdates();
 	PropagateNotifications();
 }
@@ -136,18 +163,18 @@ void ObjectConfiguration::TriggerChangeNotification()
 
 void ObjectConfiguration::UpdateFromParent()
 {
-	read_config = (parent_config != nullptr && parent_config->read_config != nullptr) ?
-		chaos::JSONTools::GetStructureByPath(*parent_config->read_config, key) :
+	read_config = (parent_configuration != nullptr && parent_configuration->read_config != nullptr) ?
+		chaos::JSONTools::GetStructureByPath(*parent_configuration->read_config, key) :
 		nullptr;
-	write_config = (parent_config != nullptr && parent_config->write_config != nullptr) ?
-		chaos::JSONTools::GetOrCreateStructureByPath(*parent_config->write_config, key) :
+	write_config = (parent_configuration != nullptr && parent_configuration->write_config != nullptr) ?
+		chaos::JSONTools::GetOrCreateStructureByPath(*parent_configuration->write_config, key) :
 		nullptr;
 }
 
 void ObjectConfiguration::PropagateUpdates()
 {
 	UpdateFromParent();
-	for (chaos::weak_ptr<ObjectConfiguration>& child : child_configs)
+	for (chaos::weak_ptr<ObjectConfiguration>& child : child_configurations)
 		if (child != nullptr)
 			child->PropagateUpdates();
 }
@@ -155,7 +182,7 @@ void ObjectConfiguration::PropagateUpdates()
 void ObjectConfiguration::PropagateNotifications()
 {
 	TriggerChangeNotification();
-	for (chaos::weak_ptr<ObjectConfiguration>& child : child_configs)
+	for (chaos::weak_ptr<ObjectConfiguration>& child : child_configurations)
 		if (child != nullptr)
 			child->PropagateNotifications();
 }

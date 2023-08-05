@@ -53,3 +53,4 @@
 #include "chaos/Core/PriorityQueue.h"
 #include "chaos/Core/NestedIterator.h"
 #include "chaos/Core/LoggerImGuiContent.h"
+#include "chaos/Core/ConfigurableInterface.h"

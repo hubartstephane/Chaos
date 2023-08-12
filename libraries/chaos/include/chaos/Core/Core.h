@@ -17,6 +17,7 @@
 #include "chaos/Core/PathTools.h"
 #include "chaos/Core/JSONRecursiveLoader.h"
 #include "chaos/Core/JSONSerializableInterface.h"
+#include "chaos/Core/JSONConfiguration.h"
 #include "chaos/Core/AutoCast.h"
 #include "chaos/Core/SmartPointers.h"
 #include "chaos/Core/Class.h"

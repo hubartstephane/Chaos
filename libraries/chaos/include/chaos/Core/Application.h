@@ -59,13 +59,13 @@ namespace chaos
 		template<typename ...PARAMS>
 		nlohmann::json const* GetPersistentDataStructure(PARAMS && ...params) const
 		{ 
-			return JSONTools::GetStructureByPath(persistent_data, std::forward<PARAMS>(params)...);
+			return JSONTools::GetStructure(persistent_data, std::forward<PARAMS>(params)...);
 		}
 		/** get the persistent data (writeable) */
 		template<typename ...PARAMS>
 		nlohmann::json * GetOrCreatePersistentDataStructure(PARAMS && ...params) const
 		{
-			return JSONTools::GetOrCreateStructureByPath(persistent_data, std::forward<PARAMS>(params)...);
+			return JSONTools::GetOrCreateStructure(persistent_data, std::forward<PARAMS>(params)...);
 		}
 		/** get the persistent data file path */
 		boost::filesystem::path GetPersistentDataPath() const;

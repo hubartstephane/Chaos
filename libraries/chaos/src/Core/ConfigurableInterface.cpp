@@ -76,10 +76,10 @@ namespace chaos
 	void ObjectConfiguration::UpdateFromParent()
 	{
 		read_config = (parent_configuration != nullptr && parent_configuration->read_config != nullptr) ?
-			JSONTools::GetStructureByPath(*parent_configuration->read_config, key) :
+			JSONTools::GetStructure(*parent_configuration->read_config, key) :
 			nullptr;
 		write_config = (parent_configuration != nullptr && parent_configuration->write_config != nullptr) ?
-			JSONTools::GetOrCreateStructureByPath(*parent_configuration->write_config, key) :
+			JSONTools::GetOrCreateStructure(*parent_configuration->write_config, key) :
 			nullptr;
 	}
 

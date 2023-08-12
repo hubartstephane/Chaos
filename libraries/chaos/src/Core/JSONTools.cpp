@@ -21,7 +21,7 @@ namespace chaos
 		return SaveIntoJSON(json, src.string());
 	}
 
-	bool LoadFromJSON(nlohmann::json const & entry, bool & dst)
+	bool LoadFromJSON(nlohmann::json const& entry, bool& dst)
 	{
 		try
 		{
@@ -48,27 +48,31 @@ namespace chaos
 
 	namespace JSONTools
 	{
-		nlohmann::json* GetStructure(nlohmann::json& entry, char const* name)
+		namespace details
 		{
-			if (entry.is_object())
+			nlohmann::json* GetStructureInternal(nlohmann::json& entry, char const* name)
 			{
-				auto it = entry.find(name);
-				if (it != entry.end() && it->is_structured())
-					return &*it;
+				if (entry.is_object())
+				{
+					auto it = entry.find(name);
+					if (it != entry.end() && it->is_structured())
+						return &*it;
+				}
+				return nullptr;
 			}
-			return nullptr;
-		}
 
-		nlohmann::json const* GetStructure(nlohmann::json const& entry, char const* name)
-		{
-			if (entry.is_object())
+			nlohmann::json const* GetStructureInternal(nlohmann::json const& entry, char const* name)
 			{
-				auto it = entry.find(name);
-				if (it != entry.end() && it->is_structured())
-					return &*it;
+				if (entry.is_object())
+				{
+					auto it = entry.find(name);
+					if (it != entry.end() && it->is_structured())
+						return &*it;
+				}
+				return nullptr;
 			}
-			return nullptr;
-		}
+
+		}; // namespace details
 
 		nlohmann::json* GetStructureByIndex(nlohmann::json& entry, size_t index)
 		{
@@ -100,7 +104,7 @@ namespace chaos
 				result = nlohmann::json::parse(buffer);
 				return true;
 			}
-			catch (std::exception & error)
+			catch (std::exception& error)
 			{
 				char const* error_string = error.what();
 				return false;
@@ -120,7 +124,7 @@ namespace chaos
 
 		bool LoadJSONFile(FilePathParam const& path, nlohmann::json& result, LoadFileFlag flag)
 		{
-			if (int(flag & LoadFileFlag::RECURSIVE) != 0)
+			if ((flag & LoadFileFlag::RECURSIVE) != LoadFileFlag::NONE)
 			{
 				JSONRecursiveLoader loader;
 				return loader.LoadJSONFile(path, result, flag);
@@ -140,7 +144,7 @@ namespace chaos
 			}
 		}
 
-		bool SaveJSONToFile(nlohmann::json const& json, FilePathParam const & path)
+		bool SaveJSONToFile(nlohmann::json const& json, FilePathParam const& path)
 		{
 			std::ofstream stream(path.GetResolvedPath().c_str());
 			if (stream)

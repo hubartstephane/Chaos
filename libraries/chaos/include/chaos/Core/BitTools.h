@@ -44,14 +44,48 @@ namespace chaos
 
 #endif // _WIN64
 
+		template<bool FORWARD, typename T, typename FUNC>
+		auto ForEachBit(T value, FUNC const& func)
+		{
+			while (value != 0)
+			{
+				T bit = 0;
+
+				if constexpr (FORWARD)
+					bit = BitTools::bsf(value);
+				else
+					bit = BitTools::bsr(value);
+
+				if constexpr (std::is_convertible_v<bool, decltype(func(0))>)
+				{
+					if (func(bit))
+						return true;
+				}
+				else
+				{
+					func(bit);
+				}
+				value &= ~(1 << bit);
+			}
+
+			if constexpr (std::is_convertible_v<bool, decltype(func(0))>)
+				return false;
+		}
+
+		template<typename T, typename FUNC>
+		auto ForEachBitForward(T value, FUNC const& func)
+		{
+			return ForEachBit<true>(value, func);
+		}
+
+		template<typename T, typename FUNC>
+		auto ForEachBitReverse(T value, FUNC const& func)
+		{
+			return ForEachBit<false>(value, func);
+		}
+
 #endif
 
 	}; // namespace BitTools
 
 }; // namespace chaos
-
-
-
-
-
-

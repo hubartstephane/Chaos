@@ -44,6 +44,14 @@ namespace chaos
 
 #endif // _WIN64
 
+		template<typename T>
+		T SetBit(T src, T bit_index, bool bit_value)
+		{
+			return (bit_value)?
+				src | (1 << bit_index):
+				src & ~(1 << bit_index);
+		}
+
 		template<bool FORWARD, typename T, typename FUNC>
 		auto ForEachBit(T value, FUNC const& func)
 		{

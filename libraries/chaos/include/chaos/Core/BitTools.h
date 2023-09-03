@@ -45,51 +45,54 @@ namespace chaos
 #endif // _WIN64
 
 		template<typename T>
-		T SetBit(T src, T bit_index, bool bit_value)
+		T SetBit(T src, T bit_index, bool value)
 		{
-			return (bit_value)?
+			return (value)?
 				src | (1 << bit_index):
 				src & ~(1 << bit_index);
 		}
 
-		template<bool FORWARD, typename T, typename FUNC>
-		auto ForEachBit(T value, FUNC const& func)
+		template<bool FORWARD, std::integral T, typename FUNC>
+		decltype(auto) ForEachBit(T bitfield, FUNC const& func)
 		{
-			while (value != 0)
+			using result_type = decltype(func(0));
+
+			constexpr bool convertible_to_bool = std::is_convertible_v<result_type, bool>;
+
+			while (bitfield != 0)
 			{
-				T bit = 0;
-
+				T bit;
 				if constexpr (FORWARD)
-					bit = BitTools::bsf(value);
+					bit = BitTools::bsf(bitfield);
 				else
-					bit = BitTools::bsr(value);
+					bit = BitTools::bsr(bitfield);
 
-				if constexpr (std::is_convertible_v<bool, decltype(func(0))>)
+				if constexpr (convertible_to_bool)
 				{
-					if (func(bit))
-						return true;
+					if (auto result = func(bit))
+						return result;
 				}
 				else
 				{
 					func(bit);
 				}
-				value &= ~(1 << bit);
+				bitfield &= ~(1 << bit);
 			}
 
-			if constexpr (std::is_convertible_v<bool, decltype(func(0))>)
-				return false;
+			if constexpr (convertible_to_bool)
+				return result_type();
 		}
 
-		template<typename T, typename FUNC>
-		auto ForEachBitForward(T value, FUNC const& func)
+		template<std::integral T, typename FUNC>
+		decltype(auto) ForEachBitForward(T bitfield, FUNC const& func)
 		{
-			return ForEachBit<true>(value, func);
+			return ForEachBit<true>(bitfield, func);
 		}
 
-		template<typename T, typename FUNC>
-		auto ForEachBitReverse(T value, FUNC const& func)
+		template<std::integral T, typename FUNC>
+		decltype(auto) ForEachBitReverse(T bitfield, FUNC const& func)
 		{
-			return ForEachBit<false>(value, func);
+			return ForEachBit<false>(bitfield, func);
 		}
 
 #endif

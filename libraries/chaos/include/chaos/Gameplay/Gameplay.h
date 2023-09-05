@@ -34,4 +34,5 @@
 #include "chaos/Gameplay/SoundContext.h"
 #include "chaos/Gameplay/GameGettersDecl.h"
 #include "chaos/Gameplay/GameGettersImpl.h"
+#include "chaos/Gameplay/Tree27.h"
 #include "chaos/Gameplay/TM/TM.h"

@@ -72,7 +72,7 @@ namespace chaos
 
 	// base template
 	template<typename T, int dimension>
-	class /*CHAOS_API*/ type_rotator;
+	class /*CHAOS_API*/ type_rotator : public boost::mpl::identity<void> {};
 	// specialization
 	template<>
 	class /*CHAOS_API*/ type_rotator<float, 2> : public boost::mpl::identity<float> {};
@@ -102,9 +102,9 @@ namespace chaos
 		/** the type for matrix */
 		using mat_type = glm::tmat4x4<T, glm::highp>;
 		/** the type of vector */
-		using vec_type = glm::tvec2<type>;
+		using vec_type = glm::vec<dimension, type>;
 		/** the type of plane */
-		using plane_type = glm::tvec3<type>;
+		using plane_type = glm::vec<dimension + 1, type>;
 		/** the type of rotator */
 		using rot_type = typename type_rotator<type, dimension>::type;
 		/** the type of ray */
@@ -133,9 +133,9 @@ namespace chaos
 		/** the type for matrix */
 		using mat_type = glm::tmat4x4<T, glm::defaultp>;
 		/** the type of vector */
-		using vec_type = glm::tvec3<type>;
+		using vec_type = glm::vec<dimension, type>;
 		/** the type of plane */
-		using plane_type = glm::tvec4<type>;
+		using plane_type = glm::vec<dimension + 1, type>;
 		/** the type of rotator */
 		using rot_type = typename type_rotator<type, dimension>::type;
 		/** the type of ray */

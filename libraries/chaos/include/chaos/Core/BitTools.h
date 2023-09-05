@@ -52,7 +52,7 @@ namespace chaos
 				src & ~(1 << bit_index);
 		}
 
-		template<bool FORWARD, std::integral T, typename FUNC>
+		template<bool FORWARD = true, std::integral T, typename FUNC>
 		decltype(auto) ForEachBit(T bitfield, FUNC const& func)
 		{
 			using result_type = decltype(func(0));

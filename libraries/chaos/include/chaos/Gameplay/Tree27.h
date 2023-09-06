@@ -21,31 +21,44 @@ namespace chaos
 	// |                 |                                                 |                 |                      Node 1                     |       A         |
 	// |                 |                           1/6         1/3       |  1/6            |                                                 |                 |
 	// |                 |                        o<-----><--------------->|<----->o         |                                                 |                 |
-	// |                 |                        Distance between sibling's centers                                           1/3 * 3 (overlaps Level N + 1)    |
-	// |                 |                                                 |                                <...................................................>|
-	// |                                                                                                   +-----------------------------------------------------+--------------------------+--------------------------------------------------------------------------------+
-	// |                                                                                                   |                                     width = 1                                                                                                                   |
-	// |                                                                                                   |                  <...............................................>                                                                                              |
-	// |                                                                                                   |                                                                             Ensure Node 1 & Node 2 overlaps by 1/3                                              |
-	// |                                                                                                   |                 +------------------------+------------------------+                                                                                             |
-	// |                                                                                                   |       1/3       |                                                 |         (Node 1 & Node 2 have sibling parents)                                              |
-	// |                                                                                                   |<...............>|                     Node 2                      |                                                                                             |
-	// |                                                                                                   |        B        |                                                 |         A + B + C = 1/3 * 3                                                                 |
-	// |                                                                                                   |                 |       1/3                                       |                                                                                             |
-	// |                                                                                                   |                 |<...............>                                |         => C = 1/3      CQFD !                                                              |
-	// |                                                                                                   |                 |        C                                        |                                                                                             |
-	// |                                                                                                   |                 |                                                 |                                                                                             |// 
-	//
+	// |                 |                        Distance between sibling's centers         |                                 1/3 * 3 (overlaps Level N + 1)    |
+	// |                 |                                                 |                 |              <...................................................>|
+	// |                                                                                     |             +-----------------------------------------------------+--------------------------+--------------------------------------------------------------------------------+
+	// |                                                                                     |             |                                     width = 1                                                                                                                   |
+	// |                                                                                     |             |                  <...............................................>                                                                                              |
+	// |                                                                                     |             |                                                                             Ensure Node 1 & Node 2 overlaps by 1/3                                              |
+	// |                                                                                     |             |                 +------------------------+------------------------+                                                                                             |
+	// |                                                                                     |             |       1/3       |                                                 |         (Node 1 & Node 2 have sibling parents)                                              |
+	// |                                                                                     |             |<...............>|                     Node 2                      |                                                                                             |
+	// |                                                                                     |             |        B        |                                                 |         A + B + C = 1/3 * 3                                                                 |
+	// |                                                                                     |             |                 |       1/3       |                               |                                                                                             |
+	// |                                                                                     |             |                 |<...............>|                               |         => C = 1/3      CQFD !                                                              |
+	// |                                                                                     |             |                 |        C        |                               |                                                                                             |
+	// |                                                                                     |             |                 |                 |                               |                                                                                             |
+	// |                                                                                     |                                                 |
+	// |                                                                                     |                                                 |
+	// |                                                                                     |                                                 |
+	// |                                                                                     +-------------------------------------------------+
+	// 
 	// Each node has 3 child nodes.
 	// The width of a child node is 1/3 its parent width
 	// Each node overlaps its siblings by 1/3 its width
 	// The distance between 2 siblings centers is 2/3 the width
+	// Whenever an object is to be inserted in the tree, we search the level whose node width is 3x greater than the object size
+	// (it fully fits inside 1 of the 3 sibling/overlapping nodes)
 	//
+	// Width(L) = pow(3, L)
 	//
+	// let Node(0)(L) be the node centered to the origin for level L
 	//
+	// Node(X)(L) contains Node(3X - 1)(L - 1)
+	//                     Node(3X)    (L - 1)
+	//                     Node(3X + 1)(L - 1)
 	//
+	// Distance Centers (L) = (2/3).Width(L)
 	//
-
+	// Left Corner (X)(L) =  (2/3).X.Width(L) - (1/2).Width(L)
+	//
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -59,17 +72,37 @@ namespace chaos
 				return 1;
 			return src * static_pow(src, exponent - 1);
 		}
+		/** compute log 3 */
+		float log3(float value);
+		/** compute pow 3 */
+		float pow3(float level);
 	};
-
 
 	template<int dimension>
 	class Tree27NodeInfo
 	{
 	public:
 
+		/** compute the bounding box of the node */
+		type_box<float, dimension> GetBox() const
+		{
+			type_box<float, dimension> result;
+
+			float width = details::pow3(float(level));
+
+			for (int i = 0; i < dimension; ++i)
+			{
+				result.half_size[i] = width * 0.5f;
+				result.position[i] = (2.0f / 3.0f) * float(position[i]) * width;
+			}
+			return result;
+		}
+
+	public:
+
 		/** the level in the hierarchy of this node */
 		int level = 0;
-		/** the position of this node in space */
+		/** the position of this node in space (indices) */
 		type_geometric<int, dimension>::vec_type position;
 	};
 
@@ -167,11 +200,44 @@ namespace chaos
 	};
 
 	template<int dimension>
-	Tree27NodeInfo<dimension> ComputeTreeNodeInfo(typename type_geometric<float, dimension>::box_type const& box)
+	Tree27NodeInfo<dimension> ComputeTreeNodeInfo(type_box<float, dimension> const& box)
 	{
 		Tree27NodeInfo<dimension> result;
 
+		// get size to take into account
+		float box_size = 2.0f * GLMTools::GetMaxComponent(box.half_size);
+		if (box_size == 0.0f)
+			box_size = 1.0f;  // any object that have size 0, is considered has size = 1
 
+		// compute level:
+
+		// size <= pow(3, L) / 3
+		// size <= pow(3, L - 1)
+		// log3(size) <= L - 1
+		//
+		// L >= ceilf(log3(size) + 1)
+
+		result.level = int(std::ceil(details::log3(box_size) + 1.0f));
+
+		// compute node position:
+
+		// obj_left_position >= node_left_position
+		//
+		// obj_left_position >= (2/3).width(L).X - (1/2).width(L)
+		// 
+		// (2/3).L.X <= obj_left_position + (1/2).width(L)
+		//
+		//             obj_left_position + (1/2).width(L)
+		// X = floor[ -----------------------------------]
+		//                       (2/3).width(L)
+
+		float widthL = details::pow3(float(result.level));
+		float denum = (2.0f / 3.0f) * widthL;
+		for (int i = 0; i < dimension; ++i)
+		{
+			float num   = (box.position[i] - box.half_size[i]) + (1.0f / 2.0f) * widthL;
+			result.position[i] = int(std::floor(num / denum));
+		}
 
 		return result;
 	}
@@ -200,6 +266,23 @@ namespace chaos
 			}
 		}
 
+		/** add a node for a given object */
+		node_type* AddNodeFor(type_box<float, dimension> const& box)
+		{
+			Tree27NodeInfo<dimension> node_info = ComputeTreeNodeInfo(box);
+
+
+
+
+
+
+
+			return nullptr;
+		}
+
+
+
+		/** visit the tree */
 		template<bool DEPTH_FIRST = false, typename FUNC>
 		decltype(auto) ForEachNode(FUNC const& func)
 		{

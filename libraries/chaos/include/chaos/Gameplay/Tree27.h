@@ -84,7 +84,7 @@ namespace chaos
 	public:
 
 		/** compute the bounding box of the node */
-		type_box<float, dimension> GetBox() const
+		type_box<float, dimension> GetBoundingBox() const
 		{
 			type_box<float, dimension> result;
 
@@ -106,13 +106,68 @@ namespace chaos
 		type_geometric<int, dimension>::vec_type position;
 	};
 
+	template<int dimension>
+	bool operator == (Tree27NodeInfo<dimension> const& src1, Tree27NodeInfo<dimension> const& src2)
+	{
+		return (src1.level == src2.level) && (src1.position == src2.position);
+	}
+
 	template<int dimension, typename PARENT>
 	class Tree27Node : public PARENT
 	{
+		template<int dimension, typename PARENT>
+		friend class Tree27;
+
 	public:
 
 		/** the number of children this node has */
 		static constexpr size_t children_count = details::static_pow(3, dimension);
+
+		using node_info_type = Tree27NodeInfo<dimension>;
+
+		/** check whether node has a no child */
+		bool HasChild() const
+		{
+			return (existing_children != 0);
+		}
+
+		/** check whether node has a single child */
+		bool HasSingleChild() const
+		{
+			return MathTools::IsPowerOf2(existing_children); // a single bit is 1 in the mask
+		}
+
+		/** check whether node is used */
+		bool IsUseful() const
+		{
+			return PARENT::IsUseful();
+		}
+
+		/** gets the node info */
+		node_info_type GetNodeInfo() const
+		{
+			return info;
+		}
+
+		/** gets the node info */
+		type_box<float, dimension> GetBoundingBox() const
+		{
+			return info.GetBoundingBox();
+		}
+
+		/** gets the parent */
+		Tree27Node const* GetParentNode() const
+		{
+			return parent;
+		}
+
+		/** gets the parent */
+		Tree27Node* GetParentNode()
+		{
+			return parent;
+		}
+
+	protected:
 
 		/** constructor */
 		Tree27Node()
@@ -137,20 +192,8 @@ namespace chaos
 			existing_children = 0;
 		}
 
-		/** check whether node has a no child */
-		bool HasChild() const
-		{
-			return (existing_children != nullptr);
-		}
-
-		/** check whether node has a single child */
-		bool HasSingleChild() const
-		{
-			return MathTools::IsPowerOf2(existing_children); // a single bit is 1 in the mask
-		}
-
 		/** if the node has a single child, extract it and return it */
-		Tree27Node * ExtractSingleChildNode() const
+		Tree27Node * ExtractSingleChildNode()
 		{
 			if (HasSingleChild())
 			{
@@ -160,12 +203,6 @@ namespace chaos
 				return result;
 			}
 			return nullptr;
-		}
-
-		/** check whether node is used */
-		bool IsUseful() const
-		{
-			return PARENT::IsUseful();
 		}
 
 		/** set a child for a given index */
@@ -185,7 +222,7 @@ namespace chaos
 			}
 			// insert new child
 			children[index] = child;
-			existing_children.SetBit(index, child != nullptr);
+			existing_children = BitTools::SetBit(existing_children, index, child != nullptr);
 		}
 
 		/** recursively visit all children */
@@ -235,7 +272,7 @@ namespace chaos
 				return result_type();
 		}
 
-	public:
+	protected:
 
 		/** the node information */
 		Tree27NodeInfo<dimension> info;
@@ -300,6 +337,8 @@ namespace chaos
 
 		/** the type for nodes */
 		using node_type = Tree27Node<dimension, NODE_PARENT>;
+		/** the type for nodes info */
+		using node_info_type = Tree27NodeInfo<dimension>;
 
 		/** destructor */
 		~Tree27()
@@ -320,7 +359,7 @@ namespace chaos
 		/** add a node for a given object */
 		node_type* AddNode(type_box<float, dimension> const& box)
 		{
-			Tree27NodeInfo<dimension> node_info = ComputeTreeNodeInfo(box);
+			node_info_type node_info = ComputeTreeNodeInfo(box);
 
 
 
@@ -350,7 +389,7 @@ namespace chaos
 			// removing non root node
 			else
 			{
-				Tree27Node* parent_node = node->parent; // keep a copy of parent before SetChild(...) reset some members
+				node_type * parent_node = node->parent; // keep a copy of parent before SetChild(...) reset some members
 				parent_node->SetChild(node->index_in_parent, node->ExtractSingleChildNode());
 				TrySimplifyNode(parent_node); // maybe parent node has become useless
 			}
@@ -373,6 +412,18 @@ namespace chaos
 
 			if constexpr (convertible_to_bool)
 				return result_type();
+		}
+
+		/** returns the root */
+		node_type* GetRootNode()
+		{
+			return root;
+		}
+
+		/** returns the root */
+		node_type const * GetRootNode() const
+		{
+			return root;
 		}
 
 	protected:

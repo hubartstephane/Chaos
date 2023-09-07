@@ -137,6 +137,57 @@ namespace chaos
 			existing_children = 0;
 		}
 
+		/** check whether node has a no child */
+		bool HasChild() const
+		{
+			return (existing_children != nullptr);
+		}
+
+		/** check whether node has a single child */
+		bool HasSingleChild() const
+		{
+			return MathTools::IsPowerOf2(existing_children); // a single bit is 1 in the mask
+		}
+
+		/** if the node has a single child, extract it and return it */
+		Tree27Node * ExtractSingleChildNode() const
+		{
+			if (HasSingleChild())
+			{
+				int index = BitTools::bsf(existing_children);
+				Tree27Node* result = children[index];
+				SetChild(index, nullptr);
+				return result;
+			}
+			return nullptr;
+		}
+
+		/** check whether node is used */
+		bool IsUseful() const
+		{
+			return PARENT::IsUseful();
+		}
+
+		/** set a child for a given index */
+		void SetChild(int index, Tree27Node* child)
+		{
+			// update previous child
+			if (Tree27Node* previous_child = children[index])
+			{
+				previous_child->parent = nullptr;
+				previous_child->index_in_parent = 0;
+			}
+			// update new child members
+			if (child != nullptr)
+			{
+				child->parent = this;
+				child->index_in_parent = index;
+			}
+			// insert new child
+			children[index] = child;
+			existing_children.SetBit(index, child != nullptr);
+		}
+
 		/** recursively visit all children */
 		template<bool DEPTH_FIRST = false, typename FUNC>
 		auto ForEachNode(FUNC const& func) -> boost::mpl::if_c<std::is_convertible_v<decltype(func(0)), bool>, decltype(func(0)), void>::type
@@ -267,7 +318,7 @@ namespace chaos
 		}
 
 		/** add a node for a given object */
-		node_type* AddNodeFor(type_box<float, dimension> const& box)
+		node_type* AddNode(type_box<float, dimension> const& box)
 		{
 			Tree27NodeInfo<dimension> node_info = ComputeTreeNodeInfo(box);
 
@@ -280,7 +331,35 @@ namespace chaos
 			return nullptr;
 		}
 
+		/** try to simplify a node (if possible and have at most one child) */
+		bool TrySimplifyNode(node_type * node)
+		{
+			assert(node != nullptr);
 
+			// more than one child: cannot simplify
+			if (node->HasChild() && !node->HasSingleChild())
+				return false;
+			// node still useful: cannot simplify
+			if (node->IsUseful())
+				return false;
+			// removing the root
+			if (node->parent == nullptr)
+			{
+				root = node->ExtractSingleChildNode();
+			}
+			// removing non root node
+			else
+			{
+				Tree27Node* parent_node = node->parent; // keep a copy of parent before SetChild(...) reset some members
+				parent_node->SetChild(node->index_in_parent, node->ExtractSingleChildNode());
+				TrySimplifyNode(parent_node); // maybe parent node has become useless
+			}
+
+			// delete the useless node
+			delete(node);
+
+			return true;
+		}
 
 		/** visit the tree */
 		template<bool DEPTH_FIRST = false, typename FUNC>

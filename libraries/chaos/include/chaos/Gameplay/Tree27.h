@@ -49,17 +49,56 @@ namespace chaos
 	//
 	// Width(L) = pow(3, L)
 	//
+	// Distance Centers (L) = (2/3).Width(L)
+	//
+	// Left Corner (X)(L) =  (2/3).X.Width(L) - (1/2).Width(L)
+	//
 	// let Node(0)(L) be the node centered to the origin for level L
 	//
 	// Node(X)(L) contains Node(3X - 1)(L - 1)
 	//                     Node(3X)    (L - 1)
 	//                     Node(3X + 1)(L - 1)
 	//
-	// Distance Centers (L) = (2/3).Width(L)
+	// The following table shows how children belongs to Node(X)(0) 
+	// 
+	// L = 0  | x
+	// -------+-------------------------------
+	// L = -1 | 3x +/- 1
+	// -------+-------------------------------
+	// L = -2 | 3[3x +/- 1] +/- 1
+	//        | = 9x +/- (3 + 1) 
+	// -------+-------------------------------
+	// L = -3 | 3[9x +/- (3 + 1)] +/- 1
+	//        | = 27x +/- (9 + 3 + 1) 
+	// -------+-------------------------------
+	// L = -4 | 3[27x +/- (9 + 3 + 1)] +/- 1
+	//        | = 81x +- (27 + 9 + 3 + 1)    <--- 27 + 9 + 3 + 1 is the sum of a geometric serie
+	// -------+-------------------------------
+	//        |                    [pow(3, L) - 1]
+	//   -L   | = pow(3, L).x +/- -----------------
+	//        |                       [ 3 - 1 ]
 	//
-	// Left Corner (X)(L) =  (2/3).X.Width(L) - (1/2).Width(L)
+	//  pow(3, L) table
+	// 
+	//  0 | 1
+	//  1 | 3
+	//  2 | 9
+	//  3 | 27
+	//  4 | 81
+	//  5 | 243
+	//  6 | 729
+	//  7 | 2'187
+	//  8 | 6'561
+	//  9 | 19'683
+	// 10 | 59'049
+	// 11 | 177'147
+	// 12 | 531'441
+	// 13 | 1'594'323
+	// 14 | 4'782'969
+	// 15 | 14'348'907
 	//
-
+	// This is growing very fast. we should rarely use more than 10 levels
+	//
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	namespace details
@@ -73,23 +112,45 @@ namespace chaos
 			return src * static_pow(src, exponent - 1);
 		}
 		/** compute log 3 */
-		float log3(float value);
+		float log3(float src);
+		/** compute log 3 */
+		int log3i(int src);
 		/** compute pow 3 */
-		float pow3(float level);
+		float pow3(float src);
+		/** compute pow 3 */
+		int pow3i(int src);
 	};
 
-	template<int dimension>
+	template<int DIMENSION>
 	class Tree27NodeInfo
 	{
 	public:
 
-		/** compute the bounding box of the node */
-		type_box<float, dimension> GetBoundingBox() const
+		/** the dimension */
+		static constexpr int dimension = DIMENSION;
+		/** the type for vector */
+		using vec_type = type_geometric<int, dimension>::vec_type;
+		/** the type for box */
+		using box_type = type_box<float, dimension>;
+
+		/** gets info for one of the children */
+		Tree27NodeInfo GetChildNodeInfo(vec_type const & child_position) const
 		{
-			type_box<float, dimension> result;
+			assert(!glm::any(glm::greaterThan(child_position, vec_type(1.0f))));
+			assert(!glm::any(glm::lessThan(child_position, vec_type(-1.0f))));
+
+			Tree27NodeInfo result;
+			result.level = level - 1;
+			result.position = (position * 3) + child_position;
+			return result;
+		}
+
+		/** compute the bounding box of the node */
+		box_type GetBoundingBox() const
+		{
+			box_type result;
 
 			float width = details::pow3(float(level));
-
 			for (int i = 0; i < dimension; ++i)
 			{
 				result.half_size[i] = width * 0.5f;
@@ -98,31 +159,150 @@ namespace chaos
 			return result;
 		}
 
+		/** compute the range for possible descendants */
+		std::pair<vec_type, vec_type> GetDescendantRange(int sub_level) const // sub level is number of levels relatively to current level
+		{
+			assert(sub_level >= 0);
+
+			//        |                    [pow(3, L) - 1]
+			//   -L   | = pow(3, L).x +/- -----------------
+			//        |                       [ 3 - 1 ]
+
+			int p3 = details::pow3i(sub_level);
+
+			vec_type a = p3 * position;
+			vec_type b = vec_type((p3 - 1) / 2);
+
+			return std::make_pair(a - b, a + b);
+		}
+
+		/** gets the index in children corresponding to this info (-1 the node is not a descendant) */
+		int GetDescendantIndex(Tree27NodeInfo const& info)
+		{
+			// check for level
+			if (info.level >= level)
+				return -1;
+			// check whether the info is inside the descendant range
+			auto descendant_range = GetDescendantRange(level - info.level);
+			if (glm::any(glm::greaterThan(info.position, descendant_range.second)))
+				return -1;
+			if (glm::any(glm::lessThan(info.position, descendant_range.first)))
+				return -1;
+			// compute the central child range for info
+			auto central_child_range = GetChildNodeInfo(vec_type(0)).GetDescendantRange(level - info.level + 1);
+
+			vec_type descendant_position = vec_type(0);
+			for (int i = 0; i < dimension; ++i)
+			{
+				if (info.position[i] < central_child_range.first)
+					descendant_position = -1;
+				else if (info.position[i] < central_child_range.first)
+					descendant_position = -1;
+			}
+
+			if constexpr (dimension == 2)
+				return glm::dot(descendant_position, glm::ivec2(1, 3));
+			else if constexpr (dimension == 3)
+				return glm::dot(descendant_position, glm::ivec3(1, 3, 9));
+		}
+
 	public:
 
 		/** the level in the hierarchy of this node */
 		int level = 0;
 		/** the position of this node in space (indices) */
-		type_geometric<int, dimension>::vec_type position;
+		vec_type position;
 	};
 
-	template<int dimension>
-	bool operator == (Tree27NodeInfo<dimension> const& src1, Tree27NodeInfo<dimension> const& src2)
+	template<int DIMENSION>
+	bool operator == (Tree27NodeInfo<DIMENSION> const& src1, Tree27NodeInfo<DIMENSION> const& src2)
 	{
 		return (src1.level == src2.level) && (src1.position == src2.position);
 	}
 
-	template<int dimension, typename PARENT>
+	template<int DIMENSION>
+	Tree27NodeInfo<DIMENSION> ComputeTreeNodeInfo(type_box<float, DIMENSION> const& box)
+	{
+		Tree27NodeInfo<DIMENSION> result;
+
+		// get size to take into account
+		float box_size = 2.0f * GLMTools::GetMaxComponent(box.half_size);
+		if (box_size == 0.0f)
+			box_size = 1.0f;  // any object that have size 0, is considered has size = 1
+
+		// compute level:
+
+		// size <= pow(3, L) / 3
+		// size <= pow(3, L - 1)
+		// log3(size) <= L - 1
+		//
+		// L >= ceilf(log3(size) + 1)
+
+		result.level = int(std::ceil(details::log3(box_size) + 1.0f));
+
+		// compute node position:
+
+		// obj_left_position >= node_left_position
+		//
+		// obj_left_position >= (2/3).width(L).X - (1/2).width(L)
+		// 
+		// (2/3).L.X <= obj_left_position + (1/2).width(L)
+		//
+		//             obj_left_position + (1/2).width(L)
+		// X = floor[ -----------------------------------]
+		//                       (2/3).width(L)
+
+		float widthL = details::pow3(float(result.level));
+		float denum = (2.0f / 3.0f) * widthL;
+		for (int i = 0; i < DIMENSION; ++i)
+		{
+			float num = (box.position[i] - box.half_size[i]) + (1.0f / 2.0f) * widthL;
+			result.position[i] = int(std::floor(num / denum));
+		}
+
+		return result;
+	}
+
+	template<int DIMENSION>
+	Tree27NodeInfo<DIMENSION> ComputeCommonParent(Tree27NodeInfo<DIMENSION> info1, Tree27NodeInfo<DIMENSION> info2)
+	{
+		// ensure both nodes have the same level
+		if (info1.level < info2.level)
+		{
+			info1.position /= details::pow3i(info2.level - info1.level);
+			info1.level = info2.level;
+		}
+		else if (info2.level < info1.level)
+		{
+			info2.position /= details::pow3i(info1.level - info2.level);
+			info2.level = info1.level;
+		}
+
+		// go from parent to parent until they have the same position
+		while (info1.position != info2.position)
+		{
+			++info1.level;
+			++info2.level;
+			info1.position /= 3;
+			info2.position /= 3;
+		}
+
+		return info1;
+	}
+
+	template<int DIMENSION, typename PARENT>
 	class Tree27Node : public PARENT
 	{
-		template<int dimension, typename PARENT>
+		template<int DIMENSION, typename PARENT>
 		friend class Tree27;
 
 	public:
 
+		/** the dimension */
+		static constexpr int dimension = DIMENSION;
 		/** the number of children this node has */
-		static constexpr size_t children_count = details::static_pow(3, dimension);
-
+		static constexpr int children_count = details::static_pow(3, dimension);
+		/** the type for NodeInfo */
 		using node_info_type = Tree27NodeInfo<dimension>;
 
 		/** check whether node has a no child */
@@ -172,7 +352,7 @@ namespace chaos
 		/** constructor */
 		Tree27Node()
 		{
-			for (size_t i = 0; i < children_count; ++i)
+			for (int i = 0; i < children_count; ++i)
 				children[i] = nullptr;
 		}
 
@@ -287,58 +467,17 @@ namespace chaos
 
 	};
 
-	template<int dimension>
-	Tree27NodeInfo<dimension> ComputeTreeNodeInfo(type_box<float, dimension> const& box)
-	{
-		Tree27NodeInfo<dimension> result;
-
-		// get size to take into account
-		float box_size = 2.0f * GLMTools::GetMaxComponent(box.half_size);
-		if (box_size == 0.0f)
-			box_size = 1.0f;  // any object that have size 0, is considered has size = 1
-
-		// compute level:
-
-		// size <= pow(3, L) / 3
-		// size <= pow(3, L - 1)
-		// log3(size) <= L - 1
-		//
-		// L >= ceilf(log3(size) + 1)
-
-		result.level = int(std::ceil(details::log3(box_size) + 1.0f));
-
-		// compute node position:
-
-		// obj_left_position >= node_left_position
-		//
-		// obj_left_position >= (2/3).width(L).X - (1/2).width(L)
-		// 
-		// (2/3).L.X <= obj_left_position + (1/2).width(L)
-		//
-		//             obj_left_position + (1/2).width(L)
-		// X = floor[ -----------------------------------]
-		//                       (2/3).width(L)
-
-		float widthL = details::pow3(float(result.level));
-		float denum = (2.0f / 3.0f) * widthL;
-		for (int i = 0; i < dimension; ++i)
-		{
-			float num   = (box.position[i] - box.half_size[i]) + (1.0f / 2.0f) * widthL;
-			result.position[i] = int(std::floor(num / denum));
-		}
-
-		return result;
-	}
-
-	template<int dimension, typename NODE_PARENT>
+	template<int DIMENSION, typename NODE_PARENT>
 	class Tree27
 	{
 	public:
 
 		/** the type for nodes */
-		using node_type = Tree27Node<dimension, NODE_PARENT>;
+		using node_type = Tree27Node<DIMENSION, NODE_PARENT>;
 		/** the type for nodes info */
-		using node_info_type = Tree27NodeInfo<dimension>;
+		using node_info_type = Tree27NodeInfo<DIMENSION>;
+		/** the dimension */
+		static constexpr int dimension = DIMENSION;
 
 		/** destructor */
 		~Tree27()
@@ -361,13 +500,7 @@ namespace chaos
 		{
 			node_info_type node_info = ComputeTreeNodeInfo(box);
 
-
-
-
-
-
-
-			return nullptr;
+			return DoAddNode(node_info, root, nullptr, 0);
 		}
 
 		/** try to simplify a node (if possible and have at most one child) */
@@ -382,13 +515,15 @@ namespace chaos
 			if (node->IsUseful())
 				return false;
 			// removing the root
-			if (node->parent == nullptr)
+			if (root == node)
 			{
 				root = node->ExtractSingleChildNode();
 			}
 			// removing non root node
 			else
 			{
+				assert(node->parent != nullptr);
+
 				node_type * parent_node = node->parent; // keep a copy of parent before SetChild(...) reset some members
 				parent_node->SetChild(node->index_in_parent, node->ExtractSingleChildNode());
 				TrySimplifyNode(parent_node); // maybe parent node has become useless
@@ -402,7 +537,7 @@ namespace chaos
 
 		/** visit the tree */
 		template<bool DEPTH_FIRST = false, typename FUNC>
-		decltype(auto) ForEachNode(FUNC const& func)
+		decltype(auto) ForEachNode(FUNC const& func) const
 		{
 			using result_type = decltype(func(0));
 			constexpr bool convertible_to_bool = std::is_convertible_v<result_type, bool>;
@@ -424,6 +559,55 @@ namespace chaos
 		node_type const * GetRootNode() const
 		{
 			return root;
+		}
+
+	protected:
+
+		node_type* DoAddNode(node_info_type const & node_info, node_type* current_node, node_type * parent_node, int index_in_parent)
+		{
+			// the node to create is a leaf (it may be a root too)
+			if (current_node == nullptr)
+			{
+				return DoAddNodeToParent(node_info, parent_node, index_in_parent);
+			}
+			// the current node is the one searched
+			if (current_node->GetNodeInfo() == node_info)
+			{
+				return current_node;
+			}
+			// the current node contains the node we want to create
+			int child_index1 = current_node->GetNodeInfo()->GetDescendantIndex(node_info);
+			if (child_index1 >= 0)
+			{
+
+			}
+			// the current node is contained by the node we want to create
+			int child_index2 = node_info.GetDescendantIndex(current_node->GetNodeInfo());
+			if (child_index2 >= 0)
+			{
+
+			}
+			// must create a common parent for current node and new node
+
+
+
+
+
+			return nullptr;
+		}
+
+		node_type* DoAddNodeToParent(node_info_type const& node_info, node_type* parent_node, int index_in_parent)
+		{
+			if (node_type* result = new node_type)
+			{
+				result->info = node_info;
+				if (parent_node != nullptr)
+					parent_node->SetChild(index_in_parent, result);
+				else
+					root = result;
+				return result;
+			}
+			return nullptr;
 		}
 
 	protected:

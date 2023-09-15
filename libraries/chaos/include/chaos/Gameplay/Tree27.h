@@ -119,7 +119,16 @@ namespace chaos
 		float pow3(float src);
 		/** compute pow 3 */
 		int pow3i(int src);
+
+		/** a concept for node */
+		template<typename T>
+		concept Implement_IsUseful = requires(T t)
+		{
+			{t.IsUseful()} -> std::convertible_to<bool>;
+		};
 	};
+
+
 
 	template<int DIMENSION>
 	class Tree27NodeInfo
@@ -351,7 +360,9 @@ namespace chaos
 		/** check whether node is used */
 		bool IsUseful() const
 		{
-			return PARENT::IsUseful();
+			if constexpr (details::Implement_IsUseful<PARENT>)
+				return PARENT::IsUseful();
+			return false;
 		}
 
 		/** gets the node info */
@@ -620,11 +631,19 @@ namespace chaos
 				return result;
 			}
 			// must create a common parent for current node and new node
-			//node_info common_node_info = ComputeCommonParent(node_info, current_node->node_info);
+			node_info_type common_parent_info = ComputeCommonParent(node_info, current_node->GetNodeInfo());
 
+			if (node_type* common_parent = DoAddNodeToParent(common_parent_info, parent_node, index_in_parent))
+			{
+				int child_index3 = common_parent_info.GetDescendantIndex(current_node->GetNodeInfo());
+				assert(child_index3 >= 0);
+				common_parent->SetChild(child_index3, current_node);
 
-
-
+				int child_index4 = common_parent_info.GetDescendantIndex(node_info);
+				assert(child_index4 >= 0);
+				assert(child_index4 != child_index3);
+				return DoCreateNode(node_info, common_parent->children[child_index4], common_parent, child_index4);
+			}
 			return nullptr;
 		}
 

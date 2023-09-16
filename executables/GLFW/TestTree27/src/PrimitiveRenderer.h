@@ -69,11 +69,11 @@ public:
 
 	void GPUDrawPrimitive(chaos::sphere2 const & s, glm::vec4 const & color, bool is_translucent) const;
 
-	void GPUDrawPrimitive(chaos::box3 const & b, glm::vec4 const & color, bool is_translucent) const;
+	void GPUDrawPrimitive(chaos::box3 const & b, glm::vec4 const & color, bool is_translucent, bool is_wireframe) const;
 
 	void GPUDrawPrimitive(chaos::box2 const & b, glm::vec4 const & color, bool is_translucent) const;
 
-	void GPUDrawPrimitive(chaos::obox3 const & b, glm::vec4 const & color, bool is_translucent) const;
+	void GPUDrawPrimitive(chaos::obox3 const & b, glm::vec4 const & color, bool is_translucent, bool is_wireframe) const;
 
 	void GPUDrawPrimitive(chaos::obox2 const & b, glm::vec4 const & color, bool is_translucent) const;
 
@@ -105,6 +105,7 @@ public:
 
 	// the meshes
 	chaos::shared_ptr<chaos::GPUMesh> mesh_box;
+	chaos::shared_ptr<chaos::GPUMesh> mesh_wireframe_box;
 	chaos::shared_ptr<chaos::GPUMesh> mesh_triangle;
 	chaos::shared_ptr<chaos::GPUMesh> mesh_sphere;
 	chaos::shared_ptr<chaos::GPUMesh> mesh_circle;

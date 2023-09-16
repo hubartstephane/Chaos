@@ -73,7 +73,7 @@ protected:
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		object_tree.ForEachNode([this](chaos::Tree27<3, Tree27NodeBase>::node_type const* node)
 		{
-			primitive_renderer->GPUDrawPrimitive(node->GetBoundingBox(), white, false);
+			primitive_renderer->GPUDrawPrimitive(node->GetBoundingBox(), white, false, true);
 		});
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glEnable(GL_CULL_FACE);
@@ -265,16 +265,15 @@ protected:
 
 			if (moved)
 			{
-				auto new_node = object_tree.CreateNode(chaos::GetBoundingBox(current_object->sphere));
-				if (new_node != current_object->node)
-				{
-					// order is important
-					new_node->objects.push_back(current_object);
+				chaos::box3 new_box = chaos::GetBoundingBox(current_object->sphere);
 
+				if (chaos::ComputeTreeNodeInfo(new_box) != current_object->node->GetNodeInfo()) // changement required
+				{
 					current_object->node->objects.erase(std::ranges::find(current_object->node->objects, current_object));
 					object_tree.DeleteNodeIfPossible(current_object->node);
 
-					current_object->node = new_node;
+					current_object->node = object_tree.CreateNode(new_box);
+					current_object->node->objects.push_back(current_object);
 				}
 			}
 		}
@@ -303,7 +302,7 @@ protected:
 
 	float fast_scale_speed = 3.0f;
 
-	float camera_speed = 100.0f;
+	float camera_speed = 200.0f;
 
 	chaos::Tree27<3, Tree27NodeBase> object_tree;
 };

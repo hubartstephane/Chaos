@@ -29,25 +29,14 @@ bool PrimitiveRenderer::Initialize()
 	chaos::sphere2   c = chaos::sphere2(glm::vec2(0.0f, 0.0f), 1.0f);
 	chaos::sphere3   s = chaos::sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 
-#if 1
 	chaos::GPUMultiMeshGenerator generators;
 	generators.AddGenerator(new chaos::GPUSphereMeshGenerator(s, glm::mat4x4(1.0f), 30), mesh_sphere);
 	generators.AddGenerator(new chaos::GPUCircleMeshGenerator(c, glm::mat4x4(1.0f), 30), mesh_circle);
 	generators.AddGenerator(new chaos::GPUQuadMeshGenerator(b2), mesh_quad);
 	generators.AddGenerator(new chaos::GPUCubeMeshGenerator(b3), mesh_box);
 	generators.AddGenerator(new chaos::GPUTriangleMeshGenerator(t), mesh_triangle);
-
 	if (!generators.GenerateMeshes())
 		return false;
-#else
-
-	mesh_sphere = (new chaos::GPUSphereMeshGenerator(s, glm::mat4x4(1.0f), 30))->GenerateMesh();
-
-	mesh_circle = (new chaos::GPUCircleMeshGenerator(c, glm::mat4x4(1.0f), 30))->GenerateMesh();
-	mesh_quad = (new chaos::GPUQuadMeshGenerator(b2))->GenerateMesh();
-	mesh_box = (new chaos::GPUCubeMeshGenerator(b3))->GenerateMesh();
-	mesh_triangle = (new chaos::GPUTriangleMeshGenerator(t))->GenerateMesh();
-#endif
 	return true;
 }
 
@@ -277,5 +266,3 @@ void PrimitiveRenderer::GPUDrawPrimitive(glm::vec2 const & p, glm::vec4 const & 
 	glm::vec2 half_point_size(0.125f);
 	GPUDrawPrimitive(chaos::box2(p, half_point_size), color, is_translucent);
 }
-
-

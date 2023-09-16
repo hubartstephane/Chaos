@@ -28,7 +28,4 @@ build:ProcessSubPremake("Clocks")
 build:ProcessSubPremake("Sound3D")
 build:ProcessSubPremake("Spriter")
 build:ProcessSubPremake("ViewportWindow")
-
-
-
-
+build:ProcessSubPremake("TestTree27")

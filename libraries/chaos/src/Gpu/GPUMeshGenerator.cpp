@@ -13,75 +13,6 @@
 
 namespace chaos
 {
-
-	glm::vec2 const GPUQuadMeshGenerator::vertices[4] =
-	{
-		glm::vec2(-1.0f, -1.0f),
-		glm::vec2(1.0f, -1.0f),
-		glm::vec2(1.0f,  1.0f),
-		glm::vec2(-1.0f,  1.0f)
-	};
-
-	GLuint const GPUQuadMeshGenerator::triangles[6] =
-	{
-		0, 1, 2,
-		0, 2, 3
-	};
-
-	glm::vec3 const GPUCubeMeshGenerator::vertices[24 * 2] = // position + normal
-	{
-		glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
-		glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
-		glm::vec3(1.0f,  1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
-		glm::vec3(-1.0f,  1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
-
-		glm::vec3(-1.0f, -1.0f, +1.0f), glm::vec3(0.0f, 0.0f, +1.0f),
-		glm::vec3(1.0f, -1.0f, +1.0f), glm::vec3(0.0f, 0.0f, +1.0f),
-		glm::vec3(1.0f,  1.0f, +1.0f), glm::vec3(0.0f, 0.0f, +1.0f),
-		glm::vec3(-1.0f,  1.0f, +1.0f), glm::vec3(0.0f, 0.0f, +1.0f),
-
-		glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(-1.0f, 0.0f, 0.0f),
-		glm::vec3(-1.0f,  1.0f, -1.0f), glm::vec3(-1.0f, 0.0f, 0.0f),
-		glm::vec3(-1.0f,  1.0f,  1.0f), glm::vec3(-1.0f, 0.0f, 0.0f),
-		glm::vec3(-1.0f, -1.0f,  1.0f), glm::vec3(-1.0f, 0.0f, 0.0f),
-
-		glm::vec3(+1.0f, -1.0f, -1.0f), glm::vec3(+1.0f, 0.0f, 0.0f),
-		glm::vec3(+1.0f,  1.0f, -1.0f), glm::vec3(+1.0f, 0.0f, 0.0f),
-		glm::vec3(+1.0f,  1.0f,  1.0f), glm::vec3(+1.0f, 0.0f, 0.0f),
-		glm::vec3(+1.0f, -1.0f,  1.0f), glm::vec3(+1.0f, 0.0f, 0.0f),
-
-		glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f),
-		glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f),
-		glm::vec3(1.0f, -1.0f,  1.0f), glm::vec3(0.0f, -1.0f, 0.0f),
-		glm::vec3(-1.0f, -1.0f,  1.0f), glm::vec3(0.0f, -1.0f, 0.0f),
-
-		glm::vec3(-1.0f, +1.0f, -1.0f), glm::vec3(0.0f, +1.0f, 0.0f),
-		glm::vec3(1.0f, +1.0f, -1.0f), glm::vec3(0.0f, +1.0f, 0.0f),
-		glm::vec3(1.0f, +1.0f,  1.0f), glm::vec3(0.0f, +1.0f, 0.0f),
-		glm::vec3(-1.0f, +1.0f,  1.0f), glm::vec3(0.0f, +1.0f, 0.0f),
-	};
-
-	GLuint const GPUCubeMeshGenerator::triangles[36] =
-	{
-		0, 2, 1,
-		0, 3, 2,
-
-		4, 5, 6,
-		4, 6, 7,
-
-		8, 10,  9,
-		8, 11, 10,
-
-		12, 13, 14,
-		12, 14, 15,
-
-		16, 17, 18,
-		16, 18, 19,
-
-		20, 22, 21,
-		20, 23, 22
-	};
-
 	// =====================================================================
 	// GPUMeshGenerationRequirement
 	// =====================================================================
@@ -231,6 +162,20 @@ namespace chaos
 	// GPUQuadMeshGenerator
 	// =====================================================================
 
+	glm::vec2 const GPUQuadMeshGenerator::vertices[4] =
+	{
+		glm::vec2(-1.0f, -1.0f),
+		glm::vec2(1.0f, -1.0f),
+		glm::vec2(1.0f,  1.0f),
+		glm::vec2(-1.0f,  1.0f)
+	};
+
+	GLuint const GPUQuadMeshGenerator::triangles[6] =
+	{
+		0, 1, 2,
+		0, 2, 3
+	};
+
 	GPUMeshGenerationRequirement GPUQuadMeshGenerator::GetRequirement() const
 	{
 		GPUMeshGenerationRequirement result;
@@ -280,6 +225,60 @@ namespace chaos
 	// GPUCubeMeshGenerator
 	// =====================================================================
 
+	glm::vec3 const GPUCubeMeshGenerator::vertices[24 * 2] = // position + normal
+	{
+		glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
+		glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
+		glm::vec3(1.0f,  1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
+		glm::vec3(-1.0f,  1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
+
+		glm::vec3(-1.0f, -1.0f, +1.0f), glm::vec3(0.0f, 0.0f, +1.0f),
+		glm::vec3(1.0f, -1.0f, +1.0f), glm::vec3(0.0f, 0.0f, +1.0f),
+		glm::vec3(1.0f,  1.0f, +1.0f), glm::vec3(0.0f, 0.0f, +1.0f),
+		glm::vec3(-1.0f,  1.0f, +1.0f), glm::vec3(0.0f, 0.0f, +1.0f),
+
+		glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(-1.0f, 0.0f, 0.0f),
+		glm::vec3(-1.0f,  1.0f, -1.0f), glm::vec3(-1.0f, 0.0f, 0.0f),
+		glm::vec3(-1.0f,  1.0f,  1.0f), glm::vec3(-1.0f, 0.0f, 0.0f),
+		glm::vec3(-1.0f, -1.0f,  1.0f), glm::vec3(-1.0f, 0.0f, 0.0f),
+
+		glm::vec3(+1.0f, -1.0f, -1.0f), glm::vec3(+1.0f, 0.0f, 0.0f),
+		glm::vec3(+1.0f,  1.0f, -1.0f), glm::vec3(+1.0f, 0.0f, 0.0f),
+		glm::vec3(+1.0f,  1.0f,  1.0f), glm::vec3(+1.0f, 0.0f, 0.0f),
+		glm::vec3(+1.0f, -1.0f,  1.0f), glm::vec3(+1.0f, 0.0f, 0.0f),
+
+		glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f),
+		glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f),
+		glm::vec3(1.0f, -1.0f,  1.0f), glm::vec3(0.0f, -1.0f, 0.0f),
+		glm::vec3(-1.0f, -1.0f,  1.0f), glm::vec3(0.0f, -1.0f, 0.0f),
+
+		glm::vec3(-1.0f, +1.0f, -1.0f), glm::vec3(0.0f, +1.0f, 0.0f),
+		glm::vec3(1.0f, +1.0f, -1.0f), glm::vec3(0.0f, +1.0f, 0.0f),
+		glm::vec3(1.0f, +1.0f,  1.0f), glm::vec3(0.0f, +1.0f, 0.0f),
+		glm::vec3(-1.0f, +1.0f,  1.0f), glm::vec3(0.0f, +1.0f, 0.0f),
+	};
+
+	GLuint const GPUCubeMeshGenerator::triangles[36] =
+	{
+		0, 2, 1,
+		0, 3, 2,
+
+		4, 5, 6,
+		4, 6, 7,
+
+		8, 10,  9,
+		8, 11, 10,
+
+		12, 13, 14,
+		12, 14, 15,
+
+		16, 17, 18,
+		16, 18, 19,
+
+		20, 22, 21,
+		20, 23, 22
+	};
+
 	GPUMeshGenerationRequirement GPUCubeMeshGenerator::GetRequirement() const
 	{
 		GPUMeshGenerationRequirement result;
@@ -324,6 +323,83 @@ namespace chaos
 			vertices_writer << GLMTools::MultWithTranslation(transform, vertices[i * 2] * hs + p); // resize position
 			vertices_writer << GLMTools::Mult(transform, vertices[i * 2 + 1]);      // copy normal
 		}
+	}
+
+	// =====================================================================
+	// GPUWireframeCubeMeshGenerator
+	// =====================================================================
+
+	glm::vec3 const GPUWireframeCubeMeshGenerator::vertices[8] = // position
+	{
+		glm::vec3(-1.0f, -1.0f, -1.0f),
+		glm::vec3(-1.0f,  1.0f, -1.0f),
+		glm::vec3( 1.0f,  1.0f, -1.0f),
+		glm::vec3( 1.0f, -1.0f, -1.0f),
+
+		glm::vec3(-1.0f, -1.0f,  1.0f),
+		glm::vec3(-1.0f,  1.0f,  1.0f),
+		glm::vec3( 1.0f,  1.0f,  1.0f),
+		glm::vec3( 1.0f, -1.0f,  1.0f)
+	};
+
+	GLuint const GPUWireframeCubeMeshGenerator::indices[24] =
+	{
+		0, 1,
+		1, 2,
+		2, 3,
+		3, 0,
+
+		4, 5,
+		5, 6,
+		6, 7,
+		7, 4,
+
+		0, 4,
+		1, 5,
+		2, 6,
+		3, 7
+	};
+
+	GPUMeshGenerationRequirement GPUWireframeCubeMeshGenerator::GetRequirement() const
+	{
+		GPUMeshGenerationRequirement result;
+		result.vertex_size = sizeof(glm::vec3);
+		result.vertices_count = (sizeof(vertices) / sizeof(vertices[0]));
+		result.indices_count = (sizeof(indices) / sizeof(indices[0]));
+		return result;
+	}
+
+	GPUVertexDeclaration* GPUWireframeCubeMeshGenerator::GenerateVertexDeclaration() const
+	{
+		GPUVertexDeclaration* result = new GPUVertexDeclaration();
+		if (result != nullptr)
+		{
+			result->Push(VertexAttributeSemantic::POSITION, 0, VertexAttributeType::FLOAT3);
+		}
+		return result;
+	}
+
+	void GPUWireframeCubeMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive>& primitives, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const
+	{
+		// the primitives
+		GPUDrawPrimitive draw_primitive;
+		draw_primitive.count = sizeof(indices) / sizeof(indices[0]);
+		draw_primitive.indexed = true;
+		draw_primitive.primitive_type = GL_LINES;
+		draw_primitive.start = 0;
+		draw_primitive.base_vertex_index = 0;
+		primitives.push_back(draw_primitive);
+
+		// the indices
+		indices_writer.Write(indices, sizeof(indices));
+
+		// the vertices
+		glm::vec3 hs = primitive.half_size;
+		glm::vec3 p = primitive.position;
+
+		int const count = sizeof(vertices) / sizeof(vertices[0]);
+		for (int i = 0; i < count; ++i)
+			vertices_writer << GLMTools::MultWithTranslation(transform, vertices[i] * hs + p); // resize position
 	}
 
 	// =====================================================================

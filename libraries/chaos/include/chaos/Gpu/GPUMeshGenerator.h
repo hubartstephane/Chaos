@@ -11,6 +11,7 @@ namespace chaos
 	class GPUQuadMeshGenerator;
 	class GPUTriangleMeshGenerator;
 	class GPUCubeMeshGenerator;
+	class GPUWireframeCubeMeshGenerator;
 	class GPUCircleMeshGenerator;
 	class GPUSphereMeshGenerator;
 
@@ -154,6 +155,32 @@ namespace chaos
 		static glm::vec3 const vertices[24 * 2];
 		/** the triangles defining a cube */
 		static GLuint const triangles[36];
+	};
+
+	/**
+	* GPUWireframeCubeMeshGenerator : help defines cube mesh
+	*/
+
+	class CHAOS_API GPUWireframeCubeMeshGenerator : public GPUPrimitiveMeshGenerator<box3>
+	{
+
+	public:
+
+		using GPUPrimitiveMeshGenerator::GPUPrimitiveMeshGenerator;
+
+		/** get requirement */
+		virtual GPUMeshGenerationRequirement GetRequirement() const override;
+		/** get the vertex declaration */
+		virtual GPUVertexDeclaration* GenerateVertexDeclaration() const override;
+		/** get the mesh data */
+		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive>& primitives, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
+
+	protected:
+
+		/** the vertices defining a cube */
+		static glm::vec3 const vertices[8];
+		/** the indices defining a cube */
+		static GLuint const indices[24];
 	};
 
 	/**

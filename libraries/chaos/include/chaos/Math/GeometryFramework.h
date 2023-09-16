@@ -685,7 +685,7 @@ namespace chaos
 	template<typename T, int dimension>
 	/*CHAOS_API*/ bool operator == (type_sphere<T, dimension> const& c1, type_sphere<T, dimension> const& c2)
 	{
-		return (c1.position == c1.position) && (c1.radius == c2.radius);
+		return (c1.position == c2.position) && (c1.radius == c2.radius);
 	}
 
 	/** returns the perimeter of the circle */

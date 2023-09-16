@@ -56,6 +56,8 @@ namespace chaos
 			return (char*)position - (char*)buffer;
 		}
 
+	protected:
+
 		/** the buffer where writing is done */
 		void* buffer = nullptr;
 		/** the size of the buffer */

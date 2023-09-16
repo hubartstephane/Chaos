@@ -10,8 +10,8 @@ namespace chaos
 
 	class GPUQuadMeshGenerator;
 	class GPUTriangleMeshGenerator;
-	class GPUCubeMeshGenerator;
-	class GPUWireframeCubeMeshGenerator;
+	class GPUBoxMeshGenerator;
+	class GPUWireframeBoxMeshGenerator;
 	class GPUCircleMeshGenerator;
 	class GPUSphereMeshGenerator;
 
@@ -132,10 +132,10 @@ namespace chaos
 	};
 
 	/**
-	* GPUCubeMeshGenerator : help defines cube mesh
+	* GPUBoxMeshGenerator : help defines cube mesh
 	*/
 
-	class CHAOS_API GPUCubeMeshGenerator : public GPUPrimitiveMeshGenerator<box3>
+	class CHAOS_API GPUBoxMeshGenerator : public GPUPrimitiveMeshGenerator<box3>
 	{
 
 	public:
@@ -158,10 +158,10 @@ namespace chaos
 	};
 
 	/**
-	* GPUWireframeCubeMeshGenerator : help defines cube mesh
+	* GPUWireframeBoxMeshGenerator : help defines cube mesh
 	*/
 
-	class CHAOS_API GPUWireframeCubeMeshGenerator : public GPUPrimitiveMeshGenerator<box3>
+	class CHAOS_API GPUWireframeBoxMeshGenerator : public GPUPrimitiveMeshGenerator<box3>
 	{
 
 	public:

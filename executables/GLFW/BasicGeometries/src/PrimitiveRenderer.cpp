@@ -34,7 +34,7 @@ bool PrimitiveRenderer::Initialize()
 	generators.AddGenerator(new chaos::GPUSphereMeshGenerator(s, glm::mat4x4(1.0f), 30), mesh_sphere);
 	generators.AddGenerator(new chaos::GPUCircleMeshGenerator(c, glm::mat4x4(1.0f), 30), mesh_circle);
 	generators.AddGenerator(new chaos::GPUQuadMeshGenerator(b2), mesh_quad);
-	generators.AddGenerator(new chaos::GPUCubeMeshGenerator(b3), mesh_box);
+	generators.AddGenerator(new chaos::GPUBoxMeshGenerator(b3), mesh_box);
 	generators.AddGenerator(new chaos::GPUTriangleMeshGenerator(t), mesh_triangle);
 
 	if (!generators.GenerateMeshes())
@@ -45,7 +45,7 @@ bool PrimitiveRenderer::Initialize()
 
 	mesh_circle = (new chaos::GPUCircleMeshGenerator(c, glm::mat4x4(1.0f), 30))->GenerateMesh();
 	mesh_quad = (new chaos::GPUQuadMeshGenerator(b2))->GenerateMesh();
-	mesh_box = (new chaos::GPUCubeMeshGenerator(b3))->GenerateMesh();
+	mesh_box = (new chaos::GPUBoxMeshGenerator(b3))->GenerateMesh();
 	mesh_triangle = (new chaos::GPUTriangleMeshGenerator(t))->GenerateMesh();
 #endif
 	return true;

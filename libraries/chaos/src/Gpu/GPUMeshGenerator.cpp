@@ -222,10 +222,10 @@ namespace chaos
 	}
 
 	// =====================================================================
-	// GPUCubeMeshGenerator
+	// GPUBoxMeshGenerator
 	// =====================================================================
 
-	glm::vec3 const GPUCubeMeshGenerator::vertices[24 * 2] = // position + normal
+	glm::vec3 const GPUBoxMeshGenerator::vertices[24 * 2] = // position + normal
 	{
 		glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
 		glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
@@ -258,7 +258,7 @@ namespace chaos
 		glm::vec3(-1.0f, +1.0f,  1.0f), glm::vec3(0.0f, +1.0f, 0.0f),
 	};
 
-	GLuint const GPUCubeMeshGenerator::triangles[36] =
+	GLuint const GPUBoxMeshGenerator::triangles[36] =
 	{
 		0, 2, 1,
 		0, 3, 2,
@@ -279,7 +279,7 @@ namespace chaos
 		20, 23, 22
 	};
 
-	GPUMeshGenerationRequirement GPUCubeMeshGenerator::GetRequirement() const
+	GPUMeshGenerationRequirement GPUBoxMeshGenerator::GetRequirement() const
 	{
 		GPUMeshGenerationRequirement result;
 		result.vertex_size = 2 * sizeof(glm::vec3);
@@ -288,7 +288,7 @@ namespace chaos
 		return result;
 	}
 
-    GPUVertexDeclaration * GPUCubeMeshGenerator::GenerateVertexDeclaration() const
+    GPUVertexDeclaration * GPUBoxMeshGenerator::GenerateVertexDeclaration() const
 	{
         GPUVertexDeclaration* result = new GPUVertexDeclaration();
         if (result != nullptr)
@@ -299,7 +299,7 @@ namespace chaos
         return result;
 	}
 
-	void GPUCubeMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+	void GPUBoxMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 	{
 		// the primitives
 		GPUDrawPrimitive draw_primitive;
@@ -326,10 +326,10 @@ namespace chaos
 	}
 
 	// =====================================================================
-	// GPUWireframeCubeMeshGenerator
+	// GPUWireframeBoxMeshGenerator
 	// =====================================================================
 
-	glm::vec3 const GPUWireframeCubeMeshGenerator::vertices[8] = // position
+	glm::vec3 const GPUWireframeBoxMeshGenerator::vertices[8] = // position
 	{
 		glm::vec3(-1.0f, -1.0f, -1.0f),
 		glm::vec3(-1.0f,  1.0f, -1.0f),
@@ -342,7 +342,7 @@ namespace chaos
 		glm::vec3( 1.0f, -1.0f,  1.0f)
 	};
 
-	GLuint const GPUWireframeCubeMeshGenerator::indices[24] =
+	GLuint const GPUWireframeBoxMeshGenerator::indices[24] =
 	{
 		0, 1,
 		1, 2,
@@ -360,7 +360,7 @@ namespace chaos
 		3, 7
 	};
 
-	GPUMeshGenerationRequirement GPUWireframeCubeMeshGenerator::GetRequirement() const
+	GPUMeshGenerationRequirement GPUWireframeBoxMeshGenerator::GetRequirement() const
 	{
 		GPUMeshGenerationRequirement result;
 		result.vertex_size = sizeof(glm::vec3);
@@ -369,7 +369,7 @@ namespace chaos
 		return result;
 	}
 
-	GPUVertexDeclaration* GPUWireframeCubeMeshGenerator::GenerateVertexDeclaration() const
+	GPUVertexDeclaration* GPUWireframeBoxMeshGenerator::GenerateVertexDeclaration() const
 	{
 		GPUVertexDeclaration* result = new GPUVertexDeclaration();
 		if (result != nullptr)
@@ -379,7 +379,7 @@ namespace chaos
 		return result;
 	}
 
-	void GPUWireframeCubeMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive>& primitives, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const
+	void GPUWireframeBoxMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive>& primitives, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const
 	{
 		// the primitives
 		GPUDrawPrimitive draw_primitive;

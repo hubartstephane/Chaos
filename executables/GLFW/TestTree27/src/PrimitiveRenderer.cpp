@@ -34,7 +34,9 @@ bool PrimitiveRenderer::Initialize()
 	generators.AddGenerator(new chaos::GPUCircleMeshGenerator(c, glm::mat4x4(1.0f), 30), mesh_circle);
 	generators.AddGenerator(new chaos::GPUQuadMeshGenerator(b2), mesh_quad);
 	generators.AddGenerator(new chaos::GPUCubeMeshGenerator(b3), mesh_box);
+	generators.AddGenerator(new chaos::GPUWireframeCubeMeshGenerator(b3), mesh_wireframe_box);
 	generators.AddGenerator(new chaos::GPUTriangleMeshGenerator(t), mesh_triangle);
+
 	if (!generators.GenerateMeshes())
 		return false;
 	return true;
@@ -173,7 +175,7 @@ void PrimitiveRenderer::GPUDrawPrimitive(chaos::sphere2 const & s, glm::vec4 con
 	);
 }
 
-void PrimitiveRenderer::GPUDrawPrimitive(chaos::box3 const & b, glm::vec4 const & color, bool is_translucent) const
+void PrimitiveRenderer::GPUDrawPrimitive(chaos::box3 const & b, glm::vec4 const & color, bool is_translucent, bool is_wireframe) const
 {
 	if (IsGeometryEmpty(b))
 		return;
@@ -183,7 +185,7 @@ void PrimitiveRenderer::GPUDrawPrimitive(chaos::box3 const & b, glm::vec4 const 
 		glm::scale(b.half_size);
 
 	DrawPrimitiveImpl(
-		mesh_box.get(),
+		is_wireframe ? mesh_wireframe_box.get() : mesh_box.get(),
 		program_common.get(),
 		color,
 		local_to_world,
@@ -213,7 +215,7 @@ void PrimitiveRenderer::GPUDrawPrimitive(chaos::box2 const & b, glm::vec4 const 
 	glEnable(GL_CULL_FACE);
 }
 
-void PrimitiveRenderer::GPUDrawPrimitive(chaos::obox3 const & b, glm::vec4 const & color, bool is_translucent) const
+void PrimitiveRenderer::GPUDrawPrimitive(chaos::obox3 const & b, glm::vec4 const & color, bool is_translucent, bool is_wireframe) const
 {
 	if (IsGeometryEmpty(b))
 		return;
@@ -224,7 +226,7 @@ void PrimitiveRenderer::GPUDrawPrimitive(chaos::obox3 const & b, glm::vec4 const
 		glm::scale(b.half_size);
 
 	DrawPrimitiveImpl(
-		mesh_box.get(),
+		is_wireframe? mesh_wireframe_box.get() : mesh_box.get(),
 		program_common.get(),
 		color,
 		local_to_world,
@@ -258,7 +260,7 @@ void PrimitiveRenderer::GPUDrawPrimitive(chaos::obox2 const & b, glm::vec4 const
 void PrimitiveRenderer::GPUDrawPrimitive(glm::vec3 const & p, glm::vec4 const & color, bool is_translucent) const
 {
 	glm::vec3 half_point_size(0.125f);
-	GPUDrawPrimitive(chaos::box3(p, half_point_size), color, is_translucent);
+	GPUDrawPrimitive(chaos::box3(p, half_point_size), color, is_translucent, false);
 }
 
 void PrimitiveRenderer::GPUDrawPrimitive(glm::vec2 const & p, glm::vec4 const & color, bool is_translucent) const

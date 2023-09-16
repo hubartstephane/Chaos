@@ -78,6 +78,12 @@ protected:
 		if (!primitive_renderer->Initialize())
 			return false;
 
+		fps_view_controller.movement_speed.back = camera_speed;
+		fps_view_controller.movement_speed.down = camera_speed;
+		fps_view_controller.movement_speed.up = camera_speed;
+		fps_view_controller.movement_speed.forward = camera_speed;
+		fps_view_controller.movement_speed.strafe = camera_speed;
+
 		for (int i = 0; i < 20; ++i)
 		{
 			chaos::sphere3 creation_sphere;
@@ -115,13 +121,6 @@ protected:
 				current_object_index = (current_object_index + geometric_objects.size() - 1) % geometric_objects.size();
 				return true;
 			}
-
-			if (event.IsKeyPressed(GLFW_KEY_1) || event.IsKeyPressed(GLFW_KEY_2))
-			{
-				
-
-			}
-
 
 
 		}
@@ -162,66 +161,60 @@ protected:
 		return nullptr;
 	}
 
-
-
-#if 0
-
-	void UpdateObjectPosition(int key, float delta_time, glm::vec3 const & factor)
+	bool MoveObject(GeometricObject* object, int key, float& target_value, float delta_time, float speed, float fast_speed)
 	{
-		static float SPEED = 5.0f;
 		if (glfwGetKey(glfw_window, key) == GLFW_PRESS)
 		{
-			if (glfwGetKey(glfw_window, GLFW_KEY_LEFT_CONTROL) != GLFW_RELEASE)
-				position_object1 += SPEED * (float)(delta_time)* factor;
-			else
-				position_object2 += SPEED * (float)(delta_time)* factor;
+			float final_speed = (glfwGetKey(glfw_window, GLFW_KEY_LEFT_SHIFT) != GLFW_RELEASE) ? fast_speed : speed;
+			target_value += final_speed * delta_time;
+			return true;
 		}
+		return false;
 	}
 
-#endif
+
+	bool MoveObject(GeometricObject* object, int key, float delta_time, glm::vec3 const & direction)
+	{
+		if (glfwGetKey(glfw_window, key) == GLFW_PRESS)
+		{
+			float final_speed = (glfwGetKey(glfw_window, GLFW_KEY_LEFT_SHIFT) != GLFW_RELEASE) ?
+				fast_displacement_speed:
+				displacement_speed;
+
+			object->sphere.position += glm::vec3(fps_view_controller.LocalToGlobal() * glm::vec4(direction, 0.0f)) * delta_time * final_speed;
+			return true;
+	}
+		return false;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
 
 	virtual bool DoTick(float delta_time) override
 	{
 		fps_view_controller.Tick(glfw_window, delta_time);
 
-		
-
+		if (GeometricObject* object = GetCurrentGeometricObject())
+		{
+			MoveObject(object, GLFW_KEY_A, delta_time, {-1.0f,  0.0f,  0.0f });
+			MoveObject(object, GLFW_KEY_D, delta_time, { 1.0f,  0.0f,  0.0f });
+			MoveObject(object, GLFW_KEY_Q, delta_time, { 0.0f, -1.0f,  0.0f });
+			MoveObject(object, GLFW_KEY_E, delta_time, { 0.0f,  1.0f,  0.0f });
+			MoveObject(object, GLFW_KEY_W, delta_time, { 0.0f,  0.0f, -1.0f });
+			MoveObject(object, GLFW_KEY_S, delta_time, { 0.0f,  0.0f,  1.0f });
+		}
 
 		return true; // refresh
 	}
-
-#if 0
-
-	virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override
-	{
-		if (event.IsKeyReleased(GLFW_KEY_T))
-		{
-			chaos::Clock * clock = chaos::WindowApplication::GetMainClockInstance();
-			if (clock != nullptr)
-				clock->Toggle();
-			return true;
-		}
-		else if (event.IsKeyReleased(GLFW_KEY_KP_ADD))
-		{
-			SetExample((TestID)((int)display_example + 1));
-			DebugDisplayExampleTitle();
-			return true;
-		}
-		else if (event.IsKeyReleased(GLFW_KEY_KP_SUBTRACT))
-		{
-			SetExample((TestID)((int)display_example - 1));
-			DebugDisplayExampleTitle();
-			return true;
-		}
-		else if (event.IsKeyReleased(GLFW_KEY_KP_5))
-		{
-			UpdateObjectType();
-			DebugDisplayExampleTitle();
-		}
-		return chaos::Window::OnKeyEventImpl(event);
-	}
-
-#endif
 
 protected:
 
@@ -243,6 +236,8 @@ protected:
 	float scale_speed = 1.5f;
 
 	float fast_scale_speed = 3.0f;
+
+	float camera_speed = 100.0f;
 };
 
 int main(int argc, char ** argv, char ** env)

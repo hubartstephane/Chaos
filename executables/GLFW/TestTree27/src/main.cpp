@@ -185,16 +185,21 @@ protected:
 
 			if (event.IsKeyPressed(GLFW_KEY_Y))
 			{
-				for (auto& object : geometric_objects)
+				geometric_objects.clear();
+				current_object_index = 0;
+				object_tree.Clear();
+
+				for (int i = 0; i < 20; ++i)
 				{
-					object->sphere.position.x = chaos::MathTools::RandFloat(-1000.0f, 1000.0f);
-					object->sphere.position.y = chaos::MathTools::RandFloat(-1000.0f, 1000.0f);
-					object->sphere.position.y = chaos::MathTools::RandFloat(-1000.0f, 1000.0f);
+					chaos::sphere3 creation_sphere;
+					creation_sphere.position.x = chaos::MathTools::RandFloat(-1000.0f, 1000.0f);
+					creation_sphere.position.y = chaos::MathTools::RandFloat(-1000.0f, 1000.0f);
+					creation_sphere.position.z = chaos::MathTools::RandFloat(-1000.0f, 1000.0f);
 
-					object->sphere.radius = chaos::MathTools::RandFloat(2.0f, 50.0f);
-
-					OnObjectMoved(object.get());
+					creation_sphere.radius = chaos::MathTools::RandFloat(2.0f, 50.0f);
+					CreateNewObject(creation_sphere);
 				}
+				return true;
 			}
 		}
 

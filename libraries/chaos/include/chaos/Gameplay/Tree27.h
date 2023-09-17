@@ -112,13 +112,13 @@ namespace chaos
 			return src * static_pow(src, exponent - 1);
 		}
 		/** compute log 3 */
-		float log3(float src);
+		CHAOS_API float log3(float src);
 		/** compute log 3 */
-		int log3i(int src);
+		CHAOS_API int log3i(int src);
 		/** compute pow 3 */
-		float pow3(float src);
+		CHAOS_API float pow3(float src);
 		/** compute pow 3 */
-		int pow3i(int src);
+		CHAOS_API int pow3i(int src);
 
 		/** a concept for node */
 		template<typename T>
@@ -198,7 +198,8 @@ namespace chaos
 			if (glm::any(glm::lessThan(info.position, descendant_range.first)))
 				return -1;
 			// compute the central child range for info
-			auto central_child_range = GetChildNodeInfo(vec_type(0)).GetDescendantRange(level - info.level + 1);
+			Tree27NodeInfo<dimension> central_child_node_info = GetChildNodeInfo(vec_type(0));
+			auto central_child_range = central_child_node_info.GetDescendantRange(central_child_node_info.level - info.level);
 
 			// compute index
 			//
@@ -206,9 +207,9 @@ namespace chaos
 
 			int result = 0;
 			int multiplier = 1;
-			for (int i = 0; i < dimension; ++i, multiplier *= 3)
+			for (int i = 0; i < dimension; ++i, multiplier *= dimension)
 			{
-				if (info.position[i] > central_child_range.first[i])
+				if (info.position[i] >= central_child_range.first[i])
 				{
 					result += multiplier;
 					if (info.position[i] > central_child_range.second[i])
@@ -278,37 +279,31 @@ namespace chaos
 	template<int DIMENSION>
 	Tree27NodeInfo<DIMENSION> ComputeCommonParent(Tree27NodeInfo<DIMENSION> info1, Tree27NodeInfo<DIMENSION> info2)
 	{
-
-
-
-
-
-
-
-
-
-
-
-
+		auto GetParentNodePosition = [](Tree27NodeInfo<DIMENSION>::vec_type v)
+		{
+			for (int i = 0; i < DIMENSION; ++i)
+				v[i] = (v[i] > 0) ? (v[i] + 1) / 3 : (v[i] - 1) / 3;
+			return v;
+		};
 		// ensure both nodes have the same level
-		if (info1.level < info2.level)
+		while (info1.level < info2.level)
 		{
-			info1.position /= details::pow3i(info2.level - info1.level);
-			info1.level = info2.level;
-		}
-		else if (info2.level < info1.level)
-		{
-			info2.position /= details::pow3i(info1.level - info2.level);
-			info2.level = info1.level;
+			info1.position = GetParentNodePosition(info1.position);
+			++info1.level;
 		}
 
+		while (info2.level < info1.level)
+		{
+			info2.position = GetParentNodePosition(info2.position);
+			++info2.level;
+		}
 		// go from parent to parent until they have the same position
 		while (info1.position != info2.position)
 		{
+			info1.position = GetParentNodePosition(info1.position);
+			info2.position = GetParentNodePosition(info2.position);
 			++info1.level;
 			++info2.level;
-			info1.position /= 3;
-			info2.position /= 3;
 		}
 
 		return info1;
@@ -527,10 +522,10 @@ namespace chaos
 		}
 
 		/** add a node for a given object */
-		node_type* CreateNode(type_box<float, dimension> const& box)
+		node_type* GetOrCreateNode(type_box<float, dimension> const& box)
 		{
 			node_info_type node_info = ComputeTreeNodeInfo(box);
-			return DoCreateNode(node_info, root, nullptr, 0);
+			return DoGetOrCreateNode(node_info, root, nullptr, 0);
 		}
 
 		/** try to delete a node (if possible and have at most one child) */
@@ -603,7 +598,7 @@ namespace chaos
 		}
 
 		/** internal recursive method to create a node and insert it into the tree */
-		node_type* DoCreateNode(node_info_type const & node_info, node_type* current_node, node_type * parent_node, int index_in_parent)
+		node_type* DoGetOrCreateNode(node_info_type const & node_info, node_type* current_node, node_type * parent_node, int index_in_parent)
 		{
 			// the node to create is a leaf (it may be a root too)
 			if (current_node == nullptr)
@@ -619,7 +614,7 @@ namespace chaos
 			int child_index1 = current_node->GetNodeInfo().GetDescendantIndex(node_info);
 			if (child_index1 >= 0)
 			{
-				return DoCreateNode(node_info, current_node->children[child_index1], current_node, child_index1);
+				return DoGetOrCreateNode(node_info, current_node->children[child_index1], current_node, child_index1);
 			}
 			// the current node is contained by the node we want to create
 			int child_index2 = node_info.GetDescendantIndex(current_node->GetNodeInfo());
@@ -642,8 +637,9 @@ namespace chaos
 				int child_index4 = common_parent_info.GetDescendantIndex(node_info);
 				assert(child_index4 >= 0);
 				assert(child_index4 != child_index3);
-				return DoCreateNode(node_info, common_parent->children[child_index4], common_parent, child_index4);
+				return DoGetOrCreateNode(node_info, common_parent->children[child_index4], common_parent, child_index4);
 			}
+
 			return nullptr;
 		}
 

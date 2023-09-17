@@ -49,7 +49,7 @@ protected:
 		glm::vec4 clear_color(0.0f, 0.7f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
-		float far_plane = 1000.0f;
+		float far_plane = 10000.0f;
 		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
 		glEnable(GL_DEPTH_TEST);
@@ -197,7 +197,7 @@ protected:
 			geometric_objects.push_back(new_object);
 			current_object_index = geometric_objects.size() - 1;
 
-			new_object->node = object_tree.CreateNode(chaos::GetBoundingBox(new_object->sphere));
+			new_object->node = object_tree.GetOrCreateNode(chaos::GetBoundingBox(new_object->sphere));
 			new_object->node->objects.push_back(new_object);
 
 			return new_object;
@@ -272,7 +272,7 @@ protected:
 					current_object->node->objects.erase(std::ranges::find(current_object->node->objects, current_object));
 					object_tree.DeleteNodeIfPossible(current_object->node);
 
-					current_object->node = object_tree.CreateNode(new_box);
+					current_object->node = object_tree.GetOrCreateNode(new_box);
 					current_object->node->objects.push_back(current_object);
 				}
 			}
@@ -302,7 +302,7 @@ protected:
 
 	float fast_scale_speed = 3.0f;
 
-	float camera_speed = 200.0f;
+	float camera_speed = 400.0f;
 
 	chaos::Tree27<3, Tree27NodeBase> object_tree;
 };

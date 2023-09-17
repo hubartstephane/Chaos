@@ -168,8 +168,7 @@ protected:
 				if (geometric_objects.size() > 1)
 				{
 					// remove the object from tree
-					current_object->node->objects.erase(std::ranges::find(current_object->node->objects, current_object));
-					object_tree.DeleteNodeIfPossible(current_object->node);
+					EraseObjectFromNode(current_object);
 					// remove the object from object list
 					auto it = std::ranges::find_if(geometric_objects, [current_object](auto& v)
 					{
@@ -182,6 +181,20 @@ protected:
 				}
 
 				return true;
+			}
+
+			if (event.IsKeyPressed(GLFW_KEY_Y))
+			{
+				for (auto& object : geometric_objects)
+				{
+					object->sphere.position.x = chaos::MathTools::RandFloat(-1000.0f, 1000.0f);
+					object->sphere.position.y = chaos::MathTools::RandFloat(-1000.0f, 1000.0f);
+					object->sphere.position.y = chaos::MathTools::RandFloat(-1000.0f, 1000.0f);
+
+					object->sphere.radius = chaos::MathTools::RandFloat(2.0f, 50.0f);
+
+					OnObjectMoved(object.get());
+				}
 			}
 		}
 
@@ -197,8 +210,7 @@ protected:
 			geometric_objects.push_back(new_object);
 			current_object_index = geometric_objects.size() - 1;
 
-			new_object->node = object_tree.GetOrCreateNode(chaos::GetBoundingBox(new_object->sphere));
-			new_object->node->objects.push_back(new_object);
+			InsertObjectIntoNode(new_object, object_tree.GetOrCreateNode(chaos::GetBoundingBox(new_object->sphere)));
 
 			return new_object;
 		}
@@ -245,6 +257,31 @@ protected:
 		return false;
 	}
 
+
+	void InsertObjectIntoNode(GeometricObject* object, chaos::Tree27<3, Tree27NodeBase>::node_type * node)
+	{
+		object->node = node;
+		object->node->objects.push_back(object);
+	}
+
+	void EraseObjectFromNode(GeometricObject* object)
+	{
+		object->node->objects.erase(std::ranges::find(object->node->objects, object));
+		object_tree.DeleteNodeIfPossible(object->node);
+		object->node = nullptr;
+	}
+
+	void OnObjectMoved(GeometricObject* object)
+	{
+		chaos::box3 new_box = chaos::GetBoundingBox(object->sphere);
+
+		if (chaos::ComputeTreeNodeInfo(new_box) != object->node->GetNodeInfo()) // changement required
+		{
+			EraseObjectFromNode(object);
+			InsertObjectIntoNode(object, object_tree.GetOrCreateNode(new_box));
+		}
+	}
+
 	virtual bool DoTick(float delta_time) override
 	{
 		fps_view_controller.Tick(glfw_window, delta_time);
@@ -264,18 +301,7 @@ protected:
 			moved |= ScaleObject(current_object, GLFW_KEY_F, delta_time, -1.0f);
 
 			if (moved)
-			{
-				chaos::box3 new_box = chaos::GetBoundingBox(current_object->sphere);
-
-				if (chaos::ComputeTreeNodeInfo(new_box) != current_object->node->GetNodeInfo()) // changement required
-				{
-					current_object->node->objects.erase(std::ranges::find(current_object->node->objects, current_object));
-					object_tree.DeleteNodeIfPossible(current_object->node);
-
-					current_object->node = object_tree.GetOrCreateNode(new_box);
-					current_object->node->objects.push_back(current_object);
-				}
-			}
+				OnObjectMoved(current_object);
 		}
 
 		return true; // refresh

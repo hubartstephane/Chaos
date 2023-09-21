@@ -48,8 +48,8 @@ namespace chaos
 		T SetBit(T src, T bit_index, bool value)
 		{
 			return (value)?
-				src | (1 << bit_index):
-				src & ~(1 << bit_index);
+				src |  (T(1) << bit_index):
+				src & ~(T(1) << bit_index);
 		}
 
 		template<bool FORWARD = true, std::integral T, typename FUNC>
@@ -76,7 +76,7 @@ namespace chaos
 				{
 					func(bit);
 				}
-				bitfield &= ~(1 << bit);
+				bitfield &= ~(T(1) << bit);
 			}
 
 			if constexpr (convertible_to_bool)

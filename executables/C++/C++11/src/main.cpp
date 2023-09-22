@@ -15,7 +15,7 @@ public:
 
 	using type = T;
 
-	static constexpr size_t pool_size = sizeof(int64_t) * 8;
+	static constexpr size_t pool_size = 64;
 
 	/** constructor */
 	ObjectPool64() = default;
@@ -27,6 +27,7 @@ public:
 	/** destructor */
 	~ObjectPool64()
 	{
+		// destroy all objects
 		chaos::BitTools::ForEachBitForward(used_instanced, [this](int64_t index)
 		{
 			Free(GetObjectPtr(index));
@@ -43,6 +44,7 @@ public:
 			int64_t index = GetObjectIndex(object);
 			assert((used_instanced >> index) & 1); // ensure the object was not already freed
 			used_instanced = chaos::BitTools::SetBit(used_instanced, index, false);
+			--reserved_count;
 			// manually call the destructor
 			object->~type();
 		}
@@ -57,6 +59,7 @@ public:
 		// update the available flag
 		int64_t index = chaos::BitTools::bsr(~used_instanced);
 		used_instanced = chaos::BitTools::SetBit(used_instanced, index, true);
+		++reserved_count;
 		// manually call constructor
 		type* result = GetObjectPtr(index);
 		new (result) type(std::forward<PARAMS>(params)...);
@@ -64,12 +67,10 @@ public:
 	}
 
 	/** check whether an object is inside the pool */
-	bool IsObjectInsidePool(type* object) const
+	bool IsObjectInsidePool(type const* object) const
 	{
 		assert(object != nullptr);
-
-		int64_t index = GetObjectIndex(object);
-		return (index >= 0 && index < int64_t(pool_size));
+		return (object >= GetObjectPtr(0)) && (object <= GetObjectPtr(pool_size - 1));
 	}
 
 	/** returns true whether all instanced have allready been allocated */
@@ -78,10 +79,16 @@ public:
 		return (used_instanced != int64_t(-1));
 	}
 
+	/** gets the number of reserved object */
+	size_t GetReservedCount() const
+	{
+		return reserved_count;
+	}
+
 protected:
 
 	/** gets the index of an object inside the pool */
-	int64_t GetObjectIndex(type* object) const
+	int64_t GetObjectIndex(type const* object) const
 	{
 		assert(object != nullptr);
 		return int64_t(object - GetObjectPtr(0));
@@ -99,13 +106,11 @@ protected:
 
 	/** a bitfield indicating with instances are in use */
 	int64_t used_instanced = 0;
+	/** number of reserved object */
+	size_t reserved_count = 0;
 	/** the block of data where instanced are being used */
 	alignas(8) char data[pool_size * sizeof(T)];
 };
-
-
-
-
 
 template<typename T>
 class ObjectPool
@@ -128,7 +133,6 @@ protected:
 		/** the previous pool node in the pool */
 		node_type* next_node = nullptr;
 	};
-
 
 public:
 
@@ -156,10 +160,33 @@ public:
 	{
 		if (object != nullptr)
 		{
-			// search object in used_list then unavailable_nodes
-			for (node_type& root : { used_nodes , unavailable_nodes })
+			if (node_type* node = SearchOwningNode(used_nodes, object))
 			{
+				if (node->GetReservedCount() == 1) // the last object is about to be removed from the node. the node now belongs to unused
+				{
+					ExtractNode(used_nodes, node);
+					InsertNode(unused_nodes, node);
+					++unused_node_count;
+				}
+				node->Free(object);
 
+				// does this node deserve to be destroyed ?
+				if (max_unused_node_count > 0 && unused_node_count > max_unused_node_count && node->GetReservedCount() == 0)
+				{
+					ExtractNode(unused_nodes, node);
+					delete(node);
+					--unused_node_count;
+				}
+			}
+			else if (node_type* node = SearchOwningNode(unavailable_nodes, object))
+			{
+				ExtractNode(unavailable_nodes, node); // now, the node has a single available entry. it belongs to used_nodes
+				InsertNode(used_nodes, node);
+				node->Free(object);
+			}
+			else
+			{
+				assert(0); // object does not belong to this pool
 			}
 		}
 	}
@@ -173,10 +200,15 @@ public:
 		{
 			// can use an unused_nodes
 			if (unused_nodes != nullptr)
+			{
 				InsertNode(used_nodes, ExtractFirstNode(unused_nodes));
+				--unused_node_count;
+			}
 			// need a new node
-			else if(node_type * new_node = new node_type)
+			else if (node_type* new_node = new node_type)
+			{
 				InsertNode(used_nodes, new_node);
+			}
 			// failure
 			else
 				return nullptr;
@@ -195,7 +227,55 @@ public:
 		return nullptr;
 	}
 
+	/** change the maximum number of unused nodes */
+	void SetMaxUnusedNodeCount(size_t count)
+	{
+		max_unused_node_count = count;
+		if (max_unused_node_count > 0)
+		{
+			while (unused_node_count > max_unused_node_count)
+			{
+				delete(ExtractFirstNode(unused_nodes));
+				--unused_node_count;
+			}
+		}
+	}
+
+	/** get the maximum number of unused nodes */
+	size_t GetMaxUnusedNodeCount() const
+	{
+		return unused_node_count;
+	}
+
 protected:
+
+	/** remove a node from the list */
+	void ExtractNode(node_type*& root, node_type* node)
+	{
+		assert(node != nullptr);
+		// unlink with siblings
+		if (node->previous_node != nullptr)
+			node->previous_node->next_node = node->next_node;
+		if (node->next_node != nullptr)
+			node->next_node->previous_node = node->previous_node;
+		// change root if necessary
+		if (root == node)
+			root = node->next_node;
+		// clear data
+		node->previous_node = node->next_node = nullptr;
+	}
+
+	/** search a node that contains the object */
+	node_type* SearchOwningNode(node_type* node, type const* object)
+	{
+		while (node != nullptr)
+		{
+			if (node->IsObjectInsidePool(object))
+				return node;
+			node = node->next_node;
+		}
+		return nullptr;
+	}
 
 	/** extract the first node (if any) of a given list */
 	node_type* ExtractFirstNode(node_type*& root)
@@ -233,6 +313,10 @@ protected:
 	node_type* unavailable_nodes = nullptr;
 	/** nodes that aren't used at all (all entries available) */
 	node_type* unused_nodes = nullptr;
+	/** maximum number of unused nodes (0 for unlimited) */
+	size_t max_unused_node_count = 0;
+	/** number of unused nodes */
+	size_t unused_node_count = 0;
 };
 
 
@@ -333,12 +417,18 @@ public:
 
 int main(int argc, char ** argv, char ** env)
 {
+	std::vector<G*> v;
 
-	ObjectPool64<G> pool;
+	ObjectPool<G> pool;
+	pool.SetMaxUnusedNodeCount(1);
 
 	for (int i = 0; i < 200; ++i)
 	{
 		G* ptr = pool.Allocate(1,2,3);
+
+		v.push_back(ptr);
+
+		//pool.Free(ptr);
 		if (ptr == nullptr)
 			i = i;
 		else
@@ -347,7 +437,15 @@ int main(int argc, char ** argv, char ** env)
 
 	}
 
+	int ii = 0;
+	for (G* g : v)
+	{
+		if (++ii > 100)
+			break;
+		pool.Free(g);
+	}
 
+	pool.SetMaxUnusedNodeCount(1);
 
 
 	argc = argc;

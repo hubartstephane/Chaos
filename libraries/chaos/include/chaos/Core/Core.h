@@ -55,3 +55,5 @@
 #include "chaos/Core/NestedIterator.h"
 #include "chaos/Core/LoggerImGuiContent.h"
 #include "chaos/Core/ConfigurableInterface.h"
+#include "chaos/Core/ObjectPool.h"
+#include "chaos/Core/ObjectPool64.h"

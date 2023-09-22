@@ -88,6 +88,52 @@ namespace chaos
 			return reserved_count;
 		}
 
+		/** iterator over all objects (const version) */
+		template<typename FUNC>
+		auto ForEachObject(FUNC const& func) const -> boost::mpl::if_c<std::is_convertible_v<decltype(func(0)), bool>, decltype(func(0)), void>::type
+		{
+			using result_type = decltype(func(0));
+			constexpr bool convertible_to_bool = std::is_convertible_v<result_type, bool>;
+
+			if constexpr (convertible_to_bool)
+			{
+				return chaos::BitTools::ForEachBitForward(used_instanced, [this, &func](int64_t index)
+				{
+					return func(GetObjectPtr(index));
+				});
+			}
+			else
+			{
+				chaos::BitTools::ForEachBitForward(used_instanced, [this, &func](int64_t index)
+				{
+					func(GetObjectPtr(index));
+				});
+			}
+		}
+
+		/** iterator over all objects (non const version) */
+		template<typename FUNC>
+		auto ForEachObject(FUNC const& func) -> boost::mpl::if_c<std::is_convertible_v<decltype(func(0)), bool>, decltype(func(0)), void>::type
+		{
+			using result_type = decltype(func(0));
+			constexpr bool convertible_to_bool = std::is_convertible_v<result_type, bool>;
+
+			if constexpr (convertible_to_bool)
+			{
+				return chaos::BitTools::ForEachBitForward(used_instanced, [this, &func](int64_t index)
+				{
+					return func(GetObjectPtr(index));
+				});
+			}
+			else
+			{
+				chaos::BitTools::ForEachBitForward(used_instanced, [this, &func](int64_t index)
+				{
+					func(GetObjectPtr(index));
+				});
+			}
+		}
+
 	protected:
 
 		/** gets the index of an object inside the pool */
@@ -98,7 +144,15 @@ namespace chaos
 		}
 
 		/** gets the address of an object inside the pool */
-		T* GetObjectPtr(int64_t index) const
+		T const* GetObjectPtr(int64_t index) const
+		{
+			assert(index >= 0);
+			assert(index < pool_size);
+			return ((type*)data) + index;
+		}
+
+		/** gets the address of an object inside the pool */
+		T* GetObjectPtr(int64_t index)
 		{
 			assert(index >= 0);
 			assert(index < pool_size);

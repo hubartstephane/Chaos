@@ -145,6 +145,62 @@ namespace chaos
 			return max_unused_node_count;
 		}
 
+		/** iterator over all objects (const version) */
+		template<typename FUNC>
+		auto ForEachObject(FUNC const& func) const -> boost::mpl::if_c<std::is_convertible_v<decltype(func(0)), bool>, decltype(func(0)), void>::type
+		{
+			using result_type = decltype(func(0));
+			constexpr bool convertible_to_bool = std::is_convertible_v<result_type, bool>;
+
+			for (node_type const* node : { used_nodes , unavailable_nodes })
+			{
+				while (node != nullptr)
+				{
+					if constexpr (convertible_to_bool)
+					{
+						if (auto result = node->ForEachObject(func))
+							return result;
+					}
+					else
+					{
+						node->ForEachObject(func);
+					}
+					node = node->next_node;
+				}
+			}
+
+			if constexpr (convertible_to_bool)
+				return result_type();
+		}
+
+		/** iterator over all objects (non const version) */
+		template<typename FUNC>
+		auto ForEachObject(FUNC const& func) -> boost::mpl::if_c<std::is_convertible_v<decltype(func(0)), bool>, decltype(func(0)), void>::type
+		{
+			using result_type = decltype(func(0));
+			constexpr bool convertible_to_bool = std::is_convertible_v<result_type, bool>;
+
+			for (node_type* node : { used_nodes , unavailable_nodes })
+			{
+				while (node != nullptr)
+				{
+					if constexpr (convertible_to_bool)
+					{
+						if (auto result = node->ForEachObject(func))
+							return result;
+					}
+					else
+					{
+						node->ForEachObject(func);
+					}
+					node = node->next_node;
+				}
+			}
+
+			if constexpr (convertible_to_bool)
+				return result_type();
+		}
+
 	protected:
 
 		/** remove a node from the list */

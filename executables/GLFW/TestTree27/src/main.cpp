@@ -67,6 +67,45 @@ protected:
 		return true;
 	}
 
+	void OnDrawWindowImGuiMenu() override
+	{
+		chaos::Window::OnDrawWindowImGuiMenu();
+
+		chaos::ImGuiDrawableInterface::MenuBar(chaos::ImGuiDrawMenuMode::FullWindow, [this]()
+		{
+			if (ImGui::BeginMenu("Windows"))
+			{
+				if (ImGui::MenuItem("Show Help", nullptr, show_help, true))
+					show_help = !show_help;
+				ImGui::EndMenu();
+			}
+		});
+	}
+
+	void OnDrawWindowImGuiContent() override
+	{
+		if (show_help)
+		{
+			ImGui::Begin("help", &show_help);
+			ImGui::Text("+      : next object");
+			ImGui::Text("-      : previous object");
+			ImGui::Text("space  : new object");
+			ImGui::Text("delete : delete");
+			ImGui::Text("y      : new random scene");
+			ImGui::Text("z      : move forward");
+			ImGui::Text("s      : move backward");
+			ImGui::Text("q      : move left");
+			ImGui::Text("d      : move right");
+			ImGui::Text("a      : move down");
+			ImGui::Text("e      : move up");
+			ImGui::Text("r      : scale up");
+			ImGui::Text("f      : scale down");
+			ImGui::Text("shift  : speed");
+
+			ImGui::End();
+		}
+	}
+
 	void DrawTree27()
 	{
 		glDisable(GL_CULL_FACE);
@@ -189,7 +228,7 @@ protected:
 				current_object_index = 0;
 				object_tree.Clear();
 
-				for (int i = 0; i < 20; ++i)
+				for (int i = 0; i < 200; ++i)
 				{
 					chaos::sphere3 creation_sphere;
 					creation_sphere.position.x = chaos::MathTools::RandFloat(-1000.0f, 1000.0f);
@@ -203,7 +242,7 @@ protected:
 			}
 		}
 
-		return false;
+		return chaos::Window::OnKeyEventImpl(event);
 	}
 
 	GeometricObject * CreateNewObject(chaos::sphere3 const & creation_sphere)
@@ -336,6 +375,8 @@ protected:
 	float camera_speed = 400.0f;
 
 	chaos::Tree27<3, Tree27NodeBase> object_tree;
+
+	bool show_help = true;
 };
 
 int main(int argc, char ** argv, char ** env)

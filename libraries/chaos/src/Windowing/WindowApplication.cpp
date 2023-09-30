@@ -122,22 +122,6 @@ namespace chaos
 
 		return WithGLFWContext(nullptr, [this, window_class, &create_params, &request]() -> Window*
 		{
-
-
-
-				// shuxxx
-
-
-
-
-
-
-
-
-
-
-
-
 			// create the window class
 			shared_ptr<Window> result = window_class.CreateInstance();
 			if (result == nullptr)

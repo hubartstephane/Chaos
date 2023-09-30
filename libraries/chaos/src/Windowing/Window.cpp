@@ -635,7 +635,7 @@ namespace chaos
 				if (double_buffer)
 					glfwSwapBuffers(glfw_window);
 				else
-					glFlush(); // seems useless ?
+					glFlush();
 			}
 			renderer->EndRenderingFrame();
 		}

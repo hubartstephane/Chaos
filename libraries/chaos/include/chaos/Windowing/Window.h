@@ -150,7 +150,8 @@ namespace chaos
 			glfwMakeContextCurrent(glfw_window);
 			// save ImGui context
 			ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
-			ImGui::SetCurrentContext(imgui_context);
+			ImGuiContext* imgui_context_to_set = imgui_context;
+			ImGui::SetCurrentContext(imgui_context_to_set);
 
 			if constexpr (std::is_same_v<void, decltype(func())>)
 			{
@@ -159,7 +160,8 @@ namespace chaos
 				// restore GLFW and ImGui contexts
 				glfwMakeContextCurrent(previous_glfw_window);
 				// restore ImGui context (if different, because maybe the context has been destroy inside the func() call
-				ImGui::SetCurrentContext(previous_imgui_context);
+				if (previous_imgui_context != imgui_context_to_set)
+					ImGui::SetCurrentContext(previous_imgui_context);
 				// enable window destruction back
 				DecrementWindowDestructionGuard();
 			}
@@ -170,7 +172,8 @@ namespace chaos
 				// restore GLFW and ImGui contexts
 				glfwMakeContextCurrent(previous_glfw_window);
 				// restore ImGui context (if different, because maybe the context has been destroy inside the func() call
-				ImGui::SetCurrentContext(previous_imgui_context);
+				if (previous_imgui_context != imgui_context_to_set)
+					ImGui::SetCurrentContext(previous_imgui_context);
 				// enable window destruction back
 				DecrementWindowDestructionGuard();
 				return result;

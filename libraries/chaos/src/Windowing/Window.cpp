@@ -232,7 +232,26 @@ namespace chaos
 		ImGui::StyleColorsDark();
 
 		// initialize the context
-		ImGui_ImplGlfw_InitForOpenGL(GetGLFWHandler(), true);
+		//
+		// note: we don't install callbacks. we will manually call the functions ourselves
+		//       under normal circumstances, we have the following call chain
+		//
+		//       Window Message Handler (or NOT) -> GLFW call -> IMGUI callbacks -> our callbacks
+		//                ^
+		//                +-- settings the IMGUI context here is not enought
+		//
+		//       due to our multiple-window system, inside the IMGUI callbacks, the current IMGUI context may not be set causing a crash
+		//       -> for example, push both LEFT and RIGHT shift and release one of theses keys
+		//
+		//       we can change the Window Message Function to ensure the IMG context is properly set, but some time the GLFW call is not made from inside the Window Message Handler
+		//
+		//       By not installing IMGUI callbacks we have the following chain
+		//
+		//       Window Message Handler or (NOT) -> GLFW call -> our callbacks -> set IMGUI context -> manually call IMGUI callbacks
+		//
+		//       see in ImGui_ImplGlfw_InstallCallbacks (IMGUI source code) which callback are concerned
+
+		ImGui_ImplGlfw_InitForOpenGL(GetGLFWHandler(), false); // do not install callbakcs !!
 		ImGui_ImplOpenGL3_Init("#version 130");
 
 		// substitute our own window proc (now that ImGui has inserted its own WindowProc */
@@ -388,16 +407,18 @@ namespace chaos
 	//
 	//   first GLFW install its own WndProc to make a bind between WIN32API and GLFW
 	//
-	//   then ImGui install its own WndProc on top of that
+	//   then ImGui install its own WndProc on top of that (see ImGui_ImplGlfw_WndProc)
 	//
 	//   The issue is that ImGui WndProc relies on the current ImGui context to dispatch events. The current ImGui context does not necessary correspond the the window whose message is being processed
 	//
-	//   That's why we install our own WndProc on top of all to get a ImGui from a HWND
+	//   That's why we install our own WndProc on top of all to get a ImGui from a HWND (and restore it to nullptr at the end)
 	//
 	//   Thoses layers of WndProc must be removed in reverse order
 	//
-	//   Our new WndProc does not use glfwMakeCurrentContext(...) to make current GLFW context active because this function is much more costly than ImGui::SetCurrentContext(...)
-	//   There is a huge number of window events and we are only interrested to have a GLFW context in some glfw callback
+	//   Our new WndProc does not use glfwMakeCurrentContext(...) to make current GLFW context active because:
+	//   - this doesn't seem to be necessary
+	//   - this function is much more costly than ImGui::SetCurrentContext(...)
+	//   - There is a huge number of window events and we are only interrested to have a GLFW context in some glfw callback
 
 	void Window::SetImGuiWindowProc(bool set_proc)
 	{
@@ -452,7 +473,7 @@ namespace chaos
 			});
 		}
 	}
-
+	
 	void Window::DoOnIconifiedStateChange(GLFWwindow* in_glfw_window, int value)
 	{
 		GetWindowAndProcess(in_glfw_window, [value](Window * my_window)
@@ -463,8 +484,12 @@ namespace chaos
 
 	void Window::DoOnFocusStateChange(GLFWwindow* in_glfw_window, int value)
 	{
-		GetWindowAndProcess(in_glfw_window, [value](Window * my_window)
+		GetWindowAndProcess(in_glfw_window, [=](Window * my_window)
 		{
+			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
+			if (ImGui::GetCurrentContext() != nullptr)
+				ImGui_ImplGlfw_WindowFocusCallback(in_glfw_window, value);
+
 			my_window->OnFocusStateChange(value == GL_TRUE);
 		});
 	}
@@ -488,10 +513,14 @@ namespace chaos
 
 	void Window::DoOnMouseMove(GLFWwindow* in_glfw_window, double x, double y)
 	{
-		Application::SetApplicationInputMode(InputMode::MOUSE);
-
-		GetWindowAndProcess(in_glfw_window, [x, y](Window* my_window)
+		GetWindowAndProcess(in_glfw_window, [=](Window* my_window)
 		{
+			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
+			if (ImGui::GetCurrentContext() != nullptr)
+				ImGui_ImplGlfw_CursorPosCallback(in_glfw_window, x, y);
+
+			Application::SetApplicationInputMode(InputMode::MOUSE);
+
 			glm::vec2 position = { float(x), float(y) };
 			if (!my_window->IsMousePositionValid())
 				my_window->OnMouseMove({ 0.0f, 0.0f });
@@ -503,62 +532,76 @@ namespace chaos
 
 	void Window::DoOnMouseButton(GLFWwindow* in_glfw_window, int button, int action, int modifier)
 	{
-		MouseButton mouse_button = (MouseButton)button;
-
-		// notify the application of the keyboard button state
-		WindowApplication* application = Application::GetInstance();
-		if (application != nullptr)
+		GetWindowAndProcess(in_glfw_window, [=](Window* my_window)
 		{
-			application->SetInputMode(InputMode::MOUSE);
-			application->SetMouseButtonState(mouse_button, action);
-		}
+			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
+			if (ImGui::GetCurrentContext() != nullptr)
+				ImGui_ImplGlfw_MouseButtonCallback(in_glfw_window, button, action, modifier);
 
-		GetWindowAndProcess(in_glfw_window, [button, action, modifier](Window* my_window)
-		{
+			MouseButton mouse_button = (MouseButton)button;
+
+			// notify the application of the keyboard button state
+			if (WindowApplication* application = Application::GetInstance())
+			{
+				application->SetInputMode(InputMode::MOUSE);
+				application->SetMouseButtonState(mouse_button, action);
+			}
+
 			my_window->OnMouseButton(button, action, modifier);
 		});
 	}
 
 	void Window::DoOnMouseWheel(GLFWwindow* in_glfw_window, double scroll_x, double scroll_y)
 	{
-		Application::SetApplicationInputMode(InputMode::MOUSE);
-
-		GetWindowAndProcess(in_glfw_window, [scroll_x, scroll_y](Window* my_window)
+		GetWindowAndProcess(in_glfw_window, [=](Window* my_window)
 		{
+			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
+			if (ImGui::GetCurrentContext() != nullptr)
+				ImGui_ImplGlfw_ScrollCallback(in_glfw_window, scroll_x, scroll_y);
+
+			Application::SetApplicationInputMode(InputMode::MOUSE);
+
 			my_window->OnMouseWheel(scroll_x, scroll_y);
 		});
 	}
 
 	void Window::DoOnKeyEvent(GLFWwindow* in_glfw_window, int key, int scan_code, int action, int modifier)
 	{
-		KeyboardButton keyboard_button = (KeyboardButton)key;
-
-		// notify the application of the keyboard button state
-		WindowApplication* application = Application::GetInstance();
-		if (application != nullptr)
+		GetWindowAndProcess(in_glfw_window, [=](Window* my_window)
 		{
-			application->SetInputMode(InputMode::KEYBOARD);
-			application->SetKeyboardButtonState(keyboard_button, action);
-		}
-		// handle the message
-		KeyEvent event;
-		event.key = key;
-		event.scan_code = scan_code;
-		event.action = action;
-		event.modifier = modifier;
+			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
+			if (ImGui::GetCurrentContext() != nullptr)
+				ImGui_ImplGlfw_KeyCallback(in_glfw_window, key, scan_code, action, modifier);
 
-		GetWindowAndProcess(in_glfw_window, [&event](Window* my_window)
-		{
+			KeyboardButton keyboard_button = (KeyboardButton)key;
+
+			// notify the application of the keyboard button state
+			if (WindowApplication* application = Application::GetInstance())
+			{
+				application->SetInputMode(InputMode::KEYBOARD);
+				application->SetKeyboardButtonState(keyboard_button, action);
+			}
+			// handle the message
+			KeyEvent event;
+			event.key = key;
+			event.scan_code = scan_code;
+			event.action = action;
+			event.modifier = modifier;
+
 			my_window->OnKeyEvent(event);
 		});
 	}
 
 	void Window::DoOnCharEvent(GLFWwindow* in_glfw_window, unsigned int c)
 	{
-		Application::SetApplicationInputMode(InputMode::KEYBOARD);
-
-		GetWindowAndProcess(in_glfw_window, [c](Window* my_window)
+		GetWindowAndProcess(in_glfw_window, [=](Window* my_window)
 		{
+			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
+			if (ImGui::GetCurrentContext() != nullptr)
+				ImGui_ImplGlfw_CharCallback(in_glfw_window, c);
+
+			Application::SetApplicationInputMode(InputMode::KEYBOARD);
+
 			my_window->OnCharEvent(c);
 		});
 	}

@@ -278,7 +278,7 @@ namespace chaos
 			}
 			else
 			{
-				T sqrtdelta = Sqrt(delta);
+				T sqrtdelta = std::sqrt(delta);
 				T _2a = a + a;
 				result.solutions[0] = (-b - sqrtdelta) / _2a;
 				result.solutions[1] = (-b + sqrtdelta) / _2a;

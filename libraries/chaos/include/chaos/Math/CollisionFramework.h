@@ -407,6 +407,9 @@ namespace chaos
 		return 1;
 	}
 
+
+
+
 	template<typename T, int dimension>
 	/*CHAOS_API*/ int GetIntersection(type_ray<T, dimension> const& r, type_triangle<T, dimension> const& t, typename type_ray<T, dimension>::vec_type& res)
 	{
@@ -416,13 +419,94 @@ namespace chaos
 		return 0;
 	}
 
+
 	template<typename T, int dimension>
-	/*CHAOS_API*/ int GetIntersection(type_ray<T, dimension> const& r, type_sphere<T, dimension> const& s, typename type_ray<T, dimension>::vec_type& res1, typename type_ray<T, dimension>::vec_type& res2)
+	class RaySphereIntersectionResult
 	{
+	public:
 
+		class IntersectionData
+		{
+		public:
 
+			float t = 0.0f;
+			glm::vec<dimension, T> position = glm::vec<dimension, T>(T(0));
+		};
 
-		return 0;
+	public:
+
+		operator bool() const
+		{
+			return (intersection_count > 0);
+		}
+
+		void AddIntersectionInfo(float t, glm::vec<dimension, T> const& position)
+		{
+			assert(intersection_count < 2);
+			data[++intersection_count] = { t, position };
+		}
+
+		RaySphereIntersectionResult FilterPositiveIntersectionOnly() const
+		{
+			RaySphereIntersectionResult result;
+
+			for (int i = 0; i < intersection_count; ++i)
+				if (data[i].t >= 0.0f)
+					result.AddIntersectionInfo(data[i].t, data[i].position);
+
+			return result;
+		}
+
+	public:
+
+		/** number of intersections */
+		int intersection_count = 0;
+		/** data for each intersection */
+		std::optional<IntersectionData> data[2];
+	};
+
+	// Ray/Sphere intersection
+	//
+	// intersection point P is on the circle (C, r)
+	// intersection point P is on the ray (A, dir)
+	// 
+	// P = A + dir.t
+	// dist2(P, C) = r^2
+	//
+	// ----------------------------------------------------------
+	// dist2(A + dir.t, C) = r^2
+	// ----------------------------------------------------------
+	// [(A.x + dir.x t) - C.x]^2 + [(A.y + dir.y t) - C.y]^2 + [(A.y + dir.y t) - C.y]^2 = r^2
+	// ----------------------------------------------------------
+	// (A.x + dir.x t)^2 + (A.y + dir.y t)^2 + (A.z + dir.z t)^2 +
+	// size2(C) 
+	// -2 [(A.x + dir.x t) C.x + (A.y + dir.y t) C.y + (A.z + dir.z t) C.z]
+	// = r^2
+	// ----------------------------------------------------------
+	// size2(A)     +     size2(dir).t^2     +     2 t dot(A, dir) +
+	// size2(C)
+	// -2 dot(A, C) -2 dot(dir, C) t
+	// = r^2
+	// ----------------------------------------------------------
+	// t^2 [size2(dir)] +
+	// 2 t [dot(A, dir) - dot(dir, C)] +
+	// size2(A) + size2(C) - 2 dot(A, C) - r^2
+	// = 0
+
+	template<typename T, int dimension>
+	/*CHAOS_API*/ RaySphereIntersectionResult<T, dimension> GetIntersection(type_ray<T, dimension> const& r, type_sphere<T, dimension> const& s)
+	{
+		RaySphereIntersectionResult<T, dimension> result;
+
+		T A = glm::length2(r.direction);
+		T B = T(2) * (glm::dot(r.position, r.direction) - glm::dot(r.direction, s.position));
+		T C = glm::length2(r.position) + glm::length2(s.position) - T(2) * glm::dot(r.position, r.position) - s.radius * s.radius;
+
+		MathTools::Polynome2Solution<T> solutions = MathTools::SolvePolynome2(A, B, C);
+		for (int i = 0; i < solutions.solution_count; ++i)
+			result.AddIntersectionInfo(solutions.solutions[i], r.position * r.direction * solutions.solutions[i]);
+ 
+		return result;
 	}
 
 	template<typename T, int dimension>

@@ -727,10 +727,128 @@ int ConvertKeyToCurrentLayout(int key, KeyboardLayout source_layout = KeyboardLa
 	return key;
 }
 
+#if 0
+
+int ConvertKey(int K)
+{
+
+#if 0
+	char buf[KL_NAMELENGTH];
+
+	GetKeyboardLayoutName(buf);
+
+	HKL Layouts[1000];
+
+	int R = GetKeyboardLayoutList(1000, Layouts);
+
+	int ScanCode = glfwGetKeyScancode(K);
+
+
+
+	std::map<unsigned int, unsigned int> m1;
+	std::map<unsigned int, unsigned int> m2;
+
+	for (unsigned int i = 0; i < 100000; ++i)
+	{
+		unsigned int scan1 = ::MapVirtualKeyEx(i, MAPVK_VSC_TO_VK, Layouts[0]);
+		unsigned int scan2 = ::MapVirtualKeyEx(i, MAPVK_VSC_TO_VK, Layouts[1]);
+
+		if (scan1 != 0)
+			m1.insert({ i, scan1 });
+		if (scan2 != 0)
+			m2.insert({ i, scan2 });
+
+		if (scan1 != scan2)
+			scan1 = scan1;
+
+		if (i == std::numeric_limits<unsigned int>::max())
+			break;
+	}
+
+
+
+	for (int i = 0; i < m1.size(); ++i)
+	{
+		if (m1[i] == K)
+			K = K;
+		if (m2[i] == K)
+			K = K;
+
+
+
+	}
 
 
 
 
+	UINT VKCode1 = ::MapVirtualKeyEx(K, MAPVK_VSC_TO_VK, Layouts[0]);
+	UINT VKCode2 = ::MapVirtualKeyEx(K, MAPVK_VSC_TO_VK, Layouts[1]);
+
+	UINT C1 = ::MapVirtualKeyEx(VKCode1, MAPVK_VK_TO_CHAR, Layouts[0]);
+	UINT C2 = ::MapVirtualKeyEx(VKCode2, MAPVK_VK_TO_CHAR, Layouts[1]);
+
+	R = R;
+#endif
+
+#if 0
+
+	int GetKeyboardLayoutList(
+		[in]  int nBuff,
+		[out] HKL * lpList
+	);
+
+
+
+
+	HKL hKeyboardLayout = ::GetKeyboardLayout(NULL);
+
+	UINT VKCode = ::MapVirtualKeyEx(K, MAPVK_VSC_TO_VK, hKeyboardLayout);
+
+	UINT CharCode = ::MapVirtualKeyEx(K, MAPVK_VK_TO_CHAR, hKeyboardLayout);
+
+
+#endif
+
+
+
+
+	//exit(0);
+#if 0
+	auto p = VK_LBUTTON;
+
+	HKL hKeyboardLayout = ::GetKeyboardLayout(NULL);
+
+	UINT VKCode = ::MapVirtualKeyEx(K, MAPVK_VSC_TO_VK, hKeyboardLayout);
+
+	UINT CharCode = ::MapVirtualKeyEx(VKCode, MAPVK_VK_TO_CHAR, hKeyboardLayout);
+
+	UINT a = ::MapVirtualKeyEx(K, MAPVK_VK_TO_VSC, hKeyboardLayout);
+	UINT b = ::MapVirtualKeyEx(K, MAPVK_VSC_TO_VK, hKeyboardLayout);
+	UINT c = ::MapVirtualKeyEx(K, MAPVK_VK_TO_CHAR, hKeyboardLayout);
+	UINT d = ::MapVirtualKeyEx(K, MAPVK_VSC_TO_VK_EX, hKeyboardLayout);
+#endif
+
+
+	return 0;
+
+#if 0
+	HKL hKeyboardLayout = ::GetKeyboardLayout(NULL);
+	for (UINT ScanCode = 0; ScanCode <= 0xFF; ++ScanCode)
+	{
+		UINT VKCode = ::MapVirtualKeyEx(ScanCode, MAPVK_VSC_TO_VK, hKeyboardLayout);
+		if (VKCode != 0)
+		{
+			UINT CharCode = ::MapVirtualKeyEx(VKCode, MAPVK_VK_TO_CHAR, hKeyboardLayout);
+			Result.Push({ ScanCode, VKCode, CharCode });
+		}
+	}
+#endif
+
+}
+
+
+
+#endif
 
 
 
@@ -787,21 +905,39 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
+	float fov = 60.0f;
+	float far_plane = 5000.0f;
+	float near_plane = 20.0f;
+	float create_object_distance = 50.0f;
+
+	glm::mat4x4 GetProjectionMatrix(glm::vec2 viewport_size) const
+	{
+		return glm::perspectiveFov(fov * (float)M_PI / 180.0f, float(viewport_size.x), float(viewport_size.y), near_plane, far_plane);
+	}
+
+	glm::mat4x4 GetGlobalToCameraMatrix() const
+	{
+		return fps_view_controller.GlobalToLocal();
+	}
+
+	glm::mat4x4 GetCameraToGlobalMatrix() const
+	{
+		return fps_view_controller.LocalToGlobal();
+	}
+
 	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
 		glm::vec4 clear_color(0.0f, 0.7f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
-
-		float far_plane = 10000.0f;
+		
 		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);   // when viewer is inside the cube
 
 		// XXX : the scaling is used to avoid the near plane clipping
-		static float FOV = 60.0f;
-		primitive_renderer->projection      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, float(draw_params.viewport.size.x), float(draw_params.viewport.size.y), 1.0f, far_plane);
-		primitive_renderer->world_to_camera = fps_view_controller.GlobalToLocal();
+		primitive_renderer->projection      = GetProjectionMatrix(draw_params.viewport.size);
+		primitive_renderer->world_to_camera = GetGlobalToCameraMatrix();
 		primitive_renderer->renderer        = renderer;
 
 		DrawGeometryObjects();
@@ -844,7 +980,6 @@ protected:
 			ImGui::Text("r      : scale up");
 			ImGui::Text("f      : scale down");
 			ImGui::Text("shift  : speed");
-
 			ImGui::End();
 		}
 	}
@@ -916,6 +1051,83 @@ protected:
 	{
 		return (geometric_objects.size() == 0) ? nullptr : geometric_objects[current_object_index].get();
 	}
+
+	bool GetImGuiMenuMode() const
+	{
+		if (chaos::WindowApplication const* application = chaos::Application::GetInstance())
+		{
+			return application->GetImGuiMenuMode();
+		}
+
+		return false;
+	}
+
+	chaos::ray3 GetRayFromMousePosition() const
+	{
+		glm::ivec2 window_size = GetWindowSize();
+		if (window_size.x > 0 && window_size.y > 0)
+		{
+			// get the viewport
+			chaos::aabox2 viewport = GetRequiredViewport(window_size);
+
+			// get the position of the cursor
+			double x = 0.0;
+			double y = 0.0;
+			glfwGetCursorPos(glfw_window, &x, &y);
+
+			// compute the ray in projection space from eye center to cursor
+			auto RecenterInterval = [](float value)
+			{
+				return (value * 2.0f - 1.0f);
+			};
+
+			glm::mat4x4 proj_inv = glm::inverse(GetProjectionMatrix(viewport.size));
+			glm::mat4x4 cam_to_world = GetCameraToGlobalMatrix();
+
+			glm::vec4 ray_point1 = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+			ray_point1 = cam_to_world * ray_point1;
+
+			glm::vec4 ray_point2 = glm::vec4(
+				 RecenterInterval(((float)x - viewport.position.x) / viewport.size.x),
+				-RecenterInterval(((float)y - viewport.position.y) / viewport.size.y), // for mouse position, Y = 0.0f is top Y = 1.0f is bottom
+				1.0f,
+				1.0f);
+
+			ray_point2 = proj_inv * ray_point2;
+			ray_point2 = cam_to_world * ray_point2;
+
+			glm::vec3 p1 = glm::vec3(ray_point1.x / ray_point1.w, ray_point1.y / ray_point1.w, ray_point1.z / ray_point1.w);
+			glm::vec3 p2 = glm::vec3(ray_point2.x / ray_point2.w, ray_point2.y / ray_point2.w, ray_point2.z / ray_point2.w);
+
+			chaos::ray3 r;
+			r.position = p1;
+			r.direction = glm::normalize(p2 - p1);
+
+			return r;
+		}
+
+		return chaos::ray3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	}
+
+	virtual bool OnMouseButtonImpl(int button, int action, int modifier) override
+	{
+		if (button == 1 && action == GLFW_PRESS)
+		{
+			if (GetImGuiMenuMode())
+			{
+				chaos::ray3 r = GetRayFromMousePosition();
+
+				glm::vec3 center = r.position + create_object_distance * r.direction;
+
+				chaos::sphere3 creation_sphere;
+				creation_sphere.position = center;
+				creation_sphere.radius = 10.0f;
+				CreateNewObject(creation_sphere);
+			}
+		}
+		return true;
+	}
+
 
 	virtual bool OnKeyEventImpl(chaos::KeyEvent const& event) override
 	{
@@ -1030,124 +1242,6 @@ protected:
 		return false;
 	}
 
-	int ConvertKey(int K)
-	{
-
-#if 0
-		char buf[KL_NAMELENGTH];
-
-		GetKeyboardLayoutName(buf);
-
-		HKL Layouts[1000];
-
-		int R = GetKeyboardLayoutList(1000, Layouts);
-
-		int ScanCode = glfwGetKeyScancode(K);
-
-
-
-		std::map<unsigned int, unsigned int> m1;
-		std::map<unsigned int, unsigned int> m2;
-
-		for (unsigned int i = 0; i < 100000; ++i)
-		{
-			unsigned int scan1 = ::MapVirtualKeyEx(i, MAPVK_VSC_TO_VK, Layouts[0]);
-			unsigned int scan2 = ::MapVirtualKeyEx(i, MAPVK_VSC_TO_VK, Layouts[1]);
-
-			if (scan1 != 0)
-				m1.insert({ i, scan1 });
-			if (scan2 != 0)
-				m2.insert({ i, scan2 });
-
-			if (scan1 != scan2)
-				scan1 = scan1;
-
-			if (i == std::numeric_limits<unsigned int>::max())
-				break;
-		}
-
-
-
-		for (int i = 0; i < m1.size(); ++i)
-		{
-			if (m1[i] == K)
-				K = K;
-			if (m2[i] == K)
-				K = K;
-
-			
-
-		}
-
-
-
-
-		UINT VKCode1 = ::MapVirtualKeyEx(K, MAPVK_VSC_TO_VK, Layouts[0]);
-		UINT VKCode2 = ::MapVirtualKeyEx(K, MAPVK_VSC_TO_VK, Layouts[1]);
-
-		UINT C1 = ::MapVirtualKeyEx(VKCode1, MAPVK_VK_TO_CHAR, Layouts[0]);
-		UINT C2 = ::MapVirtualKeyEx(VKCode2, MAPVK_VK_TO_CHAR, Layouts[1]);
-
-		R = R;
-#endif
-
-#if 0
-
-		int GetKeyboardLayoutList(
-			[in]  int nBuff,
-			[out] HKL * lpList
-		);
-
-
-
-
-		HKL hKeyboardLayout = ::GetKeyboardLayout(NULL);
-		
-		UINT VKCode = ::MapVirtualKeyEx(K, MAPVK_VSC_TO_VK, hKeyboardLayout);
-
-		UINT CharCode = ::MapVirtualKeyEx(K, MAPVK_VK_TO_CHAR, hKeyboardLayout);
-
-
-#endif
-
-
-
-
-		//exit(0);
-#if 0
-		auto p = VK_LBUTTON;
-
-		HKL hKeyboardLayout = ::GetKeyboardLayout(NULL);
-
-		UINT VKCode = ::MapVirtualKeyEx(K, MAPVK_VSC_TO_VK, hKeyboardLayout);
-
-		UINT CharCode = ::MapVirtualKeyEx(VKCode, MAPVK_VK_TO_CHAR, hKeyboardLayout);
-
-		UINT a = ::MapVirtualKeyEx(K, MAPVK_VK_TO_VSC, hKeyboardLayout);
-		UINT b = ::MapVirtualKeyEx(K, MAPVK_VSC_TO_VK, hKeyboardLayout);
-		UINT c = ::MapVirtualKeyEx(K, MAPVK_VK_TO_CHAR, hKeyboardLayout);
-		UINT d = ::MapVirtualKeyEx(K, MAPVK_VSC_TO_VK_EX, hKeyboardLayout);
-#endif
-
-
-		return 0;
-
-#if 0
-		HKL hKeyboardLayout = ::GetKeyboardLayout(NULL);
-		for (UINT ScanCode = 0; ScanCode <= 0xFF; ++ScanCode)
-		{
-			UINT VKCode = ::MapVirtualKeyEx(ScanCode, MAPVK_VSC_TO_VK, hKeyboardLayout);
-			if (VKCode != 0)
-			{
-				UINT CharCode = ::MapVirtualKeyEx(VKCode, MAPVK_VK_TO_CHAR, hKeyboardLayout);
-				Result.Push({ ScanCode, VKCode, CharCode });
-			}
-		}
-#endif
-
-	}
-
-
 
 
 	bool ScaleObject(GeometricObject* object, int key, float delta_time, float direction)
@@ -1191,8 +1285,11 @@ protected:
 
 	virtual bool DoTick(float delta_time) override
 	{
+		// move camera
+		//if (!GetImGuiMenuMode())
 		fps_view_controller.Tick(glfw_window, delta_time);
 
+		// move object
 		if (GeometricObject* current_object = GetCurrentGeometricObject())
 		{
 			bool moved = false;
@@ -1209,6 +1306,46 @@ protected:
 
 			if (moved)
 				OnObjectMoved(current_object);
+		}
+
+		// object selection with mouse
+		if (glfwGetInputMode(glfw_window, GLFW_CURSOR) == GLFW_CURSOR_NORMAL)
+		{
+			glm::ivec2 window_size = GetWindowSize();
+			if (window_size.x > 0 && window_size.y > 0)
+			{
+				// get the viewport
+				chaos::aabox2 viewport = GetRequiredViewport(window_size);
+
+				// get the position of the cursor
+				double x = 0.0;
+				double y = 0.0;
+				glfwGetCursorPos(glfw_window, &x, &y);
+
+				// search whether their is an object intersection
+				GeometricObject const * intersection_obj = nullptr;
+
+				chaos::ray3 r = GetRayFromMousePosition();
+				for (auto const& obj : geometric_objects)
+					if (chaos::RaySphereIntersectionResult<float, 3> intersections = chaos::GetIntersection(r, obj->sphere))
+						intersection_obj = obj.get();
+
+				// trace debugging information
+				ImGui::Begin("Information");
+				ImGui::Text("cursor            : (%0.3f, %0.3f)", (float)x, (float)y);
+				ImGui::Text("window   size     : (%0.3f, %0.3f)", (float)window_size.x, (float)window_size.y);
+				ImGui::Text("viewport position : (%0.3f, %0.3f)", (float)viewport.position.x, (float)viewport.position.y);
+				ImGui::Text("viewport size     : (%0.3f, %0.3f)", (float)viewport.size.x, (float)viewport.size.y);
+				ImGui::InputFloat("create_object_distance", &create_object_distance);
+				ImGui::InputFloat("near_plane", &near_plane, 10.0f, 50.0f);
+				ImGui::InputFloat("far_plane", &far_plane, 10.0f, 50.0f);
+				ImGui::InputFloat("fov", &fov, 1.0f, 5.0f);
+				if (intersection_obj != nullptr)
+				{
+					ImGui::Text("ray found sphere");
+				}
+				ImGui::End();
+			}
 		}
 
 		return true; // refresh

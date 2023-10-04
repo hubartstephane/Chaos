@@ -443,17 +443,15 @@ namespace chaos
 		void AddIntersectionInfo(float t, glm::vec<dimension, T> const& position)
 		{
 			assert(intersection_count < 2);
-			data[++intersection_count] = { t, position };
+			data[intersection_count++] = { t, position };
 		}
 
 		RaySphereIntersectionResult FilterPositiveIntersectionOnly() const
 		{
 			RaySphereIntersectionResult result;
-
 			for (int i = 0; i < intersection_count; ++i)
-				if (data[i].t >= 0.0f)
-					result.AddIntersectionInfo(data[i].t, data[i].position);
-
+				if (data[i]->t >= 0.0f)
+					result.AddIntersectionInfo(data[i]->t, data[i]->position);
 			return result;
 		}
 
@@ -478,33 +476,26 @@ namespace chaos
 	// ----------------------------------------------------------
 	// [(A.x + dir.x t) - C.x]^2 + [(A.y + dir.y t) - C.y]^2 + [(A.y + dir.y t) - C.y]^2 = r^2
 	// ----------------------------------------------------------
-	// (A.x + dir.x t)^2 + (A.y + dir.y t)^2 + (A.z + dir.z t)^2 +
-	// size2(C) 
-	// -2 [(A.x + dir.x t) C.x + (A.y + dir.y t) C.y + (A.z + dir.z t) C.z]
-	// = r^2
+	// [(A.x + dir.x t) - C.x]^2 + [(A.y + dir.y t) - C.y]^2 + [(A.y + dir.y t) - C.y]^2 = r^2
 	// ----------------------------------------------------------
-	// size2(A)     +     size2(dir).t^2     +     2 t dot(A, dir) +
-	// size2(C)
-	// -2 dot(A, C) -2 dot(dir, C) t
-	// = r^2
+	// [(A.x - C.x) + dir.x t]^2 + [(A.y - C.y) + dir.x t]^2 +[(A.z - C.z) + dir.z t]^2  = r^2
 	// ----------------------------------------------------------
-	// t^2 [size2(dir)] +
-	// 2 t [dot(A, dir) - dot(dir, C)] +
-	// size2(A) + size2(C) - 2 dot(A, C) - r^2
-	// = 0
+	// size2(AC) + 2.t.dot(AC, dir) + t^2.size2(dir) - r^2 = 0
 
 	template<typename T, int dimension>
 	/*CHAOS_API*/ RaySphereIntersectionResult<T, dimension> GetIntersection(type_ray<T, dimension> const& r, type_sphere<T, dimension> const& s)
 	{
 		RaySphereIntersectionResult<T, dimension> result;
 
-		T A = glm::length2(r.direction);
-		T B = T(2) * (glm::dot(r.position, r.direction) - glm::dot(r.direction, s.position));
-		T C = glm::length2(r.position) + glm::length2(s.position) - T(2) * glm::dot(r.position, r.position) - s.radius * s.radius;
+		auto AC = r.position - s.position;
 
-		MathTools::Polynome2Solution<T> solutions = MathTools::SolvePolynome2(A, B, C);
+		T a = glm::length2(r.direction);
+		T b = T(2) * glm::dot(AC, r.direction);
+		T c = glm::length2(AC) - s.radius * s.radius;
+
+		MathTools::Polynome2Solution<T> solutions = MathTools::SolvePolynome2(a, b, c);
 		for (int i = 0; i < solutions.solution_count; ++i)
-			result.AddIntersectionInfo(solutions.solutions[i], r.position * r.direction * solutions.solutions[i]);
+			result.AddIntersectionInfo(solutions.solutions[i], r.position + r.direction * solutions.solutions[i]);
  
 		return result;
 	}

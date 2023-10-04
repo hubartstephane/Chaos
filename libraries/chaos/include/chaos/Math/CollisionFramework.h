@@ -5,7 +5,7 @@ namespace chaos
 	enum class CollisionType;
 
 	template<typename T, int dimension>
-	class RaySphereIntersectionResult;
+	class RayConvexGeometryIntersectionResult;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -442,7 +442,7 @@ namespace chaos
 	// size2(AC) + 2.t.dot(AC, dir) + t^2.size2(dir) - r^2 = 0
 
 	template<typename T, int dimension>
-	class RaySphereIntersectionResult
+	class RayConvexGeometryIntersectionResult
 	{
 	public:
 
@@ -473,9 +473,9 @@ namespace chaos
 		}
 
 		/** remove all intersections in opposite direction of the ray */
-		RaySphereIntersectionResult FilterPositiveIntersectionOnly() const
+		RayConvexGeometryIntersectionResult FilterPositiveIntersectionOnly() const
 		{
-			RaySphereIntersectionResult result;
+			RayConvexGeometryIntersectionResult result;
 			for (int i = 0; i < count ; ++i)
 				if (info[i]->t >= 0.0f)
 					result.AddIntersectionPoint(info[i]->t, info[i]->position);
@@ -483,9 +483,9 @@ namespace chaos
 		}
 
 		/** keep only all intersections in opposite direction of the ray */
-		RaySphereIntersectionResult FilterNegativeIntersectionOnly() const
+		RayConvexGeometryIntersectionResult FilterNegativeIntersectionOnly() const
 		{
-			RaySphereIntersectionResult result;
+			RayConvexGeometryIntersectionResult result;
 			for (int i = 0; i < count ; ++i)
 				if (info[i]->t <= 0.0f)
 					result.AddIntersectionPoint(info[i]->t, info[i]->position);
@@ -515,9 +515,9 @@ namespace chaos
 	};
 
 	template<typename T, int dimension>
-	/*CHAOS_API*/ RaySphereIntersectionResult<T, dimension> GetIntersection(type_ray<T, dimension> const& r, type_sphere<T, dimension> const& s)
+	/*CHAOS_API*/ RayConvexGeometryIntersectionResult<T, dimension> GetIntersection(type_ray<T, dimension> const& r, type_sphere<T, dimension> const& s)
 	{
-		RaySphereIntersectionResult<T, dimension> result;
+		RayConvexGeometryIntersectionResult<T, dimension> result;
 
 		auto AC = r.position - s.position;
 

@@ -471,7 +471,7 @@ protected:
 
 				for (auto const& obj : geometric_objects)
 				{
-					if (chaos::RaySphereIntersectionResult<float, 3> intersections = chaos::GetIntersection(r, obj->sphere).FilterPositiveIntersectionOnly())
+					if (chaos::RayConvexGeometryIntersectionResult<float, 3> intersections = chaos::GetIntersection(r, obj->sphere).FilterPositiveIntersectionOnly())
 					{
 						for (int i = 0; i < intersections.count ; ++i)
 						{

@@ -147,7 +147,8 @@ protected:
 			}
 			else
 			{
-				primitive_renderer->GPUDrawPrimitive(geometric_object->sphere, white, false);
+				glm::vec4 color = (pointed_object == geometric_object) ? blue : white;
+				primitive_renderer->GPUDrawPrimitive(geometric_object->sphere, color, false);
 			}
 		}
 	}
@@ -462,12 +463,26 @@ protected:
 				glfwGetCursorPos(glfw_window, &x, &y);
 
 				// search whether their is an object intersection
-				GeometricObject const * intersection_obj = nullptr;
+				pointed_object = nullptr;
 
 				chaos::ray3 r = GetRayFromMousePosition();
+
+				float best_distance = std::numeric_limits<float>::max();
+
 				for (auto const& obj : geometric_objects)
-					if (chaos::RaySphereIntersectionResult<float, 3> intersections = chaos::GetIntersection(r, obj->sphere))
-						intersection_obj = obj.get();
+				{
+					if (chaos::RaySphereIntersectionResult<float, 3> intersections = chaos::GetIntersection(r, obj->sphere).FilterPositiveIntersectionOnly())
+					{
+						for (int i = 0; i < intersections.intersection_count; ++i)
+						{
+							if (best_distance > intersections.data[i]->t)
+							{
+								pointed_object = obj.get();
+								best_distance = intersections.data[i]->t;
+							}
+						}
+					}
+				}
 
 				// trace debugging information
 				ImGui::Begin("Information");
@@ -479,10 +494,6 @@ protected:
 				ImGui::InputFloat("near_plane", &near_plane, 10.0f, 50.0f);
 				ImGui::InputFloat("far_plane", &far_plane, 10.0f, 50.0f);
 				ImGui::InputFloat("fov", &fov, 1.0f, 5.0f);
-				if (intersection_obj != nullptr)
-				{
-					ImGui::Text("ray found sphere");
-				}
 				ImGui::End();
 			}
 		}
@@ -514,6 +525,8 @@ protected:
 	float camera_speed = 400.0f;
 
 	chaos::Tree27<3, Tree27NodeBase> object_tree;
+
+	chaos::weak_ptr<GeometricObject> pointed_object;
 
 	bool show_help = true;
 };

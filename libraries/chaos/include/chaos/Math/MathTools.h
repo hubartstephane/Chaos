@@ -252,10 +252,10 @@ namespace chaos
 		template<typename T>
 		struct /*CHAOS_API*/ Polynome2Solution
 		{
-			/** the number of solutions (0, 1 or 2) */
-			size_t solution_count = 0;
 			/** the solutions */
 			T      solutions[2];
+			/** the number of solutions (0, 1 or 2) */
+			size_t count = 0;
 		};
 
 		/** solve the 2 degree polynome ax2 + bx + c */
@@ -268,13 +268,13 @@ namespace chaos
 
 			if (delta < 0)
 			{
-				result.solution_count = 0;
+				result.count = 0;
 			}
 			else if (delta == 0)
 			{
 				T solution = -b / (a + a);
 				result.solutions[0] = result.solutions[1] = solution;
-				result.solution_count = 1;
+				result.count = 1;
 			}
 			else
 			{
@@ -282,7 +282,7 @@ namespace chaos
 				T _2a = a + a;
 				result.solutions[0] = (-b - sqrtdelta) / _2a;
 				result.solutions[1] = (-b + sqrtdelta) / _2a;
-				result.solution_count = 2;
+				result.count = 2;
 			}
 
 			return result;

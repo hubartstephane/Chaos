@@ -473,12 +473,12 @@ protected:
 				{
 					if (chaos::RaySphereIntersectionResult<float, 3> intersections = chaos::GetIntersection(r, obj->sphere).FilterPositiveIntersectionOnly())
 					{
-						for (int i = 0; i < intersections.intersection_count; ++i)
+						for (int i = 0; i < intersections.count ; ++i)
 						{
-							if (best_distance > intersections.data[i]->t)
+							if (best_distance > intersections[i].t)
 							{
 								pointed_object = obj.get();
-								best_distance = intersections.data[i]->t;
+								best_distance = intersections[i].t;
 							}
 						}
 					}

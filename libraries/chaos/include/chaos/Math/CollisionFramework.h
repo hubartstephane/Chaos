@@ -4,6 +4,9 @@ namespace chaos
 
 	enum class CollisionType;
 
+	template<typename T, int dimension>
+	class RaySphereIntersectionResult;
+
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// ==============================================================================================
@@ -419,50 +422,6 @@ namespace chaos
 		return 0;
 	}
 
-
-	template<typename T, int dimension>
-	class RaySphereIntersectionResult
-	{
-	public:
-
-		class IntersectionData
-		{
-		public:
-
-			float t = 0.0f;
-			glm::vec<dimension, T> position = glm::vec<dimension, T>(T(0));
-		};
-
-	public:
-
-		operator bool() const
-		{
-			return (intersection_count > 0);
-		}
-
-		void AddIntersectionInfo(float t, glm::vec<dimension, T> const& position)
-		{
-			assert(intersection_count < 2);
-			data[intersection_count++] = { t, position };
-		}
-
-		RaySphereIntersectionResult FilterPositiveIntersectionOnly() const
-		{
-			RaySphereIntersectionResult result;
-			for (int i = 0; i < intersection_count; ++i)
-				if (data[i]->t >= 0.0f)
-					result.AddIntersectionInfo(data[i]->t, data[i]->position);
-			return result;
-		}
-
-	public:
-
-		/** number of intersections */
-		int intersection_count = 0;
-		/** data for each intersection */
-		std::optional<IntersectionData> data[2];
-	};
-
 	// Ray/Sphere intersection
 	//
 	// intersection point P is on the circle (C, r)
@@ -483,6 +442,79 @@ namespace chaos
 	// size2(AC) + 2.t.dot(AC, dir) + t^2.size2(dir) - r^2 = 0
 
 	template<typename T, int dimension>
+	class RaySphereIntersectionResult
+	{
+	public:
+
+		/** information concerning an intersection */
+		class IntersectionInfo
+		{
+		public:
+
+			/** position of the solution */
+			glm::vec<dimension, T> position = glm::vec<dimension, T>(T(0));
+			/** distance along the ray for that solution */
+			float t = 0.0f;
+		};
+
+	public:
+
+		/** returns whether there is at least one intersection point */
+		operator bool() const
+		{
+			return (count > 0);
+		}
+
+		/** add an intersection to the solution */
+		void AddIntersectionPoint(float t, glm::vec<dimension, T> const& position)
+		{
+			assert(count < 2);
+			info[count++] = { position, t};
+		}
+
+		/** remove all intersections in opposite direction of the ray */
+		RaySphereIntersectionResult FilterPositiveIntersectionOnly() const
+		{
+			RaySphereIntersectionResult result;
+			for (int i = 0; i < count ; ++i)
+				if (info[i]->t >= 0.0f)
+					result.AddIntersectionPoint(info[i]->t, info[i]->position);
+			return result;
+		}
+
+		/** keep only all intersections in opposite direction of the ray */
+		RaySphereIntersectionResult FilterNegativeIntersectionOnly() const
+		{
+			RaySphereIntersectionResult result;
+			for (int i = 0; i < count ; ++i)
+				if (info[i]->t <= 0.0f)
+					result.AddIntersectionPoint(info[i]->t, info[i]->position);
+			return result;
+		}
+
+		/** get number of intersection */
+		int GetIntersectionCount() const
+		{
+			return count;
+		}
+
+		/** get the intersection info */
+		IntersectionInfo const & operator [](size_t index) const
+		{
+			assert(index <= 1);
+			assert(index < count);
+			return info[index].value();
+		}
+
+	public:
+
+		/** data for each intersection */
+		std::optional<IntersectionInfo> info[2];
+		/** number of intersections */
+		int count = 0;
+	};
+
+	template<typename T, int dimension>
 	/*CHAOS_API*/ RaySphereIntersectionResult<T, dimension> GetIntersection(type_ray<T, dimension> const& r, type_sphere<T, dimension> const& s)
 	{
 		RaySphereIntersectionResult<T, dimension> result;
@@ -494,8 +526,8 @@ namespace chaos
 		T c = glm::length2(AC) - s.radius * s.radius;
 
 		MathTools::Polynome2Solution<T> solutions = MathTools::SolvePolynome2(a, b, c);
-		for (int i = 0; i < solutions.solution_count; ++i)
-			result.AddIntersectionInfo(solutions.solutions[i], r.position + r.direction * solutions.solutions[i]);
+		for (int i = 0; i < solutions.count; ++i)
+			result.AddIntersectionPoint(solutions.solutions[i], r.position + r.direction * solutions.solutions[i]);
  
 		return result;
 	}

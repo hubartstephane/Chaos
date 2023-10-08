@@ -218,6 +218,22 @@ protected:
 			ImGui::Text("a      : move down");
 			ImGui::Text("e      : move up");
 
+			//IMGUI_API bool          ImageButton(const char* str_id, ImTextureID user_texture_id, const ImVec2 & size, const ImVec2 & uv0 = ImVec2(0, 0), const ImVec2 & uv1 = ImVec2(1, 1), const ImVec4 & bg_col = ImVec4(0, 0, 0, 0), const ImVec4 & tint_col = ImVec4(1, 1, 1, 1));
+			//
+
+			if (box_icon_texture != nullptr)
+			{
+				chaos::TextureDescription const& description = box_icon_texture->GetTextureDescription();
+				ImVec2 icon_size = { float(description.width), float(description.height) };
+				ImGui::ImageButton((ImTextureID)box_icon_texture->GetResourceID(), icon_size, ImVec2(0, 1), ImVec2(1, 0)); // reverse the texture coordinate along Y
+			}
+
+			if (sphere_icon_texture != nullptr)
+			{
+				chaos::TextureDescription const& description = sphere_icon_texture->GetTextureDescription();
+				ImVec2 icon_size = { float(description.width), float(description.height) };
+				ImGui::ImageButton((ImTextureID)sphere_icon_texture->GetResourceID(), icon_size, ImVec2(0, 1), ImVec2(1, 0)); // reverse the texture coordinate along Y
+			}
 
 
 
@@ -262,8 +278,23 @@ protected:
 
 	virtual void Finalize() override
 	{
+		box_icon_texture = nullptr;
+		sphere_icon_texture = nullptr;
+		
 		primitive_renderer = nullptr;
 		chaos::Window::Finalize();
+	}
+
+	chaos::GPUTexture* LoadTexture(char const* filename) const
+	{
+		if (chaos::WindowApplication* application = chaos::Application::GetInstance())
+		{
+			boost::filesystem::path resources_path = application->GetResourcesPath();
+
+			chaos::GPUTextureLoader loader;
+			return loader.LoadObject(resources_path / filename);
+		}
+		return nullptr;
 	}
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const& config) override
@@ -291,6 +322,10 @@ protected:
 		creation_box.half_size = glm::vec3(5.0f, 7.0f, 9.0f);
 
 		CreateNewObject(GeometryType::SPHERE, creation_box);
+
+		// create icons
+		box_icon_texture = LoadTexture("BoxIcon.png");
+		sphere_icon_texture = LoadTexture("SphereIcon.png");
 
 		return true;
 	}
@@ -594,7 +629,12 @@ protected:
 	/** the new object id */
 	size_t new_object_id = 0;
 
-	
+
+
+	/** the icon for the sphere */
+	chaos::shared_ptr<chaos::GPUTexture> sphere_icon_texture;
+	/** the icon for the box */
+	chaos::shared_ptr<chaos::GPUTexture> box_icon_texture;
 
 	chaos::Tree27<3, Tree27NodeBase> object_tree;
 

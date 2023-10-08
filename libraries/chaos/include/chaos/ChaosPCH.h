@@ -46,6 +46,7 @@
 #include <set>
 #include <cmath>
 #include <cfloat>
+#include <random>
 
 #if _WIN32 || _WIN64
 #include <io.h>

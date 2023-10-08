@@ -9,6 +9,15 @@ static glm::vec4 const white = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 // =======================================================================
 
+enum class GeometryType
+{
+	SPHERE,
+	BOX,
+	COUNT
+};
+
+// =======================================================================
+
 class Tree27NodeBase
 {
 public:
@@ -29,11 +38,104 @@ class GeometricObject : public chaos::Object
 {
 public:
 
+	void ChangeGeometry(int direction)
+	{
+		int type_count = int(GeometryType::COUNT);
+		geometry_type = GeometryType((int(geometry_type) + direction + type_count) % type_count);
+	}
+
+	void DrawPrimitive(PrimitiveRenderer * primitive_renderer, glm::vec4 const & color) const
+	{
+		switch (geometry_type)
+		{
+		case GeometryType::SPHERE:
+			primitive_renderer->GPUDrawPrimitive(sphere, color, false);
+			break;
+		case GeometryType::BOX:
+			primitive_renderer->GPUDrawPrimitive(box, color, false, false);
+			break;
+		default:
+			assert(0);
+		};
+	}
+
+	chaos::RayConvexGeometryIntersectionResult<float, 3> GetIntersection(chaos::ray3 const& r) const
+	{
+		switch (geometry_type)
+		{
+		case GeometryType::SPHERE:
+			return chaos::GetIntersection(r, sphere);
+		case GeometryType::BOX:
+			break;
+		default:
+			assert(0);
+		};
+		return {};
+	}
+
+	bool DisplaceObjectWithInputs(GLFWwindow* glfw_window, float delta_time)
+	{
+		bool result = false;
+
+		result |= MoveObjectWithInputs(glfw_window, GLFW_KEY_A, delta_time, { -1.0f,  0.0f,  0.0f });
+		result |= MoveObjectWithInputs(glfw_window, GLFW_KEY_D, delta_time, {  1.0f,  0.0f,  0.0f });
+		result |= MoveObjectWithInputs(glfw_window, GLFW_KEY_Q, delta_time, {  0.0f, -1.0f,  0.0f });
+		result |= MoveObjectWithInputs(glfw_window, GLFW_KEY_E, delta_time, {  0.0f,  1.0f,  0.0f });
+		result |= MoveObjectWithInputs(glfw_window, GLFW_KEY_W, delta_time, {  0.0f,  0.0f, -1.0f });
+		result |= MoveObjectWithInputs(glfw_window, GLFW_KEY_S, delta_time, {  0.0f,  0.0f,  1.0f });
+
+		result |= ScaleObjectWithInputs(glfw_window, GLFW_KEY_R, delta_time, 1.0f);
+		result |= ScaleObjectWithInputs(glfw_window, GLFW_KEY_F, delta_time, -1.0f);
+
+		return result;
+	}
+
+protected:
+
+	bool MoveObjectWithInputs(GLFWwindow* glfw_window, int key, float delta_time, glm::vec3 const& direction)
+	{
+		if (glfwGetKey(glfw_window, key) == GLFW_PRESS)
+		{
+			float final_speed = (glfwGetKey(glfw_window, GLFW_KEY_LEFT_SHIFT) != GLFW_RELEASE) ? FAST_DISPLACEMENT_SPEED : DISPLACEMENT_SPEED;
+			sphere.position += direction * delta_time * final_speed;
+			box.position    += direction * delta_time * final_speed;
+			return true;
+		}
+		return false;
+	}
+
+	bool ScaleObjectWithInputs(GLFWwindow* glfw_window, int key, float delta_time, float direction)
+	{
+		if (glfwGetKey(glfw_window, key) == GLFW_PRESS)
+		{
+			float final_scale_speed = (glfwGetKey(glfw_window, GLFW_KEY_LEFT_SHIFT) != GLFW_RELEASE) ? SCALE_SPEED : FAST_SCALE_SPEED;
+
+			sphere.radius = std::max(1.0f, sphere.radius + direction * final_scale_speed);
+			return true;
+		}
+		return false;
+	}
+
+public:
+
+	GeometryType geometry_type = GeometryType::SPHERE;
+
 	chaos::sphere3 sphere;
 
-	size_t object_index = 0;
+	chaos::box3    box;
+
+	size_t object_id = 0;
 
 	chaos::Tree27<3, Tree27NodeBase>::node_type * node = nullptr;
+
+	static constexpr float DISPLACEMENT_SPEED = 100.0f;
+
+	static constexpr float FAST_DISPLACEMENT_SPEED = 200.0f;
+
+	static constexpr float SCALE_SPEED = 1.5f;
+
+	static constexpr float FAST_SCALE_SPEED = 3.0f;
+
 };
 
 // =======================================================================
@@ -47,7 +149,6 @@ protected:
 	float fov = 60.0f;
 	float far_plane = 5000.0f;
 	float near_plane = 20.0f;
-	float create_object_distance = 50.0f;
 
 	glm::mat4x4 GetProjectionMatrix(glm::vec2 viewport_size) const
 	{
@@ -116,9 +217,15 @@ protected:
 			ImGui::Text("d      : move right");
 			ImGui::Text("a      : move down");
 			ImGui::Text("e      : move up");
+
+
+
+
 			ImGui::Text("r      : scale up");
 			ImGui::Text("f      : scale down");
 			ImGui::Text("shift  : speed");
+			ImGui::Text("o      : next geometry type");
+			ImGui::Text("p      : previous geometry type");
 			ImGui::End();
 		}
 	}
@@ -142,13 +249,13 @@ protected:
 			if (geometric_object.get() == GetCurrentGeometricObject())
 			{
 				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-				primitive_renderer->GPUDrawPrimitive(primitive_renderer->SlightIncreaseSize(geometric_object->sphere), red, false);
+				geometric_object->DrawPrimitive(primitive_renderer.get(), red);
 				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			}
 			else
 			{
 				glm::vec4 color = (pointed_object == geometric_object) ? blue : white;
-				primitive_renderer->GPUDrawPrimitive(geometric_object->sphere, color, false);
+				geometric_object->DrawPrimitive(primitive_renderer.get(), color);
 			}
 		}
 	}
@@ -171,18 +278,19 @@ protected:
 		if (!primitive_renderer->Initialize())
 			return false;
 		// update the camera speed
-		fps_view_controller.movement_speed.back = camera_speed;
-		fps_view_controller.movement_speed.down = camera_speed;
-		fps_view_controller.movement_speed.up = camera_speed;
-		fps_view_controller.movement_speed.forward = camera_speed;
-		fps_view_controller.movement_speed.strafe = camera_speed;
+		fps_view_controller.movement_speed.back = CAMERA_SPEED;
+		fps_view_controller.movement_speed.down = CAMERA_SPEED;
+		fps_view_controller.movement_speed.up = CAMERA_SPEED;
+		fps_view_controller.movement_speed.forward = CAMERA_SPEED;
+		fps_view_controller.movement_speed.strafe = CAMERA_SPEED;
 
 		fps_view_controller.fps_controller.position.y = 30.0f;
 		// create the very single sphere
-		chaos::sphere3 creation_sphere;
-		creation_sphere.position = glm::vec3(0.0f, 0.0f, -200.0f);
-		creation_sphere.radius = 10.0f;
-		CreateNewObject(creation_sphere);
+		chaos::box3 creation_box;
+		creation_box.position  = glm::vec3(0.0f, 0.0f, -200.0f);
+		creation_box.half_size = glm::vec3(5.0f, 7.0f, 9.0f);
+
+		CreateNewObject(GeometryType::SPHERE, creation_box);
 
 		return true;
 	}
@@ -257,12 +365,13 @@ protected:
 			{
 				chaos::ray3 r = GetRayFromMousePosition();
 
-				glm::vec3 center = r.position + create_object_distance * r.direction;
+				glm::vec3 center = r.position + CREATE_OBJECT_DISTANCE * r.direction;
 
-				chaos::sphere3 creation_sphere;
-				creation_sphere.position = center;
-				creation_sphere.radius = 10.0f;
-				CreateNewObject(creation_sphere);
+				chaos::box3 creation_box;
+				creation_box.position = center;
+				creation_box.half_size = glm::vec3(5.0f, 7.0f, 9.0f);
+
+				CreateNewObject(GeometryType::SPHERE, creation_box);
 			}
 		}
 		return true;
@@ -293,7 +402,20 @@ protected:
 					if (current_object != object.get() && object->sphere == current_object->sphere)
 						return false;
 
-				CreateNewObject(current_object->sphere);
+				CreateNewObject(current_object->geometry_type, current_object->box);
+				return true;
+			}
+
+			// change the geometry type
+			if (event.IsKeyPressed(GLFW_KEY_O))
+			{
+				current_object->ChangeGeometry(+1);
+				return true;
+			}
+
+			if (event.IsKeyPressed(GLFW_KEY_P))
+			{
+				current_object->ChangeGeometry(-1);
 				return true;
 			}
 
@@ -325,13 +447,24 @@ protected:
 
 				for (int i = 0; i < 200; ++i)
 				{
-					chaos::sphere3 creation_sphere;
-					creation_sphere.position.x = chaos::MathTools::RandFloat(-1000.0f, 1000.0f);
-					creation_sphere.position.y = chaos::MathTools::RandFloat(-1000.0f, 1000.0f);
-					creation_sphere.position.z = chaos::MathTools::RandFloat(-1000.0f, 1000.0f);
+					glm::vec3 center = {
+						chaos::MathTools::RandFloat(-1000.0f, 1000.0f),
+						chaos::MathTools::RandFloat(-1000.0f, 1000.0f),
+						chaos::MathTools::RandFloat(-1000.0f, 1000.0f)
+					};
 
-					creation_sphere.radius = chaos::MathTools::RandFloat(2.0f, 50.0f);
-					CreateNewObject(creation_sphere);
+					chaos::box3 creation_box;
+					creation_box.position = center;
+					creation_box.half_size = {
+						chaos::MathTools::RandFloat(1.0f, 25.0f),
+						chaos::MathTools::RandFloat(1.0f, 25.0f),
+						chaos::MathTools::RandFloat(1.0f, 25.0f)
+					};
+
+					std::random_device rd;
+					std::uniform_int_distribution<int> uniform_dist(0, int(GeometryType::COUNT) - 1);
+
+					CreateNewObject(GeometryType(uniform_dist(rd)), creation_box);
 				}
 				return true;
 			}
@@ -340,12 +473,14 @@ protected:
 		return chaos::Window::OnKeyEventImpl(event);
 	}
 
-	GeometricObject * CreateNewObject(chaos::sphere3 const & creation_sphere)
+	GeometricObject * CreateNewObject(GeometryType type, chaos::box3 const & creation_box)
 	{
 		if (GeometricObject* new_object = new GeometricObject)
 		{
-			new_object->sphere = creation_sphere;
-			new_object->object_index = new_object_index++;
+			new_object->geometry_type = type;
+			new_object->sphere = chaos::GetBoundingSphere(creation_box);
+			new_object->box    = creation_box;
+			new_object->object_id = new_object_id++;
 			geometric_objects.push_back(new_object);
 			current_object_index = geometric_objects.size() - 1;
 
@@ -355,49 +490,6 @@ protected:
 		}
 		return nullptr;
 	}
-
-	bool MoveObject(GeometricObject* object, int key, float& target_value, float delta_time, float speed, float fast_speed)
-	{
-		if (glfwGetKey(glfw_window, key) == GLFW_PRESS)
-		{
-			float final_speed = (glfwGetKey(glfw_window, GLFW_KEY_LEFT_SHIFT) != GLFW_RELEASE) ? fast_speed : speed;
-			target_value += final_speed * delta_time;
-			return true;
-		}
-		return false;
-	}
-
-
-	bool MoveObject(GeometricObject* object, int key, float delta_time, glm::vec3 const & direction)
-	{
-		if (glfwGetKey(glfw_window, key) == GLFW_PRESS)
-		{
-			float final_speed = (glfwGetKey(glfw_window, GLFW_KEY_LEFT_SHIFT) != GLFW_RELEASE) ?
-				fast_displacement_speed:
-				displacement_speed;
-
-			object->sphere.position += glm::vec3(fps_view_controller.LocalToGlobal() * glm::vec4(direction, 0.0f)) * delta_time * final_speed;
-			return true;
-		}
-		return false;
-	}
-
-
-
-	bool ScaleObject(GeometricObject* object, int key, float delta_time, float direction)
-	{
-		if (glfwGetKey(glfw_window, key) == GLFW_PRESS)
-		{
-			float final_scale_speed = (glfwGetKey(glfw_window, GLFW_KEY_LEFT_SHIFT) != GLFW_RELEASE) ?
-				fast_scale_speed :
-				scale_speed;
-
-			object->sphere.radius = std::max(1.0f, object->sphere.radius + direction * final_scale_speed);
-			return true;
-		}
-		return false;
-	}
-
 
 	void InsertObjectIntoNode(GeometricObject* object, chaos::Tree27<3, Tree27NodeBase>::node_type * node)
 	{
@@ -426,25 +518,12 @@ protected:
 	virtual bool DoTick(float delta_time) override
 	{
 		// move camera
-		//if (!GetImGuiMenuMode())
 		fps_view_controller.Tick(glfw_window, delta_time);
 
 		// move object
 		if (GeometricObject* current_object = GetCurrentGeometricObject())
 		{
-			bool moved = false;
-
-			moved |= MoveObject(current_object, GLFW_KEY_A, delta_time, {-1.0f,  0.0f,  0.0f });
-			moved |= MoveObject(current_object, GLFW_KEY_D, delta_time, { 1.0f,  0.0f,  0.0f });
-			moved |= MoveObject(current_object, GLFW_KEY_Q, delta_time, { 0.0f, -1.0f,  0.0f });
-			moved |= MoveObject(current_object, GLFW_KEY_E, delta_time, { 0.0f,  1.0f,  0.0f });
-			moved |= MoveObject(current_object, GLFW_KEY_W, delta_time, { 0.0f,  0.0f, -1.0f });
-			moved |= MoveObject(current_object, GLFW_KEY_S, delta_time, { 0.0f,  0.0f,  1.0f });
-
-			moved |= ScaleObject(current_object, GLFW_KEY_R, delta_time,  1.0f);
-			moved |= ScaleObject(current_object, GLFW_KEY_F, delta_time, -1.0f);
-
-			if (moved)
+			if (current_object->DisplaceObjectWithInputs(glfw_window, delta_time))
 				OnObjectMoved(current_object);
 		}
 
@@ -471,7 +550,7 @@ protected:
 
 				for (auto const& obj : geometric_objects)
 				{
-					if (chaos::RayConvexGeometryIntersectionResult<float, 3> intersections = chaos::GetIntersection(r, obj->sphere).FilterPositiveIntersectionOnly())
+					if (chaos::RayConvexGeometryIntersectionResult<float, 3> intersections = obj->GetIntersection(r).FilterPositiveIntersectionOnly())
 					{
 						for (int i = 0; i < intersections.count ; ++i)
 						{
@@ -486,11 +565,12 @@ protected:
 
 				// trace debugging information
 				ImGui::Begin("Information");
+#if 0
 				ImGui::Text("cursor            : (%0.3f, %0.3f)", (float)x, (float)y);
 				ImGui::Text("window   size     : (%0.3f, %0.3f)", (float)window_size.x, (float)window_size.y);
 				ImGui::Text("viewport position : (%0.3f, %0.3f)", (float)viewport.position.x, (float)viewport.position.y);
 				ImGui::Text("viewport size     : (%0.3f, %0.3f)", (float)viewport.size.x, (float)viewport.size.y);
-				ImGui::InputFloat("create_object_distance", &create_object_distance);
+#endif
 				ImGui::InputFloat("near_plane", &near_plane, 10.0f, 50.0f);
 				ImGui::InputFloat("far_plane", &far_plane, 10.0f, 50.0f);
 				ImGui::InputFloat("fov", &fov, 1.0f, 5.0f);
@@ -503,32 +583,29 @@ protected:
 
 protected:
 
-	// an object for debug rendering
+	// an object for rendering
 	chaos::shared_ptr<PrimitiveRenderer> primitive_renderer;
-
+	/** the camera */
 	chaos::FPSViewInputController fps_view_controller;
-
+	/** the objects */
 	std::vector<chaos::shared_ptr<GeometricObject>> geometric_objects;
-
+	/** the selected object */
 	size_t current_object_index = 0;
+	/** the new object id */
+	size_t new_object_id = 0;
 
-	size_t new_object_index = 0;
-
-	float displacement_speed = 100.0f;
-
-	float fast_displacement_speed = 200.0f;
-
-	float scale_speed = 1.5f;
-
-	float fast_scale_speed = 3.0f;
-
-	float camera_speed = 400.0f;
+	
 
 	chaos::Tree27<3, Tree27NodeBase> object_tree;
 
 	chaos::weak_ptr<GeometricObject> pointed_object;
 
 	bool show_help = true;
+
+	/** the camera displacement speed */
+	static constexpr float CAMERA_SPEED = 400.0f;
+	/** the distance at which object are being created */
+	static constexpr float CREATE_OBJECT_DISTANCE = 50.0f;
 };
 
 int main(int argc, char ** argv, char ** env)

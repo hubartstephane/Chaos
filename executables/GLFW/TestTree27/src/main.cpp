@@ -203,6 +203,7 @@ protected:
 
 	void OnDrawWindowImGuiContent() override
 	{
+		// the HELP
 		if (show_help)
 		{
 			ImGui::Begin("help", &show_help);
@@ -218,30 +219,65 @@ protected:
 			ImGui::Text("a      : move down");
 			ImGui::Text("e      : move up");
 
-			//IMGUI_API bool          ImageButton(const char* str_id, ImTextureID user_texture_id, const ImVec2 & size, const ImVec2 & uv0 = ImVec2(0, 0), const ImVec2 & uv1 = ImVec2(1, 1), const ImVec4 & bg_col = ImVec4(0, 0, 0, 0), const ImVec4 & tint_col = ImVec4(1, 1, 1, 1));
-			//
-
-			if (box_icon_texture != nullptr)
-			{
-				chaos::TextureDescription const& description = box_icon_texture->GetTextureDescription();
-				ImVec2 icon_size = { float(description.width), float(description.height) };
-				ImGui::ImageButton((ImTextureID)box_icon_texture->GetResourceID(), icon_size, ImVec2(0, 1), ImVec2(1, 0)); // reverse the texture coordinate along Y
-			}
-
-			if (sphere_icon_texture != nullptr)
-			{
-				chaos::TextureDescription const& description = sphere_icon_texture->GetTextureDescription();
-				ImVec2 icon_size = { float(description.width), float(description.height) };
-				ImGui::ImageButton((ImTextureID)sphere_icon_texture->GetResourceID(), icon_size, ImVec2(0, 1), ImVec2(1, 0)); // reverse the texture coordinate along Y
-			}
-
-
-
 			ImGui::Text("r      : scale up");
 			ImGui::Text("f      : scale down");
 			ImGui::Text("shift  : speed");
 			ImGui::Text("o      : next geometry type");
 			ImGui::Text("p      : previous geometry type");
+			ImGui::End();
+		}
+
+		OnDrawToolbar();
+	}
+
+	void OnDrawToolbar()
+	{
+		if (ImGuiViewport* viewport = ImGui::GetMainViewport())
+		{
+			ImGui::SetNextWindowPos(ImVec2(15.0f, viewport->Size.y - 15.0f), ImGuiCond_FirstUseEver, ImVec2(0.0f, 1.0f));
+			ImGui::Begin("Toolbar", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
+
+			auto AddButton = [this](GeometryType type, chaos::GPUTexture * texture, char const * tooltip, float base_cursor_y)
+			{
+				if (texture != nullptr)
+				{
+					ImVec2 icon_size = { 32.0f, 32.0f };
+
+					bool selected = (current_creation_type == type);
+
+					if (selected)
+					{
+						ImGui::SetCursorPosY(base_cursor_y);
+						ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.0f, 0.0f, 1.0f));
+						ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+						ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.0f, 0.0f, 1.0f));
+						icon_size = { 40.0f, 40.0f };
+					}
+					else
+					{
+						ImGui::SetCursorPosY(base_cursor_y + 4.0f);
+					}
+
+					if (ImGui::ImageButton(ImTextureID(texture->GetResourceID()), icon_size, ImVec2(0, 1), ImVec2(1, 0))) // reverse the texture coordinate along Y
+					{
+						current_creation_type = type;
+					}
+					if (ImGui::IsItemHovered())
+						ImGui::SetTooltip(tooltip);
+
+					if (selected)
+						ImGui::PopStyleColor(3);
+				}
+
+			};
+
+			float base_cursor_y = ImGui::GetCursorPosY();
+
+			AddButton(GeometryType::BOX, box_icon_texture.get(), "box creation mode", base_cursor_y);
+
+			ImGui::SameLine();
+			AddButton(GeometryType::SPHERE, sphere_icon_texture.get(), "sphere creation mode", base_cursor_y);
+
 			ImGui::End();
 		}
 	}
@@ -629,7 +665,8 @@ protected:
 	/** the new object id */
 	size_t new_object_id = 0;
 
-
+	/** the object to create */
+	GeometryType current_creation_type = GeometryType::BOX;
 
 	/** the icon for the sphere */
 	chaos::shared_ptr<chaos::GPUTexture> sphere_icon_texture;

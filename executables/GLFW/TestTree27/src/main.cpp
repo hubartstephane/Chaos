@@ -16,6 +16,15 @@ enum class GeometryType
 	COUNT
 };
 
+enum class ActionType
+{
+	CREATE_SPHERE,
+	CREATE_BOX,
+	MOVE_OBJECT,
+	SCALE_OBJECT,
+	ROTATE_OBJECT
+};
+
 // =======================================================================
 
 class Tree27NodeBase
@@ -237,13 +246,13 @@ protected:
 			ImGui::SetNextWindowPos(ImVec2(15.0f, viewport->Size.y - 15.0f), ImGuiCond_FirstUseEver, ImVec2(0.0f, 1.0f));
 			ImGui::Begin("Toolbar", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
 
-			auto AddButton = [this](GeometryType type, chaos::GPUTexture * texture, char const * tooltip, float base_cursor_y)
+			auto AddButton = [this](ActionType type, chaos::GPUTexture * texture, char const * tooltip, float base_cursor_y)
 			{
 				if (texture != nullptr)
 				{
 					ImVec2 icon_size = { 32.0f, 32.0f };
 
-					bool selected = (current_creation_type == type);
+					bool selected = (current_action_type == type);
 
 					if (selected)
 					{
@@ -260,7 +269,7 @@ protected:
 
 					if (ImGui::ImageButton(ImTextureID(texture->GetResourceID()), icon_size, ImVec2(0, 1), ImVec2(1, 0))) // reverse the texture coordinate along Y
 					{
-						current_creation_type = type;
+						current_action_type = type;
 					}
 					if (ImGui::IsItemHovered())
 						ImGui::SetTooltip(tooltip);
@@ -273,10 +282,19 @@ protected:
 
 			float base_cursor_y = ImGui::GetCursorPosY();
 
-			AddButton(GeometryType::BOX, box_icon_texture.get(), "box creation mode", base_cursor_y);
+			AddButton(ActionType::CREATE_BOX, box_icon_texture.get(), "create box", base_cursor_y);
 
 			ImGui::SameLine();
-			AddButton(GeometryType::SPHERE, sphere_icon_texture.get(), "sphere creation mode", base_cursor_y);
+			AddButton(ActionType::CREATE_SPHERE, sphere_icon_texture.get(), "create sphere", base_cursor_y);
+
+			ImGui::SameLine();
+			AddButton(ActionType::MOVE_OBJECT, move_icon_texture.get(), "move object", base_cursor_y);
+
+			ImGui::SameLine();
+			AddButton(ActionType::SCALE_OBJECT, scale_icon_texture.get(), "scale object", base_cursor_y);
+
+			ImGui::SameLine();
+			AddButton(ActionType::ROTATE_OBJECT, rotate_icon_texture.get(), "rotate object", base_cursor_y);
 
 			ImGui::End();
 		}
@@ -316,6 +334,9 @@ protected:
 	{
 		box_icon_texture = nullptr;
 		sphere_icon_texture = nullptr;
+		move_icon_texture = nullptr;
+		scale_icon_texture = nullptr;
+		rotate_icon_texture = nullptr;
 		
 		primitive_renderer = nullptr;
 		chaos::Window::Finalize();
@@ -362,6 +383,9 @@ protected:
 		// create icons
 		box_icon_texture = LoadTexture("BoxIcon.png");
 		sphere_icon_texture = LoadTexture("SphereIcon.png");
+		move_icon_texture = LoadTexture("MoveIcon.png");
+		scale_icon_texture = LoadTexture("ScaleIcon.png");
+		rotate_icon_texture = LoadTexture("RotateIcon.png");
 
 		return true;
 	}
@@ -668,10 +692,18 @@ protected:
 	/** the object to create */
 	GeometryType current_creation_type = GeometryType::BOX;
 
+	ActionType current_action_type = ActionType::CREATE_BOX;
+
 	/** the icon for the sphere */
 	chaos::shared_ptr<chaos::GPUTexture> sphere_icon_texture;
 	/** the icon for the box */
 	chaos::shared_ptr<chaos::GPUTexture> box_icon_texture;
+	/** the icon for move */
+	chaos::shared_ptr<chaos::GPUTexture> move_icon_texture;
+	/** the icon for scale */
+	chaos::shared_ptr<chaos::GPUTexture> scale_icon_texture;
+	/** the icon for rotate */
+	chaos::shared_ptr<chaos::GPUTexture> rotate_icon_texture;
 
 	chaos::Tree27<3, Tree27NodeBase> object_tree;
 

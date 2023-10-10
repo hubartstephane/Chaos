@@ -47,10 +47,15 @@ class GeometricObject : public chaos::Object
 {
 public:
 
-	void ChangeGeometry(int direction)
+	chaos::box3 GetBoundingBox() const
 	{
-		int type_count = int(GeometryType::COUNT);
-		geometry_type = GeometryType((int(geometry_type) + direction + type_count) % type_count);
+		switch (geometry_type)
+		{
+		case GeometryType::SPHERE: return chaos::GetBoundingBox(sphere);
+		case GeometryType::BOX: return box;
+		default: assert(0);
+		};
+		return {};
 	}
 
 	void DrawPrimitive(PrimitiveRenderer * primitive_renderer, glm::vec4 const & color) const
@@ -191,6 +196,7 @@ protected:
 
 		DrawGeometryObjects();
 		DrawTree27();
+		DrawAction();
 
 		return true;
 	}
@@ -218,7 +224,6 @@ protected:
 			ImGui::Begin("help", &show_help);
 			ImGui::Text("+      : next object");
 			ImGui::Text("-      : previous object");
-			ImGui::Text("space  : new object");
 			ImGui::Text("delete : delete");
 			ImGui::Text("y      : new random scene");
 			ImGui::Text("z      : move forward");
@@ -231,8 +236,6 @@ protected:
 			ImGui::Text("r      : scale up");
 			ImGui::Text("f      : scale down");
 			ImGui::Text("shift  : speed");
-			ImGui::Text("o      : next geometry type");
-			ImGui::Text("p      : previous geometry type");
 			ImGui::End();
 		}
 
@@ -316,16 +319,55 @@ protected:
 	{
 		for (auto& geometric_object : geometric_objects)
 		{
-			if (geometric_object.get() == GetCurrentGeometricObject())
+			glm::vec4 color = white;
+			if (geometric_object == GetCurrentGeometricObject())
+				color = blue;
+			if (pointed_object == geometric_object)
+				color = blue;
+			
+			geometric_object->DrawPrimitive(primitive_renderer.get(), color);
+		}
+	}
+
+	chaos::box3 GetBoxToCreateFromMousePosition() const
+	{
+		chaos::ray3 r = GetRayFromMousePosition();
+		glm::vec3 center = r.position + CREATE_OBJECT_DISTANCE * r.direction;
+
+		chaos::box3 result;
+		result.position = center;
+		result.half_size = glm::vec3(5.0f, 7.0f, 9.0f);
+
+		return result;
+	}
+
+	chaos::sphere3 GetSphereToCreateFromMousePosition() const
+	{
+		chaos::ray3 r = GetRayFromMousePosition();
+		glm::vec3 center = r.position + CREATE_OBJECT_DISTANCE * r.direction;
+
+		chaos::sphere3 result;
+		result.position = center;
+		result.radius = 10.0f;
+
+		return result;
+	}
+
+	void DrawAction()
+	{
+		if (GetImGuiMenuMode())
+		{
+			if (current_action_type == ActionType::CREATE_BOX)
 			{
 				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-				geometric_object->DrawPrimitive(primitive_renderer.get(), red);
+				primitive_renderer->GPUDrawPrimitive(GetBoxToCreateFromMousePosition(), red, false, false);
 				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			}
-			else
+			else if (current_action_type == ActionType::CREATE_SPHERE)
 			{
-				glm::vec4 color = (pointed_object == geometric_object) ? blue : white;
-				geometric_object->DrawPrimitive(primitive_renderer.get(), color);
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+				primitive_renderer->GPUDrawPrimitive(GetSphereToCreateFromMousePosition(), red, false);
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			}
 		}
 	}
@@ -378,7 +420,7 @@ protected:
 		creation_box.position  = glm::vec3(0.0f, 0.0f, -200.0f);
 		creation_box.half_size = glm::vec3(5.0f, 7.0f, 9.0f);
 
-		CreateNewObject(GeometryType::SPHERE, creation_box);
+		CreateNewBox(creation_box);
 
 		// create icons
 		box_icon_texture = LoadTexture("BoxIcon.png");
@@ -458,15 +500,14 @@ protected:
 		{
 			if (GetImGuiMenuMode())
 			{
-				chaos::ray3 r = GetRayFromMousePosition();
-
-				glm::vec3 center = r.position + CREATE_OBJECT_DISTANCE * r.direction;
-
-				chaos::box3 creation_box;
-				creation_box.position = center;
-				creation_box.half_size = glm::vec3(5.0f, 7.0f, 9.0f);
-
-				CreateNewObject(GeometryType::SPHERE, creation_box);
+				if (current_action_type == ActionType::CREATE_BOX)
+				{
+					CreateNewBox(GetBoxToCreateFromMousePosition());
+				}
+				else if (current_action_type == ActionType::CREATE_SPHERE)
+				{
+					CreateNewSphere(GetSphereToCreateFromMousePosition());
+				}
 			}
 		}
 		return true;
@@ -487,30 +528,6 @@ protected:
 			else if (event.IsKeyPressed(GLFW_KEY_KP_SUBTRACT))
 			{
 				current_object_index = (current_object_index + geometric_objects.size() - 1) % geometric_objects.size();
-				return true;
-			}
-
-			// create a new object from current object or nothing
-			if (event.IsKeyPressed(GLFW_KEY_SPACE))
-			{
-				for (auto& object : geometric_objects)
-					if (current_object != object.get() && object->sphere == current_object->sphere)
-						return false;
-
-				CreateNewObject(current_object->geometry_type, current_object->box);
-				return true;
-			}
-
-			// change the geometry type
-			if (event.IsKeyPressed(GLFW_KEY_O))
-			{
-				current_object->ChangeGeometry(+1);
-				return true;
-			}
-
-			if (event.IsKeyPressed(GLFW_KEY_P))
-			{
-				current_object->ChangeGeometry(-1);
 				return true;
 			}
 
@@ -559,7 +576,12 @@ protected:
 					std::random_device rd;
 					std::uniform_int_distribution<int> uniform_dist(0, int(GeometryType::COUNT) - 1);
 
-					CreateNewObject(GeometryType(uniform_dist(rd)), creation_box);
+					switch(uniform_dist(rd))
+					{
+					case 0: CreateNewBox(creation_box); break;
+					case 1: CreateNewSphere(chaos::GetBoundingSphere(creation_box)); break;
+					default: assert(0);
+					}
 				}
 				return true;
 			}
@@ -568,20 +590,37 @@ protected:
 		return chaos::Window::OnKeyEventImpl(event);
 	}
 
-	GeometricObject * CreateNewObject(GeometryType type, chaos::box3 const & creation_box)
+	GeometricObject* CreateNewGeometry(GeometryType type)
 	{
 		if (GeometricObject* new_object = new GeometricObject)
 		{
 			new_object->geometry_type = type;
-			new_object->sphere = chaos::GetBoundingSphere(creation_box);
-			new_object->box    = creation_box;
 			new_object->object_id = new_object_id++;
 			geometric_objects.push_back(new_object);
 			current_object_index = geometric_objects.size() - 1;
-
-			InsertObjectIntoNode(new_object, object_tree.GetOrCreateNode(chaos::GetBoundingBox(new_object->sphere)));
-
 			return new_object;
+		}
+		return nullptr;
+	}
+
+	GeometricObject* CreateNewBox(chaos::box3 const& creation_box)
+	{
+		if (GeometricObject* result = CreateNewGeometry(GeometryType::BOX))
+		{
+			result->box = creation_box;
+			InsertObjectIntoNode(result, object_tree.GetOrCreateNode(creation_box));
+			return result;
+		}
+		return nullptr;
+	}
+
+	GeometricObject * CreateNewSphere(chaos::sphere3 const & creation_sphere)
+	{
+		if (GeometricObject* result = CreateNewGeometry(GeometryType::SPHERE))
+		{
+			result->sphere = creation_sphere;
+			InsertObjectIntoNode(result, object_tree.GetOrCreateNode(chaos::GetBoundingBox(creation_sphere)));
+			return result;
 		}
 		return nullptr;
 	}
@@ -601,7 +640,7 @@ protected:
 
 	void OnObjectMoved(GeometricObject* object)
 	{
-		chaos::box3 new_box = chaos::GetBoundingBox(object->sphere);
+		chaos::box3 new_box = object->GetBoundingBox();
 
 		if (chaos::ComputeTreeNodeInfo(new_box) != object->node->GetNodeInfo()) // changement required
 		{
@@ -714,7 +753,7 @@ protected:
 	/** the camera displacement speed */
 	static constexpr float CAMERA_SPEED = 400.0f;
 	/** the distance at which object are being created */
-	static constexpr float CREATE_OBJECT_DISTANCE = 50.0f;
+	static constexpr float CREATE_OBJECT_DISTANCE = 100.0f;
 };
 
 int main(int argc, char ** argv, char ** env)

@@ -236,6 +236,11 @@ protected:
 			ImGui::Text("r      : scale up");
 			ImGui::Text("f      : scale down");
 			ImGui::Text("shift  : speed");
+
+			ImGuiIO& io = ImGui::GetIO();
+			ImGui::Text("WantCaptureMouse  : %d", io.WantCaptureMouse);
+			ImGui::Text("WantCaptureKeyboard   : %d", io.WantCaptureKeyboard);
+
 			ImGui::End();
 		}
 
@@ -280,7 +285,6 @@ protected:
 					if (selected)
 						ImGui::PopStyleColor(3);
 				}
-
 			};
 
 			float base_cursor_y = ImGui::GetCursorPosY();
@@ -651,14 +655,18 @@ protected:
 
 	virtual bool DoTick(float delta_time) override
 	{
-		// move camera
-		fps_view_controller.Tick(glfw_window, delta_time);
-
-		// move object
-		if (GeometricObject* current_object = GetCurrentGeometricObject())
+		
+		ImGuiIO& io = ImGui::GetIO();
+		if (!io.WantCaptureMouse && !io.WantCaptureKeyboard)
 		{
-			if (current_object->DisplaceObjectWithInputs(glfw_window, delta_time))
-				OnObjectMoved(current_object);
+			// move camera
+			fps_view_controller.Tick(glfw_window, delta_time);
+			// move object
+			if (GeometricObject* current_object = GetCurrentGeometricObject())
+			{
+				if (current_object->DisplaceObjectWithInputs(glfw_window, delta_time))
+					OnObjectMoved(current_object);
+			}
 		}
 
 		// object selection with mouse

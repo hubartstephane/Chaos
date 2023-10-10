@@ -517,7 +517,13 @@ namespace chaos
 		{
 			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
 			if (ImGui::GetCurrentContext() != nullptr)
+			{
 				ImGui_ImplGlfw_CursorPosCallback(in_glfw_window, x, y);
+
+				ImGuiIO& io = ImGui::GetIO();
+				if (io.WantCaptureMouse)
+					return;
+			}
 
 			Application::SetApplicationInputMode(InputMode::MOUSE);
 
@@ -536,7 +542,13 @@ namespace chaos
 		{
 			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
 			if (ImGui::GetCurrentContext() != nullptr)
+			{
 				ImGui_ImplGlfw_MouseButtonCallback(in_glfw_window, button, action, modifier);
+
+				ImGuiIO& io = ImGui::GetIO();
+				if (io.WantCaptureMouse)
+					return;
+			}
 
 			MouseButton mouse_button = (MouseButton)button;
 
@@ -557,7 +569,13 @@ namespace chaos
 		{
 			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
 			if (ImGui::GetCurrentContext() != nullptr)
+			{
 				ImGui_ImplGlfw_ScrollCallback(in_glfw_window, scroll_x, scroll_y);
+
+				ImGuiIO& io = ImGui::GetIO();
+				if (io.WantCaptureMouse)
+					return;
+			}
 
 			Application::SetApplicationInputMode(InputMode::MOUSE);
 
@@ -571,7 +589,13 @@ namespace chaos
 		{
 			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
 			if (ImGui::GetCurrentContext() != nullptr)
+			{
 				ImGui_ImplGlfw_KeyCallback(in_glfw_window, key, scan_code, action, modifier);
+
+				ImGuiIO& io = ImGui::GetIO();
+				if (io.WantCaptureKeyboard)
+					return;
+			}
 
 			KeyboardButton keyboard_button = (KeyboardButton)key;
 
@@ -598,7 +622,13 @@ namespace chaos
 		{
 			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
 			if (ImGui::GetCurrentContext() != nullptr)
+			{
 				ImGui_ImplGlfw_CharCallback(in_glfw_window, c);
+
+				ImGuiIO& io = ImGui::GetIO();
+				if (io.WantCaptureKeyboard)
+					return;
+			}
 
 			Application::SetApplicationInputMode(InputMode::KEYBOARD);
 

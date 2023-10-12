@@ -225,7 +225,7 @@
 #include <GLFW/glfw3native.h>
 #else // WITH_VULKAN
 
-#define GLFW_DLL
+//#define GLFW_DLL
 #include <GLFW/glfw3.h>
 #define GLFW_EXPOSE_NATIVE_WIN32
 #define GLFW_EXPOSE_NATIVE_WGL

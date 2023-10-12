@@ -48,22 +48,13 @@ build:DeclareExternalLib("LUA")
 -- GLFW
 --------------------------------------------------------------------
 
---[[
-
 GLFW_PATH = "glfw"
 GLFW_INC_PATH = "include"
-GLFW_LIB_PATH = "lib-vc2022"
-GLFW_LIB_NAME = "glfw3dll.lib"
-GLFW_TOCOPY  = path.join(GLFW_LIB_PATH, "glfw3.dll")
-build:DeclareExternalLib("GLFW")
-
-]]--
-
-GLFW_PATH = "glfw-3.3.8"
-GLFW_INC_PATH = "include"
-GLFW_LIB_PATH = path.join("src", "Release")
+GLFW_LIB_PATH = {
+  RELEASE = path.join("src", "Release"),
+  DEBUG = path.join("src", "Debug")
+ }
 GLFW_LIB_NAME = "glfw3.lib"
-GLFW_TOCOPY  = path.join(GLFW_LIB_PATH)
 build:DeclareExternalLib("GLFW")
 
 --------------------------------------------------------------------
@@ -175,8 +166,14 @@ build:DeclareExternalLib("GLEW")
 --------------------------------------------------------------------
 FREETYPE2_PATH = "freetype2"
 FREETYPE2_INC_PATH = "include"
-FREETYPE2_LIB_PATH = path.join("objs", x64, "Release Static")
-FREETYPE2_LIB_NAME = "freetype.lib"
+FREETYPE2_LIB_PATH = {
+	RELEASE = path.join("build", "Release"),
+	DEBUG = path.join("build", "Debug")
+}
+FREETYPE2_LIB_NAME = {
+	RELEASE = "freetype.lib",
+	DEBUG = "freetyped.lib"
+}
 build:DeclareExternalLib("FREETYPE2")
 
 --------------------------------------------------------------------
@@ -193,7 +190,7 @@ build:DeclareExternalLib("IRRKLANG")
 --------------------------------------------------------------------
 -- FBX
 --------------------------------------------------------------------
-FBX_PATH = path.join("FBX-2020.0.1") 
+FBX_PATH = path.join("FBX-2020.0.1", "2020.0.1") 
 FBX_INC_PATH = "include"
 FBX_LIB_PATH = path.join("lib", "vs2017", "x64", "release")
 FBX_LIB_NAME = "libfbxsdk.lib"
@@ -205,8 +202,14 @@ build:DeclareExternalLib("FBX")
 --------------------------------------------------------------------
 ZLIB_PATH     = "zlib-1.3"
 ZLIB_INC_PATH = ""
-ZLIB_LIB_PATH = path.join("contrib",   "vstudio", "vc14", "x64", "ZlibStatRelease")
-ZLIB_LIB_NAME = "zlibstat.lib"
+ZLIB_LIB_PATH = {
+	RELEASE = path.join("build", "Release"),
+	DEBUG = path.join("build", "Debug")
+}
+ZLIB_LIB_NAME = {
+	RELEASE = "zlibstatic.lib",
+	DEBUG = "zlibstaticd.lib"
+}
 build:DeclareExternalLib("ZLIB")
 
 --------------------------------------------------------------------
@@ -214,15 +217,24 @@ build:DeclareExternalLib("ZLIB")
 --------------------------------------------------------------------
 ASSIMP_PATH     = "assimp"
 ASSIMP_INC_PATH = "include"
-ASSIMP_LIB_PATH = path.join("lib", "Release")
-ASSIMP_LIB_NAME  = "assimp-vc143-mt.lib"
-ASSIMP_TOCOPY   = path.join("bin", "Release", "assimp-vc143-mt.dll")
+ASSIMP_LIB_PATH = {
+	RELEASE = path.join("build", "lib", "Release"),
+	DEBUG = path.join("build", "lib", "Debug")
+}
+ASSIMP_LIB_NAME  = {
+	RELEASE = "assimp-vc143-mt.lib",
+	DEBUG = "assimp-vc143-mtd.lib"
+}
+ASSIMP_TOCOPY = {
+	RELEASE = path.join("build", "bin", "Release", "assimp-vc143-mt.dll"),
+	DEBUG = path.join("build", "bin", "Release", "assimp-vc143-mtd.dll")
+}
 build:DeclareExternalLib("ASSIMP")
 
 --------------------------------------------------------------------
 -- FREEIMAGE
 --------------------------------------------------------------------
-FREEIMAGE_PATH       = "FreeImage-3.18"
+FREEIMAGE_PATH       = "FreeImage"
 FREEIMAGE_DIST_PATH  = path.join("Dist", "x64")
 FREEIMAGE_INC_PATH = FREEIMAGE_DIST_PATH
 FREEIMAGE_LIB_PATH = FREEIMAGE_DIST_PATH
@@ -236,8 +248,8 @@ build:DeclareExternalLib("FREEIMAGE")
 TINYXML2_PATH = "tinyxml2"
 TINYXML2_INC_PATH = ""
 TINYXML2_LIB_PATH = {
-	DEBUG = DEBUG,
-	RELEASE = RELEASE
+	RELEASE = path.join("build", "Release"),
+	DEBUG = path.join("build", "Debug")
 }
 TINYXML2_LIB_NAME = "tinyxml2.lib"
 build:DeclareExternalLib("TINYXML2")

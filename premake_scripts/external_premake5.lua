@@ -30,7 +30,7 @@ build:DeclareExternalLib("GLM")
 --------------------------------------------------------------------
 -- BOOST
 --------------------------------------------------------------------
-BOOST_PATH     = "boost_1_80_0"
+BOOST_PATH     = "boost_1_83_0"
 BOOST_INC_PATH = ""
 BOOST_LIB_PATH =  path.join("stage", "lib")
 build:DeclareExternalLib("BOOST")
@@ -47,11 +47,23 @@ build:DeclareExternalLib("LUA")
 --------------------------------------------------------------------
 -- GLFW
 --------------------------------------------------------------------
+
+--[[
+
 GLFW_PATH = "glfw"
 GLFW_INC_PATH = "include"
 GLFW_LIB_PATH = "lib-vc2022"
 GLFW_LIB_NAME = "glfw3dll.lib"
 GLFW_TOCOPY  = path.join(GLFW_LIB_PATH, "glfw3.dll")
+build:DeclareExternalLib("GLFW")
+
+]]--
+
+GLFW_PATH = "glfw-3.3.8"
+GLFW_INC_PATH = "include"
+GLFW_LIB_PATH = path.join("src", "Release")
+GLFW_LIB_NAME = "glfw3.lib"
+GLFW_TOCOPY  = path.join(GLFW_LIB_PATH)
 build:DeclareExternalLib("GLFW")
 
 --------------------------------------------------------------------
@@ -191,7 +203,7 @@ build:DeclareExternalLib("FBX")
 --------------------------------------------------------------------
 -- ZLIB
 --------------------------------------------------------------------
-ZLIB_PATH     = "zlib-1.2.11"
+ZLIB_PATH     = "zlib-1.3"
 ZLIB_INC_PATH = ""
 ZLIB_LIB_PATH = path.join("contrib",   "vstudio", "vc14", "x64", "ZlibStatRelease")
 ZLIB_LIB_NAME = "zlibstat.lib"
@@ -224,23 +236,11 @@ build:DeclareExternalLib("FREEIMAGE")
 TINYXML2_PATH = "tinyxml2"
 TINYXML2_INC_PATH = ""
 TINYXML2_LIB_PATH = {
-	DEBUG = path.join("projects", DEBUG),
-	RELEASE = path.join("projects", RELEASE)
+	DEBUG = DEBUG,
+	RELEASE = RELEASE
 }
 TINYXML2_LIB_NAME = "tinyxml2.lib"
 build:DeclareExternalLib("TINYXML2")
-
---------------------------------------------------------------------
--- NANA
---------------------------------------------------------------------
-NANA_PATH     = "nana-1.7.4"
-NANA_INC_PATH = "include"
-NANA_LIB_PATH = path.join("build", "bin")
-NANA_LIB_NAME = {
-	DEBUG = "nana_v143_Debug_x64.lib",
-	RELEASE = "nana_v143_Release_x64.lib"
-}
-build:DeclareExternalLib("NANA")
 
 --------------------------------------------------------------------
 -- JSON
@@ -262,11 +262,11 @@ build:DeclareExternalLib("IMGUI")
 --------------------------------------------------------------------
 -- VULKAN
 --------------------------------------------------------------------
-VULKAN_PATH = path.join("VulkanSDK", "1.3.236.0")
+VULKAN_PATH = path.join("VulkanSDK", "1.3.261.1")
 VULKAN_INC_PATH = "Include"
 VULKAN_LIB_PATH = "Lib"
 VULKAN_BIN_PATH = "Bin"
-VULKAN_LIB_NAME = {"vulkan-1.lib", "VkLayer_utils.lib"}
+VULKAN_LIB_NAME = {"vulkan-1.lib"} --, "VkLayer_utils.lib"}
 
 VULKAN_TOCOPY  = {
 	path.join(VULKAN_BIN_PATH, "VkLayer_api_dump.dll"),

@@ -61,18 +61,6 @@ Zlib
 
   there is the solution zlib-1.2.11\contrib\vstudio\vc14
 	build zlibstat for static library
-	
-===================================================================================================================	
-NANA
-====
-
-  solution is here ./build/vc2019/nana.sln
-	
-	then the lib is here ./build/bin/nana_v142_Release_x64.lib
-	
-	beware, a temp directory is created in external
-	
-	change runtime to DLL in project settings for a correct linkage
 
 ===================================================================================================================
 GLFW
@@ -128,7 +116,7 @@ workspace "ImGUI"
    files { "backends/*glfw*.h", "backends/*glfw*.cpp" }
    files { "backends/*opengl3*.h", "backends/*opengl3*.cpp" }
 
-   includedirs {path.join("..", "glfw", "include")}
+   includedirs {path.join("..", "glfw-3.3.8", "include")}
 
    filter "configurations:Debug"
       defines { "DEBUG" }

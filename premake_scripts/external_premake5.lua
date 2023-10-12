@@ -51,8 +51,8 @@ build:DeclareExternalLib("LUA")
 GLFW_PATH = "glfw"
 GLFW_INC_PATH = "include"
 GLFW_LIB_PATH = {
-  RELEASE = path.join("src", "Release"),
-  DEBUG = path.join("src", "Debug")
+  RELEASE = path.join("build", "src", "Release"),
+  DEBUG = path.join("build", "src", "Debug")
  }
 GLFW_LIB_NAME = "glfw3.lib"
 build:DeclareExternalLib("GLFW")

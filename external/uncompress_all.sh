@@ -3,6 +3,8 @@
 SCRIPT_PATH=$(pwd)/$0
 SCRIPT_PATH=$(dirname $SCRIPT_PATH)
 
+
+
 #unzip $SCRIPT_PATH/external_zip/FreeImage3180Win32Win64.zip -d $SCRIPT_PATH
 #unzip $SCRIPT_PATH/external_zip/glew-2.2.0-win32.zip -d $SCRIPT_PATH
 #unzip $SCRIPT_PATH/external_zip/irrKlang-64bit-1.6.0.zip -d $SCRIPT_PATH
@@ -14,6 +16,26 @@ SCRIPT_PATH=$(dirname $SCRIPT_PATH)
 #mv $SCRIPT_PATH/external_zip/zlib-1.3 $SCRIPT_PATH
 
 cd $SCRIPT_PATH/glfw
-cmake -S . -B build/ 
+cmake -S . -B build/
+cmake --build build/ --config Release
+cmake --build build/ --config Debug
+
+#cd $SCRIPT_PATH/freetype2
+#cmake -S . -B build/
+#cmake --build build/ --config Release
+#cmake --build build/ --config Debug
+
+#cd $SCRIPT_PATH/zlib-1.3
+#cmake -S . -B build/
+#cmake --build build/ --config Release
+#cmake --build build/ --config Debug
+
+#cd $SCRIPT_PATH/assimp
+#cmake -S . -B build/
+#cmake --build build/ --config Release
+#cmake --build build/ --config Debug
+
+cd $SCRIPT_PATH/tinyxml2
+cmake -S . -B build/
 cmake --build build/ --config Release
 cmake --build build/ --config Debug

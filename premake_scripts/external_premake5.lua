@@ -201,7 +201,7 @@ build:DeclareExternalLib("FBX")
 -- ZLIB
 --------------------------------------------------------------------
 ZLIB_PATH     = "zlib-1.3"
-ZLIB_INC_PATH = ""
+ZLIB_INC_PATH = "build"
 ZLIB_LIB_PATH = {
 	RELEASE = path.join("build", "Release"),
 	DEBUG = path.join("build", "Debug")
@@ -227,7 +227,7 @@ ASSIMP_LIB_NAME  = {
 }
 ASSIMP_TOCOPY = {
 	RELEASE = path.join("build", "bin", "Release", "assimp-vc143-mt.dll"),
-	DEBUG = path.join("build", "bin", "Release", "assimp-vc143-mtd.dll")
+	DEBUG = path.join("build", "bin", "Debug", "assimp-vc143-mtd.dll")
 }
 build:DeclareExternalLib("ASSIMP")
 

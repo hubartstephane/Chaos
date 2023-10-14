@@ -9,6 +9,25 @@ static glm::vec4 const white = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 // =======================================================================
 
+class KeyConfiguration
+{
+public:
+
+	chaos::Key new_scene = (chaos::KeyboardButton)GLFW_KEY_Y;
+	chaos::Key delete_object = (chaos::KeyboardButton)GLFW_KEY_DELETE;
+	chaos::Key next_object = (chaos::KeyboardButton)GLFW_KEY_KP_ADD;
+	chaos::Key previous_object = (chaos::KeyboardButton)GLFW_KEY_KP_SUBTRACT;
+
+	chaos::Key move_object_positive_x = (chaos::KeyboardButton)GLFW_KEY_A;
+	chaos::Key move_object_negative_x = (chaos::KeyboardButton)GLFW_KEY_D;
+	chaos::Key move_object_positive_y = (chaos::KeyboardButton)GLFW_KEY_Q;
+	chaos::Key move_object_negative_y = (chaos::KeyboardButton)GLFW_KEY_E;
+	chaos::Key move_object_positive_z = (chaos::KeyboardButton)GLFW_KEY_W;
+	chaos::Key move_object_negative_z = (chaos::KeyboardButton)GLFW_KEY_S;
+};
+
+// =======================================================================
+
 enum class GeometryType
 {
 	SPHERE,
@@ -87,28 +106,33 @@ public:
 		return {};
 	}
 
-	bool DisplaceObjectWithInputs(GLFWwindow* glfw_window, float delta_time)
+	bool DisplaceObjectWithInputs(ActionType action_type, KeyConfiguration const & key_configuration, GLFWwindow* glfw_window, float delta_time)
 	{
 		bool result = false;
 
-		result |= MoveObjectWithInputs(glfw_window, GLFW_KEY_A, delta_time, { -1.0f,  0.0f,  0.0f });
-		result |= MoveObjectWithInputs(glfw_window, GLFW_KEY_D, delta_time, {  1.0f,  0.0f,  0.0f });
-		result |= MoveObjectWithInputs(glfw_window, GLFW_KEY_Q, delta_time, {  0.0f, -1.0f,  0.0f });
-		result |= MoveObjectWithInputs(glfw_window, GLFW_KEY_E, delta_time, {  0.0f,  1.0f,  0.0f });
-		result |= MoveObjectWithInputs(glfw_window, GLFW_KEY_W, delta_time, {  0.0f,  0.0f, -1.0f });
-		result |= MoveObjectWithInputs(glfw_window, GLFW_KEY_S, delta_time, {  0.0f,  0.0f,  1.0f });
-
-		result |= ScaleObjectWithInputs(glfw_window, GLFW_KEY_R, delta_time, 1.0f);
-		result |= ScaleObjectWithInputs(glfw_window, GLFW_KEY_F, delta_time, -1.0f);
+		if (action_type == ActionType::MOVE_OBJECT)
+		{
+			result |= MoveObjectWithInputs(glfw_window, key_configuration.move_object_positive_x, delta_time, { -1.0f,  0.0f,  0.0f });
+			result |= MoveObjectWithInputs(glfw_window, key_configuration.move_object_negative_x, delta_time, { 1.0f,  0.0f,  0.0f });
+			result |= MoveObjectWithInputs(glfw_window, key_configuration.move_object_positive_y, delta_time, { 0.0f, -1.0f,  0.0f });
+			result |= MoveObjectWithInputs(glfw_window, key_configuration.move_object_negative_y, delta_time, { 0.0f,  1.0f,  0.0f });
+			result |= MoveObjectWithInputs(glfw_window, key_configuration.move_object_positive_z, delta_time, { 0.0f,  0.0f, -1.0f });
+			result |= MoveObjectWithInputs(glfw_window, key_configuration.move_object_negative_z, delta_time, { 0.0f,  0.0f,  1.0f });
+		}
+		else if (action_type == ActionType::SCALE_OBJECT)
+		{
+			//result |= ScaleObjectWithInputs(glfw_window, GLFW_KEY_R, delta_time, 1.0f);
+			//result |= ScaleObjectWithInputs(glfw_window, GLFW_KEY_F, delta_time, -1.0f);
+		}
 
 		return result;
 	}
 
 protected:
 
-	bool MoveObjectWithInputs(GLFWwindow* glfw_window, int key, float delta_time, glm::vec3 const& direction)
+	bool MoveObjectWithInputs(GLFWwindow* glfw_window, chaos::Key const & key, float delta_time, glm::vec3 const& direction)
 	{
-		if (glfwGetKey(glfw_window, key) == GLFW_PRESS)
+		if (glfwGetKey(glfw_window, (int)key.GetKeyboardButton()) == GLFW_PRESS)
 		{
 			float final_speed = (glfwGetKey(glfw_window, GLFW_KEY_LEFT_SHIFT) != GLFW_RELEASE) ? FAST_DISPLACEMENT_SPEED : DISPLACEMENT_SPEED;
 			sphere.position += direction * delta_time * final_speed;
@@ -157,6 +181,8 @@ public:
 class WindowOpenGLTest : public chaos::Window
 {
 	CHAOS_DECLARE_OBJECT_CLASS(WindowOpenGLTest, chaos::Window);
+
+	friend class GeometricObject;
 
 protected:
 
@@ -221,26 +247,41 @@ protected:
 		// the HELP
 		if (show_help)
 		{
+			auto text_func = (GetCurrentGeometricObject() == nullptr) ? &ImGui::TextDisabled : &ImGui::Text;
+
 			ImGui::Begin("help", &show_help);
+
+			ImGui::Text("y      : new random scene");
 			ImGui::Text("+      : next object");
 			ImGui::Text("-      : previous object");
-			ImGui::Text("delete : delete");
-			ImGui::Text("y      : new random scene");
-			ImGui::Text("z      : move forward");
-			ImGui::Text("s      : move backward");
-			ImGui::Text("q      : move left");
-			ImGui::Text("d      : move right");
-			ImGui::Text("a      : move down");
-			ImGui::Text("e      : move up");
+			text_func  ("delete : delete");
+			if (current_action_type == ActionType::MOVE_OBJECT)
+			{
+				text_func("z      : move forward");
+				text_func("s      : move backward");
+				text_func("q      : move left");
+				text_func("d      : move right");
+				text_func("a      : move down");
+				text_func("e      : move up");
+			}
+			else if (current_action_type == ActionType::SCALE_OBJECT)
+			{
+				text_func("z      : scale + X");
+				text_func("s      : scale - X");
+				text_func("q      : scale + Y");
+				text_func("d      : scale - Y");
+				text_func("a      : scale + Z");
+				text_func("e      : scale - Z");
+			}
 
-			ImGui::Text("r      : scale up");
-			ImGui::Text("f      : scale down");
-			ImGui::Text("shift  : speed");
+
+
+
+			text_func("shift  : speed");
 
 			ImGuiIO& io = ImGui::GetIO();
 			ImGui::Text("WantCaptureMouse  : %d", io.WantCaptureMouse);
 			ImGui::Text("WantCaptureKeyboard   : %d", io.WantCaptureKeyboard);
-
 			ImGui::End();
 		}
 
@@ -274,8 +315,9 @@ protected:
 					{
 						ImGui::SetCursorPosY(base_cursor_y + 4.0f);
 					}
+					ImTextureID textureID = (ImTextureID)(texture->GetResourceID());
 
-					if (ImGui::ImageButton(ImTextureID(texture->GetResourceID()), icon_size, ImVec2(0, 1), ImVec2(1, 0))) // reverse the texture coordinate along Y
+					if (ImGui::ImageButton(textureID, icon_size, ImVec2(0, 1), ImVec2(1, 0))) // reverse the texture coordinate along Y
 					{
 						current_action_type = type;
 					}
@@ -324,9 +366,9 @@ protected:
 		for (auto& geometric_object : geometric_objects)
 		{
 			glm::vec4 color = white;
-			if (geometric_object == GetCurrentGeometricObject())
-				color = blue;
 			if (pointed_object == geometric_object)
+				color = red;
+			else if (geometric_object == GetCurrentGeometricObject())
 				color = blue;
 			
 			geometric_object->DrawPrimitive(primitive_renderer.get(), color);
@@ -438,7 +480,7 @@ protected:
 
 	GeometricObject* GetCurrentGeometricObject()
 	{
-		return (geometric_objects.size() == 0) ? nullptr : geometric_objects[current_object_index].get();
+		return (!current_object_index.has_value()) ? nullptr : geometric_objects[current_object_index.value()].get();
 	}
 
 	bool GetImGuiMenuMode() const
@@ -512,6 +554,22 @@ protected:
 				{
 					CreateNewSphere(GetSphereToCreateFromMousePosition());
 				}
+				else if (current_action_type == ActionType::MOVE_OBJECT || current_action_type == ActionType::SCALE_OBJECT || current_action_type == ActionType::ROTATE_OBJECT)
+				{
+					if (pointed_object == nullptr)
+						current_object_index.reset();
+					else
+					{
+						for (size_t i = 0; i < geometric_objects.size(); ++i)
+						{
+							if (pointed_object == geometric_objects[i].get())
+							{
+								current_object_index = i;
+								break;
+							}
+						}
+					}
+				}
 			}
 		}
 		return true;
@@ -524,20 +582,20 @@ protected:
 		if (GeometricObject* current_object = GetCurrentGeometricObject())
 		{
 			// change current selection
-			if (event.IsKeyPressed(GLFW_KEY_KP_ADD))
+			if (event.IsKeyPressed((int)key_configuration.next_object.GetKeyboardButton()))
 			{
-				current_object_index = (current_object_index + 1) % geometric_objects.size();
+				current_object_index = (current_object_index.value() + 1) % geometric_objects.size();
 				return true;
 			}
-			else if (event.IsKeyPressed(GLFW_KEY_KP_SUBTRACT))
+			else if (event.IsKeyPressed((int)key_configuration.previous_object.GetKeyboardButton()))
 			{
-				current_object_index = (current_object_index + geometric_objects.size() - 1) % geometric_objects.size();
+				current_object_index = (current_object_index.value() + geometric_objects.size() - 1) % geometric_objects.size();
 				return true;
 			}
 
-			if (event.IsKeyPressed(GLFW_KEY_DELETE))
+			if (event.IsKeyPressed((int)key_configuration.delete_object.GetKeyboardButton()))
 			{
-				if (geometric_objects.size() > 1)
+				if (geometric_objects.size() > 0)
 				{
 					// remove the object from tree
 					EraseObjectFromNode(current_object);
@@ -548,14 +606,16 @@ protected:
 					});
 					geometric_objects.erase(it); // destroy the last reference on object
 					// select object near in creation order
-					if (current_object_index > 0)
-						--current_object_index; // while there is always at least one object in the array, this is always valid
+					if (geometric_objects.size() == 0)
+						current_object_index.reset();
+					else
+						current_object_index = (current_object_index.value() == 0)? 0 : (current_object_index.value() - 1); // while there is always at least one object in the array, this is always valid				
 				}
 
 				return true;
 			}
 
-			if (event.IsKeyPressed(GLFW_KEY_Y))
+			if (event.IsKeyPressed((int)key_configuration.new_scene.GetKeyboardButton()))
 			{
 				geometric_objects.clear();
 				current_object_index = 0;
@@ -664,7 +724,7 @@ protected:
 			// move object
 			if (GeometricObject* current_object = GetCurrentGeometricObject())
 			{
-				if (current_object->DisplaceObjectWithInputs(glfw_window, delta_time))
+				if (current_object->DisplaceObjectWithInputs(current_action_type, key_configuration, glfw_window, delta_time))
 					OnObjectMoved(current_object);
 			}
 		}
@@ -732,7 +792,7 @@ protected:
 	/** the objects */
 	std::vector<chaos::shared_ptr<GeometricObject>> geometric_objects;
 	/** the selected object */
-	size_t current_object_index = 0;
+	std::optional<size_t> current_object_index;
 	/** the new object id */
 	size_t new_object_id = 0;
 
@@ -762,6 +822,8 @@ protected:
 	static constexpr float CAMERA_SPEED = 400.0f;
 	/** the distance at which object are being created */
 	static constexpr float CREATE_OBJECT_DISTANCE = 100.0f;
+
+	KeyConfiguration key_configuration;
 };
 
 int main(int argc, char ** argv, char ** env)

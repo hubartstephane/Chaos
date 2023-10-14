@@ -190,7 +190,7 @@ build:DeclareExternalLib("IRRKLANG")
 --------------------------------------------------------------------
 -- FBX
 --------------------------------------------------------------------
-FBX_PATH = path.join("FBX-2020.0.1", "2020.0.1") 
+FBX_PATH = path.join("FBX SDK", "2020.0.1") 
 FBX_INC_PATH = "include"
 FBX_LIB_PATH = path.join("lib", "vs2017", "x64", "release")
 FBX_LIB_NAME = "libfbxsdk.lib"
@@ -201,10 +201,10 @@ build:DeclareExternalLib("FBX")
 -- ZLIB
 --------------------------------------------------------------------
 ZLIB_PATH     = "zlib-1.3"
-ZLIB_INC_PATH = "build"
+ZLIB_INC_PATH = ""
 ZLIB_LIB_PATH = {
-	RELEASE = path.join("build", "Release"),
-	DEBUG = path.join("build", "Debug")
+	RELEASE = path.join(".", "Release"),
+	DEBUG = path.join(".", "Debug")
 }
 ZLIB_LIB_NAME = {
 	RELEASE = "zlibstatic.lib",
@@ -218,16 +218,16 @@ build:DeclareExternalLib("ZLIB")
 ASSIMP_PATH     = "assimp"
 ASSIMP_INC_PATH = "include"
 ASSIMP_LIB_PATH = {
-	RELEASE = path.join("build", "lib", "Release"),
-	DEBUG = path.join("build", "lib", "Debug")
+	RELEASE = path.join("lib", "Release"),
+	DEBUG = path.join("lib", "Debug")
 }
 ASSIMP_LIB_NAME  = {
 	RELEASE = "assimp-vc143-mt.lib",
 	DEBUG = "assimp-vc143-mtd.lib"
 }
 ASSIMP_TOCOPY = {
-	RELEASE = path.join("build", "bin", "Release", "assimp-vc143-mt.dll"),
-	DEBUG = path.join("build", "bin", "Debug", "assimp-vc143-mtd.dll")
+	RELEASE = path.join("bin", "Release", "assimp-vc143-mt.dll"),
+	DEBUG = path.join("bin", "Debug", "assimp-vc143-mtd.dll")
 }
 build:DeclareExternalLib("ASSIMP")
 
@@ -274,7 +274,11 @@ build:DeclareExternalLib("IMGUI")
 --------------------------------------------------------------------
 -- VULKAN
 --------------------------------------------------------------------
-VULKAN_PATH = path.join("VulkanSDK", "1.3.261.1")
+
+VULKAN_PATH = os.getenv("VULKAN_SDK")
+if (not VULKAN_PATH) then
+	VULKAN_PATH = path.join("VulkanSDK", "1.3.261.1")
+end
 VULKAN_INC_PATH = "Include"
 VULKAN_LIB_PATH = "Lib"
 VULKAN_BIN_PATH = "Bin"

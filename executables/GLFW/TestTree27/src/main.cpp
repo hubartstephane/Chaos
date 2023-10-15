@@ -18,12 +18,19 @@ public:
 	chaos::Key next_object = (chaos::KeyboardButton)GLFW_KEY_KP_ADD;
 	chaos::Key previous_object = (chaos::KeyboardButton)GLFW_KEY_KP_SUBTRACT;
 
-	chaos::Key move_object_positive_x = (chaos::KeyboardButton)GLFW_KEY_A;
-	chaos::Key move_object_negative_x = (chaos::KeyboardButton)GLFW_KEY_D;
+	chaos::Key move_object_positive_x = (chaos::KeyboardButton)GLFW_KEY_D;
+	chaos::Key move_object_negative_x = (chaos::KeyboardButton)GLFW_KEY_A;
 	chaos::Key move_object_positive_y = (chaos::KeyboardButton)GLFW_KEY_Q;
 	chaos::Key move_object_negative_y = (chaos::KeyboardButton)GLFW_KEY_E;
-	chaos::Key move_object_positive_z = (chaos::KeyboardButton)GLFW_KEY_W;
-	chaos::Key move_object_negative_z = (chaos::KeyboardButton)GLFW_KEY_S;
+	chaos::Key move_object_positive_z = (chaos::KeyboardButton)GLFW_KEY_S;
+	chaos::Key move_object_negative_z = (chaos::KeyboardButton)GLFW_KEY_W;
+
+	chaos::Key scale_object_positive_x = (chaos::KeyboardButton)GLFW_KEY_D;
+	chaos::Key scale_object_negative_x = (chaos::KeyboardButton)GLFW_KEY_A;
+	chaos::Key scale_object_positive_y = (chaos::KeyboardButton)GLFW_KEY_Q;
+	chaos::Key scale_object_negative_y = (chaos::KeyboardButton)GLFW_KEY_E;
+	chaos::Key scale_object_positive_z = (chaos::KeyboardButton)GLFW_KEY_S;
+	chaos::Key scale_object_negative_z = (chaos::KeyboardButton)GLFW_KEY_W;
 };
 
 // =======================================================================
@@ -112,12 +119,12 @@ public:
 
 		if (action_type == ActionType::MOVE_OBJECT)
 		{
-			result |= MoveObjectWithInputs(glfw_window, key_configuration.move_object_positive_x, delta_time, { -1.0f,  0.0f,  0.0f });
-			result |= MoveObjectWithInputs(glfw_window, key_configuration.move_object_negative_x, delta_time, { 1.0f,  0.0f,  0.0f });
-			result |= MoveObjectWithInputs(glfw_window, key_configuration.move_object_positive_y, delta_time, { 0.0f, -1.0f,  0.0f });
-			result |= MoveObjectWithInputs(glfw_window, key_configuration.move_object_negative_y, delta_time, { 0.0f,  1.0f,  0.0f });
-			result |= MoveObjectWithInputs(glfw_window, key_configuration.move_object_positive_z, delta_time, { 0.0f,  0.0f, -1.0f });
-			result |= MoveObjectWithInputs(glfw_window, key_configuration.move_object_negative_z, delta_time, { 0.0f,  0.0f,  1.0f });
+			result |= MoveObjectWithInputs(glfw_window, key_configuration.move_object_negative_x, delta_time, { -1.0f,  0.0f,  0.0f });
+			result |= MoveObjectWithInputs(glfw_window, key_configuration.move_object_positive_x, delta_time, { 1.0f,  0.0f,  0.0f });
+			result |= MoveObjectWithInputs(glfw_window, key_configuration.move_object_negative_y, delta_time, { 0.0f, -1.0f,  0.0f });
+			result |= MoveObjectWithInputs(glfw_window, key_configuration.move_object_positive_y, delta_time, { 0.0f,  1.0f,  0.0f });
+			result |= MoveObjectWithInputs(glfw_window, key_configuration.move_object_negative_z, delta_time, { 0.0f,  0.0f, -1.0f });
+			result |= MoveObjectWithInputs(glfw_window, key_configuration.move_object_positive_z, delta_time, { 0.0f,  0.0f,  1.0f });
 		}
 		else if (action_type == ActionType::SCALE_OBJECT)
 		{
@@ -245,9 +252,9 @@ protected:
 	void DrawTextItem(char const* title, chaos::Key const& key, bool enabled) const
 	{
 		if (enabled)
-			ImGui::Text("%s      : %s", key_configuration.move_object_negative_x.GetName(), title);
+			ImGui::Text("%s      : %s", key.GetName(), title);
 		else
-			ImGui::TextDisabled("%s      : %s", key_configuration.move_object_negative_x.GetName(), title);
+			ImGui::TextDisabled("%s      : %s", key.GetName(), title);
 	}
 
 	void OnDrawWindowImGuiContent() override
@@ -263,32 +270,24 @@ protected:
 			DrawTextItem("previous object", key_configuration.previous_object, enabled);
 			DrawTextItem("delete object", key_configuration.delete_object, enabled);
 
-#if 0
-			
-			ImGui::Text("+      : next object");
-			ImGui::Text("-      : previous object");
-			text_func  ("delete : delete");
 			if (current_action_type == ActionType::MOVE_OBJECT)
 			{
-				text_func("z      : move forward %s", key_configuration.move_object_negative_x.GetName());
-				text_func("s      : move backward");
-				text_func("q      : move left");
-				text_func("d      : move right");
-				text_func("a      : move down");
-				text_func("e      : move up");
+				DrawTextItem("move object -x", key_configuration.move_object_negative_x.GetName(), enabled);
+				DrawTextItem("move object +x", key_configuration.move_object_positive_x.GetName(), enabled);
+				DrawTextItem("move object -y", key_configuration.move_object_negative_y.GetName(), enabled);
+				DrawTextItem("move object +y", key_configuration.move_object_positive_y.GetName(), enabled);
+				DrawTextItem("move object -z", key_configuration.move_object_negative_z.GetName(), enabled);
+				DrawTextItem("move object +z", key_configuration.move_object_positive_z.GetName(), enabled);
 			}
 			else if (current_action_type == ActionType::SCALE_OBJECT)
 			{
-				text_func("z      : scale + X");
-				text_func("s      : scale - X");
-				text_func("q      : scale + Y");
-				text_func("d      : scale - Y");
-				text_func("a      : scale + Z");
-				text_func("e      : scale - Z");
+				DrawTextItem("scale object -x", key_configuration.scale_object_negative_x.GetName(), enabled);
+				DrawTextItem("scale object +x", key_configuration.scale_object_positive_x.GetName(), enabled);
+				DrawTextItem("scale object -y", key_configuration.scale_object_negative_y.GetName(), enabled);
+				DrawTextItem("scale object +y", key_configuration.scale_object_positive_y.GetName(), enabled);
+				DrawTextItem("scale object -z", key_configuration.scale_object_negative_z.GetName(), enabled);
+				DrawTextItem("scale object +z", key_configuration.scale_object_positive_z.GetName(), enabled);
 			}
-
-#endif
-
 
 			//text_func("shift  : speed");
 

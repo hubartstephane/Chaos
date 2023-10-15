@@ -118,8 +118,7 @@ namespace chaos
 			// make substitution, build_path prefix to src_path prefix
 			boost::filesystem::path relative_path = p.lexically_relative(build_path);
 			boost::filesystem::path result = (src_path / relative_path);
-			result.normalize();
-			return result;
+			return result.lexically_normal();
 		}
 #endif // _DEBUG
 

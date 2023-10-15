@@ -3,6 +3,7 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	class ImGuiDrawableInterface;
+	class ImGuiDrawableObject;
 
 	enum class ImGuiDrawMenuMode;
 
@@ -61,6 +62,13 @@ namespace chaos
 			}
 			return false;
 		}
+	};
+
+	class CHAOS_API ImGuiDrawableObject : public Object, public ImGuiDrawableInterface
+	{
+	public:
+
+		CHAOS_DECLARE_OBJECT_CLASS(ImGuiDrawableObject, Object);
 	};
 
 #endif

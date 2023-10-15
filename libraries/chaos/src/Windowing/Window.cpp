@@ -957,6 +957,7 @@ namespace chaos
 	{
 		OnDrawWindowImGuiMenu();
 		OnDrawWindowImGuiContent();
+		DrawImGui(ImGuiDrawMenuMode::FullWindow);
 	}
 
 	void Window::OnDrawWindowImGuiMenu()

@@ -459,6 +459,7 @@ protected:
 		// super
 		if (!chaos::Window::InitializeFromConfiguration(config))
 			return false;
+
 		// create the renderer
 		primitive_renderer = new PrimitiveRenderer();
 		if (primitive_renderer == nullptr)
@@ -742,7 +743,7 @@ protected:
 		}
 
 		// object selection with mouse
-		if (glfwGetInputMode(glfw_window, GLFW_CURSOR) == GLFW_CURSOR_NORMAL)
+		if (GetImGuiMenuMode())
 		{
 			glm::ivec2 window_size = GetWindowSize();
 			if (window_size.x > 0 && window_size.y > 0)
@@ -778,13 +779,16 @@ protected:
 				}
 
 				// trace debugging information
-				ImGui::Begin("Information");
+				ImGui::Begin("Information", nullptr);
 #if 0
 				ImGui::Text("cursor            : (%0.3f, %0.3f)", (float)x, (float)y);
 				ImGui::Text("window   size     : (%0.3f, %0.3f)", (float)window_size.x, (float)window_size.y);
 				ImGui::Text("viewport position : (%0.3f, %0.3f)", (float)viewport.position.x, (float)viewport.position.y);
 				ImGui::Text("viewport size     : (%0.3f, %0.3f)", (float)viewport.size.x, (float)viewport.size.y);
 #endif
+				static char buf[10];
+
+				ImGui::InputText("xxx", buf, 10);
 				ImGui::InputFloat("near_plane", &near_plane, 10.0f, 50.0f);
 				ImGui::InputFloat("far_plane", &far_plane, 10.0f, 50.0f);
 				ImGui::InputFloat("fov", &fov, 1.0f, 5.0f);

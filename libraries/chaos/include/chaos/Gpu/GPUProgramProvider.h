@@ -2,6 +2,8 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
+	class GPUProgramProviderInterface;
+
 	class GPUProgramProviderBase;
 
 	template<typename T, typename MEMBER_TYPE>

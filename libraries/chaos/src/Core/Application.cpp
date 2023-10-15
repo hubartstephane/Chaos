@@ -230,7 +230,7 @@ namespace chaos
 		}
 
 		boost::filesystem::path p = argv[0];
-		p.normalize();
+		p = p.lexically_normal();
 		p.make_preferred();
 
 		application_filename = p.filename();

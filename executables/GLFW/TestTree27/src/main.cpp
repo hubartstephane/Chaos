@@ -242,22 +242,35 @@ protected:
 		});
 	}
 
+	void DrawTextItem(char const* title, chaos::Key const& key, bool enabled) const
+	{
+		if (enabled)
+			ImGui::Text("%s      : %s", key_configuration.move_object_negative_x.GetName(), title);
+		else
+			ImGui::TextDisabled("%s      : %s", key_configuration.move_object_negative_x.GetName(), title);
+	}
+
 	void OnDrawWindowImGuiContent() override
 	{
 		// the HELP
 		if (show_help)
 		{
-			auto text_func = (GetCurrentGeometricObject() == nullptr) ? &ImGui::TextDisabled : &ImGui::Text;
+			bool enabled = (GetCurrentGeometricObject() != nullptr);
 
 			ImGui::Begin("help", &show_help);
+			DrawTextItem("random scene", key_configuration.new_scene, true);
+			DrawTextItem("next object", key_configuration.next_object, enabled);
+			DrawTextItem("previous object", key_configuration.previous_object, enabled);
+			DrawTextItem("delete object", key_configuration.delete_object, enabled);
 
-			ImGui::Text("y      : new random scene");
+#if 0
+			
 			ImGui::Text("+      : next object");
 			ImGui::Text("-      : previous object");
 			text_func  ("delete : delete");
 			if (current_action_type == ActionType::MOVE_OBJECT)
 			{
-				text_func("z      : move forward");
+				text_func("z      : move forward %s", key_configuration.move_object_negative_x.GetName());
 				text_func("s      : move backward");
 				text_func("q      : move left");
 				text_func("d      : move right");
@@ -274,10 +287,10 @@ protected:
 				text_func("e      : scale - Z");
 			}
 
+#endif
 
 
-
-			text_func("shift  : speed");
+			//text_func("shift  : speed");
 
 			ImGuiIO& io = ImGui::GetIO();
 			ImGui::Text("WantCaptureMouse  : %d", io.WantCaptureMouse);
@@ -315,7 +328,7 @@ protected:
 					{
 						ImGui::SetCursorPosY(base_cursor_y + 4.0f);
 					}
-					ImTextureID textureID = (ImTextureID)(texture->GetResourceID());
+					ImTextureID textureID = (ImTextureID)((uint64_t)texture->GetResourceID()); // conversion into uint64_t to remove a C4312 warning
 
 					if (ImGui::ImageButton(textureID, icon_size, ImVec2(0, 1), ImVec2(1, 0))) // reverse the texture coordinate along Y
 					{

@@ -282,6 +282,9 @@ namespace chaos
 		/** get the destruction guard count */
 		int GetWindowDestructionGuard() const { return window_destruction_guard; }
 
+		/** register the known drawables */
+		virtual void RegisterKnownDrawables();
+
 		/** override */
 		virtual nlohmann::json * GetPersistentWriteStorage() const override;
 		/** override */

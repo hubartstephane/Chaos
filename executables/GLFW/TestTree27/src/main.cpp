@@ -484,15 +484,6 @@ protected:
 		scale_icon_texture = LoadTexture("ScaleIcon.png");
 		rotate_icon_texture = LoadTexture("RotateIcon.png");
 
-		// create huds
-		RegisterDrawable("Window Information", [this]()
-		{
-			chaos::ImGuiWindowInformationDrawable* result = new chaos::ImGuiWindowInformationDrawable;
-			if (result != nullptr)
-				result->SetWindow(this);
-			return result;
-		});
-
 		return true;
 	}
 

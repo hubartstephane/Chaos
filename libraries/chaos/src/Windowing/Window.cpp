@@ -1044,7 +1044,21 @@ namespace chaos
 
 	bool Window::InitializeFromConfiguration(nlohmann::json const& config)
 	{
+		RegisterKnownDrawables();
 		return true; 
+	}
+
+	void Window::RegisterKnownDrawables()
+	{
+		auto * p = RegisterDrawable("Window Information", [this]()
+		{
+			ImGuiWindowInformationDrawable* result = new ImGuiWindowInformationDrawable;
+			if (result != nullptr)
+				result->SetWindow(this);
+			return result;
+		});
+
+		shared_ptr<ImGuiDrawableObjectRegistration> r = p;
 	}
 
 	nlohmann::json * Window::GetPersistentWriteStorage() const

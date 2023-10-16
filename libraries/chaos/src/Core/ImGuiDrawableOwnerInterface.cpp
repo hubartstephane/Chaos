@@ -7,6 +7,11 @@ namespace chaos
 	 * ImGuiDrawableObjectRegistration implementation
 	 */
 
+	ImGuiDrawableObjectRegistration::~ImGuiDrawableObjectRegistration()
+	{
+		assert(owner == nullptr);
+	}
+
 	void ImGuiDrawableObjectRegistration::DrawImGui(ImGuiDrawMenuMode menu_mode)
 	{
 		if (drawable_object != nullptr)
@@ -44,9 +49,29 @@ namespace chaos
 		return name.c_str();
 	}
 
+	void ImGuiDrawableObjectRegistration::SubReference()
+	{
+		// the registration does not belong to any owner: handle as usual
+		if (owner == nullptr)
+			Object::SubReference();
+		// the last reference is the one from the owner. Destroy it
+		else if (--shared_count == 1)
+			owner->UnregisterDrawable(this);
+	}
+
 	/**
 	 * ImGuiDrawableOwnerInterface implementation
 	 */
+
+	ImGuiDrawableOwnerInterface::~ImGuiDrawableOwnerInterface()
+	{
+		while (registered_drawable.size() > 0)
+		{
+			ImGuiDrawableObjectRegistration* last = registered_drawable[0].get();
+			last->owner = nullptr;
+			registered_drawable.pop_back();
+		}
+	}
 
 	ImGuiDrawableObjectRegistration* ImGuiDrawableOwnerInterface::FindRegisteredDrawable(char const* name)
 	{
@@ -56,11 +81,14 @@ namespace chaos
 		return nullptr;
 	}
 
-	void ImGuiDrawableOwnerInterface::RemoveRegisteredDrawable(char const* name)
+	void ImGuiDrawableOwnerInterface::UnregisterDrawable(ImGuiDrawableObjectRegistration* registration)
 	{
-		auto it = std::ranges::find_if(registered_drawable, [name](auto & drawable) { return chaos::StringTools::Stricmp(drawable->GetName(), name) == 0; });
+		auto it = std::ranges::find_if(registered_drawable, [registration](auto& drawable) { return drawable == registration; });
 		if (it != std::ranges::end(registered_drawable))
+		{
+			registration->owner = nullptr; // order is important, next line may destroy it
 			registered_drawable.erase(it);
+		}
 	}
 
 	ImGuiDrawableObjectRegistration * ImGuiDrawableOwnerInterface::RegisterDrawable(char const* name, std::function<ImGuiDrawableObject* ()> drawable_creation_function)
@@ -73,6 +101,7 @@ namespace chaos
 		{
 			result->name = name;
 			result->creation_function = drawable_creation_function;
+			result->owner = this;
 			registered_drawable.push_back(result);
 			return result;
 		}

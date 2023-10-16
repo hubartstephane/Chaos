@@ -17,6 +17,9 @@ namespace chaos
 
 	public:
 
+		/** destructor */
+		~ImGuiDrawableObjectRegistration();
+
 		/** override */
 		virtual void DrawImGui(ImGuiDrawMenuMode menu_mode) override;
 
@@ -26,6 +29,9 @@ namespace chaos
 		bool IsVisible() const;
 		/** get the name of the registration */
 		char const* GetName() const;
+
+		/** override */
+		virtual void SubReference() override;
 
 	protected:
 
@@ -37,6 +43,8 @@ namespace chaos
 		std::function<ImGuiDrawableObject* ()> creation_function;
 		/** the show count */
 		bool visible = false;
+		/** owner */
+		ImGuiDrawableOwnerInterface* owner = nullptr;
 	};
 
 	/**
@@ -45,7 +53,10 @@ namespace chaos
 
 	class CHAOS_API ImGuiDrawableOwnerInterface : public ImGuiDrawableInterface
 	{
-	protected:
+	public:
+
+		/** destructor */
+		~ImGuiDrawableOwnerInterface();
 
 		/** find a registered object */
 		ImGuiDrawableObjectRegistration* FindRegisteredDrawable(char const* name);
@@ -59,7 +70,7 @@ namespace chaos
 		ImGuiDrawableObjectRegistration * RegisterDrawable(char const* name, SubClassOf<ImGuiDrawableObject> drawable_class);
 
 		/** remove a registered object */
-		void RemoveRegisteredDrawable(char const* name);
+		void UnregisterDrawable(ImGuiDrawableObjectRegistration* registration);
 
 	protected:
 

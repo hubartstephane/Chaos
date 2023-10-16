@@ -7,6 +7,47 @@ static glm::vec4 const green = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 static glm::vec4 const blue  = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
 static glm::vec4 const white = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
+class ImGuiInformationDrawable : public chaos::ImGuiDrawableObject
+{
+public:
+
+	CHAOS_DECLARE_OBJECT_CLASS(ImGuiInformationDrawable, chaos::ImGuiDrawableObject);
+
+	void SetWindow(chaos::Window* in_window)
+	{
+		assert(window == nullptr);
+		assert(in_window != nullptr);
+		window = in_window;
+	}
+
+	virtual void DrawImGui(chaos::ImGuiDrawMenuMode menu_mode) override
+	{
+		// collect window information
+		glm::ivec2 window_size = window->GetWindowSize();
+		chaos::aabox2 viewport = window->GetRequiredViewport(window_size);
+		double x = 0.0;
+		double y = 0.0;
+		glfwGetCursorPos(window->GetGLFWHandler(), &x, &y);
+
+		// trace debugging information
+		ImGui::Begin("Window Information", nullptr);
+		ImGui::Text("cursor              : (%0.3f, %0.3f)", (float)x, (float)y);
+		ImGui::Text("window   size       : (%0.3f, %0.3f)", (float)window_size.x, (float)window_size.y);
+		ImGui::Text("viewport position   : (%0.3f, %0.3f)", (float)viewport.position.x, (float)viewport.position.y);
+		ImGui::Text("viewport size       : (%0.3f, %0.3f)", (float)viewport.size.x, (float)viewport.size.y);
+
+		ImGuiIO& io = ImGui::GetIO();
+		ImGui::Text("WantCaptureMouse    : %d", io.WantCaptureMouse);
+		ImGui::Text("WantCaptureKeyboard : %d", io.WantCaptureKeyboard);
+		ImGui::End();
+	}
+
+protected:
+
+	chaos::Window* window = nullptr;
+};
+
+
 // =======================================================================
 
 class KeyConfiguration
@@ -288,12 +329,6 @@ protected:
 				DrawTextItem("scale object -z", key_configuration.scale_object_negative_z.GetName(), enabled);
 				DrawTextItem("scale object +z", key_configuration.scale_object_positive_z.GetName(), enabled);
 			}
-
-			//text_func("shift  : speed");
-
-			ImGuiIO& io = ImGui::GetIO();
-			ImGui::Text("WantCaptureMouse  : %d", io.WantCaptureMouse);
-			ImGui::Text("WantCaptureKeyboard   : %d", io.WantCaptureKeyboard);
 			ImGui::End();
 		}
 
@@ -487,6 +522,15 @@ protected:
 		move_icon_texture = LoadTexture("MoveIcon.png");
 		scale_icon_texture = LoadTexture("ScaleIcon.png");
 		rotate_icon_texture = LoadTexture("RotateIcon.png");
+
+		// create huds
+		RegisterDrawable("Window Information", [this]()
+		{
+			ImGuiInformationDrawable* result = new ImGuiInformationDrawable;
+			if (result != nullptr)
+				result->SetWindow(this);
+			return result;
+		});
 
 		return true;
 	}
@@ -786,9 +830,7 @@ protected:
 				ImGui::Text("viewport position : (%0.3f, %0.3f)", (float)viewport.position.x, (float)viewport.position.y);
 				ImGui::Text("viewport size     : (%0.3f, %0.3f)", (float)viewport.size.x, (float)viewport.size.y);
 #endif
-				static char buf[10];
 
-				ImGui::InputText("xxx", buf, 10);
 				ImGui::InputFloat("near_plane", &near_plane, 10.0f, 50.0f);
 				ImGui::InputFloat("far_plane", &far_plane, 10.0f, 50.0f);
 				ImGui::InputFloat("fov", &fov, 1.0f, 5.0f);

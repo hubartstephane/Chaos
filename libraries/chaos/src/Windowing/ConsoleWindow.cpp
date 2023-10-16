@@ -10,15 +10,10 @@ namespace chaos
 
 	void ConsoleWindow::OnDrawWindowImGuiContent()
 	{
-		int window_flags = ImGuiDrawableInterface::AddWindowMainMenuFlag(ImGuiDrawMenuMode::ImGuiWindow, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground);
-
-		ImGui::SetNextWindowPos({ 0, 0 });
-		ImGui::SetNextWindowSize({ ImGui::GetMainViewport()->Size.x, ImGui::GetMainViewport()->Size.y });
-		if (ImGui::Begin("##console", nullptr, window_flags))
+		ImGuiDrawableInterface::FullscreenWindow("##console", true, [this]()
 		{
 			console_content.DrawImGui(ImGuiDrawMenuMode::ImGuiWindow);
-			ImGui::End();
-		}
+		});
 	}
 
 	void ConsoleWindow::OnDrawWindowImGuiMenu()

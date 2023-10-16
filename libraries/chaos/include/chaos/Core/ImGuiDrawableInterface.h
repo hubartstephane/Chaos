@@ -27,6 +27,23 @@ namespace chaos
 		/** conditionally add a flag for main menu */
 		static int AddWindowMainMenuFlag(ImGuiDrawMenuMode menu_mode, int flags);
 
+		/** start a fullscreen window */
+		template<typename FUNC>
+		static void FullscreenWindow(char const* name, bool menu_bar, FUNC const & content_func)
+		{
+			int window_flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground;
+			if (menu_bar)
+				window_flags |= AddWindowMainMenuFlag(ImGuiDrawMenuMode::ImGuiWindow , window_flags);
+
+			ImGui::SetNextWindowPos({ 0, 0 });
+			ImGui::SetNextWindowSize({ ImGui::GetMainViewport()->Size.x, ImGui::GetMainViewport()->Size.y });
+			if (ImGui::Begin(name, nullptr, window_flags))
+			{
+				content_func();
+				ImGui::End();
+			}
+		}
+
 		/** start a menu */
 		template<typename FUNC>
 		static bool MenuBar(ImGuiDrawMenuMode menu_mode, FUNC const& func)

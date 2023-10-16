@@ -844,31 +844,65 @@ int ConvertKey(int K)
 
 #endif
 
+class WindowOpenGLTest : public chaos::Window
+{
+	CHAOS_DECLARE_OBJECT_CLASS(WindowOpenGLTest, chaos::Window);
+
+public:
+
+	virtual void OnDrawWindowImGuiMenu() override
+	{
+		// Window::OnDrawImGuiMenu();
+		// do not call super so that the application items are not inserted here
+	}
+
+	virtual void OnDrawWindowImGuiContent()
+	{
+		ImGuiDrawableInterface::FullscreenWindow("conversion", false, [this]()
+		{
+			auto ImGui_DisplayConversion = [](int src, KeyboardLayout src_layout)
+			{
+				int dst = ConvertKeyToCurrentLayout(src, src_layout);
+
+				chaos::Key k1 = chaos::Key((chaos::KeyboardButton)src);
+				chaos::Key k2 = chaos::Key((chaos::KeyboardButton)dst);
+
+				char const* layout_name = (src_layout == KeyboardLayout::AZERTY) ? "azerty" : "qwerty";
+
+				ImGui::Text("%s (%s) -> %s (current)", k1.GetName(), layout_name, k2.GetName());
+			};
+
+			ImGui_DisplayConversion(GLFW_KEY_A, KeyboardLayout::AZERTY);
+			ImGui_DisplayConversion(GLFW_KEY_A, KeyboardLayout::QWERTY);
+
+			ImGui_DisplayConversion(GLFW_KEY_Q, KeyboardLayout::AZERTY);
+			ImGui_DisplayConversion(GLFW_KEY_Q, KeyboardLayout::QWERTY);
+
+			ImGui_DisplayConversion(GLFW_KEY_Z, KeyboardLayout::AZERTY);
+			ImGui_DisplayConversion(GLFW_KEY_Z, KeyboardLayout::QWERTY);
+				
+			ImGui_DisplayConversion(GLFW_KEY_W, KeyboardLayout::AZERTY);
+			ImGui_DisplayConversion(GLFW_KEY_W, KeyboardLayout::QWERTY);
+
+			ImGui_DisplayConversion(GLFW_KEY_M, KeyboardLayout::AZERTY);
+			ImGui_DisplayConversion(GLFW_KEY_M, KeyboardLayout::QWERTY);
+
+			ImGui_DisplayConversion(GLFW_KEY_COMMA, KeyboardLayout::AZERTY);
+			ImGui_DisplayConversion(GLFW_KEY_COMMA, KeyboardLayout::QWERTY);
+
+			ImGui_DisplayConversion(GLFW_KEY_SEMICOLON, KeyboardLayout::AZERTY);
+			ImGui_DisplayConversion(GLFW_KEY_SEMICOLON, KeyboardLayout::QWERTY);
+		});
+	}
+};
+
 int main(int argc, char ** argv, char ** env)
 {
-	//PrintScancodeVKConversionToFile("d://keyboard.txt", "Qwerty");
+	chaos::WindowCreateParams create_params;
+	create_params.monitor = nullptr;
+	create_params.width = 800;
+	create_params.height = 800;
+	create_params.monitor_index = 0;
 
-	auto n1 = ConvertKeyToCurrentLayout(GLFW_KEY_A, KeyboardLayout::AZERTY);
-	auto n2 = ConvertKeyToCurrentLayout(GLFW_KEY_A, KeyboardLayout::QWERTY);
-
-	auto n3 = ConvertKeyToCurrentLayout(GLFW_KEY_Q, KeyboardLayout::AZERTY);
-	auto n4 = ConvertKeyToCurrentLayout(GLFW_KEY_Q, KeyboardLayout::QWERTY);
-
-	auto n5 = ConvertKeyToCurrentLayout(GLFW_KEY_Z, KeyboardLayout::AZERTY);
-	auto n6 = ConvertKeyToCurrentLayout(GLFW_KEY_Z, KeyboardLayout::QWERTY);
-
-	auto n7 = ConvertKeyToCurrentLayout(GLFW_KEY_W, KeyboardLayout::AZERTY);
-	auto n8 = ConvertKeyToCurrentLayout(GLFW_KEY_W, KeyboardLayout::QWERTY);
-
-	auto n9 = ConvertKeyToCurrentLayout(GLFW_KEY_M, KeyboardLayout::AZERTY);
-	auto n10 = ConvertKeyToCurrentLayout(GLFW_KEY_M, KeyboardLayout::QWERTY);
-
-	auto n11 = ConvertKeyToCurrentLayout(GLFW_KEY_COMMA, KeyboardLayout::AZERTY);
-	auto n12 = ConvertKeyToCurrentLayout(GLFW_KEY_COMMA, KeyboardLayout::QWERTY);
-
-	auto n13 = ConvertKeyToCurrentLayout(GLFW_KEY_SEMICOLON, KeyboardLayout::AZERTY);
-	auto n14 = ConvertKeyToCurrentLayout(GLFW_KEY_SEMICOLON, KeyboardLayout::QWERTY);
-
-
-	return 0;
+	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, create_params);
 }

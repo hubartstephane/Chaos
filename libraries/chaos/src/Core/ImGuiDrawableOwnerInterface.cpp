@@ -63,7 +63,7 @@ namespace chaos
 			registered_drawable.erase(it);
 	}
 
-	ImGuiDrawableObjectRegistration * ImGuiDrawableOwnerInterface::RegisteredDrawable(char const* name, std::function<ImGuiDrawableObject* ()> drawable_creation_function)
+	ImGuiDrawableObjectRegistration * ImGuiDrawableOwnerInterface::RegisterDrawable(char const* name, std::function<ImGuiDrawableObject* ()> drawable_creation_function)
 	{
 		if (ImGuiDrawableObjectRegistration* registration = FindRegisteredDrawable(name))
 		{
@@ -79,9 +79,9 @@ namespace chaos
 		return nullptr;
 	}
 
-	ImGuiDrawableObjectRegistration * ImGuiDrawableOwnerInterface::RegisteredDrawable(char const* name, SubClassOf<ImGuiDrawableObject> drawable_class)
+	ImGuiDrawableObjectRegistration * ImGuiDrawableOwnerInterface::RegisterDrawable(char const* name, SubClassOf<ImGuiDrawableObject> drawable_class)
 	{
-		return RegisteredDrawable(name, [drawable_class]()
+		return RegisterDrawable(name, [drawable_class]()
 		{
 			return drawable_class.CreateInstance();
 		});
@@ -94,7 +94,7 @@ namespace chaos
 			// draw the menu
 			chaos::ImGuiDrawableInterface::MenuBar(chaos::ImGuiDrawMenuMode::FullWindow, [this]()
 			{
-				if (ImGui::BeginMenu("Windows"))
+				if (ImGui::BeginMenu("ImGuiDrawable"))
 				{
 					for (auto& drawable : registered_drawable)
 						if (ImGui::MenuItem(drawable->GetName(), nullptr, drawable->IsVisible(), true))

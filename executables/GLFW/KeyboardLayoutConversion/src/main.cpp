@@ -310,6 +310,11 @@ int ConvertVirtualKeyIntoCurrentLayout(int src_vk, KeyboardLayout src_layout, Ke
 	case KeyboardLayout::QWERTY: conversion_table = &QwertyKeyboardLayoutConversionTable; break;
 	default:assert(0); break;
 	}
+
+	// reset pointer if existing
+	if (src_entry != nullptr)
+		*src_entry = nullptr;
+
 	// search int table the VK code corresponding, and translate scancode to new VK code
 	for (KeyboardLayoutConversionEntry const& entry : *conversion_table)
 	{
@@ -352,7 +357,9 @@ public:
 
 				char const* layout_name = (src_layout == KeyboardLayout::AZERTY) ? "azerty" : "qwerty";
 
-				ImGui::Text("%s (%s) -> %s (current)", src_entry->name.c_str(), layout_name, name);
+				char const * src_entry_name = (src_entry != nullptr) ? src_entry->name.c_str() : "unknown";
+
+				ImGui::Text("%s (%s) -> %s (current)", src_entry_name, layout_name, name);
 			};
 
 			ImGui_DisplayConversion('A', KeyboardLayout::AZERTY);
@@ -377,6 +384,16 @@ public:
 
 			ImGui_DisplayConversion('0', KeyboardLayout::AZERTY);
 			ImGui_DisplayConversion('0', KeyboardLayout::QWERTY);
+			ImGui::Separator();
+
+			int vk1 = ::VkKeyScan('*') & 0xFF;
+			ImGui_DisplayConversion(vk1, KeyboardLayout::AZERTY);
+			ImGui_DisplayConversion(vk1, KeyboardLayout::QWERTY);
+			ImGui::Separator();
+
+			int vk2 = ::VkKeyScan('$') & 0xFF;
+			ImGui_DisplayConversion(vk2, KeyboardLayout::AZERTY);
+			ImGui_DisplayConversion(vk2, KeyboardLayout::QWERTY);
 			ImGui::Separator();
 		});
 	}

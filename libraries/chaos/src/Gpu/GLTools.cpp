@@ -5,9 +5,9 @@ namespace chaos
 {
 	namespace GlobalVariables
 	{
-		CHAOS_GLOBAL_VARIABLE(bool, GLDebugNotifications);
+		CHAOS_GLOBAL_VARIABLE(bool, GLDebugNotifications, false);
 #if _WIN32 || _WIN64
-		CHAOS_GLOBAL_VARIABLE(bool, GLDebugBreak);
+		CHAOS_GLOBAL_VARIABLE(bool, GLDebugBreak, false);
 #endif
 	};
 

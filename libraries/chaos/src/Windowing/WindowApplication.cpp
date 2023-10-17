@@ -363,9 +363,9 @@ namespace chaos
 
 	namespace GlobalVariables
 	{
-		CHAOS_GLOBAL_VARIABLE(bool, UseCachedAtlas);
+		CHAOS_GLOBAL_VARIABLE(bool, UseCachedAtlas, false);
 #if !_DEBUG
-		CHAOS_GLOBAL_VARIABLE(bool, DumpCachedAtlas);
+		CHAOS_GLOBAL_VARIABLE(bool, DumpCachedAtlas, false);
 #endif
 	};
 

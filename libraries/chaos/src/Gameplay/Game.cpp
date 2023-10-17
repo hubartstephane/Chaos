@@ -39,7 +39,7 @@ namespace chaos
 
 	namespace GlobalVariables
 	{
-		CHAOS_GLOBAL_VARIABLE(bool, CheatMode);
+		CHAOS_GLOBAL_VARIABLE(bool, CheatMode, false);
 	};
 
 	bool Game::GetCheatMode() const
@@ -668,7 +668,7 @@ namespace chaos
 	namespace GlobalVariables
 	{
 #if _DEBUG
-		CHAOS_GLOBAL_VARIABLE(bool, MuteMusic);
+		CHAOS_GLOBAL_VARIABLE(bool, MuteMusic, false);
 #endif
 	};
 

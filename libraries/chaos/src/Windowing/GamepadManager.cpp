@@ -471,7 +471,7 @@ namespace chaos
 	namespace GlobalVariables
 	{
 #if _DEBUG
-		CHAOS_GLOBAL_VARIABLE(bool, NoForceFeedback);
+		CHAOS_GLOBAL_VARIABLE(bool, NoForceFeedback, false);
 #endif
 	};
 

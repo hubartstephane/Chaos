@@ -95,12 +95,12 @@ namespace chaos
 
 	namespace GlobalVariables
 	{
-		CHAOS_GLOBAL_VARIABLE(bool, ShowConsole);
-		CHAOS_GLOBAL_VARIABLE(bool, HideConsole);
-		CHAOS_GLOBAL_VARIABLE(bool, DumpConfigFile);
-		CHAOS_GLOBAL_VARIABLE(bool, ShowDirectories);
-		CHAOS_GLOBAL_VARIABLE(bool, ShowUserTempDirectory);
-		CHAOS_GLOBAL_VARIABLE(bool, ShowInstalledResourcesDirectory);
+		CHAOS_GLOBAL_VARIABLE(bool, ShowConsole, false);
+		CHAOS_GLOBAL_VARIABLE(bool, HideConsole, false);
+		CHAOS_GLOBAL_VARIABLE(bool, DumpConfigFile, false);
+		CHAOS_GLOBAL_VARIABLE(bool, ShowDirectories, false);
+		CHAOS_GLOBAL_VARIABLE(bool, ShowUserTempDirectory, false);
+		CHAOS_GLOBAL_VARIABLE(bool, ShowInstalledResourcesDirectory, false);
 	};
 
 	bool Application::Initialize()
@@ -118,6 +118,8 @@ namespace chaos
 			will_show_console = true;
 		else if (GlobalVariables::HideConsole.Get())
 			will_show_console = false;
+
+		will_show_console = false;
 
 		if (will_show_console)
 			WinTools::AllocConsoleAndRedirectStdOutput();

@@ -10,8 +10,8 @@ namespace chaos
 		namespace GlobalVariables
 		{
 #if _DEBUG
-			CHAOS_GLOBAL_VARIABLE(bool, ShowLoadedFile);
-			CHAOS_GLOBAL_VARIABLE(bool, NoDirectResourceFiles);
+			CHAOS_GLOBAL_VARIABLE(bool, ShowLoadedFile, false);
+			CHAOS_GLOBAL_VARIABLE(bool, NoDirectResourceFiles, false);
 #endif
 		};
 

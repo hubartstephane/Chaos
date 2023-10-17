@@ -369,7 +369,7 @@ namespace chaos
 	namespace GlobalVariables
 	{
 #if _DEBUG
-		CHAOS_GLOBAL_VARIABLE(bool, TMForceParticleCreation);
+		CHAOS_GLOBAL_VARIABLE(bool, TMForceParticleCreation, false);
 #endif
 	};
 

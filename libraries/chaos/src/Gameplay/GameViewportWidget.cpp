@@ -122,7 +122,7 @@ namespace chaos
 	namespace GlobalVariables
 	{
 #if _DEBUG
-		CHAOS_GLOBAL_VARIABLE(bool, NoAutoPause);
+		CHAOS_GLOBAL_VARIABLE(bool, NoAutoPause, false);
 #endif
 	};
 

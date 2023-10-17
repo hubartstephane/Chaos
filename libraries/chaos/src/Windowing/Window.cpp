@@ -95,7 +95,7 @@ namespace chaos
 
 	namespace GlobalVariables
 	{
-		CHAOS_GLOBAL_VARIABLE(bool, UnlimitedFPS);
+		CHAOS_GLOBAL_VARIABLE(bool, UnlimitedFPS, false);
 	};
 
 	bool Window::CreateGLFWWindow(WindowCreateParams create_params, GLFWwindow* share_context_window, GLFWHints glfw_hints)

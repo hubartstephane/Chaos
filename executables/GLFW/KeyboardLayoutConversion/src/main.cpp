@@ -23,7 +23,7 @@ public:
 			{
 				chaos::VirtualKeyScancodePair const* src_entry = nullptr;
 
-				int new_vk = chaos::KeyboardLayoutConversion::ConvertVirtualKey(src_vk, src_layout, &src_entry);
+				int new_vk = chaos::KeyboardLayoutConversion::ConvertVirtualKeyToCurrentLayout(src_vk, src_layout, &src_entry);
 
 				int new_scancode = ::MapVirtualKey(new_vk, MAPVK_VK_TO_VSC);
 				std::string name = chaos::KeyboardLayoutConversion::ScancodeToName(new_scancode);
@@ -92,6 +92,7 @@ public:
 		});
 	}
 };
+
 
 int main(int argc, char ** argv, char ** env)
 {

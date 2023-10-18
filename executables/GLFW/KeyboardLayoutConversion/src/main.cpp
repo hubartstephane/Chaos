@@ -12,11 +12,19 @@ public:
 		// do not call super so that the application items are not inserted here
 	}
 
+	virtual bool OnKeyEventImpl(chaos::KeyEvent const& event) override
+	{
+		if (event.action == GLFW_PRESS)
+		{
+			last_scan_code = event.scan_code;
+			last_key_pressed = chaos::KeyboardLayoutConversion::GetVirtualKeyScancodeFromScancode(event.scan_code, chaos::KeyboardLayout::AZERTY);
+		}
+
+		return chaos::Window::OnKeyEventImpl(event);
+	}
+
 	virtual void OnDrawWindowImGuiContent()
 	{
-
-
-
 		ImGuiDrawableInterface::FullscreenWindow("conversion", false, [this]()
 		{
 			auto ImGui_DisplayConversion = [](int src_vk, chaos::KeyboardLayout src_layout)
@@ -89,8 +97,27 @@ public:
 			ImGui_DisplayConversion(vk2, chaos::KeyboardLayout::AZERTY);
 			ImGui_DisplayConversion(vk2, chaos::KeyboardLayout::QWERTY);
 			ImGui::Separator();
+
+			if (last_key_pressed)
+			{
+				ImGui::Text("VK:       [0x%x]", last_key_pressed->vk);
+				ImGui::Text("SCANCODE: [0x%x]", last_key_pressed->scancode);
+				ImGui::Text("NAME:     [%s]", last_key_pressed->name.c_str());
+
+
+			}
+			else if (last_scan_code > 0)
+			{
+				ImGui::Text("SCANCODE: [0x%x]", last_scan_code);
+			}
 		});
 	}
+
+protected:
+
+	chaos::VirtualKeyScancodePair const* last_key_pressed = nullptr;
+
+	int last_scan_code = -1;
 };
 
 

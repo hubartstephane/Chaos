@@ -137,7 +137,7 @@ namespace chaos
 		/** the key */
 		int key = 0;
 		/** the scan code */
-		int scan_code = 0;
+		int scancode = 0;
 		/** pressed or release */
 		int action = 0;
 		/** some special key modifiers like shift */

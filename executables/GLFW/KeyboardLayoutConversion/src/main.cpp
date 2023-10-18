@@ -16,8 +16,8 @@ public:
 	{
 		if (event.action == GLFW_PRESS)
 		{
-			last_scan_code = event.scan_code;
-			last_key_pressed = chaos::KeyboardLayoutConversion::GetVirtualKeyScancodeFromScancode(event.scan_code, chaos::KeyboardLayout::AZERTY);
+			last_scancode = event.scancode;
+			last_key_pressed = chaos::KeyboardLayoutConversion::GetVirtualKeyScancodeFromScancode(event.scancode, chaos::KeyboardLayout::AZERTY);
 		}
 
 		return chaos::Window::OnKeyEventImpl(event);
@@ -106,9 +106,9 @@ public:
 
 
 			}
-			else if (last_scan_code > 0)
+			else if (last_scancode > 0)
 			{
-				ImGui::Text("SCANCODE: [0x%x]", last_scan_code);
+				ImGui::Text("SCANCODE: [0x%x]", last_scancode);
 			}
 		});
 	}
@@ -117,7 +117,7 @@ protected:
 
 	chaos::VirtualKeyScancodePair const* last_key_pressed = nullptr;
 
-	int last_scan_code = -1;
+	int last_scancode = -1;
 };
 
 

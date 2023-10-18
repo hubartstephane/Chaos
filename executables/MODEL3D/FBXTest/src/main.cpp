@@ -17,7 +17,7 @@ public:
 
 protected:
 
-  virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override
+  virtual bool OnKeyEvent(int key, int scancode, int action, int modifier) override
   {
     if (key == GLFW_KEY_F2 && action == GLFW_RELEASE)
     {

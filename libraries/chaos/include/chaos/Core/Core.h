@@ -42,6 +42,7 @@
 #include "chaos/Core/NameFilter.h"
 #include "chaos/Core/GlobalVariables.h"
 #include "chaos/Core/Key.h"
+#include "chaos/Core/KeyboardConversion.h"
 #include "chaos/Core/InputMode.h"
 #include "chaos/Core/InputEventReceiverInterface.h"
 #include "chaos/Core/PersistentDataInterface.h"

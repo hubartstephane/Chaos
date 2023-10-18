@@ -39,20 +39,21 @@ namespace chaos
 	//
 	//  Notes:
 	//
-	//    -WINDOWS (virtual) keycodes are in [0x00 - 0xFF]
+	//    -WINDOWS (virtual) keycodes are in [0x00 .. 0xFF]
 	// 
 	//    -GLFW's keycodes range is much bigger [0 .. 348]
 	//
 	//    -It is very likely that you don't really have an enum value for all keys of your keyboard 
 	//     For example, there is no VK_ASTERISK nor GLFW_KEY_ASTERISK
 	//     this is because on QWERTY (the base layout for thoses enums), there is no asterisk key of its own (on QWERTY, '*' in over the key '8')
-	//    
-	
+	//
+	//    - For WINDOWS, there is no VK_A .. VK_Z. used 'A' or 'Z' directly
+	//                   there is no VK_0 .. VK_9. used '0' or '9' directly
 	/**
 	 * KeyboardLayout: known layout
 	 */
 
-	enum class KeyboardLayout
+	enum class CHAOS_API KeyboardLayout
 	{
 		AZERTY,
 		QWERTY
@@ -62,7 +63,7 @@ namespace chaos
 	 * VirtualKeyScancodePair: information relation between scancode and virtual key
 	 */
 
-	class VirtualKeyScancodePair
+	class CHAOS_API VirtualKeyScancodePair
 	{
 	public:
 
@@ -78,20 +79,34 @@ namespace chaos
 	 * KeyboardLayoutConversion: convert key and scancode from/to qwerty/azerty and current layout
 	 **/
 
-	class KeyboardLayoutConversion
+	class CHAOS_API KeyboardLayoutConversion
 	{
 	public:
 
 #if _WIN32 || _WIN64
 
+		/** get the virtual key/scancode relation table for given layout */
+		static std::vector<VirtualKeyScancodePair> const* GetVirtualKeyScancodeTable(KeyboardLayout layout);
+		/** get the association entry for a given layout and a given scancode */
+		static VirtualKeyScancodePair const* GetVirtualKeyScancodeFromScancode(unsigned int scancode, KeyboardLayout layout);
+		/** get the association entry for a given layout and a given VK */
+		static VirtualKeyScancodePair const* GetVirtualKeyScancodeFromVK(unsigned int vk, KeyboardLayout layout);
+		/** get the association entry for a given table and a given scancode */
+		static VirtualKeyScancodePair const* GetVirtualKeyScancodeFromScancode(unsigned int scancode, std::vector<VirtualKeyScancodePair> const & table);
+		/** get the association entry for a given table and a given VK */
+		static VirtualKeyScancodePair const* GetVirtualKeyScancodeFromVK(unsigned int vk, std::vector<VirtualKeyScancodePair> const& table);
+
 		/** convert a virtual key, may return the entry that has been used for the conversion */
-		static int ConvertVirtualKey(int src_vk, KeyboardLayout src_layout, VirtualKeyScancodePair const ** src_entry);
+		static unsigned int ConvertVirtualKeyToCurrentLayout(unsigned int vk, KeyboardLayout layout, VirtualKeyScancodePair const ** result_pair);
 
 		/** get the VirtualKeyScancodePair table for the current layout */
-		static std::vector<VirtualKeyScancodePair> GetVirtualKeyScancodeTable();
+		static std::vector<VirtualKeyScancodePair> GetCurrentVirtualKeyScancodeTable();
 
 		/** get the name of a key corresponding to a scancode */
-		static std::string ScancodeToName(int scancode);
+		static std::string ScancodeToName(unsigned int scancode);
+
+		/** convert the GLFW keycode (QWERTY) into the equivalent key on current keyboard layout */
+		static int ConvertGLFWKey(int keycode);
 
 #endif // #if _WIN32 || _WIN64
 

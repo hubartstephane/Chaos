@@ -89,11 +89,6 @@ namespace chaos
 		/** override */
 		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
 
-		/** get the state of a keyboard key */
-		static bool GetApplicationKeyState(Key key, bool previous_frame = false);
-		/** change the state of a keyboard key */
-		bool GetKeyState(Key key, bool previous_frame = false) const;
-
 		/** get the OpenGL context, call the function, restore previous context after */
 		template<typename FUNC>
 		static auto WithGLFWContext(GLFWwindow* glfw_context, FUNC const& func)
@@ -191,14 +186,6 @@ namespace chaos
 		/** generate atlas entries relative to fonts */
 		virtual bool FillAtlasGeneratorInputFonts(BitmapAtlas::AtlasInput& input);
 
-		/** change the state of a keyboard key (notification from a window)*/
-		void SetKeyboardButtonState(KeyboardButton key, int action);
-		/** change the state of a mouse key (notification from a window)*/
-		void SetMouseButtonState(MouseButton key, int action);
-
-		/** update the internal timers of keyboard states */
-		void UpdateKeyStates(float delta_time);
-
 		/** override */
 		virtual bool DoTick(float delta_time) override;
 		/** override */
@@ -254,11 +241,6 @@ namespace chaos
 		SubClassOf<Window> main_window_class;
 		/** the window list */
 		std::vector<shared_ptr<Window>> windows;
-
-		/** the state of all buttons */
-		std::array<ButtonState, GLFW_KEY_LAST> keyboard_state;
-		/** the state of all buttons */
-		std::array<ButtonState, GLFW_MOUSE_BUTTON_LAST + 1> mouse_button_state;
 
 		/** forced time slice for tick */
 		float forced_tick_duration = 0.0f;

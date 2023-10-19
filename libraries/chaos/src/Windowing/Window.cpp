@@ -552,13 +552,11 @@ namespace chaos
 			}
 
 			MouseButton mouse_button = (MouseButton)button;
+			KeyboardState::SetMouseButtonState(mouse_button, action);
 
 			// notify the application of the keyboard button state
 			if (WindowApplication* application = Application::GetInstance())
-			{
 				application->SetInputMode(InputMode::MOUSE);
-				application->SetMouseButtonState(mouse_button, action);
-			}
 
 			my_window->OnMouseButton(button, action, modifier);
 		});
@@ -599,13 +597,12 @@ namespace chaos
 			}
 
 			KeyboardButton keyboard_button = (KeyboardButton)key;
+			KeyboardState::SetKeyboardButtonState(keyboard_button, action);
 
 			// notify the application of the keyboard button state
 			if (WindowApplication* application = Application::GetInstance())
-			{
 				application->SetInputMode(InputMode::KEYBOARD);
-				application->SetKeyboardButtonState(keyboard_button, action);
-			}
+
 			// handle the message
 			KeyEvent event;
 			event.key = key;

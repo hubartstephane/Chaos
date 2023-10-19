@@ -16,7 +16,7 @@ namespace chaos
 #define CHAOS_KEYDEF(KEY) KEY = GLFW_KEY_##KEY
 
 	/**
-	 * KeyboardButton : A keyboard key
+	 * KeyboardButton : A keyboard key (this is an enum that mimics the GLFW_KEY_... described in glfw3.h)
 	 */
 	enum class CHAOS_API KeyboardButton : int
 	{
@@ -272,7 +272,7 @@ namespace chaos
 		/** copy constructor */
 		Key(Key const& src) = default;
 		/** key from its name */
-		Key(char const* name);
+		Key(char const* name, KeyboardLayout layout = KeyboardLayout::AZERTY);
 		/** gamepad key constructor */
 		Key(GamepadButton button);
 		/** keyboard key constructor */

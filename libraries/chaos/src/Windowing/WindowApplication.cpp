@@ -516,8 +516,8 @@ namespace chaos
 			main_clock->TickClock(delta_time);
 		if (sound_manager != nullptr)
 			sound_manager->Tick(delta_time);
-		// update keyboard state
-		UpdateKeyStates(delta_time);
+		// update keyboard and mouse state
+		KeyboardState::UpdateKeyStates(delta_time);
 		return true;
 	}
 
@@ -754,51 +754,6 @@ namespace chaos
 		}
 #endif
 		return Application::OnKeyEventImpl(event);
-	}
-
-	bool WindowApplication::GetApplicationKeyState(Key key, bool previous_frame)
-	{
-		WindowApplication* application = Application::GetInstance();
-		if (application != nullptr)
-			return application->GetKeyState(key, previous_frame);
-		return false;
-	}
-
-	void WindowApplication::SetKeyboardButtonState(KeyboardButton key, int action)
-	{
-		int raw_value = int(key);
-		if (raw_value >= 0 && raw_value < keyboard_state.size())
-			keyboard_state[raw_value].SetValue(action == GLFW_PRESS || action == GLFW_REPEAT);
-	}
-
-	void WindowApplication::SetMouseButtonState(MouseButton key, int action)
-	{
-		int raw_value = int(key);
-		if (raw_value >= 0 && raw_value < mouse_button_state.size())
-			mouse_button_state[raw_value].SetValue(action == GLFW_PRESS || action == GLFW_REPEAT);
-	}
-
-	bool WindowApplication::GetKeyState(Key key, bool previous_frame) const
-	{
-		int raw_value = key.GetRawValue();
-
-		if (key.GetType() == KeyType::KEYBOARD)
-		{
-			if (raw_value >= 0 && raw_value < keyboard_state.size())
-				return keyboard_state[raw_value].GetValue(previous_frame);
-		}
-		else if (key.GetType() == KeyType::MOUSE)
-		{
-			if (raw_value >= 0 && raw_value < mouse_button_state.size())
-				return mouse_button_state[raw_value].GetValue(previous_frame);
-		}
-		return false;
-	}
-
-	void WindowApplication::UpdateKeyStates(float delta_time)
-	{
-		for (ButtonState& button : keyboard_state)
-			button.UpdateSameValueTimer(delta_time);
 	}
 
 	GLFWwindow* WindowApplication::GetSharedGLContext()

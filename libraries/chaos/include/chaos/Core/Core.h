@@ -44,6 +44,8 @@
 #include "chaos/Core/KeyboardLayoutConversion.h"
 #include "chaos/Core/Key.h"
 #include "chaos/Core/InputMode.h"
+#include "chaos/Core/InputState.h"
+#include "chaos/Core/KeyboardState.h"
 #include "chaos/Core/InputEventReceiverInterface.h"
 #include "chaos/Core/PersistentDataInterface.h"
 #include "chaos/Core/Application.h"

@@ -115,23 +115,23 @@ public:
 		return {};
 	}
 
-	bool DisplaceObjectWithInputs(ActionType action_type, KeyConfiguration const & key_configuration, GLFWwindow* glfw_window, float delta_time)
+	bool DisplaceObjectWithInputs(ActionType action_type, KeyConfiguration const & key_configuration, float delta_time)
 	{
 		bool result = false;
 
 		if (action_type == ActionType::MOVE_OBJECT)
 		{
-			result |= MoveObjectWithInputs(glfw_window, key_configuration.move_object_negative_x, delta_time, { -1.0f,  0.0f,  0.0f });
-			result |= MoveObjectWithInputs(glfw_window, key_configuration.move_object_positive_x, delta_time, { 1.0f,  0.0f,  0.0f });
-			result |= MoveObjectWithInputs(glfw_window, key_configuration.move_object_negative_y, delta_time, { 0.0f, -1.0f,  0.0f });
-			result |= MoveObjectWithInputs(glfw_window, key_configuration.move_object_positive_y, delta_time, { 0.0f,  1.0f,  0.0f });
-			result |= MoveObjectWithInputs(glfw_window, key_configuration.move_object_negative_z, delta_time, { 0.0f,  0.0f, -1.0f });
-			result |= MoveObjectWithInputs(glfw_window, key_configuration.move_object_positive_z, delta_time, { 0.0f,  0.0f,  1.0f });
+			result |= MoveObjectWithInputs(key_configuration.move_object_negative_x, delta_time, { -1.0f,  0.0f,  0.0f });
+			result |= MoveObjectWithInputs(key_configuration.move_object_positive_x, delta_time, { 1.0f,  0.0f,  0.0f });
+			result |= MoveObjectWithInputs(key_configuration.move_object_negative_y, delta_time, { 0.0f, -1.0f,  0.0f });
+			result |= MoveObjectWithInputs(key_configuration.move_object_positive_y, delta_time, { 0.0f,  1.0f,  0.0f });
+			result |= MoveObjectWithInputs(key_configuration.move_object_negative_z, delta_time, { 0.0f,  0.0f, -1.0f });
+			result |= MoveObjectWithInputs(key_configuration.move_object_positive_z, delta_time, { 0.0f,  0.0f,  1.0f });
 		}
 		else if (action_type == ActionType::SCALE_OBJECT)
 		{
-			//result |= ScaleObjectWithInputs(glfw_window, GLFW_KEY_R, delta_time, 1.0f);
-			//result |= ScaleObjectWithInputs(glfw_window, GLFW_KEY_F, delta_time, -1.0f);
+			//result |= ScaleObjectWithInputs(GLFW_KEY_R, delta_time, 1.0f);
+			//result |= ScaleObjectWithInputs(GLFW_KEY_F, delta_time, -1.0f);
 		}
 
 		return result;
@@ -139,11 +139,11 @@ public:
 
 protected:
 
-	bool MoveObjectWithInputs(GLFWwindow* glfw_window, chaos::Key const & key, float delta_time, glm::vec3 const& direction)
+	bool MoveObjectWithInputs(chaos::Key const & key, float delta_time, glm::vec3 const& direction)
 	{
-		if (glfwGetKey(glfw_window, (int)key.GetKeyboardButton()) == GLFW_PRESS)
+		if (chaos::KeyboardState::GetKeyState(key.GetKeyboardButton())->IsPressed())
 		{
-			float final_speed = (glfwGetKey(glfw_window, GLFW_KEY_LEFT_SHIFT) != GLFW_RELEASE) ? FAST_DISPLACEMENT_SPEED : DISPLACEMENT_SPEED;
+			float final_speed = (chaos::KeyboardState::GetKeyState((chaos::KeyboardButton)GLFW_KEY_LEFT_SHIFT)->IsPressed()) ? FAST_DISPLACEMENT_SPEED : DISPLACEMENT_SPEED;
 			sphere.position += direction * delta_time * final_speed;
 			box.position    += direction * delta_time * final_speed;
 			return true;
@@ -151,11 +151,11 @@ protected:
 		return false;
 	}
 
-	bool ScaleObjectWithInputs(GLFWwindow* glfw_window, int key, float delta_time, float direction)
+	bool ScaleObjectWithInputs(chaos::Key const& key, float delta_time, float direction)
 	{
-		if (glfwGetKey(glfw_window, key) == GLFW_PRESS)
+		if (chaos::KeyboardState::GetKeyState(key.GetKeyboardButton())->IsPressed())
 		{
-			float final_scale_speed = (glfwGetKey(glfw_window, GLFW_KEY_LEFT_SHIFT) != GLFW_RELEASE) ? SCALE_SPEED : FAST_SCALE_SPEED;
+			float final_scale_speed = (chaos::KeyboardState::GetKeyState((chaos::KeyboardButton)GLFW_KEY_LEFT_SHIFT)->IsPressed()) ? SCALE_SPEED : FAST_SCALE_SPEED;
 
 			sphere.radius = std::max(1.0f, sphere.radius + direction * final_scale_speed);
 			return true;
@@ -733,7 +733,7 @@ protected:
 			// move object
 			if (GeometricObject* current_object = GetCurrentGeometricObject())
 			{
-				if (current_object->DisplaceObjectWithInputs(current_action_type, key_configuration, glfw_window, delta_time))
+				if (current_object->DisplaceObjectWithInputs(current_action_type, key_configuration, delta_time))
 					OnObjectMoved(current_object);
 			}
 		}
@@ -776,13 +776,6 @@ protected:
 
 				// trace debugging information
 				ImGui::Begin("Information", nullptr);
-#if 0
-				ImGui::Text("cursor            : (%0.3f, %0.3f)", (float)x, (float)y);
-				ImGui::Text("window   size     : (%0.3f, %0.3f)", (float)window_size.x, (float)window_size.y);
-				ImGui::Text("viewport position : (%0.3f, %0.3f)", (float)viewport.position.x, (float)viewport.position.y);
-				ImGui::Text("viewport size     : (%0.3f, %0.3f)", (float)viewport.size.x, (float)viewport.size.y);
-#endif
-
 				ImGui::InputFloat("near_plane", &near_plane, 10.0f, 50.0f);
 				ImGui::InputFloat("far_plane", &far_plane, 10.0f, 50.0f);
 				ImGui::InputFloat("fov", &fov, 1.0f, 5.0f);

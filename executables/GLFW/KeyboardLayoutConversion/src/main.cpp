@@ -100,15 +100,18 @@ public:
 
 			if (last_key_pressed)
 			{
-				ImGui::Text("VK:       [0x%x]", last_key_pressed->vk);
 				ImGui::Text("SCANCODE: [0x%x]", last_key_pressed->scancode);
+				ImGui::Text("VK:       [0x%x]", last_key_pressed->vk);
 				ImGui::Text("NAME:     [%s]", last_key_pressed->name.c_str());
-
-
 			}
 			else if (last_scancode > 0)
 			{
+				ImVec4 new_color = { 1.0f, 0.0f, 0.0f, 1.0f };
+				ImGui::PushStyleColor(ImGuiCol_Text, new_color);
 				ImGui::Text("SCANCODE: [0x%x]", last_scancode);
+				ImGui::Text("VK:       [0x%x]", ::MapVirtualKeyA(last_scancode & 0xFF, MAPVK_VSC_TO_VK));
+				ImGui::Text("NAME:     [UNKNOWN] !!!");
+				ImGui::PopStyleColor(1);
 			}
 		});
 	}

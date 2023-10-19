@@ -5,6 +5,8 @@
 namespace chaos
 {
 	// this is the table obtained by running GetCurrentVirtualKeyScancodeTable(...) with an azerty keyboard
+	// the strings are modified by hand so that we can easily search in the table
+	// there are some values that have been inserted by hand, due to manual search
 	std::vector<VirtualKeyScancodePair> AzertyVirtualKeyScancodeTable =
 	{
 	  {0x1b, 0x1, "Esc"},
@@ -89,7 +91,7 @@ namespace chaos
 	  {0x28, 0x50, "Num 2"},
 	  {0x22, 0x51, "Num 3"},
 	  {0x2d, 0x52, "Num 0"},
-	  {0x2e, 0x53, ". (PAVE NUM.)"},
+	  {0x2e, 0x53, "Num Del"},
 	  {0x2c, 0x54, ""},
 	  {0xe2, 0x56, "<"},
 	  {0x7a, 0x57, "F11"},
@@ -120,10 +122,36 @@ namespace chaos
 	  {0x87, 0x76, ""},
 	  {0xeb, 0x7b, ""},
 	  {0x9, 0x7c, "	"},
-	  {0xc2, 0x7e, ""}
+	  {0xc2, 0x7e, ""},
+
+	  // manually inserted values
+	  {0x26, 0x148, "Up"},
+	  {0x25, 0x14b, "Left"},
+	  {0x28, 0x150, "Down"},
+	  {0x27, 0x14d, "Right"},
+
+	  {0x6a, 0x137, "Print"},
+	  {0x24, 0x147, "Home"},
+	  {0x21, 0x149, "Page Up"},
+	  {0x2e, 0x153, "Delete"},
+	  {0x22, 0x151, "Page Down"},
+	  {0x90, 0x145, "Num Lock"},
+	  {0x2d, 0x152, "Insert"},
+	  {0x23, 0x14f, "End"},
+
+	  {0x12, 0x138, "Right Alt"},
+	  {0x11, 0x11d, "Right Ctrl"},
+
+	  {0xf1, 0x15b, "Windows"},
+	  {0xea, 0x15c, "Right Windows"},
+
+	  {0x0c, 0x11c, "Num Enter"},
+	  {0xdf, 0x135, "Num /" }
 	};
 
 	// this is the table obtained by running GetCurrentVirtualKeyScancodeTable(...) with an qwerty keyboard
+	// the strings are modified by hand so that we can easily search in the table
+	// there are some values that have been inserted by hand, due to manual search
 	std::vector<VirtualKeyScancodePair> QwertyVirtualKeyScancodeTable =
 	{
 	  {0x1b, 0x1, "Esc"},
@@ -239,7 +267,31 @@ namespace chaos
 	  {0x87, 0x76, ""},
 	  {0xeb, 0x7b, ""},
 	  {0x9, 0x7c, "F13"},
-	  {0xc2, 0x7e, "F15"}
+	  {0xc2, 0x7e, "F15"},
+
+	  // manually inserted values
+	  {0x26, 0x148, "Up"},
+	  {0x25, 0x14b, "Left"},
+	  {0x28, 0x150, "Down"},
+	  {0x27, 0x14d, "Right"},
+
+	  {0x6a, 0x137, "Print"},
+	  {0x24, 0x147, "Home"},
+	  {0x21, 0x149, "Page Up"},
+	  {0x2e, 0x153, "Delete"},
+	  {0x22, 0x151, "Page Down"},
+	  {0x90, 0x145, "Num Lock"},
+	  {0x2d, 0x152, "Insert"},
+	  {0x23, 0x14f, "End"},
+
+	  {0x12, 0x138, "Right Alt"},
+	  {0x11, 0x11d, "Right Ctrl"},
+
+	  {0xf1, 0x15b, "Windows"},
+	  {0xea, 0x15c, "Right Windows"},
+
+	  { 0x0c, 0x11c, "Num Enter"},
+	  { 0xdf, 0x135, "Num /" }
 	};
 
 	// here is the function that is used to get the tables above

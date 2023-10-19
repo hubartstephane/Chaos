@@ -15,24 +15,24 @@ class KeyConfiguration
 {
 public:
 
-	chaos::Key new_scene = (chaos::KeyboardButton)GLFW_KEY_Y;
-	chaos::Key delete_object = (chaos::KeyboardButton)GLFW_KEY_DELETE;
-	chaos::Key next_object = (chaos::KeyboardButton)GLFW_KEY_KP_ADD;
-	chaos::Key previous_object = (chaos::KeyboardButton)GLFW_KEY_KP_SUBTRACT;
+	chaos::Key new_scene = "Y";
+	chaos::Key delete_object = "Delete";
+	chaos::Key next_object = "NUM +";
+	chaos::Key previous_object = "NUM -";
 
-	chaos::Key move_object_positive_x = (chaos::KeyboardButton)GLFW_KEY_D;
-	chaos::Key move_object_negative_x = (chaos::KeyboardButton)GLFW_KEY_A;
-	chaos::Key move_object_positive_y = (chaos::KeyboardButton)GLFW_KEY_Q;
-	chaos::Key move_object_negative_y = (chaos::KeyboardButton)GLFW_KEY_E;
-	chaos::Key move_object_positive_z = (chaos::KeyboardButton)GLFW_KEY_S;
-	chaos::Key move_object_negative_z = (chaos::KeyboardButton)GLFW_KEY_W;
+	chaos::Key move_object_positive_x = "D";
+	chaos::Key move_object_negative_x = "Q";
+	chaos::Key move_object_positive_y = "E";
+	chaos::Key move_object_negative_y = "A";
+	chaos::Key move_object_positive_z = "S";
+	chaos::Key move_object_negative_z = "Z";
 
-	chaos::Key scale_object_positive_x = (chaos::KeyboardButton)GLFW_KEY_D;
-	chaos::Key scale_object_negative_x = (chaos::KeyboardButton)GLFW_KEY_A;
-	chaos::Key scale_object_positive_y = (chaos::KeyboardButton)GLFW_KEY_Q;
-	chaos::Key scale_object_negative_y = (chaos::KeyboardButton)GLFW_KEY_E;
-	chaos::Key scale_object_positive_z = (chaos::KeyboardButton)GLFW_KEY_S;
-	chaos::Key scale_object_negative_z = (chaos::KeyboardButton)GLFW_KEY_W;
+	chaos::Key scale_object_positive_x = "D";
+	chaos::Key scale_object_negative_x = "Q";
+	chaos::Key scale_object_positive_y = "E";
+	chaos::Key scale_object_negative_y = "A";
+	chaos::Key scale_object_positive_z = "S";
+	chaos::Key scale_object_negative_z = "Z";
 };
 
 // =======================================================================
@@ -274,21 +274,21 @@ protected:
 
 			if (current_action_type == ActionType::MOVE_OBJECT)
 			{
-				DrawTextItem("move object -x", key_configuration.move_object_negative_x.GetName(), enabled);
-				DrawTextItem("move object +x", key_configuration.move_object_positive_x.GetName(), enabled);
-				DrawTextItem("move object -y", key_configuration.move_object_negative_y.GetName(), enabled);
-				DrawTextItem("move object +y", key_configuration.move_object_positive_y.GetName(), enabled);
-				DrawTextItem("move object -z", key_configuration.move_object_negative_z.GetName(), enabled);
-				DrawTextItem("move object +z", key_configuration.move_object_positive_z.GetName(), enabled);
+				DrawTextItem("move object -x", key_configuration.move_object_negative_x, enabled);
+				DrawTextItem("move object +x", key_configuration.move_object_positive_x, enabled);
+				DrawTextItem("move object -y", key_configuration.move_object_negative_y, enabled);
+				DrawTextItem("move object +y", key_configuration.move_object_positive_y, enabled);
+				DrawTextItem("move object -z", key_configuration.move_object_negative_z, enabled);
+				DrawTextItem("move object +z", key_configuration.move_object_positive_z, enabled);
 			}
 			else if (current_action_type == ActionType::SCALE_OBJECT)
 			{
-				DrawTextItem("scale object -x", key_configuration.scale_object_negative_x.GetName(), enabled);
-				DrawTextItem("scale object +x", key_configuration.scale_object_positive_x.GetName(), enabled);
-				DrawTextItem("scale object -y", key_configuration.scale_object_negative_y.GetName(), enabled);
-				DrawTextItem("scale object +y", key_configuration.scale_object_positive_y.GetName(), enabled);
-				DrawTextItem("scale object -z", key_configuration.scale_object_negative_z.GetName(), enabled);
-				DrawTextItem("scale object +z", key_configuration.scale_object_positive_z.GetName(), enabled);
+				DrawTextItem("scale object -x", key_configuration.scale_object_negative_x, enabled);
+				DrawTextItem("scale object +x", key_configuration.scale_object_positive_x, enabled);
+				DrawTextItem("scale object -y", key_configuration.scale_object_negative_y, enabled);
+				DrawTextItem("scale object +y", key_configuration.scale_object_positive_y, enabled);
+				DrawTextItem("scale object -z", key_configuration.scale_object_negative_z, enabled);
+				DrawTextItem("scale object +z", key_configuration.scale_object_positive_z, enabled);
 			}
 			ImGui::End();
 		}

@@ -3,8 +3,9 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	enum class KeyboardLayout;
+	class KeyboardLayoutInformation;
 	class KeyboardLayoutConversion;
-	class KeyboardVirtualKeyConversionEntry;
+	class ScancodeInformation;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -49,6 +50,7 @@ namespace chaos
 	//
 	//    - For WINDOWS, there is no VK_A .. VK_Z. used 'A' or 'Z' directly
 	//                   there is no VK_0 .. VK_9. used '0' or '9' directly
+
 	/**
 	 * KeyboardLayout: known layout
 	 */
@@ -60,20 +62,51 @@ namespace chaos
 	};
 
 	/**
-	 * VirtualKeyScancodePair: information relation between scancode and virtual key
+	 * ScancodeInformation: information relation between scancode and virtual key
 	 */
 
-	class CHAOS_API VirtualKeyScancodePair
+	class CHAOS_API ScancodeInformation
 	{
 	public:
 
-		/** the virtual key of the entry */
-		unsigned int vk = 0;
 		/** the scancode of the entry */
 		unsigned int scancode = 0;
+		/** the virtual key of the entry */
+		unsigned int vk = 0;
 		/** the name of the key */
 		std::string name;
 	};
+
+	/**
+	 * KeyboardLayoutInformation
+	 */
+
+	class CHAOS_API KeyboardLayoutInformation
+	{
+	public:
+
+		/** collect the current keyboard layout information */
+		static KeyboardLayoutInformation Collect();
+		/** get the information for a known layout */
+		static KeyboardLayoutInformation const& GetKeyboardInformation(KeyboardLayout layout);
+		/** get scancode name */
+		static std::string ScancodeToName(unsigned int scancode);
+
+		/** get information from the scancode */
+		ScancodeInformation const* GetInformationFromScancode(unsigned int scancode) const;
+		/** get information from the virtual key */
+		ScancodeInformation const* GetInformationFromVK(unsigned int vk) const;
+
+	public:
+
+		/** the informations for each keys */
+		std::vector<ScancodeInformation> key_informations;
+	};
+
+	/** this method is used to dump KeyboardLayoutInformation as a C++ code */
+#if _DEBUG
+	bool DumpKeyboardLayoutInformationToFile(char const* filename, char const* table_name, KeyboardLayoutInformation const& information);
+#endif
 
 	/**
 	 * KeyboardLayoutConversion: convert key and scancode from/to qwerty/azerty and current layout
@@ -83,35 +116,11 @@ namespace chaos
 	{
 	public:
 
-#if _WIN32 || _WIN64
-
-		/** get the virtual key/scancode relation table for given layout */
-		static std::vector<VirtualKeyScancodePair> const* GetVirtualKeyScancodeTable(KeyboardLayout layout);
-		/** get the association entry for a given layout and a given scancode */
-		static VirtualKeyScancodePair const* GetVirtualKeyScancodeFromScancode(unsigned int scancode, KeyboardLayout layout);
-		/** get the association entry for a given layout and a given VK */
-		static VirtualKeyScancodePair const* GetVirtualKeyScancodeFromVK(unsigned int vk, KeyboardLayout layout);
-		/** get the association entry for a given table and a given scancode */
-		static VirtualKeyScancodePair const* GetVirtualKeyScancodeFromScancode(unsigned int scancode, std::vector<VirtualKeyScancodePair> const & table);
-		/** get the association entry for a given table and a given VK */
-		static VirtualKeyScancodePair const* GetVirtualKeyScancodeFromVK(unsigned int vk, std::vector<VirtualKeyScancodePair> const& table);
-
 		/** convert a virtual key, may return the entry that has been used for the conversion */
-		static unsigned int ConvertVirtualKeyToCurrentLayout(unsigned int vk, KeyboardLayout layout, VirtualKeyScancodePair const ** result_pair);
-
-		/** get the VirtualKeyScancodePair table for the current layout */
-		static std::vector<VirtualKeyScancodePair> GetCurrentVirtualKeyScancodeTable();
-
-		/** get the name of a key corresponding to a scancode */
-		static std::string ScancodeToName(unsigned int scancode);
+		static unsigned int ConvertVirtualKeyToCurrentLayout(unsigned int vk, KeyboardLayout layout, ScancodeInformation const ** result_pair);
 
 		/** convert the scancode into GLFW keycode (QWERTY) */
 		static int ScancodeToGLFWKey(int scancode);
-
-#endif // #if _WIN32 || _WIN64
-
-
-
 	};
 
 #endif

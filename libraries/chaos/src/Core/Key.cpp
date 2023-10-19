@@ -169,19 +169,19 @@ namespace chaos
 			return;
 
 		// search whether it is a keyboard key
-		if (std::vector<VirtualKeyScancodePair> const* table = KeyboardLayoutConversion::GetVirtualKeyScancodeTable(layout))
+
+		KeyboardLayoutInformation const& information = KeyboardLayoutInformation::GetKeyboardInformation(layout);
+
+		for (ScancodeInformation const& info : information.key_informations)
 		{
-			for (VirtualKeyScancodePair const& info : *table)
+			if (StringTools::Stricmp(info.name, name) == 0)
 			{
-				if (StringTools::Stricmp(info.name, name) == 0)
+				int k = KeyboardLayoutConversion::ScancodeToGLFWKey(info.scancode);
+				if (k != -1)
 				{
-					int k = KeyboardLayoutConversion::ScancodeToGLFWKey(info.scancode);
-					if (k != -1)
-					{
-						type = KeyType::KEYBOARD;
-						keyboard_button = (KeyboardButton)k;
-						return;
-					}
+					type = KeyType::KEYBOARD;
+					keyboard_button = (KeyboardButton)k;
+					return;
 				}
 			}
 		}

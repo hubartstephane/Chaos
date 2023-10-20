@@ -41,6 +41,7 @@
 #include "chaos/Core/NamedObjectFilter.h"
 #include "chaos/Core/NameFilter.h"
 #include "chaos/Core/GlobalVariables.h"
+#include "chaos/Core/KeyboardLayoutInformation.h"
 #include "chaos/Core/KeyboardLayoutConversion.h"
 #include "chaos/Core/Key.h"
 #include "chaos/Core/InputMode.h"

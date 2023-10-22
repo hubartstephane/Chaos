@@ -225,7 +225,7 @@ namespace chaos
 		/** index in axis of LEFT X for XBOX like pad */
 		LEFT_AXIS_X = GLFW_GAMEPAD_AXIS_LEFT_X,
 		/** index in axis of LEFT Y for XBOX like pad */
-		LEFT_AXIS_Y = GLFW_GAMEPAD_AXIS_LEFT_Y, // STICLEFT_TRIGGERK DOWN = positive values
+		LEFT_AXIS_Y = GLFW_GAMEPAD_AXIS_LEFT_Y, // STICK LEFT_TRIGGER DOWN = positive values
 
 		/** index in axis of RIGHT X for XBOX like pad */
 		RIGHT_AXIS_X = GLFW_GAMEPAD_AXIS_RIGHT_X,

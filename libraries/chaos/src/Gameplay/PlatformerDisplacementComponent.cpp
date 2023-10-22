@@ -202,10 +202,10 @@ namespace chaos
 		}
 
 		Key const jump_key_buttons[] = { KeyboardButton::SPACE, GamepadButton::A, Key() };
-		bool jump_pressed = player->CheckButtonPressed(jump_key_buttons);
+		bool jump_pressed = player->CheckKeyPressed(jump_key_buttons);
 
 		Key const run_key_buttons[] = { KeyboardButton::LEFT_SHIFT, KeyboardButton::RIGHT_SHIFT, GamepadButton::RIGHT_TRIGGER, Key() };
-		bool run_pressed = player->CheckButtonPressed(run_key_buttons);
+		bool run_pressed = player->CheckKeyPressed(run_key_buttons);
 
 		// get player position
 		box2 initial_pawn_box = pawn->GetBoundingBox();

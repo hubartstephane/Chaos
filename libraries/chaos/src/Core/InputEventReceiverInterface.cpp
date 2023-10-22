@@ -18,24 +18,24 @@ namespace chaos
 		return (action == GLFW_RELEASE);
 	}
 
-	bool KeyEvent::IsKeyEvent(int check_key, int check_modifier) const
+	bool KeyEvent::IsKeyEvent(int check_keycode, int check_modifier) const
 	{
-		if (key == check_key)
+		if (keycode == check_keycode)
 			if ((modifier & check_modifier) == check_modifier)
 				return true;
 		return false;
 	}
 
-	bool KeyEvent::IsKeyPressed(int check_key, int check_modifier) const
+	bool KeyEvent::IsKeyPressed(int check_keycode, int check_modifier) const
 	{
-		if (IsKeyPressed() && IsKeyEvent(check_key, check_modifier))
+		if (IsKeyPressed() && IsKeyEvent(check_keycode, check_modifier))
 				return true;
 		return false;
 	}
 
-	bool KeyEvent::IsKeyReleased(int check_key, int check_modifier) const
+	bool KeyEvent::IsKeyReleased(int check_keycode, int check_modifier) const
 	{
-		if (IsKeyReleased() && IsKeyEvent(check_key, check_modifier))
+		if (IsKeyReleased() && IsKeyEvent(check_keycode, check_modifier))
 			return true;
 		return false;
 	}
@@ -53,36 +53,36 @@ namespace chaos
 		OnInputModeChanged(new_mode, old_mode);
 	}
 
-	bool InputEventReceiverInterface::CheckButtonPressed(Key const* buttons, bool previous_frame)
+	bool InputEventReceiverInterface::CheckKeyPressed(Key const* keys, bool previous_frame)
 	{
 		// early exit
-		if (buttons == nullptr)
+		if (keys == nullptr)
 			return false;
 		// iteration
-		for (size_t i = 0; buttons[i].IsValid(); ++i)
-			if (CheckButtonPressed(buttons[i], previous_frame))
+		for (size_t i = 0; keys[i].IsValid(); ++i)
+			if (CheckKeyPressed(keys[i], previous_frame))
 				return true;
 		return false;
 	}
 
-	bool InputEventReceiverInterface::CheckButtonPressed(Key button, bool previous_frame)
+	bool InputEventReceiverInterface::CheckKeyPressed(Key key, bool previous_frame)
 	{
-		if (DoCheckButtonPressed(button, previous_frame))
+		if (DoCheckKeyPressed(key, previous_frame))
 		{
-			if (button.GetType() == KeyType::KEYBOARD)
+			if (key.GetType() == KeyType::KEYBOARD)
 				SetInputMode(InputMode::KEYBOARD);
-			else if (button.GetType() == KeyType::MOUSE)
+			else if (key.GetType() == KeyType::MOUSE)
 				SetInputMode(InputMode::MOUSE);
-			else if (button.GetType() == KeyType::GAMEPAD)
+			else if (key.GetType() == KeyType::GAMEPAD)
 				SetInputMode(InputMode::GAMEPAD);
 			return true;
 		}
 		return false;
 	}
 
-	bool InputEventReceiverInterface::DoCheckButtonPressed(Key button, bool previous_frame)
+	bool InputEventReceiverInterface::DoCheckKeyPressed(Key key, bool previous_frame)
 	{
-		if (ButtonState const* state = KeyboardState::GetKeyState(button))
+		if (ButtonState const* state = KeyboardState::GetKeyState(key))
 			return state->IsPressed(previous_frame);
 		return false;
 	}

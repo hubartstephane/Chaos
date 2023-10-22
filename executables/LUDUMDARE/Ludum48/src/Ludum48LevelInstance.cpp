@@ -127,12 +127,12 @@ void LudumLevelInstance::CapturePlayerInputs()
 
 	// Fake move
 	Key const fake_move_keys[] = { KeyboardButton::LEFT_CONTROL, KeyboardButton::RIGHT_CONTROL, GamepadButton::A, Key() };
-	if (player->CheckButtonPressed(fake_move_keys, false)) // current frame
+	if (player->CheckKeyPressed(fake_move_keys, false)) // current frame
 	{
 		if (beginning)
 		{
 			// button is just beeing pressed
-			if (!player->CheckButtonPressed(fake_move_keys, true)) // previous frame
+			if (!player->CheckKeyPressed(fake_move_keys, true)) // previous frame
 				cached_fake_move = true;
 		}
 		else

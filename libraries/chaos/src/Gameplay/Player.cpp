@@ -139,14 +139,14 @@ namespace chaos
 		// test whether the stick position can be overriden
 		glm::vec2 simulated_stick = glm::vec2(0.0f, 0.0f);
 
-		if (CheckButtonPressed(KeyboardButton::LEFT))
+		if (CheckKeyPressed(KeyboardButton::LEFT))
 			simulated_stick.x -= 1.0f;
-		if (CheckButtonPressed(KeyboardButton::RIGHT))
+		if (CheckKeyPressed(KeyboardButton::RIGHT))
 			simulated_stick.x += 1.0f;
 
-		if (CheckButtonPressed(KeyboardButton::DOWN))
+		if (CheckKeyPressed(KeyboardButton::DOWN))
 			simulated_stick.y -= 1.0f;
-		if (CheckButtonPressed(KeyboardButton::UP))
+		if (CheckKeyPressed(KeyboardButton::UP))
 			simulated_stick.y += 1.0f;
 
 		if (glm::length2(simulated_stick) > 0)
@@ -341,7 +341,7 @@ namespace chaos
 		return false;
 	}
 
-    bool Player::DoCheckButtonPressed(Key button, bool previous_frame)
+    bool Player::DoCheckKeyPressed(Key button, bool previous_frame)
     {
 		// gamepad input
 		if (button.GetType() == KeyType::GAMEPAD)
@@ -351,7 +351,7 @@ namespace chaos
 			return false;
 		}
 		// super call
-		return InputEventReceiverInterface::DoCheckButtonPressed(button, previous_frame);
+		return InputEventReceiverInterface::DoCheckKeyPressed(button, previous_frame);
     }
 
 	bool Player::InitializeGameValues(nlohmann::json const& config, bool hot_reload)

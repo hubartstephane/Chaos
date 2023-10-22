@@ -124,7 +124,7 @@ namespace chaos
 		virtual void PlayHealthChangedEffects(bool health_lost);
 
 		/** utility function to check whether a keyboard key or gamepad button is down */
-		virtual bool DoCheckButtonPressed(Key button, bool previous_frame) override;
+		virtual bool DoCheckKeyPressed(Key button, bool previous_frame) override;
 
 	protected:
 

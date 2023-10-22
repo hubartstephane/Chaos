@@ -108,30 +108,8 @@ protected:
 
 
 
+
 #if 0
-// WM_INPUTLANGCHANGE
-
-int layout_count = ::GetKeyboardLayoutList(0, nullptr);
-if (HKL* hkl = new HKL[layout_count])
-{
-	if (::GetKeyboardLayoutList(layout_count, hkl) == layout_count)
-	{
-		for (int i = 0; i < layout_count; ++i)
-		{
-			char buffer[KL_NAMELENGTH];
-			::GetKeyboardLayoutName()
-
-		}
-
-	}
-	delete[](hkl);
-}
-
-
-std::vector<chaos::ScancodeInformation> table = chaos::KeyboardLayoutConversion::GetCurrentVirtualKeyScancodeTable();
-
-#endif
-
 void GenerateKeyboardLayoutFiles()
 {
 	int layout_count = ::GetKeyboardLayoutList(0, nullptr);
@@ -159,6 +137,7 @@ void GenerateKeyboardLayoutFiles()
 		delete[](hkl);
 	}
 }
+#endif
 
 // search an Entry in the known keyboard layout for a given name
 unsigned int GetVirtualKeyFromName(char const* name)

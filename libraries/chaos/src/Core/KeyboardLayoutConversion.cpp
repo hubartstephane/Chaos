@@ -196,7 +196,7 @@ namespace chaos
 	unsigned int KeyboardLayoutConversion::ConvertVirtualKeyToCurrentLayout(unsigned int vk, KeyboardLayoutType type, ScancodeInformation const** result_pair = nullptr)
 	{
 #if _WIN32 || _WIN64
-		if (ScancodeInformation const* info = KeyboardLayout::GetKeyboardInformation(type).GetInformationFromVK(vk))
+		if (ScancodeInformation const* info = KeyboardLayout::GetKnownLayout(type).GetInformationFromVK(vk))
 		{
 			if (result_pair != nullptr)
 				*result_pair = info;

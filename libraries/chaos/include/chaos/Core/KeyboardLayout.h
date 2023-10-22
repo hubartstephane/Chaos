@@ -85,9 +85,9 @@ namespace chaos
 	public:
 
 		/** collect the current keyboard layout information */
-		static KeyboardLayout Collect();
+		static KeyboardLayout Collect(bool capture_names_from_known_layout = true);
 		/** get the information for a known layout */
-		static KeyboardLayout const& GetKeyboardInformation(KeyboardLayoutType type);
+		static KeyboardLayout const& GetKnownLayout(KeyboardLayoutType type);
 		/** get scancode name */
 		static std::string ScancodeToName(unsigned int scancode);
 
@@ -99,7 +99,7 @@ namespace chaos
 	public:
 
 		/** the informations for each keys */
-		std::vector<ScancodeInformation> key_informations;
+		std::vector<ScancodeInformation> key_info;
 	};
 
 	/** this method is used to dump KeyboardLayout as a C++ code */

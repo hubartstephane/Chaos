@@ -394,23 +394,23 @@ namespace chaos
 
 	bool DumpKeyboardLayoutToFile(char const* filename, char const* table_name, KeyboardLayout const& layout)
 	{
-		FILE* f = NULL;
-		fopen_s(&f, filename, "w");
-		if (f != NULL)
+		if (std::ofstream file = std::ofstream(filename, std::ios_base::trunc))
 		{
-			fprintf(f, "KeyboardLayout const %s = \n{{\n", table_name);
-			
-			char const* format = "  {0x%x, 0x%02x, \"%s\"}"; // the very first line inserted (no comma at the end)
-			
-			for (ScancodeInformation const & scancode_info : layout.key_informations)
+			file << "KeyboardLayout const " << table_name << " = \n{{\n"; // << ;
+
+			bool first_line = true;
+			for (ScancodeInformation const& scancode_info : layout.key_info)
 			{
-				fprintf(f, format, scancode_info.scancode, scancode_info.vk, scancode_info.name.c_str());
+				if (!first_line)
+					file << ",\n";
 
-				format = ",\n  {0x%x, 0x%02x, \"%s\"}"; // the format for all lines after the first (add a comma at the end of previous printed line)
+				file << "  { 0x" << std::hex << std::uppercase << std::setw(3) << std::setfill('0') << scancode_info.scancode 
+					 << ", 0x" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << scancode_info.vk
+					 << ", \"" << scancode_info.name << "\"}";
+				first_line = false;
 			}
-			fprintf(f, "\n}};\n\n");
+			file << "\n}};\n\n";
 
-			fclose(f);
 			return true;
 		}
 		return false;
@@ -432,7 +432,7 @@ namespace chaos
 		return {};
 	}
 
-	KeyboardLayout KeyboardLayout::Collect()
+	KeyboardLayout KeyboardLayout::Collect(bool capture_names_from_known_layout)
 	{
 		KeyboardLayout result;
 
@@ -440,26 +440,71 @@ namespace chaos
 		for (unsigned int scancode = 0; scancode <= 0x1FF; ++scancode)
 		{
 			unsigned int vk = ::MapVirtualKey(scancode, MAPVK_VSC_TO_VK);
-			std::string name = ScancodeToName(scancode);
 
-			// ignore names with special characters
-			// this can happen for extended scancode > 0x100
-			// this happens for
-			//   ESCAPE + extended flag
-			//   BACKSPACE + extended flag
-			//   TAB 
-			for (size_t i = 0; i < name.length(); ++i)
-				if (name[i] < 32) // 32 is SPACE. characters before are specials
-					name = {}; // this stop the iteration and reset the name below
+			// prepare the new entry
+			ScancodeInformation new_scancode_info;
+			new_scancode_info.scancode = scancode;
+			new_scancode_info.vk = vk;
 
-			if (vk != 0 || name.length() > 0)
-				result.key_informations.push_back({ scancode, vk, std::move(name)});
+			// search the name from the known layout (if necessary)
+			if (capture_names_from_known_layout)
+			{
+				if (vk != 0) // there is a valid VK to look at
+				{
+					for (KeyboardLayoutType type : {KeyboardLayoutType::AZERTY, KeyboardLayoutType::QWERTY})
+					{
+						if (ScancodeInformation const* scancode_info = KeyboardLayout::GetKnownLayout(type).GetInformationFromVK(vk))
+						{
+							if (scancode_info->name.length() > 0)
+							{
+								new_scancode_info.name = scancode_info->name; // we have the name
+								break;
+							}
+						}
+					}
+				}
+
+				if (new_scancode_info.name.length() == 0) // no name yet: search with scancode
+				{
+					for (KeyboardLayoutType type : {KeyboardLayoutType::AZERTY, KeyboardLayoutType::QWERTY})
+					{
+						if (ScancodeInformation const* scancode_info = KeyboardLayout::GetKnownLayout(type).GetInformationFromScancode(scancode))
+						{
+							if (scancode_info->name.length() > 0)
+							{
+								new_scancode_info.name = scancode_info->name; // we have the name
+								break;
+							}
+						}
+					}
+				}
+			}
+
+			// no name: need to ask from OS API
+			if (new_scancode_info.name.length() == 0)
+			{
+				new_scancode_info.name = ScancodeToName(scancode);
+
+				// ignore names with special characters
+				// this can happen for extended scancode > 0x100
+				// this happens for
+				//   ESCAPE + extended flag
+				//   BACKSPACE + extended flag
+				//   TAB 
+				for (size_t i = 0; i < new_scancode_info.name.length(); ++i)
+					if (new_scancode_info.name[i] < 32) // 32 is SPACE. characters before are specials
+						new_scancode_info.name = {}; // this stop the iteration and reset the name below
+			}
+
+			// insert the new element (if at least a vk or a name)
+			if (new_scancode_info.vk != 0 || new_scancode_info.name.length() > 0)
+				result.key_info.push_back(std::move(new_scancode_info));
 		}
 #endif // #if _WIN32 || _WIN64
 		return result;
 	}
 
-	KeyboardLayout const & KeyboardLayout::GetKeyboardInformation(KeyboardLayoutType type)
+	KeyboardLayout const & KeyboardLayout::GetKnownLayout(KeyboardLayoutType type)
 	{
 		if (type == KeyboardLayoutType::AZERTY)
 			return AzertyKeyboardLayout;
@@ -469,7 +514,7 @@ namespace chaos
 
 	ScancodeInformation const* KeyboardLayout::GetInformationFromScancode(unsigned int scancode) const
 	{
-		for (ScancodeInformation const& scancode_info : key_informations)
+		for (ScancodeInformation const& scancode_info : key_info)
 			if (scancode_info.scancode == scancode)
 				return &scancode_info;
 		return nullptr;
@@ -477,7 +522,7 @@ namespace chaos
 
 	ScancodeInformation const* KeyboardLayout::GetInformationFromVK(unsigned int vk) const
 	{
-		for (ScancodeInformation const& scancode_info : key_informations)
+		for (ScancodeInformation const& scancode_info : key_info)
 			if (scancode_info.vk == vk)
 				return &scancode_info;
 		return nullptr;

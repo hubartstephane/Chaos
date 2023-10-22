@@ -17,7 +17,7 @@ public:
 		if (event.action == GLFW_PRESS)
 		{
 			last_scancode = event.scancode;
-			last_key_pressed = chaos::KeyboardLayoutInformation::GetKeyboardInformation(chaos::KeyboardLayoutType::AZERTY).GetInformationFromScancode(event.scancode);
+			last_key_pressed = chaos::KeyboardLayout::GetKeyboardInformation(chaos::KeyboardLayoutType::AZERTY).GetInformationFromScancode(event.scancode);
 		}
 
 		return chaos::Window::OnKeyEventImpl(event);
@@ -34,7 +34,7 @@ public:
 				int new_vk = chaos::KeyboardLayoutConversion::ConvertVirtualKeyToCurrentLayout(src_vk, src_layout, &src_entry);
 
 				int new_scancode = ::MapVirtualKey(new_vk, MAPVK_VK_TO_VSC);
-				std::string name = chaos::KeyboardLayoutInformation::ScancodeToName(new_scancode);
+				std::string name = chaos::KeyboardLayout::ScancodeToName(new_scancode);
 
 				char const* layout_name = (src_layout == chaos::KeyboardLayoutType::AZERTY) ? "azerty" : "qwerty";
 
@@ -147,12 +147,12 @@ void GenerateKeyboardLayoutFiles()
 				char buffer[KL_NAMELENGTH];
 				::GetKeyboardLayoutName(buffer);
 
-				chaos::KeyboardLayoutInformation information = chaos::KeyboardLayoutInformation::Collect();
+				chaos::KeyboardLayout information = chaos::KeyboardLayout::Collect();
 
 				if (information.GetInformationFromScancode(0x10)->vk == 'A')
-					chaos::DumpKeyboardLayoutInformationToFile("azerty2.txt", "AzertyKeyboardLayoutInformation", information);
+					chaos::DumpKeyboardLayoutToFile("azerty2.txt", "AzertyKeyboardLayout", information);
 				if (information.GetInformationFromScancode(0x10)->vk == 'Q')
-					chaos::DumpKeyboardLayoutInformationToFile("qwerty2.txt", "QwertyKeyboardLayoutInformation", information);
+					chaos::DumpKeyboardLayoutToFile("qwerty2.txt", "QwertyKeyboardLayout", information);
 			}
 
 		}
@@ -163,11 +163,11 @@ void GenerateKeyboardLayoutFiles()
 
 unsigned int GetVirtualKeyFromName(char const* name)
 {
-	for (chaos::KeyboardLayoutType layout : {chaos::KeyboardLayoutType::AZERTY, chaos::KeyboardLayoutType::QWERTY})
+	for (chaos::KeyboardLayoutType type : {chaos::KeyboardLayoutType::AZERTY, chaos::KeyboardLayoutType::QWERTY})
 	{
-		chaos::KeyboardLayoutInformation const& layout_info = chaos::KeyboardLayoutInformation::GetKeyboardInformation(layout);
+		chaos::KeyboardLayout const& layout = chaos::KeyboardLayout::GetKeyboardInformation(type);
 
-		for (chaos::ScancodeInformation const& scancode_info : layout_info.key_informations)
+		for (chaos::ScancodeInformation const& scancode_info : layout.key_informations)
 			if (chaos::StringTools::Stricmp(name, scancode_info.name) == 0)
 				return scancode_info.vk;
 	}
@@ -187,9 +187,9 @@ unsigned int GetScancodeFromGLFWKeycode(int glfw_keycode)
 {
 	if (unsigned int qwerty_scancode = chaos::KeyboardLayoutConversion::QwertyGLFWKeycodeToScancode(glfw_keycode))
 	{
-		chaos::KeyboardLayoutInformation const & layout_info = chaos::KeyboardLayoutInformation::GetKeyboardInformation(chaos::KeyboardLayoutType::QWERTY);
+		chaos::KeyboardLayout const & layout = chaos::KeyboardLayout::GetKeyboardInformation(chaos::KeyboardLayoutType::QWERTY);
 
-		if (chaos::ScancodeInformation const * qwerty_scancode_info = layout_info.GetInformationFromScancode(qwerty_scancode))
+		if (chaos::ScancodeInformation const * qwerty_scancode_info = layout.GetInformationFromScancode(qwerty_scancode))
 			return ::MapVirtualKey(qwerty_scancode_info->vk, MAPVK_VK_TO_VSC); // convert with the current layout whatever it is
 	}
 	return 0;
@@ -217,16 +217,16 @@ int main(int argc, char ** argv, char ** env)
 
 
 	//GenerateKeyboardLayoutFiles();
-	//chaos::KeyboardLayoutInformation information = chaos::KeyboardLayoutInformation::Collect();
-	//chaos::DumpKeyboardLayoutInformationToFile("qwertz2.txt", "QwertzKeyboardLayoutInformation", information);
-	//chaos::DumpKeyboardLayoutInformationToFile("dvorak.txt", "DvorakKeyboardLayoutInformation", information);
+	//chaos::KeyboardLayout information = chaos::KeyboardLayout::Collect();
+	//chaos::DumpKeyboardLayoutToFile("qwertz2.txt", "QwertzKeyboardLayout", information);
+	//chaos::DumpKeyboardLayoutToFile("dvorak.txt", "DvorakKeyboardLayout", information);
 
 
 	return 0;
 
-	//chaos::KeyboardLayoutInformation information = chaos::KeyboardLayoutInformation::Collect();
-	//chaos::DumpKeyboardLayoutInformationToFile("azerty2.txt", "AzertyKeyboardLayoutInformation", information);
-	//chaos::DumpKeyboardLayoutInformationToFile("qwerty2.txt", "QwertyKeyboardLayoutInformation", information);
+	//chaos::KeyboardLayout information = chaos::KeyboardLayout::Collect();
+	//chaos::DumpKeyboardLayoutToFile("azerty2.txt", "AzertyKeyboardLayout", information);
+	//chaos::DumpKeyboardLayoutToFile("qwerty2.txt", "QwertyKeyboardLayout", information);
 
 	chaos::WindowCreateParams create_params;
 	create_params.monitor = nullptr;

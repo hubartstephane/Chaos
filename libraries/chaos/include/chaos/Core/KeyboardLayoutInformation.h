@@ -2,7 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	enum class KeyboardLayout;
+	enum class KeyboardLayoutType;
 	class KeyboardLayoutInformation;
 	class ScancodeInformation;
 
@@ -51,10 +51,10 @@ namespace chaos
 	//                   there is no VK_0 .. VK_9. used '0' or '9' directly
 
 	/**
-	 * KeyboardLayout: known layout
+	 * KeyboardLayoutType: known layout
 	 */
 
-	enum class CHAOS_API KeyboardLayout
+	enum class CHAOS_API KeyboardLayoutType
 	{
 		AZERTY,
 		QWERTY
@@ -87,7 +87,7 @@ namespace chaos
 		/** collect the current keyboard layout information */
 		static KeyboardLayoutInformation Collect();
 		/** get the information for a known layout */
-		static KeyboardLayoutInformation const& GetKeyboardInformation(KeyboardLayout layout);
+		static KeyboardLayoutInformation const& GetKeyboardInformation(KeyboardLayoutType type);
 		/** get scancode name */
 		static std::string ScancodeToName(unsigned int scancode);
 

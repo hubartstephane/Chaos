@@ -160,7 +160,7 @@ namespace chaos
 	};
 #undef CHAOS_KEYBOARD_DEF
 
-	Key::Key(char const* name, KeyboardLayout layout) :
+	Key::Key(char const* name, KeyboardLayoutType layout) :
 		type(KeyType::UNKNOWN),
 		gamepad_button(GamepadButton::UNKNOWN) // due to union aliasing, this works fine
 	{
@@ -168,6 +168,13 @@ namespace chaos
 		if (StringTools::IsEmpty(name))
 			return;
 
+
+
+
+
+
+
+#if 0
 		// search whether it is a keyboard key
 
 		KeyboardLayoutInformation const& information = KeyboardLayoutInformation::GetKeyboardInformation(layout);
@@ -195,6 +202,7 @@ namespace chaos
 				break;
 			}
 		}
+#endif
 	}
 
 	Key::Key() :

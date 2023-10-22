@@ -15,10 +15,12 @@ namespace chaos
 	public:
 
 		/** convert a virtual key, may return the entry that has been used for the conversion */
-		static unsigned int ConvertVirtualKeyToCurrentLayout(unsigned int vk, KeyboardLayout layout, ScancodeInformation const ** result_pair);
+		static unsigned int ConvertVirtualKeyToCurrentLayout(unsigned int vk, KeyboardLayoutType layout, ScancodeInformation const ** result_pair);
 
 		/** convert the scancode into GLFW keycode (QWERTY) */
-		static int ScancodeToGLFWKey(int scancode);
+		static int QwertyScancodeToGLFWKeycode(unsigned int scancode);
+		/** convert the scancode into GLFW keycode (QWERTY) */
+		static unsigned int QwertyGLFWKeycodeToScancode(int glfw_keycode);
 	};
 
 #endif

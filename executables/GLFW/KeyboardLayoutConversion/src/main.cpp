@@ -17,7 +17,7 @@ public:
 		if (event.action == GLFW_PRESS)
 		{
 			last_scancode = event.scancode;
-			last_key_pressed = chaos::KeyboardLayoutInformation::GetKeyboardInformation(chaos::KeyboardLayout::AZERTY).GetInformationFromScancode(event.scancode);
+			last_key_pressed = chaos::KeyboardLayoutInformation::GetKeyboardInformation(chaos::KeyboardLayoutType::AZERTY).GetInformationFromScancode(event.scancode);
 		}
 
 		return chaos::Window::OnKeyEventImpl(event);
@@ -27,7 +27,7 @@ public:
 	{
 		ImGuiDrawableInterface::FullscreenWindow("conversion", false, [this]()
 		{
-			auto ImGui_DisplayConversion = [](int src_vk, chaos::KeyboardLayout src_layout)
+			auto ImGui_DisplayConversion = [](int src_vk, chaos::KeyboardLayoutType src_layout)
 			{
 				chaos::ScancodeInformation const* src_entry = nullptr;
 
@@ -36,7 +36,7 @@ public:
 				int new_scancode = ::MapVirtualKey(new_vk, MAPVK_VK_TO_VSC);
 				std::string name = chaos::KeyboardLayoutInformation::ScancodeToName(new_scancode);
 
-				char const* layout_name = (src_layout == chaos::KeyboardLayout::AZERTY) ? "azerty" : "qwerty";
+				char const* layout_name = (src_layout == chaos::KeyboardLayoutType::AZERTY) ? "azerty" : "qwerty";
 
 				char const * src_entry_name = (src_entry != nullptr) ? src_entry->name.c_str() : "unknown";
 
@@ -47,38 +47,38 @@ public:
 
 			auto ppp = ::MapVirtualKey('A', MAPVK_VK_TO_VSC);
 
-			ImGui_DisplayConversion('A', chaos::KeyboardLayout::AZERTY);
-			ImGui_DisplayConversion('A', chaos::KeyboardLayout::QWERTY);
+			ImGui_DisplayConversion('A', chaos::KeyboardLayoutType::AZERTY);
+			ImGui_DisplayConversion('A', chaos::KeyboardLayoutType::QWERTY);
 			ImGui::Separator();
 
-			ImGui_DisplayConversion('Q', chaos::KeyboardLayout::AZERTY);
-			ImGui_DisplayConversion('Q', chaos::KeyboardLayout::QWERTY);
+			ImGui_DisplayConversion('Q', chaos::KeyboardLayoutType::AZERTY);
+			ImGui_DisplayConversion('Q', chaos::KeyboardLayoutType::QWERTY);
 			ImGui::Separator();
 
-			ImGui_DisplayConversion('M', chaos::KeyboardLayout::AZERTY);
-			ImGui_DisplayConversion('M', chaos::KeyboardLayout::QWERTY);
+			ImGui_DisplayConversion('M', chaos::KeyboardLayoutType::AZERTY);
+			ImGui_DisplayConversion('M', chaos::KeyboardLayoutType::QWERTY);
 			ImGui::Separator();
 
-			ImGui_DisplayConversion(VK_SPACE, chaos::KeyboardLayout::AZERTY);
-			ImGui_DisplayConversion(VK_SPACE, chaos::KeyboardLayout::QWERTY);
+			ImGui_DisplayConversion(VK_SPACE, chaos::KeyboardLayoutType::AZERTY);
+			ImGui_DisplayConversion(VK_SPACE, chaos::KeyboardLayoutType::QWERTY);
 			ImGui::Separator();
 
-			ImGui_DisplayConversion(VK_SHIFT, chaos::KeyboardLayout::AZERTY);
-			ImGui_DisplayConversion(VK_SHIFT, chaos::KeyboardLayout::QWERTY);
+			ImGui_DisplayConversion(VK_SHIFT, chaos::KeyboardLayoutType::AZERTY);
+			ImGui_DisplayConversion(VK_SHIFT, chaos::KeyboardLayoutType::QWERTY);
 			ImGui::Separator();
 
-			ImGui_DisplayConversion('0', chaos::KeyboardLayout::AZERTY);
-			ImGui_DisplayConversion('0', chaos::KeyboardLayout::QWERTY);
+			ImGui_DisplayConversion('0', chaos::KeyboardLayoutType::AZERTY);
+			ImGui_DisplayConversion('0', chaos::KeyboardLayoutType::QWERTY);
 			ImGui::Separator();
 
 			int vk1 = ::VkKeyScan('*') & 0xFF;
-			ImGui_DisplayConversion(vk1, chaos::KeyboardLayout::AZERTY);
-			ImGui_DisplayConversion(vk1, chaos::KeyboardLayout::QWERTY);
+			ImGui_DisplayConversion(vk1, chaos::KeyboardLayoutType::AZERTY);
+			ImGui_DisplayConversion(vk1, chaos::KeyboardLayoutType::QWERTY);
 			ImGui::Separator();
 
 			int vk2 = ::VkKeyScan('$') & 0xFF;
-			ImGui_DisplayConversion(vk2, chaos::KeyboardLayout::AZERTY);
-			ImGui_DisplayConversion(vk2, chaos::KeyboardLayout::QWERTY);
+			ImGui_DisplayConversion(vk2, chaos::KeyboardLayoutType::AZERTY);
+			ImGui_DisplayConversion(vk2, chaos::KeyboardLayoutType::QWERTY);
 			ImGui::Separator();
 
 			if (last_key_pressed)
@@ -132,10 +132,97 @@ std::vector<chaos::ScancodeInformation> table = chaos::KeyboardLayoutConversion:
 
 #endif
 
+void GenerateKeyboardLayoutFiles()
+{
+	int layout_count = ::GetKeyboardLayoutList(0, nullptr);
+	if (HKL* hkl = new HKL[layout_count])
+	{
+		if (::GetKeyboardLayoutList(layout_count, hkl) == layout_count)
+		{
+			for (int i = 0; i < layout_count; ++i)
+			{
 
+				::ActivateKeyboardLayout(hkl[i], KLF_SETFORPROCESS);
+
+				char buffer[KL_NAMELENGTH];
+				::GetKeyboardLayoutName(buffer);
+
+				chaos::KeyboardLayoutInformation information = chaos::KeyboardLayoutInformation::Collect();
+
+				if (information.GetInformationFromScancode(0x10)->vk == 'A')
+					chaos::DumpKeyboardLayoutInformationToFile("azerty2.txt", "AzertyKeyboardLayoutInformation", information);
+				if (information.GetInformationFromScancode(0x10)->vk == 'Q')
+					chaos::DumpKeyboardLayoutInformationToFile("qwerty2.txt", "QwertyKeyboardLayoutInformation", information);
+			}
+
+		}
+		delete[](hkl);
+	}
+}
+
+
+unsigned int GetVirtualKeyFromName(char const* name)
+{
+	for (chaos::KeyboardLayoutType layout : {chaos::KeyboardLayoutType::AZERTY, chaos::KeyboardLayoutType::QWERTY})
+	{
+		chaos::KeyboardLayoutInformation const& layout_info = chaos::KeyboardLayoutInformation::GetKeyboardInformation(layout);
+
+		for (chaos::ScancodeInformation const& scancode_info : layout_info.key_informations)
+			if (chaos::StringTools::Stricmp(name, scancode_info.name) == 0)
+				return scancode_info.vk;
+	}
+	return 0;
+}
+
+unsigned int GetScancodeFromName(char const* name)
+{
+	if (unsigned int vk = GetVirtualKeyFromName(name))
+	{
+		return ::MapVirtualKey(vk, MAPVK_VK_TO_VSC);
+	}
+	return 0;
+}
+
+unsigned int GetScancodeFromGLFWKeycode(int glfw_keycode)
+{
+	if (unsigned int qwerty_scancode = chaos::KeyboardLayoutConversion::QwertyGLFWKeycodeToScancode(glfw_keycode))
+	{
+		chaos::KeyboardLayoutInformation const & layout_info = chaos::KeyboardLayoutInformation::GetKeyboardInformation(chaos::KeyboardLayoutType::QWERTY);
+
+		if (chaos::ScancodeInformation const * qwerty_scancode_info = layout_info.GetInformationFromScancode(qwerty_scancode))
+			return ::MapVirtualKey(qwerty_scancode_info->vk, MAPVK_VK_TO_VSC); // convert with the current layout whatever it is
+	}
+	return 0;
+}
+
+#if 0
+chaos::Key KeyFromName(char const* name)
+{
+	if (unsigned int GetScancodeFromName)
+
+
+}
+#endif
 
 int main(int argc, char ** argv, char ** env)
 {
+
+	auto a = GetScancodeFromGLFWKeycode(GLFW_KEY_A);
+	auto q = GetScancodeFromGLFWKeycode(GLFW_KEY_Q);
+	auto y = GetScancodeFromGLFWKeycode(GLFW_KEY_Y);
+	auto z = GetScancodeFromGLFWKeycode(GLFW_KEY_Z);
+	auto m = GetScancodeFromGLFWKeycode(GLFW_KEY_M);
+	auto comma = GetScancodeFromGLFWKeycode(GLFW_KEY_COMMA);
+
+
+
+	//GenerateKeyboardLayoutFiles();
+	//chaos::KeyboardLayoutInformation information = chaos::KeyboardLayoutInformation::Collect();
+	//chaos::DumpKeyboardLayoutInformationToFile("qwertz2.txt", "QwertzKeyboardLayoutInformation", information);
+	//chaos::DumpKeyboardLayoutInformationToFile("dvorak.txt", "DvorakKeyboardLayoutInformation", information);
+
+
+	return 0;
 
 	//chaos::KeyboardLayoutInformation information = chaos::KeyboardLayoutInformation::Collect();
 	//chaos::DumpKeyboardLayoutInformationToFile("azerty2.txt", "AzertyKeyboardLayoutInformation", information);
@@ -146,6 +233,6 @@ int main(int argc, char ** argv, char ** env)
 	create_params.width = 800;
 	create_params.height = 800;
 	create_params.monitor_index = 0;
-
+	 
 	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, create_params);
 }

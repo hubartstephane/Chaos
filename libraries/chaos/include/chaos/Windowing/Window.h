@@ -309,7 +309,7 @@ namespace chaos
 		/** binding function with GLFW library */
 		static void DoOnMouseWheel(GLFWwindow* in_glfw_window, double scroll_x, double scroll_y);
 		/** binding function with GLFW library */
-		static void DoOnKeyEvent(GLFWwindow* in_glfw_window, int key, int scancode, int action, int modifier);
+		static void DoOnKeyEvent(GLFWwindow* in_glfw_window, int keycode, int scancode, int action, int modifier);
 		/** binding function with GLFW library */
 		static void DoOnCharEvent(GLFWwindow* in_glfw_window, unsigned int c);
 		/** binding function with GLFW library */

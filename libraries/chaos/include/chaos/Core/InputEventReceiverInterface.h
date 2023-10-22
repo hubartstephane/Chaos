@@ -16,22 +16,22 @@ namespace chaos
 	public:
 
 		/** check whether the key event is for considered key */
-		bool IsKeyEvent(int check_key, int check_modifier = 0) const;
+		bool IsKeyEvent(int check_keycode, int check_modifier = 0) const;
 
 		/** check whether this is a key press event (no key requirement) */
 		bool IsKeyPressed() const;
 		/** check whether this is a key press event */
-		bool IsKeyPressed(int check_key, int check_modifier = 0) const;
+		bool IsKeyPressed(int check_keycode, int check_modifier = 0) const;
 
 		/** check whether this is a key release event (no key requirement) */
 		bool IsKeyReleased() const;
 		/** check whether this is a key release event */
-		bool IsKeyReleased(int check_key, int check_modifier = 0) const;
+		bool IsKeyReleased(int check_keycode, int check_modifier = 0) const;
 
 	public:
 
-		/** the key */
-		int key = 0;
+		/** the keycode (GLFW code) */
+		int keycode = 0;
 		/** the scan code */
 		int scancode = 0;
 		/** pressed or release */
@@ -58,9 +58,9 @@ namespace chaos
 		InputMode GetInputMode() const { return input_mode; }
 
 		/** check whether a key is pressed. Change input mode according to success */
-		bool CheckButtonPressed(Key button, bool previous_frame = false);
+		bool CheckKeyPressed(Key key, bool previous_frame = false);
 		/** check whether a key in a set is pressed */
-		bool CheckButtonPressed(Key const* buttons, bool previous_frame = false);
+		bool CheckKeyPressed(Key const* keys, bool previous_frame = false);
 
 		/** called whenever the mouse is moved */
 		bool OnMouseMove(glm::vec2 const & delta);
@@ -90,7 +90,7 @@ namespace chaos
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode);
 
 		/** internal method to check whether a button is pressed */
-		virtual bool DoCheckButtonPressed(Key button, bool previous_frame);
+		virtual bool DoCheckKeyPressed(Key key, bool previous_frame);
 
 	protected:
 

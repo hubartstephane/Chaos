@@ -594,21 +594,21 @@ namespace chaos
 		});
 	}
 
-	void Window::DoOnKeyEvent(GLFWwindow* in_glfw_window, int key, int scancode, int action, int modifier)
+	void Window::DoOnKeyEvent(GLFWwindow* in_glfw_window, int keycode, int scancode, int action, int modifier)
 	{
 		GetWindowAndProcess(in_glfw_window, [=](Window* my_window)
 		{
 			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
 			if (ImGui::GetCurrentContext() != nullptr)
 			{
-				ImGui_ImplGlfw_KeyCallback(in_glfw_window, key, scancode, action, modifier);
+				ImGui_ImplGlfw_KeyCallback(in_glfw_window, keycode, scancode, action, modifier);
 
 				ImGuiIO& io = ImGui::GetIO();
 				if (io.WantCaptureKeyboard)
 					return;
 			}
 
-			KeyboardButton keyboard_button = (KeyboardButton)key;
+			KeyboardButton keyboard_button = (KeyboardButton)keycode;
 			KeyboardState::SetKeyboardButtonState(keyboard_button, action);
 
 			// notify the application of the keyboard button state
@@ -617,7 +617,7 @@ namespace chaos
 
 			// handle the message
 			KeyEvent event;
-			event.key = key;
+			event.keycode = keycode;
 			event.scancode = scancode;
 			event.action = action;
 			event.modifier = modifier;

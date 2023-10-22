@@ -154,9 +154,9 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	}
 
 	chaos::Key const accelerate_keys[] = { chaos::KeyboardButton::SPACE, chaos::GamepadButton::A, chaos::Key() };
-	particle.accelerate_pressed = player->CheckButtonPressed(accelerate_keys);
+	particle.accelerate_pressed = player->CheckKeyPressed(accelerate_keys);
 	chaos::Key const break_keys[] = { chaos::KeyboardButton::LEFT_CONTROL, chaos::GamepadButton::B, chaos::Key() };
-	particle.break_pressed = player->CheckButtonPressed(break_keys);
+	particle.break_pressed = player->CheckKeyPressed(break_keys);
 
 	// no input before race really starts
 	if (level_instance->lost_timer >= 0 || player->race_position.IsCompleted())

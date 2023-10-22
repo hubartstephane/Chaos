@@ -17,7 +17,7 @@ public:
 		if (event.action == GLFW_PRESS)
 		{
 			last_scancode = event.scancode;
-			last_key_pressed = chaos::KeyboardLayout::GetKeyboardInformation(chaos::KeyboardLayoutType::AZERTY).GetInformationFromScancode(event.scancode);
+			last_key_pressed = chaos::KeyboardLayout::GetKnownLayout(chaos::KeyboardLayoutType::AZERTY).GetInformationFromScancode(event.scancode);
 		}
 
 		return chaos::Window::OnKeyEventImpl(event);
@@ -165,9 +165,9 @@ unsigned int GetVirtualKeyFromName(char const* name)
 {
 	for (chaos::KeyboardLayoutType type : {chaos::KeyboardLayoutType::AZERTY, chaos::KeyboardLayoutType::QWERTY})
 	{
-		chaos::KeyboardLayout const& layout = chaos::KeyboardLayout::GetKeyboardInformation(type);
+		chaos::KeyboardLayout const& layout = chaos::KeyboardLayout::GetKnownLayout(type);
 
-		for (chaos::ScancodeInformation const& scancode_info : layout.key_informations)
+		for (chaos::ScancodeInformation const& scancode_info : layout.key_info)
 			if (chaos::StringTools::Stricmp(name, scancode_info.name) == 0)
 				return scancode_info.vk;
 	}
@@ -187,7 +187,7 @@ unsigned int GetScancodeFromGLFWKeycode(int glfw_keycode)
 {
 	if (unsigned int qwerty_scancode = chaos::KeyboardLayoutConversion::QwertyGLFWKeycodeToScancode(glfw_keycode))
 	{
-		chaos::KeyboardLayout const & layout = chaos::KeyboardLayout::GetKeyboardInformation(chaos::KeyboardLayoutType::QWERTY);
+		chaos::KeyboardLayout const & layout = chaos::KeyboardLayout::GetKnownLayout(chaos::KeyboardLayoutType::QWERTY);
 
 		if (chaos::ScancodeInformation const * qwerty_scancode_info = layout.GetInformationFromScancode(qwerty_scancode))
 			return ::MapVirtualKey(qwerty_scancode_info->vk, MAPVK_VK_TO_VSC); // convert with the current layout whatever it is
@@ -204,8 +204,14 @@ chaos::Key KeyFromName(char const* name)
 }
 #endif
 
+#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+
 int main(int argc, char ** argv, char ** env)
 {
+
+
+
+
 
 	auto a = GetScancodeFromGLFWKeycode(GLFW_KEY_A);
 	auto q = GetScancodeFromGLFWKeycode(GLFW_KEY_Q);
@@ -214,7 +220,11 @@ int main(int argc, char ** argv, char ** env)
 	auto m = GetScancodeFromGLFWKeycode(GLFW_KEY_M);
 	auto comma = GetScancodeFromGLFWKeycode(GLFW_KEY_COMMA);
 
+	chaos::KeyboardLayout l1 = chaos::KeyboardLayout::Collect(true);
+	chaos::KeyboardLayout l2 = chaos::KeyboardLayout::Collect(false);
 
+	chaos::DumpKeyboardLayoutToFile("bidon1.txt", "Bidon1KeyboardLayout", l1);
+	chaos::DumpKeyboardLayoutToFile("bidon2.txt", "Bidon1KeyboardLayout", l2);
 
 	//GenerateKeyboardLayoutFiles();
 	//chaos::KeyboardLayout information = chaos::KeyboardLayout::Collect();

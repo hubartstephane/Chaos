@@ -177,9 +177,9 @@ namespace chaos
 #if 0
 		// search whether it is a keyboard key
 
-		KeyboardLayout const& information = KeyboardLayout::GetKeyboardInformation(layout);
+		KeyboardLayout const& information = KeyboardLayout::GetKnownLayout(layout);
 
-		for (ScancodeInformation const& info : information.key_informations)
+		for (ScancodeInformation const& info : information.key_info)
 		{
 			if (StringTools::Stricmp(info.name, name) == 0)
 			{

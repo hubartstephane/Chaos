@@ -177,7 +177,7 @@ namespace chaos
 #if 0
 		// search whether it is a keyboard key
 
-		KeyboardLayoutInformation const& information = KeyboardLayoutInformation::GetKeyboardInformation(layout);
+		KeyboardLayout const& information = KeyboardLayout::GetKeyboardInformation(layout);
 
 		for (ScancodeInformation const& info : information.key_informations)
 		{

@@ -4,9 +4,9 @@
 
 namespace chaos
 {
-	// this is the information obtained by running KeyboardLayoutInformation::Collect(...) with an azerty keyboard
+	// this is the information obtained by running KeyboardLayout::Collect(...) with an azerty keyboard
 	// the strings are modified by hand so that we can easily search in the table
-	KeyboardLayoutInformation const AzertyKeyboardLayoutInformation =
+	KeyboardLayout const AzertyKeyboardLayout =
 	{ {
 	  {0x1, 0x1b, "ECHAP"},
 	  {0x2, 0x31, "&"},
@@ -189,9 +189,9 @@ namespace chaos
 	  {0x15d, 0x00, "APPLICATION"}
 	}};
 
-	// this is the information obtained by running KeyboardLayoutInformation::Collect(...) with an qwerty keyboard
+	// this is the information obtained by running KeyboardLayout::Collect(...) with an qwerty keyboard
 	// the strings are modified by hand so that we can easily search in the table
-	KeyboardLayoutInformation const QwertyKeyboardLayoutInformation =
+	KeyboardLayout const QwertyKeyboardLayout =
 	{ {
 	  {0x1, 0x1b, "Esc"},
 	  {0x2, 0x31, "1"},
@@ -392,17 +392,17 @@ namespace chaos
 
 #if _DEBUG
 
-	bool DumpKeyboardLayoutInformationToFile(char const* filename, char const* table_name, KeyboardLayoutInformation const& layout_info)
+	bool DumpKeyboardLayoutToFile(char const* filename, char const* table_name, KeyboardLayout const& layout)
 	{
 		FILE* f = NULL;
 		fopen_s(&f, filename, "w");
 		if (f != NULL)
 		{
-			fprintf(f, "KeyboardLayoutInformation const %s = \n{{\n", table_name);
+			fprintf(f, "KeyboardLayout const %s = \n{{\n", table_name);
 			
 			char const* format = "  {0x%x, 0x%02x, \"%s\"}"; // the very first line inserted (no comma at the end)
 			
-			for (ScancodeInformation const & scancode_info : layout_info.key_informations)
+			for (ScancodeInformation const & scancode_info : layout.key_informations)
 			{
 				fprintf(f, format, scancode_info.scancode, scancode_info.vk, scancode_info.name.c_str());
 
@@ -419,10 +419,10 @@ namespace chaos
 #endif // #if _DEBUG
 
 	//
-	// KeyboardLayoutInformation implementation
+	// KeyboardLayout implementation
 	//
 
-	std::string KeyboardLayoutInformation::ScancodeToName(unsigned int scancode)
+	std::string KeyboardLayout::ScancodeToName(unsigned int scancode)
 	{
 #if _WIN32 || _WIN64
 		char name[256];
@@ -432,9 +432,9 @@ namespace chaos
 		return {};
 	}
 
-	KeyboardLayoutInformation KeyboardLayoutInformation::Collect()
+	KeyboardLayout KeyboardLayout::Collect()
 	{
-		KeyboardLayoutInformation result;
+		KeyboardLayout result;
 
 #if _WIN32 || _WIN64
 		for (unsigned int scancode = 0; scancode <= 0x1FF; ++scancode)
@@ -459,15 +459,15 @@ namespace chaos
 		return result;
 	}
 
-	KeyboardLayoutInformation const & KeyboardLayoutInformation::GetKeyboardInformation(KeyboardLayoutType type)
+	KeyboardLayout const & KeyboardLayout::GetKeyboardInformation(KeyboardLayoutType type)
 	{
 		if (type == KeyboardLayoutType::AZERTY)
-			return AzertyKeyboardLayoutInformation;
+			return AzertyKeyboardLayout;
 		assert(type == KeyboardLayoutType::QWERTY);
-		return QwertyKeyboardLayoutInformation;
+		return QwertyKeyboardLayout;
 	}
 
-	ScancodeInformation const* KeyboardLayoutInformation::GetInformationFromScancode(unsigned int scancode) const
+	ScancodeInformation const* KeyboardLayout::GetInformationFromScancode(unsigned int scancode) const
 	{
 		for (ScancodeInformation const& scancode_info : key_informations)
 			if (scancode_info.scancode == scancode)
@@ -475,7 +475,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	ScancodeInformation const* KeyboardLayoutInformation::GetInformationFromVK(unsigned int vk) const
+	ScancodeInformation const* KeyboardLayout::GetInformationFromVK(unsigned int vk) const
 	{
 		for (ScancodeInformation const& scancode_info : key_informations)
 			if (scancode_info.vk == vk)

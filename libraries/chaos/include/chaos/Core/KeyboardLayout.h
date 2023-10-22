@@ -3,7 +3,7 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	enum class KeyboardLayoutType;
-	class KeyboardLayoutInformation;
+	class KeyboardLayout;
 	class ScancodeInformation;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -77,17 +77,17 @@ namespace chaos
 	};
 
 	/**
-	 * KeyboardLayoutInformation
+	 * KeyboardLayout
 	 */
 
-	class CHAOS_API KeyboardLayoutInformation
+	class CHAOS_API KeyboardLayout
 	{
 	public:
 
 		/** collect the current keyboard layout information */
-		static KeyboardLayoutInformation Collect();
+		static KeyboardLayout Collect();
 		/** get the information for a known layout */
-		static KeyboardLayoutInformation const& GetKeyboardInformation(KeyboardLayoutType type);
+		static KeyboardLayout const& GetKeyboardInformation(KeyboardLayoutType type);
 		/** get scancode name */
 		static std::string ScancodeToName(unsigned int scancode);
 
@@ -102,9 +102,9 @@ namespace chaos
 		std::vector<ScancodeInformation> key_informations;
 	};
 
-	/** this method is used to dump KeyboardLayoutInformation as a C++ code */
+	/** this method is used to dump KeyboardLayout as a C++ code */
 #if _DEBUG
-	bool DumpKeyboardLayoutInformationToFile(char const* filename, char const* table_name, KeyboardLayoutInformation const& information);
+	bool DumpKeyboardLayoutToFile(char const* filename, char const* table_name, KeyboardLayout const& information);
 #endif
 
 #endif

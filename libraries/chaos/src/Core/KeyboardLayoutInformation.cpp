@@ -392,21 +392,21 @@ namespace chaos
 
 #if _DEBUG
 
-	bool DumpKeyboardLayoutInformationToFile(char const* filename, char const* table_name, KeyboardLayoutInformation const& information)
+	bool DumpKeyboardLayoutInformationToFile(char const* filename, char const* table_name, KeyboardLayoutInformation const& layout_info)
 	{
 		FILE* f = NULL;
 		fopen_s(&f, filename, "w");
 		if (f != NULL)
 		{
 			fprintf(f, "KeyboardLayoutInformation const %s = \n{{\n", table_name);
-			size_t count = 0;
-			for (ScancodeInformation const & info : information.key_informations)
+			
+			char const* format = "  {0x%x, 0x%02x, \"%s\"}"; // the very first line inserted (no comma at the end)
+			
+			for (ScancodeInformation const & scancode_info : layout_info.key_informations)
 			{
-				if (count > 0)
-					fprintf(f, ",\n  {0x%x, 0x%02x, \"%s\"}", info.scancode, info.vk, info.name.c_str());
-				else
-					fprintf(f, "  {0x%x, 0x%02x, \"%s\"}", info.scancode, info.vk, info.name.c_str());
-				++count;
+				fprintf(f, format, scancode_info.scancode, scancode_info.vk, scancode_info.name.c_str());
+
+				format = ",\n  {0x%x, 0x%02x, \"%s\"}"; // the format for all lines after the first (add a comma at the end of previous printed line)
 			}
 			fprintf(f, "\n}};\n\n");
 
@@ -442,8 +442,14 @@ namespace chaos
 			unsigned int vk = ::MapVirtualKey(scancode, MAPVK_VSC_TO_VK);
 			std::string name = ScancodeToName(scancode);
 
+			// ignore names with special characters
+			// this can happen for extended scancode > 0x100
+			// this happens for
+			//   ESCAPE + extended flag
+			//   BACKSPACE + extended flag
+			//   TAB 
 			for (size_t i = 0; i < name.length(); ++i)
-				if (name[i] < 32)
+				if (name[i] < 32) // 32 is SPACE. characters before are specials
 					name = {}; // this stop the iteration and reset the name below
 
 			if (vk != 0 || name.length() > 0)
@@ -453,27 +459,27 @@ namespace chaos
 		return result;
 	}
 
-	KeyboardLayoutInformation const & KeyboardLayoutInformation::GetKeyboardInformation(KeyboardLayout layout)
+	KeyboardLayoutInformation const & KeyboardLayoutInformation::GetKeyboardInformation(KeyboardLayoutType type)
 	{
-		if (layout == KeyboardLayout::AZERTY)
+		if (type == KeyboardLayoutType::AZERTY)
 			return AzertyKeyboardLayoutInformation;
-		assert(layout == KeyboardLayout::QWERTY);
+		assert(type == KeyboardLayoutType::QWERTY);
 		return QwertyKeyboardLayoutInformation;
 	}
 
 	ScancodeInformation const* KeyboardLayoutInformation::GetInformationFromScancode(unsigned int scancode) const
 	{
-		for (ScancodeInformation const& entry : key_informations)
-			if (entry.scancode == scancode)
-				return &entry;
+		for (ScancodeInformation const& scancode_info : key_informations)
+			if (scancode_info.scancode == scancode)
+				return &scancode_info;
 		return nullptr;
 	}
 
 	ScancodeInformation const* KeyboardLayoutInformation::GetInformationFromVK(unsigned int vk) const
 	{
-		for (ScancodeInformation const& entry : key_informations)
-			if (entry.vk == vk)
-				return &entry;
+		for (ScancodeInformation const& scancode_info : key_informations)
+			if (scancode_info.vk == vk)
+				return &scancode_info;
 		return nullptr;
 	}
 

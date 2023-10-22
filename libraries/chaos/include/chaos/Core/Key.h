@@ -272,7 +272,7 @@ namespace chaos
 		/** copy constructor */
 		Key(Key const& src) = default;
 		/** key from its name */
-		Key(char const* name, KeyboardLayout layout = KeyboardLayout::AZERTY);
+		Key(char const* name, KeyboardLayoutType layout = KeyboardLayoutType::AZERTY);
 		/** gamepad key constructor */
 		Key(GamepadButton button);
 		/** keyboard key constructor */

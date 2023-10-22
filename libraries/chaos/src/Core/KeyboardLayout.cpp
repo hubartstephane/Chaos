@@ -528,4 +528,23 @@ namespace chaos
 		return nullptr;
 	}
 
+	std::optional<KeyboardLayout>& KeyboardLayout::GetCachedLayout()
+	{
+		static std::optional<KeyboardLayout> cached_layout;
+		return cached_layout;
+	}
+
+	KeyboardLayout const& KeyboardLayout::GetCurrentLayout()
+	{
+		std::optional<KeyboardLayout> & cached_layout = GetCachedLayout();
+		if (!cached_layout.has_value())
+			cached_layout = Collect(true);
+		return cached_layout.value();
+	}
+	
+	void KeyboardLayout::InvalidateCachedLayout()
+	{
+		GetCachedLayout().reset();
+	}
+
 }; // namespace chaos

@@ -160,7 +160,7 @@ void GenerateKeyboardLayoutFiles()
 	}
 }
 
-
+// search an Entry in the known keyboard layout for a given name
 unsigned int GetVirtualKeyFromName(char const* name)
 {
 	for (chaos::KeyboardLayoutType type : {chaos::KeyboardLayoutType::AZERTY, chaos::KeyboardLayoutType::QWERTY})
@@ -204,6 +204,7 @@ chaos::Key KeyFromName(char const* name)
 }
 #endif
 
+
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 
 int main(int argc, char ** argv, char ** env)
@@ -211,7 +212,7 @@ int main(int argc, char ** argv, char ** env)
 
 
 
-
+#if 0
 
 	auto a = GetScancodeFromGLFWKeycode(GLFW_KEY_A);
 	auto q = GetScancodeFromGLFWKeycode(GLFW_KEY_Q);
@@ -231,12 +232,8 @@ int main(int argc, char ** argv, char ** env)
 	//chaos::DumpKeyboardLayoutToFile("qwertz2.txt", "QwertzKeyboardLayout", information);
 	//chaos::DumpKeyboardLayoutToFile("dvorak.txt", "DvorakKeyboardLayout", information);
 
+#endif
 
-	return 0;
-
-	//chaos::KeyboardLayout information = chaos::KeyboardLayout::Collect();
-	//chaos::DumpKeyboardLayoutToFile("azerty2.txt", "AzertyKeyboardLayout", information);
-	//chaos::DumpKeyboardLayoutToFile("qwerty2.txt", "QwertyKeyboardLayout", information);
 
 	chaos::WindowCreateParams create_params;
 	create_params.monitor = nullptr;

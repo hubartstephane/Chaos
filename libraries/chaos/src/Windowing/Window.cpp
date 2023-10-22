@@ -392,6 +392,8 @@ namespace chaos
 				ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
 				ImGuiContext* toset_imgui_context = window->imgui_context;
 				ImGui::SetCurrentContext(toset_imgui_context);
+				// call special treatments
+				window->HookedWindowProc(msg, wParam, lParam);
 				// call "super" window proc
 				result = ::CallWindowProc(previous_wndproc, hWnd, msg, wParam, lParam); // call "super" WndProc
 				// restore the previous ImGui context
@@ -402,6 +404,16 @@ namespace chaos
 			}
 		}
 		return result;
+	}
+
+	bool Window::HookedWindowProc(UINT msg, WPARAM wParam, LPARAM lParam)
+	{
+		if (msg == WM_INPUTLANGCHANGE)
+		{
+			KeyboardLayout::InvalidateCachedLayout();
+			return true;
+		}
+		return false;
 	}
 
 	// Note on ImGui and WndProc

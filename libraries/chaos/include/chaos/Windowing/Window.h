@@ -273,6 +273,8 @@ namespace chaos
 		void SetImGuiWindowProc(bool set_proc);
 		/** a dedicated WndProc for ImGui */
 		static LRESULT CALLBACK ImGuiWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+		/** special handlers */
+		virtual bool HookedWindowProc(UINT msg, WPARAM wParam, LPARAM lParam);
 #endif
 
 		/** increment the counter that prevent window destruction */

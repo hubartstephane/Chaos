@@ -96,6 +96,16 @@ namespace chaos
 		/** get information from the virtual key */
 		ScancodeInformation const* GetInformationFromVK(unsigned int vk) const;
 
+		/** get the cached current layout */
+		static KeyboardLayout const& GetCurrentLayout();
+		/** invalidate the cached current layout */
+		static void InvalidateCachedLayout();
+
+	protected:
+
+		/** returns a reference to the cached layout */
+		static std::optional<KeyboardLayout>& GetCachedLayout();
+
 	public:
 
 		/** the informations for each keys */

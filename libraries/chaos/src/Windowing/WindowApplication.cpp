@@ -81,24 +81,22 @@ namespace chaos
 			}
 
 			// destroy windows that mean to be
-			for (weak_ptr<Window>& window : GetWeakWindowArray())
-				if (window != nullptr)
-					if (window->ShouldClose())
-						window->Destroy();
+			ForAllWindows([](Window* window)
+			{
+				if (window->ShouldClose())
+					window->Destroy();
+				});
 
 			// tick the windows
-			for (weak_ptr<Window> & window : GetWeakWindowArray())
+			ForAllWindows([delta_time, real_delta_time](Window* window)
 			{
-				if (window != nullptr)
+				window->WithWindowContext([&window, delta_time, real_delta_time]()
 				{
-					window->WithWindowContext([&window, delta_time, real_delta_time]()
-					{
-						window->TickRenderer(real_delta_time);
-						window->Tick(delta_time);
-						window->DrawWindow();
-					});
-					}
-			}
+					window->TickRenderer(real_delta_time);
+					window->Tick(delta_time);
+					window->DrawWindow();
+				});
+			});
 			// update time
 			t1 = t2;
 		}
@@ -106,9 +104,10 @@ namespace chaos
 
 	void WindowApplication::DestroyAllWindows()
 	{
-		for (weak_ptr<Window> window : GetWeakWindowArray())
-			if (window != nullptr)
-				window->Destroy();
+		ForAllWindows([](Window* window)
+		{
+			window->Destroy();
+		});
 	}
 
 	Window* WindowApplication::CreateTypedWindow(SubClassOf<Window> window_class, WindowCreateParams create_params, ObjectRequest request)
@@ -671,16 +670,13 @@ namespace chaos
 
 	void WindowApplication::OnInputModeChanged(InputMode new_mode, InputMode old_mode)
 	{
-		for (weak_ptr<Window> & window : GetWeakWindowArray())
+		ForAllWindows([new_mode, old_mode](Window * window)
 		{
-			if (window != nullptr)
+			window->WithWindowContext([&window, new_mode, old_mode]()
 			{
-				window->WithWindowContext([&window, new_mode, old_mode]()
-				{
-					window->OnInputModeChanged(new_mode, old_mode);
-				});
-			}
-		}
+				window->OnInputModeChanged(new_mode, old_mode);
+			});
+		});
 	}
 
 	Clock* WindowApplication::GetMainClockInstance()
@@ -802,18 +798,15 @@ namespace chaos
 	{
 		// the GLFW monitor delegate does not send event to any window
 		// that's why we are catching here the event and dispatching to all application's windows
-		for (weak_ptr<Window> & window : GetWeakWindowArray())
+		ForAllWindows([monitor, monitor_state](Window* window)
 		{
-			if (window != nullptr)
+			window->WithWindowContext([&window, monitor, monitor_state]()
 			{
-				window->WithWindowContext([&window, monitor, monitor_state]()
-				{
-					if (window->GetImGuiContext() != nullptr)
-						ImGui_ImplGlfw_MonitorCallback(monitor, monitor_state); // manually call ImGui delegate (see comment in WindowApplication::OnWindowCreated(...)
-					window->OnMonitorEvent(monitor, monitor_state);
-				});
-			}
-		}
+				if (window->GetImGuiContext() != nullptr)
+					ImGui_ImplGlfw_MonitorCallback(monitor, monitor_state); // manually call ImGui delegate (see comment in WindowApplication::OnWindowCreated(...)
+				window->OnMonitorEvent(monitor, monitor_state);
+			});
+		});
 	}
 
 	void WindowApplication::DoOnMonitorEvent(GLFWmonitor* monitor, int monitor_state)
@@ -832,16 +825,13 @@ namespace chaos
 		if (imgui_menu_mode != mode)
 		{
 			imgui_menu_mode = mode;
-			for (weak_ptr<Window>& window : GetWeakWindowArray())
+			ForAllWindows([mode](Window* window)
 			{
-				if (window != nullptr)
+				window->WithWindowContext([&window, mode]()
 				{
-					window->WithWindowContext([&window, mode]()
-					{
-						window->OnImGuiMenuModeChanged(mode);
-					});
-				}
-			}
+					window->OnImGuiMenuModeChanged(mode);
+				});
+			});
 		}
 	}
 
@@ -973,9 +963,10 @@ namespace chaos
 		// update the layout
 		KeyboardLayout::InvalidateCachedLayout();
 		// propage the information to all windows (WM_INPUTLANGCHANGE is only sent to the topmost one)
-		for (weak_ptr<Window>& window : GetWeakWindowArray())
-			if (window != nullptr)
-				window->OnInputLanguageChanged();
+		ForAllWindows([](Window * window)
+		{
+			window->OnInputLanguageChanged();
+		});
 	}
 
 #endif // #if _WIN32

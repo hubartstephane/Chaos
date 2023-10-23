@@ -2,5 +2,5 @@
 -- ROOT_PATH/executables/MISC/MyZLib
 -- =============================================================================
 
-local project = build:ConsoleApp()
+local project = build:WindowedApp()
 project:DependOnLib("CHAOS")

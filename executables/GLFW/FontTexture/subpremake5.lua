@@ -2,5 +2,5 @@
 -- ROOT_PATH/executables/GLFW/FontTexture
 -- =============================================================================
 
-local project = build:ConsoleApp()
+local project = build:WindowedApp()
 project:DependOnLib("CHAOS")

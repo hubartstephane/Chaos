@@ -2,5 +2,5 @@
 -- ROOT_PATH/executables/SOUND/MIDI_readFile
 -- =============================================================================
 
-local project = build:ConsoleApp()
+local project = build:WindowedApp()
 project:DependOnLib("CHAOS")

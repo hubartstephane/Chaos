@@ -2,5 +2,5 @@
 -- ROOT_PATH/executables/C++/C++CHAOS2
 -- =============================================================================
 
-local project = build:ConsoleApp()
+local project = build:WindowedApp()
 project:DependOnLib("CHAOS2")

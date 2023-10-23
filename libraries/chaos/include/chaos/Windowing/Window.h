@@ -269,13 +269,17 @@ namespace chaos
 		virtual void OnDrawWindowImGuiContent();
 
 #if _WIN32
+
 		/** set or restore WndProc for ImGui usage */
 		void SetImGuiWindowProc(bool set_proc);
 		/** a dedicated WndProc for ImGui */
 		static LRESULT CALLBACK ImGuiWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 		/** special handlers */
 		virtual bool HookedWindowProc(UINT msg, WPARAM wParam, LPARAM lParam);
-#endif
+		/** called whenever the language is being changed */
+		virtual void OnInputLanguageChanged();
+
+#endif // #if _WIN32
 
 		/** increment the counter that prevent window destruction */
 		void IncrementWindowDestructionGuard();

@@ -966,4 +966,19 @@ namespace chaos
 		Application::OnWritePersistentData(json);
 	}
 
+#ifdef _WIN32
+
+	void WindowApplication::OnInputLanguageChanged()
+	{
+		// update the layout
+		KeyboardLayout::InvalidateCachedLayout();
+		// propage the information to all windows (WM_INPUTLANGCHANGE is only sent to the topmost one)
+		for (weak_ptr<Window>& window : GetWeakWindowArray())
+			if (window != nullptr)
+				window->OnInputLanguageChanged();
+	}
+
+#endif // #if _WIN32
+
+
 }; // namespace chaos

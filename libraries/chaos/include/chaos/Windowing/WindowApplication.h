@@ -218,6 +218,11 @@ namespace chaos
 		/** some window may be removed or created during a loop on 'windows' array itself. this intermediate array helps to detect such issues */
 		std::vector<weak_ptr<Window>> GetWeakWindowArray() const;
 
+#ifdef _WIN32
+		/** called whenever the application language is being changed */
+		virtual void OnInputLanguageChanged();
+#endif
+
 	protected:
 
 		/** the main clock of the manager */

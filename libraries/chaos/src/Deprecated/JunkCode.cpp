@@ -6,6 +6,27 @@
 
 
 
+if (msg == WM_INPUTLANGCHANGE)
+{
+
+	HKL hkl = (HKL)lParam;
+	// LANGIDs are deprecated. Use BCP 47 locale names where possible.
+	LANGID langId = LOWORD(HandleToUlong(hkl));
+
+	WCHAR localeName[LOCALE_NAME_MAX_LENGTH];
+	LCIDToLocaleName(MAKELCID(langId, SORT_DEFAULT), localeName, LOCALE_NAME_MAX_LENGTH, 0);
+
+	// Get the ISO abbreviated language name (for example, "eng").
+	WCHAR lang[9];
+	GetLocaleInfoEx(localeName, LOCALE_SISO639LANGNAME2, lang, 9);
+
+	// Get the keyboard layout identifier (for example, "00020409" for United States-International keyboard layout)
+	WCHAR keyboardLayoutId[KL_NAMELENGTH];
+	GetKeyboardLayoutNameW(keyboardLayoutId);
+}
+
+
+
 
 
 

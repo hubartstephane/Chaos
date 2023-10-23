@@ -178,21 +178,21 @@ end
 -- gets the name of the premake project for documentation
 --------------------------------------------------------------------
 function Project:GetDocumentationProjectName()
-	return "Documentation_of_" .. self.project_name
+	return self.project_name .. " (Documentation)"
 end
 
 --------------------------------------------------------------------
 -- gets the name of the premake project for ZIP
 --------------------------------------------------------------------
 function Project:GetZipProjectName()
-	return "ZIP_of_" .. self.project_name
+	return self.project_name .. " (ZIP)"
 end
 
 --------------------------------------------------------------------
 -- gets the name of the premake project for resources
 --------------------------------------------------------------------
 function Project:GetResourceProjectName()
-	return "Resources_of_" .. self.project_name
+	return self.project_name .. " (Resources)" 
 end
 
 --------------------------------------------------------------------

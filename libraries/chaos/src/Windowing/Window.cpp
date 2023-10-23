@@ -377,6 +377,7 @@ namespace chaos
 	}
 
 #ifdef _WIN32
+
 	LRESULT CALLBACK Window::ImGuiWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 		LRESULT result = 0;
@@ -408,12 +409,17 @@ namespace chaos
 
 	bool Window::HookedWindowProc(UINT msg, WPARAM wParam, LPARAM lParam)
 	{
-		if (msg == WM_INPUTLANGCHANGE)
+		if (msg == WM_INPUTLANGCHANGE) // note: WM_INPUTLANGCHANGE is sent only to the topmost window of the EXE. That's exactly what we want
 		{
-			KeyboardLayout::InvalidateCachedLayout();
+			if (WindowApplication* application = Application::GetInstance())
+				application->OnInputLanguageChanged(); // the application will be responsible to propage the change to all windows
 			return true;
 		}
 		return false;
+	}
+
+	void Window::OnInputLanguageChanged()
+	{
 	}
 
 	// Note on ImGui and WndProc
@@ -455,7 +461,8 @@ namespace chaos
 			RemovePropW(hWnd, L"CHAOS_PREVIOUS_WNDPROC");
 		}
 	}
-#endif
+
+#endif // #if _WIN32
 
 	void Window::SetGLFWCallbacks(bool in_double_buffer)
 	{

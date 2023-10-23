@@ -223,6 +223,35 @@ namespace chaos
 		virtual void OnInputLanguageChanged();
 #endif
 
+		/** enumerate all windows */
+		template<typename FUNC>
+		auto ForAllWindows(FUNC func) -> boost::mpl::if_c<std::is_convertible_v<decltype(func((Window*)(nullptr))), bool>, decltype(func((Window*)(nullptr))), void>::type
+		{
+			using result_type = decltype(func((Window *)(nullptr)));
+			constexpr bool convertible_to_bool = std::is_convertible_v<result_type, bool>;
+
+			// enumerate all windows
+			for (weak_ptr<Window> & window : GetWeakWindowArray()) // use a 'weak' copy of all existing windows because some windows may be erased during the loop
+			{
+				if (window != nullptr) // check whether the window has be erased
+				{
+					if constexpr (convertible_to_bool)
+					{
+						if (auto result = func(window.get()))
+							return result;
+					}
+					else
+					{
+						func(window.get());
+					}
+				}
+			}
+
+			// default result
+			if constexpr (convertible_to_bool)
+				return result_type();
+		}
+
 	protected:
 
 		/** the main clock of the manager */

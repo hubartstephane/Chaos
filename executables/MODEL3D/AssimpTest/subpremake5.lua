@@ -2,5 +2,5 @@
 -- ROOT_PATH/executables/MODEL3D/AssimpTest
 -- =============================================================================
 
-local project = build:ConsoleApp()
+local project = build:WindowedApp()
 project:DependOnLib("CHAOS")

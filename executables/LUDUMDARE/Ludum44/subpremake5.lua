@@ -2,7 +2,7 @@
 -- ROOT_PATH/executables/LUDUM/Ludum44
 -- =============================================================================
 
-local project = build:ConsoleApp()
+local project = build:WindowedApp()
 project:DependOnLib("CHAOS")
 project:DependOnLib("CommonFonts")
 project:PrecompiledHeader(

@@ -2,5 +2,5 @@
 -- ROOT_PATH/executables/MISC/MyBase64
 -- =============================================================================
 
-local project = build:ConsoleApp()
+local project = build:WindowedApp()
 project:DependOnLib("CHAOS")

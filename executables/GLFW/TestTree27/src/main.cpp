@@ -141,24 +141,31 @@ protected:
 
 	bool MoveObjectWithInputs(chaos::Key const & key, float delta_time, glm::vec3 const& direction)
 	{
-		if (chaos::KeyboardState::GetKeyState(key.GetKeyboardButton())->IsPressed())
+
+		if (key.GetType() == chaos::KeyType::KEYBOARD)
 		{
-			float final_speed = (chaos::KeyboardState::GetKeyState((chaos::KeyboardButton)GLFW_KEY_LEFT_SHIFT)->IsPressed()) ? FAST_DISPLACEMENT_SPEED : DISPLACEMENT_SPEED;
-			sphere.position += direction * delta_time * final_speed;
-			box.position    += direction * delta_time * final_speed;
-			return true;
+			if (chaos::KeyboardState::GetKeyState(key.GetKeyboardButton())->IsPressed())
+			{
+				float final_speed = (chaos::KeyboardState::GetKeyState((chaos::KeyboardButton)GLFW_KEY_LEFT_SHIFT)->IsPressed()) ? FAST_DISPLACEMENT_SPEED : DISPLACEMENT_SPEED;
+				sphere.position += direction * delta_time * final_speed;
+				box.position += direction * delta_time * final_speed;
+				return true;
+			}
 		}
 		return false;
 	}
 
 	bool ScaleObjectWithInputs(chaos::Key const& key, float delta_time, float direction)
 	{
-		if (chaos::KeyboardState::GetKeyState(key.GetKeyboardButton())->IsPressed())
+		if (key.GetType() == chaos::KeyType::KEYBOARD)
 		{
-			float final_scale_speed = (chaos::KeyboardState::GetKeyState((chaos::KeyboardButton)GLFW_KEY_LEFT_SHIFT)->IsPressed()) ? SCALE_SPEED : FAST_SCALE_SPEED;
+			if (chaos::KeyboardState::GetKeyState(key.GetKeyboardButton())->IsPressed())
+			{
+				float final_scale_speed = (chaos::KeyboardState::GetKeyState((chaos::KeyboardButton)GLFW_KEY_LEFT_SHIFT)->IsPressed()) ? SCALE_SPEED : FAST_SCALE_SPEED;
 
-			sphere.radius = std::max(1.0f, sphere.radius + direction * final_scale_speed);
-			return true;
+				sphere.radius = std::max(1.0f, sphere.radius + direction * final_scale_speed);
+				return true;
+			}
 		}
 		return false;
 	}

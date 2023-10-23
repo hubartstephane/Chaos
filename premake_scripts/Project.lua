@@ -450,8 +450,8 @@ function Project:AddProjectToSolution()
 
 	-- entry point (avoid WinMain to main)
 	if (os.target() == "windows") then
-		if (self:IsExecutable()) then
-			--entrypoint "mainCRTStartup"
+		if (self.project_type == ProjectType.WINDOW_EXE) then
+			entrypoint "mainCRTStartup" -- this is important to avoid the default console to be opened
 		end
 	end
 

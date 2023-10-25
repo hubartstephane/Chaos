@@ -5,11 +5,11 @@
 SCRIPT_PATH=$(pwd)/$0
 SCRIPT_PATH=$(dirname $SCRIPT_PATH)
 
-BASE_INSTALL_PATH=$SCRIPT_PATH/../externals/
+BASE_INSTALL_PATH=$SCRIPT_PATH/../external/
 
 ###########################################################################
 # Unzip libraries
-###########################################################################
+##########################################################################
 
 unzip $SCRIPT_PATH/external_zip/FreeImage3180Win32Win64.zip -d $BASE_INSTALL_PATH
 unzip $SCRIPT_PATH/external_zip/glew-2.2.0-win32.zip -d $BASE_INSTALL_PATH

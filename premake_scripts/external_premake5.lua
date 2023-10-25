@@ -31,7 +31,7 @@ build:DeclareExternalLib("GLM")
 -- BOOST
 --------------------------------------------------------------------
 BOOST_PATH     = "boost_1_83_0"
-BOOST_INC_PATH = path.join("include", "boost_1_83")
+BOOST_INC_PATH = path.join("include", "boost-1_83")
 BOOST_LIB_PATH = "lib"
 build:DeclareExternalLib("BOOST")
 
@@ -201,7 +201,7 @@ build:DeclareExternalLib("ZLIB")
 -- ASSIMP
 --------------------------------------------------------------------
 ASSIMP_PATH     = "assimp"
-ASSIMP_INC_PATH = path.join("include", "assimp")
+ASSIMP_INC_PATH = "include"
 ASSIMP_LIB_PATH = "lib"
 ASSIMP_LIB_NAME = "assimp-vc143-mt.lib"
 ASSIMP_TOCOPY   = path.join("bin", "assimp-vc143-mt.dll")

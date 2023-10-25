@@ -1,14 +1,3 @@
-glew-2.2.0
-boost_1_83_0
-MSVC_Redist
-FreeImage
-Irrklang-64bit-1.6.0
-lua-5.4.2
-zlib-1.3
-glfw-3.3.8
-tinyxml2
-freetype2
-FBX SDK
-glslang
-VulkanSDK
-imgui
+*
+!install_externals.sh
+!ReadMe.txt

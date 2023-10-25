@@ -44,6 +44,7 @@ function BeginBuildLibrary()
 
 for LIBRARY in assimp freetype2 glm json tinyxml2 glfw
 do
+
 	BeginBuildLibrary $LIBRARY
 	cmake -S $SRC_PATH -B $BUILD_PATH
 	cmake --build $BUILD_PATH --config $CONFIG_TYPE
@@ -58,3 +59,15 @@ BeginBuildLibrary "zlib-1.3"
 cmake -S $SRC_PATH -B $BUILD_PATH -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH
 cmake --build $BUILD_PATH --config $CONFIG_TYPE
 cmake --install $BUILD_PATH
+
+###########################################################################
+# Boost
+###########################################################################
+
+curl -L https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.zip --output $SRC_PATH/boost_1_83_0.zip  --ssl-no-revoke
+unzip $SCRIPT_PATH/boost_1_83_0.zip -d $SCRIPT_PATH
+cd $SCRIPT_PATH/boost_1_83_0
+$SCRIPT_PATH/boost_1_83_0/bootstrap.bat
+$SCRIPT_PATH/boost_1_83_0/b2
+$SCRIPT_PATH/boost_1_83_0/b2 install --prefix=$BASE_INSTALL_PATH/boost_1_83_0
+cd -

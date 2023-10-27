@@ -9,6 +9,10 @@ BASE_INSTALL_PATH=$SCRIPT_PATH
 BASE_BUILD_PATH=$SCRIPT_PATH/build
 CONFIGS="Release Debug"
 
+echo "========================================================="
+echo " Clean"
+echo "========================================================="	
+
 # clean previous files
 for FILE in assimp build freetype2 glfw glm json tinyxml2 boost_1_83_0 FreeImage glew-2.2.0 ImGui irrKlang-64bit-1.6.0 lua-5.4.2 MSVC_Redist zlib-1.3
 do
@@ -108,5 +112,9 @@ cd -
 ###########################################################################
 # Some clean
 ###########################################################################
+
+echo "========================================================="
+echo " Clean"
+echo "========================================================="	
 
 rm -fr $BASE_BUILD_PATH

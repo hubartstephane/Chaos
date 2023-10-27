@@ -5,6 +5,15 @@
 local WINDOWS = (os.target() == "windows")
 local LINUX = (os.target() == "linux")
 
+function MakePathPerConfig(p)
+
+	return {
+		DEBUG = path.join("Debug", p),
+		RELEASE = path.join("Release", p)
+	}
+
+end
+
 --------------------------------------------------------------------
 -- RANGE-V3
 --------------------------------------------------------------------
@@ -24,7 +33,7 @@ build:DeclareExternalLib("OPENGL")
 -- GLM
 --------------------------------------------------------------------
 GLM_PATH = "glm"
-GLM_INC_PATH = "include"
+GLM_INC_PATH = MakePathPerConfig("include")
 build:DeclareExternalLib("GLM")
 
 --------------------------------------------------------------------
@@ -49,8 +58,8 @@ build:DeclareExternalLib("LUA")
 --------------------------------------------------------------------
 
 GLFW_PATH = "glfw"
-GLFW_INC_PATH = "include"
-GLFW_LIB_PATH = "lib"
+GLFW_INC_PATH = MakePathPerConfig("include")
+GLFW_LIB_PATH = MakePathPerConfig("lib")
 GLFW_LIB_NAME = "glfw3.lib"
 build:DeclareExternalLib("GLFW")
 
@@ -162,9 +171,13 @@ build:DeclareExternalLib("GLEW")
 -- FREETYPE2
 --------------------------------------------------------------------
 FREETYPE2_PATH = "freetype2"
-FREETYPE2_INC_PATH = path.join("include", "freetype2")
-FREETYPE2_LIB_PATH = "lib"
-FREETYPE2_LIB_NAME = "freetype.lib"
+FREETYPE2_INC_PATH = MakePathPerConfig(path.join("include", "freetype2"))
+FREETYPE2_LIB_PATH = MakePathPerConfig("lib")
+FREETYPE2_LIB_NAME = 
+{
+	DEBUG = "freetyped.lib",
+	RELEASE = "freetype.lib",
+}
 build:DeclareExternalLib("FREETYPE2")
 
 --------------------------------------------------------------------
@@ -192,19 +205,28 @@ build:DeclareExternalLib("FBX")
 -- ZLIB
 --------------------------------------------------------------------
 ZLIB_PATH     = "zlib-1.3"
-ZLIB_INC_PATH = "include"
-ZLIB_LIB_PATH = "lib"
-ZLIB_LIB_NAME = "zlibstatic.lib"
+ZLIB_INC_PATH = MakePathPerConfig("include")
+ZLIB_LIB_PATH = MakePathPerConfig("lib")
+ZLIB_LIB_NAME = {
+	DEBUG = "zlibstaticd.lib",
+	RELEASE = "zlibstatic.lib"
+}
 build:DeclareExternalLib("ZLIB")
 
 --------------------------------------------------------------------
 -- ASSIMP
 --------------------------------------------------------------------
 ASSIMP_PATH     = "assimp"
-ASSIMP_INC_PATH = "include"
-ASSIMP_LIB_PATH = "lib"
-ASSIMP_LIB_NAME = "assimp-vc143-mt.lib"
-ASSIMP_TOCOPY   = path.join("bin", "assimp-vc143-mt.dll")
+ASSIMP_INC_PATH = MakePathPerConfig("include")
+ASSIMP_LIB_PATH = MakePathPerConfig("lib")
+ASSIMP_LIB_NAME = {
+	DEBUG = "assimp-vc143-mtd.lib",
+	RELEASE = "assimp-vc143-mt.lib"
+}
+ASSIMP_TOCOPY   = {
+	DEBUG = path.join("Debug", "bin", "assimp-vc143-mtd.dll"),
+	RELEASE = path.join("Release", "bin", "assimp-vc143-mt.dll")
+}
 build:DeclareExternalLib("ASSIMP")
 
 --------------------------------------------------------------------
@@ -219,11 +241,11 @@ FREEIMAGE_TOCOPY  = path.join(FREEIMAGE_LIB_PATH, "FreeImage.dll")
 build:DeclareExternalLib("FREEIMAGE")
 
 --------------------------------------------------------------------
--- LIBXML2
+-- TINYXML2
 --------------------------------------------------------------------
 TINYXML2_PATH = "tinyxml2"
-TINYXML2_INC_PATH = "include"
-TINYXML2_LIB_PATH = "lib"
+TINYXML2_INC_PATH = MakePathPerConfig("include")
+TINYXML2_LIB_PATH = MakePathPerConfig("lib")
 TINYXML2_LIB_NAME = "tinyxml2.lib"
 build:DeclareExternalLib("TINYXML2")
 
@@ -231,7 +253,7 @@ build:DeclareExternalLib("TINYXML2")
 -- JSON
 --------------------------------------------------------------------
 JSON_PATH     = "json"
-JSON_INC_PATH = path.join("include", "nlohmann")
+JSON_INC_PATH = MakePathPerConfig(path.join("include", "nlohmann"))
 build:DeclareExternalLib("JSON")
 
 --------------------------------------------------------------------

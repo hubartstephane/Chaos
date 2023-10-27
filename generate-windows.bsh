@@ -1,0 +1,21 @@
+#! /usr/bin/bash
+
+# This script create solution for visual studio
+SCRIPT_PATH=$(pwd)/$0
+SCRIPT_PATH=$(dirname $SCRIPT_PATH)
+
+# Search target in arguments (beware case sensitive)
+TARGET=vs2022
+if [ $# -gt 0 ]; then
+  TARGET=$1
+fi
+
+# Search premake5.exe
+PREMAKE5_PATH=$SCRIPT_PATH/build_tools/premake5.exe
+if [ ! -f $PREMAKE5_PATH ]; then
+	echo "ERROR: fails to find premake5.exe in " $PREMAKE5_PATH
+fi
+
+# start premake
+cd $SCRIPT_PATH
+$PREMAKE5_PATH $TARGET #--file=$SCRIPT_PATH/premake_scripts/premake5.lua

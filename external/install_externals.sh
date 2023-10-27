@@ -65,7 +65,7 @@ do
 		BeginBuildLibrary $LIBRARY $CONFIG
 		cmake -S $SRC_PATH -B $BUILD_PATH
 		cmake --build $BUILD_PATH --config $CONFIG
-		cmake --install $BUILD_PATH --prefix $INSTALL_PATH
+		cmake --install $BUILD_PATH --prefix $INSTALL_PATH --config $CONFIG
 	
 	done
 done
@@ -78,11 +78,13 @@ cd $INSTALLATION_PATH/external_zip
 gunzip --stdout $INSTALLATION_PATH/external_zip/zlib-1.3.tar.gz | tar -x
 mv zlib-1.3 $INSTALLATION_PATH
 
-CONFIG=Release # zlib does not support debug installation
-BeginBuildLibrary "zlib-1.3" $CONFIG
-cmake -S $SRC_PATH -B $BUILD_PATH -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH
-cmake --build $BUILD_PATH --config $CONFIG
-cmake --install $BUILD_PATH
+for CONFIG in $CONFIGS
+do
+	BeginBuildLibrary "zlib-1.3" $CONFIG
+	cmake -S $SRC_PATH -B $BUILD_PATH -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH
+	cmake --build $BUILD_PATH --config $CONFIG
+	cmake --install $BUILD_PATH --config $CONFIG
+done	
 
 rm -fr $INSTALLATION_PATH/zlib-1.3
 cd -
@@ -102,3 +104,9 @@ $BASE_BUILD_PATH/boost_1_83_0/bootstrap.bat
 $BASE_BUILD_PATH/boost_1_83_0/b2
 $BASE_BUILD_PATH/boost_1_83_0/b2 install --prefix=$BASE_INSTALL_PATH/boost_1_83_0
 cd -
+
+###########################################################################
+# Some clean
+###########################################################################
+
+rm -fr $BASE_BUILD_PATH

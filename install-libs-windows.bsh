@@ -3,10 +3,11 @@
 # This script compiles and installs most libraries into "external" directory
 SCRIPT_PATH=$(pwd)/$0
 SCRIPT_PATH=$(dirname $SCRIPT_PATH)
+EXTERNAL_PATH=$SCRIPT_PATH/external
 
-INSTALLATION_PATH=$SCRIPT_PATH/installation
-BASE_INSTALL_PATH=$SCRIPT_PATH
-BASE_BUILD_PATH=$SCRIPT_PATH/build
+INSTALLATION_PATH=$EXTERNAL_PATH/installation
+BASE_INSTALL_PATH=$EXTERNAL_PATH
+BASE_BUILD_PATH=$EXTERNAL_PATH/build
 CONFIGS="Release Debug"
 
 echo "========================================================="
@@ -16,7 +17,7 @@ echo "========================================================="
 # clean previous files
 for FILE in assimp build freetype2 glfw glm json tinyxml2 boost_1_83_0 FreeImage glew-2.2.0 ImGui irrKlang-64bit-1.6.0 lua-5.4.2 MSVC_Redist zlib-1.3
 do
-  rm -fr $SCRIPT_PATH/$FILE
+  rm -fr $EXTERNAL_PATH/$FILE
 done
 
 # create the build directory
@@ -33,12 +34,12 @@ echo "========================================================="
 echo " Unzip files"
 echo "========================================================="	
 
-unzip $INSTALLATION_PATH/external_zip/FreeImage3180Win32Win64.zip -d $BASE_INSTALL_PATH
-unzip $INSTALLATION_PATH/external_zip/glew-2.2.0-win32.zip -d $BASE_INSTALL_PATH
-unzip $INSTALLATION_PATH/external_zip/irrKlang-64bit-1.6.0.zip -d $BASE_INSTALL_PATH
-unzip $INSTALLATION_PATH/external_zip/lua-5.4.2_Win64_vc16_lib -d $BASE_INSTALL_PATH/lua-5.4.2
-unzip $INSTALLATION_PATH/external_zip/ImGui -d $BASE_INSTALL_PATH
-unzip $INSTALLATION_PATH/external_zip/MSVC_Redist.zip -d $BASE_INSTALL_PATH
+unzip $INSTALLATION_PATH/FreeImage3180Win32Win64.zip -d $BASE_INSTALL_PATH
+unzip $INSTALLATION_PATH/glew-2.2.0-win32.zip -d $BASE_INSTALL_PATH
+unzip $INSTALLATION_PATH/irrKlang-64bit-1.6.0.zip -d $BASE_INSTALL_PATH
+unzip $INSTALLATION_PATH/lua-5.4.2_Win64_vc16_lib -d $BASE_INSTALL_PATH/lua-5.4.2
+unzip $INSTALLATION_PATH/ImGui -d $BASE_INSTALL_PATH
+unzip $INSTALLATION_PATH/MSVC_Redist.zip -d $BASE_INSTALL_PATH
 
 ###########################################################################
 # Compile libraries (except zlib)
@@ -79,7 +80,7 @@ done
 ###########################################################################
 
 cd $INSTALLATION_PATH/external_zip
-gunzip --stdout $INSTALLATION_PATH/external_zip/zlib-1.3.tar.gz | tar -x
+gunzip --stdout $INSTALLATION_PATH/zlib-1.3.tar.gz | tar -x
 mv zlib-1.3 $INSTALLATION_PATH
 
 for CONFIG in $CONFIGS

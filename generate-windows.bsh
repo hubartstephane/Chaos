@@ -17,5 +17,4 @@ if [ ! -f $PREMAKE5_PATH ]; then
 fi
 
 # start premake
-cd $SCRIPT_PATH
-$PREMAKE5_PATH $TARGET #--file=$SCRIPT_PATH/premake_scripts/premake5.lua
+$PREMAKE5_PATH $TARGET --file=$SCRIPT_PATH/premake_scripts/premake5.lua

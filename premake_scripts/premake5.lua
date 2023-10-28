@@ -62,7 +62,7 @@
 -- =============================================================================
 
 BUILD_TARGET = _ACTION
-ROOT_PATH = path.getdirectory(_SCRIPT)
+ROOT_PATH = path.join(path.getdirectory(_SCRIPT), "..")
 SOLUTION_PATH = path.join(ROOT_PATH, "solutions", BUILD_TARGET)
 EXTERNAL_PATH = path.join(ROOT_PATH, "external")
 BUILD_PATH = path.join(ROOT_PATH, "build", BUILD_TARGET)
@@ -90,11 +90,11 @@ CONFIGS = {DEBUG, RELEASE}
 -- requirement
 -- =============================================================================
 
-require 'premake_scripts/Object'
-require 'premake_scripts/Utility'
-require 'premake_scripts/Log'
-require 'premake_scripts/BuildSystem'
-require 'premake_scripts/Project'
+require 'Object'
+require 'Utility'
+require 'Log'
+require 'BuildSystem'
+require 'Project'
 
 -- =============================================================================
 -- options
@@ -126,7 +126,7 @@ end)
 build = BuildSystem:new()
 build:DisplayInformation()
 
-require 'premake_scripts/external_premake5' -- declare external libraries
+require 'external_premake5' -- declare external libraries
 
 local sub_directories = {'libraries', 'executables','shared_resources'}
 build:ProcessSubPremake(sub_directories, true) -- create sub groups

@@ -422,6 +422,10 @@ function Project:AddProjectToSolution()
 
 	local proj_location = path.join(SOLUTION_PATH, self.project_path)
 	location(proj_location)
+	
+	-- put in solution src and headers into simple virtual directories
+	vpaths { ["Headers"] = {"**.h", "**.hpp"} }
+	vpaths { ["Sources"] = {"**.c", "**.cpp"} }	
 
 	-- kind
 	kind(self.project_type)
@@ -581,7 +585,7 @@ function Project:HandlePrecompiledHeader()
 	end
 
 	if (self.pch_source) then
-		pchsource(path.join(self.project_path,self.pch_source))
+		pchsource(path.join(".." , self.project_path, self.pch_source))
 	end
 end
 

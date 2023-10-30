@@ -17,6 +17,7 @@ public:
 		if (event.action == GLFW_PRESS)
 		{
 			last_scancode = event.scancode;
+			last_keycode  = event.keycode;
 			last_key_pressed = chaos::KeyboardLayout::GetKnownLayout(chaos::KeyboardLayoutType::AZERTY).GetInformationFromScancode(event.scancode);
 		}
 
@@ -81,19 +82,28 @@ public:
 			ImGui_DisplayConversion(vk2, chaos::KeyboardLayoutType::QWERTY);
 			ImGui::Separator();
 
+			if (last_keycode != -1)
+			{
+				chaos::Key k = chaos::Key(chaos::KeyboardButton(last_keycode));
+				ImGui::Text("KEYCODE: [0x%x]  [%s]", last_keycode, k.GetName());
+			}
+
+
 			if (last_key_pressed)
 			{
 				ImGui::Text("SCANCODE: [0x%x]", last_key_pressed->scancode);
 				ImGui::Text("VK:       [0x%x]", last_key_pressed->vk);
 				ImGui::Text("NAME:     [%s]", last_key_pressed->name.c_str());
+		
 			}
 			else if (last_scancode > 0)
 			{
 				ImVec4 new_color = { 1.0f, 0.0f, 0.0f, 1.0f };
 				ImGui::PushStyleColor(ImGuiCol_Text, new_color);
-				ImGui::Text("SCANCODE: [0x%x]", last_scancode);
+				ImGui::Text("SCANCODE: [0x%x]", last_scancode); 
 				ImGui::Text("VK:       [0x%x]", ::MapVirtualKeyA(last_scancode & 0xFF, MAPVK_VSC_TO_VK));
 				ImGui::Text("NAME:     [UNKNOWN] !!!");
+
 				ImGui::PopStyleColor(1);
 			}
 		});
@@ -104,6 +114,8 @@ protected:
 	chaos::ScancodeInformation const* last_key_pressed = nullptr;
 
 	int last_scancode = -1;
+
+	int last_keycode = -1;
 };
 
 
@@ -182,9 +194,6 @@ chaos::Key KeyFromName(char const* name)
 
 }
 #endif
-
-
-#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 
 int main(int argc, char ** argv, char ** env)
 {

@@ -18,7 +18,7 @@ namespace chaos
 
 	void ConsoleWindow::OnDrawWindowImGuiMenu()
 	{
-		// Window::OnDrawImGuiMenu();
+		// Window::OnDrawWindowImGuiMenu();
 		// do not call super so that the application items are not inserted here
 	}
 

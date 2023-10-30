@@ -35,7 +35,7 @@ namespace chaos
 			if (menu_bar)
 				window_flags |= AddWindowMainMenuFlag(ImGuiDrawMenuMode::ImGuiWindow , window_flags);
 
-			ImGui::SetNextWindowPos({ 0, 0 });
+			ImGui::SetNextWindowPos({ ImGui::GetMainViewport()->WorkPos.x, ImGui::GetMainViewport()->WorkPos.y });
 			ImGui::SetNextWindowSize({ ImGui::GetMainViewport()->Size.x, ImGui::GetMainViewport()->Size.y });
 			if (ImGui::Begin(name, nullptr, window_flags))
 			{

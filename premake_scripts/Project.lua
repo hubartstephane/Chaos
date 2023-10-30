@@ -424,8 +424,10 @@ function Project:AddProjectToSolution()
 	location(proj_location)
 	
 	-- put in solution src and headers into simple virtual directories
-	vpaths { ["Headers"] = {"**.h", "**.hpp"} }
-	vpaths { ["Sources"] = {"**.c", "**.cpp"} }	
+	-- for '..' not really sure of what is happening
+	-- this is probably because premake5.lua is now in a sub directory and not directly a the root dir of the project
+	vpaths { ["Headers"] = {"../**.h", "../**.hpp"} }
+	vpaths { ["Sources"] = {"../**.c", "../**.cpp"} }	
 
 	-- kind
 	kind(self.project_type)

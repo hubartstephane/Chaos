@@ -28,84 +28,28 @@ public:
 	{
 		ImGuiDrawableInterface::FullscreenWindow("conversion", false, [this]()
 		{
-			auto ImGui_DisplayConversion = [](int src_vk, chaos::KeyboardLayoutType src_layout)
+			auto ImGui_DisplayConversion = [](chaos::KeyboardButton qwerty_button)
 			{
-				chaos::ScancodeInformation const* src_entry = nullptr;
+				chaos::Key src = qwerty_button;
+				chaos::Key dst = chaos::KeyboardLayoutConversion::ConvertToCurrentLayout(qwerty_button);
 
-				int new_vk = chaos::KeyboardLayoutConversion::ConvertToCurrentLayoutConvertVirtualKeyToCurrentLayout(src_vk, src_layout, &src_entry);
-
-				int new_scancode = ::MapVirtualKey(new_vk, MAPVK_VK_TO_VSC);
-				std::string name = chaos::KeyboardLayout::ScancodeToName(new_scancode);
-
-				char const* layout_name = (src_layout == chaos::KeyboardLayoutType::AZERTY) ? "azerty" : "qwerty";
-
-				char const * src_entry_name = (src_entry != nullptr) ? src_entry->name.c_str() : "unknown";
-
-				ImGui::Text("%s (%s) -> %s (current)", src_entry_name, layout_name, name.c_str());
+				ImGui::Text("%s (qwerty) -> %s (current)", src.GetName(), dst.GetName());
 			};
 
-			auto xxx = glfwGetKeyScancode(GLFW_KEY_A);
-
-			auto ppp = ::MapVirtualKey('A', MAPVK_VK_TO_VSC);
-
-			ImGui_DisplayConversion('A', chaos::KeyboardLayoutType::AZERTY);
-			ImGui_DisplayConversion('A', chaos::KeyboardLayoutType::QWERTY);
-			ImGui::Separator();
-
-			ImGui_DisplayConversion('Q', chaos::KeyboardLayoutType::AZERTY);
-			ImGui_DisplayConversion('Q', chaos::KeyboardLayoutType::QWERTY);
-			ImGui::Separator();
-
-			ImGui_DisplayConversion('M', chaos::KeyboardLayoutType::AZERTY);
-			ImGui_DisplayConversion('M', chaos::KeyboardLayoutType::QWERTY);
-			ImGui::Separator();
-
-			ImGui_DisplayConversion(VK_SPACE, chaos::KeyboardLayoutType::AZERTY);
-			ImGui_DisplayConversion(VK_SPACE, chaos::KeyboardLayoutType::QWERTY);
-			ImGui::Separator();
-
-			ImGui_DisplayConversion(VK_SHIFT, chaos::KeyboardLayoutType::AZERTY);
-			ImGui_DisplayConversion(VK_SHIFT, chaos::KeyboardLayoutType::QWERTY);
-			ImGui::Separator();
-
-			ImGui_DisplayConversion('0', chaos::KeyboardLayoutType::AZERTY);
-			ImGui_DisplayConversion('0', chaos::KeyboardLayoutType::QWERTY);
-			ImGui::Separator();
-
-			int vk1 = ::VkKeyScan('*') & 0xFF;
-			ImGui_DisplayConversion(vk1, chaos::KeyboardLayoutType::AZERTY);
-			ImGui_DisplayConversion(vk1, chaos::KeyboardLayoutType::QWERTY);
-			ImGui::Separator();
-
-			int vk2 = ::VkKeyScan('$') & 0xFF;
-			ImGui_DisplayConversion(vk2, chaos::KeyboardLayoutType::AZERTY);
-			ImGui_DisplayConversion(vk2, chaos::KeyboardLayoutType::QWERTY);
-			ImGui::Separator();
-
-			if (last_keycode != -1)
-			{
-				chaos::Key k = chaos::Key(chaos::KeyboardButton(last_keycode));
-				ImGui::Text("KEYCODE: [0x%x]  [%s]", last_keycode, k.GetName());
-			}
-
-
-			if (last_key_pressed)
-			{
-				ImGui::Text("SCANCODE: [0x%x]", last_key_pressed->scancode);
-				ImGui::Text("VK:       [0x%x]", last_key_pressed->vk);
-				ImGui::Text("NAME:     [%s]", last_key_pressed->name.c_str());
-		
-			}
-			else if (last_scancode > 0)
-			{
-				ImVec4 new_color = { 1.0f, 0.0f, 0.0f, 1.0f };
-				ImGui::PushStyleColor(ImGuiCol_Text, new_color);
-				ImGui::Text("SCANCODE: [0x%x]", last_scancode); 
-				ImGui::Text("VK:       [0x%x]", ::MapVirtualKeyA(last_scancode & 0xFF, MAPVK_VSC_TO_VK));
-				ImGui::Text("NAME:     [UNKNOWN] !!!");
-
-				ImGui::PopStyleColor(1);
-			}
+			ImGui_DisplayConversion(chaos::KeyboardButton::Q);
+			ImGui_DisplayConversion(chaos::KeyboardButton::W);
+			ImGui_DisplayConversion(chaos::KeyboardButton::E);
+			ImGui_DisplayConversion(chaos::KeyboardButton::R);
+			ImGui_DisplayConversion(chaos::KeyboardButton::T);
+			ImGui_DisplayConversion(chaos::KeyboardButton::Y);
+			ImGui_DisplayConversion(chaos::KeyboardButton::A);
+			ImGui_DisplayConversion(chaos::KeyboardButton::Z);
+			ImGui_DisplayConversion(chaos::KeyboardButton::COMMA);
+			ImGui_DisplayConversion(chaos::KeyboardButton::SPACE);
+			ImGui_DisplayConversion(chaos::KeyboardButton::NUM_1);
+			ImGui_DisplayConversion(chaos::KeyboardButton::KP_1);
+			ImGui_DisplayConversion(chaos::KeyboardButton::UP);
+			ImGui_DisplayConversion(chaos::KeyboardButton::PAGE_UP);
 		});
 	}
 

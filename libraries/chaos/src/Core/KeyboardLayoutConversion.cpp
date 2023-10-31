@@ -6,12 +6,13 @@ namespace chaos
 {
 	std::vector<GLFWKeyScancodePair> const& KeyboardLayoutConversion::GetQwertyGLFWKeyScancodeTable()
 	{
-		std::optional<std::vector<GLFWKeyScancodePair>> cached_table;
+		static std::optional<std::vector<GLFWKeyScancodePair>> cached_table;
+
 		if (!cached_table.has_value())
 		{
 			cached_table = std::vector<GLFWKeyScancodePair>();
 
-			std::vector<GLFWKeyScancodePair> & result = cached_table.value();
+			std::vector<GLFWKeyScancodePair> & table = cached_table.value();
 
 			for (int keycode = 0; keycode < GLFW_KEY_LAST; ++keycode)
 			{
@@ -21,7 +22,7 @@ namespace chaos
 					GLFWKeyScancodePair info;
 					info.keycode = keycode;
 					info.scancode = (unsigned int)scancode; // while WINDOWS scancodes are UINT, use the same type here
-					result.push_back(info);
+					table.push_back(info);
 				}
 			}
 		}
@@ -72,7 +73,7 @@ namespace chaos
 
 #endif // #if _WIN32 || _WIN64
 
-		return src;
+		return src; // valid for non-keyboard keys, non-windows code, and when conversion has failed
 	}
 
 }; // namespace chaos

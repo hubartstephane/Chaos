@@ -78,7 +78,6 @@ public:
 			HBRUSH hBrush = CreateSolidBrush(color);
 			if (hBrush != NULL)
 			{
-
 				float division_size = (float)(ps.rcPaint.bottom - ps.rcPaint.top) / (float)division;
 
 				float top    = division_size * (float)i;

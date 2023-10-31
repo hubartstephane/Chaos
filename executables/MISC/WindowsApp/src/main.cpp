@@ -4,6 +4,18 @@ class MyWindow : public chaos::SimpleWin32Window
 {
 public:
 
+	virtual LRESULT OnKeyDown(int keycode, int scancode) override
+	{
+
+		return 0;
+	}
+
+	virtual LRESULT OnKeyUp(int keycode, int scancode) override
+	{
+
+		return 0;
+	}
+
 	virtual LRESULT OnLButtonDown(int x, int y, int buttonStates)
 	{
 		//::ShowWindow(GetHwnd(), SW_HIDE);
@@ -88,7 +100,7 @@ class MyApplication : public chaos::Application
 {
 protected:
 
-	virtual bool Main() override
+	virtual int Main() override
 	{
 		chaos::SimpleWin32CreateParam create_params;
 		create_params.x         = 10;
@@ -100,7 +112,8 @@ protected:
 
 		chaos::SimpleWin32Class<MyWindow> c("class1");
 		c.CreateWindowHinstance(NULL, "my_window", create_params);
-		chaos::SimpleWin32Window::SimpleMessageLoop();		return true;
+		chaos::SimpleWin32Window::SimpleMessageLoop();
+		return 0;
 	}
 };
 

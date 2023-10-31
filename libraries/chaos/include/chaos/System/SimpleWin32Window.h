@@ -51,6 +51,11 @@ namespace chaos
 		virtual LRESULT OnMButtonUp(int x, int y, int buttonStates);
 		/** some mouse events MOUSE_WHEEL */
 		virtual LRESULT OnMouseWheel(int x, int y, int wheel_value, int buttonStates);
+		/** some key event KEYDOWN */
+		virtual LRESULT OnKeyDown(int keycode, int scancode);
+		/** some key event KEYUP */
+		virtual LRESULT OnKeyUp(int keycode, int scancode);
+
 		/** the rendering method */
 		virtual LRESULT OnPaint();
 		/** called whenever the background is to be erased */

@@ -82,6 +82,16 @@ namespace chaos
 		return -1;
 	}
 
+	LRESULT SimpleWin32Window::OnKeyDown(int keycode, int scancode)
+	{
+		return 0;
+	}
+
+	LRESULT SimpleWin32Window::OnKeyUp(int keycode, int scancode)
+	{
+		return 0;
+	}
+
 	LRESULT SimpleWin32Window::OnEraseBackground(HDC hDC)
 	{
 		return 0;
@@ -180,6 +190,19 @@ namespace chaos
 		case WM_DESTROY:
 			PostQuitMessage(0);
 			return 0;
+
+		case WM_KEYUP:
+		case WM_KEYDOWN:
+		{
+			int key = int(wParam);
+			int scancode = (HIWORD(lParam) & (KF_EXTENDED | 0xff));
+
+			if (uMsg == WM_KEYDOWN)
+				return OnKeyDown(key, scancode);
+			if (uMsg == WM_KEYUP)
+				return OnKeyUp(key, scancode);
+			return 0;
+		}
 
 		default:
 			message_handled = FALSE;

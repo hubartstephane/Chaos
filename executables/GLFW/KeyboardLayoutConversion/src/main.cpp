@@ -158,7 +158,7 @@ unsigned int GetVirtualKeyFromName(char const* name)
 	{
 		chaos::KeyboardLayout const& layout = chaos::KeyboardLayout::GetKnownLayout(type);
 
-		for (chaos::ScancodeInformation const& scancode_info : layout.key_info)
+		for (chaos::ScancodeInformation const& scancode_info : layout.GetScancodeTable())
 			if (chaos::StringTools::Stricmp(name, scancode_info.name) == 0)
 				return scancode_info.vk;
 	}
@@ -195,10 +195,57 @@ chaos::Key KeyFromName(char const* name)
 }
 #endif
 
+#if 0
+
+Key = GLFW_KEY_A -> on veut la touche GLFW_KEY_A, sans conversions
+
+Key = GLFW_KEY_A + AZERTY -> on veut la touche qui est a la meme position que GLFW_KEY_A sur le clavier Azerty
+
+Key = 'Left Shift' -> on veut la touche qui s'appelle "Left Shift" sur le layout courant
+
+Key = 'Left Shift' + AZERTY -> on veut la touche qui est a la meme position que la touche qui s'appelle "Left Shift" sur le clavier Azerty
+#endif
+
+
+// 1/on veut la touche par position (ex: meme position que le 'A' sur AZERTY)
+//
+// On cherche le scancode sur la table de reference
+//
+
+
+// 2/on veut une touche par nom (ex: on veut la touche 'M' sur le clavier courant)
+//
+//   on cherche sur les tables AZERTY/QWERTY 'M' -> on obtient un scancode et surtout un VK
+//   on prends le layout courant et on cherche le VK -> on obtient le scancode correspondant
+// 
+
+// 3/on veut la touche par identifiant GLFW sur AZERTY
+//
+// GLFW (qwerty) -> scancode (qwerty)
+//
+
+
+chaos::Key GetKeyFromGLFW(int glfw_keycode)
+{
+	return {};
+}
+
+chaos::Key GetKeyFromName(char const* name)
+{
+	return {};
+}
+
+chaos::Key GetKeyFromScancode(unsigned int scancode)
+{
+	return {};
+}
+
+
+
 int main(int argc, char ** argv, char ** env)
 {
 
-
+	VK_ADD;
 
 #if 0
 

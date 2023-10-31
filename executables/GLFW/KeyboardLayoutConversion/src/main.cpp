@@ -28,10 +28,10 @@ public:
 	{
 		ImGuiDrawableInterface::FullscreenWindow("conversion", false, [this]()
 		{
-			auto ImGui_DisplayConversion = [](chaos::KeyboardButton qwerty_button)
+			auto ImGui_DisplayConversion = [](chaos::Key qwerty_key)
 			{
-				chaos::Key src = qwerty_button;
-				chaos::Key dst = chaos::KeyboardLayoutConversion::ConvertToCurrentLayout(qwerty_button);
+				chaos::Key src = qwerty_key;
+				chaos::Key dst = chaos::KeyboardLayoutConversion::ConvertToCurrentLayout(qwerty_key);
 
 				ImGui::Text("%s (qwerty) -> %s (current)", src.GetName(), dst.GetName());
 			};
@@ -50,6 +50,11 @@ public:
 			ImGui_DisplayConversion(chaos::KeyboardButton::KP_1);
 			ImGui_DisplayConversion(chaos::KeyboardButton::UP);
 			ImGui_DisplayConversion(chaos::KeyboardButton::PAGE_UP);
+
+			ImGui_DisplayConversion(chaos::Key("SEMICOLON"));
+			ImGui_DisplayConversion(chaos::Key("A"));
+			ImGui_DisplayConversion(chaos::Key("Q"));
+			ImGui_DisplayConversion(chaos::Key("MOUSE_BUTTON_1"));
 		});
 	}
 

@@ -396,6 +396,23 @@ namespace chaos
 	{
 		if (std::ofstream file = std::ofstream(filename, std::ios_base::trunc))
 		{
+
+
+			for (int keycode = 0; keycode <= 0xFF; ++keycode)
+			{
+				unsigned int scancode = ::MapVirtualKey(keycode, MAPVK_VK_TO_VSC);
+
+				file << " keycode  = 0x" << std::hex << std::uppercase << std::setw(3) << std::setfill('0') << keycode;
+				file << "        ";
+				file << " scancode = 0x" << std::hex << std::uppercase << std::setw(3) << std::setfill('0') << scancode;
+				file << std::endl;
+			}
+
+
+
+
+
+
 			file << "KeyboardLayout const " << table_name << " = \n{{\n"; // << ;
 
 			bool first_line = true;

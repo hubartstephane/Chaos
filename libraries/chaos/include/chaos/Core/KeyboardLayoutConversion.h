@@ -3,8 +3,20 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	class KeyboardLayoutConversion;
+	class GLFWKeyScancodePair;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+	// GLFWKeyScancodePair: describe a relation between a GLFW keycode and a scancode. This is only valid for QWERTY while it is HARD-CODED inside GLFW
+	class GLFWKeyScancodePair
+	{
+	public:
+
+		/** the GLFW keycode */
+		int keycode = 0;
+		/** the corresponding scancode */
+		unsigned int scancode = 0;
+	};
 
 	/**
 	 * KeyboardLayoutConversion: convert key and scancode from/to qwerty/azerty and current layout
@@ -14,13 +26,13 @@ namespace chaos
 	{
 	public:
 
-		/** convert a virtual key, may return the entry that has been used for the conversion */
-		static unsigned int ConvertVirtualKeyToCurrentLayout(unsigned int vk, KeyboardLayoutType layout, ScancodeInformation const ** result_pair);
+		/** convert input key into the key at the same position */
+		static Key ConvertToCurrentLayout(Key src);
 
-		/** convert the scancode into GLFW keycode (QWERTY) */
-		static int QwertyScancodeToGLFWKeycode(unsigned int scancode);
-		/** convert the scancode into GLFW keycode (QWERTY) */
-		static unsigned int QwertyGLFWKeycodeToScancode(int glfw_keycode);
+	protected:
+
+		/** get the GLFWKey/Scancode qwerty table */
+		static std::vector<GLFWKeyScancodePair> const& GetQwertyGLFWKeyScancodeTable();
 	};
 
 #endif

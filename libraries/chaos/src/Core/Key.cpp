@@ -4,12 +4,9 @@
 
 namespace chaos
 {
-
-#define CHAOS_KEYBOARD_DEF(KEY) std::make_pair(KeyboardButton::KEY, #KEY)
-
-	static std::vector<std::pair<Key, char const *>> const key_map =
+	// mouse entries
+	static std::vector<std::pair<MouseButton, std::string>> const mouse_key_to_name_map =
 	{
-		// mouse entries
 		std::make_pair(MouseButton::BUTTON_1, "MOUSE_BUTTON_1"),
 		std::make_pair(MouseButton::BUTTON_2, "MOUSE_BUTTON_2"),
 		std::make_pair(MouseButton::BUTTON_3, "MOUSE_BUTTON_3"),
@@ -18,7 +15,11 @@ namespace chaos
 		std::make_pair(MouseButton::BUTTON_6, "MOUSE_BUTTON_6"),
 		std::make_pair(MouseButton::BUTTON_7, "MOUSE_BUTTON_7"),
 		std::make_pair(MouseButton::BUTTON_8, "MOUSE_BUTTON_8"),
-		// gamepad button
+	};
+
+	// gamepad button
+	static std::vector<std::pair<GamepadButton, std::string>> const gamepad_key_to_name_map =
+	{
 		std::make_pair(GamepadButton::A, "GAMEPAD_A"),
 		std::make_pair(GamepadButton::B, "GAMEPAD_B"),
 		std::make_pair(GamepadButton::X, "GAMEPAD_X"),
@@ -36,7 +37,14 @@ namespace chaos
 		std::make_pair(GamepadButton::DPAD_LEFT, "GAMEPAD_DPAD_LEFT"),
 		std::make_pair(GamepadButton::LEFT_TRIGGER, "GAMEPAD_LEFT_TRIGGER"),
 		std::make_pair(GamepadButton::RIGHT_TRIGGER, "GAMEPAD_RIGHT_TRIGGER"),
-		// keyboard entries
+	};
+
+	// keyboard entries
+
+	#define CHAOS_KEYBOARD_DEF(KEY) std::make_pair(KeyboardButton::KEY, #KEY)
+
+	static std::vector<std::pair<KeyboardButton, std::string>> const keyboard_key_to_name_map =
+	{
 		CHAOS_KEYBOARD_DEF(SPACE),
 		CHAOS_KEYBOARD_DEF(APOSTROPHE),
 		CHAOS_KEYBOARD_DEF(COMMA),
@@ -168,41 +176,16 @@ namespace chaos
 		if (StringTools::IsEmpty(name))
 			return;
 
-
-
-
-
-
-
-#if 0
-		// search whether it is a keyboard key
-
-		KeyboardLayout const& information = KeyboardLayout::GetKnownLayout(layout);
-
-		for (ScancodeInformation const& info : information.key_info)
-		{
-			if (StringTools::Stricmp(info.name, name) == 0)
-			{
-				int k = KeyboardLayoutConversion::ScancodeToGLFWKey(info.scancode);
-				if (k != -1)
-				{
-					type = KeyType::KEYBOARD;
-					keyboard_button = (KeyboardButton)k;
-					return;
-				}
-			}
-		}
-
 		// search by name
-		for (auto const& entry : key_map)
+		for (auto const& entry : keyboard_key_to_name_map)
 		{
 			if (StringTools::Stricmp(name, entry.second) == 0)
 			{
-				*this = entry.first;
+				type = KeyType::KEYBOARD;
+				keyboard_button = entry.first;
 				break;
 			}
 		}
-#endif
 	}
 
 	Key::Key() :
@@ -248,9 +231,25 @@ namespace chaos
 
 	char const* Key::GetName() const
 	{
-		for (auto const& entry : key_map)
-			if (*this == entry.first)
-				return entry.second;
+		auto search_in_map = [](auto k, auto const & key_map) -> char const*
+		{
+			for (auto const& entry : key_map)
+				if (k == entry.first)
+					return entry.second.c_str();
+			return nullptr;
+		};
+
+		switch (type)
+		{
+		case KeyType::KEYBOARD:
+			return search_in_map(keyboard_button, keyboard_key_to_name_map);
+		case KeyType::GAMEPAD:
+			return search_in_map(gamepad_button, gamepad_key_to_name_map);
+		case KeyType::MOUSE:
+			return search_in_map(mouse_button, mouse_key_to_name_map);
+		default:
+			assert(0);
+		}
 		return nullptr;
 	}
 

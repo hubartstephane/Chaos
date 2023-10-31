@@ -89,7 +89,7 @@ namespace chaos
 		/** copy constructor */
 		KeyboardLayout(KeyboardLayout const &) = default;
 		/** move constructor */
-		KeyboardLayout(KeyboardLayout&& src) : key_info(std::move(src.key_info)) {}
+		KeyboardLayout(KeyboardLayout&& src) noexcept : key_info(std::move(src.key_info)) {}
 		/** constructor with initializer */
 		KeyboardLayout(std::initializer_list<ScancodeInformation> const& initializer) : key_info(initializer) {}
 

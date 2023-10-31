@@ -14,7 +14,7 @@ namespace chaos
 		value = in_value;
 	}
 
-	void ButtonState::UpdateSameValueTimer(float delta_time)
+	void ButtonState::UpdateTimerAccumulation(float delta_time)
 	{
 		if (value != previous_value)
 			same_value_timer = 0.0f;
@@ -61,10 +61,11 @@ namespace chaos
 	void AxisState::SetValue(float in_raw_value, float dead_zone)
 	{
 		previous_value = value;
+		value = 0.0f;
 
 		// apply the dead zone
 		if (in_raw_value < dead_zone && in_raw_value > -dead_zone)
-			in_raw_value = 0.0f;
+			return;
 
 		// clamp the raw value to -1 .. +1
 		in_raw_value = std::clamp(in_raw_value, -1.0f, +1.0f);
@@ -74,17 +75,13 @@ namespace chaos
 		min_value = std::min(min_value, in_raw_value);
 
 		// apply dead zone and normalization
-		value = 0.0f;
-		if (in_raw_value > dead_zone || in_raw_value < -dead_zone)
-		{
-			if (in_raw_value > 0.0f)
-				value = (in_raw_value - dead_zone) / (max_value - dead_zone);
-			else
-				value = -(in_raw_value + dead_zone) / (min_value + dead_zone);
-		}
+		if (in_raw_value > 0.0f)
+			value = (in_raw_value - dead_zone) / (max_value - dead_zone);
+		else
+			value = -(in_raw_value + dead_zone) / (min_value + dead_zone);
 	}
 
-	void AxisState::UpdateSameValueTimer(float delta_time)
+	void AxisState::UpdateTimerAccumulation(float delta_time)
 	{
 		// update timer
 		// while floats are never equals (a small stick inclinaison change is detected immedialty),

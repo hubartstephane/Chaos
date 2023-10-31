@@ -53,9 +53,9 @@ namespace chaos
 	void KeyboardState::UpdateKeyStates(float delta_time)
 	{
 		for (ButtonState& button : keyboard_state)
-			button.UpdateSameValueTimer(delta_time);
+			button.UpdateTimerAccumulation(delta_time);
 		for (ButtonState& button : mouse_button_state)
-			button.UpdateSameValueTimer(delta_time);
+			button.UpdateTimerAccumulation(delta_time);
 	}
 
 }; // namespace chaos

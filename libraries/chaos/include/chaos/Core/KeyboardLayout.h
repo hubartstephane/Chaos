@@ -84,6 +84,15 @@ namespace chaos
 	{
 	public:
 
+		/** default constructor */
+		KeyboardLayout() = default;
+		/** copy constructor */
+		KeyboardLayout(KeyboardLayout const &) = default;
+		/** move constructor */
+		KeyboardLayout(KeyboardLayout&& src) : key_info(std::move(src.key_info)) {}
+		/** constructor with initializer */
+		KeyboardLayout(std::initializer_list<ScancodeInformation> const& initializer) : key_info(initializer) {}
+
 		/** collect the current keyboard layout information */
 		static KeyboardLayout Collect(bool capture_names_from_known_layout = true);
 		/** get the information for a known layout */
@@ -95,6 +104,16 @@ namespace chaos
 		ScancodeInformation const* GetInformationFromScancode(unsigned int scancode) const;
 		/** get information from the virtual key */
 		ScancodeInformation const* GetInformationFromVK(unsigned int vk) const;
+		/** get information from the name */
+		ScancodeInformation const* GetInformationFromName(char const* name) const;
+
+		/** get the internal table */
+		std::vector<ScancodeInformation> const & GetScancodeTable() const { return key_info; }
+
+		/** copy operator */
+		KeyboardLayout& operator = (KeyboardLayout const& src) = default;
+		/** move operator */
+		KeyboardLayout& operator = (KeyboardLayout&& src) = default;
 
 		/** get the cached current layout */
 		static KeyboardLayout const& GetCurrentLayout();
@@ -105,8 +124,6 @@ namespace chaos
 
 		/** returns a reference to the cached layout */
 		static std::optional<KeyboardLayout>& GetCachedLayout();
-
-	public:
 
 		/** the informations for each keys */
 		std::vector<ScancodeInformation> key_info;

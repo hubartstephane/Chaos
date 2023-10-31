@@ -5,10 +5,10 @@
 namespace chaos
 {
 	// this is the information obtained by running KeyboardLayout::Collect(...) with an azerty keyboard
-	// the strings are modified by hand so that we can easily search in the table
+	// the strings are modified by hand so that we can easily search in the table (Azerty and Qwerty names match as much as possible)
 	KeyboardLayout const AzertyKeyboardLayout =
 	{ {
-	  {0x1, 0x1b, "ECHAP"},
+	  {0x1, 0x1b, "Esc"},
 	  {0x2, 0x31, "&"},
 	  {0x3, 0x32, ""},
 	  {0x4, 0x33, "\""},
@@ -21,8 +21,8 @@ namespace chaos
 	  {0xb, 0x30, ""},
 	  {0xc, 0xdb, ")"},
 	  {0xd, 0xbb, "="},
-	  {0xe, 0x08, "RET.ARR"},
-	  {0xf, 0x09, "TAB"},
+	  {0xe, 0x08, "Backspace"},
+	  {0xf, 0x09, "Tab"},
 	  {0x10, 0x41, "A"},
 	  {0x11, 0x5a, "Z"},
 	  {0x12, 0x45, "E"},
@@ -33,10 +33,10 @@ namespace chaos
 	  {0x17, 0x49, "I"},
 	  {0x18, 0x4f, "O"},
 	  {0x19, 0x50, "P"},
-	  {0x1a, 0xdd, "ACCENT CIRCONFLEXE"},
+	  {0x1a, 0xdd, "^"}, // ACCENT CIRCONFLEXE
 	  {0x1b, 0xba, "$"},
-	  {0x1c, 0x0d, "ENTREE"},
-	  {0x1d, 0x11, "CTRL"},
+	  {0x1c, 0x0d, "Enter"},
+	  {0x1d, 0x11, "Ctrl"},
 	  {0x1e, 0x51, "Q"},
 	  {0x1f, 0x53, "S"},
 	  {0x20, 0x44, "D"},
@@ -49,7 +49,7 @@ namespace chaos
 	  {0x27, 0x4d, "M"},
 	  {0x28, 0xc0, ""},
 	  {0x29, 0xde, ""},
-	  {0x2a, 0x10, "MAJ"},
+	  {0x2a, 0x10, "Shift"},
 	  {0x2b, 0xdc, "*"},
 	  {0x2c, 0x57, "W"},
 	  {0x2d, 0x58, "X"},
@@ -61,11 +61,11 @@ namespace chaos
 	  {0x33, 0xbe, ";"},
 	  {0x34, 0xbf, ":"},
 	  {0x35, 0xdf, "!"},
-	  {0x36, 0x10, "MAJ DROITE"},
-	  {0x37, 0x6a, "* (PAVE NUM.)"},
-	  {0x38, 0x12, "ALT"},
-	  {0x39, 0x20, "ESPACE"},
-	  {0x3a, 0x14, "VERR.MAJ"},
+	  {0x36, 0x10, "Right Shift"},
+	  {0x37, 0x6a, "Num *"},
+	  {0x38, 0x12, "Alt"},
+	  {0x39, 0x20, "Space"},
+	  {0x3a, 0x14, "Caps Lock"},
 	  {0x3b, 0x70, "F1"},
 	  {0x3c, 0x71, "F2"},
 	  {0x3d, 0x72, "F3"},
@@ -77,20 +77,20 @@ namespace chaos
 	  {0x43, 0x78, "F9"},
 	  {0x44, 0x79, "F10"},
 	  {0x45, 0x90, "Pause"},
-	  {0x46, 0x91, "DEFIL"},
-	  {0x47, 0x24, "7 (PAVE NUM.)"},
-	  {0x48, 0x26, "8 (PAVE NUM.)"},
-	  {0x49, 0x21, "9 (PAVE NUM.)"},
-	  {0x4a, 0x6d, "- (PAVE NUM.)"},
-	  {0x4b, 0x25, "4 (PAVE NUM.)"},
-	  {0x4c, 0x0c, "5 (PAVE NUM.)"},
-	  {0x4d, 0x27, "6 (PAVE NUM.)"},
-	  {0x4e, 0x6b, "+ (PAVE NUM.)"},
-	  {0x4f, 0x23, "1 (PAVE NUM.)"},
-	  {0x50, 0x28, "2 (PAVE NUM.)"},
-	  {0x51, 0x22, "3 (PAVE NUM.)"},
-	  {0x52, 0x2d, "0 (PAVE NUM.)"},
-	  {0x53, 0x2e, ". (PAVE NUM.)"},
+	  {0x46, 0x91, "Scroll Lock"},
+	  {0x47, 0x24, "Num 7"},
+	  {0x48, 0x26, "Num 8"},
+	  {0x49, 0x21, "Num 9"},
+	  {0x4a, 0x6d, "Num -"},
+	  {0x4b, 0x25, "Num 4"},
+	  {0x4c, 0x0c, "Num 5"},
+	  {0x4d, 0x27, "Num 6"},
+	  {0x4e, 0x6b, "Num +"},
+	  {0x4f, 0x23, "Num 1"},
+	  {0x50, 0x28, "Num 2"},
+	  {0x51, 0x22, "Num 3"},
+	  {0x52, 0x2d, "Num 0"},
+	  {0x53, 0x2e, "Num Del"},
 	  {0x54, 0x2c, ""},
 	  {0x56, 0xe2, "<"},
 	  {0x57, 0x7a, "F11"},
@@ -140,10 +140,10 @@ namespace chaos
 	  {0x117, 0x00, "I"},
 	  {0x118, 0x00, "O"},
 	  {0x119, 0x00, "P"},
-	  {0x11a, 0x00, "ACCENT CIRCONFLEXE"},
+	  {0x11a, 0x00, "^"}, // ACCENT CIRCONFLEXE
 	  {0x11b, 0x00, "$"},
-	  {0x11c, 0x00, "ENTREE (PAVE NUM.)"},
-	  {0x11d, 0x00, "CTRL DROITE"},
+	  {0x11c, 0x00, "Num Enter"},
+	  {0x11d, 0x00, "Right Ctrl"},
 	  {0x11e, 0x00, "Q"},
 	  {0x11f, 0x00, "S"},
 	  {0x120, 0x00, "D"},
@@ -164,33 +164,33 @@ namespace chaos
 	  {0x132, 0x00, ","},
 	  {0x133, 0x00, ";"},
 	  {0x134, 0x00, ":"},
-	  {0x135, 0x00, "/ (PAVE NUM.)"},
-	  {0x137, 0x00, "Impr.Ecran"},
-	  {0x138, 0x00, "ALT DROITE"},
+	  {0x135, 0x00, "Num /"},
+	  {0x137, 0x00, "Print Screen"},
+	  {0x138, 0x00, "Right Alt"},
 	  {0x139, 0x00, " "},
-	  {0x145, 0x00, "Ver.Num"},
-	  {0x146, 0x00, "ATTN"},
-	  {0x147, 0x00, "ORIGINE"},
-	  {0x148, 0x00, "HAUT"},
-	  {0x149, 0x00, "PG.PREC"},
+	  {0x145, 0x00, "Num Lock"},
+	  {0x146, 0x00, "Break"},
+	  {0x147, 0x00, "Home"},
+	  {0x148, 0x00, "Up"},
+	  {0x149, 0x00, "Page Up"},
 	  {0x14a, 0x00, "-"},
-	  {0x14b, 0x00, "GAUCHE"},
-	  {0x14d, 0x00, "DROITE"},
+	  {0x14b, 0x00, "Left"},
+	  {0x14d, 0x00, "Right"},
 	  {0x14e, 0x00, "+"},
-	  {0x14f, 0x00, "FIN"},
-	  {0x150, 0x00, "BAS"},
-	  {0x151, 0x00, "PG.SUIV"},
-	  {0x152, 0x00, "INS"},
-	  {0x153, 0x00, "SUPPR"},
+	  {0x14f, 0x00, "End"},
+	  {0x150, 0x00, "Down"},
+	  {0x151, 0x00, "Page Down"},
+	  {0x152, 0x00, "Insert"},
+	  {0x153, 0x00, "Delete"},
 	  {0x154, 0x00, "<00>"},
-	  {0x156, 0x00, "AIDE"},
-	  {0x15b, 0x00, "WINDOWS GAUCHE"},
-	  {0x15c, 0x00, "WINDOWS DROITE"},
-	  {0x15d, 0x00, "APPLICATION"}
+	  {0x156, 0x00, "Help"},
+	  {0x15b, 0x00, "Left Windows"},
+	  {0x15c, 0x00, "Right Windows"},
+	  {0x15d, 0x00, "Application"}
 	}};
 
 	// this is the information obtained by running KeyboardLayout::Collect(...) with an qwerty keyboard
-	// the strings are modified by hand so that we can easily search in the table
+	// the strings are modified by hand so that we can easily search in the table (Azerty and Qwerty names match as much as possible)
 	KeyboardLayout const QwertyKeyboardLayout =
 	{ {
 	  {0x1, 0x1b, "Esc"},
@@ -366,7 +366,7 @@ namespace chaos
 	  {0x133, 0x00, ","},
 	  {0x134, 0x00, "."},
 	  {0x135, 0x00, "Num /"},
-	  {0x137, 0x00, "Prnt Scrn"},
+	  {0x137, 0x00, "Print Screen"},
 	  {0x138, 0x00, "Right Alt"},
 	  {0x139, 0x00, " "},
 	  {0x145, 0x00, "Num Lock"},
@@ -399,7 +399,7 @@ namespace chaos
 			file << "KeyboardLayout const " << table_name << " = \n{{\n"; // << ;
 
 			bool first_line = true;
-			for (ScancodeInformation const& scancode_info : layout.key_info)
+			for (ScancodeInformation const& scancode_info : layout.GetScancodeTable())
 			{
 				if (!first_line)
 					file << ",\n";
@@ -510,6 +510,14 @@ namespace chaos
 			return AzertyKeyboardLayout;
 		assert(type == KeyboardLayoutType::QWERTY);
 		return QwertyKeyboardLayout;
+	}
+
+	ScancodeInformation const* KeyboardLayout::GetInformationFromName(char const* name) const
+	{
+		for (ScancodeInformation const& scancode_info : key_info)
+			if (StringTools::Stricmp(scancode_info.name, name) == 0)
+				return &scancode_info;
+		return nullptr;
 	}
 
 	ScancodeInformation const* KeyboardLayout::GetInformationFromScancode(unsigned int scancode) const

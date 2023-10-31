@@ -6,6 +6,25 @@ public:
 
 	virtual LRESULT OnKeyDown(int keycode, int scancode) override
 	{
+		TextToDisplay = chaos::StringTools::Printf("keycode = [0x%03x]    scancode= [0x%03x]", keycode, scancode);
+		InvalidateRect(hWnd, NULL, TRUE);
+		return 0;
+	}
+
+	virtual LRESULT OnCreate(CREATESTRUCTA* create_param)
+	{
+		hFont = CreateFont(
+			40, 0, 0, 0, 
+			FW_DONTCARE, 
+			FALSE, 
+			FALSE, 
+			FALSE, 
+			ANSI_CHARSET, 
+			OUT_DEFAULT_PRECIS, 
+			CLIP_DEFAULT_PRECIS, 
+			DEFAULT_QUALITY, 
+			DEFAULT_PITCH | FF_SWISS, 
+			"Arial");
 
 		return 0;
 	}
@@ -45,7 +64,7 @@ public:
 		PAINTSTRUCT ps;
 		HDC hdc = BeginPaint(hWnd, &ps);
 
-		int division = 100;
+		int division = 10;
 
 		for (int i = 0 ; i < division ; ++i)
 		{
@@ -73,6 +92,10 @@ public:
 			}
 		}
 
+		RECT rect;
+		GetClientRect(hWnd, &rect);
+		SelectFont(hdc, hFont);
+		DrawText(hdc, TextToDisplay.c_str(), (int)TextToDisplay.length(), &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE); // DT_VCENTER only works with DT_SINGLELINE
 
 		EndPaint(hWnd, &ps);
 		return 0;
@@ -82,6 +105,12 @@ public:
 	{
 		return 1;
 	}
+
+protected:
+
+	std::string TextToDisplay;
+
+	HFONT hFont = NULL;
 
 };
 
@@ -105,8 +134,8 @@ protected:
 		chaos::SimpleWin32CreateParam create_params;
 		create_params.x         = 10;
 		create_params.y         = 10;
-		create_params.nWidth    = 300;
-		create_params.nHeight   = 2000;
+		create_params.nWidth    = 800;
+		create_params.nHeight   = 800;
 		create_params.dwExStyle = 0;
 		//  create_params.dwStyle   = WS_POPUP;
 

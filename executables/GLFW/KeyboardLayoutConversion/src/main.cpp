@@ -32,7 +32,7 @@ public:
 			{
 				chaos::ScancodeInformation const* src_entry = nullptr;
 
-				int new_vk = chaos::KeyboardLayoutConversion::ConvertVirtualKeyToCurrentLayout(src_vk, src_layout, &src_entry);
+				int new_vk = chaos::KeyboardLayoutConversion::ConvertToCurrentLayoutConvertVirtualKeyToCurrentLayout(src_vk, src_layout, &src_entry);
 
 				int new_scancode = ::MapVirtualKey(new_vk, MAPVK_VK_TO_VSC);
 				std::string name = chaos::KeyboardLayout::ScancodeToName(new_scancode);
@@ -151,124 +151,10 @@ void GenerateKeyboardLayoutFiles()
 }
 #endif
 
-// search an Entry in the known keyboard layout for a given name
-unsigned int GetVirtualKeyFromName(char const* name)
-{
-	for (chaos::KeyboardLayoutType type : {chaos::KeyboardLayoutType::AZERTY, chaos::KeyboardLayoutType::QWERTY})
-	{
-		chaos::KeyboardLayout const& layout = chaos::KeyboardLayout::GetKnownLayout(type);
-
-		for (chaos::ScancodeInformation const& scancode_info : layout.GetScancodeTable())
-			if (chaos::StringTools::Stricmp(name, scancode_info.name) == 0)
-				return scancode_info.vk;
-	}
-	return 0;
-}
-
-unsigned int GetScancodeFromName(char const* name)
-{
-	if (unsigned int vk = GetVirtualKeyFromName(name))
-	{
-		return ::MapVirtualKey(vk, MAPVK_VK_TO_VSC);
-	}
-	return 0;
-}
-
-unsigned int GetScancodeFromGLFWKeycode(int glfw_keycode)
-{
-	if (unsigned int qwerty_scancode = chaos::KeyboardLayoutConversion::QwertyGLFWKeycodeToScancode(glfw_keycode))
-	{
-		chaos::KeyboardLayout const & layout = chaos::KeyboardLayout::GetKnownLayout(chaos::KeyboardLayoutType::QWERTY);
-
-		if (chaos::ScancodeInformation const * qwerty_scancode_info = layout.GetInformationFromScancode(qwerty_scancode))
-			return ::MapVirtualKey(qwerty_scancode_info->vk, MAPVK_VK_TO_VSC); // convert with the current layout whatever it is
-	}
-	return 0;
-}
-
-#if 0
-chaos::Key KeyFromName(char const* name)
-{
-	if (unsigned int GetScancodeFromName)
-
-
-}
-#endif
-
-#if 0
-
-Key = GLFW_KEY_A -> on veut la touche GLFW_KEY_A, sans conversions
-
-Key = GLFW_KEY_A + AZERTY -> on veut la touche qui est a la meme position que GLFW_KEY_A sur le clavier Azerty
-
-Key = 'Left Shift' -> on veut la touche qui s'appelle "Left Shift" sur le layout courant
-
-Key = 'Left Shift' + AZERTY -> on veut la touche qui est a la meme position que la touche qui s'appelle "Left Shift" sur le clavier Azerty
-#endif
-
-
-// 1/on veut la touche par position (ex: meme position que le 'A' sur AZERTY)
-//
-// On cherche le scancode sur la table de reference
-//
-
-
-// 2/on veut une touche par nom (ex: on veut la touche 'M' sur le clavier courant)
-//
-//   on cherche sur les tables AZERTY/QWERTY 'M' -> on obtient un scancode et surtout un VK
-//   on prends le layout courant et on cherche le VK -> on obtient le scancode correspondant
-// 
-
-// 3/on veut la touche par identifiant GLFW sur AZERTY
-//
-// GLFW (qwerty) -> scancode (qwerty)
-//
-
-
-chaos::Key GetKeyFromGLFW(int glfw_keycode)
-{
-	return {};
-}
-
-chaos::Key GetKeyFromName(char const* name)
-{
-	return {};
-}
-
-chaos::Key GetKeyFromScancode(unsigned int scancode)
-{
-	return {};
-}
-
-
 
 int main(int argc, char ** argv, char ** env)
 {
-
-	VK_ADD;
-
-#if 0
-
-	auto a = GetScancodeFromGLFWKeycode(GLFW_KEY_A);
-	auto q = GetScancodeFromGLFWKeycode(GLFW_KEY_Q);
-	auto y = GetScancodeFromGLFWKeycode(GLFW_KEY_Y);
-	auto z = GetScancodeFromGLFWKeycode(GLFW_KEY_Z);
-	auto m = GetScancodeFromGLFWKeycode(GLFW_KEY_M);
-	auto comma = GetScancodeFromGLFWKeycode(GLFW_KEY_COMMA);
-
-	chaos::KeyboardLayout l1 = chaos::KeyboardLayout::Collect(true);
-	chaos::KeyboardLayout l2 = chaos::KeyboardLayout::Collect(false);
-
-	chaos::DumpKeyboardLayoutToFile("bidon1.txt", "Bidon1KeyboardLayout", l1);
-	chaos::DumpKeyboardLayoutToFile("bidon2.txt", "Bidon1KeyboardLayout", l2);
-
 	//GenerateKeyboardLayoutFiles();
-	//chaos::KeyboardLayout information = chaos::KeyboardLayout::Collect();
-	//chaos::DumpKeyboardLayoutToFile("qwertz2.txt", "QwertzKeyboardLayout", information);
-	//chaos::DumpKeyboardLayoutToFile("dvorak.txt", "DvorakKeyboardLayout", information);
-
-#endif
-
 
 	chaos::WindowCreateParams create_params;
 	create_params.monitor = nullptr;

@@ -161,13 +161,13 @@ namespace chaos
 			else if (i == (size_t)GamepadAxis::LEFT_AXIS_Y || i == (size_t)GamepadAxis::RIGHT_AXIS_Y)
 				value = -value;
 			axes[i].SetValue(value, dead_zone);
-			axes[i].UpdateSameValueTimer(delta_time);
+			axes[i].UpdateTimerAccumulation(delta_time);
 		}
 
 		for (size_t i = 0 ; i < BUTTON_COUNT ; ++i)
 		{
 			buttons[i].SetValue(state.buttons[i] != 0);
-			buttons[i].UpdateSameValueTimer(delta_time);
+			buttons[i].UpdateTimerAccumulation(delta_time);
 		}
 	}
 

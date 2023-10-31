@@ -74,7 +74,7 @@ namespace chaos
 		/** update the value */
 		void SetValue(bool in_value);
 		/** update the timer accumulator */
-		void UpdateSameValueTimer(float delta_time);
+		void UpdateTimerAccumulation(float delta_time);
 
 		/** whether the button is pressed */
 		bool IsPressed(bool previous_frame = false) const;
@@ -98,7 +98,7 @@ namespace chaos
 		/** update the value */
 		void SetValue(float in_raw_value, float dead_zone);
 		/** update the timer accumulator */
-		void UpdateSameValueTimer(float delta_time);
+		void UpdateTimerAccumulation(float delta_time);
 
 	protected:
 

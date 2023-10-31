@@ -6,7 +6,10 @@ public:
 
 	virtual LRESULT OnKeyDown(int keycode, int scancode) override
 	{
-		TextToDisplay = chaos::StringTools::Printf("keycode = [0x%03x]    scancode= [0x%03x]", keycode, scancode);
+		unsigned int mapped_key = ::MapVirtualKey(scancode, MAPVK_VSC_TO_VK);
+
+		std::string name = chaos::KeyboardLayout::ScancodeToName(scancode);
+		TextToDisplay = chaos::StringTools::Printf("keycode = [0x%03x]    scancode= [0x%03x]    mapped_key= [0x%03x]     name = [%s]", keycode, scancode, mapped_key, name.c_str());
 		InvalidateRect(hWnd, NULL, TRUE);
 		return 0;
 	}
@@ -14,7 +17,7 @@ public:
 	virtual LRESULT OnCreate(CREATESTRUCTA* create_param)
 	{
 		hFont = CreateFont(
-			40, 0, 0, 0, 
+			30, 0, 0, 0, 
 			FW_DONTCARE, 
 			FALSE, 
 			FALSE, 
@@ -134,8 +137,8 @@ protected:
 		chaos::SimpleWin32CreateParam create_params;
 		create_params.x         = 10;
 		create_params.y         = 10;
-		create_params.nWidth    = 800;
-		create_params.nHeight   = 800;
+		create_params.nWidth    = 1100;
+		create_params.nHeight   = 300;
 		create_params.dwExStyle = 0;
 		//  create_params.dwStyle   = WS_POPUP;
 

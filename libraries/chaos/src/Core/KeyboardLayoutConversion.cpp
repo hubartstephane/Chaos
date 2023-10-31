@@ -30,7 +30,7 @@ namespace chaos
 	}
 
 	//
-	// GLFW ---> qwerty SCANCODE ---> current layout VK ---> qwerty scancode ---> new GLFW
+	// GLFW ---> qwerty SCANCODE ---> current layout VK (same SCANCODE) ---> qwerty scancode (same VK) ---> new GLFW
 	//
 
 	Key KeyboardLayoutConversion::ConvertToCurrentLayout(Key src)

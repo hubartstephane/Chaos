@@ -168,7 +168,7 @@ namespace chaos
 	};
 #undef CHAOS_KEYBOARD_DEF
 
-	Key::Key(char const* name, KeyboardLayoutType layout) :
+	Key::Key(char const* name) :
 		type(KeyType::UNKNOWN),
 		gamepad_button(GamepadButton::UNKNOWN) // due to union aliasing, this works fine
 	{
@@ -176,16 +176,23 @@ namespace chaos
 		if (StringTools::IsEmpty(name))
 			return;
 
-		// search by name
-		for (auto const& entry : keyboard_key_to_name_map)
+		auto search_in_map = [this](KeyType key_type, auto const & key_map, char const * name) -> bool
 		{
-			if (StringTools::Stricmp(name, entry.second) == 0)
+			for (auto const& entry : key_map)
 			{
-				type = KeyType::KEYBOARD;
-				keyboard_button = entry.first;
-				break;
+				if (StringTools::Stricmp(name, entry.second) == 0)
+				{
+					type = key_type;
+					keyboard_button = KeyboardButton(entry.first); // works for all cases
+					return true;
+				}
 			}
-		}
+			return false;
+		};
+
+		if (!search_in_map(KeyType::KEYBOARD, keyboard_key_to_name_map, name))
+			if (!search_in_map(KeyType::GAMEPAD, gamepad_key_to_name_map, name))
+				search_in_map(KeyType::MOUSE, mouse_key_to_name_map, name);
 	}
 
 	Key::Key() :
@@ -247,8 +254,6 @@ namespace chaos
 			return search_in_map(gamepad_button, gamepad_key_to_name_map);
 		case KeyType::MOUSE:
 			return search_in_map(mouse_button, mouse_key_to_name_map);
-		default:
-			assert(0);
 		}
 		return nullptr;
 	}

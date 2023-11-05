@@ -26,6 +26,11 @@ namespace chaos
 	{
 	public:
 
+		/** convert a key by position */
+		static Key ConvertKey(Key src, KeyboardLayoutType src_layout, KeyboardLayoutType dst_layout);
+		/** convert VK from one layout to another */
+		static unsigned int ConvertVK(unsigned int vk, KeyboardLayoutType src_layout = KeyboardLayoutType::QWERTY, KeyboardLayoutType dst_layout = KeyboardLayoutType::CURRENT);
+
 		/** convert input key into the key at the same position */
 		static Key ConvertToCurrentLayout(Key src);
 

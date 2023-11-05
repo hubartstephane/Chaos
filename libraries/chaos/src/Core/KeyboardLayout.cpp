@@ -390,6 +390,14 @@ namespace chaos
 	  {0x15d, 0x00, "Application"}
 	}};
 
+	static std::vector<std::pair<KeyboardLayoutType, char const*>> const keyboard_layout_map = {
+		{ KeyboardLayoutType::AZERTY, "azerty" }, //default
+		{ KeyboardLayoutType::QWERTY, "qwerty" },
+		{ KeyboardLayoutType::CURRENT, "current" }
+	};
+
+	CHAOS_IMPLEMENT_ENUM_METHOD(KeyboardLayoutType, keyboard_layout_map);
+
 #if _DEBUG
 
 	bool DumpKeyboardLayoutToFile(char const* filename, char const* table_name, KeyboardLayout const& layout)
@@ -525,7 +533,7 @@ namespace chaos
 	{
 		if (type == KeyboardLayoutType::AZERTY)
 			return AzertyKeyboardLayout;
-		if (type == KeyboardLayoutType::QWERTY);
+		if (type == KeyboardLayoutType::QWERTY)
 			return QwertyKeyboardLayout;
 		assert(type == KeyboardLayoutType::CURRENT);
 		return GetCurrentLayout();

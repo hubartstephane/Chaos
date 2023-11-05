@@ -61,6 +61,8 @@ namespace chaos
 		CURRENT
 	};
 
+	CHAOS_DECLARE_ENUM_METHOD(KeyboardLayoutType);
+
 	/**
 	 * ScancodeInformation: information relation between scancode and virtual key
 	 */

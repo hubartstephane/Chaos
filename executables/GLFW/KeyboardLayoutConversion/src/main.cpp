@@ -28,12 +28,16 @@ public:
 	{
 		ImGuiDrawableInterface::FullscreenWindow("conversion", false, [this]()
 		{
-			auto ImGui_DisplayConversion = [](chaos::Key qwerty_key)
+			auto ImGui_DisplayConversion = [](chaos::Key src)
 			{
-				chaos::Key src = qwerty_key;
-				chaos::Key dst = chaos::KeyboardLayoutConversion::ConvertToCurrentLayout(qwerty_key);
+				for (chaos::KeyboardLayoutType layout : {chaos::KeyboardLayoutType::AZERTY, chaos::KeyboardLayoutType::QWERTY, chaos::KeyboardLayoutType::CURRENT})
+				{
+					char const* src_name = EnumToString(layout);
+					chaos::Key dst = chaos::KeyboardLayoutConversion::ConvertKey(src, layout);
 
-				ImGui::Text("%s (qwerty) -> %s (current)", src.GetName(), dst.GetName());
+					ImGui::Text("%s (%s) -> %s (current)", src.GetName(), src_name, dst.GetName());
+				}
+				ImGui::Separator();
 			};
 
 			ImGui_DisplayConversion(chaos::KeyboardButton::Q);

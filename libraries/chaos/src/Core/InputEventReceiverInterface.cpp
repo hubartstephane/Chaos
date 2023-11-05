@@ -69,11 +69,11 @@ namespace chaos
 	{
 		if (DoCheckKeyPressed(key, previous_frame))
 		{
-			if (key.GetType() == KeyType::KEYBOARD)
+			if (key.IsKeyboardKey())
 				SetInputMode(InputMode::KEYBOARD);
-			else if (key.GetType() == KeyType::MOUSE)
+			else if (key.IsMouseKey())
 				SetInputMode(InputMode::MOUSE);
-			else if (key.GetType() == KeyType::GAMEPAD)
+			else if (key.IsGamepadKey())
 				SetInputMode(InputMode::GAMEPAD);
 			return true;
 		}

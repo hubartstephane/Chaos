@@ -344,7 +344,7 @@ namespace chaos
     bool Player::DoCheckKeyPressed(Key button, bool previous_frame)
     {
 		// gamepad input
-		if (button.GetType() == KeyType::GAMEPAD)
+		if (button.IsGamepadKey())
 		{
 			if (gamepad != nullptr)
 				return gamepad->IsButtonPressed(button.GetGamepadButton(), previous_frame);

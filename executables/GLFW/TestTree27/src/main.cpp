@@ -142,7 +142,7 @@ protected:
 	bool MoveObjectWithInputs(chaos::Key const & key, float delta_time, glm::vec3 const& direction)
 	{
 
-		if (key.GetType() == chaos::KeyType::KEYBOARD)
+		if (key.IsKeyboardKey())
 		{
 			if (chaos::KeyboardState::GetKeyState(key.GetKeyboardButton())->IsPressed())
 			{
@@ -157,7 +157,7 @@ protected:
 
 	bool ScaleObjectWithInputs(chaos::Key const& key, float delta_time, float direction)
 	{
-		if (key.GetType() == chaos::KeyType::KEYBOARD)
+		if (key.IsKeyboardKey())
 		{
 			if (chaos::KeyboardState::GetKeyState(key.GetKeyboardButton())->IsPressed())
 			{

@@ -286,6 +286,12 @@ namespace chaos
 		bool IsValid() const;
 		/** gets the type */
 		KeyType GetType() const;
+		/** returns whether the key is a keyboard one */
+		bool IsKeyboardKey() const { return type == KeyType::KEYBOARD; }
+		/** returns whether the key is a gamepad one */
+		bool IsGamepadKey() const { return type == KeyType::GAMEPAD; }
+		/** returns whether the key is a mouse one */
+		bool IsMouseKey() const { return type == KeyType::MOUSE; }
 
 		/** comparaison operator */
 		bool operator == (Key const& src) const;

@@ -62,7 +62,30 @@ namespace chaos
 		return cached_table.value();
 	}
 
+	unsigned int KeyboardLayoutConversion::ConvertVK(unsigned int vk, KeyboardLayoutType src_layout, KeyboardLayoutType dst_layout)
+	{
+		assert(src_layout != dst_layout);
+		if (ScancodeInformation const* src_scancode = KeyboardLayout::GetKnownLayout(src_layout).GetInformationFromVK(vk))
+			if (ScancodeInformation const* dst_scancode = KeyboardLayout::GetKnownLayout(dst_layout).GetInformationFromScancode(src_scancode->scancode))
+				return dst_scancode->vk;
+		return 0;
+	}
+
 #endif // #if _WIN32 || _WIN64
+
+	Key KeyboardLayoutConversion::ConvertKey(Key src, KeyboardLayoutType src_layout, KeyboardLayoutType dst_layout)
+	{
+		assert(src_layout != dst_layout);
+
+#if _WIN32 || _WIN64
+
+#endif
+
+		return src; // valid for non-keyboard keys, non-windows code, and when conversion has failed
+	}
+
+
+
 
 	//
 	// GLFW ---> qwerty SCANCODE ---> current layout VK (same SCANCODE) ---> qwerty scancode (same VK) ---> new GLFW
@@ -72,7 +95,7 @@ namespace chaos
 	{
 #if _WIN32 || _WIN64
 
-		if (src.GetType() == KeyType::KEYBOARD)
+		if (src.IsKeyboardKey())
 		{
 			KeyboardLayout const& current_layout = KeyboardLayout::GetCurrentLayout();
 			KeyboardLayout const& qwerty_layout  = KeyboardLayout::GetKnownLayout(KeyboardLayoutType::QWERTY);

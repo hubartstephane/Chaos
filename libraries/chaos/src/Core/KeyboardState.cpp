@@ -43,9 +43,9 @@ namespace chaos
 
 	ButtonState const * KeyboardState::GetKeyState(Key key)
 	{
-		if (key.GetType() == KeyType::KEYBOARD)
+		if (key.IsKeyboardKey())
 			return GetKeyboardButtonState(key.GetKeyboardButton());
-		if (key.GetType() == KeyType::MOUSE)
+		if (key.IsMouseKey())
 			return GetMouseButtonState(key.GetMouseButton());
 		return nullptr;
 	}

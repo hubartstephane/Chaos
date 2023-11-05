@@ -525,8 +525,10 @@ namespace chaos
 	{
 		if (type == KeyboardLayoutType::AZERTY)
 			return AzertyKeyboardLayout;
-		assert(type == KeyboardLayoutType::QWERTY);
-		return QwertyKeyboardLayout;
+		if (type == KeyboardLayoutType::QWERTY);
+			return QwertyKeyboardLayout;
+		assert(type == KeyboardLayoutType::CURRENT);
+		return GetCurrentLayout();
 	}
 
 	ScancodeInformation const* KeyboardLayout::GetInformationFromName(char const* name) const

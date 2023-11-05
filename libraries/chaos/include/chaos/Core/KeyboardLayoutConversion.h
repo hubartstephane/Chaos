@@ -31,8 +31,21 @@ namespace chaos
 
 	protected:
 
+#if _WIN32 || _WIN64
+
+		/** VK to GLFW keycode (relative to qwerty layout) */
+		static int QwertyVKToGLFWKeycode(unsigned int vk);
+		/** GLFW keycode to VK (relative to qwerty layout) */
+		static unsigned int QwertyGLFWKeycodeToVK(int keycode);
+		/** GLFW keycode to scancode (relative to qwerty layout) */
+		static unsigned int QwertyGLFWKeycodeToScancode(int keycode);
+		/** Scancode to GLFW keycode (relative to qwerty layout) */
+		static int QwertyScancodeToGLFWKeycode(unsigned int scancode);
+
 		/** get the GLFWKey/Scancode qwerty table */
 		static std::vector<GLFWKeyScancodePair> const& GetQwertyGLFWKeyScancodeTable();
+
+#endif // #if _WIN32 || _WIN64
 	};
 
 #endif

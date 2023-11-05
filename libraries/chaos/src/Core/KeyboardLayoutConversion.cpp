@@ -4,6 +4,39 @@
 
 namespace chaos
 {
+#if _WIN32 || _WIN64
+
+	int KeyboardLayoutConversion::QwertyVKToGLFWKeycode(unsigned int vk)
+	{
+		if (ScancodeInformation const* scancode_info = KeyboardLayout::GetKnownLayout(KeyboardLayoutType::QWERTY).GetInformationFromVK(vk))
+			return QwertyScancodeToGLFWKeycode(scancode_info->scancode);
+		return 0;
+	}
+
+	unsigned int KeyboardLayoutConversion::QwertyGLFWKeycodeToVK(int keycode)
+	{
+		if (unsigned int scancode = QwertyGLFWKeycodeToScancode(keycode))
+			if (ScancodeInformation const* scancode_info = KeyboardLayout::GetKnownLayout(KeyboardLayoutType::QWERTY).GetInformationFromScancode(scancode))
+				return scancode_info->vk;
+		return 0;
+	}
+
+	unsigned int KeyboardLayoutConversion::QwertyGLFWKeycodeToScancode(int keycode)
+	{
+		for (GLFWKeyScancodePair const& scancode_pair : GetQwertyGLFWKeyScancodeTable())
+			if (scancode_pair.keycode == keycode)
+				return scancode_pair.scancode;
+		return 0;
+	}
+
+	int KeyboardLayoutConversion::QwertyScancodeToGLFWKeycode(unsigned int scancode)
+	{
+		for (GLFWKeyScancodePair const& scancode_pair : GetQwertyGLFWKeyScancodeTable())
+			if (scancode_pair.scancode == scancode)
+				return scancode_pair.keycode;
+		return 0;
+	}
+
 	std::vector<GLFWKeyScancodePair> const& KeyboardLayoutConversion::GetQwertyGLFWKeyScancodeTable()
 	{
 		static std::optional<std::vector<GLFWKeyScancodePair>> cached_table;
@@ -28,6 +61,8 @@ namespace chaos
 		}
 		return cached_table.value();
 	}
+
+#endif // #if _WIN32 || _WIN64
 
 	//
 	// GLFW ---> qwerty SCANCODE ---> current layout VK (same SCANCODE) ---> qwerty scancode (same VK) ---> new GLFW

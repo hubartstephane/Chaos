@@ -734,7 +734,7 @@ namespace chaos
 
 	bool WindowApplication::OnKeyEventImpl(KeyEvent const& event)
 	{
-		if (event.IsKeyPressed(GLFW_KEY_F7))
+		if (event.IsKeyPressed(KeyboardButton::F7))
 		{
 			SetImGuiMenuMode(!GetImGuiMenuMode());
 			return true;
@@ -742,9 +742,9 @@ namespace chaos
 
 #if _DEBUG
 		// reloading GPU resources
-		if (event.IsKeyPressed(GLFW_KEY_F8))
+		if (event.IsKeyPressed(KeyboardButton::F8))
 		{
-			// CMD GLFW_KEY_F8 : ReloadGPUResources(...)
+			// CMD F8 : ReloadGPUResources(...)
 			ReloadGPUResources();
 			return true;
 		}

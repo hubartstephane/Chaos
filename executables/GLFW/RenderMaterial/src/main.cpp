@@ -60,22 +60,22 @@ protected:
 
 	virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override
 	{
-		if (event.IsKeyPressed(GLFW_KEY_KP_ADD, GLFW_MOD_SHIFT))
+		if (event.IsKeyPressed(chaos::KeyboardButton::KP_ADD, GLFW_MOD_SHIFT))
 		{
 			ChangeRenderpass(+1);
 			return true;
 		}
-		else if (event.IsKeyPressed(GLFW_KEY_KP_ADD))
+		else if (event.IsKeyPressed(chaos::KeyboardButton::KP_ADD))
 		{
 			ChangeMaterial(+1);
 			return true;
 		}
-		else if (event.IsKeyPressed(GLFW_KEY_KP_SUBTRACT, GLFW_MOD_SHIFT))
+		else if (event.IsKeyPressed(chaos::KeyboardButton::KP_SUBTRACT, GLFW_MOD_SHIFT))
 		{
 			ChangeRenderpass(-1);
 			return true;
 		}
-		else if (event.IsKeyPressed(GLFW_KEY_KP_SUBTRACT))
+		else if (event.IsKeyPressed(chaos::KeyboardButton::KP_SUBTRACT))
 		{
 			ChangeMaterial(-1);
 			return true;

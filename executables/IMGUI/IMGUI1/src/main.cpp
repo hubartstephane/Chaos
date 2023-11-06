@@ -95,7 +95,7 @@ protected:
 				col = 0.0f;
 		}
 
-		if (event.IsKeyReleased(GLFW_KEY_ESCAPE))
+		if (event.IsKeyReleased(chaos::KeyboardButton::ESCAPE))
 		{
 			Destroy();
 			//RequireWindowClosure();

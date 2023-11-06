@@ -616,6 +616,13 @@ namespace chaos
 			}
 
 			KeyboardButton keyboard_button = (KeyboardButton)keycode;
+
+
+
+
+
+
+
 			KeyboardState::SetKeyboardButtonState(keyboard_button, action);
 
 			// notify the application of the keyboard button state
@@ -624,7 +631,7 @@ namespace chaos
 
 			// handle the message
 			KeyEvent event;
-			event.keycode = keycode;
+			event.button = keyboard_button;
 			event.scancode = scancode;
 			event.action = action;
 			event.modifier = modifier;
@@ -905,22 +912,22 @@ namespace chaos
 	{
 		// kill the window (use ALT+F4 for the moment)
 #if 0
-		if (event.IsKeyPressed(GLFW_KEY_ESCAPE, GLFW_MOD_SHIFT))
+		if (event.IsKeyPressed(KeyboardButton::ESCAPE, GLFW_MOD_SHIFT))
 		{
 			RequireWindowClosure();
 			return true;
 		}
 #endif
 		// screen capture
-		// CMD GLFW_KEY_F9 : ScreenCapture(...)
-		if (event.IsKeyPressed(GLFW_KEY_F9))
+		// CMD F9 : ScreenCapture(...)
+		if (event.IsKeyPressed(KeyboardButton::F9))
 		{
 			ScreenCapture();
 			return true;
 		}
 		// try to go fullscreen
-		// CMD GLFW_KEY_F10 : ToggleFullscreen(...)
-		if (event.IsKeyPressed(GLFW_KEY_F10))
+		// CMD F10 : ToggleFullscreen(...)
+		if (event.IsKeyPressed(KeyboardButton::F10))
 		{
 			ToggleFullscreen();
 			return true;

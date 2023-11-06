@@ -15,23 +15,33 @@ namespace chaos
 	{
 	public:
 
-		/** check whether the key event is for considered key */
-		bool IsKeyEvent(int check_keycode, int check_modifier = 0) const;
-
-		/** check whether this is a key press event (no key requirement) */
-		bool IsKeyPressed() const;
 		/** check whether this is a key press event */
-		bool IsKeyPressed(int check_keycode, int check_modifier = 0) const;
-
-		/** check whether this is a key release event (no key requirement) */
-		bool IsKeyReleased() const;
+		bool IsKeyPressedEvent() const;
+		/** check whether this is a key repeat event */
+		bool IsKeyRepeatEvent() const;
 		/** check whether this is a key release event */
-		bool IsKeyReleased(int check_keycode, int check_modifier = 0) const;
+		bool IsKeyReleasedEvent() const;
+		/** check whether this is a key press or repeat event */
+		bool IsKeyDownEvent() const;
+
+		/** check whether this is a key press or repeat event */
+		bool IsKeyDown(KeyboardButton check_button, int check_modifier = 0) const;
+		/** check whether this is a key press event */
+		bool IsKeyPressed(KeyboardButton check_button, int check_modifier = 0) const;
+		/** check whether this is a key release event */
+		bool IsKeyReleased(KeyboardButton check_button, int check_modifier = 0) const;
+		/** check whether this is a key repeat event */
+		bool IsKeyRepeat(KeyboardButton check_button, int check_modifier = 0) const;
+
+	protected:
+
+		/** check whether the key event is for considered key */
+		bool IsKeyEvent(KeyboardButton check_button, int check_modifier = 0) const;
 
 	public:
 
-		/** the keycode (GLFW code) */
-		int keycode = 0;
+		/** the keycode */
+		KeyboardButton button = KeyboardButton::UNKNOWN;
 		/** the scan code */
 		int scancode = 0;
 		/** pressed or release */

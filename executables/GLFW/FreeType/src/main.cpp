@@ -41,12 +41,12 @@ protected:
 
 	virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override
 	{
-		if (event.IsKeyReleased(GLFW_KEY_KP_ADD))
+		if (event.IsKeyReleased(chaos::KeyboardButton::KP_ADD))
 		{
 			ChangeFont(font_index + 1);
 			return true;
 		}
-		else if (event.IsKeyReleased(GLFW_KEY_KP_SUBTRACT))
+		else if (event.IsKeyReleased(chaos::KeyboardButton::KP_SUBTRACT))
 		{
 			ChangeFont(font_index - 1);
 			return true;

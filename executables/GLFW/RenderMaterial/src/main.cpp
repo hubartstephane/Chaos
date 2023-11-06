@@ -188,7 +188,7 @@ protected:
 			return false;
 
 		// initialize FPS
-		fps_view_controller.fps_controller.position.z = 30.0f;
+		fps_view_controller.fps_view.position.z = 30.0f;
 
 		return true;
 	}
@@ -211,7 +211,7 @@ protected:
 
 	chaos::shared_ptr<chaos::GPUMesh> mesh;
 
-	chaos::FPSViewInputController fps_view_controller;
+	chaos::FPSViewController fps_view_controller;
 
 	chaos::GLDebugOnScreenDisplay debug_display;
 };

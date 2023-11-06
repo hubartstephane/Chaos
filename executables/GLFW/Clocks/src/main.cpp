@@ -238,8 +238,8 @@ protected:
 			return false;
 
 		// place camera
-		fps_view_controller.fps_controller.position.y = 10.0f;
-		fps_view_controller.fps_controller.position.z = 30.0f;
+		fps_view_controller.fps_view.position.y = 10.0f;
+		fps_view_controller.fps_view.position.z = 30.0f;
 
 		// initial display
 		DebugDisplayTips();
@@ -358,7 +358,7 @@ protected:
 	float time_line_box_size = 0.0f;
 	float time_line_box_position = 0.0f;
 
-	chaos::FPSViewInputController fps_view_controller;
+	chaos::FPSViewController fps_view_controller;
 
 	chaos::GLDebugOnScreenDisplay debug_display;
 };

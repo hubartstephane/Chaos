@@ -127,7 +127,7 @@ protected:
 			return false;
 
 		// set camera position
-		fps_view_controller.fps_controller.position.z = 50.0f;
+		fps_view_controller.fps_view.position.z = 50.0f;
 
 		return true;
 	}
@@ -147,7 +147,7 @@ protected:
 
 	chaos::shared_ptr<chaos::GPUMesh> mesh;
 
-	chaos::FPSViewInputController fps_view_controller;
+	chaos::FPSViewController fps_view_controller;
 };
 
 int main(int argc, char ** argv, char ** env)

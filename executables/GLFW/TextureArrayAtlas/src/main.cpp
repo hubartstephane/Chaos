@@ -139,8 +139,8 @@ protected:
 			return false;
 
 		// place camera
-		fps_view_controller.fps_controller.position.y = 0.0f;
-		fps_view_controller.fps_controller.position.z = 10.0f;
+		fps_view_controller.fps_view.position.y = 0.0f;
+		fps_view_controller.fps_view.position.z = 10.0f;
 
 		// initial display
 		debug_display.AddLine("Draw a box with a texture array : \n  Use +/- to change slice.\n  Array composed of images with different size and BPP");
@@ -184,7 +184,7 @@ protected:
 	size_t bitmap_index = 0;
 	std::vector<chaos::BitmapAtlas::BitmapLayout> bitmap_layouts;
 
-	chaos::FPSViewInputController fps_view_controller;
+	chaos::FPSViewController fps_view_controller;
 
 	chaos::GLDebugOnScreenDisplay debug_display;
 };

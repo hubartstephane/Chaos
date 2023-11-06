@@ -1023,12 +1023,12 @@ protected:
 		clock = application->GetMainClock()->CreateChildClock();
 
 		// place camera
-		fps_view_controller.fps_controller.position.y = 10.0f;
-		fps_view_controller.fps_controller.position.z = 30.0f;
-		fps_view_controller.keyboard_config.pitch_down = chaos::KeyboardButton::UNKNOWN; // disable some inputs so they can be used else where
-		fps_view_controller.keyboard_config.pitch_up   = chaos::KeyboardButton::UNKNOWN;
-		fps_view_controller.keyboard_config.yaw_left   = chaos::KeyboardButton::UNKNOWN;
-		fps_view_controller.keyboard_config.yaw_right  = chaos::KeyboardButton::UNKNOWN;
+		fps_view_controller.fps_view.position.y = 10.0f;
+		fps_view_controller.fps_view.position.z = 30.0f;
+		fps_view_controller.input_config.pitch_down_button = chaos::KeyboardButton::UNKNOWN; // disable some inputs so they can be used else where
+		fps_view_controller.input_config.pitch_up_button = chaos::KeyboardButton::UNKNOWN;
+		fps_view_controller.input_config.yaw_left_button = chaos::KeyboardButton::UNKNOWN;
+		fps_view_controller.input_config.yaw_right_button = chaos::KeyboardButton::UNKNOWN;
 
 		// initialize the example
 		SetExample(TestID::BOX2_DISPLAY_TEST);
@@ -1158,7 +1158,7 @@ protected:
 
 	TestID display_example = TestID::BOX2_DISPLAY_TEST;
 
-	chaos::FPSViewInputController fps_view_controller;
+	chaos::FPSViewController fps_view_controller;
 
 	chaos::GLDebugOnScreenDisplay debug_display;
 

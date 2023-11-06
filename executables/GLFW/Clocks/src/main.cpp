@@ -263,7 +263,7 @@ protected:
 		DebugDisplayTips();
 	}
 
-	bool UpdateClockTimeScaleWithKeys(chaos::Clock * clock, chaos::KeyEvent const & event, int incr_key, int decr_key)
+	bool UpdateClockTimeScaleWithKeys(chaos::Clock * clock, chaos::KeyEvent const & event, chaos::KeyboardButton incr_key, chaos::KeyboardButton decr_key)
 	{
 		if (event.IsKeyReleased(incr_key))
 		{
@@ -278,7 +278,7 @@ protected:
 		return false;
 	}
 
-	bool GenerateEvent(chaos::Clock * clock, chaos::KeyEvent const & event, int create_key, char const * str, int type)
+	bool GenerateEvent(chaos::Clock * clock, chaos::KeyEvent const & event, chaos::KeyboardButton create_key, char const * str, int type)
 	{
 		if (event.IsKeyReleased(create_key))
 		{
@@ -317,7 +317,7 @@ protected:
 
 	virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override
 	{
-		if (event.IsKeyReleased(GLFW_KEY_T))
+		if (event.IsKeyReleased(chaos::KeyboardButton::T))
 		{
 			chaos::Clock * clock = chaos::WindowApplication::GetMainClockInstance();
 			if (clock != nullptr)
@@ -326,18 +326,18 @@ protected:
 		}
 		else
 		{
-			if (UpdateClockTimeScaleWithKeys(clock1.get(), event, GLFW_KEY_KP_1, GLFW_KEY_KP_2))
+			if (UpdateClockTimeScaleWithKeys(clock1.get(), event, chaos::KeyboardButton::KP_1, chaos::KeyboardButton::KP_2))
 				return true;
-			if (UpdateClockTimeScaleWithKeys(clock2.get(), event, GLFW_KEY_KP_4, GLFW_KEY_KP_5))
+			if (UpdateClockTimeScaleWithKeys(clock2.get(), event, chaos::KeyboardButton::KP_4, chaos::KeyboardButton::KP_5))
 				return true;
-			if (UpdateClockTimeScaleWithKeys(clock3.get(), event, GLFW_KEY_KP_7, GLFW_KEY_KP_8))
+			if (UpdateClockTimeScaleWithKeys(clock3.get(), event, chaos::KeyboardButton::KP_7, chaos::KeyboardButton::KP_8))
 				return true;
 
-			if (GenerateEvent(clock1.get(), event, GLFW_KEY_A, "EVENT 1", EVENT_SINGLE_TEST))
+			if (GenerateEvent(clock1.get(), event, chaos::KeyboardButton::A, "EVENT 1", EVENT_SINGLE_TEST))
 				return true;
-			if (GenerateEvent(clock2.get(), event, GLFW_KEY_Z, "EVENT 2", EVENT_RANGE_TEST))
+			if (GenerateEvent(clock2.get(), event, chaos::KeyboardButton::Z, "EVENT 2", EVENT_RANGE_TEST))
 				return true;
-			if (GenerateEvent(clock3.get(), event, GLFW_KEY_E, "EVENT 3", EVENT_FOREVER_TEST))
+			if (GenerateEvent(clock3.get(), event, chaos::KeyboardButton::E, "EVENT 3", EVENT_FOREVER_TEST))
 				return true;
 		}
 		return chaos::Window::OnKeyEventImpl(event);

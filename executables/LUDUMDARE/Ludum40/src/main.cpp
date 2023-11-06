@@ -15,7 +15,7 @@ protected:
 	virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override
 	{
 		if (game != nullptr)
-			if (game->OnKeyEvent(event.keycode, event.action))
+			if (game->OnKeyEvent(event.button, event.action))
 				return true;
 		return chaos::Window::OnKeyEventImpl(event);
 	}

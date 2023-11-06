@@ -94,7 +94,7 @@ namespace chaos
 		// try start the game
 		if (game_instance == nullptr)
 		{
-			if (event.IsKeyPressed())
+			if (event.IsKeyPressedEvent())
 				RequireStartGame(nullptr);
 			return true;
 		}
@@ -105,16 +105,16 @@ namespace chaos
 				return true;
 
 		// PLAYING to PAUSE
-		if (event.IsKeyPressed(GLFW_KEY_KP_ENTER) || event.IsKeyPressed(GLFW_KEY_ENTER))
+		if (event.IsKeyPressed(KeyboardButton::KP_ENTER) || event.IsKeyPressed(KeyboardButton::ENTER))
 			if (RequireTogglePause())
 				return true;
 		// QUIT GAME
-		if (event.IsKeyPressed(GLFW_KEY_ESCAPE, GLFW_MOD_SHIFT))
+		if (event.IsKeyPressed(KeyboardButton::ESCAPE, GLFW_MOD_SHIFT))
 		{
 			if (RequireExitGame())
 				return true;
 		}
-		else if (event.IsKeyPressed(GLFW_KEY_ESCAPE))
+		else if (event.IsKeyPressed(KeyboardButton::ESCAPE))
 		{
 			if (RequireTogglePause())
 				return true;
@@ -122,38 +122,38 @@ namespace chaos
 		// CHEAT CODE TO SKIP LEVEL
 #if _DEBUG
 
-		// CMD GLFW_KEY_F1  : SetCheatSkipLevelRequired(...)
-		if (event.IsKeyPressed(GLFW_KEY_F1))
+		// CMD F1  : SetCheatSkipLevelRequired(...)
+		if (event.IsKeyPressed(KeyboardButton::F1))
 		{
 			SetCheatSkipLevelRequired(true);
 			return true;
 		}
-		// CMD GLFW_KEY_F2  : SetCheatMode(...)
-		if (event.IsKeyPressed(GLFW_KEY_F2))
+		// CMD F2  : SetCheatMode(...)
+		if (event.IsKeyPressed(KeyboardButton::F2))
 		{
 			SetCheatMode(!GetCheatMode());
 			return true;
 		}
-		// CMD GLFW_KEY_F3  : ReloadGameConfiguration(...)
-		if (event.IsKeyPressed(GLFW_KEY_F3))
+		// CMD F3  : ReloadGameConfiguration(...)
+		if (event.IsKeyPressed(KeyboardButton::F3))
 		{
 			ReloadGameConfiguration();
 			return true;
 		}
-		// CMD GLFW_KEY_F4  : ReloadCurrentLevel(...)
-		if (event.IsKeyPressed(GLFW_KEY_F4))
+		// CMD F4  : ReloadCurrentLevel(...)
+		if (event.IsKeyPressed(KeyboardButton::F4))
 		{
 			ReloadCurrentLevel();
 			return true;
 		}
-		// CMD GLFW_KEY_F5  : QuickSave = SaveToCheckpoint(...)
-		if (event.IsKeyPressed(GLFW_KEY_F5))
+		// CMD F5  : QuickSave = SaveToCheckpoint(...)
+		if (event.IsKeyPressed(KeyboardButton::F5))
 		{
 			SaveIntoCheckpoint();
 			return true;
 		}
-		// CMD GLFW_KEY_F6  : SetFreeCameraMode(...)
-		if (event.IsKeyPressed(GLFW_KEY_F6))
+		// CMD F6  : SetFreeCameraMode(...)
+		if (event.IsKeyPressed(KeyboardButton::F6))
 		{
 			SetFreeCameraMode(!IsFreeCameraMode());
 			return true;

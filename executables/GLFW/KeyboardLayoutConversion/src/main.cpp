@@ -17,7 +17,7 @@ public:
 		if (event.action == GLFW_PRESS)
 		{
 			last_scancode = event.scancode;
-			last_keycode  = event.keycode;
+			last_button  = event.button;
 			last_key_pressed = chaos::KeyboardLayout::GetKnownLayout(chaos::KeyboardLayoutType::AZERTY).GetInformationFromScancode(event.scancode);
 		}
 
@@ -28,9 +28,14 @@ public:
 	{
 		ImGuiDrawableInterface::FullscreenWindow("conversion", false, [this]()
 		{
+			if (last_scancode != 0)
+			{
+				ImGui::Text("last_scancode (0x%03x) -> last_button (0x%02x)", last_scancode, (int)last_button);
+			}
+
 			auto ImGui_DisplayConversion = [](chaos::Key src)
 			{
-				for (chaos::KeyboardLayoutType layout : {chaos::KeyboardLayoutType::AZERTY, chaos::KeyboardLayoutType::QWERTY, chaos::KeyboardLayoutType::CURRENT})
+				for (chaos::KeyboardLayoutType layout : {chaos::KeyboardLayoutType::QWERTY, chaos::KeyboardLayoutType::AZERTY, chaos::KeyboardLayoutType::CURRENT})
 				{
 					char const* src_name = EnumToString(layout);
 					chaos::Key dst = chaos::KeyboardLayoutConversion::ConvertKey(src, layout);
@@ -68,7 +73,7 @@ protected:
 
 	int last_scancode = -1;
 
-	int last_keycode = -1;
+	chaos::KeyboardButton last_button = chaos::KeyboardButton::UNKNOWN;
 };
 
 
@@ -130,6 +135,7 @@ void GenerateKeyboardLayoutFiles()
 int main(int argc, char ** argv, char ** env)
 {
 	GenerateKeyboardLayoutFiles();
+	return 0;
 
 	chaos::WindowCreateParams create_params;
 	create_params.monitor = nullptr;

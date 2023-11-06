@@ -179,22 +179,22 @@ protected:
 
 	virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override
 	{
-		if (event.IsKeyReleased(GLFW_KEY_KP_ADD))
+		if (event.IsKeyReleased(chaos::KeyboardButton::KP_ADD))
 		{
 			ChangeSlice(+1);
 			return true;
 		}
-		else if (event.IsKeyReleased(GLFW_KEY_KP_SUBTRACT))
+		else if (event.IsKeyReleased(chaos::KeyboardButton::KP_SUBTRACT))
 		{
 			ChangeSlice(-1);
 			return true;
 		}
-		else if (event.IsKeyReleased(GLFW_KEY_KP_1))
+		else if (event.IsKeyReleased(chaos::KeyboardButton::KP_1))
 		{
 			ChangePixelFormat(+1);
 			return true;
 		}
-		else if (event.IsKeyReleased(GLFW_KEY_KP_2))
+		else if (event.IsKeyReleased(chaos::KeyboardButton::KP_2))
 		{
 			ChangePixelFormat(-1);
 			return true;

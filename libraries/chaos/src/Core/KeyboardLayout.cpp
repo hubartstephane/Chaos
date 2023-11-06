@@ -434,7 +434,7 @@ namespace chaos
 	{
 #if _WIN32 || _WIN64
 		char name[256];
-		if (::GetKeyNameTextA(scancode << 16, name, sizeof(name)))
+		if (::GetKeyNameTextA(scancode << 16 & 0xFFFF, name, sizeof(name)))
 			return name;
 #endif // #if _WIN32 || _WIN64
 		return {};
@@ -448,6 +448,8 @@ namespace chaos
 		for (unsigned int scancode = 0; scancode <= 0x1FF; ++scancode)
 		{
 			unsigned int vk = ::MapVirtualKey(scancode, MAPVK_VSC_TO_VK);
+			if (vk == 0)
+				vk = ::MapVirtualKey(scancode & 0xFF, MAPVK_VSC_TO_VK);
 
 			// prepare the new entry
 			ScancodeInformation new_scancode_info;

@@ -1097,26 +1097,26 @@ protected:
 
 	virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override
 	{
-		if (event.IsKeyReleased(GLFW_KEY_T))
+		if (event.IsKeyReleased(chaos::KeyboardButton::T))
 		{
 			chaos::Clock * clock = chaos::WindowApplication::GetMainClockInstance();
 			if (clock != nullptr)
 				clock->Toggle();
 			return true;
 		}
-		else if (event.IsKeyReleased(GLFW_KEY_KP_ADD))
+		else if (event.IsKeyReleased(chaos::KeyboardButton::KP_ADD))
 		{
 			SetExample((TestID)((int)display_example + 1));
 			DebugDisplayExampleTitle();
 			return true;
 		}
-		else if (event.IsKeyReleased(GLFW_KEY_KP_SUBTRACT))
+		else if (event.IsKeyReleased(chaos::KeyboardButton::KP_SUBTRACT))
 		{
 			SetExample((TestID)((int)display_example - 1));
 			DebugDisplayExampleTitle();
 			return true;
 		}
-		else if (event.IsKeyReleased(GLFW_KEY_KP_5))
+		else if (event.IsKeyReleased(chaos::KeyboardButton::KP_5))
 		{
 			UpdateObjectType();
 			DebugDisplayExampleTitle();

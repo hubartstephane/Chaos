@@ -152,12 +152,12 @@ protected:
 
 	virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override
 	{
-		if (event.IsKeyReleased(GLFW_KEY_KP_ADD))
+		if (event.IsKeyReleased(chaos::KeyboardButton::KP_ADD))
 		{
 			++bitmap_index;
 			return true;
 		}
-		else if (event.IsKeyReleased(GLFW_KEY_KP_SUBTRACT))
+		else if (event.IsKeyReleased(chaos::KeyboardButton::KP_SUBTRACT))
 		{
 			if (bitmap_index > 0)
 				--bitmap_index;

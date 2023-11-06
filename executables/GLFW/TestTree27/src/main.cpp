@@ -598,18 +598,18 @@ protected:
 		if (GeometricObject* current_object = GetCurrentGeometricObject())
 		{
 			// change current selection
-			if (event.IsKeyPressed((int)key_configuration.next_object.GetKeyboardButton()))
+			if (event.IsKeyPressed(key_configuration.next_object.GetKeyboardButton()))
 			{
 				current_object_index = (current_object_index.value() + 1) % geometric_objects.size();
 				return true;
 			}
-			else if (event.IsKeyPressed((int)key_configuration.previous_object.GetKeyboardButton()))
+			else if (event.IsKeyPressed(key_configuration.previous_object.GetKeyboardButton()))
 			{
 				current_object_index = (current_object_index.value() + geometric_objects.size() - 1) % geometric_objects.size();
 				return true;
 			}
 
-			if (event.IsKeyPressed((int)key_configuration.delete_object.GetKeyboardButton()))
+			if (event.IsKeyPressed(key_configuration.delete_object.GetKeyboardButton()))
 			{
 				if (geometric_objects.size() > 0)
 				{
@@ -631,7 +631,7 @@ protected:
 				return true;
 			}
 
-			if (event.IsKeyPressed((int)key_configuration.new_scene.GetKeyboardButton()))
+			if (event.IsKeyPressed(key_configuration.new_scene.GetKeyboardButton()))
 			{
 				geometric_objects.clear();
 				current_object_index = 0;

@@ -6,7 +6,7 @@ namespace chaos
 	namespace GlobalVariables
 	{
 		CHAOS_GLOBAL_VARIABLE(bool, GLDebugNotifications, false);
-#if _WIN32 || _WIN64
+#if _WIN32
 		CHAOS_GLOBAL_VARIABLE(bool, GLDebugBreak, false);
 #endif
 	};
@@ -230,7 +230,7 @@ namespace chaos
 
 			//DebugTools::DisplayCallStack(std::cout);
 
-#if _WIN32 || _WIN64
+#if _WIN32
 			if (GlobalVariables::GLDebugBreak.Get())
 				DebugBreak();
 #endif

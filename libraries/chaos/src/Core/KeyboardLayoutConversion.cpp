@@ -4,7 +4,7 @@
 
 namespace chaos
 {
-#if _WIN32 || _WIN64
+#if _WIN32
 
 	KeyboardButton KeyboardLayoutConversion::QwertyVKToGLFWKeycode(unsigned int vk)
 	{
@@ -71,11 +71,11 @@ namespace chaos
 		return 0;
 	}
 
-#endif // #if _WIN32 || _WIN64
+#endif // #if _WIN32
 
 	KeyboardButton KeyboardLayoutConversion::ConvertKeyboardButton(KeyboardButton button, KeyboardLayoutType layout)
 	{
-#if _WIN32 || _WIN64
+#if _WIN32
 
 		if (layout == KeyboardLayoutType::QWERTY)
 		{
@@ -90,14 +90,14 @@ namespace chaos
 					return QwertyScancodeToGLFWKeycode(scancode_info->scancode);
 		}
 
-#endif // #if _WIN32 || _WIN64
+#endif // #if _WIN32
 
 		return button;
 	}
 
 	Key KeyboardLayoutConversion::ConvertKey(Key key, KeyboardLayoutType layout)
 	{
-#if _WIN32 || _WIN64
+#if _WIN32
 
 		if (key.IsKeyboardKey())
 			return Key(ConvertKeyboardButton(key.GetKeyboardButton(), layout));

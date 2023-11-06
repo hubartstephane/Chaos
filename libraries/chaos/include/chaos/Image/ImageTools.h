@@ -199,12 +199,12 @@ return true;\
 			return ReadFIFTag(tag, result, default_value);
 		}
 
-#if _WIN32 || _WIN64
+#if _WIN32
 		/** conversion between HBITMAP & FIBITMAP */
 		static FIBITMAP* ConvertFromHBITMAP(HBITMAP hBitmap);
 		/** conversion between HBITMAP & FIBITMAP */
 		static HBITMAP ConvertToHBITMAP(FIBITMAP* bitmap, bool flip_vertical = true);
-#endif // #if _WIN32 || _WIN64
+#endif // #if _WIN32
 
 	};
 

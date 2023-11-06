@@ -79,7 +79,7 @@ namespace chaos
 
 	protected:
 
-#if _WIN32 || _WIN64
+#if _WIN32
 
 		/** VK to GLFW keycode (relative to qwerty layout) */
 		static KeyboardButton QwertyVKToGLFWKeycode(unsigned int vk);
@@ -93,7 +93,7 @@ namespace chaos
 		/** get the GLFWKey/Scancode qwerty table */
 		static std::vector<GLFWKeyScancodePair> const& GetQwertyGLFWKeyScancodeTable();
 
-#endif // #if _WIN32 || _WIN64
+#endif // #if _WIN32
 	};
 
 #endif

@@ -48,7 +48,7 @@
 #include <cfloat>
 #include <random>
 
-#if _WIN32 || _WIN64
+#if _WIN32
 #include <io.h>
 #endif
 
@@ -151,7 +151,7 @@
 
 #undef DELETE // thanks to winnt.h we have this define !
 
-#endif
+#endif // #if _WIN32
 
 #include <lua.hpp>
 

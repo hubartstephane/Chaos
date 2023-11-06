@@ -66,7 +66,7 @@ namespace chaos
 		{
 #if _WIN32
 			SetImGuiWindowProc(false); // remove our WndProc layer before ImGui may remove its layer
-#endif
+#endif // #if _WIN32
 			ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
 			ImGui::SetCurrentContext(imgui_context);
 
@@ -258,7 +258,7 @@ namespace chaos
 		// substitute our own window proc (now that ImGui has inserted its own WindowProc */
 #if _WIN32
 		SetImGuiWindowProc(true);
-#endif
+#endif // #if _WIN32
 		// the context is ready for rendering
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -376,7 +376,7 @@ namespace chaos
 		return mouse_position.value();
 	}
 
-#ifdef _WIN32
+#if _WIN32
 
 	LRESULT CALLBACK Window::ImGuiWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
@@ -615,6 +615,8 @@ namespace chaos
 					return;
 			}
 
+#if _WIN32
+
 			KeyboardButton keyboard_button = (KeyboardButton)keycode;
 
 
@@ -622,6 +624,14 @@ namespace chaos
 
 
 
+
+
+
+#else
+
+			KeyboardButton keyboard_button = (KeyboardButton)keycode;
+
+#endif // #if _WIN32
 
 			KeyboardState::SetKeyboardButtonState(keyboard_button, action);
 

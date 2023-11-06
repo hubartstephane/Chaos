@@ -640,7 +640,7 @@ namespace chaos
 	}
 
 
-#if _WIN32 || _WIN64
+#if _WIN32
 
 	FIBITMAP* ImageTools::ConvertFromHBITMAP(HBITMAP hBitmap)
 	{
@@ -700,7 +700,7 @@ namespace chaos
 		return result;
 	}
 
-#endif // #if _WIN32 || _WIN64
+#endif // #if _WIN32
 
 
 }; // namespace chaos

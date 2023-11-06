@@ -432,11 +432,11 @@ namespace chaos
 
 	std::string KeyboardLayout::ScancodeToName(unsigned int scancode)
 	{
-#if _WIN32 || _WIN64
+#if _WIN32
 		char name[256];
 		if (::GetKeyNameTextA(scancode << 16 & 0xFFFF, name, sizeof(name)))
 			return name;
-#endif // #if _WIN32 || _WIN64
+#endif // #if _WIN32
 		return {};
 	}
 
@@ -444,7 +444,7 @@ namespace chaos
 	{
 		KeyboardLayout result;
 
-#if _WIN32 || _WIN64
+#if _WIN32
 		for (unsigned int scancode = 0; scancode <= 0x1FF; ++scancode)
 		{
 			unsigned int vk = ::MapVirtualKey(scancode, MAPVK_VSC_TO_VK);
@@ -510,7 +510,7 @@ namespace chaos
 			if (new_scancode_info.vk != 0 || new_scancode_info.name.length() > 0)
 				result.key_info.push_back(std::move(new_scancode_info));
 		}
-#endif // #if _WIN32 || _WIN64
+#endif // #if _WIN32
 		return result;
 	}
 

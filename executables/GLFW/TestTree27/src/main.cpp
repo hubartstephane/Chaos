@@ -146,7 +146,7 @@ protected:
 		{
 			if (chaos::KeyboardState::GetKeyState(key.GetKeyboardButton())->IsPressed())
 			{
-				float final_speed = (chaos::KeyboardState::GetKeyState((chaos::KeyboardButton)GLFW_KEY_LEFT_SHIFT)->IsPressed()) ? FAST_DISPLACEMENT_SPEED : DISPLACEMENT_SPEED;
+				float final_speed = (chaos::KeyboardState::GetKeyState(chaos::KeyboardButton::LEFT_SHIFT)->IsPressed()) ? FAST_DISPLACEMENT_SPEED : DISPLACEMENT_SPEED;
 				sphere.position += direction * delta_time * final_speed;
 				box.position += direction * delta_time * final_speed;
 				return true;
@@ -161,7 +161,7 @@ protected:
 		{
 			if (chaos::KeyboardState::GetKeyState(key.GetKeyboardButton())->IsPressed())
 			{
-				float final_scale_speed = (chaos::KeyboardState::GetKeyState((chaos::KeyboardButton)GLFW_KEY_LEFT_SHIFT)->IsPressed()) ? SCALE_SPEED : FAST_SCALE_SPEED;
+				float final_scale_speed = (chaos::KeyboardState::GetKeyState(chaos::KeyboardButton::LEFT_SHIFT)->IsPressed()) ? SCALE_SPEED : FAST_SCALE_SPEED;
 
 				sphere.radius = std::max(1.0f, sphere.radius + direction * final_scale_speed);
 				return true;

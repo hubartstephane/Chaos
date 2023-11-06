@@ -3,24 +3,18 @@
 
 namespace chaos
 {
-	//double const FPSViewInputController::INVALID_MOUSE_VALUE = std::numeric_limits<double>::max();
-
-
-
 	void FPSViewInputController::SetMouseEnabled(bool in_mouse_enabled)
 	{
 		if (mouse_enabled == in_mouse_enabled)
 			return;
-
 		mouse_captured = false;
 		mouse_enabled = in_mouse_enabled;
 	}
 
-
 	void FPSViewInputController::Tick(GLFWwindow * glfw_window, float delta_time)
 	{
 		HandleMouseInputs(glfw_window, delta_time);
-		HandleKeyboardInputs(glfw_window, delta_time);
+		HandleKeyboardInputs(delta_time);
 	}
 
 	void FPSViewInputController::HandleMouseInputs(GLFWwindow * glfw_window, float delta_time)
@@ -31,7 +25,7 @@ namespace chaos
 		// handle mouse movement
 		if (mouse_captured || !must_click_to_rotate)
 		{
-			if (must_click_to_rotate && glfwGetMouseButton(glfw_window, 0) == GLFW_RELEASE)
+			if (must_click_to_rotate && !KeyboardState::GetMouseButtonState(MouseButton::BUTTON_1)->IsPressed())
 				mouse_captured = false;
 			else
 			{
@@ -52,7 +46,7 @@ namespace chaos
 		}
 		else
 		{
-			if (glfwGetMouseButton(glfw_window, 0) == GLFW_PRESS)
+			if (KeyboardState::GetMouseButtonState(MouseButton::BUTTON_1)->IsPressed())
 			{
 				mouse_captured = true;
 				previous_mouse_x = INVALID_MOUSE_VALUE;
@@ -62,36 +56,36 @@ namespace chaos
 		}
 	}
 
-	void FPSViewInputController::HandleKeyboardInputs(GLFWwindow * glfw_window, float delta_time)
+	void FPSViewInputController::HandleKeyboardInputs(float delta_time)
 	{
 		// handles the keys for displacement
-		if (CheckKeyInput(glfw_window, keyboard_config.key_left))
+		if (CheckKeyInput(keyboard_config.left))
 			fps_controller.StrafeLeft(movement_speed.strafe * delta_time);
-		if (CheckKeyInput(glfw_window, keyboard_config.key_right))
+		if (CheckKeyInput(keyboard_config.right))
 			fps_controller.StrafeRight(movement_speed.strafe * delta_time);
-		if (CheckKeyInput(glfw_window, keyboard_config.key_forward))
+		if (CheckKeyInput(keyboard_config.forward))
 			fps_controller.GoForward(movement_speed.forward * delta_time);
-		if (CheckKeyInput(glfw_window, keyboard_config.key_backward))
+		if (CheckKeyInput(keyboard_config.backward))
 			fps_controller.GoBackward(movement_speed.back * delta_time);
-		if (CheckKeyInput(glfw_window, keyboard_config.key_up))
+		if (CheckKeyInput(keyboard_config.up))
 			fps_controller.position.y -= movement_speed.down * delta_time;
-		if (CheckKeyInput(glfw_window, keyboard_config.key_down))
+		if (CheckKeyInput(keyboard_config.down))
 			fps_controller.position.y += movement_speed.up * delta_time;
 
-		if (CheckKeyInput(glfw_window, keyboard_config.key_yaw_left))
+		if (CheckKeyInput(keyboard_config.yaw_left))
 			fps_controller.IncrementYaw(movement_speed.yaw * delta_time);
-		if (CheckKeyInput(glfw_window, keyboard_config.key_yaw_right))
+		if (CheckKeyInput(keyboard_config.yaw_right))
 			fps_controller.IncrementYaw(-movement_speed.yaw * delta_time);
 
-		if (CheckKeyInput(glfw_window, keyboard_config.key_pitch_up))
+		if (CheckKeyInput(keyboard_config.pitch_up))
 			fps_controller.IncrementPitch(movement_speed.pitch * delta_time);
-		if (CheckKeyInput(glfw_window, keyboard_config.key_pitch_down))
+		if (CheckKeyInput(keyboard_config.pitch_down))
 			fps_controller.IncrementPitch(-movement_speed.pitch * delta_time);
 	}
 
-	bool FPSViewInputController::CheckKeyInput(GLFWwindow * glfw_window, int key) const
+	bool FPSViewInputController::CheckKeyInput(KeyboardButton button) const
 	{
-		return (key >= 0 && glfwGetKey(glfw_window, key) == GLFW_PRESS); // GLFW_KEY_UNKNOWN = -1
+		return (button != KeyboardButton::UNKNOWN && KeyboardState::GetKeyboardButtonState(button)->IsPressed());
 	}
 
 }; // namespace chaos

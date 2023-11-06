@@ -180,5 +180,5 @@ int main(int argc, char ** argv, char ** env)
     create_params.height = 500;
     create_params.monitor_index = 0;
 
-    return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, params);
+    return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, create_params);
 }

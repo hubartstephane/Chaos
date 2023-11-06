@@ -1025,10 +1025,10 @@ protected:
 		// place camera
 		fps_view_controller.fps_controller.position.y = 10.0f;
 		fps_view_controller.fps_controller.position.z = 30.0f;
-		fps_view_controller.keyboard_config.key_pitch_down = GLFW_KEY_UNKNOWN; // disable some inputs so they can be used else where
-		fps_view_controller.keyboard_config.key_pitch_up   = GLFW_KEY_UNKNOWN;
-		fps_view_controller.keyboard_config.key_yaw_left   = GLFW_KEY_UNKNOWN;
-		fps_view_controller.keyboard_config.key_yaw_right  = GLFW_KEY_UNKNOWN;
+		fps_view_controller.keyboard_config.pitch_down = chaos::KeyboardButton::UNKNOWN; // disable some inputs so they can be used else where
+		fps_view_controller.keyboard_config.pitch_up   = chaos::KeyboardButton::UNKNOWN;
+		fps_view_controller.keyboard_config.yaw_left   = chaos::KeyboardButton::UNKNOWN;
+		fps_view_controller.keyboard_config.yaw_right  = chaos::KeyboardButton::UNKNOWN;
 
 		// initialize the example
 		SetExample(TestID::BOX2_DISPLAY_TEST);
@@ -1039,25 +1039,25 @@ protected:
 		return true;
 	}
 
-	void UpdateObjectPosition(int key, float delta_time, glm::vec3 const & factor)
+	void UpdateObjectPosition(chaos::KeyboardButton button, float delta_time, glm::vec3 const & factor)
 	{
 		static float SPEED = 5.0f;
-		if (glfwGetKey(glfw_window, key) == GLFW_PRESS)
+		if (chaos::KeyboardState::GetKeyboardButtonState(button)->IsPressed())
 		{
-			if (glfwGetKey(glfw_window, GLFW_KEY_LEFT_CONTROL) != GLFW_RELEASE)
+			if (chaos::KeyboardState::GetKeyboardButtonState(chaos::KeyboardButton::LEFT_CONTROL)->IsPressed())
 				position_object1 += SPEED * (float)(delta_time)* factor;
 			else
 				position_object2 += SPEED * (float)(delta_time)* factor;
 		}
 	}
 
-	void UpdateObjectRotation(int key, float delta_time, float factor)
+	void UpdateObjectRotation(chaos::KeyboardButton button, float delta_time, float factor)
 	{
 		static float SPEED = 1.0f;
 
-		if (glfwGetKey(glfw_window, key) == GLFW_PRESS)
+		if (chaos::KeyboardState::GetKeyboardButtonState(button)->IsPressed())
 		{
-			if (glfwGetKey(glfw_window, GLFW_KEY_LEFT_CONTROL) != GLFW_RELEASE)
+			if (chaos::KeyboardState::GetKeyboardButtonState(chaos::KeyboardButton::LEFT_CONTROL)->IsPressed())
 				rotation_object1 += SPEED * (float)(delta_time)* factor;
 			else
 				rotation_object2 += SPEED * (float)(delta_time)* factor;
@@ -1066,7 +1066,7 @@ protected:
 
 	void UpdateObjectType()
 	{
-		if (glfwGetKey(glfw_window, GLFW_KEY_LEFT_CONTROL) != GLFW_RELEASE)
+		if (chaos::KeyboardState::GetKeyboardButtonState(chaos::KeyboardButton::LEFT_CONTROL)->IsPressed())
 			prim_type_object1 = (PrimitiveType)(((int)prim_type_object1 + 1) % (int)PrimitiveType::PRIMITIVE_TYPE_COUNT);
 		else
 			prim_type_object2 = (PrimitiveType)(((int)prim_type_object2 + 1) % (int)PrimitiveType::PRIMITIVE_TYPE_COUNT);
@@ -1081,15 +1081,15 @@ protected:
 		// update primitives
 		if (display_example == TestID::COLLISION_2D_TEST || display_example == TestID::COLLISION_3D_TEST)
 		{
-			UpdateObjectPosition(GLFW_KEY_KP_6, delta_time, glm::vec3( 1.0f,  0.0f,  0.0f));
-			UpdateObjectPosition(GLFW_KEY_KP_4, delta_time, glm::vec3(-1.0f,  0.0f,  0.0f));
-			UpdateObjectPosition(GLFW_KEY_KP_8, delta_time, glm::vec3( 0.0f,  1.0f,  0.0f));
-			UpdateObjectPosition(GLFW_KEY_KP_2, delta_time, glm::vec3( 0.0f, -1.0f,  0.0f));
-			UpdateObjectPosition(GLFW_KEY_KP_1, delta_time, glm::vec3( 0.0f,  0.0f,  1.0f));
-			UpdateObjectPosition(GLFW_KEY_KP_7, delta_time, glm::vec3( 0.0f,  0.0f, -1.0f));
+			UpdateObjectPosition(chaos::KeyboardButton::KP_6, delta_time, glm::vec3( 1.0f,  0.0f,  0.0f));
+			UpdateObjectPosition(chaos::KeyboardButton::KP_4, delta_time, glm::vec3(-1.0f,  0.0f,  0.0f));
+			UpdateObjectPosition(chaos::KeyboardButton::KP_8, delta_time, glm::vec3( 0.0f,  1.0f,  0.0f));
+			UpdateObjectPosition(chaos::KeyboardButton::KP_2, delta_time, glm::vec3( 0.0f, -1.0f,  0.0f));
+			UpdateObjectPosition(chaos::KeyboardButton::KP_1, delta_time, glm::vec3( 0.0f,  0.0f,  1.0f));
+			UpdateObjectPosition(chaos::KeyboardButton::KP_7, delta_time, glm::vec3( 0.0f,  0.0f, -1.0f));
 
-			UpdateObjectRotation(GLFW_KEY_KP_9, delta_time,  1.0f);
-			UpdateObjectRotation(GLFW_KEY_KP_3, delta_time, -1.0f);
+			UpdateObjectRotation(chaos::KeyboardButton::KP_9, delta_time,  1.0f);
+			UpdateObjectRotation(chaos::KeyboardButton::KP_3, delta_time, -1.0f);
 		}
 
 		return true; // refresh

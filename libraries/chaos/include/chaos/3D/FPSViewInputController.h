@@ -41,26 +41,26 @@ namespace chaos
 	public:
 
 		/** self descriptive key */
-		int key_left = GLFW_KEY_LEFT;
+		KeyboardButton left = KeyboardButton::LEFT;
 		/** self descriptive key */
-		int key_right = GLFW_KEY_RIGHT;
+		KeyboardButton right = KeyboardButton::RIGHT;
 		/** self descriptive key */
-		int key_forward = GLFW_KEY_UP;
+		KeyboardButton forward = KeyboardButton::UP;
 		/** self descriptive key */
-		int key_backward = GLFW_KEY_DOWN;
+		KeyboardButton backward = KeyboardButton::DOWN;
 		/** self descriptive key */
-		int key_up = GLFW_KEY_PAGE_DOWN;
+		KeyboardButton up = KeyboardButton::PAGE_DOWN;
 		/** self descriptive key */
-		int key_down = GLFW_KEY_PAGE_UP;
+		KeyboardButton down = KeyboardButton::PAGE_UP;
 
 		/** self descriptive key */
-		int key_yaw_left = GLFW_KEY_KP_4;
+		KeyboardButton yaw_left = KeyboardButton::KP_4;
 		/** self descriptive key */
-		int key_yaw_right = GLFW_KEY_KP_6;
+		KeyboardButton yaw_right = KeyboardButton::KP_6;
 		/** self descriptive key */
-		int key_pitch_up = GLFW_KEY_KP_8;
+		KeyboardButton pitch_up = KeyboardButton::KP_8;
 		/** self descriptive key */
-		int key_pitch_down = GLFW_KEY_KP_2;
+		KeyboardButton pitch_down = KeyboardButton::KP_2;
 	};
 
 	/**
@@ -91,10 +91,10 @@ namespace chaos
 		/** handle the mouse displacement */
 		void HandleMouseInputs(GLFWwindow* glfw_window, float delta_time);
 		/** handle the keyboard inputs */
-		void HandleKeyboardInputs(GLFWwindow* glfw_window, float delta_time);
+		void HandleKeyboardInputs(float delta_time);
 
 		/** check whether keyboard input is down */
-		bool CheckKeyInput(GLFWwindow* glfw_window, int key) const;
+		bool CheckKeyInput(KeyboardButton button) const;
 
 		/** whether the mouse is enabled or not */
 		bool mouse_enabled = true;

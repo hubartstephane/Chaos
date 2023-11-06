@@ -167,7 +167,7 @@ protected:
 
   chaos::GPUProgramData program_data[MAX_BONE_COUNT];
 
-  chaos::FPSViewInputController fps_view_controller;
+  chaos::FPSViewController fps_view_controller;
 
   chaos::MyFbxImporterOutput imported_data;
 };

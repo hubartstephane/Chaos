@@ -257,7 +257,7 @@ protected:
 
 	chaos::shared_ptr<chaos::GPUQuery> query;
 
-	chaos::FPSViewInputController fps_view_controller;
+	chaos::FPSViewController fps_view_controller;
 
 	chaos::GLDebugOnScreenDisplay debug_display;
 

@@ -242,7 +242,7 @@ protected:
 
 protected:
 
-  chaos::FPSViewInputController fps_view_controller;
+  chaos::FPSViewController fps_view_controller;
 
   chaos::GLDebugOnScreenDisplay debug_display;
 };

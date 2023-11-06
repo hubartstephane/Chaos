@@ -470,13 +470,13 @@ protected:
 		if (!primitive_renderer->Initialize())
 			return false;
 		// update the camera speed
-		fps_view_controller.movement_speed.back = CAMERA_SPEED;
-		fps_view_controller.movement_speed.down = CAMERA_SPEED;
-		fps_view_controller.movement_speed.up = CAMERA_SPEED;
-		fps_view_controller.movement_speed.forward = CAMERA_SPEED;
-		fps_view_controller.movement_speed.strafe = CAMERA_SPEED;
-
-		fps_view_controller.fps_controller.position.y = 30.0f;
+		fps_view_controller.config.back_speed = CAMERA_SPEED;
+		fps_view_controller.config.down_speed = CAMERA_SPEED;
+		fps_view_controller.config.up_speed = CAMERA_SPEED;
+		fps_view_controller.config.forward_speed = CAMERA_SPEED;
+		fps_view_controller.config.strafe_speed = CAMERA_SPEED;
+		
+		fps_view_controller.fps_view.position.y = 30.0f;
 		// create the very single sphere
 		chaos::box3 creation_box;
 		creation_box.position  = glm::vec3(0.0f, 0.0f, -200.0f);
@@ -798,7 +798,7 @@ protected:
 	// an object for rendering
 	chaos::shared_ptr<PrimitiveRenderer> primitive_renderer;
 	/** the camera */
-	chaos::FPSViewInputController fps_view_controller;
+	chaos::FPSViewController fps_view_controller;
 	/** the objects */
 	std::vector<chaos::shared_ptr<GeometricObject>> geometric_objects;
 	/** the selected object */

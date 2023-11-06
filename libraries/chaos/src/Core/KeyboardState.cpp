@@ -13,31 +13,43 @@ namespace chaos
 
 	void KeyboardState::SetKeyboardButtonState(KeyboardButton key, int action)
 	{
-		int raw_value = int(key);
-		if (raw_value >= 0 && raw_value < keyboard_state.size())
-			keyboard_state[raw_value].SetValue(action == GLFW_PRESS || action == GLFW_REPEAT);
+		if (key != KeyboardButton::UNKNOWN)
+		{
+			int raw_value = int(key);
+			if (raw_value >= 0 && raw_value < keyboard_state.size())
+				keyboard_state[raw_value].SetValue(action == GLFW_PRESS || action == GLFW_REPEAT);
+		}
 	}
 
 	void KeyboardState::SetMouseButtonState(MouseButton key, int action)
 	{
-		int raw_value = int(key);
-		if (raw_value >= 0 && raw_value < mouse_button_state.size())
-			mouse_button_state[raw_value].SetValue(action == GLFW_PRESS || action == GLFW_REPEAT);
+		if (key != MouseButton::UNKNOWN)
+		{
+			int raw_value = int(key);
+			if (raw_value >= 0 && raw_value < mouse_button_state.size())
+				mouse_button_state[raw_value].SetValue(action == GLFW_PRESS || action == GLFW_REPEAT);
+		}
 	}
 
 	ButtonState const* KeyboardState::GetKeyboardButtonState(KeyboardButton key)
 	{
-		int raw_value = int(key);
-		if (raw_value >= 0 && raw_value < keyboard_state.size())
-			return &keyboard_state[raw_value];
+		if (key != KeyboardButton::UNKNOWN)
+		{
+			int raw_value = int(key);
+			if (raw_value >= 0 && raw_value < keyboard_state.size())
+				return &keyboard_state[raw_value];
+		}
 		return nullptr;
 	}
 
 	ButtonState const* KeyboardState::GetMouseButtonState(MouseButton key)
 	{
-		int raw_value = int(key);
-		if (raw_value >= 0 && raw_value < mouse_button_state.size())
-			return &mouse_button_state[raw_value];
+		if (key != MouseButton::UNKNOWN)
+		{
+			int raw_value = int(key);
+			if (raw_value >= 0 && raw_value < mouse_button_state.size())
+				return &mouse_button_state[raw_value];
+		}
 		return nullptr;
 	}
 

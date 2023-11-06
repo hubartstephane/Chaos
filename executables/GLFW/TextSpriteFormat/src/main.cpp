@@ -166,8 +166,8 @@ protected:
 			return false;
 
 		// place camera
-		fps_view_controller.fps_controller.position.y = 0.0f;
-		fps_view_controller.fps_controller.position.z = 10.0f;
+		fps_view_controller.fps_view.position.y = 0.0f;
+		fps_view_controller.fps_view.position.z = 10.0f;
 
 		return true;
 	}
@@ -192,7 +192,7 @@ protected:
 	chaos::shared_ptr<chaos::ParticleAllocationBase> particles_allocation;
 
 	// the camera
-	chaos::FPSViewInputController fps_view_controller;
+	chaos::FPSViewController fps_view_controller;
 };
 
 

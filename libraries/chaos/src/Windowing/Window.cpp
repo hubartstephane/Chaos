@@ -618,7 +618,7 @@ namespace chaos
 			// GLFW keycode corresponds to the character that would be produced on a QWERTY layout
 			// we have to make a conversion to know the character is to be produced on CURRENT layout
 
-			KeyboardButton keyboard_button = (KeyboardButton)KeyboardLayoutConversion::ConvertGLFWKeycode(keycode, KeyboardLayoutType::QWERTY, KeyboardLayoutType::CURRENT);
+			KeyboardButton keyboard_button = KeyboardButton(KeyboardLayoutConversion::ConvertGLFWKeycode(keycode, KeyboardLayoutType::QWERTY, KeyboardLayoutType::CURRENT));
 
 			KeyboardState::SetKeyboardButtonState(keyboard_button, action);
 

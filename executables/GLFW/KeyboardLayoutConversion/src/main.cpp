@@ -16,6 +16,32 @@ public:
 	{
 		if (event.action == GLFW_PRESS)
 		{
+			int i = 0;
+			if (event.button == chaos::KeyboardButton::A)
+				++i;
+			if (event.button == chaos::KeyboardButton::Q)
+				++i;
+			if (event.button == chaos::KeyboardButton::UP)
+				++i;
+			if (event.button == chaos::KeyboardButton::DOWN)
+				++i;
+			if (event.button == chaos::KeyboardButton::COMMA)
+				++i;
+			if (event.button == chaos::KeyboardButton::M)
+				++i;
+			if (event.button == chaos::KeyboardButton::NUM_0)
+				++i;
+			if (event.button == chaos::KeyboardButton::KP_0)
+				++i;
+			if (event.button == chaos::KeyboardButton::Z)
+				++i;
+			if (event.button == chaos::KeyboardButton::W)
+				++i;
+
+			//last_button = event.button;
+
+
+
 			last_scancode = event.scancode;
 			last_button  = event.button;
 			last_key_pressed = chaos::KeyboardLayout::GetKnownLayout(chaos::KeyboardLayoutType::AZERTY).GetInformationFromScancode(event.scancode);
@@ -26,8 +52,12 @@ public:
 
 	virtual void OnDrawWindowImGuiContent()
 	{
+
 		ImGuiDrawableInterface::FullscreenWindow("conversion", false, [this]()
 		{
+			ImGui::Text("last_button (%s) (%s)", chaos::EnumToString(last_button), chaos::Key(chaos::EnumToString(last_button)).GetName());
+
+#if 0
 			if (last_scancode != 0)
 			{
 				ImGui::Text("last_scancode (0x%03x) -> last_button (0x%02x)", last_scancode, (int)last_button);
@@ -64,7 +94,9 @@ public:
 			ImGui_DisplayConversion(chaos::Key("A"));
 			ImGui_DisplayConversion(chaos::Key("Q"));
 			ImGui_DisplayConversion(chaos::Key("MOUSE_BUTTON_1"));
+#endif
 		});
+
 	}
 
 protected:
@@ -134,8 +166,8 @@ void GenerateKeyboardLayoutFiles()
 
 int main(int argc, char ** argv, char ** env)
 {
-	GenerateKeyboardLayoutFiles();
-	return 0;
+	//GenerateKeyboardLayoutFiles();
+	//return 0;
 
 	chaos::WindowCreateParams create_params;
 	create_params.monitor = nullptr;

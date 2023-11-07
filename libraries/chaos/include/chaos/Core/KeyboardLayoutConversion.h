@@ -13,7 +13,7 @@ namespace chaos
 	public:
 
 		/** the GLFW keycode */
-		KeyboardButton keycode = KeyboardButton::UNKNOWN;
+		int glfw_keycode = 0;
 		/** the corresponding scancode */
 		unsigned int scancode = 0;
 	};
@@ -68,14 +68,52 @@ namespace chaos
 
 	class CHAOS_API KeyboardLayoutConversion
 	{
+
+
+	public:
+
+		/** convert VK from one layout to another */
+		static unsigned int ConvertVK(unsigned int vk, KeyboardLayoutType src_layout_type = KeyboardLayoutType::QWERTY, KeyboardLayoutType dst_layout_type = KeyboardLayoutType::CURRENT);
+		/** convert a GLFW keycode from a layout to another layout (into a key that has the same position) */
+		static int ConvertGLFWKeycode(int keycode, KeyboardLayoutType src_layout_type, KeyboardLayoutType dst_layout_type);
+
+	protected:
+
+#if _WIN32
+
+		/** VK to GLFW keycode (relative to qwerty layout) */
+		static int QwertyVKToGLFWKeycode(unsigned int vk);
+		/** GLFW keycode to VK (relative to qwerty layout) */
+		static unsigned int QwertyGLFWKeycodeToVK(int keycode);
+		/** GLFW keycode to scancode (relative to qwerty layout) */
+		static unsigned int QwertyGLFWKeycodeToScancode(int keycode);
+		/** Scancode to GLFW keycode (relative to qwerty layout) */
+		static int QwertyScancodeToGLFWKeycode(unsigned int scancode);
+
+		/** get the GLFWKey/Scancode qwerty table */
+		static std::vector<GLFWKeyScancodePair> const& GetQwertyGLFWKeyScancodeTable();
+
+#endif // #if _WIN32
+
+
+
+#if 0
+
+
+
+
+
+
 	public:
 
 		/** convert a key by position */
 		static Key ConvertKey(Key key, KeyboardLayoutType layout);
 		/** convert VK from one layout to another */
-		static unsigned int ConvertVK(unsigned int vk, KeyboardLayoutType src_layout = KeyboardLayoutType::QWERTY, KeyboardLayoutType dst_layout = KeyboardLayoutType::CURRENT);
+		static unsigned int ConvertVK(unsigned int vk, KeyboardLayoutType src_layout_type = KeyboardLayoutType::QWERTY, KeyboardLayoutType dst_layout_type = KeyboardLayoutType::CURRENT);
 		/** convert input button */
 		static KeyboardButton ConvertKeyboardButton(KeyboardButton button, KeyboardLayoutType layout);
+		/** convert a GLFW keycode from a layout to another layout (into a key that has the same position) */
+		static int ConvertGLFWKeycode(int keycode, KeyboardLayoutType src_layout_type, KeyboardLayoutType dst_layout_type);
 
 	protected:
 
@@ -94,6 +132,10 @@ namespace chaos
 		static std::vector<GLFWKeyScancodePair> const& GetQwertyGLFWKeyScancodeTable();
 
 #endif // #if _WIN32
+
+#endif
+
+
 	};
 
 #endif

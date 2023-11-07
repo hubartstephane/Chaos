@@ -10,7 +10,7 @@ namespace chaos
 
 	void ImGuiWindowInformationDrawable::DrawImGui(ImGuiDrawMenuMode menu_mode)
 	{
-		ImGui::Begin("Window Information", nullptr);
+		ImGui::Begin("Window Information", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
 
 		if (window != nullptr)
 		{

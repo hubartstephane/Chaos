@@ -4,7 +4,7 @@
 
 /**
 * Common "macros"
-*/
+*/    
 
 #ifdef min
 #  undef min
@@ -12,6 +12,12 @@
 
 #ifdef max
 #  undef max
+#endif
+
+#if _WIN32
+#	if !_WIN64
+#		error "cannot compile in x32. Compile in x64 instead"
+#	endif
 #endif
 
 /**

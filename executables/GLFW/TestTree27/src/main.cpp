@@ -15,24 +15,24 @@ class KeyConfiguration
 {
 public:
 
-	chaos::Key new_scene = "Y";
-	chaos::Key delete_object = "Delete";
-	chaos::Key next_object = "NUM +";
-	chaos::Key previous_object = "NUM -";
+	chaos::Key new_scene = chaos::KeyboardLayoutConversion::ConvertKey("Y", chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key delete_object = chaos::KeyboardLayoutConversion::ConvertKey("DELETE", chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key next_object = chaos::KeyboardLayoutConversion::ConvertKey("KP_ADD", chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key previous_object = chaos::KeyboardLayoutConversion::ConvertKey("KP_SUBTRACT", chaos::KeyboardLayoutType::AZERTY);
 
-	chaos::Key move_object_positive_x = "D";
-	chaos::Key move_object_negative_x = "Q";
-	chaos::Key move_object_positive_y = "E";
-	chaos::Key move_object_negative_y = "A";
-	chaos::Key move_object_positive_z = "S";
-	chaos::Key move_object_negative_z = "Z";
+	chaos::Key move_object_positive_x = chaos::KeyboardLayoutConversion::ConvertKey("D", chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key move_object_negative_x = chaos::KeyboardLayoutConversion::ConvertKey("Q", chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key move_object_positive_y = chaos::KeyboardLayoutConversion::ConvertKey("E", chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key move_object_negative_y = chaos::KeyboardLayoutConversion::ConvertKey("A", chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key move_object_positive_z = chaos::KeyboardLayoutConversion::ConvertKey("S", chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key move_object_negative_z = chaos::KeyboardLayoutConversion::ConvertKey("Z", chaos::KeyboardLayoutType::AZERTY);
 
-	chaos::Key scale_object_positive_x = "D";
-	chaos::Key scale_object_negative_x = "Q";
-	chaos::Key scale_object_positive_y = "E";
-	chaos::Key scale_object_negative_y = "A";
-	chaos::Key scale_object_positive_z = "S";
-	chaos::Key scale_object_negative_z = "Z";
+	chaos::Key scale_object_positive_x = chaos::KeyboardLayoutConversion::ConvertKey("D", chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key scale_object_negative_x = chaos::KeyboardLayoutConversion::ConvertKey("Q", chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key scale_object_positive_y = chaos::KeyboardLayoutConversion::ConvertKey("E", chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key scale_object_negative_y = chaos::KeyboardLayoutConversion::ConvertKey("A", chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key scale_object_positive_z = chaos::KeyboardLayoutConversion::ConvertKey("S", chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key scale_object_negative_z = chaos::KeyboardLayoutConversion::ConvertKey("Z", chaos::KeyboardLayoutType::AZERTY);
 };
 
 // =======================================================================
@@ -273,7 +273,7 @@ protected:
 		{
 			bool enabled = (GetCurrentGeometricObject() != nullptr);
 
-			ImGui::Begin("help", &show_help);
+			ImGui::Begin("help", &show_help, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
 			DrawTextItem("random scene", key_configuration.new_scene, true);
 			DrawTextItem("next object", key_configuration.next_object, enabled);
 			DrawTextItem("previous object", key_configuration.previous_object, enabled);
@@ -782,7 +782,7 @@ protected:
 				}
 
 				// trace debugging information
-				ImGui::Begin("Information", nullptr);
+				ImGui::Begin("Information", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
 				ImGui::InputFloat("near_plane", &near_plane, 10.0f, 50.0f);
 				ImGui::InputFloat("far_plane", &far_plane, 10.0f, 50.0f);
 				ImGui::InputFloat("fov", &fov, 1.0f, 5.0f);
@@ -791,6 +791,12 @@ protected:
 		}
 
 		return true; // refresh
+	}
+
+	virtual void OnInputLanguageChanged() override
+	{
+		chaos::Window::OnInputLanguageChanged();
+		key_configuration = KeyConfiguration();
 	}
 
 protected:

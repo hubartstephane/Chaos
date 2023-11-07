@@ -144,6 +144,8 @@ namespace chaos
 	};
 #undef CHAOS_KEYDEF
 
+	CHAOS_DECLARE_ENUM_METHOD(KeyboardButton);
+
 	/**
 	 * MouseButton
 	 */
@@ -159,6 +161,8 @@ namespace chaos
 		BUTTON_7 = GLFW_MOUSE_BUTTON_7,
 		BUTTON_8 = GLFW_MOUSE_BUTTON_8
 	};
+
+	CHAOS_DECLARE_ENUM_METHOD(MouseButton);
 
 
 	// XXX: there are important changes in GLFW 3.3 relative to 3.1
@@ -218,6 +222,8 @@ namespace chaos
 		RIGHT_TRIGGER = 102
 	};
 
+	CHAOS_DECLARE_ENUM_METHOD(GamepadButton);
+
 	enum class CHAOS_API GamepadAxis : int
 	{
 		/** undefined value */
@@ -238,6 +244,8 @@ namespace chaos
 		RIGHT_TRIGGER = GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER,
 	};
 
+	CHAOS_DECLARE_ENUM_METHOD(GamepadAxis);
+
 	enum class CHAOS_API GamepadStick : int
 	{
 		/** undefined value */
@@ -247,6 +255,8 @@ namespace chaos
 		/** returns the direction of right stick */
 		RIGHT_STICK = 1
 	};
+
+	CHAOS_DECLARE_ENUM_METHOD(GamepadStick);
 
 	enum class CHAOS_API KeyType : int
 	{
@@ -259,6 +269,8 @@ namespace chaos
 		/** undefined value */
 		GAMEPAD = 2
 	};
+
+	CHAOS_DECLARE_ENUM_METHOD(KeyType);
 
 	/**
 	 * Key : a generic key (gamepad, keyboard or mouse)

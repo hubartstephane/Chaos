@@ -29,7 +29,10 @@ public:
 
 		ImGuiDrawableInterface::FullscreenWindow("conversion", false, [this]()
 		{
-			ImGui::Text("last_button (%s) (%s)", chaos::EnumToString(last_button), chaos::Key(chaos::EnumToString(last_button)).GetName());
+			ImGui::Text("LAST BUTTON (%s)", chaos::EnumToString(last_button));
+
+			ImGui::Dummy({ 0.0f, 20.0f });
+			ImGui::Separator();
 
 			auto ImGui_DisplayConversion = [](chaos::Key src)
 			{

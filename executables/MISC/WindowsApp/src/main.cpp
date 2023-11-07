@@ -4,54 +4,18 @@ class MyWindow : public chaos::SimpleWin32Window
 {
 public:
 
-	virtual LRESULT OnKeyDown(int keycode, int scancode) override
-	{
-		unsigned int mapped_key = ::MapVirtualKey(scancode, MAPVK_VSC_TO_VK);
-
-		std::string name = chaos::KeyboardLayout::ScancodeToName(scancode);
-		TextToDisplay = chaos::StringTools::Printf("keycode = [0x%03x]    scancode= [0x%03x]    mapped_key= [0x%03x]     name = [%s]", keycode, scancode, mapped_key, name.c_str());
-		InvalidateRect(hWnd, NULL, TRUE);
-		return 0;
-	}
-
-	virtual LRESULT OnCreate(CREATESTRUCTA* create_param)
-	{
-		hFont = CreateFont(
-			30, 0, 0, 0, 
-			FW_DONTCARE, 
-			FALSE, 
-			FALSE, 
-			FALSE, 
-			ANSI_CHARSET, 
-			OUT_DEFAULT_PRECIS, 
-			CLIP_DEFAULT_PRECIS, 
-			DEFAULT_QUALITY, 
-			DEFAULT_PITCH | FF_SWISS, 
-			"Arial");
-
-		return 0;
-	}
-
-	virtual LRESULT OnKeyUp(int keycode, int scancode) override
-	{
-
-		return 0;
-	}
-
 	virtual LRESULT OnLButtonDown(int x, int y, int buttonStates)
 	{
-		//::ShowWindow(GetHwnd(), SW_HIDE);
-
 		FIBITMAP * bitmap = chaos::WinTools::CaptureWindowToImage(GetHwnd());
 		if (bitmap != NULL)
 		{
-			std::string path = chaos::StringTools::Printf("c:\\temp\\capture_shu.png");
+			boost::filesystem::path p = chaos::Application::GetInstance()->GetUserLocalTempPath() / "capture.png";
 
-			FreeImage_Save(FIF_PNG, bitmap, path.c_str());  
+			FreeImage_Save(FIF_PNG, bitmap, p.string().c_str());  
 			FreeImage_Unload(bitmap);
-		}
 
-		//::ShowWindow(GetHwnd(), SW_SHOW);
+			chaos::WinTools::ShowFile(p);
+		}
 
 		return 0;
 	}
@@ -94,11 +58,6 @@ public:
 			}
 		}
 
-		RECT rect;
-		GetClientRect(hWnd, &rect);
-		SelectFont(hdc, hFont);
-		DrawText(hdc, TextToDisplay.c_str(), (int)TextToDisplay.length(), &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE); // DT_VCENTER only works with DT_SINGLELINE
-
 		EndPaint(hWnd, &ps);
 		return 0;
 	}
@@ -111,9 +70,6 @@ public:
 protected:
 
 	std::string TextToDisplay;
-
-	HFONT hFont = NULL;
-
 };
 
 //

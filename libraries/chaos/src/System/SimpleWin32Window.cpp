@@ -142,6 +142,11 @@ namespace chaos
 		return 0;  
 	}
 
+	LRESULT SimpleWin32Window::OnDestroy()
+	{
+		return 0;
+	}
+
 	LRESULT SimpleWin32Window::OnPaint()
 	{
 		PAINTSTRUCT ps;
@@ -188,6 +193,7 @@ namespace chaos
 			return OnCreate((CREATESTRUCTA*)lParam);
 
 		case WM_DESTROY:
+			OnDestroy();
 			PostQuitMessage(0);
 			return 0;
 

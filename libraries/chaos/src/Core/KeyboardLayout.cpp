@@ -434,7 +434,7 @@ namespace chaos
 	{
 #if _WIN32
 		char name[256];
-		if (::GetKeyNameTextA(scancode << 16 & 0xFFFF, name, sizeof(name)))
+		if (::GetKeyNameTextA(scancode << 16, name, sizeof(name)))
 			return name;
 #endif // #if _WIN32
 		return {};
@@ -445,6 +445,7 @@ namespace chaos
 		KeyboardLayout result;
 
 #if _WIN32
+
 		for (unsigned int scancode = 0; scancode <= 0x1FF; ++scancode)
 		{
 			unsigned int vk = ::MapVirtualKey(scancode, MAPVK_VSC_TO_VK);

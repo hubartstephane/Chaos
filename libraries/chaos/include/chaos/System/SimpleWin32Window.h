@@ -55,6 +55,8 @@ namespace chaos
 		virtual LRESULT OnKeyDown(int keycode, int scancode);
 		/** some key event KEYUP */
 		virtual LRESULT OnKeyUp(int keycode, int scancode);
+		/** called by WM_DESTROY */
+		virtual LRESULT OnDestroy();
 
 		/** the rendering method */
 		virtual LRESULT OnPaint();

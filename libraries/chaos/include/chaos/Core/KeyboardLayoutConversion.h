@@ -23,8 +23,8 @@ namespace chaos
 	 */
 
 	 // GLFW keycodes represent the 'character' that would be produced on a qwerty keyboard -+
-	 //                                                                                      +--> GLFW keycodes and VK represent CHARACTER (there is a link to be made between this 2 concepts)
-	 // VK (virtual key) represent a 'character' on any keyboard                            -+
+	 //                                                                                      +--> GLFW keycodes and VK represent CHARACTERS (there is a link to be made between this 2 concepts)
+	 // VK (virtual key) represent a 'character' on any keyboard                            -+                                              (they are both indepedant of key position)
 	 // 
 	 // Scancodes represent a position on the keyboard (independant of the character produced) -> SCANCODE only represents a position
 	 //
@@ -68,14 +68,19 @@ namespace chaos
 
 	class CHAOS_API KeyboardLayoutConversion
 	{
-
-
 	public:
+
+#if _WIN32
 
 		/** convert VK from one layout to another */
 		static unsigned int ConvertVK(unsigned int vk, KeyboardLayoutType src_layout_type = KeyboardLayoutType::QWERTY, KeyboardLayoutType dst_layout_type = KeyboardLayoutType::CURRENT);
+
+#endif // #if _WIN32
+
 		/** convert a GLFW keycode from a layout to another layout (into a key that has the same position) */
-		static int ConvertGLFWKeycode(int keycode, KeyboardLayoutType src_layout_type, KeyboardLayoutType dst_layout_type);
+		static int ConvertGLFWKeycode(int keycode, KeyboardLayoutType src_layout_type = KeyboardLayoutType::QWERTY, KeyboardLayoutType dst_layout_type = KeyboardLayoutType::CURRENT);
+		/** convert a key by position */
+		static Key ConvertKey(Key key, KeyboardLayoutType src_layout_type = KeyboardLayoutType::QWERTY, KeyboardLayoutType dst_layout_type = KeyboardLayoutType::CURRENT);
 
 	protected:
 
@@ -94,47 +99,6 @@ namespace chaos
 		static std::vector<GLFWKeyScancodePair> const& GetQwertyGLFWKeyScancodeTable();
 
 #endif // #if _WIN32
-
-
-
-#if 0
-
-
-
-
-
-
-	public:
-
-		/** convert a key by position */
-		static Key ConvertKey(Key key, KeyboardLayoutType layout);
-		/** convert VK from one layout to another */
-		static unsigned int ConvertVK(unsigned int vk, KeyboardLayoutType src_layout_type = KeyboardLayoutType::QWERTY, KeyboardLayoutType dst_layout_type = KeyboardLayoutType::CURRENT);
-		/** convert input button */
-		static KeyboardButton ConvertKeyboardButton(KeyboardButton button, KeyboardLayoutType layout);
-		/** convert a GLFW keycode from a layout to another layout (into a key that has the same position) */
-		static int ConvertGLFWKeycode(int keycode, KeyboardLayoutType src_layout_type, KeyboardLayoutType dst_layout_type);
-
-	protected:
-
-#if _WIN32
-
-		/** VK to GLFW keycode (relative to qwerty layout) */
-		static KeyboardButton QwertyVKToGLFWKeycode(unsigned int vk);
-		/** GLFW keycode to VK (relative to qwerty layout) */
-		static unsigned int QwertyGLFWKeycodeToVK(KeyboardButton keycode);
-		/** GLFW keycode to scancode (relative to qwerty layout) */
-		static unsigned int QwertyGLFWKeycodeToScancode(KeyboardButton keycode);
-		/** Scancode to GLFW keycode (relative to qwerty layout) */
-		static KeyboardButton QwertyScancodeToGLFWKeycode(unsigned int scancode);
-
-		/** get the GLFWKey/Scancode qwerty table */
-		static std::vector<GLFWKeyScancodePair> const& GetQwertyGLFWKeyScancodeTable();
-
-#endif // #if _WIN32
-
-#endif
-
 
 	};
 

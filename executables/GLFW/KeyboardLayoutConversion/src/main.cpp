@@ -16,32 +16,6 @@ public:
 	{
 		if (event.action == GLFW_PRESS)
 		{
-			int i = 0;
-			if (event.button == chaos::KeyboardButton::A)
-				++i;
-			if (event.button == chaos::KeyboardButton::Q)
-				++i;
-			if (event.button == chaos::KeyboardButton::UP)
-				++i;
-			if (event.button == chaos::KeyboardButton::DOWN)
-				++i;
-			if (event.button == chaos::KeyboardButton::COMMA)
-				++i;
-			if (event.button == chaos::KeyboardButton::M)
-				++i;
-			if (event.button == chaos::KeyboardButton::NUM_0)
-				++i;
-			if (event.button == chaos::KeyboardButton::KP_0)
-				++i;
-			if (event.button == chaos::KeyboardButton::Z)
-				++i;
-			if (event.button == chaos::KeyboardButton::W)
-				++i;
-
-			//last_button = event.button;
-
-
-
 			last_scancode = event.scancode;
 			last_button  = event.button;
 			last_key_pressed = chaos::KeyboardLayout::GetKnownLayout(chaos::KeyboardLayoutType::AZERTY).GetInformationFromScancode(event.scancode);
@@ -57,20 +31,18 @@ public:
 		{
 			ImGui::Text("last_button (%s) (%s)", chaos::EnumToString(last_button), chaos::Key(chaos::EnumToString(last_button)).GetName());
 
-#if 0
-			if (last_scancode != 0)
-			{
-				ImGui::Text("last_scancode (0x%03x) -> last_button (0x%02x)", last_scancode, (int)last_button);
-			}
-
 			auto ImGui_DisplayConversion = [](chaos::Key src)
 			{
-				for (chaos::KeyboardLayoutType layout : {chaos::KeyboardLayoutType::QWERTY, chaos::KeyboardLayoutType::AZERTY, chaos::KeyboardLayoutType::CURRENT})
+				for (chaos::KeyboardLayoutType src_layout : {chaos::KeyboardLayoutType::QWERTY, chaos::KeyboardLayoutType::AZERTY, chaos::KeyboardLayoutType::CURRENT})
 				{
-					char const* src_name = EnumToString(layout);
-					chaos::Key dst = chaos::KeyboardLayoutConversion::ConvertKey(src, layout);
+					char const* src_layout_name = EnumToString(src_layout);
+					chaos::Key dst = chaos::KeyboardLayoutConversion::ConvertKey(src, src_layout, chaos::KeyboardLayoutType::CURRENT);
 
-					ImGui::Text("%s (%s) -> %s (current)", src.GetName(), src_name, dst.GetName());
+					ImVec4 color = (src == dst) ?
+						ImVec4{ 1.0f, 1.0f, 1.0f, 1.0f }: 
+						ImVec4{ 1.0f, 0.0f, 0.0f, 1.0f };
+
+					ImGui::TextColored(color, "%s (%s) -> %s (current)", src.GetName(), src_layout_name, dst.GetName());
 				}
 				ImGui::Separator();
 			};
@@ -94,7 +66,6 @@ public:
 			ImGui_DisplayConversion(chaos::Key("A"));
 			ImGui_DisplayConversion(chaos::Key("Q"));
 			ImGui_DisplayConversion(chaos::Key("MOUSE_BUTTON_1"));
-#endif
 		});
 
 	}

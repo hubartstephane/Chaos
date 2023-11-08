@@ -31,7 +31,7 @@ public:
 
 	void Initialize()
 	{
-		chaos::ObjectConfiguration* conf = GetConfiguration();
+		chaos::ObjectConfigurationBase* conf = GetConfiguration();
 
 		conf = conf;
 
@@ -61,7 +61,7 @@ public:
 
 	void Initialize()
 	{
-		chaos::ObjectConfiguration* conf = GetConfiguration();
+		chaos::ObjectConfigurationBase* conf = GetConfiguration();
 
 		conf = conf;
 
@@ -102,64 +102,8 @@ public:
 
 int main(int argc, char ** argv, char ** env)
 {
+	chaos::RootObjectConfiguration conf;
 
-
-
-	return 0;
-
-
-#if 0
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	chaos::Tree27Node<2, chaos::EmptyClass> Node;
-
-	Node.ForEachNode([](auto ptr)
-	{
-			ptr = ptr;
-			//return 0;
-	});
-
-
-
-	struct TOTO
-	{
-		int index_in_parent : 5 = 0;
-		int children_flags : 27;
-	};
-
-	TOTO toto;
-	toto.index_in_parent = 27;
-	toto.children_flags = 0b0001011;
-
-	chaos::BitTools::ForEachBitForward(toto.children_flags, [](int bit)
-		{
-			bit = bit;
-		});
-
-	auto s = sizeof(TOTO);
-
-
-	chaos::ObjectConfiguration conf;
-
-	chaos::Tree27NodeInfo<2> NN;
 
 	chaos::shared_ptr<A> a = new A;
 
@@ -167,9 +111,9 @@ int main(int argc, char ** argv, char ** env)
 	a->SetConfiguration(conf.CreateChildConfiguration("A"));
 	a->Initialize();
 
-	conf.OnConfigurationChanged();
+	conf.TriggerConfigurationChanged();
 
 	a = nullptr;
-#endif
+
 	return 0;
 }

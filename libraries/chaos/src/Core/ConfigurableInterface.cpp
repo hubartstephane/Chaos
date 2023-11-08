@@ -9,7 +9,7 @@ namespace chaos
 	// ConfigurableInterface implementation
 	// ---------------------------------------------------------------------
 
-	void ConfigurableInterface::SetConfiguration(ObjectConfiguration* in_configuration)
+	void ConfigurableInterface::SetConfiguration(ObjectConfigurationBase* in_configuration)
 	{
 		if (configuration.get() != in_configuration)
 		{
@@ -24,15 +24,50 @@ namespace chaos
 	}
 
 	// ---------------------------------------------------------------------
-	// ObjectConfiguration implementation
+	// ObjectConfigurationBase implementation
 	// ---------------------------------------------------------------------
 
-	ObjectConfiguration::~ObjectConfiguration()
+	ChildObjectConfiguration* ObjectConfigurationBase::CreateChildConfiguration(std::string_view key)
+	{
+		if (ChildObjectConfiguration* result = new ChildObjectConfiguration)
+		{
+			child_configurations.push_back(result);
+
+			result->parent_configuration = this;
+			result->key = key;
+			result->UpdateFromParent();
+
+			return result;
+		}
+		return nullptr;
+	}
+
+	void ObjectConfigurationBase::PropagateNotifications()
+	{
+		// trigger the change for the configurable
+		if (ConfigurableInterface* configurable = auto_cast(configurable_object.get()))
+			configurable->OnConfigurationChanged();
+		// create a weak copy of the children list. children may be destroyed during this loop
+		std::vector<weak_ptr<ChildObjectConfiguration>> child_copy;
+		child_copy.reserve(child_configurations.size());
+		for (auto& child : child_configurations)
+			child_copy.push_back(child.get());
+		// propagate the change to sub hierarchy
+		for (auto& child : child_copy)
+			if (child != nullptr)
+				child->PropagateNotifications();
+	}
+
+	// ---------------------------------------------------------------------
+	// ChildObjectConfiguration implementation
+	// ---------------------------------------------------------------------
+
+	ChildObjectConfiguration::~ChildObjectConfiguration()
 	{
 		assert(parent_configuration == nullptr);
 	}
 
-	void ObjectConfiguration::SubReference()
+	void ChildObjectConfiguration::SubReference()
 	{
 		if (parent_configuration == nullptr)
 			Object::SubReference(); // the configuration is handled as usual
@@ -40,7 +75,7 @@ namespace chaos
 			RemoveFromParent();
 	}
 
-	void ObjectConfiguration::RemoveFromParent()
+	void ChildObjectConfiguration::RemoveFromParent()
 	{
 		assert(parent_configuration != nullptr);
 
@@ -51,29 +86,7 @@ namespace chaos
 		parent_configuration = nullptr;
 	}
 
-	ObjectConfiguration* ObjectConfiguration::CreateChildConfiguration(std::string_view key)
-	{
-		if (ObjectConfiguration* result = new ObjectConfiguration)
-		{
-			result->parent_configuration = this;
-			result->key = key;
-			result->UpdateFromParent();
-
-			child_configurations.push_back(result);
-
-			return result;
-		}
-		return nullptr;
-	}
-
-	void ObjectConfiguration::OnConfigurationChanged()
-	{
-		assert(parent_configuration == nullptr); // should only be called for top level configuration
-		PropagateUpdates();
-		PropagateNotifications();
-	}
-
-	void ObjectConfiguration::UpdateFromParent()
+	void ChildObjectConfiguration::UpdateFromParent()
 	{
 		read_config = (parent_configuration != nullptr && parent_configuration->read_config != nullptr) ?
 			JSONTools::GetStructure(*parent_configuration->read_config, key) :
@@ -83,29 +96,54 @@ namespace chaos
 			nullptr;
 	}
 
-	void ObjectConfiguration::PropagateUpdates()
+	void ChildObjectConfiguration::PropagateUpdates()
 	{
 		// update the configuration
 		UpdateFromParent();
 		// propagate the update to sub hierarchy
-		for (shared_ptr<ObjectConfiguration>& child : child_configurations)
+		for (shared_ptr<ChildObjectConfiguration>& child : child_configurations)
 			child->PropagateUpdates();
 	}
 
-	void ObjectConfiguration::PropagateNotifications()
+	// ---------------------------------------------------------------------
+	// RootObjectConfiguration implementation
+	// ---------------------------------------------------------------------
+
+	void RootObjectConfiguration::TriggerConfigurationChanged()
 	{
-		// trigger the change for the configurable
-		if (ConfigurableInterface* configurable = auto_cast(configurable_object.get()))
-			configurable->OnConfigurationChanged();
-		// create a weak copy of the children list. children may be destroyed during this loop
-		std::vector<weak_ptr<ObjectConfiguration>> child_copy;
-		child_copy.reserve(child_configurations.size());
-		for (auto& child : child_configurations)
-			child_copy.push_back(child.get());
-		// propagate the change to sub hierarchy
-		for (auto& child : child_copy)
-			if (child != nullptr)
-				child->PropagateNotifications();
+		// propagate the update to sub hierarchy
+		for (shared_ptr<ChildObjectConfiguration>& child : child_configurations)
+			child->PropagateUpdates();
+		// send notifications
+		PropagateNotifications();
+	}
+
+	bool RootObjectConfiguration::LoadConfigurations(FilePathParam const& read_config_path, FilePathParam const& write_config_path, bool trigger_notifications)
+	{
+		// update the read json
+		root_read_config = nlohmann::json();
+		JSONTools::LoadJSONFile(read_config_path, root_read_config, LoadFileFlag::RECURSIVE);
+		read_config = &root_read_config;
+
+		// update the write json
+		root_write_config = nlohmann::json();
+		JSONTools::LoadJSONFile(write_config_path, root_write_config, LoadFileFlag::RECURSIVE);
+		write_config = &root_write_config;
+
+		// notify the changes
+		if (trigger_notifications)
+			TriggerConfigurationChanged();
+
+		return true;
+	}
+
+	bool RootObjectConfiguration::SaveWriteConfiguration(FilePathParam const& write_config_path)
+	{
+
+
+
+
+		return true;
 	}
 
 }; // namespace chaos

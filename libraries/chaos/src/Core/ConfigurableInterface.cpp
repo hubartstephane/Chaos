@@ -139,11 +139,7 @@ namespace chaos
 
 	bool RootObjectConfiguration::SaveWriteConfiguration(FilePathParam const& write_config_path)
 	{
-
-
-
-
-		return true;
+		return JSONTools::SaveJSONToFile(root_write_config, write_config_path);
 	}
 
 }; // namespace chaos

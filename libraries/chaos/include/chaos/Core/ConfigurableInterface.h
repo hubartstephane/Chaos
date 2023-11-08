@@ -4,7 +4,9 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	class ConfigurableInterface;
-	class ObjectConfiguration;
+	class ObjectConfigurationBase;
+	class ChildObjectConfiguration;
+	class RootObjectConfiguration;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -12,9 +14,9 @@ namespace chaos
 	* ConfigurableInterface: an interface representing that can have a configuration. Theses objects may react to confgiuration updates
 	*/
 
-	class ConfigurableInterface
+	class CHAOS_API ConfigurableInterface
 	{
-		friend class ObjectConfiguration;
+		friend class ObjectConfigurationBase;
 
 	public:
 
@@ -22,13 +24,13 @@ namespace chaos
 		virtual ~ConfigurableInterface() = default;
 
 		/** getter on the configuration */
-		ObjectConfiguration* GetConfiguration() const
+		ObjectConfigurationBase* GetConfiguration() const
 		{
 			return configuration.get();
 		}
 
 		/** set the configuration of the object */
-		void SetConfiguration(ObjectConfiguration* in_configuration);
+		void SetConfiguration(ObjectConfigurationBase* in_configuration);
 
 	protected:
 
@@ -38,57 +40,97 @@ namespace chaos
 	protected:
 
 		/** the configuration */
-		shared_ptr<ObjectConfiguration> configuration;
+		shared_ptr<ObjectConfigurationBase> configuration;
 	};
 
 
 	/**
-	* ObjectConfiguration: some configuration that may be used for reading and writing (for persistent data)
+	* ObjectConfigurationBase: some configuration that may be used for reading and writing (for persistent data)
 	*/
 
-	class ObjectConfiguration : public Object
+	class CHAOS_API ObjectConfigurationBase : public Object
 	{
 		friend class ConfigurableInterface;
+		friend class ChildObjectConfiguration;
+		friend class RootObjectConfiguration;
 
 	public:
 
-		/** destructor */
-		virtual ~ObjectConfiguration();
-
-		/** override */
-		virtual void SubReference() override;
-
 		/** create a child configuration */
-		ObjectConfiguration* CreateChildConfiguration(std::string_view key);
-		/** call this whenever the configuration is being changed */
-		void OnConfigurationChanged();
+		ChildObjectConfiguration* CreateChildConfiguration(std::string_view key);
 
 	protected:
 
-		/** update json nodes from parent configuration */
-		void UpdateFromParent();
-		/** recursively update child configuration */
-		void PropagateUpdates();
 		/** recursively send notifications */
 		void PropagateNotifications();
-		/** remove the configuration from its parent */
-		void RemoveFromParent();
 
 	protected:
+
+		/** the children configurations */
+		std::vector<shared_ptr<ChildObjectConfiguration>> child_configurations;
+		/** the configurable object owning this */
+		weak_ptr<Object> configurable_object;
 
 		/** the json node to read info from */
 		nlohmann::json* read_config = nullptr;
 		/** the json node to write info into */
 		nlohmann::json* write_config = nullptr;
+	};
+
+	/**
+	* ChildObjectConfiguration: a specialization that has a parent node and whose content depend on that
+	*/
+
+	class CHAOS_API ChildObjectConfiguration : public ObjectConfigurationBase
+	{
+		friend class ObjectConfigurationBase;
+		friend class RootObjectConfiguration;
+
+	public:
+
+		/** destructor */
+		virtual ~ChildObjectConfiguration();
+		/** override */
+		virtual void SubReference() override;
+
+	protected:
+
+		/** recursively update child configuration */
+		void PropagateUpdates();
+		/** update json nodes from parent configuration */
+		void UpdateFromParent();
+		/** remove the configuration from its parent */
+		void RemoveFromParent();
+
+	protected:
 
 		/** the parent configuration */
-		weak_ptr<ObjectConfiguration> parent_configuration;
+		weak_ptr<ObjectConfigurationBase> parent_configuration;
 		/** the path from parent to this configuration */
 		std::string key;
-		/** the children configurations */
-		std::vector<shared_ptr<ObjectConfiguration>> child_configurations;
-		/** the configurable object owning this */
-		weak_ptr<Object> configurable_object;
+	};
+
+	/**
+	* RootObjectConfiguration: a specialization store the whole JSON hierarchy and lend sub-content to its children
+	*/
+
+	class CHAOS_API RootObjectConfiguration : public ObjectConfigurationBase
+	{
+	public:
+
+		/** read config from files */
+		bool LoadConfigurations(FilePathParam const& read_config_path, FilePathParam const& write_config_path, bool trigger_notifications = false);
+		/** save the persistent data */
+		bool SaveWriteConfiguration(FilePathParam const& write_config_path);
+		/** call this whenever the configuration is being changed */
+		void TriggerConfigurationChanged();
+
+	protected:
+
+		/** the json node to read info from */
+		nlohmann::json root_read_config;
+		/** the json node to write info into */
+		nlohmann::json root_write_config;
 	};
 
 #endif

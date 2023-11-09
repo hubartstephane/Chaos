@@ -31,7 +31,11 @@ public:
 
 	void Initialize()
 	{
-		chaos::ObjectConfigurationBase* conf = GetConfiguration();
+		chaos::ObjectConfigurationBase* conf = GetObjectConfiguration();
+
+		int i = 0;
+
+		bool b2 = chaos::JSONTools::GetAttributeByIndex(GetJSONReadConfiguration(), 3, i);
 
 		conf = conf;
 
@@ -40,7 +44,9 @@ public:
 	virtual void OnConfigurationChanged()
 	{
 		int i = 0;
-		++i;
+		bool b = chaos::JSONTools::GetAttributeByIndex(GetJSONReadConfiguration(), 3, i);
+
+		b = b;
 
 	}
 
@@ -61,54 +67,29 @@ public:
 
 	void Initialize()
 	{
-		chaos::ObjectConfigurationBase* conf = GetConfiguration();
-
-		conf = conf;
+		chaos::ObjectConfigurationBase* conf = GetObjectConfiguration();
 
 		b = new B;
-		b->SetConfiguration(conf->CreateChildConfiguration("B"));
+		b->SetObjectConfiguration(conf->CreateChildConfiguration("B"));
+		b->Initialize();
 	}
 
 	virtual void OnConfigurationChanged()
 	{
-		int i = 0;
-		++i;
-
-		b = nullptr;
+		b = nullptr; // destroy the child object before it receives the notification of configuration changed
 	}
+
+protected:
 
 	chaos::shared_ptr<B> b;
-
-};
-
-
-class G
-{
-public:
-
-	G(int a, int b, int c):x(a)
-	{
-		a = a;
-	}
-
-	~G()
-	{
-		int i = 0;
-		++i;
-	}
-
-	int x;
 };
 
 int main(int argc, char ** argv, char ** env)
 {
 	chaos::RootObjectConfiguration conf;
 
-
 	chaos::shared_ptr<A> a = new A;
-
-
-	a->SetConfiguration(conf.CreateChildConfiguration("A"));
+	a->SetObjectConfiguration(conf.CreateChildConfiguration("A"));
 	a->Initialize();
 
 	conf.TriggerConfigurationChanged();

@@ -1,10 +1,10 @@
 {
 	"fragment":
 	[
-		"@health.fsh"
+		"$SCRIPT_PATH/health.fsh"
 	],
   "vertex": 
   [
-    "@health.vsh"
+    "$SCRIPT_PATH/health.vsh"
   ]
 }

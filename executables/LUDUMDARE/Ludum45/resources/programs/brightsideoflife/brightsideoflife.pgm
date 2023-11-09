@@ -1,10 +1,10 @@
 {
 	"fragment":
 	[
-		"@brightsideoflife.fsh"
+		"$SCRIPT_PATH/brightsideoflife.fsh"
 	],
 	"vertex":
 	[
-		"@brightsideoflife.vsh"
+		"$SCRIPT_PATH/brightsideoflife.vsh"
 	]
 }

@@ -1,10 +1,10 @@
 {
 	"fragment":
 	[
-		"@whitescreen.fsh"
+		"$SCRIPT_PATH/whitescreen.fsh"
 	],
 	"vertex":
 	[
-		"@whitescreen.vsh"
+		"$SCRIPT_PATH/whitescreen.vsh"
 	]
 }

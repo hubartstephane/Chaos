@@ -12,12 +12,12 @@
 	},
 
 	"sources":[
-		{"path":"@sounds/music.ogg", "categories":"cat2"},
-		{"path":"@sounds/gameover.ogg"},
-		{"path":"@sounds/bonus1.ogg"},
-		{"path":"@sounds/bonus2.ogg"},		
-		{"path":"@sounds/start.ogg"},
-		{"path":"@sounds/pause.ogg"},
-		{"path":"@sounds/collision.ogg"}
+		{"path":"$SCRIPT_PATH/sounds/music.ogg", "categories":"cat2"},
+		{"path":"$SCRIPT_PATH/sounds/gameover.ogg"},
+		{"path":"$SCRIPT_PATH/sounds/bonus1.ogg"},
+		{"path":"$SCRIPT_PATH/sounds/bonus2.ogg"},		
+		{"path":"$SCRIPT_PATH/sounds/start.ogg"},
+		{"path":"$SCRIPT_PATH/sounds/pause.ogg"},
+		{"path":"$SCRIPT_PATH/sounds/collision.ogg"}
 	]
 }

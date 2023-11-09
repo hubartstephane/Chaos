@@ -1,10 +1,10 @@
 {
 	"fragment":
 	[
-		"@postprocess.fsh"
+		"$SCRIPT_PATH/postprocess.fsh"
 	],
 	"vertex":
 	[
-		"@postprocess.vsh"
+		"$SCRIPT_PATH/postprocess.vsh"
 	]
 }

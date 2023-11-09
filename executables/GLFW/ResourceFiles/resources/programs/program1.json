@@ -1,10 +1,10 @@
 {
 	"fragment":
 	[
-		"@pixel_shader1.txt"
+		"$SCRIPT_PATH/pixel_shader1.txt"
 	],
 	"vertex":
 	[
-		"@vertex_shader1.txt"
+		"$SCRIPT_PATH/vertex_shader1.txt"
 	]
 }

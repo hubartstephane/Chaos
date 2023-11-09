@@ -1,21 +1,21 @@
 {
-	"windows": {
-		"main_window": {
-			"width": 1200,
-			"height": 600
-		}
-	},
+  "windows": {
+    "main_window": {
+      "width": 1200,
+      "height": 600
+    }
+  },
 
   "max_tick_duration": 0.06,
   "forced_tick_durationxxx": 0.003,
 
-  "gpu": { "[include]": "@gpu.json" },
-  "game": { "[include]": "@game.json" },
-  "sounds": { "[include]": "@sounds.json" },
-  "hud": { "[include]": "@hud.json" },
-  "classes": { "[include]": "@classes.json" },
+  "gpu": { "[include]": "$SCRIPT_PATH/gpu.json" },
+  "game": { "[include]": "$SCRIPT_PATH/game.json" },
+  "sounds": { "[include]": "$SCRIPT_PATH/sounds.json" },
+  "hud": { "[include]": "$SCRIPT_PATH/hud.json" },
+  "classes": { "[include]": "$SCRIPT_PATH/classes.json" },
 
-  "atlas": { "[include]": "@atlas.json" },
+  "atlas": { "[include]": "$SCRIPT_PATH/atlas.json" },
   "fonts": { "[include]": "fonts.json" },
-  "sprite_directory": "@sprites"
+  "sprite_directory": "$SCRIPT_PATH/sprites"
 }

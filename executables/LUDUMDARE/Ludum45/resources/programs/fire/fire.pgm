@@ -1,10 +1,10 @@
 {
 	"fragment":
 	[
-		"@fire.fsh"
+		"$SCRIPT_PATH/fire.fsh"
 	],
 	"vertex":
 	[
-		"@fire.vsh"
+		"$SCRIPT_PATH/fire.vsh"
 	]
 }

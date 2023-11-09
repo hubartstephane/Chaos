@@ -50,18 +50,22 @@ namespace chaos
 
 	bool JSONRecursiveLoader::DoMakeStringSubstitution(LoaderEntry * entry, std::string & result)
 	{
-		if (result[0] == '@') // may be a path ?
+		if (result[0] == '$') // may be a path ?
 		{
-			if (result[1] == '@') // escaped characters ?
+			if (result[1] == '$') // escaped characters ?
 			{
 				result = result.c_str() + 1; // skip the first
+				return true;
 			}
-			else
+			
+			constexpr std::string_view SCRIPT_PATH_MARKUP = "$SCRIPT_PATH";
+			
+			if (StringTools::Strnicmp(result, SCRIPT_PATH_MARKUP.data(), SCRIPT_PATH_MARKUP.length()) == 0)
 			{
-				FilePathParam replacement_path(result.c_str() + 1, entry->path);
+				FilePathParam replacement_path(result.c_str() + SCRIPT_PATH_MARKUP.length(), entry->path);
 				result = replacement_path.GetResolvedPath().string().c_str();
+				return true;
 			}
-			return true;
 		}
 		return false;
 	}

@@ -1,8 +1,8 @@
 {
-  "sprite_directory": "@sprites",
-  "levels_directory": "@levels",
-  "tilesets_directory": "@tilesets",
-  "objecttypesets_directory": "@objecttypesets",
+  "sprite_directory": "$SCRIPT_PATH/sprites",
+  "levels_directory": "$SCRIPT_PATH/levels",
+  "tilesets_directory": "$SCRIPT_PATH/tilesets",
+  "objecttypesets_directory": "$SCRIPT_PATH/objecttypesets",
 
   "mouse_sensitivity": 1.0,
   "gamepad_sensitivity": 1.0,

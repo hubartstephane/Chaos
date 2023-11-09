@@ -1,11 +1,11 @@
 {
-  "@postprocess": { "path": "@materials/postprocess.mat" },
-  "@background": { "path": "@materials/background.mat" },
-  "@health": { "path": "@materials/health.mat" },
-  "@player": { "path": "@materials/player.mat" },
-  "@enemy": { "path": "@materials/enemy.mat" },
-  "@atom": { "path": "@materials/atom.mat" },
-  "@worldlimit": { "path": "@materials/worldlimit.mat" },
-  "@background_particle": { "path": "@materials/background_particle.mat" },
-  "@text": { "path": "@materials/text.mat" }
+  "@postprocess": { "path": "$SCRIPT_PATH/materials/postprocess.mat" },
+  "@background": { "path": "$SCRIPT_PATH/materials/background.mat" },
+  "@health": { "path": "$SCRIPT_PATH/materials/health.mat" },
+  "@player": { "path": "$SCRIPT_PATH/materials/player.mat" },
+  "@enemy": { "path": "$SCRIPT_PATH/materials/enemy.mat" },
+  "@atom": { "path": "$SCRIPT_PATH/materials/atom.mat" },
+  "@worldlimit": { "path": "$SCRIPT_PATH/materials/worldlimit.mat" },
+  "@background_particle": { "path": "$SCRIPT_PATH/materials/background_particle.mat" },
+  "@text": { "path": "$SCRIPT_PATH/materials/text.mat" }
 }

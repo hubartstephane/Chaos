@@ -1,8 +1,8 @@
 [
-{"name":"background", "path": "@programs/background/background.pgm" },
-{"name":"text", "path": "@programs/text/text.pgm" },
-{"name":"screenspace1", "path": "@programs/screenspace1/screenspace1.pgm" },
-{"name":"screenspace2", "path": "@programs/screenspace2/screenspace2.pgm" },
-{"name":"BurningFlames", "path": "@programs/BurningFlames/BurningFlames.pgm" },
-{"name":"blackscreen", "path": "@programs/blackscreen/blackscreen.pgm" }
+{"name":"background", "path": "$SCRIPT_PATH/programs/background/background.pgm" },
+{"name":"text", "path": "$SCRIPT_PATH/programs/text/text.pgm" },
+{"name":"screenspace1", "path": "$SCRIPT_PATH/programs/screenspace1/screenspace1.pgm" },
+{"name":"screenspace2", "path": "$SCRIPT_PATH/programs/screenspace2/screenspace2.pgm" },
+{"name":"BurningFlames", "path": "$SCRIPT_PATH/programs/BurningFlames/BurningFlames.pgm" },
+{"name":"blackscreen", "path": "$SCRIPT_PATH/programs/blackscreen/blackscreen.pgm" }
 ]

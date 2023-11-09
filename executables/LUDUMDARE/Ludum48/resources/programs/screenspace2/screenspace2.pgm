@@ -1,10 +1,10 @@
 {
 	"fragment":
 	[
-		"@screenspace2.fsh"
+		"$SCRIPT_PATH/screenspace2.fsh"
 	],
 	"vertex":
 	[
-		"@screenspace2.vsh"
+		"$SCRIPT_PATH/screenspace2.vsh"
 	]
 }

@@ -1,10 +1,10 @@
 {
 	"fragment":
 	[
-		"@power_up.fsh"
+		"$SCRIPT_PATH/power_up.fsh"
 	],
 	"vertex":
 	[
-		"@power_up.vsh"
+		"$SCRIPT_PATH/power_up.vsh"
 	]
 }

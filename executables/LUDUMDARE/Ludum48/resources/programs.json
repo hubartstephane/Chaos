@@ -1,9 +1,9 @@
 {
-  "@background": { "path": "@programs/background/background.pgm" },
-  "@text": { "path": "@programs/text/text.pgm" },
-  "@screenspace1": { "path": "@programs/screenspace1/screenspace1.pgm" },
-  "@screenspace2": { "path": "@programs/screenspace2/screenspace2.pgm" },
-  "@BurningFlames": { "path": "@programs/BurningFlames/BurningFlames.pgm" },
-  "@blackscreen": { "path": "@programs/blackscreen/blackscreen.pgm" },
-  "@whitescreen": { "path": "@programs/whitescreen/whitescreen.pgm" }
+  "@background": { "path": "$SCRIPT_PATH/programs/background/background.pgm" },
+  "@text": { "path": "$SCRIPT_PATH/programs/text/text.pgm" },
+  "@screenspace1": { "path": "$SCRIPT_PATH/programs/screenspace1/screenspace1.pgm" },
+  "@screenspace2": { "path": "$SCRIPT_PATH/programs/screenspace2/screenspace2.pgm" },
+  "@BurningFlames": { "path": "$SCRIPT_PATH/programs/BurningFlames/BurningFlames.pgm" },
+  "@blackscreen": { "path": "$SCRIPT_PATH/programs/blackscreen/blackscreen.pgm" },
+  "@whitescreen": { "path": "$SCRIPT_PATH/programs/whitescreen/whitescreen.pgm" }
 }

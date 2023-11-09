@@ -1,8 +1,8 @@
 {
   "fonts": {
-    "normal": "@fonts/overpass-mono-bold.otf",
-    "titlex": "@fonts/unispace bold italic.ttf",
-    "title": "@fonts/Coconut Cookies.ttf"
+    "normal": "$SCRIPT_PATH/fonts/overpass-mono-bold.otf",
+    "titlex": "$SCRIPT_PATH/fonts/unispace bold italic.ttf",
+    "title": "$SCRIPT_PATH/fonts/Coconut Cookies.ttf"
   },
   "default_font_param": {
     "glyph_width": 64,

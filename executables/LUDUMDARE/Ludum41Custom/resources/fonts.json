@@ -1,8 +1,8 @@
 {
   "fonts": {
-    "normal": "@fonts/overpass-mono-bold.otf",
-    "challenge": "@fonts/gomarice_katamari_serif.ttf",
-    "title": "@fonts/unispace bold italic.ttf",
-    "score": "@fonts/unispace.ttf"
+    "normal": "$SCRIPT_PATH/fonts/overpass-mono-bold.otf",
+    "challenge": "$SCRIPT_PATH/fonts/gomarice_katamari_serif.ttf",
+    "title": "$SCRIPT_PATH/fonts/unispace bold italic.ttf",
+    "score": "$SCRIPT_PATH/fonts/unispace.ttf"
   }
 }

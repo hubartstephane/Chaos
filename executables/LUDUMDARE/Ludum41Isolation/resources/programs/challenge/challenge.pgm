@@ -1,10 +1,10 @@
 {
 	"fragment":
 	[
-		"@challenge.fsh"
+		"$SCRIPT_PATH/challenge.fsh"
 	],
 	"vertex":
 	[
-		"@challenge.vsh"
+		"$SCRIPT_PATH/challenge.vsh"
 	]
 }

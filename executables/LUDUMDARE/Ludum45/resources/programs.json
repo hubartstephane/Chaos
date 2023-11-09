@@ -1,10 +1,10 @@
 {
-  "@background" : { "path": "@programs/background/background.pgm" },
-  "@player": { "path": "@programs/player/player.pgm" },
-  "@explosion": { "path": "@programs/explosion/explosion.pgm" },
-  "@enemy": { "path": "@programs/enemy/enemy.pgm" },
-  "@brightsideoflife": { "path": "@programs/brightsideoflife/brightsideoflife.pgm" },
-  "@gameobject": { "path": "@programs/gameobject/gameobject.pgm" },
-  "@fire": { "path": "@programs/fire/fire.pgm" },  
-  "@text"  : { "path": "@programs/text/text.pgm" }    
+  "@background" : { "path": "$SCRIPT_PATH/programs/background/background.pgm" },
+  "@player": { "path": "$SCRIPT_PATH/programs/player/player.pgm" },
+  "@explosion": { "path": "$SCRIPT_PATH/programs/explosion/explosion.pgm" },
+  "@enemy": { "path": "$SCRIPT_PATH/programs/enemy/enemy.pgm" },
+  "@brightsideoflife": { "path": "$SCRIPT_PATH/programs/brightsideoflife/brightsideoflife.pgm" },
+  "@gameobject": { "path": "$SCRIPT_PATH/programs/gameobject/gameobject.pgm" },
+  "@fire": { "path": "$SCRIPT_PATH/programs/fire/fire.pgm" },  
+  "@text"  : { "path": "$SCRIPT_PATH/programs/text/text.pgm" }    
 }

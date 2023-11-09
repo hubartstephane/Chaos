@@ -1,7 +1,7 @@
 {
   "fonts": {
-    "normal": "@fonts/overpass-mono-bold.otf",
-    "title": "@fonts/unispace bold italic.ttf"
+    "normal": "$SCRIPT_PATH/fonts/overpass-mono-bold.otf",
+    "title": "$SCRIPT_PATH/fonts/unispace bold italic.ttf"
   },
   "default_font_param": {
     "glyph_width": 64,

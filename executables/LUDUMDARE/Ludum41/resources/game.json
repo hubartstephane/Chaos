@@ -1,10 +1,10 @@
 {
-  "small_french_dictionnary": "@dictionnary/small_french.txt",
-  "small_english_dictionnary": "@dictionnary/small_english.txt",
-  "french_dictionnary": "@dictionnary/french.txt",
-  "english_dictionnary": "@dictionnary/english.txt",
+  "small_french_dictionnary": "$SCRIPT_PATH/dictionnary/small_french.txt",
+  "small_english_dictionnary": "$SCRIPT_PATH/dictionnary/small_english.txt",
+  "french_dictionnary": "$SCRIPT_PATH/dictionnary/french.txt",
+  "english_dictionnary": "$SCRIPT_PATH/dictionnary/english.txt",
 
-  "levels_directory": "@levels",
+  "levels_directory": "$SCRIPT_PATH/levels",
 
   "game_instance": { "[include]": "game_instance.json" },
 

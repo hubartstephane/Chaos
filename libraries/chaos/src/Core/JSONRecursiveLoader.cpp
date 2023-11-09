@@ -84,7 +84,7 @@ namespace chaos
 		{
 			if (root.is_object())
 			{
-				nlohmann::json::iterator filename_it = root.find("@include"); // replace any object that contains "@include" = "..."
+				nlohmann::json::iterator filename_it = root.find("[include]"); // replace any object that contains "[include]" = "..."
 				if (filename_it != root.end())
 				{
 					if (filename_it->is_string())

@@ -8,7 +8,7 @@ namespace chaos
 
 	// Note on recursive substitution.
 	//
-	// -any object {"@include", "XXX"} is replaced by the content of the JSON file XXX
+	// -any object {"[include]", "XXX"} is replaced by the content of the JSON file XXX
 	//
 	// -any string (excluding keys for objects)   "@@XXX" is escaped into "XXX"
 	//

@@ -6,9 +6,9 @@
 		}
 	},
 
-	"gpu": { "@include": "@gpu.json" },
+	"gpu": { "[include]": "@gpu.json" },
 
-	"game": { "@include": "@game.json" },
+	"game": { "[include]": "@game.json" },
 
 	"verify_caracter_escape": "@@escaped",
 

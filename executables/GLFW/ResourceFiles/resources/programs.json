@@ -1,4 +1,4 @@
 {
-		"@prog1":{"@include":"@programs/program1.json"},
-		"@prog2":{"@include":"@programs/program2.json"}
+		"@prog1":{"[include]":"@programs/program1.json"},
+		"@prog2":{"[include]":"@programs/program2.json"}
 }

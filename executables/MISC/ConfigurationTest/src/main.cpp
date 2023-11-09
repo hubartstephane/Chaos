@@ -31,13 +31,11 @@ public:
 
 	void Initialize()
 	{
-		chaos::ObjectConfigurationBase* conf = GetObjectConfiguration();
+		int value = 0;
 
-		int i = 0;
+		chaos::JSONTools::GetAttribute(GetJSONReadConfiguration(), "toto", value, 666);
 
-		bool b2 = chaos::JSONTools::GetAttributeByIndex(GetJSONReadConfiguration(), 3, i);
-
-		conf = conf;
+		chaos::JSONTools::SetAttribute(GetJSONWriteConfiguration(), "toto", value + 1);
 
 	}
 
@@ -105,6 +103,8 @@ protected:
 	{
 		chaos::RootObjectConfiguration conf;
 
+		conf.LoadConfigurations(boost::filesystem::path{}, GetJSONWritePath());
+
 		chaos::shared_ptr<A> a = new A;
 		a->SetObjectConfiguration(conf.CreateChildConfiguration("A"));
 		a->Initialize();
@@ -113,8 +113,8 @@ protected:
 		chaos::WinTools::ShowFile(GetJSONWritePath());
 
 
-
-			conf.TriggerConfigurationChanged();
+		conf.LoadConfigurations(boost::filesystem::path{}, GetJSONWritePath());
+			//conf.TriggerConfigurationChanged();
 
 
 		return 0;

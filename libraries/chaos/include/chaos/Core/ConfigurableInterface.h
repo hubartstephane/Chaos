@@ -53,7 +53,6 @@ namespace chaos
 		shared_ptr<ObjectConfigurationBase> configuration;
 	};
 
-
 	/**
 	* ObjectConfigurationBase: some configuration that may be used for reading and writing (for persistent data)
 	*/
@@ -133,8 +132,11 @@ namespace chaos
 	{
 	public:
 
+		/** constructor */
+		RootObjectConfiguration();
+
 		/** read config from files */
-		bool LoadConfigurations(FilePathParam const& read_config_path, FilePathParam const& write_config_path, bool trigger_notifications = false);
+		bool LoadConfigurations(FilePathParam const& read_config_path, FilePathParam const& write_config_path, bool trigger_notifications = true);
 		/** save the persistent data */
 		bool SaveWriteConfiguration(FilePathParam const& write_config_path);
 		/** call this whenever the configuration is being changed */

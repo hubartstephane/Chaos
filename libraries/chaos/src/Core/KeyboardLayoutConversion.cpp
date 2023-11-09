@@ -48,7 +48,7 @@ namespace chaos
 
 			std::vector<GLFWKeyScancodePair>& table = cached_table.value();
 
-			for (int keycode = 0; keycode < GLFW_KEY_LAST; ++keycode)
+			for (int keycode = GLFW_KEY_SPACE; keycode < GLFW_KEY_LAST; ++keycode)
 			{
 				int scancode = glfwGetKeyScancode(keycode);
 				if (scancode > 0)

@@ -7,11 +7,11 @@
 	{
 		"fragment":
 		[
-			"@../programs/pixel_shader3.txt"
+			"$SCRIPT_PATH/../programs/pixel_shader3.txt"
 		],
 		"vertex":
 		[
-			"@../programs/vertex_shader3.txt"
+			"$SCRIPT_PATH/../programs/vertex_shader3.txt"
 		]
 	}
 }

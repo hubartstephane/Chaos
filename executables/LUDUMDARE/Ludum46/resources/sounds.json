@@ -22,12 +22,12 @@
 
   "sources": [
 
-    { "path": "@sounds/game_music1.ogg" , "categories" :  "music"},
-    { "path": "@sounds/pause_music.ogg" , "categories" :  "music"},
-    { "path": "@sounds/menu_music.ogg" , "categories" :  "music"},
-    { "path": "@sounds/gameover.ogg" , "categories" :  "Voices"},
-    { "path": "@sounds/start.ogg" , "categories" :  "FX"},
-    { "path": "@sounds/next_level.ogg" , "categories" :  "FX"},     
-    { "path": "@sounds/heartbeat.ogg" , "categories" :  "HeartBeat"}
+    { "path": "$SCRIPT_PATH/sounds/game_music1.ogg" , "categories" :  "music"},
+    { "path": "$SCRIPT_PATH/sounds/pause_music.ogg" , "categories" :  "music"},
+    { "path": "$SCRIPT_PATH/sounds/menu_music.ogg" , "categories" :  "music"},
+    { "path": "$SCRIPT_PATH/sounds/gameover.ogg" , "categories" :  "Voices"},
+    { "path": "$SCRIPT_PATH/sounds/start.ogg" , "categories" :  "FX"},
+    { "path": "$SCRIPT_PATH/sounds/next_level.ogg" , "categories" :  "FX"},     
+    { "path": "$SCRIPT_PATH/sounds/heartbeat.ogg" , "categories" :  "HeartBeat"}
   ]
 }

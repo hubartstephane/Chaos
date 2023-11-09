@@ -22,60 +22,60 @@
 
   "sources": [
     {
-      "path": "@sounds/honk.ogg",
+      "path": "$SCRIPT_PATH/sounds/honk.ogg",
       "categories": "FX"
     },
     {
-      "path": "@sounds/game_music1.ogg",
+      "path": "$SCRIPT_PATH/sounds/game_music1.ogg",
       "categories": "music"
     },
     {
-      "path": "@sounds/game_music2.ogg",
+      "path": "$SCRIPT_PATH/sounds/game_music2.ogg",
       "categories": "music"
     },
     {
-      "path": "@sounds/game_music3.ogg",
+      "path": "$SCRIPT_PATH/sounds/game_music3.ogg",
       "categories": "music"
     },
     {
-      "path": "@sounds/pause_music.ogg",
+      "path": "$SCRIPT_PATH/sounds/pause_music.ogg",
       "categories": "music"
     },
     {
-      "path": "@sounds/menu_music.ogg",
+      "path": "$SCRIPT_PATH/sounds/menu_music.ogg",
       "categories": "music"
     },
     {
-      "path": "@sounds/gameover.ogg",
+      "path": "$SCRIPT_PATH/sounds/gameover.ogg",
       "categories": "Voices"
     },
     {
-      "path": "@sounds/start.ogg",
+      "path": "$SCRIPT_PATH/sounds/start.ogg",
       "categories": "FX"
     },
     {
-      "path": "@sounds/start1.ogg",
+      "path": "$SCRIPT_PATH/sounds/start1.ogg",
       "categories": "FX"
     },
     {
-      "path": "@sounds/start2.ogg",
+      "path": "$SCRIPT_PATH/sounds/start2.ogg",
       "categories": "FX"
     },
     {
-      "path": "@sounds/Explosion.ogg",
+      "path": "$SCRIPT_PATH/sounds/Explosion.ogg",
       "categories": "FX"
     },
     {
-      "path": "@sounds/Bip.ogg",
+      "path": "$SCRIPT_PATH/sounds/Bip.ogg",
       "categories": "FX",
       "volume": 0.3
     },
     {
-      "path": "@sounds/next_levelx.ogg",
+      "path": "$SCRIPT_PATH/sounds/next_levelx.ogg",
       "categories": "FX"
     },
     {
-      "path": "@sounds/heartbeat.ogg",
+      "path": "$SCRIPT_PATH/sounds/heartbeat.ogg",
       "categories": "HeartBeat"
     }
   ]

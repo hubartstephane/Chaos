@@ -7,17 +7,17 @@
 
 		"console": {
 			"width": 800,
-			"height":800
+			"height": 800
 		}
 	},
 
-  "max_tick_duration": 1.0,
+	"max_tick_duration": 1.0,
 
-  "gpu": { "[include]": "@gpu.json" },
-  "game": { "[include]": "@game.json" },
-  "sounds": { "[include]": "@sounds.json" },
-  "hud": { "[include]": "@hud.json" },
+	"gpu": { "[include]": "$SCRIPT_PATH/gpu.json" },
+	"game": { "[include]": "$SCRIPT_PATH/game.json" },
+	"sounds": { "[include]": "$SCRIPT_PATH/sounds.json" },
+	"hud": { "[include]": "$SCRIPT_PATH/hud.json" },
 
-  "fonts": { "[include]": "fonts.json" },
-  "sprite_directory": "@sprites"
+	"fonts": { "[include]": "fonts.json" },
+	"sprite_directory": "$SCRIPT_PATH/sprites"
 }

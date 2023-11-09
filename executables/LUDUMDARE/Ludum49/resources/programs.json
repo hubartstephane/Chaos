@@ -1,5 +1,5 @@
 {
-  "@background": { "path": "@programs/background/background.pgm" },
-  "@text": { "path": "@programs/text/text.pgm" },
-  "@blackscreen": { "path": "@programs/blackscreen/blackscreen.pgm" }
+  "@background": { "path": "$SCRIPT_PATH/programs/background/background.pgm" },
+  "@text": { "path": "$SCRIPT_PATH/programs/text/text.pgm" },
+  "@blackscreen": { "path": "$SCRIPT_PATH/programs/blackscreen/blackscreen.pgm" }
 }

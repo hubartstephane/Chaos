@@ -1,10 +1,10 @@
 {
 	"fragment":
 	[
-		"@gameobject.fsh"
+		"$SCRIPT_PATH/gameobject.fsh"
 	],
 	"vertex":
 	[
-		"@gameobject.vsh"
+		"$SCRIPT_PATH/gameobject.vsh"
 	]
 }

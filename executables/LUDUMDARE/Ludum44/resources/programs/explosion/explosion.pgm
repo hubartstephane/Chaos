@@ -1,10 +1,10 @@
 {
 	"fragment":
 	[
-		"@explosion.fsh"
+		"$SCRIPT_PATH/explosion.fsh"
 	],
 	"vertex":
 	[
-		"@explosion.vsh"
+		"$SCRIPT_PATH/explosion.vsh"
 	]
 }

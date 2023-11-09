@@ -1,10 +1,10 @@
 {
 	"fragment":
 	[
-		"@BurningFlames.fsh"
+		"$SCRIPT_PATH/BurningFlames.fsh"
 	],
   "vertex": 
   [
-    "@BurningFlames.vsh"
+    "$SCRIPT_PATH/BurningFlames.vsh"
   ]
 }

@@ -1658,27 +1658,27 @@
                         "x": 52,
                         "y": 247
                     },
-                    {
-                        "advance_x": 24,
-                        "advance_y": 0,
-                        "bitmap_index": 1,
-                        "bitmap_left": 3,
-                        "bitmap_top": 32,
-                        "bottomleft_texcoord": [
-                            0.82421875,
-                            0.01953125
-                        ],
-                        "height": 32,
-                        "name": "@",
-                        "tag": 64,
-                        "topright_texcoord": [
-                            0.873046875,
-                            0.08203125
-                        ],
-                        "width": 25,
-                        "x": 422,
-                        "y": 470
-                    },
+                  {
+                    "advance_x": 24,
+                    "advance_y": 0,
+                    "bitmap_index": 1,
+                    "bitmap_left": 3,
+                    "bitmap_top": 32,
+                    "bottomleft_texcoord": [
+                      0.82421875,
+                      0.01953125
+                    ],
+                    "height": 32,
+                    "name": "$SCRIPT_PATH",
+                    "tag": 64,
+                    "topright_texcoord": [
+                      0.873046875,
+                      0.08203125
+                    ],
+                    "width": 25,
+                    "x": 422,
+                    "y": 470
+                  },
                     {
                         "advance_x": 24,
                         "advance_y": 0,
@@ -3475,27 +3475,27 @@
                         "x": 472,
                         "y": 288
                     },
-                    {
-                        "advance_x": 25,
-                        "advance_y": 0,
-                        "bitmap_index": 14,
-                        "bitmap_left": 2,
-                        "bitmap_top": 32,
-                        "bottomleft_texcoord": [
-                            0.099609375,
-                            0.25
-                        ],
-                        "height": 32,
-                        "name": "@",
-                        "tag": 64,
-                        "topright_texcoord": [
-                            0.140625,
-                            0.3125
-                        ],
-                        "width": 21,
-                        "x": 51,
-                        "y": 352
-                    },
+                  {
+                    "advance_x": 25,
+                    "advance_y": 0,
+                    "bitmap_index": 14,
+                    "bitmap_left": 2,
+                    "bitmap_top": 32,
+                    "bottomleft_texcoord": [
+                      0.099609375,
+                      0.25
+                    ],
+                    "height": 32,
+                    "name": "$SCRIPT_PATH",
+                    "tag": 64,
+                    "topright_texcoord": [
+                      0.140625,
+                      0.3125
+                    ],
+                    "width": 21,
+                    "x": 51,
+                    "y": 352
+                  },
                     {
                         "advance_x": 24,
                         "advance_y": 0,

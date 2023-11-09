@@ -1,10 +1,10 @@
 {
 	"fragment":
 	[
-		"@player.fsh"
+		"$SCRIPT_PATH/player.fsh"
 	],
 	"vertex":
 	[
-		"@player.vsh"
+		"$SCRIPT_PATH/player.vsh"
 	]
 }

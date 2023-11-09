@@ -1,10 +1,10 @@
 {
 	"fragment":
 	[
-		"@worldlimit.fsh"
+		"$SCRIPT_PATH/worldlimit.fsh"
 	],
 	"vertex":
 	[
-		"@worldlimit.vsh"
+		"$SCRIPT_PATH/worldlimit.vsh"
 	]
 }

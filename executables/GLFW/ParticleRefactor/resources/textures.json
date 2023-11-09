@@ -1,4 +1,4 @@
 {
-		"@tex1":{ "path":"@textures/texture1.json"},
-		"@tex2":{ "path":"@textures/texture2.json"}
+		"@tex1":{ "path":"$SCRIPT_PATH/textures/texture1.json"},
+		"@tex2":{ "path":"$SCRIPT_PATH/textures/texture2.json"}
 }

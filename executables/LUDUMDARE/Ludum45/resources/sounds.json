@@ -22,29 +22,29 @@
 
   "sources": [
 
-    { "path": "@sounds/game_music1.ogg" , "categories" :  "music"},
-    { "path": "@sounds/game_music2.ogg" , "categories" :  "music"},
-    { "path": "@sounds/game_music3.ogg" , "categories" :  "music"},
-    { "path": "@sounds/pause_music.ogg" , "categories" :  "music"},
-    { "path": "@sounds/menu_music.ogg" , "categories" :  "music"},
-    { "path": "@sounds/gameover.ogg" , "categories" :  "Voices"},
-    { "path": "@sounds/brightsideoflife.ogg" , "categories" :  "music"},
-    { "path": "@sounds/start.ogg" , "categories" :  "FX"},
-    { "path": "@sounds/fire.ogg" , "categories" :  "FX"},
-    { "path": "@sounds/next_level.ogg" , "categories" :  "FX"},
-    { "path": "@sounds/dash.ogg" , "categories" :  "Voices"},
-    { "path": "@sounds/explosion.ogg" , "categories" :  "FX2"},    
-    { "path": "@sounds/metallic.ogg" , "categories" :  "FX"},
-    { "path": "@sounds/player_touched.ogg" , "categories" :  "FX"},      
+    { "path": "$SCRIPT_PATH/sounds/game_music1.ogg" , "categories" :  "music"},
+    { "path": "$SCRIPT_PATH/sounds/game_music2.ogg" , "categories" :  "music"},
+    { "path": "$SCRIPT_PATH/sounds/game_music3.ogg" , "categories" :  "music"},
+    { "path": "$SCRIPT_PATH/sounds/pause_music.ogg" , "categories" :  "music"},
+    { "path": "$SCRIPT_PATH/sounds/menu_music.ogg" , "categories" :  "music"},
+    { "path": "$SCRIPT_PATH/sounds/gameover.ogg" , "categories" :  "Voices"},
+    { "path": "$SCRIPT_PATH/sounds/brightsideoflife.ogg" , "categories" :  "music"},
+    { "path": "$SCRIPT_PATH/sounds/start.ogg" , "categories" :  "FX"},
+    { "path": "$SCRIPT_PATH/sounds/fire.ogg" , "categories" :  "FX"},
+    { "path": "$SCRIPT_PATH/sounds/next_level.ogg" , "categories" :  "FX"},
+    { "path": "$SCRIPT_PATH/sounds/dash.ogg" , "categories" :  "Voices"},
+    { "path": "$SCRIPT_PATH/sounds/explosion.ogg" , "categories" :  "FX2"},    
+    { "path": "$SCRIPT_PATH/sounds/metallic.ogg" , "categories" :  "FX"},
+    { "path": "$SCRIPT_PATH/sounds/player_touched.ogg" , "categories" :  "FX"},      
     
-    { "path": "@sounds/gods_power.ogg" , "categories" :  "Voices"},
-    { "path": "@sounds/gods_speed.ogg" , "categories" :  "Voices"},
-    { "path": "@sounds/gods_blast.ogg" , "categories" :  "Voices"},
-    { "path": "@sounds/gods_dash.ogg" , "categories" :  "Voices"},
-    { "path": "@sounds/gods_ghost.ogg" , "categories" :  "Voices"},
-    { "path": "@sounds/gods_spread.ogg" , "categories" :  "Voices"},
-    { "path": "@sounds/gods_sideoflife.ogg" , "categories" :  "Voices"},
+    { "path": "$SCRIPT_PATH/sounds/gods_power.ogg" , "categories" :  "Voices"},
+    { "path": "$SCRIPT_PATH/sounds/gods_speed.ogg" , "categories" :  "Voices"},
+    { "path": "$SCRIPT_PATH/sounds/gods_blast.ogg" , "categories" :  "Voices"},
+    { "path": "$SCRIPT_PATH/sounds/gods_dash.ogg" , "categories" :  "Voices"},
+    { "path": "$SCRIPT_PATH/sounds/gods_ghost.ogg" , "categories" :  "Voices"},
+    { "path": "$SCRIPT_PATH/sounds/gods_spread.ogg" , "categories" :  "Voices"},
+    { "path": "$SCRIPT_PATH/sounds/gods_sideoflife.ogg" , "categories" :  "Voices"},
 
-    { "path": "@sounds/heartbeat.ogg" , "categories" :  "HeartBeat"}
+    { "path": "$SCRIPT_PATH/sounds/heartbeat.ogg" , "categories" :  "HeartBeat"}
   ]
 }

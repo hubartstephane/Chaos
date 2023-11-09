@@ -1,10 +1,10 @@
 {
 	"fragment":
 	[
-		"@background_level_base.fsh"
+		"$SCRIPT_PATH/background_level_base.fsh"
 	],
 	"vertex":
 	[
-		"@background_level_base.vsh"
+		"$SCRIPT_PATH/background_level_base.vsh"
 	]
 }

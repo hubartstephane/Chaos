@@ -1,10 +1,10 @@
 {
 	"fragment":
 	[
-		"@background_particle.fsh"
+		"$SCRIPT_PATH/background_particle.fsh"
 	],
 	"vertex":
 	[
-		"@background_particle.vsh"
+		"$SCRIPT_PATH/background_particle.vsh"
 	]
 }

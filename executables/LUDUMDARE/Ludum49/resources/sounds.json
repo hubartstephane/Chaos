@@ -8,11 +8,11 @@
 
   "sources": [
     {
-      "path": "@sounds/menu_music.ogg",
+      "path": "$SCRIPT_PATH/sounds/menu_music.ogg",
       "categories": "music"
     },
     {
-      "path": "@sounds/game_music1.ogg",
+      "path": "$SCRIPT_PATH/sounds/game_music1.ogg",
       "categories": "music"
     }
   ]

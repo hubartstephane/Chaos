@@ -1,10 +1,10 @@
 {
 	"faces":[
-		"@nx.jpg",
-		"@px.jpg",
-		"@py.jpg",
-		"@ny.jpg",
-		"@pz.jpg",
-		"@nz.jpg"
+		"$SCRIPT_PATH/nx.jpg",
+		"$SCRIPT_PATH/px.jpg",
+		"$SCRIPT_PATH/py.jpg",
+		"$SCRIPT_PATH/ny.jpg",
+		"$SCRIPT_PATH/pz.jpg",
+		"$SCRIPT_PATH/nz.jpg"
 	]
 }

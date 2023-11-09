@@ -6,5 +6,5 @@
 		}
 	},
 
-	"gpu": { "[include]": "@gpu.json" }
+	"gpu": { "[include]": "$SCRIPT_PATH/gpu.json" }
 }

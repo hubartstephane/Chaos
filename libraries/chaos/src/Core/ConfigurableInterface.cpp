@@ -139,6 +139,12 @@ namespace chaos
 	// RootObjectConfiguration implementation
 	// ---------------------------------------------------------------------
 
+	RootObjectConfiguration::RootObjectConfiguration()
+	{
+		read_config = &root_read_config;
+		write_config = &root_write_config;
+	}
+
 	void RootObjectConfiguration::TriggerConfigurationChanged()
 	{
 		// propagate the update to sub hierarchy
@@ -153,12 +159,10 @@ namespace chaos
 		// update the read json
 		root_read_config = nlohmann::json();
 		JSONTools::LoadJSONFile(read_config_path, root_read_config, LoadFileFlag::RECURSIVE);
-		read_config = &root_read_config;
 
 		// update the write json
 		root_write_config = nlohmann::json();
 		JSONTools::LoadJSONFile(write_config_path, root_write_config, LoadFileFlag::RECURSIVE);
-		write_config = &root_write_config;
 
 		// notify the changes
 		if (trigger_notifications)

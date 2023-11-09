@@ -99,11 +99,16 @@ protected:
 		return GetUserLocalTempPath() / "json_write.json";
 	}
 
+	boost::filesystem::path GetJSONReadPath() const
+	{
+		return GetResourcesPath() / "json_read.json";
+	}
+
 	virtual int Main() override
 	{
 		chaos::RootObjectConfiguration conf;
 
-		conf.LoadConfigurations(boost::filesystem::path{}, GetJSONWritePath());
+		conf.LoadConfigurations(GetJSONReadPath(), GetJSONWritePath());
 
 		chaos::shared_ptr<A> a = new A;
 		a->SetObjectConfiguration(conf.CreateChildConfiguration("A"));
@@ -111,11 +116,9 @@ protected:
 
 		conf.SaveWriteConfiguration(GetJSONWritePath());
 		chaos::WinTools::ShowFile(GetJSONWritePath());
-
+		chaos::WinTools::ShowFile(GetJSONReadPath());
 
 		conf.LoadConfigurations(boost::filesystem::path{}, GetJSONWritePath());
-			//conf.TriggerConfigurationChanged();
-
 
 		return 0;
 	}

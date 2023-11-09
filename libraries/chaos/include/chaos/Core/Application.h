@@ -163,6 +163,10 @@ namespace chaos
 		mutable nlohmann::json persistent_data;
 
 
+		DisableReferenceCount<RootObjectConfiguration> configurationX;
+
+
+
 		/** redirection source directories */
 #if _DEBUG
 		boost::filesystem::path redirection_build_path;

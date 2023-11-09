@@ -13,23 +13,34 @@ namespace chaos
 	/**
 	 * JSONConfiguration: a combinaison of configuration/persistent data where you can read and write data
 	 */
-	template<bool WRITABLE>
-	class JSONConfiguration
+	template<>
+	class JSONConfiguration<false>
 	{
 	public:
 
 		/** the normal json object */
-		nlohmann::json const* normal_configuration = nullptr;
+		nlohmann::json const* read_config = nullptr;
 		/** the persistent json object */
-		nlohmann::json* persistent_configuration = nullptr;
+		nlohmann::json const* write_config = nullptr;
+	};
+
+	template<>
+	class JSONConfiguration<true>
+	{
+	public:
+
+		/** the normal json object */
+		nlohmann::json const* read_config = nullptr;
+		/** the persistent json object */
+		nlohmann::json* write_config = nullptr;
 	};
 
 	template<typename ...PARAMS>
 	bool SaveIntoJSON(JSONWriteConfiguration entry, PARAMS&& ...params)
 	{
-		if (entry.persistent_configuration == nullptr)
+		if (entry.write_config == nullptr)
 			return false;
-		return SaveIntoJSON(*entry.persistent_configuration, std::forward<PARAMS>(params)...);
+		return SaveIntoJSON(*entry.write_config, std::forward<PARAMS>(params)...);
 	}
 
 	namespace JSONTools
@@ -38,12 +49,12 @@ namespace chaos
 		JSONConfiguration<WRITABLE> GetStructure(JSONConfiguration<WRITABLE> entry, PARAMS&& ...params)
 		{
 			JSONConfiguration<WRITABLE> result;
-			result.normal_configuration = JSONTools::GetStructure(*entry.normal_configuration, std::forward<PARAMS>(params)...);
+			result.read_config = JSONTools::GetStructure(*entry.read_config, std::forward<PARAMS>(params)...);
 
 			if constexpr (WRITABLE)
-				result.persistent_configuration = JSONTools::GetOrCreateStructure(*entry.persistent_configuration, std::forward<PARAMS>(params)...);
+				result.write_config = JSONTools::GetOrCreateStructure(*entry.write_config, std::forward<PARAMS>(params)...);
 			else
-				result.persistent_configuration = JSONTools::GetStructure(*entry.persistent_configuration, std::forward<PARAMS>(params)...);
+				result.write_config = JSONTools::GetStructure(*entry.write_config, std::forward<PARAMS>(params)...);
 
 			return result;
 		}
@@ -51,11 +62,11 @@ namespace chaos
 		template<bool WRITABLE, typename T>
 		bool GetAttribute(JSONConfiguration<WRITABLE> entry, char const* name, T& result)
 		{
-			if (entry.persistent_configuration != nullptr)
-				if (GetAttribute(*entry.persistent_configuration, name, result))
+			if (entry.write_config != nullptr)
+				if (GetAttribute(*entry.write_config, name, result))
 					return true;
-			if (entry.normal_configuration != nullptr)
-				if (GetAttribute(*entry.normal_configuration, name, result))
+			if (entry.read_config != nullptr)
+				if (GetAttribute(*entry.read_config, name, result))
 					return true;
 			return false;
 		}
@@ -72,22 +83,22 @@ namespace chaos
 		template<bool WRITABLE, typename T>
 		bool GetAttributeByIndex(JSONConfiguration<WRITABLE> entry, size_t index, T& result)
 		{
-			if (entry.persistent_configuration != nullptr)
+			if (entry.write_config != nullptr)
 			{
-				if (entry.persistent_configuration->is_array())
+				if (entry.write_config->is_array())
 				{
-					if (index >= entry.persistent_configuration->size())
+					if (index >= entry.write_config->size())
 						return false;
-					return LoadFromJSON(entry.persistent_configuration->operator [](index), result);
+					return LoadFromJSON(entry.write_config->operator [](index), result);
 				}
 			}
-			if (entry.normal_configuration != nullptr)
+			if (entry.read_config != nullptr)
 			{
-				if (entry.normal_configuration->is_array())
+				if (entry.read_config->is_array())
 				{
-					if (index >= entry.normal_configuration->size())
+					if (index >= entry.read_config->size())
 						return false;
-					return LoadFromJSON(entry.normal_configuration->operator [](index), result);
+					return LoadFromJSON(entry.read_config->operator [](index), result);
 				}
 			}
 			return false;
@@ -106,25 +117,25 @@ namespace chaos
 		bool SetAttribute(JSONWriteConfiguration entry, char const* name, T const& src)
 		{
 			assert(name != nullptr);
-			assert(entry.persistent_configuration != nullptr);
-			if (entry.persistent_configuration->is_null())
-				*entry.persistent_configuration = nlohmann::json::object();
-			else if (!entry.persistent_configuration->is_object())
+			assert(entry.write_config != nullptr);
+			if (entry.write_config->is_null())
+				*entry.write_config = nlohmann::json::object();
+			else if (!entry.write_config->is_object())
 				return false;
-			entry.persistent_configuration->operator [](name) = nlohmann::json();
-			return SaveIntoJSON(entry.persistent_configuration->operator[](name), src);
+			entry.write_config->operator [](name) = nlohmann::json();
+			return SaveIntoJSON(entry.write_config->operator[](name), src);
 		}
 
 		template<typename T>
 		bool SetAttributeByIndex(JSONWriteConfiguration entry, size_t index, T const& src)
 		{
-			assert(entry.persistent_configuration != nullptr);
-			if (entry.persistent_configuration->is_null())
-				*entry.persistent_configuration = nlohmann::json::array();
-			else if (!entry.persistent_configuration->is_array())
+			assert(entry.write_config != nullptr);
+			if (entry.write_config->is_null())
+				*entry.write_config = nlohmann::json::array();
+			else if (!entry.write_config->is_array())
 				return false;
-			entry.persistent_configuration->operator[](index) = nlohmann::json();
-			return SaveIntoJSON(entry.persistent_configuration->operator[](index), src);
+			entry.write_config->operator[](index) = nlohmann::json();
+			return SaveIntoJSON(entry.write_config->operator[](index), src);
 		}
 
 	}; // namespace JSONTools

@@ -24,13 +24,23 @@ namespace chaos
 		virtual ~ConfigurableInterface() = default;
 
 		/** getter on the configuration */
-		ObjectConfigurationBase* GetConfiguration() const
+		ObjectConfigurationBase const * GetObjectConfiguration() const
+		{
+			return configuration.get();
+		}
+
+		ObjectConfigurationBase * GetObjectConfiguration()
 		{
 			return configuration.get();
 		}
 
 		/** set the configuration of the object */
-		void SetConfiguration(ObjectConfigurationBase* in_configuration);
+		void SetObjectConfiguration(ObjectConfigurationBase* in_configuration);
+
+		/** get the interface used for reading */
+		JSONReadConfiguration GetJSONReadConfiguration() const;
+		/** get the interface used for reading & writing*/
+		JSONWriteConfiguration GetJSONWriteConfiguration() const;
 
 	protected:
 
@@ -58,6 +68,11 @@ namespace chaos
 
 		/** create a child configuration */
 		ChildObjectConfiguration* CreateChildConfiguration(std::string_view key);
+
+		/** get the interface used for reading */
+		JSONReadConfiguration GetJSONReadConfiguration() const;
+		/** get the interface used for reading & writing*/
+		JSONWriteConfiguration GetJSONWriteConfiguration() const;
 
 	protected:
 

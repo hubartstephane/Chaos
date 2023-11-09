@@ -9,7 +9,7 @@ namespace chaos
 	// ConfigurableInterface implementation
 	// ---------------------------------------------------------------------
 
-	void ConfigurableInterface::SetConfiguration(ObjectConfigurationBase* in_configuration)
+	void ConfigurableInterface::SetObjectConfiguration(ObjectConfigurationBase* in_configuration)
 	{
 		if (configuration.get() != in_configuration)
 		{
@@ -21,6 +21,20 @@ namespace chaos
 			if (configuration != nullptr)
 				configuration->configurable_object = auto_cast(this);
 		}
+	}
+
+	JSONReadConfiguration ConfigurableInterface::GetJSONReadConfiguration() const
+	{
+		if (configuration != nullptr)
+			return configuration->GetJSONReadConfiguration();
+		return {};
+	}
+
+	JSONWriteConfiguration ConfigurableInterface::GetJSONWriteConfiguration() const
+	{
+		if (configuration != nullptr)
+			return configuration->GetJSONWriteConfiguration();
+		return {};
 	}
 
 	// ---------------------------------------------------------------------
@@ -56,6 +70,22 @@ namespace chaos
 		for (auto& child : child_copy)
 			if (child != nullptr)
 				child->PropagateNotifications();
+	}
+
+	JSONReadConfiguration ObjectConfigurationBase::GetJSONReadConfiguration() const
+	{
+		JSONReadConfiguration result;
+		result.read_config = read_config;
+		result.write_config = write_config;
+		return result;
+	}
+
+	JSONWriteConfiguration ObjectConfigurationBase::GetJSONWriteConfiguration() const
+	{
+		JSONWriteConfiguration result;
+		result.read_config = read_config;
+		result.write_config = write_config;
+		return result;
 	}
 
 	// ---------------------------------------------------------------------

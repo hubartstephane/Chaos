@@ -49,6 +49,9 @@ namespace chaos
 
 	protected:
 
+		/** cannot be construct except by CreateChildConfiguration(...) */
+		ObjectConfigurationBase() = default;
+
 		/** the children configurations */
 		std::vector<shared_ptr<ChildObjectConfiguration>> child_configurations;
 		/** the configurable object owning this */
@@ -81,6 +84,9 @@ namespace chaos
 		virtual void SubReference() override;
 
 	protected:
+
+		/** cannot be construct except by CreateChildConfiguration(...) */
+		ChildObjectConfiguration() = default;
 
 		/** recursively update child configuration */
 		void PropagateUpdates();

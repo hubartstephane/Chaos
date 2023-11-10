@@ -2,7 +2,7 @@
 
 // ---------------------------------------------------------------------
 
-class ConfigurableInterface;
+class ConfigurableInterfaceBase;
 class ObjectConfiguration;
 
 
@@ -19,7 +19,7 @@ class ObjectConfiguration;
 
 
 // ---------------------------------------------------------------------
-class B : public chaos::Object, public chaos::ConfigurableInterface
+class B : public chaos::Object, public chaos::ConfigurableInterfaceBase
 {
 public:
 
@@ -53,7 +53,7 @@ public:
 
 
 
-class A : public chaos::Object, public chaos::ConfigurableInterface
+class A : public chaos::Object, public chaos::ConfigurableInterfaceBase
 {
 public:
 

@@ -26,6 +26,7 @@
 #include "chaos/Core/Copyable.h"
 #include "chaos/Core/MetaProgramming.h"
 #include "chaos/Core/ConfigurableInterface.h"
+#include "chaos/Core/ObjectConfiguration.h"
 #include "chaos/Core/JSONTools.h"
 #include "chaos/Core/JSONConfiguration.h"
 #include "chaos/Core/SubClassOf.h"

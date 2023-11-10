@@ -47,4 +47,11 @@ namespace chaos
 		return false;
 	}
 
+	bool ConfigurableInterfaceBase::ReloadObjectConfiguration(bool send_notifications)
+	{
+		if (configuration != nullptr)
+			return configuration->Reload(send_notifications);
+		return false;
+	}
+
 }; // namespace chaos

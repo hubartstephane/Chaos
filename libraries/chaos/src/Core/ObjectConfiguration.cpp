@@ -27,7 +27,7 @@ namespace chaos
 	{
 		// trigger the change for the configurable
 		if (ConfigurableInterfaceBase* configurable = auto_cast(configurable_object.get()))
-			configurable->OnConfigurationChanged();
+			configurable->OnConfigurationChanged(GetJSONReadConfiguration());
 		// create a weak copy of the children list. children may be destroyed during this loop
 		std::vector<weak_ptr<ChildObjectConfiguration>> child_copy;
 		child_copy.reserve(child_configurations.size());
@@ -55,13 +55,14 @@ namespace chaos
 		return result;
 	}
 
-	void ObjectConfigurationBase::TriggerChangeNotifications()
+	void ObjectConfigurationBase::CompleteUpdateOperation(bool send_notifications)
 	{
 		// propagate the update to sub hierarchy
 		for (shared_ptr<ChildObjectConfiguration>& child : child_configurations)
 			child->PropagateUpdates();
 		// send notifications
-		PropagateNotifications();
+		if (send_notifications)
+			PropagateNotifications();
 	}
 
 	RootObjectConfiguration* ObjectConfigurationBase::GetRootConfiguration()
@@ -82,60 +83,52 @@ namespace chaos
 		return nullptr;
 	}
 
-	bool ObjectConfigurationBase::Reload(bool trigger_notifications)
+	bool ObjectConfigurationBase::Reload(bool send_notifications)
 	{
+		// for root
 		if (RootObjectConfiguration* root = auto_cast(this))
-			return root->LoadConfigurations(true, false, trigger_notifications);
-		
+			return root->LoadConfigurations(true, false, send_notifications); // only reload the READ part
 
-		return false;
-	}
-
-
-#if 0
-
-
-	bool ObjectConfigurationBase::ReloadPartial()
-	{
-		nlohmann::json new_root;
-
-		if (nlohmann::json const* parent_content = ReloadPartialHelper(new_root, this))
+		// for children
+		if (ChildObjectConfiguration* child = auto_cast(this))
 		{
-			storage_read_config = *parent_content;
-			read_config = &storage_read_config;
+			// empty current storage
+			storage_read_config = {};
+			read_config = nullptr;
+
+			// temp storage for the whole hierarchy
+			nlohmann::json new_root_storage;
+
+			// recursively go to root and ask for this node content
+			if (nlohmann::json const* new_read_config = ReloadHelper(new_root_storage, child->parent_configuration.get(), child->key))
+			{
+				storage_read_config = *new_read_config; // copy the whole json structure
+				read_config = &storage_read_config;
+			}
+
+			// update down hierarchy and send notifications (parents and siblings conf are unchanged and receive non notification)
+			CompleteUpdateOperation(send_notifications);
+
 			return true;
 		}
 		return false;
 	}
 
-	nlohmann::json const * ObjectConfigurationBase::ReloadPartialHelper(nlohmann::json & new_root, ObjectConfigurationBase * src)
+	nlohmann::json const* ObjectConfigurationBase::ReloadHelper(nlohmann::json& new_root_storage, ObjectConfigurationBase* src, std::string_view in_key)
 	{
-		if (RootObjectConfiguration* root = auto_cast(this))
+		// root case
+		if (RootObjectConfiguration* root = auto_cast(src))
 		{
-			if (JSONTools::LoadJSONFile(read_config_path, new_root, LoadFileFlag::RECURSIVE))
-				return &new_root;
-			return nullptr;
+			JSONTools::LoadJSONFile(root->write_config_path, new_root_storage, LoadFileFlag::RECURSIVE);
+			return JSONTools::GetStructure(new_root_storage, in_key);
 		}
-		if (ChildObjectConfiguration* child = auto_cast(this))
-		{
-			if (nlohmann::json const* parent_node = ReloadPartialHelper(new_root, child->parent_configuration.get()))
-			{
-				return JSONTools::GetStructure(*parent_node, child->key);
-			}
-			return nullptr;
-		}
-
-
-		return ReloadPartialHelper(this);
+		// child case
+		if (ChildObjectConfiguration* child = auto_cast(src))
+			if (nlohmann::json const* new_child_read_json = ReloadHelper(new_root_storage, child->parent_configuration.get(), child->key))
+				return JSONTools::GetStructure(*new_child_read_json, in_key);
+		// error
+		return nullptr;
 	}
-
-
-
-
-
-#endif
-
-
 
 	// ---------------------------------------------------------------------
 	// ChildObjectConfiguration implementation
@@ -196,7 +189,7 @@ namespace chaos
 		write_config = &storage_write_config;
 	}
 
-	bool RootObjectConfiguration::LoadConfigurations(bool load_read, bool load_write, bool trigger_notifications)
+	bool RootObjectConfiguration::LoadConfigurations(bool load_read, bool load_write, bool send_notifications)
 	{
 		bool changed = false;
 
@@ -210,7 +203,6 @@ namespace chaos
 				changed = true;
 			}
 		}
-
 		// update the write json
 		if (load_write)
 		{
@@ -221,10 +213,9 @@ namespace chaos
 				changed = true;
 			}
 		}
-
 		// notify the changes
-		if (changed && trigger_notifications)
-			TriggerChangeNotifications();
+		if (changed)
+			CompleteUpdateOperation(send_notifications);
 
 		return true;
 	}

@@ -34,24 +34,18 @@ namespace chaos
 		/** gets the root configuration */
 		RootObjectConfiguration const* GetRootConfiguration() const;
 
-		/** call this whenever the configuration is being changed */
-		void TriggerChangeNotifications();
+		/** recursively send notifications */
+		void PropagateNotifications();
 
-
-		bool Reload(bool trigger_notifications);
-
-#if 0
-
-		bool ReloadPartial();
-
-		nlohmann::json const * ReloadPartialHelper(nlohmann::json& new_root, ObjectConfigurationBase* src);
-
-#endif
+		/** reload the read configuration part. Only affect current node and its children value (not its parents nor siblings nodes) */
+		bool Reload(bool send_notifications);
 
 	protected:
 
-		/** recursively send notifications */
-		void PropagateNotifications();
+		/** call this whenever the configuration is being changed */
+		void CompleteUpdateOperation(bool send_notifications);
+		/** helper function used to reload the hierarchy */
+		static nlohmann::json const* ReloadHelper(nlohmann::json& new_root_storage, ObjectConfigurationBase* src, std::string_view in_key);
 
 	protected:
 
@@ -109,6 +103,8 @@ namespace chaos
 
 	class CHAOS_API RootObjectConfiguration : public ObjectConfigurationBase
 	{
+		friend class ObjectConfigurationBase;
+
 	public:
 
 		/** constructor */
@@ -120,7 +116,7 @@ namespace chaos
 		void SetWriteConfigPath(FilePathParam const& in_write_config_path);
 
 		/** read config from files */
-		bool LoadConfigurations(bool load_read = true, bool load_write = true, bool trigger_notifications = true);
+		bool LoadConfigurations(bool load_read = true, bool load_write = true, bool send_notifications = true);
 		/** save the persistent data */
 		bool SaveWriteConfiguration();
 

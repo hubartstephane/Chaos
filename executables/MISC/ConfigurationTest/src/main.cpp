@@ -31,22 +31,31 @@ public:
 
 	void Initialize()
 	{
-		int value = 0;
+		chaos::JSONTools::GetAttribute(GetJSONReadConfiguration(), "toto", toto, 777);
+		chaos::JSONTools::SetAttribute(GetJSONWriteConfiguration(), "toto", toto + 1);
 
-		chaos::JSONTools::GetAttribute(GetJSONReadConfiguration(), "toto", value, 666);
-
-		chaos::JSONTools::SetAttribute(GetJSONWriteConfiguration(), "toto", value + 1);
-
+		ReadValues();
 	}
 
-	virtual void OnConfigurationChanged()
+	void ReadValues()
 	{
-		int i = 0;
-		bool b = chaos::JSONTools::GetAttributeByIndex(GetJSONReadConfiguration(), 3, i);
+		chaos::JSONReadConfiguration read_config = GetJSONReadConfiguration();
 
-		b = b;
+		chaos::JSONTools::GetAttribute(read_config, "titi", titi, 777);
+		chaos::JSONTools::GetAttribute(read_config, "toto", toto, 777);
 
+		titi = titi;
 	}
+
+
+
+	virtual void OnConfigurationChanged(chaos::JSONReadConfiguration read_config)
+	{
+		ReadValues();
+	}
+
+	int titi = 0;
+	int toto = 0;
 
 };
 
@@ -70,14 +79,29 @@ public:
 		b = new B;
 		b->SetObjectConfiguration(conf->CreateChildConfiguration("B"));
 		b->Initialize();
+
+		ReadValues();
 	}
 
-	virtual void OnConfigurationChanged()
+	void ReadValues()
 	{
-		b = nullptr; // destroy the child object before it receives the notification of configuration changed
+		chaos::JSONReadConfiguration read_config = GetJSONReadConfiguration();
+
+		chaos::JSONTools::GetAttribute(read_config, "tutu", tutu, 777);
+
+		tutu = tutu;
 	}
 
-protected:
+
+	virtual void OnConfigurationChanged(chaos::JSONReadConfiguration read_config)
+	{
+		ReadValues();
+		// b = nullptr; // destroy the child object before it receives the notification of configuration changed
+	}
+
+	int tutu = 0;
+
+//protected:
 
 	chaos::shared_ptr<B> b;
 };
@@ -114,17 +138,24 @@ protected:
 		chaos::RootObjectConfiguration conf;
 		conf.SetReadConfigPath(conf_read_path);
 		conf.SetWriteConfigPath(conf_write_path);
+		conf.LoadConfigurations();
 
 		chaos::shared_ptr<A> a = new A;
 		a->SetObjectConfiguration(conf.CreateChildConfiguration("A"));
 		a->Initialize();
 
+
+
+		//a->b->ReloadObjectConfiguration(true);
+		a->ReloadObjectConfiguration(true);
+
+		//conf.LoadConfigurations();
+
+
 		conf.SaveWriteConfiguration();
 
 		chaos::WinTools::ShowFile(conf_read_path);
 		chaos::WinTools::ShowFile(conf_write_path);
-
-		conf.LoadConfigurations();
 
 		return 0;
 	}

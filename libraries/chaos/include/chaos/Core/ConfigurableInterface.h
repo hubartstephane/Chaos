@@ -39,13 +39,16 @@ namespace chaos
 		/** get the interface used for reading & writing*/
 		JSONWriteConfiguration GetJSONWriteConfiguration() const;
 
+		/** reload the configuration for this object and its children */
+		bool ReloadObjectConfiguration(bool send_notifications);
+
 		/** create a child configuration and give it to another object */
 		bool GiveChildConfiguration(ConfigurableInterfaceBase* other_configurable, std::string_view key);
 
 	protected:
 
 		/** called whenever the configuration has been changed */
-		virtual void OnConfigurationChanged() {}
+		virtual void OnConfigurationChanged(JSONReadConfiguration read_config) {}
 
 	protected:
 

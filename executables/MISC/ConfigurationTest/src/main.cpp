@@ -76,11 +76,13 @@ public:
 	{
 		chaos::ObjectConfigurationBase* conf = GetObjectConfiguration();
 
+		ReadValues();
+
 		b = new B;
 		b->SetObjectConfiguration(conf->CreateChildConfiguration("B"));
 		b->Initialize();
 
-		ReadValues();
+
 	}
 
 	void ReadValues()
@@ -90,6 +92,10 @@ public:
 		chaos::JSONTools::GetAttribute(read_config, "tutu", tutu, 777);
 
 		tutu = tutu;
+
+		auto s = read_config.read_config->dump(4);
+
+		s = s;
 	}
 
 
@@ -147,7 +153,7 @@ protected:
 
 
 		//a->b->ReloadObjectConfiguration(true);
-		a->ReloadObjectConfiguration(true);
+		a->b->ReloadObjectConfiguration(true);
 
 		//conf.LoadConfigurations();
 

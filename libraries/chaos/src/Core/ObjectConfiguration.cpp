@@ -119,7 +119,7 @@ namespace chaos
 		// root case
 		if (RootObjectConfiguration* root = auto_cast(src))
 		{
-			JSONTools::LoadJSONFile(root->write_config_path, new_root_storage, LoadFileFlag::RECURSIVE);
+			JSONTools::LoadJSONFile(root->read_config_path, new_root_storage, LoadFileFlag::RECURSIVE);
 			return JSONTools::GetStructure(new_root_storage, in_key);
 		}
 		// child case

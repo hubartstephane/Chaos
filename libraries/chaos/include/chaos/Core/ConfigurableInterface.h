@@ -42,6 +42,9 @@ namespace chaos
 		/** get the interface used for reading & writing*/
 		JSONWriteConfiguration GetJSONWriteConfiguration() const;
 
+		/** create a child configuration and give it to another object */
+		bool GiveChildConfiguration(ConfigurableInterface* other_configurable, std::string_view key);
+
 	protected:
 
 		/** called whenever the configuration has been changed */

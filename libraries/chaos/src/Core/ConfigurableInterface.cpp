@@ -37,6 +37,16 @@ namespace chaos
 		return {};
 	}
 
+	bool ConfigurableInterface::GiveChildConfiguration(ConfigurableInterface* other_configurable, std::string_view key)
+	{
+		if (configuration != nullptr)
+		{
+			other_configurable->SetObjectConfiguration(configuration->CreateChildConfiguration(key));
+			return true;
+		}
+		return false;
+	}
+
 	// ---------------------------------------------------------------------
 	// ObjectConfigurationBase implementation
 	// ---------------------------------------------------------------------

@@ -9,6 +9,8 @@ namespace chaos
 
 	void ConfigurableInterfaceBase::SetObjectConfiguration(ObjectConfigurationBase* in_configuration)
 	{
+		assert(in_configuration == nullptr || in_configuration->configurable_object == nullptr); // cannot set a configuration already in use
+
 		if (configuration.get() != in_configuration)
 		{
 			// erase previous configuration

@@ -29,6 +29,25 @@ namespace chaos
 		/** get the interface used for reading & writing*/
 		JSONWriteConfiguration GetJSONWriteConfiguration() const;
 
+		/** gets the root configuration */
+		RootObjectConfiguration* GetRootConfiguration();
+		/** gets the root configuration */
+		RootObjectConfiguration const* GetRootConfiguration() const;
+
+		/** call this whenever the configuration is being changed */
+		void TriggerChangeNotifications();
+
+
+		bool Reload(bool trigger_notifications);
+
+#if 0
+
+		bool ReloadPartial();
+
+		nlohmann::json const * ReloadPartialHelper(nlohmann::json& new_root, ObjectConfigurationBase* src);
+
+#endif
+
 	protected:
 
 		/** recursively send notifications */
@@ -45,7 +64,11 @@ namespace chaos
 		nlohmann::json* read_config = nullptr;
 		/** the json node to write info into */
 		nlohmann::json* write_config = nullptr;
+
+		/** the storage for json node to read info from */
+		nlohmann::json storage_read_config;
 	};
+
 
 	/**
 	* ChildObjectConfiguration: a specialization that has a parent node and whose content depend on that
@@ -91,19 +114,25 @@ namespace chaos
 		/** constructor */
 		RootObjectConfiguration();
 
+		/** change the read config path */
+		void SetReadConfigPath(FilePathParam const& in_read_config_path);
+		/** change the write config path */
+		void SetWriteConfigPath(FilePathParam const& in_write_config_path);
+
 		/** read config from files */
-		bool LoadConfigurations(FilePathParam const& read_config_path, FilePathParam const& write_config_path, bool trigger_notifications = true);
+		bool LoadConfigurations(bool load_read = true, bool load_write = true, bool trigger_notifications = true);
 		/** save the persistent data */
-		bool SaveWriteConfiguration(FilePathParam const& write_config_path);
-		/** call this whenever the configuration is being changed */
-		void TriggerConfigurationChanged();
+		bool SaveWriteConfiguration();
 
 	protected:
 
-		/** the json node to read info from */
-		nlohmann::json root_read_config;
-		/** the json node to write info into */
-		nlohmann::json root_write_config;
+		/** the path for the read configuration */
+		boost::filesystem::path read_config_path;
+		/** the path for the write configuration */
+		boost::filesystem::path write_config_path;
+
+		/** the storage for json node to write info into */
+		nlohmann::json storage_write_config;
 	};
 
 #endif

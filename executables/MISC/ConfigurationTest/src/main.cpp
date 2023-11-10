@@ -106,19 +106,25 @@ protected:
 
 	virtual int Main() override
 	{
-		chaos::RootObjectConfiguration conf;
+		size_t p = sizeof(nlohmann::json);
 
-		conf.LoadConfigurations(GetJSONReadPath(), GetJSONWritePath());
+		boost::filesystem::path conf_read_path = GetJSONReadPath();
+		boost::filesystem::path conf_write_path = GetJSONWritePath();
+
+		chaos::RootObjectConfiguration conf;
+		conf.SetReadConfigPath(conf_read_path);
+		conf.SetWriteConfigPath(conf_write_path);
 
 		chaos::shared_ptr<A> a = new A;
 		a->SetObjectConfiguration(conf.CreateChildConfiguration("A"));
 		a->Initialize();
 
-		conf.SaveWriteConfiguration(GetJSONWritePath());
-		chaos::WinTools::ShowFile(GetJSONWritePath());
-		chaos::WinTools::ShowFile(GetJSONReadPath());
+		conf.SaveWriteConfiguration();
 
-		conf.LoadConfigurations(boost::filesystem::path{}, GetJSONWritePath());
+		chaos::WinTools::ShowFile(conf_read_path);
+		chaos::WinTools::ShowFile(conf_write_path);
+
+		conf.LoadConfigurations();
 
 		return 0;
 	}

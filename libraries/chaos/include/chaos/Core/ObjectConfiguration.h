@@ -22,7 +22,7 @@ namespace chaos
 	public:
 
 		/** create a child configuration */
-		ChildObjectConfiguration* CreateChildConfiguration(std::string_view key);
+		ChildObjectConfiguration* CreateChildConfiguration(std::string key);
 
 		/** get the interface used for reading */
 		JSONReadConfiguration GetJSONReadConfiguration() const;

@@ -34,6 +34,53 @@ namespace chaos
 			return stream.str();
 		}
 
+		/** split a string according to a separator and call a deleguate on each fragment */
+		template<typename FUNC>
+		decltype(auto) WithSplitText(std::string_view src, std::string_view delim, FUNC const& func)
+		{
+			using result_type = decltype(func(0));
+			constexpr bool convertible_to_bool = std::is_convertible_v<result_type, bool>;
+
+			char tmp_buffer[3];
+			std::string tmp_string;
+
+			for (const auto word : std::views::split(src, delim))
+			{
+				char const* ptr = nullptr;
+
+				// optimized code with a on the stack buffer
+				if (word.end() - word.begin() < sizeof(tmp_buffer) - 1)
+				{
+					// copy view into buffer, add zero at the end
+					auto last = std::copy(word.begin(), word.end(), tmp_buffer);
+					*last = 0;
+					ptr = tmp_buffer;
+				}
+				// degraded code requiring memory allocation
+				else
+				{
+					tmp_string = std::string(word.begin(), word.end());
+					ptr = tmp_string.c_str();
+				}
+
+				// call deleguate
+				if constexpr (convertible_to_bool)
+				{
+					if (auto result = func(ptr))
+						return result;
+				}
+				else
+				{
+					func(ptr);
+				}
+			}
+
+			// default result
+			if constexpr (convertible_to_bool)
+				return result_type();
+		}
+
+
         /** get the numerical suffix of the input string (ex. toto_123 => 123) */
 		CHAOS_API size_t GetStringNumSuffix(std::string_view s);
 

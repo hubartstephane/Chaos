@@ -8,14 +8,14 @@ namespace chaos
 	// ObjectConfigurationBase implementation
 	// ---------------------------------------------------------------------
 
-	ChildObjectConfiguration* ObjectConfigurationBase::CreateChildConfiguration(std::string_view key)
+	ChildObjectConfiguration* ObjectConfigurationBase::CreateChildConfiguration(std::string key)
 	{
 		if (ChildObjectConfiguration* result = new ChildObjectConfiguration)
 		{
 			child_configurations.push_back(result);
 
 			result->parent_configuration = this;
-			result->key = key;
+			result->key = std::move(key);
 			result->UpdateFromParent();
 
 			return result;

@@ -43,7 +43,7 @@ namespace chaos
 		bool ReloadObjectConfiguration(bool send_notifications);
 
 		/** create a child configuration and give it to another object */
-		bool GiveChildConfiguration(ConfigurableInterfaceBase* other_configurable, std::string_view key);
+		bool GiveChildConfiguration(ConfigurableInterfaceBase* other_configurable, std::string key);
 
 	protected:
 

@@ -37,11 +37,11 @@ namespace chaos
 		return {};
 	}
 
-	bool ConfigurableInterfaceBase::GiveChildConfiguration(ConfigurableInterfaceBase* other_configurable, std::string_view key)
+	bool ConfigurableInterfaceBase::GiveChildConfiguration(ConfigurableInterfaceBase* other_configurable, std::string key)
 	{
 		if (configuration != nullptr)
 		{
-			other_configurable->SetObjectConfiguration(configuration->CreateChildConfiguration(key));
+			other_configurable->SetObjectConfiguration(configuration->CreateChildConfiguration(std::move(key)));
 			return true;
 		}
 		return false;

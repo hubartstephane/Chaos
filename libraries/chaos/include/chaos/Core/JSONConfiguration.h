@@ -84,23 +84,11 @@ namespace chaos
 		bool GetAttributeByIndex(JSONConfiguration<WRITABLE> entry, size_t index, T& result)
 		{
 			if (entry.write_config != nullptr)
-			{
-				if (entry.write_config->is_array())
-				{
-					if (index >= entry.write_config->size())
-						return false;
-					return LoadFromJSON(entry.write_config->operator [](index), result);
-				}
-			}
+				if (GetAttributeByIndex(*entry.write_config, index, result))
+					return true;
 			if (entry.read_config != nullptr)
-			{
-				if (entry.read_config->is_array())
-				{
-					if (index >= entry.read_config->size())
-						return false;
-					return LoadFromJSON(entry.read_config->operator [](index), result);
-				}
-			}
+				if (GetAttributeByIndex(*entry.read_config, index, result))
+					return true;
 			return false;
 		}
 

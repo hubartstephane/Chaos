@@ -109,6 +109,8 @@ namespace chaos
 
 			CHAOS_API nlohmann::json const* GetStructureInternal(nlohmann::json const& entry, char const* name);
 
+			CHAOS_API nlohmann::json* GetOrCreateStructureInternal(nlohmann::json& entry, char const* name);
+
 		}; // namespace details
 
 		template<typename ...PARAMS>
@@ -397,18 +399,13 @@ namespace chaos
 		template<typename ...PARAMS>
 		nlohmann::json* GetOrCreateStructure(nlohmann::json& json, std::string_view p, PARAMS && ...params)
 		{
-			nlohmann::json* child_structure = details::GetStructureInternal(json, p.data());
-			if (child_structure == nullptr)
+			if (nlohmann::json* child_structure = details::GetOrCreateStructureInternal(json, p.data()))
 			{
-				json[p.data()] = nlohmann::json::object();
-				child_structure = &json[p.data()];
+				if constexpr (sizeof...(params) == 0)
+					return child_structure;
+				else
+					return GetOrCreateStructure(*child_structure, std::forward<PARAMS>(params)...);
 			}
-
-			if constexpr (sizeof...(params) == 0)
-				return child_structure;
-			else
-				return GetOrCreateStructure(*child_structure, std::forward<PARAMS>(params)...);
-
 			return nullptr;
 		}
 

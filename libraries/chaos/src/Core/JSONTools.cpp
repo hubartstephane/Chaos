@@ -55,10 +55,6 @@ namespace chaos
 			{
 				using result_type = typename std::remove_reference<T>::type *;
 
-				// early exit
-				if (!entry.is_object())
-					return result_type(nullptr);
-
 				// node uppon which we will iterate
 				result_type node = &entry;
 
@@ -74,6 +70,13 @@ namespace chaos
 				{
 					if (!StringTools::IsEmpty(subkey))
 					{
+						// early exit if type does not correspond
+						if (!node->is_object())
+						{
+							node = result_type(nullptr);
+							return true; // stop iteration on that error
+						}
+
 						auto it = node->find(subkey);
 						if (it == node->end() || !it->is_structured()) // found nothing or something that is not a structure
 						{
@@ -83,7 +86,7 @@ namespace chaos
 						node = &(*it);
 						++count;
 					}
-					return false; // continue iterator
+					return false; // continue iteration
 				});
 
 				return (count > 0) ? node : result_type(nullptr); // check whether there is at least one child encoutered
@@ -97,6 +100,55 @@ namespace chaos
 			nlohmann::json const* GetStructureInternal(nlohmann::json const& entry, char const* name)
 			{
 				return GetStructureInternalHelper(entry, name);
+			}
+
+			nlohmann::json* GetOrCreateStructureInternal(nlohmann::json& json, char const* name)
+			{
+				nlohmann::json* node = &json;
+
+				int count = 0;
+				bool creation_mode = false; // once a node has been created, it is unnecessary to make search again
+
+				StringTools::WithSplittedText(name, "/", [&node, &count, &creation_mode](char const* subkey)
+				{
+					if (!StringTools::IsEmpty(subkey))
+					{
+						++count;
+
+						// search whether the node already exists
+						if (!creation_mode)
+						{
+							// early exit if type does not correspond
+							if (!node->is_object())
+							{
+								node = nullptr;
+								return true; // stop iteration on that error
+							}
+
+							auto it = node->find(subkey);
+							if (it == node->end())
+							{
+								creation_mode = true; // node does not exists. all subsequent children are to be created
+							}
+							else if (!it->is_structured()) // node found but it is not a structure
+							{
+								node = nullptr;
+								return true; // stop iteration on that error
+							}
+						}
+
+						// create new node
+						node = &node->operator [](subkey);
+						*node = nlohmann::json::object();
+
+						//node->operator [](subkey) = nlohmann::json::object();
+						//child_structure = &json[p.data()];
+
+					}
+					return false; // continue iteration
+				});
+
+				return (count > 0) ? node : nullptr;
 			}
 
 		}; // namespace details

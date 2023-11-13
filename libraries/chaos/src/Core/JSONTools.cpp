@@ -50,26 +50,53 @@ namespace chaos
 	{
 		namespace details
 		{
+			template<typename T>
+			static auto GetStructureInternalHelper(T & entry, char const* name)
+			{
+				using result_type = typename std::remove_reference<T>::type *;
+
+				// early exit
+				if (!entry.is_object())
+					return result_type(nullptr);
+
+				// node uppon which we will iterate
+				result_type node = &entry;
+
+				// we have to have at least one non-empty subkey for a valid indirection
+				// for ex:
+				//   -"A"      is a valid key
+				//   -""       is NOT a valid key
+				//   -"A/B//C" is a valid key
+				//   -"///"    is NOT a valid key
+				int count = 0; 
+
+				StringTools::WithSplittedText(name, "/", [&node, &count](char const* subkey)
+				{
+					if (!StringTools::IsEmpty(subkey))
+					{
+						auto it = node->find(subkey);
+						if (it == node->end() || !it->is_structured()) // found nothing or something that is not a structure
+						{
+							node = result_type(nullptr);
+							return true; // stop iteration on that error
+						}
+						node = &(*it);
+						++count;
+					}
+					return false; // continue iterator
+				});
+
+				return (count > 0) ? node : result_type(nullptr); // check whether there is at least one child encoutered
+			}
+
 			nlohmann::json* GetStructureInternal(nlohmann::json& entry, char const* name)
 			{
-				if (entry.is_object())
-				{
-					auto it = entry.find(name);
-					if (it != entry.end() && it->is_structured())
-						return &*it;
-				}
-				return nullptr;
+				return GetStructureInternalHelper(entry, name);
 			}
 
 			nlohmann::json const* GetStructureInternal(nlohmann::json const& entry, char const* name)
 			{
-				if (entry.is_object())
-				{
-					auto it = entry.find(name);
-					if (it != entry.end() && it->is_structured())
-						return &*it;
-				}
-				return nullptr;
+				return GetStructureInternalHelper(entry, name);
 			}
 
 		}; // namespace details

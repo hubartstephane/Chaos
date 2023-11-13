@@ -36,12 +36,12 @@ namespace chaos
 
 		/** split a string according to a separator and call a deleguate on each fragment */
 		template<typename FUNC>
-		decltype(auto) WithSplitText(std::string_view src, std::string_view delim, FUNC const& func)
+		decltype(auto) WithSplittedText(std::string_view src, std::string_view delim, FUNC const& func)
 		{
 			using result_type = decltype(func(0));
 			constexpr bool convertible_to_bool = std::is_convertible_v<result_type, bool>;
 
-			char tmp_buffer[3];
+			char tmp_buffer[256];
 			std::string tmp_string;
 
 			for (const auto word : std::views::split(src, delim))

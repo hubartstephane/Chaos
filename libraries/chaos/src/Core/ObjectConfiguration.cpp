@@ -119,7 +119,7 @@ namespace chaos
 		// root case
 		if (RootObjectConfiguration* root = auto_cast(src))
 		{
-			JSONTools::LoadJSONFile(root->read_config_path, new_root_storage, LoadFileFlag::RECURSIVE);
+			JSONTools::LoadJSONFile(root->read_config_path, new_root_storage, LoadFileFlag::RECURSIVE | LoadFileFlag::NO_ERROR_TRACE);
 			return JSONTools::GetStructureNode(new_root_storage, in_path);
 		}
 		// child case
@@ -199,7 +199,7 @@ namespace chaos
 			if (!read_config_path.empty())
 			{
 				storage_read_config = nlohmann::json();
-				JSONTools::LoadJSONFile(read_config_path, storage_read_config, LoadFileFlag::RECURSIVE);
+				JSONTools::LoadJSONFile(read_config_path, storage_read_config, LoadFileFlag::RECURSIVE | LoadFileFlag::NO_ERROR_TRACE);
 				changed = true;
 			}
 		}
@@ -209,7 +209,7 @@ namespace chaos
 			if (!write_config_path.empty())
 			{
 				storage_write_config = nlohmann::json();
-				JSONTools::LoadJSONFile(write_config_path, storage_write_config, LoadFileFlag::RECURSIVE);
+				JSONTools::LoadJSONFile(write_config_path, storage_write_config, LoadFileFlag::RECURSIVE | LoadFileFlag::NO_ERROR_TRACE);
 				changed = true;
 			}
 		}

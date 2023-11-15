@@ -144,6 +144,9 @@ protected:
 		boost::filesystem::path conf_read_path = GetJSONReadPath();
 		boost::filesystem::path conf_write_path = GetJSONWritePath();
 
+		chaos::WinTools::ShowFile(conf_read_path);
+		chaos::WinTools::ShowFile(conf_write_path);
+
 		conf.SetReadConfigPath(conf_read_path);
 		conf.SetWriteConfigPath(conf_write_path);
 		conf.LoadConfigurations();
@@ -161,10 +164,8 @@ protected:
 
 		conf.SaveWriteConfiguration();
 
-		chaos::WinTools::CopyStringToClipboard(conf.GetJSONReadConfiguration().write_config->dump(2).c_str());
+//		chaos::WinTools::CopyStringToClipboard(conf.GetJSONReadConfiguration().write_config->dump(2).c_str());
 
-		chaos::WinTools::ShowFile(conf_read_path);
-		chaos::WinTools::ShowFile(conf_write_path);
 
 		return 0;
 	}

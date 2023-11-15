@@ -74,14 +74,9 @@ namespace chaos
 		/** save the json into a file */
 		CHAOS_API bool SaveJSONToFile(nlohmann::json const& json, FilePathParam const& path);
 
-		/** get a sub object from an object */
-		CHAOS_API nlohmann::json* GetStructureByIndex(nlohmann::json& entry, size_t index);
-		/** get a sub object from an object */
-		CHAOS_API nlohmann::json const* GetStructureByIndex(nlohmann::json const& entry, size_t index);
-
 		/** set an attribute in a json structure */
 		template<typename T>
-		/*CHAOS_API*/ bool SetAttribute(nlohmann::json& entry, char const* name, T const& src);
+		/*CHAOS_API*/ bool SetAttribute(nlohmann::json& entry, std::string_view path, T const& src);
 
 		/** set an attribute in a json array */
 		template<typename T>
@@ -89,7 +84,7 @@ namespace chaos
 
 		/** reading an attribute from a JSON structure */
 		template<typename T>
-		/*CHAOS_API*/ bool GetAttribute(nlohmann::json const& entry, char const* name, T& result);
+		/*CHAOS_API*/ bool GetAttribute(nlohmann::json const& entry, std::string_view path, T& result);
 
 		/** reading an attribute from a JSON array */
 		template<typename T>
@@ -97,31 +92,55 @@ namespace chaos
 
 		/** reading an attribute with default value */
 		template<typename T, typename Y>
-		/*CHAOS_API*/ bool GetAttribute(nlohmann::json const& entry, char const* name, T& result, Y default_value);
+		/*CHAOS_API*/ bool GetAttribute(nlohmann::json const& entry, std::string_view path, T& result, Y default_value);
 
 		/** reading an attribute with default value */
 		template<typename T, typename Y>
 		/*CHAOS_API*/ bool GetAttributeByIndex(nlohmann::json const& entry, size_t index, T& result, Y default_value);
 
-		namespace details
-		{
-			CHAOS_API nlohmann::json* GetStructureInternal(nlohmann::json& entry, char const* name);
+		/** getting a node by path */
+		CHAOS_API nlohmann::json* GetNode(nlohmann::json& json, std::string_view path);
+		/** getting a node by path */
+		CHAOS_API nlohmann::json const* GetNode(nlohmann::json const& json, std::string_view path);
+		/** getting or creating a node by path */
+		CHAOS_API nlohmann::json* GetOrCreateNode(nlohmann::json& json, std::string_view path);
+		/** getting a node by index */
+		CHAOS_API nlohmann::json* GetNodeByIndex(nlohmann::json& size_t, int index);
+		/** getting a node by inde */
+		CHAOS_API nlohmann::json const* GetNodeByIndex(nlohmann::json const& json, size_t index);
 
-			CHAOS_API nlohmann::json const* GetStructureInternal(nlohmann::json const& entry, char const* name);
 
-			CHAOS_API nlohmann::json* GetOrCreateStructureInternal(nlohmann::json& entry, char const* name);
+		/** getting an object node by path */
+		CHAOS_API nlohmann::json* GetObjectNode(nlohmann::json& json, std::string_view path);
+		/** getting an object node by path */
+		CHAOS_API nlohmann::json const* GetObjectNode(nlohmann::json const& json, std::string_view path);
+		/** getting or creating an object node by path */
+		CHAOS_API nlohmann::json* GetOrCreateObjectNode(nlohmann::json& json, std::string_view path);
+		/** getting an object node by index */
+		CHAOS_API nlohmann::json* GetObjectNodeByIndex(nlohmann::json& size_t, int index);
+		/** getting an object node by inde */
+		CHAOS_API nlohmann::json const* GetObjectNodeByIndex(nlohmann::json const& json, size_t index);
 
-		}; // namespace details
 
-		template<typename ...PARAMS>
-		/*CHAOS_API*/ nlohmann::json* GetStructure(nlohmann::json& json, std::string_view p, PARAMS && ...params);
+		/** getting an array node by path */
+		CHAOS_API nlohmann::json* GetArrayNode(nlohmann::json& json, std::string_view path);
+		/** getting an array node by path */
+		CHAOS_API nlohmann::json const* GetArrayNode(nlohmann::json const& json, std::string_view path);
+		/** getting or creating an array node by path */
+		CHAOS_API nlohmann::json* GetOrCreateArrayNode(nlohmann::json& json, std::string_view path);
+		/** getting an array node by index */
+		CHAOS_API nlohmann::json* GetArrayNodeByIndex(nlohmann::json& size_t, int index);
+		/** getting an array node by index */
+		CHAOS_API nlohmann::json const* GetArrayNodeByIndex(nlohmann::json const& json, size_t index);
 
-		template<typename ...PARAMS>
-		/*CHAOS_API*/ nlohmann::json const* GetStructure(nlohmann::json const& json, std::string_view p, PARAMS && ...params);
-
-		template<typename ...PARAMS>
-		/*CHAOS_API*/ nlohmann::json* GetOrCreateStructure(nlohmann::json& json, std::string_view p, PARAMS && ...params);
-
+		/** getting a structure node by path */
+		CHAOS_API nlohmann::json* GetStructureNode(nlohmann::json& json, std::string_view path);
+		/** getting a structure node by path */
+		CHAOS_API nlohmann::json const* GetStructureNode(nlohmann::json const& json, std::string_view path);
+		/** getting a structure node by index */
+		CHAOS_API nlohmann::json* GetStructureNodeByIndex(nlohmann::json& size_t, int index);
+		/** getting a structure node by index */
+		CHAOS_API nlohmann::json const* GetStructureNodeByIndex(nlohmann::json const& json, size_t index);
 
 	}; // namespace JSONTools
 
@@ -336,15 +355,25 @@ namespace chaos
 	namespace JSONTools
 	{
 		template<typename T>
-		bool SetAttribute(nlohmann::json& entry, char const* name, T const& src)
+		bool GetAttribute(nlohmann::json const& entry, std::string_view path, T& result)
 		{
-			assert(name != nullptr);
-			if (entry.is_null())
-				entry = nlohmann::json::object();
-			else if (!entry.is_object())
-				return false;
-			entry[name] = nlohmann::json();
-			return SaveIntoJSON(entry[name], src);
+			if (nlohmann::json const* node = GetNode(entry, path))
+				return LoadFromJSON(*node, result);
+			return false;
+		}
+
+		template<typename T>
+		bool SetAttribute(nlohmann::json& entry, std::string_view path, T const& src)
+		{
+			if (nlohmann::json* node = GetOrCreateNode(entry, path))
+			{
+				if (node->is_null())
+					*node = nlohmann::json::object();
+				else if (!node->is_object())
+					return false;
+				return SaveIntoJSON(*node, src);
+			}
+			return false;
 		}
 
 		template<typename T>
@@ -359,29 +388,17 @@ namespace chaos
 		}
 
 		template<typename T>
-		bool GetAttribute(nlohmann::json const& entry, char const* name, T& result)
-		{
-			assert(name != nullptr);
-			if (!entry.is_object())
-				return false;
-			nlohmann::json::const_iterator it = entry.find(name);
-			if (it == entry.end())
-				return false;
-			return LoadFromJSON(*it, result);
-		}
-
-		template<typename T>
 		bool GetAttributeByIndex(nlohmann::json const& entry, size_t index, T& result)
 		{
-			if (!entry.is_array() || index >= entry.size())
-				return false;
-			return LoadFromJSON(entry[index], result);
+			if (nlohmann::json const * node = GetNodeByIndex(entry, index))
+				return LoadFromJSON(*node, result);
+			return false;
 		}
 
 		template<typename T, typename Y>
-		bool GetAttribute(nlohmann::json const& entry, char const* name, T& result, Y default_value)
+		bool GetAttribute(nlohmann::json const& entry, std::string_view path, T& result, Y default_value)
 		{
-			if (GetAttribute(entry, name, result))
+			if (GetAttribute(entry, path, result))
 				return true;
 			result = default_value;
 			return false;
@@ -394,45 +411,6 @@ namespace chaos
 				return true;
 			result = default_value;
 			return false;
-		}
-
-		template<typename ...PARAMS>
-		nlohmann::json* GetOrCreateStructure(nlohmann::json& json, std::string_view p, PARAMS && ...params)
-		{
-			if (nlohmann::json* child_structure = details::GetOrCreateStructureInternal(json, p.data()))
-			{
-				if constexpr (sizeof...(params) == 0)
-					return child_structure;
-				else
-					return GetOrCreateStructure(*child_structure, std::forward<PARAMS>(params)...);
-			}
-			return nullptr;
-		}
-
-		template<typename ...PARAMS>
-		nlohmann::json* GetStructure(nlohmann::json& json, std::string_view p, PARAMS&& ...params)
-		{
-			if (nlohmann::json* child_structure = details::GetStructureInternal(json, p.data()))
-			{
-				if constexpr (sizeof...(params) == 0)
-					return child_structure;
-				else
-					return GetStructure(*child_structure, std::forward<PARAMS>(params)...);
-			}
-			return nullptr;
-		}
-
-		template<typename ...PARAMS>
-		nlohmann::json const* GetStructure(nlohmann::json const& json, std::string_view p, PARAMS&& ...params)
-		{
-			if (nlohmann::json const* child_structure = details::GetStructureInternal(json, p.data()))
-			{
-				if constexpr (sizeof...(params) == 0)
-					return child_structure;
-				else
-					return GetStructure(*child_structure, std::forward<PARAMS>(params)...);
-			}
-			return nullptr;
 		}
 
 	} // namespace JSONTools

@@ -22,7 +22,7 @@ namespace chaos
 			return false;
 
 		// initialize the game from configuration
-		nlohmann::json const* game_config = JSONTools::GetStructure(configuration, "game");
+		nlohmann::json const* game_config = JSONTools::GetStructureNode(configuration, "game");
 		if (game_config != nullptr)
 			if (!game->InitializeFromConfiguration(*game_config))
 				return false;

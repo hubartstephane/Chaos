@@ -80,8 +80,7 @@ namespace chaos
 
 	bool Application::LoadClasses()
 	{
-		nlohmann::json const * classes_json = JSONTools::GetStructure(configuration, "classes");
-		if (classes_json != nullptr && classes_json->is_object())
+		if (nlohmann::json const* classes_json = JSONTools::GetObjectNode(configuration, "classes"))
 		{
 			std::string classes_directory;
 			if (JSONTools::GetAttribute(*classes_json, "classes_directory", classes_directory))

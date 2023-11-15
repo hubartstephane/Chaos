@@ -62,11 +62,11 @@ namespace chaos
 
 		nlohmann::json const& config = application->GetConfiguration();
 		// get the hud config
-		nlohmann::json const* hud_config = JSONTools::GetStructure(config, "hud");
+		nlohmann::json const* hud_config = JSONTools::GetStructureNode(config, "hud");
 		if (hud_config == nullptr)
 			return;
 		// get the component config (if existing)
-		nlohmann::json const* component_config = JSONTools::GetStructure(*hud_config, (char const*)key);
+		nlohmann::json const* component_config = JSONTools::GetStructureNode(*hud_config, (char const*)key);
 		if (component_config == nullptr)
 			return;
 		// initialize the component from JSON

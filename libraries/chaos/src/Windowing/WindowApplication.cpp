@@ -132,9 +132,9 @@ namespace chaos
 			result->SetObjectNaming(request);
 			// override the create params with the JSON configuration (if any)
 			nlohmann::json const* window_configuration = nullptr;
-			if (nlohmann::json const* windows_configuration = JSONTools::GetStructure(configuration, "windows"))
+			if (nlohmann::json const* windows_configuration = JSONTools::GetStructureNode(configuration, "windows"))
 			{
-				window_configuration = JSONTools::GetStructure(*windows_configuration, result->GetName());
+				window_configuration = JSONTools::GetStructureNode(*windows_configuration, result->GetName());
 				if (window_configuration != nullptr)
 				{
 					LoadFromJSON(*window_configuration, create_params);
@@ -186,7 +186,7 @@ namespace chaos
 		glfwSetErrorCallback(OnGLFWError);
 
 		// the glfw configuration (valid for all windows)
-		if (nlohmann::json const* glfw_configuration = JSONTools::GetStructure(configuration, "glfw"))
+		if (nlohmann::json const* glfw_configuration = JSONTools::GetStructureNode(configuration, "glfw"))
 			LoadFromJSON(*glfw_configuration, glfw_hints);
 		glfw_hints.ApplyHints();
 
@@ -330,19 +330,17 @@ namespace chaos
 
 	bool WindowApplication::FillAtlasGeneratorInputFonts(BitmapAtlas::AtlasInput& input)
 	{
-		nlohmann::json const* fonts_config = JSONTools::GetStructure(configuration, "fonts");
-		if (fonts_config != nullptr)
+		if (nlohmann::json const* fonts_config = JSONTools::GetStructureNode(configuration, "fonts"))
 		{
 			// read the default font parameters
 			BitmapAtlas::FontInfoInputParams font_params;
 
-			nlohmann::json const* default_font_param_json = JSONTools::GetStructure(*fonts_config, "default_font_param");
+			nlohmann::json const* default_font_param_json = JSONTools::GetStructureNode(*fonts_config, "default_font_param");
 			if (default_font_param_json != nullptr)
 				LoadFromJSON(*default_font_param_json, font_params);
 
 			// Add the fonts
-			nlohmann::json const* fonts_json = JSONTools::GetStructure(*fonts_config, "fonts");
-			if (fonts_json != nullptr && fonts_json->is_object())
+			if (nlohmann::json const* fonts_json = JSONTools::GetObjectNode(*fonts_config, "fonts"))
 			{
 				for (nlohmann::json::const_iterator it = fonts_json->begin(); it != fonts_json->end(); ++it)
 				{
@@ -398,7 +396,7 @@ namespace chaos
 
 		BitmapAtlas::AtlasGeneratorParams params = BitmapAtlas::AtlasGeneratorParams(DEFAULT_ATLAS_SIZE, DEFAULT_ATLAS_SIZE, DEFAULT_ATLAS_PADDING, PixelFormatMergeParams());
 
-		nlohmann::json const* atlas_json = JSONTools::GetStructure(configuration, "atlas");
+		nlohmann::json const* atlas_json = JSONTools::GetStructureNode(configuration, "atlas");
 		if (atlas_json != nullptr)
 			LoadFromJSON(*atlas_json, params);
 
@@ -423,7 +421,7 @@ namespace chaos
 	bool WindowApplication::CreateTextGenerator()
 	{
 		// get the font sub objects
-		nlohmann::json const* fonts_config = JSONTools::GetStructure(configuration, "fonts");
+		nlohmann::json const* fonts_config = JSONTools::GetStructureNode(configuration, "fonts");
 
 		// create the generator
 		particle_text_generator = new ParticleTextGenerator::Generator(*texture_atlas);
@@ -447,8 +445,7 @@ namespace chaos
 			// embedded sprites
 			if (fonts_config != nullptr)
 			{
-				nlohmann::json const* font_bitmaps_json = JSONTools::GetStructure(*fonts_config, "bitmaps");
-				if (font_bitmaps_json != nullptr && font_bitmaps_json->is_object())
+				if (nlohmann::json const* font_bitmaps_json = JSONTools::GetObjectNode(*fonts_config, "bitmaps"))
 				{
 					for (nlohmann::json::const_iterator it = font_bitmaps_json->begin(); it != font_bitmaps_json->end(); ++it)
 					{
@@ -468,8 +465,7 @@ namespace chaos
 		// the colors
 		if (fonts_config != nullptr)
 		{
-			nlohmann::json const* font_colors_json = JSONTools::GetStructure(*fonts_config, "colors");
-			if (font_colors_json != nullptr && font_colors_json->is_object())
+			if (nlohmann::json const* font_colors_json = JSONTools::GetObjectNode(*fonts_config, "colors"))
 			{
 				for (nlohmann::json::const_iterator it = font_colors_json->begin(); it != font_colors_json->end(); ++it)
 				{
@@ -538,7 +534,7 @@ namespace chaos
 		if (!gpu_resource_manager->InitializeInternalResources())
 			return false;
 		// get JSON section and load all requested resources
-		nlohmann::json const* gpu_config = JSONTools::GetStructure(configuration, "gpu");
+		nlohmann::json const* gpu_config = JSONTools::GetStructureNode(configuration, "gpu");
 		if (gpu_config != nullptr)
 			if (!gpu_resource_manager->InitializeFromConfiguration(*gpu_config))
 				return false;
@@ -557,7 +553,7 @@ namespace chaos
 			if (!ReloadConfigurationFile(config))
 				return false;
 			// get the structure of interrest
-			nlohmann::json const* gpu_config = JSONTools::GetStructure(config, "gpu");
+			nlohmann::json const* gpu_config = JSONTools::GetStructureNode(config, "gpu");
 			if (gpu_config == nullptr)
 				return false;
 			// create a temporary manager
@@ -597,7 +593,7 @@ namespace chaos
 		main_clock = new Clock("main_clock");
 		if (main_clock == nullptr)
 			return false;
-		nlohmann::json const* clock_config = JSONTools::GetStructure(configuration, "clocks");
+		nlohmann::json const* clock_config = JSONTools::GetStructureNode(configuration, "clocks");
 		if (clock_config != nullptr)
 			main_clock->InitializeFromConfiguration(*clock_config);
 
@@ -606,7 +602,7 @@ namespace chaos
 		if (sound_manager == nullptr)
 			return false;
 		sound_manager->StartManager();
-		nlohmann::json const* sound_config = JSONTools::GetStructure(configuration, "sounds");
+		nlohmann::json const* sound_config = JSONTools::GetStructureNode(configuration, "sounds");
 		if (sound_config != nullptr)
 			sound_manager->InitializeFromConfiguration(*sound_config);
 

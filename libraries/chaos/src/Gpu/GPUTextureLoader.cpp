@@ -400,66 +400,62 @@ namespace chaos
 		}
 
 		// skybox descriptions ?
-		nlohmann::json const * faces = JSONTools::GetStructure(json, "faces");
-		if (faces != nullptr)
+		if (nlohmann::json const* faces = JSONTools::GetStructureNode(json, "faces"))
 		{
-			if (faces->is_array() || faces->is_object())
+			boost::filesystem::path left_path;
+			boost::filesystem::path right_path;
+			boost::filesystem::path top_path;
+			boost::filesystem::path bottom_path;
+			boost::filesystem::path front_path;
+			boost::filesystem::path back_path;
+
+			boost::filesystem::path single_path;
+
+			bool single_image = false;
+			bool multiple_image = false;
+
+			SkyBoxImages skybox;
+			if (faces->is_array())
 			{
-				boost::filesystem::path left_path;
-				boost::filesystem::path right_path;
-				boost::filesystem::path top_path;
-				boost::filesystem::path bottom_path;
-				boost::filesystem::path front_path;
-				boost::filesystem::path back_path;
-
-				boost::filesystem::path single_path;
-
-				bool single_image = false;
-				bool multiple_image = false;
-
-				SkyBoxImages skybox;
-				if (faces->is_array())
+				if (faces->size() == 1)
 				{
-					if (faces->size() == 1)
-					{
-						single_image |= JSONTools::GetAttributeByIndex(*faces, 0, single_path);
-					}
-					else
-					{
-						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 0, left_path);
-						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 1, right_path);
-						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 2, top_path);
-						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 3, bottom_path);
-						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 4, front_path);
-						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 5, back_path);
-					}
+					single_image |= JSONTools::GetAttributeByIndex(*faces, 0, single_path);
 				}
 				else
 				{
-					single_image |= JSONTools::GetAttribute(*faces, "single", single_path);
-					if (!single_image)
-					{
-						multiple_image |= JSONTools::GetAttribute(*faces, "left", left_path);
-						multiple_image |= JSONTools::GetAttribute(*faces, "right", right_path);
-						multiple_image |= JSONTools::GetAttribute(*faces, "top", top_path);
-						multiple_image |= JSONTools::GetAttribute(*faces, "bottom", bottom_path);
-						multiple_image |= JSONTools::GetAttribute(*faces, "front", front_path);
-						multiple_image |= JSONTools::GetAttribute(*faces, "back", back_path);
-					}
+					multiple_image |= JSONTools::GetAttributeByIndex(*faces, 0, left_path);
+					multiple_image |= JSONTools::GetAttributeByIndex(*faces, 1, right_path);
+					multiple_image |= JSONTools::GetAttributeByIndex(*faces, 2, top_path);
+					multiple_image |= JSONTools::GetAttributeByIndex(*faces, 3, bottom_path);
+					multiple_image |= JSONTools::GetAttributeByIndex(*faces, 4, front_path);
+					multiple_image |= JSONTools::GetAttributeByIndex(*faces, 5, back_path);
 				}
-
-				if (single_image || multiple_image)
+			}
+			else
+			{
+				single_image |= JSONTools::GetAttribute(*faces, "single", single_path);
+				if (!single_image)
 				{
-					if (single_image)
-					{
-						skybox = SkyBoxTools::LoadSingleSkyBox(single_path);
-					}
-					else if (multiple_image)
-					{
-						skybox = SkyBoxTools::LoadMultipleSkyBox(left_path, right_path, top_path, bottom_path, front_path, back_path);
-					}
-					return GenTextureObject(&skybox, PixelFormatMergeParams(), parameters);
+					multiple_image |= JSONTools::GetAttribute(*faces, "left", left_path);
+					multiple_image |= JSONTools::GetAttribute(*faces, "right", right_path);
+					multiple_image |= JSONTools::GetAttribute(*faces, "top", top_path);
+					multiple_image |= JSONTools::GetAttribute(*faces, "bottom", bottom_path);
+					multiple_image |= JSONTools::GetAttribute(*faces, "front", front_path);
+					multiple_image |= JSONTools::GetAttribute(*faces, "back", back_path);
 				}
+			}
+
+			if (single_image || multiple_image)
+			{
+				if (single_image)
+				{
+					skybox = SkyBoxTools::LoadSingleSkyBox(single_path);
+				}
+				else if (multiple_image)
+				{
+					skybox = SkyBoxTools::LoadMultipleSkyBox(left_path, right_path, top_path, bottom_path, front_path, back_path);
+				}
+				return GenTextureObject(&skybox, PixelFormatMergeParams(), parameters);
 			}
 		}
 		return nullptr;

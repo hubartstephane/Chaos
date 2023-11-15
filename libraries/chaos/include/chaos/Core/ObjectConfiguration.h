@@ -22,7 +22,7 @@ namespace chaos
 	public:
 
 		/** create a child configuration */
-		ChildObjectConfiguration* CreateChildConfiguration(std::string key);
+		ChildObjectConfiguration* CreateChildConfiguration(std::string path);
 
 		/** get the interface used for reading */
 		JSONReadConfiguration GetJSONReadConfiguration() const;
@@ -45,7 +45,7 @@ namespace chaos
 		/** call this whenever the configuration is being changed */
 		void CompleteUpdateOperation(bool send_notifications);
 		/** helper function used to reload the hierarchy */
-		static nlohmann::json const* ReloadHelper(nlohmann::json& new_root_storage, ObjectConfigurationBase* src, std::string_view in_key);
+		static nlohmann::json const* ReloadHelper(nlohmann::json& new_root_storage, ObjectConfigurationBase* src, std::string_view in_path);
 
 	protected:
 
@@ -100,7 +100,7 @@ namespace chaos
 		/** the parent configuration */
 		weak_ptr<ObjectConfigurationBase> parent_configuration;
 		/** the path from parent to this configuration */
-		std::string key;
+		std::string path;
 	};
 
 	/**

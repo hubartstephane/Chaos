@@ -1082,15 +1082,15 @@ namespace chaos
 
 	nlohmann::json * Window::GetPersistentWriteStorage() const
 	{
-		if (Application* application = Application::GetInstance())
-			return application->GetOrCreatePersistentDataStructure("windows", GetName());
+		//if (Application* application = Application::GetInstance())
+		//	return application->GetOrCreatePersistentDataStructure("windows", GetName());
 		return nullptr;
 	}
 
 	nlohmann::json const * Window::GetPersistentReadStorage() const
 	{
-		if (Application* application = Application::GetInstance())
-			return application->GetPersistentDataStructure("windows", GetName());
+		//if (Application* application = Application::GetInstance())
+		//	return application->GetPersistentDataStructure("windows", GetName());
 		return nullptr;
 	}
 

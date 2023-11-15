@@ -8,13 +8,11 @@ namespace chaos
 		template<typename T>
 		/*CHAOS_API*/ void SerializeLayersFromJSON(T* object, nlohmann::json const& json)
 		{
-			nlohmann::json const* layers_json = JSONTools::GetStructure(json, "LAYERS");
-			if (layers_json != nullptr && layers_json->is_array())
+			if (nlohmann::json const* layers_json = JSONTools::GetArrayNode(json, "LAYERS"))
 			{
 				for (size_t i = 0; i < layers_json->size(); ++i)
 				{
-					nlohmann::json const* layer_json = JSONTools::GetStructureByIndex(*layers_json, i);
-					if (layer_json != nullptr && layer_json->is_object())
+					if (nlohmann::json const* layer_json = JSONTools::GetObjectNodeByIndex(*layers_json, i))
 					{
 						int layer_id = 0;
 						if (JSONTools::GetAttribute(*layer_json, "LAYER_ID", layer_id))

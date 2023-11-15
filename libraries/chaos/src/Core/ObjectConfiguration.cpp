@@ -8,14 +8,14 @@ namespace chaos
 	// ObjectConfigurationBase implementation
 	// ---------------------------------------------------------------------
 
-	ChildObjectConfiguration* ObjectConfigurationBase::CreateChildConfiguration(std::string key)
+	ChildObjectConfiguration* ObjectConfigurationBase::CreateChildConfiguration(std::string path)
 	{
 		if (ChildObjectConfiguration* result = new ChildObjectConfiguration)
 		{
 			child_configurations.push_back(result);
 
 			result->parent_configuration = this;
-			result->key = std::move(key);
+			result->path = std::move(path);
 			result->UpdateFromParent();
 
 			return result;
@@ -100,7 +100,7 @@ namespace chaos
 			nlohmann::json new_root_storage;
 
 			// recursively go to root and ask for this node content
-			if (nlohmann::json const* new_read_config = ReloadHelper(new_root_storage, child->parent_configuration.get(), child->key))
+			if (nlohmann::json const* new_read_config = ReloadHelper(new_root_storage, child->parent_configuration.get(), child->path))
 			{
 				storage_read_config = *new_read_config; // copy the whole json structure
 				read_config = &storage_read_config;
@@ -114,18 +114,18 @@ namespace chaos
 		return false;
 	}
 
-	nlohmann::json const* ObjectConfigurationBase::ReloadHelper(nlohmann::json& new_root_storage, ObjectConfigurationBase* src, std::string_view in_key)
+	nlohmann::json const* ObjectConfigurationBase::ReloadHelper(nlohmann::json& new_root_storage, ObjectConfigurationBase* src, std::string_view in_path)
 	{
 		// root case
 		if (RootObjectConfiguration* root = auto_cast(src))
 		{
 			JSONTools::LoadJSONFile(root->read_config_path, new_root_storage, LoadFileFlag::RECURSIVE);
-			return JSONTools::GetStructure(new_root_storage, in_key);
+			return JSONTools::GetStructureNode(new_root_storage, in_path);
 		}
 		// child case
 		if (ChildObjectConfiguration* child = auto_cast(src))
-			if (nlohmann::json const* new_child_read_json = ReloadHelper(new_root_storage, child->parent_configuration.get(), child->key))
-				return JSONTools::GetStructure(*new_child_read_json, in_key);
+			if (nlohmann::json const* new_child_read_json = ReloadHelper(new_root_storage, child->parent_configuration.get(), child->path))
+				return JSONTools::GetStructureNode(*new_child_read_json, in_path);
 		// error
 		return nullptr;
 	}
@@ -161,10 +161,10 @@ namespace chaos
 	void ChildObjectConfiguration::UpdateFromParent()
 	{
 		read_config = (parent_configuration != nullptr && parent_configuration->read_config != nullptr) ?
-			JSONTools::GetStructure(*parent_configuration->read_config, key) :
+			JSONTools::GetObjectNode(*parent_configuration->read_config, path) :
 			nullptr;
 		write_config = (parent_configuration != nullptr && parent_configuration->write_config != nullptr) ?
-			JSONTools::GetOrCreateStructure(*parent_configuration->write_config, key) :
+			JSONTools::GetOrCreateObjectNode(*parent_configuration->write_config, path) :
 			nullptr;
 
 		storage_read_config = {}; // empty self storage

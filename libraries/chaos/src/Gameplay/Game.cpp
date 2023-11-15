@@ -631,12 +631,29 @@ namespace chaos
 
 	bool Game::SavePersistentGameData(nlohmann::json & game_data) const
 	{
+
+
+		return false;
+
+
+
+
+
 		JSONTools::SetAttribute(game_data, "best_score", best_score);
 		return true;
 	}
 
 	bool Game::SerializePersistentGameData(bool save)
 	{
+
+		return false;
+
+
+
+
+
+
+
 		// get application
 		Application * application = Application::GetInstance();
 		if (application == nullptr)
@@ -805,8 +822,8 @@ namespace chaos
 	bool Game::InitializeGameValues(nlohmann::json const & config, bool hot_reload)
 	{
 		// capture the game instance configuration
-		nlohmann::json const* gi_config = JSONTools::GetStructure(config, "game_instance");
-		if (gi_config != nullptr && gi_config->is_object())
+		nlohmann::json const* gi_config = JSONTools::GetObjectNode(config, "game_instance");
+		if (gi_config != nullptr)
 			game_instance_configuration = *gi_config;
 		else
 			game_instance_configuration = nlohmann::json();
@@ -1301,7 +1318,7 @@ namespace chaos
 		if (!application->ReloadConfigurationFile(config))
 			return false;
 		// extract the part of interest for us
-		nlohmann::json const * game_config = JSONTools::GetStructure(config, "game");
+		nlohmann::json const * game_config = JSONTools::GetStructureNode(config, "game");
 		if (game_config == nullptr)
 			return false;
 		// update game values

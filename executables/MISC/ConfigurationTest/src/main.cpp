@@ -32,7 +32,10 @@ public:
 	void Initialize()
 	{
 		chaos::JSONTools::GetAttribute(GetJSONReadConfiguration(), "toto", toto, 777);
-		chaos::JSONTools::SetAttribute(GetJSONWriteConfiguration(), "toto", toto + 1);
+		chaos::JSONTools::SetAttribute(GetJSONWriteConfiguration(), "toto", toto + 10);
+
+		int iii = 0;
+		chaos::JSONTools::GetAttribute(GetJSONWriteConfiguration(), "toto", iii);
 
 		ReadValues();
 	}
@@ -79,7 +82,7 @@ public:
 		ReadValues();
 
 		b = new B;
-		b->SetObjectConfiguration(conf->CreateChildConfiguration("B"));
+		GiveChildConfiguration(b.get(), "B/C/D");
 		b->Initialize();
 
 
@@ -120,7 +123,7 @@ public:
 
 
 
-class MyApplication : public chaos::Application
+class MyApplication : public chaos::Application, public chaos::ConfigurableInterfaceBase
 {
 protected:
 
@@ -136,12 +139,11 @@ protected:
 
 	virtual int Main() override
 	{
-		size_t p = sizeof(nlohmann::json);
+		chaos::RootObjectConfiguration conf;
 
 		boost::filesystem::path conf_read_path = GetJSONReadPath();
 		boost::filesystem::path conf_write_path = GetJSONWritePath();
 
-		chaos::RootObjectConfiguration conf;
 		conf.SetReadConfigPath(conf_read_path);
 		conf.SetWriteConfigPath(conf_write_path);
 		conf.LoadConfigurations();
@@ -157,8 +159,9 @@ protected:
 
 		//conf.LoadConfigurations();
 
-
 		conf.SaveWriteConfiguration();
+
+		chaos::WinTools::CopyStringToClipboard(conf.GetJSONReadConfiguration().write_config->dump(2).c_str());
 
 		chaos::WinTools::ShowFile(conf_read_path);
 		chaos::WinTools::ShowFile(conf_write_path);

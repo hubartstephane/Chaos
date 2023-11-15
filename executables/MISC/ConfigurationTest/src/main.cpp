@@ -2,7 +2,7 @@
 
 // ---------------------------------------------------------------------
 
-class ConfigurableInterfaceBase;
+class ConfigurableInterface;
 class ObjectConfiguration;
 
 
@@ -19,7 +19,7 @@ class ObjectConfiguration;
 
 
 // ---------------------------------------------------------------------
-class B : public chaos::Object, public chaos::ConfigurableInterfaceBase
+class B : public chaos::Object, public chaos::ConfigurableInterface
 {
 public:
 
@@ -65,7 +65,7 @@ public:
 
 
 
-class A : public chaos::Object, public chaos::ConfigurableInterfaceBase
+class A : public chaos::Object, public chaos::ConfigurableInterface
 {
 public:
 
@@ -123,7 +123,7 @@ public:
 
 
 
-class MyApplication : public chaos::Application, public chaos::ConfigurableInterfaceBase
+class MyApplication : public chaos::Application, public chaos::ConfigurableInterface
 {
 protected:
 
@@ -148,8 +148,8 @@ protected:
 		chaos::WinTools::ShowFile(conf_write_path);
 
 		conf.SetReadConfigPath(conf_read_path);
-		conf.SetWriteConfigPath(conf_write_path);
-		conf.LoadConfigurations();
+		conf.SetPersistentConfigPath(conf_write_path);
+		conf.LoadConfiguration();
 
 		chaos::shared_ptr<A> a = new A;
 		a->SetObjectConfiguration(conf.CreateChildConfiguration("A"));
@@ -162,7 +162,7 @@ protected:
 
 		//conf.LoadConfigurations();
 
-		conf.SaveWriteConfiguration();
+		conf.SavePersistentConfiguration();
 
 //		chaos::WinTools::CopyStringToClipboard(conf.GetJSONReadConfiguration().write_config->dump(2).c_str());
 

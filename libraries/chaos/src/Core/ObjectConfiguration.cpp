@@ -26,7 +26,7 @@ namespace chaos
 	void ObjectConfigurationBase::PropagateNotifications()
 	{
 		// trigger the change for the configurable
-		if (ConfigurableInterfaceBase* configurable = auto_cast(configurable_object.get()))
+		if (ConfigurableInterface* configurable = auto_cast(configurable_object.get()))
 			configurable->OnConfigurationChanged(GetJSONReadConfiguration());
 		// create a weak copy of the children list. children may be destroyed during this loop
 		std::vector<weak_ptr<ChildObjectConfiguration>> child_copy;
@@ -43,7 +43,7 @@ namespace chaos
 	{
 		JSONReadConfiguration result;
 		result.read_config = read_config;
-		result.write_config = write_config;
+		result.write_config = persistent_config;
 		return result;
 	}
 
@@ -51,7 +51,7 @@ namespace chaos
 	{
 		JSONWriteConfiguration result;
 		result.read_config = read_config;
-		result.write_config = write_config;
+		result.write_config = persistent_config;
 		return result;
 	}
 
@@ -87,7 +87,7 @@ namespace chaos
 	{
 		// for root
 		if (RootObjectConfiguration* root = auto_cast(this))
-			return root->LoadConfigurations(true, false, send_notifications); // only reload the READ part
+			return root->LoadConfiguration(true, false, send_notifications); // only reload the READ part
 
 		// for children
 		if (ChildObjectConfiguration* child = auto_cast(this))
@@ -163,8 +163,8 @@ namespace chaos
 		read_config = (parent_configuration != nullptr && parent_configuration->read_config != nullptr) ?
 			JSONTools::GetObjectNode(*parent_configuration->read_config, path) :
 			nullptr;
-		write_config = (parent_configuration != nullptr && parent_configuration->write_config != nullptr) ?
-			JSONTools::GetOrCreateObjectNode(*parent_configuration->write_config, path) :
+		persistent_config = (parent_configuration != nullptr && parent_configuration->persistent_config != nullptr) ?
+			JSONTools::GetOrCreateObjectNode(*parent_configuration->persistent_config, path) :
 			nullptr;
 
 		storage_read_config = {}; // empty self storage
@@ -186,10 +186,10 @@ namespace chaos
 	RootObjectConfiguration::RootObjectConfiguration()
 	{
 		read_config = &storage_read_config;
-		write_config = &storage_write_config;
+		persistent_config = &storage_persistent_config;
 	}
 
-	bool RootObjectConfiguration::LoadConfigurations(bool load_read, bool load_write, bool send_notifications)
+	bool RootObjectConfiguration::LoadConfiguration(bool load_read, bool load_persistent, bool send_notifications)
 	{
 		bool changed = false;
 
@@ -203,13 +203,13 @@ namespace chaos
 				changed = true;
 			}
 		}
-		// update the write json
-		if (load_write)
+		// update the persistent json
+		if (load_persistent)
 		{
-			if (!write_config_path.empty())
+			if (!persistent_config_path.empty())
 			{
-				storage_write_config = nlohmann::json();
-				JSONTools::LoadJSONFile(write_config_path, storage_write_config, LoadFileFlag::RECURSIVE | LoadFileFlag::NO_ERROR_TRACE);
+				storage_persistent_config = nlohmann::json();
+				JSONTools::LoadJSONFile(persistent_config_path, storage_persistent_config, LoadFileFlag::RECURSIVE | LoadFileFlag::NO_ERROR_TRACE);
 				changed = true;
 			}
 		}
@@ -220,11 +220,11 @@ namespace chaos
 		return true;
 	}
 
-	bool RootObjectConfiguration::SaveWriteConfiguration()
+	bool RootObjectConfiguration::SavePersistentConfiguration()
 	{
-		if (write_config_path.empty())
+		if (persistent_config_path.empty())
 			return false;
-		return JSONTools::SaveJSONToFile(storage_write_config, write_config_path);
+		return JSONTools::SaveJSONToFile(storage_persistent_config, persistent_config_path);
 	}
 	
 	void RootObjectConfiguration::SetReadConfigPath(FilePathParam const& in_read_config_path)
@@ -232,9 +232,9 @@ namespace chaos
 		read_config_path = in_read_config_path.GetResolvedPath();
 	}
 	
-	void RootObjectConfiguration::SetWriteConfigPath(FilePathParam const& in_write_config_path)
+	void RootObjectConfiguration::SetPersistentConfigPath(FilePathParam const& in_persistent_config_path)
 	{
-		write_config_path = in_write_config_path.GetResolvedPath();
+		persistent_config_path = in_persistent_config_path.GetResolvedPath();
 	}
 
 }; // namespace chaos

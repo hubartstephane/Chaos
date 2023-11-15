@@ -4,10 +4,10 @@
 namespace chaos
 {
 	// ---------------------------------------------------------------------
-	// ConfigurableInterfaceBase implementation
+	// ConfigurableInterface implementation
 	// ---------------------------------------------------------------------
 
-	void ConfigurableInterfaceBase::SetObjectConfiguration(ObjectConfigurationBase* in_configuration)
+	void ConfigurableInterface::SetObjectConfiguration(ObjectConfigurationBase* in_configuration)
 	{
 		assert(in_configuration == nullptr || in_configuration->configurable_object == nullptr); // cannot set a configuration already in use
 
@@ -23,21 +23,21 @@ namespace chaos
 		}
 	}
 
-	JSONReadConfiguration ConfigurableInterfaceBase::GetJSONReadConfiguration() const
+	JSONReadConfiguration ConfigurableInterface::GetJSONReadConfiguration() const
 	{
 		if (configuration != nullptr)
 			return configuration->GetJSONReadConfiguration();
 		return {};
 	}
 
-	JSONWriteConfiguration ConfigurableInterfaceBase::GetJSONWriteConfiguration() const
+	JSONWriteConfiguration ConfigurableInterface::GetJSONWriteConfiguration() const
 	{
 		if (configuration != nullptr)
 			return configuration->GetJSONWriteConfiguration();
 		return {};
 	}
 
-	bool ConfigurableInterfaceBase::GiveChildConfiguration(ConfigurableInterfaceBase* other_configurable, std::string key)
+	bool ConfigurableInterface::GiveChildConfiguration(ConfigurableInterface* other_configurable, std::string key)
 	{
 		if (configuration != nullptr)
 		{
@@ -47,11 +47,25 @@ namespace chaos
 		return false;
 	}
 
-	bool ConfigurableInterfaceBase::ReloadObjectConfiguration(bool send_notifications)
+	bool ConfigurableInterface::ReloadObjectConfiguration(bool send_notifications)
 	{
 		if (configuration != nullptr)
 			return configuration->Reload(send_notifications);
 		return false;
+	}
+
+	void ConfigurableInterface::OnConfigurationChanged(JSONReadConfiguration read_config)
+	{
+		ReadConfigurableProperties(ReadConfigurablePropertiesContext::HOT_RELOAD);
+	}
+
+	void ConfigurableInterface::ReadConfigurableProperties(ReadConfigurablePropertiesContext context)
+	{
+		OnReadConfigurableProperties(JSONReadConfiguration(), context);
+	}
+
+	void ConfigurableInterface::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
+	{		
 	}
 
 }; // namespace chaos

@@ -58,6 +58,8 @@ namespace chaos
 		bool GiveChildConfiguration(ConfigurableInterface* other_configurable, std::string key);
 		/** read the properties from the config */
 		void ReadConfigurableProperties(ReadConfigurablePropertiesContext context = ReadConfigurablePropertiesContext::INITIALIZATION);
+		/** store the properties into the persistent data */
+		void StorePersistentProperties();
 
 	protected:
 
@@ -65,6 +67,8 @@ namespace chaos
 		virtual void OnConfigurationChanged(JSONReadConfiguration read_config);
 		/** the reading properties method */
 		virtual void OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context);
+
+		virtual void OnStorePersistentProperties(JSONWriteConfiguration config);
 
 	protected:
 

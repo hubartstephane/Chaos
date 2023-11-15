@@ -80,8 +80,8 @@ namespace chaos
 			return InitializeProgramFromName(material_info, program_name.c_str());
 
 		// if there is a program it has to be under the form of a structure
-		nlohmann::json const * json_program = JSONTools::GetStructure(json, "program");
-		if (json_program == nullptr || !json_program->is_object())
+		nlohmann::json const * json_program = JSONTools::GetObjectNode(json, "program");
+		if (json_program == nullptr)
 			return false;
 
 		// does the object has a member : "name" ? (this can be an inplace program defined => only return if we found the corresponding resource)
@@ -132,8 +132,8 @@ namespace chaos
 	bool GPURenderMaterialLoader::InitializeTexturesFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json) const
 	{
 		// search the texture object
-		nlohmann::json const * json_textures = JSONTools::GetStructure(json, "textures");
-		if (json_textures == nullptr || !json_textures->is_object())
+		nlohmann::json const * json_textures = JSONTools::GetObjectNode(json, "textures");
+		if (json_textures == nullptr)
 			return false;
 		// enumerate all textures
 		for (nlohmann::json::const_iterator it = json_textures->begin(); it != json_textures->end(); ++it)
@@ -268,8 +268,8 @@ namespace chaos
 	bool GPURenderMaterialLoader::InitializeUniformsFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json) const
 	{
 		// search the uniform object
-		nlohmann::json const * json_uniforms = JSONTools::GetStructure(json, "uniforms");
-		if (json_uniforms == nullptr || !json_uniforms->is_object())
+		nlohmann::json const * json_uniforms = JSONTools::GetObjectNode(json, "uniforms");
+		if (json_uniforms == nullptr)
 			return false;
 		// enumerate all uniforms
 		for (nlohmann::json::const_iterator it = json_uniforms->begin(); it != json_uniforms->end(); ++it)

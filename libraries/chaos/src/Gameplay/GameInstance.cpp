@@ -468,8 +468,8 @@ namespace chaos
 	bool GameInstance::InitializeGameValues(nlohmann::json const& config, bool hot_reload)
 	{
 		// capture the player configuration
-		nlohmann::json const* p_config = JSONTools::GetStructure(config, "player");
-		if (p_config != nullptr && p_config->is_object())
+		nlohmann::json const* p_config = JSONTools::GetObjectNode(config, "player");
+		if (p_config != nullptr)
 			player_configuration = *p_config;
 		else
 			player_configuration = nlohmann::json();

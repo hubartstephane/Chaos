@@ -61,11 +61,21 @@ namespace chaos
 
 	void ConfigurableInterface::ReadConfigurableProperties(ReadConfigurablePropertiesContext context)
 	{
-		OnReadConfigurableProperties(JSONReadConfiguration(), context);
+		OnReadConfigurableProperties(GetJSONReadConfiguration(), context);
 	}
 
 	void ConfigurableInterface::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
 	{		
+	}
+
+	void ConfigurableInterface::StorePersistentProperties()
+	{
+		OnStorePersistentProperties(GetJSONWriteConfiguration());
+	}
+
+	void ConfigurableInterface::OnStorePersistentProperties(JSONWriteConfiguration config)
+	{
+
 	}
 
 }; // namespace chaos

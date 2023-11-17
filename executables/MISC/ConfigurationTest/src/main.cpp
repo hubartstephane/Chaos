@@ -52,9 +52,10 @@ public:
 
 
 
-	virtual void OnConfigurationChanged(chaos::JSONReadConfiguration read_config)
+	virtual bool OnConfigurationChanged(chaos::JSONReadConfiguration read_config)
 	{
 		ReadValues();
+		return true;
 	}
 
 	int titi = 0;
@@ -102,10 +103,11 @@ public:
 	}
 
 
-	virtual void OnConfigurationChanged(chaos::JSONReadConfiguration read_config)
+	virtual bool OnConfigurationChanged(chaos::JSONReadConfiguration read_config)
 	{
 		ReadValues();
 		// b = nullptr; // destroy the child object before it receives the notification of configuration changed
+		return true;
 	}
 
 	int tutu = 0;

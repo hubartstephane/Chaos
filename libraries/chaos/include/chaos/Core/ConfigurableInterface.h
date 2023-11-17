@@ -48,27 +48,31 @@ namespace chaos
 
 		/** get the interface used for reading */
 		JSONReadConfiguration GetJSONReadConfiguration() const;
-		/** get the interface used for reading & writing*/
+		/** get the interface used for reading & writing */
 		JSONWriteConfiguration GetJSONWriteConfiguration() const;
 
 		/** reload the configuration for this object and its children */
-		bool ReloadObjectConfiguration(bool send_notifications);
+		bool ReloadObjectConfiguration(bool partial_reload_only, bool send_notifications);
 
 		/** create a child configuration and give it to another object */
-		bool GiveChildConfiguration(ConfigurableInterface* other_configurable, std::string key);
-		/** read the properties from the config */
-		void ReadConfigurableProperties(ReadConfigurablePropertiesContext context = ReadConfigurablePropertiesContext::INITIALIZATION);
-		/** store the properties into the persistent data */
-		void StorePersistentProperties();
+		bool GiveChildConfiguration(ConfigurableInterface* other_configurable, std::string key) const;
+		/** read the properties (an children) from the config */
+		bool ReadConfigurableProperties(ReadConfigurablePropertiesContext context, bool recurse);
+		/** store the persistent properties (and children) into JSON (no disk access) */
+		bool StorePersistentProperties(bool recurse) const;
+		/** save persistent properties to file (whole hierarchy) */
+		bool SavePersistentPropertiesToFile(bool store_properties) const;
+		/** read config from files (whole hierarchy) */
+		bool LoadConfigurablePropertiesFromFile(bool load_default = true, bool load_persistent = true, bool send_notifications = true);
 
 	protected:
 
 		/** called whenever the configuration has been changed */
-		virtual void OnConfigurationChanged(JSONReadConfiguration read_config);
-		/** the reading properties method */
-		virtual void OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context);
-
-		virtual void OnStorePersistentProperties(JSONWriteConfiguration config);
+		virtual bool OnConfigurationChanged(JSONReadConfiguration config);
+		/** the reading properties effective method */
+		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context);
+		/** the storing persistent properties effective method (no disk access) */
+		virtual bool OnStorePersistentProperties(JSONWriteConfiguration config) const;
 
 	protected:
 

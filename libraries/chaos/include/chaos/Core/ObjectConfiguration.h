@@ -21,8 +21,10 @@ namespace chaos
 
 	public:
 
-		/** create a child configuration */
-		ChildObjectConfiguration* CreateChildConfiguration(std::string path);
+		/** get the target configurable object */
+		ConfigurableInterface* GetConfigurable();
+		/** get the target configurable object */
+		ConfigurableInterface const* GetConfigurable() const;
 
 		/** get the interface used for reading */
 		JSONReadConfiguration GetJSONReadConfiguration() const;
@@ -34,11 +36,20 @@ namespace chaos
 		/** gets the root configuration */
 		RootObjectConfiguration const* GetRootConfiguration() const;
 
+		/** create a child configuration */
+		ChildObjectConfiguration* CreateChildConfiguration(std::string path);
+
 		/** recursively send notifications */
 		void PropagateNotifications();
 
 		/** reload the read configuration part. Only affect current node and its children value (not its parents nor siblings nodes) */
-		bool Reload(bool send_notifications);
+		bool Reload(bool partial_reload_only, bool send_notifications);
+
+		/** read the properties (an children) from the config */
+		bool ReadConfigurableProperties(ReadConfigurablePropertiesContext context, bool recurse);
+		/** store the persistent properties (and children) into JSON (no disk access) */
+		bool StorePersistentProperties(bool recurse) const;
+
 
 	protected:
 
@@ -58,12 +69,12 @@ namespace chaos
 		weak_ptr<Object> configurable_object;
 
 		/** the json node to read info from */
-		nlohmann::json* read_config = nullptr;
+		nlohmann::json* default_config = nullptr;
 		/** the json node to persistent info into */
 		nlohmann::json* persistent_config = nullptr;
 
 		/** the storage for json node to read info from */
-		nlohmann::json storage_read_config;
+		nlohmann::json storage_default_config;
 	};
 
 
@@ -116,20 +127,20 @@ namespace chaos
 		/** constructor */
 		RootObjectConfiguration();
 
-		/** change the read config path */
-		void SetReadConfigPath(FilePathParam const& in_read_config_path);
+		/** change the default config path */
+		void SetDefaultConfigurationPath(FilePathParam const& in_default_config_path);
 		/** change the persistent config path */
-		void SetPersistentConfigPath(FilePathParam const& in_persistent_config_path);
+		void SetPersistentConfigurationPath(FilePathParam const& in_persistent_config_path);
 
-		/** read config from files */
-		bool LoadConfiguration(bool load_read = true, bool load_persistent = true, bool send_notifications = true);
-		/** save the persistent data */
-		bool SavePersistentConfiguration();
+		/** read config from files (whole hierarchy) */
+		bool LoadConfigurablePropertiesFromFile(bool load_default = true, bool load_persistent = true, bool send_notifications = true);
+		/** save the persistent data (whole hierarchy) */
+		bool SavePersistentPropertiesToFile(bool store_properties) const;
 
 	protected:
 
-		/** the path for the read configuration */
-		boost::filesystem::path read_config_path;
+		/** the path for the default configuration */
+		boost::filesystem::path default_config_path;
 		/** the path for the persistent configuration */
 		boost::filesystem::path persistent_config_path;
 

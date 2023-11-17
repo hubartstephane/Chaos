@@ -37,7 +37,7 @@ namespace chaos
 		return {};
 	}
 
-	bool ConfigurableInterface::GiveChildConfiguration(ConfigurableInterface* other_configurable, std::string key)
+	bool ConfigurableInterface::GiveChildConfiguration(ConfigurableInterface* other_configurable, std::string key) const
 	{
 		if (configuration != nullptr)
 		{
@@ -47,35 +47,56 @@ namespace chaos
 		return false;
 	}
 
-	bool ConfigurableInterface::ReloadObjectConfiguration(bool send_notifications)
+	bool ConfigurableInterface::ReloadObjectConfiguration(bool partial_reload_only, bool send_notifications)
 	{
 		if (configuration != nullptr)
-			return configuration->Reload(send_notifications);
+			return configuration->Reload(partial_reload_only, send_notifications);
 		return false;
 	}
 
-	void ConfigurableInterface::OnConfigurationChanged(JSONReadConfiguration read_config)
+	bool ConfigurableInterface::ReadConfigurableProperties(ReadConfigurablePropertiesContext context, bool recurse)
 	{
-		ReadConfigurableProperties(ReadConfigurablePropertiesContext::HOT_RELOAD);
+		if (configuration == nullptr)
+			return false;
+		return configuration->ReadConfigurableProperties(context, recurse);
 	}
 
-	void ConfigurableInterface::ReadConfigurableProperties(ReadConfigurablePropertiesContext context)
+	bool ConfigurableInterface::StorePersistentProperties(bool recurse) const
 	{
-		OnReadConfigurableProperties(GetJSONReadConfiguration(), context);
+		if (configuration == nullptr)
+			return false;
+		return configuration->StorePersistentProperties(recurse);
 	}
 
-	void ConfigurableInterface::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
-	{		
+	bool ConfigurableInterface::OnConfigurationChanged(JSONReadConfiguration config)
+	{
+		return OnReadConfigurableProperties(config, ReadConfigurablePropertiesContext::HOT_RELOAD);
 	}
 
-	void ConfigurableInterface::StorePersistentProperties()
+	bool ConfigurableInterface::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
 	{
-		OnStorePersistentProperties(GetJSONWriteConfiguration());
+		return true;
 	}
 
-	void ConfigurableInterface::OnStorePersistentProperties(JSONWriteConfiguration config)
+	bool ConfigurableInterface::OnStorePersistentProperties(JSONWriteConfiguration config) const
 	{
+		return true;
+	}
 
+	bool ConfigurableInterface::SavePersistentPropertiesToFile(bool store_properties) const
+	{
+		if (configuration != nullptr)
+			if (RootObjectConfiguration* root_configuration = configuration->GetRootConfiguration())
+				return root_configuration->SavePersistentPropertiesToFile(store_properties);
+		return false;
+	}
+
+	bool ConfigurableInterface::LoadConfigurablePropertiesFromFile(bool load_default, bool load_persistent, bool send_notifications)
+	{
+		if (configuration != nullptr)
+			if (RootObjectConfiguration* root_configuration = configuration->GetRootConfiguration())
+				return root_configuration->LoadConfigurablePropertiesFromFile(load_default, load_persistent, send_notifications);
+		return false;
 	}
 
 }; // namespace chaos

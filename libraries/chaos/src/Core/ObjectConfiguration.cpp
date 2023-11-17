@@ -26,7 +26,7 @@ namespace chaos
 	void ObjectConfigurationBase::PropagateNotifications()
 	{
 		// trigger the change for the configurable
-		if (ConfigurableInterface* configurable = auto_cast(configurable_object.get()))
+		if (ConfigurableInterface* configurable = GetConfigurable())
 			configurable->OnConfigurationChanged(GetJSONReadConfiguration());
 		// create a weak copy of the children list. children may be destroyed during this loop
 		std::vector<weak_ptr<ChildObjectConfiguration>> child_copy;
@@ -42,16 +42,16 @@ namespace chaos
 	JSONReadConfiguration ObjectConfigurationBase::GetJSONReadConfiguration() const
 	{
 		JSONReadConfiguration result;
-		result.read_config = read_config;
-		result.write_config = persistent_config;
+		result.default_config = default_config;
+		result.persistent_config = persistent_config;
 		return result;
 	}
 
 	JSONWriteConfiguration ObjectConfigurationBase::GetJSONWriteConfiguration() const
 	{
 		JSONWriteConfiguration result;
-		result.read_config = read_config;
-		result.write_config = persistent_config;
+		result.default_config = default_config;
+		result.persistent_config = persistent_config;
 		return result;
 	}
 
@@ -83,27 +83,32 @@ namespace chaos
 		return nullptr;
 	}
 
-	bool ObjectConfigurationBase::Reload(bool send_notifications)
+	bool ObjectConfigurationBase::Reload(bool partial_reload_only, bool send_notifications)
 	{
+		// reload whole hiearchy
+		if (!partial_reload_only)
+			if (RootObjectConfiguration* root = GetRootConfiguration())
+				return root->LoadConfigurablePropertiesFromFile(true, false, send_notifications); // only reload the DEFAULT part
+
 		// for root
 		if (RootObjectConfiguration* root = auto_cast(this))
-			return root->LoadConfiguration(true, false, send_notifications); // only reload the READ part
+			return root->LoadConfigurablePropertiesFromFile(true, false, send_notifications); // only reload the DEFAULT part
 
 		// for children
 		if (ChildObjectConfiguration* child = auto_cast(this))
 		{
 			// empty current storage
-			storage_read_config = {};
-			read_config = nullptr;
+			storage_default_config = {};
+			default_config = nullptr;
 
 			// temp storage for the whole hierarchy
 			nlohmann::json new_root_storage;
 
 			// recursively go to root and ask for this node content
-			if (nlohmann::json const* new_read_config = ReloadHelper(new_root_storage, child->parent_configuration.get(), child->path))
+			if (nlohmann::json const* new_default_config = ReloadHelper(new_root_storage, child->parent_configuration.get(), child->path))
 			{
-				storage_read_config = *new_read_config; // copy the whole json structure
-				read_config = &storage_read_config;
+				storage_default_config = *new_default_config; // copy the whole json structure
+				default_config = &storage_default_config;
 			}
 
 			// update down hierarchy and send notifications (parents and siblings conf are unchanged and receive non notification)
@@ -119,15 +124,53 @@ namespace chaos
 		// root case
 		if (RootObjectConfiguration* root = auto_cast(src))
 		{
-			JSONTools::LoadJSONFile(root->read_config_path, new_root_storage, LoadFileFlag::RECURSIVE | LoadFileFlag::NO_ERROR_TRACE);
+			JSONTools::LoadJSONFile(root->default_config_path, new_root_storage, LoadFileFlag::RECURSIVE | LoadFileFlag::NO_ERROR_TRACE);
 			return JSONTools::GetStructureNode(new_root_storage, in_path);
 		}
 		// child case
 		if (ChildObjectConfiguration* child = auto_cast(src))
-			if (nlohmann::json const* new_child_read_json = ReloadHelper(new_root_storage, child->parent_configuration.get(), child->path))
-				return JSONTools::GetStructureNode(*new_child_read_json, in_path);
+			if (nlohmann::json const* new_child_default_json = ReloadHelper(new_root_storage, child->parent_configuration.get(), child->path))
+				return JSONTools::GetStructureNode(*new_child_default_json, in_path);
 		// error
 		return nullptr;
+	}
+
+	bool ObjectConfigurationBase::ReadConfigurableProperties(ReadConfigurablePropertiesContext context, bool recurse)
+	{
+		ConfigurableInterface* configurable = GetConfigurable();
+		if (configurable == nullptr)
+			return false;
+		if (!configurable->OnReadConfigurableProperties(GetJSONReadConfiguration(), context))
+			return false;
+		if (recurse)
+			for (shared_ptr<ChildObjectConfiguration>& child : child_configurations)
+				if (!child->ReadConfigurableProperties(context, recurse))
+					return false;
+		return true;
+	}
+
+	bool ObjectConfigurationBase::StorePersistentProperties(bool recurse) const
+	{
+		ConfigurableInterface const* configurable = GetConfigurable();
+		if (configurable == nullptr)
+			return false;
+		if (!configurable->OnStorePersistentProperties(GetJSONWriteConfiguration()))
+			return false;
+		if (recurse)
+			for (shared_ptr<ChildObjectConfiguration> const& child : child_configurations)
+				if (!child->StorePersistentProperties(recurse))
+					return false;
+		return true;
+	}
+
+	ConfigurableInterface* ObjectConfigurationBase::GetConfigurable()
+	{
+		return auto_cast(configurable_object.get());
+	}
+
+	ConfigurableInterface const* ObjectConfigurationBase::GetConfigurable() const
+	{
+		return auto_cast(configurable_object.get());
 	}
 
 	// ---------------------------------------------------------------------
@@ -160,14 +203,14 @@ namespace chaos
 
 	void ChildObjectConfiguration::UpdateFromParent()
 	{
-		read_config = (parent_configuration != nullptr && parent_configuration->read_config != nullptr) ?
-			JSONTools::GetObjectNode(*parent_configuration->read_config, path) :
+		default_config = (parent_configuration != nullptr && parent_configuration->default_config != nullptr) ?
+			JSONTools::GetObjectNode(*parent_configuration->default_config, path) :
 			nullptr;
 		persistent_config = (parent_configuration != nullptr && parent_configuration->persistent_config != nullptr) ?
 			JSONTools::GetOrCreateObjectNode(*parent_configuration->persistent_config, path) :
 			nullptr;
 
-		storage_read_config = {}; // empty self storage
+		storage_default_config = {}; // empty self storage
 	}
 
 	void ChildObjectConfiguration::PropagateUpdates()
@@ -185,21 +228,21 @@ namespace chaos
 
 	RootObjectConfiguration::RootObjectConfiguration()
 	{
-		read_config = &storage_read_config;
+		default_config = &storage_default_config;
 		persistent_config = &storage_persistent_config;
 	}
 
-	bool RootObjectConfiguration::LoadConfiguration(bool load_read, bool load_persistent, bool send_notifications)
+	bool RootObjectConfiguration::LoadConfigurablePropertiesFromFile(bool load_default, bool load_persistent, bool send_notifications)
 	{
 		bool changed = false;
 
-		// update the read json
-		if (load_read)
+		// update the default json
+		if (load_default)
 		{
-			if (!read_config_path.empty())
+			if (!default_config_path.empty())
 			{
-				storage_read_config = nlohmann::json();
-				JSONTools::LoadJSONFile(read_config_path, storage_read_config, LoadFileFlag::RECURSIVE | LoadFileFlag::NO_ERROR_TRACE);
+				storage_default_config = nlohmann::json();
+				JSONTools::LoadJSONFile(default_config_path, storage_default_config, LoadFileFlag::RECURSIVE | LoadFileFlag::NO_ERROR_TRACE);
 				changed = true;
 			}
 		}
@@ -220,19 +263,22 @@ namespace chaos
 		return true;
 	}
 
-	bool RootObjectConfiguration::SavePersistentConfiguration()
+	bool RootObjectConfiguration::SavePersistentPropertiesToFile(bool store_properties) const
 	{
 		if (persistent_config_path.empty())
 			return false;
+		if (store_properties)
+			if (!StorePersistentProperties(true))
+				return false;
 		return JSONTools::SaveJSONToFile(storage_persistent_config, persistent_config_path);
 	}
 	
-	void RootObjectConfiguration::SetReadConfigPath(FilePathParam const& in_read_config_path)
+	void RootObjectConfiguration::SetDefaultConfigurationPath(FilePathParam const& in_default_config_path)
 	{
-		read_config_path = in_read_config_path.GetResolvedPath();
+		default_config_path = in_default_config_path.GetResolvedPath();
 	}
 	
-	void RootObjectConfiguration::SetPersistentConfigPath(FilePathParam const& in_persistent_config_path)
+	void RootObjectConfiguration::SetPersistentConfigurationPath(FilePathParam const& in_persistent_config_path)
 	{
 		persistent_config_path = in_persistent_config_path.GetResolvedPath();
 	}

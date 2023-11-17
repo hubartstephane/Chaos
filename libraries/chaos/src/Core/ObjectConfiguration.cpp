@@ -83,16 +83,16 @@ namespace chaos
 		return nullptr;
 	}
 
-	bool ObjectConfigurationBase::Reload(bool partial_reload_only, bool send_notifications)
+	bool ObjectConfigurationBase::ReloadDefaultPropertiesFromFile(bool partial_reload_only, bool send_notifications)
 	{
 		// reload whole hiearchy
 		if (!partial_reload_only)
 			if (RootObjectConfiguration* root = GetRootConfiguration())
-				return root->LoadConfigurablePropertiesFromFile(true, false, send_notifications); // only reload the DEFAULT part
+				return root->DoLoadConfigurablePropertiesFromFile(true, false, send_notifications); // only reload the DEFAULT part
 
 		// for root
 		if (RootObjectConfiguration* root = auto_cast(this))
-			return root->LoadConfigurablePropertiesFromFile(true, false, send_notifications); // only reload the DEFAULT part
+			return root->DoLoadConfigurablePropertiesFromFile(true, false, send_notifications); // only reload the DEFAULT part
 
 		// for children
 		if (ChildObjectConfiguration* child = auto_cast(this))
@@ -151,11 +151,9 @@ namespace chaos
 
 	bool ObjectConfigurationBase::StorePersistentProperties(bool recurse) const
 	{
-		ConfigurableInterface const* configurable = GetConfigurable();
-		if (configurable == nullptr)
-			return false;
-		if (!configurable->OnStorePersistentProperties(GetJSONWriteConfiguration()))
-			return false;
+		if (ConfigurableInterface const* configurable = GetConfigurable())
+			if (!configurable->OnStorePersistentProperties(GetJSONWriteConfiguration()))
+				return false;
 		if (recurse)
 			for (shared_ptr<ChildObjectConfiguration> const& child : child_configurations)
 				if (!child->StorePersistentProperties(recurse))
@@ -232,7 +230,15 @@ namespace chaos
 		persistent_config = &storage_persistent_config;
 	}
 
-	bool RootObjectConfiguration::LoadConfigurablePropertiesFromFile(bool load_default, bool load_persistent, bool send_notifications)
+
+	bool RootObjectConfiguration::LoadConfigurablePropertiesFromFile(FilePathParam const& in_default_config_path, FilePathParam const& in_persistent_config_path, bool send_notifications)
+	{
+		SetDefaultConfigurationPath(in_default_config_path);
+		SetPersistentConfigurationPath(in_persistent_config_path);
+		return DoLoadConfigurablePropertiesFromFile(true, true, send_notifications);
+	}
+
+	bool RootObjectConfiguration::DoLoadConfigurablePropertiesFromFile(bool load_default, bool load_persistent, bool send_notifications)
 	{
 		bool changed = false;
 

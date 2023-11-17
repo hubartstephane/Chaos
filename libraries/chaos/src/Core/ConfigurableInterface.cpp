@@ -47,13 +47,6 @@ namespace chaos
 		return false;
 	}
 
-	bool ConfigurableInterface::ReloadObjectConfiguration(bool partial_reload_only, bool send_notifications)
-	{
-		if (configuration != nullptr)
-			return configuration->Reload(partial_reload_only, send_notifications);
-		return false;
-	}
-
 	bool ConfigurableInterface::ReadConfigurableProperties(ReadConfigurablePropertiesContext context, bool recurse)
 	{
 		if (configuration == nullptr)
@@ -91,11 +84,18 @@ namespace chaos
 		return false;
 	}
 
-	bool ConfigurableInterface::LoadConfigurablePropertiesFromFile(bool load_default, bool load_persistent, bool send_notifications)
+	bool ConfigurableInterface::LoadConfigurablePropertiesFromFile(FilePathParam const& in_default_config_path, FilePathParam const& in_persistent_config_path, bool send_notifications)
 	{
 		if (configuration != nullptr)
 			if (RootObjectConfiguration* root_configuration = configuration->GetRootConfiguration())
-				return root_configuration->LoadConfigurablePropertiesFromFile(load_default, load_persistent, send_notifications);
+				return root_configuration->LoadConfigurablePropertiesFromFile(in_default_config_path, in_persistent_config_path, send_notifications);
+		return false;
+	}
+
+	bool ConfigurableInterface::ReloadDefaultPropertiesFromFile(bool partial_reload_only, bool send_notifications)
+	{
+		if (configuration != nullptr)
+			return configuration->ReloadDefaultPropertiesFromFile(partial_reload_only, send_notifications);
 		return false;
 	}
 

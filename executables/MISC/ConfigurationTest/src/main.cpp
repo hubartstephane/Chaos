@@ -31,32 +31,23 @@ public:
 
 	void Initialize()
 	{
-		chaos::JSONTools::GetAttribute(GetJSONReadConfiguration(), "toto", toto, 777);
-		chaos::JSONTools::SetAttribute(GetJSONWriteConfiguration(), "toto", toto + 10);
-
-		int iii = 0;
-		chaos::JSONTools::GetAttribute(GetJSONWriteConfiguration(), "toto", iii);
-
-		ReadValues();
+		ReadConfigurableProperties(chaos::ReadConfigurablePropertiesContext::INITIALIZATION, false);
 	}
 
-	void ReadValues()
+	virtual bool OnReadConfigurableProperties(chaos::JSONReadConfiguration config, chaos::ReadConfigurablePropertiesContext context) override
 	{
-		chaos::JSONReadConfiguration read_config = GetJSONReadConfiguration();
-
-		chaos::JSONTools::GetAttribute(read_config, "titi", titi, 777);
-		chaos::JSONTools::GetAttribute(read_config, "toto", toto, 777);
-
-		titi = titi;
-	}
-
-
-
-	virtual bool OnConfigurationChanged(chaos::JSONReadConfiguration read_config)
-	{
-		ReadValues();
+		chaos::JSONTools::GetAttribute(config, "titi", titi, 777);
+		chaos::JSONTools::GetAttribute(config, "toto", toto, 777);
 		return true;
 	}
+
+	bool OnStorePersistentProperties(chaos::JSONWriteConfiguration config) const override
+	{
+		chaos::JSONTools::SetAttribute(config, "toto", toto + 10);
+		return true;
+	}
+
+public:
 
 	int titi = 0;
 	int toto = 0;
@@ -78,51 +69,30 @@ public:
 
 	void Initialize()
 	{
-		chaos::ObjectConfigurationBase* conf = GetObjectConfiguration();
-
-		ReadValues();
+		ReadConfigurableProperties(chaos::ReadConfigurablePropertiesContext::INITIALIZATION, false);
 
 		b = new B;
 		GiveChildConfiguration(b.get(), "B/C/D");
 		b->Initialize();
-
-
 	}
 
-	void ReadValues()
+	virtual bool OnReadConfigurableProperties(chaos::JSONReadConfiguration config, chaos::ReadConfigurablePropertiesContext context) override
 	{
-		chaos::JSONReadConfiguration read_config = GetJSONReadConfiguration();
-
-		chaos::JSONTools::GetAttribute(read_config, "tutu", tutu, 777);
-
-		tutu = tutu;
-
-		auto s = read_config.read_config->dump(4);
-
-		s = s;
-	}
-
-
-	virtual bool OnConfigurationChanged(chaos::JSONReadConfiguration read_config)
-	{
-		ReadValues();
-		// b = nullptr; // destroy the child object before it receives the notification of configuration changed
+		chaos::JSONTools::GetAttribute(config, "tutu", tutu, 777);
 		return true;
 	}
 
-	int tutu = 0;
+	bool OnStorePersistentProperties(chaos::JSONWriteConfiguration config) const override
+	{
+		return true;
+	}
 
-//protected:
+public:
+
+	int tutu = 0;
 
 	chaos::shared_ptr<B> b;
 };
-
-
-
-
-
-
-
 
 
 class MyApplication : public chaos::Application, public chaos::ConfigurableInterface
@@ -141,33 +111,22 @@ protected:
 
 	virtual int Main() override
 	{
-		chaos::RootObjectConfiguration conf;
-
 		boost::filesystem::path conf_read_path = GetJSONReadPath();
 		boost::filesystem::path conf_write_path = GetJSONWritePath();
 
 		chaos::WinTools::ShowFile(conf_read_path);
 		chaos::WinTools::ShowFile(conf_write_path);
 
-		conf.SetReadConfigPath(conf_read_path);
-		conf.SetPersistentConfigPath(conf_write_path);
-		conf.LoadConfiguration();
+		chaos::RootObjectConfiguration conf;
+		conf.LoadConfigurablePropertiesFromFile(conf_read_path, conf_write_path, false);
 
 		chaos::shared_ptr<A> a = new A;
 		a->SetObjectConfiguration(conf.CreateChildConfiguration("A"));
 		a->Initialize();
 
+		a->b->ReloadDefaultPropertiesFromFile(true, true);
 
-
-		//a->b->ReloadObjectConfiguration(true);
-		a->b->ReloadObjectConfiguration(true);
-
-		//conf.LoadConfigurations();
-
-		conf.SavePersistentConfiguration();
-
-//		chaos::WinTools::CopyStringToClipboard(conf.GetJSONReadConfiguration().write_config->dump(2).c_str());
-
+		conf.SavePersistentPropertiesToFile(true);
 
 		return 0;
 	}

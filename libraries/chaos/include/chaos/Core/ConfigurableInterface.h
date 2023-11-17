@@ -51,9 +51,6 @@ namespace chaos
 		/** get the interface used for reading & writing */
 		JSONWriteConfiguration GetJSONWriteConfiguration() const;
 
-		/** reload the configuration for this object and its children */
-		bool ReloadObjectConfiguration(bool partial_reload_only, bool send_notifications);
-
 		/** create a child configuration and give it to another object */
 		bool GiveChildConfiguration(ConfigurableInterface* other_configurable, std::string key) const;
 		/** read the properties (an children) from the config */
@@ -63,7 +60,9 @@ namespace chaos
 		/** save persistent properties to file (whole hierarchy) */
 		bool SavePersistentPropertiesToFile(bool store_properties) const;
 		/** read config from files (whole hierarchy) */
-		bool LoadConfigurablePropertiesFromFile(bool load_default = true, bool load_persistent = true, bool send_notifications = true);
+		bool LoadConfigurablePropertiesFromFile(FilePathParam const& in_default_config_path, FilePathParam const& in_persistent_config_path, bool send_notifications);
+		/** reload default properties (from root or not) */
+		bool ReloadDefaultPropertiesFromFile(bool partial_reload_only, bool send_notifications);
 
 	protected:
 

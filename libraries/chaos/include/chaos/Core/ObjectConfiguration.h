@@ -42,8 +42,8 @@ namespace chaos
 		/** recursively send notifications */
 		void PropagateNotifications();
 
-		/** reload the read configuration part. Only affect current node and its children value (not its parents nor siblings nodes) */
-		bool Reload(bool partial_reload_only, bool send_notifications);
+		/** reload the default configuration part. Only affect current node and its children value (not its parents nor siblings nodes) */
+		bool ReloadDefaultPropertiesFromFile(bool partial_reload_only, bool send_notifications);
 
 		/** read the properties (an children) from the config */
 		bool ReadConfigurableProperties(ReadConfigurablePropertiesContext context, bool recurse);
@@ -133,9 +133,14 @@ namespace chaos
 		void SetPersistentConfigurationPath(FilePathParam const& in_persistent_config_path);
 
 		/** read config from files (whole hierarchy) */
-		bool LoadConfigurablePropertiesFromFile(bool load_default = true, bool load_persistent = true, bool send_notifications = true);
+		bool LoadConfigurablePropertiesFromFile(FilePathParam const& in_default_config_path, FilePathParam const& in_persistent_config_path, bool send_notifications);
 		/** save the persistent data (whole hierarchy) */
 		bool SavePersistentPropertiesToFile(bool store_properties) const;
+
+	protected:
+
+		/** internal method to load configuration from file */
+		bool DoLoadConfigurablePropertiesFromFile(bool load_default, bool load_persistent, bool send_notifications);
 
 	protected:
 

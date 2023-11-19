@@ -89,13 +89,10 @@ namespace chaos
 		}
 
 		/** iterator over all objects (const version) */
-		template<typename FUNC>
-		auto ForEachObject(FUNC const& func) const -> boost::mpl::if_c<std::is_convertible_v<decltype(func(0)), bool>, decltype(func(0)), void>::type
+		template<typename FUNC, typename L = meta::LambdaInfo<FUNC, T const *>>
+		auto ForEachObject(FUNC const& func) const -> L::result_type
 		{
-			using result_type = decltype(func(0));
-			constexpr bool convertible_to_bool = std::is_convertible_v<result_type, bool>;
-
-			if constexpr (convertible_to_bool)
+			if constexpr (L::convertible_to_bool)
 			{
 				return chaos::BitTools::ForEachBitForward(used_instanced, [this, &func](int64_t index)
 				{
@@ -112,13 +109,10 @@ namespace chaos
 		}
 
 		/** iterator over all objects (non const version) */
-		template<typename FUNC>
-		auto ForEachObject(FUNC const& func) -> boost::mpl::if_c<std::is_convertible_v<decltype(func(0)), bool>, decltype(func(0)), void>::type
+		template<typename FUNC, typename L = meta::LambdaInfo<FUNC, T *>>
+		auto ForEachObject(FUNC const& func) -> L::result_type
 		{
-			using result_type = decltype(func(0));
-			constexpr bool convertible_to_bool = std::is_convertible_v<result_type, bool>;
-
-			if constexpr (convertible_to_bool)
+			if constexpr (L::convertible_to_bool)
 			{
 				return chaos::BitTools::ForEachBitForward(used_instanced, [this, &func](int64_t index)
 				{

@@ -90,20 +90,20 @@ namespace chaos
 		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
 
 		/** get the OpenGL context, call the function, restore previous context after */
-		template<typename FUNC>
-		static auto WithGLFWContext(GLFWwindow* glfw_context, FUNC const& func)
+		template<typename FUNC, typename L = meta::LambdaInfo<FUNC>>
+		static auto WithGLFWContext(GLFWwindow* glfw_context, FUNC const& func) -> L::result_type
 		{
 			GLFWwindow* previous_glfw_context = glfwGetCurrentContext();
 			glfwMakeContextCurrent(glfw_context);
 
-			if constexpr (std::is_same_v<void, decltype(func())>)
+			if constexpr (std::is_same_v<void, typename L::result_type>)
 			{
 				func();
 				glfwMakeContextCurrent(previous_glfw_context);
 			}
 			else
 			{
-				auto result = func();
+				decltype(auto) result = func();
 				glfwMakeContextCurrent(previous_glfw_context);
 				return result;
 			}
@@ -224,20 +224,17 @@ namespace chaos
 #endif
 
 		/** enumerate all windows */
-		template<typename FUNC>
-		auto ForAllWindows(FUNC func) -> boost::mpl::if_c<std::is_convertible_v<decltype(func((Window*)(nullptr))), bool>, decltype(func((Window*)(nullptr))), void>::type
+		template<typename FUNC, typename L = meta::LambdaInfo<FUNC, Window*>>
+		auto ForAllWindows(FUNC func) -> L::result_type
 		{
-			using result_type = decltype(func((Window *)(nullptr)));
-			constexpr bool convertible_to_bool = std::is_convertible_v<result_type, bool>;
-
 			// enumerate all windows
 			for (weak_ptr<Window> & window : GetWeakWindowArray()) // use a 'weak' copy of all existing windows because some windows may be erased during the loop
 			{
 				if (window != nullptr) // check whether the window has be erased
 				{
-					if constexpr (convertible_to_bool)
+					if constexpr (L::convertible_to_bool)
 					{
-						if (auto result = func(window.get()))
+						if (decltype(auto) result = func(window.get()))
 							return result;
 					}
 					else
@@ -248,8 +245,8 @@ namespace chaos
 			}
 
 			// default result
-			if constexpr (convertible_to_bool)
-				return result_type();
+			if constexpr (L::convertible_to_bool)
+				return {};
 		}
 
 	protected:

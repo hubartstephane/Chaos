@@ -427,23 +427,35 @@ namespace chaos
 		}
 
 		/** recursively visit all children */
-		template<bool DEPTH_FIRST = false, typename FUNC>
-		auto ForEachNode(FUNC const& func) -> boost::mpl::if_c<std::is_convertible_v<decltype(func(0)), bool>, decltype(func(0)), void>::type
+		template<bool DEPTH_FIRST = false, typename FUNC, typename L = meta::LambdaInfo<FUNC, Tree27Node<DIMENSION, PARENT> const *>>
+		auto ForEachNode(FUNC const& func) const -> L::result_type
 		{
-			using result_type = decltype(func(0));
-			constexpr bool convertible_to_bool = std::is_convertible_v<result_type, bool>;
+			return ForEachNodeHelper<DEPTH_FIRST>(this, FUNC);
+		}
 
+
+		/** recursively visit all children */
+		template<bool DEPTH_FIRST = false, typename FUNC, typename L = meta::LambdaInfo<FUNC, Tree27Node<DIMENSION, PARENT>*>>
+		auto ForEachNode(FUNC const& func) -> L::result_type
+		{
+			return ForEachNodeHelper<DEPTH_FIRST>(this, FUNC);
+		}
+
+	protected:
+
+		template<bool DEPTH_FIRST, typename SELF, typename FUNC, typename L = meta::LambdaInfo<FUNC, SELF*>>
+		static auto ForEachNodeHelper(SELF * self, FUNC const& func) -> L::result_type
+		{
 			for (int i = 0; i < 2; ++i)
 			{
 				if ((i == 0 && DEPTH_FIRST) || (i == 1 && !DEPTH_FIRST)) // process children
 				{
-					if constexpr (convertible_to_bool)
+					if constexpr (L::convertible_to_bool)
 					{
-						auto result = BitTools::ForEachBitForward(existing_children, [this, &func](int index)
+						decltype(auto) result = BitTools::ForEachBitForward(existing_children, [this, &func](int index)
 						{
 							return children[index]->ForEachNode<DEPTH_FIRST>(func);
 						});
-
 						if (result)
 							return result;
 					}
@@ -451,15 +463,15 @@ namespace chaos
 					{
 						BitTools::ForEachBitForward(existing_children, [this, &func](int index)
 						{
-							children[index]->ForEachNode<DEPTH_FIRST>(func);
+								children[index]->ForEachNode<DEPTH_FIRST>(func);
 						});
 					}
 				}
 				else // process this
 				{
-					if constexpr (convertible_to_bool)
+					if constexpr (L::convertible_to_bool)
 					{
-						if (auto result = func(this))
+						if (decltype(auto) result = func(this))
 							return result;
 					}
 					else
@@ -469,8 +481,8 @@ namespace chaos
 				}
 			}
 
-			if constexpr (convertible_to_bool)
-				return result_type();
+			if constexpr (L::convertible_to_bool)
+				return {};
 		}
 
 	protected:
@@ -558,17 +570,25 @@ namespace chaos
 		}
 
 		/** visit the tree */
-		template<bool DEPTH_FIRST = false, typename FUNC>
-		decltype(auto) ForEachNode(FUNC const& func) const
+		template<bool DEPTH_FIRST = false, typename FUNC, typename L = meta::LambdaInfo<FUNC, node_type *>>
+		auto ForEachNode(FUNC const& func) -> L::result_type
 		{
-			using result_type = decltype(func(0));
-			constexpr bool convertible_to_bool = std::is_convertible_v<result_type, bool>;
-
 			if (root != nullptr)
 				return root->ForEachNode<DEPTH_FIRST>(func);
 
-			if constexpr (convertible_to_bool)
-				return result_type();
+			if constexpr (L::convertible_to_bool)
+				return {};
+		}
+
+		/** visit the tree */
+		template<bool DEPTH_FIRST = false, typename FUNC, typename L = meta::LambdaInfo<FUNC, node_type const *>>
+		auto ForEachNode(FUNC const& func) const -> L::result_type
+		{
+			if (root != nullptr)
+				return root->ForEachNode<DEPTH_FIRST>(func);
+
+			if constexpr (L::convertible_to_bool)
+				return {};
 		}
 
 		/** returns the root */

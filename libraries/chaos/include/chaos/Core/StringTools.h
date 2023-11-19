@@ -35,12 +35,9 @@ namespace chaos
 		}
 
 		/** split a string according to a separator and call a deleguate on each fragment */
-		template<typename FUNC>
-		decltype(auto) WithSplittedText(std::string_view src, std::string_view delim, FUNC const& func)
+		template<typename FUNC, typename L = meta::LambdaInfo<FUNC, char const *>>
+		auto WithSplittedText(std::string_view src, std::string_view delim, FUNC const& func) -> L::result_type
 		{
-			using result_type = decltype(func(0));
-			constexpr bool convertible_to_bool = std::is_convertible_v<result_type, bool>;
-
 			char tmp_buffer[256];
 			std::string tmp_string;
 
@@ -64,9 +61,9 @@ namespace chaos
 				}
 
 				// call deleguate
-				if constexpr (convertible_to_bool)
+				if constexpr (L::convertible_to_bool)
 				{
-					if (auto result = func(ptr))
+					if (decltype(auto) result = func(ptr))
 						return result;
 				}
 				else
@@ -76,8 +73,8 @@ namespace chaos
 			}
 
 			// default result
-			if constexpr (convertible_to_bool)
-				return result_type();
+			if constexpr (L::convertible_to_bool)
+				return {};
 		}
 
 

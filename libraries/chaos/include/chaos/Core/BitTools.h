@@ -52,13 +52,9 @@ namespace chaos
 				src & ~(T(1) << bit_index);
 		}
 
-		template<bool FORWARD = true, std::integral T, typename FUNC>
-		decltype(auto) ForEachBit(T bitfield, FUNC const& func)
+		template<bool FORWARD, std::integral T, typename FUNC, typename L = meta::LambdaInfo<FUNC, T>>
+		auto ForEachBit(T bitfield, FUNC const& func) -> L::result_type
 		{
-			using result_type = decltype(func(0));
-
-			constexpr bool convertible_to_bool = std::is_convertible_v<result_type, bool>;
-
 			while (bitfield != 0)
 			{
 				T bit;
@@ -67,9 +63,9 @@ namespace chaos
 				else
 					bit = BitTools::bsr(bitfield);
 
-				if constexpr (convertible_to_bool)
+				if constexpr (L::convertible_to_bool)
 				{
-					if (auto result = func(bit))
+					if (decltype(auto) result = func(bit))
 						return result;
 				}
 				else
@@ -79,8 +75,8 @@ namespace chaos
 				bitfield &= ~(T(1) << bit);
 			}
 
-			if constexpr (convertible_to_bool)
-				return result_type();
+			if constexpr (L::convertible_to_bool)
+				return {};
 		}
 
 		template<std::integral T, typename FUNC>

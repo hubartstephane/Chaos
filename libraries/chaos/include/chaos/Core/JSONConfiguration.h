@@ -13,26 +13,39 @@ namespace chaos
 	/**
 	 * JSONConfiguration: a combinaison of configuration/persistent data where you can read and write data
 	 */
-	template<>
-	class JSONConfiguration<false>
+	template<bool WRITABLE>
+	class JSONConfiguration
 	{
+	public:
+
+		template<typename FUNC, typename L = meta::LambdaInfo<FUNC, nlohmann::json const &>>
+		auto ForEachSource(FUNC const& func) const -> L::result_type
+		{
+			if constexpr (L::convertible_to_bool)
+			{
+				if (persistent_config != nullptr)
+					if (decltype(auto) result = func(*persistent_config))
+						return result;
+				if (default_config != nullptr)
+					if (decltype(auto) result = func(*default_config))
+						return result;
+				return false;
+			}
+			else
+			{
+				if (persistent_config != nullptr)
+					func(*persistent_config);
+				if (default_config != nullptr)
+					func(*default_config);
+			}
+		}
+
 	public:
 
 		/** the normal json object */
 		nlohmann::json const* default_config = nullptr;
 		/** the persistent json object */
-		nlohmann::json const* persistent_config = nullptr;
-	};
-
-	template<>
-	class JSONConfiguration<true>
-	{
-	public:
-
-		/** the normal json object */
-		nlohmann::json const* default_config = nullptr;
-		/** the persistent json object */
-		nlohmann::json* persistent_config = nullptr;
+		boost::mpl::if_c<WRITABLE, nlohmann::json, nlohmann::json const>::type * persistent_config = nullptr;
 	};
 
 	template<typename ...PARAMS>

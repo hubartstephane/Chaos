@@ -319,6 +319,19 @@ namespace chaos
 		template<typename T>
 		bool constexpr is_vector_type_v<std::vector<T>> = true;
 
+		// ==================================================
+		// Information concerning lambda
+		// ==================================================
+
+		template<typename FUNC, typename ...PARAMS>
+		struct LambdaInfo
+		{
+			/** the return type of the lambda */
+			using result_type = decltype(meta::FakeInstance<FUNC>()(meta::FakeInstance<PARAMS>()...));
+			/** whether the lambda result type is convertible into a bool */
+			static bool constexpr convertible_to_bool = std::is_convertible_v<result_type, bool>;
+		};
+
 	}; // namespace meta
 
 }; // namespace chaos

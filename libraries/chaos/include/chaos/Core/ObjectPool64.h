@@ -32,9 +32,9 @@ namespace chaos
 		{
 			// destroy all objects
 			BitTools::ForEachBitForward(used_instanced, [this](int64_t index)
-				{
-					Free(GetObjectPtr(index));
-				});
+			{
+				Free(GetObjectPtr(index));
+			});
 		}
 
 		/** release an object inside the pool for further usage */
@@ -89,43 +89,23 @@ namespace chaos
 		}
 
 		/** iterator over all objects (const version) */
-		template<typename FUNC, typename L = meta::LambdaInfo<FUNC, T const *>>
-		auto ForEachObject(FUNC const& func) const -> L::result_type
+		template<typename FUNC>
+		decltype(auto) ForEachObject(FUNC const& func) const
 		{
-			if constexpr (L::convertible_to_bool)
+			return chaos::BitTools::ForEachBitForward(used_instanced, [this, &func](int64_t index)
 			{
-				return chaos::BitTools::ForEachBitForward(used_instanced, [this, &func](int64_t index)
-				{
-					return func(GetObjectPtr(index));
-				});
-			}
-			else
-			{
-				chaos::BitTools::ForEachBitForward(used_instanced, [this, &func](int64_t index)
-				{
-					func(GetObjectPtr(index));
-				});
-			}
+				return func(GetObjectPtr(index));
+			});
 		}
 
 		/** iterator over all objects (non const version) */
-		template<typename FUNC, typename L = meta::LambdaInfo<FUNC, T *>>
-		auto ForEachObject(FUNC const& func) -> L::result_type
+		template<typename FUNC>
+		decltype(auto) ForEachObject(FUNC const& func)
 		{
-			if constexpr (L::convertible_to_bool)
+			return chaos::BitTools::ForEachBitForward(used_instanced, [this, &func](int64_t index)
 			{
-				return chaos::BitTools::ForEachBitForward(used_instanced, [this, &func](int64_t index)
-				{
-					return func(GetObjectPtr(index));
-				});
-			}
-			else
-			{
-				chaos::BitTools::ForEachBitForward(used_instanced, [this, &func](int64_t index)
-				{
-					func(GetObjectPtr(index));
-				});
-			}
+				return func(GetObjectPtr(index));
+			});
 		}
 
 	protected:

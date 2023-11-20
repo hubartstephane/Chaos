@@ -9,7 +9,7 @@ namespace chaos
 
 	/** a selector for EmpyClass with or without VTABLE */
 	template<bool VTABLE = false>
-	using EmptyClassExt = typename boost::mpl::if_c<VTABLE, EmptyClassVTable, EmptyClass>::type;
+	using EmptyClassExt = typename std::conditional<VTABLE, EmptyClassVTable, EmptyClass>::type;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 

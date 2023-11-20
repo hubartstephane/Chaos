@@ -426,116 +426,6 @@ namespace chaos
 			existing_children = BitTools::SetBit(existing_children, index, child != nullptr);
 		}
 
-#if 0
-
-		template<bool DEPTH_FIRST, typename FUNC>
-		decltype(auto) ForEachNode(FUNC const& func)
-		{
-			using L = meta::LambdaInfo<FUNC, Tree27Node*>;
-
-			for (int i = 0; i < 2; ++i)
-			{
-				if ((i == 0 && DEPTH_FIRST) || (i == 1 && !DEPTH_FIRST)) // process children
-				{
-					if constexpr (L::convertible_to_bool)
-					{
-						decltype(auto) result = BitTools::ForEachBitForward(existing_children, [this, &func](int index)
-						{
-							return GetChild(index)->ForEachNode<DEPTH_FIRST>(func);
-						});
-						if (result)
-							return result;
-					}
-					else
-					{
-						BitTools::ForEachBitForward(existing_children, [this, &func](int index)
-						{
-							GetChild(index)->ForEachNode<DEPTH_FIRST>(func);
-						});
-					}
-				}
-				else // process this
-				{
-					if constexpr (L::convertible_to_bool)
-					{
-						if (decltype(auto) result = func(this))
-							return result;
-					}
-					else
-					{
-						func(this);
-					}
-				}
-			}
-
-			if constexpr (L::convertible_to_bool)
-				return typename L::result_type{};
-		}
-
-		template<bool DEPTH_FIRST, typename FUNC>
-		decltype(auto) ForEachNode(FUNC const& func) const
-		{
-			using L = meta::LambdaInfo<FUNC, Tree27Node const*>;
-
-			for (int i = 0; i < 2; ++i)
-			{
-				if ((i == 0 && DEPTH_FIRST) || (i == 1 && !DEPTH_FIRST)) // process children
-				{
-					if constexpr (L::convertible_to_bool)
-					{
-						decltype(auto) result = BitTools::ForEachBitForward(existing_children, [this, &func](int index)
-						{
-							return GetChild(index)->ForEachNode<DEPTH_FIRST>(func);
-						});
-						if (result)
-							return result;
-					}
-					else
-					{
-						BitTools::ForEachBitForward(existing_children, [this, &func](int index)
-						{
-							GetChild(index)->ForEachNode<DEPTH_FIRST>(func);
-						});
-					}
-				}
-				else // process this
-				{
-					if constexpr (L::convertible_to_bool)
-					{
-						if (decltype(auto) result = func(this))
-							return result;
-					}
-					else
-					{
-						func(this);
-					}
-				}
-			}
-
-			if constexpr (L::convertible_to_bool)
-				return typename L::result_type{};
-		}
-
-
-
-
-
-
-#endif
-
-
-
-
-
-
-
-
-#if 1
-
-
-
-
-
 		/** recursively visit all children */
 		template<bool DEPTH_FIRST = false, typename FUNC>
 		decltype(auto) ForEachNode(FUNC const& func) const
@@ -550,22 +440,22 @@ namespace chaos
 		{
 			return ForEachNodeHelper<DEPTH_FIRST>(this, func);
 		}
-#endif
 
 	protected:
 
+		/** gets a child by its index */
 		Tree27Node* GetChild(size_t index)
 		{
 			return children[index];
 		}
-
+		/** gets a child by its index */
 		Tree27Node const * GetChild(size_t index) const
 		{
 			return children[index];
 		}
-
+		/** utility method to get recursively iterate over children for both CONST and NON-CONST version */
 		template<bool DEPTH_FIRST, typename SELF, typename FUNC>
-		static decltype(auto) ForEachNodeHelper(SELF * self, FUNC const& func)
+		static auto ForEachNodeHelper(SELF * self, FUNC const& func) -> meta::LambdaInfo<FUNC, SELF*>::result_type
 		{
 			using L = meta::LambdaInfo<FUNC, SELF*>;
 
@@ -577,8 +467,8 @@ namespace chaos
 					{
 						decltype(auto) result = BitTools::ForEachBitForward(self->existing_children, [self, &func](int index)
 						{
-							return self->children[index]->ForEachNode<DEPTH_FIRST>(func);
-						});
+							return self->GetChild(index)->ForEachNode<DEPTH_FIRST>(func); // GetChild() is necessary to have proper constness of the node and though call the proper
+						});                                                               // version of Node::ForEachNode
 						if (result)
 							return result;
 					}
@@ -586,7 +476,7 @@ namespace chaos
 					{
 						BitTools::ForEachBitForward(self->existing_children, [self, &func](int index)
 						{
-							self->children[index]->ForEachNode<DEPTH_FIRST>(func);
+							self->GetChild(index)->ForEachNode<DEPTH_FIRST>(func); // GetChild(): same here
 						});
 					}
 				}
@@ -696,9 +586,9 @@ namespace chaos
 		template<bool DEPTH_FIRST = false, typename FUNC>
 		decltype(auto) ForEachNode(FUNC const& func)
 		{
-			using L = meta::LambdaInfo<FUNC, node_type*>;
+			using L = meta::LambdaInfo<FUNC, node_type *>;
 
-			if (auto * root_node = GetRootNode()) // necessary burden to work with the proper constness for root
+			if (auto* root_node = GetRootNode()) // GetRootNode() is necessary to work with proper constness of the node
 				return root_node->ForEachNode<DEPTH_FIRST>(func);
 
 			if constexpr (L::convertible_to_bool)
@@ -711,7 +601,7 @@ namespace chaos
 		{
 			using L = meta::LambdaInfo<FUNC, node_type const*>;
 
-			if (auto* root_node = GetRootNode()) // necessary burden to work with the proper constness for root
+			if (auto* root_node = GetRootNode()) // GetRootNode() is necessary to work with proper constness of the node
 				return root_node->ForEachNode<DEPTH_FIRST>(func);
 
 			if constexpr (L::convertible_to_bool)

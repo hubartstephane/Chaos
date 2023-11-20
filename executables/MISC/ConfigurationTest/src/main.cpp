@@ -142,7 +142,7 @@ int main(int argc, char** argv, char** env)
 
 	auto const& pp = p;
 
-	p.ForEachObject([](int const * o)
+	p.ForEachObject([](int  * o)
 	{
 		int i = 0;
 		++i;

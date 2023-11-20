@@ -18,9 +18,11 @@ namespace chaos
 	{
 	public:
 
-		template<typename FUNC, typename L = meta::LambdaInfo<FUNC, nlohmann::json const &>>
-		auto ForEachSource(FUNC const& func) const -> L::result_type
+		template<typename FUNC>
+		decltype(auto) ForEachSource(FUNC const& func) const
 		{
+			using L = meta::LambdaInfo<FUNC, nlohmann::json const&>;
+
 			if constexpr (L::convertible_to_bool)
 			{
 				if (persistent_config != nullptr)
@@ -29,7 +31,7 @@ namespace chaos
 				if (default_config != nullptr)
 					if (decltype(auto) result = func(*default_config))
 						return result;
-				return false;
+				return typename L::result_type{};
 			}
 			else
 			{

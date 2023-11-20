@@ -134,5 +134,23 @@ protected:
 
 int main(int argc, char** argv, char** env)
 {
+
+	chaos::ObjectPool<int> p;
+	p.Allocate(3);
+	p.Allocate(4);
+	p.Allocate(6);
+
+	auto const& pp = p;
+
+	p.ForEachObject([](int const * o)
+	{
+		int i = 0;
+		++i;
+	});
+
+	return 0;
+
+
+
 	return chaos::RunApplication<MyApplication>(argc, argv, env);
 }

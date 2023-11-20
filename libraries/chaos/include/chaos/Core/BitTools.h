@@ -52,9 +52,11 @@ namespace chaos
 				src & ~(T(1) << bit_index);
 		}
 
-		template<bool FORWARD, std::integral T, typename FUNC, typename L = meta::LambdaInfo<FUNC, T>>
-		auto ForEachBit(T bitfield, FUNC const& func) -> L::result_type
+		template<bool FORWARD, std::integral T, typename FUNC >
+		decltype(auto) ForEachBit(T bitfield, FUNC const& func)
 		{
+			using L = meta::LambdaInfo<FUNC, T>;
+
 			while (bitfield != 0)
 			{
 				T bit;
@@ -76,7 +78,7 @@ namespace chaos
 			}
 
 			if constexpr (L::convertible_to_bool)
-				return {};
+				return typename L::result_type {};
 		}
 
 		template<std::integral T, typename FUNC>

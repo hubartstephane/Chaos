@@ -90,9 +90,11 @@ namespace chaos
 		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
 
 		/** get the OpenGL context, call the function, restore previous context after */
-		template<typename FUNC, typename L = meta::LambdaInfo<FUNC>>
-		static auto WithGLFWContext(GLFWwindow* glfw_context, FUNC const& func) -> L::result_type
+		template<typename FUNC>
+		static decltype(auto) WithGLFWContext(GLFWwindow* glfw_context, FUNC const& func)
 		{
+			using L = meta::LambdaInfo<FUNC>;
+
 			GLFWwindow* previous_glfw_context = glfwGetCurrentContext();
 			glfwMakeContextCurrent(glfw_context);
 
@@ -224,9 +226,11 @@ namespace chaos
 #endif
 
 		/** enumerate all windows */
-		template<typename FUNC, typename L = meta::LambdaInfo<FUNC, Window*>>
-		auto ForAllWindows(FUNC func) -> L::result_type
+		template<typename FUNC>
+		decltype(auto) ForAllWindows(FUNC func)
 		{
+			using L = meta::LambdaInfo<FUNC, Window*>;
+
 			// enumerate all windows
 			for (weak_ptr<Window> & window : GetWeakWindowArray()) // use a 'weak' copy of all existing windows because some windows may be erased during the loop
 			{
@@ -246,7 +250,7 @@ namespace chaos
 
 			// default result
 			if constexpr (L::convertible_to_bool)
-				return {};
+				return typename L::result_type{};
 		}
 
 	protected:

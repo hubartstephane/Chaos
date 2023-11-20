@@ -426,26 +426,13 @@ namespace chaos
 			existing_children = BitTools::SetBit(existing_children, index, child != nullptr);
 		}
 
-		/** recursively visit all children */
-		template<bool DEPTH_FIRST = false, typename FUNC, typename L = meta::LambdaInfo<FUNC, Tree27Node<DIMENSION, PARENT> const *>>
-		auto ForEachNode(FUNC const& func) const -> L::result_type
+#if 0
+
+		template<bool DEPTH_FIRST, typename FUNC>
+		decltype(auto) ForEachNode(FUNC const& func)
 		{
-			return ForEachNodeHelper<DEPTH_FIRST>(this, FUNC);
-		}
+			using L = meta::LambdaInfo<FUNC, Tree27Node*>;
 
-
-		/** recursively visit all children */
-		template<bool DEPTH_FIRST = false, typename FUNC, typename L = meta::LambdaInfo<FUNC, Tree27Node<DIMENSION, PARENT>*>>
-		auto ForEachNode(FUNC const& func) -> L::result_type
-		{
-			return ForEachNodeHelper<DEPTH_FIRST>(this, FUNC);
-		}
-
-	protected:
-
-		template<bool DEPTH_FIRST, typename SELF, typename FUNC, typename L = meta::LambdaInfo<FUNC, SELF*>>
-		static auto ForEachNodeHelper(SELF * self, FUNC const& func) -> L::result_type
-		{
 			for (int i = 0; i < 2; ++i)
 			{
 				if ((i == 0 && DEPTH_FIRST) || (i == 1 && !DEPTH_FIRST)) // process children
@@ -454,7 +441,7 @@ namespace chaos
 					{
 						decltype(auto) result = BitTools::ForEachBitForward(existing_children, [this, &func](int index)
 						{
-							return children[index]->ForEachNode<DEPTH_FIRST>(func);
+							return GetChild(index)->ForEachNode<DEPTH_FIRST>(func);
 						});
 						if (result)
 							return result;
@@ -463,7 +450,7 @@ namespace chaos
 					{
 						BitTools::ForEachBitForward(existing_children, [this, &func](int index)
 						{
-								children[index]->ForEachNode<DEPTH_FIRST>(func);
+							GetChild(index)->ForEachNode<DEPTH_FIRST>(func);
 						});
 					}
 				}
@@ -482,7 +469,143 @@ namespace chaos
 			}
 
 			if constexpr (L::convertible_to_bool)
-				return {};
+				return typename L::result_type{};
+		}
+
+		template<bool DEPTH_FIRST, typename FUNC>
+		decltype(auto) ForEachNode(FUNC const& func) const
+		{
+			using L = meta::LambdaInfo<FUNC, Tree27Node const*>;
+
+			for (int i = 0; i < 2; ++i)
+			{
+				if ((i == 0 && DEPTH_FIRST) || (i == 1 && !DEPTH_FIRST)) // process children
+				{
+					if constexpr (L::convertible_to_bool)
+					{
+						decltype(auto) result = BitTools::ForEachBitForward(existing_children, [this, &func](int index)
+						{
+							return GetChild(index)->ForEachNode<DEPTH_FIRST>(func);
+						});
+						if (result)
+							return result;
+					}
+					else
+					{
+						BitTools::ForEachBitForward(existing_children, [this, &func](int index)
+						{
+							GetChild(index)->ForEachNode<DEPTH_FIRST>(func);
+						});
+					}
+				}
+				else // process this
+				{
+					if constexpr (L::convertible_to_bool)
+					{
+						if (decltype(auto) result = func(this))
+							return result;
+					}
+					else
+					{
+						func(this);
+					}
+				}
+			}
+
+			if constexpr (L::convertible_to_bool)
+				return typename L::result_type{};
+		}
+
+
+
+
+
+
+#endif
+
+
+
+
+
+
+
+
+#if 1
+
+
+
+
+
+		/** recursively visit all children */
+		template<bool DEPTH_FIRST = false, typename FUNC>
+		decltype(auto) ForEachNode(FUNC const& func) const
+		{
+			return ForEachNodeHelper<DEPTH_FIRST>(this, func);
+		}
+
+
+		/** recursively visit all children */
+		template<bool DEPTH_FIRST = false, typename FUNC>
+		decltype(auto) ForEachNode(FUNC const& func)
+		{
+			return ForEachNodeHelper<DEPTH_FIRST>(this, func);
+		}
+#endif
+
+	protected:
+
+		Tree27Node* GetChild(size_t index)
+		{
+			return children[index];
+		}
+
+		Tree27Node const * GetChild(size_t index) const
+		{
+			return children[index];
+		}
+
+		template<bool DEPTH_FIRST, typename SELF, typename FUNC>
+		static decltype(auto) ForEachNodeHelper(SELF * self, FUNC const& func)
+		{
+			using L = meta::LambdaInfo<FUNC, SELF*>;
+
+			for (int i = 0; i < 2; ++i)
+			{
+				if ((i == 0 && DEPTH_FIRST) || (i == 1 && !DEPTH_FIRST)) // process children
+				{
+					if constexpr (L::convertible_to_bool)
+					{
+						decltype(auto) result = BitTools::ForEachBitForward(self->existing_children, [self, &func](int index)
+						{
+							return self->children[index]->ForEachNode<DEPTH_FIRST>(func);
+						});
+						if (result)
+							return result;
+					}
+					else
+					{
+						BitTools::ForEachBitForward(self->existing_children, [self, &func](int index)
+						{
+							self->children[index]->ForEachNode<DEPTH_FIRST>(func);
+						});
+					}
+				}
+				else // process this
+				{
+					if constexpr (L::convertible_to_bool)
+					{
+						if (decltype(auto) result = func(self))
+							return result;
+					}
+					else
+					{
+						func(self);
+					}
+				}
+			}
+
+			if constexpr (L::convertible_to_bool)
+				return typename L::result_type{};
 		}
 
 	protected:
@@ -570,25 +693,29 @@ namespace chaos
 		}
 
 		/** visit the tree */
-		template<bool DEPTH_FIRST = false, typename FUNC, typename L = meta::LambdaInfo<FUNC, node_type *>>
-		auto ForEachNode(FUNC const& func) -> L::result_type
+		template<bool DEPTH_FIRST = false, typename FUNC>
+		decltype(auto) ForEachNode(FUNC const& func)
 		{
-			if (root != nullptr)
-				return root->ForEachNode<DEPTH_FIRST>(func);
+			using L = meta::LambdaInfo<FUNC, node_type*>;
+
+			if (auto * root_node = GetRootNode()) // necessary burden to work with the proper constness for root
+				return root_node->ForEachNode<DEPTH_FIRST>(func);
 
 			if constexpr (L::convertible_to_bool)
-				return {};
+				return typename L::result_type{};
 		}
 
 		/** visit the tree */
-		template<bool DEPTH_FIRST = false, typename FUNC, typename L = meta::LambdaInfo<FUNC, node_type const *>>
-		auto ForEachNode(FUNC const& func) const -> L::result_type
+		template<bool DEPTH_FIRST = false, typename FUNC>
+		decltype(auto) ForEachNode(FUNC const& func) const
 		{
-			if (root != nullptr)
-				return root->ForEachNode<DEPTH_FIRST>(func);
+			using L = meta::LambdaInfo<FUNC, node_type const*>;
+
+			if (auto* root_node = GetRootNode()) // necessary burden to work with the proper constness for root
+				return root_node->ForEachNode<DEPTH_FIRST>(func);
 
 			if constexpr (L::convertible_to_bool)
-				return {};
+				return typename L::result_type{};
 		}
 
 		/** returns the root */

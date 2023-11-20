@@ -146,9 +146,11 @@ namespace chaos
 		}
 
 		/** iterator over all objects (const version) */
-		template<typename FUNC, typename L = meta::LambdaInfo<FUNC, T const*>>
-		auto ForEachObject(FUNC const& func) const -> L::result_type
+		template<typename FUNC>
+		decltype(auto) ForEachObject(FUNC const& func) const
 		{
+			using L = meta::LambdaInfo<FUNC, T const*>;
+
 			for (node_type const* node : { used_nodes , unavailable_nodes })
 			{
 				while (node != nullptr)
@@ -167,13 +169,15 @@ namespace chaos
 			}
 
 			if constexpr (L::convertible_to_bool)
-				return {};
+				return typename L::result_type{};
 		}
 
 		/** iterator over all objects (non const version) */
-		template<typename FUNC, typename L = meta::LambdaInfo<FUNC, T*>>
-		auto ForEachObject(FUNC const& func) -> L::result_type
+		template<typename FUNC>
+		decltype(auto) ForEachObject(FUNC const& func)
 		{
+			using L = meta::LambdaInfo<FUNC, T*>;
+
 			for (node_type* node : { used_nodes , unavailable_nodes })
 			{
 				while (node != nullptr)
@@ -192,7 +196,7 @@ namespace chaos
 			}
 
 			if constexpr (L::convertible_to_bool)
-				return {};
+				return typename L::result_type{};
 		}
 
 	protected:

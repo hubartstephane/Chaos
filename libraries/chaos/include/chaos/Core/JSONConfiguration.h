@@ -47,7 +47,7 @@ namespace chaos
 		/** the normal json object */
 		nlohmann::json const* default_config = nullptr;
 		/** the persistent json object */
-		boost::mpl::if_c<WRITABLE, nlohmann::json, nlohmann::json const>::type * persistent_config = nullptr;
+		std::conditional<WRITABLE, nlohmann::json, nlohmann::json const>::type * persistent_config = nullptr;
 	};
 
 	template<typename ...PARAMS>

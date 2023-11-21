@@ -70,19 +70,17 @@ namespace chaos
 		return (component_type == other.component_type) && (component_count == other.component_count);
 	}
 
-	bool LoadFromJSON(nlohmann::json const& json, PixelFormat& dst)
+	bool DoLoadFromJSON(JSONReadConfiguration config, PixelFormat& dst)
 	{
-		if (!json.is_object())
-			return false;
-		JSONTools::GetAttribute(json, "component_type", dst.component_type);
-		JSONTools::GetAttribute(json, "component_count", dst.component_count);
+		JSONTools::GetAttribute(config, "component_type", dst.component_type);
+		JSONTools::GetAttribute(config, "component_count", dst.component_count);
 		return true;
 	}
 
-	bool SaveIntoJSON(nlohmann::json& json, PixelFormat const& src)
+	bool DoSaveIntoJSON(nlohmann::json * json, PixelFormat const& src)
 	{
-		if (!json.is_object())
-			json = nlohmann::json::object();
+		if (!PrepareSaveIntoJSON(json))
+			return false;
 		JSONTools::SetAttribute(json, "component_type", src.component_type);
 		JSONTools::SetAttribute(json, "component_count", src.component_count);
 		return true;

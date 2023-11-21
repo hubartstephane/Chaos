@@ -8,7 +8,7 @@ class Singleton;
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 template<typename T>
-class /*CHAOS_API*/ Singleton
+class Singleton
 {
 public:
 

@@ -114,7 +114,7 @@ namespace chaos
 		safe_zone = in_safe_zone;
 	}
 	
-	bool Camera::SerializeIntoJSON(nlohmann::json& json) const
+	bool Camera::SerializeIntoJSON(nlohmann::json * json) const
 	{
 		if (!JSONSerializableInterface::SerializeIntoJSON(json))
 			return false;
@@ -122,7 +122,7 @@ namespace chaos
 		return true;
 	}
 	
-	bool Camera::SerializeFromJSON(nlohmann::json const& json)
+	bool Camera::SerializeFromJSON(nlohmann::json const * json)
 	{
 		if (!JSONSerializableInterface::SerializeFromJSON(json))
 			return false;

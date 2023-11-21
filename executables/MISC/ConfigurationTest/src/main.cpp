@@ -134,6 +134,11 @@ protected:
 
 int main(int argc, char** argv, char** env)
 {
+	//nlohmann::json j;
+
+	//j.get<MyApplication>();
+
+
 
 	chaos::ObjectPool<int> p;
 	p.Allocate(3);

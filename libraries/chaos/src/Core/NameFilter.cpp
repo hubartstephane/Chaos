@@ -101,47 +101,69 @@ namespace chaos
 	// JSON methods
 	// ============================================================
 
-	bool SaveIntoJSON(nlohmann::json & json, NameFilter const & src)
+	bool DoSaveIntoJSON(nlohmann::json * json, NameFilter const & src)
 	{
-		if (!json.is_object())
-			json = nlohmann::json::object();
+		if (!PrepareSaveIntoJSON(json))
+			return false;
 		JSONTools::SetAttribute(json, "enabled_names", src.enabled_names);
 		JSONTools::SetAttribute(json, "disabled_names", src.disabled_names);
 		return true;
 	}
 
-	bool LoadFromJSON(nlohmann::json const & json, NameFilter & dst)
+	bool DoLoadFromJSON(JSONReadConfiguration config, NameFilter & dst)
 	{
-		// the simplest format is with string and ',' as separator 
-		if (json.is_string())
+		bool enabled_names_found = false;
+		bool disabled_names_found = false;
+		JSONTools::ForEachSource(config, [&enabled_names_found, &disabled_names_found, &dst](nlohmann::json const * json)
 		{
-			dst.AddEnabledNames(json.get<std::string>().c_str());
-			return true;
-		}
-		else if (json.is_object())
-		{
-			// "enabled_names" can be a string with ';' as separator or an array of string
-			nlohmann::json::const_iterator it_enabled = json.find("enabled_names");
-			if (it_enabled != json.end())
+			if (!enabled_names_found)
 			{
-				if (it_enabled->is_string())
-					dst.AddEnabledNames(it_enabled->get<std::string>().c_str());
-				else
-					LoadFromJSON(*it_enabled, dst.enabled_names);
+				// the simplest format is with string and ',' as separator 
+				if (json->is_string())
+				{
+					dst.AddEnabledNames(json->get<std::string>().c_str());
+					enabled_names_found = true;
+				}
+				else if (json->is_object())
+				{
+					// "enabled_names" can be a string with ';' as separator or an array of string
+					nlohmann::json::const_iterator it_enabled = json->find("enabled_names");
+					if (it_enabled != json->end())
+					{
+						if (it_enabled->is_string())
+						{
+							dst.AddEnabledNames(it_enabled->get<std::string>().c_str());
+							enabled_names_found = true;
+						}
+						else
+						{
+							enabled_names_found = LoadFromJSON(&(*it_enabled), dst.enabled_names);
+						}
+					}
+				}
 			}
 
-			// "disabled_names" can be a string with ',' as separator or an array of string
-			nlohmann::json::const_iterator it_disabled = json.find("disabled_names");
-			if (it_disabled != json.end())
+			if (!disabled_names_found)
 			{
-				if (it_disabled->is_string())
-					dst.AddDisabledNames(it_disabled->get<std::string>().c_str());
-				else
-					LoadFromJSON(*it_disabled, dst.disabled_names);
+				// "disabled_names" can be a string with ',' as separator or an array of string
+				nlohmann::json::const_iterator it_disabled = json->find("disabled_names");
+				if (it_disabled != json->end())
+				{
+					if (it_disabled->is_string())
+					{
+						dst.AddDisabledNames(it_disabled->get<std::string>().c_str());
+						disabled_names_found = true;
+					}
+					else
+					{
+						disabled_names_found = LoadFromJSON(&(*it_disabled), dst.disabled_names);
+					}
+				}
 			}
-			return true;		
-		}			
-		return false;
+			return (enabled_names_found && disabled_names_found); // if both are true, no need to search in other sources
+		});
+
+		return true;
 	}
 
 }; // namespace chaos

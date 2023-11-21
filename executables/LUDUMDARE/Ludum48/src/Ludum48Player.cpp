@@ -91,7 +91,7 @@ bool LudumPlayer::DoTick(float delta_time)
 }
 
 
-bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, bool hot_reload)
+bool LudumPlayer::InitializeGameValues(nlohmann::json const * config, bool hot_reload)
 {
 	if (!Player::InitializeGameValues(config, hot_reload))
 		return false;

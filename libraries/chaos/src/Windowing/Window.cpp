@@ -7,10 +7,10 @@ namespace chaos
 	* WindowCreateParams
 	*/
 
-	bool SaveIntoJSON(nlohmann::json& json, WindowCreateParams const& src)
+	bool DoSaveIntoJSON(nlohmann::json * json, WindowCreateParams const& src)
 	{
-		if (!json.is_object())
-			json = nlohmann::json::object();
+		if (!PrepareSaveIntoJSON(json))
+			return false;
 		JSONTools::SetAttribute(json, "monitor_index", src.monitor_index);
 		JSONTools::SetAttribute(json, "width", src.width);
 		JSONTools::SetAttribute(json, "height", src.height);
@@ -22,18 +22,16 @@ namespace chaos
 		return true;
 	}
 
-	bool LoadFromJSON(nlohmann::json const& json, WindowCreateParams& dst)
+	bool DoLoadFromJSON(JSONReadConfiguration config, WindowCreateParams& dst)
 	{
-		if (!json.is_object())
-			return false;
-		JSONTools::GetAttribute(json, "monitor_index", dst.monitor_index);
-		JSONTools::GetAttribute(json, "width", dst.width);
-		JSONTools::GetAttribute(json, "height", dst.height);
-		JSONTools::GetAttribute(json, "resizable", dst.resizable);
-		JSONTools::GetAttribute(json, "start_visible", dst.start_visible);
-		JSONTools::GetAttribute(json, "decorated", dst.decorated);
-		JSONTools::GetAttribute(json, "toplevel", dst.toplevel);
-		JSONTools::GetAttribute(json, "focused", dst.focused);
+		JSONTools::GetAttribute(config, "monitor_index", dst.monitor_index);
+		JSONTools::GetAttribute(config, "width", dst.width);
+		JSONTools::GetAttribute(config, "height", dst.height);
+		JSONTools::GetAttribute(config, "resizable", dst.resizable);
+		JSONTools::GetAttribute(config, "start_visible", dst.start_visible);
+		JSONTools::GetAttribute(config, "decorated", dst.decorated);
+		JSONTools::GetAttribute(config, "toplevel", dst.toplevel);
+		JSONTools::GetAttribute(config, "focused", dst.focused);
 		return true;
 	}
 
@@ -1063,7 +1061,7 @@ namespace chaos
 		return result;
 	}
 
-	bool Window::InitializeFromConfiguration(nlohmann::json const& config)
+	bool Window::InitializeFromConfiguration(nlohmann::json const * config)
 	{
 		RegisterKnownDrawables();
 		return true; 
@@ -1094,7 +1092,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	void Window::OnReadPersistentData(nlohmann::json const& json)
+	void Window::OnReadPersistentData(nlohmann::json const * json)
 	{
 		glm::ivec2 position = { 0, 0 };
 		glm::ivec2 size = { 0, 0 };
@@ -1104,7 +1102,7 @@ namespace chaos
 		SetWindowSize(size);
 	}
 
-	void Window::OnWritePersistentData(nlohmann::json & json) const
+	void Window::OnWritePersistentData(nlohmann::json * json) const
 	{
 		JSONTools::SetAttribute(json, "position", GetWindowPosition());
 		JSONTools::SetAttribute(json, "size", GetWindowSize());

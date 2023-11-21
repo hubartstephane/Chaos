@@ -19,7 +19,7 @@ public:
 
 	virtual char const * GetPowerUpTitle() const { return nullptr; }
 
-	virtual bool InitializeFromConfiguration(char const * json_name, nlohmann::json const & config);
+	virtual bool InitializeFromConfiguration(char const * json_name, nlohmann::json const * config);
 
 
 	float GetLifeCost() const { return life_cost; }

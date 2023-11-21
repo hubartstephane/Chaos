@@ -102,7 +102,7 @@ namespace chaos
 		return true;
 	}
 
-	bool ScrollCameraComponent::SerializeIntoJSON(nlohmann::json& json) const
+	bool ScrollCameraComponent::SerializeIntoJSON(nlohmann::json * json) const
 	{
 		if (!CameraComponent::SerializeIntoJSON(json))
 			return false;
@@ -111,7 +111,7 @@ namespace chaos
 		return true;
 	}
 
-	bool ScrollCameraComponent::SerializeFromJSON(nlohmann::json const& json)
+	bool ScrollCameraComponent::SerializeFromJSON(nlohmann::json const * json)
 	{
 		if (!CameraComponent::SerializeFromJSON(json))
 			return false;

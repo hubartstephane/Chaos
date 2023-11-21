@@ -34,13 +34,13 @@ chaos::GameHUD * LudumGame::DoCreatePlayingHUD()
 }
 
 template<typename T>
-static bool InitializeGameValueVector(char const * json_name, nlohmann::json const & config, std::vector<T> & result)
+static bool InitializeGameValueVector(char const * json_name, nlohmann::json const * config, std::vector<T> & result)
 {
 	chaos::JSONTools::GetAttribute(config, json_name, result);
 	return (result.size() > 0);
 }
 
-bool LudumGame::InitializeGameValues(nlohmann::json const & config, bool hot_reload)
+bool LudumGame::InitializeGameValues(nlohmann::json const * config, bool hot_reload)
 {
 	if (!chaos::Game::InitializeGameValues(config, hot_reload))
 		return false;
@@ -80,7 +80,7 @@ chaos::TMLevel * LudumGame::CreateTMLevel()
 	return new LudumLevel();
 }
 
-bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config)
+bool LudumGame::InitializeFromConfiguration(nlohmann::json const * config)
 {
 	if (!chaos::Game::InitializeFromConfiguration(config))
 		return false;
@@ -90,7 +90,7 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config)
 	return true;
 }
 
-bool LudumGame::PopulatePowerOneUp(LudumPowerUp * power_up, char const * json_name, nlohmann::json const & config)
+bool LudumGame::PopulatePowerOneUp(LudumPowerUp * power_up, char const * json_name, nlohmann::json const * config)
 {
 	if (!power_up->InitializeFromConfiguration(json_name, config))
 	{
@@ -101,7 +101,7 @@ bool LudumGame::PopulatePowerOneUp(LudumPowerUp * power_up, char const * json_na
 	return true;
 }
 
-bool LudumGame::PopulatePowerUps(nlohmann::json const & config)
+bool LudumGame::PopulatePowerUps(nlohmann::json const * config)
 {
 	if (!PopulatePowerOneUp(new LudumSpeedUp("speed_up"), "speed_up", config))
 		return false;

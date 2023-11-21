@@ -12,7 +12,7 @@ namespace chaos
 	 */
 
 	template<typename VERTEX_TYPE>
-	class /*CHAOS_API*/ GPUDrawInterface : public PrimitiveOutput<VERTEX_TYPE>
+	class GPUDrawInterface : public PrimitiveOutput<VERTEX_TYPE>
 	{
 	public:
 

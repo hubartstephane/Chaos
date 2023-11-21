@@ -300,7 +300,7 @@ bool Game::Initialize(chaos::Window * in_window, nlohmann::json const * config, 
 
 
   if (config != nullptr)
-	  InitializeFromConfiguration(*config);
+	  InitializeFromConfiguration(config);
 
   window = in_window;
 
@@ -316,7 +316,7 @@ bool Game::Initialize(chaos::Window * in_window, nlohmann::json const * config, 
   // parse JSON structures
   nlohmann::json json;
   if (chaos::JSONTools::Parse(buf, json))
-    return DoInitialize(resources_path, object_path, json);
+    return DoInitialize(resources_path, object_path, &json);
 	return false;
 }
 
@@ -342,7 +342,7 @@ bool Game::InitializeSounds(boost::filesystem::path const & resource_path)
 	return true;
 }
 
-bool Game::DoInitialize(boost::filesystem::path const & resource_path, boost::filesystem::path const & object_path, nlohmann::json const & json)
+bool Game::DoInitialize(boost::filesystem::path const & resource_path, boost::filesystem::path const & object_path, nlohmann::json const * json)
 {
 	if (!InitializeSounds(resource_path))
 		return false;
@@ -415,14 +415,14 @@ SpriteLayer const * Game::FindSpriteLayer(int layer) const
 	return nullptr;
 }
 
-bool Game::LoadSpriteLayerInfo(nlohmann::json const & json)
+bool Game::LoadSpriteLayerInfo(nlohmann::json const * json)
 {
 	if (nlohmann::json const* layers = chaos::JSONTools::GetStructureNode(json, "layers"))
 	{
 		for (auto const & json_layer : *layers)
 		{
 			SpriteLayer sprite_layer;
-			if (!sprite_layer.LoadFromJSON(json_layer))
+			if (!sprite_layer.LoadFromJSON(&json_layer))
 				continue;
 			if (FindSpriteLayer(sprite_layer.layer) != nullptr) // already existing
 				continue;
@@ -567,14 +567,14 @@ ObjectDefinition const * Game::FindObjectDefinition(int id) const
 	return nullptr;
 }
 
-bool Game::LoadObjectDefinition(nlohmann::json const & json)
+bool Game::LoadObjectDefinition(nlohmann::json const * json)
 {
 	if (nlohmann::json const* objects = chaos::JSONTools::GetStructureNode(json, "objects"))
 	{
 		for (auto const & json_obj : *objects)
 		{
 			ObjectDefinition def;
-			if (!def.LoadFromJSON(json_obj))
+			if (!def.LoadFromJSON(&json_obj))
 				continue;
 			if (FindSpriteLayer(def.layer) == nullptr) // layer not existing
 				continue;
@@ -889,7 +889,7 @@ glm::vec2 Game::GetPlayerInitialScreenPosition() const
 	return glm::vec2(0.0f, 0.0f);
 }
 
-void Game::InitializeFromConfiguration(nlohmann::json const & config)
+void Game::InitializeFromConfiguration(nlohmann::json const * config)
 {
   chaos::JSONTools::GetAttribute(config, "level_particle_increment", level_particle_increment, 10);
   chaos::JSONTools::GetAttribute(config, "max_particles_per_frame", max_particles_per_frame, 100);

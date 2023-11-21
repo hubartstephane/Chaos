@@ -3,7 +3,7 @@ namespace chaos
 #if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	template<typename CONSTNESS_OPERATOR> // should be add_const<_1> or identity<_1>
-	class /*CHAOS_API*/ TMLayerInstanceIteratorBase
+	class TMLayerInstanceIteratorBase
 	{
 	public:
 

@@ -60,17 +60,17 @@ namespace chaos
 		if (application == nullptr)
 			return;
 
-		nlohmann::json const& config = application->GetConfiguration();
+		nlohmann::json const * config = application->GetConfiguration();
 		// get the hud config
 		nlohmann::json const* hud_config = JSONTools::GetStructureNode(config, "hud");
 		if (hud_config == nullptr)
 			return;
 		// get the component config (if existing)
-		nlohmann::json const* component_config = JSONTools::GetStructureNode(*hud_config, (char const*)key);
+		nlohmann::json const* component_config = JSONTools::GetStructureNode(hud_config, (char const*)key);
 		if (component_config == nullptr)
 			return;
 		// initialize the component from JSON
-		component->InitializeFromConfiguration(*component_config);
+		component->InitializeFromConfiguration(component_config);
 	}
 
 	bool GameHUD::Initialize(Game* in_game)

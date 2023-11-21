@@ -21,7 +21,7 @@ namespace chaos
 
 		/** a functor used to repeatly map a range to another */
 		template<typename T, typename U>
-		class /*CHAOS_API*/ RangeMapper
+		class RangeMapper
 		{
 		public:
 
@@ -58,7 +58,7 @@ namespace chaos
 		// XXX : the '%' operator is the reminder of the integer divide ... not really modulo when it comes with negative values
 		//
 		template<typename T>
-		/*CHAOS_API*/ T Modulo(T a, T b)
+		T Modulo(T a, T b)
 		{
 			assert(b > 0);
 
@@ -91,7 +91,7 @@ namespace chaos
 
 		/** gets the value to add to src in order to have dst angle (with the lowest possible rotation) */
 		template<typename T>
-		/*CHAOS_API*/ T GetShortestRotation(T src, T dst)
+		T GetShortestRotation(T src, T dst)
 		{
 			T const pi = T(M_PI);
 			// set the two parameters into [0 .. 2PI] (the choosen range is not important while this is for difference computation)
@@ -115,7 +115,7 @@ namespace chaos
 
 		/** Try to make src be equal to dst. Use shortest path and clamp possible rotation */
 		template<typename T>
-		/*CHAOS_API*/ T UpdateRotationForTargetAngle(T src, T dst, T max_rotation)
+		T UpdateRotationForTargetAngle(T src, T dst, T max_rotation)
 		{
 			assert(max_rotation >= 0);
 
@@ -126,28 +126,28 @@ namespace chaos
 
 		/** remap a range to another */
 		template<typename T, typename U>
-		/*CHAOS_API*/ U RemapRanges(T const& src_range_min, T const& src_range_max, U const& dst_range_min, U const& dst_range_max, T src)
+		U RemapRanges(T const& src_range_min, T const& src_range_max, U const& dst_range_min, U const& dst_range_max, T src)
 		{
 			return dst_range_min + (src - src_range_min) * (dst_range_max - dst_range_min) / (src_range_max - src_range_min);
 		}
 
 		/** create a range remapper functor */
 		template<typename T, typename U>
-		/*CHAOS_API*/ RangeMapper<T, U> MakeRangeRemapper(T const& src_range_min, T const& src_range_max, U const& dst_range_min, U const& dst_range_max)
+		RangeMapper<T, U> MakeRangeRemapper(T const& src_range_min, T const& src_range_max, U const& dst_range_min, U const& dst_range_max)
 		{
 			return RangeMapper<T, U>(src_range_min, src_range_max, dst_range_min, dst_range_max);
 		}
 
 		/** create a range remapper functor */
 		template<typename T, typename U>
-		/*CHAOS_API*/ RangeMapper<T, U> MakeRangeRemapper(std::pair<T, T> const& src_range, std::pair<U, U> const& dst_range)
+		RangeMapper<T, U> MakeRangeRemapper(std::pair<T, T> const& src_range, std::pair<U, U> const& dst_range)
 		{
 			return RangeMapper<T, U>(src_range, dst_range);
 		}
 
 		/** a function to multiply to values and convert */
 		template<typename T, typename T1, typename T2>
-		/*CHAOS_API*/ T CastAndMul(T1 src1, T2 src2)
+		T CastAndMul(T1 src1, T2 src2)
 		{
 			return static_cast<T>(
 				static_cast<float>(src1) * static_cast<float>(src2)
@@ -155,7 +155,7 @@ namespace chaos
 		}
 
 		template<typename T, typename T1, typename T2>
-		/*CHAOS_API*/ T CastAndDiv(T1 src1, T2 src2)
+		T CastAndDiv(T1 src1, T2 src2)
 		{
 			return static_cast<T>(
 				static_cast<float>(src1) / static_cast<float>(src2)
@@ -164,35 +164,35 @@ namespace chaos
 
 		/** convert an angle into Radian (for float or double) */
 		template<typename T>
-		/*CHAOS_API*/ T DegreeToRadian(T degree)
+		T DegreeToRadian(T degree)
 		{
 			return degree * static_cast<T>(M_PI / 180.0);
 		}
 
 		/** convert an angle into Degree (for float or double) */
 		template<typename T>
-		/*CHAOS_API*/ T RadianToDegree(T radian)
+		T RadianToDegree(T radian)
 		{
 			return radian * static_cast<T>(180.0 / M_PI);
 		}
 
 		/** return the square of a value */
 		template<typename T>
-		/*CHAOS_API*/ T Square(T value)
+		T Square(T value)
 		{
 			return value * value;
 		}
 
 		/** Saturate a value to 1 */
 		template<typename T>
-		/*CHAOS_API*/ T Saturate(T x)
+		T Saturate(T x)
 		{
 			return std::min(x, static_cast<T>(1));
 		}
 
 		/** compute a vector from polar coordinates */
 		template<typename T>
-		/*CHAOS_API*/ glm::tvec3<T> PolarCoordToVector(T alpha, T beta)
+		glm::tvec3<T> PolarCoordToVector(T alpha, T beta)
 		{
 			T c = std::cos(beta);
 
@@ -201,14 +201,14 @@ namespace chaos
 
 		/** returns the linear interpolation between 2 values */
 		template<typename T>
-		/*CHAOS_API*/ T Lerp(T t, T a, T b)
+		T Lerp(T t, T a, T b)
 		{
 			return ((static_cast<T>(1) - t) * a) + (t * b);
 		}
 
 		/** returns the cos interpolation between 2 values */
 		template<typename T>
-		/*CHAOS_API*/ T Coserp(T t, T a, T b)
+		T Coserp(T t, T a, T b)
 		{
 			T f = (static_cast<T>(1) - std::cos(t * static_cast<T>(M_PI)) / static_cast<T>(2));
 
@@ -226,7 +226,7 @@ namespace chaos
 
 		/** an Ease-In, Ease-out function */
 		template<typename T>
-		/*CHAOS_API*/ T Ease(T x)
+		T Ease(T x)
 		{
 			T x2 = x * x;
 			return static_cast<T>(3) * x2 - static_cast<T>(2) * x2 * x;
@@ -234,14 +234,14 @@ namespace chaos
 
 		/** a linear function that is y(x) = a.x + b, but with a ease In (the derivative of    y(x) = x * x    as a value of 1 when x = 0.5) */
 		template<typename T>
-		/*CHAOS_API*/ T EaseInIdentity(T x)
+		T EaseInIdentity(T x)
 		{
 			return static_cast<T>(x) - (static_cast<T>(1.0 - 0.5 * 0.5));
 		}
 
 		/** transform range [-1 .. +1] into 3 integer values -1, 0, +1 */
 		template<typename T>
-		/*CHAOS_API*/ T AnalogicToDiscret(T value)
+		T AnalogicToDiscret(T value)
 		{
 			if (value == 0)
 				return 0;
@@ -250,7 +250,7 @@ namespace chaos
 
 		/** the structure for polynomial solutions */
 		template<typename T>
-		struct /*CHAOS_API*/ Polynome2Solution
+		struct Polynome2Solution
 		{
 			/** the solutions */
 			T      solutions[2];
@@ -260,7 +260,7 @@ namespace chaos
 
 		/** solve the 2 degree polynome ax2 + bx + c */
 		template<typename T>
-		/*CHAOS_API*/ Polynome2Solution<T> SolvePolynome2(T a, T b, T c)
+		Polynome2Solution<T> SolvePolynome2(T a, T b, T c)
 		{
 			Polynome2Solution<T> result;
 
@@ -290,7 +290,7 @@ namespace chaos
 
 		/** target a value */
 		template<typename T>
-		/*CHAOS_API*/ T TargetValue(T src, T target_value, T increase_value, T decrease_value)
+		T TargetValue(T src, T target_value, T increase_value, T decrease_value)
 		{
 			if (src < target_value)
 				src = std::min(src + increase_value, target_value);
@@ -310,14 +310,14 @@ namespace chaos
 
 		/** a function to detect if an entry is power of 2 */
 		template<typename T>
-		/*CHAOS_API*/ bool IsPowerOf2(T src)
+		bool IsPowerOf2(T src)
 		{
 			return ((src != 0) && (src & (src - 1)) == 0);
 		}
 
 		/** a function to find the smallest power of 2 greater or equal than src */
 		template<typename T>
-		/*CHAOS_API*/ T GetNearestPowerOf2(T src)
+		T GetNearestPowerOf2(T src)
 		{
 			if (src == 0)
 				return 1;
@@ -327,7 +327,7 @@ namespace chaos
 		}
 
 		template<typename T>
-		/*CHAOS_API*/ bool IsInRange(T value, T min_value, T max_value, bool open_range = true)
+		bool IsInRange(T value, T min_value, T max_value, bool open_range = true)
 		{
 			if (open_range)
 			{

@@ -327,7 +327,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	boost::filesystem::path Game::GetResourceDirectoryFromConfig(nlohmann::json const & config, char const * config_name, char const * default_path) const
+	boost::filesystem::path Game::GetResourceDirectoryFromConfig(nlohmann::json const * config, char const * config_name, char const * default_path) const
 	{
 		// read in the config file the whole path
 		boost::filesystem::path result;
@@ -350,7 +350,7 @@ namespace chaos
 	}
 
 	template<typename FUNC>
-	bool Game::DoGenerateTiledMapEntity(nlohmann::json const & config, char const * property_name, char const * default_value, char const * extension, FUNC func)
+	bool Game::DoGenerateTiledMapEntity(nlohmann::json const * config, char const * property_name, char const * default_value, char const * extension, FUNC func)
 	{
 		// iterate the files and load the tilesets
 		boost::filesystem::path path = GetResourceDirectoryFromConfig(config, property_name, default_value);
@@ -376,7 +376,7 @@ namespace chaos
 
 	// shu49 c 'est un peut bizarre d'avoir ce genre de code ici
 
-	bool Game::GenerateObjectTypeSets(nlohmann::json const & config)
+	bool Game::GenerateObjectTypeSets(nlohmann::json const * config)
 	{
 		return DoGenerateTiledMapEntity(
 			config,
@@ -393,7 +393,7 @@ namespace chaos
 
 	// shu49 c 'est un peut bizarre d'avoir ce genre de code ici
 
-	bool Game::GenerateTileSets(nlohmann::json const & config)
+	bool Game::GenerateTileSets(nlohmann::json const * config)
 	{
 		return DoGenerateTiledMapEntity(
 			config,
@@ -408,7 +408,7 @@ namespace chaos
 			});
 	}
 
-	bool Game::LoadLevels(nlohmann::json const & config)
+	bool Game::LoadLevels(nlohmann::json const * config)
 	{
 		// iterate the files and load the levels
 		boost::filesystem::path path = GetResourceDirectoryFromConfig(config, "levels_directory", "levels");
@@ -516,7 +516,7 @@ namespace chaos
 		return true;
 	}
 
-	bool Game::CreateClocks(nlohmann::json const& config)
+	bool Game::CreateClocks(nlohmann::json const * config)
 	{
 		Clock* application_clock = GetApplicationClock();
 		if (application_clock == nullptr)
@@ -528,7 +528,7 @@ namespace chaos
 		return true;
 	}
 
-	bool Game::CreateGamepadManager(nlohmann::json const& config)
+	bool Game::CreateGamepadManager(nlohmann::json const * config)
 	{
 		bool gamepad_enabled = true;
 		JSONTools::GetAttribute(config, "gamepad_enabled", gamepad_enabled, true);
@@ -541,7 +541,7 @@ namespace chaos
 		return true;
 	}
 
-	bool Game::InitializeFromConfiguration(nlohmann::json const& config)
+	bool Game::InitializeFromConfiguration(nlohmann::json const * config)
 	{
 		// initialize the gamepad manager
 		if (!CreateGamepadManager(config))
@@ -623,13 +623,13 @@ namespace chaos
 		best_score = std::max(best_score, GetBestPlayerScore());
 	}
 
-	bool Game::LoadPersistentGameData(nlohmann::json const& game_data)
+	bool Game::LoadPersistentGameData(nlohmann::json const * game_data)
 	{
 		JSONTools::GetAttribute(game_data, "best_score", best_score);
 		return true;
 	}
 
-	bool Game::SavePersistentGameData(nlohmann::json & game_data) const
+	bool Game::SavePersistentGameData(nlohmann::json * game_data) const
 	{
 
 
@@ -665,7 +665,7 @@ namespace chaos
 		// save the game data
 		if (save)
 		{
-			if (!SavePersistentGameData(game_data))
+			if (!SavePersistentGameData(&game_data))
 				return false;
 			std::ofstream file(filepath.string().c_str());
 			if (!file)
@@ -678,7 +678,7 @@ namespace chaos
 		{
 			if (!JSONTools::LoadJSONFile(filepath, game_data))
 				return false;
-			return LoadPersistentGameData(game_data);
+			return LoadPersistentGameData(&game_data);
 		}
 	}
 
@@ -766,7 +766,7 @@ namespace chaos
 		return PlaySound(name, play_desc, category_tag);
 	}
 
-	bool Game::CreateGameStateMachine(nlohmann::json const& config)
+	bool Game::CreateGameStateMachine(nlohmann::json const * config)
 	{
 		game_sm = DoCreateGameStateMachine();
 		if (game_sm == nullptr)
@@ -819,7 +819,7 @@ namespace chaos
 		return true;
 	}
 
-	bool Game::InitializeGameValues(nlohmann::json const & config, bool hot_reload)
+	bool Game::InitializeGameValues(nlohmann::json const * config, bool hot_reload)
 	{
 		// capture the game instance configuration
 		nlohmann::json const* gi_config = JSONTools::GetObjectNode(config, "game_instance");
@@ -838,7 +838,7 @@ namespace chaos
 	void Game::OnGameValuesChanged(bool hot_reload)
 	{
 		if (game_instance != nullptr)
-			if (game_instance->InitializeGameValues(game_instance_configuration, hot_reload))
+			if (game_instance->InitializeGameValues(&game_instance_configuration, hot_reload))
 				game_instance->OnGameValuesChanged(hot_reload);
 	}
 
@@ -1318,11 +1318,11 @@ namespace chaos
 		if (!application->ReloadConfigurationFile(config))
 			return false;
 		// extract the part of interest for us
-		nlohmann::json const * game_config = JSONTools::GetStructureNode(config, "game");
+		nlohmann::json const * game_config = JSONTools::GetStructureNode(&config, "game");
 		if (game_config == nullptr)
 			return false;
 		// update game values
-		if (!InitializeGameValues(*game_config, true)) // true => hot_reload
+		if (!InitializeGameValues(game_config, true)) // true => hot_reload
 			return false;
 		OnGameValuesChanged(true);
 		return true;

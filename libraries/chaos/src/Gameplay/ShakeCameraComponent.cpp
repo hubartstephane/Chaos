@@ -48,7 +48,7 @@ namespace chaos
 		return true;
 	}
 
-	bool ShakeCameraComponent::SerializeIntoJSON(nlohmann::json& json) const
+	bool ShakeCameraComponent::SerializeIntoJSON(nlohmann::json * json) const
 	{
 		if (!CameraComponent::SerializeIntoJSON(json))
 			return false;
@@ -60,7 +60,7 @@ namespace chaos
 		return true;
 	}
 
-	bool ShakeCameraComponent::SerializeFromJSON(nlohmann::json const& json)
+	bool ShakeCameraComponent::SerializeFromJSON(nlohmann::json const * json)
 	{
 		if (!CameraComponent::SerializeFromJSON(json))
 			return false;

@@ -535,7 +535,7 @@ namespace chaos
 		return TMObjectCollisionIterator(this, in_collision_mask, in_collision_box, in_open_geometry);
 	}
 
-	bool TMLevelInstance::SerializeFromJSON(nlohmann::json const& json)
+	bool TMLevelInstance::SerializeFromJSON(nlohmann::json const * json)
 	{
 		if (!LevelInstance::SerializeFromJSON(json))
 			return false;
@@ -543,7 +543,7 @@ namespace chaos
 		return true;
 	}
 
-	bool TMLevelInstance::SerializeIntoJSON(nlohmann::json& json) const
+	bool TMLevelInstance::SerializeIntoJSON(nlohmann::json * json) const
 	{
 		if (!LevelInstance::SerializeIntoJSON(json))
 			return false;

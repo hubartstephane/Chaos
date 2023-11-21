@@ -8,7 +8,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	template<typename OUTER_ITERATOR, typename INNER_ITERATOR, std::pair<INNER_ITERATOR, INNER_ITERATOR>(*GetInnerIterators)(OUTER_ITERATOR)>
-	class /*CHAOS_API*/ NestedIterator
+	class NestedIterator
 	{
 	public:
 

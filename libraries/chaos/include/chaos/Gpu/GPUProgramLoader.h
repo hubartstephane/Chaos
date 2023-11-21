@@ -20,12 +20,12 @@ namespace chaos
 			ResourceManagerLoader<GPUProgram, GPUResourceManager>(in_resource_manager) {}
 
 		/** load an object from JSON */
-		virtual GPUProgram* LoadObject(char const* name, nlohmann::json const& json) const;
+		virtual GPUProgram* LoadObject(char const* name, nlohmann::json const * json) const;
 		/** program loading from path */
 		virtual GPUProgram* LoadObject(FilePathParam const& path, char const* name = nullptr) const;
 
 		/** Generate a program from a json content */
-		virtual GPUProgram* GenProgramObject(nlohmann::json const& json) const;
+		virtual GPUProgram* GenProgramObject(nlohmann::json const * json) const;
 		/** Generate a program from an file */
 		virtual GPUProgram* GenProgramObject(FilePathParam const& path) const;
 

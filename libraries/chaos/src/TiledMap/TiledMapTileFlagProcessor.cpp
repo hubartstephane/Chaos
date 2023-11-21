@@ -101,7 +101,7 @@ namespace chaos
 			}
 		}
 
-		bool ComputeNeighbourFlagProcessor::SerializeIntoJSON(nlohmann::json& json) const
+		bool ComputeNeighbourFlagProcessor::SerializeIntoJSON(nlohmann::json * json) const
 		{
 			if (!TileFlagProcessor::SerializeIntoJSON(json))
 				return false;
@@ -111,7 +111,7 @@ namespace chaos
 			return true;
 		}
 
-		bool ComputeNeighbourFlagProcessor::SerializeFromJSON(nlohmann::json const& json)
+		bool ComputeNeighbourFlagProcessor::SerializeFromJSON(nlohmann::json const * json)
 		{
 			if (!TileFlagProcessor::SerializeFromJSON(json))
 				return false;
@@ -147,32 +147,36 @@ namespace chaos
 		//
 		//  => an array of simple objects (a single KEY-VALUE pair in each object)
 
-		bool SaveIntoJSON(nlohmann::json& json, ComputeCustomFlagProcessorEntry const& src)
+		bool DoSaveIntoJSON(nlohmann::json * json, ComputeCustomFlagProcessorEntry const& src)
 		{
-			if (!json.is_object())
-				json = nlohmann::json::object();
+			if (!PrepareSaveIntoJSON(json))
+				return false;
 			JSONTools::SetAttribute(json, src.type.c_str(), src.flag);
 			return true;
 		}
 
-		bool LoadFromJSON(nlohmann::json const& json, ComputeCustomFlagProcessorEntry& dst)
+		bool DoLoadFromJSON(JSONReadConfiguration config, ComputeCustomFlagProcessorEntry& dst)
 		{
-			if (!json.is_object())
-				return false;
-
-			auto it = json.begin();
-			if (it != json.end())
+			return JSONTools::ForEachSource(config, [&dst](nlohmann::json const * json)
 			{
-				try
+				if (!json->is_object())
+					return false;
+
+				auto it = json->begin();
+				if (it != json->end())
 				{
-					dst.flag = it.value().get<int>();
-					dst.type = it.key();
+					try
+					{
+						dst.flag = it.value().get<int>();
+						dst.type = it.key();
+						return true;
+					}
+					catch (...)
+					{
+					}
 				}
-				catch (...)
-				{
-				}
-			}
-			return true;
+				return false;			
+			});
 		}
 
 		void ComputeCustomFlagProcessor::Process(TileLayer* in_layer)
@@ -197,7 +201,7 @@ namespace chaos
 			}
 		}
 
-		bool ComputeCustomFlagProcessor::SerializeIntoJSON(nlohmann::json& json) const
+		bool ComputeCustomFlagProcessor::SerializeIntoJSON(nlohmann::json * json) const
 		{
 			if (!TileFlagProcessor::SerializeIntoJSON(json))
 				return false;
@@ -207,7 +211,7 @@ namespace chaos
 			return true;
 		}
 		
-		bool ComputeCustomFlagProcessor::SerializeFromJSON(nlohmann::json const& json)
+		bool ComputeCustomFlagProcessor::SerializeFromJSON(nlohmann::json const * json)
 		{
 			if (!TileFlagProcessor::SerializeFromJSON(json))
 				return false;

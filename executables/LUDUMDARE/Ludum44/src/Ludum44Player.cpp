@@ -172,7 +172,7 @@ void LudumPlayer::UpdatePlayerBuyingItem(float delta_time)
 		buylocked = false;
 }
 
-bool LudumPlayer::SerializeFromJSON(nlohmann::json const& json)
+bool LudumPlayer::SerializeFromJSON(nlohmann::json const * json)
 {
 	if (!chaos::Player::SerializeFromJSON(json))
 		return false;
@@ -183,7 +183,7 @@ bool LudumPlayer::SerializeFromJSON(nlohmann::json const& json)
 	return true;
 }
 
-bool LudumPlayer::SerializeIntoJSON(nlohmann::json & json) const
+bool LudumPlayer::SerializeIntoJSON(nlohmann::json * json) const
 {
 	if (!chaos::Player::SerializeIntoJSON(json))
 		return false;

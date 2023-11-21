@@ -3,16 +3,31 @@
 
 namespace chaos
 {
-
-	bool JSONSerializableInterface::SerializeIntoJSON(nlohmann::json& json) const
+	bool JSONSerializableInterface::SerializeFromJSON(JSONReadConfiguration config)
 	{
-		assert(json.is_object());
 		return true;
 	}
 
-	bool JSONSerializableInterface::SerializeFromJSON(nlohmann::json const& json)
+
+
+
+
+
+
+	bool JSONSerializableInterface::SerializeIntoJSON(nlohmann::json * json) const
 	{
-		assert(json.is_object());
+		if (json == nullptr)
+			return false;
+
+		assert(json->is_object());
+		return true;
+	}
+
+	bool JSONSerializableInterface::SerializeFromJSON(nlohmann::json const * json)
+	{
+		if (json == nullptr)
+			return false;
+		assert(json->is_object());
 		return true;
 	}
 

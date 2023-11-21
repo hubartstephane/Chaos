@@ -30,9 +30,9 @@ namespace chaos
 	protected:
 
 		/** read information from persistent storage */
-		virtual void OnReadPersistentData(nlohmann::json const& json) {}
+		virtual void OnReadPersistentData(nlohmann::json const * json) {}
 		/** write information into persistent storage */
-		virtual void OnWritePersistentData(nlohmann::json& json) const {}
+		virtual void OnWritePersistentData(nlohmann::json * json) const {}
 	};
 
 #endif

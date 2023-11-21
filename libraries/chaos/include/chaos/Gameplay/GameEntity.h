@@ -80,9 +80,9 @@ namespace chaos
 		virtual void SetAllocation(ParticleAllocationBase* in_allocation);
 
 		/** the processor may save its configuration into a JSON file */
-		virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
+		virtual bool SerializeIntoJSON(nlohmann::json * json) const override;
 		/** the processor may save its configuration from a JSON file */
-		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
+		virtual bool SerializeFromJSON(nlohmann::json const * json) override;
 
 		/** copy the bounding box from particle to entity or the opposite */
 		void SynchronizeData(bool particle_to_entity);

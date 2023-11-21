@@ -262,7 +262,7 @@ namespace chaos
 		return player_pawn->GetBoundingBox();
 	}
 
-	bool AutoRecenterToPlayerCameraComponent::SerializeIntoJSON(nlohmann::json& json) const
+	bool AutoRecenterToPlayerCameraComponent::SerializeIntoJSON(nlohmann::json * json) const
 	{
 		if (!CameraComponent::SerializeIntoJSON(json))
 			return false;
@@ -275,7 +275,7 @@ namespace chaos
 		return true;
 	}
 
-	bool AutoRecenterToPlayerCameraComponent::SerializeFromJSON(nlohmann::json const& json)
+	bool AutoRecenterToPlayerCameraComponent::SerializeFromJSON(nlohmann::json const * json)
 	{
 		if (!CameraComponent::SerializeFromJSON(json))
 			return false;

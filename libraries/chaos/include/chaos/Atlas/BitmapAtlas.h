@@ -135,7 +135,7 @@ namespace chaos
 		*/
 
 		template<typename PARENT_CLASS, typename CHARACTER_INFO_TYPE, typename META_WRAPPER_TYPE>
-		class /*CHAOS_API*/ FontInfoTemplate : public PARENT_CLASS
+		class FontInfoTemplate : public PARENT_CLASS
 		{
 		public:
 
@@ -179,7 +179,7 @@ namespace chaos
 		*/
 
 		template<typename PARENT_CLASS, typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE, typename META_WRAPPER_TYPE>
-		class /*CHAOS_API*/ FolderInfoTemplate : public PARENT_CLASS
+		class FolderInfoTemplate : public PARENT_CLASS
 		{
 		public:
 
@@ -265,7 +265,7 @@ namespace chaos
 		* AtlasBaseTemplate : a base template for AtlasBase and AtlasInput
 		*/
 		template<typename PARENT_CLASS, typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE>
-		class /*CHAOS_API*/ AtlasBaseTemplate : public PARENT_CLASS
+		class AtlasBaseTemplate : public PARENT_CLASS
 		{
 		public:
 
@@ -440,7 +440,7 @@ namespace chaos
 		protected:
 
 			/** load an atlas from a json object */
-			bool LoadAtlas(nlohmann::json const& json, boost::filesystem::path const& src_dir);
+			bool LoadAtlas(nlohmann::json const * json, boost::filesystem::path const& src_dir);
 			/** function to save bitmaps */
 			bool SaveAtlasBitmaps(boost::filesystem::path const& target_dir, boost::filesystem::path const& index_filename, boost::filesystem::path const& bitmap_filename) const;
 			/** function to save contents */
@@ -460,33 +460,33 @@ namespace chaos
 		* Some JSON utility functions
 		*/
 
-		CHAOS_API bool SaveIntoJSON(nlohmann::json& json, BitmapAnimationInfo const& src);
+		CHAOS_API bool DoSaveIntoJSON(nlohmann::json * json, BitmapAnimationInfo const& src);
 
-		CHAOS_API bool LoadFromJSON(nlohmann::json const& json, BitmapAnimationInfo& dst);
+		CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, BitmapAnimationInfo& dst);
 
-		CHAOS_API bool SaveIntoJSON(nlohmann::json& json, BitmapLayout const& src);
+		CHAOS_API bool DoSaveIntoJSON(nlohmann::json * json, BitmapLayout const& src);
 
-		CHAOS_API bool LoadFromJSON(nlohmann::json const& json, BitmapLayout& dst);
+		CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, BitmapLayout& dst);
 
-		CHAOS_API bool SaveIntoJSON(nlohmann::json& json, CharacterLayout const& src);
+		CHAOS_API bool DoSaveIntoJSON(nlohmann::json * json, CharacterLayout const& src);
 
-		CHAOS_API bool LoadFromJSON(nlohmann::json const& json, CharacterLayout& dst);
+		CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, CharacterLayout& dst);
 
-		CHAOS_API bool SaveIntoJSON(nlohmann::json& json, BitmapInfo const& src);
+		CHAOS_API bool DoSaveIntoJSON(nlohmann::json * json, BitmapInfo const& src);
 
-		CHAOS_API bool LoadFromJSON(nlohmann::json const& json, BitmapInfo& dst);
+		CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, BitmapInfo& dst);
 
-		CHAOS_API bool SaveIntoJSON(nlohmann::json& json, CharacterInfo const& src);
+		CHAOS_API bool DoSaveIntoJSON(nlohmann::json * json, CharacterInfo const& src);
 
-		CHAOS_API bool LoadFromJSON(nlohmann::json const& json, CharacterInfo& dst);
+		CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, CharacterInfo& dst);
 
-		CHAOS_API bool SaveIntoJSON(nlohmann::json& json, FolderInfo const& src);
+		CHAOS_API bool DoSaveIntoJSON(nlohmann::json * json, FolderInfo const& src);
 
-		CHAOS_API bool LoadFromJSON(nlohmann::json const& json, FolderInfo& dst);
+		CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, FolderInfo& dst);
 
-		CHAOS_API bool SaveIntoJSON(nlohmann::json& json, FontInfo const& src);
+		CHAOS_API bool DoSaveIntoJSON(nlohmann::json * json, FontInfo const& src);
 
-		CHAOS_API bool LoadFromJSON(nlohmann::json const& json, FontInfo& dst);
+		CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, FontInfo& dst);
 
 
 #endif

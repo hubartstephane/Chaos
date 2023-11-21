@@ -102,7 +102,7 @@ void LudumPlayer::SetPlayerLength(float in_length, bool increment)
 	}
 }
 
-bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, bool hot_reload)
+bool LudumPlayer::InitializeGameValues(nlohmann::json const * config, bool hot_reload)
 {
 	if (!chaos::Player::InitializeGameValues(config, hot_reload))
 		return false;

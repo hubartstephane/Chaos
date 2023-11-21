@@ -67,7 +67,7 @@ namespace chaos
 	{
 		/** returns the kind of implementation required for the particle rendering */
 		template<typename TRAIT_TYPE>
-		/*CHAOS_API*/ constexpr int GetParticleToPrimitivesImplementationType()
+		constexpr int GetParticleToPrimitivesImplementationType()
 		{
 			// the types used
 			using trait = TRAIT_TYPE;
@@ -127,7 +127,7 @@ namespace chaos
 
 		/** returns the kind of implementation required for the particle update */
 		template<typename TRAIT_TYPE>
-		/*CHAOS_API*/ constexpr int GetUpdateParticleImplementationFlags()
+		constexpr int GetUpdateParticleImplementationFlags()
 		{
 			using Flags = UpdateParticle_ImplementationFlags;
 

@@ -100,7 +100,7 @@ void GameHUDShroudLifeComponent::UpdateMesh()
 	mesh = DI.GetDynamicMesh();
 }
 
-bool GameHUDShroudLifeComponent::InitializeFromConfiguration(nlohmann::json const& config)
+bool GameHUDShroudLifeComponent::InitializeFromConfiguration(nlohmann::json const * config)
 {
 	if (!GameHUDMeshComponent::InitializeFromConfiguration(config))
 		return true;

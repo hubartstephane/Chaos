@@ -223,22 +223,22 @@ namespace chaos
 			objects[i]->OnLevelRestart();
 	}
 
-	bool TMLayerInstance::SerializeObjectListFromJSON(nlohmann::json const& json, char const * attribute_name, std::vector<shared_ptr<TMObject>> & result)
+	bool TMLayerInstance::SerializeObjectListFromJSON(nlohmann::json const * json, char const * attribute_name, std::vector<shared_ptr<TMObject>> & result)
 	{
 		// in "Objects" array, read all objects, search the ID and apply the data to dedicated object
 		if (nlohmann::json const* objects_json = JSONTools::GetArrayNode(json, attribute_name))
 		{
 			for (size_t i = 0; i < objects_json->size(); ++i)
 			{
-				if (nlohmann::json const* object_json = JSONTools::GetObjectNodeByIndex(*objects_json, i))
+				if (nlohmann::json const* object_json = JSONTools::GetObjectNodeByIndex(objects_json, i))
 				{
 					int object_id = 0;
-					if (JSONTools::GetAttribute(*object_json, "OBJECT_ID", object_id))
+					if (JSONTools::GetAttribute(object_json, "OBJECT_ID", object_id))
 					{
 						TMTrigger* trigger = FindObjectByID<TMTrigger>(object_id);
 						if (trigger != nullptr)
 						{
-							LoadFromJSON(*object_json, *trigger); // XXX : the indirection is important to avoid the creation of a new layer_instance
+							LoadFromJSON(object_json, *trigger); // XXX : the indirection is important to avoid the creation of a new layer_instance
 						}
 						else
 						{
@@ -251,7 +251,7 @@ namespace chaos
 		return true;
 	}
 
-	bool TMLayerInstance::SerializeFromJSON(nlohmann::json const& json)
+	bool TMLayerInstance::SerializeFromJSON(nlohmann::json const * json)
 	{
 		if (!JSONSerializableInterface::SerializeFromJSON(json))
 			return false;
@@ -260,7 +260,7 @@ namespace chaos
 		return true;
 	}
 
-	bool TMLayerInstance::SerializeIntoJSON(nlohmann::json& json) const
+	bool TMLayerInstance::SerializeIntoJSON(nlohmann::json * json) const
 	{
 		if (!JSONSerializableInterface::SerializeIntoJSON(json))
 			return false;

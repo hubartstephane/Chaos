@@ -10,27 +10,25 @@ namespace chaos
 		// Utility functions
 		// ========================================================================
 
-		bool LoadFromJSON(nlohmann::json const& json, AtlasGeneratorParams& dst)
+		bool DoLoadFromJSON(JSONReadConfiguration config, AtlasGeneratorParams& dst)
 		{
-			if (!json.is_object())
-				return false;
-			JSONTools::GetAttribute(json, "force_power_of_2", dst.force_power_of_2);
-			JSONTools::GetAttribute(json, "force_square", dst.force_square);
-			JSONTools::GetAttribute(json, "duplicate_image_border", dst.duplicate_image_border);
-			JSONTools::GetAttribute(json, "atlas_width", dst.atlas_width);
-			JSONTools::GetAttribute(json, "atlas_height", dst.atlas_height);
-			JSONTools::GetAttribute(json, "atlas_max_width", dst.atlas_max_width);
-			JSONTools::GetAttribute(json, "atlas_max_height", dst.atlas_max_height);
-			JSONTools::GetAttribute(json, "atlas_padding", dst.atlas_padding);
-			JSONTools::GetAttribute(json, "background_color", dst.background_color);
-			JSONTools::GetAttribute(json, "merge_params", dst.merge_params);
+			JSONTools::GetAttribute(config, "force_power_of_2", dst.force_power_of_2);
+			JSONTools::GetAttribute(config, "force_square", dst.force_square);
+			JSONTools::GetAttribute(config, "duplicate_image_border", dst.duplicate_image_border);
+			JSONTools::GetAttribute(config, "atlas_width", dst.atlas_width);
+			JSONTools::GetAttribute(config, "atlas_height", dst.atlas_height);
+			JSONTools::GetAttribute(config, "atlas_max_width", dst.atlas_max_width);
+			JSONTools::GetAttribute(config, "atlas_max_height", dst.atlas_max_height);
+			JSONTools::GetAttribute(config, "atlas_padding", dst.atlas_padding);
+			JSONTools::GetAttribute(config, "background_color", dst.background_color);
+			JSONTools::GetAttribute(config, "merge_params", dst.merge_params);
 			return true;
 		}
 
-		bool SaveIntoJSON(nlohmann::json& json, AtlasGeneratorParams const& src)
+		bool DoSaveIntoJSON(nlohmann::json * json, AtlasGeneratorParams const& src)
 		{
-			if (!json.is_object())
-				json = nlohmann::json::object();
+			if (!PrepareSaveIntoJSON(json))
+				return false;
 			JSONTools::SetAttribute(json, "force_power_of_2", src.force_power_of_2);
 			JSONTools::SetAttribute(json, "force_square", src.force_square);
 			JSONTools::SetAttribute(json, "duplicate_image_border", src.duplicate_image_border);

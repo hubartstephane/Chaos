@@ -207,7 +207,7 @@ chaos::GameHUD * LudumGame::DoCreatePlayingHUD()
 	return new LudumPlayingHUD();
 }
 
-bool LudumGame::InitializeGameValues(nlohmann::json const & config, bool hot_reload)
+bool LudumGame::InitializeGameValues(nlohmann::json const * config, bool hot_reload)
 {
 	if (!chaos::Game::InitializeGameValues(config, hot_reload))
 		return false;

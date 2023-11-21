@@ -54,7 +54,7 @@ namespace chaos
 	//
 
 	template<typename T, int dimension>
-	class /*CHAOS_API*/ SceneTransform
+	class SceneTransform
 	{
 		using vec_type = typename type_geometric<T, dimension>::vec_type;
 		using rot_type = typename type_geometric<T, dimension>::rot_type;

@@ -9,7 +9,7 @@
 // =================================================
 
 
-bool LudumPowerUp::InitializeFromConfiguration(char const * json_name, nlohmann::json const & config)
+bool LudumPowerUp::InitializeFromConfiguration(char const * json_name, nlohmann::json const * config)
 {
 	std::string cost_json_name = std::string("cost_") + json_name;
 	chaos::JSONTools::GetAttribute(config, cost_json_name.c_str(), life_cost);

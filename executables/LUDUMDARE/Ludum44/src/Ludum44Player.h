@@ -26,9 +26,9 @@ public:
 protected:
 
 	/** override */
-	virtual bool SerializeFromJSON(nlohmann::json const& json) override;
+	virtual bool SerializeFromJSON(nlohmann::json const * json) override;
 	/** override */
-	virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
+	virtual bool SerializeIntoJSON(nlohmann::json * json) const override;
 
 	/** override */
 	virtual void TickInternal(float delta_time) override;

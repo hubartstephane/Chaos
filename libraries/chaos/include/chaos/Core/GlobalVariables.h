@@ -37,7 +37,7 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 	 */
 
 	template<typename T>
-	class /*CHAOS_API*/ GlobalVariable : public GlobalVariableBase
+	class GlobalVariable : public GlobalVariableBase
 	{
 		friend class GlobalVariableManager;
 

@@ -162,10 +162,10 @@ namespace chaos
 		nlohmann::json json;
 		if (!JSONTools::LoadJSONFile(path, json, LoadFileFlag::RECURSIVE))
 			return true;
-		return InitializeFromConfiguration(json);
+		return InitializeFromConfiguration(&json);
 	}
 
-	bool GPUResourceManager::InitializeFromConfiguration(nlohmann::json const& config)
+	bool GPUResourceManager::InitializeFromConfiguration(nlohmann::json const * config)
 	{
 		if (!LoadTexturesFromConfiguration(config))
 			return false;
@@ -176,7 +176,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GPUResourceManager::LoadTexturesFromConfiguration(nlohmann::json const& config)
+	bool GPUResourceManager::LoadTexturesFromConfiguration(nlohmann::json const * config)
 	{
 		return LoadObjectsFromConfiguration<true>(
 			"textures",
@@ -184,7 +184,7 @@ namespace chaos
 			GPUTextureLoader(this));
 	}
 
-	bool GPUResourceManager::LoadProgramsFromConfiguration(nlohmann::json const& config)
+	bool GPUResourceManager::LoadProgramsFromConfiguration(nlohmann::json const * config)
 	{
 		return LoadObjectsFromConfiguration<true>(
 			"programs",
@@ -192,7 +192,7 @@ namespace chaos
 			GPUProgramLoader(this));
 	}
 
-	bool GPUResourceManager::LoadMaterialsFromConfiguration(nlohmann::json const& config)
+	bool GPUResourceManager::LoadMaterialsFromConfiguration(nlohmann::json const * config)
 	{
 		GPURenderMaterialLoaderReferenceSolver solver; // finalize the missing references
 

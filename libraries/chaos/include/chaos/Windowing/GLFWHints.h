@@ -45,9 +45,9 @@ namespace chaos
 		int stencil_bits = 8;
 	};
 
-	CHAOS_API bool SaveIntoJSON(nlohmann::json& json, GLFWHints const& src);
+	CHAOS_API bool DoSaveIntoJSON(nlohmann::json * json, GLFWHints const& src);
 
-	CHAOS_API bool LoadFromJSON(nlohmann::json const& json, GLFWHints& dst);
+	CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, GLFWHints& dst);
 
 #endif
 

@@ -69,7 +69,7 @@ bool LudumLevelInstance::Initialize(chaos::Game * in_game, chaos::Level * in_lev
 	return true;
 }
 
-bool LudumLevelInstance::SerializeFromJSON(nlohmann::json const& json)
+bool LudumLevelInstance::SerializeFromJSON(nlohmann::json const * json)
 {
 	if (!chaos::TMLevelInstance::SerializeFromJSON(json))
 		return false;
@@ -77,7 +77,7 @@ bool LudumLevelInstance::SerializeFromJSON(nlohmann::json const& json)
 	return true;
 }
 
-bool LudumLevelInstance::SerializeIntoJSON(nlohmann::json & json) const
+bool LudumLevelInstance::SerializeIntoJSON(nlohmann::json * json) const
 {
 	if (!chaos::TMLevelInstance::SerializeIntoJSON(json))
 		return false;

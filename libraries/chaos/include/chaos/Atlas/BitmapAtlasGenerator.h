@@ -184,9 +184,9 @@ namespace chaos
 		};
 
 		/** load from JSON */
-		CHAOS_API bool LoadFromJSON(nlohmann::json const& json, AtlasGeneratorParams& dst);
+		CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, AtlasGeneratorParams& dst);
 		/** save into JSON */
-		CHAOS_API bool SaveIntoJSON(nlohmann::json& json, AtlasGeneratorParams const& src);
+		CHAOS_API bool DoSaveIntoJSON(nlohmann::json * json, AtlasGeneratorParams const& src);
 
 
 #endif

@@ -194,7 +194,7 @@ namespace chaos
 		});
 	}
 
-	bool ImageProcessorOutline::SerializeIntoJSON(nlohmann::json& json) const
+	bool ImageProcessorOutline::SerializeIntoJSON(nlohmann::json * json) const
 	{
 		if (!ImageProcessor::SerializeIntoJSON(json))
 			return false;
@@ -205,7 +205,7 @@ namespace chaos
 		return true;
 	}
 
-	bool ImageProcessorOutline::SerializeFromJSON(nlohmann::json const& json)
+	bool ImageProcessorOutline::SerializeFromJSON(nlohmann::json const * json)
 	{
 		if (!ImageProcessor::SerializeFromJSON(json))
 			return false;
@@ -275,7 +275,7 @@ namespace chaos
 		});
 	}
 
-	bool ImageProcessorAddAlpha::SerializeIntoJSON(nlohmann::json& json) const
+	bool ImageProcessorAddAlpha::SerializeIntoJSON(nlohmann::json * json) const
 	{
 		if (!ImageProcessor::SerializeIntoJSON(json))
 			return false;
@@ -283,7 +283,7 @@ namespace chaos
 		return true;
 	}
 
-	bool ImageProcessorAddAlpha::SerializeFromJSON(nlohmann::json const& json)
+	bool ImageProcessorAddAlpha::SerializeFromJSON(nlohmann::json const * json)
 	{
 		if (!ImageProcessor::SerializeFromJSON(json))
 			return false;
@@ -395,7 +395,7 @@ namespace chaos
 #endif
 	}
 
-	bool ImageProcessorShadow::SerializeIntoJSON(nlohmann::json& json) const
+	bool ImageProcessorShadow::SerializeIntoJSON(nlohmann::json * json) const
 	{
 		if (!ImageProcessor::SerializeIntoJSON(json))
 			return false;
@@ -406,7 +406,7 @@ namespace chaos
 		return true;
 	}
 
-	bool ImageProcessorShadow::SerializeFromJSON(nlohmann::json const& json)
+	bool ImageProcessorShadow::SerializeFromJSON(nlohmann::json const * json)
 	{
 		if (!ImageProcessor::SerializeFromJSON(json))
 			return false;

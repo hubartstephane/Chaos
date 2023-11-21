@@ -74,7 +74,7 @@ namespace chaos
 		// ==========================================
 
 		template<typename T, PropertyType TYPE_ID>
-		class /*CHAOS_API*/ PropertyTemplate : public Property
+		class PropertyTemplate : public Property
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 

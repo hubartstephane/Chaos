@@ -27,7 +27,7 @@ namespace chaos
 
 		/** transform any object that have stream operator into a string */
 		template<typename T>
-		/*CHAOS_API*/ std::string ToString(T const & value)
+		std::string ToString(T const & value)
 		{
 			std::stringstream stream;
 			stream << value;
@@ -161,7 +161,7 @@ namespace chaos
 
 		/** string comparator class base */
 		template<typename COMPARE, int (&Func)(char const *, char const *)>
-		class /*CHAOS_API*/ RawStringCompareBase
+		class RawStringCompareBase
 		{
 		public:
 

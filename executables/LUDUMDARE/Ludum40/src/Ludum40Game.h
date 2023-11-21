@@ -57,7 +57,7 @@ public:
 
 protected:
 
-  void InitializeFromConfiguration(nlohmann::json const & config);
+  void InitializeFromConfiguration(nlohmann::json const * config);
 
 	void UpdateParticlesPosition(float delta_time, glm::vec2 delta_pos);
 
@@ -73,9 +73,9 @@ protected:
 
 
 
-	bool DoInitialize(boost::filesystem::path const & resource_path, boost::filesystem::path const & object_path, nlohmann::json const & json);
+	bool DoInitialize(boost::filesystem::path const & resource_path, boost::filesystem::path const & object_path, nlohmann::json const * json);
 
-	bool LoadObjectDefinition(nlohmann::json const & json);
+	bool LoadObjectDefinition(nlohmann::json const * json);
 
 	bool GenerateAtlas(boost::filesystem::path const & path);
 
@@ -83,7 +83,7 @@ protected:
 
 	bool InitializeSpriteManagers();
 
-	bool LoadSpriteLayerInfo(nlohmann::json const & json);
+	bool LoadSpriteLayerInfo(nlohmann::json const * json);
 
 	bool InitializeGamepadManager();
 

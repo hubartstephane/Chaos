@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	bool GameWindow::InitializeFromConfiguration(nlohmann::json const& config)
+	bool GameWindow::InitializeFromConfiguration(nlohmann::json const * config)
 	{
 		// super call
 		if (!Window::InitializeFromConfiguration(config))

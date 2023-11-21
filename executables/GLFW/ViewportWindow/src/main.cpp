@@ -11,7 +11,7 @@ class WindowOpenGLTest : public chaos::ViewportWindow
 
 protected:
 
-	virtual bool InitializeFromConfiguration(nlohmann::json const& config) override
+	virtual bool InitializeFromConfiguration(nlohmann::json const * config) override
 	{
 		if (!chaos::ViewportWindow::InitializeFromConfiguration(config))
 			return false;

@@ -185,7 +185,7 @@ bool Spawner::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::Tiled
 }
 
 
-bool Spawner::SerializeIntoJSON(nlohmann::json& json) const
+bool Spawner::SerializeIntoJSON(nlohmann::json * json) const
 {
 	if (!chaos::TMObject::SerializeIntoJSON(json))
 		return false;
@@ -202,7 +202,7 @@ bool Spawner::SerializeIntoJSON(nlohmann::json& json) const
 	return true;
 }
 
-bool Spawner::SerializeFromJSON(nlohmann::json const & json)
+bool Spawner::SerializeFromJSON(nlohmann::json const * json)
 {
 	if (!chaos::TMObject::SerializeFromJSON(json))
 		return false;

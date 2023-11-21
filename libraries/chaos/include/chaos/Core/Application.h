@@ -51,7 +51,7 @@ namespace chaos
 		boost::filesystem::path const& GetUserLocalTempPath() const { return userlocal_temp_path; }
 
 		/** get the configuration */
-		nlohmann::json const& GetConfiguration() const { return configuration; }
+		nlohmann::json const * GetConfiguration() const { return &configuration; }
 		/** get the configuration file path */
 		boost::filesystem::path GetConfigurationPath() const;
 
@@ -59,13 +59,13 @@ namespace chaos
 		template<typename ...PARAMS>
 		nlohmann::json const* GetPersistentDataStructure(PARAMS && ...params) const
 		{ 
-			return JSONTools::GetObjectNode(persistent_data, std::forward<PARAMS>(params)...);
+			return JSONTools::GetObjectNode(&persistent_data, std::forward<PARAMS>(params)...);
 		}
 		/** get the persistent data (writeable) */
 		template<typename ...PARAMS>
 		nlohmann::json * GetOrCreatePersistentDataStructure(PARAMS && ...params) const
 		{
-			return JSONTools::GetOrCreateObjectNode(persistent_data, std::forward<PARAMS>(params)...);
+			return JSONTools::GetOrCreateObjectNode(&persistent_data, std::forward<PARAMS>(params)...);
 		}
 		/** get the persistent data file path */
 		boost::filesystem::path GetPersistentDataPath() const;
@@ -131,9 +131,9 @@ namespace chaos
 		/** override */
 		virtual nlohmann::json const* GetPersistentReadStorage() const override;
 		/** override */
-		virtual void OnReadPersistentData(nlohmann::json const& json) override;
+		virtual void OnReadPersistentData(nlohmann::json const * json) override;
 		/** override */
-		virtual void OnWritePersistentData(nlohmann::json& json) const override;
+		virtual void OnWritePersistentData(nlohmann::json * json) const override;
 
 	protected:
 
@@ -182,7 +182,7 @@ namespace chaos
 	};
 
 	template<typename APPLICATION_TYPE, typename ...PARAMS>
-	/*CHAOS_API*/ int RunApplication(int argc, char** argv, char** env, PARAMS && ...params)
+	int RunApplication(int argc, char** argv, char** env, PARAMS && ...params)
 	{
 		shared_ptr<APPLICATION_TYPE> application = new APPLICATION_TYPE(std::forward<PARAMS>(params)...);
 		if (application != nullptr)

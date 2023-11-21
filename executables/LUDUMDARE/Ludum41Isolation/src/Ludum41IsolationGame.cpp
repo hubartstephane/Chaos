@@ -37,7 +37,7 @@ void LudumGame::OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode o
 		ludum_game_instance->OnInputModeChanged(new_mode, old_mode);
 }
 
-bool LudumGame::InitializeGameValues(nlohmann::json const & config, bool hot_reload)
+bool LudumGame::InitializeGameValues(nlohmann::json const * config, bool hot_reload)
 {
 	if (!chaos::Game::InitializeGameValues(config, hot_reload))
 		return false;
@@ -86,7 +86,7 @@ chaos::Level * LudumGame::DoLoadLevel(chaos::FilePathParam const & path)
 		return nullptr;
 
 	std::vector<std::string> lines;
-	if (!chaos::JSONTools::GetAttribute(level_content, "LINES", lines))
+	if (!chaos::JSONTools::GetAttribute(&level_content, "LINES", lines))
 		return nullptr;
 
 	LudumLevel * result = new LudumLevel;
@@ -143,13 +143,13 @@ chaos::Level * LudumGame::DoLoadLevel(chaos::FilePathParam const & path)
 	}
 
 	// get the music
-	chaos::JSONTools::GetAttribute(level_content, "MUSIC", result->music);
+	chaos::JSONTools::GetAttribute(&level_content, "MUSIC", result->music);
 	// get the background
-	chaos::JSONTools::GetAttribute(level_content, "BACKGROUND_MATERIAL", result->background_material);
-	chaos::JSONTools::GetAttribute(level_content, "BACKGROUND_TEXTURE", result->background_texture);
+	chaos::JSONTools::GetAttribute(&level_content, "BACKGROUND_MATERIAL", result->background_material);
+	chaos::JSONTools::GetAttribute(&level_content, "BACKGROUND_TEXTURE", result->background_texture);
 	// get the "dictionnary"
 	std::vector<std::string> dictionnary;
-	if (chaos::JSONTools::GetAttribute(level_content, "DICTIONNARY", dictionnary))
+	if (chaos::JSONTools::GetAttribute(&level_content, "DICTIONNARY", dictionnary))
 	{
 		for (std::string const & dictionnary_line : dictionnary)
 		{
@@ -163,7 +163,7 @@ chaos::Level * LudumGame::DoLoadLevel(chaos::FilePathParam const & path)
 	return result;
 }
 
-bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config)
+bool LudumGame::InitializeFromConfiguration(nlohmann::json const * config)
 {
 	if (!chaos::Game::InitializeFromConfiguration(config))
 		return false;
@@ -212,7 +212,7 @@ void LudumGame::ReplaceSpecialLetters(std::string & word) const
 	}
 }
 
-bool LudumGame::InitializeDictionnary(nlohmann::json const & config)
+bool LudumGame::InitializeDictionnary(nlohmann::json const * config)
 {
 	// detect whether the language is french
 

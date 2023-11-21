@@ -20,7 +20,7 @@ namespace chaos
     // ==============================================================
 
     template<typename ALLOCATION_TYPE>
-    class /*CHAOS_API*/ AutoCastedParticleAccessorBase
+    class AutoCastedParticleAccessorBase
     {
     public:
 

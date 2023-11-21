@@ -70,7 +70,7 @@ namespace chaos
 
 	bool Application::SavePersistentDataFile() const
 	{
-		return JSONTools::SaveJSONToFile(persistent_data, GetPersistentDataPath());
+		return JSONTools::SaveJSONToFile(&persistent_data, GetPersistentDataPath());
 	}
 	
 	boost::filesystem::path Application::GetPersistentDataPath() const
@@ -80,10 +80,10 @@ namespace chaos
 
 	bool Application::LoadClasses()
 	{
-		if (nlohmann::json const* classes_json = JSONTools::GetObjectNode(configuration, "classes"))
+		if (nlohmann::json const* classes_json = JSONTools::GetObjectNode(&configuration, "classes"))
 		{
 			std::string classes_directory;
-			if (JSONTools::GetAttribute(*classes_json, "classes_directory", classes_directory))
+			if (JSONTools::GetAttribute(classes_json, "classes_directory", classes_directory))
 			{
 				ClassLoader loader;
 				loader.LoadClassesInDirectory(ClassManager::GetDefaultInstance(), classes_directory);
@@ -139,7 +139,7 @@ namespace chaos
 		// display the directories to help debugging
 		bool dump_config = GlobalVariables::DumpConfigFile.Get();
 		if (dump_config)
-			JSONTools::DumpConfigFile(configuration);
+			JSONTools::DumpConfigFile(&configuration);
 		if (dump_config || GlobalVariables::ShowDirectories.Get() || GlobalVariables::ShowUserTempDirectory.Get())
 			WinTools::ShowFile(user_temp);
 		if (GlobalVariables::ShowDirectories.Get() || GlobalVariables::ShowInstalledResourcesDirectory.Get())
@@ -318,11 +318,11 @@ namespace chaos
 		return GetPersistentDataStructure("application");
 	}
 
-	void Application::OnReadPersistentData(nlohmann::json const& json)
+	void Application::OnReadPersistentData(nlohmann::json const * json)
 	{
 	}
 
-	void Application::OnWritePersistentData(nlohmann::json& json) const
+	void Application::OnWritePersistentData(nlohmann::json * json) const
 	{
 	}
 

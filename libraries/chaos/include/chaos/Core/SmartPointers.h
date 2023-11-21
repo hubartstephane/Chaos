@@ -154,7 +154,7 @@ namespace chaos
 	 */
 
 	template<typename T, typename POLICY>
-	class /*CHAOS_API*/ SmartPointerBase
+	class SmartPointerBase
 	{
 		friend class SharedPointerPolicy;
 		friend class WeakPointerPolicy;
@@ -316,13 +316,13 @@ namespace chaos
 	*/
 
 	template<typename T, typename POLICY, typename U>
-	/*CHAOS_API*/ bool operator == (SmartPointerBase<T, POLICY> const& src1, U* src2)
+	bool operator == (SmartPointerBase<T, POLICY> const& src1, U* src2)
 	{
 		return (src1.get() == src2);
 	}
 
 	template<typename T, typename POLICY, typename U>
-	/*CHAOS_API*/ bool operator == (U* src1, SmartPointerBase<T, POLICY> const& src2)
+	bool operator == (U* src1, SmartPointerBase<T, POLICY> const& src2)
 	{
 		return (src1 == src2.get());
 	}
@@ -332,13 +332,13 @@ namespace chaos
 	*/
 
 	template<typename T, typename POLICY>
-	/*CHAOS_API*/ bool operator == (SmartPointerBase<T, POLICY> const& src1, nullptr_t src2)
+	bool operator == (SmartPointerBase<T, POLICY> const& src1, nullptr_t src2)
 	{
 		return (src1.get() == src2);
 	}
 
 	template<typename T, typename POLICY>
-	/*CHAOS_API*/ bool operator == (nullptr_t src1, SmartPointerBase<T, POLICY> const& src2)
+	bool operator == (nullptr_t src1, SmartPointerBase<T, POLICY> const& src2)
 	{
 		return (src1 == src2.get());
 	}
@@ -348,7 +348,7 @@ namespace chaos
 	*/
 
 	template<typename T, typename POLICY, typename U, typename POLICY2>
-	/*CHAOS_API*/ bool operator == (SmartPointerBase<T, POLICY> const& src1, SmartPointerBase<U, POLICY2> const& src2)
+	bool operator == (SmartPointerBase<T, POLICY> const& src1, SmartPointerBase<U, POLICY2> const& src2)
 	{
 		return (src1.get() == src2.get());
 	}
@@ -358,7 +358,7 @@ namespace chaos
 	*/
 
 	template<typename T, typename POLICY>
-	/*CHAOS_API*/ void swap(SmartPointerBase<T, POLICY>& src1, SmartPointerBase<T, POLICY>& src2)
+	void swap(SmartPointerBase<T, POLICY>& src1, SmartPointerBase<T, POLICY>& src2)
 	{
 		src1.swap(src2);
 	}
@@ -368,13 +368,13 @@ namespace chaos
 	*/
 
 	template<typename T>
-	struct /*CHAOS_API*/ is_weak_ptr
+	struct is_weak_ptr
 	{
 		static constexpr bool value = false;
 	};
 
 	template<typename T>
-	struct /*CHAOS_API*/ is_weak_ptr<weak_ptr<T>>
+	struct is_weak_ptr<weak_ptr<T>>
 	{
 		static constexpr bool value = true;
 	};
@@ -387,13 +387,13 @@ namespace chaos
 	*/
 
 	template<typename T>
-	struct /*CHAOS_API*/ is_shared_ptr
+	struct is_shared_ptr
 	{
 		static constexpr bool value = false;
 	};
 
 	template<typename T>
-	struct /*CHAOS_API*/ is_shared_ptr<shared_ptr<T>>
+	struct is_shared_ptr<shared_ptr<T>>
 	{
 		static constexpr bool value = true;
 	};

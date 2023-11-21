@@ -58,9 +58,9 @@ protected:
 	/** override */
 	virtual bool Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, chaos::TMObjectReferenceSolver& reference_solver) override;
 
-	virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
+	virtual bool SerializeIntoJSON(nlohmann::json * json) const override;
 
-	virtual bool SerializeFromJSON(nlohmann::json const& json) override;
+	virtual bool SerializeFromJSON(nlohmann::json const * json) override;
 
 	void SpawnParticles(chaos::ParticleSpawner & spawner, int count);
 

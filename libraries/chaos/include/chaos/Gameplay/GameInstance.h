@@ -69,7 +69,7 @@ namespace chaos
 		SoundCategory const* GetSoundCategory() const;
 
 		/** initialization of the game instance */
-		virtual bool InitializeGameValues(nlohmann::json const& config, bool hot_reload);
+		virtual bool InitializeGameValues(nlohmann::json const * config, bool hot_reload);
 		/** called after game instance configuration has been (re)loaded */
 		virtual void OnGameValuesChanged(bool hot_reload);
 

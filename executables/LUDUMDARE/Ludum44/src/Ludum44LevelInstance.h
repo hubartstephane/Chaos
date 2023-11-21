@@ -32,9 +32,9 @@ protected:
 	virtual void CreateCameraComponents(chaos::Camera* camera, chaos::TMCameraTemplate* camera_template) override;
 
 	/** override */
-	bool SerializeFromJSON(nlohmann::json const& json) override;
+	bool SerializeFromJSON(nlohmann::json const * json) override;
 	/** override */
-	bool SerializeIntoJSON(nlohmann::json & json) const override;
+	bool SerializeIntoJSON(nlohmann::json * json) const override;
 
 protected:
 

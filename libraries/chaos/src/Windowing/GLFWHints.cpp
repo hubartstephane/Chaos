@@ -24,10 +24,10 @@ namespace chaos
 		glfwWindowHint(GLFW_ALPHA_BITS, 8);
 	}
 
-	bool SaveIntoJSON(nlohmann::json& json, GLFWHints const& src)
+	bool DoSaveIntoJSON(nlohmann::json * json, GLFWHints const& src)
 	{
-		if (!json.is_object())
-			json = nlohmann::json::object();
+		if (!PrepareSaveIntoJSON(json))
+			return false;
 		JSONTools::SetAttribute(json, "debug_context", src.debug_context);
 		JSONTools::SetAttribute(json, "major_version", src.major_version);
 		JSONTools::SetAttribute(json, "minor_version", src.minor_version);
@@ -41,20 +41,18 @@ namespace chaos
 		return true;
 	}
 
-	bool LoadFromJSON(nlohmann::json const& json, GLFWHints& dst)
+	bool DoLoadFromJSON(JSONReadConfiguration config, GLFWHints& dst)
 	{
-		if (!json.is_object())
-			return false;
-		JSONTools::GetAttribute(json, "debug_context", dst.debug_context);
-		JSONTools::GetAttribute(json, "major_version", dst.major_version);
-		JSONTools::GetAttribute(json, "minor_version", dst.minor_version);
-		JSONTools::GetAttribute(json, "refresh_rate", dst.refresh_rate);
-		JSONTools::GetAttribute(json, "opengl_profile", dst.opengl_profile);
-		JSONTools::GetAttribute(json, "samples", dst.samples);
-		JSONTools::GetAttribute(json, "double_buffer", dst.double_buffer);
-		JSONTools::GetAttribute(json, "depth_bits", dst.depth_bits);
-		JSONTools::GetAttribute(json, "stencil_bits", dst.stencil_bits);
-		JSONTools::GetAttribute(json, "unlimited_fps", dst.unlimited_fps);
+		JSONTools::GetAttribute(config, "debug_context", dst.debug_context);
+		JSONTools::GetAttribute(config, "major_version", dst.major_version);
+		JSONTools::GetAttribute(config, "minor_version", dst.minor_version);
+		JSONTools::GetAttribute(config, "refresh_rate", dst.refresh_rate);
+		JSONTools::GetAttribute(config, "opengl_profile", dst.opengl_profile);
+		JSONTools::GetAttribute(config, "samples", dst.samples);
+		JSONTools::GetAttribute(config, "double_buffer", dst.double_buffer);
+		JSONTools::GetAttribute(config, "depth_bits", dst.depth_bits);
+		JSONTools::GetAttribute(config, "stencil_bits", dst.stencil_bits);
+		JSONTools::GetAttribute(config, "unlimited_fps", dst.unlimited_fps);
 		return true;
 	}
 

@@ -34,7 +34,7 @@ namespace chaos
 
 	/** NamedInterfaceWrapper : this is a wrapper to ba able to use NamedInterface's static methods */
 	template<typename T>
-	class /*CHAOS_API*/ NamedInterfaceWrapper
+	class NamedInterfaceWrapper
 	{
 	public:
 
@@ -50,9 +50,9 @@ namespace chaos
 	};
 
 	/** function to serialize into JSON */
-	CHAOS_API bool SaveIntoJSON(nlohmann::json& json, NamedInterface const& src);
+	CHAOS_API bool DoSaveIntoJSON(nlohmann::json * json, NamedInterface const& src);
 	/** function to serialize from JSON */
-	CHAOS_API bool LoadFromJSON(nlohmann::json const& json, NamedInterface& dst);
+	CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, NamedInterface& dst);
 
 #endif
 

@@ -33,7 +33,7 @@ bool LudumPlayer::Initialize(chaos::GameInstance * in_game_instance)
 	return true;
 }
 
-bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, bool hot_reload)
+bool LudumPlayer::InitializeGameValues(nlohmann::json const * config, bool hot_reload)
 {
 	if (!Player::InitializeGameValues(config, hot_reload))
 		return false;

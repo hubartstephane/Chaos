@@ -457,7 +457,7 @@ protected:
 		return nullptr;
 	}
 
-	virtual bool InitializeFromConfiguration(nlohmann::json const& config) override
+	virtual bool InitializeFromConfiguration(nlohmann::json const * config) override
 	{
 		// super
 		if (!chaos::Window::InitializeFromConfiguration(config))

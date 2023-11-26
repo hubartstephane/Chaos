@@ -34,9 +34,9 @@ namespace chaos
 		/** override */
 		virtual box2 ApplyModifier(box2 const& src) const override;
 		/** override */
-		virtual bool SerializeIntoJSON(nlohmann::json& json) const;
+		virtual bool SerializeIntoJSON(nlohmann::json * json) const;
 		/** override */
-		virtual bool SerializeFromJSON(nlohmann::json const& json);
+		virtual bool SerializeFromJSON(nlohmann::json const * json);
 
 	protected:
 

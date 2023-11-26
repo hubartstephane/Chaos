@@ -115,7 +115,7 @@ namespace chaos
 		return result;
 	}
 
-	bool GameHUDComponent::InitializeFromConfiguration(nlohmann::json const& config)
+	bool GameHUDComponent::InitializeFromConfiguration(nlohmann::json const * config)
 	{
 		bool visible = true;
 		JSONTools::GetAttribute(config, "visible", visible);
@@ -188,7 +188,7 @@ namespace chaos
 	{
 	}
 
-	bool GameHUDTextComponent::InitializeFromConfiguration(nlohmann::json const& config)
+	bool GameHUDTextComponent::InitializeFromConfiguration(nlohmann::json const * config)
 	{
 		if (!GameHUDMeshComponent::InitializeFromConfiguration(config))
 			return true;
@@ -444,7 +444,7 @@ namespace chaos
 		final_params.default_color = (cached_value >= 10.0f) ? normal_color : final_color;
 	}
 
-	bool GameHUDTimeoutComponent::InitializeFromConfiguration(nlohmann::json const& config)
+	bool GameHUDTimeoutComponent::InitializeFromConfiguration(nlohmann::json const * config)
 	{
 		if (!GameHUDCacheValueTextComponent<float>::InitializeFromConfiguration(config))
 			return true;
@@ -458,7 +458,7 @@ namespace chaos
 	// GameHUDLifeComponent
 	// ====================================================================
 
-	bool GameHUDLifeComponent::InitializeFromConfiguration(nlohmann::json const& config)
+	bool GameHUDLifeComponent::InitializeFromConfiguration(nlohmann::json const * config)
 	{
 		if (!GameHUDMeshComponent::InitializeFromConfiguration(config))
 			return true;
@@ -705,7 +705,7 @@ namespace chaos
 		should_update_mesh = true;
 	}
 
-	bool GameHUDDebugValuesComponent::InitializeFromConfiguration(nlohmann::json const& config)
+	bool GameHUDDebugValuesComponent::InitializeFromConfiguration(nlohmann::json const * config)
 	{
 		if (!GameHUDMeshComponent::InitializeFromConfiguration(config))
 			return true;

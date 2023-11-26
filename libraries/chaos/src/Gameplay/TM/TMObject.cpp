@@ -35,7 +35,7 @@ namespace chaos
 		return true;
 	}
 
-	bool TMObject::SerializeFromJSON(nlohmann::json const& json)
+	bool TMObject::SerializeFromJSON(nlohmann::json const * json)
 	{
 		if (!GameEntity::SerializeFromJSON(json))
 			return false;
@@ -45,7 +45,7 @@ namespace chaos
 		return true;
 	}
 
-	bool TMObject::SerializeIntoJSON(nlohmann::json& json) const
+	bool TMObject::SerializeIntoJSON(nlohmann::json * json) const
 	{
 		if (!GameEntity::SerializeIntoJSON(json))
 			return false;
@@ -92,7 +92,7 @@ namespace chaos
 		return true;
 	}
 
-	bool TMTrigger::SerializeFromJSON(nlohmann::json const& json)
+	bool TMTrigger::SerializeFromJSON(nlohmann::json const * json)
 	{
 		if (!TMObject::SerializeFromJSON(json))
 			return false;
@@ -103,7 +103,7 @@ namespace chaos
 		return true;
 	}
 
-	bool TMTrigger::SerializeIntoJSON(nlohmann::json& json) const
+	bool TMTrigger::SerializeIntoJSON(nlohmann::json * json) const
 	{
 		if (!TMObject::SerializeIntoJSON(json))
 			return false;
@@ -189,7 +189,7 @@ namespace chaos
 		return true;
 	}
 
-	bool TMPlayerStart::SerializeFromJSON(nlohmann::json const& json)
+	bool TMPlayerStart::SerializeFromJSON(nlohmann::json const * json)
 	{
 		if (!TMObject::SerializeFromJSON(json))
 			return false;
@@ -197,7 +197,7 @@ namespace chaos
 		return true;
 	}
 
-	bool TMPlayerStart::SerializeIntoJSON(nlohmann::json& json) const
+	bool TMPlayerStart::SerializeIntoJSON(nlohmann::json * json) const
 	{
 		if (!TMObject::SerializeIntoJSON(json))
 			return false;
@@ -227,7 +227,7 @@ namespace chaos
 		return true;
 	}
 
-	bool TMNotificationTrigger::SerializeFromJSON(nlohmann::json const& json)
+	bool TMNotificationTrigger::SerializeFromJSON(nlohmann::json const * json)
 	{
 		if (!TMTrigger::SerializeFromJSON(json))
 			return false;
@@ -238,7 +238,7 @@ namespace chaos
 		return true;
 	}
 
-	bool TMNotificationTrigger::SerializeIntoJSON(nlohmann::json& json) const
+	bool TMNotificationTrigger::SerializeIntoJSON(nlohmann::json * json) const
 	{
 		if (!TMTrigger::SerializeIntoJSON(json))
 			return false;
@@ -311,7 +311,7 @@ namespace chaos
 		return true;
 	}
 
-	bool TMSoundTrigger::SerializeFromJSON(nlohmann::json const& json)
+	bool TMSoundTrigger::SerializeFromJSON(nlohmann::json const * json)
 	{
 		if (!TMTrigger::SerializeFromJSON(json))
 			return false;
@@ -324,7 +324,7 @@ namespace chaos
 		return true;
 	}
 
-	bool TMSoundTrigger::SerializeIntoJSON(nlohmann::json& json) const
+	bool TMSoundTrigger::SerializeIntoJSON(nlohmann::json * json) const
 	{
 		if (!TMTrigger::SerializeIntoJSON(json))
 			return false;
@@ -435,7 +435,7 @@ namespace chaos
 		return true;
 	}
 
-	bool TMChangeLevelTrigger::SerializeFromJSON(nlohmann::json const& json)
+	bool TMChangeLevelTrigger::SerializeFromJSON(nlohmann::json const * json)
 	{
 		if (!TMTrigger::SerializeFromJSON(json))
 			return false;
@@ -444,7 +444,7 @@ namespace chaos
 		return true;
 	}
 
-	bool TMChangeLevelTrigger::SerializeIntoJSON(nlohmann::json& json) const
+	bool TMChangeLevelTrigger::SerializeIntoJSON(nlohmann::json * json) const
 	{
 		if (!TMTrigger::SerializeIntoJSON(json))
 			return false;

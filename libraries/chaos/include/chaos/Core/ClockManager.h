@@ -389,12 +389,12 @@ namespace chaos
 		bool GetTickEventsEnabled() const { return tick_events; }
 
 		/** initialization of the manager from configuration file */
-		virtual void InitializeFromConfiguration(nlohmann::json const& config);
+		virtual void InitializeFromConfiguration(nlohmann::json const * config);
 
 		/** the processor may save its configuration into a JSON file */
-		virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
+		virtual bool SerializeIntoJSON(nlohmann::json * json) const override;
 		/** the processor may save its configuration from a JSON file */
-		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
+		virtual bool SerializeFromJSON(nlohmann::json const * json) override;
 
 	protected:
 

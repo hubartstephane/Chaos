@@ -119,7 +119,7 @@ namespace chaos
      */
 
     template<typename VERTEX_TYPE>
-    class /*CHAOS_API*/ PrimitiveOutput : public PrimitiveOutputBase
+    class PrimitiveOutput : public PrimitiveOutputBase
     {
     public:
 
@@ -239,17 +239,17 @@ namespace chaos
      */
 
     template<typename VERTEX_TYPE>
-    /*CHAOS_API*/ void DrawLine(PrimitiveOutput<VERTEX_TYPE>& output, glm::vec2 const& p1, glm::vec2 const& p2, glm::vec4 const& color);
+    void DrawLine(PrimitiveOutput<VERTEX_TYPE>& output, glm::vec2 const& p1, glm::vec2 const& p2, glm::vec4 const& color);
 
     template<typename VERTEX_TYPE>
-    /*CHAOS_API*/ void DrawBox(PrimitiveOutput<VERTEX_TYPE>& output, obox2 const& b, glm::vec4 const& color, bool fill);
+    void DrawBox(PrimitiveOutput<VERTEX_TYPE>& output, obox2 const& b, glm::vec4 const& color, bool fill);
 
     template<typename VERTEX_TYPE>
-    /*CHAOS_API*/ void DrawSphere(PrimitiveOutput<VERTEX_TYPE>& output, sphere2 const& s, glm::vec4 const& color, bool fill);
+    void DrawSphere(PrimitiveOutput<VERTEX_TYPE>& output, sphere2 const& s, glm::vec4 const& color, bool fill);
 
     /** text creation */
     template<typename VERTEX_TYPE>
-    /*CHAOS_API*/ QuadPrimitive<VERTEX_TYPE> DrawText(PrimitiveOutput<VERTEX_TYPE>& output, char const* in_text, ParticleTextGenerator::GeneratorParams const& params = {}, ParticleTextGenerator::CreateTextAllocationParams const& allocation_params = {}, ParticleCorners* out_bounding_box = nullptr);
+    QuadPrimitive<VERTEX_TYPE> DrawText(PrimitiveOutput<VERTEX_TYPE>& output, char const* in_text, ParticleTextGenerator::GeneratorParams const& params = {}, ParticleTextGenerator::CreateTextAllocationParams const& allocation_params = {}, ParticleCorners* out_bounding_box = nullptr);
 
 
 #else // => defined CHAOS_TEMPLATE_IMPLEMENTATION

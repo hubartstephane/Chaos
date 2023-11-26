@@ -19,7 +19,7 @@ namespace chaos
      // XXX : use CONST/NON CONST for TYPE for const_iterator/non_const_iterator
 
     template<typename TYPE, int DIRECTION>
-    class /*CHAOS_API*/ RawDataBufferIteratorBase
+    class RawDataBufferIteratorBase
     {
         using type = TYPE;
 
@@ -158,14 +158,14 @@ namespace chaos
     // ==============================================================
 
     template<typename TYPE, int DIRECTION>
-    /*CHAOS_API*/ RawDataBufferIteratorBase<TYPE, DIRECTION> operator + (RawDataBufferIteratorBase<TYPE, DIRECTION> const& src, size_t count)
+    RawDataBufferIteratorBase<TYPE, DIRECTION> operator + (RawDataBufferIteratorBase<TYPE, DIRECTION> const& src, size_t count)
     {
         RawDataBufferIteratorBase<TYPE, DIRECTION> result = src;
         return (result += count);
     }
 
     template<typename TYPE, int DIRECTION>
-    /*CHAOS_API*/ RawDataBufferIteratorBase<TYPE, DIRECTION> operator - (RawDataBufferIteratorBase<TYPE, DIRECTION> const& src, size_t count)
+    RawDataBufferIteratorBase<TYPE, DIRECTION> operator - (RawDataBufferIteratorBase<TYPE, DIRECTION> const& src, size_t count)
     {
         RawDataBufferIteratorBase<TYPE, DIRECTION> result = src;
         return (result -= count);

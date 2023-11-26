@@ -7,7 +7,7 @@ namespace chaos
 		namespace details
 		{
 			template<typename VECTOR, typename IT, typename VALUE, typename COMPARE>
-			/*CHAOS_API*/ IT FindSortedVector(VECTOR& v, IT b, IT e, VALUE value, COMPARE compare)
+			IT FindSortedVector(VECTOR& v, IT b, IT e, VALUE value, COMPARE compare)
 			{
 				// early exit
 				if (e < b)
@@ -37,7 +37,7 @@ namespace chaos
 
 		/** utility function that search in a sorted vector an element based on a value and a compare function that gives whether the direction to search next (0 : found, < 0 : before, > 0 : next) */
 		template<typename VECTOR, typename VALUE, typename COMPARE>
-		/*CHAOS_API*/ auto FindSortedVector(VECTOR& v, VALUE value, COMPARE compare)
+		auto FindSortedVector(VECTOR& v, VALUE value, COMPARE compare)
 		{
 			if (v.begin() == v.end())
 				return v.end();

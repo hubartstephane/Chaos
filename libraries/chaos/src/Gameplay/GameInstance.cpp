@@ -193,7 +193,7 @@ namespace chaos
 		game = in_game;
 
 		// initialize from configuration
-		if (!InitializeGameValues(in_game->game_instance_configuration, false)) // false for not hot reload
+		if (!InitializeGameValues(&in_game->game_instance_configuration, false)) // false for not hot reload
 			return false;
 		OnGameValuesChanged(false);
 
@@ -376,17 +376,17 @@ namespace chaos
 		// XXX : this is important that it is first so we can test LEVEL INDEX correspond to the level
 		LevelInstance const* level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
-			if (!SaveIntoJSON(checkpoint->level_save, *level_instance))
+			if (!SaveIntoJSON(&checkpoint->level_save, *level_instance))
 				return false;
 
-		WinTools::CopyStringToClipboard(checkpoint->level_save.dump(2).c_str());
+		//WinTools::CopyStringToClipboard(checkpoint->level_save.dump(2).c_str());
 
 
 
 		// save player data
 		Player const* player = GetPlayer(0);
 		if (player != nullptr)
-			if (!SaveIntoJSON(checkpoint->player_save, *player))
+			if (!SaveIntoJSON(&checkpoint->player_save, *player))
 				return false;
 
 		// save the clocks
@@ -408,22 +408,22 @@ namespace chaos
 		// XXX : this is important that it is first so we can test LEVEL INDEX correspond to the level
 		LevelInstance * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
-			if (!LoadFromJSON(checkpoint->level_save, *level_instance)) // XXX : indirection is important to avoid a reallocation the object
+			if (!LoadFromJSON(&checkpoint->level_save, *level_instance)) // XXX : indirection is important to avoid a reallocation the object
 				return false;
 
 		// load player data
 		Player * player = GetPlayer(0);
 		if (player != nullptr)
-			if (!LoadFromJSON(checkpoint->player_save, *player)) // XXX : indirection is important to avoid a reallocation the object
+			if (!LoadFromJSON(&checkpoint->player_save, *player)) // XXX : indirection is important to avoid a reallocation the object
 				return false;
 
 		// load the clocks
 #if 0
 		if (main_clock != nullptr)
-			if (!LoadFromJSON(checkpoint->main_clock_save, *main_clock)) // XXX : indirection is important to avoid a reallocation the object
+			if (!LoadFromJSON(&checkpoint->main_clock_save, *main_clock)) // XXX : indirection is important to avoid a reallocation the object
 				return false;
 		if (main_clock != nullptr)
-			if (!LoadFromJSON(checkpoint->game_clock_save, *game_clock)) // XXX : indirection is important to avoid a reallocation the object
+			if (!LoadFromJSON(&checkpoint->game_clock_save, *game_clock)) // XXX : indirection is important to avoid a reallocation the object
 				return false;
 #endif
 
@@ -465,7 +465,7 @@ namespace chaos
 		return sound_category.get();
 	}
 
-	bool GameInstance::InitializeGameValues(nlohmann::json const& config, bool hot_reload)
+	bool GameInstance::InitializeGameValues(nlohmann::json const * config, bool hot_reload)
 	{
 		// capture the player configuration
 		nlohmann::json const* p_config = JSONTools::GetObjectNode(config, "player");
@@ -485,7 +485,7 @@ namespace chaos
 			Player* player = players[i].get();
 			if (player == nullptr)
 				continue;
-			if (player->InitializeGameValues(player_configuration, hot_reload))
+			if (player->InitializeGameValues(&player_configuration, hot_reload))
 				player->OnGameValuesChanged(hot_reload);
 		}
 	}

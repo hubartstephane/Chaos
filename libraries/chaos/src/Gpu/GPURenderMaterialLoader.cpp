@@ -72,7 +72,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GPURenderMaterialLoader::InitializeProgramFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json) const
+	bool GPURenderMaterialLoader::InitializeProgramFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const * json) const
 	{
 		// does the JSON have a "program" string ?
 		std::string program_name;
@@ -85,19 +85,19 @@ namespace chaos
 			return false;
 
 		// does the object has a member : "name" ? (this can be an inplace program defined => only return if we found the corresponding resource)
-		if (JSONTools::GetAttribute(*json_program, "name", program_name))
+		if (JSONTools::GetAttribute(json_program, "name", program_name))
 			if (InitializeProgramFromName(material_info, program_name.c_str()))
 				return true;
 
 		// does the object has a "path" member ?
 		boost::filesystem::path program_path;
-		if (JSONTools::GetAttribute(*json_program, "path", program_path))
+		if (JSONTools::GetAttribute(json_program, "path", program_path))
 			if (InitializeProgramFromPath(material_info, program_path))
 				return true;
 
 		// inplace declared program
 		GPUProgramLoader program_loader(manager);
-		GPUProgram * program = program_loader.LoadObject(nullptr, *json_program);
+		GPUProgram * program = program_loader.LoadObject(nullptr, json_program);
 		if (program == nullptr || program->GetProgramType() != GPUProgramType::RENDER)
 			return false;
 
@@ -129,8 +129,11 @@ namespace chaos
 		return true;
 	}
 
-	bool GPURenderMaterialLoader::InitializeTexturesFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json) const
+	bool GPURenderMaterialLoader::InitializeTexturesFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const * json) const
 	{
+		// early exit
+		if (json == nullptr)
+			return false;
 		// search the texture object
 		nlohmann::json const * json_textures = JSONTools::GetObjectNode(json, "textures");
 		if (json_textures == nullptr)
@@ -158,7 +161,7 @@ namespace chaos
 
 			// does the object have a "Name" => try to find already loaded texture ?
 			std::string texture_name;
-			if (JSONTools::GetAttribute(*it, "name", texture_name))
+			if (JSONTools::GetAttribute(&(*it), "name", texture_name))
 			{
 				if (!texture_name.empty())
 					if (InitializeTextureFromName(material_info, texture_uniform_name.c_str(), texture_name.c_str()))
@@ -167,13 +170,13 @@ namespace chaos
 
 			// does the object have a "Path" => try to find already loaded texture or load the texture
 			boost::filesystem::path texture_path;
-			if (JSONTools::GetAttribute(*it, "path", texture_path))
+			if (JSONTools::GetAttribute(&(*it), "path", texture_path))
 				if (InitializeTextureFromPath(material_info, texture_uniform_name.c_str(), texture_path))
 					continue;
 
 			// inplace declared texture
 			GPUTextureLoader texture_loader(manager);
-			GPUTexture * texture = texture_loader.LoadObject(nullptr, *it);
+			GPUTexture * texture = texture_loader.LoadObject(nullptr, &(*it));
 			if (texture == nullptr)
 				continue;
 			material_info->uniform_provider.AddTexture(texture_uniform_name.c_str(), texture);
@@ -182,22 +185,22 @@ namespace chaos
 	}
 
 	template<typename VECTOR_TYPE>
-	static bool DoAddUniformVectorToRenderMaterial(GPURenderMaterialInfo * material_info, char const * uniform_name, nlohmann::json const & json, VECTOR_TYPE & value)
+	static bool DoAddUniformVectorToRenderMaterial(GPURenderMaterialInfo * material_info, char const * uniform_name, nlohmann::json const * json, VECTOR_TYPE & value)
 	{
-		size_t count = json.size();
+		size_t count = json->size();
 		for (size_t i = 0; i < count; ++i)
-			value[i] = json[i].get<typename VECTOR_TYPE::value_type>();
+			value[i] = json->operator[](i).get<typename VECTOR_TYPE::value_type>();
 		material_info->uniform_provider.AddVariable(uniform_name, value);
 		return true;
 	}
 
 	template<typename SCALAR_TYPE>
-	static bool AddUniformVectorToRenderMaterial(GPURenderMaterialInfo * material_info, char const * uniform_name, nlohmann::json const & json)
+	static bool AddUniformVectorToRenderMaterial(GPURenderMaterialInfo * material_info, char const * uniform_name, nlohmann::json const * json)
 	{
-		size_t count = json.size();
+		size_t count = json->size();
 		if (count == 1)
 		{
-			material_info->uniform_provider.AddVariable(uniform_name, json[0].get<SCALAR_TYPE>());
+			material_info->uniform_provider.AddVariable(uniform_name, json->operator[](0).get<SCALAR_TYPE>());
 			return true;
 		}
 		if (count == 2)
@@ -218,25 +221,25 @@ namespace chaos
 		return false;
 	}
 
-	bool GPURenderMaterialLoader::AddUniformToRenderMaterial(GPURenderMaterialInfo * material_info, char const * uniform_name, nlohmann::json const & json) const
+	bool GPURenderMaterialLoader::AddUniformToRenderMaterial(GPURenderMaterialInfo * material_info, char const * uniform_name, nlohmann::json const * json) const
 	{
 		// is the uniform a integer ?
-		if (json.is_number_integer())
+		if (json->is_number_integer())
 		{
-			material_info->uniform_provider.AddVariable(uniform_name, json.get<int>());
+			material_info->uniform_provider.AddVariable(uniform_name, json->get<int>());
 			return true;
 		}
 		// is the uniform a number ?
-		if (json.is_number())
+		if (json->is_number())
 		{
-			material_info->uniform_provider.AddVariable(uniform_name, json.get<float>());
+			material_info->uniform_provider.AddVariable(uniform_name, json->get<float>());
 			return true;
 		}
 		// is the uniform an array of numbers
-		if (json.is_array())
+		if (json->is_array())
 		{
 			// only accept array of numbers. Search the type
-			size_t count = json.size();
+			size_t count = json->size();
 			if (count == 0)
 				return false;
 			if (count > 4) // only vectors for moment
@@ -247,8 +250,8 @@ namespace chaos
 			for (size_t i = 0; i < count; ++i)
 			{
 				// detect variable types
-				bool integer = json[i].is_number_integer();
-				bool real    = json[i].is_number_float();
+				bool integer = json->operator [](i).is_number_integer();
+				bool real    = json->operator [](i).is_number_float();
 				if (!integer && !real) // only types accepted
 					return false;
 				// promotion
@@ -265,8 +268,11 @@ namespace chaos
 		return false;
 	}
 
-	bool GPURenderMaterialLoader::InitializeUniformsFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json) const
+	bool GPURenderMaterialLoader::InitializeUniformsFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const * json) const
 	{
+		// early exit
+		if (json == nullptr)
+			return false;
 		// search the uniform object
 		nlohmann::json const * json_uniforms = JSONTools::GetObjectNode(json, "uniforms");
 		if (json_uniforms == nullptr)
@@ -276,15 +282,15 @@ namespace chaos
 		{
 			std::string const & uniform_name = it.key();
 			if (!uniform_name.empty())
-				AddUniformToRenderMaterial(material_info, uniform_name.c_str(), *it);
+				AddUniformToRenderMaterial(material_info, uniform_name.c_str(), &(*it));
 		}
 		return true;
 	}
 
-	bool GPURenderMaterialLoader::InitializeRenderPassesFromJSON(GPURenderMaterial * render_material, GPURenderMaterialInfo * material_info, nlohmann::json const & json) const
+	bool GPURenderMaterialLoader::InitializeRenderPassesFromJSON(GPURenderMaterial * render_material, GPURenderMaterialInfo * material_info, nlohmann::json const * json) const
 	{
 		// iterate over all properties
-		for (nlohmann::json::const_iterator it = json.begin(); it != json.end(); it++)
+		for (nlohmann::json::const_iterator it = json->begin(); it != json->end(); it++)
 		{
 			// a renderpass must be an object
 			if (!it->is_object())
@@ -299,7 +305,7 @@ namespace chaos
 			GPURenderMaterialInfo * other_material_info = new GPURenderMaterialInfo;
 			if (other_material_info == nullptr)
 				continue;
-			if (!InitializeMaterialInfoFromJSON(render_material, other_material_info, it.value()))
+			if (!InitializeMaterialInfoFromJSON(render_material, other_material_info, &it.value()))
 			{
 				delete (other_material_info);
 				continue;
@@ -317,12 +323,12 @@ namespace chaos
 		return true;
 	}
 
-	bool GPURenderMaterialLoader::InitializeMaterialInfoFromJSON(GPURenderMaterial * render_material, GPURenderMaterialInfo * material_info, nlohmann::json const & json) const
+	bool GPURenderMaterialLoader::InitializeMaterialInfoFromJSON(GPURenderMaterial * render_material, GPURenderMaterialInfo * material_info, nlohmann::json const * json) const
 	{
 		assert(render_material != nullptr);
 		assert(material_info != nullptr);
 
-		if (!json.is_object())
+		if (!json->is_object())
 			return false;
 
 		// search material parent
@@ -359,10 +365,10 @@ namespace chaos
 		return (manager != nullptr && request.FindObject(manager->render_materials) != nullptr);
 	}
 
-	GPURenderMaterial * GPURenderMaterialLoader::LoadObject(char const * name, nlohmann::json const & json) const
+	GPURenderMaterial * GPURenderMaterialLoader::LoadObject(char const * name, nlohmann::json const * json) const
 	{
 		// check for name
-		if (!CheckResourceName(nullptr, name, &json))
+		if (!CheckResourceName(nullptr, name, json))
 			return nullptr;
 
 		// indirect call
@@ -399,7 +405,7 @@ namespace chaos
 		// the file for material is in JSON format
 		nlohmann::json json;
 		if (JSONTools::LoadJSONFile(path, json, LoadFileFlag::RECURSIVE))
-			return LoadObject(nullptr, json);
+			return LoadObject(nullptr, &json);
 		return nullptr;
 	}
 

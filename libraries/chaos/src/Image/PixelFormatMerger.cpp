@@ -8,22 +8,19 @@ namespace chaos
 	// PixelFormatMergeParams methods
 	// ==============================================================================================
 
-	bool LoadFromJSON(nlohmann::json const& json, PixelFormatMergeParams& dst)
+	bool DoLoadFromJSON(JSONReadConfiguration config, PixelFormatMergeParams& dst)
 	{
-		if (!json.is_object())
-			return false;
-
-		JSONTools::GetAttribute(json, "pixel_format", dst.pixel_format);
-		JSONTools::GetAttribute(json, "upgrade_pixel_format", dst.upgrade_pixel_format);
-		JSONTools::GetAttribute(json, "accept_luminance", dst.accept_luminance);
-		JSONTools::GetAttribute(json, "accept_float", dst.accept_float);
+		JSONTools::GetAttribute(config, "pixel_format", dst.pixel_format);
+		JSONTools::GetAttribute(config, "upgrade_pixel_format", dst.upgrade_pixel_format);
+		JSONTools::GetAttribute(config, "accept_luminance", dst.accept_luminance);
+		JSONTools::GetAttribute(config, "accept_float", dst.accept_float);
 		return true;
 	}
 
-	bool SaveIntoJSON(nlohmann::json& json, PixelFormatMergeParams const& src)
+	bool DoSaveIntoJSON(nlohmann::json * json, PixelFormatMergeParams const& src)
 	{
-		if (!json.is_object())
-			json = nlohmann::json::object();
+		if (!PrepareSaveIntoJSON(json))
+			return false;
 		JSONTools::SetAttribute(json, "pixel_format", src.pixel_format);
 		JSONTools::SetAttribute(json, "upgrade_pixel_format", src.upgrade_pixel_format);
 		JSONTools::SetAttribute(json, "accept_luminance", src.accept_luminance);

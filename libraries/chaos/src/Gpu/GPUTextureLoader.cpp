@@ -5,9 +5,9 @@ namespace chaos
 {
 
 
-	GPUTexture * GPUTextureLoader::LoadObject(char const * name, nlohmann::json const & json, GenTextureParameters const & parameters) const
+	GPUTexture * GPUTextureLoader::LoadObject(char const * name, nlohmann::json const * json, GenTextureParameters const & parameters) const
 	{
-		return LoadObjectHelper(name, json, [this, &parameters](nlohmann::json const& json)
+		return LoadObjectHelper(name, json, [this, &parameters](nlohmann::json const * json)
 		{
 			return GenTextureObject(json, parameters);
 		},
@@ -138,7 +138,7 @@ namespace chaos
 		{
 			nlohmann::json json;
 			if (JSONTools::ParseRecursive(ascii_buffer, path.GetResolvedPath(), json))
-				result = GenTextureObject(json, parameters);
+				result = GenTextureObject(&json, parameters);
 			else
 				Log::Error("GPUTextureLoader: unknown format for [%s]", path.GetResolvedPath().string().c_str());
 		}
@@ -389,7 +389,7 @@ namespace chaos
 		return result;
 	}
 
-	GPUTexture * GPUTextureLoader::GenTextureObject(nlohmann::json const & json, GenTextureParameters const & parameters) const
+	GPUTexture * GPUTextureLoader::GenTextureObject(nlohmann::json const * json, GenTextureParameters const & parameters) const
 	{
 		// the entry has a reference to another file => recursive call
 		std::string p;
@@ -419,29 +419,29 @@ namespace chaos
 			{
 				if (faces->size() == 1)
 				{
-					single_image |= JSONTools::GetAttributeByIndex(*faces, 0, single_path);
+					single_image |= JSONTools::GetAttributeByIndex(faces, 0, single_path);
 				}
 				else
 				{
-					multiple_image |= JSONTools::GetAttributeByIndex(*faces, 0, left_path);
-					multiple_image |= JSONTools::GetAttributeByIndex(*faces, 1, right_path);
-					multiple_image |= JSONTools::GetAttributeByIndex(*faces, 2, top_path);
-					multiple_image |= JSONTools::GetAttributeByIndex(*faces, 3, bottom_path);
-					multiple_image |= JSONTools::GetAttributeByIndex(*faces, 4, front_path);
-					multiple_image |= JSONTools::GetAttributeByIndex(*faces, 5, back_path);
+					multiple_image |= JSONTools::GetAttributeByIndex(faces, 0, left_path);
+					multiple_image |= JSONTools::GetAttributeByIndex(faces, 1, right_path);
+					multiple_image |= JSONTools::GetAttributeByIndex(faces, 2, top_path);
+					multiple_image |= JSONTools::GetAttributeByIndex(faces, 3, bottom_path);
+					multiple_image |= JSONTools::GetAttributeByIndex(faces, 4, front_path);
+					multiple_image |= JSONTools::GetAttributeByIndex(faces, 5, back_path);
 				}
 			}
 			else
 			{
-				single_image |= JSONTools::GetAttribute(*faces, "single", single_path);
+				single_image |= JSONTools::GetAttribute(faces, "single", single_path);
 				if (!single_image)
 				{
-					multiple_image |= JSONTools::GetAttribute(*faces, "left", left_path);
-					multiple_image |= JSONTools::GetAttribute(*faces, "right", right_path);
-					multiple_image |= JSONTools::GetAttribute(*faces, "top", top_path);
-					multiple_image |= JSONTools::GetAttribute(*faces, "bottom", bottom_path);
-					multiple_image |= JSONTools::GetAttribute(*faces, "front", front_path);
-					multiple_image |= JSONTools::GetAttribute(*faces, "back", back_path);
+					multiple_image |= JSONTools::GetAttribute(faces, "left", left_path);
+					multiple_image |= JSONTools::GetAttribute(faces, "right", right_path);
+					multiple_image |= JSONTools::GetAttribute(faces, "top", top_path);
+					multiple_image |= JSONTools::GetAttribute(faces, "bottom", bottom_path);
+					multiple_image |= JSONTools::GetAttribute(faces, "front", front_path);
+					multiple_image |= JSONTools::GetAttribute(faces, "back", back_path);
 				}
 			}
 

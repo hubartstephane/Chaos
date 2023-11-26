@@ -7,7 +7,7 @@ namespace chaos
 	// =====================================
 
 	template<typename CONSTNESS_OPERATOR>
-	class /*CHAOS_API*/ TileCollisionInfoBase
+	class TileCollisionInfoBase
 	{
 	public:
 
@@ -30,7 +30,7 @@ namespace chaos
 	// =====================================
 
 	template<typename CONSTNESS_OPERATOR>
-	class /*CHAOS_API*/ TMCollisionIteratorBase
+	class TMCollisionIteratorBase
 	{
 	public:
 
@@ -83,7 +83,7 @@ namespace chaos
 	// =====================================
 
 	template<typename CONSTNESS_OPERATOR>
-	class /*CHAOS_API*/ TMTileCollisionIteratorBase : public TMCollisionIteratorBase<CONSTNESS_OPERATOR>
+	class TMTileCollisionIteratorBase : public TMCollisionIteratorBase<CONSTNESS_OPERATOR>
 	{
 	public:
 
@@ -111,7 +111,7 @@ namespace chaos
 		}
 
 		/** comparaison operator */
-		friend /*CHAOS_API*/ bool operator == (TMTileCollisionIteratorBase const& src1, TMTileCollisionIteratorBase const& src2)
+		friend bool operator == (TMTileCollisionIteratorBase const& src1, TMTileCollisionIteratorBase const& src2)
 		{
 			if (src1.li_iterator != src2.li_iterator)
 				return false;
@@ -246,7 +246,7 @@ namespace chaos
 	// =====================================
 
 	template<typename T, typename CONSTNESS_OPERATOR>
-	class /*CHAOS_API*/ TMObjectCollisionIteratorBase : public TMCollisionIteratorBase<CONSTNESS_OPERATOR>
+	class TMObjectCollisionIteratorBase : public TMCollisionIteratorBase<CONSTNESS_OPERATOR>
 	{
 	public:
 
@@ -273,7 +273,7 @@ namespace chaos
 
 
 		/** comparaison operator */
-		friend /*CHAOS_API*/ bool operator == (TMObjectCollisionIteratorBase const& src1, TMObjectCollisionIteratorBase const& src2)
+		friend bool operator == (TMObjectCollisionIteratorBase const& src1, TMObjectCollisionIteratorBase const& src2)
 		{
 			if (src1.li_iterator != src2.li_iterator)
 				return false;

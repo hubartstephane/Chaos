@@ -7,39 +7,20 @@ namespace chaos
 	// EXTERNAL FUNCTION
 	// ========================================================================
 
-	bool LoadFromJSON(nlohmann::json const& json, boost::filesystem::path& dst)
+	bool PrepareSaveIntoJSON(nlohmann::json* json)
 	{
-		std::string result;
-		if (!LoadFromJSON(json, result))
+		if (json == nullptr)
 			return false;
-		dst = result;
+		if (json->is_null())
+			*json = nlohmann::json::object();
+		else if (!json->is_object())
+			return false;
 		return true;
 	}
 
-	bool SaveIntoJSON(nlohmann::json& json, boost::filesystem::path const& src)
+	bool SaveIntoJSON(nlohmann::json * json, boost::filesystem::path const& src)
 	{
 		return SaveIntoJSON(json, src.string());
-	}
-
-	bool LoadFromJSON(nlohmann::json const& entry, bool& dst)
-	{
-		try
-		{
-			dst = entry.get<bool>(); // for bool type
-			return true;
-		}
-		catch (...)
-		{
-			try
-			{
-				dst = (entry.get<int>() != 0); // for int type (+ conversion to bool)
-				return true;
-			}
-			catch (...)
-			{
-			}
-		}
-		return false;
 	}
 
 	namespace JSONTools
@@ -49,12 +30,14 @@ namespace chaos
 		// ========================================================================
 
 		template<typename T>
-		static auto GetNodeHelper(T& entry, std::string_view path)
+		static auto GetNodeHelper(T * json, std::string_view path)
 		{
-			using result_type = typename std::remove_reference<T>::type *;
+			// early exit
+			if (json == nullptr)
+				return (T*)nullptr;
 
 			// node uppon which we will iterate
-			result_type node = &entry;
+			T * node = json;
 
 			// we have to have at least one non-empty subkey for a valid indirection
 			// for ex:
@@ -73,14 +56,14 @@ namespace chaos
 					// early exit if type does not correspond
 					if (!node->is_object())
 					{
-						node = result_type(nullptr);
+						node = nullptr;
 						return true; // stop iteration on that error
 					}
 
 					auto it = node->find(subkey);
 					if (it == node->end()) // found nothing
 					{
-						node = result_type(nullptr);
+						node = nullptr;
 						return true; // stop iteration on that error
 					}
 					node = &(*it);
@@ -88,22 +71,26 @@ namespace chaos
 				return false; // continue iteration
 			});
 
-			return (count > 0) ? node : result_type(nullptr); // check whether there is at least one child encoutered
+			return (count > 0) ? node : (T*)nullptr; // check whether there is at least one child encoutered
 		}
 
-		nlohmann::json* GetNode(nlohmann::json& entry, std::string_view path)
+		nlohmann::json* GetNode(nlohmann::json * json, std::string_view path)
 		{
-			return GetNodeHelper(entry, path);
+			return GetNodeHelper(json, path);
 		}
 
-		nlohmann::json const* GetNode(nlohmann::json const& entry, std::string_view path)
+		nlohmann::json const* GetNode(nlohmann::json const * json, std::string_view path)
 		{
-			return GetNodeHelper(entry, path);
+			return GetNodeHelper(json, path);
 		}
 
-		nlohmann::json* GetOrCreateNode(nlohmann::json& entry, std::string_view path)
+		nlohmann::json* GetOrCreateNode(nlohmann::json * json, std::string_view path)
 		{
-			nlohmann::json* node = &entry;
+			// early exit
+			if (json == nullptr)
+				return nullptr;
+
+			nlohmann::json* node = json;
 
 			int count = 0;
 
@@ -143,17 +130,17 @@ namespace chaos
 			return (count > 0) ? node : nullptr;
 		}
 
-		nlohmann::json* GetNodeByIndex(nlohmann::json& entry, size_t index)
+		nlohmann::json* GetNodeByIndex(nlohmann::json * json, size_t index)
 		{
-			if (entry.is_array() && index < entry.size())
-				return &entry[index];
+			if (json != nullptr && json->is_array() && index < json->size())
+				return &json->operator [](index);
 			return nullptr;
 		}
 
-		nlohmann::json const* GetNodeByIndex(nlohmann::json const& entry, size_t index)
+		nlohmann::json const* GetNodeByIndex(nlohmann::json const * json, size_t index)
 		{
-			if (entry.is_array() && index < entry.size())
-				return &entry[index];
+			if (json != nullptr && json->is_array() && index < json->size())
+				return &json->operator [](index);
 			return nullptr;
 		}
 
@@ -161,7 +148,7 @@ namespace chaos
 		// Object Node
 		// ========================================================================
 
-		nlohmann::json* GetObjectNode(nlohmann::json& json, std::string_view path)
+		nlohmann::json* GetObjectNode(nlohmann::json * json, std::string_view path)
 		{
 			if (nlohmann::json* result = GetNode(json, path))
 				if (result->is_object())
@@ -169,7 +156,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		nlohmann::json const * GetObjectNode(nlohmann::json const& json, std::string_view path)
+		nlohmann::json const * GetObjectNode(nlohmann::json const * json, std::string_view path)
 		{
 			if (nlohmann::json const* result = GetNode(json, path))
 				if (result->is_object())
@@ -177,7 +164,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		nlohmann::json* GetOrCreateObjectNode(nlohmann::json& json, std::string_view path)
+		nlohmann::json* GetOrCreateObjectNode(nlohmann::json * json, std::string_view path)
 		{
 			if (nlohmann::json* result = GetOrCreateNode(json, path))
 			{				
@@ -189,17 +176,17 @@ namespace chaos
 			return nullptr;
 		}
 
-		nlohmann::json * GetObjectNodeByIndex(nlohmann::json & entry, size_t index)
+		nlohmann::json * GetObjectNodeByIndex(nlohmann::json * json, size_t index)
 		{
-			if (nlohmann::json * result = GetNodeByIndex(entry, index))
+			if (nlohmann::json * result = GetNodeByIndex(json, index))
 				if (result->is_object())
 					return result;
 			return nullptr;
 		}
 
-		nlohmann::json const* GetObjectNodeByIndex(nlohmann::json const& entry, size_t index)
+		nlohmann::json const* GetObjectNodeByIndex(nlohmann::json const * json, size_t index)
 		{
-			if (nlohmann::json const* result = GetNodeByIndex(entry, index))
+			if (nlohmann::json const* result = GetNodeByIndex(json, index))
 				if (result->is_object())
 					return result;
 			return nullptr;
@@ -209,7 +196,7 @@ namespace chaos
 		// Array node
 		// ========================================================================
 
-		nlohmann::json* GetArrayNode(nlohmann::json& json, std::string_view path)
+		nlohmann::json* GetArrayNode(nlohmann::json * json, std::string_view path)
 		{
 			if (nlohmann::json* result = GetNode(json, path))
 				if (result->is_array())
@@ -217,7 +204,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		nlohmann::json const* GetArrayNode(nlohmann::json const& json, std::string_view path)
+		nlohmann::json const* GetArrayNode(nlohmann::json const * json, std::string_view path)
 		{
 			if (nlohmann::json const* result = GetNode(json, path))
 				if (result->is_array())
@@ -225,7 +212,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		nlohmann::json* GetOrCreateArrayNode(nlohmann::json& json, std::string_view path)
+		nlohmann::json* GetOrCreateArrayNode(nlohmann::json * json, std::string_view path)
 		{
 			if (nlohmann::json* result = GetOrCreateNode(json, path))
 			{
@@ -237,17 +224,17 @@ namespace chaos
 			return nullptr;
 		}
 
-		nlohmann::json* GetArrayNodeByIndex(nlohmann::json& entry, size_t index)
+		nlohmann::json* GetArrayNodeByIndex(nlohmann::json * json, size_t index)
 		{
-			if (nlohmann::json* result = GetNodeByIndex(entry, index))
+			if (nlohmann::json* result = GetNodeByIndex(json, index))
 				if (result->is_array())
 					return result;
 			return nullptr;
 		}
 
-		nlohmann::json const* GetArrayNodeByIndex(nlohmann::json const& entry, size_t index)
+		nlohmann::json const* GetArrayNodeByIndex(nlohmann::json const * json, size_t index)
 		{
-			if (nlohmann::json const* result = GetNodeByIndex(entry, index))
+			if (nlohmann::json const* result = GetNodeByIndex(json, index))
 				if (result->is_array())
 					return result;
 			return nullptr;
@@ -257,7 +244,7 @@ namespace chaos
 		// Structure node
 		// ========================================================================
 
-		nlohmann::json* GetStructureNode(nlohmann::json& json, std::string_view path)
+		nlohmann::json* GetStructureNode(nlohmann::json * json, std::string_view path)
 		{
 			if (nlohmann::json* result = GetNode(json, path))
 				if (result->is_structured())
@@ -265,7 +252,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		nlohmann::json const* GetStructureNode(nlohmann::json const& json, std::string_view path)
+		nlohmann::json const* GetStructureNode(nlohmann::json const * json, std::string_view path)
 		{
 			if (nlohmann::json const* result = GetNode(json, path))
 				if (result->is_structured())
@@ -273,17 +260,17 @@ namespace chaos
 			return nullptr;
 		}
 
-		nlohmann::json* GetStructureNodeByIndex(nlohmann::json& entry, size_t index)
+		nlohmann::json* GetStructureNodeByIndex(nlohmann::json * json, size_t index)
 		{
-			if (nlohmann::json* result = GetNodeByIndex(entry, index))
+			if (nlohmann::json* result = GetNodeByIndex(json, index))
 				if (result->is_structured())
 					return result;
 			return nullptr;
 		}
 
-		nlohmann::json const* GetStructureNodeByIndex(nlohmann::json const& entry, size_t index)
+		nlohmann::json const* GetStructureNodeByIndex(nlohmann::json const * json, size_t index)
 		{
-			if (nlohmann::json const* result = GetNodeByIndex(entry, index))
+			if (nlohmann::json const* result = GetNodeByIndex(json, index))
 				if (result->is_structured())
 					return result;
 			return nullptr;
@@ -340,20 +327,23 @@ namespace chaos
 			}
 		}
 
-		bool SaveJSONToFile(nlohmann::json const& json, FilePathParam const& path)
+		bool SaveJSONToFile(nlohmann::json const * json, FilePathParam const& path)
 		{
+			if (json == nullptr)
+				return false;
+			
 			std::ofstream stream(path.GetResolvedPath().c_str());
 			if (stream)
 			{
-				stream << json.dump(4);
+				stream << json->dump(4);
 				return true;
 			}
 			return false;
 		}
 
-		boost::filesystem::path DumpConfigFile(nlohmann::json const& json, char const* filename)
+		boost::filesystem::path DumpConfigFile(nlohmann::json const * json, char const* filename)
 		{
-			if (filename != nullptr)
+			if (json != nullptr && filename != nullptr)
 			{
 				boost::filesystem::path result;
 				// get the directory to write to

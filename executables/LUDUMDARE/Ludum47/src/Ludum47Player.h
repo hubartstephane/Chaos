@@ -45,7 +45,7 @@ protected:
     /** override */
     virtual void HandleInputs(float delta_time, chaos::GamepadState const* gpd) override;
     /** override */
-    virtual bool InitializeGameValues(nlohmann::json const& config, bool hot_reload) override;
+    virtual bool InitializeGameValues(nlohmann::json const * config, bool hot_reload) override;
 
 public:
 

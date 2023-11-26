@@ -3,9 +3,9 @@
 
 namespace chaos
 {
-	GPUProgram * GPUProgramLoader::LoadObject(char const * name, nlohmann::json const & json) const
+	GPUProgram * GPUProgramLoader::LoadObject(char const * name, nlohmann::json const * json) const
 	{
-		return LoadObjectHelper(name, json, [this](nlohmann::json const & json)
+		return LoadObjectHelper(name, json, [this](nlohmann::json const * json)
 		{
 			return GenProgramObject(json);
 		},
@@ -37,10 +37,10 @@ namespace chaos
 		return (manager != nullptr && manager->FindProgram(request) != nullptr);
 	}
 
-	GPUProgram * GPUProgramLoader::GenProgramObject(nlohmann::json const & json) const
+	GPUProgram * GPUProgramLoader::GenProgramObject(nlohmann::json const * json) const
 	{
 		// can only work with json object
-		if (!json.is_object())
+		if (json == nullptr || !json->is_object())
 			return nullptr;
 
 		// the entry has a reference to another file => recursive call
@@ -54,7 +54,7 @@ namespace chaos
 		// gather all shaders
 		GPUProgramGenerator program_generator;
 
-		for (auto it = json.begin(); it != json.end(); ++it) // search of all keys
+		for (auto it = json->begin(); it != json->end(); ++it) // search of all keys
 		{
 			std::string const & property_name = it.key();
 
@@ -62,7 +62,7 @@ namespace chaos
 			if (StringToEnum(property_name.c_str(), shader_type)) // if the key does correspond to a shader type
 			{
 				std::vector<boost::filesystem::path> shader_paths;
-				if (LoadFromJSON(*it, shader_paths))
+				if (LoadFromJSON(&(*it), shader_paths))
 					for (auto const& p : shader_paths)
 						program_generator.AddShaderSourceFile(shader_type, p); // add the shader
 			}
@@ -89,7 +89,7 @@ namespace chaos
 			{
 				nlohmann::json json;
 				if (JSONTools::LoadJSONFile(p, json, LoadFileFlag::RECURSIVE))
-					result = GenProgramObject(json);
+					result = GenProgramObject(&json);
 			}
 			return (result != nullptr); // stops as soon some result is found
 		});
@@ -103,7 +103,7 @@ namespace chaos
 
 		nlohmann::json json;
 		if (JSONTools::LoadJSONFile(pgm_filename, json, LoadFileFlag::RECURSIVE))
-			return GenProgramObject(json);
+			return GenProgramObject(&json);
 
 		// search all files in the directory
 		static std::map<char const*, ShaderType, StringTools::RawStringILess> extension_map =

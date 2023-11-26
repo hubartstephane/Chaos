@@ -52,9 +52,9 @@ namespace chaos
 		int focused = 0;
 	};
 
-	CHAOS_API bool SaveIntoJSON(nlohmann::json& json, WindowCreateParams const& src);
+	CHAOS_API bool DoSaveIntoJSON(nlohmann::json * json, WindowCreateParams const& src);
 
-	CHAOS_API bool LoadFromJSON(nlohmann::json const& json, WindowCreateParams& dst);
+	CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, WindowCreateParams& dst);
 
 	/**
 	* NonFullScreenWindowData : a binding class between chaos and GLFW to handle window (beware the prefix "My")
@@ -238,7 +238,7 @@ namespace chaos
 		virtual void DrawWindow();
 
 		/** called at window creation (returns false if the window must be killed) */
-		virtual bool InitializeFromConfiguration(nlohmann::json const& config);
+		virtual bool InitializeFromConfiguration(nlohmann::json const * config);
 		/** called at window destruction */
 		virtual void Finalize();
 
@@ -296,9 +296,9 @@ namespace chaos
 		/** override */
 		virtual nlohmann::json const * GetPersistentReadStorage() const override;
 		/** override */
-		virtual void OnReadPersistentData(nlohmann::json const& json) override;
+		virtual void OnReadPersistentData(nlohmann::json const * json) override;
 		/** override */
-		virtual void OnWritePersistentData(nlohmann::json & json) const override;
+		virtual void OnWritePersistentData(nlohmann::json * json) const override;
 
 	private:
 

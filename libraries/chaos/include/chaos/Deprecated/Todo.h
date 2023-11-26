@@ -371,7 +371,7 @@ public:
 
 	CHAOS_DECLARE_OBJECT_CLASS(toto, chaos::Object)
 
-	virtual bool SerializeFromJSON(nlohmann::json const& json) override
+	virtual bool SerializeFromJSON(nlohmann::json const * json) override
 	{
 		chaos::JSONTools::GetAttribute(json, "myvalue", myvalue);
 

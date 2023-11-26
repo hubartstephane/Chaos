@@ -12,11 +12,11 @@ namespace chaos
 		{
 			// get or build a class name
 			std::string class_name;
-			if (!JSONTools::GetAttribute(json, "class_name", class_name))
+			if (!JSONTools::GetAttribute(&json, "class_name", class_name))
 				class_name = PathTools::PathToName(path.GetResolvedPath());
 			// parent class is MANDATORY for Special objects
 			std::string parent_class_name;
-			if (!JSONTools::GetAttribute(json, "parent_class", parent_class_name))
+			if (!JSONTools::GetAttribute(&json, "parent_class", parent_class_name))
 			{
 				Log::Error("DoLoadClassHelper : special class [%s] require a parent class", class_name.c_str());
 				return nullptr;
@@ -25,7 +25,7 @@ namespace chaos
 			if (!class_name.empty())
 			{
 				std::string short_name;
-				JSONTools::GetAttribute(json, "short_name", short_name);
+				JSONTools::GetAttribute(&json, "short_name", short_name);
 				return func(std::move(class_name), std::move(short_name), std::move(parent_class_name), std::move(json));
 			}
 		}
@@ -125,7 +125,7 @@ namespace chaos
 			result->AddObjectInitializationFunction([json = std::move(json)](Object* object)
 			{
 				if (JSONSerializableInterface* serializable = auto_cast(object))
-					serializable->SerializeFromJSON(json);
+					serializable->SerializeFromJSON(&json);
 			});
 			return result;
 		}

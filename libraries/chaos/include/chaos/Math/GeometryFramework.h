@@ -42,7 +42,7 @@ namespace chaos
 
 	/** cast a vector into another vector (arity and type may change) */
 	template<typename VECTOR_TYPE1, typename VECTOR_TYPE2>
-	/*CHAOS_API*/ VECTOR_TYPE1 RecastVector(VECTOR_TYPE2 const& value)
+	VECTOR_TYPE1 RecastVector(VECTOR_TYPE2 const& value)
 	{
 		VECTOR_TYPE1 result(0);
 		size_t count = std::min(result.length(), value.length());
@@ -53,7 +53,7 @@ namespace chaos
 	}
 
 	template<typename VECTOR_TYPE>
-	class /*CHAOS_API*/ AutoCastableVector
+	class AutoCastableVector
 	{
 	public:
 
@@ -81,11 +81,11 @@ namespace chaos
 
 	/** create a delayed 'cast' */
 	template<typename T>
-	/*CHAOS_API*/ AutoCastableVector<T> auto_cast_vector(AutoCastableVector<T> const& src) { return src; }
+	AutoCastableVector<T> auto_cast_vector(AutoCastableVector<T> const& src) { return src; }
 
 	/** create a delayed 'cast' */
 	template<typename T>
-	/*CHAOS_API*/ AutoCastableVector<T> auto_cast_vector(T const& src) { return src; }
+	AutoCastableVector<T> auto_cast_vector(T const& src) { return src; }
 
 
 	// ==============================================================================================
@@ -97,70 +97,70 @@ namespace chaos
 
 	/** returns true whether the box is empty */
 	template<typename T, int dimension>
-	/*CHAOS_API*/ bool IsGeometryEmpty(type_box_base<T, dimension> const& b)
+	bool IsGeometryEmpty(type_box_base<T, dimension> const& b)
 	{
 		return glm::any(glm::lessThan(b.half_size, type_box_base<T, dimension>::vec_type(0)));
 	}
 
 	/** returns the perimeter of the box */
 	template<typename T>
-	/*CHAOS_API*/ T GetPerimeter(type_box_base<T, 2> const& b)
+	T GetPerimeter(type_box_base<T, 2> const& b)
 	{
 		return static_cast<T>(4) * (b.half_size.x + b.half_size.y);
 	}
 
 	/** returns the surface of the box */
 	template<typename T>
-	/*CHAOS_API*/ T GetSurface(type_box_base<T, 2> const& b)
+	T GetSurface(type_box_base<T, 2> const& b)
 	{
 		return static_cast<T>(4) * (b.half_size.x * b.half_size.y);
 	}
 
 	/** return the volume of the box */
 	template<typename T>
-	/*CHAOS_API*/ T GetVolume(type_box_base<T, 3> const& b)
+	T GetVolume(type_box_base<T, 3> const& b)
 	{
 		return static_cast<T>(8) * b.half_size.x * b.half_size.y * b.half_size.z;
 	}
 
 	/** return the surface of the box */
 	template<typename T>
-	/*CHAOS_API*/ T GetSurface(type_box_base<T, 3> const& b)
+	T GetSurface(type_box_base<T, 3> const& b)
 	{
 		return static_cast<T>(8) * ((b.half_size.x * b.half_size.y) + (b.half_size.y * b.half_size.z) + (b.half_size.z * b.half_size.x));
 	};
 
 	/** returns the bounding circle for the box */
 	template<typename T>
-	/*CHAOS_API*/ type_sphere<T, 2> GetBoundingSphere(type_box_base<T, 2> const& b)
+	type_sphere<T, 2> GetBoundingSphere(type_box_base<T, 2> const& b)
 	{
 		return IsGeometryEmpty(b) ? type_sphere<T, 2>() : type_sphere<T, 2>(b.position, glm::length(b.half_size));
 	}
 
 	/** returns the inner circle for the box */
 	template<typename T>
-	/*CHAOS_API*/ type_sphere<T, 2> GetInnerSphere(type_box_base<T, 2> const& b)
+	type_sphere<T, 2> GetInnerSphere(type_box_base<T, 2> const& b)
 	{
 		return IsGeometryEmpty(b) ? type_sphere<T, 2>() : type_sphere<T, 2>(b.position, GLMTools::GetMinComponent(b.half_size));
 	}
 
 	/** returns the bounding sphere for the box */
 	template<typename T>
-	/*CHAOS_API*/ type_sphere<T, 3> GetBoundingSphere(type_box_base<T, 3> const& b)
+	type_sphere<T, 3> GetBoundingSphere(type_box_base<T, 3> const& b)
 	{
 		return IsGeometryEmpty(b) ? type_sphere<T, 3>() : type_sphere<T, 3>(b.position, glm::length(b.half_size));
 	}
 
 	/** returns the inner sphere for the box */
 	template<typename T>
-	/*CHAOS_API*/ type_sphere<T, 3> GetInnerSphere(type_box_base<T, 3> const& b)
+	type_sphere<T, 3> GetInnerSphere(type_box_base<T, 3> const& b)
 	{
 		return IsGeometryEmpty(b) ? type_sphere<T, 3>() : type_sphere<T, 3>(b.position, GLMTools::GetMinComponent(b.half_size));
 	}
 
 	/** returns the "aspect" of the box (width/height) */
 	template<typename T>
-	/*CHAOS_API*/ T GetBoxAspect(type_box_base<T, 2> const& b)
+	T GetBoxAspect(type_box_base<T, 2> const& b)
 	{
 		return (b.half_size.y) ? (b.half_size.x / b.half_size.y) : static_cast<T>(1);
 	}
@@ -175,7 +175,7 @@ namespace chaos
 
 	/** update a box aspect */
 	template<typename BOX_TYPE>
-	/*CHAOS_API*/ BOX_TYPE SetBoxAspect(BOX_TYPE const& src, typename BOX_TYPE::type aspect, SetBoxAspectMethod method)
+	BOX_TYPE SetBoxAspect(BOX_TYPE const& src, typename BOX_TYPE::type aspect, SetBoxAspectMethod method)
 	{
 		// any negative component
 		if (IsGeometryEmpty(src))
@@ -225,14 +225,14 @@ namespace chaos
 
 	/** equality function for box */
 	template<typename T, int dimension>
-	/*CHAOS_API*/ bool operator == (type_box<T, dimension> const& b1, type_box<T, dimension> const& b2)
+	bool operator == (type_box<T, dimension> const& b1, type_box<T, dimension> const& b2)
 	{
 		return (b1.position == b1.position) && (b1.half_size == b2.half_size);
 	}
 
 	/** intersection of 2 boxes */
 	template<typename T, int dimension>
-	/*CHAOS_API*/ type_box<T, dimension> operator & (type_box<T, dimension> const& b1, type_box<T, dimension> const& b2)
+	type_box<T, dimension> operator & (type_box<T, dimension> const& b1, type_box<T, dimension> const& b2)
 	{
 		using vec_type = typename type_box<T, dimension>::vec_type;
 
@@ -259,7 +259,7 @@ namespace chaos
 
 	/** union of 2 boxes */
 	template<typename T, int dimension>
-	/*CHAOS_API*/ type_box<T, dimension> operator | (type_box<T, dimension> const& b1, type_box<T, dimension> const& b2)
+	type_box<T, dimension> operator | (type_box<T, dimension> const& b1, type_box<T, dimension> const& b2)
 	{
 		using vec_type = typename type_box<T, dimension>::vec_type;
 
@@ -282,7 +282,7 @@ namespace chaos
 
 	/** returns one of the sub-boxes obtained by splitting the src */
 	template<typename T>
-	/*CHAOS_API*/ type_box<T, 2> GetSplitBox(type_box<T, 2> const& b, int i, int j)
+	type_box<T, 2> GetSplitBox(type_box<T, 2> const& b, int i, int j)
 	{
 		using vec_type = typename type_box<T, 2>::vec_type;
 
@@ -299,7 +299,7 @@ namespace chaos
 
 	/** returns one of the sub-boxes obtained by splitting the src */
 	template<typename T>
-	/*CHAOS_API*/ type_box<T, 3> GetSplitBox(type_box<T, 3> const& b, int i, int j, int k)
+	type_box<T, 3> GetSplitBox(type_box<T, 3> const& b, int i, int j, int k)
 	{
 		using vec_type = typename type_box<T, 3>::vec_type;
 
@@ -318,7 +318,7 @@ namespace chaos
 
 	/** get the corners of the box */
 	template<typename T, int dimension>
-	/*CHAOS_API*/ auto GetBoxCorners(type_box<T, dimension> const& b) // returns a std::pair<vec_type, vec_type>
+	auto GetBoxCorners(type_box<T, dimension> const& b) // returns a std::pair<vec_type, vec_type>
 	{
 		if (!IsGeometryEmpty(b))
 			return std::make_pair(b.position - b.half_size, b.position + b.half_size);
@@ -327,7 +327,7 @@ namespace chaos
 
 	/** increase the box size with a single vertex */
 	template<typename T, int dimension>
-	/*CHAOS_API*/ void ExtendBox(type_box<T, dimension>& b, typename type_box<T, dimension>::vec_type const& v)
+	void ExtendBox(type_box<T, dimension>& b, typename type_box<T, dimension>::vec_type const& v)
 	{
 		using vec_type = typename type_box<T, dimension>::vec_type;
 
@@ -346,7 +346,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	/*CHAOS_API*/ auto GetBoxVertices(type_box_base<T, 2> const& b, typename type_box_base<T, 2>::vec_type* result, bool global = true) // expect an array of 4 elements
+	auto GetBoxVertices(type_box_base<T, 2> const& b, typename type_box_base<T, 2>::vec_type* result, bool global = true) // expect an array of 4 elements
 	{
 		assert(result != nullptr);
 
@@ -371,7 +371,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	/*CHAOS_API*/ auto GetBoxVertices(type_box_base<T, 3> const& b, typename type_box_base<T, 3>::vec_type* result, bool global = true) // expect an array of 8 elements
+	auto GetBoxVertices(type_box_base<T, 3> const& b, typename type_box_base<T, 3>::vec_type* result, bool global = true) // expect an array of 8 elements
 	{
 		assert(result != nullptr);
 
@@ -411,7 +411,7 @@ namespace chaos
 
 	/** equality function for obox */
 	template<typename T, int dimension>
-	/*CHAOS_API*/ bool operator == (type_obox<T, dimension> const& b1, type_obox<T, dimension> const& b2)
+	bool operator == (type_obox<T, dimension> const& b1, type_obox<T, dimension> const& b2)
 	{
 		return (b1.position == b1.position) && (b1.half_size == b2.half_size) && (b1.rotator == b2.rotator);
 	}
@@ -430,7 +430,7 @@ namespace chaos
 
 
 	template<typename T>
-	/*CHAOS_API*/ auto GetBoxVertices(type_obox<T, 2> const& b, typename type_box_base<T, 2>::vec_type* result, bool global = true) // expect an array of 4 elements
+	auto GetBoxVertices(type_obox<T, 2> const& b, typename type_box_base<T, 2>::vec_type* result, bool global = true) // expect an array of 4 elements
 	{
 		GetBoxVertices((type_box_base<T, 2> const&)b, result, false); // do not integrate translation because this would produce a wrong rotation/translation combinaison
 
@@ -447,7 +447,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	/*CHAOS_API*/ auto GetBoxVertices(type_obox<T, 3> const& b, typename type_box_base<T, 3>::vec_type* result, bool global = true) // expect an array of 8 elements
+	auto GetBoxVertices(type_obox<T, 3> const& b, typename type_box_base<T, 3>::vec_type* result, bool global = true) // expect an array of 8 elements
 	{
 		GetBoxVertices((type_box_base<T, 3> const&)b, result, false); // do not integrate translation because this would produce a wrong rotation/translation combinaison
 
@@ -463,7 +463,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	/*CHAOS_API*/ type_box<T, 2> GetBoundingBox(type_obox<T, 2> const& b)
+	type_box<T, 2> GetBoundingBox(type_obox<T, 2> const& b)
 	{
 		type_box<T, 2> result;
 
@@ -484,7 +484,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	/*CHAOS_API*/ type_box<T, 3> GetBoundingBox(type_obox<T, 3> const& b)
+	type_box<T, 3> GetBoundingBox(type_obox<T, 3> const& b)
 	{
 		type_box<T, 3> result;
 
@@ -511,49 +511,49 @@ namespace chaos
 
 	/** equality function for obox */
 	template<typename T, int dimension>
-	/*CHAOS_API*/ bool operator == (type_aabox<T, dimension> const& b1, type_aabox<T, dimension> const& b2)
+	bool operator == (type_aabox<T, dimension> const& b1, type_aabox<T, dimension> const& b2)
 	{
 		return (b1.position == b1.position) && (b1.size == b2.size);
 	}
 
 	/** returns true whether the box is empty */
 	template<typename T, int dimension>
-	/*CHAOS_API*/ bool IsGeometryEmpty(type_aabox<T, dimension> const& b)
+	bool IsGeometryEmpty(type_aabox<T, dimension> const& b)
 	{
 		return glm::any(glm::lessThan(b.size, type_aabox<T, dimension>::vec_type(0)));
 	}
 
 	/** returns the perimeter of the box */
 	template<typename T>
-	/*CHAOS_API*/ T GetPerimeter(type_aabox<T, 2> const& b)
+	T GetPerimeter(type_aabox<T, 2> const& b)
 	{
 		return static_cast<T>(2) * (b.size.x + b.size.y);
 	}
 
 	/** returns the surface of the box */
 	template<typename T>
-	/*CHAOS_API*/ T GetSurface(type_aabox<T, 2> const& b)
+	T GetSurface(type_aabox<T, 2> const& b)
 	{
 		return (b.size.x * b.size.y);
 	}
 
 	/** return the volume of the box */
 	template<typename T>
-	/*CHAOS_API*/ T GetVolume(type_aabox<T, 3> const& b)
+	T GetVolume(type_aabox<T, 3> const& b)
 	{
 		return b.size.x * b.size.y * b.size.z;
 	}
 
 	/** return the surface of the box */
 	template<typename T>
-	/*CHAOS_API*/ T GetSurface(type_aabox<T, 3> const& b)
+	T GetSurface(type_aabox<T, 3> const& b)
 	{
 		return static_cast<T>(2) * ((b.size.x * b.size.y) + (b.size.y * b.size.z) + (b.size.z * b.size.x));
 	};
 
 	/** returns the "aspect" of the box (width/height) */
 	template<typename T>
-	/*CHAOS_API*/ T GetBoxAspect(type_aabox<T, 2> const& b)
+	T GetBoxAspect(type_aabox<T, 2> const& b)
 	{
 		return (b.size.y) ? (b.size.x / b.size.y) : static_cast<T>(1);
 	}
@@ -561,7 +561,7 @@ namespace chaos
 
 	/** update a box aspect */
 	template<typename T>
-	/*CHAOS_API*/ type_aabox<T, 2> SetBoxAspect(type_aabox<T, 2> const& src, typename T aspect, SetBoxAspectMethod method)
+	type_aabox<T, 2> SetBoxAspect(type_aabox<T, 2> const& src, typename T aspect, SetBoxAspectMethod method)
 	{
 		// any negative component
 		if (IsGeometryEmpty(src))
@@ -617,7 +617,7 @@ namespace chaos
 
 	/** equality test function for triangles */
 	template<typename T, int dimension>
-	/*CHAOS_API*/ bool operator == (type_triangle<T, dimension> const& t1, type_triangle<T, dimension> const& t2)
+	bool operator == (type_triangle<T, dimension> const& t1, type_triangle<T, dimension> const& t2)
 	{
 		if (t1.a == t2.a)
 		{
@@ -645,7 +645,7 @@ namespace chaos
 
 	/** returns true whether the triangle is empty */
 	template<typename T, int dimension>
-	/*CHAOS_API*/ bool IsGeometryEmpty(type_triangle<T, dimension> const& t)
+	bool IsGeometryEmpty(type_triangle<T, dimension> const& t)
 	{
 		if (t.a == t.b || t.a == t.c || t.b == t.c)
 			return true;
@@ -654,7 +654,7 @@ namespace chaos
 
 	/** get the reversed triangle */
 	template<typename T, int dimension>
-	/*CHAOS_API*/ type_triangle<T, dimension> GetInvertedTriangle(type_triangle<T, dimension> const& t)
+	type_triangle<T, dimension> GetInvertedTriangle(type_triangle<T, dimension> const& t)
 	{
 		return type_triangle<T, dimension>(t.a, t.c, t.b);
 	}
@@ -665,7 +665,7 @@ namespace chaos
 
 	/** equality function for ray */
 	template<typename T, int dimension>
-	/*CHAOS_API*/ bool operator == (type_ray<T, dimension> const& r1, type_ray<T, dimension> const& r2)
+	bool operator == (type_ray<T, dimension> const& r1, type_ray<T, dimension> const& r2)
 	{
 		return (r1.position == r2.position) && (r1.direction == r2.direction);
 	}
@@ -676,49 +676,49 @@ namespace chaos
 
 	/** returns true whether the circle is empty */
 	template<typename T, int dimension>
-	/*CHAOS_API*/ bool IsGeometryEmpty(type_sphere<T, dimension> const& c)
+	bool IsGeometryEmpty(type_sphere<T, dimension> const& c)
 	{
 		return (c.radius < 0);
 	}
 
 	/** equality function for circle */
 	template<typename T, int dimension>
-	/*CHAOS_API*/ bool operator == (type_sphere<T, dimension> const& c1, type_sphere<T, dimension> const& c2)
+	bool operator == (type_sphere<T, dimension> const& c1, type_sphere<T, dimension> const& c2)
 	{
 		return (c1.position == c2.position) && (c1.radius == c2.radius);
 	}
 
 	/** returns the perimeter of the circle */
 	template<typename T>
-	/*CHAOS_API*/ T GetPerimeter(type_sphere<T, 2> const& c)
+	T GetPerimeter(type_sphere<T, 2> const& c)
 	{
 		return static_cast<T>(2.0 * M_PI) * c.radius;
 	}
 
 	/** returns the surface of the circle */
 	template<typename T>
-	/*CHAOS_API*/ T GetSurface(type_sphere<T, 2> const& c)
+	T GetSurface(type_sphere<T, 2> const& c)
 	{
 		return static_cast<T>(M_PI) * c.radius * c.radius;
 	}
 
 	/** returns the volume of the sphere */
 	template<typename T>
-	/*CHAOS_API*/ T GetVolume(type_sphere<T, 3> const& s)
+	T GetVolume(type_sphere<T, 3> const& s)
 	{
 		return static_cast<T>((4.0 / 3.0) * M_PI) * s.radius * s.radius * s.radius;
 	}
 
 	/** returns the surface of the sphere */
 	template<typename T>
-	/*CHAOS_API*/ T GetSurface(type_sphere<T, 3> const& s)
+	T GetSurface(type_sphere<T, 3> const& s)
 	{
 		return static_cast<T>(4.0 * M_PI) * s.radius * s.radius;
 	}
 
 	/** returns the bounding box of the circle */
 	template<typename T>
-	/*CHAOS_API*/ type_box<T, 2> GetBoundingBox(type_sphere<T, 2> const& c)
+	type_box<T, 2> GetBoundingBox(type_sphere<T, 2> const& c)
 	{
 		using vec_type = typename type_sphere<T, 2>::vec_type;
 
@@ -727,7 +727,7 @@ namespace chaos
 
 	/** returns the bounding box of the circle (square) */
 	template<typename T>
-	/*CHAOS_API*/ type_box<T, 2> GetInnerBox(type_sphere<T, 2> const& c)
+	type_box<T, 2> GetInnerBox(type_sphere<T, 2> const& c)
 	{
 		using vec_type = typename type_sphere<T, 2>::vec_type;
 
@@ -737,7 +737,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	/*CHAOS_API*/ type_box<T, 3> GetBoundingBox(type_sphere<T, 3> const& s)
+	type_box<T, 3> GetBoundingBox(type_sphere<T, 3> const& s)
 	{
 		using vec_type = typename type_sphere<T, 3>::vec_type;
 
@@ -745,7 +745,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	/*CHAOS_API*/ type_box<T, 3> GetInnerBox(type_sphere<T, 3> const& s)
+	type_box<T, 3> GetInnerBox(type_sphere<T, 3> const& s)
 	{
 		using vec_type = typename type_sphere<T, 3>::vec_type;
 
@@ -756,7 +756,7 @@ namespace chaos
 
 	/** returns intersection of 2 spheres */
 	template<typename T, int dimension>
-	/*CHAOS_API*/ type_sphere<T, dimension> operator & (type_sphere<T, dimension> const& s1, type_sphere<T, dimension> const& s2) // intersection
+	type_sphere<T, dimension> operator & (type_sphere<T, dimension> const& s1, type_sphere<T, dimension> const& s2) // intersection
 	{
 		using vec_type = typename type_sphere<T, dimension>::vec_type;
 
@@ -784,7 +784,7 @@ namespace chaos
 
 	/** returns union of 2 spheres */
 	template<typename T, int dimension>
-	/*CHAOS_API*/ type_sphere<T, dimension> operator | (type_sphere<T, dimension> const& s1, type_sphere<T, dimension> const& s2) // union
+	type_sphere<T, dimension> operator | (type_sphere<T, dimension> const& s1, type_sphere<T, dimension> const& s2) // union
 	{
 		using vec_type = typename type_sphere<T, dimension>::vec_type;
 
@@ -816,39 +816,50 @@ namespace chaos
 		// vectors
 
 	template<typename T, glm::precision P>
-	/*CHAOS_API*/ bool SaveIntoJSON(nlohmann::json& json, glm::tvec2<T, P> const& src)
+	bool DoSaveIntoJSON(nlohmann::json * json, glm::tvec2<T, P> const& src)
 	{
-		if (!json.is_array())
-			json = nlohmann::json::array();
+		if (json == nullptr)
+			return false;
+		if (json->is_null())
+			*json = nlohmann::json::array();
+		else if (!json->is_array())
+			return false;
 		JSONTools::SetAttributeByIndex(json, 0, src.x);
 		JSONTools::SetAttributeByIndex(json, 1, src.y);
 		return true;
 	}
 
 	template<typename T, glm::precision P>
-	/*CHAOS_API*/ bool LoadFromJSON(nlohmann::json const& json, glm::tvec2<T, P>& dst)
+	bool DoLoadFromJSON(JSONReadConfiguration config, glm::tvec2<T, P>& dst)
 	{
-		if (json.is_object())
+		return JSONTools::ForEachSource(config, [&dst](nlohmann::json const * json)
 		{
-			JSONTools::GetAttribute(json, "x", dst.x);
-			JSONTools::GetAttribute(json, "y", dst.y);
-			return true;
-		}
-		else if (json.is_array())
-		{
-			size_t count = std::min(json.size(), (size_t)dst.length());
-			for (size_t i = 0; i < count; ++i)
-				dst[i] = json[i].get<T>();
-			return true;
-		}
-		return false;
+			if (json->is_object())
+			{
+				JSONTools::GetAttribute(json, "x", dst.x);
+				JSONTools::GetAttribute(json, "y", dst.y);
+				return true;
+			}
+			else if (json->is_array()) 
+			{
+				size_t count = std::min(json->size(), (size_t)dst.length());
+				for (size_t i = 0; i < count; ++i)
+					dst[i] = json->operator[](i).get<T>();
+				return true;
+			}
+			return false;		
+		});
 	}
 
 	template<typename T, glm::precision P>
-	/*CHAOS_API*/ bool SaveIntoJSON(nlohmann::json& json, glm::tvec3<T, P> const& src)
+	bool DoSaveIntoJSON(nlohmann::json * json, glm::tvec3<T, P> const& src)
 	{
-		if (!json.is_array())
-			json = nlohmann::json::array();
+		if (json == nullptr)
+			return false;
+		if (json->is_null())
+			*json = nlohmann::json::array();
+		else if (!json->is_array())
+			return false;
 		JSONTools::SetAttributeByIndex(json, 0, src.x);
 		JSONTools::SetAttributeByIndex(json, 1, src.y);
 		JSONTools::SetAttributeByIndex(json, 2, src.z);
@@ -856,30 +867,37 @@ namespace chaos
 	}
 
 	template<typename T, glm::precision P>
-	/*CHAOS_API*/ bool LoadFromJSON(nlohmann::json const& json, glm::tvec3<T, P>& dst)
+	bool DoLoadFromJSON(JSONReadConfiguration config, glm::tvec3<T, P>& dst)
 	{
-		if (json.is_object())
+	return JSONTools::ForEachSource(config, [&dst](nlohmann::json const * json)
 		{
-			JSONTools::GetAttribute(json, "x", dst.x);
-			JSONTools::GetAttribute(json, "y", dst.y);
-			JSONTools::GetAttribute(json, "z", dst.z);
-			return true;
-		}
-		else if (json.is_array())
-		{
-			size_t count = std::min(json.size(), (size_t)dst.length());
-			for (size_t i = 0; i < count; ++i)
-				dst[i] = json[i].get<T>();
-			return true;
-		}
-		return false;
+			if (json->is_object())
+			{
+				JSONTools::GetAttribute(json, "x", dst.x);
+				JSONTools::GetAttribute(json, "y", dst.y);
+				JSONTools::GetAttribute(json, "z", dst.z);
+				return true;
+			}
+			else if (json->is_array())
+			{
+				size_t count = std::min(json->size(), (size_t)dst.length());
+				for (size_t i = 0; i < count; ++i)
+					dst[i] = json->operator[](i).get<T>();
+				return true;
+			}
+			return false;
+		});
 	}
 
 	template<typename T, glm::precision P>
-	/*CHAOS_API*/ bool SaveIntoJSON(nlohmann::json& json, glm::tvec4<T, P> const& src)
+	bool DoSaveIntoJSON(nlohmann::json * json, glm::tvec4<T, P> const& src)
 	{
-		if (!json.is_array())
-			json = nlohmann::json::array();
+		if (json == nullptr)
+			return false;
+		if (json->is_null())
+			*json = nlohmann::json::array();
+		else if (!json->is_array())
+			return false;
 		JSONTools::SetAttributeByIndex(json, 0, src.x);
 		JSONTools::SetAttributeByIndex(json, 1, src.y);
 		JSONTools::SetAttributeByIndex(json, 2, src.z);
@@ -888,51 +906,57 @@ namespace chaos
 	}
 
 	template<typename T, glm::precision P>
-	/*CHAOS_API*/ bool LoadFromJSON(nlohmann::json const& json, glm::tvec4<T, P>& dst)
+	bool DoLoadFromJSON(JSONReadConfiguration config, glm::tvec4<T, P>& dst)
 	{
-		if (json.is_object())
+		return JSONTools::ForEachSource(config, [&dst](nlohmann::json const * json)
 		{
-			JSONTools::GetAttribute(json, "x", dst.x);
-			JSONTools::GetAttribute(json, "y", dst.y);
-			JSONTools::GetAttribute(json, "z", dst.z);
-			JSONTools::GetAttribute(json, "w", dst.w);
-			return true;
-		}
-		else if (json.is_array())
-		{
-			size_t count = std::min(json.size(), (size_t)dst.length());
-			for (size_t i = 0; i < count; ++i)
-				dst[i] = json[i].get<T>();
-			return true;
-		}
-		return false;
+			if (json->is_object())
+			{
+				JSONTools::GetAttribute(json, "x", dst.x);
+				JSONTools::GetAttribute(json, "y", dst.y);
+				JSONTools::GetAttribute(json, "z", dst.z);
+				JSONTools::GetAttribute(json, "w", dst.w);
+				return true;
+			}
+			else if (json->is_array())
+			{
+				size_t count = std::min(json->size(), (size_t)dst.length());
+				for (size_t i = 0; i < count; ++i)
+					dst[i] = json->operator[](i).get<T>();
+				return true;
+			}
+			return false;
+		});
 	}
 
 	template<typename T, int dimension>
-	/*CHAOS_API*/ bool SaveIntoJSON(nlohmann::json& json, type_box<T, dimension> const& src)
+	bool DoSaveIntoJSON(nlohmann::json * json, type_box<T, dimension> const& src)
 	{
-		if (!json.is_object())
-			json = nlohmann::json::object();
+		if (!PrepareSaveIntoJSON(json))
+			return false;
 		JSONTools::SetAttribute(json, "position", src.position);
 		JSONTools::SetAttribute(json, "half_size", src.half_size);
 		return true;
 	}
 
 	template<typename T, int dimension>
-	/*CHAOS_API*/ bool LoadFromJSON(nlohmann::json const& json, type_box<T, dimension>& dst)
+	bool DoLoadFromJSON(JSONReadConfiguration config, type_box<T, dimension>& dst)
 	{
-		if (!json.is_object())
-			return false;
-		JSONTools::GetAttribute(json, "position", dst.position);
-		JSONTools::GetAttribute(json, "half_size", dst.half_size);
+
+
+
+
+
+		JSONTools::GetAttribute(config, "position", dst.position);
+		JSONTools::GetAttribute(config, "half_size", dst.half_size);
 		return true;
 	}
 
 	template<typename T, int dimension>
-	/*CHAOS_API*/ bool SaveIntoJSON(nlohmann::json& json, type_obox<T, dimension> const& src)
+	bool DoSaveIntoJSON(nlohmann::json * json, type_obox<T, dimension> const& src)
 	{
-		if (!json.is_object())
-			json = nlohmann::json::object();
+		if (!PrepareSaveIntoJSON(json))
+			return false;
 		JSONTools::SetAttribute(json, "position", src.position);
 		JSONTools::SetAttribute(json, "half_size", src.half_size);
 		JSONTools::SetAttribute(json, "rotation", src.rotation);
@@ -940,73 +964,89 @@ namespace chaos
 	}
 
 	template<typename T, int dimension>
-	/*CHAOS_API*/ bool LoadFromJSON(nlohmann::json const& json, type_obox<T, dimension>& dst)
+	bool DoLoadFromJSON(JSONReadConfiguration config, type_obox<T, dimension>& dst)
 	{
-		if (!json.is_object())
-			return false;
-		JSONTools::GetAttribute(json, "position", dst.position);
-		JSONTools::GetAttribute(json, "half_size", dst.half_size);
-		JSONTools::GetAttribute(json, "rotation", dst.rotation);
+		
+		
+		
+		
+		JSONTools::GetAttribute(config, "position", dst.position);
+		JSONTools::GetAttribute(config, "half_size", dst.half_size);
+		JSONTools::GetAttribute(config, "rotation", dst.rotation);
 		return true;
 	}
 
 	template<typename T, int dimension>
-	/*CHAOS_API*/ bool SaveIntoJSON(nlohmann::json& json, type_aabox<T, dimension> const& src)
+	bool DoSaveIntoJSON(nlohmann::json * json, type_aabox<T, dimension> const& src)
 	{
-		if (!json.is_object())
-			json = nlohmann::json::object();
+		if (!PrepareSaveIntoJSON(json))
+			return false;
 		JSONTools::SetAttribute(json, "position", src.position);
 		JSONTools::SetAttribute(json, "size", src.size);
 		return true;
 	}
 
 	template<typename T, int dimension>
-	/*CHAOS_API*/ bool LoadFromJSON(nlohmann::json const& json, type_aabox<T, dimension>& dst)
+	bool DoLoadFromJSON(JSONReadConfiguration config, type_aabox<T, dimension>& dst)
 	{
-		if (!json.is_object())
-			return false;
-		JSONTools::GetAttribute(json, "position", dst.position);
-		JSONTools::GetAttribute(json, "size", dst.size);
+
+
+
+		JSONTools::GetAttribute(config, "position", dst.position);
+		JSONTools::GetAttribute(config, "size", dst.size);
 		return true;
 	}
 
 	template<typename T, int dimension>
-	/*CHAOS_API*/ bool SaveIntoJSON(nlohmann::json& json, type_sphere<T, dimension> const& src)
+	bool DoSaveIntoJSON(nlohmann::json * json, type_sphere<T, dimension> const& src)
 	{
-		if (!json.is_object())
-			json = nlohmann::json::object();
+		if (!PrepareSaveIntoJSON(json))
+			return false;
 		JSONTools::SetAttribute(json, "position", src.position);
 		JSONTools::SetAttribute(json, "radius", src.radius);
 		return true;
 	}
 
 	template<typename T, int dimension>
-	/*CHAOS_API*/ bool LoadFromJSON(nlohmann::json const& json, type_sphere<T, dimension>& dst)
+	bool DoLoadFromJSON(JSONReadConfiguration config, type_sphere<T, dimension>& dst)
 	{
-		if (!json.is_object())
-			return false;
-		JSONTools::GetAttribute(json, "position", dst.position);
-		JSONTools::GetAttribute(json, "radius", dst.radius);
+
+
+
+
+
+
+
+
+
+		JSONTools::GetAttribute(config, "position", dst.position);
+		JSONTools::GetAttribute(config, "radius", dst.radius);
 		return true;
 	}
 
 	template<typename T, int dimension>
-	/*CHAOS_API*/ bool SaveIntoJSON(nlohmann::json& json, type_ray<T, dimension> const& src)
+	bool DoSaveIntoJSON(nlohmann::json * json, type_ray<T, dimension> const& src)
 	{
-		if (!json.is_object())
-			json = nlohmann::json::object();
+		if (!PrepareSaveIntoJSON(json))
+			return false;
 		JSONTools::SetAttribute(json, "position", src.position);
 		JSONTools::SetAttribute(json, "direction", src.direction);
 		return true;
 	}
 
 	template<typename T, int dimension>
-	/*CHAOS_API*/ bool LoadFromJSON(nlohmann::json const& json, type_ray<T, dimension>& dst)
+	bool DoLoadFromJSON(JSONReadConfiguration config, type_ray<T, dimension>& dst)
 	{
-		if (!json.is_object())
-			return false;
-		JSONTools::GetAttribute(json, "position", dst.position);
-		JSONTools::GetAttribute(json, "direction", dst.direction);
+
+
+
+
+
+
+
+
+		JSONTools::GetAttribute(config, "position", dst.position);
+		JSONTools::GetAttribute(config, "direction", dst.direction);
 		return true;
 	}
 

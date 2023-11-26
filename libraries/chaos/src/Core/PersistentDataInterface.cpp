@@ -7,7 +7,7 @@ namespace chaos
 	{
 		if (nlohmann::json const* json = GetPersistentReadStorage())
 		{
-			OnReadPersistentData(*json);
+			OnReadPersistentData(json);
 			return true;
 		}
 		return false;
@@ -17,7 +17,7 @@ namespace chaos
 	{
 		if (nlohmann::json * json = GetPersistentWriteStorage())
 		{
-			OnWritePersistentData(*json);
+			OnWritePersistentData(json);
 			return true;
 		}
 		return false;

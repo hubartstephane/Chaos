@@ -26,9 +26,9 @@ namespace chaos
 		bool accept_float = true;
 	};
 
-	CHAOS_API bool LoadFromJSON(nlohmann::json const& json, PixelFormatMergeParams& dst);
+	CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, PixelFormatMergeParams& dst);
 
-	CHAOS_API bool SaveIntoJSON(nlohmann::json& json, PixelFormatMergeParams const& src);
+	CHAOS_API bool DoSaveIntoJSON(nlohmann::json * json, PixelFormatMergeParams const& src);
 
 	/**
 	* PixelFormatMerger : utility function to find a common PixelFormat for multiple images

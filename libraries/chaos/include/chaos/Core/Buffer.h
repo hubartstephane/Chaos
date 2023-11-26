@@ -74,7 +74,7 @@ namespace chaos
 	*/
 
 	template<typename T>
-	class /*CHAOS_API*/ SharedBufferPolicy : public BufferPolicyBase
+	class SharedBufferPolicy : public BufferPolicyBase
 	{
 
 	public:
@@ -133,7 +133,7 @@ namespace chaos
 	*/
 
 	template<typename T>
-	class /*CHAOS_API*/ SharedNonOptimizedBufferPolicy : public SharedBufferPolicy<T>
+	class SharedNonOptimizedBufferPolicy : public SharedBufferPolicy<T>
 	{
 
 	public:
@@ -165,7 +165,7 @@ namespace chaos
 	*/
 
 	template<typename TYPE = char>
-	class /*CHAOS_API*/ Buffer : public BufferBase
+	class Buffer : public BufferBase
 	{
 		friend class BufferPolicyBase;
 

@@ -134,23 +134,23 @@ namespace chaos
 		allocations = in_allocation;
 	}
 	
-	bool GameEntity::SerializeFromJSON(nlohmann::json const& entry)
+	bool GameEntity::SerializeFromJSON(nlohmann::json const * json)
 	{
-		if (!JSONSerializableInterface::SerializeFromJSON(entry))
+		if (!JSONSerializableInterface::SerializeFromJSON(json))
 			return false;
 
 		box2 b;
-		if (JSONTools::GetAttribute(entry, "BOUNDING_BOX", b))
+		if (JSONTools::GetAttribute(json, "BOUNDING_BOX", b))
 			SetBoundingBox(b);
 
 		return true;
 	}
 
-	bool GameEntity::SerializeIntoJSON(nlohmann::json& entry) const
+	bool GameEntity::SerializeIntoJSON(nlohmann::json * json) const
 	{
-		if (!JSONSerializableInterface::SerializeIntoJSON(entry))
+		if (!JSONSerializableInterface::SerializeIntoJSON(json))
 			return false;
-		JSONTools::SetAttribute(entry, "BOUNDING_BOX", GetBoundingBox());
+		JSONTools::SetAttribute(json, "BOUNDING_BOX", GetBoundingBox());
 		return true;
 	}
 	

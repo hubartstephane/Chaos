@@ -156,7 +156,7 @@ namespace chaos
 	// ==============================================================
 
 	template<typename LAYER_TRAIT>
-	class /*CHAOS_API*/ ParticleAllocation : public ParticleAllocationBase, public DataOwner<typename get_AllocationTrait<LAYER_TRAIT>::type>
+	class ParticleAllocation : public ParticleAllocationBase, public DataOwner<typename get_AllocationTrait<LAYER_TRAIT>::type>
 	{
         friend class ParticleLayer<LAYER_TRAIT>;
 

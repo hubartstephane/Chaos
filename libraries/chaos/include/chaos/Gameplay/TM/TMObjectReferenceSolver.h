@@ -21,7 +21,7 @@ namespace chaos
 	// ==========================================
 
 	template<typename T>
-	class /*CHAOS_API*/ TMObjectReferenceEntryClassSolver : public TMObjectReferenceEntryClassSolverBase
+	class TMObjectReferenceEntryClassSolver : public TMObjectReferenceEntryClassSolverBase
 	{
 	public:
 

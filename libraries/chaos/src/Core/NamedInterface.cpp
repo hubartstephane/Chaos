@@ -19,27 +19,23 @@ namespace chaos
 			SetTag(request.tag);
 	}
 
-	bool SaveIntoJSON(nlohmann::json& json, NamedInterface const& src)
+	bool DoSaveIntoJSON(nlohmann::json * json, NamedInterface const& src)
 	{
-		if (!json.is_object())
-			json = nlohmann::json::object();
-
+		if (!PrepareSaveIntoJSON(json))
+			return false;
 		JSONTools::SetAttribute(json, "name", src.GetName());
 		JSONTools::SetAttribute(json, "tag", src.GetTag());
 		return true;
 	}
 
-	bool LoadFromJSON(nlohmann::json const& json, NamedInterface& dst)
+	bool DoLoadFromJSON(JSONReadConfiguration config, NamedInterface& dst)
 	{
-		if (!json.is_object())
-			return false;
-
 		std::string name;
-		JSONTools::GetAttribute(json, "name", name, "");
+		JSONTools::GetAttribute(config, "name", name, "");
 		dst.SetName(name.c_str());
 
 		TagType tag;
-		JSONTools::GetAttribute(json, "tag", tag, 0);
+		JSONTools::GetAttribute(config, "tag", tag, 0);
 		dst.SetTag(tag);
 		return true;
 	}

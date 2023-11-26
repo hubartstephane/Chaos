@@ -50,7 +50,7 @@ namespace chaos
 	**/
 
 	template<typename RESOURCE_TYPE, typename MANAGER_TYPE>
-	class /*CHAOS_API*/ ResourceManagerLoader : public ResourceManagerLoaderBase
+	class ResourceManagerLoader : public ResourceManagerLoaderBase
 	{
 	public:
 
@@ -68,10 +68,10 @@ namespace chaos
 
 	protected:
 
-		RESOURCE_TYPE * LoadObjectHelper(char const * name, nlohmann::json const & json, std::function<RESOURCE_TYPE *(nlohmann::json const &)> load_func, std::function<void(RESOURCE_TYPE*)> insert_func) const
+		RESOURCE_TYPE * LoadObjectHelper(char const * name, nlohmann::json const * json, std::function<RESOURCE_TYPE *(nlohmann::json const *)> load_func, std::function<void(RESOURCE_TYPE*)> insert_func) const
 		{
 			// check for name
-			if (!CheckResourceName(nullptr, name, &json))
+			if (!CheckResourceName(nullptr, name, json))
 				return nullptr;
 			// load the object
 			RESOURCE_TYPE * result = load_func(json);

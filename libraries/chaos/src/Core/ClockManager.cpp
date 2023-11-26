@@ -429,7 +429,7 @@ namespace chaos
 	}
 
 	
-	bool Clock::SerializeIntoJSON(nlohmann::json& json) const
+	bool Clock::SerializeIntoJSON(nlohmann::json * json) const
 	{
 		if (!JSONSerializableInterface::SerializeIntoJSON(json))
 			return false;
@@ -437,7 +437,7 @@ namespace chaos
 		return true;
 	}
 	
-	bool Clock::SerializeFromJSON(nlohmann::json const& json) 
+	bool Clock::SerializeFromJSON(nlohmann::json const * json) 
 	{
 		if (!JSONSerializableInterface::SerializeFromJSON(json))
 			return false;
@@ -445,7 +445,7 @@ namespace chaos
 		return true;
 	}
 
-	void Clock::InitializeFromConfiguration(nlohmann::json const & config)
+	void Clock::InitializeFromConfiguration(nlohmann::json const * config)
 	{
 
 

@@ -88,9 +88,9 @@ namespace chaos
 		int component_count = 0;
 	};
 
-	CHAOS_API bool LoadFromJSON(nlohmann::json const& json, PixelFormat& dst);
+	CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, PixelFormat& dst);
 
-	CHAOS_API bool SaveIntoJSON(nlohmann::json& json, PixelFormat const& src);
+	CHAOS_API bool DoSaveIntoJSON(nlohmann::json * json, PixelFormat const& src);
 
 #endif
 

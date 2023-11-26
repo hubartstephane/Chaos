@@ -391,7 +391,7 @@ namespace chaos
 		return sound_category.get();
 	}
 
-	bool LevelInstance::SerializeIntoJSON(nlohmann::json& json) const
+	bool LevelInstance::SerializeIntoJSON(nlohmann::json * json) const
 	{
 		if (!JSONSerializableInterface::SerializeIntoJSON(json))
 			return false;
@@ -408,7 +408,7 @@ namespace chaos
 		return true;
 	}
 
-	bool LevelInstance::SerializeFromJSON(nlohmann::json const& json)
+	bool LevelInstance::SerializeFromJSON(nlohmann::json const * json)
 	{
 		if (!JSONSerializableInterface::SerializeFromJSON(json))
 			return false;

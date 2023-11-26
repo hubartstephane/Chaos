@@ -191,9 +191,9 @@ namespace chaos
 		/** override */
 		virtual bool DoTick(float delta_time) override;
 		/** override */
-		virtual void OnReadPersistentData(nlohmann::json const& json) override;
+		virtual void OnReadPersistentData(nlohmann::json const * json) override;
 		/** override */
-		virtual void OnWritePersistentData(nlohmann::json& json) const override;
+		virtual void OnWritePersistentData(nlohmann::json * json) const override;
 
 		/** the user callback called when current input mode changes */
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;
@@ -299,7 +299,7 @@ namespace chaos
 	*/
 
 	template<typename WINDOW_TYPE, typename ...PARAMS>
-	/*CHAOS_API*/ bool RunWindowApplication(int argc, char** argv, char** env, PARAMS && ...params)
+	bool RunWindowApplication(int argc, char** argv, char** env, PARAMS && ...params)
 	{
 		return RunApplication<WindowApplication>(argc, argv, env, WINDOW_TYPE::GetStaticClass(), std::forward<PARAMS>(params)...);
 	}

@@ -26,9 +26,9 @@ namespace chaos
 			virtual bool AcceptFont(class FontInfoInput const* input) const;
 
 			/** loading method from JSON */
-			virtual bool SerializeFromJSON(nlohmann::json const& entry) override;
+			virtual bool SerializeFromJSON(nlohmann::json const * json) override;
 			/** saving method from JSON */
-			virtual bool SerializeIntoJSON(nlohmann::json& entry) const override;
+			virtual bool SerializeIntoJSON(nlohmann::json * json) const override;
 		};
 
 		/**
@@ -47,9 +47,9 @@ namespace chaos
 		};
 
 		/** loading method from JSON */
-		CHAOS_API bool LoadFromJSON(nlohmann::json const& entry, BitmapAtlasFilter& dst);
+		CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, BitmapAtlasFilter& dst);
 		/** saving method from JSON */
-		CHAOS_API bool SaveIntoJSON(nlohmann::json& entry, BitmapAtlasFilter const& src);
+		CHAOS_API bool DoSaveIntoJSON(nlohmann::json * json, BitmapAtlasFilter const& src);
 
 		/**
 		* BitmapAtlasFilterSet : a whole set of condition/image processor
@@ -64,9 +64,9 @@ namespace chaos
 		};
 
 		/** loading method from JSON */
-		CHAOS_API bool LoadFromJSON(nlohmann::json const& entry, BitmapAtlasFilterSet& dst);
+		CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, BitmapAtlasFilterSet& dst);
 		/** saving method from JSON */
-		CHAOS_API bool SaveIntoJSON(nlohmann::json& entry, BitmapAtlasFilterSet const& src);
+		CHAOS_API bool DoSaveIntoJSON(nlohmann::json * json, BitmapAtlasFilterSet const& src);
 
 #endif
 

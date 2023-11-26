@@ -351,7 +351,7 @@ namespace chaos
 		return (blend_desc.blend_type != SoundBlendType::BLEND_NONE);
 	}
 
-	bool SoundObject::InitializeFromJSON(nlohmann::json const & json)
+	bool SoundObject::InitializeFromJSON(nlohmann::json const * json)
 	{
 		assert(IsAttachedToManager());
 		float json_volume = 1.0f;
@@ -482,7 +482,7 @@ namespace chaos
 		return true;
 	}
 
-	bool SoundSource::InitializeFromJSON(nlohmann::json const & json)
+	bool SoundSource::InitializeFromJSON(nlohmann::json const * json)
 	{
 		if (!SoundObject::InitializeFromJSON(json))
 			return false;
@@ -1166,7 +1166,7 @@ namespace chaos
 	// "key": {"name":"myname"}   => name given by the member 'name'
 	// "@key" : {}                => the key begins with @ => the name is the key (with @removed)
 
-	SoundCategory * SoundManager::AddJSONCategory(char const * name, nlohmann::json const & json)
+	SoundCategory * SoundManager::AddJSONCategory(char const * name, nlohmann::json const * json)
 	{
 		// no anonymous category
 		if (name == nullptr)
@@ -1179,7 +1179,7 @@ namespace chaos
 		return category;
 	}
 
-	bool SoundManager::InitializeFromConfiguration(nlohmann::json const& config)
+	bool SoundManager::InitializeFromConfiguration(nlohmann::json const * config)
 	{
 		// initialize the categories
 		if (!LoadCategoriesFromConfiguration(config))
@@ -1190,7 +1190,7 @@ namespace chaos
 		return true;
 	}
 
-	bool SoundManager::LoadCategoriesFromConfiguration(nlohmann::json const& config)
+	bool SoundManager::LoadCategoriesFromConfiguration(nlohmann::json const * config)
 	{
 		return LoadObjectsFromConfiguration<false>( // no [recurse] reading
 			"categories",
@@ -1198,7 +1198,7 @@ namespace chaos
 			SoundCategoryLoader(this));
 	}
 
-	bool SoundManager::LoadSourcesFromConfiguration(nlohmann::json const& config)
+	bool SoundManager::LoadSourcesFromConfiguration(nlohmann::json const * config)
 	{
 		return LoadObjectsFromConfiguration<true>(
 			"sources",
@@ -1267,7 +1267,7 @@ namespace chaos
 	// SOUND SOURCE LOADER
 	// ==============================================================
 
-	SoundSource * SoundSourceLoader::LoadObject(char const * name, nlohmann::json const & json) const
+	SoundSource * SoundSourceLoader::LoadObject(char const * name, nlohmann::json const * json) const
 	{
 		SoundSource * result = nullptr;
 		// the entry has a reference to another file => recursive call
@@ -1340,7 +1340,7 @@ namespace chaos
 	// SOUND CATEGORY LOADER
 	// ==============================================================
 
-	SoundCategory * SoundCategoryLoader::LoadObject(char const * name, nlohmann::json const & json) const
+	SoundCategory * SoundCategoryLoader::LoadObject(char const * name, nlohmann::json const * json) const
 	{
 		// no anonymous category
 		if (name == nullptr)

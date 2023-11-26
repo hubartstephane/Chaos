@@ -79,13 +79,13 @@ namespace chaos
 	* Some JSON utility functions
 	*/
 
-	CHAOS_API bool SaveIntoJSON(nlohmann::json& json, BitmapGridAnimationInfo const& src);
+	CHAOS_API bool DoSaveIntoJSON(nlohmann::json * json, BitmapGridAnimationInfo const& src);
 
-	CHAOS_API bool LoadFromJSON(nlohmann::json const& json, BitmapGridAnimationInfo& dst);
+	CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, BitmapGridAnimationInfo& dst);
 
-	CHAOS_API bool SaveIntoJSON(nlohmann::json& json, ImageAnimationDescription const& src);
+	CHAOS_API bool DoSaveIntoJSON(nlohmann::json * json, ImageAnimationDescription const& src);
 
-	CHAOS_API bool LoadFromJSON(nlohmann::json const& json, ImageAnimationDescription& dst);
+	CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, ImageAnimationDescription& dst);
 
 
 #endif

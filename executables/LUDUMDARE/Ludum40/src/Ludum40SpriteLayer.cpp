@@ -7,31 +7,29 @@
 
 // ======================================================================================
 
-bool SpriteLayer::LoadFromJSON(nlohmann::json const & json)
+bool SpriteLayer::LoadFromJSON(chaos::JSONReadConfiguration config)
 {
-	chaos::JSONTools::GetAttribute(json, "name", name, "noname");
-	chaos::JSONTools::GetAttribute(json, "layer", layer, 0);
-	chaos::JSONTools::GetAttribute(json, "relative_speed", relative_speed, 1.0f);
-	chaos::JSONTools::GetAttribute(json, "start_visible", start_visible, true);
-	chaos::JSONTools::GetAttribute(json, "collision_type", collision_type, 1);
-	chaos::JSONTools::GetAttribute(json, "min_particle_count", min_particle_count, 0);
-	chaos::JSONTools::GetAttribute(json, "max_particle_count", max_particle_count, 0);
-
+	chaos::JSONTools::GetAttribute(config, "name", name, "noname");
+	chaos::JSONTools::GetAttribute(config, "layer", layer, 0);
+	chaos::JSONTools::GetAttribute(config, "relative_speed", relative_speed, 1.0f);
+	chaos::JSONTools::GetAttribute(config, "start_visible", start_visible, true);
+	chaos::JSONTools::GetAttribute(config, "collision_type", collision_type, 1);
+	chaos::JSONTools::GetAttribute(config, "min_particle_count", min_particle_count, 0);
+	chaos::JSONTools::GetAttribute(config, "max_particle_count", max_particle_count, 0);
 	return true;
 }
 
 // ======================================================================================
 
-bool ObjectDefinition::LoadFromJSON(nlohmann::json const & json)
+bool ObjectDefinition::LoadFromJSON(chaos::JSONReadConfiguration config)
 {
-	chaos::JSONTools::GetAttribute(json, "id", id, 0);
-	chaos::JSONTools::GetAttribute(json, "layer", layer, 0);
-	chaos::JSONTools::GetAttribute(json, "size", size, 1.0f);
-	chaos::JSONTools::GetAttribute(json, "bitmap", bitmap_path, "");
-	chaos::JSONTools::GetAttribute(json, "min_lifetime", min_lifetime, 0.0f);
-	chaos::JSONTools::GetAttribute(json, "max_lifetime", max_lifetime, 0.0f);
-	chaos::JSONTools::GetAttribute(json, "spawn_type", spawn_type, SPAWN_TYPE_CENTER);
-
+	chaos::JSONTools::GetAttribute(config, "id", id, 0);
+	chaos::JSONTools::GetAttribute(config, "layer", layer, 0);
+	chaos::JSONTools::GetAttribute(config, "size", size, 1.0f);
+	chaos::JSONTools::GetAttribute(config, "bitmap", bitmap_path, "");
+	chaos::JSONTools::GetAttribute(config, "min_lifetime", min_lifetime, 0.0f);
+	chaos::JSONTools::GetAttribute(config, "max_lifetime", max_lifetime, 0.0f);
+	chaos::JSONTools::GetAttribute(config, "spawn_type", spawn_type, SPAWN_TYPE_CENTER);
 	return true;
 }
 

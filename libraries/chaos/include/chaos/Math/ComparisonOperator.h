@@ -25,7 +25,7 @@ namespace chaos
 	CHAOS_API ComparisonOperator operator ! (ComparisonOperator op);
 
 	template<typename T>
-	/*CHAOS_API*/ bool Compare(ComparisonOperator op, T const& src1, T const& src2)
+	bool Compare(ComparisonOperator op, T const& src1, T const& src2)
 	{
 		if (op == ComparisonOperator::NEVER)
 			return false;

@@ -72,14 +72,14 @@ namespace chaos
 		float GetRightTrigger(bool previous_frame = false) const { return (previous_frame) ? previous_right_trigger : right_trigger; }
 
 		/** player initialization from config */
-		virtual bool InitializeGameValues(nlohmann::json const& config, bool hot_reload);
+		virtual bool InitializeGameValues(nlohmann::json const * config, bool hot_reload);
 		/** called after player configuration has been (re)loaded */
 		virtual void OnGameValuesChanged(bool hot_reload);
 
 		/** the processor may save its configuration into a JSON file */
-		virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
+		virtual bool SerializeIntoJSON(nlohmann::json * json) const override;
 		/** the processor may save its configuration from a JSON file */
-		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
+		virtual bool SerializeFromJSON(nlohmann::json const * json) override;
 
 	protected:
 

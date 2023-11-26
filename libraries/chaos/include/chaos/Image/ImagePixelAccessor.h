@@ -8,7 +8,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	template<typename PIXEL_TYPE>
-	class /*CHAOS_API*/ ImagePixelAccessor
+	class ImagePixelAccessor
 	{
 	public:
 

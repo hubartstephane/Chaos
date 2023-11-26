@@ -10,10 +10,22 @@ namespace chaos
 	{
 	public:
 
+
+
+
+		bool SerializeFromJSON(JSONReadConfiguration config);
+
+
+
+
+
+
+
+
 		/** the processor may save its configuration into a JSON file */
-		virtual bool SerializeIntoJSON(nlohmann::json& json) const;
+		virtual bool SerializeIntoJSON(nlohmann::json * json) const;
 		/** the processor may save its configuration from a JSON file */
-		virtual bool SerializeFromJSON(nlohmann::json const& json);
+		virtual bool SerializeFromJSON(nlohmann::json const * json);
 	};
 
 #endif

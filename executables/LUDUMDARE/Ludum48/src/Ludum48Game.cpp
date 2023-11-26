@@ -37,7 +37,7 @@ GameHUD * LudumGame::DoCreatePlayingHUD()
 	return new LudumPlayingHUD();
 }
 
-bool LudumGame::InitializeGameValues(nlohmann::json const & config, bool hot_reload)
+bool LudumGame::InitializeGameValues(nlohmann::json const * config, bool hot_reload)
 {
 	if (!Game::InitializeGameValues(config, hot_reload))
 		return false;
@@ -50,7 +50,7 @@ TMLevel * LudumGame::CreateTMLevel()
 	return new LudumLevel();
 }
 
-bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config)
+bool LudumGame::InitializeFromConfiguration(nlohmann::json const * config)
 {
 	if (!Game::InitializeFromConfiguration(config))
 		return false;

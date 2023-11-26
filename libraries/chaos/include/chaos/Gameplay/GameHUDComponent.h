@@ -79,7 +79,7 @@ namespace chaos
 		/** called whenever the hud is beeing removed into the hud */
 		virtual void OnRemovedFromHUD();
 		/** initialization method from JSON */
-		virtual bool InitializeFromConfiguration(nlohmann::json const& config);
+		virtual bool InitializeFromConfiguration(nlohmann::json const * config);
 		/** set the HUD */
 		virtual void SetHUD(GameHUD* in_hud);
 
@@ -135,7 +135,7 @@ namespace chaos
 		/** override */
 		virtual void UpdateMesh() override;
 		/** override */
-		virtual bool InitializeFromConfiguration(nlohmann::json const& config) override;
+		virtual bool InitializeFromConfiguration(nlohmann::json const * config) override;
 		/** override */
 		virtual void OnInsertedInHUD() override;
 
@@ -152,7 +152,7 @@ namespace chaos
 	// ====================================================================
 
 	template<typename T, typename BASE>
-	class /*CHAOS_API*/ GameHUDCacheValueComponent : public BASE
+	class GameHUDCacheValueComponent : public BASE
 	{
 		using type = T;
 
@@ -200,7 +200,7 @@ namespace chaos
 	// ====================================================================
 
 	template<typename T>
-	class /*CHAOS_API*/ GameHUDCacheValueTextComponent : public GameHUDCacheValueComponent<T, GameHUDTextComponent>
+	class GameHUDCacheValueTextComponent : public GameHUDCacheValueComponent<T, GameHUDTextComponent>
 	{
 	protected:
 
@@ -368,7 +368,7 @@ namespace chaos
 		/** override */
 		virtual void TweakTextGeneratorParams(ParticleTextGenerator::GeneratorParams& final_params) const override;
 		/** override */
-		virtual bool InitializeFromConfiguration(nlohmann::json const& config) override;
+		virtual bool InitializeFromConfiguration(nlohmann::json const * config) override;
 
 	protected:
 
@@ -404,7 +404,7 @@ namespace chaos
 		/** override */
 		virtual void UpdateMesh() override;
 		/** override */
-		virtual bool InitializeFromConfiguration(nlohmann::json const& config) override;
+		virtual bool InitializeFromConfiguration(nlohmann::json const * config) override;
 
 	protected:
 
@@ -506,7 +506,7 @@ namespace chaos
 		/** override */
 		virtual void OnInsertedInHUD() override;
 		/** override */
-		virtual bool InitializeFromConfiguration(nlohmann::json const& config) override;
+		virtual bool InitializeFromConfiguration(nlohmann::json const * config) override;
 
 	protected:
 
@@ -524,7 +524,7 @@ namespace chaos
 	CHAOS_API void DebugValue(char const* title, char const* value, float life_time = 0.0f);
 	/** display a variable for 1 frame */
 	template<typename T>
-	/*CHAOS_API*/ void DebugValue(char const* title, T const& value, float life_time = 0.0f)
+	void DebugValue(char const* title, T const& value, float life_time = 0.0f)
 	{
 		std::string str = StringTools::ToString(value);
 		DebugValue(title, str.c_str(), life_time);

@@ -47,9 +47,9 @@ namespace chaos
 		virtual bool OnCharEventImpl(unsigned int c) override;
 
 		/** override */
-		virtual void OnReadPersistentData(nlohmann::json const& json) override;
+		virtual void OnReadPersistentData(nlohmann::json const * json) override;
 		/** override */
-		virtual void OnWritePersistentData(nlohmann::json& json) const override;
+		virtual void OnWritePersistentData(nlohmann::json * json) const override;
 
 	protected:
 
@@ -62,7 +62,7 @@ namespace chaos
 	};
 
 	template<typename GAME_TYPE, typename GAME_APPLICATION_TYPE = GameApplication, typename MAIN_WINDOW_CLASS = GameWindow, typename GAME_VIEWPORT_WIDGET_CLASS = GameViewportWidget, typename ...PARAMS>
-	/*CHAOS_API*/ int RunGame(int argc, char** argv, char** env, PARAMS && ...params)
+	int RunGame(int argc, char** argv, char** env, PARAMS && ...params)
 	{
 		return RunApplication<GAME_APPLICATION_TYPE>(
 			argc, argv, env,

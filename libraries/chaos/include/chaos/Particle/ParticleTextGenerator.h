@@ -60,9 +60,9 @@ namespace chaos
 		};
 
 		/** json functions */
-		CHAOS_API bool SaveIntoJSON(nlohmann::json& json, GeneratorParams const& src);
+		CHAOS_API bool DoSaveIntoJSON(nlohmann::json * json, GeneratorParams const& src);
 		/** json functions */
-		CHAOS_API bool LoadFromJSON(nlohmann::json const& json, GeneratorParams& dst);
+		CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, GeneratorParams& dst);
 
 		/**
 		* some parameters used during the final particle generation
@@ -309,7 +309,7 @@ namespace chaos
 
 		/** output primitives corresponding to generated text */
 		template<typename VERTEX_TYPE>
-		/*CHAOS_API*/ QuadPrimitive<VERTEX_TYPE> TextToPrimitives(PrimitiveOutput<VERTEX_TYPE>& output, GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params = {});
+		QuadPrimitive<VERTEX_TYPE> TextToPrimitives(PrimitiveOutput<VERTEX_TYPE>& output, GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params = {});
 
 #else
 

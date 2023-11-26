@@ -24,9 +24,9 @@ namespace chaos
 		virtual box2 GetTargetBox() const;
 
 		/** override */
-		virtual bool SerializeIntoJSON(nlohmann::json& json) const;
+		virtual bool SerializeIntoJSON(nlohmann::json * json) const;
 		/** override */
-		virtual bool SerializeFromJSON(nlohmann::json const& json);
+		virtual bool SerializeFromJSON(nlohmann::json const * json);
 
 	protected:
 

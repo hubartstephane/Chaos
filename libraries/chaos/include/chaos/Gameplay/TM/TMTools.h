@@ -6,20 +6,20 @@ namespace chaos
 
 		/** serialize layers into JSON */
 		template<typename T>
-		/*CHAOS_API*/ void SerializeLayersFromJSON(T* object, nlohmann::json const& json)
+		void SerializeLayersFromJSON(T* object, nlohmann::json const * json)
 		{
 			if (nlohmann::json const* layers_json = JSONTools::GetArrayNode(json, "LAYERS"))
 			{
 				for (size_t i = 0; i < layers_json->size(); ++i)
 				{
-					if (nlohmann::json const* layer_json = JSONTools::GetObjectNodeByIndex(*layers_json, i))
+					if (nlohmann::json const* layer_json = JSONTools::GetObjectNodeByIndex(layers_json, i))
 					{
 						int layer_id = 0;
-						if (JSONTools::GetAttribute(*layer_json, "LAYER_ID", layer_id))
+						if (JSONTools::GetAttribute(layer_json, "LAYER_ID", layer_id))
 						{
 							TMLayerInstance* layer_instance = object->FindLayerInstanceByID(layer_id);
 							if (layer_instance != nullptr)
-								LoadFromJSON(*layer_json, *layer_instance); // XXX : the indirection is important to avoid the creation of a new layer_instance
+								LoadFromJSON(layer_json, *layer_instance); // XXX : the indirection is important to avoid the creation of a new layer_instance
 						}
 					}
 				}
@@ -28,7 +28,7 @@ namespace chaos
 
 		/** search a layer inside an object by ID */
 		template<typename T, typename U>
-		/*CHAOS_API*/ auto FindLayerInstanceByID(T* object, U& layer_instances, int in_id, bool recursive) -> decltype(layer_instances[0].get())
+		auto FindLayerInstanceByID(T* object, U& layer_instances, int in_id, bool recursive) -> decltype(layer_instances[0].get())
 		{
 			for (auto& layer : layer_instances)
 			{
@@ -46,7 +46,7 @@ namespace chaos
 
 		/** search a layer inside an object by request */
 		template<typename T, typename U>
-		/*CHAOS_API*/ auto FindLayerInstance(T* object, U& layer_instances, ObjectRequest request, bool recursive) -> decltype(layer_instances[0].get())
+		auto FindLayerInstance(T* object, U& layer_instances, ObjectRequest request, bool recursive) -> decltype(layer_instances[0].get())
 		{
 			for (auto& layer : layer_instances)
 			{

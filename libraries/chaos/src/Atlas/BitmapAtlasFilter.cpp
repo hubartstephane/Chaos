@@ -9,16 +9,16 @@ namespace chaos
 		// BitmapAtlasFilterCondition methods
 		// ==========================================================================
 
-		bool BitmapAtlasFilterCondition::SerializeFromJSON(nlohmann::json const& entry)
+		bool BitmapAtlasFilterCondition::SerializeFromJSON(nlohmann::json const * json)
 		{
-			if (!JSONSerializableInterface::SerializeFromJSON(entry))
+			if (!JSONSerializableInterface::SerializeFromJSON(json))
 				return false;
 			return true;
 		}
 
-		bool BitmapAtlasFilterCondition::SerializeIntoJSON(nlohmann::json& entry) const
+		bool BitmapAtlasFilterCondition::SerializeIntoJSON(nlohmann::json * json) const
 		{
-			if (!JSONSerializableInterface::SerializeIntoJSON(entry))
+			if (!JSONSerializableInterface::SerializeIntoJSON(json))
 				return false;
 			return true;
 		}
@@ -37,17 +37,19 @@ namespace chaos
 		// BitmapAtlasFilter methods
 		// ==========================================================================
 
-		bool LoadFromJSON(nlohmann::json const& entry, BitmapAtlasFilter & dst)
+		bool DoLoadFromJSON(JSONReadConfiguration config, BitmapAtlasFilter & dst)
 		{
-			JSONTools::GetAttribute(entry, "condition", dst.condition);
-			JSONTools::GetAttribute(entry, "processor", dst.processor);
+			JSONTools::GetAttribute(config, "condition", dst.condition);
+			JSONTools::GetAttribute(config, "processor", dst.processor);
 			return true;
 		}
 
-		bool SaveIntoJSON(nlohmann::json& entry, BitmapAtlasFilter const & src)
+		bool DoSaveIntoJSON(nlohmann::json * json, BitmapAtlasFilter const & src)
 		{
-			JSONTools::SetAttribute(entry, "condition", src.condition);
-			JSONTools::SetAttribute(entry, "processor", src.processor);
+			if (!PrepareSaveIntoJSON(json))
+				return false;
+			JSONTools::SetAttribute(json, "condition", src.condition);
+			JSONTools::SetAttribute(json, "processor", src.processor);
 			return true;
 		}
 
@@ -55,15 +57,17 @@ namespace chaos
 		// BitmapAtlasFilterSet methods
 		// ==========================================================================
 
-		bool LoadFromJSON(nlohmann::json const& entry, BitmapAtlasFilterSet & dst)
+		bool DoLoadFromJSON(JSONReadConfiguration config, BitmapAtlasFilterSet & dst)
 		{
-			JSONTools::GetAttribute(entry, "filters", dst.filters);
+			JSONTools::GetAttribute(config, "filters", dst.filters);
 			return true;
 		}
 
-		bool SaveIntoJSON(nlohmann::json& entry, BitmapAtlasFilterSet const & src)
+		bool DoSaveIntoJSON(nlohmann::json * json, BitmapAtlasFilterSet const & src)
 		{
-			JSONTools::SetAttribute(entry, "filters", src.filters);
+			if (!PrepareSaveIntoJSON(json))
+				return false;
+			JSONTools::SetAttribute(json, "filters", src.filters);
 			return true;
 		}
 

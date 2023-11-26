@@ -34,13 +34,13 @@ namespace chaos
 
     /** output primitive */
     template<typename VERTEX_TYPE>
-    /*CHAOS_API*/ void ParticleToPrimitives(ParticleBackground const& particle, PrimitiveOutput<VERTEX_TYPE>& output);
+    void ParticleToPrimitives(ParticleBackground const& particle, PrimitiveOutput<VERTEX_TYPE>& output);
     /** generates 1 quad from one particle */
     template<typename VERTEX_TYPE>
-    /*CHAOS_API*/ void ParticleToPrimitive(ParticleBackground const& particle, QuadPrimitive<VERTEX_TYPE>& primitive);
+    void ParticleToPrimitive(ParticleBackground const& particle, QuadPrimitive<VERTEX_TYPE>& primitive);
     /** generates 1 triangle pair from one particle */
     template<typename VERTEX_TYPE>
-    /*CHAOS_API*/ void ParticleToPrimitive(ParticleBackground const& particle, TrianglePairPrimitive<VERTEX_TYPE>& primitive);
+    void ParticleToPrimitive(ParticleBackground const& particle, TrianglePairPrimitive<VERTEX_TYPE>& primitive);
 
 #else
 

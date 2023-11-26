@@ -132,12 +132,12 @@ namespace chaos
 			result->SetObjectNaming(request);
 			// override the create params with the JSON configuration (if any)
 			nlohmann::json const* window_configuration = nullptr;
-			if (nlohmann::json const* windows_configuration = JSONTools::GetStructureNode(configuration, "windows"))
+			if (nlohmann::json const* windows_configuration = JSONTools::GetStructureNode(&configuration, "windows"))
 			{
-				window_configuration = JSONTools::GetStructureNode(*windows_configuration, result->GetName());
+				window_configuration = JSONTools::GetStructureNode(windows_configuration, result->GetName());
 				if (window_configuration != nullptr)
 				{
-					LoadFromJSON(*window_configuration, create_params);
+					LoadFromJSON(window_configuration, create_params);
 				}
 			}
 			// create the GLFW resource
@@ -153,7 +153,7 @@ namespace chaos
 			nlohmann::json default_window_config;
 			if (window_configuration == nullptr)
 				window_configuration = &default_window_config;
-			result->InitializeFromConfiguration(*window_configuration);
+			result->InitializeFromConfiguration(window_configuration);
 			// read information from session file
 			result->ReadPersistentData();
 			// create the root widget
@@ -186,8 +186,8 @@ namespace chaos
 		glfwSetErrorCallback(OnGLFWError);
 
 		// the glfw configuration (valid for all windows)
-		if (nlohmann::json const* glfw_configuration = JSONTools::GetStructureNode(configuration, "glfw"))
-			LoadFromJSON(*glfw_configuration, glfw_hints);
+		if (nlohmann::json const* glfw_configuration = JSONTools::GetStructureNode(&configuration, "glfw"))
+			LoadFromJSON(glfw_configuration, glfw_hints);
 		glfw_hints.ApplyHints();
 
 		// create a hidden window whose purpose is to provide a sharable context for all others
@@ -254,7 +254,7 @@ namespace chaos
 			std::vector<char const*> names;
 			for (shared_ptr<Window> const& window : windows)
 				names.push_back(window->GetName());
-			JSONTools::SetAttribute(*json, "opened_window", names);
+			JSONTools::SetAttribute(json, "opened_window", names);
 		}
 		// effectively quit the application
 		DestroyAllWindows();
@@ -316,7 +316,7 @@ namespace chaos
 	{
 		// get the directory where the sprites are
 		std::string sprite_directory;
-		if (!JSONTools::GetAttribute(configuration, "sprite_directory", sprite_directory))
+		if (!JSONTools::GetAttribute(&configuration, "sprite_directory", sprite_directory))
 			return true;
 		// find or create folder
 		BitmapAtlas::FolderInfoInput* folder_info = input.AddFolder("sprites", 0);
@@ -330,17 +330,17 @@ namespace chaos
 
 	bool WindowApplication::FillAtlasGeneratorInputFonts(BitmapAtlas::AtlasInput& input)
 	{
-		if (nlohmann::json const* fonts_config = JSONTools::GetStructureNode(configuration, "fonts"))
+		if (nlohmann::json const* fonts_config = JSONTools::GetStructureNode(&configuration, "fonts"))
 		{
 			// read the default font parameters
 			BitmapAtlas::FontInfoInputParams font_params;
 
-			nlohmann::json const* default_font_param_json = JSONTools::GetStructureNode(*fonts_config, "default_font_param");
+			nlohmann::json const* default_font_param_json = JSONTools::GetStructureNode(fonts_config, "default_font_param");
 			if (default_font_param_json != nullptr)
-				LoadFromJSON(*default_font_param_json, font_params);
+				LoadFromJSON(default_font_param_json, font_params);
 
 			// Add the fonts
-			if (nlohmann::json const* fonts_json = JSONTools::GetObjectNode(*fonts_config, "fonts"))
+			if (nlohmann::json const* fonts_json = JSONTools::GetObjectNode(fonts_config, "fonts"))
 			{
 				for (nlohmann::json::const_iterator it = fonts_json->begin(); it != fonts_json->end(); ++it)
 				{
@@ -396,9 +396,9 @@ namespace chaos
 
 		BitmapAtlas::AtlasGeneratorParams params = BitmapAtlas::AtlasGeneratorParams(DEFAULT_ATLAS_SIZE, DEFAULT_ATLAS_SIZE, DEFAULT_ATLAS_PADDING, PixelFormatMergeParams());
 
-		nlohmann::json const* atlas_json = JSONTools::GetStructureNode(configuration, "atlas");
+		nlohmann::json const* atlas_json = JSONTools::GetStructureNode(&configuration, "atlas");
 		if (atlas_json != nullptr)
-			LoadFromJSON(*atlas_json, params);
+			LoadFromJSON(atlas_json, params);
 
 		// atlas generation params : maybe a dump
 		char const* dump_atlas_dirname = nullptr;
@@ -421,7 +421,7 @@ namespace chaos
 	bool WindowApplication::CreateTextGenerator()
 	{
 		// get the font sub objects
-		nlohmann::json const* fonts_config = JSONTools::GetStructureNode(configuration, "fonts");
+		nlohmann::json const* fonts_config = JSONTools::GetStructureNode(&configuration, "fonts");
 
 		// create the generator
 		particle_text_generator = new ParticleTextGenerator::Generator(*texture_atlas);
@@ -445,7 +445,7 @@ namespace chaos
 			// embedded sprites
 			if (fonts_config != nullptr)
 			{
-				if (nlohmann::json const* font_bitmaps_json = JSONTools::GetObjectNode(*fonts_config, "bitmaps"))
+				if (nlohmann::json const* font_bitmaps_json = JSONTools::GetObjectNode(fonts_config, "bitmaps"))
 				{
 					for (nlohmann::json::const_iterator it = font_bitmaps_json->begin(); it != font_bitmaps_json->end(); ++it)
 					{
@@ -465,12 +465,12 @@ namespace chaos
 		// the colors
 		if (fonts_config != nullptr)
 		{
-			if (nlohmann::json const* font_colors_json = JSONTools::GetObjectNode(*fonts_config, "colors"))
+			if (nlohmann::json const* font_colors_json = JSONTools::GetObjectNode(fonts_config, "colors"))
 			{
 				for (nlohmann::json::const_iterator it = font_colors_json->begin(); it != font_colors_json->end(); ++it)
 				{
 					glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);  // initialization for if input is smaller than 4
-					if (!LoadFromJSON(*it, color))
+					if (!LoadFromJSON(&(*it), color))
 						continue;
 					std::string const & color_name = it.key();
 					particle_text_generator->AddColor(color_name.c_str(), color);
@@ -534,9 +534,9 @@ namespace chaos
 		if (!gpu_resource_manager->InitializeInternalResources())
 			return false;
 		// get JSON section and load all requested resources
-		nlohmann::json const* gpu_config = JSONTools::GetStructureNode(configuration, "gpu");
+		nlohmann::json const* gpu_config = JSONTools::GetStructureNode(&configuration, "gpu");
 		if (gpu_config != nullptr)
-			if (!gpu_resource_manager->InitializeFromConfiguration(*gpu_config))
+			if (!gpu_resource_manager->InitializeFromConfiguration(gpu_config))
 				return false;
 		return true;
 	}
@@ -553,7 +553,7 @@ namespace chaos
 			if (!ReloadConfigurationFile(config))
 				return false;
 			// get the structure of interrest
-			nlohmann::json const* gpu_config = JSONTools::GetStructureNode(config, "gpu");
+			nlohmann::json const* gpu_config = JSONTools::GetStructureNode(&config, "gpu");
 			if (gpu_config == nullptr)
 				return false;
 			// create a temporary manager
@@ -563,7 +563,7 @@ namespace chaos
 			if (!other_gpu_resource_manager->StartManager())
 				return false;
 			// reload all resources ... (even unchanged)
-			if (other_gpu_resource_manager->InitializeFromConfiguration(*gpu_config))
+			if (other_gpu_resource_manager->InitializeFromConfiguration(gpu_config))
 				gpu_resource_manager->RefreshGPUResources(other_gpu_resource_manager.get());
 			other_gpu_resource_manager->StopManager();
 			return true;
@@ -586,25 +586,25 @@ namespace chaos
 			return false;
 
 		// update some internals
-		JSONTools::GetAttribute(configuration, "max_tick_duration", max_tick_duration);
-		JSONTools::GetAttribute(configuration, "forced_tick_duration", forced_tick_duration);
+		JSONTools::GetAttribute(&configuration, "max_tick_duration", max_tick_duration);
+		JSONTools::GetAttribute(&configuration, "forced_tick_duration", forced_tick_duration);
 
 		// initialize the clock
 		main_clock = new Clock("main_clock");
 		if (main_clock == nullptr)
 			return false;
-		nlohmann::json const* clock_config = JSONTools::GetStructureNode(configuration, "clocks");
+		nlohmann::json const* clock_config = JSONTools::GetStructureNode(&configuration, "clocks");
 		if (clock_config != nullptr)
-			main_clock->InitializeFromConfiguration(*clock_config);
+			main_clock->InitializeFromConfiguration(clock_config);
 
 		// initialize the sound manager
 		sound_manager = new SoundManager();
 		if (sound_manager == nullptr)
 			return false;
 		sound_manager->StartManager();
-		nlohmann::json const* sound_config = JSONTools::GetStructureNode(configuration, "sounds");
+		nlohmann::json const* sound_config = JSONTools::GetStructureNode(&configuration, "sounds");
 		if (sound_config != nullptr)
-			sound_manager->InitializeFromConfiguration(*sound_config);
+			sound_manager->InitializeFromConfiguration(sound_config);
 
 		return true;
 	}
@@ -896,7 +896,7 @@ namespace chaos
 				}
 				if (ImGui::MenuItem("Open Config File", nullptr, false, true))
 				{
-					WinTools::ShowFile(JSONTools::DumpConfigFile(configuration));
+					WinTools::ShowFile(JSONTools::DumpConfigFile(&configuration));
 				}
 				if (ImGui::MenuItem("Open Persistent File", nullptr, false, true))
 				{
@@ -935,7 +935,7 @@ namespace chaos
 	}
 
 
-	void WindowApplication::OnReadPersistentData(nlohmann::json const& json)
+	void WindowApplication::OnReadPersistentData(nlohmann::json const * json)
 	{
 		Application::OnReadPersistentData(json);
 
@@ -947,7 +947,7 @@ namespace chaos
 			SetKnownWindowVisibility(name.c_str(), true);
 	}
 
-	void WindowApplication::OnWritePersistentData(nlohmann::json & json) const
+	void WindowApplication::OnWritePersistentData(nlohmann::json * json) const
 	{
 		Application::OnWritePersistentData(json);
 	}

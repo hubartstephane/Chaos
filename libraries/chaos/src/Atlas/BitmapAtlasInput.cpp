@@ -49,10 +49,10 @@ namespace chaos
 		// FontInfoInputParams functions
 		// ========================================================================
 
-		bool SaveIntoJSON(nlohmann::json& json, FontInfoInputParams const& src)
+		bool DoSaveIntoJSON(nlohmann::json * json, FontInfoInputParams const& src)
 		{
-			if (!json.is_object())
-				json = nlohmann::json::object();
+			if (!PrepareSaveIntoJSON(json))
+				return false;
 			JSONTools::SetAttribute(json, "characters", src.characters);
 			JSONTools::SetAttribute(json, "grid_size", src.grid_size);
 			JSONTools::SetAttribute(json, "glyph_width", src.glyph_width);
@@ -61,15 +61,13 @@ namespace chaos
 			return true;
 		}
 
-		bool LoadFromJSON(nlohmann::json const& json, FontInfoInputParams& dst)
+		bool DoLoadFromJSON(JSONReadConfiguration config, FontInfoInputParams& dst)
 		{
-			if (!json.is_object())
-				return false;
-			JSONTools::GetAttribute(json, "characters", dst.characters);
-			JSONTools::GetAttribute(json, "grid_size", dst.grid_size);
-			JSONTools::GetAttribute(json, "glyph_width", dst.glyph_width);
-			JSONTools::GetAttribute(json, "glyph_height", dst.glyph_height);
-			JSONTools::GetAttribute(json, "image_processors", dst.image_processors);
+			JSONTools::GetAttribute(config, "characters", dst.characters);
+			JSONTools::GetAttribute(config, "grid_size", dst.grid_size);
+			JSONTools::GetAttribute(config, "glyph_width", dst.glyph_width);
+			JSONTools::GetAttribute(config, "glyph_height", dst.glyph_height);
+			JSONTools::GetAttribute(config, "image_processors", dst.image_processors);
 			return true;
 		}
 
@@ -96,10 +94,10 @@ namespace chaos
 			std::vector<shared_ptr<ImageProcessor>> image_processors;
 		};
 
-		bool SaveIntoJSON(nlohmann::json & json, BitmapInfoInputManifest const & src)
+		bool DoSaveIntoJSON(nlohmann::json * json, BitmapInfoInputManifest const & src)
 		{
-			if (!json.is_object())
-				json = nlohmann::json::object();
+			if (!PrepareSaveIntoJSON(json))
+				return false;
 			JSONTools::SetAttribute(json, "grid_data", src.grid_data);
 			JSONTools::SetAttribute(json, "images_path", src.images_path);
 			JSONTools::SetAttribute(json, "frame_duration", src.frame_duration);
@@ -109,16 +107,14 @@ namespace chaos
 			return true;
 		}
 
-		bool LoadFromJSON(nlohmann::json const & json, BitmapInfoInputManifest & dst)
+		bool DoLoadFromJSON(JSONReadConfiguration config, BitmapInfoInputManifest & dst)
 		{
-			if (!json.is_object())
-				return false;
-			JSONTools::GetAttribute(json, "grid_data", dst.grid_data);
-			JSONTools::GetAttribute(json, "images_path", dst.images_path);
-			JSONTools::GetAttribute(json, "frame_duration", dst.frame_duration);
-			JSONTools::GetAttribute(json, "anim_duration", dst.anim_duration);
-			JSONTools::GetAttribute(json, "default_wrap_mode", dst.default_wrap_mode);
-			JSONTools::GetAttribute(json, "image_processors", dst.image_processors);
+			JSONTools::GetAttribute(config, "grid_data", dst.grid_data);
+			JSONTools::GetAttribute(config, "images_path", dst.images_path);
+			JSONTools::GetAttribute(config, "frame_duration", dst.frame_duration);
+			JSONTools::GetAttribute(config, "anim_duration", dst.anim_duration);
+			JSONTools::GetAttribute(config, "default_wrap_mode", dst.default_wrap_mode);
+			JSONTools::GetAttribute(config, "image_processors", dst.image_processors);
 			return true;
 		}
 
@@ -282,7 +278,7 @@ namespace chaos
 			// search if there is a JSON file to describe the font (this replace any previous info)
 			FontInfoInputParams input_manifest = params;
 			if (json_manifest != nullptr)
-				LoadFromJSON(*json_manifest, input_manifest);
+				LoadFromJSON(json_manifest, input_manifest);
 
 			// create a library if necessary
 			if (library == nullptr)
@@ -587,7 +583,7 @@ namespace chaos
             // search if there is a JSON file to describe an animation
             BitmapInfoInputManifest input_manifest;
             if (json_manifest != nullptr)
-                LoadFromJSON(*json_manifest, input_manifest);
+                LoadFromJSON(json_manifest, input_manifest);
 
 			// load all pages for the bitmap
             std::vector<FIBITMAP*> pages;

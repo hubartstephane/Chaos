@@ -29,7 +29,7 @@ namespace chaos
 			if (in_path != nullptr)
 				tmp_name = PathTools::PathToName(*in_path).c_str();
 			else if (json != nullptr)
-				JSONTools::GetAttribute(*json, "name", tmp_name);
+				JSONTools::GetAttribute(json, "name", tmp_name);
 
 			// XXX : to test without 
 			//       this line of code prevent to have anymous object that can be declared inline

@@ -23,10 +23,10 @@ bool LudumPlayingHUD::FillHUDContent()
 {
 	if (!chaos::PlayingHUD::FillHUDContent())
 		return false;
-	RegisterComponent(chaos::GameHUDKeys::SHROUDLIFE_ID, new GameHUDShroudLifeComponent("LifeGrid"));
-	RegisterComponent(chaos::GameHUDKeys::LIFE_ID, new chaos::GameHUDLifeComponent());
-	RegisterComponent(chaos::GameHUDKeys::UPGRADE_ID, new GameHUDUpgradeComponent());
-	RegisterComponent(chaos::GameHUDKeys::LEVEL_TITLE_ID, new chaos::GameHUDLevelTitleComponent());
+	RegisterComponent(CreateHUDComponent<GameHUDShroudLifeComponent>(chaos::GameHUDKeys::SHROUDLIFE_ID, "LifeGrid"));
+	RegisterComponent(CreateHUDComponent<chaos::GameHUDLifeComponent>(chaos::GameHUDKeys::LIFE_ID));
+	RegisterComponent(CreateHUDComponent<GameHUDUpgradeComponent>(chaos::GameHUDKeys::UPGRADE_ID));
+	RegisterComponent(CreateHUDComponent<chaos::GameHUDLevelTitleComponent>(chaos::GameHUDKeys::LEVEL_TITLE_ID));
 	return true;
 }
 

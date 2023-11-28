@@ -14,7 +14,7 @@ namespace chaos
 	// GameHUD
 	// =============================================
 
-	class CHAOS_API GameHUD : public GPURenderable
+	class CHAOS_API GameHUD : public GPURenderable, public ConfigurableInterface
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
@@ -78,7 +78,7 @@ namespace chaos
 		virtual bool Initialize(Game* in_game);
 
 		/** insert a component inside the HUD */
-		void RegisterComponent(TagType key, GameHUDComponent* in_component);
+		void RegisterComponent(GameHUDComponent* in_component);
 		/** remove a component from the HUD */
 		void UnregisterComponent(TagType key);
 		/** remove a component from the HUD */
@@ -96,15 +96,35 @@ namespace chaos
 
 		/** create the particles */
 		virtual bool FillHUDContent();
-		/** try to find some information in JSON for configuring the component */
-		void InitializeComponentFromConfiguration(TagType key, GameHUDComponent* component);
 
-	protected:
+		/** component creation */
+		template<typename T, typename... PARAMS>
+		T * CreateHUDComponent(TagType key, PARAMS && ...params)
+		{
+			if (T * result = new T(std::forward<PARAMS>(params)...))
+			{
+				GiveChildConfiguration(result, (char const*)key);
+				result->SetTag(key);
+
+				if (!result->Initialize())
+				{
+					delete(result);
+					return nullptr;
+				}
+				return result;
+			}
+			return nullptr;
+		}
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;
 		/** override */
 		virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params) override;
+
+		/** override */
+		virtual bool OnConfigurationChanged(JSONReadConfiguration config) override;
+		/** override */
+		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
 
 	protected:
 

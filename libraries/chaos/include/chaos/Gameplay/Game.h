@@ -8,7 +8,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class CHAOS_API Game : public Object, public InputEventReceiverInterface, public GPUProgramProviderInterface
+	class CHAOS_API Game : public Object, public InputEventReceiverInterface, public GPUProgramProviderInterface, public ConfigurableInterface
 	{
 		friend class GameGamepadManager;
 		friend class GameViewportWidget;
@@ -40,6 +40,9 @@ namespace chaos
 
 		/** constructor */
 		Game();
+
+		/** initialization */
+		bool Initialize();
 
 		/** Get a level by its index */
 		AutoCastable<Level> FindLevelByIndex(int level_index);
@@ -202,11 +205,13 @@ namespace chaos
 
 		/** initialization from the config file */
 		virtual bool InitializeFromConfiguration(nlohmann::json const * config);
-		/** called whenever the game values as been changed */
-		virtual void OnGameValuesChanged(bool hot_reload);
 		/** initialize some resources */
 		virtual bool CreateGPUResources();
 
+		/** override */
+		virtual bool OnConfigurationChanged(JSONReadConfiguration config) override;
+		/** override */
+		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
 
 		/** save the best score */
 		bool SerializePersistentGameData(bool save);
@@ -236,8 +241,6 @@ namespace chaos
 
 		/** create some clocks */
 		virtual bool CreateClocks(nlohmann::json const * config);
-		/** initialize the game data from configuration file */
-		virtual bool InitializeGameValues(nlohmann::json const * config, bool hot_reload);
 
 		/** initialize the particle manager */
 		virtual bool CreateParticleManager();
@@ -371,9 +374,6 @@ namespace chaos
 		SubClassOf<SM::StateMachine> game_sm_class;
 		/** pointer on the state_machine instance */
 		shared_ptr<SM::StateMachineInstance> game_sm_instance;
-
-		/** the configuration object to use for game instance */
-		nlohmann::json game_instance_configuration;
 
 		/** cheating */
 #if _DEBUG

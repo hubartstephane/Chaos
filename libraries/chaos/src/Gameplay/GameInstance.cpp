@@ -76,6 +76,7 @@ namespace chaos
 		Player * result = DoCreatePlayer();
 		if (result == nullptr)
 			return nullptr;
+		GiveChildConfiguration(result, "player");
 		// initialize the player
 		if (!result->Initialize(this))
 		{
@@ -189,14 +190,11 @@ namespace chaos
 		// ensure valid arguments and not already initialized
 		assert(in_game != nullptr);
 		assert(game == nullptr);
-
+		// set the game
 		game = in_game;
-
 		// initialize from configuration
-		if (!InitializeGameValues(&in_game->game_instance_configuration, false)) // false for not hot reload
+		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
 			return false;
-		OnGameValuesChanged(false);
-
 		// create the game instance clocks
 		Clock * root_clock = in_game->GetRootClock();
 		if (root_clock == nullptr)
@@ -230,6 +228,16 @@ namespace chaos
 		if (sound_manager != nullptr)
 			sound_category = sound_manager->AddCategory("game_instance");
 
+		return true;
+	}
+
+	bool GameInstance::OnConfigurationChanged(JSONReadConfiguration config)
+	{
+		return ConfigurableInterface::OnConfigurationChanged(config);
+	}
+
+	bool GameInstance::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
+	{
 		return true;
 	}
 
@@ -463,31 +471,6 @@ namespace chaos
 	SoundCategory const * GameInstance::GetSoundCategory() const
 	{
 		return sound_category.get();
-	}
-
-	bool GameInstance::InitializeGameValues(nlohmann::json const * config, bool hot_reload)
-	{
-		// capture the player configuration
-		nlohmann::json const* p_config = JSONTools::GetObjectNode(config, "player");
-		if (p_config != nullptr)
-			player_configuration = *p_config;
-		else
-			player_configuration = nlohmann::json();
-
-		return true;
-	}
-
-	void GameInstance::OnGameValuesChanged(bool hot_reload)
-	{
-		size_t count = players.size();
-		for (size_t i = 0; i < count; ++i)
-		{
-			Player* player = players[i].get();
-			if (player == nullptr)
-				continue;
-			if (player->InitializeGameValues(&player_configuration, hot_reload))
-				player->OnGameValuesChanged(hot_reload);
-		}
 	}
 
 }; // namespace chaos

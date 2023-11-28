@@ -48,9 +48,14 @@ namespace chaos
 		Log::EndTransaction();
 	}
 
-	bool Application::ReloadConfigurationFile(nlohmann::json & result) const
+	bool Application::OnConfigurationChanged(JSONReadConfiguration config)
 	{
-		return JSONTools::LoadJSONFile(GetConfigurationPath(), result, LoadFileFlag::RECURSIVE);
+		return ConfigurableInterface::OnConfigurationChanged(config);
+	}
+
+	bool Application::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
+	{
+		return true;
 	}
 
 	boost::filesystem::path Application::GetConfigurationPath() const
@@ -58,6 +63,7 @@ namespace chaos
 		return GetResourcesPath() / "config.json";
 	}
 
+	// shuxxx
 	bool Application::LoadConfigurationFile()
 	{
 		return JSONTools::LoadJSONFile(GetConfigurationPath(), configuration, LoadFileFlag::RECURSIVE);
@@ -104,6 +110,13 @@ namespace chaos
 
 	bool Application::Initialize()
 	{
+		LoadConfigurationFile();
+
+
+
+
+
+
 		// prepare the logger
 		if (Logger* logger = Logger::GetInstance())
 			if (LoggerListener* listener = new FileLoggerListener())
@@ -126,13 +139,36 @@ namespace chaos
 		// some log
 		LogExecutionInformation();
 
+
+
+
+
+		
+
+
+
+
+
+		// load the configuration
+		if (!InitializeConfiguration())
+		{
+			Log::Error("InitializeConfiguration(...) failure");
+			return false;
+		}
+
 		// load class
 		if (!LoadClasses())
+		{
+			Log::Error("LoadClasses(...) failure");
 			return false;
+		}
 
 		// initialize the managers
 		if (!InitializeManagers())
+		{
+			Log::Error("InitializeManagers(...) failure");
 			return false;
+		}
 		// open user temp directory and dump the config file
 		boost::filesystem::path user_temp = GetUserLocalPath(); // XXX : this directory is necessary for some per application data
 #if _DEBUG
@@ -158,6 +194,18 @@ namespace chaos
 		return 0;
 	}
 
+	bool Application::InitializeConfiguration()
+	{
+		if (RootObjectConfiguration* root_config = new RootObjectConfiguration)
+		{
+			SetObjectConfiguration(root_config);
+			root_config->LoadConfigurablePropertiesFromFile(GetConfigurationPath(), GetPersistentDataPath(), false); // do not send notification yet
+			return true;
+		}
+		return false;
+
+	}
+
 	int Application::Run(int argc, char ** argv, char ** env)
 	{
 		bool result = false;
@@ -171,7 +219,11 @@ namespace chaos
 			// create a user temp directory if necessary */
 			CreateUserLocalTempDirectory();
 			// load the configuration file (ignore return value because there is no obligation to use a configuration file)
-			LoadConfigurationFile();
+
+
+
+
+
 			// initialize, run, and finalize the application
 			if (Initialize())
 			{

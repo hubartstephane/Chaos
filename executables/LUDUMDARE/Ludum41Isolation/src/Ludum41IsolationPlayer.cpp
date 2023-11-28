@@ -102,9 +102,9 @@ void LudumPlayer::SetPlayerLength(float in_length, bool increment)
 	}
 }
 
-bool LudumPlayer::InitializeGameValues(nlohmann::json const * config, bool hot_reload)
+bool LudumPlayer::OnReadConfigurableProperties(chaos::JSONReadConfiguration config, chaos::ReadConfigurablePropertiesContext context)
 {
-	if (!chaos::Player::InitializeGameValues(config, hot_reload))
+	if (!chaos::Player::OnReadConfigurableProperties(config, context))
 		return false;
 	CHAOS_JSON_ATTRIBUTE(config, max_life_count);
 	return true;

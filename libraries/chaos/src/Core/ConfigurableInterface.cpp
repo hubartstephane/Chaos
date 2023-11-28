@@ -37,6 +37,16 @@ namespace chaos
 		return {};
 	}
 
+	bool ConfigurableInterface::GiveClonedConfiguration(ConfigurableInterface* other_configurable) const
+	{
+		if (configuration != nullptr)
+		{
+			other_configurable->SetObjectConfiguration(configuration->CreateClonedConfiguration());
+			return true;
+		}
+		return false;
+	}
+
 	bool ConfigurableInterface::GiveChildConfiguration(ConfigurableInterface* other_configurable, std::string key) const
 	{
 		if (configuration != nullptr)

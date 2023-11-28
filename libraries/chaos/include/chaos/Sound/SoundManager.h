@@ -489,7 +489,7 @@ namespace chaos
 	// MANAGER
 	// ==============================================================
 
-	class CHAOS_API SoundManager : public ResourceManager
+	class CHAOS_API SoundManager : public ResourceManager, public ConfigurableInterface
 	{
 		CHAOS_SOUND_ALL_FRIENDS
 
@@ -639,6 +639,11 @@ namespace chaos
 		bool LoadCategoriesFromConfiguration(nlohmann::json const * config);
 		/** load the sources from configuration */
 		bool LoadSourcesFromConfiguration(nlohmann::json const * config);
+
+		/** override */
+		virtual bool OnConfigurationChanged(JSONReadConfiguration config) override;
+		/** override */
+		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
 
 	protected:
 

@@ -49,7 +49,7 @@ protected:
 	/** initialize the particle manager */
 	virtual int AddParticleLayers() override;
 	/** initialize the game variables */
-	virtual bool InitializeGameValues(nlohmann::json const * config, bool hot_reload) override;
+	virtual bool OnReadConfigurableProperties(chaos::JSONReadConfiguration config, chaos::ReadConfigurablePropertiesContext context) override;
 	/** fullfill the lists of rewards an punishments */
 	bool InitializeRewardsAndPunishments();
 

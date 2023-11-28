@@ -22,7 +22,7 @@ namespace chaos
 		requires
 			std::is_convertible_v<T, JSONReadConfiguration> ||
 			std::is_convertible_v<T, JSONWriteConfiguration> ||
-			std::is_same_v<T, nlohmann::json const*>;
+			std::is_convertible_v<T, nlohmann::json const*>;
 	};
 
 	template<typename T>

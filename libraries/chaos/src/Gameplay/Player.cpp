@@ -21,16 +21,25 @@ namespace chaos
 		// ensure valid arguments and not already initialized
 		assert(in_game_instance != nullptr);
 		assert(game_instance == nullptr);
+		// some initialization
 		game_instance = in_game_instance;
+		// read JSON properties
+		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
+			return false;
+		return true;
+	}
 
-		// read the configuration
-		Game* game = GetGame();
-		if (game != nullptr)
-		{
-			if (!InitializeGameValues(&in_game_instance->player_configuration, false)) // false => not hot relead
-				return false;
-			OnGameValuesChanged(false);
-		}
+	bool Player::OnConfigurationChanged(JSONReadConfiguration config)
+	{
+		return ConfigurableInterface::OnConfigurationChanged(config);
+	}
+	
+	bool Player::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
+	{
+		CHAOS_JSON_ATTRIBUTE(config, life_count);
+		CHAOS_JSON_ATTRIBUTE(config, max_health);
+		CHAOS_JSON_ATTRIBUTE(config, invulnerability_duration);
+		health = max_health;
 		return true;
 	}
 
@@ -353,19 +362,6 @@ namespace chaos
 		// super call
 		return InputEventReceiverInterface::DoCheckKeyPressed(button, previous_frame);
     }
-
-	bool Player::InitializeGameValues(nlohmann::json const * config, bool hot_reload)
-	{
-		CHAOS_JSON_ATTRIBUTE(config, life_count);
-		CHAOS_JSON_ATTRIBUTE(config, max_health);
-		CHAOS_JSON_ATTRIBUTE(config, invulnerability_duration);		
-		return true;
-	}
-
-	void Player::OnGameValuesChanged(bool hot_reload)
-	{
-		health = max_health;
-	}
 
 	// =================================================
 	// PlayerGamepadCallbacks

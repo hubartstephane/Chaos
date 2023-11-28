@@ -159,6 +159,69 @@ namespace chaos
 		/** returns true whether the string is null or as 0 length */
 		CHAOS_API bool IsEmpty(std::string const & src);
 
+		/** concept for conversion */
+		template<typename T>
+		concept ConvertibleToStringView = std::convertible_to<T, std::string_view>;
+
+		namespace details
+		{
+			/** internal method to compute joined string size */
+			template<ConvertibleToStringView ...PARAMS>
+			size_t GetJoinedSizeHelper(std::string_view first, PARAMS... params)
+			{
+				if constexpr (sizeof...(PARAMS) == 0)
+					return first.size();
+				else
+					return first.size() + GetJoinedSizeHelper(std::forward<PARAMS>(params)...);
+			}
+
+			/** internal method to join strings */
+			template<ConvertibleToStringView ...PARAMS>
+			void JoinHelper(char* dst, size_t dst_size, bool separator_required, std::string_view separator, std::string_view first, PARAMS... params)
+			{
+				// add separator if necessary
+				if (separator_required)
+				{
+					strcpy_s(dst, dst_size, separator.data());
+					dst += separator.size();
+					dst_size -= separator.size();
+				}
+				// add first token
+				strcpy_s(dst, dst_size, first.data());
+				dst += first.size();
+				dst_size -= first.size();
+				// add other tokens
+				if constexpr (sizeof...(PARAMS) > 0)
+					JoinHelper(dst, dst_size, true, separator, std::forward<PARAMS>(params)...);
+			}
+		};
+
+		/** compute the size of a joined string */
+		template<ConvertibleToStringView ...PARAMS>
+		size_t GetJoinedSize(std::string_view separator, PARAMS... params)
+		{
+			size_t result = details::GetJoinedSizeHelper(std::forward<PARAMS>(params)...);
+			if constexpr (sizeof...(PARAMS) > 1)
+				result += separator.size() * (sizeof...(PARAMS) - 1);
+			return result;
+		}
+
+		/** join all parameters into a single string */
+		template<ConvertibleToStringView ...PARAMS>
+		std::string Join(std::string_view separator, PARAMS... params)
+		{
+			// early exit
+			if constexpr (sizeof...(PARAMS) == 0)
+				return {};
+			// compute the required size
+			size_t size = GetJoinedSize(separator, std::forward<PARAMS>(params)...);
+			// allocate a string large enough
+			std::string result = std::string(size + 1, 0);
+			// appends all required tokens
+			details::JoinHelper(&result[0], size + 1, false, separator, std::forward<PARAMS>(params)...);
+			return result;
+		}
+
 		/** string comparator class base */
 		template<typename COMPARE, int (&Func)(char const *, char const *)>
 		class RawStringCompareBase

@@ -161,7 +161,7 @@ Dans GameHUD la notion de text/format n'est pas tres claire'
 
 		------------------------------------------------------
 
-		Player::InitializeGameValues ... Player::LoadFromJSON
+		Player::OnReadConfigurableProperties ... Player::LoadFromJSON
 		ca fait double emploui,
 		l un est utilisé pour le hot reload, l autre les checkpoints
 

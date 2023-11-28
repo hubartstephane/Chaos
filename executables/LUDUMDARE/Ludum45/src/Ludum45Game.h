@@ -52,7 +52,7 @@ protected:
 	virtual bool OnEnterGame(chaos::PhysicalGamepad * in_physical_gamepad) override;
 
 	/** initialize the game variables */
-	virtual bool InitializeGameValues(nlohmann::json const * config, bool hot_reload) override;
+	virtual bool OnReadConfigurableProperties(chaos::JSONReadConfiguration config, chaos::ReadConfigurablePropertiesContext context) override;
 
 	/** override level creation */
 	chaos::TMLevel * CreateTMLevel() override;

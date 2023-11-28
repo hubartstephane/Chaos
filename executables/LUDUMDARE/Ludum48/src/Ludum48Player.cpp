@@ -90,10 +90,9 @@ bool LudumPlayer::DoTick(float delta_time)
 
 }
 
-
-bool LudumPlayer::InitializeGameValues(nlohmann::json const * config, bool hot_reload)
+bool LudumPlayer::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
 {
-	if (!Player::InitializeGameValues(config, hot_reload))
+	if (!Player::OnReadConfigurableProperties(config, context))
 		return false;
 	if (life_count != 8)
 		cheater_farid = true;

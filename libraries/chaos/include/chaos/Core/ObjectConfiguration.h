@@ -36,6 +36,8 @@ namespace chaos
 		/** gets the root configuration */
 		RootObjectConfiguration const* GetRootConfiguration() const;
 
+		/** create a configuration that is clone of us */
+		virtual ObjectConfigurationBase* CreateClonedConfiguration();
 		/** create a child configuration */
 		ChildObjectConfiguration* CreateChildConfiguration(std::string path);
 
@@ -49,7 +51,6 @@ namespace chaos
 		bool ReadConfigurableProperties(ReadConfigurablePropertiesContext context, bool recurse);
 		/** store the persistent properties (and children) into JSON (no disk access) */
 		bool StorePersistentProperties(bool recurse) const;
-
 
 	protected:
 
@@ -94,6 +95,9 @@ namespace chaos
 		/** override */
 		virtual void SubReference() override;
 
+		/** override */
+		virtual ObjectConfigurationBase* CreateClonedConfiguration() override;
+
 	protected:
 
 		/** cannot be construct except by CreateChildConfiguration(...) */
@@ -136,6 +140,9 @@ namespace chaos
 		bool LoadConfigurablePropertiesFromFile(FilePathParam const& in_default_config_path, FilePathParam const& in_persistent_config_path, bool send_notifications);
 		/** save the persistent data (whole hierarchy) */
 		bool SavePersistentPropertiesToFile(bool store_properties) const;
+
+		/** override */
+		virtual ObjectConfigurationBase* CreateClonedConfiguration() override;
 
 	protected:
 

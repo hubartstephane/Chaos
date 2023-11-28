@@ -9,7 +9,7 @@ namespace chaos
 	/**
 	* Application : used to store generic application data
 	*/
-	class CHAOS_API Application : public Object, public InputEventReceiverInterface, public PersistentDataInterface
+	class CHAOS_API Application : public Object, public InputEventReceiverInterface, public PersistentDataInterface, public ConfigurableInterface
 	{
 
 	public:
@@ -83,9 +83,6 @@ namespace chaos
 		/** check whether -flag_name is in command line */
 		static bool HasApplicationCommandLineFlag(char const* flag_name);
 
-		/** reloading the configuration file (do not apply it to any object at all) */
-		bool ReloadConfigurationFile(nlohmann::json& result) const;
-
 #if _DEBUG
 		/** set redirection file directories */
 		void SetFileRedirectionDirectories( boost::filesystem::path const & build_path, std::string const & direct_access_paths);
@@ -115,6 +112,9 @@ namespace chaos
 		/** finalize the managers */
 		virtual void FinalizeManagers();
 
+		/** initialization relative to ConfigurableInterface */
+		bool InitializeConfiguration();
+
 		/** loading the configuration file */
 		bool LoadConfigurationFile();
 		/** loading the persistent data file */
@@ -134,6 +134,12 @@ namespace chaos
 		virtual void OnReadPersistentData(nlohmann::json const * json) override;
 		/** override */
 		virtual void OnWritePersistentData(nlohmann::json * json) const override;
+
+
+		/** override */
+		virtual bool OnConfigurationChanged(JSONReadConfiguration config) override;
+		/** override */
+		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
 
 	protected:
 
@@ -163,7 +169,7 @@ namespace chaos
 		mutable nlohmann::json persistent_data;
 
 
-		DisableReferenceCount<RootObjectConfiguration> configurationX;
+
 
 
 

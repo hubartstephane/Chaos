@@ -115,7 +115,6 @@ namespace chaos
 		if (FindWindow(request) != nullptr)
 		{
 			Log::Error("WindowApplication::CreateTypedWindow(...) name already used");
-			Log::Error("WindowApplication::CreateTypedWindow(...) name already used");
 			return nullptr;
 		}
 
@@ -124,23 +123,16 @@ namespace chaos
 			// create the window class
 			shared_ptr<Window> result = window_class.CreateInstance();
 			if (result == nullptr)
-			{
 				return nullptr;
-			}
 			windows.push_back(result.get());
 			// set the name
 			result->SetObjectNaming(request);
-			// override the create params with the JSON configuration (if any)
-			nlohmann::json const* window_configuration = nullptr;
-			if (nlohmann::json const* windows_configuration = JSONTools::GetStructureNode(&configuration, "windows"))
-			{
-				window_configuration = JSONTools::GetStructureNode(windows_configuration, result->GetName());
-				if (window_configuration != nullptr)
-				{
-					LoadFromJSON(window_configuration, create_params);
-				}
-			}
+			// set the configuration
+			GiveChildConfiguration(result.get(), StringTools::Join("/", "windows", result->GetName()));
+
 			// create the GLFW resource
+			LoadFromJSON(result->GetJSONReadConfiguration(), create_params); // override the create params with the JSON configuration (if any)
+
 			if (!result->CreateGLFWWindow(create_params, shared_context, glfw_hints))
 			{
 				result->Destroy();
@@ -149,11 +141,12 @@ namespace chaos
 			result->CreateImGuiContext();
 			// post initialization method
 			glfwMakeContextCurrent(result->GetGLFWHandler());
-			// finalize the creation
-			nlohmann::json default_window_config;
-			if (window_configuration == nullptr)
-				window_configuration = &default_window_config;
-			result->InitializeFromConfiguration(window_configuration);
+			// finalize the creation		
+			if (!result->Initialize())
+			{
+				result->Destroy();
+				return nullptr; // the shared_ptr destruction will handle the object lifetime
+			}
 			// read information from session file
 			result->ReadPersistentData();
 			// create the root widget
@@ -529,44 +522,31 @@ namespace chaos
 		gpu_resource_manager = new GPUResourceManager;
 		if (gpu_resource_manager == nullptr)
 			return false;
+		GiveChildConfiguration(gpu_resource_manager.get(), "gpu");
 		gpu_resource_manager->StartManager();
 		// create internal resource
 		if (!gpu_resource_manager->InitializeInternalResources())
 			return false;
-		// get JSON section and load all requested resources
-		nlohmann::json const* gpu_config = JSONTools::GetStructureNode(&configuration, "gpu");
-		if (gpu_config != nullptr)
-			if (!gpu_resource_manager->InitializeFromConfiguration(gpu_config))
-				return false;
+		return true;
+	}
+
+	bool WindowApplication::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
+	{
+		JSONTools::GetAttribute(config, "max_tick_duration", max_tick_duration);
+		JSONTools::GetAttribute(config, "forced_tick_duration", forced_tick_duration);
 		return true;
 	}
 
 	bool WindowApplication::ReloadGPUResources()
 	{
+		assert(gpu_resource_manager != nullptr);
+
 		return WithGLFWContext(shared_context, [this]()
 		{
 			// this call may block for too much time
 			FreezeNextFrameTickDuration();
-
-			// reload the configuration file
-			nlohmann::json config;
-			if (!ReloadConfigurationFile(config))
-				return false;
-			// get the structure of interrest
-			nlohmann::json const* gpu_config = JSONTools::GetStructureNode(&config, "gpu");
-			if (gpu_config == nullptr)
-				return false;
-			// create a temporary manager
-			shared_ptr<GPUResourceManager> other_gpu_resource_manager = new GPUResourceManager; // destroyed at the end of the function
-			if (other_gpu_resource_manager == nullptr)
-				return false;
-			if (!other_gpu_resource_manager->StartManager())
-				return false;
-			// reload all resources ... (even unchanged)
-			if (other_gpu_resource_manager->InitializeFromConfiguration(gpu_config))
-				gpu_resource_manager->RefreshGPUResources(other_gpu_resource_manager.get());
-			other_gpu_resource_manager->StopManager();
-			return true;
+			// reload GPU resources
+			return gpu_resource_manager->ReloadDefaultPropertiesFromFile(true, true); // partial, send notification
 		});
 	}
 
@@ -585,10 +565,6 @@ namespace chaos
 		if (!Application::InitializeManagers())
 			return false;
 
-		// update some internals
-		JSONTools::GetAttribute(&configuration, "max_tick_duration", max_tick_duration);
-		JSONTools::GetAttribute(&configuration, "forced_tick_duration", forced_tick_duration);
-
 		// initialize the clock
 		main_clock = new Clock("main_clock");
 		if (main_clock == nullptr)
@@ -601,10 +577,8 @@ namespace chaos
 		sound_manager = new SoundManager();
 		if (sound_manager == nullptr)
 			return false;
+		GiveChildConfiguration(sound_manager.get(), "sounds");
 		sound_manager->StartManager();
-		nlohmann::json const* sound_config = JSONTools::GetStructureNode(&configuration, "sounds");
-		if (sound_config != nullptr)
-			sound_manager->InitializeFromConfiguration(sound_config);
 
 		return true;
 	}
@@ -740,6 +714,10 @@ namespace chaos
 		// reloading GPU resources
 		if (event.IsKeyPressed(KeyboardButton::F8))
 		{
+
+
+
+
 			// CMD F8 : ReloadGPUResources(...)
 			ReloadGPUResources();
 			return true;

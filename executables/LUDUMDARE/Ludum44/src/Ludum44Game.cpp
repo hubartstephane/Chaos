@@ -40,10 +40,11 @@ static bool InitializeGameValueVector(char const * json_name, nlohmann::json con
 	return (result.size() > 0);
 }
 
-bool LudumGame::InitializeGameValues(nlohmann::json const * config, bool hot_reload)
+bool LudumGame::OnReadConfigurableProperties(chaos::JSONReadConfiguration config, chaos::ReadConfigurablePropertiesContext context)
 {
-	if (!chaos::Game::InitializeGameValues(config, hot_reload))
+	if (!chaos::Game::OnReadConfigurableProperties(config, context))
 		return false;
+
 	if (!InitializeGameValueVector("player_speeds", config, player_speeds))
 		return false;
 	if (!InitializeGameValueVector("player_damages", config, player_damages))

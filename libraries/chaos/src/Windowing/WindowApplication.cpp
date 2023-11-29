@@ -179,7 +179,7 @@ namespace chaos
 		glfwSetErrorCallback(OnGLFWError);
 
 		// the glfw configuration (valid for all windows)
-		if (nlohmann::json const* glfw_configuration = JSONTools::GetStructureNode(&configuration, "glfw"))
+		if (JSONReadConfiguration glfw_configuration = JSONTools::GetStructureNode(GetJSONReadConfiguration(), "glfw"))
 			LoadFromJSON(glfw_configuration, glfw_hints);
 		glfw_hints.ApplyHints();
 
@@ -309,7 +309,7 @@ namespace chaos
 	{
 		// get the directory where the sprites are
 		std::string sprite_directory;
-		if (!JSONTools::GetAttribute(&configuration, "sprite_directory", sprite_directory))
+		if (!JSONTools::GetAttribute(GetJSONReadConfiguration(), "sprite_directory", sprite_directory))
 			return true;
 		// find or create folder
 		BitmapAtlas::FolderInfoInput* folder_info = input.AddFolder("sprites", 0);
@@ -323,31 +323,32 @@ namespace chaos
 
 	bool WindowApplication::FillAtlasGeneratorInputFonts(BitmapAtlas::AtlasInput& input)
 	{
-		if (nlohmann::json const* fonts_config = JSONTools::GetStructureNode(&configuration, "fonts"))
+		if (JSONReadConfiguration fonts_config = JSONTools::GetStructureNode(GetJSONReadConfiguration(), "fonts"))
 		{
 			// read the default font parameters
 			BitmapAtlas::FontInfoInputParams font_params;
-
-			nlohmann::json const* default_font_param_json = JSONTools::GetStructureNode(fonts_config, "default_font_param");
-			if (default_font_param_json != nullptr)
+			if (JSONReadConfiguration default_font_param_json = JSONTools::GetStructureNode(fonts_config, "default_font_param"))
 				LoadFromJSON(default_font_param_json, font_params);
 
 			// Add the fonts
-			if (nlohmann::json const* fonts_json = JSONTools::GetObjectNode(fonts_config, "fonts"))
+			if (JSONReadConfiguration fonts_json = JSONTools::GetObjectNode(fonts_config, "fonts"))
 			{
-				for (nlohmann::json::const_iterator it = fonts_json->begin(); it != fonts_json->end(); ++it)
+				JSONTools::ForEachSource(fonts_json, [this, &input, &font_params](nlohmann::json const * json)
 				{
-					if (!it->is_string())
-						continue;
-					// read information
-					std::string const& font_name = it.key();
-					std::string font_path = it->get<std::string>();
-					if (input.AddFont(font_path.c_str(), nullptr, true, font_name.c_str(), 0, font_params) == nullptr)
-						return false;
-				}
+					for (nlohmann::json::const_iterator it = json->begin(); it != json->end(); ++it)
+					{
+						if (!it->is_string())
+							continue;
+						// read information
+						std::string const& font_name = it.key();
+						std::string font_path = it->get<std::string>();
+						if (input.AddFont(font_path.c_str(), nullptr, true, font_name.c_str(), 0, font_params) == nullptr)
+							Log::Error("FillAtlasGeneratorInputFonts(...): fails to AddFont name = [%s]    path = [%s]", font_name.c_str(), font_path.c_str());
+					}
+					return true; // stop at the very first source
+				});
 			}
 		}
-
 		return true;
 	}
 
@@ -389,9 +390,8 @@ namespace chaos
 
 		BitmapAtlas::AtlasGeneratorParams params = BitmapAtlas::AtlasGeneratorParams(DEFAULT_ATLAS_SIZE, DEFAULT_ATLAS_SIZE, DEFAULT_ATLAS_PADDING, PixelFormatMergeParams());
 
-		nlohmann::json const* atlas_json = JSONTools::GetStructureNode(&configuration, "atlas");
-		if (atlas_json != nullptr)
-			LoadFromJSON(atlas_json, params);
+		if (JSONReadConfiguration atlas_config = JSONTools::GetStructureNode(GetJSONReadConfiguration(), "atlas"))
+			LoadFromJSON(atlas_config, params);
 
 		// atlas generation params : maybe a dump
 		char const* dump_atlas_dirname = nullptr;
@@ -413,17 +413,16 @@ namespace chaos
 
 	bool WindowApplication::CreateTextGenerator()
 	{
-		// get the font sub objects
-		nlohmann::json const* fonts_config = JSONTools::GetStructureNode(&configuration, "fonts");
-
 		// create the generator
 		particle_text_generator = new ParticleTextGenerator::Generator(*texture_atlas);
 		if (particle_text_generator == nullptr)
 			return false;
 
+		// get the font sub objects
+		JSONReadConfiguration fonts_config = JSONTools::GetStructureNode(GetJSONReadConfiguration(), "fonts");
+
 		// bitmaps in generator
-		BitmapAtlas::FolderInfo const* folder_info = texture_atlas->GetFolderInfo("sprites");
-		if (folder_info != nullptr)
+		if (BitmapAtlas::FolderInfo const* folder_info = texture_atlas->GetFolderInfo("sprites"))
 		{
 			// for each bitmap, that correspond to a button, register a [NAME] in the generator
 			for (auto it = gamepad_button_map.begin(); it != gamepad_button_map.end(); ++it)
@@ -436,21 +435,25 @@ namespace chaos
 				particle_text_generator->AddBitmap(generator_alias.c_str(), info);
 			}
 			// embedded sprites
-			if (fonts_config != nullptr)
+			if (fonts_config)
 			{
-				if (nlohmann::json const* font_bitmaps_json = JSONTools::GetObjectNode(fonts_config, "bitmaps"))
+				if (JSONReadConfiguration font_bitmaps_config = JSONTools::GetObjectNode(fonts_config, "bitmaps"))
 				{
-					for (nlohmann::json::const_iterator it = font_bitmaps_json->begin(); it != font_bitmaps_json->end(); ++it)
+					JSONTools::ForEachSource(font_bitmaps_config, [this, folder_info](nlohmann::json const * json)
 					{
-						if (!it->is_string())
-							continue;
-						std::string const & bitmap_name = it.key();
-						std::string bitmap_path = it->get<std::string>();
-						BitmapAtlas::BitmapInfo const* info = folder_info->GetBitmapInfo(bitmap_path.c_str());
-						if (info == nullptr)
-							continue;
-						particle_text_generator->AddBitmap(bitmap_name.c_str(), info);
-					}
+						for (nlohmann::json::const_iterator it = json->begin(); it != json->end(); ++it)
+						{
+							if (!it->is_string())
+								continue;
+							std::string const& bitmap_name = it.key();
+							std::string bitmap_path = it->get<std::string>();
+							BitmapAtlas::BitmapInfo const* info = folder_info->GetBitmapInfo(bitmap_path.c_str());
+							if (info == nullptr)
+								continue;
+							particle_text_generator->AddBitmap(bitmap_name.c_str(), info);
+						}
+						return true; // stop at the very first source
+					});
 				}
 			}
 		}
@@ -458,16 +461,20 @@ namespace chaos
 		// the colors
 		if (fonts_config != nullptr)
 		{
-			if (nlohmann::json const* font_colors_json = JSONTools::GetObjectNode(fonts_config, "colors"))
+			if (JSONReadConfiguration font_colors_config = JSONTools::GetObjectNode(fonts_config, "colors"))
 			{
-				for (nlohmann::json::const_iterator it = font_colors_json->begin(); it != font_colors_json->end(); ++it)
+				JSONTools::ForEachSource(font_colors_config, [this](nlohmann::json const* json)
 				{
-					glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);  // initialization for if input is smaller than 4
-					if (!LoadFromJSON(&(*it), color))
-						continue;
-					std::string const & color_name = it.key();
-					particle_text_generator->AddColor(color_name.c_str(), color);
-				}
+					for (nlohmann::json::const_iterator it = json->begin(); it != json->end(); ++it)
+					{
+						glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);  // initialization for if input is smaller than 4
+						if (!LoadFromJSON(&(*it), color))
+							continue;
+						std::string const& color_name = it.key();
+						particle_text_generator->AddColor(color_name.c_str(), color);
+					}
+					return true; // stop at the very first source
+				});
 			}
 		}
 		return true;
@@ -569,9 +576,7 @@ namespace chaos
 		main_clock = new Clock("main_clock");
 		if (main_clock == nullptr)
 			return false;
-		nlohmann::json const* clock_config = JSONTools::GetStructureNode(&configuration, "clocks");
-		if (clock_config != nullptr)
-			main_clock->InitializeFromConfiguration(clock_config);
+		main_clock->InitializeFromConfiguration(JSONTools::GetStructureNode(GetJSONReadConfiguration(), "clocks"));
 
 		// initialize the sound manager
 		sound_manager = new SoundManager();
@@ -714,10 +719,6 @@ namespace chaos
 		// reloading GPU resources
 		if (event.IsKeyPressed(KeyboardButton::F8))
 		{
-
-
-
-
 			// CMD F8 : ReloadGPUResources(...)
 			ReloadGPUResources();
 			return true;
@@ -874,7 +875,7 @@ namespace chaos
 				}
 				if (ImGui::MenuItem("Open Config File", nullptr, false, true))
 				{
-					WinTools::ShowFile(JSONTools::DumpConfigFile(&configuration));
+					WinTools::ShowFile(JSONTools::DumpConfigFile(GetJSONReadConfiguration().default_config));
 				}
 				if (ImGui::MenuItem("Open Persistent File", nullptr, false, true))
 				{

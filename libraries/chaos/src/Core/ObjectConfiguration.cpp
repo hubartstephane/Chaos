@@ -8,6 +8,11 @@ namespace chaos
 	// ObjectConfigurationBase implementation
 	// ---------------------------------------------------------------------
 
+	ObjectConfigurationBase* ObjectConfigurationBase::CreateClonedConfiguration()
+	{
+		return nullptr;
+	}
+
 	ChildObjectConfiguration* ObjectConfigurationBase::CreateChildConfiguration(std::string path)
 	{
 		if (ChildObjectConfiguration* result = new ChildObjectConfiguration)
@@ -220,6 +225,21 @@ namespace chaos
 			child->PropagateUpdates();
 	}
 
+	ObjectConfigurationBase* ChildObjectConfiguration::CreateClonedConfiguration()
+	{
+		if (ChildObjectConfiguration* result = new ChildObjectConfiguration)
+		{
+			child_configurations.push_back(result);
+
+			result->parent_configuration = parent_configuration;
+			result->path = path;
+			result->UpdateFromParent();
+
+			return result;
+		}
+		return nullptr;
+	}
+
 	// ---------------------------------------------------------------------
 	// RootObjectConfiguration implementation
 	// ---------------------------------------------------------------------
@@ -287,6 +307,16 @@ namespace chaos
 	void RootObjectConfiguration::SetPersistentConfigurationPath(FilePathParam const& in_persistent_config_path)
 	{
 		persistent_config_path = in_persistent_config_path.GetResolvedPath();
+	}
+
+	ObjectConfigurationBase * RootObjectConfiguration::CreateClonedConfiguration()
+	{
+		if (RootObjectConfiguration* result = new RootObjectConfiguration)
+		{
+			result->LoadConfigurablePropertiesFromFile(default_config_path, persistent_config_path, false); // don't send notifications
+			return result;
+		}
+		return nullptr;
 	}
 
 }; // namespace chaos

@@ -34,7 +34,7 @@ namespace chaos
 	// GameHUDComponent
 	// ====================================================================
 
-	class CHAOS_API GameHUDComponent : public GPURenderable
+	class CHAOS_API GameHUDComponent : public GPURenderable, public ConfigurableInterface
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
@@ -74,14 +74,19 @@ namespace chaos
 
 	protected:
 
+		/** initialization method */
+		virtual bool Initialize();
 		/** called whenever the hud is beeing inserted into the hud */
 		virtual void OnInsertedInHUD();
 		/** called whenever the hud is beeing removed into the hud */
 		virtual void OnRemovedFromHUD();
 		/** initialization method from JSON */
 		virtual bool InitializeFromConfiguration(nlohmann::json const * config);
-		/** set the HUD */
-		virtual void SetHUD(GameHUD* in_hud);
+
+		/** override */
+		virtual bool OnConfigurationChanged(JSONReadConfiguration config) override;
+		/** override */
+		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
 
 	protected:
 

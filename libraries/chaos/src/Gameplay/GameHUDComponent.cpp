@@ -84,6 +84,13 @@ namespace chaos
 		return hud->GetPlayerCount();
 	}
 
+	bool GameHUDComponent::Initialize()
+	{
+		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
+			return false;
+		return InitializeFromConfiguration(GetJSONReadConfiguration().default_config);
+	}
+
 	void GameHUDComponent::OnInsertedInHUD()
 	{
 	}
@@ -124,10 +131,14 @@ namespace chaos
 		return true;
 	}
 
-	void GameHUDComponent::SetHUD(GameHUD * in_hud)
+	bool GameHUDComponent::OnConfigurationChanged(JSONReadConfiguration config)
 	{
-		assert(in_hud != nullptr);
-		hud = in_hud;
+		return ConfigurableInterface::OnConfigurationChanged(config);
+	}
+
+	bool GameHUDComponent::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
+	{
+		return true;
 	}
 
 	// ====================================================================

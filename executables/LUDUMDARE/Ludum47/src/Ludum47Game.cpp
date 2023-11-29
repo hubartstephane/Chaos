@@ -35,11 +35,10 @@ chaos::GameHUD * LudumGame::DoCreatePlayingHUD()
 	return new LudumPlayingHUD();
 }
 
-bool LudumGame::InitializeGameValues(nlohmann::json const * config, bool hot_reload)
+bool LudumGame::OnReadConfigurableProperties(chaos::JSONReadConfiguration config, chaos::ReadConfigurablePropertiesContext context)
 {
-	if (!chaos::Game::InitializeGameValues(config, hot_reload))
+	if (!chaos::Game::OnReadConfigurableProperties(config, context))
 		return false;
-
 	return true;
 }
 

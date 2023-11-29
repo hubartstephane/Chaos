@@ -22,10 +22,10 @@ bool LudumPlayingHUD::FillHUDContent()
 {
 	if (!PlayingHUD::FillHUDContent())
 		return false;
-	RegisterComponent(GameHUDKeys::LEVEL_TIMEOUT_ID, new GameHUDTimeoutComponent());
-	RegisterComponent(GameHUDKeys::DIAMOND_ID, new LudumHUDDiamondComponent());
-	RegisterComponent(GameHUDKeys::LIFE_ID, new LudumHUDLifeComponent());
-	RegisterComponent(GameHUDKeys::LEVEL_TITLE_ID, new GameHUDLevelTitleComponent());
+	RegisterComponent(CreateHUDComponent<GameHUDTimeoutComponent>(GameHUDKeys::LEVEL_TIMEOUT_ID));
+	RegisterComponent(CreateHUDComponent<LudumHUDDiamondComponent>(GameHUDKeys::DIAMOND_ID));
+	RegisterComponent(CreateHUDComponent<LudumHUDLifeComponent>(GameHUDKeys::LIFE_ID));
+	RegisterComponent(CreateHUDComponent<GameHUDLevelTitleComponent>(GameHUDKeys::LEVEL_TITLE_ID));
 	return true;
 }
 

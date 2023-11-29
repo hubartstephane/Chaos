@@ -453,4 +453,37 @@ namespace chaos
 		return quad_mesh.get();
 	}
 
+	bool GPUResourceManager::OnConfigurationChanged(JSONReadConfiguration config)
+	{
+		// create a temporary manager
+		shared_ptr<GPUResourceManager> other_gpu_resource_manager = new GPUResourceManager; // destroyed at the end of the function
+		if (other_gpu_resource_manager == nullptr)
+			return false;
+		GiveClonedConfiguration(other_gpu_resource_manager.get());
+		if (!other_gpu_resource_manager->StartManager())
+			return false;
+		// steal data from other manager	
+		RefreshGPUResources(other_gpu_resource_manager.get());
+		// stop other manager
+		other_gpu_resource_manager->StopManager();
+		return true;
+	}
+
+	bool GPUResourceManager::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
+	{
+		return true;
+	}
+
+	bool GPUResourceManager::DoStartManager()
+	{
+		// super method
+		if (!ResourceManager::DoStartManager())
+			return false;
+		// read the properties
+		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
+			return false;
+		// other initializations
+		return InitializeFromConfiguration(GetJSONReadConfiguration().default_config);
+	}
+
 }; // namespace chaos

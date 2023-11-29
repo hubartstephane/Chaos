@@ -835,6 +835,9 @@ namespace chaos
 		// super method
 		if (!ResourceManager::DoStartManager())
 			return false;
+		// read the properties
+		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
+			return false;
 		// get the list of all devices
 		irrklang_devices = irrklang::createSoundDeviceList();
 		if (irrklang_devices == nullptr)
@@ -864,14 +867,12 @@ namespace chaos
 		// suppress the extra reference
 		irrklang_engine->drop();
 
-		return true;
+		// other initializations
+		return InitializeFromConfiguration(GetJSONReadConfiguration().default_config);
 	}
 
 	bool SoundManager::DoStopManager()
 	{
-		// super method
-		ResourceManager::DoStopManager();
-
 		// empty the managed objects list (destroy sounds first to make other list destructions faster)
 		RemoveAllObjectsFromList(sounds, &SoundManager::OnObjectRemovedFromManager);
 		RemoveAllObjectsFromList(categories, &SoundManager::OnObjectRemovedFromManager);
@@ -879,7 +880,11 @@ namespace chaos
 
 		// clean irrklang resources
 		irrklang_devices = nullptr;
+		irrklang_devices = nullptr;
 		irrklang_engine = nullptr;
+
+		// super method
+		ResourceManager::DoStopManager();
 
 		return true;
 	}
@@ -1177,6 +1182,16 @@ namespace chaos
 		if (category != nullptr)
 			category->InitializeFromJSON(json);
 		return category;
+	}
+
+	bool SoundManager::OnConfigurationChanged(JSONReadConfiguration config)
+	{
+		return true;
+	}
+	
+	bool SoundManager::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
+	{
+		return true;
 	}
 
 	bool SoundManager::InitializeFromConfiguration(nlohmann::json const * config)

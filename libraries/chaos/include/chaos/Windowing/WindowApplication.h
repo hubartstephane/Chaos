@@ -195,6 +195,9 @@ namespace chaos
 		/** override */
 		virtual void OnWritePersistentData(nlohmann::json * json) const override;
 
+		/** override */
+		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
+
 		/** the user callback called when current input mode changes */
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;
 

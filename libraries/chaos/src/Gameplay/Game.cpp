@@ -541,6 +541,11 @@ namespace chaos
 		return true;
 	}
 
+	bool Game::Initialize()
+	{
+		return InitializeFromConfiguration(GetJSONReadConfiguration().default_config);
+	}
+
 	bool Game::InitializeFromConfiguration(nlohmann::json const * config)
 	{
 		// initialize the gamepad manager
@@ -553,10 +558,8 @@ namespace chaos
 		if (!CreateClocks(config))
 			return false;
 		// initialize game values
-		if (!InitializeGameValues(config, false)) // false => not hot_reload
+		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
 			return false;
-		OnGameValuesChanged(false);
-
 
 		// shu49 c'est bizare d avoir le type sets ici
 
@@ -819,29 +822,6 @@ namespace chaos
 		return true;
 	}
 
-	bool Game::InitializeGameValues(nlohmann::json const * config, bool hot_reload)
-	{
-		// capture the game instance configuration
-		nlohmann::json const* gi_config = JSONTools::GetObjectNode(config, "game_instance");
-		if (gi_config != nullptr)
-			game_instance_configuration = *gi_config;
-		else
-			game_instance_configuration = nlohmann::json();
-
-		// read dedicated game values
-		CHAOS_JSON_ATTRIBUTE(config, mouse_sensitivity);
-		CHAOS_JSON_ATTRIBUTE(config, gamepad_sensitivity);
-		CHAOS_JSON_ATTRIBUTE(config, viewport_wanted_aspect);
-		return true;
-	}
-
-	void Game::OnGameValuesChanged(bool hot_reload)
-	{
-		if (game_instance != nullptr)
-			if (game_instance->InitializeGameValues(&game_instance_configuration, hot_reload))
-				game_instance->OnGameValuesChanged(hot_reload);
-	}
-
 	void Game::OnEnterMainMenu(bool very_first)
 	{
 		// start the music
@@ -958,6 +938,9 @@ namespace chaos
 		GameInstance * result = DoCreateGameInstance();
 		if (result == nullptr)
 			return nullptr;
+		GiveChildConfiguration(result, "game_instance");
+
+
 		// initialize the instance
 		if (!result->Initialize(this))
 		{
@@ -974,6 +957,7 @@ namespace chaos
 		game_instance = CreateGameInstance();
 		if (game_instance == nullptr)
 			return false;
+
 		// create other resources
 		game_instance->OnEnterGame();
 		// game entered
@@ -1156,6 +1140,7 @@ namespace chaos
 		hud = DoCreate##classname();\
 		if (hud == nullptr)\
 			return false;\
+		Application::GetInstance()->GiveChildConfiguration(hud.get(), "hud");\
 		if (!hud->Initialize(this))\
 		{\
 			hud = nullptr;\
@@ -1305,27 +1290,27 @@ namespace chaos
 			game_instance->OnLevelChanged(new_level, old_level, new_level_instance);
 	}
 
+
+	bool Game::OnConfigurationChanged(JSONReadConfiguration config)
+	{
+		return ConfigurableInterface::OnConfigurationChanged(config);
+	}
+	
+	bool Game::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
+	{
+		CHAOS_JSON_ATTRIBUTE(config, mouse_sensitivity);
+		CHAOS_JSON_ATTRIBUTE(config, gamepad_sensitivity);
+		CHAOS_JSON_ATTRIBUTE(config, viewport_wanted_aspect);
+		return true;
+	}
+
 	bool Game::ReloadGameConfiguration()
 	{
-		// gets application
-		WindowApplication * application = Application::GetInstance();
-		if (application == nullptr)
-			return false;
 		// this call may take a while. Avoid Frame rate jump
-		application->FreezeNextFrameTickDuration();
-		// reload the whole configuration file
-		nlohmann::json config;
-		if (!application->ReloadConfigurationFile(config))
-			return false;
-		// extract the part of interest for us
-		nlohmann::json const * game_config = JSONTools::GetStructureNode(&config, "game");
-		if (game_config == nullptr)
-			return false;
-		// update game values
-		if (!InitializeGameValues(game_config, true)) // true => hot_reload
-			return false;
-		OnGameValuesChanged(true);
-		return true;
+		if (GameApplication* application = Application::GetInstance())
+			application->FreezeNextFrameTickDuration();		
+		// reload properties
+		return ReloadDefaultPropertiesFromFile(true, true); // partial, send notification
 	}
 
 	bool Game::ReloadCurrentLevel()

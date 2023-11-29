@@ -10,7 +10,7 @@ namespace chaos
 	// GameInstance
 	// =============================================
 
-	class CHAOS_API GameInstance : public Tickable, public InputEventReceiverInterface, public GPUProgramProviderInterface, public CheckpointObject<GameCheckpoint>
+	class CHAOS_API GameInstance : public Tickable, public InputEventReceiverInterface, public GPUProgramProviderInterface, public CheckpointObject<GameCheckpoint>, public ConfigurableInterface
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
@@ -67,11 +67,6 @@ namespace chaos
 		SoundCategory* GetSoundCategory();
 		/** returns the sound category */
 		SoundCategory const* GetSoundCategory() const;
-
-		/** initialization of the game instance */
-		virtual bool InitializeGameValues(nlohmann::json const * config, bool hot_reload);
-		/** called after game instance configuration has been (re)loaded */
-		virtual void OnGameValuesChanged(bool hot_reload);
 
 	protected:
 
@@ -137,14 +132,15 @@ namespace chaos
 		virtual bool DoSaveIntoCheckpoint(GameCheckpoint* checkpoint) const override;
 		/** override */
 		virtual bool DoLoadFromCheckpoint(GameCheckpoint const* checkpoint) override;
+		/** override */
+		virtual bool OnConfigurationChanged(JSONReadConfiguration config) override;
+		/** override */
+		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
 
 	protected:
 
 		/** the game */
 		Game* game = nullptr;
-
-		/** the configuration object to use for players */
-		nlohmann::json player_configuration;
 
 		/** the player class */
 		SubClassOf<Player> player_class;

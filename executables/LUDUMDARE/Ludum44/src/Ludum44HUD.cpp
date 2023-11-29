@@ -173,10 +173,10 @@ bool LudumPlayingHUD::FillHUDContent()
 {
 	if (!chaos::PlayingHUD::FillHUDContent())
 		return false;
-	RegisterComponent(chaos::GameHUDKeys::LIFE_HEALTH_ID, new GameHUDHealthBarComponent());
-	RegisterComponent(chaos::GameHUDKeys::LEVEL_TITLE_ID, new chaos::GameHUDLevelTitleComponent());
-	RegisterComponent(chaos::GameHUDKeys::POWER_UP_ID, new GameHUDPowerUpComponent());
-	RegisterComponent(chaos::GameHUDKeys::LIFE_ID, new GameHUDLifeCountComponent());
-	RegisterComponent(chaos::GameHUDKeys::NOTIFICATION_ID, new chaos::GameHUDNotificationComponent());
+	RegisterComponent(CreateHUDComponent<GameHUDHealthBarComponent>(chaos::GameHUDKeys::LIFE_HEALTH_ID));
+	RegisterComponent(CreateHUDComponent<chaos::GameHUDLevelTitleComponent>(chaos::GameHUDKeys::LEVEL_TITLE_ID));
+	RegisterComponent(CreateHUDComponent<GameHUDPowerUpComponent>(chaos::GameHUDKeys::POWER_UP_ID));
+	RegisterComponent(CreateHUDComponent<GameHUDLifeCountComponent>(chaos::GameHUDKeys::LIFE_ID));
+	RegisterComponent(CreateHUDComponent<chaos::GameHUDNotificationComponent>(chaos::GameHUDKeys::NOTIFICATION_ID));
 	return true;
 }

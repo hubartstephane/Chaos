@@ -36,7 +36,7 @@ bool LudumPlayingHUD::FillHUDContent()
 {
 	if (!chaos::PlayingHUD::FillHUDContent())
 		return false;
-	RegisterComponent(chaos::GameHUDKeys::COMBO_ID, new GameHUDComboComponent());
-	RegisterComponent(chaos::GameHUDKeys::LIFE_ID, new chaos::GameHUDLifeComponent());
+	RegisterComponent(CreateHUDComponent<GameHUDComboComponent>(chaos::GameHUDKeys::COMBO_ID));
+	RegisterComponent(CreateHUDComponent<chaos::GameHUDLifeComponent>(chaos::GameHUDKeys::LIFE_ID));
 	return true;
 }

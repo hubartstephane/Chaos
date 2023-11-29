@@ -42,7 +42,7 @@ protected:
 	/** override */
 	virtual void HandleInputs(float delta_time, chaos::GamepadState const * gpd) override;
 	/** override */
-	virtual bool InitializeGameValues(nlohmann::json const * config, bool hot_reload) override;
+	virtual bool OnReadConfigurableProperties(chaos::JSONReadConfiguration config, chaos::ReadConfigurablePropertiesContext context) override;
 	/** override */
 	virtual void OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode) override;
 	/** override */

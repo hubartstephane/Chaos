@@ -112,8 +112,8 @@ bool LudumPlayingHUD::FillHUDContent()
 		return false;
 #endif
 
-	RegisterComponent(chaos::GameHUDKeys::RACE_POSITION_ID, new GameHUDRacePositionComponent());
-	RegisterComponent(chaos::GameHUDKeys::RACE_LAPS_ID, new GameHUDRaceLapsComponent());
+	RegisterComponent(CreateHUDComponent<GameHUDRacePositionComponent>(chaos::GameHUDKeys::RACE_POSITION_ID));
+	RegisterComponent(CreateHUDComponent<GameHUDRaceLapsComponent>(chaos::GameHUDKeys::RACE_LAPS_ID));
 
 	return true;
 }

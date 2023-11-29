@@ -1061,6 +1061,13 @@ namespace chaos
 		return result;
 	}
 
+	bool Window::Initialize()
+	{
+		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
+			return false;
+		return InitializeFromConfiguration(GetJSONReadConfiguration().default_config);
+	}
+
 	bool Window::InitializeFromConfiguration(nlohmann::json const * config)
 	{
 		RegisterKnownDrawables();
@@ -1076,6 +1083,16 @@ namespace chaos
 				result->SetWindow(this);
 			return result;
 		});
+	}
+
+	bool Window::OnConfigurationChanged(JSONReadConfiguration config)
+	{
+		return ConfigurableInterface::OnConfigurationChanged(config);
+	}
+	
+	bool Window::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
+	{
+		return true;
 	}
 
 	nlohmann::json * Window::GetPersistentWriteStorage() const

@@ -31,7 +31,7 @@ protected:
 
     virtual bool DoTick(float delta_time) override;
 
-    virtual bool InitializeGameValues(nlohmann::json const * config, bool hot_reload) override;
+    virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
 
 public:
 

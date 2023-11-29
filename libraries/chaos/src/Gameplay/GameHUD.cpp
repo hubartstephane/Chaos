@@ -52,25 +52,14 @@ namespace chaos
 		return game->GetPlayerCount();
 	}
 
-	void GameHUD::InitializeComponentFromConfiguration(TagType key, GameHUDComponent* component)
+	bool GameHUD::OnConfigurationChanged(JSONReadConfiguration config)
 	{
-		assert(component != nullptr);
+		return ConfigurableInterface::OnConfigurationChanged(config);
+	}
 
-		Application const* application = Application::GetInstance();
-		if (application == nullptr)
-			return;
-
-		nlohmann::json const * config = application->GetConfiguration();
-		// get the hud config
-		nlohmann::json const* hud_config = JSONTools::GetStructureNode(config, "hud");
-		if (hud_config == nullptr)
-			return;
-		// get the component config (if existing)
-		nlohmann::json const* component_config = JSONTools::GetStructureNode(hud_config, (char const*)key);
-		if (component_config == nullptr)
-			return;
-		// initialize the component from JSON
-		component->InitializeFromConfiguration(component_config);
+	bool GameHUD::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
+	{
+		return true;
 	}
 
 	bool GameHUD::Initialize(Game* in_game)
@@ -78,7 +67,11 @@ namespace chaos
 		// ensure valid arguments and not already initialized
 		assert(in_game != nullptr);
 		assert(game == nullptr);
+		// set the game
 		game = in_game;
+		// read the configuration file
+		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
+			return false;
 		// create the components
 		if (!FillHUDContent())
 			return false;
@@ -88,30 +81,30 @@ namespace chaos
 	bool GameHUD::FillHUDContent()
 	{
 		// FPS
-		RegisterComponent(GameHUDKeys::FPS_ID, new GameHUDFramerateComponent());
+		RegisterComponent(CreateHUDComponent<GameHUDFramerateComponent>(GameHUDKeys::FPS_ID));
 		// PERFS
-		RegisterComponent(GameHUDKeys::PERFS_ID, new GameHUDPerfsComponent());
+		RegisterComponent(CreateHUDComponent<GameHUDPerfsComponent>(GameHUDKeys::PERFS_ID));
 #if _DEBUG
 		// FREECAMERA
-		RegisterComponent(GameHUDKeys::FREECAMERA_ID, new GameHUDFreeCameraComponent());
+		RegisterComponent(CreateHUDComponent<GameHUDFreeCameraComponent>(GameHUDKeys::FREECAMERA_ID));
 		// DEBUG VALUES
-		RegisterComponent(GameHUDKeys::DEBUG_VALUES_ID, new GameHUDDebugValuesComponent());
+		RegisterComponent(CreateHUDComponent<GameHUDDebugValuesComponent>(GameHUDKeys::DEBUG_VALUES_ID));
 		// DEBUG DRAW
-		RegisterComponent(GameHUDKeys::DEBUG_DRAW_ID, new GameHUDDebugDrawComponent());
+		RegisterComponent(CreateHUDComponent<GameHUDDebugDrawComponent>(GameHUDKeys::DEBUG_DRAW_ID));
 #endif
 		return true;
 	}
 
-	void GameHUD::RegisterComponent(TagType key, GameHUDComponent* in_component)
+	void GameHUD::RegisterComponent(GameHUDComponent* in_component)
 	{
 		assert(in_component != nullptr);
 		assert(in_component->hud == nullptr);
 		// remove previous component with the key
-		UnregisterComponent(key);
+		UnregisterComponent(in_component->GetTag());
 		// register new component for that key
-		components.insert(std::make_pair(key, in_component));
-		in_component->SetHUD(this);
-		InitializeComponentFromConfiguration(key, in_component); // this will override the component position from JSON file
+		components.insert(std::make_pair(in_component->GetTag(), in_component));
+		// additional initializations
+		in_component->hud = this;
 		in_component->OnInsertedInHUD();
 	}
 
@@ -120,8 +113,7 @@ namespace chaos
 		auto it = components.find(key);
 		if (it == components.end())
 			return;
-		GameHUDComponent * component = it->second.get();
-		if (component != nullptr)
+		if (GameHUDComponent* component = it->second.get())
 		{
 			component->OnRemovedFromHUD();
 			component->hud = nullptr;
@@ -131,6 +123,9 @@ namespace chaos
 
 	void GameHUD::UnregisterComponent(GameHUDComponent * in_component)
 	{
+		assert(in_component != nullptr);
+		assert(in_component->hud == this);
+
 		auto it = components.begin();
 		for (; it != components.end(); ++it)
 		{
@@ -203,18 +198,20 @@ namespace chaos
 		// the title
 		char const * game_name = game->GetGameName();
 		if (game_name != nullptr)
-			RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent(
+			RegisterComponent(CreateHUDComponent<GameHUDTextComponent>(
+				GameHUDKeys::TITLE_ID,
 				game_name,
 				ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), Hotpoint::CENTER)));
 		// the best score
 		if (game->GetBestScore() > 0)
 		{
-			RegisterComponent(GameHUDKeys::BEST_SCORE_ID, new GameHUDBestScoreComponent());
+			RegisterComponent(CreateHUDComponent<GameHUDBestScoreComponent>(GameHUDKeys::BEST_SCORE_ID));
 		}
 		// the instructions
 		char const * game_instructions = game->GetGameInstructions();
 		if (game_instructions != nullptr)
-			RegisterComponent(GameHUDKeys::INSTRUCTIONS_ID, new GameHUDTextComponent(
+			RegisterComponent(CreateHUDComponent<GameHUDTextComponent>(
+				GameHUDKeys::INSTRUCTIONS_ID,
 				game_instructions,
 				ParticleTextGenerator::GeneratorParams("normal", 40.0f, glm::vec2(0.0f, 40.0f), Hotpoint::BOTTOM)));
 
@@ -231,7 +228,8 @@ namespace chaos
 		if (!GameHUD::FillHUDContent())
 			return false;
 		// the title
-		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent(
+		RegisterComponent(CreateHUDComponent<GameHUDTextComponent>(
+			GameHUDKeys::TITLE_ID,
 			"Pause",
 			ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), Hotpoint::CENTER)));
 		return true;
@@ -247,7 +245,8 @@ namespace chaos
 		if (!GameHUD::FillHUDContent())
 			return false;
 		// the title
-		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent(
+		RegisterComponent(CreateHUDComponent<GameHUDTextComponent>(
+			GameHUDKeys::TITLE_ID,
 			"Game Over",
 			ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), Hotpoint::CENTER)));
 		return true;
@@ -262,8 +261,7 @@ namespace chaos
 		// call super method
 		if (!GameHUD::FillHUDContent())
 			return false;
-		RegisterComponent(GameHUDKeys::SCORE_ID, new GameHUDScoreComponent());
-
+		RegisterComponent(CreateHUDComponent<GameHUDScoreComponent>(GameHUDKeys::SCORE_ID));
 		return true;
 	}
 

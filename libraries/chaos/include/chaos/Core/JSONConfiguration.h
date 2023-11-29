@@ -90,9 +90,9 @@ namespace chaos
 			else
 			{
 				if (config.persistent_config != nullptr)
-					func(*config.persistent_config);
+					func(config.persistent_config);
 				if (config.default_config != nullptr)
-					func(*config.default_config);
+					func(config.default_config);
 			}
 		}
 

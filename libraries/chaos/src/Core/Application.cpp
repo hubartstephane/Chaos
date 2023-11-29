@@ -63,12 +63,6 @@ namespace chaos
 		return GetResourcesPath() / "config.json";
 	}
 
-	// shuxxx
-	bool Application::LoadConfigurationFile()
-	{
-		return JSONTools::LoadJSONFile(GetConfigurationPath(), configuration, LoadFileFlag::RECURSIVE);
-	}
-
 	bool Application::LoadPersistentDataFile()
 	{
 		return JSONTools::LoadJSONFile(GetPersistentDataPath(), persistent_data, LoadFileFlag::RECURSIVE);
@@ -86,10 +80,10 @@ namespace chaos
 
 	bool Application::LoadClasses()
 	{
-		if (nlohmann::json const* classes_json = JSONTools::GetObjectNode(&configuration, "classes"))
+		if (JSONReadConfiguration classes_config = JSONTools::GetObjectNode(GetJSONReadConfiguration(), "classes"))
 		{
 			std::string classes_directory;
-			if (JSONTools::GetAttribute(classes_json, "classes_directory", classes_directory))
+			if (JSONTools::GetAttribute(classes_config, "classes_directory", classes_directory))
 			{
 				ClassLoader loader;
 				loader.LoadClassesInDirectory(ClassManager::GetDefaultInstance(), classes_directory);
@@ -110,13 +104,6 @@ namespace chaos
 
 	bool Application::Initialize()
 	{
-		LoadConfigurationFile();
-
-
-
-
-
-
 		// prepare the logger
 		if (Logger* logger = Logger::GetInstance())
 			if (LoggerListener* listener = new FileLoggerListener())
@@ -175,7 +162,7 @@ namespace chaos
 		// display the directories to help debugging
 		bool dump_config = GlobalVariables::DumpConfigFile.Get();
 		if (dump_config)
-			JSONTools::DumpConfigFile(&configuration);
+			JSONTools::DumpConfigFile(GetJSONReadConfiguration().default_config);
 		if (dump_config || GlobalVariables::ShowDirectories.Get() || GlobalVariables::ShowUserTempDirectory.Get())
 			WinTools::ShowFile(user_temp);
 		if (GlobalVariables::ShowDirectories.Get() || GlobalVariables::ShowInstalledResourcesDirectory.Get())

@@ -50,8 +50,6 @@ namespace chaos
 		/** get the application local temp path for execution data */
 		boost::filesystem::path const& GetUserLocalTempPath() const { return userlocal_temp_path; }
 
-		/** get the configuration */
-		nlohmann::json const * GetConfiguration() const { return &configuration; }
 		/** get the configuration file path */
 		boost::filesystem::path GetConfigurationPath() const;
 
@@ -115,8 +113,6 @@ namespace chaos
 		/** initialization relative to ConfigurableInterface */
 		bool InitializeConfiguration();
 
-		/** loading the configuration file */
-		bool LoadConfigurationFile();
 		/** loading the persistent data file */
 		bool LoadPersistentDataFile();
 		/** saving the persistent data file */
@@ -163,15 +159,8 @@ namespace chaos
 		/** path of the application to store user temp data */
 		boost::filesystem::path userlocal_temp_path;
 
-		/** the JSON configuration file if existing */
-		nlohmann::json configuration;
 		/** the JSON persistent data if existing */
 		mutable nlohmann::json persistent_data;
-
-
-
-
-
 
 		/** redirection source directories */
 #if _DEBUG

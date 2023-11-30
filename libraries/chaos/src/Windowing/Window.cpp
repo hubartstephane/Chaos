@@ -1092,37 +1092,27 @@ namespace chaos
 	
 	bool Window::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
 	{
+
+		// read the position
+		glm::ivec2 position = { 0, 0 };		
+		if (JSONTools::GetAttribute(config, "position", position))
+			//SetWindowPosition(position);
+			;
+		// read the size
+		glm::ivec2 size = { 0, 0 };
+		if (JSONTools::GetAttribute(config, "size", size))
+			//SetWindowSize(size);
+			;
+
+
 		return true;
 	}
 
-	nlohmann::json * Window::GetPersistentWriteStorage() const
+	bool Window::OnStorePersistentProperties(JSONWriteConfiguration config) const
 	{
-		//if (Application* application = Application::GetInstance())
-		//	return application->GetOrCreatePersistentDataStructure("windows", GetName());
-		return nullptr;
-	}
-
-	nlohmann::json const * Window::GetPersistentReadStorage() const
-	{
-		//if (Application* application = Application::GetInstance())
-		//	return application->GetPersistentDataStructure("windows", GetName());
-		return nullptr;
-	}
-
-	void Window::OnReadPersistentData(nlohmann::json const * json)
-	{
-		glm::ivec2 position = { 0, 0 };
-		glm::ivec2 size = { 0, 0 };
-		JSONTools::GetAttribute(json, "position", position);
-		JSONTools::GetAttribute(json, "size", size);
-		SetWindowPosition(position);
-		SetWindowSize(size);
-	}
-
-	void Window::OnWritePersistentData(nlohmann::json * json) const
-	{
-		JSONTools::SetAttribute(json, "position", GetWindowPosition());
-		JSONTools::SetAttribute(json, "size", GetWindowSize());
+		JSONTools::SetAttribute(config, "position", GetWindowPosition());
+		JSONTools::SetAttribute(config, "size", GetWindowSize());
+		return true;
 	}
 
 	bool Window::DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const

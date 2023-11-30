@@ -9,7 +9,7 @@ namespace chaos
 	/**
 	* Application : used to store generic application data
 	*/
-	class CHAOS_API Application : public Object, public InputEventReceiverInterface, public PersistentDataInterface, public ConfigurableInterface
+	class CHAOS_API Application : public Object, public InputEventReceiverInterface, public ConfigurableInterface
 	{
 
 	public:
@@ -53,18 +53,6 @@ namespace chaos
 		/** get the configuration file path */
 		boost::filesystem::path GetConfigurationPath() const;
 
-		/** get the persistent data */
-		template<typename ...PARAMS>
-		nlohmann::json const* GetPersistentDataStructure(PARAMS && ...params) const
-		{ 
-			return JSONTools::GetObjectNode(&persistent_data, std::forward<PARAMS>(params)...);
-		}
-		/** get the persistent data (writeable) */
-		template<typename ...PARAMS>
-		nlohmann::json * GetOrCreatePersistentDataStructure(PARAMS && ...params) const
-		{
-			return JSONTools::GetOrCreateObjectNode(&persistent_data, std::forward<PARAMS>(params)...);
-		}
 		/** get the persistent data file path */
 		boost::filesystem::path GetPersistentDataPath() const;
 
@@ -113,25 +101,11 @@ namespace chaos
 		/** initialization relative to ConfigurableInterface */
 		bool InitializeConfiguration();
 
-		/** loading the persistent data file */
-		bool LoadPersistentDataFile();
-		/** saving the persistent data file */
-		bool SavePersistentDataFile() const;
 		/** load the extra classes */
 		virtual bool LoadClasses();
 		/** log some application information */
 		virtual void LogExecutionInformation();
 		
-		/** override */
-		virtual nlohmann::json * GetPersistentWriteStorage() const override;
-		/** override */
-		virtual nlohmann::json const* GetPersistentReadStorage() const override;
-		/** override */
-		virtual void OnReadPersistentData(nlohmann::json const * json) override;
-		/** override */
-		virtual void OnWritePersistentData(nlohmann::json * json) const override;
-
-
 		/** override */
 		virtual bool OnConfigurationChanged(JSONReadConfiguration config) override;
 		/** override */
@@ -158,9 +132,6 @@ namespace chaos
 		boost::filesystem::path userlocal_path;
 		/** path of the application to store user temp data */
 		boost::filesystem::path userlocal_temp_path;
-
-		/** the JSON persistent data if existing */
-		mutable nlohmann::json persistent_data;
 
 		/** redirection source directories */
 #if _DEBUG

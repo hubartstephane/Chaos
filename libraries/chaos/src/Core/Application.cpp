@@ -62,16 +62,6 @@ namespace chaos
 	{
 		return GetResourcesPath() / "config.json";
 	}
-
-	bool Application::LoadPersistentDataFile()
-	{
-		return JSONTools::LoadJSONFile(GetPersistentDataPath(), persistent_data, LoadFileFlag::RECURSIVE);
-	}
-
-	bool Application::SavePersistentDataFile() const
-	{
-		return JSONTools::SaveJSONToFile(&persistent_data, GetPersistentDataPath());
-	}
 	
 	boost::filesystem::path Application::GetPersistentDataPath() const
 	{
@@ -205,22 +195,11 @@ namespace chaos
 			StoreParameters(argc, argv, env);
 			// create a user temp directory if necessary */
 			CreateUserLocalTempDirectory();
-			// load the configuration file (ignore return value because there is no obligation to use a configuration file)
-
-
-
-
-
 			// initialize, run, and finalize the application
 			if (Initialize())
 			{
-				// load the persistent data file (ignore return value because there is no obligation to use a configuration file)
-				LoadPersistentDataFile();
-				ReadPersistentData();
-				result = Main();
-				// save the persistent data to file
-				WritePersistentData();
-				SavePersistentDataFile();
+				result = Main();				
+				SavePersistentPropertiesToFile(true); // save the persistent data to file
 			}
 			// finalization (even if initialization failed)
 			Finalize();
@@ -345,24 +324,6 @@ namespace chaos
 			if (StringTools::Stricmp(arg, flag_name) == 0)
 				return true;
 		return false;
-	}
-
-	nlohmann::json * Application::GetPersistentWriteStorage() const
-	{
-		return GetOrCreatePersistentDataStructure("application"); 
-	}
-
-	nlohmann::json const * Application::GetPersistentReadStorage() const
-	{
-		return GetPersistentDataStructure("application");
-	}
-
-	void Application::OnReadPersistentData(nlohmann::json const * json)
-	{
-	}
-
-	void Application::OnWritePersistentData(nlohmann::json * json) const
-	{
 	}
 
 #if _DEBUG

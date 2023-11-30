@@ -147,8 +147,6 @@ namespace chaos
 				result->Destroy();
 				return nullptr; // the shared_ptr destruction will handle the object lifetime
 			}
-			// read information from session file
-			result->ReadPersistentData();
 			// create the root widget
 			result->CreateRootWidget();
 			// notify the application
@@ -159,7 +157,7 @@ namespace chaos
 
 	void WindowApplication::OnWindowDestroyed(Window* window)
 	{
-		window->WritePersistentData();
+		window->StorePersistentProperties(true);
 		window->Finalize();
 		window->DestroyImGuiContext();
 		window->DestroyGLFWWindow();
@@ -241,14 +239,12 @@ namespace chaos
 
 	void WindowApplication::Quit()
 	{
-		// write the name of the windows that are opened
-		if (nlohmann::json* json = GetPersistentWriteStorage())
-		{
-			std::vector<char const*> names;
-			for (shared_ptr<Window> const& window : windows)
-				names.push_back(window->GetName());
-			JSONTools::SetAttribute(json, "opened_window", names);
-		}
+		// save the name of all windows that are still opened before closing them all
+		std::vector<char const*> names;
+		for (shared_ptr<Window> const& window : windows)
+			names.push_back(window->GetName());
+		JSONTools::SetAttribute(GetJSONWriteConfiguration(), "opened_window", names);
+
 		// effectively quit the application
 		DestroyAllWindows();
 	}
@@ -539,8 +535,29 @@ namespace chaos
 
 	bool WindowApplication::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
 	{
+		if (!Application::OnReadConfigurableProperties(config, context))
+			return false;
+
 		JSONTools::GetAttribute(config, "max_tick_duration", max_tick_duration);
 		JSONTools::GetAttribute(config, "forced_tick_duration", forced_tick_duration);
+
+		// open windows that were there during previous session
+		if (context == ReadConfigurablePropertiesContext::INITIALIZATION)
+		{		
+			std::vector<std::string> opened_window;
+			if (JSONTools::GetAttribute(config, "opened_window", opened_window))
+				for (std::string const& name : opened_window)
+					SetKnownWindowVisibility(name.c_str(), true);
+		}
+		return true;
+	}
+
+	bool WindowApplication::OnStorePersistentProperties(JSONWriteConfiguration config) const
+	{
+		if (!Application::OnStorePersistentProperties(config))
+			return false;
+
+
 		return true;
 	}
 
@@ -879,7 +896,7 @@ namespace chaos
 				}
 				if (ImGui::MenuItem("Open Persistent File", nullptr, false, true))
 				{
-					SavePersistentDataFile();
+					SavePersistentPropertiesToFile(false); // do not require an update from clients
 					WinTools::ShowFile(GetPersistentDataPath());
 				}
 				ImGui::Separator();
@@ -911,24 +928,6 @@ namespace chaos
 		for (shared_ptr<Window> const& window : windows)
 			result.emplace_back(window.get());
 		return result;
-	}
-
-
-	void WindowApplication::OnReadPersistentData(nlohmann::json const * json)
-	{
-		Application::OnReadPersistentData(json);
-
-		// open windows that were there during previous session
-		std::vector<std::string> opened_window;
-		JSONTools::GetAttribute(json, "opened_window", opened_window);
-
-		for (std::string const& name : opened_window)
-			SetKnownWindowVisibility(name.c_str(), true);
-	}
-
-	void WindowApplication::OnWritePersistentData(nlohmann::json * json) const
-	{
-		Application::OnWritePersistentData(json);
 	}
 
 #ifdef _WIN32

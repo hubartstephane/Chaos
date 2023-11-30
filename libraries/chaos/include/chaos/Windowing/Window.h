@@ -76,7 +76,7 @@ namespace chaos
 	* Window : a binding class between chaos and GLFW to handle window (beware the prefix "My")
 	*/
 
-	class CHAOS_API Window : public Object, public WindowInterface, public PersistentDataInterface, public ImGuiDrawableOwnerInterface, public ConfigurableInterface
+	class CHAOS_API Window : public Object, public WindowInterface, public ImGuiDrawableOwnerInterface, public ConfigurableInterface
 	{
 		friend class WindowApplication;
 
@@ -294,18 +294,11 @@ namespace chaos
 		virtual void RegisterKnownDrawables();
 
 		/** override */
-		virtual nlohmann::json * GetPersistentWriteStorage() const override;
-		/** override */
-		virtual nlohmann::json const * GetPersistentReadStorage() const override;
-		/** override */
-		virtual void OnReadPersistentData(nlohmann::json const * json) override;
-		/** override */
-		virtual void OnWritePersistentData(nlohmann::json * json) const override;
-
-		/** override */
 		virtual bool OnConfigurationChanged(JSONReadConfiguration config) override;
 		/** override */
 		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
+		/** override */
+		virtual bool OnStorePersistentProperties(JSONWriteConfiguration config) const override;
 
 	private:
 

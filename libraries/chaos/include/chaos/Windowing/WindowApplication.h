@@ -190,13 +190,11 @@ namespace chaos
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;
-		/** override */
-		virtual void OnReadPersistentData(nlohmann::json const * json) override;
-		/** override */
-		virtual void OnWritePersistentData(nlohmann::json * json) const override;
 
 		/** override */
 		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
+		/** override */
+		virtual bool OnStorePersistentProperties(JSONWriteConfiguration config) const override;
 
 		/** the user callback called when current input mode changes */
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;

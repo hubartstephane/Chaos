@@ -113,7 +113,7 @@ namespace chaos
 		bool SetAttribute(nlohmann::json * json, std::string_view path, T const& src);
 		/** set an attribute in a json array */
 		template<typename T>
-		bool SetAttributeByIndex(nlohmann::json * json, size_t index, T const& src);
+		bool SetElement(nlohmann::json * json, size_t index, T const& src);
 
 		/** reading an attribute from a JSON structure */
 		template<typename T, JSONSource SRC_TYPE>
@@ -272,13 +272,9 @@ namespace chaos
 		}
 
 		template<typename T>
-		bool SetAttributeByIndex(nlohmann::json* json, size_t index, T const& src)
+		bool SetElement(nlohmann::json* json, size_t index, T const& src)
 		{
-			if (json == nullptr)
-				return false;
-			if (json->is_null())
-				*json = nlohmann::json::array();
-			else if (!json->is_array())
+			if (!PrepareSaveArrayIntoJSON(json))
 				return false;
 			json->operator [](index) = nlohmann::json();
 			return SaveIntoJSON(&json->operator [](index), src);

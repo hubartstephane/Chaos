@@ -29,7 +29,7 @@ namespace chaos
 		bool SetAttribute(JSONWriteConfiguration const& config, std::string_view path, T const& src);
 
 		template<typename T>
-		bool SetAttributeByIndex(JSONWriteConfiguration const& config, size_t index, T const& src);
+		bool SetElement(JSONWriteConfiguration const& config, size_t index, T const& src);
 	}
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -151,11 +151,11 @@ namespace chaos
 		}
 
 		template<typename T>
-		bool SetAttributeByIndex(JSONWriteConfiguration const & config, size_t index, T const& src)
+		bool SetElement(JSONWriteConfiguration const & config, size_t index, T const& src)
 		{
 			if (config.persistent_config == nullptr)
 				return false;
-			return SetAttributeByIndex(config.persistent_config, index, src);
+			return SetElement(config.persistent_config, index, src);
 		}
 
 	}; // namespace JSONTools

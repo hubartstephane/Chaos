@@ -820,8 +820,8 @@ namespace chaos
 	{
 		if (!PrepareSaveArrayIntoJSON(json))
 			return false;
-		JSONTools::SetAttributeByIndex(json, 0, src.x);
-		JSONTools::SetAttributeByIndex(json, 1, src.y);
+		JSONTools::SetElement(json, 0, src.x);
+		JSONTools::SetElement(json, 1, src.y);
 		return true;
 	}
 
@@ -852,9 +852,9 @@ namespace chaos
 	{
 		if (!PrepareSaveArrayIntoJSON(json))
 			return false;
-		JSONTools::SetAttributeByIndex(json, 0, src.x);
-		JSONTools::SetAttributeByIndex(json, 1, src.y);
-		JSONTools::SetAttributeByIndex(json, 2, src.z);
+		JSONTools::SetElement(json, 0, src.x);
+		JSONTools::SetElement(json, 1, src.y);
+		JSONTools::SetElement(json, 2, src.z);
 		return true;
 	}
 
@@ -886,10 +886,10 @@ namespace chaos
 	{
 		if (!PrepareSaveArrayIntoJSON(json))
 			return false;
-		JSONTools::SetAttributeByIndex(json, 0, src.x);
-		JSONTools::SetAttributeByIndex(json, 1, src.y);
-		JSONTools::SetAttributeByIndex(json, 2, src.z);
-		JSONTools::SetAttributeByIndex(json, 3, src.w);
+		JSONTools::SetElement(json, 0, src.x);
+		JSONTools::SetElement(json, 1, src.y);
+		JSONTools::SetElement(json, 2, src.z);
+		JSONTools::SetElement(json, 3, src.w);
 		return true;
 	}
 

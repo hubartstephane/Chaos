@@ -172,14 +172,14 @@ void LudumPlayer::UpdatePlayerBuyingItem(float delta_time)
 		buylocked = false;
 }
 
-bool LudumPlayer::SerializeFromJSON(nlohmann::json const * json)
+bool LudumPlayer::SerializeFromJSON(chaos::JSONReadConfiguration config)
 {
-	if (!chaos::Player::SerializeFromJSON(json))
+	if (!chaos::Player::SerializeFromJSON(config))
 		return false;
-	chaos::JSONTools::GetAttribute(json, "SPEED_INDEX", current_speed_index);
-	chaos::JSONTools::GetAttribute(json, "DAMAGE_INDEX", current_damage_index);
-	chaos::JSONTools::GetAttribute(json, "CHARGED_DAMAGE_INDEX", current_charged_damage_index);
-	chaos::JSONTools::GetAttribute(json, "FIRE_RATE_INDEX", current_fire_rate_index);
+	chaos::JSONTools::GetAttribute(config, "SPEED_INDEX", current_speed_index);
+	chaos::JSONTools::GetAttribute(config, "DAMAGE_INDEX", current_damage_index);
+	chaos::JSONTools::GetAttribute(config, "CHARGED_DAMAGE_INDEX", current_charged_damage_index);
+	chaos::JSONTools::GetAttribute(config, "FIRE_RATE_INDEX", current_fire_rate_index);
 	return true;
 }
 

@@ -455,7 +455,7 @@ namespace chaos
 		}
 
 		// the colors
-		if (fonts_config != nullptr)
+		if (fonts_config)
 		{
 			if (JSONReadConfiguration font_colors_config = JSONTools::GetObjectNode(fonts_config, "colors"))
 			{
@@ -593,7 +593,6 @@ namespace chaos
 		main_clock = new Clock("main_clock");
 		if (main_clock == nullptr)
 			return false;
-		main_clock->InitializeFromConfiguration(JSONTools::GetStructureNode(GetJSONReadConfiguration(), "clocks"));
 
 		// initialize the sound manager
 		sound_manager = new SoundManager();

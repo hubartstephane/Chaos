@@ -111,12 +111,12 @@ namespace chaos
 			return true;
 		}
 
-		bool ComputeNeighbourFlagProcessor::SerializeFromJSON(nlohmann::json const * json)
+		bool ComputeNeighbourFlagProcessor::SerializeFromJSON(JSONReadConfiguration config)
 		{
-			if (!TileFlagProcessor::SerializeFromJSON(json))
+			if (!TileFlagProcessor::SerializeFromJSON(config))
 				return false;
 			// get the types of interrest
-			JSONTools::GetAttribute(json, "types", types);
+			JSONTools::GetAttribute(config, "types", types);
 			// decrypt the strings
 			if (types.size() > 0)
 			{
@@ -211,12 +211,12 @@ namespace chaos
 			return true;
 		}
 		
-		bool ComputeCustomFlagProcessor::SerializeFromJSON(nlohmann::json const * json)
+		bool ComputeCustomFlagProcessor::SerializeFromJSON(JSONReadConfiguration config)
 		{
-			if (!TileFlagProcessor::SerializeFromJSON(json))
+			if (!TileFlagProcessor::SerializeFromJSON(config))
 				return false;
 			// extract all flag key-flag
-			JSONTools::GetAttribute(json, "custom_flags", custom_flags);
+			JSONTools::GetAttribute(config, "custom_flags", custom_flags);
 			// decrypt all data (a key may be a comma separated value)
 			std::vector<ComputeCustomFlagProcessorEntry> final_custom_flags;
 			for (ComputeCustomFlagProcessorEntry& old_entry : custom_flags)

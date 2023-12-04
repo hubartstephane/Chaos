@@ -223,40 +223,44 @@ namespace chaos
 			objects[i]->OnLevelRestart();
 	}
 
-	bool TMLayerInstance::SerializeObjectListFromJSON(nlohmann::json const * json, char const * attribute_name, std::vector<shared_ptr<TMObject>> & result)
+	bool TMLayerInstance::SerializeObjectListFromJSON(JSONReadConfiguration config, char const * attribute_name, std::vector<shared_ptr<TMObject>> & result)
 	{
 		// in "Objects" array, read all objects, search the ID and apply the data to dedicated object
-		if (nlohmann::json const* objects_json = JSONTools::GetArrayNode(json, attribute_name))
+		if (JSONReadConfiguration objects_config = JSONTools::GetArrayNode(config, attribute_name))
 		{
-			for (size_t i = 0; i < objects_json->size(); ++i)
+			JSONTools::ForEachSource(config, [this](nlohmann::json const* json)
 			{
-				if (nlohmann::json const* object_json = JSONTools::GetObjectNodeByIndex(objects_json, i))
+				for (size_t i = 0; i < json->size(); ++i)
 				{
-					int object_id = 0;
-					if (JSONTools::GetAttribute(object_json, "OBJECT_ID", object_id))
+					if (nlohmann::json const* object_json = JSONTools::GetObjectNodeByIndex(json, i))
 					{
-						TMTrigger* trigger = FindObjectByID<TMTrigger>(object_id);
-						if (trigger != nullptr)
+						int object_id = 0;
+						if (JSONTools::GetAttribute(object_json, "OBJECT_ID", object_id))
 						{
-							LoadFromJSON(object_json, *trigger); // XXX : the indirection is important to avoid the creation of a new layer_instance
-						}
-						else
-						{
+							TMTrigger* trigger = FindObjectByID<TMTrigger>(object_id);
+							if (trigger != nullptr)
+							{
+								LoadFromJSON(object_json, *trigger); // XXX : the indirection is important to avoid the creation of a new layer_instance
+							}
+							else
+							{
 
+							}
 						}
 					}
 				}
-			}
+				return true; // no more sources
+			});
 		}
 		return true;
 	}
 
-	bool TMLayerInstance::SerializeFromJSON(nlohmann::json const * json)
+	bool TMLayerInstance::SerializeFromJSON(JSONReadConfiguration config)
 	{
-		if (!JSONSerializableInterface::SerializeFromJSON(json))
+		if (!JSONSerializableInterface::SerializeFromJSON(config))
 			return false;
-		SerializeObjectListFromJSON(json, "OBJECTS", objects);
-		TMTools::SerializeLayersFromJSON(this, json);
+		SerializeObjectListFromJSON(config, "OBJECTS", objects);
+		TMTools::SerializeLayersFromJSON(this, config);
 		return true;
 	}
 

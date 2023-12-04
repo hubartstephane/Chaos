@@ -437,18 +437,12 @@ namespace chaos
 		return true;
 	}
 	
-	bool Clock::SerializeFromJSON(nlohmann::json const * json) 
+	bool Clock::SerializeFromJSON(JSONReadConfiguration config) 
 	{
-		if (!JSONSerializableInterface::SerializeFromJSON(json))
+		if (!JSONSerializableInterface::SerializeFromJSON(config))
 			return false;
-		JSONTools::GetAttribute(json, "CLOCK_TIME", clock_time);
+		JSONTools::GetAttribute(config, "CLOCK_TIME", clock_time);
 		return true;
-	}
-
-	void Clock::InitializeFromConfiguration(nlohmann::json const * config)
-	{
-
-
 	}
 
 	void Clock::SetPause(bool in_pause)

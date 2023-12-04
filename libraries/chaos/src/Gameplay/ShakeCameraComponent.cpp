@@ -60,15 +60,15 @@ namespace chaos
 		return true;
 	}
 
-	bool ShakeCameraComponent::SerializeFromJSON(nlohmann::json const * json)
+	bool ShakeCameraComponent::SerializeFromJSON(JSONReadConfiguration config)
 	{
-		if (!CameraComponent::SerializeFromJSON(json))
+		if (!CameraComponent::SerializeFromJSON(config))
 			return false;
-		JSONTools::GetAttribute(json, "modifier_duration", modifier_duration);
-		JSONTools::GetAttribute(json, "modifier_range", modifier_range);
-		JSONTools::GetAttribute(json, "modifier_frequency", modifier_frequency);
-		JSONTools::GetAttribute(json, "use_damping", use_damping);
-		JSONTools::GetAttribute(json, "zoom_effect", zoom_effect);
+		JSONTools::GetAttribute(config, "modifier_duration", modifier_duration);
+		JSONTools::GetAttribute(config, "modifier_range", modifier_range);
+		JSONTools::GetAttribute(config, "modifier_frequency", modifier_frequency);
+		JSONTools::GetAttribute(config, "use_damping", use_damping);
+		JSONTools::GetAttribute(config, "zoom_effect", zoom_effect);
 		return true;
 	}
 

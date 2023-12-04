@@ -26,7 +26,7 @@ public:
 protected:
 
 	/** override */
-	virtual bool SerializeFromJSON(nlohmann::json const * json) override;
+	virtual bool SerializeFromJSON(chaos::JSONReadConfiguration config) override;
 	/** override */
 	virtual bool SerializeIntoJSON(nlohmann::json * json) const override;
 

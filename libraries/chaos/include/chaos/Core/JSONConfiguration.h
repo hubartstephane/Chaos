@@ -57,10 +57,12 @@ namespace chaos
 			return (default_config != nullptr) || (persistent_config != nullptr);
 		}
 		/** conversion operator */
+#if 0
 		operator nlohmann::json const* () const
 		{
 			return default_config;
 		}
+#endif
 
 	public:
 

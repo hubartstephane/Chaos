@@ -166,7 +166,7 @@ namespace chaos
 		GPURenderMaterial* GetRenderMaterial() const;
 
 		/** override */
-		virtual bool SerializeFromJSON(nlohmann::json const * json) override;
+		virtual bool SerializeFromJSON(JSONReadConfiguration config) override;
 		/** override */
 		virtual bool SerializeIntoJSON(nlohmann::json * json) const override;
 
@@ -175,7 +175,7 @@ namespace chaos
 		/** initialization */
 		virtual bool Initialize(TMLevelInstance* in_level_instance, TiledMap::LayerBase const * in_layer, TMLayerInstance* in_parent_layer, TMObjectReferenceSolver & reference_solver);
 		/** serialization of all JSON objects into an array */
-		virtual bool SerializeObjectListFromJSON(nlohmann::json const * json, char const* attribute_name, std::vector<shared_ptr<TMObject>>& result);
+		virtual bool SerializeObjectListFromJSON(JSONReadConfiguration config, char const* attribute_name, std::vector<shared_ptr<TMObject>>& result);
 		/** called whenever level instance is restarted */
 		virtual void OnRestart();
 

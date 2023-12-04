@@ -535,11 +535,11 @@ namespace chaos
 		return TMObjectCollisionIterator(this, in_collision_mask, in_collision_box, in_open_geometry);
 	}
 
-	bool TMLevelInstance::SerializeFromJSON(nlohmann::json const * json)
+	bool TMLevelInstance::SerializeFromJSON(JSONReadConfiguration config)
 	{
-		if (!LevelInstance::SerializeFromJSON(json))
+		if (!LevelInstance::SerializeFromJSON(config))
 			return false;
-		TMTools::SerializeLayersFromJSON(this, json);
+		TMTools::SerializeLayersFromJSON(this, config);
 		return true;
 	}
 

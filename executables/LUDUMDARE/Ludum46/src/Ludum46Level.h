@@ -60,7 +60,7 @@ protected:
 
 	virtual bool SerializeIntoJSON(nlohmann::json * json) const override;
 
-	virtual bool SerializeFromJSON(nlohmann::json const * json) override;
+	virtual bool SerializeFromJSON(chaos::JSONReadConfiguration config) override;
 
 	void SpawnParticles(chaos::ParticleSpawner & spawner, int count);
 

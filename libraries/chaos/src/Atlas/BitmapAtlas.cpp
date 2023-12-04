@@ -749,7 +749,7 @@ namespace chaos
 
 		bool DoSaveIntoJSON(nlohmann::json * json, BitmapLayout const & src)
 		{
-			if (!PrepareSaveIntoJSON(json))
+			if (!PrepareSaveObjectIntoJSON(json))
 				return false;
 			JSONTools::SetAttribute(json, "bitmap_index", src.bitmap_index);
 			JSONTools::SetAttribute(json, "x", src.x);

@@ -19,7 +19,7 @@ namespace chaos
 
 	bool DoSaveIntoJSON(nlohmann::json * json, PixelFormatMergeParams const& src)
 	{
-		if (!PrepareSaveIntoJSON(json))
+		if (!PrepareSaveObjectIntoJSON(json))
 			return false;
 		JSONTools::SetAttribute(json, "pixel_format", src.pixel_format);
 		JSONTools::SetAttribute(json, "upgrade_pixel_format", src.upgrade_pixel_format);

@@ -27,7 +27,7 @@ namespace chaos
 
 		bool DoSaveIntoJSON(nlohmann::json * json, AtlasGeneratorParams const& src)
 		{
-			if (!PrepareSaveIntoJSON(json))
+			if (!PrepareSaveObjectIntoJSON(json))
 				return false;
 			JSONTools::SetAttribute(json, "force_power_of_2", src.force_power_of_2);
 			JSONTools::SetAttribute(json, "force_square", src.force_square);

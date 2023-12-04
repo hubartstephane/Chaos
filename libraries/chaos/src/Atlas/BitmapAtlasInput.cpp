@@ -51,7 +51,7 @@ namespace chaos
 
 		bool DoSaveIntoJSON(nlohmann::json * json, FontInfoInputParams const& src)
 		{
-			if (!PrepareSaveIntoJSON(json))
+			if (!PrepareSaveObjectIntoJSON(json))
 				return false;
 			JSONTools::SetAttribute(json, "characters", src.characters);
 			JSONTools::SetAttribute(json, "grid_size", src.grid_size);
@@ -96,7 +96,7 @@ namespace chaos
 
 		bool DoSaveIntoJSON(nlohmann::json * json, BitmapInfoInputManifest const & src)
 		{
-			if (!PrepareSaveIntoJSON(json))
+			if (!PrepareSaveObjectIntoJSON(json))
 				return false;
 			JSONTools::SetAttribute(json, "grid_data", src.grid_data);
 			JSONTools::SetAttribute(json, "images_path", src.images_path);

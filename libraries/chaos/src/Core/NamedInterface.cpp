@@ -21,7 +21,7 @@ namespace chaos
 
 	bool DoSaveIntoJSON(nlohmann::json * json, NamedInterface const& src)
 	{
-		if (!PrepareSaveIntoJSON(json))
+		if (!PrepareSaveObjectIntoJSON(json))
 			return false;
 		JSONTools::SetAttribute(json, "name", src.GetName());
 		JSONTools::SetAttribute(json, "tag", src.GetTag());

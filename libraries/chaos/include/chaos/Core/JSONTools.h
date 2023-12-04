@@ -87,7 +87,9 @@ namespace chaos
 	bool SaveIntoJSON(nlohmann::json * json, std::vector<T> const& src);
 
 	/** ensure pointers is not null and the node is a json object */
-	CHAOS_API bool PrepareSaveIntoJSON(nlohmann::json* json);
+	CHAOS_API bool PrepareSaveObjectIntoJSON(nlohmann::json* json);
+	/** ensure pointers is not null and the node is a json array */
+	CHAOS_API bool PrepareSaveArrayIntoJSON(nlohmann::json* json);
 
 	// =================
 	// JSONTools
@@ -262,10 +264,8 @@ namespace chaos
 				return false;
 			if (nlohmann::json* node = GetOrCreateNode(json, path))
 			{
-				if (node->is_null())
+				if (!node->is_object())
 					*node = nlohmann::json::object();
-				else if (!node->is_object())
-					return false;
 				return SaveIntoJSON(node, src);
 			}
 			return false;
@@ -467,11 +467,7 @@ namespace chaos
 			{
 				// we need a json object to store a C++ object
 				if (!json->is_object())
-				{
-					if (!json->is_null())
-						return false;
 					*json = nlohmann::json::object(); // create the JSON object if not already set
-				}
 
 				// get the class of the C++ object
 				Class const* src_class = nullptr;

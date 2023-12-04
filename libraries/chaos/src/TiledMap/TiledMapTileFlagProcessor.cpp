@@ -149,7 +149,7 @@ namespace chaos
 
 		bool DoSaveIntoJSON(nlohmann::json * json, ComputeCustomFlagProcessorEntry const& src)
 		{
-			if (!PrepareSaveIntoJSON(json))
+			if (!PrepareSaveObjectIntoJSON(json))
 				return false;
 			JSONTools::SetAttribute(json, src.type.c_str(), src.flag);
 			return true;

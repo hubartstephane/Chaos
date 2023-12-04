@@ -15,7 +15,7 @@ namespace chaos
 
 		bool DoSaveIntoJSON(nlohmann::json * json, GeneratorParams const & src)
 		{
-			if (!PrepareSaveIntoJSON(json))
+			if (!PrepareSaveObjectIntoJSON(json))
 				return false;
 			JSONTools::SetAttribute(json, "line_height", src.line_height);
 			JSONTools::SetAttribute(json, "line_spacing", src.line_spacing);

@@ -26,7 +26,7 @@ namespace chaos
 
 	bool DoSaveIntoJSON(nlohmann::json * json, GLFWHints const& src)
 	{
-		if (!PrepareSaveIntoJSON(json))
+		if (!PrepareSaveObjectIntoJSON(json))
 			return false;
 		JSONTools::SetAttribute(json, "debug_context", src.debug_context);
 		JSONTools::SetAttribute(json, "major_version", src.major_version);

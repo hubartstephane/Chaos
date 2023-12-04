@@ -46,7 +46,7 @@ namespace chaos
 
 		bool DoSaveIntoJSON(nlohmann::json * json, BitmapAtlasFilter const & src)
 		{
-			if (!PrepareSaveIntoJSON(json))
+			if (!PrepareSaveObjectIntoJSON(json))
 				return false;
 			JSONTools::SetAttribute(json, "condition", src.condition);
 			JSONTools::SetAttribute(json, "processor", src.processor);
@@ -65,7 +65,7 @@ namespace chaos
 
 		bool DoSaveIntoJSON(nlohmann::json * json, BitmapAtlasFilterSet const & src)
 		{
-			if (!PrepareSaveIntoJSON(json))
+			if (!PrepareSaveObjectIntoJSON(json))
 				return false;
 			JSONTools::SetAttribute(json, "filters", src.filters);
 			return true;

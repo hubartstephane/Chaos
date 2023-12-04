@@ -103,7 +103,7 @@ namespace chaos
 
 	bool DoSaveIntoJSON(nlohmann::json * json, NameFilter const & src)
 	{
-		if (!PrepareSaveIntoJSON(json))
+		if (!PrepareSaveObjectIntoJSON(json))
 			return false;
 		JSONTools::SetAttribute(json, "enabled_names", src.enabled_names);
 		JSONTools::SetAttribute(json, "disabled_names", src.disabled_names);

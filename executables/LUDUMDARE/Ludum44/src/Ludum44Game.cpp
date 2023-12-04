@@ -34,7 +34,7 @@ chaos::GameHUD * LudumGame::DoCreatePlayingHUD()
 }
 
 template<typename T>
-static bool InitializeGameValueVector(char const * json_name, nlohmann::json const * config, std::vector<T> & result)
+static bool InitializeGameValueVector(char const * json_name, chaos::JSONReadConfiguration config, std::vector<T> & result)
 {
 	chaos::JSONTools::GetAttribute(config, json_name, result);
 	return (result.size() > 0);

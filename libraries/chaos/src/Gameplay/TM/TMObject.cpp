@@ -35,13 +35,13 @@ namespace chaos
 		return true;
 	}
 
-	bool TMObject::SerializeFromJSON(nlohmann::json const * json)
+	bool TMObject::SerializeFromJSON(JSONReadConfiguration config)
 	{
-		if (!GameEntity::SerializeFromJSON(json))
+		if (!GameEntity::SerializeFromJSON(config))
 			return false;
-		JSONTools::GetAttribute(json, "NAME", name);
-		JSONTools::GetAttribute(json, "OBJECT_ID", id);
-		JSONTools::GetAttribute(json, "PARTICLE_OWNERSHIP", particle_ownership);
+		JSONTools::GetAttribute(config, "NAME", name);
+		JSONTools::GetAttribute(config, "OBJECT_ID", id);
+		JSONTools::GetAttribute(config, "PARTICLE_OWNERSHIP", particle_ownership);
 		return true;
 	}
 
@@ -92,14 +92,14 @@ namespace chaos
 		return true;
 	}
 
-	bool TMTrigger::SerializeFromJSON(nlohmann::json const * json)
+	bool TMTrigger::SerializeFromJSON(JSONReadConfiguration config)
 	{
-		if (!TMObject::SerializeFromJSON(json))
+		if (!TMObject::SerializeFromJSON(config))
 			return false;
-		JSONTools::GetAttribute(json, "ENABLED", enabled);
-		JSONTools::GetAttribute(json, "TRIGGER_ONCE", trigger_once);
-		JSONTools::GetAttribute(json, "OUTSIDE_BOX_FACTOR", outside_box_factor);
-		JSONTools::GetAttribute(json, "ENTER_EVENT_TRIGGERED", enter_event_triggered);
+		JSONTools::GetAttribute(config, "ENABLED", enabled);
+		JSONTools::GetAttribute(config, "TRIGGER_ONCE", trigger_once);
+		JSONTools::GetAttribute(config, "OUTSIDE_BOX_FACTOR", outside_box_factor);
+		JSONTools::GetAttribute(config, "ENTER_EVENT_TRIGGERED", enter_event_triggered);
 		return true;
 	}
 
@@ -189,11 +189,11 @@ namespace chaos
 		return true;
 	}
 
-	bool TMPlayerStart::SerializeFromJSON(nlohmann::json const * json)
+	bool TMPlayerStart::SerializeFromJSON(JSONReadConfiguration config)
 	{
-		if (!TMObject::SerializeFromJSON(json))
+		if (!TMObject::SerializeFromJSON(config))
 			return false;
-		JSONTools::GetAttribute(json, "BITMAP_NAME", bitmap_name);
+		JSONTools::GetAttribute(config, "BITMAP_NAME", bitmap_name);
 		return true;
 	}
 
@@ -227,14 +227,14 @@ namespace chaos
 		return true;
 	}
 
-	bool TMNotificationTrigger::SerializeFromJSON(nlohmann::json const * json)
+	bool TMNotificationTrigger::SerializeFromJSON(JSONReadConfiguration config)
 	{
-		if (!TMTrigger::SerializeFromJSON(json))
+		if (!TMTrigger::SerializeFromJSON(config))
 			return false;
-		JSONTools::GetAttribute(json, "NOTIFICATION", notification_string);
-		JSONTools::GetAttribute(json, "LIFETIME", notification_lifetime);
-		JSONTools::GetAttribute(json, "STOP_WHEN_COLLISION_OVER", stop_when_collision_over);
-		JSONTools::GetAttribute(json, "PLAYER_COLLISION", player_collision);
+		JSONTools::GetAttribute(config, "NOTIFICATION", notification_string);
+		JSONTools::GetAttribute(config, "LIFETIME", notification_lifetime);
+		JSONTools::GetAttribute(config, "STOP_WHEN_COLLISION_OVER", stop_when_collision_over);
+		JSONTools::GetAttribute(config, "PLAYER_COLLISION", player_collision);
 		return true;
 	}
 
@@ -311,16 +311,16 @@ namespace chaos
 		return true;
 	}
 
-	bool TMSoundTrigger::SerializeFromJSON(nlohmann::json const * json)
+	bool TMSoundTrigger::SerializeFromJSON(JSONReadConfiguration config)
 	{
-		if (!TMTrigger::SerializeFromJSON(json))
+		if (!TMTrigger::SerializeFromJSON(config))
 			return false;
-		JSONTools::GetAttribute(json, "SOUND_NAME", sound_name);
-		JSONTools::GetAttribute(json, "MIN_DISTANCE_RATIO", min_distance_ratio);
-		JSONTools::GetAttribute(json, "PAUSE_TIMER_WHEN_TOO_FAR", pause_timer_when_too_far);
-		JSONTools::GetAttribute(json, "3D_SOUND", is_3D_sound);
-		JSONTools::GetAttribute(json, "LOOPING", looping);
-		JSONTools::GetAttribute(json, "STOP_WHEN_COLLISION_OVER", stop_when_collision_over);
+		JSONTools::GetAttribute(config, "SOUND_NAME", sound_name);
+		JSONTools::GetAttribute(config, "MIN_DISTANCE_RATIO", min_distance_ratio);
+		JSONTools::GetAttribute(config, "PAUSE_TIMER_WHEN_TOO_FAR", pause_timer_when_too_far);
+		JSONTools::GetAttribute(config, "3D_SOUND", is_3D_sound);
+		JSONTools::GetAttribute(config, "LOOPING", looping);
+		JSONTools::GetAttribute(config, "STOP_WHEN_COLLISION_OVER", stop_when_collision_over);
 		return true;
 	}
 
@@ -435,12 +435,12 @@ namespace chaos
 		return true;
 	}
 
-	bool TMChangeLevelTrigger::SerializeFromJSON(nlohmann::json const * json)
+	bool TMChangeLevelTrigger::SerializeFromJSON(JSONReadConfiguration config)
 	{
-		if (!TMTrigger::SerializeFromJSON(json))
+		if (!TMTrigger::SerializeFromJSON(config))
 			return false;
-		JSONTools::GetAttribute(json, "LEVEL_NAME", level_name);
-		JSONTools::GetAttribute(json, "PLAYER_START_NAME", player_start_name);
+		JSONTools::GetAttribute(config, "LEVEL_NAME", level_name);
+		JSONTools::GetAttribute(config, "PLAYER_START_NAME", player_start_name);
 		return true;
 	}
 

@@ -48,7 +48,7 @@ namespace chaos
 			/** override */
 			virtual bool SerializeIntoJSON(nlohmann::json * json) const override;
 			/** override */
-			virtual bool SerializeFromJSON(nlohmann::json const * json) override;
+			virtual bool SerializeFromJSON(JSONReadConfiguration config) override;
 
 		protected:
 
@@ -92,7 +92,7 @@ namespace chaos
 			/** override */
 			virtual bool SerializeIntoJSON(nlohmann::json * json) const override;
 			/** override */
-			virtual bool SerializeFromJSON(nlohmann::json const * json) override;
+			virtual bool SerializeFromJSON(JSONReadConfiguration config) override;
 
 		protected:
 

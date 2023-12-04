@@ -122,12 +122,12 @@ namespace chaos
 		return true;
 	}
 	
-	bool Camera::SerializeFromJSON(nlohmann::json const * json)
+	bool Camera::SerializeFromJSON(JSONReadConfiguration config)
 	{
-		if (!JSONSerializableInterface::SerializeFromJSON(json))
+		if (!JSONSerializableInterface::SerializeFromJSON(config))
 			return false;
 		box2 b;
-		if (JSONTools::GetAttribute(json, "CAMERA_BOX", b))
+		if (JSONTools::GetAttribute(config, "CAMERA_BOX", b))
 			SetCameraBox(b);
 		return true;
 	}

@@ -111,12 +111,12 @@ namespace chaos
 		return true;
 	}
 
-	bool ScrollCameraComponent::SerializeFromJSON(nlohmann::json const * json)
+	bool ScrollCameraComponent::SerializeFromJSON(JSONReadConfiguration config)
 	{
-		if (!CameraComponent::SerializeFromJSON(json))
+		if (!CameraComponent::SerializeFromJSON(config))
 			return false;
-		JSONTools::GetAttribute(json, "scroll_speed", scroll_speed);
-		JSONTools::GetAttribute(json, "axis", axis);
+		JSONTools::GetAttribute(config, "scroll_speed", scroll_speed);
+		JSONTools::GetAttribute(config, "axis", axis);
 		return true;
 	}
 

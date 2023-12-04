@@ -257,21 +257,21 @@ namespace chaos
 		return true;
 	}
 
-	bool Player::SerializeFromJSON(nlohmann::json const * json)
+	bool Player::SerializeFromJSON(JSONReadConfiguration config)
 	{
-		if (!JSONSerializableInterface::SerializeFromJSON(json))
+		if (!JSONSerializableInterface::SerializeFromJSON(config))
 			return false;
 
-		JSONTools::GetAttribute(json, "LIFE_COUNT", life_count);
-		JSONTools::GetAttribute(json, "HEALTH", health);
-		JSONTools::GetAttribute(json, "MAX_HEALTH", max_health);
-		JSONTools::GetAttribute(json, "INVULNERABILITY_TIMER", invulnerability_timer);
-		JSONTools::GetAttribute(json, "INVULNERABILITY_DURATION", invulnerability_duration);
-		JSONTools::GetAttribute(json, "SCORE", score);
+		JSONTools::GetAttribute(config, "LIFE_COUNT", life_count);
+		JSONTools::GetAttribute(config, "HEALTH", health);
+		JSONTools::GetAttribute(config, "MAX_HEALTH", max_health);
+		JSONTools::GetAttribute(config, "INVULNERABILITY_TIMER", invulnerability_timer);
+		JSONTools::GetAttribute(config, "INVULNERABILITY_DURATION", invulnerability_duration);
+		JSONTools::GetAttribute(config, "SCORE", score);
 
 		// XXX : the indirection is important to avoid a reallocation of the pawn
 		if (pawn != nullptr)
-			JSONTools::GetAttribute(json, "PAWN", *pawn);
+			JSONTools::GetAttribute(config, "PAWN", *pawn);
 
 		return true;
 	}

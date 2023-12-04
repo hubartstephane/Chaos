@@ -408,23 +408,23 @@ namespace chaos
 		return true;
 	}
 
-	bool LevelInstance::SerializeFromJSON(nlohmann::json const * json)
+	bool LevelInstance::SerializeFromJSON(JSONReadConfiguration config)
 	{
-		if (!JSONSerializableInterface::SerializeFromJSON(json))
+		if (!JSONSerializableInterface::SerializeFromJSON(config))
 			return false;
 
 		// check for level index
 		int index = 0;
-		if (JSONTools::GetAttribute(json, "LEVEL_INDEX", index))
+		if (JSONTools::GetAttribute(config, "LEVEL_INDEX", index))
 			if (level->GetLevelIndex() != index)
 				return false;
 
 		// attributes
-		JSONTools::GetAttribute(json, "LEVEL_TIMEOUT", level_timeout);
+		JSONTools::GetAttribute(config, "LEVEL_TIMEOUT", level_timeout);
 		// the camera 0
 		Camera * camera = DoGetCamera(0, false); // do not accept free camera
 		if (camera != nullptr)
-			JSONTools::GetAttribute(json, "CAMERA0", *camera); // XXX : indirection is important to avoid a reallocation the object
+			JSONTools::GetAttribute(config, "CAMERA0", *camera); // XXX : indirection is important to avoid a reallocation the object
 
 		return true;
 	}

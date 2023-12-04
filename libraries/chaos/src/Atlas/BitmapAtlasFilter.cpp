@@ -9,9 +9,9 @@ namespace chaos
 		// BitmapAtlasFilterCondition methods
 		// ==========================================================================
 
-		bool BitmapAtlasFilterCondition::SerializeFromJSON(nlohmann::json const * json)
+		bool BitmapAtlasFilterCondition::SerializeFromJSON(JSONReadConfiguration config)
 		{
-			if (!JSONSerializableInterface::SerializeFromJSON(json))
+			if (!JSONSerializableInterface::SerializeFromJSON(config))
 				return false;
 			return true;
 		}

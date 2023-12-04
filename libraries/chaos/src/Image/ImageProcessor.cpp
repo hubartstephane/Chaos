@@ -205,14 +205,14 @@ namespace chaos
 		return true;
 	}
 
-	bool ImageProcessorOutline::SerializeFromJSON(nlohmann::json const * json)
+	bool ImageProcessorOutline::SerializeFromJSON(JSONReadConfiguration config)
 	{
-		if (!ImageProcessor::SerializeFromJSON(json))
+		if (!ImageProcessor::SerializeFromJSON(config))
 			return false;
-		JSONTools::GetAttribute(json, "distance", distance);
-		JSONTools::GetAttribute(json, "color_filter", color_filter);
-		JSONTools::GetAttribute(json, "color", color);
-		JSONTools::GetAttribute(json, "empty_color", empty_color);
+		JSONTools::GetAttribute(config, "distance", distance);
+		JSONTools::GetAttribute(config, "color_filter", color_filter);
+		JSONTools::GetAttribute(config, "color", color);
+		JSONTools::GetAttribute(config, "empty_color", empty_color);
 		return true;
 	}
 
@@ -283,28 +283,13 @@ namespace chaos
 		return true;
 	}
 
-	bool ImageProcessorAddAlpha::SerializeFromJSON(nlohmann::json const * json)
+	bool ImageProcessorAddAlpha::SerializeFromJSON(JSONReadConfiguration config)
 	{
-		if (!ImageProcessor::SerializeFromJSON(json))
+		if (!ImageProcessor::SerializeFromJSON(config))
 			return false;
-		JSONTools::GetAttribute(json, "strength", strength);
+		JSONTools::GetAttribute(config, "strength", strength);
 		return true;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	// ================================================================
 	// ImageProcessorShadow functions
@@ -406,40 +391,16 @@ namespace chaos
 		return true;
 	}
 
-	bool ImageProcessorShadow::SerializeFromJSON(nlohmann::json const * json)
+	bool ImageProcessorShadow::SerializeFromJSON(JSONReadConfiguration config)
 	{
-		if (!ImageProcessor::SerializeFromJSON(json))
+		if (!ImageProcessor::SerializeFromJSON(config))
 			return false;
-		JSONTools::GetAttribute(json, "offset", offset);
-		JSONTools::GetAttribute(json, "color_filter", color_filter);
-		JSONTools::GetAttribute(json, "color", color);
-		JSONTools::GetAttribute(json, "empty_color", empty_color);
+		JSONTools::GetAttribute(config, "offset", offset);
+		JSONTools::GetAttribute(config, "color_filter", color_filter);
+		JSONTools::GetAttribute(config, "color", color);
+		JSONTools::GetAttribute(config, "empty_color", empty_color);
 		return true;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }; // namespace chaos
 

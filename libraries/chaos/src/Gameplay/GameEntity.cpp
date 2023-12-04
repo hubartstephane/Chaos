@@ -134,13 +134,13 @@ namespace chaos
 		allocations = in_allocation;
 	}
 	
-	bool GameEntity::SerializeFromJSON(nlohmann::json const * json)
+	bool GameEntity::SerializeFromJSON(JSONReadConfiguration config)
 	{
-		if (!JSONSerializableInterface::SerializeFromJSON(json))
+		if (!JSONSerializableInterface::SerializeFromJSON(config))
 			return false;
 
 		box2 b;
-		if (JSONTools::GetAttribute(json, "BOUNDING_BOX", b))
+		if (JSONTools::GetAttribute(config, "BOUNDING_BOX", b))
 			SetBoundingBox(b);
 
 		return true;

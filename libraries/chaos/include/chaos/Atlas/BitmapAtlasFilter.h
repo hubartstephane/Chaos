@@ -26,7 +26,7 @@ namespace chaos
 			virtual bool AcceptFont(class FontInfoInput const* input) const;
 
 			/** loading method from JSON */
-			virtual bool SerializeFromJSON(nlohmann::json const * json) override;
+			virtual bool SerializeFromJSON(JSONReadConfiguration config) override;
 			/** saving method from JSON */
 			virtual bool SerializeIntoJSON(nlohmann::json * json) const override;
 		};

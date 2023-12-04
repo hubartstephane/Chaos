@@ -275,16 +275,16 @@ namespace chaos
 		return true;
 	}
 
-	bool AutoRecenterToPlayerCameraComponent::SerializeFromJSON(nlohmann::json const * json)
+	bool AutoRecenterToPlayerCameraComponent::SerializeFromJSON(JSONReadConfiguration config)
 	{
-		if (!CameraComponent::SerializeFromJSON(json))
+		if (!CameraComponent::SerializeFromJSON(config))
 			return false;
-		JSONTools::GetAttribute(json, "fast_pawn_speed", fast_pawn_speed);
-		JSONTools::GetAttribute(json, "idle_pawn_speed", idle_pawn_speed);
-		JSONTools::GetAttribute(json, "limit_speed", limit_speed);
-		JSONTools::GetAttribute(json, "manual_limit_speed", manual_limit_speed);
-		JSONTools::GetAttribute(json, "recenter_limit_speed", recenter_limit_speed);
-		JSONTools::GetAttribute(json, "idle_delay", idle_delay);
+		JSONTools::GetAttribute(config, "fast_pawn_speed", fast_pawn_speed);
+		JSONTools::GetAttribute(config, "idle_pawn_speed", idle_pawn_speed);
+		JSONTools::GetAttribute(config, "limit_speed", limit_speed);
+		JSONTools::GetAttribute(config, "manual_limit_speed", manual_limit_speed);
+		JSONTools::GetAttribute(config, "recenter_limit_speed", recenter_limit_speed);
+		JSONTools::GetAttribute(config, "idle_delay", idle_delay);
 		return true;
 	}
 

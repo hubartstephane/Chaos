@@ -37,7 +37,7 @@ namespace chaos
 		virtual box2 GetBoundingBox(bool world_system) const;
 
 		/** override */
-		virtual bool SerializeFromJSON(nlohmann::json const * json) override;
+		virtual bool SerializeFromJSON(JSONReadConfiguration config) override;
 		/** override */
 		virtual bool SerializeIntoJSON(nlohmann::json * json) const override;
 
@@ -112,7 +112,7 @@ namespace chaos
 		/** override */
 		virtual bool Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
 		/** override */
-		virtual bool SerializeFromJSON(nlohmann::json const * json) override;
+		virtual bool SerializeFromJSON(JSONReadConfiguration config) override;
 		/** override */
 		virtual bool SerializeIntoJSON(nlohmann::json * json) const override;
 
@@ -148,7 +148,7 @@ namespace chaos
 		virtual bool IsCollisionWith(box2 const& other_box, CollisionType collision_type) const;
 
 		/** override */
-		virtual bool SerializeFromJSON(nlohmann::json const * json) override;
+		virtual bool SerializeFromJSON(JSONReadConfiguration config) override;
 		/** override */
 		virtual bool SerializeIntoJSON(nlohmann::json * json) const override;
 
@@ -187,7 +187,7 @@ namespace chaos
 		/** override */
 		virtual bool IsParticleCreationEnabled() const override;
 		/** override */
-		virtual bool SerializeFromJSON(nlohmann::json const * json) override;
+		virtual bool SerializeFromJSON(JSONReadConfiguration config) override;
 		/** override */
 		virtual bool SerializeIntoJSON(nlohmann::json * json) const override;
 
@@ -248,7 +248,7 @@ namespace chaos
 		/** override */
 		virtual bool IsParticleCreationEnabled() const override;
 		/** override */
-		virtual bool SerializeFromJSON(nlohmann::json const * json) override;
+		virtual bool SerializeFromJSON(JSONReadConfiguration config) override;
 		/** override */
 		virtual bool SerializeIntoJSON(nlohmann::json * json) const override;
 
@@ -296,7 +296,7 @@ namespace chaos
 	public:
 
 		/** override */
-		virtual bool SerializeFromJSON(nlohmann::json const * json) override;
+		virtual bool SerializeFromJSON(JSONReadConfiguration config) override;
 		/** override */
 		virtual bool SerializeIntoJSON(nlohmann::json * json) const override;
 

@@ -69,11 +69,11 @@ bool LudumLevelInstance::Initialize(chaos::Game * in_game, chaos::Level * in_lev
 	return true;
 }
 
-bool LudumLevelInstance::SerializeFromJSON(nlohmann::json const * json)
+bool LudumLevelInstance::SerializeFromJSON(chaos::JSONReadConfiguration config)
 {
-	if (!chaos::TMLevelInstance::SerializeFromJSON(json))
+	if (!chaos::TMLevelInstance::SerializeFromJSON(config))
 		return false;
-	chaos::JSONTools::GetAttribute(json, "SCROLL_FACTOR", scroll_factor);
+	chaos::JSONTools::GetAttribute(config, "SCROLL_FACTOR", scroll_factor);
 	return true;
 }
 

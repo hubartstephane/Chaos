@@ -6,23 +6,24 @@ namespace chaos
 
 		/** serialize layers into JSON */
 		template<typename T>
-		void SerializeLayersFromJSON(T* object, nlohmann::json const * json)
+		void SerializeLayersFromJSON(T* object, JSONReadConfiguration config)
 		{
-			if (nlohmann::json const* layers_json = JSONTools::GetArrayNode(json, "LAYERS"))
+			if (JSONReadConfiguration layers_config = JSONTools::GetArrayNode(config, "LAYERS"))
 			{
-				for (size_t i = 0; i < layers_json->size(); ++i)
+				JSONTools::ForEachSource(layers_config, [object](nlohmann::json const * layers_json)
 				{
-					if (nlohmann::json const* layer_json = JSONTools::GetObjectNodeByIndex(layers_json, i))
+					for (size_t i = 0; i < layers_json->size(); ++i)
 					{
-						int layer_id = 0;
-						if (JSONTools::GetAttribute(layer_json, "LAYER_ID", layer_id))
+						if (nlohmann::json const * layer_json = JSONTools::GetObjectNodeByIndex(layers_json, i))
 						{
-							TMLayerInstance* layer_instance = object->FindLayerInstanceByID(layer_id);
-							if (layer_instance != nullptr)
-								LoadFromJSON(layer_json, *layer_instance); // XXX : the indirection is important to avoid the creation of a new layer_instance
+							int layer_id = 0;
+							if (JSONTools::GetAttribute(layer_json, "LAYER_ID", layer_id))
+								if (TMLayerInstance* layer_instance = object->FindLayerInstanceByID(layer_id))
+									LoadFromJSON(layer_json, *layer_instance); // XXX : the indirection is important to avoid the creation of a new layer_instance
 						}
 					}
-				}
+					return true; // stop at very first array
+				});
 			}
 		}
 

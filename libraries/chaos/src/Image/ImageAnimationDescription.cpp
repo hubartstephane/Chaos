@@ -187,7 +187,7 @@ namespace chaos
 
 	bool DoSaveIntoJSON(nlohmann::json * json, BitmapGridAnimationInfo const & src)
 	{
-		if (!PrepareSaveIntoJSON(json))
+		if (!PrepareSaveObjectIntoJSON(json))
 			return false;
 		JSONTools::SetAttribute(json, "grid_size", src.grid_size);
 		JSONTools::SetAttribute(json, "skip_lasts", src.skip_lasts);
@@ -203,7 +203,7 @@ namespace chaos
 
 	bool DoSaveIntoJSON(nlohmann::json * json, ImageAnimationDescription const & src)
 	{
-		if (!PrepareSaveIntoJSON(json))
+		if (!PrepareSaveObjectIntoJSON(json))
 			return false;
 		JSONTools::SetAttribute(json, "grid_data", src.grid_data);
 		JSONTools::SetAttribute(json, "child_frame_count", src.child_frame_count);

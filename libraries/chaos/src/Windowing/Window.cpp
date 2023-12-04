@@ -9,7 +9,7 @@ namespace chaos
 
 	bool DoSaveIntoJSON(nlohmann::json * json, WindowCreateParams const& src)
 	{
-		if (!PrepareSaveIntoJSON(json))
+		if (!PrepareSaveObjectIntoJSON(json))
 			return false;
 		JSONTools::SetAttribute(json, "monitor_index", src.monitor_index);
 		JSONTools::SetAttribute(json, "width", src.width);

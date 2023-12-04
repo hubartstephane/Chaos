@@ -79,7 +79,7 @@ namespace chaos
 
 	bool DoSaveIntoJSON(nlohmann::json * json, PixelFormat const& src)
 	{
-		if (!PrepareSaveIntoJSON(json))
+		if (!PrepareSaveObjectIntoJSON(json))
 			return false;
 		JSONTools::SetAttribute(json, "component_type", src.component_type);
 		JSONTools::SetAttribute(json, "component_count", src.component_count);

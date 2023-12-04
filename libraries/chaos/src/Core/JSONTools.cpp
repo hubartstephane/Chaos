@@ -7,14 +7,21 @@ namespace chaos
 	// EXTERNAL FUNCTION
 	// ========================================================================
 
-	bool PrepareSaveIntoJSON(nlohmann::json* json)
+	bool PrepareSaveObjectIntoJSON(nlohmann::json* json)
 	{
 		if (json == nullptr)
 			return false;
-		if (json->is_null())
+		if (!json->is_object())
 			*json = nlohmann::json::object();
-		else if (!json->is_object())
+		return true;
+	}
+
+	bool PrepareSaveArrayIntoJSON(nlohmann::json* json)
+	{
+		if (json == nullptr)
 			return false;
+		if (!json->is_array())
+			*json = nlohmann::json::array();
 		return true;
 	}
 

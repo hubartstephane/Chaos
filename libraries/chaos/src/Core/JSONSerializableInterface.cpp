@@ -8,17 +8,10 @@ namespace chaos
 		return true;
 	}
 
-
-
-
-
-
-
 	bool JSONSerializableInterface::SerializeIntoJSON(nlohmann::json * json) const
 	{
 		if (json == nullptr)
 			return false;
-
 		assert(json->is_object());
 		return true;
 	}

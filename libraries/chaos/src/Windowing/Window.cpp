@@ -1096,15 +1096,17 @@ namespace chaos
 		// read the position
 		glm::ivec2 position = { 0, 0 };		
 		if (JSONTools::GetAttribute(config, "position", position))
-			//SetWindowPosition(position);
-			;
+			SetWindowPosition(position);
 		// read the size
 		glm::ivec2 size = { 0, 0 };
 		if (JSONTools::GetAttribute(config, "size", size))
-			//SetWindowSize(size);
-			;
-
-
+			SetWindowSize(size);
+		// fullscreen
+		bool fullscreen = false;
+		if (JSONTools::GetAttribute(config, "fullscreen", fullscreen))
+			if (fullscreen)
+				if (GLFWmonitor* prefered_monitor = GetPreferredMonitor())
+					SetFullscreen(prefered_monitor);
 		return true;
 	}
 
@@ -1112,6 +1114,7 @@ namespace chaos
 	{
 		JSONTools::SetAttribute(config, "position", GetWindowPosition());
 		JSONTools::SetAttribute(config, "size", GetWindowSize());
+		JSONTools::SetAttribute(config, "fullscreen", GetFullscreenMonitor() != nullptr);
 		return true;
 	}
 

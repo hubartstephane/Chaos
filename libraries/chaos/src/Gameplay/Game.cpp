@@ -573,9 +573,6 @@ namespace chaos
 		// load exisiting levels
 		if (!LoadLevels(config))
 			return false;
-
-		// load the best score if any
-		SerializePersistentGameData(false);
 		return true;
 	}
 
@@ -624,65 +621,6 @@ namespace chaos
 	void Game::UpdatePersistentGameData()
 	{
 		best_score = std::max(best_score, GetBestPlayerScore());
-	}
-
-	bool Game::LoadPersistentGameData(nlohmann::json const * game_data)
-	{
-		JSONTools::GetAttribute(game_data, "best_score", best_score);
-		return true;
-	}
-
-	bool Game::SavePersistentGameData(nlohmann::json * game_data) const
-	{
-
-
-		return false;
-
-
-
-
-
-		JSONTools::SetAttribute(game_data, "best_score", best_score);
-		return true;
-	}
-
-	bool Game::SerializePersistentGameData(bool save)
-	{
-
-		return false;
-
-
-
-
-
-
-
-		// get application
-		Application * application = Application::GetInstance();
-		if (application == nullptr)
-			return false;
-		// get user temp directory
-		boost::filesystem::path filepath = application->GetUserLocalTempPath() / "game_data.json";
-
-		nlohmann::json game_data;
-		// save the game data
-		if (save)
-		{
-			if (!SavePersistentGameData(&game_data))
-				return false;
-			std::ofstream file(filepath.string().c_str());
-			if (!file)
-				return false;
-			file << game_data.dump();
-			return true;
-		}
-		// load the game data
-		else
-		{
-			if (!JSONTools::LoadJSONFile(filepath, game_data))
-				return false;
-			return LoadPersistentGameData(&game_data);
-		}
 	}
 
 	namespace GlobalVariables
@@ -974,8 +912,6 @@ namespace chaos
 	{
 		// update game data that must me prevent from destruction
 		UpdatePersistentGameData();
-		// save the best score (and other values)
-		SerializePersistentGameData(true);
 		// restore main menu condition (level, music ...)
 		SetCurrentLevel(nullptr);
 		// game instance stop
@@ -1298,6 +1234,7 @@ namespace chaos
 	
 	bool Game::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
 	{
+		CHAOS_JSON_ATTRIBUTE(config, best_score);
 		CHAOS_JSON_ATTRIBUTE(config, mouse_sensitivity);
 		CHAOS_JSON_ATTRIBUTE(config, gamepad_sensitivity);
 		CHAOS_JSON_ATTRIBUTE(config, viewport_wanted_aspect);
@@ -1419,6 +1356,12 @@ namespace chaos
 		if (game_instance == nullptr)
 			return nullptr;
 		return game_instance->SaveIntoCheckpoint();
+	}
+
+	bool Game::OnStorePersistentProperties(JSONWriteConfiguration config) const
+	{
+		JSONTools::SetAttribute(config, "best_score", best_score);
+		return true;
 	}
 
 }; // namespace chaos

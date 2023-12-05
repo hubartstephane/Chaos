@@ -174,6 +174,9 @@ namespace chaos
 	protected:
 
 		/** override */
+		virtual bool OnStorePersistentProperties(JSONWriteConfiguration config) const override;
+
+		/** override */
 		virtual bool DoProcessAction(chaos::GPUProgramProviderExecutionData const& execution_data) const override;
 
 		/** the tick method */
@@ -213,12 +216,6 @@ namespace chaos
 		/** override */
 		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
 
-		/** save the best score */
-		bool SerializePersistentGameData(bool save);
-		/** data internal method serialization */
-		virtual bool LoadPersistentGameData(nlohmann::json const * game_data);
-		/** data internal method serialization */
-		virtual bool SavePersistentGameData(nlohmann::json * game_data) const;
 		/** prepare data before saving */
 		virtual void UpdatePersistentGameData();
 

@@ -457,30 +457,23 @@ namespace chaos
 			return false;
 		}
 		// class has its own implementation
-		else if constexpr (std::is_class_v<T> && !std::is_same_v<T, std::string>) // string is to be handled in the native json way
+		else if constexpr (check_method_SerializeIntoJSON_v<T const, nlohmann::json*>)
 		{
-			if constexpr (check_method_SerializeIntoJSON_v<T const, nlohmann::json*>)
-			{
-				// we need a json object to store a C++ object
-				if (!json->is_object())
-					*json = nlohmann::json::object(); // create the JSON object if not already set
+			// we need a json object to store a C++ object
+			if (!json->is_object())
+				*json = nlohmann::json::object(); // create the JSON object if not already set
 
-				// get the class of the C++ object
-				Class const* src_class = nullptr;
-				if constexpr (check_method_GetClass_v<T const>)
-					src_class = src.GetClass();
-				if (src_class == nullptr || !src_class->IsDeclared())
-					src_class = ClassManager::GetDefaultInstance()->FindCPPClass<T>();
-				// write the class into the json object
-				if (src_class != nullptr && src_class->IsDeclared())
-					JSONTools::SetAttribute(json, "classname", src_class->GetClassName());
-				// save into JSON
-				return src.SerializeIntoJSON(json);
-			}
-			else
-			{
-				return false; // do not know how to save the object (we should never come here if the object had a Save method or if there was a standalone Save function)
-			}
+			// get the class of the C++ object
+			Class const* src_class = nullptr;
+			if constexpr (check_method_GetClass_v<T const>)
+				src_class = src.GetClass();
+			if (src_class == nullptr || !src_class->IsDeclared())
+				src_class = ClassManager::GetDefaultInstance()->FindCPPClass<T>();
+			// write the class into the json object
+			if (src_class != nullptr && src_class->IsDeclared())
+				JSONTools::SetAttribute(json, "classname", src_class->GetClassName());
+			// save into JSON
+			return src.SerializeIntoJSON(json);
 		}
 		else if constexpr (HasDoSaveIntoJSON<T>)
 		{

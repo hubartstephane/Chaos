@@ -1,14 +1,19 @@
+#ifdef CHAOS_FORWARD_DECLARATION
+
 namespace chaos
 {
-#ifdef CHAOS_FORWARD_DECLARATION
 
 	template<typename VECTOR_TYPE>
 	class AutoCastableVector;
 
 	enum class SetBoxAspectMethod;
 
+}; // namespace chaos
+
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+namespace chaos
+{
 	// ==============================================================================================
 	// rotator functions
 	// ==============================================================================================
@@ -86,7 +91,6 @@ namespace chaos
 	/** create a delayed 'cast' */
 	template<typename T>
 	AutoCastableVector<T> auto_cast_vector(T const& src) { return src; }
-
 
 	// ==============================================================================================
 	// type_box_base functions
@@ -416,7 +420,6 @@ namespace chaos
 		return (b1.position == b1.position) && (b1.half_size == b2.half_size) && (b1.rotator == b2.rotator);
 	}
 
-
 	// shu49. Ca vaut le coup de savoir dans quel ordre on genere ces vertex
 
 	//  0    1                    0    1
@@ -424,10 +427,6 @@ namespace chaos
 	//  2    3                    3    2
 	//
 	// histoire de faire du rendu plus facilement
-
-
-
-
 
 	template<typename T>
 	auto GetBoxVertices(type_obox<T, 2> const& b, typename type_box_base<T, 2>::vec_type* result, bool global = true) // expect an array of 4 elements
@@ -813,112 +812,8 @@ namespace chaos
 	// JSON functions
 	// ==============================================================================================
 
-		// vectors
-
-	template<typename T, glm::precision P>
-	bool DoSaveIntoJSON(nlohmann::json * json, glm::tvec2<T, P> const& src)
-	{
-		if (!PrepareSaveArrayIntoJSON(json))
-			return false;
-		JSONTools::SetElement(json, 0, src.x);
-		JSONTools::SetElement(json, 1, src.y);
-		return true;
-	}
-
-	template<typename T, glm::precision P>
-	bool DoLoadFromJSON(JSONReadConfiguration config, glm::tvec2<T, P>& dst)
-	{
-		return JSONTools::ForEachSource(config, [&dst](nlohmann::json const * json)
-		{
-			if (json->is_object())
-			{
-				JSONTools::GetAttribute(json, "x", dst.x);
-				JSONTools::GetAttribute(json, "y", dst.y);
-				return true;
-			}
-			else if (json->is_array()) 
-			{
-				size_t count = std::min(json->size(), (size_t)dst.length());
-				for (size_t i = 0; i < count; ++i)
-					dst[i] = json->operator[](i).get<T>();
-				return true;
-			}
-			return false;		
-		});
-	}
-
-	template<typename T, glm::precision P>
-	bool DoSaveIntoJSON(nlohmann::json * json, glm::tvec3<T, P> const& src)
-	{
-		if (!PrepareSaveArrayIntoJSON(json))
-			return false;
-		JSONTools::SetElement(json, 0, src.x);
-		JSONTools::SetElement(json, 1, src.y);
-		JSONTools::SetElement(json, 2, src.z);
-		return true;
-	}
-
-	template<typename T, glm::precision P>
-	bool DoLoadFromJSON(JSONReadConfiguration config, glm::tvec3<T, P>& dst)
-	{
-	return JSONTools::ForEachSource(config, [&dst](nlohmann::json const * json)
-		{
-			if (json->is_object())
-			{
-				JSONTools::GetAttribute(json, "x", dst.x);
-				JSONTools::GetAttribute(json, "y", dst.y);
-				JSONTools::GetAttribute(json, "z", dst.z);
-				return true;
-			}
-			else if (json->is_array())
-			{
-				size_t count = std::min(json->size(), (size_t)dst.length());
-				for (size_t i = 0; i < count; ++i)
-					dst[i] = json->operator[](i).get<T>();
-				return true;
-			}
-			return false;
-		});
-	}
-
-	template<typename T, glm::precision P>
-	bool DoSaveIntoJSON(nlohmann::json * json, glm::tvec4<T, P> const& src)
-	{
-		if (!PrepareSaveArrayIntoJSON(json))
-			return false;
-		JSONTools::SetElement(json, 0, src.x);
-		JSONTools::SetElement(json, 1, src.y);
-		JSONTools::SetElement(json, 2, src.z);
-		JSONTools::SetElement(json, 3, src.w);
-		return true;
-	}
-
-	template<typename T, glm::precision P>
-	bool DoLoadFromJSON(JSONReadConfiguration config, glm::tvec4<T, P>& dst)
-	{
-		return JSONTools::ForEachSource(config, [&dst](nlohmann::json const * json)
-		{
-			if (json->is_object())
-			{
-				JSONTools::GetAttribute(json, "x", dst.x);
-				JSONTools::GetAttribute(json, "y", dst.y);
-				JSONTools::GetAttribute(json, "z", dst.z);
-				JSONTools::GetAttribute(json, "w", dst.w);
-				return true;
-			}
-			else if (json->is_array())
-			{
-				size_t count = std::min(json->size(), (size_t)dst.length());
-				for (size_t i = 0; i < count; ++i)
-					dst[i] = json->operator[](i).get<T>();
-				return true;
-			}
-			return false;
-		});
-	}
-
 	template<typename T, int dimension>
-	bool DoSaveIntoJSON(nlohmann::json * json, type_box<T, dimension> const& src)
+	bool DoSaveIntoJSON(nlohmann::json* json, type_box<T, dimension> const& src)
 	{
 		if (!PrepareSaveObjectIntoJSON(json))
 			return false;
@@ -936,7 +831,7 @@ namespace chaos
 	}
 
 	template<typename T, int dimension>
-	bool DoSaveIntoJSON(nlohmann::json * json, type_obox<T, dimension> const& src)
+	bool DoSaveIntoJSON(nlohmann::json* json, type_obox<T, dimension> const& src)
 	{
 		if (!PrepareSaveObjectIntoJSON(json))
 			return false;
@@ -956,7 +851,7 @@ namespace chaos
 	}
 
 	template<typename T, int dimension>
-	bool DoSaveIntoJSON(nlohmann::json * json, type_aabox<T, dimension> const& src)
+	bool DoSaveIntoJSON(nlohmann::json* json, type_aabox<T, dimension> const& src)
 	{
 		if (!PrepareSaveObjectIntoJSON(json))
 			return false;
@@ -974,7 +869,7 @@ namespace chaos
 	}
 
 	template<typename T, int dimension>
-	bool DoSaveIntoJSON(nlohmann::json * json, type_sphere<T, dimension> const& src)
+	bool DoSaveIntoJSON(nlohmann::json* json, type_sphere<T, dimension> const& src)
 	{
 		if (!PrepareSaveObjectIntoJSON(json))
 			return false;
@@ -992,7 +887,7 @@ namespace chaos
 	}
 
 	template<typename T, int dimension>
-	bool DoSaveIntoJSON(nlohmann::json * json, type_ray<T, dimension> const& src)
+	bool DoSaveIntoJSON(nlohmann::json* json, type_ray<T, dimension> const& src)
 	{
 		if (!PrepareSaveObjectIntoJSON(json))
 			return false;
@@ -1004,19 +899,120 @@ namespace chaos
 	template<typename T, int dimension>
 	bool DoLoadFromJSON(JSONReadConfiguration config, type_ray<T, dimension>& dst)
 	{
-
-
-
-
-
-
-
-
 		JSONTools::GetAttribute(config, "position", dst.position);
 		JSONTools::GetAttribute(config, "direction", dst.direction);
 		return true;
 	}
 
-#endif
-
 }; // namespace chaos
+
+	// XXX: for namespace resolution in JSONTools::LoadFromJSON(...) and JSONTools::SaveIntoJSON(...),
+	//      it is important that the following functions belong to the same namespace than the target (glm)
+
+namespace glm
+{
+	template<typename T, glm::precision P>
+	bool DoSaveIntoJSON(nlohmann::json* json, glm::tvec2<T, P> const& src)
+	{
+		if (!chaos::PrepareSaveArrayIntoJSON(json))
+			return false;
+		chaos::JSONTools::SetElement(json, 0, src.x);
+		chaos::JSONTools::SetElement(json, 1, src.y);
+		return true;
+	}
+
+	template<typename T, glm::precision P>
+	bool DoLoadFromJSON(chaos::JSONReadConfiguration config, glm::tvec2<T, P>& dst)
+	{
+		return chaos::JSONTools::ForEachSource(config, [&dst](nlohmann::json const* json)
+		{
+			if (json->is_object())
+			{
+				chaos::JSONTools::GetAttribute(json, "x", dst.x);
+				chaos::JSONTools::GetAttribute(json, "y", dst.y);
+				return true;
+			}
+			else if (json->is_array())
+			{
+				size_t count = std::min(json->size(), (size_t)dst.length());
+				for (size_t i = 0; i < count; ++i)
+					dst[i] = json->operator[](i).get<T>();
+				return true;
+			}
+			return false;
+		});
+	}
+
+	template<typename T, glm::precision P>
+	bool DoSaveIntoJSON(nlohmann::json* json, glm::tvec3<T, P> const& src)
+	{
+		if (!chaos::PrepareSaveArrayIntoJSON(json))
+			return false;
+		chaos::JSONTools::SetElement(json, 0, src.x);
+		chaos::JSONTools::SetElement(json, 1, src.y);
+		chaos::JSONTools::SetElement(json, 2, src.z);
+		return true;
+	}
+
+	template<typename T, glm::precision P>
+	bool DoLoadFromJSON(chaos::JSONReadConfiguration config, glm::tvec3<T, P>& dst)
+	{
+		return chaos::JSONTools::ForEachSource(config, [&dst](nlohmann::json const* json)
+		{
+			if (json->is_object())
+			{
+				chaos::JSONTools::GetAttribute(json, "x", dst.x);
+				chaos::JSONTools::GetAttribute(json, "y", dst.y);
+				chaos::JSONTools::GetAttribute(json, "z", dst.z);
+				return true;
+			}
+			else if (json->is_array())
+			{
+				size_t count = std::min(json->size(), (size_t)dst.length());
+				for (size_t i = 0; i < count; ++i)
+					dst[i] = json->operator[](i).get<T>();
+				return true;
+			}
+			return false;
+		});
+	}
+
+	template<typename T, glm::precision P>
+	bool DoSaveIntoJSON(nlohmann::json* json, glm::tvec4<T, P> const& src)
+	{
+		if (!chaos::PrepareSaveArrayIntoJSON(json))
+			return false;
+		chaos::JSONTools::SetElement(json, 0, src.x);
+		chaos::JSONTools::SetElement(json, 1, src.y);
+		chaos::JSONTools::SetElement(json, 2, src.z);
+		chaos::JSONTools::SetElement(json, 3, src.w);
+		return true;
+	}
+
+	template<typename T, glm::precision P>
+	bool DoLoadFromJSON(chaos::JSONReadConfiguration config, glm::tvec4<T, P>& dst)
+	{
+		return chaos::JSONTools::ForEachSource(config, [&dst](nlohmann::json const* json)
+		{
+			if (json->is_object())
+			{
+				chaos::JSONTools::GetAttribute(json, "x", dst.x);
+				chaos::JSONTools::GetAttribute(json, "y", dst.y);
+				chaos::JSONTools::GetAttribute(json, "z", dst.z);
+				chaos::JSONTools::GetAttribute(json, "w", dst.w);
+				return true;
+			}
+			else if (json->is_array())
+			{
+				size_t count = std::min(json->size(), (size_t)dst.length());
+				for (size_t i = 0; i < count; ++i)
+					dst[i] = json->operator[](i).get<T>();
+				return true;
+			}
+			return false;
+		});
+	}
+
+}; // namespace glm
+
+#endif

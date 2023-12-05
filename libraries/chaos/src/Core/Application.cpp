@@ -116,20 +116,17 @@ namespace chaos
 		// some log
 		LogExecutionInformation();
 
-
-
-
-
-		
-
-
-
-
-
 		// load the configuration
 		if (!InitializeConfiguration())
 		{
 			Log::Error("InitializeConfiguration(...) failure");
+			return false;
+		}
+
+		// load the properties
+		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
+		{
+			Log::Error("ReadConfigurableProperties(...) failure");
 			return false;
 		}
 

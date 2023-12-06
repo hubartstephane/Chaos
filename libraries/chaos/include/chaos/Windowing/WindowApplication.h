@@ -17,7 +17,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		WindowApplication(SubClassOf<Window> in_main_window_class, WindowCreateParams const& in_window_create_params = {});
+		WindowApplication(SubClassOf<Window> in_main_window_class, WindowPlacementInfo const& in_main_window_placement_info = {}, WindowCreateParams const& in_main_window_create_params = {});
 
 		/** gets the number of windows */
 		size_t GetWindowCount() const;
@@ -118,7 +118,7 @@ namespace chaos
 		virtual void RunMessageLoop(std::function<bool()> const& loop_condition_func = {});
 
 		/** create a window */
-		Window* CreateTypedWindow(SubClassOf<Window> window_class, WindowCreateParams create_params = {}, ObjectRequest = {});
+		Window* CreateTypedWindow(SubClassOf<Window> window_class, WindowPlacementInfo placement_info = {}, WindowCreateParams const& create_params = {}, ObjectRequest = {});
 
 		/** enable per window special mode */
 		void SetImGuiMenuMode(bool mode);
@@ -271,10 +271,14 @@ namespace chaos
 		/** a mapping between the button index and its resource name + text generator alias */
 		std::map<GamepadButton, std::pair<std::string, std::string>> gamepad_button_map;
 
-		/** the initial_window param */
-		WindowCreateParams window_create_params;
+		/** the main window params */
+		WindowCreateParams main_window_create_params;
 		/** the class of the main window */
 		SubClassOf<Window> main_window_class;
+		/** the main window initial placement */
+		WindowPlacementInfo main_window_placement_info;
+
+
 		/** the window list */
 		std::vector<shared_ptr<Window>> windows;
 

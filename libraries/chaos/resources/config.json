@@ -1,8 +1,7 @@
 {
   "windows": {
     "main_window": {
-      "width": 1200,
-      "height": 600
+      "size": [ 1200, 600 ]
     }
   },
 

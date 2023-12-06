@@ -11,9 +11,6 @@ namespace chaos
 	{
 		if (!PrepareSaveObjectIntoJSON(json))
 			return false;
-		JSONTools::SetAttribute(json, "monitor_index", src.monitor_index);
-		JSONTools::SetAttribute(json, "width", src.width);
-		JSONTools::SetAttribute(json, "height", src.height);
 		JSONTools::SetAttribute(json, "resizable", src.resizable);
 		JSONTools::SetAttribute(json, "start_visible", src.start_visible);
 		JSONTools::SetAttribute(json, "decorated", src.decorated);
@@ -24,14 +21,29 @@ namespace chaos
 
 	bool DoLoadFromJSON(JSONReadConfiguration config, WindowCreateParams& dst)
 	{
-		JSONTools::GetAttribute(config, "monitor_index", dst.monitor_index);
-		JSONTools::GetAttribute(config, "width", dst.width);
-		JSONTools::GetAttribute(config, "height", dst.height);
 		JSONTools::GetAttribute(config, "resizable", dst.resizable);
 		JSONTools::GetAttribute(config, "start_visible", dst.start_visible);
 		JSONTools::GetAttribute(config, "decorated", dst.decorated);
 		JSONTools::GetAttribute(config, "toplevel", dst.toplevel);
 		JSONTools::GetAttribute(config, "focused", dst.focused);
+		return true;
+	}
+
+	bool DoSaveIntoJSON(nlohmann::json* json, WindowPlacementInfo const& src)
+	{
+		if (!PrepareSaveObjectIntoJSON(json))
+			return false;
+		//JSONTools::SetAttribute(json, "monitor_index", src.monitor_index);
+		JSONTools::SetAttribute(json, "position", src.position);
+		JSONTools::SetAttribute(json, "size", src.size);
+		return true;
+	}
+
+	bool DoLoadFromJSON(JSONReadConfiguration config, WindowPlacementInfo& dst)
+	{
+		//JSONTools::GetAttribute(config, "monitor_index", dst.monitor_index);
+		JSONTools::GetAttribute(config, "position", dst.position);
+		JSONTools::GetAttribute(config, "size", dst.size);
 		return true;
 	}
 
@@ -96,23 +108,36 @@ namespace chaos
 		CHAOS_GLOBAL_VARIABLE(bool, UnlimitedFPS, false);
 	};
 
-	bool Window::CreateGLFWWindow(WindowCreateParams create_params, GLFWwindow* share_context_window, GLFWHints glfw_hints)
+	bool Window::CreateGLFWWindow(WindowPlacementInfo placement_info, WindowCreateParams const &create_params, GLFWwindow* share_context_window, GLFWHints glfw_hints)
 	{
 		// resource already existing
 		if (glfw_window != nullptr)
 			return false;
 
+
+
+
+
+
 		// compute the monitor upon which the window will be : use it for pixel format
-		if (create_params.monitor == nullptr)
-			create_params.monitor = GLFWTools::GetMonitorByIndex(create_params.monitor_index);
+		if (placement_info.monitor == nullptr)
+			placement_info.monitor = GLFWTools::GetMonitorByIndex(placement_info.monitor_index);
+
+
+
+
+
+
+
+
 
 		// retrieve the position of the monitor
 		int monitor_x = 0;
 		int monitor_y = 0;
-		glfwGetMonitorPos(create_params.monitor, &monitor_x, &monitor_y);
+		glfwGetMonitorPos(placement_info.monitor, &monitor_x, &monitor_y);
 
 		// compute the position and size of the window
-		bool pseudo_fullscreen = (create_params.width <= 0 && create_params.height <= 0);
+		bool pseudo_fullscreen = (placement_info.size.x <= 0 && placement_info.size.y <= 0);
 
 		// prepare window creation
 		glfwWindowHint(GLFW_RESIZABLE, create_params.resizable);
@@ -123,40 +148,36 @@ namespace chaos
 		glfwWindowHint(GLFW_VISIBLE, 0); // override the initial visibility
 
 		// compute window size and position
-		GLFWvidmode const* mode = glfwGetVideoMode(create_params.monitor);
+		GLFWvidmode const* mode = glfwGetVideoMode(placement_info.monitor);
 
 		int x = 0;
 		int y = 0;
 		if (pseudo_fullscreen) // full-screen, the window use the full-size
 		{
-			create_params.width = mode->width;
-			create_params.height = mode->height;
+			placement_info.size.x = mode->width;
+			placement_info.size.y = mode->height;
 
 			x = monitor_x;
 			y = monitor_y;
 		}
 		else
 		{
-			if (create_params.width <= 0)
-				create_params.width = mode->width;
+			if (placement_info.size.x <= 0)
+				placement_info.size.x = mode->width;
 			else
-				create_params.width = std::min(mode->width, create_params.width);
+				placement_info.size.x = std::min(mode->width, placement_info.size.x);
 
-			if (create_params.height <= 0)
-				create_params.height = mode->height;
+			if (placement_info.size.y <= 0)
+				placement_info.size.y = mode->height;
 			else
-				create_params.height = std::min(mode->height, create_params.height);
+				placement_info.size.y = std::min(mode->height, placement_info.size.y);
 
-			x = monitor_x + (mode->width - create_params.width) / 2;
-			y = monitor_y + (mode->height - create_params.height) / 2;
+			x = monitor_x + (mode->width - placement_info.size.x) / 2;
+			y = monitor_y + (mode->height - placement_info.size.y) / 2;
 		}
 
-		// title cannot be null
-		if (create_params.title == nullptr)
-			create_params.title = "";
-
 		// we are doing a pseudo fullscreen => monitor parameters of glfwCreateWindow must be null or it will "capture" the screen
-		glfw_window = glfwCreateWindow(create_params.width, create_params.height, create_params.title, nullptr, share_context_window);
+		glfw_window = glfwCreateWindow(placement_info.size.x, placement_info.size.y, create_params.title.c_str(), nullptr, share_context_window);
 		if (glfw_window == nullptr)
 			return false;
 		glfwMakeContextCurrent(glfw_window);
@@ -183,9 +204,9 @@ namespace chaos
 		{
 			x += left;
 			y += top;
-			create_params.width = create_params.width - left - right;
-			create_params.height = create_params.height - top - bottom;
-			glfwSetWindowSize(glfw_window, create_params.width, create_params.height);
+			placement_info.size.x = placement_info.size.x - left - right;
+			placement_info.size.y = placement_info.size.y - top - bottom;
+			glfwSetWindowSize(glfw_window, placement_info.size.x, placement_info.size.y);
 		}
 
 		glfwSetWindowPos(glfw_window, x, y);

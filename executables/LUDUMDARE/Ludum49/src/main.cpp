@@ -4,8 +4,7 @@
 int main(int argc, char ** argv, char ** env)
 {
 	WindowCreateParams create_params;
-	create_params.width = 500;
-	create_params.height = 500;
+	placement_info.size = { 500, 500 };
 
-	return RunGame<LudumGame>(argc, argv, env, create_params);
+	return RunGame<LudumGame>(argc, argv, env, placement_info);
 }

@@ -9,7 +9,7 @@ namespace chaos
 		result.x = src.position.x;
 		result.y = src.position.y;
 		result.z = src.half_size.x;
-		result.w = src.half_size.y;		
+		result.w = src.half_size.y;
 		return result;
 	}
 
@@ -75,22 +75,22 @@ namespace chaos
 
 	float GetPlaneOffset(glm::vec3  const & p)
 	{
-		return p.z;	
+		return p.z;
 	}
 
 	float GetPlaneOffset(glm::vec4  const & p)
 	{
-		return p.w;	
+		return p.w;
 	}
 
 	double GetPlaneOffset(glm::dvec3 const & p)
 	{
-		return p.z;	
+		return p.z;
 	}
 
 	double GetPlaneOffset(glm::dvec4 const & p)
 	{
-		return p.w;	
+		return p.w;
 	}
 
 }; // namespace chaos

@@ -14,7 +14,7 @@
 //
 // for (auto ob : IterateByClass<TOTO>(my_array))
 {
-ca retourne un object avec begin()/end ++ 
+ca retourne un object avec begin()/end ++
 ca fait auto_cast => + travail sur les pointeur weak_shared
 et ca filtre par class
 }
@@ -79,7 +79,7 @@ genre
 
 Pawn::Tick(dt)
 {
-	spawner->Tick(dt, [](SmokeParticleAccessor & accessor) 
+	spawner->Tick(dt, [](SmokeParticleAccessor & accessor)
 	{
 		le spawner decide combien de particule il va creer (avec un spawn rate),
 

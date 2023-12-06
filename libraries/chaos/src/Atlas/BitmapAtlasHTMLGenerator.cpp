@@ -61,9 +61,9 @@ namespace chaos
 		template<typename T>
 		void AtlasHTMLGenerator::OutputElementsToHTMLDocument(char const * folder_path, std::vector<T> const & elements, XMLTools & html, tinyxml2::XMLElement * TABLE, tinyxml2::XMLElement * &TR, int bitmap_index, int & count)
 		{
-			for (auto const & info : elements) // all elements 
+			for (auto const & info : elements) // all elements
 			{
-				// keep only entries of corresponding bitmap 
+				// keep only entries of corresponding bitmap
 				if (info.bitmap_index != bitmap_index)
 					continue;
 
@@ -104,7 +104,7 @@ namespace chaos
 		{
 			for (auto const & info : elements) // all elements of FontInfo or BitmapSet (i.e CharacterInfo or BitmapInfo)
 			{
-				// keep only entries of corresponding bitmap 
+				// keep only entries of corresponding bitmap
 				if (info.bitmap_index != bitmap_index)
 					continue;
 
@@ -131,7 +131,7 @@ namespace chaos
 		{
 			if (folder_info == nullptr)
 				return;
-			
+
 			// draw the bitmaps and the characters
 			OutputBitmapFilenamesToHTMLDocument(folder_info->bitmaps, html, SVG, bitmap_index, scale);
 			for (size_t i = 0; i < folder_info->fonts.size(); ++i)
@@ -146,7 +146,7 @@ namespace chaos
 		{
 			for (auto const & info : elements) // all elements of FontInfo or BitmapSet (i.e CharacterInfo or BitmapInfo)
 			{
-				// keep only entries of corresponding bitmap 
+				// keep only entries of corresponding bitmap
 				if (info.bitmap_index != bitmap_index)
 					continue;
 

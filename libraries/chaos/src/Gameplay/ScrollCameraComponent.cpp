@@ -25,7 +25,7 @@ namespace chaos
 		// compute scroll for both camera and player
 		float scroll_displacement = scroll_speed * delta_time;
 
-		// scroll the camera in given direction and keep the wanted value	
+		// scroll the camera in given direction and keep the wanted value
 		float camera_position_scroll_axis = camera_box.position[axis_index] + scroll_displacement;
 		camera_box.position[axis_index] = camera_position_scroll_axis;
 
@@ -40,7 +40,7 @@ namespace chaos
 		size_t player_count = camera->GetPlayerCount();
 		for (size_t i = 0; i < player_count; ++i)
 		{
-			// get the player pawn 
+			// get the player pawn
 			PlayerPawn * player_pawn = camera->GetPlayerPawn(i);
 			if (player_pawn == nullptr)
 				continue;
@@ -68,7 +68,7 @@ namespace chaos
 		// compute the max displacement along the other index
 		float min_pawn_box_other_axis = all_pawns_box.position[1 - axis_index] - all_pawns_box.half_size[1 - axis_index];
 		float max_pawn_box_other_axis = all_pawns_box.position[1 - axis_index] + all_pawns_box.half_size[1 - axis_index];
-		// the camera position must stay between theses 2 values 
+		// the camera position must stay between theses 2 values
 		float p1_other_axis = min_pawn_box_other_axis + camera_box.half_size[1 - axis_index];
 		float p2_other_axis = max_pawn_box_other_axis - camera_box.half_size[1 - axis_index];
 
@@ -79,7 +79,7 @@ namespace chaos
 		else if (camera_box.position[1 - axis_index] < p2_other_axis)
 			camera_box.position[1 - axis_index] = p2_other_axis;
 
-		// restrict camera to world		
+		// restrict camera to world
 		if (!IsGeometryEmpty(world))
 			RestrictToInside(world, camera_box, false);
 		// apply the compute result
@@ -87,7 +87,7 @@ namespace chaos
 		// step 2 : make all pawns stay inside the camera (maybe 2 players want to go in opposite direction)
 		for (size_t i = 0; i < player_count; ++i)
 		{
-			// get the player pawn 
+			// get the player pawn
 			PlayerPawn * player_pawn = camera->GetPlayerPawn(i);
 			if (player_pawn == nullptr)
 				continue;

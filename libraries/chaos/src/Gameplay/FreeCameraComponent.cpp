@@ -31,7 +31,7 @@ namespace chaos
 		if ((zoom_in == 0.0f) ^ (zoom_out == 0.0f))
 		{
 			if (zoom_in > 0.0f)
-				zoom_value -= 1.0f * zoom_in * delta_time;				
+				zoom_value -= 1.0f * zoom_in * delta_time;
 			else if (zoom_out > 0.0f)
 				zoom_value += 1.0f * zoom_value * delta_time;
 		}

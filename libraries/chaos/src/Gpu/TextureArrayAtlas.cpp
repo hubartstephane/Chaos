@@ -28,7 +28,7 @@ namespace chaos
 			if (!DoLoadFromBitmapAtlas(atlas))
 			{
 				Clear();
-				return false;			
+				return false;
 			}
 			return true;
 		}
@@ -39,7 +39,7 @@ namespace chaos
 			if (!DoLoadFromBitmapAtlas(std::move(atlas)))
 			{
 				Clear();
-				return false;			
+				return false;
 			}
 			return true;
 		}
@@ -64,12 +64,12 @@ namespace chaos
 		{
 			if (!DoGenerateTextureArray(atlas))
 				return false;
-		
+
 			// steal all data
 			atlas_count = atlas.atlas_count;
 			dimension   = atlas.dimension;
 			root_folder = std::move(atlas.root_folder);
-			return true;		
+			return true;
 		}
 
 		bool TextureArrayAtlas::DoLoadFromBitmapAtlas(Atlas const & atlas)

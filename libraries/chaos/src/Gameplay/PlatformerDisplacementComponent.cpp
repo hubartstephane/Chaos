@@ -133,7 +133,7 @@ namespace chaos
 
 	// 1. forces
 	//
-	//   sum(Forces) = m.gravity = m.acceleration 
+	//   sum(Forces) = m.gravity = m.acceleration
 	//
 	//   acceleration = gravity
 	//
@@ -143,7 +143,7 @@ namespace chaos
 	//                                                                  | -we know      a           == gravity
 	//   velocity(t) = (a * t)   +   velocity(0)                        | -we search    velocity(0) ???
 	//
-	// 3. when the jumper reach the max height we know   
+	// 3. when the jumper reach the max height we know
 	//
 	//   velocity(tmax) = 0
 	//
@@ -156,9 +156,9 @@ namespace chaos
 	//      => v0 = -(a * tmax)
 	//
 	//   max_jump_height = (1/2 * a * tmax ^ 2)   +   (v0 * tmax)
-	//	
+	//
 	// 5.
-	//  
+	//
 	//    max_jump_height = (1/2 * a * tmax ^ 2)   -   (a * tmax ^ 2)
 	//
 	//      => tmax = sqrt(  -2 * max_jump_height / gravity   )                   XXX : gravity is NEGATIVE !! dont panic
@@ -213,7 +213,7 @@ namespace chaos
 		box2 pawn_box = initial_pawn_box;
 		glm::vec2& pawn_position = pawn_box.position;
 
-		// sum the forces 
+		// sum the forces
 		glm::vec2 sum_forces = glm::vec2(0.0f, 0.0f);
 
 		if (displacement_state == PlatformerDisplacementState::FALLING || displacement_state == PlatformerDisplacementState::JUMPING_DOWN) // do not fall otherway
@@ -270,7 +270,7 @@ namespace chaos
 		// search collisions, apply collision reaction
 		int collision_flags = PlatformerDisplacementCollisionFlags::NOTHING;
 
-		char const* wangset_name = nullptr;  //"CollisionPlatformer"; 
+		char const* wangset_name = nullptr;  //"CollisionPlatformer";
 
 		TileCollisionComputer computer = TileCollisionComputer(GetLevelInstance(), initial_pawn_box, pawn_box, CollisionMask::PLAYER, pawn->GetAllocation(), displacement_info.pawn_extend, wangset_name);
 
@@ -296,10 +296,10 @@ namespace chaos
 					else if (edge == Edge::BOTTOM)
 						collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_CEIL;
 					else if (edge == Edge::LEFT || edge == Edge::RIGHT)
- 						collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_WALL;		
+ 						collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_WALL;
 					return true;
 				});
-			}		
+			}
 		});
 
 		// update player state

@@ -426,7 +426,7 @@ namespace chaos
 	//
 	// intersection point P is on the circle (C, r)
 	// intersection point P is on the ray (A, dir)
-	// 
+	//
 	// P = A + dir.t
 	// dist2(P, C) = r^2
 	//
@@ -528,7 +528,7 @@ namespace chaos
 		MathTools::Polynome2Solution<T> solutions = MathTools::SolvePolynome2(a, b, c);
 		for (int i = 0; i < solutions.count; ++i)
 			result.AddIntersectionPoint(solutions.solutions[i], r.position + r.direction * solutions.solutions[i]);
- 
+
 		return result;
 	}
 

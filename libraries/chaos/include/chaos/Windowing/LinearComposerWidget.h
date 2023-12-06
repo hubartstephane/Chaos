@@ -66,7 +66,7 @@ namespace chaos
 	protected:
 
 		/** utility method to compute children surface requirement */
-		template<bool ADD_X, bool ADD_Y> 
+		template<bool ADD_X, bool ADD_Y>
 		WidgetSurfaceRequirement ComputeChildrenSurfaceRequirement() const
 		{
 			auto get_optional_value = [](std::optional<float> const& opt)

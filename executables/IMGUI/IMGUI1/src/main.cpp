@@ -170,7 +170,7 @@ protected:
 					ImGui::Separator();
 					if (ImGui::BeginMenu("personals"))
 					{
-						ImGui::MenuItem("main", nullptr, &p_open, true); // whenever the user select the menu item, the p_open value is being toggled						
+						ImGui::MenuItem("main", nullptr, &p_open, true); // whenever the user select the menu item, the p_open value is being toggled
 						ImGui::EndMenu();
 					}
 					ImGui::EndMenu();
@@ -185,8 +185,8 @@ protected:
 			static bool show_personal_window = true;
 			add_close_personal_window(show_personal_window);
 
-			
-			if (show_personal_window) 
+
+			if (show_personal_window)
 			{
 				ImGui::Begin("##truc1", &show_personal_window, ImGuiWindowFlags_NoCollapse);
 
@@ -338,7 +338,7 @@ protected:
 							ImGui::PushButtonRepeat(true);
 							if (ImGui::ArrowButton("##left", ImGuiDir_Left)) { counter--; }
 							ImGui::SameLine();
-							
+
 							if (ImGui::ArrowButton("##right", ImGuiDir_Right)) { counter++; }
 							ImGui::SameLine();
 
@@ -366,7 +366,7 @@ protected:
 							for (int i = 0; i < IM_ARRAYSIZE(lines); i++)
 								if (filter.PassFilter(lines[i]))
 									ImGui::BulletText("%s", lines[i]);
-							
+
 
 							static float myfloat = 500.0f;
 							ImGui::DragFloat("Myfloatdrag", &myfloat);

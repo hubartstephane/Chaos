@@ -78,13 +78,13 @@ namespace chaos
 		glUseProgram(program->GetResourceID());
 
 		// Initialize the vertex array
-		
+
 		float character_width = (float)mesh_builder_params.character_width;
 		float character_height = (float)mesh_builder_params.character_width;
 
 		float factor_x = (character_width  * 2.0f / ((float)width));   // screen coordinates are [-1, +1]
 		float factor_y = (character_height * 2.0f / ((float)height));  // for [width, height] pixels
-																	   // each characters is 1.0f unit large (+0.1f for padding)                                                                                                                                                                                                         
+																	   // each characters is 1.0f unit large (+0.1f for padding)
 																	   // see BitmapFontTextMeshBuilder
 		GPUProgramProvider uniform_provider;
 		uniform_provider.AddVariable("position_factor", glm::vec2(factor_x, factor_y));
@@ -93,7 +93,7 @@ namespace chaos
 		GPUProgramData const & program_data = program->GetProgramData();
 		program_data.BindUniforms(&uniform_provider);
 
-		// The drawing   
+		// The drawing
 		glDrawArrays(GL_TRIANGLES, 0, (GLsizei)draw_count);
 
 		// restore states
@@ -137,7 +137,7 @@ namespace chaos
 				continue;
 			box2 bounding = builder.BuildBuffer(l.first.c_str(), params, vertices);
 			if (!IsGeometryEmpty(bounding))
-				params.position = GetBoxCorners(bounding).first; // maybe some degenerated case 
+				params.position = GetBoxCorners(bounding).first; // maybe some degenerated case
 		}
 
 		// fill GPU buffer

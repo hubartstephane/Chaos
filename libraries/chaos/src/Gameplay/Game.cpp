@@ -1231,7 +1231,7 @@ namespace chaos
 	{
 		return ConfigurableInterface::OnConfigurationChanged(config);
 	}
-	
+
 	bool Game::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
 	{
 		CHAOS_JSON_ATTRIBUTE(config, best_score);
@@ -1245,7 +1245,7 @@ namespace chaos
 	{
 		// this call may take a while. Avoid Frame rate jump
 		if (GameApplication* application = Application::GetInstance())
-			application->FreezeNextFrameTickDuration();		
+			application->FreezeNextFrameTickDuration();
 		// reload properties
 		return ReloadDefaultPropertiesFromFile(true, true); // partial, send notification
 	}

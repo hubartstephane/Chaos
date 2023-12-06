@@ -62,7 +62,7 @@ namespace chaos
 	{
 		return GetResourcesPath() / "config.json";
 	}
-	
+
 	boost::filesystem::path Application::GetPersistentDataPath() const
 	{
 		return GetUserLocalTempPath() / "persistent_data.json";
@@ -195,7 +195,7 @@ namespace chaos
 			// initialize, run, and finalize the application
 			if (Initialize())
 			{
-				result = Main();				
+				result = Main();
 				SavePersistentPropertiesToFile(true); // save the persistent data to file
 			}
 			// finalization (even if initialization failed)

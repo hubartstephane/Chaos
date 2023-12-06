@@ -6,7 +6,7 @@ namespace chaos
 
 	GPUQuery::GPUQuery(Window * in_window, GLenum in_target)
 	{
-		CreateResource(in_window, in_target);	
+		CreateResource(in_window, in_target);
 	}
 
 	GPUQuery::GPUQuery(Window* in_window, GLuint in_id, bool in_ownership)
@@ -19,8 +19,8 @@ namespace chaos
 		Release();
 	}
 
-	bool GPUQuery::IsValid() const 
-	{ 
+	bool GPUQuery::IsValid() const
+	{
 		return (query_id != 0 && window != nullptr && window->GetGLFWHandler() == context);
 	}
 
@@ -55,7 +55,7 @@ namespace chaos
 		}
 		return false;
 	}
-	
+
 	bool GPUQuery::SetResource(Window* in_window, GLuint in_id, bool in_ownership)
 	{
 		// early exit
@@ -91,7 +91,7 @@ namespace chaos
 	void GPUQuery::Release()
 	{
 		assert(!query_started);
-		assert(!conditional_rendering_started);  // do not release resource, if something has been started (and would never been stopped)  
+		assert(!conditional_rendering_started);  // do not release resource, if something has been started (and would never been stopped)
 
 		if (window != nullptr && context != nullptr && window->GetGLFWHandler() == context) // ensure window has not be destroyed/recreated
 		{
@@ -212,6 +212,6 @@ namespace chaos
 		conditional_rendering_started = false;
 		glEndConditionalRender();
 		return true;
-	}  
+	}
 
 }; // namespace chaos

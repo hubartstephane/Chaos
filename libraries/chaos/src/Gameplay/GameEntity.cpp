@@ -81,7 +81,7 @@ namespace chaos
 	}
 
 
-	// shu47 
+	// shu47
 
 	void GameEntity::SetRotation(float in_rotation)
 	{
@@ -93,7 +93,7 @@ namespace chaos
 
 
 
-	
+
 
 
 
@@ -133,7 +133,7 @@ namespace chaos
 	{
 		allocations = in_allocation;
 	}
-	
+
 	bool GameEntity::SerializeFromJSON(JSONReadConfiguration config)
 	{
 		if (!JSONSerializableInterface::SerializeFromJSON(config))
@@ -153,6 +153,6 @@ namespace chaos
 		JSONTools::SetAttribute(json, "BOUNDING_BOX", GetBoundingBox());
 		return true;
 	}
-	
+
 }; // namespace chaos
 

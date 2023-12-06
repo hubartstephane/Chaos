@@ -123,8 +123,8 @@ class MyApplication : public chaos::Application
 
 public:
 
-	MyApplication() 
-	{		
+	MyApplication()
+	{
 		show_console = false;
 	}
 

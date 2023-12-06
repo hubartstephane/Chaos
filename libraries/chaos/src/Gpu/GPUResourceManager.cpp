@@ -462,7 +462,7 @@ namespace chaos
 		GiveClonedConfiguration(other_gpu_resource_manager.get());
 		if (!other_gpu_resource_manager->StartManager())
 			return false;
-		// steal data from other manager	
+		// steal data from other manager
 		RefreshGPUResources(other_gpu_resource_manager.get());
 		// stop other manager
 		other_gpu_resource_manager->StopManager();

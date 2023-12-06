@@ -22,6 +22,6 @@ namespace chaos
 		player = in_player;
 		return true;
 	}
-	
+
 }; // namespace chaos
 

@@ -87,7 +87,7 @@ namespace chaos
 		uint32_t count = 0;
 		while (!reader.Read(tmp) && count++ < 4) // time is at much 4 bytes long
 		{
-			result |= ((uint32_t)(tmp & ~0x80));		
+			result |= ((uint32_t)(tmp & ~0x80));
 			// last byte reached
 			if ((tmp & 0x80) == 0)
 				return true;

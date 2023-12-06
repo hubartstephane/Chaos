@@ -126,7 +126,7 @@ namespace chaos
 
 			float c = std::cos(rotation);
 			float s = std::sin(rotation);
-			
+
 			particle.bounding_box.position = pivot + GLMTools::Rotate((particle.bounding_box.position - pivot), c, s);
 		}
 
@@ -142,7 +142,7 @@ namespace chaos
 		return true;
 	}
 
-	// XXX : copy all data except for the cached particles waiting to be flushed 
+	// XXX : copy all data except for the cached particles waiting to be flushed
 	TMParticlePopulator& TMParticlePopulator::operator = (TMParticlePopulator const& src)
 	{
 		layer_instance = src.layer_instance;

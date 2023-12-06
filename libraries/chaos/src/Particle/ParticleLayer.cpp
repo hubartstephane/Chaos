@@ -71,7 +71,7 @@ namespace chaos
 		}
 
 		// handle allocation that wanted to react whenever they become empty
-		// XXX : this is done outside the loop because this could callback can create or destroy some allocations 
+		// XXX : this is done outside the loop because this could callback can create or destroy some allocations
 		//       causing iteration in 'particles_allocations' dangerous
 		size_t empty_count = to_destroy_allocations.size();
 		for (size_t i = 0; i < empty_count; ++i)
@@ -166,12 +166,12 @@ namespace chaos
 		}
         // evaluate how much memory should be allocated for buffers (count in vertices)
         size_t vertex_requirement_evaluation = EvaluateGPUVertexMemoryRequirement(mesh.get());
-        // clear previous dynamic mesh (and give buffers back for further usage)       
+        // clear previous dynamic mesh (and give buffers back for further usage)
         if (particle_manager != nullptr)
 			mesh->Clear(&particle_manager->GetBufferPool());
         else
 			mesh->Clear(&buffer_pool);
-        // select PrimitiveOutput and collect vertices        
+        // select PrimitiveOutput and collect vertices
 		GenerateMeshData(mesh.get(), vertex_declaration.get(), render_material.get(), vertex_requirement_evaluation);
         // mark as up to date
         require_GPU_update = false;

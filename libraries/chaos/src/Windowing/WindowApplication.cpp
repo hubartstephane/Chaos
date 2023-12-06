@@ -141,7 +141,7 @@ namespace chaos
 			result->CreateImGuiContext();
 			// post initialization method
 			glfwMakeContextCurrent(result->GetGLFWHandler());
-			// finalize the creation		
+			// finalize the creation
 			if (!result->Initialize())
 			{
 				result->Destroy();
@@ -543,7 +543,7 @@ namespace chaos
 
 		// open windows that were there during previous session
 		if (context == ReadConfigurablePropertiesContext::INITIALIZATION)
-		{		
+		{
 			std::vector<std::string> opened_window;
 			if (JSONTools::GetAttribute(config, "opened_window", opened_window))
 				for (std::string const& name : opened_window)

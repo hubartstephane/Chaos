@@ -12,7 +12,7 @@ namespace chaos
 			return false;
 		else if (context_window->GetGLFWHandler() != context)
 			return false;
-		// should always have a program 
+		// should always have a program
 		if (program == nullptr)
 			return false;
 		else if (program_id != program->GetResourceID()) // the program OpenGL resource has changed. it is invalid
@@ -67,18 +67,18 @@ namespace chaos
 			// check whether entry is still valid (else swap/pop with last)
 			GPUVertexArrayCacheEntry & entry = entries[index];
 			if (!entry.IsValid())
-			{				
+			{
 				// remove the entry
 				if (index != entries.size() - 1)
 					std::swap(entry, entries[entries.size() - 1]);
 				entries.pop_back();
-			}			
+			}
 			else if (result == nullptr)
-			{				
+			{
 				// check whether this is expected entry
-				if (entry.program == program && 
-					entry.vertex_buffer == vertex_buffer && 
-					entry.index_buffer == index_buffer && 
+				if (entry.program == program &&
+					entry.vertex_buffer == vertex_buffer &&
+					entry.index_buffer == index_buffer &&
 					entry.context_window == renderer->GetWindow() &&
 					entry.vertex_buffer_offset == offset)
 				{

@@ -89,7 +89,7 @@ que faire si on veut utiliser autre chose que les DPAD pour les directions
 la safe zone devrait etre configurabl
 
 
--question: 
+-question:
    le SetPath(...) devrait il stocker le path apres redirection ?
 
 
@@ -108,7 +108,7 @@ la safe zone devrait etre configurabl
 
 -TMObject revoir ca. Pas de necessité que cela s'appelle TM (le lien avec TiledMap pourrait peut etre sauter. Resterait un Loader qui utilise TiledMap, point barre)
 
--pb 
+-pb
    {
 	   DI = GetDrawInterface()
 
@@ -146,7 +146,7 @@ VAR=1,2,3   TRUC=MACHIN ...
 on pourrait parser des arguments de ligne de commande (eventuellement avoir des enum automatiquement ...)
 ca pourrait etre utile dans des zone de texte genre TiledMap editor
 
-LPMorph_Circle radius=3  
+LPMorph_Circle radius=3
 
 - revoir StringTools::Split()
 

@@ -50,7 +50,7 @@ namespace chaos
 		if (in_id != 0)
 		{
 			// bad incomming resource
-			if (!glIsBuffer(in_id)) 
+			if (!glIsBuffer(in_id))
 				return false;
 			// get the resource size
 			GLint size = 0;
@@ -65,10 +65,10 @@ namespace chaos
 			ownership = in_ownership;
 		}
 		return true;
-	}		
+	}
 
-	bool GPUBuffer::IsValid() const 
-	{ 
+	bool GPUBuffer::IsValid() const
+	{
 		return (buffer_id != 0);
 	}
 

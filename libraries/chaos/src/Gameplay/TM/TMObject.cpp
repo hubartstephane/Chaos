@@ -271,7 +271,7 @@ namespace chaos
 			return false;
 		if (event_type == CollisionType::FINISHED && !stop_when_collision_over) // ignore FINISHED if you do not want to kill the notification
 			return false;
-		// get some variables 
+		// get some variables
 		Game* game = layer_instance->GetGame();
 		if (game == nullptr)
 			return false;

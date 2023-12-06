@@ -22,12 +22,12 @@ namespace chaos
 			same_value_timer += delta_time;
 	}
 
-	
+
 	bool ButtonState::IsPressed(bool previous_frame) const
 	{
 		return GetValue(previous_frame);
 	}
-	
+
 	bool ButtonState::IsJustPressed() const
 	{
 		return IsPressed(false) && !IsPressed(true);

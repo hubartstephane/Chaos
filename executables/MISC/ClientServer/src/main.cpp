@@ -13,11 +13,11 @@
 #pragma comment (lib, "Mswsock.lib")
 #pragma comment (lib, "AdvApi32.lib")
 
-// 
+//
 // The code misses to include the prototype for inet_ntoa().
-// 
+//
 //     The compiler should have told you this.
-// 
+//
 //     Do add:
 
 //#include <arpa/inet.h>
@@ -125,13 +125,13 @@ void RunServer(char const * url, int port, std::string & output_string)
                             SOCKET client_s = accept(s, NULL, NULL);
                             if (client_s != INVALID_SOCKET)
                             {
-                          
+
                                 struct timeval tv;
                                 tv.tv_usec = 0;
                                 tv.tv_sec  = 7;
 
                                 //result = setsockopt(client_s, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(struct timeval));
-                          
+
                                 DWORD timeout = 3000;
 
                                 result = setsockopt(client_s, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout));
@@ -141,11 +141,11 @@ void RunServer(char const * url, int port, std::string & output_string)
 
                                 char recvbuf[7];
                                 int  recvbuflen = sizeof(recvbuf);
-                                
+
                                 int sum = 0;
 
                                 int count = 0;
-                                do 
+                                do
                                 {
                                     count = recv(client_s, recvbuf, recvbuflen, 0);
 
@@ -177,7 +177,7 @@ void RunServer(char const * url, int port, std::string & output_string)
                                         // WSAETIMEDOUT
 
                                         char * ss = NULL;
-                                        FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, 
+                                        FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
                                             NULL, err,
                                             MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
                                             (LPSTR)&ss, 0, NULL);
@@ -185,7 +185,7 @@ void RunServer(char const * url, int port, std::string & output_string)
                                         LocalFree(ss);
                                     }
 
-  
+
 
 
 
@@ -197,7 +197,7 @@ void RunServer(char const * url, int port, std::string & output_string)
                                     for (int i = 0 ; i < count ; ++i)
                                     {
                                         output_string += recvbuf[i];
-                                        
+
 
                                   //      printf("%c", isprint(recvbuf[i])? recvbuf[i] : '.');
                                   //      if ((sum++) % 50 == 49)
@@ -208,7 +208,7 @@ void RunServer(char const * url, int port, std::string & output_string)
                                         break;
 
                                 } while (count > 1);
-                                
+
                                 closesocket(client_s);
                                 job_done = true;
                             }

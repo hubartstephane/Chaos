@@ -39,7 +39,7 @@ namespace chaos
 			RestrictToInside(world, camera_box, false);
 		// apply camera changes
 		camera->SetCameraBox(camera_box);
-		
+
 		return true;
 	}
 

@@ -22,7 +22,7 @@ namespace chaos
 
 	void CameraComponent::OnRemovedFrom(Camera * in_camera)
 	{
-		assert(in_camera != nullptr);		
+		assert(in_camera != nullptr);
 	}
 
 }; // namespace chaos

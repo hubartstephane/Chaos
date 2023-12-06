@@ -3,7 +3,7 @@
 
 
 // XXX : for Freetype, a glyph in memory is organised up to down
-//   
+//
 // ----------------------------------- pen_y
 //            |
 //            v - bitmap_top
@@ -12,7 +12,7 @@
 // Line 2       +---+
 // Line 3       |   |
 // Line 4       |   |
-// 
+//
 
 namespace chaos
 {
@@ -340,7 +340,7 @@ namespace chaos
 
 					ImageDescription src_desc = FontTools::GetImageDescription(record.bitmap_glyph->bitmap);
 
-					// copy the glyph to dest buffer : invert lines 
+					// copy the glyph to dest buffer : invert lines
 					ImagePixelAccessor<pixel_type>  dst_acc(dst_desc);
 					ImagePixelAccessor<PixelGray> src_acc(src_desc);
 

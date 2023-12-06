@@ -43,7 +43,7 @@ namespace chaos
 				FreeImage_Unload(image);
 				image = nullptr;
 			}
-		}	
+		}
 	}
 
 	void TextureArraySliceGenerator_Image::RegisterSlices(TextureArraySliceRegistry & slice_registry)
@@ -60,7 +60,7 @@ namespace chaos
 			if (image == nullptr)
 				return false;
 			release_image = true;
-		}	
+		}
 		return true;
 	}
 
@@ -140,7 +140,7 @@ namespace chaos
 			if (generators.size() != 0)
 				return nullptr;
 
-		PixelFormat pixel_format = pixel_format_merger.GetResult(); 
+		PixelFormat pixel_format = pixel_format_merger.GetResult();
 		if (!pixel_format.IsValid())
 		{
 			if (generators.size() > 0)
@@ -176,7 +176,7 @@ namespace chaos
 		if (flat_target == GL_NONE)
 			return nullptr;
 
-		// convert to 'array' target 
+		// convert to 'array' target
 		GLenum array_target = GLTextureTools::ToArrayTextureType(flat_target);
 		if (array_target == GL_NONE)
 			return nullptr;
@@ -210,7 +210,7 @@ namespace chaos
 			}
 		}
 		// generate the texture
-		GLuint texture_id = 0;	
+		GLuint texture_id = 0;
 		glCreateTextures(array_target, 1, &texture_id);
 		if (texture_id > 0)
 		{

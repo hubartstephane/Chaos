@@ -60,7 +60,7 @@ namespace chaos
 
 		for (auto m : skeleton_defs)
 			delete(m);
-		skeleton_defs.clear();  
+		skeleton_defs.clear();
 	}
 
 	MyFbxImporterParams::MyFbxImporterParams():
@@ -155,7 +155,7 @@ namespace chaos
 	}
 
 	bool MyFbxImporter::DoImportScene(FbxScene * myScene)
-	{  
+	{
 		if (DoImportSceneSkeletals(myScene))
 			if (DoImportSceneResources(myScene))
 				return DoImportSceneHierarchy(myScene);
@@ -176,7 +176,7 @@ namespace chaos
 				if (character == nullptr)
 					continue;
 				result &= DoImportCharacter(character);
-			}  
+			}
 		}
 
 		// read the character poses
@@ -239,7 +239,7 @@ namespace chaos
 			if (geometry == nullptr)
 				continue;
 			result &= DoImportGeometry(geometry);
-		} 
+		}
 
 		return true;
 	}
@@ -311,7 +311,7 @@ namespace chaos
 		DisplaySceneAnimation(myScene);
 
 		if (params.import_scene_hierarchy)
-		{        
+		{
 			FbxNode * root = myScene->GetRootNode();
 			return DoImportSceneHierarchy(root, 0);
 		}

@@ -32,7 +32,7 @@ namespace chaos
 	glm::mat4 SceneNode::GetWorldToLocal() const
 	{
 		glm::mat4 result = GetParentToLocal();
-		
+
 		SceneNode const * node = parent_node.get();
 		while (node != nullptr)
 		{
@@ -74,7 +74,7 @@ namespace chaos
 		cache_state |= (INVALID_LOCAL_TO_PARENT | INVALID_PARENT_TO_LOCAL);
 	}
 
-	
+
 	void SceneNode::AddChildNode(SceneNode* in_child)
 	{
 		assert(in_child != nullptr);
@@ -82,7 +82,7 @@ namespace chaos
 
 		child_nodes.push_back(in_child);
 	}
-	
+
 	void SceneNode::RemoveChildNode(SceneNode* in_child)
 	{
 		assert(in_child != nullptr);
@@ -105,6 +105,6 @@ namespace chaos
 
 		return 0;
 	}
-	
+
 }; // namespace chaos
 

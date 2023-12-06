@@ -170,7 +170,7 @@ namespace chaos
 				}
 				else
 				{
-					// nop: target is already 0 
+					// nop: target is already 0
 				}
 			}
 
@@ -193,18 +193,18 @@ namespace chaos
 				//         -but more distance to go along X axis than Y
 				//
 				//       X initial position on screen
-				//        .  
+				//        .
 				//         .
 				//          ........X final position on screen
-				//      
+				//
 				//       GOOD interpolation
 				//         -no the same distance along X & Y axis
 				//         -speed is not the same along theses axis so that we have the impression the pawn movement is linear
 				//
 				//       X initial position on screen
-				//        ...  
+				//        ...
 				//           ...
-				//              ..X final position on screen   
+				//              ..X final position on screen
 				{
 					float d1 = std::abs(min_dynamic_safe_zone[0] - target_min_limit[0]);
 					float d2 = std::abs(min_dynamic_safe_zone[1] - target_min_limit[1]);

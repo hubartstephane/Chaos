@@ -78,13 +78,13 @@ namespace chaos
 					glm::ivec2 pos = glm::ivec2(
 						chunk.offset.x + (i % chunk.size.x),
 						chunk.offset.y + (i / chunk.size.x));
-					
+
 					int neighbour_flags = 0;
 					for (int k = 0; k < 4; ++k)
 					{
 						glm::ivec2 neighbour = pos + offsets[k];
 
-						// search first in current chunk 
+						// search first in current chunk
 						Tile neighbour_tile;
 						if (chunk.ContainTile(neighbour))
 							neighbour_tile = chunk.GetTile(neighbour);
@@ -175,7 +175,7 @@ namespace chaos
 					{
 					}
 				}
-				return false;			
+				return false;
 			});
 		}
 
@@ -210,7 +210,7 @@ namespace chaos
 				JSONTools::SetAttribute(json, "custom_flags", custom_flags);
 			return true;
 		}
-		
+
 		bool ComputeCustomFlagProcessor::SerializeFromJSON(JSONReadConfiguration config)
 		{
 			if (!TileFlagProcessor::SerializeFromJSON(config))

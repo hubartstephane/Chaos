@@ -42,7 +42,7 @@ public:
 					chaos::Key dst = chaos::KeyboardLayoutConversion::ConvertKey(src, src_layout, chaos::KeyboardLayoutType::CURRENT);
 
 					ImVec4 color = (src == dst) ?
-						ImVec4{ 1.0f, 1.0f, 1.0f, 1.0f }: 
+						ImVec4{ 1.0f, 1.0f, 1.0f, 1.0f }:
 						ImVec4{ 1.0f, 0.0f, 0.0f, 1.0f };
 
 					ImGui::TextColored(color, "%s (%s) -> %s (current)", src.GetName(), src_layout_name, dst.GetName());
@@ -89,6 +89,6 @@ int main(int argc, char ** argv, char ** env)
 	create_params.width = 800;
 	create_params.height = 800;
 	create_params.monitor_index = 0;
-	 
+
 	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, create_params);
 }

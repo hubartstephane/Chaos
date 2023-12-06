@@ -50,9 +50,9 @@ namespace chaos
 		lua_settable(state, tomt_index);          // consume both KEY and DUPLICATED VALUE
 
 												  // link MT and RuntimeClassID  (MT["ID"] = ID)
-		lua_pushstring(state, ID_KEY);            // KEY 
+		lua_pushstring(state, ID_KEY);            // KEY
 		lua_pushlightuserdata(state, (void*)ID);  // VALUE
-		lua_settable(state, -3); 
+		lua_settable(state, -3);
 	}
 
 	void LuaBinding::GetMT(InheritanceIntrospection::ClassRuntimeID ID) // leave the MT on the stack
@@ -109,7 +109,7 @@ namespace chaos
 
 			lua_pop(state, 1); // remove the metatable
 		}
-		return result;  
+		return result;
 	};
 
 

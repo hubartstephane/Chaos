@@ -412,7 +412,7 @@ namespace chaos
 				if (!first_line)
 					file << ",\n";
 
-				file << "  { 0x" << std::hex << std::uppercase << std::setw(3) << std::setfill('0') << scancode_info.scancode 
+				file << "  { 0x" << std::hex << std::uppercase << std::setw(3) << std::setfill('0') << scancode_info.scancode
 					 << ", 0x" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << scancode_info.vk
 					 << ", \"" << scancode_info.name << "\"}";
 				first_line = false;
@@ -501,7 +501,7 @@ namespace chaos
 				// this happens for
 				//   ESCAPE + extended flag
 				//   BACKSPACE + extended flag
-				//   TAB 
+				//   TAB
 				for (size_t i = 0; i < new_scancode_info.name.length(); ++i)
 					if (new_scancode_info.name[i] < 32) // 32 is SPACE. characters before are specials
 						new_scancode_info.name = {}; // this stop the iteration and reset the name below
@@ -562,7 +562,7 @@ namespace chaos
 			cached_layout = Collect(true);
 		return cached_layout.value();
 	}
-	
+
 	void KeyboardLayout::InvalidateCachedLayout()
 	{
 		GetCachedLayout().reset();

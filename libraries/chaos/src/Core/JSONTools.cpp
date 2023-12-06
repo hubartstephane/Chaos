@@ -52,7 +52,7 @@ namespace chaos
 			//   -""       is NOT a valid key
 			//   -"A/B//C" is a valid key
 			//   -"///"    is NOT a valid key
-			int count = 0; 
+			int count = 0;
 
 			StringTools::WithSplittedText(path, "/", [&node, &count](char const* subkey)
 			{
@@ -174,11 +174,11 @@ namespace chaos
 		nlohmann::json* GetOrCreateObjectNode(nlohmann::json * json, std::string_view path)
 		{
 			if (nlohmann::json* result = GetOrCreateNode(json, path))
-			{				
+			{
 				if (result->is_null())
 					*result = nlohmann::json::object();
 				if (result->is_object())
-					return result;			
+					return result;
 			}
 			return nullptr;
 		}
@@ -338,7 +338,7 @@ namespace chaos
 		{
 			if (json == nullptr)
 				return false;
-			
+
 			std::ofstream stream(path.GetResolvedPath().c_str());
 			if (stream)
 			{

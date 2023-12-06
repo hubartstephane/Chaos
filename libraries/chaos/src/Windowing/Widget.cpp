@@ -23,7 +23,7 @@ namespace chaos
 
 	AutoCastable<Window> Widget::GetWindow()
 	{
-		Widget* widget = this; // do not point to parent so that this function is working for WindowRootWidget 
+		Widget* widget = this; // do not point to parent so that this function is working for WindowRootWidget
 		while (widget != nullptr)
 		{
 			if (WindowRootWidget* root_widget = auto_cast(widget))
@@ -35,7 +35,7 @@ namespace chaos
 
 	AutoConstCastable<Window> Widget::GetWindow() const
 	{
-		Widget const* widget = this; // do not point to parent so that this function is working for WindowRootWidget 
+		Widget const* widget = this; // do not point to parent so that this function is working for WindowRootWidget
 		while (widget != nullptr)
 		{
 			if (WindowRootWidget const* root_widget = auto_cast(widget))
@@ -136,7 +136,7 @@ namespace chaos
 					return result;
 		return nullptr;
 	}
-	
+
 	AutoConstCastable<Widget> Widget::FindDescendantWidget(ObjectRequest request) const
 	{
 		if (Widget const* result = FindChildWidget(request))

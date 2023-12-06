@@ -8,9 +8,9 @@ namespace chaos
 	static std::vector<std::pair<int, std::function<void()>>> & GetPendingPremainCalls()
 	{
 		static std::vector<std::pair<int, std::function<void()>>> result;
-		return result;	
+		return result;
 	}
-	
+
 	bool RegisterPremainCode(int order, std::function<void()> func)
 	{
 		auto & pending_premain_calls = GetPendingPremainCalls();

@@ -138,7 +138,7 @@ namespace chaos
 		if (name != nullptr)
 			info.name = name;
 		// compute size if required
-		if (size == glm::ivec2(0, 0)) 
+		if (size == glm::ivec2(0, 0))
 		{
 			glm::ivec2 new_size = glm::ivec2(0, 0);
 			if (info.texture != nullptr)

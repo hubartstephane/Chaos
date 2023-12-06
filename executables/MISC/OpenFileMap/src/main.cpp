@@ -48,7 +48,7 @@ int main(int argc, char ** argv, char ** env)
                     {
                         boost::timer::cpu_timer t1;
 
-                        char sum = 0;                   
+                        char sum = 0;
                         for (DWORD j = 0 ; j < FileSizeLow ; ++j)
                             sum += ((char*)pBuffer)[j];
 
@@ -58,7 +58,7 @@ int main(int argc, char ** argv, char ** env)
                     {
                         boost::timer::cpu_timer t2;
 
-                        char sum = 0; 
+                        char sum = 0;
                         for (DWORD j = 0 ; j < FileSizeLow ; ++j)
                             sum += ((char*)pBuffer)[j];
 
@@ -70,7 +70,7 @@ int main(int argc, char ** argv, char ** env)
                     std::string str = timer.format();
                     std::cout << timer.format() << std::endl;
 
-                    MessageBoxA(NULL, str.c_str(), "Timer", MB_OK); 
+                    MessageBoxA(NULL, str.c_str(), "Timer", MB_OK);
 
                     UnmapViewOfFile(pBuffer);
                 }
@@ -96,7 +96,7 @@ int main(int argc, char ** argv, char ** env)
         LPVOID lpMsgBuf = NULL;
 
         FormatMessage(
-            FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+            FORMAT_MESSAGE_ALLOCATE_BUFFER |
             FORMAT_MESSAGE_FROM_SYSTEM |
             FORMAT_MESSAGE_IGNORE_INSERTS,
             NULL,
@@ -106,7 +106,7 @@ int main(int argc, char ** argv, char ** env)
             0, NULL );
 
         if (lpMsgBuf != NULL)
-            MessageBox(NULL, (LPCTSTR)lpMsgBuf, TEXT("Error"), MB_OK); 
+            MessageBox(NULL, (LPCTSTR)lpMsgBuf, TEXT("Error"), MB_OK);
 
     }
 

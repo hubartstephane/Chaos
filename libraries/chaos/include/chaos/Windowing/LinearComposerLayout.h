@@ -22,7 +22,7 @@ namespace chaos
 	/**
 	 * LinearComposerLayoutFillMode: indicates how child widgets should use available size
 	 */
-	 
+
 	//          max = 6
 	// <----------------------->
 	// +-----+-----+-----+-----+
@@ -40,7 +40,7 @@ namespace chaos
 	// +---+---+---+---+---+---+
 	// |   |   | X | X | X | X | UNIFORM_PACKED_REVERSED: all cells have same size. there are packed alltogether in insertion direction
 	// +---+---+---+---+---+---+
-	// 
+	//
 	//          max = 6
 	// <----------------------->
 	// +---+---+---+---+---+---+

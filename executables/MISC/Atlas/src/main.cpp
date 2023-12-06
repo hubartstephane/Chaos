@@ -109,7 +109,7 @@ void TestAtlasNormalMode(boost::filesystem::path const & dest_p, boost::filesyst
 	// XXX : the resources directory contains
 	//        - a bmp image whose extension has been swapped to ".txt" => detected has an image
 	//        - a text file                                            => not detected has an image
-	// correct behavior 
+	// correct behavior
 
 	chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(512, 512, ATLAS_PADDING, merge_params);
 
@@ -132,7 +132,7 @@ protected:
 	{
 
 
-		
+
 
 #if 0
 

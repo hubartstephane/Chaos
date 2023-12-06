@@ -14,7 +14,7 @@
 
 // ca serait bien que dans
 //
-//    TMLayerInstance::CreateObjectParticles(...) 
+//    TMLayerInstance::CreateObjectParticles(...)
 //
 // on puisse recuperer les particules que l on vient de creer pour faire notre petite ttambouille ... pb : on utilise un cache de particles (et en plus elles sont typées en TMParticle : aie)
 //
@@ -28,7 +28,7 @@
 
 //
 // maybe review CheckCompletedLevel/ CanCompleteLevel / CheckGameOverCondition
-// 
+//
 
 
 // Make ParticleTraits inherit one another / Particles inherit
@@ -53,11 +53,11 @@
 //
 //
 // J ai ajouté une bordure redondante dans l atlas, pour eciter que les access textures n interpolent sur une ligne/colonne de padding.
-// C'est pas une bonne idée. 
+// C'est pas une bonne idée.
 // Les lettres ont cette ligne qui bave (<== a verifier)
 //
 // en revanche pour les images grille   mybitmap_3x4 par exemple, cette bordure n exite pas donc on retombe sur le probleme
-// 
+//
 
 
 // revoir les collisions

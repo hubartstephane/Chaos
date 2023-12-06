@@ -1,4 +1,4 @@
-#include "chaos/Chaos.h" 
+#include "chaos/Chaos.h"
 #include "PrimitiveRenderer.h"
 
 static glm::vec4 const solid = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -13,7 +13,7 @@ bool PrimitiveRenderer::Initialize()
 	// compute resource path
 	boost::filesystem::path resources_path = application->GetResourcesPath();
 
-	// load programs      
+	// load programs
 	program_common = LoadProgram(resources_path, "pixel_shader.txt", "vertex_shader_common.txt");
 	if (program_common == nullptr)
 		return false;
@@ -129,9 +129,9 @@ void PrimitiveRenderer::GPUDrawPrimitive(chaos::triangle3 const & t, glm::vec4 c
 	);
 	glEnable(GL_CULL_FACE);
 }
-	
+
 void PrimitiveRenderer::GPUDrawPrimitive(chaos::triangle2 const & t, glm::vec4 const & color, bool is_translucent) const
-{	
+{
 	chaos::triangle3 t3;
 	t3.a = glm::vec3(t.a.x, t.a.y, 0.0f);
 	t3.b = glm::vec3(t.b.x, t.b.y, 0.0f);
@@ -231,7 +231,7 @@ void PrimitiveRenderer::GPUDrawPrimitive(chaos::obox3 const & b, glm::vec4 const
 		color,
 		local_to_world,
 		is_translucent
-	);	
+	);
 }
 
 void PrimitiveRenderer::GPUDrawPrimitive(chaos::obox2 const & b, glm::vec4 const & color, bool is_translucent) const

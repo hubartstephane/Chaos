@@ -57,9 +57,9 @@ namespace chaos
 				result = result.c_str() + 1; // skip the first
 				return true;
 			}
-			
+
 			constexpr std::string_view SCRIPT_PATH_MARKUP = "$SCRIPT_PATH";
-			
+
 			if (StringTools::Strnicmp(result, SCRIPT_PATH_MARKUP.data(), SCRIPT_PATH_MARKUP.length()) == 0)
 			{
 				FilePathParam replacement_path(result.c_str() + SCRIPT_PATH_MARKUP.length(), entry->path);

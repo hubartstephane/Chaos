@@ -179,7 +179,7 @@ namespace chaos
 				{
 					min_position = glm::min(min_position, p);
 					max_position = glm::max(max_position, p);
-				}			
+				}
 
 
 
@@ -330,8 +330,8 @@ namespace chaos
 		//
 		//       -the PROPERTY_MAP of the object
 		//       -the TYPE1 of the object
-		//       -the TILE_DATA 
-		//           -PROPERTY_MAP 
+		//       -the TILE_DATA
+		//           -PROPERTY_MAP
 		//           -TYPE2 (that may differ from TYPE1)
 		//
 		//       the PROPERTY_MAP of the object is obviously the very first place where to look at for a property (while it is the finer customization we can do)

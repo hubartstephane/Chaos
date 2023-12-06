@@ -28,7 +28,7 @@ namespace chaos
 	}
 
 	void ParticleManager::DoAddLayer(ParticleLayerBase * layer, int render_order, ObjectRequest layer_id)
-	{        		
+	{
         layer->particle_manager = this;
 		layer->SetObjectNaming(layer_id);
         layer->SetTextureAtlas(atlas.get());

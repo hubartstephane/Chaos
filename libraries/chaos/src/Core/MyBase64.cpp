@@ -4,7 +4,7 @@
 namespace chaos
 {
 
-	bool MyBase64::IsBase64(unsigned char c) 
+	bool MyBase64::IsBase64(unsigned char c)
 	{
 		return (isalnum(c) || (c == '+') || (c == '/'));
 	}
@@ -15,10 +15,10 @@ namespace chaos
 	//       we split input into groups of 3 bytes [0-255]
 	//       we can see 3 bytes as
 	//          => 3 x 8 = 24 bits (normal)
-	//          => 4 x 6 = 24 bits (encoded) 
+	//          => 4 x 6 = 24 bits (encoded)
 	//
 	//       6 bits = 64 values. we use a map with 64 alpha numerical characters
-	//	
+	//
 	void MyBase64::EncodeBuffer(unsigned char const * char_array_3, unsigned char * char_array_4)
 	{
 		char_array_4[0] = ((char_array_3[0] & 0xfc) >> 2);
@@ -43,11 +43,11 @@ namespace chaos
 		unsigned char char_array_4[4];
 		int tmp = 0;
 
-		for (size_t i = 0 ; i < src.bufsize ; ++i) 
+		for (size_t i = 0 ; i < src.bufsize ; ++i)
 		{
 			char_array_3[tmp++] = src.data[i];
-			if (tmp == 3) 
-			{			
+			if (tmp == 3)
+			{
 				EncodeBuffer(char_array_3, char_array_4);
 				for (int k = 0 ; k < 4 ; ++k)
 					result += base64_chars[char_array_4[k]]; // flush the buffer
@@ -94,7 +94,7 @@ namespace chaos
 
 			// replace incomming byte by its index and pack it
 			char_array_4[tmp++] = (unsigned char)(strchr(base64_chars, c) - base64_chars);
-			if (tmp == 4) 
+			if (tmp == 4)
 			{
 				DecodeBuffer(char_array_4, char_array_3);
 				for (int k = 0 ; k < 3 ; ++k)

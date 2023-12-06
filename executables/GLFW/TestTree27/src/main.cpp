@@ -225,7 +225,7 @@ protected:
 	{
 		glm::vec4 clear_color(0.0f, 0.7f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
-		
+
 		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
 		glEnable(GL_DEPTH_TEST);
@@ -385,7 +385,7 @@ protected:
 				color = red;
 			else if (geometric_object == GetCurrentGeometricObject())
 				color = blue;
-			
+
 			geometric_object->DrawPrimitive(primitive_renderer.get(), color);
 		}
 	}
@@ -440,7 +440,7 @@ protected:
 		move_icon_texture = nullptr;
 		scale_icon_texture = nullptr;
 		rotate_icon_texture = nullptr;
-		
+
 		primitive_renderer = nullptr;
 		chaos::Window::Finalize();
 	}
@@ -475,7 +475,7 @@ protected:
 		fps_view_controller.config.up_speed = CAMERA_SPEED;
 		fps_view_controller.config.forward_speed = CAMERA_SPEED;
 		fps_view_controller.config.strafe_speed = CAMERA_SPEED;
-		
+
 		fps_view_controller.fps_view.position.y = 30.0f;
 		// create the very single sphere
 		chaos::box3 creation_box;
@@ -625,7 +625,7 @@ protected:
 					if (geometric_objects.size() == 0)
 						current_object_index.reset();
 					else
-						current_object_index = (current_object_index.value() == 0)? 0 : (current_object_index.value() - 1); // while there is always at least one object in the array, this is always valid				
+						current_object_index = (current_object_index.value() == 0)? 0 : (current_object_index.value() - 1); // while there is always at least one object in the array, this is always valid
 				}
 
 				return true;
@@ -731,7 +731,7 @@ protected:
 
 	virtual bool DoTick(float delta_time) override
 	{
-		
+
 		ImGuiIO& io = ImGui::GetIO();
 		if (!io.WantCaptureMouse && !io.WantCaptureKeyboard)
 		{

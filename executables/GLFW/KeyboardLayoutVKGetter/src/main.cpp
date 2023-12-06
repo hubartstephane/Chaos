@@ -27,16 +27,16 @@ public:
 	virtual LRESULT OnCreate(CREATESTRUCTA* create_param) override
 	{
 		hFont = CreateFont(
-			30, 0, 0, 0, 
-			FW_DONTCARE, 
-			FALSE, 
-			FALSE, 
-			FALSE, 
-			ANSI_CHARSET, 
-			OUT_DEFAULT_PRECIS, 
-			CLIP_DEFAULT_PRECIS, 
-			DEFAULT_QUALITY, 
-			DEFAULT_PITCH | FF_SWISS, 
+			30, 0, 0, 0,
+			FW_DONTCARE,
+			FALSE,
+			FALSE,
+			FALSE,
+			ANSI_CHARSET,
+			OUT_DEFAULT_PRECIS,
+			CLIP_DEFAULT_PRECIS,
+			DEFAULT_QUALITY,
+			DEFAULT_PITCH | FF_SWISS,
 			"Arial");
 
 		return 0;

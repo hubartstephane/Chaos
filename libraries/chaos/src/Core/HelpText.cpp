@@ -30,7 +30,7 @@ namespace chaos
 		}
 
 		void OutputToLogs()
-		{	
+		{
 			Log::BeginTransaction(LogType::Message);
 
 			std::map<std::string, std::vector<std::string>> & message_map = GetMessageMap();

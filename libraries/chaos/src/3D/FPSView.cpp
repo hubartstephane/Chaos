@@ -9,8 +9,8 @@
 //      |
 //      |
 //      +-------> X
-//     / 
-//    / 
+//     /
+//    /
 //   L Z
 //
 // The eye is located along +Z and looking to the -Z direction
@@ -26,7 +26,7 @@ namespace chaos
 	}
 
 	void FPSView::GoForward(float value)
-	{ 
+	{
 		GoBackward(-value);
 	}
 
@@ -42,7 +42,7 @@ namespace chaos
 	}
 
 	void FPSView::StrafeLeft(float value)
-	{ 
+	{
 		StrafeRight(-value);
 	}
 
@@ -78,7 +78,7 @@ namespace chaos
 
 	glm::mat4 FPSView::GlobalToLocal() const
 	{
-		return  
+		return
 			glm::rotate(- MathTools::DegreeToRadian(roll),  glm::vec3(0.0f, 0.0f, 1.0f)) *
 			glm::rotate(- MathTools::DegreeToRadian(pitch), glm::vec3(1.0f, 0.0f, 0.0f)) *
 			glm::rotate(- MathTools::DegreeToRadian(yaw),   glm::vec3(0.0f, 1.0f, 0.0f)) *
@@ -87,9 +87,9 @@ namespace chaos
 
 	glm::mat4 FPSView::LocalToGlobal() const
 	{
-		return 
+		return
 			glm::translate(position) *
-			glm::yawPitchRoll(MathTools::DegreeToRadian(yaw), MathTools::DegreeToRadian(pitch), MathTools::DegreeToRadian(roll));   
+			glm::yawPitchRoll(MathTools::DegreeToRadian(yaw), MathTools::DegreeToRadian(pitch), MathTools::DegreeToRadian(roll));
 	}
 
 }; // namespace chaos

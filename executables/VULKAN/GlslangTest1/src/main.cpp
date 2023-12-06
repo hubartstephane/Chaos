@@ -9,7 +9,7 @@
 char const * pixel_shader_source= R"SHADER_SOURCE(
 
 	#version 450
-	
+
 	layout(location = 0) out vec4 outColor;
 
 	void main()
@@ -41,14 +41,14 @@ int main(int argc, char ** argv, char ** env)
 		.target_language = GLSLANG_TARGET_SPV,
 		.target_language_version = GLSLANG_TARGET_SPV_1_5,
 
-		//.client = GLSLANG_CLIENT_OPENGL,		
+		//.client = GLSLANG_CLIENT_OPENGL,
 		//.client_version = GLSLANG_TARGET_OPENGL_450,
 		// .target_language = GLSLANG_TARGET_SPV,
 		//.target_language_version = GLSLANG_TARGET_SPV_1_0,
 
 
 
-		
+
 
 		.code = pixel_shader_source,
 		.default_version = 100,
@@ -128,7 +128,7 @@ int main(int argc, char ** argv, char ** env)
 		auto* bbb = glslang_program_get_info_debug_log(program);
 
 
-		
+
 		if (char const * spirv_messages = glslang_program_SPIRV_get_messages(program))
 		{
 			spirv_messages = spirv_messages;

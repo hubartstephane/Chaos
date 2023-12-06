@@ -33,7 +33,7 @@ namespace chaos
 	{
 		return ConfigurableInterface::OnConfigurationChanged(config);
 	}
-	
+
 	bool Player::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
 	{
 		CHAOS_JSON_ATTRIBUTE(config, life_count);
@@ -85,7 +85,7 @@ namespace chaos
 	}
 
 	bool Player::DoTick(float delta_time)
-	{	
+	{
 		// remove previous frame cached input
 		ResetCachedInputs();
 		// cache values for stick displacement
@@ -172,7 +172,7 @@ namespace chaos
 		if (gamepad_state == nullptr)
 			return;
 		// change the application mode
-		if (gamepad_state->IsAnyAction())			
+		if (gamepad_state->IsAnyAction())
 			SetInputMode(InputMode::GAMEPAD);
 
 		// cache the LEFT stick position (it is aliases with the DPAD)
@@ -225,7 +225,7 @@ namespace chaos
 		if (increment)
 			score += in_score;
 		else
-			score = in_score;	
+			score = in_score;
 	}
 
 	void Player::SetLifeCount(int in_life, bool increment)
@@ -284,7 +284,7 @@ namespace chaos
 
     void Player::SetHealth(float in_value, bool in_increment)
     {
-        // compute new life 
+        // compute new life
         float old_health = health;
         float new_health = health;
 

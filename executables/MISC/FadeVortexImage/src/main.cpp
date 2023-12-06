@@ -56,7 +56,7 @@ protected:
 	// A B C C B A
 	// A B B B B A
 	// A A A A A A
-	// 	
+	//
 	// for a given the layer the element fade according to their category
 	// this create a smooth animation
 	//
@@ -235,19 +235,19 @@ protected:
 		glm::ivec2 cell = chaos::RecastVector<glm::vec2>(pos / cell_size);
 
 		// 9 adjacent cells -> 9 values considered -> 9 distances with the center of the cells
-		//		 
+		//
 		// the value of the point is an 'average' of all the 9 values
 		// => the difficulty for this is that whenever a point is exactly at the center, the distance is the smallest and the influence must be the greatest (unlike normal average)
 		//
 		// => solution with an example (for a 4 cells)
 		//
-		// VALUE = 
-		//   v1.(d2.d3.d4)/SUM + 
+		// VALUE =
+		//   v1.(d2.d3.d4)/SUM +
 		//   V2.(d1.d3.d4)/SUM +   where SUM = (d2.d3.d4) + (d1.d3.d4) + (d1.d2.d3) + (d2.d3.d4)
 		//   V3.(d1.d2.d4)/SUM +
 		//   V4.(d1.d2.d3)/SUM
 		//
-		// With such a solution, whenever on distance is 0, all other factors are zeroed 
+		// With such a solution, whenever on distance is 0, all other factors are zeroed
 		// => the only cell value considered is the one for which the distance is 0
 		// => the sum of all coefficients are 0
 		//
@@ -339,13 +339,13 @@ protected:
 		float beta = std::atan2(diag.y, diag.x);
 
 		// considering the ellipse contained by the rectangle
-		// it is described by 
+		// it is described by
 		//
 		// | cos(t). W/2
-		// | 
+		// |
 		// | sin(t). H/2
-		// 
-		// for t = beta, its length is				
+		//
+		// for t = beta, its length is
 		glm::vec2 d = diag * glm::vec2(std::cos(beta), std::sin(beta));
 
 		float d_length = glm::length(d);

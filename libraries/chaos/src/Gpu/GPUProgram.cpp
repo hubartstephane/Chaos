@@ -4,7 +4,7 @@
 namespace chaos
 {
 
-	GPUProgram::GPUProgram(GLuint in_id, GPUProgramType in_type): 
+	GPUProgram::GPUProgram(GLuint in_id, GPUProgramType in_type):
 		program_id(in_id),
 		type(in_type)
 	{
@@ -38,7 +38,7 @@ namespace chaos
 	}
 
 	GPURenderMaterial* GPUProgram::GetDefaultMaterial() const
-	{ 
+	{
 		return default_material.get();
 	}
 

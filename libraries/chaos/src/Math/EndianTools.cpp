@@ -11,11 +11,11 @@ namespace chaos
 
 			unsigned char lsb = ((unsigned char const *)&tmp)[0];
 
-			return (lsb == 0xFF);	
+			return (lsb == 0xFF);
 		}
 
 		bool IsHostBigEndian()
-		{ 
+		{
 			return !IsHostLittleEndian();
 		}
 
@@ -23,7 +23,7 @@ namespace chaos
 		{
 			uint16_t result = 0;
 			((unsigned char *)&result)[0] = ((unsigned char const *)&src)[1];
-			((unsigned char *)&result)[1] = ((unsigned char const *)&src)[0];	
+			((unsigned char *)&result)[1] = ((unsigned char const *)&src)[0];
 			return result;
 		}
 
@@ -31,7 +31,7 @@ namespace chaos
 		{
 			int16_t result = 0;
 			((unsigned char *)&result)[0] = ((unsigned char const *)&src)[1];
-			((unsigned char *)&result)[1] = ((unsigned char const *)&src)[0];	
+			((unsigned char *)&result)[1] = ((unsigned char const *)&src)[0];
 			return result;
 		}
 
@@ -41,7 +41,7 @@ namespace chaos
 			((unsigned char *)&result)[0] = ((unsigned char const *)&src)[3];
 			((unsigned char *)&result)[1] = ((unsigned char const *)&src)[2];
 			((unsigned char *)&result)[2] = ((unsigned char const *)&src)[1];
-			((unsigned char *)&result)[3] = ((unsigned char const *)&src)[0];	
+			((unsigned char *)&result)[3] = ((unsigned char const *)&src)[0];
 			return result;
 		}
 
@@ -51,7 +51,7 @@ namespace chaos
 			((unsigned char *)&result)[0] = ((unsigned char const *)&src)[3];
 			((unsigned char *)&result)[1] = ((unsigned char const *)&src)[2];
 			((unsigned char *)&result)[2] = ((unsigned char const *)&src)[1];
-			((unsigned char *)&result)[3] = ((unsigned char const *)&src)[0];	
+			((unsigned char *)&result)[3] = ((unsigned char const *)&src)[0];
 			return result;
 		}
 
@@ -61,7 +61,7 @@ namespace chaos
 			((unsigned char *)&result)[0] = ((unsigned char const *)&src)[7];
 			((unsigned char *)&result)[1] = ((unsigned char const *)&src)[6];
 			((unsigned char *)&result)[2] = ((unsigned char const *)&src)[5];
-			((unsigned char *)&result)[3] = ((unsigned char const *)&src)[4];	
+			((unsigned char *)&result)[3] = ((unsigned char const *)&src)[4];
 			((unsigned char *)&result)[4] = ((unsigned char const *)&src)[3];
 			((unsigned char *)&result)[5] = ((unsigned char const *)&src)[2];
 			((unsigned char *)&result)[6] = ((unsigned char const *)&src)[1];
@@ -75,7 +75,7 @@ namespace chaos
 			((unsigned char *)&result)[0] = ((unsigned char const *)&src)[7];
 			((unsigned char *)&result)[1] = ((unsigned char const *)&src)[6];
 			((unsigned char *)&result)[2] = ((unsigned char const *)&src)[5];
-			((unsigned char *)&result)[3] = ((unsigned char const *)&src)[4];	
+			((unsigned char *)&result)[3] = ((unsigned char const *)&src)[4];
 			((unsigned char *)&result)[4] = ((unsigned char const *)&src)[3];
 			((unsigned char *)&result)[5] = ((unsigned char const *)&src)[2];
 			((unsigned char *)&result)[6] = ((unsigned char const *)&src)[1];
@@ -89,7 +89,7 @@ namespace chaos
 			((unsigned char *)&result)[0] = ((unsigned char const *)&src)[3];
 			((unsigned char *)&result)[1] = ((unsigned char const *)&src)[2];
 			((unsigned char *)&result)[2] = ((unsigned char const *)&src)[1];
-			((unsigned char *)&result)[3] = ((unsigned char const *)&src)[0];	
+			((unsigned char *)&result)[3] = ((unsigned char const *)&src)[0];
 			return result;
 		}
 
@@ -99,7 +99,7 @@ namespace chaos
 			((unsigned char *)&result)[0] = ((unsigned char const *)&src)[7];
 			((unsigned char *)&result)[1] = ((unsigned char const *)&src)[6];
 			((unsigned char *)&result)[2] = ((unsigned char const *)&src)[5];
-			((unsigned char *)&result)[3] = ((unsigned char const *)&src)[4];	
+			((unsigned char *)&result)[3] = ((unsigned char const *)&src)[4];
 			((unsigned char *)&result)[4] = ((unsigned char const *)&src)[3];
 			((unsigned char *)&result)[5] = ((unsigned char const *)&src)[2];
 			((unsigned char *)&result)[6] = ((unsigned char const *)&src)[1];

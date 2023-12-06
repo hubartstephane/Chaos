@@ -55,7 +55,7 @@ void LoadBitmaps(std::vector<FIBITMAP*> & atlas_bitmaps)
 	{
 		FIBITMAP * bitmap = chaos::ImageTools::LoadImageFromFile(p);
 		if (bitmap != nullptr)
-			atlas_bitmaps.push_back(bitmap);	
+			atlas_bitmaps.push_back(bitmap);
 		return false; // do not stop
 	});
 }

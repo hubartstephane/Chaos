@@ -19,18 +19,18 @@ namespace chaos
 
 	void GPUProgramGenerator::AddFrameworkSources(ShaderType shader_type, std::vector<char const*> & sources, std::vector<Buffer<char>> & buffers) const
 	{
-		// XXX : this must be the very first line of the program. 
-		//       do it here and not in files because it would be difficult to insert macro just after elsewhere    
+		// XXX : this must be the very first line of the program.
+		//       do it here and not in files because it would be difficult to insert macro just after elsewhere
 		sources.push_back("#version 450\n");
 
-		// some flags for each vertex of a particle. Usefull for Half pixel correction 
+		// some flags for each vertex of a particle. Usefull for Half pixel correction
 		sources.push_back(R"SHARED_SHADER(
 		const int BOTTOM_LEFT  = 1;
 		const int BOTTOM_RIGHT = 2;
 		const int TOP_LEFT     = 3;
-		const int TOP_RIGHT    = 4;		
+		const int TOP_RIGHT    = 4;
 		const int CORNER_MASK  = 7;
-		const int EIGHT_BITS_MODE = (1 << 4);			
+		const int EIGHT_BITS_MODE = (1 << 4);
 		)SHARED_SHADER");
 
 		// some functions to extract flags from the Z component of texcoord and apply half pixel correction
@@ -38,10 +38,10 @@ namespace chaos
 		vec2 GetHalfPixelCorrectionOffset(int flags)
 		{
 			// only values 1, 2, 3 and 4 are valid corners
-			vec2 offsets[8] = 
+			vec2 offsets[8] =
 			{
 				vec2( 0.0,  0.0),
-				vec2(+1.0, +1.0), 
+				vec2(+1.0, +1.0),
 				vec2(-1.0, +1.0),
 				vec2(+1.0, -1.0),
 				vec2(-1.0, -1.0),
@@ -49,7 +49,7 @@ namespace chaos
 				vec2( 0.0,  0.0),
 				vec2( 0.0,  0.0)
 			};
-			return offsets[flags & CORNER_MASK]; 
+			return offsets[flags & CORNER_MASK];
 		}
 		vec3 HalfPixelCorrection(vec3 texcoord, int flags, sampler2DArray material)
 		{
@@ -92,7 +92,7 @@ namespace chaos
 			Log::Error("Shader compilation failure : %s", log_buffer);
 		}
 		glDeleteShader(result);
-		
+
 		return 0;
 	}
 
@@ -100,14 +100,14 @@ namespace chaos
 	{
 		bool success = false;
 
-		// shared generators 
+		// shared generators
 		GeneratorSet const * global_generators = nullptr;
 
 		std::map<ShaderType, GeneratorSet>::const_iterator global_generators_it = shaders.find(ShaderType::ANY);
 		if (global_generators_it != shaders.cend())
 			global_generators = &global_generators_it->second;
 
-		// store the 'strings' in one array 
+		// store the 'strings' in one array
 		// store the 'buffers' in a second one
 		//  => we do not want the generated strings to becomes invalid due to buffer destruction
 		//     the second buffer helps us keep the string valid.
@@ -198,7 +198,7 @@ namespace chaos
 	{
 		std::string result;
 
-		// reserve a raisonable amount of memory 
+		// reserve a raisonable amount of memory
 		size_t size = 0;
 		for (auto const & d : definitions)
 			size += d.first.length();
@@ -264,7 +264,7 @@ namespace chaos
 
 
 
-		
+
 
 
 		}

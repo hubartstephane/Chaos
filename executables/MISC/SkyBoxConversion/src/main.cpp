@@ -6,7 +6,7 @@
 
 void TestConvertToSingle(boost::filesystem::path const & dst_p, boost::filesystem::path const & p, bool horizontal)
 {
-	boost::filesystem::path left_image   = p / "negx.jpg";  
+	boost::filesystem::path left_image   = p / "negx.jpg";
 	boost::filesystem::path front_image  = p / "posz.jpg";
 	boost::filesystem::path right_image  = p / "posx.jpg";
 	boost::filesystem::path back_image   = p / "negz.jpg";
@@ -16,7 +16,7 @@ void TestConvertToSingle(boost::filesystem::path const & dst_p, boost::filesyste
 	chaos::SkyBoxImages multiple_sky_box = chaos::SkyBoxTools::LoadMultipleSkyBox(left_image, right_image, top_image, bottom_image, front_image, back_image);
 	if (multiple_sky_box.IsMultipleImage())
 	{
-		static glm::vec4 back_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f); 
+		static glm::vec4 back_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
 		chaos::SkyBoxImages single_sky_box = multiple_sky_box.ToSingleImage(horizontal, back_color, chaos::PixelFormatMergeParams());
 		if (single_sky_box.IsSingleImage())
@@ -28,7 +28,7 @@ void TestConvertToSingle(boost::filesystem::path const & dst_p, boost::filesyste
 					dst_p / "ConvertToSingle_Horiz.png":
 					dst_p / "ConvertToSingle_Vert.png";
 				FreeImage_Save(FIF_PNG ,image, dst.string().c_str(), 0);
-			}        
+			}
 		}
 	}
 }
@@ -45,12 +45,12 @@ void TestConvertToMultiple(boost::filesystem::path const & dst_p, boost::filesys
 		chaos::SkyBoxImages multiple_sky_box = single_sky_box.ToMultipleImages();
 		if (multiple_sky_box.IsMultipleImage())
 		{
-			char const * left_image   = "negx.png";  
+			char const * left_image   = "negx.png";
 			char const * front_image  = "posz.png";
 			char const * right_image  = "posx.png";
 			char const * back_image   = "negz.png";
 			char const * top_image    = "posy.png";
-			char const * bottom_image = "negy.png"; 
+			char const * bottom_image = "negy.png";
 
 			for (int i = (int)chaos::SkyBoxImageType::IMAGE_LEFT ; i <= (int)chaos::SkyBoxImageType::IMAGE_BACK ; ++i)
 			{
@@ -73,9 +73,9 @@ void TestConvertToMultiple(boost::filesystem::path const & dst_p, boost::filesys
 					else if (Type == chaos::SkyBoxImageType::IMAGE_BACK)
 						suffix = back_image;
 
-					std::string filename = chaos::StringTools::Printf("%s_%s", dst_filename, suffix);         
+					std::string filename = chaos::StringTools::Printf("%s_%s", dst_filename, suffix);
 					FreeImage_Save(FIF_PNG ,image, (dst_p / filename).string().c_str(), 0);
-				} 
+				}
 			}
 		}
 	}

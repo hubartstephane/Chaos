@@ -15,7 +15,7 @@ namespace chaos
 	bool GameApplication::PostOpenGLContextCreation()
 	{
 		assert(glfwGetCurrentContext() == shared_context);
-		 
+
 		// create the game
 		game = game_class.CreateInstance();
 		if (game == nullptr)

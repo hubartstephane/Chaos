@@ -53,7 +53,7 @@
 //F:\Personnel\Programmation\external\VulkanSDK\1.2.162.0\Bin\glslc.exe shader.vert -o vert.spv -mfmt=c
 //F:\Personnel\Programmation\external\VulkanSDK\1.2.162.0\Bin\glslc.exe shader.frag -o frag.spv -mfmt=c
 
-std::vector<uint32_t> vertex_shader = { 
+std::vector<uint32_t> vertex_shader = {
 0x07230203,0x00010000,0x000d000a,0x00000036,
 0x00000000,0x00020011,0x00000001,0x0006000b,
 0x00000001,0x4c534c47,0x6474732e,0x3035342e,
@@ -152,7 +152,7 @@ std::vector<uint32_t> vertex_shader = {
 0x0003003e,0x00000031,0x00000035,0x000100fd,
 0x00010038 };
 
-std::vector<uint32_t> frag_shader = { 
+std::vector<uint32_t> frag_shader = {
 0x07230203,0x00010000,0x000d000a,0x00000013,
 0x00000000,0x00020011,0x00000001,0x0006000b,
 0x00000001,0x4c534c47,0x6474732e,0x3035342e,
@@ -196,7 +196,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
     VkDebugUtilsMessageTypeFlagsEXT messageType,
     const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-    void* pUserData) 
+    void* pUserData)
 {
     if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
         std::cerr << "validation layer: " << pCallbackData->pMessage << "\n";
@@ -593,13 +593,13 @@ protected:
 
         uint32_t queue_family_indices[] = {vk_graphic_queue_family_index, vk_present_queue_family_index};
 
-        if (vk_graphic_queue_family_index != vk_present_queue_family_index) 
+        if (vk_graphic_queue_family_index != vk_present_queue_family_index)
         {
             create_info.imageSharingMode = VK_SHARING_MODE_CONCURRENT; // images are shared between queues from different families
             create_info.queueFamilyIndexCount = 2;
             create_info.pQueueFamilyIndices = queue_family_indices;
-        } 
-        else 
+        }
+        else
         {
             create_info.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
             create_info.queueFamilyIndexCount = 0; // Optional
@@ -666,7 +666,7 @@ protected:
         color_attachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
         VkAttachmentReference color_attachment_ref{};
-        color_attachment_ref.attachment = 0; // layout(location = 0) out vec4 outColor 
+        color_attachment_ref.attachment = 0; // layout(location = 0) out vec4 outColor
         color_attachment_ref.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
         VkSubpassDescription subpass{};
@@ -686,7 +686,7 @@ protected:
 
         return true;
     }
-    // 12 -------------------------------------------- 
+    // 12 --------------------------------------------
     VkShaderModule CreateShaderModule(uint32_t const* data, size_t data_size)
     {
         VkShaderModuleCreateInfo create_info{};
@@ -854,7 +854,7 @@ protected:
 
         vk_swap_chain_framebuffers.resize(vk_swap_chain_image_views.size());
 
-        for (size_t i = 0; i < vk_swap_chain_image_views.size(); i++) 
+        for (size_t i = 0; i < vk_swap_chain_image_views.size(); i++)
         {
             VkImageView attachments[] = { vk_swap_chain_image_views[i] };
 
@@ -904,7 +904,7 @@ protected:
 
         VkExtent2D swap_chain_extent = SelectBestSurfaceExtend(vk_surface_caps);
 
-        for (size_t i = 0; i < vk_command_buffers.size(); i++) 
+        for (size_t i = 0; i < vk_command_buffers.size(); i++)
         {
             VkCommandBufferBeginInfo begin_info{};
             begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -983,7 +983,7 @@ protected:
             vk_instance = VK_NULL_HANDLE;
         }
     }
-    
+
     void DestroyLogicalDevice()
     {
         if (vk_device != VK_NULL_HANDLE)
@@ -1014,8 +1014,8 @@ protected:
 
 
 
- 
-    
+
+
 
 
     void LogLayers()
@@ -1130,7 +1130,7 @@ protected:
 
 
 
- 
+
 
     void DestroyFramebuffers()
     {
@@ -1204,7 +1204,7 @@ protected:
     uint32_t vk_graphic_queue_family_index = 0;
 
     uint32_t vk_present_queue_family_index = 0;
-                
+
     VkDevice vk_device = VK_NULL_HANDLE;
 
     VkQueue vk_graphic_queue = VK_NULL_HANDLE;
@@ -1381,8 +1381,8 @@ char const* pixel_sourceXXX = R"FRAGMENT_SHADER(
 
     void main()
     {
-	vec4 color = (vs_texcoord.z < 0.0)? 
-		vec4(1.0, 1.0, 1.0, 1.0) : 
+	vec4 color = (vs_texcoord.z < 0.0)?
+		vec4(1.0, 1.0, 1.0, 1.0) :
 		texture(material, vs_texcoord);
       output_color.xyz = color.xyz * vs_color;
       output_color.a   = color.a;
@@ -1402,7 +1402,7 @@ char const* pixel_source = R"FRAGMENT_SHADER(
     //layout(location = 0)
 
 
- 
+
     out vec4 output_color;
     void main()
     {
@@ -1422,16 +1422,16 @@ char const* vertex_source = R"VERTEX_SHADER(
     uniform float xxx;
     uniform float yyy[7];
     uniform vec3  zzz;
-    
+
     out vec3 vs_texcoord;
     out vec3 vs_color;
-    
+
     void main()
     {
       vs_texcoord = texcoord;
       vs_color    = color;
       gl_Position = local_to_cam * vec4(position.x + zzz.x, position.y, 0.0, 1.0);
-    }							
+    }
 	)VERTEX_SHADER";
 
 
@@ -1540,13 +1540,13 @@ int main(int argc, char ** argv, char ** env)
     prog.addShader(&vs);
     prog.addShader(&ps);
     bool b1 = prog.link(EShMsgDefault);
-    
+
     bool b3 = prog.buildReflection(EShReflectionAllBlockVariables | EShReflectionIntermediateIO /*| EShReflectionAllIOVariables*/);
     bool b2 = prog.mapIO();
     prog.dumpReflection();
-   
+
     int c1 = prog.getNumUniformBlocks();
-    int c2 = prog.getNumLiveUniformBlocks();    
+    int c2 = prog.getNumLiveUniformBlocks();
     int c3 = prog.getNumUniformVariables();
     int c4 = prog.getNumLiveUniformVariables();
 
@@ -1560,9 +1560,9 @@ int main(int argc, char ** argv, char ** env)
     for (int i = 0; i < c5; ++i) //getNumPipeInputs
     {
         glslang::TObjectReflection const& r = prog.getPipeInput(i);
-        
+
         int b = r.getBinding();
-        
+
         i = i;
 
     }
@@ -1570,9 +1570,9 @@ int main(int argc, char ** argv, char ** env)
     for (int i = 0; i < c6; ++i) //getNumPipeOutputs
     {
         glslang::TObjectReflection const& r = prog.getPipeOutput(i);
-        
+
         int b = r.getBinding();
-        
+
         i = i;
 
     }
@@ -1593,7 +1593,7 @@ int main(int argc, char ** argv, char ** env)
         glslang::TBasicType basic_type = type->getBasicType(); // component type
 
         int v = type->getVectorSize();
-        
+
         // offset: est OK
         // size: indique si c'est un tableau[7]
         // type.basicType: float/int...
@@ -1603,12 +1603,12 @@ int main(int argc, char ** argv, char ** env)
         // stages : c'est un mask qui indique dans quel shader est utilisé l uniform
 
         n = n;
-            
+
 
     }
 
 
-    
+
 
 
 

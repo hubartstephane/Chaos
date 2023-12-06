@@ -72,9 +72,9 @@ namespace chaos
 		return Resize(extra_count + GetParticleCount());
 	}
 
-	AutoCastedParticleAccessor ParticleAllocationBase::Resize(size_t new_count) 
-	{ 
-		return AutoCastedParticleAccessor(this, 0, 0); 
+	AutoCastedParticleAccessor ParticleAllocationBase::Resize(size_t new_count)
+	{
+		return AutoCastedParticleAccessor(this, 0, 0);
 	}
 
 	AutoCastedParticleAccessor ParticleAllocationBase::GetParticleAccessor(size_t start, size_t count)
@@ -105,9 +105,9 @@ namespace chaos
 	{
         // the ParticleAllocation is handled as usual
 		if (layer == nullptr)
-			Object::SubReference(); 
+			Object::SubReference();
         // the last reference is the one from the layer. Destroy it
-		else if (--shared_count == 1) 
+		else if (--shared_count == 1)
             RemoveFromLayer();
 	}
 
@@ -128,7 +128,7 @@ namespace chaos
             return nullptr;
         // compute some other useful values
         particle_size = GetParticleSize();
-        void const* buffer = GetParticleBuffer();        
+        void const* buffer = GetParticleBuffer();
         return ((char const*)buffer) + start * particle_size;
     }
 

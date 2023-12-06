@@ -13,7 +13,7 @@ namespace chaos
 		StateBase::StateBase(StateMachine * in_state_machine):
 			state_machine(in_state_machine)
 		{
-			assert(in_state_machine != nullptr);		
+			assert(in_state_machine != nullptr);
 		}
 
 		// ==================================================
@@ -42,12 +42,12 @@ namespace chaos
 		}
 
 		void State::OnEnter(StateMachineInstance * sm_instance, StateBase * from_state, Object * extra_data)
-		{	
+		{
 			OnEnterImpl(sm_instance, from_state, extra_data);
 		}
 
 		void State::OnLeave(StateMachineInstance * sm_instance, StateBase * to_state, Object * extra_data)
-		{		
+		{
 			OnLeaveImpl(sm_instance, to_state, extra_data);
 		}
 
@@ -70,7 +70,7 @@ namespace chaos
 
 		bool State::OnEnterImpl(StateMachineInstance * sm_instance, StateBase * from_state, Object * extra_data)
 		{
-			return false; 
+			return false;
 		}
 
 		bool State::TickImpl(StateMachineInstance * sm_instance, float delta_time, Object * extra_data)
@@ -120,7 +120,7 @@ namespace chaos
 		}
 
 		void Transition::Tick(StateMachineInstance * sm_instance, float delta_time, Object * extra_data)
-		{	
+		{
 			if (TickImpl(sm_instance, delta_time, extra_data))
 				sm_instance->ChangeState(to_state, extra_data); // will cause OnLeave call
 		}
@@ -152,7 +152,7 @@ namespace chaos
 
 		void StateMachine::SetInitialState(StateBase * in_state)
 		{
-			initial_state = in_state;	
+			initial_state = in_state;
 		}
 
 		// ==================================================

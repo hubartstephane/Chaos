@@ -20,7 +20,7 @@ namespace chaos
 				for (int i = 0; i < monitor_count; ++i)
 					result.push_back(monitors[i]);
 
-				// sort the array by X position of the monitor    
+				// sort the array by X position of the monitor
 				auto b = result.begin();
 				auto e = result.end();
 

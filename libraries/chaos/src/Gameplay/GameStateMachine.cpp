@@ -130,7 +130,7 @@ namespace chaos
 		if (game == nullptr)
 			return true;
 		// try get the physical gamepad
-		PhysicalGamepadWrapper * wrapper = auto_cast(extra_data); 		
+		PhysicalGamepadWrapper * wrapper = auto_cast(extra_data);
 		// enter the game
 		game->OnEnterGame((wrapper == nullptr)? nullptr : wrapper->data);
 		return false;
@@ -206,7 +206,7 @@ namespace chaos
 	// GameStateMachineInstance
 	// =========================================================
 
-	GameStateMachineInstance::GameStateMachineInstance(Game * in_game, SM::StateMachine * in_state_machine) : 
+	GameStateMachineInstance::GameStateMachineInstance(Game * in_game, SM::StateMachine * in_state_machine) :
 		SM::StateMachineInstance(in_state_machine),
 		game(in_game)
 	{

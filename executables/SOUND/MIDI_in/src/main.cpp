@@ -151,9 +151,8 @@ int main(int argc, char ** argv, char ** env)
 
 	return 0;
 
-	chaos::WindowCreateParams create_params;
-	create_params.width = 500;
-	create_params.height = 500;
+	chaos::WindowPlacementInfo placement_info;
+	placement_info.size = { 500, 500 };
 
-	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, create_params);
+	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, placement_info);
 }

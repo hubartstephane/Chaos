@@ -4,6 +4,7 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	class WindowCreateParams;
+	class WindowPlacementInfo;
 	class NonFullScreenWindowData;
 	class Window;
 
@@ -23,6 +24,33 @@ namespace chaos
 	};
 
 	/**
+	* WindowPlacementInfo: describes how the window should be placed
+	*/
+
+	class CHAOS_API WindowPlacementInfo
+	{
+	public:
+
+		glm::ivec2 position = glm::ivec2(0, 0);
+
+		glm::ivec2 size = glm::ivec2(800, 800);
+
+		//std::optional<glm::ivec2> position;
+
+		//std::optional<glm::ivec2> size;
+
+		/** the wanted monitor */
+		GLFWmonitor* monitor = nullptr;
+		/** the monitor index */
+		int monitor_index = 0;
+
+	};
+
+	CHAOS_API bool DoSaveIntoJSON(nlohmann::json* json, WindowPlacementInfo const& src);
+
+	CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, WindowPlacementInfo& dst);
+
+	/**
 	* WindowCreateParams : parameters for playing single window application
 	*/
 
@@ -31,15 +59,7 @@ namespace chaos
 	public:
 
 		/** the title */
-		char const* title = nullptr;
-		/** the wanted monitor */
-		GLFWmonitor* monitor = nullptr;
-		/** the monitor index */
-		int monitor_index = 0;
-		/** window width */
-		int width = 0;
-		/** window height */
-		int height = 0;
+		std::string title;
 		/** true if the window can be resized */
 		int resizable = 1;
 		/** true if the window starts visible */
@@ -225,7 +245,7 @@ namespace chaos
 		void DestroyImGuiContext();
 
 		/** create the internal window */
-		bool CreateGLFWWindow(WindowCreateParams create_params, GLFWwindow* share_context, GLFWHints glfw_hints);
+		bool CreateGLFWWindow(WindowPlacementInfo placement_info, WindowCreateParams const &create_params, GLFWwindow* share_context, GLFWHints glfw_hints);
 		/** destroying the window */
 		void DestroyGLFWWindow();
 

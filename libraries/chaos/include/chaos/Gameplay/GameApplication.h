@@ -11,7 +11,12 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GameApplication(SubClassOf<Game> in_game_class, SubClassOf<GameWindow> in_main_window_class, SubClassOf<GameViewportWidget> in_game_viewport_widget_class, WindowCreateParams const& in_window_create_params = {});
+		GameApplication(
+			SubClassOf<Game> in_game_class,
+			SubClassOf<GameWindow> in_main_window_class,
+			SubClassOf<GameViewportWidget> in_game_viewport_widget_class,
+			WindowPlacementInfo const& in_main_window_placement_info = {},
+			WindowCreateParams const& in_main_window_create_params = {});
 
 		/** gets the game */
 		Game* GetGame() { return game.get(); }

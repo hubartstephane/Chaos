@@ -57,7 +57,7 @@ namespace chaos
 	};
 
 	template<typename GAME_TYPE, typename GAME_APPLICATION_TYPE = GameApplication, typename MAIN_WINDOW_CLASS = GameWindow, typename GAME_VIEWPORT_WIDGET_CLASS = GameViewportWidget, typename ...PARAMS>
-	int RunGame(int argc, char** argv, char** env, PARAMS && ...params)
+	decltype(auto) RunGame(int argc, char** argv, char** env, PARAMS && ...params)
 	{
 		return RunApplication<GAME_APPLICATION_TYPE>(
 			argc, argv, env,

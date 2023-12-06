@@ -300,7 +300,7 @@ namespace chaos
 	*/
 
 	template<typename WINDOW_TYPE, typename ...PARAMS>
-	bool RunWindowApplication(int argc, char** argv, char** env, PARAMS && ...params)
+	decltype(auto) RunWindowApplication(int argc, char** argv, char** env, PARAMS && ...params)
 	{
 		return RunApplication<WindowApplication>(argc, argv, env, WINDOW_TYPE::GetStaticClass(), std::forward<PARAMS>(params)...);
 	}

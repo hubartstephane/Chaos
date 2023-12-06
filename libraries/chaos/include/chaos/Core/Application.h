@@ -174,7 +174,7 @@ namespace chaos
 #endif
 			return application->Run(argc, argv, env);
 		}
-		return false;
+		return -1; // error
 	}
 
 #endif

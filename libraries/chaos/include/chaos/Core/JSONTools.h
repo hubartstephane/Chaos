@@ -70,6 +70,9 @@ namespace chaos
 	/** loading specialization for vector */
 	template<typename T, JSONSource SRC_TYPE>
 	bool LoadFromJSON(SRC_TYPE src, std::vector<T>& dst);
+	/** template for optional */
+	template<typename T, JSONSource SRC_TYPE>
+	bool LoadFromJSON(SRC_TYPE src, std::optional<T>& dst);
 
 	/** serialize a path into json */
 	CHAOS_API bool SaveIntoJSON(nlohmann::json * json, boost::filesystem::path const& src);
@@ -85,6 +88,9 @@ namespace chaos
 	/** specialization for vector */
 	template<typename T>
 	bool SaveIntoJSON(nlohmann::json * json, std::vector<T> const& src);
+	/** specialization for optional */
+	template<typename T>
+	bool SaveIntoJSON(nlohmann::json* json, std::optional<T> const& src);
 
 	/** ensure pointers is not null and the node is a json object */
 	CHAOS_API bool PrepareSaveObjectIntoJSON(nlohmann::json* json);
@@ -442,6 +448,19 @@ namespace chaos
 		});
 	}
 
+	template<typename T, JSONSource SRC_TYPE>
+	bool LoadFromJSON(SRC_TYPE src, std::optional<T>& dst)
+	{
+		T other;
+		if (LoadFromJSON(src, other))
+		{
+			dst = std::move(other);
+			return true;
+		}
+		dst.reset();
+		return false;
+	}
+
 	template<typename T>
 	bool SaveIntoJSON(nlohmann::json * json, T const& src)
 	{
@@ -522,6 +541,14 @@ namespace chaos
 				json->push_back(std::move(j));
 		}
 		return true;
+	}
+
+	template<typename T>
+	bool SaveIntoJSON(nlohmann::json* json, std::optional<T> const& src)
+	{
+		if (!src.has_value())
+			return false;
+		return SaveIntoJSON(json, src.value());
 	}
 
 #endif

@@ -6,7 +6,7 @@
 // -------------------------
 //
 //                       +1
-//       +--------------+ 
+//       +--------------+
 //       |              |
 //       |              |
 //       |    screen    |
@@ -14,11 +14,11 @@
 //       |              |
 //       |              |
 //       +--------------+
-//     -1              
+//     -1
 //
 //
 //                       1
-//       +--------------+ 
+//       +--------------+
 //       |     top      |
 //       |              |
 //       |    Texture   |  The OpenGL texture is oriented like this
@@ -26,11 +26,11 @@
 //       |              |
 //       |    bottom    |
 //       +--------------+
-//      0       
+//      0
 //
-// for FreeImage, the line storage is done with the convention below 
+// for FreeImage, the line storage is done with the convention below
 //
-//       +--------------+ 
+//       +--------------+
 //       | LINE 5       |
 //       | LINE 4       |
 //       | LINE 3       |
@@ -38,11 +38,11 @@
 //       | LINE 1       |
 //       | LINE 0       |
 //       +--------------+
-//          
+//
 // but for FreeImage, the coordinates used are (Y is inversed compared to OpenGL)
 //
 //      0,0
-//       +--------------+ 
+//       +--------------+
 //       |     top      |
 //       |              |
 //       |              |
@@ -287,23 +287,23 @@ namespace chaos
 		//
 		// OpenGL has a important limitation. Offsets are not defined in bytes but in multiple of Pixel Size !!
 		// That means that we have no way to require for an explicit padding !
-		// 
+		//
 		// note : with SubImageDefinition, the padding maybe a huge value to skip lots of pixel at the end of the scanline
 		//
-		// In a random ImageDefinition, this is a blocker. We cannot have all paddings we want 
+		// In a random ImageDefinition, this is a blocker. We cannot have all paddings we want
 		//
 		//
 		// If the memory disposition (pitch, line size ...) was fully random, we would end copying data from an incorrect layout into a new buffer
 		// wasting lots of resources.
 		//
 		// XXX : There is a solution !!!
-		// 
+		//
 		//       for images coming from FreeImage, we can ensure (in specifications) that lines are DWORD aligned
 		//       So if we want to transfert a block a pixel starting at pointer B, we will work a virtual pointer B' and use SKIP_PIXELS and ROW_LENGTH
 		//       B' has to be DWORD aligned and (B - B') has to be a multiple of DWORD
 		//
 		//
-		// buffer 
+		// buffer
 		// x
 		//
 		//          B'
@@ -315,14 +315,14 @@ namespace chaos
 		//           |               |            |       |
 		//           |               +------------+       |
 		// ---------><-------------------------------------
-		//                               ROW LENGTH'     
+		//                               ROW LENGTH'
 		//
 		// XXX : If we are not working with FreeImage but with our own buffer, we have to meet theses requirements :
 		//
 		//         Row are DWORD aligned
 		//
 		//       See
-		//         ImageTools::GetImageDescriptionForAlignedTexture(...) and  
+		//         ImageTools::GetImageDescriptionForAlignedTexture(...) and
 		//         ImageTools::GetMemoryRequirementForAlignedTexture(...)
 		//
 
@@ -334,7 +334,7 @@ namespace chaos
 			int row_length = desc.pitch_size / pixel_size;
 			int skip_pixel = 0;
 
-			// first pixel already aligned on DWORD ?? 
+			// first pixel already aligned on DWORD ??
 			uintptr_t b = (uintptr_t)desc.data;
 
 			// find pointer b' before b that is DWORD aligned and at a distance multiple of pixel size from th real buffer.

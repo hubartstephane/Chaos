@@ -1188,7 +1188,7 @@ namespace chaos
 	{
 		return true;
 	}
-	
+
 	bool SoundManager::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
 	{
 		return true;

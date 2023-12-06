@@ -94,12 +94,12 @@ namespace chaos
 			}
 		}
 	}
-	
+
 	void FileLoggerListener::OnDetachedFromLogger(Logger* in_logger)
 	{
 		output_file.close();
 	}
-	
+
 	void FileLoggerListener::OnNewLine(LogLine const& line)
 	{
 		if (output_file.is_open())
@@ -140,7 +140,7 @@ namespace chaos
 	Logger* Logger::GetInstance()
 	{
 		// XXX : use a share pointer so that we are sure it is being destroyed at the end of the application (and so the output_file is being flushed)
-		static shared_ptr<Logger> result; 
+		static shared_ptr<Logger> result;
 		if (result == nullptr)
 			result = new Logger();
 		return result.get();
@@ -200,7 +200,7 @@ namespace chaos
 		va_start(va, format);
 		// format the message
 		char buffer[4096];
-		vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, va); // doesn't count for the zero  
+		vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, va); // doesn't count for the zero
 		// output the message
 		DoOutput(RegisterDomain(domain), type, buffer);
 		va_end(va);
@@ -212,7 +212,7 @@ namespace chaos
 		va_start(va, format);
 		// format the message
 		char buffer[4096];
-		vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, va); // doesn't count for the zero  
+		vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, va); // doesn't count for the zero
 		// output the message
 		transaction_content.append(buffer);
 		va_end(va);

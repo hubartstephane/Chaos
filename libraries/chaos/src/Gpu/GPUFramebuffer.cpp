@@ -26,7 +26,7 @@ namespace chaos
 	{
 		if (!IsValid())
 			return false;
-		// check the status 
+		// check the status
 		GLenum status = glCheckNamedFramebufferStatus(framebuffer_id, GL_FRAMEBUFFER);
 		if (status != GL_FRAMEBUFFER_COMPLETE)
 			return false;

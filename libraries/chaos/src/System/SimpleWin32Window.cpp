@@ -61,7 +61,7 @@ namespace chaos
 				if (DragQueryFileA(hDrop, i, Filename, sizeof(Filename) / sizeof(Filename[0])) != 0)
 				{
 					if (!OnDragFile(Filename, pt))
-						break;       
+						break;
 				}
 			}
 		}
@@ -107,39 +107,39 @@ namespace chaos
 		return 0;
 	}
 
-	LRESULT SimpleWin32Window::OnLButtonDown(int x, int y, int buttonStates) 
+	LRESULT SimpleWin32Window::OnLButtonDown(int x, int y, int buttonStates)
 	{
 		return 0;
 	}
 
-	LRESULT SimpleWin32Window::OnLButtonUp(int x, int y, int buttonStates) 
+	LRESULT SimpleWin32Window::OnLButtonUp(int x, int y, int buttonStates)
 	{
 		return 0;
 	}
 
-	LRESULT SimpleWin32Window::OnRButtonDown(int x, int y, int buttonStates) 
+	LRESULT SimpleWin32Window::OnRButtonDown(int x, int y, int buttonStates)
 	{
 		return 0;
 	}
 
-	LRESULT SimpleWin32Window::OnRButtonUp(int x, int y, int buttonStates) 
+	LRESULT SimpleWin32Window::OnRButtonUp(int x, int y, int buttonStates)
 	{
 		return 0;
 	}
 
-	LRESULT SimpleWin32Window::OnMButtonDown(int x, int y, int buttonStates) 
+	LRESULT SimpleWin32Window::OnMButtonDown(int x, int y, int buttonStates)
 	{
 		return 0;
 	}
 
-	LRESULT SimpleWin32Window::OnMButtonUp(int x, int y, int buttonStates) 
+	LRESULT SimpleWin32Window::OnMButtonUp(int x, int y, int buttonStates)
 	{
 		return 0;
 	}
 
 	LRESULT SimpleWin32Window::OnMouseWheel(int x, int y, int wheel_value, int buttonStates)
 	{
-		return 0;  
+		return 0;
 	}
 
 	LRESULT SimpleWin32Window::OnDestroy()
@@ -181,7 +181,7 @@ namespace chaos
 #undef CHAOS_CATCH_WND_MSG
 
 		case WM_MOUSEWHEEL:
-			return OnMouseWheel(int(GET_X_LPARAM(lParam)), int(GET_Y_LPARAM(lParam)), int(GET_WHEEL_DELTA_WPARAM(wParam)) / WHEEL_DELTA, int(GET_KEYSTATE_WPARAM(wParam))); 
+			return OnMouseWheel(int(GET_X_LPARAM(lParam)), int(GET_Y_LPARAM(lParam)), int(GET_WHEEL_DELTA_WPARAM(wParam)) / WHEEL_DELTA, int(GET_KEYSTATE_WPARAM(wParam)));
 
 		case WM_SIZE:
 			return OnWindowSize(int(LOWORD(lParam)), int(HIWORD(lParam)));
@@ -224,7 +224,7 @@ namespace chaos
 		SimpleWin32Window * myself = (SimpleWin32Window *)GetWindowLongPtr(hWnd, GWLP_USERDATA); // data is not available until WM_CREATE has been called
 		if (myself != NULL)
 		{
-			BOOL message_handled = FALSE; 
+			BOOL message_handled = FALSE;
 			LRESULT result = myself->HandleMessage(uMsg, wParam, lParam, message_handled);
 			if (message_handled)
 				return result;

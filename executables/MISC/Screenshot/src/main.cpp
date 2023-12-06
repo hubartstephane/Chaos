@@ -10,7 +10,7 @@ BOOL WINAPI EnumWindowCallback(HWND hWnd, LPARAM lParam)
 	GetWindowText(hWnd, buf, sizeof(buf));
 
 	if (strlen(buf) > 0)
-		window_names->push_back(std::string(buf));    
+		window_names->push_back(std::string(buf));
 	return TRUE;
 }
 
@@ -26,33 +26,33 @@ std::vector<std::string> GetAllWindowNames()
 
 void HandleConsoleEvents()
 {
-	DWORD NumRead = 0; 
-	INPUT_RECORD ConsoleEvents[128]; 
+	DWORD NumRead = 0;
+	INPUT_RECORD ConsoleEvents[128];
 
 	if (ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE), ConsoleEvents, 128, &NumRead) )
 	{
 		for (DWORD i = 0 ; i < NumRead ; ++i)
 		{
-			switch(ConsoleEvents[i].EventType) 
-			{ 
+			switch(ConsoleEvents[i].EventType)
+			{
 			case KEY_EVENT:
 				i = i;
-				break; 
+				break;
 			case MOUSE_EVENT:
 				i = i;
-				break; 
+				break;
 			case WINDOW_BUFFER_SIZE_EVENT:
 				i = i;
-				break; 
+				break;
 			case FOCUS_EVENT:
 				i = i;
 				break;
 			case MENU_EVENT:
 				i = i;
-				break; 
-			default: 
-				break; 
-			} 
+				break;
+			default:
+				break;
+			}
 		}
 	}
 }
@@ -67,7 +67,7 @@ void CaptureAndSaveMonitor(boost::filesystem::path const & dst_p, char const * m
 		FIBITMAP * bitmap = chaos::WinTools::CaptureWindowToImage(hDC);
 		if (bitmap != NULL)
 		{
-			FreeImage_Save(FIF_PNG, bitmap, (dst_p / filename).string().c_str());  
+			FreeImage_Save(FIF_PNG, bitmap, (dst_p / filename).string().c_str());
 			FreeImage_Unload(bitmap);
 		}
 		DeleteDC(hDC);

@@ -68,7 +68,7 @@ namespace chaos
 			index_buffer->SetBufferData(nullptr, ib_size);
 		}
 
-		// map the buffers		
+		// map the buffers
 		char* vb_ptr = (vertex_buffer != nullptr) ? vertex_buffer->MapBuffer(0, 0, false, true) : nullptr;
 		char* ib_ptr = (index_buffer != nullptr) ? index_buffer->MapBuffer(0, 0, false, true) : nullptr;
 
@@ -210,7 +210,7 @@ namespace chaos
 		// the indices
 		indices_writer.Write(triangles, sizeof(triangles));
 
-		// the vertices 
+		// the vertices
 		int const vertex_count = sizeof(vertices) / sizeof(vertices[0]);
 
 		glm::vec3 normal = GLMTools::Mult(transform, glm::vec3(0.0f, 0.0f, 1.0f));
@@ -406,13 +406,13 @@ namespace chaos
 	// GPUCircleMeshGenerator
 	// =====================================================================
 
-	GPUMeshGenerationRequirement GPUCircleMeshGenerator::GetRequirement() const 
+	GPUMeshGenerationRequirement GPUCircleMeshGenerator::GetRequirement() const
 	{
 		GPUMeshGenerationRequirement result;
 		result.vertex_size = 2 * sizeof(glm::vec3);
 		result.vertices_count = 1 + subdivisions;
 		result.indices_count  = 3 * subdivisions;
-		return result;	
+		return result;
 	}
 
     GPUVertexDeclaration * GPUCircleMeshGenerator::GenerateVertexDeclaration() const
@@ -426,15 +426,15 @@ namespace chaos
         return result;
 	}
 
-	void GPUCircleMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const 
+	void GPUCircleMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 	{
 		glm::vec3 normal = GLMTools::Mult(transform, glm::vec3(0.0f, 0.0f, 1.0f));
-	
+
 		// generate the vertices
 		vertices_writer << GLMTools::MultWithTranslation(transform, glm::vec3(primitive.position, 0.0f));
 		vertices_writer << normal;
 
-		float delta_alpha = ((float)M_PI * 2.0f) / ((float)subdivisions); 
+		float delta_alpha = ((float)M_PI * 2.0f) / ((float)subdivisions);
 		for (int i = 0 ; i < subdivisions ; ++i)
 		{
 			float alpha = (float)i * delta_alpha;
@@ -450,7 +450,7 @@ namespace chaos
 		{
 			indices_writer << (std::uint32_t)0;
 			indices_writer << (std::uint32_t)(i + 1);
-			indices_writer << (std::uint32_t)(((i + 1) % subdivisions) + 1);		
+			indices_writer << (std::uint32_t)(((i + 1) % subdivisions) + 1);
 		}
 
 		// insert the primitive

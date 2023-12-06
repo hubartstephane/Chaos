@@ -5,8 +5,8 @@ namespace chaos
 {
 	// ========================================================
 	// Tickable implementation
-	// ========================================================	
-	
+	// ========================================================
+
 	void TickableInterface::SetPause(bool in_pause)
 	{
 		if (paused == in_pause)
@@ -14,7 +14,7 @@ namespace chaos
 		paused = in_pause;
 		OnPauseStateChanged(in_pause);
 	}
-		
+
 	bool TickableInterface::IsPaused() const
 	{
 		return paused;

@@ -20,8 +20,8 @@ namespace chaos
 		Release();
 	}
 
-	bool GPUVertexArray::IsValid() const 
-	{ 
+	bool GPUVertexArray::IsValid() const
+	{
 		return (vertex_array_id != 0 && window != nullptr && window->GetGLFWHandler() == context);
 	}
 
@@ -92,6 +92,6 @@ namespace chaos
 			});
 		}
 		return true;
-	}	
+	}
 
 }; // namespace chaos

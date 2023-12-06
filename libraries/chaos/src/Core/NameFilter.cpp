@@ -32,7 +32,7 @@ namespace chaos
 		}
 		return true;
 	}
-	
+
 	void NameFilter::AddEnabledNames(char const * names)
 	{
 		AddNames(names, enabled_names, name_separator);
@@ -62,8 +62,8 @@ namespace chaos
 		std::vector<std::string> name_array = StringTools::Split(names, separator);
 		for (std::string & name : name_array)
 		{
-			// remove space 
-			name.erase(std::remove_if(name.begin(), name.end(), isspace), name.end()); 
+			// remove space
+			name.erase(std::remove_if(name.begin(), name.end(), isspace), name.end());
 			// search if the name is already existing
 			for (std::string const & element : target_list)
 				if (StringTools::Stricmp(name, element) == 0)
@@ -82,7 +82,7 @@ namespace chaos
 		std::vector<std::string> name_array = StringTools::Split(names, separator);
 		for (std::string & name : name_array)
 		{
-			// remove space 
+			// remove space
 			name.erase(std::remove_if(name.begin(), name.end(), isspace), name.end());
 			// remove the name from list
 			size_t count = target_list.size();
@@ -118,7 +118,7 @@ namespace chaos
 		{
 			if (!enabled_names_found)
 			{
-				// the simplest format is with string and ',' as separator 
+				// the simplest format is with string and ',' as separator
 				if (json->is_string())
 				{
 					dst.AddEnabledNames(json->get<std::string>().c_str());

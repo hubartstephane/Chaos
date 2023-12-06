@@ -12,7 +12,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* CursorMode 
+	* CursorMode
 	*/
 
 	enum class CHAOS_API CursorMode : int
@@ -208,7 +208,7 @@ namespace chaos
 		/** override */
 		virtual bool OnDraw(GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params) override;
 		/** override */
-		virtual bool DoTick(float delta_time) override;		
+		virtual bool DoTick(float delta_time) override;
 
 		/** create the root widget */
 		virtual bool CreateRootWidget();

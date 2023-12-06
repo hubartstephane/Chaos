@@ -28,7 +28,7 @@ namespace chaos
 		ResolvePath(basic_path, nullptr, nullptr, &reference_path);
 	}
 
-	FilePathParam::FilePathParam(std::string const & string_path, boost::filesystem::path const & reference_path) 
+	FilePathParam::FilePathParam(std::string const & string_path, boost::filesystem::path const & reference_path)
 	{
 		ResolvePath(nullptr, &string_path, nullptr, &reference_path);
 	}
@@ -68,11 +68,11 @@ namespace chaos
 			if (p == &temp_path)
 				resolved_path = std::move(temp_path); // can steal the temp_path
 			else
-				resolved_path = *p; // must copy the temp_path		
+				resolved_path = *p; // must copy the temp_path
 		}
 		// resolve the path
 		else
-			resolved_path = (reference_path->parent_path() / *p); 
+			resolved_path = (reference_path->parent_path() / *p);
 		// make the path under a 'normalized' representation
 		resolved_path = resolved_path.lexically_normal().make_preferred();
 	}

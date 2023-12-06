@@ -226,7 +226,7 @@ namespace chaos
 				// still repetition possible ?
 				if (!event_info.IsRepeatedInfinitly())
 				{
-					if (event_info.repetition_count == 0) // no more repetition 
+					if (event_info.repetition_count == 0) // no more repetition
 					{
 						clock_event->RemoveFromClock();
 						return;
@@ -313,7 +313,7 @@ namespace chaos
 				}
 			}
 		}
-		// recursive tick 
+		// recursive tick
 		size_t child_count = children_clocks.size();
 		for (size_t i = 0; i < child_count; ++i)
 			children_clocks[i]->TickClockImpl(time_scale * delta_time, cumulated_factor * time_scale, event_tick_set);
@@ -353,7 +353,7 @@ namespace chaos
 
 					parent_clock = nullptr;          // XXX : we cannot invert these 2 lines because, because 'this' could be deleted and then
 					tmp->children_clocks.pop_back(); //       and then we would access 'parent_clock' member after destructor
-					return true;                     //       that's why we are using 'tmp'					
+					return true;                     //       that's why we are using 'tmp'
 				}
 			}
 		}
@@ -428,7 +428,7 @@ namespace chaos
 		return false;
 	}
 
-	
+
 	bool Clock::SerializeIntoJSON(nlohmann::json * json) const
 	{
 		if (!JSONSerializableInterface::SerializeIntoJSON(json))
@@ -436,8 +436,8 @@ namespace chaos
 		JSONTools::SetAttribute(json, "CLOCK_TIME", clock_time);
 		return true;
 	}
-	
-	bool Clock::SerializeFromJSON(JSONReadConfiguration config) 
+
+	bool Clock::SerializeFromJSON(JSONReadConfiguration config)
 	{
 		if (!JSONSerializableInterface::SerializeFromJSON(config))
 			return false;
@@ -458,21 +458,21 @@ namespace chaos
 	{
 		clock_time = 0.0;
 		if (remove_events)
-			RemoveAllPendingEvents();	
+			RemoveAllPendingEvents();
 	}
 
 	// XXX : See ParticleAllocationBase::SubReference(...) implementation and comments
 	void Clock::SubReference()
 	{
 		if (parent_clock == nullptr)
-		{			
+		{
 			Object::SubReference(); // the Clock is handled as usual
 		}
 		else
 		{
-			if (--shared_count == 1) // the last reference is the one from the parent clock. Destroy it 
-				RemoveFromParent();		
-		}				
+			if (--shared_count == 1) // the last reference is the one from the parent clock. Destroy it
+				RemoveFromParent();
+		}
 	}
 
 

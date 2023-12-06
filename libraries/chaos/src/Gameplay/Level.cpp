@@ -10,11 +10,11 @@ namespace chaos
 	LevelInstance * Level::CreateLevelInstance(Game * in_game)
 	{
 		// create the instance
-		LevelInstance * result = DoCreateLevelInstance(); 
+		LevelInstance * result = DoCreateLevelInstance();
 		if (result == nullptr)
 			return nullptr;
 		// additional initialization
-		if (!result->Initialize(in_game, this)) 
+		if (!result->Initialize(in_game, this))
 		{
 			delete(result);
 			return nullptr;

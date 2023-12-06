@@ -12,7 +12,7 @@ namespace chaos
 
 	glm::mat4x4 CameraTools::GetCameraTransform(obox2 const & obox)
 	{
-		glm::mat4x4 result;	
+		glm::mat4x4 result;
 		result = GetRotatorMatrix(-obox.rotator) * glm::translate(glm::vec3(-obox.position.x, -obox.position.y, 0.0f));
 		return result;
 	}
@@ -37,7 +37,7 @@ namespace chaos
 	// Camera
 	// =================================================
 
-	bool Camera::Initialize(LevelInstance * in_level_instance)		
+	bool Camera::Initialize(LevelInstance * in_level_instance)
 	{
 		// ensure valid arguments and not already initialized
 		assert(in_level_instance != nullptr);
@@ -45,7 +45,7 @@ namespace chaos
 		level_instance = in_level_instance;
 		return true;
 	}
-	
+
 	bool Camera::DoTick(float delta_time)
 	{
 		// tick all components
@@ -55,7 +55,7 @@ namespace chaos
 		return true;
 	}
 
-	box2 Camera::GetCameraBox(bool apply_modifiers) const 
+	box2 Camera::GetCameraBox(bool apply_modifiers) const
 	{
 		box2 result = camera_box;
 
@@ -76,7 +76,7 @@ namespace chaos
 				result = camera_component->ApplyModifier(result);
 			}
 		}
-		return result; 
+		return result;
 	}
 
 	obox2 Camera::GetCameraOBox(bool apply_modifiers) const
@@ -113,7 +113,7 @@ namespace chaos
 		assert(in_safe_zone.first.y <= in_safe_zone.second.y);
 		safe_zone = in_safe_zone;
 	}
-	
+
 	bool Camera::SerializeIntoJSON(nlohmann::json * json) const
 	{
 		if (!JSONSerializableInterface::SerializeIntoJSON(json))
@@ -121,7 +121,7 @@ namespace chaos
 		JSONTools::SetAttribute(json, "CAMERA_BOX", GetCameraBox(false));
 		return true;
 	}
-	
+
 	bool Camera::SerializeFromJSON(JSONReadConfiguration config)
 	{
 		if (!JSONSerializableInterface::SerializeFromJSON(config))

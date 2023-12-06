@@ -21,7 +21,7 @@ protected:
 		boost::filesystem::path const & rp = GetResourcesPath();
 		boost::filesystem::path skybox_path    = rp / "Maskonaive";
 
-		boost::filesystem::path left_image   = skybox_path / "negx.jpg";  
+		boost::filesystem::path left_image   = skybox_path / "negx.jpg";
 		boost::filesystem::path front_image  = skybox_path / "posz.jpg";
 		boost::filesystem::path right_image  = skybox_path / "posx.jpg";
 		boost::filesystem::path back_image   = skybox_path / "negz.jpg";
@@ -33,17 +33,17 @@ protected:
 		boost::filesystem::path single_image = rp / "violentdays_large.jpg";
 
 
-		// load multiple images  
+		// load multiple images
 		chaos::SkyBoxImages multiple_sky_box1 = chaos::SkyBoxTools::LoadMultipleSkyBox(left_image, right_image, top_image, bottom_image, front_image, back_image);
 
 		DisplaySkyboxInfo(multiple_sky_box1, "MULTIPLE SKYBOX");
 
-		// load multiple with unspecified  
+		// load multiple with unspecified
 		chaos::SkyBoxImages multiple_sky_box2 = chaos::SkyBoxTools::LoadMultipleSkyBox(left_image, nullptr, top_image, bottom_image, front_image, back_image);
 
 		DisplaySkyboxInfo(multiple_sky_box2, "MULTIPLE INCOMPLETE SKYBOX");
 
-		// load multiple images with format error 
+		// load multiple images with format error
 		chaos::SkyBoxImages multiple_sky_box3 = chaos::SkyBoxTools::LoadMultipleSkyBox(left_image, square_image, top_image, bottom_image, front_image, back_image);
 
 		DisplaySkyboxInfo(multiple_sky_box3, "MULTIPLE INCOMPATIBLE SKYBOX");

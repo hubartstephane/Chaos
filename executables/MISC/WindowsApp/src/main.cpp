@@ -11,7 +11,7 @@ public:
 		{
 			boost::filesystem::path p = chaos::Application::GetInstance()->GetUserLocalTempPath() / "capture.png";
 
-			FreeImage_Save(FIF_PNG, bitmap, p.string().c_str());  
+			FreeImage_Save(FIF_PNG, bitmap, p.string().c_str());
 			FreeImage_Unload(bitmap);
 
 			chaos::WinTools::ShowFile(p);
@@ -47,7 +47,7 @@ public:
 				float top    = division_size * (float)i;
 				float bottom = division_size * (float)(i + 1);
 
-				RECT rect;        
+				RECT rect;
 				rect.left   = ps.rcPaint.left;
 				rect.right  = ps.rcPaint.right;
 				rect.top    = (LONG)top;
@@ -76,8 +76,8 @@ protected:
 // Test : ATTENTION ceci montre que si une fenetre sort du cadre de l'ecran, elle est capturee correctement
 //        Vrai au taffe ... Pas vrai a la maison !!!!!
 //
-// Test : en revanche, si on encapsule la capture avec 
-//   ::ShowWindow(GetHwnd(), SW_HIDE); 
+// Test : en revanche, si on encapsule la capture avec
+//   ::ShowWindow(GetHwnd(), SW_HIDE);
 //   ...
 //   ::ShowWindow(GetHwnd(), SW_SHOW);
 //

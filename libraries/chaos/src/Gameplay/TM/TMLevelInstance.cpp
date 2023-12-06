@@ -27,7 +27,7 @@ namespace chaos
 	void TMLevelInstance::OnRestart()
 	{
 		LevelInstance::OnRestart();
-		
+
 		size_t count = layer_instances.size();
 		for (size_t i = 0; i < count; ++i)
 			layer_instances[i]->OnRestart();
@@ -103,7 +103,7 @@ namespace chaos
 		}
 
 
-		// triggers collisions 
+		// triggers collisions
 		size_t new_collision_count = new_collisions.triggers.size();
 		for (size_t i = 0; i < new_collision_count; ++i)
 		{
@@ -146,7 +146,7 @@ namespace chaos
 		}
 		else if(new_collisions.triggers.size() > 0)
 		{
-			new_collisions.object = object;		
+			new_collisions.object = object;
 			collision_info.push_back(std::move(new_collisions));
 		}
 	}
@@ -225,7 +225,7 @@ namespace chaos
 			return false;
 
 		TMObjectReferenceSolver reference_solver;
-		// create a the layers instances		
+		// create a the layers instances
 		if (!CreateLayerInstances(in_game, reference_solver))
 			return false;
 		// initialize the level instance
@@ -378,9 +378,9 @@ namespace chaos
 		return result;
 	}
 
-	PlayerPawn* TMLevelInstance::CreatePlayerPawnAtPlayerStart(Player* player, TMPlayerStart* player_start)	
+	PlayerPawn* TMLevelInstance::CreatePlayerPawnAtPlayerStart(Player* player, TMPlayerStart* player_start)
 	{
-		// create a pawn 
+		// create a pawn
 		PlayerPawn* result = LevelInstance::CreatePlayerPawn(player);
 		if (result == nullptr)
 			return nullptr;
@@ -413,13 +413,13 @@ namespace chaos
 		// shu47 => j utilise nouvellement player_start->GetRotation().  Comme l'allocation n'existe pas encore, cela va prendre la donnée en provenance de GameEntity
 
 		particle_populator.AddParticle(
-			player_start->bitmap_name.c_str(), 
-			hotpoint, 
-			player_start->GetBoundingBox(true), 
-			glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 
+			player_start->bitmap_name.c_str(),
+			hotpoint,
+			player_start->GetBoundingBox(true),
+			glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
 			player_start->GetRotation(),
-			particle_flags, 
-			player_gid, 
+			particle_flags,
+			player_gid,
 			keep_aspect_ratio);
 		particle_populator.FlushParticles();
 
@@ -427,10 +427,10 @@ namespace chaos
 		ParticleAllocationBase* player_allocation = particle_populator.GetParticleAllocation();
 		if (player_allocation == nullptr)
 			return result;
-		// shuxxx : first time FinalizeParticles(...) was called, there was no effect because the PlayerStartLayer has no particle. 
+		// shuxxx : first time FinalizeParticles(...) was called, there was no effect because the PlayerStartLayer has no particle.
 		//          call it twice as a fast fix
 		layer_instance->FinalizeParticles(player_allocation);
-		
+
 		// give the allocation tp the pawn
 		result->SetAllocation(player_allocation);
 

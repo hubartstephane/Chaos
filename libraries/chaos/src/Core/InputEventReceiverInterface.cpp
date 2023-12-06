@@ -111,7 +111,7 @@ namespace chaos
 		return false;
 	}
 
-	void InputEventReceiverInterface::OnInputModeChanged(InputMode new_mode, InputMode old_mode) 
+	void InputEventReceiverInterface::OnInputModeChanged(InputMode new_mode, InputMode old_mode)
 	{
 	}
 
@@ -122,47 +122,47 @@ namespace chaos
 			SetInputMode(InputMode::MOUSE);
 			return true;
 		}
-		return false; 
+		return false;
 	}
 
-	bool InputEventReceiverInterface::OnMouseButton(int button, int action, int modifier) 
-	{ 
+	bool InputEventReceiverInterface::OnMouseButton(int button, int action, int modifier)
+	{
 		if (OnMouseButtonImpl(button, action, modifier))
 		{
 			SetInputMode(InputMode::MOUSE);
 			return true;
 		}
-		return false; 
+		return false;
 	}
 
-	bool InputEventReceiverInterface::OnMouseWheel(double scroll_x, double scroll_y) 
-	{ 
+	bool InputEventReceiverInterface::OnMouseWheel(double scroll_x, double scroll_y)
+	{
 		if (OnMouseWheelImpl(scroll_x, scroll_y))
 		{
 			SetInputMode(InputMode::MOUSE);
 			return true;
 		}
-		return false; 
+		return false;
 	}
 
-	bool InputEventReceiverInterface::OnKeyEvent(KeyEvent const & event) 
-	{ 
+	bool InputEventReceiverInterface::OnKeyEvent(KeyEvent const & event)
+	{
 		if (OnKeyEventImpl(event))
 		{
 			SetInputMode(InputMode::KEYBOARD);
 			return true;
 		}
-		return false; 
+		return false;
 	}
 
-	bool InputEventReceiverInterface::OnCharEvent(unsigned int c) 
-	{ 
+	bool InputEventReceiverInterface::OnCharEvent(unsigned int c)
+	{
 		if (OnCharEventImpl(c))
 		{
 			SetInputMode(InputMode::KEYBOARD);
 			return true;
 		}
-		return false; 
+		return false;
 	}
 
 	bool InputEventReceiverInterface::OnMouseMoveImpl(glm::vec2 const& delta)

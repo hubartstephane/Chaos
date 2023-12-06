@@ -12,14 +12,14 @@ namespace chaos
         for (size_t i = 0; i < count; ++i)
         {
             GPUBuffer * buffer = buffers[i].get();
-            // buffer too small ? 
+            // buffer too small ?
             size_t buffer_size = buffer->GetBufferSize();
             if (buffer_size < required_size)
                 continue;
             // or too big ?
             if (max_accepted_size > 0 && buffer_size > max_accepted_size) // we do not want to waste to much memory => that why we use a max_accepted_size
                 continue;
-            // buffer found            
+            // buffer found
             result = buffer;
             buffers.erase(buffers.begin() + i);
             return true;
@@ -49,7 +49,7 @@ namespace chaos
         assert(required_size > 0);
 
         // compute the maximum size we want
-        size_t max_accepted_size = 0;  
+        size_t max_accepted_size = 0;
         if (rejected_size_percentage > 0)
             max_accepted_size = ((100 + rejected_size_percentage) * required_size) / 100;
 
@@ -60,11 +60,11 @@ namespace chaos
             if (entry.fence != nullptr)
             {
                 // as soon as a FENCE exists and is not completed yet, there is no need to search further in the array
-                // none of the other are completed	
+                // none of the other are completed
                 if (entry.fence->WaitForCompletion(0.0f))
                     entry.fence = nullptr;
                 else
-                    break; 
+                    break;
             }
             // search a buffer valid for given fence
             entry.GetBuffer(required_size, max_accepted_size, result);

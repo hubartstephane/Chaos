@@ -7,7 +7,7 @@ namespace chaos
 	int GPUVertexDeclarationEntry::GetComponentCount() const
 	{
 		int component_count = int(type) & 7;
-		return component_count; 
+		return component_count;
 	}
 
 	GLenum GPUVertexDeclarationEntry::GetComponentType() const
@@ -45,7 +45,7 @@ namespace chaos
 
 		int component_count = int(type) & 7;
 
-		return component_count * component_size; 
+		return component_count * component_size;
 	}
 
 	void GPUVertexDeclaration::Push(VertexAttributeSemantic semantic, int semantic_index, VertexAttributeType type, char const * name)

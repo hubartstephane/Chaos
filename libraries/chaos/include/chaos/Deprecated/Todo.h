@@ -43,7 +43,7 @@ joyGetDevCaps(0, &joycaps, sizeof(JOYCAPS));
 
 	- TiledMap => supporter Object Template (etudier l interet)
 
-	
+
 https://www.mapeditor.org/2020/08/05/tiled-1-4-2-released.html
 https://www.mapeditor.org/2020/06/25/tiled-1-4-1-released.html
 https://www.mapeditor.org/2020/05/27/tiled-1-4-beta-released.html
@@ -57,8 +57,8 @@ https://www.mapeditor.org/2020/06/20/tiled-1-4-0-released.html
 	====================================================================
 	== TODO
 	====================================================================
-	
-	
+
+
 
 	- BUG FIX
 
@@ -66,7 +66,7 @@ https://www.mapeditor.org/2020/06/20/tiled-1-4-0-released.html
 	2/ si on fait du HOT RELOAD de shader et que des attributs disparaissent/apparaissent, le systeme de cache de VertexArray par programme semble perdu
 	   (a verifier)
 	3/ pour que le HOT RELOAD refonctionne (contournement), on peut recharger le niveau
-		
+
 		F4->Resoure RELOAD
 		F5->Level RELOAD
 
@@ -93,80 +93,80 @@ https://www.mapeditor.org/2020/06/20/tiled-1-4-0-released.html
 
 
 	- revoir CreateBackgroundImage(...) : SetBackground(...) + SetBackgroundMaterial(...)
-	
+
 	  sortir ca du ParticleManager. Creer un renderable dedié "background_renderable"
-	
-	
-	
-	
+
+
+
+
 	- SoundManager : multi-category
 	=> Pause -> BlendPause category=INGAME
-	  
+
 	=> travailler sur les musiques. MENU-PAUSE-IN GAME
 	  probablement mieux a faire
-	  
-	  
-	  
 
-	
-	
-	
-	
+
+
+
+
+
+
+
 	- MATERIAL
-	
+
 	=> Revoir SubMaterials. Utiliser ca dans LD43 (quantic paouf) pour le multipass
-	
-	
-	
+
+
+
 	- PROGRAMS
 	=> ajouter missing VERTEX SHADER si non specifié
 	=> Chargement d un program
 		-> on peut charger un fichier       'myprogram.pgm'
 		-> ou on peut charger le repertoire 'myprogram' (si le .pgm n'existe pas, le generer a la volée)
-		
-	
-	
+
+
+
 	- MANAGER
-	
+
 	[recurse] : a revoir. il devrait y avoir un niveau [files]: [...]
 	eventuellement PATH
-	
-	
-	
-	
+
+
+
+
 	- COLLISIONS
 	=>revoir box/obox pour fixer les soucis de camera dans TMLevel
-	
-	
-	
+
+
+
 	- LEVELS
 	=>un fichier levels.json pour decrire les fichiers, eventuellement une map pour le menu
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 	-ParticleSystem
 	=>utiliser des VERTEX_BUFFER tournant + GPUFence
-	
+
 	====================================================================
 	== TODO
 	====================================================================
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		-- animated bitmap in atlas
 
@@ -175,12 +175,12 @@ https://www.mapeditor.org/2020/06/20/tiled-1-4-0-released.html
 
 
 		-- Mieux a  faire que d un coté
-		
+
 			ParticleDefaultLayerTrait::ParticleToPrimitives
 
-		  et 
+		  et
 
-			ParticleTools::GenerateBoxParticle(...) + copy couleur 
+			ParticleTools::GenerateBoxParticle(...) + copy couleur
 
 		 de l autre
 
@@ -212,7 +212,7 @@ https://www.mapeditor.org/2020/06/20/tiled-1-4-0-released.html
 
 		AddFontInfo .. AddColor  => ParticleTextGenerator : faudrait avoir quelque chose qui change la taille + la couleur ...
 
-		
+
 
 		Printf(\\[])=> resultat bizarre
 
@@ -428,7 +428,7 @@ class ExecutionContext
 protected:
 
 	/** constructor with data */
-	ExecutionContext(ExecutionContextData* in_context_data): 
+	ExecutionContext(ExecutionContextData* in_context_data):
 		context_data(in_context_data){}
 
 public:
@@ -705,7 +705,7 @@ void ExecutionContextData::OnChildTaskCompleted(ExecutionContextData* child_task
 ExecutionContext TestSimple1()
 {
 	ExecutionContext result;
-	
+
 	for (int i = 0; i < 2; ++i)
 	{
 		ExecutionContext child = result.AddChildTask();
@@ -743,7 +743,7 @@ glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 0, &workgroup_size[0]);
   glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 1, &workgroup_size[1]);
   glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 2, &workgroup_size[2]);
 
-  // glBindImageTexture 
+  // glBindImageTexture
   // glDispatchCompute -> number of workgroup
   // glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT); -- bloque le CPU
   // glFinish block until all GL execution is complete

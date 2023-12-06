@@ -4,7 +4,7 @@
 
 /**
 * Common "macros"
-*/    
+*/
 
 #ifdef min
 #  undef min

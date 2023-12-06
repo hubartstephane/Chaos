@@ -30,7 +30,7 @@ namespace chaos
 		if (parent->FirstChild() == nullptr)
 			parent->InsertFirstChild(node);
 		else
-			parent->InsertAfterChild(parent->LastChild(), node);  
+			parent->InsertAfterChild(parent->LastChild(), node);
 	}
 
 	void XMLTools::PushAttribute(tinyxml2::XMLElement * element, char const * name, char const * value)

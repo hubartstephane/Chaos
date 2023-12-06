@@ -17,7 +17,7 @@ namespace chaos
 		strm.next_in = Z_NULL;
 
 		if (deflateInit(&strm, Z_DEFAULT_COMPRESSION) == Z_OK)
-		{		
+		{
 			unsigned char chunk[CHUNK_SIZE];
 
 			strm.avail_in = (uInt)src.bufsize;
@@ -62,7 +62,7 @@ namespace chaos
 		strm.next_in = Z_NULL;
 
 		if (inflateInit(&strm) == Z_OK)
-		{		
+		{
 			unsigned char chunk[CHUNK_SIZE];
 
 			strm.avail_in = (uInt)src.bufsize;

@@ -37,7 +37,7 @@ namespace chaos
 	//
 	//    luaL_getmetatable(state, "MyClass");  => get MT for a class that has been registered by luaL_newmetatable(...);
 	//
-	// If we use meta programming techniques, we don't know the "name" of the class searched 
+	// If we use meta programming techniques, we don't know the "name" of the class searched
 	// (except maybe with RTTI, but this is not always enabled in a project and that requires that target structure have a V-TABLE)
 	//
 	// So we cannot call : luaL_getmetatable(state, "MyClass");
@@ -50,10 +50,10 @@ namespace chaos
 	//
 	//   -> use address of a unique function
 	//
-	//       template<typename T> 
+	//       template<typename T>
 	//       void F()                       => The address of this function is unique for a given specialization
 	//       {
-	//       } 
+	//       }
 	//
 	//   -> use address of a singleton
 	//
@@ -64,8 +64,8 @@ namespace chaos
 	//         return &result;
 	//       }
 	//
-	//  For any given class A,  
-	//    - &F<A>   
+	//  For any given class A,
+	//    - &F<A>
 	//    - &GetSingletonObject<A>()          => are both unique ID => say    Unique<T>() == some void *
 	//
 	//
@@ -125,7 +125,7 @@ namespace chaos
 	//
 	//        obsolete XXX : why  ID.first == &ID ???
 	//
-	//              => because if we make the call         
+	//              => because if we make the call
 	//
 	//                   std::pair<void *, void *> copy_of_ID = UniqueID<A>()
 	//
@@ -141,7 +141,7 @@ namespace chaos
 	//
 	//
 	// XXX : while ANYOBJECT is a pointer, we can simply use it as a LIGHTUSERDATA. Indexation in a table becomes simple
-	//  
+	//
 
 #if 0
 

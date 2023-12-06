@@ -1,8 +1,8 @@
 
 #include "chaos/Chaos.h"
 
-// if a ConsoleApp is NOT run from a Console, it is given one !! 
-// 
+// if a ConsoleApp is NOT run from a Console, it is given one !!
+//
 
 int main(int argc, char ** argv, char ** env)
 {

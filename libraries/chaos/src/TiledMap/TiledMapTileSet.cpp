@@ -47,9 +47,9 @@ namespace chaos
 			// early exit
 			if ((flags & (ParticleFlags::TEXTURE_DIAGONAL_FLIP | ParticleFlags::TEXTURE_HORIZONTAL_FLIP | ParticleFlags::TEXTURE_VERTICAL_FLIP)) == 0)
 				return;
-			
+
 			// get values
-			int top_edge    = GetEdgeValue(Edge::TOP); 
+			int top_edge    = GetEdgeValue(Edge::TOP);
 			int right_edge  = GetEdgeValue(Edge::RIGHT);
 			int bottom_edge = GetEdgeValue(Edge::BOTTOM);
 			int left_edge   = GetEdgeValue(Edge::LEFT);
@@ -292,7 +292,7 @@ namespace chaos
 
 			// XXX : theses tokens are not exactly the same that for JSON serialization !!!
 			static std::vector<std::pair<Hotpoint, char const*>> const hotpoint_map =
-			{				
+			{
 				{ Hotpoint::TOP, "top" },
 				{ Hotpoint::BOTTOM, "bottom" },
 				{ Hotpoint::LEFT, "left" },

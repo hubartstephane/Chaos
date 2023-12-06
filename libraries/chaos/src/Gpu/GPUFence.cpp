@@ -6,7 +6,7 @@ namespace chaos
 
 	GPUFence::GPUFence(GLsync in_fence) :
 		fence(in_fence)
-	{		
+	{
 	}
 
 	GPUFence::GPUFence() // the GL object is not yet generated

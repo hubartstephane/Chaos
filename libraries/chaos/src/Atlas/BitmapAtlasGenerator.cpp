@@ -241,13 +241,13 @@ namespace chaos
 		}
 
 		std::vector<bitmap_ptr> AtlasGenerator::GenerateBitmaps(BitmapInfoInputVector const & entries, PixelFormat const & final_pixel_format) const
-		{		
+		{
 			std::vector<bitmap_ptr> result;
 
 			// generate the bitmaps
 			size_t bitmap_count = atlas_definitions.size();
 			for (size_t i = 0; i < bitmap_count; ++i)
-			{			
+			{
 				bitmap_ptr bitmap = bitmap_ptr(ImageTools::GenFreeImage(final_pixel_format, params.atlas_width, params.atlas_height));
 				if (bitmap != nullptr)
 				{
@@ -280,14 +280,14 @@ namespace chaos
 
 						int w = src_desc.width;
 						int h = src_desc.height;
-						
+
 
 						ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x, tex_y, w, src_desc.height, ImageTransform::NO_TRANSFORM);
 
-						
+
 						// XXX:
 						// Duplicate the first/last rows/column of each subimage so that the sampling errors would give us a duplicate value
-						// this force to have a padding of a least 1 (each image have its own padding zone) 
+						// this force to have a padding of a least 1 (each image have its own padding zone)
 						//
 						// +------+
 						// |+----+|
@@ -299,7 +299,7 @@ namespace chaos
 						{
 							// XXX : it is possible to index dst texture to outside the range reserved surface (the double border) because
 							//       dst_desc is descriptor on the whole image
-							//       (we force a padding of at least 1)						
+							//       (we force a padding of at least 1)
 
 							// 4 edges
 							ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x, tex_y - 1, w, 1, ImageTransform::NO_TRANSFORM);
@@ -369,7 +369,7 @@ namespace chaos
 				folder_info_output->bitmaps.push_back(std::move(bitmap_info_output));
 			}
 
-			// once we are sure that Folder.Bitmaps does not resize anymore, we can store pointers    
+			// once we are sure that Folder.Bitmaps does not resize anymore, we can store pointers
 			for (size_t i = 0; i < bitmap_count; ++i)
 			{
 				BitmapInfoInput * bitmap_info_input = folder_info_input->bitmaps[i].get();
@@ -404,7 +404,7 @@ namespace chaos
 				}
 			}
 
-			// register the fonts 
+			// register the fonts
 			size_t font_count = folder_info_input->fonts.size();
 			folder_info_output->fonts.reserve(font_count + folder_info_output->fonts.size());
 			for (size_t i = 0 ; i < font_count ; ++i)
@@ -444,7 +444,7 @@ namespace chaos
 				}
 				folder_info_output->fonts.push_back(std::move(font_info_output));
 			}
-			// once we are sure that Folder.Fonts vector does not resize anymore, we can store pointers    			
+			// once we are sure that Folder.Fonts vector does not resize anymore, we can store pointers
 			for (size_t i = 0; i < font_count; ++i)
 			{
 				FontInfoInput * font_info_input  = folder_info_input->fonts[i].get();
@@ -476,7 +476,7 @@ namespace chaos
 			// prepare the result to receive new computation
 			output->Clear();
 
-			// generate input entries and sets. Collect input entries 
+			// generate input entries and sets. Collect input entries
 			// we have to const_cast<> as a non-const data because we are modifying "output_info" members
 			// this as no real side effect a the exit of this function on AtlasInput
 			BitmapInfoInputVector entries;
@@ -543,7 +543,7 @@ namespace chaos
 				{
 					output->bitmaps = GenerateBitmaps(entries, final_pixel_format);
 					output->atlas_count = int(output->bitmaps.size());
-					output->dimension = glm::ivec2(params.atlas_width, params.atlas_height);					
+					output->dimension = glm::ivec2(params.atlas_width, params.atlas_height);
 					return true;
 				}
 			}
@@ -559,7 +559,7 @@ namespace chaos
 
 			// create an indirection list for entries sorted by surface
 			float padding = (float)params.atlas_padding;
-			std::vector<size_t> textures_indirection_table = CreateIndirectionTable(count, [padding, &entries](size_t i1, size_t i2) 
+			std::vector<size_t> textures_indirection_table = CreateIndirectionTable(count, [padding, &entries](size_t i1, size_t i2)
 			{
 				BitmapInfoInput const * entry_1 = entries[i1];
 				BitmapInfoInput const * entry_2 = entries[i2];
@@ -616,7 +616,7 @@ namespace chaos
 				}
 
 				BitmapLayout * layout = GetBitmapLayout(entries[entry_index]);
-				if (layout != nullptr)					
+				if (layout != nullptr)
 					InsertBitmapLayoutInAtlas(*layout, atlas_definitions[best_atlas_index], best_position);
 			}
 			return true;

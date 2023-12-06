@@ -29,7 +29,7 @@ faire meilleure gestion du tile (pas forcement par particle libre)
 
 ------------------------------------------------------
 
-revoir CollisionMask 
+revoir CollisionMask
 
   permettre d ajouter ses propre flag plus facilement. Est ce que cela ne pourrait pas devenir des tag ?
 
@@ -42,12 +42,12 @@ certaines fonction sont virtual dans TMLevel, d autres dans TMLevelInstance. Fai
 
 	------------------------------------------------------
 
-dans 
+dans
 
 	ParticleLayerBase* LudumLevel::DoCreateParticleLayer(TMLayerInstance* layer_instance)
 
-	on creer des layers de particles avec  
-	
+	on creer des layers de particles avec
+
 	   new ParticleLayer<ParticleAnimatedLayerTrait>();
 
     on est donc obligé de creer de LayerTrait alors qu on pourrait faire de l inplace
@@ -57,7 +57,7 @@ dans
 
 	------------------------------------------------------
 
-dans 
+dans
 
 bool LudumLevel::FinalizeLayerParticles(TMLayerInstance* layer_instance, ParticleAllocationBase* allocation)
 
@@ -65,7 +65,7 @@ for (GameObjectParticle& particle : accessor)
 
 on a particle.bitmap_info   ... mais on ne trouve pas l information du tileset qui a permis sa creation
 
-il ya 
+il ya
 
 TMParticle::gid ... mais un acces directement au TileData serait il pas mieux ?
 

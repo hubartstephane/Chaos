@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	
+
 	bool ResourceManagerLoaderBase::CheckResourcePath(FilePathParam const& path) const
 	{
 		// path already known, nothing to do
@@ -16,7 +16,7 @@ namespace chaos
 		resolved_path = path.GetResolvedPath();
 		return true;
 	}
-	
+
 	bool ResourceManagerLoaderBase::CheckResourceName(boost::filesystem::path const* in_path, char const* in_name, nlohmann::json const* json) const
 	{
 		// name already known, nothing to do
@@ -31,7 +31,7 @@ namespace chaos
 			else if (json != nullptr)
 				JSONTools::GetAttribute(json, "name", tmp_name);
 
-			// XXX : to test without 
+			// XXX : to test without
 			//       this line of code prevent to have anymous object that can be declared inline
 			//       for example, a program discribed inplace by {...}
 			//       inside the material itself
@@ -51,7 +51,7 @@ namespace chaos
 			resource_name = in_name; // have to make a copy
 		return true;
 	}
-	
+
 	void ResourceManagerLoaderBase::ApplyNameToLoadedResource(NamedInterface* resource) const
 	{
 		if (resource != nullptr)
@@ -65,7 +65,7 @@ namespace chaos
 		}
 		resource_name = std::string(); // reset
 	}
-	
+
 	void ResourceManagerLoaderBase::ApplyPathToLoadedResource(FileResource* resource) const
 	{
 		if (resource != nullptr)

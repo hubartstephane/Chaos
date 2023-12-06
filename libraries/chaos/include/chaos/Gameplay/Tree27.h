@@ -5,7 +5,7 @@ namespace chaos
 	//
 	//                                                                           width = 3
 	// <........................................................................................................................................................>
-	// 
+	//
 	// +----------------------------------------------------------------------------+----------------------------------------------------------------------------+ Level N + 1
 	// |                                                                                                                                                         |
 	// |                                                                                                                                                         |
@@ -39,7 +39,7 @@ namespace chaos
 	// |                                                                                     |                                                 |
 	// |                                                                                     |                                                 |
 	// |                                                                                     +-------------------------------------------------+
-	// 
+	//
 	// Each node has 3 child nodes.
 	// The width of a child node is 1/3 its parent width
 	// Each node overlaps its siblings by 1/3 its width
@@ -59,17 +59,17 @@ namespace chaos
 	//                     Node(3X)    (L - 1)
 	//                     Node(3X + 1)(L - 1)
 	//
-	// The following table shows how children belongs to Node(X)(0) 
-	// 
+	// The following table shows how children belongs to Node(X)(0)
+	//
 	// L = 0  | x
 	// -------+-------------------------------
 	// L = -1 | 3x +/- 1
 	// -------+-------------------------------
 	// L = -2 | 3[3x +/- 1] +/- 1
-	//        | = 9x +/- (3 + 1) 
+	//        | = 9x +/- (3 + 1)
 	// -------+-------------------------------
 	// L = -3 | 3[9x +/- (3 + 1)] +/- 1
-	//        | = 27x +/- (9 + 3 + 1) 
+	//        | = 27x +/- (9 + 3 + 1)
 	// -------+-------------------------------
 	// L = -4 | 3[27x +/- (9 + 3 + 1)] +/- 1
 	//        | = 81x +- (27 + 9 + 3 + 1)    <--- 27 + 9 + 3 + 1 is the sum of a geometric serie
@@ -79,7 +79,7 @@ namespace chaos
 	//        |                       [ 3 - 1 ]
 	//
 	//  pow(3, L) table
-	// 
+	//
 	//  0 | 1
 	//  1 | 3
 	//  2 | 9
@@ -258,7 +258,7 @@ namespace chaos
 		// obj_left_position >= node_left_position
 		//
 		// obj_left_position >= (2/3).width(L).X - (1/2).width(L)
-		// 
+		//
 		// (2/3).L.X <= obj_left_position + (1/2).width(L)
 		//
 		//             obj_left_position + (1/2).width(L)

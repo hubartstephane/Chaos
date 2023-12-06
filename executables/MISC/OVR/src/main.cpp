@@ -42,7 +42,7 @@ int main(int argc, char ** argv, char ** env)
     }
     ovr_Shutdown();
   }
-  
+
   chaos::WinTools::PressToContinue();
 
   return 0;

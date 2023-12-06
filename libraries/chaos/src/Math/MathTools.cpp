@@ -7,11 +7,11 @@ namespace chaos
 	{
 
 		/** structure used to decompose floating point in bit fields */
-		union FloatingPointStruct 
+		union FloatingPointStruct
 		{
 			float value;
 			struct {
-				unsigned int mantissa : 23;  // to get exponent, we decompose value to the form 1.xxx E exponent    
+				unsigned int mantissa : 23;  // to get exponent, we decompose value to the form 1.xxx E exponent
 				unsigned int exponent : 8;   // beware : should add 127 to have the correct value
 				unsigned int sign : 1;
 			};

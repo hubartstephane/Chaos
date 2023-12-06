@@ -5,7 +5,7 @@ namespace chaos
 {
 	bool TextWidget::OnDraw(GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params)
 	{
-		
+
 		if (mesh != nullptr)
 		{
 			//mesh->Display(renderer, uniform_provider)

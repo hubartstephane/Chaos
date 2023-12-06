@@ -6,7 +6,7 @@ namespace chaos
 	int MIDICommand::GetCommandParamCount(unsigned char status)
 	{
 		// remove channel part from the command
-		status &= 0xF0; 
+		status &= 0xF0;
 
 		if (status == CMD_NOTE_OFF)
 			return 2;
@@ -20,7 +20,7 @@ namespace chaos
 			return 1;
 		if (status == CMD_PITCH_WHEEL_CHANGE)
 			return 2;
-		return -1;	
+		return -1;
 	}
 
 	bool MIDICommand::ReadParams(BufferReader & reader)

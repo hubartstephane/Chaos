@@ -8,7 +8,7 @@ PlayerInputCommon.json
 {
 	Jump = {GamepadA}
 
-	
+
 	LongJump = LongPress(GamepadA)
 
 
@@ -62,7 +62,7 @@ public:
 
 	}
 
-	virtual 
+	virtual
 
 
 
@@ -189,7 +189,7 @@ InitialState<> InitialState()
 
 
 
-	
+
 
 	viewport.display = []()
 	{
@@ -202,7 +202,7 @@ InitialState<> InitialState()
 
 
 
-	
+
 
 
 
@@ -963,12 +963,12 @@ int main(int argc, char** argv, char** env)
 		int count = 0;
 
 		Task<int, void> G = Generator1();
-		
+
 #if 0
 		.CancelIf([&count]()
 		{
 				return false;
-			return (++count == 2); 
+			return (++count == 2);
 		});
 #endif
 
@@ -987,7 +987,7 @@ int main(int argc, char** argv, char** env)
 		{
 			auto t = std::chrono::system_clock::now();
 			std::chrono::duration<float> diff = t - start_time;
-			
+
 			return (diff.count() > 2.0f);
 		});
 

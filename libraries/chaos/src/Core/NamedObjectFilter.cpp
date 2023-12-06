@@ -37,7 +37,7 @@ namespace chaos
 				if (enable_tags[i] == tag)
 					return true;
 			// if requirement list, we must met at least one condition
-			return false; 
+			return false;
 		}
 		return true; // no requirement => OK
 	}

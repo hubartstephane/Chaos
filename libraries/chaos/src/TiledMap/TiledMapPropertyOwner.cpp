@@ -8,41 +8,41 @@ namespace chaos
 		// ==========================================
 		// Property methods
 		// ==========================================
-		
-		int const* Property::GetPropertyInt() const 
-		{ 
+
+		int const* Property::GetPropertyInt() const
+		{
 			PropertyInt const * prop = auto_cast(this);
 			if (prop != nullptr)
 				return &prop->value;
 			return nullptr;
 		}
-		
-		float const* Property::GetPropertyFloat() const 
-		{ 
+
+		float const* Property::GetPropertyFloat() const
+		{
 			PropertyFloat const * prop = auto_cast(this);
 			if (prop != nullptr)
 				return &prop->value;
 			return nullptr;
 		}
 
-		bool const* Property::GetPropertyBool() const 
-		{ 
+		bool const* Property::GetPropertyBool() const
+		{
 			PropertyBool const* prop = auto_cast(this);
 			if (prop != nullptr)
 				return &prop->value;
 			return nullptr;
 		}
-		
-		std::string const* Property::GetPropertyString() const 
-		{ 
+
+		std::string const* Property::GetPropertyString() const
+		{
 			PropertyString const * prop = auto_cast(this);
 			if (prop != nullptr)
 				return &prop->value;
 			return nullptr;
 		}
-		
-		glm::vec4 const* Property::GetPropertyColor() const 
-		{ 
+
+		glm::vec4 const* Property::GetPropertyColor() const
+		{
 			PropertyColor const* prop = auto_cast(this);
 			if (prop != nullptr)
 				return &prop->value;
@@ -131,15 +131,15 @@ namespace chaos
 			if (result == nullptr)\
 				return default_value;\
 			return *result;\
-		}		
-		CHAOS_FIND_PROPERTY_WITH_DEFAULT(Int, int, int);			
+		}
+		CHAOS_FIND_PROPERTY_WITH_DEFAULT(Int, int, int);
 		CHAOS_FIND_PROPERTY_WITH_DEFAULT(Float, float, float);
 		CHAOS_FIND_PROPERTY_WITH_DEFAULT(Bool, bool, bool);
 		CHAOS_FIND_PROPERTY_WITH_DEFAULT(String, std::string, char const*);
 		CHAOS_FIND_PROPERTY_WITH_DEFAULT(Color, glm::vec4, glm::vec4 const&);
 		CHAOS_FIND_PROPERTY_WITH_DEFAULT(Object, int, int);
 #undef CHAOS_FIND_PROPERTY_WITH_DEFAULT
-		
+
 		bool PropertyOwner::DoLoad(tinyxml2::XMLElement const * element)
 		{
 			assert(element != nullptr);

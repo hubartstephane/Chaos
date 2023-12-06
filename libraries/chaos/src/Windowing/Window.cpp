@@ -491,7 +491,7 @@ namespace chaos
 			});
 		}
 	}
-	
+
 	void Window::DoOnIconifiedStateChange(GLFWwindow* in_glfw_window, int value)
 	{
 		GetWindowAndProcess(in_glfw_window, [value](Window * my_window)
@@ -654,7 +654,7 @@ namespace chaos
 			my_window->OnCharEvent(c);
 		});
 	}
-	
+
 	void Window::DoOnDropFile(GLFWwindow* in_glfw_window, int count, char const** paths)
 	{
 		GetWindowAndProcess(in_glfw_window, [count, paths](Window* my_window)
@@ -1071,7 +1071,7 @@ namespace chaos
 	bool Window::InitializeFromConfiguration(nlohmann::json const * config)
 	{
 		RegisterKnownDrawables();
-		return true; 
+		return true;
 	}
 
 	void Window::RegisterKnownDrawables()
@@ -1089,12 +1089,12 @@ namespace chaos
 	{
 		return ConfigurableInterface::OnConfigurationChanged(config);
 	}
-	
+
 	bool Window::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
 	{
 
 		// read the position
-		glm::ivec2 position = { 0, 0 };		
+		glm::ivec2 position = { 0, 0 };
 		if (JSONTools::GetAttribute(config, "position", position))
 			SetWindowPosition(position);
 		// read the size
@@ -1129,7 +1129,7 @@ namespace chaos
 	}
 
 	bool Window::OnWindowClosed()
-	{ 
+	{
 		return true;
 	}
 

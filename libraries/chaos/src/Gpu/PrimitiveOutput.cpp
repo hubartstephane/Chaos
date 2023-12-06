@@ -56,7 +56,7 @@ namespace chaos
                 return &cache_entry;
         return nullptr;
     }
-   
+
     void PrimitiveOutputBase::GiveBufferToInternalCache(GPUBuffer* in_buffer, char* in_buffer_start, char* in_buffer_position, char* in_buffer_end)
     {
         assert(in_buffer != nullptr);
@@ -186,7 +186,7 @@ namespace chaos
     void PrimitiveOutputBase::FlushDrawPrimitive()
     {
         if (buffer_unflushed != buffer_position) // something to flush
-        { 
+        {
             assert(current_primitive_type != PrimitiveType::NONE);
 
             GPUDrawPrimitive primitive;
@@ -195,7 +195,7 @@ namespace chaos
             // quads are indexed and uses a shared index_buffer. The flush may so produce multiple primitive (if there are not enougth indices in this buffer)
             if (current_primitive_type == PrimitiveType::QUAD)
             {
-                // flush 
+                // flush
                 primitive.indexed = true;
                 primitive.start = 0; // the start is relative to the index buffer here : always 0
 
@@ -236,13 +236,13 @@ namespace chaos
         // was indexed, becomes not indexed (or the opposite) (or current_primitive_type was none)
         if ((primitive_type == PrimitiveType::QUAD) ^ (current_primitive_type == PrimitiveType::QUAD)) // one or the other but not twice (this works if current_primitive_type == NONE)
         {
-            FlushMeshElement(); 
+            FlushMeshElement();
         }
         // cannot concat the new primitive in the same draw call
         else if (primitive_type == PrimitiveType::TRIANGLE_FAN || primitive_type == PrimitiveType::TRIANGLE_STRIP || primitive_type == PrimitiveType::LINE_STRIP || primitive_type == PrimitiveType::LINE_LOOP)
         {
             FlushDrawPrimitive(); // flush pending primitives
-        } 
+        }
         else if (primitive_type != current_primitive_type)
         {
             FlushDrawPrimitive(); // flush pending primitives

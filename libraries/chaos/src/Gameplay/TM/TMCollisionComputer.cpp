@@ -57,14 +57,14 @@ namespace chaos
 	//
 	//
 	// To solve with issue we use extended collisions : We define 3 zones for the PAWN
-	// 
 	//
-	// +----------------+        -XXXX zone is strictly the PAWN 
+	//
+	// +----------------+        -XXXX zone is strictly the PAWN
 	// |     ZONE 2     |
 	// |  +----------+  |        -ZONE 1 : if collision happens inside ZONE 1, the PAWN reacts and is pushed away so that the collision is now at the limit of ZONE 1 and ZONE 2
 	// |  |  ZONE 1  |  |
 	// |  |  +----+  |  |        -ZONE 2 : if collision happens inside ZONE 2, the collision is detected (means objects know they are touching each other) but there is no repulsion
-	// |  |  |XXXX|  |  | 
+	// |  |  |XXXX|  |  |
 	// |  |  |XXXX|  |  |
 	// |  |  +----+  |  |
 	// |  |          |  |
@@ -172,7 +172,7 @@ namespace chaos
 		std::pair<glm::vec2, glm::vec2> particle_corners = GetBoxCorners(collision_info.particle->bounding_box);
 		std::pair<glm::vec2, glm::vec2> dst_corners = GetBoxCorners(dst_box);
 
-		// XXX : an edge with wang value 
+		// XXX : an edge with wang value
 		//         0 -> the tile does not use the wangset at all
 		//         1 -> this is the empty wang value
 		//        +2 -> good
@@ -317,6 +317,6 @@ namespace chaos
 		{
 			dst_box.position = best_position;
 		}
-	} 
+	}
 
 }; // namespace chaos

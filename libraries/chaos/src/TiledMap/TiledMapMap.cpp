@@ -162,7 +162,7 @@ namespace chaos
 			TileData const * tiledata = it->tileset->FindTileData(gid - it->first_gid);
 			if (tiledata == nullptr)
 				return {};
-				
+
 			return TileInfo((gid - it->first_gid), it->tileset.get(), tiledata);
 		}
 

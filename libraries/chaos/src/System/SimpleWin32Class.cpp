@@ -12,7 +12,7 @@ namespace chaos
 
 		wc.lpfnWndProc   = native_class? DefWindowProc : SimpleWin32Window::WindowProc;
 		wc.hInstance     = NULL;
-		wc.lpszClassName = window_classname;  
+		wc.lpszClassName = window_classname;
 
 		if (!native_class)
 			RegisterClassA(&wc);
@@ -26,12 +26,12 @@ namespace chaos
 				create_params.dwExStyle, // Optional window styles.
 				window_classname,        // Window class
 				window_title,            // Window text
-				create_params.dwStyle,   // Window style        
-				create_params.x,         // Size and position        
-				create_params.y,         // Size and position        
-				create_params.nWidth,    // Size and position        
-				create_params.nHeight,   // Size and position        
-				hParent,                 // Parent window    
+				create_params.dwStyle,   // Window style
+				create_params.x,         // Size and position
+				create_params.y,         // Size and position
+				create_params.nWidth,    // Size and position
+				create_params.nHeight,   // Size and position
+				hParent,                 // Parent window
 				NULL,                    // Menu
 				NULL,                    // Instance handle
 				(LPVOID)result           // Additional application data
@@ -43,7 +43,7 @@ namespace chaos
 				return NULL;
 			}
 			result->PostCreateWindow();
-		}       
+		}
 		return result;
 	}
 

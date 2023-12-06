@@ -8,7 +8,7 @@ namespace chaos
 	{
 		std::string PathToName(boost::filesystem::path const & path)
 		{
-			return path.filename().stem().string();	  
+			return path.filename().stem().string();
 		}
 
 		boost::filesystem::path FindAbsolutePath(boost::filesystem::path const & reference_path, boost::filesystem::path const & path)

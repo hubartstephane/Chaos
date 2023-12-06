@@ -8,7 +8,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* This is an allocator that use in internal ObjectPool64 
+	* This is an allocator that use in internal ObjectPool64
 	**/
 	template<typename T>
 	class ObjectPool

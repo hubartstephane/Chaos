@@ -268,7 +268,7 @@ namespace chaos
 			if (element == nullptr)
 				return true;
 
-			// read the data		
+			// read the data
 			std::vector<Tile> tiles;
 
 			glm::ivec2 chunk_size = size;
@@ -278,7 +278,7 @@ namespace chaos
 			glm::ivec2 chunk_offset = glm::ivec2(0, 0);
 			XMLTools::ReadAttribute(element, "x", chunk_offset.x);
 			XMLTools::ReadAttribute(element, "y", chunk_offset.y);
-			
+
 			if (StringTools::Stricmp(encoding, "base64") == 0)
 			{
 				char const* txt = element->GetText();
@@ -363,7 +363,7 @@ namespace chaos
 				}
 			}
 
-			
+
 			if (tiles.size() != 0)
 			{
 				// decode the ID's and the flags

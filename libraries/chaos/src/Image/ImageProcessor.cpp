@@ -21,8 +21,8 @@ namespace chaos
 		assert(src.size() == 1 || grid_anim.GetFrameCount() == 0); // cannot have both multiple image and a grid structure
 
 		std::vector<FIBITMAP*> result;
-		
-		// grid animation		
+
+		// grid animation
 		if (grid_anim.GetFrameCount() > 1)
 		{
 			ImageDescription src_desc = ImageTools::GetImageDescription(src[0]);
@@ -35,7 +35,7 @@ namespace chaos
 					int w = src_desc.width / grid_anim.grid_size.x;
 					int h = src_desc.height / grid_anim.grid_size.y;
 					ImageDescription sub_desc = src_desc.GetSubImageDescription(x * w, y * h, w, h);
-										
+
 					FIBITMAP* image = ProcessImage(sub_desc);
 					if (image == nullptr)
 					{
@@ -44,7 +44,7 @@ namespace chaos
 					}
 					// push first so that the image is released in case of failure
 					result.push_back(image);
-					// check compatibility with previous elements 
+					// check compatibility with previous elements
 					if (result.size() > 1)
 					{
 						ImageDescription d1 = ImageTools::GetImageDescription(image);
@@ -54,13 +54,13 @@ namespace chaos
 							Log::Error("ImageProcessor : when processing GRID resulting images should all have same size and same format");
 							return ProcessAnimatedImage_ClearResult(result);
 						}
-					}					
+					}
 				}
 			}
 
 			assert(result.size() > 0);
 
-			// recompose the image to have a grid 
+			// recompose the image to have a grid
 			ImageDescription d = ImageTools::GetImageDescription(result[0]);
 			FIBITMAP * image = ImageTools::GenFreeImage(d.pixel_format, d.width * grid_anim.grid_size.x, d.height * grid_anim.grid_size.y);
 			if (image == nullptr)
@@ -70,7 +70,7 @@ namespace chaos
 			}
 
 			ImageDescription dst_desc = ImageTools::GetImageDescription(image);
-			
+
 			for (int y = 0; y < grid_anim.grid_size.y; ++y)
 			{
 				for (int x = 0; x < grid_anim.grid_size.x; ++x)
@@ -179,12 +179,12 @@ namespace chaos
 									all_neighboor_empty = !color_filter.Filter(src_accessor(sx, sy));
 							}
 						}
-									
+
 						// put the pixel on destination
 						if (all_neighboor_empty)
 							dst_accessor(x, y) = empty;
 						else if (src_x >= 0 && src_x < src_desc.width && src_y >= 0 && src_y < src_desc.height && color_filter.Filter(src_accessor(src_x, src_y)))
-							dst_accessor(x, y) = src_accessor(src_x, src_y); 
+							dst_accessor(x, y) = src_accessor(src_x, src_y);
 						else
 							dst_accessor(x, y) = outline;
 					}

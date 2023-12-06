@@ -62,7 +62,7 @@ namespace chaos
 				if (skin == nullptr)
 					continue;
 
-				FbxSkin::EType skin_type = skin->GetSkinningType(); // eRigid, eLinear, eDualQuaternion, eBlend 
+				FbxSkin::EType skin_type = skin->GetSkinningType(); // eRigid, eLinear, eDualQuaternion, eBlend
 
 				int cluster_count = skin->GetClusterCount();
 				for (int j = 0; j < cluster_count; ++j) // get all bones for that skinning
@@ -311,7 +311,7 @@ namespace chaos
 					{
 						int32_t boneindex = 0;
 						float   boneweight = 0.0f;
-						if (i < skin_data.size()) // this will fill missing bones with 0, 0 
+						if (i < skin_data.size()) // this will fill missing bones with 0, 0
 						{
 							boneindex = skin_data[i].first;
 							boneweight = skin_data[i].second;
@@ -334,12 +334,12 @@ namespace chaos
 			//          2 vertices can only be identical if they use the same control point.
 			//          So we use a map
 			//
-			//                MAP[control_point_index] = {list of final vertices that COULD be identical} 
+			//                MAP[control_point_index] = {list of final vertices that COULD be identical}
 			//
 			//          This helps reducing the number of comparaison
 			//
 			//          Then we compare pairs of vertices and store results in an equivalent table.
-			// 
+			//
 
 			// create a contigus buffer for the vertices
 			Buffer<char> vertices = SharedBufferPolicy<char>::NewBuffer(vertex_write_buffer.GetWrittenSize());
@@ -378,7 +378,7 @@ namespace chaos
 
 						for (size_t j = i + 1; j < count; ++j)
 						{
-#if _DEBUG && 0 
+#if _DEBUG && 0
 							++effective_comparaison_count;
 #endif
 							int v2 = it->second[j];
@@ -405,7 +405,7 @@ namespace chaos
 				//
 				//  index           |  0   1   2   3   4   5   6   7   8   9
 				//  --------------------------------------------------------
-				//  equiv class     |  0   1   2   1   4   5   2   5   8   9 
+				//  equiv class     |  0   1   2   1   4   5   2   5   8   9
 				//                                ---         --- ---
 				//                                 |           |   |
 				//                                   can be removed
@@ -415,11 +415,11 @@ namespace chaos
 				//
 				//  index           |  0   1   2   3   4   5   6   7   8   9
 				//  --------------------------------------------------------
-				//  equiv class     |  0   1   2   1   3   4   2   4   5   6 
+				//  equiv class     |  0   1   2   1   3   4   2   4   5   6
 				//                                    --- --- --- --- --- ---
 				//                                     |   |   |   |   |   |
 				//                               must be displaced to compact buffer
-				//                                      
+				//
 
 				// apply the equivalence table in vertex buffer
 				// each vertex that are not in than their own equiv class make a free row for next vertices in the array
@@ -448,8 +448,8 @@ namespace chaos
 
 #if 0
 				//
-				// STEP 4 : spacial locality of vertices. 
-				//          try to avoid large distances between vertex indices 
+				// STEP 4 : spacial locality of vertices.
+				//          try to avoid large distances between vertex indices
 				//          [1, 2, 3] is better than [2, 50, 100]
 				//
 

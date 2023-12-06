@@ -51,7 +51,7 @@ namespace chaos
 
 			GPUSkeletonHierarchyDef * def = new GPUSkeletonHierarchyDef;
 			def->name = skeleton->GetName();
-			output->skeleton_defs.push_back(def);    
+			output->skeleton_defs.push_back(def);
 
 			previous_bone = std::numeric_limits<size_t>::max();
 		}

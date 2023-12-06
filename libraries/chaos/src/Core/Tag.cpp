@@ -11,7 +11,7 @@ namespace chaos
 			if (it == name)
 				return (TagType)it.c_str();
 		// insert a new string
-		auto it = tags.insert(std::move(std::string(name)));		
+		auto it = tags.insert(std::move(std::string(name)));
 		return (TagType)it.first->c_str();
 	}
 

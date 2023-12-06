@@ -189,7 +189,7 @@ namespace chaos
 	{
 		if (parent_configuration == nullptr)
 			Object::SubReference(); // the configuration is handled as usual
-		else if (--shared_count == 1) // the last reference is the one from the parent. Destroy it 
+		else if (--shared_count == 1) // the last reference is the one from the parent. Destroy it
 			RemoveFromParent();
 	}
 
@@ -298,12 +298,12 @@ namespace chaos
 				return false;
 		return JSONTools::SaveJSONToFile(&storage_persistent_config, persistent_config_path);
 	}
-	
+
 	void RootObjectConfiguration::SetDefaultConfigurationPath(FilePathParam const& in_default_config_path)
 	{
 		default_config_path = in_default_config_path.GetResolvedPath();
 	}
-	
+
 	void RootObjectConfiguration::SetPersistentConfigurationPath(FilePathParam const& in_persistent_config_path)
 	{
 		persistent_config_path = in_persistent_config_path.GetResolvedPath();

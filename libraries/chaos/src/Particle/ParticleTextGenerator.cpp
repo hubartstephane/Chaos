@@ -4,7 +4,7 @@
 namespace chaos
 {
 	namespace ParticleTextGenerator
-	{	
+	{
 		GeneratorParams::GeneratorParams(char const * in_font_info_name, float in_line_height, glm::vec2 const & in_position, Hotpoint in_hotpoint):
 			line_height(in_line_height),
 			font_info_name(in_font_info_name),
@@ -72,7 +72,7 @@ namespace chaos
 		{
 			size_t result = 0;
 			for (size_t i = 0 ; i < token_lines.size() ; ++i)
-				result += token_lines[i].size();	
+				result += token_lines[i].size();
 			return result;
 		}
 
@@ -194,8 +194,8 @@ namespace chaos
 				token_size.y = params.line_height - 2 * params.bitmap_padding.y;
 
 				// compute the particle data
-				token.corners.bottomleft = bottomleft_position; 
-				token.corners.topright   = bottomleft_position + token_size; 
+				token.corners.bottomleft = bottomleft_position;
+				token.corners.topright   = bottomleft_position + token_size;
 				token.texcoords          = token.bitmap_layout->GetTexcoords();
 
 				// next bitmap/character data
@@ -211,7 +211,7 @@ namespace chaos
 			}
 			else if (token.character_layout != nullptr)
 			{
-				// get the descender 
+				// get the descender
 				Style const & style = style_stack.back();
 				float descender = (style.font_info == nullptr) ? 0.0f : style.font_info->descender;
 
@@ -239,8 +239,8 @@ namespace chaos
 				token_size.y = factor * (float)token.character_layout->height;
 
 				// compute the particle data
-				token.corners.bottomleft = bottomleft_position; 
-				token.corners.topright   = bottomleft_position + token_size; 
+				token.corners.bottomleft = bottomleft_position;
+				token.corners.topright   = bottomleft_position + token_size;
 				token.texcoords = token.character_layout->GetTexcoords();
 
 				// XXX : Some fonts are in italic. The 'advance' cause some 'override' in character bounding box.
@@ -278,7 +278,7 @@ namespace chaos
 			if (result.token_lines.size() == 0)
 				result.token_lines.push_back(TokenLine());
 			// ... then you can add a new line
-			result.token_lines.push_back(TokenLine());	
+			result.token_lines.push_back(TokenLine());
 		}
 
 		bool GeneratorData::StartMarkup(char const * text, int & i)
@@ -292,14 +292,14 @@ namespace chaos
 				{
 					// no character : skip
 					if (i - j < 1)
-						return false; // ill-formed string								  
+						return false; // ill-formed string
 					// the markup
 					std::string markup = std::string(&text[j], &text[i]);
 					// markup correspond to a bitmap, the current character MUST be ']'
 					auto bitmap = generator.GetBitmapInfo(markup.c_str());
 					if (bitmap != nullptr)
 					{
-						if (c == ']') // normal bitmap 
+						if (c == ']') // normal bitmap
 						{
 							EmitBitmap(bitmap, false);
 							return true;
@@ -330,7 +330,7 @@ namespace chaos
 						PushFontInfo(font_info, override_top_stack);
 						return true;
 					}
-					// a markup has been detected but we don'k know to what it corresponds, so push a duplicate on the stack 
+					// a markup has been detected but we don'k know to what it corresponds, so push a duplicate on the stack
 					// because we expect a markup closure later
 					PushDuplicate(override_top_stack);
 					return true;
@@ -509,7 +509,7 @@ namespace chaos
 				{
 
 				}
-				// close previously started markup 
+				// close previously started markup
 				else if (c == ']')
 				{
 					if (generator_data.style_stack.size() <= 1) // the very first style is manually inserted. It should never be popped
@@ -522,7 +522,7 @@ namespace chaos
 					if (!generator_data.StartMarkup(text, ++i)) // ill-formed markup
 						return false;
 				}
-				// finally, this is not a special character  		
+				// finally, this is not a special character
 				else
 				{
 					generator_data.EmitCharacters(c, 1);
@@ -532,7 +532,7 @@ namespace chaos
 			}
 
 			// all markups should be correctly closed (except the very first we have manually inserted)
-			if (generator_data.style_stack.size() != 1) 
+			if (generator_data.style_stack.size() != 1)
 				return false;
 
 			return true;
@@ -584,9 +584,9 @@ namespace chaos
 			{
 				for (Token & token : line)
 				{
-					token.corners.bottomleft += offset;	
-					token.corners.topright += offset;	
-				}	
+					token.corners.bottomleft += offset;
+					token.corners.topright += offset;
+				}
 			}
 		}
 
@@ -598,11 +598,11 @@ namespace chaos
 				{
 					for (Token & token : line)
 					{
-						token.corners.bottomleft += offset;	
-						token.corners.topright += offset;	
-					}						
-				}		
-			}				
+						token.corners.bottomleft += offset;
+						token.corners.topright += offset;
+					}
+				}
+			}
 		}
 
 		bool Generator::MoveParticlesToHotpoint(GeneratorData & generator_data) const
@@ -671,9 +671,9 @@ namespace chaos
 						MoveParticles(line, glm::vec2((W1 - W2) * 0.5f, 0.0f));
 					}
 					// justification
-					else if (params.alignment == TextAlignment::JUSTIFY && W2 < W1) // cannot justify to decrease line size 
+					else if (params.alignment == TextAlignment::JUSTIFY && W2 < W1) // cannot justify to decrease line size
 					{
-						// count the total size of whitespace token						
+						// count the total size of whitespace token
 						float whitespace_width = 0.0f;
 						for (Token const & token : line)
 						{
@@ -760,7 +760,7 @@ namespace chaos
 				// create the background
 				if (allocation_params.create_background)
 					accessor[token_index++] = GetBackgroundParticle(generator_result, allocation_params);
-				// convert the text	
+				// convert the text
 				for (ParticleTextGenerator::TokenLine const& line : generator_result.token_lines)
 					for (Token const & token : line)
 						accessor[token_index++] = TokenToParticle(token);

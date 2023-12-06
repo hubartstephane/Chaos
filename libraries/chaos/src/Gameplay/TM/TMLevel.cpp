@@ -6,7 +6,7 @@ namespace chaos
 	// =====================================
 	// TMLevel implementation
 	// =====================================
-	
+
 	TMLevel::TMLevel()
 	{
 		level_instance_class = TMLevelInstance::GetStaticClass();
@@ -22,7 +22,7 @@ namespace chaos
 		std::string const* in_level_title = in_tiled_map->FindPropertyString("LEVEL_TITLE");
 		if (in_level_title != nullptr)
 			level_title = *in_level_title;
-		// get the level time	
+		// get the level time
 		level_timeout = in_tiled_map->GetPropertyValueFloat("LEVEL_TIMEOUT", level_timeout);
 		return true;
 	}
@@ -36,13 +36,13 @@ namespace chaos
 	{
 		return new ParticleLayer<TMParticleLayerTrait>();
 	}
-	
+
 	TMObjectFactory TMLevel::DoGetObjectFactory(TMLayerInstance* in_layer_instance, TiledMap::TypedObject const * in_typed_object)
 	{
-		// player start 
+		// player start
 		if (TMTools::IsPlayerStart(in_typed_object))
 			return CHAOS_TM_MAKE_OBJECT_FACTORY(return DoCreatePlayerStart(););
-		// camera 
+		// camera
 		if (TMTools::IsCameraTemplate(in_typed_object))
 			return CHAOS_TM_MAKE_OBJECT_FACTORY(return DoCreateCameraTemplate(););
 		// path
@@ -112,7 +112,7 @@ namespace chaos
 		};
 		return result_factory;
 	}
-	
+
 	TMPath* TMLevel::DoCreatePath()
 	{
 		return new TMPath();
@@ -164,9 +164,9 @@ namespace chaos
 		return result;
 	}
 
-	bool TMLevel::FinalizeLayerParticles(TMLayerInstance* layer_instance, ParticleAllocationBase* allocation) 
+	bool TMLevel::FinalizeLayerParticles(TMLayerInstance* layer_instance, ParticleAllocationBase* allocation)
 	{
-		return true; 
+		return true;
 	}
 
 }; // namespace chaos

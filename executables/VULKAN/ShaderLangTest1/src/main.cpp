@@ -22,7 +22,7 @@ char const * pixel_shader_source= R"SHADER_SOURCE(
 	#extension GL_GOOGLE_cpp_style_line_directive: enable
 	#include "toto.h"
 	#include <titi.h>
-	
+
 	layout(location = 0) out vec4 outColor;
 
 	layout(binding=0) uniform MyUniforms
@@ -63,10 +63,10 @@ char const* vertex_shader_source = R"SHADER_SOURCE(
 
 // DirStackFileIncluder: public glslang::TShader::Includer
 
-// #include "..." 
+// #include "..."
 //   1->call includeLocal
 //   2->call includeSystem
-// #include <...> 
+// #include <...>
 //   1->call includeSystem
 
 class MyIncluder : public glslang::TShader::Includer
@@ -154,22 +154,22 @@ glslang::TProgram* CreateProgram(std::map<EShLanguage, char const*> const& shade
 				char const* shader_strings[] = { it.second };
 				int const shader_strings_length[] = { int(strlen(it.second)) };
 				char const* shader_names[] = { "shader_source1" };
-				
+
 				shader->setStringsWithLengthsAndNames(shader_strings, shader_strings_length, shader_names, 1);
-				
-				
-				
+
+
+
 				//shader->setEnvInput(glslang::EShSourceGlsl, it.first, glslang::EShClientVulkan, 110); // important so that we know how to compile
 
 				shader->setEnvInput(glslang::EShSourceGlsl, it.first, glslang::EShClientOpenGL, 450); // important so that we know how to compile
-				
-				
-				
-				
-				
+
+
+
+
+
 				shader->setEnvTarget(glslang::EShTargetSpv, glslang::EShTargetSpv_1_0); // ??? we have source language below, and client language. what is this ?
-				
-				shader->setEntryPoint("main"); 
+
+				shader->setEntryPoint("main");
 				shader->setDebugInfo(true);
 				shader->setEnhancedMsgs();
 				shader->setOverrideVersion(460);
@@ -327,7 +327,7 @@ int main(int argc, char ** argv, char ** env)
 
 
 
-		delete (program); 
+		delete (program);
 	}
 
 	glslang::FinalizeProcess();

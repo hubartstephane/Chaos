@@ -27,8 +27,8 @@ namespace chaos
 
 		float x         =  params.position.x;
 		float y         =  params.position.y;
-		float dx        =  params.character_size.x; 
-		float dy        = -params.character_size.y; 
+		float dx        =  params.character_size.x;
+		float dy        = -params.character_size.y;
 		float next_char =  params.character_size.x + params.spacing.x;
 		float next_line = -params.character_size.y - params.spacing.y;      // we want the Y = 0 to be the TOPLEFT position of the text. To match natural OpenGL system, the remining characters are in negative Y axix
 
@@ -53,7 +53,7 @@ namespace chaos
 
 			if (c == '\t') // tabulations
 			{
-				if (params.line_limit <= 0) 
+				if (params.line_limit <= 0)
 					x += next_tab;
 				else
 				{
@@ -100,7 +100,7 @@ namespace chaos
 				glm::vec2 v4 = v1 + glm::vec2(0.0f, dy);
 
 				// insert the triangles
-				InsertVertexComponent(vertices, v1, t1);		  
+				InsertVertexComponent(vertices, v1, t1);
 				InsertVertexComponent(vertices, v3, t3);
 				InsertVertexComponent(vertices, v2, t2);
 
@@ -112,7 +112,7 @@ namespace chaos
 				ExtendBox(result, v3);
 			}
 
-			// next character 
+			// next character
 			x = x + next_char;
 
 			if (params.line_limit > 0)

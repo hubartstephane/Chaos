@@ -5,7 +5,7 @@ namespace chaos
 {
 
 	void LuaState::OpenLibs(luaL_Reg const * funcs, int index)
-	{ 
+	{
 #if _DEBUG
 		ensure_luatop_const(state);
 #endif

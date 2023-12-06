@@ -5,7 +5,7 @@ namespace chaos
 {
 	// ========================================================
 	// GPURenderableLayerSystem implementation
-	// ========================================================	
+	// ========================================================
 
 	int GPURenderableLayerSystem::DoDisplay(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
 	{

@@ -3,10 +3,15 @@
 
 namespace chaos
 {
-	GameApplication::GameApplication(SubClassOf<Game> in_game_class, SubClassOf<GameWindow> in_main_window_class, SubClassOf<GameViewportWidget> in_game_viewport_widget_class, WindowCreateParams const& in_window_create_params):
-		WindowApplication(in_main_window_class, in_window_create_params),
-		game_class(in_game_class),
-		game_viewport_widget_class(in_game_viewport_widget_class)
+	GameApplication::GameApplication(
+		SubClassOf<Game> in_game_class,
+		SubClassOf<GameWindow> in_main_window_class,
+		SubClassOf<GameViewportWidget> in_game_viewport_widget_class,
+		WindowPlacementInfo const& in_main_window_placement_info, 
+		WindowCreateParams const& in_main_window_create_params):
+			WindowApplication(in_main_window_class, in_main_window_placement_info, in_main_window_create_params),
+			game_class(in_game_class),
+			game_viewport_widget_class(in_game_viewport_widget_class)
 	{
 		assert(in_game_class.IsValid());
 		assert(game_viewport_widget_class.IsValid());

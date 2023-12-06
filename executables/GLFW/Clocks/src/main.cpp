@@ -414,10 +414,8 @@ chaos::ClockEventTickResult MyEvent::Tick(chaos::ClockEventTickData const & tick
 int main(int argc, char ** argv, char ** env)
 {
 	chaos::WindowCreateParams create_params;
-	create_params.monitor = nullptr;
 	create_params.width = 1200;
 	create_params.height = 500;
-	create_params.monitor_index = 0;
 
 	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, create_params);
 }

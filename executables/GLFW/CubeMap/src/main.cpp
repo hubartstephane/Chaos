@@ -266,11 +266,10 @@ protected:
 
 int main(int argc, char** argv, char** env)
 {
-	chaos::WindowCreateParams create_params;
-	create_params.width = 1200;
-	create_params.height = 700;
+	chaos::WindowPlacementInfo placement_info;
+	placement_info.size = { 1200, 700 };
 
-	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, create_params);
+	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, placement_info);
 }
 
 

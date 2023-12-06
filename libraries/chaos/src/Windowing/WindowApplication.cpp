@@ -7,9 +7,10 @@ namespace chaos
 	// WindowApplication
 	//
 
-	WindowApplication::WindowApplication(SubClassOf<Window> in_main_window_class, WindowCreateParams const& in_window_create_params):
+	WindowApplication::WindowApplication(SubClassOf<Window> in_main_window_class, WindowPlacementInfo const& in_main_window_placement_info, WindowCreateParams const& in_main_window_create_params):
 		main_window_class(in_main_window_class),
-		window_create_params(in_window_create_params)
+		main_window_placement_info(in_main_window_placement_info),
+		main_window_create_params(in_main_window_create_params)
 	{
 		assert(in_main_window_class.IsValid());
 	}
@@ -110,7 +111,7 @@ namespace chaos
 		});
 	}
 
-	Window* WindowApplication::CreateTypedWindow(SubClassOf<Window> window_class, WindowCreateParams create_params, ObjectRequest request)
+	Window* WindowApplication::CreateTypedWindow(SubClassOf<Window> window_class, WindowPlacementInfo placement_info, WindowCreateParams const &create_params, ObjectRequest request)
 	{
 		if (FindWindow(request) != nullptr)
 		{
@@ -118,7 +119,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		return WithGLFWContext(nullptr, [this, window_class, &create_params, &request]() -> Window*
+		return WithGLFWContext(nullptr, [this, window_class, &placement_info , &create_params, &request]() -> Window*
 		{
 			// create the window class
 			shared_ptr<Window> result = window_class.CreateInstance();
@@ -131,9 +132,9 @@ namespace chaos
 			GiveChildConfiguration(result.get(), StringTools::Join("/", "windows", result->GetName()));
 
 			// create the GLFW resource
-			LoadFromJSON(result->GetJSONReadConfiguration(), create_params); // override the create params with the JSON configuration (if any)
+			LoadFromJSON(result->GetJSONReadConfiguration(), placement_info); // override the create params with the JSON configuration (if any)
 
-			if (!result->CreateGLFWWindow(create_params, shared_context, glfw_hints))
+			if (!result->CreateGLFWWindow(placement_info, create_params, shared_context, glfw_hints))
 			{
 				result->Destroy();
 				return nullptr; // the shared_ptr destruction will handle the object lifetime
@@ -251,7 +252,7 @@ namespace chaos
 
 	Window* WindowApplication::CreateMainWindow()
 	{
-		WindowCreateParams create_params = window_create_params;
+		WindowCreateParams create_params = main_window_create_params;
 
 		// gives a title to the window (if necessary)
 		std::string title_storage;
@@ -265,7 +266,7 @@ namespace chaos
 			}
 		}
 		// create the window
-		return CreateTypedWindow(main_window_class, window_create_params, "main_window");
+		return CreateTypedWindow(main_window_class, main_window_placement_info, main_window_create_params, "main_window");
 	}
 
 	bool WindowApplication::InitializeGamepadButtonMap()
@@ -836,9 +837,10 @@ namespace chaos
 			{
 				WindowCreateParams create_params;
 				create_params.title = name;
-				create_params.width = 800;
-				create_params.height = 800;
-				CreateTypedWindow(window_class, create_params, name);
+
+				WindowPlacementInfo placement_info;
+				placement_info.size = { 800, 800 };
+				CreateTypedWindow(window_class, placement_info, create_params, name);
 			}
 		}
 		else

@@ -131,9 +131,25 @@ namespace chaos
 			// set the configuration
 			GiveChildConfiguration(result.get(), StringTools::Join("/", "windows", result->GetName()));
 
-			// create the GLFW resource
-			LoadFromJSON(result->GetJSONReadConfiguration(), placement_info); // override the create params with the JSON configuration (if any)
+			// search size and position values
+			// 1-saved configuration overrides given parameters
+			// 2-use given parameters
+			// 3-use fallback configuration
+			JSONReadConfiguration config = result->GetJSONReadConfiguration();
 
+			std::optional<glm::ivec2> window_size;
+			if (JSONTools::GetAttribute(config, "size", window_size))
+				placement_info.size = window_size;
+			else if (!placement_info.size.has_value())
+				JSONTools::GetAttribute(config, "default_size", placement_info.size);
+
+			std::optional<glm::ivec2> window_position;
+			if (JSONTools::GetAttribute(config, "position", window_position))
+				placement_info.position = window_position;
+			else if (!placement_info.position.has_value())
+				JSONTools::GetAttribute(config, "default_position", placement_info.position);
+
+			// create the GLFW resource
 			if (!result->CreateGLFWWindow(placement_info, create_params, shared_context, glfw_hints))
 			{
 				result->Destroy();

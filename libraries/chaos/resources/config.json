@@ -1,7 +1,7 @@
 {
   "windows": {
     "main_window": {
-      "size": [ 1200, 600 ]
+      "default_size": [ 1200, 600 ]
     }
   },
 

@@ -31,19 +31,15 @@ namespace chaos
 	{
 	public:
 
-		//glm::ivec2 position = glm::ivec2(0, 0);
-
-		//glm::ivec2 size = glm::ivec2(800, 800);
-
-		std::optional<glm::ivec2> position;
-
-		std::optional<glm::ivec2> size;
-
 		/** the wanted monitor */
 		GLFWmonitor* monitor = nullptr;
-		/** the monitor index */
-		std::optional<int> monitor_index;
 
+		/** the wanted position */
+		std::optional<glm::ivec2> position;
+		/** the wanted size (fullscreen if not set or with negative values) */
+		std::optional<glm::ivec2> size;
+		/** the monitor index (used only if monitor is not explicitly defined above) */
+		std::optional<int> monitor_index;
 	};
 
 	CHAOS_API bool DoSaveIntoJSON(nlohmann::json* json, WindowPlacementInfo const& src);
@@ -87,11 +83,7 @@ namespace chaos
 		/** the position of window */
 		glm::ivec2 position = { 0, 0 };
 		/** the size of window */
-		glm::ivec2 size = { 0, -1 };
-		/** whether the window is decorated */
-		bool decorated = true;
-		/** whether the window is toplevel */
-		bool toplevel = true;
+		glm::ivec2 size = { 0, 0 };
 	};
 
 	/**
@@ -124,24 +116,29 @@ namespace chaos
 		/** toggle to fullscreen mode */
 		void ToggleFullscreen();
 		/** returns whether the screen is fullscreen */
-		bool IsFullscreen() const { return GetFullscreenMonitor() != nullptr; }
+		bool IsFullscreen() const { return fullscreen_monitor != nullptr; }
 
-		/** returns the monitor for which the window is fullscreen (nullptr otherwise) */
-		GLFWmonitor* GetFullscreenMonitor() const;
 		/** returns the monitor where the window is centered */
 		GLFWmonitor* GetPreferredMonitor() const;
 		/** set window to fullscreen or remove */
 		void SetFullscreen(GLFWmonitor* monitor);
 
 		/** returns the position of the window */
-		glm::ivec2 GetWindowPosition() const;
+		glm::ivec2 GetWindowPosition(bool include_decorators) const;
 		/** returns the size of the window */
-		glm::ivec2 GetWindowSize() const;
+		glm::ivec2 GetWindowSize(bool include_decorators) const;
 
 		/** change the window position */
-		void SetWindowPosition(glm::ivec2 const& position);
+		void SetWindowPosition(glm::ivec2 position, bool include_decorators);
 		/** change the window size */
-		void SetWindowSize(glm::ivec2 const& size);
+		void SetWindowSize(glm::ivec2 size, bool include_decorators);
+		/** change the placement of the window */
+		void SetWindowPlacement(WindowPlacementInfo placement_info);
+
+		/** show or hide the window */
+		void ShowWindow(bool visible);
+		/** get visibility status */
+		bool IsWindowVisible() const;
 
 		/** require a screen capture */
 		bool ScreenCapture();
@@ -239,7 +236,7 @@ namespace chaos
 		virtual bool DrawInternal(GPUProgramProviderInterface const* uniform_provider);
 
 		/** bind Window with GLFW */
-		virtual void SetGLFWCallbacks(bool in_double_buffer);
+		virtual void SetGLFWCallbacks();
 
 		/** create an ImGui context */
 		void CreateImGuiContext();
@@ -247,7 +244,7 @@ namespace chaos
 		void DestroyImGuiContext();
 
 		/** create the internal window */
-		bool CreateGLFWWindow(WindowPlacementInfo placement_info, WindowCreateParams const &create_params, GLFWwindow* share_context, GLFWHints glfw_hints);
+		bool CreateGLFWWindow(WindowPlacementInfo const & placement_info, WindowCreateParams const &create_params, GLFWwindow* share_context, GLFWHints glfw_hints);
 		/** destroying the window */
 		void DestroyGLFWWindow();
 
@@ -353,6 +350,10 @@ namespace chaos
 		GLFWwindow* glfw_window = nullptr;
 		/** is the window with double buffer */
 		bool double_buffer = true;
+		/** whether the window should be toplevel when non-fullscreen */
+		bool initial_toplevel = false;
+		/** whether the window should be decorated when non-fullscreen */
+		bool initial_decorated = false;
 		/** the root widget for the window */
 		shared_ptr<WindowRootWidget> root_widget;
 		/** the renderer */

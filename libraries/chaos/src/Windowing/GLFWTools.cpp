@@ -39,31 +39,29 @@ namespace chaos
 
 		GLFWmonitor* GetMonitorByIndex(int monitor_index, bool relative_to_primary) // monitor_index relative to primary monitor
 		{
-			GLFWmonitor* result = glfwGetPrimaryMonitor();
-			if (monitor_index != 0)
+			std::vector<GLFWmonitor*> monitors = GetSortedMonitors();
+			if (monitors.size() == 0)
+				return nullptr;
+
+			GLFWmonitor* primary_monitor = glfwGetPrimaryMonitor();
+
+			// get the base monitor index (relative to the primary or to the most to the left)
+			int base_monitor_index = 0;
+			if (relative_to_primary)
 			{
-				std::vector<GLFWmonitor*> monitors = GetSortedMonitors();
+				auto b = monitors.begin();
+				auto e = monitors.end();
+				auto it = std::find(b, e, primary_monitor);
 
-				// get the base monitor index (relative to the primary or to the most to the left)
-				int base_monitor_index = 0;
-				if (relative_to_primary)
-				{
-					auto b = monitors.begin();
-					auto e = monitors.end();
-					auto it = std::find(b, e, result);
-
-					base_monitor_index = int(it - b); // we want to offset it with positive or negative values (cast it into signed)
-				}
-				// compute the index of the monitor we are interested in (and clamp)
-				int result_index = base_monitor_index + monitor_index;
-				if (result_index < 0)
-					result_index = 0;
-				else if (result_index >= int(monitors.size()))
-					result_index = int(monitors.size() - 1);
-
-				result = monitors[(size_t)result_index];
+				base_monitor_index = int(it - b); // we want to offset it with positive or negative values (cast it into signed)
 			}
-			return result;
+			// compute the index of the monitor we are interested in (and clamp)
+			int effective_monitor_index = std::clamp(
+				base_monitor_index + monitor_index,
+				0,
+				int(monitors.size()) - 1);
+
+			return monitors[(size_t)effective_monitor_index];
 		}
 
 		GLFWmonitor* GetNearestMonitor(glm::ivec2 const& position)
@@ -75,7 +73,7 @@ namespace chaos
 				return nullptr;
 
 			GLFWmonitor* best_monitor = nullptr;
-			int           best_distance2 = std::numeric_limits<int>::max();
+			int          best_distance2 = std::numeric_limits<int>::max();
 			// 1 - search the monitor for which position is fully inside
 			// 2 - search the monitor for which position.x is inside the range
 			// 3 - search the monitor for which position.y is inside the range

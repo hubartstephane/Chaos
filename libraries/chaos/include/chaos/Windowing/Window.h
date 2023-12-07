@@ -31,18 +31,18 @@ namespace chaos
 	{
 	public:
 
-		glm::ivec2 position = glm::ivec2(0, 0);
+		//glm::ivec2 position = glm::ivec2(0, 0);
 
-		glm::ivec2 size = glm::ivec2(800, 800);
+		//glm::ivec2 size = glm::ivec2(800, 800);
 
-		//std::optional<glm::ivec2> position;
+		std::optional<glm::ivec2> position;
 
-		//std::optional<glm::ivec2> size;
+		std::optional<glm::ivec2> size;
 
 		/** the wanted monitor */
 		GLFWmonitor* monitor = nullptr;
 		/** the monitor index */
-		int monitor_index = 0;
+		std::optional<int> monitor_index;
 
 	};
 
@@ -90,6 +90,8 @@ namespace chaos
 		glm::ivec2 size = { 0, -1 };
 		/** whether the window is decorated */
 		bool decorated = true;
+		/** whether the window is toplevel */
+		bool toplevel = true;
 	};
 
 	/**
@@ -359,6 +361,8 @@ namespace chaos
 		std::optional<glm::vec2> mouse_position;
 		/** used to store data when toggling fullscreen */
 		std::optional<NonFullScreenWindowData> non_fullscreen_data;
+		/** if the window is fullscreen, this points to the concerned monitor */
+		GLFWmonitor* fullscreen_monitor = nullptr;
 		/** the current cursor mode */
 		CursorMode cursor_mode = CursorMode::Normal;
 		/** a counter that prevent destruction of the window resources */

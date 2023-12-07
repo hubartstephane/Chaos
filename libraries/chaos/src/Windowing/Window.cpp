@@ -127,17 +127,6 @@ namespace chaos
 
 	void Window::SetWindowPlacement(WindowPlacementInfo placement_info)
 	{
-		//placement_info.size = { 0, 0 };
-
-
-
-
-
-		// while this is a 2 steps updates, hide and show the window after operation is complete to avoid artifacts
-		bool visibility = IsWindowVisible();
-		if (visibility)
-			ShowWindow(false);
-
 		// compute the monitor upon which the window will be
 		GLFWmonitor* monitor = placement_info.monitor;
 		if (monitor == nullptr)
@@ -210,9 +199,6 @@ namespace chaos
 		// update placement
 		SetWindowSize(window_size, true); // include decorators
 		SetWindowPosition(window_position, true); // include decorators
-
-		// show back the window
-		ShowWindow(visibility);
 	}
 
 	bool Window::CreateGLFWWindow(WindowPlacementInfo const & placement_info, WindowCreateParams const &create_params, GLFWwindow* share_context_window, GLFWHints glfw_hints)

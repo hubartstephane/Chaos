@@ -33,7 +33,7 @@ namespace chaos
 	{
 		if (!PrepareSaveObjectIntoJSON(json))
 			return false;
-		//JSONTools::SetAttribute(json, "monitor_index", src.monitor_index);
+		JSONTools::SetAttribute(json, "monitor_index", src.monitor_index);
 		JSONTools::SetAttribute(json, "position", src.position);
 		JSONTools::SetAttribute(json, "size", src.size);
 		return true;
@@ -41,7 +41,7 @@ namespace chaos
 
 	bool DoLoadFromJSON(JSONReadConfiguration config, WindowPlacementInfo& dst)
 	{
-		//JSONTools::GetAttribute(config, "monitor_index", dst.monitor_index);
+		JSONTools::GetAttribute(config, "monitor_index", dst.monitor_index);
 		JSONTools::GetAttribute(config, "position", dst.position);
 		JSONTools::GetAttribute(config, "size", dst.size);
 		return true;
@@ -108,6 +108,8 @@ namespace chaos
 		CHAOS_GLOBAL_VARIABLE(bool, UnlimitedFPS, false);
 	};
 
+	//void Window::Compute(WindowPlacementInfo placement_info, glm::ivec2 & position, glm::ivec2 & size)
+
 	bool Window::CreateGLFWWindow(WindowPlacementInfo placement_info, WindowCreateParams const &create_params, GLFWwindow* share_context_window, GLFWHints glfw_hints)
 	{
 		// resource already existing
@@ -116,68 +118,68 @@ namespace chaos
 
 
 
+		placement_info.size = { 0, 0 };
 
 
+		// compute the monitor upon which the window will be: use it for pixel format
+		GLFWmonitor* monitor = placement_info.monitor;
+		if (monitor == nullptr)
+		{
+			if (placement_info.monitor_index.has_value())
+				monitor = GLFWTools::GetMonitorByIndex(placement_info.monitor_index.value());
+			else
+				monitor = glfwGetPrimaryMonitor();
+		}
 
-		// compute the monitor upon which the window will be : use it for pixel format
-		if (placement_info.monitor == nullptr)
-			placement_info.monitor = GLFWTools::GetMonitorByIndex(placement_info.monitor_index);
+		// retrieve the position and size of the monitor
+		glm::ivec2 monitor_position = { 0, 0 };
+		glfwGetMonitorPos(monitor, &monitor_position.x, &monitor_position.y);
 
-
-
-
-
-
-
-
-
-		// retrieve the position of the monitor
-		int monitor_x = 0;
-		int monitor_y = 0;
-		glfwGetMonitorPos(placement_info.monitor, &monitor_x, &monitor_y);
+		GLFWvidmode const* mode = glfwGetVideoMode(monitor);
+		glm::ivec2 monitor_size = { mode->width , mode->height };
 
 		// compute the position and size of the window
-		bool pseudo_fullscreen = (placement_info.size.x <= 0 && placement_info.size.y <= 0);
+		bool pseudo_fullscreen = false;
+		if (!placement_info.size.has_value())
+			pseudo_fullscreen = true;
+		else if (placement_info.size.value().x <= 0 && placement_info.size.value().y <= 0)
+			pseudo_fullscreen = true;
 
 		// prepare window creation
 		glfwWindowHint(GLFW_RESIZABLE, create_params.resizable);
 		glfwWindowHint(GLFW_VISIBLE, create_params.start_visible);
+		//glfwWindowHint(GLFW_DECORATED, (pseudo_fullscreen)? 0 : create_params.decorated);
+		//glfwWindowHint(GLFW_FLOATING, (pseudo_fullscreen)? 1 : create_params.toplevel);
+
+
 		glfwWindowHint(GLFW_DECORATED, create_params.decorated);
 		glfwWindowHint(GLFW_FLOATING, create_params.toplevel);
+
 		glfwWindowHint(GLFW_FOCUSED, create_params.focused);
 		glfwWindowHint(GLFW_VISIBLE, 0); // override the initial visibility
 
 		// compute window size and position
-		GLFWvidmode const* mode = glfwGetVideoMode(placement_info.monitor);
+		glm::ivec2 window_position = { 0, 0 };
+		glm::ivec2 window_size = { 0, 0 };
 
-		int x = 0;
-		int y = 0;
 		if (pseudo_fullscreen) // full-screen, the window use the full-size
 		{
-			placement_info.size.x = mode->width;
-			placement_info.size.y = mode->height;
-
-			x = monitor_x;
-			y = monitor_y;
+			window_size = monitor_size;
+			window_position = monitor_position;
 		}
 		else
 		{
-			if (placement_info.size.x <= 0)
-				placement_info.size.x = mode->width;
-			else
-				placement_info.size.x = std::min(mode->width, placement_info.size.x);
+			assert(placement_info.size.has_value());
 
-			if (placement_info.size.y <= 0)
-				placement_info.size.y = mode->height;
-			else
-				placement_info.size.y = std::min(mode->height, placement_info.size.y);
-
-			x = monitor_x + (mode->width - placement_info.size.x) / 2;
-			y = monitor_y + (mode->height - placement_info.size.y) / 2;
+			window_size = {
+				std::min(mode->width, placement_info.size.value().x),
+				std::min(mode->height, placement_info.size.value().y)
+			};
+			window_position = monitor_position + (monitor_size - window_size) / 2;
 		}
 
 		// we are doing a pseudo fullscreen => monitor parameters of glfwCreateWindow must be null or it will "capture" the screen
-		glfw_window = glfwCreateWindow(placement_info.size.x, placement_info.size.y, create_params.title.c_str(), nullptr, share_context_window);
+		glfw_window = glfwCreateWindow(window_size.x, window_size.y, create_params.title.c_str(), nullptr, share_context_window);
 		if (glfw_window == nullptr)
 			return false;
 		glfwMakeContextCurrent(glfw_window);
@@ -197,19 +199,25 @@ namespace chaos
 		// set the callbacks
 		SetGLFWCallbacks(glfw_hints.double_buffer ? true : false);
 
-		// x and y are the coordinates of the client area : when there is a decoration, we want to tweak the window size / position with that
-		int left, top, right, bottom;
+		// for GLFW, position and size we give to it describes the client area.
+		// we want to describes the whole window position (including decorators)
+		// tweak this here
+		int left = 0;
+		int top = 0;
+		int right = 0;
+		int bottom = 0;
 		glfwGetWindowFrameSize(glfw_window, &left, &top, &right, &bottom);
 		if (left != 0 || top != 0 || right != 0 || bottom != 0)
 		{
-			x += left;
-			y += top;
-			placement_info.size.x = placement_info.size.x - left - right;
-			placement_info.size.y = placement_info.size.y - top - bottom;
-			glfwSetWindowSize(glfw_window, placement_info.size.x, placement_info.size.y);
+			window_position.x += left;
+			window_position.y += top;
+			window_size.x = window_size.x - left - right;
+			window_size.y = window_size.y - top - bottom;
+			glfwSetWindowSize(glfw_window, window_size.x, window_size.y);
 		}
+		glfwSetWindowPos(glfw_window, window_position.x, window_position.y);
 
-		glfwSetWindowPos(glfw_window, x, y);
+		// some input mode
 		glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, 1);
 
 		// prepare cursor mode
@@ -775,16 +783,17 @@ namespace chaos
 		if (glfw_window == nullptr)
 			return;
 
-		GLFWmonitor* fullscreen_monitor = GetFullscreenMonitor(); // is the window already fullscreen for a monitor ?
-
 		if (monitor == nullptr) // want to "unfull screen"
 		{
 			if (fullscreen_monitor != nullptr) // is currently fullscreen
 			{
+				fullscreen_monitor = nullptr;
+
 				// data properly initialized
 				if (non_fullscreen_data.has_value())
 				{
 					glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, non_fullscreen_data->decorated != 0);
+					glfwSetWindowAttrib(glfw_window, GLFW_FLOATING, non_fullscreen_data->toplevel != 0);
 					glfwSetWindowPos(glfw_window, non_fullscreen_data->position.x, non_fullscreen_data->position.y);
 					glfwSetWindowSize(glfw_window, non_fullscreen_data->size.x, non_fullscreen_data->size.y);
 				}
@@ -796,6 +805,7 @@ namespace chaos
 						if (GLFWvidmode const* mode = glfwGetVideoMode(preferred_monitor))
 						{
 							glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, 1); // default choice
+							glfwSetWindowAttrib(glfw_window, GLFW_FLOATING, 0); // default choice
 
 							glm::ivec2 window_size = { mode->width / 2, mode->height / 2 }; // half monitor size
 							SetWindowSize(window_size);
@@ -813,17 +823,21 @@ namespace chaos
 		{
 			if (fullscreen_monitor != monitor) // want to change target monitor
 			{
+				fullscreen_monitor = monitor;
+
 				// store current information (if not already fullscreen)
 				if (fullscreen_monitor == nullptr)
 				{
 					NonFullScreenWindowData data;
 					data.decorated = glfwGetWindowAttrib(glfw_window, GLFW_DECORATED) != 0;
+					data.toplevel = glfwGetWindowAttrib(glfw_window, GLFW_FLOATING) != 0;
 					glfwGetWindowPos(glfw_window, &data.position.x, &data.position.y);
 					glfwGetWindowSize(glfw_window, &data.size.x, &data.size.y);
 					non_fullscreen_data = data;
 				}
-				// remove decoration
+				// update decoration
 				glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, 0);
+				glfwSetWindowAttrib(glfw_window, GLFW_FLOATING, 1);
 				// fit window to monitor size and position
 				if (GLFWvidmode const* mode = glfwGetVideoMode(monitor))
 				{
@@ -839,7 +853,7 @@ namespace chaos
 
 	void Window::ToggleFullscreen()
 	{
-		if (GLFWmonitor* fullscreen_monitor = GetFullscreenMonitor())
+		if (fullscreen_monitor != nullptr)
 			SetFullscreen(nullptr);
 		else if (GLFWmonitor* prefered_monitor = GetPreferredMonitor())
 			SetFullscreen(prefered_monitor);
@@ -1114,6 +1128,11 @@ namespace chaos
 	bool Window::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
 	{
 
+
+		return true;
+
+
+
 		// read the position
 		glm::ivec2 position = { 0, 0 };
 		if (JSONTools::GetAttribute(config, "position", position))
@@ -1168,6 +1187,8 @@ namespace chaos
 
 	void Window::OnMonitorEvent(GLFWmonitor* monitor, int monitor_state)
 	{
+		if (monitor == fullscreen_monitor && monitor_state == GLFW_DISCONNECTED)
+			fullscreen_monitor = nullptr;
 	}
 
 	void Window::Finalize()

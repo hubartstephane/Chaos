@@ -37,6 +37,15 @@ namespace chaos
 			return result;
 		}
 
+		int GetMonitorIndex(GLFWmonitor* monitor)
+		{
+			std::vector<GLFWmonitor*> monitors = GetSortedMonitors();
+			for (int i = 0; i < monitors.size(); ++i)
+				if (monitors[i] == monitor)
+					return i;
+			return 0;
+		}
+
 		GLFWmonitor* GetMonitorByIndex(int monitor_index, bool relative_to_primary) // monitor_index relative to primary monitor
 		{
 			std::vector<GLFWmonitor*> monitors = GetSortedMonitors();
@@ -124,6 +133,28 @@ namespace chaos
 				}
 			}
 			return best_monitor;
+		}
+
+		glm::ivec2 AbsolutePositionToMonitor(glm::ivec2 position, GLFWmonitor* monitor)
+		{
+			if (monitor != nullptr)
+			{
+				glm::ivec2 monitor_position = { 0, 0 };
+				glfwGetMonitorPos(monitor, &monitor_position.x, &monitor_position.y);
+				position -= monitor_position;
+			}
+			return position;
+		}
+
+		glm::ivec2 MonitorPositionToAbsolute(glm::ivec2 position, GLFWmonitor* monitor)
+		{
+			if (monitor != nullptr)
+			{
+				glm::ivec2 monitor_position = { 0, 0 };
+				glfwGetMonitorPos(monitor, &monitor_position.x, &monitor_position.y);
+				position += monitor_position;
+			}
+			return position;
 		}
 
 	}; // namespace GLFWTools

@@ -15,7 +15,7 @@ namespace chaos
 		if (window != nullptr)
 		{
 			// collect window information
-			glm::ivec2 window_size = window->GetWindowSize();
+			glm::ivec2 window_size = window->GetWindowSize(false); // only client size
 			aabox2 viewport = window->GetRequiredViewport(window_size);
 			double x = 0.0;
 			double y = 0.0;

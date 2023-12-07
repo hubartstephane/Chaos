@@ -127,7 +127,7 @@ namespace chaos
 
 	void Window::SetWindowPlacement(WindowPlacementInfo placement_info)
 	{
-		placement_info.size = { 0, 0 };
+		//placement_info.size = { 0, 0 };
 
 
 
@@ -174,8 +174,8 @@ namespace chaos
 			window_position = GLFWTools::MonitorPositionToAbsolute({ 0, 0 }, monitor);
 
 			fullscreen_monitor = monitor;
-			glfwWindowHint(GLFW_DECORATED, 0);
-			glfwWindowHint(GLFW_FLOATING, 1);
+			glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, 0);
+			glfwSetWindowAttrib(glfw_window, GLFW_FLOATING, 1);
 		}
 		else
 		{
@@ -188,8 +188,8 @@ namespace chaos
 			window_position = GLFWTools::MonitorPositionToAbsolute((monitor_size - window_size) / 2, monitor);
 
 			fullscreen_monitor = nullptr;
-			glfwWindowHint(GLFW_DECORATED, initial_decorated? 1 : 0);
-			glfwWindowHint(GLFW_FLOATING, initial_toplevel? 1 : 0);
+			glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, initial_decorated? 1 : 0);
+			glfwSetWindowAttrib(glfw_window, GLFW_FLOATING, initial_toplevel? 1 : 0);
 		}
 
 		SetWindowSize(window_size, true); // include decorators
@@ -413,15 +413,15 @@ namespace chaos
 		if (glfw_window == nullptr)
 			return;
 
-		if (include_decorators)
+		if (include_decorators) // client area is displaced to the right and the bottom
 		{
 			int left = 0;
 			int top = 0;
 			int right = 0;
 			int bottom = 0;
 			glfwGetWindowFrameSize(glfw_window, &left, &top, &right, &bottom);
-			position.x -= left;
-			position.y -= top;
+			position.x += left;
+			position.y += top;
 		}
 		glfwSetWindowPos(glfw_window, position.x, position.y); // glfwSetWindowPos(...) receives client information
 	}
@@ -430,15 +430,15 @@ namespace chaos
 	{
 		if (glfw_window == nullptr)
 			return;
-		if (include_decorators)
+		if (include_decorators) // client aera is smaller than the given size
 		{
 			int left = 0;
 			int top = 0;
 			int right = 0;
 			int bottom = 0;
 			glfwGetWindowFrameSize(glfw_window, &left, &top, &right, &bottom);
-			size.x += left + right;
-			size.y += top + bottom;
+			size.x -= (left + right);
+			size.y -= (top + bottom);
 		}
 		glfwSetWindowSize(glfw_window, size.x, size.y); // glfwSetWindowSize(...) receives client information
 	}

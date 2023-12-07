@@ -144,12 +144,19 @@ namespace chaos
 		{
 			if (placement_info.monitor_index.has_value())
 				monitor = GLFWTools::GetMonitorByIndex(placement_info.monitor_index.value());
+			else if (placement_info.position.has_value())
+			{
+				monitor = GLFWTools::GetNearestMonitor(placement_info.position.value());
+				placement_info.position = GLFWTools::AbsolutePositionToMonitor(placement_info.position.value(), monitor);
+			}
 			else
 				monitor = glfwGetPrimaryMonitor();
 
 			if (monitor == nullptr) // all monitors are off
 				return;
 		}
+
+		// XXX: at this point, if placement_info.position is defined, it is relative to the monitor
 
 		// retrieve the position and size of the monitor
 		GLFWvidmode const* mode = glfwGetVideoMode(monitor);
@@ -158,11 +165,10 @@ namespace chaos
 		glm::ivec2 monitor_size = { mode->width , mode->height };
 
 		// compute the position and size of the window
-		bool pseudo_fullscreen = false;
-		if (!placement_info.size.has_value())
-			pseudo_fullscreen = true;
-		else if (placement_info.size.value().x <= 0 && placement_info.size.value().y <= 0)
-			pseudo_fullscreen = true;
+		bool pseudo_fullscreen = true;
+		if (placement_info.size.has_value())
+			if (placement_info.size.value().x > 0 && placement_info.size.value().y > 0)
+				pseudo_fullscreen = false;
 
 		// compute window size and position
 		glm::ivec2 window_position = { 0, 0 };
@@ -170,28 +176,38 @@ namespace chaos
 
 		if (pseudo_fullscreen) // full-screen, the window use the full-size
 		{
-			window_size = monitor_size;
-			window_position = GLFWTools::MonitorPositionToAbsolute({ 0, 0 }, monitor);
-
+			// update internals
 			fullscreen_monitor = monitor;
 			glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, 0);
 			glfwSetWindowAttrib(glfw_window, GLFW_FLOATING, 1);
+			// compute size and position
+			window_size = monitor_size;
+			window_position = { 0, 0 };
 		}
 		else
 		{
 			assert(placement_info.size.has_value());
 
-			window_size = {
-				std::min(mode->width, placement_info.size.value().x),
-				std::min(mode->height, placement_info.size.value().y)
-			};
-			window_position = GLFWTools::MonitorPositionToAbsolute((monitor_size - window_size) / 2, monitor);
-
+			// update internals
 			fullscreen_monitor = nullptr;
 			glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, initial_decorated? 1 : 0);
 			glfwSetWindowAttrib(glfw_window, GLFW_FLOATING, initial_toplevel? 1 : 0);
-		}
 
+			// compute size
+			window_size = placement_info.size.value();
+			// compute position (local to concerned monitor)
+			if (placement_info.position.has_value())
+				window_position = placement_info.position.value();
+			else
+				window_position = (monitor_size - window_size) / 2; // use center of screen by default
+
+			// clamp the position to ensure the window in visible portion of monitor
+			window_position.x = std::clamp(window_position.x, 0, monitor_size.x);
+			window_position.y = std::clamp(window_position.y, 0, monitor_size.y);
+		}
+		// set position in absolute coordinates
+		window_position = GLFWTools::MonitorPositionToAbsolute(window_position, monitor);
+		// update placement
 		SetWindowSize(window_size, true); // include decorators
 		SetWindowPosition(window_position, true); // include decorators
 
@@ -799,8 +815,8 @@ namespace chaos
 
 	GLFWmonitor* Window::GetPreferredMonitor() const
 	{
-		glm::ivec2 window_center = GetWindowPosition(true) + GetWindowSize(true) / 2; // include decorators
-		return GLFWTools::GetNearestMonitor(window_center);
+		glm::ivec2 top_left_corner = GetWindowPosition(true); // include decorators
+		return GLFWTools::GetNearestMonitor(top_left_corner);
 	}
 
 	void Window::SetFullscreen(GLFWmonitor* monitor)

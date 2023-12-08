@@ -36,6 +36,7 @@ namespace chaos
 		JSONTools::SetAttribute(json, "monitor_index", src.monitor_index);
 		JSONTools::SetAttribute(json, "position", src.position);
 		JSONTools::SetAttribute(json, "size", src.size);
+		JSONTools::SetAttribute(json, "fullscreen", src.fullscreen);
 		return true;
 	}
 
@@ -44,6 +45,7 @@ namespace chaos
 		JSONTools::GetAttribute(config, "monitor_index", dst.monitor_index);
 		JSONTools::GetAttribute(config, "position", dst.position);
 		JSONTools::GetAttribute(config, "size", dst.size);
+		JSONTools::GetAttribute(config, "fullscreen", dst.fullscreen);
 		return true;
 	}
 
@@ -127,17 +129,20 @@ namespace chaos
 
 	void Window::SetWindowPlacement(WindowPlacementInfo placement_info)
 	{
-		// compute the monitor upon which the window will be
+		// compute the monitor over which the window will be
 		GLFWmonitor* monitor = placement_info.monitor;
 		if (monitor == nullptr)
 		{
+			// explicitly given monitor
 			if (placement_info.monitor_index.has_value())
 				monitor = GLFWTools::GetMonitorByIndex(placement_info.monitor_index.value());
-			else if (placement_info.position.has_value())
+			// position is an absolute position. get the corresponding monitor and transform position into monitor local
+			else if (placement_info.position.has_value()) 
 			{
 				monitor = GLFWTools::GetNearestMonitor(placement_info.position.value());
 				placement_info.position = GLFWTools::AbsolutePositionToMonitor(placement_info.position.value(), monitor);
 			}
+			// fallback on primary monitor
 			else
 				monitor = glfwGetPrimaryMonitor();
 
@@ -155,9 +160,10 @@ namespace chaos
 
 		// compute the position and size of the window
 		bool pseudo_fullscreen = true;
-		if (placement_info.size.has_value())
-			if (placement_info.size.value().x > 0 && placement_info.size.value().y > 0)
-				pseudo_fullscreen = false;
+		if (!placement_info.fullscreen)
+			if (placement_info.size.has_value())
+				if (placement_info.size.value().x > 0 && placement_info.size.value().y > 0)
+					pseudo_fullscreen = false;
 
 		// compute window size and position
 		glm::ivec2 window_position = { 0, 0 };
@@ -166,9 +172,18 @@ namespace chaos
 		if (pseudo_fullscreen) // full-screen, the window use the full-size
 		{
 			// update internals
-			fullscreen_monitor = monitor;
-			glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, 0);
-			glfwSetWindowAttrib(glfw_window, GLFW_FLOATING, 1);
+			if (placement_info.fullscreen) // no decorator
+			{
+				fullscreen_monitor = monitor;
+				glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, 0);
+				glfwSetWindowAttrib(glfw_window, GLFW_FLOATING, 1);
+			}
+			else // use initial settings to know whether decorators are necessary
+			{
+				fullscreen_monitor = nullptr;
+				glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, initial_decorated ? 1 : 0);
+				glfwSetWindowAttrib(glfw_window, GLFW_FLOATING, initial_toplevel ? 1 : 0);
+			}
 			// compute size and position
 			window_size = monitor_size;
 			window_position = { 0, 0 };
@@ -818,8 +833,9 @@ namespace chaos
 			{
 				if (non_fullscreen_data.has_value())
 				{
-					placement_info.position = non_fullscreen_data->position; // absolute placement of the window (monitor not defined)
-					placement_info.size = non_fullscreen_data->size;
+					placement_info.position   = non_fullscreen_data->position; // absolute placement of the window (monitor not defined)
+					placement_info.size       = non_fullscreen_data->size;
+					placement_info.fullscreen = false;
 					SetWindowPlacement(placement_info);
 				}
 				else
@@ -830,9 +846,10 @@ namespace chaos
 						{
 							glm::ivec2 monitor_size = { mode->width, mode->height}; // half monitor size
 
-							placement_info.monitor  = preferred_monitor;
-							placement_info.size     = monitor_size / 2;
-							placement_info.position = (monitor_size - placement_info.size.value()) / 2; // relative placement to given monitor
+							placement_info.monitor    = preferred_monitor;
+							placement_info.size       = monitor_size / 2;
+							placement_info.position   = (monitor_size - placement_info.size.value()) / 2; // relative placement to given monitor
+							placement_info.fullscreen = false;
 							SetWindowPlacement(placement_info);
 						}
 					}
@@ -852,6 +869,7 @@ namespace chaos
 					non_fullscreen_data = data;
 				}
 				placement_info.monitor = monitor; // fullscreen placement
+				placement_info.fullscreen = true;
 				SetWindowPlacement(placement_info);
 			}
 		}
@@ -1153,6 +1171,7 @@ namespace chaos
 				JSONTools::SetAttribute(config, "position", window_position);
 				JSONTools::SetAttribute(config, "size", window_size);
 				JSONTools::SetAttribute(config, "monitor_index", monitor_index);
+				JSONTools::SetAttribute(config, "fullscreen", IsFullscreen());
 			}
 		}
 		return true;

@@ -274,14 +274,20 @@ namespace chaos
 			if (placement_info.fullscreen) // no decorator
 			{
 				fullscreen_monitor = monitor;
+
 				glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, 0);
+#if !_DEBUG
 				glfwSetWindowAttrib(glfw_window, GLFW_FLOATING, 1);
+#endif
 			}
 			else // use initial settings to know whether decorators are necessary
 			{
 				fullscreen_monitor = nullptr;
+
 				glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, initial_decorated ? 1 : 0);
+#if !_DEBUG
 				glfwSetWindowAttrib(glfw_window, GLFW_FLOATING, initial_toplevel ? 1 : 0);
+#endif
 			}
 			// compute size and position
 			window_size = monitor_size;
@@ -296,7 +302,9 @@ namespace chaos
 			// update internals
 			fullscreen_monitor = nullptr;
 			glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, initial_decorated? 1 : 0);
+#if !_DEBUG
 			glfwSetWindowAttrib(glfw_window, GLFW_FLOATING, initial_toplevel? 1 : 0);
+#endif
 
 			// compute size
 			window_size = placement_info.size.value();

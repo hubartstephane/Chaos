@@ -4,6 +4,30 @@
 namespace chaos
 {
 	/**
+	* Internal structure and method to have the surface around the client area
+	*/
+
+	static WindowFrameSizeInfo GetWindowFrameSizeInfo(GLFWwindow* window)
+	{
+		WindowFrameSizeInfo result;
+		if (window != nullptr)
+		{
+			glfwGetWindowFrameSize(window, &result.left, &result.top, &result.right, &result.bottom);
+
+			// XXX: the left and right values are surestimated
+			//      without the following correction we would have the following bug
+			//      1/double click on the title bar so that the window fills the right monitors (but still with a title bar)
+			//      2/press F10 so that the window really becomes fullscreen (no more decorators)
+			//      3/observe that the window is now on the left monitor
+			//        -> because the effective top-left corner (that is to say not the client position) is a bit on the left monitor making
+			//           left monitor preferred
+			result.left = 0;
+			result.right = 0;
+		}
+		return result;
+	}
+
+	/**
 	* WindowCreateParams
 	*/
 
@@ -390,13 +414,9 @@ namespace chaos
 			// include decorators
 			if (include_decorators)
 			{
-				int left = 0;
-				int top = 0;
-				int right = 0;
-				int bottom = 0;
-				glfwGetWindowFrameSize(glfw_window, &left, &top, &right, &bottom);
-				result.x -= left;
-				result.y -= top;
+				WindowFrameSizeInfo framesize_info = GetWindowFrameSizeInfo(glfw_window);
+				result.x -= framesize_info.left;
+				result.y -= framesize_info.top;
 			}
 		}	
 		return result;
@@ -413,13 +433,9 @@ namespace chaos
 			// include decorators
 			if (include_decorators)
 			{
-				int left   = 0;
-				int top    = 0;
-				int right  = 0;
-				int bottom = 0;
-				glfwGetWindowFrameSize(glfw_window, &left, &top, &right, &bottom);
-				result.x += left + right;
-				result.y += top  + bottom;
+				WindowFrameSizeInfo framesize_info = GetWindowFrameSizeInfo(glfw_window);
+				result.x += framesize_info.left + framesize_info.right;
+				result.y += framesize_info.top  + framesize_info.bottom;
 			}
 		}
 		return result;
@@ -432,13 +448,9 @@ namespace chaos
 
 		if (include_decorators) // client area is displaced to the right and the bottom
 		{
-			int left = 0;
-			int top = 0;
-			int right = 0;
-			int bottom = 0;
-			glfwGetWindowFrameSize(glfw_window, &left, &top, &right, &bottom);
-			position.x += left;
-			position.y += top;
+			WindowFrameSizeInfo framesize_info = GetWindowFrameSizeInfo(glfw_window);
+			position.x += framesize_info.left;
+			position.y += framesize_info.top;
 		}
 		glfwSetWindowPos(glfw_window, position.x, position.y); // glfwSetWindowPos(...) receives client information
 	}
@@ -449,13 +461,9 @@ namespace chaos
 			return;
 		if (include_decorators) // client aera is smaller than the given size
 		{
-			int left = 0;
-			int top = 0;
-			int right = 0;
-			int bottom = 0;
-			glfwGetWindowFrameSize(glfw_window, &left, &top, &right, &bottom);
-			size.x -= (left + right);
-			size.y -= (top + bottom);
+			WindowFrameSizeInfo framesize_info = GetWindowFrameSizeInfo(glfw_window);
+			size.x -= (framesize_info.left + framesize_info.right);
+			size.y -= (framesize_info.top  + framesize_info.bottom);
 		}
 		glfwSetWindowSize(glfw_window, size.x, size.y); // glfwSetWindowSize(...) receives client information
 	}

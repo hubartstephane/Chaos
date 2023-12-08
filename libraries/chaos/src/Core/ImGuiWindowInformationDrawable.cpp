@@ -27,15 +27,26 @@ namespace chaos
 			double y = 0.0;
 			glfwGetCursorPos(window->GetGLFWHandler(), &x, &y);
 
-			// trace debugging information
-			ImGui::Text("cursor              : (%0.3f, %0.3f)", (float)x, (float)y);
-			ImGui::Text("window   position   : (%0.3f, %0.3f)", (float)window_position.x, (float)window_position.y);
-			ImGui::Text("window   size       : (%0.3f, %0.3f)", (float)window_size.x, (float)window_size.y);
-			ImGui::Text("client   position   : (%0.3f, %0.3f)", (float)client_position.x, (float)client_position.y);
-			ImGui::Text("client   size       : (%0.3f, %0.3f)", (float)client_size.x, (float)client_size.y);
-			ImGui::Text("viewport position   : (%0.3f, %0.3f)", (float)viewport.position.x, (float)viewport.position.y);
-			ImGui::Text("viewport size       : (%0.3f, %0.3f)", (float)viewport.size.x, (float)viewport.size.y);
+			WindowFrameSizeInfo framesize_info;
+			glfwGetWindowFrameSize(window->GetGLFWHandler(), &framesize_info.left, &framesize_info.top, &framesize_info.right, &framesize_info.bottom);
 
+			// trace debugging information
+			ImGui::Text("cursor              : (%d, %d)", (int)x, (int)y);
+			ImGui::Separator();
+			ImGui::Text("window   position   : (%d, %d)", window_position.x, window_position.y);
+			ImGui::Text("window   size       : (%d, %d)", window_size.x, window_size.y);
+			ImGui::Separator();
+			ImGui::Text("client   position   : (%d, %d)", client_position.x, client_position.y);
+			ImGui::Text("client   size       : (%d, %d)", client_size.x, client_size.y);
+			ImGui::Separator();
+			ImGui::Text("viewport position   : (%d, %d)", viewport.position.x, viewport.position.y);
+			ImGui::Text("viewport size       : (%d, %d)", viewport.size.x, viewport.size.y);
+			ImGui::Separator();
+			ImGui::Text("framesize left      : (%d)", framesize_info.left);
+			ImGui::Text("framesize right     : (%d)", framesize_info.right);
+			ImGui::Text("framesize top       : (%d)", framesize_info.top);
+			ImGui::Text("framesize bottom    : (%d)", framesize_info.bottom);
+			ImGui::Separator();
 			ImGuiIO& io = ImGui::GetIO();
 			ImGui::Text("WantCaptureMouse    : %d", io.WantCaptureMouse);
 			ImGui::Text("WantCaptureKeyboard : %d", io.WantCaptureKeyboard);

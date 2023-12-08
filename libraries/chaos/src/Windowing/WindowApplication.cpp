@@ -137,19 +137,24 @@ namespace chaos
 			// 3-use fallback configuration
 			JSONReadConfiguration config = result->GetJSONReadConfiguration();
 
-			std::optional<glm::ivec2> window_size;
+			glm::ivec2 window_size;
 			if (JSONTools::GetAttribute(config, "size", window_size))
 				placement_info.size = window_size;
 			else if (!placement_info.size.has_value())
 				JSONTools::GetAttribute(config, "default_size", placement_info.size);
 
-			std::optional<glm::ivec2> window_position;
+			glm::ivec2 window_position;
 			if (JSONTools::GetAttribute(config, "position", window_position))
 				placement_info.position = window_position;
 			else if (!placement_info.position.has_value())
 				JSONTools::GetAttribute(config, "default_position", placement_info.position);
 
-			JSONTools::GetAttribute(config, "fullscreen", placement_info.fullscreen);
+			int monitor_index = 0;
+			if (JSONTools::GetAttribute(config, "monitor_index", monitor_index))
+				placement_info.monitor_index = monitor_index;
+
+			if (!JSONTools::GetAttribute(config, "fullscreen", placement_info.fullscreen))
+				JSONTools::GetAttribute(config, "default_fullscreen", placement_info.fullscreen);
 
 			// create the GLFW resource
 			if (!result->CreateGLFWWindow(placement_info, create_params, shared_context, glfw_hints))

@@ -5,6 +5,7 @@ namespace chaos
 
 	class WindowCreateParams;
 	class WindowPlacementInfo;
+	class WindowFrameSizeInfo;
 	class NonFullScreenWindowData;
 	class Window;
 
@@ -47,6 +48,22 @@ namespace chaos
 	CHAOS_API bool DoSaveIntoJSON(nlohmann::json* json, WindowPlacementInfo const& src);
 
 	CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, WindowPlacementInfo& dst);
+
+	/**
+	* WindowFrameSizeInfo: describes the decoration surface surrounding a window
+	*/
+
+	class CHAOS_API WindowFrameSizeInfo
+	{
+	public:
+
+		int left = 0;
+		int top = 0;
+		int right = 0;
+		int bottom = 0;
+	};
+
+	CHAOS_API WindowFrameSizeInfo GetWindowFrameSizeInfo(GLFWwindow* window);
 
 	/**
 	* WindowCreateParams : parameters for playing single window application

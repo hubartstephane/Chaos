@@ -76,7 +76,7 @@ namespace chaos
 	ImGuiDrawableObjectRegistration* ImGuiDrawableOwnerInterface::FindRegisteredDrawable(char const* name)
 	{
 		for (auto& drawable : registered_drawable)
-			if (StringTools::Stricmp(name, drawable->GetName()))
+			if (StringTools::Stricmp(name, drawable->GetName()) == 0)
 				return drawable.get();
 		return nullptr;
 	}
@@ -123,7 +123,7 @@ namespace chaos
 			// draw the menu
 			chaos::ImGuiDrawableInterface::MenuBar(chaos::ImGuiDrawMenuMode::FullWindow, [this]()
 			{
-				if (ImGui::BeginMenu("ImGuiDrawable"))
+				if (ImGui::BeginMenu("Widgets"))
 				{
 					for (auto& drawable : registered_drawable)
 						if (ImGui::MenuItem(drawable->GetName(), nullptr, drawable->IsVisible(), true))

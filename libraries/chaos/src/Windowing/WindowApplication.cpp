@@ -149,6 +149,8 @@ namespace chaos
 			else if (!placement_info.position.has_value())
 				JSONTools::GetAttribute(config, "default_position", placement_info.position);
 
+			JSONTools::GetAttribute(config, "fullscreen", placement_info.fullscreen);
+
 			// create the GLFW resource
 			if (!result->CreateGLFWWindow(placement_info, create_params, shared_context, glfw_hints))
 			{

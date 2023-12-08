@@ -35,6 +35,7 @@
 #include "chaos/Core/ImGuiDrawableOwnerInterface.h"
 #include "chaos/Core/ImGuiWindowInformationDrawable.h"
 #include "chaos/Core/ImGuiSystemInformationDrawable.h"
+#include "chaos/Core/ImGuiHelpDrawable.h"
 #include "chaos/Core/Log.h"
 #include "chaos/Core/FileResource.h"
 #include "chaos/Core/Tag.h"

@@ -1241,7 +1241,10 @@ namespace chaos
 			return result;
 		});
 
-
+		RegisterDrawable("Help", [this]()
+		{
+			return new ImGuiHelpDrawable;
+		});
 	}
 
 	bool Window::OnConfigurationChanged(JSONReadConfiguration config)

@@ -1228,6 +1228,11 @@ namespace chaos
 
 	void Window::RegisterKnownDrawables()
 	{
+		RegisterDrawable("System Information", [this]()
+		{
+			return new ImGuiSystemInformationDrawable;
+		});
+
 		RegisterDrawable("Window Information", [this]()
 		{
 			ImGuiWindowInformationDrawable* result = new ImGuiWindowInformationDrawable;
@@ -1235,6 +1240,8 @@ namespace chaos
 				result->SetWindow(this);
 			return result;
 		});
+
+
 	}
 
 	bool Window::OnConfigurationChanged(JSONReadConfiguration config)

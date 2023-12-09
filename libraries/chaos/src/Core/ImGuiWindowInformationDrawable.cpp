@@ -10,7 +10,9 @@ namespace chaos
 
 	void ImGuiWindowInformationDrawable::DrawImGui(ImGuiDrawMenuMode menu_mode)
 	{
-		ImGui::Begin("Window Information", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
+		bool open_value = true;
+
+		ImGui::Begin("Window Information", &open_value, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
 
 		if (window != nullptr)
 		{
@@ -56,6 +58,9 @@ namespace chaos
 			ImGui::Text("missing call to SetWindow(..)");
 		}
 		ImGui::End();
+
+		if (!open_value)
+			RequestClosing();
 	}
 
 }; // namespace chaos

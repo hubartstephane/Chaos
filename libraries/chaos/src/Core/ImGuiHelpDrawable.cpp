@@ -5,7 +5,9 @@ namespace chaos
 {
 	void ImGuiHelpDrawable::DrawImGui(ImGuiDrawMenuMode menu_mode)
 	{
-		ImGui::Begin("Help", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
+		bool open_value = true;
+
+		ImGui::Begin("Help", &open_value, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
 
 		ImGui::Text("F1:  Skip level");
 		ImGui::Text("F2:  Toggle cheat mode");
@@ -19,6 +21,9 @@ namespace chaos
 		ImGui::Text("F10: Toggle fullscreen");
 
 		ImGui::End();
+
+		if (!open_value)
+			RequestClosing();
 	}
 
 }; // namespace chaos

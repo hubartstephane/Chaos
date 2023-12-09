@@ -15,7 +15,11 @@ namespace chaos
 	void ImGuiDrawableObjectRegistration::DrawImGui(ImGuiDrawMenuMode menu_mode)
 	{
 		if (drawable_object != nullptr)
+		{
 			drawable_object->DrawImGui(menu_mode);
+			if (drawable_object->IsClosingRequested()) // transfert closing request
+				RequestClosing();
+		}
 	}
 
 	bool ImGuiDrawableObjectRegistration::IsVisible() const
@@ -39,6 +43,7 @@ namespace chaos
 			{
 				assert(drawable_object != nullptr);
 				drawable_object = nullptr;
+
 			}
 		}
 		visible = show;
@@ -134,7 +139,14 @@ namespace chaos
 
 			// draw the drawables
 			for (auto& drawable : registered_drawable)
+			{
 				drawable->DrawImGui(menu_mode);
+				if (drawable->IsClosingRequested())
+				{
+					drawable->Show(false);
+					drawable->closing_request = false; // reset the request
+				}
+			}
 		}
 	}
 

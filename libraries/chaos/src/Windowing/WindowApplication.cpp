@@ -906,23 +906,37 @@ namespace chaos
 		{
 			if (ImGui::BeginMenu("Actions"))
 			{
-				if (ImGui::MenuItem("Open Temp Dir.", nullptr, false, true))
+				if (ImGui::BeginMenu("Directories"))
 				{
-					WinTools::ShowFile(GetUserLocalTempPath());
+					if (ImGui::MenuItem("Open Resources Dir.", nullptr, false, true))
+					{
+						WinTools::ShowFile(GetResourcesPath());
+					}
+					if (ImGui::MenuItem("Open Temp Dir.", nullptr, false, true))
+					{
+						WinTools::ShowFile(GetUserLocalTempPath());
+					}
+					ImGui::EndMenu();
 				}
-				if (ImGui::MenuItem("Open Resources Dir.", nullptr, false, true))
+
+				if (ImGui::BeginMenu("Configuration"))
 				{
-					WinTools::ShowFile(GetResourcesPath());
+					if (ImGui::MenuItem("Show Configuration", nullptr, false, true))
+					{
+						WinTools::ShowFile(JSONTools::DumpConfigFile(GetJSONReadConfiguration().default_config));
+					}
+					if (ImGui::MenuItem("Show Persistent Configuration", nullptr, false, true))
+					{
+						SavePersistentPropertiesToFile(false); // do not require an update from clients
+						WinTools::ShowFile(GetPersistentDataPath());
+					}
+					if (ImGui::MenuItem("Delete Persistent Configuration", nullptr, false, true))
+					{
+						std::remove(GetPersistentDataPath().string().c_str());
+					}
+					ImGui::EndMenu();
 				}
-				if (ImGui::MenuItem("Open Config File", nullptr, false, true))
-				{
-					WinTools::ShowFile(JSONTools::DumpConfigFile(GetJSONReadConfiguration().default_config));
-				}
-				if (ImGui::MenuItem("Open Persistent File", nullptr, false, true))
-				{
-					SavePersistentPropertiesToFile(false); // do not require an update from clients
-					WinTools::ShowFile(GetPersistentDataPath());
-				}
+
 				ImGui::Separator();
 				if (ImGui::MenuItem("Quit", nullptr, false, true))
 				{

@@ -414,7 +414,6 @@ chaos::ClockEventTickResult MyEvent::Tick(chaos::ClockEventTickData const & tick
 int main(int argc, char ** argv, char ** env)
 {
 	chaos::WindowPlacementInfo placement_info;
-	placement_info.size = { 1200, 500 };
 
 	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, placement_info);
 }

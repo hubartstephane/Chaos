@@ -152,7 +152,6 @@ int main(int argc, char ** argv, char ** env)
 	return 0;
 
 	chaos::WindowPlacementInfo placement_info;
-	placement_info.size = { 500, 500 };
 
 	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, placement_info);
 }

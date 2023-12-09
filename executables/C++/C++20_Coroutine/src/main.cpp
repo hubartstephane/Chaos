@@ -233,7 +233,7 @@ InitialState<> InitialState()
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void FF(std::function<void(int)> f)
+void FF(std::function<void(int)> const &f)
 {
 
 }
@@ -661,7 +661,7 @@ public:
 	}
 
 	/** add a function to check whether the current coroutine is to be abort */
-	void AddAbortFunction(std::function<bool()> func)
+	void AddAbortFunction(std::function<bool()> const& func)
 	{
 		abort_functions.push_back(std::move(func));
 	}
@@ -870,7 +870,7 @@ public:
 		return task_internal->GetReturnValue();
 	}
 	/** add a cancellation function */
-	Task& CancelIf(std::function<bool()> func)
+	Task& CancelIf(std::function<bool()> const& func)
 	{
 		task_internal->AddAbortFunction(std::move(func));
 		return *this;

@@ -11,7 +11,7 @@ namespace chaos
 		return result;
 	}
 
-	bool RegisterPremainCode(int order, std::function<void()> func)
+	bool RegisterPremainCode(int order, std::function<void()> const& func)
 	{
 		auto & pending_premain_calls = GetPendingPremainCalls();
 		pending_premain_calls.push_back(std::make_pair(order, func));

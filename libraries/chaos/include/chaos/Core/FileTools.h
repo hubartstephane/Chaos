@@ -51,9 +51,9 @@ namespace chaos
 		CHAOS_API Buffer<char> LoadFile(FilePathParam const& path, LoadFileFlag flags = LoadFileFlag::NONE);
 
 		/** try path redirection and call func (until it returns true) */
-		CHAOS_API bool WithFile(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func);
+		CHAOS_API bool WithFile(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> const &func);
 		/** iterate over all entries in all possible directories (until func returns true) */
-		CHAOS_API bool WithDirectoryContent(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func);
+		CHAOS_API bool WithDirectoryContent(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> const &func);
 
 		/** returns a filepath that is unused */
 		CHAOS_API boost::filesystem::path GetUniquePath(FilePathParam const& path, char const* format, bool create_empty_file, int max_iterations = -1);

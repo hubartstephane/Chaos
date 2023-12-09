@@ -65,7 +65,7 @@ namespace chaos
 		virtual void DrawImGui(ImGuiDrawMenuMode menu_mode) override;
 
 		/** insert a drawable */
-		ImGuiDrawableObjectRegistration * RegisterDrawable(char const* name, std::function<ImGuiDrawableObject * ()> drawable_creation_function);
+		ImGuiDrawableObjectRegistration * RegisterDrawable(char const* name, std::function<ImGuiDrawableObject * ()> const& drawable_creation_function);
 		/** insert a drawable */
 		ImGuiDrawableObjectRegistration * RegisterDrawable(char const* name, SubClassOf<ImGuiDrawableObject> drawable_class);
 

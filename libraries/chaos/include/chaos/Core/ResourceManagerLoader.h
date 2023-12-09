@@ -68,7 +68,11 @@ namespace chaos
 
 	protected:
 
-		RESOURCE_TYPE * LoadObjectHelper(char const * name, nlohmann::json const * json, std::function<RESOURCE_TYPE *(nlohmann::json const *)> load_func, std::function<void(RESOURCE_TYPE*)> insert_func) const
+		RESOURCE_TYPE * LoadObjectHelper(
+			char const * name,
+			nlohmann::json const * json,
+			std::function<RESOURCE_TYPE *(nlohmann::json const *)> const& load_func,
+			std::function<void(RESOURCE_TYPE*)> const& insert_func) const
 		{
 			// check for name
 			if (!CheckResourceName(nullptr, name, json))
@@ -89,7 +93,11 @@ namespace chaos
 			return result;
 		}
 
-		RESOURCE_TYPE * LoadObjectHelper(FilePathParam const & path, char const * name, std::function<RESOURCE_TYPE *(FilePathParam const&)> load_func, std::function<void(RESOURCE_TYPE*)> insert_func) const
+		RESOURCE_TYPE * LoadObjectHelper(
+			FilePathParam const & path,
+			char const * name,
+			std::function<RESOURCE_TYPE *(FilePathParam const&)> const& load_func,
+			std::function<void(RESOURCE_TYPE*)> const& insert_func) const
 		{
 			// check for path
 			if (!CheckResourcePath(path))

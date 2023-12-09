@@ -20,7 +20,7 @@ namespace chaos
 			return result;
 		}
 
-		void ProcessCallStack(std::function<void(char const *, char const *, int)> func)
+		void ProcessCallStack(std::function<void(char const *, char const *, int)> const& func)
 		{
 			// Note on CaptureStackBackTrace : https://msdn.microsoft.com/fr-fr/library/windows/desktop/bb204633(v=vs.85).aspx
 

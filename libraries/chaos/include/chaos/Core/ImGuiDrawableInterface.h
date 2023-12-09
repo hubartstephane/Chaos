@@ -24,8 +24,8 @@ namespace chaos
 		/** draw both ImGui and Menu */
 		virtual void DrawImGui(ImGuiDrawMenuMode menu_mode);
 
-		/** conditionally add a flag for main menu */
-		static int AddWindowMainMenuFlag(ImGuiDrawMenuMode menu_mode, int flags);
+		/** conditionally detect whether a flag for window menu is necessary */
+		static int GetConditionalMainMenuFlag(ImGuiDrawMenuMode menu_mode);
 
 		/** start a fullscreen window */
 		template<typename FUNC>
@@ -33,7 +33,7 @@ namespace chaos
 		{
 			int window_flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground;
 			if (menu_bar)
-				window_flags |= AddWindowMainMenuFlag(ImGuiDrawMenuMode::ImGuiWindow , window_flags);
+				window_flags |= GetConditionalMainMenuFlag(ImGuiDrawMenuMode::ImGuiWindow);
 
 			ImGui::SetNextWindowPos({ ImGui::GetMainViewport()->WorkPos.x, ImGui::GetMainViewport()->WorkPos.y });
 			ImGui::SetNextWindowSize({ ImGui::GetMainViewport()->Size.x, ImGui::GetMainViewport()->Size.y });
@@ -79,6 +79,22 @@ namespace chaos
 			}
 			return false;
 		}
+
+		/** request to close this interface */
+		void RequestClosing()
+		{
+			closing_request = true;
+		}
+		/** check whether closing is requested */
+		bool IsClosingRequested() const
+		{
+			return closing_request;
+		}
+	
+	protected:
+
+		/** indicates whether closing this UI is requested */
+		bool closing_request = false;
 	};
 
 	class CHAOS_API ImGuiDrawableObject : public Object, public ImGuiDrawableInterface

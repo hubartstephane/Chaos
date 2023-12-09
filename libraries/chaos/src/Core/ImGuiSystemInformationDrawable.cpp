@@ -5,7 +5,9 @@ namespace chaos
 {
 	void ImGuiSystemInformationDrawable::DrawImGui(ImGuiDrawMenuMode menu_mode)
 	{
-		ImGui::Begin("System Information", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
+		bool open_value = true;
+
+		ImGui::Begin("System Information", &open_value, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
 
 		int monitor_count = 0;
 		GLFWmonitor** monitors = glfwGetMonitors(&monitor_count);
@@ -23,6 +25,9 @@ namespace chaos
 			}
 		}
 		ImGui::End();
+
+		if (!open_value)
+			RequestClosing();
 	}
 
 }; // namespace chaos

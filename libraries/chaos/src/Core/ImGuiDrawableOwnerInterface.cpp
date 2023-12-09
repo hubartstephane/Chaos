@@ -96,7 +96,7 @@ namespace chaos
 		}
 	}
 
-	ImGuiDrawableObjectRegistration * ImGuiDrawableOwnerInterface::RegisterDrawable(char const* name, std::function<ImGuiDrawableObject* ()> drawable_creation_function)
+	ImGuiDrawableObjectRegistration * ImGuiDrawableOwnerInterface::RegisterDrawable(char const* name, std::function<ImGuiDrawableObject* ()> const& drawable_creation_function)
 	{
 		if (ImGuiDrawableObjectRegistration* registration = FindRegisteredDrawable(name))
 		{

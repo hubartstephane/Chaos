@@ -384,7 +384,7 @@ public:
 #if 0
 
 
-	ExecutionContext BuildChildSequence(std::function<void(ExecutionContext context_sequence)> build_func)
+	ExecutionContext BuildChildSequence(std::function<void(ExecutionContext context_sequence)> const& build_func)
 	{
 		Lock();
 		ExecutionContext result = AddChildSequence();
@@ -446,10 +446,10 @@ public:
 	/** create a child task */
 	ExecutionContext AddChildTask();
 	/** create a child sequence task */
-	void AddChildSequenceTask(std::function<void(ExecutionContext)> func);
+	void AddChildSequenceTask(std::function<void(ExecutionContext)> const& func);
 
 	/** add (or call directly) a delegate whenever the task is being finished */
-	void AddCompletionDelegate(std::function<void()> func);
+	void AddCompletionDelegate(std::function<void()> const& func);
 
 	/** returns whether the task is already completed */
 	bool IsCompleted() const;
@@ -485,7 +485,7 @@ protected:
 	/** create a child task */
 	ExecutionContextData * AddChildTask();
 	/** create a sequence pending task */
-	void AddChildSequenceTask(std::function<void(ExecutionContext)> func);
+	void AddChildSequenceTask(std::function<void(ExecutionContext)>const& func);
 	/** lock the context */
 	void Lock();
 	/** unlock the context (pending actions started) */
@@ -497,7 +497,7 @@ protected:
 	/** called whenever a child task is being completed */
 	void OnChildTaskCompleted(ExecutionContextData* child_task);
 	/** add a delegate at completion */
-	void AddCompletionDelegate(std::function<void()> func);
+	void AddCompletionDelegate(std::function<void()> const& func);
 
 protected:
 
@@ -526,14 +526,14 @@ ExecutionContext ExecutionContext::AddChildTask()
 	return ExecutionContext(context_data->AddChildTask());
 }
 
-void ExecutionContext::AddChildSequenceTask(std::function<void(ExecutionContext)> func)
+void ExecutionContext::AddChildSequenceTask(std::function<void(ExecutionContext)> const& func)
 {
 	if (context_data == nullptr)
 		context_data = new ExecutionContextData;
 	context_data->AddChildSequenceTask(func);
 }
 
-void ExecutionContext::AddCompletionDelegate(std::function<void()> func)
+void ExecutionContext::AddCompletionDelegate(std::function<void()> const& func)
 {
 	if (context_data == nullptr)
 		func();
@@ -574,7 +574,7 @@ void ExecutionContext::Unlock()
 
 // ======================================================
 
-void ExecutionContextData::AddCompletionDelegate(std::function<void()> func)
+void ExecutionContextData::AddCompletionDelegate(std::function<void()> const& func)
 {
 	std::unique_lock lock(critical_section);
 	if (IsCompleted())
@@ -649,7 +649,7 @@ ExecutionContextData * ExecutionContextData::AddChildTask()
 	return new ExecutionContextData(this);
 }
 
-void ExecutionContextData::AddChildSequenceTask(std::function<void(ExecutionContext)> func)
+void ExecutionContextData::AddChildSequenceTask(std::function<void(ExecutionContext)> const& func)
 {
 	std::unique_lock lock(critical_section);
 	if (IsCompleted()) // include lock

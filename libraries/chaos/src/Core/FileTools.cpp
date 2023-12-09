@@ -123,7 +123,7 @@ namespace chaos
 #endif // _DEBUG
 
 
-		bool WithFile(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> func)
+		bool WithFile(FilePathParam const& path, std::function<bool(boost::filesystem::path const& p)> const& func)
 		{
 			boost::filesystem::path const& resolved_path = path.GetResolvedPath();
 
@@ -159,7 +159,7 @@ namespace chaos
 			return false;
 		}
 
-		bool WithDirectoryContent(FilePathParam const& p, std::function<bool(boost::filesystem::path const& p)> func)
+		bool WithDirectoryContent(FilePathParam const& p, std::function<bool(boost::filesystem::path const& p)> const& func)
 		{
 			std::vector<boost::filesystem::path> processed_relative_paths;
 

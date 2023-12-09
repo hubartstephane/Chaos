@@ -26,10 +26,10 @@ namespace chaos
 	public:
 
 		/** the entry point for the whole computation */
-		box2 Run(std::function<void(TileCollisionInfo const& collision_info)> func);
+		box2 Run(std::function<void(TileCollisionInfo const& collision_info)> const& func);
 
 		/** compute reaction for a a particle */
-		void ComputeReaction(TileCollisionInfo const& collision_info, std::function<bool(TileCollisionInfo const&, Edge)> func);
+		void ComputeReaction(TileCollisionInfo const& collision_info, std::function<bool(TileCollisionInfo const&, Edge)> const& func);
 
 	public:
 

@@ -25,7 +25,7 @@ namespace chaos
 		void ShowWindow(int nCmdShow);
 
 		/** an utility function to handle all window (if callback is given use PEEK, use blocking GET elsewhere) */
-		static void SimpleMessageLoop(std::function<void()> func = {});
+		static void SimpleMessageLoop(std::function<void()> const& func = {});
 
 	protected:
 

@@ -71,8 +71,8 @@ namespace chaos
 		RESOURCE_TYPE * LoadObjectHelper(
 			char const * name,
 			nlohmann::json const * json,
-			LightweightFunction<RESOURCE_TYPE *(nlohmann::json const *)> const& load_func,
-			LightweightFunction<void(RESOURCE_TYPE*)> const& insert_func) const
+			LightweightFunction<RESOURCE_TYPE *(nlohmann::json const *)> load_func,
+			LightweightFunction<void(RESOURCE_TYPE*)> insert_func) const
 		{
 			// check for name
 			if (!CheckResourceName(nullptr, name, json))
@@ -96,8 +96,8 @@ namespace chaos
 		RESOURCE_TYPE * LoadObjectHelper(
 			FilePathParam const & path,
 			char const * name,
-			LightweightFunction<RESOURCE_TYPE *(FilePathParam const&)> const& load_func,
-			LightweightFunction<void(RESOURCE_TYPE*)> const& insert_func) const
+			LightweightFunction<RESOURCE_TYPE *(FilePathParam const&)> load_func,
+			LightweightFunction<void(RESOURCE_TYPE*)> insert_func) const
 		{
 			// check for path
 			if (!CheckResourcePath(path))

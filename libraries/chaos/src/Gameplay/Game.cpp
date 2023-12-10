@@ -349,8 +349,12 @@ namespace chaos
 		return {};
 	}
 
-	template<typename FUNC>
-	bool Game::DoGenerateTiledMapEntity(nlohmann::json const * config, char const * property_name, char const * default_value, char const * extension, FUNC func)
+	bool Game::DoGenerateTiledMapEntity(
+		nlohmann::json const * config,
+		char const * property_name,
+		char const * default_value,
+		char const * extension,
+		LightweightFunction<bool(TiledMap::Manager *, boost::filesystem::path const&)> func)
 	{
 		// iterate the files and load the tilesets
 		boost::filesystem::path path = GetResourceDirectoryFromConfig(config, property_name, default_value);

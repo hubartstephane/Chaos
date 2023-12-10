@@ -692,8 +692,7 @@ namespace chaos
 		glfwSetWindowIconifyCallback(glfw_window, DoOnIconifiedStateChange);
 	}
 
-	template<typename FUNC>
-	static void GetWindowAndProcess(GLFWwindow* in_glfw_window, FUNC const& func)
+	static void GetWindowAndProcess(GLFWwindow* in_glfw_window, LightweightFunction<void(Window*)> func)
 	{
 		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
 		{

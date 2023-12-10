@@ -9,7 +9,7 @@ namespace chaos
 
 	}
 
-	void SimpleWin32Window::SimpleMessageLoop(LightweightFunction<void()> const& func)
+	void SimpleWin32Window::SimpleMessageLoop(LightweightFunction<void()> func)
 	{
 		MSG msg = { };
 		while (msg.message != WM_QUIT)

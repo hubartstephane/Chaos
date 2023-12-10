@@ -25,7 +25,7 @@ namespace chaos
 		void ShowWindow(int nCmdShow);
 
 		/** an utility function to handle all window (if callback is given use PEEK, use blocking GET elsewhere) */
-		static void SimpleMessageLoop(LightweightFunction<void()> const& func = {});
+		static void SimpleMessageLoop(LightweightFunction<void()> func = {});
 
 	protected:
 

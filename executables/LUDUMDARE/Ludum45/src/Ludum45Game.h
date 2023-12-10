@@ -68,8 +68,7 @@ protected:
 
 	void DoRegisterEnemyType(chaos::TiledMap::ObjectTypeDefinition const * def);
 
-	template<typename FUNC>
-	void RegisterObjectTypeDefinition(char const * prefix, FUNC func);
+	void RegisterObjectTypeDefinition(char const * prefix, chaos::LightweightFunction<void(chaos::TiledMap::ObjectTypeDefinition const *)> func);
 
 protected:
 

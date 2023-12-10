@@ -75,8 +75,7 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const * config)
 	return true;
 }
 
-template<typename FUNC>
-void LudumGame::RegisterObjectTypeDefinition(char const * prefix, FUNC func)
+void LudumGame::RegisterObjectTypeDefinition(char const * prefix, chaos::LightweightFunction<void(chaos::TiledMap::ObjectTypeDefinition const*)> func)
 {
 	size_t prefix_length = strlen(prefix);
 

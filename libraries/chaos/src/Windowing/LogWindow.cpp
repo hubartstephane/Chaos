@@ -3,12 +3,12 @@
 
 namespace chaos
 {
-	ConsoleWindow::ConsoleWindow()
+	LogWindow::LogWindow()
 	{
 		console_content.SetLogger(Logger::GetInstance());
 	}
 
-	void ConsoleWindow::OnDrawWindowImGuiContent()
+	void LogWindow::OnDrawWindowImGuiContent()
 	{
 		ImGuiDrawableInterface::FullscreenWindow("##console", true, [this]()
 		{
@@ -16,7 +16,7 @@ namespace chaos
 		});
 	}
 
-	void ConsoleWindow::OnDrawWindowImGuiMenu()
+	void LogWindow::OnDrawWindowImGuiMenu()
 	{
 		// Window::OnDrawWindowImGuiMenu();
 		// do not call super so that the application items are not inserted here

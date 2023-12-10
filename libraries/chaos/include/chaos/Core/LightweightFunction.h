@@ -2,7 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	template<typename RETURN_TYPE, typename... PARAMS>
+	template<typename>
 	class LightweightFunction;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -15,7 +15,7 @@ namespace chaos
 	 */
 
 	template<typename RETURN_TYPE, typename... PARAMS>
-	class LightweightFunction
+	class LightweightFunction<RETURN_TYPE(PARAMS...)> // specialization of template for functions
 	{
 	public:
 

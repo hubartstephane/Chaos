@@ -253,8 +253,12 @@ namespace chaos
 		virtual bool GenerateTileSets(nlohmann::json const * config);
 
 		/** a generic function to load some tiled map instances */
-		template<typename FUNC>
-		bool DoGenerateTiledMapEntity(nlohmann::json const * config, char const* property_name, char const* default_value, char const* extension, FUNC func);
+		bool DoGenerateTiledMapEntity(
+			nlohmann::json const* config,
+			char const* property_name,
+			char const* default_value,
+			char const* extension,
+			LightweightFunction<bool(TiledMap::Manager*, boost::filesystem::path const&)> func);
 
 		/** read in config file for the path of the resource directory. */
 		boost::filesystem::path GetResourceDirectoryFromConfig(nlohmann::json const * config, char const* config_name, char const* default_path) const;

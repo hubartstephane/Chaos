@@ -21,7 +21,7 @@ namespace chaos
 		};
 
 		/** call a functor on all elements of the callstack (parameters are symbol name, filename, linenumber) */
-		CHAOS_API void ProcessCallStack(LightweightFunction<void(char const*, char const*, int)> const& func);
+		CHAOS_API void ProcessCallStack(LightweightFunction<void(char const*, char const*, int)> func);
 		/** extract the callstack */
 		CHAOS_API std::vector<CallStackEntry> ExtractCallStack();
 		/** display the callstack of the current application */

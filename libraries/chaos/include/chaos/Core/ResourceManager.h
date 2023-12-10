@@ -163,7 +163,7 @@ namespace chaos
 		}
 
 		/** utility function to test whether an object can be inserted */
-		bool CanAddObject(ObjectRequest request, LightweightFunction<bool(ObjectRequest)> const& can_add_func) const;
+		bool CanAddObject(ObjectRequest request, LightweightFunction<bool(ObjectRequest)> can_add_func) const;
 
 	protected:
 

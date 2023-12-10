@@ -20,7 +20,7 @@ namespace chaos
 			return result;
 		}
 
-		void ProcessCallStack(LightweightFunction<void(char const *, char const *, int)> const& func)
+		void ProcessCallStack(LightweightFunction<void(char const *, char const *, int)> func)
 		{
 			// Note on CaptureStackBackTrace : https://msdn.microsoft.com/fr-fr/library/windows/desktop/bb204633(v=vs.85).aspx
 

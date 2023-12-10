@@ -115,7 +115,7 @@ namespace chaos
 		static GLFWwindow* GetSharedGLContext();
 
 		/** Run the message loop while the condition is true */
-		virtual void RunMessageLoop(LightweightFunction<bool()> const& loop_condition_func = {});
+		virtual void RunMessageLoop(LightweightFunction<bool()> loop_condition_func = {});
 
 		/** create a window */
 		Window* CreateTypedWindow(SubClassOf<Window> window_class, WindowPlacementInfo placement_info = {}, WindowCreateParams const& create_params = {}, ObjectRequest = {});
@@ -148,7 +148,7 @@ namespace chaos
 		static void DoOnMonitorEvent(GLFWmonitor* monitor, int monitor_state);
 
 		/** enumerate windows that the application can open */
-		virtual bool EnumerateKnownWindows(LightweightFunction<bool(char const * name, SubClassOf<Window> window_class)> const& func) const;
+		virtual bool EnumerateKnownWindows(LightweightFunction<bool(char const * name, SubClassOf<Window> window_class)> func) const;
 
 		/** override */
 		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override;

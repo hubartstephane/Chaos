@@ -113,7 +113,7 @@ namespace chaos
 		return true;
 	}
 
-	box2 TileCollisionComputer::Run(LightweightFunction<void(TileCollisionInfo const& collision_info)> const& func)
+	box2 TileCollisionComputer::Run(LightweightFunction<void(TileCollisionInfo const& collision_info)> func)
 	{
 		assert(level_instance != nullptr);
 
@@ -143,7 +143,7 @@ namespace chaos
 		return dst_box;
 	}
 
-	void TileCollisionComputer::ComputeReaction(TileCollisionInfo const& collision_info, LightweightFunction<bool(TileCollisionInfo const &, Edge)> const& func)
+	void TileCollisionComputer::ComputeReaction(TileCollisionInfo const& collision_info, LightweightFunction<bool(TileCollisionInfo const &, Edge)> func)
 	{
 		int particle_flags = collision_info.particle->flags;
 

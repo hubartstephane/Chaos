@@ -47,7 +47,7 @@ namespace chaos
 		}
 	}
 
-	void WindowApplication::RunMessageLoop(LightweightFunction<bool()> const & loop_condition_func)
+	void WindowApplication::RunMessageLoop(LightweightFunction<bool()> loop_condition_func)
 	{
 		double t1 = glfwGetTime();
 
@@ -890,7 +890,7 @@ namespace chaos
 		});
 	}
 
-	bool WindowApplication::EnumerateKnownWindows(LightweightFunction<bool(char const * name, SubClassOf<Window> window_class)> const& func) const
+	bool WindowApplication::EnumerateKnownWindows(LightweightFunction<bool(char const * name, SubClassOf<Window> window_class)> func) const
 	{
 		return
 			func("Console", SubClassOf<ConsoleWindow>())

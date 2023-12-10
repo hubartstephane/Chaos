@@ -46,7 +46,7 @@ namespace chaos
 		return true;
 	}
 
-	bool ResourceManager::CanAddObject(ObjectRequest request, LightweightFunction<bool(ObjectRequest)> const& can_add_func) const
+	bool ResourceManager::CanAddObject(ObjectRequest request, LightweightFunction<bool(ObjectRequest)> can_add_func) const
 	{
 		// manager initialized ?
 		if (!IsManagerStarted())

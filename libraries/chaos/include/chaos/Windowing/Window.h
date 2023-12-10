@@ -178,8 +178,10 @@ namespace chaos
 
 		/** using window context, call functor, then restore previous */
 		template<typename FUNC>
-		auto WithWindowContext(FUNC const& func)
+		decltype(auto) WithWindowContext(FUNC const& func)
 		{
+			using L = meta::LambdaInfo<FUNC>;
+
 			// prevent the window destruction
 			shared_ptr<Window> prevent_destruction = this;
 			IncrementWindowDestructionGuard();
@@ -191,7 +193,7 @@ namespace chaos
 			ImGuiContext* imgui_context_to_set = imgui_context;
 			ImGui::SetCurrentContext(imgui_context_to_set);
 
-			if constexpr (std::is_same_v<void, decltype(func())>)
+			if constexpr (std::is_same_v<void, typename L::result_type>)
 			{
 				// call delegate
 				func();

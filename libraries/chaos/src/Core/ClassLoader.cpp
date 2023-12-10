@@ -4,8 +4,7 @@
 namespace chaos
 {
 	// an utility function to load a JSON file a find the approriate classname
-	template<typename FUNC>
-	static Class * DoLoadClassHelper(FilePathParam const& path, FUNC func)
+	static Class* DoLoadClassHelper(FilePathParam const& path, LightweightFunction<Class* (std::string, std::string, std::string, nlohmann::json)> func)
 	{
 		nlohmann::json json;
 		if (JSONTools::LoadJSONFile(path, json))

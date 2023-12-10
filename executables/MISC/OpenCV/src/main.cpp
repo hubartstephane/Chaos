@@ -118,7 +118,5 @@ public:
 
 int main(int argc, char ** argv, char ** env)
 {
-	chaos::WindowPlacementInfo placement_info;
-
-	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, placement_info);
+	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env);
 }

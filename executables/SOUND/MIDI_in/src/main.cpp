@@ -142,16 +142,5 @@ protected:
 
 int main(int argc, char ** argv, char ** env)
 {
-	int a = 83;
-	int b = 0;
-
-	int c = ((a & 127) << 7) + b;
-
-
-
-	return 0;
-
-	chaos::WindowPlacementInfo placement_info;
-
-	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, placement_info);
+	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env);
 }

@@ -3,7 +3,5 @@
 
 int main(int argc, char ** argv, char ** env)
 {
-	WindowCreateParams create_params;
-
-	return RunGame<LudumGame>(argc, argv, env, placement_info);
+	return RunGame<LudumGame>(argc, argv, env);
 }

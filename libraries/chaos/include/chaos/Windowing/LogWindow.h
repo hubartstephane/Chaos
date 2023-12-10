@@ -2,21 +2,21 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class ConsoleWindow;
+	class LogWindow;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	 * ConsoleWindow: a window that deserves to display log information
+	 * LogWindow: a window that deserves to display log information
 	 **/
-	class CHAOS_API ConsoleWindow : public Window
+	class CHAOS_API LogWindow : public Window
 	{
-		CHAOS_DECLARE_OBJECT_CLASS(ConsoleWindow, Window);
+		CHAOS_DECLARE_OBJECT_CLASS(LogWindow, Window);
 
 	public:
 
 		/** constructor */
-		ConsoleWindow();
+		LogWindow();
 
 	protected:
 

@@ -893,7 +893,7 @@ namespace chaos
 	bool WindowApplication::EnumerateKnownWindows(LightweightFunction<bool(char const * name, SubClassOf<Window> window_class)> func) const
 	{
 		return
-			func("Console", SubClassOf<ConsoleWindow>())
+			func("Log", SubClassOf<LogWindow>())
 #if _DEBUG
 			|| func("ImGuiDemo", SubClassOf<ImGuiDemoWindow>())
 #endif

@@ -28,7 +28,7 @@ namespace chaos
 	protected:
 
 		/** ImGui information */
-		LoggerImGuiContent console_content;
+		ImGuiLogObject console_content;
 	};
 
 #endif

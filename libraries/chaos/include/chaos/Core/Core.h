@@ -63,6 +63,6 @@
 #include "chaos/Core/BitTools.h"
 #include "chaos/Core/PriorityQueue.h"
 #include "chaos/Core/NestedIterator.h"
-#include "chaos/Core/LoggerImGuiContent.h"
+#include "chaos/Core/ImGuiLogObject.h"
 #include "chaos/Core/ObjectPool.h"
 #include "chaos/Core/ObjectPool64.h"

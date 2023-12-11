@@ -2,11 +2,11 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class LoggerImGuiContent;
+	class ImGuiLogObject;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class CHAOS_API LoggerImGuiContent : public ImGuiInterface
+	class CHAOS_API ImGuiLogObject : public ImGuiInterface
 	{
 
 	public:

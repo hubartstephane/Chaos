@@ -3,12 +3,12 @@
 
 namespace chaos
 {
-	void LoggerImGuiContent::SetLogger(Logger * in_logger)
+	void ImGuiLogObject::SetLogger(Logger * in_logger)
 	{
 		logger = in_logger;
 	}
 
-	void LoggerImGuiContent::DrawImGui(ImGuiDrawMenuMode menu_mode)
+	void ImGuiLogObject::DrawImGui(ImGuiDrawMenuMode menu_mode)
 	{
 		ImGuiInterface::MenuBar(menu_mode, [this, menu_mode]()
 		{
@@ -17,7 +17,7 @@ namespace chaos
 		OnDrawImGuiContent(menu_mode);
 	}
 
-	void LoggerImGuiContent::OnDrawImGuiMenu(ImGuiDrawMenuMode menu_mode)
+	void ImGuiLogObject::OnDrawImGuiMenu(ImGuiDrawMenuMode menu_mode)
 	{
 		// the types
 		if (ImGui::BeginMenu("Type"))
@@ -75,7 +75,7 @@ namespace chaos
 		}
 	}
 
-	void LoggerImGuiContent::OnDrawImGuiContent(ImGuiDrawMenuMode menu_mode)
+	void ImGuiLogObject::OnDrawImGuiContent(ImGuiDrawMenuMode menu_mode)
 	{
 		assert(logger != nullptr);
 

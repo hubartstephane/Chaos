@@ -2,8 +2,8 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class ImGuiDrawableInterface;
-	class ImGuiDrawableObject;
+	class ImGuiInterface;
+	class ImGuiObject;
 
 	enum class ImGuiDrawMenuMode;
 
@@ -15,12 +15,12 @@ namespace chaos
 		ImGuiWindow
 	};
 
-	class CHAOS_API ImGuiDrawableInterface
+	class CHAOS_API ImGuiInterface
 	{
 	public:
 
 		/** destructor */
-		virtual ~ImGuiDrawableInterface() = default;
+		virtual ~ImGuiInterface() = default;
 		/** draw both ImGui and Menu */
 		virtual void DrawImGui(ImGuiDrawMenuMode menu_mode);
 
@@ -50,11 +50,11 @@ namespace chaos
 		bool closing_request = false;
 	};
 
-	class CHAOS_API ImGuiDrawableObject : public Object, public ImGuiDrawableInterface
+	class CHAOS_API ImGuiObject : public Object, public ImGuiInterface
 	{
 	public:
 
-		CHAOS_DECLARE_OBJECT_CLASS(ImGuiDrawableObject, Object);
+		CHAOS_DECLARE_OBJECT_CLASS(ImGuiObject, Object);
 	};
 
 #endif

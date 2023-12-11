@@ -26,7 +26,7 @@ namespace chaos
 		// Window::OnDrawImGuiMenu();
 		// do not call super so that the application items are not inserted here
 
-		chaos::ImGuiDrawableInterface::MenuBar(chaos::ImGuiDrawMenuMode::FullWindow, [this]()
+		chaos::ImGuiInterface::MenuBar(chaos::ImGuiDrawMenuMode::FullWindow, [this]()
 		{
 			if (ImGui::BeginMenu("ImGui"))
 			{

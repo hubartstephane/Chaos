@@ -27,7 +27,7 @@ public:
 	virtual void OnDrawWindowImGuiContent()
 	{
 
-		ImGuiDrawableInterface::FullscreenWindow("conversion", false, [this]()
+		ImGuiInterface::FullscreenWindow("conversion", false, [this]()
 		{
 			ImGui::Text("LAST BUTTON (%s)", chaos::EnumToString(last_button));
 

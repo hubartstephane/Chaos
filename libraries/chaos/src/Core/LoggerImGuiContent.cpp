@@ -10,7 +10,7 @@ namespace chaos
 
 	void LoggerImGuiContent::DrawImGui(ImGuiDrawMenuMode menu_mode)
 	{
-		ImGuiDrawableInterface::MenuBar(menu_mode, [this, menu_mode]()
+		ImGuiInterface::MenuBar(menu_mode, [this, menu_mode]()
 		{
 			OnDrawImGuiMenu(menu_mode);
 		});
@@ -63,7 +63,7 @@ namespace chaos
 		if (ImGui::BeginMenu("Actions"))
 		{
 			for (size_t i = 0; i < logger->GetListenerCount(); ++i)
-				if (ImGuiDrawableInterface* imgui_drawable = auto_cast(logger->GetListener(i)))
+				if (ImGuiInterface* imgui_drawable = auto_cast(logger->GetListener(i)))
 					imgui_drawable->DrawImGui(menu_mode);
 			ImGui::EndMenu();
 		}

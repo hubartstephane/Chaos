@@ -163,7 +163,7 @@ protected:
 
 		auto add_close_personal_window = [this](bool& p_open)
 		{
-			chaos::ImGuiDrawableInterface::MenuBar(chaos::ImGuiDrawMenuMode::FullWindow, [this, &p_open]()
+			chaos::ImGuiInterface::MenuBar(chaos::ImGuiDrawMenuMode::FullWindow, [this, &p_open]()
 			{
 				if (ImGui::BeginMenu("Windows"))
 				{

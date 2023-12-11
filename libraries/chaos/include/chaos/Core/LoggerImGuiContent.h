@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class CHAOS_API LoggerImGuiContent : public ImGuiDrawableInterface
+	class CHAOS_API LoggerImGuiContent : public ImGuiInterface
 	{
 
 	public:

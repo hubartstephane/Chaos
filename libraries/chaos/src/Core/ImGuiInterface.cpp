@@ -3,11 +3,11 @@
 
 namespace chaos
 {
-	void ImGuiDrawableInterface::DrawImGui(ImGuiDrawMenuMode menu_mode)
+	void ImGuiInterface::DrawImGui(ImGuiDrawMenuMode menu_mode)
 	{
 	}
 
-	int ImGuiDrawableInterface::GetConditionalMainMenuFlag(ImGuiDrawMenuMode menu_mode)
+	int ImGuiInterface::GetConditionalMainMenuFlag(ImGuiDrawMenuMode menu_mode)
 	{
 		// only add a flags for the menu if it is not the global GLFW window
 		if (menu_mode == ImGuiDrawMenuMode::ImGuiWindow)
@@ -17,7 +17,7 @@ namespace chaos
 		return 0;
 	}
 
-	void ImGuiDrawableInterface::FullscreenWindow(char const* name, bool menu_bar, LightweightFunction<void()> content_func)
+	void ImGuiInterface::FullscreenWindow(char const* name, bool menu_bar, LightweightFunction<void()> content_func)
 	{
 		int window_flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground;
 		if (menu_bar)
@@ -32,7 +32,7 @@ namespace chaos
 		}
 	}
 
-	bool ImGuiDrawableInterface::MenuBar(ImGuiDrawMenuMode menu_mode, LightweightFunction<void()> func)
+	bool ImGuiInterface::MenuBar(ImGuiDrawMenuMode menu_mode, LightweightFunction<void()> func)
 	{
 		bool show_menu = true;
 		if (WindowApplication* window_application = Application::GetInstance())

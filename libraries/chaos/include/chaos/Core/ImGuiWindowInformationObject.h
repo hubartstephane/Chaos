@@ -2,20 +2,20 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class ImGuiWindowInformationDrawable;
+	class ImGuiWindowInformationObject;
 
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* ImGuiWindowInformationDrawable: a drawable that displays some window informations
+	* ImGuiWindowInformationObject: a drawable that displays some window informations
 	*/
 
-	class ImGuiWindowInformationDrawable : public ImGuiObject
+	class ImGuiWindowInformationObject : public ImGuiObject
 	{
 	public:
 
-		CHAOS_DECLARE_OBJECT_CLASS(ImGuiWindowInformationDrawable, ImGuiObject);
+		CHAOS_DECLARE_OBJECT_CLASS(ImGuiWindowInformationObject, ImGuiObject);
 
 		/** initialization function */
 		void SetWindow(Window* in_window);

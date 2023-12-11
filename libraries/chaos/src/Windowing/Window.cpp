@@ -1229,12 +1229,12 @@ namespace chaos
 	{
 		RegisterDrawable("System Information", [this]()
 		{
-			return new ImGuiSystemInformationDrawable;
+			return new ImGuiSystemInformationObject;
 		});
 
 		RegisterDrawable("Window Information", [this]()
 		{
-			ImGuiWindowInformationDrawable* result = new ImGuiWindowInformationDrawable;
+			ImGuiWindowInformationObject* result = new ImGuiWindowInformationObject;
 			if (result != nullptr)
 				result->SetWindow(this);
 			return result;
@@ -1242,7 +1242,7 @@ namespace chaos
 
 		RegisterDrawable("Help", [this]()
 		{
-			return new ImGuiHelpDrawable;
+			return new ImGuiHelpObject;
 		});
 	}
 

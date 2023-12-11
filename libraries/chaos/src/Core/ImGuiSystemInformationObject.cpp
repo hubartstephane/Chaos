@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	void ImGuiSystemInformationDrawable::DrawImGui(ImGuiDrawMenuMode menu_mode)
+	void ImGuiSystemInformationObject::DrawImGui(ImGuiDrawMenuMode menu_mode)
 	{
 		bool open_value = true;
 

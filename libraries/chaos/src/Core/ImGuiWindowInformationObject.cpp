@@ -3,12 +3,12 @@
 
 namespace chaos
 {
-	void ImGuiWindowInformationDrawable::SetWindow(Window* in_window)
+	void ImGuiWindowInformationObject::SetWindow(Window* in_window)
 	{
 		window = in_window;
 	}
 
-	void ImGuiWindowInformationDrawable::DrawImGui(ImGuiDrawMenuMode menu_mode)
+	void ImGuiWindowInformationObject::DrawImGui(ImGuiDrawMenuMode menu_mode)
 	{
 		bool open_value = true;
 

@@ -10,11 +10,11 @@ namespace chaos
 	* ImGuiGlobalVariableDrawable: a drawable that display the global variables
 	*/
 
-	class ImGuiGlobalVariableDrawable : public ImGuiDrawableObject
+	class ImGuiGlobalVariableDrawable : public ImGuiObject
 	{
 	public:
 
-		CHAOS_DECLARE_OBJECT_CLASS(ImGuiGlobalVariableDrawable, ImGuiDrawableObject);
+		CHAOS_DECLARE_OBJECT_CLASS(ImGuiGlobalVariableDrawable, ImGuiObject);
 
 		/** override */
 		virtual void DrawImGui(ImGuiDrawMenuMode menu_mode) override;

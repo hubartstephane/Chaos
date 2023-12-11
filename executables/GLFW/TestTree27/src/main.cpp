@@ -247,7 +247,7 @@ protected:
 	{
 		chaos::Window::OnDrawWindowImGuiMenu();
 
-		chaos::ImGuiDrawableInterface::MenuBar(chaos::ImGuiDrawMenuMode::FullWindow, [this]()
+		chaos::ImGuiInterface::MenuBar(chaos::ImGuiDrawMenuMode::FullWindow, [this]()
 		{
 			if (ImGui::BeginMenu("Windows"))
 			{

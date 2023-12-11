@@ -902,7 +902,7 @@ namespace chaos
 
 	void WindowApplication::OnDrawWindowImGuiMenu(Window* window)
 	{
-		ImGuiDrawableInterface::MenuBar(ImGuiDrawMenuMode::FullWindow, [this]()
+		ImGuiInterface::MenuBar(ImGuiDrawMenuMode::FullWindow, [this]()
 		{
 			if (ImGui::BeginMenu("Actions"))
 			{

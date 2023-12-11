@@ -11,11 +11,11 @@ namespace chaos
 	* ImGuiWindowInformationDrawable: a drawable that displays some window informations
 	*/
 
-	class ImGuiWindowInformationDrawable : public ImGuiDrawableObject
+	class ImGuiWindowInformationDrawable : public ImGuiObject
 	{
 	public:
 
-		CHAOS_DECLARE_OBJECT_CLASS(ImGuiWindowInformationDrawable, ImGuiDrawableObject);
+		CHAOS_DECLARE_OBJECT_CLASS(ImGuiWindowInformationDrawable, ImGuiObject);
 
 		/** initialization function */
 		void SetWindow(Window* in_window);

@@ -4,15 +4,15 @@
 namespace chaos
 {
 	/**
-	 * ImGuiDrawableObjectRegistration implementation
+	 * ImGuiRegistrationObject implementation
 	 */
 
-	ImGuiDrawableObjectRegistration::~ImGuiDrawableObjectRegistration()
+	ImGuiRegistrationObject::~ImGuiRegistrationObject()
 	{
 		assert(owner == nullptr);
 	}
 
-	void ImGuiDrawableObjectRegistration::DrawImGui(ImGuiDrawMenuMode menu_mode)
+	void ImGuiRegistrationObject::DrawImGui(ImGuiDrawMenuMode menu_mode)
 	{
 		if (drawable_object != nullptr)
 		{
@@ -22,12 +22,12 @@ namespace chaos
 		}
 	}
 
-	bool ImGuiDrawableObjectRegistration::IsVisible() const
+	bool ImGuiRegistrationObject::IsVisible() const
 	{
 		return visible;
 	}
 
-	void ImGuiDrawableObjectRegistration::Show(bool show)
+	void ImGuiRegistrationObject::Show(bool show)
 	{
 		if (show)
 		{
@@ -49,12 +49,12 @@ namespace chaos
 		visible = show;
 	}
 
-	char const* ImGuiDrawableObjectRegistration::GetName() const
+	char const* ImGuiRegistrationObject::GetName() const
 	{
 		return name.c_str();
 	}
 
-	void ImGuiDrawableObjectRegistration::SubReference()
+	void ImGuiRegistrationObject::SubReference()
 	{
 		// the registration does not belong to any owner: handle as usual
 		if (owner == nullptr)
@@ -65,20 +65,20 @@ namespace chaos
 	}
 
 	/**
-	 * ImGuiDrawableOwnerInterface implementation
+	 * ImGuiOwnerInterface implementation
 	 */
 
-	ImGuiDrawableOwnerInterface::~ImGuiDrawableOwnerInterface()
+	ImGuiOwnerInterface::~ImGuiOwnerInterface()
 	{
 		while (registered_drawable.size() > 0)
 		{
-			ImGuiDrawableObjectRegistration* last = registered_drawable[0].get();
+			ImGuiRegistrationObject* last = registered_drawable[0].get();
 			last->owner = nullptr;
 			registered_drawable.pop_back();
 		}
 	}
 
-	ImGuiDrawableObjectRegistration* ImGuiDrawableOwnerInterface::FindRegisteredDrawable(char const* name)
+	ImGuiRegistrationObject* ImGuiOwnerInterface::FindRegisteredDrawable(char const* name)
 	{
 		for (auto& drawable : registered_drawable)
 			if (StringTools::Stricmp(name, drawable->GetName()) == 0)
@@ -86,7 +86,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	void ImGuiDrawableOwnerInterface::UnregisterDrawable(ImGuiDrawableObjectRegistration* registration)
+	void ImGuiOwnerInterface::UnregisterDrawable(ImGuiRegistrationObject* registration)
 	{
 		auto it = std::ranges::find_if(registered_drawable, [registration](auto& drawable) { return drawable == registration; });
 		if (it != std::ranges::end(registered_drawable))
@@ -96,13 +96,13 @@ namespace chaos
 		}
 	}
 
-	ImGuiDrawableObjectRegistration * ImGuiDrawableOwnerInterface::RegisterDrawable(char const* name, std::function<ImGuiDrawableObject* ()> const& drawable_creation_function)
+	ImGuiRegistrationObject * ImGuiOwnerInterface::RegisterDrawable(char const* name, std::function<ImGuiObject* ()> const& drawable_creation_function)
 	{
-		if (ImGuiDrawableObjectRegistration* registration = FindRegisteredDrawable(name))
+		if (ImGuiRegistrationObject* registration = FindRegisteredDrawable(name))
 		{
-			Log::Warning("ImGuiDrawableOwnerInterface::RegisteredDrawable: %s already existing", name);
+			Log::Warning("ImGuiOwnerInterface::RegisteredDrawable: %s already existing", name);
 		}
-		else if (ImGuiDrawableObjectRegistration* result = new ImGuiDrawableObjectRegistration())
+		else if (ImGuiRegistrationObject* result = new ImGuiRegistrationObject())
 		{
 			result->name = name;
 			result->creation_function = drawable_creation_function;
@@ -113,7 +113,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	ImGuiDrawableObjectRegistration * ImGuiDrawableOwnerInterface::RegisterDrawable(char const* name, SubClassOf<ImGuiDrawableObject> drawable_class)
+	ImGuiRegistrationObject * ImGuiOwnerInterface::RegisterDrawable(char const* name, SubClassOf<ImGuiObject> drawable_class)
 	{
 		return RegisterDrawable(name, [drawable_class]()
 		{
@@ -121,12 +121,12 @@ namespace chaos
 		});
 	}
 
-	void ImGuiDrawableOwnerInterface::DrawImGui(ImGuiDrawMenuMode menu_mode)
+	void ImGuiOwnerInterface::DrawImGui(ImGuiDrawMenuMode menu_mode)
 	{
 		if (registered_drawable.size() > 0)
 		{
 			// draw the menu
-			chaos::ImGuiDrawableInterface::MenuBar(chaos::ImGuiDrawMenuMode::FullWindow, [this]()
+			chaos::ImGuiInterface::MenuBar(chaos::ImGuiDrawMenuMode::FullWindow, [this]()
 			{
 				if (ImGui::BeginMenu("Widgets"))
 				{

@@ -91,7 +91,7 @@ namespace chaos
 	* FileLoggerListener : an object dedicated to wait for entries and write them into a file
 	*/
 
-	class CHAOS_API FileLoggerListener : public LoggerListener, public ImGuiDrawableInterface
+	class CHAOS_API FileLoggerListener : public LoggerListener, public ImGuiInterface
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(FileLoggerListener, LoggerListener);
 

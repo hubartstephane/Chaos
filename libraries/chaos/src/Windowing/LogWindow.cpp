@@ -10,7 +10,7 @@ namespace chaos
 
 	void LogWindow::OnDrawWindowImGuiContent()
 	{
-		ImGuiDrawableInterface::FullscreenWindow("##console", true, [this]()
+		ImGuiInterface::FullscreenWindow("##console", true, [this]()
 		{
 			console_content.DrawImGui(ImGuiDrawMenuMode::ImGuiWindow);
 		});

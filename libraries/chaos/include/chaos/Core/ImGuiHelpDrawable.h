@@ -10,11 +10,11 @@ namespace chaos
 	* ImGuiHelpDrawable: a drawable that displays some help for keys
 	*/
 
-	class ImGuiHelpDrawable : public ImGuiDrawableObject
+	class ImGuiHelpDrawable : public ImGuiObject
 	{
 	public:
 
-		CHAOS_DECLARE_OBJECT_CLASS(ImGuiHelpDrawable, ImGuiDrawableObject);
+		CHAOS_DECLARE_OBJECT_CLASS(ImGuiHelpDrawable, ImGuiObject);
 
 		/** override */
 		virtual void DrawImGui(ImGuiDrawMenuMode menu_mode) override;

@@ -10,11 +10,11 @@ namespace chaos
 	* ImGuiSystemInformationDrawable: a drawable that displays some system informations
 	*/
 
-	class ImGuiSystemInformationDrawable : public ImGuiDrawableObject
+	class ImGuiSystemInformationDrawable : public ImGuiObject
 	{
 	public:
 
-		CHAOS_DECLARE_OBJECT_CLASS(ImGuiSystemInformationDrawable, ImGuiDrawableObject);
+		CHAOS_DECLARE_OBJECT_CLASS(ImGuiSystemInformationDrawable, ImGuiObject);
 
 		/** override */
 		virtual void DrawImGui(ImGuiDrawMenuMode menu_mode) override;

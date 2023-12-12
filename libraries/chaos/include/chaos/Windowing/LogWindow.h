@@ -28,7 +28,7 @@ namespace chaos
 	protected:
 
 		/** ImGui information */
-		ImGuiLogObject console_content;
+		shared_ptr<ImGuiLogObject> content;
 	};
 
 #endif

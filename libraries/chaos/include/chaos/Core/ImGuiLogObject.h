@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class CHAOS_API ImGuiLogObject : public ImGuiInterface
+	class CHAOS_API ImGuiLogObject : public ImGuiObject
 	{
 
 	public:

@@ -5,15 +5,20 @@ namespace chaos
 {
 	LogWindow::LogWindow()
 	{
-		console_content.SetLogger(Logger::GetInstance());
+		content = new ImGuiLogObject;
+		if (content != nullptr)
+			content->SetLogger(Logger::GetInstance());
 	}
 
 	void LogWindow::OnDrawWindowImGuiContent()
 	{
-		ImGuiInterface::FullscreenWindow("##console", true, [this]()
+		if (content != nullptr)
 		{
-			console_content.DrawImGui(ImGuiDrawMenuMode::ImGuiWindow);
-		});
+			ImGuiInterface::FullscreenWindow("##console", true, [this]()
+			{
+				content->DrawImGui(ImGuiDrawMenuMode::ImGuiWindow);
+			});
+		}
 	}
 
 	void LogWindow::OnDrawWindowImGuiMenu()

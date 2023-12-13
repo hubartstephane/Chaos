@@ -7,24 +7,25 @@ namespace chaos
 	{
 		bool open_value = true;
 
-		ImGui::Begin("System Information", &open_value, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
-
-		int monitor_count = 0;
-		GLFWmonitor** monitors = glfwGetMonitors(&monitor_count);
-		if (monitors != nullptr && monitor_count > 0)
+		if (ImGui::Begin("System Information", &open_value, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
 		{
-			for (int i = 0; i < monitor_count; ++i)
+			int monitor_count = 0;
+			GLFWmonitor** monitors = glfwGetMonitors(&monitor_count);
+			if (monitors != nullptr && monitor_count > 0)
 			{
-				glm::ivec2 monitor_position = { 0, 0 };
-				glfwGetMonitorPos(monitors[i], &monitor_position.x, &monitor_position.y);
+				for (int i = 0; i < monitor_count; ++i)
+				{
+					glm::ivec2 monitor_position = { 0, 0 };
+					glfwGetMonitorPos(monitors[i], &monitor_position.x, &monitor_position.y);
 
-				ImGui::Text("monitor[%d] position: (%d, %d)", i, monitor_position.x, monitor_position.y);
+					ImGui::Text("monitor[%d] position: (%d, %d)", i, monitor_position.x, monitor_position.y);
 
-				if (GLFWvidmode const* mode = glfwGetVideoMode(monitors[i]))
-					ImGui::Text("monitor[%d] size:     (%d, %d)", i, mode->width, mode->height);
+					if (GLFWvidmode const* mode = glfwGetVideoMode(monitors[i]))
+						ImGui::Text("monitor[%d] size:     (%d, %d)", i, mode->width, mode->height);
+				}
 			}
+			ImGui::End();
 		}
-		ImGui::End();
 
 		if (!open_value)
 			RequestClosing();

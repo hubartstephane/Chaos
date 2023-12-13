@@ -58,29 +58,6 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 	};
 
 	/**
-	 * GlobalVariableImGUIRenderer: the generic template for GlobalVariableImGUIRendererBase inheriting class
-	 */
-
-	template<>
-	class GlobalVariableImGUIRenderer<bool> : public GlobalVariableImGUIRendererBase
-	{
-	public:
-
-		virtual void DrawImGui(GlobalVariableBase* target) const
-		{
-			target = target;
-		}
-	};
-
-
-
-
-
-
-
-
-
-	/**
 	 * GlobalVariableInfo: some meta data used by GlobalVariable
 	 */
 
@@ -261,6 +238,26 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 		/** list of all variables */
 		std::vector<GlobalVariableBase*> variables;
 	};
+
+	/**
+	 * GlobalVariableImGUIRenderer: the generic template for GlobalVariableImGUIRendererBase inheriting class
+	 */
+
+	template<>
+	class GlobalVariableImGUIRenderer<bool> : public GlobalVariableImGUIRendererBase
+	{
+	public:
+
+		virtual void DrawImGui(GlobalVariableBase* target) const
+		{
+			bool& target_value = ((GlobalVariable<bool> *)target)->Get();
+			ImGui::PushID((int)&target_value);
+			ImGui::Checkbox("", &target_value);
+			ImGui::PopID();
+		}
+	};
+
+
 
 #endif
 

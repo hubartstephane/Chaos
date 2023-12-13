@@ -7,23 +7,38 @@ namespace chaos
 	{
 		bool open_value = true;
 
-		ImGui::Begin("Help", &open_value, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
+		int id = 0;
 
-		for (GlobalVariableBase * variable : chaos::GlobalVariableManager::GetInstance()->GetVariables())
+		if (ImGui::Begin("Global Variables", &open_value, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
 		{
-			if (variable != nullptr)
+			if (ImGui::BeginTable("Global Variables", 2))
 			{
-				if (GlobalVariableInfo const* variable_info = variable->GetVariableInfo())
+				for (GlobalVariableBase* variable : chaos::GlobalVariableManager::GetInstance()->GetVariables())
 				{
-					if (GlobalVariableImGUIRendererBase const* imgui_renderer = variable_info->GetImGUIRenderer())
+					if (variable != nullptr)
 					{
-						imgui_renderer->DrawImGui(variable);
+						if (GlobalVariableInfo const* variable_info = variable->GetVariableInfo())
+						{
+							if (GlobalVariableImGUIRendererBase const* imgui_renderer = variable_info->GetImGUIRenderer())
+							{
+								//ImGui::PushID(++id);
+								ImGui::TableNextColumn();
+								ImGui::Text("%s", variable->GetName());
+								//ImGui::PopID();
+
+								//ImGui::PushID(++id);
+								ImGui::TableNextColumn();
+								imgui_renderer->DrawImGui(variable);
+								//ImGui::PopID();
+
+							}
+						}
 					}
 				}
+				ImGui::EndTable();
 			}
+			ImGui::End();
 		}
-
-		ImGui::End();
 
 		if (!open_value)
 			RequestClosing();

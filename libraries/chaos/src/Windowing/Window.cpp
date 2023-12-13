@@ -1227,6 +1227,11 @@ namespace chaos
 
 	void Window::RegisterKnownDrawables()
 	{
+		RegisterDrawable("Global Variables", [this]()
+		{
+			return new ImGuiGlobalVariablesObject;
+		});
+
 		RegisterDrawable("System Information", [this]()
 		{
 			return new ImGuiSystemInformationObject;

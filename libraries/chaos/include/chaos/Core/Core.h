@@ -37,7 +37,7 @@
 #include "chaos/Core/ImGuiWindowInformationObject.h"
 #include "chaos/Core/ImGuiSystemInformationObject.h"
 #include "chaos/Core/ImGuiHelpObject.h"
-#include "chaos/Core/ImGuiGlobalVariableDrawable.h"
+#include "chaos/Core/ImGuiGlobalVariablesObject.h"
 #include "chaos/Core/Log.h"
 #include "chaos/Core/FileResource.h"
 #include "chaos/Core/Tag.h"

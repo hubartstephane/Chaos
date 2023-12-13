@@ -2,7 +2,13 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
+	class GlobalVariableInfo;
 	class GlobalVariableBase;
+
+	class GlobalVariableImGUIRendererBase;
+	template<typename T>
+	class GlobalVariableImGUIRenderer;
+
 	class GlobalVariableManager;
 
 	template<typename T>
@@ -14,6 +20,110 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
+	 * GlobalVariableImGUIRendererBase: a base class dedicated to render GlobalVariable with ImGui
+	 */
+
+	class CHAOS_API GlobalVariableImGUIRendererBase
+	{
+		friend class GlobalVariableInfo;
+
+	public:
+
+		/** the main method to override */
+		virtual void DrawImGui(GlobalVariableBase* target) const
+		{
+			target = target;
+			int i = 0;
+			++i;
+		}
+
+	protected:
+
+		/** getter on the static instance */
+		template<typename T>
+		static GlobalVariableImGUIRendererBase const * GetInstance()
+		{
+			static GlobalVariableImGUIRenderer<T> result;
+			return &result;
+		}
+	};
+
+	/**
+	 * GlobalVariableImGUIRenderer: the generic template for GlobalVariableImGUIRendererBase inheriting class
+	 */
+
+	template<typename T>
+	class GlobalVariableImGUIRenderer : public GlobalVariableImGUIRendererBase
+	{
+	};
+
+	/**
+	 * GlobalVariableImGUIRenderer: the generic template for GlobalVariableImGUIRendererBase inheriting class
+	 */
+
+	template<>
+	class GlobalVariableImGUIRenderer<bool> : public GlobalVariableImGUIRendererBase
+	{
+	public:
+
+		virtual void DrawImGui(GlobalVariableBase* target) const
+		{
+			target = target;
+		}
+	};
+
+
+
+
+
+
+
+
+
+	/**
+	 * GlobalVariableInfo: some meta data used by GlobalVariable
+	 */
+
+	class CHAOS_API GlobalVariableInfo
+	{
+		template<typename T>
+		friend class GlobalVariable;
+
+	public:
+
+		/** gets the type_info for this entry */
+		std::type_info const* GetTypeInfo() const { return type_info; }
+		/** get the imgui renderer */
+		GlobalVariableImGUIRendererBase const* GetImGUIRenderer() const { return imgui_renderer; }
+
+	protected:
+
+		/** getter on the static instance */
+		template<typename T>
+		static GlobalVariableInfo const * GetInstance()
+		{
+			static GlobalVariableInfo result = GlobalVariableInfo
+			(
+				&typeid(T),
+				GlobalVariableImGUIRendererBase::GetInstance<T>()
+			);
+			return &result;
+		}
+
+		/** constructor */
+		GlobalVariableInfo(std::type_info const* in_type_info, GlobalVariableImGUIRendererBase const * in_imgui_renderer):
+			type_info(in_type_info),
+			imgui_renderer(in_imgui_renderer){}
+
+	protected:
+		
+		/** the type information */
+		std::type_info const* type_info = nullptr;
+		/** how to display the data with ImGui */
+		GlobalVariableImGUIRendererBase const* imgui_renderer = nullptr;
+	};
+
+	/**
 	 * GlobalVariableBase: the base class for global variable
 	 */
 
@@ -21,15 +131,15 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 	{
 	public:
 
-		/** gets the type_info for this entry */
-		std::type_info const * GetTypeInfo() const { return type_info; }
+		/** get information related to this variable */
+		GlobalVariableInfo const * GetVariableInfo() const { return variable_info; }
 		/** register an option into a description */
 		virtual void RegisterProgramOption(boost::program_options::options_description& desc) = 0;
 
 	protected:
 
-		/** an id for class checking */
-		std::type_info const* type_info = nullptr;
+		/** some commong information for this variable */
+		GlobalVariableInfo const * variable_info = nullptr;
 	};
 
 	/**
@@ -46,7 +156,7 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 		/** constructor */
 		GlobalVariable(T in_value = {}) : value(std::move(in_value))
 		{
-			type_info = &typeid(T);
+			variable_info = GlobalVariableInfo::GetInstance<T>();
 		}
 
 		/** destructor */
@@ -117,7 +227,7 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 			{
 				// the type matches ?
 				// (you may use CHAOS_GLOBAL_VARIABLE(XXX) several times with the same string in several places. They will all point the same data)
-				if (*result->GetTypeInfo() == typeid(T))
+				if (*result->GetVariableInfo()->GetTypeInfo() == typeid(T))
 				{
 					return dynamic_cast<GlobalVariable<T>*>(result);
 				}

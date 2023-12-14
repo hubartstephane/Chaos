@@ -251,7 +251,7 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 		virtual void DrawImGui(GlobalVariableBase* target) const
 		{
 			bool& target_value = ((GlobalVariable<bool> *)target)->Get();
-			ImGui::PushID((int)&target_value);
+			ImGuiTools::PushID(target);
 			ImGui::Checkbox("", &target_value);
 			ImGui::PopID();
 		}

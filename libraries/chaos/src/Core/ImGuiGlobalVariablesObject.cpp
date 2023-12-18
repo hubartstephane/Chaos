@@ -19,7 +19,7 @@ namespace chaos
 					{
 						if (GlobalVariableInfo const* variable_info = variable->GetVariableInfo())
 						{
-							if (GlobalVariableImGUIRendererBase const* imgui_renderer = variable_info->GetImGUIRenderer())
+							if (GlobalVariableImGuiRendererBase const* imgui_renderer = variable_info->GetImGuiRenderer())
 							{
 								//ImGui::PushID(++id);
 								ImGui::TableNextColumn();

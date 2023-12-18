@@ -5,9 +5,9 @@ namespace chaos
 	class GlobalVariableInfo;
 	class GlobalVariableBase;
 
-	class GlobalVariableImGUIRendererBase;
+	class GlobalVariableImGuiRendererBase;
 	template<typename T>
-	class GlobalVariableImGUIRenderer;
+	class GlobalVariableImGuiRenderer;
 
 	class GlobalVariableManager;
 
@@ -20,41 +20,46 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	 * GlobalVariableImGUIRendererBase: a base class dedicated to render GlobalVariable with ImGui
+	 * GlobalVariableImGuiRendererBase: a base class dedicated to render GlobalVariable with ImGui
 	 */
 
-	class CHAOS_API GlobalVariableImGUIRendererBase
+	class CHAOS_API GlobalVariableImGuiRendererBase
 	{
 		friend class GlobalVariableInfo;
 
 	public:
 
 		/** the main method to override */
-		virtual void DrawImGui(GlobalVariableBase* target) const
-		{
-			target = target;
-			int i = 0;
-			++i;
-		}
+		virtual void DrawImGui(GlobalVariableBase* target) const = 0;
 
 	protected:
 
 		/** getter on the static instance */
 		template<typename T>
-		static GlobalVariableImGUIRendererBase const * GetInstance()
+		static GlobalVariableImGuiRendererBase const * GetInstance()
 		{
-			static GlobalVariableImGUIRenderer<T> result;
+			static GlobalVariableImGuiRenderer<T> result;
 			return &result;
 		}
 	};
 
 	/**
-	 * GlobalVariableImGUIRenderer: the generic template for GlobalVariableImGUIRendererBase inheriting class
+	 * GlobalVariableImGuiRenderer: the generic template for GlobalVariableImGuiRendererBase inheriting class
 	 */
 
 	template<typename T>
-	class GlobalVariableImGUIRenderer : public GlobalVariableImGUIRendererBase
+	class GlobalVariableImGuiRenderer : public GlobalVariableImGuiRendererBase
 	{
+	public:
+
+		virtual void DrawImGui(GlobalVariableBase* target) const
+		{
+			if constexpr (ImGuiTools::HasDrawImGuiFunction<T>)
+			{
+				T& target_value = ((GlobalVariable<T> *)target)->Get();				
+				ImGuiTools::DrawImGui(target_value);
+			}
+		}
 	};
 
 	/**
@@ -71,7 +76,7 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 		/** gets the type_info for this entry */
 		std::type_info const* GetTypeInfo() const { return type_info; }
 		/** get the imgui renderer */
-		GlobalVariableImGUIRendererBase const* GetImGUIRenderer() const { return imgui_renderer; }
+		GlobalVariableImGuiRendererBase const* GetImGuiRenderer() const { return imgui_renderer; }
 
 	protected:
 
@@ -82,13 +87,13 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 			static GlobalVariableInfo result = GlobalVariableInfo
 			(
 				&typeid(T),
-				GlobalVariableImGUIRendererBase::GetInstance<T>()
+				GlobalVariableImGuiRendererBase::GetInstance<T>()
 			);
 			return &result;
 		}
 
 		/** constructor */
-		GlobalVariableInfo(std::type_info const* in_type_info, GlobalVariableImGUIRendererBase const * in_imgui_renderer):
+		GlobalVariableInfo(std::type_info const* in_type_info, GlobalVariableImGuiRendererBase const * in_imgui_renderer):
 			type_info(in_type_info),
 			imgui_renderer(in_imgui_renderer){}
 
@@ -97,7 +102,7 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 		/** the type information */
 		std::type_info const* type_info = nullptr;
 		/** how to display the data with ImGui */
-		GlobalVariableImGUIRendererBase const* imgui_renderer = nullptr;
+		GlobalVariableImGuiRendererBase const* imgui_renderer = nullptr;
 	};
 
 	/**
@@ -238,26 +243,6 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 		/** list of all variables */
 		std::vector<GlobalVariableBase*> variables;
 	};
-
-	/**
-	 * GlobalVariableImGUIRenderer: the generic template for GlobalVariableImGUIRendererBase inheriting class
-	 */
-
-	template<>
-	class GlobalVariableImGUIRenderer<bool> : public GlobalVariableImGUIRendererBase
-	{
-	public:
-
-		virtual void DrawImGui(GlobalVariableBase* target) const
-		{
-			bool& target_value = ((GlobalVariable<bool> *)target)->Get();
-			ImGuiTools::PushID(target);
-			ImGui::Checkbox("", &target_value);
-			ImGui::PopID();
-		}
-	};
-
-
 
 #endif
 

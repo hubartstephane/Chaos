@@ -5,6 +5,18 @@ namespace chaos
 {
 	namespace ImGuiTools
 	{
+		void DrawImGui(bool& value)
+		{
+			ImGuiTools::PushID(&value);
+			ImGui::Checkbox("", &value);
+			ImGui::PopID();
+		}
+
+		void DrawImGui(float& value)
+		{
+
+		}
+
 		void PushID(void* ptr)
 		{
 			char buffer[17]; // pointers are 64bits, 8 bytes -> %p uses 16 characters (each byte requires 2 characters)(+1 for ending 0)

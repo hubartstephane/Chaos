@@ -30,7 +30,7 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 	public:
 
 		/** the main method to override */
-		virtual void DrawImGui(GlobalVariableBase* target) const = 0;
+		virtual void DrawImGuiVariable(GlobalVariableBase* target) const = 0;
 
 	protected:
 
@@ -52,12 +52,12 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 	{
 	public:
 
-		virtual void DrawImGui(GlobalVariableBase* target) const
+		virtual void DrawImGuiVariable(GlobalVariableBase* target) const
 		{
 			if constexpr (ImGuiTools::HasDrawImGuiFunction<T>)
 			{
 				T& target_value = ((GlobalVariable<T> *)target)->Get();				
-				ImGuiTools::DrawImGui(target_value);
+				DrawImGui(target_value);
 			}
 		}
 	};
@@ -147,6 +147,7 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 		/** override */
 		virtual void RegisterProgramOption(boost::program_options::options_description& desc) override
 		{
+#if 0
 			if constexpr (meta::is_vector_type_v<T>)
 			{
 				// zero_tokens
@@ -173,6 +174,7 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 				desc.add_options()
 					(GetName(), boost::program_options::value<T>(&value), "");
 			}
+#endif
 		}
 
 		/** const getter */

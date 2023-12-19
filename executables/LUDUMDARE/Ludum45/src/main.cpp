@@ -17,6 +17,7 @@ CHAOS_GLOBAL_VARIABLE(A, aaa);
 CHAOS_GLOBAL_VARIABLE(glm::vec2, v2);
 CHAOS_GLOBAL_VARIABLE(glm::int3, i3);
 CHAOS_GLOBAL_VARIABLE(glm::double4, d4);
+CHAOS_GLOBAL_VARIABLE(std::string, str, "toto truc");
 
 
 int main(int argc, char ** argv, char ** env)

@@ -257,7 +257,10 @@ namespace chaos
 		if (main_window == nullptr)
 			return -1;
 		// run the main loop as long as there are windows
-		RunMessageLoop([this]() { return (windows.size() > 0); });
+		RunMessageLoop([this]()
+		{
+			return (windows.size() > 0);
+		});
 		return 0;
 	}
 

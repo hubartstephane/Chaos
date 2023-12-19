@@ -59,6 +59,9 @@ namespace chaos
 		SubClassOf<GameViewportWidget> game_viewport_widget_class;
 		/** pointer on the game */
 		shared_ptr<Game> game;
+
+		/** indicates whenever the application is being quit (closing windows in cascade may cause several Quit() calls */
+		bool is_quitting = false;
 	};
 
 	template<typename GAME_TYPE, typename GAME_APPLICATION_TYPE = GameApplication, typename MAIN_WINDOW_CLASS = GameWindow, typename GAME_VIEWPORT_WIDGET_CLASS = GameViewportWidget, typename ...PARAMS>

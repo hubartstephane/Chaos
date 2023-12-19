@@ -113,18 +113,26 @@ namespace chaos
 	{
 		WindowApplication::OnWindowDestroyed(window);
 
-		// destroy all other windows as soon as there are no more game_window
-		bool has_game_window = false;
-		for (shared_ptr<Window> const & window : windows)
+		if (!is_quitting) // prevent multiples calls of Quit()
 		{
-			if (GameWindow const* game_window = auto_cast(window.get()))
+			// destroy all other windows as soon as there are no more game_window
+			bool has_game_window = false;
+			for (shared_ptr<Window> const& window : windows)
 			{
-				has_game_window = true;
-				break;
+				if (GameWindow const* game_window = auto_cast(window.get()))
+				{
+					has_game_window = true;
+					break;
+				}
+			}
+			if (!has_game_window)
+			{
+				is_quitting = true;
+				Quit(); // keep trace of all (no game) windows that were opened and CloseAllWindows()
 			}
 		}
-		if (!has_game_window)
-			DestroyAllWindows();
+
+
 	}
 
 }; // namespace chaos

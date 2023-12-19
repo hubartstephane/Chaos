@@ -10,6 +10,11 @@ namespace chaos
 			content->SetLogger(Logger::GetInstance());
 	}
 
+	WindowCategory LogWindow::GetWindowCategory() const
+	{
+		return WindowCategory::OPTIONAL_WINDOW;
+	};
+
 	void LogWindow::OnDrawWindowImGuiContent()
 	{
 		if (content != nullptr)

@@ -10,6 +10,7 @@ namespace chaos
 	class Window;
 
 	enum class CursorMode;
+	enum class WindowCategory;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -103,6 +104,16 @@ namespace chaos
 		glm::ivec2 position = { 0, 0 };
 		/** the size of window */
 		glm::ivec2 size = { 0, 0 };
+	};
+
+	/**
+	* WindowCategory: Indicate window closing behaviour relative to others (windows)
+	*/
+
+	enum class CHAOS_API WindowCategory
+	{
+		MAIN_WINDOW, // once last main window has been close, all other windows should be closed and application quit
+		OPTIONAL_WINDOW
 	};
 
 	/**
@@ -230,6 +241,9 @@ namespace chaos
 
 		/** draw ImGui */
 		virtual void DrawWindowImGui();
+
+		/** gets the category of the window */
+		virtual WindowCategory GetWindowCategory() const { return WindowCategory::MAIN_WINDOW; };
 
 	protected:
 

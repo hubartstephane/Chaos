@@ -278,7 +278,6 @@ namespace chaos
 		/** the main window initial placement */
 		WindowPlacementInfo main_window_placement_info;
 
-
 		/** the window list */
 		std::vector<shared_ptr<Window>> windows;
 
@@ -297,6 +296,9 @@ namespace chaos
 
 		/** an invisible window that is used as a OpenGL context for all others */
 		GLFWwindow* shared_context = nullptr;
+
+		/** indicates whenever the application is being quit (closing windows in cascade may cause several Quit() calls */
+		bool is_quitting = false;
 	};
 
 	/**

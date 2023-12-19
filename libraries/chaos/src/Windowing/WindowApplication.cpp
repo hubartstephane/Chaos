@@ -181,10 +181,22 @@ namespace chaos
 
 	void WindowApplication::OnWindowDestroyed(Window* window)
 	{
+		// destroy the window for real
 		window->StorePersistentProperties(true);
 		window->Finalize();
 		window->DestroyImGuiContext();
 		window->DestroyGLFWWindow();
+
+		// check whether the whole application should be left
+		if (!is_quitting)
+		{
+			// check whether there is still any main window
+			for (shared_ptr<Window> const& window : windows)
+				if (window->GetWindowCategory() == WindowCategory::MAIN_WINDOW)
+					return;
+			// save some window session data and DestroyAllWindows()
+			Quit();
+		}
 	}
 
 	void WindowApplication::OnWindowCreated(Window* window)
@@ -266,6 +278,11 @@ namespace chaos
 
 	void WindowApplication::Quit()
 	{
+		// prevent Quit() reentrance
+		if (is_quitting)
+			return;
+		is_quitting = true;
+
 		// save the name of all windows that are still opened before closing them all
 		std::vector<char const*> names;
 		for (shared_ptr<Window> const& window : windows)

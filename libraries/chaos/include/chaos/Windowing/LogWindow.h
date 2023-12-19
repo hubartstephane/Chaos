@@ -18,6 +18,9 @@ namespace chaos
 		/** constructor */
 		LogWindow();
 
+		/** override */
+		virtual WindowCategory GetWindowCategory() const override;
+
 	protected:
 
 		/** override */

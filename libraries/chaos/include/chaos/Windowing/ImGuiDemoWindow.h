@@ -13,6 +13,11 @@ namespace chaos
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(ImGuiDemoWindow, Window);
 
+	public:
+
+		/** override */
+		virtual WindowCategory GetWindowCategory() const override;
+
 	protected:
 
 		/** override */

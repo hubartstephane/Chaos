@@ -109,31 +109,5 @@ namespace chaos
 		return imgui_menu_mode;
 	}
 
-	void GameApplication::OnWindowDestroyed(Window* window)
-	{
-		WindowApplication::OnWindowDestroyed(window);
-
-		if (!is_quitting) // prevent multiples calls of Quit()
-		{
-			// destroy all other windows as soon as there are no more game_window
-			bool has_game_window = false;
-			for (shared_ptr<Window> const& window : windows)
-			{
-				if (GameWindow const* game_window = auto_cast(window.get()))
-				{
-					has_game_window = true;
-					break;
-				}
-			}
-			if (!has_game_window)
-			{
-				is_quitting = true;
-				Quit(); // keep trace of all (no game) windows that were opened and CloseAllWindows()
-			}
-		}
-
-
-	}
-
 }; // namespace chaos
 

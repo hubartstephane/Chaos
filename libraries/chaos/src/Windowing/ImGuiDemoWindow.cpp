@@ -3,6 +3,11 @@
 
 namespace chaos
 {
+	WindowCategory ImGuiDemoWindow::GetWindowCategory() const
+	{
+		return WindowCategory::OPTIONAL_WINDOW;
+	};
+
 	void ImGuiDemoWindow::OnDrawWindowImGuiContent()
 	{
 		if (show_demo)

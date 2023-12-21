@@ -5,31 +5,11 @@ namespace chaos
 {
 	LogWindow::LogWindow()
 	{
-		content = new ImGuiLogObject;
-		if (content != nullptr)
-			content->SetLogger(Logger::GetInstance());
-	}
-
-	WindowCategory LogWindow::GetWindowCategory() const
-	{
-		return WindowCategory::OPTIONAL_WINDOW;
-	};
-
-	void LogWindow::OnDrawWindowImGuiContent()
-	{
-		if (content != nullptr)
+		if (ImGuiLogObject* new_content = new ImGuiLogObject)
 		{
-			ImGuiInterface::FullscreenWindow("##console", true, [this]()
-			{
-				content->DrawImGui(ImGuiDrawMenuMode::ImGuiWindow);
-			});
+			content = new_content;
+			new_content->SetLogger(Logger::GetInstance());
 		}
-	}
-
-	void LogWindow::OnDrawWindowImGuiMenu()
-	{
-		// Window::OnDrawWindowImGuiMenu();
-		// do not call super so that the application items are not inserted here
 	}
 
 }; // namespace chaos

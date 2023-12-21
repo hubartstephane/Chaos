@@ -911,7 +911,6 @@ namespace chaos
 
 namespace glm
 {
-
 	template<int SIZE, typename T, glm::precision P>
 	void DrawImGui(glm::vec<SIZE, T, P>& value)
 	{
@@ -926,7 +925,6 @@ namespace glm
 			ImGui::InputScalarN("", ImGuiDataType_Double, &value, SIZE, NULL, NULL, "%lf", 0);
 		ImGui::PopID();
 	}
-
 
 	template<typename T, glm::precision P>
 	bool DoSaveIntoJSON(nlohmann::json* json, glm::tvec2<T, P> const& src)

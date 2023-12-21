@@ -9,29 +9,14 @@ namespace chaos
 	/**
 	 * LogWindow: a window that deserves to display log information
 	 **/
-	class CHAOS_API LogWindow : public Window
+	class CHAOS_API LogWindow : public ImGuiWindow
 	{
-		CHAOS_DECLARE_OBJECT_CLASS(LogWindow, Window);
+		CHAOS_DECLARE_OBJECT_CLASS(LogWindow, ImGuiWindow);
 
 	public:
 
 		/** constructor */
 		LogWindow();
-
-		/** override */
-		virtual WindowCategory GetWindowCategory() const override;
-
-	protected:
-
-		/** override */
-		virtual void OnDrawWindowImGuiContent() override;
-		/** override */
-		virtual void OnDrawWindowImGuiMenu() override;
-
-	protected:
-
-		/** ImGui information */
-		shared_ptr<ImGuiLogObject> content;
 	};
 
 #endif

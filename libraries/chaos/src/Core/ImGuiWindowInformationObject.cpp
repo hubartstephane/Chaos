@@ -10,14 +10,11 @@ namespace chaos
 
 	void ImGuiWindowInformationObject::DrawImGui(ImGuiDrawMenuMode menu_mode)
 	{
-		bool open_value = true;
-
-		if (ImGui::Begin("Window Information", &open_value, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
+		BeginWindow(menu_mode, "Window Information", ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize, [this](ImGuiDrawMenuMode menu_mode)
 		{
 			if (window != nullptr)
 			{
 				// collect window information
-
 				glm::ivec2 window_position = window->GetWindowPosition(true);   // include decorators
 				glm::ivec2 client_position = window->GetWindowPosition(false);  // client area only
 
@@ -57,11 +54,7 @@ namespace chaos
 			{
 				ImGui::Text("missing call to SetWindow(..)");
 			}
-			ImGui::End();
-		}
-
-		if (!open_value)
-			RequestClosing();
+		});
 	}
 
 }; // namespace chaos

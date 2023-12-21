@@ -66,5 +66,27 @@ namespace chaos
 		return false;
 	}
 
+	void ImGuiInterface::BeginWindow(ImGuiDrawMenuMode menu_mode, char const* title, int flags, LightweightFunction<void(ImGuiDrawMenuMode)> content_func)
+	{
+		// fullwindow mode
+		if (menu_mode == ImGuiDrawMenuMode::FullWindow) // no imgui title bar for fullscreen items
+		{
+			content_func(menu_mode);
+		}
+		// normal imgui mode
+		else
+		{
+			bool open_value = true;
+
+			if (ImGui::Begin(title, &open_value, flags))
+			{
+				content_func(menu_mode);
+				ImGui::End();
+			}
+
+			if (!open_value)
+				RequestClosing();
+		}
+	}
 
 }; // namespace chaos

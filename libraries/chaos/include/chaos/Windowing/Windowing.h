@@ -17,5 +17,7 @@
 #include "chaos/Windowing/GamepadManager.h"
 #include "chaos/Windowing/WindowApplication.h"
 #include "chaos/Windowing/GLFWTools.h"
+#include "chaos/Windowing/ImGuiWindow.h"
 #include "chaos/Windowing/LogWindow.h"
+#include "chaos/Windowing/GlobalVariablesWindow.h"
 #include "chaos/Windowing/ImGuiDemoWindow.h"

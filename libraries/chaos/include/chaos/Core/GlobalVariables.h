@@ -56,7 +56,7 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 		{
 			if constexpr (ImGuiTools::HasDrawImGuiFunction<T>)
 			{
-				T& target_value = ((GlobalVariable<T> *)target)->Get();				
+				T & target_value = ((GlobalVariable<T> *)target)->Get();
 				DrawImGui(target_value);
 			}
 		}

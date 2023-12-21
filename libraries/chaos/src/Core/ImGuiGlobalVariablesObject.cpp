@@ -5,9 +5,7 @@ namespace chaos
 {
 	void ImGuiGlobalVariablesObject::DrawImGui(ImGuiDrawMenuMode menu_mode)
 	{
-		bool open_value = true;
-
-		if (ImGui::Begin("Global Variables", &open_value,  ImGuiWindowFlags_NoCollapse))
+		BeginWindow(menu_mode, "Global Variables", ImGuiWindowFlags_NoCollapse, [this](ImGuiDrawMenuMode menu_mode)
 		{
 			if (ImGui::BeginTable("Global Variables", 2, ImGuiTableFlags_Resizable))
 			{
@@ -30,11 +28,7 @@ namespace chaos
 				}
 				ImGui::EndTable();
 			}
-			ImGui::End();
-		}
-
-		if (!open_value)
-			RequestClosing();
+		});
 	}
 
 }; // namespace chaos

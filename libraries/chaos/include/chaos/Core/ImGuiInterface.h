@@ -24,6 +24,9 @@ namespace chaos
 		/** draw both ImGui and Menu */
 		virtual void DrawImGui(ImGuiDrawMenuMode menu_mode);
 
+		/** create a window with title and some additionnal features */
+		void BeginWindow(ImGuiDrawMenuMode menu_mode, char const* title, int flags, LightweightFunction<void(ImGuiDrawMenuMode)> content_func);
+
 		/** conditionally detect whether a flag for window menu is necessary */
 		static int GetConditionalMainMenuFlag(ImGuiDrawMenuMode menu_mode);
 

@@ -126,7 +126,7 @@ namespace chaos
 		if (registered_drawable.size() > 0)
 		{
 			// draw the menu
-			chaos::ImGuiInterface::MenuBar(chaos::ImGuiDrawMenuMode::FullWindow, [this]()
+			ImGuiInterface::MenuBar(ImGuiDrawMenuMode::FullWindow, [this]()
 			{
 				if (ImGui::BeginMenu("Widgets"))
 				{

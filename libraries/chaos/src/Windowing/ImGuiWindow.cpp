@@ -10,13 +10,9 @@ namespace chaos
 
 	void ImGuiWindow::OnDrawWindowImGuiContent()
 	{
+		Window::OnDrawWindowImGuiContent();
 		if (content != nullptr)
-		{
-			ImGuiInterface::FullscreenWindow("##console", true, [this]()
-			{
-				content->DrawImGui(ImGuiDrawMenuMode::ImGuiWindow);
-			});
-		}
+			content->DrawImGui(GetName(), ImGuiDrawFlags::FullWindow);
 	}
 
 	void ImGuiWindow::OnDrawWindowImGuiMenu()

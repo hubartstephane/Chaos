@@ -7,33 +7,16 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	 * ImGuiDemoWindow: a window that deserves displaying ImGui demos
+	 * ImGuiDemoWindow: a window that deserves displaying ImGui demo
 	 **/
-	class CHAOS_API ImGuiDemoWindow : public Window
+	class CHAOS_API ImGuiDemoWindow : public ImGuiWindow
 	{
-		CHAOS_DECLARE_OBJECT_CLASS(ImGuiDemoWindow, Window);
+		CHAOS_DECLARE_OBJECT_CLASS(ImGuiDemoWindow, ImGuiWindow);
 
 	public:
 
-		/** override */
-		virtual WindowCategory GetWindowCategory() const override;
-
-	protected:
-
-		/** override */
-		virtual void OnDrawWindowImGuiContent() override;
-		/** override */
-		virtual void OnDrawWindowImGuiMenu() override;
-
-	protected:
-
-		bool show_demo = true;
-		bool show_metrics = false;
-		bool show_debug_log = false;
-		bool show_stack_tool = false;
-		bool show_about = false;
-		bool show_style_editor = false;
-		bool show_user_guide = false;
+		/** constructor */
+		ImGuiDemoWindow();
 	};
 
 #endif

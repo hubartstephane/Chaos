@@ -117,10 +117,10 @@ namespace chaos
 	};
 
 	/**
-	* Window : a binding class between chaos and GLFW to handle window (beware the prefix "My")
+	* Window: a binding class between chaos and GLFW to handle window (beware the prefix "My")
 	*/
 
-	class CHAOS_API Window : public Object, public WindowInterface, public ImGuiOwnerInterface, public ConfigurableInterface
+	class CHAOS_API Window : public Object, public WindowInterface, public ImGuiObjectOwnerInterface, public ConfigurableInterface
 	{
 		friend class WindowApplication;
 
@@ -239,8 +239,16 @@ namespace chaos
 		/** get the cursor mode */
 		CursorMode GetCursorMode() const;
 
+
+
+
 		/** draw ImGui */
 		virtual void DrawWindowImGui();
+
+
+
+
+
 
 		/** gets the category of the window */
 		virtual WindowCategory GetWindowCategory() const { return WindowCategory::MAIN_WINDOW; };
@@ -319,10 +327,28 @@ namespace chaos
 		/** called whenever a monitor is connected or disconnected */
 		virtual void OnMonitorEvent(GLFWmonitor* monitor, int monitor_state);
 
+
+
+
+
+
+
+
+
 		/** draw the main menu */
 		virtual void OnDrawWindowImGuiMenu();
 		/** draw the content */
 		virtual void OnDrawWindowImGuiContent();
+
+
+
+
+
+
+
+
+
+
 
 #if _WIN32
 
@@ -344,8 +370,8 @@ namespace chaos
 		/** get the destruction guard count */
 		int GetWindowDestructionGuard() const { return window_destruction_guard; }
 
-		/** register the known drawables */
-		virtual void RegisterKnownDrawables();
+		/** register the known proxies */
+		virtual void RegisterImGuiProxies();
 
 		/** override */
 		virtual bool OnConfigurationChanged(JSONReadConfiguration config) override;

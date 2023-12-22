@@ -26,8 +26,6 @@ namespace chaos
 
 	}; // namespace ImGuiTools
 
-
-
 	/** implementation of DrawImGui for a string */
 	CHAOS_API void DrawImGui(std::string& value);
 	/** implementation of DrawImGui for a bool */
@@ -39,19 +37,7 @@ namespace chaos
 	/** implementation of DrawImGui for a double */
 	CHAOS_API void DrawImGui(double& value);
 
-#if 0
-	template<typename T>
-	void DrawImGui(T& value)
-	{
-		if constexpr (ImGuiTools::HasDrawImGuiMethod<T>)
-		{
-			value.DrawImGui();
-		}
-	}
-#endif
-
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
-
 
 #endif
 

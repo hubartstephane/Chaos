@@ -8,74 +8,12 @@ namespace chaos
 		logger = in_logger;
 	}
 
-	void ImGuiLogObject::DrawImGui(ImGuiDrawMenuMode menu_mode)
+	int ImGuiLogObject::GetImGuiWindowFlags() const
 	{
-		ImGuiInterface::MenuBar(menu_mode, [this, menu_mode]()
-		{
-			OnDrawImGuiMenu(menu_mode);
-		});
-		OnDrawImGuiContent(menu_mode);
+		return ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar;
 	}
 
-	void ImGuiLogObject::OnDrawImGuiMenu(ImGuiDrawMenuMode menu_mode)
-	{
-		// the types
-		if (ImGui::BeginMenu("Type"))
-		{
-			ImGui::Checkbox("messages", &show_messages); ImGui::SameLine();
-			ImGui::Checkbox("warnings", &show_warnings); ImGui::SameLine();
-			ImGui::Checkbox("errors", &show_errors);
-			ImGui::EndMenu();
-		}
-		// the domains
-		if (ImGui::BeginMenu("Domains"))
-		{
-			if (ImGui::BeginTable("split", 3))
-			{
-				for (size_t i = 0; i < logger->GetDomainCount(); ++i)
-				{
-					char const* domain = logger->GetDomain(i);
-					bool* domain_flag = nullptr;
-
-					auto it = domain_visibilities.find(domain);
-					if (it != domain_visibilities.end())
-					{
-						domain_flag = &it->second;
-					}
-					else
-					{
-						domain_visibilities[domain] = true;
-						domain_flag = &domain_visibilities.find(domain)->second;
-					}
-					ImGui::TableNextColumn(); ImGui::Checkbox(domain, domain_flag);
-				}
-				ImGui::EndTable();
-			}
-			ImGui::EndMenu();
-		}
-		// Miscellaneaous
-		if (ImGui::BeginMenu("Miscellaneous"))
-		{
-			ImGui::Checkbox("group identical lines", &group_identical_lines);
-			ImGui::EndMenu();
-		}
-		// some listeners' actions
-		if (ImGui::BeginMenu("Actions"))
-		{
-			for (size_t i = 0; i < logger->GetListenerCount(); ++i)
-				if (ImGuiInterface* imgui_drawable = auto_cast(logger->GetListener(i)))
-					imgui_drawable->DrawImGui(menu_mode);
-			ImGui::EndMenu();
-		}
-		// filter
-		if (ImGui::BeginMenu("Filter"))
-		{
-			filter.Draw();
-			ImGui::EndMenu();
-		}
-	}
-
-	void ImGuiLogObject::OnDrawImGuiContent(ImGuiDrawMenuMode menu_mode)
+	void ImGuiLogObject::OnDrawImGuiContent(ImGuiDrawFlags flags)
 	{
 		assert(logger != nullptr);
 
@@ -180,6 +118,64 @@ namespace chaos
 
 			}
 			ImGui::EndTable();
+		}
+	}
+
+	void ImGuiLogObject::OnDrawImGuiMenu(ImGuiDrawFlags flags)
+	{
+		// the types
+		if (ImGui::BeginMenu("Type"))
+		{
+			ImGui::Checkbox("messages", &show_messages); ImGui::SameLine();
+			ImGui::Checkbox("warnings", &show_warnings); ImGui::SameLine();
+			ImGui::Checkbox("errors", &show_errors);
+			ImGui::EndMenu();
+		}
+		// the domains
+		if (ImGui::BeginMenu("Domains"))
+		{
+			if (ImGui::BeginTable("split", 3))
+			{
+				for (size_t i = 0; i < logger->GetDomainCount(); ++i)
+				{
+					char const* domain = logger->GetDomain(i);
+					bool* domain_flag = nullptr;
+
+					auto it = domain_visibilities.find(domain);
+					if (it != domain_visibilities.end())
+					{
+						domain_flag = &it->second;
+					}
+					else
+					{
+						domain_visibilities[domain] = true;
+						domain_flag = &domain_visibilities.find(domain)->second;
+					}
+					ImGui::TableNextColumn(); ImGui::Checkbox(domain, domain_flag);
+				}
+				ImGui::EndTable();
+			}
+			ImGui::EndMenu();
+		}
+		// Miscellaneaous
+		if (ImGui::BeginMenu("Miscellaneous"))
+		{
+			ImGui::Checkbox("group identical lines", &group_identical_lines);
+			ImGui::EndMenu();
+		}
+		// some listeners' actions
+		if (ImGui::BeginMenu("Actions"))
+		{
+			for (size_t i = 0; i < logger->GetListenerCount(); ++i)
+				if (LoggerListener* logger_listener = logger->GetListener(i))
+					logger_listener->DrawImGuiMenu();
+			ImGui::EndMenu();
+		}
+		// filter
+		if (ImGui::BeginMenu("Filter"))
+		{
+			filter.Draw();
+			ImGui::EndMenu();
 		}
 	}
 

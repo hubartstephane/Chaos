@@ -108,7 +108,7 @@ namespace chaos
 		}
 	}
 
-	void FileLoggerListener::DrawImGui(ImGuiDrawMenuMode menu_mode)
+	void FileLoggerListener::DrawImGuiMenu()
 	{
 		if (ImGui::Button("Show output file"))
 		{

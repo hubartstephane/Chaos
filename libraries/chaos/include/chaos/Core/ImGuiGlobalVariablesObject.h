@@ -16,8 +16,10 @@ namespace chaos
 
 		CHAOS_DECLARE_OBJECT_CLASS(ImGuiGlobalVariablesObject, ImGuiObject);
 
+	protected:
+
 		/** override */
-		virtual void DrawImGui(ImGuiDrawMenuMode menu_mode) override;
+		virtual void OnDrawImGuiContent(ImGuiDrawFlags flags) override;
 	};
 
 #endif

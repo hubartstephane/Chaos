@@ -1124,22 +1124,30 @@ namespace chaos
 
 	void Window::DrawWindowImGui()
 	{
-		OnDrawWindowImGuiMenu();
+		// draw the content
 		OnDrawWindowImGuiContent();
+
+		// draw the menu
+		if (GetImGuiMenuMode())
+			OnDrawWindowImGuiMenu();
 	}
 
 	void Window::OnDrawWindowImGuiMenu()
 	{
-		if (WindowApplication* window_application = Application::GetInstance())
+		if (ImGui::BeginMainMenuBar())
 		{
-			window_application->OnDrawWindowImGuiMenu(this);
-		}
+			if (WindowApplication* window_application = Application::GetInstance())
+				window_application->OnDrawApplicationImGuiMenu();
 
-		DrawImGui(ImGuiDrawMenuMode::FullWindow); // the owned window
+			ImGuiObjectOwnerInterface::DrawImGuiObjectsMenu();
+
+			ImGui::EndMainMenuBar();
+		}
 	}
 
 	void Window::OnDrawWindowImGuiContent()
 	{
+		ImGuiObjectOwnerInterface::DrawImGuiObjects();
 	}
 
 	bool Window::DrawInternal(GPUProgramProviderInterface const* uniform_provider)
@@ -1221,18 +1229,18 @@ namespace chaos
 
 	bool Window::InitializeFromConfiguration(nlohmann::json const * config)
 	{
-		RegisterKnownDrawables();
+		RegisterImGuiProxies();
 		return true;
 	}
 
-	void Window::RegisterKnownDrawables()
+	void Window::RegisterImGuiProxies()
 	{
-		RegisterDrawable("System Information", [this]()
+		RegisterImGuiObjectProxy("System Information", [this]()
 		{
 			return new ImGuiSystemInformationObject;
 		});
 
-		RegisterDrawable("Window Information", [this]()
+		RegisterImGuiObjectProxy("Window Information", [this]()
 		{
 			ImGuiWindowInformationObject* result = new ImGuiWindowInformationObject;
 			if (result != nullptr)
@@ -1240,7 +1248,7 @@ namespace chaos
 			return result;
 		});
 
-		RegisterDrawable("Help", [this]()
+		RegisterImGuiObjectProxy("Help", [this]()
 		{
 			return new ImGuiHelpObject;
 		});

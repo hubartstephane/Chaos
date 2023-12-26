@@ -5,48 +5,60 @@ namespace chaos
 	class ImGuiInterface;
 	class ImGuiObject;
 
-	enum class ImGuiDrawMenuMode;
+	enum class ImGuiDrawFlags;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	enum class ImGuiDrawMenuMode : int
+	/**
+	 * ImGuiDrawFlags: some flags concerning ImGui rendering
+	 */
+
+	enum class ImGuiDrawFlags : int
 	{
-		FullWindow,
-		ImGuiWindow
+		None = 0,
+		FullWindow = 1,
+		FloatingImGuiWindow = 2,
+		UseFullWindowMenu = 4
 	};
 
+	CHAOS_DECLARE_ENUM_FLAG_METHOD(ImGuiDrawFlags);
+
+	/**
+	 * ImGuiInterface: an interface to display an ImGui window
+	 */
 	class CHAOS_API ImGuiInterface
 	{
 	public:
 
 		/** destructor */
 		virtual ~ImGuiInterface() = default;
-		/** draw both ImGui and Menu */
-		virtual void DrawImGui(ImGuiDrawMenuMode menu_mode);
 
-		/** create a window with title and some additionnal features */
-		void BeginWindow(ImGuiDrawMenuMode menu_mode, char const* title, int flags, LightweightFunction<void(ImGuiDrawMenuMode)> content_func);
-
-		/** conditionally detect whether a flag for window menu is necessary */
-		static int GetConditionalMainMenuFlag(ImGuiDrawMenuMode menu_mode);
-
-		/** start a fullscreen window */
-		static void FullscreenWindow(char const* name, bool menu_bar, LightweightFunction<void()> content_func);
-
-		/** try start a menu (maybe FullWindow, maybe ImGuiWindow, maybe failure if ImGUI mode is not active) */
-		static bool MenuBar(ImGuiDrawMenuMode menu_mode, LightweightFunction<void()> func);
+		/** main method to display both menu and content */
+		virtual void DrawImGui(char const * title, ImGuiDrawFlags flags);
 
 		/** request to close this interface */
-		void RequestClosing()
-		{
-			closing_request = true;
-		}
+		void RequestClosing();
 		/** check whether closing is requested */
-		bool IsClosingRequested() const
-		{
-			return closing_request;
-		}
-	
+		bool IsClosingRequested() const;
+
+	protected:
+
+		/** get flags */
+		virtual int GetImGuiWindowFlags() const;
+		/** method to override to display content */
+		virtual void OnDrawImGuiContent(ImGuiDrawFlags flags);
+		/** method to override to display menu */
+		virtual void OnDrawImGuiMenu(ImGuiDrawFlags flags);
+
+		/** check whether a context is valid for having a menubar and call FullScreen or Floating window menu bar method */
+		void ConditionalMenuBar(ImGuiDrawFlags flags, int imgui_window_flags, LightweightFunction<void()> func);
+		/** update the imgui window flags according to use flags */
+		int UpdateWindowFlagsForMenu(ImGuiDrawFlags flags, int imgui_window_flags) const;
+		/** create a fullscreen window and fill with content */
+		void FullscreenWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func);
+		/** create a floating window and fill with content */
+		void FloatingWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func);
+
 	protected:
 
 		/** indicates whether closing this UI is requested */

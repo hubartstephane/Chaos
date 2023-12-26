@@ -20,8 +20,12 @@ namespace chaos
 		/** initialization function */
 		void SetWindow(Window* in_window);
 
+	protected:
+
 		/** override */
-		virtual void DrawImGui(ImGuiDrawMenuMode menu_mode) override;
+		virtual int GetImGuiWindowFlags() const override;
+		/** override */
+		virtual void OnDrawImGuiContent(ImGuiDrawFlags flags) override;
 
 	protected:
 

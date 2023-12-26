@@ -11,18 +11,19 @@ namespace chaos
 
 	public:
 
+		CHAOS_DECLARE_OBJECT_CLASS(ImGuiLogObject, ImGuiObject);
+
 		/** initialize the object */
 		void SetLogger(Logger * in_logger);
 
-		/** override */
-		virtual void DrawImGui(ImGuiDrawMenuMode menu_mode) override;
-
 	protected:
 
-		/** draw the menu */
-		void OnDrawImGuiMenu(ImGuiDrawMenuMode menu_mode);
-		/** draw the content */
-		void OnDrawImGuiContent(ImGuiDrawMenuMode menu_mode);
+		/** override */
+		virtual int GetImGuiWindowFlags() const override;
+		/** override */
+		virtual void OnDrawImGuiContent(ImGuiDrawFlags flags) override;
+		/** override */
+		virtual void OnDrawImGuiMenu(ImGuiDrawFlags flags) override;
 
 	protected:
 

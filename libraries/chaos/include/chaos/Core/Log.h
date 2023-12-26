@@ -72,6 +72,9 @@ namespace chaos
 		/** change the log system */
 		void SetLogger(Logger* in_logger);
 
+		/** plug some ImGui items inside ImGui menu */
+		virtual void DrawImGuiMenu() {}
+
 	protected:
 
 		/** called whenever the listener is attached to the log object */
@@ -91,7 +94,7 @@ namespace chaos
 	* FileLoggerListener : an object dedicated to wait for entries and write them into a file
 	*/
 
-	class CHAOS_API FileLoggerListener : public LoggerListener, public ImGuiInterface
+	class CHAOS_API FileLoggerListener : public LoggerListener
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(FileLoggerListener, LoggerListener);
 
@@ -110,9 +113,8 @@ namespace chaos
 		virtual void OnDetachedFromLogger(Logger* in_logger) override;
 		/** override */
 		virtual void OnNewLine(LogLine const& line) override;
-
 		/** override */
-		virtual void DrawImGui(ImGuiDrawMenuMode menu_mode) override;
+		virtual void DrawImGuiMenu() override;
 
 	protected:
 

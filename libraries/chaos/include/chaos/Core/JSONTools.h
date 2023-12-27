@@ -126,7 +126,7 @@ namespace chaos
 		bool GetAttribute(SRC_TYPE src, std::string_view path, T& result);
 		/** reading an attribute from a JSON array */
 		template<typename T, JSONSource SRC_TYPE>
-		bool GetAttributeByIndex(SRC_TYPE src, size_t index, T& result);
+		bool GetElement(SRC_TYPE src, size_t index, T& result);
 		/** reading an attribute with default value */
 		template<typename T, JSONSource SRC_TYPE, typename Y>
 		bool GetAttribute(SRC_TYPE src, std::string_view path, T& result, Y const & default_value);
@@ -135,10 +135,10 @@ namespace chaos
 		bool GetAttribute(SRC_TYPE src, std::string_view path, T& result, Y && default_value);
 		/** reading an attribute with default value */
 		template<typename T, JSONSource SRC_TYPE, typename Y>
-		bool GetAttributeByIndex(SRC_TYPE src, size_t index, T& result, Y const &default_value);
+		bool GetElement(SRC_TYPE src, size_t index, T& result, Y const &default_value);
 		/** reading an attribute with default value */
 		template<typename T, JSONSource SRC_TYPE, typename Y>
-		bool GetAttributeByIndex(SRC_TYPE src, size_t index, T& result, Y && default_value);
+		bool GetElement(SRC_TYPE src, size_t index, T& result, Y && default_value);
 
 		/** getting a node by path */
 		CHAOS_API nlohmann::json* GetNode(nlohmann::json * json, std::string_view path);
@@ -220,7 +220,7 @@ namespace chaos
 		}
 
 		template<typename T, JSONSource SRC_TYPE>
-		bool GetAttributeByIndex(SRC_TYPE src, size_t index, T& result)
+		bool GetElement(SRC_TYPE src, size_t index, T& result)
 		{
 			if (SRC_TYPE node = GetNodeByIndex(src, index))
 				return LoadFromJSON(node, result);
@@ -246,18 +246,18 @@ namespace chaos
 		}
 
 		template<typename T, JSONSource SRC_TYPE, typename Y>
-		bool GetAttributeByIndex(SRC_TYPE src, size_t index, T& result, Y const& default_value)
+		bool GetElement(SRC_TYPE src, size_t index, T& result, Y const& default_value)
 		{
-			if (GetAttributeByIndex(src, index, result))
+			if (GetElement(src, index, result))
 				return true;
 			result = default_value;
 			return false;
 		}
 
 		template<typename T, JSONSource SRC_TYPE, typename Y>
-		bool GetAttributeByIndex(SRC_TYPE src, size_t index, T& result, Y&& default_value)
+		bool GetElement(SRC_TYPE src, size_t index, T& result, Y&& default_value)
 		{
-			if (GetAttributeByIndex(src, index, result))
+			if (GetElement(src, index, result))
 				return true;
 			result = std::move(default_value);
 			return false;

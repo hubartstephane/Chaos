@@ -419,16 +419,16 @@ namespace chaos
 			{
 				if (faces->size() == 1)
 				{
-					single_image |= JSONTools::GetAttributeByIndex(faces, 0, single_path);
+					single_image |= JSONTools::GetElement(faces, 0, single_path);
 				}
 				else
 				{
-					multiple_image |= JSONTools::GetAttributeByIndex(faces, 0, left_path);
-					multiple_image |= JSONTools::GetAttributeByIndex(faces, 1, right_path);
-					multiple_image |= JSONTools::GetAttributeByIndex(faces, 2, top_path);
-					multiple_image |= JSONTools::GetAttributeByIndex(faces, 3, bottom_path);
-					multiple_image |= JSONTools::GetAttributeByIndex(faces, 4, front_path);
-					multiple_image |= JSONTools::GetAttributeByIndex(faces, 5, back_path);
+					multiple_image |= JSONTools::GetElement(faces, 0, left_path);
+					multiple_image |= JSONTools::GetElement(faces, 1, right_path);
+					multiple_image |= JSONTools::GetElement(faces, 2, top_path);
+					multiple_image |= JSONTools::GetElement(faces, 3, bottom_path);
+					multiple_image |= JSONTools::GetElement(faces, 4, front_path);
+					multiple_image |= JSONTools::GetElement(faces, 5, back_path);
 				}
 			}
 			else

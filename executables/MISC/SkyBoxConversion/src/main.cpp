@@ -114,7 +114,7 @@ class MyApplication : public chaos::Application
 {
 protected:
 
-	virtual bool Main() override
+	virtual int Main() override
 	{
 		boost::filesystem::path const & rp = GetResourcesPath();
 
@@ -133,7 +133,7 @@ protected:
 			chaos::WinTools::ShowFile(dst_p);
 		}
 
-		return true;
+		return 0;
 	}
 };
 

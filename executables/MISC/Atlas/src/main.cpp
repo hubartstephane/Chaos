@@ -191,7 +191,7 @@ protected:
 		i5 = i5;
 	}
 
-	virtual bool Main() override
+	virtual int Main() override
 	{
 		TestGIF();
 
@@ -225,7 +225,7 @@ protected:
 			chaos::WinTools::ShowFile(dst_p);
 		}
 
-		return true;
+		return 0;
 	}
 };
 

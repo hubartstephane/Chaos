@@ -338,7 +338,7 @@ class MyApplication : public chaos::Application
 {
 protected:
 
-	virtual bool Main() override
+	virtual int Main() override
 	{
 		TestCutWord("bonjour");
 		TestCutWord("peuple");
@@ -357,7 +357,7 @@ protected:
 
 		chaos::WinTools::PressToContinue();
 
-		return true;
+		return 0;
 	}
 };
 

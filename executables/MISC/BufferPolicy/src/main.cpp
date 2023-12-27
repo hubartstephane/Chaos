@@ -36,7 +36,7 @@ class MyApplication : public chaos::Application
 {
 protected:
 
-	virtual bool Main() override
+	virtual int Main() override
 	{
 
 		std::cout << "-- CREATE SHARED BUFFER 1 --" << std::endl;
@@ -61,7 +61,7 @@ protected:
 
 		chaos::WinTools::PressToContinue();
 
-		return true;
+		return 0;
 	}
 };
 

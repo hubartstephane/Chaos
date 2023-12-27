@@ -435,12 +435,12 @@ protected:
 			chaos::WinTools::ShowFile(dst_path.string().c_str());
 	}
 
-	virtual bool Main() override
+	virtual int Main() override
 	{
 		boost::filesystem::path dst_directory_path = GetUserLocalTempPath() / "GeneratedTexture";
 		if (!boost::filesystem::is_directory(dst_directory_path))
 			if (!boost::filesystem::create_directories(dst_directory_path))
-				return false;
+				return -1;
 
 		glm::ivec2 image_size = glm::ivec2(320, 200);
 		glm::ivec2 cell_count = glm::ivec2(8, 5);
@@ -456,7 +456,7 @@ protected:
 
 		chaos::WinTools::ShowFile(dst_directory_path);
 
-		return true;
+		return 0;
 	}
 };
 

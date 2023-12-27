@@ -51,12 +51,12 @@ protected:
 		});
 	}
 
-	virtual bool Main() override
+	virtual int Main() override
 	{
 		boost::filesystem::path dst_directory_path = GetUserLocalTempPath() / "GeneratedTexture";
 		if (!boost::filesystem::is_directory(dst_directory_path))
 			if (!boost::filesystem::create_directories(dst_directory_path))
-				return false;
+				return -1;
 
 		glm::ivec2 image_size = glm::ivec2(128, 128);
 		FIBITMAP* image = GenerateTexture(image_size);
@@ -68,7 +68,7 @@ protected:
 			chaos::WinTools::ShowFile(dst_directory_path);
 		}
 
-		return true;
+		return 0;
 	}
 };
 

@@ -249,7 +249,7 @@ class MyApplication : public chaos::Application
 {
 protected:
 
-	virtual bool Main() override
+	virtual int Main() override
 	{
 		boost::filesystem::path const & rp = GetResourcesPath();
 
@@ -280,7 +280,7 @@ protected:
 
 			lua_close(l);
 		}
-		return true;
+		return 0;
 	}
 };
 

@@ -16,7 +16,7 @@ class MyApplication : public chaos::Application
 {
 protected:
 
-	virtual bool Main() override
+	virtual int Main() override
 	{
 		boost::filesystem::path const & rp = GetResourcesPath();
 		boost::filesystem::path skybox_path    = rp / "Maskonaive";
@@ -62,7 +62,7 @@ protected:
 
 		chaos::WinTools::PressToContinue();
 
-		return true;
+		return 0;
 	}
 };
 

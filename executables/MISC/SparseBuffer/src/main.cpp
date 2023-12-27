@@ -5,7 +5,7 @@ class MyApplication : public chaos::Application
 {
 protected:
 
-	virtual bool Main() override
+	virtual int Main() override
 	{
 		chaos::SparseWriteBuffer<> write_buf(15);
 
@@ -39,7 +39,7 @@ protected:
 
 		chaos::WinTools::PressToContinue();
 
-		return true;
+		return 0;
 	}
 };
 

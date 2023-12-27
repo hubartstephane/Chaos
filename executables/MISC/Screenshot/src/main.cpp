@@ -78,7 +78,7 @@ class MyApplication : public chaos::Application
 {
 protected:
 
-	virtual bool Main() override
+	virtual int Main() override
 	{
 		boost::filesystem::path dst_p;
 		if (chaos::FileTools::CreateTemporaryDirectory("ScreenShot", dst_p))
@@ -91,7 +91,7 @@ protected:
 			chaos::WinTools::ShowFile(dst_p);
 		}
 
-		return true;
+		return 0;
 	}
 };
 

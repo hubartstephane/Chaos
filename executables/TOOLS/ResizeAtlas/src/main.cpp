@@ -130,7 +130,7 @@ public:
 
 protected:
 
-	virtual bool Main() override
+	virtual int Main() override
 	{
 		boost::filesystem::path user_temp = CreateUserLocalTempDirectory();
 		chaos::WinTools::ShowFile(user_temp);
@@ -146,7 +146,9 @@ protected:
 
 		chaos::SimpleWin32Class<MyWindow> c("class1");
 		c.CreateWindowHinstance(NULL, "my_window", create_params);
-		chaos::SimpleWin32Window::SimpleMessageLoop();		return true;
+		chaos::SimpleWin32Window::SimpleMessageLoop();
+		
+		return 0;
 	}
 };
 

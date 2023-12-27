@@ -41,6 +41,11 @@ namespace chaos
 		/** check whether closing is requested */
 		bool IsClosingRequested() const;
 
+		/** create a fullscreen window and fill with content (returns true if the window must be kept alive) */
+		static bool FullscreenWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func);
+		/** create a floating window and fill with content (returns true if the window must be kept alive) */
+		static bool FloatingWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func);
+
 	protected:
 
 		/** get flags */
@@ -54,10 +59,6 @@ namespace chaos
 		void ConditionalMenuBar(ImGuiDrawFlags flags, int imgui_window_flags, LightweightFunction<void()> func);
 		/** update the imgui window flags according to use flags */
 		int UpdateWindowFlagsForMenu(ImGuiDrawFlags flags, int imgui_window_flags) const;
-		/** create a fullscreen window and fill with content */
-		void FullscreenWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func);
-		/** create a floating window and fill with content */
-		void FloatingWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func);
 
 	protected:
 

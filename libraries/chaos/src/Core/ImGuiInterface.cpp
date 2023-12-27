@@ -75,16 +75,16 @@ namespace chaos
 		// display fullscreen window
 		if ((flags & ImGuiDrawFlags::FullWindow) != ImGuiDrawFlags::None)
 		{
-			FullscreenWindow(title, imgui_window_flags, DisplayFunc);
+			closing_request = FullscreenWindow(title, imgui_window_flags, DisplayFunc);
 		}
 		// display floating window
 		else
 		{
-			FloatingWindow(title, imgui_window_flags, DisplayFunc);
+			closing_request = FloatingWindow(title, imgui_window_flags, DisplayFunc);
 		}
 	}
 
-	void ImGuiInterface::FullscreenWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func)
+	bool ImGuiInterface::FullscreenWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func)
 	{
 		// update flags
 		imgui_window_flags |= ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoBringToFrontOnFocus;
@@ -98,20 +98,18 @@ namespace chaos
 			content_func();
 			ImGui::End();
 		}
+		return true; // window must be kept alive
 	}
 
-	void ImGuiInterface::FloatingWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func)
+	bool ImGuiInterface::FloatingWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func)
 	{
 		bool open_value = true;
-		// start the window
 		if (ImGui::Begin(title, &open_value, imgui_window_flags))
 		{
 			content_func();
 			ImGui::End();
 		}
-		// require window closing if necessary
-		if (!open_value)
-			RequestClosing();
+		return open_value;
 	}
 
 	int ImGuiInterface::GetImGuiWindowFlags() const

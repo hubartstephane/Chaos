@@ -1235,10 +1235,7 @@ namespace chaos
 
 	void Window::RegisterImGuiProxies()
 	{
-		RegisterImGuiObjectProxy("System Information", [this]()
-		{
-			return new ImGuiSystemInformationObject;
-		});
+		RegisterImGuiObjectProxy("System Information", ImGuiSystemInformationObject::GetStaticClass());
 
 		RegisterImGuiObjectProxy("Window Information", [this]()
 		{
@@ -1248,10 +1245,7 @@ namespace chaos
 			return result;
 		});
 
-		RegisterImGuiObjectProxy("Help", [this]()
-		{
-			return new ImGuiHelpObject;
-		});
+		RegisterImGuiObjectProxy("Help", ImGuiHelpObject::GetStaticClass());
 	}
 
 	bool Window::OnConfigurationChanged(JSONReadConfiguration config)

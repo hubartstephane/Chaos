@@ -400,7 +400,7 @@ namespace chaos
 		}
 
 		// skybox descriptions ?
-		if (nlohmann::json const* faces = JSONTools::GetStructureNode(json, "faces"))
+		if (nlohmann::json const* faces = JSONTools::GetAttributeStructureNode(json, "faces"))
 		{
 			boost::filesystem::path left_path;
 			boost::filesystem::path right_path;

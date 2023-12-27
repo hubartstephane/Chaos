@@ -70,7 +70,7 @@ namespace chaos
 
 	bool Application::LoadClasses()
 	{
-		if (JSONReadConfiguration classes_config = JSONTools::GetObjectNode(GetJSONReadConfiguration(), "classes"))
+		if (JSONReadConfiguration classes_config = JSONTools::GetAttributeObjectNode(GetJSONReadConfiguration(), "classes"))
 		{
 			std::string classes_directory;
 			if (JSONTools::GetAttribute(classes_config, "classes_directory", classes_directory))

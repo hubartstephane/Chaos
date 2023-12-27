@@ -247,7 +247,7 @@ protected:
 	{
 		chaos::Window::OnDrawWindowImGuiMenu();
 
-		chaos::ImGuiInterface::MenuBar(chaos::ImGuiDrawMenuMode::FullWindow, [this]()
+		if (ImGui::BeginMainMenuBar())
 		{
 			if (ImGui::BeginMenu("Windows"))
 			{
@@ -255,7 +255,8 @@ protected:
 					show_help = !show_help;
 				ImGui::EndMenu();
 			}
-		});
+			ImGui::EndMainMenuBar();
+		}
 	}
 
 	void DrawTextItem(char const* title, chaos::Key const& key, bool enabled) const
@@ -731,7 +732,6 @@ protected:
 
 	virtual bool DoTick(float delta_time) override
 	{
-
 		ImGuiIO& io = ImGui::GetIO();
 		if (!io.WantCaptureMouse && !io.WantCaptureKeyboard)
 		{
@@ -789,7 +789,6 @@ protected:
 				ImGui::End();
 			}
 		}
-
 		return true; // refresh
 	}
 

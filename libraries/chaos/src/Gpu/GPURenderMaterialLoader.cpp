@@ -80,7 +80,7 @@ namespace chaos
 			return InitializeProgramFromName(material_info, program_name.c_str());
 
 		// if there is a program it has to be under the form of a structure
-		nlohmann::json const * json_program = JSONTools::GetObjectNode(json, "program");
+		nlohmann::json const * json_program = JSONTools::GetAttributeObjectNode(json, "program");
 		if (json_program == nullptr)
 			return false;
 
@@ -135,7 +135,7 @@ namespace chaos
 		if (json == nullptr)
 			return false;
 		// search the texture object
-		nlohmann::json const * json_textures = JSONTools::GetObjectNode(json, "textures");
+		nlohmann::json const * json_textures = JSONTools::GetAttributeObjectNode(json, "textures");
 		if (json_textures == nullptr)
 			return false;
 		// enumerate all textures
@@ -274,7 +274,7 @@ namespace chaos
 		if (json == nullptr)
 			return false;
 		// search the uniform object
-		nlohmann::json const * json_uniforms = JSONTools::GetObjectNode(json, "uniforms");
+		nlohmann::json const * json_uniforms = JSONTools::GetAttributeObjectNode(json, "uniforms");
 		if (json_uniforms == nullptr)
 			return false;
 		// enumerate all uniforms

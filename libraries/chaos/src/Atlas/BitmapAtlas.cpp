@@ -660,7 +660,7 @@ namespace chaos
 			Clear();
 
 			// load the files
-			if (nlohmann::json const* json_files = JSONTools::GetStructureNode(json, "bitmaps"))
+			if (nlohmann::json const* json_files = JSONTools::GetAttributeStructureNode(json, "bitmaps"))
 			{
 				for (nlohmann::json const & json_filename : *json_files)
 				{
@@ -813,7 +813,7 @@ namespace chaos
 				return false;
 			if (!LoadFromJSON(config, (BitmapLayout & )dst)) // call 'super' method
 				return false;
-			if (JSONReadConfiguration animation_config = JSONTools::GetStructureNode(config, "animation_info"))
+			if (JSONReadConfiguration animation_config = JSONTools::GetAttributeStructureNode(config, "animation_info"))
 			{
 				dst.animation_info = new BitmapAnimationInfo;
 				if (dst.animation_info != nullptr)

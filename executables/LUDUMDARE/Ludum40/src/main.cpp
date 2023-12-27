@@ -64,7 +64,7 @@ protected:
 
 		float WORLD_X = 1000.0f;
 		glm::vec2 world_size = glm::vec2(WORLD_X, WORLD_X / VIEWPORT_WANTED_ASPECT);
-		if (!game->Initialize(this, chaos::JSONTools::GetStructureNode(config, "game"), world_size))
+		if (!game->Initialize(this, chaos::JSONTools::GetAttributeStructureNode(config, "game"), world_size))
 			return false;
 
 		return true;

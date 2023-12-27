@@ -130,12 +130,12 @@ namespace chaos
 		if (RootObjectConfiguration* root = auto_cast(src))
 		{
 			JSONTools::LoadJSONFile(root->default_config_path, new_root_storage, LoadFileFlag::RECURSIVE | LoadFileFlag::NO_ERROR_TRACE);
-			return JSONTools::GetStructureNode(&new_root_storage, in_path);
+			return JSONTools::GetAttributeStructureNode(&new_root_storage, in_path);
 		}
 		// child case
 		if (ChildObjectConfiguration* child = auto_cast(src))
 			if (nlohmann::json const* new_child_default_json = ReloadHelper(new_root_storage, child->parent_configuration.get(), child->path))
-				return JSONTools::GetStructureNode(new_child_default_json, in_path);
+				return JSONTools::GetAttributeStructureNode(new_child_default_json, in_path);
 		// error
 		return nullptr;
 	}
@@ -207,10 +207,10 @@ namespace chaos
 	void ChildObjectConfiguration::UpdateFromParent()
 	{
 		default_config = (parent_configuration != nullptr) ?
-			JSONTools::GetObjectNode(parent_configuration->default_config, path) :
+			JSONTools::GetAttributeObjectNode(parent_configuration->default_config, path) :
 			nullptr;
 		persistent_config = (parent_configuration != nullptr) ?
-			JSONTools::GetOrCreateObjectNode(parent_configuration->persistent_config, path) :
+			JSONTools::GetOrCreateAttributeObjectNode(parent_configuration->persistent_config, path) :
 			nullptr;
 
 		storage_default_config = {}; // empty self storage

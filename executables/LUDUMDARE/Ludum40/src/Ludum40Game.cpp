@@ -417,7 +417,7 @@ SpriteLayer const * Game::FindSpriteLayer(int layer) const
 
 bool Game::LoadSpriteLayerInfo(nlohmann::json const * json)
 {
-	if (nlohmann::json const* layers = chaos::JSONTools::GetStructureNode(json, "layers"))
+	if (nlohmann::json const* layers = chaos::JSONTools::GetAttributeStructureNode(json, "layers"))
 	{
 		for (auto const & json_layer : *layers)
 		{
@@ -569,7 +569,7 @@ ObjectDefinition const * Game::FindObjectDefinition(int id) const
 
 bool Game::LoadObjectDefinition(nlohmann::json const * json)
 {
-	if (nlohmann::json const* objects = chaos::JSONTools::GetStructureNode(json, "objects"))
+	if (nlohmann::json const* objects = chaos::JSONTools::GetAttributeStructureNode(json, "objects"))
 	{
 		for (auto const & json_obj : *objects)
 		{

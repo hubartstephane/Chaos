@@ -154,9 +154,9 @@ namespace chaos
 		void SetFullscreen(GLFWmonitor* monitor);
 
 		/** returns the position of the window */
-		glm::ivec2 GetWindowPosition(bool include_decorators) const;
+		glm::ivec2 GetWindowPosition(bool include_decorators = false) const;
 		/** returns the size of the window */
-		glm::ivec2 GetWindowSize(bool include_decorators) const;
+		glm::ivec2 GetWindowSize(bool include_decorators = false) const;
 
 		/** change the window position */
 		void SetWindowPosition(glm::ivec2 position, bool include_decorators);

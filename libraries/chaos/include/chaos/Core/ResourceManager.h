@@ -103,7 +103,7 @@ namespace chaos
 			// or
 			// "object_names": [...] -> read all entries inside as anonymous data
 			//
-			if (nlohmann::json const* objects_json = JSONTools::GetStructureNode(json, object_names))
+			if (nlohmann::json const* objects_json = JSONTools::GetAttributeStructureNode(json, object_names))
 			{
 				for (nlohmann::json::const_iterator it = objects_json->begin(); it != objects_json->end(); ++it)
 				{

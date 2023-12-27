@@ -141,46 +141,46 @@ namespace chaos
 		bool GetElement(SRC_TYPE src, size_t index, T& result, Y && default_value);
 
 		/** getting a node by path */
-		CHAOS_API nlohmann::json* GetNode(nlohmann::json * json, std::string_view path);
+		CHAOS_API nlohmann::json* GetAttributeNode(nlohmann::json * json, std::string_view path);
 		/** getting a node by path */
-		CHAOS_API nlohmann::json const* GetNode(nlohmann::json const * json, std::string_view path);
+		CHAOS_API nlohmann::json const* GetAttributeNode(nlohmann::json const * json, std::string_view path);
 		/** getting or creating a node by path */
-		CHAOS_API nlohmann::json* GetOrCreateNode(nlohmann::json * json, std::string_view path);
+		CHAOS_API nlohmann::json* GetOrCreateAttributeNode(nlohmann::json * json, std::string_view path);
 		/** getting a node by index */
-		CHAOS_API nlohmann::json* GetNodeByIndex(nlohmann::json * json, size_t index);
+		CHAOS_API nlohmann::json* GetElementNode(nlohmann::json * json, size_t index);
 		/** getting a node by inde */
-		CHAOS_API nlohmann::json const* GetNodeByIndex(nlohmann::json const * json, size_t index);
+		CHAOS_API nlohmann::json const* GetElementNode(nlohmann::json const * json, size_t index);
 
 		/** getting an object node by path */
-		CHAOS_API nlohmann::json* GetObjectNode(nlohmann::json * json, std::string_view path);
+		CHAOS_API nlohmann::json* GetAttributeObjectNode(nlohmann::json * json, std::string_view path);
 		/** getting an object node by path */
-		CHAOS_API nlohmann::json const* GetObjectNode(nlohmann::json const * json, std::string_view path);
+		CHAOS_API nlohmann::json const* GetAttributeObjectNode(nlohmann::json const * json, std::string_view path);
 		/** getting or creating an object node by path */
-		CHAOS_API nlohmann::json* GetOrCreateObjectNode(nlohmann::json * json, std::string_view path);
+		CHAOS_API nlohmann::json* GetOrCreateAttributeObjectNode(nlohmann::json * json, std::string_view path);
 		/** getting an object node by index */
-		CHAOS_API nlohmann::json* GetObjectNodeByIndex(nlohmann::json * json, size_t index);
+		CHAOS_API nlohmann::json* GetElementObjectNode(nlohmann::json * json, size_t index);
 		/** getting an object node by inde */
-		CHAOS_API nlohmann::json const* GetObjectNodeByIndex(nlohmann::json const * json, size_t index);
+		CHAOS_API nlohmann::json const* GetElementObjectNode(nlohmann::json const * json, size_t index);
 
 		/** getting an array node by path */
-		CHAOS_API nlohmann::json* GetArrayNode(nlohmann::json * json, std::string_view path);
+		CHAOS_API nlohmann::json* GetElementArrayNode(nlohmann::json * json, std::string_view path);
 		/** getting an array node by path */
-		CHAOS_API nlohmann::json const* GetArrayNode(nlohmann::json const * json, std::string_view path);
+		CHAOS_API nlohmann::json const* GetElementArrayNode(nlohmann::json const * json, std::string_view path);
 		/** getting or creating an array node by path */
-		CHAOS_API nlohmann::json* GetOrCreateArrayNode(nlohmann::json * json, std::string_view path);
+		CHAOS_API nlohmann::json* GetOrCreateAttributeArrayNode(nlohmann::json * json, std::string_view path);
 		/** getting an array node by index */
-		CHAOS_API nlohmann::json* GetArrayNodeByIndex(nlohmann::json * json, size_t index);
+		CHAOS_API nlohmann::json* GetElementArrayNode(nlohmann::json * json, size_t index);
 		/** getting an array node by index */
-		CHAOS_API nlohmann::json const* GetArrayNodeByIndex(nlohmann::json const * json, size_t index);
+		CHAOS_API nlohmann::json const* GetElementArrayNode(nlohmann::json const * json, size_t index);
 
 		/** getting a structure node by path */
-		CHAOS_API nlohmann::json* GetStructureNode(nlohmann::json * json, std::string_view path);
+		CHAOS_API nlohmann::json* GetAttributeStructureNode(nlohmann::json * json, std::string_view path);
 		/** getting a structure node by path */
-		CHAOS_API nlohmann::json const* GetStructureNode(nlohmann::json const * json, std::string_view path);
+		CHAOS_API nlohmann::json const* GetAttributeStructureNode(nlohmann::json const * json, std::string_view path);
 		/** getting a structure node by index */
-		CHAOS_API nlohmann::json* GetStructureNodeByIndex(nlohmann::json * json, size_t index);
+		CHAOS_API nlohmann::json* GetElementStructureNode(nlohmann::json * json, size_t index);
 		/** getting a structure node by index */
-		CHAOS_API nlohmann::json const* GetStructureNodeByIndex(nlohmann::json const * json, size_t index);
+		CHAOS_API nlohmann::json const* GetElementStructureNode(nlohmann::json const * json, size_t index);
 
 		/** iterate over the sources of a json node (its only its self) */
 		template<typename FUNC>
@@ -214,7 +214,7 @@ namespace chaos
 		template<typename T, JSONSource SRC_TYPE>
 		bool GetAttribute(SRC_TYPE src, std::string_view path, T& result)
 		{
-			if (SRC_TYPE node = GetNode(src, path))
+			if (SRC_TYPE node = GetAttributeNode(src, path))
 				return LoadFromJSON(node, result);
 			return false;
 		}
@@ -222,7 +222,7 @@ namespace chaos
 		template<typename T, JSONSource SRC_TYPE>
 		bool GetElement(SRC_TYPE src, size_t index, T& result)
 		{
-			if (SRC_TYPE node = GetNodeByIndex(src, index))
+			if (SRC_TYPE node = GetElementNode(src, index))
 				return LoadFromJSON(node, result);
 			return false;
 		}
@@ -268,7 +268,7 @@ namespace chaos
 		{
 			if (json == nullptr)
 				return false;
-			if (nlohmann::json* node = GetOrCreateNode(json, path))
+			if (nlohmann::json* node = GetOrCreateAttributeNode(json, path))
 			{
 				if (!node->is_object())
 					*node = nlohmann::json::object();

@@ -213,7 +213,7 @@ namespace chaos
 		glfwSetErrorCallback(OnGLFWError);
 
 		// the glfw configuration (valid for all windows)
-		if (JSONReadConfiguration glfw_configuration = JSONTools::GetStructureNode(GetJSONReadConfiguration(), "glfw"))
+		if (JSONReadConfiguration glfw_configuration = JSONTools::GetAttributeStructureNode(GetJSONReadConfiguration(), "glfw"))
 			LoadFromJSON(glfw_configuration, glfw_hints);
 		glfw_hints.ApplyHints();
 
@@ -363,15 +363,15 @@ namespace chaos
 
 	bool WindowApplication::FillAtlasGeneratorInputFonts(BitmapAtlas::AtlasInput& input)
 	{
-		if (JSONReadConfiguration fonts_config = JSONTools::GetStructureNode(GetJSONReadConfiguration(), "fonts"))
+		if (JSONReadConfiguration fonts_config = JSONTools::GetAttributeStructureNode(GetJSONReadConfiguration(), "fonts"))
 		{
 			// read the default font parameters
 			BitmapAtlas::FontInfoInputParams font_params;
-			if (JSONReadConfiguration default_font_param_json = JSONTools::GetStructureNode(fonts_config, "default_font_param"))
+			if (JSONReadConfiguration default_font_param_json = JSONTools::GetAttributeStructureNode(fonts_config, "default_font_param"))
 				LoadFromJSON(default_font_param_json, font_params);
 
 			// Add the fonts
-			if (JSONReadConfiguration fonts_json = JSONTools::GetObjectNode(fonts_config, "fonts"))
+			if (JSONReadConfiguration fonts_json = JSONTools::GetAttributeObjectNode(fonts_config, "fonts"))
 			{
 				JSONTools::ForEachSource(fonts_json, [this, &input, &font_params](nlohmann::json const * json)
 				{
@@ -430,7 +430,7 @@ namespace chaos
 
 		BitmapAtlas::AtlasGeneratorParams params = BitmapAtlas::AtlasGeneratorParams(DEFAULT_ATLAS_SIZE, DEFAULT_ATLAS_SIZE, DEFAULT_ATLAS_PADDING, PixelFormatMergeParams());
 
-		if (JSONReadConfiguration atlas_config = JSONTools::GetStructureNode(GetJSONReadConfiguration(), "atlas"))
+		if (JSONReadConfiguration atlas_config = JSONTools::GetAttributeStructureNode(GetJSONReadConfiguration(), "atlas"))
 			LoadFromJSON(atlas_config, params);
 
 		// atlas generation params : maybe a dump
@@ -459,7 +459,7 @@ namespace chaos
 			return false;
 
 		// get the font sub objects
-		JSONReadConfiguration fonts_config = JSONTools::GetStructureNode(GetJSONReadConfiguration(), "fonts");
+		JSONReadConfiguration fonts_config = JSONTools::GetAttributeStructureNode(GetJSONReadConfiguration(), "fonts");
 
 		// bitmaps in generator
 		if (BitmapAtlas::FolderInfo const* folder_info = texture_atlas->GetFolderInfo("sprites"))
@@ -477,7 +477,7 @@ namespace chaos
 			// embedded sprites
 			if (fonts_config)
 			{
-				if (JSONReadConfiguration font_bitmaps_config = JSONTools::GetObjectNode(fonts_config, "bitmaps"))
+				if (JSONReadConfiguration font_bitmaps_config = JSONTools::GetAttributeObjectNode(fonts_config, "bitmaps"))
 				{
 					JSONTools::ForEachSource(font_bitmaps_config, [this, folder_info](nlohmann::json const * json)
 					{
@@ -501,7 +501,7 @@ namespace chaos
 		// the colors
 		if (fonts_config)
 		{
-			if (JSONReadConfiguration font_colors_config = JSONTools::GetObjectNode(fonts_config, "colors"))
+			if (JSONReadConfiguration font_colors_config = JSONTools::GetAttributeObjectNode(fonts_config, "colors"))
 			{
 				JSONTools::ForEachSource(font_colors_config, [this](nlohmann::json const* json)
 				{

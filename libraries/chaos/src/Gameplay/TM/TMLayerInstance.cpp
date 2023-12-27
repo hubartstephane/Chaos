@@ -226,13 +226,13 @@ namespace chaos
 	bool TMLayerInstance::SerializeObjectListFromJSON(JSONReadConfiguration config, char const * attribute_name, std::vector<shared_ptr<TMObject>> & result)
 	{
 		// in "Objects" array, read all objects, search the ID and apply the data to dedicated object
-		if (JSONReadConfiguration objects_config = JSONTools::GetArrayNode(config, attribute_name))
+		if (JSONReadConfiguration objects_config = JSONTools::GetElementArrayNode(config, attribute_name))
 		{
 			JSONTools::ForEachSource(config, [this](nlohmann::json const* json)
 			{
 				for (size_t i = 0; i < json->size(); ++i)
 				{
-					if (nlohmann::json const* object_json = JSONTools::GetObjectNodeByIndex(json, i))
+					if (nlohmann::json const* object_json = JSONTools::GetElementObjectNode(json, i))
 					{
 						int object_id = 0;
 						if (JSONTools::GetAttribute(object_json, "OBJECT_ID", object_id))

@@ -8,13 +8,13 @@ namespace chaos
 		template<typename T>
 		void SerializeLayersFromJSON(T* object, JSONReadConfiguration config)
 		{
-			if (JSONReadConfiguration layers_config = JSONTools::GetArrayNode(config, "LAYERS"))
+			if (JSONReadConfiguration layers_config = JSONTools::GetElementArrayNode(config, "LAYERS"))
 			{
 				JSONTools::ForEachSource(layers_config, [object](nlohmann::json const * layers_json)
 				{
 					for (size_t i = 0; i < layers_json->size(); ++i)
 					{
-						if (nlohmann::json const * layer_json = JSONTools::GetObjectNodeByIndex(layers_json, i))
+						if (nlohmann::json const * layer_json = JSONTools::GetElementObjectNode(layers_json, i))
 						{
 							int layer_id = 0;
 							if (JSONTools::GetAttribute(layer_json, "LAYER_ID", layer_id))

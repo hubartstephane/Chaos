@@ -11,16 +11,16 @@ namespace chaos
 	namespace JSONTools
 	{
 		template<bool WRITABLE, typename ...PARAMS>
-		JSONConfiguration<WRITABLE> GetNode(JSONConfiguration<WRITABLE> const& config, PARAMS&& ...params);
+		JSONConfiguration<WRITABLE> GetAttributeNode(JSONConfiguration<WRITABLE> const& config, PARAMS&& ...params);
 
 		template<bool WRITABLE, typename ...PARAMS>
-		JSONConfiguration<WRITABLE> GetStructureNode(JSONConfiguration<WRITABLE> const& config, PARAMS&& ...params);
+		JSONConfiguration<WRITABLE> GetAttributeStructureNode(JSONConfiguration<WRITABLE> const& config, PARAMS&& ...params);
 
 		template<bool WRITABLE, typename ...PARAMS>
-		JSONConfiguration<WRITABLE> GetObjectNode(JSONConfiguration<WRITABLE> const& config, PARAMS&& ...params);
+		JSONConfiguration<WRITABLE> GetAttributeObjectNode(JSONConfiguration<WRITABLE> const& config, PARAMS&& ...params);
 
 		template<bool WRITABLE, typename ...PARAMS>
-		JSONConfiguration<WRITABLE> GetArrayNode(JSONConfiguration<WRITABLE> const& config, PARAMS&& ...params);
+		JSONConfiguration<WRITABLE> GetElementArrayNode(JSONConfiguration<WRITABLE> const& config, PARAMS&& ...params);
 
 		template<bool WRITABLE, typename FUNC>
 		decltype(auto) ForEachSource(JSONConfiguration<WRITABLE> const& config, FUNC const& func);
@@ -99,47 +99,47 @@ namespace chaos
 		}
 
 		template<bool WRITABLE, typename ...PARAMS>
-		JSONConfiguration<WRITABLE> GetNode(JSONConfiguration<WRITABLE> const& config, PARAMS&& ...params) // READ-ONLY: creation as no sense
+		JSONConfiguration<WRITABLE> GetAttributeNode(JSONConfiguration<WRITABLE> const& config, PARAMS&& ...params) // READ-ONLY: creation as no sense
 		{
 			JSONConfiguration<WRITABLE> result;
-			result.default_config = JSONTools::GetNode(config.default_config, std::forward<PARAMS>(params)...);
-			result.persistent_config = JSONTools::GetNode(config.persistent_config, std::forward<PARAMS>(params)...);
+			result.default_config = JSONTools::GetAttributeNode(config.default_config, std::forward<PARAMS>(params)...);
+			result.persistent_config = JSONTools::GetAttributeNode(config.persistent_config, std::forward<PARAMS>(params)...);
 			return result;
 		}
 
 		template<bool WRITABLE, typename ...PARAMS>
-		JSONConfiguration<WRITABLE> GetStructureNode(JSONConfiguration<WRITABLE> const& config, PARAMS&& ...params) // READ-ONLY: creation as no sense
+		JSONConfiguration<WRITABLE> GetAttributeStructureNode(JSONConfiguration<WRITABLE> const& config, PARAMS&& ...params) // READ-ONLY: creation as no sense
 		{
 			JSONConfiguration<WRITABLE> result;
-			result.default_config = JSONTools::GetStructureNode(config.default_config, std::forward<PARAMS>(params)...);
-			result.persistent_config = JSONTools::GetStructureNode(config.persistent_config, std::forward<PARAMS>(params)...);
+			result.default_config = JSONTools::GetAttributeStructureNode(config.default_config, std::forward<PARAMS>(params)...);
+			result.persistent_config = JSONTools::GetAttributeStructureNode(config.persistent_config, std::forward<PARAMS>(params)...);
 			return result;
 		}
 
 		template<bool WRITABLE, typename ...PARAMS>
-		JSONConfiguration<WRITABLE> GetObjectNode(JSONConfiguration<WRITABLE> const & config, PARAMS&& ...params)
+		JSONConfiguration<WRITABLE> GetAttributeObjectNode(JSONConfiguration<WRITABLE> const & config, PARAMS&& ...params)
 		{
 			JSONConfiguration<WRITABLE> result;
-			result.default_config = JSONTools::GetObjectNode(config.default_config, std::forward<PARAMS>(params)...);
+			result.default_config = JSONTools::GetAttributeObjectNode(config.default_config, std::forward<PARAMS>(params)...);
 
 			if constexpr (WRITABLE)
-				result.persistent_config = JSONTools::GetOrCreateObjectNode(config.persistent_config, std::forward<PARAMS>(params)...);
+				result.persistent_config = JSONTools::GetOrCreateAttributeObjectNode(config.persistent_config, std::forward<PARAMS>(params)...);
 			else
-				result.persistent_config = JSONTools::GetObjectNode(config.persistent_config, std::forward<PARAMS>(params)...);
+				result.persistent_config = JSONTools::GetAttributeObjectNode(config.persistent_config, std::forward<PARAMS>(params)...);
 
 			return result;
 		}
 
 		template<bool WRITABLE, typename ...PARAMS>
-		JSONConfiguration<WRITABLE> GetArrayNode(JSONConfiguration<WRITABLE> const & config, PARAMS&& ...params)
+		JSONConfiguration<WRITABLE> GetElementArrayNode(JSONConfiguration<WRITABLE> const & config, PARAMS&& ...params)
 		{
 			JSONConfiguration<WRITABLE> result;
-			result.default_config = JSONTools::GetArrayNode(config.default_config, std::forward<PARAMS>(params)...);
+			result.default_config = JSONTools::GetElementArrayNode(config.default_config, std::forward<PARAMS>(params)...);
 
 			if constexpr (WRITABLE)
-				result.persistent_config = JSONTools::GetOrCreateArrayNode(config.persistent_config, std::forward<PARAMS>(params)...);
+				result.persistent_config = JSONTools::GetOrCreateAttributeArrayNode(config.persistent_config, std::forward<PARAMS>(params)...);
 			else
-				result.persistent_config = JSONTools::GetArrayNode(config.persistent_config, std::forward<PARAMS>(params)...);
+				result.persistent_config = JSONTools::GetElementArrayNode(config.persistent_config, std::forward<PARAMS>(params)...);
 
 			return result;
 		}

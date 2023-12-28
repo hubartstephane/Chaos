@@ -13,7 +13,7 @@ namespace chaos
 		return ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize;
 	}
 
-	void ImGuiWindowInformationObject::OnDrawImGuiContent(ImGuiDrawFlags flags)
+	void ImGuiWindowInformationObject::OnDrawImGuiContent()
 	{
 		if (window != nullptr)
 		{

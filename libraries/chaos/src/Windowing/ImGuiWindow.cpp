@@ -15,9 +15,9 @@ namespace chaos
 			content->DrawImGui(GetName(), ImGuiDrawFlags::FullWindow);
 	}
 
-	void ImGuiWindow::OnDrawWindowImGuiMenu()
+	void ImGuiWindow::OnDrawWindowImGuiMenu(ImGuiInterface::DrawImGuiMenuFunc func)
 	{
-		// Window::OnDrawWindowImGuiMenu();
+		// Window::OnDrawWindowImGuiMenu(func);
 		// do not call super so that the application items are not inserted here
 	}
 

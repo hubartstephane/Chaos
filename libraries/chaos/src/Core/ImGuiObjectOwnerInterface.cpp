@@ -131,17 +131,20 @@ namespace chaos
 		});
 	}
 
-	void ImGuiObjectOwnerInterface::DrawImGuiObjectsMenu()
+	void ImGuiObjectOwnerInterface::DrawImGuiObjectsMenu(ImGuiInterface::DrawImGuiMenuFunc func)
 	{
 		if (proxies.size() > 0)
 		{
-			if (ImGui::BeginMenu("Widgets"))
+			func([this]()
 			{
-				for (auto& proxy : proxies)
-					if (ImGui::MenuItem(proxy->GetName(), nullptr, proxy->IsVisible(), true))
-						proxy->Show(!proxy->IsVisible());
-				ImGui::EndMenu();
-			}
+				if (ImGui::BeginMenu("Widgets"))
+				{
+					for (auto& proxy : proxies)
+						if (ImGui::MenuItem(proxy->GetName(), nullptr, proxy->IsVisible(), true))
+							proxy->Show(!proxy->IsVisible());
+					ImGui::EndMenu();
+				}
+			});
 		}
 	}
 

@@ -1129,20 +1129,26 @@ namespace chaos
 
 		// draw the menu
 		if (GetImGuiMenuMode())
-			OnDrawWindowImGuiMenu();
+		{
+			auto draw_menu_func = [this](LightweightFunction<void()> func)
+			{
+				if (ImGui::BeginMainMenuBar())
+				{
+					func();
+					ImGui::EndMainMenuBar();
+				}
+			};
+			OnDrawWindowImGuiMenu(draw_menu_func);
+		}
 	}
 
-	void Window::OnDrawWindowImGuiMenu()
+	void Window::OnDrawWindowImGuiMenu(ImGuiInterface::DrawImGuiMenuFunc func)
 	{
-		if (ImGui::BeginMainMenuBar())
-		{
-			if (WindowApplication* window_application = Application::GetInstance())
-				window_application->OnDrawApplicationImGuiMenu();
-
-			ImGuiObjectOwnerInterface::DrawImGuiObjectsMenu();
-
-			ImGui::EndMainMenuBar();
-		}
+		// display application menu items
+		if (WindowApplication* window_application = Application::GetInstance())
+			window_application->OnDrawApplicationImGuiMenu(func);
+		// display menu items for widgets
+		ImGuiObjectOwnerInterface::DrawImGuiObjectsMenu(func);
 	}
 
 	void Window::OnDrawWindowImGuiContent()

@@ -8,7 +8,7 @@ namespace chaos
 		return ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize;
 	}
 
-	void ImGuiSystemInformationObject::OnDrawImGuiContent(ImGuiDrawFlags flags)
+	void ImGuiSystemInformationObject::OnDrawImGuiContent()
 	{
 		int monitor_count = 0;
 		GLFWmonitor** monitors = glfwGetMonitors(&monitor_count);

@@ -5,10 +5,10 @@ namespace chaos
 {
 	int ImGuiDemoObject::GetImGuiWindowFlags() const
 	{
-		return ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar;
+		return ImGuiWindowFlags_NoCollapse;
 	}
 
-	void ImGuiDemoObject::OnDrawImGuiContent(ImGuiDrawFlags flags)
+	void ImGuiDemoObject::OnDrawImGuiContent()
 	{
 		if (show_demo)
 			ImGui::ShowDemoWindow(&show_demo);
@@ -26,21 +26,24 @@ namespace chaos
 			ImGui::ShowUserGuide();
 	}
 
-	void ImGuiDemoObject::OnDrawImGuiMenu(ImGuiDrawFlags flags)
+	void ImGuiDemoObject::OnDrawImGuiMenu(DrawImGuiMenuFunc func)
 	{
-		if (ImGui::BeginMenu("ImGui"))
+		func([this]()
 		{
+			if (ImGui::BeginMenu("ImGui"))
+			{
 #define CHAOS_IMGUI_MENUITEM(X) ImGui::MenuItem(#X, nullptr, &X, true);
-			CHAOS_IMGUI_MENUITEM(show_demo);
-			CHAOS_IMGUI_MENUITEM(show_metrics);
-			CHAOS_IMGUI_MENUITEM(show_debug_log);
-			CHAOS_IMGUI_MENUITEM(show_stack_tool);
-			CHAOS_IMGUI_MENUITEM(show_about);
-			CHAOS_IMGUI_MENUITEM(show_style_editor);
-			CHAOS_IMGUI_MENUITEM(show_user_guide);
+				CHAOS_IMGUI_MENUITEM(show_demo);
+				CHAOS_IMGUI_MENUITEM(show_metrics);
+				CHAOS_IMGUI_MENUITEM(show_debug_log);
+				CHAOS_IMGUI_MENUITEM(show_stack_tool);
+				CHAOS_IMGUI_MENUITEM(show_about);
+				CHAOS_IMGUI_MENUITEM(show_style_editor);
+				CHAOS_IMGUI_MENUITEM(show_user_guide);
 #undef CHAOS_IMGUI_MENUITEM
-			ImGui::EndMenu();
-		}
+				ImGui::EndMenu();
+			}
+		});
 	}
 
 }; // namespace chaos

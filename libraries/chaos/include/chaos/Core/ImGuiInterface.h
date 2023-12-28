@@ -30,6 +30,9 @@ namespace chaos
 	{
 	public:
 
+		using DrawImGuiMenuFunc = LightweightFunction<void(LightweightFunction<void()>)>;
+
+
 		/** destructor */
 		virtual ~ImGuiInterface() = default;
 
@@ -51,14 +54,14 @@ namespace chaos
 		/** get flags */
 		virtual int GetImGuiWindowFlags() const;
 		/** method to override to display content */
-		virtual void OnDrawImGuiContent(ImGuiDrawFlags flags);
+		virtual void OnDrawImGuiContent();
 		/** method to override to display menu */
-		virtual void OnDrawImGuiMenu(ImGuiDrawFlags flags);
+		virtual void OnDrawImGuiMenu(DrawImGuiMenuFunc func);
 
 		/** check whether a context is valid for having a menubar and call FullScreen or Floating window menu bar method */
-		void ConditionalMenuBar(ImGuiDrawFlags flags, int imgui_window_flags, LightweightFunction<void()> func);
+		void ConditionalMenuBar(ImGuiDrawFlags flags, int imgui_window_flags);
 		/** update the imgui window flags according to use flags */
-		int UpdateWindowFlagsForMenu(ImGuiDrawFlags flags, int imgui_window_flags) const;
+		int UpdateWindowFlagsForMenu(ImGuiDrawFlags flags, int imgui_window_flags);
 
 	protected:
 

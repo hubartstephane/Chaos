@@ -21,9 +21,9 @@ namespace chaos
 		/** override */
 		virtual int GetImGuiWindowFlags() const override;
 		/** override */
-		virtual void OnDrawImGuiContent(ImGuiDrawFlags flags) override;
+		virtual void OnDrawImGuiContent() override;
 		/** override */
-		virtual void OnDrawImGuiMenu(ImGuiDrawFlags flags) override;
+		virtual void OnDrawImGuiMenu(DrawImGuiMenuFunc func) override;
 
 	protected:
 

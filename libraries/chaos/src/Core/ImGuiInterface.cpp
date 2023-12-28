@@ -5,7 +5,7 @@ namespace chaos
 {
 	CHAOS_IMPLEMENT_ENUM_FLAG_METHOD(ImGuiDrawFlags);
 
-	void ImGuiInterface::ConditionalMenuBar(ImGuiDrawFlags flags, int imgui_window_flags, LightweightFunction<void()> func)
+	void ImGuiInterface::ConditionalMenuBar(ImGuiDrawFlags flags, int imgui_window_flags)
 	{
 		// check wether the application accepts the menu bar
 		if (WindowApplication* window_application = Application::GetInstance())
@@ -15,27 +15,35 @@ namespace chaos
 		// display full window menu bar
 		if ((flags & ImGuiDrawFlags::UseFullWindowMenu) != ImGuiDrawFlags::None)
 		{
-			if (ImGui::BeginMainMenuBar())
+			auto draw_menu_func = [this](LightweightFunction<void()> func)
 			{
-				func();
-				ImGui::EndMainMenuBar();
-			}
+				if (ImGui::BeginMainMenuBar())
+				{
+					func();
+					ImGui::EndMainMenuBar();
+				}
+			};
+			OnDrawImGuiMenu(draw_menu_func);
 		}
 		// display floating window menu bar
 		else
 		{
 			if ((imgui_window_flags & ImGuiWindowFlags_MenuBar) != 0)
 			{
-				if (ImGui::BeginMenuBar())
+				auto draw_menu_func = [this](LightweightFunction<void()> func)
 				{
-					func();
-					ImGui::EndMenuBar();
-				}
+					if (ImGui::BeginMenuBar())
+					{
+						func();
+						ImGui::EndMenuBar();
+					}
+				};
+				OnDrawImGuiMenu(draw_menu_func);
 			}
 		}
 	}
 
-	int ImGuiInterface::UpdateWindowFlagsForMenu(ImGuiDrawFlags flags, int imgui_window_flags) const
+	int ImGuiInterface::UpdateWindowFlagsForMenu(ImGuiDrawFlags flags, int imgui_window_flags)
 	{
 		// check whether application accepts menu
 		if (WindowApplication* window_application = Application::GetInstance())
@@ -46,7 +54,19 @@ namespace chaos
 		if ((flags & ImGuiDrawFlags::UseFullWindowMenu) != ImGuiDrawFlags::None)
 			return imgui_window_flags & ~ImGuiWindowFlags_MenuBar;
 
-		return imgui_window_flags;
+		// request if there is really some menu content
+		bool want_menu = false;
+		auto draw_menu_func = [&want_menu](LightweightFunction<void()> func)
+		{
+			want_menu = true;
+		};
+		OnDrawImGuiMenu(draw_menu_func);
+
+		// add or remove menu bar flag
+		if (want_menu)
+			return imgui_window_flags | ImGuiWindowFlags_MenuBar;
+		else
+			return imgui_window_flags & ~ImGuiWindowFlags_MenuBar;
 	}
 
 	void ImGuiInterface::DrawImGui(char const * title, ImGuiDrawFlags flags)
@@ -64,23 +84,19 @@ namespace chaos
 		// display content + menu delegate
 		auto DisplayFunc = [this, flags, imgui_window_flags]()
 		{
-			OnDrawImGuiContent(flags);
-
-			ConditionalMenuBar(flags, imgui_window_flags, [this, flags]()
-			{
-				OnDrawImGuiMenu(flags);
-			});
+			OnDrawImGuiContent();
+			ConditionalMenuBar(flags, imgui_window_flags);
 		};
 
 		// display fullscreen window
 		if ((flags & ImGuiDrawFlags::FullWindow) != ImGuiDrawFlags::None)
 		{
-			closing_request = FullscreenWindow(title, imgui_window_flags, DisplayFunc);
+			closing_request = !FullscreenWindow(title, imgui_window_flags, DisplayFunc);
 		}
 		// display floating window
 		else
 		{
-			closing_request = FloatingWindow(title, imgui_window_flags, DisplayFunc);
+			closing_request = !FloatingWindow(title, imgui_window_flags, DisplayFunc);
 		}
 	}
 
@@ -117,11 +133,11 @@ namespace chaos
 		return ImGuiWindowFlags_NoCollapse; // XXX: do not forget to add ImGuiWindowFlags_MenuBar if you want to have a menu
 	}
 
-	void ImGuiInterface::OnDrawImGuiContent(ImGuiDrawFlags flags)
+	void ImGuiInterface::OnDrawImGuiContent()
 	{
 	}
 
-	void ImGuiInterface::OnDrawImGuiMenu(ImGuiDrawFlags flags)
+	void ImGuiInterface::OnDrawImGuiMenu(DrawImGuiMenuFunc func)
 	{
 	}
 

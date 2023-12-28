@@ -8,7 +8,7 @@ namespace chaos
 		return ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize;
 	}
 
-	void ImGuiHelpObject::OnDrawImGuiContent(ImGuiDrawFlags flags)
+	void ImGuiHelpObject::OnDrawImGuiContent()
 	{
 		ImGui::Text("F1:  Skip level");
 		ImGui::Text("F2:  Toggle cheat mode");

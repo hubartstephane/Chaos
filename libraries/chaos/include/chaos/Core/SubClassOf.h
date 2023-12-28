@@ -117,6 +117,13 @@ namespace chaos
 				return nullptr;
 			return (T*)internal_class->CreateInstance();
 		}
+
+		/** Subclass may be used as a function to create an instance */
+		T* operator () () const
+		{
+			return CreateInstance();
+		}
+
 		/** create a temporary instance on the stack an call the functor on it */
 		template<typename FUNC>
 		bool CreateInstanceOnStack(FUNC const & func) const

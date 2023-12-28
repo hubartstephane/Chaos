@@ -10,10 +10,10 @@ namespace chaos
 
 	int ImGuiLogObject::GetImGuiWindowFlags() const
 	{
-		return ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar;
+		return ImGuiWindowFlags_NoCollapse;
 	}
 
-	void ImGuiLogObject::OnDrawImGuiContent(ImGuiDrawFlags flags)
+	void ImGuiLogObject::OnDrawImGuiContent()
 	{
 		assert(logger != nullptr);
 
@@ -121,62 +121,65 @@ namespace chaos
 		}
 	}
 
-	void ImGuiLogObject::OnDrawImGuiMenu(ImGuiDrawFlags flags)
+	void ImGuiLogObject::OnDrawImGuiMenu(DrawImGuiMenuFunc func)
 	{
-		// the types
-		if (ImGui::BeginMenu("Type"))
+		func([this]()
 		{
-			ImGui::Checkbox("messages", &show_messages); ImGui::SameLine();
-			ImGui::Checkbox("warnings", &show_warnings); ImGui::SameLine();
-			ImGui::Checkbox("errors", &show_errors);
-			ImGui::EndMenu();
-		}
-		// the domains
-		if (ImGui::BeginMenu("Domains"))
-		{
-			if (ImGui::BeginTable("split", 3))
+			// the types
+			if (ImGui::BeginMenu("Type"))
 			{
-				for (size_t i = 0; i < logger->GetDomainCount(); ++i)
-				{
-					char const* domain = logger->GetDomain(i);
-					bool* domain_flag = nullptr;
-
-					auto it = domain_visibilities.find(domain);
-					if (it != domain_visibilities.end())
-					{
-						domain_flag = &it->second;
-					}
-					else
-					{
-						domain_visibilities[domain] = true;
-						domain_flag = &domain_visibilities.find(domain)->second;
-					}
-					ImGui::TableNextColumn(); ImGui::Checkbox(domain, domain_flag);
-				}
-				ImGui::EndTable();
+				ImGui::Checkbox("messages", &show_messages); ImGui::SameLine();
+				ImGui::Checkbox("warnings", &show_warnings); ImGui::SameLine();
+				ImGui::Checkbox("errors", &show_errors);
+				ImGui::EndMenu();
 			}
-			ImGui::EndMenu();
-		}
-		// Miscellaneaous
-		if (ImGui::BeginMenu("Miscellaneous"))
-		{
-			ImGui::Checkbox("group identical lines", &group_identical_lines);
-			ImGui::EndMenu();
-		}
-		// some listeners' actions
-		if (ImGui::BeginMenu("Actions"))
-		{
-			for (size_t i = 0; i < logger->GetListenerCount(); ++i)
-				if (LoggerListener* logger_listener = logger->GetListener(i))
-					logger_listener->DrawImGuiMenu();
-			ImGui::EndMenu();
-		}
-		// filter
-		if (ImGui::BeginMenu("Filter"))
-		{
-			filter.Draw();
-			ImGui::EndMenu();
-		}
+			// the domains
+			if (ImGui::BeginMenu("Domains"))
+			{
+				if (ImGui::BeginTable("split", 3))
+				{
+					for (size_t i = 0; i < logger->GetDomainCount(); ++i)
+					{
+						char const* domain = logger->GetDomain(i);
+						bool* domain_flag = nullptr;
+
+						auto it = domain_visibilities.find(domain);
+						if (it != domain_visibilities.end())
+						{
+							domain_flag = &it->second;
+						}
+						else
+						{
+							domain_visibilities[domain] = true;
+							domain_flag = &domain_visibilities.find(domain)->second;
+						}
+						ImGui::TableNextColumn(); ImGui::Checkbox(domain, domain_flag);
+					}
+					ImGui::EndTable();
+				}
+				ImGui::EndMenu();
+			}
+			// Miscellaneaous
+			if (ImGui::BeginMenu("Miscellaneous"))
+			{
+				ImGui::Checkbox("group identical lines", &group_identical_lines);
+				ImGui::EndMenu();
+			}
+			// some listeners' actions
+			if (ImGui::BeginMenu("Actions"))
+			{
+				for (size_t i = 0; i < logger->GetListenerCount(); ++i)
+					if (LoggerListener* logger_listener = logger->GetListener(i))
+						logger_listener->DrawImGuiMenu();
+				ImGui::EndMenu();
+			}
+			// filter
+			if (ImGui::BeginMenu("Filter"))
+			{
+				filter.Draw();
+				ImGui::EndMenu();
+			}
+		});
 	}
 
 }; // namespace chaos

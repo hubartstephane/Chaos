@@ -327,28 +327,10 @@ namespace chaos
 		/** called whenever a monitor is connected or disconnected */
 		virtual void OnMonitorEvent(GLFWmonitor* monitor, int monitor_state);
 
-
-
-
-
-
-
-
-
-		/** draw the main menu */
-		virtual void OnDrawWindowImGuiMenu();
 		/** draw the content */
 		virtual void OnDrawWindowImGuiContent();
-
-
-
-
-
-
-
-
-
-
+		/** draw the main menu */
+		virtual void OnDrawWindowImGuiMenu(ImGuiInterface::DrawImGuiMenuFunc func);
 
 #if _WIN32
 

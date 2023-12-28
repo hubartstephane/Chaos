@@ -921,60 +921,63 @@ namespace chaos
 			;
 	}
 
-	void WindowApplication::OnDrawApplicationImGuiMenu()
+	void WindowApplication::OnDrawApplicationImGuiMenu(ImGuiInterface::DrawImGuiMenuFunc func)
 	{
-		if (ImGui::BeginMenu("Actions"))
+		func([this]()
 		{
-			if (ImGui::BeginMenu("Directories"))
+			if (ImGui::BeginMenu("Actions"))
 			{
-				if (ImGui::MenuItem("Open Resources Dir.", nullptr, false, true))
+				if (ImGui::BeginMenu("Directories"))
 				{
-					WinTools::ShowFile(GetResourcesPath());
+					if (ImGui::MenuItem("Open Resources Dir.", nullptr, false, true))
+					{
+						WinTools::ShowFile(GetResourcesPath());
+					}
+					if (ImGui::MenuItem("Open Temp Dir.", nullptr, false, true))
+					{
+						WinTools::ShowFile(GetUserLocalTempPath());
+					}
+					ImGui::EndMenu();
 				}
-				if (ImGui::MenuItem("Open Temp Dir.", nullptr, false, true))
+
+				if (ImGui::BeginMenu("Configuration"))
 				{
-					WinTools::ShowFile(GetUserLocalTempPath());
+					if (ImGui::MenuItem("Show Configuration", nullptr, false, true))
+					{
+						WinTools::ShowFile(JSONTools::DumpConfigFile(GetJSONReadConfiguration().default_config));
+					}
+					if (ImGui::MenuItem("Show Persistent Configuration", nullptr, false, true))
+					{
+						SavePersistentPropertiesToFile(false); // do not require an update from clients
+						WinTools::ShowFile(GetPersistentDataPath());
+					}
+					if (ImGui::MenuItem("Delete Persistent Configuration", nullptr, false, true))
+					{
+						std::remove(GetPersistentDataPath().string().c_str());
+					}
+					ImGui::EndMenu();
+				}
+
+				ImGui::Separator();
+				if (ImGui::MenuItem("Quit", nullptr, false, true))
+				{
+					Quit();
 				}
 				ImGui::EndMenu();
 			}
 
-			if (ImGui::BeginMenu("Configuration"))
+			if (ImGui::BeginMenu("Windows"))
 			{
-				if (ImGui::MenuItem("Show Configuration", nullptr, false, true))
+				EnumerateKnownWindows([this](char const* name, SubClassOf<Window> window_class)
 				{
-					WinTools::ShowFile(JSONTools::DumpConfigFile(GetJSONReadConfiguration().default_config));
-				}
-				if (ImGui::MenuItem("Show Persistent Configuration", nullptr, false, true))
-				{
-					SavePersistentPropertiesToFile(false); // do not require an update from clients
-					WinTools::ShowFile(GetPersistentDataPath());
-				}
-				if (ImGui::MenuItem("Delete Persistent Configuration", nullptr, false, true))
-				{
-					std::remove(GetPersistentDataPath().string().c_str());
-				}
+					bool window_exists = (FindWindow(name) != nullptr);
+					if (ImGui::MenuItem(name, nullptr, window_exists, true))
+						SetWindowInternalVisibility(!window_exists, name, window_class);
+					return false; // don't stop the search
+				});
 				ImGui::EndMenu();
 			}
-
-			ImGui::Separator();
-			if (ImGui::MenuItem("Quit", nullptr, false, true))
-			{
-				Quit();
-			}
-			ImGui::EndMenu();
-		}
-
-		if (ImGui::BeginMenu("Windows"))
-		{
-			EnumerateKnownWindows([this](char const* name, SubClassOf<Window> window_class)
-			{
-				bool window_exists = (FindWindow(name) != nullptr);
-				if (ImGui::MenuItem(name, nullptr, window_exists, true))
-					SetWindowInternalVisibility(!window_exists, name, window_class);
-				return false; // don't stop the search
-			});
-			ImGui::EndMenu();
-		}
+		});
 	}
 
 	std::vector<weak_ptr<Window>> WindowApplication::GetWeakWindowArray() const

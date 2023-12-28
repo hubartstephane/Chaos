@@ -909,8 +909,6 @@ namespace chaos
 			return true; // stop the search
 		});
 	}
-	
-
 
 	bool WindowApplication::EnumerateKnownWindows(EnumerateKnownWindowsFunc func) const
 	{

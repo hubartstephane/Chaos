@@ -1,7 +1,29 @@
-namespace chaos
-{
 #ifdef CHAOS_FORWARD_DECLARATION
 
+// XXX: the following functions don't belong to chaos, so that namespace is properly resolved for basic types
+
+/** implementation of DrawImGui for a string */
+CHAOS_API void DrawImGui(std::string& value);
+/** implementation of DrawImGui for a bool */
+CHAOS_API void DrawImGui(bool& value);
+/** implementation of DrawImGui for a int */
+CHAOS_API void DrawImGui(int& value);
+/** implementation of DrawImGui for a float */
+CHAOS_API void DrawImGui(float& value);
+/** implementation of DrawImGui for a double */
+CHAOS_API void DrawImGui(double& value);
+
+/** a template to display const variables */
+template<typename T>
+void DrawImGui(T const& value)
+{
+	ImGui::BeginDisabled();
+	DrawImGui(*(T*)&value);
+	ImGui::EndDisabled();
+}
+
+namespace chaos
+{
 	namespace ImGuiTools
 	{
 		/** concept to know whether DrawImGui can be called on a variable */
@@ -26,19 +48,9 @@ namespace chaos
 
 	}; // namespace ImGuiTools
 
-	/** implementation of DrawImGui for a string */
-	CHAOS_API void DrawImGui(std::string& value);
-	/** implementation of DrawImGui for a bool */
-	CHAOS_API void DrawImGui(bool& value);
-	/** implementation of DrawImGui for a int */
-	CHAOS_API void DrawImGui(int& value);
-	/** implementation of DrawImGui for a float */
-	CHAOS_API void DrawImGui(float& value);
-	/** implementation of DrawImGui for a double */
-	CHAOS_API void DrawImGui(double& value);
+}; // namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 #endif
 
-}; // namespace chaos

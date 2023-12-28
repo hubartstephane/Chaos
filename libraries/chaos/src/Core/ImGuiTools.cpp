@@ -1,43 +1,43 @@
 #include "chaos/ChaosPCH.h"
 #include "chaos/ChaosInternals.h"
 
+void DrawImGui(std::string& value)
+{
+	chaos::ImGuiTools::PushID(&value);
+	chaos::ImGuiTools::InputText("", value);
+	ImGui::PopID();
+}
+
+void DrawImGui(bool& value)
+{
+	chaos::ImGuiTools::PushID(&value);
+	ImGui::Checkbox("", &value);
+	ImGui::PopID();
+}
+
+void DrawImGui(int& value)
+{
+	chaos::ImGuiTools::PushID(&value);
+	ImGui::InputInt("", &value);
+	ImGui::PopID();
+}
+
+void DrawImGui(float& value)
+{
+	chaos::ImGuiTools::PushID(&value);
+	ImGui::InputFloat("", &value);
+	ImGui::PopID();
+}
+
+void DrawImGui(double& value)
+{
+	chaos::ImGuiTools::PushID(&value);
+	ImGui::InputDouble("", &value);
+	ImGui::PopID();
+}
+
 namespace chaos
 {
-	void DrawImGui(std::string& value)
-	{
-		ImGuiTools::PushID(&value);
-		ImGuiTools::InputText("", value);
-		ImGui::PopID();
-	}
-
-	void DrawImGui(bool& value)
-	{
-		ImGuiTools::PushID(&value);
-		ImGui::Checkbox("", &value);
-		ImGui::PopID();
-	}
-
-	void DrawImGui(int& value)
-	{
-		ImGuiTools::PushID(&value);
-		ImGui::InputInt("", &value);
-		ImGui::PopID();
-	}
-
-	void DrawImGui(float& value)
-	{
-		ImGuiTools::PushID(&value);
-		ImGui::InputFloat("", &value);
-		ImGui::PopID();
-	}
-
-	void DrawImGui(double& value)
-	{
-		ImGuiTools::PushID(&value);
-		ImGui::InputDouble("", &value);
-		ImGui::PopID();
-	}
-
 	namespace ImGuiTools
 	{
 		void PushID(void* ptr) // native ImGui provides PushID(char *) and PushID(void *). Using this ImGuiTools method prevent ambiguity. If a char * pointer was given as parameter, the content
@@ -88,6 +88,5 @@ namespace chaos
 		}
 
 	}; // namespace ImGuiTools
-
 
 }; // namespace chaos

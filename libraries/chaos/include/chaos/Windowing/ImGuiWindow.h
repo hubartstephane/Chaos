@@ -18,6 +18,26 @@ namespace chaos
 		/** override */
 		virtual WindowCategory GetWindowCategory() const override;
 
+		/** get the content */
+		AutoCastable<ImGuiObject> GetContent() { return content.get(); }
+		/** get the content */
+		AutoConstCastable<ImGuiObject> GetContent() const { return content.get(); }
+
+		/** change the content */
+		void SetContent(ImGuiObject* in_content);
+
+		/** create a ImGui window with a given type */
+		template<typename CONTENT_TYPE>
+		static ImGuiWindow* CreateImGuiWindow()
+		{
+			if (ImGuiWindow* result = new ImGuiWindow)
+			{
+				result->SetContent(new CONTENT_TYPE);
+				return result;
+			}
+			return nullptr;
+		}
+
 	protected:
 
 		/** override */

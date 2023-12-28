@@ -5,11 +5,7 @@ namespace chaos
 {
 	LogWindow::LogWindow()
 	{
-		if (ImGuiLogObject* new_content = new ImGuiLogObject)
-		{
-			content = new_content;
-			new_content->SetLogger(Logger::GetInstance());
-		}
+		content = new ImGuiLogObject;
 	}
 
 }; // namespace chaos

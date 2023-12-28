@@ -8,6 +8,11 @@ namespace chaos
 		return WindowCategory::OPTIONAL_WINDOW;
 	};
 
+	void ImGuiWindow::SetContent(ImGuiObject* in_content)
+	{
+		content = in_content;
+	}
+
 	void ImGuiWindow::OnDrawWindowImGuiContent()
 	{
 		Window::OnDrawWindowImGuiContent();

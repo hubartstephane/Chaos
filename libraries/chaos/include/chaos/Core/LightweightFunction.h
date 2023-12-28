@@ -69,7 +69,7 @@ namespace chaos
 		template<typename FUNC>
 		static RETURN_TYPE Process(void* src, PARAMS... params)
 		{
-			return reinterpret_cast<FUNC*>(src)->operator ()(std::forward<PARAMS>(params)...);
+			return (*reinterpret_cast<FUNC*>(src))(std::forward<PARAMS>(params)...);
 		}
 
 	protected:

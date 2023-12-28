@@ -3,6 +3,11 @@
 
 namespace chaos
 {
+	ImGuiLogObject::ImGuiLogObject()
+	{
+		SetLogger(Logger::GetInstance());
+	}
+
 	void ImGuiLogObject::SetLogger(Logger * in_logger)
 	{
 		logger = in_logger;

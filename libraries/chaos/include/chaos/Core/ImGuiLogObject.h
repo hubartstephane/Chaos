@@ -13,6 +13,8 @@ namespace chaos
 
 		CHAOS_DECLARE_OBJECT_CLASS(ImGuiLogObject, ImGuiObject);
 
+		/** constructor */
+		ImGuiLogObject();
 		/** initialize the object */
 		void SetLogger(Logger * in_logger);
 

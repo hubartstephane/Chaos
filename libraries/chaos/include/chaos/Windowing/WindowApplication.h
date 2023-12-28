@@ -16,6 +16,9 @@ namespace chaos
 
 	public:
 
+		using CreateWindowFunc = LightweightFunction<Window*()>;
+		using EnumerateKnownWindowsFunc = LightweightFunction<bool(char const*, CreateWindowFunc)>;
+
 		/** constructor */
 		WindowApplication(SubClassOf<Window> in_main_window_class, WindowPlacementInfo const& in_main_window_placement_info = {}, WindowCreateParams const& in_main_window_create_params = {});
 
@@ -118,7 +121,7 @@ namespace chaos
 		virtual void RunMessageLoop(LightweightFunction<bool()> loop_condition_func = {});
 
 		/** create a window */
-		Window* CreateTypedWindow(SubClassOf<Window> window_class, WindowPlacementInfo placement_info = {}, WindowCreateParams const& create_params = {}, ObjectRequest = {});
+		Window* CreateTypedWindow(CreateWindowFunc create_window_func, WindowPlacementInfo placement_info = {}, WindowCreateParams const& create_params = {}, ObjectRequest = {});
 
 		/** enable per window special mode */
 		void SetImGuiMenuMode(bool mode);
@@ -148,7 +151,7 @@ namespace chaos
 		static void DoOnMonitorEvent(GLFWmonitor* monitor, int monitor_state);
 
 		/** enumerate windows that the application can open */
-		virtual bool EnumerateKnownWindows(LightweightFunction<bool(char const * name, SubClassOf<Window> window_class)> func) const;
+		virtual bool EnumerateKnownWindows(EnumerateKnownWindowsFunc func) const;
 
 		/** override */
 		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override;
@@ -213,7 +216,7 @@ namespace chaos
 		virtual void OnDrawApplicationImGuiMenu(ImGuiInterface::DrawImGuiMenuFunc func);
 
 		/** internal method to show or hide a window */
-		void SetWindowInternalVisibility(bool visible, char const* name, SubClassOf<Window> window_class);
+		void SetWindowInternalVisibility(bool visible, char const* name, CreateWindowFunc create_window_func);
 
 		/** checks whether the window is inside the application windows array */
 		bool IsWindowHandledByApplication(Window const* window) const;

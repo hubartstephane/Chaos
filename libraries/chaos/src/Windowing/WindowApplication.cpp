@@ -111,7 +111,7 @@ namespace chaos
 		});
 	}
 
-	Window* WindowApplication::CreateTypedWindow(SubClassOf<Window> window_class, WindowPlacementInfo placement_info, WindowCreateParams const &create_params, ObjectRequest request)
+	Window* WindowApplication::CreateTypedWindow(CreateWindowFunc create_window_func, WindowPlacementInfo placement_info, WindowCreateParams const &create_params, ObjectRequest request)
 	{
 		if (FindWindow(request) != nullptr)
 		{
@@ -119,10 +119,10 @@ namespace chaos
 			return nullptr;
 		}
 
-		return WithGLFWContext(nullptr, [this, window_class, &placement_info , &create_params, &request]() -> Window*
+		return WithGLFWContext(nullptr, [this, create_window_func, &placement_info , &create_params, &request]() -> Window*
 		{
 			// create the window class
-			shared_ptr<Window> result = window_class.CreateInstance();
+			shared_ptr<Window> result = create_window_func();
 			if (result == nullptr)
 				return nullptr;
 			windows.push_back(result.get());
@@ -870,7 +870,7 @@ namespace chaos
 		}
 	}
 
-	void WindowApplication::SetWindowInternalVisibility(bool visible, char const * name, SubClassOf<Window> window_class)
+	void WindowApplication::SetWindowInternalVisibility(bool visible, char const * name, CreateWindowFunc create_window_func)
 	{
 		Window* existing_window = FindWindow(name);
 
@@ -883,7 +883,7 @@ namespace chaos
 
 				WindowPlacementInfo placement_info;
 				placement_info.size = { 800, 800 };
-				CreateTypedWindow(window_class, placement_info, create_params, name);
+				CreateTypedWindow(create_window_func, placement_info, create_params, name);
 			}
 		}
 		else
@@ -900,23 +900,25 @@ namespace chaos
 
 	bool WindowApplication::SetKnownWindowVisibility(char const* name, bool visible)
 	{
-		return EnumerateKnownWindows([this, name, visible](char const* window_name, SubClassOf<Window> window_class)
+		return EnumerateKnownWindows([this, name, visible](char const* window_name, CreateWindowFunc create_window_func)
 		{
 			// is it the window we are searching?
 			if (StringTools::Stricmp(name, window_name) != 0)
 				return false;
-			SetWindowInternalVisibility(visible, window_name, window_class);
+			SetWindowInternalVisibility(visible, window_name, create_window_func);
 			return true; // stop the search
 		});
 	}
+	
 
-	bool WindowApplication::EnumerateKnownWindows(LightweightFunction<bool(char const * name, SubClassOf<Window> window_class)> func) const
+
+	bool WindowApplication::EnumerateKnownWindows(EnumerateKnownWindowsFunc func) const
 	{
-		return
-			func("Log", SubClassOf<LogWindow>()) ||
-			func("Global Variables", SubClassOf<GlobalVariablesWindow>())
+		return 
+			func("Log", &ImGuiWindow::CreateImGuiWindow<ImGuiLogObject>) ||
+			func("Global Variables", &ImGuiWindow::CreateImGuiWindow<ImGuiGlobalVariablesObject>)
 #if _DEBUG
-			|| func("ImGuiDemo", SubClassOf<ImGuiDemoWindow>())
+			|| func("ImGuiDemo", &ImGuiWindow::CreateImGuiWindow<ImGuiDemoObject>)
 #endif
 			;
 	}
@@ -968,11 +970,11 @@ namespace chaos
 
 			if (ImGui::BeginMenu("Windows"))
 			{
-				EnumerateKnownWindows([this](char const* name, SubClassOf<Window> window_class)
+				EnumerateKnownWindows([this](char const* name, CreateWindowFunc create_window_func)
 				{
 					bool window_exists = (FindWindow(name) != nullptr);
 					if (ImGui::MenuItem(name, nullptr, window_exists, true))
-						SetWindowInternalVisibility(!window_exists, name, window_class);
+						SetWindowInternalVisibility(!window_exists, name, create_window_func);
 					return false; // don't stop the search
 				});
 				ImGui::EndMenu();

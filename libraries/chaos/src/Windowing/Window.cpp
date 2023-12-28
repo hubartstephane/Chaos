@@ -1252,6 +1252,15 @@ namespace chaos
 		});
 
 		RegisterImGuiObjectProxy("Help", ImGuiHelpObject::GetStaticClass());
+
+
+
+
+		RegisterImGuiObjectProxy("Global Variables", ImGuiGlobalVariablesObject::GetStaticClass());
+
+		RegisterImGuiObjectProxy("ImGui Demo", ImGuiDemoObject::GetStaticClass());
+
+		RegisterImGuiObjectProxy("Log", ImGuiLogObject::GetStaticClass());
 	}
 
 	bool Window::OnConfigurationChanged(JSONReadConfiguration config)

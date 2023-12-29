@@ -1,43 +1,41 @@
-#ifdef CHAOS_FORWARD_DECLARATION
-
-// XXX: the following functions don't belong to chaos, so that namespace is properly resolved for basic types
-
-/** implementation of DrawImGui for a string */
-CHAOS_API void DrawImGui(std::string& value);
-/** implementation of DrawImGui for a bool */
-CHAOS_API void DrawImGui(bool& value);
-/** implementation of DrawImGui for a int */
-CHAOS_API void DrawImGui(int& value);
-/** implementation of DrawImGui for a float */
-CHAOS_API void DrawImGui(float& value);
-/** implementation of DrawImGui for a double */
-CHAOS_API void DrawImGui(double& value);
-
-/** a template to display const variables */
-template<typename T>
-void DrawImGui(T const& value)
-{
-	ImGui::BeginDisabled();
-	DrawImGui(*(T*)&value);
-	ImGui::EndDisabled();
-}
-
 namespace chaos
 {
+
+#ifdef CHAOS_FORWARD_DECLARATION
+
+	enum class DrawImGuiVariableFlags;
+
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+	enum class DrawImGuiVariableFlags : int
+	{
+		None = 0,
+		Const = 1
+	};
+
+	CHAOS_DECLARE_ENUM_FLAG_METHOD(DrawImGuiVariableFlags);
+
 	namespace ImGuiTools
 	{
-		/** concept to know whether DrawImGui can be called on a variable */
+		/** concept to know whether there is a function named DrawImGuiVariable that can be called on a variable */
 		template<typename T>
-		concept HasDrawImGuiFunction = requires (T & t)
+		concept HasDrawImGuiVariableImplFunction = requires (T & t)
 		{
-			{DrawImGui(t)};
+			{DrawImGuiVariableImpl(t, DrawImGuiVariableFlags::None)};
 		};
 
-		/** concept to know whether variable has a method called DrawImGui */
+		/** concept to know whether the variable has a method called DrawImGuiVariable */
 		template<typename T>
-		concept HasDrawImGuiMethod = requires (T & t)
+		concept HasDrawImGuiVariableMethod = requires (T & t)
 		{
-			{t.DrawImGui()};
+			{t.DrawImGuiVariable(DrawImGuiVariableFlags::None)};
+		};
+
+		/** concept to know whether there is a way, one way or another to call DrawImGuiVariable on the variable */
+		template<typename T>
+		concept CanDrawImGuiVariable = requires (T & t)
+		{
+			requires HasDrawImGuiVariableImplFunction<T> || HasDrawImGuiVariableMethod<T>;
 		};
 
 		/** ImGUI use 32 bits integers (or strings) for ID's. when using pointers as key, a dedicated function is necessary while pointers are 64 bits */
@@ -48,9 +46,57 @@ namespace chaos
 
 	}; // namespace ImGuiTools
 
-}; // namespace chaos
+	/** implementation of DrawImGui for a string */
+	CHAOS_API void DrawImGuiVariableImpl(std::string& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::None);
+	/** implementation of DrawImGui for a bool */
+	CHAOS_API void DrawImGuiVariableImpl(bool& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::None);
+	/** implementation of DrawImGui for a int */
+	CHAOS_API void DrawImGuiVariableImpl(int& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::None);
+	/** implementation of DrawImGui for a float */
+	CHAOS_API void DrawImGuiVariableImpl(float& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::None);
+	/** implementation of DrawImGui for a double */
+	CHAOS_API void DrawImGuiVariableImpl(double& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::None);
 
-#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
+	/** internal method to call proper function */
+	namespace details
+	{
+		template<typename T>
+		void CallDrawImGuiVariable(T& value, DrawImGuiVariableFlags flags)
+		{
+			if constexpr (ImGuiTools::HasDrawImGuiVariableMethod<T>)
+				value.DrawImGuiVariable(flags); 
+			else if constexpr (ImGuiTools::HasDrawImGuiVariableImplFunction<T>)
+				DrawImGuiVariableImpl(value, flags);
+			else
+				assert(0);
+		}
+
+	}; // namespace details
+
+	/** a template to display const variables */
+	template<typename T>
+	void DrawImGuiVariable(T & value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::None)
+	{
+		if ((flags & DrawImGuiVariableFlags::Const) != DrawImGuiVariableFlags::None)
+		{
+			ImGui::BeginDisabled();
+			details::CallDrawImGuiVariable(value, flags);
+			ImGui::EndDisabled();
+		}
+		else
+		{
+			details::CallDrawImGuiVariable(value, flags);
+		}
+	}
+
+	template<typename T>
+	void DrawImGuiVariable(T const& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::None)
+	{
+		ImGui::BeginDisabled();
+		details::CallDrawImGuiVariable(*(T*)&value, flags | DrawImGuiVariableFlags::Const); // ensure the const flag is properly set
+		ImGui::EndDisabled();
+	}
 
 #endif
 
+}; // namespace chaos

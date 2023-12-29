@@ -1,43 +1,45 @@
 #include "chaos/ChaosPCH.h"
 #include "chaos/ChaosInternals.h"
 
-void DrawImGui(std::string& value)
-{
-	chaos::ImGuiTools::PushID(&value);
-	chaos::ImGuiTools::InputText("", value);
-	ImGui::PopID();
-}
-
-void DrawImGui(bool& value)
-{
-	chaos::ImGuiTools::PushID(&value);
-	ImGui::Checkbox("", &value);
-	ImGui::PopID();
-}
-
-void DrawImGui(int& value)
-{
-	chaos::ImGuiTools::PushID(&value);
-	ImGui::InputInt("", &value);
-	ImGui::PopID();
-}
-
-void DrawImGui(float& value)
-{
-	chaos::ImGuiTools::PushID(&value);
-	ImGui::InputFloat("", &value);
-	ImGui::PopID();
-}
-
-void DrawImGui(double& value)
-{
-	chaos::ImGuiTools::PushID(&value);
-	ImGui::InputDouble("", &value);
-	ImGui::PopID();
-}
-
 namespace chaos
 {
+	CHAOS_IMPLEMENT_ENUM_FLAG_METHOD(DrawImGuiVariableFlags);
+
+	void DrawImGuiVariableImpl(std::string& value, DrawImGuiVariableFlags flags)
+	{
+		chaos::ImGuiTools::PushID(&value);
+		chaos::ImGuiTools::InputText("", value);
+		ImGui::PopID();
+	}
+
+	void DrawImGuiVariableImpl(bool& value, DrawImGuiVariableFlags flags)
+	{
+		chaos::ImGuiTools::PushID(&value);
+		ImGui::Checkbox("", &value);
+		ImGui::PopID();
+	}
+
+	void DrawImGuiVariableImpl(int& value, DrawImGuiVariableFlags flags)
+	{
+		chaos::ImGuiTools::PushID(&value);
+		ImGui::InputInt("", &value);
+		ImGui::PopID();
+	}
+
+	void DrawImGuiVariableImpl(float& value, DrawImGuiVariableFlags flags)
+	{
+		chaos::ImGuiTools::PushID(&value);
+		ImGui::InputFloat("", &value);
+		ImGui::PopID();
+	}
+
+	void DrawImGuiVariableImpl(double& value, DrawImGuiVariableFlags flags)
+	{
+		chaos::ImGuiTools::PushID(&value);
+		ImGui::InputDouble("", &value);
+		ImGui::PopID();
+	}
+
 	namespace ImGuiTools
 	{
 		void PushID(void* ptr) // native ImGui provides PushID(char *) and PushID(void *). Using this ImGuiTools method prevent ambiguity. If a char * pointer was given as parameter, the content

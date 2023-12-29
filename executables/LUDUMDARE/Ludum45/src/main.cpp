@@ -3,11 +3,16 @@
 
 class A
 {
+public:
 
+	void DrawImGuiVariable(chaos::DrawImGuiVariableFlags flags = chaos::DrawImGuiVariableFlags::None) const
+	{
+		ImGui::Text("I am A here");
+	}
 };
 
 
-	void DrawImGui(A& a)
+	void DrawImGuiVariableImpl(A& a, chaos::DrawImGuiVariableFlags flags = chaos::DrawImGuiVariableFlags::None)
 	{
 		ImGui::Text("I am A");
 	}

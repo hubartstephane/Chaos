@@ -19,7 +19,7 @@ namespace chaos
 							ImGui::Text("%s", variable->GetName());
 
 							ImGui::TableNextColumn();
-							imgui_renderer->DrawImGuiVariable(variable);
+							imgui_renderer->DrawVariable(variable);
 						}
 					}
 				}

@@ -10,32 +10,40 @@ namespace chaos
 	enum class DrawImGuiVariableFlags : int
 	{
 		None = 0,
-		Const = 1
+		ReadOnly = 1
 	};
 
 	CHAOS_DECLARE_ENUM_FLAG_METHOD(DrawImGuiVariableFlags);
 
+	// XXX: In order to display variable, the system is looking
+	//       -whether a function named DrawImGuiVariableImpl(...) exists
+	//       -whether a method   named DrawImGuiVariable(...) exists
+	//      both have to be NON CONST. 
+	//      The system will be able to work with CONST data, but the controls inside will be disabled
+	//      (thoses functions should so not modified data by themselves)
+
 	namespace ImGuiTools
 	{
-		/** concept to know whether there is a function named DrawImGuiVariable that can be called on a variable */
+		/** check whether there is a function named DrawImGuiVariableImpl */
 		template<typename T>
-		concept HasDrawImGuiVariableImplFunction = requires (T & t)
+		concept HasDrawImGuiVariableImplFunction = requires(std::remove_const<T>::type & t)
 		{
-			{DrawImGuiVariableImpl(t, DrawImGuiVariableFlags::None)};
+			{DrawImGuiVariableImpl(t, chaos::DrawImGuiVariableFlags::None)};
 		};
 
-		/** concept to know whether the variable has a method called DrawImGuiVariable */
+		/** check whether there is a method named DrawImGuiVariable */
 		template<typename T>
-		concept HasDrawImGuiVariableMethod = requires (T & t)
+		concept HasDrawImGuiVariableMethod = requires(std::remove_const<T>::type & t)
 		{
-			{t.DrawImGuiVariable(DrawImGuiVariableFlags::None)};
+			{t.DrawImGuiVariable(chaos::DrawImGuiVariableFlags::None)};
 		};
 
-		/** concept to know whether there is a way, one way or another to call DrawImGuiVariable on the variable */
 		template<typename T>
-		concept CanDrawImGuiVariable = requires (T & t)
+		concept CanDrawImGuiVariable = requires()
 		{
-			requires HasDrawImGuiVariableImplFunction<T> || HasDrawImGuiVariableMethod<T>;
+			requires
+				HasDrawImGuiVariableImplFunction<T> ||
+				HasDrawImGuiVariableMethod<T>;
 		};
 
 		/** ImGUI use 32 bits integers (or strings) for ID's. when using pointers as key, a dedicated function is necessary while pointers are 64 bits */
@@ -57,43 +65,54 @@ namespace chaos
 	/** implementation of DrawImGui for a double */
 	CHAOS_API void DrawImGuiVariableImpl(double& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::None);
 
-	/** internal method to call proper function */
-	namespace details
-	{
-		template<typename T>
-		void CallDrawImGuiVariable(T& value, DrawImGuiVariableFlags flags)
-		{
-			if constexpr (ImGuiTools::HasDrawImGuiVariableMethod<T>)
-				value.DrawImGuiVariable(flags); 
-			else if constexpr (ImGuiTools::HasDrawImGuiVariableImplFunction<T>)
-				DrawImGuiVariableImpl(value, flags);
-			else
-				assert(0);
-		}
-
-	}; // namespace details
-
 	/** a template to display const variables */
 	template<typename T>
 	void DrawImGuiVariable(T & value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::None)
 	{
-		if ((flags & DrawImGuiVariableFlags::Const) != DrawImGuiVariableFlags::None)
+		if ((flags & DrawImGuiVariableFlags::ReadOnly) != DrawImGuiVariableFlags::None)
 		{
 			ImGui::BeginDisabled();
-			details::CallDrawImGuiVariable(value, flags);
-			ImGui::EndDisabled();
+		}
+
+		if constexpr (ImGuiTools::HasDrawImGuiVariableMethod<T>)
+		{
+			value.DrawImGuiVariable(flags);
+		}
+		else if constexpr (ImGuiTools::HasDrawImGuiVariableImplFunction<T>)
+		{
+			DrawImGuiVariableImpl(value, flags);
 		}
 		else
 		{
-			details::CallDrawImGuiVariable(value, flags);
+			assert(0);
+		}
+
+		if ((flags & DrawImGuiVariableFlags::ReadOnly) != DrawImGuiVariableFlags::None)
+		{
+			ImGui::EndDisabled();
 		}
 	}
 
 	template<typename T>
 	void DrawImGuiVariable(T const& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::None)
 	{
-		ImGui::BeginDisabled();
-		details::CallDrawImGuiVariable(*(T*)&value, flags | DrawImGuiVariableFlags::Const); // ensure the const flag is properly set
+		ImGui::BeginDisabled(); // while we are about to call some mutable function/method on a const data, we prevent UI operations to make changes
+
+		flags |= DrawImGuiVariableFlags::ReadOnly; // ensure flag is coherent
+
+		if constexpr (ImGuiTools::HasDrawImGuiVariableMethod<T>)
+		{
+			((T&)value).DrawImGuiVariable(flags); // XXX: call a MUTABLE method from a CONST reference !
+		}
+		else if constexpr (ImGuiTools::HasDrawImGuiVariableImplFunction<T>)
+		{
+			DrawImGuiVariableImpl((T&)value, flags); // XXX: call a MUTABLE function from a CONST reference !			
+		}
+		else
+		{
+			assert(0);
+		}
+
 		ImGui::EndDisabled();
 	}
 

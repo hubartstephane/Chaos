@@ -1,28 +1,73 @@
 #include "Ludum45PCH.h"
 #include "Ludum45Game.h"
 
-class A
+namespace toto
 {
-public:
 
-	void DrawImGuiVariable(chaos::DrawImGuiVariableFlags flags = chaos::DrawImGuiVariableFlags::None) const
+#define WITH_METHOD 1
+
+	// ----------------------------------------------------
+
+	class A
 	{
-		ImGui::Text("I am A here");
-	}
-};
+	public:
 
+		void DrawImGuiVariable(chaos::DrawImGuiVariableFlags flags = chaos::DrawImGuiVariableFlags::None)
+		{
+			ImGui::Text("Method A"); ImGui::SameLine();
+			chaos::DrawImGuiVariable(i, flags);
+		}
 
-	void DrawImGuiVariableImpl(A& a, chaos::DrawImGuiVariableFlags flags = chaos::DrawImGuiVariableFlags::None)
+		int i = 777;
+	};
+
+	// ----------------------------------------------------
+
+	class B
 	{
-		ImGui::Text("I am A");
+	public:
+
+		int i = 666;
+	
+	};
+
+	void DrawImGuiVariableImpl(B & b, chaos::DrawImGuiVariableFlags flags = chaos::DrawImGuiVariableFlags::None)
+	{
+		ImGui::Text("Function B"); ImGui::SameLine();
+		chaos::DrawImGuiVariable(b.i, flags);
 	}
 
+	// ----------------------------------------------------
 
-CHAOS_GLOBAL_VARIABLE(A, aaa);
-CHAOS_GLOBAL_VARIABLE(glm::vec2, v2);
-CHAOS_GLOBAL_VARIABLE(glm::int3, i3);
-CHAOS_GLOBAL_VARIABLE(glm::double4, d4);
-CHAOS_GLOBAL_VARIABLE(std::string, str, "toto truc");
+	class C
+	{
+	public:
+
+	};
+
+}; // namespace toto
+
+using ATYPE = toto::A;
+using BTYPE = toto::B;
+using CTYPE = toto::C;
+
+CHAOS_GLOBAL_VARIABLE(ATYPE, A1);
+CHAOS_GLOBAL_VARIABLE(BTYPE, B1);
+CHAOS_GLOBAL_VARIABLE(CTYPE, C1);
+CHAOS_GLOBAL_VARIABLE(const ATYPE, A2);
+CHAOS_GLOBAL_VARIABLE(const BTYPE, B2);
+CHAOS_GLOBAL_VARIABLE(const CTYPE, C2);
+
+CHAOS_GLOBAL_VARIABLE(glm::vec2, vec2_1);
+CHAOS_GLOBAL_VARIABLE(glm::int3, int3_1);
+CHAOS_GLOBAL_VARIABLE(glm::double4, double4_1);
+CHAOS_GLOBAL_VARIABLE(std::string, string_1, "mutable string");
+
+CHAOS_GLOBAL_VARIABLE(glm::vec2 const, vec2_2);
+CHAOS_GLOBAL_VARIABLE(glm::int3 const, int_2);
+CHAOS_GLOBAL_VARIABLE(glm::double4 const, double4_2);
+CHAOS_GLOBAL_VARIABLE(std::string const, string_2, "const string");
+
 
 
 int main(int argc, char ** argv, char ** env)

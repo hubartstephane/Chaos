@@ -22,7 +22,10 @@ namespace chaos
 	void DrawImGuiVariableImpl(int& value, DrawImGuiVariableFlags flags)
 	{
 		chaos::ImGuiTools::PushID(&value);
-		ImGui::InputInt("", &value);
+		if ((flags & DrawImGuiVariableFlags::ReadOnly) != DrawImGuiVariableFlags::None)
+			ImGui::InputInt("", &value, 0, 0); // prevent showing the + and - buttons
+		else
+			ImGui::InputInt("", &value); 
 		ImGui::PopID();
 	}
 

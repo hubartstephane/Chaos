@@ -31,6 +31,8 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 
 		/** the main method to override */
 		virtual void DrawVariable(GlobalVariableBase* target) const = 0;
+		/** check whether to variable can be displayed */
+		virtual bool CanDrawVariable() const = 0;
 
 	protected:
 
@@ -52,13 +54,20 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 	{
 	public:
 
-		virtual void DrawVariable(GlobalVariableBase* target) const
+		/** override */
+		virtual void DrawVariable(GlobalVariableBase* target) const override
 		{
 			if constexpr (ImGuiTools::CanDrawImGuiVariable<T>)
 			{
 				T& target_value = ((GlobalVariable<T> *)target)->Get();
 				DrawImGuiVariable(target_value, DrawImGuiVariableFlags::None);
 			}
+		}
+
+		/** override */
+		virtual bool CanDrawVariable() const override
+		{
+			return ImGuiTools::CanDrawImGuiVariable<T>;
 		}
 	};
 

@@ -15,11 +15,14 @@ namespace chaos
 					{
 						if (GlobalVariableImGuiRendererBase const* imgui_renderer = variable_info->GetImGuiRenderer())
 						{
-							ImGui::TableNextColumn();
-							ImGui::Text("%s", variable->GetName());
+							if (imgui_renderer->CanDrawVariable())
+							{
+								ImGui::TableNextColumn();
+								ImGui::Text("%s", variable->GetName());
 
-							ImGui::TableNextColumn();
-							imgui_renderer->DrawVariable(variable);
+								ImGui::TableNextColumn();
+								imgui_renderer->DrawVariable(variable);
+							}
 						}
 					}
 				}

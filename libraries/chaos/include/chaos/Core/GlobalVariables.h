@@ -20,6 +20,16 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
+	 * IsStreamable: check whether an object can be read from a stream
+	 */
+
+	template<typename T>
+	concept IsStreamable = requires(std::istream & str, T & value)
+	{
+		{str >> value};
+	};
+
+	/**
 	 * GlobalVariableImGuiRendererBase: a base class dedicated to render GlobalVariable with ImGui
 	 */
 
@@ -156,34 +166,38 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 		/** override */
 		virtual void RegisterProgramOption(boost::program_options::options_description& desc) override
 		{
-#if 0
 			if constexpr (meta::is_vector_type_v<T>)
 			{
-				// zero_tokens
-				//   accepts empty lists as
-				//     --PARAM
-				// composing
-				//    --PARAM a b c --PARAM d e
-				//   is equivalent to
-				//    --PARAM a b c d e
-				desc.add_options()
-					(GetName(), boost::program_options::value<T>(&value)->multitoken()->zero_tokens()->composing(), "");
+				if constexpr (IsStreamable<T>)
+				{
+					// zero_tokens
+					//   accepts empty lists as
+					//     --PARAM
+					// composing
+					//    --PARAM a b c --PARAM d e
+					//   is equivalent to
+					//    --PARAM a b c d e
+					desc.add_options()
+						(GetName(), boost::program_options::value<T>(&value)->multitoken()->zero_tokens()->composing(), "");
+				}
 			}
-			else if constexpr (std::is_same_v<T, bool>)
+			else if constexpr (IsStreamable<T>)
 			{
-				// implicit value:
-				//     --PARAM
-				//   is equivalent to
-				//     --PARAM true
-				desc.add_options()
-					(GetName(), boost::program_options::value<T>(&value)->implicit_value(true), "");
+				if constexpr (std::is_same_v<T, bool>)
+				{
+					// implicit value:
+					//     --PARAM
+					//   is equivalent to
+					//     --PARAM true
+					desc.add_options()
+						(GetName(), boost::program_options::value<T>(&value)->implicit_value(true), "");
+				}
+				else
+				{
+					desc.add_options()
+						(GetName(), boost::program_options::value<T>(&value), "");
+				}
 			}
-			else
-			{
-				desc.add_options()
-					(GetName(), boost::program_options::value<T>(&value), "");
-			}
-#endif
 		}
 
 		/** const getter */

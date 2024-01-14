@@ -239,19 +239,11 @@ namespace chaos
 		/** get the cursor mode */
 		CursorMode GetCursorMode() const;
 
-
-
-
 		/** draw ImGui */
 		virtual void DrawWindowImGui();
 
-
-
-
-
-
 		/** gets the category of the window */
-		virtual WindowCategory GetWindowCategory() const { return WindowCategory::MAIN_WINDOW; };
+		WindowCategory GetWindowCategory() const { return window_category; };
 
 	protected:
 
@@ -411,6 +403,8 @@ namespace chaos
 		CursorMode cursor_mode = CursorMode::Normal;
 		/** a counter that prevent destruction of the window resources */
 		int window_destruction_guard = 0;
+		/** the window category */
+		WindowCategory window_category = WindowCategory::MAIN_WINDOW;
 	};
 
 #endif

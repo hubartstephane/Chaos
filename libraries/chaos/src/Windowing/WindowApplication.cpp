@@ -392,33 +392,8 @@ namespace chaos
 		return true;
 	}
 
-	namespace GlobalVariables
-	{
-		CHAOS_GLOBAL_VARIABLE(bool, UseCachedAtlas, false);
-#if !_DEBUG
-		CHAOS_GLOBAL_VARIABLE(bool, DumpCachedAtlas, false);
-#endif
-	};
-
 	bool WindowApplication::CreateTextureAtlas()
 	{
-		char const* CachedAtlasFilename = "CachedAtlas";
-
-		// Try to load already computed data
-		if (GlobalVariables::UseCachedAtlas.Get())
-		{
-			BitmapAtlas::TextureArrayAtlas* tmp_texture_atlas = new BitmapAtlas::TextureArrayAtlas;
-			if (tmp_texture_atlas != nullptr)
-			{
-				if (tmp_texture_atlas->LoadAtlas(GetUserLocalTempPath() / CachedAtlasFilename))
-				{
-					texture_atlas = tmp_texture_atlas;
-					return true;
-				}
-				delete(tmp_texture_atlas);
-			}
-		}
-
 		// fill sub images for atlas generation
 		BitmapAtlas::AtlasInput input;
 		if (!FillAtlasGeneratorInput(input))
@@ -433,18 +408,9 @@ namespace chaos
 		if (JSONReadConfiguration atlas_config = JSONTools::GetAttributeStructureNode(GetJSONReadConfiguration(), "atlas"))
 			LoadFromJSON(atlas_config, params);
 
-		// atlas generation params : maybe a dump
-		char const* dump_atlas_dirname = nullptr;
-#if _DEBUG
-		dump_atlas_dirname = CachedAtlasFilename;
-#else
-		if (GlobalVariables::DumpCachedAtlas.Get())
-			dump_atlas_dirname = CachedAtlasFilename;
-#endif
-
 		// generate the atlas
 		BitmapAtlas::TextureArrayAtlasGenerator generator;
-		texture_atlas = generator.ComputeResult(input, params, dump_atlas_dirname);
+		texture_atlas = generator.ComputeResult(input, params);
 		if (texture_atlas == nullptr)
 			return false;
 

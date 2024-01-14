@@ -138,13 +138,6 @@ namespace chaos
 		boost::filesystem::path redirection_build_path;
 		std::vector<boost::filesystem::path> redirection_source_paths;
 #endif
-
-		/** whether to show the console by default (can be overriden in constructor) */
-#if _DEBUG
-		bool show_console = true;
-#else
-		bool show_console = false;
-#endif
 	};
 
 	template<typename APPLICATION_TYPE, typename ...PARAMS>

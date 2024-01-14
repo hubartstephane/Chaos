@@ -627,21 +627,9 @@ namespace chaos
 		best_score = std::max(best_score, GetBestPlayerScore());
 	}
 
-	namespace GlobalVariables
-	{
-#if _DEBUG
-		CHAOS_GLOBAL_VARIABLE(bool, MuteMusic, false);
-#endif
-	};
-
 	Sound * Game::SetInGameMusic(char const * music_name)
 	{
 		assert(music_name != nullptr);
-
-#if _DEBUG
-		if (GlobalVariables::MuteMusic.Get())
-			return nullptr;
-#endif
 
 		// ensure there is a real music change
 		if (game_music != nullptr && !game_music->IsPendingKill())
@@ -767,14 +755,6 @@ namespace chaos
 	void Game::OnEnterMainMenu(bool very_first)
 	{
 		// start the music
-#if _DEBUG
-		if (GlobalVariables::MuteMusic.Get())
-			menu_music = nullptr;
-		else
-#endif
-
-			// shu49 ca vaudrait le coup que ca soit en fichier de conf non ?
-
 		menu_music = PlaySound("menu_music", false, true, 0.0f, SoundContext::MAINMENU);
 		game_music = nullptr;
 		pause_music = nullptr;
@@ -809,13 +789,6 @@ namespace chaos
 	bool Game::OnEnterPause()
 	{
 		// start sound
-#if _DEBUG
-		if (GlobalVariables::MuteMusic.Get())
-			pause_music = nullptr;
-		else
-#endif
-
-			// shu49 ca vaudrait le coup de mettre ca en fichier de conf
 		pause_music = PlaySound("pause_music", false, true, 0.0f, SoundContext::PAUSEMENU);
 		// internal code
 		CreatePauseMenuHUD();

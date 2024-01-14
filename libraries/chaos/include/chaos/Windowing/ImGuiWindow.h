@@ -15,8 +15,8 @@ namespace chaos
 
 	public:
 
-		/** override */
-		virtual WindowCategory GetWindowCategory() const override;
+		/** constructor */
+		ImGuiWindow();
 
 		/** get the content */
 		AutoCastable<ImGuiObject> GetContent() { return content.get(); }

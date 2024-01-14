@@ -82,16 +82,6 @@ namespace chaos
 		return true;
 	}
 
-	namespace GlobalVariables
-	{
-		CHAOS_GLOBAL_VARIABLE(bool, ShowConsole, false);
-		CHAOS_GLOBAL_VARIABLE(bool, HideConsole, false);
-		CHAOS_GLOBAL_VARIABLE(bool, DumpConfigFile, false);
-		CHAOS_GLOBAL_VARIABLE(bool, ShowDirectories, false);
-		CHAOS_GLOBAL_VARIABLE(bool, ShowUserTempDirectory, false);
-		CHAOS_GLOBAL_VARIABLE(bool, ShowInstalledResourcesDirectory, false);
-	};
-
 	bool Application::Initialize()
 	{
 		// prepare the logger
@@ -102,15 +92,7 @@ namespace chaos
 		HelpText::OutputToLogs();
 
 		// show console
-		bool will_show_console = show_console;
-		if (GlobalVariables::ShowConsole.Get())
-			will_show_console = true;
-		else if (GlobalVariables::HideConsole.Get())
-			will_show_console = false;
-
-		will_show_console = false;
-
-		if (will_show_console)
+		if (false)
 			WinTools::AllocConsoleAndRedirectStdOutput();
 
 		// some log
@@ -143,18 +125,6 @@ namespace chaos
 			Log::Error("InitializeManagers(...) failure");
 			return false;
 		}
-		// open user temp directory and dump the config file
-		boost::filesystem::path user_temp = GetUserLocalPath(); // XXX : this directory is necessary for some per application data
-#if _DEBUG
-		// display the directories to help debugging
-		bool dump_config = GlobalVariables::DumpConfigFile.Get();
-		if (dump_config)
-			JSONTools::DumpConfigFile(GetJSONReadConfiguration().default_config);
-		if (dump_config || GlobalVariables::ShowDirectories.Get() || GlobalVariables::ShowUserTempDirectory.Get())
-			WinTools::ShowFile(user_temp);
-		if (GlobalVariables::ShowDirectories.Get() || GlobalVariables::ShowInstalledResourcesDirectory.Get())
-			WinTools::ShowFile(GetResourcesPath());
-#endif
 		return true;
 	}
 

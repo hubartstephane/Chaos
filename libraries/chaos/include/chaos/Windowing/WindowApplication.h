@@ -136,6 +136,9 @@ namespace chaos
 		/** destroy all windows */
 		void DestroyAllWindows();
 
+		/** search whether there is at least one main window */
+		bool HasMainWindow() const;
+
 	protected:
 
 		/** Main method */

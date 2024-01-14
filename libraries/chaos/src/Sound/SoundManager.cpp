@@ -6,7 +6,7 @@ namespace chaos
 	namespace GlobalVariables
 	{
 #if _DEBUG
-		CHAOS_GLOBAL_VARIABLE(bool, Mute, true)
+		CHAOS_GLOBAL_VARIABLE(bool, Mute, false)
 #endif
 	};
 

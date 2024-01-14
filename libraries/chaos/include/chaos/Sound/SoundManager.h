@@ -426,6 +426,9 @@ namespace chaos
 
 		/** the irrklang sound */
 		shared_ptr<irrklang::ISound> irrklang_sound;
+
+		/** the volume that has been sent to irrklang */
+		float cached_effective_volume = 0.0f;
 	};
 
 	// ==============================================================

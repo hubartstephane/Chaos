@@ -5,9 +5,7 @@ namespace chaos
 {
 	namespace GlobalVariables
 	{
-#if _DEBUG
 		CHAOS_GLOBAL_VARIABLE(bool, Mute, false)
-#endif
 	};
 
 	// ==============================================================
@@ -124,35 +122,31 @@ namespace chaos
 
 	void SoundObject::TickObject(float delta_time)
 	{
-		// early exit
-		if (!HasVolumeBlending())
-			return;
-
-		float speed = 1.0f / blend_desc.blend_time;
-		float delta_blend = delta_time * speed;
-
-		// keep trace of the effective volume before blending is done
-		float old_effective_volume = GetEffectiveVolume();
-		// update the blend data
-		if (blend_desc.blend_type == SoundBlendType::BLEND_IN)
+		// blend effects
+		if (HasVolumeBlending())
 		{
-			blend_value = std::clamp(blend_value + delta_blend, 0.0f, 1.0f);
-			if (blend_value >= 1.0f)
-				OnBlendFinished();
+			float speed = 1.0f / blend_desc.blend_time;
+			float delta_blend = delta_time * speed;
+
+			// update the blend data
+			if (blend_desc.blend_type == SoundBlendType::BLEND_IN)
+			{
+				blend_value = std::clamp(blend_value + delta_blend, 0.0f, 1.0f);
+				if (blend_value >= 1.0f)
+					OnBlendFinished();
+			}
+			else if (blend_desc.blend_type == SoundBlendType::BLEND_OUT)
+			{
+				blend_value = std::clamp(blend_value - delta_blend, 0.0f, 1.0f);
+				if (blend_value <= 0.0f)
+					OnBlendFinished();
+			}
+			// at this point the object may not be in manager anymore (due to DoTickObjects(...) its destruction should be prevented
+			if (!IsAttachedToManager())
+				return;
 		}
-		else if (blend_desc.blend_type == SoundBlendType::BLEND_OUT)
-		{
-			blend_value = std::clamp(blend_value - delta_blend, 0.0f, 1.0f);
-			if (blend_value <= 0.0f)
-				OnBlendFinished();
-		}
-		// at this point the object may not be in manager anymore (due to DoTickObjects(...) its destruction should be prevented
-		if (!IsAttachedToManager())
-			return;
 		// compare effective volume change
-		float new_effective_volume = GetEffectiveVolume();
-		if (old_effective_volume != new_effective_volume)
-			DoUpdateEffectiveVolume(new_effective_volume);
+		DoUpdateEffectiveVolume(GetEffectiveVolume());
 	}
 
 	void SoundObject::OnBlendFinished()
@@ -259,12 +253,8 @@ namespace chaos
 		if (in_volume == volume)
 			return;
 		// change the volume state
-		float old_effective_volume = GetEffectiveVolume();
 		volume = in_volume;
-		float new_effective_volume = GetEffectiveVolume();
-		// trigger changes
-		if (old_effective_volume != new_effective_volume)
-			DoUpdateEffectiveVolume(new_effective_volume);
+		DoUpdateEffectiveVolume(GetEffectiveVolume());
 	}
 
 	void SoundObject::DoUpdateEffectiveVolume(float effective_volume)
@@ -281,6 +271,9 @@ namespace chaos
 
 	float SoundObject::GetEffectiveVolume() const
 	{
+		if (GlobalVariables::Mute.Get())
+			return 0.0f;
+
 		float result = SoundObject::GetVolume();
 		result *= blend_value;
 		return result;
@@ -698,10 +691,6 @@ namespace chaos
 		bool  effective_pause  = IsEffectivePaused();
 		float effective_volume = GetEffectiveVolume();
 
-#if _DEBUG
-		if (GlobalVariables::Mute.Get())
-			effective_volume = 0.0f;
-#endif
 		// play sound
 		bool track = true;
 		bool sound_effect = true;
@@ -755,12 +744,12 @@ namespace chaos
 
 	void Sound::DoUpdateEffectiveVolume(float effective_volume)
 	{
-#if _DEBUG
-		if (GlobalVariables::Mute.Get())
-			effective_volume = 0.0f;
-#endif
-		if (irrklang_sound != nullptr)
-			irrklang_sound->setVolume((irrklang::ik_f32)effective_volume);
+		if (cached_effective_volume != effective_volume)
+		{
+			cached_effective_volume = effective_volume;
+			if (irrklang_sound != nullptr)
+				irrklang_sound->setVolume((irrklang::ik_f32)effective_volume);
+		}
 	}
 
 	void Sound::DoUpdateIrrklangPause(bool effective_pause)

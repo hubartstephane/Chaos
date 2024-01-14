@@ -40,6 +40,8 @@ namespace chaos
 
 	public:
 
+		/** index of the line for the logger */
+		size_t line_index = 0;
 		/** the date of post */
 		std::chrono::system_clock::time_point time;
 		/** the type of the message */
@@ -120,6 +122,8 @@ namespace chaos
 
 		/** an additionnal output */
 		std::ofstream output_file;
+		/** last line index handled */
+		std::optional<size_t> last_line_index_handled;
 	};
 
 	/**
@@ -238,6 +242,8 @@ namespace chaos
 		char const* transaction_domain = nullptr;
 		/** the transaction information */
 		std::string transaction_content;
+		/** the index to give to the next line */
+		size_t next_line_index = 0;
 	};
 
 	/**

@@ -86,12 +86,8 @@ namespace chaos
 		{
 			output_file.open(log_path.c_str(), std::ofstream::binary | std::ofstream::trunc);
 			if (output_file.is_open())
-			{
 				for (LogLine const& line : in_logger->GetLines())
-				{
-					output_file << line.ToString() << "\n\n";
-				}
-			}
+					OnNewLine(line);
 		}
 	}
 
@@ -102,9 +98,13 @@ namespace chaos
 
 	void FileLoggerListener::OnNewLine(LogLine const& line)
 	{
-		if (output_file.is_open())
+		if (!last_line_index_handled.has_value() || line.line_index > last_line_index_handled.value())
 		{
-			output_file << line.ToString() << "\n\n";
+			if (output_file.is_open())
+			{
+				output_file << line.ToString() << "\n\n";
+				last_line_index_handled = std::max(last_line_index_handled.value_or(line.line_index), line.line_index);
+			}
 		}
 	}
 
@@ -222,6 +222,7 @@ namespace chaos
 	{
 		// register the new line
 		LogLine new_line;
+		new_line.line_index = next_line_index++;
 		new_line.type = type;
 		new_line.content = buffer;
 		new_line.time = std::chrono::system_clock::now();

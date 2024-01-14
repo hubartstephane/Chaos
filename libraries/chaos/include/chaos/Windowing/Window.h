@@ -244,6 +244,8 @@ namespace chaos
 
 		/** gets the category of the window */
 		WindowCategory GetWindowCategory() const { return window_category; };
+		/** gets the category of the window */
+		void SetWindowCategory(WindowCategory in_window_category){ window_category = in_window_category; };
 
 	protected:
 

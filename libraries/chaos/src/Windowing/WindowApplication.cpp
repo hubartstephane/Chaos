@@ -265,6 +265,13 @@ namespace chaos
 		Window * main_window = CreateMainWindow();
 		if (main_window == nullptr)
 			return -1;
+
+		// open windows that were there during previous session (after main window because main window can take a few second to initialize)
+		std::vector<std::string> opened_window;
+		if (JSONTools::GetAttribute(GetJSONReadConfiguration(), "opened_window", opened_window))
+			for (std::string const& name : opened_window)
+				SetKnownWindowVisibility(name.c_str(), true);
+
 		// run the main loop as long as there are main windows
 		RunMessageLoop([this]()
 		{
@@ -305,11 +312,11 @@ namespace chaos
 			if (GetArguments().size() > 0)
 			{
 				title_storage = PathTools::PathToName(GetArguments()[0]);
-				create_params.title = title_storage.c_str();
+				create_params.title = std::move(title_storage);
 			}
 		}
 		// create the window
-		return CreateTypedWindow(main_window_class, main_window_placement_info, main_window_create_params, "main_window");
+		return CreateTypedWindow(main_window_class, main_window_placement_info, create_params, "main_window");
 	}
 
 	bool WindowApplication::InitializeGamepadButtonMap()
@@ -551,14 +558,6 @@ namespace chaos
 		JSONTools::GetAttribute(config, "max_tick_duration", max_tick_duration);
 		JSONTools::GetAttribute(config, "forced_tick_duration", forced_tick_duration);
 
-		// open windows that were there during previous session
-		if (context == ReadConfigurablePropertiesContext::INITIALIZATION)
-		{
-			std::vector<std::string> opened_window;
-			if (JSONTools::GetAttribute(config, "opened_window", opened_window))
-				for (std::string const& name : opened_window)
-					SetKnownWindowVisibility(name.c_str(), true);
-		}
 		return true;
 	}
 

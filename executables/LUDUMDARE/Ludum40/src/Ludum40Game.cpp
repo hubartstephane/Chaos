@@ -547,12 +547,8 @@ bool Game::GenerateAtlas(boost::filesystem::path const & path)
 	}
 
 	// generate STD Atlas
-	char const* dump_atlas_dirname = nullptr;
-#if _DEBUG
-	//dump_atlas_dirname = "LudumAtlas";
-#endif
 	chaos::BitmapAtlas::TextureArrayAtlasGenerator generator;
-	texture_atlas = generator.ComputeResult(input, params, dump_atlas_dirname);
+	texture_atlas = generator.ComputeResult(input, params);
 	if (texture_atlas == nullptr)
 		return false;
 

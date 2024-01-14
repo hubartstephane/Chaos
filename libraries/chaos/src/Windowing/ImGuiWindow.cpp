@@ -3,10 +3,10 @@
 
 namespace chaos
 {
-	WindowCategory ImGuiWindow::GetWindowCategory() const
+	ImGuiWindow::ImGuiWindow()
 	{
-		return WindowCategory::OPTIONAL_WINDOW;
-	};
+		window_category = WindowCategory::OPTIONAL_WINDOW;
+	}
 
 	void ImGuiWindow::SetContent(ImGuiObject* in_content)
 	{

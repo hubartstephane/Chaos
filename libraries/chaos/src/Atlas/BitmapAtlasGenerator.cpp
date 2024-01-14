@@ -719,21 +719,13 @@ namespace chaos
 		// TextureArrayAtlasGenerator implementation
 		// ========================================================================
 
-		TextureArrayAtlas * TextureArrayAtlasGenerator::ComputeResult(AtlasInput const & in_input, AtlasGeneratorParams const & in_params, char const * dump_atlas_dirname)
+		TextureArrayAtlas * TextureArrayAtlasGenerator::ComputeResult(AtlasInput const & in_input, AtlasGeneratorParams const & in_params)
 		{
 			// generate a standard atlas to be converted
 			BitmapAtlas::Atlas          atlas;
 			BitmapAtlas::AtlasGenerator generator;
 			if (!generator.ComputeResult(in_input, atlas, in_params))
 				return nullptr;
-
-			// dump the atlas on disk
-			if (dump_atlas_dirname != nullptr)
-			{
-				Application* application = Application::GetInstance();
-				if (application != nullptr)
-					atlas.SaveAtlas(application->GetUserLocalTempPath() / dump_atlas_dirname);
-			}
 
 			// generate texture Atlas
 			BitmapAtlas::TextureArrayAtlas * result = new BitmapAtlas::TextureArrayAtlas;

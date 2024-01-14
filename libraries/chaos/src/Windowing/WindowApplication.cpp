@@ -86,7 +86,7 @@ namespace chaos
 			{
 				if (window->ShouldClose())
 					window->Destroy();
-				});
+			});
 
 			// tick the windows
 			ForAllWindows([delta_time, real_delta_time](Window* window)
@@ -186,17 +186,14 @@ namespace chaos
 		window->Finalize();
 		window->DestroyImGuiContext();
 		window->DestroyGLFWWindow();
+	}
 
-		// check whether the whole application should be left
-		if (!is_quitting)
-		{
-			// check whether there is still any main window
-			for (shared_ptr<Window> const& window : windows)
-				if (window->GetWindowCategory() == WindowCategory::MAIN_WINDOW)
-					return;
-			// save some window session data and DestroyAllWindows()
-			Quit();
-		}
+	bool WindowApplication::HasMainWindow() const
+	{
+		for (shared_ptr<Window> const& window : windows)
+			if (window->GetWindowCategory() == WindowCategory::MAIN_WINDOW)
+				return true;
+		return false;
 	}
 
 	void WindowApplication::OnWindowCreated(Window* window)
@@ -268,11 +265,14 @@ namespace chaos
 		Window * main_window = CreateMainWindow();
 		if (main_window == nullptr)
 			return -1;
-		// run the main loop as long as there are windows
+		// run the main loop as long as there are main windows
 		RunMessageLoop([this]()
 		{
-			return (windows.size() > 0);
+			return HasMainWindow();
 		});
+		// destroy remaining windows
+		Quit();
+
 		return 0;
 	}
 

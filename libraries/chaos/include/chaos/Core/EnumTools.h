@@ -7,11 +7,11 @@ namespace chaos
 	template<typename T>
 	using EnumMetaData = std::vector<std::pair<T, char const*>>;
 
-	template<typename T, typename ENCODE_TABLE>
-	bool ConvertStringToEnum(char const* src, ENCODE_TABLE const& encode_table, T& dst);
+	template<typename T, typename METADATA>
+	bool ConvertStringToEnum(char const* src, METADATA const& metadata, T& dst);
 
-	template<typename T, typename ENCODE_TABLE>
-	char const * ConvertEnumToString(T src, ENCODE_TABLE const& encode_table);
+	template<typename T, typename METADATA>
+	char const * ConvertEnumToString(T src, METADATA const& metadata);
 
 #define CHAOS_DECLARE_ENUM_FLAG_METHOD(enum_type)\
 CHAOS_API enum_type operator|(enum_type a, enum_type b);\
@@ -29,29 +29,34 @@ CHAOS_API enum_type& operator&=(enum_type& a, enum_type b) { a = a & b; return a
 
 #define CHAOS_DECLARE_ENUM_METHOD(enum_type)\
 CHAOS_API bool StringToEnum(char const * src, enum_type& dst);\
-CHAOS_API char const * EnumToString(enum_type src);
+CHAOS_API char const * EnumToString(enum_type src);\
+CHAOS_API chaos::EnumTools::EnumMetaData<enum_type> const & GetEnumMetaData(boost::mpl::identity<enum_type>);
 
-#define CHAOS_IMPLEMENT_ENUM_METHOD(enum_type, table_name)\
+#define CHAOS_IMPLEMENT_ENUM_METHOD(enum_type, metadata)\
 CHAOS_API bool StringToEnum(char const * src, enum_type& dst)\
 {\
-	return chaos::EnumTools::ConvertStringToEnum(src, table_name, dst);\
+	return chaos::EnumTools::ConvertStringToEnum(src, metadata, dst);\
 }\
 CHAOS_API char const * EnumToString(enum_type src)\
 {\
-	return chaos::EnumTools::ConvertEnumToString(src, table_name);\
+	return chaos::EnumTools::ConvertEnumToString(src, metadata);\
+}\
+CHAOS_API chaos::EnumTools::EnumMetaData<enum_type> const& GetEnumMetaData(boost::mpl::identity<enum_type>)\
+{\
+	return metadata;\
 }
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/** decode a value with a conversion table */
-	template<typename T, typename ENCODE_TABLE>
-	bool ConvertStringToEnum(char const * src, ENCODE_TABLE const & encode_table, T & dst)
+	template<typename T, typename METADATA>
+	bool ConvertStringToEnum(char const * src, METADATA const & metadata, T & dst)
 	{
-		for (auto const & encode : encode_table)
+		for (auto const & data : metadata)
 		{
-			if (StringTools::Stricmp(src, encode.second) == 0)
+			if (StringTools::Stricmp(src, data.second) == 0)
 			{
-				dst = encode.first;
+				dst = data.first;
 				return true;
 			}
 		}
@@ -59,14 +64,14 @@ CHAOS_API char const * EnumToString(enum_type src)\
 	}
 
 	/** encode a value with a conversion table */
-	template<typename T, typename ENCODE_TABLE>
-	char const * ConvertEnumToString(T src, ENCODE_TABLE const & encode_table)
+	template<typename T, typename METADATA>
+	char const * ConvertEnumToString(T src, METADATA const & metadata)
 	{
-		for (auto const & encode : encode_table)
+		for (auto const & data : metadata)
 		{
-			if (src == encode.first)
+			if (src == data.first)
 			{
-				return encode.second;
+				return data.second;
 			}
 		}
 		return nullptr;

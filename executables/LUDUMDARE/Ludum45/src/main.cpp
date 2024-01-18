@@ -9,7 +9,7 @@ enum class Truc : int
 	Truc4
 };
 
-CHAOS_GLOBAL_VARIABLE(Truc, mtruc);
+CHAOS_GLOBAL_VARIABLE(chaos::ShaderType, mtruc);
 CHAOS_GLOBAL_VARIABLE(bool, mybool);
 CHAOS_GLOBAL_VARIABLE(int, myint, 666);
 

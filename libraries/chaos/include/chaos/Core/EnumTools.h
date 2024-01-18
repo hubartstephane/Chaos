@@ -2,16 +2,13 @@ namespace chaos
 {
 	namespace EnumTools
 	{
-#if defined CHAOS_FORWARD_DECLARATION
+#ifdef CHAOS_FORWARD_DECLARATION
 
-	template<typename T>
-	using EnumMetaData = std::vector<std::pair<T, char const*>>;
+		template<typename T>
+		class EnumMetaDataEntry;
 
-	template<typename T, typename METADATA>
-	bool ConvertStringToEnum(char const* src, METADATA const& metadata, T& dst);
-
-	template<typename T, typename METADATA>
-	char const * ConvertEnumToString(T src, METADATA const& metadata);
+		template<typename T>
+		class EnumMetaData;
 
 #define CHAOS_DECLARE_ENUM_FLAG_METHOD(enum_type)\
 CHAOS_API enum_type operator|(enum_type a, enum_type b);\
@@ -35,11 +32,11 @@ CHAOS_API chaos::EnumTools::EnumMetaData<enum_type> const & GetEnumMetaData(boos
 #define CHAOS_IMPLEMENT_ENUM_METHOD(enum_type, metadata)\
 CHAOS_API bool StringToEnum(char const * src, enum_type& dst)\
 {\
-	return chaos::EnumTools::ConvertStringToEnum(src, metadata, dst);\
+	return metadata.StringToValue(src, dst);\
 }\
 CHAOS_API char const * EnumToString(enum_type src)\
 {\
-	return chaos::EnumTools::ConvertEnumToString(src, metadata);\
+	return metadata.ValueToString(src);\
 }\
 CHAOS_API chaos::EnumTools::EnumMetaData<enum_type> const& GetEnumMetaData(boost::mpl::identity<enum_type>)\
 {\
@@ -48,34 +45,114 @@ CHAOS_API chaos::EnumTools::EnumMetaData<enum_type> const& GetEnumMetaData(boost
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	/** decode a value with a conversion table */
-	template<typename T, typename METADATA>
-	bool ConvertStringToEnum(char const * src, METADATA const & metadata, T & dst)
+	/**
+	 * EnumMetaDataEntry: used to define a relation between a name and an enum value
+	 */
+	template<typename T>
+	class EnumMetaDataEntry
 	{
-		for (auto const & data : metadata)
+	public:
+
+		/** the value for this entry */
+		T value;
+		/** the name for this entry */
+		char const* name = nullptr;
+	};
+
+	/**
+	 * EnumMetaData: some kind of table to make relation between enum names and values
+	 */
+
+	template<typename T>
+	class EnumMetaData
+	{
+	public:
+
+		/** constructor */
+		EnumMetaData(std::initializer_list<EnumMetaDataEntry<T>> entries)
 		{
-			if (StringTools::Stricmp(src, data.second) == 0)
+			// transform a list of entries into 2 list of names/values
+			values.reserve(entries.size());
+			names.reserve(entries.size());
+
+			for (EnumMetaDataEntry<T> const& entry : entries)
 			{
-				dst = data.first;
+				values.push_back(entry.value);
+				names.push_back(entry.name);
+			}
+		}
+
+		/** gets the number of entry */
+		size_t GetCount() const
+		{
+			return values.size();
+		}
+
+		/** get the index for a name */
+		std::optional<size_t> GetNameIndex(char const* src) const
+		{
+			for (size_t i = 0; i < names.size(); ++i)
+				if (chaos::StringTools::Stricmp(src, names[i]) == 0)
+					return i;
+			return {};
+		}
+
+		/** get the index for a value */
+		std::optional<size_t> GetValueIndex(T src) const
+		{
+			for (size_t i = 0; i < values.size(); ++i)
+				if (src == values[i])
+					return i;
+			return {};
+		}
+
+		/** get a name by index */
+		char const* GetNameByIndex(size_t index) const
+		{
+			assert(index < names.size());
+			return names[index];
+		}
+
+		/** get a value by index */
+		T GetValueByIndex(size_t index) const
+		{
+			assert(index < values.size());
+			return values[index];
+		}
+
+		/** convert string into value */
+		bool StringToValue(char const* src, T & dst) const
+		{
+			if (std::optional<size_t> index = GetNameIndex(src))
+			{
+				dst = GetValueByIndex(index.value());
 				return true;
 			}
+			return false;
 		}
-		return false;
-	}
 
-	/** encode a value with a conversion table */
-	template<typename T, typename METADATA>
-	char const * ConvertEnumToString(T src, METADATA const & metadata)
-	{
-		for (auto const & data : metadata)
+		/** convert value into string */
+		char const * ValueToString(T value) const
 		{
-			if (src == data.first)
-			{
-				return data.second;
-			}
+			if (std::optional<size_t> index = GetValueIndex(value))
+				return GetNameByIndex(index.value());
+			return nullptr;
 		}
-		return nullptr;
-	}
+
+		/** check whether there is at least one entries */
+		bool IsValid() const
+		{
+			return
+				(names.size() == values.size()) &&
+				(names.size() > 0);
+		}
+
+	public:
+
+		std::vector<T> values;
+		std::vector<char const*> names;
+	};
+
 #endif
 
 	}; // namespace EnumTools

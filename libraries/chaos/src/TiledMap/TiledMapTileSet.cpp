@@ -5,12 +5,12 @@ namespace chaos
 {
 	namespace TiledMap
 	{
-		static std::vector<std::pair<TileSetOrientation, char const*>> const orientation_map = {
+		static chaos::EnumTools::EnumMetaData<TileSetOrientation> const TileSetOrientation_metadata = {
 			{ TileSetOrientation::ISOMETRIC, "isometric" },
 			{ TileSetOrientation::ORTHOGONAL, "orthogonal" } // default
 		};
 
-		CHAOS_IMPLEMENT_ENUM_METHOD(TileSetOrientation, orientation_map);
+		CHAOS_IMPLEMENT_ENUM_METHOD(TileSetOrientation, TileSetOrientation_metadata);
 
 		// ==========================================
 		// Wangset methods

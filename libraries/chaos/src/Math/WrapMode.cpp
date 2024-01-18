@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	static std::vector<std::pair<WrapMode, char const*>> const wrapmode_encoding =
+	static chaos::EnumTools::EnumMetaData<WrapMode> const WrapMode_metadata =
 	{
 		{ WrapMode::NONE, "NONE" },
 		{ WrapMode::CLAMP, "CLAMP" },
@@ -11,6 +11,6 @@ namespace chaos
 		{ WrapMode::CHECK_RANGES, "CHECK_RANGES" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(WrapMode, wrapmode_encoding);
+	CHAOS_IMPLEMENT_ENUM_METHOD(WrapMode, WrapMode_metadata);
 
 }; // namespace chaos

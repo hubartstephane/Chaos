@@ -5,37 +5,37 @@ namespace chaos
 {
 	namespace TiledMap
 	{
-		static std::vector<std::pair<MapOrientation, char const*>> const orient_map = {
+		static chaos::EnumTools::EnumMetaData<MapOrientation> const MapOrientation_metadata = {
 			{ MapOrientation::ORTHOGONAL, "orthogonal" }, //default
 			{ MapOrientation::ISOMETRIC, "isometric" },
 			{ MapOrientation::STAGGERED, "staggered" },
 			{ MapOrientation::HEXAGONAL, "hexagonal" }
 		};
 
-		CHAOS_IMPLEMENT_ENUM_METHOD(MapOrientation, orient_map);
+		CHAOS_IMPLEMENT_ENUM_METHOD(MapOrientation, MapOrientation_metadata);
 
-		static std::vector < std::pair<StaggerAxis, char const*>> const stagger_axis_map = {
+		static chaos::EnumTools::EnumMetaData<StaggerAxis> const StaggerAxis_metadata = {
 			{ StaggerAxis::AXIS_X, "X",  }, // default
 			{ StaggerAxis::AXIS_Y, "Y",  }
 		};
 
-		CHAOS_IMPLEMENT_ENUM_METHOD(StaggerAxis, stagger_axis_map);
+		CHAOS_IMPLEMENT_ENUM_METHOD(StaggerAxis, StaggerAxis_metadata);
 
-		static std::vector<std::pair<StaggerIndex, char const*>> const stagger_index_map = {
+		static chaos::EnumTools::EnumMetaData<StaggerIndex> const StaggerIndex_metadata = {
 			{ StaggerIndex::ODD, "odd" }, // default
 			{ StaggerIndex::EVEN, "even" }
 		};
 
-		CHAOS_IMPLEMENT_ENUM_METHOD(StaggerIndex, stagger_index_map);
+		CHAOS_IMPLEMENT_ENUM_METHOD(StaggerIndex, StaggerIndex_metadata);
 
-		static std::vector<std::pair<RenderOrder, char const*>> const render_order_map = {
+		static chaos::EnumTools::EnumMetaData<RenderOrder> const RenderOrder_metadata = {
 			{ RenderOrder::RIGHT_UP, "right-up" }, // default
 			{ RenderOrder::RIGHT_DOWN, "right-down" },
 			{ RenderOrder::LEFT_UP, "left-up" },
 			{ RenderOrder::LEFT_DOWN, "left-down" }
 		};
 
-		CHAOS_IMPLEMENT_ENUM_METHOD(RenderOrder, render_order_map);
+		CHAOS_IMPLEMENT_ENUM_METHOD(RenderOrder, RenderOrder_metadata);
 
 		// ==========================================
 		// Map methods

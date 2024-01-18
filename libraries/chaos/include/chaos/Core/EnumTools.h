@@ -4,6 +4,9 @@ namespace chaos
 	{
 #if defined CHAOS_FORWARD_DECLARATION
 
+	template<typename T>
+	using EnumMetaData = std::vector<std::pair<T, char const*>>;
+
 	template<typename T, typename ENCODE_TABLE>
 	bool ConvertStringToEnum(char const* src, ENCODE_TABLE const& encode_table, T& dst);
 

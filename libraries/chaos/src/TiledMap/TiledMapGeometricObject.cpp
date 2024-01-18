@@ -5,22 +5,22 @@ namespace chaos
 {
 	namespace TiledMap
 	{
-		static std::vector<std::pair<HorizontalTextAlignment, char const*>> const halign_map = {
+		static chaos::EnumTools::EnumMetaData<HorizontalTextAlignment> const HorizontalTextAlignment_metadata = {
 			{ HorizontalTextAlignment::LEFT, "left" }, // default
 			{ HorizontalTextAlignment::CENTER, "center" },
 			{ HorizontalTextAlignment::RIGHT, "right" },
 			{ HorizontalTextAlignment::JUSTIFY, "justify" }
 		};
 
-		CHAOS_IMPLEMENT_ENUM_METHOD(HorizontalTextAlignment, halign_map);
+		CHAOS_IMPLEMENT_ENUM_METHOD(HorizontalTextAlignment, HorizontalTextAlignment_metadata);
 
-		static std::vector<std::pair<VerticalTextAlignment, char const*>> const valign_map = {
+		static chaos::EnumTools::EnumMetaData<VerticalTextAlignment> const VerticalTextAlignment_metadata = {
 			{ VerticalTextAlignment::TOP, "top" }, // default
 			{ VerticalTextAlignment::CENTER, "center" },
 			{ VerticalTextAlignment::BOTTOM, "bottom" }
 		};
 
-		CHAOS_IMPLEMENT_ENUM_METHOD(VerticalTextAlignment, valign_map);
+		CHAOS_IMPLEMENT_ENUM_METHOD(VerticalTextAlignment, VerticalTextAlignment_metadata);
 
 		// ==========================================
 		// GeometricObject methods

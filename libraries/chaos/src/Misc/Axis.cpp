@@ -3,13 +3,13 @@
 
 namespace chaos
 {
-	static std::vector<std::pair<Axis, char const *>> const axis_encoding =
+	static chaos::EnumTools::EnumMetaData<Axis> const Axis_metadata =
 	{
 		{ Axis::AXIS_X, "axis_x" },
 		{ Axis::AXIS_Y, "axis_y" },
 		{ Axis::AXIS_Z, "axis_z" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(Axis, axis_encoding);
+	CHAOS_IMPLEMENT_ENUM_METHOD(Axis, Axis_metadata);
 
 }; // namespace chaos

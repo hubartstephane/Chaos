@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	static std::vector<std::pair<Edge, char const *>> const edge_encoding =
+	static chaos::EnumTools::EnumMetaData<Edge> const Edge_metadata =
 	{
 		{ Edge::TOP, "top" },
 		{ Edge::RIGHT, "right" },
@@ -11,6 +11,6 @@ namespace chaos
 		{ Edge::LEFT, "left" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(Edge, edge_encoding);
+	CHAOS_IMPLEMENT_ENUM_METHOD(Edge, Edge_metadata);
 
 }; // namespace chaos

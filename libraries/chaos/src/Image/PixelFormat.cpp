@@ -8,7 +8,7 @@ namespace chaos
 	// PixelFormat methods
 	// ==============================================================================================
 
-	static std::vector<std::pair<PixelComponentType, char const*>> const pixel_component_type_encoding =
+	static chaos::EnumTools::EnumMetaData<PixelComponentType> const PixelComponentType_metadata =
 	{
 		{ PixelComponentType::UNKNOWN, "UNKNOWN" },
 		{ PixelComponentType::UNSIGNED_CHAR, "UNSIGNED_CHAR" },
@@ -16,7 +16,7 @@ namespace chaos
 		{ PixelComponentType::DEPTH_STENCIL, "DEPTH_STENCIL" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(PixelComponentType, pixel_component_type_encoding);
+	CHAOS_IMPLEMENT_ENUM_METHOD(PixelComponentType, PixelComponentType_metadata);
 
 	// ==============================================================================================
 	// PixelFormat methods

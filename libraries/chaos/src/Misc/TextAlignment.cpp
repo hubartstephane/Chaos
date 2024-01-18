@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	static std::vector<std::pair<TextAlignment, char const*>> const alignment_encoding =
+	static chaos::EnumTools::EnumMetaData<TextAlignment> const TextAlignment_metadata =
 	{
 		{ TextAlignment::LEFT, "left" },
 		{ TextAlignment::RIGHT, "right" },
@@ -11,6 +11,6 @@ namespace chaos
 		{ TextAlignment::JUSTIFY, "justify" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(TextAlignment, alignment_encoding);
+	CHAOS_IMPLEMENT_ENUM_METHOD(TextAlignment, TextAlignment_metadata);
 
 }; // namespace chaos

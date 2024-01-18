@@ -39,12 +39,18 @@ namespace chaos
 		};
 
 		template<typename T>
+		concept HasEnumMetaData = requires()
+		{
+			{GetEnumMetaData(boost::mpl::identity<typename std::remove_const<T>::type>())};
+		};
+
+		template<typename T>
 		concept CanDrawImGuiVariable = requires()
 		{
 			requires
 				HasDrawImGuiVariableImplFunction<T> ||
 				HasDrawImGuiVariableMethod<T> ||
-				std::is_enum_v<T>;
+				HasEnumMetaData<T>;
 		};
 
 		/** ImGUI use 32 bits integers (or strings) for ID's. when using pointers as key, a dedicated function is necessary while pointers are 64 bits */
@@ -70,43 +76,45 @@ namespace chaos
 	template<typename T>
 	void DrawImGuiVariable(T & value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::None)
 	{
+		// disable control if necessary
 		if ((flags & DrawImGuiVariableFlags::ReadOnly) != DrawImGuiVariableFlags::None)
 		{
 			ImGui::BeginDisabled();
 		}
 
-		if constexpr (std::is_enum_v<T>)
-		{
-			char const* titles[] =
-			{
-				"title1",
-				"title2",
-				"title3",
-				"title4"
-			};
-			static int toto = 0;
-			ImGui::Combo("toto", &toto, titles, 4);
-
-			if (ImGui::BeginCombo("MyCombo", "preview_value", ImGuiComboFlags_None))
-			{
-
-				ImGui::EndCombo();
-			}
-
-		}
-		else if constexpr (ImGuiTools::HasDrawImGuiVariableMethod<T>)
+		// call method if exists
+		if constexpr (ImGuiTools::HasDrawImGuiVariableMethod<T>)
 		{
 			value.DrawImGuiVariable(flags);
 		}
+		// call function if exists
 		else if constexpr (ImGuiTools::HasDrawImGuiVariableImplFunction<T>)
 		{
 			DrawImGuiVariableImpl(value, flags);
 		}
+		// enum case
+		else if constexpr (std::is_enum_v<T> && ImGuiTools::HasEnumMetaData<T>)
+		{
+			chaos::EnumTools::EnumMetaData<T> const& metadata = GetEnumMetaData(boost::mpl::identity<T>());
+			if (metadata.IsValid())
+			{
+				int index = 0;
+				if (std::optional<size_t> selected_index = metadata.GetValueIndex(value))
+					index = (int)selected_index.value();
+
+				if (ImGui::Combo("", &index, &metadata.names[0], (int)metadata.names.size()))
+				{
+					value = metadata.GetValueByIndex((size_t)index);
+				}
+			}
+		}
+		// error
 		else
 		{
 			assert(0);
 		}
 
+		// enable control back if necessary
 		if ((flags & DrawImGuiVariableFlags::ReadOnly) != DrawImGuiVariableFlags::None)
 		{
 			ImGui::EndDisabled();
@@ -116,28 +124,9 @@ namespace chaos
 	template<typename T>
 	void DrawImGuiVariable(T const& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::None)
 	{
-		ImGui::BeginDisabled(); // while we are about to call some mutable function/method on a const data, we prevent UI operations to make changes
-
 		flags |= DrawImGuiVariableFlags::ReadOnly; // ensure flag is coherent
 
-		if constexpr (std::is_enum_v<T>)
-		{
-
-		}
-		else if constexpr (ImGuiTools::HasDrawImGuiVariableMethod<T>)
-		{
-			((T&)value).DrawImGuiVariable(flags); // XXX: call a MUTABLE method from a CONST reference !
-		}
-		else if constexpr (ImGuiTools::HasDrawImGuiVariableImplFunction<T>)
-		{
-			DrawImGuiVariableImpl((T&)value, flags); // XXX: call a MUTABLE function from a CONST reference !			
-		}
-		else
-		{
-			assert(0);
-		}
-
-		ImGui::EndDisabled();
+		DrawImGuiVariable(((T&)value), flags); // call CONST version !
 	}
 
 #endif

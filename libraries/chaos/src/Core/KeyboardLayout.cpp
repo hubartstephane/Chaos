@@ -390,13 +390,13 @@ namespace chaos
 	  {0x15d, 0x00, "Application"}
 	}};
 
-	static std::vector<std::pair<KeyboardLayoutType, char const*>> const keyboard_layout_map = {
+	static chaos::EnumTools::EnumMetaData<KeyboardLayoutType> const KeyboardLayoutType_metadata = {
 		{ KeyboardLayoutType::AZERTY, "azerty" }, //default
 		{ KeyboardLayoutType::QWERTY, "qwerty" },
 		{ KeyboardLayoutType::CURRENT, "current" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(KeyboardLayoutType, keyboard_layout_map);
+	CHAOS_IMPLEMENT_ENUM_METHOD(KeyboardLayoutType, KeyboardLayoutType_metadata);
 
 #if _DEBUG
 

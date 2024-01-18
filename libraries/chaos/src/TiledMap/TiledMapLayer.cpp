@@ -5,12 +5,12 @@ namespace chaos
 {
 	namespace TiledMap
 	{
-		static std::vector<std::pair<DrawOrder, char const*>> const draw_order_map = {
+		static chaos::EnumTools::EnumMetaData<DrawOrder> const DrawOrder_metadata = {
 			{ DrawOrder::MANUAL, "index"  },
 			{ DrawOrder::TOPDOWN, "topdown" } // default
 		};
 
-		CHAOS_IMPLEMENT_ENUM_METHOD(DrawOrder, draw_order_map);
+		CHAOS_IMPLEMENT_ENUM_METHOD(DrawOrder, DrawOrder_metadata);
 
 		// ==========================================
 		// LayerBase methods

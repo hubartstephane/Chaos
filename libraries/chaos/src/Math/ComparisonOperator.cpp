@@ -4,7 +4,7 @@
 namespace chaos
 {
 
-	static std::vector<std::pair<ComparisonOperator, char const*>> const comparison_operator_encoding =
+	static chaos::EnumTools::EnumMetaData<ComparisonOperator> const ComparisonOperator_metadata =
 	{
 		{ ComparisonOperator::NEVER, "NEVER" },
 		{ ComparisonOperator::ALWAYS, "ALWAYS" },
@@ -38,6 +38,6 @@ namespace chaos
 		return op;
 	}
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(ComparisonOperator, comparison_operator_encoding);
+	CHAOS_IMPLEMENT_ENUM_METHOD(ComparisonOperator, ComparisonOperator_metadata);
 
 }; // namespace chaos

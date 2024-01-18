@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	static std::vector<std::pair<Hotpoint, char const *>> const hotpoint_encoding =
+	static chaos::EnumTools::EnumMetaData<Hotpoint> const Hotpoint_metadata =
 	{
 		{ Hotpoint::TOP, "top" },
 		{ Hotpoint::BOTTOM, "bottom" },
@@ -16,7 +16,7 @@ namespace chaos
 		{ Hotpoint::CENTER, "center" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(Hotpoint, hotpoint_encoding);
+	CHAOS_IMPLEMENT_ENUM_METHOD(Hotpoint, Hotpoint_metadata);
 	CHAOS_IMPLEMENT_ENUM_FLAG_METHOD(Hotpoint);
 
 	glm::vec2 ConvertHotpoint(glm::vec2 const & pt, glm::vec2 const & size, Hotpoint initial_hotpoint, Hotpoint final_hotpoint)

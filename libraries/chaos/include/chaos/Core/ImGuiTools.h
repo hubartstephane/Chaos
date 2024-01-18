@@ -43,7 +43,8 @@ namespace chaos
 		{
 			requires
 				HasDrawImGuiVariableImplFunction<T> ||
-				HasDrawImGuiVariableMethod<T>;
+				HasDrawImGuiVariableMethod<T> ||
+				std::is_enum_v<T>;
 		};
 
 		/** ImGUI use 32 bits integers (or strings) for ID's. when using pointers as key, a dedicated function is necessary while pointers are 64 bits */
@@ -74,7 +75,26 @@ namespace chaos
 			ImGui::BeginDisabled();
 		}
 
-		if constexpr (ImGuiTools::HasDrawImGuiVariableMethod<T>)
+		if constexpr (std::is_enum_v<T>)
+		{
+			char const* titles[] =
+			{
+				"title1",
+				"title2",
+				"title3",
+				"title4"
+			};
+			static int toto = 0;
+			ImGui::Combo("toto", &toto, titles, 4);
+
+			if (ImGui::BeginCombo("MyCombo", "preview_value", ImGuiComboFlags_None))
+			{
+
+				ImGui::EndCombo();
+			}
+
+		}
+		else if constexpr (ImGuiTools::HasDrawImGuiVariableMethod<T>)
 		{
 			value.DrawImGuiVariable(flags);
 		}
@@ -100,7 +120,11 @@ namespace chaos
 
 		flags |= DrawImGuiVariableFlags::ReadOnly; // ensure flag is coherent
 
-		if constexpr (ImGuiTools::HasDrawImGuiVariableMethod<T>)
+		if constexpr (std::is_enum_v<T>)
+		{
+
+		}
+		else if constexpr (ImGuiTools::HasDrawImGuiVariableMethod<T>)
 		{
 			((T&)value).DrawImGuiVariable(flags); // XXX: call a MUTABLE method from a CONST reference !
 		}

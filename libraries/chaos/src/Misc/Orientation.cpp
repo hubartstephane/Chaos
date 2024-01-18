@@ -3,12 +3,12 @@
 
 namespace chaos
 {
-	static std::vector<std::pair<Orientation, char const *>> const orientation_encoding =
+	static chaos::EnumTools::EnumMetaData<Orientation> const Orientation_metadata =
 	{
 		{ Orientation::HORIZONTAL, "horizontal" },
 		{ Orientation::VERTICAL, "vertical" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(Orientation, orientation_encoding);
+	CHAOS_IMPLEMENT_ENUM_METHOD(Orientation, Orientation_metadata);
 
 }; // namespace chaos

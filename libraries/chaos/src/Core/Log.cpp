@@ -7,14 +7,14 @@ namespace chaos
 	// LogLine implementation
 	// ================================================================
 
-	static std::vector<std::pair<LogType, char const*>> const log_type_encoding =
+	static chaos::EnumTools::EnumMetaData<LogType> const LogType_metadata =
 	{
 		{ LogType::Message, "Message" },
 		{ LogType::Warning, "Warning" },
 		{ LogType::Error,   "Error" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(LogType, log_type_encoding);
+	CHAOS_IMPLEMENT_ENUM_METHOD(LogType, LogType_metadata);
 
 	std::string LogLine::ToString() const
 	{

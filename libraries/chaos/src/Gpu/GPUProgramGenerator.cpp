@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	static std::vector<std::pair<ShaderType, char const *>> const shader_type_encoding =
+	static chaos::EnumTools::EnumMetaData<ShaderType> const ShaderType_metadata =
 	{
 		{ ShaderType::ANY, "any" },
 		{ ShaderType::VERTEX, "vertex" },
@@ -14,7 +14,7 @@ namespace chaos
 		{ ShaderType::COMPUTE, "compute" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(ShaderType, shader_type_encoding);
+	CHAOS_IMPLEMENT_ENUM_METHOD(ShaderType, ShaderType_metadata);
 
 
 	void GPUProgramGenerator::AddFrameworkSources(ShaderType shader_type, std::vector<char const*> & sources, std::vector<Buffer<char>> & buffers) const

@@ -8,7 +8,7 @@ namespace chaos
 	// MouseButton implementation
 	// -------------------------------------------------------------------
 
-	static std::vector<std::pair<MouseButton, char const *>> const mouse_key_to_name_map =
+	static chaos::EnumTools::EnumMetaData<MouseButton> const MouseButton_metadata =
 	{
 		{ MouseButton::BUTTON_1, "MOUSE_BUTTON_1" },
 		{ MouseButton::BUTTON_2, "MOUSE_BUTTON_2" },
@@ -20,13 +20,13 @@ namespace chaos
 		{ MouseButton::BUTTON_8, "MOUSE_BUTTON_8" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(MouseButton, mouse_key_to_name_map);
+	CHAOS_IMPLEMENT_ENUM_METHOD(MouseButton, MouseButton_metadata);
 
 	// -------------------------------------------------------------------
 	// GamepadButton implementation
 	// -------------------------------------------------------------------
 
-	static std::vector<std::pair<GamepadButton, char const *>> const gamepad_key_to_name_map =
+	static chaos::EnumTools::EnumMetaData<GamepadButton> const GamepadButton_metadata =
 	{
 		{ GamepadButton::A, "GAMEPAD_A" },
 		{ GamepadButton::B, "GAMEPAD_B" },
@@ -47,7 +47,7 @@ namespace chaos
 		{ GamepadButton::RIGHT_TRIGGER, "GAMEPAD_RIGHT_TRIGGER" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(GamepadButton, gamepad_key_to_name_map);
+	CHAOS_IMPLEMENT_ENUM_METHOD(GamepadButton, GamepadButton_metadata);
 
 	// -------------------------------------------------------------------
 	// KeyboardButton implementation
@@ -55,7 +55,7 @@ namespace chaos
 
 	#define CHAOS_KEYBOARD_DEF(KEY) { KeyboardButton::KEY, #KEY }
 
-	static std::vector<std::pair<KeyboardButton, char const *>> const keyboard_key_to_name_map =
+	static chaos::EnumTools::EnumMetaData<KeyboardButton> const KeyboardButton_metadata =
 	{
 		CHAOS_KEYBOARD_DEF(SPACE),
 		CHAOS_KEYBOARD_DEF(APOSTROPHE),
@@ -180,13 +180,13 @@ namespace chaos
 	};
 #undef CHAOS_KEYBOARD_DEF
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(KeyboardButton, keyboard_key_to_name_map);
+	CHAOS_IMPLEMENT_ENUM_METHOD(KeyboardButton, KeyboardButton_metadata);
 
 	// -------------------------------------------------------------------
 	// GamepadAxis implementation
 	// -------------------------------------------------------------------
 
-	static std::vector<std::pair<GamepadAxis, char const*>> const gamepadaxis_key_to_name_map =
+	static chaos::EnumTools::EnumMetaData<GamepadAxis> const GamepadAxis_metadata =
 	{
 		{ GamepadAxis::UNKNOWN, "UNKNOWN" },
 		{ GamepadAxis::LEFT_AXIS_X, "LEFT_AXIS_X" },
@@ -197,27 +197,27 @@ namespace chaos
 		{ GamepadAxis::RIGHT_TRIGGER, "RIGHT_TRIGGER" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(GamepadAxis, gamepadaxis_key_to_name_map);
+	CHAOS_IMPLEMENT_ENUM_METHOD(GamepadAxis, GamepadAxis_metadata);
 
 
 	// -------------------------------------------------------------------
 	// GamepadStick implementation
 	// -------------------------------------------------------------------
 
-	static std::vector<std::pair<GamepadStick, char const*>> const gamepadstick_key_to_name_map =
+	static chaos::EnumTools::EnumMetaData<GamepadStick> const GamepadStick_metadata =
 	{
 		{ GamepadStick::UNKNOWN, "UNKNOWN" },
 		{ GamepadStick::LEFT_STICK, "LEFT_STICK" },
 		{ GamepadStick::RIGHT_STICK, "RIGHT_STICK" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(GamepadStick, gamepadstick_key_to_name_map);
+	CHAOS_IMPLEMENT_ENUM_METHOD(GamepadStick, GamepadStick_metadata);
 
 	// -------------------------------------------------------------------
 	// KeyType implementation
 	// -------------------------------------------------------------------
 
-	static std::vector<std::pair<KeyType, char const*>> const keytype_key_to_name_map =
+	static chaos::EnumTools::EnumMetaData<KeyType> const KeyType_metadata =
 	{
 		{ KeyType::UNKNOWN, "UNKNOWN" },
 		{ KeyType::KEYBOARD, "KEYBOARD" },
@@ -225,7 +225,7 @@ namespace chaos
 		{ KeyType::GAMEPAD, "GAMEPAD" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(KeyType, keytype_key_to_name_map);
+	CHAOS_IMPLEMENT_ENUM_METHOD(KeyType, KeyType_metadata);
 
 	// -------------------------------------------------------------------
 	// Key implementation

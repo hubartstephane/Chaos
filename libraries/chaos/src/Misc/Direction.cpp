@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	static std::vector<std::pair<Direction, char const *>> const direction_encoding =
+	static chaos::EnumTools::EnumMetaData<Direction> const Direction_metadata =
 	{
 		{ Direction::POSITIVE_X, "positive_x" },
 		{ Direction::NEGATIVE_X, "negative_y" },
@@ -13,6 +13,6 @@ namespace chaos
 		{ Direction::NEGATIVE_Z, "negative_z" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(Direction, direction_encoding);
+	CHAOS_IMPLEMENT_ENUM_METHOD(Direction, Direction_metadata);
 
 }; // namespace chaos

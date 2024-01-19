@@ -82,6 +82,8 @@ namespace chaos
 			ImGui::BeginDisabled();
 		}
 
+		ImGui::PushID((void*)&value);
+
 		// call method if exists
 		if constexpr (ImGuiTools::HasDrawImGuiVariableMethod<T>)
 		{
@@ -124,6 +126,8 @@ namespace chaos
 		{
 			assert(0);
 		}
+
+		ImGui::PopID();
 
 		// enable control back if necessary
 		if ((flags & DrawImGuiVariableFlags::ReadOnly) != DrawImGuiVariableFlags::None)

@@ -106,6 +106,17 @@ namespace chaos
 				{
 					value = metadata.GetValueByIndex((size_t)index);
 				}
+#if 0
+				if (ImGui::BeginCombo("", "enter content", ImGuiComboFlags_None))
+				{
+					ImGui::Button("A");
+					ImGui::Button("B");
+					ImGui::Button("C");
+					ImGui::EndCombo();
+				}
+#endif
+
+
 			}
 		}
 		// error

@@ -7,21 +7,21 @@ namespace chaos
 
 	void DrawImGuiVariableImpl(std::string& value, DrawImGuiVariableFlags flags)
 	{
-		chaos::ImGuiTools::PushID(&value);
+		ImGui::PushID(&value);
 		chaos::ImGuiTools::InputText("", value);
 		ImGui::PopID();
 	}
 
 	void DrawImGuiVariableImpl(bool& value, DrawImGuiVariableFlags flags)
 	{
-		chaos::ImGuiTools::PushID(&value);
+		ImGui::PushID(&value);
 		ImGui::Checkbox("", &value);
 		ImGui::PopID();
 	}
 
 	void DrawImGuiVariableImpl(int& value, DrawImGuiVariableFlags flags)
 	{
-		chaos::ImGuiTools::PushID(&value);
+		ImGui::PushID(&value);
 		if ((flags & DrawImGuiVariableFlags::ReadOnly) != DrawImGuiVariableFlags::None)
 			ImGui::InputInt("", &value, 0, 0); // prevent showing the + and - buttons
 		else
@@ -31,25 +31,20 @@ namespace chaos
 
 	void DrawImGuiVariableImpl(float& value, DrawImGuiVariableFlags flags)
 	{
-		chaos::ImGuiTools::PushID(&value);
+		ImGui::PushID(&value);
 		ImGui::InputFloat("", &value);
 		ImGui::PopID();
 	}
 
 	void DrawImGuiVariableImpl(double& value, DrawImGuiVariableFlags flags)
 	{
-		chaos::ImGuiTools::PushID(&value);
+		ImGui::PushID(&value);
 		ImGui::InputDouble("", &value);
 		ImGui::PopID();
 	}
 
 	namespace ImGuiTools
 	{
-		void PushID(void* ptr) // native ImGui provides PushID(char *) and PushID(void *). Using this ImGuiTools method prevent ambiguity. If a char * pointer was given as parameter, the content
-		{                      // would not be hashed, only the pointer
-			ImGui::PushID(ptr);
-		}
-
 		// code for using ImGui with strings
 		// this comes from imgui_stdlib.cpp whose functions are not really part of the compiled lib we are using
 		struct InputTextCallback_UserData

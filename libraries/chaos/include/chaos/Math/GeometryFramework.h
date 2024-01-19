@@ -916,7 +916,7 @@ namespace glm
 	{
 		// ImGui does not provide a InputDoubleX method, that's why we are using InputScalarN here instead of (InputIntX and InputFloatX)
 		// (InputScalarN is easier because the size can be given has an argument)
-		chaos::ImGuiTools::PushID(&value);
+		ImGui::PushID(&value);
 		if constexpr (std::is_same_v<T, int>)
 			ImGui::InputScalarN("", ImGuiDataType_S32, &value, SIZE, NULL, NULL, "%d", 0);
 		else if constexpr (std::is_same_v<T, float>)

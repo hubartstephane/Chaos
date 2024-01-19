@@ -13,7 +13,7 @@ namespace chaos
 		VERTICAL = 1
 	};
 
-	CHAOS_DECLARE_ENUM_METHOD(Orientation);
+	CHAOS_DECLARE_ENUM_METHOD(Orientation, CHAOS_API);
 
 #endif
 

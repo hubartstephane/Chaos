@@ -38,6 +38,6 @@ namespace chaos
 		return op;
 	}
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(ComparisonOperator, ComparisonOperator_metadata);
+	CHAOS_IMPLEMENT_ENUM_METHOD(ComparisonOperator, ComparisonOperator_metadata, CHAOS_API);
 
 }; // namespace chaos

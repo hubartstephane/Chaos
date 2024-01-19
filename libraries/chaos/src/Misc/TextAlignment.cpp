@@ -11,6 +11,6 @@ namespace chaos
 		{ TextAlignment::JUSTIFY, "justify" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(TextAlignment, TextAlignment_metadata);
+	CHAOS_IMPLEMENT_ENUM_METHOD(TextAlignment, TextAlignment_metadata, CHAOS_API);
 
 }; // namespace chaos

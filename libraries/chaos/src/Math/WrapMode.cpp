@@ -11,6 +11,6 @@ namespace chaos
 		{ WrapMode::CHECK_RANGES, "CHECK_RANGES" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(WrapMode, WrapMode_metadata);
+	CHAOS_IMPLEMENT_ENUM_METHOD(WrapMode, WrapMode_metadata, CHAOS_API);
 
 }; // namespace chaos

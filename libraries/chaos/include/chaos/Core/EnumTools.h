@@ -10,35 +10,39 @@ namespace chaos
 		template<typename T>
 		class EnumMetaData;
 
-#define CHAOS_DECLARE_ENUM_FLAG_METHOD(enum_type)\
-CHAOS_API enum_type operator|(enum_type a, enum_type b);\
-CHAOS_API enum_type operator&(enum_type a, enum_type b);\
-CHAOS_API enum_type operator~(enum_type a);\
-CHAOS_API enum_type & operator|=(enum_type & a, enum_type b);\
-CHAOS_API enum_type & operator&=(enum_type & a, enum_type b);
+/** you may use an additionnal argument to represent the function API (CHAOS_API for example) */
+#define CHAOS_DECLARE_ENUM_FLAG_METHOD(enum_type, ...)\
+__VA_ARGS__ enum_type operator|(enum_type a, enum_type b);\
+__VA_ARGS__ enum_type operator&(enum_type a, enum_type b);\
+__VA_ARGS__ enum_type operator~(enum_type a);\
+__VA_ARGS__ enum_type & operator|=(enum_type & a, enum_type b);\
+__VA_ARGS__ enum_type & operator&=(enum_type & a, enum_type b);
 
-#define CHAOS_IMPLEMENT_ENUM_FLAG_METHOD(enum_type)\
-CHAOS_API enum_type operator|(enum_type a, enum_type b){ return static_cast<enum_type>(static_cast<int>(a) | static_cast<int>(b));}\
-CHAOS_API enum_type operator&(enum_type a, enum_type b){ return static_cast<enum_type>(static_cast<int>(a) & static_cast<int>(b));};\
-CHAOS_API enum_type operator~(enum_type a){ return static_cast<enum_type>(~static_cast<int>(a));}\
-CHAOS_API enum_type& operator|=(enum_type& a, enum_type b) { a = a | b; return a; }\
-CHAOS_API enum_type& operator&=(enum_type& a, enum_type b) { a = a & b; return a; }
+/** you may use an additionnal argument to represent the function API (CHAOS_API for example) */
+#define CHAOS_IMPLEMENT_ENUM_FLAG_METHOD(enum_type, ...)\
+__VA_ARGS__ enum_type operator|(enum_type a, enum_type b){ return static_cast<enum_type>(static_cast<int>(a) | static_cast<int>(b));}\
+__VA_ARGS__ enum_type operator&(enum_type a, enum_type b){ return static_cast<enum_type>(static_cast<int>(a) & static_cast<int>(b));};\
+__VA_ARGS__ enum_type operator~(enum_type a){ return static_cast<enum_type>(~static_cast<int>(a));}\
+__VA_ARGS__ enum_type& operator|=(enum_type& a, enum_type b) { a = a | b; return a; }\
+__VA_ARGS__ enum_type& operator&=(enum_type& a, enum_type b) { a = a & b; return a; }
 
-#define CHAOS_DECLARE_ENUM_METHOD(enum_type)\
-CHAOS_API bool StringToEnum(char const * src, enum_type& dst);\
-CHAOS_API char const * EnumToString(enum_type src);\
-CHAOS_API chaos::EnumTools::EnumMetaData<enum_type> const & GetEnumMetaData(boost::mpl::identity<enum_type>);
+/** you may use an additionnal argument to represent the function API (CHAOS_API for example) */
+#define CHAOS_DECLARE_ENUM_METHOD(enum_type, ...)\
+__VA_ARGS__ bool StringToEnum(char const * src, enum_type& dst);\
+__VA_ARGS__ char const * EnumToString(enum_type src);\
+__VA_ARGS__ chaos::EnumTools::EnumMetaData<enum_type> const & GetEnumMetaData(boost::mpl::identity<enum_type>);
 
-#define CHAOS_IMPLEMENT_ENUM_METHOD(enum_type, metadata)\
-CHAOS_API bool StringToEnum(char const * src, enum_type& dst)\
+/** you may use an additionnal argument to represent the function API (CHAOS_API for example) */
+#define CHAOS_IMPLEMENT_ENUM_METHOD(enum_type, metadata, ...)\
+__VA_ARGS__ bool StringToEnum(char const * src, enum_type& dst)\
 {\
 	return metadata.StringToValue(src, dst);\
 }\
-CHAOS_API char const * EnumToString(enum_type src)\
+__VA_ARGS__ char const * EnumToString(enum_type src)\
 {\
 	return metadata.ValueToString(src);\
 }\
-CHAOS_API chaos::EnumTools::EnumMetaData<enum_type> const& GetEnumMetaData(boost::mpl::identity<enum_type>)\
+__VA_ARGS__ chaos::EnumTools::EnumMetaData<enum_type> const& GetEnumMetaData(boost::mpl::identity<enum_type>)\
 {\
 	return metadata;\
 }

@@ -3,7 +3,7 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	enum class Hotpoint;
-	CHAOS_DECLARE_ENUM_FLAG_METHOD(Hotpoint)
+	CHAOS_DECLARE_ENUM_FLAG_METHOD(Hotpoint, CHAOS_API)
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -29,7 +29,7 @@ namespace chaos
 	/** given a hotpoint and a hotpoint, returns any other hotpoint position */
 	CHAOS_API glm::vec2 ConvertHotpoint(glm::vec2 const& pt, glm::vec2 const& size, Hotpoint initial_hotpoint, Hotpoint final_hotpoint);
 
-	CHAOS_DECLARE_ENUM_METHOD(Hotpoint);
+	CHAOS_DECLARE_ENUM_METHOD(Hotpoint, CHAOS_API);
 
 #endif
 

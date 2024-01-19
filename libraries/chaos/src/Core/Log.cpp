@@ -14,7 +14,7 @@ namespace chaos
 		{ LogType::Error,   "Error" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(LogType, LogType_metadata);
+	CHAOS_IMPLEMENT_ENUM_METHOD(LogType, LogType_metadata, CHAOS_API);
 
 	std::string LogLine::ToString() const
 	{

@@ -14,7 +14,7 @@ namespace chaos
 		AXIS_Z = 2
 	};
 
-	CHAOS_DECLARE_ENUM_METHOD(Axis);
+	CHAOS_DECLARE_ENUM_METHOD(Axis, CHAOS_API);
 
 #endif
 

@@ -20,7 +20,7 @@ namespace chaos
 		DEPTH_STENCIL = 3
 	};
 
-	CHAOS_DECLARE_ENUM_METHOD(PixelComponentType);
+	CHAOS_DECLARE_ENUM_METHOD(PixelComponentType, CHAOS_API);
 
 	/**
 	* PixelFormat : the accepted pixel formats

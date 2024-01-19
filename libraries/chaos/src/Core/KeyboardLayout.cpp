@@ -396,7 +396,7 @@ namespace chaos
 		{ KeyboardLayoutType::CURRENT, "current" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(KeyboardLayoutType, KeyboardLayoutType_metadata);
+	CHAOS_IMPLEMENT_ENUM_METHOD(KeyboardLayoutType, KeyboardLayoutType_metadata, CHAOS_API);
 
 #if _DEBUG
 

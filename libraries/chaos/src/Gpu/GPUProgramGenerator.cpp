@@ -14,7 +14,7 @@ namespace chaos
 		{ ShaderType::COMPUTE, "compute" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(ShaderType, ShaderType_metadata);
+	CHAOS_IMPLEMENT_ENUM_METHOD(ShaderType, ShaderType_metadata, CHAOS_API);
 
 
 	void GPUProgramGenerator::AddFrameworkSources(ShaderType shader_type, std::vector<char const*> & sources, std::vector<Buffer<char>> & buffers) const

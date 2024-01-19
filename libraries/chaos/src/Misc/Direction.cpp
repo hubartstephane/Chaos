@@ -13,6 +13,6 @@ namespace chaos
 		{ Direction::NEGATIVE_Z, "negative_z" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(Direction, Direction_metadata);
+	CHAOS_IMPLEMENT_ENUM_METHOD(Direction, Direction_metadata, CHAOS_API);
 
 }; // namespace chaos

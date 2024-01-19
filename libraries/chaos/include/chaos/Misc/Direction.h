@@ -17,7 +17,7 @@ namespace chaos
 		NEGATIVE_Z = (1 << 5)
 	};
 
-	CHAOS_DECLARE_ENUM_METHOD(Direction);
+	CHAOS_DECLARE_ENUM_METHOD(Direction, CHAOS_API);
 
 #endif
 

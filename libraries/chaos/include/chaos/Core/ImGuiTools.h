@@ -13,7 +13,7 @@ namespace chaos
 		ReadOnly = 1
 	};
 
-	CHAOS_DECLARE_ENUM_FLAG_METHOD(DrawImGuiVariableFlags);
+	CHAOS_DECLARE_ENUM_FLAG_METHOD(DrawImGuiVariableFlags, CHAOS_API);
 
 	// XXX: In order to display variable, the system is looking
 	//       -whether a function named DrawImGuiVariableImpl(...) exists

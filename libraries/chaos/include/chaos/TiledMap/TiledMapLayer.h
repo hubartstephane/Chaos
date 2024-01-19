@@ -89,7 +89,7 @@ namespace chaos
 			TOPDOWN = 1
 		};
 
-		CHAOS_DECLARE_ENUM_METHOD(DrawOrder);
+		CHAOS_DECLARE_ENUM_METHOD(DrawOrder, CHAOS_API);
 
 		class CHAOS_API ObjectLayer : public LayerBase
 		{

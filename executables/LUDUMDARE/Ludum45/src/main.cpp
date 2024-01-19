@@ -25,6 +25,10 @@ static chaos::EnumTools::EnumMetaData<Truc> const Truc_metadata =
 
 CHAOS_IMPLEMENT_ENUM_METHOD(Truc, Truc_metadata);
 
+
+
+
+
 std::istream & operator >> (std::istream& stream, Truc& dst)
 {
 	std::string tmp;
@@ -44,8 +48,13 @@ CHAOS_GLOBAL_VARIABLE(int, myint, 666);
 CHAOS_GLOBAL_VARIABLE(Truc, mytruc2, Truc::Truc3);
 
 
+#define TOTO(a, ...) 6 * a __VA_ARGS__
+
 int main(int argc, char ** argv, char ** env)
 {
+	int xxx = TOTO(5, +7);
+
+
 	bool b1 = chaos::IsStreamable<Truc>;
 	bool b2 = chaos::IsStreamable<Machin>;
 

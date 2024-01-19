@@ -184,7 +184,7 @@ namespace chaos
 			ISOMETRIC = 1
 		};
 
-		CHAOS_DECLARE_ENUM_METHOD(TileSetOrientation);
+		CHAOS_DECLARE_ENUM_METHOD(TileSetOrientation, CHAOS_API);
 
 		// ==========================================
 		// TileSet

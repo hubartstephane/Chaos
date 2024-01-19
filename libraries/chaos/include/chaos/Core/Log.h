@@ -23,7 +23,7 @@ namespace chaos
 		Error
 	};
 
-	CHAOS_DECLARE_ENUM_METHOD(LogType);
+	CHAOS_DECLARE_ENUM_METHOD(LogType, CHAOS_API);
 
 	/**
 	* LogLine : an entry in the log system

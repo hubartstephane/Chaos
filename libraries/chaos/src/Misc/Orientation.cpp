@@ -9,6 +9,6 @@ namespace chaos
 		{ Orientation::VERTICAL, "vertical" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(Orientation, Orientation_metadata);
+	CHAOS_IMPLEMENT_ENUM_METHOD(Orientation, Orientation_metadata, CHAOS_API);
 
 }; // namespace chaos

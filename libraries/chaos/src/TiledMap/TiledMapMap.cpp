@@ -12,21 +12,21 @@ namespace chaos
 			{ MapOrientation::HEXAGONAL, "hexagonal" }
 		};
 
-		CHAOS_IMPLEMENT_ENUM_METHOD(MapOrientation, MapOrientation_metadata);
+		CHAOS_IMPLEMENT_ENUM_METHOD(MapOrientation, MapOrientation_metadata, CHAOS_API);
 
 		static chaos::EnumTools::EnumMetaData<StaggerAxis> const StaggerAxis_metadata = {
 			{ StaggerAxis::AXIS_X, "X",  }, // default
 			{ StaggerAxis::AXIS_Y, "Y",  }
 		};
 
-		CHAOS_IMPLEMENT_ENUM_METHOD(StaggerAxis, StaggerAxis_metadata);
+		CHAOS_IMPLEMENT_ENUM_METHOD(StaggerAxis, StaggerAxis_metadata, CHAOS_API);
 
 		static chaos::EnumTools::EnumMetaData<StaggerIndex> const StaggerIndex_metadata = {
 			{ StaggerIndex::ODD, "odd" }, // default
 			{ StaggerIndex::EVEN, "even" }
 		};
 
-		CHAOS_IMPLEMENT_ENUM_METHOD(StaggerIndex, StaggerIndex_metadata);
+		CHAOS_IMPLEMENT_ENUM_METHOD(StaggerIndex, StaggerIndex_metadata, CHAOS_API);
 
 		static chaos::EnumTools::EnumMetaData<RenderOrder> const RenderOrder_metadata = {
 			{ RenderOrder::RIGHT_UP, "right-up" }, // default
@@ -35,7 +35,7 @@ namespace chaos
 			{ RenderOrder::LEFT_DOWN, "left-down" }
 		};
 
-		CHAOS_IMPLEMENT_ENUM_METHOD(RenderOrder, RenderOrder_metadata);
+		CHAOS_IMPLEMENT_ENUM_METHOD(RenderOrder, RenderOrder_metadata, CHAOS_API);
 
 		// ==========================================
 		// Map methods

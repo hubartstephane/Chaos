@@ -16,7 +16,7 @@ namespace chaos
 		{ PixelComponentType::DEPTH_STENCIL, "DEPTH_STENCIL" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(PixelComponentType, PixelComponentType_metadata);
+	CHAOS_IMPLEMENT_ENUM_METHOD(PixelComponentType, PixelComponentType_metadata, CHAOS_API);
 
 	// ==============================================================================================
 	// PixelFormat methods

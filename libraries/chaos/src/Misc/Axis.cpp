@@ -10,6 +10,6 @@ namespace chaos
 		{ Axis::AXIS_Z, "axis_z" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(Axis, Axis_metadata);
+	CHAOS_IMPLEMENT_ENUM_METHOD(Axis, Axis_metadata, CHAOS_API);
 
 }; // namespace chaos

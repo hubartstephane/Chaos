@@ -15,7 +15,7 @@ namespace chaos
 		LEFT = 3
 	};
 
-	CHAOS_DECLARE_ENUM_METHOD(Edge);
+	CHAOS_DECLARE_ENUM_METHOD(Edge, CHAOS_API);
 
 #endif
 

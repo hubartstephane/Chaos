@@ -29,34 +29,26 @@ CHAOS_IMPLEMENT_ENUM_METHOD(Truc, Truc_metadata);
 
 
 
-std::istream & operator >> (std::istream& stream, Truc& dst)
-{
-	std::string tmp;
-	stream >> tmp;
-
-	StringToEnum(tmp.c_str(), dst);
-
-	return stream;
-}
-
-
-
 
 CHAOS_GLOBAL_VARIABLE(Truc, mtruc);
 CHAOS_GLOBAL_VARIABLE(bool, mybool);
 CHAOS_GLOBAL_VARIABLE(int, myint, 666);
 CHAOS_GLOBAL_VARIABLE(Truc, mytruc2, Truc::Truc3);
+CHAOS_GLOBAL_VARIABLE(chaos::Hotpoint, hot);
 
 
 #define TOTO(a, ...) 6 * a __VA_ARGS__
 
 int main(int argc, char ** argv, char ** env)
 {
-	int xxx = TOTO(5, +7);
+	bool b1 = chaos::IsEnumBitmask<Truc>;
+	bool b2 = chaos::IsEnumBitmask<chaos::Hotpoint>;
 
+	std::ostringstream sss;
+	sss << Truc::Truc4;
 
-	bool b1 = chaos::IsStreamable<Truc>;
-	bool b2 = chaos::IsStreamable<Machin>;
+	auto s = sss.str();
+
 
 	return chaos::RunGame<LudumGame>(argc, argv, env);
 }

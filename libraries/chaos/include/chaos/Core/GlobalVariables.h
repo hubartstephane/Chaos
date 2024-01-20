@@ -20,13 +20,23 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	 * IsStreamable: check whether an object can be read from a stream
+	 * IsIStreamable: check whether an object can be read from a stream
 	 */
 
 	template<typename T>
-	concept IsStreamable = requires(std::istream & str, T & value)
+	concept IsIStreamable = requires(std::istream & str, T & value)
 	{
 		{str >> value};
+	};
+
+	/**
+	 * IsOStreamable: check whether an object can be written into a stream
+	 */
+
+	template<typename T>
+	concept IsOStreamable = requires(std::ostream & str, T const & value)
+	{
+		{str << value};
 	};
 
 	/**
@@ -168,7 +178,7 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 		{
 			if constexpr (meta::is_vector_type_v<T>)
 			{
-				if constexpr (IsStreamable<T>)
+				if constexpr (IsIStreamable<T>)
 				{
 					// zero_tokens
 					//   accepts empty lists as
@@ -181,7 +191,7 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 						(GetName(), boost::program_options::value<T>(&value)->multitoken()->zero_tokens()->composing(), "");
 				}
 			}
-			else if constexpr (IsStreamable<T>)
+			else if constexpr (IsIStreamable<T>)
 			{
 				if constexpr (std::is_same_v<T, bool>)
 				{

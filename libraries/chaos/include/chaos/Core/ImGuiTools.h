@@ -13,7 +13,7 @@ namespace chaos
 		ReadOnly = 1
 	};
 
-	CHAOS_DECLARE_ENUM_FLAG_METHOD(DrawImGuiVariableFlags, CHAOS_API);
+	CHAOS_DECLARE_ENUM_BITMASK_METHOD(DrawImGuiVariableFlags, CHAOS_API);
 
 	// XXX: In order to display variable, the system is looking
 	//       -whether a function named DrawImGuiVariableImpl(...) exists
@@ -100,25 +100,29 @@ namespace chaos
 			chaos::EnumTools::EnumMetaData<T> const& metadata = GetEnumMetaData(boost::mpl::identity<T>());
 			if (metadata.IsValid())
 			{
-				int index = 0;
-				if (std::optional<size_t> selected_index = metadata.GetValueIndex(value))
-					index = (int)selected_index.value();
-
-				if (ImGui::Combo("", &index, &metadata.names[0], (int)metadata.names.size()))
+				if constexpr (IsEnumBitmask<T>)
 				{
-					value = metadata.GetValueByIndex((size_t)index);
+					if (ImGui::BeginCombo("", "enter content", ImGuiComboFlags_None))
+					{
+						ImGui::Button("A");
+						ImGui::Button("B");
+						ImGui::Button("C");
+						ImGui::EndCombo();
+					}
+
 				}
-#if 0
-				if (ImGui::BeginCombo("", "enter content", ImGuiComboFlags_None))
+				else
 				{
-					ImGui::Button("A");
-					ImGui::Button("B");
-					ImGui::Button("C");
-					ImGui::EndCombo();
+					// get value corresponding index
+					int index = 0;
+					if (std::optional<size_t> selected_index = metadata.GetValueIndex(value))
+						index = (int)selected_index.value();
+					// display combo
+					if (ImGui::Combo("", &index, &metadata.names[0], (int)metadata.names.size()))
+					{
+						value = metadata.GetValueByIndex((size_t)index);
+					}
 				}
-#endif
-
-
 			}
 		}
 		// error

@@ -8,6 +8,9 @@ namespace chaos
 		template<typename T, typename U>
 		class RangeMapper;
 
+		template<typename T>
+		bool IsPowerOf2(T src);
+
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 		/** returns the mantissa of a float */

@@ -21,7 +21,7 @@ namespace chaos
 		UseFullWindowMenu = 4
 	};
 
-	CHAOS_DECLARE_ENUM_FLAG_METHOD(ImGuiDrawFlags, CHAOS_API);
+	CHAOS_DECLARE_ENUM_BITMASK_METHOD(ImGuiDrawFlags, CHAOS_API);
 
 	/**
 	 * ImGuiInterface: an interface to display an ImGui window

@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	CHAOS_IMPLEMENT_ENUM_FLAG_METHOD(LoadFileFlag, CHAOS_API);
+	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(LoadFileFlag, CHAOS_API);
 
 	namespace FileTools
 	{

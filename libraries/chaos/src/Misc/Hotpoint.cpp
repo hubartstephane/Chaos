@@ -17,7 +17,7 @@ namespace chaos
 	};
 
 	CHAOS_IMPLEMENT_ENUM_METHOD(Hotpoint, Hotpoint_metadata, CHAOS_API);
-	CHAOS_IMPLEMENT_ENUM_FLAG_METHOD(Hotpoint, CHAOS_API);
+	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(Hotpoint, CHAOS_API);
 
 	glm::vec2 ConvertHotpoint(glm::vec2 const & pt, glm::vec2 const & size, Hotpoint initial_hotpoint, Hotpoint final_hotpoint)
 	{

@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	CHAOS_IMPLEMENT_ENUM_FLAG_METHOD(ImGuiDrawFlags, CHAOS_API);
+	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(ImGuiDrawFlags, CHAOS_API);
 
 	void ImGuiInterface::ConditionalMenuBar(ImGuiDrawFlags flags, int imgui_window_flags)
 	{

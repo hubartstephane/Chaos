@@ -102,14 +102,29 @@ namespace chaos
 			{
 				if constexpr (IsEnumBitmask<T>)
 				{
-					if (ImGui::BeginCombo("", "enter content", ImGuiComboFlags_None))
+					char buffer[256];
+					char const * preview = EnumToString(value, buffer, 256);
+
+					// start a combo
+					if (ImGui::BeginCombo("", preview, ImGuiComboFlags_None))
 					{
-						ImGui::Button("A");
-						ImGui::Button("B");
-						ImGui::Button("C");
+						for (size_t i = 0 ; i < metadata.values.size() ; ++i) // enumerate all possible values
+						{
+							if (MathTools::IsPowerOf2(static_cast<int>(metadata.values[i]))) // the enum may have "extra" values not corresponding to flag (NONE for example or some conjuction of other flags as BOTTOM+LEFT for example). Ignore them
+							{
+								bool selected = (static_cast<int>(value & metadata.values[i]) != 0);
+
+								if (ImGui::Selectable(metadata.names[i], selected, ImGuiSelectableFlags_DontClosePopups)) // ImGuiSelectableFlags_DontClosePopups -> clicking on selection does not close combo
+								{
+									if (selected)
+										value &= ~metadata.values[i]; // invert bit value
+									else 
+										value |= metadata.values[i]; // invert bit value
+								}
+							}
+						}
 						ImGui::EndCombo();
 					}
-
 				}
 				else
 				{

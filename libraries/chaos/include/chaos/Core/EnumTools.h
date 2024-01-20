@@ -16,7 +16,7 @@ namespace chaos
 	template<typename T>
 	concept IsEnumBitmask = requires()
 	{
-		{UseAsEnumBitmask(boost::mpl::identity<typename std::remove_const<T>::type>())};
+		{IsEnumBitmaskImpl(boost::mpl::identity<typename std::remove_const<T>::type>())};
 	};
 
 }; // namespace chaos
@@ -28,7 +28,7 @@ __VA_ARGS__ enum_type operator&(enum_type a, enum_type b);\
 __VA_ARGS__ enum_type operator~(enum_type a);\
 __VA_ARGS__ enum_type & operator|=(enum_type & a, enum_type b);\
 __VA_ARGS__ enum_type & operator&=(enum_type & a, enum_type b);\
-__VA_ARGS__ bool UseAsEnumBitmask(boost::mpl::identity<enum_type>);
+__VA_ARGS__ bool IsEnumBitmaskImpl(boost::mpl::identity<enum_type>);
 
 /** you may use an additionnal argument to represent the function API (CHAOS_API for example) */
 #define CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(enum_type, ...)\
@@ -37,12 +37,12 @@ __VA_ARGS__ enum_type operator&(enum_type a, enum_type b){ return static_cast<en
 __VA_ARGS__ enum_type operator~(enum_type a){ return static_cast<enum_type>(~static_cast<int>(a));}\
 __VA_ARGS__ enum_type& operator|=(enum_type& a, enum_type b) { a = a | b; return a; }\
 __VA_ARGS__ enum_type& operator&=(enum_type& a, enum_type b) { a = a & b; return a; }\
-__VA_ARGS__ bool UseAsEnumBitmask(boost::mpl::identity<enum_type>){ return true;}
+__VA_ARGS__ bool IsEnumBitmaskImpl(boost::mpl::identity<enum_type>){ return true;}
 
 /** you may use an additionnal argument to represent the function API (CHAOS_API for example) */
 #define CHAOS_DECLARE_ENUM_METHOD(enum_type, ...)\
 __VA_ARGS__ bool StringToEnum(char const * src, enum_type& dst);\
-__VA_ARGS__ char const * EnumToString(enum_type src);\
+__VA_ARGS__ char const * EnumToString(enum_type src, char * buffer = nullptr, size_t buflen = 0);\
 __VA_ARGS__ chaos::EnumTools::EnumMetaData<enum_type> const & GetEnumMetaData(boost::mpl::identity<enum_type>);\
 __VA_ARGS__ std::istream & operator >> (std::istream& stream, enum_type& dst);\
 __VA_ARGS__ std::ostream & operator << (std::ostream& stream, enum_type src);
@@ -53,9 +53,9 @@ __VA_ARGS__ bool StringToEnum(char const * src, enum_type& dst)\
 {\
 	return metadata.StringToValue(src, dst);\
 }\
-__VA_ARGS__ char const * EnumToString(enum_type src)\
+__VA_ARGS__ char const * EnumToString(enum_type src, char * buffer, size_t buflen)\
 {\
-	return metadata.ValueToString(src);\
+	return metadata.ValueToString(src, buffer, buflen);\
 }\
 __VA_ARGS__ chaos::EnumTools::EnumMetaData<enum_type> const& GetEnumMetaData(boost::mpl::identity<enum_type>)\
 {\
@@ -171,10 +171,39 @@ namespace chaos
 			}
 
 			/** convert value into string */
-			char const * ValueToString(T value) const
+			char const * ValueToString(T value, char * buffer = nullptr, size_t buflen = 0) const
 			{
-				if (std::optional<size_t> index = GetValueIndex(value))
-					return GetNameByIndex(index.value());
+				int value_as_int = static_cast<int>(value);
+
+				if (!IsEnumBitmask<T> || (value_as_int == 0) || (MathTools::IsPowerOf2(value_as_int))) // a single or no bit. Normal search
+				{
+					if (std::optional<size_t> index = GetValueIndex(value))
+						return GetNameByIndex(index.value());
+				}
+				else
+				{
+					assert(buffer != nullptr);
+					assert(buflen > 0);
+
+					std::ostrstream stream(buffer, buflen);
+
+					BitTools::ForEachBitForward(value_as_int, [this, &stream](int index)
+					{
+						T bit_as_value = static_cast<T>(1 << index);
+
+						if (std::optional<size_t> index = GetValueIndex(bit_as_value))
+						{
+							if (stream.pcount() > 0)
+								stream << "|";
+							stream << GetNameByIndex(index.value());
+						}
+					});
+
+					buffer[stream.pcount()] = 0; // terminal zero
+
+					return buffer;
+
+				}
 				return nullptr;
 			}
 

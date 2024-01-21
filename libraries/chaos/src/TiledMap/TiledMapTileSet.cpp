@@ -290,6 +290,10 @@ namespace chaos
 			XMLTools::ReadAttribute(element, "margin", image_margin);
 			XMLTools::ReadAttribute(element, "spacing", image_spacing);
 
+
+			// SHUXXX: probably broken. hotpoint_map unused
+
+
 			// XXX : theses tokens are not exactly the same that for JSON serialization !!!
 			static std::vector<std::pair<Hotpoint, char const*>> const hotpoint_map =
 			{

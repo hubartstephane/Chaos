@@ -68,7 +68,8 @@ __VA_ARGS__ bool HasAllFlags(enum_type src, enum_type flags)\
 /** you may use an additionnal argument to represent the function API (CHAOS_API for example) */
 #define CHAOS_DECLARE_ENUM_METHOD(enum_type, ...)\
 __VA_ARGS__ bool StringToEnum(char const * src, enum_type& dst);\
-__VA_ARGS__ char const * EnumToString(enum_type src, char * buffer = nullptr, size_t buflen = 0);\
+__VA_ARGS__ char const * EnumToString(enum_type src);\
+__VA_ARGS__ char const * EnumToString(enum_type src, char * buffer, size_t buflen);\
 __VA_ARGS__ chaos::EnumTools::EnumMetaData<enum_type> const * GetEnumMetaData(boost::mpl::identity<enum_type>);\
 __VA_ARGS__ std::istream & operator >> (std::istream& stream, enum_type& dst);\
 __VA_ARGS__ std::ostream & operator << (std::ostream& stream, enum_type src);
@@ -78,6 +79,10 @@ __VA_ARGS__ std::ostream & operator << (std::ostream& stream, enum_type src);
 __VA_ARGS__ bool StringToEnum(char const * src, enum_type& dst)\
 {\
 	return (metadata)->StringToValue(src, dst);\
+}\
+__VA_ARGS__ char const * EnumToString(enum_type src)\
+{\
+	return (metadata)->ValueToString(src, nullptr, 0);\
 }\
 __VA_ARGS__ char const * EnumToString(enum_type src, char * buffer, size_t buflen)\
 {\
@@ -98,7 +103,8 @@ __VA_ARGS__ std::istream& operator >> (std::istream& stream, enum_type& dst)\
 }\
 __VA_ARGS__ std::ostream& operator << (std::ostream& stream, enum_type src)\
 {\
-	stream << EnumToString(src);\
+	char buffer[256];\
+	stream << EnumToString(src, buffer, 256);\
 	return stream;\
 }
 
@@ -190,9 +196,40 @@ namespace chaos
 			/** convert string into value */
 			bool StringToValue(char const* src, T & dst) const
 			{
-				if (std::optional<size_t> index = GetNameIndex(src))
+				// normal enums
+				if constexpr (!IsEnumBitmask<T>)
 				{
-					dst = GetValueByIndex(index.value());
+					if (std::optional<size_t> index = GetNameIndex(src))
+					{
+						dst = GetValueByIndex(index.value());
+						return true;
+					}
+				}
+				// bitmask enums
+				else
+				{
+					T other_dst = T(0); // work on a copy because the string could produce an invalid value
+
+					// construct enum value from string fragments
+					bool invalid_token = StringTools::WithSplittedText(src, "|", [this, &other_dst](char const* subkey)
+					{
+						if (std::optional<size_t> index = GetNameIndex(subkey))
+						{
+							other_dst |= GetValueByIndex(index.value());
+							return false; // continue with next token
+						}
+						return true; // stop parsing tokens
+					});
+					// ensure no invalid token were found
+					if (invalid_token)
+						return false;
+					// ensure the result is valid
+					if (EnumTools::EnumBitmaskMetaData<T> const* bitmask_metadata = GetEnumBitmaskMetaData(boost::mpl::identity<T>()))
+						if (!bitmask_metadata->IsValueValid(other_dst))
+							return false;
+
+					dst = other_dst; // value is valid, update destination
+
 					return true;
 				}
 				return false;
@@ -213,7 +250,7 @@ namespace chaos
 					assert(buffer != nullptr);
 					assert(buflen > 0);
 
-					std::ostrstream stream(buffer, buflen);
+					std::ostrstream stream(buffer, buflen - 1); // -1 to keep at least zero terminal
 
 					BitTools::ForEachBitForward(value_as_int, [this, &stream](int index)
 					{
@@ -336,11 +373,12 @@ namespace chaos
 					return typename L::result_type{};
 			}
 
-			bool HasIncompatibility(T value) const
+			/** check whether there is some flags that are incompatible */
+			bool IsValueValid(T value) const
 			{
-				return ForEachIncompatibleValue(value, [](T other_value)
+				return !ForEachIncompatibleValue(value, [value](T other_value)
 				{
-					return true; // stop at the very first incompatibility value found
+					return HasAnyFlags(value, other_value); // stop at the very first incompatibility value found
 				});
 			}
 

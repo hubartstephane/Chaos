@@ -12,7 +12,7 @@ public:
 		// super
 		chaos::GameApplication::OnWindowCreated(window);
 		// hidden cursor
-		window->SetCursorMode(chaos::CursorMode::Disabled);
+		window->SetCursorMode(chaos::CursorMode::DISABLED);
 	}
 };
 

@@ -13,7 +13,7 @@ namespace chaos
 				return;
 
 		// display full window menu bar
-		if ((flags & ImGuiDrawFlags::USE_FULL_WINDOW_MENU) != ImGuiDrawFlags::NONE)
+		if (HasAnyFlags(flags, ImGuiDrawFlags::USE_FULL_WINDOW_MENU))
 		{
 			auto draw_menu_func = [this](LightweightFunction<void()> func)
 			{
@@ -51,7 +51,7 @@ namespace chaos
 				return imgui_window_flags & ~ImGuiWindowFlags_MenuBar;
 
 		// check whether the menu is to be plugged into full window
-		if ((flags & ImGuiDrawFlags::USE_FULL_WINDOW_MENU) != ImGuiDrawFlags::NONE)
+		if (HasAnyFlags(flags, ImGuiDrawFlags::USE_FULL_WINDOW_MENU))
 			return imgui_window_flags & ~ImGuiWindowFlags_MenuBar;
 
 		// request if there is really some menu content
@@ -73,8 +73,8 @@ namespace chaos
 	{
 		// check flags coherency
 		assert(
-			((ImGuiDrawFlags::FULL_WINDOW & flags) == ImGuiDrawFlags::NONE) ||
-			((ImGuiDrawFlags::FLOATING_IMGUI_WINDOW & flags) == ImGuiDrawFlags::NONE)
+			(!HasAnyFlags(flags, ImGuiDrawFlags::FULL_WINDOW)) ||
+			(!HasAnyFlags(flags, ImGuiDrawFlags::FLOATING_IMGUI_WINDOW))
 		);
 
 		// get ImGui window flags
@@ -89,7 +89,7 @@ namespace chaos
 		};
 
 		// display fullscreen window
-		if ((flags & ImGuiDrawFlags::FULL_WINDOW) != ImGuiDrawFlags::NONE)
+		if (HasAnyFlags(flags, ImGuiDrawFlags::FULL_WINDOW))
 		{
 			closing_request = !FullscreenWindow(title, imgui_window_flags, DisplayFunc);
 		}

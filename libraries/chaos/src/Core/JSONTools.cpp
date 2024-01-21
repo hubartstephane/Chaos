@@ -314,7 +314,7 @@ namespace chaos
 
 		bool LoadJSONFile(FilePathParam const& path, nlohmann::json& result, LoadFileFlag flag)
 		{
-			if ((flag & LoadFileFlag::RECURSIVE) != LoadFileFlag::NONE)
+			if (HasAnyFlags(flag, LoadFileFlag::RECURSIVE))
 			{
 				JSONRecursiveLoader loader;
 				return loader.LoadJSONFile(path, result, flag);

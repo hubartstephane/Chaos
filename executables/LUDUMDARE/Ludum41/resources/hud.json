@@ -1,7 +1,7 @@
 {
 	"LIFE_ID":
 	{
-		"hotpoint":"bottom-left",
+		"hotpoint":"bottom|left",
 		"position":[20.0, 20.0],
 		"particle_offset":[40.0, 0.0],
 		"particle_size":[35.0, 0]

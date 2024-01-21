@@ -471,7 +471,8 @@ namespace chaos
 		// target is an enum
 		if constexpr (std::is_enum_v<T>)
 		{
-			if (char const* encoded_str = EnumToString(src))
+			char buffer[256];
+			if (char const* encoded_str = EnumToString(src, buffer, 256))
 				return SaveIntoJSON(json, encoded_str);
 			return false;
 		}

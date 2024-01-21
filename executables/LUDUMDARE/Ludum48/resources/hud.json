@@ -20,7 +20,7 @@
   "LIFE_ID": {
     "format": "[PLAYER_ICON] %d",
     "generator_params": {
-      "hotpoint": "top-left",
+      "hotpoint": "top|left",
       "line_height": 50,
       "position": [ 20.0, -20.0 ]
     }
@@ -30,7 +30,7 @@
 
     "format": "[DIAMOND_ICON] %02d/%02d",
     "generator_params": {
-      "hotpoint": "top-left",
+      "hotpoint": "top|left",
       "line_height": 50,
       "position": [ 180.0, -20.0 ]
     }
@@ -42,7 +42,7 @@
 
     "format": "[CLOCK_ICON] %02.0f",
     "generator_params": {
-      "hotpoint": "top-left",
+      "hotpoint": "top|left",
       "line_height": 50,
       "position": [ 460.0, -20.0 ]
     },

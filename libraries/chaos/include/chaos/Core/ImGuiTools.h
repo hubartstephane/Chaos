@@ -72,42 +72,25 @@ namespace chaos
 	/** implementation of DrawImGui for a double */
 	CHAOS_API void DrawImGuiVariableImpl(double& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::NONE);
 
-	/** a template to display const variables */
-	template<typename T>
-	void DrawImGuiVariable(T & value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::NONE)
+	namespace details
 	{
-		// disable control if necessary
-		if (HasAnyFlags(flags, DrawImGuiVariableFlags::READ_ONLY))
+		/** internal implementation of DrawImGui for enums */
+		template<typename T>
+		void DrawImGuiVariableEnum(T& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::NONE)
 		{
-			ImGui::BeginDisabled();
-		}
+			assert(std::is_enum_v<T> && ImGuiTools::HasEnumMetaData<T>);
 
-		ImGui::PushID((void*)&value);
-
-		// call method if exists
-		if constexpr (ImGuiTools::HasDrawImGuiVariableMethod<T>)
-		{
-			value.DrawImGuiVariable(flags);
-		}
-		// call function if exists
-		else if constexpr (ImGuiTools::HasDrawImGuiVariableImplFunction<T>)
-		{
-			DrawImGuiVariableImpl(value, flags);
-		}
-		// enum case
-		else if constexpr (std::is_enum_v<T> && ImGuiTools::HasEnumMetaData<T>)
-		{
-			if (EnumTools::EnumMetaData<T> const * metadata = GetEnumMetaData(boost::mpl::identity<T>()))
+			if (EnumTools::EnumMetaData<T> const* metadata = GetEnumMetaData(boost::mpl::identity<T>()))
 			{
 				if constexpr (IsEnumBitmask<T>)
 				{
 					char buffer[256];
-					char const * preview = EnumToString(value, buffer, 256);
+					char const* preview = EnumToString(value, buffer, 256);
 
 					// start a combo
 					if (ImGui::BeginCombo("", preview, ImGuiComboFlags_None))
 					{
-						for (size_t i = 0 ; i < metadata->values.size() ; ++i) // enumerate all possible values
+						for (size_t i = 0; i < metadata->values.size(); ++i) // enumerate all possible values
 						{
 							if (MathTools::IsPowerOf2(static_cast<int>(metadata->values[i]))) // the enum may have "extra" values not corresponding to flag (NONE for example or some conjuction of other flags as BOTTOM+LEFT for example). Ignore them
 							{
@@ -150,6 +133,36 @@ namespace chaos
 					}
 				}
 			}
+		}
+
+	}; // namespace details
+
+	/** a template to display const variables */
+	template<typename T>
+	void DrawImGuiVariable(T & value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::NONE)
+	{
+		// disable control if necessary
+		if (HasAnyFlags(flags, DrawImGuiVariableFlags::READ_ONLY))
+		{
+			ImGui::BeginDisabled();
+		}
+
+		ImGui::PushID((void*)&value);
+
+		// call method if exists
+		if constexpr (ImGuiTools::HasDrawImGuiVariableMethod<T>)
+		{
+			value.DrawImGuiVariable(flags);
+		}
+		// call function if exists
+		else if constexpr (ImGuiTools::HasDrawImGuiVariableImplFunction<T>)
+		{
+			DrawImGuiVariableImpl(value, flags);
+		}
+		// enum case
+		else if constexpr (std::is_enum_v<T> && ImGuiTools::HasEnumMetaData<T>)
+		{
+			details::DrawImGuiVariableEnum(value, flags);
 		}
 		// error
 		else

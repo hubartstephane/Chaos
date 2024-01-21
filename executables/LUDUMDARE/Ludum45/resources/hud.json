@@ -29,7 +29,7 @@
   },
 
   "SHROUDLIFE_ID": {
-    "hotpoint": "top-left",
+    "hotpoint": "top|left",
     "position": [ 20.0, -20.0 ],
     "particle_size": [ 0.0, 150 ]
   },
@@ -43,7 +43,7 @@
 
   "UPGRADE_ID": {
     "generator_params": {
-      "hotpoint": "top-right",
+      "hotpoint": "top|right",
       "position": [ -20.0, -20.0 ],
       "line_height": 80.0
     }
@@ -51,21 +51,21 @@
 
   "FPS_ID": {
     "generator_params": {
-      "hotpoint": "bottom-right",
+      "hotpoint": "bottom|right",
       "position": [ -20.0, 20.0 ]
     }
   },
 
   "PERFS_ID": {
     "generator_params": {
-      "hotpoint": "top-right",
+      "hotpoint": "top|right",
       "position": [ -20.0, -120.0 ]
     }
   },
 
   "LIFE_ID": {
 
-    "hotpoint": "bottom-left",
+    "hotpoint": "bottom|left",
     "position": [ 20.0, 20.0 ],
     "particle_offset": [ 120.0, 0.0 ],
     "particle_size": [ 0.0, 120.0 ]

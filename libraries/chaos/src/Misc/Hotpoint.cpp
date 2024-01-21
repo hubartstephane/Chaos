@@ -9,10 +9,6 @@ namespace chaos
 		{ Hotpoint::BOTTOM, "bottom" },
 		{ Hotpoint::LEFT, "left" },
 		{ Hotpoint::RIGHT, "right" },
-		{ Hotpoint::TOP_LEFT, "top-left" },
-		{ Hotpoint::TOP_RIGHT, "top-right" },
-		{ Hotpoint::BOTTOM_LEFT, "bottom-left" },
-		{ Hotpoint::BOTTOM_RIGHT, "bottom-right" },
 		{ Hotpoint::CENTER, "center" }
 	};
 

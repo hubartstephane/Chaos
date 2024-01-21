@@ -97,7 +97,7 @@ namespace chaos
 		// enum case
 		else if constexpr (std::is_enum_v<T> && ImGuiTools::HasEnumMetaData<T>)
 		{
-			if (chaos::EnumTools::EnumMetaData<T> const * metadata = GetEnumMetaData(boost::mpl::identity<T>()))
+			if (EnumTools::EnumMetaData<T> const * metadata = GetEnumMetaData(boost::mpl::identity<T>()))
 			{
 				if constexpr (IsEnumBitmask<T>)
 				{
@@ -115,10 +115,22 @@ namespace chaos
 
 								if (ImGui::Selectable(metadata->names[i], selected, ImGuiSelectableFlags_DontClosePopups)) // ImGuiSelectableFlags_DontClosePopups -> clicking on selection does not close combo
 								{
-									if (selected)
+									if (selected) // was selected -> unselect
+									{
 										value &= ~metadata->values[i]; // invert bit value
-									else 
+									}
+									else // was not selected -> select
+									{
 										value |= metadata->values[i]; // invert bit value
+
+										if (EnumTools::EnumBitmaskMetaData<T> const* bitmask_metadata = GetEnumBitmaskMetaData(boost::mpl::identity<T>()))
+										{
+											bitmask_metadata->ForEachIncompatibleValue(metadata->values[i], [&value](T other_value)
+											{
+												value &= ~other_value; // remove incompatible values
+											});
+										}
+									}
 								}
 							}
 						}

@@ -15,10 +15,10 @@ namespace chaos
 
 	enum class ImGuiDrawFlags : int
 	{
-		None = 0,
-		FullWindow = 1,
-		FloatingImGuiWindow = 2,
-		UseFullWindowMenu = 4
+		NONE = 0,
+		FULL_WINDOW = 1,
+		FLOATING_IMGUI_WINDOW = 2,
+		USE_FULL_WINDOW_MENU = 4
 	};
 
 	CHAOS_DECLARE_ENUM_BITMASK_METHOD(ImGuiDrawFlags, CHAOS_API);

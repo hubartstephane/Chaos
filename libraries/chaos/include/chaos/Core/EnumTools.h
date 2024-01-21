@@ -10,6 +10,9 @@ namespace chaos
 
 		template<typename T>
 		class EnumMetaData;
+
+		template<typename T>
+		class EnumBitmaskMetaData;
 	
 	}; // namespace EnumTools
 
@@ -22,25 +25,30 @@ namespace chaos
 }; // namespace chaos
 
 /** you may use an additionnal argument to represent the function API (CHAOS_API for example) */
-#define CHAOS_DECLARE_ENUM_BITMASK_METHOD(enum_type, ...)\
+#define CHAOS_DECLARE_ENUM_BITMASK_METHOD(enum_type, bitmask_metadata, ...)\
 __VA_ARGS__ enum_type operator|(enum_type a, enum_type b);\
 __VA_ARGS__ enum_type operator&(enum_type a, enum_type b);\
 __VA_ARGS__ enum_type operator~(enum_type a);\
 __VA_ARGS__ enum_type & operator|=(enum_type & a, enum_type b);\
 __VA_ARGS__ enum_type & operator&=(enum_type & a, enum_type b);\
 __VA_ARGS__ bool IsEnumBitmaskImpl(boost::mpl::identity<enum_type>);\
+__VA_ARGS__ chaos::EnumTools::EnumBitmaskMetaData<enum_type> const * GetEnumBitmaskMetaData(boost::mpl::identity<enum_type>);\
 __VA_ARGS__ bool IsNull(enum_type src);\
 __VA_ARGS__ bool HasAnyFlags(enum_type src, enum_type flags);\
 __VA_ARGS__ bool HasAllFlags(enum_type src, enum_type flags);
 
 /** you may use an additionnal argument to represent the function API (CHAOS_API for example) */
-#define CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(enum_type, ...)\
+#define CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(enum_type, bitmask_metadata, ...)\
 __VA_ARGS__ enum_type operator|(enum_type a, enum_type b){ return static_cast<enum_type>(static_cast<int>(a) | static_cast<int>(b));}\
 __VA_ARGS__ enum_type operator&(enum_type a, enum_type b){ return static_cast<enum_type>(static_cast<int>(a) & static_cast<int>(b));};\
 __VA_ARGS__ enum_type operator~(enum_type a){ return static_cast<enum_type>(~static_cast<int>(a));}\
 __VA_ARGS__ enum_type& operator|=(enum_type& a, enum_type b) { a = a | b; return a; }\
 __VA_ARGS__ enum_type& operator&=(enum_type& a, enum_type b) { a = a & b; return a; }\
 __VA_ARGS__ bool IsEnumBitmaskImpl(boost::mpl::identity<enum_type>){ return true;}\
+__VA_ARGS__ chaos::EnumTools::EnumBitmaskMetaData<enum_type> const * GetEnumBitmaskMetaData(boost::mpl::identity<enum_type>)\
+{\
+	return bitmask_metadata;\
+}\
 __VA_ARGS__ bool IsNull(enum_type src)\
 {\
 	return static_cast<int>(src) == 0;\
@@ -237,6 +245,111 @@ namespace chaos
 
 			std::vector<T> values;
 			std::vector<char const*> names;
+		};
+
+		/**
+		 * EnumBitmaskMetaData: some extra data dedicated to bitmask enums
+		 */
+
+		template<typename T>
+		class EnumBitmaskMetaData
+		{
+			/** a structure to store groups in same vector */
+			union IncompatibilityGroupEntry
+			{
+				size_t group_size; // first element of a group is the number of values it belongs
+				T      value;      // following elements of a group are the values themselves
+			};
+
+		public:
+
+			/** constructor */
+			EnumBitmaskMetaData(std::initializer_list<std::initializer_list<T>> entries)
+			{
+				// count the total number of entry required
+				size_t count = 0;
+				for (std::initializer_list<T> const& entry : entries)
+					count += 1 + entry.size(); // +1 for the group counter
+				incompatibility_groups.reserve(count);
+
+				// splat the array of arrays into a single vector
+				for (std::initializer_list<T> const& entry : entries) 
+				{
+					// insert the number of element in the group
+					IncompatibilityGroupEntry group_entry;
+					group_entry.group_size = entry.size();
+					incompatibility_groups.push_back(group_entry);
+					// insert all elements in the group
+					for (T value : entry)
+					{
+						IncompatibilityGroupEntry group_entry;
+						group_entry.value = value;
+						incompatibility_groups.push_back(group_entry);
+					}
+				}
+			}
+
+			/** request for incompatible values */
+			template<typename FUNC>
+			decltype(auto) ForAllIncompatibleValues(T value, FUNC const& func)
+			{
+				using L = meta::LambdaInfo<FUNC, T>;
+
+				size_t count = incompatibility_groups.size();
+				for (size_t i = 0; i < count; ) // do not ++i. this is handled by the loop itself
+				{
+					size_t group_size = incompatibility_groups[i].group_size;
+
+					// search whether this group contains the searched value
+					bool group_contains_value = false;
+					for (size_t j = 0; j < group_size && !group_contains_value ; ++j)
+						if (incompatibility_groups[i + 1 + j].value == value)
+							group_contains_value = true;
+
+					// if group contains value, apply incompatibilities
+					if (group_contains_value)
+					{
+						for (size_t j = 0; j < group_size; ++j)
+						{
+							T other_value = incompatibility_groups[i + 1 + j].value;
+							if (other_value != value)
+							{
+								if constexpr (L::convertible_to_bool)
+								{
+									if (decltype(auto) result = func(other_value))
+										return result;
+								}
+								else
+								{
+									func(other_value);
+								}
+							}
+						}
+					}
+					// next group
+					i = i + 1 + group_size;
+				}
+
+				if constexpr (L::convertible_to_bool)
+					return typename L::result_type{};
+			}
+
+			bool HasIncompatibility(T value) const
+			{
+				return ForAllIncompatibleValues(value, [](T other_value)
+				{
+					return true; // stop at the very first incompatibility value found
+				});
+			}
+
+		protected:
+
+			// incompatibility groups are formed as follow:
+			// -a single size_t indicating the number of elements in the group
+			// -N values that are incompatible one with the other
+
+			/** the incompatibility groups */
+			std::vector<IncompatibilityGroupEntry> incompatibility_groups;
 		};
 
 	}; // namespace EnumTools

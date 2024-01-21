@@ -112,7 +112,7 @@ namespace chaos
 
 	void GLTools::DisplayGenericInformation()
 	{
-		Log::BeginTransaction(LogType::Message);
+		Log::BeginTransaction(LogSeverity::Message);
 
 		GLubyte const * renderer = glGetString(GL_RENDERER);
 		if (renderer != nullptr)

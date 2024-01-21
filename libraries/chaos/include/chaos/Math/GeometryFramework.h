@@ -912,7 +912,7 @@ namespace chaos
 namespace glm
 {
 	template<int SIZE, typename T, glm::precision P>
-	void DrawImGuiVariableImpl(glm::vec<SIZE, T, P>& value, chaos::DrawImGuiVariableFlags flags = chaos::DrawImGuiVariableFlags::None)
+	void DrawImGuiVariableImpl(glm::vec<SIZE, T, P>& value, chaos::DrawImGuiVariableFlags flags = chaos::DrawImGuiVariableFlags::NONE)
 	{
 		// ImGui does not provide a InputDoubleX method, that's why we are using InputScalarN here instead of (InputIntX and InputFloatX)
 		// (InputScalarN is easier because the size can be given has an argument)	

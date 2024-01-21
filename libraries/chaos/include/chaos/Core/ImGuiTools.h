@@ -77,7 +77,7 @@ namespace chaos
 	void DrawImGuiVariable(T & value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::NONE)
 	{
 		// disable control if necessary
-		if ((flags & DrawImGuiVariableFlags::READ_ONLY) != DrawImGuiVariableFlags::NONE)
+		if (HasAnyFlags(flags, DrawImGuiVariableFlags::READ_ONLY))
 		{
 			ImGui::BeginDisabled();
 		}
@@ -149,7 +149,7 @@ namespace chaos
 		ImGui::PopID();
 
 		// enable control back if necessary
-		if ((flags & DrawImGuiVariableFlags::READ_ONLY) != DrawImGuiVariableFlags::NONE)
+		if (HasAnyFlags(flags, DrawImGuiVariableFlags::READ_ONLY))
 		{
 			ImGui::EndDisabled();
 		}

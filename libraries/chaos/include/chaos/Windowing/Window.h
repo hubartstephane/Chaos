@@ -20,9 +20,9 @@ namespace chaos
 
 	enum class CHAOS_API CursorMode : int
 	{
-		Normal = GLFW_CURSOR_NORMAL,
-		Disabled = GLFW_CURSOR_DISABLED,
-		Hidden = GLFW_CURSOR_HIDDEN
+		NORMAL = GLFW_CURSOR_NORMAL,
+		DISABLED = GLFW_CURSOR_DISABLED,
+		HIDDEN = GLFW_CURSOR_HIDDEN
 	};
 
 	/**
@@ -402,7 +402,7 @@ namespace chaos
 		/** if the window is fullscreen, this points to the concerned monitor */
 		GLFWmonitor* fullscreen_monitor = nullptr;
 		/** the current cursor mode */
-		CursorMode cursor_mode = CursorMode::Normal;
+		CursorMode cursor_mode = CursorMode::NORMAL;
 		/** a counter that prevent destruction of the window resources */
 		int window_destruction_guard = 0;
 		/** the window category */

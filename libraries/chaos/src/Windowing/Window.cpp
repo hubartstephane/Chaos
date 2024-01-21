@@ -370,7 +370,7 @@ namespace chaos
 
 		// prepare cursor mode
 		cursor_mode = (CursorMode)glfwGetInputMode(glfw_window, GLFW_CURSOR);
-		SetCursorMode(CursorMode::Disabled);
+		SetCursorMode(CursorMode::DISABLED);
 
 		// update placement
 		SetWindowPlacement(placement_info);
@@ -483,7 +483,7 @@ namespace chaos
 	void Window::OnImGuiMenuModeChanged(bool mode)
 	{
 		if (mode)
-			glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)CursorMode::Normal);
+			glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)CursorMode::NORMAL);
 		else
 			glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)cursor_mode);
 	}

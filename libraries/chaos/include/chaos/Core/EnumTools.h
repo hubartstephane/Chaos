@@ -293,7 +293,7 @@ namespace chaos
 
 			/** request for incompatible values */
 			template<typename FUNC>
-			decltype(auto) ForAllIncompatibleValues(T value, FUNC const& func)
+			decltype(auto) ForEachIncompatibleValue(T value, FUNC const& func) const
 			{
 				using L = meta::LambdaInfo<FUNC, T>;
 
@@ -338,7 +338,7 @@ namespace chaos
 
 			bool HasIncompatibility(T value) const
 			{
-				return ForAllIncompatibleValues(value, [](T other_value)
+				return ForEachIncompatibleValue(value, [](T other_value)
 				{
 					return true; // stop at the very first incompatibility value found
 				});

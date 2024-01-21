@@ -11,6 +11,6 @@ namespace chaos
 		{ Edge::LEFT, "left" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(Edge, Edge_metadata, CHAOS_API);
+	CHAOS_IMPLEMENT_ENUM_METHOD(Edge, &Edge_metadata, CHAOS_API);
 
 }; // namespace chaos

@@ -69,7 +69,7 @@ __VA_ARGS__ bool HasAllFlags(enum_type src, enum_type flags)\
 #define CHAOS_DECLARE_ENUM_METHOD(enum_type, ...)\
 __VA_ARGS__ bool StringToEnum(char const * src, enum_type& dst);\
 __VA_ARGS__ char const * EnumToString(enum_type src, char * buffer = nullptr, size_t buflen = 0);\
-__VA_ARGS__ chaos::EnumTools::EnumMetaData<enum_type> const & GetEnumMetaData(boost::mpl::identity<enum_type>);\
+__VA_ARGS__ chaos::EnumTools::EnumMetaData<enum_type> const * GetEnumMetaData(boost::mpl::identity<enum_type>);\
 __VA_ARGS__ std::istream & operator >> (std::istream& stream, enum_type& dst);\
 __VA_ARGS__ std::ostream & operator << (std::ostream& stream, enum_type src);
 
@@ -77,15 +77,17 @@ __VA_ARGS__ std::ostream & operator << (std::ostream& stream, enum_type src);
 #define CHAOS_IMPLEMENT_ENUM_METHOD(enum_type, metadata, ...)\
 __VA_ARGS__ bool StringToEnum(char const * src, enum_type& dst)\
 {\
-	return metadata.StringToValue(src, dst);\
+	return (metadata)->StringToValue(src, dst);\
 }\
 __VA_ARGS__ char const * EnumToString(enum_type src, char * buffer, size_t buflen)\
 {\
-	return metadata.ValueToString(src, buffer, buflen);\
+	return (metadata)->ValueToString(src, buffer, buflen);\
 }\
-__VA_ARGS__ chaos::EnumTools::EnumMetaData<enum_type> const& GetEnumMetaData(boost::mpl::identity<enum_type>)\
+__VA_ARGS__ chaos::EnumTools::EnumMetaData<enum_type> const * GetEnumMetaData(boost::mpl::identity<enum_type>)\
 {\
-	return metadata;\
+	if ((metadata) && (metadata)->IsValid())\
+		return (metadata);\
+	return nullptr;\
 }\
 __VA_ARGS__ std::istream& operator >> (std::istream& stream, enum_type& dst)\
 {\

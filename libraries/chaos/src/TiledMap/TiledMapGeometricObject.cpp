@@ -12,7 +12,7 @@ namespace chaos
 			{ HorizontalTextAlignment::JUSTIFY, "justify" }
 		};
 
-		CHAOS_IMPLEMENT_ENUM_METHOD(HorizontalTextAlignment, HorizontalTextAlignment_metadata, CHAOS_API);
+		CHAOS_IMPLEMENT_ENUM_METHOD(HorizontalTextAlignment, &HorizontalTextAlignment_metadata, CHAOS_API);
 
 		static chaos::EnumTools::EnumMetaData<VerticalTextAlignment> const VerticalTextAlignment_metadata = {
 			{ VerticalTextAlignment::TOP, "top" }, // default
@@ -20,7 +20,7 @@ namespace chaos
 			{ VerticalTextAlignment::BOTTOM, "bottom" }
 		};
 
-		CHAOS_IMPLEMENT_ENUM_METHOD(VerticalTextAlignment, VerticalTextAlignment_metadata);
+		CHAOS_IMPLEMENT_ENUM_METHOD(VerticalTextAlignment, &VerticalTextAlignment_metadata);
 
 		// ==========================================
 		// GeometricObject methods

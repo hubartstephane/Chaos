@@ -20,7 +20,7 @@ namespace chaos
 		{ MouseButton::BUTTON_8, "MOUSE_BUTTON_8" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(MouseButton, MouseButton_metadata, CHAOS_API);
+	CHAOS_IMPLEMENT_ENUM_METHOD(MouseButton, &MouseButton_metadata, CHAOS_API);
 
 	// -------------------------------------------------------------------
 	// GamepadButton implementation
@@ -47,7 +47,7 @@ namespace chaos
 		{ GamepadButton::RIGHT_TRIGGER, "GAMEPAD_RIGHT_TRIGGER" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(GamepadButton, GamepadButton_metadata, CHAOS_API);
+	CHAOS_IMPLEMENT_ENUM_METHOD(GamepadButton, &GamepadButton_metadata, CHAOS_API);
 
 	// -------------------------------------------------------------------
 	// KeyboardButton implementation
@@ -180,7 +180,7 @@ namespace chaos
 	};
 #undef CHAOS_KEYBOARD_DEF
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(KeyboardButton, KeyboardButton_metadata, CHAOS_API);
+	CHAOS_IMPLEMENT_ENUM_METHOD(KeyboardButton, &KeyboardButton_metadata, CHAOS_API);
 
 	// -------------------------------------------------------------------
 	// GamepadAxis implementation
@@ -197,7 +197,7 @@ namespace chaos
 		{ GamepadAxis::RIGHT_TRIGGER, "RIGHT_TRIGGER" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(GamepadAxis, GamepadAxis_metadata, CHAOS_API);
+	CHAOS_IMPLEMENT_ENUM_METHOD(GamepadAxis, &GamepadAxis_metadata, CHAOS_API);
 
 
 	// -------------------------------------------------------------------
@@ -211,7 +211,7 @@ namespace chaos
 		{ GamepadStick::RIGHT_STICK, "RIGHT_STICK" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(GamepadStick, GamepadStick_metadata, CHAOS_API);
+	CHAOS_IMPLEMENT_ENUM_METHOD(GamepadStick, &GamepadStick_metadata, CHAOS_API);
 
 	// -------------------------------------------------------------------
 	// KeyType implementation
@@ -225,7 +225,7 @@ namespace chaos
 		{ KeyType::GAMEPAD, "GAMEPAD" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(KeyType, KeyType_metadata, CHAOS_API);
+	CHAOS_IMPLEMENT_ENUM_METHOD(KeyType, &KeyType_metadata, CHAOS_API);
 
 	// -------------------------------------------------------------------
 	// Key implementation

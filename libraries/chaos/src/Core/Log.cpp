@@ -14,7 +14,7 @@ namespace chaos
 		{ LogSeverity::Error,   "Error" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(LogSeverity, LogSeverity_metadata, CHAOS_API);
+	CHAOS_IMPLEMENT_ENUM_METHOD(LogSeverity, &LogSeverity_metadata, CHAOS_API);
 
 	std::string LogLine::ToString() const
 	{

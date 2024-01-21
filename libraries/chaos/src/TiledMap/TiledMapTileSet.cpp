@@ -10,7 +10,7 @@ namespace chaos
 			{ TileSetOrientation::ORTHOGONAL, "orthogonal" } // default
 		};
 
-		CHAOS_IMPLEMENT_ENUM_METHOD(TileSetOrientation, TileSetOrientation_metadata, CHAOS_API);
+		CHAOS_IMPLEMENT_ENUM_METHOD(TileSetOrientation, &TileSetOrientation_metadata, CHAOS_API);
 
 		// ==========================================
 		// Wangset methods

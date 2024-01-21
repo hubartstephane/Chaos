@@ -10,7 +10,7 @@ namespace chaos
 			{ DrawOrder::TOPDOWN, "topdown" } // default
 		};
 
-		CHAOS_IMPLEMENT_ENUM_METHOD(DrawOrder, DrawOrder_metadata, CHAOS_API);
+		CHAOS_IMPLEMENT_ENUM_METHOD(DrawOrder, &DrawOrder_metadata, CHAOS_API);
 
 		// ==========================================
 		// LayerBase methods

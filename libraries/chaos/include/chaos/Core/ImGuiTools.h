@@ -97,8 +97,7 @@ namespace chaos
 		// enum case
 		else if constexpr (std::is_enum_v<T> && ImGuiTools::HasEnumMetaData<T>)
 		{
-			chaos::EnumTools::EnumMetaData<T> const& metadata = GetEnumMetaData(boost::mpl::identity<T>());
-			if (metadata.IsValid())
+			if (chaos::EnumTools::EnumMetaData<T> const * metadata = GetEnumMetaData(boost::mpl::identity<T>()))
 			{
 				if constexpr (IsEnumBitmask<T>)
 				{
@@ -108,18 +107,18 @@ namespace chaos
 					// start a combo
 					if (ImGui::BeginCombo("", preview, ImGuiComboFlags_None))
 					{
-						for (size_t i = 0 ; i < metadata.values.size() ; ++i) // enumerate all possible values
+						for (size_t i = 0 ; i < metadata->values.size() ; ++i) // enumerate all possible values
 						{
-							if (MathTools::IsPowerOf2(static_cast<int>(metadata.values[i]))) // the enum may have "extra" values not corresponding to flag (NONE for example or some conjuction of other flags as BOTTOM+LEFT for example). Ignore them
+							if (MathTools::IsPowerOf2(static_cast<int>(metadata->values[i]))) // the enum may have "extra" values not corresponding to flag (NONE for example or some conjuction of other flags as BOTTOM+LEFT for example). Ignore them
 							{
-								bool selected = (static_cast<int>(value & metadata.values[i]) != 0);
+								bool selected = (static_cast<int>(value & metadata->values[i]) != 0);
 
-								if (ImGui::Selectable(metadata.names[i], selected, ImGuiSelectableFlags_DontClosePopups)) // ImGuiSelectableFlags_DontClosePopups -> clicking on selection does not close combo
+								if (ImGui::Selectable(metadata->names[i], selected, ImGuiSelectableFlags_DontClosePopups)) // ImGuiSelectableFlags_DontClosePopups -> clicking on selection does not close combo
 								{
 									if (selected)
-										value &= ~metadata.values[i]; // invert bit value
+										value &= ~metadata->values[i]; // invert bit value
 									else 
-										value |= metadata.values[i]; // invert bit value
+										value |= metadata->values[i]; // invert bit value
 								}
 							}
 						}
@@ -130,12 +129,12 @@ namespace chaos
 				{
 					// get value corresponding index
 					int index = 0;
-					if (std::optional<size_t> selected_index = metadata.GetValueIndex(value))
+					if (std::optional<size_t> selected_index = metadata->GetValueIndex(value))
 						index = (int)selected_index.value();
 					// display combo
-					if (ImGui::Combo("", &index, &metadata.names[0], (int)metadata.names.size()))
+					if (ImGui::Combo("", &index, &metadata->names[0], (int)metadata->names.size()))
 					{
-						value = metadata.GetValueByIndex((size_t)index);
+						value = metadata->GetValueByIndex((size_t)index);
 					}
 				}
 			}

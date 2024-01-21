@@ -45,7 +45,10 @@ __VA_ARGS__ bool StringToEnum(char const * src, enum_type& dst);\
 __VA_ARGS__ char const * EnumToString(enum_type src, char * buffer = nullptr, size_t buflen = 0);\
 __VA_ARGS__ chaos::EnumTools::EnumMetaData<enum_type> const & GetEnumMetaData(boost::mpl::identity<enum_type>);\
 __VA_ARGS__ std::istream & operator >> (std::istream& stream, enum_type& dst);\
-__VA_ARGS__ std::ostream & operator << (std::ostream& stream, enum_type src);
+__VA_ARGS__ std::ostream & operator << (std::ostream& stream, enum_type src);\
+__VA_ARGS__ bool IsNull(enum_type src);\
+__VA_ARGS__ bool HasAnyFlags(enum_type src, enum_type flags);\
+__VA_ARGS__ bool HasAllFlags(enum_type src, enum_type flags);
 
 /** you may use an additionnal argument to represent the function API (CHAOS_API for example) */
 #define CHAOS_IMPLEMENT_ENUM_METHOD(enum_type, metadata, ...)\
@@ -72,6 +75,20 @@ __VA_ARGS__ std::ostream& operator << (std::ostream& stream, enum_type src)\
 {\
 	stream << EnumToString(src);\
 	return stream;\
+}\
+__VA_ARGS__ bool IsNull(enum_type src)\
+{\
+	return static_cast<int>(src) == 0;\
+}\
+__VA_ARGS__ bool HasAnyFlags(enum_type src, enum_type flags)\
+{\
+	assert(static_cast<int>(flags) != 0);\
+	return (static_cast<int>(src) & static_cast<int>(flags)) != 0;\
+}\
+__VA_ARGS__ bool HasAllFlags(enum_type src, enum_type flags)\
+{\
+	assert(static_cast<int>(flags) != 0);\
+	return (static_cast<int>(src) & static_cast<int>(flags)) == static_cast<int>(flags);\
 }
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION

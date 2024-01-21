@@ -17,7 +17,7 @@ namespace chaos
 	{
 		Window::OnDrawWindowImGuiContent();
 		if (content != nullptr)
-			content->DrawImGui(GetName(), ImGuiDrawFlags::FullWindow);
+			content->DrawImGui(GetName(), ImGuiDrawFlags::FULL_WINDOW);
 	}
 
 	void ImGuiWindow::OnDrawWindowImGuiMenu(ImGuiInterface::DrawImGuiMenuFunc func)

@@ -16,7 +16,7 @@ namespace chaos
 	{
 		if (imgui_object != nullptr)
 		{
-			imgui_object->DrawImGui(name.c_str(), ImGuiDrawFlags::None);
+			imgui_object->DrawImGui(name.c_str(), ImGuiDrawFlags::NONE);
 			if (imgui_object->IsClosingRequested()) // transfert closing request
 				RequestClosing();
 		}

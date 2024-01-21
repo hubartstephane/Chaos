@@ -2,7 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	enum class LogType;
+	enum class LogSeverity;
 	class LogLine;
 	class LoggerListener;
 	class FileLoggerListener;
@@ -13,17 +13,17 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* LogType: severity of the message
+	* LogSeverity: severity of the message
 	*/
 
-	enum class CHAOS_API LogType : int
+	enum class CHAOS_API LogSeverity : int
 	{
 		Message,
 		Warning,
 		Error
 	};
 
-	CHAOS_DECLARE_ENUM_METHOD(LogType, CHAOS_API);
+	CHAOS_DECLARE_ENUM_METHOD(LogSeverity, CHAOS_API);
 
 	/**
 	* LogLine : an entry in the log system
@@ -44,8 +44,8 @@ namespace chaos
 		size_t line_index = 0;
 		/** the date of post */
 		std::chrono::system_clock::time_point time;
-		/** the type of the message */
-		LogType type = LogType::Message;
+		/** the severity of the message */
+		LogSeverity severity = LogSeverity::Message;
 		/** the domain of the message */
 		char const * domain = nullptr;
 		/** the content of the message */
@@ -148,30 +148,30 @@ namespace chaos
 		template<typename ...PARAMS>
 		void Message(std::string_view domain, PARAMS && ...params)
 		{
-			Output(domain, LogType::Message, std::forward<PARAMS>(params)...);
+			Output(domain, LogSeverity::Message, std::forward<PARAMS>(params)...);
 		}
 		/** output a warning */
 		template<typename ...PARAMS>
 		void Warning(std::string_view domain, PARAMS && ...params)
 		{
-			Output(domain, LogType::Warning, std::forward<PARAMS>(params)...);
+			Output(domain, LogSeverity::Warning, std::forward<PARAMS>(params)...);
 		}
 		/** output an error */
 		template<typename ...PARAMS>
 		void Error(std::string_view domain, PARAMS && ...params)
 		{
-			Output(domain, LogType::Error, std::forward<PARAMS>(params)...);
+			Output(domain, LogSeverity::Error, std::forward<PARAMS>(params)...);
 		}
 
 		/** generic log function (non static function) */
 		template<typename ...PARAMS>
-		void Output(std::string_view domain, LogType type, PARAMS && ...params)
+		void Output(std::string_view domain, LogSeverity severity, PARAMS && ...params)
 		{
-			DoFormatAndOutput(domain, type, std::forward<PARAMS>(params)...);
+			DoFormatAndOutput(domain, severity, std::forward<PARAMS>(params)...);
 		}
 
 		/** start a new line of log, but wait until transaction ends to emit the line */
-		void BeginTransaction(std::string_view domain, LogType type);
+		void BeginTransaction(std::string_view domain, LogSeverity severity);
 		/** add some text to the current transaction */
 		template<typename ...PARAMS>
 		void TransactionConcat(PARAMS && ...params)
@@ -215,12 +215,12 @@ namespace chaos
 		void RemoveListener(LoggerListener* listener);
 
 		/** internal method to format then display a log */
-		void DoFormatAndOutput(std::string_view domain, LogType type, char const* format, ...);
+		void DoFormatAndOutput(std::string_view domain, LogSeverity severity, char const* format, ...);
 		/** format a string and concat to the transaction in progress */
 		void DoFormatAndConcatToTransaction(char const* format, ...);
 
 		/** internal method to display a log */
-		virtual void DoOutput(char const * domain, LogType type, std::string_view buffer);
+		virtual void DoOutput(char const * domain, LogSeverity severity, std::string_view buffer);
 
 		/** register a string for domain and gets its internal pointer */
 		char const* RegisterDomain(std::string_view domain);
@@ -237,7 +237,7 @@ namespace chaos
 		/** whether a transaction is being started */
 		int transaction_count = 0;
 		/** the transaction information */
-		LogType transaction_type = LogType::Message;
+		LogSeverity transaction_severity = LogSeverity::Message;
 		/** the transaction domain */
 		char const* transaction_domain = nullptr;
 		/** the transaction information */
@@ -254,39 +254,38 @@ namespace chaos
 	{
 	public:
 
-
 		/** output a message */
 		template<typename ...PARAMS>
 		static void Message(PARAMS && ...params)
 		{
-			Output(LogType::Message, std::forward<PARAMS>(params)...);
+			Output(LogSeverity::Message, std::forward<PARAMS>(params)...);
 		}
 		/** output a warning */
 		template<typename ...PARAMS>
 		static void Warning(PARAMS && ...params)
 		{
-			Output(LogType::Warning, std::forward<PARAMS>(params)...);
+			Output(LogSeverity::Warning, std::forward<PARAMS>(params)...);
 		}
 		/** output an error */
 		template<typename ...PARAMS>
 		static void Error(PARAMS && ...params)
 		{
-			Output(LogType::Error, std::forward<PARAMS>(params)...);
+			Output(LogSeverity::Error, std::forward<PARAMS>(params)...);
 		}
 
 		/** generic log function */
 		template<typename ...PARAMS>
-		static void Output(LogType type, PARAMS && ...params)
+		static void Output(LogSeverity severity, PARAMS && ...params)
 		{
 			if (Logger* logger = Logger::GetInstance())
-				logger->Output("default", type, std::forward<PARAMS>(params)...);
+				logger->Output("default", severity, std::forward<PARAMS>(params)...);
 		}
 
 		/** start a new line of log, but wait until transaction ends to emit the line */
-		static void BeginTransaction(LogType type)
+		static void BeginTransaction(LogSeverity severity)
 		{
 			if (Logger* logger = Logger::GetInstance())
-				logger->BeginTransaction("default", type);
+				logger->BeginTransaction("default", severity);
 		}
 		/** add some text to the current transaction */
 		template<typename ...PARAMS>

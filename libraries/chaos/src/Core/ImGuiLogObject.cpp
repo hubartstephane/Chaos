@@ -28,7 +28,7 @@ namespace chaos
 		if (ImGui::BeginTable("##lines", COLUMN_COUNT, ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersInnerH | ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_Reorderable))
 		{
 			ImGui::TableSetupColumn("Date", 0);
-			ImGui::TableSetupColumn("Type", 0);
+			ImGui::TableSetupColumn("Severity", 0);
 			ImGui::TableSetupColumn("Domain", 0);
 			ImGui::TableSetupColumn("Count", 0);
 			ImGui::TableSetupColumn("Message", 0);
@@ -59,19 +59,19 @@ namespace chaos
 
 				// search color and filter out by type
 				ImVec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
-				if (line.type == LogType::Message)
+				if (line.severity == LogSeverity::Message)
 				{
 					if (!show_messages)
 						continue;
 					color = { 1.0f, 1.0f, 1.0f, 1.0f };
 				}
-				else if (line.type == LogType::Warning)
+				else if (line.severity == LogSeverity::Warning)
 				{
 					if (!show_warnings)
 						continue;
 					color = { 1.0f, 0.64f, 0.0f, 1.0f };
 				}
-				else if (line.type == LogType::Error)
+				else if (line.severity == LogSeverity::Error)
 				{
 					if (!show_errors)
 						continue;
@@ -91,7 +91,7 @@ namespace chaos
 				// type
 				ImGui::PushID(int(i * COLUMN_COUNT + 1));
 				ImGui::TableNextColumn();
-				ImGui::TextColored(color, EnumToString(line.type));
+				ImGui::TextColored(color, EnumToString(line.severity));
 				ImGui::PopID();
 
 				// domain
@@ -131,7 +131,7 @@ namespace chaos
 		func([this]()
 		{
 			// the types
-			if (ImGui::BeginMenu("Type"))
+			if (ImGui::BeginMenu("Severity"))
 			{
 				ImGui::Checkbox("messages", &show_messages); ImGui::SameLine();
 				ImGui::Checkbox("warnings", &show_warnings); ImGui::SameLine();

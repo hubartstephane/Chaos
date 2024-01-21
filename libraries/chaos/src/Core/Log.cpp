@@ -7,20 +7,20 @@ namespace chaos
 	// LogLine implementation
 	// ================================================================
 
-	static chaos::EnumTools::EnumMetaData<LogType> const LogType_metadata =
+	static chaos::EnumTools::EnumMetaData<LogSeverity> const LogSeverity_metadata =
 	{
-		{ LogType::Message, "Message" },
-		{ LogType::Warning, "Warning" },
-		{ LogType::Error,   "Error" }
+		{ LogSeverity::Message, "Message" },
+		{ LogSeverity::Warning, "Warning" },
+		{ LogSeverity::Error,   "Error" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(LogType, LogType_metadata, CHAOS_API);
+	CHAOS_IMPLEMENT_ENUM_METHOD(LogSeverity, LogSeverity_metadata, CHAOS_API);
 
 	std::string LogLine::ToString() const
 	{
 		return std::format("[{}] [{}] [{}]\n{}",
 			StringTools::TimeToString(time, TimeToStringFormatType::FULL),
-			EnumToString(type),
+			EnumToString(severity),
 			(domain != nullptr) ? domain : "",
 			content.c_str());
 	}
@@ -29,7 +29,7 @@ namespace chaos
 	{
 		// compare members to members, by comparaison speed (ignore time)
 		return
-			(type == src.type) &&
+			(severity == src.severity) &&
 			(domain == src.domain) && // raw pointer comparaison
 			(content == src.content);
 	}
@@ -166,12 +166,12 @@ namespace chaos
 		listener->OnDetachedFromLogger(this);
 	}
 
-	void Logger::BeginTransaction(std::string_view domain, LogType type)
+	void Logger::BeginTransaction(std::string_view domain, LogSeverity severity)
 	{
 		assert(!IsTransactionInProgress());
 		if (transaction_count++ == 0)
 		{
-			transaction_type = type;
+			transaction_severity = severity;
 			transaction_content = {};
 			transaction_domain = RegisterDomain(domain);
 		}
@@ -182,8 +182,8 @@ namespace chaos
 		assert(IsTransactionInProgress());
 		if (--transaction_count == 0)
 		{
-			DoOutput(transaction_domain, transaction_type, transaction_content);
-			transaction_type = LogType::Message;
+			DoOutput(transaction_domain, transaction_severity, transaction_content);
+			transaction_severity = LogSeverity::Message;
 			transaction_content = {};
 			transaction_domain = nullptr;
 		}
@@ -194,7 +194,7 @@ namespace chaos
 		return (transaction_count > 0);
 	}
 
-	void Logger::DoFormatAndOutput(std::string_view domain, LogType type, char const* format, ...)
+	void Logger::DoFormatAndOutput(std::string_view domain, LogSeverity severity, char const* format, ...)
 	{
 		va_list va;
 		va_start(va, format);
@@ -202,7 +202,7 @@ namespace chaos
 		char buffer[4096];
 		vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, va); // doesn't count for the zero
 		// output the message
-		DoOutput(RegisterDomain(domain), type, buffer);
+		DoOutput(RegisterDomain(domain), severity, buffer);
 		va_end(va);
 	}
 
@@ -218,12 +218,12 @@ namespace chaos
 		va_end(va);
 	}
 
-	void Logger::DoOutput(char const * domain, LogType type, std::string_view buffer)
+	void Logger::DoOutput(char const * domain, LogSeverity severity, std::string_view buffer)
 	{
 		// register the new line
 		LogLine new_line;
 		new_line.line_index = next_line_index++;
-		new_line.type = type;
+		new_line.severity = severity;
 		new_line.content = buffer;
 		new_line.time = std::chrono::system_clock::now();
 		new_line.domain = domain;

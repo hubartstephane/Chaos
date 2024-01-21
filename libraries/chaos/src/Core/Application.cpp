@@ -21,7 +21,7 @@ namespace chaos
 	{
 		// display the options
 #if _DEBUG
-		Log::BeginTransaction(LogType::Message);
+		Log::BeginTransaction(LogSeverity::Message);
 		Log::TransactionConcatLN("==========================================");
 		Log::TransactionConcatLN("== Existing Options");
 		Log::TransactionConcatLN("==========================================");
@@ -29,7 +29,7 @@ namespace chaos
 		Log::EndTransaction();
 #endif
 		// display the arguments
-		Log::BeginTransaction(LogType::Message);
+		Log::BeginTransaction(LogSeverity::Message);
 		Log::TransactionConcatLN("==========================================");
 		Log::TransactionConcatLN("== Command line");
 		Log::TransactionConcatLN("==========================================");
@@ -38,7 +38,7 @@ namespace chaos
 		Log::EndTransaction();
 
 		// display some informations
-		Log::BeginTransaction(LogType::Message);
+		Log::BeginTransaction(LogSeverity::Message);
 		Log::TransactionConcatLN("==========================================");
 		Log::TransactionConcatLN("== Informations");
 		Log::TransactionConcatLN("==========================================");

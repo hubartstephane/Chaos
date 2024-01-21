@@ -376,10 +376,24 @@ namespace chaos
 			/** check whether there is some flags that are incompatible */
 			bool IsValueValid(T value) const
 			{
-				return !ForEachIncompatibleValue(value, [value](T other_value)
+				size_t count = incompatibility_groups.size();
+				for (size_t i = 0; i < count; ) // do not ++i. this is handled by the loop itself
 				{
-					return HasAnyFlags(value, other_value); // stop at the very first incompatibility value found
-				});
+					size_t group_size = incompatibility_groups[i].group_size;
+
+					size_t flags_in_group_count = 0; // number of flag in this group
+					for (size_t j = 0; j < group_size; ++j)
+					{
+						T other_value = incompatibility_groups[i + 1 + j].value;
+
+						if (HasAnyFlags(value, other_value))
+							if (++flags_in_group_count >= 2) // incomming value has 2 flags from incompatible group -> error
+								return false;
+					}
+					// next group
+					i = i + 1 + group_size;
+				}
+				return true;
 			}
 
 		protected:

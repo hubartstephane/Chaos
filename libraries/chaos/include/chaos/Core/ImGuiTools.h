@@ -10,7 +10,11 @@ namespace chaos
 	enum class DrawImGuiVariableFlags : int
 	{
 		NONE = 0,
-		READ_ONLY = 1
+		READ_ONLY           = (1 << 0),
+		COLOR               = (1 << 1),  // treat glm::vec3 and glm::vec4 has a colour
+		FIXED_SIZE_ARRAY    = (1 << 2),  // prevent add/suppress element from array
+		FIXED_REORDER_ARRAY = (1 << 3)   // prevent reordering element from an array
+
 	};
 
 	CHAOS_DECLARE_ENUM_BITMASK_METHOD(DrawImGuiVariableFlags, CHAOS_API);

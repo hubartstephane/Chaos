@@ -919,7 +919,22 @@ namespace glm
 		if constexpr (std::is_same_v<T, int>)
 			ImGui::InputScalarN("", ImGuiDataType_S32, &value, SIZE, NULL, NULL, "%d", 0);
 		else if constexpr (std::is_same_v<T, float>)
+		{
+			if (HasAnyFlags(flags, chaos::DrawImGuiVariableFlags::COLOR)) // special case for colors
+			{
+				if (SIZE == 3)
+				{
+					ImGui::ColorEdit3("", &value.x, 0);
+					return;
+				}
+				if (SIZE == 4)
+				{
+					ImGui::ColorEdit4("", &value.x, 0);
+					return;
+				}
+			}
 			ImGui::InputScalarN("", ImGuiDataType_Float, &value, SIZE, NULL, NULL, "%f", 0);
+		}		
 		else if constexpr (std::is_same_v<T, double>)
 			ImGui::InputScalarN("", ImGuiDataType_Double, &value, SIZE, NULL, NULL, "%lf", 0);
 	}

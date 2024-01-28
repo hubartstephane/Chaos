@@ -20,15 +20,8 @@ public:
 		{
 			chaos::DrawImGuiVariable(i, flags);
 			chaos::DrawImGuiVariable(j, flags);
-		}
-
-		if (ImGui::CollapsingHeader("Configuration"))
-		{
-
 			chaos::DrawImGuiVariable(name, flags);
-
 		}
-
 	}
 
 	int i = 666;

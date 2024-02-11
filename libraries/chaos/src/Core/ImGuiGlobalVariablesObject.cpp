@@ -90,10 +90,14 @@ namespace chaos
 			if (ImGui::BeginDragDropSource(source_flags))
 			{
 				DragAndDropImGuiVectorHelper data(&in_source_vector, in_source_index);
-				ImGui::SetDragDropPayload("CHAOS_VECTOR_DRAG_AND_DROP", &data, sizeof(DragAndDropImGuiVectorHelper));
+				ImGui::SetDragDropPayload("CHAOS_VECTOR_DRAG_AND_DROP", &data, sizeof(DragAndDropImGuiVectorHelper), ImGuiCond_Once);
 
 				if (!(source_flags & ImGuiDragDropFlags_SourceNoPreviewTooltip))
+				{
+					ImGui::PushID(in_source_index); // ensure that whatever draw_tooltip_func does, this works
 					draw_tooltip_func();
+					ImGui::PopID();
+				}
 
 				ImGui::EndDragDropSource();
 				return true;
@@ -153,17 +157,17 @@ namespace chaos
 		DragAndDropImGuiVectorSolverBase * solver = nullptr;
 	};
 
-
+#if 0	
 	void DrawArray(std::vector<std::string> & names)
 	{
 		for (size_t i = 0; i < names.size(); ++i)
 		{
-			ImGui::PushID(i);
+			ImGui::PushID((int)i);
 
 			// render the drag and drop handler
-			ImGui::Button(names[i].c_str());
+			ImGui::Button("names[i].c_str()");
 
-			ImGui::PopID();
+
 
 			// source for drag and drop
 			ImGuiDragDropFlags source_flags = 0;
@@ -172,7 +176,9 @@ namespace chaos
 			
 			DragAndDropImGuiVectorHelper::CheckDragSource(names, i, source_flags, [&names, i]()
 			{
+				//ImGui::PushID((int)i);
 				ImGui::Text(names[i].c_str()); // ImGui::SameLine(); //ImGui::Button(names[i].c_str());
+				//ImGui::PopID();
 			});
 			
 			// target for drag and drop
@@ -184,18 +190,46 @@ namespace chaos
 			// render the object itself
 			ImGui::SameLine(); ImGui::Text(names[i].c_str()); // ImGui::SameLine(); //ImGui::Button(names[i].c_str());
 
-
-			
+			ImGui::PopID();			
 		}
-
 		DragAndDropImGuiVectorHelper::SolveDragAndDrop(names);
 	}
+#endif
 
 
 
+	template<typename T>
+	void DrawArray(std::vector<T>& values)
+	{
+		for (size_t i = 0; i < values.size(); ++i)
+		{
+			ImGui::PushID((int)i);
 
+			// render the drag and drop handler
+			ImGui::Button("||");
 
+			// source for drag and drop
+			ImGuiDragDropFlags source_flags = 0;
+			source_flags |= ImGuiDragDropFlags_SourceNoDisableHover;     // Keep the source displayed as hovered
+			source_flags |= ImGuiDragDropFlags_SourceNoHoldToOpenOthers; // Because our dragging is local, we disable the feature of opening foreign treenodes/tabs while dragging
 
+			DragAndDropImGuiVectorHelper::CheckDragSource(values, i, source_flags, [&values, i]()
+			{
+				DrawImGuiVariable(values[i]);
+			});
+
+			// target for drag and drop
+			ImGuiDragDropFlags target_flags = 0;
+			target_flags |= ImGuiDragDropFlags_AcceptBeforeDelivery;    // Don't wait until the delivery (release mouse button on a target) to do something
+			DragAndDropImGuiVectorHelper::CheckDropOnTarget(values, i, target_flags);
+
+			// render the object itself
+			ImGui::SameLine(); DrawImGuiVariable(values[i]);
+
+			ImGui::PopID();
+		}
+		DragAndDropImGuiVectorHelper::SolveDragAndDrop(values);
+	}
 
 
 

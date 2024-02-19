@@ -3,9 +3,9 @@
 
 namespace chaos
 {
-	class DragAndDropImGuiVectorHelper;
+	class ImGuiDrawVectorHelper;
 
-	class DragAndDropImGuiVectorSolverBase
+	class ImGuiVectorOperationsSolverBase
 	{
 	public:
 
@@ -13,13 +13,13 @@ namespace chaos
 	};
 
 	template<typename T>
-	class DragAndDropImGuiVectorSolver : public DragAndDropImGuiVectorSolverBase
+	class ImGuiVectorOperationsSolver : public ImGuiVectorOperationsSolverBase
 	{
 	public:
 
-		static DragAndDropImGuiVectorSolverBase* GetInstance()
+		static ImGuiVectorOperationsSolverBase* GetInstance()
 		{
-			static DragAndDropImGuiVectorSolver<T> result;
+			static ImGuiVectorOperationsSolver<T> result;
 			return &result;
 		}
 
@@ -43,7 +43,7 @@ namespace chaos
 			typed_vector[in_destination_index] = std::move(source_element);
 
 			// update the preload data
-			if (DragAndDropImGuiVectorHelper * payload = DragAndDropImGuiVectorHelper::GetCurrentPlayload(typed_vector))
+			if (ImGuiDrawVectorHelper* payload = ImGuiDrawVectorHelper::GetCurrentPlayload(typed_vector))
 			{
 				payload->source_index = in_destination_index;
 				payload->destination_index = in_destination_index;
@@ -52,30 +52,30 @@ namespace chaos
 	};
 
 
-	class DragAndDropImGuiVectorHelper
+	class ImGuiDrawVectorHelper
 	{
 
 	protected:
 
 		template<typename T>
-		friend class DragAndDropImGuiVectorSolver;
+		friend class ImGuiVectorOperationsSolver;
 
 		/** constructor */
 		template<typename T>
-		DragAndDropImGuiVectorHelper(std::vector<T> * in_source_vector, size_t in_source_index):
+		ImGuiDrawVectorHelper(std::vector<T> * in_source_vector, size_t in_source_index):
 			source_vector(in_source_vector),
 			source_index(in_source_index),
-			solver(DragAndDropImGuiVectorSolver<T>::GetInstance())
+			solver(ImGuiVectorOperationsSolver<T>::GetInstance())
 		{
 		}
 
 		/** try to get the payload. only success if target_vector is the same than source_vector */
 		template<typename T>
-		static class DragAndDropImGuiVectorHelper * GetCurrentPlayload(std::vector<T>& in_target_vector)
+		static class ImGuiDrawVectorHelper* GetCurrentPlayload(std::vector<T>& in_target_vector)
 		{
 			if (ImGuiPayload const* payload = ImGui::GetDragDropPayload())
-				if (StringTools::Strcmp("CHAOS_VECTOR_DRAG_AND_DROP", payload->DataType) == 0)
-					if (DragAndDropImGuiVectorHelper * result = (DragAndDropImGuiVectorHelper *)payload->Data)
+				if (StringTools::Strcmp("CHAOS_VECTOR_OPERATIONS", payload->DataType) == 0)
+					if (ImGuiDrawVectorHelper* result = (ImGuiDrawVectorHelper*)payload->Data)
 						if (result->source_vector == &in_target_vector)
 							return result;
 			return nullptr;
@@ -89,12 +89,12 @@ namespace chaos
 		{
 			if (ImGui::BeginDragDropSource(source_flags))
 			{
-				DragAndDropImGuiVectorHelper data(&in_source_vector, in_source_index);
-				ImGui::SetDragDropPayload("CHAOS_VECTOR_DRAG_AND_DROP", &data, sizeof(DragAndDropImGuiVectorHelper), ImGuiCond_Once);
+				ImGuiDrawVectorHelper data(&in_source_vector, in_source_index);
+				ImGui::SetDragDropPayload("CHAOS_VECTOR_OPERATIONS", &data, sizeof(ImGuiDrawVectorHelper), ImGuiCond_Once);
 
 				if (!(source_flags & ImGuiDragDropFlags_SourceNoPreviewTooltip))
 				{
-					ImGui::PushID(in_source_index); // ensure that whatever draw_tooltip_func does, this works
+					ImGui::PushID((int)in_source_index); // ensure that whatever draw_tooltip_func does, there is not ID collision
 					draw_tooltip_func();
 					ImGui::PopID();
 				}
@@ -111,9 +111,9 @@ namespace chaos
 		{
 			if (ImGui::BeginDragDropTarget())
 			{
-				if (ImGuiPayload const * payload = ImGui::AcceptDragDropPayload("CHAOS_VECTOR_DRAG_AND_DROP", target_flags))
+				if (ImGuiPayload const * payload = ImGui::AcceptDragDropPayload("CHAOS_VECTOR_OPERATIONS", target_flags))
 				{
-					if (DragAndDropImGuiVectorHelper * helper = (DragAndDropImGuiVectorHelper *)payload->Data)
+					if (ImGuiDrawVectorHelper* helper = (ImGuiDrawVectorHelper*)payload->Data)
 					{
 						if (helper->source_vector == &in_target_vector)
 						{
@@ -127,11 +127,11 @@ namespace chaos
 			return false;
 		}
 
-		/** finalize the drag-and-drop */
+		/** finalize pending operations */
 		template<typename T>
-		static bool SolveDragAndDrop(std::vector<T> & in_vector)
+		static bool SolveVectorOperations(std::vector<T> & in_vector)
 		{
-			if (DragAndDropImGuiVectorHelper const * payload = GetCurrentPlayload(in_vector))
+			if (ImGuiDrawVectorHelper const * payload = GetCurrentPlayload(in_vector))
 			{
 				if (payload->source_index.has_value() && payload->destination_index.has_value())
 				{
@@ -147,88 +147,206 @@ namespace chaos
 
 	public:
 
-		/** the vector which is concerned by the drag-and-drop */
+		/** the vector which is concerned by operations */
 		void * source_vector = nullptr;
 		/** the index in the vector of the element as destination for drag-and-drop */
 		std::optional<size_t> source_index;
 		/** the index in the vector of the element as source for drag-and-drop */
 		std::optional<size_t> destination_index;
 		/** the operator for solving drag-and-drop */
-		DragAndDropImGuiVectorSolverBase * solver = nullptr;
+		ImGuiVectorOperationsSolverBase* solver = nullptr;
 	};
 
-#if 0	
-	void DrawArray(std::vector<std::string> & names)
+
+	template<typename T>
+	class ImGuiDrawVectorOperationProcessor
 	{
-		for (size_t i = 0; i < names.size(); ++i)
+		enum class VectorOperation
 		{
-			ImGui::PushID((int)i);
+			Delete,
+			Duplicate,
+			InsertBefore,
+			InsertAfter
+		};
 
-			// render the drag and drop handler
-			ImGui::Button("names[i].c_str()");
+	public:
 
+		/** constructor */
+		ImGuiDrawVectorOperationProcessor(std::vector<T>& in_target) :
+			target(in_target) {}
 
-
-			// source for drag and drop
-			ImGuiDragDropFlags source_flags = 0;
-			source_flags |= ImGuiDragDropFlags_SourceNoDisableHover;     // Keep the source displayed as hovered
-			source_flags |= ImGuiDragDropFlags_SourceNoHoldToOpenOthers; // Because our dragging is local, we disable the feature of opening foreign treenodes/tabs while dragging
-			
-			DragAndDropImGuiVectorHelper::CheckDragSource(names, i, source_flags, [&names, i]()
-			{
-				//ImGui::PushID((int)i);
-				ImGui::Text(names[i].c_str()); // ImGui::SameLine(); //ImGui::Button(names[i].c_str());
-				//ImGui::PopID();
-			});
-			
-			// target for drag and drop
-			ImGuiDragDropFlags target_flags = 0;
-			target_flags |= ImGuiDragDropFlags_AcceptBeforeDelivery;    // Don't wait until the delivery (release mouse button on a target) to do something
-			DragAndDropImGuiVectorHelper::CheckDropOnTarget(names, i, target_flags);
-			
-
-			// render the object itself
-			ImGui::SameLine(); ImGui::Text(names[i].c_str()); // ImGui::SameLine(); //ImGui::Button(names[i].c_str());
-
-			ImGui::PopID();			
+		/** request for a deletion */
+		void Delete(size_t index)
+		{
+			pending_operation = VectorOperation::Delete;
+			target_index = index;
 		}
-		DragAndDropImGuiVectorHelper::SolveDragAndDrop(names);
-	}
-#endif
+
+		/** request for a duplication */
+		void Duplicate(size_t index)
+		{
+			pending_operation = VectorOperation::Duplicate;
+			target_index = index;
+		}
+
+		/** request for insertion (before) */
+		void InsertBefore(size_t index)
+		{
+			pending_operation = VectorOperation::InsertBefore;
+			target_index = index;
+		}
+
+		/** request for insertion (after) */
+		void InsertAfter(size_t index)
+		{
+			pending_operation = VectorOperation::InsertAfter;
+			target_index = index;
+		}
+
+		/** finalize the pending operation */
+		void ResolvePendingOperation()
+		{
+			if (pending_operation.has_value())
+			{
+				switch (pending_operation.value())
+				{
+				case VectorOperation::Delete:
+					return DoDelete();
+				case VectorOperation::Duplicate:
+					return DoDuplicate();
+				case VectorOperation::InsertBefore:
+					return DoInsertBefore();
+				case VectorOperation::InsertAfter:
+					return DoInsertAfter();
+				default:
+					assert(0);
+				}
+			}
+		}
+
+	protected:
+
+		/** process delete operation */
+		void DoDelete()
+		{
+
+		}
+
+		/** process duplicate operation */
+		void DoDuplicate()
+		{
+
+		}
+
+		/** process insert before operation */
+		void DoInsertBefore()
+		{
+
+		}
+
+		/** process insert after operation */
+		void DoInsertAfter()
+		{
+
+		}
+
+	protected:
+
+		/** the array we are working on */
+		std::vector<T> & target;
+		/** pending operation */
+		std::optional<VectorOperation> pending_operation;
+		/** target index */
+		size_t target_index = 0;
+	};
+
+
+
+
+
+
+
 
 
 
 	template<typename T>
 	void DrawArray(std::vector<T>& values)
 	{
+		ImGuiDrawVectorOperationProcessor<T> vector_operation_processor(values);
+
 		for (size_t i = 0; i < values.size(); ++i)
 		{
 			ImGui::PushID((int)i);
 
 			// render the drag and drop handler
-			ImGui::Button("||");
+			ImGui::Text("[%02d]", (int)i);
 
 			// source for drag and drop
 			ImGuiDragDropFlags source_flags = 0;
 			source_flags |= ImGuiDragDropFlags_SourceNoDisableHover;     // Keep the source displayed as hovered
 			source_flags |= ImGuiDragDropFlags_SourceNoHoldToOpenOthers; // Because our dragging is local, we disable the feature of opening foreign treenodes/tabs while dragging
 
-			DragAndDropImGuiVectorHelper::CheckDragSource(values, i, source_flags, [&values, i]()
+			ImGuiDrawVectorHelper::CheckDragSource(values, i, source_flags, [&values, i]()
 			{
+				ImGui::BeginGroup();
+				ImGui::Dummy({ 200.0f, 1.0f }); ImGui::SameLine();
+				ImGui::Text("toto");
+				ImGui::Dummy({ 200.0f, 1.0f });
 				DrawImGuiVariable(values[i]);
+				ImGui::EndGroup();
 			});
 
 			// target for drag and drop
 			ImGuiDragDropFlags target_flags = 0;
 			target_flags |= ImGuiDragDropFlags_AcceptBeforeDelivery;    // Don't wait until the delivery (release mouse button on a target) to do something
-			DragAndDropImGuiVectorHelper::CheckDropOnTarget(values, i, target_flags);
+			ImGuiDrawVectorHelper::CheckDropOnTarget(values, i, target_flags);
 
 			// render the object itself
-			ImGui::SameLine(); DrawImGuiVariable(values[i]);
+			ImGui::SameLine();
+
+			ImGui::BeginGroup();
+			ImGui::Dummy({ 200.0f, 1.0f }); ImGui::SameLine();
+			ImGui::Text("toto");
+			ImGui::Dummy({ 200.0f, 1.0f });
+			DrawImGuiVariable(values[i]);
+			ImGui::EndGroup();
+
+			// drop down popup for row operations
+			ImGui::SameLine();
+			if (ImGui::ArrowButton("##down", ImGuiDir_Down))
+			{
+				ImGui::OpenPopup("row operation popup", ImGuiPopupFlags_MouseButtonRight);
+			}
+
+			// operation popup
+			if (ImGui::BeginPopup("row operation popup"))
+			{
+				if (ImGui::Selectable("Delete"))
+					vector_operation_processor.Delete(i);
+				if constexpr (std::copy_constructible<T>)
+					if (ImGui::Selectable("Duplicate"))
+						vector_operation_processor.Duplicate(i);
+				if constexpr (std::is_default_constructible_v<T>)
+					if (ImGui::Selectable("Insert Before"))
+						vector_operation_processor.InsertBefore(i);
+				if constexpr (std::is_default_constructible_v<T>)
+					if (ImGui::Selectable("Insert After"))
+						vector_operation_processor.InsertAfter(i);
+				ImGui::EndPopup();
+			}
+
+
+
+
+
+
 
 			ImGui::PopID();
 		}
-		DragAndDropImGuiVectorHelper::SolveDragAndDrop(values);
+
+		vector_operation_processor.ResolvePendingOperation();
+
+		ImGuiDrawVectorHelper::SolveVectorOperations(values);
 	}
 
 
@@ -237,6 +355,7 @@ namespace chaos
 
 	void ImGuiGlobalVariablesObject::OnDrawImGuiContent()
 	{
+		ImGui::Dummy({ 200.0f, 1.0f });
 		if (ImGui::BeginTable("Global Variables", 2, ImGuiTableFlags_Resizable))
 		{
 			for (GlobalVariableBase* variable : chaos::GlobalVariableManager::GetInstance()->GetVariables())
@@ -307,7 +426,7 @@ namespace chaos
 
 		ImGui::Separator();
 
-		static std::vector<std::string> names1 = { "name1" , "name2", "name3", "name4", "name5", "name6", "name7", "name8", "name9", "name10" };
+		static std::vector<std::string> names1 = { "name1" , "name1", "name1", "name4", "name5", "name6", "name7", "name8", "name9", "name10" };
 		ImGui::PushID(1);
 		DrawArray(names1);
 		ImGui::PopID();

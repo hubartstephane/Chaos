@@ -1,6 +1,6 @@
 -- =============================================================================
--- ROOT_PATH/executables/TOOLS
+-- ROOT_PATH/executables/TOOLS/AnalyticMatrix
 -- =============================================================================
 
-build:ProcessSubPremake("ResizeAtlas")
-build:ProcessSubPremake("AnalyticMatrix")
+local project = build:WindowedApp()
+project:DependOnLib("CHAOS")

@@ -57,17 +57,5 @@ CHAOS_GLOBAL_VARIABLE(AAA, aaa);
 
 int main(int argc, char ** argv, char ** env)
 {
-	Matrix m;
-	for (size_t i = 0; i < 4; ++i)
-		m(i, i) = new MatrixComponent(float(i + 1));
-
-	for (size_t y = 0; y < 4; ++y)
-	{
-		for (size_t x = 0; x < 4; ++x)
-		{
-			std::string c = ToString(m(x, y));
-		}
-	}
-
 	return chaos::RunGame<LudumGame>(argc, argv, env);
 }

@@ -1,5 +1,6 @@
 #include "chaos/Chaos.h"
 
+
 enum class Operator
 {
 	Add,
@@ -238,21 +239,60 @@ Matrix operator * (Matrix const& m1, Matrix const& m2)
 }
 
 
-int main(int argc, char ** argv, char ** env)
-{
-	Matrix m;
-	for (size_t i = 0; i < 4; ++i)
-		m(i, i) = new MatrixComponent(float(i + 1));
 
-	for (size_t y = 0; y < 4; ++y)
+class MyImGuiObject : public chaos::ImGuiObject
+{
+public:
+
+	MyImGuiObject()
 	{
-		for (size_t x = 0; x < 4; ++x)
+		for (size_t i = 0; i < 4; ++i)
+			m(i, i) = new MatrixComponent(float(i + 1));
+
+		for (size_t y = 0; y < 4; ++y)
 		{
-			std::string c = ToString(m(x, y));
+			for (size_t x = 0; x < 4; ++x)
+			{
+				std::string c = ToString(m(x, y));
+			}
 		}
 	}
 
-	return 0;
+	virtual void OnDrawImGuiContent() override
+	{
+		DisplayMatrix(m);
+	}
 
-	//return chaos::RunApplication<MyApplication>(argc, argv, env);
+	void DisplayMatrix(Matrix const& m) const
+	{
+		if (ImGui::BeginTable("Matrix", 4, ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg))
+		{
+			for (size_t y = 0; y < 4; ++y)
+			{
+				for (size_t x = 0; x < 4; ++x)
+				{
+					ImGui::TableNextColumn();
+					ImGui::Text("%s", ToString(m(x, y)).c_str());
+
+				}
+			}
+			ImGui::EndTable();
+		}
+
+
+	}
+
+protected:
+
+	Matrix m;
+};
+
+
+
+
+
+
+int main(int argc, char ** argv, char ** env)
+{
+	return chaos:: RunImGuiApplication<MyImGuiObject>(argc, argv, env);
 }

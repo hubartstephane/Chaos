@@ -122,6 +122,8 @@ namespace chaos
 
 		/** create a window */
 		Window* CreateTypedWindow(CreateWindowFunc create_window_func, WindowPlacementInfo placement_info = {}, WindowCreateParams const& create_params = {}, ObjectRequest = {});
+		/** create the main window */
+		virtual Window* DoCreateMainWindow(WindowCreateParams const& create_params);
 
 		/** enable per window special mode */
 		void SetImGuiMenuMode(bool mode);

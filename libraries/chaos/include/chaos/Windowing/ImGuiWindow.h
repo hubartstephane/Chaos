@@ -51,6 +51,37 @@ namespace chaos
 		shared_ptr<ImGuiObject> content;
 	};
 
+	/**
+	* RunImGuiApplication : utility template function to run an application with a single window based on some ImGui content
+	*/
+
+	template<typename CONTENT_TYPE, typename ...PARAMS>
+	decltype(auto) RunImGuiApplication(int argc, char** argv, char** env, PARAMS && ...params)
+	{
+		class MyImGuiApplication : public WindowApplication
+		{
+		public:
+
+			using WindowApplication::WindowApplication;
+
+			virtual Window* DoCreateMainWindow(WindowCreateParams const& create_params) override
+			{
+				if (Window* result = CreateTypedWindow(main_window_class, main_window_placement_info, create_params, "main_window"))
+				{
+					if (ImGuiWindow* imgui_window = auto_cast(result))
+					{
+						imgui_window->SetContent(new CONTENT_TYPE);
+						imgui_window->SetWindowCategory(WindowCategory::MAIN_WINDOW);
+					}
+					return result;
+				}
+				return nullptr;
+			}
+		};
+
+		return RunApplication<MyImGuiApplication>(argc, argv, env, ImGuiWindow::GetStaticClass(), std::forward<PARAMS>(params)...);
+	}
+
 #endif
 
 }; // namespace chaos

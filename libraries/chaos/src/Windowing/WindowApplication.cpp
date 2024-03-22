@@ -316,6 +316,11 @@ namespace chaos
 			}
 		}
 		// create the window
+		return DoCreateMainWindow(create_params);
+	}
+
+	Window * WindowApplication::DoCreateMainWindow(WindowCreateParams const & create_params)
+	{
 		return CreateTypedWindow(main_window_class, main_window_placement_info, create_params, "main_window");
 	}
 

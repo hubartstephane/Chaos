@@ -175,11 +175,14 @@ public:
 
 	Matrix() = default;
 
-	Matrix(Matrix const& in_src);
+	Matrix(Matrix const& src);
 
-	Matrix(Matrix&& in_src);
+	Matrix(Matrix&& src);
 
 	~Matrix();
+
+	Matrix& operator = (Matrix const& src);
+	Matrix& operator = (Matrix && src);
 
 	MatrixComponent*& operator () (size_t x, size_t y)
 	{
@@ -191,6 +194,8 @@ public:
 		return components[x + y * 4];
 	}
 
+	void Clear();
+
 public:
 
 	std::array<MatrixComponent*, 16> components = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
@@ -198,28 +203,60 @@ public:
 
 // ===============================================================================
 
-Matrix::Matrix(Matrix const& in_src)
+Matrix::Matrix(Matrix const& src)
 {
 	for (size_t i = 0; i < 16; ++i)
-		if (in_src.components[i] != nullptr)
-			components[i] = Clone(in_src.components[i]);
+		components[i] = Clone(src.components[i]);
 }
 
-Matrix::Matrix(Matrix&& in_src)
+Matrix::Matrix(Matrix&& src)
 {
 	for (size_t i = 0; i < 16; ++i)
 	{
-		components[i] = in_src.components[i];
-		in_src.components[i] = nullptr;
+		components[i] = src.components[i];
+		src.components[i] = nullptr;
+	}
+}
+
+Matrix& Matrix::operator = (Matrix const& src)
+{
+	if (&src != this)
+	{
+		Clear();
+		for (size_t i = 0; i < 16; ++i)
+			components[i] = Clone(src.components[i]);
+	}
+	return *this;
+}
+
+Matrix& Matrix::operator = (Matrix && src)
+{
+	if (&src != this)
+	{
+		Clear();
+		for (size_t i = 0; i < 16; ++i)
+		{
+			components[i] = src.components[i];
+			src.components[i] = nullptr;
+		}
+	}
+	return *this;
+}
+
+
+void Matrix::Clear()
+{
+	for (MatrixComponent * & component : components)
+	{
+		delete component;
+		component = nullptr;
 	}
 }
 
 Matrix::~Matrix()
 {
-	for (MatrixComponent* component : components)
-		delete component;
+	Clear();
 }
-
 
 Matrix operator * (Matrix const& m1, Matrix const& m2)
 {
@@ -238,7 +275,49 @@ Matrix operator * (Matrix const& m1, Matrix const& m2)
 	return result;
 }
 
+Matrix ScaleMatrix(glm::vec3 const & v)
+{
+	Matrix result;
+	result(0, 0) = new MatrixComponent(v.x);
+	result(1, 1) = new MatrixComponent(v.y);
+	result(2, 2) = new MatrixComponent(v.z);
+	result(3, 3) = new MatrixComponent(1.0f);
+	return result;
+}
 
+Matrix ScaleMatrix(std::string x, std::string y, std::string z)
+{
+	Matrix result;
+	result(0, 0) = new MatrixComponent(std::move(x));
+	result(1, 1) = new MatrixComponent(std::move(y));
+	result(2, 2) = new MatrixComponent(std::move(z));
+	result(3, 3) = new MatrixComponent(1.0f);
+	return result;
+}
+
+
+Matrix IdentityMatrix()
+{
+	return ScaleMatrix({ 1.0f, 1.0f, 1.0f });
+}
+
+Matrix TranslationMatrix(glm::vec3 const& v)
+{
+	Matrix result = IdentityMatrix();
+	result(0, 3) = new MatrixComponent(v.x);
+	result(1, 3) = new MatrixComponent(v.y);
+	result(2, 3) = new MatrixComponent(v.z);
+	return result;
+}
+
+Matrix TranslationMatrix(std::string x, std::string y, std::string z)
+{
+	Matrix result = IdentityMatrix();
+	result(0, 3) = new MatrixComponent(std::move(x));
+	result(1, 3) = new MatrixComponent(std::move(y));
+	result(2, 3) = new MatrixComponent(std::move(z));
+	return result;
+}
 
 class MyImGuiObject : public chaos::ImGuiObject
 {
@@ -246,16 +325,10 @@ public:
 
 	MyImGuiObject()
 	{
-		for (size_t i = 0; i < 4; ++i)
-			m(i, i) = new MatrixComponent(float(i + 1));
+		//m = TranslationMatrix({ 3.0f, 5.0f, 7.0f });
+		//m = m * m;
 
-		for (size_t y = 0; y < 4; ++y)
-		{
-			for (size_t x = 0; x < 4; ++x)
-			{
-				std::string c = ToString(m(x, y));
-			}
-		}
+		m = TranslationMatrix("A", "B", "C");
 	}
 
 	virtual void OnDrawImGuiContent() override
@@ -273,13 +346,10 @@ public:
 				{
 					ImGui::TableNextColumn();
 					ImGui::Text("%s", ToString(m(x, y)).c_str());
-
 				}
 			}
 			ImGui::EndTable();
 		}
-
-
 	}
 
 protected:
@@ -294,5 +364,5 @@ protected:
 
 int main(int argc, char ** argv, char ** env)
 {
-	return chaos:: RunImGuiApplication<MyImGuiObject>(argc, argv, env);
+	return chaos::RunImGuiApplication<MyImGuiObject>(argc, argv, env);
 }

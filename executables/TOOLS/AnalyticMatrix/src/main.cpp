@@ -160,8 +160,11 @@ std::string ToString(MatrixComponent const* src)
 	if (src->type == MatrixComponentType::Value)
 		return std::format("{}", src->value);
 	if (src->type == MatrixComponentType::Name)
-		return src->name;
-
+		return src->name;	
+	if (src->type == MatrixComponentType::Add)
+		return std::format("({} + {})", ToString(src->operand1), ToString(src->operand2));
+	if (src->type == MatrixComponentType::Mul)
+		return std::format("({} * {})", ToString(src->operand1), ToString(src->operand2));
 
 	return "?";
 }
@@ -329,6 +332,8 @@ public:
 		//m = m * m;
 
 		m = TranslationMatrix("A", "B", "C");
+
+		m = m * m;
 	}
 
 	virtual void OnDrawImGuiContent() override

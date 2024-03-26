@@ -460,8 +460,13 @@ AnalyticMatrix MakeRotationMatrixZ(char const* angle_name)
 
 
 
+class NamedMatrix
+{
+public:
 
-
+	std::string name;
+	AnalyticMatrix matrix;
+};
 
 
 class MyImGuiObject : public chaos::ImGuiObject
@@ -471,49 +476,247 @@ public:
 	MyImGuiObject()
 	{
 		AnalyticMatrix S = MakeScaleMatrix("S");
+		AnalyticMatrix T = MakeTranslationMatrix("T");
 
-		//m = TranslationAnalyticMatrix({ 3.0f, 5.0f, 7.0f });
-		//m = m * m;
-
-
-		m = MakeRotationMatrixZ("Rot");
+		matrixes.push_back({ "toto", S });
+		matrixes.push_back({ "titi", T });
 	}
+
 
 	virtual void OnDrawImGuiContent() override
 	{
-		DisplayAnalyticMatrix(m, "T * S");
-
-		if (ImGui::Button("New"))
+		for (NamedMatrix const& m : matrixes)
 		{
+			if (DisplayAnalyticMatrix(m))
+			{
+				break;
+			}
+			ImGui::Separator();
+		}
 
+		if (ImGui::ArrowButton("##down", ImGuiDir_Down))
+			ImGui::OpenPopup("new matrix", ImGuiPopupFlags_MouseButtonRight);
+
+		bool new_identity_matrix = false;
+		bool new_scale_matrix = false;
+		bool new_translation_matrix = false;
+		bool new_rotation_x_matrix = false;
+		bool new_rotation_y_matrix = false;
+		bool new_rotation_z_matrix = false;
+
+		if (ImGui::BeginPopup("new matrix"))
+		{
+			if (ImGui::Selectable("Identity"))
+			{
+				new_identity_matrix = true;
+			}
+			if (ImGui::Selectable("Scale"))
+			{
+				new_scale_matrix = true;
+			}
+			if (ImGui::Selectable("Translation"))
+			{
+				new_translation_matrix = true;
+			}
+			if (ImGui::Selectable("Rotation X"))
+			{
+				new_rotation_x_matrix = true;
+			}
+			if (ImGui::Selectable("Rotation Y"))
+			{
+				new_rotation_y_matrix = true;
+			}
+			if (ImGui::Selectable("Rotation Z"))
+			{
+				new_rotation_z_matrix = true;
+			}
+			ImGui::EndPopup();
+		}
+
+		auto DisplayNamePopupAndCreateMatrix = [this](bool raise_popup, char const * title, chaos::LightweightFunction<AnalyticMatrix(char const*)> func)
+		{
+			DisplayNameSelectionPopup(raise_popup, title, [this, &func](char const* name)
+			{
+				NamedMatrix NewMatrix;
+				NewMatrix.name = name;
+				NewMatrix.matrix = func(name);
+				matrixes.push_back(std::move(NewMatrix));
+			});
+		};
+
+		DisplayNamePopupAndCreateMatrix(new_identity_matrix, "Identity", [this](char const * name)
+		{
+			return MakeIdentityMatrix();
+		});
+
+		DisplayNamePopupAndCreateMatrix(new_scale_matrix, "Scale", [this](char const* name)
+		{
+			return MakeScaleMatrix(name);
+		});
+
+		DisplayNamePopupAndCreateMatrix(new_translation_matrix, "Translation", [this](char const* name)
+		{
+			return MakeTranslationMatrix(name);
+		});
+
+		DisplayNamePopupAndCreateMatrix(new_rotation_x_matrix, "Rotation##x", [this](char const* name)
+		{
+			return MakeRotationMatrixX(name);
+		});
+
+		DisplayNamePopupAndCreateMatrix(new_rotation_y_matrix, "Rotation##y", [this](char const* name)
+		{
+			return MakeRotationMatrixY(name);
+		});
+
+		DisplayNamePopupAndCreateMatrix(new_rotation_z_matrix, "Rotation##z", [this](char const* name)
+		{
+			return MakeRotationMatrixZ(name);
+		});
+
+	}
+
+	void DisplayErrorPopup(bool raise_popup, std::string_view message)
+	{
+		static std::string error_message;
+		if (raise_popup)
+		{
+			ImGui::OpenPopup("Error");
+			error_message = message;
+		}
+
+		ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+		ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+
+		if (ImGui::BeginPopupModal("Error", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			ImGui::Text(error_message.c_str());
+			if (ImGui::Button("Close"))
+				ImGui::CloseCurrentPopup();
+			ImGui::EndPopup();
 		}
 	}
 
-	void DisplayAnalyticMatrix(AnalyticMatrix const& m, char const * name) const
+	void DisplayNameSelectionPopup(bool raise_popup, char const * popup_name, chaos::LightweightFunction<void(char const* name)> func)
+	{
+		static std::string name;
+		if (raise_popup)
+		{
+			ImGui::OpenPopup(popup_name);
+			name.clear();
+		}
+
+		ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+		ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+
+		std::string error_message;
+
+		if (ImGui::BeginPopupModal(popup_name, NULL, ImGuiWindowFlags_AlwaysAutoResize))
+		{ 
+			ImGui::Text("new matrix name");
+
+			chaos::ImGuiTools::InputText("", name);
+			if (ImGui::Button("Validate"))
+			{
+				auto it = std::ranges::find_if(matrixes, [&name = name](NamedMatrix const& M)
+				{
+					return chaos::StringTools::Stricmp(name, M.name) == 0;
+				});
+				if (it != matrixes.end())
+				{
+					error_message = std::format("A matrix named [{}] already exits", name);
+				}
+				else
+				{
+					func(name.c_str());
+				}
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Close"))
+				ImGui::CloseCurrentPopup();
+
+			ImGui::EndPopup();
+		}
+		DisplayErrorPopup(error_message.length() > 0, error_message.c_str());
+	}
+
+	bool DisplayAnalyticMatrix(NamedMatrix const& m)
 	{
 		ImGui::PushID(&m);
-		if (name != nullptr)
-			ImGui::SeparatorText(name);
-		if (ImGui::BeginTable("AnalyticMatrix", 4, ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg))
+		ImGui::TextWrapped(m.name.c_str()); ImGui::SameLine();
+
+		// popup for actions
+		static std::optional<NamedMatrix const*> matrix_to_duplicate;
+		if (ImGui::ArrowButton("##down", ImGuiDir_Down))
 		{
-			for (size_t y = 0; y < 4; ++y)
+			matrix_to_duplicate.reset();
+			ImGui::OpenPopup("element operation", ImGuiPopupFlags_MouseButtonRight);
+		}
+
+		bool duplicate_matrix = false;
+		bool delete_matrix = false;
+		bool has_duplicated = false;
+		if (ImGui::BeginPopup("element operation"))
+		{
+			if (ImGui::Selectable("delete"))
 			{
-				for (size_t x = 0; x < 4; ++x)
+				delete_matrix = true;
+			}
+			else if (ImGui::Selectable("duplicate"))
+			{
+				duplicate_matrix = true;
+				matrix_to_duplicate = &m;
+			}
+			else if (ImGui::Selectable("copy to clipboard"))
+			{
+				chaos::WinTools::CopyStringToClipboard(m.matrix.ToCppString("m").c_str());
+			}
+			ImGui::EndPopup();
+		}
+
+		if (delete_matrix)
+		{
+			size_t index = &m - &matrixes[0];
+			matrixes.erase(matrixes.begin() + index);
+		}
+		else
+		{
+			DisplayNameSelectionPopup(duplicate_matrix, "Duplicate", [this, &matrix_to_duplicate = matrix_to_duplicate, &has_duplicated](char const* name) mutable
+			{
+				NamedMatrix NewMatrix;
+				NewMatrix.name = name;
+				NewMatrix.matrix = matrix_to_duplicate.value()->matrix;
+				matrixes.push_back(std::move(NewMatrix));
+				matrix_to_duplicate.reset();
+				has_duplicated = true;
+			});
+
+			if (!has_duplicated) // don't displace matrix because the current matrix parameter may become invalid due to vector resize
+			{
+				if (ImGui::BeginTable("AnalyticMatrix", 4, ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg))
 				{
-					ImGui::TableNextColumn();
-					ImGui::Text("%s", ToString(m(x, y)).c_str());
+					for (size_t y = 0; y < 4; ++y)
+					{
+						for (size_t x = 0; x < 4; ++x)
+						{
+							ImGui::TableNextColumn();
+							ImGui::Text("%s", ToString(m.matrix(x, y)).c_str());
+						}
+					}
+					ImGui::EndTable();
 				}
 			}
-			ImGui::EndTable();
 		}
-		if (ImGui::Button("Clipboard"))
-			chaos::WinTools::CopyStringToClipboard(m.ToCppString("m").c_str());
+
 		ImGui::PopID();
+
+		return delete_matrix || has_duplicated;
 	}
 
 protected:
 
-	AnalyticMatrix m;
+	std::vector<NamedMatrix> matrixes;
 };
 
 

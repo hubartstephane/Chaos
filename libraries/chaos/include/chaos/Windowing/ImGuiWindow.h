@@ -43,7 +43,7 @@ namespace chaos
 		/** override */
 		virtual void OnDrawWindowImGuiContent() override;
 		/** override */
-		virtual void OnDrawWindowImGuiMenu(ImGuiInterface::DrawImGuiMenuFunc func) override;
+		virtual void RegisterImGuiProxies() override;
 
 	protected:
 

@@ -16,9 +16,9 @@ namespace chaos
 	enum class ImGuiDrawFlags : int
 	{
 		NONE = 0,
-		FULL_WINDOW = 1,
-		FLOATING_IMGUI_WINDOW = 2,
-		USE_FULL_WINDOW_MENU = 4
+		FULL_WINDOW = 1,           // the ImGui (pseudo) window fills the whole GLFW window
+		FLOATING_IMGUI_WINDOW = 2, // this is a standart ImGui (pseudo) window
+		USE_FULL_WINDOW_MENU = 4   // menu items are stored inside the full GLFW window's menu instead of the ImGui (pseudo) window's menu
 	};
 
 	CHAOS_DECLARE_ENUM_BITMASK_METHOD(ImGuiDrawFlags, CHAOS_API);
@@ -30,8 +30,7 @@ namespace chaos
 	{
 	public:
 
-		using DrawImGuiMenuFunc = LightweightFunction<void(LightweightFunction<void()>)>;
-
+		using BeginImGuiMenuFunc = LightweightFunction<void(LightweightFunction<void()>)>;
 
 		/** destructor */
 		virtual ~ImGuiInterface() = default;
@@ -56,10 +55,10 @@ namespace chaos
 		/** method to override to display content */
 		virtual void OnDrawImGuiContent();
 		/** method to override to display menu */
-		virtual void OnDrawImGuiMenu(DrawImGuiMenuFunc func);
+		virtual void OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func);
 
 		/** check whether a context is valid for having a menubar and call FullScreen or Floating window menu bar method */
-		void ConditionalMenuBar(ImGuiDrawFlags flags, int imgui_window_flags);
+		void OnDrawImGuiMenuConditional(ImGuiDrawFlags flags, int imgui_window_flags);
 		/** update the imgui window flags according to use flags */
 		int UpdateWindowFlagsForMenu(ImGuiDrawFlags flags, int imgui_window_flags);
 

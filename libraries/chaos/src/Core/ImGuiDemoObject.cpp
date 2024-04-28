@@ -3,11 +3,6 @@
 
 namespace chaos
 {
-	int ImGuiDemoObject::GetImGuiWindowFlags() const
-	{
-		return ImGuiWindowFlags_NoCollapse;
-	}
-
 	void ImGuiDemoObject::OnDrawImGuiContent()
 	{
 		if (show_demo)
@@ -26,9 +21,9 @@ namespace chaos
 			ImGui::ShowUserGuide();
 	}
 
-	void ImGuiDemoObject::OnDrawImGuiMenu(DrawImGuiMenuFunc func)
+	void ImGuiDemoObject::OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func)
 	{
-		func([this]()
+		begin_menu_func([this]()
 		{
 			if (ImGui::BeginMenu("ImGui"))
 			{

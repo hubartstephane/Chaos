@@ -13,11 +13,6 @@ namespace chaos
 		logger = in_logger;
 	}
 
-	int ImGuiLogObject::GetImGuiWindowFlags() const
-	{
-		return ImGuiWindowFlags_NoCollapse;
-	}
-
 	void ImGuiLogObject::OnDrawImGuiContent()
 	{
 		assert(logger != nullptr);
@@ -126,9 +121,9 @@ namespace chaos
 		}
 	}
 
-	void ImGuiLogObject::OnDrawImGuiMenu(DrawImGuiMenuFunc func)
+	void ImGuiLogObject::OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func)
 	{
-		func([this]()
+		begin_menu_func([this]()
 		{
 			// the types
 			if (ImGui::BeginMenu("Severity"))

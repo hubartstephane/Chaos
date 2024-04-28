@@ -329,7 +329,7 @@ namespace chaos
 		/** draw the content */
 		virtual void OnDrawWindowImGuiContent();
 		/** draw the main menu */
-		virtual void OnDrawWindowImGuiMenu(ImGuiInterface::DrawImGuiMenuFunc func);
+		virtual void OnDrawWindowImGuiMenu(ImGuiInterface::BeginImGuiMenuFunc begin_menu_func);
 
 #if _WIN32
 

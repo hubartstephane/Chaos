@@ -6,6 +6,7 @@ namespace chaos
 	ImGuiWindow::ImGuiWindow()
 	{
 		window_category = WindowCategory::OPTIONAL_WINDOW;
+		EnableApplicationImGuiMenu(false);
 	}
 
 	void ImGuiWindow::SetContent(ImGuiObject* in_content)
@@ -20,10 +21,9 @@ namespace chaos
 			content->DrawImGui(GetName(), ImGuiDrawFlags::FULL_WINDOW);
 	}
 
-	void ImGuiWindow::OnDrawWindowImGuiMenu(ImGuiInterface::DrawImGuiMenuFunc func)
+	void ImGuiWindow::RegisterImGuiProxies()
 	{
-		// Window::OnDrawWindowImGuiMenu(func);
-		// do not call super so that the application items are not inserted here
+		// Window::RegisterImGuiProxies() // don't call super method
 	}
 
 }; // namespace chaos

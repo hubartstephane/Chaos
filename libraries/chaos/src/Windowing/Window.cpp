@@ -1142,11 +1142,22 @@ namespace chaos
 		}
 	}
 
+	bool Window::IsApplicationImGuiMenuEnabled() const
+	{
+		return application_menu_enabled;
+	}
+
+	void Window::EnableApplicationImGuiMenu(bool in_enabled)
+	{
+		application_menu_enabled = in_enabled;
+	}
+
 	void Window::OnDrawWindowImGuiMenu(ImGuiInterface::DrawImGuiMenuFunc func)
 	{
 		// display application menu items
-		if (WindowApplication* window_application = Application::GetInstance())
-			window_application->OnDrawApplicationImGuiMenu(func);
+		if (IsApplicationImGuiMenuEnabled())
+			if (WindowApplication* window_application = Application::GetInstance())
+				window_application->OnDrawApplicationImGuiMenu(func);
 		// display menu items for widgets
 		ImGuiObjectOwnerInterface::DrawImGuiObjectsMenu(func);
 	}

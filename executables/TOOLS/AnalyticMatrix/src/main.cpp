@@ -162,7 +162,6 @@ std::string ToString(AnalyticExpression const* src)
 	return "?";
 }
 
-
 // ===============================================================================
 
 class AnalyticMatrix
@@ -315,15 +314,7 @@ std::string AnalyticMatrix::ToCppString(char const* matrix_name) const
 	return result;
 }
 
-
-
-
-
-
-
-
-
-
+// ----------------------------------------------------------------------------------------
 
 AnalyticMatrix MakeScaleMatrix(glm::vec3 const & v)
 {
@@ -454,11 +445,297 @@ AnalyticMatrix MakeRotationMatrixZ(char const* angle_name)
 	return result;
 }
 
+// ----------------------------------------------------------------------------------------
+
+enum class PopupPlacementType
+{
+	ScreenCenter,
+	CursorPosition
+};
+
+
+template<typename T>
+class ImGuiPopupBase
+{
+public:
+
+	using RESULT_TYPE = std::conditional_t<
+		std::is_same_v<T, void>,
+		void,
+		std::optional<T>
+	>;
+
+	virtual PopupPlacementType GetPlacementType() const
+	{
+		//return PopupPlacementType::ScreenCenter;
+		return PopupPlacementType::CursorPosition;
+	}
+
+	virtual RESULT_TYPE Process()
+	{
+		if (popup_name.length() > 0)
+		{
+			ImGui::SetNextWindowPos(popup_position, ImGuiCond_Always, popup_alignment);
+
+			if (ImGui::BeginPopupModal(popup_name.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize))
+			{
+				if constexpr (std::is_same_v<void, T>)
+				{
+					DoProcess();
+					ImGui::EndPopup();
+				}
+				else
+				{
+					RESULT_TYPE result = DoProcess();
+					ImGui::EndPopup();
+					return result;
+				}
+			}
+		}
+
+		if constexpr (!std::is_same_v<void, T>)
+		{
+			return {};
+		}
+	}
+
+	bool IsOpened() const
+	{
+		return popup_name.length() > 0;
+	}
+
+protected:
+
+	virtual RESULT_TYPE DoProcess()
+	{
+		if constexpr (!std::is_same_v<T, void>)
+		{
+			return {};
+		}
+	}
+
+	virtual void Close()
+	{
+		popup_name = {};
+		ImGui::CloseCurrentPopup();
+	}
+
+	bool DoOpen(std::string in_popup_name)
+	{
+		if (!IsOpened())
+		{
+			PopupPlacementType placement_type = GetPlacementType();
+			if (placement_type == PopupPlacementType::ScreenCenter)
+			{
+				popup_position  = ImGui::GetMainViewport()->GetCenter();
+				popup_alignment = ImVec2(0.5f, 0.5f);
+			}
+			else if (placement_type == PopupPlacementType::CursorPosition)
+			{
+				popup_position = ImGui::GetMousePos();
+				popup_alignment = ImVec2(0.0f, 0.0f);
+			}
+
+			popup_name = std::move(in_popup_name);
+
+			ImGui::OpenPopup(popup_name.c_str(), ImGuiPopupFlags_MouseButtonRight); // shuxxx ImGuiPopupFlags_MouseButtonRight
+			return true;
+		}
+		return false;
+	}
+
+protected:
+
+	std::string popup_name;
+
+	ImVec2 popup_position;
+
+	ImVec2 popup_alignment;
+};
+
+
+// ----------------------------------------------------------------------------------------
+
+class ImGuiErrorPopup : public ImGuiPopupBase<void>
+{
+public:
+
+	void Open(std::string in_popup_name, std::string in_message)
+	{
+		if (DoOpen(std::move(in_popup_name)))
+		{
+			message = std::move(in_message);
+		}
+	}
+
+protected:
+
+	virtual void DoProcess() override
+	{
+		ImGui::Text(message.c_str());
+		if (ImGui::Button("Close"))
+			Close();
+	}
+
+	virtual void Close() override
+	{
+		message = {};
+		ImGuiPopupBase::Close();
+	}
+
+protected:
+
+	std::string message;
+};
+
+// ----------------------------------------------------------------------------------------
+
+class ImGuiNameSelectionPopup : public ImGuiPopupBase<std::string>
+{
+public:
+
+	void Open(std::string in_popup_name)
+	{
+		DoOpen(std::move(in_popup_name));
+	}
+
+protected:
+
+	virtual std::optional<std::string> DoProcess() override
+	{
+		std::optional<std::string> result;
+
+		ImGui::Text("new matrix name");
+
+		chaos::ImGuiTools::InputText("", name);
+		if (ImGui::Button("Validate"))
+		{
+			result.emplace(std::move(name));
+			Close();
+		}
+
+		ImGui::SameLine();
+		if (ImGui::Button("Close"))
+		{
+			result = "";
+			Close();
+		}
+
+		return result;
+	}
+
+	virtual void Close() override
+	{
+		name = {};
+		ImGuiPopupBase::Close();
+	}
+
+protected:
+
+	std::string name;
+};
+
+// ----------------------------------------------------------------------------------------
+
+enum class MatrixCreationType
+{
+	Identity,
+	Scale,
+	Translation,
+	RotationX,
+	RotationY,
+	RotationZ
+};
+
+class ImGuiNewMatrixPopup : public ImGuiPopupBase<MatrixCreationType>
+{
+public:
+
+	void Open(std::string in_popup_name)
+	{
+		DoOpen(std::move(in_popup_name));
+	}
+
+protected:
+
+	std::optional<MatrixCreationType> DoProcess() override
+	{
+		std::optional<MatrixCreationType> result;
+
+		if (ImGui::Selectable("Identity"))
+		{
+			result = MatrixCreationType::Identity;
+			Close();
+		}
+		if (ImGui::Selectable("Scale"))
+		{
+			result = MatrixCreationType::Scale;
+			Close();
+		}
+		if (ImGui::Selectable("Translation"))
+		{
+			result = MatrixCreationType::Translation;
+			Close();
+		}
+		if (ImGui::Selectable("Rotation X"))
+		{
+			result = MatrixCreationType::RotationX;
+			Close();
+		}
+		if (ImGui::Selectable("Rotation Y"))
+		{
+			result = MatrixCreationType::RotationY;
+			Close();
+		}
+		if (ImGui::Selectable("Rotation Z"))
+		{
+			result = MatrixCreationType::RotationZ;
+			Close();
+		}
+
+		return result;
+	}
+};
+
+// ----------------------------------------------------------------------------------------
+
+
+#if 0
+auto it = std::ranges::find_if(matrixes, [&name = name](NamedMatrix const& M)
+{
+	return chaos::StringTools::Stricmp(name, M.name) == 0;
+});
+if (it != matrixes.end())
+{
+	ErrorPopup.Open(std::format("A matrix named [{}] already exits", name));
+}
+else
+{
+	validation_function(name.c_str());
+}
+
+
+ImGuiErrorPopup ErrorPopup;
+
+#endif
 
 
 
 
 
+
+
+
+
+
+
+// ----------------------------------------------------------------------------------------
+
+enum class IterationState
+{
+	Continue,
+	Stop
+};
 
 class NamedMatrix
 {
@@ -482,19 +759,91 @@ public:
 		matrixes.push_back({ "titi", T });
 	}
 
-
 	virtual void OnDrawImGuiContent() override
 	{
 		for (NamedMatrix const& m : matrixes)
 		{
-			if (DisplayAnalyticMatrix(m))
+			if (DisplayAnalyticMatrix(m) == IterationState::Stop)
 			{
 				break;
 			}
 			ImGui::Separator();
 		}
 
+		ImGui::Text("tergndslkjnlgkjnfg"); ImGui::SameLine();
 		if (ImGui::ArrowButton("##down", ImGuiDir_Down))
+			new_matrix_popup.Open("New Matrix");
+			//new_matrix_popup.Open();
+
+
+		if (std::optional<MatrixCreationType> new_matrix_name = new_matrix_popup.Process())
+		{
+			int i = 0;
+			++i;
+
+		}
+		
+		
+		//new_matrix_popup.Display();
+#if 0
+		if (std::optional<std::string> new_matrix_name = name_selection_popup.Display())
+		{
+			auto it = std::ranges::find_if(matrixes, [&name = new_matrix_name](NamedMatrix const& M)
+			{
+				return chaos::StringTools::Stricmp(name, M.name) == 0;
+			});
+			if (it != matrixes.end())
+			{
+				ErrorPopup.Open(std::format("A matrix named [{}] already exits", name));
+			}
+			else
+			{
+				
+			}
+
+		}
+#endif
+
+	}
+
+	IterationState DisplayAnalyticMatrix(NamedMatrix const& m)
+	{
+		ImGui::PushID(&m);
+
+		ImGui::TextWrapped(m.name.c_str());
+
+		if (ImGui::BeginTable("AnalyticMatrix", 4, ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg))
+		{
+			for (size_t y = 0; y < 4; ++y)
+			{
+				for (size_t x = 0; x < 4; ++x)
+				{
+					ImGui::TableNextColumn();
+					ImGui::Text("%s", ToString(m.matrix(x, y)).c_str());
+				}
+			}
+			ImGui::EndTable();
+		}
+
+		ImGui::PopID();
+
+		return IterationState::Continue;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0
+
 			ImGui::OpenPopup("new matrix", ImGuiPopupFlags_MouseButtonRight);
 
 		bool new_identity_matrix = false;
@@ -535,6 +884,7 @@ public:
 
 		auto DisplayNamePopupAndCreateMatrix = [this](bool raise_popup, char const * title, chaos::LightweightFunction<AnalyticMatrix(char const*)> func)
 		{
+#if 0
 			DisplayNameSelectionPopup(raise_popup, title, [this, &func](char const* name)
 			{
 				NamedMatrix NewMatrix;
@@ -542,6 +892,7 @@ public:
 				NewMatrix.matrix = func(name);
 				matrixes.push_back(std::move(NewMatrix));
 			});
+#endif
 		};
 
 		DisplayNamePopupAndCreateMatrix(new_identity_matrix, "Identity", [this](char const * name)
@@ -573,86 +924,27 @@ public:
 		{
 			return MakeRotationMatrixZ(name);
 		});
-
 	}
 
-	void DisplayErrorPopup(bool raise_popup, std::string_view message)
-	{
-		static std::string error_message;
-		if (raise_popup)
-		{
-			ImGui::OpenPopup("Error");
-			error_message = message;
-		}
 
-		ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-		ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
-
-		if (ImGui::BeginPopupModal("Error", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-		{
-			ImGui::Text(error_message.c_str());
-			if (ImGui::Button("Close"))
-				ImGui::CloseCurrentPopup();
-			ImGui::EndPopup();
-		}
-	}
-
-	void DisplayNameSelectionPopup(bool raise_popup, char const * popup_name, chaos::LightweightFunction<void(char const* name)> func)
-	{
-		static std::string name;
-		if (raise_popup)
-		{
-			ImGui::OpenPopup(popup_name);
-			name.clear();
-		}
-
-		ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-		ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
-
-		std::string error_message;
-
-		if (ImGui::BeginPopupModal(popup_name, NULL, ImGuiWindowFlags_AlwaysAutoResize))
-		{ 
-			ImGui::Text("new matrix name");
-
-			chaos::ImGuiTools::InputText("", name);
-			if (ImGui::Button("Validate"))
-			{
-				auto it = std::ranges::find_if(matrixes, [&name = name](NamedMatrix const& M)
-				{
-					return chaos::StringTools::Stricmp(name, M.name) == 0;
-				});
-				if (it != matrixes.end())
-				{
-					error_message = std::format("A matrix named [{}] already exits", name);
-				}
-				else
-				{
-					func(name.c_str());
-				}
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Close"))
-				ImGui::CloseCurrentPopup();
-
-			ImGui::EndPopup();
-		}
-		DisplayErrorPopup(error_message.length() > 0, error_message.c_str());
-	}
 
 	bool DisplayAnalyticMatrix(NamedMatrix const& m)
 	{
 		ImGui::PushID(&m);
+
+		static ImVec2 p;
 		ImGui::TextWrapped(m.name.c_str()); ImGui::SameLine();
 
 		// popup for actions
 		static std::optional<NamedMatrix const*> matrix_to_duplicate;
 		if (ImGui::ArrowButton("##down", ImGuiDir_Down))
 		{
+			p = ImGui::GetCursorPos();
 			matrix_to_duplicate.reset();
 			ImGui::OpenPopup("element operation", ImGuiPopupFlags_MouseButtonRight);
 		}
+
+		ImGui::SetNextWindowPos(p, ImGuiCond_Always, ImVec2(0.0f, 0.0f));
 
 		bool duplicate_matrix = false;
 		bool delete_matrix = false;
@@ -708,21 +1000,23 @@ public:
 				}
 			}
 		}
-
 		ImGui::PopID();
 
 		return delete_matrix || has_duplicated;
 	}
 
+#endif
+
 protected:
+
+	ImGuiNameSelectionPopup name_selection_popup;
+
+	ImGuiNewMatrixPopup new_matrix_popup;
 
 	std::vector<NamedMatrix> matrixes;
 };
 
-
-
-
-
+// ----------------------------------------------------------------------------------------
 
 int main(int argc, char ** argv, char ** env)
 {

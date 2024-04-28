@@ -10,7 +10,7 @@ namespace chaos
 
 	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(ImGuiDrawFlags, &ImGuiDrawFlags_bitmask_metadata, CHAOS_API);
 
-	void ImGuiInterface::ConditionalMenuBar(ImGuiDrawFlags flags, int imgui_window_flags)
+	void ImGuiInterface::OnDrawImGuiMenuConditional(ImGuiDrawFlags flags, int imgui_window_flags)
 	{
 		// check wether the application accepts the menu bar
 		if (WindowApplication* window_application = Application::GetInstance())
@@ -20,7 +20,7 @@ namespace chaos
 		// display full window menu bar
 		if (HasAnyFlags(flags, ImGuiDrawFlags::USE_FULL_WINDOW_MENU))
 		{
-			auto draw_menu_func = [this](LightweightFunction<void()> func)
+			auto begin_menu_func = [this](LightweightFunction<void()> func)
 			{
 				if (ImGui::BeginMainMenuBar())
 				{
@@ -28,14 +28,14 @@ namespace chaos
 					ImGui::EndMainMenuBar();
 				}
 			};
-			OnDrawImGuiMenu(draw_menu_func);
+			OnDrawImGuiMenu(begin_menu_func);
 		}
 		// display floating window menu bar
 		else
 		{
 			if ((imgui_window_flags & ImGuiWindowFlags_MenuBar) != 0)
 			{
-				auto draw_menu_func = [this](LightweightFunction<void()> func)
+				auto begin_menu_func = [this](LightweightFunction<void()> func)
 				{
 					if (ImGui::BeginMenuBar())
 					{
@@ -43,7 +43,7 @@ namespace chaos
 						ImGui::EndMenuBar();
 					}
 				};
-				OnDrawImGuiMenu(draw_menu_func);
+				OnDrawImGuiMenu(begin_menu_func);
 			}
 		}
 	}
@@ -60,15 +60,15 @@ namespace chaos
 			return imgui_window_flags & ~ImGuiWindowFlags_MenuBar;
 
 		// request if there is really some menu content
-		bool want_menu = false;
-		auto draw_menu_func = [&want_menu](LightweightFunction<void()> func)
+		bool menu_required = false;
+		auto fake_begin_menu_func = [&menu_required](LightweightFunction<void()> func)
 		{
-			want_menu = true;
+			menu_required = true; // this implementation fully ignore the "func" content. we just check whether OnDrawImGuiMenu calls "fake_begin_menu_func"
 		};
-		OnDrawImGuiMenu(draw_menu_func);
+		OnDrawImGuiMenu(fake_begin_menu_func);
 
 		// add or remove menu bar flag
-		if (want_menu)
+		if (menu_required)
 			return imgui_window_flags | ImGuiWindowFlags_MenuBar;
 		else
 			return imgui_window_flags & ~ImGuiWindowFlags_MenuBar;
@@ -87,21 +87,21 @@ namespace chaos
 		imgui_window_flags = UpdateWindowFlagsForMenu(flags, imgui_window_flags);
 
 		// display content + menu delegate
-		auto DisplayFunc = [this, flags, imgui_window_flags]()
+		auto display_func = [this, flags, imgui_window_flags]()
 		{
 			OnDrawImGuiContent();
-			ConditionalMenuBar(flags, imgui_window_flags);
+			OnDrawImGuiMenuConditional(flags, imgui_window_flags);
 		};
 
 		// display fullscreen window
 		if (HasAnyFlags(flags, ImGuiDrawFlags::FULL_WINDOW))
 		{
-			closing_request = !FullscreenWindow(title, imgui_window_flags, DisplayFunc);
+			closing_request = !FullscreenWindow(title, imgui_window_flags, display_func);
 		}
 		// display floating window
 		else
 		{
-			closing_request = !FloatingWindow(title, imgui_window_flags, DisplayFunc);
+			closing_request = !FloatingWindow(title, imgui_window_flags, display_func);
 		}
 	}
 
@@ -135,14 +135,14 @@ namespace chaos
 
 	int ImGuiInterface::GetImGuiWindowFlags() const
 	{
-		return ImGuiWindowFlags_NoCollapse; // XXX: do not forget to add ImGuiWindowFlags_MenuBar if you want to have a menu
+		return ImGuiWindowFlags_NoCollapse;
 	}
 
 	void ImGuiInterface::OnDrawImGuiContent()
 	{
 	}
 
-	void ImGuiInterface::OnDrawImGuiMenu(DrawImGuiMenuFunc func)
+	void ImGuiInterface::OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func)
 	{
 	}
 

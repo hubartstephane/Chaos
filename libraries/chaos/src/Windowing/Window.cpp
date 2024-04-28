@@ -1130,7 +1130,7 @@ namespace chaos
 		// draw the menu
 		if (GetImGuiMenuMode())
 		{
-			auto draw_menu_func = [this](LightweightFunction<void()> func)
+			auto begin_menu_func = [this](LightweightFunction<void()> func)
 			{
 				if (ImGui::BeginMainMenuBar())
 				{
@@ -1138,7 +1138,7 @@ namespace chaos
 					ImGui::EndMainMenuBar();
 				}
 			};
-			OnDrawWindowImGuiMenu(draw_menu_func);
+			OnDrawWindowImGuiMenu(begin_menu_func);
 		}
 	}
 
@@ -1152,14 +1152,14 @@ namespace chaos
 		application_menu_enabled = in_enabled;
 	}
 
-	void Window::OnDrawWindowImGuiMenu(ImGuiInterface::DrawImGuiMenuFunc func)
+	void Window::OnDrawWindowImGuiMenu(ImGuiInterface::BeginImGuiMenuFunc begin_menu_func)
 	{
 		// display application menu items
 		if (IsApplicationImGuiMenuEnabled())
 			if (WindowApplication* window_application = Application::GetInstance())
-				window_application->OnDrawApplicationImGuiMenu(func);
+				window_application->OnDrawApplicationImGuiMenu(begin_menu_func);
 		// display menu items for widgets
-		ImGuiObjectOwnerInterface::DrawImGuiObjectsMenu(func);
+		ImGuiObjectOwnerInterface::DrawImGuiObjectsMenu(begin_menu_func);
 	}
 
 	void Window::OnDrawWindowImGuiContent()

@@ -218,7 +218,7 @@ namespace chaos
 		AutoConstCastable<Window> GetMainWindow() const { return FindWindow("main"); }
 
 		/** add some items to a windows menu */
-		virtual void OnDrawApplicationImGuiMenu(ImGuiInterface::DrawImGuiMenuFunc func);
+		virtual void OnDrawApplicationImGuiMenu(ImGuiInterface::BeginImGuiMenuFunc begin_menu_func);
 
 		/** internal method to show or hide a window */
 		void SetWindowInternalVisibility(bool visible, char const* name, CreateWindowFunc create_window_func);

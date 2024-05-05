@@ -63,6 +63,22 @@ namespace chaos
 		/** implementaion coming from imgui_stdlib.cpp */
 		CHAOS_API bool InputText(const char* label, std::string& str, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = nullptr, void* user_data = nullptr);
 
+		/** utility class to handle simple menu window */
+		class CHAOS_API BeginMenuBar
+		{
+		public:
+
+			void operator ()(LightweightFunction<void()> func) const;
+		};
+
+		/** utility class to handle main menu window */
+		class CHAOS_API BeginMainMenuBar
+		{
+		public:
+
+			void operator ()(LightweightFunction<void()> func) const;
+		};
+
 	}; // namespace ImGuiTools
 
 	/** implementation of DrawImGui for a string */

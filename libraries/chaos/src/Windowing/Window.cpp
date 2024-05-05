@@ -1130,15 +1130,7 @@ namespace chaos
 		// draw the menu
 		if (GetImGuiMenuMode())
 		{
-			auto begin_menu_func = [this](LightweightFunction<void()> func)
-			{
-				if (ImGui::BeginMainMenuBar())
-				{
-					func();
-					ImGui::EndMainMenuBar();
-				}
-			};
-			OnDrawWindowImGuiMenu(begin_menu_func);
+			OnDrawWindowImGuiMenu(ImGuiTools::BeginMainMenuBar());
 		}
 	}
 

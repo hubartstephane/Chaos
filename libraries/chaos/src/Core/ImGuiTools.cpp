@@ -87,6 +87,24 @@ namespace chaos
 			return ImGui::InputText(label, (char*)str.c_str(), str.capacity() + 1, flags, InputTextCallback, &cb_user_data);
 		}
 
+		void BeginMenuBar::operator()(LightweightFunction<void()> func) const
+		{
+			if (ImGui::BeginMenuBar())
+			{
+				func();
+				ImGui::EndMenuBar();
+			}
+		}
+
+		void BeginMainMenuBar::operator()(LightweightFunction<void()> func) const
+		{
+			if (ImGui::BeginMainMenuBar())
+			{
+				func();
+				ImGui::EndMainMenuBar();
+			}
+		}
+
 	}; // namespace ImGuiTools
 
 }; // namespace chaos

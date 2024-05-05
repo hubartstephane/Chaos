@@ -20,30 +20,14 @@ namespace chaos
 		// display full window menu bar
 		if (HasAnyFlags(flags, ImGuiDrawFlags::USE_FULL_WINDOW_MENU))
 		{
-			auto begin_menu_func = [this](LightweightFunction<void()> func)
-			{
-				if (ImGui::BeginMainMenuBar())
-				{
-					func();
-					ImGui::EndMainMenuBar();
-				}
-			};
-			OnDrawImGuiMenu(begin_menu_func);
+			OnDrawImGuiMenu(ImGuiTools::BeginMainMenuBar());
 		}
 		// display floating window menu bar
 		else
 		{
 			if ((imgui_window_flags & ImGuiWindowFlags_MenuBar) != 0)
 			{
-				auto begin_menu_func = [this](LightweightFunction<void()> func)
-				{
-					if (ImGui::BeginMenuBar())
-					{
-						func();
-						ImGui::EndMenuBar();
-					}
-				};
-				OnDrawImGuiMenu(begin_menu_func);
+				OnDrawImGuiMenu(ImGuiTools::BeginMenuBar());
 			}
 		}
 	}

@@ -219,7 +219,7 @@ namespace chaos
 			else
 			{
 				// call delegate
-				auto result = func();
+				decltype(auto) result = func();
 				// restore GLFW and ImGui contexts
 				glfwMakeContextCurrent(previous_glfw_window);
 				// restore ImGui context (if different, because maybe the context has been destroy inside the func() call

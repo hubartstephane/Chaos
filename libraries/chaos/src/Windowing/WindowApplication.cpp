@@ -891,7 +891,7 @@ namespace chaos
 			;
 	}
 
-	void WindowApplication::OnDrawApplicationImGuiMenu(ImGuiInterface::BeginImGuiMenuFunc begin_menu_func)
+	void WindowApplication::OnDrawApplicationImGuiMenu(BeginImGuiMenuFunc begin_menu_func)
 	{
 		begin_menu_func([this]()
 		{

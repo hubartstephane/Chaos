@@ -70,7 +70,7 @@ namespace chaos
 		/** draw all ImGui objects */
 		virtual void DrawImGuiObjects();
 		/** draw all ImGui objects menu entries */
-		virtual void DrawImGuiObjectsMenu(ImGuiInterface::BeginImGuiMenuFunc begin_menu_func);
+		virtual void DrawImGuiObjectsMenu(BeginImGuiMenuFunc begin_menu_func);
 
 		/** find a registered object */
 		ImGuiObjectProxy* FindImGuiObjectProxy(char const* name);

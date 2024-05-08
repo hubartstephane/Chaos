@@ -131,7 +131,7 @@ namespace chaos
 		});
 	}
 
-	void ImGuiObjectOwnerInterface::DrawImGuiObjectsMenu(ImGuiInterface::BeginImGuiMenuFunc begin_menu_func)
+	void ImGuiObjectOwnerInterface::DrawImGuiObjectsMenu(BeginImGuiMenuFunc begin_menu_func)
 	{
 		if (proxies.size() > 0)
 		{

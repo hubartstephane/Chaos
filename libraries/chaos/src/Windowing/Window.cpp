@@ -1144,7 +1144,7 @@ namespace chaos
 		application_menu_enabled = in_enabled;
 	}
 
-	void Window::OnDrawWindowImGuiMenu(ImGuiInterface::BeginImGuiMenuFunc begin_menu_func)
+	void Window::OnDrawWindowImGuiMenu(BeginImGuiMenuFunc begin_menu_func)
 	{
 		// display application menu items
 		if (IsApplicationImGuiMenuEnabled())

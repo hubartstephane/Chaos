@@ -268,6 +268,8 @@ protected:
 
 	void OnDrawWindowImGuiContent() override
 	{
+		chaos::Window::OnDrawWindowImGuiContent();
+
 		// the HELP
 		if (show_help)
 		{

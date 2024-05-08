@@ -89,6 +89,22 @@ namespace chaos
 		assert(imgui_context == nullptr);
 	}
 
+	void Window::SubReference()
+	{
+		// the last reference is removed except for the one in 
+		if (--shared_count == 1)
+		{
+
+		}
+
+		// the proxy does not belong to any owner: handle as usual
+		if (owner == nullptr)
+			Object::SubReference();
+		// the last reference is the one from the owner. Destroy it
+		else if (--shared_count == 1)
+			owner->UnregisterImGuiObjectProxy(this);
+	}
+
 	void Window::Destroy()
 	{
 		if (WindowApplication* WindowApplication = Application::GetInstance())

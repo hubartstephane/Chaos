@@ -2,7 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	using PhysicalGamepadWrapper = ReferencedObjectDataWrapper<PhysicalGamepad*>;
+	using PhysicalGamepadWrapper = DataWrapperObject<PhysicalGamepad*>;
 
 	class Game;
 

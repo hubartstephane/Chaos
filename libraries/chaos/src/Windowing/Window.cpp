@@ -88,23 +88,6 @@ namespace chaos
 		assert(glfw_window == nullptr);
 		assert(imgui_context == nullptr);
 	}
-#if 0
-	void Window::SubReference()
-	{
-		// the last reference is removed except for the one in 
-		if (--shared_count == 1)
-		{
-
-		}
-
-		// the proxy does not belong to any owner: handle as usual
-		if (owner == nullptr)
-			Object::SubReference();
-		// the last reference is the one from the owner. Destroy it
-		else if (--shared_count == 1)
-			owner->UnregisterImGuiObjectProxy(this);
-	}
-#endif
 
 	void Window::Destroy()
 	{

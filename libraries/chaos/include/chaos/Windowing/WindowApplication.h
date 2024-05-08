@@ -121,7 +121,7 @@ namespace chaos
 		virtual void RunMessageLoop(LightweightFunction<bool()> loop_condition_func = {});
 
 		/** create a window */
-		Window* CreateTypedWindow(CreateWindowFunc create_window_func, WindowPlacementInfo placement_info = {}, WindowCreateParams const& create_params = {}, ObjectRequest = {});
+		Window* CreateTypedWindow(CreateWindowFunc create_func, WindowPlacementInfo placement_info = {}, WindowCreateParams const& create_params = {}, ObjectRequest = {});
 		/** create the main window */
 		virtual Window* DoCreateMainWindow(WindowCreateParams const& create_params);
 
@@ -221,7 +221,7 @@ namespace chaos
 		virtual void OnDrawApplicationImGuiMenu(BeginImGuiMenuFunc begin_menu_func);
 
 		/** internal method to show or hide a window */
-		void SetWindowInternalVisibility(bool visible, char const* name, CreateWindowFunc create_window_func);
+		void SetWindowInternalVisibility(bool visible, char const* name, CreateWindowFunc create_func);
 
 		/** checks whether the window is inside the application windows array */
 		bool IsWindowHandledByApplication(Window const* window) const;

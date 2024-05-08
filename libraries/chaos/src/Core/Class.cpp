@@ -55,6 +55,11 @@ namespace chaos
 		return nullptr;
 	}
 
+	Object* Class::operator ()() const
+	{
+		return CreateInstance();
+	}
+
 	Object * Class::CreateInstance() const
 	{
 		if (create_instance_function_type const * create_func = GetCreateInstanceFunc())

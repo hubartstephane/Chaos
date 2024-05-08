@@ -27,7 +27,7 @@ namespace chaos
 	/**
 	 * ImGuiObject: an interface to display an ImGui window
 	 */
-	class CHAOS_API ImGuiObject : public Object
+	class CHAOS_API ImGuiObject : public Object, public NamedInterface
 	{
 	public:
 

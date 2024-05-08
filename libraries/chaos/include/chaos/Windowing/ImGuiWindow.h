@@ -43,7 +43,7 @@ namespace chaos
 		/** override */
 		virtual void OnDrawWindowImGuiContent() override;
 		/** override */
-		virtual void RegisterImGuiProxies() override;
+		virtual bool EnumerateKnownImGuiObjects(EnumerateKnownImGuiObjectFunc func) const override;
 
 	protected:
 

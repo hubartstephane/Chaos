@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	void ImGuiWindowInformationObject::SetWindow(Window* in_window)
+	void ImGuiWindowInformationObject::SetWindow(const Window* in_window)
 	{
 		window = in_window;
 	}

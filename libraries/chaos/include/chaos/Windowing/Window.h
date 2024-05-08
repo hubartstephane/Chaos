@@ -120,13 +120,16 @@ namespace chaos
 	* Window: a binding class between chaos and GLFW to handle window (beware the prefix "My")
 	*/
 
-	class CHAOS_API Window : public Object, public WindowInterface, public ImGuiObjectOwnerInterface, public ConfigurableInterface
+	class CHAOS_API Window : public Object, public WindowInterface, public ConfigurableInterface
 	{
 		friend class WindowApplication;
 
 		CHAOS_DECLARE_OBJECT_CLASS(Window, Object);
 
 	public:
+
+		using CreateImGuiObjectFunc = LightweightFunction<ImGuiObject* ()>;
+		using EnumerateKnownImGuiObjectFunc = LightweightFunction<bool(char const*, CreateImGuiObjectFunc)>;
 
 		/** constructor */
 		Window();
@@ -139,7 +142,7 @@ namespace chaos
 		/** called to require the window to close */
 		void RequireWindowClosure();
 		/** getter on the handler */
-		GLFWwindow* GetGLFWHandler();
+		GLFWwindow* GetGLFWHandler() const;
 		/** returns whether the window has a pending GLFW close message */
 		bool ShouldClose();
 
@@ -252,6 +255,19 @@ namespace chaos
 		/** enable or disable application imgui menu to be plugged into this window */
 		void EnableApplicationImGuiMenu(bool in_enabled);
 
+		/** search whether a given ImGui object exists */
+		bool IsKnownImGuiObjectVisible(char const* name) const;
+		/** create a ImGuiObject from its name */
+		bool SetKnownImGuiObjectVisibility(char const* name, bool visible);
+
+		/** search an ImGui object by name */
+		AutoCastable<ImGuiObject> FindImGuiObject(ObjectRequest request);
+		/** search an ImGui object by name */
+		AutoConstCastable<ImGuiObject> FindImGuiObject(ObjectRequest request) const;
+
+		/** remove an ImGui object from list */
+		void RemoveImGuiObject(ImGuiObject* imgui_object);
+
 	protected:
 
 		/** override */
@@ -351,15 +367,17 @@ namespace chaos
 		/** get the destruction guard count */
 		int GetWindowDestructionGuard() const { return window_destruction_guard; }
 
-		/** register the known proxies */
-		virtual void RegisterImGuiProxies();
-
 		/** override */
 		virtual bool OnConfigurationChanged(JSONReadConfiguration config) override;
 		/** override */
 		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
 		/** override */
 		virtual bool OnStorePersistentProperties(JSONWriteConfiguration config) const override;
+
+		/** enumerate ImGuiObjects that the window can create */
+		virtual bool EnumerateKnownImGuiObjects(EnumerateKnownImGuiObjectFunc func) const;
+		/** create or destroy an ImGuiObject */
+		void SetImGuiObjectInternalVisibility(bool visible, char const* name, CreateImGuiObjectFunc create_func);
 
 	private:
 
@@ -414,6 +432,9 @@ namespace chaos
 		WindowCategory window_category = WindowCategory::MAIN_WINDOW;
 		/** whether application is enabled to be plugged into the window */
 		bool application_menu_enabled = true;
+
+		/** the imgui_objects handled by this window */
+		std::vector<shared_ptr<ImGuiObject>> imgui_objects;
 	};
 
 #endif

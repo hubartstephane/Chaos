@@ -553,7 +553,7 @@ namespace chaos
 		glfwSetWindowSize(glfw_window, size.x, size.y); // glfwSetWindowSize(...) receives client information
 	}
 
-	GLFWwindow* Window::GetGLFWHandler()
+	GLFWwindow* Window::GetGLFWHandler() const
 	{
 		return glfw_window;
 	}
@@ -1150,13 +1150,43 @@ namespace chaos
 		if (IsApplicationImGuiMenuEnabled())
 			if (WindowApplication* window_application = Application::GetInstance())
 				window_application->OnDrawApplicationImGuiMenu(begin_menu_func);
+
 		// display menu items for widgets
-		ImGuiObjectOwnerInterface::DrawImGuiObjectsMenu(begin_menu_func);
+		EnumerateKnownImGuiObjects([this, &begin_menu_func](char const* name, CreateImGuiObjectFunc create_func)
+		{
+			begin_menu_func([this, &create_func, name]()
+			{
+				if (ImGui::BeginMenu("Widgets"))
+				{
+					bool imgui_object_exists = (FindImGuiObject(name) != nullptr);
+					if (ImGui::MenuItem(name, nullptr, imgui_object_exists, true))
+						SetImGuiObjectInternalVisibility(!imgui_object_exists, name, create_func);
+					ImGui::EndMenu();
+				}
+			});
+			return false; // don't stop the loop
+		});
 	}
 
 	void Window::OnDrawWindowImGuiContent()
 	{
-		ImGuiObjectOwnerInterface::DrawImGuiObjects();
+		// create a weak copy of imgui objects to avoid 
+		// bugs if some elements are destroyed during the loop
+		std::vector<weak_ptr<ImGuiObject>> weak_imgui_objects;
+		weak_imgui_objects.reserve(imgui_objects.size());
+		for (shared_ptr<ImGuiObject> const& imgui_object : imgui_objects)
+			weak_imgui_objects.emplace_back(imgui_object.get());
+
+		// draw all imgui objects
+		for (weak_ptr<ImGuiObject> imgui_object : weak_imgui_objects)
+		{
+			if (imgui_object != nullptr)
+			{
+				imgui_object->DrawImGui(imgui_object->GetName(), ImGuiDrawFlags::NONE);
+				if (imgui_object->IsClosingRequested()) // closing requested ?
+					RemoveImGuiObject(imgui_object.get());
+			}
+		}
 	}
 
 	bool Window::DrawInternal(GPUProgramProviderInterface const* uniform_provider)
@@ -1238,23 +1268,7 @@ namespace chaos
 
 	bool Window::InitializeFromConfiguration(nlohmann::json const * config)
 	{
-		RegisterImGuiProxies();
 		return true;
-	}
-
-	void Window::RegisterImGuiProxies()
-	{
-		RegisterImGuiObjectProxy("System Information", ImGuiSystemInformationObject::GetStaticClass());
-
-		RegisterImGuiObjectProxy("Window Information", [this]()
-		{
-			ImGuiWindowInformationObject* result = new ImGuiWindowInformationObject;
-			if (result != nullptr)
-				result->SetWindow(this);
-			return result;
-		});
-
-		RegisterImGuiObjectProxy("Help", ImGuiHelpObject::GetStaticClass());
 	}
 
 	bool Window::OnConfigurationChanged(JSONReadConfiguration config)
@@ -1325,6 +1339,91 @@ namespace chaos
 
 	void Window::Finalize()
 	{
+	}
+
+	AutoCastable<ImGuiObject> Window::FindImGuiObject(ObjectRequest request)
+	{
+		return request.FindObject(imgui_objects);
+	}
+
+	AutoConstCastable<ImGuiObject> Window::FindImGuiObject(ObjectRequest request) const
+	{
+		return request.FindObject(imgui_objects);
+	}
+
+	bool Window::IsKnownImGuiObjectVisible(char const* name) const
+	{
+		return (FindImGuiObject(name) != nullptr);
+	}
+
+	bool Window::SetKnownImGuiObjectVisibility(char const* name, bool visible)
+	{
+		return EnumerateKnownImGuiObjects([this, name, visible](char const* imgui_object_name, CreateImGuiObjectFunc create_func)
+		{
+			// is it the window we are searching?
+			if (StringTools::Stricmp(name, imgui_object_name) != 0)
+				return false;
+			SetImGuiObjectInternalVisibility(visible, imgui_object_name, create_func);
+			return true; // stop the search
+		});
+	}
+
+	bool Window::EnumerateKnownImGuiObjects(EnumerateKnownImGuiObjectFunc func) const
+	{
+
+		if (func("System Information", []() { return new ImGuiSystemInformationObject; }))
+			return true;
+
+		if (func("Window Information", [this]()
+		{
+			ImGuiWindowInformationObject* result = new ImGuiWindowInformationObject;
+			if (result != nullptr)
+				result->SetWindow(this);
+			return result;
+		}))
+			return true;
+
+		if (func("Help", []() { return new ImGuiHelpObject; }))
+			return true;
+
+		return false;
+	}
+
+	void Window::SetImGuiObjectInternalVisibility(bool visible, char const* name, CreateImGuiObjectFunc create_func)
+	{
+		ImGuiObject* existing_imgui_object = FindImGuiObject(name);
+
+		if (visible)
+		{
+			if (existing_imgui_object == nullptr)
+			{
+				if (ImGuiObject* imgui_object = create_func())
+				{
+					imgui_object->SetName(name);
+					imgui_objects.push_back(imgui_object);
+				}
+			}
+		}
+		else
+		{
+			if (existing_imgui_object != nullptr)
+				RemoveImGuiObject(existing_imgui_object);
+		}
+	}
+
+	void Window::RemoveImGuiObject(ImGuiObject* imgui_object)
+	{
+		assert(imgui_object != nullptr);
+
+		auto it = std::ranges::find_if(imgui_objects, [imgui_object](shared_ptr<ImGuiObject> const& ptr)
+		{
+			return (ptr == imgui_object);
+		});
+
+		if (it != imgui_objects.end())
+		{
+			imgui_objects.erase(it);
+		}
 	}
 
 }; // namespace chaos

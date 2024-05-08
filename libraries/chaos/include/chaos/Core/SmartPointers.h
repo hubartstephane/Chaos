@@ -77,7 +77,7 @@ namespace chaos
 
 		/** adding a reference */
 		template<typename T>
-		static pointer_type<T>* AddReference(T* in_target)
+		static T * AddReference(T* in_target)
 		{
 			assert(in_target != nullptr);
 			::intrusive_ptr_add_ref(in_target);
@@ -86,7 +86,7 @@ namespace chaos
 
 		/** removing a reference */
 		template<typename T>
-		static pointer_type<T>* SubReference(pointer_type<T>* in_target)
+		static T * SubReference(pointer_type<T>* in_target)
 		{
 			assert(in_target != nullptr);
 			::intrusive_ptr_release(in_target);
@@ -101,7 +101,6 @@ namespace chaos
 		}
 	};
 
-
 	/**
 	 * SharedPointerPolicy : policy used for weak_ptr
 	 */
@@ -113,7 +112,6 @@ namespace chaos
 		/** the internal data in the smart pointer */
 		template<typename T>
 		using pointer_type = WeakPointerData;
-
 
 		/** adding a reference */
 		template<typename T>
@@ -146,7 +144,6 @@ namespace chaos
 				return (T*)in_target->object_ptr; // remove constness here
 			return nullptr;
 		}
-
 	};
 
 	/**
@@ -221,7 +218,7 @@ namespace chaos
 			return *this;
 		}
 		/** move */
-		SmartPointerBase& operator = (SmartPointerBase<T, POLICY>&& src) noexcept // shuxxx to test
+		SmartPointerBase& operator = (SmartPointerBase<T, POLICY>&& src) noexcept
 		{
 			if (src.target != target)
 			{
@@ -238,8 +235,6 @@ namespace chaos
 			return *this;
 		}
 
-
-
 		/** copy */
 		template<typename T2, typename POLICY2>
 		SmartPointerBase& operator = (SmartPointerBase<T2, POLICY2> const& src)
@@ -250,14 +245,12 @@ namespace chaos
 			return *this;
 		}
 
-
 		/** constructor with AutoCastable */
 		template<typename U>
 		SmartPointerBase& operator = (AutoCastable<U> const& src)
 		{
 			return operator = ((type*)src);
 		}
-
 
 		/** getters */
 		type* get() const

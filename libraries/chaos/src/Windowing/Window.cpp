@@ -1370,8 +1370,7 @@ namespace chaos
 
 	bool Window::EnumerateKnownImGuiObjects(EnumerateKnownImGuiObjectFunc func) const
 	{
-
-		if (func("System Information", []() { return new ImGuiSystemInformationObject; }))
+		if (func("System Information", ImGuiSystemInformationObject::GetStaticClass()))
 			return true;
 
 		if (func("Window Information", [this]()
@@ -1383,7 +1382,7 @@ namespace chaos
 		}))
 			return true;
 
-		if (func("Help", []() { return new ImGuiHelpObject; }))
+		if (func("Help", ImGuiHelpObject::GetStaticClass()))
 			return true;
 
 		return false;

@@ -882,13 +882,15 @@ namespace chaos
 
 	bool WindowApplication::EnumerateKnownWindows(EnumerateKnownWindowsFunc func) const
 	{
-		return 
-			func("Log", &ImGuiWindow::CreateImGuiWindow<ImGuiLogObject>) ||
-			func("Global Variables", &ImGuiWindow::CreateImGuiWindow<ImGuiGlobalVariablesObject>)
+		if (func("Log", &ImGuiWindow::CreateImGuiWindow<ImGuiLogObject>))
+			return true;
+		if (func("Global Variables", &ImGuiWindow::CreateImGuiWindow<ImGuiGlobalVariablesObject>))
+			return true;
 #if _DEBUG
-			|| func("ImGuiDemo", &ImGuiWindow::CreateImGuiWindow<ImGuiDemoObject>)
+		if (func("ImGuiDemo", &ImGuiWindow::CreateImGuiWindow<ImGuiDemoObject>))
+			return true;
 #endif
-			;
+		return false;
 	}
 
 	void WindowApplication::OnDrawApplicationImGuiMenu(BeginImGuiMenuFunc begin_menu_func)

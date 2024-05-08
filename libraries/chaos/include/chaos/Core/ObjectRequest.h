@@ -128,6 +128,9 @@ namespace chaos
 		template<typename CHECK_CLASS = EmptyClass, typename P>
 		std::optional<size_t> FindObjectIndex(std::vector<P>& elements) const
 		{
+			// early exit
+			if (IsNoneRequest())
+				return {};
 			// search in the list
 			size_t count = elements.size();
 			for (size_t i = 0; i < count; ++i)
@@ -143,6 +146,9 @@ namespace chaos
 		template<typename CHECK_CLASS = EmptyClass, typename P>
 		std::optional<size_t> FindObjectIndex(std::vector<P> const& elements) const
 		{
+			// early exit
+			if (IsNoneRequest())
+				return {};
 			// search in the list
 			size_t count = elements.size();
 			for (size_t i = 0; i < count; ++i)

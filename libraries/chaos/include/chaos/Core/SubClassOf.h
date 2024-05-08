@@ -26,19 +26,7 @@ namespace chaos
 		/** constructor */
 		SubClassOf(SubClassOf && src) = default;
 		/** constructor */
-		SubClassOf(Class const* src)
-		{
-			if (src != nullptr)
-			{
-				Class const* base_class = ClassManager::GetDefaultInstance()->FindCPPClass<T>();
-				if (base_class == nullptr)
-					Log::Error("SubClassOf constructor : FindCPPClass<T> failure");
-				else if (src->InheritsFrom(base_class, true) != InheritanceType::YES)
-					Log::Error("SubClassOf constructor : src class does not inherit from base_class");
-				else
-					internal_class = src;
-			}
-		}
+		SubClassOf(Class const* src);
 		/** constructor */
 		template<typename U>
 		requires std::is_base_of_v<T, U>
@@ -54,15 +42,9 @@ namespace chaos
 		{
 		}
 		/** constructor with search */
-		SubClassOf(ClassFindResult find_result):
-			SubClassOf(find_result.Resolve(ClassManager::GetDefaultInstance()->FindCPPClass<T>()))
-		{
-		}
+		SubClassOf(ClassFindResult find_result);
 		/** constructor with search */
-		SubClassOf(char const* name, ClassManager * manager = ClassManager::GetDefaultInstance()):
-			SubClassOf(manager->FindClass(name))
-		{
-		}
+		SubClassOf(char const* name, ClassManager* manager = GetDefaultClassManagerInstance);
 
 		/** assign operator */
 		SubClassOf<T>& operator = (Class const* src)
@@ -134,6 +116,13 @@ namespace chaos
 		}
 		/** get the internal class */
 		Class const* GetInternalClass() const { return internal_class; }
+		/** conversion to class operator */
+		operator Class const * () const { return internal_class; }
+
+	protected:
+
+		/** get the class manager */
+		static ClassManager* GetDefaultClassManagerInstance();
 
 	protected:
 
@@ -142,40 +131,83 @@ namespace chaos
 	};
 
 	template<typename T>
-	std::vector<SubClassOf<T>> GetSubClassesFromString(char const* src, char separator = ',')
-	{
-		std::vector<SubClassOf<T>> result;
-
-		std::vector<std::string> class_names = StringTools::Split(src, separator);
-		for (auto& class_name : class_names)
-		{
-			class_name.erase(std::remove_if(class_name.begin(), class_name.end(), isspace), class_name.end());
-			SubClassOf<T> cls = ClassManager::GetDefaultInstance()->FindClass(class_name.c_str());
-			if (cls.IsValid())
-				result.push_back(cls);
-		}
-		return result;
-	}
-
+	std::vector<SubClassOf<T>> GetSubClassesFromString(char const* src, char separator = ',');
 
 	template<typename T>
-	bool DoSaveIntoJSON(nlohmann::json * json, SubClassOf<T> const& src)
-	{
-		Class const* cls = src.GetInternalClass();
-
-		json = (cls == nullptr || !cls->IsDeclared()) ? "" : cls->GetClassName().c_str();
-		return true;
-	}
+	bool DoSaveIntoJSON(nlohmann::json* json, SubClassOf<T> const& src);
 
 	template<typename T>
-	bool DoLoadFromJSON(JSONReadConfiguration config, SubClassOf<T>& src)
+	bool DoLoadFromJSON(JSONReadConfiguration config, SubClassOf<T>& src);
+
+#else
+
+template<typename T>
+SubClassOf<T>::SubClassOf(ClassFindResult find_result) :
+	SubClassOf(find_result.Resolve(ClassManager::GetDefaultInstance()->FindCPPClass<T>()))
+{
+}
+
+template<typename T>
+SubClassOf<T>::SubClassOf(char const* name, ClassManager* manager) :
+	SubClassOf(manager->FindClass(name))
+{
+}
+
+template<typename T>
+SubClassOf<T>::SubClassOf(Class const* src)
+{
+	if (src != nullptr)
 	{
-		std::string classname;
-		if (!LoadFromJSON(config, classname))
-			return false;
-		src = SubClassOf<T>(ClassManager::GetDefaultInstance()->FindClass(classname.c_str()));
-		return src.IsValid();
+		Class const* base_class = ClassManager::GetDefaultInstance()->FindCPPClass<T>();
+		if (base_class == nullptr)
+			Log::Error("SubClassOf constructor : FindCPPClass<T> failure");
+		else if (src->InheritsFrom(base_class, true) != InheritanceType::YES)
+			Log::Error("SubClassOf constructor : src class does not inherit from base_class");
+		else
+			internal_class = src;
 	}
+}
+
+template<typename T>
+ClassManager* SubClassOf<T>::GetDefaultClassManagerInstance()
+{
+	return ClassManager::GetDefaultInstance();
+}
+
+template<typename T>
+std::vector<SubClassOf<T>> GetSubClassesFromString(char const* src, char separator)
+{
+	std::vector<SubClassOf<T>> result;
+
+	std::vector<std::string> class_names = StringTools::Split(src, separator);
+	for (auto& class_name : class_names)
+	{
+		class_name.erase(std::remove_if(class_name.begin(), class_name.end(), isspace), class_name.end());
+		SubClassOf<T> cls = ClassManager::GetDefaultInstance()->FindClass(class_name.c_str());
+		if (cls.IsValid())
+			result.push_back(cls);
+	}
+	return result;
+}
+
+template<typename T>
+bool DoSaveIntoJSON(nlohmann::json* json, SubClassOf<T> const& src)
+{
+	Class const* cls = src.GetInternalClass();
+
+	json = (cls == nullptr || !cls->IsDeclared()) ? "" : cls->GetClassName().c_str();
+	return true;
+}
+
+template<typename T>
+bool DoLoadFromJSON(JSONReadConfiguration config, SubClassOf<T>& src)
+{
+	std::string classname;
+	if (!LoadFromJSON(config, classname))
+		return false;
+	src = SubClassOf<T>(ClassManager::GetDefaultInstance()->FindClass(classname.c_str()));
+	return src.IsValid();
+}
 
 #endif
 

@@ -18,7 +18,7 @@ namespace chaos
 		CHAOS_DECLARE_OBJECT_CLASS(ImGuiWindowInformationObject, ImGuiObject);
 
 		/** initialization function */
-		void SetWindow(Window* in_window);
+		void SetWindow(const Window* in_window);
 
 	protected:
 
@@ -30,7 +30,7 @@ namespace chaos
 	protected:
 
 		/** the target window */
-		Window* window = nullptr;
+		const Window* window = nullptr;
 	};
 
 #endif

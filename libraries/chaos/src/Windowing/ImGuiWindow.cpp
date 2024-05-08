@@ -21,9 +21,9 @@ namespace chaos
 			content->DrawImGui(GetName(), ImGuiDrawFlags::FULL_WINDOW);
 	}
 
-	void ImGuiWindow::RegisterImGuiProxies()
+	bool ImGuiWindow::EnumerateKnownImGuiObjects(EnumerateKnownImGuiObjectFunc func) const
 	{
-		// Window::RegisterImGuiProxies() // don't call super method
+		return false; // don't call super method
 	}
 
 }; // namespace chaos

@@ -111,7 +111,7 @@ namespace chaos
 		});
 	}
 
-	Window* WindowApplication::CreateTypedWindow(CreateWindowFunc create_window_func, WindowPlacementInfo placement_info, WindowCreateParams const &create_params, ObjectRequest request)
+	Window* WindowApplication::CreateTypedWindow(CreateWindowFunc create_func, WindowPlacementInfo placement_info, WindowCreateParams const &create_params, ObjectRequest request)
 	{
 		if (FindWindow(request) != nullptr)
 		{
@@ -119,10 +119,10 @@ namespace chaos
 			return nullptr;
 		}
 
-		return WithGLFWContext(nullptr, [this, create_window_func, &placement_info , &create_params, &request]() -> Window*
+		return WithGLFWContext(nullptr, [this, create_func, &placement_info , &create_params, &request]() -> Window*
 		{
 			// create the window class
-			shared_ptr<Window> result = create_window_func();
+			shared_ptr<Window> result = create_func();
 			if (result == nullptr)
 				return nullptr;
 			windows.push_back(result.get());
@@ -840,7 +840,7 @@ namespace chaos
 		}
 	}
 
-	void WindowApplication::SetWindowInternalVisibility(bool visible, char const * name, CreateWindowFunc create_window_func)
+	void WindowApplication::SetWindowInternalVisibility(bool visible, char const * name, CreateWindowFunc create_func)
 	{
 		Window* existing_window = FindWindow(name);
 
@@ -853,7 +853,7 @@ namespace chaos
 
 				WindowPlacementInfo placement_info;
 				placement_info.size = { 800, 800 };
-				CreateTypedWindow(create_window_func, placement_info, create_params, name);
+				CreateTypedWindow(create_func, placement_info, create_params, name);
 			}
 		}
 		else
@@ -870,12 +870,12 @@ namespace chaos
 
 	bool WindowApplication::SetKnownWindowVisibility(char const* name, bool visible)
 	{
-		return EnumerateKnownWindows([this, name, visible](char const* window_name, CreateWindowFunc create_window_func)
+		return EnumerateKnownWindows([this, name, visible](char const* window_name, CreateWindowFunc create_func)
 		{
 			// is it the window we are searching?
 			if (StringTools::Stricmp(name, window_name) != 0)
 				return false;
-			SetWindowInternalVisibility(visible, window_name, create_window_func);
+			SetWindowInternalVisibility(visible, window_name, create_func);
 			return true; // stop the search
 		});
 	}
@@ -938,17 +938,17 @@ namespace chaos
 				ImGui::EndMenu();
 			}
 
-			if (ImGui::BeginMenu("Windows"))
+			EnumerateKnownWindows([this](char const* name, CreateWindowFunc create_func)
 			{
-				EnumerateKnownWindows([this](char const* name, CreateWindowFunc create_window_func)
+				if (ImGui::BeginMenu("Windows"))
 				{
 					bool window_exists = (FindWindow(name) != nullptr);
 					if (ImGui::MenuItem(name, nullptr, window_exists, true))
-						SetWindowInternalVisibility(!window_exists, name, create_window_func);
-					return false; // don't stop the search
-				});
-				ImGui::EndMenu();
-			}
+						SetWindowInternalVisibility(!window_exists, name, create_func);
+					ImGui::EndMenu();
+				}
+				return false; // don't stop the search
+			});
 		});
 	}
 

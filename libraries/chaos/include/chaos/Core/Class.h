@@ -54,6 +54,10 @@ namespace chaos
 
 		/** method to create an instance of the object */
 		Object* CreateInstance() const;
+
+		/** creation operator */
+		Object* operator ()() const;
+
 		/** create a temporary instance on the stack an call the functor on it */
 		template<typename FUNC>
 		bool CreateInstanceOnStack(FUNC const & func) const

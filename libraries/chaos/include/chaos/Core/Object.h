@@ -24,7 +24,7 @@ namespace chaos
 	class DisableReferenceCount;
 
 	template<typename T>
-	class ReferencedObjectDataWrapper;
+	class DataWrapperObject;
 
 }; // namespace chaos
 
@@ -132,11 +132,11 @@ namespace chaos
 	};
 
 	/**
-	* ReferencedObjectDataWrapper : a data wrapped into a referenced object => while referenced object may be dynamic_casted we can test for the data inside
+	* DataWrapperObject : a data wrapped into a referenced object => while referenced object may be dynamic_casted we can test for the data inside
 	*/
 
 	template<typename T>
-	class ReferencedObjectDataWrapper : public Object
+	class DataWrapperObject : public Object
 	{
 		using type = T;
 
@@ -144,7 +144,7 @@ namespace chaos
 
 		/** constructor */
 		template<typename ...PARAMS>
-		ReferencedObjectDataWrapper(PARAMS && ...params) : data(std::forward<PARAMS>(params)...)
+		DataWrapperObject(PARAMS && ...params) : data(std::forward<PARAMS>(params)...)
 		{
 		}
 

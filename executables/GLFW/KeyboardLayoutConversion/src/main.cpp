@@ -6,12 +6,6 @@ class WindowOpenGLTest : public chaos::Window
 
 public:
 
-	virtual void OnDrawWindowImGuiMenu() override
-	{
-		 chaos::Window::OnDrawWindowImGuiMenu();
-		// do not call super so that the application items are not inserted here
-	}
-
 	virtual bool OnKeyEventImpl(chaos::KeyEvent const& event) override
 	{
 		if (event.action == GLFW_PRESS)
@@ -26,6 +20,7 @@ public:
 
 	virtual void OnDrawWindowImGuiContent()
 	{
+		chaos::Window::OnDrawWindowImGuiContent();
 
 		chaos::ImGuiObject::FullscreenWindow("conversion", false, [this]()
 		{

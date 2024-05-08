@@ -38,7 +38,6 @@
 #include "chaos/Core/ClassLoader.h"
 #include "chaos/Core/ImGuiTools.h"
 #include "chaos/Core/ImGuiObject.h"
-#include "chaos/Core/ImGuiObjectOwnerInterface.h"
 #include "chaos/Core/ImGuiWindowInformationObject.h"
 #include "chaos/Core/ImGuiSystemInformationObject.h"
 #include "chaos/Core/ImGuiHelpObject.h"

@@ -12,7 +12,7 @@
 //
 #define CHAOS_DECLARE_OBJECT_CLASS(CLASS, ...)\
 public:\
-static chaos::Class const * GetStaticClass(){ return CLASS##_class;}\
+static chaos::SubClassOf<CLASS> GetStaticClass(){ return CLASS##_class;}\
 virtual chaos::Class const * GetClass() const { return CLASS##_class; }\
 static inline chaos::Class const * CLASS##_class = DeclareObjectClass<CLASS, __VA_ARGS__>(#CLASS)
 

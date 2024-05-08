@@ -243,11 +243,11 @@ protected:
 		return true;
 	}
 
-	void OnDrawWindowImGuiMenu() override
+	void OnDrawWindowImGuiMenu(chaos::BeginImGuiMenuFunc begin_menu_func) override
 	{
-		chaos::Window::OnDrawWindowImGuiMenu();
+		chaos::Window::OnDrawWindowImGuiMenu(begin_menu_func);
 
-		if (ImGui::BeginMainMenuBar())
+		begin_menu_func([this]
 		{
 			if (ImGui::BeginMenu("Windows"))
 			{
@@ -255,8 +255,7 @@ protected:
 					show_help = !show_help;
 				ImGui::EndMenu();
 			}
-			ImGui::EndMainMenuBar();
-		}
+		});
 	}
 
 	void DrawTextItem(char const* title, chaos::Key const& key, bool enabled) const

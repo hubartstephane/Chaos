@@ -32,12 +32,27 @@ namespace chaos
 			process_function = &Process<FUNC>;
 			src = (void*)(&func);
 		}
+		/** constructor with initializer */
+		template<typename FUNC>
+		LightweightFunction(FUNC & func)
+		{
+			process_function = &Process<FUNC>;
+			src = (void*)(&func);
+		}
 
 		/** assignation operator */
-		LightweightFunction& operator = (LightweightFunction& src) = default;
+		LightweightFunction& operator = (LightweightFunction const & src) = default;
 		/** move operator */
 		LightweightFunction& operator = (LightweightFunction&& src) = default;
 
+		/** assign a new real underlying function */
+		template<typename FUNC>
+		LightweightFunction& operator = (FUNC const& func)
+		{
+			process_function = &Process<FUNC>;
+			src = (void*)(&func);
+			return *this;
+		}
 		/** assign a new real underlying function */
 		template<typename FUNC>
 		LightweightFunction& operator = (FUNC& func)

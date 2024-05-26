@@ -73,7 +73,7 @@ namespace chaos
 						return new CLASS_TYPE;
 					};
 
-					result->create_instance_on_stack = [](std::function<void(Object*)> const & func)
+					result->create_instance_on_stack = [](LightweightFunction<void(Object*)> func)
 					{
 						CLASS_TYPE instance;
 						func(&instance);

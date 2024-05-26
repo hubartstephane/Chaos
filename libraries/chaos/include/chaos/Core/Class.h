@@ -45,7 +45,7 @@ namespace chaos
 		/** the type of the function to allocate an object */
 		using create_instance_function_type = std::function<Object* ()>;
 		/** the type of the function to create an object on the stack an call a function on it */
-		using create_instance_on_stack_function_type = std::function<void(std::function<void(Object*)> const &)>;
+		using create_instance_on_stack_function_type = std::function<void(LightweightFunction<void(Object*)>)>;
 		/** the type of the function to initialize some object */
 		using initialization_function_type = std::function<void(Object*)>;
 
@@ -64,7 +64,7 @@ namespace chaos
 		{
 			if (create_instance_on_stack_function_type const* create_func = GetCreateInstanceOnStackFunc())
 			{
-				create_func([&func](Object * object)
+				(*create_func)([this, &func](Object * object)
 				{
 					InitializeObjectInstance(this, object);
 					func(auto_cast_checked(object));

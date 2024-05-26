@@ -26,39 +26,39 @@ namespace chaos
 		/** move constructor */
 		LightweightFunction(LightweightFunction&&) = default;
 		/** constructor with initializer */
-		template<typename FUNC>
-		LightweightFunction(FUNC const& func)
+		template<typename CALLABLE>
+		LightweightFunction(CALLABLE const& callable)
 		{
-			process_function = &Process<FUNC>;
-			src = (void*)(&func);
+			process_function = &ProcessConst<CALLABLE>;
+			src = (void*)(&callable);
 		}
 		/** constructor with initializer */
-		template<typename FUNC>
-		LightweightFunction(FUNC & func)
+		template<typename CALLABLE>
+		LightweightFunction(CALLABLE& callable)
 		{
-			process_function = &Process<FUNC>;
-			src = (void*)(&func);
+			process_function = &Process<CALLABLE>;
+			src = (void*)(&callable);
 		}
 
 		/** assignation operator */
-		LightweightFunction& operator = (LightweightFunction const & src) = default;
+		LightweightFunction& operator = (LightweightFunction const& src) = default;
 		/** move operator */
 		LightweightFunction& operator = (LightweightFunction&& src) = default;
 
 		/** assign a new real underlying function */
-		template<typename FUNC>
-		LightweightFunction& operator = (FUNC const& func)
+		template<typename CALLABLE>
+		LightweightFunction& operator = (CALLABLE const& callable)
 		{
-			process_function = &Process<FUNC>;
-			src = (void*)(&func);
+			process_function = &ProcessConst<CALLABLE>;
+			src = (void*)(&callable);
 			return *this;
 		}
 		/** assign a new real underlying function */
-		template<typename FUNC>
-		LightweightFunction& operator = (FUNC& func)
+		template<typename CALLABLE>
+		LightweightFunction& operator = (CALLABLE& callable)
 		{
-			process_function = &Process<FUNC>;
-			src = (void*)(&func);
+			process_function = &Process<CALLABLE>;
+			src = (void*)(&callable);
 			return *this;
 		}
 
@@ -81,10 +81,19 @@ namespace chaos
 	protected:
 
 		/** internal method that make casts and call the underlying code */
-		template<typename FUNC>
+		template<typename CALLABLE>
 		static RETURN_TYPE Process(void* src, PARAMS... params)
 		{
-			return (*reinterpret_cast<FUNC*>(src))(std::forward<PARAMS>(params)...);
+			auto callable = reinterpret_cast<CALLABLE*>(src);
+			return (*callable)(std::forward<PARAMS>(params)...);
+		}
+
+		/** internal method that make casts and call the underlying code */
+		template<typename CALLABLE>
+		static RETURN_TYPE ProcessConst(void* src, PARAMS... params)
+		{
+			auto callable = reinterpret_cast<CALLABLE const*>(src);
+			return (*callable)(std::forward<PARAMS>(params)...);
 		}
 
 	protected:

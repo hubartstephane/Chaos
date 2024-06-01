@@ -19,8 +19,22 @@ namespace chaos
 
 	/**
 	 * ClassFindResult : Intermediate object for class searching.
-	 *                   While there may be several classes with the same short_name, we have to select the good one when searching
-	 *                   We so want that the search is affected by the Subclass affectation that requires it.
+	 *                   A class has a name and may have a short name
+	 *                   Inside a ClassManager, there's only a single class for a given name, but there may be several classes with the same shortname
+	 *                   ClassManagers are chained with a parent-child relationship
+	 *                   Given that, a search inside by (short)name by the ClassManager may produce several results
+	 *                   To filter-out some of theses outputs some additionnal information is to be brought: the accepted classes
+	 *                   SubClassOf<...> is able to give this additional information to ClassManager for effectively searched class
+	 *                   That's why ClassManager's search returns the intermediate object ClassFindResult
+	 * 
+	 *                   ClassManager::Find(name) -----> ClassFindResult
+	 * 
+	 *                   ClassFindResult -----> SubClassOf<...>      the full search is delayed until SubClassOf<...> bring some information about searched class
+	 * 
+	 *                   Under other circumbstances such a ClassFindResult should store the name somehow (probably with a std::string) by there's a hack here
+	 *                   to avoid memory allocation:
+	 *                   At construction by ClassManager, ClassFindResult stores an iterator on the very first object matching by (short)name the request.
+	 *                   When looking for further results the iterator is used to get the name that was used
 	 */
 
 	class CHAOS_API ClassFindResult

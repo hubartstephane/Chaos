@@ -21,7 +21,7 @@ namespace chaos
 
 	Class* ClassFindResult::Resolve(Class const * check_class) const
 	{
-		// check for cached result or stop if class_manager
+		// check for cached result or stop if no class_manager
 		if (result != nullptr || class_manager == nullptr)
 			return result;
 

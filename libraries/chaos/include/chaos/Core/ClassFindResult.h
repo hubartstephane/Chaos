@@ -21,20 +21,21 @@ namespace chaos
 	 * ClassFindResult : Intermediate object for class searching.
 	 *                   A class has a name and may have a short name
 	 *                   Inside a ClassManager, there's only a single class for a given name, but there may be several classes with the same shortname
-	 *                   ClassManagers are chained with a parent-child relationship
+	 *                   ClassManagers are chained with a parent-child relationship (and parent managers may have classes with the same name)
 	 *                   Given that, a search inside by (short)name by the ClassManager may produce several results
 	 *                   To filter-out some of theses outputs some additionnal information is to be brought: the accepted classes
-	 *                   SubClassOf<...> is able to give this additional information to ClassManager for effectively searched class
+	 *                   SubClassOf<...> is able to give this additional information to ClassManager
 	 *                   That's why ClassManager's search returns the intermediate object ClassFindResult
 	 * 
-	 *                   ClassManager::Find(name) -----> ClassFindResult
+	 *                   ClassManager::Find(name)                -----> search for first Class by (short)name and returns a ClassFindResult (no consideration of Class yet)
 	 * 
-	 *                   ClassFindResult -----> SubClassOf<...>      the full search is delayed until SubClassOf<...> bring some information about searched class
+	 *                   SubClassOf<...> <-- ClassFindResult     -----> when a ClassFindResult is converted into a SubClassOf<...> we check whether the first class found above matches the wanted Class, 
+     *                                                                  else we continue iterating over parent managers (with Class consideration)
 	 * 
 	 *                   Under other circumbstances such a ClassFindResult should store the name somehow (probably with a std::string) by there's a hack here
 	 *                   to avoid memory allocation:
-	 *                   At construction by ClassManager, ClassFindResult stores an iterator on the very first object matching by (short)name the request.
-	 *                   When looking for further results the iterator is used to get the name that was used
+	 *                       ClassFindResult stores an iterator on the very first object matching by (short)name the request (see ClassManager::Find(...) )
+	 *                       When looking for further results the iterator is used to get the name that was used
 	 */
 
 	class CHAOS_API ClassFindResult

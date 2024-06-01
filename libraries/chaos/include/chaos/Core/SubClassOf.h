@@ -114,6 +114,7 @@ namespace chaos
 				return false;
 			return internal_class->CreateInstanceOnStack(func);
 		}
+
 		/** get the internal class */
 		Class const* GetInternalClass() const { return internal_class; }
 		/** conversion to class operator */

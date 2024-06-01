@@ -25,7 +25,7 @@ namespace chaos
 			}
 			return false;
 		});
-		// cannot have a class with same name in the same manager (but not in parent manager)
+		// cannot have a class with same name in the same manager (but its possible in parent manager)
 		if (it != classes.end())
 		{
 			Log::Error("ClassManager::CreateClass(...): class already existing [%s]", name.c_str());
@@ -41,7 +41,7 @@ namespace chaos
 
 		// early exit
 		if (StringTools::IsEmpty(name))
-			return {nullptr, classes.end(), ClassMatchType::MATCH_NAME};
+			return {nullptr, classes.end(), ClassMatchType::MATCH_NAME}; // empty ClassFindResult result
 
 		// search in manager chain
 		ClassManager* manager = this;
@@ -68,8 +68,8 @@ namespace chaos
 				break;
 			manager = manager->parent_manager.get();
 		}
-		/* no class, no possible alias */
-		return { nullptr, classes.end(), ClassMatchType::MATCH_NAME };
+		// no class, no possible alias
+		return { nullptr, classes.end(), ClassMatchType::MATCH_NAME }; // empty ClassFindResult result
 	}
 
 }; // namespace chaos

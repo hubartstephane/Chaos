@@ -44,7 +44,7 @@ namespace chaos
 		/** constructor with search */
 		SubClassOf(ClassFindResult find_result);
 		/** constructor with search */
-		SubClassOf(char const* name, ClassManager* manager = GetDefaultClassManagerInstance);
+		SubClassOf(char const* name, ClassManager* manager = GetDefaultClassManagerInstance());
 
 		/** assign operator */
 		SubClassOf<T>& operator = (Class const* src)

@@ -29,17 +29,17 @@ namespace chaos
 		SubClassOf(Class const* src);
 		/** constructor */
 		template<typename U>
-		requires std::is_base_of_v<T, U>
 		SubClassOf(SubClassOf<U> const & src) :
 			SubClassOf(src.GetInternalClass())
 		{
+			static_assert(std::is_base_of_v<T, U>);
 		}
 		/** constructor */
 		template<typename U>
-		requires std::is_base_of_v<T, U>
 		SubClassOf(SubClassOf<U> && src):
 			SubClassOf(src.GetInternalClass())
 		{
+			static_assert(std::is_base_of_v<T, U>);
 		}
 		/** constructor with search */
 		SubClassOf(ClassFindResult find_result);
@@ -72,17 +72,19 @@ namespace chaos
 		}
 		/** assign operator */
 		template<typename U>
-		requires std::is_base_of_v<T, U>
 		SubClassOf<T>& operator = (SubClassOf<U> const & src)
 		{
+			static_assert(std::is_base_of_v<T, U>);
+
 			*this = SubClassOf<T>(src);
 			return *this;
 		}
 		/** assign operator */
 		template<typename U>
-		requires std::is_base_of_v<T, U>
 		SubClassOf<T>& operator = (SubClassOf<U>&& src)
 		{
+			static_assert(std::is_base_of_v<T, U>);
+
 			*this = SubClassOf<T>(src);
 			return *this;
 		}

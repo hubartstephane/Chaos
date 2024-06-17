@@ -4,7 +4,23 @@ namespace chaos
 
 	class ClassManager;
 
+	enum class FindClassFlags;
+	CHAOS_DECLARE_ENUM_BITMASK_METHOD(FindClassFlags, CHAOS_API);
+
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+
+	/**
+	 * ClassManager: an object that registered some classes, C++ or JSON
+	 */
+
+	enum class FindClassFlags : int
+	{
+		NAME = 1,             // consider name when searching
+		SHORTNAME = 2,        // consider shortname when searching
+		PARENT_MANAGER = 4,   // search into child managers
+		ALL = NAME | SHORTNAME | PARENT_MANAGER
+	};
 
 	/**
 	 * ClassManager: an object that registered some classes, C++ or JSON
@@ -30,11 +46,8 @@ namespace chaos
 		/** gets the parent manager */
 		ClassManager const * GetParentManager() const { return parent_manager.get(); }
 
-		/** create a class */
-		Class* CreateClass(std::string name, Class *in_parent_class = nullptr);
-
 		/** find a class by name */
-		ClassFindResult FindClass(char const* name, bool search_manager_hierarchy = true);
+		ClassFindResult FindClass(char const* name, FindClassFlags flags = FindClassFlags::ALL);
 
 		/** find a class by type */
 		template<typename CLASS_TYPE>

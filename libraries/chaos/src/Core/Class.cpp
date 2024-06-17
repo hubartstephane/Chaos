@@ -12,8 +12,6 @@ namespace chaos
 		name(std::move(in_name)),
 		manager(in_manager)
 	{
-		assert(in_manager != nullptr);
-
 #if _DEBUG
 		// ensure the parent class does not come from a child manager (cyclic references)
 		if (in_parent != nullptr)
@@ -26,7 +24,8 @@ namespace chaos
 			}
 		}
 #endif
-		manager->classes.push_back(this);
+		if (manager != nullptr)
+			manager->classes.push_back(this);
 	}
 
 	bool Class::CanCreateInstance() const
@@ -66,7 +65,7 @@ namespace chaos
 		{
 			if (Object* result = (*create_func)())
 			{
-				InitializeObjectInstance(this, result);
+				InitializeObjectInstance(result);
 				return result;
 			}
 			else
@@ -83,14 +82,14 @@ namespace chaos
 		return declared;
 	}
 
-	void Class::InitializeObjectInstance(Class const * cls, Object* object)
+	void Class::InitializeObjectInstance(Object* object) const
 	{
-		if (cls != nullptr)
-		{
-			InitializeObjectInstance(cls->parent, object); // recursive: parents first
-			for (initialization_function_type const& func : cls->initialization_functions)
-				func(object);
-		}
+		// recursive: parents first
+		if (parent != nullptr)
+			parent->InitializeObjectInstance(object);
+		// apply initialization functors
+		for (initialization_function_type const& func : initialization_functions)
+			func(object);
 	}
 
 	InheritanceType Class::InheritsFrom(Class const* child_class, Class const* parent_class, bool accept_equal)

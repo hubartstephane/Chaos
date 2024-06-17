@@ -114,9 +114,14 @@ namespace chaos
 	{
 		// check parameter and not already registered
 		assert(!StringTools::IsEmpty(class_name));
-		assert(manager->FindClass(class_name.c_str()) == nullptr);
 
-		if (Class* result = manager->CreateClass(std::move(class_name)))
+		if (manager->FindClass(class_name.c_str(), FindClassFlags::NAME) != nullptr)
+		{
+			Log::Error("ClassLoader::DoDeclareSpecialClassCreate(...): class already existing [%s]", class_name.c_str());
+			return nullptr;
+		}
+
+		if (Class* result = new Class(manager, std::move(class_name), nullptr))
 		{
 			result->declared = true;
 			if (!StringTools::IsEmpty(short_name))

@@ -108,7 +108,7 @@ namespace chaos
 	protected:
 
 		/** initialize the object instance */
-		static void InitializeObjectInstance(Class const* cls, Object* object);
+		void InitializeObjectInstance(Object* object) const;
 		/** get the create instance function */
 		create_instance_function_type const* GetCreateInstanceFunc() const;
 		/** get the create instance on stack function */

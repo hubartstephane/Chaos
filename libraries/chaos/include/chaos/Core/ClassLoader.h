@@ -2,9 +2,29 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
+	class ClassWithJSONInitialization;
 	class ClassLoader;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+	class CHAOS_API ClassWithJSONInitialization : public Class
+	{
+		friend class ClassLoader;
+
+	protected:
+
+		/** constructor */
+		ClassWithJSONInitialization(ClassManager* in_manager, std::string in_name, Class* in_parent, nlohmann::json in_json);
+
+		/** override */
+		virtual void OnObjectInstanceInitialized(Object* object) const override;
+
+	protected:
+
+		nlohmann::json json;
+
+	};
+
 
 	class CHAOS_API ClassLoader
 	{

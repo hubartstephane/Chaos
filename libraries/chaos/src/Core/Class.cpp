@@ -88,8 +88,11 @@ namespace chaos
 		if (parent != nullptr)
 			parent->InitializeObjectInstance(object);
 		// apply initialization functors
-		for (initialization_function_type const& func : initialization_functions)
-			func(object);
+		OnObjectInstanceInitialized(object);
+	}
+
+	void Class::OnObjectInstanceInitialized(Object* object) const
+	{
 	}
 
 	InheritanceType Class::InheritsFrom(Class const* child_class, Class const* parent_class, bool accept_equal)
@@ -133,11 +136,6 @@ namespace chaos
 		assert(StringTools::IsEmpty(short_name));
 		assert(!StringTools::IsEmpty(in_short_name));
 		short_name = std::move(in_short_name);
-	}
-
-	void Class::AddObjectInitializationFunction(initialization_function_type func)
-	{
-		initialization_functions.push_back(std::move(func));
 	}
 
 }; // namespace chaos

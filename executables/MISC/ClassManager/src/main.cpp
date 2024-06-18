@@ -47,6 +47,9 @@ protected:
 	}
 };
 
+
+
+
 int main(int argc, char ** argv, char ** env)
 {
 	return chaos::RunApplication<MyApplication>(argc, argv, env);

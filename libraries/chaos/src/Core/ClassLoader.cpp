@@ -121,16 +121,11 @@ namespace chaos
 			return nullptr;
 		}
 
-		if (Class* result = new Class(manager, std::move(class_name), nullptr))
+		if (Class* result = new ClassWithJSONInitialization(manager, std::move(class_name), nullptr, std::move(json)))
 		{
 			result->declared = true;
 			if (!StringTools::IsEmpty(short_name))
 				result->SetShortName(std::move(short_name));
-			result->AddObjectInitializationFunction([json = std::move(json)](Object* object)
-			{
-				if (JSONSerializableInterface* serializable = auto_cast(object))
-					serializable->SerializeFromJSON(&json);
-			});
 			return result;
 		}
 		return nullptr;
@@ -158,6 +153,18 @@ namespace chaos
 		auto& classes = manager->classes;
 		classes.erase(std::ranges::find(classes, cls));
 		delete(cls);
+	}
+
+	ClassWithJSONInitialization::ClassWithJSONInitialization(ClassManager* in_manager, std::string in_name, Class* in_parent, nlohmann::json in_json) :
+		Class(in_manager, std::move(in_name), in_parent),
+		json(std::move(in_json))
+	{
+	}
+
+	void ClassWithJSONInitialization::OnObjectInstanceInitialized(Object* object) const
+	{
+		if (JSONSerializableInterface* serializable = auto_cast(object))
+			serializable->SerializeFromJSON(&json);
 	}
 
 }; // namespace chaos

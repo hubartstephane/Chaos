@@ -46,8 +46,6 @@ namespace chaos
 		using create_instance_function_type = std::function<Object* ()>;
 		/** the type of the function to create an object on the stack an call a function on it */
 		using create_instance_on_stack_function_type = std::function<void(LightweightFunction<void(Object*)>)>;
-		/** the type of the function to initialize some object */
-		using initialization_function_type = std::function<void(Object*)>;
 
 		/** destructor */
 		virtual ~Class() = default;
@@ -100,12 +98,13 @@ namespace chaos
 
 		/** set the short name */
 		void SetShortName(std::string in_short_name);
-		/** add an extra initialization */
-		void AddObjectInitializationFunction(initialization_function_type func);
 		/** returns whether the class has been registered */
 		bool IsDeclared() const;
 
 	protected:
+
+		/** object initialization function */
+		virtual void OnObjectInstanceInitialized(Object* object) const;
 
 		/** initialize the object instance */
 		void InitializeObjectInstance(Object* object) const;
@@ -134,8 +133,6 @@ namespace chaos
 		std::type_info const* info = nullptr;
 		/** the manager for this class */
 		ClassManager* manager = nullptr;
-		/** object initialization */
-		std::vector<initialization_function_type> initialization_functions;
 	};
 
 #endif

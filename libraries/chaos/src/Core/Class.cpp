@@ -7,25 +7,9 @@ namespace chaos
 	// Class functions
 	// ==========================================================
 
-	Class::Class(ClassManager* in_manager, std::string in_name, Class * in_parent):
-		parent(in_parent),
-		name(std::move(in_name)),
-		manager(in_manager)
+	Class::Class(std::string in_name) :
+		name(std::move(in_name))
 	{
-#if _DEBUG
-		// ensure the parent class does not come from a child manager (cyclic references)
-		if (in_parent != nullptr)
-		{
-			ClassManager* parent_manager = in_parent->GetClassManager();
-			while (parent_manager != nullptr)
-			{
-				assert(parent_manager != in_manager);
-				parent_manager = parent_manager->GetParentManager();
-			}
-		}
-#endif
-		if (manager != nullptr)
-			manager->classes.push_back(this);
 	}
 
 	bool Class::CanCreateInstance() const
@@ -137,5 +121,42 @@ namespace chaos
 		assert(!StringTools::IsEmpty(in_short_name));
 		short_name = std::move(in_short_name);
 	}
+
+	void Class::SetParentClass(Class const* in_parent)
+	{
+		assert(in_parent != nullptr);
+		assert(parent == nullptr);
+
+		parent = in_parent;
+
+#if _DEBUG
+		assert(!HasCyclicParent());
+#endif // #if _DEBUG
+	}
+
+#if _DEBUG
+	bool Class::HasCyclicParent() const
+	{
+		if (parent != nullptr && manager != nullptr)
+		{
+			bool found_different_manager = false;
+
+			ClassManager* parent_manager = parent->GetClassManager();
+			while (parent_manager != nullptr)
+			{
+				if (parent_manager == manager) // cycle found: parent class in child manager
+				{
+					if (found_different_manager)
+						return true;
+				}
+				else
+					found_different_manager = true;
+
+				parent_manager = parent_manager->GetParentManager();
+			}
+		}
+		return false;
+	}
+#endif // _DEBUG
 
 }; // namespace chaos

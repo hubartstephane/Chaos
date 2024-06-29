@@ -14,38 +14,36 @@ namespace chaos
 	protected:
 
 		/** constructor */
-		ClassWithJSONInitialization(ClassManager* in_manager, std::string in_name, Class* in_parent, nlohmann::json in_json);
+		ClassWithJSONInitialization(std::string in_name, nlohmann::json in_json);
 
 		/** override */
 		virtual void OnObjectInstanceInitialized(Object* object) const override;
 
 	protected:
 
+		/** the data to apply at object instance creation */
 		nlohmann::json json;
-
 	};
-
 
 	class CHAOS_API ClassLoader
 	{
 	public:
 
 		/** load one class by its path */
-		virtual Class * LoadClass(ClassManager * manager, FilePathParam const& path);
+		virtual Class * LoadClass(ClassManager * manager, FilePathParam const& path) const;
 		/** load all classes in one directory */
-		virtual bool LoadClassesInDirectory(ClassManager* manager, FilePathParam const& path);
+		virtual bool LoadClassesInDirectory(ClassManager* manager, FilePathParam const& path) const;
 
 	protected:
 
 		/** internal method to declare a class without finding yet its parent (used for directory iteration) */
-		Class* DoDeclareSpecialClassCreate(ClassManager* manager, std::string class_name, std::string short_name, nlohmann::json json); // XXX : no const return value here !! (for Finalization of special class)
+		Class* DoCreateSpecialClass(ClassManager* manager, std::string class_name, std::string short_name, nlohmann::json json) const; // XXX : no const return value here !! (for Finalization of special class)
 		/** finalization of a special class (called from ClassLoader) : find parent */
-		bool DoDeclareSpecialClassPatchParent(ClassManager* manager, Class* cls, std::string const & parent_class_name);
-		/** declare a pseudo class, that is a class with additionnal json initialization */
-		Class * DeclareSpecialClass(ClassManager* manager, std::string class_name, std::string short_name, std::string const & parent_class_name, nlohmann::json json);
-
+		bool DoSetSpecialClassParent(ClassManager* manager, Class* cls, std::string const & parent_class_name) const;
 		/** internal method called from ClassLoader to abord a failed loaded class */
-		 void DoInvalidateSpecialClass(ClassManager* manager, Class const* cls);
+		void DoDeleteSpecialClass(ClassManager* manager, Class * cls) const;
+		/** internal method to complete the load */
+		void DoCompleteSpecialClassMissingData(Class * cls) const;
 	};
 
 #endif

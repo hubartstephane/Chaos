@@ -38,7 +38,7 @@ namespace chaos
 	protected:
 
 		/** constructor */
-		Class(ClassManager* in_manager, std::string in_name, Class* in_parent = nullptr);
+		Class(std::string in_name);
 
 	public:
 
@@ -96,12 +96,19 @@ namespace chaos
 		/** returns whether the class inherits from parent */
 		InheritanceType InheritsFrom(Class const* parent_class, bool accept_equal = false) const;
 
+		/** set the parent class */
+		void SetParentClass(Class const * in_parent);
 		/** set the short name */
 		void SetShortName(std::string in_short_name);
 		/** returns whether the class has been registered */
 		bool IsDeclared() const;
 
 	protected:
+
+#if _DEBUG
+		/** search whether the some parent class is in a child manager */
+		bool HasCyclicParent() const;
+#endif // #if _DEBUG
 
 		/** object initialization function */
 		virtual void OnObjectInstanceInitialized(Object* object) const;

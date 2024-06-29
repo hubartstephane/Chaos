@@ -4,7 +4,7 @@ class BaseClass : public chaos::Object, public chaos::JSONSerializableInterface
 {
 public:
 
-	CHAOS_DECLARE_OBJECT_CLASS(BaseClass, chaos::Object);
+	CHAOS_DECLARE_OBJECT_CLASS(BaseClass, chaos::Object)("BC"); // with a short name
 
 	BaseClass()
 	{
@@ -38,19 +38,44 @@ protected:
 
 	virtual int Main() override
 	{
-		chaos::SubClassOf<BaseClass> c = chaos::ClassManager::GetDefaultInstance()->FindClass("ChildClass");
+		chaos::SubClassOf<BaseClass> c1 = chaos::ClassManager::GetDefaultInstance()->FindClass("ChildClass");
+		BaseClass* object1 = c1.CreateInstance();
 
+		assert(object1 != nullptr);
+		assert(object1->value == 666);
 
-		BaseClass* object = c.CreateInstance();
+		chaos::SubClassOf<BaseClass> c2 = chaos::ClassManager::GetDefaultInstance()->FindClass("BC");
+		BaseClass* object2 = c2.CreateInstance();
+
+		assert(object2 != nullptr);
+		assert(object2->value == 13);
 
 		return 0;
 	}
 };
+
+#if 0
+class Cls : public chaos::Class
+{
+public:
+
+	Cls(std::function<chaos::Object*()> func)
+	{
+		int i = 0;
+		++i;
+	}
+};
+#endif
 
 
 
 
 int main(int argc, char ** argv, char ** env)
 {
+	//Cls c = Cls([]() {return new chaos::Object; });
+
+
+
+
 	return chaos::RunApplication<MyApplication>(argc, argv, env);
 }

@@ -43,7 +43,7 @@ namespace chaos
 		/** internal method called from ClassLoader to abord a failed loaded class */
 		void DoDeleteSpecialClass(ClassManager* manager, Class * cls) const;
 		/** internal method to complete the load */
-		void DoCompleteSpecialClassMissingData(Class * cls) const;
+		bool DoCompleteSpecialClassMissingData(Class * cls) const;
 	};
 
 #endif

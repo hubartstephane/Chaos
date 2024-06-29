@@ -9,7 +9,6 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-
 	/**
 	 * ClassManager: an object that registered some classes, C++ or JSON
 	 */
@@ -94,10 +93,13 @@ namespace chaos
 				}
 				// the parent is accessed, but not necesseraly initialized yet
 				if (!std::is_same_v<PARENT_CLASS_TYPE, EmptyClass>)
-					result->parent = FindOrCreateCPPClassInstance<PARENT_CLASS_TYPE>(true);
+					result->SetParentClass(FindOrCreateCPPClassInstance<PARENT_CLASS_TYPE>(true));
 			}
 			return { result };
 		}
+
+		/** insert a new class in the manager */
+		void InsertClass(Class* cls);
 
 	protected:
 
@@ -119,9 +121,10 @@ namespace chaos
 				manager = manager->parent_manager.get();
 			}
 			// register the class
-			if (Class* result = new Class(this, std::string()))
+			if (Class* result = new Class(std::string())) // do not name the class yet
 			{
 				result->info = &info;
+				InsertClass(result);
 				return result;
 			}
 			return nullptr;

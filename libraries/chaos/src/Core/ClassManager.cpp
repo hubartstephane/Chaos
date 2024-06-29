@@ -60,4 +60,16 @@ namespace chaos
 		return { nullptr, classes.end(), ClassMatchType::MATCH_NAME }; // empty ClassFindResult result
 	}
 
+	void ClassManager::InsertClass(Class* cls)
+	{
+		assert(cls != nullptr);
+		assert(cls->manager == nullptr);
+
+		cls->manager = this;
+		classes.push_back(cls);
+#if _DEBUG
+		assert(!cls->HasCyclicParent());
+#endif
+	}
+
 }; // namespace chaos

@@ -71,67 +71,44 @@ namespace chaos
 			return false; // don't stop
 		});
 
-		// Step 2: fix parent classes (all classes coming from json files should have a valid C++ at least or even JSON parent class)
-		std::vector<Class*> failing_parent_classes;
+		// Step 2: set parents
+		for (ClassRegistrationType& class_registration : loaded_classes)
+			DoSetSpecialClassParent(manager, class_registration.first, class_registration.second);
+
+		//  Step 3: complete inheritance chain
+		std::vector<Class*> to_remove;
 
 		for (ClassRegistrationType& class_registration : loaded_classes)
-			if (!DoSetSpecialClassParent(manager, class_registration.first, class_registration.second))
-				failing_parent_classes.push_back(class_registration.first);
-
-		// Step 3: find invalid classes and remove them
-		if (failing_parent_classes.size() > 0)
 		{
-			std::vector<Class*> all_failing_classes;
-			all_failing_classes.reserve(loaded_classes.size());
-
-			// Step 3.1: construct a vector that owns all failures (direct or indirect)
-			for (ClassRegistrationType & class_registration : loaded_classes)
+			if (!DoCompleteSpecialClassMissingData(class_registration.first)) // if it fais, this means that parent chain is broken
 			{
-				for (Class* failing_cls : failing_parent_classes)
-				{
-					if (class_registration.first->InheritsFrom(failing_cls, true) == InheritanceType::YES) // failing class
-					{
-						Log::Error("Class::LoadClassesInDirectory : special class [%s] has no valid parent.", class_registration.first->GetClassName().c_str());
-						all_failing_classes.push_back(class_registration.first); // this will push classes that fails for parent as well as their children
-						class_registration.first = nullptr; // mark this registration as invalid
-						break;
-					}
-				}
+				Log::Error("Class::LoadClassesInDirectory : special class [%s] has a broken inheritance chain.", class_registration.first->GetClassName().c_str());
+				to_remove.push_back(class_registration.first);
 			}
-
-			// Step 3.2: remove all failing class (direct or indirect)
-			for (Class* cls : all_failing_classes)
-				DoDeleteSpecialClass(manager, cls);
 		}
 
-		// Step 4: complete missing data
-		for (ClassRegistrationType& class_registration : loaded_classes)
-			if (class_registration.first != nullptr)
-				DoCompleteSpecialClassMissingData(class_registration.first);
-
+		// Step 4: remove classes that have to
+		for (Class* cls : to_remove)
+			DoDeleteSpecialClass(manager, cls);
 		return true;
 	}
 
 	bool ClassLoader::DoCompleteSpecialClassMissingData(Class* cls) const
 	{
-		if (cls->class_size > 0) // the class is already fully initialized
+		// the class is already fully initialized
+		if (cls->declared)
 			return true;
-
-		if (cls->parent == nullptr) // cannot complete the initialization
+		// cannot complete the initialization
+		if (cls->parent == nullptr)
 			return false;
-
-		if (!DoCompleteSpecialClassMissingData(const_cast<Class*>(cls->parent))) // forced to remove constness
+		// recursively initialize children
+		if (!DoCompleteSpecialClassMissingData(const_cast<Class*>(cls->parent))) // forced to remove constness here
 			return false;
-
-		if (cls->class_size == 0) // the class is not fully initialized
-		{
-			if (cls->parent != nullptr)
-			{
-				DoCompleteSpecialClassMissingData(const_cast<Class*>(cls->parent)); // forced to remove constness
-				cls->class_size = cls->parent->class_size;
-				cls->info = cls->parent->info;
-			}
-		}
+		// get missing data
+		cls->declared = true;
+		cls->class_size = cls->parent->class_size;
+		cls->info = cls->parent->info;
+		return true;
 	}
 
 	Class * ClassLoader::DoCreateSpecialClass(ClassManager* manager, std::string class_name, std::string short_name, nlohmann::json json) const
@@ -147,7 +124,6 @@ namespace chaos
 
 		if (Class* result = new ClassWithJSONInitialization(std::move(class_name), std::move(json)))
 		{
-			result->declared = true; // necessary so that call to InheritFrom(...) works
 			if (!StringTools::IsEmpty(short_name))
 				result->SetShortName(std::move(short_name));
 			manager->InsertClass(result);

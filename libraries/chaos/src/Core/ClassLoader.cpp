@@ -112,14 +112,22 @@ namespace chaos
 		return true;
 	}
 
-	void ClassLoader::DoCompleteSpecialClassMissingData(Class* cls) const
+	bool ClassLoader::DoCompleteSpecialClassMissingData(Class* cls) const
 	{
-		if (!cls->declared)
+		if (cls->class_size > 0) // the class is already fully initialized
+			return true;
+
+		if (cls->parent == nullptr) // cannot complete the initialization
+			return false;
+
+		if (!DoCompleteSpecialClassMissingData(const_cast<Class*>(cls->parent))) // forced to remove constness
+			return false;
+
+		if (cls->class_size == 0) // the class is not fully initialized
 		{
 			if (cls->parent != nullptr)
 			{
 				DoCompleteSpecialClassMissingData(const_cast<Class*>(cls->parent)); // forced to remove constness
-				cls->declared = true;
 				cls->class_size = cls->parent->class_size;
 				cls->info = cls->parent->info;
 			}
@@ -139,6 +147,7 @@ namespace chaos
 
 		if (Class* result = new ClassWithJSONInitialization(std::move(class_name), std::move(json)))
 		{
+			result->declared = true; // necessary so that call to InheritFrom(...) works
 			if (!StringTools::IsEmpty(short_name))
 				result->SetShortName(std::move(short_name));
 			manager->InsertClass(result);

@@ -31,6 +31,18 @@ public:
 
 };
 
+//
+//   BaseClass           ???     Unknown (does not exist)
+//       ^                ^               ^
+//       |                |               |
+//   ChildClass        NoParent     UnknownParent
+//       ^                                ^
+//       |                                |
+//   ChildClass2                  BrokenInheritance1
+//                                        ^
+//                                        |
+//                                BrokenInheritance2
+//
 
 class MyApplication : public chaos::Application
 {
@@ -50,23 +62,15 @@ protected:
 		assert(object2 != nullptr);
 		assert(object2->value == 13);
 
+		chaos::SubClassOf<BaseClass> c3 = chaos::ClassManager::GetDefaultInstance()->FindClass("ChildClass2");
+		BaseClass* object3 = c3.CreateInstance();
+
+		assert(object3 != nullptr);
+		assert(object3->value == 777);
+
 		return 0;
 	}
 };
-
-#if 0
-class Cls : public chaos::Class
-{
-public:
-
-	Cls(std::function<chaos::Object*()> func)
-	{
-		int i = 0;
-		++i;
-	}
-};
-#endif
-
 
 
 

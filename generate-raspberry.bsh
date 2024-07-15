@@ -1,12 +1,16 @@
 #! /bin/bash
 
 # go in the directory of current script
-cd $(dirname $0)
+SCRIPT_PATH=$(pwd)/$0
+SCRIPT_PATH=$(dirname $SCRIPT_PATH)
+cd $SCRIPT_PATH
 
-#search target name
+# Search target in arguments (beware case sensitive)
 TARGET=codelite
 if [ $# -ge 1 ]; then
 	TARGET=$1
 fi
-premake5 $TARGET --os=linux --arch=arm
+
+# start premake
+premake5 $TARGET --file=$SCRIPT_PATH/premake_scripts/premake5.lua --os=linux --arch=arm
 

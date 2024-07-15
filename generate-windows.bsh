@@ -1,13 +1,14 @@
 #! /usr/bin/bash
 
-# This script create solution for visual studio
+# go in the directory of current script
 SCRIPT_PATH=$(pwd)/$0
 SCRIPT_PATH=$(dirname $SCRIPT_PATH)
+cd $SCRIPT_PATH
 
 # Search target in arguments (beware case sensitive)
-TARGET=vs2022
-if [ $# -gt 0 ]; then
-  TARGET=$1
+TARGET=codelite
+if [ $# -ge 1 ]; then
+	TARGET=$1
 fi
 
 # Search premake5.exe

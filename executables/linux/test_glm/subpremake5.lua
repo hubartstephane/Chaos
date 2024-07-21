@@ -1,7 +1,6 @@
 -- =============================================================================
--- ROOT_PATH/executables/linux
+-- ROOT_PATH/executables/linux/test_glm
 -- =============================================================================
 
-for _, v in ipairs({"test1", "test_glm" })   do
-	build:ProcessSubPremake(v, true) -- create a sub groups
-end
+local project = build:WindowedApp()
+project:DependOnLib("GLM")

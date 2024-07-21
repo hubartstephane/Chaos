@@ -14,6 +14,12 @@ function MakePathPerConfig(p)
 
 end
 
+--------------------------------------------------------------------
+-- GLM
+--------------------------------------------------------------------
+GLM_PATH = "glm"
+GLM_INC_PATH = MakePathPerConfig("include")
+build:DeclareExternalLib("GLM")
 
 
 
@@ -39,12 +45,6 @@ OPENGL_INC_PATH = ""
 OPENGL_LIB_NAME = "OpenGL32"
 build:DeclareExternalLib("OPENGL")
 
---------------------------------------------------------------------
--- GLM
---------------------------------------------------------------------
-GLM_PATH = "glm"
-GLM_INC_PATH = MakePathPerConfig("include")
-build:DeclareExternalLib("GLM")
 
 --------------------------------------------------------------------
 -- BOOST

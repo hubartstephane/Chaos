@@ -128,7 +128,8 @@ build:DisplayInformation()
 
 require 'external_premake5' -- declare external libraries
 
-local sub_directories = {'libraries', 'executables','shared_resources'}
+--local sub_directories = {'libraries', 'executables','shared_resources'}
+local sub_directories = {'executables'}
 build:ProcessSubPremake(sub_directories, true) -- create sub groups
 
 build:CollectDependencies()

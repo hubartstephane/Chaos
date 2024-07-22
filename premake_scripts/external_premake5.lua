@@ -32,6 +32,12 @@ TINYXML2_LIB_PATH = MakePathPerConfig("lib")
 TINYXML2_LIB_NAME = "tinyxml2"
 build:DeclareExternalLib("TINYXML2")
 
+--------------------------------------------------------------------
+-- JSON
+--------------------------------------------------------------------
+JSON_PATH     = "json"
+JSON_INC_PATH = MakePathPerConfig(path.join("include", "nlohmann"))
+build:DeclareExternalLib("JSON")
 
 
 

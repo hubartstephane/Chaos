@@ -16,7 +16,7 @@ else
 		if [ "$i" == "-lib" ] ; then
 			DoInstall libglm-dev
 			DoInstall libboost-all-dev
-			DoInstall liblua5.3-dev
+			DoInstall liblua5.4-dev
 			DoInstall libfreetype6-dev
 			DoInstall libfreeimage-dev
 			DoInstall libfreeimageplus-dev

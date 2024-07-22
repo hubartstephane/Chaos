@@ -1,7 +1,6 @@
 -- =============================================================================
--- ROOT_PATH/executables/linux
+-- ROOT_PATH/executables/linux/test_tinyxml2
 -- =============================================================================
 
-for _, v in ipairs({"test1", "test_glm", "test_tinyxml2" })   do
-	build:ProcessSubPremake(v, true) -- create a sub groups
-end
+local project = build:WindowedApp()
+project:DependOnLib("TINYXML2")

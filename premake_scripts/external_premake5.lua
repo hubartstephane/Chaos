@@ -21,13 +21,28 @@ GLM_PATH = "glm"
 GLM_INC_PATH = MakePathPerConfig("include")
 build:DeclareExternalLib("GLM")
 
+--------------------------------------------------------------------
+-- TINYXML2
+--------------------------------------------------------------------
+TINYXML2_PATH = "tinyxml2"
+TINYXML2_INC_PATH = MakePathPerConfig("include")
+TINYXML2_LIB_PATH = MakePathPerConfig("lib")
+--TINYXML2_LIB_NAME = "tinyxml2.lib" 
 
+TINYXML2_LIB_NAME = "tinyxml2"
+build:DeclareExternalLib("TINYXML2")
 
 
 
 
 --[[
 
+--------------------------------------------------------------------
+-- GLM
+--------------------------------------------------------------------
+GLM_PATH = "glm"
+GLM_INC_PATH = MakePathPerConfig("include")
+build:DeclareExternalLib("GLM")
 
 
 --------------------------------------------------------------------

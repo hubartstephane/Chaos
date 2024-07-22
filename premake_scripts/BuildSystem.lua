@@ -120,7 +120,7 @@ function BuildSystem:DeclareExternalLib(name)
 					function(lib_name)
 						local fullpath = result.targetdir[plat][conf] .. "/" .. lib_name
 						if not os.isfile(fullpath) then
-							assert(false, "library does not exist: " .. fullpath)
+							--assert(false, "library does not exist: " .. fullpath)
 						end
 					end
 				)

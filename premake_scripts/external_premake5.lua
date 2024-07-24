@@ -26,7 +26,7 @@ end
 
 -- dans /usr/include
 
-GLM_PATH = "glm"
+--GLM_PATH = "glm"
 --GLM_INC_PATH = MakePathPerConfig("include")
 build:DeclareExternalLib("GLM")
 
@@ -37,7 +37,7 @@ build:DeclareExternalLib("GLM")
 -- dans /usr/include
 
 
-TINYXML2_PATH = "tinyxml2"
+--TINYXML2_PATH = "tinyxml2"
 --TINYXML2_INC_PATH = MakePathPerConfig("include")
 --TINYXML2_LIB_PATH = MakePathPerConfig("lib")
 --TINYXML2_LIB_NAME = "tinyxml2.lib" 
@@ -52,7 +52,7 @@ build:DeclareExternalLib("TINYXML2")
 -- dans /usr/include
 
 
-JSON_PATH     = "json"
+--JSON_PATH     = "json"
 --JSON_INC_PATH = MakePathPerConfig(path.join("include", "nlohmann"))
 build:DeclareExternalLib("JSON")
 
@@ -60,7 +60,7 @@ build:DeclareExternalLib("JSON")
 -- GLFW
 --------------------------------------------------------------------
 
-GLFW_PATH = "glfw"
+--GLFW_PATH = "glfw"
 --GLFW_INC_PATH = MakePathPerConfig("include")
 --GLFW_LIB_PATH = MakePathPerConfig("lib")
 --GLFW_LIB_NAME = "glfw3.lib"
@@ -74,7 +74,7 @@ build:DeclareExternalLib("GLFW")
 
 -- dans /usr/include
 
-OPENGL_PATH = "openGL"
+--OPENGL_PATH = "openGL"
 --OPENGL_INC_PATH = ""
 --OPENGL_LIB_NAME = "OpenGL32"
 OPENGL_LIB_NAME = "GL"
@@ -86,7 +86,7 @@ build:DeclareExternalLib("OPENGL")
 
 -- dans /usr/include
 
-FREEIMAGE_PATH       = "FreeImage"
+--FREEIMAGE_PATH       = "FreeImage"
 --FREEIMAGE_DIST_PATH  = path.join("Dist", "x64")
 --FREEIMAGE_INC_PATH = FREEIMAGE_DIST_PATH
 --FREEIMAGE_LIB_PATH = FREEIMAGE_DIST_PATH

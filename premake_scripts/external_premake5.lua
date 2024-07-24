@@ -59,12 +59,30 @@ build:DeclareExternalLib("GLFW")
 --------------------------------------------------------------------
 -- OPENGL
 --------------------------------------------------------------------
+
+
+-- dans /usr/include
+
 OPENGL_PATH = "openGL"
 OPENGL_INC_PATH = ""
 --OPENGL_LIB_NAME = "OpenGL32"
 OPENGL_LIB_NAME = "GL"
 build:DeclareExternalLib("OPENGL")
 
+--------------------------------------------------------------------
+-- FREEIMAGE
+--------------------------------------------------------------------
+
+-- dans /usr/include
+
+FREEIMAGE_PATH       = "FreeImage"
+--FREEIMAGE_DIST_PATH  = path.join("Dist", "x64")
+--FREEIMAGE_INC_PATH = FREEIMAGE_DIST_PATH
+--FREEIMAGE_LIB_PATH = FREEIMAGE_DIST_PATH
+--FREEIMAGE_LIB_NAME = "FreeImage.lib"
+FREEIMAGE_LIB_NAME = "freeimage"
+--FREEIMAGE_TOCOPY  = path.join(FREEIMAGE_LIB_PATH, "FreeImage.dll")
+build:DeclareExternalLib("FREEIMAGE")
 
 
 

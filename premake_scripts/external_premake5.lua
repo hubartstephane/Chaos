@@ -23,16 +23,23 @@ end
 --------------------------------------------------------------------
 -- GLM
 --------------------------------------------------------------------
+
+-- dans /usr/include
+
 GLM_PATH = "glm"
-GLM_INC_PATH = MakePathPerConfig("include")
+--GLM_INC_PATH = MakePathPerConfig("include")
 build:DeclareExternalLib("GLM")
 
 --------------------------------------------------------------------
 -- TINYXML2
 --------------------------------------------------------------------
+
+-- dans /usr/include
+
+
 TINYXML2_PATH = "tinyxml2"
-TINYXML2_INC_PATH = MakePathPerConfig("include")
-TINYXML2_LIB_PATH = MakePathPerConfig("lib")
+--TINYXML2_INC_PATH = MakePathPerConfig("include")
+--TINYXML2_LIB_PATH = MakePathPerConfig("lib")
 --TINYXML2_LIB_NAME = "tinyxml2.lib" 
 
 TINYXML2_LIB_NAME = "tinyxml2"
@@ -41,8 +48,12 @@ build:DeclareExternalLib("TINYXML2")
 --------------------------------------------------------------------
 -- JSON
 --------------------------------------------------------------------
+
+-- dans /usr/include
+
+
 JSON_PATH     = "json"
-JSON_INC_PATH = MakePathPerConfig(path.join("include", "nlohmann"))
+--JSON_INC_PATH = MakePathPerConfig(path.join("include", "nlohmann"))
 build:DeclareExternalLib("JSON")
 
 --------------------------------------------------------------------

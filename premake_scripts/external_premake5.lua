@@ -14,6 +14,12 @@ function MakePathPerConfig(p)
 
 end
 
+
+
+
+
+
+
 --------------------------------------------------------------------
 -- GLM
 --------------------------------------------------------------------
@@ -38,6 +44,31 @@ build:DeclareExternalLib("TINYXML2")
 JSON_PATH     = "json"
 JSON_INC_PATH = MakePathPerConfig(path.join("include", "nlohmann"))
 build:DeclareExternalLib("JSON")
+
+--------------------------------------------------------------------
+-- GLFW
+--------------------------------------------------------------------
+
+GLFW_PATH = "glfw"
+GLFW_INC_PATH = MakePathPerConfig("include")
+GLFW_LIB_PATH = MakePathPerConfig("lib")
+--GLFW_LIB_NAME = "glfw3.lib"
+GLFW_LIB_NAME = "glfw3"
+build:DeclareExternalLib("GLFW")
+
+--------------------------------------------------------------------
+-- OPENGL
+--------------------------------------------------------------------
+OPENGL_PATH = "openGL"
+OPENGL_INC_PATH = ""
+--OPENGL_LIB_NAME = "OpenGL32"
+OPENGL_LIB_NAME = "GL"
+build:DeclareExternalLib("OPENGL")
+
+
+
+
+
 
 
 

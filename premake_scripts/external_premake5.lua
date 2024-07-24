@@ -61,8 +61,8 @@ build:DeclareExternalLib("JSON")
 --------------------------------------------------------------------
 
 GLFW_PATH = "glfw"
-GLFW_INC_PATH = MakePathPerConfig("include")
-GLFW_LIB_PATH = MakePathPerConfig("lib")
+--GLFW_INC_PATH = MakePathPerConfig("include")
+--GLFW_LIB_PATH = MakePathPerConfig("lib")
 --GLFW_LIB_NAME = "glfw3.lib"
 GLFW_LIB_NAME = "glfw3"
 build:DeclareExternalLib("GLFW")
@@ -75,7 +75,7 @@ build:DeclareExternalLib("GLFW")
 -- dans /usr/include
 
 OPENGL_PATH = "openGL"
-OPENGL_INC_PATH = ""
+--OPENGL_INC_PATH = ""
 --OPENGL_LIB_NAME = "OpenGL32"
 OPENGL_LIB_NAME = "GL"
 build:DeclareExternalLib("OPENGL")

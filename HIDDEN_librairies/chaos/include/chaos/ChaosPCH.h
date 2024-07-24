@@ -218,8 +218,8 @@
 #include <GL/wglew.h>
 
 // XXX : GL.h requires windows.h
-#include <GL/GL.h>
-#include <GL/GLU.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 
 // GLFW
 #if WITH_VULKAN

@@ -64,7 +64,8 @@ build:DeclareExternalLib("JSON")
 --GLFW_INC_PATH = MakePathPerConfig("include")
 --GLFW_LIB_PATH = MakePathPerConfig("lib")
 --GLFW_LIB_NAME = "glfw3.lib"
-GLFW_LIB_NAME = "glfw3"
+--GLFW_LIB_NAME = "glfw3"
+GLFW_LIB_NAME = "glfw"
 build:DeclareExternalLib("GLFW")
 
 --------------------------------------------------------------------
@@ -97,6 +98,16 @@ build:DeclareExternalLib("FREEIMAGE")
 
 
 
+--------------------------------------------------------------------
+-- GLEW
+--------------------------------------------------------------------
+--GLEW_PATH     = "glew-2.2.0"
+--GLEW_INC_PATH = "include"
+--GLEW_LIB_PATH = path.join("lib", RELEASE, x64)
+--GLEW_LIB_NAME = "glew32.lib"
+--GLEW_TOCOPY  = path.join("bin", RELEASE, x64, "glew32.dll")  
+GLEW_LIB_NAME = "GLEW"
+build:DeclareExternalLib("GLEW")
 
 
 

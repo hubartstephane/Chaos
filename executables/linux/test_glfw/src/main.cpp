@@ -1,18 +1,25 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
+
+
+
+//#define GLEW_STATIC
+#include <GL/glew.h>
+//#include <GL/wglew.h>
+#include <GL/glxew.h>
+
+// XXX : GL.h requires windows.h
+#include <GL/gl.h>
+#include <GL/glu.h>
+
+
 #include <GLFW/glfw3.h>
 //#define GLFW_EXPOSE_NATIVE_WIN32
 //#define GLFW_EXPOSE_NATIVE_WGL
-
-
-
 #define GLFW_EXPOSE_NATIVE_X11
 #define GLFW_EXPOSE_NATIVE_GLX
-
 #include <GLFW/glfw3native.h>
-
-#include <GL/gl.h>
 
 void DrawWindow(GLFWwindow * window)
 {
@@ -31,6 +38,8 @@ int main(int argc, char ** argv)
 	if (window != nullptr)
 	{
 		glfwMakeContextCurrent(window);
+		
+		GLenum err = glewInit();
 		
 		while (!glfwWindowShouldClose(window))
 		{

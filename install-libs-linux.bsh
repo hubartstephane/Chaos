@@ -30,6 +30,9 @@ else
 			DoInstall gcc-multilib 
 			DoInstall g++-multilib
 			DoInstall glslang-dev
+			DoInstall vulkan-tools
+			DoInstall vulkan-validationlayers
+			DoInstall vulkan-validationlayers-dev
 			#OVR not found
 			#GLI not found
 			#NANA not found

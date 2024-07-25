@@ -226,6 +226,39 @@ GLSLANG_LIBS = {
 
 build:DeclareExternalLib("GLSLANG")
 
+--------------------------------------------------------------------
+-- VULKAN
+--------------------------------------------------------------------
+
+VULKAN_BASE_PATH = path.join("/","usr", "include")
+VULKAN_INC_PATH = "vulkan"
+VULKAN_LIB_NAME = "vulkan"
+
+
+--VULKAN_PATH = os.getenv("VULKAN_SDK")
+--if (not VULKAN_PATH) then
+--	VULKAN_PATH = path.join("VulkanSDK", "1.3.261.1")
+--end
+--VULKAN_INC_PATH = "Include"
+--VULKAN_LIB_PATH = "Lib"
+--VULKAN_BIN_PATH = "Bin"
+--VULKAN_LIB_NAME = {"vulkan-1.lib"} --, "VkLayer_utils.lib"}
+
+--VULKAN_TOCOPY  = {
+--	path.join(VULKAN_BIN_PATH, "VkLayer_api_dump.dll"),
+--	path.join(VULKAN_BIN_PATH, "VkLayer_khronos_validation.dll")
+--} 
+
+build:DeclareExternalLib("VULKAN")
+
+
+
+
+
+
+
+
+
 
 
 

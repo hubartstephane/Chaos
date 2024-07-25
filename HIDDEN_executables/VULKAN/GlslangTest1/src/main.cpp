@@ -2,9 +2,9 @@
 
 // https://github.com/KhronosGroup/glslang/blob/master/README.md
 
-#include "glslang/include/glslang_c_interface.h"
-#include "glslang/public/ShaderLang.h"
-#include "glslang/public/ResourceLimits.h"
+#include "glslang/Include/glslang_c_interface.h"
+#include "glslang/Public/ShaderLang.h"
+#include "glslang/Public/ResourceLimits.h"
 
 char const * pixel_shader_source= R"SHADER_SOURCE(
 

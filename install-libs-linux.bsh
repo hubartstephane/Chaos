@@ -29,6 +29,7 @@ else
 			DoInstall clang
 			DoInstall gcc-multilib 
 			DoInstall g++-multilib
+			DoInstall glslang-dev
 			#OVR not found
 			#GLI not found
 			#NANA not found

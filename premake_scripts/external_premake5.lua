@@ -169,6 +169,62 @@ build:DeclareExternalLib("ASSIMP")
 
 
 
+--------------------------------------------------------------------
+-- GLSLANG
+--------------------------------------------------------------------
+
+GLSLANG_BASE_PATH = path.join("/","usr", "include")
+GLSLANG_INC_PATH = "glslang"
+
+GLSLANG_LIB_NAME = {"glslang", "MachineIndependent", "OSDependent", "HLSL", "OGLCompiler", "GenericCodeGen", "SPVRemapper", "pthread"}
+
+--[[
+GLSLANG_PATH = path.join("glslang", "install")
+GLSLANG_INC_PATH = "include"
+GLSLANG_LIB_PATH = "lib"
+
+GLSLANG_LIBS = {
+
+	DEBUG = {
+		"glslangd.lib",
+		"MachineIndependentd.lib",
+		"GenericCodeGend.lib",
+		"glslang-default-resource-limitsd.lib",
+		"HLSLd.lib",
+		"OGLCompilerd.lib",
+		"OSDependentd.lib",
+		"SPIRVd.lib",
+		"SPIRV-Toolsd.lib",
+		"SPIRV-Tools-diffd.lib",
+		"SPIRV-Tools-linkd.lib",
+		"SPIRV-Tools-lintd.lib",
+		"SPIRV-Tools-optd.lib",
+		"SPIRV-Tools-reduced.lib",
+		"SPIRV-Tools-sharedd.lib",
+		"SPVRemapperd.lib"
+	},
+	RELEASE = {
+		"glslang.lib",
+		"MachineIndependent.lib",
+		"GenericCodeGen.lib",
+		"glslang-default-resource-limits.lib",
+		"HLSL.lib",
+		"OGLCompiler.lib",
+		"OSDependent.lib",
+		"SPIRV.lib",
+		"SPIRV-Tools.lib",
+		"SPIRV-Tools-diff.lib",
+		"SPIRV-Tools-link.lib",
+		"SPIRV-Tools-lint.lib",
+		"SPIRV-Tools-opt.lib",
+		"SPIRV-Tools-reduce.lib",
+		"SPIRV-Tools-shared.lib",
+		"SPVRemapper.lib"
+	}
+}
+--]]
+
+build:DeclareExternalLib("GLSLANG")
 
 
 

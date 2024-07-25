@@ -92,13 +92,16 @@ end
 function BuildSystem:DeclareExternalLib(name)
 
 	local external_name = name
-	local src_path = _G[name .. "_PATH"]
-	local inc_path = _G[name .. "_INC_PATH"]
-	local lib_path = _G[name .. "_LIB_PATH"]
-	local lib_name = _G[name .. "_LIB_NAME"]
-	local tocopy   = _G[name .. "_TOCOPY"]
+	local base_path = _G[name .. "_BASE_PATH"]	
+	local src_path  = _G[name .. "_PATH"]
+	local inc_path  = _G[name .. "_INC_PATH"]
+	local lib_path  = _G[name .. "_LIB_PATH"]
+	local lib_name  = _G[name .. "_LIB_NAME"]
+	local tocopy    = _G[name .. "_TOCOPY"]
+	
+	base_path = base_path or EXTERNAL_PATH
 
-	src_path = path.join(EXTERNAL_PATH, src_path)
+	src_path = path.join(base_path, src_path)
 
 	local result = self:AddProject(external_name, {
 		project_src_path = src_path,

@@ -109,6 +109,32 @@ build:DeclareExternalLib("FREEIMAGE")
 GLEW_LIB_NAME = "GLEW"
 build:DeclareExternalLib("GLEW")
 
+--------------------------------------------------------------------
+-- LUA
+--------------------------------------------------------------------
+
+LUA_BASE_PATH = path.join("/","usr", "include")
+LUA_INC_PATH = "lua5.4"
+
+--LUA_PATH     = "lua-5.4.2"
+--LUA_INC_PATH = "include"
+--LUA_LIB_PATH = ""
+--LUA_LIB_NAME  = "lua54.lib"
+
+LUA_LIB_NAME  = "lua5.4"
+build:DeclareExternalLib("LUA")
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -146,6 +146,26 @@ build:DeclareExternalLib("FREETYPE2")
 
 
 
+--------------------------------------------------------------------
+-- ASSIMP
+--------------------------------------------------------------------
+
+ASSIMP_BASE_PATH = path.join("/","usr", "include")
+ASSIMP_INC_PATH = "assimp"
+ASSIMP_LIB_NAME = "assimp"
+
+--ASSIMP_PATH     = "assimp"
+--ASSIMP_INC_PATH = MakePathPerConfig("include")
+--ASSIMP_LIB_PATH = MakePathPerConfig("lib")
+--ASSIMP_LIB_NAME = {
+--	DEBUG = "assimp-vc143-mtd.lib",
+--	RELEASE = "assimp-vc143-mt.lib"
+--}
+--ASSIMP_TOCOPY   = {
+--	DEBUG = path.join("Debug", "bin", "assimp-vc143-mtd.dll"),
+--	RELEASE = path.join("Release", "bin", "assimp-vc143-mt.dll")
+--}
+build:DeclareExternalLib("ASSIMP")
 
 
 

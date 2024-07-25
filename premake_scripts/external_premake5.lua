@@ -126,7 +126,23 @@ build:DeclareExternalLib("LUA")
 
 
 
+--------------------------------------------------------------------
+-- FREETYPE2
+--------------------------------------------------------------------
 
+FREETYPE2_BASE_PATH = path.join("/","usr", "include")
+FREETYPE2_INC_PATH = "freetype2"
+FREETYPE2_LIB_NAME = "freetype"
+
+--FREETYPE2_PATH = "freetype2"
+--FREETYPE2_INC_PATH = MakePathPerConfig(path.join("include", "freetype2"))
+--FREETYPE2_LIB_PATH = MakePathPerConfig("lib")
+--
+--{
+--	DEBUG = "freetyped.lib",
+--	RELEASE = "freetype.lib",
+--}
+build:DeclareExternalLib("FREETYPE2")
 
 
 

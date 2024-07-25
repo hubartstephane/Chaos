@@ -253,6 +253,23 @@ build:DeclareExternalLib("VULKAN")
 
 
 
+--------------------------------------------------------------------
+-- ZLIB
+--------------------------------------------------------------------
+
+ZLIB_BASE_PATH = path.join("/","usr", "include")
+ZLIB_INC_PATH = "zlib"
+ZLIB_LIB_NAME = "z"
+
+
+--ZLIB_PATH     = "zlib-1.3"
+--ZLIB_INC_PATH = MakePathPerConfig("include")
+--ZLIB_LIB_PATH = MakePathPerConfig("lib")
+--ZLIB_LIB_NAME = {
+--	DEBUG = "zlibstaticd.lib",
+--	RELEASE = "zlibstatic.lib"
+--}
+build:DeclareExternalLib("ZLIB")
 
 
 

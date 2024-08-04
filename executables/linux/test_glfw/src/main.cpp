@@ -6,20 +6,42 @@
 
 //#define GLEW_STATIC
 #include <GL/glew.h>
-//#include <GL/wglew.h>
+#if _WIN32
+#include <GL/wglew.h>
+#endif
+
+#if _LINUX
 #include <GL/glxew.h>
+endif
 
 // XXX : GL.h requires windows.h
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-
+#if _LINUX
 #include <GLFW/glfw3.h>
-//#define GLFW_EXPOSE_NATIVE_WIN32
-//#define GLFW_EXPOSE_NATIVE_WGL
 #define GLFW_EXPOSE_NATIVE_X11
 #define GLFW_EXPOSE_NATIVE_GLX
 #include <GLFW/glfw3native.h>
+#endif
+#endif
+
+
+#if _WIN32
+#include <GLFW/glfw3.h>
+#define GLFW_EXPOSE_NATIVE_WIN32
+#define GLFW_EXPOSE_NATIVE_WGL
+#include <GLFW/glfw3native.h>
+#endif
+
+
+
+
+
+
+
+
+
 
 void DrawWindow(GLFWwindow * window)
 {

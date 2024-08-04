@@ -10,6 +10,7 @@ int main(int argc, char ** argv)
 	
 	FreeImage_DeInitialise();
 
+	std::cout << "test FreeImage" << std::endl;
 	return 0;
 }
  

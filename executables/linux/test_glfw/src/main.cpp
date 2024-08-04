@@ -7,23 +7,23 @@
 //#define GLEW_STATIC
 #include <GL/glew.h>
 #if _WIN32
+ddd
 #include <GL/wglew.h>
 #endif
 
-#if _LINUX
+#if __linux__
 #include <GL/glxew.h>
-endif
+#endif
 
 // XXX : GL.h requires windows.h
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#if _LINUX
+#if __linux__
 #include <GLFW/glfw3.h>
 #define GLFW_EXPOSE_NATIVE_X11
 #define GLFW_EXPOSE_NATIVE_GLX
 #include <GLFW/glfw3native.h>
-#endif
 #endif
 
 

@@ -272,6 +272,21 @@ ZLIB_LIB_NAME = "z"
 build:DeclareExternalLib("ZLIB")
 
 
+--------------------------------------------------------------------
+-- BOOST
+--------------------------------------------------------------------
+--[[
+
+BOOST_PATH     = "boost_1_83_0"
+BOOST_INC_PATH = path.join("include", "boost-1_83")
+BOOST_LIB_PATH = "lib"
+]]--
+
+BOOST_LIB_NAME = {"boost_system", "boost_thread"}
+
+build:DeclareExternalLib("BOOST")
+
+
 
 
 

@@ -14,286 +14,278 @@ function MakePathPerConfig(p)
 
 end
 
-
-
-
-
-
-
 --------------------------------------------------------------------
 -- GLM
 --------------------------------------------------------------------
 
--- dans /usr/include
-
---GLM_PATH = "glm"
---GLM_INC_PATH = MakePathPerConfig("include")
+if WINDOWS then
+	GLM_PATH = "glm"
+	GLM_INC_PATH = MakePathPerConfig("include")
+end
 build:DeclareExternalLib("GLM")
 
 --------------------------------------------------------------------
 -- TINYXML2
 --------------------------------------------------------------------
 
--- dans /usr/include
-
-
---TINYXML2_PATH = "tinyxml2"
---TINYXML2_INC_PATH = MakePathPerConfig("include")
---TINYXML2_LIB_PATH = MakePathPerConfig("lib")
---TINYXML2_LIB_NAME = "tinyxml2.lib" 
-
-TINYXML2_LIB_NAME = "tinyxml2"
+if WINDOWS then
+	TINYXML2_PATH = "tinyxml2"
+	TINYXML2_INC_PATH = MakePathPerConfig("include")
+	TINYXML2_LIB_PATH = MakePathPerConfig("lib")
+	TINYXML2_LIB_NAME = "tinyxml2.lib"
+end
+if LINUX then
+	TINYXML2_LIB_NAME = "tinyxml2"
+end
 build:DeclareExternalLib("TINYXML2")
 
 --------------------------------------------------------------------
 -- JSON
 --------------------------------------------------------------------
 
--- dans /usr/include
-
-
---JSON_PATH     = "json"
---JSON_INC_PATH = MakePathPerConfig(path.join("include", "nlohmann"))
+if WINDOWS then
+	JSON_PATH     = "json"
+	JSON_INC_PATH = MakePathPerConfig(path.join("include", "nlohmann"))
+end
 build:DeclareExternalLib("JSON")
 
 --------------------------------------------------------------------
 -- GLFW
 --------------------------------------------------------------------
 
---GLFW_PATH = "glfw"
---GLFW_INC_PATH = MakePathPerConfig("include")
---GLFW_LIB_PATH = MakePathPerConfig("lib")
---GLFW_LIB_NAME = "glfw3.lib"
---GLFW_LIB_NAME = "glfw3"
-GLFW_LIB_NAME = "glfw"
+if WINDOWS then
+	GLFW_PATH = "glfw"
+	GLFW_INC_PATH = MakePathPerConfig("include")
+	GLFW_LIB_PATH = MakePathPerConfig("lib")
+	GLFW_LIB_NAME = "glfw3.lib"
+	GLFW_LIB_NAME = "glfw3"
+end
+if LINUX then
+	GLFW_LIB_NAME = "glfw"
+end
 build:DeclareExternalLib("GLFW")
 
 --------------------------------------------------------------------
 -- OPENGL
 --------------------------------------------------------------------
 
-
--- dans /usr/include
-
---OPENGL_PATH = "openGL"
---OPENGL_INC_PATH = ""
---OPENGL_LIB_NAME = "OpenGL32"
-OPENGL_LIB_NAME = "GL"
+if WINDOWS then
+	OPENGL_PATH = "openGL"
+	OPENGL_INC_PATH = ""
+	OPENGL_LIB_NAME = "OpenGL32"
+end
+if LINUX then
+	OPENGL_LIB_NAME = "GL"
+end
 build:DeclareExternalLib("OPENGL")
 
 --------------------------------------------------------------------
 -- FREEIMAGE
 --------------------------------------------------------------------
 
--- dans /usr/include
-
---FREEIMAGE_PATH       = "FreeImage"
---FREEIMAGE_DIST_PATH  = path.join("Dist", "x64")
---FREEIMAGE_INC_PATH = FREEIMAGE_DIST_PATH
---FREEIMAGE_LIB_PATH = FREEIMAGE_DIST_PATH
---FREEIMAGE_LIB_NAME = "FreeImage.lib"
-FREEIMAGE_LIB_NAME = "freeimage"
---FREEIMAGE_TOCOPY  = path.join(FREEIMAGE_LIB_PATH, "FreeImage.dll")
+if WINDOWS then
+	FREEIMAGE_PATH       = "FreeImage"
+	FREEIMAGE_DIST_PATH  = path.join("Dist", "x64")
+	FREEIMAGE_INC_PATH = FREEIMAGE_DIST_PATH
+	FREEIMAGE_LIB_PATH = FREEIMAGE_DIST_PATH
+	FREEIMAGE_LIB_NAME = "FreeImage.lib"
+	FREEIMAGE_TOCOPY  = path.join(FREEIMAGE_LIB_PATH, "FreeImage.dll")
+end
+if LINUX then
+	FREEIMAGE_LIB_NAME = "freeimage"
+end
 build:DeclareExternalLib("FREEIMAGE")
-
-
 
 --------------------------------------------------------------------
 -- GLEW
 --------------------------------------------------------------------
---GLEW_PATH     = "glew-2.2.0"
---GLEW_INC_PATH = "include"
---GLEW_LIB_PATH = path.join("lib", RELEASE, x64)
---GLEW_LIB_NAME = "glew32.lib"
---GLEW_TOCOPY  = path.join("bin", RELEASE, x64, "glew32.dll")  
-GLEW_LIB_NAME = "GLEW"
+
+if WINDOWS then
+	GLEW_PATH     = "glew-2.2.0"
+	GLEW_INC_PATH = "include"
+	GLEW_LIB_PATH = path.join("lib", RELEASE, x64)
+	GLEW_LIB_NAME = "glew32.lib"
+	GLEW_TOCOPY  = path.join("bin", RELEASE, x64, "glew32.dll")  
+end
+if LINUX then
+	GLEW_LIB_NAME = "GLEW"
+end
 build:DeclareExternalLib("GLEW")
 
 --------------------------------------------------------------------
 -- LUA
 --------------------------------------------------------------------
 
-LUA_BASE_PATH = path.join("/","usr", "include")
-LUA_INC_PATH = "lua5.4"
-
---LUA_PATH     = "lua-5.4.2"
---LUA_INC_PATH = "include"
---LUA_LIB_PATH = ""
---LUA_LIB_NAME  = "lua54.lib"
-
-LUA_LIB_NAME  = "lua5.4"
+if WINDOWS then
+	LUA_PATH     = "lua-5.4.2"
+	LUA_INC_PATH = "include"
+	LUA_LIB_PATH = ""
+	LUA_LIB_NAME  = "lua54.lib"
+end
+if LINUX then
+	LUA_BASE_PATH = path.join("/","usr", "include")
+	LUA_INC_PATH = "lua5.4"
+	LUA_LIB_NAME  = "lua5.4"
+end
 build:DeclareExternalLib("LUA")
-
-
 
 --------------------------------------------------------------------
 -- FREETYPE2
 --------------------------------------------------------------------
 
-FREETYPE2_BASE_PATH = path.join("/","usr", "include")
-FREETYPE2_INC_PATH = "freetype2"
-FREETYPE2_LIB_NAME = "freetype"
-
---FREETYPE2_PATH = "freetype2"
---FREETYPE2_INC_PATH = MakePathPerConfig(path.join("include", "freetype2"))
---FREETYPE2_LIB_PATH = MakePathPerConfig("lib")
---
---{
---	DEBUG = "freetyped.lib",
---	RELEASE = "freetype.lib",
---}
+if WINDOWS then
+	FREETYPE2_PATH = "freetype2"
+	FREETYPE2_INC_PATH = MakePathPerConfig(path.join("include", "freetype2"))
+	FREETYPE2_LIB_PATH = MakePathPerConfig("lib")
+	FREETYPE2_LIB_NAME
+	{
+		DEBUG = "freetyped.lib",
+		RELEASE = "freetype.lib",
+	}
+end
+if LINUX then
+	FREETYPE2_BASE_PATH = path.join("/","usr", "include")
+	FREETYPE2_INC_PATH = "freetype2"
+	FREETYPE2_LIB_NAME = "freetype"
+end
 build:DeclareExternalLib("FREETYPE2")
-
-
 
 --------------------------------------------------------------------
 -- ASSIMP
 --------------------------------------------------------------------
 
-ASSIMP_BASE_PATH = path.join("/","usr", "include")
-ASSIMP_INC_PATH = "assimp"
-ASSIMP_LIB_NAME = "assimp"
-
---ASSIMP_PATH     = "assimp"
---ASSIMP_INC_PATH = MakePathPerConfig("include")
---ASSIMP_LIB_PATH = MakePathPerConfig("lib")
---ASSIMP_LIB_NAME = {
---	DEBUG = "assimp-vc143-mtd.lib",
---	RELEASE = "assimp-vc143-mt.lib"
---}
---ASSIMP_TOCOPY   = {
---	DEBUG = path.join("Debug", "bin", "assimp-vc143-mtd.dll"),
---	RELEASE = path.join("Release", "bin", "assimp-vc143-mt.dll")
---}
+if WINDOWS then
+	ASSIMP_PATH     = "assimp"
+	ASSIMP_INC_PATH = MakePathPerConfig("include")
+	ASSIMP_LIB_PATH = MakePathPerConfig("lib")
+	ASSIMP_LIB_NAME = {
+		DEBUG = "assimp-vc143-mtd.lib",
+		RELEASE = "assimp-vc143-mt.lib"
+	}
+	ASSIMP_TOCOPY   = {
+		DEBUG = path.join("Debug", "bin", "assimp-vc143-mtd.dll"),
+		RELEASE = path.join("Release", "bin", "assimp-vc143-mt.dll")
+	}
+end
+if LINUX then
+	ASSIMP_BASE_PATH = path.join("/","usr", "include")
+	ASSIMP_INC_PATH = "assimp"
+	ASSIMP_LIB_NAME = "assimp"
+end
 build:DeclareExternalLib("ASSIMP")
-
-
 
 --------------------------------------------------------------------
 -- GLSLANG
 --------------------------------------------------------------------
 
-GLSLANG_BASE_PATH = path.join("/","usr", "include")
-GLSLANG_INC_PATH = "glslang"
-
-GLSLANG_LIB_NAME = {"glslang", "MachineIndependent", "OSDependent", "HLSL", "OGLCompiler", "GenericCodeGen", "SPVRemapper", "pthread"}
-
---[[
-GLSLANG_PATH = path.join("glslang", "install")
-GLSLANG_INC_PATH = "include"
-GLSLANG_LIB_PATH = "lib"
-
-GLSLANG_LIBS = {
-
-	DEBUG = {
-		"glslangd.lib",
-		"MachineIndependentd.lib",
-		"GenericCodeGend.lib",
-		"glslang-default-resource-limitsd.lib",
-		"HLSLd.lib",
-		"OGLCompilerd.lib",
-		"OSDependentd.lib",
-		"SPIRVd.lib",
-		"SPIRV-Toolsd.lib",
-		"SPIRV-Tools-diffd.lib",
-		"SPIRV-Tools-linkd.lib",
-		"SPIRV-Tools-lintd.lib",
-		"SPIRV-Tools-optd.lib",
-		"SPIRV-Tools-reduced.lib",
-		"SPIRV-Tools-sharedd.lib",
-		"SPVRemapperd.lib"
-	},
-	RELEASE = {
-		"glslang.lib",
-		"MachineIndependent.lib",
-		"GenericCodeGen.lib",
-		"glslang-default-resource-limits.lib",
-		"HLSL.lib",
-		"OGLCompiler.lib",
-		"OSDependent.lib",
-		"SPIRV.lib",
-		"SPIRV-Tools.lib",
-		"SPIRV-Tools-diff.lib",
-		"SPIRV-Tools-link.lib",
-		"SPIRV-Tools-lint.lib",
-		"SPIRV-Tools-opt.lib",
-		"SPIRV-Tools-reduce.lib",
-		"SPIRV-Tools-shared.lib",
-		"SPVRemapper.lib"
+if WINDOWS then
+	GLSLANG_PATH = path.join("glslang", "install")
+	GLSLANG_INC_PATH = "include"
+	GLSLANG_LIB_PATH = "lib"
+	GLSLANG_LIBS = {
+		DEBUG = {
+			"glslangd.lib",
+			"MachineIndependentd.lib",
+			"GenericCodeGend.lib",
+			"glslang-default-resource-limitsd.lib",
+			"HLSLd.lib",
+			"OGLCompilerd.lib",
+			"OSDependentd.lib",
+			"SPIRVd.lib",
+			"SPIRV-Toolsd.lib",
+			"SPIRV-Tools-diffd.lib",
+			"SPIRV-Tools-linkd.lib",
+			"SPIRV-Tools-lintd.lib",
+			"SPIRV-Tools-optd.lib",
+			"SPIRV-Tools-reduced.lib",
+			"SPIRV-Tools-sharedd.lib",
+			"SPVRemapperd.lib"
+		},
+		RELEASE = {
+			"glslang.lib",
+			"MachineIndependent.lib",
+			"GenericCodeGen.lib",
+			"glslang-default-resource-limits.lib",
+			"HLSL.lib",
+			"OGLCompiler.lib",
+			"OSDependent.lib",
+			"SPIRV.lib",
+			"SPIRV-Tools.lib",
+			"SPIRV-Tools-diff.lib",
+			"SPIRV-Tools-link.lib",
+			"SPIRV-Tools-lint.lib",
+			"SPIRV-Tools-opt.lib",
+			"SPIRV-Tools-reduce.lib",
+			"SPIRV-Tools-shared.lib",
+			"SPVRemapper.lib"
+		}
 	}
-}
---]]
-
+end
+if LINUX then
+	GLSLANG_BASE_PATH = path.join("/","usr", "include")
+	GLSLANG_INC_PATH = "glslang"
+	GLSLANG_LIB_NAME = {"glslang", "MachineIndependent", "OSDependent", "HLSL", "OGLCompiler", "GenericCodeGen", "SPVRemapper", "pthread"}
+end
 build:DeclareExternalLib("GLSLANG")
 
 --------------------------------------------------------------------
 -- VULKAN
 --------------------------------------------------------------------
 
-VULKAN_BASE_PATH = path.join("/","usr", "include")
-VULKAN_INC_PATH = "vulkan"
-VULKAN_LIB_NAME = "vulkan"
-
-
---VULKAN_PATH = os.getenv("VULKAN_SDK")
---if (not VULKAN_PATH) then
---	VULKAN_PATH = path.join("VulkanSDK", "1.3.261.1")
---end
---VULKAN_INC_PATH = "Include"
---VULKAN_LIB_PATH = "Lib"
---VULKAN_BIN_PATH = "Bin"
---VULKAN_LIB_NAME = {"vulkan-1.lib"} --, "VkLayer_utils.lib"}
-
---VULKAN_TOCOPY  = {
---	path.join(VULKAN_BIN_PATH, "VkLayer_api_dump.dll"),
---	path.join(VULKAN_BIN_PATH, "VkLayer_khronos_validation.dll")
---} 
-
+if WINDOWS then
+	VULKAN_PATH = os.getenv("VULKAN_SDK")
+	if (not VULKAN_PATH) then
+		VULKAN_PATH = path.join("VulkanSDK", "1.3.261.1")
+	end
+	VULKAN_INC_PATH = "Include"
+	VULKAN_LIB_PATH = "Lib"
+	VULKAN_BIN_PATH = "Bin"
+	VULKAN_LIB_NAME = {"vulkan-1.lib"} --, "VkLayer_utils.lib"}
+	VULKAN_TOCOPY  = {
+		path.join(VULKAN_BIN_PATH, "VkLayer_api_dump.dll"),
+		path.join(VULKAN_BIN_PATH, "VkLayer_khronos_validation.dll")
+	} 
+end
+if LINUX then
+	VULKAN_BASE_PATH = path.join("/","usr", "include")
+	VULKAN_INC_PATH = "vulkan"
+	VULKAN_LIB_NAME = "vulkan"
+end
 build:DeclareExternalLib("VULKAN")
-
-
 
 --------------------------------------------------------------------
 -- ZLIB
 --------------------------------------------------------------------
 
-ZLIB_BASE_PATH = path.join("/","usr", "include")
-ZLIB_INC_PATH = "zlib"
-ZLIB_LIB_NAME = "z"
-
-
---ZLIB_PATH     = "zlib-1.3"
---ZLIB_INC_PATH = MakePathPerConfig("include")
---ZLIB_LIB_PATH = MakePathPerConfig("lib")
---ZLIB_LIB_NAME = {
---	DEBUG = "zlibstaticd.lib",
---	RELEASE = "zlibstatic.lib"
---}
+if WINDOWS then
+	ZLIB_PATH     = "zlib-1.3"
+	ZLIB_INC_PATH = MakePathPerConfig("include")
+	ZLIB_LIB_PATH = MakePathPerConfig("lib")
+	ZLIB_LIB_NAME = {
+		DEBUG = "zlibstaticd.lib",
+		RELEASE = "zlibstatic.lib"
+	}
+end
+if LINUX then
+	ZLIB_BASE_PATH = path.join("/","usr", "include")
+	ZLIB_INC_PATH = "zlib"
+	ZLIB_LIB_NAME = "z"
+end
 build:DeclareExternalLib("ZLIB")
-
 
 --------------------------------------------------------------------
 -- BOOST
 --------------------------------------------------------------------
---[[
 
-BOOST_PATH     = "boost_1_83_0"
-BOOST_INC_PATH = path.join("include", "boost-1_83")
-BOOST_LIB_PATH = "lib"
-]]--
-
-BOOST_LIB_NAME = {"boost_system", "boost_thread"}
-
+if WINDOWS then
+	BOOST_PATH     = "boost_1_83_0"
+	BOOST_INC_PATH = path.join("include", "boost-1_83")
+	BOOST_LIB_PATH = "lib"
+end
+if LINUX then
+	BOOST_LIB_NAME = {"boost_system", "boost_thread"}
+end
 build:DeclareExternalLib("BOOST")
-
-
-
-
-
-
-
-
-
 
 --[[
 

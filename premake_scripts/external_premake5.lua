@@ -141,7 +141,7 @@ if WINDOWS then
 	FREETYPE2_PATH = "freetype2"
 	FREETYPE2_INC_PATH = MakePathPerConfig(path.join("include", "freetype2"))
 	FREETYPE2_LIB_PATH = MakePathPerConfig("lib")
-	FREETYPE2_LIB_NAME
+	FREETYPE2_LIB_NAME =
 	{
 		DEBUG = "freetyped.lib",
 		RELEASE = "freetype.lib",
@@ -289,6 +289,14 @@ end
 if LINUX then
 	BOOST_LIB_NAME = {"boost_system", "boost_thread"}
 end
+
+--boost_chrono
+--boost_atomic
+--boost_filesystem
+--boost_timer
+--boost_program_options
+--boost-log
+
 build:DeclareExternalLib("BOOST")
 
 --[[

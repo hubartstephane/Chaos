@@ -6,7 +6,7 @@ SCRIPT_PATH=$(dirname $SCRIPT_PATH)
 cd $SCRIPT_PATH
 
 # Search target in arguments (beware case sensitive)
-TARGET=codelite
+TARGET=vs2022
 if [ $# -ge 1 ]; then
 	TARGET=$1
 fi

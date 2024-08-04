@@ -20,7 +20,7 @@ else
 			DoInstall libfreetype6-dev
 			DoInstall libfreeimage-dev
 			DoInstall libfreeimageplus-dev
-			DoInstall nlohmann-json-dev
+			DoInstall nlohmann-json3-dev
 			DoInstall libglfw3-dev
 			DoInstall libglew2.0
 			DoInstall libglew-dev

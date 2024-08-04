@@ -47,6 +47,10 @@ if WINDOWS then
 	JSON_PATH     = "json"
 	JSON_INC_PATH = MakePathPerConfig(path.join("include", "nlohmann"))
 end
+if LINUX then
+	JSON_BASE_PATH = path.join("/","usr", "include")
+	JSON_INC_PATH = "nlohmann"
+end
 build:DeclareExternalLib("JSON")
 
 --------------------------------------------------------------------

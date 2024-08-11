@@ -151,7 +151,8 @@ if LINUX then
 	FREETYPE2_INC_PATH = "freetype2"
 	FREETYPE2_LIB_NAME = "freetype"
 end
-build:DeclareExternalLib("FREETYPE2")
+local freetype2 = build:DeclareExternalLib("FREETYPE2")
+freetype2:DependOnLib("ZLIB")
 
 --------------------------------------------------------------------
 -- ASSIMP

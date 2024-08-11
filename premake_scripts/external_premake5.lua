@@ -62,7 +62,6 @@ if WINDOWS then
 	GLFW_INC_PATH = MakePathPerConfig("include")
 	GLFW_LIB_PATH = MakePathPerConfig("lib")
 	GLFW_LIB_NAME = "glfw3.lib"
-	GLFW_LIB_NAME = "glfw3"
 end
 if LINUX then
 	GLFW_LIB_NAME = "glfw"
@@ -183,10 +182,13 @@ build:DeclareExternalLib("ASSIMP")
 --------------------------------------------------------------------
 
 if WINDOWS then
-	GLSLANG_PATH = path.join("glslang", "install")
+
+	VULKAN_PATH = os.getenv("VULKAN_SDK")
+
+	GLSLANG_PATH = VULKAN_PATH
 	GLSLANG_INC_PATH = "include"
 	GLSLANG_LIB_PATH = "lib"
-	GLSLANG_LIBS = {
+	GLSLANG_LIB_NAME = {
 		DEBUG = {
 			"glslangd.lib",
 			"MachineIndependentd.lib",
@@ -238,9 +240,7 @@ build:DeclareExternalLib("GLSLANG")
 
 if WINDOWS then
 	VULKAN_PATH = os.getenv("VULKAN_SDK")
-	if (not VULKAN_PATH) then
-		VULKAN_PATH = path.join("VulkanSDK", "1.3.261.1")
-	end
+
 	VULKAN_INC_PATH = "Include"
 	VULKAN_LIB_PATH = "Lib"
 	VULKAN_BIN_PATH = "Bin"

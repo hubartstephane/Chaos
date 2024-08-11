@@ -115,21 +115,23 @@ function BuildSystem:DeclareExternalLib(name)
 		result:AddFileToCopy(tocopy)
 	end
 
-	-- check for library file existence
-	Utility:AllTargets(
-		function(plat, conf)
-			if (result.targetdir[plat][conf]) then -- in some cases there may be a library to link with but no directory specified (ex OpenGL)
-				Utility:ForEachElement(result.lib_name[plat][conf],
-					function(lib_name)
-						local fullpath = result.targetdir[plat][conf] .. "/" .. lib_name
-						if not os.isfile(fullpath) then
-							--assert(false, "library does not exist: " .. fullpath)
+	-- check for library file existence (only for WINDOWS)
+	if (os.target() == "windows") then	
+		Utility:AllTargets(
+			function(plat, conf)
+				if (result.targetdir[plat][conf]) then -- in some cases there may be a library to link with but no directory specified (ex OpenGL)
+					Utility:ForEachElement(result.lib_name[plat][conf],
+						function(lib_name)
+							local fullpath = result.targetdir[plat][conf] .. "/" .. lib_name
+							if not os.isfile(fullpath) then
+								assert(false, "library does not exist: " .. fullpath)
+							end
 						end
-					end
-				)
+					)
+				end
 			end
-		end
-	)
+		)
+	end
 	return result
 
 end

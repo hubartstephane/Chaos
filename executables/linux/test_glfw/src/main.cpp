@@ -7,7 +7,6 @@
 //#define GLEW_STATIC
 #include <GL/glew.h>
 #if _WIN32
-ddd
 #include <GL/wglew.h>
 #endif
 

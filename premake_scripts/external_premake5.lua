@@ -293,6 +293,81 @@ end
 
 build:DeclareExternalLib("BOOST")
 
+--------------------------------------------------------------------
+-- VISUAL STUDIO REDISTRIBUABLE
+--------------------------------------------------------------------
+
+if WINDOWS then
+	MSVC_PATH = "MSVC_Redist"  
+	MSVC_BASELIB_PATH = "14.23.27820"
+	MSVC_LIB_PATH_X64_RELEASE = path.join(MSVC_BASELIB_PATH, "x64", "Microsoft.VC142.CRT") 
+	MSVC_LIB_PATH_X64_DEBUG = path.join(MSVC_BASELIB_PATH, "debug_nonredist", "x64", "Microsoft.VC142.DebugCRT") 
+
+	MSVC_DLL_DEBUG = {
+		"concrt140d.dll",
+		"msvcp140d.dll",
+		"msvcp140_1d.dll",
+		"msvcp140_2d.dll",
+		"msvcp140d_codecvt_ids.dll",
+		"vccorlib140d.dll",
+		"vcruntime140d.dll",
+		"vcruntime140_1d.dll" -- not for x32, but copy should be ignored
+	}
+
+	MSVC_DLL_RELEASE = {
+		"concrt140.dll",
+		"msvcp140.dll",
+		"msvcp140_1.dll",
+		"msvcp140_2.dll",
+		"msvcp140_codecvt_ids.dll",
+		"vccorlib140.dll",
+		"vcruntime140.dll",
+		"vcruntime140_1.dll"
+	}
+
+	function GenerateMSVCDLLs(base_path, dlls)
+
+	  local result = {}
+	  for k, v in ipairs(dlls) do
+	    table.insert(result, path.join(base_path, v))
+	  end
+	  return result
+	end
+
+	MSVC_TOCOPY  = {
+	   DEBUG = GenerateMSVCDLLs(MSVC_LIB_PATH_X64_DEBUG, MSVC_DLL_DEBUG),
+	   RELEASE = GenerateMSVCDLLs(MSVC_LIB_PATH_X64_RELEASE, MSVC_DLL_RELEASE)
+	}
+	build:DeclareExternalLib("MSVC")
+end
+
+--------------------------------------------------------------------
+-- IRRKLANG
+--------------------------------------------------------------------
+
+if WINDOWS then
+	IRRKLANG_PATH = "irrKlang-64bit-1.6.0"
+	IRRKLANG_INC_PATH = "include"
+	IRRKLANG_LIB_PATH = path.join("lib", "Winx64-visualStudio")
+	IRRKLANG_LIB_NAME = "irrKlang.lib"
+	IRRKLANG_TOCOPY  = path.join("bin", "winx64-visualStudio" , "irrKlang.dll")  
+end
+if LINUX then
+end
+build:DeclareExternalLib("IRRKLANG")
+
+
+
+
+
+
+
+
+
+
+
+
+
 --[[
 
 --------------------------------------------------------------------

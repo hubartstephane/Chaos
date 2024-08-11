@@ -358,6 +358,7 @@ if LINUX then
 	IRRKLANG_BASE_PATH = path.join("/", "home", "stephane", "irrklang", "irrKlang-64bit-1.6.0")
 	IRRKLANG_INC_PATH = "include"
 	IRRKLANG_LIB_PATH = path.join("bin", "linux-gcc-64")
+	IRRKLANG_LINKOPTIONS = "libIrrKlang.so"
 --	IRRKLANG_LIB_NAME = "libIrrKlang.so"	
 end
 build:DeclareExternalLib("IRRKLANG")

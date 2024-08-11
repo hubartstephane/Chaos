@@ -531,6 +531,13 @@ function Project:AddProjectToSolution()
 							libdirs(elem)
 						end
 					)
+					
+					--linkoptions
+					Utility:ForEachElement(p.linkoptions[plat][conf],
+						function(elem)
+							linkoptions(elem)
+						end
+					)					
 				end
 			)
 		end

@@ -92,12 +92,13 @@ end
 function BuildSystem:DeclareExternalLib(name)
 
 	local external_name = name
-	local base_path = _G[name .. "_BASE_PATH"]	
-	local src_path  = _G[name .. "_PATH"]
-	local inc_path  = _G[name .. "_INC_PATH"]
-	local lib_path  = _G[name .. "_LIB_PATH"]
-	local lib_name  = _G[name .. "_LIB_NAME"]
-	local tocopy    = _G[name .. "_TOCOPY"]
+	local base_path   = _G[name .. "_BASE_PATH"]	
+	local src_path    = _G[name .. "_PATH"]
+	local inc_path    = _G[name .. "_INC_PATH"]
+	local lib_path    = _G[name .. "_LIB_PATH"]
+	local lib_name    = _G[name .. "_LIB_NAME"]
+	local linkoptions = _G[name .. "_LINKOPTIONS"]
+	local tocopy      = _G[name .. "_TOCOPY"]
 	
 	base_path = base_path or EXTERNAL_PATH
 
@@ -108,7 +109,8 @@ function BuildSystem:DeclareExternalLib(name)
 		project_type = ProjectType.EXTERNAL_LIBRARY,
 		includedirs = Utility:PrefixPathArray(Utility:GetPlatConfArray(inc_path), src_path),
 		targetdir = Utility:PrefixPathArray(Utility:GetPlatConfArray(lib_path), src_path),
-		lib_name = Utility:GetPlatConfArray(lib_name)
+		lib_name = Utility:GetPlatConfArray(lib_name),
+		linkoptions = Utility:GetPlatConfArray(linkoptions)
 	})
 
 	if (not Utility:IsNil(tocopy)) then

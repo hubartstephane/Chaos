@@ -419,6 +419,12 @@ function Project:AddProjectToSolution()
 
 	-- declare project
 	project(self.project_name)
+	
+	
+	
+	
+	
+	linkoptions("/home/stephane/irrklang/irrKlang-64bit-1.6.0/bin/linux-gcc-64/libIrrKlang.so")
 
 	local proj_location = path.join(SOLUTION_PATH, self.project_path)
 	location(proj_location)

@@ -2,10 +2,8 @@
 #include <stdio.h>
 #include <iostream>
 
-#include "glslang/Include/glslang_c_interface.h"
 #include "glslang/Public/ShaderLang.h"
 #include "glslang/Public/ResourceLimits.h"
-
 
 int main(int argc, char ** argv)
 {

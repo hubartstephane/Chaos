@@ -79,6 +79,7 @@ function BuildSystem:AddProject(name, data)
 		result.lib_name = result.lib_name or Utility:GetPlatConfArray({})
 		result.dependencies = {}
 		result.tocopy = result.tocopy or Utility:GetPlatConfArray({})
+		result.linkoptions = Utility:GetPlatConfArray(result.linkoptions or {})
 		self.projects[upper_name] = result
 
 		return result
@@ -110,7 +111,7 @@ function BuildSystem:DeclareExternalLib(name)
 		includedirs = Utility:PrefixPathArray(Utility:GetPlatConfArray(inc_path), src_path),
 		targetdir = Utility:PrefixPathArray(Utility:GetPlatConfArray(lib_path), src_path),
 		lib_name = Utility:GetPlatConfArray(lib_name),
-		linkoptions = Utility:GetPlatConfArray(linkoptions)
+		linkoptions = Utility:GetPlatConfArray(linkoptions or {})
 	})
 
 	if (not Utility:IsNil(tocopy)) then

@@ -1,3 +1,4 @@
+#! /usr/bin/python3
 # XXX : patchprojects.py is used to patch visual studio projects
 #       replace 
 #         <characterset>unicode</characterset>      

@@ -1,3 +1,4 @@
+#! /usr/bin/python3
 # beware : zipfile.write(...) insert a file in the archive with the full
 #          path given => that why we use a os.chdir() to avoid useless
 #          hierarchy node

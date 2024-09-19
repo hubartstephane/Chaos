@@ -353,14 +353,11 @@ if WINDOWS then
 	IRRKLANG_TOCOPY  = path.join("bin", "winx64-visualStudio" , "irrKlang.dll")  
 end
 if LINUX then
-	HOME = os.getenv("HOME")
---	IRRKLANG_BASE_PATH = path.join(HOME, "irrklang", "irrKlang-64bit-1.6.0")
-	IRRKLANG_BASE_PATH = path.join("/", "home", "stephane", "irrklang", "irrKlang-64bit-1.6.0")
+	IRRKLANG_PATH = "irrKlang-64bit-1.6.0"
 	IRRKLANG_INC_PATH = "include"
-	IRRKLANG_LIB_PATH = path.join("bin", "linux-gcc-64")
-	IRRKLANG_LINKOPTIONS = "libIrrKlang.so"
---	IRRKLANG_LIB_NAME = "libIrrKlang.so"	
+	IRRKLANG_LINKOPTIONS = path.join(EXTERNAL_PATH, "irrKlang-64bit-1.6.0", "bin", "linux-gcc-64", "libIrrKlang.so")
 end
+
 build:DeclareExternalLib("IRRKLANG")
 
 

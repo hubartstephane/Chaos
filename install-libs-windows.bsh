@@ -1,8 +1,8 @@
 #! /usr/bin/bash
 
 # This script compiles and installs most libraries into "external" directory
-SCRIPT_PATH=$(pwd)/$0
-SCRIPT_PATH=$(dirname $SCRIPT_PATH)
+SCRIPT=$(readlink -f "$0")
+SCRIPT_PATH=$(dirname $SCRIPT)
 EXTERNAL_PATH=$SCRIPT_PATH/external
 
 INSTALLATION_PATH=$EXTERNAL_PATH/installation

@@ -1,3 +1,4 @@
+#! /usr/bin/python3
 # A mydoxygen.conf file can be created with the command :
 #
 #  doxygen -g mydoxygen.conf

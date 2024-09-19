@@ -1,3 +1,4 @@
+#! /usr/bin/python3
 # XXX : why such a useless executable that make   xcopy only ?
 #       because path in commands send from premake replace \ by / (or the inverse)
 #       that makes trouble on windows
@@ -8,7 +9,9 @@
 #       that would be interpreted by bash as 'copy.py'
 #       That why there this file is called MYcopy.py       
 
-import os, sys, shutil
+import os
+import sys
+import shutil
 
 def MyCopy(src, dst):
   print ("MYCOPY [%s] = > [%s]" % (src, dst))

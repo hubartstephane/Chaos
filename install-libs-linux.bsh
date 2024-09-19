@@ -1,5 +1,8 @@
 #! /bin/bash
 
+SCRIPT=$(readlink -f "$0")
+SCRIPT_PATH=$(dirname $SCRIPT)
+
 DoInstall()
 {
 	echo "==========================================================="
@@ -33,13 +36,9 @@ else
 			DoInstall vulkan-tools
 			DoInstall vulkan-validationlayers
 			DoInstall vulkan-validationlayers-dev
-			#OVR not found
-			#GLI not found
-			#NANA not found
-			#TRISTRIPPER not found
-			#FMOD STUDIO not found
-			#IRRKLANG not found (.zip can be found)
-			#FBXSDK not found (.zip can be found)
+			
+			IRRKLANG=$SCRIPT_PATH/external/installation/irrKlang-64bit-1.6.0.zip
+			unzip $IRRKLANG -d $SCRIPT_PATH/external					
 		fi
 		if [ "$i" == "-exe" ] ; then
 			DoInstall premake4

@@ -7,6 +7,19 @@ INSTALLATION_PATH=$EXTERNAL_PATH/installation
 BASE_INSTALL_PATH=$EXTERNAL_PATH
 BASE_BUILD_PATH=$EXTERNAL_PATH/build
 
+echo "========================================================="
+echo " Initial Clean"
+echo "========================================================="	
+
+# (re)create the build directory
+rm -fr $BASE_BUILD_PATH 
+mkdir -p $BASE_BUILD_PATH
+
+
+
+
+
+
 function BeginBuildLibrary()
 {
 	LIBRARY=$1
@@ -40,44 +53,45 @@ else
 	for i in $* ; do
 		if [ "$i" == "-lib" ] ; then
 		
-#			DoInstall libglm-dev
-#			DoInstall libboost-all-dev
-#			DoInstall liblua5.4-dev
-#			DoInstall libfreetype6-dev
-#			DoInstall libfreeimage-dev
-#			DoInstall libfreeimageplus-dev
-#			DoInstall nlohmann-json3-dev
-#			DoInstall libglfw3-dev
-#			DoInstall libglew2.0
-#			DoInstall libglew-dev
-#			DoInstall libassimp-dev
-#			DoInstall libtinyxml2-dev
-#			DoInstall clang
-#			DoInstall gcc-multilib 
-#			DoInstall g++-multilib
-#			DoInstall glslang-dev
-#			DoInstall vulkan-tools
-#			DoInstall vulkan-validationlayers
-#			DoInstall vulkan-validationlayers-dev
+			DoInstall libglm-dev
+			DoInstall libboost-all-dev
+			DoInstall liblua5.4-dev
+			DoInstall libfreetype6-dev
+			DoInstall libfreeimage-dev
+			DoInstall libfreeimageplus-dev
+			DoInstall nlohmann-json3-dev
+			DoInstall libglfw3-dev
+			DoInstall libglew2.0
+			DoInstall libglew-dev
+			DoInstall libassimp-dev
+			DoInstall libtinyxml2-dev
+			DoInstall clang
+			DoInstall gcc-multilib 
+			DoInstall g++-multilib
+			DoInstall glslang-dev
+			DoInstall vulkan-tools
+			DoInstall vulkan-validationlayers
+			DoInstall vulkan-validationlayers-dev
 
-			#IRRKLANG=$INSTALLATION_PATH/irrKlang-64bit-1.6.0.zip
-			#rm -fr $EXTERNAL_PATH/irrKlang-64bit-1.6.0						
-			#unzip $IRRKLANG -d $EXTERNAL_PATH				
-			
-			#rm -fr $EXTERNAL_PATH/ImGui						
-			#unzip $INSTALLATION_PATH/ImGui -d $BASE_INSTALL_PATH
-			
-			#premake5 $TARGET --file=$SCRIPT_PATH/premake_scripts/premake5.lua --os=linux
-			
+			# install IRRKLANG
+			IRRKLANG=$INSTALLATION_PATH/irrKlang-64bit-1.6.0.zip
+			rm -fr $EXTERNAL_PATH/irrKlang-64bit-1.6.0						
+			unzip $IRRKLANG -d $EXTERNAL_PATH				
+									
+			# install IMGUI
+			rm -fr $BASE_INSTALL_PATH/imgui	
+			unzip $INSTALLATION_PATH/imgui -d $BASE_INSTALL_PATH
+			premake5 codelite --file=$BASE_INSTALL_PATH/imgui/premake5.lua --os=linux			
+			codelite-make -d=build -w="$BASE_INSTALL_PATH/imgui/ImGUI.workspace" -p=ImGUIOpenGL -c="Debug" -e
+			codelite-make -d=build -w="$BASE_INSTALL_PATH/imgui/ImGUI.workspace" -p=ImGUIOpenGL -c="Release" -e										
 				
 		fi
 		if [ "$i" == "-exe" ] ; then
 		
-			DoInstall git
 			DoInstall codelite
-			DoInstall premake4
-			DoInstall codeblocks
-			DoInstall kdevelop
+			#DoInstall premake4
+			#DoInstall codeblocks
+			#DoInstall kdevelop
 			DoInstall cmake
 			DoInstall libpython3-all-dev
 			DoInstall dos2unix

@@ -10,7 +10,7 @@ BASE_INSTALL_PATH=$EXTERNAL_PATH
 BASE_BUILD_PATH=$EXTERNAL_PATH/build
 
 echo "========================================================="
-echo " Clean"
+echo " Initial Clean"
 echo "========================================================="	
 
 # (re)create the build directory
@@ -175,7 +175,9 @@ if [ $INSTALL_BOOST -gt 0 ] ; then
 	
 	rm -fr $EXTERNAL_PATH/boost_1_83_0
 
-	curl -L https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.zip --output $BASE_BUILD_PATH/boost_1_83_0.zip  --ssl-no-revoke
+	BOOST_URL=https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.zip
+	
+	curl -L $BOOST_URL --output $BASE_BUILD_PATH/boost_1_83_0.zip --ssl-no-revoke
 	unzip $BASE_BUILD_PATH/boost_1_83_0.zip -d $BASE_BUILD_PATH
 	cd $BASE_BUILD_PATH/boost_1_83_0
 	$BASE_BUILD_PATH/boost_1_83_0/bootstrap.bat
@@ -188,8 +190,13 @@ fi
 # Some clean
 ###########################################################################
 
-echo "========================================================="
-echo " Clean"
-echo "========================================================="	
+FINAL_CLEAN=1
 
-#rm -fr $BASE_BUILD_PATH
+if [ $FINAL_CLEAN -gt 0 ] ; then
+
+	echo "========================================================="
+	echo " Final Clean"
+	echo "========================================================="	
+
+	rm -fr $BASE_BUILD_PATH
+fi

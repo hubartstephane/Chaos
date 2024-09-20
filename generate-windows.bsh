@@ -1,8 +1,8 @@
 #! /usr/bin/bash
 
 # go in the directory of current script
-SCRIPT_PATH=$(pwd)/$0
-SCRIPT_PATH=$(dirname $SCRIPT_PATH)
+SCRIPT=$(readlink -f "$0")
+SCRIPT_PATH=$(dirname $SCRIPT)
 cd $SCRIPT_PATH
 
 # Search target in arguments (beware case sensitive)

@@ -1,9 +1,30 @@
-#! /bin/bash
+#! /usr/bin/bash
 
 SCRIPT=$(readlink -f "$0")
 SCRIPT_PATH=$(dirname $SCRIPT)
+EXTERNAL_PATH=$SCRIPT_PATH/external
+INSTALLATION_PATH=$EXTERNAL_PATH/installation
+BASE_INSTALL_PATH=$EXTERNAL_PATH
+BASE_BUILD_PATH=$EXTERNAL_PATH/build
 
-DoInstall()
+function BeginBuildLibrary()
+{
+	LIBRARY=$1
+	CONFIG_TYPE=$2
+	SRC_PATH=$INSTALLATION_PATH/$LIBRARY
+	BUILD_PATH=$BASE_BUILD_PATH/$LIBRARY/$CONFIG_TYPE
+	INSTALL_PATH=$BASE_INSTALL_PATH/$LIBRARY/$CONFIG_TYPE
+	
+	echo "========================================================="
+	echo "  -> Building: " $LIBRARY
+	echo "       CONFIG_TYPE:  " $CONFIG_TYPE	
+	echo "       SRC_PATH:     " $SRC_PATH
+	echo "       BUILD_PATH:   " $BUILD_PATH
+	echo "       INSTALL_PATH: " $INSTALL_PATH
+	echo "========================================================="
+}
+
+function DoInstall()
 {
 	echo "==========================================================="
 	echo "==  Install: " $1
@@ -12,50 +33,75 @@ DoInstall()
 }
 
 if [ "$#" -eq 0 ]; then
-	echo "usage: sudo $0 -lib  -> install most of the libraries"
-	echo "usage: sudo $0 -exe  -> install some usual executables"
+	echo "usage: sudo $0 -lib   -> install most of the libraries"
+	echo "usage: sudo $0 -exe   -> install some necessary executables"
+	echo "usage: sudo $0 -tools -> install some extra tools"
 else
 	for i in $* ; do
 		if [ "$i" == "-lib" ] ; then
-			DoInstall libglm-dev
-			DoInstall libboost-all-dev
-			DoInstall liblua5.4-dev
-			DoInstall libfreetype6-dev
-			DoInstall libfreeimage-dev
-			DoInstall libfreeimageplus-dev
-			DoInstall nlohmann-json3-dev
-			DoInstall libglfw3-dev
-			DoInstall libglew2.0
-			DoInstall libglew-dev
-			DoInstall libassimp-dev
-			DoInstall libtinyxml2-dev
-			DoInstall clang
-			DoInstall gcc-multilib 
-			DoInstall g++-multilib
-			DoInstall glslang-dev
-			DoInstall vulkan-tools
-			DoInstall vulkan-validationlayers
-			DoInstall vulkan-validationlayers-dev
+		
+#			DoInstall libglm-dev
+#			DoInstall libboost-all-dev
+#			DoInstall liblua5.4-dev
+#			DoInstall libfreetype6-dev
+#			DoInstall libfreeimage-dev
+#			DoInstall libfreeimageplus-dev
+#			DoInstall nlohmann-json3-dev
+#			DoInstall libglfw3-dev
+#			DoInstall libglew2.0
+#			DoInstall libglew-dev
+#			DoInstall libassimp-dev
+#			DoInstall libtinyxml2-dev
+#			DoInstall clang
+#			DoInstall gcc-multilib 
+#			DoInstall g++-multilib
+#			DoInstall glslang-dev
+#			DoInstall vulkan-tools
+#			DoInstall vulkan-validationlayers
+#			DoInstall vulkan-validationlayers-dev
+
+			#IRRKLANG=$INSTALLATION_PATH/irrKlang-64bit-1.6.0.zip
+			#rm -fr $EXTERNAL_PATH/irrKlang-64bit-1.6.0						
+			#unzip $IRRKLANG -d $EXTERNAL_PATH				
 			
-			IRRKLANG=$SCRIPT_PATH/external/installation/irrKlang-64bit-1.6.0.zip
-			unzip $IRRKLANG -d $SCRIPT_PATH/external					
+			#rm -fr $EXTERNAL_PATH/ImGui						
+			#unzip $INSTALLATION_PATH/ImGui -d $BASE_INSTALL_PATH
+			
+			#premake5 $TARGET --file=$SCRIPT_PATH/premake_scripts/premake5.lua --os=linux
+			
+				
 		fi
 		if [ "$i" == "-exe" ] ; then
+		
+			DoInstall git
+			DoInstall codelite
 			DoInstall premake4
 			DoInstall codeblocks
 			DoInstall kdevelop
+			DoInstall cmake
+			DoInstall libpython3-all-dev
+			DoInstall dos2unix
+			DoInstall unix2dos 
+			
+			PREMAKE5_URL=https://github.com/premake/premake-core/releases/download/v5.0.0-beta2/premake-5.0.0-beta2-linux.tar.gz
+			curl -L $PREMAKE5_URL --output $BASE_INSTALL_PATH/premake5.tar.gz  --ssl-no-revoke
+			gunzip --stdout $BASE_INSTALL_PATH/premake5.tar.gz | tar -x
+			mv $BASE_INSTALL_PATH/premake5 /usr/bin						
+			rm $BASE_INSTALL_PATH/premake5.tar.gz
+			rm $BASE_INSTALL_PATH/example.so
+			rm $BASE_INSTALL_PATH/libluasocket.so			
+			
+		fi
+		if [ "$i" == "-tools" ] ; then
+		
 			DoInstall blender
 			DoInstall blender-data
 			DoInstall krita
 			DoInstall krita-data
-			DoInstall cmake
-			DoInstall libpython3-all-dev
 			DoInstall vlc
 			DoInstall audacity
 			DoInstall tiled
-			DoInstall dos2unix
-			DoInstall unix2dos 
-		fi
+		fi		
 	done
 fi
 

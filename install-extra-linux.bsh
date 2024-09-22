@@ -18,7 +18,7 @@ function Title()
 function DoInstall()
 {
 	Title "Install $1"
-	apt install $1 -y
+	sudo apt install $1 -y
 }
 
 if [ "$#" -eq 0 ]; then
@@ -90,7 +90,7 @@ else
 			curl -L $PREMAKE5_URL --output $BASE_INSTALL_PATH/premake5.tar.gz  --ssl-no-revoke
 			mkdir -p $BASE_INSTALL_PATH/premake5_tmp
 			gunzip --stdout $BASE_INSTALL_PATH/premake5.tar.gz | tar -x -C $BASE_INSTALL_PATH/premake5_tmp
-			mv $BASE_INSTALL_PATH/premake5_tmp/premake5 /usr/bin						
+			sudo mv $BASE_INSTALL_PATH/premake5_tmp/premake5 /usr/bin						
 			rm -fr $BASE_INSTALL_PATH/premake5_tmp
 			rm -fr $BASE_INSTALL_PATH/premake5.tar.gz									
 		fi

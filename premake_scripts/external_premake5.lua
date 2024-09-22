@@ -365,7 +365,10 @@ build:DeclareExternalLib("IRRKLANG")
 --------------------------------------------------------------------
 
 if WINDOWS then
-
+	IMGUI_PATH     = "ImGui"
+	IMGUI_INC_PATH = "."
+	IMGUI_LIB_PATH = path.join("bin", "windows", "Release")
+	IMGUI_LIB_NAME = "ImGUIOpenGL.lib"
 end
 
 if LINUX then

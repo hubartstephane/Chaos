@@ -4,7 +4,6 @@
 SCRIPT=$(readlink -f "$0")
 SCRIPT_PATH=$(dirname $SCRIPT)
 EXTERNAL_PATH=$SCRIPT_PATH/external
-
 INSTALLATION_PATH=$EXTERNAL_PATH/installation
 BASE_INSTALL_PATH=$EXTERNAL_PATH
 BASE_BUILD_PATH=$EXTERNAL_PATH/build
@@ -16,7 +15,6 @@ function Title()
 	echo "========================================================="
 }
 
-
 ###########################################################################
 # Initial Clean
 ###########################################################################
@@ -26,14 +24,6 @@ Title "Initial Clean"
 # (re)create the build directory
 rm -fr $BASE_BUILD_PATH 
 mkdir -p $BASE_BUILD_PATH
-
-
-
-
-
-
-
-
 
 # glfw on linux requires libxinerama-dev
 # sudo apt-get update -y
@@ -63,8 +53,8 @@ if [ $UNZIP_FILES -gt 0 ] ; then
 	unzip $INSTALLATION_PATH/FreeImage3180Win32Win64.zip -d $BASE_INSTALL_PATH
 	unzip $INSTALLATION_PATH/glew-2.2.0-win32.zip -d $BASE_INSTALL_PATH
 	unzip $INSTALLATION_PATH/irrKlang-64bit-1.6.0.zip -d $BASE_INSTALL_PATH
-	unzip $INSTALLATION_PATH/lua-5.4.2_Win64_vc16_lib -d $BASE_INSTALL_PATH/lua-5.4.2
-	unzip $INSTALLATION_PATH/ImGui -d $BASE_INSTALL_PATH
+	unzip $INSTALLATION_PATH/lua-5.4.2_Win64_vc16_lib.zip -d $BASE_INSTALL_PATH/lua-5.4.2
+	unzip $INSTALLATION_PATH/ImGui.zip -d $BASE_INSTALL_PATH
 	unzip $INSTALLATION_PATH/MSVC_Redist.zip -d $BASE_INSTALL_PATH
 	
 fi

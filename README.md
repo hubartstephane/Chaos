@@ -8,7 +8,7 @@ Internally, **premake5** is used to generate solutions:
 * **Codelite** on linux
 
 Chaos uses the following external libraries:
-* OpenGL
+* OpenGL 4.5
 * Glfw
 * Glew
 * Glm
@@ -19,10 +19,11 @@ Chaos uses the following external libraries:
 * Freetype2
 * Freeimage
 * Tinyxml2
-* Lua
-* Assimp
 * ZLib
-* Glslang
+* Lua           (not really used yet)
+* Assimp        (not really used yet)
+* Glslang       (not really used yet)
+* Vulkan        (not really used yet)
 
 Some of thoses libraries are forked from the original depot, some are ZIPPED within Chaos files themselves
  
@@ -44,7 +45,10 @@ install-extra-windows.bsh
 ```
 generate-windows.bsh
 ```
-
+* Start **Visual Studio 2022** and open the following solution:
+```
+solutions/vs2022/Death.sln
+```
 # Installation on linux
 
 * First, you need to install git and its tools:
@@ -69,4 +73,8 @@ install-extra-linux.bsh -tools                    (this is not mandatory)
 * Generate the **Codelite** solution with premake5:
 ```
 generate-linux.bsh
+```
+* Start **Codelite** and open the following solution:
+```
+solutions/codelite/Death.workspace
 ```

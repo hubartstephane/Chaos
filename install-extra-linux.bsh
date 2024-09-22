@@ -22,9 +22,9 @@ function DoInstall()
 }
 
 if [ "$#" -eq 0 ]; then
-	echo "usage: sudo $0 -lib   -> install most of the libraries"
-	echo "usage: sudo $0 -exe   -> install some necessary executables"
-	echo "usage: sudo $0 -tools -> install some extra tools"
+	echo "usage: $0 -lib   -> install most of the libraries"
+	echo "usage: $0 -exe   -> install some necessary executables"
+	echo "usage: $0 -tools -> install some extra tools"
 else
 	for i in $* ; do
 		if [ "$i" == "-lib" ] ; then

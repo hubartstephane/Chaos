@@ -62,11 +62,8 @@ else
 									
 			# install IMGUI
 			Title "Install ImGui"			
-			rm -fr $BASE_INSTALL_PATH/imgui	
-			unzip $INSTALLATION_PATH/imgui -d $BASE_INSTALL_PATH
-			premake5 codelite --file=$BASE_INSTALL_PATH/imgui/premake5.lua --os=linux			
-			codelite-make -d=build -w="$BASE_INSTALL_PATH/imgui/ImGUI.workspace" -p=ImGUIOpenGL -c="Debug" -e
-			codelite-make -d=build -w="$BASE_INSTALL_PATH/imgui/ImGUI.workspace" -p=ImGUIOpenGL -c="Release" -e										
+			rm -fr $BASE_INSTALL_PATH/ImGui	
+			unzip $INSTALLATION_PATH/ImGui.zip -d $BASE_INSTALL_PATH							
 			
 			# Final Clean
 			FINAL_CLEAN=1

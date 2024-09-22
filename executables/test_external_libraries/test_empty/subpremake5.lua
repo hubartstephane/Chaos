@@ -1,6 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/linux/test_json
+-- ROOT_PATH/executables/linux/test_empty
 -- =============================================================================
 
 local project = build:WindowedApp()
-project:DependOnLib("JSON")

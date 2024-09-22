@@ -1,4 +1,4 @@
-#Installation on windows
+# Installation on windows
 
 First, you need to install git and its tools:
 

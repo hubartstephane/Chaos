@@ -88,12 +88,11 @@ else
 			Title "Install Premake5"
 			PREMAKE5_URL=https://github.com/premake/premake-core/releases/download/v5.0.0-beta2/premake-5.0.0-beta2-linux.tar.gz
 			curl -L $PREMAKE5_URL --output $BASE_INSTALL_PATH/premake5.tar.gz  --ssl-no-revoke
-			gunzip --stdout $BASE_INSTALL_PATH/premake5.tar.gz | tar -x
-			mv $BASE_INSTALL_PATH/premake5 /usr/bin						
-			rm $BASE_INSTALL_PATH/premake5.tar.gz
-			rm $BASE_INSTALL_PATH/example.so
-			rm $BASE_INSTALL_PATH/libluasocket.so			
-			
+			mkdir -p $BASE_INSTALL_PATH/premake5_tmp
+			gunzip --stdout $BASE_INSTALL_PATH/premake5.tar.gz | tar -x -C $BASE_INSTALL_PATH/premake5_tmp
+			mv $BASE_INSTALL_PATH/premake5_tmp/premake5 /usr/bin						
+			rm -fr $BASE_INSTALL_PATH/premake5_tmp
+			rm -fr $BASE_INSTALL_PATH/premake5.tar.gz									
 		fi
 		if [ "$i" == "-tools" ] ; then
 		
@@ -107,8 +106,3 @@ else
 		fi		
 	done
 fi
-
-
-
-
-

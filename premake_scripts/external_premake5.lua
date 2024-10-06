@@ -288,7 +288,7 @@ if WINDOWS then
 	BOOST_LIB_PATH = "lib"
 end
 if LINUX then
-	BOOST_LIB_NAME = {"boost_system", "boost_thread", "boost_chrono", "boost_atomic", "boost_filesystem", "boost_timer", "boost_program_options", "boost-log"}
+	BOOST_LIB_NAME = {"boost_system", "boost_thread", "boost_chrono", "boost_atomic", "boost_filesystem", "boost_timer", "boost_program_options", "boost_log"}
 end
 
 build:DeclareExternalLib("BOOST")

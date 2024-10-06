@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include "glslang/Public/ShaderLang.h"
-#include "glslang/Public/ResourceLimits.h"
+#include "glslang/Include/ResourceLimits.h"
 
 int main(int argc, char ** argv)
 {

@@ -8,6 +8,8 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+#if 0
+
 	/**
 	* MyFbxImporterOutput : a class to hold all data results from the importation
 	*/
@@ -165,6 +167,8 @@ namespace chaos
 		/** the currently constructed bone */
 		size_t current_bone_index;
 	};
+
+#endif
 
 #endif
 

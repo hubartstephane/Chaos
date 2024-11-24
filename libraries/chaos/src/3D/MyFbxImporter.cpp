@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-
+#if 0
 
 	static void DisplayCurves(FbxObject * obj)
 	{
@@ -429,5 +429,7 @@ namespace chaos
 
 		return DoImportSceneHierarchyChildren(node, level);
 	}
+
+#endif
 
 }; // namespace chaos

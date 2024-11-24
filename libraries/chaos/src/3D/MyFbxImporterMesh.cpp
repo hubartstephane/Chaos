@@ -48,7 +48,7 @@ namespace chaos
 			return true;
 		}
 
-#endif
+
 
 		MyFbxImporter::BoneTableType MyFbxImporter::GetBoneData(FbxMesh * mesh)
 		{
@@ -546,5 +546,7 @@ namespace chaos
 			}
 			return nullptr;
 		}
+
+#endif
 
 }; // namespace chaos

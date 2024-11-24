@@ -26,6 +26,31 @@ Chaos uses the following external libraries:
 * Vulkan        (not really used yet)
 
 Some of thoses libraries are forked from the original depot, some are ZIPPED within Chaos files themselves
+
+# CMake Installation
+
+Even if not use in the premake process, external dependencies most be built and **CMake** is mandatory.
+Here the link for installation
+
+https://cmake.org/download/
+
+# Vulkan installation
+ 
+Vulkan has to be installed manually
+
+Here is the link for **windows**:
+
+https://vulkan.lunarg.com/sdk/home#windows
+
+Here is the link for **linux**:
+
+https://vulkan.lunarg.com/sdk/home#linux
+
+# FBX Installation
+ 
+not necessary yet
+
+https://aps.autodesk.com/developer/overview/fbx-sdk
  
 # Installation on windows
 
@@ -33,7 +58,7 @@ Some of thoses libraries are forked from the original depot, some are ZIPPED wit
 
 [https://git-scm.com/download/win](https://git-scm.com/download/win)
 
-* Start git shell and get the depot from git:
+* Start git shell and get the depot from git (from the directory you want to install chaos):
 ```
 git clone --recursive https://github.com/hubartstephane/Chaos.git
 ```
@@ -57,7 +82,7 @@ solutions/vs2022/Death.sln
 sudo apt install git
 ```
 
-* Then get the depot from git
+* Then get the depot from git (from the directory you want to install chaos)
 
 ```
 git clone --recursive https://github.com/hubartstephane/Chaos.git

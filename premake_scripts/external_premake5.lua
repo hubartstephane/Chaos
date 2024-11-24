@@ -195,8 +195,8 @@ if WINDOWS then
 			"MachineIndependentd.lib",
 			"GenericCodeGend.lib",
 			"glslang-default-resource-limitsd.lib",
-			"HLSLd.lib",
-			"OGLCompilerd.lib",
+			--"HLSLd.lib",
+			--"OGLCompilerd.lib",
 			"OSDependentd.lib",
 			"SPIRVd.lib",
 			"SPIRV-Toolsd.lib",
@@ -213,8 +213,8 @@ if WINDOWS then
 			"MachineIndependent.lib",
 			"GenericCodeGen.lib",
 			"glslang-default-resource-limits.lib",
-			"HLSL.lib",
-			"OGLCompiler.lib",
+		--	"HLSL.lib",
+		--	"OGLCompiler.lib",
 			"OSDependent.lib",
 			"SPIRV.lib",
 			"SPIRV-Tools.lib",
@@ -379,14 +379,6 @@ if LINUX then
 end
 
 build:DeclareExternalLib("IMGUI")
-
-
-
-
-
-
-
-
 
 
 

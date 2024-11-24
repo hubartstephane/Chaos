@@ -4,26 +4,26 @@ require "Object"
 -- The types of projects (the values are valid strings for premake5.kind(...) function)
 --------------------------------------------------------------------
 ProjectType = {
-	WINDOW_EXE = "WindowedApp",
-	CONSOLE_EXE = "ConsoleApp",
-	STATIC_LIBRARY = "StaticLib",
-	SHARED_LIBRARY = "SharedLib",
+	WINDOW_EXE       = "WindowedApp",
+	CONSOLE_EXE      = "ConsoleApp",
+	STATIC_LIBRARY   = "StaticLib",
+	SHARED_LIBRARY   = "SharedLib",
 	EXTERNAL_LIBRARY = "External Library", -- except for this
-	RESOURCES = "Makefile"
+	RESOURCES        = "Makefile"
 }
 
 --------------------------------------------------------------------
 -- Class declaration
 --------------------------------------------------------------------
 Project = Object:new({
-	project_name = "",
-	project_type = "",
-	project_path = "",
-	project_src_path = "",
+	project_name       = "",
+	project_type       = "",
+	project_path       = "",
+	project_src_path   = "",
 	project_build_path = "",
-	current_group = "",
-	gen_zip = false,
-	gen_doxygen = false
+	current_group      = "",
+	gen_zip            = false,
+	gen_doxygen        = false
 })
 
 --------------------------------------------------------------------
@@ -200,7 +200,7 @@ end
 --------------------------------------------------------------------
 
 -- note on staticruntime -> dll or static
---				 runtime			 -> debug or rekease
+--               runtime -> debug or release
 -- /MT static multithread
 -- /MTd static debug multithread
 -- /MD	DLL

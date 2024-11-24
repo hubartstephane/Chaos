@@ -4,6 +4,8 @@
 namespace chaos
 {
 
+#if 0
+
 	bool MyFbxImporter::DoImportSceneSkeletals(FbxScene * myScene)
 	{
 		FbxNode * root = myScene->GetRootNode();
@@ -96,6 +98,6 @@ namespace chaos
 		current_bone_index     = previous_bone;
 		return result;
 	}
-
+#endif
 
 }; // namespace chaos

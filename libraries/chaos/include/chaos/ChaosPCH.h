@@ -185,9 +185,9 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include <fbxsdk.h>
-#include <fbxsdk/fileio/fbxiosettings.h>
-#include <fbxsdk/scene/fbxscene.h>
+//#include <fbxsdk.h>
+//#include <fbxsdk/fileio/fbxiosettings.h>
+//#include <fbxsdk/scene/fbxscene.h>
 
 #include <ranges>
 

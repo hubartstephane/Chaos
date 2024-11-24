@@ -5,12 +5,12 @@ require "Utility"
 -- Class declaration
 --------------------------------------------------------------------
 BuildSystem = Object:new({
-	current_group = "",
-	project_name = "",
-	project_path = "",
-	project_src_path = "",
+	current_group      = "",
+	project_name       = "",
+	project_path       = "",
+	project_src_path   = "",
 	project_build_path = "",
-	projects = {}
+	projects           = {}
 })
 
 --------------------------------------------------------------------
@@ -48,17 +48,17 @@ function BuildSystem:ProcessSubPremake(dir_name, create_sub_group)
 			if (create_sub_group) then
 				self.current_group = path.join(self.current_group, name)
 			end
-			self.project_name = string.upper(path.getbasename(name))
-			self.project_path = path.join(self.project_path, path.getbasename(name))
-			self.project_src_path = path.join(ROOT_PATH, self.project_path)
+			self.project_name       = string.upper(path.getbasename(name))
+			self.project_path       = path.join(self.project_path, path.getbasename(name))
+			self.project_src_path   = path.join(ROOT_PATH, self.project_path)
 			self.project_build_path = path.join(BUILD_PATH, self.project_path)
 			include(path.join(self.project_src_path, "subpremake5.lua"))
 
 			Log:DecrementIndent()
 
 			self:RestoreEnvironment(env)
-    end
-  )
+		end
+	)
 end
 
 --------------------------------------------------------------------
@@ -72,14 +72,14 @@ function BuildSystem:AddProject(name, data)
 		assert(false, "Project " .. upper_name .. " already definied")
 	else
 		local result = Project:new(data)
-		result.project_name = name
-		result.targetdir = result.targetdir or Utility:GetPlatConfArray("")
-		result.includedirs = result.includedirs or Utility:GetPlatConfArray({})
+		result.project_name     = name
+		result.targetdir        = result.targetdir or Utility:GetPlatConfArray("")
+		result.includedirs      = result.includedirs or Utility:GetPlatConfArray({})
 		result.additionnal_libs = result.additionnal_libs or Utility:GetPlatConfArray({})
-		result.lib_name = result.lib_name or Utility:GetPlatConfArray({})
-		result.dependencies = {}
-		result.tocopy = result.tocopy or Utility:GetPlatConfArray({})
-		result.linkoptions = Utility:GetPlatConfArray(result.linkoptions or {})
+		result.lib_name         = result.lib_name or Utility:GetPlatConfArray({})
+		result.dependencies     = {}
+		result.tocopy           = result.tocopy or Utility:GetPlatConfArray({})
+		result.linkoptions      = Utility:GetPlatConfArray(result.linkoptions or {})
 		self.projects[upper_name] = result
 
 		return result
@@ -107,11 +107,11 @@ function BuildSystem:DeclareExternalLib(name)
 
 	local result = self:AddProject(external_name, {
 		project_src_path = src_path,
-		project_type = ProjectType.EXTERNAL_LIBRARY,
-		includedirs = Utility:PrefixPathArray(Utility:GetPlatConfArray(inc_path), src_path),
-		targetdir = Utility:PrefixPathArray(Utility:GetPlatConfArray(lib_path), src_path),
-		lib_name = Utility:GetPlatConfArray(lib_name),
-		linkoptions = Utility:GetPlatConfArray(linkoptions or {})
+		project_type     = ProjectType.EXTERNAL_LIBRARY,
+		includedirs      = Utility:PrefixPathArray(Utility:GetPlatConfArray(inc_path), src_path),
+		targetdir        = Utility:PrefixPathArray(Utility:GetPlatConfArray(lib_path), src_path),
+		lib_name         = Utility:GetPlatConfArray(lib_name),
+		linkoptions      = Utility:GetPlatConfArray(linkoptions or {})
 	})
 
 	if (not Utility:IsNil(tocopy)) then
@@ -125,7 +125,7 @@ function BuildSystem:DeclareExternalLib(name)
 				if (result.targetdir[plat][conf]) then -- in some cases there may be a library to link with but no directory specified (ex OpenGL)
 					Utility:ForEachElement(result.lib_name[plat][conf],
 						function(lib_name)
-							local fullpath = result.targetdir[plat][conf] .. "/" .. lib_name
+							local fullpath = path.join(result.targetdir[plat][conf], lib_name)
 							if not os.isfile(fullpath) then
 								assert(false, "library does not exist: " .. fullpath)
 							end
@@ -146,10 +146,10 @@ function BuildSystem:CppProject(project_type)
 
 	-- basics
 	local result = self:AddProject(self.project_name, {
-		project_type = project_type,
-		current_group = self.current_group,
-		project_path = self.project_path,
-		project_src_path = self.project_src_path,
+		project_type       = project_type,
+		current_group      = self.current_group,
+		project_path       = self.project_path,
+		project_src_path   = self.project_src_path,
 		project_build_path = self.project_build_path
 	})
 
@@ -244,7 +244,11 @@ function BuildSystem:CollectDependencies()
 		for _, proj in pairs(self.projects) do
 			local count1 = #proj.dependencies
 			for _, depend_project_name in ipairs(proj.dependencies) do
-				table.append(proj.dependencies, self.projects[depend_project_name].dependencies)
+				if not self.projects[depend_project_name] then
+					Log:Output("BuildSystem:CollectDependencies: project [" .. proj.project_name .. "] depends on unknown project [" .. depend_project_name .. "]")
+				else
+					table.append(proj.dependencies, self.projects[depend_project_name].dependencies)
+				end
 			end
 			local count2 = #proj.dependencies
 			if (count2 ~= count1) then

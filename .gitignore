@@ -2,3 +2,4 @@ build/**
 solutions/**
 zip/**
 external/**
+generate.log

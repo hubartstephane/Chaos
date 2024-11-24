@@ -12,5 +12,5 @@ if [ $# -ge 1 ]; then
 fi
 
 # start premake
-premake5 $TARGET --file=$SCRIPT_PATH/premake_scripts/premake5.lua --os=linux
+premake5 $TARGET --file=$SCRIPT_PATH/premake_scripts/premake5.lua --os=linux 2>&1 | tee generate.log
 

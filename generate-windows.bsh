@@ -18,4 +18,4 @@ if [ ! -f $PREMAKE5_PATH ]; then
 fi
 
 # start premake
-$PREMAKE5_PATH $TARGET --file=$SCRIPT_PATH/premake_scripts/premake5.lua
+$PREMAKE5_PATH --verbose $TARGET --file=$SCRIPT_PATH/premake_scripts/premake5.lua 2>&1 | tee generate.log

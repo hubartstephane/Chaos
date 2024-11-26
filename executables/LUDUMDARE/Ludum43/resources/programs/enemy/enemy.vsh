@@ -15,16 +15,13 @@ out vec2  particle_center;
 
 uniform mat4 local_to_camera;
 uniform mat4 projection_matrix;
-uniform float position_blend_ratio;
+uniform float enlarge_enemy;
 
 uniform sampler2DArray material; // texture required in VS for Half pixel correction
 
 void main() 
 {
-	
-
-  vec2 p = (position_blend_ratio * position0) + (1.0 - position_blend_ratio) * position1;
-
+	vec2 p = (enlarge_enemy * position1) + (1.0 - enlarge_enemy) * position0;
 
 	// For enlarged enemies, we want to compute the circle inside the particle box (instead of reading a texture)
 	//   => the texture is good used for normal rendering is good. Always white except a small blur near the limit of the circle

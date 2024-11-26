@@ -7,7 +7,7 @@ in vec4 vs_color;
 in float distance_to_center;
 in vec2  particle_center;
 
-uniform float position_blend_ratio; 
+uniform float enlarge_enemy; 
 
 uniform sampler2DArray material;
 
@@ -17,7 +17,7 @@ void main()
 		vec4(1.0, 1.0, 1.0, 1.0) :
 		texture(material, vs_texcoord);
 
-	if (position_blend_ratio == 0.0) // enlarged zone
+	if (enlarge_enemy > 0.0) // enlarged zone
 	{
 		float ratio = clamp(1.0 - (length(vs_position - particle_center) / distance_to_center), 0.0, 1.0);
 

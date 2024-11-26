@@ -261,6 +261,12 @@ namespace chaos
 
 	int WindowApplication::Main()
 	{
+
+#if _WIN32
+		// prevent windows to be in pause
+		SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED);
+#endif // #if _WIN32
+
 		// create the main window
 		Window * main_window = CreateMainWindow();
 		if (main_window == nullptr)
@@ -659,8 +665,7 @@ namespace chaos
 			return false;
 
 		IMGUI_CHECKVERSION();
-
-		FreeImage_Initialise(); // glew will be initialized
+		FreeImage_Initialise();
 		FreeImage_SetOutputMessage(&FreeImageOutputMessageFunc);
 		glfwInit();
 		return true;

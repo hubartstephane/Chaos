@@ -78,39 +78,23 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 		// World limits on RED
 		// ---------------------------------------------
 		{
-			auto f = render_params.viewport.size;
-			auto a = render_params.material_provider;
-			auto b = render_params.object_filter;
-
 			chaos::GPURenderParams other_render_params = render_params;
 			other_render_params.renderpass_name = "WORLD_LIMITS_ONLY";
-
-#if 0
-			chaos::DisableReferenceCount<chaos::GPUParticleLayerFilterList> filter;
-			filter.name_filter.enable_names.push_back("WorldLimits");
-			other_render_params.object_filter = &filter;
-#endif
 
 			glColorMask(true, false, false, true);
 			ludum_level_instance->Display(renderer, uniform_provider, other_render_params);
 		}
 
 		// ---------------------------------------------
-		// (enlarged) Enemies on GREEN  (position_blend_ratio => enlarged for enemies)
+		// (enlarged) Enemies on GREEN  (enlarge_enemy => enlarged for enemies)
 		//  BLACK => greatest deformation, white => smallest deformation
 		// ---------------------------------------------
 		{
 			chaos::GPURenderParams other_render_params = render_params;
 			other_render_params.renderpass_name = "ENEMIES_ONLY";
 
-#if 0
-			chaos::DisableReferenceCount<chaos::GPUParticleLayerFilterList> filter;
-			filter.name_filter.enable_names.push_back("Enemies");
-			other_render_params.object_filter = &filter;
-#endif
-
 			chaos::GPUProgramProviderChain enlarged_provider(uniform_provider);
-			enlarged_provider.AddVariable("position_blend_ratio", 0.0f);
+			enlarged_provider.AddVariable("enlarge_enemy", 1.0f);
 
 			glColorMask(false, true, false, true);
 			ludum_level_instance->Display(renderer, &enlarged_provider, other_render_params);
@@ -130,17 +114,6 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 
 		chaos::GPURenderParams other_render_params = render_params;
 		other_render_params.renderpass_name = "DEFORMED_OBJECT";
-
-#if 0
-		chaos::DisableReferenceCount<chaos::GPUParticleLayerFilterList> filter;
-		filter.name_filter.forbidden_names.push_back("Enemies");
-		filter.name_filter.forbidden_names.push_back("Atoms");
-		filter.name_filter.forbidden_names.push_back("PlayerAndCamera");
-		filter.name_filter.forbidden_names.push_back("WorldLimits");
-		filter.name_filter.forbidden_names.push_back("Texts");
-		other_render_params.object_filter = &filter;
-#endif
-
 
 		// display the background
 		DoDisplayBackground(renderer, uniform_provider, render_params);
@@ -188,17 +161,12 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 		chaos::GPURenderParams other_rendering_params = render_params;
 		other_rendering_params.renderpass_name = "UNDEFORMED_OBJECT";
 
-#if 0
-		chaos::DisableReferenceCount<chaos::GPUParticleLayerFilterList> filter;
-		filter.name_filter.enable_names.push_back("Enemies");
-		filter.name_filter.enable_names.push_back("Atoms");
-		filter.name_filter.enable_names.push_back("PlayerAndCamera");
-		filter.name_filter.enable_names.push_back("Texts");
-		other_rendering_params.object_filter = &filter;
-#endif
+		chaos::GPUProgramProviderChain enlarged_provider(uniform_provider);
+		enlarged_provider.AddVariable("enlarge_enemy", 0.0f);
+
 
 		// draw particle system (the background)
-		level_instance->Display(renderer, uniform_provider, other_rendering_params);
+		level_instance->Display(renderer, &enlarged_provider, other_rendering_params);
 	}
 }
 

@@ -1,3 +1,5 @@
+![Logo Chaos](./LogoChaos.png)
+
 # Chaos
 
 Chaos is a project dedicated for game development.

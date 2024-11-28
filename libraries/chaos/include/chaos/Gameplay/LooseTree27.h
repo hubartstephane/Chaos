@@ -324,7 +324,7 @@ namespace chaos
 	class Tree27Node : public PARENT
 	{
 		template<int DIMENSION, typename PARENT>
-		friend class Tree27;
+		friend class LooseTree27;
 
 	public:
 
@@ -524,7 +524,7 @@ namespace chaos
 	};
 
 	template<int DIMENSION, typename NODE_PARENT>
-	class Tree27
+	class LooseTree27
 	{
 	public:
 
@@ -542,7 +542,7 @@ namespace chaos
 		using node_type = Tree27Node<dimension, NODE_PARENT>;
 
 		/** destructor */
-		~Tree27()
+		~LooseTree27()
 		{
 			Clear();
 		}

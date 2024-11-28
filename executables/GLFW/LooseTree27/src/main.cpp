@@ -180,7 +180,7 @@ public:
 
 	size_t object_id = 0;
 
-	chaos::Tree27<3, Tree27NodeBase>::node_type * node = nullptr;
+	chaos::LooseTree27<3, Tree27NodeBase>::node_type * node = nullptr;
 
 	static constexpr float DISPLACEMENT_SPEED = 100.0f;
 
@@ -370,7 +370,7 @@ protected:
 	{
 		glDisable(GL_CULL_FACE);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		object_tree.ForEachNode([this](chaos::Tree27<3, Tree27NodeBase>::node_type const* node)
+		object_tree.ForEachNode([this](chaos::LooseTree27<3, Tree27NodeBase>::node_type const* node)
 		{
 			primitive_renderer->GPUDrawPrimitive(node->GetBoundingBox(), white, false, true);
 		});
@@ -707,7 +707,7 @@ protected:
 		return nullptr;
 	}
 
-	void InsertObjectIntoNode(GeometricObject* object, chaos::Tree27<3, Tree27NodeBase>::node_type * node)
+	void InsertObjectIntoNode(GeometricObject* object, chaos::LooseTree27<3, Tree27NodeBase>::node_type * node)
 	{
 		object->node = node;
 		object->node->objects.push_back(object);
@@ -828,7 +828,7 @@ protected:
 	/** the icon for rotate */
 	chaos::shared_ptr<chaos::GPUTexture> rotate_icon_texture;
 
-	chaos::Tree27<3, Tree27NodeBase> object_tree;
+	chaos::LooseTree27<3, Tree27NodeBase> object_tree;
 
 	chaos::weak_ptr<GeometricObject> pointed_object;
 

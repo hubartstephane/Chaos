@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/GLFW/TestTree27
+-- ROOT_PATH/executables/GLFW/LooseTree27
 -- =============================================================================
 
 local project = build:WindowedApp()

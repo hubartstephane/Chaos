@@ -9,7 +9,7 @@ namespace chaos
 
 
 
-
+#if 0
 
 
 
@@ -335,7 +335,7 @@ namespace chaos
 		vector_operation_processor.ResolvePendingOperation();
 	}
 
-
+#endif
 
 
 
@@ -366,7 +366,9 @@ namespace chaos
 				}
 			}
 			ImGui::EndTable();
+		}
 
+#if 0
 
 			ImGui::BeginDisabled();
 
@@ -418,6 +420,8 @@ namespace chaos
 		ImGui::PushID(1);
 		DrawArray(names1);
 		ImGui::PopID();
+
+#endif
 
 	}
 

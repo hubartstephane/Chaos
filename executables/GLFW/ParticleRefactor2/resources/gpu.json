@@ -1,5 +1,0 @@
-{
-	"textures":{"[include]":"$SCRIPT_PATH/textures.json"},
-	"programs":{"[include]":"$SCRIPT_PATH/programs.json"},
-	"rendermaterials":{"[include]":"$SCRIPT_PATH/rendermaterials.json"}
-}

@@ -1,4 +1,0 @@
-{
-  "fragment": "$SCRIPT_PATH/pixel_shader1.txt",
-  "vertex": "$SCRIPT_PATH/vertex_shader1.txt"
-}

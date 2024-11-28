@@ -1,5 +1,0 @@
-{
-		"@prog1":{"[include]":"$SCRIPT_PATH/programs/program1.json"},
-		"@prog2":{"[include]":"$SCRIPT_PATH/programs/program2.json"},
-		"@prog3":{"[include]":"$SCRIPT_PATH/programs/program3.json"}
-}

@@ -7,7 +7,10 @@ static glm::vec4 const green = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 static glm::vec4 const blue  = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
 static glm::vec4 const white = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
+class Tree27NodeBase;
 
+using loose_tree_type = chaos::LooseTree27<3, Tree27NodeBase, chaos::ObjectPool>;
+using loose_tree_node_type = loose_tree_type::node_type;
 
 // =======================================================================
 
@@ -180,7 +183,7 @@ public:
 
 	size_t object_id = 0;
 
-	chaos::LooseTree27<3, Tree27NodeBase>::node_type * node = nullptr;
+	loose_tree_node_type * node = nullptr;
 
 	static constexpr float DISPLACEMENT_SPEED = 100.0f;
 
@@ -370,7 +373,7 @@ protected:
 	{
 		glDisable(GL_CULL_FACE);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		object_tree.ForEachNode([this](chaos::LooseTree27<3, Tree27NodeBase>::node_type const* node)
+		object_tree.ForEachNode([this](loose_tree_node_type const* node)
 		{
 			primitive_renderer->GPUDrawPrimitive(node->GetBoundingBox(), white, false, true);
 		});
@@ -707,7 +710,7 @@ protected:
 		return nullptr;
 	}
 
-	void InsertObjectIntoNode(GeometricObject* object, chaos::LooseTree27<3, Tree27NodeBase>::node_type * node)
+	void InsertObjectIntoNode(GeometricObject* object, loose_tree_node_type * node)
 	{
 		object->node = node;
 		object->node->objects.push_back(object);
@@ -828,7 +831,7 @@ protected:
 	/** the icon for rotate */
 	chaos::shared_ptr<chaos::GPUTexture> rotate_icon_texture;
 
-	chaos::LooseTree27<3, Tree27NodeBase> object_tree;
+    loose_tree_type object_tree;
 
 	chaos::weak_ptr<GeometricObject> pointed_object;
 

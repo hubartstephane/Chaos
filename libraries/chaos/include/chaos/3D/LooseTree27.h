@@ -139,8 +139,6 @@ namespace chaos
 		};
 	};
 
-
-
 	template<int DIMENSION>
 	class Tree27NodeInfo
 	{
@@ -323,7 +321,7 @@ namespace chaos
 	template<int DIMENSION, typename PARENT>
 	class Tree27Node : public PARENT
 	{
-		template<int DIMENSION, typename PARENT>
+		template<int DIMENSION, typename PARENT, template<typename> class NODE_ALLOCATOR>
 		friend class LooseTree27;
 
 	public:
@@ -338,6 +336,13 @@ namespace chaos
 		using box_type = type_geometric<float, dimension>::box_type;
 		/** the type for NodeInfo */
 		using node_info_type = Tree27NodeInfo<dimension>;
+
+		/** constructor */
+		Tree27Node()
+		{
+			for (int i = 0; i < children_count; ++i)
+				children[i] = nullptr;
+		}
 
 		/** check whether node can be removed */
 		bool CanBeRemoved() const
@@ -396,13 +401,6 @@ namespace chaos
 		}
 
 	protected:
-
-		/** constructor */
-		Tree27Node()
-		{
-			for (int i = 0; i < children_count; ++i)
-				children[i] = nullptr;
-		}
 
 		/** if the node has a single child, extract it and return it */
 		Tree27Node * ExtractSingleChildNode()
@@ -523,7 +521,7 @@ namespace chaos
 		int index_in_parent = 0;
 	};
 
-	template<int DIMENSION, typename NODE_PARENT>
+	template<int DIMENSION, typename NODE_PARENT, template<typename> class NODE_ALLOCATOR_TEMPLATE = StandardAllocator>
 	class LooseTree27
 	{
 	public:
@@ -540,6 +538,8 @@ namespace chaos
 		using node_info_type = Tree27NodeInfo<dimension>;
 		/** the type for nodes */
 		using node_type = Tree27Node<dimension, NODE_PARENT>;
+		/** the type for allocator */
+		using node_allocator_type = NODE_ALLOCATOR_TEMPLATE<node_type>;
 
 		/** destructor */
 		~LooseTree27()
@@ -636,13 +636,13 @@ namespace chaos
 		/** allocate a node */
 		node_type* AllocateNode()
 		{
-			return new node_type;
+			return node_allocator.Allocate();
 		}
 
 		/** destroy the node */
 		void DeleteNode(node_type* node)
 		{
-			delete(node);
+			node_allocator.Free(node);
 		}
 
 		/** internal recursive method to create a node and insert it into the tree */
@@ -710,6 +710,8 @@ namespace chaos
 
 		/** the root node */
 		node_type* root = nullptr;
+		/** the node allocator */
+		node_allocator_type node_allocator;
 	};
 
 

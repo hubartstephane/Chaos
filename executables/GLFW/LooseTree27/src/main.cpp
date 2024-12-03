@@ -278,31 +278,33 @@ protected:
 		{
 			bool enabled = (GetCurrentGeometricObject() != nullptr);
 
-			ImGui::Begin("help", &show_help, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
-			DrawTextItem("random scene", key_configuration.new_scene, true);
-			DrawTextItem("next object", key_configuration.next_object, enabled);
-			DrawTextItem("previous object", key_configuration.previous_object, enabled);
-			DrawTextItem("delete object", key_configuration.delete_object, enabled);
+			if (ImGui::Begin("help", &show_help, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
+			{
+				DrawTextItem("random scene", key_configuration.new_scene, true);
+				DrawTextItem("next object", key_configuration.next_object, enabled);
+				DrawTextItem("previous object", key_configuration.previous_object, enabled);
+				DrawTextItem("delete object", key_configuration.delete_object, enabled);
 
-			if (current_action_type == ActionType::MOVE_OBJECT)
-			{
-				DrawTextItem("move object -x", key_configuration.move_object_negative_x, enabled);
-				DrawTextItem("move object +x", key_configuration.move_object_positive_x, enabled);
-				DrawTextItem("move object -y", key_configuration.move_object_negative_y, enabled);
-				DrawTextItem("move object +y", key_configuration.move_object_positive_y, enabled);
-				DrawTextItem("move object -z", key_configuration.move_object_negative_z, enabled);
-				DrawTextItem("move object +z", key_configuration.move_object_positive_z, enabled);
+				if (current_action_type == ActionType::MOVE_OBJECT)
+				{
+					DrawTextItem("move object -x", key_configuration.move_object_negative_x, enabled);
+					DrawTextItem("move object +x", key_configuration.move_object_positive_x, enabled);
+					DrawTextItem("move object -y", key_configuration.move_object_negative_y, enabled);
+					DrawTextItem("move object +y", key_configuration.move_object_positive_y, enabled);
+					DrawTextItem("move object -z", key_configuration.move_object_negative_z, enabled);
+					DrawTextItem("move object +z", key_configuration.move_object_positive_z, enabled);
+				}
+				else if (current_action_type == ActionType::SCALE_OBJECT)
+				{
+					DrawTextItem("scale object -x", key_configuration.scale_object_negative_x, enabled);
+					DrawTextItem("scale object +x", key_configuration.scale_object_positive_x, enabled);
+					DrawTextItem("scale object -y", key_configuration.scale_object_negative_y, enabled);
+					DrawTextItem("scale object +y", key_configuration.scale_object_positive_y, enabled);
+					DrawTextItem("scale object -z", key_configuration.scale_object_negative_z, enabled);
+					DrawTextItem("scale object +z", key_configuration.scale_object_positive_z, enabled);
+				}
+				ImGui::End();
 			}
-			else if (current_action_type == ActionType::SCALE_OBJECT)
-			{
-				DrawTextItem("scale object -x", key_configuration.scale_object_negative_x, enabled);
-				DrawTextItem("scale object +x", key_configuration.scale_object_positive_x, enabled);
-				DrawTextItem("scale object -y", key_configuration.scale_object_negative_y, enabled);
-				DrawTextItem("scale object +y", key_configuration.scale_object_positive_y, enabled);
-				DrawTextItem("scale object -z", key_configuration.scale_object_negative_z, enabled);
-				DrawTextItem("scale object +z", key_configuration.scale_object_positive_z, enabled);
-			}
-			ImGui::End();
 		}
 
 		OnDrawToolbar();

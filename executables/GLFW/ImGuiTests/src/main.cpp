@@ -362,13 +362,13 @@ void DrawArray(std::vector<T>& values)
 			if constexpr (std::copy_constructible<T>)
 				if (ImGui::Selectable("Duplicate"))
 					vector_operation_processor.Duplicate(i);
-			if constexpr (std::is_default_constructible_v<T>)
-				if (ImGui::Selectable("Insert Before"))
-					vector_operation_processor.InsertBefore(i);
-			if constexpr (std::is_default_constructible_v<T>)
-				if (ImGui::Selectable("Insert After"))
-					vector_operation_processor.InsertAfter(i);
-			ImGui::EndPopup();
+					if constexpr (std::is_default_constructible_v<T>)
+						if (ImGui::Selectable("Insert Before"))
+							vector_operation_processor.InsertBefore(i);
+					if constexpr (std::is_default_constructible_v<T>)
+						if (ImGui::Selectable("Insert After"))
+							vector_operation_processor.InsertAfter(i);
+					ImGui::EndPopup();
 		}
 
 		ImGui::PopID();
@@ -440,13 +440,271 @@ if (WindowApplication* WA = Application::GetInstance())
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		enum class PopupPlacementType
+		{
+			ScreenCenter,
+			CursorPosition,
+			FreePosition
+		};
+
+		class PopupPlacement
+		{
+		public:
+
+			/** get an instance for a popup centered on screen */
+			static PopupPlacement GetCenterOnScreenPlacement(bool in_movable = true, const glm::vec2 & in_alignment = {0.5f, 0.5f})
+			{
+				PopupPlacement result;
+				result.placement_type = PopupPlacementType::ScreenCenter;
+				result.movable        = in_movable;
+				result.alignment      = in_alignment;
+				return result;
+			}
+			/** get an instance for a popup placed on cursor position */
+			static PopupPlacement GetCenterOnCursorPlacement(bool in_movable = true, const glm::vec2& in_alignment = { 0.0f, 0.0f })
+			{
+				PopupPlacement result;
+				result.placement_type = PopupPlacementType::CursorPosition;
+				result.movable        = in_movable;
+				result.alignment      = in_alignment;
+				return result;
+			}
+
+			/** get an instance for a popup at a given position */
+			static PopupPlacement GetCenterOnPositionPlacement(const glm::vec2& in_position, bool in_movable = true, const glm::vec2& in_alignment = { 0.5f, 0.5f })
+			{
+				PopupPlacement result;
+				result.placement_type = PopupPlacementType::FreePosition;
+				result.movable        = in_movable;
+				result.alignment      = in_alignment;
+				result.position       = in_position;
+				return result;
+			}
+
+		public:
+
+			/** how to place the popup */
+			PopupPlacementType placement_type = PopupPlacementType::ScreenCenter;
+			/** whether the popup can be moved */
+			bool movable = true;
+			/** the position of the popup */
+			glm::vec2 position = { 0.0f, 0.0f };
+			/** the alignment of the popup */
+			glm::vec2 alignment = { 0.5f, 0.5f };
+		};
+
+		enum class PopupState
+		{
+			Closed,
+			Opening,
+			Opened
+		};
+
+
+		template<typename T>
+		class ImGuiPopupBase
+		{
+		public:
+
+			/** the return type of the popup */
+			using RESULT_TYPE = std::conditional_t<
+				std::is_same_v<T, void>,
+				void,
+				std::optional<T>
+			>;
+
+			/** entry point of the window loop */
+			virtual RESULT_TYPE Process()
+			{
+				if constexpr (!std::is_same_v<void, T>)
+					if (popup_state == PopupState::Closed)
+						return {};
+
+				if (popup_state == PopupState::Opening)
+				{
+					ImGui::OpenPopup(popup_name.c_str(), ImGuiPopupFlags_MouseButtonRight);
+
+					ImVec2 position = { 0.0f, 0.0f };
+					ImVec2 alignment = { popup_placement.alignment.x, popup_placement.alignment.y };
+
+					if (popup_placement.placement_type == PopupPlacementType::ScreenCenter)
+						position = ImGui::GetMainViewport()->GetCenter();
+					else if (popup_placement.placement_type == PopupPlacementType::CursorPosition)
+						position = ImGui::GetMousePos();
+					else if (popup_placement.placement_type == PopupPlacementType::FreePosition)
+						position = { popup_placement.position.x, popup_placement.position.y };
+
+					ImGui::SetNextWindowPos(position, ImGuiCond_Always, alignment);
+
+					popup_state = PopupState::Opened;
+				}
+
+				int flags = GetPopupFlags();
+				if (!popup_placement.movable)
+					flags |= ImGuiWindowFlags_NoMove;
+
+				if (ImGui::BeginPopupModal(popup_name.c_str(), NULL, flags))
+				{
+					if constexpr (std::is_same_v<void, T>)
+					{
+						DoProcess();
+						ImGui::EndPopup();
+					}
+					else
+					{
+						RESULT_TYPE result = DoProcess();
+						ImGui::EndPopup();
+						return result;
+					}
+				}
+
+				if constexpr (!std::is_same_v<void, T>)
+					return {};
+			}
+
+			/** get the current state of the popup */
+			PopupState GetPopupState() const
+			{
+				return popup_state;
+			}
+
+			/** end popup lifetime */
+			void Close()
+			{
+				if (popup_state == PopupState::Closed)
+					return;
+
+				if (popup_state == PopupState::Opened)
+					ImGui::CloseCurrentPopup();
+
+				popup_name = {};
+				popup_state = PopupState::Closed;
+			}
+
+		protected:
+
+			/** get the window flags */
+			virtual int GetPopupFlags() const
+			{
+				return ImGuiWindowFlags_AlwaysAutoResize;
+			}
+
+			/** this method is to be override. It describes the popup content and a return value when the popup lifetime is over */
+			virtual RESULT_TYPE DoProcess()
+			{
+				if constexpr (!std::is_same_v<T, void>)
+					return {};
+			}
+
+			/** internal method called to open the popup. Derived class has to implement a public Open method that initialize the popup and calls DoOpen */
+			bool DoOpen(std::string in_popup_name, const PopupPlacement & in_placement)
+			{
+				if (popup_state != PopupState::Closed)
+					return false;
+
+				popup_name      = std::move(in_popup_name);
+				popup_placement = in_placement;
+				popup_state     = PopupState::Opening;
+				return true;
+			}
+
+		protected:
+
+			/** the title of the popup */
+			std::string popup_name;
+			/** the state of the popup */
+			PopupState popup_state = PopupState::Closed;
+			/** placement behaviour of the popup */
+			PopupPlacement popup_placement;
+		};
+
+
+
+
+
+
+
+
+		// ----------------------------------------------------------------------------------------
+
+		class ImGuiErrorPopup : public ImGuiPopupBase<void>
+		{
+		public:
+
+			void Open(std::string in_popup_name, std::string in_message, const PopupPlacement& in_placement = {})
+			{
+				if (DoOpen(std::move(in_popup_name), in_placement))
+				{
+					message = std::move(in_message);
+				}
+			}
+
+		protected:
+
+			virtual void DoProcess() override
+			{
+				if (ImGui::IsKeyDown(ImGuiKey::ImGuiKey_Escape))
+				{
+					Close();
+				}
+
+				ImGui::Text(message.c_str());
+				if (ImGui::Button("\\uf071 Close"))
+					Close();
+			}
+
+		protected:
+
+			std::string message;
+		};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class WindowOpenGLTest : public chaos::Window
 {
 	CHAOS_DECLARE_OBJECT_CLASS(WindowOpenGLTest, chaos::Window);
 
 protected:
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
+	virtual bool OnDraw(chaos::GPURenderer* renderer, chaos::GPUProgramProviderInterface const* uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
 		glm::vec4 clear_color(0.1f, 0.0f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -455,7 +713,68 @@ protected:
 		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 		return true;
 	}
+
+	virtual void OnDrawWindowImGuiContent()
+	{
+
+#if 0
+		static ImFont* fontAwesome = nullptr;
+
+		static bool b = false;
+		if (!b)
+		{
+			b = true;
+
+			chaos::Buffer buf = chaos::FileTools::LoadFile(chaos::Application::GetInstance()->GetResourcesPath() / "fonts/fontawesome-webfont.ttf");
+
+			ImGuiIO& io = ImGui::GetIO();
+			//ImFont* fontAwesome = io.Fonts->AddFontFromFileTTF("fontawesome-webfont.ttf", 16.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+
+
+			fontAwesome = io.Fonts->AddFontFromFileTTF(
+				(chaos::Application::GetInstance()->GetResourcesPath() / "fonts/fontawesome-webfont.ttf").string().c_str(),
+				16.0f);
+				//NULL, 
+				//io.Fonts->GetGlyphRangesDefault());
+
+
+			//fontAwesome = io.Fonts->AddFontFromMemoryCompressedTTF(buf.data, buf.bufsize, 16.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+
+
+		}
+
+		if (fontAwesome)
+			ImGui::PushFont(fontAwesome);
+#endif
+
+		if (ImGui::Begin("help", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
+		{
+
+			if (ImGui::Button("show popup", { 200.0f , 200.0f }))
+			{
+				PopupPlacement placement = PopupPlacement::GetCenterOnScreenPlacement();
+				placement.movable = true;
+				error_popup.Open("error", "this is the error message", placement);
+			}
+			ImGui::End();
+		}
+
+#if 0
+		if (fontAwesome)
+			ImGui::PopFont();
+#endif
+
+		error_popup.Process();
+
+
+
+	}
+
+protected:
+
+	ImGuiErrorPopup error_popup;
 };
+
 
 int main(int argc, char ** argv, char ** env)
 {

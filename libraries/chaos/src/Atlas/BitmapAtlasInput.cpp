@@ -253,7 +253,7 @@ namespace chaos
 
 				boost::filesystem::path json_path = resolved_path;
 				json_path.replace_extension("json");
-				JSONTools::LoadJSONFile(json_path, json_manifest);
+				JSONTools::LoadJSONFile(json_path, json_manifest, LoadFileFlag::NO_ERROR_TRACE);
 
 				// do not individually load the manifest in recursive calls
 				add_data.ignore_files.push_back(json_path);

@@ -476,7 +476,7 @@ namespace chaos
 		RayConvexGeometryIntersectionResult FilterPositiveIntersectionOnly() const
 		{
 			RayConvexGeometryIntersectionResult result;
-			for (int i = 0; i < count ; ++i)
+			for (size_t i = 0; i < count ; ++i)
 				if (info[i]->t >= 0.0f)
 					result.AddIntersectionPoint(info[i]->t, info[i]->position);
 			return result;
@@ -486,14 +486,14 @@ namespace chaos
 		RayConvexGeometryIntersectionResult FilterNegativeIntersectionOnly() const
 		{
 			RayConvexGeometryIntersectionResult result;
-			for (int i = 0; i < count ; ++i)
+			for (size_t i = 0; i < count ; ++i)
 				if (info[i]->t <= 0.0f)
 					result.AddIntersectionPoint(info[i]->t, info[i]->position);
 			return result;
 		}
 
 		/** get number of intersection */
-		int GetIntersectionCount() const
+		size_t GetIntersectionCount() const
 		{
 			return count;
 		}
@@ -511,7 +511,7 @@ namespace chaos
 		/** data for each intersection */
 		std::optional<IntersectionInfo> info[2];
 		/** number of intersections */
-		int count = 0;
+		size_t count = 0;
 	};
 
 	template<typename T, int dimension>
@@ -526,7 +526,7 @@ namespace chaos
 		T c = glm::length2(AC) - s.radius * s.radius;
 
 		MathTools::Polynome2Solution<T> solutions = MathTools::SolvePolynome2(a, b, c);
-		for (int i = 0; i < solutions.count; ++i)
+		for (size_t i = 0; i < solutions.count; ++i)
 			result.AddIntersectionPoint(solutions.solutions[i], r.position + r.direction * solutions.solutions[i]);
 
 		return result;

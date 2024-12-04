@@ -714,42 +714,25 @@ protected:
 		return true;
 	}
 
-	virtual void OnDrawWindowImGuiContent()
+
+	virtual void InitializeImGuiContext() override
 	{
+		chaos::Window::InitializeImGuiContext();
 
-#if 0
-		static ImFont* fontAwesome = nullptr;
+		ImGuiIO& io = ImGui::GetIO();
+		fontAwesome = io.Fonts->AddFontFromFileTTF(
+			(chaos::Application::GetInstance()->GetResourcesPath() / "fonts/unispace bold italic.ttf").string().c_str(),
+			20.0f);
 
-		static bool b = false;
-		if (!b)
-		{
-			b = true;
+	}
 
-			chaos::Buffer buf = chaos::FileTools::LoadFile(chaos::Application::GetInstance()->GetResourcesPath() / "fonts/fontawesome-webfont.ttf");
-
-			ImGuiIO& io = ImGui::GetIO();
-			//ImFont* fontAwesome = io.Fonts->AddFontFromFileTTF("fontawesome-webfont.ttf", 16.0f, NULL, io.Fonts->GetGlyphRangesDefault());
-
-
-			fontAwesome = io.Fonts->AddFontFromFileTTF(
-				(chaos::Application::GetInstance()->GetResourcesPath() / "fonts/fontawesome-webfont.ttf").string().c_str(),
-				16.0f);
-				//NULL, 
-				//io.Fonts->GetGlyphRangesDefault());
-
-
-			//fontAwesome = io.Fonts->AddFontFromMemoryCompressedTTF(buf.data, buf.bufsize, 16.0f, NULL, io.Fonts->GetGlyphRangesDefault());
-
-
-		}
-
+	virtual void OnDrawWindowImGuiContent() override
+	{
 		if (fontAwesome)
 			ImGui::PushFont(fontAwesome);
-#endif
 
 		if (ImGui::Begin("help", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
 		{
-
 			if (ImGui::Button("show popup", { 200.0f , 200.0f }))
 			{
 				PopupPlacement placement = PopupPlacement::GetCenterOnScreenPlacement();
@@ -759,20 +742,17 @@ protected:
 			ImGui::End();
 		}
 
-#if 0
 		if (fontAwesome)
 			ImGui::PopFont();
-#endif
 
 		error_popup.Process();
-
-
-
 	}
 
 protected:
 
 	ImGuiErrorPopup error_popup;
+
+	ImFont* fontAwesome = nullptr;
 };
 
 

@@ -1,26 +1,8 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
-// concate 2 values altogether
-#define CHAOS_PP_CONCAT_IMPL(a,b) a ## b
-#define CHAOS_PP_CONCAT(a,b) CHAOS_PP_CONCAT_IMPL(a,b)
-
 // concate 4 values altogether
-#define CHAOS_PP_CONCAT_4_IMPL(a, b, c, d) CHAOS_PP_CONCAT(CHAOS_PP_CONCAT(a, b), CHAOS_PP_CONCAT(c, d))
+#define CHAOS_PP_CONCAT_4_IMPL(a, b, c, d) BOOST_PP_CAT(BOOST_PP_CAT(a, b), BOOST_PP_CAT(c, d))
 #define CHAOS_PP_CONCAT_4(a, b, c, d) CHAOS_PP_CONCAT_4_IMPL(a, b, c, d)
-
-// compute OR operator on two 0-1 values
-#define CHAOS_PP_OR_IMPL_00 0
-#define CHAOS_PP_OR_IMPL_01 1
-#define CHAOS_PP_OR_IMPL_10 1
-#define CHAOS_PP_OR_IMPL_11 1
-#define CHAOS_PP_OR_IMPL(a,b) CHAOS_PP_CONCAT(CHAOS_PP_OR_IMPL_,CHAOS_PP_CONCAT(a,b))
-#define CHAOS_PP_OR(a,b) CHAOS_PP_OR_IMPL(a,b)
-
-// make a if-then-else choice from a 0-1 value
-#define CHAOS_PP_IF_IMPL_0(then, else) else
-#define CHAOS_PP_IF_IMPL_1(then, else) then
-#define CHAOS_PP_IF_IMPL(cond, then, else) CHAOS_PP_CONCAT(CHAOS_PP_IF_IMPL_,cond)(then, else)
-#define CHAOS_PP_IF(cond, then, else) CHAOS_PP_IF_IMPL(cond, then, else)
 
 // create a hard coded UTF8 string from any byte
 #define CHAOS_PP_BYTE_TO_UTF8_IMPL_00 "\x00"
@@ -279,7 +261,7 @@
 #define CHAOS_PP_BYTE_TO_UTF8_IMPL_FD "\xFD"
 #define CHAOS_PP_BYTE_TO_UTF8_IMPL_FE "\xFE"
 
-#define CHAOS_PP_BYTE_TO_UTF8_IMPL(x) CHAOS_PP_CONCAT(CHAOS_PP_BYTE_TO_UTF8_IMPL_,x)
+#define CHAOS_PP_BYTE_TO_UTF8_IMPL(x) BOOST_PP_CAT(CHAOS_PP_BYTE_TO_UTF8_IMPL_,x)
 #define CHAOS_PP_BYTE_TO_UTF8(x) CHAOS_PP_BYTE_TO_UTF8_IMPL(x)
 
 // check whether a nibble is greater than 7 (strictly)
@@ -299,7 +281,8 @@
 #define CHAOS_PP_IS_NIBBLE_GREATER_THAN_7_IMPL_D 1
 #define CHAOS_PP_IS_NIBBLE_GREATER_THAN_7_IMPL_E 1
 #define CHAOS_PP_IS_NIBBLE_GREATER_THAN_7_IMPL_F 1
-#define CHAOS_PP_IS_NIBBLE_GREATER_THAN_7_IMPL(x) CHAOS_PP_CONCAT(CHAOS_PP_IS_NIBBLE_GREATER_THAN_7_IMPL_,x)
+
+#define CHAOS_PP_IS_NIBBLE_GREATER_THAN_7_IMPL(x) BOOST_PP_CAT(CHAOS_PP_IS_NIBBLE_GREATER_THAN_7_IMPL_,x)
 #define CHAOS_PP_IS_GREATER_THAN_7(x) CHAOS_PP_IS_NIBBLE_GREATER_THAN_7_IMPL(x)
 
 // check whether a NIBBLE is non zero
@@ -319,7 +302,8 @@
 #define CHAOS_PP_IS_NIBBLE_NON_ZERO_IMPL_D 1
 #define CHAOS_PP_IS_NIBBLE_NON_ZERO_IMPL_E 1
 #define CHAOS_PP_IS_NIBBLE_NON_ZERO_IMPL_F 1
-#define CHAOS_PP_IS_NIBBLE_NON_ZERO_IMPL(x) CHAOS_PP_CONCAT(CHAOS_PP_IS_NIBBLE_NON_ZERO_IMPL_,x)
+
+#define CHAOS_PP_IS_NIBBLE_NON_ZERO_IMPL(x) BOOST_PP_CAT(CHAOS_PP_IS_NIBBLE_NON_ZERO_IMPL_,x)
 #define CHAOS_PP_IS_NIBBLE_NON_ZERO(x) CHAOS_PP_IS_NIBBLE_NON_ZERO_IMPL(x)
 
 // ensure any hexadecimal figure is uppercase
@@ -345,7 +329,8 @@
 #define CHAOS_PP_NIBLE_TOUPPER_E E
 #define CHAOS_PP_NIBLE_TOUPPER_f F
 #define CHAOS_PP_NIBLE_TOUPPER_F F
-#define CHAOS_PP_NIBLE_TOUPPER_IMPL(x) CHAOS_PP_CONCAT(CHAOS_PP_NIBLE_TOUPPER_,x)
+
+#define CHAOS_PP_NIBLE_TOUPPER_IMPL(x) BOOST_PP_CAT(CHAOS_PP_NIBLE_TOUPPER_,x)
 #define CHAOS_PP_NIBLE_TOUPPER(x) CHAOS_PP_NIBLE_TOUPPER_IMPL(x)
 
 // select a given bit from any nible
@@ -437,7 +422,8 @@
 #define CHAOS_PP_NIBLE_HEX_TO_BIN_D 1101
 #define CHAOS_PP_NIBLE_HEX_TO_BIN_E 1110
 #define CHAOS_PP_NIBLE_HEX_TO_BIN_F 1111
-#define CHAOS_PP_NIBLE_HEX_TO_BIN_IMPL(x) CHAOS_PP_CONCAT(CHAOS_PP_NIBLE_HEX_TO_BIN_,x)
+
+#define CHAOS_PP_NIBLE_HEX_TO_BIN_IMPL(x) BOOST_PP_CAT(CHAOS_PP_NIBLE_HEX_TO_BIN_,x)
 #define CHAOS_PP_NIBLE_HEX_TO_BIN(x) CHAOS_PP_NIBLE_HEX_TO_BIN_IMPL(x)
 
 // transform a nible from binary representation into hexadecimal representation
@@ -457,7 +443,8 @@
 #define CHAOS_PP_NIBLE_BIN_TO_HEX_1101 D
 #define CHAOS_PP_NIBLE_BIN_TO_HEX_1110 E
 #define CHAOS_PP_NIBLE_BIN_TO_HEX_1111 F
-#define CHAOS_PP_NIBLE_BIN_TO_HEX_IMPL(x) CHAOS_PP_CONCAT(CHAOS_PP_NIBLE_BIN_TO_HEX_,x)
+
+#define CHAOS_PP_NIBLE_BIN_TO_HEX_IMPL(x) BOOST_PP_CAT(CHAOS_PP_NIBLE_BIN_TO_HEX_,x)
 #define CHAOS_PP_NIBLE_BIN_TO_HEX(x) CHAOS_PP_NIBLE_BIN_TO_HEX_IMPL(x)
 
 // The purpose of this macro is to have a hard coded string buffer for UTF8 corresponding to a unicode value (not all possible values yet)
@@ -466,7 +453,7 @@
 // encode a UNICODE value into a raw UTF8 buffer (for values that requires 4 bytes)
 #define CHAOS_PP_UNICODE_TO_UTF8_4_IMPL(a,b,c,d,e)\
 CHAOS_PP_BYTE_TO_UTF8(\
-  CHAOS_PP_CONCAT(\
+  BOOST_PP_CAT(\
     CHAOS_PP_NIBLE_BIN_TO_HEX(\
       CHAOS_PP_CONCAT_4(\
         1,\
@@ -486,7 +473,7 @@ CHAOS_PP_BYTE_TO_UTF8(\
   )\
 )\
 CHAOS_PP_BYTE_TO_UTF8(\
-  CHAOS_PP_CONCAT(\
+  BOOST_PP_CAT(\
     CHAOS_PP_NIBLE_BIN_TO_HEX(\
       CHAOS_PP_CONCAT_4(\
         1,\
@@ -506,7 +493,7 @@ CHAOS_PP_BYTE_TO_UTF8(\
   )\
 )\
 CHAOS_PP_BYTE_TO_UTF8(\
-  CHAOS_PP_CONCAT(\
+  BOOST_PP_CAT(\
     CHAOS_PP_NIBLE_BIN_TO_HEX(\
       CHAOS_PP_CONCAT_4(\
         1,\
@@ -526,7 +513,7 @@ CHAOS_PP_BYTE_TO_UTF8(\
   )\
 )\
 CHAOS_PP_BYTE_TO_UTF8(\
-  CHAOS_PP_CONCAT(\
+  BOOST_PP_CAT(\
     CHAOS_PP_NIBLE_BIN_TO_HEX(\
       CHAOS_PP_CONCAT_4(\
         1,\
@@ -551,7 +538,7 @@ CHAOS_PP_BYTE_TO_UTF8(\
 // encode a UNICODE value into a raw UTF8 buffer (for values that requires 3 bytes)
 #define CHAOS_PP_UNICODE_TO_UTF8_3_IMPL(a,b,c,d,e)\
 CHAOS_PP_BYTE_TO_UTF8(\
-  CHAOS_PP_CONCAT(\
+  BOOST_PP_CAT(\
     CHAOS_PP_NIBLE_BIN_TO_HEX(\
       CHAOS_PP_CONCAT_4(\
         1,\
@@ -571,7 +558,7 @@ CHAOS_PP_BYTE_TO_UTF8(\
   )\
 )\
 CHAOS_PP_BYTE_TO_UTF8(\
-  CHAOS_PP_CONCAT(\
+  BOOST_PP_CAT(\
     CHAOS_PP_NIBLE_BIN_TO_HEX(\
       CHAOS_PP_CONCAT_4(\
         1,\
@@ -591,7 +578,7 @@ CHAOS_PP_BYTE_TO_UTF8(\
   )\
 )\
 CHAOS_PP_BYTE_TO_UTF8(\
-  CHAOS_PP_CONCAT(\
+  BOOST_PP_CAT(\
     CHAOS_PP_NIBLE_BIN_TO_HEX(\
       CHAOS_PP_CONCAT_4(\
         1,\
@@ -616,7 +603,7 @@ CHAOS_PP_BYTE_TO_UTF8(\
 // encode a UNICODE value into a raw UTF8 buffer (for values that requires 2 bytes)
 #define CHAOS_PP_UNICODE_TO_UTF8_2_IMPL(a,b,c,d,e)\
 CHAOS_PP_BYTE_TO_UTF8(\
-  CHAOS_PP_CONCAT(\
+  BOOST_PP_CAT(\
     CHAOS_PP_NIBLE_BIN_TO_HEX(\
       CHAOS_PP_CONCAT_4(\
         1,\
@@ -636,7 +623,7 @@ CHAOS_PP_BYTE_TO_UTF8(\
   )\
 )\
 CHAOS_PP_BYTE_TO_UTF8(\
-  CHAOS_PP_CONCAT(\
+  BOOST_PP_CAT(\
     CHAOS_PP_NIBLE_BIN_TO_HEX(\
       CHAOS_PP_CONCAT_4(\
         1,\
@@ -661,7 +648,7 @@ CHAOS_PP_BYTE_TO_UTF8(\
 // encode a UNICODE value into a raw UTF8 buffer (for values that requires 1 byte)
 #define CHAOS_PP_UNICODE_TO_UTF8_1_IMPL(a,b,c,d,e)\
 CHAOS_PP_BYTE_TO_UTF8(\
-  CHAOS_PP_CONCAT(\
+  BOOST_PP_CAT(\
     CHAOS_PP_NIBLE_BIN_TO_HEX(\
       CHAOS_PP_CONCAT_4(\
         0,\
@@ -685,14 +672,14 @@ CHAOS_PP_BYTE_TO_UTF8(\
 
 // the entry point to encode any UNICODE to UTF8
 #define CHAOS_PP_UNICODE_TO_UTF8_IMPL(a,b,c,d,e)\
-CHAOS_PP_IF(\
+BOOST_PP_IF(\
 	CHAOS_PP_IS_NIBBLE_NON_ZERO(a),\
 	CHAOS_PP_UNICODE_TO_UTF8_4(a,b,c,d,e),\
-	CHAOS_PP_IF(\
-		CHAOS_PP_OR(CHAOS_PP_IS_NIBBLE_NON_ZERO(b), CHAOS_PP_IS_GREATER_THAN_7(c)),\
+	BOOST_PP_IF(\
+		BOOST_PP_OR(CHAOS_PP_IS_NIBBLE_NON_ZERO(b), CHAOS_PP_IS_GREATER_THAN_7(c)),\
 		CHAOS_PP_UNICODE_TO_UTF8_3(a,b,c,d,e),\
-		CHAOS_PP_IF(\
-			CHAOS_PP_OR(CHAOS_PP_IS_NIBBLE_NON_ZERO(c), CHAOS_PP_IS_GREATER_THAN_7(d)),\
+		BOOST_PP_IF(\
+			BOOST_PP_OR(CHAOS_PP_IS_NIBBLE_NON_ZERO(c), CHAOS_PP_IS_GREATER_THAN_7(d)),\
 			CHAOS_PP_UNICODE_TO_UTF8_2(a,b,c,d,e),\
 			CHAOS_PP_UNICODE_TO_UTF8_1(a,b,c,d,e)\
 		)\

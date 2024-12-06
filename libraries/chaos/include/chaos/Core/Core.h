@@ -1,3 +1,4 @@
+#include "chaos/Core/Preprocessor.h"
 #include "chaos/Core/Localization.h"
 #include "chaos/Core/EmptyClass.h"
 #include "chaos/Core/LightweightFunction.h"

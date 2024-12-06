@@ -130,6 +130,8 @@
 #include <boost/preprocessor/facilities/empty.hpp>
 #include <boost/preprocessor/control/if.hpp>
 #include <boost/preprocessor/logical/or.hpp>
+#include <boost/preprocessor/variadic/size.hpp>
+#include <boost/preprocessor/facilities/expand.hpp>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #define GLM_FORCE_SIZE_T_LENGTH

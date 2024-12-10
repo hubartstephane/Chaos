@@ -450,9 +450,9 @@ namespace chaos
 			StreamTools::Whitespaces whitespaces(indent);
 			stream << whitespaces << "  glyph_width  : " << info.glyph_width << '\n';
 			stream << whitespaces << "  glyph_height : " << info.glyph_height << '\n';
-			stream << whitespaces << "  ascender             : " << info.ascender << '\n';
-			stream << whitespaces << "  descender            : " << info.descender << '\n';
-			stream << whitespaces << "  face_height          : " << info.face_height << '\n';
+			stream << whitespaces << "  ascender     : " << info.ascender << '\n';
+			stream << whitespaces << "  descender    : " << info.descender << '\n';
+			stream << whitespaces << "  face_height  : " << info.face_height << '\n';
 
 			// output the charactars in the fonts
 			if (info.elements.size() > 0)

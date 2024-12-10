@@ -20,15 +20,14 @@ namespace chaos
 	{
 		assert(glyph != nullptr);
 
-		FIBITMAP * result = nullptr;
-
 		FT_Error Err = FT_Render_Glyph(glyph, FT_RENDER_MODE_NORMAL); // render the slot into a bitmap
 		if (!Err)
-			result = GenerateImage(glyph->bitmap, pixel_format); // convert FreeType-bitmap into FreeImage-bitmap
-		return result;
+			return GenerateImage(glyph->bitmap, pixel_format); // convert FreeType-bitmap into FreeImage-bitmap
+
+		return nullptr;
 	}
 
-	ImageDescription FontTools::GetImageDescription(FT_Bitmap & bitmap)
+	ImageDescription FontTools::GetImageDescription(FT_Bitmap const & bitmap)
 	{
 		ImageDescription result;
 
@@ -80,7 +79,7 @@ namespace chaos
 		}
 	}
 
-	FIBITMAP * FontTools::GenerateImage(FT_Bitmap & bitmap, PixelFormat const & pixel_format)
+	FIBITMAP * FontTools::GenerateImage(FT_Bitmap const & bitmap, PixelFormat const & pixel_format)
 	{
 		if (!pixel_format.IsValid())
 			return nullptr;
@@ -129,13 +128,12 @@ namespace chaos
 	}
 
 
-	FT_BitmapGlyph FontTools::GetBitmapGlyph(FT_Face face, char c, bool accept_notfound_glyph)
+	FT_BitmapGlyph FontTools::GetBitmapGlyph(FT_Face face, uint32_t charcode, bool accept_notfound_glyph)
 	{
 		FT_Error error = 0;
 
-		// get glyph index
-		int glyph_index = FT_Get_Char_Index(face, c);
-		if (c != 0 && (glyph_index == 0 && !accept_notfound_glyph))
+		FT_UInt glyph_index = FT_Get_Char_Index(face, charcode);
+		if (charcode != 0 && (glyph_index == 0 && !accept_notfound_glyph))
 			return nullptr;
 
 		// load the glyph
@@ -143,44 +141,44 @@ namespace chaos
 		if (error)
 			return nullptr;
 
-		FT_Glyph glyph;
+		FT_BitmapGlyph glyph;
 
 		// copy the glyph
-		error = FT_Get_Glyph(face->glyph, &glyph);
+		error = FT_Get_Glyph(face->glyph, (FT_Glyph*)&glyph);
 		if (error || glyph == nullptr)
 			return nullptr;
 
 		// convert to a bitmap if necessary
-		if (glyph->format != FT_GLYPH_FORMAT_BITMAP)
+		if (glyph->root.format != FT_GLYPH_FORMAT_BITMAP)
 		{
-			error = FT_Glyph_To_Bitmap(&glyph, FT_RENDER_MODE_NORMAL, nullptr, true);
+			error = FT_Glyph_To_Bitmap((FT_Glyph*)&glyph, FT_RENDER_MODE_NORMAL, nullptr, true);
 			if (error)
 				return nullptr;
 		}
 
-		return (FT_BitmapGlyph)glyph;
+		return glyph;
 	}
 
-	std::map<char, FontTools::CharacterBitmapGlyph> FontTools::GetGlyphCacheForString(FT_Face face, char const * str)
+	std::map<uint32_t, FontTools::CharacterBitmapGlyph> FontTools::GetGlyphCacheForString(FT_Face face, char const * str)
 	{
 		assert(face != nullptr);
 		assert(str != nullptr);
 
-		std::map<char, CharacterBitmapGlyph> result;
+		std::map<uint32_t, CharacterBitmapGlyph> result;
 
 		// generate the glyph bitmap : for all characters
 		for (int i = 0; str[i] != 0; ++i)
 		{
-			char c = str[i];
+			uint32_t charcode = str[i];
 
-			if (result.find(c) != result.end()) // already in cache
+			if (result.find(charcode) != result.end()) // already in cache
 				continue;
 
-			FT_BitmapGlyph bitmap_glyph = GetBitmapGlyph(face, c, false);
+			FT_BitmapGlyph bitmap_glyph = GetBitmapGlyph(face, charcode, false);
 			if (bitmap_glyph == nullptr)
 				continue;
 
-			result.insert(std::make_pair(c, CharacterBitmapGlyph(bitmap_glyph))); // insert into cache
+			result.insert(std::make_pair(charcode, CharacterBitmapGlyph(bitmap_glyph))); // insert into cache
 		}
 
 		// generate the glyph bitmap : for 0
@@ -191,13 +189,13 @@ namespace chaos
 		return result;
 	}
 
-	FIBITMAP * FontTools::GenerateImage(FT_Face face, char c, PixelFormat const & pixel_format)
+	FIBITMAP * FontTools::GenerateImage(FT_Face face, uint32_t charcode, PixelFormat const & pixel_format)
 	{
 		assert(face != nullptr);
 
 		FIBITMAP * result = nullptr;
 
-		FT_BitmapGlyph bitmap_glyph = GetBitmapGlyph(face, c, true);
+		FT_BitmapGlyph bitmap_glyph = GetBitmapGlyph(face, charcode, true);
 		if (bitmap_glyph != nullptr)
 		{
 			result = GenerateImage(bitmap_glyph->bitmap, pixel_format);
@@ -242,7 +240,7 @@ namespace chaos
 			return result;
 
 		// generate all required glyph
-		std::map<char, CharacterBitmapGlyph> glyph_cache = GetGlyphCacheForString(face, str);
+		std::map<uint32_t, CharacterBitmapGlyph> glyph_cache = GetGlyphCacheForString(face, str);
 
 		// STEP 1 : compute required size
 		int min_x = std::numeric_limits<int>::max();
@@ -254,9 +252,9 @@ namespace chaos
 		int pos_y = 0;
 		for (int i = 0; str[i] != 0; ++i)
 		{
-			char c = str[i];
+			uint32_t charcode = str[i];
 
-			auto const it = glyph_cache.find(c);
+			auto const it = glyph_cache.find(charcode);
 			if (it == glyph_cache.cend())
 				continue;
 
@@ -320,9 +318,9 @@ namespace chaos
 				int pos_y = 0;
 				for (int i = 0; str[i] != 0; ++i)
 				{
-					char c = str[i];
+					uint32_t charcode = str[i];
 
-					auto const it = glyph_cache.find(c);
+					auto const it = glyph_cache.find(charcode);
 					if (it == glyph_cache.cend())
 						continue;
 
@@ -373,7 +371,4 @@ namespace chaos
 
 		return result;
 	}
-
 };
-
-

@@ -137,7 +137,7 @@ namespace chaos
 			return result;
 		}
 
-		void GeneratorData::EmitCharacters(char c, int count)
+		void GeneratorData::EmitCharacters(uint32_t charcode, size_t count)
 		{
 			// get current character set
 			BitmapAtlas::FontInfo const * font_info = style_stack.back().font_info;
@@ -145,19 +145,19 @@ namespace chaos
 				return;
 
 			// get info corresponding to the glyph
-			BitmapAtlas::CharacterInfo const * info = font_info->GetCharacterInfo(c);
+			BitmapAtlas::CharacterInfo const * info = font_info->GetCharacterInfo(charcode);
 			if (info == nullptr)
 				return;
 
 			// emit the characters
-			for (int i = 0; i < count; ++i)
-				EmitCharacter(c, info, font_info);
+			for (size_t i = 0; i < count; ++i)
+				EmitCharacter(charcode, info, font_info);
 		}
 
-		void GeneratorData::EmitCharacter(char c, BitmapAtlas::CharacterLayout const * layout, BitmapAtlas::FontInfo const * font_info)
+		void GeneratorData::EmitCharacter(uint32_t charcode, BitmapAtlas::CharacterLayout const * layout, BitmapAtlas::FontInfo const * font_info)
 		{
 			Token token;
-			token.character = c;
+			token.character = charcode;
 			token.character_layout = layout;
 			token.font_info = font_info;
 			token.color = style_stack.back().color;
@@ -479,30 +479,30 @@ namespace chaos
 			bool escape_character = false;
 			for (int i = 0; text[i] != 0; ++i)
 			{
-				char c = text[i];
+				uint32_t charcode = text[i];
 
-				bool new_escape_character = (c == '\\');
+				bool new_escape_character = (charcode == '\\');
 
 				// ignore chariot return (UNIX/WINDOWS differences) : no different handling if previous character was an escape character
-				if (c == '\r')
+				if (charcode == '\r')
 				{
 
 				}
 				// next line  : no different handling if previous character was an escape character
-				else if (c == '\n')
+				else if (charcode == '\n')
 				{
 					generator_data.EndCurrentLine();
 				}
 				// tabulation : no different handling if previous character was an escape character
-				else if (c == '\t')
+				else if (charcode == '\t')
 				{
-					int tab_size = std::min(generator_data.params.tab_size, 1);
+					size_t tab_size = std::min(generator_data.params.tab_size, (size_t)1);
 					generator_data.EmitCharacters(' ', tab_size);
 				}
 				// if escape is set, simply display the incoming character no matter what it is (except \n \r \t)
 				else if (escape_character)
 				{
-					generator_data.EmitCharacters(c, 1);
+					generator_data.EmitCharacters(charcode, 1);
 				}
 				// start an escape
 				else if (new_escape_character)
@@ -510,14 +510,14 @@ namespace chaos
 
 				}
 				// close previously started markup
-				else if (c == ']')
+				else if (charcode == ']')
 				{
 					if (generator_data.style_stack.size() <= 1) // the very first style is manually inserted. It should never be popped
 						return false;
 					generator_data.style_stack.pop_back();
 				}
 				// start a new markup
-				else if (c == '[')
+				else if (charcode == '[')
 				{
 					if (!generator_data.StartMarkup(text, ++i)) // ill-formed markup
 						return false;
@@ -525,7 +525,7 @@ namespace chaos
 				// finally, this is not a special character
 				else
 				{
-					generator_data.EmitCharacters(c, 1);
+					generator_data.EmitCharacters(charcode, 1);
 				}
 
 				escape_character = !escape_character && new_escape_character;

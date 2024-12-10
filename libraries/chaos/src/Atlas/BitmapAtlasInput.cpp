@@ -352,7 +352,7 @@ namespace chaos
 				params.characters.c_str() :
 				DEFAULT_CHARACTERS;
 
-			std::map<char, FontTools::CharacterBitmapGlyph> glyph_cache = FontTools::GetGlyphCacheForString(face, characters);
+			std::map<uint32_t, FontTools::CharacterBitmapGlyph> glyph_cache = FontTools::GetGlyphCacheForString(face, characters);
 
 			// transforms each info of the glyph map into a bitmap
 			for (auto & glyph : glyph_cache)
@@ -376,14 +376,17 @@ namespace chaos
 						bitmap = images[0];
 					}
 
-					char name[] = " ";
-					sprintf_s(name, 2, "%c", glyph.first);
-
 					CharacterInfoInput * info = new CharacterInfoInput;
 					if (info == nullptr)
 						continue;
 					info->atlas_input = atlas_input;
-					info->SetName(name);
+
+					if (glyph.first <= 127) // an 7bit ASCII character
+					{
+						char name[] = "  ";
+						sprintf_s(name, 2, "%c", glyph.first);
+						info->SetName(name);
+					}
 					info->SetTag(glyph.first);
 					if (bitmap != nullptr)
 						info->description = ImageTools::GetImageDescription(bitmap);

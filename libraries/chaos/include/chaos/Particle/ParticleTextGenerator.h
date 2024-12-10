@@ -37,7 +37,7 @@ namespace chaos
 			/** spacing between characters */
 			float character_spacing = 0.0f;
 			/** padding for bitmaps */
-			glm::vec2 bitmap_padding = glm::vec2(0.0f, 0.0f);
+			glm::vec2 bitmap_padding = { 0.0f, 0.0f };
 			/** the text limits */
 			float max_text_width = 0.0f;
 			/** word wrap enabled */
@@ -47,14 +47,14 @@ namespace chaos
 			/** the line alignment */
 			TextAlignment alignment = TextAlignment::LEFT;
 			/** the color to use by default */
-			glm::vec4 default_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+			glm::vec4 default_color = { 1.0f, 1.0f, 1.0f, 1.0f };
 			/** the font to use by default */
 			std::string font_info_name;
 			/** tab size */
-			int tab_size = 2;
+			size_t tab_size = 2;
 
 			/** the position */
-			glm::vec2 position = glm::vec2(0.0f, 0.0f);
+			glm::vec2 position = { 0.0f, 0.0f };
 			/** the hotpoint */
 			Hotpoint hotpoint = Hotpoint::BOTTOM_LEFT;
 		};
@@ -75,7 +75,7 @@ namespace chaos
 			/** enable background */
 			bool create_background = false;
 			/** the background color */
-			glm::vec4 background_color = glm::vec4(0.4f, 0.4f, 0.4f, 0.4f);
+			glm::vec4 background_color = { 0.4f, 0.4f, 0.4f, 0.4f };
 			/** the background padding */
 			float background_padding = 20.0f;
 		};
@@ -117,7 +117,7 @@ namespace chaos
 		public:
 
 			/** the character */
-			char character = 0;
+			uint32_t character = 0;
 			/** the corresponding bitmap (if valid) */
 			BitmapAtlas::BitmapLayout const* bitmap_layout = nullptr;
 			/** the corresponding character (if valid) */
@@ -146,7 +146,7 @@ namespace chaos
 		public:
 
 			/** the line generated */
-			std::vector< TokenLine > token_lines;
+			std::vector<TokenLine> token_lines;
 			/** the bounding box */
 			ParticleCorners bounding_box;
 		};
@@ -160,7 +160,7 @@ namespace chaos
 		public:
 
 			/** the color to use */
-			glm::vec4 color;
+			glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 			/** the character set selected */
 			BitmapAtlas::FontInfo const* font_info = nullptr;
 		};
@@ -197,9 +197,9 @@ namespace chaos
 			/** start the markup */
 			bool StartMarkup(char const* text, int& i);
 			/** utility method to emit characters */
-			void EmitCharacters(char c, int count);
+			void EmitCharacters(uint32_t charcode, size_t count);
 			/** utility method to emit character */
-			void EmitCharacter(char c, BitmapAtlas::CharacterLayout const* layout, BitmapAtlas::FontInfo const* font_info);
+			void EmitCharacter(uint32_t charcode, BitmapAtlas::CharacterLayout const* layout, BitmapAtlas::FontInfo const* font_info);
 			/** emit a bitmap */
 			void EmitBitmap(BitmapAtlas::BitmapLayout const* layout, bool use_font_color);
 			/** end the current line */
@@ -220,9 +220,9 @@ namespace chaos
 			std::vector<Style> style_stack;
 
 			/** current line position for a bitmap (below scanline, at descender level) */
-			glm::vec2 bitmap_position = glm::vec2(0.0f, 0.0f);
+			glm::vec2 bitmap_position = { 0.0f, 0.0f };
 			/** current line position for a character (below scanline, at descender level) */
-			glm::vec2 character_position = glm::vec2(0.0f, 0.0f);
+			glm::vec2 character_position = { 0.0f, 0.0f };
 		};
 
 		/**

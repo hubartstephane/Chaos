@@ -8,6 +8,9 @@ namespace chaos
 	class FileLoggerListener;
 	class Logger;
 
+	template<char const* &LOG_DOMAIN>
+	class LogBase;
+
 	class Log;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -247,10 +250,11 @@ namespace chaos
 	};
 
 	/**
-	* Log: an utility class that gets the singleton logger and push data into it
+	* LogBase: Base class for an utility class that gets the singleton logger and push data into it
 	*/
 
-	class CHAOS_API Log
+	template<char const*& LOG_DOMAIN>
+	class LogBase
 	{
 	public:
 
@@ -278,14 +282,14 @@ namespace chaos
 		static void Output(LogSeverity severity, PARAMS && ...params)
 		{
 			if (Logger* logger = Logger::GetInstance())
-				logger->Output("default", severity, std::forward<PARAMS>(params)...);
+				logger->Output(GetDomain(), severity, std::forward<PARAMS>(params)...);
 		}
 
 		/** start a new line of log, but wait until transaction ends to emit the line */
 		static void BeginTransaction(LogSeverity severity)
 		{
 			if (Logger* logger = Logger::GetInstance())
-				logger->BeginTransaction("default", severity);
+				logger->BeginTransaction(GetDomain(), severity);
 		}
 		/** add some text to the current transaction */
 		template<typename ...PARAMS>
@@ -315,7 +319,27 @@ namespace chaos
 				return logger->IsTransactionInProgress();
 			return false;
 		}
+
+		/** the domain the logs belong to */
+		static char const* GetDomain()
+		{
+			return LOG_DOMAIN;
+		}
 	};
+
+	/**
+	* CHAOS_DEFINE_LOG: an utility macro to generate some Log class
+	*/
+
+#define CHAOS_DEFINE_LOG(LogClass, Domain)\
+	static const char* LogClass##_DomainStr = Domain;\
+	class LogClass : public LogBase<LogClass##_DomainStr> {};
+
+	/**
+	* Log: the default log definition
+	*/
+
+CHAOS_DEFINE_LOG(Log, "Default")
 
 #endif
 

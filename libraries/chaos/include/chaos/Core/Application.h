@@ -6,6 +6,8 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+	CHAOS_DEFINE_LOG(ApplicationLog, "Application")
+
 	/**
 	* Application : used to store generic application data
 	*/

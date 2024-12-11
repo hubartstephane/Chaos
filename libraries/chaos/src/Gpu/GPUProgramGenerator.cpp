@@ -70,7 +70,7 @@ namespace chaos
 		GLuint result = glCreateShader((GLenum)shader_type);
 		if (result == 0)
 		{
-			Log::Error("glCreateShader failed");
+			GLLog::Error("glCreateShader failed");
 			return 0;
 		}
 		// fill with sources
@@ -89,7 +89,7 @@ namespace chaos
 		{
 			GLchar log_buffer[4096];
 			glGetShaderInfoLog(result, sizeof(log_buffer) - 1, nullptr, log_buffer);
-			Log::Error("Shader compilation failure : %s", log_buffer);
+			GLLog::Error("Shader compilation failure : %s", log_buffer);
 		}
 		glDeleteShader(result);
 
@@ -216,19 +216,19 @@ namespace chaos
 		// early exit
 		if (!has_compute_shader && !has_render_shader)
 		{
-			Log::Error("GPUProgramGenerator::GenProgram(...) no COMPUTE shader nor RENDER shader");
+			GLLog::Error("GPUProgramGenerator::GenProgram(...) no COMPUTE shader nor RENDER shader");
 			return 0;
 		}
 		if (has_compute_shader && has_render_shader)
 		{
-			Log::Error("GPUProgramGenerator::GenProgram(...) cannot create a program with both COMPUTE shader and both RENDER shader");
+			GLLog::Error("GPUProgramGenerator::GenProgram(...) cannot create a program with both COMPUTE shader and both RENDER shader");
 			return 0;
 		}
 		// create openGL program
 		GLuint result = glCreateProgram();
 		if (result == 0)
 		{
-			Log::Error("glCreateProgram failed");
+			GLLog::Error("glCreateProgram failed");
 			return 0;
 		}
 		// create a string to contains all definitions
@@ -320,7 +320,7 @@ namespace chaos
 		has_render_shader  |= (shader_type != ShaderType::COMPUTE && shader_type != ShaderType::ANY);
 		if (has_compute_shader && has_render_shader)
 		{
-			Log::Warning("GPUProgramGenerator::AddSourceGenerator(...) cannot have both compute and rendering shaders");
+			GLLog::Warning("GPUProgramGenerator::AddSourceGenerator(...) cannot have both compute and rendering shaders");
 			return false;
 		}
 		return true;

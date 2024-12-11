@@ -52,7 +52,7 @@ return_type * Manager::funcname(FilePathParam const & path, bool store_object)\
 {\
 	if (Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::ASCII | LoadFileFlag::NO_ERROR_TRACE))\
 		return funcname(path, buffer, store_object);\
-	Log::Error("Manager::" #funcname ": fail to load [%s]", path.GetResolvedPath().string().c_str());\
+	ParticleLog::Error("Manager::" #funcname ": fail to load [%s]", path.GetResolvedPath().string().c_str());\
 	return nullptr;\
 }\
 return_type * Manager::funcname(FilePathParam const & path, Buffer<char> buffer, bool store_object)\

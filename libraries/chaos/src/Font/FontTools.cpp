@@ -86,7 +86,10 @@ namespace chaos
 
 		int mode = bitmap.pixel_mode;
 		if (mode != FT_PIXEL_MODE_GRAY) // other format not supported yet
+		{
+			FontLog::Error("FontTools::GenerateImage(...): bitmap.pixel_mode != FT_PIXEL_MODE_GRAY");
 			return nullptr;
+		}
 
 		int w = bitmap.width;
 		int h = bitmap.rows;
@@ -134,26 +137,38 @@ namespace chaos
 
 		FT_UInt glyph_index = FT_Get_Char_Index(face, charcode);
 		if (charcode != 0 && (glyph_index == 0 && !accept_notfound_glyph))
+		{
+			FontLog::Error("FontTools::GetBitmapGlyph(...): FT_Get_Char_Index fails with charcode = [0x%X]", charcode);
 			return nullptr;
+		}
 
 		// load the glyph
 		error = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
 		if (error)
+		{
+			FontLog::Error("FontTools::GetBitmapGlyph(...): FT_Load_Glyph fails with charcode = [0x%X]   glyph_index = [%d]", charcode, glyph_index);
 			return nullptr;
+		}
 
 		FT_BitmapGlyph glyph;
 
 		// copy the glyph
 		error = FT_Get_Glyph(face->glyph, (FT_Glyph*)&glyph);
 		if (error || glyph == nullptr)
+		{
+			FontLog::Error("FontTools::GetBitmapGlyph(...): FT_Get_Glyph fails with charcode = [0x%X]   glyph_index = [%d]", charcode, glyph_index);
 			return nullptr;
+		}
 
 		// convert to a bitmap if necessary
 		if (glyph->root.format != FT_GLYPH_FORMAT_BITMAP)
 		{
 			error = FT_Glyph_To_Bitmap((FT_Glyph*)&glyph, FT_RENDER_MODE_NORMAL, nullptr, true);
 			if (error)
+			{
+				FontLog::Error("FontTools::GetBitmapGlyph(...): FT_Glyph_To_Bitmap fails with charcode = [0x%X]   glyph_index = [%d]", charcode, glyph_index);
 				return nullptr;
+			}
 		}
 
 		return glyph;

@@ -514,7 +514,7 @@ namespace chaos
 		Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::NO_ERROR_TRACE);
 		if (buffer == nullptr)
 		{
-			Log::Error("LoadImageFromFile: fail to load image [%s]", path.GetResolvedPath().string().c_str());
+			ImageLog::Error("LoadImageFromFile: fail to load image [%s]", path.GetResolvedPath().string().c_str());
 			return {};
 		}
 		return LoadImageFromBuffer(buffer);
@@ -526,7 +526,7 @@ namespace chaos
 		Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::NO_ERROR_TRACE);
 		if (buffer == nullptr)
 		{
-			Log::Error("LoadMultipleImagesFromFile: fail to load image [%s]", path.GetResolvedPath().string().c_str());
+			ImageLog::Error("LoadMultipleImagesFromFile: fail to load image [%s]", path.GetResolvedPath().string().c_str());
 			return {};
 		}
 		return LoadMultipleImagesFromBuffer(buffer, anim_description);

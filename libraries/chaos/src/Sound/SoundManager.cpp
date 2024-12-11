@@ -1311,7 +1311,7 @@ namespace chaos
 		Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::NO_ERROR_TRACE);
 		if (buffer == nullptr)
 		{
-			Log::Error("SoundSourceLoader::GenSourceObject: fail to load [%s]", resolved_path.string().c_str());
+			SoundLog::Error("SoundSourceLoader::GenSourceObject: fail to load [%s]", resolved_path.string().c_str());
 			return nullptr;
 		}
 		// create the source on irrklang side

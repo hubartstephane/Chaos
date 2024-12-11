@@ -256,9 +256,9 @@ namespace chaos
 				err_msg = StringTools::RemoveEndOfLines(std::move(err_msg));
 
 				if (title == nullptr)
-					Log::Error("Error : [%s]", err_msg.c_str());
+					ApplicationLog::Error("Error : [%s]", err_msg.c_str());
 				else
-					Log::Error("Error in [%s] : [%s]", title, err_msg.c_str());
+					ApplicationLog::Error("Error in [%s] : [%s]", title, err_msg.c_str());
 			}
 		}
 

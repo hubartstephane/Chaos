@@ -3,6 +3,8 @@ namespace chaos
 
 #if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+	CHAOS_DEFINE_LOG(ParticleLog, "Particle")
+
 	// =====================================
 	// TMParticlePopulator : utility class to generate particles for a layer with a cache
 	// =====================================

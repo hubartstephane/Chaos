@@ -12,7 +12,6 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-
 		/** a structure that contains the result of a capture of a window */
 		class CHAOS_API WindowPixelCaptureResult
 		{

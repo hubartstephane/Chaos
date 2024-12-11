@@ -220,7 +220,7 @@ namespace chaos
 				nlohmann::json json_manifest;
 				if (!JSONTools::LoadJSONFile(path, json_manifest))
 				{
-					Log::Error("FolderInfoInput::AddFontFileImpl => failed to load json file [%s]", resolved_path.string().c_str());
+					BitmapAtlasLog::Error("FolderInfoInput::AddFontFileImpl => failed to load json file [%s]", resolved_path.string().c_str());
 					return nullptr;
 				}
 
@@ -294,7 +294,7 @@ namespace chaos
 
 			Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::NO_ERROR_TRACE); // for direct access to resource directory
 			if (buffer == nullptr)
-				Log::Error("FolderInfoInput::AddFontFileWithManifestImpl: fail to load [%s]", path.GetResolvedPath().string().c_str());
+				BitmapAtlasLog::Error("FolderInfoInput::AddFontFileWithManifestImpl: fail to load [%s]", path.GetResolvedPath().string().c_str());
 			if (buffer != nullptr)
 				FT_New_Memory_Face(library, (FT_Byte const*)buffer.data, (FT_Long)buffer.bufsize, 0, &face);
 
@@ -501,7 +501,7 @@ namespace chaos
                 nlohmann::json json_manifest;
 				if (!JSONTools::LoadJSONFile(path, json_manifest))
 				{
-					Log::Error("FolderInfoInput::AddBitmapFileImpl => failed to load json file [%s]", resolved_path.string().c_str());
+					BitmapAtlasLog::Error("FolderInfoInput::AddBitmapFileImpl => failed to load json file [%s]", resolved_path.string().c_str());
 					return nullptr;
 				}
 
@@ -618,7 +618,7 @@ namespace chaos
 			// not clear what to do (we have both a grid and a per frame animation). Abord
 			if (count > 1 && input_manifest.grid_data.GetFrameCount() > 1)
 			{
-				Log::Error("AddBitmapFileWithManifestImpl[%s] : cannot have multiple images and GRID structure in the same time", resolved_path.string().c_str());
+				BitmapAtlasLog::Error("AddBitmapFileWithManifestImpl[%s] : cannot have multiple images and GRID structure in the same time", resolved_path.string().c_str());
 				ReleaseAllImages(images);
 				return nullptr;
 			}

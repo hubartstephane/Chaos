@@ -133,7 +133,7 @@ namespace chaos
 					ShaderType shader_type = ext_it->second;
 					if (!program_generator.AddShaderSourceFile(shader_type, file_path))
 					{
-						Log::Error("GPUProgramLoader::GenProgramObjectFromDirectory(...) fails to add source [%s]", p.c_str());
+						GLLog::Error("GPUProgramLoader::GenProgramObjectFromDirectory(...) fails to add source [%s]", p.c_str());
 						return nullptr;
 					}
 				}

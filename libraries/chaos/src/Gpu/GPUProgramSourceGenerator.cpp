@@ -23,7 +23,7 @@ namespace chaos
 	{
 		buffer = FileTools::LoadFile(path, LoadFileFlag::ASCII | LoadFileFlag::NO_ERROR_TRACE);
 		if (buffer == nullptr)
-			Log::Error("GPUProgramFileSourceGenerator: fail to load [%s]", path.GetResolvedPath().string().c_str());
+			GLLog::Error("GPUProgramFileSourceGenerator: fail to load [%s]", path.GetResolvedPath().string().c_str());
 	}
 
 }; // namespace chaos

@@ -14,6 +14,8 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+	CHAOS_DEFINE_LOG(LuaLog, "Lua")
+
 	/**
 	* LuaTools is namespace-class for methods to handle lua
 	*/

@@ -212,7 +212,7 @@ namespace chaos
 #if _DEBUG
 				if (result && GlobalVariables::ShowLoadedFile.Get())
 				{
-					Log::Message("LoadFile [%s] -> [%s]    size = [%d]", path.GetResolvedPath().string().c_str(), p.string().c_str(), result.bufsize);
+					FileLog::Message("LoadFile [%s] -> [%s]    size = [%d]", path.GetResolvedPath().string().c_str(), p.string().c_str(), result.bufsize);
 				}
 #endif
 				return result; // convert to bool
@@ -220,7 +220,7 @@ namespace chaos
 
 			if (result == nullptr && int(flags & LoadFileFlag::NO_ERROR_TRACE) == 0)
 			{
-				Log::Error("LoadFile fails [%s]", path.GetResolvedPath().string().c_str());
+				FileLog::Error("LoadFile fails [%s]", path.GetResolvedPath().string().c_str());
 			}
 			return result;
 		}
@@ -250,7 +250,7 @@ namespace chaos
 #if _DEBUG
 				if ((result.size() > 0) && GlobalVariables::ShowLoadedFile.Get())
 				{
-					Log::Message("ReadFileLines [%s] -> [%s]    line count = [%d]", path.GetResolvedPath().string().c_str(), p.string().c_str(), result.size());
+					FileLog::Message("ReadFileLines [%s] -> [%s]    line count = [%d]", path.GetResolvedPath().string().c_str(), p.string().c_str(), result.size());
 				}
 #endif
 				return (result.size() > 0); // convert to bool
@@ -258,7 +258,7 @@ namespace chaos
 
 			if ((result.size() == 0) && int(flags & LoadFileFlag::NO_ERROR_TRACE) == 0)
 			{
-				Log::Error("ReadFileLines fails [%s]", path.GetResolvedPath().string().c_str());
+				FileLog::Error("ReadFileLines fails [%s]", path.GetResolvedPath().string().c_str());
 			}
 
 			return result;

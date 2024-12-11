@@ -9,6 +9,8 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+	CHAOS_DEFINE_LOG(ImageProcessorLog, "ImageProcessor")
+
 	/**
 	* ImageProcessor : take an image as an entry and returns a new image as output
 	*/

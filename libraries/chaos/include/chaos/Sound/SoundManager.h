@@ -28,6 +28,8 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+	CHAOS_DEFINE_LOG(SoundLog, "Sound")
+
 	// ==============================================================
 	// SoundBlendType
 	// ==============================================================

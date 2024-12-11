@@ -326,7 +326,7 @@ namespace chaos
 				{
 					if (int(flag & LoadFileFlag::NO_ERROR_TRACE) == 0)
 					{
-						Log::Error("JSONTools::LoadJSONFile: fail to load [%s]", path.GetResolvedPath().string().c_str());
+						JsonLog::Error("JSONTools::LoadJSONFile: fail to load [%s]", path.GetResolvedPath().string().c_str());
 					}
 					return false;
 				}

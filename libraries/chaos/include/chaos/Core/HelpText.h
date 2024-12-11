@@ -18,6 +18,10 @@ namespace chaos
 		/** flush pending messages (returns number of message flushed). The callback receives (Family, Message). for each Family, it is called first with an empty message */
 		CHAOS_API void OutputToLogs();
 
+#else
+
+	CHAOS_DEFINE_LOG(HelpLog, "Help")
+
 #endif
 
 	};

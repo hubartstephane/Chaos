@@ -33,7 +33,7 @@ namespace chaos
 		}
 		catch (const po::error& ex)
 		{
-			Log::Output(LogSeverity::Error, ex.what());
+			ApplicationLog::Output(LogSeverity::Error, ex.what());
 		}
 	}
 

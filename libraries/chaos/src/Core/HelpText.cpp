@@ -31,7 +31,7 @@ namespace chaos
 
 		void OutputToLogs()
 		{
-			Log::BeginTransaction(LogSeverity::Message);
+			HelpLog::BeginTransaction(LogSeverity::Message);
 
 			std::map<std::string, std::vector<std::string>> & message_map = GetMessageMap();
 
@@ -44,17 +44,17 @@ namespace chaos
 				if (message_count > 0)
 				{
 					// display the title
-					Log::TransactionConcatLN("==========================================");
-					Log::TransactionConcatLN("== %s", family.c_str());
-					Log::TransactionConcatLN("==========================================");
+					HelpLog::TransactionConcatLN("==========================================");
+					HelpLog::TransactionConcatLN("== %s", family.c_str());
+					HelpLog::TransactionConcatLN("==========================================");
 					// iterate over all messages of this family
 					std::sort(messages.begin(), messages.end());
 					for (std::string const& str : messages)
-						Log::TransactionConcatLN("%s", str.c_str());
+						HelpLog::TransactionConcatLN("%s", str.c_str());
 					messages.clear();
 				}
 			}
-			Log::EndTransaction();
+			HelpLog::EndTransaction();
 		}
 	};
 

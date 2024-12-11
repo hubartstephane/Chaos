@@ -53,10 +53,10 @@ namespace chaos
 				return result;
 			}
 			else
-				Log::Error("Class::CreateInstance : failed to instanciate class [%s]", name.c_str());
+				ClassLog::Error("Class::CreateInstance : failed to instanciate class [%s]", name.c_str());
 		}
 		else
-			Log::Error("Class::CreateInstance : the class [%s] cannot be instanciated", name.c_str());
+			ClassLog::Error("Class::CreateInstance : the class [%s] cannot be instanciated", name.c_str());
 
 		return nullptr;
 	}

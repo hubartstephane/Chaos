@@ -512,13 +512,13 @@ namespace chaos
 		for (size_t i = 0; i < attributes.size(); ++i)
 		{
 			GLAttributeInfo const & data = attributes[i];
-			Log::Message("Attribute[%02d]  name = [%s]   array_size = [%d]   location = [%d]   type = [%s]", i, data.name.c_str(), data.array_size, data.location, GLTools::GLenumToString(data.type));
+			GLLog::Message("Attribute[%02d]  name = [%s]   array_size = [%d]   location = [%d]   type = [%s]", i, data.name.c_str(), data.array_size, data.location, GLTools::GLenumToString(data.type));
 		}
 
 		for (size_t i = 0; i < uniforms.size(); ++i)
 		{
 			GLUniformInfo const & data = uniforms[i];
-			Log::Message("Uniform[%02d]    name = [%s]   array_size = [%d]   location = [%d]   type = [%s]", i, data.name.c_str(), data.array_size, data.location, GLTools::GLenumToString(data.type));
+			GLLog::Message("Uniform[%02d]    name = [%s]   array_size = [%d]   location = [%d]   type = [%s]", i, data.name.c_str(), data.array_size, data.location, GLTools::GLenumToString(data.type));
 		}
 	}
 
@@ -562,7 +562,7 @@ namespace chaos
 			{
 				if (attribute_provider != nullptr)
 					if (!attribute_provider->BindAttribute(attrib))
-						Log::Message("BindAttributes [%s] failure. Semantic [%d]. SemanticIndex [%d]. Location [%d]", attrib.name.c_str(), attrib.semantic, attrib.semantic_index, attrib.location);
+						GLLog::Message("BindAttributes [%s] failure. Semantic [%d]. SemanticIndex [%d]. Location [%d]", attrib.name.c_str(), attrib.semantic, attrib.semantic_index, attrib.location);
 				glDisableVertexArrayAttrib(vertex_array, location);
 				continue;
 			}

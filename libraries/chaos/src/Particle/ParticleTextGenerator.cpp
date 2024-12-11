@@ -748,7 +748,7 @@ namespace chaos
 			if (!layer->IsParticleClassCompatible<ParticleDefault>())
 			{
 				assert(0);
-				Log::Error("ParticleTextGenerator::CreateTextAllocation => IsParticleClassCompatible failure");
+				TextGeneratorLog::Error("ParticleTextGenerator::CreateTextAllocation => IsParticleClassCompatible failure");
 				return {};
 			}
 

@@ -641,7 +641,7 @@ namespace chaos
 			Buffer<char> buffer = FileTools::LoadFile(index_filename, LoadFileFlag::ASCII | LoadFileFlag::NO_ERROR_TRACE);
 			if (buffer == nullptr)
 			{
-				Log::Error("Atlas::LoadAtlas: fail to load [%s]", index_filename.string().c_str());
+				BitmapAtlasLog::Error("Atlas::LoadAtlas: fail to load [%s]", index_filename.string().c_str());
 				return false;
 			}
 

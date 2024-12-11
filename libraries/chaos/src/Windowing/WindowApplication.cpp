@@ -115,7 +115,7 @@ namespace chaos
 	{
 		if (FindWindow(request) != nullptr)
 		{
-			Log::Error("WindowApplication::CreateTypedWindow(...) name already used");
+			ApplicationLog::Error("WindowApplication::CreateTypedWindow(...) name already used");
 			return nullptr;
 		}
 
@@ -229,7 +229,7 @@ namespace chaos
 			GLenum err = glewInit();
 			if (err != GLEW_OK)
 			{
-				Log::Message("glewInit(...) failure : %s", glewGetErrorString(err));
+				ApplicationLog::Message("glewInit(...) failure : %s", glewGetErrorString(err));
 				return false;
 			}
 			// callback for monitor events
@@ -401,7 +401,7 @@ namespace chaos
 						std::string const& font_name = it.key();
 						std::string font_path = it->get<std::string>();
 						if (input.AddFont(font_path.c_str(), nullptr, true, font_name.c_str(), 0, font_params) == nullptr)
-							Log::Error("FillAtlasGeneratorInputFonts(...): fails to AddFont name = [%s]    path = [%s]", font_name.c_str(), font_path.c_str());
+							ApplicationLog::Error("FillAtlasGeneratorInputFonts(...): fails to AddFont name = [%s]    path = [%s]", font_name.c_str(), font_path.c_str());
 					}
 					return true; // stop at the very first source
 				});
@@ -510,17 +510,17 @@ namespace chaos
 
 		if (!CreateTextureAtlas())
 		{
-			Log::Error("WindowApplication::CreateTextureAtlas(...) failure");
+			ApplicationLog::Error("WindowApplication::CreateTextureAtlas(...) failure");
 			return false;
 		}
 		if (!InitializeGamepadButtonMap())
 		{
-			Log::Error("WindowApplication::InitializeGamepadButtonMap(...) failure");
+			ApplicationLog::Error("WindowApplication::InitializeGamepadButtonMap(...) failure");
 			return false;
 		}
 		if (!CreateTextGenerator())
 		{
-			Log::Error("WindowApplication::CreateTextGenerator(...) failure");
+			ApplicationLog::Error("WindowApplication::CreateTextGenerator(...) failure");
 			return false;
 		}
 		return true;
@@ -542,7 +542,7 @@ namespace chaos
 
 	void WindowApplication::OnGLFWError(int code, const char* msg)
 	{
-		Log::Message("Window(...) [%d] failure : %s", code, msg);
+		ApplicationLog::Message("Window(...) [%d] failure : %s", code, msg);
 	}
 
 	bool WindowApplication::CreateGPUResourceManager()
@@ -656,7 +656,7 @@ namespace chaos
 
 	void WindowApplication::FreeImageOutputMessageFunc(FREE_IMAGE_FORMAT fif, const char* msg)
 	{
-		Log::Message("FreeImage warning message [%d][%s]", fif, msg);
+		ApplicationLog::Message("FreeImage warning message [%d][%s]", fif, msg);
 	}
 
 	bool WindowApplication::InitializeStandardLibraries()

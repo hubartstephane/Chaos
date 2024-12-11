@@ -190,6 +190,8 @@ namespace chaos
 
 #else
 
+	CHAOS_DEFINE_LOG(JsonLog, "Json")
+
 	namespace JSONTools
 	{
 		template<typename FUNC>

@@ -71,6 +71,10 @@ namespace chaos
 
 	}; // namespace FileTools
 
+#else
+
+	CHAOS_DEFINE_LOG(FileLog, "Files")
+
 #endif
 
 }; // namespace chaos

@@ -43,7 +43,7 @@ namespace chaos
 
 		if (!accessor.IsValid())
 		{
-			Log::Error("TMParticlePopulator::FlushCachedParticlesToAllocation => invalid accessor");
+			ParticleLog::Error("TMParticlePopulator::FlushCachedParticlesToAllocation => invalid accessor");
 			return false;
 		}
 
@@ -64,7 +64,7 @@ namespace chaos
 			allocation = layer_instance->SpawnParticles(0);
 			if (allocation == nullptr)
 			{
-				Log::Error("TMParticlePopulator::FlushParticles : fails to SpawnParticles");
+				ParticleLog::Error("TMParticlePopulator::FlushParticles : fails to SpawnParticles");
 				particle_count = 0;
 				return false;
 			}
@@ -83,7 +83,7 @@ namespace chaos
 		BitmapAtlas::BitmapInfo const* bitmap_info = folder_info->GetBitmapInfo(bitmap_name);
 		if (bitmap_info == nullptr)
 		{
-			Log::Error("TMParticlePopulator::AddParticle : unknown bitmap [%s]", (bitmap_name != nullptr)? bitmap_name : "");
+			ParticleLog::Error("TMParticlePopulator::AddParticle : unknown bitmap [%s]", (bitmap_name != nullptr)? bitmap_name : "");
 			return false;
 		}
 		// get the real layout of the bitmap by removing animation

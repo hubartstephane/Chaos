@@ -21,31 +21,31 @@ namespace chaos
 	{
 		// display the options
 #if _DEBUG
-		Log::BeginTransaction(LogSeverity::Message);
-		Log::TransactionConcatLN("==========================================");
-		Log::TransactionConcatLN("== Existing Options");
-		Log::TransactionConcatLN("==========================================");
-		Log::TransactionConcatLN(GlobalVariableManager::GetInstance()->GetOptionString());
-		Log::EndTransaction();
+		ApplicationLog::BeginTransaction(LogSeverity::Message);
+		ApplicationLog::TransactionConcatLN("==========================================");
+		ApplicationLog::TransactionConcatLN("== Existing Options");
+		ApplicationLog::TransactionConcatLN("==========================================");
+		ApplicationLog::TransactionConcatLN(GlobalVariableManager::GetInstance()->GetOptionString());
+		ApplicationLog::EndTransaction();
 #endif
 		// display the arguments
-		Log::BeginTransaction(LogSeverity::Message);
-		Log::TransactionConcatLN("==========================================");
-		Log::TransactionConcatLN("== Command line");
-		Log::TransactionConcatLN("==========================================");
+		ApplicationLog::BeginTransaction(LogSeverity::Message);
+		ApplicationLog::TransactionConcatLN("==========================================");
+		ApplicationLog::TransactionConcatLN("== Command line");
+		ApplicationLog::TransactionConcatLN("==========================================");
 		for (std::string const& arg : GetArguments())
-			Log::TransactionConcatLN("%s", arg.c_str());
-		Log::EndTransaction();
+			ApplicationLog::TransactionConcatLN("%s", arg.c_str());
+		ApplicationLog::EndTransaction();
 
 		// display some informations
-		Log::BeginTransaction(LogSeverity::Message);
-		Log::TransactionConcatLN("==========================================");
-		Log::TransactionConcatLN("== Informations");
-		Log::TransactionConcatLN("==========================================");
-		Log::TransactionConcatLN("Working directory: %s", boost::filesystem::current_path().string().c_str());
-		Log::TransactionConcatLN("%s", StringTools::TimeToString(std::chrono::system_clock::now(), TimeToStringFormatType::FULL).c_str());
+		ApplicationLog::BeginTransaction(LogSeverity::Message);
+		ApplicationLog::TransactionConcatLN("==========================================");
+		ApplicationLog::TransactionConcatLN("== Informations");
+		ApplicationLog::TransactionConcatLN("==========================================");
+		ApplicationLog::TransactionConcatLN("Working directory: %s", boost::filesystem::current_path().string().c_str());
+		ApplicationLog::TransactionConcatLN("%s", StringTools::TimeToString(std::chrono::system_clock::now(), TimeToStringFormatType::FULL).c_str());
 
-		Log::EndTransaction();
+		ApplicationLog::EndTransaction();
 	}
 
 	bool Application::OnConfigurationChanged(JSONReadConfiguration config)
@@ -101,28 +101,28 @@ namespace chaos
 		// load the configuration
 		if (!InitializeConfiguration())
 		{
-			Log::Error("InitializeConfiguration(...) failure");
+			ApplicationLog::Error("InitializeConfiguration(...) failure");
 			return false;
 		}
 
 		// load the properties
 		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
 		{
-			Log::Error("ReadConfigurableProperties(...) failure");
+			ApplicationLog::Error("ReadConfigurableProperties(...) failure");
 			return false;
 		}
 
 		// load class
 		if (!LoadClasses())
 		{
-			Log::Error("LoadClasses(...) failure");
+			ApplicationLog::Error("LoadClasses(...) failure");
 			return false;
 		}
 
 		// initialize the managers
 		if (!InitializeManagers())
 		{
-			Log::Error("InitializeManagers(...) failure");
+			ApplicationLog::Error("InitializeManagers(...) failure");
 			return false;
 		}
 		return true;

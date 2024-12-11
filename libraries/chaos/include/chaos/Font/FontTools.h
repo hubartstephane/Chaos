@@ -18,6 +18,8 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+	CHAOS_DEFINE_LOG(FontLog, "Font")
+
 	/**
 	* A smart pointer for FT_Library
 	*/

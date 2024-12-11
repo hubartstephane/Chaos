@@ -58,23 +58,7 @@ namespace chaos
 
 		/** create a temporary instance on the stack an call the functor on it */
 		template<typename FUNC>
-		bool CreateInstanceOnStack(FUNC const & func) const
-		{
-			if (create_instance_on_stack_function_type const* create_func = GetCreateInstanceOnStackFunc())
-			{
-				(*create_func)([this, &func](Object * object)
-				{
-					InitializeObjectInstance(this, object);
-					func(auto_cast_checked(object));
-				});
-				return true;
-			}
-			else
-			{
-				Log::Error("Class::CreateInstanceOnStack : the class [%s] cannot be instanciated", name.c_str());
-				return false;
-			}
-		}
+		bool CreateInstanceOnStack(FUNC const& func) const;
 
 		/** gets the class size */
 		size_t GetClassSize() const { return class_size; }
@@ -141,6 +125,29 @@ namespace chaos
 		/** the manager for this class */
 		ClassManager* manager = nullptr;
 	};
+
+#else
+
+CHAOS_DEFINE_LOG(ClassLog, "Class")
+
+template<typename FUNC>
+bool Class::CreateInstanceOnStack(FUNC const& func) const
+{
+	if (create_instance_on_stack_function_type const* create_func = GetCreateInstanceOnStackFunc())
+	{
+		(*create_func)([this, &func](Object* object)
+			{
+				InitializeObjectInstance(this, object);
+				func(auto_cast_checked(object));
+			});
+		return true;
+	}
+	else
+	{
+		ClassLog::Error("Class::CreateInstanceOnStack : the class [%s] cannot be instanciated", name.c_str());
+		return false;
+	}
+}
 
 #endif
 

@@ -13,6 +13,11 @@ namespace chaos
 
 	class Log;
 
+	/** CHAOS_DEFINE_LOG: an utility macro to generate some Log class */
+#define CHAOS_DEFINE_LOG(LogClass, Domain)\
+	static const char* LogClass##_DomainStr = Domain;\
+	class LogClass : public LogBase<LogClass##_DomainStr> {};
+
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
@@ -326,14 +331,6 @@ namespace chaos
 			return LOG_DOMAIN;
 		}
 	};
-
-	/**
-	* CHAOS_DEFINE_LOG: an utility macro to generate some Log class
-	*/
-
-#define CHAOS_DEFINE_LOG(LogClass, Domain)\
-	static const char* LogClass##_DomainStr = Domain;\
-	class LogClass : public LogBase<LogClass##_DomainStr> {};
 
 	/**
 	* Log: the default log definition

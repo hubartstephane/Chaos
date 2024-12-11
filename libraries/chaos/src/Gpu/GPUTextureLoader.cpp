@@ -120,7 +120,7 @@ namespace chaos
 		Buffer<char> ascii_buffer = FileTools::LoadFile(path, LoadFileFlag::ASCII | LoadFileFlag::NO_ERROR_TRACE); // ascii mode for JSON
 		if (ascii_buffer == nullptr)
 		{
-			Log::Error("GPUTextureLoader::GenTextureObject: fail to load [%s]", path.GetResolvedPath().string().c_str());
+			GLLog::Error("GPUTextureLoader::GenTextureObject: fail to load [%s]", path.GetResolvedPath().string().c_str());
 			return nullptr;
 		}
 		// while i am not sure an additionnal 0 in buffer wont be treated as a corruption by Free_Image
@@ -140,7 +140,7 @@ namespace chaos
 			if (JSONTools::ParseRecursive(ascii_buffer, path.GetResolvedPath(), json))
 				result = GenTextureObject(&json, parameters);
 			else
-				Log::Error("GPUTextureLoader: unknown format for [%s]", path.GetResolvedPath().string().c_str());
+				GLLog::Error("GPUTextureLoader: unknown format for [%s]", path.GetResolvedPath().string().c_str());
 		}
 		return result;
 	}

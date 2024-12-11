@@ -17,7 +17,7 @@ namespace chaos
 			std::string parent_class_name;
 			if (!JSONTools::GetAttribute(&json, "parent_class", parent_class_name))
 			{
-				Log::Error("DoLoadClassHelper : special class [%s] require a parent class", class_name.c_str());
+				ClassLog::Error("DoLoadClassHelper : special class [%s] require a parent class", class_name.c_str());
 				return nullptr;
 			}
 			// create the class
@@ -82,7 +82,7 @@ namespace chaos
 		{
 			if (!DoCompleteSpecialClassMissingData(class_registration.first)) // if it fais, this means that parent chain is broken
 			{
-				Log::Error("Class::LoadClassesInDirectory : special class [%s] has a broken inheritance chain.", class_registration.first->GetClassName().c_str());
+				ClassLog::Error("Class::LoadClassesInDirectory : special class [%s] has a broken inheritance chain.", class_registration.first->GetClassName().c_str());
 				to_remove.push_back(class_registration.first);
 			}
 		}
@@ -118,7 +118,7 @@ namespace chaos
 
 		if (manager->FindClass(class_name.c_str(), FindClassFlags::NAME) != nullptr)
 		{
-			Log::Error("ClassLoader::DoCreateSpecialClass(...): class already existing [%s]", class_name.c_str());
+			ClassLog::Error("ClassLoader::DoCreateSpecialClass(...): class already existing [%s]", class_name.c_str());
 			return nullptr;
 		}
 
@@ -138,7 +138,7 @@ namespace chaos
 		cls->parent = manager->FindClass(parent_class_name.c_str());
 		if (cls->parent == nullptr)
 		{
-			Log::Error("Class::DoSetSpecialClassParent : special class [%s] has unknown parent class [%s]", cls->name.c_str(), parent_class_name.c_str());
+			ClassLog::Error("Class::DoSetSpecialClassParent : special class [%s] has unknown parent class [%s]", cls->name.c_str(), parent_class_name.c_str());
 			return false;
 		}
 		return true;

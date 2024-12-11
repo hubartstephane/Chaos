@@ -25,6 +25,8 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+		CHAOS_DEFINE_LOG(BitmapAtlasLog, "BitmapAtlas")
+
 		/**
 		* BitmapLayout : were the bitmap lies in the atlas
 		*/

@@ -39,7 +39,7 @@ namespace chaos
 					FIBITMAP* image = ProcessImage(sub_desc);
 					if (image == nullptr)
 					{
-						Log::Error("ImageProcessor : ProcessImage() failed for GRID");
+						ImageProcessorLog::Error("ImageProcessor : ProcessImage() failed for GRID");
 						return ProcessAnimatedImage_ClearResult(result);
 					}
 					// push first so that the image is released in case of failure
@@ -51,7 +51,7 @@ namespace chaos
 						ImageDescription d2 = ImageTools::GetImageDescription(result[0]);
 						if (d1.width != d2.width || d1.height != d2.height || d1.pixel_format != d2.pixel_format)
 						{
-							Log::Error("ImageProcessor : when processing GRID resulting images should all have same size and same format");
+							ImageProcessorLog::Error("ImageProcessor : when processing GRID resulting images should all have same size and same format");
 							return ProcessAnimatedImage_ClearResult(result);
 						}
 					}
@@ -65,7 +65,7 @@ namespace chaos
 			FIBITMAP * image = ImageTools::GenFreeImage(d.pixel_format, d.width * grid_anim.grid_size.x, d.height * grid_anim.grid_size.y);
 			if (image == nullptr)
 			{
-				Log::Error("ImageProcessor : failed allocating image");
+				ImageProcessorLog::Error("ImageProcessor : failed allocating image");
 				return ProcessAnimatedImage_ClearResult(result);
 			}
 
@@ -95,7 +95,7 @@ namespace chaos
 				FIBITMAP * image = ProcessImage(ImageTools::GetImageDescription(src[i]));
 				if (image == nullptr)
 				{
-					Log::Error("ImageProcessor : ProcessImage() failed for singe/multiple images");
+					ImageProcessorLog::Error("ImageProcessor : ProcessImage() failed for singe/multiple images");
 					return ProcessAnimatedImage_ClearResult(result);
 				}
 				result.push_back(image);
@@ -117,7 +117,7 @@ namespace chaos
 	{
 		if (src_desc.pixel_format == PixelFormat::DepthStencil)
 		{
-			Log::Error("ImageProcessorOutline : cannot process DepthStencil format");
+			ImageProcessorLog::Error("ImageProcessorOutline : cannot process DepthStencil format");
 			return nullptr;
 		}
 
@@ -224,7 +224,7 @@ namespace chaos
 	{
 		if (src_desc.pixel_format == PixelFormat::DepthStencil)
 		{
-			Log::Error("ImageProcessorAddAlpha : cannot process DepthStencil format");
+			ImageProcessorLog::Error("ImageProcessorAddAlpha : cannot process DepthStencil format");
 			return nullptr;
 		}
 
@@ -299,7 +299,7 @@ namespace chaos
 	{
 		if (src_desc.pixel_format == PixelFormat::DepthStencil)
 		{
-			Log::Error("ImageProcessorShadow : cannot process DepthStencil format");
+			ImageProcessorLog::Error("ImageProcessorShadow : cannot process DepthStencil format");
 			return nullptr;
 		}
 

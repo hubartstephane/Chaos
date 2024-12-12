@@ -15,6 +15,8 @@
   "classes": { "[include]": "$SCRIPT_PATH/classes.json" },
 
   "atlas": { "[include]": "$SCRIPT_PATH/atlas.json" },
+  "imgui": { "[include]": "$SCRIPT_PATH/imgui.json" },
   "fonts": { "[include]": "fonts.json" },
+
   "sprite_directory": "$SCRIPT_PATH/sprites"
 }

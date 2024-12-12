@@ -2,6 +2,13 @@
 #include "chaos/Chaos.h"
 
 
+
+
+
+
+
+
+
 enum class Truc : int
 {
 	None = 0,
@@ -650,7 +657,7 @@ if (WindowApplication* WA = Application::GetInstance())
 
 		// ----------------------------------------------------------------------------------------
 
-		class ImGuiErrorPopup : public ImGuiPopupBase<void>
+		class ImGuiMessagePopup : public ImGuiPopupBase<void>
 		{
 		public:
 
@@ -672,7 +679,7 @@ if (WindowApplication* WA = Application::GetInstance())
 				}
 
 				ImGui::Text(message.c_str());
-				if (ImGui::Button("\\uf071 Close"))
+				if (ImGui::Button("Close"))
 					Close();
 			}
 
@@ -714,47 +721,99 @@ protected:
 		return true;
 	}
 
-
 	virtual void InitializeImGuiContext() override
 	{
 		chaos::Window::InitializeImGuiContext();
 
 		ImGuiIO& io = ImGui::GetIO();
+
+		ImFontConfig fontConfig;
+		fontConfig.MergeMode = true;
+
+		// le merge mode ne doit etre donné qu'a la seconde font !! sinon ca crash
+		static const ImWchar customRange[] = { 0x01, 0x03FF, 0 }; // Plage des caractères grecs
+
 		fontAwesome = io.Fonts->AddFontFromFileTTF(
 			(chaos::Application::GetInstance()->GetResourcesPath() / "fonts/unispace bold italic.ttf").string().c_str(),
-			20.0f);
+			20.0f, nullptr, customRange);
 
+		if (0)
+		fontAwesome = io.Fonts->AddFontFromFileTTF(
+			(chaos::Application::GetInstance()->GetResourcesPath() / "fonts/fontawesome-webfont.ttf").string().c_str(),
+			20.0f, nullptr);
 	}
 
 	virtual void OnDrawWindowImGuiContent() override
 	{
-		if (fontAwesome)
-			ImGui::PushFont(fontAwesome);
-
 		if (ImGui::Begin("help", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
 		{
-			if (ImGui::Button("show popup", { 200.0f , 200.0f }))
+			if (ImGui::Button(CHAOS_PP_UNICODE_TO_UTF8(3,c,0) " show popup", { 200.0f , 200.0f }))
 			{
 				PopupPlacement placement = PopupPlacement::GetCenterOnScreenPlacement();
 				placement.movable = true;
-				error_popup.Open("error", "this is the error message", placement);
+				message_popup.Open("error", "this is the error message", placement);
 			}
 			ImGui::End();
 		}
-
-		if (fontAwesome)
-			ImGui::PopFont();
-
-		error_popup.Process();
+		message_popup.Process();
 	}
 
 protected:
 
-	ImGuiErrorPopup error_popup;
+	ImGuiMessagePopup message_popup;
 
 	ImFont* fontAwesome = nullptr;
 };
 
+bool RuntimeCheck(chaos::LightweightFunction<bool()> func)
+{
+	bool result = func();
+	assert(result);
+	return result;
+}
+
+#define RUNTIME_CHECK(FUNC) static bool value = RuntimeCheck(FUNC);
+
+RUNTIME_CHECK([]()
+{
+	return chaos::StringTools::Strcmp("\xF0\x9F\x90\x89", CHAOS_PP_UNICODE_TO_UTF8(1, f, 4, 0, 9)) == 0;
+});
+
+#if 0
+
+FT_UInt glyph_index;
+FT_ULong charcode = FT_Get_First_Char(face, &glyph_index);
+
+int k = 0;
+
+while (glyph_index != 0)
+{
+	if (FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT) == 0)
+	{
+		FT_GlyphSlot slot = face->glyph;
+
+		auto im = FontTools::GenerateImage(slot);
+
+		if (im == nullptr)
+			im = im;
+		else
+			im = im;
+
+		++k;
+
+		slot = slot;
+	}
+	else
+	{
+		k = k;
+	}
+
+	charcode = FT_Get_Next_Char(face, charcode, &glyph_index);
+}
+
+k = k;
+
+#endif
 
 int main(int argc, char ** argv, char ** env)
 {

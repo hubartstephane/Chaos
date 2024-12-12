@@ -297,11 +297,9 @@ namespace chaos
 		virtual void SetGLFWCallbacks();
 
 		/** create an ImGui context */
-		void CreateImGuiContext();
+		void CreateImGuiContext(ImGuiManager * manager);
 		/** destroying the ImGui context */
 		void DestroyImGuiContext();
-		/** initialize some internals for ImGui context */
-		virtual void InitializeImGuiContext();
 
 		/** create the internal window */
 		bool CreateGLFWWindow(WindowPlacementInfo const & placement_info, WindowCreateParams const &create_params, GLFWwindow* share_context, GLFWHints glfw_hints);

@@ -165,7 +165,7 @@ namespace chaos
 			// post initialization method
 			glfwMakeContextCurrent(result->GetGLFWHandler());
 			// initialize ImGui
-			result->CreateImGuiContext();
+			result->CreateImGuiContext(imgui_manager.get());
 
 			// finalize the creation
 			if (!result->Initialize())

@@ -396,16 +396,7 @@ namespace chaos
 					window_application->OnWindowDestroyed(this);
 	}
 
-	void Window::InitializeImGuiContext()
-	{
-		ImGuiIO& io = ImGui::GetIO();
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-		io.ConfigFlags |= ImGuiConfigFlags_NavNoCaptureKeyboard;  // Do not capture keyboard during navigation
-		ImGui::StyleColorsDark();
-	}
-
-	void Window::CreateImGuiContext()
+	void Window::CreateImGuiContext(ImGuiManager * imgui_manager)
 	{
 		// save imgui context
 		ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
@@ -414,7 +405,8 @@ namespace chaos
 		imgui_context = ImGui::CreateContext();
 		ImGui::SetCurrentContext(imgui_context);
 
-		InitializeImGuiContext();
+		if (imgui_manager != nullptr)
+			imgui_manager->InitializeImGuiContext(this);
 
 		// initialize the context
 		//

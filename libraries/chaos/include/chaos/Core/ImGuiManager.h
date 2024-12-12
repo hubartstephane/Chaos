@@ -9,6 +9,11 @@ namespace chaos
 	/** a Manager to handle ImGui preferences */
 	class ImGuiManager : public ResourceManager, public ConfigurableInterface
 	{
+	public:
+
+		/** initialize one windows' imgui context */
+		virtual void InitializeImGuiContext(Window* window) const;
+
 	protected:
 
 		/** override */

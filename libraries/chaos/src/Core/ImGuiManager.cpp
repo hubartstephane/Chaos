@@ -24,4 +24,13 @@ namespace chaos
 		return true;
 	}
 
+	void ImGuiManager::InitializeImGuiContext(Window * window) const
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+		io.ConfigFlags |= ImGuiConfigFlags_NavNoCaptureKeyboard;  // Do not capture keyboard during navigation
+		ImGui::StyleColorsDark();
+	}
+
 }; // namespace chaos

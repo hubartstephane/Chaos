@@ -162,9 +162,11 @@ namespace chaos
 				result->Destroy();
 				return nullptr; // the shared_ptr destruction will handle the object lifetime
 			}
-			result->CreateImGuiContext();
 			// post initialization method
 			glfwMakeContextCurrent(result->GetGLFWHandler());
+			// initialize ImGui
+			result->CreateImGuiContext();
+
 			// finalize the creation
 			if (!result->Initialize())
 			{
@@ -561,6 +563,16 @@ namespace chaos
 		return true;
 	}
 
+	void WindowApplication::FinalizeGPUResourceManager()
+	{
+		// stop the resource manager
+		if (gpu_resource_manager != nullptr)
+		{
+			gpu_resource_manager->StopManager();
+			gpu_resource_manager = nullptr;
+		}
+	}
+
 	bool WindowApplication::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
 	{
 		if (!Application::OnReadConfigurableProperties(config, context))
@@ -594,16 +606,6 @@ namespace chaos
 		});
 	}
 
-	void WindowApplication::FinalizeGPUResourceManager()
-	{
-		// stop the resource manager
-		if (gpu_resource_manager != nullptr)
-		{
-			gpu_resource_manager->StopManager();
-			gpu_resource_manager = nullptr;
-		}
-	}
-
 	bool WindowApplication::InitializeManagers()
 	{
 		if (!Application::InitializeManagers())
@@ -621,6 +623,13 @@ namespace chaos
 		GiveChildConfiguration(sound_manager.get(), "sounds");
 		sound_manager->StartManager();
 
+		// initialize the imgui manager
+		imgui_manager = new ImGuiManager;
+		if (imgui_manager == nullptr)
+			return false;
+		GiveChildConfiguration(imgui_manager.get(), "imgui");
+		imgui_manager->StartManager();
+
 		return true;
 	}
 
@@ -634,11 +643,11 @@ namespace chaos
 			sound_manager->StopManager();
 			sound_manager = nullptr;
 		}
-		// stop the resource manager
-		if (gpu_resource_manager != nullptr)
+		// stop the imgui manager
+		if (imgui_manager != nullptr)
 		{
-			gpu_resource_manager->StopManager();
-			gpu_resource_manager = nullptr;
+			imgui_manager->StopManager();
+			imgui_manager = nullptr;
 		}
 		// super method
 		Application::FinalizeManagers();
@@ -646,10 +655,10 @@ namespace chaos
 
 	void WindowApplication::Finalize()
 	{
-		// destroy the resources
-		FinalizeGPUResourceManager();
 		// destroy all windows
 		DestroyAllWindows();
+		// destroy the resources
+		FinalizeGPUResourceManager();
 		// super
 		Application::Finalize();
 	}

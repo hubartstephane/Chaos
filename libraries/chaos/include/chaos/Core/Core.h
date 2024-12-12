@@ -70,3 +70,4 @@
 #include "chaos/Core/ImGuiLogObject.h"
 #include "chaos/Core/ObjectPool.h"
 #include "chaos/Core/ObjectPool64.h"
+#include "chaos/Core/ImGuiManager.h"

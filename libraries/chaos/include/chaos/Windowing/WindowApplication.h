@@ -270,6 +270,8 @@ namespace chaos
 		shared_ptr<SoundManager> sound_manager;
 		/** the graphic resource manager */
 		shared_ptr<GPUResourceManager> gpu_resource_manager;
+		/** the imgui manager */
+		shared_ptr<ImGuiManager> imgui_manager;
 
 		/** the texture atlas */
 		shared_ptr<BitmapAtlas::TextureArrayAtlas> texture_atlas;

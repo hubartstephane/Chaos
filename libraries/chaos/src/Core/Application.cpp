@@ -91,10 +91,6 @@ namespace chaos
 
 		HelpText::OutputToLogs();
 
-		// show console
-		if (false)
-			WinTools::AllocConsoleAndRedirectStdOutput();
-
 		// some log
 		LogExecutionInformation();
 

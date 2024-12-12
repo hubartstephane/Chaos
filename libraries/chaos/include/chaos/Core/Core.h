@@ -45,6 +45,7 @@
 #include "chaos/Core/ImGuiHelpObject.h"
 #include "chaos/Core/ImGuiGlobalVariablesObject.h"
 #include "chaos/Core/ImGuiDemoObject.h"
+#include "chaos/Core/ImGuiPopup.h"
 #include "chaos/Core/Log.h"
 #include "chaos/Core/FileResource.h"
 #include "chaos/Core/Tag.h"

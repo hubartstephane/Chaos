@@ -73,6 +73,9 @@ namespace chaos
 	/** template for optional */
 	template<typename T, JSONSource SRC_TYPE>
 	bool LoadFromJSON(SRC_TYPE src, std::optional<T>& dst);
+	/** template for optional */
+	template<typename T1, typename T2, JSONSource SRC_TYPE>
+	bool LoadFromJSON(SRC_TYPE src, std::pair<T1, T2>& dst);
 
 	/** serialize a path into json */
 	CHAOS_API bool SaveIntoJSON(nlohmann::json * json, boost::filesystem::path const& src);
@@ -91,6 +94,9 @@ namespace chaos
 	/** specialization for optional */
 	template<typename T>
 	bool SaveIntoJSON(nlohmann::json* json, std::optional<T> const& src);
+	/** specialization for pair */
+	template<typename T1, typename T2>
+	bool SaveIntoJSON(nlohmann::json* json, std::pair<T1, T2> const& src);
 
 	/** ensure pointers is not null and the node is a json object */
 	CHAOS_API bool PrepareSaveObjectIntoJSON(nlohmann::json* json);
@@ -463,6 +469,24 @@ namespace chaos
 		return false;
 	}
 
+	template<typename T1, typename T2, JSONSource SRC_TYPE>
+	bool LoadFromJSON(SRC_TYPE src, std::pair<T1, T2>& dst)
+	{
+		return JSONTools::ForEachSource(src, [&dst](nlohmann::json const* json)
+		{
+			if (json->is_array())
+			{
+				if (json->size() == 2)
+				{
+					return
+						JSONTools::GetElement(json, 0, dst.first) &&
+						JSONTools::GetElement(json, 1, dst.second);
+				}
+			}
+			return false;
+		});
+	}
+
 	template<typename T>
 	bool SaveIntoJSON(nlohmann::json * json, T const& src)
 	{
@@ -552,6 +576,16 @@ namespace chaos
 		if (!src.has_value())
 			return false;
 		return SaveIntoJSON(json, src.value());
+	}
+
+	template<typename T1, typename T2>
+	bool SaveIntoJSON(nlohmann::json* json, std::pair<T1, T2> const& src)
+	{
+		if (!chaos::PrepareSaveArrayIntoJSON(json))
+			return false;
+		chaos::JSONTools::SetElement(json, 0, src.first);
+		chaos::JSONTools::SetElement(json, 1, src.second);
+		return true;
 	}
 
 #endif

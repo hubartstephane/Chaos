@@ -3,12 +3,17 @@
 
 namespace chaos
 {
+	static chaos::EnumTools::EnumMetaData<ImGuiStyle> const ImGuiStyle_metadata =
+	{
+		{ ImGuiStyle::Dark, "Dark" },
+		{ ImGuiStyle::Light, "Light" },
+		{ ImGuiStyle::Classic, "Classic" }
+	};
+	CHAOS_IMPLEMENT_ENUM_METHOD(ImGuiStyle, &ImGuiStyle_metadata, CHAOS_API);
+
 	bool ImGuiManager::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
 	{
-		int result = 0;
-
-		JSONTools::GetAttribute(config, "test", result);
-
+		JSONTools::GetAttribute(config, "Style", style);
 		return true;
 	}
 
@@ -30,7 +35,19 @@ namespace chaos
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 		io.ConfigFlags |= ImGuiConfigFlags_NavNoCaptureKeyboard;  // Do not capture keyboard during navigation
-		ImGui::StyleColorsDark();
+		
+		switch (style)
+		{
+		case ImGuiStyle::Dark: ImGui::StyleColorsDark(); break;
+		case ImGuiStyle::Light: ImGui::StyleColorsLight(); break;
+		case ImGuiStyle::Classic: ImGui::StyleColorsClassic(); break;
+		}
+	
+
+
+
+
+
 	}
 
 }; // namespace chaos

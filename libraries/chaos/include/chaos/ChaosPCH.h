@@ -55,6 +55,7 @@
 #include <cmath>
 #include <cfloat>
 #include <random>
+#include <concepts>
 
 #if _WIN32
 #include <io.h>

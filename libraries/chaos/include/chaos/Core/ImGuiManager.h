@@ -31,8 +31,8 @@ namespace chaos
 		/** the height of the glyphs */
 		std::optional<float> height;
 
-		/** the font object created by ImGui */
-		mutable ImFont* font = nullptr;
+		/** the buffer containing file content of the font */
+		mutable Buffer<char> file_buffer;
 	};
 
 	CHAOS_API bool DoSaveIntoJSON(nlohmann::json* json, ImGuiFontFace const& src);
@@ -45,6 +45,11 @@ namespace chaos
 
 		/** initialize one windows' imgui context */
 		virtual void InitializeImGuiContext(Window* window) const;
+		/** finalize one windows' imgui context */
+		virtual void FinalizeImGuiContext(Window* window) const;
+
+		/** construct an atlas according to the configuration */
+		ImFontAtlas* BuildAtlas() const;
 
 	protected:
 
@@ -52,11 +57,6 @@ namespace chaos
 		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
 		/** override */
 		virtual bool DoStartManager() override;
-		/** override */
-		virtual bool DoStopManager() override;
-
-		/** construct an atlas according to the configuration */
-		ImFontAtlas* GetSharedAtlas() const;
 
 	protected:
 
@@ -64,8 +64,6 @@ namespace chaos
 		ImGuiStyle style = ImGuiStyle::Classic;
 		/** the font faces */
 		std::vector<ImGuiFontFace> font_faces;
-		/** the atlas shared among all contexts */
-		mutable ImFontAtlas* shared_atlas = nullptr;
 	};
 
 #endif

@@ -95,7 +95,7 @@ namespace chaos
 			WindowApplication->DestroyWindow(this);
 	}
 
-	void Window::DestroyImGuiContext()
+	void Window::DestroyImGuiContext(ImGuiManager * imgui_manager)
 	{
 		// destroy ImGui context (must happen before the windows destruction because some GLFW callbacks rely on the existence of the ImGui context)
 		if (imgui_context != nullptr)
@@ -106,13 +106,11 @@ namespace chaos
 			ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
 			ImGui::SetCurrentContext(imgui_context);
 
+			if (imgui_manager != nullptr)
+				imgui_manager->FinalizeImGuiContext(this);
+
 			ImGui_ImplGlfw_Shutdown();
 			ImGui_ImplOpenGL3_Shutdown();
-
-
-
-			// shuxxx
-
 
 			ImGui::DestroyContext();
 			ImGui::SetCurrentContext((previous_imgui_context != imgui_context) ? previous_imgui_context : nullptr); // if there was another context, restore it
@@ -408,7 +406,7 @@ namespace chaos
 		ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
 
 		// create a new context for this window
-		imgui_context = ImGui::CreateContext();
+		imgui_context = ImGui::CreateContext(imgui_manager->BuildAtlas());
 		ImGui::SetCurrentContext(imgui_context);
 
 		if (imgui_manager != nullptr)

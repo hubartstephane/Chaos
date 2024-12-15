@@ -186,7 +186,7 @@ namespace chaos
 		// destroy the window for real
 		window->StorePersistentProperties(true);
 		window->Finalize();
-		window->DestroyImGuiContext();
+		window->DestroyImGuiContext(imgui_manager.get());
 		window->DestroyGLFWWindow();
 	}
 

@@ -39,17 +39,6 @@ namespace chaos
 		return true;
 	}
 
-	bool ImGuiManager::DoStopManager()
-	{
-		if (shared_atlas)
-		{
-			delete shared_atlas;
-			shared_atlas = nullptr;
-		}
-		ResourceManager::DoStopManager();
-		return true;
-	}
-
 	bool ImGuiManager::DoStartManager()
 	{
 		// super method
@@ -62,67 +51,60 @@ namespace chaos
 		return true;
 	}
 
-	ImFontAtlas* ImGuiManager::GetSharedAtlas() const
+	ImFontAtlas* ImGuiManager::BuildAtlas() const
 	{
-		if (shared_atlas == nullptr)
+		if (font_faces.size() == 0)
 		{
-			if (font_faces.size() > 0)
+			ImGuiManagerLog::Error("ImGuiManager::BuildAtlas: no font defined");
+			return nullptr;
+		}
+
+		ImFontAtlas* result = new ImFontAtlas;
+
+		if (result != nullptr)
+		{
+			ImFontConfig font_config;
+			font_config.MergeMode = true;
+
+			ImFontConfig const* font_config_ptr = nullptr;
+
+			for (ImGuiFontFace const& font_face : font_faces)
 			{
-				shared_atlas = new ImFontAtlas;
-				if (shared_atlas != nullptr)
+				// load the file
+				if (!font_face.file_buffer)
 				{
-					// load all resources
-					std::vector<Buffer<char>> buffers;
-
-					ImFontConfig font_config;
-					font_config.MergeMode = true;
-
-					ImFontConfig const* font_config_ptr = nullptr;
-
-					for (ImGuiFontFace const& font_face : font_faces)
+					font_face.file_buffer = FileTools::LoadFile(font_face.path);
+					if (!font_face.file_buffer)
 					{
-						// load the file
-						Buffer<char> buffer = FileTools::LoadFile(font_face.path);
-						if (!buffer)
-						{
-							ImGuiManagerLog::Error("ImGuiManager::GetSharedAtlas: fails to load file %s", font_face.path.string().c_str());
-							continue;
-						}
-
-						buffers.push_back(buffer); // do not release the buffer until the whole texture is updated
-
-						// prepare font parameters
-						float height = font_face.height.value_or(16.0f);
-
-						ImWchar range[3] = { 0, 0, 0 };
-						if (font_face.range.has_value())
-						{
-							range[0] = font_face.range.value().first;
-							range[1] = font_face.range.value().second;
-						}
-						else
-						{
-							ImWchar const* default_range = shared_atlas->GetGlyphRangesDefault();
-							range[0] = default_range[0];
-							range[1] = default_range[1];
-						}
-
-						font_face.font = shared_atlas->AddFontFromMemoryTTF(buffer.data, (int)buffer.bufsize, height, font_config_ptr);
-
-						// for next font, use merge mode
-						font_config_ptr = &font_config;
+						ImGuiManagerLog::Error("ImGuiManager::BuildAtlas: fails to load file %s", font_face.path.string().c_str());
+						continue;
 					}
-
-					// rebuild the atlas
-					unsigned char* pixels = nullptr;
-					int width = 0;
-					int height = 0;
-					int bpp = 0;
-					shared_atlas->GetTexDataAsRGBA32(&pixels, &width, &height, &bpp);
 				}
+
+				// prepare font parameters
+				float height = font_face.height.value_or(16.0f);
+
+				ImWchar range[3] = { 0, 0, 0 };
+				if (font_face.range.has_value())
+				{
+					range[0] = font_face.range.value().first;
+					range[1] = font_face.range.value().second;
+				}
+				else
+				{
+					ImWchar const* default_range = result->GetGlyphRangesDefault();
+					range[0] = default_range[0];
+					range[1] = default_range[1];
+				}
+
+				// add the font
+				result->AddFontFromMemoryTTF(font_face.file_buffer.data, (int)font_face.file_buffer.bufsize, height, font_config_ptr);
+
+				// for next font, use merge mode
+				font_config_ptr = &font_config;
 			}
 		}
-		return shared_atlas;
+		return result;
 	}
 
 	void ImGuiManager::InitializeImGuiContext(Window * window) const
@@ -140,8 +122,11 @@ namespace chaos
 		case ImGuiStyle::Light: ImGui::StyleColorsLight(); break;
 		case ImGuiStyle::Classic: ImGui::StyleColorsClassic(); break;
 		}
+	}
 
-		io.Fonts = GetSharedAtlas();
+	void ImGuiManager::FinalizeImGuiContext(Window* window) const
+	{
+		assert(window->GetImGuiContext() == ImGui::GetCurrentContext());
 	}
 
 }; // namespace chaos

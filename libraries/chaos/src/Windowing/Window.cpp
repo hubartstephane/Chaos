@@ -475,9 +475,15 @@ namespace chaos
 		return cursor_mode;
 	}
 
-	bool Window::IsImGuiMenuEnabled() const
+	void Window::SetImGuiMenuEnabled(bool enabled)
 	{
 		if (WindowApplication* window_application = Application::GetInstance())
+			window_application->SetImGuiMenuEnabled(enabled);
+	}
+
+	bool Window::IsImGuiMenuEnabled() const
+	{
+		if (WindowApplication const * window_application = Application::GetInstance())
 			return window_application->IsImGuiMenuEnabled();
 		return false;
 	}
@@ -1145,20 +1151,20 @@ namespace chaos
 		}
 	}
 
-	bool Window::IsApplicationImGuiMenuEnabled() const
+	bool Window::IsApplicationImGuiMenuPluggedIn() const
 	{
-		return application_menu_enabled;
+		return application_imgui_menu_plugged_in;
 	}
 
-	void Window::EnableApplicationImGuiMenu(bool in_enabled)
+	void Window::SetApplicationImGuiMenuPluggedIn(bool enabled)
 	{
-		application_menu_enabled = in_enabled;
+		application_imgui_menu_plugged_in = enabled;
 	}
 
 	void Window::OnDrawWindowImGuiMenu(BeginImGuiMenuFunc begin_menu_func)
 	{
 		// display application menu items
-		if (IsApplicationImGuiMenuEnabled())
+		if (IsApplicationImGuiMenuPluggedIn())
 			if (WindowApplication* window_application = Application::GetInstance())
 				window_application->OnDrawApplicationImGuiMenu(begin_menu_func);
 

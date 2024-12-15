@@ -60,6 +60,9 @@ namespace chaos
 		/** override */
 		virtual bool DoStartManager() override;
 
+		/** set mouse flags for ImGui */
+		void SetImGuiContextMouseFlag(bool enabled) const;
+
 	protected:
 
 		/** the style of imgui */

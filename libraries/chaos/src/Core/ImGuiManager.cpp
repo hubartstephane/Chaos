@@ -119,7 +119,7 @@ namespace chaos
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls		
 		io.ConfigFlags |= ImGuiConfigFlags_NavNoCaptureKeyboard;  // Do not capture keyboard during navigation
 		
-		OnImGuiMenuEnabledChanged(window, window->IsApplicationImGuiMenuEnabled());
+		SetImGuiContextMouseFlag(window->IsImGuiMenuEnabled());
 
 		switch (style)
 		{
@@ -137,7 +137,11 @@ namespace chaos
 	void ImGuiManager::OnImGuiMenuEnabledChanged(Window* window, bool enabled) const
 	{
 		assert(window->GetImGuiContext() == ImGui::GetCurrentContext());
+		SetImGuiContextMouseFlag(enabled);
+	}
 
+	void ImGuiManager::SetImGuiContextMouseFlag(bool enabled) const
+	{
 		ImGuiIO& io = ImGui::GetIO();
 		if (enabled)
 			io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse; // need mouse

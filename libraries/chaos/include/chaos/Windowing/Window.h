@@ -251,9 +251,9 @@ namespace chaos
 		void SetWindowCategory(WindowCategory in_window_category){ window_category = in_window_category; };
 
 		/** returns whether window wants application imgui menu to be plugged into its menu */
-		bool IsApplicationImGuiMenuEnabled() const;
+		bool IsApplicationImGuiMenuPluggedIn() const;
 		/** enable or disable application imgui menu to be plugged into this window */
-		void EnableApplicationImGuiMenu(bool in_enabled);
+		void SetApplicationImGuiMenuPluggedIn(bool enabled);
 
 		/** search whether a given ImGui object exists */
 		bool IsKnownImGuiObjectVisible(char const* name) const;
@@ -270,6 +270,11 @@ namespace chaos
 
 		/** gets the imgui manager */
 		ImGuiManager* GetImGuiManager() const;
+
+		/** gets the whether the menu is enabled */
+		bool IsImGuiMenuEnabled() const;
+		/** enable or disable ImGui menu */
+		void SetImGuiMenuEnabled(bool enabled);
 
 	protected:
 
@@ -311,8 +316,6 @@ namespace chaos
 
 		/** called menu is being enabled or disabled */
 		void OnImGuiMenuEnabledChanged(bool enabled);
-		/** gets the whether the menu is enabled */
-		bool IsImGuiMenuEnabled() const;
 
 		/** called whenever the window is redrawn (entry point) */
 		virtual void DrawWindow();
@@ -434,7 +437,7 @@ namespace chaos
 		/** the window category */
 		WindowCategory window_category = WindowCategory::MAIN_WINDOW;
 		/** whether application is enabled to be plugged into the window */
-		bool application_menu_enabled = true;
+		bool application_imgui_menu_plugged_in = true;
 
 		/** the imgui_objects handled by this window */
 		std::vector<shared_ptr<ImGuiObject>> imgui_objects;

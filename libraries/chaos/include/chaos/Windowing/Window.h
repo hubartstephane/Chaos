@@ -268,6 +268,9 @@ namespace chaos
 		/** remove an ImGui object from list */
 		void RemoveImGuiObject(ImGuiObject* imgui_object);
 
+		/** gets the imgui manager */
+		ImGuiManager* GetImGuiManager() const;
+
 	protected:
 
 		/** override */
@@ -297,19 +300,19 @@ namespace chaos
 		virtual void SetGLFWCallbacks();
 
 		/** create an ImGui context */
-		void CreateImGuiContext(ImGuiManager * manager);
+		void CreateImGuiContext();
 		/** destroying the ImGui context */
-		void DestroyImGuiContext(ImGuiManager* imgui_manager);
+		void DestroyImGuiContext();
 
 		/** create the internal window */
 		bool CreateGLFWWindow(WindowPlacementInfo const & placement_info, WindowCreateParams const &create_params, GLFWwindow* share_context, GLFWHints glfw_hints);
 		/** destroying the window */
 		void DestroyGLFWWindow();
 
-		/** called whenever the mode is being changed */
-		void OnImGuiMenuModeChanged(bool mode);
-		/** gets the window special mode */
-		bool GetImGuiMenuMode() const;
+		/** called menu is being enabled or disabled */
+		void OnImGuiMenuEnabledChanged(bool enabled);
+		/** gets the whether the menu is enabled */
+		bool IsImGuiMenuEnabled() const;
 
 		/** called whenever the window is redrawn (entry point) */
 		virtual void DrawWindow();

@@ -423,7 +423,7 @@ protected:
 
 	void DrawAction()
 	{
-		if (GetImGuiMenuMode())
+		if (IsImGuiMenuEnabled())
 		{
 			if (current_action_type == ActionType::CREATE_BOX)
 			{
@@ -506,11 +506,11 @@ protected:
 		return (!current_object_index.has_value()) ? nullptr : geometric_objects[current_object_index.value()].get();
 	}
 
-	bool GetImGuiMenuMode() const
+	bool IsImGuiMenuEnabled() const
 	{
 		if (chaos::WindowApplication const* application = chaos::Application::GetInstance())
 		{
-			return application->GetImGuiMenuMode();
+			return application->IsImGuiMenuEnabled();
 		}
 
 		return false;
@@ -567,7 +567,7 @@ protected:
 	{
 		if (button == 1 && action == GLFW_PRESS)
 		{
-			if (GetImGuiMenuMode())
+			if (IsImGuiMenuEnabled())
 			{
 				if (current_action_type == ActionType::CREATE_BOX)
 				{
@@ -752,7 +752,7 @@ protected:
 		}
 
 		// object selection with mouse
-		if (GetImGuiMenuMode())
+		if (IsImGuiMenuEnabled())
 		{
 			glm::ivec2 window_size = GetWindowSize();
 			if (window_size.x > 0 && window_size.y > 0)

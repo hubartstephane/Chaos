@@ -125,10 +125,10 @@ namespace chaos
 		/** create the main window */
 		virtual Window* DoCreateMainWindow(WindowCreateParams const& create_params);
 
-		/** enable per window special mode */
-		void SetImGuiMenuMode(bool mode);
-		/** gets the window special mode */
-		bool GetImGuiMenuMode() const;
+		/** enable or disable ImGui menu */
+		void SetImGuiMenuEnabled(bool enabled);
+		/** gets the whether the menu is enabled */
+		bool IsImGuiMenuEnabled() const;
 
 		/** search whether a given window exists */
 		bool IsKnownWindowVisible(char const* name) const;
@@ -140,6 +140,9 @@ namespace chaos
 
 		/** search whether there is at least one main window */
 		bool HasMainWindow() const;
+
+		/** gets the imgui manager */
+		ImGuiManager* GetImGuiManager() const;
 
 	protected:
 
@@ -299,7 +302,7 @@ namespace chaos
 		bool forced_zero_tick_duration = false;
 
 		/** the imgui menu mode */
-		bool imgui_menu_mode = false;
+		bool imgui_menu_enabled = false;
 
 		/** the hints for all windows */
 		GLFWHints glfw_hints;

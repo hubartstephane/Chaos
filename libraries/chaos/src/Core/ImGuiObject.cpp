@@ -14,7 +14,7 @@ namespace chaos
 	{
 		// check wether the application accepts the menu bar
 		if (WindowApplication* window_application = Application::GetInstance())
-			if (!window_application->GetImGuiMenuMode())
+			if (!window_application->IsImGuiMenuEnabled())
 				return;
 
 		// display full window menu bar
@@ -36,7 +36,7 @@ namespace chaos
 	{
 		// check whether application accepts menu
 		if (WindowApplication* window_application = Application::GetInstance())
-			if (!window_application->GetImGuiMenuMode())
+			if (!window_application->IsImGuiMenuEnabled())
 				return imgui_window_flags & ~ImGuiWindowFlags_MenuBar;
 
 		// check whether the menu is to be plugged into full window

@@ -95,7 +95,7 @@ namespace chaos
 			WindowApplication->DestroyWindow(this);
 	}
 
-	void Window::DestroyImGuiContext(ImGuiManager * imgui_manager)
+	void Window::DestroyImGuiContext()
 	{
 		// destroy ImGui context (must happen before the windows destruction because some GLFW callbacks rely on the existence of the ImGui context)
 		if (imgui_context != nullptr)
@@ -106,8 +106,7 @@ namespace chaos
 			ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
 			ImGui::SetCurrentContext(imgui_context);
 
-			if (imgui_manager != nullptr)
-				imgui_manager->FinalizeImGuiContext(this);
+			GetImGuiManager()->FinalizeImGuiContext(this);
 
 			ImGui_ImplGlfw_Shutdown();
 			ImGui_ImplOpenGL3_Shutdown();
@@ -400,8 +399,10 @@ namespace chaos
 					window_application->OnWindowDestroyed(this);
 	}
 
-	void Window::CreateImGuiContext(ImGuiManager * imgui_manager)
+	void Window::CreateImGuiContext()
 	{
+		ImGuiManager* imgui_manager = GetImGuiManager();
+
 		// save imgui context
 		ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
 
@@ -409,8 +410,7 @@ namespace chaos
 		imgui_context = ImGui::CreateContext(imgui_manager->BuildAtlas());
 		ImGui::SetCurrentContext(imgui_context);
 
-		if (imgui_manager != nullptr)
-			imgui_manager->InitializeImGuiContext(this);
+		imgui_manager->InitializeImGuiContext(this);
 
 		// initialize the context
 		//
@@ -465,8 +465,8 @@ namespace chaos
 		if (cursor_mode != mode)
 		{
 			cursor_mode = mode;
-			if (!GetImGuiMenuMode())
-				glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)mode); // do not effectively change cursor mode, during imgui_menu_mode
+			if (!IsImGuiMenuEnabled())
+				glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)mode); // do not effectively change cursor mode, during imgui_menu_enabled
 		}
 	}
 
@@ -475,19 +475,28 @@ namespace chaos
 		return cursor_mode;
 	}
 
-	bool Window::GetImGuiMenuMode() const
+	bool Window::IsImGuiMenuEnabled() const
 	{
 		if (WindowApplication* window_application = Application::GetInstance())
-			return window_application->GetImGuiMenuMode();
+			return window_application->IsImGuiMenuEnabled();
 		return false;
 	}
-
-	void Window::OnImGuiMenuModeChanged(bool mode)
+	
+	ImGuiManager* Window::GetImGuiManager() const
 	{
-		if (mode)
+		if (WindowApplication* window_application = Application::GetInstance())
+			return window_application->GetImGuiManager();
+		return nullptr;
+	}
+
+	void Window::OnImGuiMenuEnabledChanged(bool enabled)
+	{
+		if (enabled)
 			glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)CursorMode::NORMAL);
 		else
 			glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)cursor_mode);
+
+		GetImGuiManager()->OnImGuiMenuEnabledChanged(this, enabled);
 	}
 
 	glm::ivec2 Window::GetWindowPosition(bool include_decorators) const
@@ -747,7 +756,7 @@ namespace chaos
 		GetWindowAndProcess(in_glfw_window, [=](Window* my_window)
 		{
 			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
-			if (ImGui::GetCurrentContext() != nullptr)
+			if (ImGui::GetCurrentContext() != nullptr && my_window->IsImGuiMenuEnabled())
 			{
 				ImGui_ImplGlfw_CursorPosCallback(in_glfw_window, x, y);
 
@@ -772,7 +781,7 @@ namespace chaos
 		GetWindowAndProcess(in_glfw_window, [=](Window* my_window)
 		{
 			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
-			if (ImGui::GetCurrentContext() != nullptr)
+			if (ImGui::GetCurrentContext() != nullptr && my_window->IsImGuiMenuEnabled())
 			{
 				ImGui_ImplGlfw_MouseButtonCallback(in_glfw_window, button, action, modifier);
 
@@ -797,7 +806,7 @@ namespace chaos
 		GetWindowAndProcess(in_glfw_window, [=](Window* my_window)
 		{
 			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
-			if (ImGui::GetCurrentContext() != nullptr)
+			if (ImGui::GetCurrentContext() != nullptr && my_window->IsImGuiMenuEnabled())
 			{
 				ImGui_ImplGlfw_ScrollCallback(in_glfw_window, scroll_x, scroll_y);
 
@@ -1130,7 +1139,7 @@ namespace chaos
 		OnDrawWindowImGuiContent();
 
 		// draw the menu
-		if (GetImGuiMenuMode())
+		if (IsImGuiMenuEnabled())
 		{
 			OnDrawWindowImGuiMenu(ImGuiTools::BeginMainMenuBar());
 		}

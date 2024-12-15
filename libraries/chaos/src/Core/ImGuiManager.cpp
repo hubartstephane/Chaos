@@ -35,6 +35,20 @@ namespace chaos
 		{
 			JSONTools::GetAttribute(config, "font_faces", font_faces);
 			JSONTools::GetAttribute(config, "style", style);
+
+			// load all files. Remove the faces that are failing
+			auto it = std::remove_if(font_faces.begin(), font_faces.end(), [](ImGuiFontFace& font_face)
+			{
+				font_face.file_buffer = FileTools::LoadFile(font_face.path);
+				if (!font_face.file_buffer)
+				{
+					ImGuiManagerLog::Error("ImGuiManager::BuildAtlas: fails to load file %s", font_face.path.string().c_str());
+					return true;
+				}
+				return false;
+			});
+			if (it != font_faces.end())
+				font_faces.erase(it);
 		}
 		return true;
 	}
@@ -70,17 +84,6 @@ namespace chaos
 
 			for (ImGuiFontFace const& font_face : font_faces)
 			{
-				// load the file
-				if (!font_face.file_buffer)
-				{
-					font_face.file_buffer = FileTools::LoadFile(font_face.path);
-					if (!font_face.file_buffer)
-					{
-						ImGuiManagerLog::Error("ImGuiManager::BuildAtlas: fails to load file %s", font_face.path.string().c_str());
-						continue;
-					}
-				}
-
 				// prepare font parameters
 				float height = font_face.height.value_or(16.0f);
 
@@ -112,10 +115,12 @@ namespace chaos
 		assert(window->GetImGuiContext() == ImGui::GetCurrentContext());
 
 		ImGuiIO& io = ImGui::GetIO();
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+		io.ConfigFlags &= ~ImGuiConfigFlags_NavEnableGamepad;     // Disable Gamepad Controls
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls		
 		io.ConfigFlags |= ImGuiConfigFlags_NavNoCaptureKeyboard;  // Do not capture keyboard during navigation
 		
+		OnImGuiMenuEnabledChanged(window, window->IsApplicationImGuiMenuEnabled());
+
 		switch (style)
 		{
 		case ImGuiStyle::Dark: ImGui::StyleColorsDark(); break;
@@ -127,6 +132,17 @@ namespace chaos
 	void ImGuiManager::FinalizeImGuiContext(Window* window) const
 	{
 		assert(window->GetImGuiContext() == ImGui::GetCurrentContext());
+	}
+
+	void ImGuiManager::OnImGuiMenuEnabledChanged(Window* window, bool enabled) const
+	{
+		assert(window->GetImGuiContext() == ImGui::GetCurrentContext());
+
+		ImGuiIO& io = ImGui::GetIO();
+		if (enabled)
+			io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse; // need mouse
+		else
+			io.ConfigFlags |= ImGuiConfigFlags_NoMouse; // don't want mouse (elsewhere imgui can react to an invisible cursor)
 	}
 
 }; // namespace chaos

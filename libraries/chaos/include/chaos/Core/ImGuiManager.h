@@ -32,7 +32,7 @@ namespace chaos
 		std::optional<float> height;
 
 		/** the buffer containing file content of the font */
-		mutable Buffer<char> file_buffer;
+		Buffer<char> file_buffer;
 	};
 
 	CHAOS_API bool DoSaveIntoJSON(nlohmann::json* json, ImGuiFontFace const& src);
@@ -47,6 +47,8 @@ namespace chaos
 		virtual void InitializeImGuiContext(Window* window) const;
 		/** finalize one windows' imgui context */
 		virtual void FinalizeImGuiContext(Window* window) const;
+		/** called whenever the menu becomes enabled or disabled */
+		virtual void OnImGuiMenuEnabledChanged(Window* window, bool enabled) const;
 
 		/** construct an atlas according to the configuration */
 		ImFontAtlas* BuildAtlas() const;

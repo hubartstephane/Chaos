@@ -165,7 +165,7 @@ namespace chaos
 			// post initialization method
 			glfwMakeContextCurrent(result->GetGLFWHandler());
 			// initialize ImGui
-			result->CreateImGuiContext(imgui_manager.get());
+			result->CreateImGuiContext();
 
 			// finalize the creation
 			if (!result->Initialize())
@@ -186,7 +186,7 @@ namespace chaos
 		// destroy the window for real
 		window->StorePersistentProperties(true);
 		window->Finalize();
-		window->DestroyImGuiContext(imgui_manager.get());
+		window->DestroyImGuiContext();
 		window->DestroyGLFWWindow();
 	}
 
@@ -754,7 +754,7 @@ namespace chaos
 	{
 		if (event.IsKeyPressed(KeyboardButton::F7))
 		{
-			SetImGuiMenuMode(!GetImGuiMenuMode());
+			SetImGuiMenuEnabled(!IsImGuiMenuEnabled());
 			return true;
 		}
 
@@ -833,21 +833,21 @@ namespace chaos
 			application->OnMonitorEvent(monitor, monitor_state);
 	}
 
-	bool WindowApplication::GetImGuiMenuMode() const
+	bool WindowApplication::IsImGuiMenuEnabled() const
 	{
-		return imgui_menu_mode;
+		return imgui_menu_enabled;
 	}
 
-	void WindowApplication::SetImGuiMenuMode(bool mode)
+	void WindowApplication::SetImGuiMenuEnabled(bool enabled)
 	{
-		if (imgui_menu_mode != mode)
+		if (imgui_menu_enabled != enabled)
 		{
-			imgui_menu_mode = mode;
-			ForAllWindows([mode](Window* window)
+			imgui_menu_enabled = enabled;
+			ForAllWindows([enabled](Window* window)
 			{
-				window->WithWindowContext([&window, mode]()
+				window->WithWindowContext([&window, enabled]()
 				{
-					window->OnImGuiMenuModeChanged(mode);
+					window->OnImGuiMenuEnabledChanged(enabled);
 				});
 			});
 		}
@@ -989,5 +989,9 @@ namespace chaos
 
 #endif // #if _WIN32
 
+	ImGuiManager* WindowApplication::GetImGuiManager() const
+	{
+		return imgui_manager.get();
+	}
 
 }; // namespace chaos

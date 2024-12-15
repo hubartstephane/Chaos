@@ -8,6 +8,9 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+	CHAOS_DEFINE_LOG(ImGuiManagerLog, "ImGuiManager")
+
+	/** describe the possible styles for ImGui */
 	enum class ImGuiStyle
 	{
 		Dark,
@@ -16,8 +19,27 @@ namespace chaos
 	};
 	CHAOS_DECLARE_ENUM_METHOD(ImGuiStyle, CHAOS_API);
 
+	/** describe one's font entry */
+	class CHAOS_API ImGuiFontFace
+	{
+	public:
+
+		/** the path of the font */
+		boost::filesystem::path path;
+		/** the range of the glyph to handle */
+		std::optional<std::pair<uint32_t, uint32_t>> range;
+		/** the height of the glyphs */
+		std::optional<float> height;
+
+		/** the font object created by ImGui */
+		mutable ImFont* font = nullptr;
+	};
+
+	CHAOS_API bool DoSaveIntoJSON(nlohmann::json* json, ImGuiFontFace const& src);
+	CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, ImGuiFontFace& dst);
+
 	/** a Manager to handle ImGui preferences */
-	class ImGuiManager : public ResourceManager, public ConfigurableInterface
+	class CHAOS_API ImGuiManager : public ResourceManager, public ConfigurableInterface
 	{
 	public:
 
@@ -30,11 +52,20 @@ namespace chaos
 		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
 		/** override */
 		virtual bool DoStartManager() override;
+		/** override */
+		virtual bool DoStopManager() override;
+
+		/** construct an atlas according to the configuration */
+		ImFontAtlas* GetSharedAtlas() const;
 
 	protected:
 
 		/** the style of imgui */
 		ImGuiStyle style = ImGuiStyle::Classic;
+		/** the font faces */
+		std::vector<ImGuiFontFace> font_faces;
+		/** the atlas shared among all contexts */
+		mutable ImFontAtlas* shared_atlas = nullptr;
 	};
 
 #endif

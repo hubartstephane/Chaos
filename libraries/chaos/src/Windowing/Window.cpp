@@ -108,6 +108,12 @@ namespace chaos
 
 			ImGui_ImplGlfw_Shutdown();
 			ImGui_ImplOpenGL3_Shutdown();
+
+
+
+			// shuxxx
+
+
 			ImGui::DestroyContext();
 			ImGui::SetCurrentContext((previous_imgui_context != imgui_context) ? previous_imgui_context : nullptr); // if there was another context, restore it
 

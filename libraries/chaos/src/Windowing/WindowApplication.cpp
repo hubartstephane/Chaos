@@ -589,7 +589,6 @@ namespace chaos
 		if (!Application::OnStorePersistentProperties(config))
 			return false;
 
-
 		return true;
 	}
 

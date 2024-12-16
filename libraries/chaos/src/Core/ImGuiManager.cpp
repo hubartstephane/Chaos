@@ -48,7 +48,7 @@ namespace chaos
 				return false;
 			});
 			if (it != font_faces.end())
-				font_faces.erase(it);
+				font_faces.erase(it, font_faces.end());
 		}
 		return true;
 	}

@@ -39,7 +39,7 @@ namespace chaos
 	CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, ImGuiFontFace& dst);
 
 	/** a Manager to handle ImGui preferences */
-	class CHAOS_API ImGuiManager : public ResourceManager, public ConfigurableInterface
+	class CHAOS_API ImGuiManager : public ResourceManager, public ConfigurableInterface, public ImGuiInterface
 	{
 	public:
 
@@ -52,6 +52,9 @@ namespace chaos
 
 		/** construct an atlas according to the configuration */
 		ImFontAtlas* BuildAtlas() const;
+
+		/** override */
+		virtual void OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func) override;
 
 	protected:
 

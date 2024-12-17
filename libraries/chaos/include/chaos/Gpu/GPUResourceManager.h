@@ -51,7 +51,7 @@ namespace chaos
 	* GPUResourceManager : a manager to store different kinds of (can be depend) resources
 	**/
 
-	class CHAOS_API GPUResourceManager : public ResourceManager, public ConfigurableInterface
+	class CHAOS_API GPUResourceManager : public ResourceManager, public ConfigurableInterface, public ImGuiInterface
 	{
 		friend class GPUTextureLoader;
 		friend class GPUProgramLoader;
@@ -132,6 +132,9 @@ namespace chaos
 		GPUBuffer* GetQuadIndexBuffer(size_t* result_quad_count);
 		/** get quad simple mesh */
 		GPUMesh* GetQuadMesh();
+
+		/** override */
+		virtual void OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func) override;
 
 	protected:
 

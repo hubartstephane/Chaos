@@ -486,4 +486,23 @@ namespace chaos
 		return InitializeFromConfiguration(GetJSONReadConfiguration().default_config);
 	}
 
+	void GPUResourceManager::OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func)
+	{
+		begin_menu_func([this]()
+		{
+			if (ImGui::BeginMenu("Managers"))
+			{
+				if (ImGui::BeginMenu("GPU Resources"))
+				{
+					if (ImGui::MenuItem("Reload"))
+					{
+						ReloadDefaultPropertiesFromFile(true, true);
+					}
+					ImGui::EndMenu();
+				}
+				ImGui::EndMenu();
+			}
+		});
+	}
+
 }; // namespace chaos

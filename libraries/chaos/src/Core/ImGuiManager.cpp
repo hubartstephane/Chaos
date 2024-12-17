@@ -149,4 +149,29 @@ namespace chaos
 			io.ConfigFlags |= ImGuiConfigFlags_NoMouse; // don't want mouse (elsewhere imgui can react to an invisible cursor)
 	}
 
+	void ImGuiManager::OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func)
+	{
+		begin_menu_func([this]()
+		{
+			if (ImGui::BeginMenu("Managers"))
+			{
+				if (ImGui::BeginMenu("ImGui"))
+				{
+					if (ImGui::MenuItem("Reload"))
+					{
+						ReloadDefaultPropertiesFromFile(true, true);
+					}
+					if (ImGui::BeginMenu("Show atlas"))
+					{
+						ImGuiIO const& io = ImGui::GetIO();
+						ImGui::Image(io.Fonts->TexID, {512, 512});
+						ImGui::EndMenu();
+					}
+					ImGui::EndMenu();
+				}
+				ImGui::EndMenu();
+			}
+		});
+	}
+
 }; // namespace chaos

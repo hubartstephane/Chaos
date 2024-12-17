@@ -157,13 +157,12 @@ namespace chaos
 			{
 				if (ImGui::BeginMenu("ImGui"))
 				{
-					if (ImGui::MenuItem("Reload"))
-					{
-						ReloadDefaultPropertiesFromFile(true, true);
-					}
 					if (ImGui::BeginMenu("Show atlas"))
 					{
 						ImGuiIO const& io = ImGui::GetIO();
+
+						ImGui::Text("Widget: %d", io.Fonts->TexWidth); ImGui::SameLine(0, 20.0f); ImGui::Text("Height: %d", io.Fonts->TexHeight);
+
 						ImGui::Image(io.Fonts->TexID, {512, 512});
 						ImGui::EndMenu();
 					}

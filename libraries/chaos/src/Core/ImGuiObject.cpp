@@ -3,13 +3,6 @@
 
 namespace chaos
 {
-	static chaos::EnumTools::EnumBitmaskMetaData<ImGuiDrawFlags> const ImGuiDrawFlags_bitmask_metadata =
-	{
-		{ImGuiDrawFlags::FULL_WINDOW, ImGuiDrawFlags::FLOATING_IMGUI_WINDOW}
-	};
-
-	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(ImGuiDrawFlags, &ImGuiDrawFlags_bitmask_metadata, CHAOS_API);
-
 	void ImGuiObject::OnDrawImGuiMenuConditional(ImGuiDrawFlags flags, int imgui_window_flags)
 	{
 		// check wether the application accepts the menu bar
@@ -120,14 +113,6 @@ namespace chaos
 	int ImGuiObject::GetImGuiWindowFlags() const
 	{
 		return ImGuiWindowFlags_NoCollapse;
-	}
-
-	void ImGuiObject::OnDrawImGuiContent()
-	{
-	}
-
-	void ImGuiObject::OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func)
-	{
 	}
 
 	void ImGuiObject::RequestClosing()

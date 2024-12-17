@@ -120,7 +120,7 @@ namespace chaos
 	* Window: a binding class between chaos and GLFW to handle window (beware the prefix "My")
 	*/
 
-	class CHAOS_API Window : public Object, public WindowInterface, public ConfigurableInterface
+	class CHAOS_API Window : public Object, public WindowInterface, public ConfigurableInterface, public ImGuiInterface
 	{
 		friend class WindowApplication;
 
@@ -276,6 +276,11 @@ namespace chaos
 		/** enable or disable ImGui menu */
 		void SetImGuiMenuEnabled(bool enabled);
 
+		/** override */
+		virtual void OnDrawImGuiContent() override;
+		/** override */
+		virtual void OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func) override;
+
 	protected:
 
 		/** override */
@@ -347,11 +352,6 @@ namespace chaos
 		virtual void OnFocusStateChange(bool gain_focus);
 		/** called whenever a monitor is connected or disconnected */
 		virtual void OnMonitorEvent(GLFWmonitor* monitor, int monitor_state);
-
-		/** draw the content */
-		virtual void OnDrawWindowImGuiContent();
-		/** draw the main menu */
-		virtual void OnDrawWindowImGuiMenu(BeginImGuiMenuFunc begin_menu_func);
 
 #if _WIN32
 

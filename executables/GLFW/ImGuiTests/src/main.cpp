@@ -48,6 +48,8 @@ static chaos::EnumTools::EnumMetaData<Truc> const Truc_metadata =
 //CHAOS_DECLARE_ENUM_METHOD(Truc);
 CHAOS_IMPLEMENT_ENUM_METHOD(Truc, &Truc_metadata);
 
+CHAOS_GLOBAL_VARIABLE(std::string, MyString);
+
 CHAOS_GLOBAL_VARIABLE(Truc, mtruc);
 CHAOS_GLOBAL_VARIABLE(bool, mybool);
 CHAOS_GLOBAL_VARIABLE(int, myint, 666);
@@ -515,12 +517,12 @@ if (WindowApplication* WA = Application::GetInstance())
 
 
 
+class MyApplicationTest : public chaos::WindowApplication
+{
+public:
 
-
-
-
-
-
+	using chaos::WindowApplication::WindowApplication;
+};
 
 class WindowOpenGLTest : public chaos::Window
 {
@@ -538,29 +540,7 @@ protected:
 		return true;
 	}
 
-	virtual void InitializeImGuiContext() override
-	{
-		chaos::Window::InitializeImGuiContext();
-
-		ImGuiIO& io = ImGui::GetIO();
-
-		ImFontConfig fontConfig;
-		fontConfig.MergeMode = true;
-
-		// le merge mode ne doit etre donné qu'a la seconde font !! sinon ca crash
-		static const ImWchar customRange[] = { 0x01, 0x03FF, 0 }; // Plage des caractères grecs
-
-		fontAwesome = io.Fonts->AddFontFromFileTTF(
-			(chaos::Application::GetInstance()->GetResourcesPath() / "fonts/unispace bold italic.ttf").string().c_str(),
-			20.0f, nullptr, customRange);
-
-		if (0)
-		fontAwesome = io.Fonts->AddFontFromFileTTF(
-			(chaos::Application::GetInstance()->GetResourcesPath() / "fonts/fontawesome-webfont.ttf").string().c_str(),
-			20.0f, nullptr);
-	}
-
-	virtual void OnDrawWindowImGuiContent() override
+	virtual void OnDrawImGuiContent() override
 	{
 		if (ImGui::Begin("help", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
 		{
@@ -573,13 +553,13 @@ protected:
 			ImGui::End();
 		}
 		message_popup.Process();
+
+		chaos::Window::OnDrawImGuiContent();
 	}
 
 protected:
 
 	ImGuiMessagePopup message_popup;
-
-	ImFont* fontAwesome = nullptr;
 };
 
 bool RuntimeCheck(chaos::LightweightFunction<bool()> func)
@@ -634,6 +614,6 @@ k = k;
 
 int main(int argc, char ** argv, char ** env)
 {
-	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env);
+	return chaos::RunApplication<MyApplicationTest>(argc, argv, env, WindowOpenGLTest::GetStaticClass());
 }
 

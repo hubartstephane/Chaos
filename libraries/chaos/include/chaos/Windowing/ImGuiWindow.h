@@ -38,10 +38,11 @@ namespace chaos
 			return nullptr;
 		}
 
+		/** override */
+		virtual void OnDrawImGuiContent() override;
+
 	protected:
 
-		/** override */
-		virtual void OnDrawWindowImGuiContent() override;
 		/** override */
 		virtual bool EnumerateKnownImGuiObjects(EnumerateKnownImGuiObjectFunc func) const override;
 

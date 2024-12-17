@@ -246,9 +246,9 @@ protected:
 		return true;
 	}
 
-	void OnDrawWindowImGuiMenu(chaos::BeginImGuiMenuFunc begin_menu_func) override
+	void OnDrawImGuiMenu(chaos::BeginImGuiMenuFunc begin_menu_func) override
 	{
-		chaos::Window::OnDrawWindowImGuiMenu(begin_menu_func);
+		chaos::Window::OnDrawImGuiMenu(begin_menu_func);
 
 		begin_menu_func([this]
 		{
@@ -269,9 +269,9 @@ protected:
 			ImGui::TextDisabled("%s      : %s", key.GetName(), title);
 	}
 
-	void OnDrawWindowImGuiContent() override
+	void OnDrawImGuiContent() override
 	{
-		chaos::Window::OnDrawWindowImGuiContent();
+		chaos::Window::OnDrawImGuiContent();
 
 		// the HELP
 		if (show_help)

@@ -18,9 +18,9 @@ public:
 		return chaos::Window::OnKeyEventImpl(event);
 	}
 
-	virtual void OnDrawWindowImGuiContent()
+	virtual void OnDrawImGuiContent()
 	{
-		chaos::Window::OnDrawWindowImGuiContent();
+		chaos::Window::OnDrawImGuiContent();
 
 		chaos::ImGuiObject::FullscreenWindow("conversion", false, [this]()
 		{

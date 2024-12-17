@@ -1142,12 +1142,12 @@ namespace chaos
 	void Window::DrawWindowImGui()
 	{
 		// draw the content
-		OnDrawWindowImGuiContent();
+		OnDrawImGuiContent();
 
 		// draw the menu
 		if (IsImGuiMenuEnabled())
 		{
-			OnDrawWindowImGuiMenu(ImGuiTools::BeginMainMenuBar());
+			OnDrawImGuiMenu(ImGuiTools::BeginMainMenuBar());
 		}
 	}
 
@@ -1161,7 +1161,7 @@ namespace chaos
 		application_imgui_menu_plugged_in = enabled;
 	}
 
-	void Window::OnDrawWindowImGuiMenu(BeginImGuiMenuFunc begin_menu_func)
+	void Window::OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func)
 	{
 		// display application menu items
 		if (IsApplicationImGuiMenuPluggedIn())
@@ -1185,7 +1185,7 @@ namespace chaos
 		});
 	}
 
-	void Window::OnDrawWindowImGuiContent()
+	void Window::OnDrawImGuiContent()
 	{
 		// create a weak copy of imgui objects to avoid 
 		// bugs if some elements are destroyed during the loop

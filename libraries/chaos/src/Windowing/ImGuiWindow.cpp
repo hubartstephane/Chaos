@@ -14,9 +14,9 @@ namespace chaos
 		content = in_content;
 	}
 
-	void ImGuiWindow::OnDrawWindowImGuiContent()
+	void ImGuiWindow::OnDrawImGuiContent()
 	{
-		Window::OnDrawWindowImGuiContent();
+		Window::OnDrawImGuiContent();
 		if (content != nullptr)
 			content->DrawImGui(GetName(), ImGuiDrawFlags::FULL_WINDOW);
 	}

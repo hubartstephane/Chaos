@@ -3,7 +3,7 @@
 
 	"font_faces": [
 		{
-			"path": "$SCRIPT_PATH/fonts/unispace bold italic.ttf",
+			"path": "$SCRIPT_PATH/fonts/unispace.ttf",
 			"height": 20
 		}
 	]

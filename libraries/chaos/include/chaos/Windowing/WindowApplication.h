@@ -144,6 +144,34 @@ namespace chaos
 		/** gets the imgui manager */
 		ImGuiManager* GetImGuiManager() const;
 
+		/** enumerate all windows */
+		template<typename FUNC>
+		decltype(auto) ForAllWindows(FUNC func)
+		{
+			using L = meta::LambdaInfo<FUNC, Window*>;
+
+			// enumerate all windows
+			for (weak_ptr<Window>& window : GetWeakWindowArray()) // use a 'weak' copy of all existing windows because some windows may be erased during the loop
+			{
+				if (window != nullptr) // check whether the window has be erased
+				{
+					if constexpr (L::convertible_to_bool)
+					{
+						if (decltype(auto) result = func(window.get()))
+							return result;
+					}
+					else
+					{
+						func(window.get());
+					}
+				}
+			}
+
+			// default result
+			if constexpr (L::convertible_to_bool)
+				return typename L::result_type{};
+		}
+
 	protected:
 
 		/** Main method */
@@ -236,34 +264,6 @@ namespace chaos
 		/** called whenever the application language is being changed */
 		virtual void OnInputLanguageChanged();
 #endif
-
-		/** enumerate all windows */
-		template<typename FUNC>
-		decltype(auto) ForAllWindows(FUNC func)
-		{
-			using L = meta::LambdaInfo<FUNC, Window*>;
-
-			// enumerate all windows
-			for (weak_ptr<Window> & window : GetWeakWindowArray()) // use a 'weak' copy of all existing windows because some windows may be erased during the loop
-			{
-				if (window != nullptr) // check whether the window has be erased
-				{
-					if constexpr (L::convertible_to_bool)
-					{
-						if (decltype(auto) result = func(window.get()))
-							return result;
-					}
-					else
-					{
-						func(window.get());
-					}
-				}
-			}
-
-			// default result
-			if constexpr (L::convertible_to_bool)
-				return typename L::result_type{};
-		}
 
 	protected:
 

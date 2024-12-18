@@ -332,6 +332,10 @@ namespace chaos
 			static bool constexpr convertible_to_bool = std::is_convertible_v<result_type, bool>;
 		};
 
+		/** concept for have an integral value */
+		template <typename T>
+		concept IsInteger = std::is_integral_v<T>;
+
 	}; // namespace meta
 
 }; // namespace chaos

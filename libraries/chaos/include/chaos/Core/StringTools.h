@@ -79,7 +79,6 @@ namespace chaos
 				return typename L::result_type{};
 		}
 
-
         /** get the numerical suffix of the input string (ex. toto_123 => 123) */
 		CHAOS_API size_t GetStringNumSuffix(std::string_view s);
 
@@ -220,6 +219,117 @@ namespace chaos
 			// appends all required tokens
 			details::JoinHelper(&result[0], size + 1, false, separator, std::forward<PARAMS>(params)...);
 			return result;
+		}
+
+		/** read an integer number as a decimal, a binary or an hexadecimal */
+		template<meta::IsInteger T>
+		char const* ReadInteger(char const* str, T & dst)
+		{
+			T result = 0;
+			char const* p = str;
+			bool one_figure = false;
+
+			auto ConsumSpaces = [&p]() // consum all spaces
+			{
+				while (*p != 0 && isspace(*p))
+					++p;
+			};
+
+			auto ReadDecimal = [&result, &p, &one_figure]() // read a decimal (without sign)
+			{
+				while (*p >= '0' && *p <= '9')
+				{
+					result = (result * 10) + (*p - '0');
+					one_figure = true;
+					++p;
+				}
+			};
+
+			auto CommitReading = [&result, &p, &one_figure, &dst, &str]() // commit the reading if at least one figure has been read
+			{
+				if (one_figure)
+				{
+					dst = result;
+					return p;
+				}
+				return str;
+			};
+
+			// eat initial separators	
+			ConsumSpaces();
+			// consume other caracters
+			if (*p == 0)
+			{
+				return str; // no figure read, don't eat any character
+			}
+
+			// negative DECIMAL number (don't use a sign for binary or hexadecimal)
+			if constexpr (std::is_signed_v<T>)
+			{
+				if (*p == '-') 
+				{
+					++p;
+					ConsumSpaces();
+					ReadDecimal();
+					result = -result;
+					return CommitReading();
+				}
+			}
+
+			// positive DECIMAL number (don't use a sign for binary or hexadecimal)
+			if (*p == '+')
+			{
+				++p;
+				ConsumSpaces();
+				ReadDecimal();
+				return CommitReading();
+			}
+
+			// could be decimal, hexadecimal, binary
+			if (*p == '0')
+			{
+				++p;
+				if (*p == 'b' || *p == 'B') // binary
+				{
+					++p;
+					while (*p >= '0' && *p <= '1')
+					{
+						result = (result << 1) + (*p - '0');
+						one_figure = true;
+						++p;
+					}
+				}
+				else if (*p == 'x' || *p == 'X') // hexadecimal
+				{
+					++p;
+					while (*p != 0)
+					{
+						char value = 0;
+						if (*p >= '0' && *p <= '9')
+							value = *p - '0';
+						else if (*p >= 'a' && *p <= 'f')
+							value = 10 + (*p - 'a');
+						else if (*p >= 'A' && *p <= 'F')
+							value = 10 + (*p - 'A');
+						else
+							break;
+						result = (result * 16) + value;
+						one_figure = true;
+						++p;
+					}
+				}
+				else
+				{
+					one_figure = true; // the initial 0 is a valid first character
+					ReadDecimal();
+				}
+			}
+			else
+			{
+				ReadDecimal();
+			}
+
+			return CommitReading();
 		}
 
 		/** string comparator class base */

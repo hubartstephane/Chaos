@@ -375,6 +375,15 @@ namespace chaos
 			{
 				try
 				{
+					if constexpr (std::integral<T>) // is the integer encoded into a string (as decimal, binary or hexadecimal)
+					{
+						if (json->type() == nlohmann::json::value_t::string)
+						{
+							std::string const & c = json->get_ref<std::string const &>();
+							StringTools::ReadInteger(c.c_str(), dst);
+							return true;
+						}
+					}
 					dst = json->get<T>(); // may throw an exception
 					return true;
 				}

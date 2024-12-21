@@ -87,7 +87,7 @@ INSTALL_GENERIC_LIBS=0
 
 if [ $INSTALL_GENERIC_LIBS -gt 0 ] ; then
 
-	for LIBRARY in assimp glm json tinyxml2 glfw imgui
+	for LIBRARY in assimp glm json tinyxml2 glfw
 	do
 	 
 		Title "Install $LIBRARY"	 
@@ -117,8 +117,8 @@ if [ $INSTALL_IMGUI -gt 0 ] ; then
 
 	Title "ImGui"	 
 
-	cp -fr $INSTALLATION_PATH/imgui $BASE_BUILD_PATH/imgui
-	cp $INSTALLATION_PATH/ImGui_CMakeLists.txt $BASE_BUILD_PATH/imgui/CMakeLists.txt
+	#cp -fr $INSTALLATION_PATH/imgui $BASE_BUILD_PATH/imgui
+	cp $INSTALLATION_PATH/ImGui_CMakeLists.txt $INSTALLATION_PATH/imgui/CMakeLists.txt
 
 	LIBRARY=imgui
 

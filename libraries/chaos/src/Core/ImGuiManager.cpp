@@ -3,13 +3,13 @@
 
 namespace chaos
 {
-	static chaos::EnumTools::EnumMetaData<ImGuiStyle> const ImGuiStyle_metadata =
+	static chaos::EnumTools::EnumMetaData<ImGuiWindowStyle> const ImGuiWindowStyle_metadata =
 	{
-		{ ImGuiStyle::Dark, "Dark" },
-		{ ImGuiStyle::Light, "Light" },
-		{ ImGuiStyle::Classic, "Classic" }
+		{ ImGuiWindowStyle::Dark, "Dark" },
+		{ ImGuiWindowStyle::Light, "Light" },
+		{ ImGuiWindowStyle::Classic, "Classic" }
 	};
-	CHAOS_IMPLEMENT_ENUM_METHOD(ImGuiStyle, &ImGuiStyle_metadata, CHAOS_API);
+	CHAOS_IMPLEMENT_ENUM_METHOD(ImGuiWindowStyle, &ImGuiWindowStyle_metadata, CHAOS_API);
 
 	bool DoSaveIntoJSON(nlohmann::json* json, ImGuiFontFace const& src)
 	{
@@ -34,7 +34,7 @@ namespace chaos
 		if (context == ReadConfigurablePropertiesContext::INITIALIZATION) // do not accept hot-reload
 		{
 			JSONTools::GetAttribute(config, "font_faces", font_faces);
-			JSONTools::GetAttribute(config, "style", style);
+			JSONTools::GetAttribute(config, "window_style", window_style);
 
 			// load all files. Remove the faces that are failing
 			auto it = std::remove_if(font_faces.begin(), font_faces.end(), [](ImGuiFontFace& font_face)
@@ -121,11 +121,11 @@ namespace chaos
 		
 		SetImGuiContextMouseFlag(window->IsImGuiMenuEnabled());
 
-		switch (style)
+		switch (window_style)
 		{
-		case ImGuiStyle::Dark: ImGui::StyleColorsDark(); break;
-		case ImGuiStyle::Light: ImGui::StyleColorsLight(); break;
-		case ImGuiStyle::Classic: ImGui::StyleColorsClassic(); break;
+		case ImGuiWindowStyle::Dark: ImGui::StyleColorsDark(); break;
+		case ImGuiWindowStyle::Light: ImGui::StyleColorsLight(); break;
+		case ImGuiWindowStyle::Classic: ImGui::StyleColorsClassic(); break;
 		}
 	}
 

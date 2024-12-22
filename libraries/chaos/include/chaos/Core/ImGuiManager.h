@@ -2,7 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	enum class ImGuiStyle;
+	enum class ImGuiWindowStyle;
 
 	class ImGuiManager;
 
@@ -11,7 +11,7 @@ namespace chaos
 	CHAOS_DEFINE_LOG(ImGuiManagerLog, "ImGuiManager")
 
 	/** describe the possible styles for ImGui */
-	enum class ImGuiStyle
+	enum class ImGuiWindowStyle
 	{
 		Dark,
 		Light,
@@ -69,7 +69,7 @@ namespace chaos
 	protected:
 
 		/** the style of imgui */
-		ImGuiStyle style = ImGuiStyle::Classic;
+		ImGuiWindowStyle window_style = ImGuiWindowStyle::Classic;
 		/** the font faces */
 		std::vector<ImGuiFontFace> font_faces;
 	};

@@ -5,4 +5,13 @@ glm/**
 imgui/**
 json/**
 tinyxml2/**
+FreeImage/**
+MSVC_Redist/**
+boost_1_83_0/**
+freetype2/**
+glew-2.2.0/**
+irrKlang-64bit-1.6.0/**
+lua-5.4.2/**
+zlib-1.3/**
+
 

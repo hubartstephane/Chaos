@@ -117,7 +117,6 @@ if [ $INSTALL_IMGUI -gt 0 ] ; then
 
 	Title "ImGui"	 
 
-	#cp -fr $INSTALLATION_PATH/imgui $BASE_BUILD_PATH/imgui
 	cp $INSTALLATION_PATH/ImGui_CMakeLists.txt $INSTALLATION_PATH/imgui/CMakeLists.txt
 
 	LIBRARY=imgui
@@ -131,13 +130,6 @@ if [ $INSTALL_IMGUI -gt 0 ] ; then
 	cmake -S $SRC_PATH -B $BUILD_PATH
 	cmake --build $BUILD_PATH --config Release
 	cmake --install $BUILD_PATH --prefix $INSTALL_PATH --config Release	
-
-	#cp -fr $INSTALLATION_PATH/imgui $BASE_BUILD_PATH/imgui
-	#cp $INSTALLATION_PATH/my_imgui_premake5.lua $BASE_BUILD_PATH/imgui/premake5.lua
-	#$SCRIPT_PATH/build_tools/premake5 vs2022 --file=$BASE_BUILD_PATH/imgui/premake5.lua
-	
-	#msbuild $BASE_BUILD_PATH/imgui/ImGUI.sln /p:Configuration=Release
-
 
 fi
 
@@ -226,7 +218,7 @@ fi
 # Some clean
 ###########################################################################
 
-FINAL_CLEAN=0
+FINAL_CLEAN=1
 
 if [ $FINAL_CLEAN -gt 0 ] ; then
 

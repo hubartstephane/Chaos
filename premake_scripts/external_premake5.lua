@@ -45,7 +45,7 @@ build:DeclareExternalLib("TINYXML2")
 
 if WINDOWS then
 	JSON_PATH     = "json"
-	JSON_INC_PATH = MakePathPerConfig(path.join("include", "nlohmann"))
+	JSON_INC_PATH = MakePathPerConfig(path.join("include"))
 end
 if LINUX then
 	JSON_BASE_PATH = path.join("/","usr", "include")

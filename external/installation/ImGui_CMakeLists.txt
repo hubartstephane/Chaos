@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # user variables
-set(GLFW_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../glfw/Release" CACHE PATH "Path to the GLFW installation")
+set(GLFW_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../glfw/${CMAKE_BUILD_TYPE}" CACHE PATH "Path to the GLFW installation")
 
 # check GLFW path
 if(NOT EXISTS "${GLFW_PATH}/include" OR NOT EXISTS "${GLFW_PATH}/lib")

@@ -5,27 +5,21 @@ project(ImGuiLibrary)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Variables utilisateur
+# user variables
 set(GLFW_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../glfw/Release" CACHE PATH "Path to the GLFW installation")
 
-
-
-
-message( "========== GLFW_PATH = "  ${GLFW_PATH})
-message( "========== CMAKE_CURRENT_SOURCE_DIR = "  ${CMAKE_CURRENT_SOURCE_DIR})
-
-
-# Vérification du chemin GLFW
+# check GLFW path
 if(NOT EXISTS "${GLFW_PATH}/include" OR NOT EXISTS "${GLFW_PATH}/lib")
     message(FATAL_ERROR "GLFW_PATH is invalid or does not contain the required include/lib directories")
 endif()
 
-# Ajouter les fichiers ImGui
+# add ImGui files
 set(IMGUI_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui_draw.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui_tables.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui_widgets.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/imgui_demo.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
 )
@@ -38,17 +32,17 @@ set(IMGUI_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/backends/imgui_impl_opengl3.h
 )
 
-# Ajouter les fichiers à une bibliothèque statique
+# add files to static library
 add_library(ImGui STATIC ${IMGUI_SOURCES} ${IMGUI_HEADERS})
 
-# Inclure les répertoires nécessaires
+# include necessary directories
 target_include_directories(ImGui PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/backends
     ${GLFW_PATH}/include
 )
 
-# Lier ImGui avec GLFW et OpenGL
+# link with opengl and GLFW
 find_package(OpenGL REQUIRED)
 
 target_link_libraries(ImGui PUBLIC

@@ -337,9 +337,17 @@ protected:
 					{
 						ImGui::SetCursorPosY(base_cursor_y + 4.0f);
 					}
+
+
+
+
+
+
+
+
 					ImTextureID textureID = (ImTextureID)((uint64_t)texture->GetResourceID()); // conversion into uint64_t to remove a C4312 warning
 
-					if (ImGui::ImageButton(textureID, icon_size, ImVec2(0, 1), ImVec2(1, 0))) // reverse the texture coordinate along Y
+					if (ImGui::ImageButton(tooltip, textureID, icon_size, ImVec2(0, 1), ImVec2(1, 0))) // reverse the texture coordinate along Y
 					{
 						current_action_type = type;
 					}

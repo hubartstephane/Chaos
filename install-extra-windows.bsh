@@ -80,12 +80,15 @@ if [ $UNZIP_FILES -gt 0 ] ; then
 fi
 
 ###########################################################################
-# Compile libraries (except zlib, freetype2 and imgui)
+# Compile libraries (except zlib, freetype2)
 ###########################################################################
+
+# imgui MUST be after GLFW
+# the CHAOS_BUILD_TYPE definition is for imgui compilation
 
 if [ $INSTALL_GENERIC_LIBS -gt 0 ] ; then
 
-	for LIBRARY in assimp glm json tinyxml2 glfw
+	for LIBRARY in assimp glm json tinyxml2 glfw imgui
 	do
 	 
 		Title "Install $LIBRARY"	 
@@ -93,40 +96,16 @@ if [ $INSTALL_GENERIC_LIBS -gt 0 ] ; then
 		rm -fr $EXTERNAL_PATH/$LIBRARY
 	
 		BeginBuildLibrary $LIBRARY Debug
-		cmake -S $SRC_PATH -B $BUILD_PATH
+		cmake -DCHAOS_BUILD_TYPE=Debug -S $SRC_PATH -B $BUILD_PATH
 		cmake --build $BUILD_PATH --config Debug
 		cmake --install $BUILD_PATH --prefix $INSTALL_PATH --config Debug
 	
 		BeginBuildLibrary $LIBRARY Release
-		cmake -S $SRC_PATH -B $BUILD_PATH
+		cmake -DCHAOS_BUILD_TYPE=Release -S $SRC_PATH -B $BUILD_PATH
 		cmake --build $BUILD_PATH --config Release
 		cmake --install $BUILD_PATH --prefix $INSTALL_PATH --config Release	
 	
 	done
-fi
-
-###########################################################################
-# Compile imgui (IMGUI must be built after GLFW)
-###########################################################################
-
-if [ $INSTALL_IMGUI -gt 0 ] ; then
-
-	Title "ImGui"	 
-
-	cp $INSTALLATION_PATH/ImGui_CMakeLists.txt $INSTALLATION_PATH/imgui/CMakeLists.txt
-
-	LIBRARY=imgui
-
-	BeginBuildLibrary $LIBRARY Debug
-	cmake -DCHAOS_BUILD_TYPE=Debug -S $SRC_PATH -B $BUILD_PATH
-	cmake --build $BUILD_PATH --config Debug
-	cmake --install $BUILD_PATH --prefix $INSTALL_PATH --config Debug
-	
-	BeginBuildLibrary $LIBRARY Release
-	cmake -DCHAOS_BUILD_TYPE=Release -S $SRC_PATH -B $BUILD_PATH
-	cmake --build $BUILD_PATH --config Release
-	cmake --install $BUILD_PATH --prefix $INSTALL_PATH --config Release	
-
 fi
 
 ###########################################################################

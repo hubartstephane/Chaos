@@ -246,6 +246,7 @@
 #endif
 
 // IMGUI
+#define IMGUI_USE_WCHAR32 // important: imgui should have been compiled with this flag
 #include "imgui.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_glfw.h"

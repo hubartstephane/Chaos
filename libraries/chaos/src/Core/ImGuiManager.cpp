@@ -29,6 +29,22 @@ namespace chaos
 		return true;
 	}
 
+	ImWchar const* ImGuiFontFace::GetGlyphRange() const
+	{
+		if (range.has_value())
+		{
+			glyph_range[0] = range.value().first;
+			glyph_range[1] = range.value().second;
+			// ensure range en properly sorted (if glyph 0 were to be inside range, this would cause a crash)
+			if (glyph_range[0] > glyph_range[1])
+				std::swap(glyph_range[0], glyph_range[1]);
+			glyph_range[0] = std::max((ImWchar)1, glyph_range[0]);
+			glyph_range[1] = std::max((ImWchar)1, glyph_range[1]);
+			return glyph_range;
+		}
+		return nullptr;
+	}
+
 	bool ImGuiManager::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
 	{
 		if (context == ReadConfigurablePropertiesContext::INITIALIZATION) // do not accept hot-reload
@@ -78,33 +94,19 @@ namespace chaos
 		if (result != nullptr)
 		{
 			ImFontConfig font_config;
-			font_config.MergeMode = true;
-
-			ImFontConfig const* font_config_ptr = nullptr;
+			font_config.MergeMode = false;
 
 			for (ImGuiFontFace const& font_face : font_faces)
 			{
 				// prepare font parameters
 				float height = font_face.height.value_or(16.0f);
-
-				ImWchar range[3] = { 0, 0, 0 };
-				if (font_face.range.has_value())
-				{
-					range[0] = font_face.range.value().first;
-					range[1] = font_face.range.value().second;
-				}
-				else
-				{
-					ImWchar const* default_range = result->GetGlyphRangesDefault();
-					range[0] = default_range[0];
-					range[1] = default_range[1];
-				}
+				const ImWchar* range = font_face.GetGlyphRange();
 
 				// add the font
-				result->AddFontFromMemoryTTF(font_face.file_buffer.data, (int)font_face.file_buffer.bufsize, height, font_config_ptr);
+				result->AddFontFromMemoryTTF(font_face.file_buffer.data, (int)font_face.file_buffer.bufsize, height, &font_config, range);
 
 				// for next font, use merge mode
-				font_config_ptr = &font_config;
+				font_config.MergeMode = true;
 			}
 		}
 		return result;
@@ -161,10 +163,33 @@ namespace chaos
 					{
 						ImGuiIO const& io = ImGui::GetIO();
 
-						ImGui::Text("Widget: %d", io.Fonts->TexWidth); ImGui::SameLine(0, 20.0f); ImGui::Text("Height: %d", io.Fonts->TexHeight);
+						if (io.Fonts != nullptr && io.Fonts->Fonts.Size > 0)
+						{
+							// display texture information
+							ImGui::Text("Widget: %d", io.Fonts->TexWidth); ImGui::SameLine(0, 20.0f); ImGui::Text("Height: %d", io.Fonts->TexHeight);
+							ImGui::Text("Glyph count: %d", io.Fonts->Fonts[0]->Glyphs.size());
+							ImGui::Separator();
 
-						ImGui::Image(io.Fonts->TexID, {512, 512});
-						ImGui::EndMenu();
+							// display atlas texture (prevent texture size to be greater than 1024)
+							glm::vec2 texture_size =
+							{
+								io.Fonts->TexWidth,
+								io.Fonts->TexHeight
+							};
+
+							int major_axis = (texture_size.x > texture_size.y) ? 0 : 1;
+
+							float max_size = 1024.0f;
+							float ratio = 1.0f;
+							if (texture_size[major_axis] > max_size)
+								ratio = max_size / texture_size[major_axis];
+
+							texture_size[0] = texture_size[0] * ratio;
+							texture_size[1] = texture_size[1] * ratio;
+
+							ImGui::Image(io.Fonts->TexID, { texture_size.x, texture_size.y });
+							ImGui::EndMenu();
+						}
 					}
 					ImGui::EndMenu();
 				}

@@ -22,6 +22,12 @@ namespace chaos
 	/** describe one's font entry */
 	class CHAOS_API ImGuiFontFace
 	{
+
+	public:
+
+		/** get the range of glyphs for ImGui */
+		ImWchar const* GetGlyphRange() const;
+
 	public:
 
 		/** the path of the font */
@@ -33,6 +39,11 @@ namespace chaos
 
 		/** the buffer containing file content of the font */
 		Buffer<char> file_buffer;
+
+	protected:
+
+		/** the range for imgui (it has to be kept in memory) */
+		mutable ImWchar glyph_range[3] = { 0, 0, 0 };
 	};
 
 	CHAOS_API bool DoSaveIntoJSON(nlohmann::json* json, ImGuiFontFace const& src);

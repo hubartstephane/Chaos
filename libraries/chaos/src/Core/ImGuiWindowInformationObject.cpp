@@ -3,11 +3,6 @@
 
 namespace chaos
 {
-	void ImGuiWindowInformationObject::SetWindow(const Window* in_window)
-	{
-		window = in_window;
-	}
-
 	int ImGuiWindowInformationObject::GetImGuiWindowFlags() const
 	{
 		return ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize;

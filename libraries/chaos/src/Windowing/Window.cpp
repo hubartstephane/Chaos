@@ -1379,13 +1379,7 @@ namespace chaos
 		if (func("System Information", ImGuiSystemInformationObject::GetStaticClass()))
 			return true;
 
-		if (func("Window Information", [this]()
-		{
-			ImGuiWindowInformationObject* result = new ImGuiWindowInformationObject;
-			if (result != nullptr)
-				result->SetWindow(this);
-			return result;
-		}))
+		if (func("Window Information", ImGuiWindowInformationObject::GetStaticClass()))
 			return true;
 
 		if (func("Help", ImGuiHelpObject::GetStaticClass()))
@@ -1404,6 +1398,7 @@ namespace chaos
 			{
 				if (ImGuiObject* imgui_object = create_func())
 				{
+					imgui_object->SetWindow(this);
 					imgui_object->SetName(name);
 					imgui_objects.push_back(imgui_object);
 				}

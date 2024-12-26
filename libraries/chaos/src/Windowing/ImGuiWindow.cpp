@@ -12,6 +12,7 @@ namespace chaos
 	void ImGuiWindow::SetContent(ImGuiObject* in_content)
 	{
 		content = in_content;
+		content->SetWindow(this);
 	}
 
 	void ImGuiWindow::OnDrawImGuiContent()

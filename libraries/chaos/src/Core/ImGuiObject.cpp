@@ -129,4 +129,16 @@ namespace chaos
 		return closing_request;
 	}
 
+	void ImGuiObject::SetWindow(const Window* in_window)
+	{
+		assert(in_window != nullptr); // can only set window once
+		assert(window == nullptr);
+		window = in_window;
+	}
+
+	Window const* ImGuiObject::GetWindow() const
+	{
+		return window;
+	}
+
 }; // namespace chaos

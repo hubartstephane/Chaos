@@ -17,20 +17,12 @@ namespace chaos
 
 		CHAOS_DECLARE_OBJECT_CLASS(ImGuiWindowInformationObject, ImGuiObject);
 
-		/** initialization function */
-		void SetWindow(const Window* in_window);
-
 	protected:
 
 		/** override */
 		virtual int GetImGuiWindowFlags() const override;
 		/** override */
 		virtual void OnDrawImGuiContent() override;
-
-	protected:
-
-		/** the target window */
-		const Window* window = nullptr;
 	};
 
 #endif

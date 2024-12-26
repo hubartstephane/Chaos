@@ -18,6 +18,11 @@ namespace chaos
 		/** main method to display both menu and content */
 		virtual void DrawImGui(char const * title, ImGuiDrawFlags flags);
 
+		/** set the owing window */
+		void SetWindow(const Window* in_window);
+		/** get the owning window */
+		Window const* GetWindow() const;
+
 		/** request to close this interface */
 		void RequestClosing();
 		/** check whether closing is requested */
@@ -42,6 +47,8 @@ namespace chaos
 
 		/** indicates whether closing this UI is requested */
 		bool closing_request = false;
+		/** the target window */
+		const Window* window = nullptr;
 	};
 
 #endif

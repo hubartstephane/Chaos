@@ -71,15 +71,19 @@ namespace chaos
 		};
 
 		// display fullscreen window
+		bool keep_alive = true;
 		if (HasAnyFlags(flags, ImGuiDrawFlags::FULL_WINDOW))
 		{
-			closing_request = !FullscreenWindow(title, imgui_window_flags, display_func);
+			keep_alive = FullscreenWindow(title, imgui_window_flags, display_func);
 		}
 		// display floating window (default case)
 		else
 		{
-			closing_request = !FloatingWindow(title, imgui_window_flags, display_func);
+			keep_alive = FloatingWindow(title, imgui_window_flags, display_func);
 		}
+		// request for closing if necessary
+		if (!keep_alive)
+			RequestClosing();
 	}
 
 	bool ImGuiObject::FullscreenWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func)

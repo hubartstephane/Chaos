@@ -21,6 +21,14 @@ namespace chaos
 			content->DrawImGui(GetName(), ImGuiDrawFlags::FULL_WINDOW);
 	}
 
+	void ImGuiWindow::DrawWindowImGui()
+	{
+		Window::DrawWindowImGui();
+		if (content != nullptr)
+			if (content->IsClosingRequested())
+				RequireWindowClosure();
+	}
+
 	bool ImGuiWindow::EnumerateKnownImGuiObjects(EnumerateKnownImGuiObjectFunc func) const
 	{
 		return false; // don't call super method

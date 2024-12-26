@@ -1073,14 +1073,6 @@ namespace chaos
 
 	bool Window::OnKeyEventImpl(KeyEvent const& event)
 	{
-		// kill the window (use ALT+F4 for the moment)
-#if 0
-		if (event.IsKeyPressed(KeyboardButton::ESCAPE, GLFW_MOD_SHIFT))
-		{
-			RequireWindowClosure();
-			return true;
-		}
-#endif
 		// screen capture
 		// CMD F9 : ScreenCapture(...)
 		if (event.IsKeyPressed(KeyboardButton::F9))
@@ -1143,12 +1135,9 @@ namespace chaos
 	{
 		// draw the content
 		OnDrawImGuiContent();
-
 		// draw the menu
 		if (IsImGuiMenuEnabled())
-		{
 			OnDrawImGuiMenu(ImGuiTools::BeginMainMenuBar());
-		}
 	}
 
 	bool Window::IsApplicationImGuiMenuPluggedIn() const

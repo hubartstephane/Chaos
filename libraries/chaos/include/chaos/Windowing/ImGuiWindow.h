@@ -40,6 +40,8 @@ namespace chaos
 
 		/** override */
 		virtual void OnDrawImGuiContent() override;
+		/** override */
+		virtual void DrawWindowImGui() override;
 
 	protected:
 

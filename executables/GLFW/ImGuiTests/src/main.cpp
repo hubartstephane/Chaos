@@ -571,12 +571,40 @@ bool RuntimeCheck(chaos::LightweightFunction<bool()> func)
 
 #define RUNTIME_CHECK(FUNC) static bool value = RuntimeCheck(FUNC);
 
-RUNTIME_CHECK([]()
+static bool value = RuntimeCheck([]()
 {
-	return chaos::StringTools::Strcmp("\xF0\x9F\x90\x89", CHAOS_PP_UNICODE_TO_UTF8(1, f, 4, 0, 9)) == 0;
+	std::vector<std::pair<char const*, char const*>> checks =
+	{
+		{CHAOS_PP_UNICODE_TO_UTF8(0, 0, 0, 2, 0), "\x20"},
+		{CHAOS_PP_UNICODE_TO_UTF8(0, 0, 0, 4, 1), "\x41"},
+		{CHAOS_PP_UNICODE_TO_UTF8(0, 0, 0, 7, F), "\x7F"},
+
+		{CHAOS_PP_UNICODE_TO_UTF8(0, 0, 0, A, 9), "\xC2\xA9"},
+		{CHAOS_PP_UNICODE_TO_UTF8(0, 0, 3, A, 9), "\xCE\xA9"},
+		{CHAOS_PP_UNICODE_TO_UTF8(0, 0, 7, F, F), "\xDF\xBF"},
+
+		{CHAOS_PP_UNICODE_TO_UTF8(0, 2, 0, A, C), "\xE2\x82\xAC"},
+		{CHAOS_PP_UNICODE_TO_UTF8(0, 4, F, 6, 0), "\xE4\xBD\xA0"},
+		{CHAOS_PP_UNICODE_TO_UTF8(0, F, F, F, F), "\xEF\xBF\xBF"},
+
+		{CHAOS_PP_UNICODE_TO_UTF8(1, F, 6, 0, 0), "\xF0\x9F\x98\x80"},
+		{CHAOS_PP_UNICODE_TO_UTF8(1, F, 6, 8, 0), "\xF0\x9F\x9A\x80"},
+		{CHAOS_PP_UNICODE_TO_UTF8(1, 0, F, F, F, F), "\xF4\x8F\xBF\xBF"}
+	};
+
+	for (auto const& p : checks)
+	{
+		if (chaos::StringTools::Strcmp(p.first, p.second) != 0)
+			return false;
+	}
+	return true;
 });
 
 #if 0
+
+
+
+return chaos::StringTools::Strcmp("\xF0\x9F\x90\x89", CHAOS_PP_UNICODE_TO_UTF8(1, f, 4, 0, 9)) == 0;
 
 FT_UInt glyph_index;
 FT_ULong charcode = FT_Get_First_Char(face, &glyph_index);
@@ -619,6 +647,14 @@ k = k;
 
 int main(int argc, char ** argv, char ** env)
 {
+	auto a = CHAOS_PP_UNICODE_TO_UTF8(1, 2, 3, 4, 5, 6);
+	auto b = CHAOS_PP_UNICODE_TO_UTF8(1, 2, 3, 4, 5);
+	auto c = CHAOS_PP_UNICODE_TO_UTF8(1, 2, 3, 4);
+	auto d = CHAOS_PP_UNICODE_TO_UTF8(1, 2, 3);
+	auto e = CHAOS_PP_UNICODE_TO_UTF8(1, 2);
+	auto f = CHAOS_PP_UNICODE_TO_UTF8(1);
+
+
 	return chaos::RunApplication<MyApplicationTest>(argc, argv, env, WindowOpenGLTest::GetStaticClass());
 }
 

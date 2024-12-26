@@ -128,34 +128,30 @@ namespace chaos
 			// the types
 			if (ImGui::BeginMenu("Severity"))
 			{
-				ImGui::Checkbox("messages", &show_messages); ImGui::SameLine();
-				ImGui::Checkbox("warnings", &show_warnings); ImGui::SameLine();
+				ImGui::Checkbox("messages", &show_messages);
+				ImGui::Checkbox("warnings", &show_warnings);
 				ImGui::Checkbox("errors", &show_errors);
 				ImGui::EndMenu();
 			}
 			// the domains
 			if (ImGui::BeginMenu("Domains"))
 			{
-				if (ImGui::BeginTable("split", 3))
+				for (size_t i = 0; i < logger->GetDomainCount(); ++i)
 				{
-					for (size_t i = 0; i < logger->GetDomainCount(); ++i)
-					{
-						char const* domain = logger->GetDomain(i);
-						bool* domain_flag = nullptr;
+					char const* domain = logger->GetDomain(i);
+					bool* domain_flag = nullptr;
 
-						auto it = domain_visibilities.find(domain);
-						if (it != domain_visibilities.end())
-						{
-							domain_flag = &it->second;
-						}
-						else
-						{
-							domain_visibilities[domain] = true;
-							domain_flag = &domain_visibilities.find(domain)->second;
-						}
-						ImGui::TableNextColumn(); ImGui::Checkbox(domain, domain_flag);
+					auto it = domain_visibilities.find(domain);
+					if (it != domain_visibilities.end())
+					{
+						domain_flag = &it->second;
 					}
-					ImGui::EndTable();
+					else
+					{
+						domain_visibilities[domain] = true;
+						domain_flag = &domain_visibilities.find(domain)->second;
+					}
+					ImGui::Checkbox(domain, domain_flag);
 				}
 				ImGui::EndMenu();
 			}

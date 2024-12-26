@@ -129,9 +129,7 @@ namespace chaos
 	{
 		// remove all listeners
 		while (listeners.size() > 0)
-		{
 			listeners[0]->SetLogger(nullptr);
-		}
 		// remove all domains
 		for (std::string* d : domains)
 			delete(d);
@@ -249,8 +247,13 @@ namespace chaos
 			if (*d == domain)
 				return d->c_str();
 		// create a new string for the incoming domain
-		domains.push_back(new std::string(domain));
-		return domains[domains.size() - 1]->c_str();
+		std::string* str = new std::string(domain);
+		auto it = std::lower_bound(domains.begin(), domains.end(), str, [](std::string const * s1, std::string const* s2)
+		{
+			return StringTools::Stricmp(*s1, *s2) < 0;
+		});
+		domains.insert(it, str);
+		return str->c_str();
 	}
 
 }; // namespace chaos

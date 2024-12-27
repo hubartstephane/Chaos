@@ -11,44 +11,47 @@ namespace chaos
 	 */
 	class CHAOS_API ImGuiObject : public Object, public NamedInterface, public ImGuiInterface
 	{
+		friend class Window;
+		friend class ImGuiWindow;
+
 	public:
 
 		CHAOS_DECLARE_OBJECT_CLASS(ImGuiObject, Object);
 
-		/** main method to display both menu and content */
-		virtual void DrawImGui(char const * title, ImGuiDrawFlags flags);
+		/** override */
+		virtual void DrawImGui() override;
 
-		/** set the owing window */
-		void SetWindow(const Window* in_window);
+		/** set the flags for this object */
+		void SetDrawFlags(ImGuiDrawFlags in_flags);
+
 		/** get the owning window */
-		Window const* GetWindow() const;
+		AutoCastable<Window> GetWindow() const;
 
 		/** request to close this interface */
 		void RequestClosing();
 		/** check whether closing is requested */
 		bool IsClosingRequested() const;
 
-		/** create a fullscreen window and fill with content (returns true if the window must be kept alive) */
-		static bool FullscreenWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func);
-		/** create a floating window and fill with content (returns true if the window must be kept alive) */
-		static bool FloatingWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func);
-
 	protected:
 
 		/** get flags */
 		virtual int GetImGuiWindowFlags() const;
 
+		/** set the owing window */
+		void SetWindow(Window* in_window);
 		/** check whether a context is valid for having a menubar and call FullScreen or Floating window menu bar method */
-		void OnDrawImGuiMenuConditional(ImGuiDrawFlags flags, int imgui_window_flags);
+		void OnDrawImGuiMenuConditional(int imgui_window_flags);
 		/** update the imgui window flags according to use flags */
-		int UpdateWindowFlagsForMenu(ImGuiDrawFlags flags, int imgui_window_flags);
+		int UpdateWindowFlagsForMenu(int imgui_window_flags);
 
 	protected:
 
+		/** the owning window */
+		Window* window = nullptr;
 		/** indicates whether closing this UI is requested */
 		bool closing_request = false;
-		/** the target window */
-		const Window* window = nullptr;
+		/** the draw flags */
+		ImGuiDrawFlags draw_flags = ImGuiDrawFlags::FLOATING_IMGUI_WINDOW;
 	};
 
 #endif

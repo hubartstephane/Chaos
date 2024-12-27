@@ -3,15 +3,14 @@
 
 namespace chaos
 {
-	void ImGuiObject::OnDrawImGuiMenuConditional(ImGuiDrawFlags flags, int imgui_window_flags)
+	void ImGuiObject::OnDrawImGuiMenuConditional(int imgui_window_flags)
 	{
 		// check wether the application accepts the menu bar
-		if (WindowApplication* window_application = Application::GetInstance())
-			if (!window_application->IsImGuiMenuEnabled())
-				return;
+		if (!IsImGuiMenuEnabled())
+			return;
 
 		// display full window menu bar
-		if (HasAnyFlags(flags, ImGuiDrawFlags::USE_FULL_WINDOW_MENU))
+		if (HasAnyFlags(draw_flags, ImGuiDrawFlags::USE_FULL_WINDOW_MENU))
 		{
 			OnDrawImGuiMenu(ImGuiTools::BeginMainMenuBar());
 		}
@@ -25,7 +24,7 @@ namespace chaos
 		}
 	}
 
-	int ImGuiObject::UpdateWindowFlagsForMenu(ImGuiDrawFlags flags, int imgui_window_flags)
+	int ImGuiObject::UpdateWindowFlagsForMenu(int imgui_window_flags)
 	{
 		// check whether application accepts menu
 		if (WindowApplication* window_application = Application::GetInstance())
@@ -33,7 +32,7 @@ namespace chaos
 				return imgui_window_flags & ~ImGuiWindowFlags_MenuBar;
 
 		// check whether the menu is to be plugged into full window
-		if (HasAnyFlags(flags, ImGuiDrawFlags::USE_FULL_WINDOW_MENU))
+		if (HasAnyFlags(draw_flags, ImGuiDrawFlags::USE_FULL_WINDOW_MENU))
 			return imgui_window_flags & ~ImGuiWindowFlags_MenuBar;
 
 		// request if there is really some menu content
@@ -51,67 +50,43 @@ namespace chaos
 			return imgui_window_flags & ~ImGuiWindowFlags_MenuBar;
 	}
 
-	void ImGuiObject::DrawImGui(char const * title, ImGuiDrawFlags flags)
+	void ImGuiObject::SetDrawFlags(ImGuiDrawFlags in_flags)
 	{
 		// check flags coherency
 		assert(
-			(!HasAnyFlags(flags, ImGuiDrawFlags::FULL_WINDOW)) ||
-			(!HasAnyFlags(flags, ImGuiDrawFlags::FLOATING_IMGUI_WINDOW))
+			(!HasAnyFlags(in_flags, ImGuiDrawFlags::FULL_WINDOW)) ||
+			(!HasAnyFlags(in_flags, ImGuiDrawFlags::FLOATING_IMGUI_WINDOW))
 		);
+		draw_flags = in_flags;
+	}
 
+	void ImGuiObject::DrawImGui()
+	{
 		// get ImGui window flags
 		int imgui_window_flags = GetImGuiWindowFlags();
-		imgui_window_flags = UpdateWindowFlagsForMenu(flags, imgui_window_flags);
+		imgui_window_flags = UpdateWindowFlagsForMenu(imgui_window_flags);
 
 		// display content + menu delegate
-		auto display_func = [this, flags, imgui_window_flags]()
+		auto display_func = [this, imgui_window_flags]()
 		{
 			OnDrawImGuiContent();
-			OnDrawImGuiMenuConditional(flags, imgui_window_flags);
+			OnDrawImGuiMenuConditional(imgui_window_flags);
 		};
 
 		// display fullscreen window
 		bool keep_alive = true;
-		if (HasAnyFlags(flags, ImGuiDrawFlags::FULL_WINDOW))
+		if (HasAnyFlags(draw_flags, ImGuiDrawFlags::FULL_WINDOW))
 		{
-			keep_alive = FullscreenWindow(title, imgui_window_flags, display_func);
+			keep_alive = FullscreenWindow(GetName(), imgui_window_flags, display_func);
 		}
 		// display floating window (default case)
 		else
 		{
-			keep_alive = FloatingWindow(title, imgui_window_flags, display_func);
+			keep_alive = FloatingWindow(GetName(), imgui_window_flags, display_func);
 		}
 		// request for closing if necessary
 		if (!keep_alive)
 			RequestClosing();
-	}
-
-	bool ImGuiObject::FullscreenWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func)
-	{
-		// update flags
-		imgui_window_flags |= ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoBringToFrontOnFocus;
-
-		// prepare ImGui window size and position
-		ImGui::SetNextWindowPos({ ImGui::GetMainViewport()->WorkPos.x, ImGui::GetMainViewport()->WorkPos.y });
-		ImGui::SetNextWindowSize({ ImGui::GetMainViewport()->Size.x, ImGui::GetMainViewport()->Size.y });
-		// display then window
-		if (ImGui::Begin(title, nullptr, imgui_window_flags))
-		{
-			content_func();
-			ImGui::End();
-		}
-		return true; // window must be kept alive
-	}
-
-	bool ImGuiObject::FloatingWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func)
-	{
-		bool open_value = true;
-		if (ImGui::Begin(title, &open_value, imgui_window_flags))
-		{
-			content_func();
-			ImGui::End();
-		}
-		return open_value;
 	}
 
 	int ImGuiObject::GetImGuiWindowFlags() const
@@ -129,14 +104,12 @@ namespace chaos
 		return closing_request;
 	}
 
-	void ImGuiObject::SetWindow(const Window* in_window)
+	void ImGuiObject::SetWindow(Window* in_window)
 	{
-		assert(in_window != nullptr); // can only set window once
-		assert(window == nullptr);
 		window = in_window;
 	}
 
-	Window const* ImGuiObject::GetWindow() const
+	AutoCastable<Window> ImGuiObject::GetWindow() const
 	{
 		return window;
 	}

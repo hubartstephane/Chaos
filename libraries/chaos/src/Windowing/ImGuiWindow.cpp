@@ -11,20 +11,26 @@ namespace chaos
 
 	void ImGuiWindow::SetContent(ImGuiObject* in_content)
 	{
-		content = in_content;
-		content->SetWindow(this);
+		if (content != in_content)
+		{
+			if (content != nullptr)
+			{
+				RemoveImGuiObject(content.get());
+			}
+			content = in_content;
+			if (content != nullptr)
+			{
+				content->SetName("content");
+				content->SetDrawFlags(ImGuiDrawFlags::FULL_WINDOW);
+				AddImGuiObject(content.get());
+			}
+		}
 	}
 
-	void ImGuiWindow::OnDrawImGuiContent()
+	void ImGuiWindow::DrawImGui()
 	{
-		Window::OnDrawImGuiContent();
-		if (content != nullptr)
-			content->DrawImGui(GetName(), ImGuiDrawFlags::FULL_WINDOW);
-	}
-
-	void ImGuiWindow::DrawWindowImGui()
-	{
-		Window::DrawWindowImGui();
+		Window::DrawImGui();
+		// check whether the window as to be closed
 		if (content != nullptr)
 			if (content->IsClosingRequested())
 				RequireWindowClosure();

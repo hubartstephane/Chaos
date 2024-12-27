@@ -31,10 +31,22 @@ namespace chaos
 	{
 	public:
 
+		/** the entry point to draw the whole ImGui object */
+		virtual void DrawImGui();
 		/** method to override to display content */
 		virtual void OnDrawImGuiContent();
 		/** method to override to display menu */
 		virtual void OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func);
+
+		/** gets the whether the menu is enabled */
+		static bool IsImGuiMenuEnabled();
+		/** enable or disable ImGui menu */
+		static void SetImGuiMenuEnabled(bool enabled);
+
+		/** create a fullscreen window and fill with content (returns true if the window must be kept alive) */
+		static bool FullscreenWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func);
+		/** create a floating window and fill with content (returns true if the window must be kept alive) */
+		static bool FloatingWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func);
 	};
 
 #endif

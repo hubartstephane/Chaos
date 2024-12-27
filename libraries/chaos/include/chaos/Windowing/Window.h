@@ -243,7 +243,7 @@ namespace chaos
 		CursorMode GetCursorMode() const;
 
 		/** draw ImGui */
-		virtual void DrawWindowImGui();
+		virtual void DrawImGui() override;
 
 		/** gets the category of the window */
 		WindowCategory GetWindowCategory() const { return window_category; };
@@ -265,19 +265,14 @@ namespace chaos
 		/** search an ImGui object by name */
 		AutoConstCastable<ImGuiObject> FindImGuiObject(ObjectRequest request) const;
 
+		/** insert an ImGui object into list */
+		void AddImGuiObject(ImGuiObject* imgui_object);
 		/** remove an ImGui object from list */
 		void RemoveImGuiObject(ImGuiObject* imgui_object);
 
 		/** gets the imgui manager */
 		ImGuiManager* GetImGuiManager() const;
 
-		/** gets the whether the menu is enabled */
-		bool IsImGuiMenuEnabled() const;
-		/** enable or disable ImGui menu */
-		void SetImGuiMenuEnabled(bool enabled);
-
-		/** override */
-		virtual void OnDrawImGuiContent() override;
 		/** override */
 		virtual void OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func) override;
 
@@ -384,6 +379,8 @@ namespace chaos
 		virtual bool EnumerateKnownImGuiObjects(EnumerateKnownImGuiObjectFunc func) const;
 		/** create or destroy an ImGuiObject */
 		void SetImGuiObjectInternalVisibility(bool visible, char const* name, CreateImGuiObjectFunc create_func);
+		/** draw all ImGui objects */
+		void DrawImGuiObjects();
 
 	private:
 

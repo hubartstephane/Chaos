@@ -474,19 +474,6 @@ namespace chaos
 	{
 		return cursor_mode;
 	}
-
-	void Window::SetImGuiMenuEnabled(bool enabled)
-	{
-		if (WindowApplication* window_application = Application::GetInstance())
-			window_application->SetImGuiMenuEnabled(enabled);
-	}
-
-	bool Window::IsImGuiMenuEnabled() const
-	{
-		if (WindowApplication const * window_application = Application::GetInstance())
-			return window_application->IsImGuiMenuEnabled();
-		return false;
-	}
 	
 	ImGuiManager* Window::GetImGuiManager() const
 	{
@@ -1131,13 +1118,15 @@ namespace chaos
 		return WindowInterface::OnCharEventImpl(c);
 	}
 
-	void Window::DrawWindowImGui()
+	void Window::DrawImGui()
 	{
 		// draw the content
 		OnDrawImGuiContent();
 		// draw the menu
 		if (IsImGuiMenuEnabled())
 			OnDrawImGuiMenu(ImGuiTools::BeginMainMenuBar());
+		// draw the ImGui objects
+		DrawImGuiObjects();
 	}
 
 	bool Window::IsApplicationImGuiMenuPluggedIn() const
@@ -1174,7 +1163,7 @@ namespace chaos
 		});
 	}
 
-	void Window::OnDrawImGuiContent()
+	void Window::DrawImGuiObjects()
 	{
 		// create a weak copy of imgui objects to avoid 
 		// bugs if some elements are destroyed during the loop
@@ -1188,7 +1177,7 @@ namespace chaos
 		{
 			if (imgui_object != nullptr)
 			{
-				imgui_object->DrawImGui(imgui_object->GetName(), ImGuiDrawFlags::NONE);
+				imgui_object->DrawImGui();
 				if (imgui_object->IsClosingRequested()) // closing requested ?
 					RemoveImGuiObject(imgui_object.get());
 			}
@@ -1221,7 +1210,7 @@ namespace chaos
 			result |= root_widget->OnDraw(renderer.get(), uniform_provider, draw_params);
 		}
 		// draw ImGui
-		DrawWindowImGui();
+		DrawImGui();
 
 		// finalize the rendering
 		ImGui::Render();
@@ -1398,9 +1387,9 @@ namespace chaos
 			{
 				if (ImGuiObject* imgui_object = create_func())
 				{
-					imgui_object->SetWindow(this);
 					imgui_object->SetName(name);
-					imgui_objects.push_back(imgui_object);
+					imgui_object->SetDrawFlags(ImGuiDrawFlags::FLOATING_IMGUI_WINDOW);
+					AddImGuiObject(imgui_object);
 				}
 			}
 		}
@@ -1411,10 +1400,20 @@ namespace chaos
 		}
 	}
 
+	void Window::AddImGuiObject(ImGuiObject* imgui_object)
+	{
+		assert(imgui_object != nullptr);
+		assert(imgui_object->GetWindow() == nullptr);
+
+		imgui_object->SetWindow(this);
+		imgui_objects.push_back(imgui_object);
+	}
+
 	void Window::RemoveImGuiObject(ImGuiObject* imgui_object)
 	{
 		assert(imgui_object != nullptr);
-
+		assert(imgui_object->GetWindow() == this);
+	
 		auto it = std::ranges::find_if(imgui_objects, [imgui_object](shared_ptr<ImGuiObject> const& ptr)
 		{
 			return (ptr == imgui_object);
@@ -1422,6 +1421,7 @@ namespace chaos
 
 		if (it != imgui_objects.end())
 		{
+			imgui_object->SetWindow(nullptr);
 			imgui_objects.erase(it);
 		}
 	}

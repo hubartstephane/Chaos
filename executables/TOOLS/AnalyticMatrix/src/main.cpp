@@ -759,7 +759,7 @@ public:
 		matrixes.push_back({ "titi", T });
 	}
 
-	virtual void OnDrawImGuiContent() override
+	virtual void OnDrawImGuiContent(chaos::Window * window) override
 	{
 		for (NamedMatrix const& m : matrixes)
 		{

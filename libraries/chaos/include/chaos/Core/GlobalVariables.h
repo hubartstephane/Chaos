@@ -75,20 +75,9 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 	public:
 
 		/** override */
-		virtual void DrawVariable(GlobalVariableBase* target) const override
-		{
-			if constexpr (ImGuiTools::CanDrawImGuiVariable<T>)
-			{
-				T& target_value = ((GlobalVariable<T> *)target)->Get();
-				DrawImGuiVariable(target_value, DrawImGuiVariableFlags::NONE);
-			}
-		}
-
+		virtual void DrawVariable(GlobalVariableBase* target) const override;
 		/** override */
-		virtual bool CanDrawVariable() const override
-		{
-			return ImGuiTools::CanDrawImGuiVariable<T>;
-		}
+		virtual bool CanDrawVariable() const override;
 	};
 
 	/**
@@ -278,6 +267,25 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 		/** list of all variables */
 		std::vector<GlobalVariableBase*> variables;
 	};
+
+
+#else
+
+template<typename T>
+void GlobalVariableImGuiRenderer<T>::DrawVariable(GlobalVariableBase* target) const
+{
+	if constexpr (ImGuiTools::CanDrawImGuiVariable<T>)
+	{
+		T& target_value = ((GlobalVariable<T> *)target)->Get();
+		DrawImGuiVariable(target_value, DrawImGuiVariableFlags::NONE);
+	}
+}
+
+template<typename T>
+bool GlobalVariableImGuiRenderer<T>::CanDrawVariable() const
+{
+	return ImGuiTools::CanDrawImGuiVariable<T>;
+}
 
 #endif
 

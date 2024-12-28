@@ -1,4 +1,5 @@
 #include "chaos/Core/Core.h"
+#include "chaos/ImGuiCore/ImGuiCore.h"
 #include "chaos/Debug/Debug.h"
 #include "chaos/Midi/Midi.h"
 #include "chaos/Math/Math.h"

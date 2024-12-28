@@ -278,7 +278,7 @@ namespace chaos
 		std::vector<std::string> opened_window;
 		if (JSONTools::GetAttribute(GetJSONReadConfiguration(), "opened_window", opened_window))
 			for (std::string const& name : opened_window)
-				SetKnownWindowVisibility(name.c_str(), true);
+				CreateOrDestroyKnownWindow(name.c_str(), true);
 
 		// run the main loop as long as there are main windows
 		RunMessageLoop([this]()
@@ -858,11 +858,11 @@ namespace chaos
 		}
 	}
 
-	void WindowApplication::SetWindowInternalVisibility(bool visible, char const * name, CreateWindowFunc create_func)
+	void WindowApplication::CreateOrDestroyWindow(bool create, char const * name, CreateWindowFunc create_func)
 	{
 		Window* existing_window = FindWindow(name);
 
-		if (visible)
+		if (create)
 		{
 			if (existing_window == nullptr)
 			{
@@ -886,14 +886,14 @@ namespace chaos
 		return (FindWindow(name) != nullptr);
 	}
 
-	bool WindowApplication::SetKnownWindowVisibility(char const* name, bool visible)
+	bool WindowApplication::CreateOrDestroyKnownWindow(char const* name, bool create)
 	{
-		return EnumerateKnownWindows([this, name, visible](char const* window_name, CreateWindowFunc create_func)
+		return EnumerateKnownWindows([this, name, create](char const* window_name, CreateWindowFunc create_func)
 		{
 			// is it the window we are searching?
 			if (StringTools::Stricmp(name, window_name) != 0)
 				return false;
-			SetWindowInternalVisibility(visible, window_name, create_func);
+			CreateOrDestroyWindow(create, window_name, create_func);
 			return true; // stop the search
 		});
 	}
@@ -962,7 +962,7 @@ namespace chaos
 				{
 					bool window_exists = (FindWindow(name) != nullptr);
 					if (ImGui::MenuItem(name, nullptr, window_exists, true))
-						SetWindowInternalVisibility(!window_exists, name, create_func);
+						CreateOrDestroyWindow(!window_exists, name, create_func);
 					ImGui::EndMenu();
 				}
 				return false; // don't stop the search

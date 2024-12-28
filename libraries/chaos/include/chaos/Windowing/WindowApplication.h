@@ -133,7 +133,7 @@ namespace chaos
 		/** search whether a given window exists */
 		bool IsKnownWindowVisible(char const* name) const;
 		/** create a window from its name */
-		bool SetKnownWindowVisibility(char const* name, bool visible);
+		bool CreateOrDestroyKnownWindow(char const* name, bool create);
 
 		/** destroy all windows */
 		void DestroyAllWindows();
@@ -171,6 +171,9 @@ namespace chaos
 			if constexpr (L::convertible_to_bool)
 				return typename L::result_type{};
 		}
+
+		/** create or destroy a window */
+		void CreateOrDestroyWindow(bool create, char const* name, CreateWindowFunc create_func);
 
 	protected:
 
@@ -250,9 +253,6 @@ namespace chaos
 
 		/** add some items to a windows menu */
 		virtual void OnDrawApplicationImGuiMenu(Window * window, BeginImGuiMenuFunc begin_menu_func);
-
-		/** internal method to show or hide a window */
-		void SetWindowInternalVisibility(bool visible, char const* name, CreateWindowFunc create_func);
 
 		/** checks whether the window is inside the application windows array */
 		bool IsWindowHandledByApplication(Window const* window) const;

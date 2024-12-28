@@ -25,7 +25,7 @@ namespace chaos
 }; // namespace chaos
 
 /** you may use an additionnal argument to represent the function API (CHAOS_API for example) */
-#define CHAOS_DECLARE_ENUM_BITMASK_METHOD(enum_type, bitmask_metadata, ...)\
+#define CHAOS_DECLARE_ENUM_BITMASK_METHOD(enum_type, ...)\
 __VA_ARGS__ enum_type operator|(enum_type a, enum_type b);\
 __VA_ARGS__ enum_type operator&(enum_type a, enum_type b);\
 __VA_ARGS__ enum_type operator~(enum_type a);\

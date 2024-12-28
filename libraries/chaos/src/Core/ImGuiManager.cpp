@@ -121,7 +121,7 @@ namespace chaos
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls		
 		io.ConfigFlags |= ImGuiConfigFlags_NavNoCaptureKeyboard;  // Do not capture keyboard during navigation
 		
-		SetImGuiContextMouseFlag(window->IsImGuiMenuEnabled());
+		SetImGuiContextMouseFlag(WindowApplication::IsImGuiMenuEnabled());
 
 		switch (window_style)
 		{
@@ -151,7 +151,7 @@ namespace chaos
 			io.ConfigFlags |= ImGuiConfigFlags_NoMouse; // don't want mouse (elsewhere imgui can react to an invisible cursor)
 	}
 
-	void ImGuiManager::OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func)
+	void ImGuiManager::OnDrawImGuiMenu(Window* window, BeginImGuiMenuFunc begin_menu_func)
 	{
 		begin_menu_func([this]()
 		{

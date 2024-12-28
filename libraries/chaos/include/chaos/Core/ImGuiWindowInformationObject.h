@@ -22,7 +22,7 @@ namespace chaos
 		/** override */
 		virtual int GetImGuiWindowFlags() const override;
 		/** override */
-		virtual void OnDrawImGuiContent() override;
+		virtual void OnDrawImGuiContent(Window* window) override;
 	};
 
 #endif

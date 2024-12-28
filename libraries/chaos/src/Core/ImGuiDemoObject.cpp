@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	void ImGuiDemoObject::OnDrawImGuiContent()
+	void ImGuiDemoObject::OnDrawImGuiContent(Window* window)
 	{
 		if (show_demo)
 			ImGui::ShowDemoWindow(&show_demo);
@@ -21,7 +21,7 @@ namespace chaos
 			ImGui::ShowUserGuide();
 	}
 
-	void ImGuiDemoObject::OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func)
+	void ImGuiDemoObject::OnDrawImGuiMenu(Window* window, BeginImGuiMenuFunc begin_menu_func)
 	{
 		begin_menu_func([this]()
 		{

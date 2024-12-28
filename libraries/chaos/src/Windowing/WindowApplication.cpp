@@ -833,23 +833,28 @@ namespace chaos
 			application->OnMonitorEvent(monitor, monitor_state);
 	}
 
-	bool WindowApplication::IsImGuiMenuEnabled() const
+	bool WindowApplication::IsImGuiMenuEnabled()
 	{
-		return imgui_menu_enabled;
+		if (WindowApplication const* window_application = Application::GetInstance())
+			return window_application->imgui_menu_enabled;
+		return false;
 	}
 
 	void WindowApplication::SetImGuiMenuEnabled(bool enabled)
 	{
-		if (imgui_menu_enabled != enabled)
+		if (WindowApplication * window_application = Application::GetInstance())
 		{
-			imgui_menu_enabled = enabled;
-			ForAllWindows([enabled](Window* window)
+			if (window_application->imgui_menu_enabled != enabled)
 			{
-				window->WithWindowContext([&window, enabled]()
+				window_application->imgui_menu_enabled = enabled;
+				window_application->ForAllWindows([enabled](Window* window)
 				{
-					window->OnImGuiMenuEnabledChanged(enabled);
+					window->WithWindowContext([&window, enabled]()
+					{
+						window->OnImGuiMenuEnabledChanged(enabled);
+					});
 				});
-			});
+			}
 		}
 	}
 
@@ -906,7 +911,7 @@ namespace chaos
 		return false;
 	}
 
-	void WindowApplication::OnDrawApplicationImGuiMenu(BeginImGuiMenuFunc begin_menu_func)
+	void WindowApplication::OnDrawApplicationImGuiMenu(Window * window, BeginImGuiMenuFunc begin_menu_func)
 	{
 		begin_menu_func([this]()
 		{
@@ -965,9 +970,9 @@ namespace chaos
 		});
 
 		if (gpu_resource_manager != nullptr)
-			gpu_resource_manager->OnDrawImGuiMenu(begin_menu_func);
+			gpu_resource_manager->OnDrawImGuiMenu(window, begin_menu_func);
 		if (imgui_manager != nullptr)
-			imgui_manager->OnDrawImGuiMenu(begin_menu_func);
+			imgui_manager->OnDrawImGuiMenu(window, begin_menu_func);
 	}
 
 	std::vector<weak_ptr<Window>> WindowApplication::GetWeakWindowArray() const

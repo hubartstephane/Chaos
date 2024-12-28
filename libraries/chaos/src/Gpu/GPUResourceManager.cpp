@@ -486,7 +486,7 @@ namespace chaos
 		return InitializeFromConfiguration(GetJSONReadConfiguration().default_config);
 	}
 
-	void GPUResourceManager::OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func)
+	void GPUResourceManager::OnDrawImGuiMenu(Window* window, BeginImGuiMenuFunc begin_menu_func)
 	{
 		begin_menu_func([this]()
 		{

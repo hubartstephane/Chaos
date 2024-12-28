@@ -126,9 +126,9 @@ namespace chaos
 		virtual Window* DoCreateMainWindow(WindowCreateParams const& create_params);
 
 		/** enable or disable ImGui menu */
-		void SetImGuiMenuEnabled(bool enabled);
+		static void SetImGuiMenuEnabled(bool enabled);
 		/** gets the whether the menu is enabled */
-		bool IsImGuiMenuEnabled() const;
+		static bool IsImGuiMenuEnabled();
 
 		/** search whether a given window exists */
 		bool IsKnownWindowVisible(char const* name) const;
@@ -249,7 +249,7 @@ namespace chaos
 		AutoConstCastable<Window> GetMainWindow() const { return FindWindow("main"); }
 
 		/** add some items to a windows menu */
-		virtual void OnDrawApplicationImGuiMenu(BeginImGuiMenuFunc begin_menu_func);
+		virtual void OnDrawApplicationImGuiMenu(Window * window, BeginImGuiMenuFunc begin_menu_func);
 
 		/** internal method to show or hide a window */
 		void SetWindowInternalVisibility(bool visible, char const* name, CreateWindowFunc create_func);

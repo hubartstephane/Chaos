@@ -13,7 +13,7 @@ namespace chaos
 		logger = in_logger;
 	}
 
-	void ImGuiLogObject::OnDrawImGuiContent()
+	void ImGuiLogObject::OnDrawImGuiContent(Window* window)
 	{
 		assert(logger != nullptr);
 
@@ -121,7 +121,7 @@ namespace chaos
 		}
 	}
 
-	void ImGuiLogObject::OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func)
+	void ImGuiLogObject::OnDrawImGuiMenu(Window* window, BeginImGuiMenuFunc begin_menu_func)
 	{
 		begin_menu_func([this]()
 		{

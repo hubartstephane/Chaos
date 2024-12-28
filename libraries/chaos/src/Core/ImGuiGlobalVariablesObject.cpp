@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	void ImGuiGlobalVariablesObject::OnDrawImGuiContent()
+	void ImGuiGlobalVariablesObject::OnDrawImGuiContent(Window * window)
 	{
 		ImGui::Dummy({ 200.0f, 1.0f });
 		if (ImGui::BeginTable("Global Variables", 2, ImGuiTableFlags_Resizable))

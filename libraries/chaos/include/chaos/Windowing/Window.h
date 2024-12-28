@@ -120,7 +120,7 @@ namespace chaos
 	* Window: a binding class between chaos and GLFW to handle window (beware the prefix "My")
 	*/
 
-	class CHAOS_API Window : public Object, public WindowInterface, public ConfigurableInterface, public ImGuiInterface
+	class CHAOS_API Window : public Object, public WindowInterface, public ConfigurableInterface
 	{
 		friend class WindowApplication;
 
@@ -242,9 +242,6 @@ namespace chaos
 		/** get the cursor mode */
 		CursorMode GetCursorMode() const;
 
-		/** draw ImGui */
-		virtual void DrawImGui() override;
-
 		/** gets the category of the window */
 		WindowCategory GetWindowCategory() const { return window_category; };
 		/** gets the category of the window */
@@ -273,8 +270,12 @@ namespace chaos
 		/** gets the imgui manager */
 		ImGuiManager* GetImGuiManager() const;
 
-		/** override */
-		virtual void OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func) override;
+		/** draw ImGui */
+		virtual void DrawImGui();
+		/** draw ImGui content */
+		virtual void OnDrawImGuiContent();
+		/** draw ImGui menu */
+		virtual void OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func);
 
 	protected:
 

@@ -10,15 +10,16 @@ namespace chaos
 
 	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(ImGuiDrawFlags, &ImGuiDrawFlags_bitmask_metadata, CHAOS_API);
 
-	void ImGuiInterface::DrawImGui()
+	void ImGuiInterface::DrawImGui(Window* window)
+	{
+		assert(0);
+	}
+
+	void ImGuiInterface::OnDrawImGuiContent(Window* window)
 	{
 	}
 
-	void ImGuiInterface::OnDrawImGuiContent()
-	{
-	}
-
-	void ImGuiInterface::OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func)
+	void ImGuiInterface::OnDrawImGuiMenu(Window* window, BeginImGuiMenuFunc begin_menu_func)
 	{
 	}
 
@@ -48,19 +49,6 @@ namespace chaos
 			ImGui::End();
 		}
 		return open_value;
-	}
-
-	void ImGuiInterface::SetImGuiMenuEnabled(bool enabled)
-	{
-		if (WindowApplication* window_application = Application::GetInstance())
-			window_application->SetImGuiMenuEnabled(enabled);
-	}
-
-	bool ImGuiInterface::IsImGuiMenuEnabled()
-	{
-		if (WindowApplication const* window_application = Application::GetInstance())
-			return window_application->IsImGuiMenuEnabled();
-		return false;
 	}
 
 }; // namespace chaos

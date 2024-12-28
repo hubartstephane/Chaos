@@ -465,7 +465,7 @@ namespace chaos
 		if (cursor_mode != mode)
 		{
 			cursor_mode = mode;
-			if (!IsImGuiMenuEnabled())
+			if (!WindowApplication::IsImGuiMenuEnabled())
 				glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)mode); // do not effectively change cursor mode, during imgui_menu_enabled
 		}
 	}
@@ -749,7 +749,7 @@ namespace chaos
 		GetWindowAndProcess(in_glfw_window, [=](Window* my_window)
 		{
 			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
-			if (ImGui::GetCurrentContext() != nullptr && my_window->IsImGuiMenuEnabled())
+			if (ImGui::GetCurrentContext() != nullptr && WindowApplication::IsImGuiMenuEnabled())
 			{
 				ImGui_ImplGlfw_CursorPosCallback(in_glfw_window, x, y);
 
@@ -774,7 +774,7 @@ namespace chaos
 		GetWindowAndProcess(in_glfw_window, [=](Window* my_window)
 		{
 			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
-			if (ImGui::GetCurrentContext() != nullptr && my_window->IsImGuiMenuEnabled())
+			if (ImGui::GetCurrentContext() != nullptr && WindowApplication::IsImGuiMenuEnabled())
 			{
 				ImGui_ImplGlfw_MouseButtonCallback(in_glfw_window, button, action, modifier);
 
@@ -799,7 +799,7 @@ namespace chaos
 		GetWindowAndProcess(in_glfw_window, [=](Window* my_window)
 		{
 			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
-			if (ImGui::GetCurrentContext() != nullptr && my_window->IsImGuiMenuEnabled())
+			if (ImGui::GetCurrentContext() != nullptr && WindowApplication::IsImGuiMenuEnabled())
 			{
 				ImGui_ImplGlfw_ScrollCallback(in_glfw_window, scroll_x, scroll_y);
 
@@ -1118,17 +1118,6 @@ namespace chaos
 		return WindowInterface::OnCharEventImpl(c);
 	}
 
-	void Window::DrawImGui()
-	{
-		// draw the content
-		OnDrawImGuiContent();
-		// draw the menu
-		if (IsImGuiMenuEnabled())
-			OnDrawImGuiMenu(ImGuiTools::BeginMainMenuBar());
-		// draw the ImGui objects
-		DrawImGuiObjects();
-	}
-
 	bool Window::IsApplicationImGuiMenuPluggedIn() const
 	{
 		return application_imgui_menu_plugged_in;
@@ -1139,12 +1128,27 @@ namespace chaos
 		application_imgui_menu_plugged_in = enabled;
 	}
 
+	void Window::DrawImGui()
+	{
+		// draw the content
+		OnDrawImGuiContent();
+		// draw the menu
+		if (WindowApplication::IsImGuiMenuEnabled())
+			OnDrawImGuiMenu(ImGuiTools::BeginMainMenuBar());
+		// draw the ImGui objects
+		DrawImGuiObjects();
+	}
+
+	void Window::OnDrawImGuiContent()
+	{
+	}
+
 	void Window::OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func)
 	{
 		// display application menu items
 		if (IsApplicationImGuiMenuPluggedIn())
 			if (WindowApplication* window_application = Application::GetInstance())
-				window_application->OnDrawApplicationImGuiMenu(begin_menu_func);
+				window_application->OnDrawApplicationImGuiMenu(this, begin_menu_func);
 
 		// display menu items for widgets
 		EnumerateKnownImGuiObjects([this, &begin_menu_func](char const* name, CreateImGuiObjectFunc create_func)
@@ -1177,7 +1181,7 @@ namespace chaos
 		{
 			if (imgui_object != nullptr)
 			{
-				imgui_object->DrawImGui();
+				imgui_object->DrawImGui(this);
 				if (imgui_object->IsClosingRequested()) // closing requested ?
 					RemoveImGuiObject(imgui_object.get());
 			}
@@ -1403,16 +1407,12 @@ namespace chaos
 	void Window::AddImGuiObject(ImGuiObject* imgui_object)
 	{
 		assert(imgui_object != nullptr);
-		assert(imgui_object->GetWindow() == nullptr);
-
-		imgui_object->SetWindow(this);
 		imgui_objects.push_back(imgui_object);
 	}
 
 	void Window::RemoveImGuiObject(ImGuiObject* imgui_object)
 	{
 		assert(imgui_object != nullptr);
-		assert(imgui_object->GetWindow() == this);
 	
 		auto it = std::ranges::find_if(imgui_objects, [imgui_object](shared_ptr<ImGuiObject> const& ptr)
 		{
@@ -1421,7 +1421,6 @@ namespace chaos
 
 		if (it != imgui_objects.end())
 		{
-			imgui_object->SetWindow(nullptr);
 			imgui_objects.erase(it);
 		}
 	}

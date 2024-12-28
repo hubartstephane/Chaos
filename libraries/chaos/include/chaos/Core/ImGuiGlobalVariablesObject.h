@@ -19,7 +19,7 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual void OnDrawImGuiContent() override;
+		virtual void OnDrawImGuiContent(Window * window) override;
 	};
 
 #endif

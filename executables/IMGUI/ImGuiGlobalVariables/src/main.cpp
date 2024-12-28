@@ -92,14 +92,6 @@ static bool value = RuntimeCheck([]()
 
 #endif
 
-class WindowImGuiTest : public chaos::Window
-{
-	CHAOS_DECLARE_OBJECT_CLASS(WindowImGuiTest, chaos::Window);
-
-protected:
-
-};
-
 class MyApplicationTest : public chaos::WindowApplication
 {
 public:
@@ -117,6 +109,6 @@ public:
 
 int main(int argc, char ** argv, char ** env)
 {
-	return chaos::RunApplication<MyApplicationTest>(argc, argv, env, WindowImGuiTest::GetStaticClass());
+	return chaos::RunApplication<MyApplicationTest>(argc, argv, env);
 }
 

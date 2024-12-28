@@ -20,7 +20,7 @@ namespace chaos
 		using EnumerateKnownWindowsFunc = LightweightFunction<bool(char const*, CreateWindowFunc)>;
 
 		/** constructor */
-		WindowApplication(SubClassOf<Window> in_main_window_class, WindowPlacementInfo const& in_main_window_placement_info = {}, WindowCreateParams const& in_main_window_create_params = {});
+		WindowApplication(SubClassOf<Window> in_main_window_class = {}, WindowPlacementInfo const& in_main_window_placement_info = {}, WindowCreateParams const& in_main_window_create_params = {});
 
 		/** gets the number of windows */
 		size_t GetWindowCount() const;

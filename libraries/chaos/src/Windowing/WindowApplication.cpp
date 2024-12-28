@@ -280,13 +280,20 @@ namespace chaos
 			for (std::string const& name : opened_window)
 				CreateOrDestroyKnownWindow(name.c_str(), true);
 
+		int result = MainBody();
+		// destroy remaining windows
+		Quit();
+
+		return result;
+	}
+
+	int WindowApplication::MainBody()
+	{
 		// run the main loop as long as there are main windows
 		RunMessageLoop([this]()
 		{
 			return HasMainWindow();
 		});
-		// destroy remaining windows
-		Quit();
 
 		return 0;
 	}
@@ -858,32 +865,33 @@ namespace chaos
 		}
 	}
 
-	void WindowApplication::CreateOrDestroyWindow(bool create, char const * name, CreateWindowFunc create_func)
+	Window * WindowApplication::CreateNamedWindow(char const* name, CreateWindowFunc create_func)
 	{
 		Window* existing_window = FindWindow(name);
+		if (existing_window != nullptr)
+			return existing_window;
 
-		if (create)
-		{
-			if (existing_window == nullptr)
-			{
-				WindowCreateParams create_params;
-				create_params.title = name;
+		WindowCreateParams create_params;
+		create_params.title = name;
 
-				WindowPlacementInfo placement_info;
-				placement_info.size = { 800, 800 };
-				CreateTypedWindow(create_func, placement_info, create_params, name);
-			}
-		}
-		else
-		{
-			if (existing_window != nullptr)
-				existing_window->RequireWindowClosure();
-		}
+		WindowPlacementInfo placement_info;
+		placement_info.size = { 800, 800 };
+		return CreateTypedWindow(create_func, placement_info, create_params, name);
 	}
 
-	bool WindowApplication::IsKnownWindowVisible(char const * name) const
+	void  WindowApplication::DestroyNamedWindow(char const* name)
 	{
-		return (FindWindow(name) != nullptr);
+		Window* existing_window = FindWindow(name);
+		if (existing_window != nullptr)
+			existing_window->RequireWindowClosure();
+	}
+
+	void WindowApplication::CreateOrDestroyWindow(bool create, char const * name, CreateWindowFunc create_func)
+	{
+		if (create)
+			CreateNamedWindow(name, create_func);
+		else
+			DestroyNamedWindow(name);
 	}
 
 	bool WindowApplication::CreateOrDestroyKnownWindow(char const* name, bool create)

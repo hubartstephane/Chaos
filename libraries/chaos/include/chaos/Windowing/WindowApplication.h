@@ -36,6 +36,11 @@ namespace chaos
 		/** require application end */
 		virtual void Quit();
 
+		/** create some window by its name*/
+		Window* CreateNamedWindow(char const* name, CreateWindowFunc create_func);
+		/** destroy some window by its name */
+		void DestroyNamedWindow(char const* name);
+
 		/** destroy a window */
 		void DestroyWindow(Window* window);
 
@@ -130,8 +135,6 @@ namespace chaos
 		/** gets the whether the menu is enabled */
 		static bool IsImGuiMenuEnabled();
 
-		/** search whether a given window exists */
-		bool IsKnownWindowVisible(char const* name) const;
 		/** create a window from its name */
 		bool CreateOrDestroyKnownWindow(char const* name, bool create);
 
@@ -179,6 +182,8 @@ namespace chaos
 
 		/** Main method */
 		virtual int Main() override;
+		/** The main body method */
+		virtual int MainBody();
 		/** create the main window */
 		virtual Window* CreateMainWindow();
 		/** the possibility to have final initialization before the main loop is run */

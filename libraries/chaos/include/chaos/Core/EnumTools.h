@@ -35,7 +35,8 @@ __VA_ARGS__ bool IsEnumBitmaskImpl(boost::mpl::identity<enum_type>);\
 __VA_ARGS__ chaos::EnumTools::EnumBitmaskMetaData<enum_type> const * GetEnumBitmaskMetaData(boost::mpl::identity<enum_type>);\
 __VA_ARGS__ bool IsNull(enum_type src);\
 __VA_ARGS__ bool HasAnyFlags(enum_type src, enum_type flags);\
-__VA_ARGS__ bool HasAllFlags(enum_type src, enum_type flags);
+__VA_ARGS__ bool HasAllFlags(enum_type src, enum_type flags);\
+__VA_ARGS__ bool AreValidFlags(enum_type src);
 
 /** you may use an additionnal argument to represent the function API (CHAOS_API for example) */
 #define CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(enum_type, bitmask_metadata, ...)\
@@ -62,6 +63,10 @@ __VA_ARGS__ bool HasAllFlags(enum_type src, enum_type flags)\
 {\
 	assert(static_cast<int>(flags) != 0);\
 	return (static_cast<int>(src) & static_cast<int>(flags)) == static_cast<int>(flags);\
+}\
+__VA_ARGS__ bool AreValidFlags(enum_type src)\
+{\
+	return GetEnumBitmaskMetaData(boost::mpl::identity<enum_type>())->AreValidFlags(src);\
 }
 
 
@@ -224,9 +229,8 @@ namespace chaos
 					if (invalid_token)
 						return false;
 					// ensure the result is valid
-					if (EnumTools::EnumBitmaskMetaData<T> const* bitmask_metadata = GetEnumBitmaskMetaData(boost::mpl::identity<T>()))
-						if (!bitmask_metadata->IsValueValid(other_dst))
-							return false;
+					if (!AreValidFlags(other_dst))
+						return false;
 
 					dst = other_dst; // value is valid, update destination
 
@@ -374,7 +378,7 @@ namespace chaos
 			}
 
 			/** check whether there is some flags that are incompatible */
-			bool IsValueValid(T value) const
+			bool AreValidFlags(T value) const
 			{
 				size_t count = incompatibility_groups.size();
 				for (size_t i = 0; i < count; ) // do not ++i. this is handled by the loop itself

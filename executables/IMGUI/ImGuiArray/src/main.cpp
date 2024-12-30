@@ -480,7 +480,7 @@ if (WindowApplication* WA = Application::GetInstance())
 		{
 		public:
 
-			void Open(std::string in_popup_name, std::string in_message, const chaos::PopupPlacement& in_placement = {})
+			void Open(std::string in_popup_name, std::string in_message, const chaos::ImGuiWindowPlacement& in_placement = {})
 			{
 				if (DoOpen(std::move(in_popup_name), in_placement))
 				{
@@ -546,7 +546,7 @@ protected:
 		{
 			if (ImGui::Button(CHAOS_PP_UNICODE_TO_UTF8(3,c,0) " show popup", { 200.0f , 200.0f }))
 			{
-				chaos::PopupPlacement placement = chaos::PopupPlacement::GetCenterOnScreenPlacement();
+				chaos::ImGuiWindowPlacement placement = chaos::ImGuiWindowPlacement::GetCenterOnScreenPlacement();
 				placement.movable = true;
 				message_popup.Open("error", "this is the error message", placement);
 			}

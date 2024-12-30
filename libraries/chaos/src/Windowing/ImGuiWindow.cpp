@@ -21,7 +21,7 @@ namespace chaos
 			if (content != nullptr)
 			{
 				content->SetName("content");
-				content->SetDrawFlags(ImGuiDrawFlags::FULL_WINDOW);
+				content->SetImGuiObjectFlags(ImGuiObjectFlags::FULL_WINDOW);
 				AddImGuiObject(content.get());
 			}
 		}

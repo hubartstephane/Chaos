@@ -3,12 +3,12 @@
 
 namespace chaos
 {
-	static chaos::EnumTools::EnumBitmaskMetaData<ImGuiDrawFlags> const ImGuiDrawFlags_bitmask_metadata =
+	static EnumTools::EnumBitmaskMetaData<ImGuiObjectFlags> const ImGuiDrawFlags_bitmask_metadata =
 	{
-		{ImGuiDrawFlags::FULL_WINDOW, ImGuiDrawFlags::FLOATING_IMGUI_WINDOW}
+		{ImGuiObjectFlags::FULL_WINDOW, ImGuiObjectFlags::FLOATING_WINDOW, ImGuiObjectFlags::POPUP_WINDOW}
 	};
 
-	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(ImGuiDrawFlags, &ImGuiDrawFlags_bitmask_metadata, CHAOS_API);
+	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(ImGuiObjectFlags, &ImGuiDrawFlags_bitmask_metadata, CHAOS_API);
 
 	void ImGuiInterface::DrawImGui(Window* window)
 	{
@@ -47,6 +47,17 @@ namespace chaos
 		{
 			content_func();
 			ImGui::End();
+		}
+		return open_value;
+	}
+
+	bool ImGuiInterface::PopupWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func)
+	{
+		bool open_value = true;
+		if (ImGui::BeginPopupModal(title, &open_value, imgui_window_flags))
+		{
+			content_func();
+			ImGui::EndPopup();
 		}
 		return open_value;
 	}

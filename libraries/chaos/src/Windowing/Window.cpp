@@ -1392,7 +1392,7 @@ namespace chaos
 				if (ImGuiObject* imgui_object = create_func())
 				{
 					imgui_object->SetName(name);
-					imgui_object->SetDrawFlags(ImGuiDrawFlags::FLOATING_IMGUI_WINDOW);
+					imgui_object->SetImGuiObjectFlags(ImGuiObjectFlags::FLOATING_WINDOW);
 					AddImGuiObject(imgui_object);
 				}
 			}

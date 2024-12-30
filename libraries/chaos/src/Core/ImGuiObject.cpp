@@ -10,7 +10,7 @@ namespace chaos
 			return;
 
 		// display full window menu bar
-		if (HasAnyFlags(draw_flags, ImGuiDrawFlags::USE_FULL_WINDOW_MENU))
+		if (HasAnyFlags(imgui_object_flags, ImGuiObjectFlags::USE_FULL_WINDOW_MENU))
 		{
 			OnDrawImGuiMenu(window, ImGuiTools::BeginMainMenuBar());
 		}
@@ -31,7 +31,7 @@ namespace chaos
 			return imgui_window_flags & ~ImGuiWindowFlags_MenuBar;
 
 		// check whether the menu is to be plugged into full window
-		if (HasAnyFlags(draw_flags, ImGuiDrawFlags::USE_FULL_WINDOW_MENU))
+		if (HasAnyFlags(imgui_object_flags, ImGuiObjectFlags::USE_FULL_WINDOW_MENU))
 			return imgui_window_flags & ~ImGuiWindowFlags_MenuBar;
 
 		// request if there is really some menu content
@@ -49,14 +49,11 @@ namespace chaos
 			return imgui_window_flags & ~ImGuiWindowFlags_MenuBar;
 	}
 
-	void ImGuiObject::SetDrawFlags(ImGuiDrawFlags in_flags)
+	void ImGuiObject::SetImGuiObjectFlags(ImGuiObjectFlags in_flags)
 	{
 		// check flags coherency
-		assert(
-			(!HasAnyFlags(in_flags, ImGuiDrawFlags::FULL_WINDOW)) ||
-			(!HasAnyFlags(in_flags, ImGuiDrawFlags::FLOATING_IMGUI_WINDOW))
-		);
-		draw_flags = in_flags;
+		assert(AreValidFlags(in_flags));
+		imgui_object_flags = in_flags;
 	}
 
 	void ImGuiObject::DrawImGui(Window* window)
@@ -72,9 +69,19 @@ namespace chaos
 			OnDrawImGuiMenuConditional(window, imgui_window_flags);
 		};
 
-		// display fullscreen window
+		// display popup window
 		bool keep_alive = true;
-		if (HasAnyFlags(draw_flags, ImGuiDrawFlags::FULL_WINDOW))
+		if (HasAnyFlags(imgui_object_flags, ImGuiObjectFlags::POPUP_WINDOW))
+		{
+			if (!opened_popup)
+			{
+				opened_popup = true;
+				ImGui::OpenPopup(GetName());
+			}
+			keep_alive = PopupWindow(GetName(), imgui_window_flags, display_func);
+		}
+		// display fullscreen window
+		else if (HasAnyFlags(imgui_object_flags, ImGuiObjectFlags::FULL_WINDOW))
 		{
 			keep_alive = FullscreenWindow(GetName(), imgui_window_flags, display_func);
 		}

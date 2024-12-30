@@ -19,7 +19,7 @@ namespace chaos
 		virtual void DrawImGui(Window* window) override;
 
 		/** set the flags for this object */
-		void SetDrawFlags(ImGuiDrawFlags in_flags);
+		void SetImGuiObjectFlags(ImGuiObjectFlags in_flags);
 		/** request to close this interface */
 		void RequestClosing();
 		/** check whether closing is requested */
@@ -36,10 +36,12 @@ namespace chaos
 
 	protected:
 
+		/** the object flags */
+		ImGuiObjectFlags imgui_object_flags = ImGuiObjectFlags::FLOATING_WINDOW;
 		/** indicates whether closing this UI is requested */
 		bool closing_request = false;
-		/** the draw flags */
-		ImGuiDrawFlags draw_flags = ImGuiDrawFlags::FLOATING_IMGUI_WINDOW;
+		/** indicates whether the popup is opened (only valid if flags has POPUP_WINDOW) */
+		bool opened_popup = false;
 	};
 
 #endif

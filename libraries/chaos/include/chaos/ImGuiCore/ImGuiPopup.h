@@ -2,10 +2,10 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	enum class PopupState;
-	enum class PopupPlacementType;
+	enum class ImGuiPopupState;
+	enum class ImGuiWindowPlacementType;
 
-	class PopupPlacement;
+	class ImGuiWindowPlacement;
 
 	namespace details
 	{
@@ -18,7 +18,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/** the current state of the popup */
-	enum class PopupState
+	enum class ImGuiPopupState
 	{
 		Closed,
 		Opening,
@@ -26,7 +26,7 @@ namespace chaos
 	};
 
 	/** the reference point for placing a imgui popup */
-	enum class PopupPlacementType
+	enum class ImGuiWindowPlacementType
 	{
 		ScreenCenter,
 		CursorPosition,
@@ -34,23 +34,24 @@ namespace chaos
 	};
 
 	/** how to place a imgui popup */
-	class PopupPlacement
+	class ImGuiWindowPlacement
 	{
 	public:
 
+		/** set the next window placement */
+		void PrepareNextWindowPlacement() const;
+
 		/** get an instance for a popup centered on screen */
-		static PopupPlacement GetCenterOnScreenPlacement(bool in_movable = true, const glm::vec2& in_alignment = { 0.5f, 0.5f });
+		static ImGuiWindowPlacement GetCenterOnScreenPlacement(const glm::vec2& in_alignment = { 0.5f, 0.5f });
 		/** get an instance for a popup placed on cursor position */
-		static PopupPlacement GetCenterOnCursorPlacement(bool in_movable = true, const glm::vec2& in_alignment = { 0.0f, 0.0f });
+		static ImGuiWindowPlacement GetCenterOnCursorPlacement(const glm::vec2& in_alignment = { 0.0f, 0.0f });
 		/** get an instance for a popup at a given position */
-		static PopupPlacement GetCenterOnPositionPlacement(const glm::vec2& in_position, bool in_movable = true, const glm::vec2& in_alignment = { 0.5f, 0.5f });
+		static ImGuiWindowPlacement GetCenterOnPositionPlacement(const glm::vec2& in_position, const glm::vec2& in_alignment = { 0.5f, 0.5f });
 
 	public:
 
 		/** how to place the popup */
-		PopupPlacementType placement_type = PopupPlacementType::ScreenCenter;
-		/** whether the popup can be moved */
-		bool movable = true;
+		ImGuiWindowPlacementType placement_type = ImGuiWindowPlacementType::ScreenCenter;
 		/** the position of the popup */
 		glm::vec2 position = { 0.0f, 0.0f };
 		/** the alignment of the popup */
@@ -65,18 +66,21 @@ namespace chaos
 		public:
 
 			/** get the current state of the popup */
-			PopupState GetPopupState() const;
+			ImGuiPopupState GetPopupState() const;
+			
+			/** get the window flags */
+			int GetPopupFlags() const;
+			/** get the window flags */
+			void SetPopupFlags(int in_flags);
 
 			/** end popup lifetime */
 			void Close();
 
 		protected:
 
-			/** get the window flags */
-			virtual int GetPopupFlags() const;
 
 			/** internal method called to open the popup. Derived class has to implement a public Open method that initialize the popup and calls DoOpen */
-			bool DoOpen(std::string in_popup_name, const PopupPlacement& in_placement);
+			bool DoOpen(std::string in_popup_name, const ImGuiWindowPlacement& in_placement);
 			/** prepare imgui popup placement */
 			void PrepareModalPlacement();
 
@@ -85,9 +89,11 @@ namespace chaos
 			/** the title of the popup */
 			std::string popup_name;
 			/** the state of the popup */
-			PopupState popup_state = PopupState::Closed;
+			ImGuiPopupState popup_state = ImGuiPopupState::Closed;
 			/** placement behaviour of the popup */
-			PopupPlacement popup_placement;
+			ImGuiWindowPlacement popup_placement;
+			/** the window flags */
+			int imgui_flags = ImGuiWindowFlags_AlwaysAutoResize;
 		};
 
 	}; // namespace details
@@ -109,7 +115,7 @@ namespace chaos
 		virtual RESULT_TYPE Process()
 		{
 			// early exit
-			if (popup_state == PopupState::Closed)
+			if (popup_state == ImGuiPopupState::Closed)
 			{
 				if constexpr (!std::is_same_v<void, T>)
 					return {};
@@ -119,12 +125,8 @@ namespace chaos
 			// set the window placement
 			PrepareModalPlacement();
 
-			// do open the imgui popup
-			int flags = GetPopupFlags();
-			if (!popup_placement.movable)
-				flags |= ImGuiWindowFlags_NoMove;
-
-			if (ImGui::BeginPopupModal(popup_name.c_str(), NULL, flags))
+			// open the popup
+			if (ImGui::BeginPopupModal(popup_name.c_str(), NULL, imgui_flags))
 			{
 				if constexpr (std::is_same_v<void, T>)
 				{

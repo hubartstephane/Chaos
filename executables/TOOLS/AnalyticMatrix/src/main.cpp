@@ -447,7 +447,7 @@ AnalyticMatrix MakeRotationMatrixZ(char const* angle_name)
 
 // ----------------------------------------------------------------------------------------
 
-enum class PopupPlacementType
+enum class ImGuiWindowPlacementType
 {
 	ScreenCenter,
 	CursorPosition
@@ -465,10 +465,10 @@ public:
 		std::optional<T>
 	>;
 
-	virtual PopupPlacementType GetPlacementType() const
+	virtual ImGuiWindowPlacementType GetPlacementType() const
 	{
-		//return PopupPlacementType::ScreenCenter;
-		return PopupPlacementType::CursorPosition;
+		//return ImGuiWindowPlacementType::ScreenCenter;
+		return ImGuiWindowPlacementType::CursorPosition;
 	}
 
 	virtual RESULT_TYPE Process()
@@ -524,13 +524,13 @@ protected:
 	{
 		if (!IsOpened())
 		{
-			PopupPlacementType placement_type = GetPlacementType();
-			if (placement_type == PopupPlacementType::ScreenCenter)
+			ImGuiWindowPlacementType placement_type = GetPlacementType();
+			if (placement_type == ImGuiWindowPlacementType::ScreenCenter)
 			{
 				popup_position  = ImGui::GetMainViewport()->GetCenter();
 				popup_alignment = ImVec2(0.5f, 0.5f);
 			}
-			else if (placement_type == PopupPlacementType::CursorPosition)
+			else if (placement_type == ImGuiWindowPlacementType::CursorPosition)
 			{
 				popup_position = ImGui::GetMousePos();
 				popup_alignment = ImVec2(0.0f, 0.0f);

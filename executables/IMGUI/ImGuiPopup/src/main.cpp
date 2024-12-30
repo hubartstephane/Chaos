@@ -6,7 +6,7 @@ class ImGuiMessagePopup : public chaos::ImGuiPopup<void>
 {
 public:
 
-	void Open(std::string in_popup_name, std::string in_message, const chaos::PopupPlacement& in_placement = {})
+	void Open(std::string in_popup_name, std::string in_message, const chaos::ImGuiWindowPlacement& in_placement = {})
 	{
 		if (DoOpen(std::move(in_popup_name), in_placement))
 		{
@@ -44,11 +44,34 @@ public:
 	using chaos::WindowApplication::WindowApplication;
 };
 
+
+
+class MyImGuiPopup : public chaos::ImGuiObject
+{
+public:
+
+
+	MyImGuiPopup(std::function<void()> in_func) :
+		func(std::move(in_func))
+	{
+	}
+
+	std::function<void()> func;
+};
+
+
 class WindowOpenGLTest : public chaos::Window
 {
 	CHAOS_DECLARE_OBJECT_CLASS(WindowOpenGLTest, chaos::Window);
 
 protected:
+
+	void AddPopup(char const * name, std::function<void()> func)
+	{
+		MyImGuiPopup * popup = new MyImGuiPopup(std::move(func));
+		popup->SetName(name);
+		AddImGuiObject(popup);
+	}
 
 	virtual bool OnDraw(chaos::GPURenderer* renderer, chaos::GPUProgramProviderInterface const* uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
@@ -66,8 +89,12 @@ protected:
 		{
 			if (ImGui::Button("show popup", { 200.0f , 200.0f }))
 			{
-				chaos::PopupPlacement placement = chaos::PopupPlacement::GetCenterOnScreenPlacement();
-				placement.movable = true;
+				chaos::ImGuiWindowPlacement placement = chaos::ImGuiWindowPlacement::GetCenterOnScreenPlacement();
+
+
+
+
+				//placement.movable = true;
 				message_popup.Open("error", "this is the error message", placement);
 			}
 			ImGui::End();

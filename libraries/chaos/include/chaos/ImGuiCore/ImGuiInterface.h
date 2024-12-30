@@ -4,23 +4,24 @@ namespace chaos
 
 	class ImGuiInterface;
 
-	enum class ImGuiDrawFlags;
+	enum class ImGuiObjectFlags;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	 * ImGuiDrawFlags: some flags concerning ImGui rendering
+	 * ImGuiObjectFlags: some flags concerning ImGui rendering
 	 */
 
-	enum class ImGuiDrawFlags : int
+	enum class ImGuiObjectFlags : int
 	{
 		NONE = 0,
 		FULL_WINDOW = 1,           // the ImGui (pseudo) window fills the whole GLFW window
-		FLOATING_IMGUI_WINDOW = 2, // this is a standart ImGui (pseudo) window
-		USE_FULL_WINDOW_MENU = 4   // menu items are stored inside the full GLFW window's menu instead of the ImGui (pseudo) window's menu
+		FLOATING_WINDOW = 2,       // this is a standart ImGui (pseudo) window
+		POPUP_WINDOW = 4,          // the object behaves like a popup
+		USE_FULL_WINDOW_MENU = 8   // menu items are stored inside the full GLFW window's menu instead of the ImGui (pseudo) window's menu
 	};
 
-	CHAOS_DECLARE_ENUM_BITMASK_METHOD(ImGuiDrawFlags, CHAOS_API);
+	CHAOS_DECLARE_ENUM_BITMASK_METHOD(ImGuiObjectFlags, CHAOS_API);
 
 	using BeginImGuiMenuFunc = LightweightFunction<void(LightweightFunction<void()>)>;
 
@@ -42,6 +43,8 @@ namespace chaos
 		static bool FullscreenWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func);
 		/** create a floating window and fill with content (returns true if the window must be kept alive) */
 		static bool FloatingWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func);
+		/** create a popup window and fill with content (returns true if the window must be kept alive) */
+		static bool PopupWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func);
 	};
 
 #endif

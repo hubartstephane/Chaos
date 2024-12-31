@@ -3,12 +3,12 @@
 
 namespace chaos
 {
-	static EnumTools::EnumBitmaskMetaData<ImGuiObjectFlags> const ImGuiDrawFlags_bitmask_metadata =
+	static EnumTools::EnumBitmaskMetaData<ImGuiObjectFlags> const ImGuiObjectFlags_bitmask_metadata =
 	{
 		{ImGuiObjectFlags::FULL_WINDOW, ImGuiObjectFlags::FLOATING_WINDOW, ImGuiObjectFlags::POPUP_WINDOW}
 	};
 
-	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(ImGuiObjectFlags, &ImGuiDrawFlags_bitmask_metadata, CHAOS_API);
+	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(ImGuiObjectFlags, &ImGuiObjectFlags_bitmask_metadata, CHAOS_API);
 
 	void ImGuiInterface::DrawImGui(Window* window)
 	{

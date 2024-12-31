@@ -8,7 +8,7 @@ public:
 
 	void Open(std::string in_popup_name, std::string in_message, const chaos::ImGuiWindowPlacement& in_placement = {})
 	{
-		if (DoOpen(std::move(in_popup_name), in_placement))
+		if (DoOpen(std::move(in_popup_name), chaos::ImGuiPopupFlags::NonModal /* | chaos::ImGuiPopupFlags::CloseWithEscape*/, in_placement))
 		{
 			message = std::move(in_message);
 		}
@@ -20,7 +20,7 @@ protected:
 	{
 		if (ImGui::IsKeyDown(ImGuiKey::ImGuiKey_Escape))
 		{
-			Close();
+		//	Close();
 		}
 
 		ImGui::Text(message.c_str());

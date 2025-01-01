@@ -1181,6 +1181,7 @@ namespace chaos
 		{
 			if (imgui_object != nullptr)
 			{
+				shared_ptr<ImGuiObject> prevent_destruction = imgui_object;
 				imgui_object->DrawImGui(this);
 				if (imgui_object->IsClosingRequested()) // closing requested ?
 					RemoveImGuiObject(imgui_object.get());
@@ -1407,6 +1408,16 @@ namespace chaos
 	void Window::AddImGuiObject(ImGuiObject* imgui_object)
 	{
 		assert(imgui_object != nullptr);
+
+#if _DEBUG
+		// check whether the object is not already in list here
+		auto it = std::ranges::find_if(imgui_objects, [imgui_object](shared_ptr<ImGuiObject> const& ptr)
+		{
+			return (ptr == imgui_object);
+		});
+		assert(it == imgui_objects.end());
+#endif
+		assert(!StringTools::IsEmpty(imgui_object->GetName())); // window mush have a name !
 		imgui_objects.push_back(imgui_object);
 		imgui_object->OnAddedToWindow(this);
 	}

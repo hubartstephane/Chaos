@@ -3,6 +3,16 @@
 
 namespace chaos
 {
+	static EnumTools::EnumBitmaskMetaData<ImGuiObjectFlags> const ImGuiObjectFlags_bitmask_metadata =
+	{
+		{ ImGuiObjectFlags::FullViewport, ImGuiObjectFlags::FloatingWindow, ImGuiObjectFlags::PopupModalWindow, ImGuiObjectFlags::PopupWindow },
+		{ ImGuiObjectFlags::PopupWindow, ImGuiObjectFlags::CloseWithEscape },
+		{ ImGuiObjectFlags::PopupWindow, ImGuiObjectFlags::CloseWithCross },
+		{ ImGuiObjectFlags::FullViewport, ImGuiObjectFlags::CloseWithCross },
+	};
+
+	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(ImGuiObjectFlags, &ImGuiObjectFlags_bitmask_metadata, CHAOS_API);
+
 	void ImGuiObject::OnDrawImGuiMenuConditional(Window* window, int imgui_window_flags)
 	{
 		// check wether the application accepts the menu bar
@@ -10,7 +20,7 @@ namespace chaos
 			return;
 
 		// display full window menu bar
-		if (HasAnyFlags(imgui_object_flags, ImGuiObjectFlags::USE_FULL_WINDOW_MENU))
+		if (HasAnyFlags(imgui_object_flags, ImGuiObjectFlags::UseViewportMenu))
 		{
 			OnDrawImGuiMenu(window, ImGuiTools::BeginMainMenuBar());
 		}
@@ -31,7 +41,7 @@ namespace chaos
 			return imgui_window_flags & ~ImGuiWindowFlags_MenuBar;
 
 		// check whether the menu is to be plugged into full window
-		if (HasAnyFlags(imgui_object_flags, ImGuiObjectFlags::USE_FULL_WINDOW_MENU))
+		if (HasAnyFlags(imgui_object_flags, ImGuiObjectFlags::UseViewportMenu))
 			return imgui_window_flags & ~ImGuiWindowFlags_MenuBar;
 
 		// request if there is really some menu content
@@ -49,13 +59,6 @@ namespace chaos
 			return imgui_window_flags & ~ImGuiWindowFlags_MenuBar;
 	}
 
-	void ImGuiObject::SetImGuiObjectFlags(ImGuiObjectFlags in_flags)
-	{
-		// check flags coherency
-		assert(AreValidFlags(in_flags));
-		imgui_object_flags = in_flags;
-	}
-
 	void ImGuiObject::DrawImGui(Window* window)
 	{
 		// get ImGui window flags
@@ -67,32 +70,75 @@ namespace chaos
 		{
 			OnDrawImGuiContent(window);
 			OnDrawImGuiMenuConditional(window, imgui_window_flags);
+
+			if (HasAnyFlags(imgui_object_flags, ImGuiObjectFlags::CloseWithEscape))
+				if (ImGui::IsWindowFocused())
+					if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_Escape))
+						RequestClosing();
 		};
 
-		// display popup window
+		// display popup (modal and non-modal)
 		bool keep_alive = true;
-		if (HasAnyFlags(imgui_object_flags, ImGuiObjectFlags::POPUP_WINDOW))
+		if (HasAnyFlags(imgui_object_flags, ImGuiObjectFlags::PopupWindow | ImGuiObjectFlags::PopupModalWindow))
 		{
+			// open the popup
 			if (!opened_popup)
 			{
 				opened_popup = true;
 				ImGui::OpenPopup(GetName());
 			}
-			keep_alive = PopupWindow(GetName(), imgui_window_flags, display_func);
+
+			// display the popup
+			bool* keep_alive_ptr = (HasAnyFlags(imgui_object_flags, ImGuiObjectFlags::CloseWithCross)) ? &keep_alive : nullptr;
+
+			bool open_succes = (HasAnyFlags(imgui_object_flags, ImGuiObjectFlags::PopupWindow)) ? // select modal or non modal open function
+				ImGui::BeginPopup(GetName(), imgui_window_flags) :
+				ImGui::BeginPopupModal(GetName(), keep_alive_ptr, imgui_window_flags);
+
+			if (open_succes)
+			{
+				display_func();
+				ImGui::EndPopup();
+			}
+			// check whether popup has been closed
+			if (!ImGui::IsPopupOpen(GetName()))
+				RequestClosing();
 		}
 		// display fullscreen window
-		else if (HasAnyFlags(imgui_object_flags, ImGuiObjectFlags::FULL_WINDOW))
+		else if (HasAnyFlags(imgui_object_flags, ImGuiObjectFlags::FullViewport))
 		{
 			keep_alive = FullscreenWindow(GetName(), imgui_window_flags, display_func);
 		}
 		// display floating window (default case)
 		else
 		{
-			keep_alive = FloatingWindow(GetName(), imgui_window_flags, display_func);
+			bool* keep_alive_ptr = (HasAnyFlags(imgui_object_flags, ImGuiObjectFlags::CloseWithCross)) ? &keep_alive : nullptr;
+			if (ImGui::Begin(GetName(), keep_alive_ptr, imgui_window_flags))
+			{
+				display_func();
+				ImGui::End();
+			}
 		}
 		// request for closing if necessary
 		if (!keep_alive)
 			RequestClosing();
+	}
+
+	ImGuiObjectFlags ImGuiObject::GetImGuiObjectFlags() const
+	{
+		return imgui_object_flags;
+	}
+
+	void ImGuiObject::SetImGuiObjectFlags(ImGuiObjectFlags in_flags)
+	{
+		// check flags coherency
+		assert(AreValidFlags(in_flags));
+		imgui_object_flags = in_flags;
+	}
+
+	void ImGuiObject::SetImGuiWindowFlags(int in_imgui_flags)
+	{
+		in_imgui_flags = in_imgui_flags;
 	}
 
 	int ImGuiObject::GetImGuiWindowFlags() const
@@ -108,6 +154,23 @@ namespace chaos
 	bool ImGuiObject::IsClosingRequested() const
 	{
 		return closing_request;
+	}
+
+	void ImGuiObject::OnAddedToWindow(Window* in_window)
+	{
+	}
+
+	void ImGuiObject::OnRemovedFromWindow(Window* in_window)
+	{
+		if (opened_popup)
+		{
+			// hack to close the window: call BeginXXX() with a false flag
+			bool close_window = false;
+			if (HasAnyFlags(imgui_object_flags, ImGuiObjectFlags::PopupModalWindow | ImGuiObjectFlags::PopupWindow))
+				if (ImGui::IsPopupOpen(GetName()))
+					ImGui::BeginPopupModal(GetName(), &close_window, 0);
+			opened_popup = false;
+		}
 	}
 
 }; // namespace chaos

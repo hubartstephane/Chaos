@@ -17,10 +17,11 @@ namespace chaos
 
 		CHAOS_DECLARE_OBJECT_CLASS(ImGuiWindowInformationObject, ImGuiObject);
 
+		/** constructor */
+		ImGuiWindowInformationObject();
+
 	protected:
 
-		/** override */
-		virtual int GetImGuiWindowFlags() const override;
 		/** override */
 		virtual void OnDrawImGuiContent(Window* window) override;
 	};

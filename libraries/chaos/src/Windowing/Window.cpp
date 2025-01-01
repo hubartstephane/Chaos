@@ -1392,7 +1392,7 @@ namespace chaos
 				if (ImGuiObject* imgui_object = create_func())
 				{
 					imgui_object->SetName(name);
-					imgui_object->SetImGuiObjectFlags(ImGuiObjectFlags::FLOATING_WINDOW);
+					imgui_object->SetImGuiObjectFlags(ImGuiObjectFlags::FloatingWindow | ImGuiObjectFlags::CloseWithCross);
 					AddImGuiObject(imgui_object);
 				}
 			}
@@ -1408,6 +1408,7 @@ namespace chaos
 	{
 		assert(imgui_object != nullptr);
 		imgui_objects.push_back(imgui_object);
+		imgui_object->OnAddedToWindow(this);
 	}
 
 	void Window::RemoveImGuiObject(ImGuiObject* imgui_object)
@@ -1421,7 +1422,9 @@ namespace chaos
 
 		if (it != imgui_objects.end())
 		{
+			shared_ptr<ImGuiObject> keep_alive = imgui_object;
 			imgui_objects.erase(it);
+			keep_alive->OnRemovedFromWindow(this);
 		}
 	}
 

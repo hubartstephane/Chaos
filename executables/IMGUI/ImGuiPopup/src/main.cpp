@@ -2,13 +2,13 @@
 #include "chaos/Chaos.h"
 
 
-class ImGuiMessagePopup : public chaos::ImGuiPopup<void>
+class ImGuiMessagePopup : public chaos::ImGuiPopup<int>
 {
 public:
 
 	void Open(std::string in_popup_name, std::string in_message, const chaos::ImGuiWindowPlacement& in_placement = {})
 	{
-		if (DoOpen(std::move(in_popup_name), chaos::ImGuiPopupFlags::NonModal /* | chaos::ImGuiPopupFlags::CloseWithEscape*/, in_placement))
+		if (DoOpen(std::move(in_popup_name), chaos::ImGuiPopupFlags::Modal | chaos::ImGuiPopupFlags::CloseWithEscape, in_placement))
 		{
 			message = std::move(in_message);
 		}
@@ -16,19 +16,21 @@ public:
 
 protected:
 
-	virtual void DoProcess() override
+	virtual std::optional<int> DoProcess() override
 	{
-		if (ImGui::IsKeyDown(ImGuiKey::ImGuiKey_Escape))
-		{
-		//	Close();
-		}
-
 		ImGui::Text(message.c_str());
+		ImGui::SliderInt("value", &value, -100, 100);
 		if (ImGui::Button("Close"))
-			Close();
+		{
+			//Close();
+			return value;
+		}
+		return {};
 	}
 
 protected:
+
+	int value = 0;
 
 	std::string message;
 };
@@ -66,6 +68,21 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
+#if 1
+	virtual bool OnKeyEventImpl(chaos::KeyEvent const& event) override
+	{
+		if (event.IsKeyDown(chaos::KeyboardButton::ESCAPE))
+		{
+		//	return true;
+		}
+		
+
+
+		return chaos::Window::OnKeyEventImpl(event);
+	}
+
+#endif
+
 	void AddPopup(char const * name, std::function<void()> func)
 	{
 		MyImGuiPopup * popup = new MyImGuiPopup(std::move(func));
@@ -99,7 +116,12 @@ protected:
 			}
 			ImGui::End();
 		}
-		message_popup.Process();
+		std::optional<int> v = message_popup.Process();
+		if (v.has_value())
+		{
+			int k = v.value();
+			k = k;
+		}
 
 		chaos::Window::OnDrawImGuiContent();
 	}

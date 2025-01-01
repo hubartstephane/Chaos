@@ -3,9 +3,9 @@
 
 namespace chaos
 {
-	int ImGuiSystemInformationObject::GetImGuiWindowFlags() const
+	ImGuiSystemInformationObject::ImGuiSystemInformationObject()
 	{
-		return ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize;
+		imgui_flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize;
 	}
 
 	void ImGuiSystemInformationObject::OnDrawImGuiContent(Window* window)

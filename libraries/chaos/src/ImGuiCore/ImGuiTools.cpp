@@ -105,6 +105,23 @@ namespace chaos
 			}
 		}
 
+		bool FullscreenWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func)
+		{
+			// update flags
+			imgui_window_flags |= ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoBringToFrontOnFocus;
+
+			// prepare ImGui window size and position
+			ImGui::SetNextWindowPos({ ImGui::GetMainViewport()->WorkPos.x, ImGui::GetMainViewport()->WorkPos.y });
+			ImGui::SetNextWindowSize({ ImGui::GetMainViewport()->Size.x, ImGui::GetMainViewport()->Size.y });
+			// display then window
+			if (ImGui::Begin(title, nullptr, imgui_window_flags))
+			{
+				content_func();
+				ImGui::End();
+			}
+			return true; // window must be kept alive
+		}
+
 	}; // namespace ImGuiTools
 
 }; // namespace chaos

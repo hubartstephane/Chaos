@@ -22,7 +22,7 @@ public:
 	{
 		chaos::Window::OnDrawImGuiContent();
 
-		chaos::ImGuiInterface::FullscreenWindow("conversion", false, [this]()
+		chaos::ImGuiTools::FullscreenWindow("conversion", false, [this]()
 		{
 			ImGui::Text("LAST BUTTON (%s)", chaos::EnumToString(last_button));
 

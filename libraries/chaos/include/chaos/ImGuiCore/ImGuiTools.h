@@ -79,6 +79,9 @@ namespace chaos
 			void operator ()(LightweightFunction<void()> func) const;
 		};
 
+		/** create a fullscreen window and fill with content (returns true if the window must be kept alive) */
+		CHAOS_API bool FullscreenWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func);
+
 	}; // namespace ImGuiTools
 
 	/** implementation of DrawImGui for a string */

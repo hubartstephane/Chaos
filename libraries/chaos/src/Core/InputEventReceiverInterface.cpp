@@ -145,9 +145,9 @@ namespace chaos
 		return false;
 	}
 
-	bool InputEventReceiverInterface::OnKeyEvent(KeyEvent const & event)
+	bool InputEventReceiverInterface::OnKeyEvent(KeyEvent const & key_event)
 	{
-		if (OnKeyEventImpl(event))
+		if (OnKeyEventImpl(key_event))
 		{
 			SetInputMode(InputMode::KEYBOARD);
 			return true;
@@ -180,7 +180,7 @@ namespace chaos
 		return false;
 	}
 
-	bool InputEventReceiverInterface::OnKeyEventImpl(KeyEvent const & event)
+	bool InputEventReceiverInterface::OnKeyEventImpl(KeyEvent const & key_event)
 	{
 		return false;
 	}

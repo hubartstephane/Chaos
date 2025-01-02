@@ -30,11 +30,11 @@ namespace chaos
 		return false;
 	}
 
-	bool GameInstance::OnKeyEventImpl(KeyEvent const& event)
+	bool GameInstance::OnKeyEventImpl(KeyEvent const& key_event)
 	{
 		size_t count = players.size();
 		for (size_t i = 0; i < count; ++i)
-			if (players[i]->OnKeyEvent(event))
+			if (players[i]->OnKeyEvent(key_event))
 				return true;
 		return false;
 	}

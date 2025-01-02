@@ -79,7 +79,7 @@ namespace chaos
 		/** called whenever the mouse wheel is changed */
 		bool OnMouseWheel(double scroll_x, double scroll_y);
 		/** called whenever a key is pressed */
-		bool OnKeyEvent(KeyEvent const& event);
+		bool OnKeyEvent(KeyEvent const& key_event);
 		/** called whenever a char is generated */
 		bool OnCharEvent(unsigned int c);
 
@@ -92,7 +92,7 @@ namespace chaos
 		/** called whenever the mouse wheel is changed */
 		virtual bool OnMouseWheelImpl(double scroll_x, double scroll_y);
 		/** called whenever a key is pressed */
-		virtual bool OnKeyEventImpl(KeyEvent const& event);
+		virtual bool OnKeyEventImpl(KeyEvent const& key_event);
 		/** called whenever a char is generated */
 		virtual bool OnCharEventImpl(unsigned int c);
 

@@ -82,7 +82,7 @@ namespace chaos
 		/** handle an uncatched gamepad input incomming */
 		virtual bool OnGamepadInput(PhysicalGamepad* in_physical_gamepad);
 		/** handle keyboard input */
-		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
+		virtual bool OnKeyEventImpl(KeyEvent const& key_event) override;
 		/** handle keyboard input */
 		virtual bool OnCharEventImpl(unsigned int c) override;
 		/** handle mouse input */

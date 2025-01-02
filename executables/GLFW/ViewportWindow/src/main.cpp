@@ -39,44 +39,44 @@ protected:
 		return true;
 	}
 
-	virtual bool OnKeyEventImpl(chaos::KeyEvent const& event) override
+	virtual bool OnKeyEventImpl(chaos::KeyEvent const& key_event) override
 	{
 		chaos::ViewportGridLayout* layout = GetViewportLayout();
 
-		if (event.key == (int)chaos::KeyboardButton::E)
+		if (key_event.key == (int)chaos::KeyboardButton::E)
 			layout->SetMode(chaos::ViewportGridMode::EXPANDED);
-		if (event.key == (int)chaos::KeyboardButton::P)
+		if (key_event.key == (int)chaos::KeyboardButton::P)
 			layout->SetMode(chaos::ViewportGridMode::UNIFORM_PACKED);
-		if (event.key == (int)chaos::KeyboardButton::C)
+		if (key_event.key == (int)chaos::KeyboardButton::C)
 			layout->SetMode(chaos::ViewportGridMode::UNIFORM_CENTERED);
 
-		if (event.key == (int)chaos::KeyboardButton::V)
+		if (key_event.key == (int)chaos::KeyboardButton::V)
 			layout->SetOrientation(chaos::Orientation::VERTICAL);
-		if (event.key == (int)chaos::KeyboardButton::H)
+		if (key_event.key == (int)chaos::KeyboardButton::H)
 			layout->SetOrientation(chaos::Orientation::HORIZONTAL);
 
-		if (event.key == (int)chaos::KeyboardButton::LEFT)
+		if (key_event.key == (int)chaos::KeyboardButton::LEFT)
 			layout->SetHorizontalFillMode(chaos::ViewportGridHorizontalFillMode::RIGHT_TO_LEFT);
 
-		if (event.key == (int)chaos::KeyboardButton::RIGHT)
+		if (key_event.key == (int)chaos::KeyboardButton::RIGHT)
 			layout->SetHorizontalFillMode(chaos::ViewportGridHorizontalFillMode::LEFT_TO_RIGHT);
 
-		if (event.key == (int)chaos::KeyboardButton::UP)
+		if (key_event.key == (int)chaos::KeyboardButton::UP)
 			layout->SetVerticalFillMode(chaos::ViewportGridVerticalFillMode::BOTTOM_TO_TOP);
 
-		if (event.key == (int)chaos::KeyboardButton::DOWN)
+		if (key_event.key == (int)chaos::KeyboardButton::DOWN)
 			layout->SetVerticalFillMode(chaos::ViewportGridVerticalFillMode::TOP_TO_BOTTOM);
 
-		if (event.key == (int)chaos::KeyboardButton::KP_1)
+		if (key_event.key == (int)chaos::KeyboardButton::KP_1)
 			layout->SetMaxViewportCount(0);
 
-		if (event.key == (int)chaos::KeyboardButton::KP_2)
+		if (key_event.key == (int)chaos::KeyboardButton::KP_2)
 			layout->SetMaxViewportCount(7);
 
-		if (event.key == (int)chaos::KeyboardButton::KP_3)
+		if (key_event.key == (int)chaos::KeyboardButton::KP_3)
 			layout->SetMaxViewportCount(11);
 
-		return true;
+		return chaos::ViewportWindow::OnKeyEventImpl(key_event);
 	}
 };
 

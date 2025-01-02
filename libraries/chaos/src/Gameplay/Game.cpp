@@ -89,32 +89,32 @@ namespace chaos
 	CHAOS_HELP_TEXT(SHORTCUTS, "F6  : ToggleFreeCameraMode");
 #endif
 
-	bool Game::OnKeyEventImpl(KeyEvent const& event)
+	bool Game::OnKeyEventImpl(KeyEvent const& key_event)
 	{
 		// try start the game
 		if (game_instance == nullptr)
 		{
-			if (event.IsKeyPressedEvent())
+			if (key_event.IsKeyPressedEvent())
 				RequireStartGame(nullptr);
 			return true;
 		}
 
 		// give opportunity to game instance to response
 		if (game_instance != nullptr)
-			if (game_instance->OnKeyEvent(event))
+			if (game_instance->OnKeyEvent(key_event))
 				return true;
 
 		// PLAYING to PAUSE
-		if (event.IsKeyPressed(KeyboardButton::KP_ENTER) || event.IsKeyPressed(KeyboardButton::ENTER))
+		if (key_event.IsKeyPressed(KeyboardButton::KP_ENTER) || key_event.IsKeyPressed(KeyboardButton::ENTER))
 			if (RequireTogglePause())
 				return true;
 		// QUIT GAME
-		if (event.IsKeyPressed(KeyboardButton::ESCAPE, GLFW_MOD_SHIFT))
+		if (key_event.IsKeyPressed(KeyboardButton::ESCAPE, GLFW_MOD_SHIFT))
 		{
 			if (RequireExitGame())
 				return true;
 		}
-		else if (event.IsKeyPressed(KeyboardButton::ESCAPE))
+		else if (key_event.IsKeyPressed(KeyboardButton::ESCAPE))
 		{
 			if (RequireTogglePause())
 				return true;
@@ -123,37 +123,37 @@ namespace chaos
 #if _DEBUG
 
 		// CMD F1  : SetCheatSkipLevelRequired(...)
-		if (event.IsKeyPressed(KeyboardButton::F1))
+		if (key_event.IsKeyPressed(KeyboardButton::F1))
 		{
 			SetCheatSkipLevelRequired(true);
 			return true;
 		}
 		// CMD F2  : SetCheatMode(...)
-		if (event.IsKeyPressed(KeyboardButton::F2))
+		if (key_event.IsKeyPressed(KeyboardButton::F2))
 		{
 			SetCheatMode(!GetCheatMode());
 			return true;
 		}
 		// CMD F3  : ReloadGameConfiguration(...)
-		if (event.IsKeyPressed(KeyboardButton::F3))
+		if (key_event.IsKeyPressed(KeyboardButton::F3))
 		{
 			ReloadGameConfiguration();
 			return true;
 		}
 		// CMD F4  : ReloadCurrentLevel(...)
-		if (event.IsKeyPressed(KeyboardButton::F4))
+		if (key_event.IsKeyPressed(KeyboardButton::F4))
 		{
 			ReloadCurrentLevel();
 			return true;
 		}
 		// CMD F5  : QuickSave = SaveToCheckpoint(...)
-		if (event.IsKeyPressed(KeyboardButton::F5))
+		if (key_event.IsKeyPressed(KeyboardButton::F5))
 		{
 			SaveIntoCheckpoint();
 			return true;
 		}
 		// CMD F6  : SetFreeCameraMode(...)
-		if (event.IsKeyPressed(KeyboardButton::F6))
+		if (key_event.IsKeyPressed(KeyboardButton::F6))
 		{
 			SetFreeCameraMode(!IsFreeCameraMode());
 			return true;

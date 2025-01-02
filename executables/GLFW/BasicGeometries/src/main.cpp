@@ -1095,33 +1095,33 @@ protected:
 		return true; // refresh
 	}
 
-	virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override
+	virtual bool OnKeyEventImpl(chaos::KeyEvent const & key_event) override
 	{
-		if (event.IsKeyReleased(chaos::KeyboardButton::T))
+		if (key_event.IsKeyReleased(chaos::KeyboardButton::T))
 		{
 			chaos::Clock * clock = chaos::WindowApplication::GetMainClockInstance();
 			if (clock != nullptr)
 				clock->Toggle();
 			return true;
 		}
-		else if (event.IsKeyReleased(chaos::KeyboardButton::KP_ADD))
+		else if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_ADD))
 		{
 			SetExample((TestID)((int)display_example + 1));
 			DebugDisplayExampleTitle();
 			return true;
 		}
-		else if (event.IsKeyReleased(chaos::KeyboardButton::KP_SUBTRACT))
+		else if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_SUBTRACT))
 		{
 			SetExample((TestID)((int)display_example - 1));
 			DebugDisplayExampleTitle();
 			return true;
 		}
-		else if (event.IsKeyReleased(chaos::KeyboardButton::KP_5))
+		else if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_5))
 		{
 			UpdateObjectType();
 			DebugDisplayExampleTitle();
 		}
-		return chaos::Window::OnKeyEventImpl(event);
+		return chaos::Window::OnKeyEventImpl(key_event);
 	}
 
 	void SetExample(TestID new_display_example)

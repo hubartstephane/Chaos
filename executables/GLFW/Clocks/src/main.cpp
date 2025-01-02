@@ -263,14 +263,14 @@ protected:
 		DebugDisplayTips();
 	}
 
-	bool UpdateClockTimeScaleWithKeys(chaos::Clock * clock, chaos::KeyEvent const & event, chaos::KeyboardButton incr_key, chaos::KeyboardButton decr_key)
+	bool UpdateClockTimeScaleWithKeys(chaos::Clock * clock, chaos::KeyEvent const & key_event, chaos::KeyboardButton incr_key, chaos::KeyboardButton decr_key)
 	{
-		if (event.IsKeyReleased(incr_key))
+		if (key_event.IsKeyReleased(incr_key))
 		{
 			UpdateClockTimeScale(clock, 0.2f);
 			return true;
 		}
-		else if (event.IsKeyReleased(decr_key))
+		else if (key_event.IsKeyReleased(decr_key))
 		{
 			UpdateClockTimeScale(clock, -0.2f);
 			return true;
@@ -278,9 +278,9 @@ protected:
 		return false;
 	}
 
-	bool GenerateEvent(chaos::Clock * clock, chaos::KeyEvent const & event, chaos::KeyboardButton create_key, char const * str, int type)
+	bool GenerateEvent(chaos::Clock * clock, chaos::KeyEvent const & key_event, chaos::KeyboardButton create_key, char const * str, int type)
 	{
-		if (event.IsKeyReleased(create_key))
+		if (key_event.IsKeyReleased(create_key))
 		{
 			// remove previous event
 			if (clock_event != nullptr)
@@ -315,9 +315,9 @@ protected:
 		return false;
 	}
 
-	virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override
+	virtual bool OnKeyEventImpl(chaos::KeyEvent const & key_event) override
 	{
-		if (event.IsKeyReleased(chaos::KeyboardButton::T))
+		if (key_event.IsKeyReleased(chaos::KeyboardButton::T))
 		{
 			chaos::Clock * clock = chaos::WindowApplication::GetMainClockInstance();
 			if (clock != nullptr)
@@ -326,21 +326,21 @@ protected:
 		}
 		else
 		{
-			if (UpdateClockTimeScaleWithKeys(clock1.get(), event, chaos::KeyboardButton::KP_1, chaos::KeyboardButton::KP_2))
+			if (UpdateClockTimeScaleWithKeys(clock1.get(), key_event, chaos::KeyboardButton::KP_1, chaos::KeyboardButton::KP_2))
 				return true;
-			if (UpdateClockTimeScaleWithKeys(clock2.get(), event, chaos::KeyboardButton::KP_4, chaos::KeyboardButton::KP_5))
+			if (UpdateClockTimeScaleWithKeys(clock2.get(), key_event, chaos::KeyboardButton::KP_4, chaos::KeyboardButton::KP_5))
 				return true;
-			if (UpdateClockTimeScaleWithKeys(clock3.get(), event, chaos::KeyboardButton::KP_7, chaos::KeyboardButton::KP_8))
+			if (UpdateClockTimeScaleWithKeys(clock3.get(), key_event, chaos::KeyboardButton::KP_7, chaos::KeyboardButton::KP_8))
 				return true;
 
-			if (GenerateEvent(clock1.get(), event, chaos::KeyboardButton::A, "EVENT 1", EVENT_SINGLE_TEST))
+			if (GenerateEvent(clock1.get(), key_event, chaos::KeyboardButton::A, "EVENT 1", EVENT_SINGLE_TEST))
 				return true;
-			if (GenerateEvent(clock2.get(), event, chaos::KeyboardButton::Z, "EVENT 2", EVENT_RANGE_TEST))
+			if (GenerateEvent(clock2.get(), key_event, chaos::KeyboardButton::Z, "EVENT 2", EVENT_RANGE_TEST))
 				return true;
-			if (GenerateEvent(clock3.get(), event, chaos::KeyboardButton::E, "EVENT 3", EVENT_FOREVER_TEST))
+			if (GenerateEvent(clock3.get(), key_event, chaos::KeyboardButton::E, "EVENT 3", EVENT_FOREVER_TEST))
 				return true;
 		}
-		return chaos::Window::OnKeyEventImpl(event);
+		return chaos::Window::OnKeyEventImpl(key_event);
 	}
 
 protected:

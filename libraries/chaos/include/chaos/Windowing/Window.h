@@ -282,7 +282,7 @@ namespace chaos
 		/** override */
 		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override;
 		/** override */
-		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
+		virtual bool OnKeyEventImpl(KeyEvent const& key_event) override;
 		/** override */
 		virtual bool OnMouseMoveImpl(glm::vec2 const& delta) override;
 		/** override */

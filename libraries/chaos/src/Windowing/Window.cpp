@@ -1058,28 +1058,28 @@ namespace chaos
 	CHAOS_HELP_TEXT(SHORTCUTS, "F9  : ScreenCapture");
 	CHAOS_HELP_TEXT(SHORTCUTS, "F10 : ToggleFullscreen");
 
-	bool Window::OnKeyEventImpl(KeyEvent const& event)
+	bool Window::OnKeyEventImpl(KeyEvent const& key_event)
 	{
 		// screen capture
 		// CMD F9 : ScreenCapture(...)
-		if (event.IsKeyPressed(KeyboardButton::F9))
+		if (key_event.IsKeyPressed(KeyboardButton::F9))
 		{
 			ScreenCapture();
 			return true;
 		}
 		// try to go fullscreen
 		// CMD F10 : ToggleFullscreen(...)
-		if (event.IsKeyPressed(KeyboardButton::F10))
+		if (key_event.IsKeyPressed(KeyboardButton::F10))
 		{
 			ToggleFullscreen();
 			return true;
 		}
 		// give opportunity to application
 		if (Application* application = Application::GetInstance())
-			if (application->OnKeyEvent(event))
+			if (application->OnKeyEvent(key_event))
 				return true;
 		// super method
-		return WindowInterface::OnKeyEventImpl(event);
+		return WindowInterface::OnKeyEventImpl(key_event);
 	}
 
 	bool Window::OnMouseMoveImpl(glm::vec2 const& delta)

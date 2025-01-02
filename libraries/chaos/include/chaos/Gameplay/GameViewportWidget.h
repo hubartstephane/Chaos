@@ -47,7 +47,7 @@ namespace chaos
 		/** override */
 		virtual bool OnCharEventImpl(unsigned int c) override;
 		/** override */
-		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
+		virtual bool OnKeyEventImpl(KeyEvent const& key_event) override;
 
 		/** override */
 		virtual bool OnDraw(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, WindowDrawParams const& draw_params) override;

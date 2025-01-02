@@ -607,24 +607,24 @@ protected:
 	}
 
 
-	virtual bool OnKeyEventImpl(chaos::KeyEvent const& event) override
+	virtual bool OnKeyEventImpl(chaos::KeyEvent const& key_event) override
 	{
 		// change the current object if any
 		if (GeometricObject* current_object = GetCurrentGeometricObject())
 		{
 			// change current selection
-			if (event.IsKeyPressed(key_configuration.next_object.GetKeyboardButton()))
+			if (key_event.IsKeyPressed(key_configuration.next_object.GetKeyboardButton()))
 			{
 				current_object_index = (current_object_index.value() + 1) % geometric_objects.size();
 				return true;
 			}
-			else if (event.IsKeyPressed(key_configuration.previous_object.GetKeyboardButton()))
+			else if (key_event.IsKeyPressed(key_configuration.previous_object.GetKeyboardButton()))
 			{
 				current_object_index = (current_object_index.value() + geometric_objects.size() - 1) % geometric_objects.size();
 				return true;
 			}
 
-			if (event.IsKeyPressed(key_configuration.delete_object.GetKeyboardButton()))
+			if (key_event.IsKeyPressed(key_configuration.delete_object.GetKeyboardButton()))
 			{
 				if (geometric_objects.size() > 0)
 				{
@@ -646,7 +646,7 @@ protected:
 				return true;
 			}
 
-			if (event.IsKeyPressed(key_configuration.new_scene.GetKeyboardButton()))
+			if (key_event.IsKeyPressed(key_configuration.new_scene.GetKeyboardButton()))
 			{
 				geometric_objects.clear();
 				current_object_index = 0;
@@ -682,7 +682,7 @@ protected:
 			}
 		}
 
-		return chaos::Window::OnKeyEventImpl(event);
+		return chaos::Window::OnKeyEventImpl(key_event);
 	}
 
 	GeometricObject* CreateNewGeometry(GeometryType type)

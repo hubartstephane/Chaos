@@ -177,29 +177,29 @@ protected:
 		texture_slice = (texture_slice + delta + texture_slice_count) % texture_slice_count;
 	}
 
-	virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override
+	virtual bool OnKeyEventImpl(chaos::KeyEvent const & key_event) override
 	{
-		if (event.IsKeyReleased(chaos::KeyboardButton::KP_ADD))
+		if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_ADD))
 		{
 			ChangeSlice(+1);
 			return true;
 		}
-		else if (event.IsKeyReleased(chaos::KeyboardButton::KP_SUBTRACT))
+		else if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_SUBTRACT))
 		{
 			ChangeSlice(-1);
 			return true;
 		}
-		else if (event.IsKeyReleased(chaos::KeyboardButton::KP_1))
+		else if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_1))
 		{
 			ChangePixelFormat(+1);
 			return true;
 		}
-		else if (event.IsKeyReleased(chaos::KeyboardButton::KP_2))
+		else if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_2))
 		{
 			ChangePixelFormat(-1);
 			return true;
 		}
-		return chaos::Window::OnKeyEventImpl(event);
+		return chaos::Window::OnKeyEventImpl(key_event);
 	}
 
 	bool LoadBitmaps(boost::filesystem::path const & resources_path)

@@ -6,19 +6,19 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override
+	virtual bool OnKeyEventImpl(chaos::KeyEvent const & key_event) override
 	{
-		if (event.IsKeyReleased(chaos::KeyboardButton::KP_ADD))
+		if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_ADD))
 		{
 			ChangeTexture(texture_index + 1);
 			return true;
 		}
-		else if (event.IsKeyReleased(chaos::KeyboardButton::KP_SUBTRACT))
+		else if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_SUBTRACT))
 		{
 			ChangeTexture(texture_index - 1);
 			return true;
 		}
-		return chaos::Window::OnKeyEventImpl(event);
+		return chaos::Window::OnKeyEventImpl(key_event);
 	}
 
 	void ChangeTexture(int index)

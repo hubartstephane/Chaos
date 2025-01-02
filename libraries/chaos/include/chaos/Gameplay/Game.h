@@ -185,7 +185,7 @@ namespace chaos
 		virtual void TickGameInputs(float delta_time);
 
 		/** whenever a key event is received */
-		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
+		virtual bool OnKeyEventImpl(KeyEvent const& key_event) override;
 		/** whenever a char event is received */
 		virtual bool OnCharEventImpl(unsigned int c) override;
 		/** whenever a mouse event is received */

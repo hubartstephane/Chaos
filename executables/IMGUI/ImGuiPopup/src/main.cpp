@@ -53,10 +53,27 @@ class MyImGuiPopup : public chaos::ImGuiObject
 public:
 
 
+#if 0
 	MyImGuiPopup(std::function<void()> in_func) :
 		func(std::move(in_func))
 	{
 	}
+#endif
+
+	virtual void OnDrawImGuiContent(chaos::Window* window) override
+	{
+		if (ImGui::Button("Close"))
+		{
+			RequestClosing();
+		}
+	}
+
+	virtual void OnDrawImGuiMenu(chaos::Window* window, chaos::BeginImGuiMenuFunc begin_menu_func) override
+	{
+
+
+	}
+	
 
 	std::function<void()> func;
 };
@@ -69,25 +86,25 @@ class WindowOpenGLTest : public chaos::Window
 protected:
 
 #if 1
-	virtual bool OnKeyEventImpl(chaos::KeyEvent const& event) override
+	virtual bool OnKeyEventImpl(chaos::KeyEvent const& key_event) override
 	{
-		if (event.IsKeyDown(chaos::KeyboardButton::ESCAPE))
+		if (key_event.IsKeyDown(chaos::KeyboardButton::ESCAPE))
 		{
 		//	return true;
 		}
 		
 
 
-		return chaos::Window::OnKeyEventImpl(event);
+		return chaos::Window::OnKeyEventImpl(key_event);
 	}
 
 #endif
 
 	void AddPopup(char const * name, std::function<void()> func)
 	{
-		MyImGuiPopup * popup = new MyImGuiPopup(std::move(func));
-		popup->SetName(name);
-		AddImGuiObject(popup);
+		//MyImGuiPopup * popup = new MyImGuiPopup(std::move(func));
+		//popup->SetName(name);
+		//AddImGuiObject(popup);
 	}
 
 	virtual bool OnDraw(chaos::GPURenderer* renderer, chaos::GPUProgramProviderInterface const* uniform_provider, chaos::WindowDrawParams const& draw_params) override
@@ -107,6 +124,17 @@ protected:
 			if (ImGui::Button("show popup", { 200.0f , 200.0f }))
 			{
 				chaos::ImGuiWindowPlacement placement = chaos::ImGuiWindowPlacement::GetCenterOnScreenPlacement();
+
+				MyImGuiPopup* p = new MyImGuiPopup;
+				p->SetName("titi");
+				p->SetImGuiObjectFlags(chaos::ImGuiObjectFlags::PopupModalWindow);
+				AddImGuiObject(p);
+
+
+				
+
+
+
 
 
 

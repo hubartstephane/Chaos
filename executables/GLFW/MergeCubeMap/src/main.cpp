@@ -1,14 +1,6 @@
 #include "chaos/Chaos.h"
 
-std::vector<chaos::PixelFormat> pixel_formats =
-{
-	chaos::PixelFormat::Gray,
-	chaos::PixelFormat::GrayFloat,
-	chaos::PixelFormat::BGR,
-	chaos::PixelFormat::BGRA,
-	chaos::PixelFormat::RGBFloat,
-	chaos::PixelFormat::RGBAFloat
-};
+
 
 class WindowOpenGLTest : public chaos::Window
 {
@@ -16,19 +8,19 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override
+	virtual bool OnKeyEventImpl(chaos::KeyEvent const & key_event) override
 	{
-		if (event.IsKeyReleased(chaos::KeyboardButton::KP_ADD))
+		if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_ADD))
 		{
 			ChangeSkyBox(skybox_index + 1);
 			return true;
 		}
-		else if (event.IsKeyReleased(chaos::KeyboardButton::KP_SUBTRACT))
+		else if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_SUBTRACT))
 		{
 			ChangeSkyBox(skybox_index - 1);
 			return true;
 		}
-		return chaos::Window::OnKeyEventImpl(event);
+		return chaos::Window::OnKeyEventImpl(key_event);
 	}
 
 	void ChangeSkyBox(int index)
@@ -143,7 +135,7 @@ protected:
 			return false; // don't stop
 		});
 
-		if (skybox_bitmaps.size() != 6)
+		if (skybox_bitmaps.size() == 0)
 			return false;
 
 		// search the minimum size
@@ -265,6 +257,16 @@ protected:
 	}
 
 protected:
+
+	std::vector<chaos::PixelFormat> pixel_formats =
+	{
+		chaos::PixelFormat::Gray,
+		chaos::PixelFormat::GrayFloat,
+		chaos::PixelFormat::BGR,
+		chaos::PixelFormat::BGRA,
+		chaos::PixelFormat::RGBFloat,
+		chaos::PixelFormat::RGBAFloat
+	};
 
 	std::vector<FIBITMAP*> skybox_bitmaps;
 

@@ -6,16 +6,16 @@ class WindowOpenGLTest : public chaos::Window
 
 public:
 
-	virtual bool OnKeyEventImpl(chaos::KeyEvent const& event) override
+	virtual bool OnKeyEventImpl(chaos::KeyEvent const& key_event) override
 	{
-		if (event.action == GLFW_PRESS)
+		if (key_event.action == GLFW_PRESS)
 		{
-			last_scancode = event.scancode;
-			last_button  = event.button;
-			last_key_pressed = chaos::KeyboardLayout::GetKnownLayout(chaos::KeyboardLayoutType::AZERTY).GetInformationFromScancode(event.scancode);
+			last_scancode = key_event.scancode;
+			last_button  = key_event.button;
+			last_key_pressed = chaos::KeyboardLayout::GetKnownLayout(chaos::KeyboardLayoutType::AZERTY).GetInformationFromScancode(key_event.scancode);
 		}
 
-		return chaos::Window::OnKeyEventImpl(event);
+		return chaos::Window::OnKeyEventImpl(key_event);
 	}
 
 	virtual void OnDrawImGuiContent()

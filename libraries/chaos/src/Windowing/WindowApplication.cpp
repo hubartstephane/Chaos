@@ -757,9 +757,9 @@ namespace chaos
 	CHAOS_HELP_TEXT(SHORTCUTS, "F8  : ReloadGPUResources");
 #endif
 
-	bool WindowApplication::OnKeyEventImpl(KeyEvent const& event)
+	bool WindowApplication::OnKeyEventImpl(KeyEvent const& key_event)
 	{
-		if (event.IsKeyPressed(KeyboardButton::F7))
+		if (key_event.IsKeyPressed(KeyboardButton::F7))
 		{
 			SetImGuiMenuEnabled(!IsImGuiMenuEnabled());
 			return true;
@@ -767,14 +767,14 @@ namespace chaos
 
 #if _DEBUG
 		// reloading GPU resources
-		if (event.IsKeyPressed(KeyboardButton::F8))
+		if (key_event.IsKeyPressed(KeyboardButton::F8))
 		{
 			// CMD F8 : ReloadGPUResources(...)
 			ReloadGPUResources();
 			return true;
 		}
 #endif
-		return Application::OnKeyEventImpl(event);
+		return Application::OnKeyEventImpl(key_event);
 	}
 
 	GLFWwindow* WindowApplication::GetSharedGLContext()

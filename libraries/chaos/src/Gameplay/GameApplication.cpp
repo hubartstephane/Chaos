@@ -86,13 +86,13 @@ namespace chaos
 		return WindowApplication::OnMouseWheelImpl(scroll_x, scroll_y);
 	}
 
-	bool GameApplication::OnKeyEventImpl(KeyEvent const& event)
+	bool GameApplication::OnKeyEventImpl(KeyEvent const& key_event)
 	{
 		if (game != nullptr)
 			if (!IsGameSuspended())
-				if (game->OnKeyEvent(event))
+				if (game->OnKeyEvent(key_event))
 					return true;
-		return WindowApplication::OnKeyEventImpl(event);
+		return WindowApplication::OnKeyEventImpl(key_event);
 	}
 
 	bool GameApplication::OnCharEventImpl(unsigned int c)

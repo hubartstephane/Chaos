@@ -12,12 +12,12 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override
+	virtual bool OnKeyEventImpl(chaos::KeyEvent const & key_event) override
 	{
 		if (game != nullptr)
-			if (game->OnKeyEvent(event.button, event.action))
+			if (game->OnKeyEvent(key_event.button, key_event.action))
 				return true;
-		return chaos::Window::OnKeyEventImpl(event);
+		return chaos::Window::OnKeyEventImpl(key_event);
 	}
 
 	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override

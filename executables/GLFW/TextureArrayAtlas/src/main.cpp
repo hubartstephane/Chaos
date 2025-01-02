@@ -157,20 +157,20 @@ protected:
 		return true; // refresh
 	}
 
-	virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override
+	virtual bool OnKeyEventImpl(chaos::KeyEvent const & key_event) override
 	{
-		if (event.IsKeyReleased(chaos::KeyboardButton::KP_ADD))
+		if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_ADD))
 		{
 			++bitmap_index;
 			return true;
 		}
-		else if (event.IsKeyReleased(chaos::KeyboardButton::KP_SUBTRACT))
+		else if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_SUBTRACT))
 		{
 			if (bitmap_index > 0)
 				--bitmap_index;
 			return true;
 		}
-		return chaos::Window::OnKeyEventImpl(event);
+		return chaos::Window::OnKeyEventImpl(key_event);
 	}
 
 protected:

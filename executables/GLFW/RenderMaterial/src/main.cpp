@@ -58,29 +58,29 @@ protected:
 		UpdateDebugDisplay();
 	}
 
-	virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override
+	virtual bool OnKeyEventImpl(chaos::KeyEvent const & key_event) override
 	{
-		if (event.IsKeyPressed(chaos::KeyboardButton::KP_ADD, GLFW_MOD_SHIFT))
+		if (key_event.IsKeyPressed(chaos::KeyboardButton::KP_ADD, GLFW_MOD_SHIFT))
 		{
 			ChangeRenderpass(+1);
 			return true;
 		}
-		else if (event.IsKeyPressed(chaos::KeyboardButton::KP_ADD))
+		else if (key_event.IsKeyPressed(chaos::KeyboardButton::KP_ADD))
 		{
 			ChangeMaterial(+1);
 			return true;
 		}
-		else if (event.IsKeyPressed(chaos::KeyboardButton::KP_SUBTRACT, GLFW_MOD_SHIFT))
+		else if (key_event.IsKeyPressed(chaos::KeyboardButton::KP_SUBTRACT, GLFW_MOD_SHIFT))
 		{
 			ChangeRenderpass(-1);
 			return true;
 		}
-		else if (event.IsKeyPressed(chaos::KeyboardButton::KP_SUBTRACT))
+		else if (key_event.IsKeyPressed(chaos::KeyboardButton::KP_SUBTRACT))
 		{
 			ChangeMaterial(-1);
 			return true;
 		}
-		return chaos::Window::OnKeyEventImpl(event);
+		return chaos::Window::OnKeyEventImpl(key_event);
 	}
 
 	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override

@@ -95,7 +95,7 @@ namespace chaos
 		/** reload all GPU resources */
 		virtual bool ReloadGPUResources();
 		/** override */
-		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
+		virtual bool OnKeyEventImpl(KeyEvent const& key_event) override;
 
 		/** get the OpenGL context, call the function, restore previous context after */
 		template<typename FUNC>

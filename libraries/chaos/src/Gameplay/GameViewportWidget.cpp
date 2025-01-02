@@ -59,14 +59,14 @@ namespace chaos
 		return Widget::OnCharEventImpl(c);
 	}
 
-	bool GameViewportWidget::OnKeyEventImpl(KeyEvent const& event)
+	bool GameViewportWidget::OnKeyEventImpl(KeyEvent const& key_event)
 	{
 		// super method
-		if (Widget::OnKeyEventImpl(event))
+		if (Widget::OnKeyEventImpl(key_event))
 			return true;
 		// give inputs to the game
 		if (game != nullptr)
-			if (game->OnKeyEvent(event))
+			if (game->OnKeyEvent(key_event))
 				return true;
 		return false;
 	}

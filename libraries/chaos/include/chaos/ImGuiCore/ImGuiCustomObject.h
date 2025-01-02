@@ -2,7 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class ImGuCustomiObject;
+	class ImGuiCustomObject;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -10,11 +10,9 @@ namespace chaos
 	 * ImGuiCustomObject: an ImGuiObject dedicated to use std::function to display its content
 	 */
 
-	class ImGuiCustomObject : public ImGuiObject
+	CHAOS_API class ImGuiCustomObject : public ImGuiObject
 	{
 	public:
-
-		//CHAOS_DECLARE_OBJECT_CLASS(ImGuiCustomObject, ImGuiObject);
 
 		/** constructor (without window) */
 		ImGuiCustomObject(std::function<void()> in_draw_function);

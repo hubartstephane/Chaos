@@ -237,6 +237,33 @@ namespace chaos
 		/** gets the ImGui context */
 		ImGuiContext* GetImGuiContext() const { return imgui_context; }
 
+		/** create and add a new imgui window */
+		template<typename IMGUIOBJECT, typename... PARAMS>
+		IMGUIOBJECT* AddNewImGuiWindow(char const* title, PARAMS... params)
+		{
+			IMGUIOBJECT* result = new IMGUIOBJECT(std::forward<PARAMS>(params)...);
+			if (result != nullptr)
+			{
+				result->SetName(title);
+				AddImGuiObject(result);
+			}
+			return result;
+		}
+
+		/** create and add a new imgui popup */
+		template<typename IMGUIOBJECT, typename... PARAMS>
+		IMGUIOBJECT* AddNewImGuiPopup(char const* title, PARAMS... params)
+		{
+			IMGUIOBJECT* result = new IMGUIOBJECT(std::forward<PARAMS>(params)...);
+			if (result != nullptr)
+			{
+				result->SetName(title);
+				result->SetImGuiObjectFlags(ImGuiObjectFlags::PopupModalWindow);
+				AddImGuiObject(result);
+			}
+			return result;
+		}
+
 		/** change the cursor mode */
 		void SetCursorMode(CursorMode mode);
 		/** get the cursor mode */

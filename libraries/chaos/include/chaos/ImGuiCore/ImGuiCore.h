@@ -2,6 +2,8 @@
 #include "chaos/ImGuiCore/ImGuiInterface.h"
 #include "chaos/ImGuiCore/ImGuiObject.h"
 #include "chaos/ImGuiCore/ImGuiCustomObject.h"
+#include "chaos/ImGuiCore/ImGuiMessageObject.h"
+#include "chaos/ImGuiCore/ImGuiYesNoObject.h"
 #include "chaos/ImGuiCore/ImGuiWindowInformationObject.h"
 #include "chaos/ImGuiCore/ImGuiSystemInformationObject.h"
 #include "chaos/ImGuiCore/ImGuiHelpObject.h"

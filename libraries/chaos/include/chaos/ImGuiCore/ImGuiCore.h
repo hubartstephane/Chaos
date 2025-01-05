@@ -14,6 +14,5 @@
 #include "chaos/ImGuiCore/ImGuiDemoObject.h"
 #include "chaos/ImGuiCore/ImGuiAtlasObject.h"
 #include "chaos/ImGuiCore/ImGuiWindowPlacement.h"
-#include "chaos/ImGuiCore/ImGuiPopup.h"
 #include "chaos/ImGuiCore/ImGuiLogObject.h"
 #include "chaos/ImGuiCore/ImGuiManager.h"

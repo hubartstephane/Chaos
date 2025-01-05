@@ -166,6 +166,13 @@ namespace chaos
 				return values.size();
 			}
 
+			/** gets the meta data at a given position */
+			EnumMetaDataEntry<T> const& GetEntry(size_t index) const
+			{
+				assert(index < values.size());
+				return values[index];
+			}
+
 			/** get the index for a name */
 			std::optional<size_t> GetNameIndex(char const* src) const
 			{

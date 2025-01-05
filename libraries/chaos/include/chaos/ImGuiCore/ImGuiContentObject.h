@@ -27,6 +27,9 @@ namespace chaos
 
 	protected:
 
+		/** override */
+		virtual void OnCloseWithCross() override;
+
 		/** display the content of the widget */
 		virtual void DisplayContent();
 
@@ -46,22 +49,40 @@ namespace chaos
 
 	/** 
 	 * ImGuiContentObjectTypedBase: specialization of ImGuiContentObjectBase with some data within
+	 * 
+	 *   note: you can declare T has a reference !!! in that case the target object updates itself in realtime 
+	 *   with no apply/validation required
 	 */
 	template<typename T>
 	class ImGuiContentObjectTypedBase : public ImGuiContentObjectBase
 	{
 	public:
 
-		/** constructor */
+		using type = T;
+
+		/** constructor (for non reference type) */
 		ImGuiContentObjectTypedBase(
 			std::string in_message,
-			T in_value = {},
-			std::function<void(ImGuiButtonType, T const&)> in_notification_function = {},
+			type in_value = {},
+			std::function<void(ImGuiButtonType, type const&)> in_notification_function = {},
 			ImGuiButtonType in_buttons = ImGuiButtonType::Close
-		) :
+		) requires !std::is_reference_v<type> :
 			ImGuiContentObjectBase(std::move(in_message), in_buttons),
 			value(std::move(in_value)),
-			notification_function(std::move(in_notification_function)) {}
+			notification_function(std::move(in_notification_function))
+		{}
+
+		/** constructor (for reference type) */
+		ImGuiContentObjectTypedBase(
+			std::string in_message,
+			type in_value,
+			std::function<void(ImGuiButtonType, type const&)> in_notification_function = {},
+			ImGuiButtonType in_buttons = ImGuiButtonType::Close
+		) requires std::is_reference_v<type> :
+			ImGuiContentObjectBase(std::move(in_message), in_buttons),
+			value(in_value),
+			notification_function(std::move(in_notification_function))
+		{}
 
 	protected:
 
@@ -82,9 +103,9 @@ namespace chaos
 	protected:
 
 		/** the value to display */
-		T value;
+		type value;
 		/** the notification callback */
-		std::function<void(ImGuiButtonType, T const&)> notification_function;
+		std::function<void(ImGuiButtonType, type const&)> notification_function;
 	};
 
 	/**
@@ -95,6 +116,8 @@ namespace chaos
 	{
 
 	public:
+
+		using type = void;
 
 		/** constructor */
 		ImGuiContentObjectTypedBase(

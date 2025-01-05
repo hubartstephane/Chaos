@@ -20,6 +20,12 @@ namespace chaos
 		DisplayButtons();
 	}
 
+	void ImGuiContentObjectBase::OnCloseWithCross()
+	{
+		if (HasAnyFlags(buttons, ImGuiButtonType::Close))
+			CallNotification(ImGuiButtonType::Close);
+	}
+
 	void ImGuiContentObjectBase::DisplayContent()
 	{
 	}

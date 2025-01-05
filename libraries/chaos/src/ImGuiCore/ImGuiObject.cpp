@@ -5,10 +5,7 @@ namespace chaos
 {
 	static EnumTools::EnumBitmaskMetaData<ImGuiObjectFlags> const ImGuiObjectFlags_bitmask_metadata =
 	{
-		{ ImGuiObjectFlags::FullViewport, ImGuiObjectFlags::FloatingWindow, ImGuiObjectFlags::PopupModalWindow, ImGuiObjectFlags::PopupWindow },
-		{ ImGuiObjectFlags::PopupWindow, ImGuiObjectFlags::CloseWithEscape },
-		{ ImGuiObjectFlags::PopupWindow, ImGuiObjectFlags::CloseWithCross },
-		{ ImGuiObjectFlags::FullViewport, ImGuiObjectFlags::CloseWithCross },
+		{ ImGuiObjectFlags::FullViewport, ImGuiObjectFlags::FloatingWindow, ImGuiObjectFlags::PopupModalWindow, ImGuiObjectFlags::PopupWindow }
 	};
 
 	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(ImGuiObjectFlags, &ImGuiObjectFlags_bitmask_metadata, CHAOS_API);
@@ -59,6 +56,14 @@ namespace chaos
 			return imgui_window_flags & ~ImGuiWindowFlags_MenuBar;
 	}
 
+	void ImGuiObject::OnCloseWithEscape()
+	{
+	}
+
+	void ImGuiObject::OnCloseWithCross()
+	{
+	}
+
 	void ImGuiObject::DrawImGui(Window* window)
 	{
 		// get ImGui window flags
@@ -72,9 +77,16 @@ namespace chaos
 			OnDrawImGuiMenuConditional(window, imgui_window_flags);
 
 			if (HasAnyFlags(imgui_object_flags, ImGuiObjectFlags::CloseWithEscape))
+			{
 				if (ImGui::IsWindowFocused())
+				{
 					if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_Escape))
+					{
+						OnCloseWithEscape();
 						RequestClosing();
+					}
+				}
+			}
 		};
 
 		// display popup (modal and non-modal)
@@ -103,6 +115,9 @@ namespace chaos
 			// check whether popup has been closed
 			if (!ImGui::IsPopupOpen(GetName()))
 				RequestClosing();
+			// check whether the cross has been clicked
+			if (!keep_alive)
+				OnCloseWithCross();
 		}
 		// display fullscreen window
 		else if (HasAnyFlags(imgui_object_flags, ImGuiObjectFlags::FullViewport))
@@ -118,6 +133,9 @@ namespace chaos
 				display_func();
 				ImGui::End();
 			}
+			// check whether the cross has been clicked
+			if (!keep_alive)
+				OnCloseWithCross();
 		}
 		// request for closing if necessary
 		if (!keep_alive)

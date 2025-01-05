@@ -1408,6 +1408,7 @@ namespace chaos
 	void Window::AddImGuiObject(ImGuiObject* imgui_object)
 	{
 		assert(imgui_object != nullptr);
+		assert(FindImGuiObject(imgui_object->GetName()) == nullptr);
 
 #if _DEBUG
 		// check whether the object is not already in list here

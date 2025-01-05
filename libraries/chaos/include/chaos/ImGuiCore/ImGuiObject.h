@@ -15,13 +15,13 @@ namespace chaos
 	enum class ImGuiObjectFlags : int
 	{
 		None = 0,
-		FullViewport = 1,        // the ImGui (pseudo) window fills the whole GLFW window
-		FloatingWindow = 2,      // this is a standart ImGui (pseudo) window
-		PopupWindow = 4,         // the object behaves like a popup
-		PopupModalWindow = 8,    // the object behaves like a modal popup
-		CloseWithCross = 16,     // the window has a cross to close it (valid for floating window and modal)
-		CloseWithEscape = 32,    // the window can be closed with escaped (not valid for non modal popup)
-		UseViewportMenu = 64, // menu items are stored inside the full GLFW window's menu instead of the ImGui (pseudo) window's menu
+		FullViewport     = (1 << 0), // the ImGui (pseudo) window fills the whole GLFW window
+		FloatingWindow   = (1 << 1), // this is a standart ImGui (pseudo) window
+		PopupWindow      = (1 << 2), // the object behaves like a popup
+		PopupModalWindow = (1 << 3), // the object behaves like a modal popup
+		CloseWithCross   = (1 << 4), // the window has a cross to close it (valid for floating window and modal)
+		CloseWithEscape  = (1 << 5), // the window can be closed with escaped (not valid for non modal popup)
+		UseViewportMenu  = (1 << 6)  // menu items are stored inside the full GLFW window's menu instead of the ImGui (pseudo) window's menu
 	};
 
 	CHAOS_DECLARE_ENUM_BITMASK_METHOD(ImGuiObjectFlags, CHAOS_API);
@@ -66,6 +66,11 @@ namespace chaos
 		void OnDrawImGuiMenuConditional(Window* window, int imgui_window_flags);
 		/** update the imgui window flags according to use flags */
 		int UpdateWindowFlagsForMenu(Window* window, int imgui_window_flags);
+
+		/** called whenever escape is pressed for closing */
+		virtual void OnCloseWithEscape();
+		/** called whenever cross is pressed for closing */
+		virtual void OnCloseWithCross();
 
 	protected:
 

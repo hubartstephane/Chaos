@@ -241,6 +241,8 @@ namespace chaos
 		template<typename IMGUIOBJECT, typename... PARAMS>
 		IMGUIOBJECT* AddNewImGuiWindow(char const* title, PARAMS... params)
 		{
+			static_assert(std::is_base_of_v<ImGuiObject, IMGUIOBJECT>);
+
 			IMGUIOBJECT* result = new IMGUIOBJECT(std::forward<PARAMS>(params)...);
 			if (result != nullptr)
 			{
@@ -252,13 +254,22 @@ namespace chaos
 
 		/** create and add a new imgui popup */
 		template<typename IMGUIOBJECT, typename... PARAMS>
-		IMGUIOBJECT* AddNewImGuiPopup(char const* title, PARAMS... params)
+		IMGUIOBJECT* AddNewImGuiPopupModal(char const* title, PARAMS... params)
 		{
+			static_assert(std::is_base_of_v<ImGuiObject, IMGUIOBJECT>);
+		
 			IMGUIOBJECT* result = new IMGUIOBJECT(std::forward<PARAMS>(params)...);
 			if (result != nullptr)
 			{
 				result->SetName(title);
-				result->SetImGuiObjectFlags(ImGuiObjectFlags::PopupModalWindow);
+
+				ImGuiObjectFlags flags = result->GetImGuiObjectFlags(); // ensure the ImGuiObject is marked as a modal popup whilst keeping flags it could naturally have
+				flags |=  ImGuiObjectFlags::PopupModalWindow;
+				flags &= ~ImGuiObjectFlags::PopupWindow;
+				flags &= ~ImGuiObjectFlags::FloatingWindow;
+				flags &= ~ImGuiObjectFlags::FullViewport;
+				result->SetImGuiObjectFlags(flags);
+
 				AddImGuiObject(result);
 			}
 			return result;

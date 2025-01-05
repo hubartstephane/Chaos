@@ -8,9 +8,6 @@ public:
 	using chaos::WindowApplication::WindowApplication;
 };
 
-
-
-
 class WindowOpenGLTest : public chaos::Window
 {
 	CHAOS_DECLARE_OBJECT_CLASS(WindowOpenGLTest, chaos::Window);
@@ -29,15 +26,16 @@ protected:
 
 	virtual void OnDrawImGuiContent() override
 	{
-		if (ImGui::Begin("help", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
+		chaos::ImGuiTools::FullViewportWindow("fullscreen", 0, [this]()
 		{
-			if (ImGui::Button("void content popup", { 200.0f , 30.0f }))
+			// first line
+			if (ImGui::Button("void content popup"))
 			{
 				AddNewImGuiPopupModal<chaos::ImGuiContentObject<void>>("void content", "void content", chaos::Default(), chaos::ImGuiButtonType::Close);
 			}
 
 			ImGui::SameLine();
-			if (ImGui::Button("content popup", { 200.0f , 30.0f }))
+			if (ImGui::Button("content popup"))
 			{
 				AddNewImGuiPopupModal<chaos::ImGuiContentObject<glm::vec4>>("content popup", "content", clear_color, [this](chaos::ImGuiButtonType  button_type, glm::vec4 value)
 				{
@@ -48,12 +46,18 @@ protected:
 			}
 
 			ImGui::SameLine();
-			if (ImGui::Button("reference content popup", { 200.0f , 30.0f }))
+			if (ImGui::Button("reference content popup"))
 			{
 				AddNewImGuiPopupModal<chaos::ImGuiContentObject<glm::vec4&>>("reference content popup", "reference content popup", std::ref(clear_color), chaos::Default(), chaos::ImGuiButtonType::Close);
 			}
-			ImGui::End();
-		}
+
+			// second line
+			if (ImGui::Button("message"))
+			{
+				AddNewImGuiPopupModal<chaos::ImGuiMessageObject>("message", "message");
+			}
+		});
+
 		chaos::Window::OnDrawImGuiContent();
 	}
 

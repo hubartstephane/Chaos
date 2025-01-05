@@ -100,6 +100,10 @@ namespace chaos
 				ImGui::OpenPopup(GetName());
 			}
 
+			// prepare the window placement
+			if (placement.has_value())
+				placement.value().PrepareNextWindowPlacement();
+
 			// display the popup
 			bool* keep_alive_ptr = (HasAnyFlags(imgui_object_flags, ImGuiObjectFlags::CloseWithCross)) ? &keep_alive : nullptr;
 
@@ -127,6 +131,11 @@ namespace chaos
 		// display floating window (default case)
 		else
 		{
+			// prepare the window placement
+			if (placement.has_value())
+				placement.value().PrepareNextWindowPlacement();
+
+			// display the window
 			bool* keep_alive_ptr = (HasAnyFlags(imgui_object_flags, ImGuiObjectFlags::CloseWithCross)) ? &keep_alive : nullptr;
 			if (ImGui::Begin(GetName(), keep_alive_ptr, imgui_window_flags))
 			{
@@ -189,6 +198,14 @@ namespace chaos
 					ImGui::BeginPopupModal(GetName(), &close_window, 0);
 			opened_popup = false;
 		}
+	}
+
+	void ImGuiObject::SetWindowPlacement(std::optional<ImGuiWindowPlacement> in_placement)
+	{
+		if (!in_placement.has_value())
+			placement.reset();
+		else
+			placement = in_placement.value();
 	}
 
 }; // namespace chaos

@@ -40,7 +40,7 @@ namespace chaos
 		else if (placement_type == ImGuiWindowPlacementType::FreePosition)
 			imgui_position = { position.x, position.y };
 
-		ImGui::SetNextWindowPos(imgui_position, ImGuiCond_Always, imgui_alignment);
+		ImGui::SetNextWindowPos(imgui_position, ImGuiCond_Appearing, imgui_alignment);
 	}
 
 }; // namespace chaos

@@ -55,6 +55,9 @@ namespace chaos
 		/** check whether closing is requested */
 		bool IsClosingRequested() const;
 
+		/** set the window placement */
+		void SetWindowPlacement(std::optional<ImGuiWindowPlacement> in_placement);
+
 	protected:
 
 		/** called whenever the object is being added to the window */
@@ -80,8 +83,10 @@ namespace chaos
 		int imgui_flags = ImGuiWindowFlags_NoCollapse;
 		/** indicates whether closing this UI is requested */
 		bool closing_request = false;
-		/** indicates whether the popup is opened (only valid if flags has POPUP_WINDOW) */
+		/** indicates whether the popup is opened (only used if the object is a popup) */
 		bool opened_popup = false;
+		/** the placement */
+		std::optional<ImGuiWindowPlacement> placement;
 	};
 
 #endif

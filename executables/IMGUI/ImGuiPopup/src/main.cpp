@@ -31,30 +31,36 @@ protected:
 			// first line
 			if (ImGui::Button("void content popup"))
 			{
-				AddNewImGuiPopupModal<chaos::ImGuiContentObject<void>>("void content", "void content", chaos::Default(), chaos::ImGuiButtonType::Close);
+				auto * popup = AddNewImGuiPopupModal<chaos::ImGuiContentObject<void>>("void content", "void content", chaos::Default(), chaos::ImGuiButtonType::Close);
+
+				popup->SetWindowPlacement(chaos::ImGuiWindowPlacement::GetCenterOnCursorPlacement());
 			}
 
 			ImGui::SameLine();
 			if (ImGui::Button("content popup"))
 			{
-				AddNewImGuiPopupModal<chaos::ImGuiContentObject<glm::vec4>>("content popup", "content", clear_color, [this](chaos::ImGuiButtonType  button_type, glm::vec4 value)
+				auto* popup = AddNewImGuiPopupModal<chaos::ImGuiContentObject<glm::vec4>>("content popup", "content", clear_color, [this](chaos::ImGuiButtonType  button_type, glm::vec4 value)
 				{
 					if (HasAnyFlags(button_type, chaos::ImGuiButtonType::ValidationButtons))
 						clear_color = value;
 				},
 				chaos::ImGuiButtonType::ValidateApplyClose);
+
+				popup->SetWindowPlacement(chaos::ImGuiWindowPlacement::GetCenterOnScreenPlacement());
 			}
 
 			ImGui::SameLine();
 			if (ImGui::Button("reference content popup"))
 			{
-				AddNewImGuiPopupModal<chaos::ImGuiContentObject<glm::vec4&>>("reference content popup", "reference content popup", std::ref(clear_color), chaos::Default(), chaos::ImGuiButtonType::Close);
-			}
+				auto* popup = AddNewImGuiPopupModal<chaos::ImGuiContentObject<glm::vec4&>>("reference content popup", "reference content popup", std::ref(clear_color), chaos::Default(), chaos::ImGuiButtonType::Close);
+
+				popup->SetWindowPlacement(chaos::ImGuiWindowPlacement::GetCenterOnPositionPlacement({100.0f,100.0f}));
+			}	
 
 			// second line
 			if (ImGui::Button("message"))
 			{
-				AddNewImGuiPopupModal<chaos::ImGuiMessageObject>("message", "message");
+				auto* popup = AddNewImGuiPopupModal<chaos::ImGuiMessageObject>("message", "message");
 			}
 		});
 

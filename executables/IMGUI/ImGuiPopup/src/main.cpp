@@ -9,16 +9,7 @@ public:
 };
 
 
-class DEF
-{
-public:
 
-	template<typename T>
-	operator T ()
-	{
-		return {};
-	}
-};
 
 class WindowOpenGLTest : public chaos::Window
 {
@@ -42,10 +33,7 @@ protected:
 		{
 			if (ImGui::Button("void content popup", { 200.0f , 30.0f }))
 			{
-				AddNewImGuiPopupModal<chaos::ImGuiContentObject<void>>("void content", "void content", [this](chaos::ImGuiButtonType button_type)
-				{
-				},
-				chaos::ImGuiButtonType::Close);
+				AddNewImGuiPopupModal<chaos::ImGuiContentObject<void>>("void content", "void content", chaos::Default(), chaos::ImGuiButtonType::Close);
 			}
 
 			ImGui::SameLine();
@@ -62,10 +50,7 @@ protected:
 			ImGui::SameLine();
 			if (ImGui::Button("reference content popup", { 200.0f , 30.0f }))
 			{
-				AddNewImGuiPopupModal<chaos::ImGuiContentObject<glm::vec4&>>("reference content popup", "reference content popup", std::ref(clear_color), [this](chaos::ImGuiButtonType button_type, glm::vec4 value)
-				{
-				},
-				chaos::ImGuiButtonType::Close);
+				AddNewImGuiPopupModal<chaos::ImGuiContentObject<glm::vec4&>>("reference content popup", "reference content popup", std::ref(clear_color), chaos::Default(), chaos::ImGuiButtonType::Close);
 			}
 			ImGui::End();
 		}

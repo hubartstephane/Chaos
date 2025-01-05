@@ -243,6 +243,14 @@ namespace chaos
 		{
 			static_assert(std::is_base_of_v<ImGuiObject, IMGUIOBJECT>);
 
+			// ensure an object with same name does not already exist
+			if (FindImGuiObject(title) != nullptr)
+			{
+				ImGuiLog::Warning("Window::AddNewImGuiWindow(...) failure: an ImGuiObject named [%s] already exists", title);
+				return nullptr;
+			}
+
+			// create and add the object
 			IMGUIOBJECT* result = new IMGUIOBJECT(std::forward<PARAMS>(params)...);
 			if (result != nullptr)
 			{
@@ -256,21 +264,15 @@ namespace chaos
 		template<typename IMGUIOBJECT, typename... PARAMS>
 		IMGUIOBJECT* AddNewImGuiPopupModal(char const* title, PARAMS... params)
 		{
-			static_assert(std::is_base_of_v<ImGuiObject, IMGUIOBJECT>);
-		
-			IMGUIOBJECT* result = new IMGUIOBJECT(std::forward<PARAMS>(params)...);
+			IMGUIOBJECT* result = AddNewImGuiWindow<IMGUIOBJECT>(title, std::forward<PARAMS>(params)...);
 			if (result != nullptr)
 			{
-				result->SetName(title);
-
-				ImGuiObjectFlags flags = result->GetImGuiObjectFlags(); // ensure the ImGuiObject is marked as a modal popup whilst keeping flags it could naturally have
+				ImGuiObjectFlags flags = result->GetImGuiObjectFlags(); // ensure the ImGuiObject is marked as a modal popup whilst keeping flags it could naturaly have
 				flags |=  ImGuiObjectFlags::PopupModalWindow;
 				flags &= ~ImGuiObjectFlags::PopupWindow;
 				flags &= ~ImGuiObjectFlags::FloatingWindow;
 				flags &= ~ImGuiObjectFlags::FullViewport;
 				result->SetImGuiObjectFlags(flags);
-
-				AddImGuiObject(result);
 			}
 			return result;
 		}

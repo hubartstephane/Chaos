@@ -8,8 +8,6 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	CHAOS_DEFINE_LOG(ImGuiManagerLog, "ImGuiManager")
-
 	/** describe the possible styles for ImGui */
 	enum class ImGuiWindowStyle
 	{

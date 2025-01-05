@@ -58,7 +58,7 @@ namespace chaos
 				font_face.file_buffer = FileTools::LoadFile(font_face.path);
 				if (!font_face.file_buffer)
 				{
-					ImGuiManagerLog::Error("ImGuiManager::BuildAtlas: fails to load file %s", font_face.path.string().c_str());
+					ImGuiLog::Error("ImGuiManager::BuildAtlas: fails to load file %s", font_face.path.string().c_str());
 					return true;
 				}
 				return false;
@@ -85,7 +85,7 @@ namespace chaos
 	{
 		if (font_faces.size() == 0)
 		{
-			ImGuiManagerLog::Error("ImGuiManager::BuildAtlas: no font defined");
+			ImGuiLog::Error("ImGuiManager::BuildAtlas: no font defined");
 			return nullptr;
 		}
 

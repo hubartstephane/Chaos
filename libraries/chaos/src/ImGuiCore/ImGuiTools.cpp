@@ -105,7 +105,7 @@ namespace chaos
 			}
 		}
 
-		bool FullscreenWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func)
+		bool FullViewportWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func)
 		{
 			// update flags
 			imgui_window_flags |= ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoBringToFrontOnFocus;

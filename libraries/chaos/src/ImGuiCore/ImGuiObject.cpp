@@ -122,7 +122,7 @@ namespace chaos
 		// display fullscreen window
 		else if (HasAnyFlags(imgui_object_flags, ImGuiObjectFlags::FullViewport))
 		{
-			keep_alive = ImGuiTools::FullscreenWindow(GetName(), imgui_window_flags, display_func);
+			keep_alive = ImGuiTools::FullViewportWindow(GetName(), imgui_window_flags, display_func);
 		}
 		// display floating window (default case)
 		else

@@ -237,16 +237,16 @@ namespace chaos
 		/** gets the ImGui context */
 		ImGuiContext* GetImGuiContext() const { return imgui_context; }
 
-		/** create and add a new imgui window */
+		/** create and add a new imgui object */
 		template<typename IMGUIOBJECT, typename... PARAMS>
-		IMGUIOBJECT* AddNewImGuiWindow(char const* title, PARAMS... params)
+		IMGUIOBJECT* AddNewImGuiObject(char const* title, PARAMS... params)
 		{
 			static_assert(std::is_base_of_v<ImGuiObject, IMGUIOBJECT>);
 
 			// ensure an object with same name does not already exist
 			if (FindImGuiObject(title) != nullptr)
 			{
-				ImGuiLog::Warning("Window::AddNewImGuiWindow(...) failure: an ImGuiObject named [%s] already exists", title);
+				ImGuiLog::Warning("Window::AddNewImGuiObject(...) failure: an ImGuiObject named [%s] already exists", title);
 				return nullptr;
 			}
 
@@ -260,11 +260,11 @@ namespace chaos
 			return result;
 		}
 
-		/** create and add a new imgui popup */
+		/** create and add a new imgui popup modal */
 		template<typename IMGUIOBJECT, typename... PARAMS>
 		IMGUIOBJECT* AddNewImGuiPopupModal(char const* title, PARAMS... params)
 		{
-			IMGUIOBJECT* result = AddNewImGuiWindow<IMGUIOBJECT>(title, std::forward<PARAMS>(params)...);
+			IMGUIOBJECT* result = AddNewImGuiObject<IMGUIOBJECT>(title, std::forward<PARAMS>(params)...);
 			if (result != nullptr)
 			{
 				ImGuiObjectFlags flags = result->GetImGuiObjectFlags(); // ensure the ImGuiObject is marked as a modal popup whilst keeping flags it could naturaly have
@@ -273,6 +273,25 @@ namespace chaos
 				flags &= ~ImGuiObjectFlags::FloatingWindow;
 				flags &= ~ImGuiObjectFlags::FullViewport;
 				result->SetImGuiObjectFlags(flags);
+			}
+			return result;
+		}
+
+
+		/** create and add a new imgui popup */
+		template<typename IMGUIOBJECT, typename... PARAMS>
+		IMGUIOBJECT* AddNewImGuiPopup(char const* title, PARAMS... params)
+		{
+			IMGUIOBJECT* result = AddNewImGuiObject<IMGUIOBJECT>(title, std::forward<PARAMS>(params)...);
+			if (result != nullptr)
+			{
+				ImGuiObjectFlags flags = result->GetImGuiObjectFlags(); // ensure the ImGuiObject is marked as a modal popup whilst keeping flags it could naturaly have
+				flags &= ~ImGuiObjectFlags::PopupModalWindow;
+				flags |=  ImGuiObjectFlags::PopupWindow;
+				flags &= ~ImGuiObjectFlags::FloatingWindow;
+				flags &= ~ImGuiObjectFlags::FullViewport;
+				result->SetImGuiObjectFlags(flags);
+				result->SetWindowPlacement(ImGuiWindowPlacement::GetCenterOnCursorPlacement());
 			}
 			return result;
 		}

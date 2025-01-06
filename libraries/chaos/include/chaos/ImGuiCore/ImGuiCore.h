@@ -3,6 +3,7 @@
 #include "chaos/ImGuiCore/ImGuiInterface.h"
 #include "chaos/ImGuiCore/ImGuiWindowPlacement.h"
 #include "chaos/ImGuiCore/ImGuiObject.h"
+#include "chaos/ImGuiCore/ImGuiChoiceObject.h"
 #include "chaos/ImGuiCore/ImGuiButtonType.h"
 #include "chaos/ImGuiCore/ImGuiContentObject.h"
 #include "chaos/ImGuiCore/ImGuiCustomObject.h"

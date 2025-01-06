@@ -62,6 +62,19 @@ protected:
 			{
 				auto* popup = AddNewImGuiPopupModal<chaos::ImGuiMessageObject>("message", "message");
 			}
+
+			ImGui::SameLine();
+			if (ImGui::Button("choices"))
+			{
+				char const* entries[] =
+				{
+					"choice A", "choice B", "choice C", nullptr
+				};
+
+				auto* popup = AddNewImGuiPopup<chaos::ImGuiChoiceObject>("choices", entries, [](size_t j)
+				{
+				});
+			}
 		});
 
 		chaos::Window::OnDrawImGuiContent();

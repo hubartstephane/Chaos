@@ -4,3 +4,4 @@
 
 build:ProcessSubPremake("AssimpTest")
 build:ProcessSubPremake("FBXTest")
+build:ProcessSubPremake("Mustang")

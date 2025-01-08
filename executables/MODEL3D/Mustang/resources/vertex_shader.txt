@@ -8,12 +8,12 @@ uniform mat4  world_to_camera;
 
 void main() 
 {
-  position = VertexPosition;
+	position = VertexPosition;
 
-  vec4 tmp = vec4(VertexPosition, 1.0);
-  tmp = local_to_world  * tmp;
-  tmp = world_to_camera * tmp;
-  tmp = projection      * tmp;
+	vec4 tmp = vec4(VertexPosition, 1.0);
+	tmp = local_to_world  * tmp;
+	tmp = world_to_camera * tmp;
+	tmp = projection      * tmp;
 
-  gl_Position = tmp;
+	gl_Position = tmp;
 }

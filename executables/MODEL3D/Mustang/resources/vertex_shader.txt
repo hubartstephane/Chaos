@@ -1,16 +1,19 @@
-layout (location = 0) in vec3 VertexPosition;
+in vec3 position;
+in vec3 normal;
 
-out vec3 position;
+out vec3 ps_position;
+out vec3 ps_normal;
 
-uniform mat4  projection;
-uniform mat4  local_to_world;
-uniform mat4  world_to_camera;
+uniform mat4 projection;
+uniform mat4 local_to_world;
+uniform mat4 world_to_camera;
 
 void main() 
 {
-	position = VertexPosition;
+	ps_position = position;
+	ps_normal   = normal;
 
-	vec4 tmp = vec4(VertexPosition, 1.0);
+	vec4 tmp = vec4(position, 1.0);
 	tmp = local_to_world  * tmp;
 	tmp = world_to_camera * tmp;
 	tmp = projection      * tmp;

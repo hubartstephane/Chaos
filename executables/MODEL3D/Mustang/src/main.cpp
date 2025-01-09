@@ -13,13 +13,13 @@ protected:
 		float far_plane = 5000.0f;
 		float near_plane = 20.0f;
 
-		glm::vec4 clear_color(0.1f, 0.0f, 0.0f, 0.0f);
+		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
 		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
 		glEnable(GL_DEPTH_TEST);
-		glDisable(GL_CULL_FACE);
+		glEnable(GL_CULL_FACE);
 
 		// compute matrices
 		glm::mat4x4 projection = glm::perspectiveFov(fov * (float)M_PI / 180.0f, float(draw_params.viewport.size.x), float(draw_params.viewport.size.y), near_plane, far_plane);
@@ -74,7 +74,7 @@ protected:
 		fps_view_controller.config.forward_speed = CAMERA_SPEED;
 		fps_view_controller.config.strafe_speed = CAMERA_SPEED;
 
-		fps_view_controller.fps_view.position.y = 30.0f;
+		fps_view_controller.fps_view.position.z = 500.0f;
 
 		return true;
 	}

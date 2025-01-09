@@ -757,7 +757,7 @@ namespace chaos
 				if (io.WantCaptureMouse)
 					return;
 			}
-
+			// notify the application of the mouse state
 			Application::SetApplicationInputMode(InputMode::MOUSE);
 
 			glm::vec2 position = { float(x), float(y) };
@@ -786,9 +786,8 @@ namespace chaos
 			MouseButton mouse_button = (MouseButton)button;
 			KeyboardState::SetMouseButtonState(mouse_button, action);
 
-			// notify the application of the keyboard button state
-			if (WindowApplication* application = Application::GetInstance())
-				application->SetInputMode(InputMode::MOUSE);
+			// notify the application of the mouse state
+			Application::SetApplicationInputMode(InputMode::MOUSE);
 
 			my_window->OnMouseButton(button, action, modifier);
 		});
@@ -807,7 +806,7 @@ namespace chaos
 				if (io.WantCaptureMouse)
 					return;
 			}
-
+			// notify the application of the mouse state
 			Application::SetApplicationInputMode(InputMode::MOUSE);
 
 			my_window->OnMouseWheel(scroll_x, scroll_y);
@@ -832,12 +831,10 @@ namespace chaos
 			// we have to make a conversion to know the character is to be produced on CURRENT layout
 
 			KeyboardButton keyboard_button = KeyboardButton(KeyboardLayoutConversion::ConvertGLFWKeycode(keycode, KeyboardLayoutType::QWERTY, KeyboardLayoutType::CURRENT));
-
 			KeyboardState::SetKeyboardButtonState(keyboard_button, action);
 
 			// notify the application of the keyboard button state
-			if (WindowApplication* application = Application::GetInstance())
-				application->SetInputMode(InputMode::KEYBOARD);
+			Application::SetApplicationInputMode(InputMode::KEYBOARD);
 
 			// handle the message
 			KeyEvent event;
@@ -863,7 +860,7 @@ namespace chaos
 				if (io.WantCaptureKeyboard)
 					return;
 			}
-
+			// notify the application of the keyboard button state
 			Application::SetApplicationInputMode(InputMode::KEYBOARD);
 
 			my_window->OnCharEvent(c);

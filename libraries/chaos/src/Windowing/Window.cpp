@@ -819,7 +819,7 @@ namespace chaos
 		GetWindowAndProcess(in_glfw_window, [=](Window* my_window)
 		{
 			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
-			if (ImGui::GetCurrentContext() != nullptr)
+			if (ImGui::GetCurrentContext() != nullptr && WindowApplication::IsImGuiMenuEnabled())
 			{
 				ImGui_ImplGlfw_KeyCallback(in_glfw_window, keycode, scancode, action, modifier);
 
@@ -855,7 +855,7 @@ namespace chaos
 		GetWindowAndProcess(in_glfw_window, [=](Window* my_window)
 		{
 			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
-			if (ImGui::GetCurrentContext() != nullptr)
+			if (ImGui::GetCurrentContext() != nullptr && WindowApplication::IsImGuiMenuEnabled())
 			{
 				ImGui_ImplGlfw_CharCallback(in_glfw_window, c);
 

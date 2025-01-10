@@ -266,8 +266,6 @@ protected:
 				primitive.count = faces_count * 3;
 				element.primitives.push_back(primitive);
 
-				mesh->mName;
-
 				CreateObject3D(gpu_mesh.get(), {0.0f, 0.0f, 0.0f}, { 0.0f, 0.0f, 1.0f }, mesh->mName.C_Str());
 			}
 		}
@@ -288,7 +286,7 @@ protected:
 					ImVec4 const selected_color   = { 1.0f, 0.0f, 0.0f, 1.0f };
 					ImVec4 const unselected_color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-					bool is_selected = (selected_object == (&object - &objects[0]));
+					bool is_selected = (selected_object_index == (&object - &objects[0]));
 
 					ImGui::PushID(object.get());
 					
@@ -315,49 +313,52 @@ protected:
 		{
 			if (key_event.IsKeyDown(chaos::KeyboardButton::KP_ADD))
 			{
-				selected_object = (selected_object == object_count - 1)?
+				selected_object_index = (selected_object_index == object_count - 1)?
 					0:
-					selected_object + 1;
+					selected_object_index + 1;
 				return true;
 			}
 			if (key_event.IsKeyDown(chaos::KeyboardButton::KP_SUBTRACT))
 			{
-				selected_object = (selected_object == 0) ?
+				selected_object_index = (selected_object_index == 0) ?
 					object_count - 1 :
-					selected_object - 1;
+					selected_object_index - 1;
 				return true;
 			}
-
-			auto MoveObject = [this, &key_event](chaos::KeyboardButton button, size_t component_index, float direction)
-			{
-				if (!key_event.IsKeyDown(button))
-					return false;
-
-				Object3D * object = objects[selected_object].get();
-				object->position[component_index] += direction * 100.0f;
-				return true;
-			};
-
-			if (MoveObject(chaos::KeyboardButton::KP_4, 0, -1.0f))
-				return true;
-			if (MoveObject(chaos::KeyboardButton::KP_6, 0, +1.0f))
-				return true;
-			if (MoveObject(chaos::KeyboardButton::KP_8, 2, -1.0f))
-				return true;
-			if (MoveObject(chaos::KeyboardButton::KP_2, 2, +1.0f))
-				return true;
-			if (MoveObject(chaos::KeyboardButton::KP_9, 1, +1.0f))
-				return true;
-			if (MoveObject(chaos::KeyboardButton::KP_3, 1, -1.0f))
-				return true;
 		}
 		return chaos::Window::OnKeyEventImpl(key_event);
 	}
 
 	virtual bool DoTick(float delta_time) override
 	{
+		// move camera
 		fps_view_controller.Tick(glfw_window, delta_time);
 
+		// move objects
+		size_t object_count = objects.size();
+		if (object_count > 0)
+		{
+			auto MoveObject = [this, delta_time](chaos::KeyboardButton button, size_t component_index, float direction)
+			{
+				if (chaos::ButtonState const* state = chaos::KeyboardState::GetKeyboardButtonState(button))
+				{
+					if (state->IsPressed())
+					{
+						const float OBJECT_SPEED = 300.0f;
+
+						Object3D* selected_object = objects[selected_object_index].get();
+						selected_object->position[component_index] += direction * OBJECT_SPEED * delta_time;
+					}
+				}
+			};
+
+			MoveObject(chaos::KeyboardButton::KP_4, 0, -1.0f);
+			MoveObject(chaos::KeyboardButton::KP_6, 0, +1.0f);
+			MoveObject(chaos::KeyboardButton::KP_8, 2, -1.0f);
+			MoveObject(chaos::KeyboardButton::KP_2, 2, +1.0f);
+			MoveObject(chaos::KeyboardButton::KP_9, 1, +1.0f);
+			MoveObject(chaos::KeyboardButton::KP_3, 1, -1.0f);
+		}
 		return chaos::Window::DoTick(delta_time);
 	}
 
@@ -373,7 +374,7 @@ protected:
 
 	chaos::FPSViewController fps_view_controller;
 
-	size_t selected_object = 0;
+	size_t selected_object_index = 0;
 };
 
 int main(int argc, char ** argv, char ** env)

@@ -2,6 +2,5 @@
 -- ROOT_PATH/executables/MODEL3D
 -- =============================================================================
 
-build:ProcessSubPremake("AssimpTest")
+build:ProcessSubPremake("AssimpImport")
 build:ProcessSubPremake("FBXTest")
-build:ProcessSubPremake("Mustang")

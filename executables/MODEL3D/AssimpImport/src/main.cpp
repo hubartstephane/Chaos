@@ -1,16 +1,33 @@
 #include "chaos/Chaos.h"
 
 
+struct MeshVertex
+{
+	glm::vec3 position;
+	glm::vec3 normal;
+};
+
 class Object3D : public chaos::Object
 {
 public:
 
-	
+	void Display(chaos::GPUProgram * program, chaos::GPURenderer* renderer, chaos::GPUProgramProviderInterface const* uniform_provider, chaos::GPURenderParams & render_params)
+	{
+		glm::mat4x4 local_to_world = glm::translate(position);
+
+		chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
+		main_uniform_provider.AddVariable("local_to_world", local_to_world);
+		main_uniform_provider.AddVariable("material_color", color);
+
+		mesh->DisplayWithProgram(program, renderer, &main_uniform_provider, render_params);
+	}
 
 public:
 
 	glm::vec3 position = { 0.0f, 0.0f, 0.0f };
 	glm::vec3 color    = { 0.0f, 0.0f, 1.0f };
+
+	std::string name;
 
 	chaos::shared_ptr<chaos::GPUMesh> mesh;
 };
@@ -25,7 +42,7 @@ protected:
 	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
 		float fov = 60.0f;
-		float far_plane = 5000.0f;
+		float far_plane = 10000.0f;
 		float near_plane = 20.0f;
 
 		glm::vec4 clear_color(0.4f, 0.4f, 0.4f, 0.0f);
@@ -37,22 +54,25 @@ protected:
 		glEnable(GL_CULL_FACE);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-		// compute matrices
-		glm::mat4x4 projection = glm::perspectiveFov(fov * (float)M_PI / 180.0f, float(draw_params.viewport.size.x), float(draw_params.viewport.size.y), near_plane, far_plane);
-		glm::mat4x4 world_to_camera = fps_view_controller.GlobalToLocal();
-		glm::mat4x4 local_to_world = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
+		if (program != nullptr)
+		{
+			// compute matrices
+			glm::mat4x4 projection = glm::perspectiveFov(fov * (float)M_PI / 180.0f, float(draw_params.viewport.size.x), float(draw_params.viewport.size.y), near_plane, far_plane);
+			glm::mat4x4 world_to_camera = fps_view_controller.GlobalToLocal();
 
-		// prepare unforms
-		chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
-		main_uniform_provider.AddVariable("projection", projection);
-		main_uniform_provider.AddVariable("world_to_camera", world_to_camera);
-		main_uniform_provider.AddVariable("local_to_world", local_to_world);
+			// prepare unforms
+			chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
+			main_uniform_provider.AddVariable("projection", projection);
+			main_uniform_provider.AddVariable("world_to_camera", world_to_camera);
+			if (light != nullptr)
+				main_uniform_provider.AddVariable("light_position", light->position);
 
-		// display objects
-		chaos::GPURenderParams render_params;
+			// display objects
+			chaos::GPURenderParams render_params;
 
-		for (chaos::shared_ptr<Object3D> const & object : objects)
-			object->mesh->DisplayWithProgram(program.get(), renderer, &main_uniform_provider, render_params);
+			for (chaos::shared_ptr<Object3D> const& object : objects)
+				object->Display(program.get(), renderer, &main_uniform_provider, render_params);
+		}
 
 		return true;
 	}
@@ -70,12 +90,10 @@ protected:
 			return false;
 
 		// create light mesh
-		if (!CreateLightMesh())
-			return false;
+		CreateLightMesh();
 
 		// load the mesh model
-		if (!LoadMeshes("scene.obj"))
-			return false;
+		LoadMeshes("scene.obj");
 
 		// generate the program
 		boost::filesystem::path const& resources_path = GetResourcesPath();
@@ -84,8 +102,6 @@ protected:
 		program_generator.AddShaderSourceFile(chaos::ShaderType::FRAGMENT, resources_path / "pixel_shader.txt");
 		program_generator.AddShaderSourceFile(chaos::ShaderType::VERTEX, resources_path / "vertex_shader.txt");
 		program = program_generator.GenProgramObject();
-		if (program == nullptr)
-			return false;
 
 		// update the camera speed
 		fps_view_controller.config.back_speed = CAMERA_SPEED;
@@ -94,12 +110,17 @@ protected:
 		fps_view_controller.config.forward_speed = CAMERA_SPEED;
 		fps_view_controller.config.strafe_speed = CAMERA_SPEED;
 
-		fps_view_controller.fps_view.position.z = 500.0f;
+		fps_view_controller.input_config.yaw_left_button   = chaos::KeyboardButton::UNKNOWN;
+		fps_view_controller.input_config.yaw_right_button  = chaos::KeyboardButton::UNKNOWN;
+		fps_view_controller.input_config.pitch_up_button   = chaos::KeyboardButton::UNKNOWN;
+		fps_view_controller.input_config.pitch_down_button = chaos::KeyboardButton::UNKNOWN;
+
+		fps_view_controller.fps_view.position.z = 1000.0f;
 
 		return true;
 	}
 
-	Object3D * CreateObject3D(chaos::GPUMesh* mesh, glm::vec3 const& position, glm::vec3 const& color)
+	Object3D * CreateObject3D(chaos::GPUMesh* mesh, glm::vec3 const& position, glm::vec3 const& color, char const * name)
 	{
 		Object3D* result = new Object3D;
 		if (result == nullptr)
@@ -108,6 +129,7 @@ protected:
 		result->mesh = mesh;
 		result->position = position;
 		result->color = color;
+		result->name = name;
 
 		objects.push_back(result);
 
@@ -120,7 +142,7 @@ protected:
 
 		chaos::shared_ptr<chaos::GPUMesh> mesh = chaos::GPUSphereMeshGenerator(s, glm::mat4x4(1.0f), 10).GenerateMesh();
 
-		light = CreateObject3D(mesh.get(), { 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f });
+		light = CreateObject3D(mesh.get(), { 0.0f, 500.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, "light");
 
 		if (light == nullptr)
 			return false;
@@ -145,11 +167,11 @@ protected:
 
 		// load the scene
 		unsigned int load_flags =
-			//aiProcess_CalcTangentSpace |
+			aiProcess_CalcTangentSpace |
 			//aiProcess_GenNormals |
-			//aiProcess_GenSmoothNormals |
+			aiProcess_GenSmoothNormals |
 			aiProcess_Triangulate |
-			//aiProcess_JoinIdenticalVertices |
+			aiProcess_JoinIdenticalVertices |
 			aiProcess_SortByPType;
 
 		const aiScene* scene = importer.ReadFileFromMemory(buffer.data, buffer.bufsize, load_flags);
@@ -182,12 +204,6 @@ protected:
 					continue;
 				if (!mesh->HasPositions())
 					continue;
-
-				struct MeshVertex
-				{
-					glm::vec3 position;
-					glm::vec3 normal;
-				};
 
 				// vertices
 				chaos::shared_ptr<chaos::GPUBuffer> vertex_buffer = new chaos::GPUBuffer(false);
@@ -250,7 +266,9 @@ protected:
 				primitive.count = faces_count * 3;
 				element.primitives.push_back(primitive);
 
-				CreateObject3D(gpu_mesh.get(), {0.0f, 0.0f, 0.0f}, { 0.0f, 0.0f, 1.0f });
+				mesh->mName;
+
+				CreateObject3D(gpu_mesh.get(), {0.0f, 0.0f, 0.0f}, { 0.0f, 0.0f, 1.0f }, mesh->mName.C_Str());
 			}
 		}
 
@@ -258,23 +276,82 @@ protected:
 	}
 
 	virtual void OnDrawImGuiContent() override
-	{
-	#if 0
+	{	
 		chaos::ImGuiTools::FullViewportWindow("fullscreen", 0, [this]()
 		{
-			chaos::DrawImGuiVariable(fps_view_controller.fps_view.position);
+			if (ImGui::BeginTable("objects", 2, ImGuiTableFlags_RowBg))
+			{
+				ImGui::TableSetupColumn("Fixed Width", ImGuiTableColumnFlags_WidthFixed, 100.0f);
 
-			ImGui::Text("yaw"); ImGui::SameLine();
-			chaos::DrawImGuiVariable(fps_view_controller.fps_view.yaw);
+				for (chaos::shared_ptr<Object3D> const& object : objects)
+				{
+					ImVec4 const selected_color   = { 1.0f, 0.0f, 0.0f, 1.0f };
+					ImVec4 const unselected_color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-			ImGui::Text("pitch"); ImGui::SameLine();
-			chaos::DrawImGuiVariable(fps_view_controller.fps_view.pitch);
+					bool is_selected = (selected_object == (&object - &objects[0]));
 
-			ImGui::Text("roll"); ImGui::SameLine();
-			chaos::DrawImGuiVariable(fps_view_controller.fps_view.roll);
+					ImGui::PushID(object.get());
+					
+					ImGui::TableNextColumn();
+					ImGui::TextColored(
+						is_selected? selected_color : unselected_color,
+						object->name.c_str());
+
+					ImGui::TableNextColumn();
+					chaos::DrawImGuiVariable(object->position);
+
+					ImGui::PopID();
+				}
+				ImGui::EndTable();
+			}
 		});
-	#endif
 		chaos::Window::OnDrawImGuiContent();
+	}
+
+	virtual bool OnKeyEventImpl(chaos::KeyEvent const& key_event) override
+	{
+		size_t object_count = objects.size();
+		if (object_count > 0)
+		{
+			if (key_event.IsKeyDown(chaos::KeyboardButton::KP_ADD))
+			{
+				selected_object = (selected_object == object_count - 1)?
+					0:
+					selected_object + 1;
+				return true;
+			}
+			if (key_event.IsKeyDown(chaos::KeyboardButton::KP_SUBTRACT))
+			{
+				selected_object = (selected_object == 0) ?
+					object_count - 1 :
+					selected_object - 1;
+				return true;
+			}
+
+			auto MoveObject = [this, &key_event](chaos::KeyboardButton button, size_t component_index, float direction)
+			{
+				if (!key_event.IsKeyDown(button))
+					return false;
+
+				Object3D * object = objects[selected_object].get();
+				object->position[component_index] += direction * 100.0f;
+				return true;
+			};
+
+			if (MoveObject(chaos::KeyboardButton::KP_4, 0, -1.0f))
+				return true;
+			if (MoveObject(chaos::KeyboardButton::KP_6, 0, +1.0f))
+				return true;
+			if (MoveObject(chaos::KeyboardButton::KP_8, 2, -1.0f))
+				return true;
+			if (MoveObject(chaos::KeyboardButton::KP_2, 2, +1.0f))
+				return true;
+			if (MoveObject(chaos::KeyboardButton::KP_9, 1, +1.0f))
+				return true;
+			if (MoveObject(chaos::KeyboardButton::KP_3, 1, -1.0f))
+				return true;
+		}
+		return chaos::Window::OnKeyEventImpl(key_event);
 	}
 
 	virtual bool DoTick(float delta_time) override
@@ -295,6 +372,8 @@ protected:
 	chaos::shared_ptr<chaos::GPUProgram> program;
 
 	chaos::FPSViewController fps_view_controller;
+
+	size_t selected_object = 0;
 };
 
 int main(int argc, char ** argv, char ** env)

@@ -1,6 +1,21 @@
 #include "chaos/Chaos.h"
 
 
+class Object3D : public chaos::Object
+{
+public:
+
+	
+
+public:
+
+	glm::vec3 position = { 0.0f, 0.0f, 0.0f };
+	glm::vec3 color    = { 0.0f, 0.0f, 1.0f };
+
+	chaos::shared_ptr<chaos::GPUMesh> mesh;
+};
+
+
 class WindowOpenGLTest : public chaos::Window
 {
 	CHAOS_DECLARE_OBJECT_CLASS(WindowOpenGLTest, chaos::Window);
@@ -13,14 +28,14 @@ protected:
 		float far_plane = 5000.0f;
 		float near_plane = 20.0f;
 
-		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
+		glm::vec4 clear_color(0.4f, 0.4f, 0.4f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
 		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
 		glEnable(GL_DEPTH_TEST);
-		glDisable(GL_CULL_FACE);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glEnable(GL_CULL_FACE);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		// compute matrices
 		glm::mat4x4 projection = glm::perspectiveFov(fov * (float)M_PI / 180.0f, float(draw_params.viewport.size.x), float(draw_params.viewport.size.y), near_plane, far_plane);
@@ -33,13 +48,11 @@ protected:
 		main_uniform_provider.AddVariable("world_to_camera", world_to_camera);
 		main_uniform_provider.AddVariable("local_to_world", local_to_world);
 
+		// display objects
 		chaos::GPURenderParams render_params;
-		mesh_sphere->DisplayWithProgram(program.get(), renderer, &main_uniform_provider, render_params);
 
-		// display other meshes
-		for (chaos::shared_ptr<chaos::GPUMesh> const & mesh : meshes)
-			mesh->DisplayWithProgram(program.get(), renderer, &main_uniform_provider, render_params);
-
+		for (chaos::shared_ptr<Object3D> const & object : objects)
+			object->mesh->DisplayWithProgram(program.get(), renderer, &main_uniform_provider, render_params);
 
 		return true;
 	}
@@ -56,21 +69,17 @@ protected:
 		if (!chaos::Window::InitializeFromConfiguration(config))
 			return false;
 
-		// compute resource path
-		boost::filesystem::path const & resources_path = GetResourcesPath();
-
-		// generate the mesh
-		chaos::sphere3   s = chaos::sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 100.0f);
-		chaos::GPUMultiMeshGenerator generators;
-		generators.AddGenerator(new chaos::GPUSphereMeshGenerator(s, glm::mat4x4(1.0f), 10), mesh_sphere);
-		if (!generators.GenerateMeshes())
+		// create light mesh
+		if (!CreateLightMesh())
 			return false;
 
 		// load the mesh model
-		if (!LoadMeshes())
+		if (!LoadMeshes("scene.obj"))
 			return false;
 
 		// generate the program
+		boost::filesystem::path const& resources_path = GetResourcesPath();
+
 		chaos::GPUProgramGenerator program_generator;
 		program_generator.AddShaderSourceFile(chaos::ShaderType::FRAGMENT, resources_path / "pixel_shader.txt");
 		program_generator.AddShaderSourceFile(chaos::ShaderType::VERTEX, resources_path / "vertex_shader.txt");
@@ -90,13 +99,41 @@ protected:
 		return true;
 	}
 
-	bool LoadMeshes()
+	Object3D * CreateObject3D(chaos::GPUMesh* mesh, glm::vec3 const& position, glm::vec3 const& color)
+	{
+		Object3D* result = new Object3D;
+		if (result == nullptr)
+			return result;
+
+		result->mesh = mesh;
+		result->position = position;
+		result->color = color;
+
+		objects.push_back(result);
+
+		return result;
+	}
+
+	bool CreateLightMesh()
+	{
+		chaos::sphere3 s = chaos::sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 20.0f);
+
+		chaos::shared_ptr<chaos::GPUMesh> mesh = chaos::GPUSphereMeshGenerator(s, glm::mat4x4(1.0f), 10).GenerateMesh();
+
+		light = CreateObject3D(mesh.get(), { 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f });
+
+		if (light == nullptr)
+			return false;
+		return true;
+	}
+
+	bool LoadMeshes(chaos::FilePathParam const & path)
 	{
 		// compute resource path
 		boost::filesystem::path const & resources_path = GetResourcesPath();
 
 		// load the file
-		chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(resources_path / "scene.obj");
+		chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(resources_path / path.GetResolvedPath());
 		if (buffer == nullptr)
 			return false;
 
@@ -108,10 +145,11 @@ protected:
 
 		// load the scene
 		unsigned int load_flags =
-			aiProcess_CalcTangentSpace |
-			aiProcess_GenNormals |
+			//aiProcess_CalcTangentSpace |
+			//aiProcess_GenNormals |
+			//aiProcess_GenSmoothNormals |
 			aiProcess_Triangulate |
-			aiProcess_JoinIdenticalVertices |
+			//aiProcess_JoinIdenticalVertices |
 			aiProcess_SortByPType;
 
 		const aiScene* scene = importer.ReadFileFromMemory(buffer.data, buffer.bufsize, load_flags);
@@ -151,7 +189,7 @@ protected:
 					glm::vec3 normal;
 				};
 
-				// vertices			
+				// vertices
 				chaos::shared_ptr<chaos::GPUBuffer> vertex_buffer = new chaos::GPUBuffer(false);
 				if (vertex_buffer == nullptr)
 					break;
@@ -192,8 +230,7 @@ protected:
 
 				for (unsigned int i = 0; i < faces_count; ++i)
 				{
-					if (mesh->mFaces[i].mNumIndices != 3)
-						i = i;
+					assert(mesh->mFaces[i].mNumIndices == 3);
 
 					for (unsigned j = 0; j < mesh->mFaces[i].mNumIndices; ++j)
 					{
@@ -213,7 +250,7 @@ protected:
 				primitive.count = faces_count * 3;
 				element.primitives.push_back(primitive);
 
-				meshes.push_back(gpu_mesh.get());
+				CreateObject3D(gpu_mesh.get(), {0.0f, 0.0f, 0.0f}, { 0.0f, 0.0f, 1.0f });
 			}
 		}
 
@@ -222,6 +259,7 @@ protected:
 
 	virtual void OnDrawImGuiContent() override
 	{
+	#if 0
 		chaos::ImGuiTools::FullViewportWindow("fullscreen", 0, [this]()
 		{
 			chaos::DrawImGuiVariable(fps_view_controller.fps_view.position);
@@ -235,6 +273,7 @@ protected:
 			ImGui::Text("roll"); ImGui::SameLine();
 			chaos::DrawImGuiVariable(fps_view_controller.fps_view.roll);
 		});
+	#endif
 		chaos::Window::OnDrawImGuiContent();
 	}
 
@@ -249,9 +288,9 @@ protected:
 
 	static constexpr float CAMERA_SPEED = 400.0f;
 
-	chaos::shared_ptr<chaos::GPUMesh> mesh_sphere;
+	chaos::shared_ptr<Object3D> light;
 
-	std::vector<chaos::shared_ptr<chaos::GPUMesh>> meshes;
+	std::vector<chaos::shared_ptr<Object3D>> objects;
 
 	chaos::shared_ptr<chaos::GPUProgram> program;
 

@@ -1,5 +1,6 @@
 #include "chaos/Chaos.h"
 
+using namespace chaos;
 
 struct MeshVertex
 {
@@ -7,15 +8,15 @@ struct MeshVertex
 	glm::vec3 normal;
 };
 
-class Object3D : public chaos::Object
+class Object3D : public Object
 {
 public:
 
-	void Display(chaos::GPUProgram * program, chaos::GPURenderer* renderer, chaos::GPUProgramProviderInterface const* uniform_provider, chaos::GPURenderParams & render_params)
+	void Display(GPUProgram * program, GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, GPURenderParams & render_params)
 	{
 		glm::mat4x4 local_to_world = glm::translate(position);
 
-		chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
+		GPUProgramProviderChain main_uniform_provider(uniform_provider);
 		main_uniform_provider.AddVariable("local_to_world", local_to_world);
 		main_uniform_provider.AddVariable("material_color", color);
 
@@ -29,17 +30,17 @@ public:
 
 	std::string name;
 
-	chaos::shared_ptr<chaos::GPUMesh> mesh;
+	shared_ptr<GPUMesh> mesh;
 };
 
 
-class WindowOpenGLTest : public chaos::Window
+class WindowOpenGLTest : public Window
 {
-	CHAOS_DECLARE_OBJECT_CLASS(WindowOpenGLTest, chaos::Window);
+	CHAOS_DECLARE_OBJECT_CLASS(WindowOpenGLTest, Window);
 
 protected:
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
+	virtual bool OnDraw(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, WindowDrawParams const& draw_params) override
 	{
 		float fov = 60.0f;
 		float far_plane = 10000.0f;
@@ -61,16 +62,16 @@ protected:
 			glm::mat4x4 world_to_camera = fps_view_controller.GlobalToLocal();
 
 			// prepare unforms
-			chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
+			GPUProgramProviderChain main_uniform_provider(uniform_provider);
 			main_uniform_provider.AddVariable("projection", projection);
 			main_uniform_provider.AddVariable("world_to_camera", world_to_camera);
 			if (light != nullptr)
 				main_uniform_provider.AddVariable("light_position", light->position);
 
 			// display objects
-			chaos::GPURenderParams render_params;
+			GPURenderParams render_params;
 
-			for (chaos::shared_ptr<Object3D> const& object : objects)
+			for (shared_ptr<Object3D> const& object : objects)
 				object->Display(program.get(), renderer, &main_uniform_provider, render_params);
 		}
 
@@ -79,28 +80,28 @@ protected:
 
 	boost::filesystem::path const & GetResourcesPath() const
 	{
-		chaos::WindowApplication* application = chaos::Application::GetInstance();
+		WindowApplication* application = Application::GetInstance();
 		return application->GetResourcesPath();
 	}
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const* config) override
 	{
 		// super
-		if (!chaos::Window::InitializeFromConfiguration(config))
+		if (!Window::InitializeFromConfiguration(config))
 			return false;
 
 		// create light mesh
 		CreateLightMesh();
 
 		// load the mesh model
-		LoadMeshes("scene.glb");
+		LoadMeshesAndCreateObjects("scene.glb");
 
 		// generate the program
 		boost::filesystem::path const& resources_path = GetResourcesPath();
 
-		chaos::GPUProgramGenerator program_generator;
-		program_generator.AddShaderSourceFile(chaos::ShaderType::FRAGMENT, resources_path / "pixel_shader.txt");
-		program_generator.AddShaderSourceFile(chaos::ShaderType::VERTEX, resources_path / "vertex_shader.txt");
+		GPUProgramGenerator program_generator;
+		program_generator.AddShaderSourceFile(ShaderType::FRAGMENT, resources_path / "pixel_shader.txt");
+		program_generator.AddShaderSourceFile(ShaderType::VERTEX, resources_path / "vertex_shader.txt");
 		program = program_generator.GenProgramObject();
 
 		// update the camera speed
@@ -110,17 +111,17 @@ protected:
 		fps_view_controller.config.forward_speed = CAMERA_SPEED;
 		fps_view_controller.config.strafe_speed = CAMERA_SPEED;
 
-		fps_view_controller.input_config.yaw_left_button   = chaos::KeyboardButton::UNKNOWN;
-		fps_view_controller.input_config.yaw_right_button  = chaos::KeyboardButton::UNKNOWN;
-		fps_view_controller.input_config.pitch_up_button   = chaos::KeyboardButton::UNKNOWN;
-		fps_view_controller.input_config.pitch_down_button = chaos::KeyboardButton::UNKNOWN;
+		fps_view_controller.input_config.yaw_left_button   = KeyboardButton::UNKNOWN;
+		fps_view_controller.input_config.yaw_right_button  = KeyboardButton::UNKNOWN;
+		fps_view_controller.input_config.pitch_up_button   = KeyboardButton::UNKNOWN;
+		fps_view_controller.input_config.pitch_down_button = KeyboardButton::UNKNOWN;
 
 		fps_view_controller.fps_view.position.z = 1000.0f;
 
 		return true;
 	}
 
-	Object3D * CreateObject3D(chaos::GPUMesh* mesh, glm::vec3 const& position, glm::vec3 const& color, char const * name)
+	Object3D * CreateObject3D(GPUMesh* mesh, glm::vec3 const& position, glm::vec3 const& color, char const * name)
 	{
 		Object3D* result = new Object3D;
 		if (result == nullptr)
@@ -138,24 +139,26 @@ protected:
 
 	bool CreateLightMesh()
 	{
-		chaos::sphere3 s = chaos::sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 20.0f);
+		sphere3 s = sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 20.0f);
 
-		chaos::shared_ptr<chaos::GPUMesh> mesh = chaos::GPUSphereMeshGenerator(s, glm::mat4x4(1.0f), 10).GenerateMesh();
+		shared_ptr<GPUMesh> gpu_mesh = GPUSphereMeshGenerator(s, glm::mat4x4(1.0f), 10).GenerateMesh();
+		meshes.push_back(gpu_mesh);
 
-		light = CreateObject3D(mesh.get(), { 0.0f, 500.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, "light");
+		glm::vec3 position = { 0.0f, 300.0f, 0.0f };
+		glm::vec3 color    = { 1.0f, 1.0f, 1.0f };
 
-		if (light == nullptr)
-			return false;
-		return true;
+		light = CreateObject3D(gpu_mesh.get(), position, color, "light");
+
+		return (light != nullptr);
 	}
 
-	bool LoadMeshes(chaos::FilePathParam const & path)
+	bool LoadMeshesAndCreateObjects(FilePathParam const & path)
 	{
 		// compute resource path
 		boost::filesystem::path const & resources_path = GetResourcesPath();
 
 		// load the file
-		chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(resources_path / path.GetResolvedPath());
+		Buffer<char> buffer = FileTools::LoadFile(resources_path / path.GetResolvedPath());
 		if (buffer == nullptr)
 			return false;
 
@@ -180,37 +183,40 @@ protected:
 		{
 			char const* error = importer.GetErrorString();
 			if (error != nullptr)
-				chaos::Log::Message("Assimp::Importer::ReadFileFromMemory failure [%s]", error);
+				Log::Message("Assimp::Importer::ReadFileFromMemory failure [%s]", error);
 			return false;
 		}
 
 		// get all meshes
+
+		std::vector<GPUMesh*> imported_meshes;
+
 		if (scene->HasMeshes())
 		{
 			// create a vertex declaration
-			chaos::shared_ptr<chaos::GPUVertexDeclaration> declaration = new chaos::GPUVertexDeclaration();
-			declaration->Push(chaos::VertexAttributeSemantic::POSITION, 0, chaos::VertexAttributeType::FLOAT3);
-			declaration->Push(chaos::VertexAttributeSemantic::NORMAL, 0, chaos::VertexAttributeType::FLOAT3);
+			shared_ptr<GPUVertexDeclaration> declaration = new GPUVertexDeclaration();
+			declaration->Push(VertexAttributeSemantic::POSITION, 0, VertexAttributeType::FLOAT3);
+			declaration->Push(VertexAttributeSemantic::NORMAL, 0, VertexAttributeType::FLOAT3);
 
 			for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
 			{
-				chaos::shared_ptr<chaos::GPUMesh> gpu_mesh = new chaos::GPUMesh;
+				shared_ptr<GPUMesh> gpu_mesh = new GPUMesh;
 
-				aiMesh const* mesh = scene->mMeshes[i];
-				if (mesh == nullptr)
+				aiMesh const* imported_mesh = scene->mMeshes[i];
+				if (imported_mesh == nullptr)
 					continue;
 
-				if (!mesh->HasNormals())
+				if (!imported_mesh->HasNormals())
 					continue;
-				if (!mesh->HasPositions())
+				if (!imported_mesh->HasPositions())
 					continue;
 
 				// vertices
-				chaos::shared_ptr<chaos::GPUBuffer> vertex_buffer = new chaos::GPUBuffer(false);
+				shared_ptr<GPUBuffer> vertex_buffer = new GPUBuffer(false);
 				if (vertex_buffer == nullptr)
 					break;
 			
-				unsigned int vertices_count = mesh->mNumVertices;
+				unsigned int vertices_count = imported_mesh->mNumVertices;
 				size_t vertex_bufsize = vertices_count * sizeof(MeshVertex);
 				vertex_buffer->SetBufferData(nullptr, vertex_bufsize); // set buffer size
 
@@ -218,22 +224,22 @@ protected:
 				if (vertex_buf == nullptr)
 					break;
 
-				chaos::MemoryBufferWriter vertices_writer(vertex_buf, vertex_bufsize);
+				MemoryBufferWriter vertices_writer(vertex_buf, vertex_bufsize);
 
 				for (unsigned int i = 0 ; i < vertices_count ; ++i)
 				{
-					vertices_writer << mesh->mVertices[i] * 100.0f;
-					vertices_writer << mesh->mNormals[i];
+					vertices_writer << imported_mesh->mVertices[i] * 100.0f;
+					vertices_writer << imported_mesh->mNormals[i];
 				}
 
 				vertex_buffer->UnMapBuffer();
 
 				// indices
-				chaos::shared_ptr<chaos::GPUBuffer> index_buffer = new chaos::GPUBuffer(false);
+				shared_ptr<GPUBuffer> index_buffer = new GPUBuffer(false);
 				if (vertex_buffer == nullptr)
 					break;
 
-				unsigned int faces_count = mesh->mNumFaces;
+				unsigned int faces_count = imported_mesh->mNumFaces;
 				size_t index_bufsize = faces_count * 3 * sizeof(int32_t);
 				index_buffer->SetBufferData(nullptr, index_bufsize); // set buffer size
 
@@ -242,46 +248,76 @@ protected:
 				if (index_buf == nullptr)
 					break;
 
-				chaos::MemoryBufferWriter indices_writer(index_buf, index_bufsize);
+				MemoryBufferWriter indices_writer(index_buf, index_bufsize);
 
 				for (unsigned int i = 0; i < faces_count; ++i)
 				{
-					assert(mesh->mFaces[i].mNumIndices == 3);
+					assert(imported_mesh->mFaces[i].mNumIndices == 3);
 
-					for (unsigned j = 0; j < mesh->mFaces[i].mNumIndices; ++j)
+					for (unsigned j = 0; j < imported_mesh->mFaces[i].mNumIndices; ++j)
 					{
-						indices_writer << int32_t(mesh->mFaces[i].mIndices[j]);
+						indices_writer << int32_t(imported_mesh->mFaces[i].mIndices[j]);
 					}
 				}
 
 				index_buffer->UnMapBuffer();
 
 				// create the element
-				chaos::GPUMeshElement & element = gpu_mesh->AddMeshElement(vertex_buffer.get(), index_buffer.get());
+				GPUMeshElement & element = gpu_mesh->AddMeshElement(vertex_buffer.get(), index_buffer.get());
 				element.vertex_declaration = declaration;
 
-				chaos::GPUDrawPrimitive primitive; 
+				GPUDrawPrimitive primitive; 
 				primitive.indexed = true;
 				primitive.primitive_type = GL_TRIANGLES;
 				primitive.count = faces_count * 3;
 				element.primitives.push_back(primitive);
 
-				CreateObject3D(gpu_mesh.get(), {0.0f, 0.0f, 0.0f}, { 0.0f, 0.0f, 1.0f }, mesh->mName.C_Str());
+				meshes.push_back(gpu_mesh);
+
+				imported_meshes.push_back(gpu_mesh.get());
 			}
 		}
+
+		// create the scene
+		ImportSceneNode(scene->mRootNode, imported_meshes);
 
 		return true;
 	}
 
+	void ImportSceneNode(aiNode const * node, std::vector<GPUMesh*> const & imported_meshes)
+	{
+		if (node == nullptr)
+			return;
+
+		for (unsigned int i = 0; i < node->mNumMeshes; ++i)
+		{
+			unsigned int imported_mesh_index = node->mMeshes[i];
+
+			if (imported_mesh_index < imported_meshes.size())
+			{
+				GPUMesh * gpu_mesh = imported_meshes[imported_mesh_index];
+
+				glm::vec3 position = { 0.0f, 0.0f, 0.0f };
+				glm::vec3 color    = { 0.0f, 0.0f, 1.0f };
+
+				CreateObject3D(gpu_mesh, position, color, node->mName.C_Str());
+			}
+		}
+
+		// recurively import child nodes
+		for (unsigned int i = 0; i < node->mNumChildren; ++i)
+			ImportSceneNode(node->mChildren[i], imported_meshes);
+	}
+
 	virtual void OnDrawImGuiContent() override
 	{	
-		chaos::ImGuiTools::FullViewportWindow("fullscreen", 0, [this]()
+		ImGuiTools::FullViewportWindow("fullscreen", 0, [this]()
 		{
 			if (ImGui::BeginTable("objects", 2, ImGuiTableFlags_RowBg))
 			{
 				ImGui::TableSetupColumn("Fixed Width", ImGuiTableColumnFlags_WidthFixed, 100.0f);
 
-				for (chaos::shared_ptr<Object3D> const& object : objects)
+				for (shared_ptr<Object3D> const& object : objects)
 				{
 					size_t current_index = (&object - &objects[0]);
 					bool is_selected = (selected_object_index == current_index);
@@ -293,29 +329,29 @@ protected:
 						selected_object_index = current_index;
 
 					ImGui::TableNextColumn();
-					chaos::DrawImGuiVariable(object->position);
+					DrawImGuiVariable(object->position);
 
 					ImGui::PopID();
 				}
 				ImGui::EndTable();
 			}
 		});
-		chaos::Window::OnDrawImGuiContent();
+		Window::OnDrawImGuiContent();
 	}
 
-	virtual bool OnKeyEventImpl(chaos::KeyEvent const& key_event) override
+	virtual bool OnKeyEventImpl(KeyEvent const& key_event) override
 	{
 		size_t object_count = objects.size();
 		if (object_count > 0)
 		{
-			if (key_event.IsKeyDown(chaos::KeyboardButton::KP_ADD))
+			if (key_event.IsKeyDown(KeyboardButton::KP_ADD))
 			{
 				selected_object_index = (selected_object_index == object_count - 1)?
 					0:
 					selected_object_index + 1;
 				return true;
 			}
-			if (key_event.IsKeyDown(chaos::KeyboardButton::KP_SUBTRACT))
+			if (key_event.IsKeyDown(KeyboardButton::KP_SUBTRACT))
 			{
 				selected_object_index = (selected_object_index == 0) ?
 					object_count - 1 :
@@ -323,7 +359,7 @@ protected:
 				return true;
 			}
 		}
-		return chaos::Window::OnKeyEventImpl(key_event);
+		return Window::OnKeyEventImpl(key_event);
 	}
 
 	virtual bool DoTick(float delta_time) override
@@ -335,9 +371,9 @@ protected:
 		size_t object_count = objects.size();
 		if (object_count > 0)
 		{
-			auto MoveObject = [this, delta_time](chaos::KeyboardButton button, size_t component_index, float direction)
+			auto MoveObject = [this, delta_time](KeyboardButton button, size_t component_index, float direction)
 			{
-				if (chaos::ButtonState const* state = chaos::KeyboardState::GetKeyboardButtonState(button))
+				if (ButtonState const* state = KeyboardState::GetKeyboardButtonState(button))
 				{
 					if (state->IsPressed())
 					{
@@ -349,32 +385,34 @@ protected:
 				}
 			};
 
-			MoveObject(chaos::KeyboardButton::KP_4, 0, -1.0f);
-			MoveObject(chaos::KeyboardButton::KP_6, 0, +1.0f);
-			MoveObject(chaos::KeyboardButton::KP_8, 2, -1.0f);
-			MoveObject(chaos::KeyboardButton::KP_2, 2, +1.0f);
-			MoveObject(chaos::KeyboardButton::KP_9, 1, +1.0f);
-			MoveObject(chaos::KeyboardButton::KP_3, 1, -1.0f);
+			MoveObject(KeyboardButton::KP_4, 0, -1.0f);
+			MoveObject(KeyboardButton::KP_6, 0, +1.0f);
+			MoveObject(KeyboardButton::KP_8, 2, -1.0f);
+			MoveObject(KeyboardButton::KP_2, 2, +1.0f);
+			MoveObject(KeyboardButton::KP_9, 1, +1.0f);
+			MoveObject(KeyboardButton::KP_3, 1, -1.0f);
 		}
-		return chaos::Window::DoTick(delta_time);
+		return Window::DoTick(delta_time);
 	}
 
 protected:
 
 	static constexpr float CAMERA_SPEED = 400.0f;
 
-	chaos::shared_ptr<Object3D> light;
+	shared_ptr<Object3D> light;
 
-	std::vector<chaos::shared_ptr<Object3D>> objects;
+	std::vector<shared_ptr<Object3D>> objects;
 
-	chaos::shared_ptr<chaos::GPUProgram> program;
+	std::vector<shared_ptr<GPUMesh>> meshes;
 
-	chaos::FPSViewController fps_view_controller;
+	shared_ptr<GPUProgram> program;
+
+	FPSViewController fps_view_controller;
 
 	size_t selected_object_index = 0;
 };
 
 int main(int argc, char ** argv, char ** env)
 {
-    return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env);
+    return RunWindowApplication<WindowOpenGLTest>(argc, argv, env);
 }

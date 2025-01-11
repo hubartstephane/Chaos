@@ -93,7 +93,7 @@ protected:
 		CreateLightMesh();
 
 		// load the mesh model
-		LoadMeshes("scene.obj");
+		LoadMeshes("scene.glb");
 
 		// generate the program
 		boost::filesystem::path const& resources_path = GetResourcesPath();
@@ -283,17 +283,14 @@ protected:
 
 				for (chaos::shared_ptr<Object3D> const& object : objects)
 				{
-					ImVec4 const selected_color   = { 1.0f, 0.0f, 0.0f, 1.0f };
-					ImVec4 const unselected_color = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-					bool is_selected = (selected_object_index == (&object - &objects[0]));
+					size_t current_index = (&object - &objects[0]);
+					bool is_selected = (selected_object_index == current_index);
 
 					ImGui::PushID(object.get());
 					
 					ImGui::TableNextColumn();
-					ImGui::TextColored(
-						is_selected? selected_color : unselected_color,
-						object->name.c_str());
+					if (ImGui::Selectable(object->name.c_str(), &is_selected))
+						selected_object_index = current_index;
 
 					ImGui::TableNextColumn();
 					chaos::DrawImGuiVariable(object->position);

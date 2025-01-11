@@ -64,9 +64,9 @@ namespace chaos
 
 		operator double() const { return 0.0; }
 
-		operator glm::quat() const { return glm::quat(); }
+		operator glm::quat() const { return glm::quat(1.0f, 0.0f, 0.0f, 0.0f); } // BEWARE: first argument is W !!! want a normalized quaternion (0,0,0,0 is invalid)
 
-		operator glm::dquat() const { return glm::dquat(); }
+		operator glm::dquat() const { return glm::dquat(1.0, 0.0, 0.0, 0.0); }   // BEWARE: first argument is W !!! want a normalized quaternion (0,0,0,0 is invalid)
 	};
 
 

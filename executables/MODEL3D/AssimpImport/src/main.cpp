@@ -14,7 +14,7 @@ public:
 
 	void Display(GPUProgram * program, GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, GPURenderParams & render_params)
 	{
-		glm::mat4x4 local_to_world = glm::translate(position);
+		glm::mat4x4 local_to_world = transform.GetLocalToParent();
 
 		GPUProgramProviderChain main_uniform_provider(uniform_provider);
 		main_uniform_provider.AddVariable("local_to_world", local_to_world);
@@ -25,10 +25,11 @@ public:
 
 public:
 
-	glm::vec3 position = { 0.0f, 0.0f, 0.0f };
-	glm::vec3 color    = { 0.0f, 0.0f, 1.0f };
-
 	std::string name;
+
+	SceneTransform<float, 3> transform;
+
+	glm::vec3 color = { 0.0f, 0.0f, 1.0f };
 
 	shared_ptr<GPUMesh> mesh;
 };
@@ -66,7 +67,7 @@ protected:
 			main_uniform_provider.AddVariable("projection", projection);
 			main_uniform_provider.AddVariable("world_to_camera", world_to_camera);
 			if (light != nullptr)
-				main_uniform_provider.AddVariable("light_position", light->position);
+				main_uniform_provider.AddVariable("light_position", light->transform.position);
 
 			// display objects
 			GPURenderParams render_params;
@@ -128,7 +129,7 @@ protected:
 			return result;
 
 		result->mesh = mesh;
-		result->position = position;
+		result->transform.position = position;
 		result->color = color;
 		result->name = name;
 
@@ -297,10 +298,15 @@ protected:
 			{
 				GPUMesh * gpu_mesh = imported_meshes[imported_mesh_index];
 
-				aiMatrix4x4 m = node->mTransformation;
-				glm::vec3 position = {m.a4, m.b4, m.c4};
 
-				glm::vec3 color = { 0.0f, 0.0f, 1.0f };
+				aiVector3D scale = { 1.0f, 1.0f, 1.0f };
+				aiVector3D pos   = { 0.0f, 0.0f, 0.0f };
+				aiVector3D rot   = { 0.0f, 0.0f, 0.0f };
+
+				node->mTransformation.Decompose(scale, rot, pos);
+				
+				glm::vec3 position = { pos.x, pos.y, pos.z };
+				glm::vec3 color    = { 0.0f, 0.0f, 1.0f };
 
 				CreateObject3D(gpu_mesh, position * SCALE_SCENE_FACTOR, color, node->mName.C_Str());
 			}
@@ -331,7 +337,7 @@ protected:
 						selected_object_index = current_index;
 
 					ImGui::TableNextColumn();
-					DrawImGuiVariable(object->position);
+					DrawImGuiVariable(object->transform.position);
 
 					ImGui::PopID();
 				}
@@ -379,10 +385,8 @@ protected:
 				{
 					if (state->IsPressed())
 					{
-						const float OBJECT_SPEED = 300.0f;
-
 						Object3D* selected_object = objects[selected_object_index].get();
-						selected_object->position[component_index] += direction * OBJECT_SPEED * delta_time;
+						selected_object->transform.position[component_index] += direction * OBJECT_SPEED * delta_time;
 					}
 				}
 			};
@@ -401,6 +405,10 @@ protected:
 
 	static constexpr float CAMERA_SPEED = 400.0f;
 
+	static constexpr float SCALE_SCENE_FACTOR = 100.0f;
+
+	static constexpr float OBJECT_SPEED = 300.0f;
+
 	shared_ptr<Object3D> light;
 
 	std::vector<shared_ptr<Object3D>> objects;
@@ -413,7 +421,7 @@ protected:
 
 	size_t selected_object_index = 0;
 
-	float SCALE_SCENE_FACTOR = 100.0f;
+
 };
 
 int main(int argc, char ** argv, char ** env)

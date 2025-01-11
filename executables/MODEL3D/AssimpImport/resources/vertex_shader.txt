@@ -10,13 +10,12 @@ uniform mat4 world_to_camera;
 
 void main() 
 {
-	ps_position = position;
+	vec4 local_pos = vec4(position, 1.0);
+	vec4 world_pos = local_to_world * local_pos;
+	vec4 cam_pos   = world_to_camera * world_pos;
+
+	gl_Position = projection * cam_pos;
+
+	ps_position = world_pos.xyz;
 	ps_normal   = normal;
-
-	vec4 tmp = vec4(position, 1.0);
-	tmp = local_to_world  * tmp;
-	tmp = world_to_camera * tmp;
-	tmp = projection      * tmp;
-
-	gl_Position = tmp;
 }

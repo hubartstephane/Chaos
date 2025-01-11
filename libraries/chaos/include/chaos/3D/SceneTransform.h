@@ -69,14 +69,14 @@ namespace chaos
 
 			if constexpr (dimension == 2)
 				s = glm::scale(glm::tvec3<T>(scale, 1));
-			else if constexpr (dimension == 2)
-				s = glm::scale(position);
+			else if constexpr (dimension == 3)
+				s = glm::scale(scale);
 
 			r = GetRotatorMatrix(rotator);
 
 			if constexpr (dimension == 2)
 				t = glm::translate(glm::tvec3<T>(position, 0));
-			else if constexpr (dimension == 2)
+			else if constexpr (dimension == 3)
 				t = glm::translate(position);
 
 			return s * r * t;
@@ -88,14 +88,14 @@ namespace chaos
 
 			if constexpr (dimension == 2)
 				t = glm::translate(glm::tvec3<T>(-position, 0));
-			else if constexpr (dimension == 2)
+			else if constexpr (dimension == 3)
 				t = glm::translate(-position);
 
 			r = GetRotatorMatrix(-rotator);
 
 			if constexpr (dimension == 2)
 				s = glm::scale(glm::tvec3<T>(T(1) / scale, 1));
-			else if constexpr (dimension == 2)
+			else if constexpr (dimension == 3)
 				s = glm::scale(T(1) / scale);
 
 			return t * r * s;

@@ -11,6 +11,7 @@ void main()
 	vec3  light_direction = normalize(light_position - ps_position);
 	float light_contrib   = max(0, dot(ps_normal, light_direction));
 	
-	output_color.rgb = material_color * (light_contrib * 0.5 + 0.5);
+	output_color.rgb = material_color * (light_contrib * 0.8 + 0.2);
+	
 	output_color.a   = 1.0;
 }

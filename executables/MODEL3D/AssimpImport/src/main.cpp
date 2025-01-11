@@ -228,7 +228,7 @@ protected:
 
 				for (unsigned int i = 0 ; i < vertices_count ; ++i)
 				{
-					vertices_writer << imported_mesh->mVertices[i] * 100.0f;
+					vertices_writer << imported_mesh->mVertices[i] * SCALE_SCENE_FACTOR;
 					vertices_writer << imported_mesh->mNormals[i];
 				}
 
@@ -297,10 +297,12 @@ protected:
 			{
 				GPUMesh * gpu_mesh = imported_meshes[imported_mesh_index];
 
-				glm::vec3 position = { 0.0f, 0.0f, 0.0f };
-				glm::vec3 color    = { 0.0f, 0.0f, 1.0f };
+				aiMatrix4x4 m = node->mTransformation;
+				glm::vec3 position = {m.a4, m.b4, m.c4};
 
-				CreateObject3D(gpu_mesh, position, color, node->mName.C_Str());
+				glm::vec3 color = { 0.0f, 0.0f, 1.0f };
+
+				CreateObject3D(gpu_mesh, position * SCALE_SCENE_FACTOR, color, node->mName.C_Str());
 			}
 		}
 
@@ -410,6 +412,8 @@ protected:
 	FPSViewController fps_view_controller;
 
 	size_t selected_object_index = 0;
+
+	float SCALE_SCENE_FACTOR = 100.0f;
 };
 
 int main(int argc, char ** argv, char ** env)

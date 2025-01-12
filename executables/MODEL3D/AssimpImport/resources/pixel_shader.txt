@@ -9,7 +9,7 @@ uniform vec3 light_position;
 void main()
 {
 	vec3  light_direction = normalize(light_position - ps_position);
-	float light_contrib   = max(0, dot(ps_normal, light_direction));
+	float light_contrib   = max(0, dot(normalize(ps_normal), light_direction));
 	
 	output_color.rgb = material_color * (light_contrib * 0.8 + 0.2);
 	

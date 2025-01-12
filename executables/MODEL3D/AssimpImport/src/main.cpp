@@ -213,13 +213,13 @@ protected:
 			{
 				shared_ptr<GPUMesh> gpu_mesh = new GPUMesh;
 
-				aiMesh const* imported_mesh = scene->mMeshes[i];
-				if (imported_mesh == nullptr)
+				aiMesh const* ai_mesh = scene->mMeshes[i];
+				if (ai_mesh == nullptr)
 					continue;
 
-				if (!imported_mesh->HasNormals())
+				if (!ai_mesh->HasNormals())
 					continue;
-				if (!imported_mesh->HasPositions())
+				if (!ai_mesh->HasPositions())
 					continue;
 
 				// vertices
@@ -227,7 +227,7 @@ protected:
 				if (vertex_buffer == nullptr)
 					break;
 			
-				unsigned int vertices_count = imported_mesh->mNumVertices;
+				unsigned int vertices_count = ai_mesh->mNumVertices;
 				size_t vertex_bufsize = vertices_count * sizeof(MeshVertex);
 				vertex_buffer->SetBufferData(nullptr, vertex_bufsize); // set buffer size
 
@@ -239,8 +239,8 @@ protected:
 
 				for (unsigned int i = 0 ; i < vertices_count ; ++i)
 				{
-					glm::vec3 position = { imported_mesh->mVertices[i].x, imported_mesh->mVertices[i].y, imported_mesh->mVertices[i].z};
-					glm::vec3 normal   = { imported_mesh->mNormals[i].x, imported_mesh->mNormals[i].y, imported_mesh->mNormals[i].z};
+					glm::vec3 position = { ai_mesh->mVertices[i].x, ai_mesh->mVertices[i].y, ai_mesh->mVertices[i].z};
+					glm::vec3 normal   = { ai_mesh->mNormals[i].x, ai_mesh->mNormals[i].y, ai_mesh->mNormals[i].z};
 
 					vertices_writer << position * SCALE_SCENE_FACTOR;
 					vertices_writer << normal;
@@ -253,7 +253,7 @@ protected:
 				if (vertex_buffer == nullptr)
 					break;
 
-				unsigned int faces_count = imported_mesh->mNumFaces;
+				unsigned int faces_count = ai_mesh->mNumFaces;
 				size_t index_bufsize = faces_count * 3 * sizeof(int32_t);
 				index_buffer->SetBufferData(nullptr, index_bufsize); // set buffer size
 
@@ -266,11 +266,11 @@ protected:
 
 				for (unsigned int i = 0; i < faces_count; ++i)
 				{
-					assert(imported_mesh->mFaces[i].mNumIndices == 3);
+					assert(ai_mesh->mFaces[i].mNumIndices == 3);
 
-					for (unsigned j = 0; j < imported_mesh->mFaces[i].mNumIndices; ++j)
+					for (unsigned j = 0; j < ai_mesh->mFaces[i].mNumIndices; ++j)
 					{
-						indices_writer << int32_t(imported_mesh->mFaces[i].mIndices[j]);
+						indices_writer << int32_t(ai_mesh->mFaces[i].mIndices[j]);
 					}
 				}
 

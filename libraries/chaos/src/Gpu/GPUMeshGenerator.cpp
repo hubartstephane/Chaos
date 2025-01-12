@@ -172,10 +172,10 @@ namespace chaos
 
 	glm::vec3 const GPUQuadMeshGenerator::vertices[4] =
 	{
-		glm::vec3(-1.0f, -1.0f, 0.0f),
-		glm::vec3( 1.0f, -1.0f, 0.0f),
-		glm::vec3( 1.0f,  1.0f, 0.0f),
-		glm::vec3(-1.0f,  1.0f, 0.0f)
+		{ -1.0f, -1.0f,  0.0f },
+		{  1.0f, -1.0f,  0.0f },
+		{  1.0f,  1.0f,  0.0f },
+		{ -1.0f,  1.0f,  0.0f }
 	};
 
 	GLuint const GPUQuadMeshGenerator::triangles[6] =
@@ -219,7 +219,7 @@ namespace chaos
 		indices_writer.Write(triangles, sizeof(triangles));
 
 		// the vertices	
-		glm::vec3 normal = glm::vec3(0.0f, 0.0f, 1.0f);
+		glm::vec3 normal = {0.0f, 0.0f, 1.0f};
 		glm::vec3 transformed_normal = GLMTools::Mult(transform, normal);
 
 		box3 bounding_box;
@@ -243,35 +243,35 @@ namespace chaos
 
 	glm::vec3 const GPUBoxMeshGenerator::vertices[24 * 2] = // position + normal
 	{
-		glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3( 0.0f, 0.0f, -1.0f),
-		glm::vec3( 1.0f, -1.0f, -1.0f), glm::vec3( 0.0f, 0.0f, -1.0f),
-		glm::vec3( 1.0f,  1.0f, -1.0f), glm::vec3( 0.0f, 0.0f, -1.0f),
-		glm::vec3(-1.0f,  1.0f, -1.0f), glm::vec3( 0.0f, 0.0f, -1.0f),
+		{ -1.0f, -1.0f, -1.0f }, {  0.0f,  0.0f, -1.0f },
+		{  1.0f, -1.0f, -1.0f }, {  0.0f,  0.0f, -1.0f },
+		{  1.0f,  1.0f, -1.0f }, {  0.0f,  0.0f, -1.0f },
+		{ -1.0f,  1.0f, -1.0f }, {  0.0f,  0.0f, -1.0f },
 
-		glm::vec3(-1.0f, -1.0f,  1.0f), glm::vec3( 0.0f, 0.0f, 1.0f),
-		glm::vec3( 1.0f, -1.0f,  1.0f), glm::vec3( 0.0f, 0.0f, 1.0f),
-		glm::vec3( 1.0f,  1.0f,  1.0f), glm::vec3( 0.0f, 0.0f, 1.0f),
-		glm::vec3(-1.0f,  1.0f,  1.0f), glm::vec3( 0.0f, 0.0f, 1.0f),
+		{ -1.0f, -1.0f,  1.0f }, {  0.0f,  0.0f,  1.0f },
+		{  1.0f, -1.0f,  1.0f }, {  0.0f,  0.0f,  1.0f },
+		{  1.0f,  1.0f,  1.0f }, {  0.0f,  0.0f,  1.0f },
+		{ -1.0f,  1.0f,  1.0f }, {  0.0f,  0.0f,  1.0f },
 
-		glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(-1.0f, 0.0f, 0.0f),
-		glm::vec3(-1.0f,  1.0f, -1.0f), glm::vec3(-1.0f, 0.0f, 0.0f),
-		glm::vec3(-1.0f,  1.0f,  1.0f), glm::vec3(-1.0f, 0.0f, 0.0f),
-		glm::vec3(-1.0f, -1.0f,  1.0f), glm::vec3(-1.0f, 0.0f, 0.0f),
+		{ -1.0f, -1.0f, -1.0f }, { -1.0f,  0.0f,  0.0f },
+		{ -1.0f,  1.0f, -1.0f }, { -1.0f,  0.0f,  0.0f },
+		{ -1.0f,  1.0f,  1.0f }, { -1.0f,  0.0f,  0.0f },
+		{ -1.0f, -1.0f,  1.0f }, { -1.0f,  0.0f,  0.0f },
 
-		glm::vec3( 1.0f, -1.0f, -1.0f), glm::vec3( 1.0f, 0.0f, 0.0f),
-		glm::vec3( 1.0f,  1.0f, -1.0f), glm::vec3( 1.0f, 0.0f, 0.0f),
-		glm::vec3( 1.0f,  1.0f,  1.0f), glm::vec3( 1.0f, 0.0f, 0.0f),
-		glm::vec3( 1.0f, -1.0f,  1.0f), glm::vec3( 1.0f, 0.0f, 0.0f),
+		{  1.0f, -1.0f, -1.0f }, {  1.0f,  0.0f,  0.0f },
+		{  1.0f,  1.0f, -1.0f }, {  1.0f,  0.0f,  0.0f },
+		{  1.0f,  1.0f,  1.0f }, {  1.0f,  0.0f,  0.0f },
+		{  1.0f, -1.0f,  1.0f }, {  1.0f,  0.0f,  0.0f },
 
-		glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f),
-		glm::vec3( 1.0f, -1.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f),
-		glm::vec3( 1.0f, -1.0f,  1.0f), glm::vec3(0.0f, -1.0f, 0.0f),
-		glm::vec3(-1.0f, -1.0f,  1.0f), glm::vec3(0.0f, -1.0f, 0.0f),
+		{ -1.0f, -1.0f, -1.0f }, {  0.0f, -1.0f,  0.0f },
+		{  1.0f, -1.0f, -1.0f }, {  0.0f, -1.0f,  0.0f },
+		{  1.0f, -1.0f,  1.0f }, {  0.0f, -1.0f,  0.0f },
+		{ -1.0f, -1.0f,  1.0f }, {  0.0f, -1.0f,  0.0f },
 
-		glm::vec3(-1.0f,  1.0f, -1.0f), glm::vec3(0.0f,  1.0f, 0.0f),
-		glm::vec3( 1.0f,  1.0f, -1.0f), glm::vec3(0.0f,  1.0f, 0.0f),
-		glm::vec3( 1.0f,  1.0f,  1.0f), glm::vec3(0.0f,  1.0f, 0.0f),
-		glm::vec3(-1.0f,  1.0f,  1.0f), glm::vec3(0.0f,  1.0f, 0.0f),
+		{ -1.0f,  1.0f, -1.0f }, {  0.0f,  1.0f,  0.0f },
+		{  1.0f,  1.0f, -1.0f }, {  0.0f,  1.0f,  0.0f },
+		{  1.0f,  1.0f,  1.0f }, {  0.0f,  1.0f,  0.0f },
+		{ -1.0f,  1.0f,  1.0f }, {  0.0f,  1.0f,  0.0f }
 	};
 
 	GLuint const GPUBoxMeshGenerator::triangles[36] =
@@ -357,15 +357,15 @@ namespace chaos
 
 	glm::vec3 const GPUWireframeBoxMeshGenerator::vertices[8] = // position
 	{
-		glm::vec3(-1.0f, -1.0f, -1.0f),
-		glm::vec3(-1.0f,  1.0f, -1.0f),
-		glm::vec3( 1.0f,  1.0f, -1.0f),
-		glm::vec3( 1.0f, -1.0f, -1.0f),
+		{-1.0f, -1.0f, -1.0f},
+		{-1.0f,  1.0f, -1.0f},
+		{ 1.0f,  1.0f, -1.0f},
+		{ 1.0f, -1.0f, -1.0f},
 
-		glm::vec3(-1.0f, -1.0f,  1.0f),
-		glm::vec3(-1.0f,  1.0f,  1.0f),
-		glm::vec3( 1.0f,  1.0f,  1.0f),
-		glm::vec3( 1.0f, -1.0f,  1.0f)
+		{-1.0f, -1.0f,  1.0f},
+		{-1.0f,  1.0f,  1.0f},
+		{ 1.0f,  1.0f,  1.0f},
+		{ 1.0f, -1.0f,  1.0f}
 	};
 
 	GLuint const GPUWireframeBoxMeshGenerator::indices[24] =
@@ -463,13 +463,13 @@ namespace chaos
 
 	void GPUCircleMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 	{
-		glm::vec3 normal = glm::vec3(0.0f, 0.0f, 1.0f);
+		glm::vec3 normal = {0.0f, 0.0f, 1.0f};
 		glm::vec3 transformed_normal = GLMTools::Mult(transform, normal);
 
 		// generate the vertices
 		box3 bounding_box;
 
-		glm::vec3 center = glm::vec3(primitive.position, 0.0f);
+		glm::vec3 center = {primitive.position, 0.0f};
 		glm::vec3 transformed_center = GLMTools::MultWithTranslation(transform, center);
 
 		vertices_writer << transformed_center;
@@ -482,8 +482,8 @@ namespace chaos
 		{
 			float alpha = (float)i * delta_alpha;
 
-			glm::vec2 direction = glm::vec2(std::cos(alpha), std::sin(alpha));
-			glm::vec3 position  = glm::vec3(primitive.radius * direction + primitive.position, 0.0f);
+			glm::vec2 direction = {std::cos(alpha), std::sin(alpha)};
+			glm::vec3 position  = {primitive.radius * direction + primitive.position, 0.0f};
 
 			glm::vec3 transformed_position = GLMTools::MultWithTranslation(transform, position);
 

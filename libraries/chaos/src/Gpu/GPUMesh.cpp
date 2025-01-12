@@ -154,4 +154,14 @@ namespace chaos
 		return DisplayWithMaterial(program->GetDefaultMaterial(), renderer, uniform_provider, render_params);
 	}
 
+	void GPUMesh::SetBoundingBox(std::optional<box3> const& in_bounding_box)
+	{
+		bounding_box = in_bounding_box;
+	}
+	/** get the bounding box of the mesh */
+	std::optional<box3> const& GPUMesh::GetBoundingBox() const
+	{
+	return bounding_box;
+	}
+
 }; // namespace chaos

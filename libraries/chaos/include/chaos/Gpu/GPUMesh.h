@@ -24,6 +24,8 @@ namespace chaos
         /** destructor */
         ~GPUMeshElement();
 
+	public:
+
         /** the vertex declaration for this element */
         shared_ptr<GPUVertexDeclaration> vertex_declaration;
         /** the material to use for this rendering */
@@ -62,14 +64,21 @@ namespace chaos
         /** add an rendering element */
         GPUMeshElement& AddMeshElement(GPUBuffer * vertex_buffer, GPUBuffer * index_buffer);
 
+		/** setting the bounding box of the mesh */
+		void SetBoundingBox(std::optional<box3> const & in_bounding_box);
+		/** get the bounding box of the mesh */
+		std::optional<box3> const& GetBoundingBox() const;
+
         /** change the vertex array cache */
         void SetVertexArrayCache(GPUVertexArrayCache* in_vertex_array_cache);
 
+		/** swapping two meshes */
         friend void swap(GPUMesh& src1, GPUMesh& src2)
         {
             std::swap(src1.elements, src2.elements);
             std::swap(src1.last_rendered_fence, src2.last_rendered_fence);
             std::swap(src1.vertex_array_cache, src2.vertex_array_cache);
+			std::swap(src1.bounding_box, src2.bounding_box);
         }
 
         /** override the material for the mesh and display */
@@ -90,6 +99,8 @@ namespace chaos
         shared_ptr<GPUFence> last_rendered_fence;
         /** the vertex array cache */
         shared_ptr<GPUVertexArrayCache> vertex_array_cache;
+		/** the bounding box */
+		std::optional<box3> bounding_box;
     };
 
 #endif

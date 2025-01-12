@@ -70,7 +70,7 @@ namespace chaos
 
 		// map the buffers
 		char* vb_ptr = (vertex_buffer != nullptr) ? vertex_buffer->MapBuffer(0, 0, false, true) : nullptr;
-		char* ib_ptr = (index_buffer != nullptr) ? index_buffer->MapBuffer(0, 0, false, true) : nullptr;
+		char* ib_ptr = (index_buffer != nullptr) ?  index_buffer->MapBuffer(0, 0, false, true)  : nullptr;
 
 		// prepare the mesh
 		mesh->Clear(nullptr);
@@ -147,27 +147,35 @@ namespace chaos
 		draw_primitive.base_vertex_index = 0;
 		primitives.push_back(draw_primitive);
 
-		glm::vec3 normal = glm::normalize(glm::cross(primitive.b - primitive.a, primitive.c - primitive.b));
-		normal = GLMTools::Mult(transform, normal);
+		glm::vec3 transformed_a = GLMTools::MultWithTranslation(transform, primitive.a);
+		glm::vec3 transformed_b = GLMTools::MultWithTranslation(transform, primitive.b);
+		glm::vec3 transformed_c = GLMTools::MultWithTranslation(transform, primitive.c);
 
-		vertices_writer << GLMTools::MultWithTranslation(transform, primitive.a);
-		vertices_writer << normal;
-		vertices_writer << GLMTools::MultWithTranslation(transform, primitive.b);
-		vertices_writer << normal;
-		vertices_writer << GLMTools::MultWithTranslation(transform, primitive.c);
-		vertices_writer << normal;
+		glm::vec3 transformed_normal = glm::normalize(glm::cross(transformed_b - transformed_a, transformed_c - transformed_b));
+
+		vertices_writer << transformed_a;
+		vertices_writer << transformed_normal;
+		vertices_writer << transformed_b;
+		vertices_writer << transformed_normal;
+		vertices_writer << transformed_c;
+		vertices_writer << transformed_normal;
+
+		box3 bounding_box;
+		ExtendBox(bounding_box, transformed_a);
+		ExtendBox(bounding_box, transformed_b);
+		ExtendBox(bounding_box, transformed_c);
 	}
 
 	// =====================================================================
 	// GPUQuadMeshGenerator
 	// =====================================================================
 
-	glm::vec2 const GPUQuadMeshGenerator::vertices[4] =
+	glm::vec3 const GPUQuadMeshGenerator::vertices[4] =
 	{
-		glm::vec2(-1.0f, -1.0f),
-		glm::vec2(1.0f, -1.0f),
-		glm::vec2(1.0f,  1.0f),
-		glm::vec2(-1.0f,  1.0f)
+		glm::vec3(-1.0f, -1.0f, 0.0f),
+		glm::vec3( 1.0f, -1.0f, 0.0f),
+		glm::vec3( 1.0f,  1.0f, 0.0f),
+		glm::vec3(-1.0f,  1.0f, 0.0f)
 	};
 
 	GLuint const GPUQuadMeshGenerator::triangles[6] =
@@ -210,14 +218,22 @@ namespace chaos
 		// the indices
 		indices_writer.Write(triangles, sizeof(triangles));
 
-		// the vertices
-		int const vertex_count = sizeof(vertices) / sizeof(vertices[0]);
+		// the vertices	
+		glm::vec3 normal = glm::vec3(0.0f, 0.0f, 1.0f);
+		glm::vec3 transformed_normal = GLMTools::Mult(transform, normal);
 
-		glm::vec3 normal = GLMTools::Mult(transform, glm::vec3(0.0f, 0.0f, 1.0f));
-		for (int i = 0; i < vertex_count; ++i)
+		box3 bounding_box;
+		
+		size_t const vertex_count = sizeof(vertices) / sizeof(vertices[0]);
+		for (size_t i = 0; i < vertex_count; ++i)
 		{
-			vertices_writer << GLMTools::MultWithTranslation(transform, glm::vec3(vertices[i] * primitive.half_size + primitive.position, 0.0f));
-			vertices_writer << normal;
+			glm::vec3 position = vertices[i] * glm::vec3(primitive.half_size, 0.0f) + glm::vec3(primitive.position, 0.0f);
+			glm::vec3 transformed_position = GLMTools::MultWithTranslation(transform, position);
+
+			vertices_writer << transformed_position;
+			vertices_writer << transformed_normal;
+
+			ExtendBox(bounding_box, transformed_position);
 		}
 	}
 
@@ -227,35 +243,35 @@ namespace chaos
 
 	glm::vec3 const GPUBoxMeshGenerator::vertices[24 * 2] = // position + normal
 	{
-		glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
-		glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
-		glm::vec3(1.0f,  1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
-		glm::vec3(-1.0f,  1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
+		glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3( 0.0f, 0.0f, -1.0f),
+		glm::vec3( 1.0f, -1.0f, -1.0f), glm::vec3( 0.0f, 0.0f, -1.0f),
+		glm::vec3( 1.0f,  1.0f, -1.0f), glm::vec3( 0.0f, 0.0f, -1.0f),
+		glm::vec3(-1.0f,  1.0f, -1.0f), glm::vec3( 0.0f, 0.0f, -1.0f),
 
-		glm::vec3(-1.0f, -1.0f, +1.0f), glm::vec3(0.0f, 0.0f, +1.0f),
-		glm::vec3(1.0f, -1.0f, +1.0f), glm::vec3(0.0f, 0.0f, +1.0f),
-		glm::vec3(1.0f,  1.0f, +1.0f), glm::vec3(0.0f, 0.0f, +1.0f),
-		glm::vec3(-1.0f,  1.0f, +1.0f), glm::vec3(0.0f, 0.0f, +1.0f),
+		glm::vec3(-1.0f, -1.0f,  1.0f), glm::vec3( 0.0f, 0.0f, 1.0f),
+		glm::vec3( 1.0f, -1.0f,  1.0f), glm::vec3( 0.0f, 0.0f, 1.0f),
+		glm::vec3( 1.0f,  1.0f,  1.0f), glm::vec3( 0.0f, 0.0f, 1.0f),
+		glm::vec3(-1.0f,  1.0f,  1.0f), glm::vec3( 0.0f, 0.0f, 1.0f),
 
 		glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(-1.0f, 0.0f, 0.0f),
 		glm::vec3(-1.0f,  1.0f, -1.0f), glm::vec3(-1.0f, 0.0f, 0.0f),
 		glm::vec3(-1.0f,  1.0f,  1.0f), glm::vec3(-1.0f, 0.0f, 0.0f),
 		glm::vec3(-1.0f, -1.0f,  1.0f), glm::vec3(-1.0f, 0.0f, 0.0f),
 
-		glm::vec3(+1.0f, -1.0f, -1.0f), glm::vec3(+1.0f, 0.0f, 0.0f),
-		glm::vec3(+1.0f,  1.0f, -1.0f), glm::vec3(+1.0f, 0.0f, 0.0f),
-		glm::vec3(+1.0f,  1.0f,  1.0f), glm::vec3(+1.0f, 0.0f, 0.0f),
-		glm::vec3(+1.0f, -1.0f,  1.0f), glm::vec3(+1.0f, 0.0f, 0.0f),
+		glm::vec3( 1.0f, -1.0f, -1.0f), glm::vec3( 1.0f, 0.0f, 0.0f),
+		glm::vec3( 1.0f,  1.0f, -1.0f), glm::vec3( 1.0f, 0.0f, 0.0f),
+		glm::vec3( 1.0f,  1.0f,  1.0f), glm::vec3( 1.0f, 0.0f, 0.0f),
+		glm::vec3( 1.0f, -1.0f,  1.0f), glm::vec3( 1.0f, 0.0f, 0.0f),
 
 		glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f),
-		glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f),
-		glm::vec3(1.0f, -1.0f,  1.0f), glm::vec3(0.0f, -1.0f, 0.0f),
+		glm::vec3( 1.0f, -1.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f),
+		glm::vec3( 1.0f, -1.0f,  1.0f), glm::vec3(0.0f, -1.0f, 0.0f),
 		glm::vec3(-1.0f, -1.0f,  1.0f), glm::vec3(0.0f, -1.0f, 0.0f),
 
-		glm::vec3(-1.0f, +1.0f, -1.0f), glm::vec3(0.0f, +1.0f, 0.0f),
-		glm::vec3(1.0f, +1.0f, -1.0f), glm::vec3(0.0f, +1.0f, 0.0f),
-		glm::vec3(1.0f, +1.0f,  1.0f), glm::vec3(0.0f, +1.0f, 0.0f),
-		glm::vec3(-1.0f, +1.0f,  1.0f), glm::vec3(0.0f, +1.0f, 0.0f),
+		glm::vec3(-1.0f,  1.0f, -1.0f), glm::vec3(0.0f,  1.0f, 0.0f),
+		glm::vec3( 1.0f,  1.0f, -1.0f), glm::vec3(0.0f,  1.0f, 0.0f),
+		glm::vec3( 1.0f,  1.0f,  1.0f), glm::vec3(0.0f,  1.0f, 0.0f),
+		glm::vec3(-1.0f,  1.0f,  1.0f), glm::vec3(0.0f,  1.0f, 0.0f),
 	};
 
 	GLuint const GPUBoxMeshGenerator::triangles[36] =
@@ -314,14 +330,24 @@ namespace chaos
 		indices_writer.Write(triangles, sizeof(triangles));
 
 		// the vertices
-		glm::vec3 hs = primitive.half_size;
-		glm::vec3 p = primitive.position;
+		glm::vec3 const & hs = primitive.half_size;
+		glm::vec3 const & p  = primitive.position;
+
+		box3 bounding_box;
 
 		int const count = sizeof(vertices) / sizeof(vertices[0]);
 		for (int i = 0; i < count / 2; ++i)
 		{
-			vertices_writer << GLMTools::MultWithTranslation(transform, vertices[i * 2] * hs + p); // resize position
-			vertices_writer << GLMTools::Mult(transform, vertices[i * 2 + 1]);      // copy normal
+			glm::vec3 position = vertices[i * 2] * hs + p;
+			glm::vec3 normal   = vertices[i * 2 + 1];
+
+			glm::vec3 transformed_position = GLMTools::MultWithTranslation(transform, position);
+			glm::vec3 transformed_normal   = GLMTools::Mult(transform, normal);
+
+			vertices_writer << transformed_position;
+			vertices_writer << transformed_normal;
+
+			ExtendBox(bounding_box, transformed_position);
 		}
 	}
 
@@ -394,12 +420,21 @@ namespace chaos
 		indices_writer.Write(indices, sizeof(indices));
 
 		// the vertices
-		glm::vec3 hs = primitive.half_size;
-		glm::vec3 p = primitive.position;
+		glm::vec3 const & hs = primitive.half_size;
+		glm::vec3 const & p  = primitive.position;
 
-		int const count = sizeof(vertices) / sizeof(vertices[0]);
-		for (int i = 0; i < count; ++i)
-			vertices_writer << GLMTools::MultWithTranslation(transform, vertices[i] * hs + p); // resize position
+		box3 bounding_box;
+
+		size_t const count = sizeof(vertices) / sizeof(vertices[0]);
+		for (size_t i = 0; i < count; ++i)
+		{
+			glm::vec3 position = vertices[i] * hs + p;
+			glm::vec3 transformed_position = GLMTools::MultWithTranslation(transform, position);
+
+			vertices_writer << transformed_position;
+
+			ExtendBox(bounding_box, transformed_position);
+		}
 	}
 
 	// =====================================================================
@@ -428,11 +463,19 @@ namespace chaos
 
 	void GPUCircleMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 	{
-		glm::vec3 normal = GLMTools::Mult(transform, glm::vec3(0.0f, 0.0f, 1.0f));
+		glm::vec3 normal = glm::vec3(0.0f, 0.0f, 1.0f);
+		glm::vec3 transformed_normal = GLMTools::Mult(transform, normal);
 
 		// generate the vertices
-		vertices_writer << GLMTools::MultWithTranslation(transform, glm::vec3(primitive.position, 0.0f));
-		vertices_writer << normal;
+		box3 bounding_box;
+
+		glm::vec3 center = glm::vec3(primitive.position, 0.0f);
+		glm::vec3 transformed_center = GLMTools::MultWithTranslation(transform, center);
+
+		vertices_writer << transformed_center;
+		vertices_writer << transformed_normal;
+
+		ExtendBox(bounding_box, transformed_center);
 
 		float delta_alpha = ((float)M_PI * 2.0f) / ((float)subdivisions);
 		for (int i = 0 ; i < subdivisions ; ++i)
@@ -440,9 +483,14 @@ namespace chaos
 			float alpha = (float)i * delta_alpha;
 
 			glm::vec2 direction = glm::vec2(std::cos(alpha), std::sin(alpha));
+			glm::vec3 position  = glm::vec3(primitive.radius * direction + primitive.position, 0.0f);
 
-			vertices_writer << GLMTools::MultWithTranslation(transform, glm::vec3(primitive.radius * direction + primitive.position, 0.0f));
-			vertices_writer << normal;
+			glm::vec3 transformed_position = GLMTools::MultWithTranslation(transform, position);
+
+			vertices_writer << transformed_position;
+			vertices_writer << transformed_normal;
+
+			ExtendBox(bounding_box, transformed_position);
 		}
 
 		// generate the index buffer
@@ -497,6 +545,22 @@ namespace chaos
 
 	void GPUSphereMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 	{
+		box3 bounding_box;
+
+		auto InsertVertex = [this, &vertices_writer, &bounding_box](float alpha, float beta)
+		{
+			glm::vec3 normal = MathTools::PolarCoordToVector(alpha, beta);
+			glm::vec3 position = primitive.radius * normal + primitive.position;
+
+			glm::vec3 transformed_position = GLMTools::MultWithTranslation(transform, position);
+			glm::vec3 transformed_normal   = GLMTools::Mult(transform, normal);
+			
+			vertices_writer << transformed_position;
+			vertices_writer << transformed_normal;
+
+			ExtendBox(bounding_box, transformed_position);
+		};
+
 		int subdiv_beta = std::max(subdivisions, 3);
 		int subdiv_alpha = subdiv_beta * 2;
 
@@ -504,7 +568,7 @@ namespace chaos
 		float     radius = primitive.radius;
 
 		// construct the vertex buffer
-		InsertVertex(vertices_writer, 0.0f, (float)M_PI_2);
+		InsertVertex(0.0f, (float)M_PI_2);
 
 		float delta_alpha = ((float)M_PI * 2.0f) / ((float)subdiv_alpha); // there is twice more divisions along ALPHA than BETA
 		float delta_beta = ((float)M_PI) / ((float)subdiv_beta);
@@ -515,13 +579,13 @@ namespace chaos
 			float alpha = 0.0f;
 			for (int j = 0; j < subdiv_alpha; ++j)
 			{
-				InsertVertex(vertices_writer, alpha, beta);
+				InsertVertex(alpha, beta);
 				alpha += delta_alpha;
 			}
 			beta += delta_beta;
 		}
 
-		InsertVertex(vertices_writer, 0.0f, (float)-M_PI_2);
+		InsertVertex(0.0f, (float)-M_PI_2);
 
 		// construct the index buffer
 		for (int i = 0; i < subdiv_alpha; ++i)   // the TOP-CAP
@@ -572,13 +636,6 @@ namespace chaos
 		draw_primitive.start = 0;
 		draw_primitive.base_vertex_index = 0;
 		primitives.push_back(draw_primitive);
-	}
-
-	void GPUSphereMeshGenerator::InsertVertex(MemoryBufferWriter & vertices_writer, float alpha, float beta) const
-	{
-		glm::vec3 normal = MathTools::PolarCoordToVector(alpha, beta);
-		vertices_writer << GLMTools::MultWithTranslation(transform, primitive.radius * normal + primitive.position);
-		vertices_writer << GLMTools::Mult(transform, normal);
 	}
 
 }; // namespace chaos

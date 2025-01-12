@@ -107,7 +107,7 @@ namespace chaos
 	protected:
 
 		/** the vertices defining a face facing planes inside [-1, +1] */
-		static glm::vec2 const vertices[4];
+		static glm::vec3 const vertices[4];
 		/** the triangles indices defining a face facing planes */
 		static GLuint const triangles[6];
 	};
@@ -231,11 +231,6 @@ namespace chaos
 		virtual GPUVertexDeclaration* GenerateVertexDeclaration() const override;
 		/** get the mesh data */
 		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive>& primitives, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
-
-	protected:
-
-		/** get a vertex on the sphere from polar angle */
-		void InsertVertex(MemoryBufferWriter& vertices_writer, float alpha, float beta) const;
 
 	protected:
 

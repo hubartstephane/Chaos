@@ -239,8 +239,11 @@ protected:
 
 				for (unsigned int i = 0 ; i < vertices_count ; ++i)
 				{
-					vertices_writer << imported_mesh->mVertices[i] * SCALE_SCENE_FACTOR;
-					vertices_writer << imported_mesh->mNormals[i];
+					glm::vec3 position = { imported_mesh->mVertices[i].x, imported_mesh->mVertices[i].y, imported_mesh->mVertices[i].z};
+					glm::vec3 normal   = { imported_mesh->mNormals[i].x, imported_mesh->mNormals[i].y, imported_mesh->mNormals[i].z};
+
+					vertices_writer << position * SCALE_SCENE_FACTOR;
+					vertices_writer << normal;
 				}
 
 				vertex_buffer->UnMapBuffer();
@@ -308,7 +311,6 @@ protected:
 			{
 				GPUMesh * gpu_mesh = imported_meshes[imported_mesh_index];
 
-
 				aiVector3D   ai_scale    = { 1.0f, 1.0f, 1.0f };
 				aiVector3D   ai_position = { 0.0f, 0.0f, 0.0f };
 				aiQuaternion ai_rotation = { 0.0f, 0.0f, 0.0f };
@@ -318,6 +320,7 @@ protected:
 				glm::vec3 position = { ai_position.x, ai_position.y, ai_position.z };
 				glm::vec3 scale    = { ai_scale.x, ai_scale.y, ai_scale.z };
 				glm::quat rotation = { ai_rotation.w, ai_rotation.x, ai_rotation.y, ai_rotation.z };
+
 				glm::vec3 color    = { 0.0f, 0.0f, 1.0f };
 
 				CreateObject3D(
@@ -421,11 +424,11 @@ protected:
 
 protected:
 
-	static constexpr float CAMERA_SPEED = 400.0f;
+	static constexpr float CAMERA_SPEED = 500.0f;
 
 	static constexpr float SCALE_SCENE_FACTOR = 100.0f;
 
-	static constexpr float OBJECT_SPEED = 300.0f;
+	static constexpr float OBJECT_SPEED = 500.0f;
 
 	shared_ptr<Object3D> light;
 

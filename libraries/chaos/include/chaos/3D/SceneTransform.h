@@ -79,7 +79,7 @@ namespace chaos
 			else if constexpr (dimension == 3)
 				t = glm::translate(position);
 
-			return s * r * t;
+			return t * r * s;
 		}
 		/** gets the parent to local */
 		mat_type GetParentToLocal() const
@@ -98,7 +98,7 @@ namespace chaos
 			else if constexpr (dimension == 3)
 				s = glm::scale(T(1) / scale);
 
-			return t * r * s;
+			return s * r * t;
 		}
 
 	public:

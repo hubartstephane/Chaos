@@ -14,9 +14,9 @@ public:
 
 	void Display(GPUProgram * program, GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, GPURenderParams & render_params)
 	{
-		glm::mat4x4 local_to_world = transform.GetLocalToParent();
-
 		GPUProgramProviderChain main_uniform_provider(uniform_provider);
+
+		glm::mat4x4 local_to_world = transform.GetLocalToParent();
 		main_uniform_provider.AddVariable("local_to_world", local_to_world);
 
 		if (selected)
@@ -34,6 +34,21 @@ public:
 		}
 
 		mesh->DisplayWithProgram(program, renderer, &main_uniform_provider, render_params);
+
+		if (std::optional<box3> bounding_box = mesh->GetBoundingBox())
+		{
+			if (std::optional<box3> wireframe_bounding_box = wireframe_box_mesh->GetBoundingBox())
+			{
+				glm::vec3 scale = bounding_box->half_size / wireframe_bounding_box->half_size;
+
+				local_to_world = local_to_world * glm::translate(bounding_box->position) * glm::scale(scale) * glm::translate(-wireframe_bounding_box->position);
+
+				main_uniform_provider.AddVariable("local_to_world", local_to_world);
+
+				if (wireframe_box_mesh != nullptr)
+					wireframe_box_mesh->DisplayWithProgram(program, renderer, &main_uniform_provider, render_params);
+			}
+		}
 	}
 
 	void SetSelected(bool in_selected)
@@ -52,6 +67,8 @@ public:
 	glm::vec3 emissive_color = { 0.0f, 0.0f, 0.0f };
 
 	shared_ptr<GPUMesh> mesh;
+
+	shared_ptr<GPUMesh> wireframe_box_mesh;
 
 	bool selected = false;
 };
@@ -113,6 +130,9 @@ protected:
 		if (!Window::InitializeFromConfiguration(config))
 			return false;
 
+		// create a wireframe box
+		CreateWireframeBoxMesh();
+
 		// create light mesh
 		CreateLightMesh();
 
@@ -162,10 +182,23 @@ protected:
 		result->color              = color;
 		result->emissive_color     = emissive_color;
 		result->name               = name;
+		result->wireframe_box_mesh = wireframe_box_mesh.get();
 
 		objects.push_back(result);
 
 		return result;
+	}
+
+	bool CreateWireframeBoxMesh()
+	{
+		box3 box;
+		box.position  = { 0.0f, 0.0f, 0.0f };
+		box.half_size = { 1.0f, 1.0f, 1.0f };
+		GPUWireframeBoxMeshGenerator generator(box);
+		 	
+		wireframe_box_mesh = generator.GenerateMesh();
+
+		return (wireframe_box_mesh != nullptr);
 	}
 
 	bool CreateLightMesh()
@@ -229,7 +262,6 @@ protected:
 		}
 
 		// get all meshes
-
 		std::vector<GPUMesh*> imported_meshes;
 
 		if (scene->HasMeshes())
@@ -267,16 +299,23 @@ protected:
 
 				MemoryBufferWriter vertices_writer(vertex_buf, vertex_bufsize);
 
+				box3 bounding_box;
 				for (unsigned int i = 0 ; i < vertices_count ; ++i)
 				{
 					glm::vec3 position = { ai_mesh->mVertices[i].x, ai_mesh->mVertices[i].y, ai_mesh->mVertices[i].z};
 					glm::vec3 normal   = { ai_mesh->mNormals[i].x, ai_mesh->mNormals[i].y, ai_mesh->mNormals[i].z};
 
-					vertices_writer << position * SCALE_SCENE_FACTOR;
+					position *= SCALE_SCENE_FACTOR;
+
+					ExtendBox(bounding_box, position);
+
+					vertices_writer << position;
 					vertices_writer << normal;
 				}
 
 				vertex_buffer->UnMapBuffer();
+
+				gpu_mesh->SetBoundingBox(bounding_box);
 
 				// indices
 				shared_ptr<GPUBuffer> index_buffer = new GPUBuffer(false);
@@ -477,6 +516,8 @@ protected:
 	std::vector<shared_ptr<Object3D>> objects;
 
 	std::vector<shared_ptr<GPUMesh>> meshes;
+
+	shared_ptr<GPUMesh> wireframe_box_mesh;
 
 	shared_ptr<GPUProgram> program;
 

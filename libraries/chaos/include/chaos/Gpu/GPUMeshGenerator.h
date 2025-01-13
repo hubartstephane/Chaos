@@ -81,7 +81,8 @@ namespace chaos
 		/** constructor */
 		GPUPrimitiveMeshGenerator(primitive_type const& in_primitive, glm::mat4x4 const& in_transform = glm::mat4x4(1.0f)) :
 			primitive(in_primitive),
-			transform(in_transform) {}
+			transform(in_transform),
+			transform_normal(glm::inverse(glm::transpose(in_transform))){}
 
 	protected:
 
@@ -94,7 +95,7 @@ namespace chaos
 		/** transform a normal */
 		glm::vec3 TransformNormal(glm::vec3 const& normal) const
 		{
-			return normalize(GLMTools::Mult(transform, normal));
+			return normalize(GLMTools::Mult(transform_normal, normal));
 		}
 
 	protected:
@@ -103,6 +104,8 @@ namespace chaos
 		primitive_type primitive;
 		/** the transformation to apply to vertices */
 		glm::mat4x4 transform;
+		/** the transformation to apply to normals */
+		glm::mat4x4 transform_normal;
 	};
 
 	/**

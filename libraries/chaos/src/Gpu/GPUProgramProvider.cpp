@@ -133,6 +133,7 @@ namespace chaos
 		// some fallbacks
 		static const glm::mat4 identity = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
 
+		// transforms
 		if (execution_data.Match("local_to_world", GPUProgramProviderPassType::FALLBACK))
 		{
 			return execution_data.Process(identity);
@@ -146,6 +147,24 @@ namespace chaos
 			return execution_data.Process(identity);
 		}
 		if (execution_data.Match("camera_to_world", GPUProgramProviderPassType::FALLBACK))
+		{
+			return execution_data.Process(identity);
+		}
+
+		// normal transforms
+		if (execution_data.Match("local_to_world_normal", GPUProgramProviderPassType::FALLBACK))
+		{
+			return execution_data.Process(identity);
+		}
+		if (execution_data.Match("world_to_local_normal", GPUProgramProviderPassType::FALLBACK))
+		{
+			return execution_data.Process(identity);
+		}
+		if (execution_data.Match("world_to_camera_normal", GPUProgramProviderPassType::FALLBACK))
+		{
+			return execution_data.Process(identity);
+		}
+		if (execution_data.Match("camera_to_world_normal", GPUProgramProviderPassType::FALLBACK))
 		{
 			return execution_data.Process(identity);
 		}
@@ -178,16 +197,13 @@ namespace chaos
 			if (execution_data.GetValue("camera_to_world", camera_to_world))
 				return execution_data.Process(glm::inverse(camera_to_world));
 		}
-
 		// deduced: local_to_camera = world_to_camera * local_to_world
 		if (auto lock = execution_data.CanDeduce("local_to_camera"))
 		{
 			glm::mat4 local_to_world;
 			glm::mat4 world_to_camera;
 			if (execution_data.GetValue("local_to_world", local_to_world) && execution_data.GetValue("world_to_camera", world_to_camera))
-			{
 				return execution_data.Process(world_to_camera * local_to_world);
-			}
 		}
 		// deduced: camera_to_local = inverse(local_to_camera)
 		if (auto lock = execution_data.CanDeduce("camera_to_local"))
@@ -195,8 +211,51 @@ namespace chaos
 			glm::mat4 local_to_camera;
 			if (execution_data.GetValue("local_to_camera", local_to_camera))
 				return execution_data.Process(glm::inverse(local_to_camera));
-
 		}
+
+		// deduced: local_to_world_normal = inverse(transpose(local_to_world))
+		if (auto lock1 = execution_data.CanDeduce("local_to_world_normal"))
+		{
+			glm::mat4 local_to_world;
+			if (execution_data.GetValue("local_to_world", local_to_world))
+				return execution_data.Process(glm::inverse(glm::transpose(local_to_world)));
+		}
+		// deduced: world_to_local_normal = inverse(transpose(world_to_local))
+		if (auto lock2 = execution_data.CanDeduce("world_to_local_normal"))
+		{
+			glm::mat4 world_to_local;
+			if (execution_data.GetValue("world_to_local", world_to_local))
+				return execution_data.Process(glm::inverse(glm::transpose(world_to_local)));
+		}
+		// deduced: camera_to_world_normal = inverse(transpose(camera_to_world))
+		if (auto lock = execution_data.CanDeduce("camera_to_world_normal"))
+		{
+			glm::mat4 camera_to_world;
+			if (execution_data.GetValue("camera_to_world", camera_to_world))
+				return execution_data.Process(glm::inverse(glm::transpose(camera_to_world)));
+		}
+		// deduced: world_to_camera_normal = inverse(transpose(world_to_camera))
+		if (auto lock = execution_data.CanDeduce("world_to_camera_normal"))
+		{
+			glm::mat4 world_to_camera;
+			if (execution_data.GetValue("world_to_camera", world_to_camera))
+				return execution_data.Process(glm::inverse(glm::transpose(world_to_camera)));
+		}
+		// deduced: local_to_camera_normal = inverse(transpose(local_to_camera))
+		if (auto lock = execution_data.CanDeduce("local_to_camera_normal"))
+		{
+			glm::mat4 local_to_camera;
+			if (execution_data.GetValue("local_to_camera", local_to_camera))
+				return execution_data.Process(glm::inverse(glm::transpose(local_to_camera)));
+		}
+		// deduced: camera_to_local_normal = inverse(transpose(camera_to_local))
+		if (auto lock = execution_data.CanDeduce("camera_to_local_normal"))
+		{
+			glm::mat4 camera_to_local;
+			if (execution_data.GetValue("camera_to_local", camera_to_local))
+				return execution_data.Process(glm::inverse(glm::transpose(camera_to_local)));
+		}
+
 		return GPUProgramProvider::DoProcessAction(execution_data);
 	}
 

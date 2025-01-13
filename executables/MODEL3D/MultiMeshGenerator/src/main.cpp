@@ -18,7 +18,8 @@ public:
 
 		GPUProgramProviderChain main_uniform_provider(uniform_provider);
 		main_uniform_provider.AddVariable("local_to_world", local_to_world);
-		main_uniform_provider.AddVariable("material_color", color);
+		main_uniform_provider.AddVariable("color", color);
+		main_uniform_provider.AddVariable("emissive_color", emissive_color);
 
 		mesh->DisplayWithProgram(program, renderer, &main_uniform_provider, render_params);
 	}
@@ -30,6 +31,8 @@ public:
 	SceneTransform<float, 3> transform;
 
 	glm::vec3 color = { 0.0f, 0.0f, 1.0f };
+
+	glm::vec3 emissive_color = { 0.0f, 0.0f, 0.0f };
 
 	shared_ptr<GPUMesh> mesh;
 };
@@ -92,10 +95,10 @@ protected:
 			return false;
 
 		// create light mesh
-		CreateLightMesh();
+		CreateLight();
 
-		// load the mesh model
-		LoadMeshesAndCreateObjects("scene.glb");
+		// create all the meshes
+		CreateMeshes();
 
 		// generate the program
 		boost::filesystem::path const& resources_path = GetResourcesPath();
@@ -122,219 +125,103 @@ protected:
 		return true;
 	}
 
-	Object3D * CreateObject3D(GPUMesh* mesh, glm::vec3 const& position, glm::vec3 const & scale, glm::quat const & rotation, glm::vec3 const& color, char const * name)
+	Object3D * CreateObject3D(GPUMesh* mesh, glm::vec3 const& position, glm::vec3 const & scale, glm::quat const & rotation, glm::vec3 const& color, glm::vec3 const & emissive_color, char const * name)
 	{
 		Object3D* result = new Object3D;
 		if (result == nullptr)
 			return result;
 
-		result->mesh = mesh;
+		result->mesh               = mesh;
 		result->transform.position = position;
 		result->transform.scale    = scale;
 		result->transform.rotator  = rotation;
-		result->color = color;
-		result->name = name;
-
+		result->color              = color;
+		result->emissive_color     = emissive_color;
+		result->name               = name;
 		objects.push_back(result);
 
 		return result;
 	}
 
-	bool CreateLightMesh()
+	bool CreateLight()
 	{
 		sphere3 s = sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 20.0f);
 
 		shared_ptr<GPUMesh> gpu_mesh = GPUSphereMeshGenerator(s, glm::mat4x4(1.0f), 10).GenerateMesh();
 		meshes.push_back(gpu_mesh);
 
-		glm::vec3 position = { 0.0f, 300.0f, 0.0f };
-		glm::vec3 scale    = { 1.0f, 1.0f, 1.0f };
-		glm::quat rotation = { 1.0f, 0.0f, 0.0f, 0.0f };
-		glm::vec3 color    = { 1.0f, 1.0f, 1.0f };
+		glm::vec3 position       = { 0.0f, 300.0f, 0.0f };
+		glm::vec3 scale          = { 1.0f, 1.0f, 1.0f };
+		glm::quat rotation       = { 1.0f, 0.0f, 0.0f, 0.0f };
+		glm::vec3 color          = { 0.0f, 0.0f, 0.0f };
+		glm::vec3 emissive_color = { 1.0f, 1.0f, 1.0f };
 
-		light = CreateObject3D(
-			gpu_mesh.get(),
-			position,
-			scale,
-			rotation,
-			color, 
-			"light");
+		light = CreateObject3D(gpu_mesh.get(), position, scale, rotation, color, emissive_color, "light");
 
 		return (light != nullptr);
 	}
 
-	bool LoadMeshesAndCreateObjects(FilePathParam const & path)
+	bool CreateMeshes()
 	{
-		// compute resource path
-		boost::filesystem::path const & resources_path = GetResourcesPath();
+		GPUMultiMeshGenerator generator;
 
-		// load the file
-		Buffer<char> buffer = FileTools::LoadFile(resources_path / path.GetResolvedPath());
-		if (buffer == nullptr)
+		shared_ptr<GPUMesh> quad_mesh;
+		shared_ptr<GPUMesh> circle_mesh;
+		shared_ptr<GPUMesh> box3_mesh;
+		shared_ptr<GPUMesh> box3_wireframe_mesh;
+		shared_ptr<GPUMesh> sphere_mesh;
+
+		box2 quad;
+		quad.position  = { 0.0f, 0.0f };
+		quad.half_size = { 50.0f, 50.0f };
+		generator.AddGenerator(new GPUQuadMeshGenerator(quad), quad_mesh);
+
+		sphere2 circle;
+		circle.position = { 0.0f, 0.0f };
+		circle.radius   = 50.0f;
+		generator.AddGenerator(new GPUCircleMeshGenerator(circle), circle_mesh);
+
+		triangle3 triangle;
+		triangle.a = {0.0f, 100.0f, 0.0f};
+		triangle.b = {-100.0f, -100.0f, 0.0f};
+		triangle.c = {+100.0f, -100.0f, 0.0f};
+		generator.AddGenerator(new GPUTriangleMeshGenerator(triangle), quad_mesh);
+
+		box3 box;
+		box.position = { 0.0f, 0.0f, 0.0f };
+		box.half_size = { 50.0f, 50.0f, 50.0f };
+		generator.AddGenerator(new GPUBoxMeshGenerator(box), box3_mesh);
+		generator.AddGenerator(new GPUWireframeBoxMeshGenerator(box), box3_wireframe_mesh);
+
+		sphere3 sphere;
+		sphere.position = { 0.0f, 0.0f, 0.0f };
+		sphere.radius = 50.0f;
+		generator.AddGenerator(new GPUSphereMeshGenerator(sphere), sphere_mesh);
+
+		if (!generator.GenerateMeshes())
 			return false;
 
-		// get the extensions
-		Assimp::Importer importer;
-
-		std::string supported_extension;
-		importer.GetExtensionList(supported_extension);
-
-		// load the scene
-		unsigned int load_flags =
-			aiProcess_CalcTangentSpace |
-			//aiProcess_GenNormals |
-			aiProcess_GenSmoothNormals |
-			aiProcess_Triangulate |
-			aiProcess_JoinIdenticalVertices |
-			aiProcess_SortByPType;
-
-		const aiScene* scene = importer.ReadFileFromMemory(buffer.data, buffer.bufsize, load_flags);
-
-		if (scene == nullptr || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || scene->mRootNode == nullptr)
+		glm::vec3 primitive_position = { 0.0f, 0.0f, 0.0f };
+		auto AddObjectAndMesh = [this, &primitive_position](shared_ptr<GPUMesh> const & mesh, char const * name)
 		{
-			char const* error = importer.GetErrorString();
-			if (error != nullptr)
-				Log::Message("Assimp::Importer::ReadFileFromMemory failure [%s]", error);
-			return false;
-		}
+			meshes.push_back(mesh);
 
-		// get all meshes
+			glm::vec3 scale          = { 1.0f, 1.0f, 1.0f};
+			glm::quat rotation       = { 1.0f, 0.0f, 0.0f, 0.0f };
+			glm::vec3 color          = { 0.0f, 0.0f, 1.0f };
+			glm::vec3 emissive_color = { 0.0f, 0.0f, 0.0f };
+			CreateObject3D(mesh.get(), primitive_position, scale, rotation, color, emissive_color,  name);
+		
+			primitive_position.x += 200.0f;
+		};
 
-		std::vector<GPUMesh*> imported_meshes;
-
-		if (scene->HasMeshes())
-		{
-			// create a vertex declaration
-			shared_ptr<GPUVertexDeclaration> vertex_declaration = new GPUVertexDeclaration();
-			vertex_declaration->Push(VertexAttributeSemantic::POSITION, 0, VertexAttributeType::FLOAT3);
-			vertex_declaration->Push(VertexAttributeSemantic::NORMAL, 0, VertexAttributeType::FLOAT3);
-
-			for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
-			{
-				shared_ptr<GPUMesh> gpu_mesh = new GPUMesh;
-
-				aiMesh const* ai_mesh = scene->mMeshes[i];
-				if (ai_mesh == nullptr)
-					continue;
-
-				if (!ai_mesh->HasNormals())
-					continue;
-				if (!ai_mesh->HasPositions())
-					continue;
-
-				// vertices
-				shared_ptr<GPUBuffer> vertex_buffer = new GPUBuffer(false);
-				if (vertex_buffer == nullptr)
-					break;
-			
-				unsigned int vertices_count = ai_mesh->mNumVertices;
-				size_t vertex_bufsize = vertices_count * sizeof(MeshVertex);
-				vertex_buffer->SetBufferData(nullptr, vertex_bufsize); // set buffer size
-
-				char * vertex_buf = vertex_buffer->MapBuffer(0, 0, false, true);
-				if (vertex_buf == nullptr)
-					break;
-
-				MemoryBufferWriter vertices_writer(vertex_buf, vertex_bufsize);
-
-				for (unsigned int i = 0 ; i < vertices_count ; ++i)
-				{
-					glm::vec3 position = { ai_mesh->mVertices[i].x, ai_mesh->mVertices[i].y, ai_mesh->mVertices[i].z};
-					glm::vec3 normal   = { ai_mesh->mNormals[i].x, ai_mesh->mNormals[i].y, ai_mesh->mNormals[i].z};
-
-					vertices_writer << position * SCALE_SCENE_FACTOR;
-					vertices_writer << normal;
-				}
-
-				vertex_buffer->UnMapBuffer();
-
-				// indices
-				shared_ptr<GPUBuffer> index_buffer = new GPUBuffer(false);
-				if (vertex_buffer == nullptr)
-					break;
-
-				unsigned int faces_count = ai_mesh->mNumFaces;
-				size_t index_bufsize = faces_count * 3 * sizeof(int32_t);
-				index_buffer->SetBufferData(nullptr, index_bufsize); // set buffer size
-
-
-				char* index_buf = index_buffer->MapBuffer(0, 0, false, true);
-				if (index_buf == nullptr)
-					break;
-
-				MemoryBufferWriter indices_writer(index_buf, index_bufsize);
-
-				for (unsigned int i = 0; i < faces_count; ++i)
-				{
-					assert(ai_mesh->mFaces[i].mNumIndices == 3);
-
-					for (unsigned j = 0; j < ai_mesh->mFaces[i].mNumIndices; ++j)
-					{
-						indices_writer << int32_t(ai_mesh->mFaces[i].mIndices[j]);
-					}
-				}
-
-				index_buffer->UnMapBuffer();
-
-				// create the element
-				GPUMeshElement & element = gpu_mesh->AddMeshElement(vertex_declaration.get(), vertex_buffer.get(), index_buffer.get());
-
-				GPUDrawPrimitive primitive; 
-				primitive.indexed = true;
-				primitive.primitive_type = GL_TRIANGLES;
-				primitive.count = faces_count * 3;
-				element.primitives.push_back(primitive);
-
-				meshes.push_back(gpu_mesh);
-
-				imported_meshes.push_back(gpu_mesh.get());
-			}
-		}
-
-		// create the scene
-		ImportSceneNode(scene->mRootNode, imported_meshes);
+		AddObjectAndMesh(quad_mesh, "quad");
+		AddObjectAndMesh(circle_mesh, "circle");
+		AddObjectAndMesh(box3_mesh, "box");
+		AddObjectAndMesh(box3_wireframe_mesh, "box wireframe");
+		AddObjectAndMesh(sphere_mesh, "sphere");
 
 		return true;
-	}
-
-	void ImportSceneNode(aiNode const * node, std::vector<GPUMesh*> const & imported_meshes)
-	{
-		if (node == nullptr)
-			return;
-
-		for (unsigned int i = 0; i < node->mNumMeshes; ++i)
-		{
-			unsigned int imported_mesh_index = node->mMeshes[i];
-
-			if (imported_mesh_index < imported_meshes.size())
-			{
-				GPUMesh * gpu_mesh = imported_meshes[imported_mesh_index];
-
-				aiVector3D   ai_scale    = { 1.0f, 1.0f, 1.0f };
-				aiVector3D   ai_position = { 0.0f, 0.0f, 0.0f };
-				aiQuaternion ai_rotation = { 0.0f, 0.0f, 0.0f };
-
-				node->mTransformation.Decompose(ai_scale, ai_rotation, ai_position);
-				
-				glm::vec3 position = { ai_position.x, ai_position.y, ai_position.z };
-				glm::vec3 scale    = { ai_scale.x, ai_scale.y, ai_scale.z };
-				glm::quat rotation = { ai_rotation.w, ai_rotation.x, ai_rotation.y, ai_rotation.z };
-
-				glm::vec3 color    = { 0.0f, 0.0f, 1.0f };
-
-				CreateObject3D(
-					gpu_mesh, 
-					position * SCALE_SCENE_FACTOR,
-					scale,
-					rotation,
-					color, 
-					node->mName.C_Str());
-			}
-		}
-
-		// recurively import child nodes
-		for (unsigned int i = 0; i < node->mNumChildren; ++i)
-			ImportSceneNode(node->mChildren[i], imported_meshes);
 	}
 
 	virtual void OnDrawImGuiContent() override
@@ -424,8 +311,6 @@ protected:
 protected:
 
 	static constexpr float CAMERA_SPEED = 500.0f;
-
-	static constexpr float SCALE_SCENE_FACTOR = 100.0f;
 
 	static constexpr float OBJECT_SPEED = 500.0f;
 

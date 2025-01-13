@@ -3,4 +3,4 @@
 -- =============================================================================
 
 build:ProcessSubPremake("AssimpImport")
-build:ProcessSubPremake("FBXTest")
+build:ProcessSubPremake("MultiMeshGenerator")

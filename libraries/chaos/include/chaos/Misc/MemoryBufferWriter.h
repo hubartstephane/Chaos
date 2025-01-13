@@ -46,7 +46,9 @@ namespace chaos
 		{
 			assert(buffer != nullptr);
 			assert(GetRemainingBufferSize() >= size);
-			memcpy(position, data, size);
+
+			if (data != nullptr)
+				memcpy(position, data, size);
 			position = ((char*)position) + size;
 		}
 

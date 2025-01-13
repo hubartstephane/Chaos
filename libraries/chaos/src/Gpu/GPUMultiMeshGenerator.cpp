@@ -17,6 +17,22 @@ namespace chaos
 		generators.clear(); // destroy the intrusive_ptr
 	}
 
+	// Vertex Buffer
+	//
+	//           Mesh 1
+	//
+	//  +----+----+----+----+XXX
+	//  | v0 | v1 | v2 | v3 |XXX <--- Extra padding 
+	//  +----+----+----+----+XXX
+	//                                   Mesh 2
+	//  + - - - + - - - + - - - +-------+-------+-------+
+	//  |       |       |       |   v0  |   v1  |   v2  |
+	//  + - - - + - - - + - - - +-------+-------+-------+
+	//
+	// Mesh 1 & Mesh 2 are using the same vertex buffer
+	// Mesh 2 vertices are to be aligned on their size boundaries so that they can be properly indexed
+	// we add an extra padding at the end of Mesg 1 vertices
+
 	bool GPUMultiMeshGenerator::GenerateMeshes() const
 	{
 		if (generators.size() == 0)
@@ -28,12 +44,16 @@ namespace chaos
 			GPUMeshGenerationRequirement requirement;
 
 			shared_ptr<GPUVertexDeclaration> vertex_declaration;
+
+			size_t vertex_size   = 0;
+			size_t extra_padding = 0;
+			size_t vertex_start  = 0;
 		};
 
 		std::vector<GeneratorData> generator_data;
 
 		size_t total_vertex_buffer_size = 0;
-		size_t total_index_buffer_size = 0;
+		size_t total_index_buffer_size  = 0;
 		for (auto const it : generators)
 		{
 			GPUMeshGenerationRequirement requirement = it.first->GetRequirement();
@@ -44,9 +64,25 @@ namespace chaos
 			if (vertex_declaration == nullptr)
 				return false;
 
-			generator_data.push_back({ requirement , vertex_declaration });
+			size_t vertex_size = vertex_declaration->GetVertexSize();
 
-			total_vertex_buffer_size += requirement.vertices_count * vertex_declaration->GetVertexSize();
+			// Are vertices properly aligned ? if not, we have to add some extra padding with previous mesh
+			size_t extra_padding = (total_vertex_buffer_size % vertex_size == 0)? 
+			           0:
+			           vertex_size - (total_vertex_buffer_size % vertex_size);
+
+			// insert generator data
+			GeneratorData data;
+			data.requirement        = requirement;
+			data.vertex_declaration = vertex_declaration;
+			data.vertex_size        = vertex_size;
+			data.extra_padding      = extra_padding;
+			data.vertex_start       = (total_vertex_buffer_size + extra_padding) / vertex_size;
+
+			generator_data.push_back(data);
+
+			// next mesh
+			total_vertex_buffer_size += requirement.vertices_count * vertex_size + extra_padding;
 			total_index_buffer_size  += requirement.indices_count * sizeof(uint32_t);
 		}
 
@@ -78,6 +114,8 @@ namespace chaos
 			// generate geometry
 			GeneratorData const & data = generator_data[generator_index];
 
+			vertices_writer.Write(nullptr, data.extra_padding); // add extra padding with previous mesh
+
 			auto elem_create_func = [&mesh, &data, &buffers, vertex_buffer_offset]() -> GPUMeshElement&
 			{
 				GPUMeshElement& result = mesh->AddMeshElement(data.vertex_declaration.get(), buffers.vertex_buffer.get(), buffers.index_buffer.get());
@@ -102,11 +140,25 @@ namespace chaos
 
 			// shift the position of indices for this mesh
 			int index_buffer_offset = (int)(written_indices_count / sizeof(uint32_t));
-			if (index_buffer_offset > 0)
+			if (index_buffer_offset > 0 || data.vertex_start > 0)
+			{
 				for (size_t i = 0 ; i < mesh->GetMeshElementCount() ; ++i)
+				{
 					for (GPUDrawPrimitive& primitive : mesh->GetMeshElement(i).primitives)
+					{
 						if (primitive.indexed)
+						{
 							primitive.start += index_buffer_offset;
+							primitive.base_vertex_index = (int)data.vertex_start;
+						}
+						else
+						{
+							primitive.start += (int)data.vertex_start;
+
+						}
+					}
+				}
+			}
 
 			(*it.second) = mesh; // store the mesh as an output
 

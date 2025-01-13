@@ -2,12 +2,6 @@
 
 using namespace chaos;
 
-struct MeshVertex
-{
-	glm::vec3 position;
-	glm::vec3 normal;
-};
-
 class Object3D : public Object
 {
 public:
@@ -18,10 +12,27 @@ public:
 
 		GPUProgramProviderChain main_uniform_provider(uniform_provider);
 		main_uniform_provider.AddVariable("local_to_world", local_to_world);
-		main_uniform_provider.AddVariable("color", color);
-		main_uniform_provider.AddVariable("emissive_color", emissive_color);
+
+		if (selected)
+		{
+			glm::vec3 selected_color = {0.0f, 0.0f, 0.0f};
+			glm::vec3 selected_emissive_color = { 1.0f, 0.0f, 0.0f };
+
+			main_uniform_provider.AddVariable("color", selected_color);
+			main_uniform_provider.AddVariable("emissive_color", selected_emissive_color);
+		}
+		else
+		{
+			main_uniform_provider.AddVariable("color", color);
+			main_uniform_provider.AddVariable("emissive_color", emissive_color);
+		}
 
 		mesh->DisplayWithProgram(program, renderer, &main_uniform_provider, render_params);
+	}
+
+	void SetSelected(bool in_selected)
+	{
+		selected = in_selected;
 	}
 
 public:
@@ -35,6 +46,8 @@ public:
 	glm::vec3 emissive_color = { 0.0f, 0.0f, 0.0f };
 
 	shared_ptr<GPUMesh> mesh;
+
+	bool selected = false;
 };
 
 
@@ -100,6 +113,10 @@ protected:
 		// create all the meshes
 		CreateMeshes();
 
+		// select first object
+		if (selected_object_index < objects.size())
+			objects[selected_object_index]->SetSelected(true);
+
 		// generate the program
 		boost::filesystem::path const& resources_path = GetResourcesPath();
 
@@ -150,15 +167,16 @@ protected:
 		shared_ptr<GPUMesh> gpu_mesh = GPUSphereMeshGenerator(s, glm::mat4x4(1.0f), 10).GenerateMesh();
 		meshes.push_back(gpu_mesh);
 
-		glm::vec3 position       = { 0.0f, 300.0f, 0.0f };
+		glm::vec3 position       = { -200.0f, 200.0f, 500.0f };
 		glm::vec3 scale          = { 1.0f, 1.0f, 1.0f };
 		glm::quat rotation       = { 1.0f, 0.0f, 0.0f, 0.0f };
 		glm::vec3 color          = { 0.0f, 0.0f, 0.0f };
 		glm::vec3 emissive_color = { 1.0f, 1.0f, 1.0f };
 
 		light = CreateObject3D(gpu_mesh.get(), position, scale, rotation, color, emissive_color, "light");
-
-		return (light != nullptr);
+		if (light == nullptr)
+			return false;
+		return true;
 	}
 
 	bool CreateMeshes()
@@ -202,24 +220,24 @@ protected:
 			return false;
 
 		glm::vec3 primitive_position = { 0.0f, 0.0f, 0.0f };
-		auto AddObjectAndMesh = [this, &primitive_position](shared_ptr<GPUMesh> const & mesh, char const * name)
+		auto AddObjectAndMesh = [this, &primitive_position](shared_ptr<GPUMesh> const & mesh, char const * name, bool wireframe)
 		{
 			meshes.push_back(mesh);
 
 			glm::vec3 scale          = { 1.0f, 1.0f, 1.0f};
 			glm::quat rotation       = { 1.0f, 0.0f, 0.0f, 0.0f };
-			glm::vec3 color          = { 0.0f, 0.0f, 1.0f };
-			glm::vec3 emissive_color = { 0.0f, 0.0f, 0.0f };
+			glm::vec3 color          = wireframe ? glm::vec3(0.0f, 0.0f, 0.0f) : glm::vec3(0.0f, 0.0f, 1.0f);
+			glm::vec3 emissive_color = wireframe ? glm::vec3(1.0f, 1.0f, 1.0f) : glm::vec3(0.0f, 0.0f, 0.0f);
 			CreateObject3D(mesh.get(), primitive_position, scale, rotation, color, emissive_color,  name);
 		
 			primitive_position.x += 200.0f;
 		};
 
-		AddObjectAndMesh(quad_mesh, "quad");
-		AddObjectAndMesh(circle_mesh, "circle");
-		AddObjectAndMesh(box3_mesh, "box");
-		AddObjectAndMesh(box3_wireframe_mesh, "box wireframe");
-		AddObjectAndMesh(sphere_mesh, "sphere");
+		AddObjectAndMesh(quad_mesh, "quad", false);
+		AddObjectAndMesh(circle_mesh, "circle", false);
+		AddObjectAndMesh(box3_mesh, "box", false);
+		AddObjectAndMesh(box3_wireframe_mesh, "box wireframe", true);
+		AddObjectAndMesh(sphere_mesh, "sphere", false);
 
 		return true;
 	}
@@ -241,7 +259,11 @@ protected:
 					
 					ImGui::TableNextColumn();
 					if (ImGui::Selectable(object->name.c_str(), &is_selected))
+					{
+						objects[selected_object_index]->SetSelected(false);
 						selected_object_index = current_index;
+						objects[selected_object_index]->SetSelected(true);
+					}
 
 					ImGui::TableNextColumn();
 					DrawImGuiVariable(object->transform.position);
@@ -261,16 +283,26 @@ protected:
 		{
 			if (key_event.IsKeyDown(KeyboardButton::KP_ADD))
 			{
+				objects[selected_object_index]->SetSelected(false);
+
 				selected_object_index = (selected_object_index == object_count - 1)?
 					0:
 					selected_object_index + 1;
+
+				objects[selected_object_index]->SetSelected(true);
+
 				return true;
 			}
 			if (key_event.IsKeyDown(KeyboardButton::KP_SUBTRACT))
 			{
+				objects[selected_object_index]->SetSelected(false);
+
 				selected_object_index = (selected_object_index == 0) ?
 					object_count - 1 :
 					selected_object_index - 1;
+
+				objects[selected_object_index]->SetSelected(true);
+
 				return true;
 			}
 		}

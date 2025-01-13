@@ -284,20 +284,17 @@ protected:
 				if (!ai_mesh->HasPositions())
 					continue;
 
-				// vertices
-				shared_ptr<GPUBuffer> vertex_buffer = new GPUBuffer(false);
-				if (vertex_buffer == nullptr)
-					break;
-			
+				// allocate buffers
 				unsigned int vertices_count = ai_mesh->mNumVertices;
 				size_t vertex_bufsize = vertices_count * sizeof(MeshVertex);
-				vertex_buffer->SetBufferData(nullptr, vertex_bufsize); // set buffer size
 
-				char * vertex_buf = vertex_buffer->MapBuffer(0, 0, false, true);
-				if (vertex_buf == nullptr)
-					break;
+				unsigned int faces_count = ai_mesh->mNumFaces;
+				size_t index_bufsize = faces_count * 3 * sizeof(int32_t);
 
-				MemoryBufferWriter vertices_writer(vertex_buf, vertex_bufsize);
+				GPUVertexAndIndexMappedBuffers buffers = GPUVertexAndIndexMappedBuffers::CreateMappedBuffers(vertex_bufsize, index_bufsize);
+
+				// vertices
+				MemoryBufferWriter vertices_writer(buffers.mapped_vertex_buffer, vertex_bufsize);
 
 				box3 bounding_box;
 				for (unsigned int i = 0 ; i < vertices_count ; ++i)
@@ -313,25 +310,10 @@ protected:
 					vertices_writer << normal;
 				}
 
-				vertex_buffer->UnMapBuffer();
-
 				gpu_mesh->SetBoundingBox(bounding_box);
 
 				// indices
-				shared_ptr<GPUBuffer> index_buffer = new GPUBuffer(false);
-				if (vertex_buffer == nullptr)
-					break;
-
-				unsigned int faces_count = ai_mesh->mNumFaces;
-				size_t index_bufsize = faces_count * 3 * sizeof(int32_t);
-				index_buffer->SetBufferData(nullptr, index_bufsize); // set buffer size
-
-
-				char* index_buf = index_buffer->MapBuffer(0, 0, false, true);
-				if (index_buf == nullptr)
-					break;
-
-				MemoryBufferWriter indices_writer(index_buf, index_bufsize);
+				MemoryBufferWriter indices_writer(buffers.mapped_index_buffer, index_bufsize);
 
 				for (unsigned int i = 0; i < faces_count; ++i)
 				{
@@ -343,10 +325,8 @@ protected:
 					}
 				}
 
-				index_buffer->UnMapBuffer();
-
 				// create the element
-				GPUMeshElement & element = gpu_mesh->AddMeshElement(vertex_declaration.get(), vertex_buffer.get(), index_buffer.get());
+				GPUMeshElement & element = gpu_mesh->AddMeshElement(vertex_declaration.get(), buffers.vertex_buffer.get(), buffers.index_buffer.get());
 
 				GPUDrawPrimitive primitive; 
 				primitive.indexed = true;
@@ -354,8 +334,11 @@ protected:
 				primitive.count = faces_count * 3;
 				element.primitives.push_back(primitive);
 
-				meshes.push_back(gpu_mesh);
+				// clean the resource
+				buffers.CleanResources();
 
+				// store new instances
+				meshes.push_back(gpu_mesh);
 				imported_meshes.push_back(gpu_mesh.get());
 			}
 		}

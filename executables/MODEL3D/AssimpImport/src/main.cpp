@@ -18,7 +18,8 @@ public:
 
 		GPUProgramProviderChain main_uniform_provider(uniform_provider);
 		main_uniform_provider.AddVariable("local_to_world", local_to_world);
-		main_uniform_provider.AddVariable("material_color", color);
+		main_uniform_provider.AddVariable("color", color);
+		main_uniform_provider.AddVariable("emissive_color", emissive_color);
 
 		mesh->DisplayWithProgram(program, renderer, &main_uniform_provider, render_params);
 	}
@@ -30,6 +31,8 @@ public:
 	SceneTransform<float, 3> transform;
 
 	glm::vec3 color = { 0.0f, 0.0f, 1.0f };
+
+	glm::vec3 emissive_color = { 0.0f, 0.0f, 0.0f };
 
 	shared_ptr<GPUMesh> mesh;
 };
@@ -122,18 +125,19 @@ protected:
 		return true;
 	}
 
-	Object3D * CreateObject3D(GPUMesh* mesh, glm::vec3 const& position, glm::vec3 const & scale, glm::quat const & rotation, glm::vec3 const& color, char const * name)
+	Object3D * CreateObject3D(GPUMesh* mesh, glm::vec3 const& position, glm::vec3 const & scale, glm::quat const & rotation, glm::vec3 const& color, glm::vec3 const& emissive_color, char const * name)
 	{
 		Object3D* result = new Object3D;
 		if (result == nullptr)
 			return result;
 
-		result->mesh = mesh;
+		result->mesh               = mesh;
 		result->transform.position = position;
 		result->transform.scale    = scale;
 		result->transform.rotator  = rotation;
-		result->color = color;
-		result->name = name;
+		result->color              = color;
+		result->emissive_color     = emissive_color;
+		result->name               = name;
 
 		objects.push_back(result);
 
@@ -147,10 +151,11 @@ protected:
 		shared_ptr<GPUMesh> gpu_mesh = GPUSphereMeshGenerator(s, glm::mat4x4(1.0f), 10).GenerateMesh();
 		meshes.push_back(gpu_mesh);
 
-		glm::vec3 position = { 0.0f, 300.0f, 0.0f };
-		glm::vec3 scale    = { 1.0f, 1.0f, 1.0f };
-		glm::quat rotation = { 1.0f, 0.0f, 0.0f, 0.0f };
-		glm::vec3 color    = { 1.0f, 1.0f, 1.0f };
+		glm::vec3 position      = { 0.0f, 300.0f, 0.0f };
+		glm::vec3 scale          = { 1.0f, 1.0f, 1.0f };
+		glm::quat rotation       = { 1.0f, 0.0f, 0.0f, 0.0f };
+		glm::vec3 color          = { 0.0f, 0.0f, 0.0f };
+		glm::vec3 emissive_color = { 1.0f, 1.0f, 1.0f };
 
 		light = CreateObject3D(
 			gpu_mesh.get(),
@@ -158,6 +163,7 @@ protected:
 			scale,
 			rotation,
 			color, 
+			emissive_color,
 			"light");
 
 		return (light != nullptr);
@@ -321,13 +327,14 @@ protected:
 				glm::quat rotation = { ai_rotation.w, ai_rotation.x, ai_rotation.y, ai_rotation.z };
 
 				glm::vec3 color    = { 0.0f, 0.0f, 1.0f };
+				glm::vec3 emissive_color = { 0.0f, 0.0f, 0.0f };
 
-				CreateObject3D(
-					gpu_mesh, 
+				CreateObject3D(gpu_mesh, 
 					position * SCALE_SCENE_FACTOR,
 					scale,
 					rotation,
 					color, 
+					emissive_color,
 					node->mName.C_Str());
 			}
 		}

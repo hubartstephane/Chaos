@@ -114,6 +114,7 @@ protected:
 		CreateMeshes();
 
 		// select first object
+		selected_object_index = 0;
 		if (selected_object_index < objects.size())
 			objects[selected_object_index]->SetSelected(true);
 

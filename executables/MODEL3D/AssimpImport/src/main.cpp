@@ -18,10 +18,27 @@ public:
 
 		GPUProgramProviderChain main_uniform_provider(uniform_provider);
 		main_uniform_provider.AddVariable("local_to_world", local_to_world);
-		main_uniform_provider.AddVariable("color", color);
-		main_uniform_provider.AddVariable("emissive_color", emissive_color);
+
+		if (selected)
+		{
+			glm::vec3 selected_color = { 0.0f, 0.0f, 0.0f };
+			glm::vec3 selected_emissive_color = { 1.0f, 0.0f, 0.0f };
+
+			main_uniform_provider.AddVariable("color", selected_color);
+			main_uniform_provider.AddVariable("emissive_color", selected_emissive_color);
+		}
+		else
+		{
+			main_uniform_provider.AddVariable("color", color);
+			main_uniform_provider.AddVariable("emissive_color", emissive_color);
+		}
 
 		mesh->DisplayWithProgram(program, renderer, &main_uniform_provider, render_params);
+	}
+
+	void SetSelected(bool in_selected)
+	{
+		selected = in_selected;
 	}
 
 public:
@@ -35,6 +52,8 @@ public:
 	glm::vec3 emissive_color = { 0.0f, 0.0f, 0.0f };
 
 	shared_ptr<GPUMesh> mesh;
+
+	bool selected = false;
 };
 
 
@@ -100,6 +119,11 @@ protected:
 		// load the mesh model
 		LoadMeshesAndCreateObjects("scene.glb");
 
+		// select first object
+		selected_object_index = 0;
+		if (selected_object_index < objects.size())
+			objects[selected_object_index]->SetSelected(true);
+
 		// generate the program
 		boost::filesystem::path const& resources_path = GetResourcesPath();
 
@@ -120,7 +144,7 @@ protected:
 		fps_view_controller.input_config.pitch_up_button   = KeyboardButton::UNKNOWN;
 		fps_view_controller.input_config.pitch_down_button = KeyboardButton::UNKNOWN;
 
-		fps_view_controller.fps_view.position.z = 1000.0f;
+		fps_view_controller.fps_view.position.z = 2000.0f;
 
 		return true;
 	}
@@ -151,7 +175,7 @@ protected:
 		shared_ptr<GPUMesh> gpu_mesh = GPUSphereMeshGenerator(s, glm::mat4x4(1.0f), 10).GenerateMesh();
 		meshes.push_back(gpu_mesh);
 
-		glm::vec3 position      = { 0.0f, 300.0f, 0.0f };
+		glm::vec3 position       = { -500.0f, 0.0f, 1000.0f };
 		glm::vec3 scale          = { 1.0f, 1.0f, 1.0f };
 		glm::quat rotation       = { 1.0f, 0.0f, 0.0f, 0.0f };
 		glm::vec3 color          = { 0.0f, 0.0f, 0.0f };
@@ -361,7 +385,11 @@ protected:
 					
 					ImGui::TableNextColumn();
 					if (ImGui::Selectable(object->name.c_str(), &is_selected))
+					{
+						objects[selected_object_index]->SetSelected(false);
 						selected_object_index = current_index;
+						objects[selected_object_index]->SetSelected(true);
+					}
 
 					ImGui::TableNextColumn();
 					DrawImGuiVariable(object->transform.position);
@@ -381,16 +409,24 @@ protected:
 		{
 			if (key_event.IsKeyDown(KeyboardButton::KP_ADD))
 			{
+				objects[selected_object_index]->SetSelected(false);
+
 				selected_object_index = (selected_object_index == object_count - 1)?
 					0:
 					selected_object_index + 1;
+
+				objects[selected_object_index]->SetSelected(true);
 				return true;
 			}
 			if (key_event.IsKeyDown(KeyboardButton::KP_SUBTRACT))
 			{
+				objects[selected_object_index]->SetSelected(false);
+
 				selected_object_index = (selected_object_index == 0) ?
 					object_count - 1 :
 					selected_object_index - 1;
+
+				objects[selected_object_index]->SetSelected(true);
 				return true;
 			}
 		}

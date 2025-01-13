@@ -5,7 +5,7 @@ namespace chaos
 {
 	bool GPUVertexAndIndexMappedBuffers::IsValid() const
 	{
-		return (vertex_buffer.get() != nullptr) || (index_buffer.get() != nullptr); //
+		return (vertex_buffer.get() != nullptr) || (index_buffer.get() != nullptr); // if a single of theses checks is ok, the whole process of creating buffer and mapping has succeed
 	}
 
 	void GPUVertexAndIndexMappedBuffers::CleanResources()

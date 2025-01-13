@@ -15,6 +15,8 @@ namespace chaos
 	class GPUCircleMeshGenerator;
 	class GPUSphereMeshGenerator;
 
+	using GPUMeshGenerationElementCreationFunc = LightweightFunction<GPUMeshElement &()>;
+
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
@@ -30,12 +32,10 @@ namespace chaos
 
 	public:
 
-		/** size of a vertex */
-		int vertex_size = 0;
 		/** number of vertices required */
-		int vertices_count = 0;
+		size_t vertices_count = 0;
 		/** number of indices required */
-		int indices_count = 0;
+		size_t indices_count = 0;
 	};
 
 	/**
@@ -54,7 +54,7 @@ namespace chaos
 		/** get the vertex declaration */
 		virtual GPUVertexDeclaration* GenerateVertexDeclaration() const = 0;
 		/** get the mesh data */
-		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive>& primitives, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const = 0;
+		virtual void GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const = 0;
 
 		/** generation function */
 		shared_ptr<GPUMesh> GenerateMesh() const;
@@ -102,14 +102,14 @@ namespace chaos
 		/** get the vertex declaration */
 		virtual GPUVertexDeclaration* GenerateVertexDeclaration() const override;
 		/** get the mesh data */
-		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive>& primitives, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
+		virtual void GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
 
 	protected:
 
 		/** the vertices defining a face facing planes inside [-1, +1] */
 		static glm::vec3 const vertices[4];
 		/** the triangles indices defining a face facing planes */
-		static GLuint const triangles[6];
+		static uint32_t const triangles[6];
 	};
 
 	/**
@@ -128,7 +128,7 @@ namespace chaos
 		/** get the vertex declaration */
 		virtual GPUVertexDeclaration* GenerateVertexDeclaration() const override;
 		/** get the mesh data */
-		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive>& primitives, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
+		virtual void GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
 	};
 
 	/**
@@ -147,14 +147,14 @@ namespace chaos
 		/** get the vertex declaration */
 		virtual GPUVertexDeclaration* GenerateVertexDeclaration() const override;
 		/** get the mesh data */
-		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive>& primitives, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
+		virtual void GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
 
 	protected:
 
 		/** the vertices defining a cube */
 		static glm::vec3 const vertices[24 * 2];
 		/** the triangles defining a cube */
-		static GLuint const triangles[36];
+		static uint32_t const triangles[36];
 	};
 
 	/**
@@ -173,14 +173,14 @@ namespace chaos
 		/** get the vertex declaration */
 		virtual GPUVertexDeclaration* GenerateVertexDeclaration() const override;
 		/** get the mesh data */
-		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive>& primitives, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
+		virtual void GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
 
 	protected:
 
 		/** the vertices defining a cube */
 		static glm::vec3 const vertices[8];
 		/** the indices defining a cube */
-		static GLuint const indices[24];
+		static uint32_t const indices[24];
 	};
 
 	/**
@@ -202,7 +202,7 @@ namespace chaos
 		/** get the vertex declaration */
 		virtual GPUVertexDeclaration* GenerateVertexDeclaration() const override;
 		/** get the mesh data */
-		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive>& primitives, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
+		virtual void GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
 
 	protected:
 
@@ -230,7 +230,7 @@ namespace chaos
 		/** get the vertex declaration */
 		virtual GPUVertexDeclaration* GenerateVertexDeclaration() const override;
 		/** get the mesh data */
-		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive>& primitives, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
+		virtual void GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
 
 	protected:
 

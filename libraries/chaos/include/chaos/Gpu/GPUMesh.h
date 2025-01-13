@@ -62,7 +62,7 @@ namespace chaos
         /** access any mesh element */
         GPUMeshElement const& GetMeshElement(size_t index) const { return elements[index]; }
         /** add an rendering element */
-        GPUMeshElement& AddMeshElement(GPUBuffer * vertex_buffer, GPUBuffer * index_buffer);
+        GPUMeshElement& AddMeshElement(GPUVertexDeclaration* vertex_declaration, GPUBuffer * vertex_buffer, GPUBuffer * index_buffer);
 
 		/** setting the bounding box of the mesh */
 		void SetBoundingBox(std::optional<box3> const & in_bounding_box);

@@ -205,9 +205,9 @@ protected:
 		if (scene->HasMeshes())
 		{
 			// create a vertex declaration
-			shared_ptr<GPUVertexDeclaration> declaration = new GPUVertexDeclaration();
-			declaration->Push(VertexAttributeSemantic::POSITION, 0, VertexAttributeType::FLOAT3);
-			declaration->Push(VertexAttributeSemantic::NORMAL, 0, VertexAttributeType::FLOAT3);
+			shared_ptr<GPUVertexDeclaration> vertex_declaration = new GPUVertexDeclaration();
+			vertex_declaration->Push(VertexAttributeSemantic::POSITION, 0, VertexAttributeType::FLOAT3);
+			vertex_declaration->Push(VertexAttributeSemantic::NORMAL, 0, VertexAttributeType::FLOAT3);
 
 			for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
 			{
@@ -277,8 +277,7 @@ protected:
 				index_buffer->UnMapBuffer();
 
 				// create the element
-				GPUMeshElement & element = gpu_mesh->AddMeshElement(vertex_buffer.get(), index_buffer.get());
-				element.vertex_declaration = declaration;
+				GPUMeshElement & element = gpu_mesh->AddMeshElement(vertex_declaration.get(), vertex_buffer.get(), index_buffer.get());
 
 				GPUDrawPrimitive primitive; 
 				primitive.indexed = true;

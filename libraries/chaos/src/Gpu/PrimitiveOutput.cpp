@@ -175,9 +175,8 @@ namespace chaos
         {
             assert(current_primitive_type != PrimitiveType::NONE);
 
-            GPUMeshElement& element = mesh->AddMeshElement(vertex_buffer.get(), (current_primitive_type == PrimitiveType::QUAD)? quad_index_buffer : nullptr);
+            GPUMeshElement& element = mesh->AddMeshElement(vertex_declaration, vertex_buffer.get(), (current_primitive_type == PrimitiveType::QUAD)? quad_index_buffer : nullptr);
             element.primitives = std::move(pending_primitives);
-            element.vertex_declaration = vertex_declaration;
             element.render_material = render_material;
             current_primitive_type = PrimitiveType::NONE;
         }

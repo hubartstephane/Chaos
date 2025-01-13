@@ -30,7 +30,7 @@ namespace chaos
 		vertex_array_cache = in_vertex_array_cache;
 	}
 
-	GPUMeshElement & GPUMesh::AddMeshElement(GPUBuffer * vertex_buffer, GPUBuffer * index_buffer)
+	GPUMeshElement & GPUMesh::AddMeshElement(GPUVertexDeclaration* vertex_declaration, GPUBuffer * vertex_buffer, GPUBuffer * index_buffer)
 	{
 		if (vertex_buffer != nullptr)
 			vertex_buffer->IncrementUsageCount();
@@ -38,8 +38,9 @@ namespace chaos
 			index_buffer->IncrementUsageCount();
 
 		GPUMeshElement & result = elements.emplace_back();
-		result.vertex_buffer = vertex_buffer;
-		result.index_buffer = index_buffer;
+		result.vertex_declaration = vertex_declaration;
+		result.vertex_buffer      = vertex_buffer;
+		result.index_buffer       = index_buffer;
 		return result;
 	}
 

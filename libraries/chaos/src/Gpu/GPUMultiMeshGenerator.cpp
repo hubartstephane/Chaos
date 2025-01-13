@@ -19,6 +19,9 @@ namespace chaos
 
 	bool GPUMultiMeshGenerator::GenerateMeshes() const
 	{
+
+	#if 0
+
 		if (generators.size() == 0)
 			return true;
 
@@ -70,7 +73,11 @@ namespace chaos
 		{
 			ib_ptr = index_buffer->MapBuffer(0, 0, false, true);
 			if (ib_ptr == nullptr)
+			{
+				if (vb_ptr != nullptr)
+					vertex_buffer->UnMapBuffer();
 				return false;
+			}
 		}
 
 		// generate the indices and the vertices
@@ -132,6 +139,11 @@ namespace chaos
 			vertex_buffer->UnMapBuffer();
 		if (index_buffer != nullptr)
 			index_buffer->UnMapBuffer();
+			
+#endif
+
+
+
 
 		return true;
 	}

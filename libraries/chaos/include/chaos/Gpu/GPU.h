@@ -1,6 +1,7 @@
 #include "chaos/Gpu/TextureDescription.h"
 #include "chaos/Gpu/GLPixelFormat.h"
 #include "chaos/Gpu/GLTextureTools.h"
+#include "chaos/Gpu/GPUVertexAndIndexMappedBuffers.h"
 #include "chaos/Gpu/Primitive.h"
 #include "chaos/Gpu/GPUDrawPrimitive.h"
 #include "chaos/Gpu/GPUResource.h"

@@ -19,13 +19,9 @@ namespace chaos
 
 	bool GPUMeshGenerationRequirement::IsValid() const
 	{
-		if (vertex_size <= 0)
-			return false;
-		if (vertices_count <= 0) // at least one vertex
-			return false;
-		if (indices_count < 0)
-			return false;
-		return true;
+		if (vertices_count >= 1) // at least one vertex
+			return true;
+		return false;
 	}
 
 	// =====================================================================
@@ -36,67 +32,43 @@ namespace chaos
 	{
 		assert(mesh != nullptr);
 
+		// get requirement
 		GPUMeshGenerationRequirement requirement = GetRequirement();
 		if (!requirement.IsValid())
 			return false;
 
+		// generate a declaration
+		shared_ptr<GPUVertexDeclaration> vertex_declaration = GenerateVertexDeclaration();
+		if (vertex_declaration == nullptr)
+			return false;
+
 		// create a vertex buffer
-		int vb_size = 0;
+		size_t vertex_size        = vertex_declaration->GetVertexSize();
+		size_t vertex_buffer_size = requirement.vertices_count * vertex_size;
+		size_t index_buffer_size  = requirement.indices_count * sizeof(uint32_t);
 
-		shared_ptr<GPUBuffer> vertex_buffer;
-		if (requirement.vertices_count > 0)
-		{
-			vertex_buffer = new GPUBuffer(false);
-			if (vertex_buffer == nullptr || !vertex_buffer->IsValid())
-				return false;
-
-			vb_size = requirement.vertices_count * requirement.vertex_size;
-			vertex_buffer->SetBufferData(nullptr, vb_size);
-		}
-
-		// create a index buffer
-		int ib_size = 0;
-
-		shared_ptr<GPUBuffer> index_buffer;
-		if (requirement.indices_count > 0)
-		{
-			index_buffer = new GPUBuffer(false);
-			if (index_buffer == nullptr || !index_buffer->IsValid())
-				return false;
-
-			ib_size = requirement.indices_count * sizeof(GLuint);
-			index_buffer->SetBufferData(nullptr, ib_size);
-		}
-
-		// map the buffers
-		char* vb_ptr = (vertex_buffer != nullptr) ? vertex_buffer->MapBuffer(0, 0, false, true) : nullptr;
-		char* ib_ptr = (index_buffer != nullptr) ?  index_buffer->MapBuffer(0, 0, false, true)  : nullptr;
+		GPUVertexAndIndexMappedBuffers buffers = GPUVertexAndIndexMappedBuffers::CreateMappedBuffers(vertex_buffer_size, index_buffer_size);
+		if (!buffers.IsValid())
+			return false;
 
 		// prepare the mesh
 		mesh->Clear(nullptr);
 
-		GPUMeshElement& element = mesh->AddMeshElement(vertex_buffer.get(), index_buffer.get());
-
 		// generate the indices and the vertices
-		MemoryBufferWriter vertices_writer(vb_ptr, vb_size);
-		MemoryBufferWriter indices_writer(ib_ptr, ib_size);
-		GenerateMeshData(element.primitives, vertices_writer, indices_writer);
+		auto elem_create_func = [&mesh, &vertex_declaration, &buffers]() -> GPUMeshElement &
+		{
+			return mesh->AddMeshElement(vertex_declaration.get(), buffers.vertex_buffer.get(), buffers.index_buffer.get());
+		};
+
+		MemoryBufferWriter vertices_writer(buffers.mapped_vertex_buffer, vertex_buffer_size);
+		MemoryBufferWriter indices_writer(buffers.mapped_index_buffer, index_buffer_size);
+		GenerateMeshData(elem_create_func, vertices_writer, indices_writer);
 
 		assert(vertices_writer.GetRemainingBufferSize() == 0);
 		assert(indices_writer.GetRemainingBufferSize() == 0);
 
-		// get the vertex declaration
-		element.vertex_declaration = GenerateVertexDeclaration();
-		assert(element.vertex_declaration->GetVertexSize() == requirement.vertex_size);
-
-		// initialize the vertex array and validate
-		element.vertex_buffer_offset = 0;
-
 		// unmap buffers
-		if (vertex_buffer != nullptr)
-			vertex_buffer->UnMapBuffer();
-		if (index_buffer != nullptr)
-			index_buffer->UnMapBuffer();
+		buffers.CleanResources();
 
 		return true;
 	}
@@ -119,7 +91,6 @@ namespace chaos
 	GPUMeshGenerationRequirement GPUTriangleMeshGenerator::GetRequirement() const
 	{
 		GPUMeshGenerationRequirement result;
-		result.vertex_size = 2 * sizeof(glm::vec3);
 		result.vertices_count = 3;
 		result.indices_count = 0;
 		return result;
@@ -136,8 +107,10 @@ namespace chaos
         return result;
 	}
 
-	void GPUTriangleMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+	void GPUTriangleMeshGenerator::GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 	{
+		GPUMeshElement & mesh_element = elem_create_func();
+
 		// the primitives
 		GPUDrawPrimitive draw_primitive;
 		draw_primitive.count = 3;
@@ -145,7 +118,7 @@ namespace chaos
 		draw_primitive.primitive_type = GL_TRIANGLES;
 		draw_primitive.start = 0;
 		draw_primitive.base_vertex_index = 0;
-		primitives.push_back(draw_primitive);
+		mesh_element.primitives.push_back(draw_primitive);
 
 		glm::vec3 transformed_a = GLMTools::MultWithTranslation(transform, primitive.a);
 		glm::vec3 transformed_b = GLMTools::MultWithTranslation(transform, primitive.b);
@@ -178,7 +151,7 @@ namespace chaos
 		{ -1.0f,  1.0f,  0.0f }
 	};
 
-	GLuint const GPUQuadMeshGenerator::triangles[6] =
+	uint32_t const GPUQuadMeshGenerator::triangles[6] =
 	{
 		0, 1, 2,
 		0, 2, 3
@@ -187,7 +160,6 @@ namespace chaos
 	GPUMeshGenerationRequirement GPUQuadMeshGenerator::GetRequirement() const
 	{
 		GPUMeshGenerationRequirement result;
-		result.vertex_size = 2 * sizeof(glm::vec3);
 		result.vertices_count = sizeof(vertices) / sizeof(vertices[0]);
 		result.indices_count = sizeof(triangles) / sizeof(triangles[0]);
 		return result;
@@ -204,8 +176,10 @@ namespace chaos
         return result;
 	}
 
-	void GPUQuadMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+	void GPUQuadMeshGenerator::GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 	{
+		GPUMeshElement& mesh_element = elem_create_func();
+
 		// the primitives
 		GPUDrawPrimitive draw_primitive;
 		draw_primitive.count = sizeof(triangles) / sizeof(triangles[0]);
@@ -213,7 +187,7 @@ namespace chaos
 		draw_primitive.primitive_type = GL_TRIANGLES;
 		draw_primitive.start = 0;
 		draw_primitive.base_vertex_index = 0;
-		primitives.push_back(draw_primitive);
+		mesh_element.primitives.push_back(draw_primitive);
 
 		// the indices
 		indices_writer.Write(triangles, sizeof(triangles));
@@ -274,7 +248,7 @@ namespace chaos
 		{ -1.0f,  1.0f,  1.0f }, {  0.0f,  1.0f,  0.0f }
 	};
 
-	GLuint const GPUBoxMeshGenerator::triangles[36] =
+	uint32_t const GPUBoxMeshGenerator::triangles[36] =
 	{
 		0, 2, 1,
 		0, 3, 2,
@@ -298,7 +272,6 @@ namespace chaos
 	GPUMeshGenerationRequirement GPUBoxMeshGenerator::GetRequirement() const
 	{
 		GPUMeshGenerationRequirement result;
-		result.vertex_size = 2 * sizeof(glm::vec3);
 		result.vertices_count = (sizeof(vertices) / sizeof(vertices[0])) / 2; //  div by 2 because buffer contains POSITION + NORMAL
 		result.indices_count = (sizeof(triangles) / sizeof(triangles[0]));
 		return result;
@@ -315,8 +288,10 @@ namespace chaos
         return result;
 	}
 
-	void GPUBoxMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+	void GPUBoxMeshGenerator::GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 	{
+		GPUMeshElement& mesh_element = elem_create_func();
+
 		// the primitives
 		GPUDrawPrimitive draw_primitive;
 		draw_primitive.count = sizeof(triangles) / sizeof(triangles[0]); // number of triangles does not depends on NORMAL presence
@@ -324,7 +299,7 @@ namespace chaos
 		draw_primitive.primitive_type = GL_TRIANGLES;
 		draw_primitive.start = 0;
 		draw_primitive.base_vertex_index = 0;
-		primitives.push_back(draw_primitive);
+		mesh_element.primitives.push_back(draw_primitive);
 
 		// the indices
 		indices_writer.Write(triangles, sizeof(triangles));
@@ -368,7 +343,7 @@ namespace chaos
 		{ 1.0f, -1.0f,  1.0f}
 	};
 
-	GLuint const GPUWireframeBoxMeshGenerator::indices[24] =
+	uint32_t const GPUWireframeBoxMeshGenerator::indices[24] =
 	{
 		0, 1,
 		1, 2,
@@ -389,7 +364,6 @@ namespace chaos
 	GPUMeshGenerationRequirement GPUWireframeBoxMeshGenerator::GetRequirement() const
 	{
 		GPUMeshGenerationRequirement result;
-		result.vertex_size = sizeof(glm::vec3);
 		result.vertices_count = (sizeof(vertices) / sizeof(vertices[0]));
 		result.indices_count = (sizeof(indices) / sizeof(indices[0]));
 		return result;
@@ -405,8 +379,10 @@ namespace chaos
 		return result;
 	}
 
-	void GPUWireframeBoxMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive>& primitives, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const
+	void GPUWireframeBoxMeshGenerator::GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const
 	{
+		GPUMeshElement& mesh_element = elem_create_func();
+
 		// the primitives
 		GPUDrawPrimitive draw_primitive;
 		draw_primitive.count = sizeof(indices) / sizeof(indices[0]);
@@ -414,7 +390,7 @@ namespace chaos
 		draw_primitive.primitive_type = GL_LINES;
 		draw_primitive.start = 0;
 		draw_primitive.base_vertex_index = 0;
-		primitives.push_back(draw_primitive);
+		mesh_element.primitives.push_back(draw_primitive);
 
 		// the indices
 		indices_writer.Write(indices, sizeof(indices));
@@ -444,7 +420,6 @@ namespace chaos
 	GPUMeshGenerationRequirement GPUCircleMeshGenerator::GetRequirement() const
 	{
 		GPUMeshGenerationRequirement result;
-		result.vertex_size = 2 * sizeof(glm::vec3);
 		result.vertices_count = 1 + subdivisions;
 		result.indices_count  = 3 * subdivisions;
 		return result;
@@ -461,7 +436,7 @@ namespace chaos
         return result;
 	}
 
-	void GPUCircleMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+	void GPUCircleMeshGenerator::GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 	{
 		glm::vec3 normal = {0.0f, 0.0f, 1.0f};
 		glm::vec3 transformed_normal = GLMTools::Mult(transform, normal);
@@ -504,13 +479,15 @@ namespace chaos
 		// insert the primitive
 		int indices_count  = 3 * subdivisions;
 
+		GPUMeshElement& mesh_element = elem_create_func();
+
 		GPUDrawPrimitive draw_primitive;
 		draw_primitive.count = indices_count;
 		draw_primitive.indexed = true;
 		draw_primitive.primitive_type = GL_TRIANGLES;
 		draw_primitive.start = 0;
 		draw_primitive.base_vertex_index = 0;
-		primitives.push_back(draw_primitive);
+		mesh_element.primitives.push_back(draw_primitive);
 	}
 
 	// =====================================================================
@@ -523,7 +500,6 @@ namespace chaos
 		int subdiv_alpha = subdiv_beta * 2;
 
 		GPUMeshGenerationRequirement result;
-		result.vertex_size = 2 * sizeof(glm::vec3);
 		result.vertices_count = 2 + subdiv_beta * subdiv_alpha;
 		result.indices_count =
 			subdiv_alpha * 3 +
@@ -543,7 +519,7 @@ namespace chaos
         return result;
 	}
 
-	void GPUSphereMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+	void GPUSphereMeshGenerator::GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 	{
 		box3 bounding_box;
 
@@ -629,13 +605,15 @@ namespace chaos
 			subdiv_alpha * (subdiv_beta - 1) * 6 +
 			subdiv_alpha * 3;
 
+		GPUMeshElement& mesh_element = elem_create_func();
+
 		GPUDrawPrimitive draw_primitive;
 		draw_primitive.count = indices_count;
 		draw_primitive.indexed = true;
 		draw_primitive.primitive_type = GL_TRIANGLES;
 		draw_primitive.start = 0;
 		draw_primitive.base_vertex_index = 0;
-		primitives.push_back(draw_primitive);
+		mesh_element.primitives.push_back(draw_primitive);
 	}
 
 }; // namespace chaos

@@ -447,6 +447,9 @@ AnalyticMatrix MakeRotationMatrixZ(char const* angle_name)
 
 // ----------------------------------------------------------------------------------------
 
+
+#if 0
+
 enum class ImGuiWindowPlacementType
 {
 	ScreenCenter,
@@ -635,6 +638,8 @@ protected:
 	std::string name;
 };
 
+
+
 // ----------------------------------------------------------------------------------------
 
 enum class MatrixCreationType
@@ -697,27 +702,9 @@ protected:
 	}
 };
 
-// ----------------------------------------------------------------------------------------
-
-
-#if 0
-auto it = std::ranges::find_if(matrixes, [&name = name](NamedMatrix const& M)
-{
-	return chaos::StringTools::Stricmp(name, M.name) == 0;
-});
-if (it != matrixes.end())
-{
-	ErrorPopup.Open(std::format("A matrix named [{}] already exits", name));
-}
-else
-{
-	validation_function(name.c_str());
-}
-
-
-ImGuiErrorPopup ErrorPopup;
-
 #endif
+
+// ----------------------------------------------------------------------------------------
 
 
 

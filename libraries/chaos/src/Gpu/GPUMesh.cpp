@@ -68,6 +68,7 @@ namespace chaos
 		}
 		elements.clear();
 		last_rendered_fence = nullptr;
+		bounding_box = {};
 	}
 
 	int GPUMesh::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
@@ -162,7 +163,7 @@ namespace chaos
 	/** get the bounding box of the mesh */
 	std::optional<box3> const& GPUMesh::GetBoundingBox() const
 	{
-	return bounding_box;
+		return bounding_box;
 	}
 
 }; // namespace chaos

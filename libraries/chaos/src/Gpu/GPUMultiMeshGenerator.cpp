@@ -19,131 +19,105 @@ namespace chaos
 
 	bool GPUMultiMeshGenerator::GenerateMeshes() const
 	{
-
-	#if 0
-
 		if (generators.size() == 0)
 			return true;
 
-		// compute the final requirements
-		int vb_size = 0;
-		int ib_size = 0;
+		// compute generators requirements & vertex declarations
+		struct GeneratorData
+		{
+			GPUMeshGenerationRequirement requirement;
 
+			shared_ptr<GPUVertexDeclaration> vertex_declaration;
+		};
+
+		std::vector<GeneratorData> generator_data;
+
+		size_t total_vertex_buffer_size = 0;
+		size_t total_index_buffer_size = 0;
 		for (auto const it : generators)
 		{
 			GPUMeshGenerationRequirement requirement = it.first->GetRequirement();
 			if (!requirement.IsValid())
 				return false;
 
-			vb_size += requirement.vertex_size * requirement.vertices_count;
-			ib_size += requirement.indices_count * sizeof(GLuint);
+			shared_ptr<GPUVertexDeclaration> vertex_declaration = it.first->GenerateVertexDeclaration();
+			if (vertex_declaration == nullptr)
+				return false;
+
+			generator_data.push_back({ requirement , vertex_declaration });
+
+			total_vertex_buffer_size += requirement.vertices_count * vertex_declaration->GetVertexSize();
+			total_index_buffer_size  += requirement.indices_count * sizeof(uint32_t);
 		}
 
-		// create a vertex buffer to be shared among all meshes
-		shared_ptr<GPUBuffer> vertex_buffer;
-		if (vb_size > 0)
-		{
-			vertex_buffer = new GPUBuffer(false);
-			if (vertex_buffer == nullptr || !vertex_buffer->IsValid())
-				return false;
-			vertex_buffer->SetBufferData(nullptr, vb_size);
-		}
-
-		// create a index buffer to be shared among all meshes
-		shared_ptr<GPUBuffer> index_buffer;
-		if (ib_size > 0)
-		{
-			index_buffer = new GPUBuffer(false);
-			if (index_buffer == nullptr || !index_buffer->IsValid())
-				return false;
-			index_buffer->SetBufferData(nullptr, ib_size);
-		}
-
-		// map the buffers
-		char* vb_ptr = nullptr;
-		if (vertex_buffer != nullptr)
-		{
-			vb_ptr = vertex_buffer->MapBuffer(0, 0, false, true);
-			if (vb_ptr == nullptr)
-				return false;
-		}
-
-		char* ib_ptr = nullptr;
-		if (index_buffer != nullptr)
-		{
-			ib_ptr = index_buffer->MapBuffer(0, 0, false, true);
-			if (ib_ptr == nullptr)
-			{
-				if (vb_ptr != nullptr)
-					vertex_buffer->UnMapBuffer();
-				return false;
-			}
-		}
+		// create and map vertex and index buffer
+		GPUVertexAndIndexMappedBuffers buffers = GPUVertexAndIndexMappedBuffers::CreateMappedBuffers(total_vertex_buffer_size, total_index_buffer_size);
+		if (!buffers.IsValid())
+			return false;
 
 		// generate the indices and the vertices
-		MemoryBufferWriter vertices_writer(vb_ptr, vb_size);
-		MemoryBufferWriter indices_writer(ib_ptr, ib_size);
+		MemoryBufferWriter vertices_writer(buffers.mapped_vertex_buffer, total_vertex_buffer_size);
+		MemoryBufferWriter indices_writer(buffers.mapped_index_buffer, total_index_buffer_size);
+
+		size_t vertex_buffer_offset = 0;
+		size_t generator_index = 0;
 
 		for (auto const it : generators)
 		{
-			GPUMeshGenerationRequirement requirement = it.first->GetRequirement();
-
-			size_t written_vertices_count = vertices_writer.GetWrittenCount();
-			size_t written_indices_count = indices_writer.GetWrittenCount();
-
+			// create the mesh
 			shared_ptr<GPUMesh> mesh = (*it.second);
 			if (mesh == nullptr)
 			{
 				mesh = new GPUMesh; // generate the mesh
 				if (mesh == nullptr)
-					continue;
+					return false;
 			}
 			else
 				mesh->Clear(nullptr); // reuse existing mesh
 
-			GPUMeshElement& element = mesh->AddMeshElement(vertex_buffer.get(), index_buffer.get());
-			element.vertex_buffer_offset = written_vertices_count;
+			// generate geometry
+			GeneratorData const & data = generator_data[generator_index];
+
+			auto elem_create_func = [&mesh, &data, &buffers, vertex_buffer_offset]() -> GPUMeshElement&
+			{
+				GPUMeshElement& result = mesh->AddMeshElement(data.vertex_declaration.get(), buffers.vertex_buffer.get(), buffers.index_buffer.get());
+				result.vertex_buffer_offset += vertex_buffer_offset;
+				return result;
+			};
+
+			size_t written_vertices_count = vertices_writer.GetWrittenCount();
+			size_t written_indices_count = indices_writer.GetWrittenCount();
+
+			box3 bounding_box;
+			it.first->GenerateMeshData(elem_create_func, vertices_writer, indices_writer, bounding_box);
+			mesh->SetBoundingBox(bounding_box);
 
 #if _DEBUG
-			size_t vc1 = vertices_writer.GetWrittenCount();
-			size_t ic1 = indices_writer.GetWrittenCount();
+			size_t written_vertices_count_after = vertices_writer.GetWrittenCount();
+			size_t written_indices_count_after = indices_writer.GetWrittenCount();
+
+			assert(written_vertices_count_after - written_vertices_count == data.requirement.vertices_count * data.vertex_declaration->GetVertexSize()); // ensure generator as consumed exactly all required bytes for vertices and indices
+			assert(written_indices_count_after - written_indices_count == data.requirement.indices_count * sizeof(std::uint32_t));
 #endif
-			it.first->GenerateMeshData(element.primitives, vertices_writer, indices_writer); // generate the buffers and primitives and declaration
-			element.vertex_declaration = it.first->GenerateVertexDeclaration();
-
-#if _DEBUG
-			size_t vc2 = vertices_writer.GetWrittenCount();
-			size_t ic2 = indices_writer.GetWrittenCount();
-
-			assert(vc2 - vc1 == requirement.vertices_count * requirement.vertex_size);
-			assert(ic2 - ic1 == requirement.indices_count * sizeof(std::uint32_t));
-#endif
-
-			assert(requirement.vertex_size == element.vertex_declaration->GetVertexSize());
 
 			// shift the position of indices for this mesh
-			int ib_offset = (int)(written_indices_count / sizeof(GLuint));
-			if (ib_offset > 0)
-				for (GPUDrawPrimitive& primitive : element.primitives)
-					if (primitive.indexed)
-						primitive.start += ib_offset;
+			int index_buffer_offset = (int)(written_indices_count / sizeof(uint32_t));
+			if (index_buffer_offset > 0)
+				for (size_t i = 0 ; i < mesh->GetMeshElementCount() ; ++i)
+					for (GPUDrawPrimitive& primitive : mesh->GetMeshElement(i).primitives)
+						if (primitive.indexed)
+							primitive.start += index_buffer_offset;
 
 			(*it.second) = mesh; // store the mesh as an output
+
+			++generator_index;
 		}
 
-		assert(vertices_writer.GetRemainingBufferSize() == 0);
+		assert(vertices_writer.GetRemainingBufferSize() == 0); // ensure generators have consumed exactly what they required
 		assert(indices_writer.GetRemainingBufferSize() == 0);
 
 		// unmap buffers
-		if (vertex_buffer != nullptr)
-			vertex_buffer->UnMapBuffer();
-		if (index_buffer != nullptr)
-			index_buffer->UnMapBuffer();
-			
-#endif
-
-
-
+		buffers.CleanResources();
 
 		return true;
 	}

@@ -44,6 +44,8 @@ namespace chaos
 
 	class CHAOS_API GPUMeshGenerator : public Object
 	{
+		friend class GPUMultiMeshGenerator;
+
 	public:
 
 		/** the destructor */
@@ -53,11 +55,14 @@ namespace chaos
 		virtual GPUMeshGenerationRequirement GetRequirement() const = 0;
 		/** get the vertex declaration */
 		virtual GPUVertexDeclaration* GenerateVertexDeclaration() const = 0;
-		/** get the mesh data */
-		virtual void GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const = 0;
 
 		/** generation function */
 		shared_ptr<GPUMesh> GenerateMesh() const;
+
+	protected:
+
+		/** get the mesh data */
+		virtual void GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer, box3& bounding_box) const = 0;
 		/** population function */
 		bool FillMeshData(GPUMesh* mesh) const;
 	};
@@ -80,6 +85,20 @@ namespace chaos
 
 	protected:
 
+		/** transform a position */
+		glm::vec3 TransformPosition(glm::vec3 const& position) const
+		{
+			return GLMTools::MultWithTranslation(transform, position);
+		}
+
+		/** transform a normal */
+		glm::vec3 TransformNormal(glm::vec3 const& normal) const
+		{
+			return normalize(GLMTools::Mult(transform, normal));
+		}
+
+	protected:
+
 		/** the primitive that is been generated */
 		primitive_type primitive;
 		/** the transformation to apply to vertices */
@@ -97,12 +116,15 @@ namespace chaos
 
 		using GPUPrimitiveMeshGenerator::GPUPrimitiveMeshGenerator;
 
-		/** get requirement */
+		/** override */
 		virtual GPUMeshGenerationRequirement GetRequirement() const override;
-		/** get the vertex declaration */
+		/** override */
 		virtual GPUVertexDeclaration* GenerateVertexDeclaration() const override;
-		/** get the mesh data */
-		virtual void GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
+
+	protected:
+
+		/** override */
+		virtual void GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer, box3& bounding_box) const override;
 
 	protected:
 
@@ -123,12 +145,15 @@ namespace chaos
 
 		using GPUPrimitiveMeshGenerator::GPUPrimitiveMeshGenerator;
 
-		/** get requirement */
+		/** override */
 		virtual GPUMeshGenerationRequirement GetRequirement() const override;
-		/** get the vertex declaration */
+		/** override */
 		virtual GPUVertexDeclaration* GenerateVertexDeclaration() const override;
-		/** get the mesh data */
-		virtual void GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
+
+	protected:
+
+		/** override */
+		virtual void GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer, box3& bounding_box) const override;
 	};
 
 	/**
@@ -142,12 +167,15 @@ namespace chaos
 
 		using GPUPrimitiveMeshGenerator::GPUPrimitiveMeshGenerator;
 
-		/** get requirement */
+		/** override */
 		virtual GPUMeshGenerationRequirement GetRequirement() const override;
-		/** get the vertex declaration */
+		/** override */
 		virtual GPUVertexDeclaration* GenerateVertexDeclaration() const override;
-		/** get the mesh data */
-		virtual void GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
+
+	protected:
+
+		/** override */
+		virtual void GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer, box3& bounding_box) const override;
 
 	protected:
 
@@ -168,12 +196,15 @@ namespace chaos
 
 		using GPUPrimitiveMeshGenerator::GPUPrimitiveMeshGenerator;
 
-		/** get requirement */
+		/** override */
 		virtual GPUMeshGenerationRequirement GetRequirement() const override;
-		/** get the vertex declaration */
+		/** override */
 		virtual GPUVertexDeclaration* GenerateVertexDeclaration() const override;
-		/** get the mesh data */
-		virtual void GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
+
+	protected:
+
+		/** override */
+		virtual void GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer, box3& bounding_box) const override;
 
 	protected:
 
@@ -197,12 +228,15 @@ namespace chaos
 			GPUPrimitiveMeshGenerator<sphere2>(in_primitive, in_transform),
 			subdivisions(in_subdivisions) {}
 
-		/** get requirement */
+		/** override */
 		virtual GPUMeshGenerationRequirement GetRequirement() const override;
-		/** get the vertex declaration */
+		/** override */
 		virtual GPUVertexDeclaration* GenerateVertexDeclaration() const override;
-		/** get the mesh data */
-		virtual void GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
+
+	protected:
+
+		/** override */
+		virtual void GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer, box3& bounding_box) const override;
 
 	protected:
 
@@ -225,12 +259,16 @@ namespace chaos
 			GPUPrimitiveMeshGenerator<sphere3>(in_primitive, in_transform),
 			subdivisions(in_subdivisions) {}
 
-		/** get requirement */
+		/** override */
 		virtual GPUMeshGenerationRequirement GetRequirement() const override;
-		/** get the vertex declaration */
+		/** override */
 		virtual GPUVertexDeclaration* GenerateVertexDeclaration() const override;
-		/** get the mesh data */
-		virtual void GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const override;
+		/** override */
+
+	protected:
+
+		/** override */
+		virtual void GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer, box3& bounding_box) const override;
 
 	protected:
 

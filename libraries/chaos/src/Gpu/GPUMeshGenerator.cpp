@@ -42,7 +42,7 @@ namespace chaos
 		if (vertex_declaration == nullptr)
 			return false;
 
-		// create a vertex buffer
+		// create and map vertex and index buffer
 		size_t vertex_size        = vertex_declaration->GetVertexSize();
 		size_t vertex_buffer_size = requirement.vertices_count * vertex_size;
 		size_t index_buffer_size  = requirement.indices_count * sizeof(uint32_t);
@@ -62,9 +62,12 @@ namespace chaos
 
 		MemoryBufferWriter vertices_writer(buffers.mapped_vertex_buffer, vertex_buffer_size);
 		MemoryBufferWriter indices_writer(buffers.mapped_index_buffer, index_buffer_size);
-		GenerateMeshData(elem_create_func, vertices_writer, indices_writer);
 
-		assert(vertices_writer.GetRemainingBufferSize() == 0);
+		box3 bounding_box;
+		GenerateMeshData(elem_create_func, vertices_writer, indices_writer, bounding_box);
+		mesh->SetBoundingBox(bounding_box);
+
+		assert(vertices_writer.GetRemainingBufferSize() == 0); // ensure generator has consumed exactly what it required
 		assert(indices_writer.GetRemainingBufferSize() == 0);
 
 		// unmap buffers
@@ -77,10 +80,8 @@ namespace chaos
 	{
 		shared_ptr<GPUMesh> mesh = new GPUMesh();
 		if (mesh != nullptr)
-		{
 			if (!FillMeshData(mesh.get())) // automatic destruction in case of failure
 				return nullptr;
-		}
 		return mesh;
 	}
 
@@ -107,7 +108,7 @@ namespace chaos
         return result;
 	}
 
-	void GPUTriangleMeshGenerator::GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+	void GPUTriangleMeshGenerator::GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer, box3 & bounding_box) const
 	{
 		GPUMeshElement & mesh_element = elem_create_func();
 
@@ -120,9 +121,9 @@ namespace chaos
 		draw_primitive.base_vertex_index = 0;
 		mesh_element.primitives.push_back(draw_primitive);
 
-		glm::vec3 transformed_a = GLMTools::MultWithTranslation(transform, primitive.a);
-		glm::vec3 transformed_b = GLMTools::MultWithTranslation(transform, primitive.b);
-		glm::vec3 transformed_c = GLMTools::MultWithTranslation(transform, primitive.c);
+		glm::vec3 transformed_a = TransformPosition(primitive.a);
+		glm::vec3 transformed_b = TransformPosition(primitive.b);
+		glm::vec3 transformed_c = TransformPosition(primitive.c);
 
 		glm::vec3 transformed_normal = glm::normalize(glm::cross(transformed_b - transformed_a, transformed_c - transformed_b));
 
@@ -133,7 +134,6 @@ namespace chaos
 		vertices_writer << transformed_c;
 		vertices_writer << transformed_normal;
 
-		box3 bounding_box;
 		ExtendBox(bounding_box, transformed_a);
 		ExtendBox(bounding_box, transformed_b);
 		ExtendBox(bounding_box, transformed_c);
@@ -176,7 +176,7 @@ namespace chaos
         return result;
 	}
 
-	void GPUQuadMeshGenerator::GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+	void GPUQuadMeshGenerator::GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer, box3& bounding_box) const
 	{
 		GPUMeshElement& mesh_element = elem_create_func();
 
@@ -194,15 +194,13 @@ namespace chaos
 
 		// the vertices	
 		glm::vec3 normal = {0.0f, 0.0f, 1.0f};
-		glm::vec3 transformed_normal = GLMTools::Mult(transform, normal);
+		glm::vec3 transformed_normal = TransformNormal(normal);
 
-		box3 bounding_box;
-		
 		size_t const vertex_count = sizeof(vertices) / sizeof(vertices[0]);
 		for (size_t i = 0; i < vertex_count; ++i)
 		{
 			glm::vec3 position = vertices[i] * glm::vec3(primitive.half_size, 0.0f) + glm::vec3(primitive.position, 0.0f);
-			glm::vec3 transformed_position = GLMTools::MultWithTranslation(transform, position);
+			glm::vec3 transformed_position = TransformPosition(position);
 
 			vertices_writer << transformed_position;
 			vertices_writer << transformed_normal;
@@ -288,7 +286,7 @@ namespace chaos
         return result;
 	}
 
-	void GPUBoxMeshGenerator::GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+	void GPUBoxMeshGenerator::GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer, box3& bounding_box) const
 	{
 		GPUMeshElement& mesh_element = elem_create_func();
 
@@ -308,16 +306,14 @@ namespace chaos
 		glm::vec3 const & hs = primitive.half_size;
 		glm::vec3 const & p  = primitive.position;
 
-		box3 bounding_box;
-
 		int const count = sizeof(vertices) / sizeof(vertices[0]);
 		for (int i = 0; i < count / 2; ++i)
 		{
 			glm::vec3 position = vertices[i * 2] * hs + p;
 			glm::vec3 normal   = vertices[i * 2 + 1];
 
-			glm::vec3 transformed_position = GLMTools::MultWithTranslation(transform, position);
-			glm::vec3 transformed_normal   = GLMTools::Mult(transform, normal);
+			glm::vec3 transformed_position = TransformPosition(position);
+			glm::vec3 transformed_normal   = TransformNormal(normal);
 
 			vertices_writer << transformed_position;
 			vertices_writer << transformed_normal;
@@ -379,7 +375,7 @@ namespace chaos
 		return result;
 	}
 
-	void GPUWireframeBoxMeshGenerator::GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer) const
+	void GPUWireframeBoxMeshGenerator::GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer, box3& bounding_box) const
 	{
 		GPUMeshElement& mesh_element = elem_create_func();
 
@@ -399,13 +395,11 @@ namespace chaos
 		glm::vec3 const & hs = primitive.half_size;
 		glm::vec3 const & p  = primitive.position;
 
-		box3 bounding_box;
-
 		size_t const count = sizeof(vertices) / sizeof(vertices[0]);
 		for (size_t i = 0; i < count; ++i)
 		{
 			glm::vec3 position = vertices[i] * hs + p;
-			glm::vec3 transformed_position = GLMTools::MultWithTranslation(transform, position);
+			glm::vec3 transformed_position = TransformPosition(position);
 
 			vertices_writer << transformed_position;
 
@@ -436,16 +430,14 @@ namespace chaos
         return result;
 	}
 
-	void GPUCircleMeshGenerator::GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+	void GPUCircleMeshGenerator::GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer, box3& bounding_box) const
 	{
 		glm::vec3 normal = {0.0f, 0.0f, 1.0f};
-		glm::vec3 transformed_normal = GLMTools::Mult(transform, normal);
+		glm::vec3 transformed_normal = TransformNormal(normal);
 
 		// generate the vertices
-		box3 bounding_box;
-
 		glm::vec3 center = {primitive.position, 0.0f};
-		glm::vec3 transformed_center = GLMTools::MultWithTranslation(transform, center);
+		glm::vec3 transformed_center = TransformPosition(center);
 
 		vertices_writer << transformed_center;
 		vertices_writer << transformed_normal;
@@ -460,7 +452,7 @@ namespace chaos
 			glm::vec2 direction = {std::cos(alpha), std::sin(alpha)};
 			glm::vec3 position  = {primitive.radius * direction + primitive.position, 0.0f};
 
-			glm::vec3 transformed_position = GLMTools::MultWithTranslation(transform, position);
+			glm::vec3 transformed_position = TransformPosition(position);
 
 			vertices_writer << transformed_position;
 			vertices_writer << transformed_normal;
@@ -519,17 +511,15 @@ namespace chaos
         return result;
 	}
 
-	void GPUSphereMeshGenerator::GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+	void GPUSphereMeshGenerator::GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer, box3& bounding_box) const
 	{
-		box3 bounding_box;
-
 		auto InsertVertex = [this, &vertices_writer, &bounding_box](float alpha, float beta)
 		{
 			glm::vec3 normal = MathTools::PolarCoordToVector(alpha, beta);
 			glm::vec3 position = primitive.radius * normal + primitive.position;
 
-			glm::vec3 transformed_position = GLMTools::MultWithTranslation(transform, position);
-			glm::vec3 transformed_normal   = GLMTools::Mult(transform, normal);
+			glm::vec3 transformed_position = TransformPosition(position);
+			glm::vec3 transformed_normal   = TransformNormal(normal);
 			
 			vertices_writer << transformed_position;
 			vertices_writer << transformed_normal;

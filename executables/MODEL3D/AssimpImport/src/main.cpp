@@ -86,7 +86,7 @@ protected:
 		float far_plane = 10000.0f;
 		float near_plane = 20.0f;
 
-		glm::vec4 clear_color(0.4f, 0.4f, 0.4f, 0.0f);
+		glm::vec4 clear_color(0.4f, 0.4f, 0.4f, 1.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
 		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
@@ -313,7 +313,147 @@ protected:
 				gpu_mesh->SetBoundingBox(bounding_box);
 
 				// indices
+
+
+				// the height line going from bounding box center to bounding box corners
+				glm::vec3 bounding_box_corners[8] =
+				{
+					bounding_box.half_size * glm::vec3( -1.0f, -1.0f, -1.0f ), //     corner [0]
+					bounding_box.half_size * glm::vec3( -1.0f, -1.0f,  1.0f ), //     corner [1]
+					bounding_box.half_size * glm::vec3( -1.0f,  1.0f, -1.0f ), //     corner [2]
+					bounding_box.half_size * glm::vec3( -1.0f,  1.0f,  1.0f ), //     corner [3]
+					bounding_box.half_size * glm::vec3(  1.0f, -1.0f, -1.0f ), //     corner [4]
+					bounding_box.half_size * glm::vec3(  1.0f, -1.0f,  1.0f ), //     corner [5]
+					bounding_box.half_size * glm::vec3(  1.0f,  1.0f, -1.0f ), //     corner [6]
+					bounding_box.half_size * glm::vec3(  1.0f,  1.0f,  1.0f )  //     corner [7]
+				};
+
+				// the six faces of the bounding box
+				glm::int4 faces_to_corners[6]
+				{
+					{ 0, 1, 2, 3 }, // face X < 0      face [0]
+					{ 4, 5, 6, 7 }, // face X > 0      face [1]
+					{ 0, 1, 4, 5 }, // face Y < 0      face [2]
+					{ 2, 3, 6, 7 }, // face Y > 0      face [3]
+					{ 0, 2, 4, 6 }, // face Z < 0      face [4]
+					{ 1, 3, 5, 7 }  // face Z > 0      face [5]
+				};
+
+				glm::int3 corners_to_faces[8]
+				{
+					{ 0, 2, 4 }, // vertex 0 belongs to faces {0, 2, 4}
+					{ 0, 2, 5 },
+					{ 0, 3, 4 },
+					{ 0, 3, 5 },
+					{ 1, 2, 4 },
+					{ 1, 2, 5 },
+					{ 1, 3, 4 },
+					{ 1, 3, 5 }
+				};
+
+				std::vector<uint32_t> mesh_faces[64]; // 6 faces -> 32 possible combinaisons
+
+
+				for (unsigned int i = 0; i < faces_count; ++i)
+				{
+					aiFace const & ai_face = ai_mesh->mFaces[i];
+
+					assert(ai_face.mNumIndices == 3);
+
+					int index_a = ai_face.mIndices[0];
+					int index_b = ai_face.mIndices[1];
+					int index_c = ai_face.mIndices[2];
+
+					glm::vec3 a =
+					{
+						ai_mesh->mVertices[index_a].x,
+						ai_mesh->mVertices[index_a].y,
+						ai_mesh->mVertices[index_a].z
+					};
+
+					glm::vec3 b =
+					{
+						ai_mesh->mVertices[index_b].x,
+						ai_mesh->mVertices[index_b].y,
+						ai_mesh->mVertices[index_b].z
+					};
+
+					glm::vec3 c =
+					{
+						ai_mesh->mVertices[index_c].x,
+						ai_mesh->mVertices[index_c].y,
+						ai_mesh->mVertices[index_c].z
+					};
+
+					glm::vec3 normal = glm::cross(b - a, c - a); // no need to normalize
+
+					unsigned int face_mask = 0;
+					for (int j = 0; j < 4; ++j) // no need to iterate over the 8 corners. iterate over only half. we know that the normal must accept a corner or its opposition (opposite = 7 - corner)
+					{
+						if (dot(normal, bounding_box_corners[j]) > 0.0f)
+						{
+							for (int k = 0 ; k < 3 ; ++k)
+								face_mask |= 1 << (corners_to_faces[j][k]);
+						}
+						else
+						{
+							for (int k = 0; k < 3; ++k)
+								face_mask |= 1 << (corners_to_faces[7 - j][k]);
+						}
+					}
+
+					mesh_faces[face_mask].push_back(index_a);
+					mesh_faces[face_mask].push_back(index_b);
+					mesh_faces[face_mask].push_back(index_c);
+				};
+
 				MemoryBufferWriter indices_writer(buffers.mapped_index_buffer, index_bufsize);
+
+				for (size_t i = 0 ; i < 64; ++i)
+				{
+					if ((i & 4) == 0)
+						continue;
+
+					std::vector<uint32_t> const & faces = mesh_faces[i];
+
+
+
+					GPUMeshElement& element = gpu_mesh->AddMeshElement(vertex_declaration.get(), buffers.vertex_buffer.get(), buffers.index_buffer.get());
+
+					GPUDrawPrimitive primitive;
+					primitive.indexed = true;
+					primitive.primitive_type = GL_TRIANGLES;
+					primitive.start = indices_writer.GetWrittenCount() / (sizeof(uint32_t));
+					primitive.count = mesh_faces[i].size();
+					element.primitives.push_back(primitive);
+
+
+					for (uint32_t index : faces)
+						indices_writer << index;
+						
+
+
+
+
+
+
+				}
+
+				auto u = indices_writer.GetWrittenCount() / (3 * sizeof(uint32_t));
+				auto v = faces_count;
+
+				auto n = ai_mesh->mName.C_Str();
+
+				float delta = 100.0f * float(u) / float(v);
+
+
+				u = u;
+
+
+
+#if 0
+
+				
 
 				for (unsigned int i = 0; i < faces_count; ++i)
 				{
@@ -325,6 +465,7 @@ protected:
 					}
 				}
 
+
 				// create the element
 				GPUMeshElement & element = gpu_mesh->AddMeshElement(vertex_declaration.get(), buffers.vertex_buffer.get(), buffers.index_buffer.get());
 
@@ -333,7 +474,7 @@ protected:
 				primitive.primitive_type = GL_TRIANGLES;
 				primitive.count = faces_count * 3;
 				element.primitives.push_back(primitive);
-
+#endif
 				// clean the resource
 				buffers.CleanResources();
 

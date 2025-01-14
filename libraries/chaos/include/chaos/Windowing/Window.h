@@ -380,6 +380,9 @@ namespace chaos
 		/** called whenever the window is redrawn (entry point) */
 		virtual void DrawWindow();
 
+		/** get a provider and process the function */
+		virtual bool GetProgramProviderAndProcess(LightweightFunction<bool(GPUProgramProviderBase*)> func);
+
 		/** called at window creation */
 		virtual bool Initialize();
 		/** called at window destruction */

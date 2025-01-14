@@ -875,29 +875,41 @@ namespace chaos
 		});
 	}
 
+	bool Window::GetProgramProviderAndProcess(LightweightFunction<bool(GPUProgramProviderBase*)> func)
+	{
+		GPUProgramProviderCommonTransforms common_transforms; // some common deduction rules
+
+		WindowApplication* window_application = Application::GetInstance(); // application is a provider_interface
+
+		GPUProgramProviderChain provider(this, window_application, common_transforms); // order: window, application, common deduction rules
+
+		return func(&provider);
+	}
+
 	void Window::DrawWindow()
 	{
 		if (glfw_window != nullptr && renderer != nullptr)
 		{
 			assert(glfw_window == glfwGetCurrentContext());
 
+			// start rendering
 			renderer->BeginRenderingFrame();
 
-			// data provider
-			GPUProgramProviderCommonTransforms common_transforms; // some common deduction rules
-
-			GPUProgramProviderInterface const* application_provider_interface = Application::GetInstance(); // cast the application into a provider_interface
-
-			GPUProgramProviderChain provider(this, application_provider_interface, common_transforms); // order: window, application, common deduction rules
-
 			// render
-			if (DrawInternal(&provider))
+			bool draw_result = GetProgramProviderAndProcess([this](GPUProgramProviderBase * provider)
+			{
+				return DrawInternal(provider);
+			});
+
+			if (draw_result)
 			{
 				if (double_buffer)
 					glfwSwapBuffers(glfw_window);
 				else
 					glFlush();
 			}
+
+			// end rendering
 			renderer->EndRenderingFrame();
 		}
 	}
@@ -1005,16 +1017,17 @@ namespace chaos
 				return false;
 
 			// render in the frame buffer
-			GPUProgramProviderCommonTransforms common_transforms;
-			GPUProgramProviderChain provider(this, (WindowApplication*)Application::GetInstance(), common_transforms);
+			GetProgramProviderAndProcess([this, &framebuffer](GPUProgramProviderBase* provider)
+			{
+				renderer->BeginRenderingFrame();
+				renderer->PushFramebufferRenderContext(framebuffer.get(), false);
 
-			renderer->BeginRenderingFrame();
-			renderer->PushFramebufferRenderContext(framebuffer.get(), false);
+				DrawInternal(provider);
 
-			DrawInternal(&provider);
-
-			renderer->PopFramebufferRenderContext();
-			renderer->EndRenderingFrame();
+				renderer->PopFramebufferRenderContext();
+				renderer->EndRenderingFrame();
+				return true;
+			});
 
 			// extract the texture
 			GPUFramebufferAttachmentInfo const* attachment = framebuffer->GetColorAttachment(0);

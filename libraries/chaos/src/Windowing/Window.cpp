@@ -1020,11 +1020,13 @@ namespace chaos
 			GetProgramProviderAndProcess([this, &framebuffer](GPUProgramProviderBase* provider)
 			{
 				renderer->BeginRenderingFrame();
-				renderer->PushFramebufferRenderContext(framebuffer.get(), false);
 
-				DrawInternal(provider);
+				renderer->RenderIntoFramebuffer(framebuffer.get(), false, [this, provider]()
+				{
+					DrawInternal(provider);
+					return true;
+				});
 
-				renderer->PopFramebufferRenderContext();
 				renderer->EndRenderingFrame();
 				return true;
 			});

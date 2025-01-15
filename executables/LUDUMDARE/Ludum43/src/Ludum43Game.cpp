@@ -68,10 +68,8 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 	//
 
 	// RENDER TARGET 1 : SPECIAL WorldLimits (on red channel), Enlarged enemies (on blue channel)
+	renderer->RenderIntoFramebuffer(framebuffer_worldlimits.get(), true, [this, &clear_color, &render_params, uniform_provider, &renderer, ludum_level_instance]()
 	{
-
-		renderer->PushFramebufferRenderContext(framebuffer_worldlimits.get(), true);
-
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
 		// ---------------------------------------------
@@ -101,15 +99,15 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 			glColorMask(true, true, true, true);
 		}
 
-		renderer->PopFramebufferRenderContext();
-	}
+		return true;
+	});
 
 	// ---------------------------------------------
 	// RENDER TARGET 2 : all objects that are to be deformed (except Enemies and Player and atoms)
 	// ---------------------------------------------
-	{
-		renderer->PushFramebufferRenderContext(framebuffer_deformed.get(), true);
 
+	renderer->RenderIntoFramebuffer(framebuffer_deformed.get(), true, [this, &clear_color, &render_params, uniform_provider, &renderer]()
+	{
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
 		chaos::GPURenderParams other_render_params = render_params;
@@ -122,8 +120,8 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 		//	particle_manager->Display(renderer, uniform_provider, other_render_params);
 		level_instance->Display(renderer, uniform_provider, other_render_params);
 
-		renderer->PopFramebufferRenderContext();
-	}
+		return true;
+	});
 
 	// ---------------------------------------------
 	// COMBINE STEP 1 & STEP 2 (blend_backgrounds = 1 for default rendering, 0 for texture combining)

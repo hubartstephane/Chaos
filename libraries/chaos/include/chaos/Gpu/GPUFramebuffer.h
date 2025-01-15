@@ -48,8 +48,16 @@ namespace chaos
 		/** a getter on size */
 		aabox2 GetBox() const;
 
+		/** get whether a rendering is in progress */
+		bool IsRenderingInProgress() const { return rendering_in_progress; }
+
 		/** override */
 		virtual void Release() override;
+
+	protected:
+
+		/** set the rendering in progress flag */
+		void SetRenderingInProgress(bool in_value) { rendering_in_progress = in_value; }
 
 	protected:
 
@@ -57,6 +65,8 @@ namespace chaos
 		GLuint framebuffer_id = 0;
 		/** the size of the framebuffer */
 		glm::ivec2 size = { 0, 0 };
+		/** indicates whether there is a rendering in progress */
+		bool rendering_in_progress = false;
 	};
 
 #endif

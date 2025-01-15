@@ -2,36 +2,9 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class GPUFramebufferRenderStoredGPUState;
-	class GPUFramebufferRenderData;
 	class GPURenderer;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-	class CHAOS_API GPUFramebufferRenderStoredGPUState
-	{
-	public:
-
-		/** the viewport to restore */
-		aabox2 viewport;
-		/** the scissor to restore */
-		aabox2 scissor;
-		/** the scissor test */
-		bool scissor_test = false;
-	};
-
-	class CHAOS_API GPUFramebufferRenderData
-	{
-	public:
-
-		/** the concerned framebuffer */
-		shared_ptr<GPUFramebuffer> framebuffer;
-		/** whether mipmaps should be generated at the end of rendering */
-		bool generate_mipmaps = false;
-
-		/** the state that is to be restore at the end of the rendering */
-		GPUFramebufferRenderStoredGPUState stored_gpu_state;
-	};
 
 	class CHAOS_API GPURenderer : public Tickable
 	{
@@ -50,11 +23,6 @@ namespace chaos
 		/** called at the end of a new frame */
 		void EndRenderingFrame();
 
-		/** called to start of rendering on a new Framebuffer */
-		bool PushFramebufferRenderContext(GPUFramebuffer* framebuffer, bool generate_mipmaps);
-		/** called at the start of rendering on a framebuffer */
-		bool PopFramebufferRenderContext();
-
 		/** get the last delta_time */
 		float GetLastDeltaTime() const { return last_delta_time; }
 		/** get the average frame rate */
@@ -63,6 +31,9 @@ namespace chaos
 		int GetAverageDrawCalls() const;
 		/** get the number of average rendered vertices */
 		int GetAverageVertices() const;
+
+		/** call render function for a special framebuffer */
+		bool RenderIntoFramebuffer(GPUFramebuffer* framebuffer, bool generate_mipmaps, LightweightFunction<bool()> render_func);
 
 		/** get the rendering timestamp */
 		uint64_t GetTimestamp() const;
@@ -94,9 +65,6 @@ namespace chaos
 
 		/** the owning window */
 		weak_ptr<Window> window;
-
-		/** the stack of framebuffer */
-		std::vector<GPUFramebufferRenderData> framebuffer_stack;
 
 		/** whether a rendering is in progress */
 #if _DEBUG

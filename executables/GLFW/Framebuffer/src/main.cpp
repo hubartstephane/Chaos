@@ -8,15 +8,11 @@ protected:
 
 	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
-
-		for (int pass = 0; pass < 2; ++pass)
+		auto RenderingPass = [this, renderer, uniform_provider, draw_params](int pass)
 		{
 			glm::ivec2 size = (pass == 0) ?
 				framebuffer->GetSize():
 				glm::ivec2(int(draw_params.viewport.size.x), int(draw_params.viewport.size.y));
-
-			if (pass == 0)
-				renderer->PushFramebufferRenderContext(framebuffer.get(), true);
 
 			float far_plane = 1000.0f;
 			glm::vec4 clear_color = (pass == 0)?
@@ -71,10 +67,16 @@ protected:
 			render_params.instancing.base_instance = 0;
 
 			mesh->DisplayWithProgram(program.get(), renderer, &main_uniform_provider, render_params);
+		};
 
-			if (pass == 0)
-				renderer->PopFramebufferRenderContext();
-		}
+		renderer->RenderIntoFramebuffer(framebuffer.get(), true, [this, &RenderingPass]()
+		{
+			RenderingPass(0);
+			return true;
+		});
+
+		RenderingPass(1);
+
 		return true;
 	}
 

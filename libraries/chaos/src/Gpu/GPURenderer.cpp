@@ -10,86 +10,64 @@ namespace chaos
 		assert(in_window != nullptr);
 	}
 
-	bool GPURenderer::PushFramebufferRenderContext(GPUFramebuffer * framebuffer, bool generate_mipmaps)
+	bool GPURenderer::RenderIntoFramebuffer(GPUFramebuffer* framebuffer, bool generate_mipmaps, LightweightFunction<bool()> render_func)
 	{
 #if _DEBUG
 		assert(rendering_started);
 #endif
-		// check parameter validity
+
+		// early exit
 		if (framebuffer == nullptr || !framebuffer->IsValid())
 			return false;
-		// search whether the framebuffer is already on the stack
-		for (GPUFramebufferRenderData const & frd : framebuffer_stack)
-			if (frd.framebuffer == framebuffer)
-				return false;
-		// push the context on the stack
-		GPUFramebufferRenderData frd;
-		frd.framebuffer = framebuffer;
-		frd.generate_mipmaps = generate_mipmaps;
 
+		if (framebuffer->IsRenderingInProgress())
+			return false;
+
+		// notify the framebuffer
+		framebuffer->SetRenderingInProgress(true);
+
+		// save some states
 		GLint viewport_data[4];
 		glGetIntegerv(GL_VIEWPORT, viewport_data);
-		frd.stored_gpu_state.viewport.position = { viewport_data[0], viewport_data[1] };
-		frd.stored_gpu_state.viewport.size = { viewport_data[2], viewport_data[3] };
 
-		frd.stored_gpu_state.scissor_test = glIsEnabled(GL_SCISSOR_TEST);
-		if (frd.stored_gpu_state.scissor_test)
-		{
-			GLint scissor_data[4];
-			glGetIntegerv(GL_SCISSOR_BOX, scissor_data);
-			frd.stored_gpu_state.scissor.position = { scissor_data[0], scissor_data[1] };
-			frd.stored_gpu_state.scissor.size = { scissor_data[2], scissor_data[3] };
-		}
+		bool scissor_test = glIsEnabled(GL_SCISSOR_TEST);
 
-		framebuffer_stack.push_back(frd);
+		GLint scissor_data[4];
+		glGetIntegerv(GL_SCISSOR_BOX, scissor_data);
+
+		GLint previous_framebuffer_id = 0;
+		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &previous_framebuffer_id);
+
 		// update GL state machine
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer->GetResourceID());
 		GLTools::SetViewport(framebuffer->GetBox());
 		glDisable(GL_SCISSOR_TEST);
-		return true;
-	}
 
-	bool GPURenderer::PopFramebufferRenderContext()
-	{
-#if _DEBUG
-		assert(rendering_started);
-#endif
-		assert(framebuffer_stack.size() > 0); // logic error
+		// render
+		bool result = render_func();
 
-		// check for release version
-		if (framebuffer_stack.size() == 0)
-			return false;
-		// remove the element of the stack
-		GPUFramebufferRenderData frd = framebuffer_stack[framebuffer_stack.size() - 1];
-		framebuffer_stack.pop_back();
-		// check the framebuffer
-		if (!frd.framebuffer->IsValid())
-			return false;
-		// generate mipmaps
-		if (frd.generate_mipmaps)
-		{
-			for (GPUFramebufferAttachmentInfo & info : frd.framebuffer->attachment_info)
+		// generate mipmap
+		if (generate_mipmaps)
+			for (GPUFramebufferAttachmentInfo& info : framebuffer->attachment_info)
 				if (info.texture != nullptr)
 					glGenerateTextureMipmap(info.texture->GetResourceID());
-		}
-		// update GL state machine
-		GPUFramebuffer * previous_framebuffer = nullptr;
-		if (framebuffer_stack.size() > 0 && framebuffer_stack[framebuffer_stack.size() - 1].framebuffer->IsValid())
-			previous_framebuffer = framebuffer_stack[framebuffer_stack.size() - 1].framebuffer.get();
 
-		glBindFramebuffer(GL_FRAMEBUFFER, (previous_framebuffer == nullptr)? 0 : previous_framebuffer->GetResourceID());
+		// restore some states
+		glViewport(viewport_data[0], viewport_data[1], viewport_data[2], viewport_data[3]);
 
-		GLTools::SetViewport(frd.stored_gpu_state.viewport);
-
-		if (frd.stored_gpu_state.scissor_test)
-		{
+		if (scissor_test)
 			glEnable(GL_SCISSOR_TEST);
-			GLTools::SetScissorBox(frd.stored_gpu_state.scissor);
-		}
-		else
+		else 
 			glDisable(GL_SCISSOR_TEST);
 
-		return true;
+		glScissor(scissor_data[0], scissor_data[1], scissor_data[2], scissor_data[3]);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, previous_framebuffer_id);
+
+		// notify the framebuffer
+		framebuffer->SetRenderingInProgress(false);
+
+		return result;
 	}
 
 	void GPURenderer::BeginRenderingFrame()
@@ -111,11 +89,6 @@ namespace chaos
 		assert(rendering_started);
 		rendering_started = false;
 #endif
-		assert(framebuffer_stack.size() == 0); // logic error
-		// in release, pop all previous context
-		while(framebuffer_stack.size() > 0)
-			PopFramebufferRenderContext();
-
 		// update the frame rate
 		framerate_counter.Accumulate(1.0f);
 		// push the frame fence in the command queue if required by some external users

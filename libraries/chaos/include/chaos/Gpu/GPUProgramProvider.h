@@ -43,9 +43,9 @@ namespace chaos
 		bool ProcessAction(char const* name, GPUProgramAction& action) const;
 
 		/** utility function that deserve to set uniform */
-		bool BindUniform(GLUniformInfo const& uniform) const;
+		bool BindUniform(GPUUniformInfo const& uniform) const;
 		/** utility function that deserve to set attribute */
-		bool BindAttribute(GLAttributeInfo const& attribute) const;
+		bool BindAttribute(GPUAttributeInfo const& attribute) const;
 		/** get a value for the uniform / attribute */
 		template<typename T>
 		bool GetValue(char const* name, T& result) const

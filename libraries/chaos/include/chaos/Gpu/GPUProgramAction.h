@@ -93,7 +93,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramSetUniformAction(GLUniformInfo const& in_uniform) :
+		GPUProgramSetUniformAction(GPUUniformInfo const& in_uniform) :
 			uniform(in_uniform) {}
 
 	protected:
@@ -110,7 +110,7 @@ namespace chaos
 	protected:
 
 		/** the uniform to set */
-		GLUniformInfo const& uniform;
+		GPUUniformInfo const& uniform;
 	};
 
 	/**
@@ -122,7 +122,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramSetAttributeAction(GLAttributeInfo const& in_attribute) :
+		GPUProgramSetAttributeAction(GPUAttributeInfo const& in_attribute) :
 			attribute(in_attribute) {}
 
 	protected:
@@ -139,7 +139,7 @@ namespace chaos
 	protected:
 
 		/** the uniform to set */
-		GLAttributeInfo const& attribute;
+		GPUAttributeInfo const& attribute;
 	};
 
 	/**

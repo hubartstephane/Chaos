@@ -2,18 +2,18 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class GLVariableInfo;
-	class GLUniformInfo;
-	class GLAttributeInfo;
+	class GPUVariableInfo;
+	class GPUUniformInfo;
+	class GPUAttributeInfo;
 	class GPUProgramData;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* GLVariableInfo : a base class for uniforms and attributes
+	* GPUVariableInfo : a base class for uniforms and attributes
 	*/
 
-	class CHAOS_API GLVariableInfo
+	class CHAOS_API GPUVariableInfo
 	{
 	public:
 
@@ -28,10 +28,10 @@ namespace chaos
 	};
 
 	/**
-	* GLUniformInfo : definition of an uniform in the program
+	* GPUUniformInfo : definition of an uniform in the program
 	*/
 
-	class CHAOS_API GLUniformInfo : public GLVariableInfo
+	class CHAOS_API GPUUniformInfo : public GPUVariableInfo
 	{
 	public:
 
@@ -89,10 +89,10 @@ namespace chaos
 	};
 
 	/**
-	* GLAttributeInfo : definition of an attribute in the program
+	* GPUAttributeInfo : definition of an attribute in the program
 	*/
 
-	class CHAOS_API GLAttributeInfo : public GLVariableInfo
+	class CHAOS_API GPUAttributeInfo : public GPUVariableInfo
 	{
 	public:
 
@@ -123,16 +123,16 @@ namespace chaos
 		void BindAttributes(GLuint vertex_array, GPUVertexDeclaration const& declaration, class GPUProgramProviderInterface const* attribute_provider = nullptr) const;
 
 		/** find a uniform */
-		GLUniformInfo* FindUniform(char const* name);
+		GPUUniformInfo* FindUniform(char const* name);
 		/** find an uniform */
-		GLUniformInfo const* FindUniform(char const* name) const;
+		GPUUniformInfo const* FindUniform(char const* name) const;
 
 		/** set an uniform by its name */
 		template<typename T>
 		bool SetUniform(char const* name, T const& value) const
 		{
 			assert(name != nullptr);
-			GLUniformInfo const* uniform = FindUniform(name);
+			GPUUniformInfo const* uniform = FindUniform(name);
 			if (uniform == nullptr)
 				return false;
 			GLTools::SetUniform(uniform->location, value); // beware, there is no verification of data coherence
@@ -156,9 +156,9 @@ namespace chaos
 	public:
 
 		/** the attributes used in the program */
-		std::vector<GLAttributeInfo> attributes;
+		std::vector<GPUAttributeInfo> attributes;
 		/** the uniforms used in the program */
-		std::vector<GLUniformInfo> uniforms;
+		std::vector<GPUUniformInfo> uniforms;
 	};
 
 #endif

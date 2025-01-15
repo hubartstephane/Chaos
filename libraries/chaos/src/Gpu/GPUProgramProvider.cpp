@@ -27,13 +27,13 @@ namespace chaos
 		return false;
 	}
 
-	bool GPUProgramProviderInterface::BindUniform(GLUniformInfo const& uniform) const
+	bool GPUProgramProviderInterface::BindUniform(GPUUniformInfo const& uniform) const
 	{
 		GPUProgramSetUniformAction action(uniform);
 		return ProcessAction(uniform.name.c_str(), action);
 	}
 
-	bool GPUProgramProviderInterface::BindAttribute(GLAttributeInfo const& attribute) const
+	bool GPUProgramProviderInterface::BindAttribute(GPUAttributeInfo const& attribute) const
 	{
 		GPUProgramSetAttributeAction action(attribute);
 		return ProcessAction(attribute.name.c_str(), action);

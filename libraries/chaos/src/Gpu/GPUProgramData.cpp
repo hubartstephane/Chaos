@@ -6,7 +6,7 @@ namespace chaos
 	// utility
 
 	template<typename UNIFORM_COMPONENT_TYPE, typename T>
-	static bool SetUniformVectorImplHelper(GLUniformInfo const& uniform, T const& value, int arity)
+	static bool SetUniformVectorImplHelper(GPUUniformInfo const& uniform, T const& value, int arity)
 	{
 		if (arity == 1)
 			GLTools::SetUniform(uniform.location, RecastVector<glm::tvec1<UNIFORM_COMPONENT_TYPE>>(GLMTools::ConvertIntoVector(value))); // when the arity is 1, we force the usage of vec1 because it is simpler than a scalar value
@@ -20,7 +20,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	static bool SetUniformVectorImpl(GLUniformInfo const& uniform, T const& value)
+	static bool SetUniformVectorImpl(GPUUniformInfo const& uniform, T const& value)
 	{
 		if (int arity = GLTools::GetEnumVectorArityFloat(uniform.type))
 		{
@@ -42,7 +42,7 @@ namespace chaos
 	}
 
 	template<typename MATRIX_TYPE, typename T>
-	static bool SetUniformMatrixImplHelper(GLUniformInfo const & uniform, GLenum matrix_type, T const & value)
+	static bool SetUniformMatrixImplHelper(GPUUniformInfo const & uniform, GLenum matrix_type, T const & value)
 	{
 		if (uniform.type != matrix_type)
 			return false;
@@ -54,7 +54,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	static bool SetUniformMatrixImpl(GLUniformInfo const & uniform, T const & value)
+	static bool SetUniformMatrixImpl(GPUUniformInfo const & uniform, T const & value)
 	{
 		if (SetUniformMatrixImplHelper<glm::mat2>(uniform, GL_FLOAT_MAT2, value))
 			return true;
@@ -99,185 +99,185 @@ namespace chaos
 
 	// matrix
 
-	bool GLUniformInfo::SetUniform(glm::mat2x3 const & value) const
+	bool GPUUniformInfo::SetUniform(glm::mat2x3 const & value) const
 	{
 		return SetUniformMatrixImpl(*this, value);
 	}
-	bool GLUniformInfo::SetUniform(glm::mat2x4 const & value) const
+	bool GPUUniformInfo::SetUniform(glm::mat2x4 const & value) const
 	{
 		return SetUniformMatrixImpl(*this, value);
 	}
-	bool GLUniformInfo::SetUniform(glm::mat3x2 const & value) const
+	bool GPUUniformInfo::SetUniform(glm::mat3x2 const & value) const
 	{
 		return SetUniformMatrixImpl(*this, value);
 	}
-	bool GLUniformInfo::SetUniform(glm::mat3x4 const & value) const
+	bool GPUUniformInfo::SetUniform(glm::mat3x4 const & value) const
 	{
 		return SetUniformMatrixImpl(*this, value);
 	}
-	bool GLUniformInfo::SetUniform(glm::mat4x2 const & value) const
+	bool GPUUniformInfo::SetUniform(glm::mat4x2 const & value) const
 	{
 		return SetUniformMatrixImpl(*this, value);
 	}
-	bool GLUniformInfo::SetUniform(glm::mat4x3 const & value) const
+	bool GPUUniformInfo::SetUniform(glm::mat4x3 const & value) const
 	{
 		return SetUniformMatrixImpl(*this, value);
 	}
-	bool GLUniformInfo::SetUniform(glm::mat2 const & value) const
+	bool GPUUniformInfo::SetUniform(glm::mat2 const & value) const
 	{
 		return SetUniformMatrixImpl(*this, value);
 	}
-	bool GLUniformInfo::SetUniform(glm::mat3 const & value) const
+	bool GPUUniformInfo::SetUniform(glm::mat3 const & value) const
 	{
 		return SetUniformMatrixImpl(*this, value);
 	}
-	bool GLUniformInfo::SetUniform(glm::mat4 const & value) const
+	bool GPUUniformInfo::SetUniform(glm::mat4 const & value) const
 	{
 		return SetUniformMatrixImpl(*this, value);
 	}
 
-	bool GLUniformInfo::SetUniform(glm::dmat2x3 const & value) const
+	bool GPUUniformInfo::SetUniform(glm::dmat2x3 const & value) const
 	{
 		return SetUniformMatrixImpl(*this, value);
 	}
-	bool GLUniformInfo::SetUniform(glm::dmat2x4 const & value) const
+	bool GPUUniformInfo::SetUniform(glm::dmat2x4 const & value) const
 	{
 		return SetUniformMatrixImpl(*this, value);
 	}
-	bool GLUniformInfo::SetUniform(glm::dmat3x2 const & value) const
+	bool GPUUniformInfo::SetUniform(glm::dmat3x2 const & value) const
 	{
 		return SetUniformMatrixImpl(*this, value);
 	}
-	bool GLUniformInfo::SetUniform(glm::dmat3x4 const & value) const
+	bool GPUUniformInfo::SetUniform(glm::dmat3x4 const & value) const
 	{
 		return SetUniformMatrixImpl(*this, value);
 	}
-	bool GLUniformInfo::SetUniform(glm::dmat4x2 const & value) const
+	bool GPUUniformInfo::SetUniform(glm::dmat4x2 const & value) const
 	{
 		return SetUniformMatrixImpl(*this, value);
 	}
-	bool GLUniformInfo::SetUniform(glm::dmat4x3 const & value) const
+	bool GPUUniformInfo::SetUniform(glm::dmat4x3 const & value) const
 	{
 		return SetUniformMatrixImpl(*this, value);
 	}
-	bool GLUniformInfo::SetUniform(glm::dmat2 const & value) const
+	bool GPUUniformInfo::SetUniform(glm::dmat2 const & value) const
 	{
 		return SetUniformMatrixImpl(*this, value);
 	}
-	bool GLUniformInfo::SetUniform(glm::dmat3 const & value) const
+	bool GPUUniformInfo::SetUniform(glm::dmat3 const & value) const
 	{
 		return SetUniformMatrixImpl(*this, value);
 	}
-	bool GLUniformInfo::SetUniform(glm::dmat4 const & value) const
+	bool GPUUniformInfo::SetUniform(glm::dmat4 const & value) const
 	{
 		return SetUniformMatrixImpl(*this, value);
 	}
 
 	// vector
 
-	bool GLUniformInfo::SetUniform(glm::tvec1<GLfloat> const & value) const
+	bool GPUUniformInfo::SetUniform(glm::tvec1<GLfloat> const & value) const
 	{
 		return SetUniformVectorImpl(*this, value);
 	}
 
-	bool GLUniformInfo::SetUniform(glm::tvec2<GLfloat> const & value) const
+	bool GPUUniformInfo::SetUniform(glm::tvec2<GLfloat> const & value) const
 	{
 		return SetUniformVectorImpl(*this, value);
 	}
 
-	bool GLUniformInfo::SetUniform(glm::tvec3<GLfloat> const & value) const
+	bool GPUUniformInfo::SetUniform(glm::tvec3<GLfloat> const & value) const
 	{
 		return SetUniformVectorImpl(*this, value);
 	}
 
-	bool GLUniformInfo::SetUniform(glm::tvec4<GLfloat> const & value) const
+	bool GPUUniformInfo::SetUniform(glm::tvec4<GLfloat> const & value) const
 	{
 		return SetUniformVectorImpl(*this, value);
 	}
 
-	bool GLUniformInfo::SetUniform(glm::tvec1<GLdouble> const & value) const
+	bool GPUUniformInfo::SetUniform(glm::tvec1<GLdouble> const & value) const
 	{
 		return SetUniformVectorImpl(*this, value);
 	}
 
-	bool GLUniformInfo::SetUniform(glm::tvec2<GLdouble> const & value) const
+	bool GPUUniformInfo::SetUniform(glm::tvec2<GLdouble> const & value) const
 	{
 		return SetUniformVectorImpl(*this, value);
 	}
 
-	bool GLUniformInfo::SetUniform(glm::tvec3<GLdouble> const & value) const
+	bool GPUUniformInfo::SetUniform(glm::tvec3<GLdouble> const & value) const
 	{
 		return SetUniformVectorImpl(*this, value);
 	}
 
-	bool GLUniformInfo::SetUniform(glm::tvec4<GLdouble> const & value) const
+	bool GPUUniformInfo::SetUniform(glm::tvec4<GLdouble> const & value) const
 	{
 		return SetUniformVectorImpl(*this, value);
 	}
 
-	bool GLUniformInfo::SetUniform(glm::tvec1<GLint> const & value) const
+	bool GPUUniformInfo::SetUniform(glm::tvec1<GLint> const & value) const
 	{
 		return SetUniformVectorImpl(*this, value);
 	}
 
-	bool GLUniformInfo::SetUniform(glm::tvec2<GLint> const & value) const
+	bool GPUUniformInfo::SetUniform(glm::tvec2<GLint> const & value) const
 	{
 		return SetUniformVectorImpl(*this, value);
 	}
 
-	bool GLUniformInfo::SetUniform(glm::tvec3<GLint> const & value) const
+	bool GPUUniformInfo::SetUniform(glm::tvec3<GLint> const & value) const
 	{
 		return SetUniformVectorImpl(*this, value);
 	}
 
-	bool GLUniformInfo::SetUniform(glm::tvec4<GLint> const & value) const
+	bool GPUUniformInfo::SetUniform(glm::tvec4<GLint> const & value) const
 	{
 		return SetUniformVectorImpl(*this, value);
 	}
 
-	bool GLUniformInfo::SetUniform(glm::tvec1<GLuint> const & value) const
+	bool GPUUniformInfo::SetUniform(glm::tvec1<GLuint> const & value) const
 	{
 		return SetUniformVectorImpl(*this, value);
 	}
 
-	bool GLUniformInfo::SetUniform(glm::tvec2<GLuint> const & value) const
+	bool GPUUniformInfo::SetUniform(glm::tvec2<GLuint> const & value) const
 	{
 		return SetUniformVectorImpl(*this, value);
 	}
 
-	bool GLUniformInfo::SetUniform(glm::tvec3<GLuint> const & value) const
+	bool GPUUniformInfo::SetUniform(glm::tvec3<GLuint> const & value) const
 	{
 		return SetUniformVectorImpl(*this, value);
 	}
 
-	bool GLUniformInfo::SetUniform(glm::tvec4<GLuint> const & value) const
+	bool GPUUniformInfo::SetUniform(glm::tvec4<GLuint> const & value) const
 	{
 		return SetUniformVectorImpl(*this, value);
 	}
 
-	bool GLUniformInfo::SetUniform(GLfloat value) const
+	bool GPUUniformInfo::SetUniform(GLfloat value) const
 	{
 		return SetUniformVectorImpl(*this, value);
 	}
 
-	bool GLUniformInfo::SetUniform(GLdouble value) const
+	bool GPUUniformInfo::SetUniform(GLdouble value) const
 	{
 		return SetUniformVectorImpl(*this, value);
 	}
 
-	bool GLUniformInfo::SetUniform(GLint value) const
+	bool GPUUniformInfo::SetUniform(GLint value) const
 	{
 		return SetUniformVectorImpl(*this, value);
 	}
 
-	bool GLUniformInfo::SetUniform(GLuint value) const
+	bool GPUUniformInfo::SetUniform(GLuint value) const
 	{
 		return SetUniformVectorImpl(*this, value);
 	}
 
 	// texture
 
-	bool GLUniformInfo::SetUniform(GPUTexture const * texture) const
+	bool GPUUniformInfo::SetUniform(GPUTexture const * texture) const
 	{
 		if (!GLTools::IsSamplerType(type))
 			return false;
@@ -304,26 +304,26 @@ namespace chaos
 	{
 		if (providers == nullptr)
 			return;
-		for (GLUniformInfo const & uniform : uniforms)
+		for (GPUUniformInfo const & uniform : uniforms)
 			for (int i = 0; i < count; ++i)
 				if (GPUProgramProviderInterface const * provider = providers[i])
 					if (provider->BindUniform(uniform))
 						break;
 	}
 
-	GLUniformInfo * GPUProgramData::FindUniform(char const * name)
+	GPUUniformInfo * GPUProgramData::FindUniform(char const * name)
 	{
 		assert(name != nullptr);
-		for (GLUniformInfo & uniform : uniforms)
+		for (GPUUniformInfo & uniform : uniforms)
 			if (uniform.name == name)
 				return &uniform;
 		return nullptr;
 	}
 
-	GLUniformInfo const * GPUProgramData::FindUniform(char const * name) const
+	GPUUniformInfo const * GPUProgramData::FindUniform(char const * name) const
 	{
 		assert(name != nullptr);
-		for (GLUniformInfo const & uniform : uniforms)
+		for (GPUUniformInfo const & uniform : uniforms)
 			if (uniform.name == name)
 				return &uniform;
 		return nullptr;
@@ -438,7 +438,7 @@ namespace chaos
 
 				bool is_array = false;
 
-				GLAttributeInfo attribute;
+				GPUAttributeInfo attribute;
 				attribute.name = ExtractSemanticDataAndName(name, semantic_data, is_array); // try to find a semantic and an index according to the attribute name
 				attribute.array_size = is_array ? array_size : -1;
 				attribute.type = type;
@@ -479,7 +479,7 @@ namespace chaos
 
 				bool is_array = false;
 
-				GLUniformInfo uniform;
+				GPUUniformInfo uniform;
 				uniform.name = ExtractVariableName(name, is_array);
 				uniform.array_size = is_array ? array_size : -1;
 				uniform.type = type;
@@ -511,13 +511,13 @@ namespace chaos
 	{
 		for (size_t i = 0; i < attributes.size(); ++i)
 		{
-			GLAttributeInfo const & data = attributes[i];
+			GPUAttributeInfo const & data = attributes[i];
 			GLLog::Message("Attribute[%02d]  name = [%s]   array_size = [%d]   location = [%d]   type = [%s]", i, data.name.c_str(), data.array_size, data.location, GLTools::GLenumToString(data.type));
 		}
 
 		for (size_t i = 0; i < uniforms.size(); ++i)
 		{
-			GLUniformInfo const & data = uniforms[i];
+			GPUUniformInfo const & data = uniforms[i];
 			GLLog::Message("Uniform[%02d]    name = [%s]   array_size = [%d]   location = [%d]   type = [%s]", i, data.name.c_str(), data.array_size, data.location, GLTools::GLenumToString(data.type));
 		}
 	}

@@ -75,6 +75,12 @@ namespace chaos
 		static void SetUniform(GLint location, glm::tvec3<GLuint> const& value) { glUniform3uiv(location, 1, (GLuint const*)&value); }
 		static void SetUniform(GLint location, glm::tvec4<GLuint> const& value) { glUniform4uiv(location, 1, (GLuint const*)&value); }
 
+		static void SetUniform(GLint location, glm::tvec1<bool> const& value) { glUniform1ui(location, (int)value.x); }
+		static void SetUniform(GLint location, glm::tvec2<bool> const& value) { glUniform2ui(location, (int)value.x, (int)value.y); }
+		static void SetUniform(GLint location, glm::tvec3<bool> const& value) { glUniform3ui(location, (int)value.x, (int)value.y, (int)value.z); }
+		static void SetUniform(GLint location, glm::tvec4<bool> const& value) { glUniform4ui(location, (int)value.x, (int)value.y, (int)value.z, (int)value.w); }
+
+		static void SetUniform(GLint location, bool value) { glUniform1i(location, (int)value); }
 		static void SetUniform(GLint location, GLfloat  value) { glUniform1f(location, value); }
 		static void SetUniform(GLint location, GLdouble value) { glUniform1d(location, value); }
 		static void SetUniform(GLint location, GLint    value) { glUniform1i(location, value); }

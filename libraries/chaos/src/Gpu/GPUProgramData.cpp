@@ -3,187 +3,15 @@
 
 namespace chaos
 {
-	bool GPUUniformInfo::SetUniform(glm::mat2x3 const & value) const
+	bool GPUUniformInfo::SetUniform(GPUTexture const* texture) const
 	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-	bool GPUUniformInfo::SetUniform(glm::mat2x4 const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-	bool GPUUniformInfo::SetUniform(glm::mat3x2 const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-	bool GPUUniformInfo::SetUniform(glm::mat3x4 const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-	bool GPUUniformInfo::SetUniform(glm::mat4x2 const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-	bool GPUUniformInfo::SetUniform(glm::mat4x3 const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-	bool GPUUniformInfo::SetUniform(glm::mat2 const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-	bool GPUUniformInfo::SetUniform(glm::mat3 const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-	bool GPUUniformInfo::SetUniform(glm::mat4 const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-
-	bool GPUUniformInfo::SetUniform(glm::dmat2x3 const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-	bool GPUUniformInfo::SetUniform(glm::dmat2x4 const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-	bool GPUUniformInfo::SetUniform(glm::dmat3x2 const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-	bool GPUUniformInfo::SetUniform(glm::dmat3x4 const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-	bool GPUUniformInfo::SetUniform(glm::dmat4x2 const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-	bool GPUUniformInfo::SetUniform(glm::dmat4x3 const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-	bool GPUUniformInfo::SetUniform(glm::dmat2 const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-	bool GPUUniformInfo::SetUniform(glm::dmat3 const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-	bool GPUUniformInfo::SetUniform(glm::dmat4 const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-
-	// vector
-
-	bool GPUUniformInfo::SetUniform(glm::tvec1<GLfloat> const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value.x);
-	}
-
-	bool GPUUniformInfo::SetUniform(glm::tvec2<GLfloat> const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-
-	bool GPUUniformInfo::SetUniform(glm::tvec3<GLfloat> const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-
-	bool GPUUniformInfo::SetUniform(glm::tvec4<GLfloat> const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-
-	bool GPUUniformInfo::SetUniform(glm::tvec1<GLdouble> const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value.x);
-	}
-
-	bool GPUUniformInfo::SetUniform(glm::tvec2<GLdouble> const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-
-	bool GPUUniformInfo::SetUniform(glm::tvec3<GLdouble> const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-
-	bool GPUUniformInfo::SetUniform(glm::tvec4<GLdouble> const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-
-	bool GPUUniformInfo::SetUniform(glm::tvec1<GLint> const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value.x);
-	}
-
-	bool GPUUniformInfo::SetUniform(glm::tvec2<GLint> const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-
-	bool GPUUniformInfo::SetUniform(glm::tvec3<GLint> const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-
-	bool GPUUniformInfo::SetUniform(glm::tvec4<GLint> const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-
-	bool GPUUniformInfo::SetUniform(glm::tvec1<GLuint> const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value.x);
-	}
-
-	bool GPUUniformInfo::SetUniform(glm::tvec2<GLuint> const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-
-	bool GPUUniformInfo::SetUniform(glm::tvec3<GLuint> const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-
-	bool GPUUniformInfo::SetUniform(glm::tvec4<GLuint> const & value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-
-	bool GPUUniformInfo::SetUniform(GLfloat value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-
-	bool GPUUniformInfo::SetUniform(GLdouble value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-
-	bool GPUUniformInfo::SetUniform(GLint value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-
-	bool GPUUniformInfo::SetUniform(GLuint value) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, value);
-	}
-
-	// texture
-
-	bool GPUUniformInfo::SetUniform(GPUTexture const * texture) const
-	{
-		return GPUUniformSetter::GetUniformSetterForType(type)->SetUniform(*this, texture);
+		if (uniform_setter == nullptr)
+		{
+			uniform_setter = GPUUniformSetter::GetUniformSetterForType(type);
+			if (uniform_setter == nullptr)
+				return false;
+		}
+		return uniform_setter->SetUniform(*this, texture);
 	}
 
 	void GPUProgramData::Clear()
@@ -194,28 +22,8 @@ namespace chaos
 
 	void GPUProgramData::BindUniforms(GPUProgramProviderInterface const * provider) const
 	{
-		if (provider != nullptr)
-			BindUniforms(&provider, 1);
-	}
-
-	void GPUProgramData::BindUniforms(GPUProgramProviderInterface const * const * providers, int count) const
-	{
-		if (providers == nullptr)
-			return;
-		for (GPUUniformInfo const & uniform : uniforms)
-			for (int i = 0; i < count; ++i)
-				if (GPUProgramProviderInterface const * provider = providers[i])
-					if (provider->BindUniform(uniform))
-						break;
-	}
-
-	GPUUniformInfo * GPUProgramData::FindUniform(char const * name)
-	{
-		assert(name != nullptr);
-		for (GPUUniformInfo & uniform : uniforms)
-			if (uniform.name == name)
-				return &uniform;
-		return nullptr;
+		for (GPUUniformInfo const& uniform : uniforms)
+			provider->BindUniform(uniform);
 	}
 
 	GPUUniformInfo const * GPUProgramData::FindUniform(char const * name) const

@@ -35,57 +35,21 @@ namespace chaos
 	{
 	public:
 
-		bool SetUniform(glm::mat2x3 const& value) const;
-		bool SetUniform(glm::mat2x4 const& value) const;
-		bool SetUniform(glm::mat3x2 const& value) const;
-		bool SetUniform(glm::mat3x4 const& value) const;
-		bool SetUniform(glm::mat4x2 const& value) const;
-		bool SetUniform(glm::mat4x3 const& value) const;
-		bool SetUniform(glm::mat2   const& value) const;
-		bool SetUniform(glm::mat3   const& value) const;
-		bool SetUniform(glm::mat4   const& value) const;
-
-		bool SetUniform(glm::dmat2x3 const& value) const;
-		bool SetUniform(glm::dmat2x4 const& value) const;
-		bool SetUniform(glm::dmat3x2 const& value) const;
-		bool SetUniform(glm::dmat3x4 const& value) const;
-		bool SetUniform(glm::dmat4x2 const& value) const;
-		bool SetUniform(glm::dmat4x3 const& value) const;
-		bool SetUniform(glm::dmat2   const& value) const;
-		bool SetUniform(glm::dmat3   const& value) const;
-		bool SetUniform(glm::dmat4   const& value) const;
-
-		bool SetUniform(glm::tvec1<GLfloat> const& value) const;
-		bool SetUniform(glm::tvec2<GLfloat> const& value) const;
-		bool SetUniform(glm::tvec3<GLfloat> const& value) const;
-		bool SetUniform(glm::tvec4<GLfloat> const& value) const;
-
-		bool SetUniform(glm::tvec1<GLdouble> const& value) const;
-		bool SetUniform(glm::tvec2<GLdouble> const& value) const;
-		bool SetUniform(glm::tvec3<GLdouble> const& value) const;
-		bool SetUniform(glm::tvec4<GLdouble> const& value) const;
-
-		bool SetUniform(glm::tvec1<GLint> const& value) const;
-		bool SetUniform(glm::tvec2<GLint> const& value) const;
-		bool SetUniform(glm::tvec3<GLint> const& value) const;
-		bool SetUniform(glm::tvec4<GLint> const& value) const;
-
-		bool SetUniform(glm::tvec1<GLuint> const& value) const;
-		bool SetUniform(glm::tvec2<GLuint> const& value) const;
-		bool SetUniform(glm::tvec3<GLuint> const& value) const;
-		bool SetUniform(glm::tvec4<GLuint> const& value) const;
-
-		bool SetUniform(GLfloat  value) const;
-		bool SetUniform(GLdouble value) const;
-		bool SetUniform(GLint    value) const;
-		bool SetUniform(GLuint   value) const;
-
+		/** set the uniform for any types */
+		template<typename T>
+		bool SetUniform(T const& value) const;
+		/** set the uniform for textures */
 		bool SetUniform(GPUTexture const* texture) const;
 
 	public:
 
 		/** the number of the sampler in the program */
 		GLuint sampler_index = 0;
+
+	protected:
+
+		/** a pointer on the (singleton) setter */
+		mutable GPUUniformSetter const * uniform_setter = nullptr;
 	};
 
 	/**
@@ -122,8 +86,6 @@ namespace chaos
 		/** bind the attributes */
 		void BindAttributes(GLuint vertex_array, GPUVertexDeclaration const& declaration, class GPUProgramProviderInterface const* attribute_provider = nullptr) const;
 
-		/** find a uniform */
-		GPUUniformInfo* FindUniform(char const* name);
 		/** find an uniform */
 		GPUUniformInfo const* FindUniform(char const* name) const;
 
@@ -135,13 +97,10 @@ namespace chaos
 			GPUUniformInfo const* uniform = FindUniform(name);
 			if (uniform == nullptr)
 				return false;
-			GLTools::SetUniform(uniform->location, value); // beware, there is no verification of data coherence
-			return true;
+			return uniform->SetUniform(value);
 		}
 		/** try to bind all uniforms */
 		void BindUniforms(class GPUProgramProviderInterface const* provider) const;
-		/** try to bind all uniforms using multiples provider */
-		void BindUniforms(class GPUProgramProviderInterface const* const* providers, int count) const;
 
 		/** clear the program data object */
 		void Clear();
@@ -153,13 +112,27 @@ namespace chaos
 		/** remove the '[' part from a variable name et returns if it is an array*/
 		static std::string ExtractVariableName(char const* name, bool& is_array);
 
-	public:
+	protected:
 
 		/** the attributes used in the program */
 		std::vector<GPUAttributeInfo> attributes;
 		/** the uniforms used in the program */
 		std::vector<GPUUniformInfo> uniforms;
 	};
+
+#else // CHAOS_TEMPLATE_IMPLEMENTATION
+
+	template<typename T>
+	bool GPUUniformInfo::SetUniform(T const& value) const
+	{
+		if (uniform_setter == nullptr)
+		{
+			uniform_setter = GPUUniformSetter::GetUniformSetterForType(type);
+			if (uniform_setter == nullptr)
+				return false;
+		}
+		return uniform_setter->SetUniform(*this, value);
+	}
 
 #endif
 

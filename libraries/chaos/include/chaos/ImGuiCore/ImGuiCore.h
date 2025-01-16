@@ -16,3 +16,4 @@
 #include "chaos/ImGuiCore/ImGuiAtlasObject.h"
 #include "chaos/ImGuiCore/ImGuiLogObject.h"
 #include "chaos/ImGuiCore/ImGuiManager.h"
+#include "chaos/ImGuiCore/ImGuiRenderingStatsObject.h"

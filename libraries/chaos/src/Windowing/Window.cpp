@@ -896,18 +896,15 @@ namespace chaos
 			renderer->BeginRenderingFrame();
 
 			// render
-			bool draw_result = GetProgramProviderAndProcess([this](GPUProgramProviderBase * provider)
+			GetProgramProviderAndProcess([this](GPUProgramProviderBase * provider)
 			{
 				return DrawInternal(provider);
 			});
 
-			if (draw_result)
-			{
-				if (double_buffer)
-					glfwSwapBuffers(glfw_window);
-				else
-					glFlush();
-			}
+			if (double_buffer)
+				glfwSwapBuffers(glfw_window);
+			else
+				glFlush();
 
 			// end rendering
 			renderer->EndRenderingFrame();
@@ -1203,11 +1200,9 @@ namespace chaos
 
 	bool Window::DrawInternal(GPUProgramProviderInterface const* uniform_provider)
 	{
-		bool result = false;
-
 		glm::ivec2 window_size = GetWindowSize(false); // only interrested in client area
 		if (window_size.x <= 0 || window_size.y <= 0) // some crash to expect in drawing elsewhere
-			return result;
+			return false;
 
 		// some parameters
 		WindowDrawParams draw_params;
@@ -1217,14 +1212,14 @@ namespace chaos
 		if (!IsGeometryEmpty(draw_params.viewport))
 		{
 			GLTools::SetViewport(draw_params.viewport);
-			result |= OnDraw(renderer.get(), uniform_provider, draw_params);
+			OnDraw(renderer.get(), uniform_provider, draw_params);
 		}
 		// draw the root widget
 		if (root_widget != nullptr)
 		{
 			if (root_widget->IsUpdatePlacementHierarchyRequired())
 				UpdateWidgetPlacementHierarchy();
-			result |= root_widget->OnDraw(renderer.get(), uniform_provider, draw_params);
+			root_widget->OnDraw(renderer.get(), uniform_provider, draw_params);
 		}
 		// draw ImGui
 		DrawImGui();
@@ -1238,7 +1233,7 @@ namespace chaos
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
-		return result;
+		return true;
 	}
 
 	void Window::UpdateWidgetPlacementHierarchy()
@@ -1382,6 +1377,9 @@ namespace chaos
 
 	bool Window::EnumerateKnownImGuiObjects(EnumerateKnownImGuiObjectFunc func) const
 	{
+		if (func("Rendering Stats", ImGuiRenderingStatsObject::GetStaticClass()))
+			return true;
+
 		if (func("System Information", ImGuiSystemInformationObject::GetStaticClass()))
 			return true;
 

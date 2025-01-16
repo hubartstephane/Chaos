@@ -21,9 +21,36 @@ namespace chaos
 		glScissor(GLint(scissor.position.x), GLint(scissor.position.y), GLint(scissor.size.x), GLint(scissor.size.y));
 	}
 
-	bool GLTools::IsMatrixType(GLenum type)
+	bool GLTools::IsScalarType(GLenum type)
 	{
-		// XXX : samplers type, maybe some error or some missing elements
+		GLenum const scalar_types[] = { 
+			GL_BOOL, GL_FLOAT, GL_DOUBLE, GL_INT, GL_UNSIGNED_INT,
+			GL_NONE
+		};
+
+		for (int i = 0; scalar_types[i] != GL_NONE; ++i)
+			if (type == scalar_types[i])
+				return true;
+		return false;
+	}
+
+	bool GLTools::IsVectorType(GLenum type)
+	{
+		GLenum const vector_types[] = {
+			GL_BOOL_VEC2, GL_FLOAT_VEC2, GL_DOUBLE_VEC2, GL_INT_VEC2, GL_UNSIGNED_INT_VEC2,
+			GL_BOOL_VEC3, GL_FLOAT_VEC3, GL_DOUBLE_VEC3, GL_INT_VEC3, GL_UNSIGNED_INT_VEC3,
+			GL_BOOL_VEC4, GL_FLOAT_VEC4, GL_DOUBLE_VEC4, GL_INT_VEC4, GL_UNSIGNED_INT_VEC4,
+			GL_NONE
+		};
+
+		for (int i = 0; vector_types[i] != GL_NONE; ++i)
+			if (type == vector_types[i])
+				return true;
+		return false;
+	}
+
+	bool GLTools::IsMatrixType(GLenum type)
+	{		
 		GLenum const matrix_types[] = {
 			GL_FLOAT_MAT2, GL_FLOAT_MAT3, GL_FLOAT_MAT4,
 			GL_FLOAT_MAT2x3, GL_FLOAT_MAT2x4, GL_FLOAT_MAT3x2, GL_FLOAT_MAT3x4, GL_FLOAT_MAT4x2, GL_FLOAT_MAT4x3,
@@ -55,59 +82,6 @@ namespace chaos
 			if (type == sampler_types[i])
 				return true;
 		return false;
-	}
-
-	static int GetEnumVectorArityImpl(GLenum type, GLenum const* values)
-	{
-		for (int i = 0; i < 4; ++i)
-			if (type == values[i])
-				return (i + 1);
-		return 0;
-	}
-
-	int GLTools::GetEnumVectorArity(GLenum type)
-	{
-		if (int result = GetEnumVectorArityBool(type))
-			return result;
-		if (int result = GetEnumVectorArityFloat(type))
-			return result;
-		if (int result = GetEnumVectorArityDouble(type))
-			return result;
-		if (int result = GetEnumVectorArityInt(type))
-			return result;
-		if (int result = GetEnumVectorArityUnsignedInt(type))
-			return result;
-		return 0;
-	}
-
-	int GLTools::GetEnumVectorArityBool(GLenum type)
-	{
-		GLenum const values[] = { GL_BOOL, GL_BOOL_VEC2, GL_BOOL_VEC3, GL_BOOL_VEC4 };
-		return GetEnumVectorArityImpl(type, values);
-	}
-
-	int GLTools::GetEnumVectorArityFloat(GLenum type)
-	{
-		GLenum const values[] = { GL_FLOAT, GL_FLOAT_VEC2, GL_FLOAT_VEC3, GL_FLOAT_VEC4 };
-		return GetEnumVectorArityImpl(type, values);
-	}
-
-	int GLTools::GetEnumVectorArityDouble(GLenum type)
-	{
-		GLenum const values[] = { GL_DOUBLE, GL_DOUBLE_VEC2, GL_DOUBLE_VEC3, GL_DOUBLE_VEC4 };
-		return GetEnumVectorArityImpl(type, values);
-	}
-
-	int GLTools::GetEnumVectorArityInt(GLenum type)
-	{
-		GLenum const values[] = { GL_INT, GL_INT_VEC2, GL_INT_VEC3, GL_INT_VEC4 };
-		return GetEnumVectorArityImpl(type, values);
-	}
-
-	int GLTools::GetEnumVectorArityUnsignedInt(GLenum type)
-	{
-		GLenum const values[] = { GL_UNSIGNED_INT, GL_UNSIGNED_INT_VEC2, GL_UNSIGNED_INT_VEC3, GL_UNSIGNED_INT_VEC4 };
-		return GetEnumVectorArityImpl(type, values);
 	}
 
 	void GLTools::DisplayGenericInformation()

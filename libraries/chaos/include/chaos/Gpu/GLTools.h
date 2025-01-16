@@ -108,38 +108,14 @@ namespace chaos
 		static void SetVertexAttrib(GLint location, glm::tvec4<GLubyte>  const& value) { glVertexAttrib4ubv(location, (GLubyte const*)&value); }
 		static void SetVertexAttrib(GLint location, glm::tvec4<GLushort> const& value) { glVertexAttrib4usv(location, (GLushort const*)&value); }
 
-
+		/** returns true whether the enum is a scalar type */
+		static bool IsScalarType(GLenum type);
+		/** returns true whether the enum is a vector type */
+		static bool IsVectorType(GLenum type);
 		/** returns true whether the enum is a matrix type */
 		static bool IsMatrixType(GLenum type);
 		/** returns true whether the enum is a sampler type */
 		static bool IsSamplerType(GLenum type);
-		/** returns the arity of the vector whether the enum is a vector type */
-		static int GetEnumVectorArity(GLenum type);
-		/** returns the arity of the vector whether the enum is a (bool) vector type */
-		static int GetEnumVectorArityBool(GLenum type);
-		/** returns the arity of the vector whether the enum is a (float) vector type */
-		static int GetEnumVectorArityFloat(GLenum type);
-		/** returns the arity of the vector whether the enum is a (double) vector type */
-		static int GetEnumVectorArityDouble(GLenum type);
-		/** returns the arity of the vector whether the enum is a (int) vector type */
-		static int GetEnumVectorArityInt(GLenum type);
-		/** returns the arity of the vector whether the enum is a (unsigned int) vector type */
-		static int GetEnumVectorArityUnsignedInt(GLenum type);
-
-		/** default template for enum vector arity */
-		template<typename T>
-		static int GetTypedEnumVectorArity(GLenum type)
-		{
-			if constexpr (std::is_same_v<T, GLfloat>)
-				return GetEnumVectorArityFloat(type);
-			if constexpr (std::is_same_v<T, GLdouble>)
-				return GetEnumVectorArityDouble(type);
-			if constexpr (std::is_same_v<T, GLint>)
-				return GetEnumVectorArityInt(type);
-			if constexpr (std::is_same_v<T, GLuint>)
-				return GetEnumVectorArityUnsignedInt(type);
-			return 0;
-		}
 	};
 
 #endif

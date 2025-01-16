@@ -23,6 +23,7 @@
 #include "chaos/Gpu/GPUFramebuffer.h"
 #include "chaos/Gpu/GPUFramebufferGenerator.h"
 #include "chaos/Gpu/GPUProgramData.h"
+#include "chaos/Gpu/GPUUniformSetter.h"
 #include "chaos/Gpu/GPUProgram.h"
 #include "chaos/Gpu/GPUProgramSourceGenerator.h"
 #include "chaos/Gpu/GPUProgramGenerator.h"

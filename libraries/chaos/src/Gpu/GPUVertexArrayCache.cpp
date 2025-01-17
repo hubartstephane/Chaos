@@ -83,7 +83,7 @@ namespace chaos
 					entry.vertex_buffer_offset == offset)
 				{
 					result = entry.vertex_array.get();
-					if (!purge && result != nullptr)
+					if (!purge && result != nullptr) // if this is a purge pass, do not early exit, continue the purge (this block of code is only executed if result is not found yet)
 						return result;
 				}
 			}

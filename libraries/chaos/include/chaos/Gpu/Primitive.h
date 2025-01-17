@@ -182,7 +182,7 @@ namespace chaos
 
     protected:
 
-        /** the buffer where we write buffer */
+        /** the buffer containing vertices */
         char* buffer = nullptr;
         /** the size of a vertex for this primitive */
         size_t vertex_size = 0;
@@ -228,7 +228,7 @@ namespace chaos
             else if constexpr (PRIMITIVE_TYPE == PrimitiveType::LINE)
                 vertices_per_primitive = 2;
             else
-                assert(0); // no meaning for strips, lines ...
+                assert(0); // no meaning for strips, fan, strip_lines ... because they have infinite number of vertices
 
             vertices_per_primitive *= count;
 

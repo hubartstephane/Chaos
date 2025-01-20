@@ -569,15 +569,14 @@ namespace chaos
 
 	void Window::TickRenderer(float real_delta_time)
 	{
+		assert(glfw_window == glfwGetCurrentContext());
+
 		// cannot tick a non existing window
 		if (glfw_window == nullptr || renderer == nullptr)
 			return;
 
-		WithWindowContext([this, real_delta_time]()
-		{
-			// tick the renderer: it has metrics that rely on the real frame_rate (not modified one due to some of our tweaks)
-			renderer->Tick(real_delta_time);
-		});
+		// tick the renderer: it has metrics that rely on the real frame_rate (not modified one due to some of our tweaks)
+		renderer->Tick(real_delta_time);
 	}
 
 	bool Window::IsMousePositionValid() const

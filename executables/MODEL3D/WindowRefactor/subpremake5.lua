@@ -1,7 +1,6 @@
 -- =============================================================================
--- ROOT_PATH/executables/MODEL3D
+-- ROOT_PATH/executables/MODEL3D/WindowRefactor
 -- =============================================================================
 
-build:ProcessSubPremake("AssimpImport")
-build:ProcessSubPremake("MultiMeshGenerator")
-build:ProcessSubPremake("WindowRefactor")
+local project = build:WindowedApp()
+project:DependOnLib("CHAOS")

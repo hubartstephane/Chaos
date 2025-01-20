@@ -202,7 +202,46 @@ namespace chaos
 			for (GLint i = 0; i < uniform_block_count; ++i)
 			{
 
+			#if 0
 
+				glGetActiveUniformsiv(program, 1, &i, GL_UNIFORM_BLOCK_INDEX, &blockIndex);
+
+			  // GL_MAX_UNIFORM_BUFFER_BINDINGS
+
+				glUniformBlockBinding(program, i, 0);
+
+				char blockName[256];
+				GLsizei length;
+				glGetActiveUniformBlockName(program, i, sizeof(blockName), &length, blockName);
+
+				GLint blockSize;
+				glGetActiveUniformBlockiv(program, i, GL_UNIFORM_BLOCK_DATA_SIZE, &blockSize);
+
+				GLint bindingPoint;
+				glGetActiveUniformBlockiv(program, i, GL_UNIFORM_BLOCK_BINDING, &bindingPoint);
+
+				GLint uniformCount;
+				glGetActiveUniformBlockiv(program, i, GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, &uniformCount);
+
+				std::vector<GLint> indices(uniformCount);
+				glGetActiveUniformBlockiv(program, i, GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES, indices.data());
+
+				char uniformName[256];
+				glGetActiveUniformName(program, indices[j], sizeof(uniformName), &length, uniformName);
+
+				glGetActiveUniformsiv(program, uniformCount, uniformIndices, GL_UNIFORM_OFFSET, uniformOffsets);
+
+				GLuint uniform_index = (GLuint)i;
+				GLint blockIndex;
+				glGetActiveUniformsiv(program, i, &uniform_index, GL_UNIFORM_BLOCK_INDEX, &blockIndex);
+
+				// GLuint blockIndex = glGetUniformBlockIndex(program, "SceneData");
+				// glUniformBlockBinding(program, blockIndex, 0);
+
+				glBindBufferBase(GL_UNIFORM_BUFFER, 1, ubo);
+				void glBindBufferRange(GLenum target, GLuint index, GLuint buffer, GLintptr offset, GLsizeiptr size);
+
+				#endif
 
 			}
 

@@ -88,16 +88,19 @@ namespace chaos
 
 		/** settings default attribute values */
 		static void SetVertexAttrib(GLint location, GLfloat value) { glVertexAttrib1f(location, value); }
+		static void SetVertexAttrib(GLint location, glm::tvec1<GLfloat> const& value) { glVertexAttrib1fv(location, (GLfloat const*)&value); }
 		static void SetVertexAttrib(GLint location, glm::tvec2<GLfloat> const& value) { glVertexAttrib2fv(location, (GLfloat const*)&value); }
 		static void SetVertexAttrib(GLint location, glm::tvec3<GLfloat> const& value) { glVertexAttrib3fv(location, (GLfloat const*)&value); }
 		static void SetVertexAttrib(GLint location, glm::tvec4<GLfloat> const& value) { glVertexAttrib4fv(location, (GLfloat const*)&value); }
 
 		static void SetVertexAttrib(GLint location, GLdouble value) { glVertexAttrib1d(location, value); }
+		static void SetVertexAttrib(GLint location, glm::tvec1<GLdouble> const& value) { glVertexAttrib1dv(location, (GLdouble const*)&value); }
 		static void SetVertexAttrib(GLint location, glm::tvec2<GLdouble> const& value) { glVertexAttrib2dv(location, (GLdouble const*)&value); }
 		static void SetVertexAttrib(GLint location, glm::tvec3<GLdouble> const& value) { glVertexAttrib3dv(location, (GLdouble const*)&value); }
 		static void SetVertexAttrib(GLint location, glm::tvec4<GLdouble> const& value) { glVertexAttrib4dv(location, (GLdouble const*)&value); }
 
 		static void SetVertexAttrib(GLint location, GLshort value) { glVertexAttrib1s(location, value); }
+		static void SetVertexAttrib(GLint location, glm::tvec1<GLshort> const& value) { glVertexAttrib1sv(location, (GLshort const*)&value); }
 		static void SetVertexAttrib(GLint location, glm::tvec2<GLshort> const& value) { glVertexAttrib2sv(location, (GLshort const*)&value); }
 		static void SetVertexAttrib(GLint location, glm::tvec3<GLshort> const& value) { glVertexAttrib3sv(location, (GLshort const*)&value); }
 		static void SetVertexAttrib(GLint location, glm::tvec4<GLshort> const& value) { glVertexAttrib4sv(location, (GLshort const*)&value); }

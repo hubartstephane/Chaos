@@ -359,10 +359,7 @@ namespace chaos
 
 		if (glfw_hints.unlimited_fps)
 		{
-			WithWindowContext([]()
-			{
-				glfwSwapInterval(0);
-			});
+			glfwSwapInterval(0);
 		}
 
 		// set the callbacks

@@ -32,10 +32,28 @@ class GPUResource : public chaos::Object
 
 //---------------------------------------------------------
 
+enum class GPUBufferFlags
+{
+	Static  = (1 << 0),
+	Dynamic = (1 << 1)
+};
+
+
+
+CHAOS_DECLARE_ENUM_BITMASK_METHOD(GPUBufferFlags);
+
+static chaos::EnumTools::EnumBitmaskMetaData<GPUBufferFlags> const GPUBufferFlags_bitmask_metadata =
+{
+	{ GPUBufferFlags::Static, GPUBufferFlags::Dynamic}
+};
+
+CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(GPUBufferFlags, &GPUBufferFlags_bitmask_metadata);
+
 // shared among contexts
 class GPUBuffer : public GPUResource
 {
-	friend class GPUDevice;
+	template<typename T, typename UNUSED_RESOURCE_FINDER>
+	friend class GPUDeviceResourceManager;
 
 public:
 
@@ -44,16 +62,20 @@ public:
 	size_t GetMemoryUsage() const;
 
 protected:
-public:
 
-	GPUBuffer(GPUDevice* in_device, size_t in_size) :
-		device(in_device)
+	GPUBuffer(GPUDevice* in_device, size_t in_size, GPUBufferFlags in_flags = GPUBufferFlags::Static):
+		device(in_device),
+		size(in_size),
+		flags(in_flags)
 	{}
 
 protected:
 
-	GPUDevice * device = nullptr;
+	GPUDevice* device = nullptr;
 
+	size_t size = 0;
+
+	GPUBufferFlags flags = GPUBufferFlags::Static;
 };
 
 //---------------------------------------------------------
@@ -82,7 +104,8 @@ protected:
 
 class GPURenderbuffer : public GPUSurface
 {
-	friend class GPUDevice;
+	template<typename T, typename UNUSED_RESOURCE_FINDER>
+	friend class GPUDeviceResourceManager;
 
 public:
 
@@ -91,7 +114,6 @@ public:
 	size_t GetMemoryUsage() const;
 
 protected:
-public:
 
 	GPURenderbuffer(GPUDevice* in_device) :
 		GPUSurface(in_device)
@@ -103,7 +125,8 @@ public:
 
 class GPUTexture : public GPUSurface
 {
-	friend class GPUDevice;
+	template<typename T, typename UNUSED_RESOURCE_FINDER>
+	friend class GPUDeviceResourceManager;
 
 public:
 
@@ -112,7 +135,6 @@ public:
 	size_t GetMemoryUsage() const;
 
 protected:
-public:
 
 	GPUTexture(GPUDevice* in_device) :
 		GPUSurface(in_device)
@@ -236,10 +258,21 @@ public:
 	double unused_start_time = 0.0;
 };
 
-template<typename T>
-class GPUDeviceResourceInfo
+template<typename T, typename UNUSED_RESOURCE_FINDER>
+class GPUDeviceResourceManager
 {
 public:
+
+	~GPUDeviceResourceManager()
+	{
+		for (chaos::shared_ptr<T> & resource : resources) // detach the resources from the device
+			resource->device = nullptr;
+	}
+
+	size_t GetResourcesCount() const
+	{
+		return resources.size();
+	}
 
 	size_t GetUsedResourcesCount() const
 	{
@@ -249,6 +282,11 @@ public:
 	size_t GetUnusedResourcesCount() const
 	{
 		return unused_resources.size();
+	}
+
+	size_t GetResourcesMemoryUsage() const
+	{
+		return resources_memory_usage;
 	}
 
 	size_t GetUsedResourcesMemoryUsage() const
@@ -261,16 +299,22 @@ public:
 		return unused_resources_memory_usage;
 	}
 
-	void PurgeUnusedResources(double current_time, float max_unused_time)
+	void PurgeUnusedResources(double current_time, float purge_max_age)
 	{
-		auto it = std::remove_if(unused_resources.begin(), unused_resources.end(), [this, current_time, max_unused_time](GPUDeviceUnusedResourceInfo<T> const& info)
+		if (current_time - min_unused_start_time < (double)purge_max_age)
+			return;
+
+		min_unused_start_time = std::numeric_limits<double>::max();
+
+		auto it = std::remove_if(unused_resources.begin(), unused_resources.end(), [this, current_time, purge_max_age](GPUDeviceUnusedResourceInfo<T> const& info)
 		{
-			if (current_time - info.unused_start_time > max_unused_time)
+			if (current_time - info.unused_start_time >= purge_max_age)
 			{
 				unused_resources_memory_usage -= info.resource->GetMemoryUsage();
 				RemoveResource(info.resource);
 				return true;
 			}
+			min_unused_start_time = std::min(min_unused_start_time, info.unused_start_time);
 			return false;
 		});
 		unused_resources.erase(it, unused_resources.end());
@@ -293,6 +337,16 @@ public:
 	template<typename... PARAMS>
 	T * CreateResource(GPUDevice * in_device, PARAMS && ...params)
 	{
+		// try to get an unused resource
+		auto it = unused_resource_finder.FindMatchingUnusedResourceIterator(unused_resources, std::forward<PARAMS>(params)...);
+		if (it != unused_resources.end())
+		{
+			T* result = it->resource;
+			unused_resources_memory_usage -= result->GetMemoryUsage();
+			unused_resources.erase(it);
+			return result;
+		}
+		// create a new resource
 		T * result = new T(in_device, std::forward<PARAMS>(params)...);
 		if (result != nullptr)
 		{
@@ -302,23 +356,25 @@ public:
 		return result;
 	}
 
-	void OnResourceUnused(T * in_resource)
+	void OnResourceUnused(double current_time, T * in_resource)
 	{
+		size_t resource_memory_usage = in_resource->GetMemoryUsage();
+
+		if (max_unused_resource_memory_usage > 0 && unused_resources_memory_usage + resource_memory_usage > max_unused_resource_memory_usage)
+		{
+			RemoveResource(in_resource);
+		}
+		else
+		{
+			unused_resources.push_back({ in_resource, current_time });
+			unused_resources_memory_usage += resource_memory_usage;
+			min_unused_start_time = std::min(min_unused_start_time, current_time);
+		}
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
 public:
+
+	UNUSED_RESOURCE_FINDER unused_resource_finder;
 
 	std::vector<chaos::shared_ptr<T>> resources;
 
@@ -327,7 +383,66 @@ public:
 	size_t resources_memory_usage = 0;
 
 	size_t unused_resources_memory_usage = 0;
+
+	size_t max_unused_resource_memory_usage = 0;
+
+	double min_unused_start_time = std::numeric_limits<double>::max();
 };
+
+// --------------------------------------------------------------------------
+
+class GPUDeviceUnusedBufferFinder
+{
+public: 
+
+	template<typename... PARAMS>
+	auto FindMatchingUnusedResourceIterator(std::vector<GPUDeviceUnusedResourceInfo<GPUBuffer>>& unused_resources, PARAMS && ...params) const
+	{
+		return unused_resources.end();
+	}
+
+};
+
+using GPUDeviceBufferManager = GPUDeviceResourceManager<GPUBuffer, GPUDeviceUnusedBufferFinder>;
+
+// --------------------------------------------------------------------------
+
+class GPUDeviceUnusedTextureFinder
+{
+public:
+
+	template<typename... PARAMS>
+	auto FindMatchingUnusedResourceIterator(std::vector<GPUDeviceUnusedResourceInfo<GPUTexture>>& unused_resources, PARAMS && ...params) const
+	{
+		return unused_resources.end();
+	}
+
+};
+
+using GPUDeviceTextureManager = GPUDeviceResourceManager<GPUTexture, GPUDeviceUnusedTextureFinder>;
+
+
+// --------------------------------------------------------------------------
+
+class GPUDeviceUnusedRenderbufferFinder
+{
+public:
+
+	template<typename... PARAMS>
+	auto FindMatchingUnusedResourceIterator(std::vector<GPUDeviceUnusedResourceInfo<GPURenderbuffer>>& unused_resources, PARAMS && ...params) const
+	{
+		return unused_resources.end();
+	}
+
+};
+
+using GPUDeviceRenderbufferManager = GPUDeviceResourceManager<GPURenderbuffer, GPUDeviceUnusedRenderbufferFinder>;
+
+// --------------------------------------------------------------------------
+
+
+
+
 
 class GPUDevice : public chaos::Tickable // a single for the whole system
 {
@@ -418,9 +533,7 @@ public:
 
 protected:
 
-	void PurgeUnusedResources(float delta_time);
-
-	void DoPurgeUnusedResources(float max_unused_time);
+	void PurgeUnusedResources();
 
 	void OnBufferUnused(GPUBuffer * in_buffer);
 
@@ -434,17 +547,15 @@ protected:
 
 protected:
 
-	GPUDeviceResourceInfo<GPUBuffer> buffers;
+	GPUDeviceBufferManager buffers;
 
-	GPUDeviceResourceInfo<GPUTexture> textures;
+	GPUDeviceTextureManager textures;
 
-	GPUDeviceResourceInfo<GPURenderbuffer> render_buffers;
+	GPUDeviceRenderbufferManager render_buffers;
 
 	double current_time = 0.0;
 
-	float purge_max_timer = 10.0f;
-
-	float current_purge_time = 0.0f;
+	float purge_max_age = 10.0f;
 
 	uint64_t rendering_timestamp = 0; // resources maybe shared by several GPURenderer
 
@@ -508,29 +619,18 @@ GPURenderContext* GPUDevice::CreateRenderContext()
 bool GPUDevice::DoTick(float delta_time)
 {
 	current_time += (double)delta_time;
-
-	PurgeUnusedResources(delta_time);
+	PurgeUnusedResources();
 	return true;
 }
 
-void GPUDevice::PurgeUnusedResources(float delta_time)
+void GPUDevice::PurgeUnusedResources()
 {
-	if (purge_max_timer > 0.0f)
+	if (purge_max_age > 0.0f)
 	{
-		current_purge_time -= delta_time;
-		if (current_purge_time < 0.0f)
-		{
-			DoPurgeUnusedResources(purge_max_timer);
-			current_purge_time = purge_max_timer;
-		}
+		buffers.PurgeUnusedResources(current_time, purge_max_age);
+		textures.PurgeUnusedResources(current_time, purge_max_age);
+		render_buffers.PurgeUnusedResources(current_time, purge_max_age);
 	}
-}
-
-void GPUDevice::DoPurgeUnusedResources(float max_unused_time)
-{
-	buffers.PurgeUnusedResources(current_time, max_unused_time);
-	textures.PurgeUnusedResources(current_time, max_unused_time);
-	render_buffers.PurgeUnusedResources(current_time, max_unused_time);
 }
 
 GPUBuffer* GPUDevice::CreateBuffer(size_t bufsize)
@@ -550,17 +650,17 @@ GPURenderbuffer* GPUDevice::CreateRenderbuffer()
 
 void GPUDevice::OnBufferUnused(GPUBuffer* in_buffer)
 {
-	buffers.OnResourceUnused(in_buffer);
+	buffers.OnResourceUnused(current_time, in_buffer);
 }
 
 void GPUDevice::OnTextureUnused(GPUTexture* in_texture)
 {
-	textures.OnResourceUnused(in_texture);
+	textures.OnResourceUnused(current_time, in_texture);
 }
 
 void GPUDevice::OnRenderbufferUnused(GPURenderbuffer* in_render_buffer)
 {
-	render_buffers.OnResourceUnused(in_render_buffer);
+	render_buffers.OnResourceUnused(current_time, in_render_buffer);
 }
 
 
@@ -574,13 +674,13 @@ void GPUBuffer::SubReference()
 	--shared_count;
 	if (shared_count == 0)
 		OnLastReferenceLost();
-	else if (shared_count == 1) // last reference is owned by GPUDevice
+	else if (shared_count == 1 && device != nullptr) // last reference is owned by GPUDevice
 		device->OnBufferUnused(this);
 }
 
 size_t GPUBuffer::GetMemoryUsage() const
 {
-	return 0;
+	return size;
 }
 
 void GPUTexture::SubReference()
@@ -588,7 +688,7 @@ void GPUTexture::SubReference()
 	--shared_count;
 	if (shared_count == 0)
 		OnLastReferenceLost();
-	else if (shared_count == 1) // last reference is owned by GPUDevice
+	else if (shared_count == 1 && device != nullptr) // last reference is owned by GPUDevice
 		device->OnTextureUnused(this);
 }
 
@@ -602,7 +702,7 @@ void GPURenderbuffer::SubReference()
 	--shared_count;
 	if (shared_count == 0)
 		OnLastReferenceLost();
-	else if (shared_count == 1) // last reference is owned by GPUDevice
+	else if (shared_count == 1 && device != nullptr) // last reference is owned by GPUDevice
 		device->OnRenderbufferUnused(this);
 }
 
@@ -703,5 +803,19 @@ protected:
 
 int main(int argc, char ** argv, char ** env)
 {
+	GPUDevice device;
+
+	{
+		chaos::shared_ptr<GPUBuffer> buf = device.CreateBuffer(100);
+
+		argc = argc;
+	}
+
+	while (true)
+	{
+		device.Tick(1.0f);
+	}
+
+
     return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env);
 }

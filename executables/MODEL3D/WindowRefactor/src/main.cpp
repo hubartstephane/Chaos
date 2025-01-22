@@ -34,7 +34,7 @@ class GPUResource : public chaos::Object
 
 enum class GPUBufferFlags
 {
-	Static  = (1 << 0),
+	Static  = (1 << 0), // default value
 	Dynamic = (1 << 1)
 };
 
@@ -61,6 +61,16 @@ public:
 
 	size_t GetMemoryUsage() const;
 
+	bool IsStatic() const
+	{
+		return !HasAnyFlags(flags, GPUBufferFlags::Dynamic);
+	}
+
+	bool IsDynamic() const
+	{
+		return HasAnyFlags(flags, GPUBufferFlags::Dynamic);
+	}
+
 protected:
 
 	GPUBuffer(GPUDevice* in_device, size_t in_size, GPUBufferFlags in_flags = GPUBufferFlags::Static):
@@ -68,6 +78,8 @@ protected:
 		size(in_size),
 		flags(in_flags)
 	{}
+
+
 
 protected:
 
@@ -405,9 +417,24 @@ class GPUDeviceUnusedBufferFinder
 public: 
 
 	template<typename... PARAMS>
-	auto FindMatchingUnusedResourceIterator(std::vector<GPUDeviceUnusedResourceInfo<GPUBuffer>>& unused_resources, PARAMS && ...params) const
+	auto FindMatchingUnusedResourceIterator(std::vector<GPUDeviceUnusedResourceInfo<GPUBuffer>>& unused_resources, size_t in_size, GPUBufferFlags in_flags) const
 	{
-		return unused_resources.end();
+		bool want_static_buffer = (!HasAnyFlags(in_flags, GPUBufferFlags::Dynamic));
+
+		auto result = unused_resources.end();
+
+		for (auto it = unused_resources.begin() ; it != unused_resources.end() ; ++it)
+		{
+			if (it->resource->IsStatic() != want_static_buffer)
+				continue;
+			if (it->resource->GetMemoryUsage() < in_size)
+				continue;
+
+			return it;
+		}
+
+
+		return result;
 	}
 
 };
@@ -468,9 +495,9 @@ public:
 #endif
 	}
 
-	// GPURenderer * CreateRenderContext();
+	GPURenderContext * CreateRenderContext(chaos::Window* in_window);
 
-	GPUBuffer * CreateBuffer(size_t bufsize);
+	GPUBuffer * CreateBuffer(size_t in_size, GPUBufferFlags in_flags = GPUBufferFlags::Static);
 
 	GPUTexture* CreateTexture();
 
@@ -479,7 +506,7 @@ public:
 	virtual bool DoTick(float delta_time) override;
 
 
-
+	bool IsAnyContextActive() const;
 
 
 
@@ -569,7 +596,11 @@ public:
 
 class GPURenderContext
 {
+	friend class GPUDevice;
+
 public:
+
+	bool IsContextActive() const;
 
 	GPUFence * CreateFence();
 
@@ -580,6 +611,12 @@ public:
 	GPUFramebuffer* CreateFramebuffer();
 
 protected:
+
+	GPURenderContext(GPUDevice * in_device, chaos::Window * in_window);
+
+protected:
+
+	GPUDevice* device = nullptr;
 
 	GLFWwindow * context = nullptr;
 
@@ -597,17 +634,15 @@ protected:
 
 // -----------------------------------------------------------------------
 
-#if 0
-
-GPURenderContext* GPUDevice::CreateRenderContext()
+GPURenderContext* GPUDevice::CreateRenderContext(chaos::Window * in_window)
 {
-	return new GPURenderContext;
+	assert(IsAnyContextActive());
+	return new GPURenderContext(this, in_window);
 }
-
-#endif
 
 bool GPUDevice::DoTick(float delta_time)
 {
+	assert(IsAnyContextActive());
 	current_time += (double)delta_time;
 	PurgeUnusedResources();
 	return true;
@@ -623,18 +658,28 @@ void GPUDevice::PurgeUnusedResources()
 	}
 }
 
-GPUBuffer* GPUDevice::CreateBuffer(size_t bufsize)
+bool GPUDevice::IsAnyContextActive() const
 {
-	return buffers.CreateResource(this, bufsize);
+	return true;
+
+//	return (glfwGetCurrentContext() != nullptr);
+}
+
+GPUBuffer* GPUDevice::CreateBuffer(size_t in_size, GPUBufferFlags in_flags)
+{
+	assert(IsAnyContextActive());
+	return buffers.CreateResource(this, in_size, in_flags);
 }
 
 GPUTexture* GPUDevice::CreateTexture()
 {
+	assert(IsAnyContextActive());
 	return textures.CreateResource(this);
 }
 
 GPURenderbuffer* GPUDevice::CreateRenderbuffer()
 {
+	assert(IsAnyContextActive());
 	return render_buffers.CreateResource(this);
 }
 
@@ -703,8 +748,25 @@ size_t GPURenderbuffer::GetMemoryUsage() const
 
 // -----------------------------------------------------------------------
 
+GPURenderContext::GPURenderContext(GPUDevice * in_device, chaos::Window* in_window):
+	device(in_device),
+	context(in_window->GetGLFWHandler())
+{
+	assert(device != nullptr);
+	assert(context != nullptr);
+}
+
+bool GPURenderContext::IsContextActive() const
+{
+
+	return true;
+
+	return (glfwGetCurrentContext() == context);
+}
+
 GPUFence* GPURenderContext::CreateFence()
 {
+	assert(IsContextActive());
 	GPUFence* result = new GPUFence(this);
 	if (result != nullptr)
 		++fence_count;
@@ -713,6 +775,7 @@ GPUFence* GPURenderContext::CreateFence()
 
 GPUQuery* GPURenderContext::CreateQuery()
 {
+	assert(IsContextActive());
 	GPUQuery* result = new GPUQuery(this);
 	if (result != nullptr)
 		++query_count;
@@ -721,6 +784,7 @@ GPUQuery* GPURenderContext::CreateQuery()
 
 GPUVertexArray* GPURenderContext::CreateVertexArray()
 {
+	assert(IsContextActive());
 	GPUVertexArray* result = new GPUVertexArray(this);
 	if (result != nullptr)
 		++vertex_array_count;
@@ -729,6 +793,7 @@ GPUVertexArray* GPURenderContext::CreateVertexArray()
 
 GPUFramebuffer* GPURenderContext::CreateFramebuffer()
 {
+	assert(IsContextActive());
 	GPUFramebuffer* result = new GPUFramebuffer(this);
 	if (result != nullptr)
 		++framebuffer_count;

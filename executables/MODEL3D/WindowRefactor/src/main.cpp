@@ -246,7 +246,7 @@ protected:
 	GPURenderContext* render_context = nullptr;
 };
 
-
+//---------------------------------------------------------
 
 template<typename T>
 class GPUDeviceUnusedResourceInfo
@@ -256,6 +256,15 @@ public:
 	T * resource = nullptr;
 
 	double unused_start_time = 0.0;
+};
+
+//---------------------------------------------------------
+
+enum class GPUDeviceResourceType
+{
+	Used,
+	Unused,
+	Total
 };
 
 template<typename T, typename UNUSED_RESOURCE_FINDER>
@@ -269,34 +278,34 @@ public:
 			resource->device = nullptr;
 	}
 
-	size_t GetResourcesCount() const
+	size_t GetResourcesCount(GPUDeviceResourceType type) const
 	{
-		return resources.size();
+		switch(type)
+		{
+		case GPUDeviceResourceType::Used:
+			return resources.size() - unused_resources.size();
+		case GPUDeviceResourceType::Unused:
+			return unused_resources.size();
+		case GPUDeviceResourceType::Total:
+			return resources.size();
+		}
+		assert(0);
+		return 0;
 	}
 
-	size_t GetUsedResourcesCount() const
+	size_t GetMemoryUsage(GPUDeviceResourceType type) const
 	{
-		return resources.size() - unused_resources.size();
-	}
-
-	size_t GetUnusedResourcesCount() const
-	{
-		return unused_resources.size();
-	}
-
-	size_t GetResourcesMemoryUsage() const
-	{
-		return resources_memory_usage;
-	}
-
-	size_t GetUsedResourcesMemoryUsage() const
-	{
-		return resources_memory_usage - unused_resources_memory_usage;
-	}
-
-	size_t GetUnusedResourcesMemoryUsage() const
-	{
-		return unused_resources_memory_usage;
+		switch (type)
+		{
+		case GPUDeviceResourceType::Used:
+			return memory_usage - unused_memory_usage;
+		case GPUDeviceResourceType::Unused:
+			return unused_memory_usage;
+		case GPUDeviceResourceType::Total:
+			return memory_usage;
+		}
+		assert(0);
+		return 0;
 	}
 
 	void PurgeUnusedResources(double current_time, float purge_max_age)
@@ -310,7 +319,7 @@ public:
 		{
 			if (current_time - info.unused_start_time >= purge_max_age)
 			{
-				unused_resources_memory_usage -= info.resource->GetMemoryUsage();
+				unused_memory_usage -= info.resource->GetMemoryUsage();
 				RemoveResource(info.resource);
 				return true;
 			}
@@ -329,7 +338,7 @@ public:
 
 		if (it != resources.end())
 		{
-			resources_memory_usage -= in_resource->GetMemoryUsage();
+			memory_usage -= in_resource->GetMemoryUsage();
 			resources.erase(it);
 		}
 	}
@@ -342,7 +351,7 @@ public:
 		if (it != unused_resources.end())
 		{
 			T* result = it->resource;
-			unused_resources_memory_usage -= result->GetMemoryUsage();
+			unused_memory_usage -= result->GetMemoryUsage();
 			unused_resources.erase(it);
 			return result;
 		}
@@ -351,7 +360,7 @@ public:
 		if (result != nullptr)
 		{
 			resources.push_back(result);
-			resources_memory_usage += result->GetMemoryUsage();
+			memory_usage += result->GetMemoryUsage();
 		}
 		return result;
 	}
@@ -360,14 +369,14 @@ public:
 	{
 		size_t resource_memory_usage = in_resource->GetMemoryUsage();
 
-		if (max_unused_resource_memory_usage > 0 && unused_resources_memory_usage + resource_memory_usage > max_unused_resource_memory_usage)
+		if (max_unused_memory_usage > 0 && unused_memory_usage + resource_memory_usage > max_unused_memory_usage)
 		{
 			RemoveResource(in_resource);
 		}
 		else
 		{
 			unused_resources.push_back({ in_resource, current_time });
-			unused_resources_memory_usage += resource_memory_usage;
+			unused_memory_usage += resource_memory_usage;
 			min_unused_start_time = std::min(min_unused_start_time, current_time);
 		}
 	}
@@ -380,11 +389,11 @@ public:
 
 	std::vector<GPUDeviceUnusedResourceInfo<T>> unused_resources;
 
-	size_t resources_memory_usage = 0;
+	size_t memory_usage = 0;
 
-	size_t unused_resources_memory_usage = 0;
+	size_t unused_memory_usage = 0;
 
-	size_t max_unused_resource_memory_usage = 0;
+	size_t max_unused_memory_usage = 0;
 
 	double min_unused_start_time = std::numeric_limits<double>::max();
 };
@@ -471,65 +480,46 @@ public:
 
 
 
-	size_t GetUsedBuffersCount() const
+
+
+
+
+	size_t GetBufferCount(GPUDeviceResourceType type) const
 	{
-		return buffers.GetUsedResourcesCount();
+		return buffers.GetResourcesCount(type);
 	}
 
-	size_t GetUnusedBuffersCount() const
+	size_t GetBufferMemoryUsage(GPUDeviceResourceType type) const
 	{
-		return buffers.GetUnusedResourcesCount();
+		return buffers.GetMemoryUsage(type);
 	}
 
-	size_t GetUsedBuffersMemoryUsage() const
+	size_t GetTextureCount(GPUDeviceResourceType type) const
 	{
-		return buffers.GetUsedResourcesMemoryUsage();
+		return textures.GetResourcesCount(type);
 	}
 
-	size_t GetUnusedBuffersMemoryUsage() const
+	size_t GetTextureMemoryUsage(GPUDeviceResourceType type) const
 	{
-		return buffers.GetUnusedResourcesMemoryUsage();
+		return textures.GetMemoryUsage(type);
 	}
 
-	size_t GetUsedTexturesCount() const
+
+	size_t GetRenderbufferCount(GPUDeviceResourceType type) const
 	{
-		return textures.GetUsedResourcesCount();
+		return render_buffers.GetResourcesCount(type);
 	}
 
-	size_t GetUnusedTexturesCount() const
+	size_t GetRenderbufferMemoryUsage(GPUDeviceResourceType type) const
 	{
-		return textures.GetUnusedResourcesCount();
+		return render_buffers.GetMemoryUsage(type);
 	}
 
-	size_t GetUsedTexturesMemoryUsage() const
-	{
-		return textures.GetUsedResourcesMemoryUsage();
-	}
 
-	size_t GetUnusedTexturesMemoryUsage() const
-	{
-		return textures.GetUnusedResourcesMemoryUsage();
-	}
 
-	size_t GetUsedRenderbuffersCount() const
-	{
-		return render_buffers.GetUsedResourcesCount();
-	}
 
-	size_t GetUnusedRenderbuffersCount() const
-	{
-		return render_buffers.GetUnusedResourcesCount();
-	}
 
-	size_t GetUsedRenderbuffersMemoryUsage() const
-	{
-		return render_buffers.GetUsedResourcesMemoryUsage();
-	}
 
-	size_t GetUnusedRenderbuffersMemoryUsage() const
-	{
-		return render_buffers.GetUnusedResourcesMemoryUsage();
-	}
 
 protected:
 

@@ -32,52 +32,64 @@ namespace chaos
 		virtual bool SetUniform(GPUUniformInfo const& uniform_info, GPUTexture const* texture) const;
 
 		/** setting uniform for some scalar/vector/matrix types */
-#define CHAOS_SET_UNIFORM_DECLARATION(parameter_type)\
-		virtual bool SetUniform(GPUUniformInfo const & uniform_info, parameter_type const& value) const;
+#define CHAOS_SET_UNIFORM_IMPLEMENTATION(parameter_type)\
+		virtual bool SetUniform(GPUUniformInfo const & uniform_info, parameter_type const& value) const\
+		{\
+			return SetUniformImpl(uniform_info, value);\
+		}
 
-		CHAOS_SET_UNIFORM_DECLARATION(bool);
-		CHAOS_SET_UNIFORM_DECLARATION(float);
-		CHAOS_SET_UNIFORM_DECLARATION(double);
-		CHAOS_SET_UNIFORM_DECLARATION(int);
-		CHAOS_SET_UNIFORM_DECLARATION(unsigned int);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(bool);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(float);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(double);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(int);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(unsigned int);
 
-		CHAOS_SET_UNIFORM_DECLARATION(glm::mat2);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::mat3);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::mat4);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::mat2x3);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::mat2x4);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::mat3x2);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::mat3x4);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::mat4x2);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::mat4x3);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::mat2);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::mat3);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::mat4);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::mat2x3);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::mat2x4);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::mat3x2);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::mat3x4);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::mat4x2);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::mat4x3);
 
-		CHAOS_SET_UNIFORM_DECLARATION(glm::dmat2);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::dmat3);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::dmat4);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::dmat2x3);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::dmat2x4);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::dmat3x2);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::dmat3x4);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::dmat4x2);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::dmat4x3);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::dmat2);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::dmat3);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::dmat4);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::dmat2x3);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::dmat2x4);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::dmat3x2);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::dmat3x4);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::dmat4x2);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::dmat4x3);
 
-		CHAOS_SET_UNIFORM_DECLARATION(glm::tvec2<bool>);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::tvec3<bool>);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::tvec4<bool>);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::tvec2<float>);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::tvec3<float>);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::tvec4<float>);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::tvec2<double>);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::tvec3<double>);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::tvec4<double>);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::tvec2<int>);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::tvec3<int>);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::tvec4<int>);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::tvec2<unsigned int>);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::tvec3<unsigned int>);
-		CHAOS_SET_UNIFORM_DECLARATION(glm::tvec4<unsigned int>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec2<bool>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec3<bool>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec4<bool>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec2<float>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec3<float>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec4<float>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec2<double>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec3<double>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec4<double>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec2<int>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec3<int>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec4<int>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec2<unsigned int>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec3<unsigned int>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec4<unsigned int>);
 
 #undef CHAOS_SET_UNIFORM_IMPLEMENTATION
+
+	protected:
+
+		/** default noaction implementation */
+		template<typename PARAMETER_TYPE>
+		bool SetUniformImpl(GPUUniformInfo const& uniform_info, PARAMETER_TYPE const& value) const
+		{
+			return false;
+		}
 	};
 
 	/**
@@ -158,17 +170,14 @@ namespace chaos
 #define CHAOS_SET_UNIFORM_IMPLEMENTATION(parameter_type)\
 		virtual bool SetUniform(GPUUniformInfo const & uniform_info, parameter_type const& value) const override\
 		{\
-			if constexpr (std::is_same_v<VECTOR_TYPE, parameter_type>)\
-			{\
-				GLTools::SetUniform(uniform_info.location, value);\
-			}\
-			else\
-			{\
-				VECTOR_TYPE converted_vector = RecastVector<VECTOR_TYPE>(value);\
-				GLTools::SetUniform(uniform_info.location, converted_vector);\
-			}\
-			return true;\
+			return SetUniformImpl(uniform_info, value);\
 		}
+
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(bool);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(float);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(double);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(int);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(unsigned int);
 
 		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec2<bool>);
 		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec3<bool>);
@@ -188,6 +197,33 @@ namespace chaos
 
 #undef CHAOS_SET_UNIFORM_IMPLEMENTATION
 
+	protected:
+
+		/** generic method to set uniforms from a vector */
+		template<int ARITY, typename PARAMETER_TYPE>
+		bool SetUniformImpl(GPUUniformInfo const& uniform_info, glm::vec<ARITY, PARAMETER_TYPE> const& value) const
+		{
+			if constexpr (std::is_same_v<VECTOR_TYPE, glm::vec<ARITY, PARAMETER_TYPE>>)
+			{
+				GLTools::SetUniform(uniform_info.location, value);
+			}
+			else
+			{
+				VECTOR_TYPE converted_vector = RecastVector<VECTOR_TYPE>(value);
+				GLTools::SetUniform(uniform_info.location, converted_vector);
+			}
+			return true;
+		}
+
+		/** generic method to set uniforms from a scalar */
+		template<typename PARAMETER_TYPE>
+		bool SetUniformImpl(GPUUniformInfo const& uniform_info, PARAMETER_TYPE const& value) const
+		{
+			glm::vec<1, PARAMETER_TYPE> value_as_vec1 = glm::vec<1, PARAMETER_TYPE>(value);
+			VECTOR_TYPE converted_vector = RecastVector<VECTOR_TYPE>(value_as_vec1);
+			GLTools::SetUniform(uniform_info.location, converted_vector);
+			return true;
+		}
 	};
 
 	/**
@@ -203,16 +239,7 @@ namespace chaos
 #define CHAOS_SET_UNIFORM_IMPLEMENTATION(parameter_type)\
 		virtual bool SetUniform(GPUUniformInfo const & uniform_info, parameter_type const& value) const override\
 		{\
-			if constexpr (std::is_same_v<MATRIX_TYPE, parameter_type>)\
-			{\
-				GLTools::SetUniform(uniform_info.location, value);\
-			}\
-			else\
-			{\
-				MATRIX_TYPE converted_matrix(value);\
-				GLTools::SetUniform(uniform_info.location, converted_matrix);\
-			}\
-			return true;\
+			return SetUniformImpl(uniform_info, value);\
 		}
 
 		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::mat2);
@@ -235,6 +262,24 @@ namespace chaos
 		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::dmat4x3);
 
 #undef CHAOS_SET_UNIFORM_IMPLEMENTATION
+
+	protected:
+
+		/** generic method to set uniforms from a matrix */
+		template<typename PARAMETER_TYPE>
+		bool SetUniformImpl(GPUUniformInfo const& uniform_info, PARAMETER_TYPE const& value) const
+		{
+			if constexpr (std::is_same_v<MATRIX_TYPE, PARAMETER_TYPE>)
+			{
+				GLTools::SetUniform(uniform_info.location, value);
+			}
+			else
+			{
+				MATRIX_TYPE converted_matrix(value);
+				GLTools::SetUniform(uniform_info.location, converted_matrix);
+			}
+			return true;
+		}
 	};
 
 	/**

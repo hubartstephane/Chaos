@@ -24,9 +24,9 @@ void LudumLevelInstance::CreateCameraComponents(chaos::Camera* camera, chaos::TM
 	camera->AddComponent(new chaos::SoundListenerCameraComponent());
 }
 
-int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::GPURenderParams const& render_params)
+int LudumLevelInstance::DoDisplay(chaos::GPURenderContext* render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::GPURenderParams const& render_params)
 {
-	return chaos::TMLevelInstance::DoDisplay(renderer, uniform_provider, render_params);
+	return chaos::TMLevelInstance::DoDisplay(render_context, uniform_provider, render_params);
 }
 
 bool LudumLevelInstance::DoTick(float delta_time)

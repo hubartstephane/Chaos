@@ -19,7 +19,7 @@ namespace chaos
 	}
 
 
-	bool PlaceHolderWidget::OnDraw(GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params)
+	bool PlaceHolderWidget::OnDraw(GPURenderContext* render_context, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params)
 	{
 		GLTools::SetViewport(placement);
 
@@ -87,7 +87,7 @@ namespace chaos
 		return Widget::OnMouseMoveImpl(delta);
 	}
 
-	bool GameViewportWidget::OnDraw(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, WindowDrawParams const& draw_params)
+	bool GameViewportWidget::OnDraw(GPURenderContext * render_context, GPUProgramProviderInterface const * uniform_provider, WindowDrawParams const& draw_params)
 	{
 		if (game != nullptr)
 		{
@@ -104,7 +104,7 @@ namespace chaos
 				GLTools::SetScissorBox(render_params.viewport);
 				glEnable(GL_SCISSOR_TEST);
 
-				game->Display(renderer, &main_uniform_provider, render_params);
+				game->Display(render_context, &main_uniform_provider, render_params);
 
 				// restore scissor
 				glDisable(GL_SCISSOR_TEST);

@@ -7,7 +7,7 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-  virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
+  virtual bool OnDraw(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
   {
     glm::vec4 clear_color(0.1f, 0.0f, 0.0f, 0.0f);
     glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -15,7 +15,7 @@ protected:
     float far_plane = 1000.0f;
     glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
-		debug_display.Display(renderer, int(draw_params.viewport.size.x), int(draw_params.viewport.size.y));
+		debug_display.Display(render_context, int(draw_params.viewport.size.x), int(draw_params.viewport.size.y));
 
     return true;
   }

@@ -106,7 +106,7 @@ namespace chaos
 		/** override */
 		virtual void OnRemovedFromHUD() override;
 		/** override */
-		virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params) override;
+		virtual int DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params) override;
 		/** update the mesh according to internal data */
 		virtual void UpdateMesh() {}
 		/** invalidate the mesh. May force its reconstruction */
@@ -181,7 +181,7 @@ namespace chaos
 				this->UpdateMesh();
 		}
 		/** override */
-		virtual bool DoUpdateGPUResources(GPURenderer* renderer) override
+		virtual bool DoUpdateGPUResources(GPURenderContext* render_context) override
 		{
 			type new_value;
 			if (!QueryValue(new_value))
@@ -311,7 +311,7 @@ namespace chaos
 		/** override */
 		virtual bool QueryValue(float& result) const override;
 		/** override */
-		virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params) override;
+		virtual int DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params) override;
 
 	protected:
 
@@ -340,7 +340,7 @@ namespace chaos
 		/** override */
 		virtual void UpdateMesh() override;
 		/** override */
-		virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params) override;
+		virtual int DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params) override;
 
 	protected:
 
@@ -505,7 +505,7 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual bool DoUpdateGPUResources(GPURenderer* renderer) override;
+		virtual bool DoUpdateGPUResources(GPURenderContext* render_context) override;
 		/** override */
 		virtual bool DoTick(float delta_time) override;
 		/** override */
@@ -555,7 +555,7 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params) override;
+		virtual int DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params) override;
 
 	protected:
 

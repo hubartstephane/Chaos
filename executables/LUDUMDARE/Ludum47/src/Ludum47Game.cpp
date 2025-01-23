@@ -59,7 +59,7 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const * config)
 	return true;
 }
 
-void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::GPURenderParams const & render_params)
+void LudumGame::DoDisplayGame(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::GPURenderParams const & render_params)
 {
 	chaos::GPUProgramProviderChain update_provider(uniform_provider);
 
@@ -72,7 +72,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 	}
 
 
-	chaos::Game::DoDisplayGame(renderer, &update_provider, render_params);
+	chaos::Game::DoDisplayGame(render_context, &update_provider, render_params);
 }
 
 

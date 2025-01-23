@@ -54,9 +54,9 @@ protected:
 	/** move the player */
 	virtual GameHUD * DoCreatePlayingHUD() override;
 
-	virtual void DoDisplayGame(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params) override;
+	virtual void DoDisplayGame(GPURenderContext * render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params) override;
 
-	void SetFadeEffect(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params, bool fade_to_black, float t);
+	void SetFadeEffect(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params, bool fade_to_black, float t);
 
 protected:
 

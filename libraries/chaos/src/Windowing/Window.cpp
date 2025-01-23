@@ -79,8 +79,8 @@ namespace chaos
 
 	Window::Window()
 	{
-		// create the renderer
-		renderer = new GPURenderer(this);
+		// create the render_context
+		render_context = new GPURenderContext(this);
 	}
 
 	Window::~Window()
@@ -569,11 +569,11 @@ namespace chaos
 		assert(glfw_window == glfwGetCurrentContext());
 
 		// cannot tick a non existing window
-		if (glfw_window == nullptr || renderer == nullptr)
+		if (glfw_window == nullptr || render_context == nullptr)
 			return;
 
-		// tick the renderer: it has metrics that rely on the real frame_rate (not modified one due to some of our tweaks)
-		renderer->Tick(real_delta_time);
+		// tick the render_context: it has metrics that rely on the real frame_rate (not modified one due to some of our tweaks)
+		render_context->Tick(real_delta_time);
 	}
 
 	bool Window::IsMousePositionValid() const
@@ -884,12 +884,12 @@ namespace chaos
 
 	void Window::DrawWindow()
 	{
-		if (glfw_window != nullptr && renderer != nullptr)
+		if (glfw_window != nullptr && render_context != nullptr)
 		{
 			assert(glfw_window == glfwGetCurrentContext());
 
 			// start rendering
-			renderer->BeginRenderingFrame();
+			render_context->BeginRenderingFrame();
 
 			// render
 			GetProgramProviderAndProcess([this](GPUProgramProviderBase * provider)
@@ -903,7 +903,7 @@ namespace chaos
 				glFlush();
 
 			// end rendering
-			renderer->EndRenderingFrame();
+			render_context->EndRenderingFrame();
 		}
 	}
 
@@ -983,8 +983,8 @@ namespace chaos
 
 	bool Window::ScreenCapture()
 	{
-		// get renderer
-		if (glfw_window == nullptr || renderer == nullptr)
+		// get render_context
+		if (glfw_window == nullptr || render_context == nullptr)
 			return false;
 
 		return WithWindowContext([this]()
@@ -1012,15 +1012,15 @@ namespace chaos
 			// render in the frame buffer
 			GetProgramProviderAndProcess([this, &framebuffer](GPUProgramProviderBase* provider)
 			{
-				renderer->BeginRenderingFrame();
+				render_context->BeginRenderingFrame();
 
-				renderer->RenderIntoFramebuffer(framebuffer.get(), false, [this, provider]()
+				render_context->RenderIntoFramebuffer(framebuffer.get(), false, [this, provider]()
 				{
 					DrawInternal(provider);
 					return true;
 				});
 
-				renderer->EndRenderingFrame();
+				render_context->EndRenderingFrame();
 				return true;
 			});
 
@@ -1208,14 +1208,14 @@ namespace chaos
 		if (!IsGeometryEmpty(draw_params.viewport))
 		{
 			GLTools::SetViewport(draw_params.viewport);
-			OnDraw(renderer.get(), uniform_provider, draw_params);
+			OnDraw(render_context.get(), uniform_provider, draw_params);
 		}
 		// draw the root widget
 		if (root_widget != nullptr)
 		{
 			if (root_widget->IsUpdatePlacementHierarchyRequired())
 				UpdateWidgetPlacementHierarchy();
-			root_widget->OnDraw(renderer.get(), uniform_provider, draw_params);
+			root_widget->OnDraw(render_context.get(), uniform_provider, draw_params);
 		}
 		// draw ImGui
 		DrawImGui();
@@ -1243,7 +1243,7 @@ namespace chaos
 		}
 	}
 
-	bool Window::OnDraw(GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params)
+	bool Window::OnDraw(GPURenderContext* render_context, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params)
 	{
 		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);

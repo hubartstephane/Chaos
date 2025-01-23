@@ -2,16 +2,16 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class GPURenderer;
+	class GPURenderContext;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class CHAOS_API GPURenderer : public Tickable
+	class CHAOS_API GPURenderContext : public Tickable
 	{
 	public:
 
 		/** constructor */
-		GPURenderer(Window* in_window);
+		GPURenderContext(Window* in_window);
 
 		/** draw a primitive */
 		void Draw(GPUDrawPrimitive const& primitive, GPUInstancingInfo const& instancing = {});

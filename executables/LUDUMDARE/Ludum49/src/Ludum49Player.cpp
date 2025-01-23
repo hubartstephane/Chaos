@@ -85,7 +85,7 @@ bool LudumPlayer::DoTick(float delta_time)
 }
 
 #if 0
-int LudumPlayer::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
+int LudumPlayer::DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 {
 	int result = 0;
 
@@ -96,7 +96,7 @@ int LudumPlayer::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface co
 			glDisable(GL_CULL_FACE);
 
 	if (mesh != nullptr)
-		result += mesh->Display(renderer, uniform_provider, render_params);
+		result += mesh->Display(render_context, uniform_provider, render_params);
 
 
 			glDisable(GL_BLEND);

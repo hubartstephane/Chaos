@@ -62,11 +62,11 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const * config)
 }
 
 
-void LudumGame::DoDisplayGame(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
+void LudumGame::DoDisplayGame(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 {
 	GPUProgramProviderChain update_provider(uniform_provider);
 
-	Game::DoDisplayGame(renderer, &update_provider, render_params);
+	Game::DoDisplayGame(render_context, &update_provider, render_params);
 
 
 	// Win Fadeout to white
@@ -89,7 +89,7 @@ void LudumGame::DoDisplayGame(GPURenderer* renderer, GPUProgramProviderInterface
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glDisable(GL_DEPTH_TEST);
 			glDisable(GL_CULL_FACE);
-			DI.Display(renderer, uniform_provider, render_params);
+			DI.Display(render_context, uniform_provider, render_params);
 			glDisable(GL_BLEND);
 			glEnable(GL_DEPTH_TEST);
 			glEnable(GL_CULL_FACE);
@@ -108,15 +108,15 @@ void LudumGame::DoDisplayGame(GPURenderer* renderer, GPUProgramProviderInterface
 
 		if (player->death_timer >= 0.0f)
 		{
-			SetFadeEffect(renderer, uniform_provider, render_params, false, 1.0f - (player->death_timer / player->max_death_timer));
+			SetFadeEffect(render_context, uniform_provider, render_params, false, 1.0f - (player->death_timer / player->max_death_timer));
 		}
 		else if (player->suicidal_timer >= 0.0f)
 		{
-			SetFadeEffect(renderer, uniform_provider, render_params, false, (player->suicidal_timer / player->max_suicidal_timer));
+			SetFadeEffect(render_context, uniform_provider, render_params, false, (player->suicidal_timer / player->max_suicidal_timer));
 		}
 		else if (li != nullptr && li->level_complete)
 		{
-			SetFadeEffect(renderer, uniform_provider, render_params, true, 1.0f - (li->completion_timer / li->completion_delay));
+			SetFadeEffect(render_context, uniform_provider, render_params, true, 1.0f - (li->completion_timer / li->completion_delay));
 
 		}
 
@@ -124,7 +124,7 @@ void LudumGame::DoDisplayGame(GPURenderer* renderer, GPUProgramProviderInterface
 	}
 }
 
-void LudumGame::SetFadeEffect(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params, bool fade_to_black, float ratio)
+void LudumGame::SetFadeEffect(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params, bool fade_to_black, float ratio)
 {
 	GPUResourceManager* resource_manager = WindowApplication::GetGPUResourceManagerInstance();
 	if (resource_manager == nullptr)
@@ -140,7 +140,7 @@ void LudumGame::SetFadeEffect(GPURenderer* renderer, GPUProgramProviderInterface
 		GPUProgramProviderChain fade_provider(uniform_provider);
 		fade_provider.AddVariable("fade_ratio", ratio);
 
-		renderer->DrawFullscreenQuad(fade_material, &fade_provider, render_params);
+		render_context->DrawFullscreenQuad(fade_material, &fade_provider, render_params);
 
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);

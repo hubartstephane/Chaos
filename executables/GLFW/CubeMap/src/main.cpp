@@ -96,7 +96,7 @@ protected:
 		return nullptr;
 	}
 
-	virtual bool OnDraw(chaos::GPURenderer* renderer, chaos::GPUProgramProviderInterface const* uniform_provider, chaos::WindowDrawParams const& draw_params) override
+	virtual bool OnDraw(chaos::GPURenderContext* render_context, chaos::GPUProgramProviderInterface const* uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
 		if (query->IsEnded())
 		{
@@ -144,7 +144,7 @@ protected:
 		// XXX : the stencil is here to ensure that the debug strings is not erased by the sky box
 		//       (debug string needs to be rendered first so it can use the conditional rendering from previous frame)
 		query->BeginConditionalRendering(true, false);
-		debug_display.Display(renderer, int(draw_params.viewport.size.x), int(draw_params.viewport.size.y));
+		debug_display.Display(render_context, int(draw_params.viewport.size.x), int(draw_params.viewport.size.y));
 		query->EndConditionalRendering();
 
 		// XXX : render the skybox. Use previous frame query for conditinal rendering
@@ -160,7 +160,7 @@ protected:
 		chaos::GPURenderParams render_params;
 
 		query->BeginQuery();
-		mesh->DisplayWithProgram(program.get(), renderer, &main_uniform_provider, render_params);
+		mesh->DisplayWithProgram(program.get(), render_context, &main_uniform_provider, render_params);
 		query->EndQuery();
 
 		return true;

@@ -136,7 +136,7 @@ public:
 
 	void ParticleToPrimitives(ParticlePlayer const& particle, chaos::PrimitiveOutput<chaos::VertexDefault>& output) const;
 
-	void UpdateRenderingStates(chaos::GPURenderer* renderer, bool begin) const
+	void UpdateRenderingStates(chaos::GPURenderContext* render_context, bool begin) const
 	{
 		if (begin)
 		{

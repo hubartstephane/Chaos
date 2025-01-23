@@ -94,7 +94,7 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
+	virtual bool OnDraw(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
 		bool bbb1 = chaos::has_AllocationTrait_v< ParticleExampleLayerTrait>;
 		bool bbb2 = chaos::has_AllocationTrait_v< WindowOpenGLTest>;
@@ -123,7 +123,7 @@ protected:
 
 		// draw
 		chaos::GPURenderParams render_params;
-		particle_manager->Display(renderer, &main_uniform_provider, render_params);
+		particle_manager->Display(render_context, &main_uniform_provider, render_params);
 
 		return true;
 	}

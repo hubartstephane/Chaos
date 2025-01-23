@@ -6,7 +6,7 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
+	virtual bool OnDraw(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
 		float     far_plane = 1000.0f;
 		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
@@ -42,7 +42,7 @@ protected:
 		chaos::GPURenderParams render_params;
 		render_params.instancing.instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
 		render_params.instancing.base_instance = 0;
-		mesh->DisplayWithProgram(program.get(), renderer, &main_uniform_provider, render_params);
+		mesh->DisplayWithProgram(program.get(), render_context, &main_uniform_provider, render_params);
 
 		return true;
 	}

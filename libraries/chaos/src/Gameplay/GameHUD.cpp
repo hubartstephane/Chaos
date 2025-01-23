@@ -173,7 +173,7 @@ namespace chaos
 		return true;
 	}
 
-	int GameHUD::DoDisplay(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
+	int GameHUD::DoDisplay(GPURenderContext * render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
 	{
 		int result = 0;
 		// display components (most of them should do nothing while they re using the particle_manager
@@ -181,7 +181,7 @@ namespace chaos
 		{
 			GameHUDComponent * component = it.second.get();
 			if (component != nullptr)
-				result += component->Display(renderer, uniform_provider, render_params);
+				result += component->Display(render_context, uniform_provider, render_params);
 		}
 		return result;
 	}

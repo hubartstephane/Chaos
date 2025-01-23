@@ -16,7 +16,7 @@ namespace chaos
 		PlaceHolderWidget();
 
 		/** override */
-		virtual bool OnDraw(GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params) override;
+		virtual bool OnDraw(GPURenderContext* render_context, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params) override;
 
 
 		glm::vec4 clear_color;
@@ -50,7 +50,7 @@ namespace chaos
 		virtual bool OnKeyEventImpl(KeyEvent const& key_event) override;
 
 		/** override */
-		virtual bool OnDraw(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, WindowDrawParams const& draw_params) override;
+		virtual bool OnDraw(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, WindowDrawParams const& draw_params) override;
 
 		/** override */
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;

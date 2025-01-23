@@ -8,15 +8,15 @@ namespace chaos
 	// GPURenderable implementation
 	// ========================================================
 
-	int GPURenderable::Display(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
+	int GPURenderable::Display(GPURenderContext * render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
 	{
-		assert(renderer != nullptr);
-		if (!PrepareDisplay(renderer, uniform_provider, render_params))
+		assert(render_context != nullptr);
+		if (!PrepareDisplay(render_context, uniform_provider, render_params))
 			return 0;
-		return DoDisplay(renderer, uniform_provider, render_params);
+		return DoDisplay(render_context, uniform_provider, render_params);
 	}
 
-	bool GPURenderable::PrepareDisplay(GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, GPURenderParams const& render_params)
+	bool GPURenderable::PrepareDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const* uniform_provider, GPURenderParams const& render_params)
 	{
 		if (!IsVisible())
 			return false;
@@ -28,22 +28,22 @@ namespace chaos
 			if (!render_params.object_filter->CanRender(this))
 				return false;
 		// update it (only if necessary
-		uint64_t renderer_timestamp = renderer->GetTimestamp();
+		uint64_t renderer_timestamp = render_context->GetTimestamp();
 		if (renderer_timestamp == 0 || update_timestamp != renderer_timestamp) // test for 0 to ensure resource is updated even if caller does not care about updating a timestamp
 		{
-			if (!DoUpdateGPUResources(renderer))
+			if (!DoUpdateGPUResources(render_context))
 				return false;
 			update_timestamp = renderer_timestamp;
 		}
 		return true;
 	}
 
-	int GPURenderable::DoDisplay(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
+	int GPURenderable::DoDisplay(GPURenderContext * render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
 	{
 		return 0;
 	}
 
-	bool GPURenderable::DoUpdateGPUResources(GPURenderer * renderer)
+	bool GPURenderable::DoUpdateGPUResources(GPURenderContext * render_context)
 	{
 		return true;
 	}

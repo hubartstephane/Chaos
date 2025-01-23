@@ -36,13 +36,13 @@ namespace chaos
 		// OK
 		return true;
 	}
-	GPUVertexArray const* GPUVertexArrayCache::FindVertexArray(GPURenderer* renderer, GPUProgram const* program, GPUBuffer const* vertex_buffer, GPUBuffer const* index_buffer, GLintptr offset) const
+	GPUVertexArray const* GPUVertexArrayCache::FindVertexArray(GPURenderContext* render_context, GPUProgram const* program, GPUBuffer const* vertex_buffer, GPUBuffer const* index_buffer, GLintptr offset) const
 	{
 		GLFWwindow* current_context = glfwGetCurrentContext();
 
 #if _DEBUG
 		assert(current_context != nullptr);
-		assert(current_context == renderer->GetWindow()->GetGLFWHandler());
+		assert(current_context == render_context->GetWindow()->GetGLFWHandler());
 #endif
 		// early exit
 		if (program == nullptr)
@@ -79,7 +79,7 @@ namespace chaos
 				if (entry.program == program &&
 					entry.vertex_buffer == vertex_buffer &&
 					entry.index_buffer == index_buffer &&
-					entry.context_window == renderer->GetWindow() &&
+					entry.context_window == render_context->GetWindow() &&
 					entry.vertex_buffer_offset == offset)
 				{
 					result = entry.vertex_array.get();
@@ -91,12 +91,12 @@ namespace chaos
 		return result;
 	}
 
-	GPUVertexArray const * GPUVertexArrayCache::FindOrCreateVertexArray(GPURenderer * renderer, GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer, GPUVertexDeclaration const * declaration, GLintptr offset)
+	GPUVertexArray const * GPUVertexArrayCache::FindOrCreateVertexArray(GPURenderContext * render_context, GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer, GPUVertexDeclaration const * declaration, GLintptr offset)
 	{
-		assert(renderer != nullptr);
-		assert(renderer->GetWindow() != nullptr);
-		assert(renderer->GetWindow()->GetGLFWHandler() != nullptr);
-		assert(renderer->GetWindow()->GetGLFWHandler() == glfwGetCurrentContext());
+		assert(render_context != nullptr);
+		assert(render_context->GetWindow() != nullptr);
+		assert(render_context->GetWindow()->GetGLFWHandler() != nullptr);
+		assert(render_context->GetWindow()->GetGLFWHandler() == glfwGetCurrentContext());
 		assert(declaration != nullptr);
 
 		// early exit
@@ -108,16 +108,16 @@ namespace chaos
 			return nullptr;
 
 		// find exisiting data
-		GPUVertexArray const * result = FindVertexArray(renderer, program, vertex_buffer, index_buffer, offset);
+		GPUVertexArray const * result = FindVertexArray(render_context, program, vertex_buffer, index_buffer, offset);
 		if (result != nullptr)
 			return result;
 
 		// create the vertex array
-		shared_ptr<GPUVertexArray> new_vertex_array = new GPUVertexArray(renderer->GetWindow());
+		shared_ptr<GPUVertexArray> new_vertex_array = new GPUVertexArray(render_context->GetWindow());
 		if (new_vertex_array == nullptr || !new_vertex_array->IsValid())
 			return nullptr;
 
-		renderer->GetWindow()->WithWindowContext([this, new_vertex_array, renderer, program, vertex_buffer, index_buffer, declaration, offset]()
+		render_context->GetWindow()->WithWindowContext([this, new_vertex_array, render_context, program, vertex_buffer, index_buffer, declaration, offset]()
 		{
 			GLuint va = new_vertex_array->GetResourceID();
 
@@ -145,9 +145,9 @@ namespace chaos
 			new_entry.program_id = program->GetResourceID();
 			new_entry.vertex_buffer_id = (vertex_buffer != nullptr) ? vertex_buffer->GetResourceID() : 0;
 			new_entry.index_buffer_id = (index_buffer != nullptr) ? index_buffer->GetResourceID() : 0;
-			new_entry.context_window = renderer->GetWindow();
+			new_entry.context_window = render_context->GetWindow();
 			new_entry.vertex_buffer_offset = offset;
-			new_entry.context = renderer->GetWindow()->GetGLFWHandler();
+			new_entry.context = render_context->GetWindow()->GetGLFWHandler();
 
 			entries.push_back(std::move(new_entry));
 		});

@@ -36,7 +36,7 @@ namespace chaos
 		};
 
 		/** display the debug text */
-		void Display(GPURenderer* renderer, int width, int height) const;
+		void Display(GPURenderContext* render_context, int width, int height) const;
 		/** tick all lines (returns true whether there is a change) */
 		bool Tick(float delta_time);
 		/** Add a line in the log (character size and position are in pixels) */

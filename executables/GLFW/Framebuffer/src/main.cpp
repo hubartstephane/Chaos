@@ -6,9 +6,9 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
+	virtual bool OnDraw(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
-		auto RenderingPass = [this, renderer, uniform_provider, draw_params](int pass)
+		auto RenderingPass = [this, render_context, uniform_provider, draw_params](int pass)
 		{
 			glm::ivec2 size = (pass == 0) ?
 				framebuffer->GetSize():
@@ -66,10 +66,10 @@ protected:
 			render_params.instancing.instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
 			render_params.instancing.base_instance = 0;
 
-			mesh->DisplayWithProgram(program.get(), renderer, &main_uniform_provider, render_params);
+			mesh->DisplayWithProgram(program.get(), render_context, &main_uniform_provider, render_params);
 		};
 
-		renderer->RenderIntoFramebuffer(framebuffer.get(), true, [this, &RenderingPass]()
+		render_context->RenderIntoFramebuffer(framebuffer.get(), true, [this, &RenderingPass]()
 		{
 			RenderingPass(0);
 			return true;

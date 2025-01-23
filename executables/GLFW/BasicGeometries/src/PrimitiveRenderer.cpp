@@ -110,7 +110,7 @@ void PrimitiveRenderer::DrawPrimitiveImpl(
 	PrepareObjectProgram(uniform_provider, prim_ctx, next_provider);
 
 	chaos::GPURenderParams render_params;
-	mesh->DisplayWithProgram(program, renderer, &uniform_provider, render_params);
+	mesh->DisplayWithProgram(program, render_context, &uniform_provider, render_params);
 
 	if (is_translucent)
 		EndTranslucency();

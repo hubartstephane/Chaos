@@ -39,10 +39,10 @@ namespace chaos
 		}
 
 		/** flush and display the pending content */
-		int Display(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
+		int Display(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 		{
 			this->Flush();
-			int result = mesh.Display(renderer, uniform_provider, render_params);
+			int result = mesh.Display(render_context, uniform_provider, render_params);
 			mesh.Clear(GetBufferPool());
 			return result;
 		}

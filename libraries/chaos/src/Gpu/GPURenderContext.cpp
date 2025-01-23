@@ -4,13 +4,13 @@
 namespace chaos
 {
 
-	GPURenderer::GPURenderer(Window* in_window) :
+	GPURenderContext::GPURenderContext(Window* in_window) :
 		window(in_window)
 	{
 		assert(in_window != nullptr);
 	}
 
-	bool GPURenderer::RenderIntoFramebuffer(GPUFramebuffer* framebuffer, bool generate_mipmaps, LightweightFunction<bool()> render_func)
+	bool GPURenderContext::RenderIntoFramebuffer(GPUFramebuffer* framebuffer, bool generate_mipmaps, LightweightFunction<bool()> render_func)
 	{
 #if _DEBUG
 		assert(rendering_started);
@@ -70,7 +70,7 @@ namespace chaos
 		return result;
 	}
 
-	void GPURenderer::BeginRenderingFrame()
+	void GPURenderContext::BeginRenderingFrame()
 	{
 #if _DEBUG
 		assert(!rendering_started);
@@ -83,7 +83,7 @@ namespace chaos
 		rendering_fence = nullptr;
 	}
 
-	void GPURenderer::EndRenderingFrame()
+	void GPURenderContext::EndRenderingFrame()
 	{
 #if _DEBUG
 		assert(rendering_started);
@@ -96,34 +96,34 @@ namespace chaos
 			rendering_fence->CreateGPUFence();
 	}
 
-	float GPURenderer::GetAverageFrameRate() const
+	float GPURenderContext::GetAverageFrameRate() const
 	{
 		return framerate_counter.GetCurrentValue();
 	}
 
-	int GPURenderer::GetAverageDrawCalls() const
+	int GPURenderContext::GetAverageDrawCalls() const
 	{
 		return drawcall_counter.GetCurrentValue();
 	}
 
-	int GPURenderer::GetAverageVertices() const
+	int GPURenderContext::GetAverageVertices() const
 	{
 		return vertices_counter.GetCurrentValue();
 	}
 
-	GPUFence * GPURenderer::GetCurrentFrameFence()
+	GPUFence * GPURenderContext::GetCurrentFrameFence()
 	{
 		if (rendering_fence == nullptr)
 			rendering_fence = new GPUFence(nullptr); // does not create the OPENGL resource. It will be created at the end of frame
 		return rendering_fence.get();
 	}
 
-	uint64_t GPURenderer::GetTimestamp() const
+	uint64_t GPURenderContext::GetTimestamp() const
 	{
 		return rendering_timestamp;
 	}
 
-	bool GPURenderer::DoTick(float delta_time)
+	bool GPURenderContext::DoTick(float delta_time)
 	{
 		last_delta_time = delta_time;
 		// update counters
@@ -134,7 +134,7 @@ namespace chaos
 		return true;
 	}
 
-	void GPURenderer::Draw(GPUDrawPrimitive const & primitive, GPUInstancingInfo const & instancing)
+	void GPURenderContext::Draw(GPUDrawPrimitive const & primitive, GPUInstancingInfo const & instancing)
 	{
 #if _DEBUG
 		assert(rendering_started);
@@ -192,7 +192,7 @@ namespace chaos
 		drawcall_counter.Accumulate(1);
 	}
 
-	void GPURenderer::DrawFullscreenQuad(GPURenderMaterial const * material, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
+	void GPURenderContext::DrawFullscreenQuad(GPURenderMaterial const * material, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
 	{
 		assert(material != nullptr);
 

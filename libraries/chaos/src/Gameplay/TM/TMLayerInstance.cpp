@@ -753,7 +753,7 @@ namespace chaos
 		return true;
 	}
 
-	int TMLayerInstance::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
+	int TMLayerInstance::DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
 		// display this layer particles
 		int result = 0;
@@ -842,7 +842,7 @@ namespace chaos
 					instance_uniform_provider.AddVariable("local_to_world", local_to_world);
 
 					// draw call
-					result += particle_layer->Display(renderer, &instance_uniform_provider, render_params);
+					result += particle_layer->Display(render_context, &instance_uniform_provider, render_params);
 				}
 			}
 		}
@@ -850,7 +850,7 @@ namespace chaos
 		// draw child layers
 		for (auto& layer : layer_instances)
 			if (layer != nullptr)
-				result += layer->Display(renderer, uniform_provider, render_params);
+				result += layer->Display(render_context, uniform_provider, render_params);
 
 
 
@@ -858,7 +858,7 @@ namespace chaos
 		// shu 49 rendre les objets ??
 		for (auto& object : objects)
 			if (object != nullptr)
-				result += object->Display(renderer, uniform_provider, render_params);
+				result += object->Display(render_context, uniform_provider, render_params);
 
 
 

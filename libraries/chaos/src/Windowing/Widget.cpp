@@ -148,10 +148,10 @@ namespace chaos
 		return nullptr;
 	}
 
-	bool Widget::OnDraw(GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params)
+	bool Widget::OnDraw(GPURenderContext* render_context, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params)
 	{
 		for (auto& child : child_widgets)
-			child->OnDraw(renderer, uniform_provider, draw_params);
+			child->OnDraw(render_context, uniform_provider, draw_params);
 		return true;
 	}
 

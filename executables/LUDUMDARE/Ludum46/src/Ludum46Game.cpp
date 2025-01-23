@@ -60,7 +60,7 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const * config)
 	return true;
 }
 
-void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::GPURenderParams const & render_params)
+void LudumGame::DoDisplayGame(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::GPURenderParams const & render_params)
 {
 	chaos::GPUProgramProviderChain update_provider(uniform_provider);
 
@@ -76,7 +76,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 	}
 
 
-	chaos::Game::DoDisplayGame(renderer, &update_provider, render_params);
+	chaos::Game::DoDisplayGame(render_context, &update_provider, render_params);
 
 
 	// Win Fadeout to white
@@ -97,7 +97,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 				chaos::GPUProgramProviderChain blackscreen_provider(uniform_provider);
 				blackscreen_provider.AddVariable("fade_ratio", 1.0f - (ludum_level_instance->completion_timer / ludum_level_instance->completion_delay));
 
-				renderer->DrawFullscreenQuad(blackscreen_material, &blackscreen_provider, render_params);
+				render_context->DrawFullscreenQuad(blackscreen_material, &blackscreen_provider, render_params);
 
 				glDisable(GL_BLEND);
 			}

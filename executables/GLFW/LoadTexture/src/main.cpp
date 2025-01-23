@@ -65,7 +65,7 @@ protected:
 		return result;
 	}
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
+	virtual bool OnDraw(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
 		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -80,7 +80,7 @@ protected:
 		main_uniform_provider.AddTexture("material", texture);
 
 		chaos::GPURenderParams render_params;
-		mesh->DisplayWithProgram(program.get(), renderer, &main_uniform_provider, render_params);
+		mesh->DisplayWithProgram(program.get(), render_context, &main_uniform_provider, render_params);
 
 		return true;
 	}

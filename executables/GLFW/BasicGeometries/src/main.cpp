@@ -951,7 +951,7 @@ protected:
 
 	}
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
+	virtual bool OnDraw(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
 		glm::vec4 clear_color(0.0f, 0.7f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -966,11 +966,11 @@ protected:
 		static float FOV = 60.0f;
 		primitive_renderer->projection      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, float(draw_params.viewport.size.x), float(draw_params.viewport.size.y), 1.0f, far_plane);
 		primitive_renderer->world_to_camera = fps_view_controller.GlobalToLocal();
-		primitive_renderer->renderer        = renderer;
+		primitive_renderer->render_context        = render_context;
 
 		DrawGeometryObjects();
 
-		debug_display.Display(renderer, (int)(draw_params.viewport.size.x), (int)(draw_params.viewport.size.y));
+		debug_display.Display(render_context, (int)(draw_params.viewport.size.x), (int)(draw_params.viewport.size.y));
 
 		return true;
 	}

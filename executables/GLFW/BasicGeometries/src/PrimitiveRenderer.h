@@ -98,7 +98,7 @@ protected:
 
 public:
 
-	chaos::GPURenderer * renderer = nullptr;
+	chaos::GPURenderContext * render_context = nullptr;
 
 	glm::mat4 projection;
 	glm::mat4 world_to_camera;

@@ -6,7 +6,7 @@ class Object3D : public Object
 {
 public:
 
-	void Display(GPUProgram * program, GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, GPURenderParams & render_params)
+	void Display(GPUProgram * program, GPURenderContext* render_context, GPUProgramProviderInterface const* uniform_provider, GPURenderParams & render_params)
 	{
 		glm::mat4x4 local_to_world = transform.GetLocalToParent();
 
@@ -27,7 +27,7 @@ public:
 			main_uniform_provider.AddVariable("emissive_color", emissive_color);
 		}
 
-		mesh->DisplayWithProgram(program, renderer, &main_uniform_provider, render_params);
+		mesh->DisplayWithProgram(program, render_context, &main_uniform_provider, render_params);
 	}
 
 	void SetSelected(bool in_selected)
@@ -57,7 +57,7 @@ class WindowOpenGLTest : public Window
 
 protected:
 
-	virtual bool OnDraw(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, WindowDrawParams const& draw_params) override
+	virtual bool OnDraw(GPURenderContext * render_context, GPUProgramProviderInterface const * uniform_provider, WindowDrawParams const& draw_params) override
 	{
 		float fov = 60.0f;
 		float far_plane = 10000.0f;
@@ -89,7 +89,7 @@ protected:
 			GPURenderParams render_params;
 
 			for (shared_ptr<Object3D> const& object : objects)
-				object->Display(program.get(), renderer, &main_uniform_provider, render_params);
+				object->Display(program.get(), render_context, &main_uniform_provider, render_params);
 		}
 
 		return true;

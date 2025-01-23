@@ -93,7 +93,7 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 
 		/** gets the type_info for this entry */
 		std::type_info const* GetTypeInfo() const { return type_info; }
-		/** get the imgui renderer */
+		/** get the imgui render_context */
 		GlobalVariableImGuiRendererBase const* GetImGuiRenderer() const { return imgui_renderer; }
 
 	protected:

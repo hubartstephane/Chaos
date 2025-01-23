@@ -60,9 +60,9 @@ namespace chaos
 	public:
 
 		/** find vertex array for the program */
-		GPUVertexArray const* FindVertexArray(GPURenderer* renderer, GPUProgram const* program, GPUBuffer const* vertex_buffer, GPUBuffer const* index_buffer, GLintptr offset) const;
+		GPUVertexArray const* FindVertexArray(GPURenderContext* render_context, GPUProgram const* program, GPUBuffer const* vertex_buffer, GPUBuffer const* index_buffer, GLintptr offset) const;
 		/** create or return exisiting vertex array for a given program */
-		GPUVertexArray const* FindOrCreateVertexArray(GPURenderer* renderer, GPUProgram const* program, GPUBuffer const* vertex_buffer, GPUBuffer const* index_buffer, GPUVertexDeclaration const* declaration, GLintptr offset = 0);
+		GPUVertexArray const* FindOrCreateVertexArray(GPURenderContext* render_context, GPUProgram const* program, GPUBuffer const* vertex_buffer, GPUBuffer const* index_buffer, GPUVertexDeclaration const* declaration, GLintptr offset = 0);
 		/** reset the whole object */
 		void Clear();
 

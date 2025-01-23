@@ -20,7 +20,7 @@ protected:
 		return chaos::Window::OnKeyEventImpl(key_event);
 	}
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
+	virtual bool OnDraw(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
 		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -35,7 +35,7 @@ protected:
 		float world_y = world_x / VIEWPORT_WANTED_ASPECT;
 
 		if (game != nullptr)
-			game->Display(renderer, glm::vec2(world_x, world_y));
+			game->Display(render_context, glm::vec2(world_x, world_y));
 
 		return true;
 	}

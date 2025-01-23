@@ -15,7 +15,7 @@ class WindowOpenGLTest : public chaos::Window
 protected:
 
 
-	virtual bool OnDraw(chaos::GPURenderer* renderer, chaos::GPUProgramProviderInterface const* uniform_provider, chaos::WindowDrawParams const& draw_params) override
+	virtual bool OnDraw(chaos::GPURenderContext* render_context, chaos::GPUProgramProviderInterface const* uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 

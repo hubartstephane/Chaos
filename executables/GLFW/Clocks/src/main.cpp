@@ -42,7 +42,7 @@ class RenderingContext
 {
 public:
 
-	chaos::GPURenderer * renderer = nullptr;
+	chaos::GPURenderContext * render_context = nullptr;
 
 	glm::mat4 projection;
 	glm::mat4 world_to_camera;
@@ -98,7 +98,7 @@ protected:
 		PrepareObjectProgram(uniform_provider, ctx, prim_ctx);
 
 		chaos::GPURenderParams render_params;
-		mesh->DisplayWithProgram(program, ctx.renderer, &uniform_provider, render_params);
+		mesh->DisplayWithProgram(program, ctx.render_context, &uniform_provider, render_params);
 	}
 
 	void GPUDrawPrimitive(RenderingContext const & ctx, chaos::box3 const & b, glm::vec4 const & color)
@@ -136,7 +136,7 @@ protected:
 			GPUDrawPrimitive(ctx, b4, white);
 	}
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
+	virtual bool OnDraw(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
 		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -149,7 +149,7 @@ protected:
 
 								  // XXX : the scaling is used to avoid the near plane clipping
 		RenderingContext ctx;
-		ctx.renderer = renderer;
+		ctx.render_context = render_context;
 
 		static float FOV = 60.0f;
 		ctx.projection = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, float(draw_params.viewport.size.x), float(draw_params.viewport.size.y), 1.0f, far_plane);
@@ -157,7 +157,7 @@ protected:
 
 		DrawGeometryObjects(ctx);
 
-		debug_display.Display(renderer, (int)(draw_params.viewport.size.x), (int)(draw_params.viewport.size.y));
+		debug_display.Display(render_context, (int)(draw_params.viewport.size.x), (int)(draw_params.viewport.size.y));
 
 		return true;
 	}

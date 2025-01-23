@@ -27,7 +27,7 @@ bool LudumGame::OnEnterGame(chaos::PhysicalGamepad * in_physical_gamepad)
 	return true;
 }
 
-void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::GPURenderParams const & render_params)
+void LudumGame::DoDisplayGame(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::GPURenderParams const & render_params)
 {
 	chaos::TMLevelInstance * ludum_level_instance = GetLevelInstance();
 
@@ -37,9 +37,9 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 
 	if (ludum_level_instance == nullptr)
 	{
-		DoDisplayBackground(renderer, uniform_provider, render_params);
+		DoDisplayBackground(render_context, uniform_provider, render_params);
 		if (particle_manager != nullptr)
-			particle_manager->Display(renderer, uniform_provider, render_params);
+			particle_manager->Display(render_context, uniform_provider, render_params);
 		return;
 	}
 
@@ -68,7 +68,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 	//
 
 	// RENDER TARGET 1 : SPECIAL WorldLimits (on red channel), Enlarged enemies (on blue channel)
-	renderer->RenderIntoFramebuffer(framebuffer_worldlimits.get(), true, [this, &clear_color, &render_params, uniform_provider, &renderer, ludum_level_instance]()
+	render_context->RenderIntoFramebuffer(framebuffer_worldlimits.get(), true, [this, &clear_color, &render_params, uniform_provider, &render_context, ludum_level_instance]()
 	{
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
@@ -80,7 +80,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 			other_render_params.renderpass_name = "WORLD_LIMITS_ONLY";
 
 			glColorMask(true, false, false, true);
-			ludum_level_instance->Display(renderer, uniform_provider, other_render_params);
+			ludum_level_instance->Display(render_context, uniform_provider, other_render_params);
 		}
 
 		// ---------------------------------------------
@@ -95,7 +95,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 			enlarged_provider.AddVariable("enlarge_enemy", 1.0f);
 
 			glColorMask(false, true, false, true);
-			ludum_level_instance->Display(renderer, &enlarged_provider, other_render_params);
+			ludum_level_instance->Display(render_context, &enlarged_provider, other_render_params);
 			glColorMask(true, true, true, true);
 		}
 
@@ -106,7 +106,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 	// RENDER TARGET 2 : all objects that are to be deformed (except Enemies and Player and atoms)
 	// ---------------------------------------------
 
-	renderer->RenderIntoFramebuffer(framebuffer_deformed.get(), true, [this, &clear_color, &render_params, uniform_provider, &renderer]()
+	render_context->RenderIntoFramebuffer(framebuffer_deformed.get(), true, [this, &clear_color, &render_params, uniform_provider, &render_context]()
 	{
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
@@ -114,11 +114,11 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 		other_render_params.renderpass_name = "DEFORMED_OBJECT";
 
 		// display the background
-		DoDisplayBackground(renderer, uniform_provider, render_params);
+		DoDisplayBackground(render_context, uniform_provider, render_params);
 		// draw particle system
 		//if (particle_manager != nullptr)
-		//	particle_manager->Display(renderer, uniform_provider, other_render_params);
-		level_instance->Display(renderer, uniform_provider, other_render_params);
+		//	particle_manager->Display(render_context, uniform_provider, other_render_params);
+		level_instance->Display(render_context, uniform_provider, other_render_params);
 
 		return true;
 	});
@@ -149,7 +149,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 				main_provider.AddVariable("deformed", texture);
 		}
 
-		renderer->DrawFullscreenQuad(postprocess_material, &main_provider, other_rendering_params);
+		render_context->DrawFullscreenQuad(postprocess_material, &main_provider, other_rendering_params);
 	}
 
 	// ---------------------------------------------
@@ -164,7 +164,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 
 
 		// draw particle system (the background)
-		level_instance->Display(renderer, &enlarged_provider, other_rendering_params);
+		level_instance->Display(render_context, &enlarged_provider, other_rendering_params);
 	}
 }
 

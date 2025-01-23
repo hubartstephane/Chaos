@@ -224,7 +224,7 @@ protected:
 		return fps_view_controller.LocalToGlobal();
 	}
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
+	virtual bool OnDraw(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
 		glm::vec4 clear_color(0.0f, 0.7f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -237,7 +237,7 @@ protected:
 		// XXX : the scaling is used to avoid the near plane clipping
 		primitive_renderer->projection      = GetProjectionMatrix(draw_params.viewport.size);
 		primitive_renderer->world_to_camera = GetGlobalToCameraMatrix();
-		primitive_renderer->renderer        = renderer;
+		primitive_renderer->render_context        = render_context;
 
 		DrawGeometryObjects();
 		DrawTree27();
@@ -478,7 +478,7 @@ protected:
 		if (!chaos::Window::InitializeFromConfiguration(config))
 			return false;
 
-		// create the renderer
+		// create the render_context
 		primitive_renderer = new PrimitiveRenderer();
 		if (primitive_renderer == nullptr)
 			return false;

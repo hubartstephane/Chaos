@@ -51,7 +51,7 @@ namespace chaos
 		return rebuild_required;
 	}
 
-	void GLDebugOnScreenDisplay::Display(GPURenderer * renderer, int width, int height) const
+	void GLDebugOnScreenDisplay::Display(GPURenderContext * render_context, int width, int height) const
 	{
 		if (lines.size() == 0) // do not draw nor rebuild buffer if there are no lines (maybe GPU buffer could be cleaned)
 			return;
@@ -64,7 +64,7 @@ namespace chaos
 		}
 
 		// vertex array
-		GPUVertexArray const* vertex_array = vertex_array_cache->FindOrCreateVertexArray(renderer, program.get(), vertex_buffer.get(), nullptr, &declaration, 0);
+		GPUVertexArray const* vertex_array = vertex_array_cache->FindOrCreateVertexArray(render_context, program.get(), vertex_buffer.get(), nullptr, &declaration, 0);
 		if (vertex_array == nullptr)
 			return;
 		glBindVertexArray(vertex_array->GetResourceID());

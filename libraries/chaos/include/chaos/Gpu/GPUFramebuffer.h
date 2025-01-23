@@ -26,7 +26,7 @@ namespace chaos
 	class CHAOS_API GPUFramebuffer : public GPUResource, public GPUFramebufferAttachmentOwner<GPUFramebufferAttachmentInfo>
 	{
 		friend class GPUFramebufferGenerator;
-		friend class GPURenderer;
+		friend class GPURenderContext;
 
 	public:
 

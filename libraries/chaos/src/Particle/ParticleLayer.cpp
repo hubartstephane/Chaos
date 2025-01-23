@@ -103,7 +103,7 @@ namespace chaos
 		return { allocation, allocation->GetParticleCount() - count, count };
 	}
 
-	int ParticleLayerBase::DoDisplay(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
+	int ParticleLayerBase::DoDisplay(GPURenderContext * render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
 	{
         // early exit
         if (mesh == nullptr || mesh->IsEmpty())
@@ -113,18 +113,18 @@ namespace chaos
         if (final_material == nullptr)
             return 0;
 		// prepare rendering state
-		UpdateRenderingStates(renderer, true);
+		UpdateRenderingStates(render_context, true);
 		// update uniform provider with atlas, and do the rendering
 		GPUProgramProviderChain main_uniform_provider(uniform_provider);
 		if (atlas != nullptr)
 			main_uniform_provider.AddTexture("material", atlas->GetTexture());
-		int result = DoDisplayHelper(renderer, final_material, (atlas == nullptr) ? uniform_provider : &main_uniform_provider, render_params);
+		int result = DoDisplayHelper(render_context, final_material, (atlas == nullptr) ? uniform_provider : &main_uniform_provider, render_params);
 		// restore rendering states
-		UpdateRenderingStates(renderer, false);
+		UpdateRenderingStates(render_context, false);
 		return result;
 	}
 
-    int ParticleLayerBase::DoDisplayHelper(GPURenderer* renderer, GPURenderMaterial const* final_material, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
+    int ParticleLayerBase::DoDisplayHelper(GPURenderContext* render_context, GPURenderMaterial const* final_material, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
     {
         // create a new GPURenderParams that override the Material for inside the GPUMesh
         DisableReferenceCount<GPUConstantMaterialProvider> material_provider(final_material);  // while on stack, use DisableReferenceCount<...>
@@ -132,7 +132,7 @@ namespace chaos
         GPURenderParams other_render_params = render_params;
         other_render_params.material_provider = &material_provider;
         // let the dynamic mesh render itself
-        return mesh->Display(renderer, uniform_provider, other_render_params);
+        return mesh->Display(render_context, uniform_provider, other_render_params);
     }
 
     size_t ParticleLayerBase::EvaluateGPUVertexMemoryRequirement(GPUMesh const * in_mesh) const
@@ -145,7 +145,7 @@ namespace chaos
         return result;
     }
 
-    bool ParticleLayerBase::DoUpdateGPUResources(GPURenderer* renderer)
+    bool ParticleLayerBase::DoUpdateGPUResources(GPURenderContext* render_context)
     {
 		// ensure their is some reason to update the rendering data
 		if (!require_GPU_update && !AreVerticesDynamic())
@@ -218,7 +218,7 @@ namespace chaos
 		return result;
 	}
 
-	void ParticleLayerBase::UpdateRenderingStates(GPURenderer* renderer, bool begin) const
+	void ParticleLayerBase::UpdateRenderingStates(GPURenderContext* render_context, bool begin) const
 	{
 		if (begin)
 		{

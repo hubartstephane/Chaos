@@ -11,12 +11,12 @@ namespace chaos
 	public:
 
 		/** display a whole scene from the root node */
-		void DisplayScene(SceneNode* root_node, GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
+		void DisplayScene(SceneNode* root_node, GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
 
 	protected:
 
 		/** display a single node */
-		void DisplayNode(SceneNode* node, GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
+		void DisplayNode(SceneNode* node, GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
 
 	protected:
 

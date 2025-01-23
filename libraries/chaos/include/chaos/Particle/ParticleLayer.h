@@ -118,10 +118,10 @@ namespace chaos
 		/** ticking the particle system */
 		virtual bool DoTick(float delta_time) override;
 		/** draw the layer */
-		virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params) override;
+		virtual int DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params) override;
 
 		/** change the GL rendering state */
-		virtual void UpdateRenderingStates(GPURenderer* renderer, bool begin) const;
+		virtual void UpdateRenderingStates(GPURenderContext* render_context, bool begin) const;
 
 		/** unlink all particles allocations */
 		void DetachAllParticleAllocations();
@@ -132,7 +132,7 @@ namespace chaos
 		virtual ParticleAllocationBase* DoCreateParticleAllocation() { return nullptr; }
 
 		/** the effective rendering */
-		int DoDisplayHelper(GPURenderer* renderer, GPURenderMaterial const* final_material, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
+		int DoDisplayHelper(GPURenderContext* render_context, GPURenderMaterial const* final_material, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
 
 		/** internal method to update particles (returns true whether there was real changes) */
 		bool TickAllocations(float delta_time);
@@ -140,7 +140,7 @@ namespace chaos
 		virtual bool TickAllocation(float delta_time, ParticleAllocationBase* allocation) { return false; } // do not destroy the allocation
 
 		/** override */
-		virtual bool DoUpdateGPUResources(GPURenderer* renderer) override;
+		virtual bool DoUpdateGPUResources(GPURenderContext* render_context) override;
 
 		/** select the PrimitiveOutput and update the rendering GPU resources */
 		virtual void GenerateMeshData(GPUMesh* in_mesh, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t previous_frame_vertices_count) {}
@@ -247,12 +247,12 @@ namespace chaos
 		}
 
 		/** override */
-		virtual void UpdateRenderingStates(GPURenderer* renderer, bool begin) const override
+		virtual void UpdateRenderingStates(GPURenderContext* render_context, bool begin) const override
 		{
-			if constexpr (check_method_UpdateRenderingStates_v<layer_trait_type const, GPURenderer*, bool>)
-				this->data.UpdateRenderingStates(renderer, begin);
+			if constexpr (check_method_UpdateRenderingStates_v<layer_trait_type const, GPURenderContext*, bool>)
+				this->data.UpdateRenderingStates(render_context, begin);
 			else
-				ParticleLayerBase::UpdateRenderingStates(renderer, begin);
+				ParticleLayerBase::UpdateRenderingStates(render_context, begin);
 		}
 
 		/** override */

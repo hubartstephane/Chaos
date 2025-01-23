@@ -144,7 +144,7 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticlePlayer & particle) const;
 
-	void UpdateRenderingStates(chaos::GPURenderer* renderer, bool begin) const
+	void UpdateRenderingStates(chaos::GPURenderContext* render_context, bool begin) const
 	{
 		if (begin)
 		{

@@ -8,7 +8,7 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
+	virtual bool OnDraw(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
 		glm::vec4 clear_color(0.0f, 0.0f, 0.7f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -60,7 +60,7 @@ protected:
 		main_uniform_provider.AddProvider(dynamic_provider.get());
 
 		chaos::GPURenderParams render_params;
-		particle_manager->Display(renderer, &main_uniform_provider, render_params);
+		particle_manager->Display(render_context, &main_uniform_provider, render_params);
 
 		return true;
 	}

@@ -11,13 +11,13 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
+	virtual bool OnDraw(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
-		uint64_t ts = renderer->GetTimestamp();
+		uint64_t ts = render_context->GetTimestamp();
 
 		if (render_fence == nullptr)
 		{
-			render_fence = renderer->GetCurrentFrameFence();
+			render_fence = render_context->GetCurrentFrameFence();
 			render_stamp = ts;
 		}
 		else

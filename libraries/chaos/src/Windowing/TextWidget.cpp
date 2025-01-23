@@ -3,12 +3,12 @@
 
 namespace chaos
 {
-	bool TextWidget::OnDraw(GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params)
+	bool TextWidget::OnDraw(GPURenderContext* render_context, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params)
 	{
 
 		if (mesh != nullptr)
 		{
-			//mesh->Display(renderer, uniform_provider)
+			//mesh->Display(render_context, uniform_provider)
 		}
 
 

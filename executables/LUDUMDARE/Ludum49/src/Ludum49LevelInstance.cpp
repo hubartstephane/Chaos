@@ -659,7 +659,7 @@ namespace GlobalVariables
 #endif
 };
 
-int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
+int Landscape::DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 {
 	int result = 0;
 
@@ -682,7 +682,7 @@ int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface cons
 	glPointSize(5.0f);
 
 	if (mesh != nullptr)
-		result += mesh->Display(renderer, &main_provider, render_params);
+		result += mesh->Display(render_context, &main_provider, render_params);
 
 #if _DEBUG
 
@@ -717,7 +717,7 @@ int Landscape::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface cons
 			++prim_p;
 		}
 
-		DI.Display(renderer, &main_provider, render_params);
+		DI.Display(render_context, &main_provider, render_params);
 	}
 #endif
 
@@ -1054,12 +1054,12 @@ bool LudumLevelInstance::CanCompleteLevel() const
 	return false;
 }
 
-int LudumLevelInstance::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
+int LudumLevelInstance::DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 {
 
 
 
-	return TMLevelInstance::DoDisplay(renderer, uniform_provider, render_params);
+	return TMLevelInstance::DoDisplay(render_context, uniform_provider, render_params);
 }
 
 uint64_t LudumLevelInstance::GetCollisionFlagByName(char const* name) const

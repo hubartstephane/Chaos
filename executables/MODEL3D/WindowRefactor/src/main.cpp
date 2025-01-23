@@ -574,7 +574,7 @@ protected:
 
 	float purge_max_age = 10.0f;
 
-	uint64_t rendering_timestamp = 0; // resources maybe shared by several GPURenderer
+	uint64_t rendering_timestamp = 0; // resources maybe shared by several GPURenderContext
 
 
 #ifdef _DEBUG
@@ -847,7 +847,7 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
+	virtual bool OnDraw(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
 
 

@@ -39,7 +39,7 @@ public:
 
 	void ParticleToPrimitives(ParticlePlayer const& particle, PrimitiveOutput<VertexDefault>& output) const;
 
-	void UpdateRenderingStates(GPURenderer* renderer, bool begin) const
+	void UpdateRenderingStates(GPURenderContext* render_context, bool begin) const
 	{
 		if (begin)
 		{

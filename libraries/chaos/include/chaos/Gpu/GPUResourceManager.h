@@ -128,7 +128,7 @@ namespace chaos
 
 		/** Initialize internal resources */
 		virtual bool InitializeInternalResources();
-		/** get an index buffer for quad rendering (returns the number of quad that can be renderer with this buffer) */
+		/** get an index buffer for quad rendering (returns the number of quad that can be render_context with this buffer) */
 		GPUBuffer* GetQuadIndexBuffer(size_t* result_quad_count);
 		/** get quad simple mesh */
 		GPUMesh* GetQuadMesh();

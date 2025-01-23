@@ -82,14 +82,14 @@ namespace chaos
         }
 
         /** override the material for the mesh and display */
-        int DisplayWithMaterial(GPURenderMaterial const* material, GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
+        int DisplayWithMaterial(GPURenderMaterial const* material, GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
         /** override the program for the mesh and display */
-        int DisplayWithProgram(GPUProgram const* program, GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
+        int DisplayWithProgram(GPUProgram const* program, GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
 
     protected:
 
         /** override */
-        virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
+        virtual int DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
 
     protected:
 

@@ -140,9 +140,9 @@ EnemyType const * LudumGame::FindEnemyType(char const * name) const
 }
 
 
-void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::GPURenderParams const & render_params)
+void LudumGame::DoDisplayGame(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::GPURenderParams const & render_params)
 {
-	chaos::Game::DoDisplayGame(renderer, uniform_provider, render_params);
+	chaos::Game::DoDisplayGame(render_context, uniform_provider, render_params);
 
 	LudumPlayer * ludum_player = GetPlayer(0);
 
@@ -157,7 +157,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 
 		glEnable(GL_BLEND);
 		glDisable(GL_DEPTH_TEST);
-		renderer->DrawFullscreenQuad(postprocess_material, uniform_provider, render_params);
+		render_context->DrawFullscreenQuad(postprocess_material, uniform_provider, render_params);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 	}

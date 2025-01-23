@@ -83,7 +83,7 @@ protected:
 		return chaos::Window::OnKeyEventImpl(key_event);
 	}
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
+	virtual bool OnDraw(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
 		float     far_plane = 10000.0f;
 		glm::vec4 clear_color(0.2f, 0.2f, 0.2f, 0.0f);
@@ -135,9 +135,9 @@ protected:
 		if (rm == nullptr)
 			return true;
 		if (mesh != nullptr)
-			mesh->DisplayWithMaterial(rm, renderer, &main_uniform_provider, render_params);
+			mesh->DisplayWithMaterial(rm, render_context, &main_uniform_provider, render_params);
 
-		debug_display.Display(renderer, int(draw_params.viewport.size.x), int(draw_params.viewport.size.y));
+		debug_display.Display(render_context, int(draw_params.viewport.size.x), int(draw_params.viewport.size.y));
 
 		return true;
 	}

@@ -179,8 +179,8 @@ namespace chaos
 		/** getting the required viewport for given window */
 		virtual aabox2 GetRequiredViewport(glm::ivec2 const& size) const;
 
-		/** getting the renderer */
-		GPURenderer* GetRenderer() { return renderer.get(); }
+		/** getting the render_context */
+		GPURenderContext* GetRenderer() { return render_context.get(); }
 
 		/** get the root widget */
 		WindowRootWidget* GetRootWidget() { return root_widget.get(); }
@@ -351,7 +351,7 @@ namespace chaos
 		/** override */
 		virtual bool OnCharEventImpl(unsigned int c) override;
 		/** override */
-		virtual bool OnDraw(GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params) override;
+		virtual bool OnDraw(GPURenderContext* render_context, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params) override;
 		/** override */
 		virtual bool DoTick(float delta_time) override;
 
@@ -395,7 +395,7 @@ namespace chaos
 		/** returns true if the mouse position is valid (very first frame) */
 		bool IsMousePositionValid() const;
 
-		/** tick the renderer of the window with the real framerate (with no time scale) */
+		/** tick the render_context of the window with the real framerate (with no time scale) */
 		void TickRenderer(float real_delta_time);
 
 		/** called whenever the window is resized */
@@ -482,8 +482,8 @@ namespace chaos
 		bool initial_decorated = false;
 		/** the root widget for the window */
 		shared_ptr<WindowRootWidget> root_widget;
-		/** the renderer */
-		shared_ptr<GPURenderer> renderer;
+		/** the render_context */
+		shared_ptr<GPURenderContext> render_context;
 		/** previous mouse position */
 		std::optional<glm::vec2> mouse_position;
 		/** used to store data when toggling fullscreen */

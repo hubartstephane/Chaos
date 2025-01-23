@@ -194,17 +194,17 @@ namespace chaos
 		virtual bool OnMouseMoveImpl(glm::vec2 const & delta) override;
 
 		/** the rendering method */
-		virtual void Display(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
+		virtual void Display(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
 		/** the user defined rendering function */
-		virtual void DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
+		virtual void DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
 		/** internal method to prepare rendering */
-		virtual void DoPreDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
+		virtual void DoPreDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
 		/** internal method to display the background */
-		virtual void DoDisplayBackground(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
+		virtual void DoDisplayBackground(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
 		/** internal  method to display the game content */
-		virtual void DoDisplayGame(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
+		virtual void DoDisplayGame(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
 		/** internal  method to display the HUD */
-		virtual void DoDisplayHUD(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
+		virtual void DoDisplayHUD(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
 
 		/** initialization from the config file */
 		virtual bool InitializeFromConfiguration(nlohmann::json const * config);

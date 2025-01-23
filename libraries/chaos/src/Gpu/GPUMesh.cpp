@@ -71,7 +71,7 @@ namespace chaos
 		bounding_box = {};
 	}
 
-	int GPUMesh::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
+	int GPUMesh::DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
 		// create a vertex array cache if necessary
 		if (vertex_array_cache == nullptr)
@@ -115,7 +115,7 @@ namespace chaos
 			previous_program = program;
 
 			// gets the vertex array
-			GPUVertexArray const* vertex_array = vertex_array_cache->FindOrCreateVertexArray(renderer, program, element.vertex_buffer.get(), element.index_buffer.get(), element.vertex_declaration.get(), element.vertex_buffer_offset);
+			GPUVertexArray const* vertex_array = vertex_array_cache->FindOrCreateVertexArray(render_context, program, element.vertex_buffer.get(), element.index_buffer.get(), element.vertex_declaration.get(), element.vertex_buffer_offset);
 			if (vertex_array == nullptr)
 				continue;
 
@@ -127,7 +127,7 @@ namespace chaos
 			{
 				if (primitive.count <= 0)
 					continue;
-				renderer->Draw(primitive, render_params.instancing);
+				render_context->Draw(primitive, render_params.instancing);
 				++result;
 			}
 		}
@@ -135,7 +135,7 @@ namespace chaos
 		// XXX : make code slower
 
 		//if (result > 0)
-		// last_rendered_fence = renderer->GetCurrentFrameFence();
+		// last_rendered_fence = render_context->GetCurrentFrameFence();
 
 		// restore an 'empty' state
 		glUseProgram(0);
@@ -143,17 +143,17 @@ namespace chaos
 		return result;
 	}
 
-	int GPUMesh::DisplayWithMaterial(GPURenderMaterial const* material, GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
+	int GPUMesh::DisplayWithMaterial(GPURenderMaterial const* material, GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
 		DisableReferenceCount<GPUConstantMaterialProvider> material_provider(material);  // while on stack, use DisableReferenceCount<...>
 		GPURenderParams other_render_params = render_params;
 		other_render_params.material_provider = &material_provider;
-		return Display(renderer, uniform_provider, other_render_params);
+		return Display(render_context, uniform_provider, other_render_params);
 	}
 
-	int GPUMesh::DisplayWithProgram(GPUProgram const* program, GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
+	int GPUMesh::DisplayWithProgram(GPUProgram const* program, GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
-		return DisplayWithMaterial(program->GetDefaultMaterial(), renderer, uniform_provider, render_params);
+		return DisplayWithMaterial(program->GetDefaultMaterial(), render_context, uniform_provider, render_params);
 	}
 
 	void GPUMesh::SetBoundingBox(std::optional<box3> const& in_bounding_box)

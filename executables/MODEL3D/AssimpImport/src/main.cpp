@@ -12,7 +12,7 @@ class Object3D : public Object
 {
 public:
 
-	void Display(GPUProgram * program, GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, GPURenderParams & render_params)
+	void Display(GPUProgram * program, GPURenderContext* render_context, GPUProgramProviderInterface const* uniform_provider, GPURenderParams & render_params)
 	{
 		GPUProgramProviderChain main_uniform_provider(uniform_provider);
 
@@ -33,7 +33,7 @@ public:
 			main_uniform_provider.AddVariable("emissive_color", emissive_color);
 		}
 
-		mesh->DisplayWithProgram(program, renderer, &main_uniform_provider, render_params);
+		mesh->DisplayWithProgram(program, render_context, &main_uniform_provider, render_params);
 
 		if (std::optional<box3> bounding_box = mesh->GetBoundingBox())
 		{
@@ -46,7 +46,7 @@ public:
 				main_uniform_provider.AddVariable("local_to_world", local_to_world);
 
 				if (wireframe_box_mesh != nullptr)
-					wireframe_box_mesh->DisplayWithProgram(program, renderer, &main_uniform_provider, render_params);
+					wireframe_box_mesh->DisplayWithProgram(program, render_context, &main_uniform_provider, render_params);
 			}
 		}
 	}
@@ -80,7 +80,7 @@ class WindowOpenGLTest : public Window
 
 protected:
 
-	virtual bool OnDraw(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, WindowDrawParams const& draw_params) override
+	virtual bool OnDraw(GPURenderContext * render_context, GPUProgramProviderInterface const * uniform_provider, WindowDrawParams const& draw_params) override
 	{
 		float fov = 60.0f;
 		float far_plane = 10000.0f;
@@ -112,7 +112,7 @@ protected:
 			GPURenderParams render_params;
 
 			for (shared_ptr<Object3D> const& object : objects)
-				object->Display(program.get(), renderer, &main_uniform_provider, render_params);
+				object->Display(program.get(), render_context, &main_uniform_provider, render_params);
 		}
 
 		return true;

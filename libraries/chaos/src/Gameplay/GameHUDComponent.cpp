@@ -172,16 +172,16 @@ namespace chaos
 		mesh = nullptr;
 	}
 
-	int GameHUDMeshComponent::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
+	int GameHUDMeshComponent::DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
-		int result = GameHUDComponent::DoDisplay(renderer, uniform_provider, render_params);
+		int result = GameHUDComponent::DoDisplay(render_context, uniform_provider, render_params);
 		if (mesh != nullptr)
 		{
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glDisable(GL_DEPTH_TEST);
 			glDisable(GL_CULL_FACE);
-			result += mesh->Display(renderer, uniform_provider, render_params);
+			result += mesh->Display(render_context, uniform_provider, render_params);
 			glDisable(GL_BLEND);
 			glEnable(GL_DEPTH_TEST);
 			glEnable(GL_CULL_FACE);
@@ -354,7 +354,7 @@ namespace chaos
 		generator_params.hotpoint = Hotpoint::TOP_RIGHT;
 	}
 
-	int GameHUDFramerateComponent::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
+	int GameHUDFramerateComponent::DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
 #if !_DEBUG
 		if (!GlobalVariables::ShowFPS.Get())
@@ -363,8 +363,8 @@ namespace chaos
 		if (GlobalVariables::HideFPS.Get())
 			return 0;
 
-		average_framerate = renderer->GetAverageFrameRate();
-		return GameHUDCacheValueTextComponent<float>::DoDisplay(renderer, uniform_provider, render_params);
+		average_framerate = render_context->GetAverageFrameRate();
+		return GameHUDCacheValueTextComponent<float>::DoDisplay(render_context, uniform_provider, render_params);
 	}
 
 	bool GameHUDFramerateComponent::QueryValue(float & result) const
@@ -389,7 +389,7 @@ namespace chaos
 		generator_params.hotpoint = Hotpoint::TOP_RIGHT;
 	}
 
-	int GameHUDPerfsComponent::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
+	int GameHUDPerfsComponent::DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
 #if !_DEBUG
 		if (!GlobalVariables::ShowPerfs.Get())
@@ -398,10 +398,10 @@ namespace chaos
 		if (GlobalVariables::HidePerfs.Get())
 			return 0;
 
-		average_drawcall = renderer->GetAverageDrawCalls();
-		average_vertices = renderer->GetAverageVertices();
-		average_framerate = renderer->GetAverageFrameRate();
-		return GameHUDCacheValueTextComponent<std::pair<int, int>>::DoDisplay(renderer, uniform_provider, render_params);
+		average_drawcall = render_context->GetAverageDrawCalls();
+		average_vertices = render_context->GetAverageVertices();
+		average_framerate = render_context->GetAverageFrameRate();
+		return GameHUDCacheValueTextComponent<std::pair<int, int>>::DoDisplay(render_context, uniform_provider, render_params);
 	}
 
 	bool GameHUDPerfsComponent::QueryValue(std::pair<int, int>& result) const
@@ -674,7 +674,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GameHUDDebugValuesComponent::DoUpdateGPUResources(GPURenderer* renderer)
+	bool GameHUDDebugValuesComponent::DoUpdateGPUResources(GPURenderContext* render_context)
 	{
 		if (should_update_mesh)
 		{
@@ -746,7 +746,7 @@ namespace chaos
 	{
 	}
 
-	int GameHUDDebugDrawComponent::DoDisplay(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
+	int GameHUDDebugDrawComponent::DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
 		draw_interface.Flush();
 
@@ -759,7 +759,7 @@ namespace chaos
 		glPointSize(5.0f);
 		glLineWidth(3.0f);
 
-		int result = draw_interface.Display(renderer, uniform_provider, render_params);
+		int result = draw_interface.Display(render_context, uniform_provider, render_params);
 
 		glPointSize(1.0f);
 		glLineWidth(1.0f);

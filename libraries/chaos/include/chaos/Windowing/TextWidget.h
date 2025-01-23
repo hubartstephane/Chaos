@@ -17,7 +17,7 @@ namespace chaos
 	public:
 
 		/** override */
-		virtual bool OnDraw(GPURenderer* renderer, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params) override;
+		virtual bool OnDraw(GPURenderContext* render_context, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params) override;
 
 		/** initialize widget content */
 		virtual void Initialize(char const* str);

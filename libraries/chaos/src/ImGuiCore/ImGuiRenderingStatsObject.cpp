@@ -10,11 +10,11 @@ namespace chaos
 
 	void ImGuiRenderingStatsObject::OnDrawImGuiContent(Window* window)
 	{
-		if (GPURenderer const * renderer = window->GetRenderer())
+		if (GPURenderContext const * render_context = window->GetRenderer())
 		{
-			float average_framerate = renderer->GetAverageFrameRate();
-			int   average_drawcall  = renderer->GetAverageDrawCalls();
-			int   average_vertices  = renderer->GetAverageVertices();
+			float average_framerate = render_context->GetAverageFrameRate();
+			int   average_drawcall  = render_context->GetAverageDrawCalls();
+			int   average_vertices  = render_context->GetAverageVertices();
 			ImGui::Text("Frames     (per sec): %f", average_framerate);
 			ImGui::Text("Draw calls (per sec): %d", average_drawcall);
 			ImGui::Text("Vertices   (per sec): %d", average_vertices);

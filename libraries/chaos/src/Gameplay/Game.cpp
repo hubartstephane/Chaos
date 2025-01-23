@@ -196,10 +196,10 @@ namespace chaos
 		return false;
 	}
 
-	void Game::Display(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
+	void Game::Display(GPURenderContext * render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
 	{
 		GPUProgramProviderChain main_uniform_provider(this, game_instance.get(), level_instance.get(), uniform_provider);
-		DoDisplay(renderer, &main_uniform_provider, render_params);
+		DoDisplay(render_context, &main_uniform_provider, render_params);
 	}
 
 	bool Game::DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const
@@ -222,18 +222,18 @@ namespace chaos
 		return false;
 	}
 
-	void Game::DoDisplay(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
+	void Game::DoDisplay(GPURenderContext * render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
 	{
 		// clear the main render target
-		DoPreDisplay(renderer, uniform_provider, render_params);
+		DoPreDisplay(render_context, uniform_provider, render_params);
 		// display the level instance
-		DoDisplayGame(renderer, uniform_provider, render_params);
+		DoDisplayGame(render_context, uniform_provider, render_params);
 		// display the hud (AFTER the level)
-		DoDisplayHUD(renderer, uniform_provider, render_params);
+		DoDisplayHUD(render_context, uniform_provider, render_params);
 	}
 
 
-	void Game::DoPreDisplay(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
+	void Game::DoPreDisplay(GPURenderContext * render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
 	{
 		// clear the color buffers
 		glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -249,28 +249,28 @@ namespace chaos
 	}
 
 
-	void Game::DoDisplayBackground(GPURenderer* renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
+	void Game::DoDisplayBackground(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
 		if (background_mesh != nullptr)
-			background_mesh->Display(renderer, uniform_provider, render_params);
+			background_mesh->Display(render_context, uniform_provider, render_params);
 	}
 
-	void Game::DoDisplayGame(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
+	void Game::DoDisplayGame(GPURenderContext * render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
 	{
 		// display the background
-		DoDisplayBackground(renderer, uniform_provider, render_params);
+		DoDisplayBackground(render_context, uniform_provider, render_params);
 
 		// shuwww   root_render_layer ??
 		if (particle_manager != nullptr)
-			particle_manager->Display(renderer, uniform_provider, render_params);
+			particle_manager->Display(render_context, uniform_provider, render_params);
 		if (level_instance != nullptr)
-			level_instance->Display(renderer, uniform_provider, render_params);
+			level_instance->Display(render_context, uniform_provider, render_params);
 	}
 
-	void Game::DoDisplayHUD(GPURenderer * renderer, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
+	void Game::DoDisplayHUD(GPURenderContext * render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
 	{
 		if (hud != nullptr)
-			hud->Display(renderer, uniform_provider, render_params);
+			hud->Display(render_context, uniform_provider, render_params);
 	}
 
 	bool Game::FillAtlasGeneratorInput(BitmapAtlas::AtlasInput & input)

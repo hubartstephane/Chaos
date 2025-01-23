@@ -76,6 +76,7 @@ namespace chaos
 		if (GLTools::IsSamplerType(type))
 			return Singleton<GPUUniformSamplerSetter>::GetInstance();
 
+		assert(0);
 		return nullptr;
 	}
 

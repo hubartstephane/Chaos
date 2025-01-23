@@ -93,16 +93,7 @@ namespace chaos
 #define CHAOS_SET_UNIFORM_IMPLEMENTATION(parameter_type)\
 		virtual bool SetUniform(GPUUniformInfo const & uniform_info, parameter_type const& value) const override\
 		{\
-			if constexpr (std::is_same_v<SCALAR_TYPE, parameter_type>)\
-			{\
-				GLTools::SetUniform(uniform_info.location, value);\
-			}\
-			else\
-			{\
-				SCALAR_TYPE converted_scalar = SCALAR_TYPE(value);\
-				GLTools::SetUniform(uniform_info.location, converted_scalar);\
-			}\
-			return true;\
+			return SetUniformImpl(uniform_info, value);\
 		}
 
 		CHAOS_SET_UNIFORM_IMPLEMENTATION(bool);
@@ -111,7 +102,47 @@ namespace chaos
 		CHAOS_SET_UNIFORM_IMPLEMENTATION(int);
 		CHAOS_SET_UNIFORM_IMPLEMENTATION(unsigned int);
 
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec2<bool>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec3<bool>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec4<bool>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec2<float>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec3<float>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec4<float>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec2<double>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec3<double>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec4<double>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec2<int>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec3<int>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec4<int>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec2<unsigned int>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec3<unsigned int>);
+		CHAOS_SET_UNIFORM_IMPLEMENTATION(glm::tvec4<unsigned int>);
+
 #undef CHAOS_SET_UNIFORM_IMPLEMENTATION
+
+	protected:
+
+		/** generic method to set uniforms from a scalar */
+		template<typename PARAMETER_TYPE>
+		bool SetUniformImpl(GPUUniformInfo const& uniform_info, PARAMETER_TYPE const& value) const
+		{
+			if constexpr (std::is_same_v<SCALAR_TYPE, PARAMETER_TYPE>)
+			{
+				GLTools::SetUniform(uniform_info.location, value);
+			}
+			else
+			{
+				SCALAR_TYPE converted_scalar = SCALAR_TYPE(value);
+				GLTools::SetUniform(uniform_info.location, converted_scalar);
+			}
+			return true;
+		}
+		/** generic method to set uniforms from a vector */
+		template<int ARITY, typename PARAMETER_TYPE>
+		bool SetUniformImpl(GPUUniformInfo const& uniform_info, glm::vec<ARITY, PARAMETER_TYPE> const& value) const
+		{
+			return SetUniformImpl(uniform_info, value.x);
+		}
 	};
 
 	/**

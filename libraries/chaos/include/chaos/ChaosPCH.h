@@ -67,6 +67,7 @@
 #include <chrono>
 #include <forward_list>
 #include <type_traits>
+#include <atomic>
 
 // boost is full of #pragma comment(lib, ...)
 // ignore theses link directive for STATIC_LIBRARIES that would use this header
@@ -76,7 +77,6 @@
 #define BOOST_LIB_DIAGNOSTIC // display all #pragma comment(lib, ...) directives
 #include <boost/static_assert.hpp>
 #include <boost/thread.hpp>
-#include <boost/atomic.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/timer/timer.hpp>

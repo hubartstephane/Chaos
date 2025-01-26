@@ -30,6 +30,9 @@ namespace chaos
 
 	bool GPUFence::WaitForCompletion(float timeout)
 	{
+		if (completed)
+			return true;
+
 		if (fence == nullptr) // fence not initialized yet
 			return false;
 
@@ -38,7 +41,10 @@ namespace chaos
 
 		GLenum result = glClientWaitSync(fence, flags, timeout64); // ??? glWaitSync glFlush
 		if (result == GL_ALREADY_SIGNALED || result == GL_CONDITION_SATISFIED)
+		{
+			completed = true;
 			return true;
+		}
 		return false; // GL_TIMEOUT_EXPIRED or GL_WAIT_FAILED
 	}
 

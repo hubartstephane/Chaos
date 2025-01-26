@@ -40,6 +40,8 @@ namespace chaos
 
 		/** the fence object */
 		GLsync fence = nullptr;
+		/** cached result for completion */
+		bool completed = false;
 	};
 
 #endif

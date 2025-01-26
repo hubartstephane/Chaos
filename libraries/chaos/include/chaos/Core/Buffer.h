@@ -125,7 +125,7 @@ namespace chaos
 	protected:
 
 		/** count the reference on the buffer */
-		mutable boost::atomic<int> reference_count;
+		mutable std::atomic<int> reference_count;
 	};
 
 	/**

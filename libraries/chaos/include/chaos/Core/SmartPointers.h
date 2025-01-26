@@ -60,7 +60,7 @@ namespace chaos
 		/** pointer on the object */
 		void const* object_ptr = nullptr;
 		/** count weak reference */
-		boost::atomic<int> weak_count;
+		std::atomic<int> weak_count;
 	};
 
 	/**

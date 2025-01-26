@@ -106,7 +106,7 @@ namespace chaos
 	protected:
 
 		/** count shared reference */
-		boost::atomic<int> shared_count;
+		std::atomic<int> shared_count;
 		/** a reference to the weak structure */
 		mutable WeakPointerData* weak_ptr_data = nullptr;
 	};

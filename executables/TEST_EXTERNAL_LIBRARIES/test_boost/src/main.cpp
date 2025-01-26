@@ -5,7 +5,6 @@
 #define BOOST_LIB_DIAGNOSTIC // display all #pragma comment(lib, ...) directives
 #include <boost/static_assert.hpp>
 #include <boost/thread.hpp>
-#include <boost/atomic.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/timer/timer.hpp>

@@ -1,0 +1,31 @@
+in vec3 position;
+in vec3 normal;
+
+out vec3 ps_position;
+out vec3 ps_normal;
+
+uniform mat4 projection;
+uniform mat4 local_to_world;
+uniform mat4 local_to_world_normal;
+uniform mat4 world_to_camera;
+
+void main() 
+{
+	vec4 local_pos = vec4(position, 1.0);
+	vec4 world_pos = local_to_world * local_pos;
+	vec4 cam_pos   = world_to_camera * world_pos;
+
+
+#if 0
+
+	cam_pos.x = 0.0;
+
+#endif
+
+	gl_Position = projection * cam_pos;
+
+	ps_position = world_pos.xyz;
+	ps_normal   = normalize(
+		(local_to_world_normal * vec4(normal, 0.0)).xyz
+	);
+}

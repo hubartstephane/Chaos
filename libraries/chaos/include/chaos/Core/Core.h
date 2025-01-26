@@ -1,4 +1,5 @@
 #include "chaos/Core/Identifiable.h"
+#include "chaos/Core/HashBuilder.h"
 #include "chaos/Core/Preprocessor.h"
 #include "chaos/Core/Localization.h"
 #include "chaos/Core/Default.h"

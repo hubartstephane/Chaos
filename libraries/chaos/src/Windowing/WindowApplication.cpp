@@ -913,7 +913,9 @@ namespace chaos
 		if (func("Global Variables", &ImGuiWindow::CreateImGuiWindow<ImGuiGlobalVariablesObject>))
 			return true;
 #if _DEBUG
-		if (func("ImGuiDemo", &ImGuiWindow::CreateImGuiWindow<ImGuiDemoObject>))
+		if (func("ImGui Demo", &ImGuiWindow::CreateImGuiWindow<ImGuiDemoObject>))
+			return true;
+		if (func("ImPlot Demo", &ImGuiWindow::CreateImGuiWindow<ImGuiImPlotDemoObject>))
 			return true;
 #endif
 		return false;

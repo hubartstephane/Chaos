@@ -2,9 +2,27 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
+	class GPURenderContextFrameStats;
 	class GPURenderContext;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+	/**
+	 * GPURenderContextFrameStats: statistic for a single frame
+	 */
+
+	class GPURenderContextFrameStats
+	{
+	public:
+
+		uint64_t rendering_timestamp = 0;
+		int   drawcall_counter = 0;
+		int   vertices_counter = 0;
+	};
+
+	/**
+	 * GPURenderContext: interface for rendering
+	 */
 
 	class CHAOS_API GPURenderContext : public Tickable
 	{
@@ -13,15 +31,15 @@ namespace chaos
 		/** constructor */
 		GPURenderContext(Window* in_window);
 
+		/** render a frame (into the window directly) */
+		bool RenderFrame(LightweightFunction<bool()> render_func);
+		/** render a frame into a framebuffer */
+		bool RenderIntoFramebuffer(GPUFramebuffer* framebuffer, bool generate_mipmaps, LightweightFunction<bool()> render_func);
+
 		/** draw a primitive */
 		void Draw(GPUDrawPrimitive const& primitive, GPUInstancingInfo const& instancing = {});
 		/** render a full screen quad */
-		void DrawFullscreenQuad(GPURenderMaterial const* material, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
-
-		/** called at the start of a new frame */
-		void BeginRenderingFrame();
-		/** called at the end of a new frame */
-		void EndRenderingFrame();
+		void DrawFullscreenQuad(GPURenderMaterial const* material, GPUProgramProviderInterface const* uniform_provider, GPURenderParams const& render_params);
 
 		/** get the last delta_time */
 		float GetLastDeltaTime() const { return last_delta_time; }
@@ -32,13 +50,13 @@ namespace chaos
 		/** get the number of average rendered vertices */
 		int GetAverageVertices() const;
 
-		/** call render function for a special framebuffer */
-		bool RenderIntoFramebuffer(GPUFramebuffer* framebuffer, bool generate_mipmaps, LightweightFunction<bool()> render_func);
-
 		/** get the rendering timestamp */
 		uint64_t GetTimestamp() const;
 		/** get  a fence for the end of this frame */
 		GPUFence* GetCurrentFrameFence();
+
+		/** get the stats among time */
+		boost::circular_buffer<GPURenderContextFrameStats> const & GetStats() const { return stats; }
 
 		/** get the owning window */
 		Window* GetWindow() const { return window.get(); }
@@ -47,6 +65,11 @@ namespace chaos
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;
+
+		/** called at the start of a new frame */
+		void BeginRenderingFrame();
+		/** called at the end of a new frame */
+		void EndRenderingFrame();
 
 	protected:
 
@@ -62,6 +85,10 @@ namespace chaos
 		TimedAccumulator<int> drawcall_counter;
 		/** for counting drawcall per seconds */
 		TimedAccumulator<int> vertices_counter;
+		/** the stats over time */
+		boost::circular_buffer<GPURenderContextFrameStats> stats;
+		/** the stat for current frame */
+		GPURenderContextFrameStats current_frame_stat;
 
 		/** the owning window */
 		weak_ptr<Window> window;

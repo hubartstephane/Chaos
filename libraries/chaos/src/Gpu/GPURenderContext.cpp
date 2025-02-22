@@ -4,8 +4,11 @@
 namespace chaos
 {
 
+	CHAOS_GLOBAL_VARIABLE(size_t, renderer_stats_size, 1200 * 15) // let's say at 1200 fps for very small project, we have 15 seconds stored
+
 	GPURenderContext::GPURenderContext(Window* in_window) :
-		window(in_window)
+		window(in_window),
+		stats(renderer_stats_size.Get())
 	{
 		assert(in_window != nullptr);
 	}
@@ -47,10 +50,11 @@ namespace chaos
 		bool result = render_func();
 
 		// generate mipmap
-		if (generate_mipmaps)
-			for (GPUFramebufferAttachmentInfo& info : framebuffer->attachment_info)
-				if (info.texture != nullptr)
-					glGenerateTextureMipmap(info.texture->GetResourceID());
+		if (result)
+			if (generate_mipmaps)
+				for (GPUFramebufferAttachmentInfo& info : framebuffer->attachment_info)
+					if (info.texture != nullptr)
+						glGenerateTextureMipmap(info.texture->GetResourceID());
 
 		// restore some states
 		glViewport(viewport_data[0], viewport_data[1], viewport_data[2], viewport_data[3]);
@@ -67,6 +71,14 @@ namespace chaos
 		// notify the framebuffer
 		framebuffer->SetRenderingInProgress(false);
 
+		return true;
+	}
+
+	bool GPURenderContext::RenderFrame(LightweightFunction<bool()> render_func)
+	{
+		BeginRenderingFrame();
+		bool result = render_func();
+		EndRenderingFrame();
 		return result;
 	}
 
@@ -79,6 +91,8 @@ namespace chaos
 
 		// increment the timestamp
 		++rendering_timestamp;
+		// prepare stats
+		current_frame_stat = GPURenderContextFrameStats();
 		// unreference the fence (users of this fence must have a reference on it)
 		rendering_fence = nullptr;
 	}
@@ -94,6 +108,10 @@ namespace chaos
 		// push the frame fence in the command queue if required by some external users
 		if (rendering_fence != nullptr)
 			rendering_fence->CreateGPUFence();
+		// store statistics
+		stats.push_back(current_frame_stat);
+		current_frame_stat = GPURenderContextFrameStats();
+		current_frame_stat.rendering_timestamp = rendering_timestamp;
 	}
 
 	float GPURenderContext::GetAverageFrameRate() const
@@ -188,8 +206,10 @@ namespace chaos
 		// update some statistics
 		int instance_count = (instancing.instance_count > 1) ? instancing.instance_count : 1;
 		vertices_counter.Accumulate(primitive.count * instance_count);
+		current_frame_stat.vertices_counter += primitive.count * instance_count;
 
 		drawcall_counter.Accumulate(1);
+		++current_frame_stat.drawcall_counter;
 	}
 
 	void GPURenderContext::DrawFullscreenQuad(GPURenderMaterial const * material, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)

@@ -87,6 +87,7 @@ namespace chaos
 	{
 		assert(glfw_window == nullptr);
 		assert(imgui_context == nullptr);
+		assert(implot_context == nullptr);
 	}
 
 	void Window::Destroy()
@@ -97,6 +98,19 @@ namespace chaos
 
 	void Window::DestroyImGuiContext()
 	{
+		// destroy implot context
+		if (implot_context != nullptr)
+		{
+			ImPlotContext* previous_implot_context = ImPlot::GetCurrentContext();
+			ImPlot::SetCurrentContext(implot_context);
+
+			ImPlot::DestroyContext(implot_context);
+
+			ImPlot::SetCurrentContext((previous_implot_context != implot_context) ? previous_implot_context : nullptr); // if there was another context, restore it
+
+			implot_context = nullptr;
+		}
+
 		// destroy ImGui context (must happen before the windows destruction because some GLFW callbacks rely on the existence of the ImGui context)
 		if (imgui_context != nullptr)
 		{
@@ -441,6 +455,9 @@ namespace chaos
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
+		// create a new context for implot
+		implot_context = ImPlot::CreateContext();
+
 		// restore previous imgui context
 		ImGui::SetCurrentContext(previous_imgui_context);
 	}
@@ -605,10 +622,19 @@ namespace chaos
 				ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
 				ImGuiContext* toset_imgui_context = window->imgui_context;
 				ImGui::SetCurrentContext(toset_imgui_context);
+
+				// set the ImPlot context as current
+				ImPlotContext * previous_implot_context = ImPlot::GetCurrentContext();
+				ImPlotContext* toset_implot_context = window->implot_context;
+				ImPlot::SetCurrentContext(toset_implot_context);
+
 				// call special treatments
 				window->HookedWindowProc(msg, wParam, lParam);
 				// call "super" window proc
 				result = ::CallWindowProc(previous_wndproc, hWnd, msg, wParam, lParam); // call "super" WndProc
+				// restore the previous ImPlot context
+				if (toset_implot_context != previous_implot_context) // maybe previous context was same then window's context and window's context has been deleted
+					ImPlot::SetCurrentContext(previous_implot_context);
 				// restore the previous ImGui context
 				if (toset_imgui_context != previous_imgui_context) // maybe previous context was same then window's context and window's context has been deleted
 					ImGui::SetCurrentContext(previous_imgui_context);
@@ -680,6 +706,7 @@ namespace chaos
 	{
 		glfwSetWindowUserPointer(glfw_window, this);
 
+		// note: glfwSetWindowRefreshCallback(..) is not called to set a refresh function. The draw function is manually called from main loop
 		glfwSetCursorPosCallback(glfw_window, DoOnMouseMove);
 		glfwSetMouseButtonCallback(glfw_window, DoOnMouseButton);
 		glfwSetScrollCallback(glfw_window, DoOnMouseWheel);
@@ -888,22 +915,20 @@ namespace chaos
 		{
 			assert(glfw_window == glfwGetCurrentContext());
 
-			// start rendering
-			render_context->BeginRenderingFrame();
-
-			// render
-			GetProgramProviderAndProcess([this](GPUProgramProviderBase * provider)
+			render_context->RenderFrame([this]()
 			{
-				return DrawInternal(provider);
+				GetProgramProviderAndProcess([this](GPUProgramProviderBase* provider)
+				{
+					return DrawInternal(provider);
+				});
+
+				if (double_buffer)
+					glfwSwapBuffers(glfw_window);
+				else
+					glFlush();
+
+				return true;
 			});
-
-			if (double_buffer)
-				glfwSwapBuffers(glfw_window);
-			else
-				glFlush();
-
-			// end rendering
-			render_context->EndRenderingFrame();
 		}
 	}
 
@@ -1009,18 +1034,14 @@ namespace chaos
 			if (!framebuffer->CheckCompletionStatus())
 				return false;
 
-			// render in the frame buffer
-			GetProgramProviderAndProcess([this, &framebuffer](GPUProgramProviderBase* provider)
+			// render into the framebuffer
+			render_context->RenderIntoFramebuffer(framebuffer.get(), false, [this]()
 			{
-				render_context->BeginRenderingFrame();
-
-				render_context->RenderIntoFramebuffer(framebuffer.get(), false, [this, provider]()
+				GetProgramProviderAndProcess([this](GPUProgramProviderBase* provider)
 				{
 					DrawInternal(provider);
 					return true;
 				});
-
-				render_context->EndRenderingFrame();
 				return true;
 			});
 

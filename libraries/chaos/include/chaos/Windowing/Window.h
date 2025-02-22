@@ -472,6 +472,8 @@ namespace chaos
 
 		/** the context for ImGui */
 		ImGuiContext* imgui_context = nullptr;
+		/** the context for ImPlot */
+		ImPlotContext* implot_context = nullptr;
 		/** the window in GLFW library */
 		GLFWwindow* glfw_window = nullptr;
 		/** is the window with double buffer */

@@ -3,6 +3,7 @@ assimp/**
 glfw/**
 glm/**
 imgui/**
+implot/**
 json/**
 tinyxml2/**
 FreeImage/**

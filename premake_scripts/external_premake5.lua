@@ -379,3 +379,23 @@ if LINUX then
 end
 
 build:DeclareExternalLib("IMGUI")
+
+--------------------------------------------------------------------
+-- IMPLOT
+--------------------------------------------------------------------
+
+if WINDOWS then
+	IMPLOT_PATH     = "implot"
+	IMPLOT_INC_PATH = MakePathPerConfig(path.join("include", "implot"))
+	IMPLOT_LIB_PATH = MakePathPerConfig("lib")
+	IMPLOT_LIB_NAME = "ImPlot.lib"
+end
+
+if LINUX then
+	IMPLOT_PATH     = "ImPlot"
+	IMPLOT_INC_PATH = "."
+	IMPLOT_LIB_PATH = path.join("bin", "linux", "Release")
+	IMPLOT_LIB_NAME = "ImPlotOpenGL"
+end
+
+build:DeclareExternalLib("IMPLOT")

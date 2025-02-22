@@ -22,6 +22,7 @@ project:DependOnLib("ASSIMP")
 project:DependOnLib("GLSLANG")
 project:DependOnLib("VULKAN")
 project:DependOnLib("IMGUI")
+project:DependOnLib("IMPLOT")
 
 project:DependOnStandardLib("Dbghelp.lib")  -- used on windows for call stack introspection 
 project:DependOnStandardLib("winmm.lib")    -- used for midi

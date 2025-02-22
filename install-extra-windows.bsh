@@ -87,7 +87,7 @@ fi
 
 if [ $INSTALL_GENERIC_LIBS -gt 0 ] ; then
 
-	for LIBRARY in assimp glm json tinyxml2 glfw imgui
+	for LIBRARY in assimp glm json tinyxml2 glfw imgui implot
 	do
 	 
 		Title "Install $LIBRARY"	 

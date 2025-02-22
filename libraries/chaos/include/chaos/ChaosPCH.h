@@ -96,6 +96,7 @@
 #include <boost/tti/has_member_function.hpp>
 #include <boost/convert/detail/has_member.hpp>
 #include <boost/type_traits/add_const.hpp>
+#include <boost/circular_buffer.hpp>
 
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/eval_if.hpp>
@@ -258,3 +259,6 @@
 #ifdef _MSC_VER
 #  pragma warning(pop)
 #endif
+
+// IMPLOT
+#include "implot.h"

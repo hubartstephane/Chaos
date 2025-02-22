@@ -19,3 +19,6 @@
 [submodule "external/installation/imgui"]
 	path = external/installation/imgui
 	url = https://github.com/hubartstephane/imgui.git
+[submodule "external/installation/implot"]
+	path = external/installation/implot
+	url = https://github.com/hubartstephane/implot.git

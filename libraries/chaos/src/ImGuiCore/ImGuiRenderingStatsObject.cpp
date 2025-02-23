@@ -24,48 +24,65 @@ namespace chaos
 	{
 		if (GPURenderContext const * render_context = window->GetRenderer())
 		{
-			float average_framerate = render_context->GetAverageFrameRate();
-			int   average_drawcall  = render_context->GetAverageDrawCalls();
-			int   average_vertices  = render_context->GetAverageVertices();
-			ImGui::Text("Frames     (per sec): %f", average_framerate);
-			ImGui::Text("Draw calls (per sec): %d", average_drawcall);
-			ImGui::Text("Vertices   (per sec): %d", average_vertices);
+			uint64_t time_stamp        = render_context->GetTimestamp();
+			float    average_framerate = render_context->GetAverageFrameRate();
+			int      average_drawcall  = render_context->GetAverageDrawCalls();
+			int      average_vertices  = render_context->GetAverageVertices();
+			ImGui::Text("Time stamp      : %llu", time_stamp);
+			ImGui::Text("Frames     / sec: %f",   average_framerate);
+			ImGui::Text("Draw calls / sec: %d",   average_drawcall);
+			ImGui::Text("Vertices   / sec: %d",   average_vertices);
 
-			boost::circular_buffer<GPURenderContextFrameStats> const &stats = render_context->GetStats();
+			boost::circular_buffer<GPURenderContextFrameStats> const stats = render_context->GetStats();
 
-			if (size_t stat_count = stats.size())
+			auto DrawStat = [stats](char const * title, int GPURenderContextFrameStats::*data_ptr)
 			{
-				int point_count = std::min(int(stat_count), 500);
+				constexpr size_t GRAPH_WIDTH = 500;
 
+				int count = (int)std::min(GRAPH_WIDTH, stats.size());
 
-#if 0
-				// Commence un tracé ImPlot dans une fenêtre
-				if (ImPlot::BeginPlot("Graphique en temps réel", ImVec2(-1, 300))) {
-					// Configure les axes avec des labels et un ajustement automatique
-					ImPlot::SetupAxes("Temps (s)", "Valeur", ImPlotAxisFlags_AutoFit, ImPlotAxisFlags_AutoFit);
-					// Vous pouvez également configurer des graduations spécifiques avec ImPlot::SetupAxisTicks si besoin
-
-					// ImPlot::PlotLine attend un tableau contigu de float.
-					// Comme dataBuffer peut être non contigu après wrapping, on copie les données dans un vector.
-					//std::vector<float> data(dataBuffer.begin(), dataBuffer.end());
-					//ImPlot::PlotLine("Signal", data.data(), static_cast<int>(data.size()));
-
-					ImGui::PlotLines("draw_calls", &GetDrawCallForCircularBuffer, (void*)&stats, point_count, value_offset, nullptr, scale_min, scale_max, graph_size);
-
-					ImPlot::EndPlot();
+				float x[GRAPH_WIDTH];
+				float y[GRAPH_WIDTH];
+				float y_max = -1.0f; // values are always positive
+				for (int i = 0; i < count; ++i)
+				{
+					GPURenderContextFrameStats const& frame_stat = stats[i];
+					x[i] = (float)frame_stat.frame_time;
+					y[i] = (float)(&frame_stat->*data_ptr);
+					y_max = std::max(y_max, y[i]);
 				}
 
-	
-				ImVec2 graph_size   = {500.0f, 500.0f};
-				float  scale_min    = 5.0f;
-				float  scale_max    = 5.0f;
-				int    value_offset = 0;
+				int plot_style =
+					ImPlotFlags_NoMenus |
+					ImPlotFlags_NoLegend |
+					ImPlotFlags_NoMouseText |
+					ImPlotFlags_NoBoxSelect |
+					ImPlotAxisFlags_LockMin |
+					ImPlotAxisFlags_LockMax |
+					ImPlotAxisFlags_NoSideSwitch;
 
-				ImGui::PlotLines("draw_calls", &GetDrawCallForCircularBuffer, (void *)&stats, point_count, value_offset, nullptr, scale_min, scale_max, graph_size);
+				if (ImPlot::BeginPlot(title, ImVec2(-1, 0), plot_style))
+				{
+					int axis_x_style =
+						ImPlotAxisFlags_AutoFit |
+						ImPlotAxisFlags_NoMenus;
 
-				ImGui::PlotLines("vertices", &GetVerticesForCircularBuffer, (void*)&stats, point_count, value_offset, nullptr, scale_min, scale_max, graph_size);
-				#endif
-			}
+					int axis_y_style =
+						ImPlotAxisFlags_NoLabel |
+						ImPlotAxisFlags_NoMenus;
+
+					ImPlot::SetupAxes("Time", title, axis_x_style, axis_y_style);
+					ImPlot::SetupAxisLimits(ImAxis_Y1, 0.0f, y_max * 1.2f);
+
+					ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha, 0.25f);
+					ImPlot::PlotShaded(title, x, y, count);
+					ImPlot::PopStyleVar();
+					ImPlot::EndPlot();
+				}
+			};
+
+			DrawStat("Draw calls", &GPURenderContextFrameStats::drawcall_counter);
+			DrawStat("Vertices", &GPURenderContextFrameStats::vertices_counter);
 		}
 	}
 

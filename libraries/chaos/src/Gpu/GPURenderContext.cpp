@@ -109,9 +109,11 @@ namespace chaos
 		if (rendering_fence != nullptr)
 			rendering_fence->CreateGPUFence();
 		// store statistics
-		stats.push_back(current_frame_stat);
-		current_frame_stat = GPURenderContextFrameStats();
+		current_frame_stat.frame_time = glfwGetTime();
 		current_frame_stat.rendering_timestamp = rendering_timestamp;
+		stats.push_back(current_frame_stat);
+		// prepare next frame stats
+		current_frame_stat = GPURenderContextFrameStats();
 	}
 
 	float GPURenderContext::GetAverageFrameRate() const

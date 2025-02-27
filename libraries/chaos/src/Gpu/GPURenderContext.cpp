@@ -4,7 +4,7 @@
 namespace chaos
 {
 
-	CHAOS_GLOBAL_VARIABLE(size_t, renderer_stats_size, 1200 * 15) // let's say at 1200 fps for very small project, we have 15 seconds stored
+	CHAOS_GLOBAL_VARIABLE(size_t, renderer_stats_size, 1200 * 20) // let's say at 1200 fps for very small project, we have 20 seconds stored
 
 	GPURenderContext::GPURenderContext(Window* in_window) :
 		window(in_window),
@@ -109,7 +109,7 @@ namespace chaos
 		if (rendering_fence != nullptr)
 			rendering_fence->CreateGPUFence();
 		// store statistics
-		current_frame_stat.frame_time = glfwGetTime();
+		current_frame_stat.frame_time = (float)glfwGetTime();
 		current_frame_stat.rendering_timestamp = rendering_timestamp;
 		stats.push_back(current_frame_stat);
 		// prepare next frame stats

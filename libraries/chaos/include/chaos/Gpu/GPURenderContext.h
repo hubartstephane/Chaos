@@ -18,7 +18,7 @@ namespace chaos
 		uint64_t rendering_timestamp = 0;
 		int      drawcall_counter = 0;
 		int      vertices_counter = 0;
-		double   frame_time = 0.0;
+		float    frame_time = 0.0f;
 	};
 
 	/**

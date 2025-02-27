@@ -3,18 +3,6 @@
 
 namespace chaos
 {
-	static float GetDrawCallForCircularBuffer(void* buffer, int index)
-	{
-		auto stats = (boost::circular_buffer<GPURenderContextFrameStats> const *)(buffer);
-		return (float)stats->operator[](size_t(index)).drawcall_counter;
-	}
-
-	static float GetVerticesForCircularBuffer(void* buffer, int index)
-	{
-		auto stats = (boost::circular_buffer<GPURenderContextFrameStats> const*)(buffer);
-		return (float)stats->operator[](size_t(index)).vertices_counter;
-	}
-
 	ImGuiRenderingStatsObject::ImGuiRenderingStatsObject()
 	{
 		imgui_flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize;
@@ -37,40 +25,50 @@ namespace chaos
 
 			auto DrawStat = [stats](char const * title, int GPURenderContextFrameStats::*data_ptr)
 			{
-				constexpr size_t GRAPH_WIDTH = 500;
-				constexpr float  SLICE_DURATION = 1.0f;
+				constexpr float  HISTORY_DURATION   = 20.0f; // 20 seconds history on screen
+				constexpr float  SAMPLES_PER_SECOND = 100.0f;
+				constexpr size_t BUFFER_SIZE        = size_t(HISTORY_DURATION * SAMPLES_PER_SECOND);
 
-				float time[GRAPH_WIDTH];
-				float min_value[GRAPH_WIDTH];
-				float max_value[GRAPH_WIDTH];
-				float y_max = 0.0f; // values are always positive
+				float current_time = (float)glfwGetTime();
 
-				int stat_index  = (int)stats.size() - 1;
-				int graph_index = GRAPH_WIDTH - 1;
-				for (; graph_index >= 0 && stat_index >= 0; --graph_index)
+				float values[BUFFER_SIZE];
+				memset(values, 0, sizeof(values));
+
+				float times [BUFFER_SIZE];
+				memset(times, 0, sizeof(times));
+
+				float max_value = 0.0f; // values are always positive
+
+				int last_index_in_buffer = BUFFER_SIZE - 1;
+				for (int i = (int)stats.size() - 1 ; i >= 0 ; --i)
 				{
-					float base_time = (float)stats[stat_index].frame_time;
-					base_time = float(int(base_time * 100.0f)) / 100.0f;
+					GPURenderContextFrameStats const & st = stats[i];
 
-					time[graph_index] = base_time;
+					float dt = current_time - st.frame_time;
+					if (dt > HISTORY_DURATION)
+						break;
 
-					int min_v = stats[stat_index].*data_ptr;
-					int max_v = stats[stat_index].*data_ptr;
-					do
-					{
-						float stat_time = (float)stats[stat_index].frame_time;
-						if (stat_time < base_time)
-							break;
+					int index_in_buffer = (BUFFER_SIZE - 1) - int(dt * SAMPLES_PER_SECOND);
+					if (index_in_buffer < 0)
+						break;
 
-						int value = stats[stat_index].*data_ptr;
-						min_v = std::min(min_v, value);
-						max_v = std::max(max_v, value);
+					values[index_in_buffer] = std::max(values[index_in_buffer], float(st.*data_ptr));
+					times[index_in_buffer]  = std::max(times[index_in_buffer], st.frame_time);
 
-					} while (--stat_index >= 0);
+					max_value = std::max(max_value, values[index_in_buffer]);
 
-					min_value[graph_index] = std::min(min_value[graph_index], (float)min_v);
-					max_value[graph_index] = std::max(max_value[graph_index], (float)max_v);
-					y_max = std::max(y_max, max_value[graph_index]);
+					last_index_in_buffer = index_in_buffer;
+				}
+
+				size_t write_index = 0;
+				for (size_t read_index = last_index_in_buffer; read_index < BUFFER_SIZE ; ++read_index)
+				{
+					if (times[read_index] == 0)
+						continue;
+
+					values[write_index] = values[read_index];
+					times[write_index] = times[read_index];
+					++write_index;
 				}
 
 				int plot_style =
@@ -82,6 +80,8 @@ namespace chaos
 
 				if (ImPlot::BeginPlot(title, ImVec2(-1, 0), plot_style))
 				{
+					ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha, 0.25f);
+
 					int axis_x_style =
 						ImPlotAxisFlags_AutoFit |
 						ImPlotAxisFlags_NoMenus;
@@ -91,16 +91,12 @@ namespace chaos
 						ImPlotAxisFlags_NoMenus;
 
 					ImPlot::SetupAxes("Time", title, axis_x_style, axis_y_style);
-					ImPlot::SetupAxisLimits(ImAxis_Y1, 0.0f, y_max * 1.2f);
+					ImPlot::SetupAxisLimits(ImAxis_X1, current_time - HISTORY_DURATION, current_time, ImPlotCond_Always);
+					ImPlot::SetupAxisLimits(ImAxis_Y1, 0.0f, max_value * 1.2f, ImPlotCond_Always);
+										
+					ImPlot::PlotShaded(title, times, values, int(write_index));
+					ImPlot::PlotLine(title, times, values, int(write_index));
 
-					ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha, 0.25f);
-
-					int count = (GRAPH_WIDTH - 1) - graph_index;
-					float const * mn = &min_value[graph_index + 1];
-					float const * mx = &max_value[graph_index + 1];
-					float const * t  = &time[graph_index + 1];
-
-					ImPlot::PlotShaded(title, t, mx, count);
 					ImPlot::PopStyleVar();
 					ImPlot::EndPlot();
 				}

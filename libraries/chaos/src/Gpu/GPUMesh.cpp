@@ -54,20 +54,19 @@ namespace chaos
 				{
 					assert(!vb->IsMapped());
 					if (vb->DecrementUsageCount() == 0)
-						buffer_pool->GiveBuffer(vb, last_rendered_fence.get());
+						buffer_pool->GiveBuffer(vb, nullptr);
 					element.vertex_buffer = nullptr; // prevent GPUMeshElement destructor do decrement usage one more time (call this only after given to avoid destruction)
 				}
 				if (GPUBuffer * ib = element.index_buffer.get())
 				{
 					assert(!ib->IsMapped());
 					if (ib->DecrementUsageCount() == 0)
-						buffer_pool->GiveBuffer(ib, last_rendered_fence.get());
+						buffer_pool->GiveBuffer(ib, nullptr);
 					element.index_buffer = nullptr;  // prevent GPUMeshElement destructor do decrement usage one more time (call this only after given to avoid destruction)
 				}
 			}
 		}
 		elements.clear();
-		last_rendered_fence = nullptr;
 		bounding_box = {};
 	}
 
@@ -131,11 +130,6 @@ namespace chaos
 				++result;
 			}
 		}
-		// store fence for this last rendering time (only if some draw call has been made)
-		// XXX : make code slower
-
-		//if (result > 0)
-		// last_rendered_fence = render_context->GetCurrentFrameFence();
 
 		// restore an 'empty' state
 		glUseProgram(0);

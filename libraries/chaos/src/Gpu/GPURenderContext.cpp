@@ -100,17 +100,12 @@ namespace chaos
 		current_frame_stat = GPURenderContextFrameStats();
 		current_frame_stat.rendering_timestamp = ++rendering_timestamp;
 		current_frame_stat.frame_start_time = (float)glfwGetTime();
-		// unreference the fence (users of this fence must have a reference on it)
-		rendering_fence = nullptr;
 	}
 
 	void GPURenderContext::EndRenderingFrame()
 	{
 		// update the frame rate
 		framerate_counter.Accumulate(1.0f);
-		// push the frame fence in the command queue if required by some external users
-		if (rendering_fence != nullptr)
-			rendering_fence->CreateGPUFence();
 		// store statistics
 		current_frame_stat.frame_end_time = (float)glfwGetTime();
 		current_frame_stat.rendering_timestamp = rendering_timestamp;
@@ -132,13 +127,6 @@ namespace chaos
 	int GPURenderContext::GetAverageVertices() const
 	{
 		return vertices_counter.GetCurrentValue();
-	}
-
-	GPUFence * GPURenderContext::GetCurrentFrameFence()
-	{
-		if (rendering_fence == nullptr)
-			rendering_fence = new GPUFence(nullptr); // does not create the OPENGL resource. It will be created at the end of frame
-		return rendering_fence.get();
 	}
 
 	uint64_t GPURenderContext::GetTimestamp() const

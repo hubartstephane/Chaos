@@ -56,8 +56,6 @@ namespace chaos
 
 		/** get the rendering timestamp */
 		uint64_t GetTimestamp() const;
-		/** get  a fence for the end of this frame */
-		GPUFence* GetCurrentFrameFence();
 
 		/** get the stats among time */
 		boost::circular_buffer<GPURenderContextFrameStats> const & GetStats() const { return stats; }
@@ -81,8 +79,6 @@ namespace chaos
 		weak_ptr<Window> window;
 		/** a time stamp for rendering */
 		uint64_t rendering_timestamp = 0;
-		/** the fence for current frame */
-		shared_ptr<GPUFence> rendering_fence;
 		/** the duration of the last tick */
 		float last_delta_time = 0.0f;
 		/** for counting frame per seconds */

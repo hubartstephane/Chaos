@@ -76,7 +76,6 @@ namespace chaos
         friend void swap(GPUMesh& src1, GPUMesh& src2)
         {
             std::swap(src1.elements, src2.elements);
-            std::swap(src1.last_rendered_fence, src2.last_rendered_fence);
             std::swap(src1.vertex_array_cache, src2.vertex_array_cache);
 			std::swap(src1.bounding_box, src2.bounding_box);
         }
@@ -95,8 +94,6 @@ namespace chaos
 
         /** the element to render */
         std::vector<GPUMeshElement> elements;
-        /** the last time the dynamic mesh was rendered with current elements */
-        shared_ptr<GPUFence> last_rendered_fence;
         /** the vertex array cache */
         shared_ptr<GPUVertexArrayCache> vertex_array_cache;
 		/** the bounding box */

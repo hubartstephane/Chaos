@@ -1394,7 +1394,13 @@ namespace chaos
 
 	bool Window::EnumerateKnownImGuiObjects(EnumerateKnownImGuiObjectFunc func) const
 	{
-		if (func("Rendering Stats", ImGuiRenderingStatsObject::GetStaticClass()))
+		if (func("FPS", ImGuiRenderingFPSStatObject::GetStaticClass()))
+			return true;
+
+		if (func("Draw calls", ImGuiRenderingDrawCallsStatObject::GetStaticClass()))
+			return true;
+
+		if (func("Vertices", ImGuiRenderingVerticesStatObject::GetStaticClass()))
 			return true;
 
 		if (func("System Information", ImGuiSystemInformationObject::GetStaticClass()))

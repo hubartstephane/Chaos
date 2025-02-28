@@ -14,17 +14,16 @@ namespace chaos
 	}
 
 	bool GPURenderContext::RenderIntoFramebuffer(GPUFramebuffer* framebuffer, bool generate_mipmaps, LightweightFunction<bool()> render_func)
-	{
-#if _DEBUG
-		assert(rendering_started);
-#endif
-
+	{	
 		// early exit
 		if (framebuffer == nullptr || !framebuffer->IsValid())
 			return false;
 
 		if (framebuffer->IsRenderingInProgress())
 			return false;
+
+		// start rendering
+		++offscreen_rendering_count;
 
 		// notify the framebuffer
 		framebuffer->SetRenderingInProgress(true);
@@ -71,45 +70,49 @@ namespace chaos
 		// notify the framebuffer
 		framebuffer->SetRenderingInProgress(false);
 
+		// end rendering
+		--offscreen_rendering_count;
+
 		return true;
 	}
 
 	bool GPURenderContext::RenderFrame(LightweightFunction<bool()> render_func)
 	{
+		if (rendering_started || offscreen_rendering_count > 0)
+		{
+			GPURenderContextLog::Error("GPURenderContext::RenderFrame: no reentrance");
+			return false;
+		}
+		rendering_started = true;
+
 		BeginRenderingFrame();
 		bool result = render_func();
 		EndRenderingFrame();
+
+		rendering_started = false;
+
 		return result;
 	}
 
 	void GPURenderContext::BeginRenderingFrame()
 	{
-#if _DEBUG
-		assert(!rendering_started);
-		rendering_started = true;
-#endif
-
-		// increment the timestamp
-		++rendering_timestamp;
 		// prepare stats
 		current_frame_stat = GPURenderContextFrameStats();
+		current_frame_stat.rendering_timestamp = ++rendering_timestamp;
+		current_frame_stat.frame_start_time = (float)glfwGetTime();
 		// unreference the fence (users of this fence must have a reference on it)
 		rendering_fence = nullptr;
 	}
 
 	void GPURenderContext::EndRenderingFrame()
 	{
-#if _DEBUG
-		assert(rendering_started);
-		rendering_started = false;
-#endif
 		// update the frame rate
 		framerate_counter.Accumulate(1.0f);
 		// push the frame fence in the command queue if required by some external users
 		if (rendering_fence != nullptr)
 			rendering_fence->CreateGPUFence();
 		// store statistics
-		current_frame_stat.frame_time = (float)glfwGetTime();
+		current_frame_stat.frame_end_time = (float)glfwGetTime();
 		current_frame_stat.rendering_timestamp = rendering_timestamp;
 		stats.push_back(current_frame_stat);
 		// prepare next frame stats
@@ -156,9 +159,7 @@ namespace chaos
 
 	void GPURenderContext::Draw(GPUDrawPrimitive const & primitive, GPUInstancingInfo const & instancing)
 	{
-#if _DEBUG
-		assert(rendering_started);
-#endif
+		assert(rendering_started || offscreen_rendering_count > 0);
 
 		// This function is able to render :
 		//   -normal primitives

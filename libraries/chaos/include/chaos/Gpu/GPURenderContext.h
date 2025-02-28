@@ -7,6 +7,8 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+	CHAOS_DEFINE_LOG(GPURenderContextLog, "GPURenderContextLog")
+
 	/**
 	 * GPURenderContextFrameStats: statistic for a single frame
 	 */
@@ -16,9 +18,10 @@ namespace chaos
 	public:
 
 		uint64_t rendering_timestamp = 0;
-		int      drawcall_counter = 0;
-		int      vertices_counter = 0;
-		float    frame_time = 0.0f;
+		int      drawcall_counter    = 0;
+		int      vertices_counter    = 0;
+		float    frame_start_time    = 0.0f;
+		float    frame_end_time      = 0.0f;
 	};
 
 	/**
@@ -74,6 +77,8 @@ namespace chaos
 
 	protected:
 
+		/** the owning window */
+		weak_ptr<Window> window;
 		/** a time stamp for rendering */
 		uint64_t rendering_timestamp = 0;
 		/** the fence for current frame */
@@ -90,14 +95,10 @@ namespace chaos
 		boost::circular_buffer<GPURenderContextFrameStats> stats;
 		/** the stat for current frame */
 		GPURenderContextFrameStats current_frame_stat;
-
-		/** the owning window */
-		weak_ptr<Window> window;
-
 		/** whether a rendering is in progress */
-#if _DEBUG
 		bool rendering_started = false;
-#endif
+		/** offscreen rendering count */
+		int offscreen_rendering_count = 0;
 	};
 
 #endif

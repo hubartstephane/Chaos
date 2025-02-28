@@ -400,7 +400,7 @@ namespace chaos
 
 	bool GPUResourceManager::InitializeInternalResources()
 	{
-		// generate the quad mesh
+		// generate the quad mesh:  x,y inside[-1 .. +1]
 		GPUMultiMeshGenerator generators;
 
 		box2 box = box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));

@@ -1069,7 +1069,9 @@ namespace chaos
 			if (file_path.empty())
 				return false;
 
-			return (FreeImage_Save(FIF_PNG, img.get(), file_path.string().c_str(), 0) != 0);
+			bitmap_ptr img_without_alpha = bitmap_ptr(FreeImage_ConvertTo24Bits(img.get())); // suppress alpha channel before saving
+
+			return (FreeImage_Save(FIF_PNG, img_without_alpha.get(), file_path.string().c_str(), 0) != 0);
 		});
 	}
 

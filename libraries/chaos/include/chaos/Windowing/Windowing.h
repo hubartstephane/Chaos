@@ -18,3 +18,4 @@
 #include "chaos/Windowing/WindowApplication.h"
 #include "chaos/Windowing/GLFWTools.h"
 #include "chaos/Windowing/ImGuiWindow.h"
+#include "chaos/Windowing/ImGuiApplication.h"

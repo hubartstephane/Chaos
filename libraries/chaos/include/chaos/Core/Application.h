@@ -145,6 +145,8 @@ namespace chaos
 	template<typename APPLICATION_TYPE, typename ...PARAMS>
 	int RunApplication(int argc, char** argv, char** env, PARAMS && ...params)
 	{
+		static_assert(std::is_base_of_v<Application, APPLICATION_TYPE>);
+
 		shared_ptr<APPLICATION_TYPE> application = new APPLICATION_TYPE(std::forward<PARAMS>(params)...);
 		if (application != nullptr)
 		{

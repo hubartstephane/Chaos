@@ -5,7 +5,7 @@ namespace chaos
 {
 	ImGuiWindow::ImGuiWindow()
 	{
-		window_category = WindowCategory::OPTIONAL_WINDOW;
+		SetWindowCategory(WindowCategory::OPTIONAL_WINDOW);
 		SetApplicationImGuiMenuPluggedIn(false);
 	}
 

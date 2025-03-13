@@ -748,6 +748,8 @@ public:
 
 	virtual void OnDrawImGuiContent(chaos::Window * window) override
 	{
+		ImGui::Text("tergndslkjnlgkjnfg"); ImGui::SameLine();
+	#if 0
 		for (NamedMatrix const& m : matrixes)
 		{
 			if (DisplayAnalyticMatrix(m) == IterationState::Stop)
@@ -757,7 +759,7 @@ public:
 			ImGui::Separator();
 		}
 
-		ImGui::Text("tergndslkjnlgkjnfg"); ImGui::SameLine();
+		
 		if (ImGui::ArrowButton("##down", ImGuiDir_Down))
 			new_matrix_popup.Open("New Matrix");
 			//new_matrix_popup.Open();
@@ -769,7 +771,7 @@ public:
 			++i;
 
 		}
-		
+		#endif
 		
 		//new_matrix_popup.Display();
 #if 0
@@ -996,9 +998,9 @@ public:
 
 protected:
 
-	ImGuiNameSelectionPopup name_selection_popup;
+	//ImGuiNameSelectionPopup name_selection_popup;
 
-	ImGuiNewMatrixPopup new_matrix_popup;
+	//ImGuiNewMatrixPopup new_matrix_popup;
 
 	std::vector<NamedMatrix> matrixes;
 };

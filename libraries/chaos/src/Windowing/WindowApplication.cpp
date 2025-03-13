@@ -320,16 +320,9 @@ namespace chaos
 		WindowCreateParams create_params = main_window_create_params;
 
 		// gives a title to the window (if necessary)
-		std::string title_storage;
-
 		if (StringTools::IsEmpty(create_params.title))
-		{
 			if (GetArguments().size() > 0)
-			{
-				title_storage = PathTools::PathToName(GetArguments()[0]);
-				create_params.title = std::move(title_storage);
-			}
-		}
+				create_params.title = PathTools::PathToName(GetArguments()[0]);
 		// create the window
 		return DoCreateMainWindow(create_params);
 	}

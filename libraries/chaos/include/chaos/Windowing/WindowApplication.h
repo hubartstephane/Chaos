@@ -326,6 +326,7 @@ namespace chaos
 	template<typename WINDOW_TYPE, typename ...PARAMS>
 	decltype(auto) RunWindowApplication(int argc, char** argv, char** env, PARAMS && ...params)
 	{
+		static_assert(std::is_base_of_v<Window, WINDOW_TYPE>);
 		return RunApplication<WindowApplication>(argc, argv, env, WINDOW_TYPE::GetStaticClass(), std::forward<PARAMS>(params)...);
 	}
 

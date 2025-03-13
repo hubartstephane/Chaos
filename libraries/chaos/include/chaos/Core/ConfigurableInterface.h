@@ -55,7 +55,7 @@ namespace chaos
 		bool GiveClonedConfiguration(ConfigurableInterface* other_configurable) const;
 		/** create a child configuration and give it to another object */
 		bool GiveChildConfiguration(ConfigurableInterface* other_configurable, std::string key) const;
-		/** read the properties (an children) from the config */
+		/** read the properties (and children) from the config */
 		bool ReadConfigurableProperties(ReadConfigurablePropertiesContext context, bool recurse);
 		/** store the persistent properties (and children) into JSON (no disk access) */
 		bool StorePersistentProperties(bool recurse) const;

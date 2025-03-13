@@ -106,7 +106,7 @@ namespace chaos
 
 	bool GameApplication::IsGameSuspended() const
 	{
-		return imgui_menu_enabled;
+		return IsImGuiMenuEnabled();
 	}
 
 }; // namespace chaos

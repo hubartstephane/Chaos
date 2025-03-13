@@ -112,16 +112,16 @@ namespace chaos
 		return result;
 	}
 
-	void ImGuiManager::InitializeImGuiContext(Window * window) const
+	void ImGuiManager::InitializeWindowImGuiContext(Window * window) const
 	{
 		assert(window->GetImGuiContext() == ImGui::GetCurrentContext());
 
 		ImGuiIO& io = ImGui::GetIO();
 		io.ConfigFlags &= ~ImGuiConfigFlags_NavEnableGamepad;     // Disable Gamepad Controls
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls		
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 		io.ConfigFlags |= ImGuiConfigFlags_NavNoCaptureKeyboard;  // Do not capture keyboard during navigation
 		
-		SetImGuiContextMouseFlag(WindowApplication::IsImGuiMenuEnabled());
+		SetWindowImGuiContextMouseFlag(WindowApplication::IsImGuiMenuEnabled());
 
 		switch (window_style)
 		{
@@ -131,18 +131,18 @@ namespace chaos
 		}
 	}
 
-	void ImGuiManager::FinalizeImGuiContext(Window* window) const
+	void ImGuiManager::FinalizeWindowImGuiContext(Window* window) const
 	{
 		assert(window->GetImGuiContext() == ImGui::GetCurrentContext());
 	}
 
-	void ImGuiManager::OnImGuiMenuEnabledChanged(Window* window, bool enabled) const
+	void ImGuiManager::OnWindowImGuiMenuEnabledChanged(Window* window, bool enabled) const
 	{
 		assert(window->GetImGuiContext() == ImGui::GetCurrentContext());
-		SetImGuiContextMouseFlag(enabled);
+		SetWindowImGuiContextMouseFlag(enabled);
 	}
 
-	void ImGuiManager::SetImGuiContextMouseFlag(bool enabled) const
+	void ImGuiManager::SetWindowImGuiContextMouseFlag(bool enabled) const
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		if (enabled)

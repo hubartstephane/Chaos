@@ -120,7 +120,7 @@ namespace chaos
 			ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
 			ImGui::SetCurrentContext(imgui_context);
 
-			GetImGuiManager()->FinalizeImGuiContext(this);
+			GetImGuiManager()->FinalizeWindowImGuiContext(this);
 
 			ImGui_ImplGlfw_Shutdown();
 			ImGui_ImplOpenGL3_Shutdown();
@@ -421,7 +421,7 @@ namespace chaos
 		imgui_context = ImGui::CreateContext(imgui_manager->BuildAtlas());
 		ImGui::SetCurrentContext(imgui_context);
 
-		imgui_manager->InitializeImGuiContext(this);
+		imgui_manager->InitializeWindowImGuiContext(this);
 
 		// initialize the context
 		//
@@ -503,7 +503,7 @@ namespace chaos
 		else
 			glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)cursor_mode);
 
-		GetImGuiManager()->OnImGuiMenuEnabledChanged(this, enabled);
+		GetImGuiManager()->OnWindowImGuiMenuEnabledChanged(this, enabled);
 	}
 
 	glm::ivec2 Window::GetWindowPosition(bool include_decorators) const

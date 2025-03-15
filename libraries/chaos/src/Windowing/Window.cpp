@@ -383,7 +383,6 @@ namespace chaos
 		glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, 1);
 
 		// prepare cursor mode
-		cursor_mode = (CursorMode)glfwGetInputMode(glfw_window, GLFW_CURSOR);
 		SetCursorMode(CursorMode::DISABLED);
 
 		// update placement
@@ -476,16 +475,24 @@ namespace chaos
 
 	void Window::SetCursorMode(CursorMode mode)
 	{
-		if (cursor_mode != mode)
-		{
-			cursor_mode = mode;
-			if (!WindowApplication::IsImGuiMenuEnabled())
-				glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)mode); // do not effectively change cursor mode, during imgui_menu_enabled
-		}
+		cursor_mode = mode;
+		UpdateCursorMode();
+	}
+
+	void Window::UpdateCursorMode()
+	{
+		glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)GetEffectiveCursorMode()); // do not effectively change cursor mode, during imgui_menu_enabled
 	}
 
 	CursorMode Window::GetCursorMode() const
 	{
+		return cursor_mode;
+	}
+
+	CursorMode Window::GetEffectiveCursorMode() const
+	{
+		if (WindowApplication::IsImGuiMenuEnabled())
+			return CursorMode::NORMAL;
 		return cursor_mode;
 	}
 	
@@ -498,11 +505,7 @@ namespace chaos
 
 	void Window::OnImGuiMenuEnabledChanged(bool enabled)
 	{
-		if (enabled)
-			glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)CursorMode::NORMAL);
-		else
-			glfwSetInputMode(glfw_window, GLFW_CURSOR, (int)cursor_mode);
-
+		UpdateCursorMode();
 		GetImGuiManager()->OnWindowImGuiMenuEnabledChanged(this, enabled);
 	}
 

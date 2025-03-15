@@ -300,6 +300,10 @@ namespace chaos
 		void SetCursorMode(CursorMode mode);
 		/** get the cursor mode */
 		CursorMode GetCursorMode() const;
+		/** get the final cursor mode (taking user conditions into consideration) */
+		virtual CursorMode GetEffectiveCursorMode() const;
+		/** update cursor mode, GLFW side */
+		void UpdateCursorMode();
 
 		/** gets the category of the window */
 		WindowCategory GetWindowCategory() const { return window_category; };

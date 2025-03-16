@@ -71,6 +71,8 @@ namespace chaos
 		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
 		/** override */
 		virtual bool DoStartManager() override;
+		/** override */
+		virtual bool DoStopManager() override;
 
 		/** set mouse flags for ImGui */
 		void SetWindowImGuiContextMouseFlag(bool enabled) const;

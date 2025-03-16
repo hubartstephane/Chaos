@@ -77,8 +77,13 @@ namespace chaos
 		// read the properties
 		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
 			return false;
-
 		return true;
+	}
+
+	bool ImGuiManager::DoStopManager()
+	{
+		font_faces.clear();
+		return ResourceManager::DoStopManager();
 	}
 
 	ImFontAtlas* ImGuiManager::BuildAtlas() const

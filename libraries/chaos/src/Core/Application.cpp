@@ -220,7 +220,7 @@ namespace chaos
 
 		application_path = p.parent_path();
 		resources_path = application_path / "resources";
-		userlocal_path = WinTools::GetUserLocalPath() / application_name;
+		userlocal_path = WinTools::GetUserLocalPath() / "chaos" / application_name;
 		userlocal_temp_path = userlocal_path / "temp";
 	}
 

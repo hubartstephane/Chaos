@@ -22,7 +22,7 @@ namespace chaos
 		if (!IsManagerStarted())
 			return false;
 		DoStopManager();
-		manager_started = true;
+		manager_started = false;
 		return true;
 	}
 
@@ -41,7 +41,7 @@ namespace chaos
 		return manager_started;
 	}
 
-	bool ResourceManager::InitializeFromConfiguration(nlohmann::json const * config)
+	bool ResourceManager::OnInitialize(JSONReadConfiguration config)
 	{
 		return true;
 	}

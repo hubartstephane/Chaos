@@ -23,15 +23,14 @@ namespace chaos
 		/** whether the manager is started */
 		bool IsManagerStarted() const;
 
-		/** initialize the manager from a configuration file */
-		virtual bool InitializeFromConfiguration(nlohmann::json const * config);
-
 	protected:
 
 		/** internally starts the manager */
 		virtual bool DoStartManager();
 		/** internally stops the manager */
 		virtual bool DoStopManager();
+		/** initialize the manager from a configuration file */
+		virtual bool OnInitialize(JSONReadConfiguration config);
 
 		/** load all files from a directory */
 		template<typename LOADER>

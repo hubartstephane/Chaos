@@ -8,6 +8,8 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+	CHAOS_DEFINE_LOG(GPUResourceManagerLog, "GPUResourceManager")
+
 	/**
 	 * GPUResourceManagerReloadData : a structure used whenever we can to reload all data in manager
 	 */
@@ -121,8 +123,6 @@ namespace chaos
 
 		/** initialize the manager from a file */
 		virtual bool LoadManager(FilePathParam const& path);
-		/** loading from a JSON object */
-		virtual bool InitializeFromConfiguration(nlohmann::json const * config) override;
 		/** merge all resources with incomming manager */
 		virtual bool RefreshGPUResources(GPUResourceManager* other_gpu_manager);
 
@@ -137,6 +137,15 @@ namespace chaos
 		virtual void OnDrawImGuiMenu(Window* window, BeginImGuiMenuFunc begin_menu_func) override;
 
 	protected:
+
+		/** override */
+		virtual bool OnConfigurationChanged(JSONReadConfiguration config) override;
+		/** override */
+		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
+		/** override */
+		virtual bool DoStartManager() override;
+		/** override */
+		virtual bool OnInitialize(JSONReadConfiguration config) override;
 
 		/** load the textures from configuration */
 		virtual bool LoadTexturesFromConfiguration(nlohmann::json const * config);
@@ -154,14 +163,6 @@ namespace chaos
 
 		/** recursively patch all materials due to refreshing */
 		void PatchRenderMaterialRecursive(GPURenderMaterialInfo* material_info, GPUResourceManagerReloadData& reload_data);
-
-		/** override */
-		virtual bool OnConfigurationChanged(JSONReadConfiguration config) override;
-		/** override */
-		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
-
-		/** override */
-		virtual bool DoStartManager() override;
 
 	protected:
 

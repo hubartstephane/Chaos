@@ -162,17 +162,37 @@ namespace chaos
 		nlohmann::json json;
 		if (!JSONTools::LoadJSONFile(path, json, LoadFileFlag::RECURSIVE))
 			return true;
-		return InitializeFromConfiguration(&json);
+		return OnInitialize(JSONReadConfiguration(&json));
 	}
 
-	bool GPUResourceManager::InitializeFromConfiguration(nlohmann::json const * config)
+	bool GPUResourceManager::OnInitialize(JSONReadConfiguration config)
 	{
-		if (!LoadTexturesFromConfiguration(config))
+		bool ignore_internal_resources = false;
+		JSONTools::GetAttribute(config, "ignore_internal_resources", ignore_internal_resources, false);
+		if (!ignore_internal_resources)
+		{
+			if (!InitializeInternalResources())
+			{
+				GPUResourceManagerLog::Error("InitializeInternalResources failure");
+				return false;
+			}
+		}
+
+		if (!LoadTexturesFromConfiguration(config.default_config))
+		{
+			GPUResourceManagerLog::Error("LoadTexturesFromConfiguration failure");
 			return false;
-		if (!LoadProgramsFromConfiguration(config))
+		}
+		if (!LoadProgramsFromConfiguration(config.default_config))
+		{
+			GPUResourceManagerLog::Error("LoadProgramsFromConfiguration failure");
 			return false;
-		if (!LoadMaterialsFromConfiguration(config))
+		}
+		if (!LoadMaterialsFromConfiguration(config.default_config))
+		{
+			GPUResourceManagerLog::Error("LoadMaterialsFromConfiguration failure");
 			return false;
+		}
 		return true;
 	}
 
@@ -460,6 +480,8 @@ namespace chaos
 		if (other_gpu_resource_manager == nullptr)
 			return false;
 		GiveClonedConfiguration(other_gpu_resource_manager.get());
+		JSONTools::SetAttribute(other_gpu_resource_manager->GetJSONWriteConfiguration(), "ignore_internal_resources", true);
+		// start
 		if (!other_gpu_resource_manager->StartManager())
 			return false;
 		// steal data from other manager
@@ -483,7 +505,7 @@ namespace chaos
 		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
 			return false;
 		// other initializations
-		return InitializeFromConfiguration(GetJSONReadConfiguration().default_config);
+		return OnInitialize(GetJSONReadConfiguration());
 	}
 
 	void GPUResourceManager::OnDrawImGuiMenu(Window* window, BeginImGuiMenuFunc begin_menu_func)

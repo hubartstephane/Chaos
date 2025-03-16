@@ -534,9 +534,6 @@ namespace chaos
 		/** update the listener position */
 		bool SetListenerPosition(glm::vec3 const& position, glm::vec3 const& velocity = { 0.0f, 0.0f, 0.0f });
 
-		/** initialize the manager from a configuration file */
-		virtual bool InitializeFromConfiguration(nlohmann::json const * config) override;
-
 		/** getters on sound */
 		size_t GetSoundCount() const;
 		Sound* GetSound(size_t index);
@@ -559,10 +556,12 @@ namespace chaos
 
 	protected:
 
-		/** internally start the manager */
+		/** override */
 		virtual bool DoStartManager() override;
-		/** internally stop the manager */
+		/** override */
 		virtual bool DoStopManager() override;
+		/** override */
+		virtual bool OnInitialize(JSONReadConfiguration config) override;
 
 		/** remove a category from the list */
 		void RemoveCategory(SoundCategory* category);

@@ -857,7 +857,7 @@ namespace chaos
 		irrklang_engine->drop();
 
 		// other initializations
-		return InitializeFromConfiguration(GetJSONReadConfiguration().default_config);
+		return OnInitialize(GetJSONReadConfiguration());
 	}
 
 	bool SoundManager::DoStopManager()
@@ -1183,13 +1183,13 @@ namespace chaos
 		return true;
 	}
 
-	bool SoundManager::InitializeFromConfiguration(nlohmann::json const * config)
+	bool SoundManager::OnInitialize(JSONReadConfiguration config)
 	{
 		// initialize the categories
-		if (!LoadCategoriesFromConfiguration(config))
+		if (!LoadCategoriesFromConfiguration(config.default_config))
 			return false;
 		// Initialize the sources
-		if (!LoadSourcesFromConfiguration(config))
+		if (!LoadSourcesFromConfiguration(config.default_config))
 			return false;
 		return true;
 	}

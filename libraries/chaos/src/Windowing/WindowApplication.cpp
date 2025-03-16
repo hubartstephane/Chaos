@@ -556,11 +556,7 @@ namespace chaos
 		if (gpu_resource_manager == nullptr)
 			return false;
 		GiveChildConfiguration(gpu_resource_manager.get(), "gpu");
-		gpu_resource_manager->StartManager();
-		// create internal resource
-		if (!gpu_resource_manager->InitializeInternalResources())
-			return false;
-		return true;
+		return gpu_resource_manager->StartManager();
 	}
 
 	void WindowApplication::FinalizeGPUResourceManager()

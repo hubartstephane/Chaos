@@ -12,16 +12,14 @@ namespace chaos
 	* GPUResourceManager
 	**/
 
-	GPUResourceManager::~GPUResourceManager()
-	{
-		Release();
-	}
-
 	void GPUResourceManager::Release()
 	{
 		textures.clear();
 		programs.clear();
 		render_materials.clear();
+
+		quad_mesh = nullptr;
+		quad_index_buffer = nullptr;
 	}
 
 	size_t GPUResourceManager::GetTextureCount() const
@@ -157,14 +155,6 @@ namespace chaos
 		return result;
 	}
 
-	bool GPUResourceManager::LoadManager(FilePathParam const & path)
-	{
-		nlohmann::json json;
-		if (!JSONTools::LoadJSONFile(path, json, LoadFileFlag::RECURSIVE))
-			return true;
-		return OnInitialize(JSONReadConfiguration(&json));
-	}
-
 	bool GPUResourceManager::OnInitialize(JSONReadConfiguration config)
 	{
 		bool ignore_internal_resources = false;
@@ -178,17 +168,17 @@ namespace chaos
 			}
 		}
 
-		if (!LoadTexturesFromConfiguration(config.default_config))
+		if (!LoadTextures(config.default_config))
 		{
 			GPUResourceManagerLog::Error("LoadTexturesFromConfiguration failure");
 			return false;
 		}
-		if (!LoadProgramsFromConfiguration(config.default_config))
+		if (!LoadPrograms(config.default_config))
 		{
 			GPUResourceManagerLog::Error("LoadProgramsFromConfiguration failure");
 			return false;
 		}
-		if (!LoadMaterialsFromConfiguration(config.default_config))
+		if (!LoadMaterials(config.default_config))
 		{
 			GPUResourceManagerLog::Error("LoadMaterialsFromConfiguration failure");
 			return false;
@@ -196,27 +186,27 @@ namespace chaos
 		return true;
 	}
 
-	bool GPUResourceManager::LoadTexturesFromConfiguration(nlohmann::json const * config)
+	bool GPUResourceManager::LoadTextures(nlohmann::json const * config)
 	{
-		return LoadObjectsFromConfiguration<true>(
+		return LoadObjects<true>(
 			"textures",
 			config,
 			GPUTextureLoader(this));
 	}
 
-	bool GPUResourceManager::LoadProgramsFromConfiguration(nlohmann::json const * config)
+	bool GPUResourceManager::LoadPrograms(nlohmann::json const * config)
 	{
-		return LoadObjectsFromConfiguration<true>(
+		return LoadObjects<true>(
 			"programs",
 			config,
 			GPUProgramLoader(this));
 	}
 
-	bool GPUResourceManager::LoadMaterialsFromConfiguration(nlohmann::json const * config)
+	bool GPUResourceManager::LoadMaterials(nlohmann::json const * config)
 	{
 		GPURenderMaterialLoaderReferenceSolver solver; // finalize the missing references
 
-		bool result = LoadObjectsFromConfiguration<true>(
+		bool result = LoadObjects<true>(
 			"rendermaterials",
 			config,
 			GPURenderMaterialLoader(this, &solver));
@@ -506,6 +496,12 @@ namespace chaos
 			return false;
 		// other initializations
 		return OnInitialize(GetJSONReadConfiguration());
+	}
+
+	bool GPUResourceManager::DoStopManager()
+	{
+		Release();
+		return ResourceManager::DoStopManager();
 	}
 
 	void GPUResourceManager::OnDrawImGuiMenu(Window* window, BeginImGuiMenuFunc begin_menu_func)

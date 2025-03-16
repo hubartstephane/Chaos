@@ -63,7 +63,7 @@ namespace chaos
 
 		/** an utility method to initialize a single object in an JSON array/object */
 		template<bool RECURSE, typename LOADER>
-		static auto DoLoadObjectsFromConfiguration(char const* name, nlohmann::json const * json, LOADER const & loader) -> typename LOADER::resource_type* // LOADER passed by copy is important to ensure reset for all loaded objects
+		static auto DoLoadObjects(char const* name, nlohmann::json const * json, LOADER const & loader) -> typename LOADER::resource_type* // LOADER passed by copy is important to ensure reset for all loaded objects
 		{
 			// 1 - recurse over some directories
 			if constexpr (RECURSE)
@@ -94,7 +94,7 @@ namespace chaos
 
 		/** an utility method to initialize a list of objects from a JSON object or array */
 		template<bool RECURSE, typename LOADER>
-		static bool LoadObjectsFromConfiguration(char const* object_names, nlohmann::json const * json, LOADER const & loader)
+		static bool LoadObjects(char const* object_names, nlohmann::json const * json, LOADER const & loader)
 		{
 			// search in json for
 			//
@@ -108,9 +108,9 @@ namespace chaos
 				{
 					LOADER other_loader = loader; // use copy so that name and path store in loader is not applyed to wrong object
 					if (objects_json->is_array())
-						DoLoadObjectsFromConfiguration<RECURSE>(nullptr, &(*it), other_loader);
+						DoLoadObjects<RECURSE>(nullptr, &(*it), other_loader);
 					else if (objects_json->is_object())
-						DoLoadObjectsFromConfiguration<RECURSE>(it.key().c_str(), &(*it), other_loader);
+						DoLoadObjects<RECURSE>(it.key().c_str(), &(*it), other_loader);
 				}
 			}
 			return true;

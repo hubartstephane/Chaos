@@ -62,8 +62,6 @@ namespace chaos
 
 	public:
 
-		/** destructor */
-		virtual ~GPUResourceManager();
 		/** release the resources */
 		virtual void Release();
 
@@ -89,7 +87,6 @@ namespace chaos
 		/** find a texture by its path */
 		GPUTexture const* FindTextureByPath(FilePathParam const& path) const;
 
-
 		/** get the number of programs */
 		size_t GetProgramCount() const;
 		/** get a program by its index */
@@ -104,7 +101,6 @@ namespace chaos
 		GPUProgram* FindProgramByPath(FilePathParam const& path);
 		/** find a program by its path */
 		GPUProgram const* FindProgramByPath(FilePathParam const& path) const;
-
 
 		/** get the number of materials */
 		size_t GetRenderMaterialCount() const;
@@ -121,13 +117,6 @@ namespace chaos
 		/** find a render material by its path */
 		GPURenderMaterial const* FindRenderMaterialByPath(FilePathParam const& path) const;
 
-		/** initialize the manager from a file */
-		virtual bool LoadManager(FilePathParam const& path);
-		/** merge all resources with incomming manager */
-		virtual bool RefreshGPUResources(GPUResourceManager* other_gpu_manager);
-
-		/** Initialize internal resources */
-		virtual bool InitializeInternalResources();
 		/** get an index buffer for quad rendering (returns the number of quad that can be render_context with this buffer) */
 		GPUBuffer* GetQuadIndexBuffer(size_t* result_quad_count);
 		/** get quad simple mesh */
@@ -145,14 +134,16 @@ namespace chaos
 		/** override */
 		virtual bool DoStartManager() override;
 		/** override */
+		virtual bool DoStopManager() override;
+		/** override */
 		virtual bool OnInitialize(JSONReadConfiguration config) override;
 
 		/** load the textures from configuration */
-		virtual bool LoadTexturesFromConfiguration(nlohmann::json const * config);
+		virtual bool LoadTextures(nlohmann::json const * config);
 		/** load the programs from configuration */
-		virtual bool LoadProgramsFromConfiguration(nlohmann::json const * config);
+		virtual bool LoadPrograms(nlohmann::json const * config);
 		/** load the materials from configuration */
-		virtual bool LoadMaterialsFromConfiguration(nlohmann::json const * config);
+		virtual bool LoadMaterials(nlohmann::json const * config);
 
 		/** merge all resources with incomming manager */
 		virtual bool RefreshTextures(GPUResourceManager* other_gpu_manager, GPUResourceManagerReloadData& reload_data);
@@ -163,6 +154,11 @@ namespace chaos
 
 		/** recursively patch all materials due to refreshing */
 		void PatchRenderMaterialRecursive(GPURenderMaterialInfo* material_info, GPUResourceManagerReloadData& reload_data);
+
+		/** Initialize internal resources */
+		virtual bool InitializeInternalResources();
+		/** merge all resources with incomming manager */
+		virtual bool RefreshGPUResources(GPUResourceManager* other_gpu_manager);
 
 	protected:
 

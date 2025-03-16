@@ -562,6 +562,10 @@ namespace chaos
 		virtual bool DoStopManager() override;
 		/** override */
 		virtual bool OnInitialize(JSONReadConfiguration config) override;
+		/** override */
+		virtual bool OnConfigurationChanged(JSONReadConfiguration config) override;
+		/** override */
+		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
 
 		/** remove a category from the list */
 		void RemoveCategory(SoundCategory* category);
@@ -636,18 +640,10 @@ namespace chaos
 		/** update all sounds volume per source */
 		void UpdateAllSoundVolumePerSource(SoundSource* source);
 
-		/** add a category from a JSON object */
-		SoundCategory* AddJSONCategory(char const* name, nlohmann::json const * json);
-
 		/** load the categories from configuration */
-		bool LoadCategoriesFromConfiguration(nlohmann::json const * config);
+		bool LoadCategories(nlohmann::json const * config);
 		/** load the sources from configuration */
-		bool LoadSourcesFromConfiguration(nlohmann::json const * config);
-
-		/** override */
-		virtual bool OnConfigurationChanged(JSONReadConfiguration config) override;
-		/** override */
-		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
+		bool LoadSources(nlohmann::json const * config);
 
 	protected:
 

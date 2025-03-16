@@ -1154,25 +1154,6 @@ namespace chaos
 		}
 	}
 
-	// JSON name policy
-	//
-	// "key": {}                  => anonymous object = error
-	// "key": {"name":"myname"}   => name given by the member 'name'
-	// "@key" : {}                => the key begins with @ => the name is the key (with @removed)
-
-	SoundCategory * SoundManager::AddJSONCategory(char const * name, nlohmann::json const * json)
-	{
-		// no anonymous category
-		if (name == nullptr)
-			return nullptr;
-		// create the object
-		SoundCategory * category = AddCategory(name);
-		// initialize the new object
-		if (category != nullptr)
-			category->InitializeFromJSON(json);
-		return category;
-	}
-
 	bool SoundManager::OnConfigurationChanged(JSONReadConfiguration config)
 	{
 		return true;
@@ -1186,25 +1167,25 @@ namespace chaos
 	bool SoundManager::OnInitialize(JSONReadConfiguration config)
 	{
 		// initialize the categories
-		if (!LoadCategoriesFromConfiguration(config.default_config))
+		if (!LoadCategories(config.default_config))
 			return false;
 		// Initialize the sources
-		if (!LoadSourcesFromConfiguration(config.default_config))
+		if (!LoadSources(config.default_config))
 			return false;
 		return true;
 	}
 
-	bool SoundManager::LoadCategoriesFromConfiguration(nlohmann::json const * config)
+	bool SoundManager::LoadCategories(nlohmann::json const * config)
 	{
-		return LoadObjectsFromConfiguration<false>( // no [recurse] reading
+		return LoadObjects<false>( // no [recurse] reading
 			"categories",
 			config,
 			SoundCategoryLoader(this));
 	}
 
-	bool SoundManager::LoadSourcesFromConfiguration(nlohmann::json const * config)
+	bool SoundManager::LoadSources(nlohmann::json const * config)
 	{
-		return LoadObjectsFromConfiguration<true>(
+		return LoadObjects<true>(
 			"sources",
 			config,
 			SoundSourceLoader(this));

@@ -654,5 +654,5 @@ protected:
 
 int main(int argc, char ** argv, char ** env)
 {
-    return RunWindowApplication<WindowOpenGLTest>(argc, argv, env);
+    return RunSimpleWindowApplication<WindowOpenGLTest>(argc, argv, env);
 }

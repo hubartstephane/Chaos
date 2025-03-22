@@ -7,14 +7,6 @@ namespace chaos
 	// WindowApplication
 	//
 
-	WindowApplication::WindowApplication(SubClassOf<Window> in_main_window_class, WindowPlacementInfo const& in_main_window_placement_info, WindowCreateParams const& in_main_window_create_params):
-		main_window_class(in_main_window_class),
-		main_window_placement_info(in_main_window_placement_info),
-		main_window_create_params(in_main_window_create_params)
-	{
-		assert(in_main_window_class.IsValid());
-	}
-
 	InputMode WindowApplication::GetApplicationInputMode()
 	{
 		WindowApplication const* application = Application::GetConstInstance();
@@ -314,17 +306,6 @@ namespace chaos
 
 	int WindowApplication::MainBody()
 	{
-		// create the main window
-		Window* main_window = CreateMainWindow();
-		if (main_window == nullptr)
-			return -1;
-
-		// run the main loop as long as there are main windows
-		RunMessageLoop([this]()
-		{
-			return HasMainWindow();
-		});
-
 		return 0;
 	}
 
@@ -344,26 +325,6 @@ namespace chaos
 		// effectively quit the application
 		DestroyAllWindows();
 	}
-
-	Window* WindowApplication::CreateMainWindow()
-	{
-		WindowCreateParams create_params = main_window_create_params;
-
-		// gives a title to the window (if necessary)
-		if (StringTools::IsEmpty(create_params.title))
-			if (GetArguments().size() > 0)
-				create_params.title = PathTools::PathToName(GetArguments()[0]);
-		// create the window
-		return DoCreateMainWindow(create_params);
-	}
-
-	Window * WindowApplication::DoCreateMainWindow(WindowCreateParams const & create_params)
-	{
-		return CreateTypedWindow(main_window_class, main_window_placement_info, create_params, "main_window");
-	}
-
-
-
 
 	// shuyyy
 

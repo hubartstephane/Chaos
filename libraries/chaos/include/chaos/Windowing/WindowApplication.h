@@ -19,9 +19,6 @@ namespace chaos
 		using CreateWindowFunc = LightweightFunction<Window*()>;
 		using EnumerateKnownWindowsFunc = LightweightFunction<bool(char const*, CreateWindowFunc)>;
 
-		/** constructor */
-		WindowApplication(SubClassOf<Window> in_main_window_class = {}, WindowPlacementInfo const& in_main_window_placement_info = {}, WindowCreateParams const& in_main_window_create_params = {});
-
 		/** gets the number of windows */
 		size_t GetWindowCount() const;
 		/** get the window per index */
@@ -156,17 +153,6 @@ namespace chaos
 		/** create a window */
 		Window* CreateTypedWindow(CreateWindowFunc create_func, WindowPlacementInfo placement_info = {}, WindowCreateParams const& create_params = {}, ObjectRequest = {});
 
-
-
-
-		/** create the main window */
-		virtual Window* DoCreateMainWindow(WindowCreateParams const& create_params);
-
-
-
-
-
-
 		/** enable or disable ImGui menu */
 		static void SetImGuiMenuEnabled(bool enabled);
 		/** gets the whether the menu is enabled */
@@ -231,9 +217,6 @@ namespace chaos
 		bool CreateSharedContext();
 		/** destroy the shared window */
 		void FinalizeSharedContext();
-
-		/** create the main window */
-		virtual Window* CreateMainWindow();
 
 		/** called whenever a monitor is connected or disconnected */
 		virtual void OnMonitorEvent(GLFWmonitor* monitor, int monitor_state);
@@ -314,11 +297,6 @@ namespace chaos
 		/** called at window destruction */
 		virtual void OnWindowDestroyed(Window* window);
 
-		/** gets the main window of the application */
-		AutoCastable<Window> GetMainWindow() { return FindWindow("main"); }
-		/** gets the main window of the application */
-		AutoConstCastable<Window> GetMainWindow() const { return FindWindow("main"); }
-
 		/** add some items to a windows menu */
 		virtual void OnDrawApplicationImGuiMenu(Window * window, BeginImGuiMenuFunc begin_menu_func);
 
@@ -369,12 +347,6 @@ namespace chaos
 
 		// shuyyy
 
-		/** the main window params */
-		WindowCreateParams main_window_create_params;
-		/** the class of the main window */
-		SubClassOf<Window> main_window_class;
-		/** the main window initial placement */
-		WindowPlacementInfo main_window_placement_info;
 
 		/** the window list */
 		std::vector<shared_ptr<Window>> windows;
@@ -398,17 +370,6 @@ namespace chaos
 		/** indicates whenever the application is being quit (closing windows in cascade may cause several Quit() calls */
 		bool is_quitting = false;
 	};
-
-	/**
-	* RunWindowApplication : utility template function to run an application only from a class
-	*/
-
-	template<typename WINDOW_TYPE, typename ...PARAMS>
-	decltype(auto) RunWindowApplication(int argc, char** argv, char** env, PARAMS && ...params)
-	{
-		static_assert(std::is_base_of_v<Window, WINDOW_TYPE>);
-		return RunApplication<WindowApplication>(argc, argv, env, WINDOW_TYPE::GetStaticClass(), std::forward<PARAMS>(params)...);
-	}
 
 #endif
 

@@ -118,5 +118,5 @@ public:
 
 int main(int argc, char ** argv, char ** env)
 {
-	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env);
+	return chaos::RunSimpleWindowApplication<WindowOpenGLTest>(argc, argv, env);
 }

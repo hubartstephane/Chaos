@@ -4,7 +4,7 @@
 namespace chaos
 {
 	ImGuiApplication::ImGuiApplication(ImGuiObject* in_imgui_object, SubClassOf<ImGuiWindow> in_main_window_class, WindowPlacementInfo const& in_main_window_placement_info, WindowCreateParams const& in_main_window_create_params):
-		WindowApplication(in_main_window_class, in_main_window_placement_info, in_main_window_create_params),
+		SimpleWindowApplication(in_main_window_class, in_main_window_placement_info, in_main_window_create_params),
 		imgui_object(in_imgui_object)
 	{
 		assert(in_imgui_object != nullptr);

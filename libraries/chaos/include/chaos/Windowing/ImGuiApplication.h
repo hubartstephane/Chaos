@@ -10,7 +10,7 @@ namespace chaos
 	 * ImGuiApplication: an application that creates a window to display imgui content
 	 **/
 
-	class CHAOS_API ImGuiApplication : public WindowApplication
+	class CHAOS_API ImGuiApplication : public SimpleWindowApplication
 	{
 	public:
 

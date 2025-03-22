@@ -413,7 +413,7 @@ chaos::ClockEventTickResult MyEvent::Tick(chaos::ClockEventTickData const & tick
 
 int main(int argc, char ** argv, char ** env)
 {
-	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env);
+	return chaos::RunSimpleWindowApplication<WindowOpenGLTest>(argc, argv, env);
 }
 
 

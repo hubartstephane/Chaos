@@ -15,6 +15,21 @@ namespace chaos
 		assert(in_main_window_class.IsValid());
 	}
 
+	InputMode WindowApplication::GetApplicationInputMode()
+	{
+		WindowApplication const* application = Application::GetConstInstance();
+		if (application != nullptr)
+			return application->GetInputMode();
+		return InputMode::KEYBOARD;
+	}
+
+	void WindowApplication::SetApplicationInputMode(InputMode new_mode)
+	{
+		WindowApplication* application = Application::GetInstance();
+		if (application != nullptr)
+			application->SetInputMode(new_mode);
+	}
+
 	void WindowApplication::FreezeNextFrameTickDuration()
 	{
 		forced_zero_tick_duration = true;
@@ -332,6 +347,11 @@ namespace chaos
 		return CreateTypedWindow(main_window_class, main_window_placement_info, create_params, "main_window");
 	}
 
+
+
+
+	// shuyyy
+
 	bool WindowApplication::InitializeGamepadButtonMap()
 	{
 		// the map [button ID] => [bitmap name + text generator alias]
@@ -355,6 +375,14 @@ namespace chaos
 
 		return true;
 	}
+
+
+
+
+
+
+
+
 
 	bool WindowApplication::FillAtlasGeneratorInput(BitmapAtlas::AtlasInput& input)
 	{
@@ -763,7 +791,7 @@ namespace chaos
 			return true;
 		}
 #endif
-		return Application::OnKeyEventImpl(key_event);
+		return InputEventReceiverInterface::OnKeyEventImpl(key_event);
 	}
 
 	GLFWwindow* WindowApplication::GetSharedGLContext()

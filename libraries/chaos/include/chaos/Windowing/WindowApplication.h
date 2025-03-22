@@ -10,7 +10,7 @@ namespace chaos
 	* WindowApplication
 	*/
 
-	class CHAOS_API WindowApplication : public Application, public TickableInterface, public GPUProgramProviderInterface
+	class CHAOS_API WindowApplication : public Application, public TickableInterface, public GPUProgramProviderInterface, public InputEventReceiverInterface
 	{
 		friend class Window;
 
@@ -74,20 +74,48 @@ namespace chaos
 		/** gets the graphic resource manager */
 		GPUResourceManager const* GetGPUResourceManager() const { return gpu_resource_manager.get(); }
 
+
+
+
+
+
+
+		// shuyyy
+
+
 		/** getter on the texture atlas */
 		BitmapAtlas::TextureArrayAtlas* GetTextureAtlas() { return texture_atlas.get(); }
 		/** getter on the texture atlas */
 		BitmapAtlas::TextureArrayAtlas const* GetTextureAtlas() const { return texture_atlas.get(); }
+
+
+
+
+
+
+		// shuyyy
+
 
 		/** getter on the text generator */
 		ParticleTextGenerator::Generator* GetTextGenerator() { return particle_text_generator.get(); }
 		/** getter on the text generator */
 		ParticleTextGenerator::Generator const* GetTextGenerator() const { return particle_text_generator.get(); }
 
+
+
+		// shuyyy
+
 		/** get the button map */
 		std::map<GamepadButton, std::pair<std::string, std::string>>& GetGamepadButtonMap() { return gamepad_button_map; }
 		/** get the button map */
 		std::map<GamepadButton, std::pair<std::string, std::string>> const& GetGamepadButtonMap() const { return gamepad_button_map; }
+
+
+
+
+
+
+
 
 		/** used to force for one frame the duration of tick function to 0 : usefull for function that are long and would block the game for some time */
 		void FreezeNextFrameTickDuration();
@@ -127,8 +155,17 @@ namespace chaos
 
 		/** create a window */
 		Window* CreateTypedWindow(CreateWindowFunc create_func, WindowPlacementInfo placement_info = {}, WindowCreateParams const& create_params = {}, ObjectRequest = {});
+
+
+
+
 		/** create the main window */
 		virtual Window* DoCreateMainWindow(WindowCreateParams const& create_params);
+
+
+
+
+
 
 		/** enable or disable ImGui menu */
 		static void SetImGuiMenuEnabled(bool enabled);
@@ -178,6 +215,11 @@ namespace chaos
 		/** create or destroy a window */
 		void CreateOrDestroyWindow(bool create, char const* name, CreateWindowFunc create_func);
 
+		/** get the current input mode (search the application) */
+		static InputMode GetApplicationInputMode();
+		/** change the current input mode (search the application) */
+		static void SetApplicationInputMode(InputMode new_mode);
+
 	protected:
 
 		/** Main method */
@@ -221,8 +263,12 @@ namespace chaos
 		/** finalize the GPU manager */
 		virtual void FinalizeGPUResourceManager();
 
+
+
 		/** initialize a mapping with button names / text generator joker */
 		virtual bool InitializeGamepadButtonMap();
+
+
 		/** create the texture atlas */
 		virtual bool CreateTextureAtlas();
 		/** create the text generator */
@@ -234,6 +280,19 @@ namespace chaos
 		virtual bool FillAtlasGeneratorInputSprites(BitmapAtlas::AtlasInput& input);
 		/** generate atlas entries relative to fonts */
 		virtual bool FillAtlasGeneratorInputFonts(BitmapAtlas::AtlasInput& input);
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;
@@ -286,8 +345,25 @@ namespace chaos
 		/** the text generator */
 		shared_ptr<ParticleTextGenerator::Generator> particle_text_generator;
 
+
+
+		// shuyyy
+
 		/** a mapping between the button index and its resource name + text generator alias */
 		std::map<GamepadButton, std::pair<std::string, std::string>> gamepad_button_map;
+
+
+
+
+
+
+
+
+
+
+
+
+		// shuyyy
 
 		/** the main window params */
 		WindowCreateParams main_window_create_params;

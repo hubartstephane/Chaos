@@ -11,7 +11,7 @@ namespace chaos
 	/**
 	* Application : used to store generic application data
 	*/
-	class CHAOS_API Application : public Object, public InputEventReceiverInterface, public ConfigurableInterface
+	class CHAOS_API Application : public Object, public ConfigurableInterface
 	{
 
 	public:
@@ -60,11 +60,6 @@ namespace chaos
 
 		/** create the use local temp directory */
 		boost::filesystem::path const& CreateUserLocalTempDirectory() const;
-
-		/** get the current input mode (search the application) */
-		static InputMode GetApplicationInputMode();
-		/** change the current input mode (search the application) */
-		static void SetApplicationInputMode(InputMode new_mode);
 
 		/** check whether -flag_name is in command line */
 		bool HasCommandLineFlag(char const* flag_name) const;

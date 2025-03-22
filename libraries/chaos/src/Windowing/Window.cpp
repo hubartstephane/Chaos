@@ -92,8 +92,8 @@ namespace chaos
 
 	void Window::Destroy()
 	{
-		if (WindowApplication* WindowApplication = Application::GetInstance())
-			WindowApplication->DestroyWindow(this);
+		if (WindowApplication* window_application = Application::GetInstance())
+			window_application->DestroyWindow(this);
 	}
 
 	void Window::DestroyImGuiContext()
@@ -652,8 +652,8 @@ namespace chaos
 	{
 		if (msg == WM_INPUTLANGCHANGE) // note: WM_INPUTLANGCHANGE is sent only to the topmost window of the EXE. That's exactly what we want
 		{
-			if (WindowApplication* application = Application::GetInstance())
-				application->OnInputLanguageChanged(); // the application will be responsible to propage the change to all windows
+			if (WindowApplication* window_application = Application::GetInstance())
+				window_application->OnInputLanguageChanged(); // the application will be responsible to propage the change to all windows
 			return true;
 		}
 		return false;
@@ -784,7 +784,7 @@ namespace chaos
 					return;
 			}
 			// notify the application of the mouse state
-			Application::SetApplicationInputMode(InputMode::MOUSE);
+			WindowApplication::SetApplicationInputMode(InputMode::MOUSE);
 
 			glm::vec2 position = { float(x), float(y) };
 			if (!my_window->IsMousePositionValid())
@@ -813,7 +813,7 @@ namespace chaos
 			KeyboardState::SetMouseButtonState(mouse_button, action);
 
 			// notify the application of the mouse state
-			Application::SetApplicationInputMode(InputMode::MOUSE);
+			WindowApplication::SetApplicationInputMode(InputMode::MOUSE);
 
 			my_window->OnMouseButton(button, action, modifier);
 		});
@@ -833,7 +833,7 @@ namespace chaos
 					return;
 			}
 			// notify the application of the mouse state
-			Application::SetApplicationInputMode(InputMode::MOUSE);
+			WindowApplication::SetApplicationInputMode(InputMode::MOUSE);
 
 			my_window->OnMouseWheel(scroll_x, scroll_y);
 		});
@@ -860,7 +860,7 @@ namespace chaos
 			KeyboardState::SetKeyboardButtonState(keyboard_button, action);
 
 			// notify the application of the keyboard button state
-			Application::SetApplicationInputMode(InputMode::KEYBOARD);
+			WindowApplication::SetApplicationInputMode(InputMode::KEYBOARD);
 
 			// handle the message
 			KeyEvent event;
@@ -887,7 +887,7 @@ namespace chaos
 					return;
 			}
 			// notify the application of the keyboard button state
-			Application::SetApplicationInputMode(InputMode::KEYBOARD);
+			WindowApplication::SetApplicationInputMode(InputMode::KEYBOARD);
 
 			my_window->OnCharEvent(c);
 		});
@@ -1018,10 +1018,10 @@ namespace chaos
 		return WithWindowContext([this]()
 		{
 			// this call may take a while causing a jump in 'delta_time'
-			WindowApplication* application = Application::GetInstance();
-			if (application == nullptr)
+			WindowApplication* window_application = Application::GetInstance();
+			if (window_application == nullptr)
 				return false;
-			application->FreezeNextFrameTickDuration();
+			window_application->FreezeNextFrameTickDuration();
 
 			// compute rendering size
 			glm::ivec2 window_size = GetWindowSize(false); // only interrested in client area
@@ -1058,7 +1058,7 @@ namespace chaos
 				return false;
 
 			// create the directory
-			boost::filesystem::path capture_directory_path = application->GetUserLocalTempPath() / "Captures";
+			boost::filesystem::path capture_directory_path = window_application->GetUserLocalTempPath() / "Captures";
 			if (!boost::filesystem::is_directory(capture_directory_path))
 				if (!boost::filesystem::create_directories(capture_directory_path))
 					return false;
@@ -1106,8 +1106,8 @@ namespace chaos
 			return true;
 		}
 		// give opportunity to application
-		if (Application* application = Application::GetInstance())
-			if (application->OnKeyEvent(key_event))
+		if (WindowApplication* window_application = Application::GetInstance())
+			if (window_application->OnKeyEvent(key_event))
 				return true;
 		// super method
 		return WindowInterface::OnKeyEventImpl(key_event);
@@ -1116,8 +1116,8 @@ namespace chaos
 	bool Window::OnMouseMoveImpl(glm::vec2 const& delta)
 	{
 		// give opportunity to application
-		if (Application* application = Application::GetInstance())
-			if (application->OnMouseMove(delta))
+		if (WindowApplication* window_application = Application::GetInstance())
+			if (window_application->OnMouseMove(delta))
 				return true;
 		return WindowInterface::OnMouseMoveImpl(delta);
 	}
@@ -1125,8 +1125,8 @@ namespace chaos
 	bool Window::OnMouseButtonImpl(int button, int action, int modifier)
 	{
 		// give opportunity to application
-		if (Application* application = Application::GetInstance())
-			if (application->OnMouseButton(button, action, modifier))
+		if (WindowApplication* window_application = Application::GetInstance())
+			if (window_application->OnMouseButton(button, action, modifier))
 				return true;
 		return WindowInterface::OnMouseButtonImpl(button, action, modifier);
 	}
@@ -1134,8 +1134,8 @@ namespace chaos
 	bool Window::OnMouseWheelImpl(double scroll_x, double scroll_y)
 	{
 		// give opportunity to application
-		if (Application* application = Application::GetInstance())
-			if (application->OnMouseWheel(scroll_x, scroll_y))
+		if (WindowApplication* window_application = Application::GetInstance())
+			if (window_application->OnMouseWheel(scroll_x, scroll_y))
 				return true;
 		return WindowInterface::OnMouseWheelImpl(scroll_x, scroll_y);
 	}
@@ -1143,8 +1143,8 @@ namespace chaos
 	bool Window::OnCharEventImpl(unsigned int c)
 	{
 		// give opportunity to application
-		if (Application* application = Application::GetInstance())
-			if (application->OnCharEvent(c))
+		if (WindowApplication* window_application = Application::GetInstance())
+			if (window_application->OnCharEvent(c))
 				return true;
 		return WindowInterface::OnCharEventImpl(c);
 	}

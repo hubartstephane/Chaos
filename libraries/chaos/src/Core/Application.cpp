@@ -257,21 +257,6 @@ namespace chaos
 		return result;
 	}
 
-	InputMode Application::GetApplicationInputMode()
-	{
-		Application const * application = Application::GetConstInstance();
-		if (application != nullptr)
-			return application->GetInputMode();
-		return InputMode::KEYBOARD;
-	}
-
-	void Application::SetApplicationInputMode(InputMode new_mode)
-	{
-		Application * application = Application::GetInstance();
-		if (application != nullptr)
-			application->SetInputMode(new_mode);
-	}
-
 	bool Application::HasApplicationCommandLineFlag(char const * flag_name)
 	{
 		Application const * application = Application::GetInstance();

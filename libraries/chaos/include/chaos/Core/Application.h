@@ -97,6 +97,10 @@ namespace chaos
 
 		/** initialization relative to ConfigurableInterface */
 		bool InitializeConfiguration();
+		/** initialize the logging system */
+		bool InitializeLogging();
+		/** initialize the global variable system */
+		bool InitializeGlobalVariables(int argc, char** argv);
 
 		/** load the extra classes */
 		virtual bool LoadClasses();

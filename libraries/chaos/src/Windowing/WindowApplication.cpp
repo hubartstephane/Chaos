@@ -217,12 +217,8 @@ namespace chaos
 	{
 	}
 
-	bool WindowApplication::Initialize()
+	bool WindowApplication::CreateSharedContext()
 	{
-		// super method
-		if (!Application::Initialize())
-			return false;
-
 		// set error callback
 		glfwSetErrorCallback(OnGLFWError);
 
@@ -263,6 +259,19 @@ namespace chaos
 		{
 			return false;
 		}
+
+		return true;
+	}
+
+	bool WindowApplication::Initialize()
+	{
+		// create an invisible window to share its context with all others (must be called before super method)
+		if (!CreateSharedContext())
+			return false;
+
+		// super method
+		if (!Application::Initialize())
+			return false;
 
 		// a final initialization (after main window is constructed ... and OpenGL context)
 		if (!WithGLFWContext(shared_context, [this]()

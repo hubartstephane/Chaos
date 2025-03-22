@@ -19,15 +19,6 @@ namespace chaos
 
 	void Application::LogExecutionInformation()
 	{
-		// display the options
-#if _DEBUG
-		ApplicationLog::BeginTransaction(LogSeverity::Message);
-		ApplicationLog::TransactionConcatLN("==========================================");
-		ApplicationLog::TransactionConcatLN("== Existing Options");
-		ApplicationLog::TransactionConcatLN("==========================================");
-		ApplicationLog::TransactionConcatLN(GlobalVariableManager::GetInstance()->GetOptionString());
-		ApplicationLog::EndTransaction();
-#endif
 		// display the arguments
 		ApplicationLog::BeginTransaction(LogSeverity::Message);
 		ApplicationLog::TransactionConcatLN("==========================================");
@@ -84,23 +75,6 @@ namespace chaos
 
 	bool Application::Initialize()
 	{
-		// prepare the logger
-		if (Logger* logger = Logger::GetInstance())
-			if (LoggerListener* listener = new FileLoggerListener())
-				listener->SetLogger(logger);
-
-		HelpText::OutputToLogs();
-
-		// some log
-		LogExecutionInformation();
-
-		// load the configuration
-		if (!InitializeConfiguration())
-		{
-			ApplicationLog::Error("InitializeConfiguration(...) failure");
-			return false;
-		}
-
 		// load the properties
 		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
 		{
@@ -142,30 +116,66 @@ namespace chaos
 			root_config->LoadConfigurablePropertiesFromFile(GetConfigurationPath(), GetPersistentDataPath(), false); // do not send notification yet
 			return true;
 		}
+		ApplicationLog::Error("InitializeConfiguration(...) failure");
 		return false;
+	}
 
+	bool Application::InitializeLogging()
+	{
+		// prepare the logger
+		if (Logger* logger = Logger::GetInstance())
+			if (LoggerListener* listener = new FileLoggerListener())
+				listener->SetLogger(logger);
+		// some logs
+		LogExecutionInformation();
+		HelpText::OutputToLogs();
+
+		return true;
+	}
+
+	bool Application::InitializeGlobalVariables(int argc, char** argv)
+	{
+		GlobalVariableManager::GetInstance()->ParseArguments(argc, argv);
+
+		// display the options
+#if _DEBUG
+		ApplicationLog::BeginTransaction(LogSeverity::Message);
+		ApplicationLog::TransactionConcatLN("==========================================");
+		ApplicationLog::TransactionConcatLN("== Existing Options");
+		ApplicationLog::TransactionConcatLN("==========================================");
+		ApplicationLog::TransactionConcatLN(GlobalVariableManager::GetInstance()->GetOptionString());
+		ApplicationLog::EndTransaction();
+#endif
+
+		return true;
 	}
 
 	int Application::Run(int argc, char ** argv, char ** env)
 	{
-		bool result = false;
+		int result = -1;
 		if (InitializeStandardLibraries())
 		{
-			// parse the parameters
-			GlobalVariableManager::GetInstance()->ParseArguments(argc, argv);
-
 			// store a copy of the parameters
 			StoreParameters(argc, argv, env);
 			// create a user temp directory if necessary */
 			CreateUserLocalTempDirectory();
+			// initialize logging system (need to be done after StoreParameters so that application paths are known for loggers)
+			InitializeLogging();
+			// initialize global variables using parameters (requires logger)
+			InitializeGlobalVariables(argc, argv);
+
 			// initialize, run, and finalize the application
-			if (Initialize())
+			if (InitializeConfiguration())
 			{
-				result = Main();
-				SavePersistentPropertiesToFile(true); // save the persistent data to file
+				if (Initialize())
+				{
+					result = Main();
+					SavePersistentPropertiesToFile(true); // save the persistent data to file
+				}
+				// finalization (even if initialization failed)
+				Finalize();
 			}
-			// finalization (even if initialization failed)
-			Finalize();
+
 			FinalizeStandardLibraries();
 		}
 		return result;

@@ -226,6 +226,10 @@ namespace chaos
 		virtual int Main() override;
 		/** The main body method */
 		virtual int MainBody();
+
+		/** create an invisible window to share its context with all other windows */
+		bool CreateSharedContext();
+
 		/** create the main window */
 		virtual Window* CreateMainWindow();
 		/** the possibility to have final initialization before the main loop is run */

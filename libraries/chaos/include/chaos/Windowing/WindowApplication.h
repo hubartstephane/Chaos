@@ -229,11 +229,11 @@ namespace chaos
 
 		/** create an invisible window to share its context with all other windows */
 		bool CreateSharedContext();
+		/** destroy the shared window */
+		void FinalizeSharedContext();
 
 		/** create the main window */
 		virtual Window* CreateMainWindow();
-		/** the possibility to have final initialization before the main loop is run */
-		virtual bool PostOpenGLContextCreation();
 
 		/** called whenever a monitor is connected or disconnected */
 		virtual void OnMonitorEvent(GLFWmonitor* monitor, int monitor_state);
@@ -262,10 +262,10 @@ namespace chaos
 		virtual bool InitializeManagers() override;
 		/** finalize the managers */
 		virtual void FinalizeManagers() override;
-		/** the GPU manager must be initialized after the OpenGL context is OK. */
-		virtual bool CreateGPUResourceManager();
-		/** finalize the GPU manager */
-		virtual void FinalizeGPUResourceManager();
+		/** initialize the GPU resources */
+		virtual bool InitializeGPUResources();
+		/** finalize the GPU resources */
+		virtual void FinalizeGPUResources();
 
 
 

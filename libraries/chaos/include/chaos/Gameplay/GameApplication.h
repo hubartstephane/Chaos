@@ -32,7 +32,9 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual bool PostOpenGLContextCreation() override;
+		virtual bool InitializeGPUResources() override;
+		/** override */
+		virtual void FinalizeGPUResources() override;
 		/** override */
 		virtual bool DoTick(float delta_time) override;
 		/** override */

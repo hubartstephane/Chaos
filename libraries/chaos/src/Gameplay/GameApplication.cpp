@@ -17,7 +17,14 @@ namespace chaos
 		assert(game_viewport_widget_class.IsValid());
 	}
 
-	bool GameApplication::PostOpenGLContextCreation()
+	void GameApplication::FinalizeGPUResources()
+	{
+		assert(glfwGetCurrentContext() == shared_context);
+
+		WindowApplication::FinalizeGPUResources();
+	}
+
+	bool GameApplication::InitializeGPUResources()
 	{
 		assert(glfwGetCurrentContext() == shared_context);
 
@@ -29,7 +36,7 @@ namespace chaos
 		if (!game->Initialize())
 			return false;
 		// super method : need to be done game initialization ! (because atlas creation requires the game to have loaded its levels)
-		if (!WindowApplication::PostOpenGLContextCreation())
+		if (!WindowApplication::InitializeGPUResources())
 			return false;
 		// create now some game resources that need application resources to be initialized
 		if (!game->CreateGPUResources())

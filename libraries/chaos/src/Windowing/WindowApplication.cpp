@@ -217,6 +217,15 @@ namespace chaos
 	{
 	}
 
+	void WindowApplication::FinalizeSharedContext()
+	{
+		if (shared_context != nullptr)
+		{
+			glfwDestroyWindow(shared_context);
+			shared_context = nullptr;
+		}
+	}
+
 	bool WindowApplication::CreateSharedContext()
 	{
 		// set error callback
@@ -251,9 +260,6 @@ namespace chaos
 			GLTools::SetDebugMessageHandler();
 			// some generic information
 			GLTools::DisplayGenericInformation();
-			// initialize the GPU resource ResourceManager (first window/OpenGL context must have been created)
-			if (!CreateGPUResourceManager())
-				return false;
 			return true;
 		}))
 		{
@@ -273,15 +279,14 @@ namespace chaos
 		if (!Application::Initialize())
 			return false;
 
-		// a final initialization (after main window is constructed ... and OpenGL context)
+		// intialize the resources for GPU
 		if (!WithGLFWContext(shared_context, [this]()
 		{
-			return PostOpenGLContextCreation();
+			return InitializeGPUResources();
 		}))
 		{
 			return false;
 		}
-
 		return true;
 	}
 
@@ -543,7 +548,26 @@ namespace chaos
 		return true;
 	}
 
-	bool WindowApplication::PostOpenGLContextCreation()
+	bool WindowApplication::DoTick(float delta_time)
+	{
+		assert(glfwGetCurrentContext() == shared_context);
+
+		// tick the managers
+		if (main_clock != nullptr)
+			main_clock->TickClock(delta_time);
+		if (sound_manager != nullptr)
+			sound_manager->Tick(delta_time);
+		// update keyboard and mouse state
+		KeyboardState::UpdateKeyStates(delta_time);
+		return true;
+	}
+
+	void WindowApplication::OnGLFWError(int code, const char* msg)
+	{
+		ApplicationLog::Message("Window(...) [%d] failure : %s", code, msg);
+	}
+
+	bool WindowApplication::InitializeGPUResources()
 	{
 		assert(glfwGetCurrentContext() == shared_context);
 
@@ -565,45 +589,11 @@ namespace chaos
 		return true;
 	}
 
-	bool WindowApplication::DoTick(float delta_time)
+	void WindowApplication::FinalizeGPUResources()
 	{
-		assert(glfwGetCurrentContext() == shared_context);
-
-		// tick the managers
-		if (main_clock != nullptr)
-			main_clock->TickClock(delta_time);
-		if (sound_manager != nullptr)
-			sound_manager->Tick(delta_time);
-		// update keyboard and mouse state
-		KeyboardState::UpdateKeyStates(delta_time);
-		return true;
-	}
-
-	void WindowApplication::OnGLFWError(int code, const char* msg)
-	{
-		ApplicationLog::Message("Window(...) [%d] failure : %s", code, msg);
-	}
-
-	bool WindowApplication::CreateGPUResourceManager()
-	{
-		assert(glfwGetCurrentContext() == shared_context);
-
-		// create and start the GPU manager
-		gpu_resource_manager = new GPUResourceManager;
-		if (gpu_resource_manager == nullptr)
-			return false;
-		GiveChildConfiguration(gpu_resource_manager.get(), "gpu");
-		return gpu_resource_manager->StartManager();
-	}
-
-	void WindowApplication::FinalizeGPUResourceManager()
-	{
-		// stop the resource manager
-		if (gpu_resource_manager != nullptr)
-		{
-			gpu_resource_manager->StopManager();
-			gpu_resource_manager = nullptr;
-		}
+		particle_text_generator = nullptr;
+		gamepad_button_map.clear();
+		texture_atlas = nullptr;
 	}
 
 	bool WindowApplication::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
@@ -662,11 +652,32 @@ namespace chaos
 		GiveChildConfiguration(imgui_manager.get(), "imgui");
 		imgui_manager->StartManager();
 
+		// create and start the GPU manager
+		if (!WithGLFWContext(shared_context, [this]()
+		{
+			gpu_resource_manager = new GPUResourceManager;
+			if (gpu_resource_manager == nullptr)
+				return false;
+			GiveChildConfiguration(gpu_resource_manager.get(), "gpu");
+			return gpu_resource_manager->StartManager();
+		}))
+		{
+			return false;
+		}
 		return true;
 	}
 
 	void WindowApplication::FinalizeManagers()
 	{
+		// stop the GPU manager
+		if (gpu_resource_manager != nullptr)
+		{
+			WithGLFWContext(shared_context, [this]()
+			{
+				gpu_resource_manager->StopManager();
+				gpu_resource_manager = nullptr;
+			});
+		}
 		// stop the clock
 		main_clock = nullptr;
 		// stop the sound manager
@@ -690,7 +701,12 @@ namespace chaos
 		// destroy all windows
 		DestroyAllWindows();
 		// destroy the resources
-		FinalizeGPUResourceManager();
+		WithGLFWContext(shared_context, [this]()
+		{
+			FinalizeGPUResources();
+		});
+		// destroy the shared context
+		FinalizeSharedContext();
 		// super
 		Application::Finalize();
 	}

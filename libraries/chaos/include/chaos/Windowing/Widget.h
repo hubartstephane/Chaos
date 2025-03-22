@@ -10,7 +10,7 @@ namespace chaos
 	* Widget : some kind of "virtual sub-window"
 	*/
 
-	class CHAOS_API Widget : public Object, public WindowInterface
+	class CHAOS_API Widget : public Object, public WindowInterface, public NamedInterface
 	{
 		CHAOS_DECLARE_OBJECT_CLASS(Widget, Object);
 

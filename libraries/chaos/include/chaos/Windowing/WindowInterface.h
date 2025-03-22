@@ -22,7 +22,7 @@ namespace chaos
 	// WindowInterface : a common interface for both window and window client
 	// ========================================================
 
-	class CHAOS_API WindowInterface : public TickableInterface, public InputEventReceiverInterface, public NamedInterface, public GPUProgramProviderInterface
+	class CHAOS_API WindowInterface : public TickableInterface, public InputEventReceiverInterface, public GPUProgramProviderInterface
 	{
 	protected:
 

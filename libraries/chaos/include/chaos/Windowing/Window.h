@@ -120,7 +120,7 @@ namespace chaos
 	* Window: a binding class between chaos and GLFW to handle window (beware the prefix "My")
 	*/
 
-	class CHAOS_API Window : public Object, public WindowInterface, public ConfigurableInterface
+	class CHAOS_API Window : public Object, public WindowInterface, public ConfigurableInterface, public NamedInterface
 	{
 		friend class WindowApplication;
 
@@ -340,6 +340,14 @@ namespace chaos
 		/** draw ImGui menu */
 		virtual void OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func);
 
+		/** get the owned client */
+		AutoCastable<WindowClient> GetWindowClient() { return window_client.get(); }
+		/** get the owning window */
+		AutoConstCastable<WindowClient> GetWindowClient() const { return window_client.get(); }
+
+		/** set the client */
+		void SetWindowClient(WindowClient * in_client);
+
 	protected:
 
 		/** override */
@@ -507,6 +515,9 @@ namespace chaos
 
 		/** the imgui_objects handled by this window */
 		std::vector<shared_ptr<ImGuiObject>> imgui_objects;
+
+		/** the window client */
+		shared_ptr<WindowClient> window_client;
 	};
 
 #endif

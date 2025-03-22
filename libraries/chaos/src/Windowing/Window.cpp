@@ -1478,4 +1478,21 @@ namespace chaos
 		}
 	}
 
+	void Window::SetWindowClient(WindowClient* in_client)
+	{
+		if (window_client == in_client)
+			return;
+		if (window_client != nullptr)
+		{
+			window_client->window = nullptr;
+			window_client->OnUnpluggedFromWindow(this);
+		}
+		window_client = in_client;
+		if (window_client != nullptr)
+		{
+			window_client->window = this;
+			window_client->OnPluggedIntoWindow(this);
+		}
+	}
+
 }; // namespace chaos

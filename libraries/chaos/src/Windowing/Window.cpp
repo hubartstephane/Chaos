@@ -661,6 +661,8 @@ namespace chaos
 
 	void Window::OnInputLanguageChanged()
 	{
+		if (window_client != nullptr)
+			window_client->OnInputLanguageChanged();
 	}
 
 	// Note on ImGui and WndProc
@@ -1109,7 +1111,11 @@ namespace chaos
 		if (WindowApplication* window_application = Application::GetInstance())
 			if (window_application->OnKeyEvent(key_event))
 				return true;
-		// super method
+		// then client
+		if (window_client != nullptr)
+			if (window_client->OnKeyEvent(key_event))
+				return true;
+		// then fallback to super
 		return WindowInterface::OnKeyEventImpl(key_event);
 	}
 
@@ -1119,6 +1125,11 @@ namespace chaos
 		if (WindowApplication* window_application = Application::GetInstance())
 			if (window_application->OnMouseMove(delta))
 				return true;
+		// then client
+		if (window_client != nullptr)
+			if (window_client->OnMouseMove(delta))
+				return true;
+		// then fallback to super
 		return WindowInterface::OnMouseMoveImpl(delta);
 	}
 
@@ -1128,6 +1139,11 @@ namespace chaos
 		if (WindowApplication* window_application = Application::GetInstance())
 			if (window_application->OnMouseButton(button, action, modifier))
 				return true;
+		// then client
+		if (window_client != nullptr)
+			if (window_client->OnMouseButton(button, action, modifier))
+				return true;
+		// then fallback to super
 		return WindowInterface::OnMouseButtonImpl(button, action, modifier);
 	}
 
@@ -1137,6 +1153,11 @@ namespace chaos
 		if (WindowApplication* window_application = Application::GetInstance())
 			if (window_application->OnMouseWheel(scroll_x, scroll_y))
 				return true;
+		// then client
+		if (window_client != nullptr)
+			if (window_client->OnMouseWheel(scroll_x, scroll_y))
+				return true;
+		// then fallback to super
 		return WindowInterface::OnMouseWheelImpl(scroll_x, scroll_y);
 	}
 
@@ -1146,6 +1167,11 @@ namespace chaos
 		if (WindowApplication* window_application = Application::GetInstance())
 			if (window_application->OnCharEvent(c))
 				return true;
+		// then client
+		if (window_client != nullptr)
+			if (window_client->OnCharEvent(c))
+				return true;
+		// then fallback to super
 		return WindowInterface::OnCharEventImpl(c);
 	}
 
@@ -1271,8 +1297,16 @@ namespace chaos
 
 	bool Window::OnDraw(GPURenderContext* render_context, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params)
 	{
-		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
-		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
+		if (window_client != nullptr)
+		{
+			window_client->OnDraw(render_context, uniform_provider, draw_params);
+		}
+		else // fallback
+		{
+			glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
+			glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
+		}
+
 		return true;
 	}
 
@@ -1285,6 +1319,10 @@ namespace chaos
 				UpdateWidgetPlacementHierarchy();
 			result |= root_widget->Tick(delta_time);
 		}
+
+		if (window_client != nullptr)
+			window_client->Tick(delta_time);
+
 		return result;
 	}
 
@@ -1341,29 +1379,42 @@ namespace chaos
 	void Window::OnWindowResize(glm::ivec2 size)
 	{
 		UpdateWidgetPlacementHierarchy();
+
+		if (window_client != nullptr)
+			window_client->OnWindowResize(size);
 	}
 
 	bool Window::OnWindowClosed()
 	{
+		if (window_client != nullptr)
+			return window_client->OnWindowClosed();
 		return true;
 	}
 
 	void Window::OnDropFile(int count, char const** paths)
 	{
+		if (window_client != nullptr)
+			window_client->OnDropFile(count, paths);
 	}
 
 	void Window::OnIconifiedStateChange(bool iconified)
 	{
+		if (window_client != nullptr)
+			window_client->OnIconifiedStateChange(iconified);
 	}
 
 	void Window::OnFocusStateChange(bool gain_focus)
 	{
+		if (window_client != nullptr)
+			window_client->OnFocusStateChange(gain_focus);
 	}
 
 	void Window::OnMonitorEvent(GLFWmonitor* monitor, int monitor_state)
 	{
 		if (monitor == fullscreen_monitor && monitor_state == GLFW_DISCONNECTED)
 			fullscreen_monitor = nullptr;
+		if (window_client != nullptr)
+			window_client->OnMonitorEvent(monitor, monitor_state);
 	}
 
 	void Window::Finalize()

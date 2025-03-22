@@ -298,17 +298,13 @@ namespace chaos
 		SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED);
 #endif // #if _WIN32
 
-		// create the main window
-		Window * main_window = CreateMainWindow();
-		if (main_window == nullptr)
-			return -1;
-
 		// open windows that were there during previous session (after main window because main window can take a few second to initialize)
 		std::vector<std::string> opened_window;
 		if (JSONTools::GetAttribute(GetJSONReadConfiguration(), "opened_window", opened_window))
 			for (std::string const& name : opened_window)
 				CreateOrDestroyKnownWindow(name.c_str(), true);
 
+		// real main function
 		int result = MainBody();
 		// destroy remaining windows
 		Quit();
@@ -318,6 +314,11 @@ namespace chaos
 
 	int WindowApplication::MainBody()
 	{
+		// create the main window
+		Window* main_window = CreateMainWindow();
+		if (main_window == nullptr)
+			return -1;
+
 		// run the main loop as long as there are main windows
 		RunMessageLoop([this]()
 		{

@@ -124,10 +124,10 @@ protected:
 		return application->GetResourcesPath();
 	}
 
-	virtual bool InitializeFromConfiguration(nlohmann::json const* config) override
+	virtual bool OnInitialize(chaos::JSONReadConfiguration config) override
 	{
 		// super
-		if (!Window::InitializeFromConfiguration(config))
+		if (!Window::OnInitialize(config))
 			return false;
 
 		// create a wireframe box

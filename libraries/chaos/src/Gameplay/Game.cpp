@@ -547,19 +547,19 @@ namespace chaos
 
 	bool Game::Initialize()
 	{
-		return InitializeFromConfiguration(GetJSONReadConfiguration().default_config);
+		return OnInitialize(GetJSONReadConfiguration());
 	}
 
-	bool Game::InitializeFromConfiguration(nlohmann::json const * config)
+	bool Game::OnInitialize(JSONReadConfiguration config)
 	{
 		// initialize the gamepad manager
-		if (!CreateGamepadManager(config))
+		if (!CreateGamepadManager(config.default_config))
 			return false;
 		// create game state_machine
-		if (!CreateGameStateMachine(config))
+		if (!CreateGameStateMachine(config.default_config))
 			return false;
 		// initialize clocks
-		if (!CreateClocks(config))
+		if (!CreateClocks(config.default_config))
 			return false;
 		// initialize game values
 		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
@@ -569,13 +569,13 @@ namespace chaos
 
 
 		// loading object type sets
-		if (!GenerateObjectTypeSets(config))
+		if (!GenerateObjectTypeSets(config.default_config))
 			return false;
 		// loading tilemapset
-		if (!GenerateTileSets(config))
+		if (!GenerateTileSets(config.default_config))
 			return false;
 		// load exisiting levels
-		if (!LoadLevels(config))
+		if (!LoadLevels(config.default_config))
 			return false;
 		return true;
 	}

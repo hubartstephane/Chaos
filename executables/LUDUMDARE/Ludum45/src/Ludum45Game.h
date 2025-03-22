@@ -39,7 +39,7 @@ public:
 	LudumGame();
 
 	/** override */
-	virtual bool InitializeFromConfiguration(nlohmann::json const * config) override;
+	virtual bool OnInitialize(chaos::JSONReadConfiguration config) override;
 
 
 	EnemyType * FindEnemyType(char const * name);

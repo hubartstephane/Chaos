@@ -76,7 +76,7 @@ public:
 	GameHUDShroudLifeComponent(char const* in_bitmap_name = ""):
 		bitmap_name(in_bitmap_name) {}
 
-	virtual bool InitializeFromConfiguration(nlohmann::json const * config) override;
+	virtual bool OnInitialize(chaos::JSONReadConfiguration config) override;
 
 protected:
 

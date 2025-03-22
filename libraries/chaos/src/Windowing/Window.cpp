@@ -1330,10 +1330,10 @@ namespace chaos
 	{
 		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
 			return false;
-		return InitializeFromConfiguration(GetJSONReadConfiguration().default_config);
+		return OnInitialize(GetJSONReadConfiguration());
 	}
 
-	bool Window::InitializeFromConfiguration(nlohmann::json const * config)
+	bool Window::OnInitialize(JSONReadConfiguration config)
 	{
 		return true;
 	}

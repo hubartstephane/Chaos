@@ -47,9 +47,9 @@ chaos::TMLevel * LudumGame::CreateTMLevel()
 	return new LudumLevel();
 }
 
-bool LudumGame::InitializeFromConfiguration(nlohmann::json const * config)
+bool LudumGame::OnInitialize(chaos::JSONReadConfiguration config)
 {
-	if (!chaos::Game::InitializeFromConfiguration(config))
+	if (!chaos::Game::OnInitialize(config))
 		return false;
 
 

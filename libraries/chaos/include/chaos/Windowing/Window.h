@@ -400,7 +400,7 @@ namespace chaos
 		/** called at window destruction */
 		virtual void Finalize();
 		/** called at window creation (returns false if the window must be killed) */
-		virtual bool InitializeFromConfiguration(nlohmann::json const* config);
+		virtual bool OnInitialize(JSONReadConfiguration config);
 
 		/** get the mouse position */
 		glm::vec2 GetMousePosition() const;

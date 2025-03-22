@@ -163,12 +163,12 @@ chaos::Level * LudumGame::DoLoadLevel(chaos::FilePathParam const & path)
 	return result;
 }
 
-bool LudumGame::InitializeFromConfiguration(nlohmann::json const * config)
+bool LudumGame::OnInitialize(chaos::JSONReadConfiguration config)
 {
-	if (!chaos::Game::InitializeFromConfiguration(config))
+	if (!chaos::Game::OnInitialize(config))
 		return false;
 	// the dictionnary
-	if (!InitializeDictionnary(config))
+	if (!InitializeDictionnary(config.default_config))
 		return false;
 	// build the rewards/punishment values
 	if (!InitializeRewardsAndPunishments())

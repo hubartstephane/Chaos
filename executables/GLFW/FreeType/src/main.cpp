@@ -297,9 +297,9 @@ protected:
 #endif
 	}
 
-	virtual bool InitializeFromConfiguration(nlohmann::json const * config) override
+	virtual bool OnInitialize(chaos::JSONReadConfiguration config) override
 	{
-		if (!chaos::Window::InitializeFromConfiguration(config))
+		if (!chaos::Window::OnInitialize(config))
 			return false;
 
 		chaos::Application* application = chaos::Application::GetInstance();

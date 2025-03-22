@@ -35,7 +35,7 @@ public:
 	LudumGame();
 
 	/** override */
-	virtual bool InitializeFromConfiguration(nlohmann::json const * config) override;
+	virtual bool OnInitialize(JSONReadConfiguration config) override;
 
 
 protected:

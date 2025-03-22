@@ -48,7 +48,7 @@ protected:
 	bool IsWordValid(std::string const & word) const;
 
 	/** override */
-	virtual bool InitializeFromConfiguration(nlohmann::json const * config) override;
+	virtual bool OnInitialize(chaos::JSONReadConfiguration config) override;
 	/** initialize the particle manager */
 	virtual int AddParticleLayers() override;
 	/** initialize the game variables */

@@ -125,7 +125,6 @@ public:
 
 	MyApplication()
 	{
-		show_console = false;
 	}
 
 protected:

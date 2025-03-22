@@ -20,9 +20,9 @@ protected:
 	}
 
 
-	virtual bool InitializeFromConfiguration(nlohmann::json const * config) override
+	virtual bool OnInitialize(chaos::JSONReadConfiguration config) override
 	{
-		if (!chaos::Window::InitializeFromConfiguration(config))
+		if (!chaos::Window::OnInitialize(config))
 			return false;
 
 		using TexturePtr = chaos::shared_ptr<chaos::GPUTexture>;
@@ -85,7 +85,7 @@ protected:
 		program1->Release();
 
 
-		boost::filesystem::path dir_path = chaos::JSONTools::DumpConfigFile(config);
+		boost::filesystem::path dir_path = chaos::JSONTools::DumpConfigFile(config.default_config);
 		chaos::WinTools::ShowFile(dir_path);
 		return true;
 	}

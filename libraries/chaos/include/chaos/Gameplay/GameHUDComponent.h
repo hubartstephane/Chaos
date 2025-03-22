@@ -81,7 +81,7 @@ namespace chaos
 		/** called whenever the hud is beeing removed into the hud */
 		virtual void OnRemovedFromHUD();
 		/** initialization method from JSON */
-		virtual bool InitializeFromConfiguration(nlohmann::json const * config);
+		virtual bool OnInitialize(JSONReadConfiguration config);
 
 		/** override */
 		virtual bool OnConfigurationChanged(JSONReadConfiguration config) override;
@@ -140,7 +140,7 @@ namespace chaos
 		/** override */
 		virtual void UpdateMesh() override;
 		/** override */
-		virtual bool InitializeFromConfiguration(nlohmann::json const * config) override;
+		virtual bool OnInitialize(JSONReadConfiguration config) override;
 		/** override */
 		virtual void OnInsertedInHUD() override;
 
@@ -373,7 +373,7 @@ namespace chaos
 		/** override */
 		virtual void TweakTextGeneratorParams(ParticleTextGenerator::GeneratorParams& final_params) const override;
 		/** override */
-		virtual bool InitializeFromConfiguration(nlohmann::json const * config) override;
+		virtual bool OnInitialize(JSONReadConfiguration config) override;
 
 	protected:
 
@@ -409,7 +409,7 @@ namespace chaos
 		/** override */
 		virtual void UpdateMesh() override;
 		/** override */
-		virtual bool InitializeFromConfiguration(nlohmann::json const * config) override;
+		virtual bool OnInitialize(JSONReadConfiguration config) override;
 
 	protected:
 
@@ -511,7 +511,7 @@ namespace chaos
 		/** override */
 		virtual void OnInsertedInHUD() override;
 		/** override */
-		virtual bool InitializeFromConfiguration(nlohmann::json const * config) override;
+		virtual bool OnInitialize(JSONReadConfiguration config) override;
 
 	protected:
 

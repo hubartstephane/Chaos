@@ -88,7 +88,7 @@ namespace chaos
 	{
 		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
 			return false;
-		return InitializeFromConfiguration(GetJSONReadConfiguration().default_config);
+		return OnInitialize(GetJSONReadConfiguration());
 	}
 
 	void GameHUDComponent::OnInsertedInHUD()
@@ -122,7 +122,7 @@ namespace chaos
 		return result;
 	}
 
-	bool GameHUDComponent::InitializeFromConfiguration(nlohmann::json const * config)
+	bool GameHUDComponent::OnInitialize(JSONReadConfiguration config)
 	{
 		bool visible = true;
 		JSONTools::GetAttribute(config, "visible", visible);
@@ -199,9 +199,9 @@ namespace chaos
 	{
 	}
 
-	bool GameHUDTextComponent::InitializeFromConfiguration(nlohmann::json const * config)
+	bool GameHUDTextComponent::OnInitialize(JSONReadConfiguration config)
 	{
-		if (!GameHUDMeshComponent::InitializeFromConfiguration(config))
+		if (!GameHUDMeshComponent::OnInitialize(config))
 			return true;
 		JSONTools::GetAttribute(config, "format", text);
 		JSONTools::GetAttribute(config, "generator_params", generator_params);
@@ -455,9 +455,9 @@ namespace chaos
 		final_params.default_color = (cached_value >= 10.0f) ? normal_color : final_color;
 	}
 
-	bool GameHUDTimeoutComponent::InitializeFromConfiguration(nlohmann::json const * config)
+	bool GameHUDTimeoutComponent::OnInitialize(JSONReadConfiguration config)
 	{
-		if (!GameHUDCacheValueTextComponent<float>::InitializeFromConfiguration(config))
+		if (!GameHUDCacheValueTextComponent<float>::OnInitialize(config))
 			return true;
 		JSONTools::GetAttribute(config, "digit_count", digit_count);
 		JSONTools::GetAttribute(config, "normal_color", normal_color);
@@ -469,9 +469,9 @@ namespace chaos
 	// GameHUDLifeComponent
 	// ====================================================================
 
-	bool GameHUDLifeComponent::InitializeFromConfiguration(nlohmann::json const * config)
+	bool GameHUDLifeComponent::OnInitialize(JSONReadConfiguration config)
 	{
-		if (!GameHUDMeshComponent::InitializeFromConfiguration(config))
+		if (!GameHUDMeshComponent::OnInitialize(config))
 			return true;
 
 		JSONTools::GetAttribute(config, "hotpoint", hotpoint);
@@ -716,9 +716,9 @@ namespace chaos
 		should_update_mesh = true;
 	}
 
-	bool GameHUDDebugValuesComponent::InitializeFromConfiguration(nlohmann::json const * config)
+	bool GameHUDDebugValuesComponent::OnInitialize(JSONReadConfiguration config)
 	{
-		if (!GameHUDMeshComponent::InitializeFromConfiguration(config))
+		if (!GameHUDMeshComponent::OnInitialize(config))
 			return true;
 		JSONTools::GetAttribute(config, "generator_params", generator_params);
 		return true;

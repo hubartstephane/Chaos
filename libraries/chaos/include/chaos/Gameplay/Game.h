@@ -207,7 +207,7 @@ namespace chaos
 		virtual void DoDisplayHUD(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
 
 		/** initialization from the config file */
-		virtual bool InitializeFromConfiguration(nlohmann::json const * config);
+		virtual bool OnInitialize(JSONReadConfiguration config);
 		/** initialize some resources */
 		virtual bool CreateGPUResources();
 

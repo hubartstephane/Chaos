@@ -40,7 +40,7 @@ public:
 	LudumGame();
 
 	/** override */
-	virtual bool InitializeFromConfiguration(nlohmann::json const * config) override;
+	virtual bool OnInitialize(chaos::JSONReadConfiguration config) override;
 
 	float GetBuyUpgradeTime() const { return buy_upgrade_time; }
 

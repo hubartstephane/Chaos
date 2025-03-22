@@ -42,9 +42,9 @@ TMLevel * LudumGame::CreateTMLevel()
 	return new LudumLevel();
 }
 
-bool LudumGame::InitializeFromConfiguration(nlohmann::json const * config)
+bool LudumGame::OnInitialize(JSONReadConfiguration config)
 {
-	if (!Game::InitializeFromConfiguration(config))
+	if (!Game::OnInitialize(config))
 		return false;
 
 

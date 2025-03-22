@@ -3,10 +3,10 @@
 
 namespace chaos
 {
-	bool GameWindow::InitializeFromConfiguration(nlohmann::json const * config)
+	bool GameWindow::OnInitialize(JSONReadConfiguration config)
 	{
 		// super call
-		if (!Window::InitializeFromConfiguration(config))
+		if (!Window::OnInitialize(config))
 			return false;
 		// get the game
 		if (GameApplication * game_application = Application::GetInstance())

@@ -5,12 +5,13 @@ namespace chaos
 {
 	bool GameWindow::OnInitialize(JSONReadConfiguration config)
 	{
+		// get the game (need to be done before super call)
+		if (GameApplication* game_application = Application::GetInstance())
+			game = game_application->GetGame();
 		// super call
 		if (!Window::OnInitialize(config))
 			return false;
-		// get the game
-		if (GameApplication * game_application = Application::GetInstance())
-			game = game_application->GetGame();
+
 		return true;
 	}
 

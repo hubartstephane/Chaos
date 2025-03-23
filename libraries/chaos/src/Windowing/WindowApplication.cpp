@@ -180,8 +180,6 @@ namespace chaos
 				result->Destroy();
 				return nullptr; // the shared_ptr destruction will handle the object lifetime
 			}
-			// create the root widget
-			result->CreateRootWidget();
 			// notify the application
 			OnWindowCreated(result.get());
 			return result.get();

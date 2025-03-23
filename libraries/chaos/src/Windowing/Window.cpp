@@ -1335,6 +1335,9 @@ namespace chaos
 
 	bool Window::OnInitialize(JSONReadConfiguration config)
 	{
+		// create the root widget
+		if (!CreateRootWidget())
+			return false;
 		return true;
 	}
 

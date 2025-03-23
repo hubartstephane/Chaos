@@ -29,11 +29,6 @@ namespace chaos
 		return true;
 	}
 
-	bool Player::OnConfigurationChanged(JSONReadConfiguration config)
-	{
-		return ConfigurableInterface::OnConfigurationChanged(config);
-	}
-
 	bool Player::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
 	{
 		CHAOS_JSON_ATTRIBUTE(config, life_count);

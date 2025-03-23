@@ -39,16 +39,6 @@ namespace chaos
 		ApplicationLog::EndTransaction();
 	}
 
-	bool Application::OnConfigurationChanged(JSONReadConfiguration config)
-	{
-		return ConfigurableInterface::OnConfigurationChanged(config);
-	}
-
-	bool Application::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
-	{
-		return true;
-	}
-
 	boost::filesystem::path Application::GetConfigurationPath() const
 	{
 		return GetResourcesPath() / "config.json";

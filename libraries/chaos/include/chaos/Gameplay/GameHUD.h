@@ -121,11 +121,6 @@ namespace chaos
 		/** override */
 		virtual int DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params) override;
 
-		/** override */
-		virtual bool OnConfigurationChanged(JSONReadConfiguration config) override;
-		/** override */
-		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
-
 	protected:
 
 		/** the allocations */

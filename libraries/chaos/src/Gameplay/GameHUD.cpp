@@ -52,16 +52,6 @@ namespace chaos
 		return game->GetPlayerCount();
 	}
 
-	bool GameHUD::OnConfigurationChanged(JSONReadConfiguration config)
-	{
-		return ConfigurableInterface::OnConfigurationChanged(config);
-	}
-
-	bool GameHUD::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
-	{
-		return true;
-	}
-
 	bool GameHUD::Initialize(Game* in_game)
 	{
 		// ensure valid arguments and not already initialized

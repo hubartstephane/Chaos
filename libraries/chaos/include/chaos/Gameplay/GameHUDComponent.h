@@ -83,11 +83,6 @@ namespace chaos
 		/** initialization method from JSON */
 		virtual bool OnInitialize(JSONReadConfiguration config);
 
-		/** override */
-		virtual bool OnConfigurationChanged(JSONReadConfiguration config) override;
-		/** override */
-		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
-
 	protected:
 
 		/** the current hud */

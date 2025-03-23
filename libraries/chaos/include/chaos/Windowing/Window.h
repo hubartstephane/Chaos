@@ -444,10 +444,6 @@ namespace chaos
 		int GetWindowDestructionGuard() const { return window_destruction_guard; }
 
 		/** override */
-		virtual bool OnConfigurationChanged(JSONReadConfiguration config) override;
-		/** override */
-		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
-		/** override */
 		virtual bool OnStorePersistentProperties(JSONWriteConfiguration config) const override;
 
 		/** enumerate ImGuiObjects that the window can create */

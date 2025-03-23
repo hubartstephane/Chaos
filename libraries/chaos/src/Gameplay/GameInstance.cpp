@@ -231,16 +231,6 @@ namespace chaos
 		return true;
 	}
 
-	bool GameInstance::OnConfigurationChanged(JSONReadConfiguration config)
-	{
-		return ConfigurableInterface::OnConfigurationChanged(config);
-	}
-
-	bool GameInstance::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
-	{
-		return true;
-	}
-
 	void GameInstance::OnEnterPause()
 	{
 		OnPauseStateUpdateClocks(true);

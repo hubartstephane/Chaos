@@ -130,8 +130,6 @@ namespace chaos
 		/** override */
 		virtual bool OnConfigurationChanged(JSONReadConfiguration config) override;
 		/** override */
-		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
-		/** override */
 		virtual bool DoStartManager() override;
 		/** override */
 		virtual bool DoStopManager() override;

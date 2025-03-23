@@ -131,16 +131,6 @@ namespace chaos
 		return true;
 	}
 
-	bool GameHUDComponent::OnConfigurationChanged(JSONReadConfiguration config)
-	{
-		return ConfigurableInterface::OnConfigurationChanged(config);
-	}
-
-	bool GameHUDComponent::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
-	{
-		return true;
-	}
-
 	// ====================================================================
 	// Standalone functions
 	// ====================================================================

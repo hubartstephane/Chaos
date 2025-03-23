@@ -122,8 +122,6 @@ namespace chaos
 		virtual bool DoCheckKeyPressed(Key button, bool previous_frame) override;
 
 		/** override */
-		virtual bool OnConfigurationChanged(JSONReadConfiguration config) override;
-		/** override */
 		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
 
 	protected:

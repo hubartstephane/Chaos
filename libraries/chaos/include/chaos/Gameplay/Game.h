@@ -212,8 +212,6 @@ namespace chaos
 		virtual bool CreateGPUResources();
 
 		/** override */
-		virtual bool OnConfigurationChanged(JSONReadConfiguration config) override;
-		/** override */
 		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
 
 		/** prepare data before saving */

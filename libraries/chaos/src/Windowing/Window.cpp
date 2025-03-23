@@ -1338,16 +1338,6 @@ namespace chaos
 		return true;
 	}
 
-	bool Window::OnConfigurationChanged(JSONReadConfiguration config)
-	{
-		return ConfigurableInterface::OnConfigurationChanged(config);
-	}
-
-	bool Window::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
-	{
-		return true;
-	}
-
 	bool Window::OnStorePersistentProperties(JSONWriteConfiguration config) const
 	{
 		if (glfw_window != nullptr)

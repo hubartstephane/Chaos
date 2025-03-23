@@ -481,11 +481,6 @@ namespace chaos
 		return true;
 	}
 
-	bool GPUResourceManager::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
-	{
-		return true;
-	}
-
 	bool GPUResourceManager::DoStartManager()
 	{
 		// super method

@@ -1203,12 +1203,6 @@ namespace chaos
 			game_instance->OnLevelChanged(new_level, old_level, new_level_instance);
 	}
 
-
-	bool Game::OnConfigurationChanged(JSONReadConfiguration config)
-	{
-		return ConfigurableInterface::OnConfigurationChanged(config);
-	}
-
 	bool Game::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
 	{
 		CHAOS_JSON_ATTRIBUTE(config, best_score);

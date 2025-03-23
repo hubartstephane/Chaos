@@ -1156,12 +1156,7 @@ namespace chaos
 
 	bool SoundManager::OnConfigurationChanged(JSONReadConfiguration config)
 	{
-		return true;
-	}
-
-	bool SoundManager::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
-	{
-		return true;
+		return true; // do not call super method
 	}
 
 	bool SoundManager::OnInitialize(JSONReadConfiguration config)

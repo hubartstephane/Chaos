@@ -564,8 +564,6 @@ namespace chaos
 		virtual bool OnInitialize(JSONReadConfiguration config) override;
 		/** override */
 		virtual bool OnConfigurationChanged(JSONReadConfiguration config) override;
-		/** override */
-		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
 
 		/** remove a category from the list */
 		void RemoveCategory(SoundCategory* category);

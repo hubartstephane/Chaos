@@ -107,11 +107,6 @@ namespace chaos
 		/** log some application information */
 		virtual void LogExecutionInformation();
 
-		/** override */
-		virtual bool OnConfigurationChanged(JSONReadConfiguration config) override;
-		/** override */
-		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
-
 	protected:
 
 		/** the single application instance */

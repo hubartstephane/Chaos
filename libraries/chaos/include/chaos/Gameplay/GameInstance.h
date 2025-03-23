@@ -132,10 +132,6 @@ namespace chaos
 		virtual bool DoSaveIntoCheckpoint(GameCheckpoint* checkpoint) const override;
 		/** override */
 		virtual bool DoLoadFromCheckpoint(GameCheckpoint const* checkpoint) override;
-		/** override */
-		virtual bool OnConfigurationChanged(JSONReadConfiguration config) override;
-		/** override */
-		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
 
 	protected:
 

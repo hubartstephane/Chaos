@@ -27,33 +27,6 @@ namespace chaos
 		forced_zero_tick_duration = true;
 	}
 
-	bool WindowApplication::IsWindowHandledByApplication(Window const* window) const
-	{
-		auto it = std::ranges::find_if(windows, [window](shared_ptr<Window> const& w)
-		{
-			return (w == window);
-		});
-		return (it != windows.end());
-	}
-
-	void WindowApplication::DestroyWindow(Window* window)
-	{
-		assert(window != nullptr);
-
-		auto it = std::ranges::find_if(windows, [window](shared_ptr<Window> const& w)
-		{
-			return (w == window);
-		});
-
-		if (it != windows.end())
-		{
-			shared_ptr<Window> prevent_destruction = window;
-			windows.erase(it);
-			if (window->GetWindowDestructionGuard() == 0) // can destroy immediatly the window or must wait until no current operation ?
-				OnWindowDestroyed(window);
-		}
-	}
-
 	void WindowApplication::RunMessageLoop(LightweightFunction<bool()> loop_condition_func)
 	{
 		double t1 = glfwGetTime();
@@ -188,11 +161,6 @@ namespace chaos
 
 	void WindowApplication::OnWindowDestroyed(Window* window)
 	{
-		// destroy the window for real
-		window->StorePersistentProperties(true);
-		window->Finalize();
-		window->DestroyImGuiContext();
-		window->DestroyGLFWWindow();
 	}
 
 	bool WindowApplication::HasMainWindow() const

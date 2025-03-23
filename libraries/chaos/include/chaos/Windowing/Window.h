@@ -453,6 +453,11 @@ namespace chaos
 		/** draw all ImGui objects */
 		void DrawImGuiObjects();
 
+		/** called to destroy the window (window is already unknown from WindowApplication) */
+		void DoWindowDestruction();
+		/** checks whether the window is inside the application windows array */
+		bool IsWindowHandledByApplication() const;
+
 	private:
 
 		/** binding function with GLFW library */

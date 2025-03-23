@@ -93,7 +93,30 @@ namespace chaos
 	void Window::Destroy()
 	{
 		if (WindowApplication* window_application = Application::GetInstance())
-			window_application->DestroyWindow(this);
+		{
+			auto it = std::ranges::find_if(window_application->windows, [this](shared_ptr<Window> const& w)
+			{
+				return (w == this);
+			});
+
+			if (it != window_application->windows.end())
+			{
+				shared_ptr<Window> prevent_destruction = this;
+				window_application->windows.erase(it);
+				if (GetWindowDestructionGuard() == 0) // can destroy immediatly the window or must wait until no current operation ?
+					DoWindowDestruction();
+			}
+		}
+	}
+
+	void Window::DoWindowDestruction() // window is not more handled by WindowApplication
+	{
+		StorePersistentProperties(true);
+		Finalize();
+		DestroyImGuiContext();
+		DestroyGLFWWindow();
+		if (WindowApplication* window_application = Application::GetInstance())
+			window_application->OnWindowDestroyed(this);
 	}
 
 	void Window::DestroyImGuiContext()
@@ -404,9 +427,8 @@ namespace chaos
 	{
 		assert(window_destruction_guard > 0);
 		if (--window_destruction_guard == 0)
-			if (WindowApplication* window_application = Application::GetInstance())
-				if (!window_application->IsWindowHandledByApplication(this)) // window already removed from the application's list. just destroy resources
-					window_application->OnWindowDestroyed(this);
+			if (!IsWindowHandledByApplication())
+				DoWindowDestruction(); // window already removed from the application's list. just destroy resources
 	}
 
 	void Window::CreateImGuiContext()
@@ -1537,6 +1559,19 @@ namespace chaos
 			window_client->window = this;
 			window_client->OnPluggedIntoWindow(this);
 		}
+	}
+	
+	bool Window::IsWindowHandledByApplication() const
+	{
+		if (WindowApplication* window_application = Application::GetInstance())
+		{
+			auto it = std::ranges::find_if(window_application->windows, [this](shared_ptr<Window> const& w)
+			{
+				return (w == this);
+			});
+			return (it != window_application->windows.end());
+		}
+		return false;
 	}
 
 }; // namespace chaos

@@ -40,9 +40,6 @@ namespace chaos
 		/** destroy some window by its name */
 		void DestroyNamedWindow(char const* name);
 
-		/** destroy a window */
-		void DestroyWindow(Window* window);
-
 		/** getter of the main clock */
 		static Clock* GetMainClockInstance();
 		/** getter of the main clock */
@@ -301,9 +298,6 @@ namespace chaos
 
 		/** add some items to a windows menu */
 		virtual void OnDrawApplicationImGuiMenu(Window * window, BeginImGuiMenuFunc begin_menu_func);
-
-		/** checks whether the window is inside the application windows array */
-		bool IsWindowHandledByApplication(Window const* window) const;
 
 		/** some window may be removed or created during a loop on 'windows' array itself. this intermediate array helps to detect such issues */
 		std::vector<weak_ptr<Window>> GetWeakWindowArray() const;

@@ -194,44 +194,40 @@ namespace chaos
 		template<typename FUNC>
 		decltype(auto) WithWindowContext(FUNC const& func)
 		{
-			using L = meta::LambdaInfo<FUNC>;
-
-			// prevent the window destruction
-			shared_ptr<Window> prevent_destruction = this;
-			IncrementWindowDestructionGuard();
-			// save GLFW context
-			GLFWwindow* previous_glfw_window = glfwGetCurrentContext();
-			glfwMakeContextCurrent(glfw_window);
-			// save ImGui context
-			ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
-			ImGuiContext* imgui_context_to_set = imgui_context;
-			ImGui::SetCurrentContext(imgui_context_to_set);
-
-			if constexpr (std::is_same_v<void, typename L::result_type>)
+			return PreventWindowDestruction([this, &func]()
 			{
-				// call delegate
-				func();
-				// restore GLFW and ImGui contexts
-				glfwMakeContextCurrent(previous_glfw_window);
-				// restore ImGui context (if different, because maybe the context has been destroy inside the func() call
-				if (previous_imgui_context != imgui_context_to_set)
-					ImGui::SetCurrentContext(previous_imgui_context);
-				// enable window destruction back
-				DecrementWindowDestructionGuard();
-			}
-			else
-			{
-				// call delegate
-				decltype(auto) result = func();
-				// restore GLFW and ImGui contexts
-				glfwMakeContextCurrent(previous_glfw_window);
-				// restore ImGui context (if different, because maybe the context has been destroy inside the func() call
-				if (previous_imgui_context != imgui_context_to_set)
-					ImGui::SetCurrentContext(previous_imgui_context);
-				// enable window destruction back
-				DecrementWindowDestructionGuard();
-				return result;
-			}
+				using L = meta::LambdaInfo<FUNC>;
+
+				// save GLFW context
+				GLFWwindow* previous_glfw_window = glfwGetCurrentContext();
+				glfwMakeContextCurrent(glfw_window);
+				// save ImGui context
+				ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
+				ImGuiContext* imgui_context_to_set = imgui_context;
+				ImGui::SetCurrentContext(imgui_context_to_set);
+
+				if constexpr (std::is_same_v<void, typename L::result_type>)
+				{
+					// call delegate
+					func();
+					// restore GLFW and ImGui contexts
+					glfwMakeContextCurrent(previous_glfw_window);
+					// restore ImGui context (if different, because maybe the context has been destroy inside the func() call
+					if (previous_imgui_context != imgui_context_to_set)
+						ImGui::SetCurrentContext(previous_imgui_context);
+				}
+				else
+				{
+					// call delegate
+					decltype(auto) result = func();
+					// restore GLFW and ImGui contexts
+					glfwMakeContextCurrent(previous_glfw_window);
+					// restore ImGui context (if different, because maybe the context has been destroy inside the func() call
+					if (previous_imgui_context != imgui_context_to_set)
+						ImGui::SetCurrentContext(previous_imgui_context);
+					return result;
+				}
+			});
 		}
 
 		/** gets the ImGui context */
@@ -436,10 +432,6 @@ namespace chaos
 
 #endif // #if _WIN32
 
-		/** increment the counter that prevent window destruction */
-		void IncrementWindowDestructionGuard();
-		/** decrement the counter that prevent window destruction */
-		void DecrementWindowDestructionGuard();
 		/** get the destruction guard count */
 		int GetWindowDestructionGuard() const { return window_destruction_guard; }
 
@@ -457,6 +449,39 @@ namespace chaos
 		void DoWindowDestruction();
 		/** checks whether the window is inside the application windows array */
 		bool IsWindowHandledByApplication() const;
+
+		/** prevent window destruction during inner call */
+		template<typename FUNC>
+		decltype(auto) PreventWindowDestruction(FUNC func)
+		{
+			using L = meta::LambdaInfo<FUNC>;
+			
+			shared_ptr<Window> prevent_destruction = this;
+	
+			++window_destruction_guard;
+			
+			if constexpr (L::convertible_to_bool)
+			{
+				// call functor
+				decltype(auto) result = func();
+				// check whether window is to be destroyed
+				assert(window_destruction_guard > 0);
+				if (--window_destruction_guard == 0)
+					if (!IsWindowHandledByApplication())
+						DoWindowDestruction();
+				return result;
+			}
+			else
+			{
+				// call functor
+				func();
+				// check whether window is to be destroyed
+				assert(window_destruction_guard > 0);
+				if (--window_destruction_guard == 0)
+					if (!IsWindowHandledByApplication())
+						DoWindowDestruction();
+			}
+		}
 
 	private:
 

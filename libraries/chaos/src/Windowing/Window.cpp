@@ -418,19 +418,6 @@ namespace chaos
 		return true;
 	}
 
-	void Window::IncrementWindowDestructionGuard()
-	{
-		++window_destruction_guard;
-	}
-
-	void Window::DecrementWindowDestructionGuard()
-	{
-		assert(window_destruction_guard > 0);
-		if (--window_destruction_guard == 0)
-			if (!IsWindowHandledByApplication())
-				DoWindowDestruction(); // window already removed from the application's list. just destroy resources
-	}
-
 	void Window::CreateImGuiContext()
 	{
 		ImGuiManager* imgui_manager = GetImGuiManager();
@@ -634,40 +621,40 @@ namespace chaos
 
 	LRESULT CALLBACK Window::ImGuiWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
-		LRESULT result = 0;
-
 		if (Window* window = (Window*)GetPropW(hWnd, L"CHAOS_WINDOW"))
 		{
 			if (WNDPROC previous_wndproc = (WNDPROC)GetPropW(hWnd, L"CHAOS_PREVIOUS_WNDPROC"))
 			{
-				// prevent the destruction of the window during windows message function
-				shared_ptr<Window> prevent_destruction = window;
-				window->IncrementWindowDestructionGuard();
-				// set the ImGui context as current
-				ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
-				ImGuiContext* toset_imgui_context = window->imgui_context;
-				ImGui::SetCurrentContext(toset_imgui_context);
+				return window->PreventWindowDestruction([window, previous_wndproc, hWnd, msg, wParam, lParam]()
+				{
+					LRESULT result = 0;
 
-				// set the ImPlot context as current
-				ImPlotContext * previous_implot_context = ImPlot::GetCurrentContext();
-				ImPlotContext* toset_implot_context = window->implot_context;
-				ImPlot::SetCurrentContext(toset_implot_context);
+					// set the ImGui context as current
+					ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
+					ImGuiContext* toset_imgui_context = window->imgui_context;
+					ImGui::SetCurrentContext(toset_imgui_context);
 
-				// call special treatments
-				window->HookedWindowProc(msg, wParam, lParam);
-				// call "super" window proc
-				result = ::CallWindowProc(previous_wndproc, hWnd, msg, wParam, lParam); // call "super" WndProc
-				// restore the previous ImPlot context
-				if (toset_implot_context != previous_implot_context) // maybe previous context was same then window's context and window's context has been deleted
-					ImPlot::SetCurrentContext(previous_implot_context);
-				// restore the previous ImGui context
-				if (toset_imgui_context != previous_imgui_context) // maybe previous context was same then window's context and window's context has been deleted
-					ImGui::SetCurrentContext(previous_imgui_context);
-				// enable window resource destruction back
-				window->DecrementWindowDestructionGuard();
+					// set the ImPlot context as current
+					ImPlotContext* previous_implot_context = ImPlot::GetCurrentContext();
+					ImPlotContext* toset_implot_context = window->implot_context;
+					ImPlot::SetCurrentContext(toset_implot_context);
+
+					// call special treatments
+					window->HookedWindowProc(msg, wParam, lParam);
+					// call "super" window proc
+					result = ::CallWindowProc(previous_wndproc, hWnd, msg, wParam, lParam); // call "super" WndProc
+					// restore the previous ImPlot context
+					if (toset_implot_context != previous_implot_context) // maybe previous context was same then window's context and window's context has been deleted
+						ImPlot::SetCurrentContext(previous_implot_context);
+					// restore the previous ImGui context
+					if (toset_imgui_context != previous_imgui_context) // maybe previous context was same then window's context and window's context has been deleted
+						ImGui::SetCurrentContext(previous_imgui_context);
+
+					return result;
+				});
 			}
 		}
-		return result;
+		return 0;
 	}
 
 	bool Window::HookedWindowProc(UINT msg, WPARAM wParam, LPARAM lParam)

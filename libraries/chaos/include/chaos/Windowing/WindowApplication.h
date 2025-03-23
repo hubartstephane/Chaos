@@ -14,6 +14,8 @@ namespace chaos
 	{
 		friend class Window;
 
+		CHAOS_DECLARE_OBJECT_CLASS(WindowApplication, Application);
+
 	public:
 
 		using CreateWindowFunc = LightweightFunction<Window*()>;

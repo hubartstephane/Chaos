@@ -1,6 +1,6 @@
 -- =============================================================================
--- ROOT_PATH/executables/C++/C++CHAOS2
+-- ROOT_PATH/executables/C++/C++_TempTest
 -- =============================================================================
 
 local project = build:WindowedApp()
-project:DependOnLib("CHAOS2")
+project:DependOnLib("CHAOS")

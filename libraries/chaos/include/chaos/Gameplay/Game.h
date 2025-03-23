@@ -218,9 +218,9 @@ namespace chaos
 		virtual void UpdatePersistentGameData();
 
 		/** create the gamepad manager */
-		virtual bool CreateGamepadManager(nlohmann::json const * config);
+		virtual bool CreateGamepadManager(JSONReadConfiguration config);
 		/** create the game state_machine */
-		virtual bool CreateGameStateMachine(nlohmann::json const * config);
+		virtual bool CreateGameStateMachine(JSONReadConfiguration config);
 		/** allocate the state machine */
 		virtual SM::StateMachine* DoCreateGameStateMachine();
 		/** create the game state_machine instance */
@@ -235,7 +235,7 @@ namespace chaos
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;
 
 		/** create some clocks */
-		virtual bool CreateClocks(nlohmann::json const * config);
+		virtual bool CreateClocks(JSONReadConfiguration config);
 
 		/** initialize the particle manager */
 		virtual bool CreateParticleManager();

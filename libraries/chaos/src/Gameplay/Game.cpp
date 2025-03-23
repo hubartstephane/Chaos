@@ -520,7 +520,7 @@ namespace chaos
 		return true;
 	}
 
-	bool Game::CreateClocks(nlohmann::json const * config)
+	bool Game::CreateClocks(JSONReadConfiguration config)
 	{
 		Clock* application_clock = GetApplicationClock();
 		if (application_clock == nullptr)
@@ -532,7 +532,7 @@ namespace chaos
 		return true;
 	}
 
-	bool Game::CreateGamepadManager(nlohmann::json const * config)
+	bool Game::CreateGamepadManager(JSONReadConfiguration config)
 	{
 		bool gamepad_enabled = true;
 		JSONTools::GetAttribute(config, "gamepad_enabled", gamepad_enabled, true);
@@ -547,23 +547,31 @@ namespace chaos
 
 	bool Game::Initialize()
 	{
+		// initialize game values
+		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
+			return false;
 		return OnInitialize(GetJSONReadConfiguration());
 	}
 
 	bool Game::OnInitialize(JSONReadConfiguration config)
 	{
 		// initialize the gamepad manager
-		if (!CreateGamepadManager(config.default_config))
+		if (!CreateGamepadManager(config))
 			return false;
 		// create game state_machine
-		if (!CreateGameStateMachine(config.default_config))
+		if (!CreateGameStateMachine(config))
 			return false;
 		// initialize clocks
-		if (!CreateClocks(config.default_config))
+		if (!CreateClocks(config))
 			return false;
+#if 0
+
 		// initialize game values
 		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
 			return false;
+#endif
+
+
 
 		// shu49 c'est bizare d avoir le type sets ici
 
@@ -699,7 +707,7 @@ namespace chaos
 		return PlaySound(name, play_desc, category_tag);
 	}
 
-	bool Game::CreateGameStateMachine(nlohmann::json const * config)
+	bool Game::CreateGameStateMachine(JSONReadConfiguration config)
 	{
 		game_sm = DoCreateGameStateMachine();
 		if (game_sm == nullptr)

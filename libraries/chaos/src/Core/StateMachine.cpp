@@ -51,15 +51,15 @@ namespace chaos
 			OnLeaveImpl(sm_instance, to_state, extra_data);
 		}
 
-		bool State::SendEvent(StateMachineInstance * sm_instance, TagType event_tag, Object * extra_data)
+		bool State::OnEventReceived(StateMachineInstance * sm_instance, TagType event_tag, Object * extra_data)
 		{
 			// the USER implementation catch the method
-			if (SendEventImpl(sm_instance, event_tag, extra_data))
+			if (OnEventReceivedImpl(sm_instance, event_tag, extra_data))
 				return true;
 			// give to the outgoing transitions the opportunities to catch the event
 			for (Transition * transition : outgoing_transitions)
 			{
-				if (transition->triggering_event > 0 && transition->triggering_event == event_tag)
+				if (transition->triggering_event != 0 && transition->triggering_event == event_tag)
 				{
 					sm_instance->ChangeState(transition, extra_data);
 					return true;
@@ -83,7 +83,7 @@ namespace chaos
 			return false;
 		}
 
-		bool State::SendEventImpl(StateMachineInstance * sm_instance, TagType event_tag, Object * extra_data)
+		bool State::OnEventReceivedImpl(StateMachineInstance * sm_instance, TagType event_tag, Object * extra_data)
 		{
 			return false; // do not catch the event : let the outgoing transition do their job
 		}
@@ -205,7 +205,7 @@ namespace chaos
 		{
 			if (current_state == nullptr)
 				return false;
-			return current_state->SendEvent(this, event_tag, extra_data);
+			return current_state->OnEventReceived(this, event_tag, extra_data);
 		}
 
 		State * StateMachineInstance::GetCurrentStrictState(bool use_destination)

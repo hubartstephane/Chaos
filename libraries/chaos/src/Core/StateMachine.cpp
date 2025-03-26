@@ -18,12 +18,12 @@ namespace chaos
 
 		StateAction StateBase::OnEnterImpl(StateMachineInstance* sm_instance, StateBase* from_state, Object* extra_data)
 		{
-			return StateAction::CanLeave;
+			return StateAction::ChangeStateEnabled;
 		}
 
 		StateAction StateBase::TickImpl(StateMachineInstance* sm_instance, float delta_time, Object* extra_data)
 		{
-			return StateAction::CanLeave; // enable automatic transitions
+			return StateAction::ChangeStateEnabled; // enable automatic transitions
 		}
 
 		void StateBase::OnLeaveImpl(StateMachineInstance* sm_instance, StateBase* to_state, Object* extra_data)
@@ -48,7 +48,7 @@ namespace chaos
 		void State::Tick(StateMachineInstance * sm_instance, float delta_time, Object * extra_data)
 		{
 			StateAction action = TickImpl(sm_instance, delta_time, extra_data);
-			if (action == StateAction::MustStay)
+			if (action == StateAction::ChangeStateForbidden)
 				return;
 			CheckOutgoingTransitions(sm_instance, extra_data);
 		}
@@ -56,7 +56,7 @@ namespace chaos
 		void State::OnEnter(StateMachineInstance * sm_instance, StateBase * from_state, Object * extra_data)
 		{
 			StateAction action = OnEnterImpl(sm_instance, from_state, extra_data);
-			if (action == StateAction::MustStay)
+			if (action == StateAction::ChangeStateForbidden)
 				return;
 			CheckOutgoingTransitions(sm_instance, extra_data);
 		}
@@ -89,7 +89,7 @@ namespace chaos
 			for (Transition* transition : outgoing_transitions)
 			{
 				StateAction action = transition->CheckTransitionConditions(sm_instance, extra_data);
-				if (action == StateAction::MustStay)
+				if (action == StateAction::ChangeStateForbidden)
 					continue;
 				sm_instance->ChangeState(transition, extra_data);
 				return;
@@ -116,20 +116,20 @@ namespace chaos
 
 		SM::StateAction Transition::CheckTransitionConditions(StateMachineInstance* sm_instance, Object * extra_data)
 		{
-			return SM::StateAction::MustStay;
+			return SM::StateAction::ChangeStateForbidden;
 		}
 
 		void Transition::OnEnter(StateMachineInstance* sm_instance, StateBase* from_state, Object* extra_data)
 		{
 			StateAction action = OnEnterImpl(sm_instance, from_state, extra_data);
-			if (action == StateAction::CanLeave)
+			if (action == StateAction::ChangeStateEnabled)
 				sm_instance->ChangeState(to_state, extra_data); // will cause OnLeave call
 		}
 
 		void Transition::Tick(StateMachineInstance* sm_instance, float delta_time, Object* extra_data)
 		{
 			StateAction action = TickImpl(sm_instance, delta_time, extra_data);
-			if (action == StateAction::CanLeave)
+			if (action == StateAction::ChangeStateEnabled)
 				sm_instance->ChangeState(to_state, extra_data); // will cause OnLeave call
 		}
 

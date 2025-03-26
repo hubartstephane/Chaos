@@ -31,17 +31,17 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 
 	// Transition is some kind of state. It can be ticked (and so not be immediate), has a OnEnter & OnLeave event
 	//
-	// Transition::TickImpl    returns CanLeave ---> effective transition is made, the SM goes to next state
+	// Transition::TickImpl    returns ChangeStateEnabled ---> effective transition is made, the SM goes to next state
 	//
-	// Transition::OnEnterImpl returns CanLeave ---> this is a passthrough transition, it is immediatly left to destination state
+	// Transition::OnEnterImpl returns ChangeStateEnabled ---> this is a passthrough transition, it is immediatly left to destination state
 	//
 	//
 	//
-	// State::TickImpl            returns CanLeave  ---> outgoing transitions are tested with 'CheckTransitionCondition'
+	// State::TickImpl            returns ChangeStateEnabled  ---> outgoing transitions are tested with 'CheckTransitionCondition'
 	//
-	// State::OnEventReceivedImpl returns true  ---> the event is catched by the state
+	// State::OnEventReceivedImpl returns true                ---> the event is catched by the state
 	//
-	//                            returns false ---> search outgoing transitions of one with the same tag than the event
+	//                            returns false               ---> search outgoing transitions of one with the same tag than the event
 
 		/**
 		 * StateAction: indicates whether current state can be changed or not
@@ -49,8 +49,8 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 
 		enum class StateAction : int
 		{
-			MustStay,
-			CanLeave
+			ChangeStateForbidden,
+			ChangeStateEnabled
 		};
 
 		// ==================================================

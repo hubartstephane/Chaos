@@ -70,7 +70,7 @@ namespace chaos
 		Game* game = GetGame(sm_instance);
 		if (game != nullptr)
 			game->OnGameInitialization();
-		return SM::StateAction::CanLeave;
+		return SM::StateAction::ChangeStateEnabled;
 	}
 
 	MainMenuState::MainMenuState(GameStateMachine * in_state_machine) :
@@ -85,7 +85,7 @@ namespace chaos
 		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
 			game->OnEnterMainMenu(from == nullptr); // very first game ?
-		return SM::StateAction::MustStay;
+		return SM::StateAction::ChangeStateForbidden;
 	}
 
 	void MainMenuState::OnLeaveImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * to, Object * extra_data)
@@ -107,7 +107,7 @@ namespace chaos
 		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
 			game->TickGameLoop(delta_time);
-		return SM::StateAction::CanLeave;
+		return SM::StateAction::ChangeStateEnabled;
 	}
 
 	PauseState::PauseState(GameStateMachine * in_state_machine) :
@@ -122,7 +122,7 @@ namespace chaos
 		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
 			game->OnEnterPause();
-		return SM::StateAction::MustStay;
+		return SM::StateAction::ChangeStateForbidden;
 	}
 
 	void PauseState::OnLeaveImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * to, Object * extra_data)
@@ -139,12 +139,12 @@ namespace chaos
 
 	SM::StateAction InitialToMainMenuTransition::OnEnterImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* from, Object* extra_data)
 	{
-		return SM::StateAction::CanLeave;
+		return SM::StateAction::ChangeStateEnabled;
 	}
 
 	SM::StateAction InitialToMainMenuTransition::CheckTransitionConditions(SM::StateMachineInstance* sm_instance, Object* extra_data)
 	{
-		return SM::StateAction::CanLeave;
+		return SM::StateAction::ChangeStateEnabled;
 	}
 
 	// ======
@@ -153,12 +153,12 @@ namespace chaos
 	{
 		Game * game = GetGame(sm_instance);
 		if (game == nullptr)
-			return SM::StateAction::MustStay; // can't go further
+			return SM::StateAction::ChangeStateForbidden; // can't go further
 		// try get the physical gamepad
 		PhysicalGamepadWrapper * wrapper = auto_cast(extra_data);
 		// enter the game
 		game->OnEnterGame((wrapper == nullptr)? nullptr : wrapper->data);
-		return SM::StateAction::CanLeave;
+		return SM::StateAction::ChangeStateEnabled;
 	}
 
 	// ======
@@ -167,9 +167,9 @@ namespace chaos
 	{
 		Game * game = GetGame(sm_instance);
 		if (game == nullptr)
-			return SM::StateAction::MustStay; // can't go further
+			return SM::StateAction::ChangeStateForbidden; // can't go further
 		game->OnLeaveGame();
-		return SM::StateAction::CanLeave;
+		return SM::StateAction::ChangeStateEnabled;
 	}
 
 	// ======
@@ -182,7 +182,7 @@ namespace chaos
 			sm_instance->SetContextData(game->PlaySound("gameover", false, false, 0.0f, SoundContext::GAME));
 			game->OnGameOver();
 		}
-		return SM::StateAction::MustStay;
+		return SM::StateAction::ChangeStateForbidden;
 	}
 
 	SM::StateAction PlayingToGameOverTransition::TickImpl(SM::StateMachineInstance * sm_instance, float delta_time, Object * extra_data)
@@ -191,8 +191,8 @@ namespace chaos
 		Sound * gameover_sound = auto_cast(sm_instance->GetContextData());
 		if (gameover_sound != nullptr)
 			if (!gameover_sound->IsFinished())
-				return SM::StateAction::MustStay;
-		return SM::StateAction::CanLeave;
+				return SM::StateAction::ChangeStateForbidden;
+		return SM::StateAction::ChangeStateEnabled;
 	}
 
 	void PlayingToGameOverTransition::OnLeaveImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * to, Object * extra_data)

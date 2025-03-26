@@ -564,14 +564,6 @@ namespace chaos
 		// initialize clocks
 		if (!CreateClocks(config))
 			return false;
-#if 0
-
-		// initialize game values
-		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
-			return false;
-#endif
-
-
 
 		// shu49 c'est bizare d avoir le type sets ici
 
@@ -585,8 +577,69 @@ namespace chaos
 		// load exisiting levels
 		if (!LoadLevels(config.default_config))
 			return false;
+		// create the game window
+		if (!CreateGameWindow(config))
+			return false;
+
 		return true;
 	}
+
+	bool Game::CreateGameWindow(JSONReadConfiguration config)
+	{
+		// get application
+		WindowApplication* window_application = Application::GetInstance();
+		if (window_application == nullptr)
+			return false;
+
+		// create main window
+		SubClassOf<Window>  window_class;
+		WindowPlacementInfo window_placement_info;
+		WindowCreateParams  create_params;
+		if (window_application->GetArguments().size() > 0)
+			create_params.title = PathTools::PathToName(window_application->GetArguments()[0]);
+
+		Window * main_window = window_application->CreateTypedWindow(window_class, window_placement_info, create_params, "main_window");
+		if (main_window == nullptr)
+			return false;
+
+		// add a game viewport widget
+		WindowRootWidget * root_widget = main_window->GetRootWidget();
+		if (root_widget == nullptr)
+			return false;
+
+		SubClassOf<GameViewportWidget> game_viewport_class;
+		GameViewportWidget* game_viewport_widget = game_viewport_class.CreateInstance();
+		if (game_viewport_widget == nullptr)
+			return false;
+
+		WidgetLayout layout;
+		layout.aspect_ratio = GetViewportWantedAspect();
+		game_viewport_widget->SetLayout(layout);
+		game_viewport_widget->SetGame(this);
+
+		root_widget->AddChildWidget(game_viewport_widget);
+
+		return true;
+	}
+
+#if 0
+
+	for (int i = 0; i < 3; ++i)
+	{
+		PlaceHolderWidget* widget = new PlaceHolderWidget;
+
+		WidgetLayout layout;
+		layout.aspect_ratio = 4.0f / 3.0f;
+		layout.padding = Padding(5.0f);
+		layout.fill_mode_x = WidgetFillMode::PACKED_NORMAL;
+
+		widget->SetLayout(layout, false);
+
+		root_widget->AddChildWidget(widget);
+	}
+
+#endif
+
 
 	bool Game::CreateGPUResources()
 	{

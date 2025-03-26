@@ -228,6 +228,9 @@ namespace chaos
 		/** create the game state_machine instance */
 		virtual SM::StateMachineInstance* DoCreateGameStateMachineInstance(SM::StateMachine* state_machine);
 
+		/** create windows necessery for the game */
+		virtual bool CreateGameWindow(JSONReadConfiguration config);
+
 		/** special action on gamepad input reception */
 		virtual bool OnGamepadInput(PhysicalGamepad* in_physical_gamepad);
 		/** called whenever a gamepad input is comming */

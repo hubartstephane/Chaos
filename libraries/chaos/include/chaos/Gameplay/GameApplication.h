@@ -6,31 +6,25 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class CHAOS_API GameApplication : public SimpleWindowApplication
+	class CHAOS_API GameApplication : public WindowApplication
 	{
 	public:
 
 		/** constructor */
-		GameApplication(
-			SubClassOf<Game> in_game_class,
-			SubClassOf<GameWindow> in_main_window_class,
-			SubClassOf<GameViewportWidget> in_game_viewport_widget_class,
-			WindowPlacementInfo const& in_main_window_placement_info = {},
-			WindowCreateParams const& in_main_window_create_params = {});
+		GameApplication(SubClassOf<Game> in_game_class);
 
 		/** gets the game */
 		Game* GetGame() { return game.get(); }
 		/** gets the game */
 		Game const* GetGame() const { return game.get(); }
 
-		/** gets the viewport class */
-		SubClassOf<GameViewportWidget> GetGameViewportWidgetClass() const { return game_viewport_widget_class; }
-
 		/** whether the game should "ignored" */
 		virtual bool IsGameSuspended() const;
 
 	protected:
 
+		/** override */
+		virtual int MainBody() override;
 		/** override */
 		virtual bool InitializeGPUResources() override;
 		/** override */
@@ -55,20 +49,16 @@ namespace chaos
 
 		/** the class for the game */
 		SubClassOf<Game> game_class;
-		/** the class for the viewport */
-		SubClassOf<GameViewportWidget> game_viewport_widget_class;
 		/** pointer on the game */
 		shared_ptr<Game> game;
 	};
 
-	template<typename GAME_TYPE, typename GAME_APPLICATION_TYPE = GameApplication, typename MAIN_WINDOW_CLASS = GameWindow, typename GAME_VIEWPORT_WIDGET_CLASS = GameViewportWidget, typename ...PARAMS>
+	template<typename GAME_TYPE, typename GAME_APPLICATION_TYPE = GameApplication, typename ...PARAMS>
 	decltype(auto) RunGame(int argc, char** argv, char** env, PARAMS && ...params)
 	{
 		return RunApplication<GAME_APPLICATION_TYPE>(
 			argc, argv, env,
 			GAME_TYPE::GetStaticClass(),
-			MAIN_WINDOW_CLASS::GetStaticClass(),
-			GAME_VIEWPORT_WIDGET_CLASS::GetStaticClass(),
 			std::forward<PARAMS>(params)...);
 	}
 

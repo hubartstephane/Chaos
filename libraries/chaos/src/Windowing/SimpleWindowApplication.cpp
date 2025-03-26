@@ -23,7 +23,6 @@ namespace chaos
 		{
 			return HasMainWindow();
 		});
-
 		return 0;
 	}
 

@@ -3,25 +3,17 @@
 
 namespace chaos
 {
-	GameApplication::GameApplication(
-		SubClassOf<Game> in_game_class,
-		SubClassOf<GameWindow> in_main_window_class,
-		SubClassOf<GameViewportWidget> in_game_viewport_widget_class,
-		WindowPlacementInfo const& in_main_window_placement_info, 
-		WindowCreateParams const& in_main_window_create_params):
-			SimpleWindowApplication(in_main_window_class, in_main_window_placement_info, in_main_window_create_params),
-			game_class(in_game_class),
-			game_viewport_widget_class(in_game_viewport_widget_class)
+	GameApplication::GameApplication(SubClassOf<Game> in_game_class):
+			game_class(in_game_class)
 	{
 		assert(in_game_class.IsValid());
-		assert(game_viewport_widget_class.IsValid());
 	}
 
 	void GameApplication::FinalizeGPUResources()
 	{
 		assert(glfwGetCurrentContext() == shared_context);
 
-		SimpleWindowApplication::FinalizeGPUResources();
+		WindowApplication::FinalizeGPUResources();
 	}
 
 	bool GameApplication::InitializeGPUResources()
@@ -36,7 +28,7 @@ namespace chaos
 		if (!game->Initialize())
 			return false;
 		// super method : need to be done game initialization ! (because atlas creation requires the game to have loaded its levels)
-		if (!SimpleWindowApplication::InitializeGPUResources())
+		if (!WindowApplication::InitializeGPUResources())
 			return false;
 		// create now some game resources that need application resources to be initialized
 		if (!game->CreateGPUResources())
@@ -44,11 +36,21 @@ namespace chaos
 		return true;
 	}
 
+	int GameApplication::MainBody()
+	{
+		// run the main loop as long as there are main windows
+		RunMessageLoop([this]()
+		{
+			return HasMainWindow();
+		});
+		return 0;
+	}
+
 	bool GameApplication::DoTick(float delta_time)
 	{
 		assert(glfwGetCurrentContext() == shared_context);
 		// super
-		SimpleWindowApplication::DoTick(delta_time);
+		WindowApplication::DoTick(delta_time);
 		// update the game
 		if (game != nullptr)
 			if (!IsGameSuspended())
@@ -58,7 +60,7 @@ namespace chaos
 
 	bool GameApplication::FillAtlasGeneratorInput(BitmapAtlas::AtlasInput& input)
 	{
-		if (!SimpleWindowApplication::FillAtlasGeneratorInput(input))
+		if (!WindowApplication::FillAtlasGeneratorInput(input))
 			return false;
 		if (game != nullptr)
 			if (!game->FillAtlasGeneratorInput(input))
@@ -72,7 +74,7 @@ namespace chaos
 			if (!IsGameSuspended())
 				if (game->OnMouseMove(delta))
 					return true;
-		return SimpleWindowApplication::OnMouseMoveImpl(delta);
+		return WindowApplication::OnMouseMoveImpl(delta);
 	}
 
 	bool GameApplication::OnMouseButtonImpl(int button, int action, int modifier)
@@ -81,7 +83,7 @@ namespace chaos
 			if (!IsGameSuspended())
 				if (game->OnMouseButton(button, action, modifier))
 					return true;
-		return SimpleWindowApplication::OnMouseButtonImpl(button, action, modifier);
+		return WindowApplication::OnMouseButtonImpl(button, action, modifier);
 	}
 
 	bool GameApplication::OnMouseWheelImpl(double scroll_x, double scroll_y)
@@ -90,7 +92,7 @@ namespace chaos
 			if (!IsGameSuspended())
 				if (game->OnMouseWheel(scroll_x, scroll_y))
 					return true;
-		return SimpleWindowApplication::OnMouseWheelImpl(scroll_x, scroll_y);
+		return WindowApplication::OnMouseWheelImpl(scroll_x, scroll_y);
 	}
 
 	bool GameApplication::OnKeyEventImpl(KeyEvent const& key_event)
@@ -99,7 +101,7 @@ namespace chaos
 			if (!IsGameSuspended())
 				if (game->OnKeyEvent(key_event))
 					return true;
-		return SimpleWindowApplication::OnKeyEventImpl(key_event);
+		return WindowApplication::OnKeyEventImpl(key_event);
 	}
 
 	bool GameApplication::OnCharEventImpl(unsigned int c)
@@ -108,7 +110,7 @@ namespace chaos
 			if (!IsGameSuspended())
 				if (game->OnCharEvent(c))
 					return true;
-		return SimpleWindowApplication::OnCharEventImpl(c);
+		return WindowApplication::OnCharEventImpl(c);
 	}
 
 	bool GameApplication::IsGameSuspended() const

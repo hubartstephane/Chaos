@@ -20,6 +20,10 @@ namespace chaos
 		// super call
 		if (!Window::CreateRootWidget())
 			return false;
+
+#if 0
+
+
 		// create the game viewport
 		if (GameApplication* game_application = Application::GetInstance())
 		{
@@ -33,6 +37,9 @@ namespace chaos
 				root_widget->AddChildWidget(game_viewport_widget);
 			}
 		}
+
+#endif
+
 		return true;
 	}
 

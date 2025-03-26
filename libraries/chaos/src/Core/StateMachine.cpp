@@ -16,6 +16,26 @@ namespace chaos
 			assert(in_state_machine != nullptr);
 		}
 
+		StateAction StateBase::OnEnterImpl(StateMachineInstance* sm_instance, StateBase* from_state, Object* extra_data)
+		{
+			return StateAction::CanLeave;
+		}
+
+		StateAction StateBase::TickImpl(StateMachineInstance* sm_instance, float delta_time, Object* extra_data)
+		{
+			return StateAction::CanLeave; // enable automatic transitions
+		}
+
+		void StateBase::OnLeaveImpl(StateMachineInstance* sm_instance, StateBase* to_state, Object* extra_data)
+		{
+
+		}
+
+		bool StateBase::OnEventReceivedImpl(StateMachineInstance* sm_instance, TagType event_tag, Object* extra_data)
+		{
+			return false; // do not catch the event : let the outgoing transition do their job
+		}
+
 		// ==================================================
 		// State
 		// ==================================================
@@ -27,23 +47,18 @@ namespace chaos
 
 		void State::Tick(StateMachineInstance * sm_instance, float delta_time, Object * extra_data)
 		{
-			// the USER implementation catch the method
-			if (!TickImpl(sm_instance, delta_time, extra_data))
+			StateAction action = TickImpl(sm_instance, delta_time, extra_data);
+			if (action == StateAction::MustStay)
 				return;
-			// give the outgoing transition the opportunities to trigger themselves
-			for (Transition * transition : outgoing_transitions)
-			{
-				if (transition->CheckTransitionConditions(extra_data)) // check outgoing transtitions
-				{
-					sm_instance->ChangeState(transition, extra_data);
-					return;
-				}
-			}
+			CheckOutgoingTransitions(sm_instance, extra_data);
 		}
 
 		void State::OnEnter(StateMachineInstance * sm_instance, StateBase * from_state, Object * extra_data)
 		{
-			OnEnterImpl(sm_instance, from_state, extra_data);
+			StateAction action = OnEnterImpl(sm_instance, from_state, extra_data);
+			if (action == StateAction::MustStay)
+				return;
+			CheckOutgoingTransitions(sm_instance, extra_data);
 		}
 
 		void State::OnLeave(StateMachineInstance * sm_instance, StateBase * to_state, Object * extra_data)
@@ -68,24 +83,17 @@ namespace chaos
 			return false; // not handled
 		}
 
-		bool State::OnEnterImpl(StateMachineInstance * sm_instance, StateBase * from_state, Object * extra_data)
+		void State::CheckOutgoingTransitions(StateMachineInstance* sm_instance, Object* extra_data)
 		{
-			return false;
-		}
-
-		bool State::TickImpl(StateMachineInstance * sm_instance, float delta_time, Object * extra_data)
-		{
-			return true; // enable automatic transitions
-		}
-
-		bool State::OnLeaveImpl(StateMachineInstance * sm_instance, StateBase * to_state, Object * extra_data)
-		{
-			return false;
-		}
-
-		bool State::OnEventReceivedImpl(StateMachineInstance * sm_instance, TagType event_tag, Object * extra_data)
-		{
-			return false; // do not catch the event : let the outgoing transition do their job
+			// give the outgoing transition the opportunities to trigger themselves
+			for (Transition* transition : outgoing_transitions)
+			{
+				StateAction action = transition->CheckTransitionConditions(sm_instance, extra_data);
+				if (action == StateAction::MustStay)
+					continue;
+				sm_instance->ChangeState(transition, extra_data);
+				return;
+			}
 		}
 
 		// ==================================================
@@ -106,44 +114,28 @@ namespace chaos
 			in_to_state->incomming_transitions.push_back(this);
 		}
 
-		bool Transition::CheckTransitionConditions(Object * extra_data)
+		SM::StateAction Transition::CheckTransitionConditions(StateMachineInstance* sm_instance, Object * extra_data)
 		{
-			return false; // refuse to automatically enter the transition
+			return SM::StateAction::MustStay;
 		}
 
-
-		void Transition::OnEnter(StateMachineInstance * sm_instance, StateBase * from_state, Object * extra_data)
+		void Transition::OnEnter(StateMachineInstance* sm_instance, StateBase* from_state, Object* extra_data)
 		{
-			// test whether this is a passtrought transition
-			if (OnEnterImpl(sm_instance, from_state, extra_data))
+			StateAction action = OnEnterImpl(sm_instance, from_state, extra_data);
+			if (action == StateAction::CanLeave)
 				sm_instance->ChangeState(to_state, extra_data); // will cause OnLeave call
 		}
 
-		void Transition::Tick(StateMachineInstance * sm_instance, float delta_time, Object * extra_data)
+		void Transition::Tick(StateMachineInstance* sm_instance, float delta_time, Object* extra_data)
 		{
-			if (TickImpl(sm_instance, delta_time, extra_data))
+			StateAction action = TickImpl(sm_instance, delta_time, extra_data);
+			if (action == StateAction::CanLeave)
 				sm_instance->ChangeState(to_state, extra_data); // will cause OnLeave call
 		}
 
-		void Transition::OnLeave(StateMachineInstance * sm_instance, StateBase * to_state, Object * extra_data)
+		void Transition::OnLeave(StateMachineInstance* sm_instance, StateBase* to_state, Object* extra_data)
 		{
 			OnLeaveImpl(sm_instance, to_state, extra_data);
-		}
-
-
-		bool Transition::OnEnterImpl(StateMachineInstance * sm_instance, StateBase * from_state, Object * extra_data)
-		{
-			return true; // pass throught transition (no tick)
-		}
-
-		bool Transition::TickImpl(StateMachineInstance * sm_instance, float delta_time, Object * extra_data)
-		{
-			return true; // the transition has no special code. We can exit it
-		}
-
-		bool Transition::OnLeaveImpl(StateMachineInstance * sm_instance, StateBase * to_state, Object * extra_data)
-		{
-			return true;
 		}
 
 		// ==================================================

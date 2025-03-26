@@ -5,9 +5,11 @@ namespace chaos
 
 	class GameState;
 	class GameTransition;
+	class InitialState;
 	class MainMenuState;
 	class PlayingState;
 	class PauseState;
+	class InitialToMainMenuTransition;
 	class MainMenuToPlayingTransition;
 	class PlayingToMainMenuTransition;
 	class PlayingToGameOverTransition;
@@ -19,6 +21,7 @@ namespace chaos
 	namespace GameStateMachineKeys
 	{
 		// the possible states
+		CHAOS_DECLARE_TAG(STATE_INITIAL);
 		CHAOS_DECLARE_TAG(STATE_MAINMENU);
 		CHAOS_DECLARE_TAG(STATE_PAUSE);
 		CHAOS_DECLARE_TAG(STATE_PLAYING);
@@ -27,6 +30,7 @@ namespace chaos
 		CHAOS_DECLARE_TAG(EVENT_TOGGLE_PAUSE);
 		CHAOS_DECLARE_TAG(EVENT_EXIT_GAME);
 		CHAOS_DECLARE_TAG(EVENT_START_GAME);
+		CHAOS_DECLARE_TAG(EVENT_GAME_INITIALIZED);
 		CHAOS_DECLARE_TAG(EVENT_GAME_OVER);
 	};
 
@@ -66,6 +70,16 @@ namespace chaos
 	// All states
 	// =========================================================
 
+	class CHAOS_API InitialState : public GameState
+	{
+	public:
+
+		/** constructor */
+		InitialState(GameStateMachine* in_state_machine);
+		/** override */
+		virtual SM::StateAction OnEnterImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* from_state, Object* extra_data) override;
+	};
+
 	class CHAOS_API MainMenuState : public GameState
 	{
 	public:
@@ -73,9 +87,9 @@ namespace chaos
 		/** constructor */
 		MainMenuState(GameStateMachine* in_state_machine);
 		/** override */
-		virtual bool OnEnterImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* from_state, Object* extra_data) override;
+		virtual SM::StateAction OnEnterImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* from_state, Object* extra_data) override;
 		/** override */
-		virtual bool OnLeaveImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* to, Object* extra_data) override;
+		virtual void OnLeaveImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* to, Object* extra_data) override;
 	};
 
 	class CHAOS_API PlayingState : public GameState
@@ -85,7 +99,7 @@ namespace chaos
 		/** constructor */
 		PlayingState(GameStateMachine* in_state_machine);
 		/** override */
-		virtual bool TickImpl(SM::StateMachineInstance* sm_instance, float delta_time, Object* extra_data) override;
+		virtual SM::StateAction TickImpl(SM::StateMachineInstance* sm_instance, float delta_time, Object* extra_data) override;
 	};
 
 	class CHAOS_API PauseState : public GameState
@@ -95,14 +109,28 @@ namespace chaos
 		/** constructor */
 		PauseState(GameStateMachine* in_state_machine);
 		/** override */
-		virtual bool OnEnterImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* from_state, Object* extra_data) override;
+		virtual SM::StateAction OnEnterImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* from_state, Object* extra_data) override;
 		/** override */
-		virtual bool OnLeaveImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* to, Object* extra_data) override;
+		virtual void OnLeaveImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* to, Object* extra_data) override;
 	};
 
 	// =========================================================
 	// Transitions
 	// =========================================================
+
+	class CHAOS_API InitialToMainMenuTransition : public GameTransition
+	{
+	public:
+
+		using GameTransition::GameTransition; // inherit constructor
+
+	protected:
+
+		/** override */
+		virtual SM::StateAction OnEnterImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* from, Object* extra_data) override;
+		/** override */
+		virtual SM::StateAction CheckTransitionConditions(SM::StateMachineInstance* sm_instance, Object* extra_data) override;
+	};
 
 	class CHAOS_API MainMenuToPlayingTransition : public GameTransition
 	{
@@ -112,8 +140,8 @@ namespace chaos
 
 	protected:
 
-		/** overriding */
-		virtual bool OnEnterImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* from, Object* extra_data) override;
+		/** override */
+		virtual SM::StateAction OnEnterImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* from, Object* extra_data) override;
 	};
 
 	class CHAOS_API PlayingToMainMenuTransition : public GameTransition
@@ -125,8 +153,8 @@ namespace chaos
 
 	protected:
 
-		/** overriding */
-		virtual bool OnEnterImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* from, Object* extra_data) override;
+		/** override */
+		virtual SM::StateAction OnEnterImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* from, Object* extra_data) override;
 	};
 
 	class CHAOS_API PlayingToGameOverTransition : public GameTransition
@@ -138,12 +166,13 @@ namespace chaos
 
 	protected:
 
-		/** overriding */
-		virtual bool OnEnterImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* from, Object* extra_data) override;
-		/** overriding */
-		virtual bool OnLeaveImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* to, Object* extra_data) override;
-		/** overriding */
-		virtual bool TickImpl(SM::StateMachineInstance* sm_instance, float delta_time, Object* extra_data) override;
+		/** override */
+		virtual SM::StateAction TickImpl(SM::StateMachineInstance* sm_instance, float delta_time, Object* extra_data) override;
+		/** override */
+		virtual SM::StateAction OnEnterImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* from, Object* extra_data) override;
+		/** override */
+		virtual void OnLeaveImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* to, Object* extra_data) override;
+		
 	};
 
 	// =========================================================
@@ -164,11 +193,13 @@ namespace chaos
 	public:
 
 		/** the states */
+		shared_ptr<GameState> initial_state;
 		shared_ptr<GameState> main_menu_state;
 		shared_ptr<GameState> playing_state;
 		shared_ptr<GameState> pause_state;
 
 		/** the transitions */
+		shared_ptr<GameTransition> initial_to_main_menu;
 		shared_ptr<GameTransition> main_menu_to_playing;
 		shared_ptr<GameTransition> playing_to_main_menu;
 		shared_ptr<GameTransition> playing_to_pause;

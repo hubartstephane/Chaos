@@ -17,6 +17,8 @@ namespace chaos
 (StateMachine) \
 (StateMachineInstance)
 
+enum class StateAction;
+
 		// forward declaration
 #define CHAOS_STATEMACHINE_FORWARD_DECL(r, data, elem) class elem;
 BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLASSES);
@@ -29,17 +31,27 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 
 	// Transition is some kind of state. It can be ticked (and so not be immediate), has a OnEnter & OnLeave event
 	//
-	// Transition::TickImpl    returns true ---> effective transition is made, the SM goes to next state
+	// Transition::TickImpl    returns CanLeave ---> effective transition is made, the SM goes to next state
 	//
-	// Transition::OnEnterImpl returns true ---> this is a passthrough transition, it is immediatly left to destination state
+	// Transition::OnEnterImpl returns CanLeave ---> this is a passthrough transition, it is immediatly left to destination state
 	//
 	//
 	//
-	// State::TickImpl            returns true  ---> outgoing transitions are tested with 'CheckTransitionCondition'
+	// State::TickImpl            returns CanLeave  ---> outgoing transitions are tested with 'CheckTransitionCondition'
 	//
 	// State::OnEventReceivedImpl returns true  ---> the event is catched by the state
 	//
 	//                            returns false ---> search outgoing transitions of one with the same tag than the event
+
+		/**
+		 * StateAction: indicates whether current state can be changed or not
+		 */
+
+		enum class StateAction : int
+		{
+			MustStay,
+			CanLeave
+		};
 
 		// ==================================================
 		// State
@@ -65,14 +77,14 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 			/** FRAMEWORK : called whenever an event is send to the StateMachineInstance */
 			virtual bool OnEventReceived(StateMachineInstance* sm_instance, TagType event_tag, Object* extra_data) { return false; }
 
-			/** USER IMPLEMENTATION : called at each tick. Returns true if outgoing transition can be tested */
-			virtual bool TickImpl(StateMachineInstance* sm_instance, float delta_time, Object* extra_data) { return true; }
+			/** USER IMPLEMENTATION : called at each tick */
+			virtual StateAction TickImpl(StateMachineInstance* sm_instance, float delta_time, Object* extra_data);
 			/** USER IMPLEMENTATION : called whenever we enter in this state */
-			virtual bool OnEnterImpl(StateMachineInstance* sm_instance, StateBase* from_state, Object* extra_data) { return true; }
+			virtual StateAction OnEnterImpl(StateMachineInstance* sm_instance, StateBase* from_state, Object* extra_data);
 			/** USER IMPLEMENTATION : called whenever we leave this state */
-			virtual bool OnLeaveImpl(StateMachineInstance* sm_instance, StateBase* to_state, Object* extra_data) { return true; }
+			virtual void OnLeaveImpl(StateMachineInstance* sm_instance, StateBase* to_state, Object* extra_data);
 			/** USER IMPLEMENTATION : called whenever an event is send to the StateMachineInstance */
-			virtual bool OnEventReceivedImpl(StateMachineInstance* sm_instance, TagType event_tag, Object* extra_data) { return false; }
+			virtual bool OnEventReceivedImpl(StateMachineInstance* sm_instance, TagType event_tag, Object* extra_data);
 
 		protected:
 
@@ -104,14 +116,8 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 			/** override */
 			virtual bool OnEventReceived(StateMachineInstance* sm_instance, TagType event_tag, Object* extra_data) override;
 
-			/** override */
-			virtual bool TickImpl(StateMachineInstance* sm_instance, float delta_time, Object* extra_data) override;
-			/** override */
-			virtual bool OnEnterImpl(StateMachineInstance* sm_instance, StateBase* from_state, Object* extra_data) override;
-			/** override */
-			virtual bool OnLeaveImpl(StateMachineInstance* sm_instance, StateBase* to_state, Object* extra_data) override;
-			/** override */
-			virtual bool OnEventReceivedImpl(StateMachineInstance* sm_instance, TagType event_tag, Object* extra_data) override;
+			/** give opportunity to all outgoing transitions to trigger */
+			void CheckOutgoingTransitions(StateMachineInstance* sm_instance, Object* extra_data);
 
 		protected:
 
@@ -137,7 +143,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 		protected:
 
 			/** user implementable method to know whether the transition can trigger itself. Returns true whether the transition can be automatically used */
-			virtual bool CheckTransitionConditions(Object* extra_data);
+			virtual StateAction CheckTransitionConditions(StateMachineInstance* sm_instance, Object* extra_data);
 
 			/** override */
 			virtual void Tick(StateMachineInstance* sm_instance, float delta_time, Object* extra_data) override;
@@ -145,13 +151,6 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 			virtual void OnEnter(StateMachineInstance* sm_instance, StateBase* from_state, Object* extra_data) override;
 			/** override */
 			virtual void OnLeave(StateMachineInstance* sm_instance, StateBase* to_state, Object* extra_data) override;
-
-			/** override */
-			virtual bool TickImpl(StateMachineInstance* sm_instance, float delta_time, Object* extra_data) override;
-			/** override */
-			virtual bool OnEnterImpl(StateMachineInstance* sm_instance, StateBase* from_state, Object* extra_data) override;
-			/** override */
-			virtual bool OnLeaveImpl(StateMachineInstance* sm_instance, StateBase* to_state, Object* extra_data) override;
 
 		protected:
 

@@ -17,10 +17,12 @@ namespace chaos
 		friend class GameState;
 		friend class GameTransition;
 
+		friend class InitialState;
 		friend class MainMenuState;
 		friend class PlayingState;
 		friend class PauseState;
 
+		friend class InitialToMainMenuTransition;
 		friend class PlayingToPauseTransition;
 		friend class PauseToPlayingTransition;
 		friend class MainMenuToPlayingTransition;
@@ -280,6 +282,8 @@ namespace chaos
 		/** returns whether levels are to be looped */
 		bool AreLevelsLooping() const { return looping_levels; }
 
+		/** called once during initial state */
+		virtual void OnGameInitialization();
 		/** called on the very first time the game is started */
 		virtual void OnEnterMainMenu(bool very_first);
 		/** called whenever we leave the main menu */

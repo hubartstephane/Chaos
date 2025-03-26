@@ -760,6 +760,11 @@ namespace chaos
 		return true;
 	}
 
+	void Game::OnGameInitialization()
+	{
+
+	}
+
 	void Game::OnEnterMainMenu(bool very_first)
 	{
 		// start the music

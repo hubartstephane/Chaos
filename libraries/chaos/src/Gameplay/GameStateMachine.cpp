@@ -58,6 +58,21 @@ namespace chaos
 	// All states
 	// =========================================================
 
+	InitialState::InitialState(GameStateMachine* in_state_machine) :
+		GameState(in_state_machine)
+	{
+		SetTag(GameStateMachineKeys::STATE_INITIAL);
+		SetName("Initial");
+	}
+
+	SM::StateAction InitialState::OnEnterImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* from, Object* extra_data)
+	{
+		Game* game = GetGame(sm_instance);
+		if (game != nullptr)
+			game->OnGameInitialization();
+		return SM::StateAction::CanLeave;
+	}
+
 	MainMenuState::MainMenuState(GameStateMachine * in_state_machine) :
 		GameState(in_state_machine)
 	{
@@ -65,20 +80,19 @@ namespace chaos
 		SetName("MainMenu");
 	}
 
-	bool MainMenuState::OnEnterImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * from, Object * extra_data)
+	SM::StateAction MainMenuState::OnEnterImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * from, Object * extra_data)
 	{
 		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
 			game->OnEnterMainMenu(from == nullptr); // very first game ?
-		return false;
+		return SM::StateAction::MustStay;
 	}
 
-	bool MainMenuState::OnLeaveImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * to, Object * extra_data)
+	void MainMenuState::OnLeaveImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * to, Object * extra_data)
 	{
 		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
 			game->OnLeaveMainMenu();
-		return true;
 	}
 
 	PlayingState::PlayingState(GameStateMachine * in_state_machine) :
@@ -88,12 +102,12 @@ namespace chaos
 		SetName("Playing");
 	}
 
-	bool PlayingState::TickImpl(SM::StateMachineInstance * sm_instance, float delta_time, Object * extra_data)
+	SM::StateAction PlayingState::TickImpl(SM::StateMachineInstance * sm_instance, float delta_time, Object * extra_data)
 	{
 		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
 			game->TickGameLoop(delta_time);
-		return true;
+		return SM::StateAction::CanLeave;
 	}
 
 	PauseState::PauseState(GameStateMachine * in_state_machine) :
@@ -103,20 +117,19 @@ namespace chaos
 		SetName("Pause");
 	}
 
-	bool PauseState::OnEnterImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * from, Object * extra_data)
+	SM::StateAction PauseState::OnEnterImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * from, Object * extra_data)
 	{
 		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
 			game->OnEnterPause();
-		return false;
+		return SM::StateAction::MustStay;
 	}
 
-	bool PauseState::OnLeaveImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * to, Object * extra_data)
+	void PauseState::OnLeaveImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * to, Object * extra_data)
 	{
 		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
 			game->OnLeavePause();
-		return true;
 	}
 
 
@@ -124,32 +137,44 @@ namespace chaos
 	// All transitions
 	// =========================================================
 
-	bool MainMenuToPlayingTransition::OnEnterImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * from, Object * extra_data)
+	SM::StateAction InitialToMainMenuTransition::OnEnterImpl(SM::StateMachineInstance* sm_instance, SM::StateBase* from, Object* extra_data)
+	{
+		return SM::StateAction::CanLeave;
+	}
+
+	SM::StateAction InitialToMainMenuTransition::CheckTransitionConditions(SM::StateMachineInstance* sm_instance, Object* extra_data)
+	{
+		return SM::StateAction::CanLeave;
+	}
+
+	// ======
+
+	SM::StateAction MainMenuToPlayingTransition::OnEnterImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * from, Object * extra_data)
 	{
 		Game * game = GetGame(sm_instance);
 		if (game == nullptr)
-			return true;
+			return SM::StateAction::MustStay; // can't go further
 		// try get the physical gamepad
 		PhysicalGamepadWrapper * wrapper = auto_cast(extra_data);
 		// enter the game
 		game->OnEnterGame((wrapper == nullptr)? nullptr : wrapper->data);
-		return false;
+		return SM::StateAction::CanLeave;
 	}
 
 	// ======
 
-	bool PlayingToMainMenuTransition::OnEnterImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * from, Object * extra_data)
+	SM::StateAction PlayingToMainMenuTransition::OnEnterImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * from, Object * extra_data)
 	{
 		Game * game = GetGame(sm_instance);
 		if (game == nullptr)
-			return true;
+			return SM::StateAction::MustStay; // can't go further
 		game->OnLeaveGame();
-		return false;
+		return SM::StateAction::CanLeave;
 	}
 
 	// ======
 
-	bool PlayingToGameOverTransition::OnEnterImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * from, Object * extra_data)
+	SM::StateAction PlayingToGameOverTransition::OnEnterImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * from, Object * extra_data)
 	{
 		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
@@ -157,20 +182,20 @@ namespace chaos
 			sm_instance->SetContextData(game->PlaySound("gameover", false, false, 0.0f, SoundContext::GAME));
 			game->OnGameOver();
 		}
-		return false;
+		return SM::StateAction::MustStay;
 	}
 
-	bool PlayingToGameOverTransition::TickImpl(SM::StateMachineInstance * sm_instance, float delta_time, Object * extra_data)
+	SM::StateAction PlayingToGameOverTransition::TickImpl(SM::StateMachineInstance * sm_instance, float delta_time, Object * extra_data)
 	{
 		// wait until game over sound is finished
 		Sound * gameover_sound = auto_cast(sm_instance->GetContextData());
 		if (gameover_sound != nullptr)
 			if (!gameover_sound->IsFinished())
-				return false;
-		return true;
+				return SM::StateAction::MustStay;
+		return SM::StateAction::CanLeave;
 	}
 
-	bool PlayingToGameOverTransition::OnLeaveImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * to, Object * extra_data)
+	void PlayingToGameOverTransition::OnLeaveImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * to, Object * extra_data)
 	{
 		// destroy the sound object
 		sm_instance->SetContextData(nullptr);
@@ -178,7 +203,6 @@ namespace chaos
 		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
 			game->OnLeaveGame();
-		return true;
 	}
 
 	// =========================================================
@@ -187,17 +211,19 @@ namespace chaos
 
 	bool GameStateMachine::Initialize()
 	{
+		initial_state = new InitialState(this);
 		main_menu_state = new MainMenuState(this);
 		playing_state = new PlayingState(this);
 		pause_state = new PauseState(this);
 
+		initial_to_main_menu = new InitialToMainMenuTransition(initial_state.get(), main_menu_state.get(), GameStateMachineKeys::EVENT_GAME_INITIALIZED);
 		main_menu_to_playing = new MainMenuToPlayingTransition(main_menu_state.get(), playing_state.get(), GameStateMachineKeys::EVENT_START_GAME);
 		playing_to_main_menu = new PlayingToMainMenuTransition(playing_state.get(), main_menu_state.get(), GameStateMachineKeys::EVENT_EXIT_GAME);
 		playing_to_pause = new GameTransition(playing_state.get(), pause_state.get(), GameStateMachineKeys::EVENT_TOGGLE_PAUSE);
 		pause_to_playing = new GameTransition(pause_state.get(), playing_state.get(), GameStateMachineKeys::EVENT_TOGGLE_PAUSE);
 		playing_to_gameover = new PlayingToGameOverTransition(playing_state.get(), main_menu_state.get(), GameStateMachineKeys::EVENT_GAME_OVER);
 
-		SetInitialState(main_menu_state.get());
+		SetInitialState(initial_state.get());
 
 		return true;
 	}

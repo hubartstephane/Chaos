@@ -16,7 +16,7 @@ namespace chaos
 		WindowApplication::FinalizeGPUResources();
 	}
 
-	bool GameApplication::InitializeGPUResources()
+	bool GameApplication::InitializeGPUResources(JSONReadConfiguration config)
 	{
 		assert(glfwGetCurrentContext() == shared_context);
 
@@ -28,7 +28,7 @@ namespace chaos
 		if (!game->Initialize())
 			return false;
 		// super method : need to be done game initialization ! (because atlas creation requires the game to have loaded its levels)
-		if (!WindowApplication::InitializeGPUResources())
+		if (!WindowApplication::InitializeGPUResources(config))
 			return false;
 		// create now some game resources that need application resources to be initialized
 		if (!game->CreateGPUResources())

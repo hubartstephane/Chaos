@@ -184,13 +184,13 @@ namespace chaos
 		}
 	}
 
-	bool WindowApplication::CreateSharedContext()
+	bool WindowApplication::CreateSharedContext(JSONReadConfiguration config)
 	{
 		// set error callback
 		glfwSetErrorCallback(OnGLFWError);
 
 		// the glfw configuration (valid for all windows)
-		if (JSONReadConfiguration glfw_configuration = JSONTools::GetAttributeStructureNode(GetJSONReadConfiguration(), "glfw"))
+		if (JSONReadConfiguration glfw_configuration = JSONTools::GetAttributeStructureNode(config, "glfw"))
 			LoadFromJSON(glfw_configuration, glfw_hints);
 		glfw_hints.ApplyHints();
 
@@ -227,41 +227,43 @@ namespace chaos
 		return true;
 	}
 
-	bool WindowApplication::Initialize()
+	bool WindowApplication::Initialize(JSONReadConfiguration config)
 	{
 		// create an invisible window to share its context with all others (must be called before super method)
-		if (!CreateSharedContext())
+		if (!CreateSharedContext(config))
 			return false;
 
-		// super method
-		if (!Application::Initialize())
-			return false;
+		// super method with GL context properly set
+		return WithGLFWContext(shared_context, [this, config]()
+		{
+			return Application::Initialize(config);
+		});
+	}
 
-		// intialize the resources for GPU
-		if (!WithGLFWContext(shared_context, [this]()
-		{
-			return InitializeGPUResources();
-		}))
-		{
+	bool WindowApplication::OnInitialize(JSONReadConfiguration config)
+	{
+		if (!Application::OnInitialize(config))
 			return false;
-		}
-		return true;
+		return InitializeGPUResources(config);
+	}
+
+	void WindowApplication::RestorePreviousSessionKnownWindows()
+	{
+		std::vector<std::string> opened_window;
+		if (JSONTools::GetAttribute(GetJSONReadConfiguration(), "opened_window", opened_window))
+			for (std::string const& name : opened_window)
+				CreateOrDestroyKnownWindow(name.c_str(), true);
 	}
 
 	int WindowApplication::Main()
 	{
-
 #if _WIN32
 		// prevent windows to be in pause
 		SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED);
 #endif // #if _WIN32
 
 		// open windows that were there during previous session (after main window because main window can take a few second to initialize)
-		std::vector<std::string> opened_window;
-		if (JSONTools::GetAttribute(GetJSONReadConfiguration(), "opened_window", opened_window))
-			for (std::string const& name : opened_window)
-				CreateOrDestroyKnownWindow(name.c_str(), true);
-
+		RestorePreviousSessionKnownWindows();
 		// real main function
 		int result = MainBody();
 		// destroy remaining windows
@@ -294,7 +296,7 @@ namespace chaos
 
 	// shuyyy
 
-	bool WindowApplication::InitializeGamepadButtonMap()
+	bool WindowApplication::InitializeGamepadButtonMap(JSONReadConfiguration config)
 	{
 		// the map [button ID] => [bitmap name + text generator alias]
 		gamepad_button_map[GamepadButton::A] = { "XboxOne_A", "ButtonA" };
@@ -382,7 +384,7 @@ namespace chaos
 		return true;
 	}
 
-	bool WindowApplication::CreateTextureAtlas()
+	bool WindowApplication::CreateTextureAtlas(JSONReadConfiguration config)
 	{
 		// fill sub images for atlas generation
 		BitmapAtlas::AtlasInput input;
@@ -395,7 +397,7 @@ namespace chaos
 
 		BitmapAtlas::AtlasGeneratorParams params = BitmapAtlas::AtlasGeneratorParams(DEFAULT_ATLAS_SIZE, DEFAULT_ATLAS_SIZE, DEFAULT_ATLAS_PADDING, PixelFormatMergeParams());
 
-		if (JSONReadConfiguration atlas_config = JSONTools::GetAttributeStructureNode(GetJSONReadConfiguration(), "atlas"))
+		if (JSONReadConfiguration atlas_config = JSONTools::GetAttributeStructureNode(config, "atlas"))
 			LoadFromJSON(atlas_config, params);
 
 		// generate the atlas
@@ -407,7 +409,7 @@ namespace chaos
 		return true;
 	}
 
-	bool WindowApplication::CreateTextGenerator()
+	bool WindowApplication::CreateTextGenerator(JSONReadConfiguration config)
 	{
 		// create the generator
 		particle_text_generator = new ParticleTextGenerator::Generator(*texture_atlas);
@@ -415,7 +417,7 @@ namespace chaos
 			return false;
 
 		// get the font sub objects
-		JSONReadConfiguration fonts_config = JSONTools::GetAttributeStructureNode(GetJSONReadConfiguration(), "fonts");
+		JSONReadConfiguration fonts_config = JSONTools::GetAttributeStructureNode(config, "fonts");
 
 		// bitmaps in generator
 		if (BitmapAtlas::FolderInfo const* folder_info = texture_atlas->GetFolderInfo("sprites"))
@@ -495,21 +497,21 @@ namespace chaos
 		ApplicationLog::Message("Window(...) [%d] failure : %s", code, msg);
 	}
 
-	bool WindowApplication::InitializeGPUResources()
+	bool WindowApplication::InitializeGPUResources(JSONReadConfiguration config)
 	{
 		assert(glfwGetCurrentContext() == shared_context);
 
-		if (!CreateTextureAtlas())
+		if (!CreateTextureAtlas(config))
 		{
 			ApplicationLog::Error("WindowApplication::CreateTextureAtlas(...) failure");
 			return false;
 		}
-		if (!InitializeGamepadButtonMap())
+		if (!InitializeGamepadButtonMap(config))
 		{
 			ApplicationLog::Error("WindowApplication::InitializeGamepadButtonMap(...) failure");
 			return false;
 		}
-		if (!CreateTextGenerator())
+		if (!CreateTextGenerator(config))
 		{
 			ApplicationLog::Error("WindowApplication::CreateTextGenerator(...) failure");
 			return false;
@@ -556,9 +558,9 @@ namespace chaos
 		});
 	}
 
-	bool WindowApplication::InitializeManagers()
+	bool WindowApplication::InitializeManagers(JSONReadConfiguration config)
 	{
-		if (!Application::InitializeManagers())
+		if (!Application::InitializeManagers(config))
 			return false;
 
 		// initialize the clock
@@ -571,27 +573,25 @@ namespace chaos
 		if (sound_manager == nullptr)
 			return false;
 		GiveChildConfiguration(sound_manager.get(), "sounds");
-		sound_manager->StartManager();
+		if (!sound_manager->StartManager())
+			return false;
 
 		// initialize the imgui manager
 		imgui_manager = new ImGuiManager;
 		if (imgui_manager == nullptr)
 			return false;
 		GiveChildConfiguration(imgui_manager.get(), "imgui");
-		imgui_manager->StartManager();
+		if (!imgui_manager->StartManager())
+			return false;
 
 		// create and start the GPU manager
-		if (!WithGLFWContext(shared_context, [this]()
-		{
-			gpu_resource_manager = new GPUResourceManager;
-			if (gpu_resource_manager == nullptr)
-				return false;
-			GiveChildConfiguration(gpu_resource_manager.get(), "gpu");
-			return gpu_resource_manager->StartManager();
-		}))
-		{
+		gpu_resource_manager = new GPUResourceManager;
+		if (gpu_resource_manager == nullptr)
 			return false;
-		}
+		GiveChildConfiguration(gpu_resource_manager.get(), "gpu");
+		if (!gpu_resource_manager->StartManager())
+			return false;
+
 		return true;
 	}
 

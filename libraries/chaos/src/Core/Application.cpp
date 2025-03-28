@@ -49,9 +49,9 @@ namespace chaos
 		return GetUserLocalTempPath() / "persistent_data.json";
 	}
 
-	bool Application::LoadClasses()
+	bool Application::LoadClasses(JSONReadConfiguration config)
 	{
-		if (JSONReadConfiguration classes_config = JSONTools::GetAttributeObjectNode(GetJSONReadConfiguration(), "classes"))
+		if (JSONReadConfiguration classes_config = JSONTools::GetAttributeObjectNode(config, "classes"))
 		{
 			std::string classes_directory;
 			if (JSONTools::GetAttribute(classes_config, "classes_directory", classes_directory))
@@ -63,24 +63,22 @@ namespace chaos
 		return true;
 	}
 
-	bool Application::Initialize()
+	bool Application::Initialize(JSONReadConfiguration config)
 	{
-		// load the properties
-		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
-		{
-			ApplicationLog::Error("ReadConfigurableProperties(...) failure");
-			return false;
-		}
+		return OnInitialize(config);
+	}
 
+	bool Application::OnInitialize(JSONReadConfiguration config)
+	{
 		// load class
-		if (!LoadClasses())
+		if (!LoadClasses(config))
 		{
 			ApplicationLog::Error("LoadClasses(...) failure");
 			return false;
 		}
 
 		// initialize the managers
-		if (!InitializeManagers())
+		if (!InitializeManagers(config))
 		{
 			ApplicationLog::Error("InitializeManagers(...) failure");
 			return false;
@@ -98,16 +96,25 @@ namespace chaos
 		return 0;
 	}
 
-	bool Application::InitializeConfiguration()
+	bool Application::InitializeConfigurationSystem()
 	{
-		if (RootObjectConfiguration* root_config = new RootObjectConfiguration)
+		// create the configuration system
+		RootObjectConfiguration* root_config = new RootObjectConfiguration;
+		if (root_config == nullptr)
 		{
-			SetObjectConfiguration(root_config);
-			root_config->LoadConfigurablePropertiesFromFile(GetConfigurationPath(), GetPersistentDataPath(), false); // do not send notification yet
-			return true;
+			ApplicationLog::Error("InitializeConfigurationSystem(...) failure");
+			return false;
 		}
-		ApplicationLog::Error("InitializeConfiguration(...) failure");
-		return false;
+		SetObjectConfiguration(root_config);
+		root_config->LoadConfigurablePropertiesFromFile(GetConfigurationPath(), GetPersistentDataPath(), false); // don't send notification yet
+
+		// load the properties
+		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false)) // do not recursively update all child objects
+		{
+			ApplicationLog::Error("InitializeConfigurationSystem(...) failure");
+			return false;
+		}
+		return true;
 	}
 
 	bool Application::InitializeLogging()
@@ -155,9 +162,9 @@ namespace chaos
 			InitializeGlobalVariables(argc, argv);
 
 			// initialize, run, and finalize the application
-			if (InitializeConfiguration())
+			if (InitializeConfigurationSystem())
 			{
-				if (Initialize())
+				if (Initialize(GetJSONReadConfiguration()))
 				{
 					result = Main();
 					SavePersistentPropertiesToFile(true); // save the persistent data to file
@@ -180,7 +187,7 @@ namespace chaos
 	{
 	}
 
-	bool Application::InitializeManagers()
+	bool Application::InitializeManagers(JSONReadConfiguration config)
 	{
 		return true;
 	}

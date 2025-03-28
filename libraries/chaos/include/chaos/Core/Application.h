@@ -82,7 +82,9 @@ namespace chaos
 		/** store the application parameters */
 		virtual void StoreParameters(int argc, char** argv, char** env);
 		/** Initialize the application with the main data */
-		virtual bool Initialize();
+		virtual bool Initialize(JSONReadConfiguration config);
+		/** Initialization custom point */
+		virtual bool OnInitialize(JSONReadConfiguration config);
 		/** Finalization method */
 		virtual void Finalize();
 		/** standard library initialization */
@@ -91,19 +93,19 @@ namespace chaos
 		virtual void FinalizeStandardLibraries();
 
 		/** initialize the managers */
-		virtual bool InitializeManagers();
+		virtual bool InitializeManagers(JSONReadConfiguration config);
 		/** finalize the managers */
 		virtual void FinalizeManagers();
 
-		/** initialization relative to ConfigurableInterface */
-		bool InitializeConfiguration();
+		/** initialization the configuration system */
+		bool InitializeConfigurationSystem();
 		/** initialize the logging system */
 		bool InitializeLogging();
 		/** initialize the global variable system */
 		bool InitializeGlobalVariables(int argc, char** argv);
 
 		/** load the extra classes */
-		virtual bool LoadClasses();
+		virtual bool LoadClasses(JSONReadConfiguration config);
 		/** log some application information */
 		virtual void LogExecutionInformation();
 

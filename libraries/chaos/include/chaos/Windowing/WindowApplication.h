@@ -213,7 +213,7 @@ namespace chaos
 		virtual int MainBody();
 
 		/** create an invisible window to share its context with all other windows */
-		bool CreateSharedContext();
+		bool CreateSharedContext(JSONReadConfiguration config);
 		/** destroy the shared window */
 		void FinalizeSharedContext();
 
@@ -232,33 +232,35 @@ namespace chaos
 		static void OnGLFWError(int code, const char* msg);
 		/** a debugging function to output some message from FreeImage */
 		static void FreeImageOutputMessageFunc(FREE_IMAGE_FORMAT fif, const char* msg);
-		/** initializing standard libraries */
+		/** override */
 		virtual bool InitializeStandardLibraries() override;
-		/** Finalizalizing standard libraries */
+		/** override */
 		virtual void FinalizeStandardLibraries() override;
-		/** initialize the application */
-		virtual bool Initialize() override;
-		/** finalize the application */
+		/** override */
+		virtual bool Initialize(JSONReadConfiguration config) override;
+		/** override */
+		virtual bool OnInitialize(JSONReadConfiguration config) override;
+		/** override */
 		virtual void Finalize() override;
-		/** initialize the managers */
-		virtual bool InitializeManagers() override;
-		/** finalize the managers */
+		/** override */
+		virtual bool InitializeManagers(JSONReadConfiguration config) override;
+		/** override */
 		virtual void FinalizeManagers() override;
 		/** initialize the GPU resources */
-		virtual bool InitializeGPUResources();
+		virtual bool InitializeGPUResources(JSONReadConfiguration config);
 		/** finalize the GPU resources */
 		virtual void FinalizeGPUResources();
 
 
 
 		/** initialize a mapping with button names / text generator joker */
-		virtual bool InitializeGamepadButtonMap();
+		virtual bool InitializeGamepadButtonMap(JSONReadConfiguration config);
 
 
 		/** create the texture atlas */
-		virtual bool CreateTextureAtlas();
+		virtual bool CreateTextureAtlas(JSONReadConfiguration config);
 		/** create the text generator */
-		virtual bool CreateTextGenerator();
+		virtual bool CreateTextGenerator(JSONReadConfiguration config);
 
 		/** main method to generate atlas entries */
 		virtual bool FillAtlasGeneratorInput(BitmapAtlas::AtlasInput& input);
@@ -272,8 +274,8 @@ namespace chaos
 
 
 
-
-
+		/** restore all tool windows that were opened at the end of previous session */
+		void RestorePreviousSessionKnownWindows();
 
 
 

@@ -566,31 +566,52 @@ namespace chaos
 		// initialize the clock
 		main_clock = new Clock("main_clock");
 		if (main_clock == nullptr)
+		{
+			ApplicationLog::Error("InitializeManagers(...) fails to create Clock");
 			return false;
+		}
 
 		// initialize the sound manager
 		sound_manager = new SoundManager();
 		if (sound_manager == nullptr)
+		{
+			ApplicationLog::Error("InitializeManagers(...) fails to create SoundManager");
 			return false;
+		}
 		GiveChildConfiguration(sound_manager.get(), "sounds");
 		if (!sound_manager->StartManager())
+		{
+			ApplicationLog::Error("InitializeManagers(...) fails to initialize SoundManager");
 			return false;
+		}
 
 		// initialize the imgui manager
 		imgui_manager = new ImGuiManager;
 		if (imgui_manager == nullptr)
+		{
+			ApplicationLog::Error("InitializeManagers(...) fails to create ImGuiManager");
 			return false;
+		}
 		GiveChildConfiguration(imgui_manager.get(), "imgui");
 		if (!imgui_manager->StartManager())
+		{
+			ApplicationLog::Error("InitializeManagers(...) fails to initialize ImGuiManager");
 			return false;
+		}
 
 		// create and start the GPU manager
 		gpu_resource_manager = new GPUResourceManager;
 		if (gpu_resource_manager == nullptr)
+		{
+			ApplicationLog::Error("InitializeManagers(...) fails to create GPUResourceManager");
 			return false;
+		}
 		GiveChildConfiguration(gpu_resource_manager.get(), "gpu");
 		if (!gpu_resource_manager->StartManager())
+		{
+			ApplicationLog::Error("InitializeManagers(...) fails to initialize GPUResourceManager");
 			return false;
+		}
 
 		return true;
 	}

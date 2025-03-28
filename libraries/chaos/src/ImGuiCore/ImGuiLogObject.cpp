@@ -111,9 +111,8 @@ namespace chaos
 				ImGui::PushID(int(i * COLUMN_COUNT + 5));
 				ImGui::TableNextColumn();
 				if (ImGui::Button("Clipboard"))
-				{
-					ImGui::GetIO().SetClipboardTextFn(nullptr, line.ToString().c_str());
-				}
+					ImGui::SetClipboardText(line.ToString().c_str());
+
 				ImGui::PopID();
 
 			}

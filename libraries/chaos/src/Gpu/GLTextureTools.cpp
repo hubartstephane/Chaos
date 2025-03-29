@@ -236,8 +236,8 @@ namespace chaos
 			glTextureParameteri(texture_id, GL_TEXTURE_WRAP_T, (GLenum)parameters.wrap_t);
 			glTextureParameteri(texture_id, GL_TEXTURE_WRAP_R, (GLenum)parameters.wrap_r);
 
-			glTextureParameteri(texture_id, GL_TEXTURE_MAG_FILTER, parameters.mag_filter);
-			glTextureParameteri(texture_id, GL_TEXTURE_MIN_FILTER, parameters.min_filter);
+			glTextureParameteri(texture_id, GL_TEXTURE_MAG_FILTER, (GLenum)parameters.mag_filter);
+			glTextureParameteri(texture_id, GL_TEXTURE_MIN_FILTER, (GLenum)parameters.min_filter);
 
 			if (gl_formats.internal_format == GL_R8 || gl_formats.internal_format == GL_R32F)
 			{

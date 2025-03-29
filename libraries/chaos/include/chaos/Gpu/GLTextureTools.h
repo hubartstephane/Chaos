@@ -3,6 +3,8 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	enum class TextureWrapMethod : GLenum;
+	enum class TextureMagFilter : GLenum;
+	enum class TextureMinFilter : GLenum;
 
 	class GenTextureParameters;
 
@@ -19,6 +21,30 @@ namespace chaos
 		ClampToEdge = GL_CLAMP_TO_EDGE,
 		ClampToBorder = GL_CLAMP_TO_BORDER,
 		MirrorClampToEdge = GL_MIRROR_CLAMP_TO_EDGE
+	};
+
+	/**
+	 * TextureMagFilter: Magnification filter
+	 */
+
+	enum class TextureMagFilter : GLenum
+	{
+		Nearest = GL_NEAREST,
+		Linear = GL_LINEAR
+	};
+
+	/**
+	 * TextureMinFilter: Mignification filter
+	 */
+
+	enum class TextureMinFilter : GLenum
+	{
+		Nearest = GL_NEAREST,
+		Linear = GL_LINEAR,
+		NearestMipmapNearest = GL_NEAREST_MIPMAP_NEAREST,
+		LinearMipmapNearest  = GL_LINEAR_MIPMAP_NEAREST,
+		NearestMipmapLinear = GL_NEAREST_MIPMAP_LINEAR,
+		LinearMipmapLinear = GL_LINEAR_MIPMAP_LINEAR
 	};
 
 	/**
@@ -40,9 +66,9 @@ namespace chaos
 		TextureWrapMethod wrap_r = TextureWrapMethod::Repeat;
 
 		/** parameters for glTexParameteri(...) */
-		GLenum mag_filter = GL_LINEAR;
+		TextureMagFilter mag_filter = TextureMagFilter::Linear;
 		/** parameters for glTexParameteri(...) */
-		GLenum min_filter = GL_LINEAR_MIPMAP_LINEAR;
+		TextureMinFilter min_filter = TextureMinFilter::LinearMipmapLinear;
 
 		/** parameters for glTexImageXX(...) */
 		GLint  level = 0;

@@ -77,12 +77,6 @@ namespace chaos
 	* Window
 	*/
 
-	Window::Window()
-	{
-		// create the render_context
-		render_context = new GPURenderContext(this);
-	}
-
 	Window::~Window()
 	{
 		assert(glfw_window == nullptr);
@@ -365,10 +359,15 @@ namespace chaos
 		SetWindowPosition(window_position, true); // include decorators
 	}
 
-	bool Window::CreateGLFWWindow(WindowPlacementInfo const & placement_info, WindowCreateParams const &create_params, GLFWwindow* share_context_window, GLFWHints glfw_hints)
+	bool Window::CreateGLFWWindow(GPUDevice * in_gpu_device, WindowPlacementInfo const & placement_info, WindowCreateParams const &create_params, GLFWwindow* share_context_window, GLFWHints glfw_hints)
 	{
 		// resource already existing
 		if (glfw_window != nullptr)
+			return false;
+
+		// create the GPURenderContext
+		render_context = new GPURenderContext(in_gpu_device, this);
+		if (render_context == nullptr)
 			return false;
 
 		// prepare window creation
@@ -1038,7 +1037,7 @@ namespace chaos
 			glm::ivec2 window_size = GetWindowSize(false); // only interrested in client area
 
 			// generate a framebuffer
-			GPUFramebufferGenerator framebuffer_generator;
+			GPUFramebufferGenerator framebuffer_generator(GetRenderContext());
 			framebuffer_generator.AddColorAttachment(0, PixelFormat::BGRA, window_size, "scene");
 			framebuffer_generator.AddDepthStencilAttachment(window_size, "depth");
 
@@ -1559,6 +1558,14 @@ namespace chaos
 			return (it != window_application->windows.end());
 		}
 		return false;
+	}
+
+	GPUDevice* Window::GetDevice () const
+	{
+		WindowApplication * window_application = Application::GetInstance();
+		if (window_application == nullptr)
+			return nullptr;
+		return window_application->GetDevice ();
 	}
 
 }; // namespace chaos

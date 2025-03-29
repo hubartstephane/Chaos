@@ -118,7 +118,7 @@ protected:
 
 		static bool with_depth_stencil = true;
 
-		chaos::GPUFramebufferGenerator framebuffer_generator;
+		chaos::GPUFramebufferGenerator framebuffer_generator(GetRenderContext());
 		framebuffer_generator.AddColorAttachment(0, chaos::PixelFormat::BGRA, glm::ivec2(0, 0), "scene");
 		if (with_depth_stencil)
 			framebuffer_generator.AddDepthStencilAttachment(glm::ivec2(0, 0));

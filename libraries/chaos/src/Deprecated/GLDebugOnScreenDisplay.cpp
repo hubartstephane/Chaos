@@ -155,16 +155,20 @@ namespace chaos
 		rebuild_required = true;
 	}
 
-	bool GLDebugOnScreenDisplay::Initialize(GLDebugOnScreenDisplay::Params const & params)
+	bool GLDebugOnScreenDisplay::Initialize(GPUDevice* in_gpu_device, GLDebugOnScreenDisplay::Params const & params)
 	{
-		if (DoInitialize(params))
+		if (DoInitialize(in_gpu_device, params))
 			return true;
 		Finalize();
 		return false;
 	}
 
-	bool GLDebugOnScreenDisplay::DoInitialize(GLDebugOnScreenDisplay::Params const & params)
+	bool GLDebugOnScreenDisplay::DoInitialize(GPUDevice* in_gpu_device, GLDebugOnScreenDisplay::Params const & params)
 	{
+		assert(in_gpu_device != nullptr);
+
+		gpu_device = in_gpu_device;
+
 		// the cache
 		vertex_array_cache = new GPUVertexArrayCache;
 		if (vertex_array_cache == nullptr)
@@ -176,7 +180,7 @@ namespace chaos
 			return false;
 
 		// create texture
-		texture = GPUTextureLoader().GenTextureObject(image);
+		texture = GPUTextureLoader(gpu_device.get()).GenTextureObject(image);
 		FreeImage_Unload(image);
 		if (texture == nullptr)
 			return false;
@@ -207,6 +211,7 @@ namespace chaos
 
 	void GLDebugOnScreenDisplay::Finalize()
 	{
+		gpu_device = nullptr;
 		program = nullptr;
 		texture = nullptr;
 		vertex_array_cache = nullptr;

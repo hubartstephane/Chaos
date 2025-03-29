@@ -28,12 +28,12 @@ namespace chaos
 	 * GPURenderContext: interface for rendering
 	 */
 
-	class CHAOS_API GPURenderContext : public Tickable
+	class CHAOS_API GPURenderContext : public Tickable, public GPUDeviceResourceInterface
 	{
 	public:
 
 		/** constructor */
-		GPURenderContext(Window* in_window);
+		GPURenderContext(GPUDevice * in_gpu_device, Window* in_window);
 
 		/** render a frame (into the window directly) */
 		bool RenderFrame(LightweightFunction<bool()> render_func);

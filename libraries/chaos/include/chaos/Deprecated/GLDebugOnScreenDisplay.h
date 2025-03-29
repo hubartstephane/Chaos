@@ -45,7 +45,7 @@ namespace chaos
 		void Clear();
 
 		/** Initialize the displayer */
-		bool Initialize(GLDebugOnScreenDisplay::Params const& params);
+		bool Initialize(GPUDevice * in_gpu_device, GLDebugOnScreenDisplay::Params const& params);
 		/** Finalize */
 		void Finalize();
 
@@ -55,7 +55,7 @@ namespace chaos
 	protected:
 
 		/** internal initialization method */
-		bool DoInitialize(GLDebugOnScreenDisplay::Params const& params);
+		bool DoInitialize(GPUDevice* in_gpu_device, GLDebugOnScreenDisplay::Params const& params);
 		/** internal method to build the vertex buffer */
 		bool BuildVertexBuffer(int width, int height) const;
 
@@ -78,6 +78,9 @@ namespace chaos
 		shared_ptr<GPUBuffer> vertex_buffer;
 		/** the declaration of the vertex buffer */
 		GPUVertexDeclaration declaration;
+
+		/** the GPUDevice */
+		weak_ptr<GPUDevice> gpu_device;
 
 		/** number of element to draw */
 		mutable size_t draw_count = 0;

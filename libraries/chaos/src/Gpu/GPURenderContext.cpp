@@ -6,7 +6,8 @@ namespace chaos
 
 	CHAOS_GLOBAL_VARIABLE(size_t, renderer_stats_size, 1200 * 20) // let's say at 1200 fps for very small project, we have 20 seconds stored
 
-	GPURenderContext::GPURenderContext(Window* in_window) :
+	GPURenderContext::GPURenderContext(GPUDevice* in_gpu_device, Window* in_window) :
+		GPUDeviceResourceInterface(in_gpu_device),
 		window(in_window),
 		stats(renderer_stats_size.Get())
 	{

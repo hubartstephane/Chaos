@@ -62,7 +62,7 @@ protected:
 #if 0
 
 		// let OpenGL do the conversion
-		return chaos::GPUTextureLoader().GenTextureObject(&cubemap, merge_params);
+		return chaos::GPUTextureLoader(GetDevice()).GenTextureObject(&cubemap, merge_params);
 
 #else
 
@@ -70,7 +70,7 @@ protected:
 		chaos::CubeMapImages single_cubemap = cubemap.ToSingleImage(true, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), merge_params);
 
 		if (!single_cubemap.IsEmpty())
-			return chaos::GPUTextureLoader().GenTextureObject(&single_cubemap);
+			return chaos::GPUTextureLoader(GetDevice()).GenTextureObject(&single_cubemap);
 
 #endif
 
@@ -211,7 +211,7 @@ protected:
 		debug_params.spacing                    = glm::ivec2( 0, 0);
 		debug_params.crop_texture               = glm::ivec2(15, 7);
 
-		if (!debug_display.Initialize(debug_params))
+		if (!debug_display.Initialize(GetDevice (), debug_params))
 			return false;
 
 		debug_display.AddLine("Press +/- to change cubemap");

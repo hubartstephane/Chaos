@@ -50,7 +50,7 @@ protected:
 	/** move the player */
 	virtual chaos::GameHUD * DoCreatePlayingHUD() override;
 
-	bool GenerateFramebuffer(glm::ivec2 const & size, chaos::shared_ptr<chaos::GPUFramebuffer> & in_framebuffer);
+	bool GenerateFramebuffer(chaos::GPURenderContext* in_gpu_render_context, glm::ivec2 const & size, chaos::shared_ptr<chaos::GPUFramebuffer> & in_framebuffer);
 
 protected:
 

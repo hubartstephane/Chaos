@@ -12,6 +12,10 @@ namespace chaos
 	* GPUResourceManager
 	**/
 
+	GPUResourceManager::GPUResourceManager(GPUDevice* in_gpu_device):
+		GPUDeviceResourceInterface(in_gpu_device)
+	{}
+
 	void GPUResourceManager::Release()
 	{
 		textures.clear();
@@ -137,19 +141,19 @@ namespace chaos
 
 	GPUTexture * GPUResourceManager::LoadTexture(FilePathParam const & path, char const * name, GenTextureParameters const & texture_parameters)
 	{
-		return GPUTextureLoader(this).LoadObject(path, name, texture_parameters);
+		return GPUTextureLoader(GetDevice(), this).LoadObject(path, name, texture_parameters);
 	}
 
 	GPUProgram * GPUResourceManager::LoadProgram(FilePathParam const & path, char const * name)
 	{
-		return GPUProgramLoader(this).LoadObject(path, name);
+		return GPUProgramLoader(GetDevice(), this).LoadObject(path, name);
 	}
 
 	GPURenderMaterial * GPUResourceManager::LoadRenderMaterial(FilePathParam const & path, char const * name)
 	{
 		GPURenderMaterialLoaderReferenceSolver solver;
 
-		GPURenderMaterial * result = GPURenderMaterialLoader(this, &solver).LoadObject(path, name);
+		GPURenderMaterial * result = GPURenderMaterialLoader(GetDevice(), this, &solver).LoadObject(path, name);
 		if (result != nullptr)
 			solver.ResolveReferences(this);
 		return result;
@@ -191,7 +195,7 @@ namespace chaos
 		return LoadObjects<true>(
 			"textures",
 			config,
-			GPUTextureLoader(this));
+			GPUTextureLoader(GetDevice(), this));
 	}
 
 	bool GPUResourceManager::LoadPrograms(nlohmann::json const * config)
@@ -199,7 +203,7 @@ namespace chaos
 		return LoadObjects<true>(
 			"programs",
 			config,
-			GPUProgramLoader(this));
+			GPUProgramLoader(GetDevice(), this));
 	}
 
 	bool GPUResourceManager::LoadMaterials(nlohmann::json const * config)
@@ -209,7 +213,7 @@ namespace chaos
 		bool result = LoadObjects<true>(
 			"rendermaterials",
 			config,
-			GPURenderMaterialLoader(this, &solver));
+			GPURenderMaterialLoader(GetDevice(), this, &solver));
 		if (result)
 			solver.ResolveReferences(this);
 		return result;
@@ -466,7 +470,7 @@ namespace chaos
 	bool GPUResourceManager::OnConfigurationChanged(JSONReadConfiguration config)
 	{
 		// create a temporary manager
-		shared_ptr<GPUResourceManager> other_gpu_resource_manager = new GPUResourceManager; // destroyed at the end of the function
+		shared_ptr<GPUResourceManager> other_gpu_resource_manager = new GPUResourceManager(GetDevice()); // destroyed at the end of the function
 		if (other_gpu_resource_manager == nullptr)
 			return false;
 		GiveClonedConfiguration(other_gpu_resource_manager.get());

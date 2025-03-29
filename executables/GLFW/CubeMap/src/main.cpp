@@ -91,7 +91,7 @@ protected:
 		}
 
 		if (!cubemap.IsEmpty())
-			return chaos::GPUTextureLoader().GenTextureObject(&cubemap);
+			return chaos::GPUTextureLoader(GetDevice()).GenTextureObject(&cubemap);
 
 		return nullptr;
 	}
@@ -198,7 +198,7 @@ protected:
 		debug_params.spacing = glm::ivec2(0, 0);
 		debug_params.crop_texture = glm::ivec2(15, 7);
 
-		if (!debug_display.Initialize(debug_params))
+		if (!debug_display.Initialize(GetDevice (), debug_params))
 			return false;
 
 		debug_display.AddLine("Press +/- to change cubemap");

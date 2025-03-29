@@ -466,7 +466,7 @@ protected:
 		{
 			boost::filesystem::path resources_path = application->GetResourcesPath();
 
-			chaos::GPUTextureLoader loader;
+			chaos::GPUTextureLoader loader(GetDevice());
 			return loader.LoadObject(resources_path / filename);
 		}
 		return nullptr;

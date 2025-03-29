@@ -10,13 +10,14 @@ namespace chaos
 	* GPUTextureLoader : used to have some loading texture functions for OpenGL
 	**/
 
-	class CHAOS_API GPUTextureLoader : public ResourceManagerLoader<GPUTexture, GPUResourceManager>
+	class CHAOS_API GPUTextureLoader : public ResourceManagerLoader<GPUTexture, GPUResourceManager>, public GPUDeviceResourceInterface
 	{
 	public:
 
 		/** constructor */
-		GPUTextureLoader(GPUResourceManager* in_resource_manager = nullptr) :
-			ResourceManagerLoader<GPUTexture, GPUResourceManager>(in_resource_manager) {}
+		GPUTextureLoader(GPUDevice * in_gpu_device, GPUResourceManager* in_resource_manager = nullptr) :
+			ResourceManagerLoader<GPUTexture, GPUResourceManager>(in_resource_manager),
+			GPUDeviceResourceInterface(in_gpu_device){}
 
 		/** load an object from JSON */
 		virtual GPUTexture* LoadObject(char const* name, nlohmann::json const * json, GenTextureParameters const& parameters = {}) const;

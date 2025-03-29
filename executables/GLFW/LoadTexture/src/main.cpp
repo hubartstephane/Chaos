@@ -53,13 +53,13 @@ protected:
 
       chaos::ImageDescription sub_desc = desc.GetSubImageDescription(k, k, desc.width - 2 * k, desc.height - 2 * k);
 
-      result = chaos::GPUTextureLoader().GenTextureObject(sub_desc);
+      result = chaos::GPUTextureLoader(GetDevice()).GenTextureObject(sub_desc);
 
       FreeImage_Unload(image);
     }
 
 #else
-		result = chaos::GPUTextureLoader().GenTextureObject(texture_paths[index]);
+		result = chaos::GPUTextureLoader(GetDevice()).GenTextureObject(texture_paths[index]);
 #endif
 
 		return result;

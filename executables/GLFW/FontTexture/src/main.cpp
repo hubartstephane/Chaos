@@ -63,7 +63,7 @@ protected:
 		debug_params.spacing = glm::ivec2(0, 0);
 		debug_params.crop_texture = glm::ivec2(15, 7);
 
-		if (!debug_display.Initialize(debug_params))
+		if (!debug_display.Initialize(GetDevice (), debug_params))
 			return false;
 
 		debug_display.AddLine("line1 gdjkhfghhbb xxxxx", 2.0f);

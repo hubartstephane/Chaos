@@ -57,7 +57,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderContext * render_context, chaos::G
 
 	// create the render targets or reuse olds
 	glm::ivec2 viewport_size = render_params.viewport.size;
-	if (!GenerateFramebuffer(viewport_size, framebuffer_deformed) || !GenerateFramebuffer(viewport_size, framebuffer_worldlimits))
+	if (!GenerateFramebuffer(render_context, viewport_size, framebuffer_deformed) || !GenerateFramebuffer(render_context, viewport_size, framebuffer_worldlimits))
 		return;
 
 	// clear the color buffers
@@ -265,7 +265,7 @@ void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, s
 	}
 }
 
-bool LudumGame::GenerateFramebuffer(glm::ivec2 const & size, chaos::shared_ptr<chaos::GPUFramebuffer> & in_framebuffer)
+bool LudumGame::GenerateFramebuffer(chaos::GPURenderContext * in_gpu_render_context, glm::ivec2 const & size, chaos::shared_ptr<chaos::GPUFramebuffer> & in_framebuffer)
 {
 	if (in_framebuffer != nullptr)
 	{
@@ -273,7 +273,7 @@ bool LudumGame::GenerateFramebuffer(glm::ivec2 const & size, chaos::shared_ptr<c
 			return true;
 	}
 
-	chaos::GPUFramebufferGenerator framebuffer_generator;
+	chaos::GPUFramebufferGenerator framebuffer_generator(in_gpu_render_context);
 	framebuffer_generator.AddColorAttachment(0, chaos::PixelFormat::BGRA, glm::ivec2(0, 0), "scene");
 
 	in_framebuffer = framebuffer_generator.GenerateFramebuffer(size);

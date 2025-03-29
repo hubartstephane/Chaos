@@ -69,13 +69,12 @@ protected:
     debug_params.spacing                    = glm::ivec2( 0, 0);
     debug_params.crop_texture               = glm::ivec2(15, 7);
 
-    if (!debug_display.Initialize(debug_params))
+    if (!debug_display.Initialize(GetDevice (), debug_params))
       return false;
 
-    sound_manager = new chaos::SoundManager;
+	chaos::WindowApplication * window_application = chaos::Application::GetInstance();
+	sound_manager = window_application->GetSoundManager();
     if (sound_manager == nullptr)
-      return false;
-    if (!sound_manager->StartManager())
       return false;
 
     sound_source = sound_manager->AddSource(resources_path / "Tom.wav");

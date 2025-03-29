@@ -246,9 +246,9 @@ protected:
 			return ReleaseResourceImpl(&library, &face);
 
 		chaos::GenTextureParameters parameters;
-		parameters.wrap_r = GL_CLAMP;
-		parameters.wrap_s = GL_CLAMP;
-		parameters.wrap_t = GL_CLAMP;
+		parameters.wrap_r = chaos::TextureWrapMethod::ClampToEdge;
+		parameters.wrap_s = chaos::TextureWrapMethod::ClampToEdge;
+		parameters.wrap_t = chaos::TextureWrapMethod::ClampToEdge;
 		//parameters.min_filter = GL_NEAREST;
 		//parameters.mag_filter = GL_NEAREST;
 
@@ -273,7 +273,7 @@ protected:
 
 #endif
 
-		chaos::shared_ptr<chaos::GPUTexture> result = chaos::GPUTextureLoader().GenTextureObject(bm, parameters);
+		chaos::shared_ptr<chaos::GPUTexture> result = chaos::GPUTextureLoader(GetDevice()).GenTextureObject(bm, parameters);
 
 		glfwSetWindowSize(glfw_window, FreeImage_GetWidth(bm), FreeImage_GetHeight(bm));
 

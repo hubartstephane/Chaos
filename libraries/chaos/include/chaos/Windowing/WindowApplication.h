@@ -40,6 +40,9 @@ namespace chaos
 		/** destroy some window by its name */
 		void DestroyNamedWindow(char const* name);
 
+		/** gets the GPUDevice */
+		GPUDevice * GetDevice () const { return gpu_device.get(); }
+
 		/** getter of the main clock */
 		static Clock* GetMainClockInstance();
 		/** getter of the main clock */

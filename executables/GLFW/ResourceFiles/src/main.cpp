@@ -41,12 +41,12 @@ protected:
 		// ==========================================================
 
 		// independant loading (NOT GPUResourceManager) : always good
-		TexturePtr independant_texture1 = chaos::GPUTextureLoader().GenTextureObject(resource_path / "textures" / "texture1.json");
-		TexturePtr independant_texture2 = chaos::GPUTextureLoader().GenTextureObject(resource_path / "textures" / "texture2.json");
-		TexturePtr independant_texture3 = chaos::GPUTextureLoader().GenTextureObject(resource_path / "textures" / "texture3.json");
-		TexturePtr independant_texture4 = chaos::GPUTextureLoader().GenTextureObject(resource_path / "textures" / "texture4.json");
-		TexturePtr independant_texture5 = chaos::GPUTextureLoader().GenTextureObject(resource_path / "textures" / "texture5.json");
-		TexturePtr independant_texture6 = chaos::GPUTextureLoader().GenTextureObject(resource_path / "textures" / "space.png");
+		TexturePtr independant_texture1 = chaos::GPUTextureLoader(GetDevice()).GenTextureObject(resource_path / "textures" / "texture1.json");
+		TexturePtr independant_texture2 = chaos::GPUTextureLoader(GetDevice()).GenTextureObject(resource_path / "textures" / "texture2.json");
+		TexturePtr independant_texture3 = chaos::GPUTextureLoader(GetDevice()).GenTextureObject(resource_path / "textures" / "texture3.json");
+		TexturePtr independant_texture4 = chaos::GPUTextureLoader(GetDevice()).GenTextureObject(resource_path / "textures" / "texture4.json");
+		TexturePtr independant_texture5 = chaos::GPUTextureLoader(GetDevice()).GenTextureObject(resource_path / "textures" / "texture5.json");
+		TexturePtr independant_texture6 = chaos::GPUTextureLoader(GetDevice()).GenTextureObject(resource_path / "textures" / "space.png");
 
 		// ==========================================================
 
@@ -75,10 +75,10 @@ protected:
 
 
 		// ==========================================================
-		ProgramPtr program1 = chaos::GPUProgramLoader().GenProgramObject(resource_path / "programs" / "program1.json");
-		ProgramPtr program2 = chaos::GPUProgramLoader().GenProgramObject(resource_path / "programs" / "program2.json");
-		ProgramPtr program3 = chaos::GPUProgramLoader().GenProgramObject(resource_path / "programs" / "program3.json");
-		ProgramPtr program4 = chaos::GPUProgramLoader().GenProgramObject(resource_path / "programs" / "program4.json");
+		ProgramPtr program1 = chaos::GPUProgramLoader(GetDevice()).GenProgramObject(resource_path / "programs" / "program1.json");
+		ProgramPtr program2 = chaos::GPUProgramLoader(GetDevice()).GenProgramObject(resource_path / "programs" / "program2.json");
+		ProgramPtr program3 = chaos::GPUProgramLoader(GetDevice()).GenProgramObject(resource_path / "programs" / "program3.json");
+		ProgramPtr program4 = chaos::GPUProgramLoader(GetDevice()).GenProgramObject(resource_path / "programs" / "program4.json");
 
 
 		program1->Release();

@@ -19,10 +19,13 @@ namespace chaos
 		GenTextureParameters gen_texture_parameters;
 	};
 
-	class CHAOS_API GPUFramebufferGenerator : public GPUFramebufferAttachmentOwner<GPUFramebufferGeneratorAttachmentInfo>
+	class CHAOS_API GPUFramebufferGenerator : public GPUFramebufferAttachmentOwner<GPUFramebufferGeneratorAttachmentInfo>, public GPURenderContextResourceInterface
 	{
 
 	public:
+
+		/** constructor */
+		GPUFramebufferGenerator(GPURenderContext * in_gpu_render_context);
 
 		/** generate the framebuffer */
 		GPUFramebuffer* GenerateFramebuffer(glm::ivec2 const& wanted_size = { 0, 0 });

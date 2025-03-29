@@ -11,13 +11,14 @@ namespace chaos
 	*                    It is possible to use cache system and to add some definitions so we can generate multiple programs with small macro differences.
 	*/
 
-	class CHAOS_API GPUProgramLoader : public ResourceManagerLoader<GPUProgram, GPUResourceManager>
+	class CHAOS_API GPUProgramLoader : public ResourceManagerLoader<GPUProgram, GPUResourceManager>, public GPUDeviceResourceInterface
 	{
 	public:
 
 		/** constructor */
-		GPUProgramLoader(GPUResourceManager* in_resource_manager = nullptr) :
-			ResourceManagerLoader<GPUProgram, GPUResourceManager>(in_resource_manager) {}
+		GPUProgramLoader(GPUDevice* in_gpu_device, GPUResourceManager* in_resource_manager = nullptr) :
+			ResourceManagerLoader<GPUProgram, GPUResourceManager>(in_resource_manager),
+			GPUDeviceResourceInterface(in_gpu_device) {}
 
 		/** load an object from JSON */
 		virtual GPUProgram* LoadObject(char const* name, nlohmann::json const * json) const;

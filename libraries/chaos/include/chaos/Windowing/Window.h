@@ -131,10 +131,11 @@ namespace chaos
 		using CreateImGuiObjectFunc = LightweightFunction<ImGuiObject* ()>;
 		using EnumerateKnownImGuiObjectFunc = LightweightFunction<bool(char const*, CreateImGuiObjectFunc)>;
 
-		/** constructor */
-		Window();
 		/** destructor */
 		virtual ~Window();
+
+		/** Get the GPUDevice */
+		GPUDevice * GetDevice () const;
 
 		/** require the destruction of the window (at least its GLFW resource). this will remove it from the WindowApplication */
 		void Destroy();
@@ -180,7 +181,7 @@ namespace chaos
 		virtual aabox2 GetRequiredViewport(glm::ivec2 const& size) const;
 
 		/** getting the render_context */
-		GPURenderContext* GetRenderer() { return render_context.get(); }
+		GPURenderContext* GetRenderContext() const { return render_context.get(); }
 
 		/** get the root widget */
 		WindowRootWidget* GetRootWidget() { return root_widget.get(); }
@@ -378,7 +379,7 @@ namespace chaos
 		void DestroyImGuiContext();
 
 		/** create the internal window */
-		bool CreateGLFWWindow(WindowPlacementInfo const & placement_info, WindowCreateParams const &create_params, GLFWwindow* share_context, GLFWHints glfw_hints);
+		bool CreateGLFWWindow(GPUDevice* in_gpu_device, WindowPlacementInfo const & placement_info, WindowCreateParams const &create_params, GLFWwindow* share_context, GLFWHints glfw_hints);
 		/** destroying the window */
 		void DestroyGLFWWindow();
 

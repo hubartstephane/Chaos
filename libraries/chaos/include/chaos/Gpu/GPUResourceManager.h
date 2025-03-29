@@ -53,7 +53,7 @@ namespace chaos
 	* GPUResourceManager : a manager to store different kinds of (can be depend) resources
 	**/
 
-	class CHAOS_API GPUResourceManager : public ResourceManager, public ConfigurableInterface, public ImGuiInterface
+	class CHAOS_API GPUResourceManager : public ResourceManager, public ConfigurableInterface, public ImGuiInterface, public GPUDeviceResourceInterface
 	{
 		friend class GPUTextureLoader;
 		friend class GPUProgramLoader;
@@ -61,6 +61,9 @@ namespace chaos
 		friend class GPURenderMaterialLoaderReferenceSolver;
 
 	public:
+
+		/** constructor */
+		GPUResourceManager(GPUDevice * in_gpu_device);
 
 		/** release the resources */
 		virtual void Release();

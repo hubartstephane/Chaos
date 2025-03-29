@@ -96,7 +96,7 @@ namespace chaos
 				return true;
 
 		// inplace declared program
-		GPUProgramLoader program_loader(manager);
+		GPUProgramLoader program_loader(GetDevice (), manager);
 		GPUProgram * program = program_loader.LoadObject(nullptr, json_program);
 		if (program == nullptr || program->GetProgramType() != GPUProgramType::RENDER)
 			return false;
@@ -175,7 +175,7 @@ namespace chaos
 					continue;
 
 			// inplace declared texture
-			GPUTextureLoader texture_loader(manager);
+			GPUTextureLoader texture_loader(GetDevice(), manager);
 			GPUTexture * texture = texture_loader.LoadObject(nullptr, &(*it));
 			if (texture == nullptr)
 				continue;

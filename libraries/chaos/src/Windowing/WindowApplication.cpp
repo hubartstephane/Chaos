@@ -137,7 +137,7 @@ namespace chaos
 				JSONTools::GetAttribute(config, "default_fullscreen", placement_info.fullscreen);
 
 			// create the GLFW resource
-			if (!result->CreateGLFWWindow(placement_info, create_params, shared_context, glfw_hints))
+			if (!result->CreateGLFWWindow(GetDevice(), placement_info, create_params, shared_context, glfw_hints))
 			{
 				result->Destroy();
 				return nullptr; // the shared_ptr destruction will handle the object lifetime
@@ -578,7 +578,7 @@ namespace chaos
 		}
 
 		// create and start the GPU manager
-		gpu_resource_manager = new GPUResourceManager;
+		gpu_resource_manager = new GPUResourceManager(GetDevice());
 		if (gpu_resource_manager == nullptr)
 		{
 			ApplicationLog::Error("InitializeManagers(...) fails to create GPUResourceManager");

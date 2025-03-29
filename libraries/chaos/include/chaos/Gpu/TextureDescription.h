@@ -2,7 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	enum class TextureType;
+	enum class TextureType : GLenum;
 
 	class SurfaceDescription;
 	class TextureDescription;
@@ -13,7 +13,7 @@ namespace chaos
 	* TextureType: type of texture for hardware
 	*/
 
-	enum class TextureType
+	enum class TextureType : GLenum
 	{
 		Unknown = GL_NONE,
 

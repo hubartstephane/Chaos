@@ -2,9 +2,24 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
+	enum class TextureWrapMethod : GLenum;
+
 	class GenTextureParameters;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+	/**
+	 * TextureWrapMethod: express how texture wrapped during sampling
+	 */
+
+	enum class TextureWrapMethod : GLenum
+	{
+		Repeat = GL_REPEAT,
+		MirroredRepeat = GL_MIRRORED_REPEAT,
+		ClampToEdge = GL_CLAMP_TO_EDGE,
+		ClampToBorder = GL_CLAMP_TO_BORDER,
+		MirrorClampToEdge = GL_MIRROR_CLAMP_TO_EDGE
+	};
 
 	/**
 	* GenTextureParameters : some parameters to load textures
@@ -18,11 +33,11 @@ namespace chaos
 		// TODO : take care of level and border
 
 		/** parameters for glTexParameteri(...) */
-		GLenum wrap_s = GL_REPEAT;
+		TextureWrapMethod wrap_s = TextureWrapMethod::Repeat;
 		/** parameters for glTexParameteri(...) */
-		GLenum wrap_t = GL_REPEAT;
+		TextureWrapMethod wrap_t = TextureWrapMethod::Repeat;
 		/** parameters for glTexParameteri(...) */
-		GLenum wrap_r = GL_REPEAT;
+		TextureWrapMethod wrap_r = TextureWrapMethod::Repeat;
 
 		/** parameters for glTexParameteri(...) */
 		GLenum mag_filter = GL_LINEAR;

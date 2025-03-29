@@ -232,9 +232,9 @@ namespace chaos
 			//   - glTexParameteri(TARGET ...)
 			// and
 			//   - glTextureParameteri(TEXTURE_ID ...)
-			glTextureParameteri(texture_id, GL_TEXTURE_WRAP_S, parameters.wrap_s);
-			glTextureParameteri(texture_id, GL_TEXTURE_WRAP_T, parameters.wrap_t);
-			glTextureParameteri(texture_id, GL_TEXTURE_WRAP_R, parameters.wrap_r);
+			glTextureParameteri(texture_id, GL_TEXTURE_WRAP_S, (GLenum)parameters.wrap_s);
+			glTextureParameteri(texture_id, GL_TEXTURE_WRAP_T, (GLenum)parameters.wrap_t);
+			glTextureParameteri(texture_id, GL_TEXTURE_WRAP_R, (GLenum)parameters.wrap_r);
 
 			glTextureParameteri(texture_id, GL_TEXTURE_MAG_FILTER, parameters.mag_filter);
 			glTextureParameteri(texture_id, GL_TEXTURE_MIN_FILTER, parameters.min_filter);

@@ -374,9 +374,9 @@ namespace chaos
 
 			// this is smoother to clamp at edges
 			GenTextureParameters tmp = parameters;
-			tmp.wrap_s = GL_CLAMP_TO_EDGE;
-			tmp.wrap_r = GL_CLAMP_TO_EDGE;
-			tmp.wrap_t = GL_CLAMP_TO_EDGE;
+			tmp.wrap_s = TextureWrapMethod::ClampToEdge;
+			tmp.wrap_r = TextureWrapMethod::ClampToEdge;
+			tmp.wrap_t = TextureWrapMethod::ClampToEdge;
 
 			GLTextureTools::GenTextureApplyParameters(texture_id, texture_description, tmp);
 			result = new GPUTexture(texture_id, texture_description);

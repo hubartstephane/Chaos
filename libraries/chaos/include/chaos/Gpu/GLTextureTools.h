@@ -56,14 +56,14 @@ namespace chaos
 		CHAOS_API PixelFormat GetPixelFormat(GLenum internal_format);
 
 		/** returns true whether type is an array texture type */
-		CHAOS_API bool IsArrayTextureType(GLenum type);
+		CHAOS_API bool IsArrayTextureType(TextureType type);
 		/** returns true whether type is not an array texture type */
-		CHAOS_API bool IsFlatTextureType(GLenum type);
+		CHAOS_API bool IsFlatTextureType(TextureType type);
 
 		/** transform a texture type into an array type */
-		CHAOS_API GLenum ToArrayTextureType(GLenum type);
+		CHAOS_API TextureType ToArrayTextureType(TextureType type);
 		/** transform a texture type into a flat type */
-		CHAOS_API GLenum ToFlatTextureType(GLenum type);
+		CHAOS_API TextureType ToFlatTextureType(TextureType type);
 
 		/** returns the maximum number of mipmap */
 		CHAOS_API int GetMipmapLevelCount(int width, int height);
@@ -72,7 +72,7 @@ namespace chaos
 		CHAOS_API GLPixelFormat GetGLPixelFormat(PixelFormat const& pixel_format);
 
 		/** utility function to compute target (GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_RECTANGLE) from dimension */
-		CHAOS_API GLenum GetTextureTargetFromSize(int width, int height, bool rectangle_texture);
+		CHAOS_API TextureType GetTexture2DTypeFromSize(int width, int height, bool rectangle_texture);
 
 		/** prepare store parameters */
 		CHAOS_API char* PrepareGLTextureTransfert(ImageDescription const& desc);

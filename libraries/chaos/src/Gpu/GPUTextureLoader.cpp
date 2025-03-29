@@ -46,10 +46,10 @@ namespace chaos
 		if (!image.IsValid(true) || image.IsEmpty(true))
 			return nullptr;
 
-		GLenum target = GLTextureTools::GetTextureTargetFromSize(image.width, image.height, parameters.rectangle_texture);  // compute the format
+		TextureType texture_type = GLTextureTools::GetTexture2DTypeFromSize(image.width, image.height, parameters.rectangle_texture);  // compute the format
 
 		GLuint texture_id = 0;
-		glCreateTextures(target, 1, &texture_id);
+		glCreateTextures((GLenum)texture_type, 1, &texture_id);
 		if (texture_id > 0)
 		{
 			// choose format and internal format (beware FreeImage is BGR/BGRA)
@@ -70,7 +70,7 @@ namespace chaos
 			// shuxxx try to work with parameter.level and parameter.border
 
 			// create the texture
-			if (target == GL_TEXTURE_1D)
+			if (texture_type == TextureType::Texture1D)
 			{
 				int level_count = (parameters.reserve_mipmaps) ?
 					GLTextureTools::GetMipmapLevelCount(image.width) :
@@ -90,7 +90,7 @@ namespace chaos
 			}
 
 			TextureDescription texture_description;
-			texture_description.type = target;
+			texture_description.type = texture_type;
 			texture_description.pixel_format = image.pixel_format;
 			texture_description.width = image.width;
 			texture_description.height = image.height;
@@ -366,7 +366,7 @@ namespace chaos
 
 			// finalize the result information
 			TextureDescription texture_description;
-			texture_description.type = GL_TEXTURE_CUBE_MAP;
+			texture_description.type = TextureType::TextureCubeMap;
 			texture_description.pixel_format = final_pixel_format;
 			texture_description.width = size;
 			texture_description.height = size;

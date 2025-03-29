@@ -172,13 +172,13 @@ namespace chaos
 		GPUTexture * result = nullptr;
 
 		// compute the 'flat' texture target
-		GLenum flat_target = GLTextureTools::GetTextureTargetFromSize(width, height, false);
-		if (flat_target == GL_NONE)
+		TextureType flat_type = GLTextureTools::GetTexture2DTypeFromSize(width, height, false);
+		if (flat_type == TextureType::Unknown)
 			return nullptr;
 
 		// convert to 'array' target
-		GLenum array_target = GLTextureTools::ToArrayTextureType(flat_target);
-		if (array_target == GL_NONE)
+		TextureType array_type = GLTextureTools::ToArrayTextureType(flat_type);
+		if (array_type == TextureType::Unknown)
 			return nullptr;
 
 		// choose format and internal format
@@ -211,7 +211,7 @@ namespace chaos
 		}
 		// generate the texture
 		GLuint texture_id = 0;
-		glCreateTextures(array_target, 1, &texture_id);
+		glCreateTextures((GLenum)array_type, 1, &texture_id);
 		if (texture_id > 0)
 		{
 			// initialize the storage
@@ -242,7 +242,7 @@ namespace chaos
 
 			// finalize the result data
 			TextureDescription texture_description;
-			texture_description.type = array_target;
+			texture_description.type = array_type;
 			texture_description.width = width;
 			texture_description.height = height;
 			texture_description.depth = int(slice_count);
@@ -258,7 +258,7 @@ namespace chaos
 
 
 			GLuint texture_id2 = 0;
-			glCreateTextures(array_target, 1, &texture_id2);
+			glCreateTextures(array_type, 1, &texture_id2);
 			glTextureStorage3D(texture_id2, level_count, gl_pixel_format.internal_format, width, height, (GLsizei)slice_count);
 
 
@@ -282,8 +282,8 @@ namespace chaos
 				{
 					glCopyImageSubData(
 						
-						texture_id, array_target, j, 0, 0, i,
-						texture_id2, array_target, j, 4, 4, i,
+						texture_id, array_type, j, 0, 0, i,
+						texture_id2, array_type, j, 4, 4, i,
 						
 						w - 4 , h - 4, 1
 

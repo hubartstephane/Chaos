@@ -2,13 +2,34 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
+	enum class TextureType;
+
 	class SurfaceDescription;
 	class TextureDescription;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* SurfaceDescription : used to describe an openGL surface
+	* TextureType: type of texture for hardware
+	*/
+
+	enum class TextureType
+	{
+		Unknown = GL_NONE,
+
+		Texture1D = GL_TEXTURE_1D,
+		Texture2D = GL_TEXTURE_2D,
+		Texture3D = GL_TEXTURE_3D,
+		TextureRectangle = GL_TEXTURE_RECTANGLE,
+		TextureCubeMap = GL_TEXTURE_CUBE_MAP,
+
+		Texture1DArray = GL_TEXTURE_1D_ARRAY,
+		Texture2DArray = GL_TEXTURE_2D_ARRAY,
+		TextureCubeMapArray = GL_TEXTURE_CUBE_MAP_ARRAY
+	};
+
+	/**
+	* SurfaceDescription: used to describe an openGL surface
 	*/
 
 	class CHAOS_API SurfaceDescription
@@ -34,15 +55,15 @@ namespace chaos
 
 
 	/**
-	* TextureDescription : used to describe an openGL texture
+	* TextureDescription: used to describe an openGL texture
 	*/
 
 	class CHAOS_API TextureDescription : public SurfaceDescription
 	{
 	public:
 
-		/** the type of the texture (1D/2D/3D/RECTANGLE/CUBE) */
-		GLenum type = GL_NONE;
+		/** the type of the texture (1D/2D/3D/RECTANGLE/CUBE ...) */
+		TextureType type = TextureType::Unknown;
 	};
 
 #endif

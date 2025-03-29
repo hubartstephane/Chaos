@@ -129,60 +129,60 @@ namespace chaos
 			return result;
 		}
 
-		bool IsArrayTextureType(GLenum type)
+		bool IsArrayTextureType(TextureType type)
 		{
-			if (type == GL_TEXTURE_1D_ARRAY)
+			if (type == TextureType::Texture1DArray)
 				return true;
-			if (type == GL_TEXTURE_2D_ARRAY)
+			if (type == TextureType::Texture2DArray)
 				return true;
-			if (type == GL_TEXTURE_CUBE_MAP_ARRAY)
+			if (type == TextureType::TextureCubeMapArray)
 				return true;
 			return false;
 		}
 
-		bool IsFlatTextureType(GLenum type)
+		bool IsFlatTextureType(TextureType type)
 		{
-			if (type == GL_TEXTURE_1D)
+			if (type == TextureType::Texture1D)
 				return true;
-			if (type == GL_TEXTURE_2D)
+			if (type == TextureType::Texture2D)
 				return true;
-			if (type == GL_TEXTURE_3D)
+			if (type == TextureType::Texture3D)
 				return true;
-			if (type == GL_TEXTURE_RECTANGLE)
+			if (type == TextureType::TextureRectangle)
 				return true;
-			if (type == GL_TEXTURE_CUBE_MAP)
+			if (type == TextureType::TextureCubeMap)
 				return true;
 			return false;
 		}
 
-		GLenum ToFlatTextureType(GLenum type)
+		TextureType ToFlatTextureType(TextureType type)
 		{
 			if (IsFlatTextureType(type)) // already flat
 				return type;
 
-			if (type == GL_TEXTURE_1D_ARRAY)
-				return GL_TEXTURE_1D;
-			if (type == GL_TEXTURE_2D_ARRAY)
-				return GL_TEXTURE_2D;
-			if (type == GL_TEXTURE_CUBE_MAP_ARRAY)
-				return GL_TEXTURE_CUBE_MAP;
+			if (type == TextureType::Texture1DArray)
+				return TextureType::Texture1D;
+			if (type == TextureType::Texture2DArray)
+				return TextureType::Texture2D;
+			if (type == TextureType::TextureCubeMapArray)
+				return TextureType::TextureCubeMap;
 
-			return GL_NONE;
+			return TextureType::Unknown;
 		}
 
-		GLenum ToArrayTextureType(GLenum type)
+		TextureType ToArrayTextureType(TextureType type)
 		{
 			if (IsArrayTextureType(type)) // already array
 				return type;
 
-			if (type == GL_TEXTURE_1D)
-				return GL_TEXTURE_1D_ARRAY;
-			if (type == GL_TEXTURE_2D)
-				return GL_TEXTURE_2D_ARRAY;
-			if (type == GL_TEXTURE_CUBE_MAP)
-				return GL_TEXTURE_CUBE_MAP_ARRAY;  // XXX : GL_TEXTURE_3D and GL_TEXTURE_RECTANGLE has no correspondance in arrays
+			if (type == TextureType::Texture1D)
+				return TextureType::Texture1DArray;
+			if (type == TextureType::Texture2D)
+				return TextureType::Texture2DArray;
+			if (type == TextureType::TextureCubeMap)
+				return TextureType::TextureCubeMapArray;  // XXX : Texture3D and TextureRectangle has no correspondance in arrays
 
-			return GL_NONE;
+			return TextureType::Unknown;
 		}
 
 		int GetMipmapLevelCount(int width, int height)
@@ -248,22 +248,19 @@ namespace chaos
 			}
 
 			if (parameters.build_mipmaps && parameters.reserve_mipmaps)
-				if (texture_description.type != GL_TEXTURE_RECTANGLE) // not working with RECTANGLE (crash)
+				if (texture_description.type != TextureType::TextureRectangle) // not working with RECTANGLE (crash)
 					glGenerateTextureMipmap(texture_id);
 		}
 
-		GLenum GetTextureTargetFromSize(int width, int height, bool rectangle_texture)
+		TextureType GetTexture2DTypeFromSize(int width, int height, bool rectangle_texture)
 		{
 			if (width == height) // and power of 2 ?
-				return GL_TEXTURE_2D;
+				return TextureType::Texture2D;
 			else if (height == 1)
-				return GL_TEXTURE_1D;
+				return TextureType::Texture1D;
 			else
-				return (rectangle_texture) ? GL_TEXTURE_RECTANGLE : GL_TEXTURE_2D;
+				return (rectangle_texture) ? TextureType::TextureRectangle : TextureType::Texture2D;
 		}
-
-		// GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_3D, GL_TEXTURE_1D_ARRAY, GL_TEXTURE_2D_ARRAY, GL_TEXTURE_CUBE_MAP, or GL_TEXTURE_CUBE_MAP_ARRAY
-
 
 		//
 		// XXX : When transfering a texture in OpenGL, we can use

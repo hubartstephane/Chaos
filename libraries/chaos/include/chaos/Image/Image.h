@@ -7,4 +7,4 @@
 #include "Chaos/Image/ImageAnimationDescription.h"
 #include "Chaos/Image/ImageTools.h"
 #include "Chaos/Image/ImageProcessor.h"
-#include "Chaos/Image/SkyBoxTools.h"
+#include "Chaos/Image/CubeMapTools.h"

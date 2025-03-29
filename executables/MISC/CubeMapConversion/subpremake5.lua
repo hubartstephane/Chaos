@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/MISC/SkyBoxConversion
+-- ROOT_PATH/executables/MISC/CubeMapConversion
 -- =============================================================================
 
 local project = build:WindowedApp()

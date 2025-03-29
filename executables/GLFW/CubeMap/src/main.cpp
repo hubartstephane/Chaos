@@ -10,41 +10,41 @@ protected:
 	{
 		if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_ADD))
 		{
-			ChangeSkyBox(skybox_index + 1);
+			ChangeCubeMap(cubemap_index + 1);
 			return true;
 		}
 		else if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_SUBTRACT))
 		{
-			ChangeSkyBox(skybox_index - 1);
+			ChangeCubeMap(cubemap_index - 1);
 			return true;
 		}
 		return chaos::Window::OnKeyEventImpl(key_event);
 	}
 
-	void ChangeSkyBox(int index)
+	void ChangeCubeMap(int index)
 	{
-		chaos::shared_ptr<chaos::GPUTexture> new_texture = GenerateSkyBox(index);
+		chaos::shared_ptr<chaos::GPUTexture> new_texture = GenerateCubeMap(index);
 		if (new_texture != nullptr)
 		{
-			skybox_index = index;
+			cubemap_index = index;
 			texture = new_texture;
 		}
 	}
 
-	chaos::shared_ptr<chaos::GPUTexture> GenerateSkyBox(int index)
+	chaos::shared_ptr<chaos::GPUTexture> GenerateCubeMap(int index)
 	{
 		chaos::shared_ptr<chaos::GPUTexture> result;
 
 		boost::filesystem::path resources_path = chaos::Application::GetInstance()->GetResourcesPath();
 
-		chaos::SkyBoxImages skybox;
+		chaos::CubeMapImages cubemap;
 		if (index == 0)
 		{
-			skybox = chaos::SkyBoxTools::LoadSingleSkyBox((resources_path / "violentdays_large.jpg"));
+			cubemap = chaos::CubeMapTools::LoadSingleCubeMap((resources_path / "violentdays_large.jpg"));
 		}
 		else if (index == 1)
 		{
-			skybox = chaos::SkyBoxTools::LoadSingleSkyBox((resources_path / "originalcubecross.png"));
+			cubemap = chaos::CubeMapTools::LoadSingleCubeMap((resources_path / "originalcubecross.png"));
 		}
 		else if (index == 2)
 		{
@@ -57,11 +57,11 @@ protected:
 			boost::filesystem::path top_image = p / "posy.jpg";
 			boost::filesystem::path bottom_image = p / "negy.jpg";
 
-			skybox = chaos::SkyBoxTools::LoadMultipleSkyBox(left_image, right_image, top_image, bottom_image, front_image, back_image);
+			cubemap = chaos::CubeMapTools::LoadMultipleCubeMap(left_image, right_image, top_image, bottom_image, front_image, back_image);
 		}
 		else if (index == 3)
 		{
-			boost::filesystem::path p = resources_path / "skybox";
+			boost::filesystem::path p = resources_path / "cubemap";
 
 			boost::filesystem::path left_image = p / "nx.jpg";
 			boost::filesystem::path front_image = p / "pz.jpg";
@@ -70,7 +70,7 @@ protected:
 			boost::filesystem::path top_image = p / "py.jpg";
 			boost::filesystem::path bottom_image = p / "ny.jpg";
 
-			skybox = chaos::SkyBoxTools::LoadMultipleSkyBox(left_image, right_image, top_image, bottom_image, front_image, back_image);
+			cubemap = chaos::CubeMapTools::LoadMultipleCubeMap(left_image, right_image, top_image, bottom_image, front_image, back_image);
 		}
 		else if (index == 4)
 		{
@@ -83,15 +83,15 @@ protected:
 			boost::filesystem::path top_image = p / "dark-s_py.jpg";
 			boost::filesystem::path bottom_image = p / "dark-s_ny.jpg";
 
-			skybox = chaos::SkyBoxTools::LoadMultipleSkyBox(left_image, right_image, top_image, bottom_image, front_image, back_image);
+			cubemap = chaos::CubeMapTools::LoadMultipleCubeMap(left_image, right_image, top_image, bottom_image, front_image, back_image);
 		}
 		else if (index == 5)
 		{
-			skybox = chaos::SkyBoxTools::LoadSingleSkyBox((resources_path / "space.png"));
+			cubemap = chaos::CubeMapTools::LoadSingleCubeMap((resources_path / "space.png"));
 		}
 
-		if (!skybox.IsEmpty())
-			return chaos::GPUTextureLoader().GenTextureObject(&skybox);
+		if (!cubemap.IsEmpty())
+			return chaos::GPUTextureLoader().GenTextureObject(&cubemap);
 
 		return nullptr;
 	}
@@ -147,7 +147,7 @@ protected:
 		debug_display.Display(render_context, int(draw_params.viewport.size.x), int(draw_params.viewport.size.y));
 		query->EndConditionalRendering();
 
-		// XXX : render the skybox. Use previous frame query for conditinal rendering
+		// XXX : render the cubemap. Use previous frame query for conditinal rendering
 		ref = 0;
 		mask = 0xFF;
 		glStencilFunc(GL_EQUAL, ref, mask); // stencil must be 0 to render a pixel (debug string is not on the screen)
@@ -201,11 +201,11 @@ protected:
 		if (!debug_display.Initialize(debug_params))
 			return false;
 
-		debug_display.AddLine("Press +/- to change skybox");
-		debug_display.AddLine("If the skybox has no pixel on screen, ");
+		debug_display.AddLine("Press +/- to change cubemap");
+		debug_display.AddLine("If the cubemap has no pixel on screen, ");
 		debug_display.AddLine("this text will disappear (conditional rendering)");
 
-		texture = GenerateSkyBox(0);
+		texture = GenerateCubeMap(0);
 		if (texture == nullptr)
 			return false;
 
@@ -261,7 +261,7 @@ protected:
 
 	chaos::GLDebugOnScreenDisplay debug_display;
 
-	int skybox_index = 0;
+	int cubemap_index = 0;
 };
 
 int main(int argc, char** argv, char** env)

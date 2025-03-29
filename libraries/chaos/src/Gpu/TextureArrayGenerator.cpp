@@ -189,7 +189,7 @@ namespace chaos
 		// the number of slices
 		size_t slice_count = slice_registry.slices.size();
 
-		// find whether some conversion will be necessary (same remarks than for GLTextureTools::GenTextureObject(SkyBoxImages ...)
+		// find whether some conversion will be necessary (same remarks than for GLTextureTools::GenTextureObject(CubeMapImages ...)
 		// and allocate the buffer
 		char * conversion_buffer = nullptr;
 

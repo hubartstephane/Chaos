@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/MISC/SkyBoxLoading
+-- ROOT_PATH/executables/MISC/CubeMapLoading
 -- =============================================================================
 
 local project = build:WindowedApp()

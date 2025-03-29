@@ -13,15 +13,15 @@ void TestConvertToSingle(boost::filesystem::path const & dst_p, boost::filesyste
 	boost::filesystem::path top_image    = p / "posy.jpg";
 	boost::filesystem::path bottom_image = p / "negy.jpg";
 
-	chaos::SkyBoxImages multiple_sky_box = chaos::SkyBoxTools::LoadMultipleSkyBox(left_image, right_image, top_image, bottom_image, front_image, back_image);
+	chaos::CubeMapImages multiple_sky_box = chaos::CubeMapTools::LoadMultipleCubeMap(left_image, right_image, top_image, bottom_image, front_image, back_image);
 	if (multiple_sky_box.IsMultipleImage())
 	{
 		static glm::vec4 back_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
-		chaos::SkyBoxImages single_sky_box = multiple_sky_box.ToSingleImage(horizontal, back_color, chaos::PixelFormatMergeParams());
+		chaos::CubeMapImages single_sky_box = multiple_sky_box.ToSingleImage(horizontal, back_color, chaos::PixelFormatMergeParams());
 		if (single_sky_box.IsSingleImage())
 		{
-			FIBITMAP * image = single_sky_box.GetImage(chaos::SkyBoxImageType::IMAGE_SINGLE);
+			FIBITMAP * image = single_sky_box.GetImage(chaos::CubeMapImageType::IMAGE_SINGLE);
 			if (image != nullptr)
 			{
 				boost::filesystem::path dst = (horizontal)?
@@ -39,10 +39,10 @@ void TestConvertToSingle(boost::filesystem::path const & dst_p, boost::filesyste
 
 void TestConvertToMultiple(boost::filesystem::path const & dst_p, boost::filesystem::path const & p, char const * dst_filename)
 {
-	chaos::SkyBoxImages single_sky_box = chaos::SkyBoxTools::LoadSingleSkyBox(p);
+	chaos::CubeMapImages single_sky_box = chaos::CubeMapTools::LoadSingleCubeMap(p);
 	if (single_sky_box.IsSingleImage())
 	{
-		chaos::SkyBoxImages multiple_sky_box = single_sky_box.ToMultipleImages();
+		chaos::CubeMapImages multiple_sky_box = single_sky_box.ToMultipleImages();
 		if (multiple_sky_box.IsMultipleImage())
 		{
 			char const * left_image   = "negx.png";
@@ -52,25 +52,25 @@ void TestConvertToMultiple(boost::filesystem::path const & dst_p, boost::filesys
 			char const * top_image    = "posy.png";
 			char const * bottom_image = "negy.png";
 
-			for (int i = (int)chaos::SkyBoxImageType::IMAGE_LEFT ; i <= (int)chaos::SkyBoxImageType::IMAGE_BACK ; ++i)
+			for (int i = (int)chaos::CubeMapImageType::IMAGE_LEFT ; i <= (int)chaos::CubeMapImageType::IMAGE_BACK ; ++i)
 			{
-				chaos::SkyBoxImageType Type = chaos::SkyBoxImageType(i);
+				chaos::CubeMapImageType Type = chaos::CubeMapImageType(i);
 
 				FIBITMAP * image = multiple_sky_box.GetImage(Type);
 				if (image != nullptr)
 				{
 					char const * suffix = nullptr;
-					if (Type == chaos::SkyBoxImageType::IMAGE_LEFT)
+					if (Type == chaos::CubeMapImageType::IMAGE_LEFT)
 						suffix = left_image;
-					else if (Type == chaos::SkyBoxImageType::IMAGE_RIGHT)
+					else if (Type == chaos::CubeMapImageType::IMAGE_RIGHT)
 						suffix = right_image;
-					else if (Type == chaos::SkyBoxImageType::IMAGE_TOP)
+					else if (Type == chaos::CubeMapImageType::IMAGE_TOP)
 						suffix = top_image;
-					else if (Type == chaos::SkyBoxImageType::IMAGE_BOTTOM)
+					else if (Type == chaos::CubeMapImageType::IMAGE_BOTTOM)
 						suffix = bottom_image;
-					else if (Type == chaos::SkyBoxImageType::IMAGE_FRONT)
+					else if (Type == chaos::CubeMapImageType::IMAGE_FRONT)
 						suffix = front_image;
-					else if (Type == chaos::SkyBoxImageType::IMAGE_BACK)
+					else if (Type == chaos::CubeMapImageType::IMAGE_BACK)
 						suffix = back_image;
 
 					std::string filename = chaos::StringTools::Printf("%s_%s", dst_filename, suffix);
@@ -88,18 +88,18 @@ void TestConvertToMultiple(boost::filesystem::path const & dst_p, boost::filesys
 
 void TestDoubleConversion(boost::filesystem::path const & dst_p, boost::filesystem::path const & p, char const * dst_filename)
 {
-	chaos::SkyBoxImages single_image = chaos::SkyBoxTools::LoadSingleSkyBox(p);
+	chaos::CubeMapImages single_image = chaos::CubeMapTools::LoadSingleCubeMap(p);
 	if (single_image.IsSingleImage())
 	{
 		bool horizontal = single_image.IsSingleImageHorizontal();
 
-		chaos::SkyBoxImages multiple_image = single_image.ToMultipleImages();
+		chaos::CubeMapImages multiple_image = single_image.ToMultipleImages();
 		if (multiple_image.IsMultipleImage())
 		{
-			chaos::SkyBoxImages single_image_back = multiple_image.ToSingleImage(!horizontal, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), chaos::PixelFormatMergeParams());
+			chaos::CubeMapImages single_image_back = multiple_image.ToSingleImage(!horizontal, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), chaos::PixelFormatMergeParams());
 			if (single_image_back.IsSingleImage())
 			{
-				FIBITMAP * image = single_image_back.GetImage(chaos::SkyBoxImageType::IMAGE_SINGLE);
+				FIBITMAP * image = single_image_back.GetImage(chaos::CubeMapImageType::IMAGE_SINGLE);
 				if (image != nullptr)
 				{
 					boost::filesystem::path dst = dst_p / dst_filename;
@@ -119,7 +119,7 @@ protected:
 		boost::filesystem::path const & rp = GetResourcesPath();
 
 		boost::filesystem::path dst_p;
-		if (chaos::FileTools::CreateTemporaryDirectory("TestSkyBox", dst_p))
+		if (chaos::FileTools::CreateTemporaryDirectory("TestCubeMap", dst_p))
 		{
 			TestConvertToSingle(dst_p, rp / "Maskonaive", true);
 			TestConvertToSingle(dst_p, rp / "Maskonaive", false);

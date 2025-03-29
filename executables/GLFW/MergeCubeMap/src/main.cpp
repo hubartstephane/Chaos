@@ -12,18 +12,18 @@ protected:
 	{
 		if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_ADD))
 		{
-			ChangeSkyBox(skybox_index + 1);
+			ChangeCubeMap(cubemap_index + 1);
 			return true;
 		}
 		else if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_SUBTRACT))
 		{
-			ChangeSkyBox(skybox_index - 1);
+			ChangeCubeMap(cubemap_index - 1);
 			return true;
 		}
 		return chaos::Window::OnKeyEventImpl(key_event);
 	}
 
-	void ChangeSkyBox(int index)
+	void ChangeCubeMap(int index)
 	{
 
 
@@ -32,10 +32,10 @@ protected:
 
 
 
-		chaos::shared_ptr<chaos::GPUTexture> new_texture = GenerateSkyBox(index);
+		chaos::shared_ptr<chaos::GPUTexture> new_texture = GenerateCubeMap(index);
 		if (new_texture != nullptr)
 		{
-			skybox_index = index;
+			cubemap_index = index;
 			texture = new_texture;
 			debug_display.Clear();
 
@@ -47,7 +47,7 @@ protected:
 		}
 	}
 
-	chaos::shared_ptr<chaos::GPUTexture> GenerateSkyBox(int index)
+	chaos::shared_ptr<chaos::GPUTexture> GenerateCubeMap(int index)
 	{
 		if (index < 0 || index >= pixel_formats.size())
 			return nullptr;
@@ -62,15 +62,15 @@ protected:
 #if 0
 
 		// let OpenGL do the conversion
-		return chaos::GPUTextureLoader().GenTextureObject(&skybox, merge_params);
+		return chaos::GPUTextureLoader().GenTextureObject(&cubemap, merge_params);
 
 #else
 
 		// do the conversion ourselves
-		chaos::SkyBoxImages single_skybox = skybox.ToSingleImage(true, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), merge_params);
+		chaos::CubeMapImages single_cubemap = cubemap.ToSingleImage(true, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), merge_params);
 
-		if (!single_skybox.IsEmpty())
-			return chaos::GPUTextureLoader().GenTextureObject(&single_skybox);
+		if (!single_cubemap.IsEmpty())
+			return chaos::GPUTextureLoader().GenTextureObject(&single_cubemap);
 
 #endif
 
@@ -110,11 +110,11 @@ protected:
 
 	virtual void Finalize() override
 	{
-		skybox.Release();
+		cubemap.Release();
 
-		for (FIBITMAP * bitmap : skybox_bitmaps)
+		for (FIBITMAP * bitmap : cubemap_bitmaps)
 			FreeImage_Unload(bitmap);
-		skybox_bitmaps.clear();
+		cubemap_bitmaps.clear();
 
 		program = nullptr;
 		mesh    = nullptr;
@@ -131,16 +131,16 @@ protected:
 		{
 			FIBITMAP * bitmap = chaos::ImageTools::LoadImageFromFile(p);
 			if (bitmap != nullptr)
-				skybox_bitmaps.push_back(bitmap);
+				cubemap_bitmaps.push_back(bitmap);
 			return false; // don't stop
 		});
 
-		if (skybox_bitmaps.size() == 0)
+		if (cubemap_bitmaps.size() == 0)
 			return false;
 
 		// search the minimum size
 		int size = -1;
-		for (FIBITMAP * bitmap : skybox_bitmaps)
+		for (FIBITMAP * bitmap : cubemap_bitmaps)
 		{
 			chaos::ImageDescription desc = chaos::ImageTools::GetImageDescription(bitmap);
 			if (size < 0 || desc.width > size)
@@ -155,7 +155,7 @@ protected:
 		unsigned char c1[4] = { 0, 0, 0, 0 };
 		glm::vec4 c2 = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
-		for (FIBITMAP * & bitmap : skybox_bitmaps)
+		for (FIBITMAP * & bitmap : cubemap_bitmaps)
 		{
 			//
 			// FreeImage_EnlargeCanvas : enlarge or shrink image (returns a new image)
@@ -178,10 +178,10 @@ protected:
 			FreeImage_Unload(old_bitmap);
 		}
 
-		// generate the skybox
-		for (size_t i = 0; i < skybox_bitmaps.size() ; ++i)
+		// generate the cubemap
+		for (size_t i = 0; i < cubemap_bitmaps.size() ; ++i)
 		{
-			skybox.SetImage((chaos::SkyBoxImageType)i, skybox_bitmaps[i], false);
+			cubemap.SetImage((chaos::CubeMapImageType)i, cubemap_bitmaps[i], false);
 		}
 		return true;
 	}
@@ -214,9 +214,9 @@ protected:
 		if (!debug_display.Initialize(debug_params))
 			return false;
 
-		debug_display.AddLine("Press +/- to change skybox");
+		debug_display.AddLine("Press +/- to change cubemap");
 
-		texture = GenerateSkyBox(0);
+		texture = GenerateCubeMap(0);
 		if (texture == nullptr)
 			return false;
 
@@ -268,9 +268,9 @@ protected:
 		chaos::PixelFormat::RGBAFloat
 	};
 
-	std::vector<FIBITMAP*> skybox_bitmaps;
+	std::vector<FIBITMAP*> cubemap_bitmaps;
 
-	chaos::SkyBoxImages skybox;
+	chaos::CubeMapImages cubemap;
 
 	chaos::shared_ptr<chaos::GPUProgram>  program;
 	chaos::shared_ptr<chaos::GPUMesh> mesh;
@@ -280,7 +280,7 @@ protected:
 
 	chaos::GLDebugOnScreenDisplay debug_display;
 
-	int skybox_index = 0;
+	int cubemap_index = 0;
 };
 
 int main(int argc, char ** argv, char ** env)

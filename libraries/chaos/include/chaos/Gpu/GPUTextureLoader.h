@@ -31,8 +31,8 @@ namespace chaos
 		virtual GPUTexture* GenTextureObject(ImageDescription const& image, GenTextureParameters const& parameters = {}) const;
 		/** Generate a 1D/2D/rectangle texture from an image */
 		virtual GPUTexture* GenTextureObject(FIBITMAP* image, GenTextureParameters const& parameters = {}) const;
-		/** Generate a cube texture from a skybox */
-		virtual GPUTexture* GenTextureObject(SkyBoxImages const* skybox, PixelFormatMergeParams const& merge_params = {}, GenTextureParameters const& parameters = {}) const;
+		/** Generate a cube texture from a cubemap */
+		virtual GPUTexture* GenTextureObject(CubeMapImages const* cubemap, PixelFormatMergeParams const& merge_params = {}, GenTextureParameters const& parameters = {}) const;
 
 		/** Generate a texture from lambda */
 		template<typename T, typename GENERATOR>
@@ -58,7 +58,7 @@ namespace chaos
 	protected:
 
 		/** for cubemap texture, returns a layer index depending on the face considered */
-		static int GetCubeMapLayerValueFromSkyBoxFace(SkyBoxImageType face, int level = 0);
+		static int GetCubeMapLayerValueFromCubeMapFace(CubeMapImageType face, int level = 0);
 
 		/** search whether the path is already in used in the manager */
 		virtual bool IsPathAlreadyUsedInManager(FilePathParam const& path) const override;

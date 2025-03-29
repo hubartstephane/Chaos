@@ -150,11 +150,11 @@ namespace chaos
 	// There are differences between OpenGL & DirectX implementation
 	//
 	// I found this one that seems to work almost fine with OpenGL
-	//  - horizontal skybox OK
-	//  - vertical   skybox OK
-	//  - multiple   skybox OK
+	//  - horizontal cubemap OK
+	//  - vertical   cubemap OK
+	//  - multiple   cubemap OK
 	//
-	// Problems : the face junctions are good, but the skybox is inverted (top to down).
+	// Problems : the face junctions are good, but the cubemap is inverted (top to down).
 	//            the simplest solution is to access in shader the cube map with "-direction" instead of "direction" :
 	//
 	//                vec4 color = texture(cube_texture, -direction)
@@ -204,7 +204,7 @@ namespace chaos
 	//  v
 	//
 
-	int GPUTextureLoader::GetCubeMapLayerValueFromSkyBoxFace(SkyBoxImageType face, int level)
+	int GPUTextureLoader::GetCubeMapLayerValueFromCubeMapFace(CubeMapImageType face, int level)
 	{
 #if 0
 		// previous code was using GL_enum
@@ -232,33 +232,33 @@ namespace chaos
 
 #endif
 
-		if (face == SkyBoxImageType::IMAGE_RIGHT)
+		if (face == CubeMapImageType::IMAGE_RIGHT)
 			return 0 + 6 * level;
-		if (face == SkyBoxImageType::IMAGE_LEFT)
+		if (face == CubeMapImageType::IMAGE_LEFT)
 			return 1 + 6 * level;
-		if (face == SkyBoxImageType::IMAGE_BOTTOM)
+		if (face == CubeMapImageType::IMAGE_BOTTOM)
 			return 2 + 6 * level;
-		if (face == SkyBoxImageType::IMAGE_TOP)
+		if (face == CubeMapImageType::IMAGE_TOP)
 			return 3 + 6 * level;
-		if (face == SkyBoxImageType::IMAGE_FRONT)
+		if (face == CubeMapImageType::IMAGE_FRONT)
 			return 4 + 6 * level;
-		if (face == SkyBoxImageType::IMAGE_BACK)
+		if (face == CubeMapImageType::IMAGE_BACK)
 			return 5 + 6 * level;
 		return -1;
 	}
 
-	GPUTexture * GPUTextureLoader::GenTextureObject(SkyBoxImages const * skybox, PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters) const
+	GPUTexture * GPUTextureLoader::GenTextureObject(CubeMapImages const * cubemap, PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters) const
 	{
-		assert(skybox != nullptr);
+		assert(cubemap != nullptr);
 
 		GPUTexture * result = nullptr;
 
-		if (skybox->IsEmpty())
+		if (cubemap->IsEmpty())
 			return nullptr;
 
-		PixelFormat final_pixel_format = skybox->GetMergedPixelFormat(merge_params);
+		PixelFormat final_pixel_format = cubemap->GetMergedPixelFormat(merge_params);
 
-		int size = skybox->GetSkyBoxSize();
+		int size = cubemap->GetCubeMapSize();
 
 		// detect whether some conversion will be required and the size of buffer required (avoid multiple allocations)
 		//
@@ -273,7 +273,7 @@ namespace chaos
 		//    the conversion ourselves because we can not apply GL_TEXTURE_SWIZZLE_XXX on
 		//    independant face
 		//
-		bool is_single_image = skybox->IsSingleImage();
+		bool is_single_image = cubemap->IsSingleImage();
 
 		size_t required_allocation = 0;
 
@@ -281,10 +281,10 @@ namespace chaos
 		bool conversion_required[6] = { false, false, false, false, false, false };
 		bool central_symetry[6] = { false, false, false, false, false, false };
 
-		for (size_t i = (int)SkyBoxImageType::IMAGE_LEFT; i <= (int)SkyBoxImageType::IMAGE_BACK; ++i)
+		for (size_t i = (int)CubeMapImageType::IMAGE_LEFT; i <= (int)CubeMapImageType::IMAGE_BACK; ++i)
 		{
 			// ensure the image is valid and not empty
-			ImageDescription image = skybox->GetImageFaceDescription((SkyBoxImageType)i);
+			ImageDescription image = cubemap->GetImageFaceDescription((CubeMapImageType)i);
 			if (image.data == nullptr || !image.pixel_format.IsValid())
 				continue;
 			face_valid[i] = true;
@@ -295,7 +295,7 @@ namespace chaos
 
 			if (is_single_image)
 			{
-				glm::ivec3 position_and_flags = skybox->GetPositionAndFlags((SkyBoxImageType)i);
+				glm::ivec3 position_and_flags = cubemap->GetPositionAndFlags((CubeMapImageType)i);
 				if (position_and_flags.z == (int)ImageTransform::CENTRAL_SYMETRY)
 					central_symetry[i] = conversion_required[i] = true;
 			}
@@ -327,15 +327,15 @@ namespace chaos
 				1;
 			glTextureStorage2D(texture_id, level_count, gl_final_pixel_format.internal_format, size, size);
 
-			// fill the faces in GPU with the images of SkyBox
-			for (size_t i = int(SkyBoxImageType::IMAGE_LEFT); i <= int(SkyBoxImageType::IMAGE_BACK); ++i)
+			// fill the faces in GPU with the images of CubeMap
+			for (size_t i = int(CubeMapImageType::IMAGE_LEFT); i <= int(CubeMapImageType::IMAGE_BACK); ++i)
 			{
 				// ensure the image is valid and not empty
 				if (!face_valid[i])
 					continue;
 
 				// do the conversion, central symetry
-				ImageDescription image = skybox->GetImageFaceDescription((SkyBoxImageType)i);
+				ImageDescription image = cubemap->GetImageFaceDescription((CubeMapImageType)i);
 
 				ImageDescription effective_image = (conversion_required[i]) ?
 					ImageTools::ConvertPixels(image, final_pixel_format, conversion_buffer, central_symetry[i]? ImageTransform::CENTRAL_SYMETRY : ImageTransform::NO_TRANSFORM) :
@@ -348,7 +348,7 @@ namespace chaos
 				if (texture_buffer != nullptr)
 				{
 					// fill GPU
-					int depth = GetCubeMapLayerValueFromSkyBoxFace((SkyBoxImageType)i, 0);
+					int depth = GetCubeMapLayerValueFromCubeMapFace((CubeMapImageType)i, 0);
 
 					GLPixelFormat gl_face_pixel_format = GLTextureTools::GetGLPixelFormat(effective_image.pixel_format);
 
@@ -399,7 +399,7 @@ namespace chaos
 			return GenTextureObject(path, parameters);
 		}
 
-		// skybox descriptions ?
+		// cubemap descriptions ?
 		if (nlohmann::json const* faces = JSONTools::GetAttributeStructureNode(json, "faces"))
 		{
 			boost::filesystem::path left_path;
@@ -414,7 +414,7 @@ namespace chaos
 			bool single_image = false;
 			bool multiple_image = false;
 
-			SkyBoxImages skybox;
+			CubeMapImages cubemap;
 			if (faces->is_array())
 			{
 				if (faces->size() == 1)
@@ -449,13 +449,13 @@ namespace chaos
 			{
 				if (single_image)
 				{
-					skybox = SkyBoxTools::LoadSingleSkyBox(single_path);
+					cubemap = CubeMapTools::LoadSingleCubeMap(single_path);
 				}
 				else if (multiple_image)
 				{
-					skybox = SkyBoxTools::LoadMultipleSkyBox(left_path, right_path, top_path, bottom_path, front_path, back_path);
+					cubemap = CubeMapTools::LoadMultipleCubeMap(left_path, right_path, top_path, bottom_path, front_path, back_path);
 				}
-				return GenTextureObject(&skybox, PixelFormatMergeParams(), parameters);
+				return GenTextureObject(&cubemap, PixelFormatMergeParams(), parameters);
 			}
 		}
 		return nullptr;

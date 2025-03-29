@@ -563,6 +563,34 @@ namespace chaos
 		if (!Application::InitializeManagers(config))
 			return false;
 
+		// create the device
+		gpu_device = new GPUDevice;
+		if (gpu_device == nullptr)
+		{
+			ApplicationLog::Error("InitializeManagers(...) fails to create GPUDevice");
+			return false;
+		}
+		GiveChildConfiguration(gpu_device.get(), "gpudevice");
+		if (!gpu_device->Initialize(config))
+		{
+			ApplicationLog::Error("InitializeManagers(...) fails to initialize GPUDevice");
+			return false;
+		}
+
+		// create and start the GPU manager
+		gpu_resource_manager = new GPUResourceManager;
+		if (gpu_resource_manager == nullptr)
+		{
+			ApplicationLog::Error("InitializeManagers(...) fails to create GPUResourceManager");
+			return false;
+		}
+		GiveChildConfiguration(gpu_resource_manager.get(), "gpu");
+		if (!gpu_resource_manager->StartManager())
+		{
+			ApplicationLog::Error("InitializeManagers(...) fails to initialize GPUResourceManager");
+			return false;
+		}
+
 		// initialize the clock
 		main_clock = new Clock("main_clock");
 		if (main_clock == nullptr)
@@ -599,20 +627,6 @@ namespace chaos
 			return false;
 		}
 
-		// create and start the GPU manager
-		gpu_resource_manager = new GPUResourceManager;
-		if (gpu_resource_manager == nullptr)
-		{
-			ApplicationLog::Error("InitializeManagers(...) fails to create GPUResourceManager");
-			return false;
-		}
-		GiveChildConfiguration(gpu_resource_manager.get(), "gpu");
-		if (!gpu_resource_manager->StartManager())
-		{
-			ApplicationLog::Error("InitializeManagers(...) fails to initialize GPUResourceManager");
-			return false;
-		}
-
 		return true;
 	}
 
@@ -627,20 +641,33 @@ namespace chaos
 				gpu_resource_manager = nullptr;
 			});
 		}
-		// stop the clock
-		main_clock = nullptr;
+		// stop the GPU device
+		if (gpu_device != nullptr)
+		{
+			WithGLFWContext(shared_context, [this]()
+			{
+				gpu_device->Finalize();
+				gpu_device = nullptr;
+			});
+		}
+
 		// stop the sound manager
 		if (sound_manager != nullptr)
 		{
 			sound_manager->StopManager();
 			sound_manager = nullptr;
 		}
+
 		// stop the imgui manager
 		if (imgui_manager != nullptr)
 		{
 			imgui_manager->StopManager();
 			imgui_manager = nullptr;
 		}
+
+		// stop the clock
+		main_clock = nullptr;
+
 		// super method
 		Application::FinalizeManagers();
 	}

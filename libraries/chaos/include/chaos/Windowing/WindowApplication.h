@@ -311,14 +311,16 @@ namespace chaos
 
 	protected:
 
-		/** the main clock of the manager */
-		shared_ptr<Clock> main_clock;
-		/** the sound manager */
-		shared_ptr<SoundManager> sound_manager;
+		/** the GPU device */
+		shared_ptr<GPUDevice> gpu_device;
 		/** the graphic resource manager */
 		shared_ptr<GPUResourceManager> gpu_resource_manager;
+		/** the sound manager */
+		shared_ptr<SoundManager> sound_manager;
 		/** the imgui manager */
 		shared_ptr<ImGuiManager> imgui_manager;
+		/** the main clock of the manager */
+		shared_ptr<Clock> main_clock;
 
 		/** the texture atlas */
 		shared_ptr<BitmapAtlas::TextureArrayAtlas> texture_atlas;

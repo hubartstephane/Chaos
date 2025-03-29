@@ -232,17 +232,17 @@ namespace chaos
 
 #endif
 
-		if (face == CubeMapImageType::IMAGE_RIGHT)
+		if (face == CubeMapImageType::ImageRight)
 			return 0 + 6 * level;
-		if (face == CubeMapImageType::IMAGE_LEFT)
+		if (face == CubeMapImageType::ImageLeft)
 			return 1 + 6 * level;
-		if (face == CubeMapImageType::IMAGE_BOTTOM)
+		if (face == CubeMapImageType::ImageBottom)
 			return 2 + 6 * level;
-		if (face == CubeMapImageType::IMAGE_TOP)
+		if (face == CubeMapImageType::ImageTop)
 			return 3 + 6 * level;
-		if (face == CubeMapImageType::IMAGE_FRONT)
+		if (face == CubeMapImageType::ImageFront)
 			return 4 + 6 * level;
-		if (face == CubeMapImageType::IMAGE_BACK)
+		if (face == CubeMapImageType::ImageBack)
 			return 5 + 6 * level;
 		return -1;
 	}
@@ -281,7 +281,7 @@ namespace chaos
 		bool conversion_required[6] = { false, false, false, false, false, false };
 		bool central_symetry[6] = { false, false, false, false, false, false };
 
-		for (size_t i = (int)CubeMapImageType::IMAGE_LEFT; i <= (int)CubeMapImageType::IMAGE_BACK; ++i)
+		for (size_t i = (int)CubeMapImageType::ImageLeft; i <= (int)CubeMapImageType::ImageBack; ++i)
 		{
 			// ensure the image is valid and not empty
 			ImageDescription image = cubemap->GetImageFaceDescription((CubeMapImageType)i);
@@ -328,7 +328,7 @@ namespace chaos
 			glTextureStorage2D(texture_id, level_count, gl_final_pixel_format.internal_format, size, size);
 
 			// fill the faces in GPU with the images of CubeMap
-			for (size_t i = int(CubeMapImageType::IMAGE_LEFT); i <= int(CubeMapImageType::IMAGE_BACK); ++i)
+			for (size_t i = int(CubeMapImageType::ImageLeft); i <= int(CubeMapImageType::ImageBack); ++i)
 			{
 				// ensure the image is valid and not empty
 				if (!face_valid[i])

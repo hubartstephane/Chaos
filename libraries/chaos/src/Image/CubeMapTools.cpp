@@ -50,8 +50,8 @@ namespace chaos
 
 	glm::ivec3 CubeMapSingleDisposition::GetPositionAndFlags(CubeMapImageType image_type) const
 	{
-		assert((size_t)image_type >= (size_t)CubeMapImageType::IMAGE_LEFT);
-		assert((size_t)image_type <= (size_t)CubeMapImageType::IMAGE_BACK);
+		assert((size_t)image_type >= (size_t)CubeMapImageType::ImageLeft);
+		assert((size_t)image_type <= (size_t)CubeMapImageType::ImageBack);
 		return image_position[(size_t)image_type];
 	}
 
@@ -92,9 +92,9 @@ namespace chaos
 
 	int CubeMapImages::GetCubeMapSize() const
 	{
-		if (images[(size_t)CubeMapImageType::IMAGE_SINGLE] != nullptr)
-			return GetSingleImageSize(images[(size_t)CubeMapImageType::IMAGE_SINGLE]);
-		for (size_t i = (size_t)CubeMapImageType::IMAGE_LEFT ; i <= (size_t)CubeMapImageType::IMAGE_BACK ; ++i)
+		if (images[(size_t)CubeMapImageType::ImageSingle] != nullptr)
+			return GetSingleImageSize(images[(size_t)CubeMapImageType::ImageSingle]);
+		for (size_t i = (size_t)CubeMapImageType::ImageLeft ; i <= (size_t)CubeMapImageType::ImageBack ; ++i)
 			if (images[i] != nullptr)
 				return GetMultipleImageSize(images[i]);
 		return -1;
@@ -132,8 +132,8 @@ namespace chaos
 	{
 		if (!IsSingleImage())
 			return false;
-		int width  = FreeImage_GetWidth(images[(size_t)CubeMapImageType::IMAGE_SINGLE]);
-		int height = FreeImage_GetHeight(images[(size_t)CubeMapImageType::IMAGE_SINGLE]);
+		int width  = FreeImage_GetWidth(images[(size_t)CubeMapImageType::ImageSingle]);
+		int height = FreeImage_GetHeight(images[(size_t)CubeMapImageType::ImageSingle]);
 		return (width > height);
 	}
 
@@ -141,8 +141,8 @@ namespace chaos
 	{
 		if (!IsSingleImage())
 			return false;
-		int width  = FreeImage_GetWidth(images[(size_t)CubeMapImageType::IMAGE_SINGLE]);
-		int height = FreeImage_GetHeight(images[(size_t)CubeMapImageType::IMAGE_SINGLE]);
+		int width  = FreeImage_GetWidth(images[(size_t)CubeMapImageType::ImageSingle]);
+		int height = FreeImage_GetHeight(images[(size_t)CubeMapImageType::ImageSingle]);
 		return (height > width);
 	}
 
@@ -180,7 +180,7 @@ namespace chaos
 			return result;
 
 		// get the single image description
-		ImageDescription src_image_desc = ImageTools::GetImageDescription(images[(size_t)CubeMapImageType::IMAGE_SINGLE]);
+		ImageDescription src_image_desc = ImageTools::GetImageDescription(images[(size_t)CubeMapImageType::ImageSingle]);
 		if (!src_image_desc.IsValid(false))
 			return result;
 
@@ -188,7 +188,7 @@ namespace chaos
 		int size = GetSingleImageSize(src_image_desc);
 
 		// iterate over all faces
-		for (size_t i = (size_t)CubeMapImageType::IMAGE_LEFT ; i <= (size_t)CubeMapImageType::IMAGE_BACK ; ++i)
+		for (size_t i = (size_t)CubeMapImageType::ImageLeft ; i <= (size_t)CubeMapImageType::ImageBack ; ++i)
 		{
 			glm::ivec3 position_and_flags = GetPositionAndFlags((CubeMapImageType)i);
 
@@ -233,7 +233,7 @@ namespace chaos
 
 		// find the final format and size
 		int size = -1;
-		for (size_t i = (size_t)CubeMapImageType::IMAGE_LEFT ; i <= (size_t)CubeMapImageType::IMAGE_BACK ; ++i)
+		for (size_t i = (size_t)CubeMapImageType::ImageLeft ; i <= (size_t)CubeMapImageType::ImageBack ; ++i)
 		{
 			FIBITMAP * face_image = images[i];
 			if (face_image == nullptr)
@@ -259,7 +259,7 @@ namespace chaos
 		FIBITMAP * new_image = ImageTools::GenFreeImage(final_pixel_format, new_image_width, new_image_height);
 		if (new_image == nullptr)
 			return result;
-		result.SetImage(CubeMapImageType::IMAGE_SINGLE, new_image, true);
+		result.SetImage(CubeMapImageType::ImageSingle, new_image, true);
 
 		// fill the background (Blue - Green - Red - Alpha)
 		ImageDescription dst_image_desc = ImageTools::GetImageDescription(new_image);
@@ -267,7 +267,7 @@ namespace chaos
 		ImageTools::FillImageBackground(dst_image_desc, fill_color);
 
 		// copy the faces into the single image
-		for (size_t i = (size_t)CubeMapImageType::IMAGE_LEFT ; i <= (size_t)CubeMapImageType::IMAGE_BACK ; ++i)
+		for (size_t i = (size_t)CubeMapImageType::ImageLeft ; i <= (size_t)CubeMapImageType::ImageBack ; ++i)
 		{
 			FIBITMAP * image = images[i];
 			if (image == nullptr)
@@ -302,9 +302,9 @@ namespace chaos
 		if (!IsEmpty())
 		{
 			if (IsSingleImage())
-				pixel_format_merger.Merge(ImageTools::GetPixelFormat(images[(size_t)CubeMapImageType::IMAGE_SINGLE]));
+				pixel_format_merger.Merge(ImageTools::GetPixelFormat(images[(size_t)CubeMapImageType::ImageSingle]));
 			else
-				for (size_t i = (size_t)CubeMapImageType::IMAGE_LEFT; i <= (size_t)CubeMapImageType::IMAGE_BACK; ++i)
+				for (size_t i = (size_t)CubeMapImageType::ImageLeft; i <= (size_t)CubeMapImageType::ImageBack; ++i)
 					if (images[i] != nullptr)
 						pixel_format_merger.Merge(ImageTools::GetPixelFormat(images[i]));
 		}
@@ -313,19 +313,19 @@ namespace chaos
 
 	ImageDescription CubeMapImages::GetImageFaceDescription(CubeMapImageType image_type) const
 	{
-		assert((size_t)image_type >= (size_t)CubeMapImageType::IMAGE_LEFT);
-		assert((size_t)image_type <= (size_t)CubeMapImageType::IMAGE_BACK);
+		assert((size_t)image_type >= (size_t)CubeMapImageType::ImageLeft);
+		assert((size_t)image_type <= (size_t)CubeMapImageType::ImageBack);
 
 		if (IsSingleImage())
 		{
 			glm::ivec3 position_and_flags = GetPositionAndFlags(image_type);
 
-			ImageDescription src_image_desc = ImageTools::GetImageDescription(images[(size_t)CubeMapImageType::IMAGE_SINGLE]);
+			ImageDescription src_image_desc = ImageTools::GetImageDescription(images[(size_t)CubeMapImageType::ImageSingle]);
 
 			int sub_image_index_x = position_and_flags.x; // number of pixels / number of images aligned
 			int sub_image_index_y = position_and_flags.y;
 
-			int size = GetSingleImageSize(images[(size_t)CubeMapImageType::IMAGE_SINGLE]); // size of each face
+			int size = GetSingleImageSize(images[(size_t)CubeMapImageType::ImageSingle]); // size of each face
 			int x    = sub_image_index_x * size;
 			int y    = sub_image_index_y * size;
 
@@ -350,14 +350,14 @@ namespace chaos
 
 	bool CubeMapImages::IsSingleImage() const
 	{
-		return (images[(size_t)CubeMapImageType::IMAGE_SINGLE] != nullptr);
+		return (images[(size_t)CubeMapImageType::ImageSingle] != nullptr);
 	}
 
 	bool CubeMapImages::IsMultipleImage() const // no single image, at least one multiple image
 	{
-		if (images[(size_t)CubeMapImageType::IMAGE_SINGLE] != nullptr)
+		if (images[(size_t)CubeMapImageType::ImageSingle] != nullptr)
 			return false;
-		for (size_t i = (size_t)CubeMapImageType::IMAGE_LEFT ; i <= (size_t)CubeMapImageType::IMAGE_BACK ; ++i)
+		for (size_t i = (size_t)CubeMapImageType::ImageLeft ; i <= (size_t)CubeMapImageType::ImageBack ; ++i)
 			if (images[i] != nullptr)
 				return true;
 		return false;
@@ -365,9 +365,9 @@ namespace chaos
 
 	bool CubeMapImages::IsMultipleImageComplete() const // no single image, every face defined
 	{
-		if (images[(size_t)CubeMapImageType::IMAGE_SINGLE] != nullptr)
+		if (images[(size_t)CubeMapImageType::ImageSingle] != nullptr)
 			return false;
-		for (size_t i = (size_t)CubeMapImageType::IMAGE_LEFT ; i <= (size_t)CubeMapImageType::IMAGE_BACK ; ++i)
+		for (size_t i = (size_t)CubeMapImageType::ImageLeft ; i <= (size_t)CubeMapImageType::ImageBack ; ++i)
 			if (images[i] == nullptr)
 				return false;
 		return true;
@@ -393,15 +393,15 @@ namespace chaos
 	bool CubeMapImages::SetImage(CubeMapImageType image_type, FIBITMAP * image, bool release_image)
 	{
 		assert(image != nullptr);
-		assert((size_t)image_type >= (size_t)CubeMapImageType::IMAGE_LEFT);
-		assert((size_t)image_type <= (size_t)CubeMapImageType::IMAGE_SINGLE);
+		assert((size_t)image_type >= (size_t)CubeMapImageType::ImageLeft);
+		assert((size_t)image_type <= (size_t)CubeMapImageType::ImageSingle);
 
 		// test whether the pixel format is supported
 		ImageDescription description = ImageTools::GetImageDescription(image);
 		if (!description.IsValid(false))
 			return false;
 
-		if (image_type == CubeMapImageType::IMAGE_SINGLE)
+		if (image_type == CubeMapImageType::ImageSingle)
 		{
 			// ensure image is 3/4 or 4/3
 			int size = GetSingleImageSize(description);
@@ -410,10 +410,10 @@ namespace chaos
 			// if multiple face cubemap, we cannot set the image
 			if (IsEmpty() || IsSingleImage())
 			{
-				if (images[(size_t)CubeMapImageType::IMAGE_SINGLE] != nullptr && release_images[(size_t)CubeMapImageType::IMAGE_SINGLE])
-					FreeImage_Unload(images[(size_t)CubeMapImageType::IMAGE_SINGLE]);
-				images[(size_t)CubeMapImageType::IMAGE_SINGLE] = image;
-				release_images[(size_t)CubeMapImageType::IMAGE_SINGLE] = release_image;
+				if (images[(size_t)CubeMapImageType::ImageSingle] != nullptr && release_images[(size_t)CubeMapImageType::ImageSingle])
+					FreeImage_Unload(images[(size_t)CubeMapImageType::ImageSingle]);
+				images[(size_t)CubeMapImageType::ImageSingle] = image;
+				release_images[(size_t)CubeMapImageType::ImageSingle] = release_image;
 				return true;
 			}
 		}
@@ -428,7 +428,7 @@ namespace chaos
 			{
 				// get another image for comparison (one that will not be erased by this call)
 				FIBITMAP * other_image = nullptr;
-				for (size_t i = (size_t)CubeMapImageType::IMAGE_LEFT ; (i <= (size_t)CubeMapImageType::IMAGE_BACK) && (other_image == nullptr) ; ++i)
+				for (size_t i = (size_t)CubeMapImageType::ImageLeft ; (i <= (size_t)CubeMapImageType::ImageBack) && (other_image == nullptr) ; ++i)
 					if (i != (size_t)image_type)
 						other_image = images[i];
 
@@ -453,7 +453,7 @@ namespace chaos
 	CubeMapImages CubeMapTools::LoadSingleCubeMap(FilePathParam const & path)
 	{
 		CubeMapImages result;
-		DoLoadMultipleCubeMap_OneImage(result, path, CubeMapImageType::IMAGE_SINGLE);
+		DoLoadMultipleCubeMap_OneImage(result, path, CubeMapImageType::ImageSingle);
 		return result;
 	}
 
@@ -461,12 +461,12 @@ namespace chaos
 	{
 		CubeMapImages result;
 		if (
-			!DoLoadMultipleCubeMap_OneImage(result, left_image, CubeMapImageType::IMAGE_LEFT)   ||
-			!DoLoadMultipleCubeMap_OneImage(result, right_image, CubeMapImageType::IMAGE_RIGHT)  ||
-			!DoLoadMultipleCubeMap_OneImage(result, top_image, CubeMapImageType::IMAGE_TOP)    ||
-			!DoLoadMultipleCubeMap_OneImage(result, bottom_image, CubeMapImageType::IMAGE_BOTTOM) ||
-			!DoLoadMultipleCubeMap_OneImage(result, front_image, CubeMapImageType::IMAGE_FRONT)  ||
-			!DoLoadMultipleCubeMap_OneImage(result, back_image, CubeMapImageType::IMAGE_BACK)
+			!DoLoadMultipleCubeMap_OneImage(result, left_image, CubeMapImageType::ImageLeft)   ||
+			!DoLoadMultipleCubeMap_OneImage(result, right_image, CubeMapImageType::ImageRight)  ||
+			!DoLoadMultipleCubeMap_OneImage(result, top_image, CubeMapImageType::ImageTop)    ||
+			!DoLoadMultipleCubeMap_OneImage(result, bottom_image, CubeMapImageType::ImageBottom) ||
+			!DoLoadMultipleCubeMap_OneImage(result, front_image, CubeMapImageType::ImageFront)  ||
+			!DoLoadMultipleCubeMap_OneImage(result, back_image, CubeMapImageType::ImageBack)
 			)
 			result.Release(); // release whole object in case of error
 		return result;

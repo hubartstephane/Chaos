@@ -16,14 +16,14 @@ namespace chaos
 
 	enum class CHAOS_API CubeMapImageType : int
 	{
-		IMAGE_LEFT = 0,
-		IMAGE_RIGHT = 1,
-		IMAGE_TOP = 2,
-		IMAGE_BOTTOM = 3,
-		IMAGE_FRONT = 4,
-		IMAGE_BACK = 5,
+		ImageLeft = 0,
+		ImageRight = 1,
+		ImageTop = 2,
+		ImageBottom = 3,
+		ImageFront = 4,
+		ImageBack = 5,
 
-		IMAGE_SINGLE = 6 // some cube map may be represented by a single image containing a cross. This cross represents a deployed cube map
+		ImageSingle = 6 // some cube map may be represented by a single image containing a cross. This cross represents a deployed cube map
 	};
 
 	/**

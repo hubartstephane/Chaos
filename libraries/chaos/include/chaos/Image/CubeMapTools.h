@@ -10,6 +10,10 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+	/**
+	 * CubeMapImageType: the possible different image that compose a cubemap
+	 */
+
 	enum class CHAOS_API CubeMapImageType : int
 	{
 		IMAGE_LEFT = 0,
@@ -18,10 +22,8 @@ namespace chaos
 		IMAGE_BOTTOM = 3,
 		IMAGE_FRONT = 4,
 		IMAGE_BACK = 5,
-		IMAGE_SINGLE = 6,
 
-		IMAGE_FIRST_INDEX = IMAGE_LEFT,
-		IMAGE_LAST_INDEX = IMAGE_SINGLE
+		IMAGE_SINGLE = 6 // some cube map may be represented by a single image containing a cross. This cross represents a deployed cube map
 	};
 
 	/**
@@ -120,9 +122,9 @@ namespace chaos
 	protected:
 
 		/** the images for the cubemap */
-		FIBITMAP* images[7] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
+		std::array<FIBITMAP*, 7> images = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 		/** whether the cubemap images are to be released */
-		bool release_images[7] = { false, false, false, false, false, false, false };
+		std::array<bool, 7> release_images = { false, false, false, false, false, false, false };
 	};
 
 

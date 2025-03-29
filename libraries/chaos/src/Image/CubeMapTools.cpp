@@ -50,18 +50,17 @@ namespace chaos
 
 	glm::ivec3 CubeMapSingleDisposition::GetPositionAndFlags(CubeMapImageType image_type) const
 	{
-		assert((size_t)image_type >= 0);
-		assert((size_t)image_type <= 5);
+		assert((size_t)image_type >= (size_t)CubeMapImageType::IMAGE_LEFT);
+		assert((size_t)image_type <= (size_t)CubeMapImageType::IMAGE_BACK);
 		return image_position[(size_t)image_type];
 	}
 
 	CubeMapImages::CubeMapImages(CubeMapImages && other) noexcept
 	{
-		for (size_t i = (size_t)CubeMapImageType::IMAGE_FIRST_INDEX ; i <= (size_t)CubeMapImageType::IMAGE_LAST_INDEX ; ++i)
-		{
+		for (size_t i = 0 ; i < images.size() ; ++i)
 			std::swap(images[i], other.images[i]);
+		for (size_t i = 0; i < release_images.size(); ++i)
 			std::swap(release_images[i], other.release_images[i]);
-		}
 	}
 
 	CubeMapImages::~CubeMapImages()
@@ -71,17 +70,16 @@ namespace chaos
 
 	CubeMapImages & CubeMapImages::operator = (CubeMapImages && other) noexcept
 	{
-		for (size_t i = (size_t)CubeMapImageType::IMAGE_FIRST_INDEX ; i <= (size_t)CubeMapImageType::IMAGE_LAST_INDEX ; ++i)
-		{
+		for (size_t i = 0; i < images.size(); ++i)
 			std::swap(images[i], other.images[i]);
+		for (size_t i = 0; i < release_images.size(); ++i)
 			std::swap(release_images[i], other.release_images[i]);
-		}
 		return *this;
 	}
 
 	void CubeMapImages::Release()
 	{
-		for (size_t i = (size_t)CubeMapImageType::IMAGE_FIRST_INDEX ; i <= (size_t)CubeMapImageType::IMAGE_LAST_INDEX ; ++i)
+		for (size_t i = 0; i < images.size(); ++i)
 		{
 			if (images[i] != nullptr)
 			{
@@ -315,7 +313,8 @@ namespace chaos
 
 	ImageDescription CubeMapImages::GetImageFaceDescription(CubeMapImageType image_type) const
 	{
-		assert((size_t)image_type >= (size_t)CubeMapImageType::IMAGE_LEFT && (size_t)image_type <= (size_t)CubeMapImageType::IMAGE_BACK);
+		assert((size_t)image_type >= (size_t)CubeMapImageType::IMAGE_LEFT);
+		assert((size_t)image_type <= (size_t)CubeMapImageType::IMAGE_BACK);
 
 		if (IsSingleImage())
 		{
@@ -343,7 +342,7 @@ namespace chaos
 
 	bool CubeMapImages::IsEmpty() const // Empty = no images
 	{
-		for (size_t i = (size_t)CubeMapImageType::IMAGE_FIRST_INDEX ; i <= (size_t)CubeMapImageType::IMAGE_LAST_INDEX ; ++i)
+		for (size_t i = 0 ; i < images.size() ; ++i)
 			if (images[i] != nullptr)
 				return false;
 		return true;
@@ -387,15 +386,15 @@ namespace chaos
 
 	FIBITMAP * CubeMapImages::GetImage(CubeMapImageType face) const
 	{
-		assert((size_t)face >= (size_t)CubeMapImageType::IMAGE_FIRST_INDEX);
-		assert((size_t)face <= (size_t)CubeMapImageType::IMAGE_LAST_INDEX);
+		assert((size_t)face < images.size());
 		return images[(size_t)face];
 	}
 
 	bool CubeMapImages::SetImage(CubeMapImageType image_type, FIBITMAP * image, bool release_image)
 	{
 		assert(image != nullptr);
-		assert((size_t)image_type >= (size_t)CubeMapImageType::IMAGE_FIRST_INDEX && (size_t)image_type <= (size_t)CubeMapImageType::IMAGE_LAST_INDEX);
+		assert((size_t)image_type >= (size_t)CubeMapImageType::IMAGE_LEFT);
+		assert((size_t)image_type <= (size_t)CubeMapImageType::IMAGE_SINGLE);
 
 		// test whether the pixel format is supported
 		ImageDescription description = ImageTools::GetImageDescription(image);

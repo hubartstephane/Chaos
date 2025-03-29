@@ -5,6 +5,7 @@
 #include "chaos/Gpu/Primitive.h"
 #include "chaos/Gpu/GPUDrawPrimitive.h"
 #include "chaos/Gpu/GPUDevice.h"
+#include "chaos/Gpu/GPUDeviceResourceInterface.h"
 #include "chaos/Gpu/GPUResource.h"
 #include "chaos/Gpu/GPUFileResource.h"
 #include "chaos/Gpu/GPUInstancingInfo.h"

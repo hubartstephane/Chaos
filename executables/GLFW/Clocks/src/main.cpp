@@ -215,7 +215,7 @@ protected:
 		chaos::GPUMultiMeshGenerator generators;
 		generators.AddGenerator(new chaos::GPUBoxMeshGenerator(b), mesh_box);
 
-		if (!generators.GenerateMeshes())
+		if (!generators.GenerateMeshes(GetDevice()))
 			return false;
 
 		// place camera

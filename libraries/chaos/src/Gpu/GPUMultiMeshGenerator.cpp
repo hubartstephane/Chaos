@@ -33,7 +33,7 @@ namespace chaos
 	// Mesh 2 vertices are to be aligned on their size boundaries so that they can be properly indexed
 	// we add an extra padding at the end of Mesg 1 vertices
 
-	bool GPUMultiMeshGenerator::GenerateMeshes() const
+	bool GPUMultiMeshGenerator::GenerateMeshes(GPUDevice * in_gpu_device) const
 	{
 		if (generators.size() == 0)
 			return true;
@@ -87,7 +87,7 @@ namespace chaos
 		}
 
 		// create and map vertex and index buffer
-		GPUVertexAndIndexMappedBuffers buffers = GPUVertexAndIndexMappedBuffers::CreateMappedBuffers(total_vertex_buffer_size, total_index_buffer_size);
+		GPUVertexAndIndexMappedBuffers buffers = GPUVertexAndIndexMappedBuffers::CreateMappedBuffers(in_gpu_device, total_vertex_buffer_size, total_index_buffer_size);
 		if (!buffers.IsValid())
 			return false;
 

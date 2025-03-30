@@ -57,14 +57,14 @@ namespace chaos
 		virtual GPUVertexDeclaration* GenerateVertexDeclaration() const = 0;
 
 		/** generation function */
-		shared_ptr<GPUMesh> GenerateMesh() const;
+		shared_ptr<GPUMesh> GenerateMesh(GPUDevice * in_gpu_device) const;
 
 	protected:
 
 		/** get the mesh data */
 		virtual void GenerateMeshData(GPUMeshGenerationElementCreationFunc elem_create_func, MemoryBufferWriter& vertices_writer, MemoryBufferWriter& indices_writer, box3& bounding_box) const = 0;
 		/** population function */
-		bool FillMeshData(GPUMesh* mesh) const;
+		bool FillMeshData(GPUDevice* in_gpu_device, GPUMesh* mesh) const;
 	};
 
 	/**

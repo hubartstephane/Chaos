@@ -6,12 +6,12 @@ static glm::vec4 const translucent = glm::vec4(1.0f, 1.0f, 1.0f, 0.3f);
 
 bool PrimitiveRenderer::Initialize()
 {
-	chaos::WindowApplication * application = chaos::Application::GetInstance();
-	if (application == nullptr)
+	chaos::WindowApplication * window_application = chaos::Application::GetInstance();
+	if (window_application == nullptr)
 		return false;
 
 	// compute resource path
-	boost::filesystem::path resources_path = application->GetResourcesPath();
+	boost::filesystem::path resources_path = window_application->GetResourcesPath();
 
 	// load programs
 	program_common = LoadProgram(resources_path, "pixel_shader.txt", "vertex_shader_common.txt");
@@ -37,16 +37,16 @@ bool PrimitiveRenderer::Initialize()
 	generators.AddGenerator(new chaos::GPUBoxMeshGenerator(b3), mesh_box);
 	generators.AddGenerator(new chaos::GPUTriangleMeshGenerator(t), mesh_triangle);
 
-	if (!generators.GenerateMeshes())
+	if (!generators.GenerateMeshes(window_application->GetDevice()))
 		return false;
 #else
 
-	mesh_sphere = (new chaos::GPUSphereMeshGenerator(s, glm::mat4x4(1.0f), 30))->GenerateMesh();
+	mesh_sphere = (new chaos::GPUSphereMeshGenerator(s, glm::mat4x4(1.0f), 30))->GenerateMesh(window_application->GetDevice());
 
-	mesh_circle = (new chaos::GPUCircleMeshGenerator(c, glm::mat4x4(1.0f), 30))->GenerateMesh();
-	mesh_quad = (new chaos::GPUQuadMeshGenerator(b2))->GenerateMesh();
-	mesh_box = (new chaos::GPUBoxMeshGenerator(b3))->GenerateMesh();
-	mesh_triangle = (new chaos::GPUTriangleMeshGenerator(t))->GenerateMesh();
+	mesh_circle = (new chaos::GPUCircleMeshGenerator(c, glm::mat4x4(1.0f), 30))->GenerateMesh(window_application->GetDevice());
+	mesh_quad = (new chaos::GPUQuadMeshGenerator(b2))->GenerateMesh(window_application->GetDevice());
+	mesh_box = (new chaos::GPUBoxMeshGenerator(b3))->GenerateMesh(window_application->GetDevice());
+	mesh_triangle = (new chaos::GPUTriangleMeshGenerator(t))->GenerateMesh(window_application->GetDevice());
 #endif
 	return true;
 }

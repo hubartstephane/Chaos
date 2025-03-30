@@ -111,7 +111,7 @@ namespace chaos
 		}
 
 		/** generate the mesh corresponding to this layer. not related to the cached mesh */
-		GPUMesh* GenerateMesh();
+		GPUMesh* GenerateMesh(GPUDevice* in_gpu_device);
 
 	protected:
 

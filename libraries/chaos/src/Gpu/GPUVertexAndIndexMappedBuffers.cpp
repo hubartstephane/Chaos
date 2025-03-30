@@ -24,7 +24,7 @@ namespace chaos
 		}
 	}
 
-	GPUVertexAndIndexMappedBuffers GPUVertexAndIndexMappedBuffers::CreateMappedBuffers(size_t vertex_buffer_size, size_t index_buffer_size)
+	GPUVertexAndIndexMappedBuffers GPUVertexAndIndexMappedBuffers::CreateMappedBuffers(GPUDevice* in_gpu_device, size_t vertex_buffer_size, size_t index_buffer_size)
 	{
 		GPUVertexAndIndexMappedBuffers result;
 

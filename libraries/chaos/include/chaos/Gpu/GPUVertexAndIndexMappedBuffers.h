@@ -15,7 +15,7 @@ namespace chaos
 	public:
 
 		/** create all required resources */
-		static GPUVertexAndIndexMappedBuffers CreateMappedBuffers(size_t vertex_buffer_size, size_t index_buffer_size);
+		static GPUVertexAndIndexMappedBuffers CreateMappedBuffers(GPUDevice * in_gpu_device, size_t vertex_buffer_size, size_t index_buffer_size);
 		/** check for validity */
 		bool IsValid() const;
 		/** destroy all resources (usefull to ensure everything is unmapped properly) */

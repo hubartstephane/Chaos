@@ -28,7 +28,7 @@ namespace chaos
 	// GPUMeshGenerator
 	// =====================================================================
 
-	bool GPUMeshGenerator::FillMeshData(GPUMesh* mesh) const
+	bool GPUMeshGenerator::FillMeshData(GPUDevice* in_gpu_device, GPUMesh* mesh) const
 	{
 		assert(mesh != nullptr);
 
@@ -47,7 +47,7 @@ namespace chaos
 		size_t vertex_buffer_size = requirement.vertices_count * vertex_size;
 		size_t index_buffer_size  = requirement.indices_count * sizeof(uint32_t);
 
-		GPUVertexAndIndexMappedBuffers buffers = GPUVertexAndIndexMappedBuffers::CreateMappedBuffers(vertex_buffer_size, index_buffer_size);
+		GPUVertexAndIndexMappedBuffers buffers = GPUVertexAndIndexMappedBuffers::CreateMappedBuffers(in_gpu_device, vertex_buffer_size, index_buffer_size);
 		if (!buffers.IsValid())
 			return false;
 
@@ -76,11 +76,11 @@ namespace chaos
 		return true;
 	}
 
-	shared_ptr<GPUMesh> GPUMeshGenerator::GenerateMesh() const
+	shared_ptr<GPUMesh> GPUMeshGenerator::GenerateMesh(GPUDevice* in_gpu_device) const
 	{
 		shared_ptr<GPUMesh> mesh = new GPUMesh();
 		if (mesh != nullptr)
-			if (!FillMeshData(mesh.get())) // automatic destruction in case of failure
+			if (!FillMeshData(in_gpu_device, mesh.get())) // automatic destruction in case of failure
 				return nullptr;
 		return mesh;
 	}

@@ -165,7 +165,7 @@ protected:
 	{
 		sphere3 s = sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 20.0f);
 
-		shared_ptr<GPUMesh> gpu_mesh = GPUSphereMeshGenerator(s, glm::mat4x4(1.0f), 10).GenerateMesh();
+		shared_ptr<GPUMesh> gpu_mesh = GPUSphereMeshGenerator(s, glm::mat4x4(1.0f), 10).GenerateMesh(GetDevice());
 		meshes.push_back(gpu_mesh);
 
 		glm::vec3 position       = { -200.0f, 200.0f, 500.0f };
@@ -217,7 +217,7 @@ protected:
 		sphere.radius = 50.0f;
 		generator.AddGenerator(new GPUSphereMeshGenerator(sphere), sphere_mesh);
 
-		if (!generator.GenerateMeshes())
+		if (!generator.GenerateMeshes(GetDevice()))
 			return false;
 
 		glm::vec3 primitive_position = { 0.0f, 0.0f, 0.0f };

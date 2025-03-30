@@ -179,7 +179,7 @@ namespace chaos
         return true;
     }
 
-	GPUMesh* ParticleLayerBase::GenerateMesh()
+	GPUMesh* ParticleLayerBase::GenerateMesh(GPUDevice* in_gpu_device)
 	{
 		// get the vertex declaration for the mesh
 		shared_ptr<GPUVertexDeclaration> declaration = GetVertexDeclaration();

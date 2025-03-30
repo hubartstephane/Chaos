@@ -419,7 +419,7 @@ namespace chaos
 
 		box2 box = box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
 		generators.AddGenerator(new GPUQuadMeshGenerator(box), quad_mesh);
-		if (!generators.GenerateMeshes())
+		if (!generators.GenerateMeshes(GetDevice()))
 			return false;
 
 		// generate the quad list index buffer (used in primitive rendering)

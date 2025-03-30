@@ -19,7 +19,7 @@ namespace chaos
 		/** clean all generators */
 		void Clean();
 		/** generate all meshes */
-		bool GenerateMeshes() const;
+		bool GenerateMeshes(GPUDevice * in_gpu_device) const;
 
 	protected:
 

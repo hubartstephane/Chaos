@@ -523,7 +523,7 @@ bool Game::GenerateBackgroundResources(boost::filesystem::path const & path)
 	// generate the background mesh
 	chaos::box2 b = chaos::box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
 
-	fullscreen_mesh = chaos::GPUQuadMeshGenerator(b).GenerateMesh();
+	fullscreen_mesh = chaos::GPUQuadMeshGenerator(b).GenerateMesh(window_application->GetDevice());
 	if (fullscreen_mesh == nullptr)
 		return false;
 

@@ -6,12 +6,12 @@ static glm::vec4 const translucent = glm::vec4(1.0f, 1.0f, 1.0f, 0.3f);
 
 bool PrimitiveRenderer::Initialize()
 {
-	chaos::WindowApplication * application = chaos::Application::GetInstance();
-	if (application == nullptr)
+	chaos::WindowApplication * window_application = chaos::Application::GetInstance();
+	if (window_application == nullptr)
 		return false;
 
 	// compute resource path
-	boost::filesystem::path resources_path = application->GetResourcesPath();
+	boost::filesystem::path resources_path = window_application->GetResourcesPath();
 
 	// load programs
 	program_common = LoadProgram(resources_path, "pixel_shader.txt", "vertex_shader_common.txt");
@@ -37,7 +37,7 @@ bool PrimitiveRenderer::Initialize()
 	generators.AddGenerator(new chaos::GPUWireframeBoxMeshGenerator(b3), mesh_wireframe_box);
 	generators.AddGenerator(new chaos::GPUTriangleMeshGenerator(t), mesh_triangle);
 
-	if (!generators.GenerateMeshes())
+	if (!generators.GenerateMeshes(window_application->GetDevice()))
 		return false;
 	return true;
 }

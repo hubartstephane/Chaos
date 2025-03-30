@@ -6,6 +6,7 @@
 #include "chaos/ImGuiCore/ImGuiChoiceObject.h"
 #include "chaos/ImGuiCore/ImGuiButtonType.h"
 #include "chaos/ImGuiCore/ImGuiContentObject.h"
+#include "chaos/ImGuiCore/ImGuiUserMessageObject.h"
 #include "chaos/ImGuiCore/ImGuiCustomObject.h"
 #include "chaos/ImGuiCore/ImGuiMessageObject.h"
 #include "chaos/ImGuiCore/ImGuiWindowInformationObject.h"

@@ -139,7 +139,7 @@ protected:
 
 		chaos::ImGuiTools::FullViewportWindow("fullscreen", 0, [this]()
 		{
-			debug_display.OnDrawImGuiContent(this);
+			imgui_user_message.OnDrawImGuiContent(this);
 		});
 	}
 
@@ -154,7 +154,7 @@ protected:
 
 	chaos::FPSViewController fps_view_controller;
 
-	chaos::GLDebugOnScreenDisplay debug_display;
+	chaos::ImGuiUserMessageObject imgui_user_message;
 
 	bool rotation_started = true;
 

@@ -146,7 +146,7 @@ protected:
 		// XXX : the stencil is here to ensure that the debug strings is not erased by the sky box
 		//       (debug string needs to be rendered first so it can use the conditional rendering from previous frame)
 		//query->BeginConditionalRendering(true, false);
-		//debug_display.Display(render_context, int(draw_params.viewport.size.x), int(draw_params.viewport.size.y));
+		//imgui_user_message.Display(render_context, int(draw_params.viewport.size.x), int(draw_params.viewport.size.y));
 		//query->EndConditionalRendering();
 
 		// XXX : render the cubemap. Use previous frame query for conditinal rendering
@@ -189,9 +189,9 @@ protected:
 
 		boost::filesystem::path resources_path = application->GetResourcesPath();
 
-		debug_display.AddLine("Press +/- to change cubemap");
-		//debug_display.AddLine("If the cubemap has no pixel on screen, ");
-		//debug_display.AddLine("this text will disappear (conditional rendering)");
+		imgui_user_message.AddLine("Press +/- to change cubemap");
+		//imgui_user_message.AddLine("If the cubemap has no pixel on screen, ");
+		//imgui_user_message.AddLine("this text will disappear (conditional rendering)");
 
 		texture = GenerateCubeMap(0);
 		if (texture == nullptr)
@@ -229,7 +229,7 @@ protected:
 	{
 		if (button == 1 && action == GLFW_RELEASE)
 		{
-			debug_display.AddLine("HelloWorld");
+			imgui_user_message.AddLine("HelloWorld");
 			return true;
 		}
 		return false;
@@ -241,7 +241,7 @@ protected:
 
 		chaos::ImGuiTools::FullViewportWindow("fullscreen", 0, [this]()
 		{
-			debug_display.OnDrawImGuiContent(this);
+			imgui_user_message.OnDrawImGuiContent(this);
 		});
 	}
 
@@ -255,7 +255,7 @@ protected:
 
 	chaos::FPSViewController fps_view_controller;
 
-	chaos::GLDebugOnScreenDisplay debug_display;
+	chaos::ImGuiUserMessageObject imgui_user_message;
 
 	int cubemap_index = 0;
 };

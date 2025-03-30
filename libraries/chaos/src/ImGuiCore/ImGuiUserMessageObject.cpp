@@ -3,12 +3,12 @@
 
 namespace chaos
 {
-	void GLDebugOnScreenDisplay::OnDrawImGuiContent(Window* window)
+	void ImGuiUserMessageObject::OnDrawImGuiContent(Window* window)
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		float delta_time = io.DeltaTime;
 
-		// destroy outdated lines
+		// update lines lifetime and remove them when outdated
 		auto it = std::remove_if(lines.begin(), lines.end(), [delta_time](ImGuiUserMessageLine & line)
 		{
 			// infinite lifetime ?
@@ -32,12 +32,12 @@ namespace chaos
 		}
 	}
 
-	void GLDebugOnScreenDisplay::AddLine(std::string content, float lifetime , glm::vec4 const& color)
+	void ImGuiUserMessageObject::AddLine(std::string content, float lifetime , glm::vec4 const& color)
 	{
 		lines.push_back({std::move(content), lifetime, color});
 	}
 
-	void GLDebugOnScreenDisplay::Clear()
+	void ImGuiUserMessageObject::Clear()
 	{
 		lines.clear();
 	}

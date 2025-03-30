@@ -8,17 +8,17 @@ protected:
 
 	void UpdateDebugDisplay()
 	{
-		debug_display.Clear();
+		imgui_user_message.Clear();
 
 		if (renderpass_names.size() > 0)
-			debug_display.AddLine(chaos::StringTools::Printf("Renderpass [%s]", renderpass_names[current_renderpass].c_str()).c_str(), -1.0f);
+			imgui_user_message.AddLine(chaos::StringTools::Printf("Renderpass [%s]", renderpass_names[current_renderpass].c_str()).c_str(), -1.0f);
 
 		chaos::GPUResourceManager * resource_manager = chaos::WindowApplication::GetGPUResourceManagerInstance();
 		if (resource_manager != nullptr)
 		{
 			size_t count = resource_manager->GetRenderMaterialCount();
 			if (count != 0)
-				debug_display.AddLine(chaos::StringTools::Printf("Material   [%s]", resource_manager->GetRenderMaterial(current_material)->GetName()).c_str(), -1.0f);
+				imgui_user_message.AddLine(chaos::StringTools::Printf("Material   [%s]", resource_manager->GetRenderMaterial(current_material)->GetName()).c_str(), -1.0f);
 		}
 	}
 
@@ -179,7 +179,7 @@ protected:
 
 		chaos::ImGuiTools::FullViewportWindow("fullscreen", 0, [this]()
 		{
-			debug_display.OnDrawImGuiContent(this);
+			imgui_user_message.OnDrawImGuiContent(this);
 		});
 	}
 
@@ -194,7 +194,7 @@ protected:
 
 	chaos::FPSViewController fps_view_controller;
 
-	chaos::GLDebugOnScreenDisplay debug_display;
+	chaos::ImGuiUserMessageObject imgui_user_message;
 };
 
 int main(int argc, char ** argv, char ** env)

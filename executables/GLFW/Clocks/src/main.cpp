@@ -68,14 +68,14 @@ protected:
 
 	void DebugDisplayTips()
 	{
-		debug_display.Clear();
-		debug_display.AddLine(chaos::StringTools::Printf("update clock [%s] with NUM1 & NUM2 : %f", clock1->GetClockName(), clock1->GetTimeScale()).c_str());
-		debug_display.AddLine(chaos::StringTools::Printf("update clock [%s] with NUM4 & NUM5 : %f", clock2->GetClockName(), clock2->GetTimeScale()).c_str());
-		debug_display.AddLine(chaos::StringTools::Printf("update clock [%s] with NUM7 & NUM8 : %f", clock3->GetClockName(), clock3->GetTimeScale()).c_str());
-		debug_display.AddLine("Press A to generate an Event on Clock 1 : SingleTickEvent");
-		debug_display.AddLine("Press Z to generate an Event on Clock 2 : RangeEvent");
-		debug_display.AddLine("Press E to generate an Event on Clock 3 : Forever Event");
-		debug_display.AddLine("Press T to pause");
+		imgui_user_message.Clear();
+		imgui_user_message.AddLine(chaos::StringTools::Printf("update clock [%s] with NUM1 & NUM2 : %f", clock1->GetClockName(), clock1->GetTimeScale()).c_str());
+		imgui_user_message.AddLine(chaos::StringTools::Printf("update clock [%s] with NUM4 & NUM5 : %f", clock2->GetClockName(), clock2->GetTimeScale()).c_str());
+		imgui_user_message.AddLine(chaos::StringTools::Printf("update clock [%s] with NUM7 & NUM8 : %f", clock3->GetClockName(), clock3->GetTimeScale()).c_str());
+		imgui_user_message.AddLine("Press A to generate an Event on Clock 1 : SingleTickEvent");
+		imgui_user_message.AddLine("Press Z to generate an Event on Clock 2 : RangeEvent");
+		imgui_user_message.AddLine("Press E to generate an Event on Clock 3 : Forever Event");
+		imgui_user_message.AddLine("Press T to pause");
 	}
 
 	void PrepareObjectProgram(chaos::GPUProgramProvider & uniform_provider, RenderingContext const & ctx, PrimitiveRenderingContext const & prim_ctx)
@@ -286,7 +286,7 @@ protected:
 			if (!clock->AddPendingEvent(clock_event.get(), event_info, false))
 			{
 				clock_event = nullptr;
-				debug_display.AddLine("FAILED to add EVENT", 1.0f);
+				imgui_user_message.AddLine("FAILED to add EVENT", 1.0f);
 			}
 
 			return true;
@@ -328,7 +328,7 @@ protected:
 
 		chaos::ImGuiTools::FullViewportWindow("fullscreen", 0, [this]()
 		{
-			debug_display.OnDrawImGuiContent(this);
+			imgui_user_message.OnDrawImGuiContent(this);
 		});
 	}
 
@@ -349,7 +349,7 @@ protected:
 
 	chaos::FPSViewController fps_view_controller;
 
-	chaos::GLDebugOnScreenDisplay debug_display;
+	chaos::ImGuiUserMessageObject imgui_user_message;
 };
 
 // ====================================================================
@@ -359,7 +359,7 @@ MyEvent::~MyEvent()
 	application->time_line_box_position = 0.0f;
 	application->time_line_box_size = 0.0f;
 
-	application->debug_display.AddLine(chaos::StringTools::Printf("MyEvent [%s] destroyed", message.c_str()).c_str(), 1.0f);
+	application->imgui_user_message.AddLine(chaos::StringTools::Printf("MyEvent [%s] destroyed", message.c_str()).c_str(), 1.0f);
 }
 
 void MyEvent::OnEventRemovedFromClock()
@@ -394,7 +394,7 @@ chaos::ClockEventTickResult MyEvent::Tick(chaos::ClockEventTickData const & tick
 		}
 	}
 
-	application->debug_display.AddLine(chaos::StringTools::Printf("MyEvent [%s] tick [%d] execution [%d]", message.c_str(), GetTickCount(), GetExecutionCount()).c_str(), 0.1f);
+	application->imgui_user_message.AddLine(chaos::StringTools::Printf("MyEvent [%s] tick [%d] execution [%d]", message.c_str(), GetTickCount(), GetExecutionCount()).c_str(), 0.1f);
 	return ContinueExecution();
 }
 

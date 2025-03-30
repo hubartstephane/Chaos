@@ -181,21 +181,21 @@ protected:
 
 	void DebugDisplayExampleTitle()
 	{
-		debug_display.Clear();
-		debug_display.AddLine(chaos::StringTools::Printf("=> Example %d : %s", display_example, GetExampleTitle(display_example)).c_str());
+		imgui_user_message.Clear();
+		imgui_user_message.AddLine(chaos::StringTools::Printf("=> Example %d : %s", display_example, GetExampleTitle(display_example)).c_str());
 
-		debug_display.AddLine("");
-		debug_display.AddLine("  +/-       : change example");
-		debug_display.AddLine("  T         : freeze time");
+		imgui_user_message.AddLine("");
+		imgui_user_message.AddLine("  +/-       : change example");
+		imgui_user_message.AddLine("  T         : freeze time");
 
 		if (display_example == TestID::COLLISION_2D_TEST || display_example == TestID::COLLISION_3D_TEST)
 		{
-			debug_display.AddLine("  LEFT CTRL : select object modified");
-			debug_display.AddLine("  NUM 5     : change primitive type");
-			debug_display.AddLine("  NUM 4-6   : move X");
-			debug_display.AddLine("  NUM 1-7   : move Y");
-			debug_display.AddLine("  NUM 2-8   : move Z");
-			debug_display.AddLine("  NUM 3-9   : rotation");
+			imgui_user_message.AddLine("  LEFT CTRL : select object modified");
+			imgui_user_message.AddLine("  NUM 5     : change primitive type");
+			imgui_user_message.AddLine("  NUM 4-6   : move X");
+			imgui_user_message.AddLine("  NUM 1-7   : move Y");
+			imgui_user_message.AddLine("  NUM 2-8   : move Z");
+			imgui_user_message.AddLine("  NUM 3-9   : rotation");
 		}
 	}
 
@@ -1126,7 +1126,7 @@ protected:
 
 		chaos::ImGuiTools::FullViewportWindow("fullscreen", 0, [this]()
 		{
-			debug_display.OnDrawImGuiContent(this);
+			imgui_user_message.OnDrawImGuiContent(this);
 		});
 	}
 
@@ -1147,7 +1147,7 @@ protected:
 
 	chaos::FPSViewController fps_view_controller;
 
-	chaos::GLDebugOnScreenDisplay debug_display;
+	chaos::ImGuiUserMessageObject imgui_user_message;
 
 	// some objects for collisions tests
 	glm::vec3 position_object1 = glm::vec3(0.0f, 0.0f, 0.0f);

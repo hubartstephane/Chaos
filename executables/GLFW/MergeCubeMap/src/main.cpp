@@ -37,13 +37,13 @@ protected:
 		{
 			cubemap_index = index;
 			texture = new_texture;
-			debug_display.Clear();
+			imgui_user_message.Clear();
 
 			chaos::PixelFormat pf = pixel_formats[index];
 
 			char const * component_type = (pf.component_type == chaos::PixelComponentType::UNSIGNED_CHAR) ? "unsigned char" : "float";
 
-			debug_display.AddLine(chaos::StringTools::Printf("format : index = [%d] component = [%d] type = [%s]", index, pf.component_count, component_type).c_str());
+			imgui_user_message.AddLine(chaos::StringTools::Printf("format : index = [%d] component = [%d] type = [%s]", index, pf.component_count, component_type).c_str());
 		}
 	}
 
@@ -197,7 +197,7 @@ protected:
 		if (!LoadSkyboxBitmaps(resources_path))
 			return false;
 
-		debug_display.AddLine("Press +/- to change cubemap");
+		imgui_user_message.AddLine("Press +/- to change cubemap");
 
 		texture = GenerateCubeMap(0);
 		if (texture == nullptr)
@@ -231,7 +231,7 @@ protected:
 	{
 		if (button == 1 && action == GLFW_RELEASE)
 		{
-			debug_display.AddLine("HelloWorld");
+			imgui_user_message.AddLine("HelloWorld");
 			return true;
 		}
 		return false;
@@ -243,7 +243,7 @@ protected:
 
 		chaos::ImGuiTools::FullViewportWindow("fullscreen", 0, [this]()
 		{
-			debug_display.OnDrawImGuiContent(this);
+			imgui_user_message.OnDrawImGuiContent(this);
 		});
 	}
 
@@ -269,7 +269,7 @@ protected:
 
 	chaos::FPSViewController fps_view_controller;
 
-	chaos::GLDebugOnScreenDisplay debug_display;
+	chaos::ImGuiUserMessageObject imgui_user_message;
 
 	int cubemap_index = 0;
 };

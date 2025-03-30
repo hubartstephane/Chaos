@@ -2,7 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class GLDebugOnScreenDisplay;
+	class ImGuiUserMessageObject;
 
 	class ImGuiUserMessageEntry;
 
@@ -25,10 +25,10 @@ namespace chaos
 	};
 
 	/**
-	* GLDebugOnScreenDisplay : used to display some text on screen with timeout from a bitmap font (a texture)
+	* ImGuiUserMessageObject: used to display some messages with timeout and colors
 	**/
 
-	class CHAOS_API GLDebugOnScreenDisplay : public ImGuiObject
+	class CHAOS_API ImGuiUserMessageObject : public ImGuiObject
 	{
 	public:
 

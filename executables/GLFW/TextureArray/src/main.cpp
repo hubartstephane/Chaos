@@ -98,9 +98,9 @@ protected:
 		fps_view_controller.fps_view.position.z = 10.0f;
 
 		// initial display
-		debug_display.AddLine("Draw a box with a texture array :");
-		debug_display.AddLine("  Use +/- to change slice.");
-		debug_display.AddLine("  Use 1/2 to change pixel format.");
+		imgui_user_message.AddLine("Draw a box with a texture array :");
+		imgui_user_message.AddLine("  Use +/- to change slice.");
+		imgui_user_message.AddLine("  Use 1/2 to change pixel format.");
 
 		return true;
 	}
@@ -210,7 +210,7 @@ protected:
 
 		chaos::ImGuiTools::FullViewportWindow("fullscreen", 0, [this]()
 		{
-			debug_display.OnDrawImGuiContent(this);
+			imgui_user_message.OnDrawImGuiContent(this);
 		});
 	}
 
@@ -232,7 +232,7 @@ protected:
 
 	chaos::FPSViewController fps_view_controller;
 
-	chaos::GLDebugOnScreenDisplay debug_display;
+	chaos::ImGuiUserMessageObject imgui_user_message;
 };
 
 int main(int argc, char ** argv, char ** env)

@@ -5,7 +5,7 @@ class TestGamepadCallbacks : public chaos::GamepadCallbacks
 {
 public:
 
-  TestGamepadCallbacks(chaos::GLDebugOnScreenDisplay * in_debug_display) : debug_display(in_debug_display) {}
+  TestGamepadCallbacks(chaos::ImGuiUserMessageObject * in_imgui_user_message) : imgui_user_message(in_imgui_user_message) {}
 
   virtual bool AcceptPhysicalDevice(chaos::PhysicalGamepad * physical_device) override
   {
@@ -16,15 +16,15 @@ public:
 
   virtual bool OnGamepadConnected(chaos::Gamepad * gamepad) override
   {
-    if (debug_display != nullptr)
-      debug_display->AddLine("TestGamepadCallbacks::OnGamepadConnected");
+    if (imgui_user_message != nullptr)
+      imgui_user_message->AddLine("TestGamepadCallbacks::OnGamepadConnected");
     return true;
   }
 
   virtual bool OnGamepadDisconnected(chaos::Gamepad * gamepad) override
   {
-    if (debug_display != nullptr)
-      debug_display->AddLine("TestGamepadCallbacks::OnGamepadDisconnected");
+    if (imgui_user_message != nullptr)
+      imgui_user_message->AddLine("TestGamepadCallbacks::OnGamepadDisconnected");
     return true;
   }
 
@@ -32,15 +32,15 @@ public:
   {
   //  if (gamepad_state.IsButtonPressed(chaos::GamepadButton::Y))
     {
-   //   if (debug_display != nullptr)
-    //    debug_display->AddLine("Y");
+   //   if (imgui_user_message != nullptr)
+    //    imgui_user_message->AddLine("Y");
     }
   }
 
 
 protected:
 
-  chaos::GLDebugOnScreenDisplay * debug_display = nullptr;
+  chaos::ImGuiUserMessageObject * imgui_user_message = nullptr;
 };
 
 
@@ -50,7 +50,7 @@ class MyGamepadManager : public chaos::GamepadManager
 {
 public:
 
-  MyGamepadManager(chaos::GLDebugOnScreenDisplay * in_debug_display) : debug_display(in_debug_display) {}
+  MyGamepadManager(chaos::ImGuiUserMessageObject * in_imgui_user_message) : imgui_user_message(in_imgui_user_message) {}
 
 protected:
 
@@ -61,7 +61,7 @@ protected:
 
 protected:
 
-	chaos::GLDebugOnScreenDisplay * debug_display = nullptr;
+	chaos::ImGuiUserMessageObject * imgui_user_message = nullptr;
 };
 
 class WindowOpenGLTest : public chaos::Window
@@ -93,9 +93,9 @@ protected:
 		if (!chaos::Window::OnInitialize(config))
 			return false;
 
-		gamepad_manager = new MyGamepadManager(&debug_display);
+		gamepad_manager = new MyGamepadManager(&imgui_user_message);
 
-		main_gamepad = gamepad_manager->AllocateGamepad(false, new TestGamepadCallbacks(&debug_display));
+		main_gamepad = gamepad_manager->AllocateGamepad(false, new TestGamepadCallbacks(&imgui_user_message));
 		return true;
 	}
 
@@ -111,7 +111,7 @@ protected:
 			for (int i = 0; i < button_count; ++i)
 			{
 				if (main_gamepad->IsButtonPressed(i))
-					debug_display.AddLine(chaos::StringTools::Printf("BUTTON [%d] PRESSED", i).c_str(), 1.0f);
+					imgui_user_message.AddLine(chaos::StringTools::Printf("BUTTON [%d] PRESSED", i).c_str(), 1.0f);
 			}
 
 			int axis_count = main_gamepad->GetAxisCount();
@@ -119,16 +119,16 @@ protected:
 			{
 				float value = main_gamepad->GetAxisValue(i);
 				if (value != 0.0f)
-					debug_display.AddLine(chaos::StringTools::Printf("AXIS [%d] = %f", i, value).c_str(), 1.0f);
+					imgui_user_message.AddLine(chaos::StringTools::Printf("AXIS [%d] = %f", i, value).c_str(), 1.0f);
 			}
 
 			if (main_gamepad->IsAnyAxisAction())
-				debug_display.AddLine("AXIS ACTION", 1.0f);
+				imgui_user_message.AddLine("AXIS ACTION", 1.0f);
 
 #else
 
 #define TEST_BUTTON(x) if (main_gamepad->IsButtonPressed(chaos::GamepadButton::x))\
-debug_display.AddLine("Pressed : " #x, 1.0f);
+imgui_user_message.AddLine("Pressed : " #x, 1.0f);
 
 			TEST_BUTTON(A);
 			TEST_BUTTON(B);
@@ -150,19 +150,19 @@ debug_display.AddLine("Pressed : " #x, 1.0f);
 
 			glm::vec2 l = main_gamepad->GetStickValue(chaos::GamepadStick::LEFT_STICK);
 			if (l.x != 0.0f || l.y != 0.0f)
-				debug_display.AddLine(chaos::StringTools::Printf("LEFT AXIS x : %0.3f   y : %0.3f", l.x, l.y).c_str(), 1.0f);
+				imgui_user_message.AddLine(chaos::StringTools::Printf("LEFT AXIS x : %0.3f   y : %0.3f", l.x, l.y).c_str(), 1.0f);
 
 			glm::vec2 r = main_gamepad->GetStickValue(chaos::GamepadStick::RIGHT_STICK);
 			if (r.x != 0.0f || r.y != 0.0f)
-				debug_display.AddLine(chaos::StringTools::Printf("RIGHT AXIS x : %0.3f  y : %0.3f", r.x, r.y).c_str(), 1.0f);
+				imgui_user_message.AddLine(chaos::StringTools::Printf("RIGHT AXIS x : %0.3f  y : %0.3f", r.x, r.y).c_str(), 1.0f);
 
 			float left_trigger = main_gamepad->GetAxisValue(chaos::GamepadAxis::LEFT_TRIGGER);
 			if (left_trigger)
-				debug_display.AddLine(chaos::StringTools::Printf("LEFT TRIGGER  %0.3f", left_trigger).c_str(), 1.0f);
+				imgui_user_message.AddLine(chaos::StringTools::Printf("LEFT TRIGGER  %0.3f", left_trigger).c_str(), 1.0f);
 
 			float right_trigger = main_gamepad->GetAxisValue(chaos::GamepadAxis::RIGHT_TRIGGER);
 			if (right_trigger)
-				debug_display.AddLine(chaos::StringTools::Printf("RIGHT TRIGGER  %0.3f", right_trigger).c_str(), 1.0f);
+				imgui_user_message.AddLine(chaos::StringTools::Printf("RIGHT TRIGGER  %0.3f", right_trigger).c_str(), 1.0f);
 #endif
 		}
 
@@ -175,7 +175,7 @@ debug_display.AddLine("Pressed : " #x, 1.0f);
 
 		chaos::ImGuiTools::FullViewportWindow("fullscreen", 0, [this]()
 		{
-			debug_display.OnDrawImGuiContent(this);
+			imgui_user_message.OnDrawImGuiContent(this);
 		});
 	}
 
@@ -183,7 +183,7 @@ protected:
 
 	chaos::shared_ptr<MyGamepadManager> gamepad_manager;
 
-	chaos::GLDebugOnScreenDisplay debug_display;
+	chaos::ImGuiUserMessageObject imgui_user_message;
 
 	chaos::shared_ptr<chaos::Gamepad> main_gamepad;
 };

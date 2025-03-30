@@ -20,7 +20,7 @@ protected:
 
 	virtual bool DoTick(float delta_time) override
 	{
-		debug_display.Clear();
+		imgui_user_message.Clear();
 
 		for (int i = GLFW_JOYSTICK_1; i <= GLFW_JOYSTICK_LAST; ++i)
 		{
@@ -29,10 +29,10 @@ protected:
 			{
 				bool input = chaos::GamepadManager::HasAnyInputs(i, 0.2f);
 
-				debug_display.AddLine(chaos::StringTools::Printf("[%02d] : present. Input[%d]", i, input).c_str());
+				imgui_user_message.AddLine(chaos::StringTools::Printf("[%02d] : present. Input[%d]", i, input).c_str());
 			}
 			else
-				debug_display.AddLine(chaos::StringTools::Printf("[%02d] : absent", i).c_str());
+				imgui_user_message.AddLine(chaos::StringTools::Printf("[%02d] : absent", i).c_str());
 
 		}
 
@@ -45,13 +45,13 @@ protected:
 
 		chaos::ImGuiTools::FullViewportWindow("fullscreen", 0, [this]()
 		{
-			debug_display.OnDrawImGuiContent(this);
+			imgui_user_message.OnDrawImGuiContent(this);
 		});
 	}
 
 protected:
 
-	chaos::GLDebugOnScreenDisplay debug_display;
+	chaos::ImGuiUserMessageObject imgui_user_message;
 };
 
 int main(int argc, char** argv, char** env)

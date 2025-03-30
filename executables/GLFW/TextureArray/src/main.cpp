@@ -35,8 +35,6 @@ protected:
 		chaos::GPURenderParams render_params;
 		mesh_box->DisplayWithProgram(program_box.get(), render_context, &main_uniform_provider, render_params);
 
-		debug_display.Display(render_context, int(draw_params.viewport.size.x), int(draw_params.viewport.size.y));
-
 		return true;
 	}
 
@@ -48,7 +46,6 @@ protected:
 		program_box = nullptr;
 		texture     = nullptr;
 
-		debug_display.Finalize();
 		chaos::Window::Finalize();
 	}
 
@@ -72,21 +69,7 @@ protected:
 
 		// compute resource path
 		boost::filesystem::path resources_path = application->GetResourcesPath();
-		boost::filesystem::path font_path = resources_path / "font.png";
-
-		// initialize debug font display
-		chaos::GLDebugOnScreenDisplay::Params debug_params;
-		debug_params.texture_path               = font_path;
-		debug_params.font_characters            = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-		debug_params.font_characters_per_line   = 10;
-		debug_params.font_characters_line_count = 10;
-		debug_params.character_width            = 20;
-		debug_params.spacing                    = glm::ivec2( 0, 0);
-		debug_params.crop_texture               = glm::ivec2(15, 7);
-
-		if (!debug_display.Initialize(GetDevice (), debug_params))
-			return false;
-
+	
 		// load the initial bitmaps
 		if (!LoadBitmaps(resources_path))
 			return false;
@@ -125,8 +108,6 @@ protected:
 	virtual bool DoTick(float delta_time) override
 	{
 		fps_view_controller.Tick(glfw_window, delta_time);
-
-		debug_display.Tick(delta_time);
 
 		return true; // refresh
 	}
@@ -221,6 +202,16 @@ protected:
 		for (FIBITMAP * bitmap : bitmaps)
 			FreeImage_Unload(bitmap);
 		bitmaps.clear();
+	}
+
+	virtual void OnDrawImGuiContent() override
+	{
+		chaos::Window::OnDrawImGuiContent();
+
+		chaos::ImGuiTools::FullViewportWindow("fullscreen", 0, [this]()
+		{
+			debug_display.OnDrawImGuiContent(this);
+		});
 	}
 
 protected:

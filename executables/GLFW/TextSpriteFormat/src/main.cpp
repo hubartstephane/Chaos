@@ -155,7 +155,6 @@ protected:
 
 		// compute resource path
 		boost::filesystem::path resources_path = application->GetResourcesPath();
-		boost::filesystem::path font_path = resources_path / "font.png";
 
 		// initialize the atlas
 		if (!LoadAtlas(resources_path))

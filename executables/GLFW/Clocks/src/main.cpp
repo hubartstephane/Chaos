@@ -157,8 +157,6 @@ protected:
 
 		DrawGeometryObjects(ctx);
 
-		debug_display.Display(render_context, (int)(draw_params.viewport.size.x), (int)(draw_params.viewport.size.y));
-
 		return true;
 	}
 
@@ -166,8 +164,6 @@ protected:
 	{
 		mesh_box = nullptr;
 		program_box = nullptr;
-
-		debug_display.Finalize();
 
 		// XXX : order is important because clock1 would destroy clock2 & clock3
 		//       In fact, MainClock->FindChild(clock2) would fails, causing the removing to abord
@@ -202,21 +198,6 @@ protected:
 
 		// compute resource path
 		boost::filesystem::path resources_path = application->GetResourcesPath();
-		boost::filesystem::path image_path = resources_path / "font.png";
-
-		// initialize debug font display
-		chaos::GLDebugOnScreenDisplay::Params debug_params;
-		debug_params.texture_path = image_path;
-		debug_params.font_characters = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-		debug_params.font_characters_per_line = 10;
-		debug_params.font_characters_line_count = 10;
-		debug_params.character_width = 20;
-		debug_params.spacing = glm::ivec2(0, 0);
-		debug_params.crop_texture = glm::ivec2(15, 7);
-
-		if (!debug_display.Initialize(GetDevice (), debug_params))
-			return false;
-
 		// load programs
 		program_box = LoadProgram(resources_path, "pixel_shader_box.txt", "vertex_shader_box.txt");
 		if (program_box == nullptr)
@@ -250,8 +231,6 @@ protected:
 	virtual bool DoTick(float delta_time) override
 	{
 		fps_view_controller.Tick(glfw_window, delta_time);
-
-		debug_display.Tick(delta_time);
 
 		return true; // refresh
 	}
@@ -341,6 +320,16 @@ protected:
 				return true;
 		}
 		return chaos::Window::OnKeyEventImpl(key_event);
+	}
+
+	virtual void OnDrawImGuiContent() override
+	{
+		chaos::Window::OnDrawImGuiContent();
+
+		chaos::ImGuiTools::FullViewportWindow("fullscreen", 0, [this]()
+		{
+			debug_display.OnDrawImGuiContent(this);
+		});
 	}
 
 protected:

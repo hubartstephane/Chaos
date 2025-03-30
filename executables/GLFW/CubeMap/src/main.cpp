@@ -98,6 +98,7 @@ protected:
 
 	virtual bool OnDraw(chaos::GPURenderContext* render_context, chaos::GPUProgramProviderInterface const* uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
+	#if 0
 		if (query->IsEnded())
 		{
 			bool available = query->IsResultAvailable();
@@ -106,6 +107,7 @@ protected:
 
 			GLint64 result64 = query->GetResult64(true);
 		}
+		#endif
 
 		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -143,9 +145,9 @@ protected:
 
 		// XXX : the stencil is here to ensure that the debug strings is not erased by the sky box
 		//       (debug string needs to be rendered first so it can use the conditional rendering from previous frame)
-		query->BeginConditionalRendering(true, false);
-		debug_display.Display(render_context, int(draw_params.viewport.size.x), int(draw_params.viewport.size.y));
-		query->EndConditionalRendering();
+		//query->BeginConditionalRendering(true, false);
+		//debug_display.Display(render_context, int(draw_params.viewport.size.x), int(draw_params.viewport.size.y));
+		//query->EndConditionalRendering();
 
 		// XXX : render the cubemap. Use previous frame query for conditinal rendering
 		ref = 0;
@@ -159,9 +161,9 @@ protected:
 
 		chaos::GPURenderParams render_params;
 
-		query->BeginQuery();
+		//query->BeginQuery();
 		mesh->DisplayWithProgram(program.get(), render_context, &main_uniform_provider, render_params);
-		query->EndQuery();
+		//query->EndQuery();
 
 		return true;
 	}
@@ -171,9 +173,8 @@ protected:
 		program = nullptr;
 		mesh = nullptr;
 		texture = nullptr;
-		query = nullptr;
+		//query = nullptr;
 
-		debug_display.Finalize();
 		chaos::Window::Finalize();
 	}
 
@@ -187,23 +188,10 @@ protected:
 			return false;
 
 		boost::filesystem::path resources_path = application->GetResourcesPath();
-		boost::filesystem::path image_path = resources_path / "font.png";
-
-		chaos::GLDebugOnScreenDisplay::Params debug_params;
-		debug_params.texture_path = image_path;
-		debug_params.font_characters = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-		debug_params.font_characters_per_line = 10;
-		debug_params.font_characters_line_count = 10;
-		debug_params.character_width = 20;
-		debug_params.spacing = glm::ivec2(0, 0);
-		debug_params.crop_texture = glm::ivec2(15, 7);
-
-		if (!debug_display.Initialize(GetDevice (), debug_params))
-			return false;
 
 		debug_display.AddLine("Press +/- to change cubemap");
-		debug_display.AddLine("If the cubemap has no pixel on screen, ");
-		debug_display.AddLine("this text will disappear (conditional rendering)");
+		//debug_display.AddLine("If the cubemap has no pixel on screen, ");
+		//debug_display.AddLine("this text will disappear (conditional rendering)");
 
 		texture = GenerateCubeMap(0);
 		if (texture == nullptr)
@@ -223,9 +211,9 @@ protected:
 		if (mesh == nullptr)
 			return false;
 
-		query = new chaos::GLSamplesPassedQuery(this);
-		if (query == nullptr)
-			return false;
+		//query = new chaos::GLSamplesPassedQuery(this);
+		//if (query == nullptr)
+		//	return false;
 
 		return true;
 	}
@@ -233,8 +221,6 @@ protected:
 	virtual bool DoTick(float delta_time) override
 	{
 		fps_view_controller.Tick(glfw_window, delta_time);
-
-		debug_display.Tick(delta_time);
 
 		return true; // refresh
 	}
@@ -249,13 +235,23 @@ protected:
 		return false;
 	}
 
+	virtual void OnDrawImGuiContent() override
+	{
+		chaos::Window::OnDrawImGuiContent();
+
+		chaos::ImGuiTools::FullViewportWindow("fullscreen", 0, [this]()
+		{
+			debug_display.OnDrawImGuiContent(this);
+		});
+	}
+
 protected:
 
 	chaos::shared_ptr<chaos::GPUProgram>  program;
 	chaos::shared_ptr<chaos::GPUMesh> mesh;
 	chaos::shared_ptr<chaos::GPUTexture>    texture;
 
-	chaos::shared_ptr<chaos::GPUQuery> query;
+	//chaos::shared_ptr<chaos::GPUQuery> query;
 
 	chaos::FPSViewController fps_view_controller;
 

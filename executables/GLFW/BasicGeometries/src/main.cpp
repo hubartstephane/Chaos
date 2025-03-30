@@ -970,16 +970,12 @@ protected:
 
 		DrawGeometryObjects();
 
-		debug_display.Display(render_context, (int)(draw_params.viewport.size.x), (int)(draw_params.viewport.size.y));
-
 		return true;
 	}
 
 	virtual void Finalize() override
 	{
 		primitive_renderer = nullptr;
-
-		debug_display.Finalize();
 
 		if (clock != nullptr)
 			clock->RemoveFromParent();
@@ -994,23 +990,6 @@ protected:
 
 		chaos::WindowApplication * application = chaos::Application::GetInstance();
 		if (application == nullptr)
-			return false;
-
-		// compute resource path
-		boost::filesystem::path resources_path = application->GetResourcesPath();
-		boost::filesystem::path image_path = resources_path / "font.png";
-
-		// initialize debug font display
-		chaos::GLDebugOnScreenDisplay::Params debug_params;
-		debug_params.texture_path               = image_path;
-		debug_params.font_characters            = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-		debug_params.font_characters_per_line   = 10;
-		debug_params.font_characters_line_count = 10;
-		debug_params.character_width            = 20;
-		debug_params.spacing                    = glm::ivec2( 0, 0);
-		debug_params.crop_texture               = glm::ivec2(15, 7);
-
-		if (!debug_display.Initialize(GetDevice (), debug_params))
 			return false;
 
 		primitive_renderer = new PrimitiveRenderer();
@@ -1076,8 +1055,6 @@ protected:
 	{
 		fps_view_controller.Tick(glfw_window, delta_time);
 
-		debug_display.Tick(delta_time);
-
 		// update primitives
 		if (display_example == TestID::COLLISION_2D_TEST || display_example == TestID::COLLISION_3D_TEST)
 		{
@@ -1141,6 +1118,16 @@ protected:
 			rotation_object1 = 0.0f;
 			rotation_object2 = 0.0f;
 		}
+	}
+
+	virtual void OnDrawImGuiContent() override
+	{
+		chaos::Window::OnDrawImGuiContent();
+
+		chaos::ImGuiTools::FullViewportWindow("fullscreen", 0, [this]()
+		{
+			debug_display.OnDrawImGuiContent(this);
+		});
 	}
 
 protected:

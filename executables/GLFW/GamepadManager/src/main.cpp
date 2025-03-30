@@ -78,8 +78,6 @@ protected:
 		float far_plane = 1000.0f;
 		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
-		debug_display.Display(render_context, int(draw_params.viewport.size.x), int(draw_params.viewport.size.y));
-
 		return true;
 	}
 
@@ -87,32 +85,12 @@ protected:
 	{
 		main_gamepad = nullptr;
     gamepad_manager = nullptr;
-		debug_display.Finalize();
 		chaos::Window::Finalize();
 	}
 
 	virtual bool OnInitialize(chaos::JSONReadConfiguration config) override
 	{
 		if (!chaos::Window::OnInitialize(config))
-			return false;
-
-		chaos::Application * application = chaos::Application::GetInstance();
-		if (application == nullptr)
-			return false;
-
-		boost::filesystem::path resources_path = application->GetResourcesPath();
-		boost::filesystem::path image_path     = resources_path / "font.png";
-
-		chaos::GLDebugOnScreenDisplay::Params debug_params;
-		debug_params.texture_path               = image_path;
-		debug_params.font_characters            = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-		debug_params.font_characters_per_line   = 10;
-		debug_params.font_characters_line_count = 10;
-		debug_params.character_width            = 15;
-		debug_params.spacing                    = glm::ivec2( 0, 0);
-		debug_params.crop_texture               = glm::ivec2(15, 7);
-
-		if (!debug_display.Initialize(GetDevice (), debug_params))
 			return false;
 
 		gamepad_manager = new MyGamepadManager(&debug_display);
@@ -123,7 +101,6 @@ protected:
 
 	virtual bool DoTick(float delta_time) override
 	{
-		debug_display.Tick(delta_time);
 		gamepad_manager->Tick(0.0f);
 
 		if (main_gamepad->IsPresent())
@@ -192,6 +169,15 @@ debug_display.AddLine("Pressed : " #x, 1.0f);
 		return true; // no redraw
 	}
 
+	virtual void OnDrawImGuiContent() override
+	{
+		chaos::Window::OnDrawImGuiContent();
+
+		chaos::ImGuiTools::FullViewportWindow("fullscreen", 0, [this]()
+		{
+			debug_display.OnDrawImGuiContent(this);
+		});
+	}
 
 protected:
 

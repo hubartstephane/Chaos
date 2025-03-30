@@ -137,39 +137,13 @@ protected:
 		if (mesh != nullptr)
 			mesh->DisplayWithMaterial(rm, render_context, &main_uniform_provider, render_params);
 
-		debug_display.Display(render_context, int(draw_params.viewport.size.x), int(draw_params.viewport.size.y));
-
 		return true;
 	}
 
 	virtual void Finalize() override
 	{
-		debug_display.Finalize();
 		mesh = nullptr;
 		chaos::Window::Finalize();
-	}
-
-	bool InitializeDebugLogger()
-	{
-		chaos::Application * application = chaos::Application::GetInstance();
-		if (application == nullptr)
-			return false;
-
-		boost::filesystem::path resources_path = application->GetResourcesPath();
-		boost::filesystem::path image_path     = resources_path / "font.png";
-
-		chaos::GLDebugOnScreenDisplay::Params debug_params;
-		debug_params.texture_path               = image_path;
-		debug_params.font_characters            = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-		debug_params.font_characters_per_line   = 10;
-		debug_params.font_characters_line_count = 10;
-		debug_params.character_width            = 20;
-		debug_params.spacing                    = glm::ivec2( 0, 0);
-		debug_params.crop_texture               = glm::ivec2(15, 7);
-
-		if (!debug_display.Initialize(GetDevice (), debug_params))
-			return false;
-		return true;
 	}
 
 	virtual bool OnInitialize(chaos::JSONReadConfiguration config) override
@@ -177,7 +151,6 @@ protected:
 		if (!chaos::Window::OnInitialize(config))
 			return false;
 
-		InitializeDebugLogger();
 		UpdateDebugDisplay();
 
 		// create the mesh
@@ -197,9 +170,17 @@ protected:
 	{
 		fps_view_controller.Tick(glfw_window, delta_time);
 
-		debug_display.Tick(delta_time);
-
 		return true; // refresh
+	}
+
+	virtual void OnDrawImGuiContent() override
+	{
+		chaos::Window::OnDrawImGuiContent();
+
+		chaos::ImGuiTools::FullViewportWindow("fullscreen", 0, [this]()
+		{
+			debug_display.OnDrawImGuiContent(this);
+		});
 	}
 
 protected:

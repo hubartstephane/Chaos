@@ -3,225 +3,42 @@
 
 namespace chaos
 {
-	char const * GLDebugOnScreenDisplay::vertex_shader_source = R"VERTEX_SHADER(
-	in vec2 position;
-	in vec2 texcoord;
-	uniform vec2 position_factor;
-	out vec2 tex_coord;
-	void main()
+	void GLDebugOnScreenDisplay::OnDrawImGuiContent(Window* window)
 	{
-		tex_coord   = texcoord;
-		vec2 pos    = (position * position_factor) + vec2(-1.0, 1.0);
-		gl_Position = vec4(pos, 0.0, 1.0);
-	}
-	)VERTEX_SHADER";
+		ImGuiIO& io = ImGui::GetIO();
+		float delta_time = io.DeltaTime;
 
-	// XXX : discarding pixels => the texture we use is WRITTEN in BLACK on a WHITE background
-	//       any pixel that is 'TOO' white is beeing discarded
-	char const * GLDebugOnScreenDisplay::fragment_shader_source = R"FRAGMENT_SHADER(
-	out vec4 output_color;
-	in vec2 tex_coord;
-	uniform sampler2D material;
-	void main()
-	{
-		vec4 color = texture(material, tex_coord);
-		float alpha = 1.0;
-		if ((color.r + color.g + color.b) > 2.0)
-			discard;
-		output_color = vec4(1.0, 1.0, 1.0, alpha);
-	}
-	)FRAGMENT_SHADER";
-
-	bool GLDebugOnScreenDisplay::Tick(float delta_time)
-	{
-		int count = int(lines.size());
-		for (int i = count - 1; i >= 0; --i)
+		// destroy outdated lines
+		auto it = std::remove_if(lines.begin(), lines.end(), [delta_time](ImGuiUserMessageLine & line)
 		{
-			auto & l = lines[i];
-			if (l.second >= 0.0f) // if lines is timed
-			{
-				l.second -= delta_time; // decrement time
-				if (l.second <= 0)
-					lines.erase(lines.begin() + i); // erase the line at this position if it is timed out
-			}
-		}
+			// infinite lifetime ?
+			if (line.remaining_lifetime <= 0)
+				return false;
+			// decrement lifetime
+			line.remaining_lifetime -= delta_time;
+			// check whether end is reached
+			return (line.remaining_lifetime <= 0); 
+		});
 
-		rebuild_required |= (count != lines.size()); // has number of line changed ?
+		lines.erase(it, lines.end());
 
-		return rebuild_required;
-	}
-
-	void GLDebugOnScreenDisplay::Display(GPURenderContext * render_context, int width, int height) const
-	{
-		if (lines.size() == 0) // do not draw nor rebuild buffer if there are no lines (maybe GPU buffer could be cleaned)
-			return;
-
-		if (rebuild_required || screen_width != width) // if screen width changes, buffer has to be reconstructed
+		// display lines
+		for (ImGuiUserMessageLine const& line : lines)
 		{
-			BuildVertexBuffer(width, height);
-			rebuild_required = false;
-			screen_width = width;
+			ImGui::TextColored(
+				{line.color.r, line.color.g, line.color.b, line.color.a},
+				"%s", line.content.c_str()
+			);
 		}
-
-		// vertex array
-		GPUVertexArray const* vertex_array = vertex_array_cache->FindOrCreateVertexArray(render_context, program.get(), vertex_buffer.get(), nullptr, &declaration, 0);
-		if (vertex_array == nullptr)
-			return;
-		glBindVertexArray(vertex_array->GetResourceID());
-
-		// context states
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glDisable(GL_DEPTH_TEST);
-
-		// GPU-Program
-		glUseProgram(program->GetResourceID());
-
-		// Initialize the vertex array
-
-		float character_width = (float)mesh_builder_params.character_width;
-		float character_height = (float)mesh_builder_params.character_width;
-
-		float factor_x = (character_width  * 2.0f / ((float)width));   // screen coordinates are [-1, +1]
-		float factor_y = (character_height * 2.0f / ((float)height));  // for [width, height] pixels
-																	   // each characters is 1.0f unit large (+0.1f for padding)
-																	   // see BitmapFontTextMeshBuilder
-		GPUProgramProvider uniform_provider;
-		uniform_provider.AddVariable("position_factor", glm::vec2(factor_x, factor_y));
-		uniform_provider.AddTexture("material", texture);
-
-		GPUProgramData const & program_data = program->GetProgramData();
-		program_data.BindUniforms(&uniform_provider);
-
-		// The drawing
-		glDrawArrays(GL_TRIANGLES, 0, (GLsizei)draw_count);
-
-		// restore states
-		glDisable(GL_BLEND);
-		glEnable(GL_DEPTH_TEST);
-
-		glUseProgram(0);
-		glBindVertexArray(0);
 	}
 
-	bool GLDebugOnScreenDisplay::BuildVertexBuffer(int width, int height) const
+	void GLDebugOnScreenDisplay::AddLine(std::string content, float lifetime , glm::vec4 const& color)
 	{
-		int cpl = mesh_builder_params.font_characters_per_line;
-
-		int csw = mesh_builder_params.character_width;
-		int csh = mesh_builder_params.character_width;
-		int sx = mesh_builder_params.spacing.x;
-		int sy = mesh_builder_params.spacing.y;
-
-		int tw = texture->GetTextureDescription().width;
-		int th = texture->GetTextureDescription().height;
-		int cx = mesh_builder_params.crop_texture.x;
-		int cy = mesh_builder_params.crop_texture.y;
-
-		BitmapFontTextMeshBuilder::Params params;
-		params.font_characters = mesh_builder_params.font_characters.c_str();
-		params.font_characters_per_line = cpl;
-		params.font_characters_line_count = mesh_builder_params.font_characters_line_count;
-		params.line_limit = std::max(width / (csw + sx), 1);
-		params.character_size = glm::vec2(1.0f, 1.0f);
-		params.spacing = glm::vec2(((float)sx) / ((float)csw), ((float)sy) / ((float)csh));
-		params.crop_texture = glm::vec2(((float)cx) / ((float)tw), ((float)cy) / ((float)th));
-
-		// generate vertex buffer data
-		std::vector<float> vertices;
-
-		BitmapFontTextMeshBuilder builder;
-		for (auto const & l : lines)
-		{
-			if (l.first.size() == 0)
-				continue;
-			box2 bounding = builder.BuildBuffer(l.first.c_str(), params, vertices);
-			if (!IsGeometryEmpty(bounding))
-				params.position = GetBoxCorners(bounding).first; // maybe some degenerated case
-		}
-
-		// fill GPU buffer
-		size_t count = vertices.size();
-		glNamedBufferData(vertex_buffer->GetResourceID(), count * sizeof(float), &vertices[0], GL_STATIC_DRAW);
-		draw_count = count / 4; // 4 float per vertex
-
-		return true;
-	}
-
-	void GLDebugOnScreenDisplay::AddLine(char const * line, float duration)
-	{
-		assert(line != nullptr);
-		lines.push_back(std::make_pair(line, duration));
-		rebuild_required = true;
-	}
-
-	bool GLDebugOnScreenDisplay::Initialize(GPUDevice* in_gpu_device, GLDebugOnScreenDisplay::Params const & params)
-	{
-		if (DoInitialize(in_gpu_device, params))
-			return true;
-		Finalize();
-		return false;
-	}
-
-	bool GLDebugOnScreenDisplay::DoInitialize(GPUDevice* in_gpu_device, GLDebugOnScreenDisplay::Params const & params)
-	{
-		assert(in_gpu_device != nullptr);
-
-		gpu_device = in_gpu_device;
-
-		// the cache
-		vertex_array_cache = new GPUVertexArrayCache;
-		if (vertex_array_cache == nullptr)
-			return false;
-
-		// load image
-		FIBITMAP * image = ImageTools::LoadImageFromFile(params.texture_path);
-		if (image == nullptr)
-			return false;
-
-		// create texture
-		texture = GPUTextureLoader(gpu_device.get()).GenTextureObject(image);
-		FreeImage_Unload(image);
-		if (texture == nullptr)
-			return false;
-
-		// create GPU-Program
-		GPUProgramGenerator program_generator;
-		program_generator.AddShaderSource(ShaderType::VERTEX, vertex_shader_source);
-		program_generator.AddShaderSource(ShaderType::FRAGMENT, fragment_shader_source);
-
-		program = program_generator.GenProgramObject();
-		if (program == nullptr)
-			return false;
-
-		// prepare the vertex declaration
-		declaration.Push(VertexAttributeSemantic::POSITION, 0, VertexAttributeType::FLOAT2);
-		declaration.Push(VertexAttributeSemantic::TEXCOORD, 0, VertexAttributeType::FLOAT2);
-
-		// Generate Vertex Buffer
-		vertex_buffer = new GPUBuffer(true); // dynamic
-		if (vertex_buffer == nullptr)
-			return false;
-
-		// keep a copy of initialization params
-		mesh_builder_params = params;
-
-		return true;
-	}
-
-	void GLDebugOnScreenDisplay::Finalize()
-	{
-		gpu_device = nullptr;
-		program = nullptr;
-		texture = nullptr;
-		vertex_array_cache = nullptr;
-		vertex_buffer = nullptr;
-		declaration.Clear();
+		lines.push_back({std::move(content), lifetime, color});
 	}
 
 	void GLDebugOnScreenDisplay::Clear()
 	{
-		rebuild_required |= (lines.size() > 0);
 		lines.clear();
 	}
 

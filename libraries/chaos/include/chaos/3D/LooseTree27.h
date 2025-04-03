@@ -373,7 +373,7 @@ namespace chaos
 		{
 			if constexpr (details::Implement_IsUseful<PARENT>)
 				return PARENT::IsUseful();
-			return false;
+			return true; // if the PARENT does not provide implementation for IsUseful() this node must be useful (elsewhere, it has no reason to exist)
 		}
 
 		/** gets the node info */

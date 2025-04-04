@@ -554,9 +554,9 @@ namespace chaos
 			// this call may block for too much time
 			FreezeNextFrameTickDuration();
 			// reload GPU resources
-			return gpu_resource_manager->ReloadDefaultPropertiesFromFile(true, true); // partial, send notification
+			return gpu_resource_manager->ReloadDefaultPropertiesFromFile(ReloadConfigurationMode::CurrentNodeOnly, true); // partial, send notification
 		});
-	}
+	} 
 
 	bool WindowApplication::InitializeManagers(JSONReadConfiguration config)
 	{

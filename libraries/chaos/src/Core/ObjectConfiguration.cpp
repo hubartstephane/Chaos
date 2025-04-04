@@ -21,27 +21,21 @@ namespace chaos
 
 			result->parent_configuration = this;
 			result->path = std::move(path);
-			result->UpdateFromParent();
+			result->UpdateInternalConfigsFromParent();
 
 			return result;
 		}
 		return nullptr;
 	}
 
-	void ObjectConfigurationBase::PropagateNotifications()
+	void ObjectConfigurationBase::PropagateNotificationToUsers()
 	{
 		// trigger the change for the configurable
 		if (ConfigurableInterface* configurable = GetConfigurable())
 			configurable->OnConfigurationChanged(GetJSONReadConfiguration());
-		// create a weak copy of the children list. children may be destroyed during this loop
-		std::vector<weak_ptr<ChildObjectConfiguration>> child_copy;
-		child_copy.reserve(child_configurations.size());
-		for (auto& child : child_configurations)
-			child_copy.push_back(child.get());
 		// propagate the change to sub hierarchy
-		for (auto& child : child_copy)
-			if (child != nullptr)
-				child->PropagateNotifications();
+		for (shared_ptr<ChildObjectConfiguration>& child : child_configurations)
+			child->PropagateNotificationToUsers();
 	}
 
 	JSONReadConfiguration ObjectConfigurationBase::GetJSONReadConfiguration() const
@@ -64,89 +58,37 @@ namespace chaos
 	{
 		// propagate the update to sub hierarchy
 		for (shared_ptr<ChildObjectConfiguration>& child : child_configurations)
-			child->PropagateUpdates();
+			child->PropagateInternalConfigsUpdates();
 		// send notifications
 		if (send_notifications)
-			PropagateNotifications();
+			PropagateNotificationToUsers();
 	}
 
 	RootObjectConfiguration* ObjectConfigurationBase::GetRootConfiguration()
 	{
-		if (RootObjectConfiguration* root = auto_cast(this))
-			return root;
-		if (ChildObjectConfiguration* child = auto_cast(this))
-			return child->GetRootConfiguration();
 		return nullptr;
 	}
 
 	RootObjectConfiguration const* ObjectConfigurationBase::GetRootConfiguration() const
 	{
-		if (RootObjectConfiguration const* root = auto_cast(this))
-			return root;
-		if (ChildObjectConfiguration const* child = auto_cast(this))
-			return child->GetRootConfiguration();
 		return nullptr;
 	}
 
-	bool ObjectConfigurationBase::ReloadDefaultPropertiesFromFile(bool partial_reload_only, bool send_notifications)
+	bool ObjectConfigurationBase::ReloadDefaultPropertiesFromFile(ReloadConfigurationMode load_mode, bool send_notifications)
 	{
-		// reload whole hiearchy
-		if (!partial_reload_only)
-			if (RootObjectConfiguration* root = GetRootConfiguration())
-				return root->DoLoadConfigurablePropertiesFromFile(true, false, send_notifications); // only reload the DEFAULT part
-
-		// for root
-		if (RootObjectConfiguration* root = auto_cast(this))
-			return root->DoLoadConfigurablePropertiesFromFile(true, false, send_notifications); // only reload the DEFAULT part
-
-		// for children
-		if (ChildObjectConfiguration* child = auto_cast(this))
-		{
-			// empty current storage
-			storage_default_config = {};
-			default_config = nullptr;
-
-			// temp storage for the whole hierarchy
-			nlohmann::json new_root_storage;
-
-			// recursively go to root and ask for this node content
-			if (nlohmann::json const* new_default_config = ReloadHelper(new_root_storage, child->parent_configuration.get(), child->path))
-			{
-				storage_default_config = *new_default_config; // copy the whole json structure
-				default_config = &storage_default_config;
-			}
-
-			// update down hierarchy and send notifications (parents and siblings conf are unchanged and receive non notification)
-			CompleteUpdateOperation(send_notifications);
-
-			return true;
-		}
 		return false;
 	}
 
-	nlohmann::json const* ObjectConfigurationBase::ReloadHelper(nlohmann::json& new_root_storage, ObjectConfigurationBase* src, std::string_view in_path)
+	nlohmann::json const* ObjectConfigurationBase::ReloadHelper(nlohmann::json& new_root_storage, std::string_view in_path)
 	{
-		// root case
-		if (RootObjectConfiguration* root = auto_cast(src))
-		{
-			JSONTools::LoadJSONFile(root->default_config_path, new_root_storage, LoadFileFlag::RECURSIVE | LoadFileFlag::NO_ERROR_TRACE);
-			return JSONTools::GetAttributeStructureNode(&new_root_storage, in_path);
-		}
-		// child case
-		if (ChildObjectConfiguration* child = auto_cast(src))
-			if (nlohmann::json const* new_child_default_json = ReloadHelper(new_root_storage, child->parent_configuration.get(), child->path))
-				return JSONTools::GetAttributeStructureNode(new_child_default_json, in_path);
-		// error
 		return nullptr;
 	}
 
 	bool ObjectConfigurationBase::ReadConfigurableProperties(ReadConfigurablePropertiesContext context, bool recurse)
 	{
-		ConfigurableInterface* configurable = GetConfigurable();
-		if (configurable == nullptr)
-			return false;
-		if (!configurable->OnReadConfigurableProperties(GetJSONReadConfiguration(), context))
-			return false;
+		if (ConfigurableInterface * configurable = GetConfigurable())
+			if (!configurable->OnReadConfigurableProperties(GetJSONReadConfiguration(), context))
+				return false;
 		if (recurse)
 			for (shared_ptr<ChildObjectConfiguration>& child : child_configurations)
 				if (!child->ReadConfigurableProperties(context, recurse))
@@ -185,6 +127,20 @@ namespace chaos
 		assert(parent_configuration == nullptr);
 	}
 
+	RootObjectConfiguration* ChildObjectConfiguration::GetRootConfiguration()
+	{
+		if (parent_configuration != nullptr)
+			return parent_configuration->GetRootConfiguration();
+		return nullptr;
+	}
+
+	RootObjectConfiguration const* ChildObjectConfiguration::GetRootConfiguration() const
+	{
+		if (parent_configuration != nullptr)
+			return parent_configuration->GetRootConfiguration();
+		return nullptr;
+	}
+
 	void ChildObjectConfiguration::SubReference()
 	{
 		if (parent_configuration == nullptr)
@@ -204,7 +160,7 @@ namespace chaos
 		parent_configuration = nullptr;
 	}
 
-	void ChildObjectConfiguration::UpdateFromParent()
+	void ChildObjectConfiguration::UpdateInternalConfigsFromParent()
 	{
 		default_config = (parent_configuration != nullptr) ?
 			JSONTools::GetAttributeObjectNode(parent_configuration->default_config, path) :
@@ -216,13 +172,13 @@ namespace chaos
 		storage_default_config = {}; // empty self storage
 	}
 
-	void ChildObjectConfiguration::PropagateUpdates()
+	void ChildObjectConfiguration::PropagateInternalConfigsUpdates()
 	{
 		// update the configuration
-		UpdateFromParent();
+		UpdateInternalConfigsFromParent();
 		// propagate the update to sub hierarchy
 		for (shared_ptr<ChildObjectConfiguration>& child : child_configurations)
-			child->PropagateUpdates();
+			child->PropagateInternalConfigsUpdates();
 	}
 
 	ObjectConfigurationBase* ChildObjectConfiguration::CreateClonedConfiguration()
@@ -233,11 +189,50 @@ namespace chaos
 
 			result->parent_configuration = parent_configuration;
 			result->path = path;
-			result->UpdateFromParent();
+			result->UpdateInternalConfigsFromParent();
 
 			return result;
 		}
 		return nullptr;
+	}
+
+	nlohmann::json const* ChildObjectConfiguration::ReloadHelper(nlohmann::json& new_root_storage, std::string_view in_path)
+	{
+		if (nlohmann::json const* new_child_default_json = parent_configuration->ReloadHelper(new_root_storage, path))
+			return JSONTools::GetAttributeStructureNode(new_child_default_json, in_path);
+		return nullptr;
+	}
+
+	bool ChildObjectConfiguration::ReloadDefaultPropertiesFromFile(ReloadConfigurationMode load_mode, bool send_notifications)
+	{
+		// reload whole hiearchy ?
+		if (load_mode == ReloadConfigurationMode::FullLoad)
+			if (RootObjectConfiguration* root = GetRootConfiguration())
+				return root->DoLoadConfigurablePropertiesFromFile(true, false, send_notifications); // only reload the DEFAULT part (ignore PERSISTENT)
+
+		// at this point, we want just to update our JSON node content and don't modify any accestor node
+		// we have to reload the whole JSON file, but dont set the result to parent. we'll trunk this hierarchy starting at our node, and propagate the info to our children
+		// we are now in a state detached from the root json hierarchy
+		// we are storing our own hierachy into 'storage_default_config'
+
+		// empty current storage
+		storage_default_config = {};
+		default_config = nullptr;
+
+		// temp storage for the whole hierarchy
+		nlohmann::json new_root_storage;
+
+		// recursively go to root and ask for this node content
+		if (nlohmann::json const* new_default_config = parent_configuration->ReloadHelper(new_root_storage, path))
+		{
+			storage_default_config = *new_default_config; // copy the whole json structure
+			default_config = &storage_default_config;
+		}
+
+		// update down hierarchy and send notifications (parents and siblings conf are unchanged and receive no notification)
+		CompleteUpdateOperation(send_notifications);
+
+		return true;
 	}
 
 	// ---------------------------------------------------------------------
@@ -250,6 +245,15 @@ namespace chaos
 		persistent_config = &storage_persistent_config;
 	}
 
+	RootObjectConfiguration* RootObjectConfiguration::GetRootConfiguration()
+	{
+		return this;
+	}
+
+	RootObjectConfiguration const* RootObjectConfiguration::GetRootConfiguration() const
+	{
+		return this;
+	}
 
 	bool RootObjectConfiguration::LoadConfigurablePropertiesFromFile(FilePathParam const& in_default_config_path, FilePathParam const& in_persistent_config_path, bool send_notifications)
 	{
@@ -317,6 +321,17 @@ namespace chaos
 			return result;
 		}
 		return nullptr;
+	}
+
+	bool RootObjectConfiguration::ReloadDefaultPropertiesFromFile(ReloadConfigurationMode load_mode, bool send_notifications)
+	{
+		return DoLoadConfigurablePropertiesFromFile(true, false, send_notifications); // only reload the DEFAULT part
+	}
+
+	nlohmann::json const* RootObjectConfiguration::ReloadHelper(nlohmann::json& new_root_storage, std::string_view in_path)
+	{
+		JSONTools::LoadJSONFile(default_config_path, new_root_storage, LoadFileFlag::RECURSIVE | LoadFileFlag::NO_ERROR_TRACE);
+		return JSONTools::GetAttributeStructureNode(&new_root_storage, in_path);
 	}
 
 }; // namespace chaos

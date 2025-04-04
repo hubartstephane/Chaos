@@ -59,16 +59,16 @@ namespace chaos
 
 	bool ConfigurableInterface::ReadConfigurableProperties(ReadConfigurablePropertiesContext context, bool recurse)
 	{
-		if (configuration == nullptr)
-			return false;
-		return configuration->ReadConfigurableProperties(context, recurse);
+		if (configuration != nullptr)
+			return configuration->ReadConfigurableProperties(context, recurse);
+		return false;
 	}
 
 	bool ConfigurableInterface::StorePersistentProperties(bool recurse) const
 	{
-		if (configuration == nullptr)
-			return false;
-		return configuration->StorePersistentProperties(recurse);
+		if (configuration != nullptr)
+			return configuration->StorePersistentProperties(recurse);
+		return false;
 	}
 
 	bool ConfigurableInterface::OnConfigurationChanged(JSONReadConfiguration config)
@@ -102,10 +102,10 @@ namespace chaos
 		return false;
 	}
 
-	bool ConfigurableInterface::ReloadDefaultPropertiesFromFile(bool partial_reload_only, bool send_notifications)
+	bool ConfigurableInterface::ReloadDefaultPropertiesFromFile(ReloadConfigurationMode load_mode, bool send_notifications)
 	{
 		if (configuration != nullptr)
-			return configuration->ReloadDefaultPropertiesFromFile(partial_reload_only, send_notifications);
+			return configuration->ReloadDefaultPropertiesFromFile(load_mode, send_notifications);
 		return false;
 	}
 

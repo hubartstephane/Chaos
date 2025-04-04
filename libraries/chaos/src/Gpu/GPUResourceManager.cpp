@@ -513,7 +513,7 @@ namespace chaos
 				{
 					if (ImGui::MenuItem("Reload"))
 					{
-						ReloadDefaultPropertiesFromFile(true, true);
+						ReloadDefaultPropertiesFromFile(ReloadConfigurationMode::CurrentNodeOnly, true);
 					}
 					ImGui::EndMenu();
 				}

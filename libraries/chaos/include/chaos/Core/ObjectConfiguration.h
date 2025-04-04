@@ -32,20 +32,20 @@ namespace chaos
 		JSONWriteConfiguration GetJSONWriteConfiguration() const;
 
 		/** gets the root configuration */
-		RootObjectConfiguration* GetRootConfiguration();
+		virtual RootObjectConfiguration* GetRootConfiguration();
 		/** gets the root configuration */
-		RootObjectConfiguration const* GetRootConfiguration() const;
+		virtual RootObjectConfiguration const* GetRootConfiguration() const;
 
 		/** create a configuration that is clone of us */
 		virtual ObjectConfigurationBase* CreateClonedConfiguration();
 		/** create a child configuration */
 		ChildObjectConfiguration* CreateChildConfiguration(std::string path);
 
-		/** recursively send notifications */
-		void PropagateNotifications();
+		/** recursively send notifications to ConfigurableObjects */
+		void PropagateNotificationToUsers();
 
 		/** reload the default configuration part. Only affect current node and its children value (not its parents nor siblings nodes) */
-		bool ReloadDefaultPropertiesFromFile(bool partial_reload_only, bool send_notifications);
+		virtual bool ReloadDefaultPropertiesFromFile(ReloadConfigurationMode load_mode, bool send_notifications);
 
 		/** read the properties (an children) from the config */
 		bool ReadConfigurableProperties(ReadConfigurablePropertiesContext context, bool recurse);
@@ -57,7 +57,7 @@ namespace chaos
 		/** call this whenever the configuration is being changed */
 		void CompleteUpdateOperation(bool send_notifications);
 		/** helper function used to reload the hierarchy */
-		static nlohmann::json const* ReloadHelper(nlohmann::json& new_root_storage, ObjectConfigurationBase* src, std::string_view in_path);
+		virtual nlohmann::json const* ReloadHelper(nlohmann::json& new_root_storage, std::string_view in_path);
 
 	protected:
 
@@ -97,16 +97,25 @@ namespace chaos
 
 		/** override */
 		virtual ObjectConfigurationBase* CreateClonedConfiguration() override;
+		/** override */
+		virtual RootObjectConfiguration* GetRootConfiguration() override;
+		/** override */
+		virtual RootObjectConfiguration const* GetRootConfiguration() const override;
+		/** override */
+		virtual bool ReloadDefaultPropertiesFromFile(ReloadConfigurationMode load_mode, bool send_notifications) override;
 
 	protected:
+
+		/** override */
+		virtual nlohmann::json const* ReloadHelper(nlohmann::json& new_root_storage, std::string_view in_path) override;
 
 		/** cannot be construct except by CreateChildConfiguration(...) */
 		ChildObjectConfiguration() = default;
 
 		/** recursively update child configuration */
-		void PropagateUpdates();
+		void PropagateInternalConfigsUpdates();
 		/** update json nodes from parent configuration */
-		void UpdateFromParent();
+		void UpdateInternalConfigsFromParent();
 		/** remove the configuration from its parent */
 		void RemoveFromParent();
 
@@ -125,6 +134,7 @@ namespace chaos
 	class CHAOS_API RootObjectConfiguration : public ObjectConfigurationBase
 	{
 		friend class ObjectConfigurationBase;
+		friend class ChildObjectConfiguration;
 
 	public:
 
@@ -143,9 +153,17 @@ namespace chaos
 
 		/** override */
 		virtual ObjectConfigurationBase* CreateClonedConfiguration() override;
+		/** override */
+		virtual RootObjectConfiguration* GetRootConfiguration() override;
+		/** override */
+		virtual RootObjectConfiguration const* GetRootConfiguration() const override;
+		/** override */
+		virtual bool ReloadDefaultPropertiesFromFile(ReloadConfigurationMode load_mode, bool send_notifications) override;
 
 	protected:
 
+		/** override */
+		virtual nlohmann::json const* ReloadHelper(nlohmann::json& new_root_storage, std::string_view in_path) override;
 		/** internal method to load configuration from file */
 		bool DoLoadConfigurablePropertiesFromFile(bool load_default, bool load_persistent, bool send_notifications);
 

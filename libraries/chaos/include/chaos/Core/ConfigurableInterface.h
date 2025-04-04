@@ -4,6 +4,7 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	enum class ReadConfigurablePropertiesContext;
+	enum class ReloadConfigurationMode;
 
 	class ConfigurableInterface;
 
@@ -20,7 +21,17 @@ namespace chaos
 	};
 
 	/**
-	* ConfigurableInterface: an interface representing that can have a configuration. Theses objects may react to confgiuration updates
+	*  ReloadConfigurationMode: whether the configuration should be fully reloaded from the root or if we are just interested by the current node
+	*/
+
+	enum class ReloadConfigurationMode : int
+	{
+		FullLoad,
+		CurrentNodeOnly
+	};
+
+	/**
+	* ConfigurableInterface: an interface representing that can have a configuration. Theses objects may react to configuration updates
 	*/
 
 	class CHAOS_API ConfigurableInterface
@@ -64,7 +75,7 @@ namespace chaos
 		/** read config from files (whole hierarchy) */
 		bool LoadConfigurablePropertiesFromFile(FilePathParam const& in_default_config_path, FilePathParam const& in_persistent_config_path, bool send_notifications);
 		/** reload default properties (from root or not) */
-		bool ReloadDefaultPropertiesFromFile(bool partial_reload_only, bool send_notifications);
+		bool ReloadDefaultPropertiesFromFile(ReloadConfigurationMode load_mode, bool send_notifications);
 
 	protected:
 

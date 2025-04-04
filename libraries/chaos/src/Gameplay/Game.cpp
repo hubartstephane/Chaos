@@ -1284,7 +1284,7 @@ namespace chaos
 		if (GameApplication* application = Application::GetInstance())
 			application->FreezeNextFrameTickDuration();
 		// reload properties
-		return ReloadDefaultPropertiesFromFile(true, true); // partial, send notification
+		return ReloadDefaultPropertiesFromFile(ReloadConfigurationMode::CurrentNodeOnly, true); // partial, send notification
 	}
 
 	bool Game::ReloadCurrentLevel()

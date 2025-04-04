@@ -36,8 +36,8 @@ namespace chaos
 		/** gets the root configuration */
 		virtual RootObjectConfiguration const* GetRootConfiguration() const;
 
-		/** create a configuration that is clone of us */
-		virtual ObjectConfigurationBase* CreateClonedConfiguration();
+		/** create a configuration that is clone of us (this is now a root and has no relation with us ... we don't want to share the WRITE configuration at all) */
+		RootObjectConfiguration* CreateClonedDetachedConfiguration();
 		/** create a child configuration */
 		ChildObjectConfiguration* CreateChildConfiguration(std::string path);
 
@@ -96,8 +96,6 @@ namespace chaos
 		virtual void SubReference() override;
 
 		/** override */
-		virtual ObjectConfigurationBase* CreateClonedConfiguration() override;
-		/** override */
 		virtual RootObjectConfiguration* GetRootConfiguration() override;
 		/** override */
 		virtual RootObjectConfiguration const* GetRootConfiguration() const override;
@@ -151,8 +149,6 @@ namespace chaos
 		/** save the persistent data (whole hierarchy) */
 		bool SavePersistentPropertiesToFile(bool store_properties) const;
 
-		/** override */
-		virtual ObjectConfigurationBase* CreateClonedConfiguration() override;
 		/** override */
 		virtual RootObjectConfiguration* GetRootConfiguration() override;
 		/** override */

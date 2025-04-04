@@ -41,7 +41,7 @@ namespace chaos
 	{
 		if (configuration != nullptr)
 		{
-			other_configuration_user->SetObjectConfiguration(configuration->CreateClonedConfiguration());
+			other_configuration_user->SetObjectConfiguration(configuration->CreateClonedDetachedConfiguration());
 			return true;
 		}
 		return false;

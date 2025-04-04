@@ -3,13 +3,26 @@
 
 namespace chaos
 {
-
 	// ---------------------------------------------------------------------
 	// ObjectConfigurationBase implementation
 	// ---------------------------------------------------------------------
 
-	ObjectConfigurationBase* ObjectConfigurationBase::CreateClonedConfiguration()
+	RootObjectConfiguration* ObjectConfigurationBase::CreateClonedDetachedConfiguration()
 	{
+		if (RootObjectConfiguration* result = new RootObjectConfiguration)
+		{
+			// copy default config
+			if (default_config != nullptr)
+				result->storage_default_config = *default_config;
+			result->default_config = &result->storage_default_config;
+
+			// copy persistent config
+			if (persistent_config != nullptr)
+				result->storage_persistent_config = *persistent_config;
+			result->persistent_config = &result->storage_persistent_config;
+
+			return result;
+		}
 		return nullptr;
 	}
 
@@ -181,21 +194,6 @@ namespace chaos
 			child->PropagateInternalConfigsUpdates();
 	}
 
-	ObjectConfigurationBase* ChildObjectConfiguration::CreateClonedConfiguration()
-	{
-		if (ChildObjectConfiguration* result = new ChildObjectConfiguration)
-		{
-			child_configurations.push_back(result);
-
-			result->parent_configuration = parent_configuration;
-			result->path = path;
-			result->UpdateInternalConfigsFromParent();
-
-			return result;
-		}
-		return nullptr;
-	}
-
 	nlohmann::json const* ChildObjectConfiguration::ReloadHelper(nlohmann::json& new_root_storage, std::string_view in_path)
 	{
 		if (nlohmann::json const* new_child_default_json = parent_configuration->ReloadHelper(new_root_storage, path))
@@ -311,16 +309,6 @@ namespace chaos
 	void RootObjectConfiguration::SetPersistentConfigurationPath(FilePathParam const& in_persistent_config_path)
 	{
 		persistent_config_path = in_persistent_config_path.GetResolvedPath();
-	}
-
-	ObjectConfigurationBase * RootObjectConfiguration::CreateClonedConfiguration()
-	{
-		if (RootObjectConfiguration* result = new RootObjectConfiguration)
-		{
-			result->LoadConfigurablePropertiesFromFile(default_config_path, persistent_config_path, false); // don't send notifications
-			return result;
-		}
-		return nullptr;
 	}
 
 	bool RootObjectConfiguration::ReloadDefaultPropertiesFromFile(ReloadConfigurationMode load_mode, bool send_notifications)

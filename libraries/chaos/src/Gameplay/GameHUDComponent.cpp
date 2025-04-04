@@ -86,7 +86,7 @@ namespace chaos
 
 	bool GameHUDComponent::Initialize()
 	{
-		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
+		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::Initialization, false))
 			return false;
 		return OnInitialize(GetJSONReadConfiguration());
 	}

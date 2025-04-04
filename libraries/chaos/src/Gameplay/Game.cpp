@@ -548,7 +548,7 @@ namespace chaos
 	bool Game::Initialize()
 	{
 		// initialize game values
-		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
+		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::Initialization, false))
 			return false;
 		return OnInitialize(GetJSONReadConfiguration());
 	}

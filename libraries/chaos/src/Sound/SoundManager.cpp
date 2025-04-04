@@ -825,7 +825,7 @@ namespace chaos
 		if (!ResourceManager::DoStartManager())
 			return false;
 		// read the properties
-		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
+		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::Initialization, false))
 			return false;
 		// get the list of all devices
 		irrklang_devices = irrklang::createSoundDeviceList();

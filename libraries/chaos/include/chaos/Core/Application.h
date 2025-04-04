@@ -11,7 +11,7 @@ namespace chaos
 	/**
 	* Application : used to store generic application data
 	*/
-	class CHAOS_API Application : public Object, public ConfigurableInterface
+	class CHAOS_API Application : public Object, public ConfigurationUserInterface
 	{
 
 	public:

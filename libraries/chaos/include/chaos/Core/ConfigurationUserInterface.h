@@ -6,7 +6,7 @@ namespace chaos
 	enum class ReadConfigurablePropertiesContext;
 	enum class ReloadConfigurationMode;
 
-	class ConfigurableInterface;
+	class ConfigurationUserInterface;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -16,8 +16,8 @@ namespace chaos
 
 	enum class ReadConfigurablePropertiesContext : int
 	{
-		INITIALIZATION,
-		HOT_RELOAD
+		Initialization,
+		HotReload
 	};
 
 	/**
@@ -31,17 +31,17 @@ namespace chaos
 	};
 
 	/**
-	* ConfigurableInterface: an interface representing that can have a configuration. Theses objects may react to configuration updates
+	* ConfigurationUserInterface: an interface representing that can have a configuration. Theses objects may react to configuration updates
 	*/
 
-	class CHAOS_API ConfigurableInterface
+	class CHAOS_API ConfigurationUserInterface
 	{
 		friend class ObjectConfigurationBase;
 
 	public:
 
 		/** destructor */
-		virtual ~ConfigurableInterface() = default;
+		virtual ~ConfigurationUserInterface() = default;
 
 		/** getter on the configuration */
 		ObjectConfigurationBase const * GetObjectConfiguration() const
@@ -63,9 +63,9 @@ namespace chaos
 		JSONWriteConfiguration GetJSONWriteConfiguration() const;
 
 		/** create a cloned configuration and give it to another object */
-		bool GiveClonedConfiguration(ConfigurableInterface* other_configurable) const;
+		bool GiveClonedConfiguration(ConfigurationUserInterface* other_configuration_user) const;
 		/** create a child configuration and give it to another object */
-		bool GiveChildConfiguration(ConfigurableInterface* other_configurable, std::string key) const;
+		bool GiveChildConfiguration(ConfigurationUserInterface* other_configuration_user, std::string key) const;
 		/** read the properties (and children) from the config */
 		bool ReadConfigurableProperties(ReadConfigurablePropertiesContext context, bool recurse);
 		/** store the persistent properties (and children) into JSON (no disk access) */

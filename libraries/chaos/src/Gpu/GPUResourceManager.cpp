@@ -491,7 +491,7 @@ namespace chaos
 		if (!ResourceManager::DoStartManager())
 			return false;
 		// read the properties
-		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
+		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::Initialization, false))
 			return false;
 		// other initializations
 		return OnInitialize(GetJSONReadConfiguration());

@@ -10,7 +10,7 @@ namespace chaos
 	 * GPUDevice: an object used to send commands and create resources from the GPU hardware
 	 */
 
-	class CHAOS_API GPUDevice : public Tickable, public ConfigurableInterface
+	class CHAOS_API GPUDevice : public Tickable, public ConfigurationUserInterface
 	{
 	public:
 

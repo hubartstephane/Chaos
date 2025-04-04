@@ -53,7 +53,7 @@ namespace chaos
 	* GPUResourceManager : a manager to store different kinds of (can be depend) resources
 	**/
 
-	class CHAOS_API GPUResourceManager : public ResourceManager, public ConfigurableInterface, public ImGuiInterface, public GPUDeviceResourceInterface
+	class CHAOS_API GPUResourceManager : public ResourceManager, public ConfigurationUserInterface, public ImGuiInterface, public GPUDeviceResourceInterface
 	{
 		friend class GPUTextureLoader;
 		friend class GPUProgramLoader;

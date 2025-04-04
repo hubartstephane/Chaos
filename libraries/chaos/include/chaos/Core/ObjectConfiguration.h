@@ -15,16 +15,16 @@ namespace chaos
 
 	class CHAOS_API ObjectConfigurationBase : public Object
 	{
-		friend class ConfigurableInterface;
+		friend class ConfigurationUserInterface;
 		friend class ChildObjectConfiguration;
 		friend class RootObjectConfiguration;
 
 	public:
 
-		/** get the target configurable object */
-		ConfigurableInterface* GetConfigurable();
-		/** get the target configurable object */
-		ConfigurableInterface const* GetConfigurable() const;
+		/** get the target configuration user */
+		ConfigurationUserInterface* GetConfigurationUser();
+		/** get the target configuration user */
+		ConfigurationUserInterface const* GetConfigurationUser() const;
 
 		/** get the interface used for reading */
 		JSONReadConfiguration GetJSONReadConfiguration() const;
@@ -66,8 +66,8 @@ namespace chaos
 
 		/** the children configurations */
 		std::vector<shared_ptr<ChildObjectConfiguration>> child_configurations;
-		/** the configurable object owning this */
-		weak_ptr<Object> configurable_object;
+		/** the configuration user for this */
+		weak_ptr<Object> configuration_user;
 
 		/** the json node to read info from */
 		nlohmann::json* default_config = nullptr;

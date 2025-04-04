@@ -193,7 +193,7 @@ namespace chaos
 		// set the game
 		game = in_game;
 		// initialize from configuration
-		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
+		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::Initialization, false))
 			return false;
 		// create the game instance clocks
 		Clock * root_clock = in_game->GetRootClock();

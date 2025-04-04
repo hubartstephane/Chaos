@@ -6,7 +6,7 @@ namespace chaos
 
 	bool GPUDevice::Initialize(JSONReadConfiguration config)
 	{
-		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false)) // do not recursively update all child objects
+		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::Initialization, false)) // do not recursively update all child objects
 			return false;
 		return OnInitialize(config);
 	}

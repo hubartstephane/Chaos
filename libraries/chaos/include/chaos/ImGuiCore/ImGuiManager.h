@@ -48,7 +48,7 @@ namespace chaos
 	CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, ImGuiFontFace& dst);
 
 	/** a Manager to handle ImGui preferences */
-	class CHAOS_API ImGuiManager : public ResourceManager, public ConfigurableInterface, public ImGuiInterface
+	class CHAOS_API ImGuiManager : public ResourceManager, public ConfigurationUserInterface, public ImGuiInterface
 	{
 	public:
 

@@ -8,7 +8,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class CHAOS_API Game : public Object, public InputEventReceiverInterface, public GPUProgramProviderInterface, public ConfigurableInterface
+	class CHAOS_API Game : public Object, public InputEventReceiverInterface, public GPUProgramProviderInterface, public ConfigurationUserInterface
 	{
 		friend class GameGamepadManager;
 		friend class GameViewportWidget;

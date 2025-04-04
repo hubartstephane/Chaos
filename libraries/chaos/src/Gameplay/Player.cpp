@@ -24,7 +24,7 @@ namespace chaos
 		// some initialization
 		game_instance = in_game_instance;
 		// read JSON properties
-		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
+		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::Initialization, false))
 			return false;
 		return true;
 	}

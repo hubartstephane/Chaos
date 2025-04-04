@@ -120,7 +120,7 @@ namespace chaos
 	* Window: a binding class between chaos and GLFW to handle window (beware the prefix "My")
 	*/
 
-	class CHAOS_API Window : public Object, public WindowInterface, public ConfigurableInterface, public NamedInterface
+	class CHAOS_API Window : public Object, public WindowInterface, public ConfigurationUserInterface, public NamedInterface
 	{
 		friend class WindowApplication;
 

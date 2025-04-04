@@ -11,7 +11,7 @@ namespace chaos
 	// Player
 	// =============================================
 
-	class CHAOS_API Player : public Tickable, public InputEventReceiverInterface, public JSONSerializableInterface, public ConfigurableInterface
+	class CHAOS_API Player : public Tickable, public InputEventReceiverInterface, public JSONSerializableInterface, public ConfigurationUserInterface
 	{
 		friend class PlayerGamepadCallbacks;
 

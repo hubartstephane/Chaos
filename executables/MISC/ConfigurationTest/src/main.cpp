@@ -2,7 +2,7 @@
 
 // ---------------------------------------------------------------------
 
-class ConfigurableInterface;
+class ConfigurationUserInterface;
 class ObjectConfiguration;
 
 
@@ -19,7 +19,7 @@ class ObjectConfiguration;
 
 
 // ---------------------------------------------------------------------
-class B : public chaos::Object, public chaos::ConfigurableInterface
+class B : public chaos::Object, public chaos::ConfigurationUserInterface
 {
 public:
 
@@ -31,7 +31,7 @@ public:
 
 	void Initialize()
 	{
-		ReadConfigurableProperties(chaos::ReadConfigurablePropertiesContext::INITIALIZATION, false);
+		ReadConfigurableProperties(chaos::ReadConfigurablePropertiesContext::Initialization, false);
 	}
 
 	virtual bool OnReadConfigurableProperties(chaos::JSONReadConfiguration config, chaos::ReadConfigurablePropertiesContext context) override
@@ -57,7 +57,7 @@ public:
 
 
 
-class A : public chaos::Object, public chaos::ConfigurableInterface
+class A : public chaos::Object, public chaos::ConfigurationUserInterface
 {
 public:
 
@@ -69,7 +69,7 @@ public:
 
 	void Initialize()
 	{
-		ReadConfigurableProperties(chaos::ReadConfigurablePropertiesContext::INITIALIZATION, false);
+		ReadConfigurableProperties(chaos::ReadConfigurablePropertiesContext::Initialization, false);
 
 		b = new B;
 		GiveChildConfiguration(b.get(), "B/C/D");
@@ -95,7 +95,7 @@ public:
 };
 
 
-class MyApplication : public chaos::Application, public chaos::ConfigurableInterface
+class MyApplication : public chaos::Application, public chaos::ConfigurationUserInterface
 {
 protected:
 

@@ -494,7 +494,7 @@ namespace chaos
 	// MANAGER
 	// ==============================================================
 
-	class CHAOS_API SoundManager : public ResourceManager, public ConfigurableInterface
+	class CHAOS_API SoundManager : public ResourceManager, public ConfigurationUserInterface
 	{
 		CHAOS_SOUND_ALL_FRIENDS
 

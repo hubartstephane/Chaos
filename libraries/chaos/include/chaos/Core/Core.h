@@ -38,7 +38,7 @@
 #include "chaos/Core/Copyable.h"
 #include "chaos/Core/JSONTools.h"
 #include "chaos/Core/JSONConfiguration.h"
-#include "chaos/Core/ConfigurableInterface.h"
+#include "chaos/Core/ConfigurationUserInterface.h"
 #include "chaos/Core/ObjectConfiguration.h"
 #include "chaos/Core/ClassLoader.h"
 #include "chaos/Core/Log.h"

@@ -14,7 +14,7 @@ namespace chaos
 	// GameHUD
 	// =============================================
 
-	class CHAOS_API GameHUD : public GPURenderable, public ConfigurableInterface
+	class CHAOS_API GameHUD : public GPURenderable, public ConfigurationUserInterface
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 

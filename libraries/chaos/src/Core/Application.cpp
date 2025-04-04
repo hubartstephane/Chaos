@@ -109,7 +109,7 @@ namespace chaos
 		root_config->LoadConfigurablePropertiesFromFile(GetConfigurationPath(), GetPersistentDataPath(), false); // don't send notification yet
 
 		// load the properties
-		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false)) // do not recursively update all child objects
+		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::Initialization, false)) // do not recursively update all child objects
 		{
 			ApplicationLog::Error("InitializeConfigurationSystem(...) failure");
 			return false;

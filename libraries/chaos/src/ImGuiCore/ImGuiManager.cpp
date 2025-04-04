@@ -47,7 +47,7 @@ namespace chaos
 
 	bool ImGuiManager::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
 	{
-		if (context == ReadConfigurablePropertiesContext::INITIALIZATION) // do not accept hot-reload
+		if (context == ReadConfigurablePropertiesContext::Initialization) // do not accept hot-reload
 		{
 			JSONTools::GetAttribute(config, "font_faces", font_faces);
 			JSONTools::GetAttribute(config, "window_style", window_style);
@@ -75,7 +75,7 @@ namespace chaos
 		if (!ResourceManager::DoStartManager())
 			return false;
 		// read the properties
-		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
+		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::Initialization, false))
 			return false;
 		return true;
 	}

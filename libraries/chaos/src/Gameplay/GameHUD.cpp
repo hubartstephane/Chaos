@@ -60,7 +60,7 @@ namespace chaos
 		// set the game
 		game = in_game;
 		// read the configuration file
-		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::INITIALIZATION, false))
+		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::Initialization, false))
 			return false;
 		// create the components
 		if (!FillHUDContent())

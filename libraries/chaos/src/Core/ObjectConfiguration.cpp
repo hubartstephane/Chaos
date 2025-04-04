@@ -30,9 +30,9 @@ namespace chaos
 
 	void ObjectConfigurationBase::PropagateNotificationToUsers()
 	{
-		// trigger the change for the configurable
-		if (ConfigurableInterface* configurable = GetConfigurable())
-			configurable->OnConfigurationChanged(GetJSONReadConfiguration());
+		// trigger the change for the configuration user
+		if (ConfigurationUserInterface* configuration_user = GetConfigurationUser())
+			configuration_user->OnConfigurationChanged(GetJSONReadConfiguration());
 		// propagate the change to sub hierarchy
 		for (shared_ptr<ChildObjectConfiguration>& child : child_configurations)
 			child->PropagateNotificationToUsers();
@@ -86,8 +86,8 @@ namespace chaos
 
 	bool ObjectConfigurationBase::ReadConfigurableProperties(ReadConfigurablePropertiesContext context, bool recurse)
 	{
-		if (ConfigurableInterface * configurable = GetConfigurable())
-			if (!configurable->OnReadConfigurableProperties(GetJSONReadConfiguration(), context))
+		if (ConfigurationUserInterface * configuration_user = GetConfigurationUser())
+			if (!configuration_user->OnReadConfigurableProperties(GetJSONReadConfiguration(), context))
 				return false;
 		if (recurse)
 			for (shared_ptr<ChildObjectConfiguration>& child : child_configurations)
@@ -98,8 +98,8 @@ namespace chaos
 
 	bool ObjectConfigurationBase::StorePersistentProperties(bool recurse) const
 	{
-		if (ConfigurableInterface const* configurable = GetConfigurable())
-			if (!configurable->OnStorePersistentProperties(GetJSONWriteConfiguration()))
+		if (ConfigurationUserInterface const* configuration_user = GetConfigurationUser())
+			if (!configuration_user->OnStorePersistentProperties(GetJSONWriteConfiguration()))
 				return false;
 		if (recurse)
 			for (shared_ptr<ChildObjectConfiguration> const& child : child_configurations)
@@ -108,14 +108,14 @@ namespace chaos
 		return true;
 	}
 
-	ConfigurableInterface* ObjectConfigurationBase::GetConfigurable()
+	ConfigurationUserInterface* ObjectConfigurationBase::GetConfigurationUser()
 	{
-		return auto_cast(configurable_object.get());
+		return auto_cast(configuration_user.get());
 	}
 
-	ConfigurableInterface const* ObjectConfigurationBase::GetConfigurable() const
+	ConfigurationUserInterface const* ObjectConfigurationBase::GetConfigurationUser() const
 	{
-		return auto_cast(configurable_object.get());
+		return auto_cast(configuration_user.get());
 	}
 
 	// ---------------------------------------------------------------------

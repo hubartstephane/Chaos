@@ -21,6 +21,9 @@ namespace chaos
 
 	public:
 
+		/** destructor */
+		virtual ~ObjectConfigurationBase();
+
 		/** get the target configuration user */
 		ConfigurationUserInterface* GetConfigurationUser();
 		/** get the target configuration user */

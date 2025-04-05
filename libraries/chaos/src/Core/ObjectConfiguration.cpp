@@ -7,6 +7,12 @@ namespace chaos
 	// ObjectConfigurationBase implementation
 	// ---------------------------------------------------------------------
 
+	ObjectConfigurationBase::~ObjectConfigurationBase()
+	{
+		// ensure children are properly destroyed
+		while (child_configurations.size() > 0)
+			child_configurations[0]->RemoveFromParent();
+	}
 	RootObjectConfiguration* ObjectConfigurationBase::CreateClonedDetachedConfiguration()
 	{
 		if (RootObjectConfiguration* result = new RootObjectConfiguration)
@@ -166,11 +172,14 @@ namespace chaos
 	{
 		assert(parent_configuration != nullptr);
 
-		auto it = std::ranges::find_if(parent_configuration->child_configurations, [this](auto const& p) { return p == this; }); // search this in our parent's children list
-		if (it != parent_configuration->child_configurations.end())
-			parent_configuration->child_configurations.erase(it);
-
+		// order is important, after erase, the object may be deleted and we can't modify our parent_configuration anymore without risking a crash
+		ObjectConfigurationBase * copy_parent = parent_configuration.get();
+		
 		parent_configuration = nullptr;
+
+		auto it = std::ranges::find_if(copy_parent->child_configurations, [this](auto const& p) { return p == this; }); // search this in our parent's children list
+		if (it != copy_parent->child_configurations.end())
+			copy_parent->child_configurations.erase(it);
 	}
 
 	void ChildObjectConfiguration::UpdateInternalConfigsFromParent()

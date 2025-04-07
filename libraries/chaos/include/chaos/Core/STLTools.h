@@ -7,7 +7,7 @@ namespace chaos
 		namespace details
 		{
 			template<typename VECTOR, typename IT, typename VALUE, typename COMPARE>
-			IT FindSortedVector(VECTOR& v, IT b, IT e, VALUE value, COMPARE compare)
+			IT FindSortedVector(VECTOR& v, IT b, IT e, VALUE value, COMPARE const & compare)
 			{
 				// early exit
 				if (e < b)
@@ -37,12 +37,26 @@ namespace chaos
 
 		/** utility function that search in a sorted vector an element based on a value and a compare function that gives whether the direction to search next (0 : found, < 0 : before, > 0 : next) */
 		template<typename VECTOR, typename VALUE, typename COMPARE>
-		auto FindSortedVector(VECTOR& v, VALUE value, COMPARE compare)
+		auto FindSortedVector(VECTOR& v, VALUE value, COMPARE const & compare)
 		{
 			if (v.begin() == v.end())
 				return v.end();
 			return details::FindSortedVector(v, v.begin(), v.end(), value, compare);
 		}
+
+		/** remove the first element of a vector matching a predicat, starting by the end */
+		template<typename VECTOR, typename PREDICAT>
+		bool EraseLastIf(VECTOR& v, PREDICAT const & pred)
+		{
+			auto rit = std::find_if(v.rbegin(), v.rend(), pred);
+			if (rit != v.rend())
+			{
+				v.erase(std::prev(rit.base()));
+				return true;
+			}
+			return false;
+		}
+
 
 #endif
 

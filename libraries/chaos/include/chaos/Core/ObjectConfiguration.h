@@ -68,7 +68,7 @@ namespace chaos
 		ObjectConfigurationBase() = default;
 
 		/** the children configurations */
-		std::vector<shared_ptr<ChildObjectConfiguration>> child_configurations;
+		std::vector<weak_ptr<ChildObjectConfiguration>> child_configurations;
 		/** the configuration user for this */
 		weak_ptr<Object> configuration_user;
 
@@ -95,8 +95,6 @@ namespace chaos
 
 		/** destructor */
 		virtual ~ChildObjectConfiguration();
-		/** override */
-		virtual void SubReference() override;
 
 		/** override */
 		virtual RootObjectConfiguration* GetRootConfiguration() override;
@@ -123,7 +121,7 @@ namespace chaos
 	protected:
 
 		/** the parent configuration */
-		weak_ptr<ObjectConfigurationBase> parent_configuration;
+		shared_ptr<ObjectConfigurationBase> parent_configuration;
 		/** the path from parent to this configuration */
 		std::string path;
 	};

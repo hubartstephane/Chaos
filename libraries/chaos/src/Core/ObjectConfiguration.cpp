@@ -9,10 +9,9 @@ namespace chaos
 
 	ObjectConfigurationBase::~ObjectConfigurationBase()
 	{
-		// ensure children are properly destroyed
-		while (child_configurations.size() > 0)
-			child_configurations[0]->RemoveFromParent();
+		assert(child_configurations.size() == 0);
 	}
+
 	RootObjectConfiguration* ObjectConfigurationBase::CreateClonedDetachedConfiguration()
 	{
 		if (RootObjectConfiguration* result = new RootObjectConfiguration)
@@ -53,8 +52,9 @@ namespace chaos
 		if (ConfigurationUserInterface* configuration_user = GetConfigurationUser())
 			configuration_user->OnConfigurationChanged(GetJSONReadConfiguration());
 		// propagate the change to sub hierarchy
-		for (shared_ptr<ChildObjectConfiguration>& child : child_configurations)
-			child->PropagateNotificationToUsers();
+		for (weak_ptr<ChildObjectConfiguration>& child : child_configurations)
+			if (child != nullptr)
+				child->PropagateNotificationToUsers();
 	}
 
 	JSONReadConfiguration ObjectConfigurationBase::GetJSONReadConfiguration() const
@@ -76,8 +76,9 @@ namespace chaos
 	void ObjectConfigurationBase::CompleteUpdateOperation(bool send_notifications)
 	{
 		// propagate the update to sub hierarchy
-		for (shared_ptr<ChildObjectConfiguration>& child : child_configurations)
-			child->PropagateInternalConfigsUpdates();
+		for (weak_ptr<ChildObjectConfiguration>& child : child_configurations)
+			if (child != nullptr)
+				child->PropagateInternalConfigsUpdates();
 		// send notifications
 		if (send_notifications)
 			PropagateNotificationToUsers();
@@ -109,9 +110,10 @@ namespace chaos
 			if (!configuration_user->OnReadConfigurableProperties(GetJSONReadConfiguration(), context))
 				return false;
 		if (recurse)
-			for (shared_ptr<ChildObjectConfiguration>& child : child_configurations)
-				if (!child->ReadConfigurableProperties(context, recurse))
-					return false;
+			for (weak_ptr<ChildObjectConfiguration>& child : child_configurations)
+				if (child != nullptr)
+					if (!child->ReadConfigurableProperties(context, recurse))
+						return false;
 		return true;
 	}
 
@@ -121,9 +123,10 @@ namespace chaos
 			if (!configuration_user->OnStorePersistentProperties(GetJSONWriteConfiguration()))
 				return false;
 		if (recurse)
-			for (shared_ptr<ChildObjectConfiguration> const& child : child_configurations)
-				if (!child->StorePersistentProperties(recurse))
-					return false;
+			for (weak_ptr<ChildObjectConfiguration> const& child : child_configurations)
+				if (child != nullptr)
+					if (!child->StorePersistentProperties(recurse))
+						return false;
 		return true;
 	}
 
@@ -143,7 +146,7 @@ namespace chaos
 
 	ChildObjectConfiguration::~ChildObjectConfiguration()
 	{
-		assert(parent_configuration == nullptr);
+		RemoveFromParent();
 	}
 
 	RootObjectConfiguration* ChildObjectConfiguration::GetRootConfiguration()
@@ -160,26 +163,18 @@ namespace chaos
 		return nullptr;
 	}
 
-	void ChildObjectConfiguration::SubReference()
-	{
-		if (parent_configuration == nullptr)
-			Object::SubReference(); // the configuration is handled as usual
-		else if (--shared_count == 1) // the last reference is the one from the parent. Destroy it
-			RemoveFromParent();
-	}
-
 	void ChildObjectConfiguration::RemoveFromParent()
 	{
 		assert(parent_configuration != nullptr);
 
-		// order is important, after erase, the object may be deleted and we can't modify our parent_configuration anymore without risking a crash
-		ObjectConfigurationBase * copy_parent = parent_configuration.get();
+		shared_ptr<ObjectConfigurationBase> copy_parent = parent_configuration; // keep a copy of parent so it survive
 		
-		parent_configuration = nullptr;
+		STLTools::EraseLastIf(parent_configuration->child_configurations, [this](auto const& p) // search this in our parent's children list
+		{
+			return p == this;
+		});
 
-		auto it = std::ranges::find_if(copy_parent->child_configurations, [this](auto const& p) { return p == this; }); // search this in our parent's children list
-		if (it != copy_parent->child_configurations.end())
-			copy_parent->child_configurations.erase(it);
+		parent_configuration = nullptr;
 	}
 
 	void ChildObjectConfiguration::UpdateInternalConfigsFromParent()
@@ -199,8 +194,9 @@ namespace chaos
 		// update the configuration
 		UpdateInternalConfigsFromParent();
 		// propagate the update to sub hierarchy
-		for (shared_ptr<ChildObjectConfiguration>& child : child_configurations)
-			child->PropagateInternalConfigsUpdates();
+		for (weak_ptr<ChildObjectConfiguration>& child : child_configurations)
+			if (child != nullptr)
+				child->PropagateInternalConfigsUpdates();
 	}
 
 	nlohmann::json const* ChildObjectConfiguration::ReloadHelper(nlohmann::json& new_root_storage, std::string_view in_path)

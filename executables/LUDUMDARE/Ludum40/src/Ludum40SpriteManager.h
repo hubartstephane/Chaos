@@ -18,7 +18,7 @@ class SpriteManagerInitParams
 public:
 
     /** the texture atlas */
-    chaos::BitmapAtlas::TextureArrayAtlas* atlas = nullptr;
+    chaos::BitmapAtlas::GPUAtlas* atlas = nullptr;
     /** the replacement program */
     chaos::shared_ptr<chaos::GPUProgram> program;
 };
@@ -77,7 +77,7 @@ protected:
     /** the declaration of the vertex buffer */
     chaos::GPUVertexDeclaration declaration;
     /** the texture atlas */
-    chaos::BitmapAtlas::TextureArrayAtlas* atlas = nullptr;
+    chaos::BitmapAtlas::GPUAtlas* atlas = nullptr;
     /** the sprites */
     std::vector<SpriteVertex> sprites;
 };

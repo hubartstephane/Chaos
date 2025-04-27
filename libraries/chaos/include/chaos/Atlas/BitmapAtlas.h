@@ -330,7 +330,7 @@ namespace chaos
 		};
 
 		/**
-		* AtlasBase : base class for Atlas and TextureArrayAtlas
+		* AtlasBase : base class for Atlas and GPUAtlas
 		*/
 
 		class CHAOS_API AtlasBase : public AtlasBaseTemplate<Object, BitmapInfo, FontInfo, FolderInfo>
@@ -338,7 +338,7 @@ namespace chaos
 
 			friend class AtlasGenerator;
 			friend class AtlasHTMLGenerator;
-			friend class TextureArrayAtlas;
+			friend class GPUAtlas;
 
 		public:
 

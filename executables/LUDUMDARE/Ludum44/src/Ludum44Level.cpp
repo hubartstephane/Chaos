@@ -213,7 +213,7 @@ bool SpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
 	chaos::WindowApplication* window_application = chaos::Application::GetInstance();
 	if (window_application == nullptr)
 		return false;
-	chaos::BitmapAtlas::TextureArrayAtlas const * atlas = window_application->GetTextureAtlas();
+	chaos::BitmapAtlas::GPUAtlas const * atlas = window_application->GetTextureAtlas();
 	if (atlas == nullptr)
 		return true;
 

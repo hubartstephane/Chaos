@@ -50,12 +50,12 @@ namespace chaos
 		}
 
 		/** change the atlas */
-		void SetTextureAtlas(BitmapAtlas::TextureArrayAtlas* in_atlas) { atlas = in_atlas; }
+		void SetTextureAtlas(BitmapAtlas::GPUAtlas* in_atlas) { atlas = in_atlas; }
 		/** change the material */
 		void SetRenderMaterial(GPURenderMaterial* in_render_material) { render_material = in_render_material; }
 
 		/** get the atlas const method */
-		BitmapAtlas::TextureArrayAtlas const* GetTextureAtlas() const { return atlas.get(); }
+		BitmapAtlas::GPUAtlas const* GetTextureAtlas() const { return atlas.get(); }
 		/** get the material const method */
 		GPURenderMaterial const* GetRenderMaterial() const { return render_material.get(); }
 
@@ -155,7 +155,7 @@ namespace chaos
 		/** the manager */
 		ParticleManager* particle_manager = nullptr;
 		/** the texture atlas */
-		shared_ptr<BitmapAtlas::TextureArrayAtlas> atlas;
+		shared_ptr<BitmapAtlas::GPUAtlas> atlas;
 		/** particles allocations */
 		std::vector<shared_ptr<ParticleAllocationBase>> particles_allocations;
 

@@ -4,7 +4,7 @@
 namespace chaos
 {
 	/** constructor */
-	ParticleSpawner::ParticleSpawner(BitmapAtlas::TextureArrayAtlas const* in_atlas, ParticleLayerBase* in_particle_layer, ObjectRequest bitmap_request, ObjectRequest folder_request) :
+	ParticleSpawner::ParticleSpawner(BitmapAtlas::GPUAtlas const* in_atlas, ParticleLayerBase* in_particle_layer, ObjectRequest bitmap_request, ObjectRequest folder_request) :
 		atlas(in_atlas),
 		particle_layer(in_particle_layer)
 	{

@@ -90,7 +90,7 @@ protected:
 	}
 
 
-	chaos::BitmapAtlas::TextureArrayAtlas * LoadTextureArray(boost::filesystem::path const & resources_path)
+	chaos::BitmapAtlas::GPUAtlas * LoadTextureArray(boost::filesystem::path const & resources_path)
 	{
 		chaos::BitmapAtlas::TextureArrayAtlasGenerator generator;
 
@@ -172,7 +172,7 @@ protected:
 	chaos::shared_ptr<chaos::GPUMesh> mesh_box;
 	chaos::shared_ptr<chaos::GPUProgram>  program_box;
 
-	chaos::shared_ptr<chaos::BitmapAtlas::TextureArrayAtlas> atlas;
+	chaos::shared_ptr<chaos::BitmapAtlas::GPUAtlas> atlas;
 
 	size_t bitmap_index = 0;
 

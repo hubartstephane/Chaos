@@ -180,7 +180,7 @@ namespace chaos
 			/** make destructor virtual */
 			virtual ~TextureArrayAtlasGenerator() = default;
 			/** compute all BitmapInfo positions */
-			TextureArrayAtlas* ComputeResult(AtlasInput const& in_input, AtlasGeneratorParams const& in_params = {});
+			GPUAtlas* ComputeResult(AtlasInput const& in_input, AtlasGeneratorParams const& in_params = {});
 		};
 
 		/** load from JSON */

@@ -11,12 +11,12 @@ namespace chaos
     public:
 
         /** constructor */
-        ParticleSpawner(BitmapAtlas::TextureArrayAtlas const* in_atlas = nullptr, ParticleLayerBase* in_particle_layer = nullptr, ObjectRequest bitmap_request = ObjectRequest::None(), ObjectRequest folder_request = "sprites");
+        ParticleSpawner(BitmapAtlas::GPUAtlas const* in_atlas = nullptr, ParticleLayerBase* in_particle_layer = nullptr, ObjectRequest bitmap_request = ObjectRequest::None(), ObjectRequest folder_request = "sprites");
         /** constructor */
         ParticleSpawner(ParticleSpawner const& src) = default;
 
         /** get the texture atlas */
-        BitmapAtlas::TextureArrayAtlas const* GetTextureAtlas() const { return atlas; }
+        BitmapAtlas::GPUAtlas const* GetTextureAtlas() const { return atlas; }
 
         /** change the bitmap info */
         bool SetBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request = "sprites"); // folder "sprites" by default
@@ -44,7 +44,7 @@ namespace chaos
         /** the bitmap info to use for the spawned particles */
         BitmapAtlas::BitmapInfo const* bitmap_info = nullptr;
         /** the atlas used for the spawner */
-        BitmapAtlas::TextureArrayAtlas const* atlas = nullptr;
+        BitmapAtlas::GPUAtlas const* atlas = nullptr;
     };
 
 #endif

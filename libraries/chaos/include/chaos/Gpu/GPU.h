@@ -49,7 +49,7 @@
 #include "chaos/Gpu/GLShaderTools.h"
 #include "chaos/Gpu/GLTools.h"
 #include "chaos/Gpu/TextureArrayGenerator.h"
-#include "chaos/Gpu/TextureArrayAtlas.h"
+#include "chaos/Gpu/GPUAtlas.h"
 #include "chaos/Gpu/GPUResourceManager.h"
 #include "chaos/Gpu/PrimitiveOutput.h"
 #include "chaos/Gpu/GPUDrawInterface.h"

@@ -4,11 +4,11 @@ namespace chaos
 	{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-		class TextureArrayAtlas;
+		class GPUAtlas;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-		class CHAOS_API TextureArrayAtlas : public AtlasBase
+		class CHAOS_API GPUAtlas : public AtlasBase
 		{
 		public:
 

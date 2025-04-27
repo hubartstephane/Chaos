@@ -16,9 +16,9 @@ namespace chaos
         ParticleManager();
 
 		/** change the bitmap atlas */
-		void SetTextureAtlas(BitmapAtlas::TextureArrayAtlas * in_atlas);
+		void SetTextureAtlas(BitmapAtlas::GPUAtlas * in_atlas);
 		/** gets the texture atlas */
-		BitmapAtlas::TextureArrayAtlas const* GetTextureAtlas() const { return atlas.get(); }
+		BitmapAtlas::GPUAtlas const* GetTextureAtlas() const { return atlas.get(); }
 
 		/** Search a layer by its name */
 		ParticleLayerBase * FindLayer(ObjectRequest request);
@@ -98,7 +98,7 @@ namespace chaos
 		/** the layer system */
 		GPURenderableLayerSystem layer_system;
 		/** the texture atlas */
-		shared_ptr<BitmapAtlas::TextureArrayAtlas> atlas;
+		shared_ptr<BitmapAtlas::GPUAtlas> atlas;
         /** a cache for GPUBuffer */
         GPUBufferPool buffer_pool;
 	};

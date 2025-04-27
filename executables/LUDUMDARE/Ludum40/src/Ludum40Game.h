@@ -132,7 +132,7 @@ protected:
 
 	std::vector<SpriteLayer> sprite_layers;
 
-	chaos::shared_ptr<chaos::BitmapAtlas::TextureArrayAtlas> texture_atlas;
+	chaos::shared_ptr<chaos::BitmapAtlas::GPUAtlas> texture_atlas;
 
 	std::vector<ObjectDefinition> object_definitions;
 

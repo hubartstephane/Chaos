@@ -39,7 +39,7 @@ namespace chaos
         if (window_application == nullptr)
             return nullptr;
         // get the atlas
-        BitmapAtlas::TextureArrayAtlas const * atlas = window_application->GetTextureAtlas();
+        BitmapAtlas::GPUAtlas const * atlas = window_application->GetTextureAtlas();
         if (atlas == nullptr)
             return nullptr;
         // search the folder

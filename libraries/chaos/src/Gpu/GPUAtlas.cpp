@@ -5,13 +5,13 @@ namespace chaos
 {
 	namespace BitmapAtlas
 	{
-		void TextureArrayAtlas::Clear()
+		void GPUAtlas::Clear()
 		{
 			BitmapAtlas::AtlasBase::Clear();
 			texture = nullptr;
 		}
 
-		bool TextureArrayAtlas::LoadAtlas(FilePathParam const & path)
+		bool GPUAtlas::LoadAtlas(FilePathParam const & path)
 		{
 			Clear();
 
@@ -22,7 +22,7 @@ namespace chaos
 			return LoadFromBitmapAtlas(std::move(atlas));
 		}
 
-		bool TextureArrayAtlas::LoadFromBitmapAtlas(Atlas const & atlas)
+		bool GPUAtlas::LoadFromBitmapAtlas(Atlas const & atlas)
 		{
 			Clear();
 			if (!DoLoadFromBitmapAtlas(atlas))
@@ -33,7 +33,7 @@ namespace chaos
 			return true;
 		}
 
-		bool TextureArrayAtlas::LoadFromBitmapAtlas(Atlas && atlas)
+		bool GPUAtlas::LoadFromBitmapAtlas(Atlas && atlas)
 		{
 			Clear();
 			if (!DoLoadFromBitmapAtlas(std::move(atlas)))
@@ -44,7 +44,7 @@ namespace chaos
 			return true;
 		}
 
-		bool TextureArrayAtlas::DoGenerateTextureArray(Atlas const & atlas)
+		bool GPUAtlas::DoGenerateTextureArray(Atlas const & atlas)
 		{
 			// create and fill a texture array generator
 			std::vector<bitmap_ptr> const & bitmaps = atlas.GetBitmaps();
@@ -60,7 +60,7 @@ namespace chaos
 			return true;
 		}
 
-		bool TextureArrayAtlas::DoLoadFromBitmapAtlas(Atlas && atlas)
+		bool GPUAtlas::DoLoadFromBitmapAtlas(Atlas && atlas)
 		{
 			if (!DoGenerateTextureArray(atlas))
 				return false;
@@ -72,7 +72,7 @@ namespace chaos
 			return true;
 		}
 
-		bool TextureArrayAtlas::DoLoadFromBitmapAtlas(Atlas const & atlas)
+		bool GPUAtlas::DoLoadFromBitmapAtlas(Atlas const & atlas)
 		{
 			if (!DoGenerateTextureArray(atlas))
 				return false;
@@ -84,7 +84,7 @@ namespace chaos
 			return DoCopyFolder(&root_folder, &atlas.root_folder);
 		}
 
-		bool TextureArrayAtlas::DoCopyFolder(FolderInfo * dst_folder_info, FolderInfo const * src_folder_info)
+		bool GPUAtlas::DoCopyFolder(FolderInfo * dst_folder_info, FolderInfo const * src_folder_info)
 		{
 			assert(dst_folder_info != nullptr);
 			assert(src_folder_info != nullptr);

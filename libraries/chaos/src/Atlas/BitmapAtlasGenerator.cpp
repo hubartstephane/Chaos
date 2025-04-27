@@ -719,7 +719,7 @@ namespace chaos
 		// TextureArrayAtlasGenerator implementation
 		// ========================================================================
 
-		TextureArrayAtlas * TextureArrayAtlasGenerator::ComputeResult(AtlasInput const & in_input, AtlasGeneratorParams const & in_params)
+		GPUAtlas * TextureArrayAtlasGenerator::ComputeResult(AtlasInput const & in_input, AtlasGeneratorParams const & in_params)
 		{
 			// generate a standard atlas to be converted
 			BitmapAtlas::Atlas          atlas;
@@ -728,7 +728,7 @@ namespace chaos
 				return nullptr;
 
 			// generate texture Atlas
-			BitmapAtlas::TextureArrayAtlas * result = new BitmapAtlas::TextureArrayAtlas;
+			BitmapAtlas::GPUAtlas * result = new BitmapAtlas::GPUAtlas;
 			if (result == nullptr)
 				return nullptr;
 			if (!result->LoadFromBitmapAtlas(std::move(atlas)))

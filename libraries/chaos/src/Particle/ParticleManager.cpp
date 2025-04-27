@@ -12,7 +12,7 @@ namespace chaos
     {
     }
 
-	void ParticleManager::SetTextureAtlas(BitmapAtlas::TextureArrayAtlas * in_atlas)
+	void ParticleManager::SetTextureAtlas(BitmapAtlas::GPUAtlas * in_atlas)
 	{
 		atlas = in_atlas;
 	}

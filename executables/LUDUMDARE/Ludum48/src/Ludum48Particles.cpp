@@ -62,7 +62,7 @@ void ParticleGateLayerTrait::ParticleToPrimitives(GateParticle const& particle, 
 	WindowApplication const * application = Application::GetConstInstance();
 	if (application != nullptr)
 	{
-		BitmapAtlas::TextureArrayAtlas const * atlas = application->GetTextureAtlas();
+		BitmapAtlas::GPUAtlas const * atlas = application->GetTextureAtlas();
 		if (atlas != nullptr)
 		{
 			BitmapAtlas::BitmapInfo const* bi = (door_opened) ?

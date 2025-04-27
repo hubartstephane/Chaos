@@ -50,7 +50,7 @@ public:
 
 	ObjectDefinition const * GetObjectDefinition(int id);
 
-	chaos::BitmapAtlas::TextureArrayAtlas const * texture_atlas = nullptr;
+	chaos::BitmapAtlas::GPUAtlas const * texture_atlas = nullptr;
 	std::vector<ObjectDefinition> const & object_definitions;
 	chaos::box2 world_box;
 	chaos::box2 world_box_padding;

@@ -7,7 +7,6 @@ namespace chaos
 		class AtlasGeneratorParams;
 		class Rectangle;
 		class AtlasGenerator;
-		class GPUAtlasGenerator;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -169,25 +168,13 @@ namespace chaos
 		};
 
 		/**
-		* GPUAtlasGenerator
+		* JSON serialization
 		*/
-
-		class CHAOS_API GPUAtlasGenerator
-		{
-
-		public:
-
-			/** make destructor virtual */
-			virtual ~GPUAtlasGenerator() = default;
-			/** compute all BitmapInfo positions */
-			GPUAtlas* ComputeResult(AtlasInput const& in_input, AtlasGeneratorParams const& in_params = {});
-		};
 
 		/** load from JSON */
 		CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, AtlasGeneratorParams& dst);
 		/** save into JSON */
-		CHAOS_API bool DoSaveIntoJSON(nlohmann::json * json, AtlasGeneratorParams const& src);
-
+		CHAOS_API bool DoSaveIntoJSON(nlohmann::json* json, AtlasGeneratorParams const& src);
 
 #endif
 

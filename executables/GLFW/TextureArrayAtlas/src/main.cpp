@@ -170,7 +170,7 @@ protected:
 	chaos::shared_ptr<chaos::GPUMesh> mesh_box;
 	chaos::shared_ptr<chaos::GPUProgram>  program_box;
 
-	chaos::BitmapAtlas::GPUAtlas atlas;
+	chaos::GPUAtlas atlas;
 
 	size_t bitmap_index = 0;
 	std::vector<chaos::BitmapAtlas::BitmapLayout> bitmap_layouts;

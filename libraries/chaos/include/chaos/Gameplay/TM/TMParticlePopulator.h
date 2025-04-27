@@ -48,7 +48,7 @@ namespace chaos
 		TMLevel* level = nullptr;
 
 		/** the texture atlas required */
-		BitmapAtlas::GPUAtlas const* texture_atlas = nullptr;
+		GPUAtlas const* texture_atlas = nullptr;
 		/** the folder containing the bitmaps */
 		BitmapAtlas::FolderInfo const* folder_info = nullptr;
 

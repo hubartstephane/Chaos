@@ -76,7 +76,7 @@ protected:
 
 	bool LoadAtlas(boost::filesystem::path const & resources_path)
 	{
-		atlas = new chaos::BitmapAtlas::GPUAtlas;
+		atlas = new chaos::GPUAtlas;
 		if (atlas == nullptr)
 			return false;
 		return atlas->LoadAtlas(resources_path / "Atlas" / "MyAtlas.json");
@@ -184,7 +184,7 @@ protected:
 	// the particle manager
 	chaos::shared_ptr<chaos::ParticleManager> particle_manager;
 	/** the texture atlas */
-	chaos::shared_ptr<chaos::BitmapAtlas::GPUAtlas> atlas;
+	chaos::shared_ptr<chaos::GPUAtlas> atlas;
 	/** the material */
 	chaos::shared_ptr<chaos::GPURenderMaterial> material;
 	/** allocation */

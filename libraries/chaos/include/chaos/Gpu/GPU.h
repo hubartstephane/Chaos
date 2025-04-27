@@ -13,6 +13,7 @@
 #include "chaos/Gpu/GPUSurface.h"
 #include "chaos/Gpu/GPUTexture.h"
 #include "chaos/Gpu/GPUTextureLoader.h"
+#include "chaos/Gpu/GPUAtlasGenerator.h"
 #include "chaos/Gpu/GPUQuery.h"
 #include "chaos/Gpu/GPUBuffer.h"
 #include "chaos/Gpu/GPUFence.h"

@@ -712,30 +712,6 @@ namespace chaos
 			return false;
 		}
 
-		// ========================================================================
-		// GPUAtlasGenerator implementation
-		// ========================================================================
-
-		GPUAtlas * GPUAtlasGenerator::ComputeResult(AtlasInput const & in_input, AtlasGeneratorParams const & in_params)
-		{
-			// generate a standard atlas to be converted
-			BitmapAtlas::Atlas          atlas;
-			BitmapAtlas::AtlasGenerator generator;
-			if (!generator.ComputeResult(in_input, atlas, in_params))
-				return nullptr;
-
-			// generate texture Atlas
-			BitmapAtlas::GPUAtlas * result = new BitmapAtlas::GPUAtlas;
-			if (result == nullptr)
-				return nullptr;
-			if (!result->LoadFromBitmapAtlas(std::move(atlas)))
-			{
-				delete(result);
-				return nullptr;
-			}
-			return result;
-		}
-
 	}; // namespace BitmapAtlas
 
 }; // namespace chaos

@@ -83,9 +83,9 @@ namespace chaos
 
 
 		/** getter on the texture atlas */
-		BitmapAtlas::GPUAtlas* GetTextureAtlas() { return texture_atlas.get(); }
+		GPUAtlas* GetTextureAtlas() { return texture_atlas.get(); }
 		/** getter on the texture atlas */
-		BitmapAtlas::GPUAtlas const* GetTextureAtlas() const { return texture_atlas.get(); }
+		GPUAtlas const* GetTextureAtlas() const { return texture_atlas.get(); }
 
 
 
@@ -326,7 +326,7 @@ namespace chaos
 		shared_ptr<Clock> main_clock;
 
 		/** the texture atlas */
-		shared_ptr<BitmapAtlas::GPUAtlas> texture_atlas;
+		shared_ptr<GPUAtlas> texture_atlas;
 		/** the text generator */
 		shared_ptr<ParticleTextGenerator::Generator> particle_text_generator;
 

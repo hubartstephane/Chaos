@@ -401,7 +401,7 @@ namespace chaos
 			LoadFromJSON(atlas_config, params);
 
 		// generate the atlas
-		BitmapAtlas::GPUAtlasGenerator generator;
+		GPUAtlasGenerator generator;
 		texture_atlas = generator.ComputeResult(input, params);
 		if (texture_atlas == nullptr)
 			return false;

@@ -90,9 +90,9 @@ protected:
 	}
 
 
-	chaos::BitmapAtlas::GPUAtlas * LoadTextureArray(boost::filesystem::path const & resources_path)
+	chaos::GPUAtlas * LoadTextureArray(boost::filesystem::path const & resources_path)
 	{
-		chaos::BitmapAtlas::GPUAtlasGenerator generator;
+		chaos::GPUAtlasGenerator generator;
 
 		chaos::BitmapAtlas::AtlasInput input;
 		input.AddBitmap(resources_path / "moving_gif.gif", "moving", 0);
@@ -172,7 +172,7 @@ protected:
 	chaos::shared_ptr<chaos::GPUMesh> mesh_box;
 	chaos::shared_ptr<chaos::GPUProgram>  program_box;
 
-	chaos::shared_ptr<chaos::BitmapAtlas::GPUAtlas> atlas;
+	chaos::shared_ptr<chaos::GPUAtlas> atlas;
 
 	size_t bitmap_index = 0;
 

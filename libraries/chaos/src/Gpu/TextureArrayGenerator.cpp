@@ -250,67 +250,6 @@ namespace chaos
 
 			GLTextureTools::GenTextureApplyParameters(texture_id, texture_description, parameters);
 
-
-			// shuxxx test for copying some layers of texture
-
-
-			#if 0
-
-
-			GLuint texture_id2 = 0;
-			glCreateTextures(array_type, 1, &texture_id2);
-			glTextureStorage3D(texture_id2, level_count, gl_pixel_format.internal_format, width, height, (GLsizei)slice_count);
-
-
-			GLint levels1 = 0;
-			glGetTextureParameteriv(texture_id, GL_TEXTURE_IMMUTABLE_LEVELS, &levels1);
-			GLint levels2 = 0;
-			glGetTextureParameteriv(texture_id2, GL_TEXTURE_IMMUTABLE_LEVELS, &levels2);
-
-			GLint width, height, depth;
-			glGetTextureLevelParameteriv(texture_id2, 0, GL_TEXTURE_WIDTH, &width);
-			glGetTextureLevelParameteriv(texture_id2, 0, GL_TEXTURE_HEIGHT, &height);
-			glGetTextureLevelParameteriv(texture_id2, 0, GL_TEXTURE_DEPTH, &depth);
-
-			for (int i = 0; i < slice_count; ++i)
-			{
-				int w = texture_description.width;
-				int h = texture_description.height;
-
-
-				for (int j = 0; j < level_count; ++j)
-				{
-					glCopyImageSubData(
-						
-						texture_id, array_type, j, 0, 0, i,
-						texture_id2, array_type, j, 4, 4, i,
-						
-						w - 4 , h - 4, 1
-
-					);
-
-					w /= 2;
-					h /= 2;
-				}
-
-
-
-
-
-			}
-
-			GenTextureParameters p = parameters;
-
-			p.build_mipmaps = false;
-
-			GLTextureTools::GenTextureApplyParameters(texture_id2, texture_description, p);
-
-			result = new GPUTexture(texture_id2, texture_description);
-
-			#endif
-
-
-
 			result = new GPUTexture(texture_id, texture_description);
 		}
 

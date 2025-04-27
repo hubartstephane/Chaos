@@ -82,7 +82,7 @@ namespace chaos
 		return DoCopyFolder(&root_folder, &atlas.root_folder);
 	}
 
-	bool GPUAtlas::DoCopyFolder(BitmapAtlas::FolderInfo* dst_folder_info, BitmapAtlas::FolderInfo const* src_folder_info)
+	bool GPUAtlas::DoCopyFolder(BitmapAtlas::AtlasFolderInfo* dst_folder_info, BitmapAtlas::AtlasFolderInfo const* src_folder_info)
 	{
 		assert(dst_folder_info != nullptr);
 		assert(src_folder_info != nullptr);
@@ -97,15 +97,15 @@ namespace chaos
 		size_t child_folder_count = src_folder_info->folders.size();
 		for (size_t i = 0; i < child_folder_count; ++i)
 		{
-			BitmapAtlas::FolderInfo const* src_child_folder = src_folder_info->folders[i].get();
+			BitmapAtlas::AtlasFolderInfo const* src_child_folder = src_folder_info->folders[i].get();
 			if (src_child_folder == nullptr)
 				continue;
 
-			BitmapAtlas::FolderInfo* dst_child_folder = new BitmapAtlas::FolderInfo;
+			BitmapAtlas::AtlasFolderInfo* dst_child_folder = new BitmapAtlas::AtlasFolderInfo;
 			if (dst_child_folder == nullptr)
 				continue;
 
-			dst_folder_info->folders.push_back(std::move(std::unique_ptr<BitmapAtlas::FolderInfo>(dst_child_folder)));
+			dst_folder_info->folders.push_back(std::move(std::unique_ptr<BitmapAtlas::AtlasFolderInfo>(dst_child_folder)));
 			DoCopyFolder(dst_child_folder, src_child_folder);
 		}
 		return true;

@@ -106,16 +106,16 @@ protected:
 		generator.AddColor("blue", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 		generator.AddColor("green", glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 
-		chaos::BitmapAtlas::FolderInfo const * folder = atlas->GetFolderInfo("folder_input1");
+		chaos::BitmapAtlas::AtlasFolderInfo const * folder = atlas->GetFolderInfo("folder_input1");
 		if (folder != nullptr)
 		{
-			chaos::BitmapAtlas::BitmapInfo const * bitmap = folder->GetBitmapInfo("xboxControllerButtonA");
+			chaos::BitmapAtlas::AtlasBitmapInfo const * bitmap = folder->GetBitmapInfo("xboxControllerButtonA");
 			if (bitmap != nullptr)
 				generator.AddBitmap("BUTTON", bitmap);
 		}
 
-		generator.AddFontInfo("C1", atlas->GetFontInfo("font_info1"));
-		generator.AddFontInfo("C2", atlas->GetFontInfo("font_info2"));
+		generator.AddFontInfo("C1", atlas->GetAtlasFontInfo("font_info1"));
+		generator.AddFontInfo("C2", atlas->GetAtlasFontInfo("font_info2"));
 
 		chaos::ParticleTextGenerator::GeneratorParams generator_params;
 		generator_params.line_height = 50;

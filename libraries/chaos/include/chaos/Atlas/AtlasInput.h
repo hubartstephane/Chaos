@@ -4,23 +4,23 @@ namespace chaos
 	{
 #ifdef CHAOS_FORWARD_DECLARATION
 
-		class FontInfoInputParams;
-		class ObjectBaseInput;
-		class BitmapAnimationInfoInput;
-		class BitmapInfoInput;
-		class CharacterInfoInput;
-		class FontInfoInput;
+		class AtlasFontInfoInputParams;
+		class AtlasInputInfoBase;
+		class AtlasBitmapAnimationInfoInput;
+		class AtlasBitmapInfoInput;
+		class AtlasCharacterInfoInput;
+		class AtlasFontInfoInput;
 		class AddFilesToFolderData;
-		class FolderInfoInput;
+		class AtlasFolderInfoInput;
 		class AtlasInput;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 		/**
-		* FontInfoInputParams : when inserting FontInfoInput into AtlasInput, some glyphs are rendered into bitmaps. This controls the process
+		* AtlasFontInfoInputParams : when inserting AtlasFontInfoInput into AtlasInput, some glyphs are rendered into bitmaps. This controls the process
 		*/
 
-		class CHAOS_API FontInfoInputParams
+		class CHAOS_API AtlasFontInfoInputParams
 		{
 		public:
 
@@ -40,15 +40,15 @@ namespace chaos
 			std::vector<shared_ptr<ImageProcessor>> image_processors;
 		};
 
-		CHAOS_API bool DoSaveIntoJSON(nlohmann::json * json, FontInfoInputParams const& src);
+		CHAOS_API bool DoSaveIntoJSON(nlohmann::json * json, AtlasFontInfoInputParams const& src);
 
-		CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, FontInfoInputParams& dst);
+		CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, AtlasFontInfoInputParams& dst);
 
 		/**
-		* ObjectBaseInput : base object for inputs
+		* AtlasInputInfoBase : base object for inputs
 		*/
 
-		class CHAOS_API ObjectBaseInput : public NamedInterface
+		class CHAOS_API AtlasInputInfoBase : public NamedInterface
 		{
 		public:
 
@@ -68,10 +68,10 @@ namespace chaos
 		};
 
 		/**
-		* BitmapAnimationInfoInput : Describe an animation for a BitmapInfoInput
+		* AtlasBitmapAnimationInfoInput : Describe an animation for a AtlasBitmapInfoInput
 		*/
 
-		class CHAOS_API BitmapAnimationInfoInput : public Object
+		class CHAOS_API AtlasBitmapAnimationInfoInput : public Object
 		{
 
 		public:
@@ -79,14 +79,14 @@ namespace chaos
 			/** the animation description */
 			ImageAnimationDescription animation_description;
 			/** the child frames of animated image (GIF) */
-			std::vector<class BitmapInfoInput*> child_frames;
+			std::vector<class AtlasBitmapInfoInput*> child_frames;
 		};
 
 		/**
-		* BitmapInfoInput : Will produced a BitmapInfo in the final Atlas
+		* AtlasBitmapInfoInput : Will produced a AtlasBitmapInfo in the final Atlas
 		*/
 
-		class CHAOS_API BitmapInfoInput : public ObjectBaseInput
+		class CHAOS_API AtlasBitmapInfoInput : public AtlasInputInfoBase
 		{
 		public:
 
@@ -94,19 +94,19 @@ namespace chaos
 			ImageDescription description;
 
 			/** whether the bitmap is part of an animation */
-			shared_ptr<BitmapAnimationInfoInput> animation_info;
+			shared_ptr<AtlasBitmapAnimationInfoInput> animation_info;
 
 			/** a pointer on the destination info associated */
-			BitmapInfo* bitmap_output_info = nullptr;
+			AtlasBitmapInfo* bitmap_output_info = nullptr;
 			/** a pointer on the destination info associated */
-			CharacterInfo* character_output_info = nullptr;
+			AtlasCharacterInfo* character_output_info = nullptr;
 		};
 
 		/**
-		* CharacterInfoInput : an info in FontInfoInput. Will produced a CharacterInfo in the final Atlas
+		* AtlasCharacterInfoInput : an info in AtlasFontInfoInput. Will produced a AtlasCharacterInfo in the final Atlas
 		*/
 
-		class CHAOS_API CharacterInfoInput : public BitmapInfoInput
+		class CHAOS_API AtlasCharacterInfoInput : public AtlasBitmapInfoInput
 		{
 		public:
 
@@ -119,16 +119,16 @@ namespace chaos
 		};
 
 		/**
-		* FontInfoInput : this info will produced in the final Atlas a FontInfo (a set of glyphs generated from FreeType)
+		* AtlasFontInfoInput : this info will produced in the final Atlas a AtlasFontInfo (a set of glyphs generated from FreeType)
 		*/
 
-		class CHAOS_API FontInfoInput : public FontInfoTemplate<NoCopy<ObjectBaseInput>, CharacterInfoInput, std::unique_ptr<boost::mpl::_1>>
+		class CHAOS_API AtlasFontInfoInput : public AtlasFontInfoTemplate<NoCopy<AtlasInputInfoBase>, AtlasCharacterInfoInput, std::unique_ptr<boost::mpl::_1>>
 		{
 
 		};
 
 		/**
-		* AddFilesToFolderData : structure used when inserting multiple files in a FolderInfoInput
+		* AddFilesToFolderData : structure used when inserting multiple files in a AtlasFolderInfoInput
 		*/
 
 		class CHAOS_API AddFilesToFolderData
@@ -167,10 +167,10 @@ namespace chaos
 
 
 		/**
-		* FolderInfoInput :  this info will produced in the final Atlas a FolderInfo
+		* AtlasFolderInfoInput :  this info will produced in the final Atlas a AtlasFolderInfo
 		*/
 
-		class CHAOS_API FolderInfoInput : public FolderInfoTemplate<NoCopy<ObjectBaseInput>, BitmapInfoInput, FontInfoInput, FolderInfoInput, std::unique_ptr<boost::mpl::_1>>
+		class CHAOS_API AtlasFolderInfoInput : public AtlasFolderInfoTemplate<NoCopy<AtlasInputInfoBase>, AtlasBitmapInfoInput, AtlasFontInfoInput, AtlasFolderInfoInput, std::unique_ptr<boost::mpl::_1>>
 		{
 			friend class AtlasInput;
 			friend class AtlasGenerator;
@@ -178,75 +178,75 @@ namespace chaos
 		public:
 
 			/** constructor */
-			FolderInfoInput() = default;
+			AtlasFolderInfoInput() = default;
 
 			/** insert a Folder set inside the input */
-			FolderInfoInput* AddFolder(char const* name, TagType tag);
+			AtlasFolderInfoInput* AddFolder(char const* name, TagType tag);
 
 			/** insert multiple bitmap before computation */
 			bool AddBitmapFilesFromDirectory(FilePathParam const& path, bool recursive);
 
 			/** insert a bitmap before computation */
-			BitmapInfoInput* AddBitmap(FilePathParam const& path, char const* name, TagType tag);
+			AtlasBitmapInfoInput* AddBitmap(FilePathParam const& path, char const* name, TagType tag);
 			/** insert an image inside the atlas */
-			BitmapInfoInput* AddBitmap(FIBITMAP* bitmap, bool release_bitmap, char const* name, TagType tag);
+			AtlasBitmapInfoInput* AddBitmap(FIBITMAP* bitmap, bool release_bitmap, char const* name, TagType tag);
 			/** insert an image inside the atlas */
-			BitmapInfoInput* AddBitmap(FIMULTIBITMAP* animated_bitmap, bool release_animated_bitmap, char const* name, TagType tag);
+			AtlasBitmapInfoInput* AddBitmap(FIMULTIBITMAP* animated_bitmap, bool release_animated_bitmap, char const* name, TagType tag);
 
 			/** Add a character set */
-			FontInfoInput* AddFont(
+			AtlasFontInfoInput* AddFont(
 				FilePathParam const& path,
 				FT_Library library,
 				bool release_library,
 				char const* name,
 				TagType tag,
-				FontInfoInputParams const& params = FontInfoInputParams());
+				AtlasFontInfoInputParams const& params = AtlasFontInfoInputParams());
 
 			/** Add a character set */
-			FontInfoInput* AddFont(
+			AtlasFontInfoInput* AddFont(
 				FT_Face face,
 				bool release_face,
 				char const* name,
 				TagType tag,
-				FontInfoInputParams const& params = FontInfoInputParams());
+				AtlasFontInfoInputParams const& params = AtlasFontInfoInputParams());
 
 		protected:
 
 			/** internal method to add a bitmap from file (and searching manifest) */
-			BitmapInfoInput* AddBitmapFileImpl(FilePathParam const& path, char const* name, TagType tag, AddFilesToFolderData& add_data);
+			AtlasBitmapInfoInput* AddBitmapFileImpl(FilePathParam const& path, char const* name, TagType tag, AddFilesToFolderData& add_data);
 			/** internal method to add a bitmap whose manifest (or not) is known */
-			BitmapInfoInput* AddBitmapFileWithManifestImpl(FilePathParam const& path, char const* name, TagType tag, nlohmann::json const* json_manifest, std::vector<FIBITMAP*>* images);
+			AtlasBitmapInfoInput* AddBitmapFileWithManifestImpl(FilePathParam const& path, char const* name, TagType tag, nlohmann::json const* json_manifest, std::vector<FIBITMAP*>* images);
 			/** internal method to add a bitmap or a multi bitmap */
-			BitmapInfoInput* AddBitmapImpl(std::vector<FIBITMAP*> pages, char const* name, TagType tag, ImageAnimationDescription const* animation_description);
+			AtlasBitmapInfoInput* AddBitmapImpl(std::vector<FIBITMAP*> pages, char const* name, TagType tag, ImageAnimationDescription const* animation_description);
 
 			/** internal method to insert a font file (and searching manifest)*/
-			FontInfoInput* AddFontFileImpl(FilePathParam const& path, FT_Library library, bool release_library, char const* name, TagType tag, FontInfoInputParams const& params, AddFilesToFolderData& add_data);
+			AtlasFontInfoInput* AddFontFileImpl(FilePathParam const& path, FT_Library library, bool release_library, char const* name, TagType tag, AtlasFontInfoInputParams const& params, AddFilesToFolderData& add_data);
 			/** internal method to add a font whose manifest (or not) is known */
-			FontInfoInput* AddFontFileWithManifestImpl(FilePathParam const& path, FT_Library library, bool release_library, char const* name, TagType tag, FontInfoInputParams const& params, nlohmann::json const* json_manifest);
+			AtlasFontInfoInput* AddFontFileWithManifestImpl(FilePathParam const& path, FT_Library library, bool release_library, char const* name, TagType tag, AtlasFontInfoInputParams const& params, nlohmann::json const* json_manifest);
 
 			/** internal method to add a character set */
-			FontInfoInput* AddFontImpl(
+			AtlasFontInfoInput* AddFontImpl(
 				FT_Library library,
 				FT_Face face,
 				bool release_library,
 				bool release_face,
 				char const* name,
 				TagType tag,
-				FontInfoInputParams const& params);
+				AtlasFontInfoInputParams const& params);
 		};
 
 		/**
 		* AtlasInput : this hold the bitmaps / glyphs used for Atlas generation
 		*/
 
-		class CHAOS_API AtlasInput : public AtlasBaseTemplate<NoCopy<Object>, BitmapInfoInput, FontInfoInput, FolderInfoInput>
+		class CHAOS_API AtlasInput : public AtlasBaseTemplate<NoCopy<Object>, AtlasBitmapInfoInput, AtlasFontInfoInput, AtlasFolderInfoInput>
 		{
-			friend class ObjectBaseInput;
+			friend class AtlasInputInfoBase;
 			friend class AtlasGenerator;
 
 		public:
 
-			using super = AtlasBaseTemplate<NoCopy<Object>, BitmapInfoInput, FontInfoInput, FolderInfoInput>;
+			using super = AtlasBaseTemplate<NoCopy<Object>, AtlasBitmapInfoInput, AtlasFontInfoInput, AtlasFolderInfoInput>;
 
 			/** constructor */
 			AtlasInput();
@@ -254,34 +254,34 @@ namespace chaos
 			virtual void Clear() override;
 
 			/** insert a Folder set inside the input */
-			FolderInfoInput* AddFolder(char const* name, TagType tag);
+			AtlasFolderInfoInput* AddFolder(char const* name, TagType tag);
 
 			/** insert multiple bitmap before computation */
 			bool AddBitmapFilesFromDirectory(FilePathParam const& path, bool recursive);
 
 			/** insert an image from a file */
-			BitmapInfoInput* AddBitmap(FilePathParam const& path, char const* name, TagType tag);
+			AtlasBitmapInfoInput* AddBitmap(FilePathParam const& path, char const* name, TagType tag);
 			/** insert an image inside the atlas */
-			BitmapInfoInput* AddBitmap(FIBITMAP* bitmap, bool release_bitmap, char const* name, TagType tag);
+			AtlasBitmapInfoInput* AddBitmap(FIBITMAP* bitmap, bool release_bitmap, char const* name, TagType tag);
 			/** insert an image inside the atlas */
-			BitmapInfoInput* AddBitmap(FIMULTIBITMAP* animated_bitmap, bool release_bitmap, char const* name, TagType tag);
+			AtlasBitmapInfoInput* AddBitmap(FIMULTIBITMAP* animated_bitmap, bool release_bitmap, char const* name, TagType tag);
 
 			/** Add a character set */
-			FontInfoInput* AddFont(
+			AtlasFontInfoInput* AddFont(
 				FilePathParam const& path,
 				FT_Library library,
 				bool release_library,
 				char const* name,
 				TagType tag,
-				FontInfoInputParams const& params = FontInfoInputParams());
+				AtlasFontInfoInputParams const& params = AtlasFontInfoInputParams());
 
 			/** Add a character set */
-			FontInfoInput* AddFont(
+			AtlasFontInfoInput* AddFont(
 				FT_Face face,
 				bool release_face,
 				char const* name,
 				TagType tag,
-				FontInfoInputParams const& params = FontInfoInputParams());
+				AtlasFontInfoInputParams const& params = AtlasFontInfoInputParams());
 
 		protected:
 

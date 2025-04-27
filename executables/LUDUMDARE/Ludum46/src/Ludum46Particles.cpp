@@ -165,7 +165,7 @@ static bool UpdateAnimatedParticleTexcoords(ParticleAnimated & particle) // retu
 {
 	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasAnimation())
 	{
-		chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayoutFromTime(particle.animation_timer);
+		chaos::BitmapAtlas::AtlasBitmapLayout layout = particle.bitmap_info->GetAnimationLayoutFromTime(particle.animation_timer);
 		if (!layout.IsValid())
 			return false;
 		particle.texcoords = layout.GetTexcoords();
@@ -348,7 +348,7 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 
 	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasAnimation())
 	{
-		chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayout(particle.frame_index);
+		chaos::BitmapAtlas::AtlasBitmapLayout layout = particle.bitmap_info->GetAnimationLayout(particle.frame_index);
 		if (!layout.IsValid())
 			return true; // destroy the particle
 

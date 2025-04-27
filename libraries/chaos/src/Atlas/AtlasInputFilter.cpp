@@ -6,45 +6,45 @@ namespace chaos
 	namespace BitmapAtlas
 	{
 		// ==========================================================================
-		// BitmapAtlasFilterCondition methods
+		// AtlasInputFilterCondition methods
 		// ==========================================================================
 
-		bool BitmapAtlasFilterCondition::SerializeFromJSON(JSONReadConfiguration config)
+		bool AtlasInputFilterCondition::SerializeFromJSON(JSONReadConfiguration config)
 		{
 			if (!JSONSerializableInterface::SerializeFromJSON(config))
 				return false;
 			return true;
 		}
 
-		bool BitmapAtlasFilterCondition::SerializeIntoJSON(nlohmann::json * json) const
+		bool AtlasInputFilterCondition::SerializeIntoJSON(nlohmann::json * json) const
 		{
 			if (!JSONSerializableInterface::SerializeIntoJSON(json))
 				return false;
 			return true;
 		}
 
-		bool BitmapAtlasFilterCondition::AcceptBitmap(BitmapInfoInput const* input) const
+		bool AtlasInputFilterCondition::AcceptBitmap(AtlasBitmapInfoInput const* input) const
 		{
 			return true;
 		}
 
-		bool BitmapAtlasFilterCondition::AcceptFont(FontInfoInput const* input) const
+		bool AtlasInputFilterCondition::AcceptFont(AtlasFontInfoInput const* input) const
 		{
 			return true;
 		}
 
 		// ==========================================================================
-		// BitmapAtlasFilter methods
+		// AtlasInputFilter methods
 		// ==========================================================================
 
-		bool DoLoadFromJSON(JSONReadConfiguration config, BitmapAtlasFilter & dst)
+		bool DoLoadFromJSON(JSONReadConfiguration config, AtlasInputFilter & dst)
 		{
 			JSONTools::GetAttribute(config, "condition", dst.condition);
 			JSONTools::GetAttribute(config, "processor", dst.processor);
 			return true;
 		}
 
-		bool DoSaveIntoJSON(nlohmann::json * json, BitmapAtlasFilter const & src)
+		bool DoSaveIntoJSON(nlohmann::json * json, AtlasInputFilter const & src)
 		{
 			if (!PrepareSaveObjectIntoJSON(json))
 				return false;
@@ -54,16 +54,16 @@ namespace chaos
 		}
 
 		// ==========================================================================
-		// BitmapAtlasFilterSet methods
+		// AtlasInputFilterSet methods
 		// ==========================================================================
 
-		bool DoLoadFromJSON(JSONReadConfiguration config, BitmapAtlasFilterSet & dst)
+		bool DoLoadFromJSON(JSONReadConfiguration config, AtlasInputFilterSet & dst)
 		{
 			JSONTools::GetAttribute(config, "filters", dst.filters);
 			return true;
 		}
 
-		bool DoSaveIntoJSON(nlohmann::json * json, BitmapAtlasFilterSet const & src)
+		bool DoSaveIntoJSON(nlohmann::json * json, AtlasInputFilterSet const & src)
 		{
 			if (!PrepareSaveObjectIntoJSON(json))
 				return false;

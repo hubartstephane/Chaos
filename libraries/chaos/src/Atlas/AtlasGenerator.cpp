@@ -46,7 +46,7 @@ namespace chaos
 		// Utility functions
 		// ========================================================================
 
-		static BitmapLayout * GetBitmapLayout(BitmapInfoInput * info)
+		static AtlasBitmapLayout * GetAtlasBitmapLayout(AtlasBitmapInfoInput * info)
 		{
 			if (info->bitmap_output_info != nullptr)
 				return info->bitmap_output_info;
@@ -55,7 +55,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		static BitmapLayout const * GetBitmapLayout(BitmapInfoInput const * info)
+		static AtlasBitmapLayout const * GetAtlasBitmapLayout(AtlasBitmapInfoInput const * info)
 		{
 			if (info->bitmap_output_info != nullptr)
 				return info->bitmap_output_info;
@@ -64,7 +64,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		static NamedInterface * GetNamedObject(BitmapInfoInput * info)
+		static NamedInterface * GetNamedObject(AtlasBitmapInfoInput * info)
 		{
 			if (info->bitmap_output_info != nullptr)
 				return info->bitmap_output_info;
@@ -73,7 +73,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		static NamedInterface const * GetNamedObject(BitmapInfoInput const * info)
+		static NamedInterface const * GetNamedObject(AtlasBitmapInfoInput const * info)
 		{
 			if (info->bitmap_output_info != nullptr)
 				return info->bitmap_output_info;
@@ -134,7 +134,7 @@ namespace chaos
 			return result;
 		}
 
-		Rectangle AtlasGenerator::GetRectangle(BitmapLayout const & layout) const
+		Rectangle AtlasGenerator::GetRectangle(AtlasBitmapLayout const & layout) const
 		{
 			Rectangle result;
 			result.x = layout.x;
@@ -154,7 +154,7 @@ namespace chaos
 			return result;
 		}
 
-		bool AtlasGenerator::EnsureValidResults(BitmapInfoInputVector const & entries, std::ostream & stream) const
+		bool AtlasGenerator::EnsureValidResults(AtlasBitmapInfoInputVector const & entries, std::ostream & stream) const
 		{
 			// early exit
 			if (entries.size() == 0)
@@ -165,9 +165,9 @@ namespace chaos
 
 			// individual tests
 			size_t bitmap_count = atlas_definitions.size(); // output->bitmaps not generated yet
-			for (BitmapInfoInput const * entry_input : entries)
+			for (AtlasBitmapInfoInput const * entry_input : entries)
 			{
-				BitmapLayout const * layout = GetBitmapLayout(entry_input);
+				AtlasBitmapLayout const * layout = GetAtlasBitmapLayout(entry_input);
 				if (layout == nullptr)
 					continue;
 
@@ -202,8 +202,8 @@ namespace chaos
 			{
 				for (size_t j = i + 1; j < count; ++j)
 				{
-					BitmapLayout const * layout1 = GetBitmapLayout(entries[i]);
-					BitmapLayout const * layout2 = GetBitmapLayout(entries[j]);
+					AtlasBitmapLayout const * layout1 = GetAtlasBitmapLayout(entries[i]);
+					AtlasBitmapLayout const * layout2 = GetAtlasBitmapLayout(entries[j]);
 
 					if (layout1 == nullptr || layout2 == nullptr)
 						continue;
@@ -240,7 +240,7 @@ namespace chaos
 			return false;
 		}
 
-		std::vector<bitmap_ptr> AtlasGenerator::GenerateBitmaps(BitmapInfoInputVector const & entries, PixelFormat const & final_pixel_format) const
+		std::vector<bitmap_ptr> AtlasGenerator::GenerateBitmaps(AtlasBitmapInfoInputVector const & entries, PixelFormat const & final_pixel_format) const
 		{
 			std::vector<bitmap_ptr> result;
 
@@ -257,9 +257,9 @@ namespace chaos
 					ImageTools::FillImageBackground(image_description, params.background_color);
 
 					// copy-paste all entries
-					for (BitmapInfoInput const * entry_input : entries)
+					for (AtlasBitmapInfoInput const * entry_input : entries)
 					{
-						BitmapLayout const * layout = GetBitmapLayout(entry_input);
+						AtlasBitmapLayout const * layout = GetAtlasBitmapLayout(entry_input);
 						if (layout == nullptr)
 							continue;
 
@@ -320,7 +320,7 @@ namespace chaos
 		}
 
 
-		void AtlasGenerator::FillAtlasEntriesFromInput(BitmapInfoInputVector & result, FolderInfoInput * folder_info_input, FolderInfo * folder_info_output)
+		void AtlasGenerator::FillAtlasEntriesFromInput(AtlasBitmapInfoInputVector & result, AtlasFolderInfoInput * folder_info_input, AtlasFolderInfo * folder_info_output)
 		{
 			if (folder_info_input == nullptr)
 				return;
@@ -330,18 +330,18 @@ namespace chaos
 			folder_info_output->folders.reserve(folder_count + folder_info_output->folders.size());
 			for (size_t i = 0; i < folder_count; ++i)
 			{
-				FolderInfoInput * child_folder_info_input = folder_info_input->folders[i].get();
+				AtlasFolderInfoInput * child_folder_info_input = folder_info_input->folders[i].get();
 				if (child_folder_info_input == nullptr)
 					continue;
 
-				FolderInfo * child_folder_info_output = new FolderInfo;
+				AtlasFolderInfo * child_folder_info_output = new AtlasFolderInfo;
 				if (child_folder_info_output == nullptr)
 					continue;
 
 				child_folder_info_output->SetName(child_folder_info_input->GetName());
 				child_folder_info_output->SetTag(child_folder_info_input->GetTag());
 
-				folder_info_output->folders.push_back(std::move(std::unique_ptr<FolderInfo>(child_folder_info_output)));
+				folder_info_output->folders.push_back(std::move(std::unique_ptr<AtlasFolderInfo>(child_folder_info_output)));
 				FillAtlasEntriesFromInput(result, child_folder_info_input, child_folder_info_output);
 			}
 
@@ -350,11 +350,11 @@ namespace chaos
 			folder_info_output->bitmaps.reserve(bitmap_count + folder_info_output->bitmaps.size());
 			for (size_t i = 0 ; i < bitmap_count ; ++i)
 			{
-				BitmapInfoInput const * bitmap_info_input = folder_info_input->bitmaps[i].get();
+				AtlasBitmapInfoInput const * bitmap_info_input = folder_info_input->bitmaps[i].get();
 				if (bitmap_info_input == nullptr)
 					continue;
 
-				BitmapInfo bitmap_info_output;
+				AtlasBitmapInfo bitmap_info_output;
 				bitmap_info_output.SetName(bitmap_info_input->GetName());
 				bitmap_info_output.SetTag(bitmap_info_input->GetTag());
 				bitmap_info_output.bitmap_index = -1;
@@ -369,24 +369,24 @@ namespace chaos
 			// once we are sure that Folder.Bitmaps does not resize anymore, we can store pointers
 			for (size_t i = 0; i < bitmap_count; ++i)
 			{
-				BitmapInfoInput * bitmap_info_input = folder_info_input->bitmaps[i].get();
-				BitmapInfo      * bitmap_info = &folder_info_output->bitmaps[i];
+				AtlasBitmapInfoInput * bitmap_info_input = folder_info_input->bitmaps[i].get();
+				AtlasBitmapInfo      * bitmap_info = &folder_info_output->bitmaps[i];
 
 				bitmap_info_input->bitmap_output_info = bitmap_info;
 				result.push_back(bitmap_info_input);
 			}
 
-			// now that all BitmapInfoInput are linked to their BitmapInfo, handle animation
+			// now that all AtlasBitmapInfoInput are linked to their AtlasBitmapInfo, handle animation
 			for (size_t i = 0; i < bitmap_count; ++i)
 			{
-				BitmapInfoInput * bitmap_info_input = folder_info_input->bitmaps[i].get();
-				BitmapInfo      * bitmap_info = &folder_info_output->bitmaps[i];
+				AtlasBitmapInfoInput * bitmap_info_input = folder_info_input->bitmaps[i].get();
+				AtlasBitmapInfo      * bitmap_info = &folder_info_output->bitmaps[i];
 
 				// create the animation if necessary
-				BitmapAnimationInfoInput * animation_info_input = bitmap_info_input->animation_info.get();
+				AtlasBitmapAnimationInfoInput * animation_info_input = bitmap_info_input->animation_info.get();
 				if (animation_info_input != nullptr)
 				{
-					BitmapAnimationInfo * animation_info = new BitmapAnimationInfo;
+					AtlasBitmapAnimationInfo * animation_info = new AtlasBitmapAnimationInfo;
 					if (animation_info != nullptr)
 					{
 						// copy the animation
@@ -406,11 +406,11 @@ namespace chaos
 			folder_info_output->fonts.reserve(font_count + folder_info_output->fonts.size());
 			for (size_t i = 0 ; i < font_count ; ++i)
 			{
-				FontInfoInput const * font_info_input = folder_info_input->fonts[i].get();
+				AtlasFontInfoInput const * font_info_input = folder_info_input->fonts[i].get();
 				if (font_info_input == nullptr)
 					continue;
 
-				FontInfo font_info_output;
+				AtlasFontInfo font_info_output;
 				font_info_output.SetName(font_info_input->GetName());
 				font_info_output.SetTag(font_info_input->GetTag());
 				font_info_output.glyph_width = font_info_input->glyph_width;
@@ -423,9 +423,9 @@ namespace chaos
 				font_info_output.elements.reserve(character_count + font_info_output.elements.size());
 				for (size_t i = 0; i < character_count; ++i)
 				{
-					CharacterInfoInput const * character_info_input = font_info_input->elements[i].get();
+					AtlasCharacterInfoInput const * character_info_input = font_info_input->elements[i].get();
 
-					CharacterInfo character_info_output;
+					AtlasCharacterInfo character_info_output;
 					character_info_output.SetName(character_info_input->GetName());
 					character_info_output.SetTag(character_info_input->GetTag());
 					character_info_output.bitmap_index = -1;
@@ -444,8 +444,8 @@ namespace chaos
 			// once we are sure that Folder.Fonts vector does not resize anymore, we can store pointers
 			for (size_t i = 0; i < font_count; ++i)
 			{
-				FontInfoInput * font_info_input  = folder_info_input->fonts[i].get();
-				FontInfo & font_info_output = folder_info_output->fonts[i];
+				AtlasFontInfoInput * font_info_input  = folder_info_input->fonts[i].get();
+				AtlasFontInfo & font_info_output = folder_info_output->fonts[i];
 
 				size_t character_count = font_info_input->elements.size();
 				for (size_t j = 0; j < character_count; ++j)
@@ -476,8 +476,8 @@ namespace chaos
 			// generate input entries and sets. Collect input entries
 			// we have to const_cast<> as a non-const data because we are modifying "output_info" members
 			// this as no real side effect a the exit of this function on AtlasInput
-			BitmapInfoInputVector entries;
-			FillAtlasEntriesFromInput(entries, const_cast<FolderInfoInput *>(&in_input.root_folder), &output->root_folder);
+			AtlasBitmapInfoInputVector entries;
+			FillAtlasEntriesFromInput(entries, const_cast<AtlasFolderInfoInput *>(&in_input.root_folder), &output->root_folder);
 
 			// search max texture size
 			int max_width = -1;
@@ -485,7 +485,7 @@ namespace chaos
 
 			PixelFormatMerger pixel_format_merger(params.merge_params);
 
-			for (BitmapInfoInput const * info : entries)
+			for (AtlasBitmapInfoInput const * info : entries)
 			{
 				if (info->description.width == 0 || info->description.height == 0) // ignore empty bitmaps
 					continue;
@@ -550,7 +550,7 @@ namespace chaos
 			return false;
 		}
 
-		bool AtlasGenerator::DoComputeResult(BitmapInfoInputVector const & entries)
+		bool AtlasGenerator::DoComputeResult(AtlasBitmapInfoInputVector const & entries)
 		{
 			size_t count = entries.size();
 
@@ -558,8 +558,8 @@ namespace chaos
 			float padding = (float)params.atlas_padding;
 			std::vector<size_t> textures_indirection_table = CreateIndirectionTable(count, [padding, &entries](size_t i1, size_t i2)
 			{
-				BitmapInfoInput const * entry_1 = entries[i1];
-				BitmapInfoInput const * entry_2 = entries[i2];
+				AtlasBitmapInfoInput const * entry_1 = entries[i1];
+				AtlasBitmapInfoInput const * entry_2 = entries[i2];
 
 				if ((entry_1->description.height + padding) * (entry_1->description.width + padding) > (entry_2->description.height + padding) * (entry_2->description.width + padding))
 					return true;
@@ -570,7 +570,7 @@ namespace chaos
 			{
 				size_t entry_index = textures_indirection_table[i];
 
-				BitmapInfoInput const * input_entry = entries[entry_index];
+				AtlasBitmapInfoInput const * input_entry = entries[entry_index];
 
 				int   best_atlas_index = -1;
 				float best_score = -1.0f;
@@ -612,14 +612,14 @@ namespace chaos
 					atlas_definitions.push_back(std::move(def));
 				}
 
-				BitmapLayout * layout = GetBitmapLayout(entries[entry_index]);
+				AtlasBitmapLayout * layout = GetAtlasBitmapLayout(entries[entry_index]);
 				if (layout != nullptr)
-					InsertBitmapLayoutInAtlas(*layout, atlas_definitions[best_atlas_index], best_position);
+					InsertAtlasBitmapLayoutInAtlas(*layout, atlas_definitions[best_atlas_index], best_position);
 			}
 			return true;
 		}
 
-		float AtlasGenerator::FindBestPositionInAtlas(BitmapInfoInputVector const & entries, BitmapInfoInput const & info, AtlasDefinition const & atlas_def, glm::ivec2 & position) const
+		float AtlasGenerator::FindBestPositionInAtlas(AtlasBitmapInfoInputVector const & entries, AtlasBitmapInfoInput const & info, AtlasDefinition const & atlas_def, glm::ivec2 & position) const
 		{
 			// not enought surface remaining. Early exit
 			unsigned int max_surface = (unsigned int)(params.atlas_width * params.atlas_height);
@@ -655,7 +655,7 @@ namespace chaos
 			return -1.0f; // not found on this page
 		}
 
-		void AtlasGenerator::InsertBitmapLayoutInAtlas(BitmapLayout & layout, AtlasDefinition & atlas_def, glm::ivec2 const & position)
+		void AtlasGenerator::InsertAtlasBitmapLayoutInAtlas(AtlasBitmapLayout & layout, AtlasDefinition & atlas_def, glm::ivec2 const & position)
 		{
 			layout.bitmap_index = int(&atlas_def - &atlas_definitions[0]);
 			layout.x = position.x + params.atlas_padding;
@@ -702,7 +702,7 @@ namespace chaos
 		{
 			// fill the atlas
 			AtlasInput input;
-			FolderInfoInput * folder_info = input.AddFolder("files", 0);
+			AtlasFolderInfoInput * folder_info = input.AddFolder("files", 0);
 			folder_info->AddBitmapFilesFromDirectory(bitmaps_dir, recursive);
 			// create the atlas files
 			Atlas          atlas;

@@ -17,7 +17,7 @@ protected:
 		static int k = 0;
 		char const * bitmap_name = (k == 0)? "walking" : "moving";
 
-		chaos::BitmapAtlas::BitmapInfo const * info = atlas->GetBitmapInfo(bitmap_name, true);
+		chaos::BitmapAtlas::AtlasBitmapInfo const * info = atlas->GetBitmapInfo(bitmap_name, true);
 		if (info == nullptr)
 			return true;
 
@@ -27,7 +27,7 @@ protected:
 
 		int image = (int)(time / frame_duration);
 
-		chaos::BitmapAtlas::BitmapLayout layout = info->GetAnimationLayout(image, chaos::WrapMode::WRAP);
+		chaos::BitmapAtlas::AtlasBitmapLayout layout = info->GetAnimationLayout(image, chaos::WrapMode::WRAP);
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);   // when viewer is inside the cube

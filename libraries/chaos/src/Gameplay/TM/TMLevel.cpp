@@ -27,7 +27,7 @@ namespace chaos
 		return true;
 	}
 
-	ObjectRequest TMLevel::GetFolderInfoRequest() const
+	ObjectRequest TMLevel::GetAtlasFolderInfoRequest() const
 	{
 		return "sprites";
 	}

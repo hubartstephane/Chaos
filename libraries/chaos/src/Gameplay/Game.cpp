@@ -278,7 +278,7 @@ namespace chaos
 		if (tiled_map_manager != nullptr)
 		{
 			// find or create folder
-			BitmapAtlas::FolderInfoInput * folder_input = input.AddFolder("sprites", 0);
+			BitmapAtlas::AtlasFolderInfoInput * folder_input = input.AddFolder("sprites", 0);
 			if (folder_input == nullptr)
 				return false;
 			// add sprites from TiledMap

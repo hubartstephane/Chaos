@@ -8,10 +8,10 @@ namespace chaos
 		static constexpr size_t INDENT_VALUE = 2;
 
 		// ========================================================================
-		// BitmapLayout functions
+		// AtlasBitmapLayout functions
 		// ========================================================================
 
-		ParticleTexcoords BitmapLayout::GetTexcoords() const
+		ParticleTexcoords AtlasBitmapLayout::GetTexcoords() const
 		{
 			ParticleTexcoords result;
 			result.bottomleft = bottomleft_texcoord;
@@ -23,7 +23,7 @@ namespace chaos
 		// if src.x AND src.y are 0     => use the size in the atlas
 		// if src.x AND src.y are not 0 => returns the src unmodified
 		// if src.x OR  src.y is  0     => use bitmap ratio to replace the 0 axis
-		glm::vec2 BitmapLayout::ApplyRatioToSize(glm::vec2 src) const
+		glm::vec2 AtlasBitmapLayout::ApplyRatioToSize(glm::vec2 src) const
 		{
 			float bw = float(width);
 			float bh = float(height);
@@ -41,46 +41,46 @@ namespace chaos
 		}
 
 		// ========================================================================
-		// BitmapInfo functions
+		// AtlasBitmapInfo functions
 		// ========================================================================
 
-		bool BitmapInfo::HasAnimation() const
+		bool AtlasBitmapInfo::HasAnimation() const
 		{
 			if (animation_info == nullptr)
 				return false;
 			return true;
 		}
 
-		bool BitmapInfo::HasFrameAnimation() const
+		bool AtlasBitmapInfo::HasFrameAnimation() const
 		{
 			if (animation_info == nullptr)
 				return false;
 			return animation_info->IsFrameAnimation();
 		}
 
-		bool BitmapInfo::HasGridAnimation() const
+		bool AtlasBitmapInfo::HasGridAnimation() const
 		{
 			if (animation_info == nullptr)
 				return false;
 			return animation_info->IsGridAnimation();
 		}
 
-		BitmapLayout BitmapInfo::DoGetFrameAnimationLayout(int index, WrapMode mode) const
+		AtlasBitmapLayout AtlasBitmapInfo::DoGetFrameAnimationLayout(int index, WrapMode mode) const
 		{
 			// wrap the index
 			if (!ApplyWrapMode(index, 0, animation_info->child_frame_count + 1 - 1, mode, index)) // the real number of frames is (child_frame_count + 1). So for clamping we use (child_frame_count + 1 - 1)
-				return BitmapLayout();
+				return AtlasBitmapLayout();
 			// find the bitmap further in the bitmapinfo array
 			return this[static_cast<size_t>(index)];
 		}
 
-		BitmapLayout BitmapInfo::DoGetGridAnimationLayout(glm::ivec2 grid_index, WrapMode mode) const
+		AtlasBitmapLayout AtlasBitmapInfo::DoGetGridAnimationLayout(glm::ivec2 grid_index, WrapMode mode) const
 		{
 			BitmapGridAnimationInfo grid_data = animation_info->grid_data;
 
 			// wrap the index
 			if (!ApplyWrapMode(grid_index, glm::ivec2(0, 0), grid_data.grid_size - glm::ivec2(1, 1), mode, grid_index)) // -1 because the max_range belongs to the wanted values
-				return BitmapLayout();
+				return AtlasBitmapLayout();
 
 			// check linear index and skip_lasts
 			//
@@ -109,7 +109,7 @@ namespace chaos
 				if (index >= animation_count)
 				{
 					if (!ApplyWrapMode(index, 0, animation_count - 1, mode, index))
-						return BitmapLayout();
+						return AtlasBitmapLayout();
 					grid_index.x = (index % grid_data.grid_size.x);
 					grid_index.y = (index / grid_data.grid_size.x);
 				}
@@ -121,7 +121,7 @@ namespace chaos
 			//
 			// XXX : grid_index is top = 0 to bottom
 
-			BitmapLayout result;
+			AtlasBitmapLayout result;
 			result.bitmap_index = bitmap_index;
 			result.width = width / animation_info->grid_data.grid_size.x;
 			result.height = height / animation_info->grid_data.grid_size.y;
@@ -142,7 +142,7 @@ namespace chaos
 			return result;
 		}
 
-		WrapMode BitmapInfo::GetEffectiveRequestWrapMode(WrapMode src) const
+		WrapMode AtlasBitmapInfo::GetEffectiveRequestWrapMode(WrapMode src) const
 		{
 			// mode is none, see in the animation itself if there is a default settings
 			if (src == WrapMode::NONE)
@@ -158,26 +158,26 @@ namespace chaos
 			return src;
 		}
 
-		BitmapLayout BitmapInfo::GetAnimationLayoutFromTime(float time, WrapMode mode) const
+		AtlasBitmapLayout AtlasBitmapInfo::GetAnimationLayoutFromTime(float time, WrapMode mode) const
 		{
 			// non animated bitmap
 			if (animation_info == nullptr)
-				return BitmapLayout();
+				return AtlasBitmapLayout();
 
 			float frame_duration = animation_info->GetFrameDuration();
 			if (frame_duration <= 0.0f)
-				return BitmapLayout();
+				return AtlasBitmapLayout();
 
 			// transform time into an index
 			int index = int(time / frame_duration);
 			return GetAnimationLayout(index, mode);
 		}
 
-		BitmapLayout BitmapInfo::GetAnimationLayout(int index, WrapMode mode) const
+		AtlasBitmapLayout AtlasBitmapInfo::GetAnimationLayout(int index, WrapMode mode) const
 		{
 			// non animated bitmap
 			if (animation_info == nullptr)
-				return BitmapLayout();
+				return AtlasBitmapLayout();
 
 			// get the mode to use
 			mode = GetEffectiveRequestWrapMode(mode);
@@ -195,7 +195,7 @@ namespace chaos
 				int frame_count = animation_info->grid_data.GetFrameCount();
 
 				if (!ApplyWrapMode(index, 0, frame_count - 1, mode, index))
-					return BitmapLayout();
+					return AtlasBitmapLayout();
 
 				glm::ivec2 grid_index;
  				grid_index.x = index % grid_data.grid_size.x;
@@ -204,11 +204,11 @@ namespace chaos
 			}
 		}
 
-		BitmapLayout BitmapInfo::GetAnimationLayout(glm::ivec2 const & grid_index, WrapMode mode) const
+		AtlasBitmapLayout AtlasBitmapInfo::GetAnimationLayout(glm::ivec2 const & grid_index, WrapMode mode) const
 		{
 			// non animated bitmap
 			if (animation_info == nullptr)
-				return BitmapLayout();
+				return AtlasBitmapLayout();
 
 			// get the mode to use
 			mode = GetEffectiveRequestWrapMode(mode);
@@ -217,17 +217,17 @@ namespace chaos
 			if (animation_info->IsFrameAnimation())
 			{
 				if (mode == WrapMode::CHECK_RANGES && grid_index.y != 0)
-					return BitmapLayout();
+					return AtlasBitmapLayout();
 				return DoGetFrameAnimationLayout(grid_index.x, mode);
 			}
 			else
 			{
 				return DoGetGridAnimationLayout(grid_index, mode);
 			}
-			return BitmapLayout();
+			return AtlasBitmapLayout();
 		}
 
-		int BitmapInfo::GetAnimationImageCount() const
+		int AtlasBitmapInfo::GetAnimationImageCount() const
 		{
 			if (animation_info == nullptr)
 				return 0;
@@ -238,14 +238,14 @@ namespace chaos
 			return std::max((animation_info->grid_data.grid_size.x * animation_info->grid_data.grid_size.y) - animation_info->grid_data.skip_lasts, 0);
 		}
 
-		float BitmapInfo::GetAnimationDuration() const
+		float AtlasBitmapInfo::GetAnimationDuration() const
 		{
 			if (animation_info == nullptr)
 				return 0.0f;
 			return animation_info->GetAnimationDuration();
 		}
 
-		float BitmapInfo::GetFrameDuration() const
+		float AtlasBitmapInfo::GetFrameDuration() const
 		{
 			if (animation_info == nullptr)
 				return 0.0f;
@@ -253,10 +253,10 @@ namespace chaos
 		}
 
 		// ========================================================================
-		// FolderInfo functions
+		// AtlasFolderInfo functions
 		// ========================================================================
 
-		void FolderInfo::DoCollectEntries(std::vector<BitmapInfo> & result)
+		void AtlasFolderInfo::DoCollectEntries(std::vector<AtlasBitmapInfo> & result)
 		{
 			size_t count = bitmaps.size();
 
@@ -265,7 +265,7 @@ namespace chaos
 				result.push_back(bitmaps[i]);
 		}
 
-		void FolderInfo::DoCollectEntries(std::vector<CharacterInfo> & result)
+		void AtlasFolderInfo::DoCollectEntries(std::vector<AtlasCharacterInfo> & result)
 		{
 			size_t font_count = fonts.size();
 			for (size_t i = 0; i < font_count; ++i)
@@ -280,7 +280,7 @@ namespace chaos
 			}
 		}
 
-		void FolderInfo::DoCollectEntries(std::vector<BitmapLayout> & result, bool collect_bitmaps, bool collect_characters)
+		void AtlasFolderInfo::DoCollectEntries(std::vector<AtlasBitmapLayout> & result, bool collect_bitmaps, bool collect_characters)
 		{
 			if (collect_bitmaps)
 			{
@@ -317,7 +317,7 @@ namespace chaos
 			atlas_count = 0;
 			dimension = glm::ivec2(0, 0);
 			// destroy the root folder
-			AtlasBaseTemplate<Object, BitmapInfo, FontInfo, FolderInfo>::Clear();
+			AtlasBaseTemplate<Object, AtlasBitmapInfo, AtlasFontInfo, AtlasFolderInfo>::Clear();
 		}
 
 		float AtlasBase::ComputeSurface(int bitmap_index) const
@@ -325,7 +325,7 @@ namespace chaos
 			return DoComputeSurface(bitmap_index, &root_folder);
 		}
 
-		float AtlasBase::DoComputeSurface(int bitmap_index, FolderInfo const * folder_info) const
+		float AtlasBase::DoComputeSurface(int bitmap_index, AtlasFolderInfo const * folder_info) const
 		{
 			// XXX : ignore child entries. Their surface is already considered by their parent entry
 
@@ -334,12 +334,12 @@ namespace chaos
 
 			float result = 0.0f;
 			// surface for the bitmaps in the folder
-			for (BitmapInfo const & bitmap_info : folder_info->bitmaps)
+			for (AtlasBitmapInfo const & bitmap_info : folder_info->bitmaps)
 				if (bitmap_info.bitmap_index == bitmap_index || bitmap_index < 0)
 					result += (float)(bitmap_info.width * bitmap_info.height);
 			// surface for the fonts in the folder
-			for (FontInfo const & font_info : folder_info->fonts)
-				for (CharacterInfo const & character_info : font_info.elements)
+			for (AtlasFontInfo const & font_info : folder_info->fonts)
+				for (AtlasCharacterInfo const & character_info : font_info.elements)
 					if (character_info.bitmap_index == bitmap_index || bitmap_index < 0)
 						result += (float)(character_info.width * character_info.height);
 			// recursive calls
@@ -354,7 +354,7 @@ namespace chaos
 			DoOutputInfo(root_folder, stream);
 		}
 
-		void AtlasBase::DoOutputInfo(FolderInfo const & folder_info, std::ostream & stream, int indent) const
+		void AtlasBase::DoOutputInfo(AtlasFolderInfo const & folder_info, std::ostream & stream, int indent) const
 		{
 			StreamTools::Whitespaces whitespaces(indent);
 
@@ -367,7 +367,7 @@ namespace chaos
 			{
 				StreamTools::Whitespaces bitmap_stream_indent(indent + INDENT_VALUE);
 				stream << bitmap_stream_indent << "Bitmaps:" << '\n';
-				for (BitmapInfo const & bitmap_info : folder_info.bitmaps)
+				for (AtlasBitmapInfo const & bitmap_info : folder_info.bitmaps)
 					DoOutputInfo(bitmap_info, stream, indent + INDENT_VALUE);
 			}
 			// output the fonts in the folder
@@ -375,7 +375,7 @@ namespace chaos
 			{
 				StreamTools::Whitespaces font_stream_indent(indent + INDENT_VALUE);
 				stream << font_stream_indent << "Fonts:" << '\n';
-				for (FontInfo const & font_info : folder_info.fonts)
+				for (AtlasFontInfo const & font_info : folder_info.fonts)
 					DoOutputInfo(font_info, stream, indent + INDENT_VALUE);
 			}
 			// recursive calls
@@ -398,7 +398,7 @@ namespace chaos
 		}
 
 
-		void AtlasBase::DoOutputInfo(BitmapLayout const & info, std::ostream & stream, int indent)
+		void AtlasBase::DoOutputInfo(AtlasBitmapLayout const & info, std::ostream & stream, int indent)
 		{
 			StreamTools::Whitespaces whitespaces(indent);
 			stream << whitespaces << "  bitmap_index          : " << info.bitmap_index << '\n';
@@ -412,9 +412,9 @@ namespace chaos
 			stream << whitespaces << "  topright_texcoord.y   : " << info.topright_texcoord.y << '\n';
 		}
 
-		void AtlasBase::DoOutputInfo(CharacterLayout const & info, std::ostream & stream, int indent)
+		void AtlasBase::DoOutputInfo(AtlasCharacterLayout const & info, std::ostream & stream, int indent)
 		{
-			BitmapLayout const & bitmap_layout = info;
+			AtlasBitmapLayout const & bitmap_layout = info;
 			DoOutputInfo(bitmap_layout, stream, indent);
 
 			StreamTools::Whitespaces whitespaces(indent);
@@ -424,25 +424,25 @@ namespace chaos
 			stream << whitespaces << "  bitmap_top   : " << info.bitmap_top << '\n';
 		}
 
-		void AtlasBase::DoOutputInfo(BitmapInfo const & info, std::ostream & stream, int indent)
+		void AtlasBase::DoOutputInfo(AtlasBitmapInfo const & info, std::ostream & stream, int indent)
 		{
 			NamedInterface const & named_info = info;
 			DoOutputInfo(named_info, stream, indent);
 
-			BitmapLayout const & bitmap_layout = info;
+			AtlasBitmapLayout const & bitmap_layout = info;
 			DoOutputInfo(bitmap_layout, stream, indent);
 		}
 
-		void AtlasBase::DoOutputInfo(CharacterInfo const & info, std::ostream & stream, int indent)
+		void AtlasBase::DoOutputInfo(AtlasCharacterInfo const & info, std::ostream & stream, int indent)
 		{
 			NamedInterface const & named_info = info;
 			DoOutputInfo(named_info, stream, indent);
 
-			CharacterLayout const & character_layout = info;
+			AtlasCharacterLayout const & character_layout = info;
 			DoOutputInfo(character_layout, stream, indent);
 		}
 
-		void AtlasBase::DoOutputInfo(FontInfo const & info, std::ostream & stream, int indent)
+		void AtlasBase::DoOutputInfo(AtlasFontInfo const & info, std::ostream & stream, int indent)
 		{
 			NamedInterface const & named_info = info;
 			DoOutputInfo(named_info, stream, indent);
@@ -458,7 +458,7 @@ namespace chaos
 			if (info.elements.size() > 0)
 			{
 				stream << whitespaces << "Characters:" << '\n';
-				for (CharacterInfo const & character_info : info.elements)
+				for (AtlasCharacterInfo const & character_info : info.elements)
 					DoOutputInfo(character_info, stream, indent + INDENT_VALUE);
 			}
 		}
@@ -477,14 +477,14 @@ namespace chaos
 			return out.str();
 		}
 
-		std::string AtlasBase::GetInfoString(BitmapInfo const & info)
+		std::string AtlasBase::GetInfoString(AtlasBitmapInfo const & info)
 		{
 			std::ostringstream out;
 			DoOutputInfo(info, out);
 			return out.str();
 		}
 
-		std::string AtlasBase::GetInfoString(CharacterInfo const & info)
+		std::string AtlasBase::GetInfoString(AtlasCharacterInfo const & info)
 		{
 			std::ostringstream out;
 			DoOutputInfo(info, out);
@@ -737,17 +737,17 @@ namespace chaos
 		// JSON functions
 		// ========================================================================
 
-		bool DoSaveIntoJSON(nlohmann::json * json, BitmapAnimationInfo const & src)
+		bool DoSaveIntoJSON(nlohmann::json * json, AtlasBitmapAnimationInfo const & src)
 		{
 			return SaveIntoJSON(json, (ImageAnimationDescription const &)src);
 		}
 
-		bool DoLoadFromJSON(JSONReadConfiguration config, BitmapAnimationInfo & dst)
+		bool DoLoadFromJSON(JSONReadConfiguration config, AtlasBitmapAnimationInfo & dst)
 		{
 			return LoadFromJSON(config, (ImageAnimationDescription &)dst);
 		}
 
-		bool DoSaveIntoJSON(nlohmann::json * json, BitmapLayout const & src)
+		bool DoSaveIntoJSON(nlohmann::json * json, AtlasBitmapLayout const & src)
 		{
 			if (!PrepareSaveObjectIntoJSON(json))
 				return false;
@@ -761,7 +761,7 @@ namespace chaos
 			return true;
 		}
 
-		bool DoLoadFromJSON(JSONReadConfiguration config, BitmapLayout & dst)
+		bool DoLoadFromJSON(JSONReadConfiguration config, AtlasBitmapLayout & dst)
 		{
 			JSONTools::GetAttribute(config, "bitmap_index", dst.bitmap_index);
 			JSONTools::GetAttribute(config, "x", dst.x);
@@ -773,9 +773,9 @@ namespace chaos
 			return true;
 		}
 
-		bool DoSaveIntoJSON(nlohmann::json * json, CharacterLayout const & src)
+		bool DoSaveIntoJSON(nlohmann::json * json, AtlasCharacterLayout const & src)
 		{
-			if (!SaveIntoJSON(json, (BitmapLayout const&)src)) // call 'super' method (implies json = nlohmann::json::object();)
+			if (!SaveIntoJSON(json, (AtlasBitmapLayout const&)src)) // call 'super' method (implies json = nlohmann::json::object();)
 				return false;
 			JSONTools::SetAttribute(json, "advance_x", src.advance.x);
 			JSONTools::SetAttribute(json, "advance_y", src.advance.y);
@@ -784,9 +784,9 @@ namespace chaos
 			return true;
 		}
 
-		bool DoLoadFromJSON(JSONReadConfiguration config, CharacterLayout & dst)
+		bool DoLoadFromJSON(JSONReadConfiguration config, AtlasCharacterLayout & dst)
 		{
-			if (!LoadFromJSON(config, (BitmapLayout&)dst)) // call 'super' method
+			if (!LoadFromJSON(config, (AtlasBitmapLayout&)dst)) // call 'super' method
 				return false;
 			JSONTools::GetAttribute(config, "advance_x", dst.advance.x);
 			JSONTools::GetAttribute(config, "advance_y", dst.advance.y);
@@ -795,11 +795,11 @@ namespace chaos
 			return true;
 		}
 
-		bool DoSaveIntoJSON(nlohmann::json * json, BitmapInfo const & src)
+		bool DoSaveIntoJSON(nlohmann::json * json, AtlasBitmapInfo const & src)
 		{
 			if (!SaveIntoJSON(json, (NamedInterface const&)src))  // call 'super' method (implies json = nlohmann::json::object();)
 				return false;
-			if (!SaveIntoJSON(json, (BitmapLayout const&)src)) // call 'super' method (implies json = nlohmann::json::object();)
+			if (!SaveIntoJSON(json, (AtlasBitmapLayout const&)src)) // call 'super' method (implies json = nlohmann::json::object();)
 				return false;
 
 			if (src.animation_info != nullptr)
@@ -807,40 +807,40 @@ namespace chaos
 			return true;
 		}
 
-		bool DoLoadFromJSON(JSONReadConfiguration config, BitmapInfo & dst)
+		bool DoLoadFromJSON(JSONReadConfiguration config, AtlasBitmapInfo & dst)
 		{
 			if (!LoadFromJSON(config, (NamedInterface&)dst)) // call 'super' method
 				return false;
-			if (!LoadFromJSON(config, (BitmapLayout & )dst)) // call 'super' method
+			if (!LoadFromJSON(config, (AtlasBitmapLayout & )dst)) // call 'super' method
 				return false;
 			if (JSONReadConfiguration animation_config = JSONTools::GetAttributeStructureNode(config, "animation_info"))
 			{
-				dst.animation_info = new BitmapAnimationInfo;
+				dst.animation_info = new AtlasBitmapAnimationInfo;
 				if (dst.animation_info != nullptr)
 					LoadFromJSON(animation_config, *dst.animation_info);
 			}
 			return true;
 		}
 
-		bool DoSaveIntoJSON(nlohmann::json * json, CharacterInfo const & src)
+		bool DoSaveIntoJSON(nlohmann::json * json, AtlasCharacterInfo const & src)
 		{
 			if (!SaveIntoJSON(json, (NamedInterface const&)src))     // call 'super' method (implies json = nlohmann::json::object();)
 				return false;
-			if (!SaveIntoJSON(json, (CharacterLayout const&)src)) // call 'super' method (implies json = nlohmann::json::object();)
+			if (!SaveIntoJSON(json, (AtlasCharacterLayout const&)src)) // call 'super' method (implies json = nlohmann::json::object();)
 				return false;
 			return true;
 		}
 
-		bool DoLoadFromJSON(JSONReadConfiguration config, CharacterInfo & dst)
+		bool DoLoadFromJSON(JSONReadConfiguration config, AtlasCharacterInfo & dst)
 		{
 			if (!LoadFromJSON(config, (NamedInterface &)dst)) // call 'super' method
 				return false;
-			if (!LoadFromJSON(config, (CharacterLayout &)dst)) // call 'super' method
+			if (!LoadFromJSON(config, (AtlasCharacterLayout &)dst)) // call 'super' method
 				return false;
 			return true;
 		}
 
-		bool DoSaveIntoJSON(nlohmann::json * json, FontInfo const & src)
+		bool DoSaveIntoJSON(nlohmann::json * json, AtlasFontInfo const & src)
 		{
 			if (!SaveIntoJSON(json, (NamedInterface const&)src)) // call 'super' method (implies json = nlohmann::json::object();)
 				return false;
@@ -853,7 +853,7 @@ namespace chaos
 			return true;
 		}
 
-		bool DoLoadFromJSON(JSONReadConfiguration config, FontInfo & dst)
+		bool DoLoadFromJSON(JSONReadConfiguration config, AtlasFontInfo & dst)
 		{
 			if (!LoadFromJSON(config, (NamedInterface & )dst)) // call 'super' method
 				return false;
@@ -866,7 +866,7 @@ namespace chaos
 			return true;
 		}
 
-		bool DoSaveIntoJSON(nlohmann::json * json, FolderInfo const & src)
+		bool DoSaveIntoJSON(nlohmann::json * json, AtlasFolderInfo const & src)
 		{
 			if (!SaveIntoJSON(json, (NamedInterface const&)src)) // call 'super' method (implies json = nlohmann::json::object();)
 				return false;
@@ -879,7 +879,7 @@ namespace chaos
 			return true;
 		}
 
-		bool DoLoadFromJSON(JSONReadConfiguration config, FolderInfo & dst)
+		bool DoLoadFromJSON(JSONReadConfiguration config, AtlasFolderInfo & dst)
 		{
 			if (!LoadFromJSON(config, (NamedInterface &)dst)) // call 'super' method
 				return false;

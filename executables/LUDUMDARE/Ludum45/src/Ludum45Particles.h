@@ -137,7 +137,7 @@ class ParticleShroudLife : public ParticleBase
 {
 public:
 
-	chaos::BitmapAtlas::BitmapInfo const * bitmap_info = nullptr;
+	chaos::BitmapAtlas::AtlasBitmapInfo const * bitmap_info = nullptr;
 
 };
 
@@ -204,7 +204,7 @@ class ParticleExplosion : public chaos::ParticleDefault
 
 public:
 
-	chaos::BitmapAtlas::BitmapInfo const * explosion_info = nullptr;
+	chaos::BitmapAtlas::AtlasBitmapInfo const * explosion_info = nullptr;
 
 	float age = 0.0f;
 };

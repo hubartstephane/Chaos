@@ -17,7 +17,7 @@ protected:
 		if (bitmap_index >= bitmap_layouts.size())
 			bitmap_index = bitmap_layouts.size() - 1;
 
-		chaos::BitmapAtlas::BitmapLayout const & layout = bitmap_layouts[bitmap_index];
+		chaos::BitmapAtlas::AtlasBitmapLayout const & layout = bitmap_layouts[bitmap_index];
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);   // when viewer is inside the cube
@@ -173,7 +173,7 @@ protected:
 	chaos::GPUAtlas atlas;
 
 	size_t bitmap_index = 0;
-	std::vector<chaos::BitmapAtlas::BitmapLayout> bitmap_layouts;
+	std::vector<chaos::BitmapAtlas::AtlasBitmapLayout> bitmap_layouts;
 
 	chaos::FPSViewController fps_view_controller;
 

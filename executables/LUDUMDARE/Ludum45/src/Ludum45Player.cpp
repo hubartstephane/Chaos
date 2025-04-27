@@ -220,7 +220,7 @@ void LudumPlayer::FireProjectiles()
     if (!fire_spawner.IsValid() || !fire_spawner.HasBitmap())
         return;
 
-    chaos::BitmapAtlas::BitmapLayout const layout = *fire_spawner.GetBitmapInfo();
+    chaos::BitmapAtlas::AtlasBitmapLayout const layout = *fire_spawner.GetBitmapInfo();
 
     // get the spread value
     int count = GetCurrentPowerSpreadValue();

@@ -176,7 +176,7 @@ Dans GameHUD la notion de text/format n'est pas tres claire'
 
 		EIGHT_BIT_FLAG AUTOMATIQUEMENT ... voir d autres choses
 
-		BitmapInfo a coller dans une particle ou GID
+		AtlasBitmapInfo a coller dans une particle ou GID
 
 
 		------------------------------------------------------

@@ -20,7 +20,7 @@ namespace chaos
 			return AddIntoAtlasInput(map, input.GetRootFolder());
 		}
 
-		bool AddIntoAtlasInput(TiledMap::LayerBase const* layer, BitmapAtlas::FolderInfoInput* folder_input)
+		bool AddIntoAtlasInput(TiledMap::LayerBase const* layer, BitmapAtlas::AtlasFolderInfoInput* folder_input)
 		{
 			assert(layer != nullptr);
 			assert(folder_input != nullptr);
@@ -40,7 +40,7 @@ namespace chaos
 			return true;
 		}
 
-		bool AddIntoAtlasInput(TiledMap::Map const* map, BitmapAtlas::FolderInfoInput* folder_input)
+		bool AddIntoAtlasInput(TiledMap::Map const* map, BitmapAtlas::AtlasFolderInfoInput* folder_input)
 		{
 			assert(map != nullptr);
 			assert(folder_input != nullptr);
@@ -53,7 +53,7 @@ namespace chaos
 			return true;
 		}
 
-		bool AddIntoAtlasInput(TiledMap::TileSet const* tile_set, BitmapAtlas::FolderInfoInput* folder_input)
+		bool AddIntoAtlasInput(TiledMap::TileSet const* tile_set, BitmapAtlas::AtlasFolderInfoInput* folder_input)
 		{
 			assert(tile_set != nullptr);
 			assert(folder_input != nullptr);
@@ -75,7 +75,7 @@ namespace chaos
 			return true;
 		}
 
-		bool AddIntoAtlasInput(TiledMap::Manager const* manager, BitmapAtlas::FolderInfoInput* folder_input)
+		bool AddIntoAtlasInput(TiledMap::Manager const* manager, BitmapAtlas::AtlasFolderInfoInput* folder_input)
 		{
 			assert(manager != nullptr);
 			assert(folder_input != nullptr);

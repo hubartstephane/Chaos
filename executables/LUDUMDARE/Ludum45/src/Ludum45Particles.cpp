@@ -205,7 +205,7 @@ void ParticlePlayerLayerTrait::ParticleToPrimitives(ParticlePlayer const& partic
 	// animation
     if (other.bitmap_info != nullptr && other.bitmap_info->HasGridAnimation())
     {
-        chaos::BitmapAtlas::BitmapLayout layout = other.bitmap_info->GetAnimationLayout(other.current_frame, chaos::WrapMode::WRAP);
+        chaos::BitmapAtlas::AtlasBitmapLayout layout = other.bitmap_info->GetAnimationLayout(other.current_frame, chaos::WrapMode::WRAP);
 		other.texcoords = layout.GetTexcoords();
     }
 	// boost color
@@ -372,7 +372,7 @@ bool ParticleShroudLifeTrait::UpdateParticle(float delta_time, ParticleShroudLif
 
 	int index = (int)(image_count * (1.0 - (health / max_health)));
 
-	chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayout(index, chaos::WrapMode::CLAMP);
+	chaos::BitmapAtlas::AtlasBitmapLayout layout = particle.bitmap_info->GetAnimationLayout(index, chaos::WrapMode::CLAMP);
 
 	particle.texcoords = layout.GetTexcoords();
 
@@ -408,7 +408,7 @@ bool ParticleExplosionLayerTrait::UpdateParticle(float delta_time, ParticleExplo
 
 	int image_index = (int)(particle.age / frame_duration);
 
-	chaos::BitmapAtlas::BitmapLayout bitmap_layout = particle.explosion_info->GetAnimationLayout(image_index, chaos::WrapMode::CHECK_RANGES);
+	chaos::BitmapAtlas::AtlasBitmapLayout bitmap_layout = particle.explosion_info->GetAnimationLayout(image_index, chaos::WrapMode::CHECK_RANGES);
 	if (bitmap_layout.bitmap_index < 0)
 		return true;
 

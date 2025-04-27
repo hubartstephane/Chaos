@@ -50,7 +50,7 @@ namespace chaos
 			/** parameters for merging different pixel format */
 			PixelFormatMergeParams merge_params;
 			/** the filters to be applyed to each bitmaps */
-			BitmapAtlasFilterSet const* filters = nullptr;
+			AtlasInputFilterSet const* filters = nullptr;
 		};
 
 		/**
@@ -81,7 +81,7 @@ namespace chaos
 
 		/**
 		* AtlasGenerator :
-		*   each time a BitmapInfo is inserted, the space is split along 4 axis
+		*   each time a AtlasBitmapInfo is inserted, the space is split along 4 axis
 		*   this creates a grid of points that serve to new positions for inserting next entries ...
 		*   it select the best position as the one that minimize space at left, right, top and bottom
 		*/
@@ -99,16 +99,16 @@ namespace chaos
 			};
 
 			/** an utility class used to reference all entries in input */
-			using BitmapInfoInputVector = std::vector<BitmapInfoInput*>;
+			using AtlasBitmapInfoInputVector = std::vector<AtlasBitmapInfoInput*>;
 
 		public:
 
 			/** make destructor virtual */
 			virtual ~AtlasGenerator() = default;
-			/** compute all BitmapInfo positions */
+			/** compute all AtlasBitmapInfo positions */
 			bool ComputeResult(AtlasInput const& in_input, Atlas& in_ouput, AtlasGeneratorParams const& in_params = AtlasGeneratorParams());
 			/** returns a vector with all generated bitmaps (to be deallocated after usage) */
-			std::vector<bitmap_ptr> GenerateBitmaps(BitmapInfoInputVector const& entries, PixelFormat const& final_pixel_format) const;
+			std::vector<bitmap_ptr> GenerateBitmaps(AtlasBitmapInfoInputVector const& entries, PixelFormat const& final_pixel_format) const;
 			/** create an atlas from a directory into another directory */
 			static bool CreateAtlasFromDirectory(FilePathParam const& bitmaps_dir, FilePathParam const& path, bool recursive, AtlasGeneratorParams const& in_params = AtlasGeneratorParams());
 
@@ -120,22 +120,22 @@ namespace chaos
 			Rectangle GetAtlasRectangle() const;
 			/** add padding to a rectangle */
 			Rectangle AddPadding(Rectangle const& r) const;
-			/** returns the rectangle corresponding to the BitmapLayout */
-			Rectangle GetRectangle(BitmapLayout const& layout) const;
+			/** returns the rectangle corresponding to the AtlasBitmapLayout */
+			Rectangle GetRectangle(AtlasBitmapLayout const& layout) const;
 
 			/** fill the entries of the atlas from input (collect all input entries) */
-			void FillAtlasEntriesFromInput(BitmapInfoInputVector& result, FolderInfoInput* folder_info_input, FolderInfo* folder_info_output);
+			void FillAtlasEntriesFromInput(AtlasBitmapInfoInputVector& result, AtlasFolderInfoInput* folder_info_input, AtlasFolderInfo* folder_info_output);
 			/** test whether there is an intersection between each pair of Entries in an atlas */
-			bool EnsureValidResults(BitmapInfoInputVector const& result, std::ostream& stream = std::cout) const;
+			bool EnsureValidResults(AtlasBitmapInfoInputVector const& result, std::ostream& stream = std::cout) const;
 			/** test whether rectangle intersects with any of the entries */
 			bool HasIntersectingInfo(Rectangle const& r, std::vector<Rectangle> const& collision_rectangles) const;
 
 			/** the effective function to do the computation */
-			bool DoComputeResult(BitmapInfoInputVector const& entries);
+			bool DoComputeResult(AtlasBitmapInfoInputVector const& entries);
 			/** returns the position (if any) in an atlas withe the best score */
-			float FindBestPositionInAtlas(BitmapInfoInputVector const& entries, BitmapInfoInput const& info, AtlasDefinition const& atlas_def, glm::ivec2& position) const;
+			float FindBestPositionInAtlas(AtlasBitmapInfoInputVector const& entries, AtlasBitmapInfoInput const& info, AtlasDefinition const& atlas_def, glm::ivec2& position) const;
 			/** insert a bitmap in an atlas definition */
-			void InsertBitmapLayoutInAtlas(BitmapLayout& layout, AtlasDefinition& atlas_def, glm::ivec2 const& position);
+			void InsertAtlasBitmapLayoutInAtlas(AtlasBitmapLayout& layout, AtlasDefinition& atlas_def, glm::ivec2 const& position);
 
 			/** an utility function that returns an array with 0.. count - 1*/
 			static std::vector<size_t> CreateIndexTable(size_t count)

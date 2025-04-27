@@ -31,7 +31,7 @@ namespace chaos
 		/** generate a texture atlas from a standard atlas */
 		bool DoLoadFromBitmapAtlas(BitmapAtlas::Atlas&& atlas);
 		/** copy src folder into dst folder */
-		bool DoCopyFolder(BitmapAtlas::FolderInfo* dst_folder_info, BitmapAtlas::FolderInfo const* src_folder_info);
+		bool DoCopyFolder(BitmapAtlas::AtlasFolderInfo* dst_folder_info, BitmapAtlas::AtlasFolderInfo const* src_folder_info);
 		/** generate a texture array */
 		bool DoGenerateTextureArray(BitmapAtlas::Atlas const& atlas);
 

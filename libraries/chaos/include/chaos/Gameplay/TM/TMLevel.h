@@ -82,7 +82,7 @@ namespace chaos
 		TMLayerInstance* CreateLayerInstance(TMLevelInstance* in_level_instance, TiledMap::LayerBase* in_layer, TMLayerInstance* in_parent_layer, TMObjectReferenceSolver& reference_solver);
 
 		/** get the folder in which bitmaps are stored in Game::Atlas */
-		virtual ObjectRequest GetFolderInfoRequest() const;
+		virtual ObjectRequest GetAtlasFolderInfoRequest() const;
 
 		/** create a particle layer */
 		virtual ParticleLayerBase* DoCreateParticleLayer(TMLayerInstance* layer_instance);

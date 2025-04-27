@@ -16,7 +16,7 @@ void SaveAtlasAndOutputAtlasToHTML(chaos::BitmapAtlas::Atlas & atlas, chaos::Fil
 	chaos::BitmapAtlas::AtlasHTMLGenerator::OutputToHTMLFile(atlas, html_dest_p, html_params);
 }
 
-bool AddFakeBitmap(chaos::BitmapAtlas::FolderInfoInput * folder_input, char const * name)
+bool AddFakeBitmap(chaos::BitmapAtlas::AtlasFolderInfoInput * folder_input, char const * name)
 {
 	assert(name != nullptr);
 
@@ -34,7 +34,7 @@ bool AddFakeBitmap(chaos::BitmapAtlas::FolderInfoInput * folder_input, char cons
 
 		chaos::ImageTools::FillImageBackground(image_description, glm::vec4(color, color, color, 1.0f));
 
-		chaos::BitmapAtlas::BitmapInfoInput * result = folder_input->AddBitmap(bitmap, true, name, 0);
+		chaos::BitmapAtlas::AtlasBitmapInfoInput * result = folder_input->AddBitmap(bitmap, true, name, 0);
 		if (result == nullptr)
 			FreeImage_Unload(bitmap);
 	}
@@ -45,7 +45,7 @@ void TestAtlasDebugMode(boost::filesystem::path const & dest_p)
 {
 	chaos::BitmapAtlas::AtlasInput input;
 
-	chaos::BitmapAtlas::FolderInfoInput * folder_input = input.AddFolder("folder_input1", 0);
+	chaos::BitmapAtlas::AtlasFolderInfoInput * folder_input = input.AddFolder("folder_input1", 0);
 
 	AddFakeBitmap(folder_input, "A");
 	AddFakeBitmap(folder_input, "B");
@@ -80,11 +80,11 @@ void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::pa
 	chaos::BitmapAtlas::AtlasGenerator generator;
 	chaos::BitmapAtlas::AtlasInput     input;
 
-	input.AddFont(font_path1.string().c_str(), nullptr, true, "font_info1", 0, chaos::BitmapAtlas::FontInfoInputParams());
+	input.AddFont(font_path1.string().c_str(), nullptr, true, "font_info1", 0, chaos::BitmapAtlas::AtlasFontInfoInputParams());
 
-	input.AddFont(font_path2.string().c_str(), nullptr, true, "font_info2", 0, chaos::BitmapAtlas::FontInfoInputParams());
+	input.AddFont(font_path2.string().c_str(), nullptr, true, "font_info2", 0, chaos::BitmapAtlas::AtlasFontInfoInputParams());
 
-	chaos::BitmapAtlas::FolderInfoInput * folder_input =
+	chaos::BitmapAtlas::AtlasFolderInfoInput * folder_input =
 		input.AddFolder("folder_input1", 0);
 
 	folder_input->AddBitmapFilesFromDirectory(resources_path / "Images", true);

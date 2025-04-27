@@ -63,21 +63,21 @@ namespace chaos
 			return nullptr;
 		}
 
-		/** fill BitmapAtlasInput from a TiledMap manager */
+		/** fill AtlasInput from a TiledMap manager */
 		CHAOS_API bool AddIntoAtlasInput(TiledMap::Manager const * manager, BitmapAtlas::AtlasInput & input);
-		/** fill BitmapAtlasInput from a TileSet */
+		/** fill AtlasInput from a TileSet */
 		CHAOS_API bool AddIntoAtlasInput(TiledMap::TileSet const * tile_set, BitmapAtlas::AtlasInput & input);
-		/** fill BitmapAtlasInput from a Map */
+		/** fill AtlasInput from a Map */
 		CHAOS_API bool AddIntoAtlasInput(TiledMap::Map const * map, BitmapAtlas::AtlasInput & input);
 
-		/** fill BitmapAtlasInput from a TiledMap manager */
-		CHAOS_API bool AddIntoAtlasInput(TiledMap::Manager const * manager, BitmapAtlas::FolderInfoInput * folder_input);
-		/** fill BitmapAtlasInput from a TileSet */
-		CHAOS_API bool AddIntoAtlasInput(TiledMap::TileSet const * tile_set, BitmapAtlas::FolderInfoInput * folder_input);
-		/** fill BitmapAtlasInput from a Map */
-		CHAOS_API bool AddIntoAtlasInput(TiledMap::Map const * map, BitmapAtlas::FolderInfoInput * folder_input);
-		/** fill BitmapAtlasInput from a Layer */
-		CHAOS_API bool AddIntoAtlasInput(TiledMap::LayerBase const* layer, BitmapAtlas::FolderInfoInput* folder_input);
+		/** fill AtlasInput from a TiledMap manager */
+		CHAOS_API bool AddIntoAtlasInput(TiledMap::Manager const * manager, BitmapAtlas::AtlasFolderInfoInput * folder_input);
+		/** fill AtlasInput from a TileSet */
+		CHAOS_API bool AddIntoAtlasInput(TiledMap::TileSet const * tile_set, BitmapAtlas::AtlasFolderInfoInput * folder_input);
+		/** fill AtlasInput from a Map */
+		CHAOS_API bool AddIntoAtlasInput(TiledMap::Map const * map, BitmapAtlas::AtlasFolderInfoInput * folder_input);
+		/** fill AtlasInput from a Layer */
+		CHAOS_API bool AddIntoAtlasInput(TiledMap::LayerBase const* layer, BitmapAtlas::AtlasFolderInfoInput* folder_input);
 
 		/** returns true whether the object defines an explicit world bounding */
 		CHAOS_API bool IsWorldBoundingBox(TiledMap::TypedObject const* typed_object);

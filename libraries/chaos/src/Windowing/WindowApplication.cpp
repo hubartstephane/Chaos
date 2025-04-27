@@ -344,7 +344,7 @@ namespace chaos
 		if (!JSONTools::GetAttribute(GetJSONReadConfiguration(), "sprite_directory", sprite_directory))
 			return true;
 		// find or create folder
-		BitmapAtlas::FolderInfoInput* folder_info = input.AddFolder("sprites", 0);
+		BitmapAtlas::AtlasFolderInfoInput* folder_info = input.AddFolder("sprites", 0);
 		if (folder_info == nullptr)
 			return false;
 		// Add sprites
@@ -358,7 +358,7 @@ namespace chaos
 		if (JSONReadConfiguration fonts_config = JSONTools::GetAttributeStructureNode(GetJSONReadConfiguration(), "fonts"))
 		{
 			// read the default font parameters
-			BitmapAtlas::FontInfoInputParams font_params;
+			BitmapAtlas::AtlasFontInfoInputParams font_params;
 			if (JSONReadConfiguration default_font_param_json = JSONTools::GetAttributeStructureNode(fonts_config, "default_font_param"))
 				LoadFromJSON(default_font_param_json, font_params);
 
@@ -420,13 +420,13 @@ namespace chaos
 		JSONReadConfiguration fonts_config = JSONTools::GetAttributeStructureNode(config, "fonts");
 
 		// bitmaps in generator
-		if (BitmapAtlas::FolderInfo const* folder_info = texture_atlas->GetFolderInfo("sprites"))
+		if (BitmapAtlas::AtlasFolderInfo const* folder_info = texture_atlas->GetFolderInfo("sprites"))
 		{
 			// for each bitmap, that correspond to a button, register a [NAME] in the generator
 			for (auto it = gamepad_button_map.begin(); it != gamepad_button_map.end(); ++it)
 			{
 				std::string const& bitmap_name = it->second.first;
-				BitmapAtlas::BitmapInfo const* info = folder_info->GetBitmapInfo(bitmap_name.c_str());
+				BitmapAtlas::AtlasBitmapInfo const* info = folder_info->GetBitmapInfo(bitmap_name.c_str());
 				if (info == nullptr)
 					continue;
 				std::string const& generator_alias = it->second.second;
@@ -445,7 +445,7 @@ namespace chaos
 								continue;
 							std::string const& bitmap_name = it.key();
 							std::string bitmap_path = it->get<std::string>();
-							BitmapAtlas::BitmapInfo const* info = folder_info->GetBitmapInfo(bitmap_path.c_str());
+							BitmapAtlas::AtlasBitmapInfo const* info = folder_info->GetBitmapInfo(bitmap_path.c_str());
 							if (info == nullptr)
 								continue;
 							particle_text_generator->AddBitmap(bitmap_name.c_str(), info);

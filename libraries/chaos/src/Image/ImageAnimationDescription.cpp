@@ -139,7 +139,7 @@ namespace chaos
 	}
 
 	// ========================================================================
-	// BitmapAnimationInfo functions
+	// AtlasBitmapAnimationInfo functions
 	// ========================================================================
 
 	bool ImageAnimationDescription::IsFrameAnimation() const

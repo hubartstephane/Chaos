@@ -540,7 +540,7 @@ bool Game::GenerateAtlas(boost::filesystem::path const & path)
 
 	chaos::BitmapAtlas::AtlasInput input;
 
-	chaos::BitmapAtlas::FolderInfoInput * folder = input.AddFolder("sprites", 0);
+	chaos::BitmapAtlas::AtlasFolderInfoInput * folder = input.AddFolder("sprites", 0);
 	if (folder == nullptr)
 		return false;
 

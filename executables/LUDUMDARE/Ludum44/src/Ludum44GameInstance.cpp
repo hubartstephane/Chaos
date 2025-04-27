@@ -84,7 +84,7 @@ void LudumGameInstance::FireExplosion(chaos::box2 const & ref_box)
     if (!spawner.IsValid())
         return;
 
-    chaos::BitmapAtlas::BitmapInfo const* explosion_info = spawner.GetBitmapInfo();
+    chaos::BitmapAtlas::AtlasBitmapInfo const* explosion_info = spawner.GetBitmapInfo();
 
     spawner.SpawnParticles(1, false).Process([ref_box, explosion_info](chaos::ParticleAccessor<ParticleExplosion> accessor)
     {
@@ -116,7 +116,7 @@ chaos::ParticleAccessor<ParticleFire> LudumGameInstance::FireProjectile(char con
     if (!spawner.IsValid() || !spawner.HasBitmap())
         return result;
 
-    chaos::BitmapAtlas::BitmapLayout layout = *spawner.GetBitmapInfo();
+    chaos::BitmapAtlas::AtlasBitmapLayout layout = *spawner.GetBitmapInfo();
 
     chaos::box2 particle_box = ref_box;
     particle_box.half_size = ratio_to_box * ref_box.half_size;

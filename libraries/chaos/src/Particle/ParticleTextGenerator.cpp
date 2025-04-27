@@ -90,7 +90,7 @@ namespace chaos
 			return style_stack[style_stack.size() - 1];
 		}
 
-		Style & GeneratorData::PushFontInfo(BitmapAtlas::FontInfo const * font_info, bool override_top_stack)
+		Style & GeneratorData::PushAtlasFontInfo(BitmapAtlas::AtlasFontInfo const * font_info, bool override_top_stack)
 		{
 			// push a copy of previous style, except the character set
 			Style & result = PushDuplicate(override_top_stack);
@@ -107,14 +107,14 @@ namespace chaos
 			return result;
 		}
 
-		BitmapAtlas::FontInfo const * GeneratorData::GetFirstFont(BitmapAtlas::FolderInfo const * folder_info) const
+		BitmapAtlas::AtlasFontInfo const * GeneratorData::GetFirstFont(BitmapAtlas::AtlasFolderInfo const * folder_info) const
 		{
 			if (folder_info == nullptr)
 				return nullptr;
 			if (folder_info->fonts.size() > 0)
 				return &folder_info->fonts[0];
 
-			BitmapAtlas::FontInfo const * result = nullptr;
+			BitmapAtlas::AtlasFontInfo const * result = nullptr;
 
 			size_t count = folder_info->folders.size();
 			for (size_t i = 0; (i < count) && (result == nullptr); ++i)
@@ -122,9 +122,9 @@ namespace chaos
 			return result;
 		}
 
-		BitmapAtlas::FontInfo const * GeneratorData::GetFontInfoFromName(char const * font_info_name) const
+		BitmapAtlas::AtlasFontInfo const * GeneratorData::GetAtlasFontInfoFromName(char const * font_info_name) const
 		{
-			BitmapAtlas::FontInfo const * result = generator.atlas.GetFontInfo(font_info_name, true);
+			BitmapAtlas::AtlasFontInfo const * result = generator.atlas.GetAtlasFontInfo(font_info_name, true);
 			if (result == nullptr)
 			{
 				// for convenience, if we cannot find the character set, try to use the one on the top of the stack
@@ -140,12 +140,12 @@ namespace chaos
 		void GeneratorData::EmitCharacters(uint32_t charcode, size_t count)
 		{
 			// get current character set
-			BitmapAtlas::FontInfo const * font_info = style_stack.back().font_info;
+			BitmapAtlas::AtlasFontInfo const * font_info = style_stack.back().font_info;
 			if (font_info == nullptr)
 				return;
 
 			// get info corresponding to the glyph
-			BitmapAtlas::CharacterInfo const * info = font_info->GetCharacterInfo(charcode);
+			BitmapAtlas::AtlasCharacterInfo const * info = font_info->GetAtlasCharacterInfo(charcode);
 			if (info == nullptr)
 				return;
 
@@ -154,7 +154,7 @@ namespace chaos
 				EmitCharacter(charcode, info, font_info);
 		}
 
-		void GeneratorData::EmitCharacter(uint32_t charcode, BitmapAtlas::CharacterLayout const * layout, BitmapAtlas::FontInfo const * font_info)
+		void GeneratorData::EmitCharacter(uint32_t charcode, BitmapAtlas::AtlasCharacterLayout const * layout, BitmapAtlas::AtlasFontInfo const * font_info)
 		{
 			Token token;
 			token.character = charcode;
@@ -164,7 +164,7 @@ namespace chaos
 			InsertTokenInLine(token);
 		}
 
-		void GeneratorData::EmitBitmap(BitmapAtlas::BitmapLayout const * layout, bool use_font_color)
+		void GeneratorData::EmitBitmap(BitmapAtlas::AtlasBitmapLayout const * layout, bool use_font_color)
 		{
 			Token token;
 			token.bitmap_layout = layout;
@@ -324,10 +324,10 @@ namespace chaos
 						return true;
 					}
 					// character set markup found
-					auto font_info = generator.GetFontInfo(markup.c_str());
+					auto font_info = generator.GetAtlasFontInfo(markup.c_str());
 					if (font_info != nullptr)
 					{
-						PushFontInfo(font_info, override_top_stack);
+						PushAtlasFontInfo(font_info, override_top_stack);
 						return true;
 					}
 					// a markup has been detected but we don'k know to what it corresponds, so push a duplicate on the stack
@@ -352,14 +352,14 @@ namespace chaos
 			return &it->second;
 		}
 
-		BitmapAtlas::BitmapInfo const * Generator::GetBitmapInfo(char const * name) const
+		BitmapAtlas::AtlasBitmapInfo const * Generator::GetBitmapInfo(char const * name) const
 		{
 			auto it = bitmaps.find(name);
 			if (it == bitmaps.end())
 				return nullptr;
 			return it->second;
 		}
-		BitmapAtlas::FontInfo const * Generator::GetFontInfo(char const * name) const
+		BitmapAtlas::AtlasFontInfo const * Generator::GetAtlasFontInfo(char const * name) const
 		{
 			auto it = font_infos.find(name);
 			if (it == font_infos.end())
@@ -400,13 +400,13 @@ namespace chaos
 			assert(name != nullptr);
 			assert(font_name != nullptr);
 
-			BitmapAtlas::FontInfo const * font_info = atlas.GetFontInfo(font_name);
+			BitmapAtlas::AtlasFontInfo const * font_info = atlas.GetAtlasFontInfo(font_name);
 			if (font_info == nullptr)
 				return false;
 			return AddFontInfo(name, font_info);
 		}
 
-		bool Generator::AddFontInfo(char const * name, BitmapAtlas::FontInfo const * font_info)
+		bool Generator::AddFontInfo(char const * name, BitmapAtlas::AtlasFontInfo const * font_info)
 		{
 			assert(font_info != nullptr);
 
@@ -420,16 +420,16 @@ namespace chaos
 		{
 			assert(name != nullptr);
 
-			BitmapAtlas::FolderInfo const * folder_info = atlas.GetFolderInfo(folder_request);
+			BitmapAtlas::AtlasFolderInfo const * folder_info = atlas.GetFolderInfo(folder_request);
 			if (folder_info == nullptr)
 				return false;
-			BitmapAtlas::BitmapInfo const * info = folder_info->GetBitmapInfo(bitmap_request);
+			BitmapAtlas::AtlasBitmapInfo const * info = folder_info->GetBitmapInfo(bitmap_request);
 			if (info == nullptr)
 				return false;
 			return AddBitmap(name, info);
 		}
 
-		bool Generator::AddBitmap(char const * name, BitmapAtlas::BitmapInfo const * info)
+		bool Generator::AddBitmap(char const * name, BitmapAtlas::AtlasBitmapInfo const * info)
 		{
 			assert(info != nullptr);
 
@@ -451,7 +451,7 @@ namespace chaos
 
 			Style style;
 			style.color = params.default_color;
-			style.font_info = generator_data.GetFontInfoFromName(params.font_info_name.c_str());
+			style.font_info = generator_data.GetAtlasFontInfoFromName(params.font_info_name.c_str());
 			generator_data.style_stack.push_back(style);
 
 			// start the generation

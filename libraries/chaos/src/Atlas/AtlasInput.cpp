@@ -46,10 +46,10 @@ namespace chaos
 		}
 
 		// ========================================================================
-		// FontInfoInputParams functions
+		// AtlasFontInfoInputParams functions
 		// ========================================================================
 
-		bool DoSaveIntoJSON(nlohmann::json * json, FontInfoInputParams const& src)
+		bool DoSaveIntoJSON(nlohmann::json * json, AtlasFontInfoInputParams const& src)
 		{
 			if (!PrepareSaveObjectIntoJSON(json))
 				return false;
@@ -61,7 +61,7 @@ namespace chaos
 			return true;
 		}
 
-		bool DoLoadFromJSON(JSONReadConfiguration config, FontInfoInputParams& dst)
+		bool DoLoadFromJSON(JSONReadConfiguration config, AtlasFontInfoInputParams& dst)
 		{
 			JSONTools::GetAttribute(config, "characters", dst.characters);
 			JSONTools::GetAttribute(config, "grid_size", dst.grid_size);
@@ -72,10 +72,10 @@ namespace chaos
 		}
 
 		// ========================================================================
-		// BitmapInfoInputManifest : an utility class for JSON files coming as image descriptors
+		// AtlasBitmapInfoInputManifest : an utility class for JSON files coming as image descriptors
 		// ========================================================================
 
-		class BitmapInfoInputManifest
+		class AtlasBitmapInfoInputManifest
 		{
 		public:
 
@@ -86,7 +86,7 @@ namespace chaos
 			/** the duration of a the whole animation in seconds */
 			float anim_duration = -1.0f;
 			/** the default wrap mode */
-			WrapMode default_wrap_mode = WrapMode::NONE; // let the code decide in a single location (see  BitmapInfo::GetEffectiveRequestWrapMode(...))
+			WrapMode default_wrap_mode = WrapMode::NONE; // let the code decide in a single location (see  AtlasBitmapInfo::GetEffectiveRequestWrapMode(...))
 			/** the directory path that contains the child images */
 			boost::filesystem::path images_path;
 
@@ -94,7 +94,7 @@ namespace chaos
 			std::vector<shared_ptr<ImageProcessor>> image_processors;
 		};
 
-		bool DoSaveIntoJSON(nlohmann::json * json, BitmapInfoInputManifest const & src)
+		bool DoSaveIntoJSON(nlohmann::json * json, AtlasBitmapInfoInputManifest const & src)
 		{
 			if (!PrepareSaveObjectIntoJSON(json))
 				return false;
@@ -107,7 +107,7 @@ namespace chaos
 			return true;
 		}
 
-		bool DoLoadFromJSON(JSONReadConfiguration config, BitmapInfoInputManifest & dst)
+		bool DoLoadFromJSON(JSONReadConfiguration config, AtlasBitmapInfoInputManifest & dst)
 		{
 			JSONTools::GetAttribute(config, "grid_data", dst.grid_data);
 			JSONTools::GetAttribute(config, "images_path", dst.images_path);
@@ -119,25 +119,25 @@ namespace chaos
 		}
 
 		// ========================================================================
-		// ObjectBaseInput implementation
+		// AtlasInputInfoBase implementation
 		// ========================================================================
 
-		void ObjectBaseInput::RegisterResource(FIBITMAP * bitmap, bool release)
+		void AtlasInputInfoBase::RegisterResource(FIBITMAP * bitmap, bool release)
 		{
 			atlas_input->RegisterResource(bitmap, release);
 		}
 
-		void ObjectBaseInput::RegisterResource(FIMULTIBITMAP * multi_bitmap, bool release)
+		void AtlasInputInfoBase::RegisterResource(FIMULTIBITMAP * multi_bitmap, bool release)
 		{
 			atlas_input->RegisterResource(multi_bitmap, release);
 		}
 
-		void ObjectBaseInput::RegisterResource(FT_Library library, bool release)
+		void AtlasInputInfoBase::RegisterResource(FT_Library library, bool release)
 		{
 			atlas_input->RegisterResource(library, release);
 		}
 
-		void ObjectBaseInput::RegisterResource(FT_Face face, bool release)
+		void AtlasInputInfoBase::RegisterResource(FT_Face face, bool release)
 		{
 			atlas_input->RegisterResource(face, release);
 		}
@@ -172,27 +172,27 @@ namespace chaos
 		}
 
 		// ========================================================================
-		// FolderInfoInput implementation
+		// AtlasFolderInfoInput implementation
 		// ========================================================================
 
 				// ============================
 				// FOLDER
 				// ============================
 
-		FolderInfoInput * FolderInfoInput::AddFolder(char const * name, TagType tag)
+		AtlasFolderInfoInput * AtlasFolderInfoInput::AddFolder(char const * name, TagType tag)
 		{
 			assert(name != nullptr);
 
-			FolderInfoInput * result = GetFolderInfo(name);
+			AtlasFolderInfoInput * result = GetFolderInfo(name);
 			if (result == nullptr)
 			{
-				result = new FolderInfoInput;
+				result = new AtlasFolderInfoInput;
 				if (result != nullptr)
 				{
 					result->atlas_input = atlas_input;
 					result->name = name;
 					result->tag = tag;
-					folders.push_back(std::move(std::unique_ptr<FolderInfoInput>(result)));
+					folders.push_back(std::move(std::unique_ptr<AtlasFolderInfoInput>(result)));
 				}
 			}
 			return result;
@@ -202,13 +202,13 @@ namespace chaos
 			// FONT
 			// ============================
 
-		FontInfoInput* FolderInfoInput::AddFont(FilePathParam const& path, FT_Library library, bool release_library, char const* name, TagType tag, FontInfoInputParams const& params)
+		AtlasFontInfoInput* AtlasFolderInfoInput::AddFont(FilePathParam const& path, FT_Library library, bool release_library, char const* name, TagType tag, AtlasFontInfoInputParams const& params)
 		{
 			AddFilesToFolderData add_data(path.GetResolvedPath().parent_path());
 			return AddFontFileImpl(path, library, release_library, name, tag, params, add_data);
 		}
 
-		FontInfoInput* FolderInfoInput::AddFontFileImpl(FilePathParam const& path, FT_Library library, bool release_library, char const* name, TagType tag, FontInfoInputParams const& params, AddFilesToFolderData & add_data)
+		AtlasFontInfoInput* AtlasFolderInfoInput::AddFontFileImpl(FilePathParam const& path, FT_Library library, bool release_library, char const* name, TagType tag, AtlasFontInfoInputParams const& params, AddFilesToFolderData & add_data)
 		{
 			// compute a name from the path if necessary
 			boost::filesystem::path const& resolved_path = path.GetResolvedPath();
@@ -220,7 +220,7 @@ namespace chaos
 				nlohmann::json json_manifest;
 				if (!JSONTools::LoadJSONFile(path, json_manifest))
 				{
-					BitmapAtlasLog::Error("FolderInfoInput::AddFontFileImpl => failed to load json file [%s]", resolved_path.string().c_str());
+					BitmapAtlasLog::Error("AtlasFolderInfoInput::AddFontFileImpl => failed to load json file [%s]", resolved_path.string().c_str());
 					return nullptr;
 				}
 
@@ -262,7 +262,7 @@ namespace chaos
 			}
 		}
 
-		FontInfoInput* FolderInfoInput::AddFontFileWithManifestImpl(FilePathParam const& path, FT_Library library, bool release_library, char const* name, TagType tag, FontInfoInputParams const& params, nlohmann::json const* json_manifest)
+		AtlasFontInfoInput* AtlasFolderInfoInput::AddFontFileWithManifestImpl(FilePathParam const& path, FT_Library library, bool release_library, char const* name, TagType tag, AtlasFontInfoInputParams const& params, nlohmann::json const* json_manifest)
 		{
 			// compute a name from the path if necessary
 			boost::filesystem::path const& resolved_path = path.GetResolvedPath();
@@ -276,7 +276,7 @@ namespace chaos
 			}
 
 			// search if there is a JSON file to describe the font (this replace any previous info)
-			FontInfoInputParams input_manifest = params;
+			AtlasFontInfoInputParams input_manifest = params;
 			if (json_manifest != nullptr)
 				LoadFromJSON(json_manifest, input_manifest);
 
@@ -294,7 +294,7 @@ namespace chaos
 
 			Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::NO_ERROR_TRACE); // for direct access to resource directory
 			if (buffer == nullptr)
-				BitmapAtlasLog::Error("FolderInfoInput::AddFontFileWithManifestImpl: fail to load [%s]", path.GetResolvedPath().string().c_str());
+				BitmapAtlasLog::Error("AtlasFolderInfoInput::AddFontFileWithManifestImpl: fail to load [%s]", path.GetResolvedPath().string().c_str());
 			if (buffer != nullptr)
 				FT_New_Memory_Face(library, (FT_Byte const*)buffer.data, (FT_Long)buffer.bufsize, 0, &face);
 
@@ -307,21 +307,21 @@ namespace chaos
 			return AddFontImpl(library, face, release_library, true, name, tag, input_manifest);
 		}
 
-		FontInfoInput * FolderInfoInput::AddFont(FT_Face face, bool release_face, char const * name, TagType tag, FontInfoInputParams const & params)
+		AtlasFontInfoInput * AtlasFolderInfoInput::AddFont(FT_Face face, bool release_face, char const * name, TagType tag, AtlasFontInfoInputParams const & params)
 		{
 			return AddFontImpl(nullptr, face, false, release_face, name, tag, params);
 		}
 
-		FontInfoInput * FolderInfoInput::AddFontImpl(FT_Library library, FT_Face face, bool release_library, bool release_face, char const * name, TagType tag, FontInfoInputParams const & params)
+		AtlasFontInfoInput * AtlasFolderInfoInput::AddFontImpl(FT_Library library, FT_Face face, bool release_library, bool release_face, char const * name, TagType tag, AtlasFontInfoInputParams const & params)
 		{
 			assert(name != nullptr);
 			assert(face != nullptr);
 
 			// search whether the font already exists
-			if (GetFontInfo(name) != nullptr)
+			if (GetAtlasFontInfo(name) != nullptr)
 				return nullptr;
 
-			FontInfoInput * result = new FontInfoInput;
+			AtlasFontInfoInput * result = new AtlasFontInfoInput;
 			if (result == nullptr)
 				return nullptr;
 
@@ -376,7 +376,7 @@ namespace chaos
 						bitmap = images[0];
 					}
 
-					CharacterInfoInput * info = new CharacterInfoInput;
+					AtlasCharacterInfoInput * info = new AtlasCharacterInfoInput;
 					if (info == nullptr)
 						continue;
 					info->atlas_input = atlas_input;
@@ -393,7 +393,7 @@ namespace chaos
 					info->advance = glyph.second.advance;         // take the FT_Pixel_Size(...) into consideration
 					info->bitmap_left = glyph.second.bitmap_left; // take the FT_Pixel_Size(...) into consideration
 					info->bitmap_top = glyph.second.bitmap_top;   // take the FT_Pixel_Size(...) into consideration
-					result->elements.push_back(std::move(std::unique_ptr<CharacterInfoInput>(info)));
+					result->elements.push_back(std::move(std::unique_ptr<AtlasCharacterInfoInput>(info)));
 
 					RegisterResource(bitmap, true);
 				}
@@ -403,7 +403,7 @@ namespace chaos
 			for (auto & glyph : glyph_cache)
 				FT_Done_Glyph((FT_Glyph)glyph.second.bitmap_glyph);
 
-			fonts.push_back(std::move(std::unique_ptr<FontInfoInput>(result)));
+			fonts.push_back(std::move(std::unique_ptr<AtlasFontInfoInput>(result)));
 
 			return result;
 		}
@@ -412,7 +412,7 @@ namespace chaos
 			// BITMAP
 			// ============================
 
-		bool FolderInfoInput::AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive)
+		bool AtlasFolderInfoInput::AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive)
 		{
             AddFilesToFolderData add_data(path);
             add_data.SearchEntriesInDirectory();
@@ -436,7 +436,7 @@ namespace chaos
 					if (std::find(add_data.ignore_directories.begin(), add_data.ignore_directories.end(), p) != add_data.ignore_directories.end())
 						continue;
 					// recurse
-					FolderInfoInput* child_folder = AddFolder(PathTools::PathToName(p).c_str(), 0);
+					AtlasFolderInfoInput* child_folder = AddFolder(PathTools::PathToName(p).c_str(), 0);
 					if (child_folder == nullptr)
 						continue;
 					child_folder->AddBitmapFilesFromDirectory(p, recursive);
@@ -489,7 +489,7 @@ namespace chaos
            return child_images;
         }
 
-        BitmapInfoInput* FolderInfoInput::AddBitmapFileImpl(FilePathParam const& path, char const* name, TagType tag, AddFilesToFolderData& add_data)
+        AtlasBitmapInfoInput* AtlasFolderInfoInput::AddBitmapFileImpl(FilePathParam const& path, char const* name, TagType tag, AddFilesToFolderData& add_data)
         {
             // compute a name from the path if necessary
             boost::filesystem::path const& resolved_path = path.GetResolvedPath();
@@ -501,7 +501,7 @@ namespace chaos
                 nlohmann::json json_manifest;
 				if (!JSONTools::LoadJSONFile(path, json_manifest))
 				{
-					BitmapAtlasLog::Error("FolderInfoInput::AddBitmapFileImpl => failed to load json file [%s]", resolved_path.string().c_str());
+					BitmapAtlasLog::Error("AtlasFolderInfoInput::AddBitmapFileImpl => failed to load json file [%s]", resolved_path.string().c_str());
 					return nullptr;
 				}
 
@@ -554,7 +554,7 @@ namespace chaos
             }
         }
 
-        BitmapInfoInput* FolderInfoInput::AddBitmapFileWithManifestImpl(FilePathParam const& path, char const* name, TagType tag, nlohmann::json const * json_manifest, std::vector<FIBITMAP*>* images)
+        AtlasBitmapInfoInput* AtlasFolderInfoInput::AddBitmapFileWithManifestImpl(FilePathParam const& path, char const* name, TagType tag, nlohmann::json const * json_manifest, std::vector<FIBITMAP*>* images)
         {
 			// compute a name from the path if necessary
 			boost::filesystem::path const & resolved_path = path.GetResolvedPath();
@@ -584,7 +584,7 @@ namespace chaos
 			}
 
             // search if there is a JSON file to describe an animation
-            BitmapInfoInputManifest input_manifest;
+            AtlasBitmapInfoInputManifest input_manifest;
             if (json_manifest != nullptr)
                 LoadFromJSON(json_manifest, input_manifest);
 
@@ -635,13 +635,13 @@ namespace chaos
 			return AddBitmapImpl(*images, name, tag, &animation_description); // in case of failure, the images have already been registered for destruction
 		}
 
-		BitmapInfoInput* FolderInfoInput::AddBitmap(FilePathParam const& path, char const* name, TagType tag)
+		AtlasBitmapInfoInput* AtlasFolderInfoInput::AddBitmap(FilePathParam const& path, char const* name, TagType tag)
 		{
 			AddFilesToFolderData add_data(path.GetResolvedPath().parent_path());
 			return AddBitmapFileImpl(path, name, tag, add_data);
 		}
 
-		BitmapInfoInput * FolderInfoInput::AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag)
+		AtlasBitmapInfoInput * AtlasFolderInfoInput::AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag)
 		{
 			// prepare resource for destruction (in case of failure, there will not be memory leak)
 			RegisterResource(bitmap, release_bitmap);
@@ -654,7 +654,7 @@ namespace chaos
 			return AddBitmapImpl({ bitmap }, name, tag, nullptr);
 		}
 
-		BitmapInfoInput * FolderInfoInput::AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_animated_bitmap, char const * name, TagType tag)
+		AtlasBitmapInfoInput * AtlasFolderInfoInput::AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_animated_bitmap, char const * name, TagType tag)
 		{
 			// prepare resource for destruction (in case of failure, there will not be memory leak)
 			RegisterResource(animated_bitmap, release_animated_bitmap);
@@ -676,10 +676,10 @@ namespace chaos
 			return AddBitmapImpl(pages, name, tag, &animation_description);
 		}
 
-		BitmapInfoInput * FolderInfoInput::AddBitmapImpl(std::vector<FIBITMAP *> pages, char const * name, TagType tag, ImageAnimationDescription const * animation_description)
+		AtlasBitmapInfoInput * AtlasFolderInfoInput::AddBitmapImpl(std::vector<FIBITMAP *> pages, char const * name, TagType tag, ImageAnimationDescription const * animation_description)
 		{
 			// create the result
-			BitmapInfoInput * result = new BitmapInfoInput;
+			AtlasBitmapInfoInput * result = new AtlasBitmapInfoInput;
 			if (result == nullptr)
 				return nullptr;
 
@@ -693,13 +693,13 @@ namespace chaos
 			result->SetTag(tag);
 
 			// insert result into the folder
-			bitmaps.push_back(std::move(std::unique_ptr<BitmapInfoInput>(result))); // move for std::string copy
+			bitmaps.push_back(std::move(std::unique_ptr<AtlasBitmapInfoInput>(result))); // move for std::string copy
 			result = bitmaps.back().get();
 
 			// insert child animation frames
 			if ((animation_description != nullptr && animation_description->grid_data.GetFrameCount() > 0) || page_count > 1)
 			{
-				BitmapAnimationInfoInput * animation_info = new BitmapAnimationInfoInput;
+				AtlasBitmapAnimationInfoInput * animation_info = new AtlasBitmapAnimationInfoInput;
 				if (animation_info != nullptr)
 				{
 					// give animation to the input
@@ -713,13 +713,13 @@ namespace chaos
 						for (size_t i = 1; i < page_count; ++i)
 						{
 							// create the child frame
-							BitmapInfoInput * child_frame = new BitmapInfoInput;
+							AtlasBitmapInfoInput * child_frame = new AtlasBitmapInfoInput;
 							if (child_frame == nullptr)
 								continue;
 							// insert the child frames inside the folder (as unamed, untagged)
 							child_frame->atlas_input = atlas_input;
 							child_frame->description = ImageTools::GetImageDescription(pages[i]);
-							bitmaps.push_back(std::move(std::unique_ptr<BitmapInfoInput>(child_frame)));
+							bitmaps.push_back(std::move(std::unique_ptr<AtlasBitmapInfoInput>(child_frame)));
 							// insert the child frame inside the animation block
 							animation_info->child_frames.push_back(child_frame);
 						}
@@ -795,41 +795,41 @@ namespace chaos
 		{
 			return root_folder.AddBitmapFilesFromDirectory(path, recursive);
 		}
-		BitmapInfoInput * AtlasInput::AddBitmap(FilePathParam const & path, char const * name, TagType tag)
+		AtlasBitmapInfoInput * AtlasInput::AddBitmap(FilePathParam const & path, char const * name, TagType tag)
 		{
 			return root_folder.AddBitmap(path, name, tag);
 		}
-		BitmapInfoInput * AtlasInput::AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag)
+		AtlasBitmapInfoInput * AtlasInput::AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag)
 		{
 			return root_folder.AddBitmap(bitmap, release_bitmap, name, tag);
 		}
-		BitmapInfoInput * AtlasInput::AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag)
+		AtlasBitmapInfoInput * AtlasInput::AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag)
 		{
 			return root_folder.AddBitmap(animated_bitmap, release_bitmap, name, tag);
 		}
 
-		FolderInfoInput * AtlasInput::AddFolder(char const * name, TagType tag)
+		AtlasFolderInfoInput * AtlasInput::AddFolder(char const * name, TagType tag)
 		{
 			return root_folder.AddFolder(name, tag);
 		}
 
-		FontInfoInput * AtlasInput::AddFont(
+		AtlasFontInfoInput * AtlasInput::AddFont(
 			FilePathParam const& path,
 			FT_Library library,
 			bool release_library,
 			char const * name,
 			TagType tag,
-			FontInfoInputParams const & params)
+			AtlasFontInfoInputParams const & params)
 		{
 			return root_folder.AddFont(path, library, release_library, name, tag, params);
 		}
 
-		FontInfoInput * AtlasInput::AddFont(
+		AtlasFontInfoInput * AtlasInput::AddFont(
 			FT_Face face,
 			bool release_face,
 			char const * name,
 			TagType tag,
-			FontInfoInputParams const & params)
+			AtlasFontInfoInputParams const & params)
 		{
 			return root_folder.AddFont(face, release_face, name, tag, params);
 		}

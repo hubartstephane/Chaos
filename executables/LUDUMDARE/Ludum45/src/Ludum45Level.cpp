@@ -93,7 +93,7 @@ bool EnemySpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * obj
     if (!spawner.IsValid())
         return true;
 
-    chaos::BitmapAtlas::BitmapInfo const* bitmap_info = spawner.GetBitmapInfo();
+    chaos::BitmapAtlas::AtlasBitmapInfo const* bitmap_info = spawner.GetBitmapInfo();
 
     EnemyPattern * p = pattern;
     EnemyType* t = type;

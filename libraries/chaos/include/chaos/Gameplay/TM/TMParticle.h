@@ -19,7 +19,7 @@ namespace chaos
 		// the ID for the "tile" (0 if the particle is not a tile)
 		int gid = 0;
 		// the bitmap for the particle
-		BitmapAtlas::BitmapInfo const* bitmap_info = nullptr;
+		BitmapAtlas::AtlasBitmapInfo const* bitmap_info = nullptr;
 	};
 
 	CHAOS_REGISTER_CLASS(TMParticle, ParticleDefault);

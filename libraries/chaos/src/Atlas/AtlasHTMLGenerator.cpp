@@ -6,7 +6,7 @@ namespace chaos
 	namespace BitmapAtlas
 	{
 		// ========================================================================
-		// BitmapAtlasHTMLGenerator function
+		// AtlasHTMLGenerator function
 		// ========================================================================
 
 		tinyxml2::XMLDocument * AtlasHTMLGenerator::OutputToHTMLDocument(Atlas const & atlas, AtlasHTMLOutputParams params)
@@ -32,7 +32,7 @@ namespace chaos
 			return result;
 		}
 
-		void AtlasHTMLGenerator::OutputElementsToHTMLDocument(char const * folder_path, FolderInfo const * folder_info, XMLTools & html, tinyxml2::XMLElement * TABLE, tinyxml2::XMLElement * &TR, int bitmap_index, int & count)
+		void AtlasHTMLGenerator::OutputElementsToHTMLDocument(char const * folder_path, AtlasFolderInfo const * folder_info, XMLTools & html, tinyxml2::XMLElement * TABLE, tinyxml2::XMLElement * &TR, int bitmap_index, int & count)
 		{
 			if (folder_info == nullptr)
 				return;
@@ -46,7 +46,7 @@ namespace chaos
 			size_t folder_count = folder_info->folders.size();
 			for (size_t i = 0; i < folder_count; ++i)
 			{
-				FolderInfo const * child_folder_info = folder_info->folders[i].get();
+				AtlasFolderInfo const * child_folder_info = folder_info->folders[i].get();
 				if (child_folder_info == nullptr)
 					continue;
 
@@ -86,7 +86,7 @@ namespace chaos
 			}
 		}
 
-		void AtlasHTMLGenerator::OutputBitmapsToHTMLDocument(FolderInfo const * folder_info, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale)
+		void AtlasHTMLGenerator::OutputBitmapsToHTMLDocument(AtlasFolderInfo const * folder_info, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale)
 		{
 			if (folder_info == nullptr)
 				return;
@@ -102,7 +102,7 @@ namespace chaos
 		template<typename T>
 		void AtlasHTMLGenerator::OutputBitmapsToHTMLDocument(std::vector<T> const & elements, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale)
 		{
-			for (auto const & info : elements) // all elements of FontInfo or BitmapSet (i.e CharacterInfo or BitmapInfo)
+			for (auto const & info : elements) // all elements of AtlasFontInfo or BitmapSet (i.e AtlasCharacterInfo or AtlasBitmapInfo)
 			{
 				// keep only entries of corresponding bitmap
 				if (info.bitmap_index != bitmap_index)
@@ -127,7 +127,7 @@ namespace chaos
 			}
 		}
 
-		void AtlasHTMLGenerator::OutputBitmapFilenamesToHTMLDocument(FolderInfo const * folder_info, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale)
+		void AtlasHTMLGenerator::OutputBitmapFilenamesToHTMLDocument(AtlasFolderInfo const * folder_info, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale)
 		{
 			if (folder_info == nullptr)
 				return;
@@ -144,7 +144,7 @@ namespace chaos
 		template<typename T>
 		void AtlasHTMLGenerator::OutputBitmapFilenamesToHTMLDocument(std::vector<T> const & elements, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale)
 		{
-			for (auto const & info : elements) // all elements of FontInfo or BitmapSet (i.e CharacterInfo or BitmapInfo)
+			for (auto const & info : elements) // all elements of AtlasFontInfo or BitmapSet (i.e AtlasCharacterInfo or AtlasBitmapInfo)
 			{
 				// keep only entries of corresponding bitmap
 				if (info.bitmap_index != bitmap_index)

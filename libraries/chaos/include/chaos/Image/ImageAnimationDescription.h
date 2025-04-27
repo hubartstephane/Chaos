@@ -65,14 +65,14 @@ namespace chaos
 
 		/** if the animation is stored inside a grid */
 		BitmapGridAnimationInfo grid_data;
-		/** number of child frame (directly following the BitmapInfo */
+		/** number of child frame (directly following the AtlasBitmapInfo */
 		int child_frame_count = 0;
 		/** the duration of a frame in seconds */
 		float frame_duration = -1.0f;
 		/** the duration of the whole animation */
 		float anim_duration = -1.0f;
 		/** the default wrap mode */
-		WrapMode default_wrap_mode = WrapMode::NONE; // let the code decide in a single location (see  BitmapInfo::GetEffectiveRequestWrapMode(...))
+		WrapMode default_wrap_mode = WrapMode::NONE; // let the code decide in a single location (see  AtlasBitmapInfo::GetEffectiveRequestWrapMode(...))
 	};
 
 	/**

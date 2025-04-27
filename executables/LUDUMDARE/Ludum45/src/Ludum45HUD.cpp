@@ -74,14 +74,14 @@ void GameHUDShroudLifeComponent::UpdateMesh()
 {
 	chaos::GPUDrawInterface<chaos::VertexDefault> DI(nullptr);
 
-	chaos::BitmapAtlas::BitmapInfo const* bitmap_info = DI.FindBitmapInfo(bitmap_name);
+	chaos::BitmapAtlas::AtlasBitmapInfo const* bitmap_info = DI.FindBitmapInfo(bitmap_name);
 	if (bitmap_info == nullptr)
 		return;
 
 	float image_count = (float)bitmap_info->GetAnimationImageCount();
 	int index = (int)(image_count * (1.0 - (cached_value.health / cached_value.max_health)));
 
-	chaos::BitmapAtlas::BitmapLayout layout = bitmap_info->GetAnimationLayout(index, chaos::WrapMode::CLAMP);
+	chaos::BitmapAtlas::AtlasBitmapLayout layout = bitmap_info->GetAnimationLayout(index, chaos::WrapMode::CLAMP);
 
 	glm::vec2 final_particle_size = layout.ApplyRatioToSize(particle_size);
 

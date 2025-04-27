@@ -92,7 +92,7 @@ protected:
 
 	chaos::BitmapAtlas::GPUAtlas * LoadTextureArray(boost::filesystem::path const & resources_path)
 	{
-		chaos::BitmapAtlas::TextureArrayAtlasGenerator generator;
+		chaos::BitmapAtlas::GPUAtlasGenerator generator;
 
 		chaos::BitmapAtlas::AtlasInput input;
 		input.AddBitmap(resources_path / "moving_gif.gif", "moving", 0);

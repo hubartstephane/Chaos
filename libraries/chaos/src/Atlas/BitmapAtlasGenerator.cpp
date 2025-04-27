@@ -713,10 +713,10 @@ namespace chaos
 		}
 
 		// ========================================================================
-		// TextureArrayAtlasGenerator implementation
+		// GPUAtlasGenerator implementation
 		// ========================================================================
 
-		GPUAtlas * TextureArrayAtlasGenerator::ComputeResult(AtlasInput const & in_input, AtlasGeneratorParams const & in_params)
+		GPUAtlas * GPUAtlasGenerator::ComputeResult(AtlasInput const & in_input, AtlasGeneratorParams const & in_params)
 		{
 			// generate a standard atlas to be converted
 			BitmapAtlas::Atlas          atlas;

@@ -552,7 +552,7 @@ bool Game::GenerateAtlas(boost::filesystem::path const & path)
 	}
 
 	// generate STD Atlas
-	chaos::BitmapAtlas::TextureArrayAtlasGenerator generator;
+	chaos::BitmapAtlas::GPUAtlasGenerator generator;
 	texture_atlas = generator.ComputeResult(input, params);
 	if (texture_atlas == nullptr)
 		return false;

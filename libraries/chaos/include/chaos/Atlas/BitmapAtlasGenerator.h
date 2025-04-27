@@ -7,7 +7,7 @@ namespace chaos
 		class AtlasGeneratorParams;
 		class Rectangle;
 		class AtlasGenerator;
-		class TextureArrayAtlasGenerator;
+		class GPUAtlasGenerator;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -169,16 +169,16 @@ namespace chaos
 		};
 
 		/**
-		* TextureArrayAtlasGenerator
+		* GPUAtlasGenerator
 		*/
 
-		class CHAOS_API TextureArrayAtlasGenerator
+		class CHAOS_API GPUAtlasGenerator
 		{
 
 		public:
 
 			/** make destructor virtual */
-			virtual ~TextureArrayAtlasGenerator() = default;
+			virtual ~GPUAtlasGenerator() = default;
 			/** compute all BitmapInfo positions */
 			GPUAtlas* ComputeResult(AtlasInput const& in_input, AtlasGeneratorParams const& in_params = {});
 		};

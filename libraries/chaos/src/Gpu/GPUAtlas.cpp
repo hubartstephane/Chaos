@@ -49,9 +49,9 @@ namespace chaos
 			// create and fill a texture array generator
 			std::vector<bitmap_ptr> const & bitmaps = atlas.GetBitmaps();
 
-			TextureArrayGenerator generator;
+			GPUTextureArrayGenerator generator;
 			for (size_t i = 0; i < bitmaps.size(); ++i)
-				generator.AddGenerator(new TextureArraySliceGenerator_Image(bitmaps[i].get(), false)); // do not release image, we have a unique_ptr on it
+				generator.AddGenerator(new GPUTextureArraySliceGenerator_Image(bitmaps[i].get(), false)); // do not release image, we have a unique_ptr on it
 
 			// generate the texture array
 			texture = generator.GenTextureObject();

@@ -277,13 +277,10 @@ namespace chaos
 						ImageDescription src_desc = entry_input->description;
 						ImageDescription dst_desc = ImageTools::GetImageDescription(bitmap.get());
 
-
 						int w = src_desc.width;
 						int h = src_desc.height;
 
-
 						ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x, tex_y, w, src_desc.height, ImageTransform::NO_TRANSFORM);
-
 
 						// XXX:
 						// Duplicate the first/last rows/column of each subimage so that the sampling errors would give us a duplicate value

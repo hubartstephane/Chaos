@@ -4,24 +4,24 @@
 namespace chaos
 {
 	// ========================================================================
-	// TextureArraySliceRegistry functions
+	// GPUTextureArraySliceRegistry functions
 	// ========================================================================
 
-	bool TextureArraySliceRegistry::InsertSlice(ImageDescription const & description, void * user_data)
+	bool GPUTextureArraySliceRegistry::InsertSlice(ImageDescription const & description, void * user_data)
 	{
 		// test whether the slice format is valid
 		if (!IsImageSliceValid(description))
 			return false;
 
 		// insert the slice into the registry
-		TextureArraySliceRegistryEntry entry;
+		GPUTextureArraySliceRegistryEntry entry;
 		entry.description = description;
 		entry.user_data = user_data;
 		slices.push_back(entry);
 		return true;
 	}
 
-	bool TextureArraySliceRegistry::IsImageSliceValid(ImageDescription const & description) const
+	bool GPUTextureArraySliceRegistry::IsImageSliceValid(ImageDescription const & description) const
 	{
 		if (!description.IsValid(false))
 			return false;
@@ -31,10 +31,10 @@ namespace chaos
 	}
 
 	// ========================================================================
-	// TextureArraySliceGenerator_Image functions
+	// GPUTextureArraySliceGenerator_Image functions
 	// ========================================================================
 
-	TextureArraySliceGenerator_Image::~TextureArraySliceGenerator_Image()
+	GPUTextureArraySliceGenerator_Image::~GPUTextureArraySliceGenerator_Image()
 	{
 		if (release_image)
 		{
@@ -46,13 +46,13 @@ namespace chaos
 		}
 	}
 
-	void TextureArraySliceGenerator_Image::RegisterSlices(TextureArraySliceRegistry & slice_registry)
+	void GPUTextureArraySliceGenerator_Image::RegisterSlices(GPUTextureArraySliceRegistry & slice_registry)
 	{
 		if (image != nullptr)
 			slice_registry.InsertSlice(ImageTools::GetImageDescription(image), image);
 	}
 
-	bool TextureArraySliceGenerator_Image::PreRegister()
+	bool GPUTextureArraySliceGenerator_Image::PreRegister()
 	{
 		if (image == nullptr)
 		{
@@ -65,19 +65,19 @@ namespace chaos
 	}
 
 	// ========================================================================
-	// TextureArrayGenerator functions
+	// GPUTextureArrayGenerator functions
 	// ========================================================================
 
-	TextureArrayGenerator::~TextureArrayGenerator()
+	GPUTextureArrayGenerator::~GPUTextureArrayGenerator()
 	{
 		Clean();
 	}
 
-	bool TextureArrayGenerator::AddGenerator(TextureArraySliceGenerator * generator, SliceInfo * slice_info)
+	bool GPUTextureArrayGenerator::AddGenerator(GPUTextureArraySliceGenerator * generator, SliceInfo * slice_info)
 	{
 		assert(generator != nullptr);
 
-		shared_ptr<TextureArraySliceGenerator> generator_ptr = generator; // want to ensure that if PreRegister(...) fails, the resource is released
+		shared_ptr<GPUTextureArraySliceGenerator> generator_ptr = generator; // want to ensure that if PreRegister(...) fails, the resource is released
 
 		// prepare the generator
 		if (!generator->PreRegister())
@@ -90,14 +90,14 @@ namespace chaos
 		return true;
 	}
 
-	void TextureArrayGenerator::Clean()
+	void GPUTextureArrayGenerator::Clean()
 	{
 		generators.clear(); // destroy the intrusive_ptr
 	}
 
-	GPUTexture * TextureArrayGenerator::GenTextureObject(PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters)
+	GPUTexture * GPUTextureArrayGenerator::GenTextureObject(PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters)
 	{
-		TextureArraySliceRegistry  slice_registry;
+		GPUTextureArraySliceRegistry  slice_registry;
 		std::vector<size_t> slice_counts;
 		// insert all slices
 		for (size_t i = 0; i < generators.size(); ++i)
@@ -128,7 +128,7 @@ namespace chaos
 
 		int width = 0;
 		int height = 0;
-		for (TextureArraySliceRegistryEntry const & entry : slice_registry.slices)
+		for (GPUTextureArraySliceRegistryEntry const & entry : slice_registry.slices)
 		{
 			width = std::max(width, entry.description.width);
 			height = std::max(height, entry.description.height);
@@ -167,7 +167,7 @@ namespace chaos
 		return result;
 	}
 
-	GPUTexture * TextureArrayGenerator::GenTextureObjectHelper(TextureArraySliceRegistry & slice_registry, PixelFormat const & final_pixel_format, int width, int height, GenTextureParameters const & parameters) const
+	GPUTexture * GPUTextureArrayGenerator::GenTextureObjectHelper(GPUTextureArraySliceRegistry & slice_registry, PixelFormat const & final_pixel_format, int width, int height, GenTextureParameters const & parameters) const
 	{
 		GPUTexture * result = nullptr;
 

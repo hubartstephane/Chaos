@@ -83,10 +83,10 @@ namespace chaos
 		}
 
 		// ========================================================================
-		// Rectangle implementation
+		// AtlasRectangle implementation
 		// ========================================================================
 
-		bool Rectangle::IsFullyInside(Rectangle const & big) const
+		bool AtlasRectangle::IsFullyInside(AtlasRectangle const & big) const
 		{
 			if (x < big.x)
 				return false;
@@ -99,7 +99,7 @@ namespace chaos
 			return true;
 		}
 
-		bool Rectangle::IsIntersecting(Rectangle const & big) const
+		bool AtlasRectangle::IsIntersecting(AtlasRectangle const & big) const
 		{
 			if (x >= big.x + big.width)
 				return false;
@@ -124,9 +124,9 @@ namespace chaos
 			atlas_definitions.clear();
 		}
 
-		Rectangle AtlasGenerator::GetAtlasRectangle() const
+		AtlasRectangle AtlasGenerator::GetAtlasRectangle() const
 		{
-			Rectangle result;
+			AtlasRectangle result;
 			result.x = 0;
 			result.y = 0;
 			result.width = params.atlas_width;
@@ -134,9 +134,9 @@ namespace chaos
 			return result;
 		}
 
-		Rectangle AtlasGenerator::GetRectangle(AtlasBitmapLayout const & layout) const
+		AtlasRectangle AtlasGenerator::GetRectangle(AtlasBitmapLayout const & layout) const
 		{
-			Rectangle result;
+			AtlasRectangle result;
 			result.x = layout.x;
 			result.y = layout.y;
 			result.width = layout.width;
@@ -144,9 +144,9 @@ namespace chaos
 			return result;
 		}
 
-		Rectangle AtlasGenerator::AddPadding(Rectangle const & r) const
+		AtlasRectangle AtlasGenerator::AddPadding(AtlasRectangle const & r) const
 		{
-			Rectangle result = r;
+			AtlasRectangle result = r;
 			result.x -= params.atlas_padding;
 			result.y -= params.atlas_padding;
 			result.width += 2 * params.atlas_padding;
@@ -161,7 +161,7 @@ namespace chaos
 				return true;
 
 			bool result = true;
-			Rectangle atlas_rectangle = GetAtlasRectangle();
+			AtlasRectangle atlas_rectangle = GetAtlasRectangle();
 
 			// individual tests
 			size_t bitmap_count = atlas_definitions.size(); // output->bitmaps not generated yet
@@ -188,7 +188,7 @@ namespace chaos
 					result = false;
 				}
 				// test whether all info fits inside the atlas
-				Rectangle r = AddPadding(GetRectangle(*layout));
+				AtlasRectangle r = AddPadding(GetRectangle(*layout));
 				if (!r.IsFullyInside(atlas_rectangle))
 				{
 					stream << "Info encoutered that does not fit inside the atlas : [" << named->GetName() << " , " << named->GetTag() << "]" << '\n';
@@ -211,8 +211,8 @@ namespace chaos
 					if (layout1->bitmap_index != layout2->bitmap_index) // ignore entries not in the same bitmap
 						continue;
 
-					Rectangle r1 = AddPadding(GetRectangle(*layout1));
-					Rectangle r2 = AddPadding(GetRectangle(*layout2));
+					AtlasRectangle r1 = AddPadding(GetRectangle(*layout1));
+					AtlasRectangle r2 = AddPadding(GetRectangle(*layout2));
 
 					if (r1.IsIntersecting(r2))
 					{
@@ -232,9 +232,9 @@ namespace chaos
 			return result;
 		}
 
-		bool AtlasGenerator::HasIntersectingInfo(Rectangle const& r, std::vector<Rectangle> const& collision_rectangles) const
+		bool AtlasGenerator::HasIntersectingInfo(AtlasRectangle const& r, std::vector<AtlasRectangle> const& collision_rectangles) const
 		{
-			for (Rectangle const& other_r : collision_rectangles)
+			for (AtlasRectangle const& other_r : collision_rectangles)
 				if (other_r.IsIntersecting(r))
 					return true;
 			return false;
@@ -631,7 +631,7 @@ namespace chaos
 				return -1.0f;
 
 			// the rectangle for given bitmap including the padding
-			Rectangle r;
+			AtlasRectangle r;
 			r.width  = info.description.width + 2 * params.atlas_padding;
 			r.height = info.description.height + 2 * params.atlas_padding;
 
@@ -685,7 +685,7 @@ namespace chaos
 			atlas_def.potential_bottomleft_corners.emplace_back(position.x + width, position.y + height);
 
 			// insert new rectangle to test for collision
-			Rectangle r;
+			AtlasRectangle r;
 			r.x = position.x;
 			r.y = position.y;
 			r.width = width;

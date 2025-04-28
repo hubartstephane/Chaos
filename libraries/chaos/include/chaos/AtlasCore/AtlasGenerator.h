@@ -5,7 +5,7 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 		class AtlasGeneratorParams;
-		class Rectangle;
+		class AtlasRectangle;
 		class AtlasGenerator;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -54,10 +54,10 @@ namespace chaos
 		};
 
 		/**
-		* Rectangle : a class to represents rectangles
+		* AtlasRectangle : a class to represents rectangles
 		*/
 
-		class CHAOS_API Rectangle
+		class CHAOS_API AtlasRectangle
 		{
 		public:
 			/** the top-left corner of the rectangle */
@@ -69,14 +69,14 @@ namespace chaos
 			/** the size of the rectangle */
 			int height = 0;
 			/** equality test */
-			bool operator == (Rectangle const& src) const
+			bool operator == (AtlasRectangle const& src) const
 			{
 				return (x == src.x) && (y == src.y) && (width == src.width) && (height == src.height);
 			}
 			/** returns true whenever big does fully contains this */
-			bool IsFullyInside(Rectangle const& big) const;
+			bool IsFullyInside(AtlasRectangle const& big) const;
 			/** returns true whenever there is an intersection between this and big */
-			bool IsIntersecting(Rectangle const& big) const;
+			bool IsIntersecting(AtlasRectangle const& big) const;
 		};
 
 		/**
@@ -94,7 +94,7 @@ namespace chaos
 			public:
 				unsigned int surface_sum = 0;
 
-				std::vector<Rectangle>  collision_rectangles;
+				std::vector<AtlasRectangle>  collision_rectangles;
 				std::vector<glm::ivec2> potential_bottomleft_corners;
 			};
 
@@ -117,18 +117,18 @@ namespace chaos
 			/** clear the results */
 			void Clear();
 			/** returns the box for the atlas */
-			Rectangle GetAtlasRectangle() const;
+			AtlasRectangle GetAtlasRectangle() const;
 			/** add padding to a rectangle */
-			Rectangle AddPadding(Rectangle const& r) const;
+			AtlasRectangle AddPadding(AtlasRectangle const& r) const;
 			/** returns the rectangle corresponding to the AtlasBitmapLayout */
-			Rectangle GetRectangle(AtlasBitmapLayout const& layout) const;
+			AtlasRectangle GetRectangle(AtlasBitmapLayout const& layout) const;
 
 			/** fill the entries of the atlas from input (collect all input entries) */
 			void FillAtlasEntriesFromInput(AtlasBitmapInfoInputVector& result, AtlasFolderInfoInput* folder_info_input, AtlasFolderInfo* folder_info_output);
 			/** test whether there is an intersection between each pair of Entries in an atlas */
 			bool EnsureValidResults(AtlasBitmapInfoInputVector const& result, std::ostream& stream = std::cout) const;
 			/** test whether rectangle intersects with any of the entries */
-			bool HasIntersectingInfo(Rectangle const& r, std::vector<Rectangle> const& collision_rectangles) const;
+			bool HasIntersectingInfo(AtlasRectangle const& r, std::vector<AtlasRectangle> const& collision_rectangles) const;
 
 			/** the effective function to do the computation */
 			bool DoComputeResult(AtlasBitmapInfoInputVector const& entries);

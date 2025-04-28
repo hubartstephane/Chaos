@@ -8,7 +8,7 @@
 #include "chaos/System/System.h"
 #include "chaos/Image/Image.h"
 #include "chaos/Font/Font.h"
-#include "chaos/Atlas/AtlasCore.h"
+#include "chaos/AtlasCore/AtlasCore.h"
 #include "chaos/Gpu/Gpu.h"
 #include "chaos/Particle/Particle.h"
 #include "chaos/Windowing/Windowing.h"

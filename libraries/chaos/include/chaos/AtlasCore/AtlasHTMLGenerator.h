@@ -38,31 +38,60 @@ namespace chaos
 	public:
 
 		/** create an XML document and output debug information */
-		static tinyxml2::XMLDocument* OutputToHTMLDocument(Atlas const& atlas, AtlasHTMLOutputParams params = {});
+		tinyxml2::XMLDocument* OutputToHTMLDocument(Atlas const& atlas, AtlasHTMLOutputParams params = {}) const;
 		/** create an XML document and output debug information */
-		static void OutputToHTMLDocument(Atlas const& atlas, tinyxml2::XMLDocument* doc, AtlasHTMLOutputParams params = {});
+		void OutputToHTMLDocument(Atlas const& atlas, tinyxml2::XMLDocument* doc, AtlasHTMLOutputParams params = {}) const;
 		/** output the atlas trees in HTML format */
-		static bool OutputToHTMLFile(Atlas const& atlas, FilePathParam const& path, AtlasHTMLOutputParams params = {});
+		bool OutputToHTMLFile(Atlas const& atlas, FilePathParam const& path, AtlasHTMLOutputParams params = {}) const;
 
 	protected:
 
 		/** utility methods to iterate over BitmapSets or AtlasFontInfos and display their entries informations into HTML */
 		template<typename T>
-		static void OutputElementsToHTMLDocument(char const* folder_path, std::vector<T> const& elements, XMLTools& html, tinyxml2::XMLElement* TABLE, tinyxml2::XMLElement*& TR, int bitmap_index, int& count);
+		void OutputElementsToHTMLDocument(char const* folder_path, std::vector<T> const& elements, XMLTools& html, tinyxml2::XMLElement* TABLE, tinyxml2::XMLElement*& TR, int bitmap_index, int& count) const;
 		/** utility methods to iterate over elements of a folders and display their entries informations into HTML */
-		static void OutputElementsToHTMLDocument(char const* folder_path, AtlasFolderInfo const* folder_info, XMLTools& html, tinyxml2::XMLElement* TABLE, tinyxml2::XMLElement*& TR, int bitmap_index, int& count);
+		void OutputElementsToHTMLDocument(char const* folder_path, AtlasFolderInfo const* folder_info, XMLTools& html, tinyxml2::XMLElement* TABLE, tinyxml2::XMLElement*& TR, int bitmap_index, int& count) const;
 
 		/** utility methods to iterate over BitmapSets or AtlasFontInfos and display the texture rectangle into HTML */
 		template<typename T>
-		static void OutputBitmapsToHTMLDocument(std::vector<T> const& elements, XMLTools& html, tinyxml2::XMLElement* SVG, int bitmap_index, float scale);
+		void OutputBitmapsToHTMLDocument(std::vector<T> const& elements, XMLTools& html, tinyxml2::XMLElement* SVG, int bitmap_index, float scale) const;
 		/** utility method to recursively draw the bitmaps and characters from folders */
-		static void OutputBitmapsToHTMLDocument(AtlasFolderInfo const* folder_info, XMLTools& html, tinyxml2::XMLElement* SVG, int bitmap_index, float scale);
+		void OutputBitmapsToHTMLDocument(AtlasFolderInfo const* folder_info, XMLTools& html, tinyxml2::XMLElement* SVG, int bitmap_index, float scale) const;
 
 		/** utility methods to iterate over BitmapSets or AtlasFontInfos and display the texture filename into HTML */
 		template<typename T>
-		static void OutputBitmapFilenamesToHTMLDocument(std::vector<T> const& elements, XMLTools& html, tinyxml2::XMLElement* SVG, int bitmap_index, float scale);
+		void OutputBitmapFilenamesToHTMLDocument(std::vector<T> const& elements, XMLTools& html, tinyxml2::XMLElement* SVG, int bitmap_index, float scale) const;
 		/** utility method to recursively display bitmaps and characters filenames */
-		static void OutputBitmapFilenamesToHTMLDocument(AtlasFolderInfo const* folder_info, XMLTools& html, tinyxml2::XMLElement* SVG, int bitmap_index, float scale);
+		void OutputBitmapFilenamesToHTMLDocument(AtlasFolderInfo const* folder_info, XMLTools& html, tinyxml2::XMLElement* SVG, int bitmap_index, float scale) const;
+
+		/** get a string with the general information */
+		std::string GetGeneralInformationString(Atlas const& atlas) const;
+		/** get a string with the surface occupation of one atlas */
+		std::string GetAtlasSpaceOccupationString(Atlas const& atlas, int bitmap_index) const;
+
+		/** get the string for information about one element */
+		template<typename T>
+		std::string GetElementInfoString(T const& element) const;
+
+		/** display information */
+		void DoOutputElementInfo(AtlasFolderInfo const& folder_info, std::ostream& stream, int indent = 0) const;
+		/** display information about one named element */
+		void DoOutputElementInfo(NamedInterface const& info, std::ostream& stream, int indent = 0) const;
+		/** display information about one bitmap layout */
+		void DoOutputElementInfo(AtlasBitmapLayout const& info, std::ostream& stream, int indent = 0) const;
+		/** display information about one character layout */
+		void DoOutputElementInfo(AtlasCharacterLayout const& info, std::ostream& stream, int indent = 0) const;
+		/** display information about one bitmap info */
+		void DoOutputElementInfo(AtlasBitmapInfo const& info, std::ostream& stream, int indent = 0) const;
+		/** display information about one character info */
+		void DoOutputElementInfo(AtlasCharacterInfo const& info, std::ostream& stream, int indent = 0) const;
+		/** display information about one font info */
+		void DoOutputElementInfo(AtlasFontInfo const& info, std::ostream& stream, int indent = 0) const;
+
+	protected:
+
+		/** identation value */
+		static constexpr size_t INDENT_VALUE = 2;
 	};
 
 #endif

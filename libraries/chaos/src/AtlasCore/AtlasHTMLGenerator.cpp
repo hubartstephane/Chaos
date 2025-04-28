@@ -7,7 +7,7 @@ namespace chaos
 	// AtlasHTMLGenerator function
 	// ========================================================================
 
-	tinyxml2::XMLDocument* AtlasHTMLGenerator::OutputToHTMLDocument(Atlas const& atlas, AtlasHTMLOutputParams params)
+	tinyxml2::XMLDocument* AtlasHTMLGenerator::OutputToHTMLDocument(Atlas const& atlas, AtlasHTMLOutputParams params) const
 	{
 		tinyxml2::XMLDocument* result = new tinyxml2::XMLDocument();
 		if (result != nullptr)
@@ -15,7 +15,7 @@ namespace chaos
 		return result;
 	}
 
-	bool AtlasHTMLGenerator::OutputToHTMLFile(Atlas const& atlas, FilePathParam const& path, AtlasHTMLOutputParams params)
+	bool AtlasHTMLGenerator::OutputToHTMLFile(Atlas const& atlas, FilePathParam const& path, AtlasHTMLOutputParams params) const
 	{
 		bool result = false;
 
@@ -30,7 +30,7 @@ namespace chaos
 		return result;
 	}
 
-	void AtlasHTMLGenerator::OutputElementsToHTMLDocument(char const* folder_path, AtlasFolderInfo const* folder_info, XMLTools& html, tinyxml2::XMLElement* TABLE, tinyxml2::XMLElement*& TR, int bitmap_index, int& count)
+	void AtlasHTMLGenerator::OutputElementsToHTMLDocument(char const* folder_path, AtlasFolderInfo const* folder_info, XMLTools& html, tinyxml2::XMLElement* TABLE, tinyxml2::XMLElement*& TR, int bitmap_index, int& count) const
 	{
 		if (folder_info == nullptr)
 			return;
@@ -57,7 +57,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	void AtlasHTMLGenerator::OutputElementsToHTMLDocument(char const* folder_path, std::vector<T> const& elements, XMLTools& html, tinyxml2::XMLElement* TABLE, tinyxml2::XMLElement*& TR, int bitmap_index, int& count)
+	void AtlasHTMLGenerator::OutputElementsToHTMLDocument(char const* folder_path, std::vector<T> const& elements, XMLTools& html, tinyxml2::XMLElement* TABLE, tinyxml2::XMLElement*& TR, int bitmap_index, int& count) const
 	{
 		for (auto const& info : elements) // all elements
 		{
@@ -75,7 +75,7 @@ namespace chaos
 			html.PushText(PRE, "Folder : ");
 			html.PushText(PRE, folder_path);
 			html.PushText(PRE, "\nInfo :\n");
-			html.PushText(PRE, Atlas::GetInfoString(info).c_str());
+			html.PushText(PRE, GetElementInfoString(info).c_str());
 
 			// reset TR every 5 elements
 			if (count % 5 == 4)
@@ -84,7 +84,7 @@ namespace chaos
 		}
 	}
 
-	void AtlasHTMLGenerator::OutputBitmapsToHTMLDocument(AtlasFolderInfo const* folder_info, XMLTools& html, tinyxml2::XMLElement* SVG, int bitmap_index, float scale)
+	void AtlasHTMLGenerator::OutputBitmapsToHTMLDocument(AtlasFolderInfo const* folder_info, XMLTools& html, tinyxml2::XMLElement* SVG, int bitmap_index, float scale) const
 	{
 		if (folder_info == nullptr)
 			return;
@@ -98,7 +98,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	void AtlasHTMLGenerator::OutputBitmapsToHTMLDocument(std::vector<T> const& elements, XMLTools& html, tinyxml2::XMLElement* SVG, int bitmap_index, float scale)
+	void AtlasHTMLGenerator::OutputBitmapsToHTMLDocument(std::vector<T> const& elements, XMLTools& html, tinyxml2::XMLElement* SVG, int bitmap_index, float scale) const
 	{
 		for (auto const& info : elements) // all elements of AtlasFontInfo or BitmapSet (i.e AtlasCharacterInfo or AtlasBitmapInfo)
 		{
@@ -125,7 +125,7 @@ namespace chaos
 		}
 	}
 
-	void AtlasHTMLGenerator::OutputBitmapFilenamesToHTMLDocument(AtlasFolderInfo const* folder_info, XMLTools& html, tinyxml2::XMLElement* SVG, int bitmap_index, float scale)
+	void AtlasHTMLGenerator::OutputBitmapFilenamesToHTMLDocument(AtlasFolderInfo const* folder_info, XMLTools& html, tinyxml2::XMLElement* SVG, int bitmap_index, float scale) const
 	{
 		if (folder_info == nullptr)
 			return;
@@ -140,7 +140,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	void AtlasHTMLGenerator::OutputBitmapFilenamesToHTMLDocument(std::vector<T> const& elements, XMLTools& html, tinyxml2::XMLElement* SVG, int bitmap_index, float scale)
+	void AtlasHTMLGenerator::OutputBitmapFilenamesToHTMLDocument(std::vector<T> const& elements, XMLTools& html, tinyxml2::XMLElement* SVG, int bitmap_index, float scale) const
 	{
 		for (auto const& info : elements) // all elements of AtlasFontInfo or BitmapSet (i.e AtlasCharacterInfo or AtlasBitmapInfo)
 		{
@@ -161,7 +161,7 @@ namespace chaos
 		}
 	}
 
-	void AtlasHTMLGenerator::OutputToHTMLDocument(Atlas const& atlas, tinyxml2::XMLDocument* doc, AtlasHTMLOutputParams params)
+	void AtlasHTMLGenerator::OutputToHTMLDocument(Atlas const& atlas, tinyxml2::XMLDocument* doc, AtlasHTMLOutputParams params) const
 	{
 		assert(doc != nullptr);
 
@@ -197,7 +197,7 @@ namespace chaos
 			tinyxml2::XMLElement* P = html.PushElement(BODY, "P");
 			tinyxml2::XMLElement* PRE = html.PushElement(P, "PRE");
 
-			html.PushText(PRE, atlas.GetGeneralInformationString().c_str());
+			html.PushText(PRE, GetGeneralInformationString(atlas).c_str());
 		}
 
 		// output ordered per bitmaps
@@ -210,7 +210,7 @@ namespace chaos
 			{
 				tinyxml2::XMLElement* P = html.PushElement(BODY, "P");
 				tinyxml2::XMLElement* PRE = html.PushElement(P, "PRE");
-				html.PushText(PRE, atlas.GetAtlasSpaceOccupationString(i).c_str());
+				html.PushText(PRE, GetAtlasSpaceOccupationString(atlas, i).c_str());
 			}
 
 			tinyxml2::XMLElement* TABLE = html.PushElement(BODY, "TABLE");
@@ -245,6 +245,148 @@ namespace chaos
 					OutputBitmapFilenamesToHTMLDocument(&atlas.root_folder, html, SVG, i, scale);
 			}
 		}
+	}
+
+	void AtlasHTMLGenerator::DoOutputElementInfo(AtlasFolderInfo const& folder_info, std::ostream& stream, int indent) const
+	{
+		StreamTools::Whitespaces whitespaces(indent);
+
+		stream << whitespaces << "Folder:" << '\n';
+		NamedInterface const& named_info = folder_info;
+		DoOutputElementInfo(named_info, stream, indent);
+
+		// output the bitmaps in the folder
+		if (folder_info.bitmaps.size() > 0)
+		{
+			StreamTools::Whitespaces bitmap_stream_indent(indent + INDENT_VALUE);
+			stream << bitmap_stream_indent << "Bitmaps:" << '\n';
+			for (AtlasBitmapInfo const& bitmap_info : folder_info.bitmaps)
+				DoOutputElementInfo(bitmap_info, stream, indent + INDENT_VALUE);
+		}
+		// output the fonts in the folder
+		if (folder_info.fonts.size() > 0)
+		{
+			StreamTools::Whitespaces font_stream_indent(indent + INDENT_VALUE);
+			stream << font_stream_indent << "Fonts:" << '\n';
+			for (AtlasFontInfo const& font_info : folder_info.fonts)
+				DoOutputElementInfo(font_info, stream, indent + INDENT_VALUE);
+		}
+		// recursive calls
+		if (folder_info.folders.size() > 0)
+		{
+			StreamTools::Whitespaces folder_stream_indent(indent + INDENT_VALUE);
+			stream << folder_stream_indent << "Child Folders:" << '\n';
+
+			size_t count = folder_info.folders.size();
+			for (size_t i = 0; i < count; ++i)
+				DoOutputElementInfo(*folder_info.folders[i], stream, indent + INDENT_VALUE);
+		}
+	}
+
+	void AtlasHTMLGenerator::DoOutputElementInfo(NamedInterface const& info, std::ostream& stream, int indent) const
+	{
+		StreamTools::Whitespaces whitespaces(indent);
+		stream << whitespaces << "  name                  : " << info.GetName() << '\n';
+		stream << whitespaces << "  tag                   : " << info.GetTag() << '\n';
+	}
+
+	void AtlasHTMLGenerator::DoOutputElementInfo(AtlasBitmapLayout const& info, std::ostream& stream, int indent) const
+	{
+		StreamTools::Whitespaces whitespaces(indent);
+		stream << whitespaces << "  bitmap_index          : " << info.bitmap_index << '\n';
+		stream << whitespaces << "  width                 : " << info.width << '\n';
+		stream << whitespaces << "  height                : " << info.height << '\n';
+		stream << whitespaces << "  x                     : " << info.x << '\n';
+		stream << whitespaces << "  y                     : " << info.y << '\n';
+		stream << whitespaces << "  bottomleft_texcoord.x : " << info.bottomleft_texcoord.x << '\n';
+		stream << whitespaces << "  bottomleft_texcoord.y : " << info.bottomleft_texcoord.y << '\n';
+		stream << whitespaces << "  topright_texcoord.x   : " << info.topright_texcoord.x << '\n';
+		stream << whitespaces << "  topright_texcoord.y   : " << info.topright_texcoord.y << '\n';
+	}
+
+	void AtlasHTMLGenerator::DoOutputElementInfo(AtlasCharacterLayout const& info, std::ostream& stream, int indent) const
+	{
+		AtlasBitmapLayout const& bitmap_layout = info;
+		DoOutputElementInfo(bitmap_layout, stream, indent);
+
+		StreamTools::Whitespaces whitespaces(indent);
+		stream << whitespaces << "  advance.x    : " << info.advance.x << '\n';
+		stream << whitespaces << "  advance.y    : " << info.advance.y << '\n';
+		stream << whitespaces << "  bitmap_left  : " << info.bitmap_left << '\n';
+		stream << whitespaces << "  bitmap_top   : " << info.bitmap_top << '\n';
+	}
+
+	void AtlasHTMLGenerator::DoOutputElementInfo(AtlasBitmapInfo const& info, std::ostream& stream, int indent) const
+	{
+		NamedInterface const& named_info = info;
+		DoOutputElementInfo(named_info, stream, indent);
+
+		AtlasBitmapLayout const& bitmap_layout = info;
+		DoOutputElementInfo(bitmap_layout, stream, indent);
+	}
+
+	void AtlasHTMLGenerator::DoOutputElementInfo(AtlasCharacterInfo const& info, std::ostream& stream, int indent) const
+	{
+		NamedInterface const& named_info = info;
+		DoOutputElementInfo(named_info, stream, indent);
+
+		AtlasCharacterLayout const& character_layout = info;
+		DoOutputElementInfo(character_layout, stream, indent);
+	}
+
+	void AtlasHTMLGenerator::DoOutputElementInfo(AtlasFontInfo const& info, std::ostream& stream, int indent) const
+	{
+		NamedInterface const& named_info = info;
+		DoOutputElementInfo(named_info, stream, indent);
+
+		StreamTools::Whitespaces whitespaces(indent);
+		stream << whitespaces << "  glyph_width  : " << info.glyph_width << '\n';
+		stream << whitespaces << "  glyph_height : " << info.glyph_height << '\n';
+		stream << whitespaces << "  ascender     : " << info.ascender << '\n';
+		stream << whitespaces << "  descender    : " << info.descender << '\n';
+		stream << whitespaces << "  face_height  : " << info.face_height << '\n';
+
+		// output the charactars in the fonts
+		if (info.elements.size() > 0)
+		{
+			stream << whitespaces << "Characters:" << '\n';
+			for (AtlasCharacterInfo const& character_info : info.elements)
+				DoOutputElementInfo(character_info, stream, indent + INDENT_VALUE);
+		}
+	}
+
+	template<typename T>
+	std::string AtlasHTMLGenerator::GetElementInfoString(T const& element) const
+	{
+		std::ostringstream out;
+		DoOutputElementInfo(element, out);
+		return out.str();
+	}
+
+	std::string AtlasHTMLGenerator::GetAtlasSpaceOccupationString(Atlas const& atlas, int bitmap_index) const
+	{
+		std::ostringstream stream;
+		float atlas_surface = (float)(atlas.dimension.x * atlas.dimension.y);
+		float atlas_used_surface = atlas.ComputeSurface(bitmap_index);
+		float percent = 100.0f * atlas_used_surface / atlas_surface;
+
+		stream << "Atlas " << bitmap_index << '\n';
+		stream << "  occupation : " << percent << "%" << '\n';
+		return stream.str();
+	}
+
+	std::string AtlasHTMLGenerator::GetGeneralInformationString(Atlas const& atlas) const
+	{
+		std::ostringstream stream;
+		float atlas_surface = (float)(atlas.dimension.x * atlas.dimension.y);
+		float full_surface = atlas.ComputeSurface(-1);
+		int   min_atlas_count = int(std::ceil(full_surface / atlas_surface));
+
+		stream << "Full used surface  : " << full_surface << '\n';
+		stream << "Atlas surface      : " << atlas_surface << '\n';
+		stream << "Best atlas count   : " << min_atlas_count << '\n';
+		stream << "Actual atlas count : " << atlas.atlas_count << '\n';
+		return stream.str();
 	}
 
 }; // namespace chaos

@@ -13,7 +13,8 @@ void SaveAtlasAndOutputAtlasToHTML(chaos::Atlas & atlas, chaos::FilePathParam co
 	html_params.texture_scale = 3.0f;
 	html_params.auto_refresh = false;
 
-	chaos::AtlasHTMLGenerator::OutputToHTMLFile(atlas, html_dest_p, html_params);
+	chaos::AtlasHTMLGenerator html_generator;
+	html_generator.OutputToHTMLFile(atlas, html_dest_p, html_params);
 }
 
 bool AddFakeBitmap(chaos::AtlasFolderInfoInput * folder_input, char const * name)

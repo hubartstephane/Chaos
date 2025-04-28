@@ -26,11 +26,11 @@ namespace chaos
 
 		CHAOS_DEFINE_LOG(BitmapAtlasLog, "BitmapAtlas")
 
-		/**
-		* AtlasBitmapLayout : were the bitmap lies in the atlas
-		*/
+	/**
+	* AtlasBitmapLayout : were the bitmap lies in the atlas
+	*/
 
-		class CHAOS_API AtlasBitmapLayout
+	class CHAOS_API AtlasBitmapLayout
 	{
 	public:
 
@@ -354,18 +354,6 @@ namespace chaos
 		/** returns the used surface for a bitmap */
 		float ComputeSurface(int bitmap_index) const;
 
-		/** display information */
-		void OutputInfo(std::ostream& stream) const;
-
-		/** display information */
-		std::string GetInfoString() const;
-		/** display information about one named object */
-		static std::string GetInfoString(NamedInterface const& info);
-		/** display information about one bitmap info */
-		static std::string GetInfoString(AtlasBitmapInfo const& info);
-		/** display information about one character info */
-		static std::string GetInfoString(AtlasCharacterInfo const& info);
-
 		/** get all entries from the root folder */
 		template<typename T, typename ...PARAMS>
 		void CollectEntries(T& result, bool recursive, PARAMS && ...params)
@@ -377,34 +365,6 @@ namespace chaos
 
 		/** utility function to get the surface used in a bitmap */
 		float DoComputeSurface(int bitmap_index, AtlasFolderInfo const* folder_info) const;
-
-		/** display information */
-		void DoOutputInfo(AtlasFolderInfo const& folder_info, std::ostream& stream, int indent = 0) const;
-		/** display information about one named element */
-		static void DoOutputInfo(NamedInterface const& info, std::ostream& stream, int indent = 0);
-		/** display information about one bitmap layout */
-		static void DoOutputInfo(AtlasBitmapLayout const& info, std::ostream& stream, int indent = 0);
-		/** display information about one character layout */
-		static void DoOutputInfo(AtlasCharacterLayout const& info, std::ostream& stream, int indent = 0);
-		/** display information about one bitmap info */
-		static void DoOutputInfo(AtlasBitmapInfo const& info, std::ostream& stream, int indent = 0);
-		/** display information about one character info */
-		static void DoOutputInfo(AtlasCharacterInfo const& info, std::ostream& stream, int indent = 0);
-		/** display information about one font info */
-		static void DoOutputInfo(AtlasFontInfo const& info, std::ostream& stream, int indent = 0);
-
-		/** get a string with the general information */
-		std::string GetGeneralInformationString() const;
-		/** get a string with the surface occupation of all atlas */
-		std::string GetAtlasSpaceOccupationString() const;
-		/** get a string with the surface occupation of one atlas */
-		std::string GetAtlasSpaceOccupationString(int bitmap_index) const;
-		/** display the surface occupation of all atlas */
-		void OutputAtlasSpaceOccupation(std::ostream& stream = std::cout) const;
-		/** display the surface occupation of all atlas */
-		void OutputAtlasSpaceOccupation(int bitmap_index, std::ostream& stream = std::cout) const;
-		/** display the general information if the atlas */
-		void OutputGeneralInformation(std::ostream& stream = std::cout) const;
 
 	protected:
 

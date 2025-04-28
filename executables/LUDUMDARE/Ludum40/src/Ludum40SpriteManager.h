@@ -41,9 +41,9 @@ public:
     /** Finalize the manager */
     void Finalize();
     /** add a sprite to be rendered */
-    void AddSpriteBitmap(chaos::BitmapAtlas::AtlasBitmapInfo const* info, glm::vec2 const& position, glm::vec2 const& size, chaos::Hotpoint hotpoint);
+    void AddSpriteBitmap(chaos::AtlasBitmapInfo const* info, glm::vec2 const& position, glm::vec2 const& size, chaos::Hotpoint hotpoint);
     /** add a sprite to be rendered */
-    void AddSpriteCharacter(chaos::BitmapAtlas::AtlasCharacterInfo const* info, glm::vec2 const& position, glm::vec2 const& size, chaos::Hotpoint hotpoint, glm::vec3 const& color);
+    void AddSpriteCharacter(chaos::AtlasCharacterInfo const* info, glm::vec2 const& position, glm::vec2 const& size, chaos::Hotpoint hotpoint, glm::vec3 const& color);
     /** Display the sprites */
     void Display(chaos::GPUProgramProviderBase* uniform_provider);
     /** get the number of sprites in the buffer */
@@ -62,7 +62,7 @@ protected:
     /** internal method to send data to GPU */
     void UpdateGPUBuffer();
     /** internal method to insert a sprite in the buffer */
-    void AddSpriteImpl(chaos::BitmapAtlas::AtlasBitmapLayout const* layout, chaos::ParticleCorners const& corners, glm::vec3 const& color);
+    void AddSpriteImpl(chaos::AtlasBitmapLayout const* layout, chaos::ParticleCorners const& corners, glm::vec3 const& color);
 
 protected:
 

@@ -528,7 +528,7 @@ namespace chaos
 	{
 		GPUDrawInterface<VertexDefault> DI(nullptr);
 
-		BitmapAtlas::AtlasBitmapInfo const* bitmap_info = DI.FindBitmapInfo(particle_name.c_str());
+		AtlasBitmapInfo const* bitmap_info = DI.FindBitmapInfo(particle_name.c_str());
 		if (bitmap_info != nullptr)
 		{
 			// compute the final size of the particle

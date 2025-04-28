@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class CHAOS_API GPUAtlas : public BitmapAtlas::AtlasBase
+	class CHAOS_API GPUAtlas : public AtlasBase
 	{
 	public:
 
@@ -15,9 +15,9 @@ namespace chaos
 		/** load an atlas from an index file */
 		bool LoadAtlas(FilePathParam const& path);
 		/** generate a texture atlas from a standard atlas */
-		bool LoadFromBitmapAtlas(BitmapAtlas::Atlas const& atlas);
+		bool LoadFromBitmapAtlas(Atlas const& atlas);
 		/** generate a texture atlas from a standard atlas */
-		bool LoadFromBitmapAtlas(BitmapAtlas::Atlas&& atlas);
+		bool LoadFromBitmapAtlas(Atlas&& atlas);
 
 		/* get the array texture */
 		GPUTexture* GetTexture() { return texture.get(); }
@@ -27,13 +27,13 @@ namespace chaos
 	protected:
 
 		/** generate a texture atlas from a standard atlas */
-		bool DoLoadFromBitmapAtlas(BitmapAtlas::Atlas const& atlas);
+		bool DoLoadFromBitmapAtlas(Atlas const& atlas);
 		/** generate a texture atlas from a standard atlas */
-		bool DoLoadFromBitmapAtlas(BitmapAtlas::Atlas&& atlas);
+		bool DoLoadFromBitmapAtlas(Atlas&& atlas);
 		/** copy src folder into dst folder */
-		bool DoCopyFolder(BitmapAtlas::AtlasFolderInfo* dst_folder_info, BitmapAtlas::AtlasFolderInfo const* src_folder_info);
+		bool DoCopyFolder(AtlasFolderInfo* dst_folder_info, AtlasFolderInfo const* src_folder_info);
 		/** generate a texture array */
-		bool DoGenerateTextureArray(BitmapAtlas::Atlas const& atlas);
+		bool DoGenerateTextureArray(Atlas const& atlas);
 
 	protected:
 

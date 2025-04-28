@@ -17,7 +17,7 @@ void LudumGameInstance::FireExplosion(chaos::box2 const & ref_box)
     if (!spawner.IsValid())
         return;
 
-    chaos::BitmapAtlas::AtlasBitmapInfo const* explosion_info = spawner.GetBitmapInfo();
+    chaos::AtlasBitmapInfo const* explosion_info = spawner.GetBitmapInfo();
 
     spawner.SpawnParticles(1, false).Process([ref_box, explosion_info](chaos::ParticleAccessor<ParticleExplosion> accessor)
     {

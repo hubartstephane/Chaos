@@ -103,10 +103,10 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 
 	chaos::ParticleSpawner spawner = ludum_game->GetParticleSpawner(chaos::GameHUDKeys::BRICK_LAYER_ID, "brick");
 
-	chaos::BitmapAtlas::AtlasBitmapInfo const* brick_info = spawner.FindBitmapInfo("brick");
-	chaos::BitmapAtlas::AtlasBitmapInfo const* indestructible_brick_info = spawner.FindBitmapInfo("IndestructibleBrick");
-	chaos::BitmapAtlas::AtlasBitmapInfo const* two_brick_info = spawner.FindBitmapInfo("TwoBrick");
-	chaos::BitmapAtlas::AtlasBitmapInfo const* four_brick_info = spawner.FindBitmapInfo("FourBrick");
+	chaos::AtlasBitmapInfo const* brick_info = spawner.FindBitmapInfo("brick");
+	chaos::AtlasBitmapInfo const* indestructible_brick_info = spawner.FindBitmapInfo("IndestructibleBrick");
+	chaos::AtlasBitmapInfo const* two_brick_info = spawner.FindBitmapInfo("TwoBrick");
+	chaos::AtlasBitmapInfo const* four_brick_info = spawner.FindBitmapInfo("FourBrick");
 
 	// create the bricks resource
 

@@ -168,7 +168,7 @@ std::vector<std::pair<int, size_t>> SpriteLayer::GetSpritePopulationStats(GameIn
 
 void SpriteLayer::PopulateSprites(GameInfo game_info, int count)
 {
-	chaos::BitmapAtlas::AtlasFolderInfo const * folder_info = game_info.texture_atlas->GetFolderInfo("sprites");
+	chaos::AtlasFolderInfo const * folder_info = game_info.texture_atlas->GetFolderInfo("sprites");
 	if (folder_info == nullptr)
 		return;
 
@@ -187,11 +187,11 @@ void SpriteLayer::PopulateSprites(GameInfo game_info, int count)
 
 void SpriteLayer::PopulateSpritesWithDef(GameInfo game_info, int & count, ObjectDefinition const & def)
 {
-	chaos::BitmapAtlas::AtlasFolderInfo const * folder_info = game_info.texture_atlas->GetFolderInfo("sprites");
+	chaos::AtlasFolderInfo const * folder_info = game_info.texture_atlas->GetFolderInfo("sprites");
 	if (folder_info == nullptr)
 		return;
 
-	chaos::BitmapAtlas::AtlasBitmapInfo const * bitmap_info = folder_info->GetBitmapInfo(def.id);  // texturing info required to get a ratio between width & height
+	chaos::AtlasBitmapInfo const * bitmap_info = folder_info->GetBitmapInfo(def.id);  // texturing info required to get a ratio between width & height
 	if (bitmap_info == nullptr)
 		return;
 
@@ -330,7 +330,7 @@ void SpriteLayer::UpdateGPUBuffer(GameInfo game_info)
 									// When we want to add data in GPU buffer, we have to Find texture data (may be costly)
 									// This algo uses another approch to avoid that
 
-	chaos::BitmapAtlas::AtlasFolderInfo const * folder_info = game_info.texture_atlas->GetFolderInfo("sprites");
+	chaos::AtlasFolderInfo const * folder_info = game_info.texture_atlas->GetFolderInfo("sprites");
 	if (folder_info == nullptr)
 		return;
 
@@ -341,7 +341,7 @@ void SpriteLayer::UpdateGPUBuffer(GameInfo game_info)
 
 		int id = def.id;
 
-		chaos::BitmapAtlas::AtlasBitmapInfo const * bitmap_info = folder_info->GetBitmapInfo(id); // search data corresponding the the model of this sprite
+		chaos::AtlasBitmapInfo const * bitmap_info = folder_info->GetBitmapInfo(id); // search data corresponding the the model of this sprite
 		if (bitmap_info == nullptr)
 			continue;
 

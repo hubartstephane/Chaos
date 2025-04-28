@@ -106,10 +106,10 @@ protected:
 		generator.AddColor("blue", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 		generator.AddColor("green", glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 
-		chaos::BitmapAtlas::AtlasFolderInfo const * folder = atlas->GetFolderInfo("folder_input1");
+		chaos::AtlasFolderInfo const * folder = atlas->GetFolderInfo("folder_input1");
 		if (folder != nullptr)
 		{
-			chaos::BitmapAtlas::AtlasBitmapInfo const * bitmap = folder->GetBitmapInfo("xboxControllerButtonA");
+			chaos::AtlasBitmapInfo const * bitmap = folder->GetBitmapInfo("xboxControllerButtonA");
 			if (bitmap != nullptr)
 				generator.AddBitmap("BUTTON", bitmap);
 		}

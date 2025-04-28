@@ -117,13 +117,13 @@ chaos::ParticleCorners SpriteManager::GetParticleCorners(glm::vec2 const& positi
 	return result;
 }
 
-void SpriteManager::AddSpriteCharacter(chaos::BitmapAtlas::AtlasCharacterInfo const* info, glm::vec2 const& position, glm::vec2 const& size, chaos::Hotpoint hotpoint, glm::vec3 const& color)
+void SpriteManager::AddSpriteCharacter(chaos::AtlasCharacterInfo const* info, glm::vec2 const& position, glm::vec2 const& size, chaos::Hotpoint hotpoint, glm::vec3 const& color)
 {
 	chaos::ParticleCorners corners = GetParticleCorners(position, size, hotpoint);
 	AddSpriteImpl(info, corners, color);
 }
 
-void SpriteManager::AddSpriteBitmap(chaos::BitmapAtlas::AtlasBitmapInfo const* info, glm::vec2 const& position, glm::vec2 const& size, chaos::Hotpoint hotpoint)
+void SpriteManager::AddSpriteBitmap(chaos::AtlasBitmapInfo const* info, glm::vec2 const& position, glm::vec2 const& size, chaos::Hotpoint hotpoint)
 {
 	static glm::vec3 const color(1.0f, 1.0f, 1.0f);
 
@@ -173,7 +173,7 @@ static void MyGenerateBoxParticle(chaos::ParticleCorners const& corners, chaos::
 	vertices[5] = tl;
 }
 
-void SpriteManager::AddSpriteImpl(chaos::BitmapAtlas::AtlasBitmapLayout const* layout, chaos::ParticleCorners const& corners, glm::vec3 const& color)
+void SpriteManager::AddSpriteImpl(chaos::AtlasBitmapLayout const* layout, chaos::ParticleCorners const& corners, glm::vec3 const& color)
 {
 	chaos::ParticleTexcoords texcoords = layout->GetTexcoords();
 

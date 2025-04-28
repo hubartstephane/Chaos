@@ -32,7 +32,7 @@ namespace chaos
 		/** override */
 		virtual bool DoTick(float delta_time) override;
 		/** override */
-		virtual bool FillAtlasGeneratorInput(BitmapAtlas::AtlasInput& input) override;
+		virtual bool FillAtlasGeneratorInput(AtlasInput& input) override;
 
 		/** override */
 		virtual bool OnMouseMoveImpl(glm::vec2 const& delta) override;

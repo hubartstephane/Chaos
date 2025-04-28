@@ -21,7 +21,7 @@ namespace chaos
         /** change the bitmap info */
         bool SetAtlasBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request = "sprites"); // folder "sprites" by default
         /** find the bitmap info */
-        BitmapAtlas::AtlasBitmapInfo const* FindBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request = "sprites") const;
+        AtlasBitmapInfo const* FindBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request = "sprites") const;
 
         /** spawn particles */
         SpawnParticleResult SpawnParticles(size_t count, bool new_allocation = true);
@@ -30,7 +30,7 @@ namespace chaos
         SpawnParticleResult SpawnText(char const* in_text, bool new_allocation, ParticleTextGenerator::GeneratorParams const& params, ParticleTextGenerator::CreateTextAllocationParams const& allocation_params);
 
         /** gets the bitmap info used for spawned particles */
-        BitmapAtlas::AtlasBitmapInfo const* GetBitmapInfo() const { return bitmap_info; }
+        AtlasBitmapInfo const* GetBitmapInfo() const { return bitmap_info; }
 
         /** returns whether the spawner is valid */
         bool IsValid() const { return (particle_layer != nullptr); }
@@ -42,7 +42,7 @@ namespace chaos
         /** the layer instance where to spawn the particles */
         ParticleLayerBase* particle_layer = nullptr;
         /** the bitmap info to use for the spawned particles */
-        BitmapAtlas::AtlasBitmapInfo const* bitmap_info = nullptr;
+        AtlasBitmapInfo const* bitmap_info = nullptr;
         /** the atlas used for the spawner */
         GPUAtlas const* atlas = nullptr;
     };

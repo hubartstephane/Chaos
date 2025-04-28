@@ -273,12 +273,12 @@ namespace chaos
 			hud->Display(render_context, uniform_provider, render_params);
 	}
 
-	bool Game::FillAtlasGeneratorInput(BitmapAtlas::AtlasInput & input)
+	bool Game::FillAtlasGeneratorInput(AtlasInput & input)
 	{
 		if (tiled_map_manager != nullptr)
 		{
 			// find or create folder
-			BitmapAtlas::AtlasFolderInfoInput * folder_input = input.AddFolder("sprites", 0);
+			AtlasFolderInfoInput * folder_input = input.AddFolder("sprites", 0);
 			if (folder_input == nullptr)
 				return false;
 			// add sprites from TiledMap

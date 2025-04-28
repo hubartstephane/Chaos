@@ -7,11 +7,11 @@ namespace chaos
 	// GPUAtlasGenerator implementation
 	// ========================================================================
 
-	GPUAtlas* GPUAtlasGenerator::ComputeResult(BitmapAtlas::AtlasInput const& in_input, BitmapAtlas::AtlasGeneratorParams const& in_params)
+	GPUAtlas* GPUAtlasGenerator::ComputeResult(AtlasInput const& in_input, AtlasGeneratorParams const& in_params)
 	{
 		// generate a standard atlas to be converted
-		BitmapAtlas::Atlas          atlas;
-		BitmapAtlas::AtlasGenerator generator;
+		Atlas          atlas;
+		AtlasGenerator generator;
 		if (!generator.ComputeResult(in_input, atlas, in_params))
 			return nullptr;
 

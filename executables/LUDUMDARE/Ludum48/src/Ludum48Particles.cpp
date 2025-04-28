@@ -65,7 +65,7 @@ void ParticleGateLayerTrait::ParticleToPrimitives(GateParticle const& particle, 
 		GPUAtlas const * atlas = application->GetTextureAtlas();
 		if (atlas != nullptr)
 		{
-			BitmapAtlas::AtlasBitmapInfo const* bi = (door_opened) ?
+			AtlasBitmapInfo const* bi = (door_opened) ?
 				atlas->GetBitmapInfo("OpenGate", true) :
 				atlas->GetBitmapInfo("Gate", true);
 
@@ -130,7 +130,7 @@ static bool UpdateAnimatedParticleTexcoords(ParticleAnimated & particle) // retu
 {
 	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasAnimation())
 	{
-		BitmapAtlas::AtlasBitmapLayout layout = particle.bitmap_info->GetAnimationLayoutFromTime(particle.animation_timer);
+		AtlasBitmapLayout layout = particle.bitmap_info->GetAnimationLayoutFromTime(particle.animation_timer);
 		if (!layout.IsValid())
 			return false;
 		particle.texcoords = layout.GetTexcoords();
@@ -236,7 +236,7 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 
 	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasAnimation())
 	{
-		BitmapAtlas::AtlasBitmapLayout layout = particle.bitmap_info->GetAnimationLayout(particle.frame_index);
+		AtlasBitmapLayout layout = particle.bitmap_info->GetAnimationLayout(particle.frame_index);
 		if (!layout.IsValid())
 			return true; // destroy the particle
 

@@ -248,7 +248,7 @@ namespace chaos
 		virtual int AddParticleLayers();
 
 		/** fill atlas generation input from the tiled map manager */
-		virtual bool FillAtlasGeneratorInput(BitmapAtlas::AtlasInput& input);
+		virtual bool FillAtlasGeneratorInput(AtlasInput& input);
 
 		/** load object type sets concerned by the game (if required) */
 		virtual bool GenerateObjectTypeSets(nlohmann::json const * config);

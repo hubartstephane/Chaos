@@ -5,22 +5,22 @@ namespace chaos
 {
 	namespace TMTools
 	{
-		bool AddIntoAtlasInput(TiledMap::Manager const* manager, BitmapAtlas::AtlasInput& input)
+		bool AddIntoAtlasInput(TiledMap::Manager const* manager, AtlasInput& input)
 		{
 			return AddIntoAtlasInput(manager, input.GetRootFolder());
 		}
 
-		bool AddIntoAtlasInput(TiledMap::TileSet const* tile_set, BitmapAtlas::AtlasInput& input)
+		bool AddIntoAtlasInput(TiledMap::TileSet const* tile_set, AtlasInput& input)
 		{
 			return AddIntoAtlasInput(tile_set, input.GetRootFolder());
 		}
 
-		bool AddIntoAtlasInput(TiledMap::Map const* map, BitmapAtlas::AtlasInput& input)
+		bool AddIntoAtlasInput(TiledMap::Map const* map, AtlasInput& input)
 		{
 			return AddIntoAtlasInput(map, input.GetRootFolder());
 		}
 
-		bool AddIntoAtlasInput(TiledMap::LayerBase const* layer, BitmapAtlas::AtlasFolderInfoInput* folder_input)
+		bool AddIntoAtlasInput(TiledMap::LayerBase const* layer, AtlasFolderInfoInput* folder_input)
 		{
 			assert(layer != nullptr);
 			assert(folder_input != nullptr);
@@ -40,7 +40,7 @@ namespace chaos
 			return true;
 		}
 
-		bool AddIntoAtlasInput(TiledMap::Map const* map, BitmapAtlas::AtlasFolderInfoInput* folder_input)
+		bool AddIntoAtlasInput(TiledMap::Map const* map, AtlasFolderInfoInput* folder_input)
 		{
 			assert(map != nullptr);
 			assert(folder_input != nullptr);
@@ -53,7 +53,7 @@ namespace chaos
 			return true;
 		}
 
-		bool AddIntoAtlasInput(TiledMap::TileSet const* tile_set, BitmapAtlas::AtlasFolderInfoInput* folder_input)
+		bool AddIntoAtlasInput(TiledMap::TileSet const* tile_set, AtlasFolderInfoInput* folder_input)
 		{
 			assert(tile_set != nullptr);
 			assert(folder_input != nullptr);
@@ -75,7 +75,7 @@ namespace chaos
 			return true;
 		}
 
-		bool AddIntoAtlasInput(TiledMap::Manager const* manager, BitmapAtlas::AtlasFolderInfoInput* folder_input)
+		bool AddIntoAtlasInput(TiledMap::Manager const* manager, AtlasFolderInfoInput* folder_input)
 		{
 			assert(manager != nullptr);
 			assert(folder_input != nullptr);

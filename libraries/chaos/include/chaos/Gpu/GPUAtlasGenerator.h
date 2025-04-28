@@ -16,7 +16,7 @@ namespace chaos
 	public:
 
 		/** compute all AtlasBitmapInfo positions */
-		GPUAtlas* ComputeResult(BitmapAtlas::AtlasInput const& in_input, BitmapAtlas::AtlasGeneratorParams const& in_params = {});
+		GPUAtlas* ComputeResult(AtlasInput const& in_input, AtlasGeneratorParams const& in_params = {});
 	};
 
 #endif

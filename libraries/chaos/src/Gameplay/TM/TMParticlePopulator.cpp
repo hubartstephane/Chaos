@@ -80,14 +80,14 @@ namespace chaos
 		assert(bitmap_name != nullptr);
 
 		// search bitmap information for the particle
-		BitmapAtlas::AtlasBitmapInfo const* bitmap_info = folder_info->GetBitmapInfo(bitmap_name);
+		AtlasBitmapInfo const* bitmap_info = folder_info->GetBitmapInfo(bitmap_name);
 		if (bitmap_info == nullptr)
 		{
 			ParticleLog::Error("TMParticlePopulator::AddParticle : unknown bitmap [%s]", (bitmap_name != nullptr)? bitmap_name : "");
 			return false;
 		}
 		// get the real layout of the bitmap by removing animation
-		BitmapAtlas::AtlasBitmapLayout layout = *bitmap_info;
+		AtlasBitmapLayout layout = *bitmap_info;
 		if (bitmap_info->HasAnimation() && bitmap_info->GetAnimationImageCount() > 0)
 			layout = bitmap_info->GetAnimationLayout(0, WrapMode::CLAMP); // take frame 0 by default
 		// compute the bounding box

@@ -328,7 +328,7 @@ namespace chaos
 
 
 
-	bool WindowApplication::FillAtlasGeneratorInput(BitmapAtlas::AtlasInput& input)
+	bool WindowApplication::FillAtlasGeneratorInput(AtlasInput& input)
 	{
 		if (!FillAtlasGeneratorInputSprites(input))
 			return false;
@@ -337,14 +337,14 @@ namespace chaos
 		return true;
 	}
 
-	bool WindowApplication::FillAtlasGeneratorInputSprites(BitmapAtlas::AtlasInput& input)
+	bool WindowApplication::FillAtlasGeneratorInputSprites(AtlasInput& input)
 	{
 		// get the directory where the sprites are
 		std::string sprite_directory;
 		if (!JSONTools::GetAttribute(GetJSONReadConfiguration(), "sprite_directory", sprite_directory))
 			return true;
 		// find or create folder
-		BitmapAtlas::AtlasFolderInfoInput* folder_info = input.AddFolder("sprites", 0);
+		AtlasFolderInfoInput* folder_info = input.AddFolder("sprites", 0);
 		if (folder_info == nullptr)
 			return false;
 		// Add sprites
@@ -353,12 +353,12 @@ namespace chaos
 		return true;
 	}
 
-	bool WindowApplication::FillAtlasGeneratorInputFonts(BitmapAtlas::AtlasInput& input)
+	bool WindowApplication::FillAtlasGeneratorInputFonts(AtlasInput& input)
 	{
 		if (JSONReadConfiguration fonts_config = JSONTools::GetAttributeStructureNode(GetJSONReadConfiguration(), "fonts"))
 		{
 			// read the default font parameters
-			BitmapAtlas::AtlasFontInfoInputParams font_params;
+			AtlasFontInfoInputParams font_params;
 			if (JSONReadConfiguration default_font_param_json = JSONTools::GetAttributeStructureNode(fonts_config, "default_font_param"))
 				LoadFromJSON(default_font_param_json, font_params);
 
@@ -387,7 +387,7 @@ namespace chaos
 	bool WindowApplication::CreateTextureAtlas(JSONReadConfiguration config)
 	{
 		// fill sub images for atlas generation
-		BitmapAtlas::AtlasInput input;
+		AtlasInput input;
 		if (!FillAtlasGeneratorInput(input))
 			return false;
 
@@ -395,7 +395,7 @@ namespace chaos
 		int const DEFAULT_ATLAS_SIZE = 1024;
 		int const DEFAULT_ATLAS_PADDING = 10;
 
-		BitmapAtlas::AtlasGeneratorParams params = BitmapAtlas::AtlasGeneratorParams(DEFAULT_ATLAS_SIZE, DEFAULT_ATLAS_SIZE, DEFAULT_ATLAS_PADDING, PixelFormatMergeParams());
+		AtlasGeneratorParams params = AtlasGeneratorParams(DEFAULT_ATLAS_SIZE, DEFAULT_ATLAS_SIZE, DEFAULT_ATLAS_PADDING, PixelFormatMergeParams());
 
 		if (JSONReadConfiguration atlas_config = JSONTools::GetAttributeStructureNode(config, "atlas"))
 			LoadFromJSON(atlas_config, params);
@@ -420,13 +420,13 @@ namespace chaos
 		JSONReadConfiguration fonts_config = JSONTools::GetAttributeStructureNode(config, "fonts");
 
 		// bitmaps in generator
-		if (BitmapAtlas::AtlasFolderInfo const* folder_info = texture_atlas->GetFolderInfo("sprites"))
+		if (AtlasFolderInfo const* folder_info = texture_atlas->GetFolderInfo("sprites"))
 		{
 			// for each bitmap, that correspond to a button, register a [NAME] in the generator
 			for (auto it = gamepad_button_map.begin(); it != gamepad_button_map.end(); ++it)
 			{
 				std::string const& bitmap_name = it->second.first;
-				BitmapAtlas::AtlasBitmapInfo const* info = folder_info->GetBitmapInfo(bitmap_name.c_str());
+				AtlasBitmapInfo const* info = folder_info->GetBitmapInfo(bitmap_name.c_str());
 				if (info == nullptr)
 					continue;
 				std::string const& generator_alias = it->second.second;
@@ -445,7 +445,7 @@ namespace chaos
 								continue;
 							std::string const& bitmap_name = it.key();
 							std::string bitmap_path = it->get<std::string>();
-							BitmapAtlas::AtlasBitmapInfo const* info = folder_info->GetBitmapInfo(bitmap_path.c_str());
+							AtlasBitmapInfo const* info = folder_info->GetBitmapInfo(bitmap_path.c_str());
 							if (info == nullptr)
 								continue;
 							particle_text_generator->AddBitmap(bitmap_name.c_str(), info);

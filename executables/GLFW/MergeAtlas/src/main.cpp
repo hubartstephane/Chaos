@@ -10,12 +10,12 @@ void TestMergedAtlas(std::vector<FIBITMAP*> & atlas_bitmaps, chaos::PixelFormat 
 	// STEP 1 : create atlas from images of distinct formats
 	if (boost::filesystem::create_directories(atlas_path))
 	{
-		chaos::BitmapAtlas::Atlas          atlas;
-		chaos::BitmapAtlas::AtlasGenerator generator;
-		chaos::BitmapAtlas::AtlasGeneratorParams params;
-		chaos::BitmapAtlas::AtlasInput     input;
+		chaos::Atlas          atlas;
+		chaos::AtlasGenerator generator;
+		chaos::AtlasGeneratorParams params;
+		chaos::AtlasInput     input;
 
-		chaos::BitmapAtlas::AtlasFolderInfoInput * folder_input = input.AddFolder("bitmap_set1", 0);
+		chaos::AtlasFolderInfoInput * folder_input = input.AddFolder("bitmap_set1", 0);
 
 		for (size_t i = 0; i < atlas_bitmaps.size(); ++i)
 		{
@@ -34,7 +34,7 @@ void TestMergedAtlas(std::vector<FIBITMAP*> & atlas_bitmaps, chaos::PixelFormat 
 
 	if (boost::filesystem::create_directories(resave_path))
 	{
-		chaos::BitmapAtlas::Atlas atlas;
+		chaos::Atlas atlas;
 
 		atlas.LoadAtlas(atlas_path / "Atlas");
 		atlas.SaveAtlas(resave_path / "ResavedAtlas");

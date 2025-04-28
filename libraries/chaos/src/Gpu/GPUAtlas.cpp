@@ -5,7 +5,7 @@ namespace chaos
 {
 	void GPUAtlas::Clear()
 	{
-		BitmapAtlas::AtlasBase::Clear();
+		AtlasBase::Clear();
 		texture = nullptr;
 	}
 
@@ -14,13 +14,13 @@ namespace chaos
 		Clear();
 
 		// use a temporary standard atlas to load everything necessary from file
-		BitmapAtlas::Atlas atlas;
+		Atlas atlas;
 		if (!atlas.LoadAtlas(path))
 			return false;
 		return LoadFromBitmapAtlas(std::move(atlas));
 	}
 
-	bool GPUAtlas::LoadFromBitmapAtlas(BitmapAtlas::Atlas const& atlas)
+	bool GPUAtlas::LoadFromBitmapAtlas(Atlas const& atlas)
 	{
 		Clear();
 		if (!DoLoadFromBitmapAtlas(atlas))
@@ -31,7 +31,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GPUAtlas::LoadFromBitmapAtlas(BitmapAtlas::Atlas&& atlas)
+	bool GPUAtlas::LoadFromBitmapAtlas(Atlas&& atlas)
 	{
 		Clear();
 		if (!DoLoadFromBitmapAtlas(std::move(atlas)))
@@ -42,7 +42,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GPUAtlas::DoGenerateTextureArray(BitmapAtlas::Atlas const& atlas)
+	bool GPUAtlas::DoGenerateTextureArray(Atlas const& atlas)
 	{
 		// create and fill a texture array generator
 		std::vector<bitmap_ptr> const& bitmaps = atlas.GetBitmaps();
@@ -58,7 +58,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GPUAtlas::DoLoadFromBitmapAtlas(BitmapAtlas::Atlas&& atlas)
+	bool GPUAtlas::DoLoadFromBitmapAtlas(Atlas&& atlas)
 	{
 		if (!DoGenerateTextureArray(atlas))
 			return false;
@@ -70,7 +70,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GPUAtlas::DoLoadFromBitmapAtlas(BitmapAtlas::Atlas const& atlas)
+	bool GPUAtlas::DoLoadFromBitmapAtlas(Atlas const& atlas)
 	{
 		if (!DoGenerateTextureArray(atlas))
 			return false;
@@ -82,7 +82,7 @@ namespace chaos
 		return DoCopyFolder(&root_folder, &atlas.root_folder);
 	}
 
-	bool GPUAtlas::DoCopyFolder(BitmapAtlas::AtlasFolderInfo* dst_folder_info, BitmapAtlas::AtlasFolderInfo const* src_folder_info)
+	bool GPUAtlas::DoCopyFolder(AtlasFolderInfo* dst_folder_info, AtlasFolderInfo const* src_folder_info)
 	{
 		assert(dst_folder_info != nullptr);
 		assert(src_folder_info != nullptr);
@@ -97,15 +97,15 @@ namespace chaos
 		size_t child_folder_count = src_folder_info->folders.size();
 		for (size_t i = 0; i < child_folder_count; ++i)
 		{
-			BitmapAtlas::AtlasFolderInfo const* src_child_folder = src_folder_info->folders[i].get();
+			AtlasFolderInfo const* src_child_folder = src_folder_info->folders[i].get();
 			if (src_child_folder == nullptr)
 				continue;
 
-			BitmapAtlas::AtlasFolderInfo* dst_child_folder = new BitmapAtlas::AtlasFolderInfo;
+			AtlasFolderInfo* dst_child_folder = new AtlasFolderInfo;
 			if (dst_child_folder == nullptr)
 				continue;
 
-			dst_folder_info->folders.push_back(std::move(std::unique_ptr<BitmapAtlas::AtlasFolderInfo>(dst_child_folder)));
+			dst_folder_info->folders.push_back(std::move(std::unique_ptr<AtlasFolderInfo>(dst_child_folder)));
 			DoCopyFolder(dst_child_folder, src_child_folder);
 		}
 		return true;

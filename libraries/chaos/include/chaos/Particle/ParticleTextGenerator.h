@@ -121,11 +121,11 @@ namespace chaos
 			/** the character */
 			uint32_t character = 0;
 			/** the corresponding bitmap (if valid) */
-			BitmapAtlas::AtlasBitmapLayout const* bitmap_layout = nullptr;
+			AtlasBitmapLayout const* bitmap_layout = nullptr;
 			/** the corresponding character (if valid) */
-			BitmapAtlas::AtlasCharacterLayout const* character_layout = nullptr;
+			AtlasCharacterLayout const* character_layout = nullptr;
 			/** the corresponding character set (if valid) */
-			BitmapAtlas::AtlasFontInfo const* font_info = nullptr;
+			AtlasFontInfo const* font_info = nullptr;
 		};
 
 		using TokenLine = std::vector<Token>;
@@ -164,7 +164,7 @@ namespace chaos
 			/** the color to use */
 			glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 			/** the character set selected */
-			BitmapAtlas::AtlasFontInfo const* font_info = nullptr;
+			AtlasFontInfo const* font_info = nullptr;
 		};
 
 		/**
@@ -188,22 +188,22 @@ namespace chaos
 			/** duplicate the last stack element */
 			Style& PushDuplicate(bool override_top_stack);
 			/** add an element on generator stack : keep color, but change current font_info */
-			Style& PushAtlasFontInfo(BitmapAtlas::AtlasFontInfo const* font_info, bool override_top_stack);
+			Style& PushAtlasFontInfo(AtlasFontInfo const* font_info, bool override_top_stack);
 			/** add an element on generator stack : keep font_info, but change current color */
 			Style& PushColor(glm::vec4 const& color, bool override_top_stack);
 			/** get a character set from its name */
-			BitmapAtlas::AtlasFontInfo const* GetAtlasFontInfoFromName(char const* font_info_name) const;
+			AtlasFontInfo const* GetAtlasFontInfoFromName(char const* font_info_name) const;
 			/** recursively search a font inside the folder */
-			BitmapAtlas::AtlasFontInfo const* GetFirstFont(BitmapAtlas::AtlasFolderInfo const* folder_info) const;
+			AtlasFontInfo const* GetFirstFont(AtlasFolderInfo const* folder_info) const;
 
 			/** start the markup */
 			bool StartMarkup(char const* text, int& i);
 			/** utility method to emit characters */
 			void EmitCharacters(uint32_t charcode, size_t count);
 			/** utility method to emit character */
-			void EmitCharacter(uint32_t charcode, BitmapAtlas::AtlasCharacterLayout const* layout, BitmapAtlas::AtlasFontInfo const* font_info);
+			void EmitCharacter(uint32_t charcode, AtlasCharacterLayout const* layout, AtlasFontInfo const* font_info);
 			/** emit a bitmap */
-			void EmitBitmap(BitmapAtlas::AtlasBitmapLayout const* layout, bool use_font_color);
+			void EmitBitmap(AtlasBitmapLayout const* layout, bool use_font_color);
 			/** end the current line */
 			void EndCurrentLine();
 			/** insert a token */
@@ -238,23 +238,23 @@ namespace chaos
 		public:
 
 			/** constructor with atlas initialization */
-			Generator(BitmapAtlas::AtlasBase const& in_atlas) :
+			Generator(AtlasBase const& in_atlas) :
 				atlas(in_atlas) {}
 
 			/** get the texture atlas */
-			BitmapAtlas::AtlasBase const* GetTextureAtlas() const { return &atlas; }
+			AtlasBase const* GetTextureAtlas() const { return &atlas; }
 
 			/** add a named color in the generator */
 			bool AddColor(char const* name, glm::vec4 const& color);
 			/** add a named bitmap in the generator */
 			bool AddBitmap(char const* name, ObjectRequest bitmap_request, ObjectRequest folder_request = "sprites");
 			/** add a named bitmap in the generator */
-			bool AddBitmap(char const* name, BitmapAtlas::AtlasBitmapInfo const* info);
+			bool AddBitmap(char const* name, AtlasBitmapInfo const* info);
 
 			/** add a named character set in the generator */
 			bool AddFontInfo(char const* name, char const* font_name);
 			/** add a named character set in the generator */
-			bool AddFontInfo(char const* name, BitmapAtlas::AtlasFontInfo const* font_info);
+			bool AddFontInfo(char const* name, AtlasFontInfo const* font_info);
 
 			/** the main method to generator a text */
 			bool Generate(char const* text, GeneratorResult& result, GeneratorParams const& params = {}) const;
@@ -269,9 +269,9 @@ namespace chaos
 			/** get a color by its name */
 			glm::vec4 const* GetColor(char const* name) const;
 			/** get a bitmap by its name */
-			BitmapAtlas::AtlasBitmapInfo const* GetBitmapInfo(char const* name) const;
+			AtlasBitmapInfo const* GetBitmapInfo(char const* name) const;
 			/** get a character set by its name */
-			BitmapAtlas::AtlasFontInfo const* GetAtlasFontInfo(char const* name) const;
+			AtlasFontInfo const* GetAtlasFontInfo(char const* name) const;
 			/** test whether a name is a key in one of the following maps : colors, bitmaps, font_infos */
 			bool IsNameValid(char const* name) const;
 
@@ -294,12 +294,12 @@ namespace chaos
 			/** the colors to use, indexed by a joker name */
 			std::map<std::string, glm::vec4, StringTools::RawStringILess> colors;
 			/** the bitmaps to use, indexed by a joker name */
-			std::map<std::string, BitmapAtlas::AtlasBitmapInfo const*, StringTools::RawStringILess> bitmaps;
+			std::map<std::string, AtlasBitmapInfo const*, StringTools::RawStringILess> bitmaps;
 			/** the font_info to use, indexed by a joker name */
-			std::map<std::string, BitmapAtlas::AtlasFontInfo const*, StringTools::RawStringILess> font_infos;
+			std::map<std::string, AtlasFontInfo const*, StringTools::RawStringILess> font_infos;
 
 			/** the atlas where to find entries */
-			BitmapAtlas::AtlasBase const& atlas;
+			AtlasBase const& atlas;
 		};
 
 		/** transform a token into a particle */

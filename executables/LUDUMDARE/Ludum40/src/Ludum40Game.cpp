@@ -535,12 +535,12 @@ bool Game::GenerateAtlas(boost::filesystem::path const & path)
 	// Fill Atlas generation Input
 	int ATLAS_SIZE = 1024;
 	int ATLAS_PADDING = 10;
-	chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
+	chaos::AtlasGeneratorParams params = chaos::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
 
 
-	chaos::BitmapAtlas::AtlasInput input;
+	chaos::AtlasInput input;
 
-	chaos::BitmapAtlas::AtlasFolderInfoInput * folder = input.AddFolder("sprites", 0);
+	chaos::AtlasFolderInfoInput * folder = input.AddFolder("sprites", 0);
 	if (folder == nullptr)
 		return false;
 

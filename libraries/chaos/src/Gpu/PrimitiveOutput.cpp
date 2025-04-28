@@ -32,7 +32,7 @@ namespace chaos
         Flush();
     }
 
-    BitmapAtlas::AtlasBitmapInfo const* PrimitiveOutputBase::FindBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request) const
+    AtlasBitmapInfo const* PrimitiveOutputBase::FindBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request) const
     {
         // get the application
         WindowApplication const* window_application = Application::GetInstance();
@@ -43,7 +43,7 @@ namespace chaos
         if (atlas == nullptr)
             return nullptr;
         // search the folder
-        BitmapAtlas::AtlasFolderInfo const* folder_info = atlas->GetFolderInfo(folder_request, true);
+        AtlasFolderInfo const* folder_info = atlas->GetFolderInfo(folder_request, true);
         if (folder_info == nullptr)
             return nullptr;
         return folder_info->GetBitmapInfo(bitmap_request);

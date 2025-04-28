@@ -17,7 +17,7 @@ protected:
 		static int k = 0;
 		char const * bitmap_name = (k == 0)? "walking" : "moving";
 
-		chaos::BitmapAtlas::AtlasBitmapInfo const * info = atlas->GetBitmapInfo(bitmap_name, true);
+		chaos::AtlasBitmapInfo const * info = atlas->GetBitmapInfo(bitmap_name, true);
 		if (info == nullptr)
 			return true;
 
@@ -27,7 +27,7 @@ protected:
 
 		int image = (int)(time / frame_duration);
 
-		chaos::BitmapAtlas::AtlasBitmapLayout layout = info->GetAnimationLayout(image, chaos::WrapMode::WRAP);
+		chaos::AtlasBitmapLayout layout = info->GetAnimationLayout(image, chaos::WrapMode::WRAP);
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);   // when viewer is inside the cube
@@ -94,13 +94,13 @@ protected:
 	{
 		chaos::GPUAtlasGenerator generator;
 
-		chaos::BitmapAtlas::AtlasInput input;
+		chaos::AtlasInput input;
 		input.AddBitmap(resources_path / "moving_gif.gif", "moving", 0);
 		input.AddBitmap(resources_path / "walking_5x2s0.png", "walking", 1);
 
 		int ATLAS_SIZE = 1024;
 		int ATLAS_PADDING = 10;
-		chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
+		chaos::AtlasGeneratorParams params = chaos::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
 		return generator.ComputeResult(input, params);
 	}
 

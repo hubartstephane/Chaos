@@ -3,20 +3,20 @@
 static int ATLAS_BPP = 0;
 static int ATLAS_PADDING = 10;
 
-void SaveAtlasAndOutputAtlasToHTML(chaos::BitmapAtlas::Atlas & atlas, chaos::FilePathParam const & dest_p, chaos::FilePathParam const & html_dest_p)
+void SaveAtlasAndOutputAtlasToHTML(chaos::Atlas & atlas, chaos::FilePathParam const & dest_p, chaos::FilePathParam const & html_dest_p)
 {
 	atlas.SaveAtlas(dest_p);
 
-	chaos::BitmapAtlas::AtlasHTMLOutputParams html_params;
+	chaos::AtlasHTMLOutputParams html_params;
 	html_params.show_header = true;
 	html_params.show_atlas_header = true;
 	html_params.texture_scale = 3.0f;
 	html_params.auto_refresh = false;
 
-	chaos::BitmapAtlas::AtlasHTMLGenerator::OutputToHTMLFile(atlas, html_dest_p, html_params);
+	chaos::AtlasHTMLGenerator::OutputToHTMLFile(atlas, html_dest_p, html_params);
 }
 
-bool AddFakeBitmap(chaos::BitmapAtlas::AtlasFolderInfoInput * folder_input, char const * name)
+bool AddFakeBitmap(chaos::AtlasFolderInfoInput * folder_input, char const * name)
 {
 	assert(name != nullptr);
 
@@ -34,7 +34,7 @@ bool AddFakeBitmap(chaos::BitmapAtlas::AtlasFolderInfoInput * folder_input, char
 
 		chaos::ImageTools::FillImageBackground(image_description, glm::vec4(color, color, color, 1.0f));
 
-		chaos::BitmapAtlas::AtlasBitmapInfoInput * result = folder_input->AddBitmap(bitmap, true, name, 0);
+		chaos::AtlasBitmapInfoInput * result = folder_input->AddBitmap(bitmap, true, name, 0);
 		if (result == nullptr)
 			FreeImage_Unload(bitmap);
 	}
@@ -43,9 +43,9 @@ bool AddFakeBitmap(chaos::BitmapAtlas::AtlasFolderInfoInput * folder_input, char
 
 void TestAtlasDebugMode(boost::filesystem::path const & dest_p)
 {
-	chaos::BitmapAtlas::AtlasInput input;
+	chaos::AtlasInput input;
 
-	chaos::BitmapAtlas::AtlasFolderInfoInput * folder_input = input.AddFolder("folder_input1", 0);
+	chaos::AtlasFolderInfoInput * folder_input = input.AddFolder("folder_input1", 0);
 
 	AddFakeBitmap(folder_input, "A");
 	AddFakeBitmap(folder_input, "B");
@@ -59,9 +59,9 @@ void TestAtlasDebugMode(boost::filesystem::path const & dest_p)
 	AddFakeBitmap(folder_input, "J");
 
 	chaos::PixelFormatMergeParams            merge_params;
-	chaos::BitmapAtlas::Atlas                atlas;
-	chaos::BitmapAtlas::AtlasGenerator       generator;
-	chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(256, 256, ATLAS_PADDING, merge_params);
+	chaos::Atlas                atlas;
+	chaos::AtlasGenerator       generator;
+	chaos::AtlasGeneratorParams params = chaos::AtlasGeneratorParams(256, 256, ATLAS_PADDING, merge_params);
 
 	if (generator.ComputeResult(input, atlas, params))
 		SaveAtlasAndOutputAtlasToHTML(atlas, dest_p / "MyAtlas.x", dest_p / "atlas.html");
@@ -76,24 +76,24 @@ void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::pa
 	boost::filesystem::path dst_dir2 = dest_p / "AtlasResultFontReloaded";
 
 	chaos::PixelFormatMergeParams      merge_params;
-	chaos::BitmapAtlas::Atlas          atlas;
-	chaos::BitmapAtlas::AtlasGenerator generator;
-	chaos::BitmapAtlas::AtlasInput     input;
+	chaos::Atlas          atlas;
+	chaos::AtlasGenerator generator;
+	chaos::AtlasInput     input;
 
-	input.AddFont(font_path1.string().c_str(), nullptr, true, "font_info1", 0, chaos::BitmapAtlas::AtlasFontInfoInputParams());
+	input.AddFont(font_path1.string().c_str(), nullptr, true, "font_info1", 0, chaos::AtlasFontInfoInputParams());
 
-	input.AddFont(font_path2.string().c_str(), nullptr, true, "font_info2", 0, chaos::BitmapAtlas::AtlasFontInfoInputParams());
+	input.AddFont(font_path2.string().c_str(), nullptr, true, "font_info2", 0, chaos::AtlasFontInfoInputParams());
 
-	chaos::BitmapAtlas::AtlasFolderInfoInput * folder_input =
+	chaos::AtlasFolderInfoInput * folder_input =
 		input.AddFolder("folder_input1", 0);
 
 	folder_input->AddBitmapFilesFromDirectory(resources_path / "Images", true);
 
-	chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(512, 512, ATLAS_PADDING, merge_params);
+	chaos::AtlasGeneratorParams params = chaos::AtlasGeneratorParams(512, 512, ATLAS_PADDING, merge_params);
 	if (generator.ComputeResult(input, atlas, params))
 		SaveAtlasAndOutputAtlasToHTML(atlas, dst_dir1 / "MyAtlas", dst_dir1 / "MyAtlas.html");
 
-	chaos::BitmapAtlas::Atlas atlas_reloaded;
+	chaos::Atlas atlas_reloaded;
 	if (atlas_reloaded.LoadAtlas(dst_dir1 / "MyAtlas"))
 		SaveAtlasAndOutputAtlasToHTML(atlas_reloaded, dst_dir2 / "MyAtlas", dst_dir2 / "MyAtlas.html");
 }
@@ -111,11 +111,11 @@ void TestAtlasNormalMode(boost::filesystem::path const & dest_p, boost::filesyst
 	//        - a text file                                            => not detected has an image
 	// correct behavior
 
-	chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(512, 512, ATLAS_PADDING, merge_params);
+	chaos::AtlasGeneratorParams params = chaos::AtlasGeneratorParams(512, 512, ATLAS_PADDING, merge_params);
 
 	boost::filesystem::path result_path = dest_p / "MyAtlas.json";
 
-	chaos::BitmapAtlas::AtlasGenerator::CreateAtlasFromDirectory(resources_path, result_path, true, params);
+	chaos::AtlasGenerator::CreateAtlasFromDirectory(resources_path, result_path, true, params);
 }
 
 

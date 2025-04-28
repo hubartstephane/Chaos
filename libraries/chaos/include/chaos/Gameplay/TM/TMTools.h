@@ -64,20 +64,20 @@ namespace chaos
 		}
 
 		/** fill AtlasInput from a TiledMap manager */
-		CHAOS_API bool AddIntoAtlasInput(TiledMap::Manager const * manager, BitmapAtlas::AtlasInput & input);
+		CHAOS_API bool AddIntoAtlasInput(TiledMap::Manager const * manager, AtlasInput & input);
 		/** fill AtlasInput from a TileSet */
-		CHAOS_API bool AddIntoAtlasInput(TiledMap::TileSet const * tile_set, BitmapAtlas::AtlasInput & input);
+		CHAOS_API bool AddIntoAtlasInput(TiledMap::TileSet const * tile_set, AtlasInput & input);
 		/** fill AtlasInput from a Map */
-		CHAOS_API bool AddIntoAtlasInput(TiledMap::Map const * map, BitmapAtlas::AtlasInput & input);
+		CHAOS_API bool AddIntoAtlasInput(TiledMap::Map const * map, AtlasInput & input);
 
 		/** fill AtlasInput from a TiledMap manager */
-		CHAOS_API bool AddIntoAtlasInput(TiledMap::Manager const * manager, BitmapAtlas::AtlasFolderInfoInput * folder_input);
+		CHAOS_API bool AddIntoAtlasInput(TiledMap::Manager const * manager, AtlasFolderInfoInput * folder_input);
 		/** fill AtlasInput from a TileSet */
-		CHAOS_API bool AddIntoAtlasInput(TiledMap::TileSet const * tile_set, BitmapAtlas::AtlasFolderInfoInput * folder_input);
+		CHAOS_API bool AddIntoAtlasInput(TiledMap::TileSet const * tile_set, AtlasFolderInfoInput * folder_input);
 		/** fill AtlasInput from a Map */
-		CHAOS_API bool AddIntoAtlasInput(TiledMap::Map const * map, BitmapAtlas::AtlasFolderInfoInput * folder_input);
+		CHAOS_API bool AddIntoAtlasInput(TiledMap::Map const * map, AtlasFolderInfoInput * folder_input);
 		/** fill AtlasInput from a Layer */
-		CHAOS_API bool AddIntoAtlasInput(TiledMap::LayerBase const* layer, BitmapAtlas::AtlasFolderInfoInput* folder_input);
+		CHAOS_API bool AddIntoAtlasInput(TiledMap::LayerBase const* layer, AtlasFolderInfoInput* folder_input);
 
 		/** returns true whether the object defines an explicit world bounding */
 		CHAOS_API bool IsWorldBoundingBox(TiledMap::TypedObject const* typed_object);

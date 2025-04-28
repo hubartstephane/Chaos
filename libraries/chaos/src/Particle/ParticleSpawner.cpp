@@ -13,7 +13,7 @@ namespace chaos
 			particle_layer = nullptr;
 	}
 
-	BitmapAtlas::AtlasBitmapInfo const* ParticleSpawner::FindBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request) const
+	AtlasBitmapInfo const* ParticleSpawner::FindBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request) const
 	{
 		// early exit
 		if (atlas == nullptr)
@@ -22,7 +22,7 @@ namespace chaos
 		if (bitmap_request.IsNoneRequest())
 			return nullptr;
 		// find the folder
-		BitmapAtlas::AtlasFolderInfo const* folder_info = atlas->GetFolderInfo(folder_request, true);
+		AtlasFolderInfo const* folder_info = atlas->GetFolderInfo(folder_request, true);
 		if (folder_info == nullptr)
 			return nullptr;
 		// get the bitmap
@@ -42,7 +42,7 @@ namespace chaos
 			return true;
 		}
 		// find the folder
-		BitmapAtlas::AtlasFolderInfo const* folder_info = atlas->GetFolderInfo(folder_request, true);
+		AtlasFolderInfo const* folder_info = atlas->GetFolderInfo(folder_request, true);
 		if (folder_info == nullptr)
 			return false;
 		// get the bitmap

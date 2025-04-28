@@ -50,7 +50,7 @@ namespace chaos
 		/** the texture atlas required */
 		GPUAtlas const* texture_atlas = nullptr;
 		/** the folder containing the bitmaps */
-		BitmapAtlas::AtlasFolderInfo const* folder_info = nullptr;
+		AtlasFolderInfo const* folder_info = nullptr;
 
 		/** the allocation for all those particles */
 		ParticleAllocationBase* allocation = nullptr;

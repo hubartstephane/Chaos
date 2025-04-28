@@ -58,7 +58,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GameApplication::FillAtlasGeneratorInput(BitmapAtlas::AtlasInput& input)
+	bool GameApplication::FillAtlasGeneratorInput(AtlasInput& input)
 	{
 		if (!WindowApplication::FillAtlasGeneratorInput(input))
 			return false;

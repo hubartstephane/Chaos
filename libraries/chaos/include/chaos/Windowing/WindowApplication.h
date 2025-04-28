@@ -266,11 +266,11 @@ namespace chaos
 		virtual bool CreateTextGenerator(JSONReadConfiguration config);
 
 		/** main method to generate atlas entries */
-		virtual bool FillAtlasGeneratorInput(BitmapAtlas::AtlasInput& input);
+		virtual bool FillAtlasGeneratorInput(AtlasInput& input);
 		/** generate atlas entries relative to sprite directory */
-		virtual bool FillAtlasGeneratorInputSprites(BitmapAtlas::AtlasInput& input);
+		virtual bool FillAtlasGeneratorInputSprites(AtlasInput& input);
 		/** generate atlas entries relative to fonts */
-		virtual bool FillAtlasGeneratorInputFonts(BitmapAtlas::AtlasInput& input);
+		virtual bool FillAtlasGeneratorInputFonts(AtlasInput& input);
 
 
 

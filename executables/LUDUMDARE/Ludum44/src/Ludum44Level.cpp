@@ -218,7 +218,7 @@ bool SpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
 		return true;
 
 	// search AtlasBitmapLayout for Enemy
-	chaos::BitmapAtlas::AtlasFolderInfo const * folder_info = atlas->GetFolderInfo("sprites");
+	chaos::AtlasFolderInfo const * folder_info = atlas->GetFolderInfo("sprites");
 	if (folder_info == nullptr)
 		return true;
 
@@ -257,7 +257,7 @@ bool SpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
 	static constexpr int SPAWN_CURVE_LAST          = 4;
 	spawn_curve_type = (spawn_curve_type % SPAWN_CURVE_LAST);
 
-	chaos::BitmapAtlas::AtlasBitmapInfo const * enemy_info = nullptr; // so we can reuse among the loop existing random choice
+	chaos::AtlasBitmapInfo const * enemy_info = nullptr; // so we can reuse among the loop existing random choice
 
     // shuludum
 

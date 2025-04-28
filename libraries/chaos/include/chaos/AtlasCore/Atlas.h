@@ -337,7 +337,7 @@ namespace chaos
 
 		friend class AtlasGenerator;
 		friend class AtlasHTMLGenerator;
-		friend class GPUAtlas;
+		friend class GPUAtlasGenerator;
 
 	public:
 

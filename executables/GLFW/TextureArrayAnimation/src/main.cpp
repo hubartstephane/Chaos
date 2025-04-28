@@ -101,7 +101,7 @@ protected:
 		int ATLAS_SIZE = 1024;
 		int ATLAS_PADDING = 10;
 		chaos::AtlasGeneratorParams params = chaos::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
-		return generator.ComputeResult(input, params);
+		return generator.GenerateAtlas(input, params);
 	}
 
 	virtual bool OnInitialize(chaos::JSONReadConfiguration config) override

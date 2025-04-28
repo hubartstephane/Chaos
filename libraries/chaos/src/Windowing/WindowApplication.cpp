@@ -402,7 +402,7 @@ namespace chaos
 
 		// generate the atlas
 		GPUAtlasGenerator generator;
-		texture_atlas = generator.ComputeResult(input, params);
+		texture_atlas = generator.GenerateAtlas(input, params);
 		if (texture_atlas == nullptr)
 			return false;
 

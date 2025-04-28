@@ -6,34 +6,23 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+	/**
+	 * GPUAtlas: an atlas with its GPUTexture
+	 */
+
 	class CHAOS_API GPUAtlas : public AtlasBase
 	{
+		friend class GPUAtlasGenerator;
+
 	public:
 
-		/** the clearing method */
+		/** override */
 		virtual void Clear() override;
-		/** load an atlas from an index file */
-		bool LoadAtlas(FilePathParam const& path);
-		/** generate a texture atlas from a standard atlas */
-		bool LoadFromBitmapAtlas(Atlas const& atlas);
-		/** generate a texture atlas from a standard atlas */
-		bool LoadFromBitmapAtlas(Atlas&& atlas);
 
 		/* get the array texture */
 		GPUTexture* GetTexture() { return texture.get(); }
 		/* get the array texture */
 		GPUTexture const* GetTexture() const { return texture.get(); }
-
-	protected:
-
-		/** generate a texture atlas from a standard atlas */
-		bool DoLoadFromBitmapAtlas(Atlas const& atlas);
-		/** generate a texture atlas from a standard atlas */
-		bool DoLoadFromBitmapAtlas(Atlas&& atlas);
-		/** copy src folder into dst folder */
-		bool DoCopyFolder(AtlasFolderInfo* dst_folder_info, AtlasFolderInfo const* src_folder_info);
-		/** generate a texture array */
-		bool DoGenerateTextureArray(Atlas const& atlas);
 
 	protected:
 

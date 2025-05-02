@@ -107,7 +107,7 @@ namespace chaos
 	* GPUTextureArrayGenerator : an helper class that is used to generate texture array    GL_TEXTURE_1D_ARRAY,    GL_TEXTURE_2D_ARRAY or    GL_TEXTURE_CUBE_ARRAY
 	*/
 
-	class CHAOS_API GPUTextureArrayGenerator
+	class CHAOS_API GPUTextureArrayGenerator : public GPUDeviceResourceInterface
 	{
 	public:
 
@@ -131,7 +131,7 @@ namespace chaos
 		};
 
 		/** constructor */
-		GPUTextureArrayGenerator() = default;
+		GPUTextureArrayGenerator(GPUDevice * in_device);
 		/** destructor */
 		virtual ~GPUTextureArrayGenerator();
 
@@ -145,7 +145,7 @@ namespace chaos
 	protected:
 
 		/** internal method to generate the texture array */
-		GPUTexture* GenTextureObjectHelper(GPUTextureArraySliceRegistry& slice_registry, PixelFormat const& final_pixel_format, int width, int height, GenTextureParameters const& parameters) const;
+		GPUTexture* GenTextureObjectHelper(GPUTextureArraySliceRegistry& slice_registry, PixelFormat const& pixel_format, int width, int height, GenTextureParameters const& parameters) const;
 
 	protected:
 

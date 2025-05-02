@@ -3,12 +3,25 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	enum class CubeMapImageType;
+	enum class CubeMapFaceType;
 
 	class CubeMapSingleDisposition;
 	class CubeMapImages;
 	class CubeMapTools;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+
+	enum class CHAOS_API CubeMapFaceType : int
+	{
+		PositiveX,
+		PositiveY,
+		PositiveZ,
+		NegativeX,
+		NegativeY,
+		NegativeZ,
+	};
+
 
 	/**
 	 * CubeMapImageType: the possible different image that compose a cubemap

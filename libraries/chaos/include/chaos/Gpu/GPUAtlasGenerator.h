@@ -10,10 +10,14 @@ namespace chaos
 	* GPUAtlasGenerator: an utility class to generate a GPUAtlas
 	*/
 
-	class CHAOS_API GPUAtlasGenerator
+	class CHAOS_API GPUAtlasGenerator : public GPUDeviceResourceInterface
 	{
 
 	public:
+
+		/** constructor */
+		GPUAtlasGenerator(GPUDevice* in_gpu_device):
+			GPUDeviceResourceInterface(in_gpu_device){}
 
 		/** generate a GPUAtlas from inputs */
 		GPUAtlas* GenerateAtlas(AtlasInput const& in_input, AtlasGeneratorParams const& in_params = {}) const;

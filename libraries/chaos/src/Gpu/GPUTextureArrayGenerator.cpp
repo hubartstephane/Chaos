@@ -68,6 +68,11 @@ namespace chaos
 	// GPUTextureArrayGenerator functions
 	// ========================================================================
 
+	GPUTextureArrayGenerator::GPUTextureArrayGenerator(GPUDevice* in_device):
+		GPUDeviceResourceInterface(in_device)
+	{
+	}
+
 	GPUTextureArrayGenerator::~GPUTextureArrayGenerator()
 	{
 		Clean();
@@ -167,12 +172,13 @@ namespace chaos
 		return result;
 	}
 
-	GPUTexture * GPUTextureArrayGenerator::GenTextureObjectHelper(GPUTextureArraySliceRegistry & slice_registry, PixelFormat const & final_pixel_format, int width, int height, GenTextureParameters const & parameters) const
+	GPUTexture * GPUTextureArrayGenerator::GenTextureObjectHelper(GPUTextureArraySliceRegistry & slice_registry, PixelFormat const & pixel_format, int width, int height, GenTextureParameters const & parameters) const
 	{
-		GPUTexture * result = nullptr;
+		// the number of slices
+		size_t slice_count = slice_registry.slices.size();
 
 		// compute the 'flat' texture target
-		TextureType flat_type = GLTextureTools::GetTexture2DTypeFromSize(width, height, false);
+		TextureType flat_type = GLTextureTools::GetTexture2DTypeFromSize(width, height);
 		if (flat_type == TextureType::Unknown)
 			return nullptr;
 
@@ -180,6 +186,21 @@ namespace chaos
 		TextureType array_type = GLTextureTools::ToArrayTextureType(flat_type);
 		if (array_type == TextureType::Unknown)
 			return nullptr;
+
+		TextureDescription description;
+		description.width        = width;
+		description.height       = height;
+		description.depth        = int(slice_count);
+		description.pixel_format = pixel_format;
+		description.type         = array_type;
+		description.use_mipmaps  = parameters.reserve_mipmaps;
+
+		GPUTexture* result = GetDevice()->CreateTexture(description);
+		if (result == nullptr)
+			return nullptr;
+
+
+		#if 0
 
 		// choose format and internal format
 		GLPixelFormat gl_pixel_format = GLTextureTools::GetGLPixelFormat(final_pixel_format);
@@ -251,11 +272,22 @@ namespace chaos
 			GLTextureTools::GenTextureApplyParameters(texture_id, texture_description, parameters);
 
 			result = new GPUTexture(texture_id, texture_description);
+			result->SetMinificationFilter(parameters.min_filter);
+			result->SetMagnificationFilter(parameters.mag_filter);
+			result->SetWrapMethods(parameters.wrap_methods);
+
+			if (parameters.build_mipmaps && parameters.reserve_mipmaps)
+				result->GenerateMipmaps();
+			
+
+			result = new GPUTexture(texture_id, texture_description);
 		}
 
 		// release the conversion buffer if necessary
 		if (conversion_buffer != nullptr)
 			delete[](conversion_buffer);
+
+		#endif
 
 		return result;
 	}

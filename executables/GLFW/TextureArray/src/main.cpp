@@ -117,7 +117,7 @@ protected:
 		if (!pixel_format.IsValid())
 			return nullptr;
 
-		chaos::GPUTextureArrayGenerator generator;
+		chaos::GPUTextureArrayGenerator generator(GetDevice());
 		for (size_t i = 0 ; i < bitmaps.size() ; ++i)
 			generator.AddGenerator(new chaos::GPUTextureArraySliceGenerator_Image(bitmaps[i], false));
 

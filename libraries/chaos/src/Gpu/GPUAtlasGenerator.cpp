@@ -81,7 +81,7 @@ namespace chaos
 		// create and fill a texture array generator
 		std::vector<bitmap_ptr> const& bitmaps = in_atlas->GetBitmaps();
 
-		GPUTextureArrayGenerator generator;
+		GPUTextureArrayGenerator generator(GetDevice());
 		for (size_t i = 0; i < bitmaps.size(); ++i)
 			generator.AddGenerator(new GPUTextureArraySliceGenerator_Image(bitmaps[i].get(), false)); // do not release image, we have a unique_ptr on it
 

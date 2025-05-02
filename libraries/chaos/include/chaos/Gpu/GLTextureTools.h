@@ -3,8 +3,10 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	enum class TextureWrapMethod : GLenum;
-	enum class TextureMagFilter : GLenum;
-	enum class TextureMinFilter : GLenum;
+	enum class TextureMagnificationFilter : GLenum;
+	enum class TextureMinificationFilter : GLenum;
+
+	class TextureWrapMethods;
 
 	class GenTextureParameters;
 
@@ -24,20 +26,20 @@ namespace chaos
 	};
 
 	/**
-	 * TextureMagFilter: Magnification filter
+	 * TextureMagnificationFilter: Magnification filter
 	 */
 
-	enum class TextureMagFilter : GLenum
+	enum class TextureMagnificationFilter : GLenum
 	{
 		Nearest = GL_NEAREST,
 		Linear = GL_LINEAR
 	};
 
 	/**
-	 * TextureMinFilter: Mignification filter
+	 * TextureMinificationFilter: Mignification filter
 	 */
 
-	enum class TextureMinFilter : GLenum
+	enum class TextureMinificationFilter : GLenum
 	{
 		Nearest = GL_NEAREST,
 		Linear = GL_LINEAR,
@@ -45,6 +47,22 @@ namespace chaos
 		LinearMipmapNearest  = GL_LINEAR_MIPMAP_NEAREST,
 		NearestMipmapLinear = GL_NEAREST_MIPMAP_LINEAR,
 		LinearMipmapLinear = GL_LINEAR_MIPMAP_LINEAR
+	};
+
+	/**
+	 * TextureWrapMethods: wrapping methods along 3 axis
+	 */
+
+	class CHAOS_API TextureWrapMethods
+	{
+	public:
+
+		/** wrap method along x/s axis */
+		TextureWrapMethod wrap_x = TextureWrapMethod::Repeat;
+		/** wrap method along y/t axis */
+		TextureWrapMethod wrap_y = TextureWrapMethod::Repeat;
+		/** wrap method along z/u axis */
+		TextureWrapMethod wrap_z = TextureWrapMethod::Repeat;
 	};
 
 	/**
@@ -58,17 +76,15 @@ namespace chaos
 
 		// TODO : take care of level and border
 
-		/** parameters for glTexParameteri(...) */
-		TextureWrapMethod wrap_s = TextureWrapMethod::Repeat;
-		/** parameters for glTexParameteri(...) */
-		TextureWrapMethod wrap_t = TextureWrapMethod::Repeat;
-		/** parameters for glTexParameteri(...) */
-		TextureWrapMethod wrap_r = TextureWrapMethod::Repeat;
+
+		/** wrapping methods */
+		TextureWrapMethods wrap_methods;
+
 
 		/** parameters for glTexParameteri(...) */
-		TextureMagFilter mag_filter = TextureMagFilter::Linear;
+		TextureMagnificationFilter mag_filter = TextureMagnificationFilter::Linear;
 		/** parameters for glTexParameteri(...) */
-		TextureMinFilter min_filter = TextureMinFilter::LinearMipmapLinear;
+		TextureMinificationFilter min_filter = TextureMinificationFilter::LinearMipmapLinear;
 
 		/** parameters for glTexImageXX(...) */
 		GLint  level = 0;
@@ -78,8 +94,6 @@ namespace chaos
 		bool reserve_mipmaps = true;
 		/** enable build mipmaps */
 		bool build_mipmaps = true;
-		/** enable the texture to be used has rectangular instead of GL_TEXTURE_1D or GL_TEXTURE_2D */
-		bool rectangle_texture = false;
 	};
 
 
@@ -112,14 +126,11 @@ namespace chaos
 		/** Get Format/Internal Format pair from the description */
 		CHAOS_API GLPixelFormat GetGLPixelFormat(PixelFormat const& pixel_format);
 
-		/** utility function to compute target (GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_RECTANGLE) from dimension */
-		CHAOS_API TextureType GetTexture2DTypeFromSize(int width, int height, bool rectangle_texture);
+		/** utility function to compute target (GL_TEXTURE_1D, GL_TEXTURE_2D) from dimension */
+		CHAOS_API TextureType GetTexture2DTypeFromSize(int width, int height);
 
 		/** prepare store parameters */
 		CHAOS_API char* PrepareGLTextureTransfert(ImageDescription const& desc);
-
-		/** utility function for texture loading */
-		CHAOS_API void GenTextureApplyParameters(GLuint texture_id, TextureDescription const& texture_description, GenTextureParameters const& parameters);
 
 	}; // namespace GLTextureTools
 

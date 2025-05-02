@@ -20,7 +20,6 @@ namespace chaos
 		Texture1D = GL_TEXTURE_1D,
 		Texture2D = GL_TEXTURE_2D,
 		Texture3D = GL_TEXTURE_3D,
-		TextureRectangle = GL_TEXTURE_RECTANGLE,
 		TextureCubeMap = GL_TEXTURE_CUBE_MAP,
 
 		Texture1DArray = GL_TEXTURE_1D_ARRAY,
@@ -62,8 +61,10 @@ namespace chaos
 	{
 	public:
 
-		/** the type of the texture (1D/2D/3D/RECTANGLE/CUBE ...) */
+		/** the type of the texture */
 		TextureType type = TextureType::Unknown;
+		/** whether the texture uses mipmaps */
+		bool use_mipmaps = true;
 	};
 
 #endif

@@ -148,8 +148,6 @@ namespace chaos
 				return true;
 			if (type == TextureType::Texture3D)
 				return true;
-			if (type == TextureType::TextureRectangle)
-				return true;
 			if (type == TextureType::TextureCubeMap)
 				return true;
 			return false;
@@ -180,9 +178,9 @@ namespace chaos
 			if (type == TextureType::Texture2D)
 				return TextureType::Texture2DArray;
 			if (type == TextureType::TextureCubeMap)
-				return TextureType::TextureCubeMapArray;  // XXX : Texture3D and TextureRectangle has no correspondance in arrays
+				return TextureType::TextureCubeMapArray;
 
-			return TextureType::Unknown;
+			return TextureType::Unknown; // other types can't be array
 		}
 
 		int GetMipmapLevelCount(int width, int height)
@@ -224,42 +222,11 @@ namespace chaos
 			return GLPixelFormat(GL_NONE, GL_NONE);
 		}
 
-		void GenTextureApplyParameters(GLuint texture_id, TextureDescription const& texture_description, GenTextureParameters const& parameters)
+		TextureType GetTexture2DTypeFromSize(int width, int height)
 		{
-			GLPixelFormat gl_formats = GetGLPixelFormat(texture_description.pixel_format);
-
-			// there are to set of functions
-			//   - glTexParameteri(TARGET ...)
-			// and
-			//   - glTextureParameteri(TEXTURE_ID ...)
-			glTextureParameteri(texture_id, GL_TEXTURE_WRAP_S, (GLenum)parameters.wrap_s);
-			glTextureParameteri(texture_id, GL_TEXTURE_WRAP_T, (GLenum)parameters.wrap_t);
-			glTextureParameteri(texture_id, GL_TEXTURE_WRAP_R, (GLenum)parameters.wrap_r);
-
-			glTextureParameteri(texture_id, GL_TEXTURE_MAG_FILTER, (GLenum)parameters.mag_filter);
-			glTextureParameteri(texture_id, GL_TEXTURE_MIN_FILTER, (GLenum)parameters.min_filter);
-
-			if (gl_formats.internal_format == GL_R8 || gl_formats.internal_format == GL_R32F)
-			{
-				glTextureParameteri(texture_id, GL_TEXTURE_SWIZZLE_R, GL_RED);
-				glTextureParameteri(texture_id, GL_TEXTURE_SWIZZLE_G, GL_RED);
-				glTextureParameteri(texture_id, GL_TEXTURE_SWIZZLE_B, GL_RED);
-				glTextureParameteri(texture_id, GL_TEXTURE_SWIZZLE_A, GL_ONE);
-			}
-
-			if (parameters.build_mipmaps && parameters.reserve_mipmaps)
-				if (texture_description.type != TextureType::TextureRectangle) // not working with RECTANGLE (crash)
-					glGenerateTextureMipmap(texture_id);
-		}
-
-		TextureType GetTexture2DTypeFromSize(int width, int height, bool rectangle_texture)
-		{
-			if (width == height) // and power of 2 ?
-				return TextureType::Texture2D;
-			else if (height == 1)
-				return TextureType::Texture1D;
-			else
-				return (rectangle_texture) ? TextureType::TextureRectangle : TextureType::Texture2D;
+			return (height == 1)?
+				TextureType::Texture1D:
+				TextureType::Texture2D;
 		}
 
 		//

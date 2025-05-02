@@ -41,12 +41,47 @@ namespace chaos
 
 	GPUTexture * GPUTextureLoader::GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters) const
 	{
-		GPUTexture * result = nullptr;
-
 		if (!image.IsValid(true) || image.IsEmpty(true))
 			return nullptr;
 
-		TextureType texture_type = GLTextureTools::GetTexture2DTypeFromSize(image.width, image.height, parameters.rectangle_texture);  // compute the format
+		TextureType texture_type = GLTextureTools::GetTexture2DTypeFromSize(image.width, image.height);
+
+		TextureDescription texture_description;
+		texture_description.type         = texture_type;
+		texture_description.pixel_format = image.pixel_format;
+		texture_description.width        = image.width;
+		texture_description.height       = image.height;
+		texture_description.depth        = 1;
+		texture_description.use_mipmaps  = parameters.reserve_mipmaps;
+
+		GPUTexture * result = GetDevice()->CreateTexture(texture_description);
+		if (result == nullptr)
+			return nullptr;
+
+		if (texture_type == TextureType::Texture1D)
+		{
+			//result->SetSubImage1D(0, 0, image.width, )
+
+	//			glTextureSubImage1D(texture_id, 0, 0, image.width, format, type, texture_buffer);
+
+		}
+		else
+		{
+		}
+
+		result->SetMinificationFilter(parameters.min_filter);
+		result->SetMagnificationFilter(parameters.mag_filter);
+		result->SetWrapMethods(parameters.wrap_methods);
+
+		if (parameters.build_mipmaps && parameters.reserve_mipmaps)
+			result->GenerateMipmaps();
+
+#if 0
+
+
+
+
+
 
 		GLuint texture_id = 0;
 		glCreateTextures((GLenum)texture_type, 1, &texture_id);
@@ -99,7 +134,21 @@ namespace chaos
 			// apply parameters
 			GLTextureTools::GenTextureApplyParameters(texture_id, texture_description, parameters);
 			result = new GPUTexture(texture_id, texture_description);
+
+			result = new GPUTexture(texture_id, texture_description);
+			result->SetMinificationFilter(parameters.min_filter);
+			result->SetMagnificationFilter(parameters.mag_filter);
+			result->SetWrapMethods(parameters.wrap_methods);
+
+			if (parameters.build_mipmaps && parameters.reserve_mipmaps)
+				result->GenerateMipmaps();
+
 		}
+
+
+#endif
+
+
 		return result;
 	}
 
@@ -313,6 +362,21 @@ namespace chaos
 				return nullptr;
 		}
 
+
+
+
+
+
+
+
+
+
+		#if 0
+
+
+
+
+
 		// GPU-allocate the texture
 		GLuint texture_id = 0;
 		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &texture_id);
@@ -378,6 +442,11 @@ namespace chaos
 			tmp.wrap_r = TextureWrapMethod::ClampToEdge;
 			tmp.wrap_t = TextureWrapMethod::ClampToEdge;
 
+
+			result->SetMinificationFilter(parameters.min_filter);
+			result->SetMagnificationFilter(parameters.mag_filter);
+			result->SetWrapMethods(parameters.wrap_methods);
+
 			GLTextureTools::GenTextureApplyParameters(texture_id, texture_description, tmp);
 			result = new GPUTexture(texture_id, texture_description);
 		}
@@ -385,7 +454,7 @@ namespace chaos
 		// release the buffer
 		if (conversion_buffer != nullptr)
 			delete[](conversion_buffer);
-
+#endif
 		return result;
 	}
 

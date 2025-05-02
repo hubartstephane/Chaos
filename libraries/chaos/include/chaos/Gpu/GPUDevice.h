@@ -19,6 +19,9 @@ namespace chaos
 		/** finalize the device */
 		virtual void Finalize();
 
+		/** create a texture */
+		GPUTexture * CreateTexture(TextureDescription const& in_texture_description = {});
+
 	protected:
 
 		/** internal method for initialization */

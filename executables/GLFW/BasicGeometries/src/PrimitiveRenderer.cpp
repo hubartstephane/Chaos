@@ -37,16 +37,16 @@ bool PrimitiveRenderer::Initialize()
 	generators.AddGenerator(new chaos::GPUBoxMeshGenerator(b3), mesh_box);
 	generators.AddGenerator(new chaos::GPUTriangleMeshGenerator(t), mesh_triangle);
 
-	if (!generators.GenerateMeshes(window_application->GetDevice()))
+	if (!generators.GenerateMeshes(window_application->GetGPUDevice()))
 		return false;
 #else
 
-	mesh_sphere = (new chaos::GPUSphereMeshGenerator(s, glm::mat4x4(1.0f), 30))->GenerateMesh(window_application->GetDevice());
+	mesh_sphere = (new chaos::GPUSphereMeshGenerator(s, glm::mat4x4(1.0f), 30))->GenerateMesh(window_application->GetGPUDevice());
 
-	mesh_circle = (new chaos::GPUCircleMeshGenerator(c, glm::mat4x4(1.0f), 30))->GenerateMesh(window_application->GetDevice());
-	mesh_quad = (new chaos::GPUQuadMeshGenerator(b2))->GenerateMesh(window_application->GetDevice());
-	mesh_box = (new chaos::GPUBoxMeshGenerator(b3))->GenerateMesh(window_application->GetDevice());
-	mesh_triangle = (new chaos::GPUTriangleMeshGenerator(t))->GenerateMesh(window_application->GetDevice());
+	mesh_circle = (new chaos::GPUCircleMeshGenerator(c, glm::mat4x4(1.0f), 30))->GenerateMesh(window_application->GetGPUDevice());
+	mesh_quad = (new chaos::GPUQuadMeshGenerator(b2))->GenerateMesh(window_application->GetGPUDevice());
+	mesh_box = (new chaos::GPUBoxMeshGenerator(b3))->GenerateMesh(window_application->GetGPUDevice());
+	mesh_triangle = (new chaos::GPUTriangleMeshGenerator(t))->GenerateMesh(window_application->GetGPUDevice());
 #endif
 	return true;
 }

@@ -135,7 +135,7 @@ namespace chaos
 		virtual ~Window();
 
 		/** Get the GPUDevice */
-		GPUDevice * GetDevice () const;
+		GPUDevice * GetGPUDevice () const;
 
 		/** require the destruction of the window (at least its GLFW resource). this will remove it from the WindowApplication */
 		void Destroy();

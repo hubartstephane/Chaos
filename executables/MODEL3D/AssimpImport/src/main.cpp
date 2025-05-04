@@ -196,7 +196,7 @@ protected:
 		box.half_size = { 1.0f, 1.0f, 1.0f };
 		GPUWireframeBoxMeshGenerator generator(box);
 		 	
-		wireframe_box_mesh = generator.GenerateMesh(GetDevice());
+		wireframe_box_mesh = generator.GenerateMesh(GetGPUDevice());
 
 		return (wireframe_box_mesh != nullptr);
 	}
@@ -205,7 +205,7 @@ protected:
 	{
 		sphere3 s = sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 20.0f);
 
-		shared_ptr<GPUMesh> gpu_mesh = GPUSphereMeshGenerator(s, glm::mat4x4(1.0f), 10).GenerateMesh(GetDevice());
+		shared_ptr<GPUMesh> gpu_mesh = GPUSphereMeshGenerator(s, glm::mat4x4(1.0f), 10).GenerateMesh(GetGPUDevice());
 		meshes.push_back(gpu_mesh);
 
 		glm::vec3 position       = { -500.0f, 0.0f, 1000.0f };
@@ -291,7 +291,7 @@ protected:
 				unsigned int faces_count = ai_mesh->mNumFaces;
 				size_t index_bufsize = faces_count * 3 * sizeof(int32_t);
 
-				GPUVertexAndIndexMappedBuffers buffers = GPUVertexAndIndexMappedBuffers::CreateMappedBuffers(GetDevice(), vertex_bufsize, index_bufsize);
+				GPUVertexAndIndexMappedBuffers buffers = GPUVertexAndIndexMappedBuffers::CreateMappedBuffers(GetGPUDevice(), vertex_bufsize, index_bufsize);
 
 				// vertices
 				MemoryBufferWriter vertices_writer(buffers.mapped_vertex_buffer, vertex_bufsize);

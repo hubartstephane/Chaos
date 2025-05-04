@@ -64,7 +64,7 @@ namespace chaos
 #else
 				ImageDescription image_description(nullptr, final_size.x, final_size.y, info.pixel_format);
 
-				GPUTextureLoader loader(GetDevice());
+				GPUTextureLoader loader(GetGPUDevice());
 				target_info.texture = loader.GenTextureObject(image_description, info.gen_texture_parameters);
 				target_info.texture_mipmap = 0;
 #endif

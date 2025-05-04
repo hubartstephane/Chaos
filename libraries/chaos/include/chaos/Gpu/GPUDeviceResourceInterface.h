@@ -18,7 +18,7 @@ namespace chaos
 		GPUDeviceResourceInterface(GPUDevice * in_gpu_device);
 
 		/** getter on the device */
-		GPUDevice * GetDevice() const { return gpu_device.get(); }
+		GPUDevice * GetGPUDevice() const { return gpu_device.get(); }
 
 	protected:
 

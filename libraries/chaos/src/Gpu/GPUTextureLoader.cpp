@@ -54,7 +54,7 @@ namespace chaos
 		texture_description.depth        = 1;
 		texture_description.use_mipmaps  = parameters.reserve_mipmaps;
 
-		GPUTexture * result = GetDevice()->CreateTexture(texture_description);
+		GPUTexture * result = GetGPUDevice()->CreateTexture(texture_description);
 		if (result == nullptr)
 			return nullptr;
 
@@ -247,7 +247,7 @@ namespace chaos
 		texture_description.use_mipmaps = parameters.reserve_mipmaps;
 
 		// create the texture
-		GPUTexture* result = GetDevice()->CreateTexture(texture_description);
+		GPUTexture* result = GetGPUDevice()->CreateTexture(texture_description);
 		if (result == nullptr)
 		{
 			if (conversion_buffer != nullptr)

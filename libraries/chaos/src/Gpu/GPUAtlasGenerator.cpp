@@ -85,7 +85,7 @@ namespace chaos
 	GPUTexture * GPUAtlasGenerator::CreateTextureFromAtlas(Atlas const & in_atlas) const
 	{
 		// create and fill a texture array generator
-		GPUTextureArrayGenerator generator(GetDevice());
+		GPUTextureArrayGenerator generator(GetGPUDevice());
 
 		for (bitmap_ptr const & bitmap : in_atlas.GetBitmaps())
 			generator.AddGenerator(new GPUTextureArraySliceGenerator_Image(bitmap.get(), false)); // do not release image, we have a unique_ptr on it

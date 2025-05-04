@@ -21,7 +21,7 @@ namespace chaos
 		GPURenderContext* GetRenderContext() const { return gpu_render_context.get(); }
 
 		/** getter on the device */
-		GPUDevice * GetDevice() const;
+		GPUDevice * GetGPUDevice() const;
 
 	protected:
 

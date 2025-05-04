@@ -37,7 +37,7 @@ bool PrimitiveRenderer::Initialize()
 	generators.AddGenerator(new chaos::GPUWireframeBoxMeshGenerator(b3), mesh_wireframe_box);
 	generators.AddGenerator(new chaos::GPUTriangleMeshGenerator(t), mesh_triangle);
 
-	if (!generators.GenerateMeshes(window_application->GetDevice()))
+	if (!generators.GenerateMeshes(window_application->GetGPUDevice()))
 		return false;
 	return true;
 }

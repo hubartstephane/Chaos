@@ -91,7 +91,7 @@ protected:
 		}
 
 		if (!cubemap.IsEmpty())
-			return chaos::GPUTextureLoader(GetDevice()).GenTextureObject(&cubemap);
+			return chaos::GPUTextureLoader(GetGPUDevice()).GenTextureObject(&cubemap);
 
 		return nullptr;
 	}
@@ -207,7 +207,7 @@ protected:
 
 		chaos::box3 b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-		mesh = chaos::GPUBoxMeshGenerator(b).GenerateMesh(GetDevice());
+		mesh = chaos::GPUBoxMeshGenerator(b).GenerateMesh(GetGPUDevice());
 		if (mesh == nullptr)
 			return false;
 

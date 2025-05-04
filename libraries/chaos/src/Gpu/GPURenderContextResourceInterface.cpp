@@ -9,11 +9,11 @@ namespace chaos
 		assert(in_gpu_render_context != nullptr);
 	}
 
-	GPUDevice* GPURenderContextResourceInterface::GetDevice() const
+	GPUDevice* GPURenderContextResourceInterface::GetGPUDevice() const
 	{
 		if (gpu_render_context == nullptr)
 			return nullptr;
-		return gpu_render_context->GetDevice();
+		return gpu_render_context->GetGPUDevice();
 	}
 
 }; // namespace chaos

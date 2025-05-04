@@ -273,7 +273,7 @@ protected:
 
 #endif
 
-		chaos::shared_ptr<chaos::GPUTexture> result = chaos::GPUTextureLoader(GetDevice()).GenTextureObject(bm, parameters);
+		chaos::shared_ptr<chaos::GPUTexture> result = chaos::GPUTextureLoader(GetGPUDevice()).GenTextureObject(bm, parameters);
 
 		glfwSetWindowSize(glfw_window, FreeImage_GetWidth(bm), FreeImage_GetHeight(bm));
 
@@ -325,7 +325,7 @@ protected:
 		// create the mesh
 		chaos::box2 b = chaos::box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
 
-		mesh = chaos::GPUQuadMeshGenerator(b).GenerateMesh(GetDevice());
+		mesh = chaos::GPUQuadMeshGenerator(b).GenerateMesh(GetGPUDevice());
 		if (mesh == nullptr)
 			return false;
 

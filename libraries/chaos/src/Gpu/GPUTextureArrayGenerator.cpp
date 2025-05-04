@@ -219,7 +219,7 @@ namespace chaos
 		description.type         = array_type;
 		description.use_mipmaps  = parameters.reserve_mipmaps;
 
-		GPUTexture* result = GetDevice()->CreateTexture(description);
+		GPUTexture* result = GetGPUDevice()->CreateTexture(description);
 		if (result == nullptr)
 		{
 			if (conversion_buffer != nullptr)

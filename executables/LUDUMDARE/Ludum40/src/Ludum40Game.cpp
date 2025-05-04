@@ -470,7 +470,7 @@ bool Game::LoadBackgroundTexture(size_t index)
   index = index % background_paths.size();
 
   chaos::FilePathParam path(background_paths[index]);
-  chaos::shared_ptr<chaos::GPUTexture> new_background = chaos::GPUTextureLoader(window_application->GetDevice()).GenTextureObject(path);
+  chaos::shared_ptr<chaos::GPUTexture> new_background = chaos::GPUTextureLoader(window_application->GetGPUDevice()).GenTextureObject(path);
   if (new_background == nullptr)
     return false;
   background_texture = new_background;
@@ -498,7 +498,7 @@ bool Game::GenerateBackgroundResources(boost::filesystem::path const & path)
 	chaos::WindowApplication* window_application = chaos::Application::GetInstance();
 
 	chaos::FilePathParam p = path / "controls.png";
-	control_texture = chaos::GPUTextureLoader(window_application->GetDevice()).GenTextureObject(p);
+	control_texture = chaos::GPUTextureLoader(window_application->GetGPUDevice()).GenTextureObject(p);
 	if (control_texture == nullptr)
 		return false;
 
@@ -523,7 +523,7 @@ bool Game::GenerateBackgroundResources(boost::filesystem::path const & path)
 	// generate the background mesh
 	chaos::box2 b = chaos::box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
 
-	fullscreen_mesh = chaos::GPUQuadMeshGenerator(b).GenerateMesh(window_application->GetDevice());
+	fullscreen_mesh = chaos::GPUQuadMeshGenerator(b).GenerateMesh(window_application->GetGPUDevice());
 	if (fullscreen_mesh == nullptr)
 		return false;
 
@@ -554,7 +554,7 @@ bool Game::GenerateAtlas(boost::filesystem::path const & path)
 	// generate STD Atlas
 	chaos::WindowApplication* window_application = chaos::Application::GetInstance();
 
-	chaos::GPUAtlasGenerator generator(window_application->GetDevice());
+	chaos::GPUAtlasGenerator generator(window_application->GetGPUDevice());
 	texture_atlas = generator.GenerateAtlas(input, params);
 	if (texture_atlas == nullptr)
 		return false;

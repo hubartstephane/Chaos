@@ -90,7 +90,7 @@ protected:
 		chaos::GPUMultiMeshGenerator generators;
 		generators.AddGenerator(new chaos::GPUBoxMeshGenerator(b), mesh_box);
 
-		if (!generators.GenerateMeshes(GetDevice()))
+		if (!generators.GenerateMeshes(GetGPUDevice()))
 			return false;
 
 		// place camera
@@ -117,7 +117,7 @@ protected:
 		if (!pixel_format.IsValid())
 			return nullptr;
 
-		chaos::GPUTextureArrayGenerator generator(GetDevice());
+		chaos::GPUTextureArrayGenerator generator(GetGPUDevice());
 		for (size_t i = 0 ; i < bitmaps.size() ; ++i)
 			generator.AddGenerator(new chaos::GPUTextureArraySliceGenerator_Image(bitmaps[i], false));
 

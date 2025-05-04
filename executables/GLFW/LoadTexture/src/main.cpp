@@ -53,13 +53,13 @@ protected:
 
       chaos::ImageDescription sub_desc = desc.GetSubImageDescription(k, k, desc.width - 2 * k, desc.height - 2 * k);
 
-      result = chaos::GPUTextureLoader(GetDevice()).GenTextureObject(sub_desc);
+      result = chaos::GPUTextureLoader(GetGPUDevice()).GenTextureObject(sub_desc);
 
       FreeImage_Unload(image);
     }
 
 #else
-		result = chaos::GPUTextureLoader(GetDevice()).GenTextureObject(texture_paths[index]);
+		result = chaos::GPUTextureLoader(GetGPUDevice()).GenTextureObject(texture_paths[index]);
 #endif
 
 		return result;
@@ -129,7 +129,7 @@ protected:
 		// create the mesh
 		chaos::box2 b = chaos::box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
 
-		mesh = chaos::GPUQuadMeshGenerator(b).GenerateMesh(GetDevice());
+		mesh = chaos::GPUQuadMeshGenerator(b).GenerateMesh(GetGPUDevice());
 		if (mesh == nullptr)
 			return false;
 

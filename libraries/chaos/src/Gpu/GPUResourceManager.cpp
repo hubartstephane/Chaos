@@ -141,19 +141,19 @@ namespace chaos
 
 	GPUTexture * GPUResourceManager::LoadTexture(FilePathParam const & path, char const * name, GenTextureParameters const & texture_parameters)
 	{
-		return GPUTextureLoader(GetDevice(), this).LoadObject(path, name, texture_parameters);
+		return GPUTextureLoader(GetGPUDevice(), this).LoadObject(path, name, texture_parameters);
 	}
 
 	GPUProgram * GPUResourceManager::LoadProgram(FilePathParam const & path, char const * name)
 	{
-		return GPUProgramLoader(GetDevice(), this).LoadObject(path, name);
+		return GPUProgramLoader(GetGPUDevice(), this).LoadObject(path, name);
 	}
 
 	GPURenderMaterial * GPUResourceManager::LoadRenderMaterial(FilePathParam const & path, char const * name)
 	{
 		GPURenderMaterialLoaderReferenceSolver solver;
 
-		GPURenderMaterial * result = GPURenderMaterialLoader(GetDevice(), this, &solver).LoadObject(path, name);
+		GPURenderMaterial * result = GPURenderMaterialLoader(GetGPUDevice(), this, &solver).LoadObject(path, name);
 		if (result != nullptr)
 			solver.ResolveReferences(this);
 		return result;
@@ -195,7 +195,7 @@ namespace chaos
 		return LoadObjects<true>(
 			"textures",
 			config,
-			GPUTextureLoader(GetDevice(), this));
+			GPUTextureLoader(GetGPUDevice(), this));
 	}
 
 	bool GPUResourceManager::LoadPrograms(nlohmann::json const * config)
@@ -203,7 +203,7 @@ namespace chaos
 		return LoadObjects<true>(
 			"programs",
 			config,
-			GPUProgramLoader(GetDevice(), this));
+			GPUProgramLoader(GetGPUDevice(), this));
 	}
 
 	bool GPUResourceManager::LoadMaterials(nlohmann::json const * config)
@@ -213,7 +213,7 @@ namespace chaos
 		bool result = LoadObjects<true>(
 			"rendermaterials",
 			config,
-			GPURenderMaterialLoader(GetDevice(), this, &solver));
+			GPURenderMaterialLoader(GetGPUDevice(), this, &solver));
 		if (result)
 			solver.ResolveReferences(this);
 		return result;
@@ -419,7 +419,7 @@ namespace chaos
 
 		box2 box = box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
 		generators.AddGenerator(new GPUQuadMeshGenerator(box), quad_mesh);
-		if (!generators.GenerateMeshes(GetDevice()))
+		if (!generators.GenerateMeshes(GetGPUDevice()))
 			return false;
 
 		// generate the quad list index buffer (used in primitive rendering)
@@ -470,7 +470,7 @@ namespace chaos
 	bool GPUResourceManager::OnConfigurationChanged(JSONReadConfiguration config)
 	{
 		// create a temporary manager
-		shared_ptr<GPUResourceManager> other_gpu_resource_manager = new GPUResourceManager(GetDevice()); // destroyed at the end of the function
+		shared_ptr<GPUResourceManager> other_gpu_resource_manager = new GPUResourceManager(GetGPUDevice()); // destroyed at the end of the function
 		if (other_gpu_resource_manager == nullptr)
 			return false;
 		GiveClonedConfiguration(other_gpu_resource_manager.get());

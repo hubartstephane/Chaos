@@ -62,7 +62,7 @@ protected:
 #if 0
 
 		// let OpenGL do the conversion
-		return chaos::GPUTextureLoader(GetDevice()).GenTextureObject(&cubemap, merge_params);
+		return chaos::GPUTextureLoader(GetGPUDevice()).GenTextureObject(&cubemap, merge_params);
 
 #else
 
@@ -70,7 +70,7 @@ protected:
 		chaos::CubeMapImages single_cubemap = cubemap.ToSingleImage(true, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), merge_params);
 
 		if (!single_cubemap.IsEmpty())
-			return chaos::GPUTextureLoader(GetDevice()).GenTextureObject(&single_cubemap);
+			return chaos::GPUTextureLoader(GetGPUDevice()).GenTextureObject(&single_cubemap);
 
 #endif
 
@@ -213,7 +213,7 @@ protected:
 
 		chaos::box3 b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-		mesh = chaos::GPUBoxMeshGenerator(b).GenerateMesh(GetDevice());
+		mesh = chaos::GPUBoxMeshGenerator(b).GenerateMesh(GetGPUDevice());
 		if (mesh == nullptr)
 			return false;
 

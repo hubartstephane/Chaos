@@ -45,8 +45,6 @@ namespace chaos
 		/** override */
 		virtual void Release() override;
 
-
-
 	protected:
 
 		/** constructor */
@@ -54,6 +52,8 @@ namespace chaos
 
 		/** checks for some parameters before a SubImage operation */
 		bool CheckSubImageCommonParameters(ImageDescription const& image_description, glm::ivec3 const& offset, int mipmap_level) const;
+		/** prepare store parameters */
+		char* PreparePixelTransfert(ImageDescription const& image_description);
 
 	protected:
 

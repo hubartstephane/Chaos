@@ -130,9 +130,6 @@ namespace chaos
 		/** utility function to compute target (GL_TEXTURE_1D, GL_TEXTURE_2D) from dimension */
 		CHAOS_API TextureType GetTexture2DTypeFromSize(int width, int height);
 
-		/** prepare store parameters */
-		CHAOS_API char* PrepareGLTextureTransfert(ImageDescription const& desc);
-
 	}; // namespace GLTextureTools
 
 #endif

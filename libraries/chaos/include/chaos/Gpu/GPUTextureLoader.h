@@ -58,9 +58,6 @@ namespace chaos
 
 	protected:
 
-		/** for cubemap texture, returns a layer index depending on the face considered */
-		static int GetCubeMapLayerValueFromCubeMapFace(CubeMapImageType face, int level = 0);
-
 		/** search whether the path is already in used in the manager */
 		virtual bool IsPathAlreadyUsedInManager(FilePathParam const& path) const override;
 		/** search whether the name is already in used in the manager */

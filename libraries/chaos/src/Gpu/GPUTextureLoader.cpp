@@ -171,48 +171,6 @@ namespace chaos
 	//  v
 	//
 
-	int GPUTextureLoader::GetCubeMapLayerValueFromCubeMapFace(CubeMapImageType face, int level)
-	{
-#if 0
-		// previous code was using GL_enum
-		GLenum targets[] = {
-			GL_TEXTURE_CUBE_MAP_NEGATIVE_X, // LEFT
-			GL_TEXTURE_CUBE_MAP_POSITIVE_X, // RIGHT
-			GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, // BOTTOM
-			GL_TEXTURE_CUBE_MAP_POSITIVE_Y, // TOP
-			GL_TEXTURE_CUBE_MAP_POSITIVE_Z, // FRONT
-			GL_TEXTURE_CUBE_MAP_NEGATIVE_Z  // BACK
-		};
-
-		if (face == GL_TEXTURE_CUBE_MAP_POSITIVE_X)
-			return 0 + 6 * level;
-		if (face == GL_TEXTURE_CUBE_MAP_NEGATIVE_X)
-			return 1 + 6 * level;
-		if (face == GL_TEXTURE_CUBE_MAP_POSITIVE_Y)
-			return 2 + 6 * level;
-		if (face == GL_TEXTURE_CUBE_MAP_NEGATIVE_Y)
-			return 3 + 6 * level;
-		if (face == GL_TEXTURE_CUBE_MAP_POSITIVE_Z)
-			return 4 + 6 * level;
-		if (face == GL_TEXTURE_CUBE_MAP_NEGATIVE_Z)
-			return 5 + 6 * level;
-
-#endif
-
-		if (face == CubeMapImageType::ImageRight)
-			return 0 + 6 * level;
-		if (face == CubeMapImageType::ImageLeft)
-			return 1 + 6 * level;
-		if (face == CubeMapImageType::ImageBottom)
-			return 2 + 6 * level;
-		if (face == CubeMapImageType::ImageTop)
-			return 3 + 6 * level;
-		if (face == CubeMapImageType::ImageFront)
-			return 4 + 6 * level;
-		if (face == CubeMapImageType::ImageBack)
-			return 5 + 6 * level;
-		return -1;
-	}
 
 	GPUTexture * GPUTextureLoader::GenTextureObject(CubeMapImages const * cubemap, PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters) const
 	{

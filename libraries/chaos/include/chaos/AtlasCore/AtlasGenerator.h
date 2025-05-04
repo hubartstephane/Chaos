@@ -106,7 +106,7 @@ namespace chaos
 		/** compute all AtlasBitmapInfo positions */
 		bool ComputeResult(AtlasInput const& in_input, Atlas& in_ouput, AtlasGeneratorParams const& in_params = AtlasGeneratorParams());
 		/** returns a vector with all generated bitmaps (to be deallocated after usage) */
-		std::vector<bitmap_ptr> GenerateBitmaps(AtlasBitmapInfoInputVector const& entries, PixelFormat const& final_pixel_format) const;
+		std::vector<bitmap_ptr> GenerateBitmaps(AtlasBitmapInfoInputVector const& entries, PixelFormat const& pixel_format) const;
 		/** create an atlas from a directory into another directory */
 		static bool CreateAtlasFromDirectory(FilePathParam const& bitmaps_dir, FilePathParam const& path, bool recursive, AtlasGeneratorParams const& in_params = AtlasGeneratorParams());
 

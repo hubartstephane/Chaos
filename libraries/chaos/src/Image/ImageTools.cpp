@@ -378,9 +378,9 @@ namespace chaos
 		return result;
 	}
 
-	ImageDescription ImageTools::ConvertPixels(ImageDescription const & src_desc, PixelFormat const & final_pixel_format, char * conversion_buffer, ImageTransform image_transform)
+	ImageDescription ImageTools::ConvertPixels(ImageDescription const & src_desc, PixelFormat const & pixel_format, char * conversion_buffer, ImageTransform image_transform)
 	{
-		ImageDescription result = GetImageDescriptionForAlignedTexture(final_pixel_format, src_desc.width, src_desc.height, conversion_buffer);
+		ImageDescription result = GetImageDescriptionForAlignedTexture(pixel_format, src_desc.width, src_desc.height, conversion_buffer);
 		assert(result.IsValid(false));
 		ImageTools::CopyPixels(src_desc, result, 0, 0, 0, 0, result.width, result.height, image_transform); // do the conversion + symmetry
 		return result;

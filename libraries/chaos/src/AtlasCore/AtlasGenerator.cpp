@@ -237,7 +237,7 @@ namespace chaos
 		return false;
 	}
 
-	std::vector<bitmap_ptr> AtlasGenerator::GenerateBitmaps(AtlasBitmapInfoInputVector const& entries, PixelFormat const& final_pixel_format) const
+	std::vector<bitmap_ptr> AtlasGenerator::GenerateBitmaps(AtlasBitmapInfoInputVector const& entries, PixelFormat const& pixel_format) const
 	{
 		std::vector<bitmap_ptr> result;
 
@@ -245,7 +245,7 @@ namespace chaos
 		size_t bitmap_count = atlas_definitions.size();
 		for (size_t i = 0; i < bitmap_count; ++i)
 		{
-			bitmap_ptr bitmap = bitmap_ptr(ImageTools::GenFreeImage(final_pixel_format, params.atlas_width, params.atlas_height));
+			bitmap_ptr bitmap = bitmap_ptr(ImageTools::GenFreeImage(pixel_format, params.atlas_width, params.atlas_height));
 			if (bitmap != nullptr)
 			{
 				// set the background to black
@@ -496,12 +496,12 @@ namespace chaos
 		}
 
 		// test whether a correct pixel format has been found
-		PixelFormat final_pixel_format = pixel_format_merger.GetResult();
-		if (!final_pixel_format.IsValid())
+		PixelFormat pixel_format = pixel_format_merger.GetResult();
+		if (!pixel_format.IsValid())
 		{
 			if (entries.size() != 0)
 				return false;
-			final_pixel_format = (params.merge_params.pixel_format.IsValid()) ? params.merge_params.pixel_format : PixelFormat::BGRA;
+			pixel_format = (params.merge_params.pixel_format.IsValid()) ? params.merge_params.pixel_format : PixelFormat::BGRA;
 		}
 
 		// compute final atlas size
@@ -535,7 +535,7 @@ namespace chaos
 			if (EnsureValidResults(entries))
 #endif // _DEBUG
 			{
-				output->bitmaps = GenerateBitmaps(entries, final_pixel_format);
+				output->bitmaps = GenerateBitmaps(entries, pixel_format);
 				output->atlas_count = int(output->bitmaps.size());
 				output->dimension = glm::ivec2(params.atlas_width, params.atlas_height);
 				return true;

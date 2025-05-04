@@ -227,8 +227,8 @@ namespace chaos
 			return result;
 
 		// find the final format
-		PixelFormat final_pixel_format = GetMergedPixelFormat(merge_params);
-		if (!final_pixel_format.IsValid())
+		PixelFormat pixel_format = GetMergedPixelFormat(merge_params);
+		if (!pixel_format.IsValid())
 			return result;
 
 		// find the final format and size
@@ -256,7 +256,7 @@ namespace chaos
 		int new_image_width  = size * dispo.image_count_horiz;
 		int new_image_height = size * dispo.image_count_vert;
 
-		FIBITMAP * new_image = ImageTools::GenFreeImage(final_pixel_format, new_image_width, new_image_height);
+		FIBITMAP * new_image = ImageTools::GenFreeImage(pixel_format, new_image_width, new_image_height);
 		if (new_image == nullptr)
 			return result;
 		result.SetImage(CubeMapImageType::ImageSingle, new_image, true);

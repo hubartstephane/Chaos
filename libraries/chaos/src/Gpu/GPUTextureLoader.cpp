@@ -58,16 +58,7 @@ namespace chaos
 		if (result == nullptr)
 			return nullptr;
 
-		if (texture_type == TextureType::Texture1D)
-		{
-			//result->SetSubImage1D(0, 0, image.width, )
-
-	//			glTextureSubImage1D(texture_id, 0, 0, image.width, format, type, texture_buffer);
-
-		}
-		else
-		{
-		}
+		result->SetSubImage(image);
 
 		result->SetMinificationFilter(parameters.min_filter);
 		result->SetMagnificationFilter(parameters.mag_filter);
@@ -75,79 +66,6 @@ namespace chaos
 
 		if (parameters.build_mipmaps && parameters.reserve_mipmaps)
 			result->GenerateMipmaps();
-
-#if 0
-
-
-
-
-
-
-		GLuint texture_id = 0;
-		glCreateTextures((GLenum)texture_type, 1, &texture_id);
-		if (texture_id > 0)
-		{
-			// choose format and internal format (beware FreeImage is BGR/BGRA)
-			GLPixelFormat gl_formats = GLTextureTools::GetGLPixelFormat(image.pixel_format);
-			assert(gl_formats.IsValid());
-
-			GLenum format          = gl_formats.format;
-			GLenum internal_format = gl_formats.internal_format;
-			GLenum type            = (image.pixel_format.component_type == PixelComponentType::UNSIGNED_CHAR)?
-				GL_UNSIGNED_BYTE :
-				GL_FLOAT;
-
-			// get the buffer for the pixels
-			char * texture_buffer = (image.data == nullptr)?
-				nullptr:
-				GLTextureTools::PrepareGLTextureTransfert(image);
-
-			// shuxxx try to work with parameter.level and parameter.border
-
-			// create the texture
-			if (texture_type == TextureType::Texture1D)
-			{
-				int level_count = (parameters.reserve_mipmaps) ?
-					GLTextureTools::GetMipmapLevelCount(image.width) :
-					1;
-				glTextureStorage1D(texture_id, level_count, internal_format, image.width);
-				if (texture_buffer != nullptr)
-					glTextureSubImage1D(texture_id, 0, 0, image.width, format, type, texture_buffer);
-			}
-			else
-			{
-				int level_count = (parameters.reserve_mipmaps) ?
-					GLTextureTools::GetMipmapLevelCount(image.width, image.height) :
-					1;
-				glTextureStorage2D(texture_id, level_count, internal_format, image.width, image.height);
-				if (texture_buffer != nullptr)
-					glTextureSubImage2D(texture_id, 0, 0, 0, image.width, image.height, format, type, texture_buffer);
-			}
-
-			TextureDescription texture_description;
-			texture_description.type = texture_type;
-			texture_description.pixel_format = image.pixel_format;
-			texture_description.width = image.width;
-			texture_description.height = image.height;
-			texture_description.depth = 1;
-
-			// apply parameters
-			GLTextureTools::GenTextureApplyParameters(texture_id, texture_description, parameters);
-			result = new GPUTexture(texture_id, texture_description);
-
-			result = new GPUTexture(texture_id, texture_description);
-			result->SetMinificationFilter(parameters.min_filter);
-			result->SetMagnificationFilter(parameters.mag_filter);
-			result->SetWrapMethods(parameters.wrap_methods);
-
-			if (parameters.build_mipmaps && parameters.reserve_mipmaps)
-				result->GenerateMipmaps();
-
-		}
-
-
-#endif
-
 
 		return result;
 	}
@@ -300,14 +218,14 @@ namespace chaos
 	{
 		assert(cubemap != nullptr);
 
-		GPUTexture * result = nullptr;
-
 		if (cubemap->IsEmpty())
 			return nullptr;
 
-		PixelFormat final_pixel_format = cubemap->GetMergedPixelFormat(merge_params);
+		PixelFormat pixel_format = cubemap->GetMergedPixelFormat(merge_params);
 
-		int size = cubemap->GetCubeMapSize();
+		int cubemap_size = cubemap->GetCubeMapSize();
+		if (cubemap_size < 0)
+			return nullptr;
 
 		// detect whether some conversion will be required and the size of buffer required (avoid multiple allocations)
 		//
@@ -339,7 +257,7 @@ namespace chaos
 			face_valid[i] = true;
 
 			// test whether a conversion/copy is required
-			if ((image.pixel_format.component_count == 1) && (final_pixel_format.component_count != 1))
+			if ((image.pixel_format.component_count == 1) && (pixel_format.component_count != 1))
 				conversion_required[i] = true;
 
 			if (is_single_image)
@@ -350,7 +268,7 @@ namespace chaos
 			}
 			// compute memory required
 			if (conversion_required[i])
-				required_allocation = std::max(required_allocation, (size_t)ImageTools::GetMemoryRequirementForAlignedTexture(final_pixel_format, size, size));
+				required_allocation = std::max(required_allocation, (size_t)ImageTools::GetMemoryRequirementForAlignedTexture(pixel_format, cubemap_size, cubemap_size));
 		}
 
 		// allocate the buffer
@@ -362,99 +280,73 @@ namespace chaos
 				return nullptr;
 		}
 
+		TextureDescription texture_description;
+		texture_description.type = TextureType::TextureCubeMap;
+		texture_description.pixel_format = pixel_format;
+		texture_description.width = cubemap_size;
+		texture_description.height = cubemap_size;
+		texture_description.depth = 1;
+		texture_description.use_mipmaps = parameters.reserve_mipmaps;
 
-
-
-
-
-
-
-
-
-		#if 0
-
-
-
-
-
-		// GPU-allocate the texture
-		GLuint texture_id = 0;
-		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &texture_id);
-
-		if (texture_id > 0)
+		// create the texture
+		GPUTexture* result = GetDevice()->CreateTexture(texture_description);
+		if (result == nullptr)
 		{
-			GLPixelFormat gl_final_pixel_format = GLTextureTools::GetGLPixelFormat(final_pixel_format);
+			if (conversion_buffer != nullptr)
+				delete[](conversion_buffer);
+			return nullptr;
+		}
 
-			// generate the cube-texture : select as internal format the one given by the MERGED PIXEL FORMAT
-			int level_count = (parameters.reserve_mipmaps) ?
-				GLTextureTools::GetMipmapLevelCount(size, size) :
-				1;
-			glTextureStorage2D(texture_id, level_count, gl_final_pixel_format.internal_format, size, size);
+		// fill the faces in GPU with the images of CubeMap
+		for (size_t i = int(CubeMapImageType::ImageLeft); i <= int(CubeMapImageType::ImageBack); ++i)
+		{
+			// ensure the image is valid and not empty
+			if (!face_valid[i])
+				continue;
 
-			// fill the faces in GPU with the images of CubeMap
-			for (size_t i = int(CubeMapImageType::ImageLeft); i <= int(CubeMapImageType::ImageBack); ++i)
+			// do the conversion, central symetry
+			ImageDescription image = cubemap->GetImageFaceDescription((CubeMapImageType)i);
+
+			ImageDescription effective_image = (conversion_required[i]) ?
+				ImageTools::ConvertPixels(image, pixel_format, conversion_buffer, central_symetry[i] ? ImageTransform::CENTRAL_SYMETRY : ImageTransform::NO_TRANSFORM) :
+				image;
+
+			CubeMapFaceType face_type;
+			switch(CubeMapImageType(i))
 			{
-				// ensure the image is valid and not empty
-				if (!face_valid[i])
-					continue;
-
-				// do the conversion, central symetry
-				ImageDescription image = cubemap->GetImageFaceDescription((CubeMapImageType)i);
-
-				ImageDescription effective_image = (conversion_required[i]) ?
-					ImageTools::ConvertPixels(image, final_pixel_format, conversion_buffer, central_symetry[i]? ImageTransform::CENTRAL_SYMETRY : ImageTransform::NO_TRANSFORM) :
-					image;
-
-				// fill glPixelStorei(...)
-				// do not remove this line from the loop. Maybe future implementation will accept image with same size but different pitch
-
-				char * texture_buffer = GLTextureTools::PrepareGLTextureTransfert(effective_image);
-				if (texture_buffer != nullptr)
-				{
-					// fill GPU
-					int depth = GetCubeMapLayerValueFromCubeMapFace((CubeMapImageType)i, 0);
-
-					GLPixelFormat gl_face_pixel_format = GLTextureTools::GetGLPixelFormat(effective_image.pixel_format);
-
-					glTextureSubImage3D(
-						texture_id,
-						0,
-						0, 0, depth,
-						size, size, 1,
-						gl_face_pixel_format.format,
-						effective_image.pixel_format.component_type == PixelComponentType::UNSIGNED_CHAR ? GL_UNSIGNED_BYTE : GL_FLOAT,
-						texture_buffer
-					);
-				}
+				case CubeMapImageType::ImageLeft:
+					face_type = CubeMapFaceType::NegativeX; break;
+				case CubeMapImageType::ImageRight:
+					face_type = CubeMapFaceType::PositiveX; break;
+				case CubeMapImageType::ImageTop:
+					face_type = CubeMapFaceType::NegativeY; break;
+				case CubeMapImageType::ImageBottom:
+					face_type = CubeMapFaceType::PositiveY; break;
+				case CubeMapImageType::ImageFront:
+					face_type = CubeMapFaceType::PositiveZ; break;
+				case CubeMapImageType::ImageBack:
+					face_type = CubeMapFaceType::NegativeZ; break;
 			}
 
-			// finalize the result information
-			TextureDescription texture_description;
-			texture_description.type = TextureType::TextureCubeMap;
-			texture_description.pixel_format = final_pixel_format;
-			texture_description.width = size;
-			texture_description.height = size;
-			texture_description.depth = 1;
-
-			// this is smoother to clamp at edges
-			GenTextureParameters tmp = parameters;
-			tmp.wrap_s = TextureWrapMethod::ClampToEdge;
-			tmp.wrap_r = TextureWrapMethod::ClampToEdge;
-			tmp.wrap_t = TextureWrapMethod::ClampToEdge;
-
-
-			result->SetMinificationFilter(parameters.min_filter);
-			result->SetMagnificationFilter(parameters.mag_filter);
-			result->SetWrapMethods(parameters.wrap_methods);
-
-			GLTextureTools::GenTextureApplyParameters(texture_id, texture_description, tmp);
-			result = new GPUTexture(texture_id, texture_description);
+			result->SetSubImageCubeMap(effective_image, face_type);
 		}
+
+		// this is smoother to clamp at edges
+		TextureWrapMethods smoother_wrap_methods = parameters.wrap_methods;
+		smoother_wrap_methods.wrap_x = TextureWrapMethod::ClampToEdge;
+		smoother_wrap_methods.wrap_y = TextureWrapMethod::ClampToEdge;
+		smoother_wrap_methods.wrap_z = TextureWrapMethod::ClampToEdge;
+
+		result->SetMinificationFilter(parameters.min_filter);
+		result->SetMagnificationFilter(parameters.mag_filter);
+		result->SetWrapMethods(smoother_wrap_methods);
+
+		if (parameters.build_mipmaps && parameters.reserve_mipmaps)
+			result->GenerateMipmaps();
 
 		// release the buffer
 		if (conversion_buffer != nullptr)
 			delete[](conversion_buffer);
-#endif
 		return result;
 	}
 

@@ -42,16 +42,13 @@ namespace chaos
 		// the format should be well known
 		if (!pixel_format.IsValid())
 			return false;
-		// test data consistency (only if there is a buffer)
-		if (data != nullptr)
-		{
-			if (line_size != width * pixel_format.GetPixelSize())
-				return false;
-			if (pitch_size < 0 || padding_size < 0)
-				return false;
-			if (pitch_size != padding_size + line_size)
-				return false;
-		}
+		// test data consistency
+		if (line_size != width * pixel_format.GetPixelSize())
+			return false;
+		if (pitch_size < 0 || padding_size < 0)
+			return false;
+		if (pitch_size != padding_size + line_size)
+			return false;
 		return true;
 	}
 

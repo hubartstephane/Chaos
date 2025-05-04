@@ -121,6 +121,7 @@ namespace chaos
 		CHAOS_API TextureType ToFlatTextureType(TextureType type);
 
 		/** returns the maximum number of mipmap */
+		CHAOS_API int GetMipmapLevelCount(int width, int height, int depth);
 		CHAOS_API int GetMipmapLevelCount(int width, int height);
 		CHAOS_API int GetMipmapLevelCount(int width);
 		/** Get Format/Internal Format pair from the description */

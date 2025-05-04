@@ -61,6 +61,11 @@ namespace chaos
 	{
 	public:
 
+		/** check whether the description is valid */
+		bool IsValid() const;
+
+	public:
+
 		/** the type of the texture */
 		TextureType type = TextureType::Unknown;
 		/** whether the texture uses mipmaps */

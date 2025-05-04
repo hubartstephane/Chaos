@@ -25,6 +25,17 @@ namespace chaos
 		}
 	}
 
+	int GPUTexture::GetMipmapCount() const
+	{
+		if (!texture_description.use_mipmaps)
+			return 1;
+
+		if (GLTextureTools::IsArrayTextureType(texture_description.type))
+			return GLTextureTools::GetMipmapLevelCount(texture_description.width, texture_description.height);
+		else
+			return GLTextureTools::GetMipmapLevelCount(texture_description.width, texture_description.height, texture_description.depth);
+	}
+
 	void GPUTexture::GenerateMipmaps()
 	{
 		if (texture_id != 0)
@@ -54,22 +65,144 @@ namespace chaos
 			glTextureParameteri(texture_id, GL_TEXTURE_MAG_FILTER, (GLenum)mag_filter);
 	}
 
-	void GPUTexture::SetSubImage(ImageDescription const& image_description)
+	bool GPUTexture::CheckSubImageCommonParameters(ImageDescription const& image_description, glm::ivec3 const& offset, int mipmap_level) const
 	{
+		if (texture_id == 0)
+			return false;
 
-	#if 0
+		if (!image_description.IsValid(false))
+			return false;
+
+		if (mipmap_level < 0 || mipmap_level >= GetMipmapCount())
+			return false;
+
+		if (image_description.pixel_format.component_type != PixelComponentType::UNSIGNED_CHAR && image_description.pixel_format.component_type != PixelComponentType::FLOAT)
+			return false;
+
+		if (offset.x < 0 || offset.y < 0 || offset.z < 0)
+			return false;
+
+		if ((offset.x + image_description.width > texture_description.width) ||
+			(offset.y + image_description.height > texture_description.height) ||
+			(offset.z > texture_description.depth))
+			return false;
+
+		return true;
+	}
+
+	bool GPUTexture::SetSubImageCubeMap(ImageDescription const& image_description, CubeMapFaceType face, glm::ivec3 const& offset, int mipmap_level)
+	{
+		if (texture_description.type != TextureType::TextureCubeMap && texture_description.type != TextureType::TextureCubeMapArray)
+			return false;
+
+		if (!CheckSubImageCommonParameters(image_description, offset, mipmap_level))
+			return false;
+
+		GLint depth = GLint(face) + 6 * offset.z;
+
 		GLPixelFormat gl_pixel_format = GLTextureTools::GetGLPixelFormat(image_description.pixel_format);
 
-		int type = (effective_image.pixel_format.component_type == PixelComponentType::UNSIGNED_CHAR) ? GL_UNSIGNED_BYTE : GL_FLOAT;
+		GLenum gl_component_type = (image_description.pixel_format.component_type == PixelComponentType::UNSIGNED_CHAR) ?
+			GL_UNSIGNED_BYTE :
+			GL_FLOAT;
 
-		GLPixelFormat slice_pixel_format = GLTextureTools::GetGLPixelFormat(effective_image.pixel_format);
+		char* texture_buffer = GLTextureTools::PrepareGLTextureTransfert(image_description);
 
-		int mipmap_level = 0;
-		int start_x = 0;
+		glTextureSubImage3D(
+			texture_id,
+			mipmap_level,
+			offset.x, offset.y, depth,
+			image_description.width, image_description.height, 1,
+			gl_pixel_format.format,
+			gl_component_type,
+			texture_buffer
+		);
 
-		glTextureSubImage1D(texture_id, mipmap_level, start_x, image.width, gl_pixel_format.format, type, texture_buffer);
-#endif
-
+		return true;
 	}
+
+	bool GPUTexture::SetSubImage(ImageDescription const& image_description, glm::ivec3 const& offset, int mipmap_level)
+	{
+		if (texture_description.type != TextureType::Texture1D &&
+			texture_description.type != TextureType::Texture1DArray &&
+			texture_description.type != TextureType::Texture2D && 
+			texture_description.type != TextureType::Texture2DArray &&
+			texture_description.type != TextureType::Texture3D)
+			return false;
+
+		if (!CheckSubImageCommonParameters(image_description, offset, mipmap_level))
+			return false;
+
+		GLPixelFormat gl_pixel_format = GLTextureTools::GetGLPixelFormat(image_description.pixel_format);
+
+		GLenum gl_component_type = (image_description.pixel_format.component_type == PixelComponentType::UNSIGNED_CHAR)?
+			GL_UNSIGNED_BYTE:
+			GL_FLOAT;
+
+		char* texture_buffer = GLTextureTools::PrepareGLTextureTransfert(image_description);
+
+		switch (texture_description.type)
+		{
+		case TextureType::Texture1D:
+
+			glTextureSubImage1D(
+				texture_id,
+				mipmap_level,
+				offset.x,
+				image_description.width,
+				gl_pixel_format.format,
+				gl_component_type,
+				texture_buffer
+			);
+			return true;
+
+		case TextureType::Texture1DArray:
+
+			glTextureSubImage2D(
+				texture_id,
+				mipmap_level,
+				offset.x, offset.z, // the array slice for 1D texture is on offset.z
+				image_description.width, 1,
+				gl_pixel_format.format,
+				gl_component_type,
+				texture_buffer
+			);
+			return true;
+
+		case TextureType::Texture2D:
+
+			glTextureSubImage2D(
+				texture_id,
+				mipmap_level,
+				offset.x, offset.y,
+				image_description.width, image_description.height,
+				gl_pixel_format.format,
+				gl_component_type,
+				texture_buffer
+			);
+			return true;
+
+		case TextureType::Texture2DArray:
+		case TextureType::Texture3D:
+
+			glTextureSubImage3D(
+				texture_id,
+				mipmap_level,
+				offset.x, offset.y, offset.z,
+				image_description.width, image_description.height, 1,
+				gl_pixel_format.format,
+				gl_component_type,
+				texture_buffer
+			);
+			return true;
+
+		default:
+			assert(0);
+			return false;
+		}
+
+		return true;
+	}
+
 
 }; // namespace chaos

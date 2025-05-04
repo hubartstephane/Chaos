@@ -17,7 +17,7 @@ namespace chaos
 		return GenerateAtlas(std::move(atlas));
 	}
 
-	GPUAtlas* GPUAtlasGenerator::GenerateAtlas(Atlas const * in_atlas) const
+	GPUAtlas* GPUAtlasGenerator::GenerateAtlas(Atlas const & in_atlas) const
 	{
 		// generate texture Atlas
 		GPUAtlas* result = new GPUAtlas;
@@ -45,30 +45,36 @@ namespace chaos
 		return result;
 	}
 
-	bool GPUAtlasGenerator::FillAtlasContent(GPUAtlas* result, Atlas const * in_atlas) const
+	bool GPUAtlasGenerator::FillAtlasContent(GPUAtlas* result, Atlas const & in_atlas) const
 	{
 		// empty previous content
 		result->Clear();
 		// create the texture
-		GPUTexture* texture = CreateTextureFromAtlas(in_atlas);
-		if (texture == nullptr)
-			return false;
-		result->texture = texture;
+		if (in_atlas.GetBitmaps().size() > 0)
+		{
+			GPUTexture* texture = CreateTextureFromAtlas(in_atlas);
+			if (texture == nullptr)
+				return false;
+			result->texture = texture;
+		}
 		// copy data
-		result->atlas_count = in_atlas->atlas_count;
-		result->dimension = in_atlas->dimension;
-		return CopyAtlasFolders(&result->root_folder, &in_atlas->root_folder);
+		result->atlas_count = in_atlas.atlas_count;
+		result->dimension = in_atlas.dimension;
+		return CopyAtlasFolders(&result->root_folder, &in_atlas.root_folder);
 	}
 
 	bool GPUAtlasGenerator::FillAtlasContent(GPUAtlas* result, Atlas&& in_atlas) const
 	{
 		// empty previous content
 		result->Clear();
-		// create the texture
-		GPUTexture* texture = CreateTextureFromAtlas(&in_atlas);
-		if (texture == nullptr)
-			return false;
-		result->texture = texture;
+		// create the texture (if at least one bitmap)
+		if (in_atlas.GetBitmaps().size() > 0)
+		{
+			GPUTexture* texture = CreateTextureFromAtlas(in_atlas);
+			if (texture == nullptr)
+				return false;
+			result->texture = texture;
+		}
 		// steal all data
 		result->atlas_count = in_atlas.atlas_count;
 		result->dimension = in_atlas.dimension;
@@ -76,14 +82,13 @@ namespace chaos
 		return true;
 	}
 
-	GPUTexture * GPUAtlasGenerator::CreateTextureFromAtlas(Atlas const * in_atlas) const
+	GPUTexture * GPUAtlasGenerator::CreateTextureFromAtlas(Atlas const & in_atlas) const
 	{
 		// create and fill a texture array generator
-		std::vector<bitmap_ptr> const& bitmaps = in_atlas->GetBitmaps();
-
 		GPUTextureArrayGenerator generator(GetDevice());
-		for (size_t i = 0; i < bitmaps.size(); ++i)
-			generator.AddGenerator(new GPUTextureArraySliceGenerator_Image(bitmaps[i].get(), false)); // do not release image, we have a unique_ptr on it
+
+		for (bitmap_ptr const & bitmap : in_atlas.GetBitmaps())
+			generator.AddGenerator(new GPUTextureArraySliceGenerator_Image(bitmap.get(), false)); // do not release image, we have a unique_ptr on it
 
 		// generate the texture array
 		return generator.GenTextureObject();

@@ -25,8 +25,13 @@ namespace chaos
 		/** returns the GL name of the resource */
 		GLuint GetResourceID() const { return texture_id; }
 
-		/** populate image data from gpu */
-		void SetSubImage(ImageDescription const& image_description);
+		/** get the number of mipmaps */
+		int GetMipmapCount() const;
+
+		/** populate image data from gpu (for arrays, use offset.z for the slice index) */
+		bool SetSubImage(ImageDescription const& image_description, glm::ivec3 const& offset = { 0, 0, 0 }, int mipmap_level = 0);
+		/** populate image data from gpu (for cubemaps) */
+		bool SetSubImageCubeMap(ImageDescription const& image_description, CubeMapFaceType face, glm::ivec3 const & offset = {0, 0, 0}, int mipmap_level = 0);
 
 		/** set the mignification filter */
 		void SetMinificationFilter(TextureMinificationFilter min_filter);
@@ -46,6 +51,9 @@ namespace chaos
 
 		/** constructor */
 		GPUTexture(GPUDevice * in_device, GLuint in_id, TextureDescription const& in_texture_description);
+
+		/** checks for some parameters before a SubImage operation */
+		bool CheckSubImageCommonParameters(ImageDescription const& image_description, glm::ivec3 const& offset, int mipmap_level) const;
 
 	protected:
 

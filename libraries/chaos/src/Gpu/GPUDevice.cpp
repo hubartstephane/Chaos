@@ -13,7 +13,6 @@ namespace chaos
 
 	void GPUDevice::Finalize()
 	{
-
 	}
 
 	bool GPUDevice::OnInitialize(JSONReadConfiguration config)
@@ -24,9 +23,8 @@ namespace chaos
 	GPUTexture* GPUDevice::CreateTexture(TextureDescription const& in_texture_description)
 	{
 		// check for coherency
-		if (in_texture_description.type == TextureType::TextureCubeMap || in_texture_description.type == TextureType::TextureCubeMapArray)
-			if (in_texture_description.width != in_texture_description.height)
-				return nullptr;
+		if (!in_texture_description.IsValid())
+			return nullptr;
 
 		// tweak for single channel formats
 		GLPixelFormat gl_formats = GLTextureTools::GetGLPixelFormat(in_texture_description.pixel_format);
@@ -48,7 +46,7 @@ namespace chaos
 			glTextureParameteri(texture_id, GL_TEXTURE_SWIZZLE_A, GL_ONE);
 		}
 
-		// reserve storage
+		// compute mipmap count
 		int mipmap_count = 1;
 		if (in_texture_description.use_mipmaps)
 		{
@@ -62,12 +60,10 @@ namespace chaos
 				case TextureType::Texture2DArray:
 				case TextureType::TextureCubeMap:
 				case TextureType::TextureCubeMapArray:
-					mipmap_count = GLTextureTools::GetMipmapLevelCount(
-						std::max(in_texture_description.width, in_texture_description.height));
+					mipmap_count = GLTextureTools::GetMipmapLevelCount(in_texture_description.width, in_texture_description.height);
 					break;
 				case TextureType::Texture3D:
-					mipmap_count = GLTextureTools::GetMipmapLevelCount(
-						std::max(std::max(in_texture_description.width, in_texture_description.height), in_texture_description.depth));
+					mipmap_count = GLTextureTools::GetMipmapLevelCount(in_texture_description.width, in_texture_description.height, in_texture_description.depth);
 					break;
 				default:
 					assert(0);
@@ -75,6 +71,7 @@ namespace chaos
 			}
 		}
 
+		// reserve storage
 		switch (in_texture_description.type)
 		{
 		case TextureType::Texture1D:

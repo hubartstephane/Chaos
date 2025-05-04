@@ -12,16 +12,15 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 
-	enum class CHAOS_API CubeMapFaceType : int
+	enum class CHAOS_API CubeMapFaceType : int // values are important for OpenGL cubeface transfert
 	{
-		PositiveX,
-		PositiveY,
-		PositiveZ,
-		NegativeX,
-		NegativeY,
-		NegativeZ,
+		PositiveX = 0,
+		NegativeX = 1,
+		PositiveY = 2,
+		NegativeY = 3,
+		PositiveZ = 4,
+		NegativeZ = 5
 	};
-
 
 	/**
 	 * CubeMapImageType: the possible different image that compose a cubemap
@@ -29,12 +28,13 @@ namespace chaos
 
 	enum class CHAOS_API CubeMapImageType : int
 	{
-		ImageLeft = 0,
-		ImageRight = 1,
-		ImageTop = 2,
+
+		ImageLeft   = 0,
+		ImageRight  = 1,
+		ImageTop    = 2,
 		ImageBottom = 3,
-		ImageFront = 4,
-		ImageBack = 5,
+		ImageFront  = 4,
+		ImageBack   = 5,
 
 		ImageSingle = 6 // some cube map may be represented by a single image containing a cross. This cross represents a deployed cube map
 	};

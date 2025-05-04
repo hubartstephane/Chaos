@@ -183,6 +183,11 @@ namespace chaos
 			return TextureType::Unknown; // other types can't be array
 		}
 
+		int GetMipmapLevelCount(int width, int height, int depth)
+		{
+			return GetMipmapLevelCount(std::max(std::max(width, height), depth));
+		}
+
 		int GetMipmapLevelCount(int width, int height)
 		{
 			return GetMipmapLevelCount(std::max(width, height));
@@ -252,7 +257,7 @@ namespace chaos
 		// OpenGL has a important limitation. Offsets are not defined in bytes but in multiple of Pixel Size !!
 		// That means that we have no way to require for an explicit padding !
 		//
-		// note : with SubImageDefinition, the padding maybe a huge value to skip lots of pixel at the end of the scanline
+		// note : with SubImageDefinition, the padding may be a huge value to skip lots of pixel at the end of the scanline
 		//
 		// In a random ImageDefinition, this is a blocker. We cannot have all paddings we want
 		//

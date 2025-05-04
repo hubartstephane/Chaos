@@ -22,17 +22,17 @@ namespace chaos
 		/** generate a GPUAtlas from inputs */
 		GPUAtlas* GenerateAtlas(AtlasInput const& in_input, AtlasGeneratorParams const& in_params = {}) const;
 		/** generate a GPUAtlas from a standard atlas */
-		GPUAtlas* GenerateAtlas(Atlas const * in_atlas) const;
+		GPUAtlas* GenerateAtlas(Atlas const & in_atlas) const;
 		/** generate a GPUAtlas from a standard atlas (+ move) */
 		GPUAtlas* GenerateAtlas(Atlas&& in_atlas) const;
 
 		/** fill a GPUAtlas from standard atlas */
-		bool FillAtlasContent(GPUAtlas* result, Atlas const * in_atlas) const;
+		bool FillAtlasContent(GPUAtlas* result, Atlas const & in_atlas) const;
 		/** fill a GPUAtlas from standard atlas (+ move) */
 		bool FillAtlasContent(GPUAtlas* result, Atlas&& in_atlas) const;
 
 		/** generate a texture from a standard atlas */
-		GPUTexture* CreateTextureFromAtlas(Atlas const * in_atlas) const;
+		GPUTexture* CreateTextureFromAtlas(Atlas const & in_atlas) const;
 
 	protected:
 

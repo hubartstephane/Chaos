@@ -175,7 +175,9 @@ namespace chaos
 	GPUTexture * GPUTextureArrayGenerator::GenTextureObjectHelper(GPUTextureArraySliceRegistry & slice_registry, PixelFormat const & pixel_format, int width, int height, GenTextureParameters const & parameters) const
 	{
 		// the number of slices
-		size_t slice_count = slice_registry.slices.size();
+		int slice_count = (int)slice_registry.slices.size();
+		if (slice_count == 0)
+			return nullptr;
 
 		// compute the 'flat' texture target
 		TextureType flat_type = GLTextureTools::GetTexture2DTypeFromSize(width, height);
@@ -187,41 +189,18 @@ namespace chaos
 		if (array_type == TextureType::Unknown)
 			return nullptr;
 
-		TextureDescription description;
-		description.width        = width;
-		description.height       = height;
-		description.depth        = int(slice_count);
-		description.pixel_format = pixel_format;
-		description.type         = array_type;
-		description.use_mipmaps  = parameters.reserve_mipmaps;
-
-		GPUTexture* result = GetDevice()->CreateTexture(description);
-		if (result == nullptr)
-			return nullptr;
-
-
-		#if 0
-
-		// choose format and internal format
-		GLPixelFormat gl_pixel_format = GLTextureTools::GetGLPixelFormat(final_pixel_format);
-		if (!gl_pixel_format.IsValid())
-			return nullptr;
-
-		// the number of slices
-		size_t slice_count = slice_registry.slices.size();
-
 		// find whether some conversion will be necessary (same remarks than for GLTextureTools::GenTextureObject(CubeMapImages ...)
 		// and allocate the buffer
-		char * conversion_buffer = nullptr;
+		char* conversion_buffer = nullptr;
 
-		if (final_pixel_format.component_count != 1) // destination is not GRAY, the RED texture + SWIZZLE cannot be used on independant slices
+		if (pixel_format.component_count != 1) // destination is not GRAY, the RED texture + SWIZZLE cannot be used on independant slices
 		{
 			size_t required_allocation = 0;
-			for (size_t i = 0; i < slice_count ; ++i)
+			for (size_t i = 0; i < slice_count; ++i)
 			{
-				ImageDescription const & desc = slice_registry.slices[i].description;
+				ImageDescription const& desc = slice_registry.slices[i].description;
 				if (desc.pixel_format.component_count == 1)
-					required_allocation = std::max(required_allocation, (size_t)ImageTools::GetMemoryRequirementForAlignedTexture(final_pixel_format, desc.width, desc.height)); // slice is GRAY
+					required_allocation = std::max(required_allocation, (size_t)ImageTools::GetMemoryRequirementForAlignedTexture(pixel_format, desc.width, desc.height)); // slice is GRAY
 			}
 			if (required_allocation > 0)
 			{
@@ -230,64 +209,46 @@ namespace chaos
 					return nullptr;
 			}
 		}
-		// generate the texture
-		GLuint texture_id = 0;
-		glCreateTextures((GLenum)array_type, 1, &texture_id);
-		if (texture_id > 0)
+
+		// create the texture
+		TextureDescription description;
+		description.width        = width;
+		description.height       = height;
+		description.depth        = slice_count;
+		description.pixel_format = pixel_format;
+		description.type         = array_type;
+		description.use_mipmaps  = parameters.reserve_mipmaps;
+
+		GPUTexture* result = GetDevice()->CreateTexture(description);
+		if (result == nullptr)
 		{
-			// initialize the storage
-			int level_count = 1;
-			if (width > 0 && height > 0)
-				if (parameters.reserve_mipmaps)
-					level_count = GLTextureTools::GetMipmapLevelCount(width, height);
-			glTextureStorage3D(texture_id, level_count, gl_pixel_format.internal_format, width, height, (GLsizei)slice_count);
-
-			// fill each slices into GPU
-			for (size_t i = 0; i < slice_count; ++i)
-			{
-				ImageDescription image = slice_registry.slices[i].description;
-
-				ImageDescription effective_image = (final_pixel_format.component_count != 1 && image.pixel_format.component_count == 1)?
-					ImageTools::ConvertPixels(image, final_pixel_format, conversion_buffer, ImageTransform::NO_TRANSFORM) :
-					image;
-
-				char * texture_buffer = GLTextureTools::PrepareGLTextureTransfert(effective_image);
-				if (texture_buffer != nullptr)
-				{
-					int type = (effective_image.pixel_format.component_type == PixelComponentType::UNSIGNED_CHAR) ? GL_UNSIGNED_BYTE : GL_FLOAT;
-
-					GLPixelFormat slice_pixel_format = GLTextureTools::GetGLPixelFormat(effective_image.pixel_format);
-					glTextureSubImage3D(texture_id, 0, 0, 0, (GLsizei)i, effective_image.width, effective_image.height, 1, slice_pixel_format.format, type, texture_buffer);
-				}
-			}
-
-			// finalize the result data
-			TextureDescription texture_description;
-			texture_description.type = array_type;
-			texture_description.width = width;
-			texture_description.height = height;
-			texture_description.depth = int(slice_count);
-			texture_description.pixel_format = final_pixel_format;
-
-			GLTextureTools::GenTextureApplyParameters(texture_id, texture_description, parameters);
-
-			result = new GPUTexture(texture_id, texture_description);
-			result->SetMinificationFilter(parameters.min_filter);
-			result->SetMagnificationFilter(parameters.mag_filter);
-			result->SetWrapMethods(parameters.wrap_methods);
-
-			if (parameters.build_mipmaps && parameters.reserve_mipmaps)
-				result->GenerateMipmaps();
-			
-
-			result = new GPUTexture(texture_id, texture_description);
+			if (conversion_buffer != nullptr)
+				delete[](conversion_buffer);
+			return nullptr;
 		}
+
+		// fill each slices into GPU
+		for (int i = 0; i < slice_count; ++i)
+		{
+			ImageDescription const & image = slice_registry.slices[i].description;
+
+			ImageDescription effective_image = (pixel_format.component_count != 1 && image.pixel_format.component_count == 1)?
+				ImageTools::ConvertPixels(image, pixel_format, conversion_buffer, ImageTransform::NO_TRANSFORM) :
+				image;
+
+			result->SetSubImage(effective_image, {0, 0, i});
+		}
+
+		result->SetMinificationFilter(parameters.min_filter);
+		result->SetMagnificationFilter(parameters.mag_filter);
+		result->SetWrapMethods(parameters.wrap_methods);
+
+		if (parameters.build_mipmaps && parameters.reserve_mipmaps)
+			result->GenerateMipmaps();
 
 		// release the conversion buffer if necessary
 		if (conversion_buffer != nullptr)
 			delete[](conversion_buffer);
-
-		#endif
 
 		return result;
 	}

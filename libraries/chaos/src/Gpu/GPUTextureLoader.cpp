@@ -220,8 +220,8 @@ namespace chaos
 
 			if (is_single_image)
 			{
-				glm::ivec3 position_and_flags = cubemap->GetPositionAndFlags((CubeMapImageType)i);
-				if (position_and_flags.z == (int)ImageTransform::CENTRAL_SYMETRY)
+				CubeMapSingleDispositionFaceInfo face_info = cubemap->GetSingleImageFaceInfo((CubeMapImageType)i);
+				if (face_info.transform == ImageTransform::CENTRAL_SYMETRY)
 					central_symetry[i] = conversion_required[i] = true;
 			}
 			// compute memory required

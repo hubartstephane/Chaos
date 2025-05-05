@@ -40,6 +40,22 @@ namespace chaos
 	};
 
 	/**
+	 * CubeMapSingleDispositionFaceInfo: information concerning a cube face into one disposition
+	 */
+
+	class CHAOS_API CubeMapSingleDispositionFaceInfo
+	{
+	public:
+
+		/** the face concerned by this disposition */
+		CubeMapImageType face = CubeMapImageType::ImageLeft;
+		/** the position of the face in the whole image */
+		glm::ivec2 position = {0, 0};
+		/** the transformation to be applyed */
+		ImageTransform transform = ImageTransform::NO_TRANSFORM;
+	};
+
+	/**
 	* CubeMapSingleDisposition : the disposition of each individual face inside the single image
 	*/
 
@@ -52,16 +68,17 @@ namespace chaos
 		/** the disposition for an vertical image */
 		static CubeMapSingleDisposition const VerticalDisposition;
 
-		/** returns the position according to an image type */
-		glm::ivec3 GetPositionAndFlags(CubeMapImageType image_type) const;
+		/** returns the face information */
+		CubeMapSingleDispositionFaceInfo GetFaceInfo(CubeMapImageType image_type) const;
+
+	public:
 
 		/** the number of aligned images horizontally */
 		int image_count_horiz = 0;
 		/** the number of aligned images vertically */
 		int image_count_vert = 0;
-
-		/** the position for the images */
-		glm::ivec3 image_position[6];
+		/** the information concerning each face */
+		std::array<CubeMapSingleDispositionFaceInfo, 6> face_info;
 	};
 
 	class CHAOS_API CubeMapImages
@@ -112,10 +129,10 @@ namespace chaos
 		/** get the pixel format for the cubemap according to a merge param */
 		PixelFormat GetMergedPixelFormat(PixelFormatMergeParams const& merge_params) const;
 
-		/** Gets the description of one face */
+		/** gets the description of one face */
 		ImageDescription GetImageFaceDescription(CubeMapImageType image_type) const;
-		/** Gets position and flags for a single image */
-		glm::ivec3 GetPositionAndFlags(CubeMapImageType image_type) const;
+		/** gets information for a face in a single image mode */
+		CubeMapSingleDispositionFaceInfo GetSingleImageFaceInfo(CubeMapImageType image_type) const;
 
 		/** Sets an image (verify that it is a coherent call) */
 		bool SetImage(CubeMapImageType image_type, FIBITMAP* image, bool release_image);

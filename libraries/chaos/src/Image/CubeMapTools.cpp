@@ -27,32 +27,37 @@ namespace chaos
 	{
 		4, 3,
 		{
-			glm::ivec3(0, 1, ImageTransform::NO_TRANSFORM), // left
-			glm::ivec3(2, 1, ImageTransform::NO_TRANSFORM), // right
-			glm::ivec3(1, 2, ImageTransform::NO_TRANSFORM), // top
-			glm::ivec3(1, 0, ImageTransform::NO_TRANSFORM), // bottom
-			glm::ivec3(1, 1, ImageTransform::NO_TRANSFORM), // front
-			glm::ivec3(3, 1, ImageTransform::NO_TRANSFORM)  // back
+			CubeMapSingleDispositionFaceInfo(CubeMapImageType::ImageLeft,   glm::ivec2(0, 1), ImageTransform::NO_TRANSFORM),
+			CubeMapSingleDispositionFaceInfo(CubeMapImageType::ImageRight,  glm::ivec2(2, 1), ImageTransform::NO_TRANSFORM),
+			CubeMapSingleDispositionFaceInfo(CubeMapImageType::ImageTop,    glm::ivec2(1, 2), ImageTransform::NO_TRANSFORM),
+			CubeMapSingleDispositionFaceInfo(CubeMapImageType::ImageBottom, glm::ivec2(1, 0), ImageTransform::NO_TRANSFORM),
+			CubeMapSingleDispositionFaceInfo(CubeMapImageType::ImageFront,  glm::ivec2(1, 1), ImageTransform::NO_TRANSFORM),
+			CubeMapSingleDispositionFaceInfo(CubeMapImageType::ImageBack,   glm::ivec2(3, 1), ImageTransform::NO_TRANSFORM)
 		}
 	};
 	CubeMapSingleDisposition const CubeMapSingleDisposition::VerticalDisposition =
 	{
 		3, 4,
 		{
-			glm::ivec3(0, 2, ImageTransform::NO_TRANSFORM), // left
-			glm::ivec3(2, 2, ImageTransform::NO_TRANSFORM), // right
-			glm::ivec3(1, 3, ImageTransform::NO_TRANSFORM), // top
-			glm::ivec3(1, 1, ImageTransform::NO_TRANSFORM), // bottom
-			glm::ivec3(1, 2, ImageTransform::NO_TRANSFORM), // front
-			glm::ivec3(1, 0, ImageTransform::CENTRAL_SYMETRY)  // back
+			CubeMapSingleDispositionFaceInfo(CubeMapImageType::ImageLeft,   glm::ivec2(0, 2), ImageTransform::NO_TRANSFORM),
+			CubeMapSingleDispositionFaceInfo(CubeMapImageType::ImageRight,  glm::ivec2(2, 2), ImageTransform::NO_TRANSFORM),
+			CubeMapSingleDispositionFaceInfo(CubeMapImageType::ImageTop,    glm::ivec2(1, 3), ImageTransform::NO_TRANSFORM),
+			CubeMapSingleDispositionFaceInfo(CubeMapImageType::ImageBottom, glm::ivec2(1, 1), ImageTransform::NO_TRANSFORM),
+			CubeMapSingleDispositionFaceInfo(CubeMapImageType::ImageFront,  glm::ivec2(1, 2), ImageTransform::NO_TRANSFORM),
+			CubeMapSingleDispositionFaceInfo(CubeMapImageType::ImageBack,   glm::ivec2(1, 0), ImageTransform::CENTRAL_SYMETRY)
 		}
 	};
 
-	glm::ivec3 CubeMapSingleDisposition::GetPositionAndFlags(CubeMapImageType image_type) const
+	CubeMapSingleDispositionFaceInfo CubeMapSingleDisposition::GetFaceInfo(CubeMapImageType image_type) const
 	{
 		assert((size_t)image_type >= (size_t)CubeMapImageType::ImageLeft);
 		assert((size_t)image_type <= (size_t)CubeMapImageType::ImageBack);
-		return image_position[(size_t)image_type];
+
+		for (CubeMapSingleDispositionFaceInfo const & info : face_info)
+			if (info.face == image_type)
+				return info;
+		assert(0);
+		return {}; // should never happens
 	}
 
 	CubeMapImages::CubeMapImages(CubeMapImages && other) noexcept
@@ -161,14 +166,14 @@ namespace chaos
 		return GetMultipleImageSize(ImageTools::GetImageDescription(image));
 	}
 
-	glm::ivec3 CubeMapImages::GetPositionAndFlags(CubeMapImageType image_type) const
+	CubeMapSingleDispositionFaceInfo CubeMapImages::GetSingleImageFaceInfo(CubeMapImageType image_type) const
 	{
 		assert(IsSingleImage());
 
 		CubeMapSingleDisposition const & dispo = (IsSingleImageHorizontal())?
 			CubeMapSingleDisposition::HorizontalDisposition :
 			CubeMapSingleDisposition::VerticalDisposition;
-		return dispo.GetPositionAndFlags(image_type);
+		return dispo.GetFaceInfo(image_type);
 	}
 
 	CubeMapImages CubeMapImages::ToMultipleImages() const
@@ -190,10 +195,10 @@ namespace chaos
 		// iterate over all faces
 		for (size_t i = (size_t)CubeMapImageType::ImageLeft ; i <= (size_t)CubeMapImageType::ImageBack ; ++i)
 		{
-			glm::ivec3 position_and_flags = GetPositionAndFlags((CubeMapImageType)i);
+			CubeMapSingleDispositionFaceInfo face_info = GetSingleImageFaceInfo((CubeMapImageType)i);
 
-			int left   = position_and_flags.x * size; // number of pixels / number of images aligned
-			int bottom = position_and_flags.y * size;
+			int left   = face_info.position.x * size; // number of pixels / number of images aligned
+			int bottom = face_info.position.y * size;
 
 			// allocate a face => in case of error, forget about result and returns an empty object
 			FIBITMAP * image = ImageTools::GenFreeImage(src_image_desc.pixel_format, size, size);
@@ -208,8 +213,7 @@ namespace chaos
 			int dst_x = 0;
 			int dst_y = 0;
 
-			ImageTransform transform = (ImageTransform)position_and_flags.z;
-			ImageTools::CopyPixels(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size, transform);
+			ImageTools::CopyPixels(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size, face_info.transform);
 
 			result.images[i] = image;
 			result.release_images[i] = true;
@@ -275,10 +279,10 @@ namespace chaos
 
 			ImageDescription src_image_desc = ImageTools::GetImageDescription(image);
 
-			glm::ivec3 position_and_flags = dispo.GetPositionAndFlags((CubeMapImageType)i);
+			CubeMapSingleDispositionFaceInfo face_info = dispo.GetFaceInfo((CubeMapImageType)i);
 
-			int sub_image_index_x = position_and_flags.x; // number of pixels / number of images aligned
-			int sub_image_index_y = position_and_flags.y;
+			int sub_image_index_x = face_info.position.x; // number of pixels / number of images aligned
+			int sub_image_index_y = face_info.position.y;
 
 			int left   = sub_image_index_x * size;
 			int bottom = sub_image_index_y * size;
@@ -288,8 +292,7 @@ namespace chaos
 			int dst_x = left;
 			int dst_y = bottom;
 
-			ImageTransform transform = (ImageTransform)position_and_flags.z;
-			ImageTools::CopyPixels(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size, transform);
+			ImageTools::CopyPixels(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size, face_info.transform);
 		}
 
 		return result;
@@ -318,12 +321,12 @@ namespace chaos
 
 		if (IsSingleImage())
 		{
-			glm::ivec3 position_and_flags = GetPositionAndFlags(image_type);
+			CubeMapSingleDispositionFaceInfo face_info = GetSingleImageFaceInfo(image_type);
 
 			ImageDescription src_image_desc = ImageTools::GetImageDescription(images[(size_t)CubeMapImageType::ImageSingle]);
 
-			int sub_image_index_x = position_and_flags.x; // number of pixels / number of images aligned
-			int sub_image_index_y = position_and_flags.y;
+			int sub_image_index_x = face_info.position.x; // number of pixels / number of images aligned
+			int sub_image_index_y = face_info.position.y;
 
 			int size = GetSingleImageSize(images[(size_t)CubeMapImageType::ImageSingle]); // size of each face
 			int x    = sub_image_index_x * size;

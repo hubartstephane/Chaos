@@ -179,8 +179,6 @@ namespace chaos
 		if (cubemap->IsEmpty())
 			return nullptr;
 
-		PixelFormat pixel_format = cubemap->GetMergedPixelFormat(merge_params);
-
 		int cubemap_size = cubemap->GetCubeMapSize();
 		if (cubemap_size < 0)
 			return nullptr;
@@ -202,9 +200,16 @@ namespace chaos
 
 		size_t required_allocation = 0;
 
-		bool face_valid[6] = { false, false, false, false, false, false };
-		bool conversion_required[6] = { false, false, false, false, false, false };
-		bool central_symetry[6] = { false, false, false, false, false, false };
+		struct SubImageFaceInfo
+		{
+			bool valid = false;
+			bool conversion_required = false;
+			bool central_symetry = false;
+		};
+
+		std::array<SubImageFaceInfo, 6> subimage_face_info;
+
+		PixelFormat pixel_format = cubemap->GetMergedPixelFormat(merge_params);
 
 		for (size_t i = (int)CubeMapImageType::ImageLeft; i <= (int)CubeMapImageType::ImageBack; ++i)
 		{
@@ -212,20 +217,20 @@ namespace chaos
 			ImageDescription image = cubemap->GetImageFaceDescription((CubeMapImageType)i);
 			if (image.data == nullptr || !image.pixel_format.IsValid())
 				continue;
-			face_valid[i] = true;
+			subimage_face_info[i].valid = true;
 
 			// test whether a conversion/copy is required
 			if ((image.pixel_format.component_count == 1) && (pixel_format.component_count != 1))
-				conversion_required[i] = true;
+				subimage_face_info[i].conversion_required = true;
 
 			if (is_single_image)
 			{
 				CubeMapSingleImageLayoutFaceInfo face_info = cubemap->GetSingleImageLayoutFaceInfo((CubeMapImageType)i);
 				if (face_info.transform == ImageTransform::CENTRAL_SYMETRY)
-					central_symetry[i] = conversion_required[i] = true;
+					subimage_face_info[i].central_symetry = subimage_face_info[i].conversion_required = true;
 			}
 			// compute memory required
-			if (conversion_required[i])
+			if (subimage_face_info[i].conversion_required)
 				required_allocation = std::max(required_allocation, (size_t)ImageTools::GetMemoryRequirementForAlignedTexture(pixel_format, cubemap_size, cubemap_size));
 		}
 
@@ -259,14 +264,14 @@ namespace chaos
 		for (size_t i = int(CubeMapImageType::ImageLeft); i <= int(CubeMapImageType::ImageBack); ++i)
 		{
 			// ensure the image is valid and not empty
-			if (!face_valid[i])
+			if (!subimage_face_info[i].valid)
 				continue;
 
 			// do the conversion, central symetry
 			ImageDescription image = cubemap->GetImageFaceDescription((CubeMapImageType)i);
 
-			ImageDescription effective_image = (conversion_required[i]) ?
-				ImageTools::ConvertPixels(image, pixel_format, conversion_buffer, central_symetry[i] ? ImageTransform::CENTRAL_SYMETRY : ImageTransform::NO_TRANSFORM) :
+			ImageDescription effective_image = (subimage_face_info[i].conversion_required) ?
+				ImageTools::ConvertPixels(image, pixel_format, conversion_buffer, subimage_face_info[i].central_symetry ? ImageTransform::CENTRAL_SYMETRY : ImageTransform::NO_TRANSFORM) :
 				image;
 
 			CubeMapFaceType face_type;

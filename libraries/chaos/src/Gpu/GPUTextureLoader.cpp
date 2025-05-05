@@ -220,7 +220,7 @@ namespace chaos
 
 			if (is_single_image)
 			{
-				CubeMapSingleDispositionFaceInfo face_info = cubemap->GetSingleImageFaceInfo((CubeMapImageType)i);
+				CubeMapSingleImageLayoutFaceInfo face_info = cubemap->GetSingleImageLayoutFaceInfo((CubeMapImageType)i);
 				if (face_info.transform == ImageTransform::CENTRAL_SYMETRY)
 					central_symetry[i] = conversion_required[i] = true;
 			}

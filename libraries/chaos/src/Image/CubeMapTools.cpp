@@ -22,38 +22,52 @@ namespace chaos
 	// XXX : for FreeImage, pixels are stored has BGR or BGRA (not RGB / RGBA)
 	//
 
-
-	CubeMapSingleDisposition const CubeMapSingleDisposition::HorizontalDisposition =
+	CubeMapSingleImageLayout const * CubeMapSingleImageLayout::GetLayout(CubeMapSingleImageLayoutType layout_type)
 	{
-		4, 3,
+		static const CubeMapSingleImageLayout horizontal_layout =
 		{
-			CubeMapSingleDispositionFaceInfo(CubeMapImageType::ImageLeft,   glm::ivec2(0, 1), ImageTransform::NO_TRANSFORM),
-			CubeMapSingleDispositionFaceInfo(CubeMapImageType::ImageRight,  glm::ivec2(2, 1), ImageTransform::NO_TRANSFORM),
-			CubeMapSingleDispositionFaceInfo(CubeMapImageType::ImageTop,    glm::ivec2(1, 2), ImageTransform::NO_TRANSFORM),
-			CubeMapSingleDispositionFaceInfo(CubeMapImageType::ImageBottom, glm::ivec2(1, 0), ImageTransform::NO_TRANSFORM),
-			CubeMapSingleDispositionFaceInfo(CubeMapImageType::ImageFront,  glm::ivec2(1, 1), ImageTransform::NO_TRANSFORM),
-			CubeMapSingleDispositionFaceInfo(CubeMapImageType::ImageBack,   glm::ivec2(3, 1), ImageTransform::NO_TRANSFORM)
-		}
-	};
-	CubeMapSingleDisposition const CubeMapSingleDisposition::VerticalDisposition =
-	{
-		3, 4,
+			4, 3,
+			{
+				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageLeft,   glm::ivec2(0, 1), ImageTransform::NO_TRANSFORM),
+				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageRight,  glm::ivec2(2, 1), ImageTransform::NO_TRANSFORM),
+				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageTop,    glm::ivec2(1, 2), ImageTransform::NO_TRANSFORM),
+				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageBottom, glm::ivec2(1, 0), ImageTransform::NO_TRANSFORM),
+				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageFront,  glm::ivec2(1, 1), ImageTransform::NO_TRANSFORM),
+				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageBack,   glm::ivec2(3, 1), ImageTransform::NO_TRANSFORM)
+			}
+		};
+		static const CubeMapSingleImageLayout vertical_layout =
 		{
-			CubeMapSingleDispositionFaceInfo(CubeMapImageType::ImageLeft,   glm::ivec2(0, 2), ImageTransform::NO_TRANSFORM),
-			CubeMapSingleDispositionFaceInfo(CubeMapImageType::ImageRight,  glm::ivec2(2, 2), ImageTransform::NO_TRANSFORM),
-			CubeMapSingleDispositionFaceInfo(CubeMapImageType::ImageTop,    glm::ivec2(1, 3), ImageTransform::NO_TRANSFORM),
-			CubeMapSingleDispositionFaceInfo(CubeMapImageType::ImageBottom, glm::ivec2(1, 1), ImageTransform::NO_TRANSFORM),
-			CubeMapSingleDispositionFaceInfo(CubeMapImageType::ImageFront,  glm::ivec2(1, 2), ImageTransform::NO_TRANSFORM),
-			CubeMapSingleDispositionFaceInfo(CubeMapImageType::ImageBack,   glm::ivec2(1, 0), ImageTransform::CENTRAL_SYMETRY)
-		}
-	};
+			3, 4,
+			{
+				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageLeft,   glm::ivec2(0, 2), ImageTransform::NO_TRANSFORM),
+				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageRight,  glm::ivec2(2, 2), ImageTransform::NO_TRANSFORM),
+				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageTop,    glm::ivec2(1, 3), ImageTransform::NO_TRANSFORM),
+				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageBottom, glm::ivec2(1, 1), ImageTransform::NO_TRANSFORM),
+				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageFront,  glm::ivec2(1, 2), ImageTransform::NO_TRANSFORM),
+				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageBack,   glm::ivec2(1, 0), ImageTransform::CENTRAL_SYMETRY)
+			}
+		};
 
-	CubeMapSingleDispositionFaceInfo CubeMapSingleDisposition::GetFaceInfo(CubeMapImageType image_type) const
+		switch (layout_type)
+		{
+			case CubeMapSingleImageLayoutType::Horizontal:
+				return &horizontal_layout;
+			case CubeMapSingleImageLayoutType::Vertical:
+				return &vertical_layout;
+			default:
+				assert(0);
+		}
+
+		return nullptr;
+	}
+
+	CubeMapSingleImageLayoutFaceInfo CubeMapSingleImageLayout::GetFaceInfo(CubeMapImageType image_type) const
 	{
 		assert((size_t)image_type >= (size_t)CubeMapImageType::ImageLeft);
 		assert((size_t)image_type <= (size_t)CubeMapImageType::ImageBack);
 
-		for (CubeMapSingleDispositionFaceInfo const & info : face_info)
+		for (CubeMapSingleImageLayoutFaceInfo const & info : face_info)
 			if (info.face == image_type)
 				return info;
 		assert(0);
@@ -166,14 +180,17 @@ namespace chaos
 		return GetMultipleImageSize(ImageTools::GetImageDescription(image));
 	}
 
-	CubeMapSingleDispositionFaceInfo CubeMapImages::GetSingleImageFaceInfo(CubeMapImageType image_type) const
+	CubeMapSingleImageLayoutFaceInfo CubeMapImages::GetSingleImageLayoutFaceInfo(CubeMapImageType image_type) const
 	{
 		assert(IsSingleImage());
 
-		CubeMapSingleDisposition const & dispo = (IsSingleImageHorizontal())?
-			CubeMapSingleDisposition::HorizontalDisposition :
-			CubeMapSingleDisposition::VerticalDisposition;
-		return dispo.GetFaceInfo(image_type);
+		CubeMapSingleImageLayout const * layout = nullptr;
+		if (IsSingleImageHorizontal())
+			layout = CubeMapSingleImageLayout::GetLayout(CubeMapSingleImageLayoutType::Horizontal);
+		else if (IsSingleImageVertical())
+			layout = CubeMapSingleImageLayout::GetLayout(CubeMapSingleImageLayoutType::Vertical);
+
+		return layout->GetFaceInfo(image_type);
 	}
 
 	CubeMapImages CubeMapImages::ToMultipleImages() const
@@ -195,7 +212,7 @@ namespace chaos
 		// iterate over all faces
 		for (size_t i = (size_t)CubeMapImageType::ImageLeft ; i <= (size_t)CubeMapImageType::ImageBack ; ++i)
 		{
-			CubeMapSingleDispositionFaceInfo face_info = GetSingleImageFaceInfo((CubeMapImageType)i);
+			CubeMapSingleImageLayoutFaceInfo face_info = GetSingleImageLayoutFaceInfo((CubeMapImageType)i);
 
 			int left   = face_info.position.x * size; // number of pixels / number of images aligned
 			int bottom = face_info.position.y * size;
@@ -222,12 +239,17 @@ namespace chaos
 		return result;
 	}
 
-	CubeMapImages CubeMapImages::ToSingleImage(bool bHorizontal, glm::vec4 const & fill_color, PixelFormatMergeParams const & merge_params) const
+	CubeMapImages CubeMapImages::ToSingleImage(CubeMapSingleImageLayoutType layout_type, glm::vec4 const & fill_color, PixelFormatMergeParams const & merge_params) const
 	{
 		CubeMapImages result;
 
 		// must be multiple
 		if (IsSingleImage() || IsEmpty())
+			return result;
+
+		// get the layout
+		CubeMapSingleImageLayout const* layout = CubeMapSingleImageLayout::GetLayout(layout_type);
+		if (layout == nullptr)
 			return result;
 
 		// find the final format
@@ -247,18 +269,12 @@ namespace chaos
 			if (size < 0)
 				size = GetMultipleImageSize(face_image_desc);
 		}
-
 		if (size <= 0)
 			return result;
 
-		// get the disposition
-		CubeMapSingleDisposition const & dispo = bHorizontal?
-			CubeMapSingleDisposition::HorizontalDisposition :
-			CubeMapSingleDisposition::VerticalDisposition;
-
 		// allocate the image
-		int new_image_width  = size * dispo.image_count_horiz;
-		int new_image_height = size * dispo.image_count_vert;
+		int new_image_width  = size * layout->horizontal_image_count;
+		int new_image_height = size * layout->vertical_image_count;
 
 		FIBITMAP * new_image = ImageTools::GenFreeImage(pixel_format, new_image_width, new_image_height);
 		if (new_image == nullptr)
@@ -279,7 +295,7 @@ namespace chaos
 
 			ImageDescription src_image_desc = ImageTools::GetImageDescription(image);
 
-			CubeMapSingleDispositionFaceInfo face_info = dispo.GetFaceInfo((CubeMapImageType)i);
+			CubeMapSingleImageLayoutFaceInfo face_info = layout->GetFaceInfo((CubeMapImageType)i);
 
 			int sub_image_index_x = face_info.position.x; // number of pixels / number of images aligned
 			int sub_image_index_y = face_info.position.y;
@@ -321,7 +337,7 @@ namespace chaos
 
 		if (IsSingleImage())
 		{
-			CubeMapSingleDispositionFaceInfo face_info = GetSingleImageFaceInfo(image_type);
+			CubeMapSingleImageLayoutFaceInfo face_info = GetSingleImageLayoutFaceInfo(image_type);
 
 			ImageDescription src_image_desc = ImageTools::GetImageDescription(images[(size_t)CubeMapImageType::ImageSingle]);
 

@@ -4,7 +4,7 @@
 // Take 6 images and convert them into a single image. Then save into Temp. Show the file
 // ====================================================================================
 
-void TestConvertToSingle(boost::filesystem::path const & dst_p, boost::filesystem::path const & p, bool horizontal)
+void TestConvertToSingle(boost::filesystem::path const & dst_p, boost::filesystem::path const & p, chaos::CubeMapSingleImageLayoutType layout_type)
 {
 	boost::filesystem::path left_image   = p / "negx.jpg";
 	boost::filesystem::path front_image  = p / "posz.jpg";
@@ -18,15 +18,18 @@ void TestConvertToSingle(boost::filesystem::path const & dst_p, boost::filesyste
 	{
 		static glm::vec4 back_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
-		chaos::CubeMapImages single_sky_box = multiple_sky_box.ToSingleImage(horizontal, back_color, chaos::PixelFormatMergeParams());
+		chaos::CubeMapImages single_sky_box = multiple_sky_box.ToSingleImage(layout_type, back_color, chaos::PixelFormatMergeParams());
 		if (single_sky_box.IsSingleImage())
 		{
 			FIBITMAP * image = single_sky_box.GetImage(chaos::CubeMapImageType::ImageSingle);
 			if (image != nullptr)
 			{
-				boost::filesystem::path dst = (horizontal)?
-					dst_p / "ConvertToSingle_Horiz.png":
+				boost::filesystem::path dst;
+				if (layout_type == chaos::CubeMapSingleImageLayoutType::Horizontal)
+					dst_p / "ConvertToSingle_Horiz.png";
+				else if (layout_type == chaos::CubeMapSingleImageLayoutType::Vertical)
 					dst_p / "ConvertToSingle_Vert.png";
+
 				FreeImage_Save(FIF_PNG ,image, dst.string().c_str(), 0);
 			}
 		}
@@ -96,7 +99,11 @@ void TestDoubleConversion(boost::filesystem::path const & dst_p, boost::filesyst
 		chaos::CubeMapImages multiple_image = single_image.ToMultipleImages();
 		if (multiple_image.IsMultipleImage())
 		{
-			chaos::CubeMapImages single_image_back = multiple_image.ToSingleImage(!horizontal, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), chaos::PixelFormatMergeParams());
+			chaos::CubeMapSingleImageLayoutType  other_layout_type = (horizontal)?
+				chaos::CubeMapSingleImageLayoutType::Vertical:
+				chaos::CubeMapSingleImageLayoutType::Horizontal;
+
+			chaos::CubeMapImages single_image_back = multiple_image.ToSingleImage(other_layout_type, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), chaos::PixelFormatMergeParams());
 			if (single_image_back.IsSingleImage())
 			{
 				FIBITMAP * image = single_image_back.GetImage(chaos::CubeMapImageType::ImageSingle);
@@ -121,8 +128,8 @@ protected:
 		boost::filesystem::path dst_p;
 		if (chaos::FileTools::CreateTemporaryDirectory("TestCubeMap", dst_p))
 		{
-			TestConvertToSingle(dst_p, rp / "Maskonaive", true);
-			TestConvertToSingle(dst_p, rp / "Maskonaive", false);
+			TestConvertToSingle(dst_p, rp / "Maskonaive", chaos::CubeMapSingleImageLayoutType::Horizontal);
+			TestConvertToSingle(dst_p, rp / "Maskonaive", chaos::CubeMapSingleImageLayoutType::Vertical);
 
 			TestConvertToMultiple(dst_p, rp / "violentdays_large.jpg", "MultipleConversionViolent");
 			TestConvertToMultiple(dst_p, rp / "originalcubecross.png", "MultipleConversionOriginalCube");

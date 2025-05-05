@@ -4,13 +4,27 @@ namespace chaos
 
 	enum class CubeMapImageType;
 	enum class CubeMapFaceType;
+	enum class CubeMapSingleImageLayoutType;
 
-	class CubeMapSingleDisposition;
+	class CubeMapSingleImageLayout;
 	class CubeMapImages;
 	class CubeMapTools;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+	/**
+	 * CubeMapSingleImageLayoutType: supported layout for single image cubemap
+	 */
+
+	enum class CubeMapSingleImageLayoutType : int
+	{
+		Horizontal,
+		Vertical
+	};
+
+	/**
+	 * CubeMapFaceType: the faces of the cube
+	 */
 
 	enum class CHAOS_API CubeMapFaceType : int // values are important for OpenGL cubeface transfert
 	{
@@ -40,14 +54,14 @@ namespace chaos
 	};
 
 	/**
-	 * CubeMapSingleDispositionFaceInfo: information concerning a cube face into one disposition
+	 * CubeMapSingleImageLayoutFaceInfo: information for a face sub-image in some layout
 	 */
 
-	class CHAOS_API CubeMapSingleDispositionFaceInfo
+	class CHAOS_API CubeMapSingleImageLayoutFaceInfo
 	{
 	public:
 
-		/** the face concerned by this disposition */
+		/** the face concerned */
 		CubeMapImageType face = CubeMapImageType::ImageLeft;
 		/** the position of the face in the whole image */
 		glm::ivec2 position = {0, 0};
@@ -56,29 +70,27 @@ namespace chaos
 	};
 
 	/**
-	* CubeMapSingleDisposition : the disposition of each individual face inside the single image
+	* CubeMapSingleImageLayout: describes face sub-images, for a single image cube map
 	*/
 
-	class CHAOS_API CubeMapSingleDisposition
+	class CHAOS_API CubeMapSingleImageLayout
 	{
 	public:
 
-		/** the disposition for an horizontal image */
-		static CubeMapSingleDisposition const HorizontalDisposition;
-		/** the disposition for an vertical image */
-		static CubeMapSingleDisposition const VerticalDisposition;
+		/** gets a layout by type */
+		static CubeMapSingleImageLayout const * GetLayout(CubeMapSingleImageLayoutType layout_type);
 
 		/** returns the face information */
-		CubeMapSingleDispositionFaceInfo GetFaceInfo(CubeMapImageType image_type) const;
+		CubeMapSingleImageLayoutFaceInfo GetFaceInfo(CubeMapImageType image_type) const;
 
 	public:
 
 		/** the number of aligned images horizontally */
-		int image_count_horiz = 0;
+		int horizontal_image_count = 0;
 		/** the number of aligned images vertically */
-		int image_count_vert = 0;
+		int vertical_image_count = 0;
 		/** the information concerning each face */
-		std::array<CubeMapSingleDispositionFaceInfo, 6> face_info;
+		std::array<CubeMapSingleImageLayoutFaceInfo, 6> face_info;
 	};
 
 	class CHAOS_API CubeMapImages
@@ -111,7 +123,7 @@ namespace chaos
 		/** Transform a 6 images box into a one image box */
 		CubeMapImages ToMultipleImages() const;
 		/** Transform a single image box into a six images box */
-		CubeMapImages ToSingleImage(bool bHorizontal, glm::vec4 const& fill_color, PixelFormatMergeParams const& merge_params = PixelFormatMergeParams()) const;
+		CubeMapImages ToSingleImage(CubeMapSingleImageLayoutType layout_type, glm::vec4 const& fill_color, PixelFormatMergeParams const& merge_params = PixelFormatMergeParams()) const;
 
 		/** returns true whether the cubemap is empty */
 		bool IsEmpty() const;
@@ -132,7 +144,7 @@ namespace chaos
 		/** gets the description of one face */
 		ImageDescription GetImageFaceDescription(CubeMapImageType image_type) const;
 		/** gets information for a face in a single image mode */
-		CubeMapSingleDispositionFaceInfo GetSingleImageFaceInfo(CubeMapImageType image_type) const;
+		CubeMapSingleImageLayoutFaceInfo GetSingleImageLayoutFaceInfo(CubeMapImageType image_type) const;
 
 		/** Sets an image (verify that it is a coherent call) */
 		bool SetImage(CubeMapImageType image_type, FIBITMAP* image, bool release_image);

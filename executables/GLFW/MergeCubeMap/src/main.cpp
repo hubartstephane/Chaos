@@ -67,7 +67,7 @@ protected:
 #else
 
 		// do the conversion ourselves
-		chaos::CubeMapImages single_cubemap = cubemap.ToSingleImage(true, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), merge_params);
+		chaos::CubeMapImages single_cubemap = cubemap.ToSingleImage(chaos::CubeMapSingleImageLayoutType::Horizontal, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), merge_params);
 
 		if (!single_cubemap.IsEmpty())
 			return chaos::GPUTextureLoader(GetGPUDevice()).GenTextureObject(&single_cubemap);

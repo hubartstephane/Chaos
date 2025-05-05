@@ -195,21 +195,20 @@ namespace chaos
 
 	CubeMapImages CubeMapImages::ToMultipleImages() const
 	{
-		CubeMapImages result;
-
 		// must be single (so it is non empty)
 		if (!IsSingleImage())
-			return result;
+			return {};
 
 		// get the single image description
 		ImageDescription src_image_desc = ImageTools::GetImageDescription(images[(size_t)CubeMapImageType::ImageSingle]);
 		if (!src_image_desc.IsValid(false))
-			return result;
+			return {};
 
 		// the wanted size for every face
 		int size = GetSingleImageSize(src_image_desc);
 
 		// iterate over all faces
+		CubeMapImages result;
 		for (size_t i = (size_t)CubeMapImageType::ImageLeft ; i <= (size_t)CubeMapImageType::ImageBack ; ++i)
 		{
 			CubeMapSingleImageLayoutFaceInfo face_info = GetSingleImageLayoutFaceInfo((CubeMapImageType)i);
@@ -220,7 +219,7 @@ namespace chaos
 			// allocate a face => in case of error, forget about result and returns an empty object
 			FIBITMAP * image = ImageTools::GenFreeImage(src_image_desc.pixel_format, size, size);
 			if (image == nullptr)
-				return CubeMapImages();
+				return {};
 
 			// copy pixels
 			ImageDescription dst_image_desc = ImageTools::GetImageDescription(image);
@@ -241,21 +240,19 @@ namespace chaos
 
 	CubeMapImages CubeMapImages::ToSingleImage(CubeMapSingleImageLayoutType layout_type, glm::vec4 const & fill_color, PixelFormatMergeParams const & merge_params) const
 	{
-		CubeMapImages result;
-
 		// must be multiple
 		if (IsSingleImage() || IsEmpty())
-			return result;
+			return {};
 
 		// get the layout
 		CubeMapSingleImageLayout const* layout = CubeMapSingleImageLayout::GetLayout(layout_type);
 		if (layout == nullptr)
-			return result;
+			return {};
 
 		// find the final format
 		PixelFormat pixel_format = GetMergedPixelFormat(merge_params);
 		if (!pixel_format.IsValid())
-			return result;
+			return {};
 
 		// find the final format and size
 		int size = -1;
@@ -270,7 +267,7 @@ namespace chaos
 				size = GetMultipleImageSize(face_image_desc);
 		}
 		if (size <= 0)
-			return result;
+			return {};
 
 		// allocate the image
 		int new_image_width  = size * layout->horizontal_image_count;
@@ -278,7 +275,9 @@ namespace chaos
 
 		FIBITMAP * new_image = ImageTools::GenFreeImage(pixel_format, new_image_width, new_image_height);
 		if (new_image == nullptr)
-			return result;
+			return {};
+
+		CubeMapImages result;
 		result.SetImage(CubeMapImageType::ImageSingle, new_image, true);
 
 		// fill the background (Blue - Green - Red - Alpha)

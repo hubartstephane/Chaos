@@ -2,11 +2,28 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
+	enum class GPUBufferFlags;
+
 	class GPUBuffer;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	/** GPUBuffer : self explaning */
+	/**
+	 * GPUBufferFlags: indicates the properties of the buffer
+	 */
+
+	enum class CHAOS_API GPUBufferFlags : int
+	{
+		None = 0,
+		Dynamic = 1
+	};
+
+	CHAOS_DECLARE_ENUM_BITMASK_METHOD(GPUBufferFlags, CHAOS_API);
+
+	/** 
+	 * GPUBuffer: self explaning
+	 */
+
 	class CHAOS_API GPUBuffer : public GPUResource
 	{
 	public:

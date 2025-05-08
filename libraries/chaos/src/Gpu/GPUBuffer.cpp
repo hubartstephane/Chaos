@@ -4,6 +4,8 @@
 
 namespace chaos
 {
+	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(GPUBufferFlags, nullptr, CHAOS_API);
+
 	GPUBuffer::GPUBuffer(bool in_dynamic)
 	{
 		CreateResource(in_dynamic);

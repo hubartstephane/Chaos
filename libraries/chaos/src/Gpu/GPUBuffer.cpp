@@ -6,6 +6,8 @@ namespace chaos
 {
 	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(GPUBufferFlags, nullptr, CHAOS_API);
 
+	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(GPUBufferMapFlags, nullptr, CHAOS_API);
+
 	GPUBuffer::GPUBuffer(bool in_dynamic)
 	{
 		CreateResource(in_dynamic);
@@ -141,22 +143,22 @@ namespace chaos
 		return buffer_size;
 	}
 
-	char * GPUBuffer::MapBuffer(size_t start, size_t count, bool read, bool write)
+	char * GPUBuffer::MapBuffer(size_t start, size_t count, GPUBufferMapFlags flags)
 	{
 		assert(!mapped);
-		assert(read || write);
+		assert(HasAnyFlags(flags, GPUBufferMapFlags::Read | GPUBufferMapFlags::Write));
 
 		// early exit
 		if (buffer_id == 0)
 			return nullptr;
-		if (!read && !write)
+		if (!HasAnyFlags(flags, GPUBufferMapFlags::Read | GPUBufferMapFlags::Write))
 			return nullptr;
 
 		// search kind of mapping
 		GLbitfield map_type = GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT; // theses flag are REALLY important !! can create significant framerate drops
-		if (read)
+		if (HasAnyFlags(flags, GPUBufferMapFlags::Read))
 			map_type |= GL_MAP_READ_BIT;
-		if (write)
+		if (HasAnyFlags(flags, GPUBufferMapFlags::Write))
 			map_type |= GL_MAP_WRITE_BIT;
 
        // map_type |= GL_MAP_UNSYNCHRONIZED_BIT;

@@ -431,7 +431,7 @@ namespace chaos
 		// reserve a buffer
 		quad_index_buffer->SetBufferData(nullptr, buffer_size);
 		// fill the buffer
-		GLuint* buffer = (GLuint*)quad_index_buffer->MapBuffer(0, 0, false, true);
+		GLuint* buffer = (GLuint*)quad_index_buffer->MapBuffer(0, 0, GPUBufferMapFlags::Write);
 		if (buffer == nullptr)
 			return false;
 

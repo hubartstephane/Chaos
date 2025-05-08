@@ -49,7 +49,7 @@ namespace chaos
 		// map vertex buffer
 		if (result.vertex_buffer != nullptr)
 		{
-			result.mapped_vertex_buffer = result.vertex_buffer->MapBuffer(0, 0, false, true); // read = false, write = true
+			result.mapped_vertex_buffer = result.vertex_buffer->MapBuffer(0, 0, GPUBufferMapFlags::Write);
 			if (result.mapped_vertex_buffer == nullptr)
 				return {};
 		}
@@ -57,7 +57,7 @@ namespace chaos
 		// map index buffer
 		if (result.index_buffer != nullptr)
 		{
-			result.mapped_index_buffer = result.index_buffer->MapBuffer(0, 0, false, true); // read = false, write = true
+			result.mapped_index_buffer = result.index_buffer->MapBuffer(0, 0, GPUBufferMapFlags::Write);
 			if (result.mapped_index_buffer == nullptr)
 			{
 				if (result.vertex_buffer != nullptr)

@@ -3,6 +3,7 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	enum class GPUBufferFlags;
+	enum class GPUBufferMapFlags;
 
 	class GPUBuffer;
 
@@ -19,6 +20,19 @@ namespace chaos
 	};
 
 	CHAOS_DECLARE_ENUM_BITMASK_METHOD(GPUBufferFlags, CHAOS_API);
+
+	/**
+	 * GPUBufferMapFlags: flags for mapping buffers
+	 */
+
+	enum class CHAOS_API GPUBufferMapFlags : int
+	{
+		None = 0,
+		Read = 1,
+		Write = 2
+	};
+
+	CHAOS_DECLARE_ENUM_BITMASK_METHOD(GPUBufferMapFlags, CHAOS_API);
 
 	/** 
 	 * GPUBuffer: self explaning
@@ -51,7 +65,7 @@ namespace chaos
 		size_t GetBufferSize() const;
 
 		/** map the buffer */
-		char* MapBuffer(size_t start = 0, size_t count = 0, bool read = false, bool write = true);
+		char* MapBuffer(size_t start = 0, size_t count = 0, GPUBufferMapFlags flags = GPUBufferMapFlags::Write);
 		/** unmap the buffer */
 		void UnMapBuffer();
 

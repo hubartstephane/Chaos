@@ -137,7 +137,7 @@ namespace chaos
                     return nullptr;
 
                 // map the buffer
-                buffer_start = vertex_buffer->MapBuffer(0, 0, false, true);
+                buffer_start = vertex_buffer->MapBuffer(0, 0, GPUBufferMapFlags::Write);
                 if (buffer_start == nullptr)
                     return nullptr;
                 buffer_unflushed = buffer_position = buffer_start;

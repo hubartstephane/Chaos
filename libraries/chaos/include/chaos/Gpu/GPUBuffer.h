@@ -27,7 +27,6 @@ namespace chaos
 
 	enum class CHAOS_API GPUBufferMapFlags : int
 	{
-		None = 0,
 		Read = 1,
 		Write = 2
 	};
@@ -54,11 +53,6 @@ namespace chaos
 		/** returns true whether the resource is valid */
 		bool IsValid() const;
 
-		/** create an OpenGL resource */
-		bool CreateResource(bool in_dynamic);
-		/** Initialize from GL Resource */
-		bool SetResource(GLuint in_id, bool in_ownership);
-
 		/** update the data of the buffer */
 		bool SetBufferData(char const* in_data, size_t in_size);
 		/** get the size of the buffer */
@@ -83,6 +77,14 @@ namespace chaos
 
 		/** cleaning the object */
 		virtual void Release() override;
+
+
+
+
+		/** create an OpenGL resource */
+		bool CreateResource(bool in_dynamic);
+		/** Initialize from GL Resource */
+		bool SetResource(GLuint in_id, bool in_ownership);
 
 	protected:
 

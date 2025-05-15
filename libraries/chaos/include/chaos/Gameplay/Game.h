@@ -327,6 +327,9 @@ namespace chaos
 		/** destroy the HUD */
 		void DestroyHUD();
 
+		/** initialize a hud */
+		GameHUD * DoCreateAndInitializeHUD(GameHUD* (Game::* create_func)());
+
 		/** user defined method to create the pause HUD */
 		virtual GameHUD* DoCreatePauseMenuHUD();
 		/** user defined method to create the main menu HUD */
@@ -335,7 +338,6 @@ namespace chaos
 		virtual GameHUD* DoCreatePlayingHUD();
 		/** user defined method to create the gameover HUD */
 		virtual GameHUD* DoCreateGameOverHUD();
-
 
 		/** change the current level */
 		bool SetCurrentLevel(Level* new_level);

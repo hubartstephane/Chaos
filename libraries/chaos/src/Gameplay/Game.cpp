@@ -1113,30 +1113,63 @@ namespace chaos
 		return false;
 	}
 
-#define CHAOS_IMPLEMENT_HUD_FUNCTIONS(classname)\
-	bool Game::Create##classname()\
-	{\
-		hud = DoCreate##classname();\
-		if (hud == nullptr)\
-			return false;\
-		Application::GetInstance()->GiveChildConfiguration(hud.get(), "hud");\
-		if (!hud->Initialize(this))\
-		{\
-			hud = nullptr;\
-			return false;\
-		}\
-		return true;\
-	}\
-	GameHUD * Game::DoCreate##classname()\
-	{\
-		return new classname();\
+	bool Game::CreatePauseMenuHUD()
+	{
+		hud = DoCreateAndInitializeHUD(&Game::DoCreatePauseMenuHUD);
+		return (hud != nullptr);
 	}
-	CHAOS_IMPLEMENT_HUD_FUNCTIONS(PauseMenuHUD);
-	CHAOS_IMPLEMENT_HUD_FUNCTIONS(MainMenuHUD);
-	CHAOS_IMPLEMENT_HUD_FUNCTIONS(PlayingHUD);
-	CHAOS_IMPLEMENT_HUD_FUNCTIONS(GameOverHUD);
 
-#undef CHAOS_IMPLEMENT_HUD_FUNCTIONS
+	bool Game::CreateMainMenuHUD()
+	{
+		hud = DoCreateAndInitializeHUD(&Game::DoCreateMainMenuHUD);
+		return (hud != nullptr);
+	}
+
+	bool Game::CreatePlayingHUD()
+	{
+		hud = DoCreateAndInitializeHUD(&Game::DoCreatePlayingHUD);
+		return (hud != nullptr);
+	}
+
+	bool Game::CreateGameOverHUD()
+	{
+		hud = DoCreateAndInitializeHUD(&Game::DoCreateGameOverHUD);
+		return (hud != nullptr);
+	}
+
+	GameHUD* Game::DoCreatePauseMenuHUD()
+	{
+		return new PauseMenuHUD;
+	}
+
+	GameHUD* Game::DoCreateMainMenuHUD()
+	{
+		return new MainMenuHUD;
+	}
+
+	GameHUD* Game::DoCreatePlayingHUD()
+	{
+		return new PlayingHUD;
+	}
+
+	GameHUD * Game::DoCreateGameOverHUD()
+	{
+		return new GameOverHUD;
+	}
+
+	GameHUD * Game::DoCreateAndInitializeHUD(GameHUD* (Game::*create_func)())
+	{
+		GameHUD * hud = (this->*create_func)();
+		if (hud == nullptr)
+			return nullptr;
+		Application::GetInstance()->GiveChildConfiguration(hud, "hud");
+		if (!hud->Initialize(this))
+		{
+			delete(hud);
+			return nullptr;
+		}
+		return hud;
+	}
 
 	void Game::DestroyHUD()
 	{

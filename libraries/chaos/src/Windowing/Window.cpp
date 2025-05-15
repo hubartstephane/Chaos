@@ -1560,12 +1560,12 @@ namespace chaos
 		return false;
 	}
 
-	GPUDevice* Window::GetGPUDevice () const
+	GPUDevice* Window::GetGPUDevice() const
 	{
 		WindowApplication * window_application = Application::GetInstance();
 		if (window_application == nullptr)
 			return nullptr;
-		return window_application->GetGPUDevice ();
+		return window_application->GetGPUDevice();
 	}
 
 }; // namespace chaos

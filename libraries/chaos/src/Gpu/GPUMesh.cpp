@@ -25,10 +25,20 @@ namespace chaos
 			index_buffer->DecrementUsageCount();
 	}
 
+
+	GPUMesh::GPUMesh():
+		vertex_array_cache(new GPUVertexArrayCache)
+	{
+	}
+
+#if SHU_CLEAN_GPU
 	void GPUMesh::SetVertexArrayCache(GPUVertexArrayCache* in_vertex_array_cache)
 	{
 		vertex_array_cache = in_vertex_array_cache;
 	}
+#endif
+
+
 
 	GPUMeshElement & GPUMesh::AddMeshElement(GPUVertexDeclaration* vertex_declaration, GPUBuffer * vertex_buffer, GPUBuffer * index_buffer)
 	{
@@ -72,9 +82,6 @@ namespace chaos
 
 	int GPUMesh::DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
-		// create a vertex array cache if necessary
-		if (vertex_array_cache == nullptr)
-			vertex_array_cache = new GPUVertexArrayCache;
 		// display the elements
 		std::optional<GPURenderMaterial const*> previous_element_material;
 		std::optional<GPURenderMaterial const*> previous_effective_material;

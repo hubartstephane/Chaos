@@ -42,7 +42,6 @@ char const* SpriteManager::fragment_shader_source = R"FRAGMENT_SHADER(
 void SpriteManager::Finalize()
 {
 	program = nullptr;
-	vertex_array = nullptr;
 	vertex_buffer = nullptr;
 	atlas = nullptr;
 
@@ -93,18 +92,9 @@ bool SpriteManager::DoInitialize(SpriteManagerInitParams& params)
 	declaration.Push(chaos::VertexAttributeSemantic::TEXCOORD, 0, chaos::VertexAttributeType::FLOAT3);
 	declaration.Push(chaos::VertexAttributeSemantic::COLOR, 0, chaos::VertexAttributeType::FLOAT3);
 
-
-	// Generate Vertex Array and Buffer
-	vertex_array = new chaos::GPUVertexArray(game->GetWindow());
-	if (vertex_array == nullptr)
-		return false;
-
 	vertex_buffer = new chaos::GPUBuffer(true);
 	if (vertex_buffer == nullptr)
 		return false;
-
-	chaos::GPUProgramData const& program_data = program->GetProgramData();
-	program_data.BindAttributes(vertex_array->GetResourceID(), declaration, nullptr);
 
 	return true;
 }
@@ -192,19 +182,25 @@ void SpriteManager::AddSpriteImpl(chaos::AtlasBitmapLayout const* layout, chaos:
 
 void SpriteManager::Display(chaos::GPUProgramProviderBase* uniform_provider)
 {
-	if (sprites.size() == 0)
+	size_t count = sprites.size();
+	if (count == 0)
 		return;
 
-	UpdateGPUBuffer();
+	// fill GPU buffer
+	glNamedBufferData(vertex_buffer->GetResourceID(), count * sizeof(SpriteVertex), &sprites[0], GL_STATIC_DRAW);
+
+	// prepare vertex array
+	chaos::GPUVertexArrayBindingInfo binding_info;
+	binding_info.program            = program.get();
+	binding_info.vertex_buffer      = vertex_buffer.get();
+	binding_info.vertex_declaration = &declaration;
+	game->GetWindow()->GetRenderContext()->BindVertexArray(binding_info);
 
 	// context states
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
-
-	// Initialize the vertex array
-	glBindVertexArray(vertex_array->GetResourceID());
 
 	chaos::GPUProgramProvider main_uniform_provider;
 	main_uniform_provider.AddTexture("material", atlas->GetTexture());
@@ -222,16 +218,3 @@ void SpriteManager::Display(chaos::GPUProgramProviderBase* uniform_provider)
 	glEnable(GL_CULL_FACE);
 	glBindVertexArray(0);
 }
-
-void SpriteManager::UpdateGPUBuffer()
-{
-	// fill GPU buffer
-	size_t count = sprites.size();
-	if (count > 0)
-	{
-		GLuint binding_index = 0;
-		glNamedBufferData(vertex_buffer->GetResourceID(), count * sizeof(SpriteVertex), &sprites[0], GL_STATIC_DRAW);
-		glVertexArrayVertexBuffer(vertex_array->GetResourceID(), binding_index, vertex_buffer->GetResourceID(), 0, declaration.GetVertexSize());
-	}
-}
-

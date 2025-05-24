@@ -59,8 +59,6 @@ protected:
 
     /** initialize the manager */
     bool DoInitialize(SpriteManagerInitParams& params);
-    /** internal method to send data to GPU */
-    void UpdateGPUBuffer();
     /** internal method to insert a sprite in the buffer */
     void AddSpriteImpl(chaos::AtlasBitmapLayout const* layout, chaos::ParticleCorners const& corners, glm::vec3 const& color);
 
@@ -70,8 +68,6 @@ protected:
 
     /** the program to run */
     chaos::shared_ptr<chaos::GPUProgram> program;
-    /** the vertex array */
-    chaos::shared_ptr<chaos::GPUVertexArray> vertex_array;
     /** the vertex buffer */
     chaos::shared_ptr<chaos::GPUBuffer> vertex_buffer;
     /** the declaration of the vertex buffer */

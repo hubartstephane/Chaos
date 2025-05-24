@@ -24,8 +24,6 @@ namespace chaos
 
 		/** constructor */
 		GPUVertexArray(GLuint in_id);
-		/** cleaning the object */
-		virtual void Release() override;
 
 	protected:
 

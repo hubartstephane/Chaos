@@ -94,6 +94,8 @@ namespace chaos
 		void PurgeCache();
 		/** destroy the whole content */
 		void Destroy();
+		/** free vertex array resource */
+		void ReleaseVertexArray(GPUVertexArray * vertex_array);
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;

@@ -10,7 +10,7 @@ namespace chaos
 		if (program == nullptr)
 			return false;
 		else if (program_id != program->GetResourceID()) // the program OpenGL resource has changed. it is invalid
-            return false;
+			return false;
 		// check vertex buffer
 		if (vertex_buffer == nullptr)
 		{
@@ -61,6 +61,7 @@ namespace chaos
 			GPUVertexArrayCacheEntry& entry = entries[index];
 			if (!entry.IsValid())
 			{
+				ReleaseVertexArray(entry.vertex_array.get());
 				if (index != entries.size() - 1)
 					std::swap(entry, entries[entries.size() - 1]);
 				entries.pop_back();
@@ -151,11 +152,20 @@ namespace chaos
 		return result;
 	}
 
+	void GPUVertexArrayCache::ReleaseVertexArray(GPUVertexArray * vertex_array)
+	{
+		if (vertex_array->vertex_array_id != 0)
+		{
+			glDeleteVertexArrays(1, &vertex_array->vertex_array_id);
+			vertex_array->vertex_array_id = 0;
+		}
+	}
+
 	void GPUVertexArrayCache::Destroy()
 	{
 		for (GPUVertexArrayCacheEntry const& entry : entries)
 			if (entry.vertex_array != nullptr)
-				entry.vertex_array->Release();
+				ReleaseVertexArray(entry.vertex_array.get());
 		entries.clear();
 	}
 

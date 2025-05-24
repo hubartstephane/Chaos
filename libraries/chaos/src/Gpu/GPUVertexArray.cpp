@@ -19,13 +19,4 @@ namespace chaos
 		return (vertex_array_id != 0);
 	}
 
-	void GPUVertexArray::Release()
-	{
-		if (vertex_array_id != 0)
-		{
-			glDeleteVertexArrays(1, &vertex_array_id);
-			vertex_array_id = 0;
-		}
-	}
-
 }; // namespace chaos

@@ -74,7 +74,7 @@ void GameHUDPowerUpComponent::UpdateMesh()
 	else
 		title = chaos::StringTools::Printf("Keep [ButtonY] or [KEYBOARD ALT] Pressed to buy\n[POWERUP %s]", cached_value->GetPowerUpTitle());
 
-	chaos::GPUDrawInterface<chaos::VertexDefault> DI(nullptr);
+	chaos::GPUDrawInterface<chaos::VertexDefault> DI(GetGPUDevice(), nullptr);
 	DrawText(DI, title.c_str(), params);
 	mesh = DI.GetDynamicMesh();
 }
@@ -123,7 +123,7 @@ void GameHUDHealthBarComponent::UpdateMesh()
 	if (ludum_game == nullptr)
 		return;
 
-	chaos::GPUDrawInterface<chaos::VertexDefault> DI(nullptr);
+	chaos::GPUDrawInterface<chaos::VertexDefault> DI(GetGPUDevice(), nullptr);
 
 	chaos::box2 canvas_box = ludum_game->GetCanvasBox();
 	glm::vec2 canvas_size = 2.0f * canvas_box.half_size;

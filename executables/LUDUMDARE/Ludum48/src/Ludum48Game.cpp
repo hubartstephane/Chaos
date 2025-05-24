@@ -81,7 +81,8 @@ void LudumGame::DoDisplayGame(GPURenderContext* render_context, GPUProgramProvid
 			params.hotpoint = Hotpoint::BOTTOM;
 			params.position.y = -300.0f;
 
-			GPUDrawInterface<VertexDefault> DI(nullptr);
+			WindowApplication * window_application = Application::GetInstance();
+			GPUDrawInterface<VertexDefault> DI(window_application->GetGPUDevice(), nullptr);
 			DrawText(DI, "[KISS] Cheater Farid [KISS]", params);
 
 

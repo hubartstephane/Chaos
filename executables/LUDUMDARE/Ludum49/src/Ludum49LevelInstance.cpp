@@ -691,7 +691,9 @@ int Landscape::DoDisplay(GPURenderContext* render_context, GPUProgramProviderInt
 		// shu49. ca pourrait etre partique d avoir une fonction d affichage de bounding box
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		GPUDrawInterface<VertexDefault> DI(DefaultParticleProgram::GetMaterial(), 4);
+
+		WindowApplication * window_application = Application::GetInstance();
+		GPUDrawInterface<VertexDefault> DI(window_application->GetGPUDevice(), DefaultParticleProgram::GetMaterial(), 4);
 		QuadPrimitive<VertexDefault> quad = DI.AddQuads(1);
 
 		glm::vec2 box_v[4];
@@ -848,7 +850,8 @@ void Landscape::BuildMesh(std::vector<glm::vec2> const & src)
 
 	GPURenderMaterial * RM = GetLayerInstance()->GetRenderMaterial();
 
-	GPUDrawInterface<VertexDefault> DI(RM, 3 * triangles.size());
+	WindowApplication * window_application = Application::GetInstance();
+	GPUDrawInterface<VertexDefault> DI(window_application->GetGPUDevice(), RM, 3 * triangles.size());
 
 	for (auto const& t : triangles)
 	{

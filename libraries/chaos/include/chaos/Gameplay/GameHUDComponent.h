@@ -42,6 +42,9 @@ namespace chaos
 
 	public:
 
+		/** getter on the GPUDevice */
+		GPUDevice * GetGPUDevice();
+
 		/** getters on game */
 		AutoCastable<Game> GetGame();
 		/** getters on game */
@@ -542,8 +545,8 @@ namespace chaos
 	{
 	public:
 
-		/** constructor */
-		GameHUDDebugDrawComponent();
+		/** destructor */
+		virtual ~GameHUDDebugDrawComponent();
 		/** getter on the draw interface */
 		GPUDrawInterface<VertexDefault>* GetDebugDrawInterface();
 
@@ -555,7 +558,7 @@ namespace chaos
 	protected:
 
 		/** the draw interface */
-		GPUDrawInterface<VertexDefault> draw_interface;
+		GPUDrawInterface<VertexDefault> * draw_interface = nullptr;
 	};
 
 	/** display a variable for 1 frame */

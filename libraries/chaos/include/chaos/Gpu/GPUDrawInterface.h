@@ -12,7 +12,7 @@ namespace chaos
 	 */
 
 	template<typename VERTEX_TYPE>
-	class GPUDrawInterface : public GPUPrimitiveOutput<VERTEX_TYPE>
+	class GPUDrawInterface : public GPUDeviceResourceInterface, public GPUPrimitiveOutput<VERTEX_TYPE>
 	{
 	public:
 
@@ -20,13 +20,15 @@ namespace chaos
 		static constexpr size_t MIN_VERTEX_ALLOCATION = 100;
 
 		/** constructor */
-		GPUDrawInterface(ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION) :
-			GPUPrimitiveOutput<VERTEX_TYPE>(&mesh, GetVertexDeclaration(), in_render_material_request, in_vertex_requirement_evaluation)
+		GPUDrawInterface(GPUDevice * in_gpu_device, ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION):
+			GPUDeviceResourceInterface(in_gpu_device),
+			GPUPrimitiveOutput<VERTEX_TYPE>(new GPUMesh, GetVertexDeclaration(), in_render_material_request, in_vertex_requirement_evaluation)
 		{
 		}
 		/** constructor */
-		GPUDrawInterface(GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION) :
-			GPUPrimitiveOutput<VERTEX_TYPE>(&mesh, GetVertexDeclaration(), (in_render_material != nullptr) ? in_render_material : DefaultScreenSpaceProgram::GetMaterial(), in_vertex_requirement_evaluation)
+		GPUDrawInterface(GPUDevice * in_gpu_device, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION):
+			GPUDeviceResourceInterface(in_gpu_device),
+			GPUPrimitiveOutput<VERTEX_TYPE>(new GPUMesh, GetVertexDeclaration(), (in_render_material != nullptr) ? in_render_material : DefaultScreenSpaceProgram::GetMaterial(), in_vertex_requirement_evaluation)
 		{
 		}
 
@@ -40,15 +42,15 @@ namespace chaos
 		int Display(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 		{
 			this->Flush();
-			int result = mesh.Display(render_context, uniform_provider, render_params);
-			mesh.Clear();
+			int result = this->mesh->Display(render_context, uniform_provider, render_params);
+			this->mesh->Clear();
 			return result;
 		}
 
 		/** extract the mesh for external purpose */
 		GPUMesh* GetDynamicMesh(GPUMesh * result = nullptr)
 		{
-			assert(result != &mesh);
+			assert(result != this->mesh);
 			if (result != nullptr)
 				result->Clear();
 			else
@@ -57,7 +59,7 @@ namespace chaos
 			if (result != nullptr)
 			{
 				this->Flush();
-				swap(*result, mesh);
+				swap(*result, *this->mesh);
 			}
 			return result;
 		}
@@ -66,7 +68,7 @@ namespace chaos
 		void Clear()
 		{
 			this->Flush(); // to unmap pending mapped buffer
-			mesh.Clear();
+			this->mesh->Clear();
 		}
 
 	protected:
@@ -82,11 +84,6 @@ namespace chaos
 			}
 			return result.get();
 		}
-
-	protected:
-
-		/** the internal buffer */
-		GPUMesh mesh;
 	};
 
 #endif

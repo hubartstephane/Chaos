@@ -7,6 +7,13 @@ namespace chaos
 	// GameHUDComponent
 	// ====================================================================
 
+	GPUDevice * GameHUDComponent::GetGPUDevice()
+	{
+		if (WindowApplication * window_application = Application::GetInstance())
+			return window_application->GetGPUDevice();
+		return nullptr;
+	}
+
 	AutoCastable<Game> GameHUDComponent::GetGame()
 	{
 		if (hud == nullptr)
@@ -222,7 +229,7 @@ namespace chaos
 			ParticleTextGenerator::GeneratorParams other_params = generator_params;
 			TweakTextGeneratorParams(other_params);
 
-			GPUDrawInterface<VertexDefault> DI(nullptr);
+			GPUDrawInterface<VertexDefault> DI(GetGPUDevice(), nullptr);
 			DrawText(DI, in_text, other_params);
 			mesh = DI.GetDynamicMesh(mesh.get());
 		}
@@ -526,7 +533,7 @@ namespace chaos
 
 	void GameHUDLifeComponent::UpdateMesh()
 	{
-		GPUDrawInterface<VertexDefault> DI(nullptr);
+		GPUDrawInterface<VertexDefault> DI(GetGPUDevice(), nullptr);
 
 		AtlasBitmapInfo const* bitmap_info = DI.FindBitmapInfo(particle_name.c_str());
 		if (bitmap_info != nullptr)
@@ -672,7 +679,7 @@ namespace chaos
 				mesh = nullptr;
 			else
 			{
-				GPUDrawInterface<VertexDefault> DI(nullptr);
+				GPUDrawInterface<VertexDefault> DI(GetGPUDevice(), nullptr);
 
 				size_t largest_title = 0;
 				for (Entry const& entry : entries)
@@ -731,38 +738,44 @@ namespace chaos
 
 #if _DEBUG
 
-	GameHUDDebugDrawComponent::GameHUDDebugDrawComponent():
-		draw_interface(DefaultParticleProgram::GetMaterial())
+	GameHUDDebugDrawComponent::~GameHUDDebugDrawComponent()
 	{
+		delete draw_interface;
 	}
 
 	int GameHUDDebugDrawComponent::DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
-		draw_interface.Flush();
+		int result = 0;
+		if (draw_interface != nullptr)
+		{
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glDisable(GL_DEPTH_TEST);
+			glDisable(GL_CULL_FACE);
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glDisable(GL_DEPTH_TEST);
-		glDisable(GL_CULL_FACE);
+			// shu49
+			glPointSize(5.0f);
+			glLineWidth(3.0f);
 
-		// shu49
-		glPointSize(5.0f);
-		glLineWidth(3.0f);
+			result = draw_interface->Display(render_context, uniform_provider, render_params);
 
-		int result = draw_interface.Display(render_context, uniform_provider, render_params);
+			glPointSize(1.0f);
+			glLineWidth(1.0f);
 
-		glPointSize(1.0f);
-		glLineWidth(1.0f);
+			glDisable(GL_BLEND);
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_CULL_FACE);
 
-		glDisable(GL_BLEND);
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_CULL_FACE);
+			draw_interface->Flush();
+		}
 		return result;
 	}
 
 	GPUDrawInterface<VertexDefault>* GameHUDDebugDrawComponent::GetDebugDrawInterface()
 	{
-		return &draw_interface;
+		if (draw_interface == nullptr)
+			draw_interface = new GPUDrawInterface<VertexDefault>(GetGPUDevice(), DefaultParticleProgram::GetMaterial());
+		return draw_interface;
 	}
 
 	GPUDrawInterface<VertexDefault> * GetDebugDrawInterface()

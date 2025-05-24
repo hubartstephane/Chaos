@@ -22,16 +22,18 @@ namespace chaos
 
 	void TextWidget::Initialize(char const * in_text)
 	{
+	#if 0
 		if (StringTools::IsEmpty(in_text))
 			mesh = nullptr;
 		else
 		{
 			ParticleTextGenerator::GeneratorParams other_params;
 
-			GPUDrawInterface<VertexDefault> DI(nullptr);
+			GPUDrawInterface<VertexDefault> DI(GetGPUDevice(), nullptr);
 			DrawText(DI, in_text, other_params, {}, &bounding_box);
 			mesh = DI.GetDynamicMesh(mesh.get());
 		}
+	#endif
 	}
 
 }; // namespace chaos

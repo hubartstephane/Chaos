@@ -72,7 +72,7 @@ bool GameHUDShroudLifeComponent::QueryValue(GameHUDHealthInfo & result) const
 
 void GameHUDShroudLifeComponent::UpdateMesh()
 {
-	chaos::GPUDrawInterface<chaos::VertexDefault> DI(nullptr);
+	chaos::GPUDrawInterface<chaos::VertexDefault> DI(GetGPUDevice(), nullptr);
 
 	chaos::AtlasBitmapInfo const* bitmap_info = DI.FindBitmapInfo(bitmap_name);
 	if (bitmap_info == nullptr)

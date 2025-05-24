@@ -63,13 +63,6 @@ namespace chaos
 		/** unmap the buffer */
 		void UnMapBuffer();
 
-		/** an indication of how many objects use this buffer (to avoid buffer to be given to a GPUBufferPool whereas it used elsewhere) */
-		size_t GetUsageCount() const { return usage_count; }
-		/** Increment usage count */
-		size_t IncrementUsageCount() { return ++usage_count; }
-		/** Decrement usage count */
-		size_t DecrementUsageCount() { assert(usage_count > 0); return --usage_count; }
-
 		/** returns whether the buffer has been mapped */
 		bool IsMapped() const { return mapped; }
 
@@ -98,8 +91,6 @@ namespace chaos
 		bool dynamic = false;
 		/** whether the buffer is mapped */
 		bool mapped = false;
-		/** usage count */
-		size_t usage_count = 0;
 	};
 #endif
 

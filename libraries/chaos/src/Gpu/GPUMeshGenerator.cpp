@@ -52,7 +52,7 @@ namespace chaos
 			return false;
 
 		// prepare the mesh
-		mesh->Clear(nullptr);
+		mesh->Clear();
 
 		// generate the indices and the vertices
 		auto elem_create_func = [&mesh, &vertex_declaration, &buffers]() -> GPUMeshElement &

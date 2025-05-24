@@ -53,8 +53,8 @@ namespace chaos
 
         /** returns whether there is nothing to render */
         bool IsEmpty() const { return (elements.size() == 0); }
-        /** remove all elements of the rendering (may give GPUBuffers back to a GPUBufferPool) */
-        void Clear(GPUBufferPool* buffer_pool);
+        /** remove all elements of the rendering */
+        void Clear();
         /** gets the number of mesh element */
         size_t GetMeshElementCount() const { return elements.size(); }
         /** access any mesh element */

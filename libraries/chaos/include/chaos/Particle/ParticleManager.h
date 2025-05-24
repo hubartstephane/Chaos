@@ -78,11 +78,6 @@ namespace chaos
 		/** remove a layer from the manager */
 		void RemoveLayer(ParticleLayerBase * layer);
 
-        /** gets the buffer pool */
-        GPUBufferPool& GetBufferPool() { return buffer_pool; }
-        /** gets the buffer pool */
-        GPUBufferPool const& GetBufferPool() const { return buffer_pool; }
-
 	protected:
 
 		/** tick the manager */
@@ -99,8 +94,6 @@ namespace chaos
 		GPURenderableLayerSystem layer_system;
 		/** the texture atlas */
 		shared_ptr<GPUAtlas> atlas;
-        /** a cache for GPUBuffer */
-        GPUBufferPool buffer_pool;
 	};
 
 #endif

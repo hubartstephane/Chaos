@@ -109,7 +109,7 @@ namespace chaos
 					return false;
 			}
 			else
-				mesh->Clear(nullptr); // reuse existing mesh
+				mesh->Clear();
 
 			// generate geometry
 			GeneratorData const & data = generator_data[generator_index];

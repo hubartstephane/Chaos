@@ -498,7 +498,7 @@ namespace chaos
 					if (background_mesh != nullptr)
 					{
 						GetTypedVertexDeclaration(vertex_declaration.get(), boost::mpl::identity<VertexDefault>());
-						GPUPrimitiveOutput<VertexDefault> output(background_mesh.get(), nullptr, vertex_declaration.get(), background_material.get(), 4);
+						GPUPrimitiveOutput<VertexDefault> output(background_mesh.get(), vertex_declaration.get(), background_material.get(), 4);
 
 						auto quad = output.AddQuads(1);
 

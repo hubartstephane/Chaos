@@ -166,11 +166,8 @@ namespace chaos
 		}
         // evaluate how much memory should be allocated for buffers (count in vertices)
         size_t vertex_requirement_evaluation = EvaluateGPUVertexMemoryRequirement(mesh.get());
-        // clear previous dynamic mesh (and give buffers back for further usage)
-        if (particle_manager != nullptr)
-			mesh->Clear(&particle_manager->GetBufferPool());
-        else
-			mesh->Clear(&buffer_pool);
+        // clear previous dynamic mesh
+		mesh->Clear();
         // select GPUPrimitiveOutput and collect vertices
 		GenerateMeshData(mesh.get(), vertex_declaration.get(), render_material.get(), vertex_requirement_evaluation);
         // mark as up to date

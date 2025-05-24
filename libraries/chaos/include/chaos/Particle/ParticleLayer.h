@@ -164,8 +164,6 @@ namespace chaos
 		/** the vertex declaration */
 		shared_ptr<GPUVertexDeclaration> vertex_declaration;
 
-		/** the vertex cache (used when the layer is NOT in a manager) */
-		GPUBufferPool buffer_pool;
 		/** the corresponding dynamic mesh */
 		shared_ptr<GPUMesh> mesh;
 		/** whether there was changes in particles, and a vertex array need to be recomputed */
@@ -268,10 +266,7 @@ namespace chaos
 	template<typename LAYER_TRAIT>
 	void ParticleLayer<LAYER_TRAIT>::GenerateMeshData(GPUMesh* in_mesh, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t vertex_requirement_evaluation)
 	{
-		// some layers are in a manager, some not (see TiledMap)
-		GPUBufferPool* cache = (particle_manager == nullptr) ? &buffer_pool : &particle_manager->GetBufferPool();
-
-		GPUPrimitiveOutput<vertex_type> output(in_mesh, cache, in_vertex_declaration, in_render_material, vertex_requirement_evaluation);
+		GPUPrimitiveOutput<vertex_type> output(in_mesh, in_vertex_declaration, in_render_material, vertex_requirement_evaluation);
 		ParticlesToPrimitivesLoop(output);
 	}
 

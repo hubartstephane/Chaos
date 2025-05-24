@@ -11,27 +11,14 @@ namespace chaos
 		primitives(src.primitives),
 		vertex_buffer_offset(src.vertex_buffer_offset)
 	{
-		if (vertex_buffer != nullptr)
-			vertex_buffer->IncrementUsageCount();
-		if (index_buffer != nullptr)
-			index_buffer->IncrementUsageCount();
 	}
 
 	GPUMeshElement::~GPUMeshElement()
 	{
-		if (vertex_buffer != nullptr)
-			vertex_buffer->DecrementUsageCount();
-		if (index_buffer != nullptr)
-			index_buffer->DecrementUsageCount();
 	}
 
 	GPUMeshElement & GPUMesh::AddMeshElement(GPUVertexDeclaration* vertex_declaration, GPUBuffer * vertex_buffer, GPUBuffer * index_buffer)
 	{
-		if (vertex_buffer != nullptr)
-			vertex_buffer->IncrementUsageCount();
-		if (index_buffer != nullptr)
-			index_buffer->IncrementUsageCount();
-
 		GPUMeshElement & result = elements.emplace_back();
 		result.vertex_declaration = vertex_declaration;
 		result.vertex_buffer      = vertex_buffer;
@@ -39,28 +26,8 @@ namespace chaos
 		return result;
 	}
 
-	void GPUMesh::Clear(GPUBufferPool* buffer_pool)
+	void GPUMesh::Clear()
 	{
-		if (buffer_pool != nullptr) // give buffers to pool if we want that
-		{
-			for (GPUMeshElement& element : elements)
-			{
-				if (GPUBuffer * vb = element.vertex_buffer.get())
-				{
-					assert(!vb->IsMapped());
-					if (vb->DecrementUsageCount() == 0)
-						buffer_pool->GiveBuffer(vb, nullptr);
-					element.vertex_buffer = nullptr; // prevent GPUMeshElement destructor do decrement usage one more time (call this only after given to avoid destruction)
-				}
-				if (GPUBuffer * ib = element.index_buffer.get())
-				{
-					assert(!ib->IsMapped());
-					if (ib->DecrementUsageCount() == 0)
-						buffer_pool->GiveBuffer(ib, nullptr);
-					element.index_buffer = nullptr;  // prevent GPUMeshElement destructor do decrement usage one more time (call this only after given to avoid destruction)
-				}
-			}
-		}
 		elements.clear();
 		bounding_box = {};
 	}

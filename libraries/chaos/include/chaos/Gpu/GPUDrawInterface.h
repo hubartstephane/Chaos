@@ -21,12 +21,12 @@ namespace chaos
 
 		/** constructor */
 		GPUDrawInterface(ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION) :
-			GPUPrimitiveOutput<VERTEX_TYPE>(&mesh, GetBufferPool(), GetVertexDeclaration(), in_render_material_request, in_vertex_requirement_evaluation)
+			GPUPrimitiveOutput<VERTEX_TYPE>(&mesh, GetVertexDeclaration(), in_render_material_request, in_vertex_requirement_evaluation)
 		{
 		}
 		/** constructor */
 		GPUDrawInterface(GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION) :
-			GPUPrimitiveOutput<VERTEX_TYPE>(&mesh, GetBufferPool(), GetVertexDeclaration(), (in_render_material != nullptr) ? in_render_material : DefaultScreenSpaceProgram::GetMaterial(), in_vertex_requirement_evaluation)
+			GPUPrimitiveOutput<VERTEX_TYPE>(&mesh, GetVertexDeclaration(), (in_render_material != nullptr) ? in_render_material : DefaultScreenSpaceProgram::GetMaterial(), in_vertex_requirement_evaluation)
 		{
 		}
 
@@ -41,7 +41,7 @@ namespace chaos
 		{
 			this->Flush();
 			int result = mesh.Display(render_context, uniform_provider, render_params);
-			mesh.Clear(GetBufferPool());
+			mesh.Clear();
 			return result;
 		}
 
@@ -50,7 +50,7 @@ namespace chaos
 		{
 			assert(result != &mesh);
 			if (result != nullptr)
-				result->Clear(GetBufferPool());
+				result->Clear();
 			else
 				result = new GPUMesh();
 
@@ -66,7 +66,7 @@ namespace chaos
 		void Clear()
 		{
 			this->Flush(); // to unmap pending mapped buffer
-			mesh.Clear(GetBufferPool());
+			mesh.Clear();
 		}
 
 	protected:
@@ -80,13 +80,6 @@ namespace chaos
 				result = new GPUVertexDeclaration;
 				GetTypedVertexDeclaration(result.get(), boost::mpl::identity<VERTEX_TYPE>());
 			}
-			return result.get();
-		}
-
-		/** gets the shared GPUBufferPool to improve GPUBuffer allocation */
-		static GPUBufferPool* GetBufferPool()
-		{
-			static shared_ptr<GPUBufferPool> result = new GPUBufferPool();
 			return result.get();
 		}
 

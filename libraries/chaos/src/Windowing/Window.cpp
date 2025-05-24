@@ -108,11 +108,28 @@ namespace chaos
 		StorePersistentProperties(true);
 		Finalize();
 		DestroyImGuiContext();
+		DestroyRenderContext();
 		DestroyGLFWWindow();
 		if (WindowApplication* window_application = Application::GetInstance())
 			window_application->OnWindowDestroyed(this);
 	}
 
+	bool Window::CreateRenderContext()
+	{
+		assert(render_context == nullptr);
+		render_context = new GPURenderContext(GetGPUDevice(), this);
+		if (render_context == nullptr)
+			return false;
+		return true;
+	}
+
+	void Window::DestroyRenderContext()
+	{
+		assert(render_context != nullptr);
+		render_context->Destroy();
+		render_context = nullptr;
+	}
+		
 	void Window::DestroyImGuiContext()
 	{
 		// destroy implot context
@@ -361,13 +378,10 @@ namespace chaos
 
 	bool Window::CreateGLFWWindow(GPUDevice * in_gpu_device, WindowPlacementInfo const & placement_info, WindowCreateParams const &create_params, GLFWwindow* share_context_window, GLFWHints glfw_hints)
 	{
-		// resource already existing
-		if (glfw_window != nullptr)
-			return false;
+		assert(glfw_window == nullptr);
 
 		// create the GPURenderContext
-		render_context = new GPURenderContext(in_gpu_device, this);
-		if (render_context == nullptr)
+		if (!CreateRenderContext())
 			return false;
 
 		// prepare window creation
@@ -417,7 +431,7 @@ namespace chaos
 		return true;
 	}
 
-	void Window::CreateImGuiContext()
+	bool Window::CreateImGuiContext()
 	{
 		ImGuiManager* imgui_manager = GetImGuiManager();
 
@@ -467,6 +481,8 @@ namespace chaos
 
 		// restore previous imgui context
 		ImGui::SetCurrentContext(previous_imgui_context);
+
+		return true;
 	}
 
 	bool Window::CreateRootWidget()

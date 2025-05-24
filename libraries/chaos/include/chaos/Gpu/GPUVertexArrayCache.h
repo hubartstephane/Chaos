@@ -2,17 +2,40 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
+	class GPUVertexArrayBindingInfo;
 	class GPUVertexArrayCacheEntry;
 	class GPUVertexArrayCache;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// ==================================================================
-	// GPUVertexArrayCacheEntry : an entry in the cache vertex array
+	// GPUVertexArrayBindingInfo: this describes how vertex array must be build or searched
 	// ==================================================================
 
-	// XXX : OpenGL contexts do not share 'CONTAINER OBJECTS' has VertexArrays or FrameBuffers
-	//       That's why we use a Window entry in the cache system
+	class CHAOS_API GPUVertexArrayBindingInfo
+	{
+	public:
+
+		/** the program to use */
+		GPUProgram const* program = nullptr;
+		/** the vertex buffer to use */
+		GPUBuffer const* vertex_buffer = nullptr;
+		/** the index buffer to use */
+		GPUBuffer const* index_buffer = nullptr;
+		/** the vertex declaration to use */
+		GPUVertexDeclaration const* vertex_declaration = nullptr;
+		/** the offset in the vertex buffer */
+		GLintptr offset = 0;
+	};
+
+	// ==================================================================
+	// GPUVertexArrayCacheEntry: an entry in the cache vertex array
+	// ==================================================================
+
+	// The CacheEntry uses both weak pointer on GPUProgram and GPUBuffer and both GLuint resourceID
+	//
+	// -weak pointers are usefull to know whether the GPUObject has been destroyed and though the vertex array is not necessary anymore
+	// -GLuint IDs are necessary because on rare cases (GPUResourceManager hotreload), the associated OpenGL ID's may be changed
 
 	class CHAOS_API GPUVertexArrayCacheEntry
 	{
@@ -25,14 +48,15 @@ namespace chaos
 
 	public:
 
+		/** the vertex array */
+		shared_ptr<GPUVertexArray> vertex_array;
+
 		/** the program concerned */
 		weak_ptr<GPUProgram const> program;
 		/** the vertex buffer concerned */
 		weak_ptr<GPUBuffer const> vertex_buffer;
 		/** the index buffer concerned */
 		weak_ptr<GPUBuffer const> index_buffer;
-		/** context window */
-		weak_ptr<Window> context_window; // VertexArrays are not shared between different contexts
 
 		/** the index of the program */
 		GLuint program_id = 0;
@@ -42,36 +66,47 @@ namespace chaos
 		GLuint index_buffer_id = 0;
 		/** the offset for the vertex buffer */
 		GLintptr vertex_buffer_offset = 0;
-
-		/** the context */
-		GLFWwindow* context = nullptr;
-
-		/** the vertex array */
-		shared_ptr<GPUVertexArray> vertex_array;
 	};
 
 	// =================================================================================================
 	// GPUVertexArrayCache : a binding between GPUProgram/GPUVertexArray that support destruction of both side
 	// =================================================================================================
 
-	class CHAOS_API GPUVertexArrayCache : public Object
+	class CHAOS_API GPUVertexArrayCache : public Tickable
 	{
+		friend class GPURenderContext;
 
 	public:
 
-		/** find vertex array for the program */
-		GPUVertexArray const* FindVertexArray(GPURenderContext* render_context, GPUProgram const* program, GPUBuffer const* vertex_buffer, GPUBuffer const* index_buffer, GLintptr offset) const;
+		/** destructor */
+		virtual ~GPUVertexArrayCache();
+
 		/** create or return exisiting vertex array for a given program */
-		GPUVertexArray const* FindOrCreateVertexArray(GPURenderContext* render_context, GPUProgram const* program, GPUBuffer const* vertex_buffer, GPUBuffer const* index_buffer, GPUVertexDeclaration const* declaration, GLintptr offset = 0);
-		/** reset the whole object */
-		void Clear();
+		GPUVertexArray const* FindOrCreateVertexArray(GPUVertexArrayBindingInfo const& binding_info);
 
 	protected:
 
-		/** a counter to know whether to purge the elements */
-		mutable double last_purge_time = 0;
+		/** find vertex array for the program */
+		GPUVertexArray const* FindVertexArray(GPUVertexArrayBindingInfo const& binding_info) const;
+		/** create vertex array for the program */
+		GPUVertexArray const* CreateVertexArray(GPUVertexArrayBindingInfo const& binding_info);
+		/** purge the cache */
+		void PurgeCache();
+		/** destroy the whole content */
+		void Destroy();
+
+		/** override */
+		virtual bool DoTick(float delta_time) override;
+
+	protected:
+
+		/** max delay between successive purges */
+		static constexpr float delay_between_purge = 10.0f;
+
 		/** the cache content */
-		mutable std::vector<GPUVertexArrayCacheEntry> entries;
+		std::vector<GPUVertexArrayCacheEntry> entries;
+		/** time remaining until next purge */
+		float purge_timer = 0.0f;
 	};
 
 #endif

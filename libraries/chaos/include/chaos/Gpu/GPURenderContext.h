@@ -30,6 +30,8 @@ namespace chaos
 
 	class CHAOS_API GPURenderContext : public Tickable, public GPUDeviceResourceInterface
 	{
+		friend class Window;
+
 	public:
 
 		/** constructor */
@@ -39,6 +41,11 @@ namespace chaos
 		bool RenderFrame(LightweightFunction<bool()> render_func);
 		/** render a frame into a framebuffer */
 		bool RenderIntoFramebuffer(GPUFramebuffer* framebuffer, bool generate_mipmaps, LightweightFunction<bool()> render_func);
+
+		/** prepare vertex array */
+		bool BindVertexArray(GPUVertexArrayBindingInfo const & binding_info);
+		/** end the vertex array usage */
+		void UnbindVertexArray();
 
 		/** draw a primitive */
 		void Draw(GPUDrawPrimitive const& primitive, GPUInstancingInfo const& instancing = {});
@@ -68,6 +75,9 @@ namespace chaos
 		/** override */
 		virtual bool DoTick(float delta_time) override;
 
+		/** destroy the context */
+		void Destroy();
+
 		/** called at the start of a new frame */
 		void BeginRenderingFrame();
 		/** called at the end of a new frame */
@@ -77,6 +87,8 @@ namespace chaos
 
 		/** the owning window */
 		weak_ptr<Window> window;
+		/** the vertex array cache */
+		GPUVertexArrayCache vertex_array_cache;
 		/** a time stamp for rendering */
 		uint64_t rendering_timestamp = 0;
 		/** the duration of the last tick */

@@ -23,26 +23,11 @@ namespace chaos
 		GPUDrawInterface(ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION) :
 			PrimitiveOutput<VERTEX_TYPE>(&mesh, GetBufferPool(), GetVertexDeclaration(), in_render_material_request, in_vertex_requirement_evaluation)
 		{
-
-
-
-
-#if SHU_CLEAN_GPU
-			mesh.SetVertexArrayCache(GetVertexArrayCache());
-#endif
-
-
-
 		}
 		/** constructor */
 		GPUDrawInterface(GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION) :
 			PrimitiveOutput<VERTEX_TYPE>(&mesh, GetBufferPool(), GetVertexDeclaration(), (in_render_material != nullptr) ? in_render_material : DefaultScreenSpaceProgram::GetMaterial(), in_vertex_requirement_evaluation)
 		{
-
-
-#if SHU_CLEAN_GPU
-			mesh.SetVertexArrayCache(GetVertexArrayCache());
-#endif
 		}
 
 		/** destructor */
@@ -73,11 +58,6 @@ namespace chaos
 			{
 				this->Flush();
 				swap(*result, mesh);
-
-
-#if SHU_CLEAN_GPU
-				mesh.SetVertexArrayCache(GetVertexArrayCache()); // restore the cache that may have been lost
-#endif
 			}
 			return result;
 		}
@@ -109,18 +89,6 @@ namespace chaos
 			static shared_ptr<GPUBufferPool> result = new GPUBufferPool();
 			return result.get();
 		}
-
-
-
-
-#if SHU_CLEAN_GPU
-		/** gets the shared GPUVertexArrayCache */
-		static GPUVertexArrayCache* GetVertexArrayCache()
-		{
-			static shared_ptr<GPUVertexArrayCache> result = new GPUVertexArrayCache();
-			return result.get();
-		}
-#endif
 
 	protected:
 

@@ -14,6 +14,28 @@ namespace chaos
 		assert(in_window != nullptr);
 	}
 
+	bool GPURenderContext::BindVertexArray(GPUVertexArrayBindingInfo const & binding_info)
+	{
+		// gets the vertex array
+		GPUVertexArray const* vertex_array = vertex_array_cache.FindOrCreateVertexArray(binding_info);
+		if (vertex_array == nullptr)
+			return false;
+
+		GLuint vertex_array_id = vertex_array->GetResourceID();
+		glBindVertexArray(vertex_array_id);
+		return true;
+	}
+
+	void GPURenderContext::UnbindVertexArray()
+	{
+		glBindVertexArray(0);
+	}
+
+	void GPURenderContext::Destroy()
+	{
+		vertex_array_cache.Destroy();
+	}
+
 	bool GPURenderContext::RenderIntoFramebuffer(GPUFramebuffer* framebuffer, bool generate_mipmaps, LightweightFunction<bool()> render_func)
 	{	
 		// early exit
@@ -138,6 +160,9 @@ namespace chaos
 	bool GPURenderContext::DoTick(float delta_time)
 	{
 		last_delta_time = delta_time;
+		
+		vertex_array_cache.Tick(delta_time);
+
 		// update counters
 		framerate_counter.Tick(delta_time);
 		drawcall_counter.Tick(delta_time);

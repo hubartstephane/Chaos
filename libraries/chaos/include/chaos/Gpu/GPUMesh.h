@@ -51,9 +51,6 @@ namespace chaos
         template<typename VERTEX_TYPE>
         friend class DrawInterface;
 
-		/** constructor */
-		GPUMesh();
-
         /** returns whether there is nothing to render */
         bool IsEmpty() const { return (elements.size() == 0); }
         /** remove all elements of the rendering (may give GPUBuffers back to a GPUBufferPool) */
@@ -72,22 +69,10 @@ namespace chaos
 		/** get the bounding box of the mesh */
 		std::optional<box3> const& GetBoundingBox() const;
 
-
-
-
-#if SHU_CLEAN_GPU
-        /** change the vertex array cache */
-        void SetVertexArrayCache(GPUVertexArrayCache* in_vertex_array_cache);
-#endif
-
-
-
-
 		/** swapping two meshes */
         friend void swap(GPUMesh& src1, GPUMesh& src2)
         {
             std::swap(src1.elements, src2.elements);
-            std::swap(src1.vertex_array_cache, src2.vertex_array_cache);
 			std::swap(src1.bounding_box, src2.bounding_box);
         }
 
@@ -105,8 +90,6 @@ namespace chaos
 
         /** the element to render */
         std::vector<GPUMeshElement> elements;
-        /** the vertex array cache */
-        shared_ptr<GPUVertexArrayCache> vertex_array_cache;
 		/** the bounding box */
 		std::optional<box3> bounding_box;
     };

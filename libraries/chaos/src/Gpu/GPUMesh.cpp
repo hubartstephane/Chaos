@@ -25,21 +25,6 @@ namespace chaos
 			index_buffer->DecrementUsageCount();
 	}
 
-
-	GPUMesh::GPUMesh():
-		vertex_array_cache(new GPUVertexArrayCache)
-	{
-	}
-
-#if SHU_CLEAN_GPU
-	void GPUMesh::SetVertexArrayCache(GPUVertexArrayCache* in_vertex_array_cache)
-	{
-		vertex_array_cache = in_vertex_array_cache;
-	}
-#endif
-
-
-
 	GPUMeshElement & GPUMesh::AddMeshElement(GPUVertexDeclaration* vertex_declaration, GPUBuffer * vertex_buffer, GPUBuffer * index_buffer)
 	{
 		if (vertex_buffer != nullptr)
@@ -121,12 +106,14 @@ namespace chaos
 			previous_program = program;
 
 			// gets the vertex array
-			GPUVertexArray const* vertex_array = vertex_array_cache->FindOrCreateVertexArray(render_context, program, element.vertex_buffer.get(), element.index_buffer.get(), element.vertex_declaration.get(), element.vertex_buffer_offset);
-			if (vertex_array == nullptr)
-				continue;
+			GPUVertexArrayBindingInfo binding_info;
+			binding_info.program            = program;
+			binding_info.vertex_buffer      = element.vertex_buffer.get();
+			binding_info.index_buffer       = element.index_buffer.get();
+			binding_info.vertex_declaration = element.vertex_declaration.get();
+			binding_info.offset             = element.vertex_buffer_offset;
 
-			GLuint vertex_array_id = vertex_array->GetResourceID();
-			glBindVertexArray(vertex_array_id);
+			render_context->BindVertexArray(binding_info);
 
 			// draw all primitives
 			for (GPUDrawPrimitive const& primitive : element.primitives)
@@ -140,7 +127,9 @@ namespace chaos
 
 		// restore an 'empty' state
 		glUseProgram(0);
-		glBindVertexArray(0);
+
+		render_context->UnbindVertexArray();
+
 		return result;
 	}
 

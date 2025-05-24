@@ -4,14 +4,8 @@
 
 namespace chaos
 {
-
 	bool GPUVertexArrayCacheEntry::IsValid() const
 	{
-		// context window has been destroyed (even if recreated) ?
-		if (context_window == nullptr)
-			return false;
-		else if (context_window->GetGLFWHandler() != context)
-			return false;
 		// should always have a program
 		if (program == nullptr)
 			return false;
@@ -36,126 +30,132 @@ namespace chaos
 		// OK
 		return true;
 	}
-	GPUVertexArray const* GPUVertexArrayCache::FindVertexArray(GPURenderContext* render_context, GPUProgram const* program, GPUBuffer const* vertex_buffer, GPUBuffer const* index_buffer, GLintptr offset) const
+
+	// Due to OpenGL implementation, VertexArrays have to be deleted with the proper GLFW context set
+	// That's why we don't rely on native GPUVertexArray destructor to destroy OpenGL resource
+	// Instead we rely on an explicit Destroy() call
+	// The destructor is only here to ensure everything has been done properly
+
+	GPUVertexArrayCache::~GPUVertexArrayCache()
 	{
-		GLFWwindow* current_context = glfwGetCurrentContext();
+		assert(entries.size() == 0);
+	}
 
-#if _DEBUG
-		assert(current_context != nullptr);
-		assert(current_context == render_context->GetWindow()->GetGLFWHandler());
-#endif
-		// early exit
-		if (program == nullptr)
-			return nullptr;
-
-		// whether to purge during this pass or not
-		bool purge = false;
-
-		double t = glfwGetTime();
-		if (t - last_purge_time > 10.0)
+	bool GPUVertexArrayCache::DoTick(float delta_time)
+	{
+		purge_timer -= delta_time;
+		if (purge_timer <= 0.0f)
 		{
-			last_purge_time = t;
-			purge = true;
+			purge_timer = delay_between_purge;
+			PurgeCache();
 		}
+		return true;
+	}
 
-		// search matching entry
-		GPUVertexArray const * result = nullptr;
-		for (size_t i = entries.size() ; i > 0 ; --i)
+	void GPUVertexArrayCache::PurgeCache()
+	{
+		for (size_t i = entries.size(); i > 0; --i)
 		{
 			size_t index = i - 1;
 
-			// check whether entry is still valid (else swap/pop with last)
-			GPUVertexArrayCacheEntry & entry = entries[index];
+			GPUVertexArrayCacheEntry& entry = entries[index];
 			if (!entry.IsValid())
 			{
-				// remove the entry
 				if (index != entries.size() - 1)
 					std::swap(entry, entries[entries.size() - 1]);
 				entries.pop_back();
 			}
-			else if (result == nullptr)
+		}
+	}
+
+	GPUVertexArray const* GPUVertexArrayCache::FindOrCreateVertexArray(GPUVertexArrayBindingInfo const& binding_info)
+	{
+		// early exit
+		if (binding_info.vertex_declaration == nullptr)
+			return nullptr;
+		if (binding_info.program == nullptr || !binding_info.program->IsValid())
+			return nullptr;
+		if (binding_info.vertex_buffer != nullptr && !binding_info.vertex_buffer->IsValid()) // vertex buffer provided but invalid
+			return nullptr;
+		if (binding_info.index_buffer != nullptr && !binding_info.index_buffer->IsValid())   // index  buffer provided but invalid
+			return nullptr;
+		// find existing vertex array
+		if (GPUVertexArray const* result = FindVertexArray(binding_info))
+			return result;
+		// create new vertex array
+		return CreateVertexArray(binding_info);
+	}
+
+	GPUVertexArray const* GPUVertexArrayCache::FindVertexArray(GPUVertexArrayBindingInfo const& binding_info) const
+	{
+		for (GPUVertexArrayCacheEntry const & entry : entries)
+		{
+			if (entry.program == binding_info.program &&
+				entry.vertex_buffer == binding_info.vertex_buffer &&
+				entry.index_buffer == binding_info.index_buffer &&
+				entry.vertex_buffer_offset == binding_info.offset)
 			{
-				// check whether this is expected entry
-				if (entry.program == program &&
-					entry.vertex_buffer == vertex_buffer &&
-					entry.index_buffer == index_buffer &&
-					entry.context_window == render_context->GetWindow() &&
-					entry.vertex_buffer_offset == offset)
-				{
-					result = entry.vertex_array.get();
-					if (!purge && result != nullptr) // if this is a purge pass, do not early exit, continue the purge (this block of code is only executed if result is not found yet)
-						return result;
-				}
+				return entry.vertex_array.get();
 			}
 		}
+		return nullptr;
+	}
+
+	GPUVertexArray const* GPUVertexArrayCache::CreateVertexArray(GPUVertexArrayBindingInfo const& binding_info)
+	{
+		// create new GPUVertexArray
+		GLuint vertex_array_id = 0;
+		glCreateVertexArrays(1, &vertex_array_id);
+		if (vertex_array_id == 0)
+			return nullptr;
+		
+		GPUVertexArray * result = new GPUVertexArray(vertex_array_id);
+		if (result == nullptr)
+		{
+			glDeleteVertexArrays(1, &vertex_array_id);
+			return nullptr;
+		}
+
+		// set the vertex buffer
+		if (binding_info.vertex_buffer != nullptr)  // simple mesh only use one vertex_buffer : binding_index is always 0
+		{
+			GLuint binding_index = 0;
+			glVertexArrayVertexBuffer(
+				vertex_array_id,
+				binding_index,
+				binding_info.vertex_buffer->GetResourceID(),
+				binding_info.offset,
+				binding_info.vertex_declaration->GetVertexSize());
+		}
+
+		// set the index buffer
+		if (binding_info.index_buffer != nullptr)
+			glVertexArrayElementBuffer(vertex_array_id, binding_info.index_buffer->GetResourceID());
+
+		// bind attributes
+		GPUProgramData const& data = binding_info.program->GetProgramData();
+		data.BindAttributes(vertex_array_id, *binding_info.vertex_declaration, nullptr);
+
+		// create the entry in the cache
+		GPUVertexArrayCacheEntry new_entry;
+		new_entry.vertex_array         = result;
+		new_entry.program              = binding_info.program;
+		new_entry.vertex_buffer        = binding_info.vertex_buffer;
+		new_entry.index_buffer         = binding_info.index_buffer;
+		new_entry.program_id           = binding_info.program->GetResourceID();
+		new_entry.vertex_buffer_id     = (binding_info.vertex_buffer != nullptr) ? binding_info.vertex_buffer->GetResourceID() : 0;
+		new_entry.index_buffer_id      = (binding_info.index_buffer != nullptr) ? binding_info.index_buffer->GetResourceID() : 0;
+		new_entry.vertex_buffer_offset = binding_info.offset;
+		entries.push_back(std::move(new_entry));
+
 		return result;
 	}
 
-	GPUVertexArray const * GPUVertexArrayCache::FindOrCreateVertexArray(GPURenderContext * render_context, GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer, GPUVertexDeclaration const * declaration, GLintptr offset)
+	void GPUVertexArrayCache::Destroy()
 	{
-		assert(render_context != nullptr);
-		assert(render_context->GetWindow() != nullptr);
-		assert(render_context->GetWindow()->GetGLFWHandler() != nullptr);
-		assert(render_context->GetWindow()->GetGLFWHandler() == glfwGetCurrentContext());
-		assert(declaration != nullptr);
-
-		// early exit
-		if (program == nullptr || program->GetResourceID() == 0)
-			return nullptr;
-		if (vertex_buffer != nullptr && vertex_buffer->GetResourceID() == 0) // vertex buffer provided but empty => error
-			return nullptr;
-		if (index_buffer != nullptr && index_buffer->GetResourceID() == 0)   // index  buffer provided but empty => error
-			return nullptr;
-
-		// find exisiting data
-		GPUVertexArray const * result = FindVertexArray(render_context, program, vertex_buffer, index_buffer, offset);
-		if (result != nullptr)
-			return result;
-
-		// create the vertex array
-		shared_ptr<GPUVertexArray> new_vertex_array = new GPUVertexArray(render_context->GetWindow());
-		if (new_vertex_array == nullptr || !new_vertex_array->IsValid())
-			return nullptr;
-
-		render_context->GetWindow()->WithWindowContext([this, new_vertex_array, render_context, program, vertex_buffer, index_buffer, declaration, offset]()
-		{
-			GLuint va = new_vertex_array->GetResourceID();
-
-			// set the vertex buffer
-			if (vertex_buffer != nullptr)  // simple mesh only use one vertex_buffer : binding_index is always 0
-			{
-				GLuint binding_index = 0;
-				glVertexArrayVertexBuffer(va, binding_index, vertex_buffer->GetResourceID(), offset, declaration->GetVertexSize());
-			}
-
-			// set the index buffer
-			if (index_buffer != nullptr)
-				glVertexArrayElementBuffer(va, index_buffer->GetResourceID());
-
-			// bind attributes
-			GPUProgramData const& data = program->GetProgramData();
-			data.BindAttributes(va, *declaration, nullptr);
-
-			// create the entry in the cache
-			GPUVertexArrayCacheEntry new_entry;
-			new_entry.program = program;
-			new_entry.vertex_buffer = vertex_buffer;
-			new_entry.index_buffer = index_buffer;
-			new_entry.vertex_array = new_vertex_array;
-			new_entry.program_id = program->GetResourceID();
-			new_entry.vertex_buffer_id = (vertex_buffer != nullptr) ? vertex_buffer->GetResourceID() : 0;
-			new_entry.index_buffer_id = (index_buffer != nullptr) ? index_buffer->GetResourceID() : 0;
-			new_entry.context_window = render_context->GetWindow();
-			new_entry.vertex_buffer_offset = offset;
-			new_entry.context = render_context->GetWindow()->GetGLFWHandler();
-
-			entries.push_back(std::move(new_entry));
-		});
-		return new_vertex_array.get();
-	}
-
-	void GPUVertexArrayCache::Clear()
-	{
+		for (GPUVertexArrayCacheEntry const& entry : entries)
+			if (entry.vertex_array != nullptr)
+				entry.vertex_array->Release();
 		entries.clear();
 	}
 

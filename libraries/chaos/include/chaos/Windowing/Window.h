@@ -373,8 +373,13 @@ namespace chaos
 		/** bind Window with GLFW */
 		virtual void SetGLFWCallbacks();
 
+		/** create a render context */
+		bool CreateRenderContext();
+		/** destroy the context */
+		void DestroyRenderContext();
+
 		/** create an ImGui context */
-		void CreateImGuiContext();
+		bool CreateImGuiContext();
 		/** destroying the ImGui context */
 		void DestroyImGuiContext();
 

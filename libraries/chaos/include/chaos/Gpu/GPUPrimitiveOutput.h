@@ -4,15 +4,15 @@ namespace chaos
 
     class GPUPrimitiveBufferCacheEntry;
 
-    class PrimitiveOutputBase;
+    class GPUPrimitiveOutputBase;
 
     template<typename VERTEX_TYPE>
-    class PrimitiveOutput;
+    class GPUPrimitiveOutput;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
     /**
-    * GPUPrimitiveBufferCacheEntry : the PrimitiveOutput has its own cache because we do not want to waste too much space whenever a new big strip/fan is requested (thoses buffers have been mapped in memory)
+    * GPUPrimitiveBufferCacheEntry : the GPUPrimitiveOutput has its own cache because we do not want to waste too much space whenever a new big strip/fan is requested (thoses buffers have been mapped in memory)
     */
 
     class CHAOS_API GPUPrimitiveBufferCacheEntry
@@ -30,10 +30,10 @@ namespace chaos
     };
 
     /**
-     * PrimitiveOutputBase : a primitive generator (the base class)
+     * GPUPrimitiveOutputBase : a primitive generator (the base class)
      */
 
-    class CHAOS_API PrimitiveOutputBase
+    class CHAOS_API GPUPrimitiveOutputBase
     {
     public:
 
@@ -41,11 +41,11 @@ namespace chaos
         static constexpr size_t MIN_VERTEX_ALLOCATION = 100;
 
         /** constructor */
-        PrimitiveOutputBase(GPUMesh* in_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION);
+        GPUPrimitiveOutputBase(GPUMesh* in_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION);
         /** constructor */
-        PrimitiveOutputBase(GPUMesh* in_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION);
+        GPUPrimitiveOutputBase(GPUMesh* in_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION);
         /** destructor */
-        ~PrimitiveOutputBase();
+        ~GPUPrimitiveOutputBase();
 
         /** find the bitmap info */
         AtlasBitmapInfo const* FindBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request = "sprites") const;
@@ -115,19 +115,19 @@ namespace chaos
     };
 
     /**
-     * PrimitiveOutput : a primitive generator
+     * GPUPrimitiveOutput : a primitive generator
      */
 
     template<typename VERTEX_TYPE>
-    class PrimitiveOutput : public PrimitiveOutputBase
+    class GPUPrimitiveOutput : public GPUPrimitiveOutputBase
     {
     public:
 
         using vertex_type = VERTEX_TYPE;
 
         /** constructor */
-        PrimitiveOutput(GPUMesh* in_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION) :
-            PrimitiveOutputBase(in_mesh, in_buffer_pool, in_vertex_declaration, in_render_material, in_vertex_requirement_evaluation)
+        GPUPrimitiveOutput(GPUMesh* in_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION) :
+            GPUPrimitiveOutputBase(in_mesh, in_buffer_pool, in_vertex_declaration, in_render_material, in_vertex_requirement_evaluation)
         {
             vertex_size = sizeof(vertex_type);
             if (vertex_declaration == nullptr)
@@ -138,8 +138,8 @@ namespace chaos
             }
         }
         /** constructor */
-        PrimitiveOutput(GPUMesh* in_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION) :
-            PrimitiveOutputBase(in_mesh, in_buffer_pool, in_vertex_declaration, in_render_material_request, in_vertex_requirement_evaluation)
+        GPUPrimitiveOutput(GPUMesh* in_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION) :
+            GPUPrimitiveOutputBase(in_mesh, in_buffer_pool, in_vertex_declaration, in_render_material_request, in_vertex_requirement_evaluation)
         {
             vertex_size = sizeof(vertex_type);
             if (vertex_declaration == nullptr)
@@ -152,17 +152,17 @@ namespace chaos
 
         /** cast operator to child vertex type */
         template<typename OTHER_VERTEX_TYPE>
-        operator PrimitiveOutput<OTHER_VERTEX_TYPE>& ()
+        operator GPUPrimitiveOutput<OTHER_VERTEX_TYPE>& ()
         {
             static_assert(std::is_base_of_v<OTHER_VERTEX_TYPE, VERTEX_TYPE>);
-            return *(PrimitiveOutput<OTHER_VERTEX_TYPE>*)this;
+            return *(GPUPrimitiveOutput<OTHER_VERTEX_TYPE>*)this;
         }
         /** cast operator to child vertex type */
         template<typename OTHER_VERTEX_TYPE>
-        operator PrimitiveOutput<OTHER_VERTEX_TYPE> const& () const
+        operator GPUPrimitiveOutput<OTHER_VERTEX_TYPE> const& () const
         {
             static_assert(std::is_base_of_v<OTHER_VERTEX_TYPE, VERTEX_TYPE>);
-            return *(PrimitiveOutput<OTHER_VERTEX_TYPE>*)this;
+            return *(GPUPrimitiveOutput<OTHER_VERTEX_TYPE>*)this;
         }
 
         /** insert some points */
@@ -239,17 +239,17 @@ namespace chaos
      */
 
     template<typename VERTEX_TYPE>
-    void DrawLine(PrimitiveOutput<VERTEX_TYPE>& output, glm::vec2 const& p1, glm::vec2 const& p2, glm::vec4 const& color);
+    void DrawLine(GPUPrimitiveOutput<VERTEX_TYPE>& output, glm::vec2 const& p1, glm::vec2 const& p2, glm::vec4 const& color);
 
     template<typename VERTEX_TYPE>
-    void DrawBox(PrimitiveOutput<VERTEX_TYPE>& output, obox2 const& b, glm::vec4 const& color, bool fill);
+    void DrawBox(GPUPrimitiveOutput<VERTEX_TYPE>& output, obox2 const& b, glm::vec4 const& color, bool fill);
 
     template<typename VERTEX_TYPE>
-    void DrawSphere(PrimitiveOutput<VERTEX_TYPE>& output, sphere2 const& s, glm::vec4 const& color, bool fill);
+    void DrawSphere(GPUPrimitiveOutput<VERTEX_TYPE>& output, sphere2 const& s, glm::vec4 const& color, bool fill);
 
     /** text creation */
     template<typename VERTEX_TYPE>
-    QuadPrimitive<VERTEX_TYPE> DrawText(PrimitiveOutput<VERTEX_TYPE>& output, char const* in_text, ParticleTextGenerator::GeneratorParams const& params = {}, ParticleTextGenerator::CreateTextAllocationParams const& allocation_params = {}, ParticleCorners* out_bounding_box = nullptr);
+    QuadPrimitive<VERTEX_TYPE> DrawText(GPUPrimitiveOutput<VERTEX_TYPE>& output, char const* in_text, ParticleTextGenerator::GeneratorParams const& params = {}, ParticleTextGenerator::CreateTextAllocationParams const& allocation_params = {}, ParticleCorners* out_bounding_box = nullptr);
 
 
 #else // => defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -259,7 +259,7 @@ namespace chaos
      */
 
     template<typename VERTEX_TYPE>
-    void DrawLine(PrimitiveOutput<VERTEX_TYPE>& output, glm::vec2 const& p1, glm::vec2 const& p2, glm::vec4 const& color)
+    void DrawLine(GPUPrimitiveOutput<VERTEX_TYPE>& output, glm::vec2 const& p1, glm::vec2 const& p2, glm::vec4 const& color)
     {
         LinePrimitive<VERTEX_TYPE> line = output.AddLines(1);
         line[0].position = p1;
@@ -274,7 +274,7 @@ namespace chaos
     }
 
     template<typename VERTEX_TYPE>
-    void DrawBox(PrimitiveOutput<VERTEX_TYPE>& output, obox2 const& b, glm::vec4 const& color, bool fill)
+    void DrawBox(GPUPrimitiveOutput<VERTEX_TYPE>& output, obox2 const& b, glm::vec4 const& color, bool fill)
     {
         glm::vec2 vertex_positions[4];
         GenerateVertexPositionAttributes(b, b.rotator, vertex_positions); // in order BL, BR, TR, TL
@@ -298,7 +298,7 @@ namespace chaos
     }
 
     template<typename VERTEX_TYPE>
-    void DrawSphere(PrimitiveOutput<VERTEX_TYPE>& output, sphere2 const& s, glm::vec4 const& color, bool fill)
+    void DrawSphere(GPUPrimitiveOutput<VERTEX_TYPE>& output, sphere2 const& s, glm::vec4 const& color, bool fill)
     {
         constexpr int SEGMENT_COUNT = 40;
 
@@ -336,7 +336,7 @@ namespace chaos
 
     /** text creation */
     template<typename VERTEX_TYPE>
-    QuadPrimitive<VERTEX_TYPE> DrawText(PrimitiveOutput<VERTEX_TYPE>& output, char const* in_text, ParticleTextGenerator::GeneratorParams const& params, ParticleTextGenerator::CreateTextAllocationParams const& allocation_params, ParticleCorners * out_bounding_box)
+    QuadPrimitive<VERTEX_TYPE> DrawText(GPUPrimitiveOutput<VERTEX_TYPE>& output, char const* in_text, ParticleTextGenerator::GeneratorParams const& params, ParticleTextGenerator::CreateTextAllocationParams const& allocation_params, ParticleCorners * out_bounding_box)
     {
         // get the application
         WindowApplication const* window_application = Application::GetInstance();

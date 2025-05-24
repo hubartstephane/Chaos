@@ -20,7 +20,7 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 	return false;
 }
 
-void ParticlePlayerLayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, PrimitiveOutput<VertexDefault>& output) const
+void ParticlePlayerLayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, GPUPrimitiveOutput<VertexDefault>& output) const
 {
 
 

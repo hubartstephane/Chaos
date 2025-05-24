@@ -13,7 +13,7 @@
 // ===========================================================================
 
 
-void ParticleSmokeLayerTrait::ParticleToPrimitives(SmokeParticle const& particle, PrimitiveOutput<VertexBase>& output) const
+void ParticleSmokeLayerTrait::ParticleToPrimitives(SmokeParticle const& particle, GPUPrimitiveOutput<VertexBase>& output) const
 {
 	SmokeParticle other = particle;
 
@@ -48,7 +48,7 @@ bool ParticleSmokeLayerTrait::UpdateParticle(float delta_time, SmokeParticle& pa
 // ===========================================================================
 
 
-void ParticleGateLayerTrait::ParticleToPrimitives(GateParticle const& particle, PrimitiveOutput<VertexBase>& output) const
+void ParticleGateLayerTrait::ParticleToPrimitives(GateParticle const& particle, GPUPrimitiveOutput<VertexBase>& output) const
 {
 	bool door_opened = false;
 
@@ -92,7 +92,7 @@ bool ParticleGateLayerTrait::UpdateParticle(float delta_time, GateParticle& part
 // ParticleGameObjectLayerTrait
 // ===========================================================================
 
-void ParticleGameObjectLayerTrait::ParticleToPrimitives(GameObjectParticle const& particle, PrimitiveOutput<VertexBase>& output) const
+void ParticleGameObjectLayerTrait::ParticleToPrimitives(GameObjectParticle const& particle, GPUPrimitiveOutput<VertexBase>& output) const
 {
 	GameObjectParticle copy = particle;
 	copy.bounding_box.position += particle.offset * tile_size;
@@ -161,7 +161,7 @@ bool ParticleAnimatedLayerTrait::UpdateParticle(float delta_time, ParticleAnimat
 	return false;
 }
 
-void ParticleAnimatedLayerTrait::ParticleToPrimitives(ParticleAnimated const& particle, PrimitiveOutput<VertexBase>& output) const
+void ParticleAnimatedLayerTrait::ParticleToPrimitives(ParticleAnimated const& particle, GPUPrimitiveOutput<VertexBase>& output) const
 {
 	ParticleAnimated copy = particle;
 	copy.bounding_box.position += particle.offset * glm::vec2(32.0f, 32.0f); // HACK
@@ -192,7 +192,7 @@ void ParticleAnimatedLayerTrait::ParticleToPrimitives(ParticleAnimated const& pa
 // ParticlePlayerLayerTrait
 // ===========================================================================
 
-void ParticlePlayerLayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, PrimitiveOutput<VertexBase>& output) const
+void ParticlePlayerLayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, GPUPrimitiveOutput<VertexBase>& output) const
 {
 	ParticlePlayer copy = particle;
 	copy.bounding_box.position += particle.offset * tile_size;

@@ -171,7 +171,7 @@ namespace chaos
 			mesh->Clear(&particle_manager->GetBufferPool());
         else
 			mesh->Clear(&buffer_pool);
-        // select PrimitiveOutput and collect vertices
+        // select GPUPrimitiveOutput and collect vertices
 		GenerateMeshData(mesh.get(), vertex_declaration.get(), render_material.get(), vertex_requirement_evaluation);
         // mark as up to date
         require_GPU_update = false;

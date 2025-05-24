@@ -311,13 +311,13 @@ namespace chaos
 
 		/** output primitives corresponding to generated text */
 		template<typename VERTEX_TYPE>
-		QuadPrimitive<VERTEX_TYPE> TextToPrimitives(PrimitiveOutput<VERTEX_TYPE>& output, GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params = {});
+		QuadPrimitive<VERTEX_TYPE> TextToPrimitives(GPUPrimitiveOutput<VERTEX_TYPE>& output, GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params = {});
 
 #else
 
 		/** output primitives corresponding to generated text */
 		template<typename VERTEX_TYPE>
-		QuadPrimitive<VERTEX_TYPE> TextToPrimitives(PrimitiveOutput<VERTEX_TYPE>& output, GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params)
+		QuadPrimitive<VERTEX_TYPE> TextToPrimitives(GPUPrimitiveOutput<VERTEX_TYPE>& output, GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params)
 		{
 			// early exit
 			size_t token_count = generator_result.GetTokenCount();

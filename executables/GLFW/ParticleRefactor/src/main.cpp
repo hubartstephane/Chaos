@@ -50,7 +50,7 @@ public:
 		return (particle.remaining_time <= 0.0f);
 	}
 
-    void ParticleToPrimitives(ParticleExample const & particle, chaos::PrimitiveOutput<VertexExample> & output, int b, AllocationData const & trait) const
+    void ParticleToPrimitives(ParticleExample const & particle, chaos::GPUPrimitiveOutput<VertexExample> & output, int b, AllocationData const & trait) const
     {
 		if (rand() % 5 == 0) // flickering particles (not always rendered)
 			return;

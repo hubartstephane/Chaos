@@ -45,7 +45,7 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 	return false;
 }
 
-void ParticlePlayerLayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, chaos::PrimitiveOutput<chaos::VertexDefault>& output) const
+void ParticlePlayerLayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, chaos::GPUPrimitiveOutput<chaos::VertexDefault>& output) const
 {
 	ParticlePlayer clamped_particle = particle;
 

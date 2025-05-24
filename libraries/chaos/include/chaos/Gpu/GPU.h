@@ -52,5 +52,5 @@
 #include "chaos/Gpu/GPUTextureArrayGenerator.h"
 #include "chaos/Gpu/GPUAtlas.h"
 #include "chaos/Gpu/GPUResourceManager.h"
-#include "chaos/Gpu/PrimitiveOutput.h"
+#include "chaos/Gpu/GPUPrimitiveOutput.h"
 #include "chaos/Gpu/GPUDrawInterface.h"

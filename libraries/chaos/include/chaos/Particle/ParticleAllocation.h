@@ -223,7 +223,7 @@ namespace chaos
 		}
 
         /** transforms the particles into vertices in the buffer */
-        void ParticlesToPrimitives(PrimitiveOutput<vertex_type>& output, layer_trait_type const* layer_trait) const
+        void ParticlesToPrimitives(GPUPrimitiveOutput<vertex_type>& output, layer_trait_type const* layer_trait) const
         {
 			using Flags = ParticleToPrimitive_ImplementationFlags;
 
@@ -392,7 +392,7 @@ namespace chaos
 		}
 
         template<typename ...PARAMS>
-		void DoParticlesToPrimitivesLoop_LayerTraitImplementation(layer_trait_type const * layer_trait, PrimitiveOutput<vertex_type>& output, PARAMS && ...params) const
+		void DoParticlesToPrimitivesLoop_LayerTraitImplementation(layer_trait_type const * layer_trait, GPUPrimitiveOutput<vertex_type>& output, PARAMS && ...params) const
         {
             ParticleConstAccessor<particle_type> particle_accessor = GetParticleAccessor();
 
@@ -401,7 +401,7 @@ namespace chaos
         }
 
 		template<typename ...PARAMS>
-		void DoParticlesToPrimitivesLoop_ParticleImplementation(PrimitiveOutput<vertex_type>& output, PARAMS && ...params) const
+		void DoParticlesToPrimitivesLoop_ParticleImplementation(GPUPrimitiveOutput<vertex_type>& output, PARAMS && ...params) const
 		{
 			ParticleConstAccessor<particle_type> particle_accessor = GetParticleAccessor();
 
@@ -410,7 +410,7 @@ namespace chaos
 		}
 
 		template<typename ...PARAMS>
-		void DoParticlesToPrimitivesLoop_DefaultImplementation(PrimitiveOutput<vertex_type>& output, PARAMS && ...params) const
+		void DoParticlesToPrimitivesLoop_DefaultImplementation(GPUPrimitiveOutput<vertex_type>& output, PARAMS && ...params) const
 		{
 			ParticleConstAccessor<particle_type> particle_accessor = GetParticleAccessor();
 

@@ -94,7 +94,7 @@ namespace chaos
 
 	/** output primitive */
 	template<typename VERTEX_TYPE>
-	void ParticleToPrimitives(ParticleDefault const& particle, PrimitiveOutput<VERTEX_TYPE>& output);
+	void ParticleToPrimitives(ParticleDefault const& particle, GPUPrimitiveOutput<VERTEX_TYPE>& output);
 	/** generates 1 quad from one particle */
 	template<typename VERTEX_TYPE>
 	void ParticleToPrimitive(ParticleDefault const& particle, QuadPrimitive<VERTEX_TYPE>& primitive);
@@ -116,7 +116,7 @@ namespace chaos
 #else
 
 	template<typename VERTEX_TYPE>
-	void ParticleToPrimitives(ParticleDefault const& particle, PrimitiveOutput<VERTEX_TYPE>& output)
+	void ParticleToPrimitives(ParticleDefault const& particle, GPUPrimitiveOutput<VERTEX_TYPE>& output)
 	{
 		QuadPrimitive<VERTEX_TYPE> quad = output.AddQuads();
 		ParticleToPrimitive(particle, quad);

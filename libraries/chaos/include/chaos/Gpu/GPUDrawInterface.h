@@ -12,21 +12,21 @@ namespace chaos
 	 */
 
 	template<typename VERTEX_TYPE>
-	class GPUDrawInterface : public PrimitiveOutput<VERTEX_TYPE>
+	class GPUDrawInterface : public GPUPrimitiveOutput<VERTEX_TYPE>
 	{
 	public:
 
-		/** default/minimum number of vertices allocation (same value than PrimitiveOutput's) */
+		/** default/minimum number of vertices allocation (same value than GPUPrimitiveOutput's) */
 		static constexpr size_t MIN_VERTEX_ALLOCATION = 100;
 
 		/** constructor */
 		GPUDrawInterface(ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION) :
-			PrimitiveOutput<VERTEX_TYPE>(&mesh, GetBufferPool(), GetVertexDeclaration(), in_render_material_request, in_vertex_requirement_evaluation)
+			GPUPrimitiveOutput<VERTEX_TYPE>(&mesh, GetBufferPool(), GetVertexDeclaration(), in_render_material_request, in_vertex_requirement_evaluation)
 		{
 		}
 		/** constructor */
 		GPUDrawInterface(GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION) :
-			PrimitiveOutput<VERTEX_TYPE>(&mesh, GetBufferPool(), GetVertexDeclaration(), (in_render_material != nullptr) ? in_render_material : DefaultScreenSpaceProgram::GetMaterial(), in_vertex_requirement_evaluation)
+			GPUPrimitiveOutput<VERTEX_TYPE>(&mesh, GetBufferPool(), GetVertexDeclaration(), (in_render_material != nullptr) ? in_render_material : DefaultScreenSpaceProgram::GetMaterial(), in_vertex_requirement_evaluation)
 		{
 		}
 

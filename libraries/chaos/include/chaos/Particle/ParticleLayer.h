@@ -142,7 +142,7 @@ namespace chaos
 		/** override */
 		virtual bool DoUpdateGPUResources(GPURenderContext* render_context) override;
 
-		/** select the PrimitiveOutput and update the rendering GPU resources */
+		/** select the GPUPrimitiveOutput and update the rendering GPU resources */
 		virtual void GenerateMeshData(GPUMesh* in_mesh, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t previous_frame_vertices_count) {}
 
 		/** returns the number of vertices used in a dynamic mesh */
@@ -259,7 +259,7 @@ namespace chaos
 		virtual void GenerateMeshData(GPUMesh* in_mesh, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t vertex_requirement_evaluation) override;
 
 		// convert particles into vertices
-		void ParticlesToPrimitivesLoop(PrimitiveOutput<vertex_type>& output);
+		void ParticlesToPrimitivesLoop(GPUPrimitiveOutput<vertex_type>& output);
 	};
 
 
@@ -271,12 +271,12 @@ namespace chaos
 		// some layers are in a manager, some not (see TiledMap)
 		GPUBufferPool* cache = (particle_manager == nullptr) ? &buffer_pool : &particle_manager->GetBufferPool();
 
-		PrimitiveOutput<vertex_type> output(in_mesh, cache, in_vertex_declaration, in_render_material, vertex_requirement_evaluation);
+		GPUPrimitiveOutput<vertex_type> output(in_mesh, cache, in_vertex_declaration, in_render_material, vertex_requirement_evaluation);
 		ParticlesToPrimitivesLoop(output);
 	}
 
 	template<typename LAYER_TRAIT>
-	void ParticleLayer<LAYER_TRAIT>::ParticlesToPrimitivesLoop(PrimitiveOutput<vertex_type>& output)
+	void ParticleLayer<LAYER_TRAIT>::ParticlesToPrimitivesLoop(GPUPrimitiveOutput<vertex_type>& output)
 	{
 		size_t count = particles_allocations.size();
 		for (size_t i = 0; i < count; ++i)

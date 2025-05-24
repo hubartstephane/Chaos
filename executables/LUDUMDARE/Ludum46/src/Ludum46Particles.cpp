@@ -242,7 +242,7 @@ static bool DoUpdateBloodParticle(float delta_time, ParticleAnimated & particle)
 // ParticleBloodLayerTrait
 // ===========================================================================
 
-void ParticleBloodLayerTrait::ParticleToPrimitives(ParticleBlood const& particle, chaos::PrimitiveOutput<VertexBase>& output) const
+void ParticleBloodLayerTrait::ParticleToPrimitives(ParticleBlood const& particle, chaos::GPUPrimitiveOutput<VertexBase>& output) const
 {
 	ParticleBlood other = particle;
 	other.bounding_box.half_size *= 1.0f + (other.life / other.duration);
@@ -265,7 +265,7 @@ bool ParticleBloodLayerTrait::UpdateParticle(float delta_time, ParticleBlood & p
 // ParticleBurnedSoulLayerTrait
 // ===========================================================================
 
-void ParticleBurnedSoulLayerTrait::ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::PrimitiveOutput<VertexBase>& output, int useless) const
+void ParticleBurnedSoulLayerTrait::ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::GPUPrimitiveOutput<VertexBase>& output, int useless) const
 {
 	ParticleBurnedSoul other = particle;
 	other.bounding_box.position.x += 50.0f * std::sin(other.offset_t);

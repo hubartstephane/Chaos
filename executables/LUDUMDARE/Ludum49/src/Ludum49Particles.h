@@ -37,7 +37,7 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticlePlayer & particle) const;
 
-	void ParticleToPrimitives(ParticlePlayer const& particle, PrimitiveOutput<VertexDefault>& output) const;
+	void ParticleToPrimitives(ParticlePlayer const& particle, GPUPrimitiveOutput<VertexDefault>& output) const;
 
 	void UpdateRenderingStates(GPURenderContext* render_context, bool begin) const
 	{

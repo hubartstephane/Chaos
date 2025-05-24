@@ -226,7 +226,7 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer& 
 // ParticleEnemyLayerTrait
 // ===========================================================================
 
-void ParticleEnemyLayerTrait::ParticleToPrimitives(ParticleEnemy const& particle, chaos::PrimitiveOutput<VertexBase>& output) const
+void ParticleEnemyLayerTrait::ParticleToPrimitives(ParticleEnemy const& particle, chaos::GPUPrimitiveOutput<VertexBase>& output) const
 {
     chaos::QuadPrimitive<VertexBase> primitive = output.AddQuads();
 

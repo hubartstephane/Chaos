@@ -34,7 +34,7 @@ class ParticleSmokeLayerTrait : public ParticleLayerTrait<SmokeParticle, VertexB
 {
 public:
 
-	void ParticleToPrimitives(SmokeParticle const& particle, PrimitiveOutput<VertexBase>& output) const;
+	void ParticleToPrimitives(SmokeParticle const& particle, GPUPrimitiveOutput<VertexBase>& output) const;
 
 	bool UpdateParticle(float delta_time, SmokeParticle& particle) const;
 
@@ -61,7 +61,7 @@ class ParticleGateLayerTrait : public ParticleLayerTrait<GateParticle, VertexBas
 {
 public:
 
-	void ParticleToPrimitives(GateParticle const& particle, PrimitiveOutput<VertexBase>& output) const;
+	void ParticleToPrimitives(GateParticle const& particle, GPUPrimitiveOutput<VertexBase>& output) const;
 
 	bool UpdateParticle(float delta_time, GateParticle& particle) const;
 
@@ -119,7 +119,7 @@ class ParticleGameObjectLayerTrait : public ParticleLayerTrait<GameObjectParticl
 {
 public:
 
-	void ParticleToPrimitives(GameObjectParticle const& particle, PrimitiveOutput<VertexBase>& output) const;
+	void ParticleToPrimitives(GameObjectParticle const& particle, GPUPrimitiveOutput<VertexBase>& output) const;
 
 	bool UpdateParticle(float delta_time, GameObjectParticle& particle) const;
 
@@ -152,7 +152,7 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticleAnimated& particle) const;
 
-	void ParticleToPrimitives(ParticleAnimated const& particle, PrimitiveOutput<VertexBase>& output) const;
+	void ParticleToPrimitives(ParticleAnimated const& particle, GPUPrimitiveOutput<VertexBase>& output) const;
 
 };
 
@@ -182,7 +182,7 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticlePlayer & particle) const;
 
-	void ParticleToPrimitives(ParticlePlayer const& particle, PrimitiveOutput<VertexBase>& output) const;
+	void ParticleToPrimitives(ParticlePlayer const& particle, GPUPrimitiveOutput<VertexBase>& output) const;
 
 public:
 

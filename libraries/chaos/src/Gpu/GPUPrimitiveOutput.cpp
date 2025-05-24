@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-    PrimitiveOutputBase::PrimitiveOutputBase(GPUMesh* in_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation) :
+    GPUPrimitiveOutputBase::GPUPrimitiveOutputBase(GPUMesh* in_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation) :
         mesh(in_mesh),
         buffer_pool(in_buffer_pool),
         vertex_declaration(in_vertex_declaration),
@@ -19,20 +19,20 @@ namespace chaos
         assert((quad_index_buffer != nullptr) && (max_quad_count != 0));
     }
 
-    PrimitiveOutputBase::PrimitiveOutputBase(GPUMesh* in_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation):
-        PrimitiveOutputBase(in_mesh, in_buffer_pool, in_vertex_declaration, nullptr, in_vertex_requirement_evaluation)
+    GPUPrimitiveOutputBase::GPUPrimitiveOutputBase(GPUMesh* in_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation):
+        GPUPrimitiveOutputBase(in_mesh, in_buffer_pool, in_vertex_declaration, nullptr, in_vertex_requirement_evaluation)
     {
         GPUResourceManager* resource_manager = WindowApplication::GetGPUResourceManagerInstance();
         if (resource_manager != nullptr)
             render_material = resource_manager->FindRenderMaterial(in_render_material_request);
     }
 
-    PrimitiveOutputBase::~PrimitiveOutputBase()
+    GPUPrimitiveOutputBase::~GPUPrimitiveOutputBase()
     {
         Flush();
     }
 
-    AtlasBitmapInfo const* PrimitiveOutputBase::FindBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request) const
+    AtlasBitmapInfo const* GPUPrimitiveOutputBase::FindBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request) const
     {
         // get the application
         WindowApplication const* window_application = Application::GetInstance();
@@ -49,7 +49,7 @@ namespace chaos
         return folder_info->GetBitmapInfo(bitmap_request);
     }
 
-    GPUPrimitiveBufferCacheEntry * PrimitiveOutputBase::GetInternalCachedBuffer(size_t required_size)
+    GPUPrimitiveBufferCacheEntry * GPUPrimitiveOutputBase::GetInternalCachedBuffer(size_t required_size)
     {
         for (GPUPrimitiveBufferCacheEntry& cache_entry : internal_buffer_pool)
             if (cache_entry.buffer_end - cache_entry.buffer_position >= int(required_size))
@@ -57,7 +57,7 @@ namespace chaos
         return nullptr;
     }
 
-    void PrimitiveOutputBase::GiveBufferToInternalCache(GPUBuffer* in_buffer, char* in_buffer_start, char* in_buffer_position, char* in_buffer_end)
+    void GPUPrimitiveOutputBase::GiveBufferToInternalCache(GPUBuffer* in_buffer, char* in_buffer_start, char* in_buffer_position, char* in_buffer_end)
     {
         assert(in_buffer != nullptr);
         assert(in_buffer_start != nullptr);
@@ -77,7 +77,7 @@ namespace chaos
         internal_buffer_pool.push_back({ in_buffer, in_buffer_start, in_buffer_position, in_buffer_end });
     }
 
-    void PrimitiveOutputBase::Flush()
+    void GPUPrimitiveOutputBase::Flush()
     {
         // finalize the mesh
         FlushMeshElement();
@@ -102,7 +102,7 @@ namespace chaos
         buffer_start = buffer_unflushed = buffer_position = buffer_end = nullptr;
     }
 
-    char* PrimitiveOutputBase::AllocateBufferMemory(size_t in_size)
+    char* GPUPrimitiveOutputBase::AllocateBufferMemory(size_t in_size)
     {
         if (buffer_start == nullptr || (buffer_end - buffer_position) < int(in_size)) // not enough memory in current buffer ?
         {
@@ -151,7 +151,7 @@ namespace chaos
         return result;
     }
 
-    void PrimitiveOutputBase::SetRenderMaterial(GPURenderMaterial* in_render_material)
+    void GPUPrimitiveOutputBase::SetRenderMaterial(GPURenderMaterial* in_render_material)
     {
         assert(in_render_material != nullptr);
         if (render_material != in_render_material)
@@ -161,14 +161,14 @@ namespace chaos
         }
     }
 
-    void PrimitiveOutputBase::SetRenderMaterial(ObjectRequest render_material_request)
+    void GPUPrimitiveOutputBase::SetRenderMaterial(ObjectRequest render_material_request)
     {
         GPUResourceManager* resource_manager = WindowApplication::GetGPUResourceManagerInstance();
         if (resource_manager != nullptr)
             SetRenderMaterial(resource_manager->FindRenderMaterial(render_material_request));
     }
 
-    void PrimitiveOutputBase::FlushMeshElement()
+    void GPUPrimitiveOutputBase::FlushMeshElement()
     {
         FlushDrawPrimitive();
         if (pending_primitives.size() > 0)
@@ -182,7 +182,7 @@ namespace chaos
         }
     }
 
-    void PrimitiveOutputBase::FlushDrawPrimitive()
+    void GPUPrimitiveOutputBase::FlushDrawPrimitive()
     {
         if (buffer_unflushed != buffer_position) // something to flush
         {
@@ -224,7 +224,7 @@ namespace chaos
         }
     }
 
-    char* PrimitiveOutputBase::GeneratePrimitive(size_t requested_size, PrimitiveType primitive_type)
+    char* GPUPrimitiveOutputBase::GeneratePrimitive(size_t requested_size, PrimitiveType primitive_type)
     {
         assert(requested_size != 0);
         assert(primitive_type != PrimitiveType::NONE);

@@ -76,7 +76,7 @@ namespace chaos
 			using vertex = typename trait::vertex_type;
 			using accessor = ParticleConstAccessor<particle>;
 
-			using primitive_output = PrimitiveOutput<vertex>;
+			using primitive_output = GPUPrimitiveOutput<vertex>;
 
 			using Flags = ParticleToPrimitive_ImplementationFlags;
 

@@ -49,7 +49,7 @@ class PowerUpZoneParticleLayerTrait : public chaos::ParticleLayerTrait<ParticleP
 {
 public:
 
-    void ParticleToPrimitives(chaos::TMParticle const& particle, chaos::PrimitiveOutput<VertexPowerUpZone>& output) const;
+    void ParticleToPrimitives(chaos::TMParticle const& particle, chaos::GPUPrimitiveOutput<VertexPowerUpZone>& output) const;
 
 	bool UpdateParticle(float delta_time, ParticlePowerUpZone & particle);
 };
@@ -90,7 +90,7 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticleEnemy& particle, ParticleEnemyUpdateData const & update_data) const;
 
-    void ParticleToPrimitives(ParticleEnemy const& particle, chaos::PrimitiveOutput<VertexBase>& output) const;
+    void ParticleToPrimitives(ParticleEnemy const& particle, chaos::GPUPrimitiveOutput<VertexBase>& output) const;
 
 public:
 
@@ -132,7 +132,7 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticleFire& particle, ParticleFireUpdateData const & update_data) const;
 
-    void ParticleToPrimitives(ParticleFire const& particle, chaos::PrimitiveOutput<VertexBase>& output) const;
+    void ParticleToPrimitives(ParticleFire const& particle, chaos::GPUPrimitiveOutput<VertexBase>& output) const;
 
 public:
 

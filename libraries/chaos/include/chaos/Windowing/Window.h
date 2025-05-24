@@ -181,7 +181,7 @@ namespace chaos
 		virtual aabox2 GetRequiredViewport(glm::ivec2 const& size) const;
 
 		/** getting the render_context */
-		GPURenderContext* GetRenderContext() const { return render_context.get(); }
+		GPURenderContext* GetGPURenderContext() const { return render_context.get(); }
 
 		/** get the root widget */
 		WindowRootWidget* GetRootWidget() { return root_widget.get(); }

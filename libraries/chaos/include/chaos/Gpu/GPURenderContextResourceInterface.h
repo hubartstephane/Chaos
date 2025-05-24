@@ -18,7 +18,7 @@ namespace chaos
 		GPURenderContextResourceInterface(GPURenderContext* in_gpu_render_context);
 
 		/** getter on the render context  */
-		GPURenderContext* GetRenderContext() const { return gpu_render_context.get(); }
+		GPURenderContext* GetGPURenderContext() const { return gpu_render_context.get(); }
 
 		/** getter on the device */
 		GPUDevice * GetGPUDevice() const;

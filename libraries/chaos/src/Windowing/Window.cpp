@@ -1053,7 +1053,7 @@ namespace chaos
 			glm::ivec2 window_size = GetWindowSize(false); // only interrested in client area
 
 			// generate a framebuffer
-			GPUFramebufferGenerator framebuffer_generator(GetRenderContext());
+			GPUFramebufferGenerator framebuffer_generator(GetGPURenderContext());
 			framebuffer_generator.AddColorAttachment(0, PixelFormat::BGRA, window_size, "scene");
 			framebuffer_generator.AddDepthStencilAttachment(window_size, "depth");
 

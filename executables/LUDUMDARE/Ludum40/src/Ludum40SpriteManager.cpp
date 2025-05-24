@@ -194,7 +194,7 @@ void SpriteManager::Display(chaos::GPUProgramProviderBase* uniform_provider)
 	binding_info.program            = program.get();
 	binding_info.vertex_buffer      = vertex_buffer.get();
 	binding_info.vertex_declaration = &declaration;
-	game->GetWindow()->GetRenderContext()->BindVertexArray(binding_info);
+	game->GetWindow()->GetGPURenderContext()->BindVertexArray(binding_info);
 
 	// context states
 	glEnable(GL_BLEND);

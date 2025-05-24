@@ -10,7 +10,7 @@ namespace chaos
 
 	void ImGuiRenderingStatObject::DrawStat(char const* title, Window* window, LightweightFunction<float(GPURenderContextFrameStats const&)> stat_getter)
 	{
-		GPURenderContext * render_context = window->GetRenderContext();
+		GPURenderContext * render_context = window->GetGPURenderContext();
 		if (render_context == nullptr)
 			return;
 

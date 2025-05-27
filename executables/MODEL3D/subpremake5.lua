@@ -4,5 +4,4 @@
 
 build:ProcessSubPremake("AssimpImport")
 build:ProcessSubPremake("MultiMeshGenerator")
-build:ProcessSubPremake("WindowRefactor")
 build:ProcessSubPremake("ShaderCompare")

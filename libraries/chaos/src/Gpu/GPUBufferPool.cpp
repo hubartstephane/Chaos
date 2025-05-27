@@ -125,8 +125,15 @@ namespace chaos
 
 	void GPUBufferPool::ReleaseBufferInfo(GPUBufferPoolBufferInfo & in_buffer_info)
 	{
+		GLuint buffer_id = in_buffer_info.buffer_id;
 		glDeleteBuffers(1, &in_buffer_info.buffer_id);
 		in_buffer_info.buffer_id = 0;
+		OnBufferDestroyed(buffer_id);
+	}
+
+	void GPUBufferPool::OnBufferDestroyed(GLuint in_buffer_id)
+	{
+		gpu_device->OnBufferDestroyed(in_buffer_id);
 	}
 
 }; // namespace chaos

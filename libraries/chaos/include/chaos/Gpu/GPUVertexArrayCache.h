@@ -45,6 +45,10 @@ namespace chaos
 
 		/** whether the entry is still valid (whether one of the pointed element has been destroyed) */
 		bool IsValid() const;
+		/** returns true whether the vertex_array is using the buffer */
+		bool UseVertexBuffer(GLuint in_buffer_id) const;
+		/** returns true whether the vertex_array is using the program */
+		bool UseProgram(GLuint in_program_id) const;
 
 	public:
 
@@ -53,10 +57,6 @@ namespace chaos
 
 		/** the program concerned */
 		weak_ptr<GPUProgram const> program;
-		/** the vertex buffer concerned */
-		weak_ptr<GPUBuffer const> vertex_buffer;
-		/** the index buffer concerned */
-		weak_ptr<GPUBuffer const> index_buffer;
 
 		/** the index of the program */
 		GLuint program_id = 0;
@@ -96,6 +96,10 @@ namespace chaos
 		void Destroy();
 		/** free vertex array resource */
 		void ReleaseVertexArray(GPUVertexArray * vertex_array);
+		/** called whenever a buffer resource is destroyed */
+		void OnBufferDestroyed(GLuint in_buffer_id);
+		/** called whenever a program resource is destroyed */
+		void OnProgramDestroyed(GLuint in_program_id);
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;

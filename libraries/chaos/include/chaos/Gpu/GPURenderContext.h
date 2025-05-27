@@ -31,6 +31,7 @@ namespace chaos
 	class CHAOS_API GPURenderContext : public Tickable, public GPUDeviceResourceInterface
 	{
 		friend class Window;
+		friend class GPUDevice;
 
 	public:
 
@@ -82,6 +83,11 @@ namespace chaos
 		void BeginRenderingFrame();
 		/** called at the end of a new frame */
 		void EndRenderingFrame();
+
+		/** called whenever a buffer resource is destroyed */
+		void OnBufferDestroyed(GLuint in_buffer_id);
+		/** called whenever a program resource is destroyed */
+		void OnProgramDestroyed(GLuint in_program_id);
 
 	protected:
 

@@ -119,4 +119,14 @@ namespace chaos
 		return new GPUTexture(this, texture_id, in_texture_description);
 	}
 
+	void GPUDevice::OnBufferDestroyed(GLuint in_buffer_id)
+	{
+
+	}
+
+	void GPUDevice::OnProgramDestroyed(GLuint in_program_id)
+	{
+
+	}
+
 }; // namespace chaos

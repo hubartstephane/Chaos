@@ -11,24 +11,24 @@ namespace chaos
 			return false;
 		else if (program_id != program->GetResourceID()) // the program OpenGL resource has changed. it is invalid
 			return false;
-		// check vertex buffer
-		if (vertex_buffer == nullptr)
-		{
-			if (vertex_buffer_id != 0) // there was a vertex buffer. It has been deleted
-				return false;
-		}
-		else if (vertex_buffer_id != vertex_buffer->GetResourceID()) // the vertex buffer OpenGL resource has changed. it is invalid
-			return false;
-		// check index buffer
-		if (index_buffer == nullptr)
-		{
-			if (index_buffer_id != 0) // there was an index buffer. It has been deleted
-				return false;
-		}
-		else if (index_buffer_id != index_buffer->GetResourceID()) // the index buffer OpenGL resource has changed. it is invalid
-			return false;
 		// OK
 		return true;
+	}
+
+	bool GPUVertexArrayCacheEntry::UseVertexBuffer(GLuint in_buffer_id) const
+	{
+		if (vertex_buffer_id == in_buffer_id)
+			return true;
+		if (index_buffer_id == in_buffer_id)
+			return true;
+		return false;
+	}
+
+	bool GPUVertexArrayCacheEntry::UseProgram(GLuint in_program_id) const
+	{
+		if (program_id == in_program_id)
+			return true;
+		return false;
 	}
 
 	// Due to OpenGL implementation, VertexArrays have to be deleted with the proper GLFW context set
@@ -89,11 +89,14 @@ namespace chaos
 
 	GPUVertexArray const* GPUVertexArrayCache::FindVertexArray(GPUVertexArrayBindingInfo const& binding_info) const
 	{
+		GLuint search_vertex_buffer_id = (binding_info.vertex_buffer != nullptr)? binding_info.vertex_buffer->GetResourceID() : 0;
+		GLuint search_index_buffer_id  = (binding_info.index_buffer  != nullptr)? binding_info.index_buffer->GetResourceID()  : 0;
+
 		for (GPUVertexArrayCacheEntry const & entry : entries)
 		{
 			if (entry.program == binding_info.program &&
-				entry.vertex_buffer == binding_info.vertex_buffer &&
-				entry.index_buffer == binding_info.index_buffer &&
+				entry.vertex_buffer_id     == search_vertex_buffer_id &&
+				entry.index_buffer_id      == search_index_buffer_id &&
 				entry.vertex_buffer_offset == binding_info.offset)
 			{
 				return entry.vertex_array.get();
@@ -141,8 +144,6 @@ namespace chaos
 		GPUVertexArrayCacheEntry new_entry;
 		new_entry.vertex_array         = result;
 		new_entry.program              = binding_info.program;
-		new_entry.vertex_buffer        = binding_info.vertex_buffer;
-		new_entry.index_buffer         = binding_info.index_buffer;
 		new_entry.program_id           = binding_info.program->GetResourceID();
 		new_entry.vertex_buffer_id     = (binding_info.vertex_buffer != nullptr) ? binding_info.vertex_buffer->GetResourceID() : 0;
 		new_entry.index_buffer_id      = (binding_info.index_buffer != nullptr) ? binding_info.index_buffer->GetResourceID() : 0;
@@ -167,6 +168,32 @@ namespace chaos
 			if (entry.vertex_array != nullptr)
 				ReleaseVertexArray(entry.vertex_array.get());
 		entries.clear();
+	}
+
+	void GPUVertexArrayCache::OnBufferDestroyed(GLuint in_buffer_id)
+	{
+		for (size_t i = entries.size() ; i > 0 ; --i)
+		{
+			GPUVertexArrayCacheEntry & entry = entries[i - 1];
+			if (entry.UseVertexBuffer(in_buffer_id))
+			{
+				entry = entries[entries.size() - 1];
+				entries.pop_back();
+			}
+		}
+	}
+
+	void GPUVertexArrayCache::OnProgramDestroyed(GLuint in_program_id)
+	{
+		for (size_t i = entries.size() ; i > 0 ; --i)
+		{
+			GPUVertexArrayCacheEntry & entry = entries[i - 1];
+			if (entry.UseProgram(in_program_id))
+			{
+				entry = entries[entries.size() - 1];
+				entries.pop_back();
+			}
+		}
 	}
 
 }; // namespace chaos

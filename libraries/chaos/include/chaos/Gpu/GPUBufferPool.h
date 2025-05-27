@@ -71,6 +71,8 @@ namespace chaos
 		GPUBufferPoolBufferInfoGroup * FindOrCreateBufferInfoGroup(GPUFence * in_fence);
 		/** release one BufferInfo */
 		void ReleaseBufferInfo(GPUBufferPoolBufferInfo & in_buffer_info);
+		/** called whenever a buffer resource is destroyed */
+		void OnBufferDestroyed(GLuint in_buffer_id);
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;

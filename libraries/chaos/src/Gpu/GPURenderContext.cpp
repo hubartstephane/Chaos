@@ -242,4 +242,14 @@ namespace chaos
 		}
 	}
 
+	void GPURenderContext::OnBufferDestroyed(GLuint in_buffer_id)
+	{
+		vertex_array_cache.OnBufferDestroyed(in_buffer_id);
+	}
+
+	void GPURenderContext::OnProgramDestroyed(GLuint in_program_id)
+	{
+		vertex_array_cache.OnProgramDestroyed(in_program_id);
+	}
+
 }; // namespace chaos

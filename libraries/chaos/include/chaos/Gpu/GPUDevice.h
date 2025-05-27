@@ -12,6 +12,8 @@ namespace chaos
 
 	class CHAOS_API GPUDevice : public Tickable, public ConfigurationUserInterface
 	{
+		friend class GPUBufferPool;
+
 	public:
 
 		/** constructor */
@@ -37,6 +39,11 @@ namespace chaos
 
 		/** internal method for initialization */
 		virtual bool OnInitialize(JSONReadConfiguration config);
+
+		/** called whenever a buffer resource is destroyed */
+		void OnBufferDestroyed(GLuint in_buffer_id);
+		/** called whenever a program resource is destroyed */
+		void OnProgramDestroyed(GLuint in_program_id);
 
 	protected:
 

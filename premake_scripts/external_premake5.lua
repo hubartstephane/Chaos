@@ -283,8 +283,8 @@ build:DeclareExternalLib("ZLIB")
 --------------------------------------------------------------------
 
 if WINDOWS then
-	BOOST_PATH     = "boost_1_83_0"
-	BOOST_INC_PATH = path.join("include", "boost-1_83")
+	BOOST_PATH     = "boost_1_88_0"
+	BOOST_INC_PATH = path.join("include", "boost-1_88")
 	BOOST_LIB_PATH = "lib"
 end
 if LINUX then

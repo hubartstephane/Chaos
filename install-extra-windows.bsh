@@ -169,16 +169,16 @@ if [ $INSTALL_BOOST -gt 0 ] ; then
 
 	Title "Install Boost"
 	
-	rm -fr $EXTERNAL_PATH/boost_1_83_0
+	rm -fr $EXTERNAL_PATH/boost_1_88_0
 
-	BOOST_URL=https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.zip
+	BOOST_URL=https://archives.boost.io/release/1.88.0/source/boost_1_88_0.zip
 	
-	curl -L $BOOST_URL --output $BASE_BUILD_PATH/boost_1_83_0.zip --ssl-no-revoke
-	unzip $BASE_BUILD_PATH/boost_1_83_0.zip -d $BASE_BUILD_PATH
-	cd $BASE_BUILD_PATH/boost_1_83_0
-	$BASE_BUILD_PATH/boost_1_83_0/bootstrap.bat
-	$BASE_BUILD_PATH/boost_1_83_0/b2
-	$BASE_BUILD_PATH/boost_1_83_0/b2 install --prefix=$BASE_INSTALL_PATH/boost_1_83_0
+	curl -L $BOOST_URL --output $BASE_BUILD_PATH/boost_1_88_0.zip --ssl-no-revoke
+	unzip $BASE_BUILD_PATH/boost_1_88_0.zip -d $BASE_BUILD_PATH
+	cd $BASE_BUILD_PATH/boost_1_88_0
+	$BASE_BUILD_PATH/boost_1_88_0/bootstrap.bat
+	$BASE_BUILD_PATH/boost_1_88_0/b2
+	$BASE_BUILD_PATH/boost_1_88_0/b2 install --prefix=$BASE_INSTALL_PATH/boost_1_88_0
 	cd -
 fi
 

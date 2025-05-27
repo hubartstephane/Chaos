@@ -57,7 +57,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GPUBuffer::SetBufferData(char const * in_data, size_t in_start, size_t in_size)
+	bool GPUBuffer::SetBufferData(void const * in_data, size_t in_start, size_t in_size)
 	{
 		// early exit
 		if (buffer_id == 0)

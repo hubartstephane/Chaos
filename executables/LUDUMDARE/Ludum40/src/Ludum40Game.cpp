@@ -468,7 +468,7 @@ bool Game::LoadBackgroundTexture(size_t index)
   index = index % background_paths.size();
 
   chaos::FilePathParam path(background_paths[index]);
-  chaos::shared_ptr<chaos::GPUTexture> new_background = chaos::GPUTextureLoader(WindowApplication::GetGPUDeviceInstance()).GenTextureObject(path);
+  chaos::shared_ptr<chaos::GPUTexture> new_background = chaos::GPUTextureLoader(chaos::WindowApplication::GetGPUDeviceInstance()).GenTextureObject(path);
   if (new_background == nullptr)
     return false;
   background_texture = new_background;

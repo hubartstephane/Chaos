@@ -92,10 +92,6 @@ bool SpriteManager::DoInitialize(SpriteManagerInitParams& params)
 	declaration.Push(chaos::VertexAttributeSemantic::TEXCOORD, 0, chaos::VertexAttributeType::FLOAT3);
 	declaration.Push(chaos::VertexAttributeSemantic::COLOR, 0, chaos::VertexAttributeType::FLOAT3);
 
-	vertex_buffer = new chaos::GPUBuffer(true);
-	if (vertex_buffer == nullptr)
-		return false;
-
 	return true;
 }
 
@@ -185,6 +181,17 @@ void SpriteManager::Display(chaos::GPUProgramProviderBase* uniform_provider)
 	size_t count = sprites.size();
 	if (count == 0)
 		return;
+
+	size_t required_size = count * sizeof(SpriteVertex);
+	if (vertex_buffer == nullptr || vertex_buffer->GetBufferSize() < required_size)
+	{
+		vertex_buffer = chaos::WindowApplication::GetGPUDeviceInstance()->CreateBuffer(required_size, chaos::GPUBufferFlags::Dynamic);
+		if (vertex_buffer == nullptr)
+			return;
+	}
+
+	vertex_buffer->SetBufferData(&sprites[0], 0, required_size);
+
 
 	// fill GPU buffer
 	glNamedBufferData(vertex_buffer->GetResourceID(), count * sizeof(SpriteVertex), &sprites[0], GL_STATIC_DRAW);

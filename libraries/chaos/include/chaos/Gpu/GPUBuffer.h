@@ -54,7 +54,7 @@ namespace chaos
 		bool IsMapped() const { return mapped; }
 
 		/** update the data of the buffer */
-		bool SetBufferData(char const* in_data, size_t in_start, size_t in_size);
+		bool SetBufferData(void const* in_data, size_t in_start, size_t in_size);
 		/** map the buffer */
 		char* MapBuffer(size_t in_start = 0, size_t in_size = 0, GPUBufferMapFlags in_flags = GPUBufferMapFlags::Write);
 		/** unmap the buffer */

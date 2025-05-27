@@ -117,7 +117,7 @@ namespace chaos
 	bool Window::CreateRenderContext()
 	{
 		assert(render_context == nullptr);
-		render_context = new GPURenderContext(GetGPUDevice(), this);
+		render_context = GetGPUDevice()->CreateRenderContext(this);
 		if (render_context == nullptr)
 			return false;
 		return true;

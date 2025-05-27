@@ -35,8 +35,8 @@ namespace chaos
 
 	public:
 
-		/** constructor */
-		GPURenderContext(GPUDevice * in_gpu_device, Window* in_window);
+		/** override */
+		virtual void SubReference() override;
 
 		/** render a frame (into the window directly) */
 		bool RenderFrame(LightweightFunction<bool()> render_func);
@@ -72,6 +72,9 @@ namespace chaos
 		Window* GetWindow() const { return window.get(); }
 
 	protected:
+
+		/** constructor */
+		GPURenderContext(GPUDevice * in_gpu_device, Window* in_window);
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;

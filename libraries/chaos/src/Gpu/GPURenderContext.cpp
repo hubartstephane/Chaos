@@ -252,4 +252,13 @@ namespace chaos
 		vertex_array_cache.OnProgramDestroyed(in_program_id);
 	}
 
+	void GPURenderContext::SubReference()
+	{
+		--shared_count;
+		if (shared_count == 0)
+			OnLastReferenceLost();
+		else if (shared_count == 1) // the last reference is comming from GPUDevice
+			gpu_device->OnRenderContextDestroyed(this);
+	}
+
 }; // namespace chaos

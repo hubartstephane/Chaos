@@ -482,6 +482,9 @@ namespace chaos
 	{
 		assert(glfwGetCurrentContext() == shared_context);
 
+		// tick the device
+		if (gpu_device != nullptr)
+			gpu_device->Tick(delta_time);
 		// tick the managers
 		if (main_clock != nullptr)
 			main_clock->TickClock(delta_time);
@@ -752,6 +755,22 @@ namespace chaos
 		if (application == nullptr)
 			return nullptr;
 		return application->GetSoundManager();
+	}
+
+	GPUDevice* WindowApplication::GetGPUDeviceInstance()
+	{
+		WindowApplication* application = GetInstance();
+		if (application == nullptr)
+			return nullptr;
+		return application->GetGPUDevice();
+	}
+
+	GPUDevice const * WindowApplication::GetGPUDeviceConstInstance()
+	{
+		WindowApplication const* application = GetConstInstance();
+		if (application == nullptr)
+			return nullptr;
+		return application->GetGPUDevice();
 	}
 
 	GPUResourceManager* WindowApplication::GetGPUResourceManagerInstance()

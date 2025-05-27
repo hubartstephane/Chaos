@@ -101,7 +101,7 @@ protected:
 		mesh->DisplayWithProgram(program, ctx.render_context, &uniform_provider, render_params);
 	}
 
-	void GPUDrawPrimitive(RenderingContext const & ctx, chaos::box3 const & b, glm::vec4 const & color)
+	void DrawPrimitive(RenderingContext const & ctx, chaos::box3 const & b, glm::vec4 const & color)
 	{
 		if (IsGeometryEmpty(b))
 			return;
@@ -129,11 +129,11 @@ protected:
 			glm::vec3(time_line_box_position + time_line_box_size - 10.0f, 10.0f, 2.0f)
 		));
 
-		GPUDrawPrimitive(ctx, b1, red);
-		GPUDrawPrimitive(ctx, b2, green);
-		GPUDrawPrimitive(ctx, b3, blue);
+		DrawPrimitive(ctx, b1, red);
+		DrawPrimitive(ctx, b2, green);
+		DrawPrimitive(ctx, b3, blue);
 		if (time_line_box_size > 0.0f)
-			GPUDrawPrimitive(ctx, b4, white);
+			DrawPrimitive(ctx, b4, white);
 	}
 
 	virtual bool OnDraw(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override

@@ -1578,10 +1578,7 @@ namespace chaos
 
 	GPUDevice* Window::GetGPUDevice() const
 	{
-		WindowApplication * window_application = Application::GetInstance();
-		if (window_application == nullptr)
-			return nullptr;
-		return window_application->GetGPUDevice();
+		return WindowApplication::GetGPUDeviceInstance();
 	}
 
 }; // namespace chaos

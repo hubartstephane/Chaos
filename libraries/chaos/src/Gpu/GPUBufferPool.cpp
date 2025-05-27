@@ -3,105 +3,131 @@
 
 namespace chaos
 {
+	GPUBufferPool::GPUBufferPool(GPUDevice * in_gpu_device):
+		GPUDeviceResourceInterface(in_gpu_device)
+	{
+	}
 
-    bool GPUBufferPoolEntries::GetBuffer(size_t required_size, size_t max_accepted_size, shared_ptr<GPUBuffer>& result) // use shared pointer to avoid the buffer destruction when removed from vector<>
-    {
-        assert(required_size > 0);
+	GPUBufferPool::~GPUBufferPool()
+	{
+		for (GPUBufferPoolBufferInfoGroup & buffer_info_group : buffer_info_groups)
+			for (GPUBufferPoolBufferInfo & buffer_info : buffer_info_group.buffers_info)
+				assert(buffer_info.buffer_id == 0); // ensure buffer has properly been destroyed
+	}
 
-        size_t count = buffers.size();
-        for (size_t i = 0; i < count; ++i)
-        {
-            GPUBuffer * buffer = buffers[i].get();
-            // buffer too small ?
-            size_t buffer_size = buffer->GetBufferSize();
-            if (buffer_size < required_size)
-                continue;
-            // or too big ?
-            if (max_accepted_size > 0 && buffer_size > max_accepted_size) // we do not want to waste to much memory => that why we use a max_accepted_size
-                continue;
-            // buffer found
-            result = buffer;
-            buffers.erase(buffers.begin() + i);
-            return true;
-        }
-        return false;
-    }
+	bool GPUBufferPool::DoTick(float delta_time)
+	{
+		return true;
+	}
 
-    bool GPUBufferPool::GiveBuffer(GPUBuffer * buffer, GPUFence* fence)
-    {
-        assert(buffer != nullptr);
-        assert(!buffer->IsMapped());
-#if _DEBUG // ensure no duplication
-        for (GPUBufferPoolEntries const& entry : entries)
-            for (auto const& entry_buffer : entry.buffers)
-                assert(entry_buffer != buffer);
-#endif
-        GPUBufferPoolEntries* cache_entry = GetCacheEntryForFence(fence);
-        if (cache_entry == nullptr)
-            return false;
-        cache_entry->buffers.push_back(buffer);
-        return true;
-    }
+	GPUBuffer * GPUBufferPool::CreateBuffer(size_t in_buffer_size, GPUBufferFlags in_flags)
+	{
+		if (GPUBuffer * result = DoFindCachedBuffer(in_buffer_size, in_flags))
+			return result;
+		return DoCreateBuffer(in_buffer_size, in_flags);
+	}
 
-    bool GPUBufferPool::GetBuffer(size_t required_size, shared_ptr<GPUBuffer> & result)
-    {
-        assert(required_size > 0);
+	GPUBuffer * GPUBufferPool::DoFindCachedBuffer(size_t in_buffer_size, GPUBufferFlags in_flags)
+	{
+		for (auto entry_it = buffer_info_groups.begin() ; entry_it != buffer_info_groups.end() ; ++entry_it)
+		{
+			GPUBufferPoolBufferInfoGroup & buffer_info_group = *entry_it;
 
-        // compute the maximum size we want
-        size_t max_accepted_size = 0;
-        if (rejected_size_percentage > 0)
-            max_accepted_size = ((100 + rejected_size_percentage) * required_size) / 100;
+			for (auto buffer_info_it = buffer_info_group.buffers_info.begin() ; buffer_info_it != buffer_info_group.buffers_info.end() ; ++buffer_info_it)
+			{
+				GPUBufferPoolBufferInfo & buffer_info = *buffer_info_it;
 
-        // the buffer is ordered from older FENCE to youngest FENCE
-        for (size_t i = 0; i < entries.size(); ++i)
-        {
-            GPUBufferPoolEntries& entry = entries[i];
-            if (entry.fence != nullptr)
-            {
-                // as soon as a FENCE exists and is not completed yet, there is no need to search further in the array
-                // none of the other are completed
-                if (entry.fence->WaitForCompletion(0.0f))
-                    entry.fence = nullptr;
-                else
-                    break;
-            }
-            // search a buffer valid for given fence
-            entry.GetBuffer(required_size, max_accepted_size, result);
-            // remove empty entries
-            if (entry.buffers.size() == 0)
-            {
-                entries.erase(entries.begin() + i);
-                --i;
-            }
-            // return the buffer if OK
-            if (result != nullptr)
-                return true;
-        }
-        return CreateBuffer(required_size, result);
-    }
+				if (DoMatchRequestedBufferInfo(buffer_info, in_buffer_size, in_flags))
+				{
+					if (GPUBuffer * result = new GPUBuffer(GetGPUDevice(), buffer_info.buffer_id, buffer_info.buffer_size, buffer_info.buffer_flags))
+					{
+						buffer_info_group.buffers_info.erase(buffer_info_it);
+						if (buffer_info_group.buffers_info.size() == 0)
+							buffer_info_groups.erase(entry_it);
+						return result;
+					}
+				}
+			}
+		}
+		return nullptr;
+	}
 
-    GPUBufferPoolEntries* GPUBufferPool::GetCacheEntryForFence(GPUFence* fence)
-    {
-        // maybe an entry for this fence already exists
-        for (GPUBufferPoolEntries &entry : entries)
-            if (entry.fence == fence)
-                return &entry;
-        // create a new entry for incomming fence
-        GPUBufferPoolEntries new_entry;
-        new_entry.fence = fence;
-        entries.push_back(std::move(new_entry));
-        return &entries[entries.size() - 1];
-    }
+	bool GPUBufferPool::DoMatchRequestedBufferInfo(GPUBufferPoolBufferInfo & in_buffer_info, size_t in_buffer_size, GPUBufferFlags in_flags) const
+	{
+		if (in_buffer_info.buffer_flags != in_flags)
+			return false;
+		if (in_buffer_info.buffer_size < in_buffer_size)
+			return false;
+		if (rejected_size_percentage > 0)
+		{
+			size_t max_accepted_size = ((100 + rejected_size_percentage) * in_buffer_size) / 100;
+			if (in_buffer_info.buffer_size >= max_accepted_size)
+				return false;
+		}
+		return true;
+	}
 
-    bool GPUBufferPool::CreateBuffer(size_t required_size, shared_ptr<GPUBuffer> & result)
-    {
-        // create a dynamic buffer
-        result = new GPUBuffer(true);
-        if (result == nullptr)
-            return false;
-        result->SetBufferData(nullptr, required_size); // no allocation, but set buffer size forever
-        return true;
-    }
+	GPUBuffer * GPUBufferPool::DoCreateBuffer(size_t in_buffer_size, GPUBufferFlags in_flags)
+	{
+		// create the GL resource
+		GLuint buffer_id = 0;
+		glCreateBuffers(1, &buffer_id);
+		if (buffer_id == 0)
+			return nullptr;
+		// create the object
+		GPUBuffer * result = new GPUBuffer(GetGPUDevice(), buffer_id, in_buffer_size, in_flags);
+		if (result == nullptr)
+		{
+			glDeleteBuffers(1, &buffer_id);
+			return nullptr;
+		}
+		// prepare the buffer
+		GLenum buffer_type = (HasAnyFlags(in_flags, GPUBufferFlags::Dynamic)) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW; // there are more kind of buffers we don't support : STREAM ... COPY/READ
+		glNamedBufferData(buffer_id, in_buffer_size, nullptr, buffer_type);
+
+		return result;
+	}
+
+	GPUBufferPoolBufferInfoGroup * GPUBufferPool::FindOrCreateBufferInfoGroup(GPUFence * in_fence)
+	{
+		// search if there is an entry matching wanted fence
+		for (GPUBufferPoolBufferInfoGroup & buffer_info_group : buffer_info_groups)
+			if (buffer_info_group.fence == in_fence)
+				return &buffer_info_group;
+		// create a new entry for this fence
+		GPUBufferPoolBufferInfoGroup buffer_info_group;
+		buffer_info_group.fence = in_fence;
+		buffer_info_groups.push_back(buffer_info_group);
+		return &buffer_info_groups[buffer_info_groups.size() - 1];
+	}
+
+	void GPUBufferPool::OnBufferUnused(GPUBuffer * in_buffer)
+	{
+		if (GPUBufferPoolBufferInfoGroup * buffer_info_group = FindOrCreateBufferInfoGroup(nullptr))
+		{
+			GPUBufferPoolBufferInfo buffer_info;
+			buffer_info.buffer_id    = in_buffer->buffer_id;
+			buffer_info.buffer_size  = in_buffer->buffer_size;
+			buffer_info.buffer_flags = in_buffer->flags;
+			buffer_info_group->buffers_info.push_back(buffer_info);
+
+			in_buffer->buffer_id = 0;
+		}
+	}
+
+	void GPUBufferPool::Destroy()
+	{
+		for (GPUBufferPoolBufferInfoGroup & buffer_info_group : buffer_info_groups)
+			for (GPUBufferPoolBufferInfo & buffer_info : buffer_info_group.buffers_info)
+				ReleaseBufferInfo(buffer_info);
+		buffer_info_groups.clear();
+	}
+
+	void GPUBufferPool::ReleaseBufferInfo(GPUBufferPoolBufferInfo & in_buffer_info)
+	{
+		glDeleteBuffers(1, &in_buffer_info.buffer_id);
+		in_buffer_info.buffer_id = 0;
+	}
 
 }; // namespace chaos
 

@@ -4,6 +4,11 @@
 namespace chaos
 {
 
+	GPUDevice::GPUDevice():
+		buffer_pool(this)
+	{
+	}
+
 	bool GPUDevice::Initialize(JSONReadConfiguration config)
 	{
 		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::Initialization, false)) // do not recursively update all child objects
@@ -13,10 +18,27 @@ namespace chaos
 
 	void GPUDevice::Finalize()
 	{
+		buffer_pool.Destroy();
 	}
 
 	bool GPUDevice::OnInitialize(JSONReadConfiguration config)
 	{
+		return true;
+	}
+
+	GPUBuffer * GPUDevice::CreateBuffer(size_t in_buffer_size, GPUBufferFlags in_flags)
+	{
+		return buffer_pool.CreateBuffer(in_buffer_size, in_flags);
+	}
+
+	void GPUDevice::OnBufferUnused(GPUBuffer * in_buffer)
+	{
+		buffer_pool.OnBufferUnused(in_buffer);
+	}
+
+	bool GPUDevice::DoTick(float delta_time)
+	{
+		buffer_pool.Tick(delta_time);
 		return true;
 	}
 
@@ -96,7 +118,5 @@ namespace chaos
 
 		return new GPUTexture(this, texture_id, in_texture_description);
 	}
-
-
 
 }; // namespace chaos

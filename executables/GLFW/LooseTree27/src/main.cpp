@@ -94,10 +94,10 @@ public:
 		switch (geometry_type)
 		{
 		case GeometryType::SPHERE:
-			primitive_renderer->GPUDrawPrimitive(sphere, color, false);
+			primitive_renderer->DrawPrimitive(sphere, color, false);
 			break;
 		case GeometryType::BOX:
-			primitive_renderer->GPUDrawPrimitive(box, color, false, false);
+			primitive_renderer->DrawPrimitive(box, color, false, false);
 			break;
 		default:
 			assert(0);
@@ -385,7 +385,7 @@ protected:
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		object_tree.ForEachNode([this](loose_tree_node_type const* node)
 		{
-			primitive_renderer->GPUDrawPrimitive(node->GetBoundingBox(), white, false, true);
+			primitive_renderer->DrawPrimitive(node->GetBoundingBox(), white, false, true);
 		});
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glEnable(GL_CULL_FACE);
@@ -436,13 +436,13 @@ protected:
 			if (current_action_type == ActionType::CREATE_BOX)
 			{
 				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-				primitive_renderer->GPUDrawPrimitive(GetBoxToCreateFromMousePosition(), red, false, false);
+				primitive_renderer->DrawPrimitive(GetBoxToCreateFromMousePosition(), red, false, false);
 				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			}
 			else if (current_action_type == ActionType::CREATE_SPHERE)
 			{
 				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-				primitive_renderer->GPUDrawPrimitive(GetSphereToCreateFromMousePosition(), red, false);
+				primitive_renderer->DrawPrimitive(GetSphereToCreateFromMousePosition(), red, false);
 				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			}
 		}

@@ -8,7 +8,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	 * GPUDrawInterface : this is a primitive that have its own GPUMesh embedded for directed drawing
+	 * GPUDrawInterface: this is a primitive that have its own GPUMesh embedded for directed drawing
 	 */
 
 	template<typename VERTEX_TYPE>
@@ -22,13 +22,13 @@ namespace chaos
 		/** constructor */
 		GPUDrawInterface(GPUDevice * in_gpu_device, ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION):
 			GPUDeviceResourceInterface(in_gpu_device),
-			GPUPrimitiveOutput<VERTEX_TYPE>(new GPUMesh, GetVertexDeclaration(), in_render_material_request, in_vertex_requirement_evaluation)
+			GPUPrimitiveOutput<VERTEX_TYPE>(new GPUMesh(in_gpu_device), GetVertexDeclaration(), in_render_material_request, in_vertex_requirement_evaluation)
 		{
 		}
 		/** constructor */
 		GPUDrawInterface(GPUDevice * in_gpu_device, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION):
 			GPUDeviceResourceInterface(in_gpu_device),
-			GPUPrimitiveOutput<VERTEX_TYPE>(new GPUMesh, GetVertexDeclaration(), (in_render_material != nullptr) ? in_render_material : DefaultScreenSpaceProgram::GetMaterial(), in_vertex_requirement_evaluation)
+			GPUPrimitiveOutput<VERTEX_TYPE>(new GPUMesh(in_gpu_device), GetVertexDeclaration(), (in_render_material != nullptr) ? in_render_material : DefaultScreenSpaceProgram::GetMaterial(), in_vertex_requirement_evaluation)
 		{
 		}
 
@@ -48,19 +48,13 @@ namespace chaos
 		}
 
 		/** extract the mesh for external purpose */
-		GPUMesh* GetDynamicMesh(GPUMesh * result = nullptr)
+		GPUMesh* GetDynamicMesh()
 		{
-			assert(result != this->mesh);
-			if (result != nullptr)
-				result->Clear();
-			else
-				result = new GPUMesh();
+			GPUMesh * result = new GPUMesh(GetGPUDevice());
 
-			if (result != nullptr)
-			{
-				this->Flush();
-				swap(*result, *this->mesh);
-			}
+			this->Flush();
+			swap(*result, *this->mesh);
+
 			return result;
 		}
 

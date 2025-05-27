@@ -863,7 +863,7 @@ void Landscape::BuildMesh(std::vector<glm::vec2> const & src)
 			tri[i].color = color;
 		}
 	}
-	mesh = DI.GetDynamicMesh(mesh.get());
+	mesh = DI.GetDynamicMesh();
 }
 
 box2 Landscape::GetBoundingBox(bool world_system) const

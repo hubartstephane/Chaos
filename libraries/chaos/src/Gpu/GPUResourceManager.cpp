@@ -423,13 +423,12 @@ namespace chaos
 			return false;
 
 		// generate the quad list index buffer (used in primitive rendering)
-		quad_index_buffer = new GPUBuffer(true);
+		size_t buffer_size = 6 * QUAD_INDEX_BUFFER_COUNT * sizeof(GLuint); // quad becomes a triangle pair
+
+		quad_index_buffer = gpu_device->CreateBuffer(buffer_size, GPUBufferFlags::Dynamic);
 		if (quad_index_buffer == nullptr)
 			return false;
 
-		size_t buffer_size = 6 * QUAD_INDEX_BUFFER_COUNT * sizeof(GLuint); // quad becomes a triangle pair
-		// reserve a buffer
-		quad_index_buffer->SetBufferData(nullptr, buffer_size);
 		// fill the buffer
 		GLuint* buffer = (GLuint*)quad_index_buffer->MapBuffer(0, 0, GPUBufferMapFlags::Write);
 		if (buffer == nullptr)

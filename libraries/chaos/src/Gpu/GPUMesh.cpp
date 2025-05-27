@@ -13,7 +13,8 @@ namespace chaos
 	{
 	}
 
-	GPUMeshElement::~GPUMeshElement()
+	GPUMesh::GPUMesh(GPUDevice * in_gpu_device):
+		GPUDeviceResourceInterface(in_gpu_device)
 	{
 	}
 

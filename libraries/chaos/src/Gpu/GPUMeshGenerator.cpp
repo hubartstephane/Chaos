@@ -78,7 +78,7 @@ namespace chaos
 
 	shared_ptr<GPUMesh> GPUMeshGenerator::GenerateMesh(GPUDevice* in_gpu_device) const
 	{
-		shared_ptr<GPUMesh> mesh = new GPUMesh();
+		shared_ptr<GPUMesh> mesh = new GPUMesh(in_gpu_device);
 		if (mesh != nullptr)
 			if (!FillMeshData(in_gpu_device, mesh.get())) // automatic destruction in case of failure
 				return nullptr;

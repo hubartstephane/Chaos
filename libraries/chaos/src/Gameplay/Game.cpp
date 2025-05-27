@@ -494,7 +494,7 @@ namespace chaos
 				shared_ptr<GPUVertexDeclaration> vertex_declaration = new GPUVertexDeclaration;
 				if (vertex_declaration != nullptr)
 				{
-					background_mesh = new GPUMesh;
+					background_mesh = new GPUMesh(WindowApplication::GetGPUDeviceInstance());
 					if (background_mesh != nullptr)
 					{
 						GetTypedVertexDeclaration(vertex_declaration.get(), boost::mpl::identity<VertexDefault>());

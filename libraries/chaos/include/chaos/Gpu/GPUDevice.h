@@ -14,6 +14,9 @@ namespace chaos
 	{
 	public:
 
+		/** constructor */
+		GPUDevice();
+
 		/** initialize the device */
 		virtual bool Initialize(JSONReadConfiguration config);
 		/** finalize the device */
@@ -21,11 +24,24 @@ namespace chaos
 
 		/** create a texture */
 		GPUTexture * CreateTexture(TextureDescription const& in_texture_description = {});
+		/** create a buffer */
+		GPUBuffer * CreateBuffer(size_t in_buffer_size, GPUBufferFlags in_flags);
+
+		/** called whenever a buffer is not used anymore (but there is still a reference from device) */
+		void OnBufferUnused(GPUBuffer * in_buffer);
 
 	protected:
 
+		/** override */
+		virtual bool DoTick(float delta_time) override;
+
 		/** internal method for initialization */
 		virtual bool OnInitialize(JSONReadConfiguration config);
+
+	protected:
+
+		/** the pool for buffer */
+		GPUBufferPool buffer_pool;
 	};
 
 #endif

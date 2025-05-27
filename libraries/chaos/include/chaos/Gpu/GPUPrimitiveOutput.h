@@ -41,9 +41,17 @@ namespace chaos
         static constexpr size_t MIN_VERTEX_ALLOCATION = 100;
 
         /** constructor */
-        GPUPrimitiveOutputBase(GPUMesh* in_mesh, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION);
+        GPUPrimitiveOutputBase(
+			GPUMesh* in_mesh,
+			GPUVertexDeclaration* in_vertex_declaration,
+			GPURenderMaterial* in_render_material,
+			size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION);
         /** constructor */
-        GPUPrimitiveOutputBase(GPUMesh* in_mesh, GPUVertexDeclaration* in_vertex_declaration, ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION);
+        GPUPrimitiveOutputBase(
+			GPUMesh* in_mesh,
+			GPUVertexDeclaration* in_vertex_declaration,
+			ObjectRequest in_render_material_request,
+			size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION);
         /** destructor */
         ~GPUPrimitiveOutputBase();
 

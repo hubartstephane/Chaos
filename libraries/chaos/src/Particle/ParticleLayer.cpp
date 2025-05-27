@@ -160,7 +160,7 @@ namespace chaos
 		// create the mesh
 		if (mesh == nullptr)
 		{
-			mesh = new GPUMesh();
+			mesh = new GPUMesh(render_context->GetGPUDevice());
 			if (mesh == nullptr)
 				return true;
 		}
@@ -183,7 +183,7 @@ namespace chaos
 		if (declaration == nullptr)
 			return nullptr;
 		// generate the resulting mesh
-		GPUMesh* result = new GPUMesh();
+		GPUMesh* result = new GPUMesh(in_gpu_device);
 		if (result == nullptr)
 			return result;
 		// evaluate how much memory should be allocated for buffers (count in vertices)

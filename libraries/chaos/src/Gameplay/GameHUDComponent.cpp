@@ -9,9 +9,7 @@ namespace chaos
 
 	GPUDevice * GameHUDComponent::GetGPUDevice()
 	{
-		if (WindowApplication * window_application = Application::GetInstance())
-			return window_application->GetGPUDevice();
-		return nullptr;
+		return WindowApplication::GetGPUDeviceInstance();
 	}
 
 	AutoCastable<Game> GameHUDComponent::GetGame()
@@ -231,7 +229,7 @@ namespace chaos
 
 			GPUDrawInterface<VertexDefault> DI(GetGPUDevice(), nullptr);
 			DrawText(DI, in_text, other_params);
-			mesh = DI.GetDynamicMesh(mesh.get());
+			mesh = DI.GetDynamicMesh();
 		}
 	}
 
@@ -570,7 +568,7 @@ namespace chaos
 				particle_position += glm::abs(particle_offset);
 				++quads; // next quad
 			}
-			mesh = DI.GetDynamicMesh(mesh.get());
+			mesh = DI.GetDynamicMesh();
 		}
 	}
 
@@ -638,9 +636,9 @@ namespace chaos
 
 	bool GameHUDFreeCameraComponent::DoTick(float delta_time)
 	{
-		Game * game = GetGame();
-		if (game != nullptr)
-			mesh->Show(game->IsFreeCameraMode());
+		if (mesh != nullptr)
+			if (Game * game = GetGame())
+				mesh->Show(game->IsFreeCameraMode());
 		return true;
 	}
 
@@ -693,7 +691,7 @@ namespace chaos
 				TweakTextHotpointWithCanvas(GetGame()->GetCanvasBox(), other_params);
 				DrawText(DI, stream.str().c_str(), other_params);
 
-				mesh = DI.GetDynamicMesh(mesh.get());
+				mesh = DI.GetDynamicMesh();
 			}
 
 			// decrease time for all entries

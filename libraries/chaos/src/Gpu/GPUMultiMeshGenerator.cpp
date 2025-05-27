@@ -104,7 +104,7 @@ namespace chaos
 			shared_ptr<GPUMesh> mesh = (*it.second);
 			if (mesh == nullptr)
 			{
-				mesh = new GPUMesh; // generate the mesh
+				mesh = new GPUMesh(in_gpu_device); // generate the mesh
 				if (mesh == nullptr)
 					return false;
 			}

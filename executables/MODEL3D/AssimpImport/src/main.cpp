@@ -273,7 +273,7 @@ protected:
 
 			for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
 			{
-				shared_ptr<GPUMesh> gpu_mesh = new GPUMesh;
+				shared_ptr<GPUMesh> gpu_mesh = new GPUMesh(GetGPUDevice());
 
 				aiMesh const* ai_mesh = scene->mMeshes[i];
 				if (ai_mesh == nullptr)

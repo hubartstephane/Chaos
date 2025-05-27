@@ -209,17 +209,17 @@ protected:
 
 		if (intersection)
 		{
-			primitive_renderer->GPUDrawPrimitive(primitive_renderer->SlightIncreaseSize(p1 & p2), white, false);
+			primitive_renderer->DrawPrimitive(primitive_renderer->SlightIncreaseSize(p1 & p2), white, false);
 
-			primitive_renderer->GPUDrawPrimitive(p1, red, true);
-			primitive_renderer->GPUDrawPrimitive(p2, blue, true);
+			primitive_renderer->DrawPrimitive(p1, red, true);
+			primitive_renderer->DrawPrimitive(p2, blue, true);
 		}
 		else
 		{
-			primitive_renderer->GPUDrawPrimitive(p1, red, false);
-			primitive_renderer->GPUDrawPrimitive(p2, blue, false);
+			primitive_renderer->DrawPrimitive(p1, red, false);
+			primitive_renderer->DrawPrimitive(p2, blue, false);
 
-			primitive_renderer->GPUDrawPrimitive(primitive_renderer->SlightIncreaseSize(p1 | p2), white, true);
+			primitive_renderer->DrawPrimitive(primitive_renderer->SlightIncreaseSize(p1 | p2), white, true);
 		}
 	}
 
@@ -241,8 +241,8 @@ protected:
 
 		chaos::RestrictToInside(bigger, smaller, move_bigger);
 
-		primitive_renderer->GPUDrawPrimitive(smaller, blue, false);
-		primitive_renderer->GPUDrawPrimitive(primitive_renderer->SlightIncreaseSize(bigger), red, true);
+		primitive_renderer->DrawPrimitive(smaller, blue, false);
+		primitive_renderer->DrawPrimitive(primitive_renderer->SlightIncreaseSize(bigger), red, true);
 	}
 
 	template<typename T>
@@ -262,8 +262,8 @@ protected:
 
 		chaos::RestrictToOutside(src, target);
 
-		primitive_renderer->GPUDrawPrimitive(src, blue, false);
-		primitive_renderer->GPUDrawPrimitive(target, red, false);
+		primitive_renderer->DrawPrimitive(src, blue, false);
+		primitive_renderer->DrawPrimitive(target, red, false);
 	}
 
 
@@ -271,8 +271,8 @@ protected:
 	void DrawCollisionImpl(T1 const & p1, T2 const & p2)
 	{
 		bool collision = chaos::Collide(p1, p2);
-		primitive_renderer->GPUDrawPrimitive(p1, blue, collision);
-		primitive_renderer->GPUDrawPrimitive(p2, red, collision);
+		primitive_renderer->DrawPrimitive(p1, blue, collision);
+		primitive_renderer->DrawPrimitive(p2, red, collision);
 	}
 
 
@@ -538,8 +538,8 @@ protected:
 			GetCollisionPrimitive(prim2, position_object2, rotation_object2);
 
 			bool collision = chaos::Collide(prim1, prim2);
-			primitive_renderer->GPUDrawPrimitive(prim1, blue, collision);
-			primitive_renderer->GPUDrawPrimitive(prim2, red, collision);
+			primitive_renderer->DrawPrimitive(prim1, blue, collision);
+			primitive_renderer->DrawPrimitive(prim2, red, collision);
 		}
 
 		if (prim_type_object1 == type2 && prim_type_object2 == type1)
@@ -550,8 +550,8 @@ protected:
 			GetCollisionPrimitive(prim2, position_object2, rotation_object2);
 
 			bool collision = chaos::Collide(prim1, prim2);
-			primitive_renderer->GPUDrawPrimitive(prim1, blue, collision);
-			primitive_renderer->GPUDrawPrimitive(prim2, red, collision);
+			primitive_renderer->DrawPrimitive(prim1, blue, collision);
+			primitive_renderer->DrawPrimitive(prim2, red, collision);
 		}
 
 	}
@@ -566,44 +566,44 @@ protected:
 		if (display_example == TestID::BOX2_DISPLAY_TEST)
 		{
 			chaos::box2 b = GetMovingBox2();
-			primitive_renderer->GPUDrawPrimitive(b, red, false);
+			primitive_renderer->DrawPrimitive(b, red, false);
 		}
 		if (display_example == TestID::OBOX2_DISPLAY_TEST)
 		{
 			chaos::obox2 b = GetMovingOBox2();
-			primitive_renderer->GPUDrawPrimitive(b, red, false);
+			primitive_renderer->DrawPrimitive(b, red, false);
 		}
 		if (display_example == TestID::SPHERE2_DISPLAY_TEST)
 		{
 			chaos::sphere2 s = GetMovingSphere2();
-			primitive_renderer->GPUDrawPrimitive(s, red, false);
+			primitive_renderer->DrawPrimitive(s, red, false);
 		}
 		if (display_example == TestID::TRIANGLE2_DISPLAY_TEST)
 		{
 			chaos::triangle2 t = GetMovingTriangle2();
-			primitive_renderer->GPUDrawPrimitive(t, red, false);
+			primitive_renderer->DrawPrimitive(t, red, false);
 		}
 
 		// base display 3D
 		if (display_example == TestID::BOX3_DISPLAY_TEST)
 		{
 			chaos::box3 b = GetMovingBox3();
-			primitive_renderer->GPUDrawPrimitive(b, red, false);
+			primitive_renderer->DrawPrimitive(b, red, false);
 		}
 		if (display_example == TestID::OBOX3_DISPLAY_TEST)
 		{
 			chaos::obox3 b = GetMovingOBox3();
-			primitive_renderer->GPUDrawPrimitive(b, red, false);
+			primitive_renderer->DrawPrimitive(b, red, false);
 		}
 		if (display_example == TestID::SPHERE3_DISPLAY_TEST)
 		{
 			chaos::sphere3 s = GetMovingSphere3();
-			primitive_renderer->GPUDrawPrimitive(s, red, false);
+			primitive_renderer->DrawPrimitive(s, red, false);
 		}
 		if (display_example == TestID::TRIANGLE3_DISPLAY_TEST)
 		{
 			chaos::triangle3 t = GetMovingTriangle3();
-			primitive_renderer->GPUDrawPrimitive(t, red, false);
+			primitive_renderer->DrawPrimitive(t, red, false);
 		}
 
 		// collisions
@@ -659,11 +659,11 @@ protected:
 		{
 			chaos::box3 b(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-			primitive_renderer->GPUDrawPrimitive(b, red, false);
+			primitive_renderer->DrawPrimitive(b, red, false);
 
 			std::pair<glm::vec3, glm::vec3> corners = GetBoxCorners(b);
-			primitive_renderer->GPUDrawPrimitive(corners.first, white, false);
-			primitive_renderer->GPUDrawPrimitive(corners.second, white, false);
+			primitive_renderer->DrawPrimitive(corners.first, white, false);
+			primitive_renderer->DrawPrimitive(corners.second, white, false);
 		}
 
 		// box construction from corners
@@ -674,9 +674,9 @@ protected:
 
 			chaos::box3 b(std::make_pair(p1, p2));
 
-			primitive_renderer->GPUDrawPrimitive(b, red, false);
-			primitive_renderer->GPUDrawPrimitive(p1, white, false);
-			primitive_renderer->GPUDrawPrimitive(p2, white, false);
+			primitive_renderer->DrawPrimitive(b, red, false);
+			primitive_renderer->DrawPrimitive(p1, white, false);
+			primitive_renderer->DrawPrimitive(p2, white, false);
 		}
 
 		// box union or intersection
@@ -714,8 +714,8 @@ protected:
 			chaos::box3 b(glm::vec3(2.0f, 3.0f, 4.0f), glm::vec3(1.0f, 2.0f, 3.0f));
 			chaos::sphere3 s = GetInnerSphere(b);
 
-			primitive_renderer->GPUDrawPrimitive(s, blue, false);
-			primitive_renderer->GPUDrawPrimitive(b, red, true);
+			primitive_renderer->DrawPrimitive(s, blue, false);
+			primitive_renderer->DrawPrimitive(b, red, true);
 		}
 
 		// bounding sphere
@@ -724,8 +724,8 @@ protected:
 			chaos::box3 b(glm::vec3(2.0f, 3.0f, 4.0f), glm::vec3(1.0f, 2.0f, 3.0f));
 			chaos::sphere3 s = GetBoundingSphere(b);
 
-			primitive_renderer->GPUDrawPrimitive(b, red, false);
-			primitive_renderer->GPUDrawPrimitive(s, blue, true);
+			primitive_renderer->DrawPrimitive(b, red, false);
+			primitive_renderer->DrawPrimitive(s, blue, true);
 		}
 		// bounding box
 		if (display_example == TestID::BOUNDING_BOX_TEST)
@@ -734,8 +734,8 @@ protected:
 
 			chaos::box3 b = GetBoundingBox(s);
 
-			primitive_renderer->GPUDrawPrimitive(s, red, false);
-			primitive_renderer->GPUDrawPrimitive(b, blue, true);
+			primitive_renderer->DrawPrimitive(s, red, false);
+			primitive_renderer->DrawPrimitive(b, blue, true);
 		}
 
 		// split box
@@ -750,12 +750,12 @@ protected:
 					for (int k = 0 ; k < 2 ; ++k)
 					{
 						chaos::box3 split_b = GetSplitBox(b, i, j, k);
-						primitive_renderer->GPUDrawPrimitive(primitive_renderer->SlightDecreaseSize(split_b), red, false);
+						primitive_renderer->DrawPrimitive(primitive_renderer->SlightDecreaseSize(split_b), red, false);
 					}
 				}
 			}
 
-			primitive_renderer->GPUDrawPrimitive(b, blue, true);
+			primitive_renderer->DrawPrimitive(b, blue, true);
 		}
 
 		// box collision
@@ -837,37 +837,37 @@ protected:
 
 
 
-			primitive_renderer->GPUDrawPrimitive(b, red, transparent_obox);
+			primitive_renderer->DrawPrimitive(b, red, transparent_obox);
 
 			if (display_example == TestID::OBOX_CORNERS_TEST)
 			{
 				glm::vec3 vertices[8];
 				GetBoxVertices(b, vertices);
 				for (int i = 0 ; i < 8 ; ++i)
-					primitive_renderer->GPUDrawPrimitive(vertices[i], white, false);
+					primitive_renderer->DrawPrimitive(vertices[i], white, false);
 			}
 
 			if (display_example == TestID::OBOX_BOUNDING_SPHERE_TEST)
 			{
 				chaos::sphere3 s = GetBoundingSphere(b);
-				primitive_renderer->GPUDrawPrimitive(s, blue, true);
+				primitive_renderer->DrawPrimitive(s, blue, true);
 			}
 
 			if (display_example == TestID::OBOX_BOUNDING_BOX_TEST)
 			{
 				chaos::box3 box = GetBoundingBox(b);
-				primitive_renderer->GPUDrawPrimitive(box, blue, true);
+				primitive_renderer->DrawPrimitive(box, blue, true);
 			}
 
 			if (display_example == TestID::OBOX_INNER_SPHERE_TEST)
 			{
 				chaos::sphere3 s = GetInnerSphere(b);
-				primitive_renderer->GPUDrawPrimitive(s, blue, false);
+				primitive_renderer->DrawPrimitive(s, blue, false);
 			}
 
 			if (display_example == TestID::POINT_INSIDE_OBOX_TEST)
 			{
-				primitive_renderer->GPUDrawPrimitive(pt, white, false);
+				primitive_renderer->DrawPrimitive(pt, white, false);
 			}
 #else
 
@@ -892,37 +892,37 @@ protected:
 			else if (display_example == TestID::POINT_INSIDE_OBOX_TEST && Collide(pt, b))
 				transparent_obox = true;
 
-			primitive_renderer->GPUDrawPrimitive(b, red, transparent_obox);
+			primitive_renderer->DrawPrimitive(b, red, transparent_obox);
 
 			if (display_example == TestID::OBOX_CORNERS_TEST)
 			{
 				glm::vec2 vertices[4];
 				GetBoxVertices(b, vertices);
 				for (int i = 0 ; i < 8 ; ++i)
-					primitive_renderer->GPUDrawPrimitive(glm::vec3(vertices[i].x, 0.0f, vertices[i].y), white, false);
+					primitive_renderer->DrawPrimitive(glm::vec3(vertices[i].x, 0.0f, vertices[i].y), white, false);
 			}
 
 			if (display_example == TestID::OBOX_BOUNDING_SPHERE_TEST)
 			{
 				chaos::sphere2 s = GetBoundingSphere(b);
-				primitive_renderer->GPUDrawPrimitive(s, blue, true);
+				primitive_renderer->DrawPrimitive(s, blue, true);
 			}
 
 			if (display_example == TestID::OBOX_BOUNDING_BOX_TEST)
 			{
 				chaos::box2 box = GetBoundingBox(b);
-				primitive_renderer->GPUDrawPrimitive(box, blue, true);
+				primitive_renderer->DrawPrimitive(box, blue, true);
 			}
 
 			if (display_example == TestID::OBOX_INNER_SPHERE_TEST)
 			{
 				chaos::sphere2 s = GetBoundingSphere(b);
-				primitive_renderer->GPUDrawPrimitive(s, blue, false);
+				primitive_renderer->DrawPrimitive(s, blue, false);
 			}
 
 			if (display_example == TestID::POINT_INSIDE_OBOX_TEST)
 			{
-				primitive_renderer->GPUDrawPrimitive(glm::vec3(pt.x, 0.0f, pt.y), white, false);
+				primitive_renderer->DrawPrimitive(glm::vec3(pt.x, 0.0f, pt.y), white, false);
 			}
 
 

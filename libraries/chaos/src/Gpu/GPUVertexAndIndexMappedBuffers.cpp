@@ -31,19 +31,17 @@ namespace chaos
 		// create a vertex buffer
 		if (vertex_buffer_size > 0)
 		{
-			result.vertex_buffer = new GPUBuffer(false);
+			result.vertex_buffer = in_gpu_device->CreateBuffer(vertex_buffer_size, GPUBufferFlags::None);
 			if (result.vertex_buffer == nullptr || !result.vertex_buffer->IsValid())
 				return {};
-			result.vertex_buffer->SetBufferData(nullptr, vertex_buffer_size);
 		}
 
 		// create a index buffer
 		if (index_buffer_size > 0)
 		{
-			result.index_buffer = new GPUBuffer(false);
+			result.index_buffer = in_gpu_device->CreateBuffer(index_buffer_size, GPUBufferFlags::None);
 			if (result.index_buffer == nullptr || !result.index_buffer->IsValid())
 				return {};
-			result.index_buffer->SetBufferData(nullptr, index_buffer_size);
 		}
 
 		// map vertex buffer

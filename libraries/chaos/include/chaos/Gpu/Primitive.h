@@ -61,34 +61,6 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-    /** returns the OpenGL primitive type corresponding to the primitive */
-    CHAOS_API constexpr GLenum GetGLPrimitiveType(PrimitiveType primitive_type)
-    {
-        if (primitive_type == PrimitiveType::POINT)
-            return GL_POINTS;
-
-        if (primitive_type == PrimitiveType::TRIANGLE)
-            return GL_TRIANGLES;
-        if (primitive_type == PrimitiveType::TRIANGLE_PAIR)
-            return GL_TRIANGLES;
-        if (primitive_type == PrimitiveType::QUAD)
-            return GL_TRIANGLES;
-
-        if (primitive_type == PrimitiveType::TRIANGLE_STRIP)
-            return GL_TRIANGLE_STRIP;
-        if (primitive_type == PrimitiveType::TRIANGLE_FAN)
-            return GL_TRIANGLE_FAN;
-
-        if (primitive_type == PrimitiveType::LINE)
-            return GL_LINES;
-        if (primitive_type == PrimitiveType::LINE_STRIP)
-            return GL_LINE_STRIP;
-        if (primitive_type == PrimitiveType::LINE_LOOP)
-            return GL_LINE_LOOP;
-
-        return GL_NONE;
-    }
-
     /**
      * Primitive : base object for writing GPU primitives into memory (GPU mapped memory for the usage)
      *             a primitive is a sequence of vertices.

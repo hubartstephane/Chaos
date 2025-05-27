@@ -43,6 +43,11 @@ namespace chaos
 		/** gets the GPUDevice */
 		GPUDevice * GetGPUDevice() const { return gpu_device.get(); }
 
+		/** getter of the GPU resource manager */
+		static GPUDevice* GetGPUDeviceInstance();
+		/** getter of the GPU resource manager */
+		static GPUDevice const* GetGPUDeviceConstInstance();
+
 		/** getter of the main clock */
 		static Clock* GetMainClockInstance();
 		/** getter of the main clock */

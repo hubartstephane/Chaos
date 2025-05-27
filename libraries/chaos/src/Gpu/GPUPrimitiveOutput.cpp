@@ -3,7 +3,40 @@
 
 namespace chaos
 {
-	GPUPrimitiveOutputBase::GPUPrimitiveOutputBase(GPUMesh* in_mesh, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation) :
+	// returns the OpenGL primitive type corresponding to the primitive
+	constexpr GLenum PrimitiveTypeToGLType(PrimitiveType primitive_type)
+	{
+		if (primitive_type == PrimitiveType::POINT)
+			return GL_POINTS;
+
+		if (primitive_type == PrimitiveType::TRIANGLE)
+			return GL_TRIANGLES;
+		if (primitive_type == PrimitiveType::TRIANGLE_PAIR)
+			return GL_TRIANGLES;
+		if (primitive_type == PrimitiveType::QUAD)
+			return GL_TRIANGLES;
+
+		if (primitive_type == PrimitiveType::TRIANGLE_STRIP)
+			return GL_TRIANGLE_STRIP;
+		if (primitive_type == PrimitiveType::TRIANGLE_FAN)
+			return GL_TRIANGLE_FAN;
+
+		if (primitive_type == PrimitiveType::LINE)
+			return GL_LINES;
+		if (primitive_type == PrimitiveType::LINE_STRIP)
+			return GL_LINE_STRIP;
+		if (primitive_type == PrimitiveType::LINE_LOOP)
+			return GL_LINE_LOOP;
+
+		return GL_NONE;
+	}
+
+	GPUPrimitiveOutputBase::GPUPrimitiveOutputBase(
+		GPUMesh* in_mesh,
+		GPUVertexDeclaration* in_vertex_declaration,
+		GPURenderMaterial* in_render_material,
+		size_t in_vertex_requirement_evaluation
+	):
 		mesh(in_mesh),
 		vertex_declaration(in_vertex_declaration),
 		render_material(in_render_material),
@@ -18,7 +51,12 @@ namespace chaos
 		assert((quad_index_buffer != nullptr) && (max_quad_count != 0));
 	}
 
-	GPUPrimitiveOutputBase::GPUPrimitiveOutputBase(GPUMesh* in_mesh, GPUVertexDeclaration* in_vertex_declaration, ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation):
+	GPUPrimitiveOutputBase::GPUPrimitiveOutputBase(
+		GPUMesh* in_mesh,
+		GPUVertexDeclaration* in_vertex_declaration,
+		ObjectRequest in_render_material_request,
+		size_t in_vertex_requirement_evaluation
+	):
 		GPUPrimitiveOutputBase(in_mesh, in_vertex_declaration, nullptr, in_vertex_requirement_evaluation)
 	{
 		GPUResourceManager* resource_manager = WindowApplication::GetGPUResourceManagerInstance();
@@ -87,14 +125,11 @@ namespace chaos
 			if (cache_entry.buffer == vertex_buffer)
 				vertex_buffer_in_cache = true;
 			cache_entry.buffer->UnMapBuffer();
-			cache_entry.buffer->SetBufferData(nullptr, cache_entry.buffer->GetBufferSize()); // orphan the buffer
 		}
 		// unmap current buffer (that map not be in cache)
 		if (!vertex_buffer_in_cache && vertex_buffer != nullptr)
-		{
 			vertex_buffer->UnMapBuffer();
-			vertex_buffer->SetBufferData(nullptr, vertex_buffer->GetBufferSize()); // orphan the buffer
-		}
+
 		vertex_buffer = nullptr;
 		internal_buffer_pool.clear();
 
@@ -123,19 +158,13 @@ namespace chaos
 			}
 			else // new GPUBuffer is required
 			{
+				// create the vertex buffer
+				GPUDevice * gpu_device = mesh->GetGPUDevice();
+
 				size_t min_vertex_count = std::max(size_t(MIN_VERTEX_ALLOCATION), vertex_requirement_evaluation); // the minimum number of vertex to allocate
+				size_t reserve_size     = std::max(in_size, min_vertex_count * vertex_size); // ask for a minimum size
 
-				size_t reserve_size = std::max(in_size, min_vertex_count * vertex_size); // ask for a minimum size
-
-
-
-
-				GPUBufferPool::CreateBuffer(reserve_size, vertex_buffer);
-
-
-
-
-
+				vertex_buffer = gpu_device->CreateBuffer(reserve_size, GPUBufferFlags::None);
 				if (vertex_buffer == nullptr)
 					return nullptr;
 
@@ -178,7 +207,10 @@ namespace chaos
 		{
 			assert(current_primitive_type != PrimitiveType::NONE);
 
-			GPUMeshElement& element = mesh->AddMeshElement(vertex_declaration, vertex_buffer.get(), (current_primitive_type == PrimitiveType::QUAD)? quad_index_buffer : nullptr);
+			GPUMeshElement& element = mesh->AddMeshElement(
+				vertex_declaration,
+				vertex_buffer.get(),
+				(current_primitive_type == PrimitiveType::QUAD)? quad_index_buffer : nullptr);
 			element.primitives = std::move(pending_primitives);
 			element.render_material = render_material;
 			current_primitive_type = PrimitiveType::NONE;
@@ -192,7 +224,7 @@ namespace chaos
 			assert(current_primitive_type != PrimitiveType::NONE);
 
 			GPUDrawPrimitive primitive;
-			primitive.primitive_type = GetGLPrimitiveType(current_primitive_type);
+			primitive.primitive_type = PrimitiveTypeToGLType(current_primitive_type);
 
 			// quads are indexed and uses a shared index_buffer. The flush may so produce multiple primitive (if there are not enougth indices in this buffer)
 			if (current_primitive_type == PrimitiveType::QUAD)

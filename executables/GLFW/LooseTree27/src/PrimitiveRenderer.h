@@ -61,25 +61,25 @@ public:
 
 	void EndTranslucency() const;
 
-	void GPUDrawPrimitive(chaos::triangle3 const & t, glm::vec4 const & color, bool is_translucent) const;
+	void DrawPrimitive(chaos::triangle3 const & t, glm::vec4 const & color, bool is_translucent) const;
 
-	void GPUDrawPrimitive(chaos::triangle2 const & t, glm::vec4 const & color, bool is_translucent) const;
+	void DrawPrimitive(chaos::triangle2 const & t, glm::vec4 const & color, bool is_translucent) const;
 
-	void GPUDrawPrimitive(chaos::sphere3 const & s, glm::vec4 const & color, bool is_translucent) const;
+	void DrawPrimitive(chaos::sphere3 const & s, glm::vec4 const & color, bool is_translucent) const;
 
-	void GPUDrawPrimitive(chaos::sphere2 const & s, glm::vec4 const & color, bool is_translucent) const;
+	void DrawPrimitive(chaos::sphere2 const & s, glm::vec4 const & color, bool is_translucent) const;
 
-	void GPUDrawPrimitive(chaos::box3 const & b, glm::vec4 const & color, bool is_translucent, bool is_wireframe) const;
+	void DrawPrimitive(chaos::box3 const & b, glm::vec4 const & color, bool is_translucent, bool is_wireframe) const;
 
-	void GPUDrawPrimitive(chaos::box2 const & b, glm::vec4 const & color, bool is_translucent) const;
+	void DrawPrimitive(chaos::box2 const & b, glm::vec4 const & color, bool is_translucent) const;
 
-	void GPUDrawPrimitive(chaos::obox3 const & b, glm::vec4 const & color, bool is_translucent, bool is_wireframe) const;
+	void DrawPrimitive(chaos::obox3 const & b, glm::vec4 const & color, bool is_translucent, bool is_wireframe) const;
 
-	void GPUDrawPrimitive(chaos::obox2 const & b, glm::vec4 const & color, bool is_translucent) const;
+	void DrawPrimitive(chaos::obox2 const & b, glm::vec4 const & color, bool is_translucent) const;
 
-	void GPUDrawPrimitive(glm::vec3 const & p, glm::vec4 const & color, bool is_translucent) const;
+	void DrawPrimitive(glm::vec3 const & p, glm::vec4 const & color, bool is_translucent) const;
 
-	void GPUDrawPrimitive(glm::vec2 const & p, glm::vec4 const & color, bool is_translucent) const;
+	void DrawPrimitive(glm::vec2 const & p, glm::vec4 const & color, bool is_translucent) const;
 
 protected:
 

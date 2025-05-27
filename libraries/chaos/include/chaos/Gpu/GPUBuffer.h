@@ -37,47 +37,44 @@ namespace chaos
 	 * GPUBuffer: self explaning
 	 */
 
-	class CHAOS_API GPUBuffer : public GPUResource
+	class CHAOS_API GPUBuffer : public GPUResource, public GPUDeviceResourceInterface
 	{
+		friend class GPUBufferPool;
+
 	public:
 
-		/** constructor (create its own resource) */
-		GPUBuffer(bool dynamic);
-		/** constructor (reference a given resource). Call this function with 0 if you do not want to create resource at all */
-		GPUBuffer(GLuint in_id, bool in_ownership);
 		/** destructor */
 		virtual ~GPUBuffer();
+
+		/** get the size of the buffer */
+		size_t GetBufferSize() const;
+		/** get the flags of the buffer */
+		GPUBufferFlags GetBufferFlags() const;
+		/** returns whether the buffer has been mapped */
+		bool IsMapped() const { return mapped; }
+
+		/** update the data of the buffer */
+		bool SetBufferData(char const* in_data, size_t in_start, size_t in_size);
+		/** map the buffer */
+		char* MapBuffer(size_t in_start = 0, size_t in_size = 0, GPUBufferMapFlags in_flags = GPUBufferMapFlags::Write);
+		/** unmap the buffer */
+		void UnMapBuffer();
 
 		/** returns the GL name of the resource */
 		GLuint GetResourceID() const { return buffer_id; }
 		/** returns true whether the resource is valid */
 		bool IsValid() const;
 
-		/** update the data of the buffer */
-		bool SetBufferData(char const* in_data, size_t in_size);
-		/** get the size of the buffer */
-		size_t GetBufferSize() const;
-
-		/** map the buffer */
-		char* MapBuffer(size_t start = 0, size_t count = 0, GPUBufferMapFlags flags = GPUBufferMapFlags::Write);
-		/** unmap the buffer */
-		void UnMapBuffer();
-
-		/** returns whether the buffer has been mapped */
-		bool IsMapped() const { return mapped; }
+		/** override */
+		virtual void OnLastReferenceLost() override;
 
 	protected:
 
-		/** cleaning the object */
-		virtual void Release() override;
+		/** constructor */
+		GPUBuffer(GPUDevice * in_gpu_device, GLuint in_buffer_id, size_t in_buffer_size, GPUBufferFlags in_flags);
 
-
-
-
-		/** create an OpenGL resource */
-		bool CreateResource(bool in_dynamic);
-		/** Initialize from GL Resource */
-		bool SetResource(GLuint in_id, bool in_ownership);
+		/** check whether mapping range is valid. update parameters if necessary */
+		bool CheckAndComputeBufferRange(size_t & inout_start, size_t & inout_size) const;
 
 	protected:
 
@@ -85,10 +82,8 @@ namespace chaos
 		GLuint buffer_id = 0;
 		/** the size of the buffer */
 		size_t buffer_size = 0;
-		/** whether the object has ownership of the GL resource */
-		bool ownership = true;
-		/** whether the data is dynamic or not (this is a restrict of GL_ STATIC/STREAM/DYNAMIC ... DRAW/COPY/READ => considere only GL_STATIC_DRAW and GL_DYNAMIC_DRAW */
-		bool dynamic = false;
+		/** flags */
+		GPUBufferFlags flags = GPUBufferFlags::None;
 		/** whether the buffer is mapped */
 		bool mapped = false;
 	};

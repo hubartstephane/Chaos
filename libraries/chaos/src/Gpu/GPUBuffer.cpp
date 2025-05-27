@@ -1,141 +1,23 @@
 #include "chaos/ChaosPCH.h"
 #include "chaos/ChaosInternals.h"
 
-
 namespace chaos
 {
 	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(GPUBufferFlags, nullptr, CHAOS_API);
-
 	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(GPUBufferMapFlags, nullptr, CHAOS_API);
 
-	GPUBuffer::GPUBuffer(bool in_dynamic)
+	GPUBuffer::GPUBuffer(GPUDevice * in_gpu_device, GLuint in_buffer_id, size_t in_buffer_size, GPUBufferFlags in_flags):
+		GPUDeviceResourceInterface(in_gpu_device),
+		buffer_id(in_buffer_id),
+		buffer_size(in_buffer_size),
+		flags(in_flags)
 	{
-		CreateResource(in_dynamic);
-	}
-
-	GPUBuffer::GPUBuffer(GLuint in_id, bool in_ownership)
-	{
-		SetResource(in_id, in_ownership);
 	}
 
 	GPUBuffer::~GPUBuffer()
 	{
+		assert(buffer_id == 0);
 		assert(!mapped);
-		Release();
-	}
-
-	bool GPUBuffer::CreateResource(bool in_dynamic)
-	{
-		// release previous resource
-		Release();
-		// create new resource
-		glCreateBuffers(1, &buffer_id);
-		if (buffer_id == 0)
-			return false;
-		ownership = true;
-		dynamic = in_dynamic;
-		buffer_size = 0;
-		return true;
-	}
-
-	bool GPUBuffer::SetResource(GLuint in_id, bool in_ownership)
-	{
-		// early exit
-		if (buffer_id == in_id)
-		{
-			ownership = in_ownership;
-			return true;
-		}
-
-		// release previous resource
-		Release();
-
-		// reference new resource (if exisiting)
-		if (in_id != 0)
-		{
-			// bad incomming resource
-			if (!glIsBuffer(in_id))
-				return false;
-			// get the resource size
-			GLint size = 0;
-			glGetNamedBufferParameteriv(in_id, GL_BUFFER_SIZE, &size);
-			buffer_size = (size_t)size;
-			// get the usage : dynamic, static ...
-			int usage = 0;
-			glGetNamedBufferParameteriv(in_id, GL_BUFFER_USAGE, &usage);
-			dynamic = (usage == GL_STREAM_DRAW || usage == GL_DYNAMIC_DRAW);
-			// initialize internals
-			buffer_id = in_id;
-			ownership = in_ownership;
-		}
-		return true;
-	}
-
-	bool GPUBuffer::IsValid() const
-	{
-		return (buffer_id != 0);
-	}
-
-	void GPUBuffer::Release()
-	{
-		if (buffer_id != 0 && ownership)
-			glDeleteBuffers(1, &buffer_id);
-		buffer_id = 0;
-		buffer_size = 0;
-	}
-
-	bool GPUBuffer::SetBufferData(char const * in_data, size_t in_size)
-	{
-		// early exit
-		if (buffer_id == 0)
-			return false;
-
-		// the type of buffer we want (there are more kind of buffers we don't support : STREAM ... COPY/READ */
-		GLenum buffer_type = (dynamic) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;  // GL_STREAM_DRAW ??? GL_DYNAMIC_DRAW ??
-
-		// XXX: a mapping a STATIC_BUFFER triggers a performance warning (not a notification)
-		//      static buffers should use glBufferData(...)
-		//      test what happens with glBufferStorage(...)
-
-        size_t effective_size = in_size;
-
-		// just want to transfert some data
-		if (in_data != nullptr)
-		{
-			bool transfered = false;
-
-			// resize necessary
-			if (effective_size != buffer_size)
-			{
-				// can resize + transfert at the same time
-				if (effective_size == in_size)
-				{
-					glNamedBufferData(buffer_id, in_size, in_data, buffer_type); // can transfert data in the same time because data_size == allocation_size
-					transfered = true;
-				}
-				// resize. cannot transfert at the same time
-				else
-				{
-					glNamedBufferData(buffer_id, effective_size, nullptr, buffer_type); // reallocate and transfert NO data
-				}
-			}
-			// transfert data if not done yet
-			if (!transfered && in_size != 0)
-				glNamedBufferSubData(buffer_id, 0, in_size, in_data);
-
-			buffer_size = effective_size;
-			return true;
-		}
-		// we want to resize buffer without any transfert
-		else
-		{
-			// no need to do any thing, time is the same
-			if (effective_size == buffer_size)
-				return true;
-			glNamedBufferData(buffer_id, effective_size, nullptr, buffer_type);
-			buffer_size = effective_size;
-		}
-		return true;
 	}
 
 	size_t GPUBuffer::GetBufferSize() const
@@ -143,39 +25,79 @@ namespace chaos
 		return buffer_size;
 	}
 
-	char * GPUBuffer::MapBuffer(size_t start, size_t count, GPUBufferMapFlags flags)
+	GPUBufferFlags GPUBuffer::GetBufferFlags() const
+	{
+		return flags;
+	}
+
+	bool GPUBuffer::IsValid() const
+	{
+		return (buffer_id != 0);
+	}
+
+	void GPUBuffer::OnLastReferenceLost()
+	{
+		gpu_device->OnBufferUnused(this);
+		GPUResource::OnLastReferenceLost();
+	}
+
+	bool GPUBuffer::CheckAndComputeBufferRange(size_t & inout_start, size_t & inout_size) const
+	{
+		if (inout_start >= buffer_size) // check for range
+			return false;
+		if (inout_size == 0) // 0 = map all
+		{
+			inout_size = buffer_size - inout_start;
+			if (inout_size == 0)
+				return false; // nothing more to map
+		}
+		else if (inout_start + inout_size > buffer_size) // map all that is required or nothing
+			return false;
+
+		return true;
+	}
+
+	bool GPUBuffer::SetBufferData(char const * in_data, size_t in_start, size_t in_size)
+	{
+		// early exit
+		if (buffer_id == 0)
+			return false;
+		if (in_data == nullptr)
+			return false;
+		if (in_size == 0)
+			return false;
+		if (!CheckAndComputeBufferRange(in_start, in_size))
+			return false;
+
+		glNamedBufferSubData(buffer_id, in_start, in_size, in_data);
+
+		return true;
+	}
+
+	char * GPUBuffer::MapBuffer(size_t in_start, size_t in_size, GPUBufferMapFlags in_flags)
 	{
 		assert(!mapped);
-		assert(HasAnyFlags(flags, GPUBufferMapFlags::Read | GPUBufferMapFlags::Write));
+		assert(HasAnyFlags(in_flags, GPUBufferMapFlags::Read | GPUBufferMapFlags::Write));
 
 		// early exit
 		if (buffer_id == 0)
 			return nullptr;
-		if (!HasAnyFlags(flags, GPUBufferMapFlags::Read | GPUBufferMapFlags::Write))
+		if (!HasAnyFlags(in_flags, GPUBufferMapFlags::Read | GPUBufferMapFlags::Write))
+			return nullptr;
+		if (!CheckAndComputeBufferRange(in_start, in_size))
 			return nullptr;
 
 		// search kind of mapping
-		GLbitfield map_type = GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT; // theses flag are REALLY important !! can create significant framerate drops
-		if (HasAnyFlags(flags, GPUBufferMapFlags::Read))
+		GLbitfield map_type = GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT; // theses flags are REALLY important !! can create significant framerate drops
+		if (HasAnyFlags(in_flags, GPUBufferMapFlags::Read))
 			map_type |= GL_MAP_READ_BIT;
-		if (HasAnyFlags(flags, GPUBufferMapFlags::Write))
+		if (HasAnyFlags(in_flags, GPUBufferMapFlags::Write))
 			map_type |= GL_MAP_WRITE_BIT;
 
-       // map_type |= GL_MAP_UNSYNCHRONIZED_BIT;
+		// map_type |= GL_MAP_UNSYNCHRONIZED_BIT;
 
-		// check for map range
-		if (start >= buffer_size)
-			return nullptr;
-		if (count == 0) // 0 = map all
-		{
-			count = buffer_size - start;
-			if (count == 0)
-				return nullptr; // nothing more to map
-		}
-		else if (start + count > buffer_size) // map all what required or nothing
-			return nullptr;
 		// do the mapping
-		char* result = (char*)glMapNamedBufferRange(buffer_id, start, count, map_type);
+		char* result = (char*)glMapNamedBufferRange(buffer_id, in_start, in_size, map_type);
 		if (result != nullptr)
 			mapped = true;
 		return result;

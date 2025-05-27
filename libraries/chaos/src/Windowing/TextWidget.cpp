@@ -31,7 +31,7 @@ namespace chaos
 
 			GPUDrawInterface<VertexDefault> DI(GetGPUDevice(), nullptr);
 			DrawText(DI, in_text, other_params, {}, &bounding_box);
-			mesh = DI.GetDynamicMesh(mesh.get());
+			mesh = DI.GetDynamicMesh();
 		}
 	#endif
 	}

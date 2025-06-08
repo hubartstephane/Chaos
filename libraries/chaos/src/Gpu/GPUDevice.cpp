@@ -3,7 +3,6 @@
 
 namespace chaos
 {
-
 	GPUDevice::GPUDevice():
 		buffer_pool(this)
 	{

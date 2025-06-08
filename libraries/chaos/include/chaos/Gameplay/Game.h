@@ -45,6 +45,8 @@ namespace chaos
 
 		/** initialization */
 		bool Initialize();
+		/** destroy the game */
+		void Finalize();
 
 		/** Get a level by its index */
 		AutoCastable<Level> FindLevelByIndex(int level_index);

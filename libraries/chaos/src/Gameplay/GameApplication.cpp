@@ -13,6 +13,11 @@ namespace chaos
 	{
 		assert(glfwGetCurrentContext() == shared_context);
 
+		if (game != nullptr)
+		{
+			game->Finalize();
+			game = nullptr;
+		}
 		WindowApplication::FinalizeGPUResources();
 	}
 

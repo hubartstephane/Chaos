@@ -545,6 +545,10 @@ namespace chaos
 		return true;
 	}
 
+	void Game::Finalize()
+	{
+	}
+
 	bool Game::Initialize()
 	{
 		// initialize game values

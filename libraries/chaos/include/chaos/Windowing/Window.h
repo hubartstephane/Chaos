@@ -3,9 +3,6 @@ namespace chaos
 
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class WindowCreateParams;
-	class WindowPlacementInfo;
-	class WindowFrameSizeInfo;
 	class NonFullScreenWindowData;
 	class Window;
 
@@ -24,73 +21,6 @@ namespace chaos
 		DISABLED = GLFW_CURSOR_DISABLED,
 		HIDDEN = GLFW_CURSOR_HIDDEN
 	};
-
-	/**
-	* WindowPlacementInfo: describes how the window should be placed
-	*/
-
-	class CHAOS_API WindowPlacementInfo
-	{
-	public:
-
-		/** the wanted monitor */
-		GLFWmonitor* monitor = nullptr;
-		/** the monitor index (used only if monitor is not explicitly defined above) */
-		std::optional<int> monitor_index;
-
-		/** the wanted position (if a monitor is explicitly given, the position is relative to this monitor, elsewhere it is absolute) */
-		std::optional<glm::ivec2> position;
-		/** the wanted size (fit the whole monitor if not defined or with negative values or fullscreen is set to true) */
-		std::optional<glm::ivec2> size;
-		/** a fullscreen window fits the whole monitor and displays no decorator */
-		bool fullscreen = false;
-	};
-
-	CHAOS_API bool DoSaveIntoJSON(nlohmann::json* json, WindowPlacementInfo const& src);
-
-	CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, WindowPlacementInfo& dst);
-
-	/**
-	* WindowFrameSizeInfo: describes the decoration surface surrounding a window
-	*/
-
-	class CHAOS_API WindowFrameSizeInfo
-	{
-	public:
-
-		int left = 0;
-		int top = 0;
-		int right = 0;
-		int bottom = 0;
-	};
-
-	CHAOS_API WindowFrameSizeInfo GetWindowFrameSizeInfo(GLFWwindow* window);
-
-	/**
-	* WindowCreateParams : parameters for playing single window application
-	*/
-
-	class CHAOS_API WindowCreateParams
-	{
-	public:
-
-		/** the title */
-		std::string title;
-		/** true if the window can be resized */
-		int resizable = 1;
-		/** true if the window starts visible */
-		int start_visible = 1;
-		/** true if the window has some decoration */
-		int decorated = 1;
-		/** true if the window is toplevel */
-		int toplevel = 0;
-		/** self description */
-		int focused = 0;
-	};
-
-	CHAOS_API bool DoSaveIntoJSON(nlohmann::json * json, WindowCreateParams const& src);
-
-	CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, WindowCreateParams& dst);
 
 	/**
 	* NonFullScreenWindowData : a binding class between chaos and GLFW to handle window (beware the prefix "My")

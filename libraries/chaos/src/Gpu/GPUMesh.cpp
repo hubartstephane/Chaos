@@ -75,11 +75,11 @@ namespace chaos
 
 			// gets the vertex array
 			GPUVertexArrayBindingInfo binding_info;
-			binding_info.program            = program;
-			binding_info.vertex_buffer      = element.vertex_buffer.get();
-			binding_info.index_buffer       = element.index_buffer.get();
-			binding_info.vertex_declaration = element.vertex_declaration.get();
-			binding_info.offset             = element.vertex_buffer_offset;
+			binding_info.program              = program;
+			binding_info.vertex_buffer        = element.vertex_buffer.get();
+			binding_info.index_buffer         = element.index_buffer.get();
+			binding_info.vertex_declaration   = element.vertex_declaration.get();
+			binding_info.vertex_buffer_offset = element.vertex_buffer_offset;
 
 			render_context->BindVertexArray(binding_info);
 

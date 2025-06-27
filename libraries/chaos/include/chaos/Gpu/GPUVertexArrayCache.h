@@ -25,7 +25,7 @@ namespace chaos
 		/** the vertex declaration to use */
 		GPUVertexDeclaration const* vertex_declaration = nullptr;
 		/** the offset in the vertex buffer */
-		GLintptr offset = 0;
+		GLintptr vertex_buffer_offset = 0;
 	};
 
 	// ==================================================================
@@ -46,9 +46,9 @@ namespace chaos
 		/** whether the entry is still valid (whether one of the pointed element has been destroyed) */
 		bool IsValid() const;
 		/** returns true whether the vertex_array is using the buffer */
-		bool UseVertexBuffer(GLuint in_buffer_id) const;
+		bool IsUsingBuffer(GLuint in_buffer_id) const;
 		/** returns true whether the vertex_array is using the program */
-		bool UseProgram(GLuint in_program_id) const;
+		bool IsUsingProgram(GLuint in_program_id) const;
 
 	public:
 

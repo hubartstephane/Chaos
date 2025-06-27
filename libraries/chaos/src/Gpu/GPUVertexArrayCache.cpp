@@ -15,7 +15,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GPUVertexArrayCacheEntry::UseVertexBuffer(GLuint in_buffer_id) const
+	bool GPUVertexArrayCacheEntry::IsUsingBuffer(GLuint in_buffer_id) const
 	{
 		if (vertex_buffer_id == in_buffer_id)
 			return true;
@@ -24,7 +24,7 @@ namespace chaos
 		return false;
 	}
 
-	bool GPUVertexArrayCacheEntry::UseProgram(GLuint in_program_id) const
+	bool GPUVertexArrayCacheEntry::IsUsingProgram(GLuint in_program_id) const
 	{
 		if (program_id == in_program_id)
 			return true;
@@ -97,7 +97,7 @@ namespace chaos
 			if (entry.program == binding_info.program &&
 				entry.vertex_buffer_id     == search_vertex_buffer_id &&
 				entry.index_buffer_id      == search_index_buffer_id &&
-				entry.vertex_buffer_offset == binding_info.offset)
+				entry.vertex_buffer_offset == binding_info.vertex_buffer_offset)
 			{
 				return entry.vertex_array.get();
 			}
@@ -128,7 +128,7 @@ namespace chaos
 				vertex_array_id,
 				binding_index,
 				binding_info.vertex_buffer->GetResourceID(),
-				binding_info.offset,
+				binding_info.vertex_buffer_offset,
 				binding_info.vertex_declaration->GetVertexSize());
 		}
 
@@ -147,7 +147,7 @@ namespace chaos
 		new_entry.program_id           = binding_info.program->GetResourceID();
 		new_entry.vertex_buffer_id     = (binding_info.vertex_buffer != nullptr) ? binding_info.vertex_buffer->GetResourceID() : 0;
 		new_entry.index_buffer_id      = (binding_info.index_buffer != nullptr) ? binding_info.index_buffer->GetResourceID() : 0;
-		new_entry.vertex_buffer_offset = binding_info.offset;
+		new_entry.vertex_buffer_offset = binding_info.vertex_buffer_offset;
 		entries.push_back(std::move(new_entry));
 
 		return result;
@@ -175,7 +175,7 @@ namespace chaos
 		for (size_t i = entries.size() ; i > 0 ; --i)
 		{
 			GPUVertexArrayCacheEntry & entry = entries[i - 1];
-			if (entry.UseVertexBuffer(in_buffer_id))
+			if (entry.IsUsingBuffer(in_buffer_id))
 			{
 				entry = entries[entries.size() - 1];
 				entries.pop_back();
@@ -188,7 +188,7 @@ namespace chaos
 		for (size_t i = entries.size() ; i > 0 ; --i)
 		{
 			GPUVertexArrayCacheEntry & entry = entries[i - 1];
-			if (entry.UseProgram(in_program_id))
+			if (entry.IsUsingProgram(in_program_id))
 			{
 				entry = entries[entries.size() - 1];
 				entries.pop_back();

@@ -32,11 +32,6 @@ namespace chaos
 	// GPUVertexArrayCacheEntry: an entry in the cache vertex array
 	// ==================================================================
 
-	// The CacheEntry uses both weak pointer on GPUProgram and GPUBuffer and both GLuint resourceID
-	//
-	// -weak pointers are usefull to know whether the GPUObject has been destroyed and though the vertex array is not necessary anymore
-	// -GLuint IDs are necessary because on rare cases (GPUResourceManager hotreload), the associated OpenGL ID's may be changed
-
 	class CHAOS_API GPUVertexArrayCacheEntry
 	{
 		friend class GPUVertexArrayCache;
@@ -55,9 +50,6 @@ namespace chaos
 		/** the vertex array */
 		shared_ptr<GPUVertexArray> vertex_array;
 
-		/** the program concerned */
-		weak_ptr<GPUProgram const> program;
-
 		/** the index of the program */
 		GLuint program_id = 0;
 		/** the vertex buffer */
@@ -72,7 +64,7 @@ namespace chaos
 	// GPUVertexArrayCache : a binding between GPUProgram/GPUVertexArray that support destruction of both side
 	// =================================================================================================
 
-	class CHAOS_API GPUVertexArrayCache : public Tickable
+	class CHAOS_API GPUVertexArrayCache : public Tickable, public GPURenderContextResourceInterface
 	{
 		friend class GPURenderContext;
 
@@ -85,6 +77,9 @@ namespace chaos
 		GPUVertexArray const* FindOrCreateVertexArray(GPUVertexArrayBindingInfo const& binding_info);
 
 	protected:
+
+		/** constructor */
+		GPUVertexArrayCache(GPURenderContext * in_gpu_render_context);
 
 		/** find vertex array for the program */
 		GPUVertexArray const* FindVertexArray(GPUVertexArrayBindingInfo const& binding_info) const;

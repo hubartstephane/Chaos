@@ -19,9 +19,11 @@ namespace chaos
 
 		/** getter on the render context  */
 		GPURenderContext* GetGPURenderContext() const { return gpu_render_context.get(); }
-
 		/** getter on the device */
 		GPUDevice * GetGPUDevice() const;
+
+		/** check whether the context is current */
+		bool IsRenderContextCurrent() const;
 
 	protected:
 

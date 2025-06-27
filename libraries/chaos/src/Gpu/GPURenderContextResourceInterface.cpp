@@ -16,4 +16,11 @@ namespace chaos
 		return gpu_render_context->GetGPUDevice();
 	}
 
+	bool GPURenderContextResourceInterface::IsRenderContextCurrent() const
+	{
+		if (gpu_render_context == nullptr)
+			return false;
+		return gpu_render_context->IsRenderContextCurrent();
+	}
+
 }; // namespace chaos

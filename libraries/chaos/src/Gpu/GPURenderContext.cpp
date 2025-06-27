@@ -9,13 +9,16 @@ namespace chaos
 	GPURenderContext::GPURenderContext(GPUDevice* in_gpu_device, Window* in_window) :
 		GPUDeviceResourceInterface(in_gpu_device),
 		window(in_window),
-		stats(renderer_stats_size.Get())
+		stats(renderer_stats_size.Get()),
+		vertex_array_cache(this)
 	{
 		assert(in_window != nullptr);
 	}
 
 	bool GPURenderContext::BindVertexArray(GPUVertexArrayBindingInfo const & binding_info)
 	{
+		//assert(IsRenderContextCurrent());
+
 		// gets the vertex array
 		GPUVertexArray const* vertex_array = vertex_array_cache.FindOrCreateVertexArray(binding_info);
 		if (vertex_array == nullptr)
@@ -28,6 +31,7 @@ namespace chaos
 
 	void GPURenderContext::UnbindVertexArray()
 	{
+		//assert(IsRenderContextCurrent());
 		glBindVertexArray(0);
 	}
 
@@ -259,6 +263,13 @@ namespace chaos
 			OnLastReferenceLost();
 		else if (shared_count == 1) // the last reference is comming from GPUDevice
 			gpu_device->OnRenderContextDestroyed(this);
+	}
+
+	bool GPURenderContext::IsRenderContextCurrent() const
+	{
+		if (window == nullptr)
+			return false;
+		return (glfwGetCurrentContext() == window->GetGLFWHandler());
 	}
 
 }; // namespace chaos

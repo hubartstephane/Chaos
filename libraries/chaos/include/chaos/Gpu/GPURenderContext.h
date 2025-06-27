@@ -71,6 +71,9 @@ namespace chaos
 		/** get the owning window */
 		Window* GetWindow() const { return window.get(); }
 
+		/** check whether the context is current */
+		bool IsRenderContextCurrent() const;
+
 	protected:
 
 		/** constructor */

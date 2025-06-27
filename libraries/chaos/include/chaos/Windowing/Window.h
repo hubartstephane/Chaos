@@ -211,8 +211,9 @@ namespace chaos
 				{
 					// call delegate
 					func();
-					// restore GLFW and ImGui contexts
-					glfwMakeContextCurrent(previous_glfw_window);
+					// restore GLFW context (if different, because maybe the context has been destroy inside the func() call
+					if (previous_glfw_window != glfw_window)
+						glfwMakeContextCurrent(previous_glfw_window);
 					// restore ImGui context (if different, because maybe the context has been destroy inside the func() call
 					if (previous_imgui_context != imgui_context_to_set)
 						ImGui::SetCurrentContext(previous_imgui_context);
@@ -221,8 +222,9 @@ namespace chaos
 				{
 					// call delegate
 					decltype(auto) result = func();
-					// restore GLFW and ImGui contexts
-					glfwMakeContextCurrent(previous_glfw_window);
+					// restore GLFW context (if different, because maybe the context has been destroy inside the func() call
+					if (previous_glfw_window != glfw_window)
+						glfwMakeContextCurrent(previous_glfw_window);
 					// restore ImGui context (if different, because maybe the context has been destroy inside the func() call
 					if (previous_imgui_context != imgui_context_to_set)
 						ImGui::SetCurrentContext(previous_imgui_context);

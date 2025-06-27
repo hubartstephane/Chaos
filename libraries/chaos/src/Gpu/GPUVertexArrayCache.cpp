@@ -6,13 +6,9 @@ namespace chaos
 {
 	bool GPUVertexArrayCacheEntry::IsValid() const
 	{
-		// should always have a program
-		if (program == nullptr)
+		if (vertex_array == nullptr)
 			return false;
-		else if (program_id != program->GetResourceID()) // the program OpenGL resource has changed. it is invalid
-			return false;
-		// OK
-		return true;
+		return vertex_array->IsValid();
 	}
 
 	bool GPUVertexArrayCacheEntry::IsUsingBuffer(GLuint in_buffer_id) const
@@ -29,6 +25,11 @@ namespace chaos
 		if (program_id == in_program_id)
 			return true;
 		return false;
+	}
+
+	GPUVertexArrayCache::GPUVertexArrayCache(GPURenderContext * in_gpu_render_context):
+		GPURenderContextResourceInterface(in_gpu_render_context)
+	{
 	}
 
 	// Due to OpenGL implementation, VertexArrays have to be deleted with the proper GLFW context set
@@ -89,14 +90,15 @@ namespace chaos
 
 	GPUVertexArray const* GPUVertexArrayCache::FindVertexArray(GPUVertexArrayBindingInfo const& binding_info) const
 	{
-		GLuint search_vertex_buffer_id = (binding_info.vertex_buffer != nullptr)? binding_info.vertex_buffer->GetResourceID() : 0;
-		GLuint search_index_buffer_id  = (binding_info.index_buffer  != nullptr)? binding_info.index_buffer->GetResourceID()  : 0;
+		GLuint searched_vertex_buffer_id = (binding_info.vertex_buffer != nullptr)? binding_info.vertex_buffer->GetResourceID() : 0;
+		GLuint searched_index_buffer_id  = (binding_info.index_buffer  != nullptr)? binding_info.index_buffer->GetResourceID()  : 0;
+		GLuint searched_index_program_id = (binding_info.program  != nullptr)? binding_info.program->GetResourceID()  : 0;
 
 		for (GPUVertexArrayCacheEntry const & entry : entries)
 		{
-			if (entry.program == binding_info.program &&
-				entry.vertex_buffer_id     == search_vertex_buffer_id &&
-				entry.index_buffer_id      == search_index_buffer_id &&
+			if (entry.program_id           == searched_index_program_id &&
+				entry.vertex_buffer_id     == searched_vertex_buffer_id &&
+				entry.index_buffer_id      == searched_index_buffer_id  &&
 				entry.vertex_buffer_offset == binding_info.vertex_buffer_offset)
 			{
 				return entry.vertex_array.get();
@@ -107,6 +109,8 @@ namespace chaos
 
 	GPUVertexArray const* GPUVertexArrayCache::CreateVertexArray(GPUVertexArrayBindingInfo const& binding_info)
 	{
+		//assert(IsRenderContextCurrent());
+
 		// create new GPUVertexArray
 		GLuint vertex_array_id = 0;
 		glCreateVertexArrays(1, &vertex_array_id);
@@ -143,10 +147,9 @@ namespace chaos
 		// create the entry in the cache
 		GPUVertexArrayCacheEntry new_entry;
 		new_entry.vertex_array         = result;
-		new_entry.program              = binding_info.program;
-		new_entry.program_id           = binding_info.program->GetResourceID();
-		new_entry.vertex_buffer_id     = (binding_info.vertex_buffer != nullptr) ? binding_info.vertex_buffer->GetResourceID() : 0;
-		new_entry.index_buffer_id      = (binding_info.index_buffer != nullptr) ? binding_info.index_buffer->GetResourceID() : 0;
+		new_entry.program_id           = (binding_info.program != nullptr)? binding_info.program->GetResourceID() : 0;
+		new_entry.vertex_buffer_id     = (binding_info.vertex_buffer != nullptr)? binding_info.vertex_buffer->GetResourceID() : 0;
+		new_entry.index_buffer_id      = (binding_info.index_buffer != nullptr)? binding_info.index_buffer->GetResourceID() : 0;
 		new_entry.vertex_buffer_offset = binding_info.vertex_buffer_offset;
 		entries.push_back(std::move(new_entry));
 
@@ -155,6 +158,8 @@ namespace chaos
 
 	void GPUVertexArrayCache::ReleaseVertexArray(GPUVertexArray * vertex_array)
 	{
+		//assert(IsRenderContextCurrent());
+
 		if (vertex_array->vertex_array_id != 0)
 		{
 			glDeleteVertexArrays(1, &vertex_array->vertex_array_id);
@@ -177,6 +182,7 @@ namespace chaos
 			GPUVertexArrayCacheEntry & entry = entries[i - 1];
 			if (entry.IsUsingBuffer(in_buffer_id))
 			{
+				ReleaseVertexArray(entry.vertex_array.get());
 				entry = entries[entries.size() - 1];
 				entries.pop_back();
 			}
@@ -190,6 +196,7 @@ namespace chaos
 			GPUVertexArrayCacheEntry & entry = entries[i - 1];
 			if (entry.IsUsingProgram(in_program_id))
 			{
+				ReleaseVertexArray(entry.vertex_array.get());
 				entry = entries[entries.size() - 1];
 				entries.pop_back();
 			}

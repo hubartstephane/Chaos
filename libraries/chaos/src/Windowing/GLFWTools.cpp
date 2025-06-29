@@ -84,10 +84,8 @@ namespace chaos
 			GLFWmonitor* best_monitor = nullptr;
 			int          best_distance2 = std::numeric_limits<int>::max();
 			// 1 - search the monitor for which position is fully inside
-			// 2 - search the monitor for which position.x is inside the range
-			// 3 - search the monitor for which position.y is inside the range
-			// 4 - search the nearest position center
-			for (int step = 0; step < 4; ++step)
+			// 2 - search the nearest position center
+			for (int step = 0; step < 2; ++step)
 			{
 				for (int i = 0; i < monitor_count; ++i)
 				{
@@ -100,25 +98,13 @@ namespace chaos
 					glm::ivec2 monitor_position;
 					glfwGetMonitorPos(monitor, &monitor_position.x, &monitor_position.y);
 
-					bool x_inside = (position.x >= monitor_position.x && position.x < monitor_position.x + mode->width);
-					bool y_inside = (position.y >= monitor_position.y && position.y < monitor_position.y + mode->height);
-
 					if (step == 0)
 					{
-						if (x_inside && y_inside)
+						if ((position.x >= monitor_position.x && position.x < monitor_position.x + mode->width) &&
+						    (position.y >= monitor_position.y && position.y < monitor_position.y + mode->height))
 							return monitor;
 					}
-					else if (step == 1)
-					{
-						if (x_inside)
-							return monitor;
-					}
-					else if (step == 2)
-					{
-						if (y_inside)
-							return monitor;
-					}
-					else if (step == 3)
+					else
 					{
 						glm::ivec2 monitor_center = monitor_position + glm::ivec2(mode->width, mode->height) / 2;
 						glm::ivec2 delta_pos = position - monitor_center;

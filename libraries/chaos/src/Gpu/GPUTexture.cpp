@@ -303,5 +303,10 @@ namespace chaos
 		return result;
 	}
 
+	void GPUTexture::OnLastReferenceLost()
+	{
+		gpu_device->OnTextureUnused(this); // give underlying resource to GPUBufferPool
+		GPUResource::OnLastReferenceLost();
+	}
 
 }; // namespace chaos

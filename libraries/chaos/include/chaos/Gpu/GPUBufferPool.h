@@ -57,8 +57,8 @@ namespace chaos
 		/** called whenever a buffer is not required anymore */
 		void OnBufferUnused(GPUBuffer * in_buffer);
 
-		/** destroy the whole content */
-		void Destroy();
+		/** destroy all cached resources */
+		void ClearPool();
 
 	protected:
 		/** search a buffer in the pool */
@@ -69,10 +69,12 @@ namespace chaos
 		bool DoMatchRequestedBufferInfo(GPUBufferPoolBufferInfo & in_buffer_info, size_t in_buffer_size, GPUBufferFlags in_flags) const;
 		/** get the group corresponding to a given fence */
 		GPUBufferPoolBufferInfoGroup * FindOrCreateBufferInfoGroup(GPUFence * in_fence);
-		/** release one BufferInfo */
-		void ReleaseBufferInfo(GPUBufferPoolBufferInfo & in_buffer_info);
+		/** release the buffer */
+		void ReleaseBuffer(GLuint & in_buffer_id) const;
 		/** called whenever a buffer resource is destroyed */
-		void OnBufferDestroyed(GLuint in_buffer_id);
+		void OnBufferDestroyed(GLuint in_buffer_id) const;
+		/** returns true whether we want to reuse the buffer */
+		bool WantToReuseBuffer(GPUBuffer * in_buffer) const;
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;

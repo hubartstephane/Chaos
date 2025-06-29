@@ -10,6 +10,7 @@ namespace chaos
 	{
 		friend class GPUResourceManager;
 		friend class GPUDevice;
+		friend class GPUTexturePool;
 
 	public:
 
@@ -44,6 +45,9 @@ namespace chaos
 
 		/** override */
 		virtual void Release() override;
+
+		/** override */
+		virtual void OnLastReferenceLost() override;
 
 	protected:
 

@@ -52,6 +52,8 @@ namespace chaos
 		glm::ivec2 GetSize(int mipmap = 0) const;
 	};
 
+	bool operator == (SurfaceDescription const & src1, SurfaceDescription const & src2);
+
 
 	/**
 	* TextureDescription: used to describe an openGL texture
@@ -71,6 +73,8 @@ namespace chaos
 		/** whether the texture uses mipmaps */
 		bool use_mipmaps = true;
 	};
+
+	bool operator == (TextureDescription const & src1, TextureDescription const & src2);
 
 #endif
 

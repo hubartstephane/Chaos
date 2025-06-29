@@ -37,7 +37,7 @@ namespace chaos
 
 	void GPUBuffer::OnLastReferenceLost()
 	{
-		gpu_device->OnBufferUnused(this);
+		gpu_device->OnBufferUnused(this); // give underlying resource to GPUBufferPool
 		GPUResource::OnLastReferenceLost();
 	}
 

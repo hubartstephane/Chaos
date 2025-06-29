@@ -10,9 +10,7 @@ namespace chaos
 
 	GPUBufferPool::~GPUBufferPool()
 	{
-		for (GPUBufferPoolBufferInfoGroup & buffer_info_group : buffer_info_groups)
-			for (GPUBufferPoolBufferInfo & buffer_info : buffer_info_group.buffers_info)
-				assert(buffer_info.buffer_id == 0); // ensure buffer has properly been destroyed
+		assert(buffer_info_groups.size() == 0); // ensure pool has properly been cleared before
 	}
 
 	bool GPUBufferPool::DoTick(float delta_time)
@@ -103,7 +101,11 @@ namespace chaos
 
 	void GPUBufferPool::OnBufferUnused(GPUBuffer * in_buffer)
 	{
-		if (GPUBufferPoolBufferInfoGroup * buffer_info_group = FindOrCreateBufferInfoGroup(nullptr))
+		if (WantToReuseBuffer(in_buffer))
+		{
+			ReleaseBuffer(in_buffer->buffer_id);
+		}
+		else if (GPUBufferPoolBufferInfoGroup * buffer_info_group = FindOrCreateBufferInfoGroup(nullptr))
 		{
 			GPUBufferPoolBufferInfo buffer_info;
 			buffer_info.buffer_id    = in_buffer->buffer_id;
@@ -111,27 +113,31 @@ namespace chaos
 			buffer_info.buffer_flags = in_buffer->flags;
 			buffer_info_group->buffers_info.push_back(buffer_info);
 
-			in_buffer->buffer_id = 0;
+			in_buffer->buffer_id = 0; // capture the underlying resource
 		}
 	}
 
-	void GPUBufferPool::Destroy()
+	bool GPUBufferPool::WantToReuseBuffer(GPUBuffer * in_buffer) const
+	{
+		return true;
+	}
+
+	void GPUBufferPool::ClearPool()
 	{
 		for (GPUBufferPoolBufferInfoGroup & buffer_info_group : buffer_info_groups)
 			for (GPUBufferPoolBufferInfo & buffer_info : buffer_info_group.buffers_info)
-				ReleaseBufferInfo(buffer_info);
+				ReleaseBuffer(buffer_info.buffer_id);
 		buffer_info_groups.clear();
 	}
 
-	void GPUBufferPool::ReleaseBufferInfo(GPUBufferPoolBufferInfo & in_buffer_info)
+	void GPUBufferPool::ReleaseBuffer(GLuint & in_buffer_id) const
 	{
-		GLuint buffer_id = in_buffer_info.buffer_id;
-		glDeleteBuffers(1, &in_buffer_info.buffer_id);
-		in_buffer_info.buffer_id = 0;
-		OnBufferDestroyed(buffer_id);
+		glDeleteBuffers(1, &in_buffer_id);
+		OnBufferDestroyed(in_buffer_id);
+		in_buffer_id = 0;
 	}
 
-	void GPUBufferPool::OnBufferDestroyed(GLuint in_buffer_id)
+	void GPUBufferPool::OnBufferDestroyed(GLuint in_buffer_id) const
 	{
 		gpu_device->OnBufferDestroyed(in_buffer_id);
 	}

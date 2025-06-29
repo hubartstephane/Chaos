@@ -16,6 +16,8 @@ namespace chaos
 		CHAOS_API glm::ivec2 AbsolutePositionToMonitor(glm::ivec2 position, GLFWmonitor* monitor);
 		/** convert a monitor system position into an absolute */
 		CHAOS_API glm::ivec2 MonitorPositionToAbsolute(glm::ivec2 position, GLFWmonitor* monitor);
+		/** tweak input window position so that it's not too much outside all monitors */
+		CHAOS_API glm::ivec2 GetTweakedWindowPositionForMonitors(glm::ivec2 const & window_position, glm::ivec2 const & window_size);
 
 #endif
 

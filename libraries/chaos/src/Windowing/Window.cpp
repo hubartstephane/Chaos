@@ -132,81 +132,6 @@ namespace chaos
 		return glfwGetWindowAttrib(glfw_window, GLFW_VISIBLE) != 0;
 	}
 
-	static void EnsureWindowToolbarVisibleInAnyMonitor(glm::ivec2& window_position, glm::ivec2& window_size)
-	{
-		//        monitor
-		// 
-		//  +---+---------+---+
-		//  |   |         |   |  ensure that the window toolbar touchs the center portion of the monitor
-		//  |   |         |   |  (the toolbar should never be cropped along the Y axis)
-		//  |   +---------+   |
-		//  |                 |
-		//  +-----------------+
-
-		int MIN_HOVER_X = 300;
-		int MIN_HOVER_Y = 150;
-
-		int monitor_count = 0;
-		GLFWmonitor** monitors = glfwGetMonitors(&monitor_count);
-
-		auto length2 = [](glm::ivec2 const& src)
-		{
-			return (src.x * src.x + src.y * src.y);
-		};
-
-		std::optional<glm::ivec2> smaller_displacement;
-		for (int i = 0; i < monitor_count; ++i)
-		{
-			if (GLFWmonitor* other_monitor = monitors[i])
-			{
-				if (GLFWvidmode const* other_mode = glfwGetVideoMode(other_monitor))
-				{
-					// get size and position of the monitor
-					glm::ivec2 other_monitor_position = { 0 , 0 };
-					glfwGetMonitorPos(other_monitor, &other_monitor_position.x, &other_monitor_position.y);
-
-					glm::ivec2 other_monitor_size = { other_mode->width , other_mode->height };
-
-					// shrink it with the BORDER
-					other_monitor_position.x += MIN_HOVER_X;  // do not shrink the monitor area at the top. we don't want fullscreen window to be pushed down
-					other_monitor_size.x -= 2 * MIN_HOVER_X;
-					other_monitor_size.y -= MIN_HOVER_Y;
-
-					// compute the displacement required so that the window is touching this monitor
-					glm::ivec2 required_displacement = { 0, 0 };
-
-					if (window_position.x > other_monitor_position.x + other_monitor_size.x)
-						required_displacement.x = (other_monitor_position.x + other_monitor_size.x) - window_position.x;
-					else if (window_position.x + window_size.x < other_monitor_position.x)
-						required_displacement.x = (other_monitor_position.x - window_size.x) - window_position.x;
-
-					if (window_position.y > other_monitor_position.y + other_monitor_size.y)
-						required_displacement.y = (other_monitor_position.y + other_monitor_size.y) - window_position.y;
-					else if (window_position.y < other_monitor_position.y)
-						required_displacement.y = other_monitor_position.y - window_position.y;
-
-					// compare displacement with the best case
-					if ((!smaller_displacement.has_value()) ||
-						(length2(smaller_displacement.value()) > length2(required_displacement)))
-					{
-						smaller_displacement = required_displacement;
-					}
-
-					// early exit if no displacement is required
-					if (smaller_displacement.value().x == 0 && smaller_displacement.value().y == 0)
-					{
-						smaller_displacement.reset(); // nothing to update
-						break;
-					}
-				}
-			}
-		}
-
-		// update
-		if (smaller_displacement.has_value())
-			window_position += smaller_displacement.value();
-	}
-
 	void Window::SetWindowPlacement(WindowPlacementInfo placement_info)
 	{
 		// compute the monitor over which the window will be
@@ -242,12 +167,20 @@ namespace chaos
 		bool pseudo_fullscreen = true;
 		if (!placement_info.fullscreen)
 			if (placement_info.size.has_value())
-				if (placement_info.size.value().x > 0 && placement_info.size.value().y > 0)
+				if (placement_info.size.value().x > 0 && placement_info.size.value().y > 0) // a unset size is equivalent to a fullscreen
 					pseudo_fullscreen = false;
 
 		// compute window size and position
 		glm::ivec2 window_position = { 0, 0 };
 		glm::ivec2 window_size = { 0, 0 };
+
+		bool decorated = false;
+		bool toplevel  = false;
+#if _DEBUG
+		bool toplevel_enabled = false; // prevent toplevel in DEBUG because it's more complicated for debugging
+#else
+		bool toplevel_enabled = true;
+#endif
 
 		if (pseudo_fullscreen) // full-screen, the window use the full-size
 		{
@@ -255,20 +188,14 @@ namespace chaos
 			if (placement_info.fullscreen) // no decorator
 			{
 				fullscreen_monitor = monitor;
-
-				glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, 0);
-#if !_DEBUG
-				glfwSetWindowAttrib(glfw_window, GLFW_FLOATING, 1);
-#endif
+				decorated = false;
+				toplevel = true;
 			}
-			else // use initial settings to know whether decorators are necessary
+			else // decorators ? it depends of initial settings (this is a window that takes the whole monitor, but maybe with decorators)
 			{
 				fullscreen_monitor = nullptr;
-
-				glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, initial_decorated ? 1 : 0);
-#if !_DEBUG
-				glfwSetWindowAttrib(glfw_window, GLFW_FLOATING, initial_toplevel ? 1 : 0);
-#endif
+				decorated = initial_decorated;
+				toplevel = initial_toplevel;
 			}
 			// compute size and position
 			window_size = monitor_size;
@@ -282,11 +209,9 @@ namespace chaos
 
 			// update internals
 			fullscreen_monitor = nullptr;
-			glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, initial_decorated? 1 : 0);
-#if !_DEBUG
-			glfwSetWindowAttrib(glfw_window, GLFW_FLOATING, initial_toplevel? 1 : 0);
-#endif
-
+			decorated = initial_decorated;
+			toplevel = initial_toplevel;
+			
 			// compute size
 			window_size = placement_info.size.value();
 			// compute position (local to concerned monitor)
@@ -297,10 +222,13 @@ namespace chaos
 
 			// set position in absolute coordinates
 			window_position = MonitorTools::MonitorPositionToAbsolute(window_position, monitor);
-
-			// ensure a large enough of the window is visible in any monitor (so that it can be displaced by the user)
-			EnsureWindowToolbarVisibleInAnyMonitor(window_position, window_size);
+			// ensure a large enough portion of the window is visible in any monitor (so that it can be displaced by the user)
+			window_position = MonitorTools::GetTweakedWindowPositionForMonitors(window_position, window_size);
 		}
+
+		glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, (decorated)? 1 : 0);
+		glfwSetWindowAttrib(glfw_window, GLFW_FLOATING, (toplevel && toplevel_enabled)? 1 : 0);
+
 		// update placement
 		SetWindowSize(window_size, true); // include decorators
 		SetWindowPosition(window_position, true); // include decorators

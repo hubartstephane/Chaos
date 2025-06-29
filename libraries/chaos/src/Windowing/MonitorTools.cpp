@@ -143,6 +143,83 @@ namespace chaos
 			return position;
 		}
 
+	glm::ivec2 MonitorTools::GetTweakedWindowPositionForMonitors(glm::ivec2 const & window_position, glm::ivec2 const & window_size)
+	{
+		//        monitor
+		// 
+		//  +---+---------+---+
+		//  |   |         |   |  ensure that the window toolbar touchs the center portion of the monitor
+		//  |   |         |   |  (the toolbar should never be cropped along the Y axis)
+		//  |   +---------+   |
+		//  |                 |
+		//  +-----------------+
+
+		const int MIN_HOVER_X = 300;
+		const int MIN_HOVER_Y = 150;
+
+		int monitor_count = 0;
+		GLFWmonitor** monitors = glfwGetMonitors(&monitor_count);
+		if (monitor_count == 0)
+			return window_position;
+
+		auto length2 = [](glm::ivec2 const& src)
+		{
+			return (src.x * src.x + src.y * src.y);
+		};
+
+		std::optional<glm::ivec2> smaller_displacement;
+		for (int i = 0; i < monitor_count; ++i)
+		{
+			if (GLFWmonitor* monitor = monitors[i])
+			{
+				if (GLFWvidmode const* other_mode = glfwGetVideoMode(monitor))
+				{
+					// get size and position of the monitor
+					glm::ivec2 monitor_position = { 0 , 0 };
+					glfwGetMonitorPos(monitor, &monitor_position.x, &monitor_position.y);
+
+					glm::ivec2 monitor_size = { other_mode->width , other_mode->height };
+
+					// shrink it with the BORDER
+					monitor_position.x += MIN_HOVER_X;  // do not shrink the monitor area at the top. we don't want fullscreen window to be pushed down
+					monitor_size.x -= 2 * MIN_HOVER_X;
+					monitor_size.y -= MIN_HOVER_Y;
+
+					// compute the displacement required so that the window is touching this monitor
+					glm::ivec2 required_displacement = { 0, 0 };
+
+					if (window_position.x > monitor_position.x + monitor_size.x)
+						required_displacement.x = (monitor_position.x + monitor_size.x) - window_position.x;
+					else if (window_position.x + window_size.x < monitor_position.x)
+						required_displacement.x = (monitor_position.x - window_size.x) - window_position.x;
+
+					if (window_position.y > monitor_position.y + monitor_size.y)
+						required_displacement.y = (monitor_position.y + monitor_size.y) - window_position.y;
+					else if (window_position.y < monitor_position.y)
+						required_displacement.y = monitor_position.y - window_position.y;
+
+					// early exit if no displacement is required
+					if (required_displacement.x == 0 && required_displacement.y == 0)
+						return window_position;
+
+					// compare displacement with the best case
+					if ((!smaller_displacement.has_value()) ||
+						(length2(smaller_displacement.value()) > length2(required_displacement)))
+					{
+						smaller_displacement = required_displacement;
+					}
+				}
+			}
+		}
+
+		if (smaller_displacement.has_value())
+		{
+			return window_position + smaller_displacement.value();
+		}
+		return window_position;
+	}
+
+
 	}; // namespace MonitorTools
 
 }; // namespace chaos

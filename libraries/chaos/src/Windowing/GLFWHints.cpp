@@ -7,9 +7,9 @@ namespace chaos
 	// GLFWHints
 	//
 
-	void GLFWHints::ApplyHints()
+	void GLFWHints::ApplyHints() const
 	{
-		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, debug_context);
+		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, (debug_context)? 1 : 0);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major_version);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor_version);
 		glfwWindowHint(GLFW_REFRESH_RATE, refresh_rate); // only usefull in fullscreen mode

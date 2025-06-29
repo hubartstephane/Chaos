@@ -113,7 +113,7 @@ namespace chaos
 			GiveChildConfiguration(result.get(), StringTools::Join("/", "windows", result->GetName()));
 
 			// create the window
-			if (!result->CreateGLFWWindow(GetGPUDevice(), placement_info, create_params, shared_context, glfw_hints.double_buffer, glfw_hints.unlimited_fps))
+			if (!result->CreateGLFWWindow(GetGPUDevice(), placement_info, create_params, shared_context, glfw_hints))
 			{
 				result->Destroy();
 				return nullptr; // the shared_ptr destruction will handle the object lifetime

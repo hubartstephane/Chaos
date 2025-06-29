@@ -319,7 +319,7 @@ namespace chaos
 		void UpdatePlacementInfoAccordingToConfig(WindowPlacementInfo & placement_info) const;
 
 		/** create the internal window */
-		bool CreateGLFWWindow(GPUDevice* in_gpu_device, WindowPlacementInfo placement_info, WindowCreateParams const &create_params, GLFWwindow* share_context, bool in_double_buffer, bool in_unlimited_fps);
+		bool CreateGLFWWindow(GPUDevice* in_gpu_device, WindowPlacementInfo placement_info, WindowCreateParams const &create_params, GLFWwindow* share_context, GLFWHints const & glfw_hints);
 		/** destroying the window */
 		void DestroyGLFWWindow();
 

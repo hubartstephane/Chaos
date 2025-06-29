@@ -15,15 +15,15 @@ namespace chaos
 	public:
 
 		/** gives set hints to GLFW */
-		void ApplyHints();
+		void ApplyHints() const;
 
 	public:
 
 		/** true if we use an opengl debug context */
 #if _DEBUG
-		int debug_context = 1;
+		bool debug_context = true;
 #else
-		int debug_context = 0;
+		bool debug_context = false;
 #endif
 		/** the major version of opengl */
 		int major_version = 4;

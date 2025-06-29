@@ -334,7 +334,7 @@ namespace chaos
 			JSONTools::GetAttribute(config, "default_fullscreen", placement_info.fullscreen);
 	}
 
-	bool Window::CreateGLFWWindow(GPUDevice * in_gpu_device, WindowPlacementInfo placement_info, WindowCreateParams const &create_params, GLFWwindow* share_context_window, bool in_double_buffer, bool in_unlimited_fps)
+	bool Window::CreateGLFWWindow(GPUDevice * in_gpu_device, WindowPlacementInfo placement_info, WindowCreateParams const &create_params, GLFWwindow* share_context_window, GLFWHints const & glfw_hints)
 	{
 		assert(glfw_window == nullptr);
 
@@ -350,9 +350,11 @@ namespace chaos
 		glfwWindowHint(GLFW_FOCUSED, create_params.focused);
 		glfwWindowHint(GLFW_VISIBLE, 0); // override the initial visibility
 
+		glfw_hints.ApplyHints();
+
 		initial_toplevel  = create_params.toplevel;
 		initial_decorated = create_params.decorated;
-		double_buffer     = in_double_buffer;
+		double_buffer     = glfw_hints.double_buffer;
 	
 		// we are doing a pseudo fullscreen => monitor parameters of glfwCreateWindow must be null or it will "capture" the screen
 		// use a random size that will be corrected later in SetWindowPlacement call
@@ -362,9 +364,7 @@ namespace chaos
 		glfwMakeContextCurrent(glfw_window);
 
 		// set vsync
-		if (GlobalVariables::UnlimitedFPS.Get())
-			in_unlimited_fps = true;
-		if (in_unlimited_fps)
+		if (GlobalVariables::UnlimitedFPS.Get() || glfw_hints.unlimited_fps)
 			glfwSwapInterval(0);
 
 		// set the callbacks

@@ -38,7 +38,7 @@ namespace chaos
 		/** number of samples in multisamples (0 for none) */
 		int samples = 0;
 		/** self description */
-		int double_buffer = 1;
+		bool double_buffer = true;
 		/** self description */
 		int depth_bits = 24;
 		/** self description */

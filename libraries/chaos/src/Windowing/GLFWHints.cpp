@@ -15,7 +15,7 @@ namespace chaos
 		glfwWindowHint(GLFW_REFRESH_RATE, refresh_rate); // only usefull in fullscreen mode
 		glfwWindowHint(GLFW_OPENGL_PROFILE, opengl_profile);
 		glfwWindowHint(GLFW_SAMPLES, samples);
-		glfwWindowHint(GLFW_DOUBLEBUFFER, double_buffer);
+		glfwWindowHint(GLFW_DOUBLEBUFFER, (double_buffer)? 1 : 0);
 		glfwWindowHint(GLFW_DEPTH_BITS, depth_bits);
 		glfwWindowHint(GLFW_STENCIL_BITS, stencil_bits);
 		glfwWindowHint(GLFW_RED_BITS, 8);

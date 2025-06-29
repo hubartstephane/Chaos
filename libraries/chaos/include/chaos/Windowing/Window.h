@@ -306,7 +306,7 @@ namespace chaos
 		virtual void SetGLFWCallbacks();
 
 		/** create a render context */
-		bool CreateRenderContext();
+		bool CreateRenderContext(GPUDevice * in_gpu_device);
 		/** destroy the context */
 		void DestroyRenderContext();
 
@@ -315,8 +315,11 @@ namespace chaos
 		/** destroying the ImGui context */
 		void DestroyImGuiContext();
 
+		/** update the placement info according to information stored in window config */
+		void UpdatePlacementInfoAccordingToConfig(WindowPlacementInfo & placement_info) const;
+
 		/** create the internal window */
-		bool CreateGLFWWindow(GPUDevice* in_gpu_device, WindowPlacementInfo const & placement_info, WindowCreateParams const &create_params, GLFWwindow* share_context, GLFWHints glfw_hints);
+		bool CreateGLFWWindow(GPUDevice* in_gpu_device, WindowPlacementInfo placement_info, WindowCreateParams const &create_params, GLFWwindow* share_context, bool in_double_buffer, bool in_unlimited_fps);
 		/** destroying the window */
 		void DestroyGLFWWindow();
 

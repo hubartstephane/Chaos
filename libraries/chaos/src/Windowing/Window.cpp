@@ -44,10 +44,10 @@ namespace chaos
 			window_application->OnWindowDestroyed(this);
 	}
 
-	bool Window::CreateRenderContext()
+	bool Window::CreateRenderContext(GPUDevice * in_gpu_device)
 	{
 		assert(render_context == nullptr);
-		render_context = GetGPUDevice()->CreateRenderContext(this);
+		render_context = in_gpu_device->CreateRenderContext(this);
 		if (render_context == nullptr)
 			return false;
 		return true;
@@ -306,12 +306,40 @@ namespace chaos
 		SetWindowPosition(window_position, true); // include decorators
 	}
 
-	bool Window::CreateGLFWWindow(GPUDevice * in_gpu_device, WindowPlacementInfo const & placement_info, WindowCreateParams const &create_params, GLFWwindow* share_context_window, GLFWHints glfw_hints)
+	void Window::UpdatePlacementInfoAccordingToConfig(WindowPlacementInfo & placement_info) const
+	{
+		// search size and position values
+		// 1-saved configuration overrides given parameters
+		// 2-use given parameters
+		// 3-use fallback configuration
+		JSONReadConfiguration config = GetJSONReadConfiguration();
+
+		glm::ivec2 window_size;
+		if (JSONTools::GetAttribute(config, "size", window_size))
+			placement_info.size = window_size;
+		else if (!placement_info.size.has_value())
+			JSONTools::GetAttribute(config, "default_size", placement_info.size);
+
+		glm::ivec2 window_position;
+		if (JSONTools::GetAttribute(config, "position", window_position))
+			placement_info.position = window_position;
+		else if (!placement_info.position.has_value())
+			JSONTools::GetAttribute(config, "default_position", placement_info.position);
+
+		int monitor_index = 0;
+		if (JSONTools::GetAttribute(config, "monitor_index", monitor_index))
+			placement_info.monitor_index = monitor_index;
+
+		if (!JSONTools::GetAttribute(config, "fullscreen", placement_info.fullscreen))
+			JSONTools::GetAttribute(config, "default_fullscreen", placement_info.fullscreen);
+	}
+
+	bool Window::CreateGLFWWindow(GPUDevice * in_gpu_device, WindowPlacementInfo placement_info, WindowCreateParams const &create_params, GLFWwindow* share_context_window, bool in_double_buffer, bool in_unlimited_fps)
 	{
 		assert(glfw_window == nullptr);
 
 		// create the GPURenderContext
-		if (!CreateRenderContext())
+		if (!CreateRenderContext(in_gpu_device))
 			return false;
 
 		// prepare window creation
@@ -322,9 +350,9 @@ namespace chaos
 		glfwWindowHint(GLFW_FOCUSED, create_params.focused);
 		glfwWindowHint(GLFW_VISIBLE, 0); // override the initial visibility
 
-		initial_toplevel = create_params.toplevel;
+		initial_toplevel  = create_params.toplevel;
 		initial_decorated = create_params.decorated;
-		double_buffer = (glfw_hints.double_buffer ? true : false);
+		double_buffer     = in_double_buffer;
 	
 		// we are doing a pseudo fullscreen => monitor parameters of glfwCreateWindow must be null or it will "capture" the screen
 		// use a random size that will be corrected later in SetWindowPlacement call
@@ -335,25 +363,24 @@ namespace chaos
 
 		// set vsync
 		if (GlobalVariables::UnlimitedFPS.Get())
-			glfw_hints.unlimited_fps = true;
-
-		if (glfw_hints.unlimited_fps)
-		{
+			in_unlimited_fps = true;
+		if (in_unlimited_fps)
 			glfwSwapInterval(0);
-		}
 
 		// set the callbacks
 		SetGLFWCallbacks();
-
 		// some input mode
 		glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, 1);
-
 		// prepare cursor mode
 		SetCursorMode(CursorMode::DISABLED);
-
-		// update placement
+		// set the window position
+		UpdatePlacementInfoAccordingToConfig(placement_info);
 		SetWindowPlacement(placement_info);
-
+		// initialize ImGui
+		CreateImGuiContext();
+		// finalize the creation
+		if (!Initialize())
+			return false;
 		// now that the window is fully placed ... we can show it
 		if (create_params.start_visible)
 			glfwShowWindow(glfw_window);
@@ -856,6 +883,8 @@ namespace chaos
 			my_window->OnDropFile(count, paths);
 		});
 	}
+
+
 
 	bool Window::GetProgramProviderAndProcess(LightweightFunction<bool(GPUProgramProviderBase*)> func)
 	{

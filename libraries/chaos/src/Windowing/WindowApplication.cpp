@@ -91,6 +91,7 @@ namespace chaos
 		});
 	}
 
+
 	Window* WindowApplication::CreateTypedWindow(CreateWindowFunc create_func, WindowPlacementInfo placement_info, WindowCreateParams const &create_params, ObjectRequest request)
 	{
 		if (FindWindow(request) != nullptr)
@@ -111,44 +112,8 @@ namespace chaos
 			// set the configuration
 			GiveChildConfiguration(result.get(), StringTools::Join("/", "windows", result->GetName()));
 
-			// search size and position values
-			// 1-saved configuration overrides given parameters
-			// 2-use given parameters
-			// 3-use fallback configuration
-			JSONReadConfiguration config = result->GetJSONReadConfiguration();
-
-			glm::ivec2 window_size;
-			if (JSONTools::GetAttribute(config, "size", window_size))
-				placement_info.size = window_size;
-			else if (!placement_info.size.has_value())
-				JSONTools::GetAttribute(config, "default_size", placement_info.size);
-
-			glm::ivec2 window_position;
-			if (JSONTools::GetAttribute(config, "position", window_position))
-				placement_info.position = window_position;
-			else if (!placement_info.position.has_value())
-				JSONTools::GetAttribute(config, "default_position", placement_info.position);
-
-			int monitor_index = 0;
-			if (JSONTools::GetAttribute(config, "monitor_index", monitor_index))
-				placement_info.monitor_index = monitor_index;
-
-			if (!JSONTools::GetAttribute(config, "fullscreen", placement_info.fullscreen))
-				JSONTools::GetAttribute(config, "default_fullscreen", placement_info.fullscreen);
-
-			// create the GLFW resource
-			if (!result->CreateGLFWWindow(GetGPUDevice(), placement_info, create_params, shared_context, glfw_hints))
-			{
-				result->Destroy();
-				return nullptr; // the shared_ptr destruction will handle the object lifetime
-			}
-			// post initialization method
-			glfwMakeContextCurrent(result->GetGLFWHandler());
-			// initialize ImGui
-			result->CreateImGuiContext();
-
-			// finalize the creation
-			if (!result->Initialize())
+			// create the window
+			if (!result->CreateGLFWWindow(GetGPUDevice(), placement_info, create_params, shared_context, glfw_hints.double_buffer, glfw_hints.unlimited_fps))
 			{
 				result->Destroy();
 				return nullptr; // the shared_ptr destruction will handle the object lifetime
@@ -865,7 +830,7 @@ namespace chaos
 			window->WithWindowContext([&window, monitor, monitor_state]()
 			{
 				if (window->GetImGuiContext() != nullptr)
-					ImGui_ImplGlfw_MonitorCallback(monitor, monitor_state); // manually call ImGui delegate (see comment in WindowApplication::OnWindowCreated(...)
+					ImGui_ImplGlfw_MonitorCallback(monitor, monitor_state); // manually call ImGui delegate
 				window->OnMonitorEvent(monitor, monitor_state);
 			});
 		});

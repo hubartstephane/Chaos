@@ -12,17 +12,7 @@ namespace chaos
 
 	GPUTexture::~GPUTexture()
 	{
-		Release();
-	}
-
-	void GPUTexture::Release()
-	{
-		if (texture_id != 0)
-		{
-			texture_description = {};
-			glDeleteTextures(1, &texture_id);
-			texture_id = 0;
-		}
+		assert(texture_id == 0);
 	}
 
 	int GPUTexture::GetMipmapCount() const

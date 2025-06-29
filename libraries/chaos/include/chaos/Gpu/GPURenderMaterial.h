@@ -93,7 +93,7 @@ namespace chaos
 	* GPURenderMaterial : this is the combinaison of some uniforms and a program
 	*/
 
-	class CHAOS_API GPURenderMaterial : public GPUFileResource
+	class CHAOS_API GPURenderMaterial : public GPUResource, public NamedInterface, public FileResource
 	{
 		friend class GPUProgramData;
 		friend class GPUProgramRenderMaterialProvider;

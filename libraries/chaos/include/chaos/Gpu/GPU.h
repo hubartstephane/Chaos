@@ -8,7 +8,6 @@
 #include "chaos/Gpu/GPUResource.h"
 #include "chaos/Gpu/GPUBuffer.h"
 #include "chaos/Gpu/GPUBufferPool.h"
-#include "chaos/Gpu/GPUFileResource.h"
 #include "chaos/Gpu/GPUSurface.h"
 #include "chaos/Gpu/GPUTexture.h"
 #include "chaos/Gpu/GPUTexturePool.h"

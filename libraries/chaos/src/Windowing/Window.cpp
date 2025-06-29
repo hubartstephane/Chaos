@@ -215,12 +215,12 @@ namespace chaos
 		{
 			// explicitly given monitor
 			if (placement_info.monitor_index.has_value())
-				monitor = GLFWTools::GetMonitorByIndex(placement_info.monitor_index.value());
+				monitor = MonitorTools::GetMonitorByIndex(placement_info.monitor_index.value());
 			// position is an absolute position. get the corresponding monitor and transform position into monitor local
 			else if (placement_info.position.has_value()) 
 			{
-				monitor = GLFWTools::GetNearestMonitor(placement_info.position.value());
-				placement_info.position = GLFWTools::AbsolutePositionToMonitor(placement_info.position.value(), monitor);
+				monitor = MonitorTools::GetNearestMonitor(placement_info.position.value());
+				placement_info.position = MonitorTools::AbsolutePositionToMonitor(placement_info.position.value(), monitor);
 			}
 			// fallback on primary monitor
 			else
@@ -274,7 +274,7 @@ namespace chaos
 			window_size = monitor_size;
 			window_position = { 0, 0 };
 			// set position in absolute coordinates
-			window_position = GLFWTools::MonitorPositionToAbsolute(window_position, monitor);
+			window_position = MonitorTools::MonitorPositionToAbsolute(window_position, monitor);
 		}
 		else
 		{
@@ -296,7 +296,7 @@ namespace chaos
 				window_position = (monitor_size - window_size) / 2; // use center of screen by default
 
 			// set position in absolute coordinates
-			window_position = GLFWTools::MonitorPositionToAbsolute(window_position, monitor);
+			window_position = MonitorTools::MonitorPositionToAbsolute(window_position, monitor);
 
 			// ensure a large enough of the window is visible in any monitor (so that it can be displaced by the user)
 			EnsureWindowToolbarVisibleInAnyMonitor(window_position, window_size);
@@ -377,7 +377,8 @@ namespace chaos
 		UpdatePlacementInfoAccordingToConfig(placement_info);
 		SetWindowPlacement(placement_info);
 		// initialize ImGui
-		CreateImGuiContext();
+		if (!CreateImGuiContext())
+			return false;
 		// finalize the creation
 		if (!Initialize())
 			return false;
@@ -928,7 +929,7 @@ namespace chaos
 	GLFWmonitor* Window::GetPreferredMonitor() const
 	{
 		glm::ivec2 top_left_corner = GetWindowPosition(true); // include decorators
-		return GLFWTools::GetNearestMonitor(top_left_corner);
+		return MonitorTools::GetNearestMonitor(top_left_corner);
 	}
 
 	void Window::SetFullscreen(GLFWmonitor* monitor)
@@ -1332,11 +1333,11 @@ namespace chaos
 			{
 				// gather information
 				glm::ivec2 window_position = GetWindowPosition(true); // include decorators
-				window_position = GLFWTools::AbsolutePositionToMonitor(window_position, preferred_monitor); // relative to preferred monitor
+				window_position = MonitorTools::AbsolutePositionToMonitor(window_position, preferred_monitor); // relative to preferred monitor
 
 				glm::ivec2 window_size = GetWindowSize(true); // include decorators
 
-				int monitor_index = GLFWTools::GetMonitorIndex(preferred_monitor);
+				int monitor_index = MonitorTools::GetMonitorIndex(preferred_monitor);
 				// store information
 				JSONTools::SetAttribute(config, "position", window_position);
 				JSONTools::SetAttribute(config, "size", window_size);

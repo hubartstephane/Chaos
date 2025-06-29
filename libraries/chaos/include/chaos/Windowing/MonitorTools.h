@@ -1,6 +1,6 @@
 namespace chaos
 {
-	namespace GLFWTools
+	namespace MonitorTools
 	{
 #if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -19,7 +19,7 @@ namespace chaos
 
 #endif
 
-	}; // namespace GLFWTools
+	}; // namespace MonitorTools
 
 }; // namespace chaos
 

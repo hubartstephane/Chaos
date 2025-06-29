@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	namespace GLFWTools
+	namespace MonitorTools
 	{
 		std::vector<GLFWmonitor*> GetSortedMonitors()
 		{
@@ -143,6 +143,6 @@ namespace chaos
 			return position;
 		}
 
-	}; // namespace GLFWTools
+	}; // namespace MonitorTools
 
 }; // namespace chaos

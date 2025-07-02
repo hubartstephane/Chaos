@@ -3,13 +3,9 @@
 
 namespace chaos
 {
-
-	CHAOS_GLOBAL_VARIABLE(size_t, renderer_stats_size, 1200 * 20) // let's say at 1200 fps for very small project, we have 20 seconds stored
-
 	GPURenderContext::GPURenderContext(GPUDevice* in_gpu_device, Window* in_window) :
 		GPUDeviceResourceInterface(in_gpu_device),
 		window(in_window),
-		stats(renderer_stats_size.Get()),
 		vertex_array_cache(this)
 	{
 		assert(in_window != nullptr);
@@ -123,37 +119,12 @@ namespace chaos
 
 	void GPURenderContext::BeginRenderingFrame()
 	{
-		// prepare stats
-		current_frame_stat = GPURenderContextFrameStats();
-		current_frame_stat.rendering_timestamp = ++rendering_timestamp;
-		current_frame_stat.frame_start_time = (float)glfwGetTime();
+		stats.OnBeginRenderingFrame(++rendering_timestamp);
 	}
 
 	void GPURenderContext::EndRenderingFrame()
 	{
-		// update the frame rate
-		framerate_counter.Accumulate(1.0f);
-		// store statistics
-		current_frame_stat.frame_end_time = (float)glfwGetTime();
-		current_frame_stat.rendering_timestamp = rendering_timestamp;
-		stats.push_back(current_frame_stat);
-		// prepare next frame stats
-		current_frame_stat = GPURenderContextFrameStats();
-	}
-
-	float GPURenderContext::GetAverageFrameRate() const
-	{
-		return framerate_counter.GetCurrentValue();
-	}
-
-	int GPURenderContext::GetAverageDrawCalls() const
-	{
-		return drawcall_counter.GetCurrentValue();
-	}
-
-	int GPURenderContext::GetAverageVertices() const
-	{
-		return vertices_counter.GetCurrentValue();
+		stats.OnEndRenderingFrame();
 	}
 
 	uint64_t GPURenderContext::GetTimestamp() const
@@ -162,15 +133,9 @@ namespace chaos
 	}
 
 	bool GPURenderContext::DoTick(float delta_time)
-	{
-		last_delta_time = delta_time;
-		
+	{	
 		vertex_array_cache.Tick(delta_time);
-
-		// update counters
-		framerate_counter.Tick(delta_time);
-		drawcall_counter.Tick(delta_time);
-		vertices_counter.Tick(delta_time);
+		stats.Tick(delta_time);
 
 		return true;
 	}
@@ -226,11 +191,7 @@ namespace chaos
 
 		// update some statistics
 		int instance_count = (instancing.instance_count > 1) ? instancing.instance_count : 1;
-		vertices_counter.Accumulate(primitive.count * instance_count);
-		current_frame_stat.vertices_counter += primitive.count * instance_count;
-
-		drawcall_counter.Accumulate(1);
-		++current_frame_stat.drawcall_counter;
+		stats.OnDrawCall(primitive.count * instance_count);
 	}
 
 	void GPURenderContext::DrawFullscreenQuad(GPURenderMaterial const * material, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)

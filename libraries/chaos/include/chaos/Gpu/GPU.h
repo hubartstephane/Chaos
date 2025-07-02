@@ -39,6 +39,7 @@
 #include "chaos/Gpu/GPURenderMaterial.h"
 #include "chaos/Gpu/GPURenderMaterialLoader.h"
 #include "chaos/Gpu/GPURenderParams.h"
+#include "chaos/Gpu/GPURenderContextStats.h"
 #include "chaos/Gpu/GPURenderContext.h"
 #include "chaos/Gpu/GPURenderable.h"
 #include "chaos/Gpu/GPURenderableFilter.h"

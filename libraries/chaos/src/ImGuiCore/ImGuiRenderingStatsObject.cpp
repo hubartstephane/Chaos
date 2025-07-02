@@ -14,7 +14,9 @@ namespace chaos
 		if (render_context == nullptr)
 			return;
 
-		boost::circular_buffer<GPURenderContextFrameStats> const& stats = render_context->GetStats();
+		GPURenderContextStats const& stats = render_context->GetStats();
+
+		boost::circular_buffer<GPURenderContextFrameStats> const& frame_stats = stats.GetFrameStats();
 	
 		float current_time = (float)glfwGetTime();
 
@@ -38,9 +40,9 @@ namespace chaos
 		float max_value = 0.0f; // values are always positive
 
 		int min_index_in_buffer = BUFFER_SIZE - 1;
-		for (int i = (int)stats.size() - 1; i >= 0; --i)
+		for (int i = (int)frame_stats.size() - 1; i >= 0; --i)
 		{
-			GPURenderContextFrameStats const& st = stats[i];
+			GPURenderContextFrameStats const& st = frame_stats[i];
 
 			if (st.frame_start_time < reference_time)
 				break;

@@ -358,7 +358,9 @@ namespace chaos
 		if (GlobalVariables::HideFPS.Get())
 			return 0;
 
-		average_framerate = render_context->GetAverageFrameRate();
+		GPURenderContextStats const & stats = render_context->GetStats();
+
+		average_framerate = stats.GetAverageFrameRate();
 		return GameHUDCacheValueTextComponent<float>::DoDisplay(render_context, uniform_provider, render_params);
 	}
 
@@ -393,9 +395,11 @@ namespace chaos
 		if (GlobalVariables::HidePerfs.Get())
 			return 0;
 
-		average_drawcall = render_context->GetAverageDrawCalls();
-		average_vertices = render_context->GetAverageVertices();
-		average_framerate = render_context->GetAverageFrameRate();
+		GPURenderContextStats const & stats = render_context->GetStats();
+
+		average_drawcall = stats.GetAverageDrawCalls();
+		average_vertices = stats.GetAverageVertices();
+		average_framerate = stats.GetAverageFrameRate();
 		return GameHUDCacheValueTextComponent<std::pair<int, int>>::DoDisplay(render_context, uniform_provider, render_params);
 	}
 

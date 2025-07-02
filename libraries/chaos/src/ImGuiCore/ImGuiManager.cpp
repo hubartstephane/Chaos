@@ -86,7 +86,7 @@ namespace chaos
 		return ResourceManager::DoStopManager();
 	}
 
-	ImFontAtlas* ImGuiManager::BuildAtlas() const
+	ImFontAtlas* ImGuiManager::BuildFontAtlas() const
 	{
 		if (font_faces.size() == 0)
 		{

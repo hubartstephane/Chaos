@@ -18,15 +18,15 @@ namespace chaos
 		/** the title */
 		std::string title;
 		/** true if the window can be resized */
-		int resizable = 1;
+		bool resizable = true;
 		/** true if the window starts visible */
-		int start_visible = 1;
+		bool start_visible = true;
 		/** true if the window has some decoration */
-		int decorated = 1;
+		bool decorated = true;
 		/** true if the window is toplevel */
-		int toplevel = 0;
+		bool toplevel = false;
 		/** self description */
-		int focused = 0;
+		bool focused = false;
 	};
 
 	CHAOS_API bool DoSaveIntoJSON(nlohmann::json * json, WindowCreateParams const& src);

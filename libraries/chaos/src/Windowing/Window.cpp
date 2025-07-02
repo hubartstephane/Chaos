@@ -271,11 +271,11 @@ namespace chaos
 			return false;
 
 		// prepare window creation
-		glfwWindowHint(GLFW_RESIZABLE, create_params.resizable);
-		glfwWindowHint(GLFW_VISIBLE, create_params.start_visible);
-		glfwWindowHint(GLFW_DECORATED, create_params.decorated);
-		glfwWindowHint(GLFW_FLOATING, create_params.toplevel);
-		glfwWindowHint(GLFW_FOCUSED, create_params.focused);
+		glfwWindowHint(GLFW_RESIZABLE, (create_params.resizable)? 1 : 0);
+		glfwWindowHint(GLFW_VISIBLE, (create_params.start_visible)? 1 : 0);
+		glfwWindowHint(GLFW_DECORATED, (create_params.decorated)? 1 : 0);
+		glfwWindowHint(GLFW_FLOATING, (create_params.toplevel)? 1 : 0);
+		glfwWindowHint(GLFW_FOCUSED, (create_params.focused)? 1 : 0);
 		glfwWindowHint(GLFW_VISIBLE, 0); // override the initial visibility
 
 		glfw_hints.ApplyHints();
@@ -325,7 +325,7 @@ namespace chaos
 		ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
 
 		// create a new context for this window
-		imgui_context = ImGui::CreateContext(imgui_manager->BuildAtlas());
+		imgui_context = ImGui::CreateContext(imgui_manager->BuildFontAtlas());
 		ImGui::SetCurrentContext(imgui_context);
 
 		imgui_manager->InitializeWindowImGuiContext(this);

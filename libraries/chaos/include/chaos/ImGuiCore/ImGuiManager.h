@@ -60,7 +60,7 @@ namespace chaos
 		virtual void OnWindowImGuiMenuEnabledChanged(Window* window, bool enabled) const;
 
 		/** construct an atlas according to the configuration */
-		ImFontAtlas* BuildAtlas() const;
+		ImFontAtlas* BuildFontAtlas() const;
 
 		/** override */
 		virtual void OnDrawImGuiMenu(Window* window, BeginImGuiMenuFunc begin_menu_func) override;

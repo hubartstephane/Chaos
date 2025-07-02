@@ -1316,6 +1316,9 @@ namespace chaos
 
 	void Window::OnMonitorEvent(GLFWmonitor* monitor, int monitor_state)
 	{
+		if (imgui_context != nullptr)
+			ImGui_ImplGlfw_MonitorCallback(monitor, monitor_state); // manually call ImGui delegate
+
 		if (monitor == fullscreen_monitor && monitor_state == GLFW_DISCONNECTED)
 			fullscreen_monitor = nullptr;
 		if (window_client != nullptr)

@@ -190,12 +190,20 @@ namespace chaos
 				{
 					if constexpr (L::convertible_to_bool)
 					{
-						if (decltype(auto) result = func(window.get()))
+						decltype(auto) result = window->WithWindowContext([&func, window = window.get()]()
+						{
+							return func(window);
+						});
+
+						if (result)
 							return result;
 					}
 					else
 					{
-						func(window.get());
+						window->WithWindowContext([&func, window = window.get()]()
+						{
+							func(window);
+						});
 					}
 				}
 			}

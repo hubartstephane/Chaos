@@ -71,12 +71,9 @@ namespace chaos
 			// tick the windows
 			ForAllWindows([delta_time, real_delta_time](Window* window)
 			{
-				window->WithWindowContext([&window, delta_time, real_delta_time]()
-				{
-					window->TickRenderer(real_delta_time);
-					window->Tick(delta_time);
-					window->DrawWindow();
-				});
+				window->TickRenderer(real_delta_time);
+				window->Tick(delta_time);
+				window->DrawWindow();
 			});
 			// update time
 			t1 = t2;
@@ -683,10 +680,7 @@ namespace chaos
 	{
 		ForAllWindows([new_mode, old_mode](Window * window)
 		{
-			window->WithWindowContext([&window, new_mode, old_mode]()
-			{
-				window->OnInputModeChanged(new_mode, old_mode);
-			});
+			window->OnInputModeChanged(new_mode, old_mode);
 		});
 	}
 
@@ -827,12 +821,7 @@ namespace chaos
 		// that's why we are catching here the event and dispatching to all application's windows
 		ForAllWindows([monitor, monitor_state](Window* window)
 		{
-			window->WithWindowContext([&window, monitor, monitor_state]()
-			{
-				if (window->GetImGuiContext() != nullptr)
-					ImGui_ImplGlfw_MonitorCallback(monitor, monitor_state); // manually call ImGui delegate
-				window->OnMonitorEvent(monitor, monitor_state);
-			});
+			window->OnMonitorEvent(monitor, monitor_state);
 		});
 	}
 
@@ -858,10 +847,7 @@ namespace chaos
 				window_application->imgui_menu_enabled = enabled;
 				window_application->ForAllWindows([enabled](Window* window)
 				{
-					window->WithWindowContext([&window, enabled]()
-					{
-						window->OnImGuiMenuEnabledChanged(enabled);
-					});
+					window->OnImGuiMenuEnabledChanged(enabled);
 				});
 			}
 		}

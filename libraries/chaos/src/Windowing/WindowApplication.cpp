@@ -44,13 +44,11 @@ namespace chaos
 				delta_time = 0.0f;
 				forced_zero_tick_duration = false;
 			}
-			else
-			{
-				if (forced_tick_duration > 0.0f)
-					delta_time = forced_tick_duration;
-				else if (max_tick_duration > 0.0f)
-					delta_time = std::min(delta_time, max_tick_duration);
-			}
+			else if (forced_tick_duration > 0.0f)
+				delta_time = forced_tick_duration;
+			else if (max_tick_duration > 0.0f)
+				delta_time = std::min(delta_time, max_tick_duration);
+
 			// internal tick
 			bool tick_result = WithGLFWContext(shared_context, [this, delta_time]()
 			{
@@ -236,6 +234,11 @@ namespace chaos
 
 	int WindowApplication::MainBody()
 	{
+		// run the main loop as long as there are main windows
+		RunMessageLoop([this]()
+		{
+			return HasMainWindow();
+		});
 		return 0;
 	}
 

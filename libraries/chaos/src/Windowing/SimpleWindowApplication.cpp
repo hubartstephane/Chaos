@@ -18,12 +18,7 @@ namespace chaos
 		if (main_window == nullptr)
 			return -1;
 
-		// run the main loop as long as there are main windows
-		RunMessageLoop([this]()
-		{
-			return HasMainWindow();
-		});
-		return 0;
+		return WindowApplication::MainBody();
 	}
 
 	Window* SimpleWindowApplication::CreateMainWindow()

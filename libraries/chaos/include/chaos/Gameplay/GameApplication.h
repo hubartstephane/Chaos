@@ -24,8 +24,6 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual int MainBody() override;
-		/** override */
 		virtual bool InitializeGPUResources(JSONReadConfiguration config) override;
 		/** override */
 		virtual void FinalizeGPUResources() override;

@@ -41,16 +41,6 @@ namespace chaos
 		return true;
 	}
 
-	int GameApplication::MainBody()
-	{
-		// run the main loop as long as there are main windows
-		RunMessageLoop([this]()
-		{
-			return HasMainWindow();
-		});
-		return 0;
-	}
-
 	bool GameApplication::DoTick(float delta_time)
 	{
 		assert(glfwGetCurrentContext() == shared_context);

@@ -27,6 +27,23 @@ namespace chaos
 		forced_zero_tick_duration = true;
 	}
 
+	float WindowApplication::ComputeEffectiveDeltaTime(float real_delta_time) const
+	{
+		if (forced_zero_tick_duration) // a single frame with a zero delta_time (used whenever a long operation is beeing done during one frame and we don't want to have big dt)
+		{
+			forced_zero_tick_duration = false;
+			return 0.0f;
+		}
+
+		if (forced_tick_duration > 0.0f)
+			return forced_tick_duration;
+		
+		if (max_tick_duration > 0.0f)
+			return std::min(real_delta_time, max_tick_duration);
+
+		return real_delta_time;
+	}
+
 	void WindowApplication::RunMessageLoop(LightweightFunction<bool()> loop_condition_func)
 	{
 		double t1 = glfwGetTime();
@@ -36,18 +53,9 @@ namespace chaos
 			glfwPollEvents();
 
 			double t2 = glfwGetTime();
-			float delta_time = (float)(t2 - t1);
-			float real_delta_time = delta_time;
 
-			if (forced_zero_tick_duration) // a single frame with a zero delta_time (used whenever a long operation is beeing done during one frame and we don't want to have big dt)
-			{
-				delta_time = 0.0f;
-				forced_zero_tick_duration = false;
-			}
-			else if (forced_tick_duration > 0.0f)
-				delta_time = forced_tick_duration;
-			else if (max_tick_duration > 0.0f)
-				delta_time = std::min(delta_time, max_tick_duration);
+			float real_delta_time = (float)(t2 - t1);
+			float delta_time      = ComputeEffectiveDeltaTime(real_delta_time);
 
 			// internal tick
 			bool tick_result = WithGLFWContext(shared_context, [this, delta_time]()

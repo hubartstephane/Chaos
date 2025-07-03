@@ -228,6 +228,9 @@ namespace chaos
 		/** The main body method */
 		virtual int MainBody();
 
+		/** update the delta_time according to context */
+		float ComputeEffectiveDeltaTime(float real_delta_time) const;
+
 		/** create an invisible window to share its context with all other windows */
 		bool CreateSharedContext(JSONReadConfiguration config);
 		/** destroy the shared window */
@@ -372,7 +375,7 @@ namespace chaos
 		/** maximum time slice for tick */
 		float max_tick_duration = 0.0f;
 		/** whether the delta time is forced to 0 for one frame (usefull for long operations like screen capture or GPU resource reloading) */
-		bool forced_zero_tick_duration = false;
+		mutable bool forced_zero_tick_duration = false;
 
 		/** the imgui menu mode */
 		bool imgui_menu_enabled = false;

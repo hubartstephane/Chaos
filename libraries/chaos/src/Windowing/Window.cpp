@@ -634,15 +634,21 @@ namespace chaos
 		glfwSetWindowIconifyCallback(glfw_window, DoOnIconifiedStateChange);
 	}
 
-	static void GetWindowAndProcess(GLFWwindow* in_glfw_window, LightweightFunction<void(Window*)> func)
+	template<typename FUNC>
+	decltype(auto) GetWindowAndProcess(GLFWwindow* in_glfw_window, FUNC func)
 	{
+		using L = meta::LambdaInfo<FUNC, Window *>;
+
 		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
 		{
-			my_window->WithWindowContext([my_window, &func]()
+			return my_window->WithWindowContext([my_window, &func]()
 			{
-				func(my_window);
+				return func(my_window);
 			});
 		}
+
+		if constexpr (L::convertible_to_bool)
+			return typename L::result_type {};
 	}
 
 	void Window::DoOnIconifiedStateChange(GLFWwindow* in_glfw_window, int value)
@@ -682,8 +688,53 @@ namespace chaos
 		});
 	}
 
+	template<typename FUNC, typename ...PARAMS>
+	static bool DispatchInputEvent(GLFWwindow* in_glfw_window, FUNC func, InputMode input_mode, PARAMS&& ...params)
+	{
+		// try window first
+		bool result = GetWindowAndProcess(in_glfw_window, [&](Window* my_window)
+		{
+			// try to process window client first
+			if (WindowClient * window_client = my_window->GetWindowClient())
+			{
+				if ((window_client->*func)(std::forward<PARAMS>(params)...))
+				{
+					window_client->SetInputMode(input_mode);
+					return true;
+				}
+			}
+			// give hand to window itself
+			if ((my_window->*func)(std::forward<PARAMS>(params)...))
+			{
+				my_window->SetInputMode(input_mode);
+				return true;
+			}
+		});
+		if (result)
+			return result;
+
+		// try application
+		if (WindowApplication* window_application = Application::GetInstance())
+		{
+			if ((window_application->*func)(std::forward<PARAMS>(params)...))
+			{
+				window_application->SetInputMode(input_mode);
+				return true;
+			}
+		}
+		return false;
+	}
+
+
 	void Window::DoOnMouseMove(GLFWwindow* in_glfw_window, double x, double y)
 	{
+		//glm::vec2 position = { float(x), float(y) };
+		//DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnMouseMove, InputMode::MOUSE, position);
+
+
+
+
+
 		GetWindowAndProcess(in_glfw_window, [=](Window* my_window)
 		{
 			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window

@@ -50,16 +50,13 @@ namespace chaos
 	* Window: a binding class between chaos and GLFW to handle window (beware the prefix "My")
 	*/
 
-	class CHAOS_API Window : public Object, public WindowInterface, public ConfigurationUserInterface, public NamedInterface
+	class CHAOS_API Window : public Object, public WindowInterface, public ConfigurationUserInterface, public NamedInterface, public ImGuiObjectOwnerInterface
 	{
 		friend class WindowApplication;
 
 		CHAOS_DECLARE_OBJECT_CLASS(Window, Object);
 
 	public:
-
-		using CreateImGuiObjectFunc = LightweightFunction<ImGuiObject* ()>;
-		using EnumerateKnownImGuiObjectFunc = LightweightFunction<bool(char const*, CreateImGuiObjectFunc)>;
 
 		/** constructor */
 		Window();
@@ -159,65 +156,6 @@ namespace chaos
 			});
 		}
 
-		/** create and add a new imgui object */
-		template<typename IMGUIOBJECT, typename... PARAMS>
-		IMGUIOBJECT* AddNewImGuiObject(char const* title, PARAMS... params)
-		{
-			static_assert(std::is_base_of_v<ImGuiObject, IMGUIOBJECT>);
-
-			// ensure an object with same name does not already exist
-			if (FindImGuiObject(title) != nullptr)
-			{
-				ImGuiLog::Warning("Window::AddNewImGuiObject(...) failure: an ImGuiObject named [%s] already exists", title);
-				return nullptr;
-			}
-
-			// create and add the object
-			IMGUIOBJECT* result = new IMGUIOBJECT(std::forward<PARAMS>(params)...);
-			if (result != nullptr)
-			{
-				result->SetName(title);
-				AddImGuiObject(result);
-			}
-			return result;
-		}
-
-		/** create and add a new imgui popup modal */
-		template<typename IMGUIOBJECT, typename... PARAMS>
-		IMGUIOBJECT* AddNewImGuiPopupModal(char const* title, PARAMS... params)
-		{
-			IMGUIOBJECT* result = AddNewImGuiObject<IMGUIOBJECT>(title, std::forward<PARAMS>(params)...);
-			if (result != nullptr)
-			{
-				ImGuiObjectFlags flags = result->GetImGuiObjectFlags(); // ensure the ImGuiObject is marked as a modal popup whilst keeping flags it could naturaly have
-				flags |=  ImGuiObjectFlags::PopupModalWindow;
-				flags &= ~ImGuiObjectFlags::PopupWindow;
-				flags &= ~ImGuiObjectFlags::FloatingWindow;
-				flags &= ~ImGuiObjectFlags::FullViewport;
-				result->SetImGuiObjectFlags(flags);
-			}
-			return result;
-		}
-
-
-		/** create and add a new imgui popup */
-		template<typename IMGUIOBJECT, typename... PARAMS>
-		IMGUIOBJECT* AddNewImGuiPopup(char const* title, PARAMS... params)
-		{
-			IMGUIOBJECT* result = AddNewImGuiObject<IMGUIOBJECT>(title, std::forward<PARAMS>(params)...);
-			if (result != nullptr)
-			{
-				ImGuiObjectFlags flags = result->GetImGuiObjectFlags(); // ensure the ImGuiObject is marked as a modal popup whilst keeping flags it could naturaly have
-				flags &= ~ImGuiObjectFlags::PopupModalWindow;
-				flags |=  ImGuiObjectFlags::PopupWindow;
-				flags &= ~ImGuiObjectFlags::FloatingWindow;
-				flags &= ~ImGuiObjectFlags::FullViewport;
-				result->SetImGuiObjectFlags(flags);
-				result->SetWindowPlacement(ImGuiWindowPlacement::GetCenterOnCursorPlacement());
-			}
-			return result;
-		}
-
 		/** change the cursor mode */
 		void SetCursorMode(CursorMode mode);
 		/** get the cursor mode */
@@ -236,21 +174,6 @@ namespace chaos
 		bool IsApplicationImGuiMenuPluggedIn() const;
 		/** enable or disable application imgui menu to be plugged into this window */
 		void SetApplicationImGuiMenuPluggedIn(bool enabled);
-
-		/** search whether a given ImGui object exists */
-		bool IsKnownImGuiObjectVisible(char const* name) const;
-		/** create a ImGuiObject from its name */
-		bool SetKnownImGuiObjectVisibility(char const* name, bool visible);
-
-		/** search an ImGui object by name */
-		AutoCastable<ImGuiObject> FindImGuiObject(ObjectRequest request);
-		/** search an ImGui object by name */
-		AutoConstCastable<ImGuiObject> FindImGuiObject(ObjectRequest request) const;
-
-		/** insert an ImGui object into list */
-		void AddImGuiObject(ImGuiObject* imgui_object);
-		/** remove an ImGui object from list */
-		void RemoveImGuiObject(ImGuiObject* imgui_object);
 
 		/** gets the imgui manager */
 		ImGuiManager* GetImGuiManager() const;
@@ -372,13 +295,6 @@ namespace chaos
 		/** override */
 		virtual bool OnStorePersistentProperties(JSONWriteConfiguration config) const override;
 
-		/** enumerate ImGuiObjects that the window can create */
-		virtual bool EnumerateKnownImGuiObjects(EnumerateKnownImGuiObjectFunc func) const;
-		/** create or destroy an ImGuiObject */
-		void SetImGuiObjectInternalVisibility(bool visible, char const* name, CreateImGuiObjectFunc create_func);
-		/** draw all ImGui objects */
-		void DrawImGuiObjects();
-
 		/** called to destroy the window (window is already unknown from WindowApplication) */
 		void CompleteWindowDestruction();
 		/** checks whether the window is inside the application windows array */
@@ -477,8 +393,7 @@ namespace chaos
 		/** whether application is enabled to be plugged into the window */
 		bool application_imgui_menu_plugged_in = true;
 
-		/** the imgui_objects handled by this window */
-		std::vector<shared_ptr<ImGuiObject>> imgui_objects;
+
 
 		/** the window client */
 		shared_ptr<WindowClient> window_client;

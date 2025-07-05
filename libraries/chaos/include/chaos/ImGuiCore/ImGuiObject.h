@@ -31,7 +31,7 @@ namespace chaos
 	 */
 	class CHAOS_API ImGuiObject : public Object, public NamedInterface, public ImGuiInterface
 	{
-		friend class Window;
+		friend class ImGuiObjectOwnerInterface;
 
 	public:
 

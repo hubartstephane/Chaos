@@ -333,7 +333,7 @@ namespace chaos
 
 		/** dispatch an input event through the ImGui/WindowClient/Window/Application hierarchy */
 		template<typename FUNC, typename ...PARAMS>
-		static bool DispatchInputEvent(GLFWwindow* in_glfw_window, FUNC const & func, InputMode input_mode, PARAMS&& ...params);
+		static bool DispatchInputEvent(GLFWwindow* in_glfw_window, FUNC const & func, PARAMS&& ...params);
 
 		/** gets the window imgui context */
 		WindowImGuiContext * GetWindowImGuiContext() { return &window_imgui_context;}
@@ -403,7 +403,7 @@ namespace chaos
 
 	/** dispatch an input event through the ImGui/WindowClient/Window/Application hierarchy */
 	template<typename FUNC, typename ...PARAMS>
-	bool Window::DispatchInputEvent(GLFWwindow* in_glfw_window, FUNC const & func, InputMode input_mode, PARAMS&& ...params)
+	bool Window::DispatchInputEvent(GLFWwindow* in_glfw_window, FUNC const & func, PARAMS&& ...params)
 	{
 		// try window first
 		bool result = GetWindowAndProcess(in_glfw_window, [&](Window* my_window)
@@ -432,7 +432,7 @@ namespace chaos
 			return false;
 		});
 		if (result)
-			return result;
+			return true;
 
 		// try application
 		if (WindowApplication* window_application = Application::GetInstance())

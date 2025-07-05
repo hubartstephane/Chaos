@@ -600,7 +600,7 @@ namespace chaos
 				position - my_window->mouse_position.value():
 				glm::vec2(0.0f, 0.0f);
 
-			DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnMouseMove, InputMode::MOUSE, delta);
+			DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnMouseMove, delta);
 
 			my_window->mouse_position = position;
 		}
@@ -616,7 +616,7 @@ namespace chaos
 		WindowApplication::SetApplicationInputMode(InputMode::MOUSE);
 
 		// dispatch event
-		DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnMouseButton, InputMode::MOUSE, button, action, modifier);
+		DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnMouseButton, button, action, modifier);
 	}
 
 	void Window::DoOnMouseWheel(GLFWwindow* in_glfw_window, double scroll_x, double scroll_y)
@@ -625,7 +625,7 @@ namespace chaos
 		WindowApplication::SetApplicationInputMode(InputMode::MOUSE);
 
 		// dispatch event
-		DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnMouseWheel, InputMode::MOUSE, scroll_x, scroll_y);
+		DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnMouseWheel, scroll_x, scroll_y);
 	}
 
 	void Window::DoOnKeyEvent(GLFWwindow* in_glfw_window, int keycode, int scancode, int action, int modifier)
@@ -648,7 +648,7 @@ namespace chaos
 		key_event.action = action;
 		key_event.modifier = modifier;
 
-		DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnKeyEvent, InputMode::KEYBOARD, key_event);
+		DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnKeyEvent, key_event);
 	}
 
 	void Window::DoOnCharEvent(GLFWwindow* in_glfw_window, unsigned int c)
@@ -657,7 +657,7 @@ namespace chaos
 		WindowApplication::SetApplicationInputMode(InputMode::KEYBOARD);
 
 		// dispatch the event
-		DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnCharEvent, InputMode::KEYBOARD, c);
+		DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnCharEvent, c);
 	}
 
 	void Window::DoOnDropFile(GLFWwindow* in_glfw_window, int count, char const** paths)

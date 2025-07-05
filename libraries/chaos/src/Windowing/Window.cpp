@@ -947,14 +947,14 @@ namespace chaos
 		return WindowInterface::OnCharEventImpl(c);
 	}
 
-	bool Window::IsApplicationImGuiMenuPluggedIn() const
+	bool Window::IsStandardImGuiMenuPluggedIn() const
 	{
-		return application_imgui_menu_plugged_in;
+		return standard_imgui_menu_plugged_in;
 	}
 
-	void Window::SetApplicationImGuiMenuPluggedIn(bool enabled)
+	void Window::SetStandardImGuiMenuPluggedIn(bool enabled)
 	{
-		application_imgui_menu_plugged_in = enabled;
+		standard_imgui_menu_plugged_in = enabled;
 	}
 
 	void Window::DrawImGui()
@@ -974,17 +974,16 @@ namespace chaos
 
 	void Window::OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func)
 	{
-		if (IsApplicationImGuiMenuPluggedIn())
+		if (IsStandardImGuiMenuPluggedIn())
 		{
 			// display application menu items
 			if (WindowApplication* window_application = Application::GetInstance())
 				window_application->OnDrawApplicationImGuiMenu(this, begin_menu_func);
 			// display the imgui context
 			window_imgui_context.OnDrawImGuiMenu(this, begin_menu_func);
+			// display menu items for widgets
+			OnDrawImGuiObjectOwnerMenu(begin_menu_func);
 		}
-
-		// display menu items for widgets
-		OnDrawImGuiObjectOwnerMenu(begin_menu_func);
 	}
 
 

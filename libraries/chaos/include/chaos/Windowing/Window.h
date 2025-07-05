@@ -171,9 +171,9 @@ namespace chaos
 		void SetWindowCategory(WindowCategory in_window_category){ window_category = in_window_category; };
 
 		/** returns whether window wants application imgui menu to be plugged into its menu */
-		bool IsApplicationImGuiMenuPluggedIn() const;
+		bool IsStandardImGuiMenuPluggedIn() const;
 		/** enable or disable application imgui menu to be plugged into this window */
-		void SetApplicationImGuiMenuPluggedIn(bool enabled);
+		void SetStandardImGuiMenuPluggedIn(bool enabled);
 
 		/** gets the imgui manager */
 		ImGuiManager* GetImGuiManager() const;
@@ -391,7 +391,7 @@ namespace chaos
 		/** the window category */
 		WindowCategory window_category = WindowCategory::MAIN_WINDOW;
 		/** whether application is enabled to be plugged into the window */
-		bool application_imgui_menu_plugged_in = true;
+		bool standard_imgui_menu_plugged_in = true;
 
 
 

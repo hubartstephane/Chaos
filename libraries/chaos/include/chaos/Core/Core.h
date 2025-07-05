@@ -52,6 +52,7 @@
 #include "chaos/Core/InputMode.h"
 #include "chaos/Core/InputState.h"
 #include "chaos/Core/KeyboardState.h"
+#include "chaos/Core/KeyEvent.h"
 #include "chaos/Core/InputEventReceiverInterface.h"
 #include "chaos/Core/Application.h"
 #include "chaos/Core/ResourceManager.h"

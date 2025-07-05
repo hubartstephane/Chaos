@@ -980,8 +980,6 @@ namespace chaos
 
 		if (gpu_resource_manager != nullptr)
 			gpu_resource_manager->OnDrawImGuiMenu(window, begin_menu_func);
-		if (imgui_manager != nullptr)
-			imgui_manager->OnDrawImGuiMenu(window, begin_menu_func);
 	}
 
 	std::vector<weak_ptr<Window>> WindowApplication::GetWeakWindowArray() const

@@ -48,22 +48,19 @@ namespace chaos
 	CHAOS_API bool DoLoadFromJSON(JSONReadConfiguration config, ImGuiFontFace& dst);
 
 	/** a Manager to handle ImGui preferences */
-	class CHAOS_API ImGuiManager : public ResourceManager, public ConfigurationUserInterface, public ImGuiInterface
+	class CHAOS_API ImGuiManager : public ResourceManager, public ConfigurationUserInterface
 	{
 	public:
 
-		/** initialize one windows' imgui context */
-		virtual void InitializeWindowImGuiContext(Window* window) const;
-		/** finalize one windows' imgui context */
-		virtual void FinalizeWindowImGuiContext(Window* window) const;
-		/** called whenever the menu becomes enabled or disabled for a window */
-		virtual void OnWindowImGuiMenuEnabledChanged(Window* window, bool enabled) const;
+		/** initialize one imgui context */
+		virtual void InitializeImGuiContext(ImGuiContext * imgui_context) const;
+		/** finalize one imgui context */
+		virtual void FinalizeImGuiContext(ImGuiContext * imgui_context) const;
+		/** called whenever the menu becomes enabled or disabled */
+		virtual void OnImGuiMenuEnabledChanged(ImGuiContext * imgui_context, bool enabled) const;
 
 		/** construct an atlas according to the configuration */
 		ImFontAtlas* BuildFontAtlas() const;
-
-		/** override */
-		virtual void OnDrawImGuiMenu(Window* window, BeginImGuiMenuFunc begin_menu_func) override;
 
 	protected:
 
@@ -75,7 +72,7 @@ namespace chaos
 		virtual bool DoStopManager() override;
 
 		/** set mouse flags for ImGui */
-		void SetWindowImGuiContextMouseFlag(bool enabled) const;
+		void SetImGuiContextMouseFlag(bool enabled) const;
 
 	protected:
 

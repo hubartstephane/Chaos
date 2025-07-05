@@ -4,6 +4,7 @@
 #include "chaos/Windowing/WindowCreateParams.h"
 #include "chaos/Windowing/WindowPlacementInfo.h"
 #include "chaos/Windowing/WindowFrameSizeInfo.h"
+#include "chaos/Windowing/WindowImGuiContext.h"
 #include "chaos/Windowing/Window.h"
 #include "chaos/Windowing/WindowClient.h"
 #include "chaos/Windowing/WidgetLayout.h"

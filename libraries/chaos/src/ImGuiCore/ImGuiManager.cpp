@@ -117,16 +117,16 @@ namespace chaos
 		return result;
 	}
 
-	void ImGuiManager::InitializeWindowImGuiContext(Window * window) const
+	void ImGuiManager::InitializeImGuiContext(ImGuiContext * imgui_context) const
 	{
-		assert(window->GetImGuiContext() == ImGui::GetCurrentContext());
+		assert(ImGui::GetCurrentContext() == imgui_context);
 
 		ImGuiIO& io = ImGui::GetIO();
 		io.ConfigFlags &= ~ImGuiConfigFlags_NavEnableGamepad;     // Disable Gamepad Controls
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 		io.ConfigFlags |= ImGuiConfigFlags_NavNoCaptureKeyboard;  // Do not capture keyboard during navigation
 		
-		SetWindowImGuiContextMouseFlag(WindowApplication::IsImGuiMenuEnabled());
+		SetImGuiContextMouseFlag(WindowApplication::IsImGuiMenuEnabled());
 
 		switch (window_style)
 		{
@@ -136,45 +136,24 @@ namespace chaos
 		}
 	}
 
-	void ImGuiManager::FinalizeWindowImGuiContext(Window* window) const
+	void ImGuiManager::FinalizeImGuiContext(ImGuiContext * imgui_context) const
 	{
-		assert(window->GetImGuiContext() == ImGui::GetCurrentContext());
+		assert(ImGui::GetCurrentContext() == imgui_context);
 	}
 
-	void ImGuiManager::OnWindowImGuiMenuEnabledChanged(Window* window, bool enabled) const
+	void ImGuiManager::OnImGuiMenuEnabledChanged(ImGuiContext * imgui_context, bool enabled) const
 	{
-		assert(window->GetImGuiContext() == ImGui::GetCurrentContext());
-		SetWindowImGuiContextMouseFlag(enabled);
+		assert(ImGui::GetCurrentContext() == imgui_context);
+		SetImGuiContextMouseFlag(enabled);
 	}
 
-	void ImGuiManager::SetWindowImGuiContextMouseFlag(bool enabled) const
+	void ImGuiManager::SetImGuiContextMouseFlag(bool enabled) const
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		if (enabled)
 			io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse; // need mouse
 		else
 			io.ConfigFlags |= ImGuiConfigFlags_NoMouse; // don't want mouse (elsewhere imgui can react to an invisible cursor)
-	}
-
-	void ImGuiManager::OnDrawImGuiMenu(Window* window, BeginImGuiMenuFunc begin_menu_func)
-	{
-		begin_menu_func([this]()
-		{
-			if (ImGui::BeginMenu("Managers"))
-			{
-				if (ImGui::BeginMenu("ImGui"))
-				{
-					if (WindowApplication* window_application = Application::GetInstance())
-					{
-						bool atlas_viewer_exists = (window_application->FindWindow("ImGuiAtlasViewer") != nullptr); // search the atlas viewer
-						if (ImGui::MenuItem("Show atlas", nullptr, atlas_viewer_exists))
-							window_application->CreateOrDestroyWindow(!atlas_viewer_exists, "ImGuiAtlasViewer", &ImGuiWindow::CreateImGuiWindow<ImGuiAtlasObject>); // create or destroy the atlas
-					}
-					ImGui::EndMenu();
-				}
-				ImGui::EndMenu();
-			}
-		});
 	}
 
 }; // namespace chaos

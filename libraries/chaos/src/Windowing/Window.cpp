@@ -271,6 +271,8 @@ namespace chaos
 		if (!CreateImGuiContext())
 			return false;
 		UpdateWindowProc(true);
+		// start rendering into ImGui
+		StartImGuiNewFrame();
 		// finalize the creation
 		if (!Initialize())
 			return false;
@@ -1018,11 +1020,19 @@ namespace chaos
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		// prepare rendering until we come back into this function
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
+		StartImGuiNewFrame();
 
 		return true;
+	}
+
+	void Window::StartImGuiNewFrame()
+	{
+		window_imgui_context.WithImGuiContext([]()
+		{
+			ImGui_ImplOpenGL3_NewFrame();
+			ImGui_ImplGlfw_NewFrame();
+			ImGui::NewFrame();
+		});
 	}
 
 	void Window::UpdateWidgetPlacementHierarchy()

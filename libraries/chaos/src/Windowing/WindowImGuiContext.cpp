@@ -133,8 +133,9 @@ namespace chaos
 	{
 		ImGuiManager* imgui_manager = GetImGuiManager();
 
-		// save imgui context
-		ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
+		// save imgui/implot contexts
+		ImGuiContext * previous_imgui_context  = ImGui::GetCurrentContext();
+		ImPlotContext* previous_implot_context = ImPlot::GetCurrentContext();
 
 		// create a new context for this window
 		imgui_context = ImGui::CreateContext(imgui_manager->BuildFontAtlas());
@@ -165,15 +166,11 @@ namespace chaos
 		ImGui_ImplGlfw_InitForOpenGL(window->GetGLFWHandler(), false); // do not install callbacks !!
 		ImGui_ImplOpenGL3_Init("#version 130");
 
-		// the context is ready for rendering
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-
 		// create a new context for implot
 		implot_context = ImPlot::CreateContext();
 
-		// restore previous imgui context
+		// restore previous imgui/implot contexts
+		ImPlot::SetCurrentContext(previous_implot_context);
 		ImGui::SetCurrentContext(previous_imgui_context);
 
 		return true;

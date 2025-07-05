@@ -230,6 +230,8 @@ namespace chaos
 		bool CreateImGuiContext();
 		/** destroying the ImGui context */
 		void DestroyImGuiContext();
+		/** start rendering into imgui */
+		void StartImGuiNewFrame();
 
 		/** update the placement info according to information stored in window config */
 		void UpdatePlacementInfoAccordingToConfig(WindowPlacementInfo & placement_info) const;
@@ -392,8 +394,6 @@ namespace chaos
 		WindowCategory window_category = WindowCategory::MAIN_WINDOW;
 		/** whether application is enabled to be plugged into the window */
 		bool standard_imgui_menu_plugged_in = true;
-
-
 
 		/** the window client */
 		shared_ptr<WindowClient> window_client;

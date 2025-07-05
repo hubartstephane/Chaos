@@ -380,7 +380,7 @@ namespace chaos
 		void DrawImGuiObjects();
 
 		/** called to destroy the window (window is already unknown from WindowApplication) */
-		void DoWindowDestruction();
+		void CompleteWindowDestruction();
 		/** checks whether the window is inside the application windows array */
 		bool IsWindowHandledByApplication() const;
 
@@ -390,17 +390,17 @@ namespace chaos
 		{
 			using L = meta::LambdaInfo<FUNC>;
 			
-			shared_ptr<Window> prevent_destruction = this;
-	
-			++window_destruction_guard;
-
-			auto release_destruction_guard = [&]()
+			auto release_destruction_guard = [this]()
 			{
 				assert(window_destruction_guard > 0);
 				if (--window_destruction_guard == 0)
 					if (!IsWindowHandledByApplication())
-						DoWindowDestruction();
+						CompleteWindowDestruction();
 			};
+
+			shared_ptr<Window> prevent_destruction = this;
+
+			++window_destruction_guard;
 			
 			if constexpr (std::is_same_v<void, typename L::result_type>)
 			{

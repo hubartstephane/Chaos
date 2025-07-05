@@ -3,9 +3,10 @@
 
 namespace chaos
 {
-	/**
-	* Window
-	*/
+	namespace GlobalVariables
+	{
+		CHAOS_GLOBAL_VARIABLE(bool, UnlimitedFPS, false);
+	};
 
 	Window::Window():
 		window_imgui_context(this)
@@ -20,24 +21,13 @@ namespace chaos
 	void Window::Destroy()
 	{
 		if (WindowApplication* window_application = Application::GetInstance())
-		{
-			auto it = std::ranges::find_if(window_application->windows, [this](shared_ptr<Window> const& w)
-			{
-				return (w == this);
-			});
-
-			if (it != window_application->windows.end())
-			{
-				shared_ptr<Window> prevent_destruction = this;
-				window_application->windows.erase(it);
-				if (GetWindowDestructionGuard() == 0) // can destroy immediatly the window or must wait until no current operation ?
-					DoWindowDestruction();
-			}
-		}
+			window_application->RemoveWindowFromHandling(this);
 	}
 
-	void Window::DoWindowDestruction() // window is not more handled by WindowApplication
+	void Window::CompleteWindowDestruction() // window is not more handled by WindowApplication
 	{
+		assert(!IsWindowHandledByApplication());
+
 		StorePersistentProperties(true);
 		Finalize();
 		UpdateWindowProc(false);
@@ -87,11 +77,6 @@ namespace chaos
 			glfw_window = nullptr;
 		}
 	}
-
-	namespace GlobalVariables
-	{
-		CHAOS_GLOBAL_VARIABLE(bool, UnlimitedFPS, false);
-	};
 
 	void Window::ShowWindow(bool visible)
 	{

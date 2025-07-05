@@ -172,17 +172,17 @@ namespace chaos
 		return false;
 	}
 
-	bool Game::OnMouseButtonImpl(int button, int action, int modifier)
+	bool Game::OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event)
 	{
 		// try start the game
 		if (game_instance == nullptr)
 		{
-			if (action == GLFW_PRESS)
+			if (mouse_button_event.IsButtonDownEvent())
 				RequireStartGame(nullptr);
 			return true;
 		}
 		// give opportunity to game instance to response
-		if (game_instance->OnMouseButton(button, action, modifier))
+		if (game_instance->OnMouseButton(mouse_button_event))
 			return true;
 		return false;
 	}

@@ -41,7 +41,7 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual bool OnMouseButtonImpl(int button, int action, int modifier) override;
+		virtual bool OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event) override;
 		/** override */
 		virtual bool OnMouseMoveImpl(glm::vec2 const & delta) override;
 		/** override */

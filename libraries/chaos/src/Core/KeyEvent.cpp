@@ -24,38 +24,38 @@ namespace chaos
 		return (action == GLFW_RELEASE);
 	}
 
-	bool KeyEvent::IsKeyEvent(KeyboardButton check_button, int check_modifier) const
+	bool KeyEvent::IsKeyEvent(KeyboardButton in_check_button, int in_check_modifier) const
 	{
-		if (button == check_button)
-			if ((modifier & check_modifier) == check_modifier)
+		if (button == in_check_button)
+			if ((modifier & in_check_modifier) == in_check_modifier)
 				return true;
 		return false;
 	}
 
-	bool KeyEvent::IsKeyPressed(KeyboardButton check_button, int check_modifier) const
+	bool KeyEvent::IsKeyPressed(KeyboardButton in_check_button, int in_check_modifier) const
 	{
-		if (IsKeyPressedEvent() && IsKeyEvent(check_button, check_modifier))
+		if (IsKeyPressedEvent() && IsKeyEvent(in_check_button, in_check_modifier))
 				return true;
 		return false;
 	}
 
-	bool KeyEvent::IsKeyReleased(KeyboardButton check_button, int check_modifier) const
+	bool KeyEvent::IsKeyReleased(KeyboardButton in_check_button, int in_check_modifier) const
 	{
-		if (IsKeyReleasedEvent() && IsKeyEvent(check_button, check_modifier))
+		if (IsKeyReleasedEvent() && IsKeyEvent(in_check_button, in_check_modifier))
 			return true;
 		return false;
 	}
 
-	bool KeyEvent::IsKeyRepeat(KeyboardButton check_button, int check_modifier) const
+	bool KeyEvent::IsKeyRepeat(KeyboardButton in_check_button, int in_check_modifier) const
 	{
-		if (IsKeyRepeatEvent() && IsKeyEvent(check_button, check_modifier))
+		if (IsKeyRepeatEvent() && IsKeyEvent(in_check_button, in_check_modifier))
 			return true;
 		return false;
 	}
 
-	bool KeyEvent::IsKeyDown(KeyboardButton check_button, int check_modifier) const
+	bool KeyEvent::IsKeyDown(KeyboardButton in_check_button, int in_check_modifier) const
 	{
-		if (IsKeyDownEvent() && IsKeyEvent(check_button, check_modifier))
+		if (IsKeyDownEvent() && IsKeyEvent(in_check_button, in_check_modifier))
 			return true;
 		return false;
 	}

@@ -34,9 +34,9 @@ protected:
     return false; // no redraw
   }
 
-  virtual bool OnMouseButtonImpl(int button, int action, int modifier) override
+  virtual bool OnMouseButtonImpl(chaos::MouseButtonEvent const &mouse_button_event) override
   {
-    if (button == 0 && action == GLFW_PRESS)
+    if (mouse_button_event.IsButtonPressed(0))
     {
       chaos::PlaySoundDesc desc;
       desc.categories.push_back(category1.get());
@@ -44,7 +44,7 @@ protected:
       sound1 = source1->Play(desc);
 			return true;
     }
-    else if (button == 1 && action == GLFW_PRESS)
+    else if (mouse_button_event.IsButtonPressed(1))
     {
       if (sound1 != nullptr)
       {
@@ -56,7 +56,7 @@ protected:
       }
 			return true;
     }
-    else if (button == 2 && action == GLFW_PRESS)
+    else if (mouse_button_event.IsButtonPressed(2))
     {
       if (category1 != nullptr)
       {

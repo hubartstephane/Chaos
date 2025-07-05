@@ -250,9 +250,9 @@ protected:
 		return result;
 	}
 
-	virtual bool OnMouseButtonImpl(int button, int action, int modifier) override
+	virtual bool OnMouseButtonImpl(chaos::MouseButtonEvent const &mouse_button_event) override
 	{
-		if (button == 0 && action == GLFW_RELEASE)
+		if (mouse_button_event.IsButtonReleased(0))
 		{
 			chaos::TextureDescription desc = texture->GetTextureDescription();
 

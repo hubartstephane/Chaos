@@ -23,19 +23,17 @@ namespace chaos
 		/** check whether this is a key press or repeat event */
 		bool IsKeyDownEvent() const;
 
-		/** check whether this is a key press or repeat event */
-		bool IsKeyDown(KeyboardButton check_button, int check_modifier = 0) const;
-		/** check whether this is a key press event */
-		bool IsKeyPressed(KeyboardButton check_button, int check_modifier = 0) const;
-		/** check whether this is a key release event */
-		bool IsKeyReleased(KeyboardButton check_button, int check_modifier = 0) const;
-		/** check whether this is a key repeat event */
-		bool IsKeyRepeat(KeyboardButton check_button, int check_modifier = 0) const;
-
-	protected:
-
 		/** check whether the key event is for considered key */
-		bool IsKeyEvent(KeyboardButton check_button, int check_modifier = 0) const;
+		bool IsKeyEvent(KeyboardButton in_check_button, int in_check_modifier = 0) const;
+
+		/** check whether this is a key press or repeat event */
+		bool IsKeyDown(KeyboardButton in_check_button, int in_check_modifier = 0) const;
+		/** check whether this is a key press event */
+		bool IsKeyPressed(KeyboardButton in_check_button, int in_check_modifier = 0) const;
+		/** check whether this is a key release event */
+		bool IsKeyReleased(KeyboardButton in_check_button, int in_check_modifier = 0) const;
+		/** check whether this is a key repeat event */
+		bool IsKeyRepeat(KeyboardButton in_check_button, int in_check_modifier = 0) const;
 
 	public:
 

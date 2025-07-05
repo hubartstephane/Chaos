@@ -143,13 +143,13 @@ protected:
 		return true; // no redraw
 	}
 
-	virtual bool OnMouseButtonImpl(int button, int action, int modifier) override
+	virtual bool OnMouseButtonImpl(chaos::MouseButtonEvent const &mouse_button_event) override
 	{
 		double mouse_x = 0.0;
 		double mouse_y = 0.0;
 		glfwGetCursorPos(glfw_window, &mouse_x, &mouse_y);
 
-		if (button == 0 && action == GLFW_PRESS)
+		if (mouse_button_event.IsButtonPressed(0))
 		{
 			int layer_index    = rand() % LAYER_COUNT;
 			int material_index = rand() % MATERIAL_COUNT;
@@ -179,31 +179,23 @@ protected:
 			}
 			return true;
 		}
-		else if (button == 1 && action == GLFW_PRESS)
+		else if (mouse_button_event.IsButtonPressed(1))
 		{
 			size_t count = particle_allocations.size();
 			if (count > 0)
 			{
 				size_t r = (rand() % count);
 
-				if (button == 1)
-				{
-					particle_allocations[r] = particle_allocations.back();
-					particle_allocations.pop_back();
-				}
-				else
-				{
-					particle_allocations[r]->Show(!particle_allocations[r]->IsVisible());
-				//	particle_allocations[r]->Pause(!particle_allocations[r]->IsPaused());
-				}
+				particle_allocations[r] = particle_allocations.back();
+				particle_allocations.pop_back();
 			}
 			return true;
 		}
-		else if (button == 2)
+		else if (mouse_button_event.IsButtonEvent(2))
 		{
-			if (action == GLFW_PRESS)
+			if (mouse_button_event.IsButtonPressedEvent())
 				destroy_all_particles = true;
-			else if (action == GLFW_RELEASE)
+			else if (mouse_button_event.IsButtonReleasedEvent())
 				destroy_all_particles = false;
 		}
 

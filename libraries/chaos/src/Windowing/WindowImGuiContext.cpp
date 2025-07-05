@@ -59,11 +59,11 @@ namespace chaos
 		return false;
 	}
 
-	bool WindowImGuiContext::OnMouseButtonImpl(int button, int action, int modifier)
+	bool WindowImGuiContext::OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event)
 	{
 		if (ShouldCaptureInputEvent())
 		{
-			ImGui_ImplGlfw_MouseButtonCallback(window->GetGLFWHandler(), button, action, modifier);
+			ImGui_ImplGlfw_MouseButtonCallback(window->GetGLFWHandler(), mouse_button_event.button, mouse_button_event.action, mouse_button_event.modifier);
 
 			if (ImGui::GetIO().WantCaptureMouse)
 				return true;

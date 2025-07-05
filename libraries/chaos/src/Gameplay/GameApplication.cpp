@@ -72,13 +72,13 @@ namespace chaos
 		return WindowApplication::OnMouseMoveImpl(delta);
 	}
 
-	bool GameApplication::OnMouseButtonImpl(int button, int action, int modifier)
+	bool GameApplication::OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event)
 	{
 		if (game != nullptr)
 			if (!IsGameSuspended())
-				if (game->OnMouseButton(button, action, modifier))
+				if (game->OnMouseButton(mouse_button_event))
 					return true;
-		return WindowApplication::OnMouseButtonImpl(button, action, modifier);
+		return WindowApplication::OnMouseButtonImpl(mouse_button_event);
 	}
 
 	bool GameApplication::OnMouseWheelImpl(double scroll_x, double scroll_y)

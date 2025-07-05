@@ -113,9 +113,9 @@ protected:
 		return true; // refresh
 	}
 
-	virtual bool OnMouseButtonImpl(int button, int action, int modifier) override
+	virtual bool OnMouseButtonImpl(chaos::MouseButtonEvent const &mouse_button_event) override
 	{
-		if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS)
+		if (mouse_button_event.IsButtonPressed(1))
 		{
 			rotation_started = !rotation_started;
 			return true;

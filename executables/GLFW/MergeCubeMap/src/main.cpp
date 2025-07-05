@@ -227,9 +227,9 @@ protected:
 		return true; // refresh
 	}
 
-	virtual bool OnMouseButtonImpl(int button, int action, int modifier) override
+	virtual bool OnMouseButtonImpl(chaos::MouseButtonEvent const &mouse_button_event) override
 	{
-		if (button == 1 && action == GLFW_RELEASE)
+		if (mouse_button_event.IsButtonReleased(1))
 		{
 			imgui_user_message.AddLine("HelloWorld");
 			return true;

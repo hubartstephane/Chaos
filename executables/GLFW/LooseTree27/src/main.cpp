@@ -571,9 +571,9 @@ protected:
 		return chaos::ray3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	}
 
-	virtual bool OnMouseButtonImpl(int button, int action, int modifier) override
+	virtual bool OnMouseButtonImpl(chaos::MouseButtonEvent const &mouse_button_event) override
 	{
-		if (button == 1 && action == GLFW_PRESS)
+		if (mouse_button_event.IsButtonPressed(1))
 		{
 			if (IsImGuiMenuEnabled())
 			{

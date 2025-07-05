@@ -48,11 +48,11 @@ namespace chaos
 		return false;
 	}
 
-	bool GameInstance::OnMouseButtonImpl(int button, int action, int modifier)
+	bool GameInstance::OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event)
 	{
 		size_t count = players.size();
 		for (size_t i = 0; i < count; ++i)
-			if (players[i]->OnMouseButton(button, action, modifier))
+			if (players[i]->OnMouseButton(mouse_button_event))
 				return true;
 		return false;
 	}

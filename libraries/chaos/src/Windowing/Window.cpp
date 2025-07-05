@@ -616,7 +616,12 @@ namespace chaos
 		WindowApplication::SetApplicationInputMode(InputMode::MOUSE);
 
 		// dispatch event
-		DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnMouseButton, button, action, modifier);
+		MouseButtonEvent mouse_button_event;
+		mouse_button_event.button = button;
+		mouse_button_event.action = action;
+		mouse_button_event.modifier = modifier;
+
+		DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnMouseButton, mouse_button_event);
 	}
 
 	void Window::DoOnMouseWheel(GLFWwindow* in_glfw_window, double scroll_x, double scroll_y)
@@ -900,18 +905,18 @@ namespace chaos
 		return WindowInterface::OnMouseMoveImpl(delta);
 	}
 
-	bool Window::OnMouseButtonImpl(int button, int action, int modifier)
+	bool Window::OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event)
 	{
 		// give opportunity to application
 		if (WindowApplication* window_application = Application::GetInstance())
-			if (window_application->OnMouseButton(button, action, modifier))
+			if (window_application->OnMouseButton(mouse_button_event))
 				return true;
 		// then client
 		if (window_client != nullptr)
-			if (window_client->OnMouseButton(button, action, modifier))
+			if (window_client->OnMouseButton(mouse_button_event))
 				return true;
 		// then fallback to super
-		return WindowInterface::OnMouseButtonImpl(button, action, modifier);
+		return WindowInterface::OnMouseButtonImpl(mouse_button_event);
 	}
 
 	bool Window::OnMouseWheelImpl(double scroll_x, double scroll_y)

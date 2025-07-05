@@ -61,9 +61,9 @@ namespace chaos
 		return false;
 	}
 
-	bool InputEventReceiverInterface::OnMouseButton(int button, int action, int modifier)
+	bool InputEventReceiverInterface::OnMouseButton(MouseButtonEvent const &mouse_button_event)
 	{
-		if (OnMouseButtonImpl(button, action, modifier))
+		if (OnMouseButtonImpl(mouse_button_event))
 		{
 			SetInputMode(InputMode::MOUSE);
 			return true;
@@ -106,7 +106,7 @@ namespace chaos
 		return false;
 	}
 
-	bool InputEventReceiverInterface::OnMouseButtonImpl(int button, int action, int modifier)
+	bool InputEventReceiverInterface::OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event)
 	{
 		return false;
 	}

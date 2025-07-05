@@ -86,7 +86,7 @@ namespace chaos
 		/** handle keyboard input */
 		virtual bool OnCharEventImpl(unsigned int c) override;
 		/** handle mouse input */
-		virtual bool OnMouseButtonImpl(int button, int action, int modifier) override;
+		virtual bool OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event) override;
 		/** handle mouse movement */
 		virtual bool OnMouseMoveImpl(glm::vec2 const & delta) override;
 

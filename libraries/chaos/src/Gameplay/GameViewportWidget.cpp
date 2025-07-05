@@ -71,12 +71,12 @@ namespace chaos
 		return false;
 	}
 
-	bool GameViewportWidget::OnMouseButtonImpl(int button, int action, int modifier)
+	bool GameViewportWidget::OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event)
 	{
 		if (game != nullptr)
-			if (game->OnMouseButton(button, action, modifier))
+			if (game->OnMouseButton(mouse_button_event))
 				return true;
-		return Widget::OnMouseButtonImpl(button, action, modifier);
+		return Widget::OnMouseButtonImpl(mouse_button_event);
 	}
 
 	bool GameViewportWidget::OnMouseMoveImpl(glm::vec2 const & delta)

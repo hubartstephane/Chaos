@@ -193,7 +193,7 @@ namespace chaos
 		/** whenever a char event is received */
 		virtual bool OnCharEventImpl(unsigned int c) override;
 		/** whenever a mouse event is received */
-		virtual bool OnMouseButtonImpl(int button, int action, int modifier) override;
+		virtual bool OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event) override;
 		/** whenever mouse is displaced */
 		virtual bool OnMouseMoveImpl(glm::vec2 const & delta) override;
 

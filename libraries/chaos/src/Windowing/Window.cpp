@@ -8,7 +8,7 @@ namespace chaos
 	*/
 
 	Window::Window():
-		imgui_contextXXX(this)
+		window_imgui_context(this)
 	{
 	}
 
@@ -66,12 +66,12 @@ namespace chaos
 
 	bool Window::CreateImGuiContext()
 	{
-		return imgui_contextXXX.CreateContext();
+		return window_imgui_context.CreateContext();
 	}
 		
 	void Window::DestroyImGuiContext()
 	{
-		imgui_contextXXX.DestroyContext();
+		window_imgui_context.DestroyContext();
 	}
 
 	void Window::DestroyGLFWWindow()
@@ -341,7 +341,7 @@ namespace chaos
 	void Window::OnImGuiMenuEnabledChanged(bool enabled)
 	{
 		UpdateCursorMode();
-		imgui_contextXXX.OnImGuiMenuEnabledChanged(enabled);
+		window_imgui_context.OnImGuiMenuEnabledChanged(enabled);
 	}
 
 	glm::ivec2 Window::GetWindowPosition(bool include_decorators) const
@@ -494,7 +494,7 @@ namespace chaos
 			{
 				return window->PreventWindowDestruction([window, previous_wndproc, hWnd, msg, wParam, lParam]()
 				{
-					return window->imgui_contextXXX.WithImGuiContext([&]()
+					return window->window_imgui_context.WithImGuiContext([&]()
 					{
 						// call special treatments
 						window->HookedWindowProc(msg, wParam, lParam);
@@ -1118,13 +1118,14 @@ namespace chaos
 
 	void Window::OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func)
 	{
-		// display application menu items
 		if (IsApplicationImGuiMenuPluggedIn())
+		{
+			// display application menu items
 			if (WindowApplication* window_application = Application::GetInstance())
 				window_application->OnDrawApplicationImGuiMenu(this, begin_menu_func);
-
-		// display the imgui context
-		imgui_contextXXX.OnDrawImGuiMenu(this, begin_menu_func);
+			// display the imgui context
+			window_imgui_context.OnDrawImGuiMenu(this, begin_menu_func);
+		}
 
 		// display menu items for widgets
 		EnumerateKnownImGuiObjects([this, &begin_menu_func](char const* name, CreateImGuiObjectFunc create_func)
@@ -1323,7 +1324,7 @@ namespace chaos
 
 	void Window::OnMonitorEvent(GLFWmonitor* monitor, int monitor_state)
 	{
-		imgui_contextXXX.OnMonitorEvent(monitor, monitor_state);
+		window_imgui_context.OnMonitorEvent(monitor, monitor_state);
 
 		if (monitor == fullscreen_monitor && monitor_state == GLFW_DISCONNECTED)
 			fullscreen_monitor = nullptr;

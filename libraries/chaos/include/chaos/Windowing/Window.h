@@ -129,7 +129,7 @@ namespace chaos
 		{
 			return PreventWindowDestruction([this, &func]()
 			{
-				return imgui_contextXXX.WithImGuiContext([this, &func]()
+				return window_imgui_context.WithImGuiContext([this, &func]()
 				{
 					using L = meta::LambdaInfo<FUNC>;
 
@@ -443,7 +443,7 @@ namespace chaos
 	protected:
 
 		/** the ImGui/Implot context */
-		WindowImGuiContext imgui_contextXXX;
+		WindowImGuiContext window_imgui_context;
 
 		/** the window in GLFW library */
 		GLFWwindow* glfw_window = nullptr;

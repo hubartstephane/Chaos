@@ -18,6 +18,9 @@ namespace chaos
 		/** destructor */
 		~WindowImGuiContext();
 
+		/** check whether the context is current */
+		bool IsImGuiContextCurrent() const;
+
 	protected:
 
 		/** check whether the input event should be handled */

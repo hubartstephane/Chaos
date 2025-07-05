@@ -528,12 +528,17 @@ namespace chaos
 		glfwSetWindowIconifyCallback(glfw_window, DoOnIconifiedStateChange);
 	}
 
+	static Window * GetWindowFromGLFWContext(GLFWwindow* in_glfw_window)
+	{
+		return (Window*)glfwGetWindowUserPointer(in_glfw_window);
+	}
+
 	template<typename FUNC>
-	decltype(auto) GetWindowAndProcess(GLFWwindow* in_glfw_window, FUNC const & func)
+	static decltype(auto) GetWindowAndProcess(GLFWwindow* in_glfw_window, FUNC const & func)
 	{
 		using L = meta::LambdaInfo<FUNC, Window *>;
 
-		if (Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window))
+		if (Window* my_window = GetWindowFromGLFWContext(in_glfw_window))
 		{
 			return my_window->WithWindowContext([my_window, &func]()
 			{
@@ -557,8 +562,7 @@ namespace chaos
 	{
 		GetWindowAndProcess(in_glfw_window, [=](Window * my_window)
 		{
-			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
-			if (ImGui::GetCurrentContext() != nullptr)
+			if (my_window->window_imgui_context.IsImGuiContextCurrent())
 				ImGui_ImplGlfw_WindowFocusCallback(in_glfw_window, value);
 
 			my_window->OnFocusStateChange(value == GL_TRUE);
@@ -582,136 +586,50 @@ namespace chaos
 		});
 	}
 
-	template<typename FUNC, typename ...PARAMS>
-	static bool DispatchInputEvent(GLFWwindow* in_glfw_window, FUNC const & func, InputMode input_mode, PARAMS&& ...params)
-	{
-		// try window first
-		bool result = GetWindowAndProcess(in_glfw_window, [&](Window* my_window)
-		{
-			// try to process window client first
-			if (WindowClient * window_client = my_window->GetWindowClient())
-			{
-				if ((window_client->*func)(std::forward<PARAMS>(params)...))
-				{
-					window_client->SetInputMode(input_mode);
-					return true;
-				}
-			}
-			// give hand to window itself
-			if ((my_window->*func)(std::forward<PARAMS>(params)...))
-			{
-				my_window->SetInputMode(input_mode);
-				return true;
-			}
-		});
-		if (result)
-			return result;
-
-		// try application
-		if (WindowApplication* window_application = Application::GetInstance())
-		{
-			if ((window_application->*func)(std::forward<PARAMS>(params)...))
-			{
-				window_application->SetInputMode(input_mode);
-				return true;
-			}
-		}
-		return false;
-	}
-
-
 	void Window::DoOnMouseMove(GLFWwindow* in_glfw_window, double x, double y)
 	{
-		//glm::vec2 position = { float(x), float(y) };
-		//DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnMouseMove, InputMode::MOUSE, position);
+		// notify the application of the mouse state
+		WindowApplication::SetApplicationInputMode(InputMode::MOUSE);
 
-
-
-
-
-		GetWindowAndProcess(in_glfw_window, [=](Window* my_window)
+		// dispatch the event (a window is mandatory to have a delta)
+		if (Window * my_window = GetWindowFromGLFWContext(in_glfw_window))
 		{
-			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
-			if (ImGui::GetCurrentContext() != nullptr && WindowApplication::IsImGuiMenuEnabled())
-			{
-				ImGui_ImplGlfw_CursorPosCallback(in_glfw_window, x, y);
-
-				ImGuiIO& io = ImGui::GetIO();
-				if (io.WantCaptureMouse)
-					return;
-			}
-			// notify the application of the mouse state
-			WindowApplication::SetApplicationInputMode(InputMode::MOUSE);
-
 			glm::vec2 position = { float(x), float(y) };
-			if (!my_window->IsMousePositionValid())
-				my_window->OnMouseMove({ 0.0f, 0.0f });
-			else
-				my_window->OnMouseMove(position - my_window->mouse_position.value());
+
+			glm::vec2 delta = my_window->IsMousePositionValid()?
+				position - my_window->mouse_position.value():
+				glm::vec2(0.0f, 0.0f);
+
+			DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnMouseMove, InputMode::MOUSE, delta);
+
 			my_window->mouse_position = position;
-		});
+		}
 	}
 
 	void Window::DoOnMouseButton(GLFWwindow* in_glfw_window, int button, int action, int modifier)
 	{
-		//MouseButton mouse_button = (MouseButton)button;
-		//KeyboardState::SetMouseButtonState(mouse_button, action);
-		//DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnMouseButton, InputMode::MOUSE, button, action, modifier);
+		// update global state
+		MouseButton mouse_button = (MouseButton)button;
+		KeyboardState::SetMouseButtonState(mouse_button, action);
 
+		// notify the application of the mouse state
+		WindowApplication::SetApplicationInputMode(InputMode::MOUSE);
 
-
-
-
-
-		GetWindowAndProcess(in_glfw_window, [=](Window* my_window)
-		{
-			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
-			if (ImGui::GetCurrentContext() != nullptr && WindowApplication::IsImGuiMenuEnabled())
-			{
-				ImGui_ImplGlfw_MouseButtonCallback(in_glfw_window, button, action, modifier);
-
-				ImGuiIO& io = ImGui::GetIO();
-				if (io.WantCaptureMouse)
-					return;
-			}
-
-			MouseButton mouse_button = (MouseButton)button;
-			KeyboardState::SetMouseButtonState(mouse_button, action);
-
-			// notify the application of the mouse state
-			WindowApplication::SetApplicationInputMode(InputMode::MOUSE);
-
-			my_window->OnMouseButton(button, action, modifier);
-		});
+		// dispatch event
+		DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnMouseButton, InputMode::MOUSE, button, action, modifier);
 	}
 
 	void Window::DoOnMouseWheel(GLFWwindow* in_glfw_window, double scroll_x, double scroll_y)
 	{
-		//DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnMouseWheel, InputMode::MOUSE, scroll_x, scroll_y);
+		// notify the application of the mouse state
+		WindowApplication::SetApplicationInputMode(InputMode::MOUSE);
 
-
-		GetWindowAndProcess(in_glfw_window, [=](Window* my_window)
-		{
-			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
-			if (ImGui::GetCurrentContext() != nullptr && WindowApplication::IsImGuiMenuEnabled())
-			{
-				ImGui_ImplGlfw_ScrollCallback(in_glfw_window, scroll_x, scroll_y);
-
-				ImGuiIO& io = ImGui::GetIO();
-				if (io.WantCaptureMouse)
-					return;
-			}
-			// notify the application of the mouse state
-			WindowApplication::SetApplicationInputMode(InputMode::MOUSE);
-
-			my_window->OnMouseWheel(scroll_x, scroll_y);
-		});
+		// dispatch event
+		DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnMouseWheel, InputMode::MOUSE, scroll_x, scroll_y);
 	}
 
 	void Window::DoOnKeyEvent(GLFWwindow* in_glfw_window, int keycode, int scancode, int action, int modifier)
 	{
-
-	#if 0
 		// GLFW keycode corresponds to the character that would be produced on a QWERTY layout
 		// we have to make a conversion to know the character is to be produced on CURRENT layout
 		keycode = KeyboardLayoutConversion::ConvertGLFWKeycode(keycode, KeyboardLayoutType::QWERTY, KeyboardLayoutType::CURRENT);
@@ -720,78 +638,26 @@ namespace chaos
 		KeyboardButton keyboard_button = KeyboardButton(keycode);
 		KeyboardState::SetKeyboardButtonState(keyboard_button, action);
 
-		// handle the message
+		// notify the application of the keyboard state
+		WindowApplication::SetApplicationInputMode(InputMode::KEYBOARD);
+
+		// dispatch the event
 		KeyEvent key_event;
 		key_event.button = keyboard_button;
 		key_event.scancode = scancode;
 		key_event.action = action;
 		key_event.modifier = modifier;
 
-
 		DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnKeyEvent, InputMode::KEYBOARD, key_event);
-		#endif
-
-
-
-
-
-
-
-
-
-		GetWindowAndProcess(in_glfw_window, [=](Window* my_window)
-		{
-			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
-			if (ImGui::GetCurrentContext() != nullptr && WindowApplication::IsImGuiMenuEnabled())
-			{
-				ImGui_ImplGlfw_KeyCallback(in_glfw_window, keycode, scancode, action, modifier);
-
-				ImGuiIO& io = ImGui::GetIO();
-				if (io.WantCaptureKeyboard)
-					return;
-			}
-
-			// GLFW keycode corresponds to the character that would be produced on a QWERTY layout
-			// we have to make a conversion to know the character is to be produced on CURRENT layout
-
-			KeyboardButton keyboard_button = KeyboardButton(KeyboardLayoutConversion::ConvertGLFWKeycode(keycode, KeyboardLayoutType::QWERTY, KeyboardLayoutType::CURRENT));
-			KeyboardState::SetKeyboardButtonState(keyboard_button, action);
-
-			// notify the application of the keyboard button state
-			WindowApplication::SetApplicationInputMode(InputMode::KEYBOARD);
-
-			// handle the message
-			KeyEvent event;
-			event.button = keyboard_button;
-			event.scancode = scancode;
-			event.action = action;
-			event.modifier = modifier;
-
-			my_window->OnKeyEvent(event);
-		});
 	}
 
 	void Window::DoOnCharEvent(GLFWwindow* in_glfw_window, unsigned int c)
 	{
-		//DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnCharEvent, InputMode::KEYBOARD, c);
+		// notify the application of the keyboard button state
+		WindowApplication::SetApplicationInputMode(InputMode::KEYBOARD);
 
-
-		GetWindowAndProcess(in_glfw_window, [=](Window* my_window)
-		{
-			// XXX: manually call IMGUI callbacks. Check for context because this could be called even before IMGUI is fully bound to the window
-			if (ImGui::GetCurrentContext() != nullptr && WindowApplication::IsImGuiMenuEnabled())
-			{
-				ImGui_ImplGlfw_CharCallback(in_glfw_window, c);
-
-				ImGuiIO& io = ImGui::GetIO();
-				if (io.WantCaptureKeyboard)
-					return;
-			}
-			// notify the application of the keyboard button state
-			WindowApplication::SetApplicationInputMode(InputMode::KEYBOARD);
-
-			my_window->OnCharEvent(c);
-		});
+		// dispatch the event
+		DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnCharEvent, InputMode::KEYBOARD, c);
 	}
 
 	void Window::DoOnDropFile(GLFWwindow* in_glfw_window, int count, char const** paths)

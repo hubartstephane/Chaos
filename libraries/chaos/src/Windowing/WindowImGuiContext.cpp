@@ -15,6 +15,13 @@ namespace chaos
 		assert(implot_context == nullptr);
 	}
 
+	bool WindowImGuiContext::IsImGuiContextCurrent() const
+	{
+		return
+			(imgui_context != nullptr) &&
+			(ImGui::GetCurrentContext() == imgui_context);
+	}
+
 	ImGuiManager* WindowImGuiContext::GetImGuiManager() const
 	{
 		if (WindowApplication* window_application = Application::GetInstance())
@@ -29,7 +36,7 @@ namespace chaos
 
 	bool WindowImGuiContext::ShouldCaptureInputEvent() const
 	{
-		if (imgui_context != nullptr && ImGui::GetCurrentContext() == imgui_context && WindowApplication::IsImGuiMenuEnabled())
+		if (IsImGuiContextCurrent() && WindowApplication::IsImGuiMenuEnabled())
 			return true;
 		return false;
 	}

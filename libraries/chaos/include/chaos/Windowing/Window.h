@@ -415,6 +415,13 @@ namespace chaos
 			}
 		}
 
+		/** dispatch an input event through the ImGui/WindowClient/Window/Application hierarchy */
+		template<typename FUNC, typename ...PARAMS>
+		static bool DispatchInputEvent(GLFWwindow* in_glfw_window, FUNC const & func, InputMode input_mode, PARAMS&& ...params);
+
+		/** gets the window imgui context */
+		WindowImGuiContext * GetWindowImGuiContext() { return &window_imgui_context;}
+
 	private:
 
 		/** binding function with GLFW library */
@@ -476,6 +483,52 @@ namespace chaos
 		/** the window client */
 		shared_ptr<WindowClient> window_client;
 	};
+
+#else
+
+	/** dispatch an input event through the ImGui/WindowClient/Window/Application hierarchy */
+	template<typename FUNC, typename ...PARAMS>
+	bool Window::DispatchInputEvent(GLFWwindow* in_glfw_window, FUNC const & func, InputMode input_mode, PARAMS&& ...params)
+	{
+		// try window first
+		bool result = GetWindowAndProcess(in_glfw_window, [&](Window* my_window)
+		{
+			// try with ImGuiContext
+			if (WindowImGuiContext * window_imgui_context = my_window->GetWindowImGuiContext())
+			{
+				if ((window_imgui_context->*func)(std::forward<PARAMS>(params)...))
+				{
+					return true;
+				}
+			}
+			// try with WindowClient
+			if (WindowClient * window_client = my_window->GetWindowClient())
+			{
+				if ((window_client->*func)(std::forward<PARAMS>(params)...))
+				{
+					return true;
+				}
+			}
+			// give hand to window itself
+			if ((my_window->*func)(std::forward<PARAMS>(params)...))
+			{
+				return true;
+			}
+			return false;
+		});
+		if (result)
+			return result;
+
+		// try application
+		if (WindowApplication* window_application = Application::GetInstance())
+		{
+			if ((window_application->*func)(std::forward<PARAMS>(params)...))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 
 #endif
 

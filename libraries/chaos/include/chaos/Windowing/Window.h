@@ -393,27 +393,25 @@ namespace chaos
 			shared_ptr<Window> prevent_destruction = this;
 	
 			++window_destruction_guard;
-			
-			if constexpr (L::convertible_to_bool)
+
+			auto release_destruction_guard = [&]()
 			{
-				// call functor
-				decltype(auto) result = func();
-				// check whether window is to be destroyed
 				assert(window_destruction_guard > 0);
 				if (--window_destruction_guard == 0)
 					if (!IsWindowHandledByApplication())
 						DoWindowDestruction();
-				return result;
+			};
+			
+			if constexpr (std::is_same_v<void, typename L::result_type>)
+			{
+				func();
+				release_destruction_guard();
 			}
 			else
 			{
-				// call functor
-				func();
-				// check whether window is to be destroyed
-				assert(window_destruction_guard > 0);
-				if (--window_destruction_guard == 0)
-					if (!IsWindowHandledByApplication())
-						DoWindowDestruction();
+				decltype(auto) result = func();
+				release_destruction_guard();
+				return result;
 			}
 		}
 

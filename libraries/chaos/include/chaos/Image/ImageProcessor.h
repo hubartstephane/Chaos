@@ -32,7 +32,7 @@ namespace chaos
 
 		/** an utility function to call functor on pixel accessor */
 		template<typename FUNC>
-		static FIBITMAP* DoImageProcessing(ImageDescription const& src_desc, FUNC func)
+		static FIBITMAP* DoImageProcessing(ImageDescription const& src_desc, FUNC const & func)
 		{
 			FIBITMAP* result = nullptr;
 

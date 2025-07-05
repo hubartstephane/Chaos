@@ -40,7 +40,7 @@ namespace chaos
 		}
 		/** access all particles */
 		template<typename FUNC>
-		SpawnParticleResult& Process(FUNC func)
+		SpawnParticleResult& Process(FUNC const & func)
 		{
 			if (allocation != nullptr && count != 0)
 				func(allocation->GetParticleAccessor(start, count));

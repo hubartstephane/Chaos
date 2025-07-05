@@ -196,7 +196,7 @@ namespace chaos
 		{
 			/** internal method */
 			template<typename IT, typename END, typename FUNC, typename DEFAULT_RESULT>
-			auto for_each_internal(FUNC func, DEFAULT_RESULT default_result)
+			auto for_each_internal(FUNC const & func, DEFAULT_RESULT default_result)
 			{
 				if constexpr (std::is_same_v<IT, END>) // constexpr is important for compilation
 					return default_result;
@@ -213,7 +213,7 @@ namespace chaos
 
 			/** internal method */
 			template<typename IT, typename END, typename FUNC>
-			void for_each_internal(FUNC func)
+			void for_each_internal(FUNC const & func)
 			{
 				if constexpr (std::is_same_v<IT, END>)
 					return;
@@ -300,14 +300,14 @@ namespace chaos
 
 		/** apply a functor on a boost::mpl::vector<>. Stop whenever some kind of result is found */
 		template<typename ELEMENTS, typename FUNC, typename DEFAULT_RESULT>
-		auto for_each(FUNC func, DEFAULT_RESULT default_result)
+		auto for_each(FUNC const & func, DEFAULT_RESULT default_result)
 		{
 			return details::for_each_internal<typename boost::mpl::begin<ELEMENTS>::type, typename boost::mpl::end<ELEMENTS>::type>(func, default_result);
 		}
 
 		/** apply a functor on a boost::mpl::vector<> */
 		template<typename ELEMENTS, typename FUNC>
-		auto for_each(FUNC func)
+		auto for_each(FUNC const & func)
 		{
 			details::for_each_internal<typename boost::mpl::begin<ELEMENTS>::type, typename boost::mpl::end<ELEMENTS>::type>(func);
 		}

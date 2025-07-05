@@ -386,7 +386,7 @@ namespace chaos
 
 		/** prevent window destruction during inner call */
 		template<typename FUNC>
-		decltype(auto) PreventWindowDestruction(FUNC func)
+		decltype(auto) PreventWindowDestruction(FUNC const & func)
 		{
 			using L = meta::LambdaInfo<FUNC>;
 			

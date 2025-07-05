@@ -544,7 +544,7 @@ namespace chaos
 	}
 
 	template<typename FUNC>
-	decltype(auto) GetWindowAndProcess(GLFWwindow* in_glfw_window, FUNC func)
+	decltype(auto) GetWindowAndProcess(GLFWwindow* in_glfw_window, FUNC const & func)
 	{
 		using L = meta::LambdaInfo<FUNC, Window *>;
 

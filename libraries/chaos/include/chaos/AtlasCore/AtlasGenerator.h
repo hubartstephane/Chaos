@@ -146,7 +146,7 @@ namespace chaos
 		}
 		/** an utility function to generate sub series from a function */
 		template<typename FUNC>
-		std::vector<size_t> CreateIndirectionTable(size_t count, FUNC func)
+		std::vector<size_t> CreateIndirectionTable(size_t count, FUNC const & func)
 		{
 			std::vector<size_t> result = CreateIndexTable(count);
 			std::sort(result.begin(), result.end(), func);

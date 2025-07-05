@@ -179,7 +179,7 @@ namespace chaos
 
 		/** enumerate all windows */
 		template<typename FUNC>
-		decltype(auto) ForAllWindows(FUNC func)
+		decltype(auto) ForAllWindows(FUNC const & func)
 		{
 			using L = meta::LambdaInfo<FUNC, Window*>;
 

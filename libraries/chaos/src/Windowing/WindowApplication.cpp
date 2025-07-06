@@ -46,44 +46,47 @@ namespace chaos
 
 	void WindowApplication::RunMessageLoop(LightweightFunction<bool()> loop_condition_func)
 	{
-		double t1 = glfwGetTime();
-
-		while (!loop_condition_func || loop_condition_func())
+		WithGLFWContext(shared_context, [this, loop_condition_func]() // because during callbacks some GPU stuff may be called
 		{
-			glfwPollEvents();
+			double t1 = glfwGetTime();
 
-			double t2 = glfwGetTime();
-
-			float real_delta_time = (float)(t2 - t1);
-			float delta_time      = ComputeEffectiveDeltaTime(real_delta_time);
-
-			// internal tick
-			bool tick_result = WithGLFWContext(shared_context, [this, delta_time]()
+			while (!loop_condition_func || loop_condition_func())
 			{
-				return Tick(delta_time);
-			});
-			if (!tick_result) // quit the loop if the current tick method requires so
-			{
-				return;
+				glfwPollEvents();
+
+				double t2 = glfwGetTime();
+
+				float real_delta_time = (float)(t2 - t1);
+				float delta_time      = ComputeEffectiveDeltaTime(real_delta_time);
+
+				// internal tick
+				bool tick_result = WithGLFWContext(shared_context, [this, delta_time]()
+				{
+					return Tick(delta_time);
+				});
+				if (!tick_result) // quit the loop if the current tick method requires so
+				{
+					return;
+				}
+
+				// destroy windows that mean to be
+				ForAllWindows([](Window* window)
+				{
+					if (window->ShouldClose())
+						window->Destroy();
+				});
+
+				// tick the windows
+				ForAllWindows([delta_time, real_delta_time](Window* window)
+				{
+					window->TickRenderer(real_delta_time);
+					window->Tick(delta_time);
+					window->DrawWindow();
+				});
+				// update time
+				t1 = t2;
 			}
-
-			// destroy windows that mean to be
-			ForAllWindows([](Window* window)
-			{
-				if (window->ShouldClose())
-					window->Destroy();
-			});
-
-			// tick the windows
-			ForAllWindows([delta_time, real_delta_time](Window* window)
-			{
-				window->TickRenderer(real_delta_time);
-				window->Tick(delta_time);
-				window->DrawWindow();
-			});
-			// update time
-			t1 = t2;
-		}
+		});
 	}
 
 	void WindowApplication::DestroyAllWindows()

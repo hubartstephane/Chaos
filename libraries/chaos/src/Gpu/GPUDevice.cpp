@@ -14,6 +14,11 @@ namespace chaos
 		assert(render_contexts.size() == 0);
 	}
 
+	uint64_t GPUDevice::GetTimestamp() const
+	{
+		return rendering_timestamp;
+	}
+
 	bool GPUDevice::Initialize(JSONReadConfiguration config)
 	{
 		if (!ReadConfigurableProperties(ReadConfigurablePropertiesContext::Initialization, false)) // do not recursively update all child objects
@@ -54,6 +59,7 @@ namespace chaos
 
 	bool GPUDevice::DoTick(float delta_time)
 	{
+		++rendering_timestamp;
 		buffer_pool.Tick(delta_time);
 		texture_pool.Tick(delta_time);
 		return true;

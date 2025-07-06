@@ -25,6 +25,9 @@ namespace chaos
 		/** destructor */
 		virtual ~GPUDevice();
 
+		/** get the rendering timestamp */
+		uint64_t GetTimestamp() const;
+
 		/** initialize the device */
 		virtual bool Initialize(JSONReadConfiguration config);
 		/** finalize the device */
@@ -67,6 +70,9 @@ namespace chaos
 		GPUTexturePool texture_pool;
 		/** the render contexts created by this */
 		std::vector<shared_ptr<GPURenderContext>> render_contexts;
+
+		/** a time stamp for rendering */
+		uint64_t rendering_timestamp = 0;
 	};
 
 #endif

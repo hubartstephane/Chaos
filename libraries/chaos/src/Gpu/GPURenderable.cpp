@@ -35,7 +35,7 @@ namespace chaos
 	bool GPURenderable::UpdateGPUResources(GPURenderContext* render_context, GPUProgramProviderInterface const* uniform_provider, GPURenderParams const& render_params)
 	{
 		// update once per frame at most
-		uint64_t renderer_timestamp = render_context->GetTimestamp();
+		uint64_t renderer_timestamp = render_context->GetGPUDevice()->GetTimestamp();
 		if (renderer_timestamp == 0 || update_timestamp != renderer_timestamp) // test for 0 to ensure resource is updated even if caller does not care about updating a timestamp
 		{
 			if (!DoUpdateGPUResources(render_context))

@@ -119,17 +119,12 @@ namespace chaos
 
 	void GPURenderContext::BeginRenderingFrame()
 	{
-		stats.OnBeginRenderingFrame(++rendering_timestamp);
+		stats.OnBeginRenderingFrame(GetGPUDevice()->GetTimestamp());
 	}
 
 	void GPURenderContext::EndRenderingFrame()
 	{
 		stats.OnEndRenderingFrame();
-	}
-
-	uint64_t GPURenderContext::GetTimestamp() const
-	{
-		return rendering_timestamp;
 	}
 
 	bool GPURenderContext::DoTick(float delta_time)

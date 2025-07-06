@@ -37,9 +37,6 @@ namespace chaos
 		/** render a full screen quad */
 		void DrawFullscreenQuad(GPURenderMaterial const* material, GPUProgramProviderInterface const* uniform_provider, GPURenderParams const& render_params);
 
-		/** get the rendering timestamp */
-		uint64_t GetTimestamp() const;
-
 		/** get the rendering statistics */
 		GPURenderContextStats const & GetStats() const { return stats; }
 
@@ -76,8 +73,6 @@ namespace chaos
 		weak_ptr<Window> window;
 		/** the vertex array cache */
 		GPUVertexArrayCache vertex_array_cache;
-		/** a time stamp for rendering */
-		uint64_t rendering_timestamp = 0;
 
 		/** whether a rendering is in progress */
 		bool rendering_started = false;

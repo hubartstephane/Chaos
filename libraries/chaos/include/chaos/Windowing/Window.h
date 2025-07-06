@@ -423,21 +423,19 @@ namespace chaos
 				return true;
 			}
 
-
-
-			// try application
-			if (WindowApplication* window_application = Application::GetInstance())
-			{
-				if ((window_application->*func)(std::forward<PARAMS>(params)...))
-				{
-					return true;
-				}
-			}
-
 			return false;
 		});
 		if (result)
 			return true;
+
+		// try application
+		if (WindowApplication* window_application = Application::GetInstance())
+		{
+			if ((window_application->*func)(std::forward<PARAMS>(params)...))
+			{
+				return true;
+			}
+		}
 
 		return false;
 	}

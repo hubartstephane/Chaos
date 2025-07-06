@@ -881,72 +881,8 @@ namespace chaos
 			ToggleFullscreen();
 			return true;
 		}
-		// give opportunity to application
-		if (WindowApplication* window_application = Application::GetInstance())
-			if (window_application->OnKeyEvent(key_event))
-				return true;
-		// then client
-		if (window_client != nullptr)
-			if (window_client->OnKeyEvent(key_event))
-				return true;
 		// then fallback to super
 		return WindowInterface::OnKeyEventImpl(key_event);
-	}
-
-	bool Window::OnMouseMoveImpl(glm::vec2 const& delta)
-	{
-		// give opportunity to application
-		if (WindowApplication* window_application = Application::GetInstance())
-			if (window_application->OnMouseMove(delta))
-				return true;
-		// then client
-		if (window_client != nullptr)
-			if (window_client->OnMouseMove(delta))
-				return true;
-		// then fallback to super
-		return WindowInterface::OnMouseMoveImpl(delta);
-	}
-
-	bool Window::OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event)
-	{
-		// give opportunity to application
-		if (WindowApplication* window_application = Application::GetInstance())
-			if (window_application->OnMouseButton(mouse_button_event))
-				return true;
-		// then client
-		if (window_client != nullptr)
-			if (window_client->OnMouseButton(mouse_button_event))
-				return true;
-		// then fallback to super
-		return WindowInterface::OnMouseButtonImpl(mouse_button_event);
-	}
-
-	bool Window::OnMouseWheelImpl(double scroll_x, double scroll_y)
-	{
-		// give opportunity to application
-		if (WindowApplication* window_application = Application::GetInstance())
-			if (window_application->OnMouseWheel(scroll_x, scroll_y))
-				return true;
-		// then client
-		if (window_client != nullptr)
-			if (window_client->OnMouseWheel(scroll_x, scroll_y))
-				return true;
-		// then fallback to super
-		return WindowInterface::OnMouseWheelImpl(scroll_x, scroll_y);
-	}
-
-	bool Window::OnCharEventImpl(unsigned int c)
-	{
-		// give opportunity to application
-		if (WindowApplication* window_application = Application::GetInstance())
-			if (window_application->OnCharEvent(c))
-				return true;
-		// then client
-		if (window_client != nullptr)
-			if (window_client->OnCharEvent(c))
-				return true;
-		// then fallback to super
-		return WindowInterface::OnCharEventImpl(c);
 	}
 
 	bool Window::IsStandardImGuiMenuPluggedIn() const

@@ -199,14 +199,7 @@ namespace chaos
 		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override;
 		/** override */
 		virtual bool OnKeyEventImpl(KeyEvent const& key_event) override;
-		/** override */
-		virtual bool OnMouseMoveImpl(glm::vec2 const& delta) override;
-		/** override */
-		virtual bool OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event) override;
-		/** override */
-		virtual bool OnMouseWheelImpl(double scroll_x, double scroll_y) override;
-		/** override */
-		virtual bool OnCharEventImpl(unsigned int c) override;
+		
 		/** override */
 		virtual bool OnDraw(GPURenderContext* render_context, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params) override;
 		/** override */
@@ -429,19 +422,23 @@ namespace chaos
 			{
 				return true;
 			}
+
+
+
+			// try application
+			if (WindowApplication* window_application = Application::GetInstance())
+			{
+				if ((window_application->*func)(std::forward<PARAMS>(params)...))
+				{
+					return true;
+				}
+			}
+
 			return false;
 		});
 		if (result)
 			return true;
 
-		// try application
-		if (WindowApplication* window_application = Application::GetInstance())
-		{
-			if ((window_application->*func)(std::forward<PARAMS>(params)...))
-			{
-				return true;
-			}
-		}
 		return false;
 	}
 

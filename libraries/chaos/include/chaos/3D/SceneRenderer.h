@@ -8,6 +8,8 @@ namespace chaos
 
 	class CHAOS_API SceneRenderer
 	{
+
+	#if 0
 	public:
 
 		/** display a whole scene from the root node */
@@ -19,6 +21,7 @@ namespace chaos
 		void DisplayNode(SceneNode* node, GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
 
 	protected:
+#endif
 
 		/** the local to world matrix */
 		glm::mat4 local_to_world = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));

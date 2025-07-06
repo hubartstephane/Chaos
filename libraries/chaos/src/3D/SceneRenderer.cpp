@@ -3,6 +3,8 @@
 
 namespace chaos
 {
+
+#if 0
 	void SceneRenderer::DisplayScene(SceneNode* root_node, GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
 	{
 		if (root_node != nullptr)
@@ -33,7 +35,7 @@ namespace chaos
 		// restore transformation matrix
 		local_to_world = previous_local_to_world;
 	}
-
+#endif
 
 
 }; // namespace chaos

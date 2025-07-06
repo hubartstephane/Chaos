@@ -19,10 +19,6 @@ namespace chaos
 
 		/** public method to render the object (Display = PrepareDisplay + DoDisplay) */
 		int Display(GPURenderContext* render_context, GPUProgramProviderInterface const* uniform_provider, GPURenderParams const& render_params);
-		/** check whether the object may be displayed, and update resources if necessary (this method is already integrated into Display method) */
-		bool PrepareDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const* uniform_provider, GPURenderParams const& render_params);
-		/** the user defined method to display the object (this method is already integrated into Display method) */
-		virtual int DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const* uniform_provider, GPURenderParams const& render_params);
 
 		/** show or hide the object */
 		void Show(bool in_visible = true);
@@ -47,6 +43,14 @@ namespace chaos
 		bool IsRenderPassEnabled(char const* renderpass_name) const;
 
 	protected:
+
+		/** update resources if necessary */
+		bool UpdateGPUResources(GPURenderContext* render_context, GPUProgramProviderInterface const* uniform_provider, GPURenderParams const& render_params);
+		/** check whether the object is to be displayed */
+		bool ShouldDisplayObject(GPURenderContext* render_context, GPUProgramProviderInterface const* uniform_provider, GPURenderParams const& render_params) const;
+
+		/** the user defined method to display the object (this method is already integrated into Display method) */
+		virtual int DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const* uniform_provider, GPURenderParams const& render_params);
 
 		/** override */
 		virtual bool CanTick() override;

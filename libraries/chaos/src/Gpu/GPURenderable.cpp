@@ -11,12 +11,14 @@ namespace chaos
 	int GPURenderable::Display(GPURenderContext * render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)
 	{
 		assert(render_context != nullptr);
-		if (!PrepareDisplay(render_context, uniform_provider, render_params))
+		if (!ShouldDisplayObject(render_context, uniform_provider, render_params))
+			return 0;
+		if (!UpdateGPUResources(render_context, uniform_provider, render_params))
 			return 0;
 		return DoDisplay(render_context, uniform_provider, render_params);
 	}
 
-	bool GPURenderable::PrepareDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const* uniform_provider, GPURenderParams const& render_params)
+	bool GPURenderable::ShouldDisplayObject(GPURenderContext * render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params) const
 	{
 		if (!IsVisible())
 			return false;
@@ -27,7 +29,12 @@ namespace chaos
 		if (render_params.object_filter != nullptr)
 			if (!render_params.object_filter->CanRender(this))
 				return false;
-		// update it (only if necessary
+		return true;
+	}
+
+	bool GPURenderable::UpdateGPUResources(GPURenderContext* render_context, GPUProgramProviderInterface const* uniform_provider, GPURenderParams const& render_params)
+	{
+		// update once per frame at most
 		uint64_t renderer_timestamp = render_context->GetTimestamp();
 		if (renderer_timestamp == 0 || update_timestamp != renderer_timestamp) // test for 0 to ensure resource is updated even if caller does not care about updating a timestamp
 		{

@@ -22,18 +22,6 @@ namespace chaos
 			(ImGui::GetCurrentContext() == imgui_context);
 	}
 
-	ImGuiManager* WindowImGuiContext::GetImGuiManager() const
-	{
-		if (WindowApplication* window_application = Application::GetInstance())
-			return window_application->GetImGuiManager();
-		return nullptr;
-	}
-
-	void WindowImGuiContext::OnImGuiMenuEnabledChanged(bool enabled)
-	{
-		GetImGuiManager()->OnImGuiMenuEnabledChanged(imgui_context, enabled);
-	}
-
 	bool WindowImGuiContext::ShouldCaptureInputEvent() const
 	{
 		if (IsImGuiContextCurrent() && WindowApplication::IsImGuiMenuEnabled())
@@ -101,7 +89,6 @@ namespace chaos
 		{
 			ImGui_ImplGlfw_CharCallback(window->GetGLFWHandler(), c);
 
-			ImGuiIO& io = ImGui::GetIO();
 			if (ImGui::GetIO().WantCaptureKeyboard)
 				return true;
 		}
@@ -129,10 +116,8 @@ namespace chaos
 		});
 	}
 
-	bool WindowImGuiContext::CreateContext()
+	bool WindowImGuiContext::CreateContext(ImGuiManager* imgui_manager)
 	{
-		ImGuiManager* imgui_manager = GetImGuiManager();
-
 		// save imgui/implot contexts
 		ImGuiContext * previous_imgui_context  = ImGui::GetCurrentContext();
 		ImPlotContext* previous_implot_context = ImPlot::GetCurrentContext();
@@ -141,7 +126,7 @@ namespace chaos
 		imgui_context = ImGui::CreateContext(imgui_manager->BuildFontAtlas());
 		ImGui::SetCurrentContext(imgui_context);
 
-		imgui_manager->InitializeImGuiContext(imgui_context);
+		InitializeImGuiContextFlags(imgui_manager);
 
 		// initialize the context
 		//
@@ -176,7 +161,7 @@ namespace chaos
 		return true;
 	}
 
-	void WindowImGuiContext::DestroyContext()
+	void WindowImGuiContext::DestroyContext(ImGuiManager* imgui_manager)
 	{
 		// destroy implot context
 		if (implot_context != nullptr)
@@ -185,27 +170,59 @@ namespace chaos
 
 			ImPlot::SetCurrentContext(implot_context);
 			ImPlot::DestroyContext(implot_context);
-			ImPlot::SetCurrentContext((previous_implot_context != implot_context) ? previous_implot_context : nullptr); // if there was another context, restore it
+			ImPlot::SetCurrentContext((previous_implot_context != implot_context) ? previous_implot_context : nullptr); // if there was another context, restore it (do not restore this context. It just has been destroyed)
 
 			implot_context = nullptr;
 		}
 
-		// destroy ImGui context (must happen before the windows destruction because some GLFW callbacks rely on the existence of the ImGui context)
+		// destroy ImGui context
 		if (imgui_context != nullptr)
 		{
 			ImGuiContext* previous_imgui_context = ImGui::GetCurrentContext();
 			ImGui::SetCurrentContext(imgui_context);
 
-			GetImGuiManager()->FinalizeImGuiContext(imgui_context);
-
 			ImGui_ImplGlfw_Shutdown();
 			ImGui_ImplOpenGL3_Shutdown();
 
 			ImGui::DestroyContext();
-			ImGui::SetCurrentContext((previous_imgui_context != imgui_context) ? previous_imgui_context : nullptr); // if there was another context, restore it
+			ImGui::SetCurrentContext((previous_imgui_context != imgui_context) ? previous_imgui_context : nullptr); // if there was another context, restore it (do not restore this context. It just has been destroyed)
 
 			imgui_context = nullptr;
 		}
+	}
+
+	void WindowImGuiContext::InitializeImGuiContextFlags(ImGuiManager* imgui_manager)
+	{
+		assert(IsImGuiContextCurrent());
+
+		ImGuiIO& io = ImGui::GetIO();
+		io.ConfigFlags &= ~ImGuiConfigFlags_NavEnableGamepad;     // Disable Gamepad Controls
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+		io.ConfigFlags |= ImGuiConfigFlags_NavNoCaptureKeyboard;  // Do not capture keyboard during navigation
+
+		SetImGuiContextMouseFlag(WindowApplication::IsImGuiMenuEnabled());
+
+		switch (imgui_manager->GetImGuiWindowStyle())
+		{
+		case ImGuiWindowStyle::Dark: ImGui::StyleColorsDark(); break;
+		case ImGuiWindowStyle::Light: ImGui::StyleColorsLight(); break;
+		case ImGuiWindowStyle::Classic: ImGui::StyleColorsClassic(); break;
+		}
+	}
+
+	void WindowImGuiContext::OnImGuiMenuEnabledChanged(bool enabled)
+	{
+		assert(IsImGuiContextCurrent());
+		SetImGuiContextMouseFlag(enabled);
+	}
+
+	void WindowImGuiContext::SetImGuiContextMouseFlag(bool enabled)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		if (enabled)
+			io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse; // need mouse
+		else
+			io.ConfigFlags |= ImGuiConfigFlags_NoMouse; // don't want mouse (elsewhere imgui can react to an invisible cursor)
 	}
 
 }; // namespace chaos

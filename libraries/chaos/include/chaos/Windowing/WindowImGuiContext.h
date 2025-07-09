@@ -22,6 +22,13 @@ namespace chaos
 		bool IsImGuiContextCurrent() const;
 
 	protected:
+	
+		/** called whenever the menu becomes enabled or disabled */
+		void OnImGuiMenuEnabledChanged(bool enabled);
+		/** initialize imgui context flags */
+		void InitializeImGuiContextFlags(ImGuiManager* imgui_manager);
+		/** set mouse flags for ImGui */
+		void SetImGuiContextMouseFlag(bool enabled);
 
 		/** check whether the input event should be handled */
 		bool ShouldCaptureInputEvent() const;
@@ -42,16 +49,11 @@ namespace chaos
 
 		/** called whenever a monitor is connected or disconnected */
 		void OnMonitorEvent(GLFWmonitor* monitor, int monitor_state);
-		/** called menu is being enabled or disabled */
-		void OnImGuiMenuEnabledChanged(bool enabled);
-
-		/** gets the imgui manager */
-		ImGuiManager* GetImGuiManager() const;
 
 		/** create the context */
-		bool CreateContext();
+		bool CreateContext(ImGuiManager* imgui_manager);
 		/** destroy the context */
-		void DestroyContext();
+		void DestroyContext(ImGuiManager* imgui_manager);
 
 		/** using imgui context, call functor, then restore previous */
 		template<typename FUNC>

@@ -52,15 +52,10 @@ namespace chaos
 	{
 	public:
 
-		/** initialize one imgui context */
-		virtual void InitializeImGuiContext(ImGuiContext * imgui_context) const;
-		/** finalize one imgui context */
-		virtual void FinalizeImGuiContext(ImGuiContext * imgui_context) const;
-		/** called whenever the menu becomes enabled or disabled */
-		virtual void OnImGuiMenuEnabledChanged(ImGuiContext * imgui_context, bool enabled) const;
-
 		/** construct an atlas according to the configuration */
 		ImFontAtlas* BuildFontAtlas() const;
+		/** gets the window style */
+		ImGuiWindowStyle GetImGuiWindowStyle() const { return window_style; }
 
 	protected:
 
@@ -70,9 +65,6 @@ namespace chaos
 		virtual bool DoStartManager() override;
 		/** override */
 		virtual bool DoStopManager() override;
-
-		/** set mouse flags for ImGui */
-		void SetImGuiContextMouseFlag(bool enabled) const;
 
 	protected:
 

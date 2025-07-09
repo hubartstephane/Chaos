@@ -117,43 +117,4 @@ namespace chaos
 		return result;
 	}
 
-	void ImGuiManager::InitializeImGuiContext(ImGuiContext * imgui_context) const
-	{
-		assert(ImGui::GetCurrentContext() == imgui_context);
-
-		ImGuiIO& io = ImGui::GetIO();
-		io.ConfigFlags &= ~ImGuiConfigFlags_NavEnableGamepad;     // Disable Gamepad Controls
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-		io.ConfigFlags |= ImGuiConfigFlags_NavNoCaptureKeyboard;  // Do not capture keyboard during navigation
-		
-		SetImGuiContextMouseFlag(WindowApplication::IsImGuiMenuEnabled());
-
-		switch (window_style)
-		{
-		case ImGuiWindowStyle::Dark: ImGui::StyleColorsDark(); break;
-		case ImGuiWindowStyle::Light: ImGui::StyleColorsLight(); break;
-		case ImGuiWindowStyle::Classic: ImGui::StyleColorsClassic(); break;
-		}
-	}
-
-	void ImGuiManager::FinalizeImGuiContext(ImGuiContext * imgui_context) const
-	{
-		assert(ImGui::GetCurrentContext() == imgui_context);
-	}
-
-	void ImGuiManager::OnImGuiMenuEnabledChanged(ImGuiContext * imgui_context, bool enabled) const
-	{
-		assert(ImGui::GetCurrentContext() == imgui_context);
-		SetImGuiContextMouseFlag(enabled);
-	}
-
-	void ImGuiManager::SetImGuiContextMouseFlag(bool enabled) const
-	{
-		ImGuiIO& io = ImGui::GetIO();
-		if (enabled)
-			io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse; // need mouse
-		else
-			io.ConfigFlags |= ImGuiConfigFlags_NoMouse; // don't want mouse (elsewhere imgui can react to an invisible cursor)
-	}
-
 }; // namespace chaos

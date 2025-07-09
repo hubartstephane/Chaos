@@ -56,12 +56,12 @@ namespace chaos
 
 	bool Window::CreateImGuiContext()
 	{
-		return window_imgui_context.CreateContext();
+		return window_imgui_context.CreateContext(GetImGuiManager());
 	}
 		
 	void Window::DestroyImGuiContext()
 	{
-		window_imgui_context.DestroyContext();
+		window_imgui_context.DestroyContext(GetImGuiManager());
 	}
 
 	void Window::DestroyGLFWWindow()

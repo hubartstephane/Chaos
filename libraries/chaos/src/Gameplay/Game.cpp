@@ -114,7 +114,7 @@ namespace chaos
 			if (RequireTogglePause())
 				return true;
 		// QUIT GAME
-		if (key_event.IsKeyPressed(KeyboardButton::ESCAPE, GLFW_MOD_SHIFT))
+		if (key_event.IsKeyPressed(KeyboardButton::ESCAPE, KeyModifier::Shift))
 		{
 			if (RequireExitGame())
 				return true;

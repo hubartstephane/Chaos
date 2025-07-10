@@ -24,16 +24,16 @@ namespace chaos
 		bool IsKeyDownEvent() const;
 
 		/** check whether the key event is for considered key */
-		bool IsKeyEvent(KeyboardButton in_check_button, int in_check_modifier = 0) const;
+		bool IsKeyEvent(KeyboardButton in_check_button, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const;
 
 		/** check whether this is a key press or repeat event */
-		bool IsKeyDown(KeyboardButton in_check_button, int in_check_modifier = 0) const;
+		bool IsKeyDown(KeyboardButton in_check_button, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const;
 		/** check whether this is a key press event */
-		bool IsKeyPressed(KeyboardButton in_check_button, int in_check_modifier = 0) const;
+		bool IsKeyPressed(KeyboardButton in_check_button, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const;
 		/** check whether this is a key release event */
-		bool IsKeyReleased(KeyboardButton in_check_button, int in_check_modifier = 0) const;
+		bool IsKeyReleased(KeyboardButton in_check_button, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const;
 		/** check whether this is a key repeat event */
-		bool IsKeyRepeat(KeyboardButton in_check_button, int in_check_modifier = 0) const;
+		bool IsKeyRepeat(KeyboardButton in_check_button, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const;
 
 	public:
 
@@ -44,7 +44,7 @@ namespace chaos
 		/** pressed or release */
 		int action = 0;
 		/** some special key modifiers like shift */
-		int modifier = 0;
+		KeyModifier key_modifiers = KeyModifier::None;
 	};
 
 #endif

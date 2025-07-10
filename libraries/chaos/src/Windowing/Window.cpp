@@ -617,6 +617,20 @@ namespace chaos
 		}
 	}
 
+	static KeyModifier GetKeyModifiersFromGLFW(int modifier)
+	{
+		KeyModifier result = KeyModifier::None;
+
+		if ((modifier & GLFW_MOD_SHIFT) != 0)
+			result |= KeyModifier::Shift;
+		if ((modifier & GLFW_MOD_CONTROL) != 0)
+			result |= KeyModifier::Control;
+		if ((modifier & GLFW_MOD_ALT) != 0)
+			result |= KeyModifier::Alt;
+
+		return result;
+	}
+
 	void Window::DoOnMouseButton(GLFWwindow* in_glfw_window, int button, int action, int modifier)
 	{
 		// update global state
@@ -630,7 +644,7 @@ namespace chaos
 		MouseButtonEvent mouse_button_event;
 		mouse_button_event.button = button;
 		mouse_button_event.action = action;
-		mouse_button_event.modifier = modifier;
+		mouse_button_event.key_modifiers = GetKeyModifiersFromGLFW(modifier);
 
 		DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnMouseButton, mouse_button_event);
 	}
@@ -662,7 +676,7 @@ namespace chaos
 		key_event.button = keyboard_button;
 		key_event.scancode = scancode;
 		key_event.action = action;
-		key_event.modifier = modifier;
+		key_event.key_modifiers = GetKeyModifiersFromGLFW(modifier);
 
 		DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnKeyEvent, key_event);
 	}

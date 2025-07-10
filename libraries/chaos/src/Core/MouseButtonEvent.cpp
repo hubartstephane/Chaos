@@ -24,38 +24,41 @@ namespace chaos
 		return (action == GLFW_RELEASE);
 	}
 
-	bool MouseButtonEvent::IsButtonEvent(int in_button, int in_check_modifier) const
+	bool MouseButtonEvent::IsButtonEvent(int in_button, KeyModifier in_required_modifiers, KeyModifier in_forbidden_modifiers) const
 	{
-		if (button == in_button)
-			if ((modifier & in_check_modifier) == in_check_modifier)
+		if (button != in_button)
+			return false;
+		if (in_required_modifiers != KeyModifier::None && !HasAllFlags(key_modifiers, in_required_modifiers))
+			return false;
+		if (in_forbidden_modifiers != KeyModifier::None && HasAnyFlags(key_modifiers, in_forbidden_modifiers))
+			return false;
+		return true;
+	}
+
+	bool MouseButtonEvent::IsButtonPressed(int in_button, KeyModifier in_required_modifiers, KeyModifier in_forbidden_modifiers) const
+	{
+		if (IsButtonPressedEvent() && IsButtonEvent(in_button, in_required_modifiers, in_forbidden_modifiers))
 				return true;
 		return false;
 	}
 
-	bool MouseButtonEvent::IsButtonPressed(int in_button, int in_check_modifier) const
+	bool MouseButtonEvent::IsButtonReleased(int in_button, KeyModifier in_required_modifiers, KeyModifier in_forbidden_modifiers) const
 	{
-		if (IsButtonPressedEvent() && IsButtonEvent(in_button, in_check_modifier))
-				return true;
-		return false;
-	}
-
-	bool MouseButtonEvent::IsButtonReleased(int in_button, int in_check_modifier) const
-	{
-		if (IsButtonReleasedEvent() && IsButtonEvent(in_button, in_check_modifier))
+		if (IsButtonReleasedEvent() && IsButtonEvent(in_button, in_required_modifiers, in_forbidden_modifiers))
 			return true;
 		return false;
 	}
 
-	bool MouseButtonEvent::IsButtonRepeat(int in_button, int in_check_modifier) const
+	bool MouseButtonEvent::IsButtonRepeat(int in_button, KeyModifier in_required_modifiers, KeyModifier in_forbidden_modifiers) const
 	{
-		if (IsButtonRepeatEvent() && IsButtonEvent(in_button, in_check_modifier))
+		if (IsButtonRepeatEvent() && IsButtonEvent(in_button, in_required_modifiers, in_forbidden_modifiers))
 			return true;
 		return false;
 	}
 
-	bool MouseButtonEvent::IsButtonDown(int in_button, int in_check_modifier) const
+	bool MouseButtonEvent::IsButtonDown(int in_button, KeyModifier in_required_modifiers, KeyModifier in_forbidden_modifiers) const
 	{
-		if (IsButtonDownEvent() && IsButtonEvent(in_button, in_check_modifier))
+		if (IsButtonDownEvent() && IsButtonEvent(in_button, in_required_modifiers, in_forbidden_modifiers))
 			return true;
 		return false;
 	}

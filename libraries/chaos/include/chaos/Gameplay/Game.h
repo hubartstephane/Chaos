@@ -188,14 +188,12 @@ namespace chaos
 		/** tick the game inputs */
 		virtual void TickGameInputs(float delta_time);
 
+		/** override */
+		virtual bool DispatchEventToHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func) override;
 		/** whenever a key event is received */
 		virtual bool OnKeyEventImpl(KeyEvent const& key_event) override;
-		/** whenever a char event is received */
-		virtual bool OnCharEventImpl(unsigned int c) override;
 		/** whenever a mouse event is received */
 		virtual bool OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event) override;
-		/** whenever mouse is displaced */
-		virtual bool OnMouseMoveImpl(glm::vec2 const & delta) override;
 
 		/** the rendering method */
 		virtual void Display(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);

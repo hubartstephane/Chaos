@@ -81,14 +81,9 @@ namespace chaos
 
 		/** handle an uncatched gamepad input incomming */
 		virtual bool OnGamepadInput(PhysicalGamepad* in_physical_gamepad);
-		/** handle keyboard input */
-		virtual bool OnKeyEventImpl(KeyEvent const& key_event) override;
-		/** handle keyboard input */
-		virtual bool OnCharEventImpl(unsigned int c) override;
-		/** handle mouse input */
-		virtual bool OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event) override;
-		/** handle mouse movement */
-		virtual bool OnMouseMoveImpl(glm::vec2 const & delta) override;
+
+		/** override */
+		virtual bool DispatchEventToHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func) override;
 
 		/** returns the maximum number of player */
 		virtual size_t GetMaxPlayerCount() const;

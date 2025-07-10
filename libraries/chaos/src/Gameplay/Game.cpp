@@ -89,6 +89,16 @@ namespace chaos
 	CHAOS_HELP_TEXT(SHORTCUTS, "F6  : ToggleFreeCameraMode");
 #endif
 
+	bool Game::DispatchEventToHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func)
+	{
+		// try with game instance
+		if (game_instance != nullptr)
+			if (game_instance->DispatchEventToHierarchy(event_func))
+				return true;
+		// super 
+		return InputEventReceiverInterface::DispatchEventToHierarchy(event_func);
+	}
+
 	bool Game::OnKeyEventImpl(KeyEvent const& key_event)
 	{
 		// try start the game
@@ -98,11 +108,6 @@ namespace chaos
 				RequireStartGame(nullptr);
 			return true;
 		}
-
-		// give opportunity to game instance to response
-		if (game_instance != nullptr)
-			if (game_instance->OnKeyEvent(key_event))
-				return true;
 
 		// PLAYING to PAUSE
 		if (key_event.IsKeyPressed(KeyboardButton::KP_ENTER) || key_event.IsKeyPressed(KeyboardButton::ENTER))
@@ -163,15 +168,6 @@ namespace chaos
 		return false;
 	}
 
-	bool Game::OnCharEventImpl(unsigned int c)
-	{
-		// give the game instance opportunity to capture the input
-		if (game_instance != nullptr)
-			if (game_instance->OnCharEvent(c))
-				return true;
-		return false;
-	}
-
 	bool Game::OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event)
 	{
 		// try start the game
@@ -181,18 +177,6 @@ namespace chaos
 				RequireStartGame(nullptr);
 			return true;
 		}
-		// give opportunity to game instance to response
-		if (game_instance->OnMouseButton(mouse_button_event))
-			return true;
-		return false;
-	}
-
-	bool Game::OnMouseMoveImpl(glm::vec2 const & delta)
-	{
-		// give the game instance opportunity to capture the input
-		if (game_instance != nullptr)
-			if (game_instance->OnMouseMove(delta))
-				return true;
 		return false;
 	}
 

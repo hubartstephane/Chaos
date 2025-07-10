@@ -33,15 +33,7 @@ namespace chaos
 		virtual bool FillAtlasGeneratorInput(AtlasInput& input) override;
 
 		/** override */
-		virtual bool OnMouseMoveImpl(glm::vec2 const& delta) override;
-		/** override */
-		virtual bool OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event) override;
-		/** override */
-		virtual bool OnMouseWheelImpl(double scroll_x, double scroll_y) override;
-		/** override */
-		virtual bool OnKeyEventImpl(KeyEvent const& key_event) override;
-		/** override */
-		virtual bool OnCharEventImpl(unsigned int c) override;
+		virtual bool DispatchEventToHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func) override;
 
 	protected:
 

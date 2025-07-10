@@ -41,17 +41,9 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual bool OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event) override;
-		/** override */
-		virtual bool OnMouseMoveImpl(glm::vec2 const & delta) override;
-		/** override */
-		virtual bool OnCharEventImpl(unsigned int c) override;
-		/** override */
-		virtual bool OnKeyEventImpl(KeyEvent const& key_event) override;
-
+		virtual bool DispatchEventToHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func) override;
 		/** override */
 		virtual bool OnDraw(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, WindowDrawParams const& draw_params) override;
-
 		/** override */
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;
 

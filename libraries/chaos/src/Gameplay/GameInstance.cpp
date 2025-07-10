@@ -30,38 +30,11 @@ namespace chaos
 		return false;
 	}
 
-	bool GameInstance::OnKeyEventImpl(KeyEvent const& key_event)
+	bool GameInstance::DispatchEventToHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func)
 	{
 		size_t count = players.size();
 		for (size_t i = 0; i < count; ++i)
-			if (players[i]->OnKeyEvent(key_event))
-				return true;
-		return false;
-	}
-
-	bool GameInstance::OnCharEventImpl(unsigned int c)
-	{
-		size_t count = players.size();
-		for (size_t i = 0; i < count; ++i)
-			if (players[i]->OnCharEvent(c))
-				return true;
-		return false;
-	}
-
-	bool GameInstance::OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event)
-	{
-		size_t count = players.size();
-		for (size_t i = 0; i < count; ++i)
-			if (players[i]->OnMouseButton(mouse_button_event))
-				return true;
-		return false;
-	}
-
-	bool GameInstance::OnMouseMoveImpl(glm::vec2 const & delta)
-	{
-		size_t count = players.size();
-		for (size_t i = 0; i < count; ++i)
-			if (players[i]->OnMouseMove(delta))
+			if (players[i]->DispatchEventToHierarchy(event_func))
 				return true;
 		return false;
 	}

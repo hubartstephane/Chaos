@@ -63,49 +63,13 @@ namespace chaos
 		return true;
 	}
 
-	bool GameApplication::OnMouseMoveImpl(glm::vec2 const& delta)
+	bool GameApplication::DispatchEventToHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func)
 	{
 		if (game != nullptr)
 			if (!IsGameSuspended())
-				if (game->OnMouseMove(delta))
+				if (game->DispatchEventToHierarchy(event_func))
 					return true;
-		return WindowApplication::OnMouseMoveImpl(delta);
-	}
-
-	bool GameApplication::OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event)
-	{
-		if (game != nullptr)
-			if (!IsGameSuspended())
-				if (game->OnMouseButton(mouse_button_event))
-					return true;
-		return WindowApplication::OnMouseButtonImpl(mouse_button_event);
-	}
-
-	bool GameApplication::OnMouseWheelImpl(double scroll_x, double scroll_y)
-	{
-		if (game != nullptr)
-			if (!IsGameSuspended())
-				if (game->OnMouseWheel(scroll_x, scroll_y))
-					return true;
-		return WindowApplication::OnMouseWheelImpl(scroll_x, scroll_y);
-	}
-
-	bool GameApplication::OnKeyEventImpl(KeyEvent const& key_event)
-	{
-		if (game != nullptr)
-			if (!IsGameSuspended())
-				if (game->OnKeyEvent(key_event))
-					return true;
-		return WindowApplication::OnKeyEventImpl(key_event);
-	}
-
-	bool GameApplication::OnCharEventImpl(unsigned int c)
-	{
-		if (game != nullptr)
-			if (!IsGameSuspended())
-				if (game->OnCharEvent(c))
-					return true;
-		return WindowApplication::OnCharEventImpl(c);
+		return WindowApplication::DispatchEventToHierarchy(event_func);
 	}
 
 	bool GameApplication::IsGameSuspended() const

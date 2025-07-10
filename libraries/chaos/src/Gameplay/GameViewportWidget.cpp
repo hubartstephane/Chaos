@@ -34,57 +34,20 @@ namespace chaos
 		return true;
 	}
 
-
-
-
-
-
-
-
-
-
-
 	void GameViewportWidget::OnInputModeChanged(InputMode new_mode, InputMode old_mode)
 	{
 		if (game != nullptr)
 			game->OnInputModeChanged(new_mode, old_mode);
 	}
 
-	bool GameViewportWidget::OnCharEventImpl(unsigned int c)
+	bool GameViewportWidget::DispatchEventToHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func)
 	{
-		// give inputs to the game
+		// try with game
 		if (game != nullptr)
-			if (game->OnCharEvent(c))
+			if (game->DispatchEventToHierarchy(event_func))
 				return true;
-		return Widget::OnCharEventImpl(c);
-	}
-
-	bool GameViewportWidget::OnKeyEventImpl(KeyEvent const& key_event)
-	{
 		// super method
-		if (Widget::OnKeyEventImpl(key_event))
-			return true;
-		// give inputs to the game
-		if (game != nullptr)
-			if (game->OnKeyEvent(key_event))
-				return true;
-		return false;
-	}
-
-	bool GameViewportWidget::OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event)
-	{
-		if (game != nullptr)
-			if (game->OnMouseButton(mouse_button_event))
-				return true;
-		return Widget::OnMouseButtonImpl(mouse_button_event);
-	}
-
-	bool GameViewportWidget::OnMouseMoveImpl(glm::vec2 const & delta)
-	{
-		if (game != nullptr)
-			if (game->OnMouseMove(delta))
-				return true;
-		return Widget::OnMouseMoveImpl(delta);
+		return Widget::DispatchEventToHierarchy(event_func);
 	}
 
 	bool GameViewportWidget::OnDraw(GPURenderContext * render_context, GPUProgramProviderInterface const * uniform_provider, WindowDrawParams const& draw_params)

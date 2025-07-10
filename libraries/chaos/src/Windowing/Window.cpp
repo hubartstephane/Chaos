@@ -530,26 +530,9 @@ namespace chaos
 		glfwSetWindowIconifyCallback(glfw_window, DoOnIconifiedStateChange);
 	}
 
-	static Window * GetWindowFromGLFWContext(GLFWwindow* in_glfw_window)
+	Window * Window::GetWindowFromGLFWContext(GLFWwindow* in_glfw_window)
 	{
 		return (Window*)glfwGetWindowUserPointer(in_glfw_window);
-	}
-
-	template<typename FUNC>
-	static decltype(auto) GetWindowAndProcess(GLFWwindow* in_glfw_window, FUNC const & func)
-	{
-		using L = meta::LambdaInfo<FUNC, Window *>;
-
-		if (Window* my_window = GetWindowFromGLFWContext(in_glfw_window))
-		{
-			return my_window->WithWindowContext([my_window, &func]()
-			{
-				return func(my_window);
-			});
-		}
-
-		if constexpr (L::convertible_to_bool)
-			return typename L::result_type {};
 	}
 
 	void Window::DoOnIconifiedStateChange(GLFWwindow* in_glfw_window, int value)
@@ -586,6 +569,32 @@ namespace chaos
 		{
 			my_window->OnWindowResize(glm::ivec2(width, height));
 		});
+	}
+
+	bool Window::DispatchEventToHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func)
+	{
+		bool result = WithWindowContext([this, &event_func]()
+		{
+			// try imgui context
+			if (window_imgui_context.DispatchEventToHierarchy(event_func))
+				return true;
+			// try window client
+			if (window_client != nullptr)
+				if (window_client->DispatchEventToHierarchy(event_func))
+					return true;
+			// try super call
+			return WindowInterface::DispatchEventToHierarchy(event_func);
+		});
+
+		if (result)
+			return true;
+
+		// try application
+		if (WindowApplication* window_application = Application::GetInstance())
+			if (window_application->DispatchEventToHierarchy(event_func))
+				return true;
+
+		return false;
 	}
 
 	void Window::DoOnMouseMove(GLFWwindow* in_glfw_window, double x, double y)

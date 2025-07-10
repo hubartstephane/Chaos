@@ -126,4 +126,9 @@ namespace chaos
 		return false;
 	}
 
+	bool InputEventReceiverInterface::DispatchEventToHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func)
+	{
+		return event_func(this);
+	}
+
 }; // namespace chaos

@@ -39,6 +39,9 @@ namespace chaos
 		/** called whenever a char is generated */
 		bool OnCharEvent(unsigned int c);
 
+		/** dispatch an event to this and inner hierarchy */
+		virtual bool DispatchEventToHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func);
+
 	protected:
 
 		/** called whenever the mouse is moved */

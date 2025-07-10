@@ -377,11 +377,11 @@ namespace chaos
 		/** binding function with GLFW library */
 		static void DoOnMouseMove(GLFWwindow* in_glfw_window, double x, double y);
 		/** binding function with GLFW library */
-		static void DoOnMouseButton(GLFWwindow* in_glfw_window, int button, int action, int modifier);
+		static void DoOnMouseButton(GLFWwindow* in_glfw_window, int button, int action, int modifiers);
 		/** binding function with GLFW library */
 		static void DoOnMouseWheel(GLFWwindow* in_glfw_window, double scroll_x, double scroll_y);
 		/** binding function with GLFW library */
-		static void DoOnKeyEvent(GLFWwindow* in_glfw_window, int keycode, int scancode, int action, int modifier);
+		static void DoOnKeyEvent(GLFWwindow* in_glfw_window, int keycode, int scancode, int action, int modifiers);
 		/** binding function with GLFW library */
 		static void DoOnCharEvent(GLFWwindow* in_glfw_window, unsigned int c);
 		/** binding function with GLFW library */

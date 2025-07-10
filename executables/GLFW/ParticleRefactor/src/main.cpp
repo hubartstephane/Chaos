@@ -149,7 +149,7 @@ protected:
 		double mouse_y = 0.0;
 		glfwGetCursorPos(glfw_window, &mouse_x, &mouse_y);
 
-		if (mouse_button_event.IsButtonPressed(0))
+		if (mouse_button_event.IsKeyPressed(0))
 		{
 			int layer_index    = rand() % LAYER_COUNT;
 			int material_index = rand() % MATERIAL_COUNT;
@@ -179,7 +179,7 @@ protected:
 			}
 			return true;
 		}
-		else if (mouse_button_event.IsButtonPressed(1))
+		else if (mouse_button_event.IsKeyPressed(1))
 		{
 			size_t count = particle_allocations.size();
 			if (count > 0)
@@ -191,11 +191,11 @@ protected:
 			}
 			return true;
 		}
-		else if (mouse_button_event.IsButtonEvent(2))
+		else if (mouse_button_event.IsKeyEvent(2))
 		{
-			if (mouse_button_event.IsButtonPressedEvent())
+			if (mouse_button_event.IsKeyPressedEvent())
 				destroy_all_particles = true;
-			else if (mouse_button_event.IsButtonReleasedEvent())
+			else if (mouse_button_event.IsKeyReleasedEvent())
 				destroy_all_particles = false;
 		}
 

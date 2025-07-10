@@ -227,7 +227,7 @@ protected:
 
 	virtual bool OnMouseButtonImpl(chaos::MouseButtonEvent const &mouse_button_event) override
 	{
-		if (mouse_button_event.IsButtonReleased(1))
+		if (mouse_button_event.IsKeyReleased(1))
 		{
 			imgui_user_message.AddLine("HelloWorld");
 			return true;

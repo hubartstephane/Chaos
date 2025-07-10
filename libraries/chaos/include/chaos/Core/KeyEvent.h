@@ -10,41 +10,13 @@ namespace chaos
 	* KeyEvent: a keyboard event
 	*/
 
-	class CHAOS_API KeyEvent
+	class CHAOS_API KeyEvent : public KeyEventBase<KeyboardButton, KeyboardButton::UNKNOWN>
 	{
-	public:
-
-		/** check whether this is a key press event */
-		bool IsKeyPressedEvent() const;
-		/** check whether this is a key repeat event */
-		bool IsKeyRepeatEvent() const;
-		/** check whether this is a key release event */
-		bool IsKeyReleasedEvent() const;
-		/** check whether this is a key press or repeat event */
-		bool IsKeyDownEvent() const;
-
-		/** check whether the key event is for considered key */
-		bool IsKeyEvent(KeyboardButton in_check_button, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const;
-
-		/** check whether this is a key press or repeat event */
-		bool IsKeyDown(KeyboardButton in_check_button, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const;
-		/** check whether this is a key press event */
-		bool IsKeyPressed(KeyboardButton in_check_button, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const;
-		/** check whether this is a key release event */
-		bool IsKeyReleased(KeyboardButton in_check_button, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const;
-		/** check whether this is a key repeat event */
-		bool IsKeyRepeat(KeyboardButton in_check_button, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const;
 
 	public:
 
-		/** the keycode */
-		KeyboardButton button = KeyboardButton::UNKNOWN;
 		/** the scan code */
 		int scancode = 0;
-		/** pressed or release */
-		int action = 0;
-		/** some special key modifiers like shift */
-		KeyModifier key_modifiers = KeyModifier::None;
 	};
 
 #endif

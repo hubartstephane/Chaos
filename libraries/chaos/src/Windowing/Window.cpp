@@ -617,6 +617,16 @@ namespace chaos
 		}
 	}
 
+	static KeyAction GetKeyActionFromGLFW(int action)
+	{
+		if (action == GLFW_PRESS)
+			return KeyAction::Press;
+		if (action == GLFW_REPEAT)
+			return KeyAction::Repeat;
+
+		return KeyAction::Release; // = 0
+	}
+
 	static KeyModifier GetKeyModifiersFromGLFW(int modifier)
 	{
 		KeyModifier result = KeyModifier::None;
@@ -631,7 +641,7 @@ namespace chaos
 		return result;
 	}
 
-	void Window::DoOnMouseButton(GLFWwindow* in_glfw_window, int button, int action, int modifier)
+	void Window::DoOnMouseButton(GLFWwindow* in_glfw_window, int button, int action, int modifiers)
 	{
 		// update global state
 		MouseButton mouse_button = (MouseButton)button;
@@ -642,9 +652,9 @@ namespace chaos
 
 		// dispatch event
 		MouseButtonEvent mouse_button_event;
-		mouse_button_event.button = button;
-		mouse_button_event.action = action;
-		mouse_button_event.key_modifiers = GetKeyModifiersFromGLFW(modifier);
+		mouse_button_event.key = button;
+		mouse_button_event.action = GetKeyActionFromGLFW(action);
+		mouse_button_event.modifiers = GetKeyModifiersFromGLFW(modifiers);
 
 		DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnMouseButton, mouse_button_event);
 	}
@@ -658,7 +668,7 @@ namespace chaos
 		DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnMouseWheel, scroll_x, scroll_y);
 	}
 
-	void Window::DoOnKeyEvent(GLFWwindow* in_glfw_window, int keycode, int scancode, int action, int modifier)
+	void Window::DoOnKeyEvent(GLFWwindow* in_glfw_window, int keycode, int scancode, int action, int modifiers)
 	{
 		// GLFW keycode corresponds to the character that would be produced on a QWERTY layout
 		// we have to make a conversion to know the character is to be produced on CURRENT layout
@@ -673,10 +683,10 @@ namespace chaos
 
 		// dispatch the event
 		KeyEvent key_event;
-		key_event.button = keyboard_button;
+		key_event.key = keyboard_button;
 		key_event.scancode = scancode;
-		key_event.action = action;
-		key_event.key_modifiers = GetKeyModifiersFromGLFW(modifier);
+		key_event.action = GetKeyActionFromGLFW(action);
+		key_event.modifiers = GetKeyModifiersFromGLFW(modifiers);
 
 		DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnKeyEvent, key_event);
 	}

@@ -573,7 +573,7 @@ protected:
 
 	virtual bool OnMouseButtonImpl(chaos::MouseButtonEvent const &mouse_button_event) override
 	{
-		if (mouse_button_event.IsButtonPressed(1))
+		if (mouse_button_event.IsKeyPressed(1))
 		{
 			if (IsImGuiMenuEnabled())
 			{

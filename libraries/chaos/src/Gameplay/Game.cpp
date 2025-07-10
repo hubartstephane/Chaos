@@ -173,7 +173,7 @@ namespace chaos
 		// try start the game
 		if (game_instance == nullptr)
 		{
-			if (mouse_button_event.IsButtonDownEvent())
+			if (mouse_button_event.IsKeyDownEvent())
 				RequireStartGame(nullptr);
 			return true;
 		}

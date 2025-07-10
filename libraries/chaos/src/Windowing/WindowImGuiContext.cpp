@@ -51,7 +51,7 @@ namespace chaos
 	{
 		if (ShouldCaptureInputEvent())
 		{
-			ImGui_ImplGlfw_MouseButtonCallback(window->GetGLFWHandler(), mouse_button_event.button, mouse_button_event.action, (int)mouse_button_event.key_modifiers);
+			ImGui_ImplGlfw_MouseButtonCallback(window->GetGLFWHandler(), mouse_button_event.key, (int)mouse_button_event.action, (int)mouse_button_event.modifiers);
 
 			if (ImGui::GetIO().WantCaptureMouse)
 				return true;
@@ -75,7 +75,7 @@ namespace chaos
 	{
 		if (ShouldCaptureInputEvent())
 		{
-			ImGui_ImplGlfw_KeyCallback(window->GetGLFWHandler(), (int)key_event.button, key_event.scancode, key_event.action, (int)key_event.key_modifiers);
+			ImGui_ImplGlfw_KeyCallback(window->GetGLFWHandler(), (int)key_event.key, key_event.scancode, (int)key_event.action, (int)key_event.modifiers);
 
 			if (ImGui::GetIO().WantCaptureKeyboard)
 				return true;

@@ -28,7 +28,8 @@ namespace chaos
 		Release = 1,
 		Press   = 2,
 		Repeat  = 4,
-		Down    = Press | Repeat
+		Down    = Press | Repeat,
+		Any     = Release | Press | Repeat
 	};
 
 	CHAOS_DECLARE_ENUM_BITMASK_METHOD(KeyActionMask, CHAOS_API);

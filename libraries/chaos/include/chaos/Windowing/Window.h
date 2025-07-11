@@ -193,6 +193,11 @@ namespace chaos
 		/** set the client */
 		void SetWindowClient(WindowClient * in_client);
 
+		/** override */
+		virtual bool DispatchEventToHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func) override;
+		/** override */
+		virtual bool EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator) override;
+
 	protected:
 
 		/** override */
@@ -345,9 +350,6 @@ namespace chaos
 			}
 		}
 
-		/** override */
-		virtual bool DispatchEventToHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func) override;
-
 		/** dispatch an input event through the ImGui/WindowClient/Window/Application hierarchy */
 		template<typename FUNC, typename ...PARAMS>
 		static bool GetWindowAndDispatchInputEventWithContext(GLFWwindow* in_glfw_window, FUNC const & func, PARAMS&& ...params)
@@ -365,9 +367,6 @@ namespace chaos
 
 		/** gets the window imgui context */
 		WindowImGuiContext * GetWindowImGuiContext() { return &window_imgui_context;}
-
-		/** override */
-		virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator) override;
 
 	private:
 

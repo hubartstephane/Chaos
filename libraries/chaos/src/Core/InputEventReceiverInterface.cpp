@@ -132,8 +132,12 @@ namespace chaos
 		{
 		public:
 
-			using KeyActionEnumerator::KeyActionEnumerator;
+			/** constructor */
+			ProcessKeyActionEnumerator(KeyEvent const & in_key_event):
+				key_event(in_key_event)
+			{}
 
+			/** override */
 			virtual bool operator () (KeyRequest const & in_request, char const * in_title, bool in_enabled, LightweightFunction<void()> in_key_action) override
 			{
 				if (in_enabled && key_event.MatchRequest(in_request))
@@ -143,6 +147,11 @@ namespace chaos
 				}
 				return false;
 			}
+
+		protected:
+
+			/** the event to check */
+			KeyEvent key_event;
 		};
 
 		ProcessKeyActionEnumerator action_enumerator(key_event);

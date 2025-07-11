@@ -16,21 +16,11 @@ namespace chaos
 
 	public:
 
-		/** constructor */
-		KeyActionEnumerator(KeyEvent const & in_key_event):
-			key_event(in_key_event)
-		{}
-
 		/** the operator */
 		virtual bool operator () (KeyRequest const & in_request, char const * in_title, bool in_enabled, KeyActionFunction in_action_func);
 
 		/** lighter function, with in_enabled defaulted to true */
 		bool operator () (KeyRequest const & in_request, char const * in_title, KeyActionFunction in_action_func);
-
-	protected:
-
-		/** the event to check */
-		KeyEvent key_event;
 	};
 
 #endif

@@ -39,19 +39,27 @@ protected:
 		chaos::Window::Finalize();
 	}
 
-	virtual bool OnKeyEventImpl(chaos::KeyEvent const & key_event) override
+
+
+	virtual bool EnumerateKeyActions(EnumerateKeyActionFunc in_enumerate_func) override
 	{
-		if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_ADD))
+		if (in_enumerate_func({chaos::KeyboardButton::KP_ADD} , "Next Font", [this]()
 		{
 			ChangeFont(font_index + 1);
+		}))
+		{
 			return true;
 		}
-		else if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_SUBTRACT))
+
+		if (in_enumerate_func({chaos::KeyboardButton::KP_SUBTRACT} , "Previous Font", [this]()
 		{
 			ChangeFont(font_index - 1);
+		}))
+		{
 			return true;
 		}
-		return chaos::Window::OnKeyEventImpl(key_event);
+
+		return chaos::Window::EnumerateKeyActions(in_enumerate_func);
 	}
 
 	void ChangeFont(int index)
@@ -246,9 +254,9 @@ protected:
 			return ReleaseResourceImpl(&library, &face);
 
 		chaos::GenTextureParameters parameters;
-		parameters.wrap_r = chaos::TextureWrapMethod::ClampToEdge;
-		parameters.wrap_s = chaos::TextureWrapMethod::ClampToEdge;
-		parameters.wrap_t = chaos::TextureWrapMethod::ClampToEdge;
+		parameters.wrap_methods.wrap_x = chaos::TextureWrapMethod::ClampToEdge;
+		parameters.wrap_methods.wrap_y = chaos::TextureWrapMethod::ClampToEdge;
+		parameters.wrap_methods.wrap_z = chaos::TextureWrapMethod::ClampToEdge;
 		//parameters.min_filter = GL_NEAREST;
 		//parameters.mag_filter = GL_NEAREST;
 

@@ -1072,33 +1072,47 @@ protected:
 		return true; // refresh
 	}
 
-	virtual bool OnKeyEventImpl(chaos::KeyEvent const & key_event) override
+
+	virtual bool EnumerateKeyActions(EnumerateKeyActionFunc in_enumerate_func) override
 	{
-		if (key_event.IsKeyReleased(chaos::KeyboardButton::T))
+		if (in_enumerate_func({chaos::KeyboardButton::T} , "Toggle Clock", [this]()
 		{
 			chaos::Clock * clock = chaos::WindowApplication::GetMainClockInstance();
 			if (clock != nullptr)
 				clock->Toggle();
+		}))
+		{
 			return true;
 		}
-		else if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_ADD))
+
+		if (in_enumerate_func({chaos::KeyboardButton::KP_ADD} , "Next Example", [this]()
 		{
 			SetExample((TestID)((int)display_example + 1));
 			DebugDisplayExampleTitle();
+		}))
+		{
 			return true;
 		}
-		else if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_SUBTRACT))
+
+		if (in_enumerate_func({chaos::KeyboardButton::KP_SUBTRACT} , "Previous Example", [this]()
 		{
 			SetExample((TestID)((int)display_example - 1));
 			DebugDisplayExampleTitle();
+		}))
+		{
 			return true;
 		}
-		else if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_5))
+
+		if (in_enumerate_func({chaos::KeyboardButton::KP_5} , "Update Object Type", [this]()
 		{
 			UpdateObjectType();
 			DebugDisplayExampleTitle();
+		}))
+		{
+			return true;
 		}
-		return chaos::Window::OnKeyEventImpl(key_event);
+
+		return chaos::Window::EnumerateKeyActions(in_enumerate_func);
 	}
 
 	void SetExample(TestID new_display_example)

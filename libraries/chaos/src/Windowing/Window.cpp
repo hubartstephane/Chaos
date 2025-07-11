@@ -537,7 +537,7 @@ namespace chaos
 
 	void Window::DoOnIconifiedStateChange(GLFWwindow* in_glfw_window, int value)
 	{
-		GetWindowAndProcess(in_glfw_window, [value](Window * my_window)
+		GetWindowAndProcessWithContext(in_glfw_window, [value](Window * my_window)
 		{
 			my_window->OnIconifiedStateChange(value == GL_TRUE);
 		});
@@ -545,7 +545,7 @@ namespace chaos
 
 	void Window::DoOnFocusStateChange(GLFWwindow* in_glfw_window, int value)
 	{
-		GetWindowAndProcess(in_glfw_window, [=](Window * my_window)
+		GetWindowAndProcessWithContext(in_glfw_window, [=](Window * my_window)
 		{
 			if (my_window->window_imgui_context.IsImGuiContextCurrent())
 				ImGui_ImplGlfw_WindowFocusCallback(in_glfw_window, value);
@@ -556,7 +556,7 @@ namespace chaos
 
 	void Window::DoOnWindowClosed(GLFWwindow* in_glfw_window)
 	{
-		GetWindowAndProcess(in_glfw_window, [](Window* my_window)
+		GetWindowAndProcessWithContext(in_glfw_window, [](Window* my_window)
 		{
 			if (my_window->OnWindowClosed())
 				my_window->RequireWindowClosure();
@@ -565,7 +565,7 @@ namespace chaos
 
 	void Window::DoOnWindowResize(GLFWwindow* in_glfw_window, int width, int height)
 	{
-		GetWindowAndProcess(in_glfw_window, [width, height](Window* my_window)
+		GetWindowAndProcessWithContext(in_glfw_window, [width, height](Window* my_window)
 		{
 			my_window->OnWindowResize(glm::ivec2(width, height));
 		});
@@ -573,22 +573,16 @@ namespace chaos
 
 	bool Window::DispatchEventToHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func)
 	{
-		bool result = WithWindowContext([this, &event_func]()
-		{
-			// try imgui context
-			if (window_imgui_context.DispatchEventToHierarchy(event_func))
-				return true;
-			// try window client
-			if (window_client != nullptr)
-				if (window_client->DispatchEventToHierarchy(event_func))
-					return true;
-			// try super call
-			return WindowInterface::DispatchEventToHierarchy(event_func);
-		});
-
-		if (result)
+		// try imgui context
+		if (window_imgui_context.DispatchEventToHierarchy(event_func))
 			return true;
-
+		// try window client
+		if (window_client != nullptr)
+			if (window_client->DispatchEventToHierarchy(event_func))
+				return true;
+		// try super call
+		if (WindowInterface::DispatchEventToHierarchy(event_func))
+			return true;
 		// try application
 		if (WindowApplication* window_application = Application::GetInstance())
 			if (window_application->DispatchEventToHierarchy(event_func))
@@ -611,7 +605,7 @@ namespace chaos
 				position - my_window->mouse_position.value():
 				glm::vec2(0.0f, 0.0f);
 
-			DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnMouseMove, delta);
+			GetWindowAndDispatchInputEventWithContext(in_glfw_window, &InputEventReceiverInterface::OnMouseMove, delta);
 
 			my_window->mouse_position = position;
 		}
@@ -656,7 +650,7 @@ namespace chaos
 		mouse_button_event.action = GetKeyActionFromGLFW(action);
 		mouse_button_event.modifiers = GetKeyModifiersFromGLFW(modifiers);
 
-		DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnMouseButton, mouse_button_event);
+		GetWindowAndDispatchInputEventWithContext(in_glfw_window, &InputEventReceiverInterface::OnMouseButton, mouse_button_event);
 	}
 
 	void Window::DoOnMouseWheel(GLFWwindow* in_glfw_window, double scroll_x, double scroll_y)
@@ -665,7 +659,7 @@ namespace chaos
 		WindowApplication::SetApplicationInputMode(InputMode::MOUSE);
 
 		// dispatch event
-		DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnMouseWheel, scroll_x, scroll_y);
+		GetWindowAndDispatchInputEventWithContext(in_glfw_window, &InputEventReceiverInterface::OnMouseWheel, scroll_x, scroll_y);
 	}
 
 	void Window::DoOnKeyEvent(GLFWwindow* in_glfw_window, int keycode, int scancode, int action, int modifiers)
@@ -688,7 +682,7 @@ namespace chaos
 		key_event.action = GetKeyActionFromGLFW(action);
 		key_event.modifiers = GetKeyModifiersFromGLFW(modifiers);
 
-		DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnKeyEvent, key_event);
+		GetWindowAndDispatchInputEventWithContext(in_glfw_window, &InputEventReceiverInterface::OnKeyEvent, key_event);
 	}
 
 	void Window::DoOnCharEvent(GLFWwindow* in_glfw_window, unsigned int c)
@@ -697,12 +691,12 @@ namespace chaos
 		WindowApplication::SetApplicationInputMode(InputMode::KEYBOARD);
 
 		// dispatch the event
-		DispatchInputEvent(in_glfw_window, &InputEventReceiverInterface::OnCharEvent, c);
+		GetWindowAndDispatchInputEventWithContext(in_glfw_window, &InputEventReceiverInterface::OnCharEvent, c);
 	}
 
 	void Window::DoOnDropFile(GLFWwindow* in_glfw_window, int count, char const** paths)
 	{
-		GetWindowAndProcess(in_glfw_window, [count, paths](Window* my_window)
+		GetWindowAndProcessWithContext(in_glfw_window, [count, paths](Window* my_window)
 		{
 			my_window->OnDropFile(count, paths);
 		});

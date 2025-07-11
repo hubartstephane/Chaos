@@ -300,7 +300,7 @@ namespace chaos
 
 		/** get Window from a GLFW context, set appropriate IMGUI/GLFW context and call callback */
 		template<typename FUNC>
-		static decltype(auto) GetWindowAndProcess(GLFWwindow* in_glfw_window, FUNC const & func)
+		static decltype(auto) GetWindowAndProcessWithContext(GLFWwindow* in_glfw_window, FUNC const & func)
 		{
 			using L = meta::LambdaInfo<FUNC, Window *>;
 
@@ -352,17 +352,17 @@ namespace chaos
 
 		/** dispatch an input event through the ImGui/WindowClient/Window/Application hierarchy */
 		template<typename FUNC, typename ...PARAMS>
-		static bool DispatchInputEvent(GLFWwindow* in_glfw_window, FUNC const & func, PARAMS&& ...params)
+		static bool GetWindowAndDispatchInputEventWithContext(GLFWwindow* in_glfw_window, FUNC const & func, PARAMS&& ...params)
 		{
 			auto event_func = [&](InputEventReceiverInterface * event_receiver)
 			{
 				return (event_receiver->*func)(std::forward<PARAMS>(params)...);
 			};
 
-			if (Window * window = GetWindowFromGLFWContext(in_glfw_window))
-				if (window->DispatchEventToHierarchy(event_func))
-					return true;
-			return false;
+			return GetWindowAndProcessWithContext(in_glfw_window, [&event_func](Window * in_window)
+			{
+				return in_window->DispatchEventToHierarchy(event_func);
+			});
 		}
 
 		/** gets the window imgui context */

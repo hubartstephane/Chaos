@@ -20,12 +20,12 @@ namespace chaos
 
 		/** the concerned key */
 		key_type key = DefaultKeyValue<key_type>::value;
-		/** the required state of the key */
-		KeyActionMask action_mask = KeyActionMask::None;
 		/** some mandatory modifiers */
 		KeyModifier required_modifiers = KeyModifier::None;
 		/** some forbidden modifiers */
 		KeyModifier forbidden_modifiers = KeyModifier::None;
+		/** the required state of the key */
+		KeyActionMask action_mask = KeyActionMask::Press;
 	};
 
 #endif

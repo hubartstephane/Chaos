@@ -118,10 +118,28 @@ namespace chaos
 
 	bool InputEventReceiverInterface::OnKeyEventImpl(KeyEvent const & key_event)
 	{
-		return false;
+		return ProcessKeyActions(key_event);
 	}
 
 	bool InputEventReceiverInterface::OnCharEventImpl(unsigned int c)
+	{
+		return false;
+	}
+
+	bool InputEventReceiverInterface::ProcessKeyActions(KeyEvent const & key_event)
+	{
+		return EnumerateKeyActions([&](KeyRequest const & in_request, char const * in_title, LightweightFunction<void()> in_key_action)
+		{
+			if (key_event.MatchRequest(in_request))
+			{
+				in_key_action();
+				return true;
+			}
+			return false;
+		});
+	}
+
+	bool InputEventReceiverInterface::EnumerateKeyActions(EnumerateKeyActionFunc in_enumerate_func)
 	{
 		return false;
 	}

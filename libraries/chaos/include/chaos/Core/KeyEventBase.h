@@ -42,22 +42,22 @@ namespace chaos
 		/** check whether this is a key press event */
 		bool IsKeyPressed(key_type in_key, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const
 		{
-			return MatchRequest({in_key, KeyActionMask::Press, in_required_modifiers, in_forbidden_modifiers});
+			return MatchRequest({in_key, in_required_modifiers, in_forbidden_modifiers, KeyActionMask::Press});
 		}
 		/** check whether this is a key release event */
 		bool IsKeyReleased(key_type in_key, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const
 		{
-			return MatchRequest({in_key, KeyActionMask::Release, in_required_modifiers, in_forbidden_modifiers});
+			return MatchRequest({in_key, in_required_modifiers, in_forbidden_modifiers, KeyActionMask::Release});
 		}
 		/** check whether this is a key repeat event */
 		bool IsKeyRepeat(key_type in_key, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const
 		{
-			return MatchRequest({in_key, KeyActionMask::Repeat, in_required_modifiers, in_forbidden_modifiers});
+			return MatchRequest({in_key, in_required_modifiers, in_forbidden_modifiers, KeyActionMask::Repeat});
 		}
 		/** check whether this is a key press or repeat event */
 		bool IsKeyDown(key_type in_key, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const
 		{
-			return MatchRequest({in_key, KeyActionMask::Down, in_required_modifiers, in_forbidden_modifiers});
+			return MatchRequest({in_key, in_required_modifiers, in_forbidden_modifiers, KeyActionMask::Down});
 		}
 
 		/** check whether the key event is for considered key */
@@ -106,10 +106,10 @@ namespace chaos
 
 		/** the concerned key */
 		key_type key = DefaultKeyValue<key_type>::value;
-		/** pressed or release */
-		KeyAction action = KeyAction::Press;
 		/** some special key modifiers like shift */
 		KeyModifier modifiers = KeyModifier::None;
+		/** pressed or release */
+		KeyAction action = KeyAction::Press;
 	};
 
 #endif

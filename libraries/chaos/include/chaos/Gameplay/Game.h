@@ -175,6 +175,9 @@ namespace chaos
 			return particle_manager->GetParticleSpawner(std::forward<PARAMS>(params)...);
 		}
 
+		/** override */
+		virtual bool EnumerateKeyActions(EnumerateKeyActionFunc in_enumerate_func) override;
+
 	protected:
 
 		/** override */

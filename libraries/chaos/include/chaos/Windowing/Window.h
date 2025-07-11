@@ -197,8 +197,6 @@ namespace chaos
 
 		/** override */
 		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override;
-		/** override */
-		virtual bool OnKeyEventImpl(KeyEvent const& key_event) override;
 		
 		/** override */
 		virtual bool OnDraw(GPURenderContext* render_context, GPUProgramProviderInterface const* uniform_provider, WindowDrawParams const& draw_params) override;
@@ -367,6 +365,9 @@ namespace chaos
 
 		/** gets the window imgui context */
 		WindowImGuiContext * GetWindowImGuiContext() { return &window_imgui_context;}
+
+		/** override */
+		virtual bool EnumerateKeyActions(EnumerateKeyActionFunc in_enumerate_func) override;
 
 	private:
 

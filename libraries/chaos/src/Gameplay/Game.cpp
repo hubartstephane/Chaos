@@ -99,6 +99,79 @@ namespace chaos
 		return InputEventReceiverInterface::DispatchEventToHierarchy(event_func);
 	}
 
+	bool Game::EnumerateKeyActions(EnumerateKeyActionFunc in_enumerate_func)
+	{
+		if (in_enumerate_func({KeyboardButton::ESCAPE, KeyModifier::Shift} , "Exit Game", [this]()
+		{
+			RequireExitGame();
+		}))
+		{
+			return true;
+		}
+
+		if (in_enumerate_func({KeyboardButton::ESCAPE} , "Toggle Pause", [this]()
+		{
+			RequireTogglePause();
+		}))
+		{
+			return true;
+		}
+
+#if _DEBUG
+
+		if (in_enumerate_func({KeyboardButton::F1} , "Skip Level", [this]()
+		{
+			SetCheatSkipLevelRequired(true);
+		}))
+		{
+			return true;
+		}
+
+		if (in_enumerate_func({KeyboardButton::F2} , "Toggle Cheat Mode", [this]()
+		{
+			SetCheatMode(!GetCheatMode());
+		}))
+		{
+			return true;
+		}
+
+		if (in_enumerate_func({KeyboardButton::F3} , "Reload Configuration", [this]()
+		{
+			ReloadGameConfiguration();
+		}))
+		{
+			return true;
+		}
+
+		if (in_enumerate_func({KeyboardButton::F4} , "Reload Current Level", [this]()
+		{
+			ReloadCurrentLevel();
+		}))
+		{
+			return true;
+		}
+
+		if (in_enumerate_func({KeyboardButton::F5} , "Quick Save", [this]()
+		{
+			SaveIntoCheckpoint();
+		}))
+		{
+			return true;
+		}
+
+		if (in_enumerate_func({KeyboardButton::F6} , "Toggle Free Camera Mode", [this]()
+		{
+			SetFreeCameraMode(!IsFreeCameraMode());
+		}))
+		{
+			return true;
+		}
+#endif
+
+		return InputEventReceiverInterface::EnumerateKeyActions(in_enumerate_func);
+	}
+
+
 	bool Game::OnKeyEventImpl(KeyEvent const& key_event)
 	{
 		// try start the game
@@ -109,63 +182,7 @@ namespace chaos
 			return true;
 		}
 
-		// PLAYING to PAUSE
-		if (key_event.IsKeyPressed(KeyboardButton::KP_ENTER) || key_event.IsKeyPressed(KeyboardButton::ENTER))
-			if (RequireTogglePause())
-				return true;
-		// QUIT GAME
-		if (key_event.IsKeyPressed(KeyboardButton::ESCAPE, KeyModifier::Shift))
-		{
-			if (RequireExitGame())
-				return true;
-		}
-		else if (key_event.IsKeyPressed(KeyboardButton::ESCAPE))
-		{
-			if (RequireTogglePause())
-				return true;
-		}
-		// CHEAT CODE TO SKIP LEVEL
-#if _DEBUG
-
-		// CMD F1  : SetCheatSkipLevelRequired(...)
-		if (key_event.IsKeyPressed(KeyboardButton::F1))
-		{
-			SetCheatSkipLevelRequired(true);
-			return true;
-		}
-		// CMD F2  : SetCheatMode(...)
-		if (key_event.IsKeyPressed(KeyboardButton::F2))
-		{
-			SetCheatMode(!GetCheatMode());
-			return true;
-		}
-		// CMD F3  : ReloadGameConfiguration(...)
-		if (key_event.IsKeyPressed(KeyboardButton::F3))
-		{
-			ReloadGameConfiguration();
-			return true;
-		}
-		// CMD F4  : ReloadCurrentLevel(...)
-		if (key_event.IsKeyPressed(KeyboardButton::F4))
-		{
-			ReloadCurrentLevel();
-			return true;
-		}
-		// CMD F5  : QuickSave = SaveToCheckpoint(...)
-		if (key_event.IsKeyPressed(KeyboardButton::F5))
-		{
-			SaveIntoCheckpoint();
-			return true;
-		}
-		// CMD F6  : SetFreeCameraMode(...)
-		if (key_event.IsKeyPressed(KeyboardButton::F6))
-		{
-			SetFreeCameraMode(!IsFreeCameraMode());
-			return true;
-		}
-#endif
-
-		return false;
+		return InputEventReceiverInterface::OnKeyEventImpl(key_event);
 	}
 
 	bool Game::OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event)

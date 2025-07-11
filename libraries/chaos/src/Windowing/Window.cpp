@@ -891,6 +891,61 @@ namespace chaos
 
 	CHAOS_HELP_TEXT(SHORTCUTS, "F9  : ScreenCapture");
 	CHAOS_HELP_TEXT(SHORTCUTS, "F10 : ToggleFullscreen");
+	#if 0
+	void fff(KeyEvent const & in_key_event)
+	{
+		auto CheckKey = [&in_key_event](KeyboardButton in_key, KeyAction in_action, char const *in_title, LightweightFunction<void()>in_func)
+		{
+			if (in_key_event.key == in_key)
+			{
+				if (in_key_event.action == in_action)
+				{
+					in_func();
+					return true;
+				}
+			}
+			return false;
+		};
+
+		return EnumerateKeys(KeyRegister(CheckKey));
+	}
+
+
+	class KeyRegister
+	{
+	public:
+
+		bool OnKeyPressed(KeyboardButton in_key, char const *in_title, LightweightFunction<void()>in_func)
+		{
+			on_key(in_key, KeyAction::Press, in_title,in_func);
+
+		};
+
+	protected:
+
+		std::function<bool(KeyboardButton in_key, KeyAction in_action, char const *in_title, LightweightFunction<void()>in_func)> on_key;
+
+	}
+
+	bool Window::EnumerateKeys(KeyRegister & in_key_register)
+	{
+		if (in_key_register.OnKeyPressed(KeyboardButton::F9, "Screen Capture", [this]()
+		{
+			ScreenCapture();
+		}))
+		{
+			return true;
+		}
+
+
+
+
+		return false;
+	}
+
+	#endif
+
+
 
 	bool Window::OnKeyEventImpl(KeyEvent const& key_event)
 	{

@@ -2,7 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	template<typename T, T>
+	template<typename T>
 	class KeyEventBase;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -11,7 +11,7 @@ namespace chaos
 	* KeyEventBase: a generic key event
 	*/
 
-	template<typename T, T DefaultKeyValue>
+	template<typename T>
 	class KeyEventBase
 	{
 		using key_type = T;
@@ -79,10 +79,23 @@ namespace chaos
 			return false;
 		}
 
+		/** check whether the event matches the request */
+		bool MatchRequest(KeyRequestBase<key_type> const & in_request) const
+		{
+			if (key != in_request.key)
+				return false;
+			if (in_request.required_modifiers != KeyModifier::None && !HasAllFlags(modifiers, in_request.required_modifiers))
+				return false;
+			if (in_request.forbidden_modifiers != KeyModifier::None && HasAnyFlags(modifiers, in_request.forbidden_modifiers))
+				return false;
+
+			return false;
+		}
+
 	public:
 
 		/** the concerned key */
-		key_type key = DefaultKeyValue;
+		key_type key = DefaultKeyValue<key_type>::value;
 		/** pressed or release */
 		KeyAction action = KeyAction::Press;
 		/** some special key modifiers like shift */

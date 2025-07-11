@@ -58,29 +58,44 @@ protected:
 		UpdateDebugDisplay();
 	}
 
-	virtual bool OnKeyEventImpl(chaos::KeyEvent const & key_event) override
+
+
+
+	virtual bool EnumerateKeyActions(EnumerateKeyActionFunc in_enumerate_func) override
 	{
-		if (key_event.IsKeyPressed(chaos::KeyboardButton::KP_ADD, GLFW_MOD_SHIFT))
+		if (in_enumerate_func({chaos::KeyboardButton::KP_ADD, chaos::KeyModifier::Shift} , "Next RenderPass", [this]()
 		{
 			ChangeRenderpass(+1);
+		}))
+		{
 			return true;
 		}
-		else if (key_event.IsKeyPressed(chaos::KeyboardButton::KP_ADD))
+
+		if (in_enumerate_func({chaos::KeyboardButton::KP_ADD} , "Next Material", [this]()
 		{
 			ChangeMaterial(+1);
+		}))
+		{
 			return true;
 		}
-		else if (key_event.IsKeyPressed(chaos::KeyboardButton::KP_SUBTRACT, GLFW_MOD_SHIFT))
+
+		if (in_enumerate_func({chaos::KeyboardButton::KP_SUBTRACT, chaos::KeyModifier::Shift} , "Previous RenderPass", [this]()
 		{
 			ChangeRenderpass(-1);
+		}))
+		{
 			return true;
 		}
-		else if (key_event.IsKeyPressed(chaos::KeyboardButton::KP_SUBTRACT))
+
+		if (in_enumerate_func({chaos::KeyboardButton::KP_SUBTRACT} , "Previous Material", [this]()
 		{
 			ChangeMaterial(-1);
+		}))
+		{
 			return true;
 		}
-		return chaos::Window::OnKeyEventImpl(key_event);
+
+		return chaos::Window::EnumerateKeyActions(in_enumerate_func);
 	}
 
 	virtual bool OnDraw(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override

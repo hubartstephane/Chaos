@@ -100,7 +100,7 @@ protected:
 		// initial display
 		imgui_user_message.AddLine("Draw a box with a texture array :");
 		imgui_user_message.AddLine("  Use +/- to change slice.");
-		imgui_user_message.AddLine("  Use 1/2 to change pixel format.");
+		imgui_user_message.AddLine("  Use +/- (shift) to change pixel format.");
 
 		return true;
 	}
@@ -158,29 +158,41 @@ protected:
 		texture_slice = (texture_slice + delta + texture_slice_count) % texture_slice_count;
 	}
 
-	virtual bool OnKeyEventImpl(chaos::KeyEvent const & key_event) override
+	virtual bool EnumerateKeyActions(EnumerateKeyActionFunc in_enumerate_func) override
 	{
-		if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_ADD))
-		{
-			ChangeSlice(+1);
-			return true;
-		}
-		else if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_SUBTRACT))
-		{
-			ChangeSlice(-1);
-			return true;
-		}
-		else if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_1))
+		if (in_enumerate_func({chaos::KeyboardButton::KP_ADD, chaos::KeyModifier::Shift} , "Next Pixel Format", [this]()
 		{
 			ChangePixelFormat(+1);
+		}))
+		{
 			return true;
 		}
-		else if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_2))
+
+		if (in_enumerate_func({chaos::KeyboardButton::KP_SUBTRACT, chaos::KeyModifier::Shift} , "Previous Pixel Format", [this]()
 		{
 			ChangePixelFormat(-1);
+		}))
+		{
 			return true;
 		}
-		return chaos::Window::OnKeyEventImpl(key_event);
+
+		if (in_enumerate_func({chaos::KeyboardButton::KP_ADD} , "Next Slice", [this]()
+		{
+			ChangeSlice(+1);
+		}))
+		{
+			return true;
+		}
+
+		if (in_enumerate_func({chaos::KeyboardButton::KP_SUBTRACT} , "Previous Slice", [this]()
+		{
+			ChangeSlice(-1);
+		}))
+		{
+			return true;
+		}
+
+		return chaos::Window::EnumerateKeyActions(in_enumerate_func);
 	}
 
 	bool LoadBitmaps(boost::filesystem::path const & resources_path)

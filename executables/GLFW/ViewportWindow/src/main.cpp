@@ -39,6 +39,40 @@ protected:
 		return true;
 	}
 
+	virtual bool EnumerateKeyActions(EnumerateKeyActionFunc in_enumerate_func) override
+	{
+		chaos::ViewportGridLayout* layout = GetViewportLayout();
+
+		if (in_enumerate_func({chaos::KeyboardButton::E} , "ViewportGridMode EXPANDED", [this, layout]()
+		{
+			layout->SetMode(chaos::ViewportGridMode::EXPANDED);
+		}))
+		{
+			return true;
+		}
+
+		if (in_enumerate_func({chaos::KeyboardButton::P} , "ViewportGridMode UNIFORM_PACKED", [this, layout]()
+		{
+			layout->SetMode(chaos::ViewportGridMode::UNIFORM_PACKED);
+		}))
+		{
+			return true;
+		}
+
+		if (in_enumerate_func({chaos::KeyboardButton::C} , "ViewportGridMode UNIFORM_CENTERED", [this, layout]()
+		{
+			layout->SetMode(chaos::ViewportGridMode::UNIFORM_CENTERED);
+		}))
+		{
+			return true;
+		}
+
+		return chaos::Window::EnumerateKeyActions(in_enumerate_func);
+	}
+
+
+
+
 	virtual bool OnKeyEventImpl(chaos::KeyEvent const& key_event) override
 	{
 		chaos::ViewportGridLayout* layout = GetViewportLayout();

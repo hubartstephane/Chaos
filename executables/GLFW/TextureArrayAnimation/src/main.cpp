@@ -92,7 +92,7 @@ protected:
 
 	chaos::GPUAtlas * LoadTextureArray(boost::filesystem::path const & resources_path)
 	{
-		chaos::GPUAtlasGenerator generator;
+		chaos::GPUAtlasGenerator generator(GetGPUDevice());
 
 		chaos::AtlasInput input;
 		input.AddBitmap(resources_path / "moving_gif.gif", "moving", 0);
@@ -150,20 +150,27 @@ protected:
 		return true; // refresh
 	}
 
-	virtual bool OnKeyEventImpl(chaos::KeyEvent const & key_event) override
+
+	virtual bool EnumerateKeyActions(EnumerateKeyActionFunc in_enumerate_func) override
 	{
-		if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_ADD))
+		if (in_enumerate_func({chaos::KeyboardButton::KP_ADD} , "Next Bitmap Index", [this]()
 		{
 			++bitmap_index;
+		}))
+		{
 			return true;
 		}
-		else if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_SUBTRACT))
+
+		if (in_enumerate_func({chaos::KeyboardButton::KP_SUBTRACT} , "Previous Bitmap Index", [this]()
 		{
 			if (bitmap_index > 0)
 				--bitmap_index;
+		}))
+		{
 			return true;
 		}
-		return chaos::Window::OnKeyEventImpl(key_event);
+
+		return chaos::Window::EnumerateKeyActions(in_enumerate_func);
 	}
 
 protected:

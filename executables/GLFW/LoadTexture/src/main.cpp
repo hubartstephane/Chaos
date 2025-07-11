@@ -6,19 +6,25 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	virtual bool OnKeyEventImpl(chaos::KeyEvent const & key_event) override
+	virtual bool EnumerateKeyActions(EnumerateKeyActionFunc in_enumerate_func) override
 	{
-		if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_ADD))
+		if (in_enumerate_func({chaos::KeyboardButton::KP_ADD} , "Next Texture", [this]()
 		{
 			ChangeTexture(texture_index + 1);
+		}))
+		{
 			return true;
 		}
-		else if (key_event.IsKeyReleased(chaos::KeyboardButton::KP_SUBTRACT))
+
+		if (in_enumerate_func({chaos::KeyboardButton::KP_SUBTRACT} , "Previous Texture", [this]()
 		{
 			ChangeTexture(texture_index - 1);
+		}))
+		{
 			return true;
 		}
-		return chaos::Window::OnKeyEventImpl(key_event);
+
+		return chaos::Window::EnumerateKeyActions(in_enumerate_func);
 	}
 
 	void ChangeTexture(int index)

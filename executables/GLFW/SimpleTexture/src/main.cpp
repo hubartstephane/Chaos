@@ -6,9 +6,9 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	virtual bool EnumerateKeyActions(EnumerateKeyActionFunc in_enumerate_func) override
+	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator) override
 	{
-		if (in_enumerate_func({chaos::KeyboardButton::KP_ADD} , "Next Texture", [this]()
+		if (in_action_enumerator({chaos::KeyboardButton::KP_ADD} , "Next Texture", [this]()
 		{
 			ChangeTexture(texture_index + 1);
 		}))
@@ -16,7 +16,7 @@ protected:
 			return true;
 		}
 
-		if (in_enumerate_func({chaos::KeyboardButton::KP_SUBTRACT} , "Previous Texture", [this]()
+		if (in_action_enumerator({chaos::KeyboardButton::KP_SUBTRACT} , "Previous Texture", [this]()
 		{
 			ChangeTexture(texture_index - 1);
 		}))
@@ -24,7 +24,7 @@ protected:
 			return true;
 		}
 
-		if (in_enumerate_func({chaos::KeyboardButton::KP_ENTER} , "Change Current Level", [this]()
+		if (in_action_enumerator({chaos::KeyboardButton::KP_ENTER} , "Change Current Level", [this]()
 		{
 			ChangeTextureLevel();
 		}))
@@ -32,7 +32,7 @@ protected:
 			return true;
 		}
 
-		return chaos::Window::EnumerateKeyActions(in_enumerate_func);
+		return chaos::Window::EnumerateKeyActions(in_action_enumerator);
 	}
 
 	void ChangeTextureLevel()

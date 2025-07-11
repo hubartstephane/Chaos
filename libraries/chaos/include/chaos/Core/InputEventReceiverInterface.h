@@ -14,9 +14,7 @@ namespace chaos
 	{
 
 	public:
-
-		using EnumerateKeyActionFunc = LightweightFunction<bool(KeyRequest const &, char const *, LightweightFunction<void()>)>;
-
+	
 		/** destructor */
 		virtual ~InputEventReceiverInterface() = default;
 
@@ -48,7 +46,7 @@ namespace chaos
 		virtual bool DispatchEventToHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func);
 
 		/** enumerate some declared key actions */
-		virtual bool EnumerateKeyActions(EnumerateKeyActionFunc in_enumerate_func);
+		virtual bool EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator);
 
 	protected:
 

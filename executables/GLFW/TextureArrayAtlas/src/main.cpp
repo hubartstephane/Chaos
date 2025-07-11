@@ -138,9 +138,9 @@ protected:
 		return true; // refresh
 	}
 
-	virtual bool EnumerateKeyActions(EnumerateKeyActionFunc in_enumerate_func) override
+	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator) override
 	{
-		if (in_enumerate_func({chaos::KeyboardButton::KP_ADD} , "Next Bitmap Index", [this]()
+		if (in_action_enumerator({chaos::KeyboardButton::KP_ADD} , "Next Bitmap Index", [this]()
 		{
 			++bitmap_index;
 		}))
@@ -148,7 +148,7 @@ protected:
 			return true;
 		}
 
-		if (in_enumerate_func({chaos::KeyboardButton::KP_SUBTRACT} , "Previous Bitmap Index", [this]()
+		if (in_action_enumerator({chaos::KeyboardButton::KP_SUBTRACT} , "Previous Bitmap Index", [this]()
 		{
 			if (bitmap_index > 0)
 				--bitmap_index;
@@ -157,7 +157,7 @@ protected:
 			return true;
 		}
 
-		return chaos::Window::EnumerateKeyActions(in_enumerate_func);
+		return chaos::Window::EnumerateKeyActions(in_action_enumerator);
 	}
 
 	virtual void OnDrawImGuiContent() override

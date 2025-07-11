@@ -41,9 +41,9 @@ protected:
 
 
 
-	virtual bool EnumerateKeyActions(EnumerateKeyActionFunc in_enumerate_func) override
+	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator) override
 	{
-		if (in_enumerate_func({chaos::KeyboardButton::KP_ADD} , "Next Font", [this]()
+		if (in_action_enumerator({chaos::KeyboardButton::KP_ADD} , "Next Font", [this]()
 		{
 			ChangeFont(font_index + 1);
 		}))
@@ -51,7 +51,7 @@ protected:
 			return true;
 		}
 
-		if (in_enumerate_func({chaos::KeyboardButton::KP_SUBTRACT} , "Previous Font", [this]()
+		if (in_action_enumerator({chaos::KeyboardButton::KP_SUBTRACT} , "Previous Font", [this]()
 		{
 			ChangeFont(font_index - 1);
 		}))
@@ -59,7 +59,7 @@ protected:
 			return true;
 		}
 
-		return chaos::Window::EnumerateKeyActions(in_enumerate_func);
+		return chaos::Window::EnumerateKeyActions(in_action_enumerator);
 	}
 
 	void ChangeFont(int index)

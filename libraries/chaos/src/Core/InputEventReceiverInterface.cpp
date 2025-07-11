@@ -128,18 +128,28 @@ namespace chaos
 
 	bool InputEventReceiverInterface::ProcessKeyActions(KeyEvent const & key_event)
 	{
-		return EnumerateKeyActions([&](KeyRequest const & in_request, char const * in_title, LightweightFunction<void()> in_key_action)
+		class ProcessKeyActionEnumerator : public KeyActionEnumerator
 		{
-			if (key_event.MatchRequest(in_request))
+		public:
+
+			using KeyActionEnumerator::KeyActionEnumerator;
+
+			virtual bool operator () (KeyRequest const & in_request, char const * in_title, bool in_enabled, LightweightFunction<void()> in_key_action) override
 			{
-				in_key_action();
-				return true;
+				if (in_enabled && key_event.MatchRequest(in_request))
+				{
+					in_key_action();
+					return true;
+				}
+				return false;
 			}
-			return false;
-		});
+		};
+
+		ProcessKeyActionEnumerator action_enumerator(key_event);
+		return EnumerateKeyActions(action_enumerator);
 	}
 
-	bool InputEventReceiverInterface::EnumerateKeyActions(EnumerateKeyActionFunc in_enumerate_func)
+	bool InputEventReceiverInterface::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator)
 	{
 		return false;
 	}

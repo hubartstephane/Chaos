@@ -892,9 +892,9 @@ namespace chaos
 	CHAOS_HELP_TEXT(SHORTCUTS, "F9  : ScreenCapture");
 	CHAOS_HELP_TEXT(SHORTCUTS, "F10 : ToggleFullscreen");
 
-	bool Window::EnumerateKeyActions(EnumerateKeyActionFunc in_enumerate_func)
+	bool Window::EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator)
 	{
-		if (in_enumerate_func({KeyboardButton::F9} , "Screen Capture", [this]()
+		if (in_action_enumerator({KeyboardButton::F9} , "Screen Capture", [this]()
 		{
 			ScreenCapture();
 		}))
@@ -902,7 +902,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_enumerate_func({KeyboardButton::F10} , "Toggle Fullscreen", [this]()
+		if (in_action_enumerator({KeyboardButton::F10} , "Toggle Fullscreen", [this]()
 		{
 			ToggleFullscreen();
 		}))
@@ -910,7 +910,7 @@ namespace chaos
 			return true;
 		}
 
-		return WindowInterface::EnumerateKeyActions(in_enumerate_func);
+		return WindowInterface::EnumerateKeyActions(in_action_enumerator);
 	}
 
 	bool Window::IsStandardImGuiMenuPluggedIn() const

@@ -59,6 +59,7 @@
 #include "chaos/Core/KeyEventBase.h"
 #include "chaos/Core/KeyEvent.h"
 #include "chaos/Core/MouseButtonEvent.h"
+#include "chaos/Core/KeyActionEnumerator.h"
 #include "chaos/Core/InputEventReceiverInterface.h"
 #include "chaos/Core/Application.h"
 #include "chaos/Core/ResourceManager.h"

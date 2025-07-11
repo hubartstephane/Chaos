@@ -9,9 +9,9 @@ class WindowOpenGLTest : public chaos::Window
 protected:
 
 
-	virtual bool EnumerateKeyActions(EnumerateKeyActionFunc in_enumerate_func) override
+	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator) override
 	{
-		if (in_enumerate_func({chaos::KeyboardButton::KP_ADD} , "Next CubeMap", [this]()
+		if (in_action_enumerator({chaos::KeyboardButton::KP_ADD} , "Next CubeMap", [this]()
 		{
 			ChangeCubeMap(cubemap_index + 1);
 		}))
@@ -19,7 +19,7 @@ protected:
 			return true;
 		}
 
-		if (in_enumerate_func({chaos::KeyboardButton::KP_SUBTRACT} , "Previous CubeMap", [this]()
+		if (in_action_enumerator({chaos::KeyboardButton::KP_SUBTRACT} , "Previous CubeMap", [this]()
 		{
 			ChangeCubeMap(cubemap_index - 1);
 		}))
@@ -27,7 +27,7 @@ protected:
 			return true;
 		}
 
-		return chaos::Window::EnumerateKeyActions(in_enumerate_func);
+		return chaos::Window::EnumerateKeyActions(in_action_enumerator);
 	}
 
 	void ChangeCubeMap(int index)

@@ -61,9 +61,9 @@ protected:
 
 
 
-	virtual bool EnumerateKeyActions(EnumerateKeyActionFunc in_enumerate_func) override
+	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator) override
 	{
-		if (in_enumerate_func({chaos::KeyboardButton::KP_ADD, chaos::KeyModifier::Shift} , "Next RenderPass", [this]()
+		if (in_action_enumerator({chaos::KeyboardButton::KP_ADD, chaos::KeyModifier::Shift} , "Next RenderPass", [this]()
 		{
 			ChangeRenderpass(+1);
 		}))
@@ -71,7 +71,7 @@ protected:
 			return true;
 		}
 
-		if (in_enumerate_func({chaos::KeyboardButton::KP_ADD} , "Next Material", [this]()
+		if (in_action_enumerator({chaos::KeyboardButton::KP_ADD} , "Next Material", [this]()
 		{
 			ChangeMaterial(+1);
 		}))
@@ -79,7 +79,7 @@ protected:
 			return true;
 		}
 
-		if (in_enumerate_func({chaos::KeyboardButton::KP_SUBTRACT, chaos::KeyModifier::Shift} , "Previous RenderPass", [this]()
+		if (in_action_enumerator({chaos::KeyboardButton::KP_SUBTRACT, chaos::KeyModifier::Shift} , "Previous RenderPass", [this]()
 		{
 			ChangeRenderpass(-1);
 		}))
@@ -87,7 +87,7 @@ protected:
 			return true;
 		}
 
-		if (in_enumerate_func({chaos::KeyboardButton::KP_SUBTRACT} , "Previous Material", [this]()
+		if (in_action_enumerator({chaos::KeyboardButton::KP_SUBTRACT} , "Previous Material", [this]()
 		{
 			ChangeMaterial(-1);
 		}))
@@ -95,7 +95,7 @@ protected:
 			return true;
 		}
 
-		return chaos::Window::EnumerateKeyActions(in_enumerate_func);
+		return chaos::Window::EnumerateKeyActions(in_action_enumerator);
 	}
 
 	virtual bool OnDraw(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override

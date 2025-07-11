@@ -782,9 +782,9 @@ namespace chaos
 	CHAOS_HELP_TEXT(SHORTCUTS, "F8  : ReloadGPUResources");
 #endif
 
-	bool WindowApplication::EnumerateKeyActions(EnumerateKeyActionFunc in_enumerate_func)
+	bool WindowApplication::EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator)
 	{
-		if (in_enumerate_func({KeyboardButton::F7} , "Toggle ImGui", [this]()
+		if (in_action_enumerator({KeyboardButton::F7} , "Toggle ImGui", [this]()
 		{
 			SetImGuiMenuEnabled(!IsImGuiMenuEnabled());
 		}))
@@ -793,7 +793,7 @@ namespace chaos
 		}
 
 #if _DEBUG
-		if (in_enumerate_func({KeyboardButton::F8} , "Reload GPU Resources", [this]()
+		if (in_action_enumerator({KeyboardButton::F8} , "Reload GPU Resources", [this]()
 		{
 			ReloadGPUResources();
 		}))
@@ -802,7 +802,7 @@ namespace chaos
 		}
 #endif // #if _DEBUG
 
-		return InputEventReceiverInterface::EnumerateKeyActions(in_enumerate_func);
+		return InputEventReceiverInterface::EnumerateKeyActions(in_action_enumerator);
 	}
 
 	GLFWwindow* WindowApplication::GetSharedGLContext()

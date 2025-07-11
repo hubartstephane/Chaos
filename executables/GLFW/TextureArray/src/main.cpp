@@ -158,9 +158,9 @@ protected:
 		texture_slice = (texture_slice + delta + texture_slice_count) % texture_slice_count;
 	}
 
-	virtual bool EnumerateKeyActions(EnumerateKeyActionFunc in_enumerate_func) override
+	virtual bool EnumerateKeyActions(EnumerateKeyActionFunc in_action_enumerator) override
 	{
-		if (in_enumerate_func({chaos::KeyboardButton::KP_ADD, chaos::KeyModifier::Shift} , "Next Pixel Format", [this]()
+		if (in_action_enumerator({chaos::KeyboardButton::KP_ADD, chaos::KeyModifier::Shift} , "Next Pixel Format", [this]()
 		{
 			ChangePixelFormat(+1);
 		}))
@@ -168,7 +168,7 @@ protected:
 			return true;
 		}
 
-		if (in_enumerate_func({chaos::KeyboardButton::KP_SUBTRACT, chaos::KeyModifier::Shift} , "Previous Pixel Format", [this]()
+		if (in_action_enumerator({chaos::KeyboardButton::KP_SUBTRACT, chaos::KeyModifier::Shift} , "Previous Pixel Format", [this]()
 		{
 			ChangePixelFormat(-1);
 		}))
@@ -176,7 +176,7 @@ protected:
 			return true;
 		}
 
-		if (in_enumerate_func({chaos::KeyboardButton::KP_ADD} , "Next Slice", [this]()
+		if (in_action_enumerator({chaos::KeyboardButton::KP_ADD} , "Next Slice", [this]()
 		{
 			ChangeSlice(+1);
 		}))
@@ -184,7 +184,7 @@ protected:
 			return true;
 		}
 
-		if (in_enumerate_func({chaos::KeyboardButton::KP_SUBTRACT} , "Previous Slice", [this]()
+		if (in_action_enumerator({chaos::KeyboardButton::KP_SUBTRACT} , "Previous Slice", [this]()
 		{
 			ChangeSlice(-1);
 		}))
@@ -192,7 +192,7 @@ protected:
 			return true;
 		}
 
-		return chaos::Window::EnumerateKeyActions(in_enumerate_func);
+		return chaos::Window::EnumerateKeyActions(in_action_enumerator);
 	}
 
 	bool LoadBitmaps(boost::filesystem::path const & resources_path)

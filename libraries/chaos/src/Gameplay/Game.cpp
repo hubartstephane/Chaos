@@ -99,9 +99,9 @@ namespace chaos
 		return InputEventReceiverInterface::DispatchEventToHierarchy(event_func);
 	}
 
-	bool Game::EnumerateKeyActions(EnumerateKeyActionFunc in_enumerate_func)
+	bool Game::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator)
 	{
-		if (in_enumerate_func({KeyboardButton::ESCAPE, KeyModifier::Shift} , "Exit Game", [this]()
+		if (in_action_enumerator({KeyboardButton::ESCAPE, KeyModifier::Shift} , "Exit Game", [this]()
 		{
 			RequireExitGame();
 		}))
@@ -109,7 +109,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_enumerate_func({KeyboardButton::ESCAPE} , "Toggle Pause", [this]()
+		if (in_action_enumerator({KeyboardButton::ESCAPE} , "Toggle Pause", [this]()
 		{
 			RequireTogglePause();
 		}))
@@ -119,7 +119,7 @@ namespace chaos
 
 #if _DEBUG
 
-		if (in_enumerate_func({KeyboardButton::F1} , "Skip Level", [this]()
+		if (in_action_enumerator({KeyboardButton::F1} , "Skip Level", [this]()
 		{
 			SetCheatSkipLevelRequired(true);
 		}))
@@ -127,7 +127,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_enumerate_func({KeyboardButton::F2} , "Toggle Cheat Mode", [this]()
+		if (in_action_enumerator({KeyboardButton::F2} , "Toggle Cheat Mode", [this]()
 		{
 			SetCheatMode(!GetCheatMode());
 		}))
@@ -135,7 +135,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_enumerate_func({KeyboardButton::F3} , "Reload Configuration", [this]()
+		if (in_action_enumerator({KeyboardButton::F3} , "Reload Configuration", [this]()
 		{
 			ReloadGameConfiguration();
 		}))
@@ -143,7 +143,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_enumerate_func({KeyboardButton::F4} , "Reload Current Level", [this]()
+		if (in_action_enumerator({KeyboardButton::F4} , "Reload Current Level", [this]()
 		{
 			ReloadCurrentLevel();
 		}))
@@ -151,7 +151,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_enumerate_func({KeyboardButton::F5} , "Quick Save", [this]()
+		if (in_action_enumerator({KeyboardButton::F5} , "Quick Save", [this]()
 		{
 			SaveIntoCheckpoint();
 		}))
@@ -159,7 +159,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_enumerate_func({KeyboardButton::F6} , "Toggle Free Camera Mode", [this]()
+		if (in_action_enumerator({KeyboardButton::F6} , "Toggle Free Camera Mode", [this]()
 		{
 			SetFreeCameraMode(!IsFreeCameraMode());
 		}))
@@ -168,7 +168,7 @@ namespace chaos
 		}
 #endif
 
-		return InputEventReceiverInterface::EnumerateKeyActions(in_enumerate_func);
+		return InputEventReceiverInterface::EnumerateKeyActions(in_action_enumerator);
 	}
 
 

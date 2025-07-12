@@ -18,16 +18,18 @@ namespace chaos
 
 			virtual bool operator () (KeyRequest const & in_request, char const * in_title, bool in_enabled, LightweightFunction<void()> in_key_action) override
 			{
+				char buffer[256];
+
 				ImGui::TableNextRow();
 
 				ImGui::BeginDisabled(!in_enabled);
 				ImGui::TableSetColumnIndex(0); ImGui::Text("%s", EnumToString(in_request.key));
-				//ImGui::TableSetColumnIndex(1); ImGui::Text("%s", EnumToString(in_request.required_modifiers));
-				//ImGui::TableSetColumnIndex(2); ImGui::Text("%s", EnumToString(in_request.action_mask));
 
-
-				ImGui::TableSetColumnIndex(1); ImGui::Text("modif");
-				ImGui::TableSetColumnIndex(2); ImGui::Text("mask");
+				char const* required_modifiers = EnumToString(in_request.required_modifiers, buffer, 256);
+				ImGui::TableSetColumnIndex(1); ImGui::Text("%s", required_modifiers);
+				
+				char const* action_mask = EnumToString(in_request.action_mask, buffer, 256);
+				ImGui::TableSetColumnIndex(2); ImGui::Text("%s", action_mask);
 
 				ImGui::TableSetColumnIndex(3); ImGui::Text("%s", in_title);
 				ImGui::EndDisabled();

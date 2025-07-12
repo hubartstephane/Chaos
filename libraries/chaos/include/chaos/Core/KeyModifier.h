@@ -18,6 +18,7 @@ namespace chaos
 		Alt = GLFW_MOD_ALT
 	};
 
+	CHAOS_DECLARE_ENUM_METHOD(KeyModifier, CHAOS_API);
 	CHAOS_DECLARE_ENUM_BITMASK_METHOD(KeyModifier, CHAOS_API);
 
 #endif

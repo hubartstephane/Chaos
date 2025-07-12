@@ -32,6 +32,7 @@ namespace chaos
 		Any     = Release | Press | Repeat
 	};
 
+	CHAOS_DECLARE_ENUM_METHOD(KeyActionMask, CHAOS_API);
 	CHAOS_DECLARE_ENUM_BITMASK_METHOD(KeyActionMask, CHAOS_API);
 
 #endif

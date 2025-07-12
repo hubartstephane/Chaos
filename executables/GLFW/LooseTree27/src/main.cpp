@@ -606,83 +606,90 @@ protected:
 		return true;
 	}
 
-
-	virtual bool OnKeyEventImpl(chaos::KeyEvent const& key_event) override
+	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator) override
 	{
-		// change the current object if any
-		if (GeometricObject* current_object = GetCurrentGeometricObject())
+		GeometricObject* current_object = GetCurrentGeometricObject();
+
+		bool action_enabled = (current_object != nullptr);
+
+		if (in_action_enumerator({key_configuration.next_object.GetKeyboardButton()}, "Next Object", action_enabled, [&]()
 		{
-			// change current selection
-			if (key_event.IsKeyPressed(key_configuration.next_object.GetKeyboardButton()))
-			{
-				current_object_index = (current_object_index.value() + 1) % geometric_objects.size();
-				return true;
-			}
-			else if (key_event.IsKeyPressed(key_configuration.previous_object.GetKeyboardButton()))
-			{
-				current_object_index = (current_object_index.value() + geometric_objects.size() - 1) % geometric_objects.size();
-				return true;
-			}
-
-			if (key_event.IsKeyPressed(key_configuration.delete_object.GetKeyboardButton()))
-			{
-				if (geometric_objects.size() > 0)
-				{
-					// remove the object from tree
-					EraseObjectFromNode(current_object);
-					// remove the object from object list
-					auto it = std::ranges::find_if(geometric_objects, [current_object](auto& v)
-					{
-						return (v.get() == current_object);
-					});
-					geometric_objects.erase(it); // destroy the last reference on object
-					// select object near in creation order
-					if (geometric_objects.size() == 0)
-						current_object_index.reset();
-					else
-						current_object_index = (current_object_index.value() == 0)? 0 : (current_object_index.value() - 1); // while there is always at least one object in the array, this is always valid
-				}
-
-				return true;
-			}
-
-			if (key_event.IsKeyPressed(key_configuration.new_scene.GetKeyboardButton()))
-			{
-				geometric_objects.clear();
-				current_object_index = 0;
-				object_tree.Clear();
-
-				for (int i = 0; i < 200; ++i)
-				{
-					glm::vec3 center = {
-						chaos::MathTools::RandFloat(-1000.0f, 1000.0f),
-						chaos::MathTools::RandFloat(-1000.0f, 1000.0f),
-						chaos::MathTools::RandFloat(-1000.0f, 1000.0f)
-					};
-
-					chaos::box3 creation_box;
-					creation_box.position = center;
-					creation_box.half_size = {
-						chaos::MathTools::RandFloat(1.0f, 25.0f),
-						chaos::MathTools::RandFloat(1.0f, 25.0f),
-						chaos::MathTools::RandFloat(1.0f, 25.0f)
-					};
-
-					std::random_device rd;
-					std::uniform_int_distribution<int> uniform_dist(0, int(GeometryType::COUNT) - 1);
-
-					switch(uniform_dist(rd))
-					{
-					case 0: CreateNewBox(creation_box); break;
-					case 1: CreateNewSphere(chaos::GetBoundingSphere(creation_box)); break;
-					default: assert(0);
-					}
-				}
-				return true;
-			}
+			current_object_index = (current_object_index.value() + 1) % geometric_objects.size();
+		}))
+		{
+			return true;
+		}
+		
+		if (in_action_enumerator({key_configuration.previous_object.GetKeyboardButton()}, "Previous Object", action_enabled, [&]()
+		{
+			current_object_index = (current_object_index.value() + geometric_objects.size() - 1) % geometric_objects.size();
+		}))
+		{
+			return true;
 		}
 
-		return chaos::Window::OnKeyEventImpl(key_event);
+		if (in_action_enumerator({key_configuration.delete_object.GetKeyboardButton()}, "Delete Object", action_enabled, [&]()
+		{
+			if (geometric_objects.size() > 0)
+			{
+				// remove the object from tree
+				EraseObjectFromNode(current_object);
+				// remove the object from object list
+				auto it = std::ranges::find_if(geometric_objects, [current_object](auto& v)
+				{
+					return (v.get() == current_object);
+				});
+				geometric_objects.erase(it); // destroy the last reference on object
+				// select object near in creation order
+				if (geometric_objects.size() == 0)
+					current_object_index.reset();
+				else
+					current_object_index = (current_object_index.value() == 0)? 0 : (current_object_index.value() - 1); // while there is always at least one object in the array, this is always valid
+			}
+		}))
+		{
+			return true;
+		}
+
+		if (in_action_enumerator({key_configuration.new_scene.GetKeyboardButton()}, "New Scene", action_enabled, [&]()
+		{
+			geometric_objects.clear();
+			current_object_index = 0;
+			object_tree.Clear();
+
+			for (int i = 0; i < 200; ++i)
+			{
+				glm::vec3 center = {
+					chaos::MathTools::RandFloat(-1000.0f, 1000.0f),
+					chaos::MathTools::RandFloat(-1000.0f, 1000.0f),
+					chaos::MathTools::RandFloat(-1000.0f, 1000.0f)
+				};
+
+				chaos::box3 creation_box;
+				creation_box.position = center;
+				creation_box.half_size = {
+					chaos::MathTools::RandFloat(1.0f, 25.0f),
+					chaos::MathTools::RandFloat(1.0f, 25.0f),
+					chaos::MathTools::RandFloat(1.0f, 25.0f)
+				};
+
+				std::random_device rd;
+				std::uniform_int_distribution<int> uniform_dist(0, int(GeometryType::COUNT) - 1);
+
+				switch(uniform_dist(rd))
+				{
+				case 0: CreateNewBox(creation_box); break;
+				case 1: CreateNewSphere(chaos::GetBoundingSphere(creation_box)); break;
+				default: assert(0);
+				}
+			}
+
+		}))
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 	GeometricObject* CreateNewGeometry(GeometryType type)

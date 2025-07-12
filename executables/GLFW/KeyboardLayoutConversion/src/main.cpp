@@ -8,10 +8,10 @@ public:
 
 	virtual bool OnKeyEventImpl(chaos::KeyEvent const& key_event) override
 	{
-		if (key_event.action == GLFW_PRESS)
+		if (key_event.action == chaos::KeyAction::Press)
 		{
 			last_scancode = key_event.scancode;
-			last_button  = key_event.button;
+			last_button  = key_event.key;
 			last_key_pressed = chaos::KeyboardLayout::GetKnownLayout(chaos::KeyboardLayoutType::AZERTY).GetInformationFromScancode(key_event.scancode);
 		}
 

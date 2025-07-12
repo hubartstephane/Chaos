@@ -180,7 +180,8 @@ namespace chaos
 		assert(IsTransactionInProgress());
 		if (--transaction_count == 0)
 		{
-			DoOutput(transaction_domain, transaction_severity, transaction_content);
+			if (transaction_content.length() > 0)
+				DoOutput(transaction_domain, transaction_severity, transaction_content);
 			transaction_severity = LogSeverity::Message;
 			transaction_content = {};
 			transaction_domain = nullptr;

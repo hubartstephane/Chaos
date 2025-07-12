@@ -80,15 +80,6 @@ namespace chaos
 			hud->Tick(delta_time);
 	}
 
-#if _DEBUG
-	CHAOS_HELP_TEXT(SHORTCUTS, "F1  : SkipLevel");
-	CHAOS_HELP_TEXT(SHORTCUTS, "F2  : ToggleCheatMode");
-	CHAOS_HELP_TEXT(SHORTCUTS, "F3  : ReloadGameConfiguration");
-	CHAOS_HELP_TEXT(SHORTCUTS, "F4  : ReloadCurrentLevel");
-	CHAOS_HELP_TEXT(SHORTCUTS, "F5  : QuickSave");
-	CHAOS_HELP_TEXT(SHORTCUTS, "F6  : ToggleFreeCameraMode");
-#endif
-
 	bool Game::DispatchEventToHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func)
 	{
 		// try with game instance

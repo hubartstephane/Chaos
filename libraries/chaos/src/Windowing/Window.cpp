@@ -889,9 +889,6 @@ namespace chaos
 		return SetBoxAspect(result, 16.0f / 9.0f, SetBoxAspectMethod::SHRINK_BOX);
 	}
 
-	CHAOS_HELP_TEXT(SHORTCUTS, "F9  : ScreenCapture");
-	CHAOS_HELP_TEXT(SHORTCUTS, "F10 : ToggleFullscreen");
-
 	bool Window::EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator)
 	{
 		if (in_action_enumerator({KeyboardButton::F9} , "Screen Capture", [this]()

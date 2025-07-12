@@ -777,11 +777,6 @@ namespace chaos
 		return application->GetGPUResourceManager();
 	}
 
-#if _DEBUG
-	CHAOS_HELP_TEXT(SHORTCUTS, "F7  : ToggleImGuiMenuMode");
-	CHAOS_HELP_TEXT(SHORTCUTS, "F8  : ReloadGPUResources");
-#endif
-
 	bool WindowApplication::EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator)
 	{
 		if (in_action_enumerator({KeyboardButton::F7} , "Toggle ImGui", [this]()

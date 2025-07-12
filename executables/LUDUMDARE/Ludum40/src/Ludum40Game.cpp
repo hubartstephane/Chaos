@@ -720,11 +720,11 @@ bool Game::OnPhysicalGamepadInput(chaos::PhysicalGamepad * physical_gamepad)
 }
 
 
-bool Game::OnKeyEvent(chaos::KeyboardButton key, int action)
+bool Game::OnKeyEvent(chaos::KeyboardButton key, chaos::KeyAction action)
 {
 	if (!game_started)
 	{
-		if (action == GLFW_PRESS)
+		if (action == chaos::KeyAction::Press)
 		{
 			StartGame();
 			return true;
@@ -732,14 +732,14 @@ bool Game::OnKeyEvent(chaos::KeyboardButton key, int action)
 	}
 	else
 	{
-		if (key == chaos::KeyboardButton::ESCAPE && action == GLFW_PRESS)
+		if (key == chaos::KeyboardButton::ESCAPE && action == chaos::KeyAction::Press)
 		{
 			pending_restart_game = true;
 			return true;
 		}
 	}
 
-	if (key == chaos::KeyboardButton::P && action == GLFW_PRESS)
+	if (key == chaos::KeyboardButton::P && action == chaos::KeyAction::Press)
 	{
 		SetPause(!game_paused);
 		return true;

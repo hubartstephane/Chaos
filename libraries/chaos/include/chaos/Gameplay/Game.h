@@ -176,7 +176,7 @@ namespace chaos
 		}
 
 		/** override */
-		virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator) override;
+		virtual bool EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator) override;
 
 	protected:
 
@@ -184,7 +184,7 @@ namespace chaos
 		virtual bool OnStorePersistentProperties(JSONWriteConfiguration config) const override;
 
 		/** override */
-		virtual bool DoProcessAction(chaos::GPUProgramProviderExecutionData const& execution_data) const override;
+		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const override;
 
 		/** the tick method */
 		virtual void Tick(float delta_time);

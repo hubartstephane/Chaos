@@ -889,7 +889,7 @@ namespace chaos
 		return SetBoxAspect(result, 16.0f / 9.0f, SetBoxAspectMethod::SHRINK_BOX);
 	}
 
-	bool Window::EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator)
+	bool Window::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator)
 	{
 		if (in_action_enumerator({KeyboardButton::F9} , "Screen Capture", [this]()
 		{

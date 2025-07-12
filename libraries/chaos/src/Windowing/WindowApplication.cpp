@@ -777,7 +777,7 @@ namespace chaos
 		return application->GetGPUResourceManager();
 	}
 
-	bool WindowApplication::EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator)
+	bool WindowApplication::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator)
 	{
 		if (in_action_enumerator({KeyboardButton::F7} , "Toggle ImGui", [this]()
 		{

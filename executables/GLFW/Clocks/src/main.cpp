@@ -242,24 +242,29 @@ protected:
 		DebugDisplayTips();
 	}
 
-	bool UpdateClockTimeScaleWithKeys(chaos::Clock * clock, chaos::KeyEvent const & key_event, chaos::KeyboardButton incr_key, chaos::KeyboardButton decr_key)
+	bool UpdateClockTimeScaleWithKeys(chaos::KeyActionEnumerator & in_action_enumerator, chaos::Clock * clock, chaos::KeyboardButton incr_key, chaos::KeyboardButton decr_key, char const * incr_title, char const * decr_title)
 	{
-		if (key_event.IsKeyReleased(incr_key))
+		if (in_action_enumerator({incr_key}, incr_title, [&]()
 		{
 			UpdateClockTimeScale(clock, 0.2f);
+		}))
+		{
 			return true;
 		}
-		else if (key_event.IsKeyReleased(decr_key))
+
+		if (in_action_enumerator({decr_key}, decr_title, [&]()
 		{
 			UpdateClockTimeScale(clock, -0.2f);
+		}))
+		{
 			return true;
 		}
 		return false;
 	}
 
-	bool GenerateEvent(chaos::Clock * clock, chaos::KeyEvent const & key_event, chaos::KeyboardButton create_key, char const * str, int type)
+	bool GenerateEvent(chaos::KeyActionEnumerator & in_action_enumerator, chaos::Clock * clock, chaos::KeyboardButton create_key, char const * in_title, int type)
 	{
-		if (key_event.IsKeyReleased(create_key))
+		if (in_action_enumerator({create_key}, in_title, [&]()
 		{
 			// remove previous event
 			if (clock_event != nullptr)
@@ -281,45 +286,45 @@ protected:
 			else
 				event_info = chaos::ClockEventInfo::ForeverEvent(start_time, chaos::ClockEventRepetitionInfo::Repetition(1.0f, 3));
 
-			clock_event = new MyEvent(str, type, this);
+			clock_event = new MyEvent(in_title, type, this);
 
 			if (!clock->AddPendingEvent(clock_event.get(), event_info, false))
 			{
 				clock_event = nullptr;
 				imgui_user_message.AddLine("FAILED to add EVENT", 1.0f);
 			}
-
+		}))
+		{
 			return true;
 		}
 		return false;
 	}
 
-	virtual bool OnKeyEventImpl(chaos::KeyEvent const & key_event) override
+	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator) override
 	{
-		if (key_event.IsKeyReleased(chaos::KeyboardButton::T))
+		if (in_action_enumerator({chaos::KeyboardButton::T}, "Toggle Main Clock", [this]()
 		{
-			chaos::Clock * clock = chaos::WindowApplication::GetMainClockInstance();
-			if (clock != nullptr)
+			if (chaos::Clock * clock = chaos::WindowApplication::GetMainClockInstance())
 				clock->Toggle();
+		}))
+		{
 			return true;
 		}
-		else
-		{
-			if (UpdateClockTimeScaleWithKeys(clock1.get(), key_event, chaos::KeyboardButton::KP_1, chaos::KeyboardButton::KP_2))
-				return true;
-			if (UpdateClockTimeScaleWithKeys(clock2.get(), key_event, chaos::KeyboardButton::KP_4, chaos::KeyboardButton::KP_5))
-				return true;
-			if (UpdateClockTimeScaleWithKeys(clock3.get(), key_event, chaos::KeyboardButton::KP_7, chaos::KeyboardButton::KP_8))
-				return true;
+		if (UpdateClockTimeScaleWithKeys(in_action_enumerator, clock1.get(), chaos::KeyboardButton::KP_1, chaos::KeyboardButton::KP_2, "Increment timer Clock 1", "Decrement timer Clock 1"))
+			return true;
+		if (UpdateClockTimeScaleWithKeys(in_action_enumerator, clock2.get(), chaos::KeyboardButton::KP_4, chaos::KeyboardButton::KP_5, "Increment timer Clock 2", "Decrement timer Clock 2"))
+			return true;
+		if (UpdateClockTimeScaleWithKeys(in_action_enumerator, clock3.get(), chaos::KeyboardButton::KP_7, chaos::KeyboardButton::KP_8, "Increment timer Clock 3", "Decrement timer Clock 3"))
+			return true;
 
-			if (GenerateEvent(clock1.get(), key_event, chaos::KeyboardButton::A, "EVENT 1", EVENT_SINGLE_TEST))
-				return true;
-			if (GenerateEvent(clock2.get(), key_event, chaos::KeyboardButton::Z, "EVENT 2", EVENT_RANGE_TEST))
-				return true;
-			if (GenerateEvent(clock3.get(), key_event, chaos::KeyboardButton::E, "EVENT 3", EVENT_FOREVER_TEST))
-				return true;
-		}
-		return chaos::Window::OnKeyEventImpl(key_event);
+		if (GenerateEvent(in_action_enumerator, clock1.get(), chaos::KeyboardButton::A, "EVENT_SINGLE_TEST: Clock 1", EVENT_SINGLE_TEST))
+			return true;
+		if (GenerateEvent(in_action_enumerator, clock2.get(), chaos::KeyboardButton::Z, "EVENT_RANGE_TEST: Clock 2", EVENT_RANGE_TEST))
+			return true;
+		if (GenerateEvent(in_action_enumerator, clock3.get(), chaos::KeyboardButton::E, "EVENT_FOREVER_TEST: Clock 3", EVENT_FOREVER_TEST))
+			return true;
+
+		return false;
 	}
 
 	virtual void OnDrawImGuiContent() override

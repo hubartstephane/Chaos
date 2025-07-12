@@ -277,37 +277,44 @@ protected:
 		Window::OnDrawImGuiContent();
 	}
 
-	virtual bool OnKeyEventImpl(KeyEvent const& key_event) override
+	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator) override
 	{
 		size_t object_count = objects.size();
-		if (object_count > 0)
+
+		bool enabled = object_count > 0;
+
+		if (in_action_enumerator({KeyboardButton::KP_ADD}, "Next Object", enabled, [&]()
 		{
-			if (key_event.IsKeyDown(KeyboardButton::KP_ADD))
-			{
-				objects[selected_object_index]->SetSelected(false);
+			objects[selected_object_index]->SetSelected(false);
 
-				selected_object_index = (selected_object_index == object_count - 1)?
-					0:
-					selected_object_index + 1;
+			selected_object_index = (selected_object_index == object_count - 1)?
+				0:
+				selected_object_index + 1;
 
-				objects[selected_object_index]->SetSelected(true);
-
-				return true;
-			}
-			if (key_event.IsKeyDown(KeyboardButton::KP_SUBTRACT))
-			{
-				objects[selected_object_index]->SetSelected(false);
-
-				selected_object_index = (selected_object_index == 0) ?
-					object_count - 1 :
-					selected_object_index - 1;
-
-				objects[selected_object_index]->SetSelected(true);
-
-				return true;
-			}
+			objects[selected_object_index]->SetSelected(true);
+		
+		}))
+		{
+			return true;
 		}
-		return Window::OnKeyEventImpl(key_event);
+
+		if (in_action_enumerator({KeyboardButton::KP_SUBTRACT}, "Previous Object", enabled, [&]()
+		{
+			objects[selected_object_index]->SetSelected(false);
+
+			selected_object_index = (selected_object_index == 0) ?
+				object_count - 1 :
+				selected_object_index - 1;
+
+			objects[selected_object_index]->SetSelected(true);
+		
+		}))
+		{
+			return true;
+		}
+
+
+		return false;
 	}
 
 	virtual bool DoTick(float delta_time) override

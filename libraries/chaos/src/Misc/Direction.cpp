@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	static chaos::EnumTools::EnumMetaData<Direction> const Direction_metadata =
+	static EnumTools::EnumMetaData<Direction> const Direction_metadata =
 	{
 		{ Direction::POSITIVE_X, "positive_x" },
 		{ Direction::NEGATIVE_X, "negative_y" },

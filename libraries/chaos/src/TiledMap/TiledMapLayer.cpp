@@ -5,7 +5,7 @@ namespace chaos
 {
 	namespace TiledMap
 	{
-		static chaos::EnumTools::EnumMetaData<DrawOrder> const DrawOrder_metadata = {
+		static EnumTools::EnumMetaData<DrawOrder> const DrawOrder_metadata = {
 			{ DrawOrder::MANUAL, "index"  },
 			{ DrawOrder::TOPDOWN, "topdown" } // default
 		};

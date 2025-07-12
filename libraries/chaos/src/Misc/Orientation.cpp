@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	static chaos::EnumTools::EnumMetaData<Orientation> const Orientation_metadata =
+	static EnumTools::EnumMetaData<Orientation> const Orientation_metadata =
 	{
 		{ Orientation::HORIZONTAL, "horizontal" },
 		{ Orientation::VERTICAL, "vertical" }

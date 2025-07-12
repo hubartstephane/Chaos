@@ -5,7 +5,7 @@ namespace chaos
 {
 	namespace TiledMap
 	{
-		static chaos::EnumTools::EnumMetaData<MapOrientation> const MapOrientation_metadata = {
+		static EnumTools::EnumMetaData<MapOrientation> const MapOrientation_metadata = {
 			{ MapOrientation::ORTHOGONAL, "orthogonal" }, //default
 			{ MapOrientation::ISOMETRIC, "isometric" },
 			{ MapOrientation::STAGGERED, "staggered" },
@@ -14,21 +14,21 @@ namespace chaos
 
 		CHAOS_IMPLEMENT_ENUM_METHOD(MapOrientation, &MapOrientation_metadata, CHAOS_API);
 
-		static chaos::EnumTools::EnumMetaData<StaggerAxis> const StaggerAxis_metadata = {
+		static EnumTools::EnumMetaData<StaggerAxis> const StaggerAxis_metadata = {
 			{ StaggerAxis::AXIS_X, "X",  }, // default
 			{ StaggerAxis::AXIS_Y, "Y",  }
 		};
 
 		CHAOS_IMPLEMENT_ENUM_METHOD(StaggerAxis, &StaggerAxis_metadata, CHAOS_API);
 
-		static chaos::EnumTools::EnumMetaData<StaggerIndex> const StaggerIndex_metadata = {
+		static EnumTools::EnumMetaData<StaggerIndex> const StaggerIndex_metadata = {
 			{ StaggerIndex::ODD, "odd" }, // default
 			{ StaggerIndex::EVEN, "even" }
 		};
 
 		CHAOS_IMPLEMENT_ENUM_METHOD(StaggerIndex, &StaggerIndex_metadata, CHAOS_API);
 
-		static chaos::EnumTools::EnumMetaData<RenderOrder> const RenderOrder_metadata = {
+		static EnumTools::EnumMetaData<RenderOrder> const RenderOrder_metadata = {
 			{ RenderOrder::RIGHT_UP, "right-up" }, // default
 			{ RenderOrder::RIGHT_DOWN, "right-down" },
 			{ RenderOrder::LEFT_UP, "left-up" },

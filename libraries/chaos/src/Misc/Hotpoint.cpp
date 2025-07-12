@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	static chaos::EnumTools::EnumMetaData<Hotpoint> const Hotpoint_metadata =
+	static EnumTools::EnumMetaData<Hotpoint> const Hotpoint_metadata =
 	{
 		{ Hotpoint::TOP, "top" },
 		{ Hotpoint::BOTTOM, "bottom" },

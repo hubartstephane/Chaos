@@ -4,7 +4,7 @@
 
 namespace chaos
 {
-	static chaos::EnumTools::EnumMetaData<KeyActionMask> const KeyActionMask_metadata =
+	static EnumTools::EnumMetaData<KeyActionMask> const KeyActionMask_metadata =
 	{
 		{ KeyActionMask::None, "None" },
 		{ KeyActionMask::Release, "Release" },

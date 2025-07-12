@@ -5,7 +5,7 @@ namespace chaos
 {
 	namespace TiledMap
 	{
-		static chaos::EnumTools::EnumMetaData<HorizontalTextAlignment> const HorizontalTextAlignment_metadata = {
+		static EnumTools::EnumMetaData<HorizontalTextAlignment> const HorizontalTextAlignment_metadata = {
 			{ HorizontalTextAlignment::LEFT, "left" }, // default
 			{ HorizontalTextAlignment::CENTER, "center" },
 			{ HorizontalTextAlignment::RIGHT, "right" },
@@ -14,7 +14,7 @@ namespace chaos
 
 		CHAOS_IMPLEMENT_ENUM_METHOD(HorizontalTextAlignment, &HorizontalTextAlignment_metadata, CHAOS_API);
 
-		static chaos::EnumTools::EnumMetaData<VerticalTextAlignment> const VerticalTextAlignment_metadata = {
+		static EnumTools::EnumMetaData<VerticalTextAlignment> const VerticalTextAlignment_metadata = {
 			{ VerticalTextAlignment::TOP, "top" }, // default
 			{ VerticalTextAlignment::CENTER, "center" },
 			{ VerticalTextAlignment::BOTTOM, "bottom" }

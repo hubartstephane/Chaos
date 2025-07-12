@@ -7,7 +7,7 @@ namespace chaos
 	// LogLine implementation
 	// ================================================================
 
-	static chaos::EnumTools::EnumMetaData<LogSeverity> const LogSeverity_metadata =
+	static EnumTools::EnumMetaData<LogSeverity> const LogSeverity_metadata =
 	{
 		{ LogSeverity::Message, "Message" },
 		{ LogSeverity::Warning, "Warning" },

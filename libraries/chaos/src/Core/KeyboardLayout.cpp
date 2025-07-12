@@ -390,7 +390,7 @@ namespace chaos
 	  {0x15d, 0x00, "Application"}
 	}};
 
-	static chaos::EnumTools::EnumMetaData<KeyboardLayoutType> const KeyboardLayoutType_metadata = {
+	static EnumTools::EnumMetaData<KeyboardLayoutType> const KeyboardLayoutType_metadata = {
 		{ KeyboardLayoutType::AZERTY, "azerty" }, //default
 		{ KeyboardLayoutType::QWERTY, "qwerty" },
 		{ KeyboardLayoutType::CURRENT, "current" }

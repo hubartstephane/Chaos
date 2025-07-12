@@ -651,7 +651,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator({key_configuration.new_scene.GetKeyboardButton()}, "New Scene", action_enabled, [&]()
+		if (in_action_enumerator({key_configuration.new_scene.GetKeyboardButton()}, "New Scene", [&]()
 		{
 			geometric_objects.clear();
 			current_object_index = 0;

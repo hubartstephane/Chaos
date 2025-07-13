@@ -27,21 +27,25 @@ namespace chaos
 
 				char const* required_modifiers = EnumToString(in_request.required_modifiers, buffer, 256);
 				ImGui::TableSetColumnIndex(1); ImGui::Text("%s", required_modifiers);
+
+				char const* forbidden_modifiers = EnumToString(in_request.forbidden_modifiers, buffer, 256);
+				ImGui::TableSetColumnIndex(2); ImGui::Text("%s", forbidden_modifiers);
 				
 				char const* action_mask = EnumToString(in_request.action_mask, buffer, 256);
-				ImGui::TableSetColumnIndex(2); ImGui::Text("%s", action_mask);
+				ImGui::TableSetColumnIndex(3); ImGui::Text("%s", action_mask);
 
-				ImGui::TableSetColumnIndex(3); ImGui::Text("%s", in_title);
+				ImGui::TableSetColumnIndex(4); ImGui::Text("%s", in_title);
 				ImGui::EndDisabled();
 
 				return false;
 			}
 		};
 
-		if (ImGui::BeginTable("objects", 4, ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable))
+		if (ImGui::BeginTable("objects", 5, ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable))
 		{
 			ImGui::TableSetupColumn("Key");
-			ImGui::TableSetupColumn("Modifiers");
+			ImGui::TableSetupColumn("Mandatory Mod.");
+			ImGui::TableSetupColumn("Forbidden Mod.");
 			ImGui::TableSetupColumn("Action");
 			ImGui::TableSetupColumn("Description");
 			ImGui::TableHeadersRow();

@@ -15,9 +15,9 @@ namespace chaos
 	{
 		if (key != KeyboardButton::UNKNOWN)
 		{
-			int raw_value = int(key);
-			if (raw_value >= 0 && raw_value < keyboard_state.size())
-				keyboard_state[raw_value].SetValue(action == GLFW_PRESS || action == GLFW_REPEAT);
+			int key_index = int(key);
+			if (key_index >= 0 && key_index < keyboard_state.size())
+				keyboard_state[key_index].SetValue(action == GLFW_PRESS || action == GLFW_REPEAT);
 		}
 	}
 
@@ -25,9 +25,9 @@ namespace chaos
 	{
 		if (key != MouseButton::UNKNOWN)
 		{
-			int raw_value = int(key);
-			if (raw_value >= 0 && raw_value < mouse_button_state.size())
-				mouse_button_state[raw_value].SetValue(action == GLFW_PRESS || action == GLFW_REPEAT);
+			int key_index = int(key);
+			if (key_index >= 0 && key_index < mouse_button_state.size())
+				mouse_button_state[key_index].SetValue(action == GLFW_PRESS || action == GLFW_REPEAT);
 		}
 	}
 
@@ -35,9 +35,9 @@ namespace chaos
 	{
 		if (key != KeyboardButton::UNKNOWN)
 		{
-			int raw_value = int(key);
-			if (raw_value >= 0 && raw_value < keyboard_state.size())
-				return &keyboard_state[raw_value];
+			int key_index = int(key);
+			if (key_index >= 0 && key_index < keyboard_state.size())
+				return &keyboard_state[key_index];
 		}
 		return nullptr;
 	}
@@ -46,9 +46,9 @@ namespace chaos
 	{
 		if (key != MouseButton::UNKNOWN)
 		{
-			int raw_value = int(key);
-			if (raw_value >= 0 && raw_value < mouse_button_state.size())
-				return &mouse_button_state[raw_value];
+			int key_index = int(key);
+			if (key_index >= 0 && key_index < mouse_button_state.size())
+				return &mouse_button_state[key_index];
 		}
 		return nullptr;
 	}
@@ -62,7 +62,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	void KeyboardState::UpdateKeyStates(float delta_time)
+	void KeyboardState::UpdateKeysTimerAccumulation(float delta_time)
 	{
 		for (ButtonState& button : keyboard_state)
 			button.UpdateTimerAccumulation(delta_time);

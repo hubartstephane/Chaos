@@ -482,7 +482,7 @@ namespace chaos
 		if (sound_manager != nullptr)
 			sound_manager->Tick(delta_time);
 		// update keyboard and mouse state
-		KeyboardState::UpdateKeyStates(delta_time);
+		KeyboardState::UpdateKeysTimerAccumulation(delta_time);
 		return true;
 	}
 
@@ -924,6 +924,8 @@ namespace chaos
 	bool WindowApplication::EnumerateKnownWindows(EnumerateKnownWindowsFunc func) const
 	{
 		if (func("Log", &ImGuiWindow::CreateImGuiWindow<ImGuiLogObject>))
+			return true;
+		if (func("Input State", &ImGuiWindow::CreateImGuiWindow<ImGuiInputStateObject>))
 			return true;
 		if (func("Global Variables", &ImGuiWindow::CreateImGuiWindow<ImGuiGlobalVariablesObject>))
 			return true;

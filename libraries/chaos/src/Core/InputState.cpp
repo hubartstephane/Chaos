@@ -17,9 +17,14 @@ namespace chaos
 	void ButtonState::UpdateTimerAccumulation(float delta_time)
 	{
 		if (value != previous_value)
+		{
+			previous_value = value;
 			same_value_timer = 0.0f;
+		}
 		else
+		{
 			same_value_timer += delta_time;
+		}
 	}
 
 

@@ -31,7 +31,7 @@ namespace chaos
 		/** change the state of a mouse key (notification from a window)*/
 		static void SetMouseButtonState(MouseButton key, int action);
 		/** update the internal timers of keyboard states */
-		static void UpdateKeyStates(float delta_time);
+		static void UpdateKeysTimerAccumulation(float delta_time);
 
 	protected:
 

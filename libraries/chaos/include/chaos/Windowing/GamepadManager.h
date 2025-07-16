@@ -370,6 +370,10 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		/** returns whether the given stick has any input set */
 		static bool HasAnyInputs(int stick_index, float dead_zone);
 
+		size_t GetPhysicalGamepadCount() const { return physical_gamepads.size(); }
+
+		PhysicalGamepad const * GetPhysicalGamepad(size_t index) const { return physical_gamepads[index]; }
+
 	protected:
 
 		/** find a gamepad that is used by nobody */
@@ -393,8 +397,6 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 
 		/** tick the force feedback effects of all allocated gamepad */
 		void TickForceFeedbackEffects(float delta_time);
-
-	protected:
 
 		/** the pool method to override */
 		virtual bool DoPoolGamepad(PhysicalGamepad* physical_gamepad);

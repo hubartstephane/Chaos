@@ -178,6 +178,11 @@ namespace chaos
 		/** override */
 		virtual bool EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator) override;
 
+		/** returns the gamepad manager */
+		GamepadManager * GetGamepadManager(){ return gamepad_manager.get();}
+		/** returns the gamepad manager */
+		GamepadManager const * GetGamepadManager() const { return gamepad_manager.get();}
+
 	protected:
 
 		/** override */

@@ -2,19 +2,19 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class ImGuiInputStateObject;
+	class ImGuiGamepadObject;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* ImGuiInputStateObject: an ImGUIObject that display the state of inputs (mouse + keyboard)
+	* ImGuiGamepadObject: an ImGUIObject that display the state of gamepads
 	*/
 
-	class ImGuiInputStateObject : public ImGuiObject
+	class ImGuiGamepadObject : public ImGuiObject
 	{
 	public:
 
-		CHAOS_DECLARE_OBJECT_CLASS(ImGuiInputStateObject, ImGuiObject);
+		CHAOS_DECLARE_OBJECT_CLASS(ImGuiGamepadObject, ImGuiObject);
 
 	protected:
 

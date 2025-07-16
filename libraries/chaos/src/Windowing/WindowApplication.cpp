@@ -927,6 +927,8 @@ namespace chaos
 			return true;
 		if (func("Input State", &ImGuiWindow::CreateImGuiWindow<ImGuiInputStateObject>))
 			return true;
+		if (func("Gamepad", &ImGuiWindow::CreateImGuiWindow<ImGuiGamepadObject>))
+			return true;
 		if (func("Global Variables", &ImGuiWindow::CreateImGuiWindow<ImGuiGlobalVariablesObject>))
 			return true;
 #if _DEBUG

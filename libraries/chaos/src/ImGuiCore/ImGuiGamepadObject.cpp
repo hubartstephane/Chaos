@@ -28,6 +28,9 @@ namespace chaos
 			if (!physical_gamepad->IsPresent())
 				continue;
 
+			size_t button_count = physical_gamepad->GetButtonCount();
+			size_t axis_count   = physical_gamepad->GetAxisCount();
+
 			ImGui::PushID(int(i));
 
 			ImGui::SeparatorText("Gamepad");
@@ -48,17 +51,26 @@ namespace chaos
 				ImGui::TableNextColumn();
 				ImGui::Text("Buttons");
 				ImGui::TableNextColumn();
-				ImGui::Text("%d", physical_gamepad->GetButtonCount());
+				ImGui::Text("%d", button_count);
 
 				ImGui::TableNextColumn();
 				ImGui::Text("Axes");
 				ImGui::TableNextColumn();
-				ImGui::Text("%d", physical_gamepad->GetAxisCount());
-
-
-
+				ImGui::Text("%d", axis_count);
 
 				ImGui::EndTable();
+			}
+			if (button_count > 0)
+			{
+				ImGui::Dummy({0.0f, 20.0f});
+
+				WithImGuiInputTable("buttons", [physical_gamepad]()
+				{
+					for (GamepadButton key = GamepadButton::A ; key <= GamepadButton::DPAD_LEFT ; key = (decltype(key))(int(key) + 1)) // not the better way to increment an enum
+						DisplayImGuiKeyInfo(key, {});
+					DisplayImGuiKeyInfo(GamepadButton::LEFT_TRIGGER, {});
+					DisplayImGuiKeyInfo(GamepadButton::RIGHT_TRIGGER, {});
+				});
 			}
 
 

@@ -15,6 +15,7 @@
 #include "chaos/ImGuiCore/ImGuiHelpObject.h"
 #include "chaos/ImGuiCore/ImGuiGlobalVariablesObject.h"
 #include "chaos/ImGuiCore/ImGuiDemoObject.h"
+#include "chaos/ImGuiCore/ImGuiInputStateObjectBase.h"
 #include "chaos/ImGuiCore/ImGuiInputStateObject.h"
 #include "chaos/ImGuiCore/ImGuiGamepadObject.h"
 #include "chaos/ImGuiCore/ImGuiAtlasObject.h"

@@ -10,11 +10,11 @@ namespace chaos
 	* ImGuiGamepadObject: an ImGUIObject that display the state of gamepads
 	*/
 
-	class ImGuiGamepadObject : public ImGuiObject
+	class ImGuiGamepadObject : public ImGuiInputStateObjectBase
 	{
 	public:
 
-		CHAOS_DECLARE_OBJECT_CLASS(ImGuiGamepadObject, ImGuiObject);
+		CHAOS_DECLARE_OBJECT_CLASS(ImGuiGamepadObject, ImGuiInputStateObjectBase);
 
 	protected:
 

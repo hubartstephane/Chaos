@@ -10,11 +10,11 @@ namespace chaos
 	* ImGuiInputStateObject: an ImGUIObject that display the state of inputs (mouse + keyboard)
 	*/
 
-	class ImGuiInputStateObject : public ImGuiObject
+	class ImGuiInputStateObject : public ImGuiInputStateObjectBase
 	{
 	public:
 
-		CHAOS_DECLARE_OBJECT_CLASS(ImGuiInputStateObject, ImGuiObject);
+		CHAOS_DECLARE_OBJECT_CLASS(ImGuiInputStateObject, ImGuiInputStateObjectBase);
 
 	protected:
 

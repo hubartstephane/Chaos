@@ -147,62 +147,45 @@ namespace chaos
 		public:
 
 			/** constructor */
-			EnumMetaData(std::initializer_list<EnumMetaDataEntry<T>> entries)
-			{
-				// transform a list of entries into 2 list of names/values
-				values.reserve(entries.size());
-				names.reserve(entries.size());
+			EnumMetaData(std::initializer_list<EnumMetaDataEntry<T>> in_entries):
+				entries(in_entries)
+			{}
 
-				for (EnumMetaDataEntry<T> const& entry : entries)
-				{
-					values.push_back(entry.value);
-					names.push_back(entry.name);
-				}
+			/** check whether there is at least one entries */
+			bool IsValid() const
+			{
+				return (entries.size() > 0);
 			}
 
 			/** gets the number of entry */
-			size_t GetCount() const
+			size_t GetEntryCount() const
 			{
-				return values.size();
+				return entries.size();
 			}
 
 			/** gets the meta data at a given position */
 			EnumMetaDataEntry<T> const& GetEntry(size_t index) const
 			{
-				assert(index < values.size());
-				return values[index];
+				assert(index < entries.size());
+				return entries[index];
 			}
 
-			/** get the index for a name */
-			std::optional<size_t> GetNameIndex(char const* src) const
+			/** search an entry by name */
+			EnumMetaDataEntry<T> const * FindEntryByName(char const* src) const
 			{
-				for (size_t i = 0; i < names.size(); ++i)
-					if (chaos::StringTools::Stricmp(src, names[i]) == 0)
-						return i;
-				return {};
+				for (EnumMetaDataEntry<T> const & entry : entries)
+					if (chaos::StringTools::Stricmp(src, entry.name) == 0)
+						return &entry;
+				return nullptr;
 			}
 
-			/** get the index for a value */
-			std::optional<size_t> GetValueIndex(T src) const
+			/** search an entry by value */
+			EnumMetaDataEntry<T> const * FindEntryByValue(T src) const
 			{
-				for (size_t i = 0; i < values.size(); ++i)
-					if (src == values[i])
-						return i;
-				return {};
-			}
-
-			/** get a name by index */
-			char const* GetNameByIndex(size_t index) const
-			{
-				assert(index < names.size());
-				return names[index];
-			}
-
-			/** get a value by index */
-			T GetValueByIndex(size_t index) const
-			{
-				assert(index < values.size());
-				return values[index];
+				for (EnumMetaDataEntry<T> const & entry : entries)
+					if (src == entry.value)
+						return &entry;
+				return nullptr;
 			}
 
 			/** convert string into value */
@@ -211,9 +194,9 @@ namespace chaos
 				// normal enums
 				if constexpr (!IsEnumBitmask<T>)
 				{
-					if (std::optional<size_t> index = GetNameIndex(src))
+					if (EnumMetaDataEntry<T> const * entry = FindEntryByName(src))
 					{
-						dst = GetValueByIndex(index.value());
+						dst = entry->value;
 						return true;
 					}
 				}
@@ -223,25 +206,21 @@ namespace chaos
 					T other_dst = T(0); // work on a copy because the string could produce an invalid value
 
 					// construct enum value from string fragments
-					bool invalid_token = StringTools::WithSplittedText(src, "|", [this, &other_dst](char const* subkey)
+					bool error = StringTools::WithSplittedText(src, "|", [this, &other_dst](char const* subkey)
 					{
-						if (std::optional<size_t> index = GetNameIndex(subkey))
+						if (EnumMetaDataEntry<T> const * entry = FindEntryByName(subkey))
 						{
-							other_dst |= GetValueByIndex(index.value());
-							return false; // continue with next token
+							other_dst |= entry->value;
+							return false;
 						}
-						return true; // stop parsing tokens
+						return true; // error
 					});
-					// ensure no invalid token were found
-					if (invalid_token)
-						return false;
-					// ensure the result is valid
-					if (!AreValidFlags(other_dst))
-						return false;
 
-					dst = other_dst; // value is valid, update destination
-
-					return true;
+					if (!error && AreValidFlags(other_dst))
+					{
+						dst = other_dst;
+						return true;
+					}
 				}
 				return false;
 			}
@@ -251,50 +230,70 @@ namespace chaos
 			{
 				int value_as_int = static_cast<int>(value);
 
-				if (!IsEnumBitmask<T> || (value_as_int == 0) || (MathTools::IsPowerOf2(value_as_int))) // a single or no bit. Normal search
+				if ((!IsEnumBitmask<T>) ||                 // standard enum -> normal search by name
+					(value_as_int == 0) ||                 // this is a bitfield enum, but no bit set -> normal search by name
+					(MathTools::IsPowerOf2(value_as_int))) // this is a bitfield enum, but a single bit set -> normal search by name
 				{
-					if (std::optional<size_t> index = GetValueIndex(value))
-						return GetNameByIndex(index.value());
+					if (EnumMetaDataEntry<T> const * entry = FindEntryByValue(value))
+						return entry->name;
 				}
-				else
+				else // bitfield with more than one bit -> try to reconstitute the string
 				{
 					assert(buffer != nullptr);
 					assert(buflen > 0);
 
 					std::ostrstream stream(buffer, buflen - 1); // -1 to keep at least zero terminal
 
-					BitTools::ForEachBitForward(value_as_int, [this, &stream](int index)
+					bool error = BitTools::ForEachBitForward(value_as_int, [this, &stream](int index)
 					{
 						T bit_as_value = static_cast<T>(1 << index);
 
-						if (std::optional<size_t> index = GetValueIndex(bit_as_value))
+						if (EnumMetaDataEntry<T> const * entry = FindEntryByValue(bit_as_value))
 						{
 							if (stream.pcount() > 0)
 								stream << "|";
-							stream << GetNameByIndex(index.value());
+							stream << entry->name;
+							return false;
 						}
+						return true; // error
 					});
 
-					buffer[stream.pcount()] = 0; // terminal zero
-
-					return buffer;
-
+					if (!error)
+					{
+						buffer[stream.pcount()] = 0; // terminal zero
+						return buffer;
+					}
 				}
 				return nullptr;
 			}
 
-			/** check whether there is at least one entries */
-			bool IsValid() const
+			/** enumerate all possible values */
+			template<typename FUNC>
+			decltype(auto) ForEachEnumValue(FUNC const& func) const
 			{
-				return
-					(names.size() == values.size()) &&
-					(names.size() > 0);
+				using L = meta::LambdaInfo<FUNC, T>;
+
+				for (EnumMetaDataEntry<T> const & entry : entries)
+				{
+					if constexpr (L::convertible_to_bool)
+					{
+						if (decltype(auto) result = func(entry.value))
+							return result;
+					}
+					else
+					{
+						func(entry.value);
+					}
+				}
+
+				if constexpr (L::convertible_to_bool)
+					return typename L::result_type {};
 			}
 
 		public:
 
-			std::vector<T> values;
-			std::vector<char const*> names;
+			/** the enum entries info */
+			std::vector<EnumMetaDataEntry<T>> entries;
 		};
 
 		/**

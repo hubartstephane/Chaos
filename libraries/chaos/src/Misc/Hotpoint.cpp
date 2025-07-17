@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	static EnumTools::EnumMetaData<Hotpoint> const Hotpoint_metadata =
+	static EnumMetaData<Hotpoint> const Hotpoint_metadata =
 	{
 		{ Hotpoint::TOP, "top" },
 		{ Hotpoint::BOTTOM, "bottom" },
@@ -12,7 +12,7 @@ namespace chaos
 		{ Hotpoint::CENTER, "center" }
 	};
 
-	static EnumTools::EnumBitmaskMetaData<Hotpoint> const Hotpoint_bitmask_metadata =
+	static EnumBitmaskMetaData<Hotpoint> const Hotpoint_bitmask_metadata =
 	{
 		{Hotpoint::LEFT, Hotpoint::RIGHT},
 		{Hotpoint::TOP, Hotpoint::BOTTOM}

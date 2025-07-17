@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	static EnumTools::EnumMetaData<Edge> const Edge_metadata =
+	static EnumMetaData<Edge> const Edge_metadata =
 	{
 		{ Edge::TOP, "top" },
 		{ Edge::RIGHT, "right" },

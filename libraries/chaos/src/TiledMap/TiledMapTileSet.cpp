@@ -5,7 +5,7 @@ namespace chaos
 {
 	namespace TiledMap
 	{
-		static EnumTools::EnumMetaData<TileSetOrientation> const TileSetOrientation_metadata = {
+		static EnumMetaData<TileSetOrientation> const TileSetOrientation_metadata = {
 			{ TileSetOrientation::ISOMETRIC, "isometric" },
 			{ TileSetOrientation::ORTHOGONAL, "orthogonal" } // default
 		};

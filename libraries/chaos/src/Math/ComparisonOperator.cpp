@@ -4,7 +4,7 @@
 namespace chaos
 {
 
-	static EnumTools::EnumMetaData<ComparisonOperator> const ComparisonOperator_metadata =
+	static EnumMetaData<ComparisonOperator> const ComparisonOperator_metadata =
 	{
 		{ ComparisonOperator::NEVER, "NEVER" },
 		{ ComparisonOperator::ALWAYS, "ALWAYS" },

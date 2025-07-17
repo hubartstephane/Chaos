@@ -4,7 +4,7 @@
 
 namespace chaos
 {
-	static EnumTools::EnumMetaData<KeyModifier> const KeyModifier_metadata =
+	static EnumMetaData<KeyModifier> const KeyModifier_metadata =
 	{
 		{ KeyModifier::None, "None" },
 		{ KeyModifier::Shift, "Shift" },

@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	static EnumTools::EnumMetaData<ImGuiWindowStyle> const ImGuiWindowStyle_metadata =
+	static EnumMetaData<ImGuiWindowStyle> const ImGuiWindowStyle_metadata =
 	{
 		{ ImGuiWindowStyle::Dark, "Dark" },
 		{ ImGuiWindowStyle::Light, "Light" },

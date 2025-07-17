@@ -37,7 +37,7 @@ public:
 	std::string name;
 };
 
-static EnumTools::EnumMetaData<Truc> const Truc_metadata =
+static EnumMetaData<Truc> const Truc_metadata =
 {
 	{ Truc::Truc1, "Truc1" },
 	{ Truc::Truc2, "Truc2" },

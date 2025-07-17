@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	static EnumTools::EnumMetaData<TextAlignment> const TextAlignment_metadata =
+	static EnumMetaData<TextAlignment> const TextAlignment_metadata =
 	{
 		{ TextAlignment::LEFT, "left" },
 		{ TextAlignment::RIGHT, "right" },

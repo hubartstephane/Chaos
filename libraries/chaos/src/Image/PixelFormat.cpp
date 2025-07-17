@@ -8,7 +8,7 @@ namespace chaos
 	// PixelFormat methods
 	// ==============================================================================================
 
-	static EnumTools::EnumMetaData<PixelComponentType> const PixelComponentType_metadata =
+	static EnumMetaData<PixelComponentType> const PixelComponentType_metadata =
 	{
 		{ PixelComponentType::UNKNOWN, "UNKNOWN" },
 		{ PixelComponentType::UNSIGNED_CHAR, "UNSIGNED_CHAR" },

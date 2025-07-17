@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	static EnumTools::EnumMetaData<WrapMode> const WrapMode_metadata =
+	static EnumMetaData<WrapMode> const WrapMode_metadata =
 	{
 		{ WrapMode::NONE, "NONE" },
 		{ WrapMode::CLAMP, "CLAMP" },

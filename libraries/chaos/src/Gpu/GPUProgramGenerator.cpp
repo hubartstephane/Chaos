@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	static EnumTools::EnumMetaData<ShaderType> const ShaderType_metadata =
+	static EnumMetaData<ShaderType> const ShaderType_metadata =
 	{
 		{ ShaderType::ANY, "any" },
 		{ ShaderType::VERTEX, "vertex" },

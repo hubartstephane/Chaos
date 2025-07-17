@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	static EnumTools::EnumBitmaskMetaData<ImGuiObjectFlags> const ImGuiObjectFlags_bitmask_metadata =
+	static EnumBitmaskMetaData<ImGuiObjectFlags> const ImGuiObjectFlags_bitmask_metadata =
 	{
 		{ ImGuiObjectFlags::FullViewport, ImGuiObjectFlags::FloatingWindow, ImGuiObjectFlags::PopupModalWindow, ImGuiObjectFlags::PopupWindow }
 	};

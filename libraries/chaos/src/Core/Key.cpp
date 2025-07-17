@@ -8,7 +8,7 @@ namespace chaos
 	// MouseButton implementation
 	// -------------------------------------------------------------------
 
-	static EnumTools::EnumMetaData<MouseButton> const MouseButton_metadata =
+	static EnumMetaData<MouseButton> const MouseButton_metadata =
 	{
 		{ MouseButton::BUTTON_1, "MOUSE_BUTTON_1" },
 		{ MouseButton::BUTTON_2, "MOUSE_BUTTON_2" },
@@ -26,7 +26,7 @@ namespace chaos
 	// GamepadButton implementation
 	// -------------------------------------------------------------------
 
-	static EnumTools::EnumMetaData<GamepadButton> const GamepadButton_metadata =
+	static EnumMetaData<GamepadButton> const GamepadButton_metadata =
 	{
 		{ GamepadButton::A, "GAMEPAD_A" },
 		{ GamepadButton::B, "GAMEPAD_B" },
@@ -55,7 +55,7 @@ namespace chaos
 
 	#define CHAOS_KEYBOARD_DEF(KEY) { KeyboardButton::KEY, #KEY }
 
-	static EnumTools::EnumMetaData<KeyboardButton> const KeyboardButton_metadata =
+	static EnumMetaData<KeyboardButton> const KeyboardButton_metadata =
 	{
 		CHAOS_KEYBOARD_DEF(SPACE),
 		CHAOS_KEYBOARD_DEF(APOSTROPHE),
@@ -186,7 +186,7 @@ namespace chaos
 	// GamepadAxis implementation
 	// -------------------------------------------------------------------
 
-	static EnumTools::EnumMetaData<GamepadAxis> const GamepadAxis_metadata =
+	static EnumMetaData<GamepadAxis> const GamepadAxis_metadata =
 	{
 		{ GamepadAxis::UNKNOWN, "UNKNOWN" },
 		{ GamepadAxis::LEFT_AXIS_X, "LEFT_AXIS_X" },
@@ -204,7 +204,7 @@ namespace chaos
 	// GamepadStick implementation
 	// -------------------------------------------------------------------
 
-	static EnumTools::EnumMetaData<GamepadStick> const GamepadStick_metadata =
+	static EnumMetaData<GamepadStick> const GamepadStick_metadata =
 	{
 		{ GamepadStick::UNKNOWN, "UNKNOWN" },
 		{ GamepadStick::LEFT_STICK, "LEFT_STICK" },
@@ -217,7 +217,7 @@ namespace chaos
 	// KeyType implementation
 	// -------------------------------------------------------------------
 
-	static EnumTools::EnumMetaData<KeyType> const KeyType_metadata =
+	static EnumMetaData<KeyType> const KeyType_metadata =
 	{
 		{ KeyType::UNKNOWN, "UNKNOWN" },
 		{ KeyType::KEYBOARD, "KEYBOARD" },

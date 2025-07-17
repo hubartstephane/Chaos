@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	static EnumTools::EnumMetaData<Axis> const Axis_metadata =
+	static EnumMetaData<Axis> const Axis_metadata =
 	{
 		{ Axis::AXIS_X, "axis_x" },
 		{ Axis::AXIS_Y, "axis_y" },

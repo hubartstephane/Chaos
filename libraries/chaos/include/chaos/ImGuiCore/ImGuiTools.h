@@ -103,7 +103,7 @@ namespace chaos
 		{
 			assert(std::is_enum_v<T> && ImGuiTools::HasEnumMetaData<T>);
 
-			if (EnumTools::EnumMetaData<T> const* metadata = GetEnumMetaData(boost::mpl::identity<T>()))
+			if (EnumMetaData<T> const* metadata = GetEnumMetaData(boost::mpl::identity<T>()))
 			{
 				if constexpr (IsEnumBitmask<T>)
 				{
@@ -129,7 +129,7 @@ namespace chaos
 									{
 										value |= metadata->values[i]; // invert bit value
 
-										if (EnumTools::EnumBitmaskMetaData<T> const* bitmask_metadata = GetEnumBitmaskMetaData(boost::mpl::identity<T>()))
+										if (EnumBitmaskMetaData<T> const* bitmask_metadata = GetEnumBitmaskMetaData(boost::mpl::identity<T>()))
 										{
 											bitmask_metadata->ForEachIncompatibleValue(metadata->values[i], [&value](T other_value)
 											{

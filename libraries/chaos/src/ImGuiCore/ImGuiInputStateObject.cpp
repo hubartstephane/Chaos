@@ -3,30 +3,37 @@
 
 namespace chaos
 {
-	void ImGuiInputStateObject::OnDrawImGuiContent(Window * window)
+	template<typename ENUM_TYPE, typename GET_KEY_STATE_FUNC>
+	void ImGuiInputStateObject::DisplayKeyStates(char const * title, char const * table_title, GET_KEY_STATE_FUNC GetKeyStateFunc, bool hide_irrelevant_state)
 	{
-		auto DisplayKeyStates = [](char const * title, char const * table_title, auto key_min, auto key_max, auto GetKeyStateFunc)
+		EnumMetaData<ENUM_TYPE> const * meta = GetEnumMetaData(boost::mpl::identity<ENUM_TYPE>());
+		if (meta == nullptr)
+			return;
+
+		ImGui::SeparatorText(title);
+
+		WithImGuiInputTable(table_title, [&]()
 		{
-			ImGui::SeparatorText(title);
-
-			WithImGuiInputTable(table_title, [key_min, key_max, &GetKeyStateFunc]()
+			meta->ForEachEnumValue([&](ENUM_TYPE key)
 			{
-				for (auto key = key_min ; key <= key_max ; key = (decltype(key))(int(key) + 1)) // not the better way to increment an enum
+				if (ButtonState const * button_state = GetKeyStateFunc(key))
 				{
-					if (ButtonState const * button_state = GetKeyStateFunc(key))
-					{
-						// do not bother display keys up for more than 10s
+					// do not bother display keys up for more than 10s
+					if (hide_irrelevant_state)
 						if (!button_state->GetValue() && button_state->GetSameValueTimer() > 10.0f)
-							continue;
+							return;
 
-						DisplayImGuiKeyInfo(key, *button_state);
-					}
+					DisplayImGuiKeyInfo(key, *button_state);
 				}
 			});
-		};
+		});
+	};
 
-		DisplayKeyStates("Mouse", "Mouse Table", MouseButton::BUTTON_1, MouseButton::BUTTON_8, &KeyboardState::GetMouseButtonState);
-		DisplayKeyStates("Keyboard", "Keyboard Table", KeyboardButton::SPACE, KeyboardButton::MENU, &KeyboardState::GetKeyboardButtonState);
+
+	void ImGuiInputStateObject::OnDrawImGuiContent(Window * window)
+	{
+		DisplayKeyStates<MouseButton>("Mouse", "Mouse Table", &KeyboardState::GetMouseButtonState, false);
+		DisplayKeyStates<KeyboardButton>("Keyboard", "Keyboard Table", &KeyboardState::GetKeyboardButtonState, true);
 	}
 
 }; // namespace chaos

@@ -11,54 +11,48 @@ namespace chaos
 
 	std::array<ButtonState, GLFW_MOUSE_BUTTON_LAST + 1> KeyboardAndMouseState::mouse_button_state;
 
-	void KeyboardAndMouseState::SetKeyboardButtonState(KeyboardButton key, bool value)
+	void KeyboardAndMouseState::SetKeyState(Key key, bool value)
 	{
-		if (key != KeyboardButton::UNKNOWN)
+		if (key.IsKeyboardKey())
 		{
-			int key_index = int(key);
-			if (key_index >= 0 && key_index < keyboard_state.size())
-				keyboard_state[key_index].SetValue(value);
+			if (key != KeyboardButton::UNKNOWN)
+			{
+				int key_index = int(key.GetKeyboardButton());
+				if (key_index >= 0 && key_index < keyboard_state.size())
+					keyboard_state[key_index].SetValue(value);
+			}
 		}
-	}
-
-	void KeyboardAndMouseState::SetMouseButtonState(MouseButton key, bool value)
-	{
-		if (key != MouseButton::UNKNOWN)
+		else if (key.IsMouseKey())
 		{
-			int key_index = int(key);
-			if (key_index >= 0 && key_index < mouse_button_state.size())
-				mouse_button_state[key_index].SetValue(value);
+			if (key != MouseButton::UNKNOWN)
+			{
+				int key_index = int(key.GetMouseButton());
+				if (key_index >= 0 && key_index < mouse_button_state.size())
+					mouse_button_state[key_index].SetValue(value);
+			}
 		}
-	}
-
-	ButtonState const* KeyboardAndMouseState::GetKeyboardButtonState(KeyboardButton key)
-	{
-		if (key != KeyboardButton::UNKNOWN)
-		{
-			int key_index = int(key);
-			if (key_index >= 0 && key_index < keyboard_state.size())
-				return &keyboard_state[key_index];
-		}
-		return nullptr;
-	}
-
-	ButtonState const* KeyboardAndMouseState::GetMouseButtonState(MouseButton key)
-	{
-		if (key != MouseButton::UNKNOWN)
-		{
-			int key_index = int(key);
-			if (key_index >= 0 && key_index < mouse_button_state.size())
-				return &mouse_button_state[key_index];
-		}
-		return nullptr;
 	}
 
 	ButtonState const * KeyboardAndMouseState::GetKeyState(Key key)
 	{
 		if (key.IsKeyboardKey())
-			return GetKeyboardButtonState(key.GetKeyboardButton());
-		if (key.IsMouseKey())
-			return GetMouseButtonState(key.GetMouseButton());
+		{
+			if (key != KeyboardButton::UNKNOWN)
+			{
+				int key_index = int(key.GetKeyboardButton());
+				if (key_index >= 0 && key_index < keyboard_state.size())
+					return &keyboard_state[key_index];
+			}
+		}
+		else if (key.IsMouseKey())
+		{
+			if (key != MouseButton::UNKNOWN)
+			{
+				int key_index = int(key.GetMouseButton());
+				if (key_index >= 0 && key_index < mouse_button_state.size())
+					return &mouse_button_state[key_index];
+			}
+		}
 		return nullptr;
 	}
 

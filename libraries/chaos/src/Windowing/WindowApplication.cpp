@@ -48,15 +48,16 @@ namespace chaos
 	{
 		WithGLFWContext(shared_context, [this, loop_condition_func]() // because during callbacks some GPU stuff may be called
 		{
-			double t1 = glfwGetTime();
+			FrameTimeManager * frame_time_manager = FrameTimeManager::GetInstance();
+			assert(frame_time_manager != nullptr);
 
 			while (!loop_condition_func || loop_condition_func())
 			{
 				glfwPollEvents();
 
-				double t2 = glfwGetTime();
+				frame_time_manager->SetCurrentFrameTime(glfwGetTime());
 
-				float real_delta_time = (float)(t2 - t1);
+				float real_delta_time = float(frame_time_manager->GetCurrentFrameDuration());
 				float delta_time      = ComputeEffectiveDeltaTime(real_delta_time);
 
 				// internal tick
@@ -83,8 +84,6 @@ namespace chaos
 					window->Tick(delta_time);
 					window->DrawWindow();
 				});
-				// update time
-				t1 = t2;
 			}
 		});
 	}

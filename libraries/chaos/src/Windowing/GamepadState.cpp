@@ -3,10 +3,6 @@
 
 namespace chaos
 {
-	//
-	// GamepadState functions
-	//
-
 	void GamepadState::Clear()
 	{
 		for (ButtonState& b : buttons)

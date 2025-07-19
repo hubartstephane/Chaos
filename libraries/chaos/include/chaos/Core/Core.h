@@ -46,6 +46,7 @@
 #include "chaos/Core/Tag.h"
 #include "chaos/Core/NameFilter.h"
 #include "chaos/Core/GlobalVariables.h"
+#include "chaos/Core/FrameTimeManager.h"
 #include "chaos/Core/Key.h"
 #include "chaos/Core/KeyboardLayout.h"
 #include "chaos/Core/KeyboardLayoutConversion.h"

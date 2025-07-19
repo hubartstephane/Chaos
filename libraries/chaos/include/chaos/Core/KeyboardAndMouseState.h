@@ -2,15 +2,15 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class KeyboardState;
+	class KeyboardAndMouseState;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* KeyboardState
+	* KeyboardAndMouseState
 	*/
 
-	class CHAOS_API KeyboardState
+	class CHAOS_API KeyboardAndMouseState
 	{
 		friend class Window;
 		friend class WindowApplication;
@@ -20,9 +20,9 @@ namespace chaos
 		/** get the state of a mouse or keyboard state */
 		static ButtonState const * GetKeyState(Key key);
 		/** get the state of a keyboard key */
-		static ButtonState const* GetKeyboardButtonState(KeyboardButton key);
+		static ButtonState const * GetKeyboardButtonState(KeyboardButton key);
 		/** get the state of a mouse key */
-		static ButtonState const* GetMouseButtonState(MouseButton key);
+		static ButtonState const * GetMouseButtonState(MouseButton key);
 
 	protected:
 

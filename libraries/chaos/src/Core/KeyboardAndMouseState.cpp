@@ -4,14 +4,14 @@
 namespace chaos
 {
 	//
-	// KeyboardState
+	// KeyboardAndMouseState
 	//
 
-	std::array<ButtonState, GLFW_KEY_LAST> KeyboardState::keyboard_state;
+	std::array<ButtonState, GLFW_KEY_LAST> KeyboardAndMouseState::keyboard_state;
 
-	std::array<ButtonState, GLFW_MOUSE_BUTTON_LAST + 1> KeyboardState::mouse_button_state;
+	std::array<ButtonState, GLFW_MOUSE_BUTTON_LAST + 1> KeyboardAndMouseState::mouse_button_state;
 
-	void KeyboardState::SetKeyboardButtonState(KeyboardButton key, int action)
+	void KeyboardAndMouseState::SetKeyboardButtonState(KeyboardButton key, int action)
 	{
 		if (key != KeyboardButton::UNKNOWN)
 		{
@@ -21,7 +21,7 @@ namespace chaos
 		}
 	}
 
-	void KeyboardState::SetMouseButtonState(MouseButton key, int action)
+	void KeyboardAndMouseState::SetMouseButtonState(MouseButton key, int action)
 	{
 		if (key != MouseButton::UNKNOWN)
 		{
@@ -31,7 +31,7 @@ namespace chaos
 		}
 	}
 
-	ButtonState const* KeyboardState::GetKeyboardButtonState(KeyboardButton key)
+	ButtonState const* KeyboardAndMouseState::GetKeyboardButtonState(KeyboardButton key)
 	{
 		if (key != KeyboardButton::UNKNOWN)
 		{
@@ -42,7 +42,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	ButtonState const* KeyboardState::GetMouseButtonState(MouseButton key)
+	ButtonState const* KeyboardAndMouseState::GetMouseButtonState(MouseButton key)
 	{
 		if (key != MouseButton::UNKNOWN)
 		{
@@ -53,7 +53,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	ButtonState const * KeyboardState::GetKeyState(Key key)
+	ButtonState const * KeyboardAndMouseState::GetKeyState(Key key)
 	{
 		if (key.IsKeyboardKey())
 			return GetKeyboardButtonState(key.GetKeyboardButton());
@@ -62,7 +62,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	void KeyboardState::UpdateKeysTimerAccumulation(float delta_time)
+	void KeyboardAndMouseState::UpdateKeysTimerAccumulation(float delta_time)
 	{
 		for (ButtonState& button : keyboard_state)
 			button.UpdateTimerAccumulation(delta_time);

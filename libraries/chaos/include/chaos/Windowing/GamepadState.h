@@ -12,8 +12,6 @@ namespace chaos
 
 	class CHAOS_API GamepadState
 	{
-		CHAOS_GAMEPAD_ALL_FRIENDS
-
 		/** number of axis in a gamepad */
 		static constexpr size_t AXIS_COUNT = sizeof(meta::FakeInstance<GLFWgamepadstate>().axes) / sizeof(meta::FakeInstance<GLFWgamepadstate>().axes[0]);
 		/** number of button in a gamepad */
@@ -41,8 +39,6 @@ namespace chaos
 		size_t GetButtonCount() const;
 		/** returns the number of axis */
 		size_t GetAxisCount() const;
-
-	protected:
 
 		/** update all the values for the axis and buttons */
 		void UpdateAxisAndButtons(int stick_index, float delta_time, float dead_zone);

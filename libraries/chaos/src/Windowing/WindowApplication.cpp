@@ -482,7 +482,7 @@ namespace chaos
 		if (sound_manager != nullptr)
 			sound_manager->Tick(delta_time);
 		// update keyboard and mouse state
-		KeyboardState::UpdateKeysTimerAccumulation(delta_time);
+		KeyboardAndMouseState::UpdateKeysTimerAccumulation(delta_time);
 		return true;
 	}
 
@@ -925,7 +925,7 @@ namespace chaos
 	{
 		if (func("Log", &ImGuiWindow::CreateImGuiWindow<ImGuiLogObject>))
 			return true;
-		if (func("Input State", &ImGuiWindow::CreateImGuiWindow<ImGuiInputStateObject>))
+		if (func("Keyboard and Mouse State", &ImGuiWindow::CreateImGuiWindow<ImGuiKeyboardAndMouseStateObject>))
 			return true;
 		if (func("Gamepad", &ImGuiWindow::CreateImGuiWindow<ImGuiGamepadObject>))
 			return true;

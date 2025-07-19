@@ -1021,9 +1021,9 @@ protected:
 	void UpdateObjectPosition(chaos::KeyboardButton button, float delta_time, glm::vec3 const & factor)
 	{
 		static float SPEED = 5.0f;
-		if (chaos::KeyboardState::GetKeyboardButtonState(button)->IsPressed())
+		if (chaos::KeyboardAndMouseState::GetKeyboardButtonState(button)->IsPressed())
 		{
-			if (chaos::KeyboardState::GetKeyboardButtonState(chaos::KeyboardButton::LEFT_CONTROL)->IsPressed())
+			if (chaos::KeyboardAndMouseState::GetKeyboardButtonState(chaos::KeyboardButton::LEFT_CONTROL)->IsPressed())
 				position_object1 += SPEED * (float)(delta_time)* factor;
 			else
 				position_object2 += SPEED * (float)(delta_time)* factor;
@@ -1034,9 +1034,9 @@ protected:
 	{
 		static float SPEED = 1.0f;
 
-		if (chaos::KeyboardState::GetKeyboardButtonState(button)->IsPressed())
+		if (chaos::KeyboardAndMouseState::GetKeyboardButtonState(button)->IsPressed())
 		{
-			if (chaos::KeyboardState::GetKeyboardButtonState(chaos::KeyboardButton::LEFT_CONTROL)->IsPressed())
+			if (chaos::KeyboardAndMouseState::GetKeyboardButtonState(chaos::KeyboardButton::LEFT_CONTROL)->IsPressed())
 				rotation_object1 += SPEED * (float)(delta_time)* factor;
 			else
 				rotation_object2 += SPEED * (float)(delta_time)* factor;
@@ -1045,7 +1045,7 @@ protected:
 
 	void UpdateObjectType()
 	{
-		if (chaos::KeyboardState::GetKeyboardButtonState(chaos::KeyboardButton::LEFT_CONTROL)->IsPressed())
+		if (chaos::KeyboardAndMouseState::GetKeyboardButtonState(chaos::KeyboardButton::LEFT_CONTROL)->IsPressed())
 			prim_type_object1 = (PrimitiveType)(((int)prim_type_object1 + 1) % (int)PrimitiveType::PRIMITIVE_TYPE_COUNT);
 		else
 			prim_type_object2 = (PrimitiveType)(((int)prim_type_object2 + 1) % (int)PrimitiveType::PRIMITIVE_TYPE_COUNT);

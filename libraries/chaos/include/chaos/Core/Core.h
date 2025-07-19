@@ -51,7 +51,7 @@
 #include "chaos/Core/KeyboardLayoutConversion.h"
 #include "chaos/Core/InputMode.h"
 #include "chaos/Core/InputState.h"
-#include "chaos/Core/KeyboardState.h"
+#include "chaos/Core/KeyboardAndMouseState.h"
 #include "chaos/Core/DefaultKeyValue.h"
 #include "chaos/Core/KeyAction.h"
 #include "chaos/Core/KeyModifier.h"

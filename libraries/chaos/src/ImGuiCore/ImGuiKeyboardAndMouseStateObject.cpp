@@ -4,7 +4,7 @@
 namespace chaos
 {
 	template<typename ENUM_TYPE, typename GET_KEY_STATE_FUNC>
-	void ImGuiInputStateObject::DisplayKeyStates(char const * title, char const * table_title, GET_KEY_STATE_FUNC GetKeyStateFunc, bool hide_irrelevant_state)
+	void ImGuiKeyboardAndMouseStateObject::DisplayKeyStates(char const * title, char const * table_title, GET_KEY_STATE_FUNC GetKeyStateFunc, bool hide_irrelevant_state)
 	{
 		EnumMetaData<ENUM_TYPE> const * meta = GetEnumMetaData(boost::mpl::identity<ENUM_TYPE>());
 		if (meta == nullptr)
@@ -30,10 +30,10 @@ namespace chaos
 	};
 
 
-	void ImGuiInputStateObject::OnDrawImGuiContent(Window * window)
+	void ImGuiKeyboardAndMouseStateObject::OnDrawImGuiContent(Window * window)
 	{
-		DisplayKeyStates<MouseButton>("Mouse", "Mouse Table", &KeyboardState::GetMouseButtonState, false);
-		DisplayKeyStates<KeyboardButton>("Keyboard", "Keyboard Table", &KeyboardState::GetKeyboardButtonState, true);
+		DisplayKeyStates<MouseButton>("Mouse", "Mouse Table", &KeyboardAndMouseState::GetMouseButtonState, false);
+		DisplayKeyStates<KeyboardButton>("Keyboard", "Keyboard Table", &KeyboardAndMouseState::GetKeyboardButtonState, true);
 	}
 
 }; // namespace chaos

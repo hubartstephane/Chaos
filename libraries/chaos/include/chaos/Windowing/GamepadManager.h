@@ -53,19 +53,19 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		/* returns a status giving the change of button relative to previous frame */
 		ButtonStateChange GetButtonStateChange(GamepadButton button) const;
 		/** returns the button state */
-		bool IsButtonPressed(GamepadButton button, bool previous_frame = false) const;
+		bool IsButtonPressed(GamepadButton button, InputStateFrame frame = InputStateFrame::CURRENT) const;
 		/** returns the button state */
-		float GetAxisValue(GamepadAxis axis, bool previous_frame = false) const;
+		float GetAxisValue(GamepadAxis axis, InputStateFrame frame = InputStateFrame::CURRENT) const;
 		/** returns true whether there is a button that just has become pressed */
 		bool IsAnyButtonJustPressed() const;
 		/** returns true whether there is any pressed button */
-		bool IsAnyButtonPressed(bool previous_frame = false) const;
+		bool IsAnyButtonPressed(InputStateFrame frame = InputStateFrame::CURRENT) const;
 		/** returns true whether there is any axis in use */
-		bool IsAnyAxisAction(bool previous_frame = false) const;
+		bool IsAnyAxisAction(InputStateFrame frame = InputStateFrame::CURRENT) const;
 		/** returns true whenever a buttons is pressed or an axis is in action */
-		bool IsAnyAction(bool previous_frame = false) const;
+		bool IsAnyAction(InputStateFrame frame = InputStateFrame::CURRENT) const;
 		/** returns the direction of one stick (a combinaison of 2 axis) */
-		glm::vec2 GetStickValue(GamepadStick stick, bool previous_frame = false) const;
+		glm::vec2 GetStickValue(GamepadStick stick, InputStateFrame frame = InputStateFrame::CURRENT) const;
 		/** returns the number of buttons */
 		size_t GetButtonCount() const;
 		/** returns the number of axis */
@@ -126,19 +126,19 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		/* returns a status giving the change of button relative to previous frame */
 		ButtonStateChange GetButtonStateChange(GamepadButton button) const;
 		/** returns the button state */
-		bool IsButtonPressed(GamepadButton button, bool previous_frame = false) const;
+		bool IsButtonPressed(GamepadButton button, InputStateFrame frame = InputStateFrame::CURRENT) const;
 		/** returns the button state */
-		float GetAxisValue(GamepadAxis axis, bool previous_frame = false) const;
+		float GetAxisValue(GamepadAxis axis, InputStateFrame frame = InputStateFrame::CURRENT) const;
 		/** returns true whether there is a button that just has become pressed */
 		bool IsAnyButtonJustPressed() const;
 		/** returns true whether there is any pressed button */
-		bool IsAnyButtonPressed(bool previous_frame = false) const;
+		bool IsAnyButtonPressed(InputStateFrame frame = InputStateFrame::CURRENT) const;
 		/** returns true whether there is any axis in use */
-		bool IsAnyAxisAction(bool previous_frame = false) const;
+		bool IsAnyAxisAction(InputStateFrame frame = InputStateFrame::CURRENT) const;
 		/** returns true whenever a buttons is pressed or an axis is in action */
-		bool IsAnyAction(bool previous_frame = false) const;
+		bool IsAnyAction(InputStateFrame frame = InputStateFrame::CURRENT) const;
 		/** returns the direction of one stick (a combinaison of 2 axis) */
-		glm::vec2 GetStickValue(GamepadStick stick, bool previous_frame = false) const;
+		glm::vec2 GetStickValue(GamepadStick stick, InputStateFrame frame = InputStateFrame::CURRENT) const;
 		/** returns the number of buttons */
 		size_t GetButtonCount() const;
 		/** returns the number of axis */
@@ -258,19 +258,19 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		/* returns a status giving the change of button relative to previous frame */
 		ButtonStateChange GetButtonStateChange(GamepadButton button) const;
 		/** returns the button state */
-		bool IsButtonPressed(GamepadButton button, bool previous_frame = false) const;
+		bool IsButtonPressed(GamepadButton button, InputStateFrame frame = InputStateFrame::CURRENT) const;
 		/** returns the button state */
-		float GetAxisValue(GamepadAxis axis, bool previous_frame = false) const;
+		float GetAxisValue(GamepadAxis axis, InputStateFrame frame = InputStateFrame::CURRENT) const;
 		/** returns true whether there is a button that just has become pressed */
 		bool IsAnyButtonJustPressed() const;
 		/** returns true whether there is any pressed button */
-		bool IsAnyButtonPressed(bool previous_frame = false) const;
+		bool IsAnyButtonPressed(InputStateFrame frame = InputStateFrame::CURRENT) const;
 		/** returns true whether there is any axis in use */
-		bool IsAnyAxisAction(bool previous_frame = false) const;
+		bool IsAnyAxisAction(InputStateFrame frame = InputStateFrame::CURRENT) const;
 		/** returns true whenever a buttons is pressed or an axis is in action */
-		bool IsAnyAction(bool previous_frame = false) const;
+		bool IsAnyAction(InputStateFrame frame = InputStateFrame::CURRENT) const;
 		/** returns the direction of one stick (a combinaison of 2 axis) */
-		glm::vec2 GetStickValue(GamepadStick stick, bool previous_frame = false) const;
+		glm::vec2 GetStickValue(GamepadStick stick, InputStateFrame frame = InputStateFrame::CURRENT) const;
 		/** returns the number of buttons */
 		size_t GetButtonCount() const;
 		/** returns the number of axis */

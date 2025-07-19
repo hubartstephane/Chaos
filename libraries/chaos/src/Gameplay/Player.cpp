@@ -176,14 +176,14 @@ namespace chaos
 			left_stick_position = lsp;
 		else
 		{
-			if (gamepad_state->IsButtonPressed(GamepadButton::DPAD_LEFT, false))
+			if (gamepad_state->IsButtonPressed(GamepadButton::DPAD_LEFT, InputStateFrame::CURRENT))
 				left_stick_position.x = -1.0f;
-			else if (gamepad_state->IsButtonPressed(GamepadButton::DPAD_RIGHT, false))
+			else if (gamepad_state->IsButtonPressed(GamepadButton::DPAD_RIGHT, InputStateFrame::CURRENT))
 				left_stick_position.x = 1.0f;
 
-			if (gamepad_state->IsButtonPressed(GamepadButton::DPAD_UP, false))
+			if (gamepad_state->IsButtonPressed(GamepadButton::DPAD_UP, InputStateFrame::CURRENT))
 				left_stick_position.y = +1.0f;
-			else if (gamepad_state->IsButtonPressed(GamepadButton::DPAD_DOWN, false))
+			else if (gamepad_state->IsButtonPressed(GamepadButton::DPAD_DOWN, InputStateFrame::CURRENT))
 				left_stick_position.y = -1.0f;
 		}
 
@@ -345,17 +345,17 @@ namespace chaos
 		return false;
 	}
 
-    bool Player::DoCheckKeyPressed(Key button, bool previous_frame)
+    bool Player::DoCheckKeyPressed(Key button, InputStateFrame frame)
     {
 		// gamepad input
 		if (button.IsGamepadKey())
 		{
 			if (gamepad != nullptr)
-				return gamepad->IsButtonPressed(button.GetGamepadButton(), previous_frame);
+				return gamepad->IsButtonPressed(button.GetGamepadButton(), frame);
 			return false;
 		}
 		// super call
-		return InputEventReceiverInterface::DoCheckKeyPressed(button, previous_frame);
+		return InputEventReceiverInterface::DoCheckKeyPressed(button, frame);
     }
 
 	// =================================================

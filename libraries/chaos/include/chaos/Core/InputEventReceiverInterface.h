@@ -24,9 +24,9 @@ namespace chaos
 		InputMode GetInputMode() const { return input_mode; }
 
 		/** check whether a key is pressed. Change input mode according to success */
-		bool CheckKeyPressed(Key key, bool previous_frame = false);
+		bool CheckKeyPressed(Key key, InputStateFrame frame = InputStateFrame::CURRENT);
 		/** check whether a key in a set is pressed */
-		bool CheckKeyPressed(Key const* keys, bool previous_frame = false);
+		bool CheckKeyPressed(Key const* keys, InputStateFrame frame = InputStateFrame::CURRENT);
 
 		/** called whenever the mouse is moved */
 		bool OnMouseMove(glm::vec2 const & delta);
@@ -65,7 +65,7 @@ namespace chaos
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode);
 
 		/** internal method to check whether a button is pressed */
-		virtual bool DoCheckKeyPressed(Key key, bool previous_frame);
+		virtual bool DoCheckKeyPressed(Key key, InputStateFrame frame);
 
 	protected:
 

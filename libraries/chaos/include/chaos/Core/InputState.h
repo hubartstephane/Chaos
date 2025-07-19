@@ -3,6 +3,7 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	enum class ButtonStateChange;
+	enum class InputStateFrame;
 
 	template<typename T>
 	class InputState;
@@ -18,16 +19,21 @@ namespace chaos
 
 	enum class CHAOS_API ButtonStateChange : int
 	{
-		/** unknown value */
 		NONE = 0,
-		/** button status change */
 		STAY_RELEASED = 1,
-		/** button status change */
 		STAY_PRESSED = 2,
-		/** button status change */
 		BECOME_RELEASED = 3,
-		/** button status change */
 		BECOME_PRESSED = 4
+	};
+
+	/**
+	* InputStateFrame
+	*/
+
+	enum class CHAOS_API InputStateFrame : int
+	{
+		CURRENT,
+		PREVIOUS
 	};
 
 	/**
@@ -42,9 +48,9 @@ namespace chaos
 		/** get the timer for the same value */
 		float GetSameValueTimer() const { return same_value_timer; }
 		/** get the value */
-		T GetValue(bool previous_frame = false) const
+		T GetValue(InputStateFrame frame = InputStateFrame::CURRENT) const
 		{
-			return (previous_frame) ? previous_value : value;
+			return (frame == InputStateFrame::CURRENT) ? value : previous_value;
 		}
 		/** clear the input */
 		void Clear()
@@ -77,7 +83,7 @@ namespace chaos
 		void UpdateTimerAccumulation(float delta_time);
 
 		/** whether the button is pressed */
-		bool IsPressed(bool previous_frame = false) const;
+		bool IsPressed(InputStateFrame frame = InputStateFrame::CURRENT) const;
 		/** whether the button has just been pressed */
 		bool IsJustPressed() const;
 		/** whether the button has just been released */

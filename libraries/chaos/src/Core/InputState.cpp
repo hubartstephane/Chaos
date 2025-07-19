@@ -28,25 +28,25 @@ namespace chaos
 	}
 
 
-	bool ButtonState::IsPressed(bool previous_frame) const
+	bool ButtonState::IsPressed(InputStateFrame frame) const
 	{
-		return GetValue(previous_frame);
+		return GetValue(frame);
 	}
 
 	bool ButtonState::IsJustPressed() const
 	{
-		return IsPressed(false) && !IsPressed(true);
+		return IsPressed(InputStateFrame::CURRENT) && !IsPressed(InputStateFrame::PREVIOUS);
 	}
 
 	bool ButtonState::IsJustReleased() const
 	{
-		return !IsPressed(false) && IsPressed(true);
+		return !IsPressed(InputStateFrame::CURRENT) && IsPressed(InputStateFrame::PREVIOUS);
 	}
 
 	ButtonStateChange ButtonState::GetStateChange() const
 	{
-		bool current_state = IsPressed(false);
-		bool previous_state = IsPressed(true);
+		bool current_state = IsPressed(InputStateFrame::CURRENT);
+		bool previous_state = IsPressed(InputStateFrame::PREVIOUS);
 
 		if (current_state == previous_state)
 			return (current_state) ? ButtonStateChange::STAY_PRESSED : ButtonStateChange::STAY_RELEASED;

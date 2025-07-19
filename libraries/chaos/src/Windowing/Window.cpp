@@ -639,7 +639,8 @@ namespace chaos
 	{
 		// update global state
 		MouseButton mouse_button = (MouseButton)button;
-		KeyboardAndMouseState::SetMouseButtonState(mouse_button, action);
+		bool key_value = (action == GLFW_PRESS || action == GLFW_REPEAT);
+		KeyboardAndMouseState::SetMouseButtonState(mouse_button, key_value);
 
 		// notify the application of the mouse state
 		WindowApplication::SetApplicationInputMode(InputMode::MOUSE);
@@ -670,7 +671,8 @@ namespace chaos
 
 		// update global keyboard state
 		KeyboardButton keyboard_button = KeyboardButton(keycode);
-		KeyboardAndMouseState::SetKeyboardButtonState(keyboard_button, action);
+		bool key_value = (action == GLFW_PRESS || action == GLFW_REPEAT);
+		KeyboardAndMouseState::SetKeyboardButtonState(keyboard_button, key_value);
 
 		// notify the application of the keyboard state
 		WindowApplication::SetApplicationInputMode(InputMode::KEYBOARD);

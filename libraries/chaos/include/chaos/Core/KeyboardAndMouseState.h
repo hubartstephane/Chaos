@@ -27,9 +27,9 @@ namespace chaos
 	protected:
 
 		/** change the state of a keyboard key (notification from a window)*/
-		static void SetKeyboardButtonState(KeyboardButton key, int action);
+		static void SetKeyboardButtonState(KeyboardButton key, bool value);
 		/** change the state of a mouse key (notification from a window)*/
-		static void SetMouseButtonState(MouseButton key, int action);
+		static void SetMouseButtonState(MouseButton key, bool value);
 		/** update the internal timers of keyboard states */
 		static void UpdateKeysTimerAccumulation(float delta_time);
 

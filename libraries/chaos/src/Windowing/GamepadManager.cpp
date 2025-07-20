@@ -42,6 +42,46 @@ namespace chaos
 		return gamepad_state.GetStickState(stick);
 	}
 
+	bool PhysicalGamepad::GetButtonValue(GamepadButton button) const
+	{
+		return GetButtonState(button).GetValue();
+	}
+
+	ButtonStatus PhysicalGamepad::GetButtonStatus(GamepadButton button) const
+	{
+		return GetButtonState(button).GetStatus();
+	}
+
+	bool PhysicalGamepad::IsButtonDown(GamepadButton button) const
+	{
+		return GetButtonState(button).IsDown();
+	}
+
+	bool PhysicalGamepad::IsButtonUp(GamepadButton button) const
+	{
+		return GetButtonState(button).IsUp();
+	}
+
+	bool PhysicalGamepad::IsButtonJustPressed(GamepadButton button) const
+	{
+		return GetButtonState(button).IsJustPressed();
+	}
+
+	bool PhysicalGamepad::IsButtonJustReleased(GamepadButton button) const
+	{
+		return GetButtonState(button).IsJustReleased();
+	}
+
+	float PhysicalGamepad::GetAxisValue(GamepadAxis axis) const
+	{
+		return GetAxisState(axis).GetValue();
+	}
+
+	glm::vec2 PhysicalGamepad::GetStickValue(GamepadStick stick) const
+	{
+		return GetStickState(stick).GetValue();
+	}
+
 	bool PhysicalGamepad::IsAnyButtonAction() const
 	{
 		if (!IsPresent())
@@ -69,75 +109,6 @@ namespace chaos
 			return false;
 		return gamepad_state.IsAnyButtonJustPressed();
 	}
-
-
-
-
-
-
-
-
-#if 0
-
-	size_t PhysicalGamepad::GetButtonCount() const
-	{
-		if (!IsPresent())
-			return 0;
-		return gamepad_state.GetButtonCount();
-	}
-
-	size_t PhysicalGamepad::GetAxisCount() const
-	{
-		if (!IsPresent())
-			return 0;
-		return gamepad_state.GetAxisCount();
-	}
-
-	ButtonStateChange PhysicalGamepad::GetButtonStateChange(GamepadButton button) const
-	{
-		if (!IsPresent())
-			return ButtonStateChange::NONE;
-		return gamepad_state.GetButtonStateChange(button);
-	}
-
-	bool PhysicalGamepad::IsButtonPressed(GamepadButton button) const
-	{
-		if (!IsPresent())
-			return false;
-		return gamepad_state.IsButtonPressed(button);
-	}
-
-	float PhysicalGamepad::GetAxisValue(GamepadAxis axis) const
-	{
-		if (!IsPresent())
-			return 0.0f;
-		return gamepad_state.GetAxisValue(axis);
-	}
-
-
-
-
-
-	glm::vec2 PhysicalGamepad::GetStickValue(GamepadStick stick) const
-	{
-		if (!IsPresent())
-			return glm::vec2(0.0f, 0.0f);
-		return gamepad_state.GetStickValue(stick);
-	}
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	void PhysicalGamepad::UpdateAxisAndButtons(float dead_zone)
 	{
@@ -218,6 +189,67 @@ namespace chaos
 			physical_device->user_gamepad = nullptr;
 	}
 
+	ButtonState Gamepad::GetButtonState(GamepadButton button) const
+	{
+		if (physical_device == nullptr)
+			return {};
+		return physical_device->GetButtonState(button);
+	}
+
+	AxisState Gamepad::GetAxisState(GamepadAxis axis) const
+	{
+		if (physical_device == nullptr)
+			return {};
+		return physical_device->GetAxisState(axis);
+	}
+
+	StickState Gamepad::GetStickState(GamepadStick stick) const
+	{
+		if (physical_device == nullptr)
+			return {};
+		return physical_device->GetStickState(stick);
+	}
+
+	bool Gamepad::GetButtonValue(GamepadButton button) const
+	{
+		return GetButtonState(button).GetValue();
+	}
+
+	ButtonStatus Gamepad::GetButtonStatus(GamepadButton button) const
+	{
+		return GetButtonState(button).GetStatus();
+	}
+
+	bool Gamepad::IsButtonDown(GamepadButton button) const
+	{
+		return GetButtonState(button).IsDown();
+	}
+
+	bool Gamepad::IsButtonUp(GamepadButton button) const
+	{
+		return GetButtonState(button).IsUp();
+	}
+
+	bool Gamepad::IsButtonJustPressed(GamepadButton button) const
+	{
+		return GetButtonState(button).IsJustPressed();
+	}
+
+	bool Gamepad::IsButtonJustReleased(GamepadButton button) const
+	{
+		return GetButtonState(button).IsJustReleased();
+	}
+
+	float Gamepad::GetAxisValue(GamepadAxis axis) const
+	{
+		return GetAxisState(axis).GetValue();
+	}
+
+	glm::vec2 Gamepad::GetStickValue(GamepadStick stick) const
+	{
+		return GetStickState(stick).GetValue();
+	}
+
 	bool Gamepad::IsAnyButtonAction() const
 	{
 		if (physical_device == nullptr)
@@ -244,79 +276,6 @@ namespace chaos
 		if (physical_device == nullptr)
 			return false;
 		return physical_device->IsAnyButtonJustPressed();
-	}
-
-
-	#if 0
-
-	size_t Gamepad::GetButtonCount() const
-	{
-		if (physical_device != nullptr)
-			return physical_device->GetButtonCount();
-		return 0;
-	}
-
-	size_t Gamepad::GetAxisCount() const
-	{
-		if (physical_device != nullptr)
-			return physical_device->GetAxisCount();
-		return 0;
-	}
-
-	ButtonStateChange Gamepad::GetButtonStateChange(GamepadButton button) const
-	{
-		if (physical_device != nullptr)
-			return physical_device->GetButtonStateChange(button);
-		return ButtonStateChange::NONE;
-	}
-
-	bool Gamepad::IsButtonPressed(GamepadButton button) const
-	{
-		if (physical_device != nullptr)
-			return physical_device->IsButtonPressed(button);
-		return 0;
-	}
-
-
-
-
-
-
-
-	glm::vec2 Gamepad::GetStickValue(GamepadStick stick_index) const
-	{
-		if (physical_device != nullptr)
-			return physical_device->GetStickValue(stick_index);
-		return glm::vec2(0.0f, 0.0f);
-	}
-
-
-
-
-
-
-
-#endif
-
-	ButtonState Gamepad::GetButtonState(GamepadButton button) const
-	{
-		if (physical_device == nullptr)
-			return {};
-		return physical_device->GetButtonState(button);
-	}
-
-	AxisState Gamepad::GetAxisState(GamepadAxis axis) const
-	{
-		if (physical_device == nullptr)
-			return {};
-		return physical_device->GetAxisState(axis);
-	}
-
-	StickState Gamepad::GetStickState(GamepadStick stick) const
-	{
-		if (physical_device == nullptr)
-			return {};
-		return physical_device->GetStickState(stick);
 	}
 
 	bool Gamepad::IsPresent() const

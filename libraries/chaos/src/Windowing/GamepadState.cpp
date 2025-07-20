@@ -106,6 +106,46 @@ namespace chaos
 		return {};
 	}
 
+	bool GamepadState::GetButtonValue(GamepadButton button) const
+	{
+		return GetButtonState(button).GetValue();
+	}
+
+	ButtonStatus GamepadState::GetButtonStatus(GamepadButton button) const
+	{
+		return GetButtonState(button).GetStatus();
+	}
+
+	bool GamepadState::IsButtonDown(GamepadButton button) const
+	{
+		return GetButtonState(button).IsDown();
+	}
+
+	bool GamepadState::IsButtonUp(GamepadButton button) const
+	{
+		return GetButtonState(button).IsUp();
+	}
+
+	bool GamepadState::IsButtonJustPressed(GamepadButton button) const
+	{
+		return GetButtonState(button).IsJustPressed();
+	}
+
+	bool GamepadState::IsButtonJustReleased(GamepadButton button) const
+	{
+		return GetButtonState(button).IsJustReleased();
+	}
+
+	float GamepadState::GetAxisValue(GamepadAxis axis) const
+	{
+		return GetAxisState(axis).GetValue();
+	}
+
+	glm::vec2 GamepadState::GetStickValue(GamepadStick stick) const
+	{
+		return GetStickState(stick).GetValue();
+	}
+
 	bool GamepadState::IsAnyButtonAction() const
 	{
 		for (ButtonState const& b : buttons)
@@ -134,132 +174,6 @@ namespace chaos
 				return true;
 		return false;
 	}
-
-
-
-
-
-
-
-	#if 0
-
-
-
-
-	ButtonStateChange GamepadState::GetButtonStateChange(GamepadButton button) const
-	{
-		// early exit
-		if (button == GamepadButton::UNKNOWN)
-			return ButtonStateChange::NONE;
-		// pseudo buttons
-		if (button == GamepadButton::LEFT_TRIGGER)
-		{
-			bool previous_state = (GetAxisValue(GamepadAxis::LEFT_TRIGGER) > 0);
-			bool current_state = (GetAxisValue(GamepadAxis::LEFT_TRIGGER) > 0);
-			if (current_state == previous_state)
-				return (current_state) ? ButtonStateChange::STAY_PRESSED : ButtonStateChange::STAY_RELEASED;
-			else
-				return (current_state) ? ButtonStateChange::BECOME_PRESSED : ButtonStateChange::BECOME_RELEASED;
-		}
-
-		if (button == GamepadButton::RIGHT_TRIGGER)
-		{
-			bool previous_state = (GetAxisValue(GamepadAxis::RIGHT_TRIGGER) > 0);
-			bool current_state = (GetAxisValue(GamepadAxis::RIGHT_TRIGGER) > 0);
-			if (current_state == previous_state)
-				return (current_state) ? ButtonStateChange::STAY_PRESSED : ButtonStateChange::STAY_RELEASED;
-			else
-				return (current_state) ? ButtonStateChange::BECOME_PRESSED : ButtonStateChange::BECOME_RELEASED;
-		}
-		// standard input
-		return buttons[(size_t)button].GetStateChange();
-	}
-
-	bool GamepadState::IsButtonPressed(GamepadButton button) const
-	{
-		// early exit
-		if (button == GamepadButton::UNKNOWN)
-			return false;
-		// pseudo buttons
-		if (button == GamepadButton::LEFT_TRIGGER)
-		{
-			float trigger_value = GetAxisValue(GamepadAxis::LEFT_TRIGGER);
-			if (trigger_value > 0)
-				return true;
-			return false;
-		}
-
-		if (button == GamepadButton::RIGHT_TRIGGER)
-		{
-			float trigger_value = GetAxisValue(GamepadAxis::RIGHT_TRIGGER);
-			if (trigger_value > 0)
-				return true;
-			return false;
-		}
-		// standard input
-		return buttons[(size_t)button].GetValue();
-	}
-
-	float GamepadState::GetAxisValue(GamepadAxis axis) const
-	{
-		if (axis == GamepadAxis::UNKNOWN)
-			return 0.0f;
-		return axes[(size_t)axis].GetValue();
-	}
-
-
-
-
-	glm::vec2 GamepadState::GetStickValue(GamepadStick stick) const
-	{	
-		// early exit
-		if (stick == GamepadStick::UNKNOWN)
-			return {0.0f, 0.0f};
-
-		// get value
-		auto GetClampedAxis = [&](GamepadAxis horizontal_axis, GamepadAxis vertical_axis)
-		{
-			glm::vec2 result = {0.0f, 0.0f};
-			result.x = GetAxisValue(horizontal_axis);
-			result.y = GetAxisValue(vertical_axis);
-
-			// if the length is greater than 1, renormalize it to 1.0f !
-			float sqr_len = result.x * result.x + result.y * result.y;
-			if (sqr_len > 1.0f)
-			{
-				float len = std::sqrt(sqr_len);
-				result.x /= len;
-				result.y /= len;
-			}
-			return result;
-		};
-
-		if (stick == GamepadStick::LEFT_STICK)
-		{
-			return GetClampedAxis(GamepadAxis::LEFT_AXIS_X, GamepadAxis::LEFT_AXIS_Y);
-		}
-		else if (stick == GamepadStick::RIGHT_STICK)
-		{
-			return GetClampedAxis(GamepadAxis::RIGHT_AXIS_X, GamepadAxis::RIGHT_AXIS_X);
-		}
-
-		return {0.0f, 0.0f};
-	}
-
-
-	#endif
-
-
-
-
-
-
-
-
-
-
-
-
 
 	void GamepadState::UpdateAxisAndButtons(int stick_index, float dead_zone)
 	{

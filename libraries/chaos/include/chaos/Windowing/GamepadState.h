@@ -26,6 +26,26 @@ namespace chaos
 		/** gets one stick state */
 		StickState GetStickState(GamepadStick stick) const;
 
+		/** get the button value */
+		bool GetButtonValue(GamepadButton button) const;
+		/** get the button state change */
+		ButtonStatus GetButtonStatus(GamepadButton button) const;
+
+		/** whether the button is up (press or repeat) */
+		bool IsButtonDown(GamepadButton button) const;
+		/** whether the button is up (released) */
+		bool IsButtonUp(GamepadButton button) const;
+		/** whether the button has just been pressed */
+		bool IsButtonJustPressed(GamepadButton button) const;
+		/** whether the button has just been released */
+		bool IsButtonJustReleased(GamepadButton button) const;
+
+		/** get the axis value */
+		float GetAxisValue(GamepadAxis axis) const;
+
+		/** get the stick value */
+		glm::vec2 GetStickValue(GamepadStick stick) const;
+
 		/** returns true whether there is any actioned button */
 		bool IsAnyButtonAction() const;
 		/** returns true whether there is any axis in use */
@@ -35,36 +55,6 @@ namespace chaos
 
 		/** returns true whether there is a button that just has become pressed */
 		bool IsAnyButtonJustPressed() const;
-
-
-
-
-
-#if 0
-
-
-		/* returns a status giving the change of button relative to previous frame */
-		ButtonStateChange GetButtonStateChange(GamepadButton button) const;
-		/** returns the button state */
-		bool IsButtonPressed(GamepadButton button) const;
-		/** returns the button state */
-		float GetAxisValue(GamepadAxis axis) const;
-
-		/** returns true whether there is any pressed button */
-		bool IsAnyButtonPressed() const;
-		/** returns true whether there is any axis in use */
-		bool IsAnyAxisAction() const;
-		/** returns true whenever a buttons is pressed or an axis is in action */
-		bool IsAnyAction() const;
-
-
-		/** returns the direction of one stick (a combinaison of 2 axis) */
-		glm::vec2 GetStickValue(GamepadStick stick) const;
-
-#endif
-
-
-
 
 		/** returns the number of buttons */
 		size_t GetButtonCount() const;

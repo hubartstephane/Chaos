@@ -2,7 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	enum class ButtonStateChange;
+	enum class ButtonStatus;
 
 	template<typename T>
 	class InputState;
@@ -14,10 +14,10 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* ButtonStateChange
+	* ButtonStatus
 	*/
 
-	enum class CHAOS_API ButtonStateChange : int
+	enum class CHAOS_API ButtonStatus : int
 	{
 		NONE = 0,
 		STAY_RELEASED = 1,
@@ -35,17 +35,17 @@ namespace chaos
 	{
 	public:
 
+		/** get the value */
+		T GetValue() const
+		{
+			return value;
+		}
 		/** get the timer for the same value */
 		float GetSameValueTimer() const
 		{
 			if (update_time < 0.0)
 				return 0.0f;
 			return float(FrameTimeManager::GetInstance()->GetCurrentFrameTime() - update_time);
-		}
-		/** get the value */
-		T GetValue() const
-		{
-			return value;
 		}
 		/** returns whether the state has been set at least set */
 		bool IsStateInitialized() const
@@ -89,7 +89,7 @@ namespace chaos
 		bool IsJustReleased() const;
 
 		/** get the button state change */
-		ButtonStateChange GetStateChange() const;
+		ButtonStatus GetStatus() const;
 	};
 
 	/**
@@ -111,7 +111,9 @@ namespace chaos
 		float max_value = +0.8f;
 	};
 
-
+	/**
+	* StickState: state for a 2D stick
+	*/
 
 	class CHAOS_API StickState : public InputState<glm::vec2>
 	{

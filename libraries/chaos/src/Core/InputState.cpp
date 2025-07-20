@@ -22,12 +22,12 @@ namespace chaos
 
 	bool ButtonState::IsDown() const
 	{
-		return GetValue();
+		return value;
 	}
 
 	bool ButtonState::IsUp() const
 	{
-		return !IsDown();
+		return !value;
 	}
 
 	bool ButtonState::IsJustPressed() const
@@ -44,23 +44,23 @@ namespace chaos
 			(GetSameValueTimer() == 0.0f);
 	}
 
-	ButtonStateChange ButtonState::GetStateChange() const
+	ButtonStatus ButtonState::GetStatus() const
 	{
 		float same_value_time = GetSameValueTimer();
 
-		if (IsDown())
+		if (value)
 		{
 			if (same_value_time == 0.0f)
-				return ButtonStateChange::BECOME_PRESSED;
+				return ButtonStatus::BECOME_PRESSED;
 			else
-				return ButtonStateChange::STAY_PRESSED;
+				return ButtonStatus::STAY_PRESSED;
 		}
-		else if (IsUp())
+		else
 		{
 			if (same_value_time == 0.0f)
-				return ButtonStateChange::BECOME_RELEASED;
+				return ButtonStatus::BECOME_RELEASED;
 			else
-				return ButtonStateChange::STAY_RELEASED;
+				return ButtonStatus::STAY_RELEASED;
 		}
 	}
 
@@ -110,7 +110,6 @@ namespace chaos
 				update_time = frame_time;
 
 			value = in_raw_value;
-
 		}
 	}
 

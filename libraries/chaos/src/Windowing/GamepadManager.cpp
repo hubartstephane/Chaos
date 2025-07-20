@@ -90,11 +90,11 @@ namespace chaos
 		return gamepad_state.GetStickValue(stick, frame);
 	}
 
-	void PhysicalGamepad::UpdateAxisAndButtons(float delta_time, float dead_zone)
+	void PhysicalGamepad::UpdateAxisAndButtons(float dead_zone)
 	{
 		if (!IsPresent())
 			return;
-		gamepad_state.UpdateAxisAndButtons(stick_index, delta_time, dead_zone);
+		gamepad_state.UpdateAxisAndButtons(stick_index, dead_zone);
 	}
 
 	Gamepad* PhysicalGamepad::CaptureDevice(GamepadCallbacks* in_callbacks)
@@ -427,7 +427,7 @@ namespace chaos
 			{
 				physical_gamepad->is_present = (glfwJoystickPresent(i) > 0);
 				if (physical_gamepad->is_present)
-					physical_gamepad->UpdateAxisAndButtons(0.0f, dead_zone);
+					physical_gamepad->UpdateAxisAndButtons(dead_zone);
 			}
 			physical_gamepads.push_back(physical_gamepad);
 		}
@@ -543,7 +543,7 @@ namespace chaos
 	{
 		// update physical stick state / handle disconnection
 		int unallocated_present_physical_device_count = 0;
-		UpdateAndUnconnectPhysicalGamepads(delta_time, unallocated_present_physical_device_count); // get the number of physical devices to bind
+		UpdateAndUnconnectPhysicalGamepads(unallocated_present_physical_device_count); // get the number of physical devices to bind
 
 		// try to give all logical device a physical device
 		if (unallocated_present_physical_device_count > 0)
@@ -600,7 +600,7 @@ namespace chaos
 		return true;
 	}
 
-	void GamepadManager::UpdateAndUnconnectPhysicalGamepads(float delta_time, int& unallocated_present_physical_device_count)
+	void GamepadManager::UpdateAndUnconnectPhysicalGamepads(int& unallocated_present_physical_device_count)
 	{
 		size_t count = physical_gamepads.size();
 		for (size_t i = 0; i < count; ++i)
@@ -616,7 +616,7 @@ namespace chaos
 
 			if (is_present)
 			{
-				physical_gamepad->UpdateAxisAndButtons(delta_time, dead_zone);
+				physical_gamepad->UpdateAxisAndButtons(dead_zone);
 
 				Gamepad* user_gamepad = physical_gamepad->user_gamepad;
 				if (user_gamepad != nullptr && user_gamepad->callbacks != nullptr)

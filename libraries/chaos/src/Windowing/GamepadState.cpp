@@ -142,7 +142,7 @@ namespace chaos
 		return result;
 	}
 
-	void GamepadState::UpdateAxisAndButtons(int stick_index, float delta_time, float dead_zone)
+	void GamepadState::UpdateAxisAndButtons(int stick_index, float dead_zone)
 	{
 		GLFWgamepadstate state;
 		glfwGetGamepadState(stick_index, &state);
@@ -157,13 +157,11 @@ namespace chaos
 			else if (i == (size_t)GamepadAxis::LEFT_AXIS_Y || i == (size_t)GamepadAxis::RIGHT_AXIS_Y)
 				value = -value;
 			axes[i].SetValue(value, dead_zone);
-			axes[i].UpdateTimerAccumulation(delta_time);
 		}
 
 		for (size_t i = 0 ; i < BUTTON_COUNT ; ++i)
 		{
 			buttons[i].SetValue(state.buttons[i] != 0);
-			buttons[i].UpdateTimerAccumulation(delta_time);
 		}
 	}
 

@@ -17,7 +17,7 @@ namespace chaos
 		/** update the time of current frame */
 		void SetCurrentFrameTime(double in_frame_time);
 		/** get the current frame time */
-		double GetFrameTime() const;
+		double GetCurrentFrameTime() const;
 
 		/** get the duration of last frame */
 		double GetCurrentFrameDuration() const;

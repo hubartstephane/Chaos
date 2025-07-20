@@ -87,15 +87,17 @@ namespace chaos
 
 	bool FPSViewController::CheckMouseInput(MouseButton button) const
 	{
-		if (ButtonState const* state = KeyboardAndMouseState::GetKeyState(button))
-			return state->IsPressed();
+		if (KeyboardAndMouseState const * keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance())
+			if (ButtonState const* state = keyboard_and_mouse_state->GetKeyState(button))
+				return state->IsPressed();
 		return false;
 	}
 
 	bool FPSViewController::CheckKeyboardInput(KeyboardButton button) const
 	{
-		if (ButtonState const* state = KeyboardAndMouseState::GetKeyState(button))
-			return state->IsPressed();
+		if (KeyboardAndMouseState const * keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance())
+			if (ButtonState const* state = keyboard_and_mouse_state->GetKeyState(button))
+				return state->IsPressed();
 		return false;
 	}
 

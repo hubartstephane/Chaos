@@ -46,17 +46,27 @@ namespace chaos
 	public:
 
 		/** get the timer for the same value */
-		float GetSameValueTimer() const { return same_value_timer; }
+		float GetSameValueTimer() const
+		{
+			if (update_time < 0.0)
+				return 0.0f;
+			return float(FrameTimeManager::GetInstance()->GetCurrentFrameTime() - update_time);
+		}
 		/** get the value */
 		T GetValue(InputStateFrame frame = InputStateFrame::CURRENT) const
 		{
-			return (frame == InputStateFrame::CURRENT) ? value : previous_value;
+			return (frame == InputStateFrame::CURRENT) ? value : previous_value; // should work event if state has never been set (because initialized to 0)
+		}
+		/** returns whether the state has been set at least set */
+		bool IsStateInitialized() const
+		{
+			return (update_time >= 0.0);
 		}
 		/** clear the input */
 		void Clear()
 		{
 			value = previous_value = T();
-			same_value_timer = 0.0f;
+			update_time = -1.0;
 		}
 
 	protected:
@@ -65,8 +75,9 @@ namespace chaos
 		T value = T();
 		/** the previous value of the stick */
 		T previous_value = T();
-		/** the duration for which the value is the same */
-		float same_value_timer = 0.0f;
+		/** time when the state has been updated */
+		double update_time = -1.0;
+
 	};
 
 	/**
@@ -79,8 +90,6 @@ namespace chaos
 
 		/** update the value */
 		void SetValue(bool in_value);
-		/** update the timer accumulator */
-		void UpdateTimerAccumulation(float delta_time);
 
 		/** whether the button is pressed */
 		bool IsPressed(InputStateFrame frame = InputStateFrame::CURRENT) const;
@@ -103,8 +112,6 @@ namespace chaos
 
 		/** update the value */
 		void SetValue(float in_raw_value, float dead_zone);
-		/** update the timer accumulator */
-		void UpdateTimerAccumulation(float delta_time);
 
 	protected:
 

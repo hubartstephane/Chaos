@@ -109,7 +109,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		~PhysicalGamepad() {}
 
 		/** update all the values for the axis and buttons */
-		void UpdateAxisAndButtons(float delta_time, float dead_zone);
+		void UpdateAxisAndButtons(float dead_zone);
 		/** called at unconnection to be sure input cannot be consulted anymore */
 		void ClearInputs();
 
@@ -326,7 +326,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		/** find a gamepad that is used by nobody */
 		PhysicalGamepad* FindUnallocatedPhysicalGamepad(GamepadCallbacks* in_callbacks);
 		/** update the physical devices and detect unconnections */
-		void UpdateAndUnconnectPhysicalGamepads(float delta_time, int& unallocated_present_physical_device_count);
+		void UpdateAndUnconnectPhysicalGamepads(int& unallocated_present_physical_device_count);
 		/** try to give a physical device to all unconnected logical device */
 		void GiveGamepadPhysicalDevices(int& unallocated_present_physical_device_count);
 		/** returns false if no more logical device to bound with */

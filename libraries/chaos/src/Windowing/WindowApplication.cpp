@@ -480,8 +480,6 @@ namespace chaos
 			main_clock->TickClock(delta_time);
 		if (sound_manager != nullptr)
 			sound_manager->Tick(delta_time);
-		// update keyboard and mouse state
-		KeyboardAndMouseState::UpdateKeysTimerAccumulation(delta_time);
 		return true;
 	}
 

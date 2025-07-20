@@ -41,7 +41,7 @@ namespace chaos
 		size_t GetAxisCount() const;
 
 		/** update all the values for the axis and buttons */
-		void UpdateAxisAndButtons(int stick_index, float delta_time, float dead_zone);
+		void UpdateAxisAndButtons(int stick_index, float dead_zone);
 		/** reset the content of the object */
 		void Clear();
 

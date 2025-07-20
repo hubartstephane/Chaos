@@ -10,23 +10,24 @@ namespace chaos
 
 	void ButtonState::SetValue(bool in_value)
 	{
-		previous_value = value;
-		value = in_value;
-	}
+		double frame_time = FrameTimeManager::GetInstance()->GetCurrentFrameTime();
 
-	void ButtonState::UpdateTimerAccumulation(float delta_time)
-	{
-		if (value != previous_value)
+		if (update_time < 0.0) // very first initialization: set both current and previous value to same
 		{
-			previous_value = value;
-			same_value_timer = 0.0f;
+			previous_value = in_value;
+			value = in_value;
+			update_time = frame_time;
 		}
-		else
+		else if (value != in_value)
 		{
-			same_value_timer += delta_time;
+			if (frame_time != update_time)
+			{
+				previous_value = value; // do not override previous_value if we are updating the button state in the same frame
+				update_time = frame_time;
+			}
+			value = in_value;
 		}
 	}
-
 
 	bool ButtonState::IsPressed(InputStateFrame frame) const
 	{
@@ -65,40 +66,52 @@ namespace chaos
 
 	void AxisState::SetValue(float in_raw_value, float dead_zone)
 	{
-		previous_value = value;
-		value = 0.0f;
+		assert(dead_zone >= 0.0f);
+		
+		if (in_raw_value < dead_zone && in_raw_value > -dead_zone) // apply dead zone to input
+			in_raw_value = 0.0f;
+		else
+			in_raw_value = std::clamp(in_raw_value, -1.0f, +1.0f); // clamp the raw value to -1 .. +1
 
-		// apply the dead zone
-		if (in_raw_value < dead_zone && in_raw_value > -dead_zone)
-			return;
-
-		// clamp the raw value to -1 .. +1
-		in_raw_value = std::clamp(in_raw_value, -1.0f, +1.0f);
-
-		// store raw value
+		// update min and max values
 		max_value = std::max(max_value, in_raw_value);
 		min_value = std::min(min_value, in_raw_value);
 
-		// apply dead zone and normalization
+		// normalize input
 		if (in_raw_value > 0.0f)
-			value = (in_raw_value - dead_zone) / (max_value - dead_zone);
+			in_raw_value = (in_raw_value - dead_zone) / (max_value - dead_zone);
 		else
-			value = -(in_raw_value + dead_zone) / (min_value + dead_zone);
-	}
+			in_raw_value = -(in_raw_value + dead_zone) / (min_value + dead_zone);
 
-	void AxisState::UpdateTimerAccumulation(float delta_time)
-	{
-		// update timer
-		// while floats are never equals (a small stick inclinaison change is detected immedialty),
-		// we only check if the sign change (or value become 0 or non 0)
-		bool reset_timer =
-			(value == 0.0f && previous_value != 0.0f) ||
-			(value != 0.0f && previous_value == 0.0f) ||
-			(value * previous_value < 0.0f);
-		if (reset_timer)
-			same_value_timer = 0.0f;
-		else
-			same_value_timer += delta_time;
+		double frame_time = FrameTimeManager::GetInstance()->GetCurrentFrameTime();
+
+		if (update_time < 0.0)  // very first initialization: set both current and previous value to same
+		{
+			previous_value = in_raw_value;
+			value = in_raw_value;
+			update_time = frame_time;
+		}
+		else 
+		{
+			auto GetAxisValueType = [](float value)
+			{
+				if (value == 0.0f)
+					return 0;
+				if (value < 0.0f)
+					return -1;
+				return 1;
+			};
+
+			if (GetAxisValueType(value) != GetAxisValueType(in_raw_value)) // checking for strict equality for float values is nonsense. just check for 'sign' equality
+			{
+				if (frame_time != update_time)
+				{
+					previous_value = value; // do not override previous_value if we are updating the button state in the same frame
+					update_time = frame_time;
+				}
+			}
+			value = in_raw_value;
+		}
 	}
 
 }; // namespace chaos

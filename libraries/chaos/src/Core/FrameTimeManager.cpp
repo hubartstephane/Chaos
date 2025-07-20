@@ -22,7 +22,7 @@ namespace chaos
 		}
 	}
 
-	double FrameTimeManager::GetFrameTime() const
+	double FrameTimeManager::GetCurrentFrameTime() const
 	{
 		if (current_frame_time < 0.0)
 			return 0.0;

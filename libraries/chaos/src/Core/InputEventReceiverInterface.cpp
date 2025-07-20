@@ -42,8 +42,9 @@ namespace chaos
 
 	bool InputEventReceiverInterface::DoCheckKeyPressed(Key key, InputStateFrame frame)
 	{
-		if (ButtonState const* state = KeyboardAndMouseState::GetKeyState(key))
-			return state->IsPressed(frame);
+		if (KeyboardAndMouseState const * keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance())
+			if (ButtonState const* state = keyboard_and_mouse_state->GetKeyState(key))
+				return state->IsPressed(frame);
 		return false;
 	}
 

@@ -3,14 +3,6 @@
 
 namespace chaos
 {
-	//
-	// KeyboardAndMouseState
-	//
-
-	std::array<ButtonState, GLFW_KEY_LAST> KeyboardAndMouseState::keyboard_state;
-
-	std::array<ButtonState, GLFW_MOUSE_BUTTON_LAST + 1> KeyboardAndMouseState::mouse_button_state;
-
 	void KeyboardAndMouseState::SetKeyState(Key key, bool value)
 	{
 		if (key.IsKeyboardKey())
@@ -33,7 +25,7 @@ namespace chaos
 		}
 	}
 
-	ButtonState const * KeyboardAndMouseState::GetKeyState(Key key)
+	ButtonState const * KeyboardAndMouseState::GetKeyState(Key key) const
 	{
 		if (key.IsKeyboardKey())
 		{
@@ -54,14 +46,6 @@ namespace chaos
 			}
 		}
 		return nullptr;
-	}
-
-	void KeyboardAndMouseState::UpdateKeysTimerAccumulation(float delta_time)
-	{
-		for (ButtonState& button : keyboard_state)
-			button.UpdateTimerAccumulation(delta_time);
-		for (ButtonState& button : mouse_button_state)
-			button.UpdateTimerAccumulation(delta_time);
 	}
 
 }; // namespace chaos

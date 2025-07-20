@@ -70,8 +70,8 @@ namespace chaos
 		if (gamepad_state == nullptr)
 			return;
 		// maybe a game/pause resume
-		if ((gamepad_state->GetButtonStateChange(GamepadButton::SPECIAL_LEFT) == ButtonStateChange::BECOME_PRESSED) ||
-			(gamepad_state->GetButtonStateChange(GamepadButton::SPECIAL_RIGHT) == ButtonStateChange::BECOME_PRESSED))
+		if ((gamepad_state->GetButtonState(GamepadButton::SPECIAL_LEFT).GetStateChange() == ButtonStateChange::BECOME_PRESSED) ||
+			(gamepad_state->GetButtonState(GamepadButton::SPECIAL_RIGHT).GetStateChange() == ButtonStateChange::BECOME_PRESSED))
 		{
 			Game* game = GetGame();
 			if (game != nullptr)
@@ -143,14 +143,14 @@ namespace chaos
 		// test whether the stick position can be overriden
 		glm::vec2 simulated_stick = glm::vec2(0.0f, 0.0f);
 
-		if (CheckKeyPressed(KeyboardButton::LEFT))
+		if (CheckKeyDown(KeyboardButton::LEFT))
 			simulated_stick.x -= 1.0f;
-		if (CheckKeyPressed(KeyboardButton::RIGHT))
+		if (CheckKeyDown(KeyboardButton::RIGHT))
 			simulated_stick.x += 1.0f;
 
-		if (CheckKeyPressed(KeyboardButton::DOWN))
+		if (CheckKeyDown(KeyboardButton::DOWN))
 			simulated_stick.y -= 1.0f;
-		if (CheckKeyPressed(KeyboardButton::UP))
+		if (CheckKeyDown(KeyboardButton::UP))
 			simulated_stick.y += 1.0f;
 
 		if (glm::length2(simulated_stick) > 0)
@@ -171,30 +171,30 @@ namespace chaos
 			SetInputMode(InputMode::GAMEPAD);
 
 		// cache the LEFT stick position (it is aliases with the DPAD)
-		glm::vec2 lsp = gamepad_state->GetStickValue(GamepadStick::LEFT_STICK);
+		glm::vec2 lsp = gamepad_state->GetStickState(GamepadStick::LEFT_STICK).GetValue();
 		if (glm::length2(lsp) > 0.0f)
 			left_stick_position = lsp;
 		else
 		{
-			if (gamepad_state->IsButtonPressed(GamepadButton::DPAD_LEFT, InputStateFrame::CURRENT))
+			if (gamepad_state->GetButtonState(GamepadButton::DPAD_LEFT).IsDown())
 				left_stick_position.x = -1.0f;
-			else if (gamepad_state->IsButtonPressed(GamepadButton::DPAD_RIGHT, InputStateFrame::CURRENT))
+			else if (gamepad_state->GetButtonState(GamepadButton::DPAD_RIGHT).IsDown())
 				left_stick_position.x = 1.0f;
 
-			if (gamepad_state->IsButtonPressed(GamepadButton::DPAD_UP, InputStateFrame::CURRENT))
+			if (gamepad_state->GetButtonState(GamepadButton::DPAD_UP).IsDown())
 				left_stick_position.y = +1.0f;
-			else if (gamepad_state->IsButtonPressed(GamepadButton::DPAD_DOWN, InputStateFrame::CURRENT))
+			else if (gamepad_state->GetButtonState(GamepadButton::DPAD_DOWN).IsDown())
 				left_stick_position.y = -1.0f;
 		}
 
 		// cache the RIGHT stick position
-		glm::vec2 rsp = gamepad_state->GetStickValue(GamepadStick::RIGHT_STICK);
+		glm::vec2 rsp = gamepad_state->GetStickState(GamepadStick::RIGHT_STICK).GetValue();
 		if (glm::length2(rsp) > 0.0f)
 			right_stick_position = rsp;
 
 		// cache the TRIGGERS
-		left_trigger  = gamepad_state->GetAxisValue(GamepadAxis::LEFT_TRIGGER);
-		right_trigger = gamepad_state->GetAxisValue(GamepadAxis::RIGHT_TRIGGER);
+		left_trigger  = gamepad_state->GetAxisState(GamepadAxis::LEFT_TRIGGER).GetValue();
+		right_trigger = gamepad_state->GetAxisState(GamepadAxis::RIGHT_TRIGGER).GetValue();
 	}
 
 	void Player::HandleInputs(float delta_time, GamepadState const* gamepad_state)
@@ -277,21 +277,21 @@ namespace chaos
 		invulnerability_timer = std::max(invulnerability_duration, 0.0f);
 	}
 
-    void Player::SetHealth(float in_value, bool in_increment)
-    {
-        // compute new life
-        float old_health = health;
-        float new_health = health;
+	void Player::SetHealth(float in_value, bool in_increment)
+	{
+		// compute new life
+		float old_health = health;
+		float new_health = health;
 
-        if (in_increment)
-            new_health += in_value;
-        else
-            new_health = in_value;
+		if (in_increment)
+			new_health += in_value;
+		else
+			new_health = in_value;
 
-        if (new_health < 0.0f)
-            new_health = 0.0f;
-        else if (new_health > max_health)
-            new_health = max_health;
+		if (new_health < 0.0f)
+			new_health = 0.0f;
+		else if (new_health > max_health)
+			new_health = max_health;
 
 		bool invulnerable = false;
 #if _DEBUG
@@ -307,20 +307,20 @@ namespace chaos
 				invulnerability_timer = std::max(invulnerability_duration, 0.0f);
 		}
 
-        // commit life lost
+		// commit life lost
 		if (!invulnerable || new_health > old_health)
 			health = new_health;
 		OnHealthChanged(old_health, new_health, invulnerable);
-    }
+	}
 
-    void Player::OnHealthChanged(float old_health, float new_health, bool invulnerable)
-    {
-        // special FX
-        if (old_health > new_health && !invulnerable)
-        {
+	void Player::OnHealthChanged(float old_health, float new_health, bool invulnerable)
+	{
+		// special FX
+		if (old_health > new_health && !invulnerable)
+		{
 			PlayHealthChangedEffects(old_health > new_health);
-        }
-    }
+		}
+	}
 
 	void Player::PlayHealthChangedEffects(bool health_lost)
 	{
@@ -345,18 +345,18 @@ namespace chaos
 		return false;
 	}
 
-    bool Player::DoCheckKeyPressed(Key button, InputStateFrame frame)
-    {
+	bool Player::DoCheckKeyDown(Key button) const
+	{
 		// gamepad input
 		if (button.IsGamepadKey())
 		{
-			if (gamepad != nullptr)
-				return gamepad->IsButtonPressed(button.GetGamepadButton(), frame);
-			return false;
+			if (gamepad == nullptr)
+				return false;
+			return gamepad->GetButtonState(button.GetGamepadButton()).IsDown();
 		}
 		// super call
-		return InputEventReceiverInterface::DoCheckKeyPressed(button, frame);
-    }
+		return InputEventReceiverInterface::DoCheckKeyDown(button);
+	}
 
 	// =================================================
 	// PlayerGamepadCallbacks

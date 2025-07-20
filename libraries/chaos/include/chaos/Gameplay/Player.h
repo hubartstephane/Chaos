@@ -119,7 +119,7 @@ namespace chaos
 		virtual void PlayHealthChangedEffects(bool health_lost);
 
 		/** utility function to check whether a keyboard key or gamepad button is down */
-		virtual bool DoCheckKeyPressed(Key button, InputStateFrame frame) override;
+		virtual bool DoCheckKeyDown(Key button) const override;
 
 		/** override */
 		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;

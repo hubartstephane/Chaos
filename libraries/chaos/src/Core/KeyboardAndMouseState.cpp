@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	void KeyboardAndMouseState::SetKeyState(Key key, bool value)
+	void KeyboardAndMouseState::SetKeyValue(Key key, bool value)
 	{
 		if (key.IsKeyboardKey())
 		{

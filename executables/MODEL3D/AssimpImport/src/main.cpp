@@ -618,7 +618,7 @@ protected:
 			{
 				if (ButtonState const* state = KeyboardAndMouseState::GetKeyboardButtonState(button))
 				{
-					if (state->IsPressed())
+					if (state->IsDown())
 					{
 						Object3D* selected_object = objects[selected_object_index].get();
 						selected_object->transform.position[component_index] += direction * OBJECT_SPEED * delta_time;

@@ -28,8 +28,7 @@ namespace chaos
 			if (!physical_gamepad->IsPresent())
 				continue;
 
-			size_t button_count = physical_gamepad->GetButtonCount();
-			size_t axis_count   = physical_gamepad->GetAxisCount();
+			GamepadState const * gamepad_state = physical_gamepad->GetGamepadState();
 
 			ImGui::PushID(int(i));
 
@@ -52,12 +51,12 @@ namespace chaos
 				ImGui::TableNextColumn();
 				ImGui::Text("Buttons");
 				ImGui::TableNextColumn();
-				ImGui::Text("%d", physical_gamepad->GetButtonCount());
+				ImGui::Text("%d", gamepad_state->GetButtonCount());
 
 				ImGui::TableNextColumn();
 				ImGui::Text("Axes");
 				ImGui::TableNextColumn();
-				ImGui::Text("%d", physical_gamepad->GetAxisCount());
+				ImGui::Text("%d", gamepad_state->GetAxisCount());
 
 				ImGui::EndTable();
 			}
@@ -70,11 +69,11 @@ namespace chaos
 			{
 				WithImGuiInputTable("buttons", [&]()
 				{
-					gamepad_button_metadata->ForEachEnumValue([](GamepadButton key)
+					gamepad_button_metadata->ForEachEnumValue([&](GamepadButton key)
 					{
 
 
-						DisplayImGuiKeyInfo(key, {});
+						DisplayImGuiKeyInfo(key, gamepad_state->GetButtonState(key));
 					});
 				});
 			}

@@ -4,60 +4,65 @@
 
 namespace chaos
 {
-	//
-	// ButtonState functions
-	//
-
 	void ButtonState::SetValue(bool in_value)
 	{
 		double frame_time = FrameTimeManager::GetInstance()->GetCurrentFrameTime();
 
-		if (update_time < 0.0) // very first initialization: set both current and previous value to same
+		if (update_time < 0.0) // very first initialization
 		{
-			previous_value = in_value;
 			value = in_value;
 			update_time = frame_time;
 		}
 		else if (value != in_value)
 		{
-			if (frame_time != update_time)
-			{
-				previous_value = value; // do not override previous_value if we are updating the button state in the same frame
-				update_time = frame_time;
-			}
+			update_time = frame_time;
 			value = in_value;
 		}
 	}
 
-	bool ButtonState::IsPressed(InputStateFrame frame) const
+	bool ButtonState::IsDown() const
 	{
-		return GetValue(frame);
+		return GetValue();
+	}
+
+	bool ButtonState::IsUp() const
+	{
+		return !IsDown();
 	}
 
 	bool ButtonState::IsJustPressed() const
 	{
-		return IsPressed(InputStateFrame::CURRENT) && !IsPressed(InputStateFrame::PREVIOUS);
+		return 
+			(IsDown()) && 
+			(GetSameValueTimer() == 0.0f);
 	}
 
 	bool ButtonState::IsJustReleased() const
 	{
-		return !IsPressed(InputStateFrame::CURRENT) && IsPressed(InputStateFrame::PREVIOUS);
+		return 
+			(IsUp()) && 
+			(GetSameValueTimer() == 0.0f);
 	}
 
 	ButtonStateChange ButtonState::GetStateChange() const
 	{
-		bool current_state = IsPressed(InputStateFrame::CURRENT);
-		bool previous_state = IsPressed(InputStateFrame::PREVIOUS);
+		float same_value_time = GetSameValueTimer();
 
-		if (current_state == previous_state)
-			return (current_state) ? ButtonStateChange::STAY_PRESSED : ButtonStateChange::STAY_RELEASED;
-		else
-			return (current_state) ? ButtonStateChange::BECOME_PRESSED : ButtonStateChange::BECOME_RELEASED;
+		if (IsDown())
+		{
+			if (same_value_time == 0.0f)
+				return ButtonStateChange::BECOME_PRESSED;
+			else
+				return ButtonStateChange::STAY_PRESSED;
+		}
+		else if (IsUp())
+		{
+			if (same_value_time == 0.0f)
+				return ButtonStateChange::BECOME_RELEASED;
+			else
+				return ButtonStateChange::STAY_RELEASED;
+		}
 	}
-
-	//
-	// AxisState functions
-	//
 
 	// XXX : some sticks are not abled to physicaly returns 1.0 when they are fully triggered (depend on the device)
 	//       that's why i use some min/max values (initialized with a coherent value)
@@ -87,7 +92,6 @@ namespace chaos
 
 		if (update_time < 0.0)  // very first initialization: set both current and previous value to same
 		{
-			previous_value = in_raw_value;
 			value = in_raw_value;
 			update_time = frame_time;
 		}
@@ -103,11 +107,10 @@ namespace chaos
 			};
 
 			if (GetAxisValueType(value) != GetAxisValueType(in_raw_value)) // checking for strict equality for float values is nonsense. just check for 'sign' equality
-				if (frame_time != update_time)
-					previous_value = value; // do not override previous_value if we are updating the button state in the same frame
+				update_time = frame_time;
 
 			value = in_raw_value;
-			update_time = frame_time; // beware: the value may change even if GetAxisValueType(value) does not change
+
 		}
 	}
 

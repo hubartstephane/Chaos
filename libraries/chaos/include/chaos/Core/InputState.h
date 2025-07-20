@@ -3,13 +3,13 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	enum class ButtonStateChange;
-	enum class InputStateFrame;
 
 	template<typename T>
 	class InputState;
 
 	class ButtonState;
 	class AxisState;
+	class StickState;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -27,17 +27,7 @@ namespace chaos
 	};
 
 	/**
-	* InputStateFrame
-	*/
-
-	enum class CHAOS_API InputStateFrame : int
-	{
-		CURRENT,
-		PREVIOUS
-	};
-
-	/**
-	* InputState
+	* InputState: base class for button and axis state
 	*/
 
 	template<typename T>
@@ -53,9 +43,9 @@ namespace chaos
 			return float(FrameTimeManager::GetInstance()->GetCurrentFrameTime() - update_time);
 		}
 		/** get the value */
-		T GetValue(InputStateFrame frame = InputStateFrame::CURRENT) const
+		T GetValue() const
 		{
-			return (frame == InputStateFrame::CURRENT) ? value : previous_value; // should work event if state has never been set (because initialized to 0)
+			return value;
 		}
 		/** returns whether the state has been set at least set */
 		bool IsStateInitialized() const
@@ -65,16 +55,14 @@ namespace chaos
 		/** clear the input */
 		void Clear()
 		{
-			value = previous_value = T();
+			value = T();
 			update_time = -1.0;
 		}
 
-	protected:
+	public:
 
 		/** value of the button (pressed or not) */
 		T value = T();
-		/** the previous value of the stick */
-		T previous_value = T();
 		/** time when the state has been updated */
 		double update_time = -1.0;
 
@@ -91,8 +79,10 @@ namespace chaos
 		/** update the value */
 		void SetValue(bool in_value);
 
-		/** whether the button is pressed */
-		bool IsPressed(InputStateFrame frame = InputStateFrame::CURRENT) const;
+		/** whether the button is up (press or repeat) */
+		bool IsDown() const;
+		/** whether the button is up (released) */
+		bool IsUp() const;
 		/** whether the button has just been pressed */
 		bool IsJustPressed() const;
 		/** whether the button has just been released */
@@ -113,12 +103,25 @@ namespace chaos
 		/** update the value */
 		void SetValue(float in_raw_value, float dead_zone);
 
-	protected:
+	public:
 
 		/** min value always encountered */
 		float min_value = -0.8f;
 		/** max value always encountered */
 		float max_value = +0.8f;
+	};
+
+
+
+	class CHAOS_API StickState : public InputState<glm::vec2>
+	{
+
+	public:
+
+		/** min value always encountered */
+		glm::vec2 min_value = {-0.8f, -0.8f};
+		/** max value always encountered */
+		glm::vec2 max_value = {+0.8f, +0.8f};
 	};
 
 #endif

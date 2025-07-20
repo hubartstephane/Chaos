@@ -13,21 +13,21 @@ namespace chaos
 		OnInputModeChanged(new_mode, old_mode);
 	}
 
-	bool InputEventReceiverInterface::CheckKeyPressed(Key const* keys, InputStateFrame frame)
+	bool InputEventReceiverInterface::CheckKeyDown(Key const* keys)
 	{
 		// early exit
 		if (keys == nullptr)
 			return false;
 		// iteration
 		for (size_t i = 0; keys[i].IsValid(); ++i)
-			if (CheckKeyPressed(keys[i], frame))
+			if (CheckKeyDown(keys[i]))
 				return true;
 		return false;
 	}
 
-	bool InputEventReceiverInterface::CheckKeyPressed(Key key, InputStateFrame frame)
+	bool InputEventReceiverInterface::CheckKeyDown(Key key)
 	{
-		if (DoCheckKeyPressed(key, frame))
+		if (DoCheckKeyDown(key))
 		{
 			if (key.IsKeyboardKey())
 				SetInputMode(InputMode::KEYBOARD);
@@ -40,11 +40,11 @@ namespace chaos
 		return false;
 	}
 
-	bool InputEventReceiverInterface::DoCheckKeyPressed(Key key, InputStateFrame frame)
+	bool InputEventReceiverInterface::DoCheckKeyDown(Key key) const
 	{
 		if (KeyboardAndMouseState const * keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance())
 			if (ButtonState const* state = keyboard_and_mouse_state->GetKeyState(key))
-				return state->IsPressed(frame);
+				return state->IsDown();
 		return false;
 	}
 

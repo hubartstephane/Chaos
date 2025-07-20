@@ -89,7 +89,7 @@ void LudumPlayer::UpdatePlayerFire(float delta_time)
 	chaos::Key const fire_key_buttons[] = { chaos::KeyboardButton::SPACE, chaos::GamepadButton::A, chaos::Key()};
 	chaos::Key const charged_key_buttons[] = {chaos::KeyboardButton::LEFT_CONTROL, chaos::KeyboardButton::RIGHT_CONTROL, chaos::GamepadButton::B, chaos::Key()};
 
-	bool charged_pressed = CheckKeyPressed(charged_key_buttons);
+	bool charged_pressed = CheckKeyDown(charged_key_buttons);
 	if (charged_pressed)
 	{
 		charged_fire_timer += delta_time;
@@ -108,7 +108,7 @@ void LudumPlayer::UpdatePlayerFire(float delta_time)
 			charged_fire_timer = 0.0f;
 			if (fire_timer == 0.0f)
 			{
-				bool fire_pressed = CheckKeyPressed(fire_key_buttons);
+				bool fire_pressed = CheckKeyDown(fire_key_buttons);
 				if (fire_pressed)
 				{
 					FireNormalProjectile();
@@ -136,7 +136,7 @@ void LudumPlayer::UpdatePlayerBuyingItem(float delta_time)
 
 	chaos::Key const buy_key_buttons[] = { chaos::KeyboardButton::LEFT_ALT, chaos::KeyboardButton::RIGHT_ALT, chaos::GamepadButton::Y, chaos::Key()};
 
-	bool buy_pressed = CheckKeyPressed(buy_key_buttons);
+	bool buy_pressed = CheckKeyDown(buy_key_buttons);
 	if (buy_pressed && !buylocked)
 	{
 		buy_timer += delta_time;

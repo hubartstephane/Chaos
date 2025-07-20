@@ -89,7 +89,7 @@ namespace chaos
 	{
 		if (KeyboardAndMouseState const * keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance())
 			if (ButtonState const* state = keyboard_and_mouse_state->GetKeyState(button))
-				return state->IsPressed();
+				return state->IsDown();
 		return false;
 	}
 
@@ -97,7 +97,7 @@ namespace chaos
 	{
 		if (KeyboardAndMouseState const * keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance())
 			if (ButtonState const* state = keyboard_and_mouse_state->GetKeyState(button))
-				return state->IsPressed();
+				return state->IsDown();
 		return false;
 	}
 

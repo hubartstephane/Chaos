@@ -21,65 +21,110 @@ namespace chaos
 		return axes.size();
 	}
 
-	ButtonStateChange GamepadState::GetButtonStateChange(GamepadButton button) const
+	ButtonState GamepadState::GetButtonState(GamepadButton button) const
 	{
 		// early exit
 		if (button == GamepadButton::UNKNOWN)
-			return ButtonStateChange::NONE;
-		// pseudo buttons
+			return {};
+
+		// virtual buttons
 		if (button == GamepadButton::LEFT_TRIGGER)
 		{
-			bool previous_state = (GetAxisValue(GamepadAxis::LEFT_TRIGGER, InputStateFrame::PREVIOUS) > 0);
-			bool current_state = (GetAxisValue(GamepadAxis::LEFT_TRIGGER, InputStateFrame::CURRENT) > 0);
-			if (current_state == previous_state)
-				return (current_state) ? ButtonStateChange::STAY_PRESSED : ButtonStateChange::STAY_RELEASED;
-			else
-				return (current_state) ? ButtonStateChange::BECOME_PRESSED : ButtonStateChange::BECOME_RELEASED;
+			AxisState axis_state = GetAxisState(GamepadAxis::LEFT_TRIGGER);
+
+			ButtonState result;
+			result.value = axis_state.value != 0.0f;
+			result.update_time = axis_state.update_time;
+			return result;
 		}
 
 		if (button == GamepadButton::RIGHT_TRIGGER)
 		{
-			bool previous_state = (GetAxisValue(GamepadAxis::RIGHT_TRIGGER, InputStateFrame::PREVIOUS) > 0);
-			bool current_state = (GetAxisValue(GamepadAxis::RIGHT_TRIGGER, InputStateFrame::CURRENT) > 0);
-			if (current_state == previous_state)
-				return (current_state) ? ButtonStateChange::STAY_PRESSED : ButtonStateChange::STAY_RELEASED;
-			else
-				return (current_state) ? ButtonStateChange::BECOME_PRESSED : ButtonStateChange::BECOME_RELEASED;
+			AxisState axis_state = GetAxisState(GamepadAxis::RIGHT_TRIGGER);
+
+			ButtonState result;
+			result.value = axis_state.value != 0.0f;
+			result.update_time = axis_state.update_time;
+			return result;
 		}
 		// standard input
-		return buttons[(size_t)button].GetStateChange();
+		return buttons[(size_t)button];
 	}
 
-	bool GamepadState::IsButtonPressed(GamepadButton button, InputStateFrame frame) const
+	AxisState GamepadState::GetAxisState(GamepadAxis axis) const
 	{
 		// early exit
-		if (button == GamepadButton::UNKNOWN)
-			return false;
-		// pseudo buttons
-		if (button == GamepadButton::LEFT_TRIGGER)
-		{
-			float trigger_value = GetAxisValue(GamepadAxis::LEFT_TRIGGER, frame);
-			if (trigger_value > 0)
-				return true;
-			return false;
-		}
-
-		if (button == GamepadButton::RIGHT_TRIGGER)
-		{
-			float trigger_value = GetAxisValue(GamepadAxis::RIGHT_TRIGGER, frame);
-			if (trigger_value > 0)
-				return true;
-			return false;
-		}
-		// standard input
-		return buttons[(size_t)button].GetValue(frame);
-	}
-
-	float GamepadState::GetAxisValue(GamepadAxis axis, InputStateFrame frame) const
-	{
 		if (axis == GamepadAxis::UNKNOWN)
-			return 0.0f;
-		return axes[(size_t)axis].GetValue(frame);
+			return {};
+		// standard input
+		return axes[(size_t)axis];
+	}
+
+	StickState GamepadState::GetStickState(GamepadStick stick) const
+	{	
+		// early exit
+		if (stick == GamepadStick::UNKNOWN)
+			return {};
+
+		// get value
+		auto GetClampedAxis = [&](GamepadAxis horizontal_axis, GamepadAxis vertical_axis)
+		{
+			AxisState horizontal_axis_state = GetAxisState(horizontal_axis);
+			AxisState vertical_axis_state = GetAxisState(vertical_axis);
+
+			glm::vec2 stick_value = 
+			{
+				horizontal_axis_state.GetValue(),
+				vertical_axis_state.GetValue()
+			};
+
+			// if the length is greater than 1, renormalize it to 1.0f !
+			float sqr_len = stick_value.x * stick_value.x + stick_value.y * stick_value.y;
+			if (sqr_len > 1.0f)
+			{
+				float len = std::sqrt(sqr_len);
+				stick_value.x /= len;
+				stick_value.y /= len;
+			}
+
+			StickState result;
+			result.value = stick_value;
+			result.min_value = {horizontal_axis_state.min_value, vertical_axis_state.min_value};
+			result.max_value = {horizontal_axis_state.max_value, vertical_axis_state.max_value};
+			result.update_time = std::max(horizontal_axis_state.update_time, vertical_axis_state.update_time);
+			return result;
+		};
+
+		if (stick == GamepadStick::LEFT_STICK)
+		{
+			return GetClampedAxis(GamepadAxis::LEFT_AXIS_X, GamepadAxis::LEFT_AXIS_Y);
+		}
+		else if (stick == GamepadStick::RIGHT_STICK)
+		{
+			return GetClampedAxis(GamepadAxis::RIGHT_AXIS_X, GamepadAxis::RIGHT_AXIS_X);
+		}
+		return {};
+	}
+
+	bool GamepadState::IsAnyButtonAction() const
+	{
+		for (ButtonState const& b : buttons)
+			if (b.GetValue())
+				return true;
+		return false;
+	}
+
+	bool GamepadState::IsAnyAxisAction() const
+	{
+		for (AxisState const& a : axes)
+			if (a.GetValue() != 0.0f)
+				return true;
+		return false;
+	}
+
+	bool GamepadState::IsAnyAction() const
+	{
+		return IsAnyButtonAction() || IsAnyAxisAction();
 	}
 
 	bool GamepadState::IsAnyButtonJustPressed() const
@@ -90,57 +135,131 @@ namespace chaos
 		return false;
 	}
 
-	bool GamepadState::IsAnyButtonPressed(InputStateFrame frame) const
+
+
+
+
+
+
+	#if 0
+
+
+
+
+	ButtonStateChange GamepadState::GetButtonStateChange(GamepadButton button) const
 	{
-		for (ButtonState const& b : buttons)
-			if (b.GetValue(frame))
+		// early exit
+		if (button == GamepadButton::UNKNOWN)
+			return ButtonStateChange::NONE;
+		// pseudo buttons
+		if (button == GamepadButton::LEFT_TRIGGER)
+		{
+			bool previous_state = (GetAxisValue(GamepadAxis::LEFT_TRIGGER) > 0);
+			bool current_state = (GetAxisValue(GamepadAxis::LEFT_TRIGGER) > 0);
+			if (current_state == previous_state)
+				return (current_state) ? ButtonStateChange::STAY_PRESSED : ButtonStateChange::STAY_RELEASED;
+			else
+				return (current_state) ? ButtonStateChange::BECOME_PRESSED : ButtonStateChange::BECOME_RELEASED;
+		}
+
+		if (button == GamepadButton::RIGHT_TRIGGER)
+		{
+			bool previous_state = (GetAxisValue(GamepadAxis::RIGHT_TRIGGER) > 0);
+			bool current_state = (GetAxisValue(GamepadAxis::RIGHT_TRIGGER) > 0);
+			if (current_state == previous_state)
+				return (current_state) ? ButtonStateChange::STAY_PRESSED : ButtonStateChange::STAY_RELEASED;
+			else
+				return (current_state) ? ButtonStateChange::BECOME_PRESSED : ButtonStateChange::BECOME_RELEASED;
+		}
+		// standard input
+		return buttons[(size_t)button].GetStateChange();
+	}
+
+	bool GamepadState::IsButtonPressed(GamepadButton button) const
+	{
+		// early exit
+		if (button == GamepadButton::UNKNOWN)
+			return false;
+		// pseudo buttons
+		if (button == GamepadButton::LEFT_TRIGGER)
+		{
+			float trigger_value = GetAxisValue(GamepadAxis::LEFT_TRIGGER);
+			if (trigger_value > 0)
 				return true;
-		return false;
-	}
+			return false;
+		}
 
-	bool GamepadState::IsAnyAxisAction(InputStateFrame frame) const
-	{
-		for (AxisState const& a : axes)
-			if (a.GetValue(frame) != 0.0f)
+		if (button == GamepadButton::RIGHT_TRIGGER)
+		{
+			float trigger_value = GetAxisValue(GamepadAxis::RIGHT_TRIGGER);
+			if (trigger_value > 0)
 				return true;
-		return false;
+			return false;
+		}
+		// standard input
+		return buttons[(size_t)button].GetValue();
 	}
 
-	bool GamepadState::IsAnyAction(InputStateFrame frame) const
+	float GamepadState::GetAxisValue(GamepadAxis axis) const
 	{
-		return IsAnyButtonPressed(frame) || IsAnyAxisAction(frame);
+		if (axis == GamepadAxis::UNKNOWN)
+			return 0.0f;
+		return axes[(size_t)axis].GetValue();
 	}
 
-	glm::vec2 GamepadState::GetStickValue(GamepadStick stick, InputStateFrame frame) const
-	{
-		glm::vec2 result(0.0f, 0.0f);
 
+
+
+	glm::vec2 GamepadState::GetStickValue(GamepadStick stick) const
+	{	
 		// early exit
 		if (stick == GamepadStick::UNKNOWN)
+			return {0.0f, 0.0f};
+
+		// get value
+		auto GetClampedAxis = [&](GamepadAxis horizontal_axis, GamepadAxis vertical_axis)
+		{
+			glm::vec2 result = {0.0f, 0.0f};
+			result.x = GetAxisValue(horizontal_axis);
+			result.y = GetAxisValue(vertical_axis);
+
+			// if the length is greater than 1, renormalize it to 1.0f !
+			float sqr_len = result.x * result.x + result.y * result.y;
+			if (sqr_len > 1.0f)
+			{
+				float len = std::sqrt(sqr_len);
+				result.x /= len;
+				result.y /= len;
+			}
 			return result;
+		};
+
 		if (stick == GamepadStick::LEFT_STICK)
 		{
-			result.x = GetAxisValue(GamepadAxis::LEFT_AXIS_X, frame);
-			result.y = GetAxisValue(GamepadAxis::LEFT_AXIS_Y, frame);
+			return GetClampedAxis(GamepadAxis::LEFT_AXIS_X, GamepadAxis::LEFT_AXIS_Y);
 		}
 		else if (stick == GamepadStick::RIGHT_STICK)
 		{
-			result.x = GetAxisValue(GamepadAxis::RIGHT_AXIS_X, frame);
-			result.y = GetAxisValue(GamepadAxis::RIGHT_AXIS_Y, frame);
+			return GetClampedAxis(GamepadAxis::RIGHT_AXIS_X, GamepadAxis::RIGHT_AXIS_X);
 		}
-		else
-			return result;
 
-		// if the length is greater than 1, renormalize it to 1.0f !
-		float sqr_len = result.x * result.x + result.y * result.y;
-		if (sqr_len > 1.0f)
-		{
-			float len = std::sqrt(sqr_len);
-			result.x /= len;
-			result.y /= len;
-		}
-		return result;
+		return {0.0f, 0.0f};
 	}
+
+
+	#endif
+
+
+
+
+
+
+
+
+
+
+
+
 
 	void GamepadState::UpdateAxisAndButtons(int stick_index, float dead_zone)
 	{

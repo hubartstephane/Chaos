@@ -7,7 +7,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* GamepadState : the states contained in the device
+	* GamepadState: the gamepad buttons and axes states
 	*/
 
 	class CHAOS_API GamepadState
@@ -19,22 +19,53 @@ namespace chaos
 
 	public:
 
+		/** gets one button state */
+		ButtonState GetButtonState(GamepadButton button) const;
+		/** gets one axis state */
+		AxisState GetAxisState(GamepadAxis axis) const;
+		/** gets one stick state */
+		StickState GetStickState(GamepadStick stick) const;
+
+		/** returns true whether there is any actioned button */
+		bool IsAnyButtonAction() const;
+		/** returns true whether there is any axis in use */
+		bool IsAnyAxisAction() const;
+		/** returns true whenever a buttons is pressed or an axis is in action */
+		bool IsAnyAction() const;
+
+		/** returns true whether there is a button that just has become pressed */
+		bool IsAnyButtonJustPressed() const;
+
+
+
+
+
+#if 0
+
+
 		/* returns a status giving the change of button relative to previous frame */
 		ButtonStateChange GetButtonStateChange(GamepadButton button) const;
 		/** returns the button state */
-		bool IsButtonPressed(GamepadButton button, InputStateFrame frame = InputStateFrame::CURRENT) const;
+		bool IsButtonPressed(GamepadButton button) const;
 		/** returns the button state */
-		float GetAxisValue(GamepadAxis axis, InputStateFrame frame = InputStateFrame::CURRENT) const;
-		/** returns true whether there is a button that just has become pressed */
-		bool IsAnyButtonJustPressed() const;
+		float GetAxisValue(GamepadAxis axis) const;
+
 		/** returns true whether there is any pressed button */
-		bool IsAnyButtonPressed(InputStateFrame frame = InputStateFrame::CURRENT) const;
+		bool IsAnyButtonPressed() const;
 		/** returns true whether there is any axis in use */
-		bool IsAnyAxisAction(InputStateFrame frame = InputStateFrame::CURRENT) const;
+		bool IsAnyAxisAction() const;
 		/** returns true whenever a buttons is pressed or an axis is in action */
-		bool IsAnyAction(InputStateFrame frame = InputStateFrame::CURRENT) const;
+		bool IsAnyAction() const;
+
+
 		/** returns the direction of one stick (a combinaison of 2 axis) */
-		glm::vec2 GetStickValue(GamepadStick stick, InputStateFrame frame = InputStateFrame::CURRENT) const;
+		glm::vec2 GetStickValue(GamepadStick stick) const;
+
+#endif
+
+
+
+
 		/** returns the number of buttons */
 		size_t GetButtonCount() const;
 		/** returns the number of axis */

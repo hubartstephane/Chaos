@@ -158,7 +158,7 @@ protected:
 		texture_slice = (texture_slice + delta + texture_slice_count) % texture_slice_count;
 	}
 
-	virtual bool EnumerateKeyActions(EnumerateKeyActionFunc in_action_enumerator) override
+	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator) override
 	{
 		if (in_action_enumerator({chaos::KeyboardButton::KP_ADD, chaos::KeyModifier::Shift} , "Next Pixel Format", [this]()
 		{

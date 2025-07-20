@@ -151,7 +151,7 @@ protected:
 	}
 
 
-	virtual bool EnumerateKeyActions(EnumerateKeyActionFunc in_action_enumerator) override
+	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator) override
 	{
 		if (in_action_enumerator({chaos::KeyboardButton::KP_ADD} , "Next Bitmap Index", [this]()
 		{

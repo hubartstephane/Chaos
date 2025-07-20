@@ -73,7 +73,7 @@ void LudumPlayer::HandleInputs(float delta_time, chaos::GamepadState const* gpd)
 
 	chaos::Key const honk_keys[] = { chaos::GamepadButton::X, chaos::KeyboardButton::LEFT_SHIFT, chaos::Key() };
 
-	bool honk_pressed = CheckKeyDown(honk_keys, false);
+	bool honk_pressed = CheckKeyDown(honk_keys);
 	if (honk_pressed && !was_honk_pressed_gamepad)
 		Honk();
 	was_honk_pressed_gamepad = honk_pressed;

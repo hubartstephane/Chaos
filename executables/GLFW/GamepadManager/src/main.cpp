@@ -9,7 +9,7 @@ public:
 
   virtual bool AcceptPhysicalDevice(chaos::PhysicalGamepad * physical_device) override
   {
-	  if (!physical_device->IsButtonPressed(chaos::GamepadButton::A))
+	  if (!physical_device->GetButtonState(chaos::GamepadButton::A).IsDown())
 		  return false;
 	  return true;
   }
@@ -127,7 +127,7 @@ protected:
 
 #else
 
-#define TEST_BUTTON(x) if (main_gamepad->IsButtonPressed(chaos::GamepadButton::x))\
+#define TEST_BUTTON(x) if (main_gamepad->GetButtonState(chaos::GamepadButton::x).IsDown())\
 imgui_user_message.AddLine("Pressed : " #x, 1.0f);
 
 			TEST_BUTTON(A);
@@ -148,19 +148,19 @@ imgui_user_message.AddLine("Pressed : " #x, 1.0f);
 			TEST_BUTTON(DPAD_LEFT);
 			TEST_BUTTON(DPAD_RIGHT);
 
-			glm::vec2 l = main_gamepad->GetStickValue(chaos::GamepadStick::LEFT_STICK);
+			glm::vec2 l = main_gamepad->GetStickState(chaos::GamepadStick::LEFT_STICK).GetValue();
 			if (l.x != 0.0f || l.y != 0.0f)
 				imgui_user_message.AddLine(chaos::StringTools::Printf("LEFT AXIS x : %0.3f   y : %0.3f", l.x, l.y).c_str(), 1.0f);
 
-			glm::vec2 r = main_gamepad->GetStickValue(chaos::GamepadStick::RIGHT_STICK);
+			glm::vec2 r = main_gamepad->GetStickState(chaos::GamepadStick::RIGHT_STICK).GetValue();
 			if (r.x != 0.0f || r.y != 0.0f)
 				imgui_user_message.AddLine(chaos::StringTools::Printf("RIGHT AXIS x : %0.3f  y : %0.3f", r.x, r.y).c_str(), 1.0f);
 
-			float left_trigger = main_gamepad->GetAxisValue(chaos::GamepadAxis::LEFT_TRIGGER);
+			float left_trigger = main_gamepad->GetAxisState(chaos::GamepadAxis::LEFT_TRIGGER).GetValue();
 			if (left_trigger)
 				imgui_user_message.AddLine(chaos::StringTools::Printf("LEFT TRIGGER  %0.3f", left_trigger).c_str(), 1.0f);
 
-			float right_trigger = main_gamepad->GetAxisValue(chaos::GamepadAxis::RIGHT_TRIGGER);
+			float right_trigger = main_gamepad->GetAxisState(chaos::GamepadAxis::RIGHT_TRIGGER).GetValue();
 			if (right_trigger)
 				imgui_user_message.AddLine(chaos::StringTools::Printf("RIGHT TRIGGER  %0.3f", right_trigger).c_str(), 1.0f);
 #endif

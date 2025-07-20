@@ -328,7 +328,7 @@ protected:
 		{
 			auto MoveObject = [this, delta_time](KeyboardButton button, size_t component_index, float direction)
 			{
-				if (ButtonState const* state = KeyboardAndMouseState::GetKeyboardButtonState(button))
+				if (ButtonState const* state = KeyboardAndMouseState::GetInstance()->GetKeyState(button))
 				{
 					if (state->IsDown())
 					{

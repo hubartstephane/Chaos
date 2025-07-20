@@ -80,7 +80,7 @@ namespace chaos
 		// normalize input
 		if (in_raw_value > 0.0f)
 			in_raw_value = (in_raw_value - dead_zone) / (max_value - dead_zone);
-		else
+		else if (in_raw_value < 0.0f)
 			in_raw_value = -(in_raw_value + dead_zone) / (min_value + dead_zone);
 
 		double frame_time = FrameTimeManager::GetInstance()->GetCurrentFrameTime();
@@ -103,14 +103,11 @@ namespace chaos
 			};
 
 			if (GetAxisValueType(value) != GetAxisValueType(in_raw_value)) // checking for strict equality for float values is nonsense. just check for 'sign' equality
-			{
 				if (frame_time != update_time)
-				{
 					previous_value = value; // do not override previous_value if we are updating the button state in the same frame
-					update_time = frame_time;
-				}
-			}
+
 			value = in_raw_value;
+			update_time = frame_time; // beware: the value may change even if GetAxisValueType(value) does not change
 		}
 	}
 

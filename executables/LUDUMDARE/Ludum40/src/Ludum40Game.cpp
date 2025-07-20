@@ -703,13 +703,13 @@ bool Game::OnPhysicalGamepadInput(chaos::PhysicalGamepad * physical_gamepad)
 	}
 	else
 	{
-		if ((physical_gamepad->GetButtonState(chaos::GamepadButton::SPECIAL_LEFT).GetStateChange() == chaos::ButtonStateChange::BECOME_PRESSED) ||
-			(physical_gamepad->GetButtonState(chaos::GamepadButton::SPECIAL_RIGHT).GetStateChange() == chaos::ButtonStateChange::BECOME_PRESSED))
+		if ((physical_gamepad->IsButtonJustPressed(chaos::GamepadButton::SPECIAL_LEFT)) ||
+			(physical_gamepad->IsButtonJustPressed(chaos::GamepadButton::SPECIAL_RIGHT)))
 			SetPause(!game_paused);
 	}
 
-	glm::vec2 left_stick_position  = physical_gamepad->GetStickState(chaos::GamepadStick::LEFT_STICK).GetValue();
-	glm::vec2 right_stick_position = physical_gamepad->GetStickState(chaos::GamepadStick::RIGHT_STICK).GetValue();
+	glm::vec2 left_stick_position  = physical_gamepad->GetStickValue(chaos::GamepadStick::LEFT_STICK);
+	glm::vec2 right_stick_position = physical_gamepad->GetStickValue(chaos::GamepadStick::RIGHT_STICK);
 
 	if (glm::length2(left_stick_position) > 0.0f)
 		stick_position = left_stick_position;

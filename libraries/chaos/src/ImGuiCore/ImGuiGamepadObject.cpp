@@ -71,8 +71,6 @@ namespace chaos
 				{
 					gamepad_button_metadata->ForEachEnumValue([&](GamepadButton key)
 					{
-
-
 						DisplayImGuiKeyInfo(key, gamepad_state->GetButtonState(key));
 					});
 				});

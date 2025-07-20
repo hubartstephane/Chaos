@@ -70,8 +70,8 @@ namespace chaos
 		if (gamepad_state == nullptr)
 			return;
 		// maybe a game/pause resume
-		if ((gamepad_state->GetButtonState(GamepadButton::SPECIAL_LEFT).GetStatus() == ButtonStatus::BECOME_PRESSED) ||
-			(gamepad_state->GetButtonState(GamepadButton::SPECIAL_RIGHT).GetStatus() == ButtonStatus::BECOME_PRESSED))
+		if ((gamepad_state->IsButtonJustPressed(GamepadButton::SPECIAL_LEFT)) ||
+			(gamepad_state->IsButtonJustPressed(GamepadButton::SPECIAL_RIGHT)))
 		{
 			Game* game = GetGame();
 			if (game != nullptr)
@@ -171,30 +171,30 @@ namespace chaos
 			SetInputMode(InputMode::GAMEPAD);
 
 		// cache the LEFT stick position (it is aliases with the DPAD)
-		glm::vec2 lsp = gamepad_state->GetStickState(GamepadStick::LEFT_STICK).GetValue();
+		glm::vec2 lsp = gamepad_state->GetStickValue(GamepadStick::LEFT_STICK);
 		if (glm::length2(lsp) > 0.0f)
 			left_stick_position = lsp;
 		else
 		{
-			if (gamepad_state->GetButtonState(GamepadButton::DPAD_LEFT).IsDown())
+			if (gamepad_state->IsButtonDown(GamepadButton::DPAD_LEFT))
 				left_stick_position.x = -1.0f;
-			else if (gamepad_state->GetButtonState(GamepadButton::DPAD_RIGHT).IsDown())
+			else if (gamepad_state->IsButtonDown(GamepadButton::DPAD_RIGHT))
 				left_stick_position.x = 1.0f;
 
-			if (gamepad_state->GetButtonState(GamepadButton::DPAD_UP).IsDown())
+			if (gamepad_state->IsButtonDown(GamepadButton::DPAD_UP))
 				left_stick_position.y = +1.0f;
-			else if (gamepad_state->GetButtonState(GamepadButton::DPAD_DOWN).IsDown())
+			else if (gamepad_state->IsButtonDown(GamepadButton::DPAD_DOWN))
 				left_stick_position.y = -1.0f;
 		}
 
 		// cache the RIGHT stick position
-		glm::vec2 rsp = gamepad_state->GetStickState(GamepadStick::RIGHT_STICK).GetValue();
+		glm::vec2 rsp = gamepad_state->GetStickValue(GamepadStick::RIGHT_STICK);
 		if (glm::length2(rsp) > 0.0f)
 			right_stick_position = rsp;
 
 		// cache the TRIGGERS
-		left_trigger  = gamepad_state->GetAxisState(GamepadAxis::LEFT_TRIGGER).GetValue();
-		right_trigger = gamepad_state->GetAxisState(GamepadAxis::RIGHT_TRIGGER).GetValue();
+		left_trigger  = gamepad_state->GetAxisValue(GamepadAxis::LEFT_TRIGGER);
+		right_trigger = gamepad_state->GetAxisValue(GamepadAxis::RIGHT_TRIGGER);
 	}
 
 	void Player::HandleInputs(float delta_time, GamepadState const* gamepad_state)
@@ -352,7 +352,7 @@ namespace chaos
 		{
 			if (gamepad == nullptr)
 				return false;
-			return gamepad->GetButtonState(button.GetGamepadButton()).IsDown();
+			return gamepad->IsButtonDown(button.GetGamepadButton());
 		}
 		// super call
 		return InputEventReceiverInterface::DoCheckKeyDown(button);

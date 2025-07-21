@@ -10,15 +10,18 @@ namespace chaos
 	* KeyboardAndMouseState: A singleton that contains the state of keyboard and mouse buttons
 	*/
 
-	class CHAOS_API KeyboardAndMouseState : public Singleton<KeyboardAndMouseState>
+	class CHAOS_API KeyboardAndMouseState : public Singleton<KeyboardAndMouseState>, public InputDeviceUserInterface
 	{
 
 	public:
 
-		/** get the state of a mouse or keyboard state */
-		static KeyState const * GetKeyState(Key key);
+		/** override */
+		virtual KeyState const * GetKeyState(Key key) const override;
+		/** override */
+		virtual bool ForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const override;
+
 		/** change the state of a keyboard or mouse key (notification from a window) */
-		static void SetKeyValue(Key key, bool value);
+		void SetKeyValue(Key key, bool value);
 
 	protected:
 

@@ -146,7 +146,7 @@ namespace chaos
 					in_key_action();
 					return true;
 				}
-				return false;
+				return false; 
 			}
 
 		protected:
@@ -156,7 +156,10 @@ namespace chaos
 		};
 
 		ProcessKeyActionEnumerator action_enumerator(key_event);
-		return EnumerateKeyActions(action_enumerator);
+		return DispatchEventToHierarchy([this, &action_enumerator](InputEventReceiverInterface * in_event_receiver)
+		{
+			return in_event_receiver->EnumerateKeyActions(action_enumerator);
+		});
 	}
 
 	bool InputEventReceiverInterface::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator)

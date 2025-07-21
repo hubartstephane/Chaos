@@ -27,8 +27,6 @@ namespace chaos
 
 	void KeyboardAndMouseState::SetKeyValue(Key key, bool value)
 	{
-		KeyboardAndMouseState * singleton = KeyboardAndMouseState::GetInstance();
-
 		if (key.IsKeyboardKey())
 		{
 			if (key != KeyboardButton::UNKNOWN)

@@ -42,33 +42,25 @@ namespace chaos
 		return gamepad_state.GetStickState(stick);
 	}
 
-
-	bool PhysicalGamepad::IsAnyButtonAction() const
+	bool PhysicalGamepad::ForAllButtons(LightweightFunction<bool(GamepadButton, ButtonState const &)> func) const
 	{
 		if (!IsPresent())
 			return false;
-		return gamepad_state.IsAnyButtonAction();
+		return gamepad_state.ForAllButtons(func);
 	}
 
-	bool PhysicalGamepad::IsAnyAxisAction() const
+	bool PhysicalGamepad::ForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const
 	{
 		if (!IsPresent())
 			return false;
-		return gamepad_state.IsAnyAxisAction();
+		return gamepad_state.ForAllAxes(func);
 	}
 
-	bool PhysicalGamepad::IsAnyAction() const
+	bool PhysicalGamepad::ForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const
 	{
 		if (!IsPresent())
 			return false;
-		return gamepad_state.IsAnyAction();
-	}
-
-	bool PhysicalGamepad::IsAnyButtonJustPressed() const
-	{
-		if (!IsPresent())
-			return false;
-		return gamepad_state.IsAnyButtonJustPressed();
+		return gamepad_state.ForAllSticks(func);
 	}
 
 	void PhysicalGamepad::UpdateAxisAndButtons(float dead_zone)
@@ -171,32 +163,25 @@ namespace chaos
 		return physical_device->GetStickState(stick);
 	}
 
-	bool Gamepad::IsAnyButtonAction() const
+	bool Gamepad::ForAllButtons(LightweightFunction<bool(GamepadButton, ButtonState const &)> func) const
 	{
 		if (physical_device == nullptr)
 			return false;
-		return physical_device->IsAnyButtonAction();
+		return physical_device->ForAllButtons(func);
 	}
 
-	bool Gamepad::IsAnyAxisAction() const
+	bool Gamepad::ForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const
 	{
 		if (physical_device == nullptr)
 			return false;
-		return physical_device->IsAnyAxisAction();
+		return physical_device->ForAllAxes(func);
 	}
 
-	bool Gamepad::IsAnyAction() const
+	bool Gamepad::ForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const
 	{
 		if (physical_device == nullptr)
 			return false;
-		return physical_device->IsAnyAction();
-	}
-
-	bool Gamepad::IsAnyButtonJustPressed() const
-	{
-		if (physical_device == nullptr)
-			return false;
-		return physical_device->IsAnyButtonJustPressed();
+		return physical_device->ForAllSticks(func);
 	}
 
 	bool Gamepad::IsPresent() const

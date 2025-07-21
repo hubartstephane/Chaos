@@ -18,6 +18,21 @@ namespace chaos
 		return nullptr;
 	}
 
+	bool InputDeviceUserInterface::ForAllButtons(LightweightFunction<bool(GamepadButton, ButtonState const &)> func) const
+	{
+		return false;
+	}
+
+	bool InputDeviceUserInterface::ForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const
+	{
+		return false;
+	}
+
+	bool InputDeviceUserInterface::ForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const
+	{
+		return false;
+	}
+
 	bool InputDeviceUserInterface::GetButtonValue(GamepadButton button) const
 	{
 		if (ButtonState const * button_state = GetButtonState(button))
@@ -74,23 +89,20 @@ namespace chaos
 		return {0.0f, 0.0f};
 	}
 
-
-	#if 0
-
 	bool InputDeviceUserInterface::IsAnyButtonAction() const
 	{
-		for (ButtonState const& b : buttons)
-			if (b.GetValue())
-				return true;
-		return false;
+		return ForAllButtons([](GamepadButton button, ButtonState const & state)
+		{
+			return state.IsDown();
+		});
 	}
 
 	bool InputDeviceUserInterface::IsAnyAxisAction() const
 	{
-		for (AxisState const& a : axes)
-			if (a.GetValue() != 0.0f)
-				return true;
-		return false;
+		return ForAllAxes([](GamepadAxis axis, AxisState const & state)
+		{
+			return (state.GetValue() != 0.0f);
+		});
 	}
 
 	bool InputDeviceUserInterface::IsAnyAction() const
@@ -100,11 +112,10 @@ namespace chaos
 
 	bool InputDeviceUserInterface::IsAnyButtonJustPressed() const
 	{
-		for (ButtonState const& b : buttons)
-			if (b.IsJustPressed())
-				return true;
-		return false;
+		return ForAllButtons([](GamepadButton button, ButtonState const & state)
+		{
+			return state.IsJustPressed();
+		});
 	}
-	#endif
 
 }; // namespace chaos

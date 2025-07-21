@@ -28,15 +28,12 @@ namespace chaos
 		/** override */
 		virtual StickState const * GetStickState(GamepadStick stick) const override;
 
-		/** returns true whether there is any actioned button */
-		bool IsAnyButtonAction() const;
-		/** returns true whether there is any axis in use */
-		bool IsAnyAxisAction() const;
-		/** returns true whenever a buttons is pressed or an axis is in action */
-		bool IsAnyAction() const;
-
-		/** returns true whether there is a button that just has become pressed */
-		bool IsAnyButtonJustPressed() const;
+		/** override */
+		virtual bool ForAllButtons(LightweightFunction<bool(GamepadButton, ButtonState const &)> func) const override;
+		/** override */
+		virtual bool ForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const override;
+		/** override */
+		virtual bool ForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const override;
 
 		/** returns the number of buttons */
 		size_t GetButtonCount() const;

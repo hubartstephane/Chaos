@@ -22,6 +22,13 @@ namespace chaos
 		/** gets one stick state */
 		virtual StickState const * GetStickState(GamepadStick stick) const;
 
+		/** enumerate buttons */
+		virtual bool ForAllButtons(LightweightFunction<bool(GamepadButton, ButtonState const &)> func) const;
+		/** enumerate axes */
+		virtual bool ForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const;
+		/** enumerate sticks */
+		virtual bool ForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const;
+
 		/** get the button value */
 		bool GetButtonValue(GamepadButton button) const;
 		/** get the button state change */
@@ -42,8 +49,6 @@ namespace chaos
 		/** get the stick value */
 		glm::vec2 GetStickValue(GamepadStick stick) const;
 
-
-		#if 0
 		/** returns true whether there is any actioned button */
 		bool IsAnyButtonAction() const;
 		/** returns true whether there is any axis in use */
@@ -53,18 +58,6 @@ namespace chaos
 
 		/** returns true whether there is a button that just has become pressed */
 		bool IsAnyButtonJustPressed() const;
-
-		/** returns the number of buttons */
-		size_t GetButtonCount() const;
-		/** returns the number of axis */
-		size_t GetAxisCount() const;
-
-		/** update all the values for the axis and buttons */
-		void UpdateAxisAndButtons(int stick_index, float dead_zone);
-		/** reset the content of the object */
-		void Clear();
-#endif
-
 	};
 
 #endif

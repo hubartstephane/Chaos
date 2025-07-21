@@ -42,31 +42,24 @@ namespace chaos
 		return &sticks[(size_t)stick];
 	}
 
-	bool GamepadState::IsAnyButtonAction() const
+	bool GamepadState::ForAllButtons(LightweightFunction<bool(GamepadButton, ButtonState const &)> func) const
 	{
-		for (ButtonState const& b : buttons)
-			if (b.GetValue())
+		for (int i = 0 ; i < buttons.size() ; ++i)
+			if (func(GamepadButton(i), buttons[i]))
 				return true;
 		return false;
 	}
-
-	bool GamepadState::IsAnyAxisAction() const
+	bool GamepadState::ForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const
 	{
-		for (AxisState const& a : axes)
-			if (a.GetValue() != 0.0f)
+		for (int i = 0 ; i < axes.size() ; ++i)
+			if (func(GamepadAxis(i), axes[i]))
 				return true;
 		return false;
 	}
-
-	bool GamepadState::IsAnyAction() const
+	bool GamepadState::ForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const
 	{
-		return IsAnyButtonAction() || IsAnyAxisAction();
-	}
-
-	bool GamepadState::IsAnyButtonJustPressed() const
-	{
-		for (ButtonState const& b : buttons)
-			if (b.IsJustPressed())
+		for (int i = 0 ; i < sticks.size() ; ++i)
+			if (func(GamepadStick(i), sticks[i]))
 				return true;
 		return false;
 	}

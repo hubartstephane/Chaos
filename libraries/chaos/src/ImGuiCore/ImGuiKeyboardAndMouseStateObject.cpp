@@ -20,16 +20,16 @@ namespace chaos
 		{
 			meta->ForEachEnumValue([&](ENUM_TYPE key)
 			{
-				if (ButtonState const * button_state = keyboard_and_mouse_state->GetKeyState(key))
+				if (KeyState const * key_state = keyboard_and_mouse_state->GetKeyState(key))
 				{
 					if (hide_cold_keys)
 					{
-						if (!button_state->IsStateInitialized()) // only show values that as been set at least once
+						if (!key_state->IsStateInitialized()) // only show values that as been set at least once
 							return;
-						if (!button_state->GetValue() && button_state->GetSameValueTimer() > 10.0f) // do not bother display up keys for more than 10s
+						if (!key_state->GetValue() && key_state->GetSameValueTimer() > 10.0f) // do not bother display up keys for more than 10s
 							return;
 					}
-					DisplayImGuiKeyInfo(key, button_state);
+					DisplayImGuiKeyInfo(key, key_state);
 				}
 			});
 		});

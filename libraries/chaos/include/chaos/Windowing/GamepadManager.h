@@ -71,14 +71,14 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		GamepadState const* GetGamepadState() const { return &gamepad_state; }
 
 		/** override */
-		virtual ButtonState const * GetButtonState(GamepadButton button) const override;
+		virtual KeyState const * GetKeyState(Key key) const override;
 		/** override */
 		virtual AxisState const * GetAxisState(GamepadAxis axis) const override;
 		/** override */
 		virtual StickState const * GetStickState(GamepadStick stick) const override;
 
 		/** override */
-		virtual bool ForAllButtons(LightweightFunction<bool(GamepadButton, ButtonState const &)> func) const override;
+		virtual bool ForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const override;
 		/** override */
 		virtual bool ForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const override;
 		/** override */
@@ -196,14 +196,14 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		GamepadState const* GetGamepadState() const;
 
 		/** override */
-		virtual ButtonState const * GetButtonState(GamepadButton button) const override;
+		virtual KeyState const * GetKeyState(Key key) const override;
 		/** override */
 		virtual AxisState const * GetAxisState(GamepadAxis axis) const override;
 		/** override */
 		virtual StickState const * GetStickState(GamepadStick stick) const override;
 
 		/** override */
-		virtual bool ForAllButtons(LightweightFunction<bool(GamepadButton, ButtonState const &)> func) const override;
+		virtual bool ForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const override;
 		/** override */
 		virtual bool ForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const override;
 		/** override */

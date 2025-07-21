@@ -4,7 +4,7 @@
 
 namespace chaos
 {
-	void ButtonState::SetValue(bool in_value)
+	void KeyState::SetValue(bool in_value)
 	{
 		double frame_time = FrameTimeManager::GetInstance()->GetCurrentFrameTime();
 
@@ -20,47 +20,47 @@ namespace chaos
 		}
 	}
 
-	bool ButtonState::IsDown() const
+	bool KeyState::IsDown() const
 	{
 		return value;
 	}
 
-	bool ButtonState::IsUp() const
+	bool KeyState::IsUp() const
 	{
 		return !value;
 	}
 
-	bool ButtonState::IsJustPressed() const
+	bool KeyState::IsJustPressed() const
 	{
 		return 
 			(IsDown()) && 
 			(GetSameValueTimer() == 0.0f);
 	}
 
-	bool ButtonState::IsJustReleased() const
+	bool KeyState::IsJustReleased() const
 	{
 		return 
 			(IsUp()) && 
 			(GetSameValueTimer() == 0.0f);
 	}
 
-	ButtonStatus ButtonState::GetStatus() const
+	KeyStatus KeyState::GetStatus() const
 	{
 		float same_value_time = GetSameValueTimer();
 
 		if (value)
 		{
 			if (same_value_time == 0.0f)
-				return ButtonStatus::BECOME_PRESSED;
+				return KeyStatus::BECOME_PRESSED;
 			else
-				return ButtonStatus::STAY_PRESSED;
+				return KeyStatus::STAY_PRESSED;
 		}
 		else
 		{
 			if (same_value_time == 0.0f)
-				return ButtonStatus::BECOME_RELEASED;
+				return KeyStatus::BECOME_RELEASED;
 			else
-				return ButtonStatus::STAY_RELEASED;
+				return KeyStatus::STAY_RELEASED;
 		}
 	}
 

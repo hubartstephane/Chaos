@@ -70,8 +70,8 @@ namespace chaos
 		if (gamepad_state == nullptr)
 			return;
 		// maybe a game/pause resume
-		if ((gamepad_state->IsButtonJustPressed(GamepadButton::SPECIAL_LEFT)) ||
-			(gamepad_state->IsButtonJustPressed(GamepadButton::SPECIAL_RIGHT)))
+		if ((gamepad_state->IsKeyJustPressed(GamepadButton::SPECIAL_LEFT)) ||
+			(gamepad_state->IsKeyJustPressed(GamepadButton::SPECIAL_RIGHT)))
 		{
 			Game* game = GetGame();
 			if (game != nullptr)
@@ -176,14 +176,14 @@ namespace chaos
 			left_stick_position = lsp;
 		else
 		{
-			if (gamepad_state->IsButtonDown(GamepadButton::DPAD_LEFT))
+			if (gamepad_state->IsKeyDown(GamepadButton::DPAD_LEFT))
 				left_stick_position.x = -1.0f;
-			else if (gamepad_state->IsButtonDown(GamepadButton::DPAD_RIGHT))
+			else if (gamepad_state->IsKeyDown(GamepadButton::DPAD_RIGHT))
 				left_stick_position.x = 1.0f;
 
-			if (gamepad_state->IsButtonDown(GamepadButton::DPAD_UP))
+			if (gamepad_state->IsKeyDown(GamepadButton::DPAD_UP))
 				left_stick_position.y = +1.0f;
-			else if (gamepad_state->IsButtonDown(GamepadButton::DPAD_DOWN))
+			else if (gamepad_state->IsKeyDown(GamepadButton::DPAD_DOWN))
 				left_stick_position.y = -1.0f;
 		}
 
@@ -352,7 +352,7 @@ namespace chaos
 		{
 			if (gamepad == nullptr)
 				return false;
-			return gamepad->IsButtonDown(button.GetGamepadButton());
+			return gamepad->IsKeyDown(button.GetGamepadButton());
 		}
 		// super call
 		return InputEventReceiverInterface::DoCheckKeyDown(button);

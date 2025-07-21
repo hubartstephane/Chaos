@@ -22,14 +22,14 @@ namespace chaos
 	public:
 
 		/** override */
-		virtual ButtonState const * GetButtonState(GamepadButton button) const override;
+		virtual KeyState const * GetKeyState(Key key) const override;
 		/** override */
 		virtual AxisState const * GetAxisState(GamepadAxis axis) const override;
 		/** override */
 		virtual StickState const * GetStickState(GamepadStick stick) const override;
 
 		/** override */
-		virtual bool ForAllButtons(LightweightFunction<bool(GamepadButton, ButtonState const &)> func) const override;
+		virtual bool ForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const override;
 		/** override */
 		virtual bool ForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const override;
 		/** override */
@@ -50,7 +50,7 @@ namespace chaos
 		/** the state for axis */
 		std::array<AxisState, AXIS_COUNT> axes;
 		/** the state for buttons */
-		std::array<ButtonState, BUTTON_COUNT + 2> buttons; // +2 for LEFT_TRIGGER/RIGHT_TRIGGER virtual buttons
+		std::array<KeyState, BUTTON_COUNT + 2> buttons; // +2 for LEFT_TRIGGER/RIGHT_TRIGGER virtual buttons
 		/** the state for sticks */
 		std::array<StickState, STICK_COUNT> sticks;
 	};

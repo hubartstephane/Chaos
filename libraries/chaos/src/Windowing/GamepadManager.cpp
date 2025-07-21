@@ -21,11 +21,11 @@ namespace chaos
 		gamepad_state.Clear();
 	}
 
-	ButtonState const * PhysicalGamepad::GetButtonState(GamepadButton button) const
+	KeyState const * PhysicalGamepad::GetKeyState(Key key) const
 	{
 		if (!IsPresent())
 			return nullptr;
-		return gamepad_state.GetButtonState(button);
+		return gamepad_state.GetKeyState(key);
 	}
 
 	AxisState const * PhysicalGamepad::GetAxisState(GamepadAxis axis) const
@@ -42,11 +42,11 @@ namespace chaos
 		return gamepad_state.GetStickState(stick);
 	}
 
-	bool PhysicalGamepad::ForAllButtons(LightweightFunction<bool(GamepadButton, ButtonState const &)> func) const
+	bool PhysicalGamepad::ForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const
 	{
 		if (!IsPresent())
 			return false;
-		return gamepad_state.ForAllButtons(func);
+		return gamepad_state.ForAllKeys(func);
 	}
 
 	bool PhysicalGamepad::ForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const
@@ -142,11 +142,11 @@ namespace chaos
 			physical_device->user_gamepad = nullptr;
 	}
 
-	ButtonState const * Gamepad::GetButtonState(GamepadButton button) const
+	KeyState const * Gamepad::GetKeyState(Key key) const
 	{
 		if (physical_device == nullptr)
 			return nullptr;
-		return physical_device->GetButtonState(button);
+		return physical_device->GetKeyState(key);
 	}
 
 	AxisState const * Gamepad::GetAxisState(GamepadAxis axis) const
@@ -163,11 +163,11 @@ namespace chaos
 		return physical_device->GetStickState(stick);
 	}
 
-	bool Gamepad::ForAllButtons(LightweightFunction<bool(GamepadButton, ButtonState const &)> func) const
+	bool Gamepad::ForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const
 	{
 		if (physical_device == nullptr)
 			return false;
-		return physical_device->ForAllButtons(func);
+		return physical_device->ForAllKeys(func);
 	}
 
 	bool Gamepad::ForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const

@@ -698,13 +698,13 @@ bool Game::OnPhysicalGamepadInput(chaos::PhysicalGamepad * physical_gamepad)
 {
 	if (!game_started)
 	{
-		if (physical_gamepad->IsAnyButtonAction())
+		if (physical_gamepad->IsAnyKeyAction())
 			StartGame();
 	}
 	else
 	{
-		if ((physical_gamepad->IsButtonJustPressed(chaos::GamepadButton::SPECIAL_LEFT)) ||
-			(physical_gamepad->IsButtonJustPressed(chaos::GamepadButton::SPECIAL_RIGHT)))
+		if ((physical_gamepad->IsKeyJustPressed(chaos::GamepadButton::SPECIAL_LEFT)) ||
+			(physical_gamepad->IsKeyJustPressed(chaos::GamepadButton::SPECIAL_RIGHT)))
 			SetPause(!game_paused);
 	}
 

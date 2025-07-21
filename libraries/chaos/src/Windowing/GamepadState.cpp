@@ -5,7 +5,7 @@ namespace chaos
 {
 	void GamepadState::Clear()
 	{
-		for (ButtonState& b : buttons)
+		for (KeyState& b : buttons)
 			b.Clear();
 		for (AxisState& a : axes)
 			a.Clear();
@@ -21,11 +21,11 @@ namespace chaos
 		return axes.size();
 	}
 
-	ButtonState const * GamepadState::GetButtonState(GamepadButton button) const
+	KeyState const * GamepadState::GetKeyState(Key key) const
 	{
-		if (button == GamepadButton::UNKNOWN)
+		if (!key.IsValid() || !key.IsGamepadKey())
 			return nullptr;
-		return &buttons[(size_t)button];
+		return &buttons[(size_t)key.GetRawValue()];
 	}
 
 	AxisState const *GamepadState::GetAxisState(GamepadAxis axis) const
@@ -42,7 +42,7 @@ namespace chaos
 		return &sticks[(size_t)stick];
 	}
 
-	bool GamepadState::ForAllButtons(LightweightFunction<bool(GamepadButton, ButtonState const &)> func) const
+	bool GamepadState::ForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const
 	{
 		for (int i = 0 ; i < buttons.size() ; ++i)
 			if (func(GamepadButton(i), buttons[i]))
@@ -93,10 +93,10 @@ namespace chaos
 		{
 			if (AxisState const * axis_state = GetAxisState(src_axis))
 			{
-				ButtonState button_state;
-				button_state.value = axis_state->value != 0.0f;
-				button_state.update_time = axis_state->update_time;
-				buttons[int(dst_button)] = button_state;
+				KeyState key_state;
+				key_state.value = axis_state->value != 0.0f;
+				key_state.update_time = axis_state->update_time;
+				buttons[int(dst_button)] = key_state;
 			}
 		};
 

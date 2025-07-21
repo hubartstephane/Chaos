@@ -2,22 +2,22 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	enum class ButtonStatus;
+	enum class KeyStatus;
 
 	template<typename T>
 	class InputState;
 
-	class ButtonState;
+	class KeyState;
 	class AxisState;
 	class StickState;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* ButtonStatus
+	* KeyStatus
 	*/
 
-	enum class CHAOS_API ButtonStatus : int
+	enum class CHAOS_API KeyStatus : int
 	{
 		NONE = 0,
 		STAY_RELEASED = 1,
@@ -27,7 +27,7 @@ namespace chaos
 	};
 
 	/**
-	* InputState: base class for button and axis state
+	* InputState: base class for key/axis/stick state
 	*/
 
 	template<typename T>
@@ -69,10 +69,10 @@ namespace chaos
 	};
 
 	/**
-	* ButtonState
+	* KeyState
 	*/
 
-	class CHAOS_API ButtonState : public InputState<bool>
+	class CHAOS_API KeyState : public InputState<bool>
 	{
 	public:
 
@@ -89,7 +89,7 @@ namespace chaos
 		bool IsJustReleased() const;
 
 		/** get the button state change */
-		ButtonStatus GetStatus() const;
+		KeyStatus GetStatus() const;
 	};
 
 	/**

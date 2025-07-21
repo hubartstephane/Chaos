@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	ButtonState const * InputDeviceUserInterface::GetButtonState(GamepadButton button) const
+	KeyState const * InputDeviceUserInterface::GetKeyState(Key key) const
 	{
 		return nullptr;
 	}
@@ -18,7 +18,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	bool InputDeviceUserInterface::ForAllButtons(LightweightFunction<bool(GamepadButton, ButtonState const &)> func) const
+	bool InputDeviceUserInterface::ForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const
 	{
 		return false;
 	}
@@ -33,45 +33,45 @@ namespace chaos
 		return false;
 	}
 
-	bool InputDeviceUserInterface::GetButtonValue(GamepadButton button) const
+	bool InputDeviceUserInterface::GetKeyValue(Key key) const
 	{
-		if (ButtonState const * button_state = GetButtonState(button))
-			return button_state->GetValue();
+		if (KeyState const * key_state = GetKeyState(key))
+			return key_state->GetValue();
 		return false;
 	}
 
-	ButtonStatus InputDeviceUserInterface::GetButtonStatus(GamepadButton button) const
+	KeyStatus InputDeviceUserInterface::GetKeyStatus(Key key) const
 	{
-		if (ButtonState const * button_state = GetButtonState(button))
-			return button_state->GetStatus();
-		return ButtonStatus::NONE;
+		if (KeyState const * key_state = GetKeyState(key))
+			return key_state->GetStatus();
+		return KeyStatus::NONE;
 	}
 
-	bool InputDeviceUserInterface::IsButtonDown(GamepadButton button) const
+	bool InputDeviceUserInterface::IsKeyDown(Key key) const
 	{
-		if (ButtonState const * button_state = GetButtonState(button))
-			return button_state->IsDown();
+		if (KeyState const * key_state = GetKeyState(key))
+			return key_state->IsDown();
 		return false;
 	}
 
-	bool InputDeviceUserInterface::IsButtonUp(GamepadButton button) const
+	bool InputDeviceUserInterface::IsKeyUp(Key key) const
 	{
-		if (ButtonState const * button_state = GetButtonState(button))
-			return button_state->IsUp();
+		if (KeyState const * key_state = GetKeyState(key))
+			return key_state->IsUp();
 		return true;
 	}
 
-	bool InputDeviceUserInterface::IsButtonJustPressed(GamepadButton button) const
+	bool InputDeviceUserInterface::IsKeyJustPressed(Key key) const
 	{
-		if (ButtonState const * button_state = GetButtonState(button))
-			return button_state->IsJustPressed();
+		if (KeyState const * key_state = GetKeyState(key))
+			return key_state->IsJustPressed();
 		return false;
 	}
 
-	bool InputDeviceUserInterface::IsButtonJustReleased(GamepadButton button) const
+	bool InputDeviceUserInterface::IsKeyJustReleased(Key key) const
 	{
-		if (ButtonState const * button_state = GetButtonState(button))
-			return button_state->IsJustReleased();
+		if (KeyState const * key_state = GetKeyState(key))
+			return key_state->IsJustReleased();
 		return false;
 	}
 
@@ -89,9 +89,9 @@ namespace chaos
 		return {0.0f, 0.0f};
 	}
 
-	bool InputDeviceUserInterface::IsAnyButtonAction() const
+	bool InputDeviceUserInterface::IsAnyKeyAction() const
 	{
-		return ForAllButtons([](GamepadButton button, ButtonState const & state)
+		return ForAllKeys([](Key key, KeyState const & state)
 		{
 			return state.IsDown();
 		});
@@ -107,12 +107,12 @@ namespace chaos
 
 	bool InputDeviceUserInterface::IsAnyAction() const
 	{
-		return IsAnyButtonAction() || IsAnyAxisAction();
+		return IsAnyKeyAction() || IsAnyAxisAction();
 	}
 
-	bool InputDeviceUserInterface::IsAnyButtonJustPressed() const
+	bool InputDeviceUserInterface::IsAnyKeyJustPressed() const
 	{
-		return ForAllButtons([](GamepadButton button, ButtonState const & state)
+		return ForAllKeys([](Key key, KeyState const & state)
 		{
 			return state.IsJustPressed();
 		});

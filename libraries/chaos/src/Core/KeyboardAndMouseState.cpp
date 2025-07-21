@@ -27,7 +27,7 @@ namespace chaos
 		}
 	}
 
-	ButtonState const * KeyboardAndMouseState::GetKeyState(Key key)
+	KeyState const * KeyboardAndMouseState::GetKeyState(Key key)
 	{
 		KeyboardAndMouseState const * singleton = KeyboardAndMouseState::GetInstance();
 

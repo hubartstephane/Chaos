@@ -786,7 +786,7 @@ namespace chaos
 		// try start the game
 		if (game_instance == nullptr)
 		{
-			if (in_physical_gamepad->IsAnyButtonJustPressed())
+			if (in_physical_gamepad->IsAnyKeyJustPressed())
 				RequireStartGame(in_physical_gamepad);
 			return true;
 		}

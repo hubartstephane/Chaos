@@ -15,13 +15,15 @@ namespace chaos
 
 	public:
 
-		/** override */
-		virtual KeyState const * GetKeyState(Key key) const override;
-		/** override */
-		virtual bool ForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const override;
-
 		/** change the state of a keyboard or mouse key (notification from a window) */
 		void SetKeyValue(Key key, bool value);
+
+	protected:
+
+		/** override */
+		virtual KeyState const * DoGetKeyState(Key key) const override;
+		/** override */
+		virtual bool DoForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const override;
 
 	protected:
 

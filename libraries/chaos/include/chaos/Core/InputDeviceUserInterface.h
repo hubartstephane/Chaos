@@ -15,19 +15,22 @@ namespace chaos
 
 	public:
 
+		/** call a function on all devices handled by this whole hierarchy (composition pattern) */
+		virtual bool EnumerateDeviceHierarchy(LightweightFunction<bool(InputDeviceUserInterface const*)> func) const;
+
 		/** gets one key state */
-		virtual KeyState const * GetKeyState(Key key) const;
+		KeyState const * GetKeyState(Key key) const;
 		/** gets one axis state */
-		virtual AxisState const * GetAxisState(GamepadAxis axis) const;
+		AxisState const * GetAxisState(GamepadAxis axis) const;
 		/** gets one stick state */
-		virtual StickState const * GetStickState(GamepadStick stick) const;
+		StickState const * GetStickState(GamepadStick stick) const;
 
 		/** enumerate keys */
-		virtual bool ForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const;
+		bool ForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const;
 		/** enumerate axes */
-		virtual bool ForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const;
+		bool ForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const;
 		/** enumerate sticks */
-		virtual bool ForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const;
+		bool ForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const;
 
 		/** get the key value */
 		bool GetKeyValue(Key key) const;
@@ -58,6 +61,22 @@ namespace chaos
 
 		/** returns true whether there is a key that just has become pressed */
 		bool IsAnyKeyJustPressed() const;
+
+	protected:
+
+		/** gets one key state */
+		virtual KeyState const * DoGetKeyState(Key key) const;
+		/** gets one axis state */
+		virtual AxisState const * DoGetAxisState(GamepadAxis axis) const;
+		/** gets one stick state */
+		virtual StickState const * DoGetStickState(GamepadStick stick) const;
+
+		/** enumerate keys */
+		virtual bool DoForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const;
+		/** enumerate axes */
+		virtual bool DoForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const;
+		/** enumerate sticks */
+		virtual bool DoForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const;
 	};
 
 #endif

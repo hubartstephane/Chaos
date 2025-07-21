@@ -3,32 +3,94 @@
 
 namespace chaos
 {
+	bool InputDeviceUserInterface::EnumerateDeviceHierarchy(LightweightFunction<bool(InputDeviceUserInterface const *)> func) const
+	{
+		return func(this);
+	}
+
 	KeyState const * InputDeviceUserInterface::GetKeyState(Key key) const
 	{
-		return nullptr;
+		KeyState const * result = nullptr;
+		EnumerateDeviceHierarchy([this, &result, &key](InputDeviceUserInterface const * in_device_user) 
+		{
+			result = in_device_user->DoGetKeyState(key);
+			return (result != nullptr); // continue until some result is found
+		});
+		return result;
 	}
 
 	AxisState const * InputDeviceUserInterface::GetAxisState(GamepadAxis axis) const
 	{
-		return nullptr;
+		AxisState const * result = nullptr;
+		EnumerateDeviceHierarchy([this, &result, &axis](InputDeviceUserInterface const * in_device_user)
+		{
+			result = in_device_user->DoGetAxisState(axis);
+			return (result != nullptr); // continue until some result is found
+		});
+		return result;
 	}
 
 	StickState const * InputDeviceUserInterface::GetStickState(GamepadStick stick) const
 	{	
-		return nullptr;
+		StickState const * result = nullptr;
+		EnumerateDeviceHierarchy([this, &result, &stick](InputDeviceUserInterface const * in_device_user)
+		{
+			result = in_device_user->DoGetStickState(stick);
+			return (result != nullptr); // continue until some result is found
+		});
+		return result;
 	}
 
 	bool InputDeviceUserInterface::ForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const
 	{
-		return false;
+		return EnumerateDeviceHierarchy([this, &func](InputDeviceUserInterface const * in_device_user)
+		{
+			return in_device_user->DoForAllKeys(func);
+		});
 	}
 
 	bool InputDeviceUserInterface::ForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const
 	{
-		return false;
+		return EnumerateDeviceHierarchy([this, &func](InputDeviceUserInterface const * in_device_user)
+		{
+			return in_device_user->DoForAllAxes(func);
+		});
 	}
 
 	bool InputDeviceUserInterface::ForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const
+	{
+		return EnumerateDeviceHierarchy([this, &func](InputDeviceUserInterface const * in_device_user)
+		{
+			return in_device_user->DoForAllSticks(func);
+		});
+	}
+
+	KeyState const * InputDeviceUserInterface::DoGetKeyState(Key key) const
+	{
+		return nullptr;
+	}
+
+	AxisState const * InputDeviceUserInterface::DoGetAxisState(GamepadAxis axis) const
+	{
+		return nullptr;
+	}
+
+	StickState const * InputDeviceUserInterface::DoGetStickState(GamepadStick stick) const
+	{	
+		return nullptr;
+	}
+
+	bool InputDeviceUserInterface::DoForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const
+	{
+		return false;
+	}
+
+	bool InputDeviceUserInterface::DoForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const
+	{
+		return false;
+	}
+
+	bool InputDeviceUserInterface::DoForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const
 	{
 		return false;
 	}

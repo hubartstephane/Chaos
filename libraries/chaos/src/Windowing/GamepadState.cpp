@@ -21,42 +21,42 @@ namespace chaos
 		return axes.size();
 	}
 
-	KeyState const * GamepadState::GetKeyState(Key key) const
+	KeyState const * GamepadState::DoGetKeyState(Key key) const
 	{
 		if (!key.IsValid() || !key.IsGamepadKey())
 			return nullptr;
 		return &buttons[(size_t)key.GetRawValue()];
 	}
 
-	AxisState const *GamepadState::GetAxisState(GamepadAxis axis) const
+	AxisState const *GamepadState::DoGetAxisState(GamepadAxis axis) const
 	{
 		if (axis == GamepadAxis::UNKNOWN)
 			return nullptr;
 		return &axes[(size_t)axis];
 	}
 
-	StickState const *GamepadState::GetStickState(GamepadStick stick) const
+	StickState const *GamepadState::DoGetStickState(GamepadStick stick) const
 	{	
 		if (stick == GamepadStick::UNKNOWN)
 			return nullptr;
 		return &sticks[(size_t)stick];
 	}
 
-	bool GamepadState::ForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const
+	bool GamepadState::DoForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const
 	{
 		for (int i = 0 ; i < buttons.size() ; ++i)
 			if (func(GamepadButton(i), buttons[i]))
 				return true;
 		return false;
 	}
-	bool GamepadState::ForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const
+	bool GamepadState::DoForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const
 	{
 		for (int i = 0 ; i < axes.size() ; ++i)
 			if (func(GamepadAxis(i), axes[i]))
 				return true;
 		return false;
 	}
-	bool GamepadState::ForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const
+	bool GamepadState::DoForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const
 	{
 		for (int i = 0 ; i < sticks.size() ; ++i)
 			if (func(GamepadStick(i), sticks[i]))

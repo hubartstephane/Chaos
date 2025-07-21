@@ -70,20 +70,6 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		/** get a reference on the state */
 		GamepadState const* GetGamepadState() const { return &gamepad_state; }
 
-		/** override */
-		virtual KeyState const * GetKeyState(Key key) const override;
-		/** override */
-		virtual AxisState const * GetAxisState(GamepadAxis axis) const override;
-		/** override */
-		virtual StickState const * GetStickState(GamepadStick stick) const override;
-
-		/** override */
-		virtual bool ForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const override;
-		/** override */
-		virtual bool ForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const override;
-		/** override */
-		virtual bool ForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const override;
-
 		/** returns the stick index */
 		int GetGamepadIndex() const { return stick_index; }
 		/** returns whether the gamepad is allocated for a user */
@@ -100,6 +86,9 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		PhysicalGamepad(GamepadManager* in_gamepad_manager, int in_stick_index);
 		/** destructor is protected */
 		~PhysicalGamepad() {}
+
+		/** override */
+		virtual bool EnumerateDeviceHierarchy(LightweightFunction<bool(InputDeviceUserInterface const*)> func) const override;
 
 		/** update all the values for the axis and buttons */
 		void UpdateAxisAndButtons(float dead_zone);
@@ -195,20 +184,6 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		/** get a reference on the state (if connected) */
 		GamepadState const* GetGamepadState() const;
 
-		/** override */
-		virtual KeyState const * GetKeyState(Key key) const override;
-		/** override */
-		virtual AxisState const * GetAxisState(GamepadAxis axis) const override;
-		/** override */
-		virtual StickState const * GetStickState(GamepadStick stick) const override;
-
-		/** override */
-		virtual bool ForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const override;
-		/** override */
-		virtual bool ForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const override;
-		/** override */
-		virtual bool ForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const override;
-
 		/** returns the stick index */
 		int GetGamepadIndex() const;
 		/** returns true whether the gamepad is connected */
@@ -242,6 +217,9 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		void ClearForceFeedbackEffects();
 
 	protected:
+
+		/** override */
+		virtual bool EnumerateDeviceHierarchy(LightweightFunction<bool(InputDeviceUserInterface const*)> func) const override;
 
 		/** tick force feedback effects */
 		void TickForceFeedbackEffects(float delta_time);

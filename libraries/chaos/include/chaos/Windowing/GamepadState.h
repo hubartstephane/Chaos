@@ -21,20 +21,6 @@ namespace chaos
 
 	public:
 
-		/** override */
-		virtual KeyState const * GetKeyState(Key key) const override;
-		/** override */
-		virtual AxisState const * GetAxisState(GamepadAxis axis) const override;
-		/** override */
-		virtual StickState const * GetStickState(GamepadStick stick) const override;
-
-		/** override */
-		virtual bool ForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const override;
-		/** override */
-		virtual bool ForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const override;
-		/** override */
-		virtual bool ForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const override;
-
 		/** returns the number of buttons */
 		size_t GetButtonCount() const;
 		/** returns the number of axis */
@@ -44,6 +30,22 @@ namespace chaos
 		void UpdateAxisAndButtons(int stick_index, float dead_zone);
 		/** reset the content of the object */
 		void Clear();
+
+	protected:
+
+		/** override */
+		virtual KeyState const * DoGetKeyState(Key key) const override;
+		/** override */
+		virtual AxisState const * DoGetAxisState(GamepadAxis axis) const override;
+		/** override */
+		virtual StickState const * DoGetStickState(GamepadStick stick) const override;
+
+		/** override */
+		virtual bool DoForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const override;
+		/** override */
+		virtual bool DoForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const override;
+		/** override */
+		virtual bool DoForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const override;
 
 	protected:
 

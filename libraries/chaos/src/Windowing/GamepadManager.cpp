@@ -21,46 +21,12 @@ namespace chaos
 		gamepad_state.Clear();
 	}
 
-	KeyState const * PhysicalGamepad::GetKeyState(Key key) const
+	bool PhysicalGamepad::EnumerateDeviceHierarchy(LightweightFunction<bool(InputDeviceUserInterface const*)> func) const
 	{
-		if (!IsPresent())
-			return nullptr;
-		return gamepad_state.GetKeyState(key);
-	}
-
-	AxisState const * PhysicalGamepad::GetAxisState(GamepadAxis axis) const
-	{
-		if (!IsPresent())
-			return nullptr;
-		return gamepad_state.GetAxisState(axis);
-	}
-
-	StickState const * PhysicalGamepad::GetStickState(GamepadStick stick) const
-	{
-		if (!IsPresent())
-			return nullptr;
-		return gamepad_state.GetStickState(stick);
-	}
-
-	bool PhysicalGamepad::ForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const
-	{
-		if (!IsPresent())
-			return false;
-		return gamepad_state.ForAllKeys(func);
-	}
-
-	bool PhysicalGamepad::ForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const
-	{
-		if (!IsPresent())
-			return false;
-		return gamepad_state.ForAllAxes(func);
-	}
-
-	bool PhysicalGamepad::ForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const
-	{
-		if (!IsPresent())
-			return false;
-		return gamepad_state.ForAllSticks(func);
+		if (IsPresent())
+			if (gamepad_state.EnumerateDeviceHierarchy(func))
+				return true;
+		return InputDeviceUserInterface::EnumerateDeviceHierarchy(func);
 	}
 
 	void PhysicalGamepad::UpdateAxisAndButtons(float dead_zone)
@@ -142,46 +108,12 @@ namespace chaos
 			physical_device->user_gamepad = nullptr;
 	}
 
-	KeyState const * Gamepad::GetKeyState(Key key) const
+	bool Gamepad::EnumerateDeviceHierarchy(LightweightFunction<bool(InputDeviceUserInterface const*)> func) const
 	{
-		if (physical_device == nullptr)
-			return nullptr;
-		return physical_device->GetKeyState(key);
-	}
-
-	AxisState const * Gamepad::GetAxisState(GamepadAxis axis) const
-	{
-		if (physical_device == nullptr)
-			return nullptr;
-		return physical_device->GetAxisState(axis);
-	}
-
-	StickState const * Gamepad::GetStickState(GamepadStick stick) const
-	{
-		if (physical_device == nullptr)
-			return nullptr;
-		return physical_device->GetStickState(stick);
-	}
-
-	bool Gamepad::ForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const
-	{
-		if (physical_device == nullptr)
-			return false;
-		return physical_device->ForAllKeys(func);
-	}
-
-	bool Gamepad::ForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const
-	{
-		if (physical_device == nullptr)
-			return false;
-		return physical_device->ForAllAxes(func);
-	}
-
-	bool Gamepad::ForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const
-	{
-		if (physical_device == nullptr)
-			return false;
-		return physical_device->ForAllSticks(func);
+		if (physical_device != nullptr)
+			if (physical_device->EnumerateDeviceHierarchy(func))
+				return true;
+		return InputDeviceUserInterface::EnumerateDeviceHierarchy(func);
 	}
 
 	bool Gamepad::IsPresent() const

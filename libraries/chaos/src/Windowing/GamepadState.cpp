@@ -137,7 +137,7 @@ namespace chaos
 		};
 
 		UpdateVirtualStick(GamepadStick::LEFT_STICK, GamepadAxis::LEFT_AXIS_X, GamepadAxis::LEFT_AXIS_Y);
-		UpdateVirtualStick(GamepadStick::RIGHT_STICK, GamepadAxis::RIGHT_AXIS_X, GamepadAxis::RIGHT_AXIS_X);
+		UpdateVirtualStick(GamepadStick::RIGHT_STICK, GamepadAxis::RIGHT_AXIS_X, GamepadAxis::RIGHT_AXIS_Y);
 	}
 
 }; // namespace chaos

@@ -21,9 +21,11 @@ namespace chaos
 		return false;
 	}
 
-	bool ImGuiInputStateObjectBase::DisplayImGuiKeyInfo(Key key, ButtonState const & button_state)
+	bool ImGuiInputStateObjectBase::DisplayImGuiKeyInfo(Key key, ButtonState const * button_state)
 	{
 		// early exit for unknown key (whatever type is)
+		if (button_state == nullptr)
+			return false;
 		if (!key.IsValid())
 			return false;
 
@@ -47,7 +49,7 @@ namespace chaos
 		{
 			ImGui::PushID(ID);
 
-			bool pressed = button_state.GetValue();
+			bool pressed = button_state->GetValue();
 
 			ImVec4 color = (pressed)? 
 				ImVec4(1.0f, 0.0f, 0.0f, 1.0f):
@@ -60,7 +62,7 @@ namespace chaos
 			ImGui::TextColored(color, "%s", pressed? "pressed" : "released");
 
 			ImGui::TableNextColumn();
-			ImGui::TextColored(color, "%f", button_state.GetSameValueTimer());
+			ImGui::TextColored(color, "%f", button_state->GetSameValueTimer());
 
 			ImGui::PopID();
 

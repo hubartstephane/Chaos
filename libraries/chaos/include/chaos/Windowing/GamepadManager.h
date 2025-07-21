@@ -61,7 +61,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	/**
 	* PhysicalGamepad : the physical device. Client do not directly use it
 	*/
-	class CHAOS_API PhysicalGamepad
+	class CHAOS_API PhysicalGamepad : public InputDeviceUserInterface
 	{
 		CHAOS_GAMEPAD_ALL_FRIENDS
 
@@ -70,32 +70,12 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		/** get a reference on the state */
 		GamepadState const* GetGamepadState() const { return &gamepad_state; }
 
-		/** gets one button state */
-		ButtonState GetButtonState(GamepadButton button) const;
-		/** gets one axis state */
-		AxisState GetAxisState(GamepadAxis axis) const;
-		/** gets one stick state */
-		StickState GetStickState(GamepadStick stick) const;
-
-		/** get the button value */
-		bool GetButtonValue(GamepadButton button) const;
-		/** get the button state change */
-		ButtonStatus GetButtonStatus(GamepadButton button) const;
-
-		/** whether the button is up (press or repeat) */
-		bool IsButtonDown(GamepadButton button) const;
-		/** whether the button is up (released) */
-		bool IsButtonUp(GamepadButton button) const;
-		/** whether the button has just been pressed */
-		bool IsButtonJustPressed(GamepadButton button) const;
-		/** whether the button has just been released */
-		bool IsButtonJustReleased(GamepadButton button) const;
-
-		/** get the axis value */
-		float GetAxisValue(GamepadAxis axis) const;
-
-		/** get the stick value */
-		glm::vec2 GetStickValue(GamepadStick stick) const;
+		/** override */
+		virtual ButtonState const * GetButtonState(GamepadButton button) const override;
+		/** override */
+		virtual AxisState const * GetAxisState(GamepadAxis axis) const override;
+		/** override */
+		virtual StickState const * GetStickState(GamepadStick stick) const override;
 
 		/** returns true whether there is any pressed button */
 		bool IsAnyButtonAction() const;
@@ -200,7 +180,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	/**
 	* Gamepad : this is a logical gamepad .. may change the physical gamepad it is bound on
 	*/
-	class CHAOS_API Gamepad : public Object
+	class CHAOS_API Gamepad : public Object, public InputDeviceUserInterface
 	{
 	public:
 
@@ -218,32 +198,12 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		/** get a reference on the state (if connected) */
 		GamepadState const* GetGamepadState() const;
 
-		/** gets one button state */
-		ButtonState GetButtonState(GamepadButton button) const;
-		/** gets one axis state */
-		AxisState GetAxisState(GamepadAxis axis) const;
-		/** gets one stick state */
-		StickState GetStickState(GamepadStick stick) const;
-
-		/** get the button value */
-		bool GetButtonValue(GamepadButton button) const;
-		/** get the button state change */
-		ButtonStatus GetButtonStatus(GamepadButton button) const;
-
-		/** whether the button is up (press or repeat) */
-		bool IsButtonDown(GamepadButton button) const;
-		/** whether the button is up (released) */
-		bool IsButtonUp(GamepadButton button) const;
-		/** whether the button has just been pressed */
-		bool IsButtonJustPressed(GamepadButton button) const;
-		/** whether the button has just been released */
-		bool IsButtonJustReleased(GamepadButton button) const;
-
-		/** get the axis value */
-		float GetAxisValue(GamepadAxis axis) const;
-
-		/** get the stick value */
-		glm::vec2 GetStickValue(GamepadStick stick) const;
+		/** override */
+		virtual ButtonState const * GetButtonState(GamepadButton button) const override;
+		/** override */
+		virtual AxisState const * GetAxisState(GamepadAxis axis) const override;
+		/** override */
+		virtual StickState const * GetStickState(GamepadStick stick) const override;
 
 		/** returns true whether there is any action button */
 		bool IsAnyButtonAction() const;

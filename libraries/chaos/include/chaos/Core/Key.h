@@ -217,10 +217,14 @@ namespace chaos
 		DPAD_LEFT = GLFW_GAMEPAD_BUTTON_DPAD_LEFT,
 
 		/** index in buttons of LEFT TRIGGER for XBOX like pad (this is a simulate button, while the physical left trigger is an axis) */
-		LEFT_TRIGGER = 101,
+		LEFT_TRIGGER = 15,
 		/** index in buttons of RIGHT TRIGGER for XBOX like pad (this is a simulate button, while the physical right trigger is an axis) */
-		RIGHT_TRIGGER = 102
+		RIGHT_TRIGGER = 16
 	};
+
+	// GamepadState owns a raw array of buttons. Thoses values must match indexation requirement
+	static_assert(int(GamepadButton::LEFT_TRIGGER) == 15);
+	static_assert(int(GamepadButton::RIGHT_TRIGGER) == 16);
 
 	CHAOS_DECLARE_ENUM_METHOD(GamepadButton, CHAOS_API);
 
@@ -255,6 +259,10 @@ namespace chaos
 		/** returns the direction of right stick */
 		RIGHT_STICK = 1
 	};
+
+	// GamepadState owns a raw array of buttons. Thoses values must match indexation requirement
+	static_assert(int(GamepadStick::LEFT_STICK) == 0);
+	static_assert(int(GamepadStick::RIGHT_STICK) == 1);
 
 	CHAOS_DECLARE_ENUM_METHOD(GamepadStick, CHAOS_API);
 

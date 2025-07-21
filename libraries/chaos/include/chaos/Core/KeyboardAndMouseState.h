@@ -16,9 +16,9 @@ namespace chaos
 	public:
 
 		/** get the state of a mouse or keyboard state */
-		ButtonState const * GetKeyState(Key key) const;
+		static ButtonState const * GetKeyState(Key key);
 		/** change the state of a keyboard or mouse key (notification from a window) */
-		void SetKeyValue(Key key, bool value);
+		static void SetKeyValue(Key key, bool value);
 
 	protected:
 

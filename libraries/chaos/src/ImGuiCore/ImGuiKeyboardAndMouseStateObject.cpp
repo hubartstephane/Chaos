@@ -29,7 +29,7 @@ namespace chaos
 						if (!button_state->GetValue() && button_state->GetSameValueTimer() > 10.0f) // do not bother display up keys for more than 10s
 							return;
 					}
-					DisplayImGuiKeyInfo(key, *button_state);
+					DisplayImGuiKeyInfo(key, button_state);
 				}
 			});
 		});

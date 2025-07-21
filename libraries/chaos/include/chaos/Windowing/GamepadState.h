@@ -10,41 +10,23 @@ namespace chaos
 	* GamepadState: the gamepad buttons and axes states
 	*/
 
-	class CHAOS_API GamepadState
+	class CHAOS_API GamepadState : public InputDeviceUserInterface
 	{
-		/** number of axis in a gamepad */
+		/** number of axes in a gamepad */
 		static constexpr size_t AXIS_COUNT = sizeof(meta::FakeInstance<GLFWgamepadstate>().axes) / sizeof(meta::FakeInstance<GLFWgamepadstate>().axes[0]);
-		/** number of button in a gamepad */
+		/** number of buttons in a gamepad (beware this does not take TRIGGER_LEFT/TRIGGER_RIGHT virtual buttons into account) */
 		static constexpr size_t BUTTON_COUNT = sizeof(meta::FakeInstance<GLFWgamepadstate>().buttons) / sizeof(meta::FakeInstance<GLFWgamepadstate>().buttons[0]);
+		/** number of sticks in gamepad */
+		static constexpr size_t STICK_COUNT = 2; // see GamepadStick
 
 	public:
 
-		/** gets one button state */
-		ButtonState GetButtonState(GamepadButton button) const;
-		/** gets one axis state */
-		AxisState GetAxisState(GamepadAxis axis) const;
-		/** gets one stick state */
-		StickState GetStickState(GamepadStick stick) const;
-
-		/** get the button value */
-		bool GetButtonValue(GamepadButton button) const;
-		/** get the button state change */
-		ButtonStatus GetButtonStatus(GamepadButton button) const;
-
-		/** whether the button is up (press or repeat) */
-		bool IsButtonDown(GamepadButton button) const;
-		/** whether the button is up (released) */
-		bool IsButtonUp(GamepadButton button) const;
-		/** whether the button has just been pressed */
-		bool IsButtonJustPressed(GamepadButton button) const;
-		/** whether the button has just been released */
-		bool IsButtonJustReleased(GamepadButton button) const;
-
-		/** get the axis value */
-		float GetAxisValue(GamepadAxis axis) const;
-
-		/** get the stick value */
-		glm::vec2 GetStickValue(GamepadStick stick) const;
+		/** override */
+		virtual ButtonState const * GetButtonState(GamepadButton button) const override;
+		/** override */
+		virtual AxisState const * GetAxisState(GamepadAxis axis) const override;
+		/** override */
+		virtual StickState const * GetStickState(GamepadStick stick) const override;
 
 		/** returns true whether there is any actioned button */
 		bool IsAnyButtonAction() const;
@@ -68,10 +50,12 @@ namespace chaos
 
 	protected:
 
-		/** the value for axis */
+		/** the state for axis */
 		std::array<AxisState, AXIS_COUNT> axes;
-		/** the value for buttons */
-		std::array<ButtonState, BUTTON_COUNT> buttons;
+		/** the state for buttons */
+		std::array<ButtonState, BUTTON_COUNT + 2> buttons; // +2 for LEFT_TRIGGER/RIGHT_TRIGGER virtual buttons
+		/** the state for sticks */
+		std::array<StickState, STICK_COUNT> sticks;
 	};
 
 #endif

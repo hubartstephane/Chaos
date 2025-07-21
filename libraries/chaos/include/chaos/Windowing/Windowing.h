@@ -19,6 +19,7 @@
 #include "chaos/Windowing/VerticalBoxWidget.h"
 #include "chaos/Windowing/WrapBoxWidget.h"
 #include "chaos/Windowing/WindowRootWidget.h"
+#include "chaos/Windowing/InputDeviceUserInterface.h"
 #include "chaos/Windowing/GamepadState.h"
 #include "chaos/Windowing/GamepadManager.h"
 #include "chaos/Windowing/WindowApplication.h"

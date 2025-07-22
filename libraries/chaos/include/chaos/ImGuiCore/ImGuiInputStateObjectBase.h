@@ -18,10 +18,12 @@ namespace chaos
 
 	protected:
 
-		/** Create an ImGui table to display inputs */
-		static bool WithImGuiInputTable(char const * table_title, LightweightFunction<void()> func);
-		/** Display information concerning some key */
-		static bool DisplayImGuiKeyInfo(Key key, KeyState const * key_state);
+		/** display for all keys matching certain criteria */
+		void DisplayKeysInfo(char const * title, InputDeviceUserInterface const * in_device_user, LightweightFunction<bool(Key key, KeyState const &)> filter_func) const;
+		/** display a single key info */
+		void DisplayKeyInfo(Key key, KeyState const & key_state) const;
+		/** display info for all axes matching certain criteria */
+		void DisplayAxesInfo(char const * title, InputDeviceUserInterface const * in_device_user, LightweightFunction<bool(GamepadAxis axis, AxisState const &)> filter_func) const;
 	};
 
 #endif

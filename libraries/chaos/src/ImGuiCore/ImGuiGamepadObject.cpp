@@ -63,32 +63,16 @@ namespace chaos
 
 			ImGui::Dummy({0.0f, 20.0f});
 
-			// buttons
-			EnumMetaData<GamepadButton> const * gamepad_button_metadata = GetEnumMetaData(boost::mpl::identity<GamepadButton>());
-			if (gamepad_button_metadata != nullptr)
+			// features
+			DisplayKeysInfo("buttons", gamepad_state, [&](Key key, KeyState const & state)
 			{
-				WithImGuiInputTable("buttons", [&]()
-				{
-					gamepad_button_metadata->ForEachEnumValue([&](GamepadButton key)
-					{
-						DisplayImGuiKeyInfo(key, gamepad_state->GetKeyState(key));
-					});
-				});
-			}
-
-			// axes
-			EnumMetaData<GamepadAxis> const * gamepad_axis_metadata = GetEnumMetaData(boost::mpl::identity<GamepadAxis>());
-			if (gamepad_axis_metadata != nullptr)
+				return (key.GetType() == KeyType::GAMEPAD);
+			});
+			DisplayAxesInfo("axes", physical_gamepad,[&](GamepadAxis axis, AxisState const & state)
 			{
-				WithImGuiInputTable("axes", [&]()
-				{
-					gamepad_axis_metadata->ForEachEnumValue([](GamepadAxis axis)
-					{
+				return true;
+			});
 
-						
-					});
-				});
-			}
 			ImGui::PopID();
 		}
 	}

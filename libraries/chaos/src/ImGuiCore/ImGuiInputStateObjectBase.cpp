@@ -3,53 +3,39 @@
 
 namespace chaos
 {
-
-	bool ImGuiInputStateObjectBase::WithImGuiInputTable(char const * table_title, LightweightFunction<void()> func)
+	void ImGuiInputStateObjectBase::DisplayAxesInfo(char const * title, InputDeviceUserInterface const * in_device_user, LightweightFunction<bool(GamepadAxis, AxisState const &)> filter_func) const
 	{
-		if (ImGui::BeginTable(table_title, 3, ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg))
+		if (ImGui::BeginTable(title, 5, ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg))
 		{
 			ImGui::TableSetupColumn("Key", 0);
 			ImGui::TableSetupColumn("State", 0);
+			ImGui::TableSetupColumn("Min", 0);
+			ImGui::TableSetupColumn("Max", 0);
 			ImGui::TableSetupColumn("Repeat Timer", 0);
 			ImGui::TableHeadersRow();
 
-			func();
+			in_device_user->ForAllAxes([](GamepadAxis axis, AxisState const & state)
+			{
+				return false; // don't stop
+			});
 
 			ImGui::EndTable();
-			return true;
 		}
-		return false;
 	}
 
-	bool ImGuiInputStateObjectBase::DisplayImGuiKeyInfo(Key key, KeyState const * key_state)
+	void ImGuiInputStateObjectBase::DisplayKeyInfo(Key key, KeyState const & key_state) const
 	{
 		// early exit for unknown key (whatever type is)
-		if (key_state == nullptr)
-			return false;
 		if (!key.IsValid())
-			return false;
-
-		// gets an ID for the key depending of key type and Key value
-		int ID = 0;
-		switch (key.GetType())
-		{
-		case KeyType::KEYBOARD:
-			ID = int(key.GetKeyboardButton()) * 10 + 0; break;
-		case KeyType::MOUSE:
-			ID = int(key.GetMouseButton()) * 10 + 1; break;
-		case KeyType::GAMEPAD:
-			ID = int(key.GetGamepadButton()) * 10 + 2; break;
-		default:
-			assert(0);
-			return false;
-		}
+			return;
 
 		// ImGui display code
 		if (char const * key_name = key.GetName())
 		{
-			ImGui::PushID(ID);
+			ImGui::PushID(int(key.GetType()));
+			ImGui::PushID(int(key.GetKeyboardButton()));
 
-			bool pressed = key_state->GetValue();
+			bool pressed = key_state.GetValue();
 
 			ImVec4 color = (pressed)? 
 				ImVec4(1.0f, 0.0f, 0.0f, 1.0f):
@@ -62,13 +48,31 @@ namespace chaos
 			ImGui::TextColored(color, "%s", pressed? "pressed" : "released");
 
 			ImGui::TableNextColumn();
-			ImGui::TextColored(color, "%f", key_state->GetSameValueTimer());
+			ImGui::TextColored(color, "%f", key_state.GetSameValueTimer());
 
 			ImGui::PopID();
-
-			return true;
+			ImGui::PopID();
 		}
-		return false;
+	}
+
+	void ImGuiInputStateObjectBase::DisplayKeysInfo(char const * title, InputDeviceUserInterface const * in_device_user, LightweightFunction<bool(Key key, KeyState const &)> filter_func) const
+	{
+		if (ImGui::BeginTable(title, 3, ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg))
+		{
+			ImGui::TableSetupColumn("Key", 0);
+			ImGui::TableSetupColumn("State", 0);
+			ImGui::TableSetupColumn("Repeat Timer", 0);
+			ImGui::TableHeadersRow();
+
+			in_device_user->ForAllKeys([&](Key key, KeyState const & state)
+			{
+				if (filter_func(key, state))
+					DisplayKeyInfo(key, state);
+				return false; // don't stop
+			});
+
+			ImGui::EndTable();
+		}
 	}
 
 }; // namespace chaos

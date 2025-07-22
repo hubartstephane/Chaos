@@ -21,9 +21,8 @@ namespace chaos
 		/** override */
 		virtual void OnDrawImGuiContent(Window * window) override;
 
-		/** utility function to iterate over all enum possible values and display the key information */
-		template<typename ENUM_TYPE>
-		void DisplayKeyStates(char const * title, char const * table_title, bool hide_cold_keys);
+		/** display all keyboard or mouse keys */
+		void DisplayKeyboardAndMouseKeyStates(char const * title, char const * table_title, bool hide_cold_keys, KeyType key_type) const;
 	};
 
 #endif

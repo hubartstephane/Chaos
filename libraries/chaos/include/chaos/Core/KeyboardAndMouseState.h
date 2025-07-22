@@ -28,9 +28,9 @@ namespace chaos
 	protected:
 
 		/** the state of all keyboard buttons */
-		std::array<KeyState, GLFW_KEY_LAST> keyboard_state;
+		std::array<KeyState, GLFW_KEY_LAST + 1> keyboard_key_state;
 		/** the state of all mouse buttons */
-		std::array<KeyState, GLFW_MOUSE_BUTTON_LAST + 1> mouse_button_state;
+		std::array<KeyState, GLFW_MOUSE_BUTTON_LAST + 1> mouse_key_state;
 	};
 
 #endif

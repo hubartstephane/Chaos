@@ -8,19 +8,19 @@ namespace chaos
 		if (!key.IsValid())
 			return nullptr;
 		if (key.IsKeyboardKey())
-			return &keyboard_state[int(key.GetKeyboardButton())];
+			return &keyboard_key_state[int(key.GetKeyboardButton())];
 		if (key.IsMouseKey())
-			return &mouse_button_state[int(key.GetMouseButton())];
+			return &mouse_key_state[int(key.GetMouseButton())];
 		return nullptr;
 	}
 
 	bool KeyboardAndMouseState::DoForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const
 	{
-		for (int i = 0 ; i < keyboard_state.size() ; ++i)
-			if (func(KeyboardButton(i), keyboard_state[i]))
+		for (int i = 0 ; i < keyboard_key_state.size() ; ++i)
+			if (func(KeyboardButton(i), keyboard_key_state[i]))
 				return true;
-		for (int i = 0 ; i < mouse_button_state.size() ; ++i)
-			if (func(MouseButton(i), mouse_button_state[i]))
+		for (int i = 0 ; i < mouse_key_state.size() ; ++i)
+			if (func(MouseButton(i), mouse_key_state[i]))
 				return true;
 		return false;
 	}
@@ -32,8 +32,8 @@ namespace chaos
 			if (key != KeyboardButton::UNKNOWN)
 			{
 				int key_index = int(key.GetKeyboardButton());
-				if (key_index >= 0 && key_index < keyboard_state.size())
-					keyboard_state[key_index].SetValue(value);
+				if (key_index >= 0 && key_index < keyboard_key_state.size())
+					keyboard_key_state[key_index].SetValue(value);
 			}
 		}
 		else if (key.IsMouseKey())
@@ -41,8 +41,8 @@ namespace chaos
 			if (key != MouseButton::UNKNOWN)
 			{
 				int key_index = int(key.GetMouseButton());
-				if (key_index >= 0 && key_index < mouse_button_state.size())
-					mouse_button_state[key_index].SetValue(value);
+				if (key_index >= 0 && key_index < mouse_key_state.size())
+					mouse_key_state[key_index].SetValue(value);
 			}
 		}
 	}

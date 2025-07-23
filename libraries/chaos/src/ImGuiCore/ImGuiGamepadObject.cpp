@@ -68,14 +68,8 @@ namespace chaos
 			{
 				return (key.GetType() == KeyType::GAMEPAD);
 			});
-			DisplayAxesInfo("axes", physical_gamepad,[&](GamepadAxis axis, AxisState const & state)
-			{
-				return true;
-			});
-			DisplaySticksInfo("sticks", physical_gamepad, [&](GamepadStick stick, StickState const & state)
-			{
-				return true;
-			});
+			DisplayAxesInfo("axes", physical_gamepad);
+			DisplaySticksInfo("sticks", physical_gamepad);
 
 			ImGui::PopID();
 		}

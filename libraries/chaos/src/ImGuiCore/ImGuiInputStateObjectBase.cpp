@@ -37,22 +37,15 @@ namespace chaos
 
 	void ImGuiInputStateObjectBase::DisplayKeysInfo(char const * title, InputDeviceUserInterface const * in_device_user, LightweightFunction<bool(Key, KeyState const &)> filter_func) const
 	{
-		if (ImGui::BeginTable(title, 3, ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg))
+		ImGuiTools::DrawImGuiTable(title, "Key", "State", "Repeat Timer")([&]()
 		{
-			ImGui::TableSetupColumn("Key", 0);
-			ImGui::TableSetupColumn("State", 0);
-			ImGui::TableSetupColumn("Repeat Timer", 0);
-			ImGui::TableHeadersRow();
-
 			in_device_user->ForAllKeys([&](Key key, KeyState const & state)
 			{
 				if (filter_func(key, state))
 					DisplayKeyInfo(key, state);
 				return false; // don't stop
 			});
-
-			ImGui::EndTable();
-		}
+		});
 	}
 
 	void ImGuiInputStateObjectBase::DisplayAxisInfo(GamepadAxis axis, AxisState const & state) const
@@ -93,24 +86,15 @@ namespace chaos
 
 	void ImGuiInputStateObjectBase::DisplayAxesInfo(char const * title, InputDeviceUserInterface const * in_device_user, LightweightFunction<bool(GamepadAxis, AxisState const &)> filter_func) const
 	{
-		if (ImGui::BeginTable(title, 5, ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg))
+		ImGuiTools::DrawImGuiTable(title, "Key", "State", "Min", "Max", "Repeat Timer")([&]()
 		{
-			ImGui::TableSetupColumn("Key", 0);
-			ImGui::TableSetupColumn("State", 0);
-			ImGui::TableSetupColumn("Min", 0);
-			ImGui::TableSetupColumn("Max", 0);
-			ImGui::TableSetupColumn("Repeat Timer", 0);
-			ImGui::TableHeadersRow();
-
 			in_device_user->ForAllAxes([&](GamepadAxis axis, AxisState const & state)
 			{
 				if (filter_func(axis, state))
 					DisplayAxisInfo(axis, state);
 				return false; // don't stop
 			});
-
-			ImGui::EndTable();
-		}
+		});
 	}
 
 	void ImGuiInputStateObjectBase::DisplayStickInfo(GamepadStick stick, StickState const & state) const
@@ -154,24 +138,15 @@ namespace chaos
 
 	void ImGuiInputStateObjectBase::DisplaySticksInfo(char const * title, InputDeviceUserInterface const * in_device_user, LightweightFunction<bool(GamepadStick, StickState const &)> filter_func) const
 	{
-		if (ImGui::BeginTable(title, 5, ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg))
+		ImGuiTools::DrawImGuiTable(title, "Key", "State", "Min", "Max", "Repeat Timer")([&]()
 		{
-			ImGui::TableSetupColumn("Key", 0);
-			ImGui::TableSetupColumn("State", 0);
-			ImGui::TableSetupColumn("Min", 0);
-			ImGui::TableSetupColumn("Max", 0);
-			ImGui::TableSetupColumn("Repeat Timer", 0);
-			ImGui::TableHeadersRow();
-
 			in_device_user->ForAllSticks([&](GamepadStick stick, StickState const & state)
 			{
 				if (filter_func(stick, state))
 					DisplayStickInfo(stick, state);
 				return false; // don't stop
 			});
-
-			ImGui::EndTable();
-		}
+		});
 	}
 
 }; // namespace chaos

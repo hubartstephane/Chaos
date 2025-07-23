@@ -5,6 +5,8 @@ namespace chaos
 
 	enum class DrawImGuiVariableFlags;
 
+	class DrawImGuiTable;
+
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	enum class DrawImGuiVariableFlags : int
@@ -28,6 +30,56 @@ namespace chaos
 
 	namespace ImGuiTools
 	{
+		/** 
+		 * DrawImGuiTable: utility class that create an imgui table with its header and closes it at destruction
+		 */
+		class DrawImGuiTable
+		{
+		public:
+
+			/** constructor (that opens a ImGui table) */
+			template<typename... COLUMN_NAME>
+			DrawImGuiTable(char const* title, COLUMN_NAME... column_name)
+			{
+				static_assert((std::is_convertible_v<COLUMN_NAME, const char*> && ...)); // accept only char const * for column names
+
+				int column_count = sizeof...(COLUMN_NAME);
+				if (ImGui::BeginTable(title, column_count, ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg))
+				{
+					(ImGui::TableSetupColumn(column_name), ...);
+					ImGui::TableHeadersRow();
+
+					table_opened = true;
+				}
+			}
+
+			/** destructor (that closes ImGui table) */
+			~DrawImGuiTable()
+			{
+				if (table_opened)
+				{
+					ImGui::EndTable();
+					table_opened = false;
+				}
+			}
+
+			/** inserting content */
+			DrawImGuiTable const & operator ()(LightweightFunction<void()> func) const
+			{
+				func();
+				return *this;
+			}
+
+			// no copy
+			DrawImGuiTable(const DrawImGuiTable&) = delete;
+			DrawImGuiTable& operator=(const DrawImGuiTable&) = delete;
+
+		protected:
+
+			/** whether the table has sucessufully be opened */
+			bool table_opened = false;
+		};
+
 		/** check whether there is a function named DrawImGuiVariableImpl */
 		template<typename T>
 		concept HasDrawImGuiVariableImplFunction = requires(std::remove_const<T>::type & t)

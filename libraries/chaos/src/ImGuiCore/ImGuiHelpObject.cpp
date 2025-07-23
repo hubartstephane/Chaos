@@ -41,24 +41,15 @@ namespace chaos
 			}
 		};
 
-		if (ImGui::BeginTable("objects", 5, ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable))
+		ImGuiTools::DrawImGuiTable("objects", {}, "Key", "Mandatory Mod.", "Forbidden Mod.", "Action", "Description")([&]()
 		{
-			ImGui::TableSetupColumn("Key");
-			ImGui::TableSetupColumn("Mandatory Mod.");
-			ImGui::TableSetupColumn("Forbidden Mod.");
-			ImGui::TableSetupColumn("Action");
-			ImGui::TableSetupColumn("Description");
-			ImGui::TableHeadersRow();
-
 			ImGuiKeyActionEnumerator action_enumerator;
 			window->DispatchEventToHierarchy([&action_enumerator](InputEventReceiverInterface * in_event_receiver)
 			{
 				in_event_receiver->EnumerateKeyActions(action_enumerator);
 				return false;
 			});
-
-			ImGui::EndTable();
-		}
+		});
 	}
 
 }; // namespace chaos

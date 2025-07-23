@@ -39,12 +39,14 @@ namespace chaos
 
 			/** constructor (that opens a ImGui table) */
 			template<typename... COLUMN_NAME>
-			DrawImGuiTable(char const* title, COLUMN_NAME... column_name)
+			DrawImGuiTable(char const* title, std::optional<int> table_flags, COLUMN_NAME... column_name)
 			{
 				static_assert((std::is_convertible_v<COLUMN_NAME, const char*> && ...)); // accept only char const * for column names
 
+				int flags = table_flags.value_or(ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg);
+
 				int column_count = sizeof...(COLUMN_NAME);
-				if (ImGui::BeginTable(title, column_count, ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg))
+				if (ImGui::BeginTable(title, column_count, flags))
 				{
 					(ImGui::TableSetupColumn(column_name), ...);
 					ImGui::TableHeadersRow();

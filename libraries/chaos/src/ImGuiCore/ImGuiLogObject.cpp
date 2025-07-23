@@ -18,18 +18,10 @@ namespace chaos
 		assert(logger != nullptr);
 
 		// the lines
-		size_t constexpr COLUMN_COUNT = 6;
+		int table_flags = ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersInnerH | ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_Reorderable;
 
-		if (ImGui::BeginTable("##lines", COLUMN_COUNT, ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersInnerH | ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_Reorderable))
+		ImGuiTools::DrawImGuiTable("##lines", table_flags, "Date", "Severity", "Domain", "Count", "Message", "Action")([&]()
 		{
-			ImGui::TableSetupColumn("Date", 0);
-			ImGui::TableSetupColumn("Severity", 0);
-			ImGui::TableSetupColumn("Domain", 0);
-			ImGui::TableSetupColumn("Count", 0);
-			ImGui::TableSetupColumn("Message", 0);
-			ImGui::TableSetupColumn("Action", 0);
-			ImGui::TableHeadersRow();
-
 			std::vector<LogLine> const& lines = logger->GetLines();
 			for (size_t i = 0; i < lines.size(); ++i)
 			{
@@ -77,6 +69,8 @@ namespace chaos
 				if (!filter.PassFilter(line.content.c_str()))
 					continue;
 
+				size_t constexpr COLUMN_COUNT = 6;
+
 				// time
 				ImGui::PushID(int(i * COLUMN_COUNT + 0));
 				ImGui::TableNextColumn();
@@ -114,10 +108,8 @@ namespace chaos
 					ImGui::SetClipboardText(line.ToString().c_str());
 
 				ImGui::PopID();
-
 			}
-			ImGui::EndTable();
-		}
+		});
 	}
 
 	void ImGuiLogObject::OnDrawImGuiMenu(Window* window, BeginImGuiMenuFunc begin_menu_func)

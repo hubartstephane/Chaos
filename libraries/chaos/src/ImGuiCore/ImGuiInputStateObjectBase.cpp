@@ -37,7 +37,7 @@ namespace chaos
 
 	void ImGuiInputStateObjectBase::DisplayKeysInfo(char const * title, InputDeviceUserInterface const * in_device_user, LightweightFunction<bool(Key, KeyState const &)> filter_func) const
 	{
-		ImGuiTools::DrawImGuiTable(title, "Key", "State", "Repeat Timer")([&]()
+		ImGuiTools::DrawImGuiTable(title, {}, "Key", "State", "Repeat Timer")([&]()
 		{
 			in_device_user->ForAllKeys([&](Key key, KeyState const & state)
 			{
@@ -86,7 +86,7 @@ namespace chaos
 
 	void ImGuiInputStateObjectBase::DisplayAxesInfo(char const * title, InputDeviceUserInterface const * in_device_user, LightweightFunction<bool(GamepadAxis, AxisState const &)> filter_func) const
 	{
-		ImGuiTools::DrawImGuiTable(title, "Key", "State", "Min", "Max", "Repeat Timer")([&]()
+		ImGuiTools::DrawImGuiTable(title, {}, "Key", "State", "Min", "Max", "Repeat Timer")([&]()
 		{
 			in_device_user->ForAllAxes([&](GamepadAxis axis, AxisState const & state)
 			{
@@ -138,7 +138,7 @@ namespace chaos
 
 	void ImGuiInputStateObjectBase::DisplaySticksInfo(char const * title, InputDeviceUserInterface const * in_device_user, LightweightFunction<bool(GamepadStick, StickState const &)> filter_func) const
 	{
-		ImGuiTools::DrawImGuiTable(title, "Key", "State", "Min", "Max", "Repeat Timer")([&]()
+		ImGuiTools::DrawImGuiTable(title, {}, "Key", "State", "Min", "Max", "Repeat Timer")([&]()
 		{
 			in_device_user->ForAllSticks([&](GamepadStick stick, StickState const & state)
 			{

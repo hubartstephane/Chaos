@@ -5,6 +5,7 @@
 #include "chaos/Core/Default.h"
 #include "chaos/Core/EmptyClass.h"
 #include "chaos/Core/LightweightFunction.h"
+#include "chaos/Core/ConstantFunction.h"
 #include "chaos/Core/Singleton.h"
 #include "chaos/Core/HelpText.h"
 #include "chaos/Core/Premain.h"

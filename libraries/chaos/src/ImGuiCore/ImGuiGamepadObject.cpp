@@ -72,6 +72,10 @@ namespace chaos
 			{
 				return true;
 			});
+			DisplaySticksInfo("sticks", physical_gamepad, [&](GamepadStick stick, StickState const & state)
+			{
+				return true;
+			});
 
 			ImGui::PopID();
 		}

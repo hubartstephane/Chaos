@@ -36,7 +36,7 @@ protected:
 
   virtual bool OnMouseButtonImpl(chaos::MouseButtonEvent const &mouse_button_event) override
   {
-    if (mouse_button_event.IsKeyPressed(0))
+    if (mouse_button_event.IsKeyPressed(chaos::MouseButton::BUTTON_1))
     {
       chaos::PlaySoundDesc desc;
       desc.categories.push_back(category1.get());
@@ -44,7 +44,7 @@ protected:
       sound1 = source1->Play(desc);
 			return true;
     }
-    else if (mouse_button_event.IsKeyPressed(1))
+    else if (mouse_button_event.IsKeyPressed(chaos::MouseButton::BUTTON_2))
     {
       if (sound1 != nullptr)
       {
@@ -56,7 +56,7 @@ protected:
       }
 			return true;
     }
-    else if (mouse_button_event.IsKeyPressed(2))
+    else if (mouse_button_event.IsKeyPressed(chaos::MouseButton::BUTTON_3))
     {
       if (category1 != nullptr)
       {

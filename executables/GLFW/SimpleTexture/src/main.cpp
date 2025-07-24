@@ -261,7 +261,7 @@ protected:
 
 	virtual bool OnMouseButtonImpl(chaos::MouseButtonEvent const &mouse_button_event) override
 	{
-		if (mouse_button_event.IsKeyReleased(0))
+		if (mouse_button_event.IsKeyReleased(chaos::MouseButton::BUTTON_1))
 		{
 			chaos::TextureDescription desc = texture->GetTextureDescription();
 

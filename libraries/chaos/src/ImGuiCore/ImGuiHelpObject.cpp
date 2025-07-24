@@ -23,7 +23,7 @@ namespace chaos
 				ImGui::TableNextRow();
 
 				ImGui::BeginDisabled(!in_enabled);
-				ImGui::TableSetColumnIndex(0); ImGui::Text("%s", EnumToString(in_request.key));
+				ImGui::TableSetColumnIndex(0); ImGui::Text("%s", in_request.key.GetName());
 
 				char const* required_modifiers = EnumToString(in_request.required_modifiers, buffer, 256);
 				ImGui::TableSetColumnIndex(1); ImGui::Text("%s", required_modifiers);

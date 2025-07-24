@@ -4,15 +4,13 @@ namespace chaos
 
 	class KeyEvent;
 
-	using KeyRequest = KeyRequestBase<KeyboardButton>;
-
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* KeyEvent: a keyboard event
 	*/
 
-	class CHAOS_API KeyEvent : public KeyEventBase<KeyboardButton>
+	class CHAOS_API KeyEvent : public KeyEventBase
 	{
 
 	public:

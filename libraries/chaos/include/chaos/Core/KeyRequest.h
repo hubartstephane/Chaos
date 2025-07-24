@@ -2,24 +2,20 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	template<typename T>
-	class KeyRequestBase;
+	class KeyRequest;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* KeyRequestBase: a request for key event
+	* KeyRequest: a request for key event
 	*/
 
-	template<typename T>
-	class KeyRequestBase
+	class KeyRequest
 	{
-		using key_type = T;
-
 	public:
 
 		/** the concerned key */
-		key_type key = DefaultKeyValue<key_type>::value;
+		Key key;
 		/** some mandatory modifiers */
 		KeyModifier required_modifiers = KeyModifier::None;
 		/** some forbidden modifiers */

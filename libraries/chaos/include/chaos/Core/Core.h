@@ -58,7 +58,7 @@
 #include "chaos/Core/DefaultKeyValue.h"
 #include "chaos/Core/KeyAction.h"
 #include "chaos/Core/KeyModifier.h"
-#include "chaos/Core/KeyRequestBase.h"
+#include "chaos/Core/KeyRequest.h"
 #include "chaos/Core/KeyEventBase.h"
 #include "chaos/Core/KeyEvent.h"
 #include "chaos/Core/MouseButtonEvent.h"

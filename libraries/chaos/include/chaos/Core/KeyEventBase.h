@@ -2,7 +2,6 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	template<typename T>
 	class KeyEventBase;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -11,10 +10,8 @@ namespace chaos
 	* KeyEventBase: a generic key event
 	*/
 
-	template<typename T>
 	class KeyEventBase
 	{
-		using key_type = T;
 
 	public:
 
@@ -40,28 +37,28 @@ namespace chaos
 		}
 
 		/** check whether this is a key press event */
-		bool IsKeyPressed(key_type in_key, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const
+		bool IsKeyPressed(Key in_key, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const
 		{
 			return MatchRequest({in_key, in_required_modifiers, in_forbidden_modifiers, KeyActionMask::Press});
 		}
 		/** check whether this is a key release event */
-		bool IsKeyReleased(key_type in_key, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const
+		bool IsKeyReleased(Key in_key, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const
 		{
 			return MatchRequest({in_key, in_required_modifiers, in_forbidden_modifiers, KeyActionMask::Release});
 		}
 		/** check whether this is a key repeat event */
-		bool IsKeyRepeat(key_type in_key, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const
+		bool IsKeyRepeat(Key in_key, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const
 		{
 			return MatchRequest({in_key, in_required_modifiers, in_forbidden_modifiers, KeyActionMask::Repeat});
 		}
 		/** check whether this is a key press or repeat event */
-		bool IsKeyDown(key_type in_key, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const
+		bool IsKeyDown(Key in_key, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const
 		{
 			return MatchRequest({in_key, in_required_modifiers, in_forbidden_modifiers, KeyActionMask::Down});
 		}
 
 		/** check whether the key event is for considered key */
-		bool IsKeyEvent(key_type in_key, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const
+		bool IsKeyEvent(Key in_key, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const
 		{
 			if (key != in_key)
 				return false;
@@ -73,7 +70,7 @@ namespace chaos
 		}
 
 		/** check whether the event matches the request */
-		bool MatchRequest(KeyRequestBase<key_type> const & in_request) const
+		bool MatchRequest(KeyRequest const & in_request) const
 		{
 			if (!IsKeyEvent(in_request.key, in_request.required_modifiers, in_request.forbidden_modifiers))
 				return false;
@@ -105,7 +102,7 @@ namespace chaos
 	public:
 
 		/** the concerned key */
-		key_type key = DefaultKeyValue<key_type>::value;
+		Key key;
 		/** some special key modifiers like shift */
 		KeyModifier modifiers = KeyModifier::None;
 		/** pressed or release */

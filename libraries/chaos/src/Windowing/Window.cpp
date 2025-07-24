@@ -651,7 +651,7 @@ namespace chaos
 
 		// dispatch event
 		MouseButtonEvent mouse_button_event;
-		mouse_button_event.key = button;
+		mouse_button_event.key = MouseButton(button);
 		mouse_button_event.action = GetKeyActionFromGLFW(action);
 		mouse_button_event.modifiers = GetKeyModifiersFromGLFW(modifiers);
 

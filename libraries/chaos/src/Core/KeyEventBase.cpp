@@ -26,62 +26,22 @@ namespace chaos
 
 	bool KeyEventBase::IsKeyPressed(Key in_key, KeyModifier in_required_modifiers, KeyModifier in_forbidden_modifiers) const
 	{
-		return MatchRequest({in_key, in_required_modifiers, in_forbidden_modifiers, KeyActionMask::Press});
+		return chaos::IsKeyPressed(in_key).RequireModifiers(in_required_modifiers).ForbidModifiers(in_forbidden_modifiers).MatchEvent(*this);
 	}
 
 	bool KeyEventBase::IsKeyReleased(Key in_key, KeyModifier in_required_modifiers, KeyModifier in_forbidden_modifiers) const
 	{
-		return MatchRequest({in_key, in_required_modifiers, in_forbidden_modifiers, KeyActionMask::Release});
+		return chaos::IsKeyReleased(in_key).RequireModifiers(in_required_modifiers).ForbidModifiers(in_forbidden_modifiers).MatchEvent(*this);
 	}
 
 	bool KeyEventBase::IsKeyRepeat(Key in_key, KeyModifier in_required_modifiers, KeyModifier in_forbidden_modifiers) const
 	{
-		return MatchRequest({in_key, in_required_modifiers, in_forbidden_modifiers, KeyActionMask::Repeat});
+		return chaos::IsKeyRepeat(in_key).RequireModifiers(in_required_modifiers).ForbidModifiers(in_forbidden_modifiers).MatchEvent(*this);
 	}
 
 	bool KeyEventBase::IsKeyDown(Key in_key, KeyModifier in_required_modifiers, KeyModifier in_forbidden_modifiers) const
 	{
-		return MatchRequest({in_key, in_required_modifiers, in_forbidden_modifiers, KeyActionMask::Down});
-	}
-
-	bool KeyEventBase::IsKeyEvent(Key in_key, KeyModifier in_required_modifiers, KeyModifier in_forbidden_modifiers) const
-	{
-		if (key != in_key)
-			return false;
-		if (in_required_modifiers != KeyModifier::None && !HasAllFlags(modifiers, in_required_modifiers))
-			return false;
-		if (in_forbidden_modifiers != KeyModifier::None && HasAnyFlags(modifiers, in_forbidden_modifiers))
-			return false;
-		return true;
-	}
-
-	bool KeyEventBase::MatchRequest(KeyRequest const & in_request) const
-	{
-		if (!IsKeyEvent(in_request.key, in_request.required_modifiers, in_request.forbidden_modifiers))
-			return false;
-
-		switch (action)
-		{
-		case KeyAction::Release:
-			if (!HasAnyFlags(in_request.action_mask, KeyActionMask::Release))
-				return false;
-			break;
-
-		case KeyAction::Press:
-			if (!HasAnyFlags(in_request.action_mask, KeyActionMask::Press))
-				return false;
-			break;
-
-		case KeyAction::Repeat:
-			if (!HasAnyFlags(in_request.action_mask, KeyActionMask::Repeat))
-				return false;
-			break;
-
-		default:
-			assert(0);
-		}
-
-		return true;
+		return chaos::IsKeyDown(in_key).RequireModifiers(in_required_modifiers).ForbidModifiers(in_forbidden_modifiers).MatchEvent(*this);
 	}
 
 }; // namespace chaos

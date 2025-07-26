@@ -43,7 +43,7 @@ protected:
 	{
 		chaos::ViewportGridLayout* layout = GetViewportLayout();
 
-		if (in_action_enumerator({chaos::KeyboardButton::E} , "ViewportGridMode EXPANDED", [this, layout]()
+		if (in_action_enumerator(IsKeyPressed(chaos::KeyboardButton::E), "ViewportGridMode EXPANDED", [this, layout]()
 		{
 			layout->SetMode(chaos::ViewportGridMode::EXPANDED);
 		}))
@@ -51,7 +51,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator({chaos::KeyboardButton::P} , "ViewportGridMode UNIFORM_PACKED", [this, layout]()
+		if (in_action_enumerator(IsKeyPressed(chaos::KeyboardButton::P), "ViewportGridMode UNIFORM_PACKED", [this, layout]()
 		{
 			layout->SetMode(chaos::ViewportGridMode::UNIFORM_PACKED);
 		}))
@@ -59,7 +59,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator({chaos::KeyboardButton::C} , "ViewportGridMode UNIFORM_CENTERED", [this, layout]()
+		if (in_action_enumerator(IsKeyPressed(chaos::KeyboardButton::C), "ViewportGridMode UNIFORM_CENTERED", [this, layout]()
 		{
 			layout->SetMode(chaos::ViewportGridMode::UNIFORM_CENTERED);
 		}))

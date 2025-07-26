@@ -423,8 +423,8 @@ protected:
 					GPUDrawPrimitive primitive;
 					primitive.indexed = true;
 					primitive.primitive_type = GL_TRIANGLES;
-					primitive.start = indices_writer.GetWrittenCount() / (sizeof(uint32_t));
-					primitive.count = mesh_faces[i].size();
+					primitive.start = (int)indices_writer.GetWrittenCount() / (sizeof(uint32_t));
+					primitive.count = (int)mesh_faces[i].size();
 					element.primitives.push_back(primitive);
 
 
@@ -571,7 +571,7 @@ protected:
 
 		bool enabled = object_count > 0;
 
-		if (in_action_enumerator({KeyboardButton::KP_ADD}, "Next Object", enabled, [&]()
+		if (in_action_enumerator(IsKeyPressed(KeyboardButton::KP_ADD), "Next Object", enabled, [&]()
 		{
 			objects[selected_object_index]->SetSelected(false);
 
@@ -586,7 +586,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator({KeyboardButton::KP_SUBTRACT}, "Previous Object", enabled, [&]()
+		if (in_action_enumerator(IsKeyPressed(KeyboardButton::KP_SUBTRACT), "Previous Object", enabled, [&]()
 		{
 			objects[selected_object_index]->SetSelected(false);
 
@@ -616,13 +616,10 @@ protected:
 		{
 			auto MoveObject = [this, delta_time](KeyboardButton button, size_t component_index, float direction)
 			{
-				if (KeyState const* state = KeyboardAndMouseState::GetKeyboardButtonState(button))
+				if (KeyboardAndMouseState::GetInstance()->IsKeyDown(button))
 				{
-					if (state->IsDown())
-					{
-						Object3D* selected_object = objects[selected_object_index].get();
-						selected_object->transform.position[component_index] += direction * OBJECT_SPEED * delta_time;
-					}
+					Object3D* selected_object = objects[selected_object_index].get();
+					selected_object->transform.position[component_index] += direction * OBJECT_SPEED * delta_time;
 				}
 			};
 

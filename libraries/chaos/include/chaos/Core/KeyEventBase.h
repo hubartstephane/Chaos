@@ -33,12 +33,6 @@ namespace chaos
 		/** check whether this is a key press or repeat event */
 		bool IsKeyDown(Key in_key, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const;
 
-		/** check whether the key event is for considered key */
-		bool IsKeyEvent(Key in_key, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const;
-
-		/** check whether the event matches the request */
-		bool MatchRequest(KeyRequest const & in_request) const;
-
 	public:
 
 		/** the concerned key */

@@ -141,7 +141,7 @@ namespace chaos
 			/** override */
 			virtual bool operator () (KeyRequest const & in_request, char const * in_title, bool in_enabled, LightweightFunction<void()> in_key_action) override
 			{
-				if (in_enabled && key_event.MatchRequest(in_request))
+				if (in_enabled && in_request.MatchEvent(key_event))
 				{
 					in_key_action();
 					return true;

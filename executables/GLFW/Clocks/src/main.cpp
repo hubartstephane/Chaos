@@ -244,7 +244,7 @@ protected:
 
 	bool UpdateClockTimeScaleWithKeys(chaos::KeyActionEnumerator & in_action_enumerator, chaos::Clock * clock, chaos::KeyboardButton incr_key, chaos::KeyboardButton decr_key, char const * incr_title, char const * decr_title)
 	{
-		if (in_action_enumerator({incr_key}, incr_title, [&]()
+		if (in_action_enumerator(IsKeyPressed(incr_key), incr_title, [&]()
 		{
 			UpdateClockTimeScale(clock, 0.2f);
 		}))
@@ -252,7 +252,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator({decr_key}, decr_title, [&]()
+		if (in_action_enumerator(IsKeyPressed(decr_key), decr_title, [&]()
 		{
 			UpdateClockTimeScale(clock, -0.2f);
 		}))
@@ -264,7 +264,7 @@ protected:
 
 	bool GenerateEvent(chaos::KeyActionEnumerator & in_action_enumerator, chaos::Clock * clock, chaos::KeyboardButton create_key, char const * in_title, int type)
 	{
-		if (in_action_enumerator({create_key}, in_title, [&]()
+		if (in_action_enumerator(IsKeyPressed(create_key), in_title, [&]()
 		{
 			// remove previous event
 			if (clock_event != nullptr)
@@ -302,7 +302,7 @@ protected:
 
 	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator) override
 	{
-		if (in_action_enumerator({chaos::KeyboardButton::T}, "Toggle Main Clock", [this]()
+		if (in_action_enumerator(IsKeyPressed(chaos::KeyboardButton::T), "Toggle Main Clock", [this]()
 		{
 			if (chaos::Clock * clock = chaos::WindowApplication::GetMainClockInstance())
 				clock->Toggle();

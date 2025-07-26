@@ -44,7 +44,7 @@ namespace chaos
 		ImGuiTools::DrawImGuiTable("objects", {}, "Key", "Mandatory Mod.", "Forbidden Mod.", "Action", "Description")([&]()
 		{
 			ImGuiKeyActionEnumerator action_enumerator;
-			window->DispatchEventToHierarchy([&action_enumerator](InputEventReceiverInterface * in_event_receiver)
+			window->TraverseInputEventReceiverHierarchy([&action_enumerator](InputEventReceiverInterface * in_event_receiver)
 			{
 				in_event_receiver->EnumerateKeyActions(action_enumerator);
 				return false;

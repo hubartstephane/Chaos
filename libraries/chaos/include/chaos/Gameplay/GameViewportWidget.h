@@ -41,7 +41,7 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual bool DispatchEventToHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func) override;
+		virtual bool TraverseInputEventReceiverHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func) override;
 		/** override */
 		virtual bool OnDraw(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, WindowDrawParams const& draw_params) override;
 		/** override */

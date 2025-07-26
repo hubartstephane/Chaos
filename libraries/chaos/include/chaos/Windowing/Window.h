@@ -194,7 +194,7 @@ namespace chaos
 		void SetWindowClient(WindowClient * in_client);
 
 		/** override */
-		virtual bool DispatchEventToHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func) override;
+		virtual bool TraverseInputEventReceiverHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func) override;
 		/** override */
 		virtual bool EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator) override;
 
@@ -361,7 +361,7 @@ namespace chaos
 
 			return GetWindowAndProcessWithContext(in_glfw_window, [&event_func](Window * in_window)
 			{
-				return in_window->DispatchEventToHierarchy(event_func);
+				return in_window->TraverseInputEventReceiverHierarchy(event_func);
 			});
 		}
 

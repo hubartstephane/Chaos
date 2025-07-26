@@ -33,7 +33,7 @@ namespace chaos
 		virtual bool FillAtlasGeneratorInput(AtlasInput& input) override;
 
 		/** override */
-		virtual bool DispatchEventToHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func) override;
+		virtual bool TraverseInputEventReceiverHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func) override;
 
 	protected:
 

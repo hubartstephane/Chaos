@@ -156,7 +156,7 @@ namespace chaos
 		};
 
 		ProcessKeyActionEnumerator action_enumerator(key_event);
-		return DispatchEventToHierarchy([this, &action_enumerator](InputEventReceiverInterface * in_event_receiver)
+		return TraverseInputEventReceiverHierarchy([this, &action_enumerator](InputEventReceiverInterface * in_event_receiver)
 		{
 			return in_event_receiver->EnumerateKeyActions(action_enumerator);
 		});
@@ -167,7 +167,7 @@ namespace chaos
 		return false;
 	}
 
-	bool InputEventReceiverInterface::DispatchEventToHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func)
+	bool InputEventReceiverInterface::TraverseInputEventReceiverHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func)
 	{
 		return event_func(this);
 	}

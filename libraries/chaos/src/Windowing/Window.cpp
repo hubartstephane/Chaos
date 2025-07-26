@@ -571,21 +571,21 @@ namespace chaos
 		});
 	}
 
-	bool Window::DispatchEventToHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func)
+	bool Window::TraverseInputEventReceiverHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func)
 	{
 		// try imgui context
-		if (window_imgui_context.DispatchEventToHierarchy(event_func))
+		if (window_imgui_context.TraverseInputEventReceiverHierarchy(event_func))
 			return true;
 		// try window client
 		if (window_client != nullptr)
-			if (window_client->DispatchEventToHierarchy(event_func))
+			if (window_client->TraverseInputEventReceiverHierarchy(event_func))
 				return true;
 		// try super call
-		if (WindowInterface::DispatchEventToHierarchy(event_func))
+		if (WindowInterface::TraverseInputEventReceiverHierarchy(event_func))
 			return true;
 		// try application
 		if (WindowApplication* window_application = Application::GetInstance())
-			if (window_application->DispatchEventToHierarchy(event_func))
+			if (window_application->TraverseInputEventReceiverHierarchy(event_func))
 				return true;
 
 		return false;

@@ -42,8 +42,8 @@ namespace chaos
 		/** process an incomming event using the known KeyActions */
 		bool ProcessKeyActions(KeyEvent const & key_event);
 
-		/** dispatch an event to this and inner hierarchy */
-		virtual bool DispatchEventToHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func);
+		/** traverse all receivers hierarchy and call a functor on all elements */
+		virtual bool TraverseInputEventReceiverHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func);
 
 		/** enumerate some declared key actions */
 		virtual bool EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator);

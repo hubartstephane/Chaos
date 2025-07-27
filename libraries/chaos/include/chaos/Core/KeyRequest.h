@@ -66,13 +66,13 @@ namespace chaos
 	* Some request getters
 	**/
 
-	CHAOS_API KeyRequest IsKeyDown(Key key);
+	CHAOS_API KeyRequest RequestKeyDown(Key key);
 
-	CHAOS_API KeyRequest IsKeyPressed(Key key);
+	CHAOS_API KeyRequest RequestKeyPressed(Key key);
 
-	CHAOS_API KeyRequest IsKeyRepeat(Key key);
+	CHAOS_API KeyRequest RequestKeyRepeat(Key key);
 
-	CHAOS_API KeyRequest IsKeyReleased(Key key);
+	CHAOS_API KeyRequest RequestKeyReleased(Key key);
 
 #endif
 

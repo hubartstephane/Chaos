@@ -776,7 +776,7 @@ namespace chaos
 
 	bool WindowApplication::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator)
 	{
-		if (in_action_enumerator(IsKeyPressed(KeyboardButton::F7) , "Toggle ImGui", [this]()
+		if (in_action_enumerator(RequestKeyPressed(KeyboardButton::F7) , "Toggle ImGui", [this]()
 		{
 			SetImGuiMenuEnabled(!IsImGuiMenuEnabled());
 		}))
@@ -785,7 +785,7 @@ namespace chaos
 		}
 
 #if _DEBUG
-		if (in_action_enumerator(IsKeyPressed(KeyboardButton::F8) , "Reload GPU Resources", [this]()
+		if (in_action_enumerator(RequestKeyPressed(KeyboardButton::F8) , "Reload GPU Resources", [this]()
 		{
 			ReloadGPUResources();
 		}))

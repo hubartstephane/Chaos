@@ -63,7 +63,7 @@ protected:
 
 	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator) override
 	{
-		if (in_action_enumerator(IsKeyPressed(chaos::KeyboardButton::KP_ADD).RequireModifiers(chaos::KeyModifier::Shift) , "Next RenderPass", [this]()
+		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::KP_ADD).RequireModifiers(chaos::KeyModifier::Shift) , "Next RenderPass", [this]()
 		{
 			ChangeRenderpass(+1);
 		}))
@@ -71,7 +71,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator(IsKeyPressed(chaos::KeyboardButton::KP_ADD), "Next Material", [this]()
+		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::KP_ADD), "Next Material", [this]()
 		{
 			ChangeMaterial(+1);
 		}))
@@ -79,7 +79,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator(IsKeyPressed(chaos::KeyboardButton::KP_SUBTRACT).RequireModifiers(chaos::KeyModifier::Shift), "Previous RenderPass", [this]()
+		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::KP_SUBTRACT).RequireModifiers(chaos::KeyModifier::Shift), "Previous RenderPass", [this]()
 		{
 			ChangeRenderpass(-1);
 		}))
@@ -87,7 +87,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator(IsKeyPressed(chaos::KeyboardButton::KP_SUBTRACT), "Previous Material", [this]()
+		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::KP_SUBTRACT), "Previous Material", [this]()
 		{
 			ChangeMaterial(-1);
 		}))

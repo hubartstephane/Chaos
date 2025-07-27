@@ -900,7 +900,7 @@ namespace chaos
 
 	bool Window::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator)
 	{
-		if (in_action_enumerator(IsKeyPressed(KeyboardButton::F9) , "Screen Capture", [this]()
+		if (in_action_enumerator(RequestKeyPressed(KeyboardButton::F9) , "Screen Capture", [this]()
 		{
 			ScreenCapture();
 		}))
@@ -908,7 +908,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_enumerator(IsKeyPressed(KeyboardButton::F10) , "Toggle Fullscreen", [this]()
+		if (in_action_enumerator(RequestKeyPressed(KeyboardButton::F10) , "Toggle Fullscreen", [this]()
 		{
 			ToggleFullscreen();
 		}))

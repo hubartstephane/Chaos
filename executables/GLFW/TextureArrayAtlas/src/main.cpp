@@ -140,7 +140,7 @@ protected:
 
 	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator) override
 	{
-		if (in_action_enumerator(IsKeyPressed(chaos::KeyboardButton::KP_ADD), "Next Bitmap Index", [this]()
+		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::KP_ADD), "Next Bitmap Index", [this]()
 		{
 			++bitmap_index;
 		}))
@@ -148,7 +148,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator(IsKeyPressed(chaos::KeyboardButton::KP_SUBTRACT), "Previous Bitmap Index", [this]()
+		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::KP_SUBTRACT), "Previous Bitmap Index", [this]()
 		{
 			if (bitmap_index > 0)
 				--bitmap_index;

@@ -26,22 +26,22 @@ namespace chaos
 
 	bool KeyEventBase::IsKeyPressed(Key in_key, KeyModifier in_required_modifiers, KeyModifier in_forbidden_modifiers) const
 	{
-		return chaos::IsKeyPressed(in_key).RequireModifiers(in_required_modifiers).ForbidModifiers(in_forbidden_modifiers).MatchEvent(*this);
+		return RequestKeyPressed(in_key).RequireModifiers(in_required_modifiers).ForbidModifiers(in_forbidden_modifiers).MatchEvent(*this);
 	}
 
 	bool KeyEventBase::IsKeyReleased(Key in_key, KeyModifier in_required_modifiers, KeyModifier in_forbidden_modifiers) const
 	{
-		return chaos::IsKeyReleased(in_key).RequireModifiers(in_required_modifiers).ForbidModifiers(in_forbidden_modifiers).MatchEvent(*this);
+		return RequestKeyReleased(in_key).RequireModifiers(in_required_modifiers).ForbidModifiers(in_forbidden_modifiers).MatchEvent(*this);
 	}
 
 	bool KeyEventBase::IsKeyRepeat(Key in_key, KeyModifier in_required_modifiers, KeyModifier in_forbidden_modifiers) const
 	{
-		return chaos::IsKeyRepeat(in_key).RequireModifiers(in_required_modifiers).ForbidModifiers(in_forbidden_modifiers).MatchEvent(*this);
+		return RequestKeyRepeat(in_key).RequireModifiers(in_required_modifiers).ForbidModifiers(in_forbidden_modifiers).MatchEvent(*this);
 	}
 
 	bool KeyEventBase::IsKeyDown(Key in_key, KeyModifier in_required_modifiers, KeyModifier in_forbidden_modifiers) const
 	{
-		return chaos::IsKeyDown(in_key).RequireModifiers(in_required_modifiers).ForbidModifiers(in_forbidden_modifiers).MatchEvent(*this);
+		return RequestKeyDown(in_key).RequireModifiers(in_required_modifiers).ForbidModifiers(in_forbidden_modifiers).MatchEvent(*this);
 	}
 
 }; // namespace chaos

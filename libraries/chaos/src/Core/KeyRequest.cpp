@@ -52,22 +52,22 @@ namespace chaos
 		return result;
 	}
 
-	KeyRequest IsKeyDown(Key key)
+	KeyRequest RequestKeyDown(Key key)
 	{
 		return KeyRequest(key, KeyActionMask::Down);
 	}
 
-	KeyRequest IsKeyPressed(Key key)
+	KeyRequest RequestKeyPressed(Key key)
 	{
 		return KeyRequest(key,KeyActionMask::Press);
 	}
 
-	KeyRequest IsKeyRepeat(Key key)
+	KeyRequest RequestKeyRepeat(Key key)
 	{
 		return KeyRequest(key, KeyActionMask::Repeat);
 	}
 
-	KeyRequest IsKeyReleased(Key key)
+	KeyRequest RequestKeyReleased(Key key)
 	{
 		return KeyRequest(key, KeyActionMask::Release);
 	}

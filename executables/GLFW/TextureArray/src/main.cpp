@@ -160,7 +160,7 @@ protected:
 
 	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator) override
 	{
-		if (in_action_enumerator(IsKeyPressed(chaos::KeyboardButton::KP_ADD).RequireModifiers(chaos::KeyModifier::Shift), "Next Pixel Format", [this]()
+		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::KP_ADD).RequireModifiers(chaos::KeyModifier::Shift), "Next Pixel Format", [this]()
 		{
 			ChangePixelFormat(+1);
 		}))
@@ -168,7 +168,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator(IsKeyPressed(chaos::KeyboardButton::KP_SUBTRACT).RequireModifiers(chaos::KeyModifier::Shift), "Previous Pixel Format", [this]()
+		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::KP_SUBTRACT).RequireModifiers(chaos::KeyModifier::Shift), "Previous Pixel Format", [this]()
 		{
 			ChangePixelFormat(-1);
 		}))
@@ -176,7 +176,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator(IsKeyPressed(chaos::KeyboardButton::KP_ADD), "Next Slice", [this]()
+		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::KP_ADD), "Next Slice", [this]()
 		{
 			ChangeSlice(+1);
 		}))
@@ -184,7 +184,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator(IsKeyPressed(chaos::KeyboardButton::KP_SUBTRACT), "Previous Slice", [this]()
+		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::KP_SUBTRACT), "Previous Slice", [this]()
 		{
 			ChangeSlice(-1);
 		}))

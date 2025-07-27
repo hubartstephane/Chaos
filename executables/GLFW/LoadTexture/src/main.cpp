@@ -8,7 +8,7 @@ protected:
 
 	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator) override
 	{
-		if (in_action_enumerator(IsKeyPressed(chaos::KeyboardButton::KP_ADD), "Next Texture", [this]()
+		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::KP_ADD), "Next Texture", [this]()
 		{
 			ChangeTexture(texture_index + 1);
 		}))
@@ -16,7 +16,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator(IsKeyPressed(chaos::KeyboardButton::KP_SUBTRACT), "Previous Texture", [this]()
+		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::KP_SUBTRACT), "Previous Texture", [this]()
 		{
 			ChangeTexture(texture_index - 1);
 		}))

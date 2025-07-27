@@ -571,7 +571,7 @@ protected:
 
 		bool enabled = object_count > 0;
 
-		if (in_action_enumerator(IsKeyPressed(KeyboardButton::KP_ADD), "Next Object", enabled, [&]()
+		if (in_action_enumerator(RequestKeyPressed(KeyboardButton::KP_ADD), "Next Object", enabled, [&]()
 		{
 			objects[selected_object_index]->SetSelected(false);
 
@@ -586,7 +586,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator(IsKeyPressed(KeyboardButton::KP_SUBTRACT), "Previous Object", enabled, [&]()
+		if (in_action_enumerator(RequestKeyPressed(KeyboardButton::KP_SUBTRACT), "Previous Object", enabled, [&]()
 		{
 			objects[selected_object_index]->SetSelected(false);
 

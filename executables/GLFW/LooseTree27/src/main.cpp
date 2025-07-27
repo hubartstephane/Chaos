@@ -612,7 +612,7 @@ protected:
 
 		bool action_enabled = (current_object != nullptr);
 
-		if (in_action_enumerator(IsKeyPressed(key_configuration.next_object.GetKeyboardButton()), "Next Object", action_enabled, [&]()
+		if (in_action_enumerator(RequestKeyPressed(key_configuration.next_object.GetKeyboardButton()), "Next Object", action_enabled, [&]()
 		{
 			current_object_index = (current_object_index.value() + 1) % geometric_objects.size();
 		}))
@@ -620,7 +620,7 @@ protected:
 			return true;
 		}
 		
-		if (in_action_enumerator(IsKeyPressed(key_configuration.previous_object.GetKeyboardButton()), "Previous Object", action_enabled, [&]()
+		if (in_action_enumerator(RequestKeyPressed(key_configuration.previous_object.GetKeyboardButton()), "Previous Object", action_enabled, [&]()
 		{
 			current_object_index = (current_object_index.value() + geometric_objects.size() - 1) % geometric_objects.size();
 		}))
@@ -628,7 +628,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator(IsKeyPressed(key_configuration.delete_object.GetKeyboardButton()), "Delete Object", action_enabled, [&]()
+		if (in_action_enumerator(RequestKeyPressed(key_configuration.delete_object.GetKeyboardButton()), "Delete Object", action_enabled, [&]()
 		{
 			if (geometric_objects.size() > 0)
 			{
@@ -651,7 +651,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator(IsKeyPressed(key_configuration.new_scene.GetKeyboardButton()), "New Scene", [&]()
+		if (in_action_enumerator(RequestKeyPressed(key_configuration.new_scene.GetKeyboardButton()), "New Scene", [&]()
 		{
 			geometric_objects.clear();
 			current_object_index = 0;

@@ -131,11 +131,11 @@ protected:
 		return true;
 	}
 
-	virtual bool DoTick(float delta_time) override
+	virtual bool TraverseInputEventReceiverHierarchy(chaos::LightweightFunction<bool(InputEventReceiverInterface*)> event_func) override
 	{
-		fps_view_controller.Tick(glfw_window, delta_time);
-
-		return true; // refresh
+		if (fps_view_controller.TraverseInputEventReceiverHierarchy(event_func))
+			return true;
+		return chaos::Window::TraverseInputEventReceiverHierarchy(event_func);
 	}
 
 	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator) override

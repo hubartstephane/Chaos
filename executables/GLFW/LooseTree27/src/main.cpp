@@ -751,13 +751,18 @@ protected:
 		}
 	}
 
+	virtual bool TraverseInputEventReceiverHierarchy(chaos::LightweightFunction<bool(InputEventReceiverInterface*)> event_func) override
+	{
+		if (fps_view_controller.TraverseInputEventReceiverHierarchy(event_func))
+			return true;
+		return chaos::Window::TraverseInputEventReceiverHierarchy(event_func);
+	}
+
 	virtual bool DoTick(float delta_time) override
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		if (!io.WantCaptureMouse && !io.WantCaptureKeyboard)
 		{
-			// move camera
-			fps_view_controller.Tick(glfw_window, delta_time);
 			// move object
 			if (GeometricObject* current_object = GetCurrentGeometricObject())
 			{

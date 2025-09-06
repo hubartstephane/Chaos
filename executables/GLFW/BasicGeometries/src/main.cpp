@@ -1053,8 +1053,6 @@ protected:
 
 	virtual bool DoTick(float delta_time) override
 	{
-		fps_view_controller.Tick(glfw_window, delta_time);
-
 		// update primitives
 		if (display_example == TestID::COLLISION_2D_TEST || display_example == TestID::COLLISION_3D_TEST)
 		{
@@ -1142,6 +1140,13 @@ protected:
 		{
 			imgui_user_message.OnDrawImGuiContent(this);
 		});
+	}
+
+	virtual bool TraverseInputEventReceiverHierarchy(chaos::LightweightFunction<bool(InputEventReceiverInterface*)> event_func) override
+	{
+		if (fps_view_controller.TraverseInputEventReceiverHierarchy(event_func))
+			return true;
+		return chaos::Window::TraverseInputEventReceiverHierarchy(event_func);
 	}
 
 protected:

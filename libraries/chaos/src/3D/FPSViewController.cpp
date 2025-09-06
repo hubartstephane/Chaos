@@ -11,93 +11,64 @@ namespace chaos
 		mouse_enabled = in_mouse_enabled;
 	}
 
-	void FPSViewController::Tick(GLFWwindow * glfw_window, float delta_time)
+	bool FPSViewController::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator)
 	{
-		HandleMouseInputs(glfw_window, delta_time);
-		HandleKeyboardInputs(delta_time);
-	}
+		float frame_time = (float)FrameTimeManager::GetInstance()->GetCurrentFrameDuration();
 
-	void FPSViewController::HandleMouseInputs(GLFWwindow * glfw_window, float delta_time)
-	{
-		if (!IsMouseEnabled())
-			return;
-
-		// handle mouse movement
-		if (mouse_captured || !config.must_click_to_rotate)
+		auto CheckCameraKey = [this, frame_time, &in_action_enumerator](const Key & key, char const * title, float speed, void (FPSView::*func)(float))
 		{
-			if (config.must_click_to_rotate && !CheckMouseInput(input_config.rotation_button))
-				mouse_captured = false;
-			else
+			if (in_action_enumerator(RequestKeyDown(key), title, [this, frame_time, speed, &func]()
 			{
-				double new_mouse_x = 0.0;
-				double new_mouse_y = 0.0;
-				glfwGetCursorPos(glfw_window, &new_mouse_x, &new_mouse_y);
-
-				if (previous_mouse_x != INVALID_MOUSE_VALUE && previous_mouse_y != INVALID_MOUSE_VALUE) // only want to rotate if we have a valid mouse position
-				{
-					if (new_mouse_x != previous_mouse_x)
-						fps_view.IncrementYaw(-(float)((new_mouse_x - previous_mouse_x) * config.mouse_sensibility));
-					if (new_mouse_y != previous_mouse_y)
-						fps_view.IncrementPitch(-(float)((new_mouse_y - previous_mouse_y) * config.mouse_sensibility));
-				}
-				previous_mouse_x = new_mouse_x;
-				previous_mouse_y = new_mouse_y;
-			}
-		}
-		else
-		{
-			if (CheckMouseInput(input_config.rotation_button))
+				(fps_view.*func)(speed * frame_time);
+			}))
 			{
-				mouse_captured = true;
-				previous_mouse_x = INVALID_MOUSE_VALUE;
-				previous_mouse_y = INVALID_MOUSE_VALUE;
-				glfwGetCursorPos(glfw_window, &previous_mouse_x, &previous_mouse_y);
+				return true;
 			}
-		}
-	}
+			return false;
+		};
 
-	void FPSViewController::HandleKeyboardInputs(float delta_time)
-	{
-		// handles the keys for displacement
-		if (CheckKeyboardInput(input_config.left_button))
-			fps_view.StrafeLeft(config.strafe_speed * delta_time);
-		if (CheckKeyboardInput(input_config.right_button))
-			fps_view.StrafeRight(config.strafe_speed * delta_time);
+		return 
+			CheckCameraKey(input_config.left_button, "Strafe Left", config.strafe_speed, &FPSView::StrafeLeft) ||
+			CheckCameraKey(input_config.right_button, "Strafe Right", config.strafe_speed, &FPSView::StrafeRight) ||
+			CheckCameraKey(input_config.forward_button, "Move Forward", config.forward_speed, &FPSView::GoForward) ||
+			CheckCameraKey(input_config.backward_button, "Move Backward", config.back_speed, &FPSView::GoBackward) ||
+			CheckCameraKey(input_config.up_button, "Move Up", config.up_speed, &FPSView::GoUp) ||
+			CheckCameraKey(input_config.down_button, "Move Down", config.down_speed, &FPSView::GoDown) ||
+			CheckCameraKey(input_config.yaw_left_button, "Increment Yaw", config.yaw_speed, &FPSView::IncrementYaw) ||
+			CheckCameraKey(input_config.yaw_right_button, "Decrement Yaw", -config.yaw_speed, &FPSView::IncrementYaw) ||
+			CheckCameraKey(input_config.pitch_up_button, "Increment Pitch", config.pitch_speed, &FPSView::IncrementPitch) ||
+			CheckCameraKey(input_config.pitch_down_button, "Decrement Pitch", -config.pitch_speed, &FPSView::IncrementPitch);
 
-		if (CheckKeyboardInput(input_config.forward_button))
-			fps_view.GoForward(config.forward_speed * delta_time);
-		if (CheckKeyboardInput(input_config.backward_button))
-			fps_view.GoBackward(config.back_speed * delta_time);
-
-		if (CheckKeyboardInput(input_config.up_button))
-			fps_view.position.y += config.up_speed * delta_time;
-		if (CheckKeyboardInput(input_config.down_button))
-			fps_view.position.y -= config.down_speed * delta_time;
-
-		if (CheckKeyboardInput(input_config.yaw_left_button))
-			fps_view.IncrementYaw(config.yaw_speed * delta_time);
-		if (CheckKeyboardInput(input_config.yaw_right_button))
-			fps_view.IncrementYaw(-config.yaw_speed * delta_time);
-
-		if (CheckKeyboardInput(input_config.pitch_up_button))
-			fps_view.IncrementPitch(config.pitch_speed * delta_time);
-		if (CheckKeyboardInput(input_config.pitch_down_button))
-			fps_view.IncrementPitch(-config.pitch_speed * delta_time);
-	}
-
-	bool FPSViewController::CheckMouseInput(MouseButton button) const
-	{
-		if (KeyboardAndMouseState const * keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance())
-			if (KeyState const* state = keyboard_and_mouse_state->GetKeyState(button))
-				return state->IsDown();
 		return false;
 	}
 
-	bool FPSViewController::CheckKeyboardInput(KeyboardButton button) const
+	bool FPSViewController::OnMouseMoveImpl(glm::vec2 const& delta)
 	{
-		if (KeyboardAndMouseState const * keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance())
-			if (KeyState const* state = keyboard_and_mouse_state->GetKeyState(button))
-				return state->IsDown();
+		if (!IsMouseEnabled())
+			return false;
+
+		if (!mouse_captured && config.must_click_to_rotate) // not ready to handle the mouse movement
+			return false;
+
+		fps_view.IncrementYaw(-(float)(delta.x * config.mouse_sensibility));
+		fps_view.IncrementPitch(-(float)(delta.y * config.mouse_sensibility));
+
+		return true;
+	}
+
+	bool FPSViewController::OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event)
+	{
+		if (!IsMouseEnabled())
+			return false;
+
+		if (!config.must_click_to_rotate) // no need to catch input
+			return false;
+
+		if (mouse_button_event.IsKeyDown(input_config.rotation_button))
+			mouse_captured = true;
+		else if (mouse_button_event.IsKeyReleased(input_config.rotation_button))
+			mouse_captured = false;
+
 		return false;
 	}
 

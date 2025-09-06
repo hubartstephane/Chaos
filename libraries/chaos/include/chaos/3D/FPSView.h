@@ -19,6 +19,10 @@ namespace chaos
 		void GoBackward(float value);
 		/** advance the camera */
 		void GoForward(float value);
+		/** move the camera up */
+		void GoUp(float value);
+		/** move the camera down */
+		void GoDown(float value);
 		/** strafe the camera */
 		void StrafeRight(float value);
 		/** strafe the camera (X axis, positive values on the right) */

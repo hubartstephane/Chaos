@@ -73,14 +73,9 @@ namespace chaos
 	* FPSViewController : an utility class to simply handle a FPS camera in a GLFW application. Handle keys ...
 	*/
 
-	class CHAOS_API FPSViewController
+	class CHAOS_API FPSViewController : public InputEventReceiverInterface
 	{
-		static double constexpr INVALID_MOUSE_VALUE = std::numeric_limits<double>::max();
-
 	public:
-
-		/** the tick method */
-		virtual void Tick(GLFWwindow* glfw_window, float delta_time);
 
 		/** matrix getter */
 		inline glm::mat4 GlobalToLocal() const { return fps_view.GlobalToLocal(); }
@@ -92,17 +87,15 @@ namespace chaos
 		/** change the mouse capture policy */
 		void SetMouseEnabled(bool in_mouse_enabled);
 
+		/** override */
+		virtual bool EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator) override;
+
 	protected:
 
-		/** handle the mouse displacement */
-		void HandleMouseInputs(GLFWwindow* glfw_window, float delta_time);
-		/** handle the keyboard inputs */
-		void HandleKeyboardInputs(float delta_time);
-
-		/** check whether keyboard input is down */
-		bool CheckKeyboardInput(KeyboardButton button) const;
-		/** check whether mouse input is down */
-		bool CheckMouseInput(MouseButton button) const;
+		/** override */
+		virtual bool OnMouseMoveImpl(glm::vec2 const& delta) override;
+		/** override */
+		virtual bool OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event) override;
 
 	protected:
 
@@ -110,10 +103,6 @@ namespace chaos
 		bool mouse_enabled = true;
 		/** whether the mouse has been captured */
 		bool mouse_captured = false;
-		/** position of the mouse once captured */
-		double previous_mouse_x = INVALID_MOUSE_VALUE;
-		/** position of the mouse once captured */
-		double previous_mouse_y = INVALID_MOUSE_VALUE;
 
 	public:
 

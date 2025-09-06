@@ -98,8 +98,6 @@ protected:
 			sound_manager->Tick(delta_time);
 		}
 
-		fps_view_controller.Tick(glfw_window, delta_time);
-
 		if (rotation_started)
 		{
 			box_alpha += rotation_speed * delta_time;
@@ -111,6 +109,13 @@ protected:
 		sound->SetPosition(pos);
 
 		return true; // refresh
+	}
+
+	virtual bool TraverseInputEventReceiverHierarchy(chaos::LightweightFunction<bool(InputEventReceiverInterface*)> event_func) override
+	{
+		if (fps_view_controller.TraverseInputEventReceiverHierarchy(event_func))
+			return true;
+		return chaos::Window::TraverseInputEventReceiverHierarchy(event_func);
 	}
 
 	virtual bool OnMouseButtonImpl(chaos::MouseButtonEvent const &mouse_button_event) override

@@ -105,11 +105,11 @@ protected:
 		return true;
 	}
 
-	virtual bool DoTick(float delta_time) override
+	virtual bool TraverseInputEventReceiverHierarchy(chaos::LightweightFunction<bool(InputEventReceiverInterface*)> event_func) override
 	{
-		fps_view_controller.Tick(glfw_window, delta_time);
-
-		return true; // refresh
+		if (fps_view_controller.TraverseInputEventReceiverHierarchy(event_func))
+			return true;
+		return chaos::Window::TraverseInputEventReceiverHierarchy(event_func);
 	}
 
 	chaos::shared_ptr<chaos::GPUTexture> GenerateTextureArray(chaos::PixelFormat pixel_format)

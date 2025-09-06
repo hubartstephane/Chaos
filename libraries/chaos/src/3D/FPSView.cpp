@@ -30,6 +30,16 @@ namespace chaos
 		GoBackward(-value);
 	}
 
+	void FPSView::GoUp(float value)
+	{
+		position.y += value;
+	}
+
+	void FPSView::GoDown(float value)
+	{
+		GoUp(-value);
+	}
+
 	// use :
 	//   float angle = MathTools::DegreeToRadian(yaw + 90.0f);
 	//   position += value * glm::vec3(std::sin(angle), 0.0f, std::cos(angle));

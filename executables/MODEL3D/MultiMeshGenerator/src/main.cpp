@@ -319,9 +319,6 @@ protected:
 
 	virtual bool DoTick(float delta_time) override
 	{
-		// move camera
-		fps_view_controller.Tick(glfw_window, delta_time);
-
 		// move objects
 		size_t object_count = objects.size();
 		if (object_count > 0)
@@ -346,6 +343,13 @@ protected:
 			MoveObject(KeyboardButton::KP_3, 1, -1.0f);
 		}
 		return Window::DoTick(delta_time);
+	}
+
+	virtual bool TraverseInputEventReceiverHierarchy(chaos::LightweightFunction<bool(InputEventReceiverInterface*)> event_func) override
+	{
+		if (fps_view_controller.TraverseInputEventReceiverHierarchy(event_func))
+			return true;
+		return chaos::Window::TraverseInputEventReceiverHierarchy(event_func);
 	}
 
 protected:

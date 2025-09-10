@@ -42,6 +42,12 @@ namespace chaos
 		/** process an incomming event using the known KeyActions */
 		bool ProcessKeyActions(KeyEvent const & key_event);
 
+
+
+
+		bool ProcessInputDeviceStates(InputDeviceInterface const * in_input_device);
+
+
 		/** traverse all receivers hierarchy and call a functor on all elements */
 		virtual bool TraverseInputEventReceiverHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func);
 

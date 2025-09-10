@@ -16,7 +16,13 @@ namespace chaos
 	public:
 
 		/** check whether the request matches a given key event */
-		virtual bool MatchEvent(KeyEventBase const & key_event) const
+		virtual bool CheckAgainst(KeyEventBase const & key_event) const
+		{
+			return false;
+		}
+
+		/** check whether the request matches a given input device state */
+		virtual bool CheckAgainst(InputDeviceInterface const * in_input_device) const
 		{
 			return false;
 		}
@@ -48,7 +54,9 @@ namespace chaos
 		KeyRequest ForbidModifiers(KeyModifier in_modifiers) const;
 
 		/** override */
-		virtual bool MatchEvent(KeyEventBase const & key_event) const override;
+		virtual bool CheckAgainst(KeyEventBase const & key_event) const override;
+		/** override */
+		virtual bool CheckAgainst(InputDeviceInterface const * in_input_device) const override;
 
 	public:
 

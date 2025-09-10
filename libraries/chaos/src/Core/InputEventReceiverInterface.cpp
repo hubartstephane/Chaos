@@ -127,21 +127,58 @@ namespace chaos
 		return false;
 	}
 
-	bool InputEventReceiverInterface::ProcessKeyActions(KeyEvent const & key_event)
+	bool InputEventReceiverInterface::ProcessInputDeviceStates(InputDeviceInterface const * in_input_device)
 	{
-		class ProcessKeyActionEnumerator : public KeyActionEnumerator
+		class MyKeyActionEnumerator : public KeyActionEnumerator
 		{
 		public:
 
 			/** constructor */
-			ProcessKeyActionEnumerator(KeyEvent const & in_key_event):
+			MyKeyActionEnumerator(InputDeviceInterface const * in_input_device):
+				input_device(in_input_device)
+			{}
+
+			/** override */
+			virtual bool operator () (KeyRequest const & in_request, char const * in_title, bool in_enabled, LightweightFunction<void()> in_key_action) override
+			{
+				if (in_enabled && in_request.CheckAgainst(input_device))
+				{
+					in_key_action();
+				}
+				return false; // do not prevent other actions to be handled
+			}
+
+		protected:
+
+			/** the input device to check */
+			InputDeviceInterface const * input_device = nullptr;
+		};
+
+
+		MyKeyActionEnumerator action_enumerator(in_input_device);
+		return TraverseInputEventReceiverHierarchy([this, &action_enumerator](InputEventReceiverInterface * in_event_receiver)
+		{
+			return in_event_receiver->EnumerateKeyActions(action_enumerator);
+		});
+	}
+
+
+
+	bool InputEventReceiverInterface::ProcessKeyActions(KeyEvent const & key_event)
+	{
+		class MyKeyActionEnumerator : public KeyActionEnumerator
+		{
+		public:
+
+			/** constructor */
+			MyKeyActionEnumerator(KeyEvent const & in_key_event):
 				key_event(in_key_event)
 			{}
 
 			/** override */
 			virtual bool operator () (KeyRequest const & in_request, char const * in_title, bool in_enabled, LightweightFunction<void()> in_key_action) override
 			{
-				if (in_enabled && in_request.MatchEvent(key_event))
+				if (in_enabled && in_request.CheckAgainst(key_event))
 				{
 					in_key_action();
 					return true;
@@ -155,7 +192,7 @@ namespace chaos
 			KeyEvent key_event;
 		};
 
-		ProcessKeyActionEnumerator action_enumerator(key_event);
+		MyKeyActionEnumerator action_enumerator(key_event);
 		return TraverseInputEventReceiverHierarchy([this, &action_enumerator](InputEventReceiverInterface * in_event_receiver)
 		{
 			return in_event_receiver->EnumerateKeyActions(action_enumerator);

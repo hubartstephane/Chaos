@@ -10,7 +10,7 @@ namespace chaos
 	* GamepadState: the gamepad buttons and axes states
 	*/
 
-	class CHAOS_API GamepadState : public InputDeviceUserInterface
+	class CHAOS_API GamepadState : public InputDeviceInterface
 	{
 		/** number of axes in a gamepad */
 		static constexpr size_t AXIS_COUNT = sizeof(meta::FakeInstance<GLFWgamepadstate>().axes) / sizeof(meta::FakeInstance<GLFWgamepadstate>().axes[0]);

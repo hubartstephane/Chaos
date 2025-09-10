@@ -35,11 +35,11 @@ namespace chaos
 		}
 	}
 
-	void ImGuiInputStateObjectBase::DisplayKeysInfo(char const * title, InputDeviceUserInterface const * in_device_user, LightweightFunction<bool(Key, KeyState const &)> filter_func) const
+	void ImGuiInputStateObjectBase::DisplayKeysInfo(char const * title, InputDeviceInterface const * in_input_device, LightweightFunction<bool(Key, KeyState const &)> filter_func) const
 	{
 		ImGuiTools::DrawImGuiTable(title, {}, "Key", "State", "Repeat Timer")([&]()
 		{
-			in_device_user->ForAllKeys([&](Key key, KeyState const & state)
+			in_input_device->ForAllKeys([&](Key key, KeyState const & state)
 			{
 				if (filter_func(key, state))
 					DisplayKeyInfo(key, state);
@@ -84,11 +84,11 @@ namespace chaos
 		}
 	}
 
-	void ImGuiInputStateObjectBase::DisplayAxesInfo(char const * title, InputDeviceUserInterface const * in_device_user, LightweightFunction<bool(GamepadAxis, AxisState const &)> filter_func) const
+	void ImGuiInputStateObjectBase::DisplayAxesInfo(char const * title, InputDeviceInterface const * in_input_device, LightweightFunction<bool(GamepadAxis, AxisState const &)> filter_func) const
 	{
 		ImGuiTools::DrawImGuiTable(title, {}, "Axis", "State", "Min", "Max", "Repeat Timer")([&]()
 		{
-			in_device_user->ForAllAxes([&](GamepadAxis axis, AxisState const & state)
+			in_input_device->ForAllAxes([&](GamepadAxis axis, AxisState const & state)
 			{
 				if (filter_func(axis, state))
 					DisplayAxisInfo(axis, state);
@@ -136,11 +136,11 @@ namespace chaos
 		}
 	}
 
-	void ImGuiInputStateObjectBase::DisplaySticksInfo(char const * title, InputDeviceUserInterface const * in_device_user, LightweightFunction<bool(GamepadStick, StickState const &)> filter_func) const
+	void ImGuiInputStateObjectBase::DisplaySticksInfo(char const * title, InputDeviceInterface const * in_input_device, LightweightFunction<bool(GamepadStick, StickState const &)> filter_func) const
 	{
 		ImGuiTools::DrawImGuiTable(title, {}, "Stick", "State", "Min", "Max", "Repeat Timer")([&]()
 		{
-			in_device_user->ForAllSticks([&](GamepadStick stick, StickState const & state)
+			in_input_device->ForAllSticks([&](GamepadStick stick, StickState const & state)
 			{
 				if (filter_func(stick, state))
 					DisplayStickInfo(stick, state);

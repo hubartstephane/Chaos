@@ -61,7 +61,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	/**
 	* PhysicalGamepad : the physical device. Client do not directly use it
 	*/
-	class CHAOS_API PhysicalGamepad : public InputDeviceUserInterface
+	class CHAOS_API PhysicalGamepad : public InputDeviceInterface
 	{
 		CHAOS_GAMEPAD_ALL_FRIENDS
 
@@ -88,7 +88,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		~PhysicalGamepad() {}
 
 		/** override */
-		virtual bool EnumerateDeviceHierarchy(LightweightFunction<bool(InputDeviceUserInterface const*)> func) const override;
+		virtual bool EnumerateDeviceHierarchy(LightweightFunction<bool(InputDeviceInterface const*)> func) const override;
 
 		/** update all the values for the axis and buttons */
 		void UpdateAxisAndButtons(float dead_zone);
@@ -166,7 +166,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	/**
 	* Gamepad : this is a logical gamepad .. may change the physical gamepad it is bound on
 	*/
-	class CHAOS_API Gamepad : public Object, public InputDeviceUserInterface
+	class CHAOS_API Gamepad : public Object, public InputDeviceInterface
 	{
 	public:
 
@@ -219,7 +219,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	protected:
 
 		/** override */
-		virtual bool EnumerateDeviceHierarchy(LightweightFunction<bool(InputDeviceUserInterface const*)> func) const override;
+		virtual bool EnumerateDeviceHierarchy(LightweightFunction<bool(InputDeviceInterface const*)> func) const override;
 
 		/** tick force feedback effects */
 		void TickForceFeedbackEffects(float delta_time);

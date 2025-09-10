@@ -21,12 +21,12 @@ namespace chaos
 		gamepad_state.Clear();
 	}
 
-	bool PhysicalGamepad::EnumerateDeviceHierarchy(LightweightFunction<bool(InputDeviceUserInterface const*)> func) const
+	bool PhysicalGamepad::EnumerateDeviceHierarchy(LightweightFunction<bool(InputDeviceInterface const*)> func) const
 	{
 		if (IsPresent())
 			if (gamepad_state.EnumerateDeviceHierarchy(func))
 				return true;
-		return InputDeviceUserInterface::EnumerateDeviceHierarchy(func);
+		return InputDeviceInterface::EnumerateDeviceHierarchy(func);
 	}
 
 	void PhysicalGamepad::UpdateAxisAndButtons(float dead_zone)
@@ -108,12 +108,12 @@ namespace chaos
 			physical_device->user_gamepad = nullptr;
 	}
 
-	bool Gamepad::EnumerateDeviceHierarchy(LightweightFunction<bool(InputDeviceUserInterface const*)> func) const
+	bool Gamepad::EnumerateDeviceHierarchy(LightweightFunction<bool(InputDeviceInterface const*)> func) const
 	{
 		if (physical_device != nullptr)
 			if (physical_device->EnumerateDeviceHierarchy(func))
 				return true;
-		return InputDeviceUserInterface::EnumerateDeviceHierarchy(func);
+		return InputDeviceInterface::EnumerateDeviceHierarchy(func);
 	}
 
 	bool Gamepad::IsPresent() const

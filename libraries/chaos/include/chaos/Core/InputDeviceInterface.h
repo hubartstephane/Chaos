@@ -2,21 +2,21 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class InputDeviceUserInterface;
+	class InputDeviceInterface;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* InputDeviceUserInterface: a class to make request for some device state
+	* InputDeviceInterface: a class to make request for some device state
 	*/
 
-	class CHAOS_API InputDeviceUserInterface
+	class CHAOS_API InputDeviceInterface
 	{
 
 	public:
 
 		/** call a function on all devices handled by this whole hierarchy (composition pattern) */
-		virtual bool EnumerateDeviceHierarchy(LightweightFunction<bool(InputDeviceUserInterface const*)> func) const;
+		virtual bool EnumerateDeviceHierarchy(LightweightFunction<bool(InputDeviceInterface const*)> func) const;
 
 		/** gets one key state */
 		KeyState const * GetKeyState(Key key) const;

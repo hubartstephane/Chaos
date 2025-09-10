@@ -10,7 +10,7 @@ namespace chaos
 	* KeyboardAndMouseState: A singleton that contains the state of keyboard and mouse buttons
 	*/
 
-	class CHAOS_API KeyboardAndMouseState : public Singleton<KeyboardAndMouseState>, public InputDeviceUserInterface
+	class CHAOS_API KeyboardAndMouseState : public Singleton<KeyboardAndMouseState>, public InputDeviceInterface
 	{
 
 	public:

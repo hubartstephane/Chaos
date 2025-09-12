@@ -5,222 +5,152 @@ namespace chaos
 {
 	namespace BitTools
 	{
+		/** Bit Scan Forward methods */
+		int8_t bsf(int8_t i)
+		{
+			assert(i != 0);
+			return std::countr_zero(static_cast<uint8_t>(i));
+		}
 
-#if _WIN32
-
-		/** Bit Scan Forward method */
 		int16_t bsf(int16_t i)
 		{
 			assert(i != 0);
-			unsigned long result = 0;
-			_BitScanForward(&result, (unsigned long)i);
-			return (int16_t)result;
+			return std::countr_zero(static_cast<uint16_t>(i));
 		}
 
-		/** Bit Scan Forward method */
 		int32_t bsf(int32_t i)
 		{
 			assert(i != 0);
-			unsigned long result = 0;
-			_BitScanForward(&result, (unsigned long)i);
-			return (int32_t)result;
+			return std::countr_zero(static_cast<uint32_t>(i));
 		}
 
-		/** Bit Scan Forward method */
-		uint16_t bsf(uint16_t i)
-		{
-			assert(i != 0);
-			unsigned long result = 0;
-			_BitScanForward(&result, (unsigned long)i);
-			return (uint16_t)result;
-		}
-
-		/** Bit Scan Forward method */
-		uint32_t bsf(uint32_t i)
-		{
-			assert(i != 0);
-			unsigned long result = 0;
-			_BitScanForward(&result, (unsigned long)i);
-			return (uint32_t)result;
-		}
-
-		/** Bit Scan Reverse methods */
-		int16_t bsr(int16_t i)
-		{
-			assert(i != 0);
-			unsigned long result = 0;
-			_BitScanReverse(&result, (unsigned long)i);
-			return (int16_t)result;
-		}
-
-		/** Bit Scan Reverse methods */
-		int32_t bsr(int32_t i)
-		{
-			assert(i != 0);
-			unsigned long result = 0;
-			_BitScanReverse(&result, (unsigned long)i);
-			return (int32_t)result;
-		}
-
-		/** Bit Scan Reverse methods */
-		uint16_t bsr(uint16_t i)
-		{
-			assert(i != 0);
-			unsigned long result = 0;
-			_BitScanReverse(&result, (unsigned long)i);
-			return (uint16_t)result;
-		}
-
-		/** Bit Scan Reverse methods */
-		uint32_t bsr(uint32_t i)
-		{
-			assert(i != 0);
-			unsigned long result = 0;
-			_BitScanReverse(&result, (unsigned long)i);
-			return (uint16_t)result;
-		}
-
-#endif // _WIN32
-
-
-#if _WIN64
-
-		/** Bit Scan Forward methods */
 		int64_t bsf(int64_t i)
 		{
 			assert(i != 0);
-			unsigned long result = 0;
-			_BitScanForward64(&result, (__int64)i);
-			return (uint16_t)result;
+			return std::countr_zero(static_cast<uint64_t>(i));
 		}
 
-		/** Bit Scan Forward methods */
-		uint64_t bsf(uint64_t i)
+		uint8_t bsf(uint8_t i)
 		{
 			assert(i != 0);
-			unsigned long result = 0;
-			_BitScanForward64(&result, (unsigned __int64)i);
-			return (uint64_t)result;
+			return std::countr_zero(i);
 		}
 
-		/** Bit Scan Reverse methods */
-		int64_t bsr(int64_t i)
-		{
-			assert(i != 0);
-			unsigned long result = 0;
-			_BitScanReverse64(&result, (__int64)i);
-			return (uint16_t)result;
-		}
-
-		/** Bit Scan Reverse methods */
-		uint64_t bsr(uint64_t i)
-		{
-			assert(i != 0);
-			unsigned long result = 0;
-			_BitScanReverse64(&result, (unsigned __int64)i);
-			return (uint64_t)result;
-		}
-
-#endif // _WIN64
-
-#if _LINUX
-
-		/*
-
-		/** Bit Scan Forward method */
-		int16_t bsf(int16_t i)
-		{
-			assert(i != 0);
-			__asm mov ax, i
-			__asm bsf ax, ax
-			__asm mov i, ax
-			return i;
-		}
-
-		/** Bit Scan Forward method */
-		int32_t bsf(int32_t i)
-		{
-			assert(i != 0);
-			__asm mov eax, i
-			__asm bsf eax, eax
-			__asm mov i, eax
-			return i;
-		}
-
-		/** Bit Scan Forward method */
 		uint16_t bsf(uint16_t i)
 		{
 			assert(i != 0);
-			__asm mov ax, i
-			__asm bsf ax, ax
-			__asm mov i, ax
-			return i;
+			return std::countr_zero(i);
 		}
 
-		/** Bit Scan Forward method */
 		uint32_t bsf(uint32_t i)
 		{
 			assert(i != 0);
-			__asm mov eax, i
-			__asm bsf eax, eax
-			__asm mov i, eax
-			return i;
+			return std::countr_zero(i);
+		}
+
+		uint64_t bsf(uint64_t i)
+		{
+			assert(i != 0);
+			return std::countr_zero(i);
 		}
 
 		/** Bit Scan Reverse methods */
+		int8_t bsr(int8_t i)
+		{
+			assert(i != 0);
+			return std::bit_width(static_cast<uint8_t>(i)) - 1;
+		}
+
 		int16_t bsr(int16_t i)
 		{
 			assert(i != 0);
-			__asm mov ax, i
-			__asm bsr ax, ax
-			__asm mov i, ax
-			return i;
+			return std::bit_width(static_cast<uint16_t>(i)) - 1;
 		}
 
-		/** Bit Scan Reverse methods */
 		int32_t bsr(int32_t i)
 		{
 			assert(i != 0);
-			__asm mov eax, i
-			__asm bsr eax, eax
-			__asm mov i, eax
-			return i;
+			return std::bit_width(static_cast<uint32_t>(i)) - 1;
 		}
 
-		/** Bit Scan Reverse methods */
+		int64_t bsr(int64_t i)
+		{
+			assert(i != 0);
+			return std::bit_width(static_cast<uint64_t>(i)) - 1;
+		}
+
+		uint8_t bsr(uint8_t i)
+		{
+			assert(i != 0);
+			return std::bit_width(i) - 1;
+		}
+
 		uint16_t bsr(uint16_t i)
 		{
 			assert(i != 0);
-			__asm mov ax, i
-			__asm bsr ax, ax
-			__asm mov i, ax
-			return i;
+			return std::bit_width(i) - 1;
 		}
 
-		/** Bit Scan Reverse methods */
 		uint32_t bsr(uint32_t i)
 		{
 			assert(i != 0);
-			__asm mov eax, i
-			__asm bsr eax, eax
-			__asm mov i, eax
-			return i;
-			*/
+			return std::bit_width(i) - 1;
 		}
 
+		uint64_t bsr(uint64_t i)
+		{
+			assert(i != 0);
+			return std::bit_width(i) - 1;
+		}
 
+		/** Popcount methods */
+		int8_t popcount(int8_t i)
+		{
+			assert(i != 0);
+			return std::popcount(static_cast<uint8_t>(i));
+		}
 
-		asm(
+		int16_t popcount(int16_t i)
+		{
+			assert(i != 0);
+			return std::popcount(static_cast<uint16_t>(i));
+		}
 
-			"bsr %1,%0"
+		int32_t popcount(int32_t i)
+		{
+			assert(i != 0);
+			return std::popcount(static_cast<uint32_t>(i));
+		}
 
-			: "=r" (result)
-			: "r"  (i)
+		int64_t popcount(int64_t i)
+		{
+			assert(i != 0);
+			return std::popcount(static_cast<uint64_t>(i));
+		}
 
-		);
-		*/
+		uint8_t popcount(uint8_t i)
+		{
+			assert(i != 0);
+			return std::popcount(i);
+		}
 
-#endif // _LINUX
+		uint16_t popcount(uint16_t i)
+		{
+			assert(i != 0);
+			return std::popcount(i);
+		}
+
+		uint32_t popcount(uint32_t i)
+		{
+			assert(i != 0);
+			return std::popcount(i);
+		}
+
+		uint64_t popcount(uint64_t i)
+		{
+			assert(i != 0);
+			return std::popcount(i);
+		}
 
 	}; // namespace BitTools
 

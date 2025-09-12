@@ -68,6 +68,7 @@
 #include <forward_list>
 #include <type_traits>
 #include <atomic>
+#include <nmmintrin.h> 
 
 // boost is full of #pragma comment(lib, ...)
 // ignore theses link directive for STATIC_LIBRARIES that would use this header

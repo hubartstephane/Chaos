@@ -591,6 +591,11 @@ namespace chaos
 		return false;
 	}
 
+	bool Window::DoGetWindowAndDispatchInputEventWithContext(Window * in_window, LightweightFunction<bool(InputEventReceiverInterface*)> event_func)
+	{
+		return in_window->TraverseInputEventReceiverHierarchy(event_func);
+	}
+
 	void Window::DoOnMouseMove(GLFWwindow* in_glfw_window, double x, double y)
 	{
 		// notify the application of the mouse state

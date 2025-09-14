@@ -197,7 +197,7 @@ namespace chaos
 		virtual void TickGameInputs(float delta_time);
 
 		/** override */
-		virtual bool TraverseInputEventReceiverHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func) override;
+		virtual bool TraverseInputEventReceiverHierarchy(TraverseInputEventReceiverFunc event_func) override;
 		/** whenever a key event is received */
 		virtual bool OnKeyEventImpl(KeyEvent const& key_event) override;
 		/** whenever a mouse event is received */

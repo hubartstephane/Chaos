@@ -63,7 +63,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GameApplication::TraverseInputEventReceiverHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func)
+	bool GameApplication::TraverseInputEventReceiverHierarchy(TraverseInputEventReceiverFunc event_func)
 	{
 		if (game != nullptr)
 			if (!IsGameSuspended())

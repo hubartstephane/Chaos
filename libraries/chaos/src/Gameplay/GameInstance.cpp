@@ -30,7 +30,7 @@ namespace chaos
 		return false;
 	}
 
-	bool GameInstance::TraverseInputEventReceiverHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func)
+	bool GameInstance::TraverseInputEventReceiverHierarchy(TraverseInputEventReceiverFunc event_func)
 	{
 		size_t count = players.size();
 		for (size_t i = 0; i < count; ++i)

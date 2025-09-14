@@ -83,7 +83,7 @@ namespace chaos
 		virtual bool OnGamepadInput(PhysicalGamepad* in_physical_gamepad);
 
 		/** override */
-		virtual bool TraverseInputEventReceiverHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func) override;
+		virtual bool TraverseInputEventReceiverHierarchy(TraverseInputEventReceiverFunc event_func) override;
 
 		/** returns the maximum number of player */
 		virtual size_t GetMaxPlayerCount() const;

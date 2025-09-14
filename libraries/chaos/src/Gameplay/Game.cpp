@@ -80,7 +80,7 @@ namespace chaos
 			hud->Tick(delta_time);
 	}
 
-	bool Game::TraverseInputEventReceiverHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func)
+	bool Game::TraverseInputEventReceiverHierarchy(TraverseInputEventReceiverFunc event_func)
 	{
 		// try with game instance
 		if (game_instance != nullptr)

@@ -105,7 +105,7 @@ protected:
 		return true;
 	}
 
-	virtual bool TraverseInputEventReceiverHierarchy(chaos::LightweightFunction<bool(InputEventReceiverInterface*)> event_func) override
+	virtual bool TraverseInputEventReceiverHierarchy(chaos::TraverseInputEventReceiverFunc event_func) override
 	{
 		if (fps_view_controller.TraverseInputEventReceiverHierarchy(event_func))
 			return true;

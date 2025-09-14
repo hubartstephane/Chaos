@@ -40,7 +40,7 @@ namespace chaos
 			game->OnInputModeChanged(new_mode, old_mode);
 	}
 
-	bool GameViewportWidget::TraverseInputEventReceiverHierarchy(LightweightFunction<bool(InputEventReceiverInterface*)> event_func)
+	bool GameViewportWidget::TraverseInputEventReceiverHierarchy(TraverseInputEventReceiverFunc event_func)
 	{
 		// try with game
 		if (game != nullptr)

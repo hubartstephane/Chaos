@@ -4,9 +4,13 @@ namespace chaos
 
 	class InputEventReceiverInterface;
 
-	using TraverseInputEventReceiverFunc = LightweightFunction<bool(InputEventReceiverInterface*)>;
-
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+	/**
+	* Some aliases
+	*/
+
+	using TraverseInputEventReceiverFunc = LightweightFunction<bool(InputEventReceiverInterface*)>;
 
 	/**
 	* InputEventReceiverInterface

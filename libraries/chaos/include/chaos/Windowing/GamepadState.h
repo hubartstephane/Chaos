@@ -41,11 +41,11 @@ namespace chaos
 		virtual StickState const * DoGetStickState(GamepadStick stick) const override;
 
 		/** override */
-		virtual bool DoForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const override;
+		virtual bool DoForAllKeys(ForAllKeysFunction func) const override;
 		/** override */
-		virtual bool DoForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const override;
+		virtual bool DoForAllAxes(ForAllAxesFunction func) const override;
 		/** override */
-		virtual bool DoForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const override;
+		virtual bool DoForAllSticks(ForAllSticksFunction func) const override;
 
 	protected:
 

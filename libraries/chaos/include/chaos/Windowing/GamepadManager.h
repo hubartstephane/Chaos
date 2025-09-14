@@ -88,7 +88,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		~PhysicalGamepad() {}
 
 		/** override */
-		virtual bool EnumerateDeviceHierarchy(LightweightFunction<bool(InputDeviceInterface const*)> func) const override;
+		virtual bool EnumerateDeviceHierarchy(EnumerateDeviceHierarchyFunction func) const override;
 
 		/** update all the values for the axis and buttons */
 		void UpdateAxisAndButtons(float dead_zone);
@@ -219,7 +219,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	protected:
 
 		/** override */
-		virtual bool EnumerateDeviceHierarchy(LightweightFunction<bool(InputDeviceInterface const*)> func) const override;
+		virtual bool EnumerateDeviceHierarchy(EnumerateDeviceHierarchyFunction func) const override;
 
 		/** tick force feedback effects */
 		void TickForceFeedbackEffects(float delta_time);

@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	bool InputDeviceInterface::EnumerateDeviceHierarchy(LightweightFunction<bool(InputDeviceInterface const *)> func) const
+	bool InputDeviceInterface::EnumerateDeviceHierarchy(EnumerateDeviceHierarchyFunction func) const
 	{
 		return func(this);
 	}
@@ -41,7 +41,7 @@ namespace chaos
 		return result;
 	}
 
-	bool InputDeviceInterface::ForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const
+	bool InputDeviceInterface::ForAllKeys(ForAllKeysFunction func) const
 	{
 		return EnumerateDeviceHierarchy([this, &func](InputDeviceInterface const * in_input_device)
 		{
@@ -49,7 +49,7 @@ namespace chaos
 		});
 	}
 
-	bool InputDeviceInterface::ForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const
+	bool InputDeviceInterface::ForAllAxes(ForAllAxesFunction func) const
 	{
 		return EnumerateDeviceHierarchy([this, &func](InputDeviceInterface const * in_input_device)
 		{
@@ -57,7 +57,7 @@ namespace chaos
 		});
 	}
 
-	bool InputDeviceInterface::ForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const
+	bool InputDeviceInterface::ForAllSticks(ForAllSticksFunction func) const
 	{
 		return EnumerateDeviceHierarchy([this, &func](InputDeviceInterface const * in_input_device)
 		{
@@ -80,17 +80,17 @@ namespace chaos
 		return nullptr;
 	}
 
-	bool InputDeviceInterface::DoForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const
+	bool InputDeviceInterface::DoForAllKeys(ForAllKeysFunction func) const
 	{
 		return false;
 	}
 
-	bool InputDeviceInterface::DoForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const
+	bool InputDeviceInterface::DoForAllAxes(ForAllAxesFunction func) const
 	{
 		return false;
 	}
 
-	bool InputDeviceInterface::DoForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const
+	bool InputDeviceInterface::DoForAllSticks(ForAllSticksFunction func) const
 	{
 		return false;
 	}

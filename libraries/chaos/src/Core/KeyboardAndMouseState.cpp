@@ -14,7 +14,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	bool KeyboardAndMouseState::DoForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const
+	bool KeyboardAndMouseState::DoForAllKeys(ForAllKeysFunction func) const
 	{
 		for (int i = 0 ; i < keyboard_key_state.size() ; ++i)
 			if (func(KeyboardButton(i), keyboard_key_state[i]))

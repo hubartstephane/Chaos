@@ -42,21 +42,21 @@ namespace chaos
 		return &sticks[(size_t)stick];
 	}
 
-	bool GamepadState::DoForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const
+	bool GamepadState::DoForAllKeys(ForAllKeysFunction func) const
 	{
 		for (int i = 0 ; i < buttons.size() ; ++i)
 			if (func(GamepadButton(i), buttons[i]))
 				return true;
 		return false;
 	}
-	bool GamepadState::DoForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const
+	bool GamepadState::DoForAllAxes(ForAllAxesFunction func) const
 	{
 		for (int i = 0 ; i < axes.size() ; ++i)
 			if (func(GamepadAxis(i), axes[i]))
 				return true;
 		return false;
 	}
-	bool GamepadState::DoForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const
+	bool GamepadState::DoForAllSticks(ForAllSticksFunction func) const
 	{
 		for (int i = 0 ; i < sticks.size() ; ++i)
 			if (func(GamepadStick(i), sticks[i]))

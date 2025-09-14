@@ -7,6 +7,18 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
+	* Some aliases
+	*/
+
+	using ForAllKeysFunction = LightweightFunction<bool(Key, KeyState const &)>;
+
+	using ForAllAxesFunction = LightweightFunction<bool(GamepadAxis, AxisState const &)>;
+
+	using ForAllSticksFunction = LightweightFunction<bool(GamepadStick, StickState const &)>;
+
+	using EnumerateDeviceHierarchyFunction = LightweightFunction<bool(InputDeviceInterface const*)>;
+
+	/**
 	* InputDeviceInterface: a class to make request for some device state
 	*/
 
@@ -16,7 +28,7 @@ namespace chaos
 	public:
 
 		/** call a function on all devices handled by this whole hierarchy (composition pattern) */
-		virtual bool EnumerateDeviceHierarchy(LightweightFunction<bool(InputDeviceInterface const*)> func) const;
+		virtual bool EnumerateDeviceHierarchy(EnumerateDeviceHierarchyFunction func) const;
 
 		/** gets one key state */
 		KeyState const * GetKeyState(Key key) const;
@@ -26,11 +38,11 @@ namespace chaos
 		StickState const * GetStickState(GamepadStick stick) const;
 
 		/** enumerate keys */
-		bool ForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const;
+		bool ForAllKeys(ForAllKeysFunction func) const;
 		/** enumerate axes */
-		bool ForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const;
+		bool ForAllAxes(ForAllAxesFunction func) const;
 		/** enumerate sticks */
-		bool ForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const;
+		bool ForAllSticks(ForAllSticksFunction func) const;
 
 		/** get the key value */
 		bool GetKeyValue(Key key) const;
@@ -72,11 +84,11 @@ namespace chaos
 		virtual StickState const * DoGetStickState(GamepadStick stick) const;
 
 		/** enumerate keys */
-		virtual bool DoForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const;
+		virtual bool DoForAllKeys(ForAllKeysFunction func) const;
 		/** enumerate axes */
-		virtual bool DoForAllAxes(LightweightFunction<bool(GamepadAxis, AxisState const &)> func) const;
+		virtual bool DoForAllAxes(ForAllAxesFunction func) const;
 		/** enumerate sticks */
-		virtual bool DoForAllSticks(LightweightFunction<bool(GamepadStick, StickState const &)> func) const;
+		virtual bool DoForAllSticks(ForAllSticksFunction func) const;
 	};
 
 #endif

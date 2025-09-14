@@ -23,7 +23,7 @@ namespace chaos
 		/** override */
 		virtual KeyState const * DoGetKeyState(Key key) const override;
 		/** override */
-		virtual bool DoForAllKeys(LightweightFunction<bool(Key, KeyState const &)> func) const override;
+		virtual bool DoForAllKeys(ForAllKeysFunction func) const override;
 
 	protected:
 

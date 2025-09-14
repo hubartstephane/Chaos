@@ -36,7 +36,7 @@ namespace chaos
 		for (size_t i = 0; i < count; ++i)
 			if (players[i]->TraverseInputEventReceiverHierarchy(event_func))
 				return true;
-		return false;
+		return InputEventReceiverInterface::TraverseInputEventReceiverHierarchy(event_func);
 	}
 
 	Player * GameInstance::CreatePlayer(PhysicalGamepad * in_physical_gamepad)

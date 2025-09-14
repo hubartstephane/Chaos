@@ -69,7 +69,7 @@ namespace chaos
 		else if (mouse_button_event.IsKeyReleased(input_config.rotation_button))
 			mouse_captured = false;
 
-		return false;
+		return true;
 	}
 
 }; // namespace chaos

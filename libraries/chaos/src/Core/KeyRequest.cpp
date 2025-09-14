@@ -18,6 +18,7 @@ namespace chaos
 				KeyStatus key2_status = in_input_device->GetKeyStatus(key2);
 				if (key2_status == KeyStatus::BECOME_PRESSED || key2_status == KeyStatus::STAY_PRESSED)
 					return true;
+				return false;
 			};
 
 			bool alt_value = GetModifierKeyValue(KeyboardButton::LEFT_ALT, KeyboardButton::RIGHT_ALT);

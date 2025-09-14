@@ -571,7 +571,7 @@ namespace chaos
 		});
 	}
 
-	bool Window::TraverseInputEventReceiverHierarchy(TraverseInputEventReceiverFunc event_func)
+	bool Window::TraverseInputEventReceiverHierarchy(TraverseInputEventReceiverHierarchyFunction event_func)
 	{
 		// try imgui context
 		if (window_imgui_context.TraverseInputEventReceiverHierarchy(event_func))
@@ -591,7 +591,7 @@ namespace chaos
 		return false;
 	}
 
-	bool Window::DoGetWindowAndDispatchInputEventWithContext(Window * in_window, TraverseInputEventReceiverFunc event_func)
+	bool Window::DoGetWindowAndDispatchInputEventWithContext(Window * in_window, TraverseInputEventReceiverHierarchyFunction event_func)
 	{
 		return in_window->TraverseInputEventReceiverHierarchy(event_func);
 	}

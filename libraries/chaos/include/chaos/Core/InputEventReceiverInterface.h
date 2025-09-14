@@ -10,7 +10,7 @@ namespace chaos
 	* Some aliases
 	*/
 
-	using TraverseInputEventReceiverFunc = LightweightFunction<bool(InputEventReceiverInterface*)>;
+	using TraverseInputEventReceiverHierarchyFunction = LightweightFunction<bool(InputEventReceiverInterface*)>;
 
 	/**
 	* InputEventReceiverInterface
@@ -55,7 +55,7 @@ namespace chaos
 
 
 		/** traverse all receivers hierarchy and call a functor on all elements */
-		virtual bool TraverseInputEventReceiverHierarchy(TraverseInputEventReceiverFunc event_func);
+		virtual bool TraverseInputEventReceiverHierarchy(TraverseInputEventReceiverHierarchyFunction event_func);
 
 		/** enumerate some declared key actions */
 		virtual bool EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator);

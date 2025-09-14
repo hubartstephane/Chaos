@@ -204,7 +204,7 @@ namespace chaos
 		return false;
 	}
 
-	bool InputEventReceiverInterface::TraverseInputEventReceiverHierarchy(TraverseInputEventReceiverFunc event_func)
+	bool InputEventReceiverInterface::TraverseInputEventReceiverHierarchy(TraverseInputEventReceiverHierarchyFunction event_func)
 	{
 		return event_func(this);
 	}

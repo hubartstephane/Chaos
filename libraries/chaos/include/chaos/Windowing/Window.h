@@ -194,7 +194,7 @@ namespace chaos
 		void SetWindowClient(WindowClient * in_client);
 
 		/** override */
-		virtual bool TraverseInputEventReceiverHierarchy(TraverseInputEventReceiverFunc event_func) override;
+		virtual bool TraverseInputEventReceiverHierarchy(TraverseInputEventReceiverHierarchyFunction event_func) override;
 		/** override */
 		virtual bool EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator) override;
 
@@ -366,7 +366,7 @@ namespace chaos
 		}
 
 		/** dispatch input event utility method */
-		static bool DoGetWindowAndDispatchInputEventWithContext(Window * in_window, TraverseInputEventReceiverFunc event_func);
+		static bool DoGetWindowAndDispatchInputEventWithContext(Window * in_window, TraverseInputEventReceiverHierarchyFunction event_func);
 
 		/** gets the window imgui context */
 		WindowImGuiContext * GetWindowImGuiContext() { return &window_imgui_context;}

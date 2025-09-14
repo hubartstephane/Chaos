@@ -573,27 +573,27 @@ namespace chaos
 
 	bool Window::TraverseInputEventReceiverHierarchy(TraverseInputEventReceiverHierarchyFunction event_func)
 	{
-		// try imgui context
-		if (window_imgui_context.TraverseInputEventReceiverHierarchy(event_func))
-			return true;
 		// try window client
 		if (window_client != nullptr)
 			if (window_client->TraverseInputEventReceiverHierarchy(event_func))
 				return true;
 		// try super call
-		if (WindowInterface::TraverseInputEventReceiverHierarchy(event_func))
+		return WindowInterface::TraverseInputEventReceiverHierarchy(event_func);
+	}
+
+	bool Window::DoDispatchInputEventWithContext(Window * in_window, TraverseInputEventReceiverHierarchyFunction event_func)
+	{
+		// try imgui context
+		if (in_window->window_imgui_context.TraverseInputEventReceiverHierarchy(event_func))
+			return true;
+		// try window
+		if (in_window->TraverseInputEventReceiverHierarchy(event_func))
 			return true;
 		// try application
 		if (WindowApplication* window_application = Application::GetInstance())
 			if (window_application->TraverseInputEventReceiverHierarchy(event_func))
 				return true;
-
 		return false;
-	}
-
-	bool Window::DoGetWindowAndDispatchInputEventWithContext(Window * in_window, TraverseInputEventReceiverHierarchyFunction event_func)
-	{
-		return in_window->TraverseInputEventReceiverHierarchy(event_func);
 	}
 
 	void Window::DoOnMouseMove(GLFWwindow* in_glfw_window, double x, double y)

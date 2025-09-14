@@ -361,12 +361,12 @@ namespace chaos
 
 			return GetWindowAndProcessWithContext(in_glfw_window, [&event_func](Window * in_window)
 			{
-				return DoGetWindowAndDispatchInputEventWithContext(in_window, event_func);
+				return DoDispatchInputEventWithContext(in_window, event_func);
 			});
 		}
 
 		/** dispatch input event utility method */
-		static bool DoGetWindowAndDispatchInputEventWithContext(Window * in_window, TraverseInputEventReceiverHierarchyFunction event_func);
+		static bool DoDispatchInputEventWithContext(Window * in_window, TraverseInputEventReceiverHierarchyFunction event_func);
 
 		/** gets the window imgui context */
 		WindowImGuiContext * GetWindowImGuiContext() { return &window_imgui_context;}

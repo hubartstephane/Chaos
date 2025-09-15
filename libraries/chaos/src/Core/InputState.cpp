@@ -50,14 +50,14 @@ namespace chaos
 
 		if (value)
 		{
-			if (same_value_time == 0.0f)
+			if (same_value_time == 0.0f && update_time >= 0.0f)
 				return KeyStatus::BECOME_PRESSED;
 			else
 				return KeyStatus::STAY_PRESSED;
 		}
 		else
 		{
-			if (same_value_time == 0.0f)
+			if (same_value_time == 0.0f && update_time >= 0.0f)
 				return KeyStatus::BECOME_RELEASED;
 			else
 				return KeyStatus::STAY_RELEASED;

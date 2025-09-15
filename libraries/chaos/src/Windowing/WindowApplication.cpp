@@ -53,9 +53,9 @@ namespace chaos
 
 			while (!loop_condition_func || loop_condition_func())
 			{
-				glfwPollEvents();
+				frame_time_manager->SetCurrentFrameTime(glfwGetTime()); // this is important to be just before the glfwPollEvents() call
 
-				frame_time_manager->SetCurrentFrameTime(glfwGetTime());
+				glfwPollEvents();
 
 				float real_delta_time = float(frame_time_manager->GetCurrentFrameDuration());
 				float delta_time      = ComputeEffectiveDeltaTime(real_delta_time);

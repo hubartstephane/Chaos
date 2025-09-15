@@ -315,6 +315,8 @@ namespace chaos
 
 		/** comparaison operator */
 		bool operator == (Key const& src) const;
+		/** comparaison operator */
+		std::strong_ordering operator <=> (const Key& src) const;
 
 		/** get the keyboard value for the key (UNKNOWN if it is not a keyboard key) */
 		KeyboardButton GetKeyboardButton() const;

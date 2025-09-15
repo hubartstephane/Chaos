@@ -296,6 +296,26 @@ namespace chaos
 		return false;
 	}
 
+	std::strong_ordering Key::operator <=> (const Key& src) const
+	{
+		std::strong_ordering c = (type <=> src.type);
+		if (c != 0)
+			return c;
+
+		switch (type)
+		{
+		case KeyType::KEYBOARD:
+			return (keyboard_button <=> src.keyboard_button);
+		case KeyType::MOUSE:
+			return (mouse_button <=> src.mouse_button);
+		case KeyType::GAMEPAD:
+			return (gamepad_button <=> src.gamepad_button);
+		case KeyType::UNKNOWN:
+		default:
+			return std::strong_ordering::equal;
+		}
+	}
+
 	char const* Key::GetName() const
 	{
 		switch (type)

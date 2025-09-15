@@ -352,21 +352,21 @@ namespace chaos
 
 		/** dispatch an input event through the ImGui/WindowClient/Window/Application hierarchy */
 		template<typename FUNC, typename ...PARAMS>
-		static bool GetWindowAndDispatchInputEventWithContext(GLFWwindow* in_glfw_window, FUNC const & func, PARAMS&& ...params)
+		bool DispatchInputEventWithContext(FUNC const & func, PARAMS&& ...params)
 		{
 			auto event_func = [&](InputEventReceiverInterface * event_receiver)
 			{
 				return (event_receiver->*func)(std::forward<PARAMS>(params)...);
 			};
 
-			return GetWindowAndProcessWithContext(in_glfw_window, [&event_func](Window * in_window)
+			return WithWindowContext([this, &event_func]()
 			{
-				return DoDispatchInputEventWithContext(in_window, event_func);
+				return DoDispatchInputEvent(event_func);
 			});
 		}
 
 		/** dispatch input event utility method */
-		static bool DoDispatchInputEventWithContext(Window * in_window, TraverseInputEventReceiverHierarchyFunction event_func);
+		bool DoDispatchInputEvent(TraverseInputEventReceiverHierarchyFunction event_func);
 
 		/** gets the window imgui context */
 		WindowImGuiContext * GetWindowImGuiContext() { return &window_imgui_context;}

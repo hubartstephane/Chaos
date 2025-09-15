@@ -581,13 +581,13 @@ namespace chaos
 		return WindowInterface::TraverseInputEventReceiverHierarchy(event_func);
 	}
 
-	bool Window::DoDispatchInputEventWithContext(Window * in_window, TraverseInputEventReceiverHierarchyFunction event_func)
+	bool Window::DoDispatchInputEvent(TraverseInputEventReceiverHierarchyFunction event_func)
 	{
 		// try imgui context
-		if (in_window->window_imgui_context.TraverseInputEventReceiverHierarchy(event_func))
+		if (window_imgui_context.TraverseInputEventReceiverHierarchy(event_func))
 			return true;
 		// try window
-		if (in_window->TraverseInputEventReceiverHierarchy(event_func))
+		if (WindowInterface::TraverseInputEventReceiverHierarchy(event_func))
 			return true;
 		// try application
 		if (WindowApplication* window_application = Application::GetInstance())
@@ -601,19 +601,21 @@ namespace chaos
 		// notify the application of the mouse state
 		WindowApplication::SetApplicationInputMode(InputMode::MOUSE);
 
-		// dispatch the event (a window is mandatory to have a delta)
-		if (Window * my_window = GetWindowFromGLFWContext(in_glfw_window))
-		{
-			glm::vec2 position = { float(x), float(y) };
+		// get the window
+		Window * my_window = GetWindowFromGLFWContext(in_glfw_window);
+		if (my_window == nullptr)
+			return;
 
-			glm::vec2 delta = my_window->IsMousePositionValid()?
-				position - my_window->mouse_position.value():
-				glm::vec2(0.0f, 0.0f);
+		// dispatch the event
+		glm::vec2 position = { float(x), float(y) };
 
-			GetWindowAndDispatchInputEventWithContext(in_glfw_window, &InputEventReceiverInterface::OnMouseMove, delta);
+		glm::vec2 delta = my_window->IsMousePositionValid()?
+			position - my_window->mouse_position.value():
+			glm::vec2(0.0f, 0.0f);
 
-			my_window->mouse_position = position;
-		}
+		my_window->DispatchInputEventWithContext(&InputEventReceiverInterface::OnMouseMove, delta);
+
+		my_window->mouse_position = position;
 	}
 
 	static KeyAction GetKeyActionFromGLFW(int action)
@@ -642,17 +644,22 @@ namespace chaos
 
 	void Window::DoOnMouseButton(GLFWwindow* in_glfw_window, int button, int action, int modifiers)
 	{
+		// notify the application of the mouse state
+		WindowApplication::SetApplicationInputMode(InputMode::MOUSE);
+
+		// get the window
+		Window * my_window = GetWindowFromGLFWContext(in_glfw_window);
+		if (my_window == nullptr)
+			return;
+
 		// update global state
 		MouseButton mouse_button = (MouseButton)button;
 
 		if (KeyboardAndMouseState * keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance())
 		{
 			bool key_value = (action == GLFW_PRESS || action == GLFW_REPEAT);
-			keyboard_and_mouse_state->SetKeyValue(mouse_button, key_value);
+			keyboard_and_mouse_state->SetKeyValue(mouse_button, key_value, my_window);
 		}
-
-		// notify the application of the mouse state
-		WindowApplication::SetApplicationInputMode(InputMode::MOUSE);
 
 		// dispatch event
 		MouseButtonEvent mouse_button_event;
@@ -660,7 +667,7 @@ namespace chaos
 		mouse_button_event.action = GetKeyActionFromGLFW(action);
 		mouse_button_event.modifiers = GetKeyModifiersFromGLFW(modifiers);
 
-		GetWindowAndDispatchInputEventWithContext(in_glfw_window, &InputEventReceiverInterface::OnMouseButton, mouse_button_event);
+		my_window->DispatchInputEventWithContext(&InputEventReceiverInterface::OnMouseButton, mouse_button_event);
 	}
 
 	void Window::DoOnMouseWheel(GLFWwindow* in_glfw_window, double scroll_x, double scroll_y)
@@ -668,12 +675,25 @@ namespace chaos
 		// notify the application of the mouse state
 		WindowApplication::SetApplicationInputMode(InputMode::MOUSE);
 
+		// get the window
+		Window * my_window = GetWindowFromGLFWContext(in_glfw_window);
+		if (my_window == nullptr)
+			return;
+
 		// dispatch event
-		GetWindowAndDispatchInputEventWithContext(in_glfw_window, &InputEventReceiverInterface::OnMouseWheel, scroll_x, scroll_y);
+		my_window->DispatchInputEventWithContext(&InputEventReceiverInterface::OnMouseWheel, scroll_x, scroll_y);
 	}
 
 	void Window::DoOnKeyEvent(GLFWwindow* in_glfw_window, int keycode, int scancode, int action, int modifiers)
 	{
+		// notify the application of the keyboard state
+		WindowApplication::SetApplicationInputMode(InputMode::KEYBOARD);
+
+		// get the window
+		Window * my_window = GetWindowFromGLFWContext(in_glfw_window);
+		if (my_window == nullptr)
+			return;
+
 		// GLFW keycode corresponds to the character that would be produced on a QWERTY layout
 		// we have to make a conversion to know the character is to be produced on CURRENT layout
 		keycode = KeyboardLayoutConversion::ConvertGLFWKeycode(keycode, KeyboardLayoutType::QWERTY, KeyboardLayoutType::CURRENT);
@@ -683,11 +703,8 @@ namespace chaos
 		if (KeyboardAndMouseState * keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance())
 		{
 			bool key_value = (action == GLFW_PRESS || action == GLFW_REPEAT);
-			keyboard_and_mouse_state->SetKeyValue(keyboard_button, key_value);
+			keyboard_and_mouse_state->SetKeyValue(keyboard_button, key_value, my_window);
 		}
-
-		// notify the application of the keyboard state
-		WindowApplication::SetApplicationInputMode(InputMode::KEYBOARD);
 
 		// dispatch the event
 		KeyEvent key_event;
@@ -695,8 +712,8 @@ namespace chaos
 		key_event.scancode = scancode;
 		key_event.action = GetKeyActionFromGLFW(action);
 		key_event.modifiers = GetKeyModifiersFromGLFW(modifiers);
-
-		GetWindowAndDispatchInputEventWithContext(in_glfw_window, &InputEventReceiverInterface::OnKeyEvent, key_event);
+		
+		my_window->DispatchInputEventWithContext(&InputEventReceiverInterface::OnKeyEvent, key_event);
 	}
 
 	void Window::DoOnCharEvent(GLFWwindow* in_glfw_window, unsigned int c)
@@ -704,8 +721,13 @@ namespace chaos
 		// notify the application of the keyboard button state
 		WindowApplication::SetApplicationInputMode(InputMode::KEYBOARD);
 
+		// get the window
+		Window * my_window = GetWindowFromGLFWContext(in_glfw_window);
+		if (my_window == nullptr)
+			return;
+
 		// dispatch the event
-		GetWindowAndDispatchInputEventWithContext(in_glfw_window, &InputEventReceiverInterface::OnCharEvent, c);
+		my_window->DispatchInputEventWithContext(&InputEventReceiverInterface::OnCharEvent, c);
 	}
 
 	void Window::DoOnDropFile(GLFWwindow* in_glfw_window, int count, char const** paths)
@@ -715,8 +737,6 @@ namespace chaos
 			my_window->OnDropFile(count, paths);
 		});
 	}
-
-
 
 	bool Window::GetProgramProviderAndProcess(LightweightFunction<bool(GPUProgramProviderBase*)> func)
 	{

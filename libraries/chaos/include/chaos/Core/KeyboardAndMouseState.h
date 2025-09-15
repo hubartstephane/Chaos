@@ -16,7 +16,7 @@ namespace chaos
 	public:
 
 		/** change the state of a keyboard or mouse key (notification from a window) */
-		void SetKeyValue(Key key, bool value);
+		void SetKeyValue(Key key, bool value, Window const * window);
 
 	protected:
 

@@ -38,8 +38,6 @@ namespace chaos
 			CheckCameraKey(input_config.yaw_right_button, "Decrement Yaw", -config.yaw_speed, &FPSView::IncrementYaw) ||
 			CheckCameraKey(input_config.pitch_up_button, "Increment Pitch", config.pitch_speed, &FPSView::IncrementPitch) ||
 			CheckCameraKey(input_config.pitch_down_button, "Decrement Pitch", -config.pitch_speed, &FPSView::IncrementPitch);
-
-		return false;
 	}
 
 	bool FPSViewController::OnMouseMoveImpl(glm::vec2 const& delta)

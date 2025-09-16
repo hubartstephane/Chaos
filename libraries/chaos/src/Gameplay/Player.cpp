@@ -360,7 +360,8 @@ namespace chaos
 
 	bool Player::InvokeWithUpgradedInputDevice(InputDeviceInterface const * in_input_device, InvokeWithUpgradedInputDeviceFunction in_func)
 	{
-		return in_func(in_input_device);
+		auto composed_device = MakeComposedInputDevices(in_input_device, gamepad.get());
+		return in_func(&composed_device);
 	}
 
 	// =================================================

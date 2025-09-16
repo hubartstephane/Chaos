@@ -583,45 +583,7 @@ namespace chaos
 
 	bool Window::DoDispatchInputEvent(DoDispatchInputEventFunction func)
 	{
-
 		DelegateInputEventReceiverHierarchyTraverser traverser(func);
-
-	#if 0
-		class MyInputEventReceiverHierarchyTraverser : public DelegateInputEventReceiverHierarchyTraverser
-		{
-		public:
-
-			using DelegateInputEventReceiverHierarchyTraverser::DelegateInputEventReceiverHierarchyTraverser;
-
-			virtual bool Traverse(InputEventReceiverInterface * event_receiver) override
-			{
-				event_receiver->InvokeWithUpgradedInputDevice(
-			}
-
-		};
-#endif
-
-#if 0
-
-		class MyTraverser : public Traverser
-		{
-			public
-
-				MyTraverser(LightweightFunction<bool(InputEventReceiverInterface * event_receiver)> in_event_func):
-				event_func(in_event_func)
-			{}
-
-			virtual bool ProcessNode(InputEventReceiverInterface * event_receiver)
-			{
-				return event_func
-			}
-		};
-
-
-
-
-#endif
-
 
 		// try imgui context
 		if (traverser.Traverse(&window_imgui_context))
@@ -633,12 +595,6 @@ namespace chaos
 		if (WindowApplication* window_application = Application::GetInstance())
 			if (traverser.Traverse(window_application))
 				return true;
-
-
-
-
-
-
 
 		return false;
 	}
@@ -1115,12 +1071,6 @@ namespace chaos
 
 		if (window_client != nullptr)
 			window_client->Tick(delta_time);
-			// shuxxx
-
-
-
-
-		ProcessInputDeviceStates(KeyboardAndMouseState::GetInstance());
 
 		return result;
 	}

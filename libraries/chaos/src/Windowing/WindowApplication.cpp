@@ -480,20 +480,13 @@ namespace chaos
 			main_clock->TickClock(delta_time);
 		if (sound_manager != nullptr)
 			sound_manager->Tick(delta_time);
-
-
-
-			// shuxxx
-
-
-		ProcessPendingInputs();
-
-
+		// process the inputs
+		ProcessInputDevices();
 
 		return true;
 	}
 
-	void WindowApplication::ProcessPendingInputs()
+	void WindowApplication::ProcessInputDevices()
 	{
 		class MyKeyActionEnumerator : public KeyActionEnumerator
 		{
@@ -566,35 +559,50 @@ namespace chaos
 
 		MyKeyActionEnumerator action_enumerator(keyboard_and_mouse_state);
 
+		
 
-		#if 0
+		class MyInputEventReceiverHierarchyTraverser : public InputEventReceiverHierarchyTraverser
+		{
+		public:
+
+			MyInputEventReceiverHierarchyTraverser(InputDeviceInterface const * in_input_device, KeyActionEnumerator * in_action_enumerator):
+				input_device(in_input_device),
+				action_enumerator(in_action_enumerator)
+			{
+				assert(in_input_device != nullptr);
+				assert(in_action_enumerator != nullptr);
+			}
+
+			virtual bool Process(InputEventReceiverInterface * in_event_receiver) override
+			{
+				return in_event_receiver->EnumerateKeyActions(*action_enumerator);
+			}
+
+			virtual bool Traverse(InputEventReceiverInterface * in_event_receiver) override
+			{
+				return in_event_receiver->InvokeWithUpgradedInputDevice(input_device, [this, in_event_receiver](InputDeviceInterface const * in_input_device)
+				{
+					MyInputEventReceiverHierarchyTraverser other_traverser(in_input_device, action_enumerator);
+					return in_event_receiver->TraverseInputEventReceiverHierarchy(other_traverser);
+				});
+			}
+
+		protected:
+
+			const InputDeviceInterface * input_device = nullptr;
+
+			KeyActionEnumerator * action_enumerator = nullptr;
+		};
+
+
+		MyInputEventReceiverHierarchyTraverser traverser(keyboard_and_mouse_state, &action_enumerator);
 
 		// give focused window opportunity to catch input first
 		if (Window * focus_window = GetFocusedWindow())
-		{
-			if (focus_window->TraverseInputEventReceiverHierarchy([action_enumerator](InputEventReceiverInterface * in_event_receiver)
-			{
-				return ProcessInputs();
-
-			}))
-			{
+			if (traverser.Traverse(focus_window))
 				return;
-			}
-		}
-		
-		// fallback to the application
-		TraverseInputEventReceiverHierarchy([this, &action_enumerator](InputEventReceiverInterface * in_event_receiver)
-			{
-				return in_event_receiver->EnumerateKeyActions(action_enumerator);
-
-
-
-
-
-
-
-		});
-		#endif
+		// now time for this
+		traverser.Traverse(this);
 	}
 
 	void WindowApplication::OnGLFWError(int code, const char* msg)

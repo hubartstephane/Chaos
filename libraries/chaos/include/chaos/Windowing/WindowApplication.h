@@ -275,7 +275,7 @@ namespace chaos
 		virtual void FinalizeGPUResources();
 
 		/** processing the inputs */
-		virtual void ProcessPendingInputs();
+		virtual void ProcessInputDevices();
 
 
 		/** initialize a mapping with button names / text generator joker */

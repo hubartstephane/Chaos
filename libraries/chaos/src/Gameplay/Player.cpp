@@ -12,7 +12,7 @@ namespace chaos
 
 	void Player::OnLevelChanged(Level * new_level, Level * old_level, LevelInstance * new_level_instance)
 	{
-        health = max_health;
+		health = max_health;
 		invulnerability_timer = std::max(invulnerability_duration, 0.0f);
 	}
 
@@ -356,6 +356,11 @@ namespace chaos
 		}
 		// super call
 		return InputEventReceiverInterface::DoCheckKeyDown(button);
+	}
+
+	bool Player::InvokeWithUpgradedInputDevice(InputDeviceInterface const * in_input_device, InvokeWithUpgradedInputDeviceFunction in_func)
+	{
+		return in_func(in_input_device);
 	}
 
 	// =================================================

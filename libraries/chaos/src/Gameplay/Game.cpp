@@ -80,14 +80,14 @@ namespace chaos
 			hud->Tick(delta_time);
 	}
 
-	bool Game::TraverseInputEventReceiverHierarchy(TraverseInputEventReceiverHierarchyFunction event_func)
+	bool Game::TraverseInputEventReceiverHierarchy(InputEventReceiverHierarchyTraverser & in_traverser)
 	{
 		// try with game instance
 		if (game_instance != nullptr)
-			if (game_instance->TraverseInputEventReceiverHierarchy(event_func))
+			if (in_traverser.Traverse(game_instance.get()))
 				return true;
 		// super 
-		return InputEventReceiverInterface::TraverseInputEventReceiverHierarchy(event_func);
+		return InputEventReceiverInterface::TraverseInputEventReceiverHierarchy(in_traverser);
 	}
 
 	bool Game::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator)

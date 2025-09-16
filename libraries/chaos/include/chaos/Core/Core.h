@@ -63,6 +63,8 @@
 #include "chaos/Core/MouseButtonEvent.h"
 #include "chaos/Core/KeyActionEnumerator.h"
 #include "chaos/Core/InputEventReceiverInterface.h"
+#include "chaos/Core/InputEventReceiverHierarchyTraverser.h"
+#include "chaos/Core/DelegateInputEventReceiverHierarchyTraverser.h"
 #include "chaos/Core/Application.h"
 #include "chaos/Core/ResourceManager.h"
 #include "chaos/Core/ResourceManagerLoader.h"

@@ -7,13 +7,17 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
+	* Some aliases
+	*/
+
+	using KeyActionFunction = LightweightFunction<void()>;
+
+	/**
 	* KeyActionEnumerator
 	*/
 
 	class CHAOS_API KeyActionEnumerator
 	{
-		using KeyActionFunction = LightweightFunction<void()>;
-
 	public:
 
 		/** the operator */

@@ -25,7 +25,7 @@ namespace chaos
 		return false;
 	}
 
-	void KeyboardAndMouseState::SetKeyValue(Key key, bool value, Window const * window)
+	void KeyboardAndMouseState::SetKeyValue(Key key, bool value)
 	{
 		if (key.IsKeyboardKey())
 		{

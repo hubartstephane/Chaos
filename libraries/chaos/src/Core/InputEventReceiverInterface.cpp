@@ -120,6 +120,15 @@ namespace chaos
 	bool InputEventReceiverInterface::OnKeyEventImpl(KeyEvent const & key_event)
 	{
 		return ProcessKeyActions(key_event);
+
+
+
+		// shuxxx
+
+
+
+
+		return false;
 	}
 
 	bool InputEventReceiverInterface::OnCharEventImpl(unsigned int c)
@@ -129,38 +138,31 @@ namespace chaos
 
 	bool InputEventReceiverInterface::ProcessInputDeviceStates(InputDeviceInterface const * in_input_device)
 	{
-		class MyKeyActionEnumerator : public KeyActionEnumerator
-		{
-		public:
-
-			/** constructor */
-			MyKeyActionEnumerator(InputDeviceInterface const * in_input_device):
-				input_device(in_input_device)
-			{}
-
-			/** override */
-			virtual bool operator () (KeyRequest const & in_request, char const * in_title, bool in_enabled, LightweightFunction<void()> in_key_action) override
-			{
-				if (in_enabled && in_request.CheckAgainst(input_device))
-				{
-					in_key_action();
-				}
-				return false; // do not prevent other actions to be handled
-			}
-
-		protected:
-
-			/** the input device to check */
-			InputDeviceInterface const * input_device = nullptr;
-		};
 
 
-		MyKeyActionEnumerator action_enumerator(in_input_device);
-		return TraverseInputEventReceiverHierarchy([this, &action_enumerator](InputEventReceiverInterface * in_event_receiver)
-		{
-			return in_event_receiver->EnumerateKeyActions(action_enumerator);
-		});
+
+
+
+
+
+		return false;
 	}
+
+	bool InputEventReceiverInterface::InvokeWithUpgradedInputDevice(InputDeviceInterface const * in_input_device, InvokeWithUpgradedInputDeviceFunction in_func)
+	{
+		return in_func(in_input_device); // by default, simple passthrough
+	}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -176,7 +178,7 @@ namespace chaos
 			{}
 
 			/** override */
-			virtual bool operator () (KeyRequest const & in_request, char const * in_title, bool in_enabled, LightweightFunction<void()> in_key_action) override
+			virtual bool operator () (KeyRequest const & in_request, char const * in_title, bool in_enabled, KeyActionFunction in_key_action) override
 			{
 				if (in_enabled && in_request.CheckAgainst(key_event))
 				{
@@ -193,10 +195,12 @@ namespace chaos
 		};
 
 		MyKeyActionEnumerator action_enumerator(key_event);
-		return TraverseInputEventReceiverHierarchy([this, &action_enumerator](InputEventReceiverInterface * in_event_receiver)
+
+		DelegateInputEventReceiverHierarchyTraverser traverser([&action_enumerator](InputEventReceiverInterface * in_event_receiver)
 		{
 			return in_event_receiver->EnumerateKeyActions(action_enumerator);
 		});
+		return traverser.Traverse(this);
 	}
 
 	bool InputEventReceiverInterface::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator)
@@ -204,9 +208,9 @@ namespace chaos
 		return false;
 	}
 
-	bool InputEventReceiverInterface::TraverseInputEventReceiverHierarchy(TraverseInputEventReceiverHierarchyFunction event_func)
+	bool InputEventReceiverInterface::TraverseInputEventReceiverHierarchy(InputEventReceiverHierarchyTraverser & in_traverser)
 	{
-		return event_func(this);
+		return in_traverser.Process(this);
 	}
 
 }; // namespace chaos

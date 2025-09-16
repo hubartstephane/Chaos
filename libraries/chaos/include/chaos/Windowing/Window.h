@@ -12,6 +12,12 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
+	 * some aliases
+	 */
+	 
+	using DoDispatchInputEventFunction = LightweightFunction<bool(InputEventReceiverInterface*)>;
+
+	/**
 	* CursorMode
 	*/
 
@@ -194,7 +200,7 @@ namespace chaos
 		void SetWindowClient(WindowClient * in_client);
 
 		/** override */
-		virtual bool TraverseInputEventReceiverHierarchy(TraverseInputEventReceiverHierarchyFunction event_func) override;
+		virtual bool TraverseInputEventReceiverHierarchy(InputEventReceiverHierarchyTraverser & in_traverser) override;
 		/** override */
 		virtual bool EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator) override;
 
@@ -354,9 +360,9 @@ namespace chaos
 		template<typename FUNC, typename ...PARAMS>
 		bool DispatchInputEventWithContext(FUNC const & func, PARAMS&& ...params)
 		{
-			auto event_func = [&](InputEventReceiverInterface * event_receiver)
+			auto event_func = [&](InputEventReceiverInterface * in_event_receiver)
 			{
-				return (event_receiver->*func)(std::forward<PARAMS>(params)...);
+				return (in_event_receiver->*func)(std::forward<PARAMS>(params)...);
 			};
 
 			return WithWindowContext([this, &event_func]()
@@ -366,10 +372,13 @@ namespace chaos
 		}
 
 		/** dispatch input event utility method */
-		bool DoDispatchInputEvent(TraverseInputEventReceiverHierarchyFunction event_func);
+		bool DoDispatchInputEvent(DoDispatchInputEventFunction func);
 
 		/** gets the window imgui context */
 		WindowImGuiContext * GetWindowImGuiContext() { return &window_imgui_context;}
+
+		/** returns whether the window has the focus */
+		bool HasFocus() const;
 
 	private:
 

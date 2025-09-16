@@ -172,6 +172,9 @@ namespace chaos
 		/** search whether there is at least one main window */
 		bool HasMainWindow() const;
 
+		/** returns the window that has focus */
+		Window * GetFocusedWindow();
+
 		/** gets the imgui manager */
 		ImGuiManager* GetImGuiManager() const;
 
@@ -271,6 +274,8 @@ namespace chaos
 		/** finalize the GPU resources */
 		virtual void FinalizeGPUResources();
 
+		/** processing the inputs */
+		virtual void ProcessPendingInputs();
 
 
 		/** initialize a mapping with button names / text generator joker */

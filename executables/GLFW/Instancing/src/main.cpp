@@ -85,11 +85,11 @@ protected:
 		return true;
 	}
 
-	virtual bool TraverseInputEventReceiverHierarchy(chaos::TraverseInputEventReceiverHierarchyFunction event_func) override
+	virtual bool TraverseInputEventReceiverHierarchy(chaos::InputEventReceiverHierarchyTraverser & in_traverser) override
 	{
-		if (fps_view_controller.TraverseInputEventReceiverHierarchy(event_func))
+		if (in_traverser.Traverse(&fps_view_controller))
 			return true;
-		return chaos::Window::TraverseInputEventReceiverHierarchy(event_func);
+		return chaos::Window::TraverseInputEventReceiverHierarchy(in_traverser);
 	}
 
 protected:

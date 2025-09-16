@@ -480,7 +480,121 @@ namespace chaos
 			main_clock->TickClock(delta_time);
 		if (sound_manager != nullptr)
 			sound_manager->Tick(delta_time);
+
+
+
+			// shuxxx
+
+
+		ProcessPendingInputs();
+
+
+
 		return true;
+	}
+
+	void WindowApplication::ProcessPendingInputs()
+	{
+		class MyKeyActionEnumerator : public KeyActionEnumerator
+		{
+		public:
+
+			/** constructor */
+			MyKeyActionEnumerator(InputDeviceInterface const * in_input_device):
+				input_device(in_input_device)
+			{}
+
+			/** override */
+			virtual bool operator () (KeyRequest const & in_request, char const * in_title, bool in_enabled, KeyActionFunction in_key_action) override
+			{
+				if (in_enabled && CheckRequestAndAcquireDeviceState(in_request))
+				{
+					in_key_action();
+				}
+				return false; // do not prevent other actions to be handled
+			}
+
+
+
+		protected:
+
+			bool AcquireKey(Key in_key) const
+			{
+				if (acquired_keys.find(in_key) != acquired_keys.end())
+					return false;
+				acquired_keys.insert(in_key);
+				return true;
+			}
+
+			bool AcquireAxis(GamepadAxis in_axis) const
+			{
+				if (acquired_axes.find(in_axis) != acquired_axes.end())
+					return false;
+				acquired_axes.insert(in_axis);
+				return true;
+			}
+
+			bool AcquireSticks(GamepadStick in_stick) const
+			{
+				if (acquired_sticks.find(in_stick) != acquired_sticks.end())
+					return false;
+				acquired_sticks.insert(in_stick);
+				return true;
+			}
+
+			bool CheckRequestAndAcquireDeviceState(KeyRequest const & in_request) const
+			{
+				if (!AcquireKey(in_request.key))
+					return false;
+				return in_request.CheckAgainst(input_device);
+			}
+
+		protected:
+
+			/** the input device to check */
+			InputDeviceInterface const * input_device = nullptr;
+
+			/** keys that are locked for further requests */
+			mutable std::set<Key> acquired_keys;
+			/** axes that are locked for further requests */
+			mutable std::set<GamepadAxis> acquired_axes;
+			/** sticks that are locked for further requests */
+			mutable std::set<GamepadStick> acquired_sticks;
+		};
+
+		KeyboardAndMouseState const * keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance();
+
+		MyKeyActionEnumerator action_enumerator(keyboard_and_mouse_state);
+
+
+		#if 0
+
+		// give focused window opportunity to catch input first
+		if (Window * focus_window = GetFocusedWindow())
+		{
+			if (focus_window->TraverseInputEventReceiverHierarchy([action_enumerator](InputEventReceiverInterface * in_event_receiver)
+			{
+				return ProcessInputs();
+
+			}))
+			{
+				return;
+			}
+		}
+		
+		// fallback to the application
+		TraverseInputEventReceiverHierarchy([this, &action_enumerator](InputEventReceiverInterface * in_event_receiver)
+			{
+				return in_event_receiver->EnumerateKeyActions(action_enumerator);
+
+
+
+
+
+
+
+		});
+		#endif
 	}
 
 	void WindowApplication::OnGLFWError(int code, const char* msg)
@@ -1026,6 +1140,17 @@ namespace chaos
 	ImGuiManager* WindowApplication::GetImGuiManager() const
 	{
 		return imgui_manager.get();
+	}
+
+	Window * WindowApplication::GetFocusedWindow()
+	{
+		return ForAllWindows([](Window * window) -> Window *
+		{
+			if (window->HasFocus())
+				return window;
+			return nullptr;
+		});
+
 	}
 
 }; // namespace chaos

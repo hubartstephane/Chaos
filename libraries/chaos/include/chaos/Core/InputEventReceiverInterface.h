@@ -10,7 +10,7 @@ namespace chaos
 	* Some aliases
 	*/
 
-	using TraverseInputEventReceiverHierarchyFunction = LightweightFunction<bool(InputEventReceiverInterface*)>;
+	using InvokeWithUpgradedInputDeviceFunction = LightweightFunction<bool(InputDeviceInterface const *)>;
 
 	/**
 	* InputEventReceiverInterface
@@ -51,14 +51,19 @@ namespace chaos
 
 
 
-		bool ProcessInputDeviceStates(InputDeviceInterface const * in_input_device);
+
+
+		virtual bool ProcessInputDeviceStates(InputDeviceInterface const * in_input_device);
 
 
 		/** traverse all receivers hierarchy and call a functor on all elements */
-		virtual bool TraverseInputEventReceiverHierarchy(TraverseInputEventReceiverHierarchyFunction event_func);
+		virtual bool TraverseInputEventReceiverHierarchy(InputEventReceiverHierarchyTraverser & in_traverser);
 
 		/** enumerate some declared key actions */
 		virtual bool EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator);
+
+		/** upgrade the input device and call some functor */
+		virtual bool InvokeWithUpgradedInputDevice(InputDeviceInterface const * in_input_device, InvokeWithUpgradedInputDeviceFunction in_func);
 
 	protected:
 

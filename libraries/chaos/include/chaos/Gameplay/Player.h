@@ -124,6 +124,9 @@ namespace chaos
 		/** override */
 		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
 
+		/** override */
+		virtual bool InvokeWithUpgradedInputDevice(InputDeviceInterface const * in_input_device, InvokeWithUpgradedInputDeviceFunction in_func) override;
+
 	protected:
 
 		/** the game instance owning the player */

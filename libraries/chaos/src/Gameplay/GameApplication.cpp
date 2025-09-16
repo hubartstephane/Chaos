@@ -63,13 +63,13 @@ namespace chaos
 		return true;
 	}
 
-	bool GameApplication::TraverseInputEventReceiverHierarchy(TraverseInputEventReceiverHierarchyFunction event_func)
+	bool GameApplication::TraverseInputEventReceiverHierarchy(InputEventReceiverHierarchyTraverser & in_traverser)
 	{
 		if (game != nullptr)
 			if (!IsGameSuspended())
-				if (game->TraverseInputEventReceiverHierarchy(event_func))
+				if (in_traverser.Traverse(game.get()))
 					return true;
-		return WindowApplication::TraverseInputEventReceiverHierarchy(event_func);
+		return WindowApplication::TraverseInputEventReceiverHierarchy(in_traverser);
 	}
 
 	bool GameApplication::IsGameSuspended() const

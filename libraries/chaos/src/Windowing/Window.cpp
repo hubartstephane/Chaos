@@ -571,28 +571,75 @@ namespace chaos
 		});
 	}
 
-	bool Window::TraverseInputEventReceiverHierarchy(TraverseInputEventReceiverHierarchyFunction event_func)
+	bool Window::TraverseInputEventReceiverHierarchy(InputEventReceiverHierarchyTraverser & in_traverser)
 	{
 		// try window client
 		if (window_client != nullptr)
-			if (window_client->TraverseInputEventReceiverHierarchy(event_func))
+			if (in_traverser.Traverse(window_client.get()))
 				return true;
 		// try super call
-		return WindowInterface::TraverseInputEventReceiverHierarchy(event_func);
+		return WindowInterface::TraverseInputEventReceiverHierarchy(in_traverser);
 	}
 
-	bool Window::DoDispatchInputEvent(TraverseInputEventReceiverHierarchyFunction event_func)
+	bool Window::DoDispatchInputEvent(DoDispatchInputEventFunction func)
 	{
+
+		DelegateInputEventReceiverHierarchyTraverser traverser(func);
+
+	#if 0
+		class MyInputEventReceiverHierarchyTraverser : public DelegateInputEventReceiverHierarchyTraverser
+		{
+		public:
+
+			using DelegateInputEventReceiverHierarchyTraverser::DelegateInputEventReceiverHierarchyTraverser;
+
+			virtual bool Traverse(InputEventReceiverInterface * event_receiver) override
+			{
+				event_receiver->InvokeWithUpgradedInputDevice(
+			}
+
+		};
+#endif
+
+#if 0
+
+		class MyTraverser : public Traverser
+		{
+			public
+
+				MyTraverser(LightweightFunction<bool(InputEventReceiverInterface * event_receiver)> in_event_func):
+				event_func(in_event_func)
+			{}
+
+			virtual bool ProcessNode(InputEventReceiverInterface * event_receiver)
+			{
+				return event_func
+			}
+		};
+
+
+
+
+#endif
+
+
 		// try imgui context
-		if (window_imgui_context.TraverseInputEventReceiverHierarchy(event_func))
+		if (traverser.Traverse(&window_imgui_context))
 			return true;
 		// try window
-		if (WindowInterface::TraverseInputEventReceiverHierarchy(event_func))
+		if (TraverseInputEventReceiverHierarchy(traverser))
 			return true;
 		// try application
 		if (WindowApplication* window_application = Application::GetInstance())
-			if (window_application->TraverseInputEventReceiverHierarchy(event_func))
+			if (traverser.Traverse(window_application))
 				return true;
+
+
+
+
+
+
+
 		return false;
 	}
 
@@ -658,7 +705,7 @@ namespace chaos
 		if (KeyboardAndMouseState * keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance())
 		{
 			bool key_value = (action == GLFW_PRESS || action == GLFW_REPEAT);
-			keyboard_and_mouse_state->SetKeyValue(mouse_button, key_value, my_window);
+			keyboard_and_mouse_state->SetKeyValue(mouse_button, key_value);
 		}
 
 		// dispatch event
@@ -703,7 +750,7 @@ namespace chaos
 		if (KeyboardAndMouseState * keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance())
 		{
 			bool key_value = (action == GLFW_PRESS || action == GLFW_REPEAT);
-			keyboard_and_mouse_state->SetKeyValue(keyboard_button, key_value, my_window);
+			keyboard_and_mouse_state->SetKeyValue(keyboard_button, key_value);
 		}
 
 		// dispatch the event
@@ -1068,6 +1115,12 @@ namespace chaos
 
 		if (window_client != nullptr)
 			window_client->Tick(delta_time);
+			// shuxxx
+
+
+
+
+		ProcessInputDeviceStates(KeyboardAndMouseState::GetInstance());
 
 		return result;
 	}
@@ -1195,6 +1248,11 @@ namespace chaos
 	GPUDevice* Window::GetGPUDevice() const
 	{
 		return WindowApplication::GetGPUDeviceInstance();
+	}
+
+	bool Window::HasFocus() const
+	{
+		return (glfwGetWindowAttrib(glfw_window, GLFW_FOCUSED) == GL_TRUE);
 	}
 
 }; // namespace chaos

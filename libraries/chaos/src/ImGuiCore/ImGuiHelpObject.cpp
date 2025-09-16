@@ -47,7 +47,7 @@ namespace chaos
 
 			DelegateInputEventReceiverHierarchyTraverser traverser([&action_enumerator](InputEventReceiverInterface * in_event_receiver)
 			{
-				in_event_receiver->EnumerateKeyActions(action_enumerator);
+				in_event_receiver->EnumerateKeyActions(action_enumerator, EnumerateKeyActionContext::OnQuery);
 				return false;
 			});
 			traverser.Traverse(window);

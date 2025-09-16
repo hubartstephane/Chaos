@@ -926,7 +926,7 @@ namespace chaos
 		return SetBoxAspect(result, 16.0f / 9.0f, SetBoxAspectMethod::SHRINK_BOX);
 	}
 
-	bool Window::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator)
+	bool Window::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator, EnumerateKeyActionContext in_context)
 	{
 		if (in_action_enumerator(RequestKeyPressed(KeyboardButton::F9) , "Screen Capture", [this]()
 		{
@@ -944,7 +944,7 @@ namespace chaos
 			return true;
 		}
 
-		return WindowInterface::EnumerateKeyActions(in_action_enumerator);
+		return WindowInterface::EnumerateKeyActions(in_action_enumerator, in_context);
 	}
 
 	bool Window::IsStandardImGuiMenuPluggedIn() const

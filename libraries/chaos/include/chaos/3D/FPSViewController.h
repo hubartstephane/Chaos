@@ -88,7 +88,7 @@ namespace chaos
 		void SetMouseEnabled(bool in_mouse_enabled);
 
 		/** override */
-		virtual bool EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator) override;
+		virtual bool EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator, EnumerateKeyActionContext in_context) override;
 
 	protected:
 

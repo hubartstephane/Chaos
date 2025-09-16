@@ -12,20 +12,18 @@ namespace chaos
 		KeyStatus key_status = in_input_device->GetKeyStatus(key);
 
 
-		if (key_status == KeyStatus::BECOME_PRESSED)
-			in_input_device = in_input_device;
-		if (key_status == KeyStatus::STAY_PRESSED)
-			in_input_device = in_input_device;
-		if (key_status == KeyStatus::STAY_RELEASED)
-			in_input_device = in_input_device;
-		if (key_status == KeyStatus::BECOME_RELEASED)
-			in_input_device = in_input_device;
+
 
 
 		if (key == KeyboardButton::F7)
 		{
-
 			if (key_status == KeyStatus::BECOME_PRESSED)
+				in_input_device = in_input_device;
+			if (key_status == KeyStatus::STAY_PRESSED)
+				in_input_device = in_input_device;
+			if (key_status == KeyStatus::STAY_RELEASED)
+				in_input_device = in_input_device;
+			if (key_status == KeyStatus::BECOME_RELEASED)
 				in_input_device = in_input_device;
 
 

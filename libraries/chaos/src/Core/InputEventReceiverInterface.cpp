@@ -119,16 +119,8 @@ namespace chaos
 
 	bool InputEventReceiverInterface::OnKeyEventImpl(KeyEvent const & key_event)
 	{
-		return ProcessKeyActions(key_event);
-
-
-
-		// shuxxx
-
-
-
-
 		return false;
+		//return ProcessKeyActions(key_event);
 	}
 
 	bool InputEventReceiverInterface::OnCharEventImpl(unsigned int c)
@@ -152,19 +144,6 @@ namespace chaos
 	{
 		return in_func(in_input_device); // by default, simple passthrough
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	bool InputEventReceiverInterface::ProcessKeyActions(KeyEvent const & key_event)
 	{
@@ -198,12 +177,12 @@ namespace chaos
 
 		DelegateInputEventReceiverHierarchyTraverser traverser([&action_enumerator](InputEventReceiverInterface * in_event_receiver)
 		{
-			return in_event_receiver->EnumerateKeyActions(action_enumerator);
+			return in_event_receiver->EnumerateKeyActions(action_enumerator, EnumerateKeyActionContext::OnEvent);
 		});
 		return traverser.Traverse(this);
 	}
 
-	bool InputEventReceiverInterface::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator)
+	bool InputEventReceiverInterface::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator, EnumerateKeyActionContext in_context)
 	{
 		return false;
 	}

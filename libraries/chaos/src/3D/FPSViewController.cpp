@@ -11,7 +11,7 @@ namespace chaos
 		mouse_enabled = in_mouse_enabled;
 	}
 
-	bool FPSViewController::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator)
+	bool FPSViewController::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator, EnumerateKeyActionContext in_context)
 	{
 		float frame_time = (float)FrameTimeManager::GetInstance()->GetCurrentFrameDuration();
 

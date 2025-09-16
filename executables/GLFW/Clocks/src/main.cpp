@@ -300,7 +300,7 @@ protected:
 		return false;
 	}
 
-	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator) override
+	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator, chaos::EnumerateKeyActionContext in_context) override
 	{
 		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::T), "Toggle Main Clock", [this]()
 		{

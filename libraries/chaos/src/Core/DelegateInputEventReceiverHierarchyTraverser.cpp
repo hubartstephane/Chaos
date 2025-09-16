@@ -4,9 +4,9 @@
 
 namespace chaos
 {
-	bool DelegateInputEventReceiverHierarchyTraverser::Process(InputEventReceiverInterface * event_receiver)
+	bool DelegateInputEventReceiverHierarchyTraverser::Process(InputEventReceiverInterface * in_event_receiver)
 	{
-		return process_function(event_receiver);
+		return process_function(in_event_receiver);
 	}
 
 }; // namespace chaos

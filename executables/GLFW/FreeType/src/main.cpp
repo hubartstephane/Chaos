@@ -41,7 +41,7 @@ protected:
 
 
 
-	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator) override
+	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator, chaos::EnumerateKeyActionContext in_context) override
 	{
 		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::KP_ADD), "Next Font", [this]()
 		{
@@ -59,7 +59,7 @@ protected:
 			return true;
 		}
 
-		return chaos::Window::EnumerateKeyActions(in_action_enumerator);
+		return chaos::Window::EnumerateKeyActions(in_action_enumerator, in_context);
 	}
 
 	void ChangeFont(int index)

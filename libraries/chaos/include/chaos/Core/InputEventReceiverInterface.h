@@ -4,6 +4,8 @@ namespace chaos
 
 	class InputEventReceiverInterface;
 
+	enum class EnumerateKeyActionContext;
+
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
@@ -13,7 +15,18 @@ namespace chaos
 	using InvokeWithUpgradedInputDeviceFunction = LightweightFunction<bool(InputDeviceInterface const *)>;
 
 	/**
-	* InputEventReceiverInterface
+	* EnumerateKeyActionContext: indicates when action processing occurs
+	*/
+
+	enum class CHAOS_API EnumerateKeyActionContext : int
+	{
+		OnEvent,     // direct event (key down/up)
+		OnPolling,   // per-tick polling
+		OnQuery      // read-only inspection, no side-effects
+	};
+
+	/**
+	* InputEventReceiverInterface: an interface for objects that can handle inputs
 	*/
 
 	class CHAOS_API InputEventReceiverInterface
@@ -60,7 +73,7 @@ namespace chaos
 		virtual bool TraverseInputEventReceiverHierarchy(InputEventReceiverHierarchyTraverser & in_traverser);
 
 		/** enumerate some declared key actions */
-		virtual bool EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator);
+		virtual bool EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator, EnumerateKeyActionContext in_context);
 
 		/** upgrade the input device and call some functor */
 		virtual bool InvokeWithUpgradedInputDevice(InputDeviceInterface const * in_input_device, InvokeWithUpgradedInputDeviceFunction in_func);

@@ -575,7 +575,7 @@ namespace chaos
 
 			virtual bool Process(InputEventReceiverInterface * in_event_receiver) override
 			{
-				return in_event_receiver->EnumerateKeyActions(*action_enumerator);
+				return in_event_receiver->EnumerateKeyActions(*action_enumerator, EnumerateKeyActionContext::OnPolling);
 			}
 
 			virtual bool Traverse(InputEventReceiverInterface * in_event_receiver) override
@@ -896,8 +896,9 @@ namespace chaos
 		return application->GetGPUResourceManager();
 	}
 
-	bool WindowApplication::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator)
+	bool WindowApplication::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator, EnumerateKeyActionContext in_context)
 	{
+		if (in_context == EnumerateKeyActionContext::OnPolling)
 		if (in_action_enumerator(RequestKeyPressed(KeyboardButton::F7) , "Toggle ImGui", [this]()
 		{
 			SetImGuiMenuEnabled(!IsImGuiMenuEnabled());
@@ -916,7 +917,7 @@ namespace chaos
 		}
 #endif // #if _DEBUG
 
-		return InputEventReceiverInterface::EnumerateKeyActions(in_action_enumerator);
+		return InputEventReceiverInterface::EnumerateKeyActions(in_action_enumerator, in_context);
 	}
 
 	GLFWwindow* WindowApplication::GetSharedGLContext()

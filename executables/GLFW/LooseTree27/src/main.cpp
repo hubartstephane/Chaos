@@ -606,7 +606,7 @@ protected:
 		return true;
 	}
 
-	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator) override
+	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator, chaos::EnumerateKeyActionContext in_context) override
 	{
 		GeometricObject* current_object = GetCurrentGeometricObject();
 

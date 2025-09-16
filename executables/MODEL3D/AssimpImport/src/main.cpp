@@ -565,7 +565,7 @@ protected:
 		Window::OnDrawImGuiContent();
 	}
 
-	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator) override
+	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator, chaos::EnumerateKeyActionContext in_context) override
 	{
 		size_t object_count = objects.size();
 

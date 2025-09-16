@@ -61,7 +61,7 @@ protected:
 
 
 
-	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator) override
+	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator, chaos::EnumerateKeyActionContext in_context) override
 	{
 		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::KP_ADD).RequireModifiers(chaos::KeyModifier::Shift) , "Next RenderPass", [this]()
 		{
@@ -95,7 +95,7 @@ protected:
 			return true;
 		}
 
-		return chaos::Window::EnumerateKeyActions(in_action_enumerator);
+		return chaos::Window::EnumerateKeyActions(in_action_enumerator, in_context);
 	}
 
 	virtual bool OnDraw(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override

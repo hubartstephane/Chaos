@@ -67,7 +67,7 @@ protected:
 			return true;
 		}
 
-		return chaos::Window::EnumerateKeyActions(in_action_enumerator);
+		return chaos::Window::EnumerateKeyActions(in_action_enumerator, in_context);
 	}
 
 

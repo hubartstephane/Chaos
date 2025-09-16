@@ -22,7 +22,7 @@ namespace chaos
 			{}
 
 		/** override */
-		virtual bool Process(InputEventReceiverInterface * event_receiver) override;
+		virtual bool Process(InputEventReceiverInterface * in_event_receiver) override;
 
 	protected:
 

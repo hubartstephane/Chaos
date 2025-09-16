@@ -90,7 +90,7 @@ namespace chaos
 		return InputEventReceiverInterface::TraverseInputEventReceiverHierarchy(in_traverser);
 	}
 
-	bool Game::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator)
+	bool Game::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator, EnumerateKeyActionContext in_context)
 	{
 		if (in_action_enumerator(RequestKeyPressed(KeyboardButton::ESCAPE).RequireModifiers(KeyModifier::Shift) , "Exit Game", [this]()
 		{
@@ -159,7 +159,7 @@ namespace chaos
 		}
 #endif
 
-		return InputEventReceiverInterface::EnumerateKeyActions(in_action_enumerator);
+		return InputEventReceiverInterface::EnumerateKeyActions(in_action_enumerator, in_context);
 	}
 
 

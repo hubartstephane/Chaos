@@ -3,7 +3,6 @@
 
 namespace chaos
 {
-
 	void InputConsumptionCache::Clear()
 	{
 		consumed_keys.clear();
@@ -11,70 +10,43 @@ namespace chaos
 		consumed_sticks.clear();
 	}
 
-	void InputConsumptionCache::MarkKeyConsumed(Key in_key, InputDeviceInterface* in_input_device)
+	bool InputConsumptionCache::CheckAndMarkKeyConsumed(Key in_key, InputDeviceInterface const* in_input_device)
 	{
-		// get state
 		KeyState const* state = in_input_device->GetKeyState(in_key);
-		if (state == nullptr)
-			return;
-		// mark the entry as consumed
-		auto entry = std::make_pair(in_key, state);
-		consumed_keys.insert(entry);
+		return CheckAndMarkKeyConsumed(in_key, state);
 	}
 
-	void InputConsumptionCache::MarkAxisConsumed(GamepadAxis in_axis, InputDeviceInterface* in_input_device)
+	bool InputConsumptionCache::CheckAndMarkAxisConsumed(GamepadAxis in_axis, InputDeviceInterface const* in_input_device)
 	{
-		// get state
 		AxisState const* state = in_input_device->GetAxisState(in_axis);
-		if (state == nullptr)
-			return;
-		// mark the entry as consumed
-		auto entry = std::make_pair(in_axis, state);
-		consumed_axes.insert(entry);
+		return CheckAndMarkAxisConsumed(in_axis, state);
 	}
 
-	void InputConsumptionCache::MarkStickConsumed(GamepadStick in_stick, InputDeviceInterface* in_input_device)
+	bool InputConsumptionCache::CheckAndMarkStickConsumed(GamepadStick in_stick, InputDeviceInterface const* in_input_device)
 	{
-		// get state
 		StickState const* state = in_input_device->GetStickState(in_stick);
-		if (state == nullptr)
-			return;
-		// mark the entry as consumed
-		auto entry = std::make_pair(in_stick, state);
-		consumed_sticks.insert(entry);
+		return CheckAndMarkStickConsumed(in_stick, state);
 	}
 
-	bool InputConsumptionCache::IsKeyMarkedConsumed(Key in_key, InputDeviceInterface const* in_input_device) const
+	bool InputConsumptionCache::CheckAndMarkKeyConsumed(Key in_key, KeyState const * in_state)
 	{
-		// get state
-		KeyState const* state = in_input_device->GetKeyState(in_key);
-		if (state == nullptr)
+		if (in_state == nullptr)
 			return false;
-		// search whether the entry is already consumed
-		auto entry = std::make_pair(in_key, state);
-		return consumed_keys.contains(entry);
+		return consumed_keys.insert(std::make_pair(in_key, in_state)).second; // insert returns a pair. second element indicates whether the element has effectively been inserted
 	}
 
-	bool InputConsumptionCache::IsAxisMarkedConsumed(GamepadAxis in_axis, InputDeviceInterface const* in_input_device) const
+	bool InputConsumptionCache::CheckAndMarkAxisConsumed(GamepadAxis in_axis, AxisState const* in_state)
 	{
-		// get state
-		AxisState const* state = in_input_device->GetAxisState(in_axis);
-		if (state == nullptr)
+		if (in_state == nullptr)
 			return false;
-		// search whether the entry is already consumed
-		auto entry = std::make_pair(in_axis, state);
-		return consumed_axes.contains(entry);
+		return consumed_axes.insert(std::make_pair(in_axis, in_state)).second; // insert returns a pair. second element indicates whether the element has effectively been inserted
 	}
 
-	bool InputConsumptionCache::IsStickMarkedConsumed(GamepadStick in_stick, InputDeviceInterface const* in_input_device) const
+	bool InputConsumptionCache::CheckAndMarkStickConsumed(GamepadStick in_stick, StickState const* in_state)
 	{
-		// get state
-		StickState const* state = in_input_device->GetStickState(in_stick);
-		if (state == nullptr)
+		if (in_state == nullptr)
 			return false;
-		// search whether the entry is already consumed
-		auto entry = std::make_pair(in_stick, state);
-		return consumed_sticks.contains(entry);
+		return consumed_sticks.insert(std::make_pair(in_stick, in_state)).second; // insert returns a pair. second element indicates whether the element has effectively been inserted
 	}
 
 }; // namespace chaos

@@ -17,19 +17,19 @@ namespace chaos
 		/** clear the cache */
 		void Clear();
 
-		/** mark the key as consumed this frame */
-		void MarkKeyConsumed(Key in_key, InputDeviceInterface* in_input_device);
-		/** mark the axis as consumed this frame */
-		void MarkAxisConsumed(GamepadAxis in_axis, InputDeviceInterface* in_input_device);
-		/** mark the stick as consumed this frame */
-		void MarkStickConsumed(GamepadStick in_stick, InputDeviceInterface* in_input_device);
+		/** returns whether the input has not been consumed yet, then mark it as consumed */
+		bool CheckAndMarkKeyConsumed(Key in_key, InputDeviceInterface const * in_input_device);
+		/** returns whether the input has not been consumed yet, then mark it as consumed */
+		bool CheckAndMarkAxisConsumed(GamepadAxis in_axis, InputDeviceInterface const * in_input_device);
+		/** returns whether the input has not been consumed yet, then mark it as consumed */
+		bool CheckAndMarkStickConsumed(GamepadStick in_stick, InputDeviceInterface const * in_input_device);
 
-		/** check whether key is marked as consumed this frame */
-		bool IsKeyMarkedConsumed(Key in_key, InputDeviceInterface const* in_input_device) const;
-		/** check whether axis is marked as consumed this frame */
-		bool IsAxisMarkedConsumed(GamepadAxis in_axis, InputDeviceInterface const* in_input_device) const;
-		/** check whether stick is marked as consumed this frame */
-		bool IsStickMarkedConsumed(GamepadStick in_stick, InputDeviceInterface const* in_input_device) const;
+		/** returns whether the input has not been consumed yet, then mark it as consumed */
+		bool CheckAndMarkKeyConsumed(Key in_key, KeyState const* in_state);
+		/** returns whether the input has not been consumed yet, then mark it as consumed */
+		bool CheckAndMarkAxisConsumed(GamepadAxis in_axis, AxisState const* in_state);
+		/** returns whether the input has not been consumed yet, then mark it as consumed */
+		bool CheckAndMarkStickConsumed(GamepadStick in_stick, StickState const* in_state);
 
 	protected:
 

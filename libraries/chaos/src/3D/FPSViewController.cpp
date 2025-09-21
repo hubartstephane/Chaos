@@ -13,13 +13,23 @@ namespace chaos
 
 	bool FPSViewController::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator, EnumerateKeyActionContext in_context)
 	{
-		float frame_time = (float)FrameTimeManager::GetInstance()->GetCurrentFrameDuration();
+		float frame_duration = (float)FrameTimeManager::GetInstance()->GetCurrentFrameDuration();
 
-		auto CheckCameraKey = [this, frame_time, &in_action_enumerator](const Key & key, char const * title, float speed, void (FPSView::*func)(float))
+		auto CheckCameraKey = [this, frame_duration, &in_action_enumerator](const Key & key, char const * title, float speed, void (FPSView::*func)(float))
 		{
-			if (in_action_enumerator(RequestKeyDown(key), title, [this, frame_time, speed, &func]()
+
+
+
+			if (in_action_enumerator(RequestKeyDown(key), title, [this, frame_duration, speed, &func, key]()
 			{
-				(fps_view.*func)(speed * frame_time);
+				if (key == KeyboardButton::LEFT)
+				{
+					int i = 0;
+					++i;
+				}
+
+
+				(fps_view.*func)(speed * frame_duration);
 			}))
 			{
 				return true;
@@ -45,7 +55,7 @@ namespace chaos
 		if (!IsMouseEnabled())
 			return false;
 
-		if (!mouse_captured && config.must_click_to_rotate) // not ready to handle the mouse movement
+		if (config.must_click_to_rotate && !mouse_captured) // not ready to handle the mouse movement
 			return false;
 
 		fps_view.IncrementYaw(-(float)(delta.x * config.mouse_sensibility));

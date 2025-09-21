@@ -481,108 +481,73 @@ namespace chaos
 		if (sound_manager != nullptr)
 			sound_manager->Tick(delta_time);
 		// process the inputs
-		ProcessInputDevices();
+		if (InputConsumptionCache* consumption_cache = InputConsumptionCache::GetInstance())
+			consumption_cache->Clear();
+
+
+		//PollInputDevices();
+		if (InputConsumptionCache* consumption_cache = InputConsumptionCache::GetInstance())
+			consumption_cache->Clear();
 
 		return true;
 	}
 
-	void WindowApplication::ProcessInputDevices()
+
+
+
+
+
+
+
+
+	void WindowApplication::PollInputDevices()
 	{
-		class MyKeyActionEnumerator : public KeyActionEnumerator
+		class OnPollingKeyActionEnumerator : public KeyActionEnumerator
 		{
 		public:
 
 			/** constructor */
-			MyKeyActionEnumerator(InputDeviceInterface const * in_input_device):
+			OnPollingKeyActionEnumerator(InputDeviceInterface const * in_input_device):
 				input_device(in_input_device)
 			{}
 
 			/** override */
 			virtual bool operator () (KeyRequest const & in_request, char const * in_title, bool in_enabled, KeyActionFunction in_key_action) override
 			{
-				if (in_enabled && CheckRequestAndAcquireDeviceState(in_request))
+				if (in_enabled && in_request.CheckAgainst(input_device))
 				{
 					in_key_action();
 				}
 				return false; // do not prevent other actions to be handled
 			}
 
-
-
-		protected:
-
-			bool AcquireKey(Key in_key) const
-			{
-				if (acquired_keys.find(in_key) != acquired_keys.end())
-					return false;
-				acquired_keys.insert(in_key);
-				return true;
-			}
-
-			bool AcquireAxis(GamepadAxis in_axis) const
-			{
-				if (acquired_axes.find(in_axis) != acquired_axes.end())
-					return false;
-				acquired_axes.insert(in_axis);
-				return true;
-			}
-
-			bool AcquireSticks(GamepadStick in_stick) const
-			{
-				if (acquired_sticks.find(in_stick) != acquired_sticks.end())
-					return false;
-				acquired_sticks.insert(in_stick);
-				return true;
-			}
-
-			bool CheckRequestAndAcquireDeviceState(KeyRequest const & in_request) const
-			{
-				if (!AcquireKey(in_request.key))
-					return false;
-				return in_request.CheckAgainst(input_device);
-			}
-
 		protected:
 
 			/** the input device to check */
 			InputDeviceInterface const * input_device = nullptr;
-
-			/** keys that are locked for further requests */
-			mutable std::set<Key> acquired_keys;
-			/** axes that are locked for further requests */
-			mutable std::set<GamepadAxis> acquired_axes;
-			/** sticks that are locked for further requests */
-			mutable std::set<GamepadStick> acquired_sticks;
 		};
 
-		KeyboardAndMouseState const * keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance();
-
-		MyKeyActionEnumerator action_enumerator(keyboard_and_mouse_state);
-
-		
-
-		class MyInputEventReceiverHierarchyTraverser : public InputEventReceiverHierarchyTraverser
+		class OnPollingInputEventReceiverHierarchyTraverser : public InputEventReceiverHierarchyTraverser
 		{
 		public:
 
-			MyInputEventReceiverHierarchyTraverser(InputDeviceInterface const * in_input_device, KeyActionEnumerator * in_action_enumerator):
-				input_device(in_input_device),
-				action_enumerator(in_action_enumerator)
+			OnPollingInputEventReceiverHierarchyTraverser(InputDeviceInterface const * in_input_device):
+				input_device(in_input_device)
 			{
 				assert(in_input_device != nullptr);
-				assert(in_action_enumerator != nullptr);
 			}
 
 			virtual bool Process(InputEventReceiverInterface * in_event_receiver) override
 			{
-				return in_event_receiver->EnumerateKeyActions(*action_enumerator, EnumerateKeyActionContext::OnPolling);
+				OnPollingKeyActionEnumerator action_enumerator(input_device);
+				return in_event_receiver->EnumerateKeyActions(action_enumerator, EnumerateKeyActionContext::OnPolling);
 			}
 
 			virtual bool Traverse(InputEventReceiverInterface * in_event_receiver) override
 			{
 				return in_event_receiver->InvokeWithUpgradedInputDevice(input_device, [this, in_event_receiver](InputDeviceInterface const * in_input_device)
 				{
-					MyInputEventReceiverHierarchyTraverser other_traverser(in_input_device, action_enumerator);
+					OnPollingInputEventReceiverHierarchyTraverser other_traverser(in_input_device);
 					return in_event_receiver->TraverseInputEventReceiverHierarchy(other_traverser);
 				});
 			}
@@ -590,12 +555,9 @@ namespace chaos
 		protected:
 
 			const InputDeviceInterface * input_device = nullptr;
-
-			KeyActionEnumerator * action_enumerator = nullptr;
 		};
 
-
-		MyInputEventReceiverHierarchyTraverser traverser(keyboard_and_mouse_state, &action_enumerator);
+		OnPollingInputEventReceiverHierarchyTraverser traverser(KeyboardAndMouseState::GetInstance());
 
 		// give focused window opportunity to catch input first
 		if (Window * focus_window = GetFocusedWindow())
@@ -898,7 +860,6 @@ namespace chaos
 
 	bool WindowApplication::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator, EnumerateKeyActionContext in_context)
 	{
-		if (in_context == EnumerateKeyActionContext::OnPolling)
 		if (in_action_enumerator(RequestKeyPressed(KeyboardButton::F7) , "Toggle ImGui", [this]()
 		{
 			SetImGuiMenuEnabled(!IsImGuiMenuEnabled());

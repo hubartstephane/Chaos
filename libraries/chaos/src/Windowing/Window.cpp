@@ -573,6 +573,9 @@ namespace chaos
 
 	bool Window::TraverseInputEventReceiverHierarchy(InputEventReceiverHierarchyTraverser & in_traverser)
 	{
+		// try imgui context
+		if (in_traverser.Traverse(&window_imgui_context))
+			return true;
 		// try window client
 		if (window_client != nullptr)
 			if (in_traverser.Traverse(window_client.get()))
@@ -585,11 +588,8 @@ namespace chaos
 	{
 		DelegateInputEventReceiverHierarchyTraverser traverser(func);
 
-		// try imgui context
-		if (traverser.Traverse(&window_imgui_context))
-			return true;
 		// try window
-		if (TraverseInputEventReceiverHierarchy(traverser))
+		if (traverser.Traverse(this))
 			return true;
 		// try application
 		if (WindowApplication* window_application = Application::GetInstance())
@@ -616,9 +616,9 @@ namespace chaos
 			position - my_window->mouse_position.value():
 			glm::vec2(0.0f, 0.0f);
 
-		my_window->DispatchInputEventWithContext(&InputEventReceiverInterface::OnMouseMove, delta);
-
 		my_window->mouse_position = position;
+
+		my_window->DispatchInputEventWithContext(&InputEventReceiverInterface::OnMouseMove, delta);
 	}
 
 	static KeyAction GetKeyActionFromGLFW(int action)
@@ -647,6 +647,14 @@ namespace chaos
 
 	void Window::DoOnMouseButton(GLFWwindow* in_glfw_window, int button, int action, int modifiers)
 	{
+		// shuxxx
+
+
+		//PendingInputEvents
+
+
+
+
 		// notify the application of the mouse state
 		WindowApplication::SetApplicationInputMode(InputMode::MOUSE);
 
@@ -658,7 +666,8 @@ namespace chaos
 		// update global state
 		MouseButton mouse_button = (MouseButton)button;
 
-		if (KeyboardAndMouseState * keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance())
+		KeyboardAndMouseState* keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance();
+		if (keyboard_and_mouse_state != nullptr)
 		{
 			bool key_value = (action == GLFW_PRESS || action == GLFW_REPEAT);
 			keyboard_and_mouse_state->SetKeyValue(mouse_button, key_value);
@@ -689,6 +698,22 @@ namespace chaos
 
 	void Window::DoOnKeyEvent(GLFWwindow* in_glfw_window, int keycode, int scancode, int action, int modifiers)
 	{
+		static double last_call = -1.0f;
+
+
+		double tt = FrameTimeManager::GetInstance()->GetCurrentFrameTime();
+
+		if (tt == last_call)
+		{
+			tt = tt;
+
+		}
+		else
+		{
+			last_call = tt;
+		}
+
+
 		// notify the application of the keyboard state
 		WindowApplication::SetApplicationInputMode(InputMode::KEYBOARD);
 
@@ -703,7 +728,9 @@ namespace chaos
 
 		// update global keyboard state
 		KeyboardButton keyboard_button = KeyboardButton(keycode);
-		if (KeyboardAndMouseState * keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance())
+
+		KeyboardAndMouseState* keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance();
+		if (keyboard_and_mouse_state != nullptr)
 		{
 			bool key_value = (action == GLFW_PRESS || action == GLFW_REPEAT);
 			keyboard_and_mouse_state->SetKeyValue(keyboard_button, key_value);
@@ -715,6 +742,9 @@ namespace chaos
 		key_event.scancode = scancode;
 		key_event.action = GetKeyActionFromGLFW(action);
 		key_event.modifiers = GetKeyModifiersFromGLFW(modifiers);
+
+		if (keyboard_button == KeyboardButton::LEFT)
+			keyboard_button = keyboard_button;
 		
 		my_window->DispatchInputEventWithContext(&InputEventReceiverInterface::OnKeyEvent, key_event);
 	}

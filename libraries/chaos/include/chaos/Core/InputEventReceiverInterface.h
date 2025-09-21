@@ -59,7 +59,7 @@ namespace chaos
 		bool OnCharEvent(unsigned int c);
 
 		/** process an incomming event using the known KeyActions */
-		bool ProcessKeyActions(KeyEvent const & key_event);
+		bool ProcessKeyActions(KeyEventBase const & key_event);
 
 
 

@@ -67,6 +67,8 @@ namespace chaos
 		if (OnMouseButtonImpl(mouse_button_event))
 		{
 			SetInputMode(InputMode::MOUSE);
+			if (InputConsumptionCache* consumption_cache = InputConsumptionCache::GetInstance())
+				consumption_cache->CheckAndMarkKeyConsumed(mouse_button_event.key, KeyboardAndMouseState::GetInstance());
 			return true;
 		}
 		return false;
@@ -87,6 +89,8 @@ namespace chaos
 		if (OnKeyEventImpl(key_event))
 		{
 			SetInputMode(InputMode::KEYBOARD);
+			if (InputConsumptionCache* consumption_cache = InputConsumptionCache::GetInstance())
+				consumption_cache->CheckAndMarkKeyConsumed(key_event.key, KeyboardAndMouseState::GetInstance());
 			return true;
 		}
 		return false;
@@ -109,7 +113,7 @@ namespace chaos
 
 	bool InputEventReceiverInterface::OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event)
 	{
-		return false;
+		return ProcessKeyActions(mouse_button_event);
 	}
 
 	bool InputEventReceiverInterface::OnMouseWheelImpl(double scroll_x, double scroll_y)
@@ -119,8 +123,9 @@ namespace chaos
 
 	bool InputEventReceiverInterface::OnKeyEventImpl(KeyEvent const & key_event)
 	{
+		return ProcessKeyActions(key_event);
+
 		return false;
-		//return ProcessKeyActions(key_event);
 	}
 
 	bool InputEventReceiverInterface::OnCharEventImpl(unsigned int c)
@@ -130,6 +135,24 @@ namespace chaos
 
 	bool InputEventReceiverInterface::ProcessInputDeviceStates(InputDeviceInterface const * in_input_device)
 	{
+		Enumerator.Rule(RequestStick(GamepadStick::LEFT_STICK, left_stick), "Show", []()
+		{
+
+		});
+
+		float left_stick
+		if (RequestStick(GamepadStick::LEFT_STICK, left_stick, in_input_device)
+
+
+		Capture.On(KeyDown(Keyboard::F7), "raise popup", []()
+		{
+
+		});
+
+
+
+
+		if (KeyDown(Keyboard::F7))
 
 
 
@@ -145,14 +168,14 @@ namespace chaos
 		return in_func(in_input_device); // by default, simple passthrough
 	}
 
-	bool InputEventReceiverInterface::ProcessKeyActions(KeyEvent const & key_event)
+	bool InputEventReceiverInterface::ProcessKeyActions(KeyEventBase const & key_event)
 	{
-		class MyKeyActionEnumerator : public KeyActionEnumerator
+		class OnEventKeyActionEnumerator : public KeyActionEnumerator
 		{
 		public:
 
 			/** constructor */
-			MyKeyActionEnumerator(KeyEvent const & in_key_event):
+			OnEventKeyActionEnumerator(KeyEventBase const & in_key_event):
 				key_event(in_key_event)
 			{}
 
@@ -170,10 +193,10 @@ namespace chaos
 		protected:
 
 			/** the event to check */
-			KeyEvent key_event;
+			KeyEventBase key_event;
 		};
 
-		MyKeyActionEnumerator action_enumerator(key_event);
+		OnEventKeyActionEnumerator action_enumerator(key_event);
 
 		DelegateInputEventReceiverHierarchyTraverser traverser([&action_enumerator](InputEventReceiverInterface * in_event_receiver)
 		{

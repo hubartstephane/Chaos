@@ -275,8 +275,7 @@ namespace chaos
 		virtual void FinalizeGPUResources();
 
 		/** processing the inputs */
-		virtual void ProcessInputDevices();
-
+		virtual void PollInputDevices();
 
 		/** initialize a mapping with button names / text generator joker */
 		virtual bool InitializeGamepadButtonMap(JSONReadConfiguration config);

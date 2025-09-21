@@ -6,16 +6,28 @@ namespace chaos
 {
 	bool KeyRequest::CheckAgainst(InputDeviceInterface const * in_input_device) const
 	{
+		std::set<int> s;
+
+		auto a1 = s.insert(1);
+		auto a2 = s.insert(2);
+		auto a3 = s.insert(1);
 
 
 
-		KeyStatus key_status = in_input_device->GetKeyStatus(key);
+
+		// early exit
+		if (!key.IsValid())
+			return false;
+
+		// find key
+		KeyState const* key_state = in_input_device->GetKeyState(key);
+		if (key_state == nullptr)
+			return false;
 
 
+		KeyStatus key_status = key_state->GetStatus();
 
-
-
-		if (key == KeyboardButton::F7)
+		if (key == KeyboardButton::LEFT)
 		{
 			if (key_status == KeyStatus::BECOME_PRESSED)
 				in_input_device = in_input_device;
@@ -29,6 +41,23 @@ namespace chaos
 
 
 		}
+
+
+
+
+		// consum the key of the request (no one can use it anymore until next frame)
+		//if (key == KeyboardButton::F7)
+		if (InputConsumptionCache* consumption_cache = InputConsumptionCache::GetInstance())
+			if (!consumption_cache->CheckAndMarkKeyConsumed(key, key_state))
+				return false;
+
+		
+
+
+
+
+
+
 
 		if (required_modifiers != KeyModifier::None || forbidden_modifiers != KeyModifier::None)
 		{
@@ -88,6 +117,14 @@ namespace chaos
 
 	bool KeyRequest::CheckAgainst(KeyEventBase const & key_event) const
 	{
+		// early exit
+		if (!key.IsValid())
+			return false;
+		// consum the key of the request (no one can use it anymore until next frame)
+		if (InputConsumptionCache* consumption_cache = InputConsumptionCache::GetInstance())
+			if (!consumption_cache->CheckAndMarkKeyConsumed(key, KeyboardAndMouseState::GetInstance()))
+				return false;
+		//  effective request
 		if (key != key_event.key)
 			return false;
 

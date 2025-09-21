@@ -10,7 +10,7 @@ namespace chaos
 
 	void ImGuiHelpObject::OnDrawImGuiContent(Window * window)
 	{
-		class ImGuiKeyActionEnumerator : public KeyActionEnumerator
+		class OnQueryKeyActionEnumerator : public KeyActionEnumerator
 		{
 		public:
 
@@ -43,7 +43,7 @@ namespace chaos
 
 		ImGuiTools::DrawImGuiTable("objects", {}, "Key", "Mandatory Mod.", "Forbidden Mod.", "Action", "Description")([&]()
 		{
-			ImGuiKeyActionEnumerator action_enumerator;
+			OnQueryKeyActionEnumerator action_enumerator;
 
 			DelegateInputEventReceiverHierarchyTraverser traverser([&action_enumerator](InputEventReceiverInterface * in_event_receiver)
 			{

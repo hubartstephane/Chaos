@@ -10,6 +10,7 @@
 //
 // That's why the class member is not private (because users will have to redefines the privacy)
 //
+
 #define CHAOS_DECLARE_OBJECT_CLASS(CLASS, ...)\
 public:\
 static chaos::SubClassOf<CLASS> GetStaticClass(){ return CLASS##_class;}\
@@ -77,10 +78,7 @@ namespace chaos
 
 		/** declare the class in the default C++ ClassManager (must be declared before the CHAOS_DECLARE_OBJECT_CLASS usage) */
 		template<typename CLASS_TYPE, typename PARENT_CLASS_TYPE = EmptyClass>
-		static ClassRegistration DeclareObjectClass(std::string name)
-		{
-			return chaos::ClassManager::GetDefaultInstance()->DeclareCPPClass<CLASS_TYPE, PARENT_CLASS_TYPE>(std::move(name));
-		}
+		static ClassRegistration DeclareObjectClass(std::string name);
 
 		CHAOS_DECLARE_OBJECT_CLASS(Object);
 
@@ -168,5 +166,16 @@ CHAOS_API void intrusive_ptr_add_ref(chaos::Object* obj); // should work with bo
 
 	/** utility method for shared_ptr */
 CHAOS_API void intrusive_ptr_release(chaos::Object* obj); // should work with boost::intrusive_ptr<>
+
+#else // defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+namespace chaos
+{
+	template<typename CLASS_TYPE, typename PARENT_CLASS_TYPE>
+	ClassRegistration Object::DeclareObjectClass(std::string name)
+	{
+		return chaos::ClassManager::GetDefaultInstance()->DeclareCPPClass<CLASS_TYPE, PARENT_CLASS_TYPE>(std::move(name));
+	}
+}; // namespace chaos
 
 #endif

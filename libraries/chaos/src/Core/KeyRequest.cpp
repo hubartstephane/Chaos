@@ -107,30 +107,7 @@ namespace chaos
 		if (!in_consumption_cache.TryConsumeInput(key, in_input_device))
 			return false;
 		//  effective request
-		if (key != in_key_event.key)
-			return false;
-
-		if (required_modifiers != KeyModifier::None && !HasAllFlags(in_key_event.modifiers, required_modifiers))
-			return false;
-		if (forbidden_modifiers != KeyModifier::None && HasAnyFlags(in_key_event.modifiers, forbidden_modifiers))
-			return false;
-
-		if (HasAnyFlags(action_mask, KeyActionMask::Release))
-		{
-			if (in_key_event.action == KeyAction::Release)
-				return true;
-		}
-		if (HasAnyFlags(action_mask, KeyActionMask::Press))
-		{
-			if (in_key_event.action == KeyAction::Press)
-				return true;
-		}
-		if (HasAnyFlags(action_mask, KeyActionMask::Repeat))
-		{
-			if (in_key_event.action == KeyAction::Repeat)
-				return true;
-		}
-		return false;
+		return in_key_event.Check(key, action_mask, required_modifiers, forbidden_modifiers);
 	}
 
 	KeyRequest KeyRequest::RequireModifiers(KeyModifier in_modifiers) const
@@ -156,7 +133,7 @@ namespace chaos
 
 	KeyRequest RequestKeyPressed(Key key)
 	{
-		return KeyRequest(key,KeyActionMask::Press);
+		return KeyRequest(key, KeyActionMask::Press);
 	}
 
 	KeyRequest RequestKeyRepeat(Key key)

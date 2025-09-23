@@ -24,40 +24,52 @@ namespace chaos
 		return (action == KeyAction::Release);
 	}
 
+	bool KeyEventBase::Check(Key in_key, KeyActionMask in_action_mask, KeyModifier in_required_modifiers, KeyModifier in_forbidden_modifiers) const
+	{
+		if (in_key != key)
+			return false;
+
+		if (in_required_modifiers != KeyModifier::None && !HasAllFlags(modifiers, in_required_modifiers))
+			return false;
+		if (in_forbidden_modifiers != KeyModifier::None && HasAnyFlags(modifiers, in_forbidden_modifiers))
+			return false;
+
+		if (HasAnyFlags(in_action_mask, KeyActionMask::Release))
+		{
+			if (action == KeyAction::Release)
+				return true;
+		}
+		if (HasAnyFlags(in_action_mask, KeyActionMask::Press))
+		{
+			if (action == KeyAction::Press)
+				return true;
+		}
+		if (HasAnyFlags(in_action_mask, KeyActionMask::Repeat))
+		{
+			if (action == KeyAction::Repeat)
+				return true;
+		}
+		return false;
+	}
+
 	bool KeyEventBase::IsKeyPressed(Key in_key, KeyModifier in_required_modifiers, KeyModifier in_forbidden_modifiers) const
 	{
-		// shuxxx
-		return false;
-
-
-
-
-		//return RequestKeyPressed(in_key).RequireModifiers(in_required_modifiers).ForbidModifiers(in_forbidden_modifiers).CheckAgainst(*this);
+		return Check(in_key, KeyActionMask::Press, in_required_modifiers, in_forbidden_modifiers);
 	}
 
 	bool KeyEventBase::IsKeyReleased(Key in_key, KeyModifier in_required_modifiers, KeyModifier in_forbidden_modifiers) const
 	{
-		// shuxxx
-		return false;
-
-
-		//return RequestKeyReleased(in_key).RequireModifiers(in_required_modifiers).ForbidModifiers(in_forbidden_modifiers).CheckAgainst(*this);
+		return Check(in_key, KeyActionMask::Release, in_required_modifiers, in_forbidden_modifiers);
 	}
 
 	bool KeyEventBase::IsKeyRepeat(Key in_key, KeyModifier in_required_modifiers, KeyModifier in_forbidden_modifiers) const
 	{
-		// shuxxx
-		return false;
-
-		//return RequestKeyRepeat(in_key).RequireModifiers(in_required_modifiers).ForbidModifiers(in_forbidden_modifiers).CheckAgainst(*this);
+		return Check(in_key, KeyActionMask::Repeat, in_required_modifiers, in_forbidden_modifiers);
 	}
 
 	bool KeyEventBase::IsKeyDown(Key in_key, KeyModifier in_required_modifiers, KeyModifier in_forbidden_modifiers) const
 	{
-		// shuxxx
-		return false;
-
-		//return RequestKeyDown(in_key).RequireModifiers(in_required_modifiers).ForbidModifiers(in_forbidden_modifiers).CheckAgainst(*this);
+		return Check(in_key, KeyActionMask::Down, in_required_modifiers, in_forbidden_modifiers);
 	}
 
 }; // namespace chaos

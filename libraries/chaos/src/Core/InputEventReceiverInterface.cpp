@@ -140,12 +140,8 @@ namespace chaos
 
 		InputConsumptionCache consumption_cache;
 
-		OnKeyEventInputActionEnumerator action_enumerator(key_event, keyboard_and_mouse, &consumption_cache);
+		OnKeyEventInputEventReceiverHierarchyTraverser traverser(key_event, keyboard_and_mouse, &consumption_cache);
 
-		DelegateInputEventReceiverHierarchyTraverser traverser([&action_enumerator](InputEventReceiverInterface * in_event_receiver)
-		{
-			return in_event_receiver->EnumerateInputActions(action_enumerator, EnumerateInputActionContext::OnEvent);
-		});
 		return traverser.Traverse(this);
 	}
 

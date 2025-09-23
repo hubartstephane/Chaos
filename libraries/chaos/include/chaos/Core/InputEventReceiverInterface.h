@@ -61,19 +61,10 @@ namespace chaos
 		/** process an incomming event using the known KeyActions */
 		bool ProcessKeyActions(KeyEventBase const & key_event);
 
-
-
-
-
-
-
-
 		/** traverse all receivers hierarchy and call a functor on all elements */
 		virtual bool TraverseInputEventReceiverHierarchy(InputEventReceiverHierarchyTraverser & in_traverser);
-
 		/** enumerate some declared key actions */
 		virtual bool EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context);
-
 		/** upgrade the input device and call some functor */
 		virtual bool InvokeWithUpgradedInputDevice(InputDeviceInterface const * in_input_device, InvokeWithUpgradedInputDeviceFunction in_func);
 

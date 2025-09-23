@@ -24,6 +24,9 @@ namespace chaos
 		/** check whether this is a key release event */
 		bool IsKeyReleasedEvent() const;
 
+		/** generic check function */
+		bool Check(Key in_key, KeyActionMask in_action_mask, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const;
+
 		/** check whether this is a key press event */
 		bool IsKeyPressed(Key in_key, KeyModifier in_required_modifiers = KeyModifier::None, KeyModifier in_forbidden_modifiers = KeyModifier::None) const;
 		/** check whether this is a key release event */

@@ -480,7 +480,7 @@ namespace chaos
 			main_clock->TickClock(delta_time);
 		if (sound_manager != nullptr)
 			sound_manager->Tick(delta_time);
-		// process the inputs
+		// ,  the inputs
 
 		//PollInputDevices();
 

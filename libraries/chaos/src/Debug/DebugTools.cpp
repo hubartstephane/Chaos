@@ -3,7 +3,6 @@
 
 namespace chaos
 {
-
 	namespace DebugTools
 	{
 		std::vector<CallStackEntry> ExtractCallStack()
@@ -76,6 +75,59 @@ namespace chaos
 			{
 				stream << "- " << filename << "(" << line_number << ")    : " << symbol_name << '\n';
 			});
+		}
+
+		void LogSourceLocation(char const* in_message, std::source_location const& in_location)
+		{
+			static bool first_call = true; // this is a debug function. Don't care if this is clean code
+			static std::string filepath;
+
+			// compute the filepath
+			if (first_call)
+			{
+				Application const* application = Application::GetInstance(); // this function could be called before the initialization of the application. need to check
+				if (application == nullptr)
+					return;
+				filepath = (application->GetUserLocalTempPath() / "log_source_locations.txt").string();
+			}
+
+			// open the file and log info
+			FILE* file = NULL;
+			fopen_s(&file, filepath.c_str(), first_call ? "w" : "a"); // clean the file for first call
+			if (file != NULL)
+			{
+				std::string location;
+
+				// make the string location more readable
+				char const * function_name = in_location.function_name();
+				char const * end_markup = strchr(function_name, '(');
+				if (end_markup == nullptr || end_markup == function_name)
+				{
+					location = function_name;
+				}
+				else
+				{
+					char const* start_markup = end_markup - 1; // can go before, because checked above
+					while (start_markup >= function_name)
+					{
+						if (*start_markup != ':' && !StringTools::IsVariableCharacter(*start_markup))
+							break;
+						--start_markup;
+					}
+					location = std::string(start_markup + 1, end_markup);
+				}
+
+				if (in_message != nullptr)
+					fprintf(file, "%s(%d)  msg = [%s]   file = [%s]\r\n", location.c_str(), in_location.line(), in_message, in_location.file_name());
+				else
+					fprintf(file, "%s(%d)    file = [%s]\r\n", location.c_str(), in_location.line(), in_location.file_name());
+				fclose(file);
+			}
+			// start the application that shows .txt files
+			if (first_call)
+				WinTools::ShowFile(filepath.c_str());
+
+			first_call = false;
 		}
 
 	}; // namespace DebugTools

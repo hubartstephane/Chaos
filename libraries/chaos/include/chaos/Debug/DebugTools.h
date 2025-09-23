@@ -27,6 +27,8 @@ namespace chaos
 		/** display the callstack of the current application */
 		CHAOS_API void DisplayCallStack(std::ostream & stream);
 
+		/** log current code location into a file */
+		void LogSourceLocation(char const* in_message = nullptr, std::source_location const& in_location = std::source_location::current());
 #endif
 
 	}; // namespace DebugTools

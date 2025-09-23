@@ -573,9 +573,6 @@ namespace chaos
 
 	bool Window::TraverseInputEventReceiverHierarchy(InputEventReceiverHierarchyTraverser & in_traverser)
 	{
-		// try imgui context
-		if (in_traverser.Traverse(&window_imgui_context))
-			return true;
 		// try window client
 		if (window_client != nullptr)
 			if (in_traverser.Traverse(window_client.get()))
@@ -588,6 +585,9 @@ namespace chaos
 	{
 		DelegateInputEventReceiverHierarchyTraverser traverser(func);
 
+		// try imgui context
+		if (traverser.Traverse(&window_imgui_context))
+			return true;
 		// try window
 		if (traverser.Traverse(this))
 			return true;

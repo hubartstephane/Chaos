@@ -30,9 +30,6 @@ namespace chaos
 		/** gets an equivalent request by updating forbidden_modifiers */
 		KeyRequest ForbidModifiers(KeyModifier in_modifiers) const;
 
-		/** check against a KeyEvent. No other consideration */
-		bool CheckAgainst(KeyEventBase const& in_key_event);
-
 		/** override */
 		virtual bool Check(KeyEventBase const& in_key_event, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const override;
 		/** override */

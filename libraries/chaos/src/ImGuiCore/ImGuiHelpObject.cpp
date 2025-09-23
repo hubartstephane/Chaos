@@ -10,32 +10,37 @@ namespace chaos
 
 	void ImGuiHelpObject::OnDrawImGuiContent(Window * window)
 	{
-		class OnQueryKeyActionEnumerator : public KeyActionEnumerator
+		class OnQueryInputActionEnumerator : public InputActionEnumerator
 		{
 		public:
 
-			using KeyActionEnumerator::KeyActionEnumerator;
+			using InputActionEnumerator::InputActionEnumerator;
 
-			virtual bool operator () (KeyRequest const & in_request, char const * in_title, bool in_enabled, LightweightFunction<void()> in_key_action) override
+			virtual bool CheckAndProcess(InputRequestBase const & in_request, char const * in_title, bool in_enabled, LightweightFunction<void()> in_key_action) override
 			{
 				char buffer[256];
 
-				ImGui::TableNextRow();
+				if (KeyRequest const* key_request = auto_cast(&in_request))
+				{
+					ImGui::TableNextRow();
 
-				ImGui::BeginDisabled(!in_enabled);
-				ImGui::TableSetColumnIndex(0); ImGui::Text("%s", in_request.key.GetName());
+					ImGui::BeginDisabled(!in_enabled);
+					ImGui::TableSetColumnIndex(0); ImGui::Text("%s", key_request->key.GetName());
 
-				char const* required_modifiers = EnumToString(in_request.required_modifiers, buffer, 256);
-				ImGui::TableSetColumnIndex(1); ImGui::Text("%s", required_modifiers);
+					char const* required_modifiers = EnumToString(key_request->required_modifiers, buffer, 256);
+					ImGui::TableSetColumnIndex(1); ImGui::Text("%s", required_modifiers);
 
-				char const* forbidden_modifiers = EnumToString(in_request.forbidden_modifiers, buffer, 256);
-				ImGui::TableSetColumnIndex(2); ImGui::Text("%s", forbidden_modifiers);
-				
-				char const* action_mask = EnumToString(in_request.action_mask, buffer, 256);
-				ImGui::TableSetColumnIndex(3); ImGui::Text("%s", action_mask);
+					char const* forbidden_modifiers = EnumToString(key_request->forbidden_modifiers, buffer, 256);
+					ImGui::TableSetColumnIndex(2); ImGui::Text("%s", forbidden_modifiers);
 
-				ImGui::TableSetColumnIndex(4); ImGui::Text("%s", in_title);
-				ImGui::EndDisabled();
+					char const* action_mask = EnumToString(key_request->action_mask, buffer, 256);
+					ImGui::TableSetColumnIndex(3); ImGui::Text("%s", action_mask);
+
+					ImGui::TableSetColumnIndex(4); ImGui::Text("%s", in_title);
+					ImGui::EndDisabled();
+				}
+
+
 
 				return false;
 			}
@@ -43,11 +48,11 @@ namespace chaos
 
 		ImGuiTools::DrawImGuiTable("objects", {}, "Key", "Mandatory Mod.", "Forbidden Mod.", "Action", "Description")([&]()
 		{
-			OnQueryKeyActionEnumerator action_enumerator;
+			OnQueryInputActionEnumerator action_enumerator;
 
 			DelegateInputEventReceiverHierarchyTraverser traverser([&action_enumerator](InputEventReceiverInterface * in_event_receiver)
 			{
-				in_event_receiver->EnumerateKeyActions(action_enumerator, EnumerateKeyActionContext::OnQuery);
+				in_event_receiver->EnumerateInputActions(action_enumerator, EnumerateInputActionContext::OnQuery);
 				return false;
 			});
 			traverser.Traverse(window);

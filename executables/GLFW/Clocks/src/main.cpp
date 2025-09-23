@@ -242,9 +242,9 @@ protected:
 		DebugDisplayTips();
 	}
 
-	bool UpdateClockTimeScaleWithKeys(chaos::KeyActionEnumerator & in_action_enumerator, chaos::Clock * clock, chaos::KeyboardButton incr_key, chaos::KeyboardButton decr_key, char const * incr_title, char const * decr_title)
+	bool UpdateClockTimeScaleWithKeys(chaos::InputActionEnumerator & in_action_enumerator, chaos::Clock * clock, chaos::KeyboardButton incr_key, chaos::KeyboardButton decr_key, char const * incr_title, char const * decr_title)
 	{
-		if (in_action_enumerator(RequestKeyPressed(incr_key), incr_title, [&]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(incr_key), incr_title, [&]()
 		{
 			UpdateClockTimeScale(clock, 0.2f);
 		}))
@@ -252,7 +252,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator(RequestKeyPressed(decr_key), decr_title, [&]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(decr_key), decr_title, [&]()
 		{
 			UpdateClockTimeScale(clock, -0.2f);
 		}))
@@ -262,9 +262,9 @@ protected:
 		return false;
 	}
 
-	bool GenerateEvent(chaos::KeyActionEnumerator & in_action_enumerator, chaos::Clock * clock, chaos::KeyboardButton create_key, char const * in_title, int type)
+	bool GenerateEvent(chaos::InputActionEnumerator & in_action_enumerator, chaos::Clock * clock, chaos::KeyboardButton create_key, char const * in_title, int type)
 	{
-		if (in_action_enumerator(RequestKeyPressed(create_key), in_title, [&]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(create_key), in_title, [&]()
 		{
 			// remove previous event
 			if (clock_event != nullptr)
@@ -300,9 +300,9 @@ protected:
 		return false;
 	}
 
-	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator, chaos::EnumerateKeyActionContext in_context) override
+	virtual bool EnumerateInputActions(chaos::InputActionEnumerator & in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
 	{
-		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::T), "Toggle Main Clock", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::T), "Toggle Main Clock", [this]()
 		{
 			if (chaos::Clock * clock = chaos::WindowApplication::GetMainClockInstance())
 				clock->Toggle();

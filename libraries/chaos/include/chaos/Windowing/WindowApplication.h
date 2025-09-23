@@ -79,7 +79,7 @@ namespace chaos
 		GPUResourceManager const* GetGPUResourceManager() const { return gpu_resource_manager.get(); }
 
 		/** override */
-		virtual bool EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator, EnumerateKeyActionContext in_context) override;
+		virtual bool EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context) override;
 
 
 

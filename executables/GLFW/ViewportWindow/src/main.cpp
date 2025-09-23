@@ -39,11 +39,11 @@ protected:
 		return true;
 	}
 
-	virtual bool EnumerateKeyActions(EnumerateKeyActionFunc in_action_enumerator) override
+	virtual bool EnumerateInputActions(EnumerateKeyActionFunc in_action_enumerator) override
 	{
 		chaos::ViewportGridLayout* layout = GetViewportLayout();
 
-		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::E), "ViewportGridMode EXPANDED", [this, layout]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::E), "ViewportGridMode EXPANDED", [this, layout]()
 		{
 			layout->SetMode(chaos::ViewportGridMode::EXPANDED);
 		}))
@@ -51,7 +51,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::P), "ViewportGridMode UNIFORM_PACKED", [this, layout]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::P), "ViewportGridMode UNIFORM_PACKED", [this, layout]()
 		{
 			layout->SetMode(chaos::ViewportGridMode::UNIFORM_PACKED);
 		}))
@@ -59,7 +59,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::C), "ViewportGridMode UNIFORM_CENTERED", [this, layout]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::C), "ViewportGridMode UNIFORM_CENTERED", [this, layout]()
 		{
 			layout->SetMode(chaos::ViewportGridMode::UNIFORM_CENTERED);
 		}))
@@ -67,7 +67,7 @@ protected:
 			return true;
 		}
 
-		return chaos::Window::EnumerateKeyActions(in_action_enumerator, in_context);
+		return chaos::Window::EnumerateInputActions(in_action_enumerator, in_context);
 	}
 
 

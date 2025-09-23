@@ -481,13 +481,9 @@ namespace chaos
 		if (sound_manager != nullptr)
 			sound_manager->Tick(delta_time);
 		// process the inputs
-		if (InputConsumptionCache* consumption_cache = InputConsumptionCache::GetInstance())
-			consumption_cache->Clear();
-
 
 		//PollInputDevices();
-		if (InputConsumptionCache* consumption_cache = InputConsumptionCache::GetInstance())
-			consumption_cache->Clear();
+
 
 		return true;
 	}
@@ -502,68 +498,17 @@ namespace chaos
 
 	void WindowApplication::PollInputDevices()
 	{
-		class OnPollingKeyActionEnumerator : public KeyActionEnumerator
-		{
-		public:
+		KeyboardAndMouseState const* keyboard_and_mouse = KeyboardAndMouseState::GetInstance();
 
-			/** constructor */
-			OnPollingKeyActionEnumerator(InputDeviceInterface const * in_input_device):
-				input_device(in_input_device)
-			{}
+		InputConsumptionCache consumption_cache;
 
-			/** override */
-			virtual bool operator () (KeyRequest const & in_request, char const * in_title, bool in_enabled, KeyActionFunction in_key_action) override
-			{
-				if (in_enabled && in_request.CheckAgainst(input_device))
-				{
-					in_key_action();
-				}
-				return false; // do not prevent other actions to be handled
-			}
-
-		protected:
-
-			/** the input device to check */
-			InputDeviceInterface const * input_device = nullptr;
-		};
-
-		class OnPollingInputEventReceiverHierarchyTraverser : public InputEventReceiverHierarchyTraverser
-		{
-		public:
-
-			OnPollingInputEventReceiverHierarchyTraverser(InputDeviceInterface const * in_input_device):
-				input_device(in_input_device)
-			{
-				assert(in_input_device != nullptr);
-			}
-
-			virtual bool Process(InputEventReceiverInterface * in_event_receiver) override
-			{
-				OnPollingKeyActionEnumerator action_enumerator(input_device);
-				return in_event_receiver->EnumerateKeyActions(action_enumerator, EnumerateKeyActionContext::OnPolling);
-			}
-
-			virtual bool Traverse(InputEventReceiverInterface * in_event_receiver) override
-			{
-				return in_event_receiver->InvokeWithUpgradedInputDevice(input_device, [this, in_event_receiver](InputDeviceInterface const * in_input_device)
-				{
-					OnPollingInputEventReceiverHierarchyTraverser other_traverser(in_input_device);
-					return in_event_receiver->TraverseInputEventReceiverHierarchy(other_traverser);
-				});
-			}
-
-		protected:
-
-			const InputDeviceInterface * input_device = nullptr;
-		};
-
-		OnPollingInputEventReceiverHierarchyTraverser traverser(KeyboardAndMouseState::GetInstance());
+		OnPollInputEventReceiverHierarchyTraverser traverser(keyboard_and_mouse, &consumption_cache);
 
 		// give focused window opportunity to catch input first
 		if (Window * focus_window = GetFocusedWindow())
 			if (traverser.Traverse(focus_window))
 				return;
-		// now time for this
+		// now time for the application
 		traverser.Traverse(this);
 	}
 
@@ -858,9 +803,9 @@ namespace chaos
 		return application->GetGPUResourceManager();
 	}
 
-	bool WindowApplication::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator, EnumerateKeyActionContext in_context)
+	bool WindowApplication::EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context)
 	{
-		if (in_action_enumerator(RequestKeyPressed(KeyboardButton::F7) , "Toggle ImGui", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(KeyboardButton::F7) , "Toggle ImGui", [this]()
 		{
 			SetImGuiMenuEnabled(!IsImGuiMenuEnabled());
 		}))
@@ -869,7 +814,7 @@ namespace chaos
 		}
 
 #if _DEBUG
-		if (in_action_enumerator(RequestKeyPressed(KeyboardButton::F8) , "Reload GPU Resources", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(KeyboardButton::F8) , "Reload GPU Resources", [this]()
 		{
 			ReloadGPUResources();
 		}))
@@ -878,7 +823,7 @@ namespace chaos
 		}
 #endif // #if _DEBUG
 
-		return InputEventReceiverInterface::EnumerateKeyActions(in_action_enumerator, in_context);
+		return InputEventReceiverInterface::EnumerateInputActions(in_action_enumerator, in_context);
 	}
 
 	GLFWwindow* WindowApplication::GetSharedGLContext()

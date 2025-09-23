@@ -956,9 +956,9 @@ namespace chaos
 		return SetBoxAspect(result, 16.0f / 9.0f, SetBoxAspectMethod::SHRINK_BOX);
 	}
 
-	bool Window::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator, EnumerateKeyActionContext in_context)
+	bool Window::EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context)
 	{
-		if (in_action_enumerator(RequestKeyPressed(KeyboardButton::F9) , "Screen Capture", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(KeyboardButton::F9) , "Screen Capture", [this]()
 		{
 			ScreenCapture();
 		}))
@@ -966,7 +966,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_enumerator(RequestKeyPressed(KeyboardButton::F10) , "Toggle Fullscreen", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(KeyboardButton::F10) , "Toggle Fullscreen", [this]()
 		{
 			ToggleFullscreen();
 		}))
@@ -974,7 +974,7 @@ namespace chaos
 			return true;
 		}
 
-		return WindowInterface::EnumerateKeyActions(in_action_enumerator, in_context);
+		return WindowInterface::EnumerateInputActions(in_action_enumerator, in_context);
 	}
 
 	bool Window::IsStandardImGuiMenuPluggedIn() const

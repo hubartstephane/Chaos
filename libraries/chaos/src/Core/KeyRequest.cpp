@@ -4,19 +4,13 @@
 
 namespace chaos
 {
-	bool KeyRequest::CheckAgainst(InputDeviceInterface const * in_input_device) const
+	bool KeyRequest::Check(InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const
 	{
-		std::set<int> s;
-
-		auto a1 = s.insert(1);
-		auto a2 = s.insert(2);
-		auto a3 = s.insert(1);
-
-
-
-
 		// early exit
 		if (!key.IsValid())
+			return false;
+		// consum the key of the request (no one can use it anymore until next frame)
+		if (!in_consumption_cache.TryConsumeInput(key, in_input_device))
 			return false;
 
 		// find key
@@ -41,17 +35,6 @@ namespace chaos
 
 
 		}
-
-
-
-
-		// consum the key of the request (no one can use it anymore until next frame)
-		//if (key == KeyboardButton::F7)
-		if (InputConsumptionCache* consumption_cache = InputConsumptionCache::GetInstance())
-			if (!consumption_cache->CheckAndMarkKeyConsumed(key, key_state))
-				return false;
-
-		
 
 
 
@@ -115,37 +98,36 @@ namespace chaos
 		return false;
 	}
 
-	bool KeyRequest::CheckAgainst(KeyEventBase const & key_event) const
+	bool KeyRequest::Check(KeyEventBase const& in_key_event, InputDeviceInterface const * in_input_device, InputConsumptionCache & in_consumption_cache) const
 	{
 		// early exit
 		if (!key.IsValid())
 			return false;
 		// consum the key of the request (no one can use it anymore until next frame)
-		if (InputConsumptionCache* consumption_cache = InputConsumptionCache::GetInstance())
-			if (!consumption_cache->CheckAndMarkKeyConsumed(key, KeyboardAndMouseState::GetInstance()))
-				return false;
+		if (!in_consumption_cache.TryConsumeInput(key, in_input_device))
+			return false;
 		//  effective request
-		if (key != key_event.key)
+		if (key != in_key_event.key)
 			return false;
 
-		if (required_modifiers != KeyModifier::None && !HasAllFlags(key_event.modifiers, required_modifiers))
+		if (required_modifiers != KeyModifier::None && !HasAllFlags(in_key_event.modifiers, required_modifiers))
 			return false;
-		if (forbidden_modifiers != KeyModifier::None && HasAnyFlags(key_event.modifiers, forbidden_modifiers))
+		if (forbidden_modifiers != KeyModifier::None && HasAnyFlags(in_key_event.modifiers, forbidden_modifiers))
 			return false;
 
 		if (HasAnyFlags(action_mask, KeyActionMask::Release))
 		{
-			if (key_event.action == KeyAction::Release)
+			if (in_key_event.action == KeyAction::Release)
 				return true;
 		}
 		if (HasAnyFlags(action_mask, KeyActionMask::Press))
 		{
-			if (key_event.action == KeyAction::Press)
+			if (in_key_event.action == KeyAction::Press)
 				return true;
 		}
 		if (HasAnyFlags(action_mask, KeyActionMask::Repeat))
 		{
-			if (key_event.action == KeyAction::Repeat)
+			if (in_key_event.action == KeyAction::Repeat)
 				return true;
 		}
 		return false;

@@ -11,24 +11,14 @@ namespace chaos
 		mouse_enabled = in_mouse_enabled;
 	}
 
-	bool FPSViewController::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator, EnumerateKeyActionContext in_context)
+	bool FPSViewController::EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context)
 	{
 		float frame_duration = (float)FrameTimeManager::GetInstance()->GetCurrentFrameDuration();
 
 		auto CheckCameraKey = [this, frame_duration, &in_action_enumerator](const Key & key, char const * title, float speed, void (FPSView::*func)(float))
 		{
-
-
-
-			if (in_action_enumerator(RequestKeyDown(key), title, [this, frame_duration, speed, &func, key]()
+			if (in_action_enumerator.CheckAndProcess(RequestKeyDown(key), title, [this, frame_duration, speed, &func, key]()
 			{
-				if (key == KeyboardButton::LEFT)
-				{
-					int i = 0;
-					++i;
-				}
-
-
 				(fps_view.*func)(speed * frame_duration);
 			}))
 			{

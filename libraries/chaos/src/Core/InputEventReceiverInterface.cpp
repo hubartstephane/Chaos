@@ -67,8 +67,6 @@ namespace chaos
 		if (OnMouseButtonImpl(mouse_button_event))
 		{
 			SetInputMode(InputMode::MOUSE);
-			if (InputConsumptionCache* consumption_cache = InputConsumptionCache::GetInstance())
-				consumption_cache->CheckAndMarkKeyConsumed(mouse_button_event.key, KeyboardAndMouseState::GetInstance());
 			return true;
 		}
 		return false;
@@ -89,8 +87,6 @@ namespace chaos
 		if (OnKeyEventImpl(key_event))
 		{
 			SetInputMode(InputMode::KEYBOARD);
-			if (InputConsumptionCache* consumption_cache = InputConsumptionCache::GetInstance())
-				consumption_cache->CheckAndMarkKeyConsumed(key_event.key, KeyboardAndMouseState::GetInstance());
 			return true;
 		}
 		return false;
@@ -133,36 +129,6 @@ namespace chaos
 		return false;
 	}
 
-	bool InputEventReceiverInterface::ProcessInputDeviceStates(InputDeviceInterface const * in_input_device)
-	{
-		Enumerator.Rule(RequestStick(GamepadStick::LEFT_STICK, left_stick), "Show", []()
-		{
-
-		});
-
-		float left_stick
-		if (RequestStick(GamepadStick::LEFT_STICK, left_stick, in_input_device)
-
-
-		Capture.On(KeyDown(Keyboard::F7), "raise popup", []()
-		{
-
-		});
-
-
-
-
-		if (KeyDown(Keyboard::F7))
-
-
-
-
-
-
-
-		return false;
-	}
-
 	bool InputEventReceiverInterface::InvokeWithUpgradedInputDevice(InputDeviceInterface const * in_input_device, InvokeWithUpgradedInputDeviceFunction in_func)
 	{
 		return in_func(in_input_device); // by default, simple passthrough
@@ -170,42 +136,20 @@ namespace chaos
 
 	bool InputEventReceiverInterface::ProcessKeyActions(KeyEventBase const & key_event)
 	{
-		class OnEventKeyActionEnumerator : public KeyActionEnumerator
-		{
-		public:
+		KeyboardAndMouseState const* keyboard_and_mouse = KeyboardAndMouseState::GetInstance();
 
-			/** constructor */
-			OnEventKeyActionEnumerator(KeyEventBase const & in_key_event):
-				key_event(in_key_event)
-			{}
+		InputConsumptionCache consumption_cache;
 
-			/** override */
-			virtual bool operator () (KeyRequest const & in_request, char const * in_title, bool in_enabled, KeyActionFunction in_key_action) override
-			{
-				if (in_enabled && in_request.CheckAgainst(key_event))
-				{
-					in_key_action();
-					return true;
-				}
-				return false; 
-			}
-
-		protected:
-
-			/** the event to check */
-			KeyEventBase key_event;
-		};
-
-		OnEventKeyActionEnumerator action_enumerator(key_event);
+		OnKeyEventInputActionEnumerator action_enumerator(key_event, keyboard_and_mouse, &consumption_cache);
 
 		DelegateInputEventReceiverHierarchyTraverser traverser([&action_enumerator](InputEventReceiverInterface * in_event_receiver)
 		{
-			return in_event_receiver->EnumerateKeyActions(action_enumerator, EnumerateKeyActionContext::OnEvent);
+			return in_event_receiver->EnumerateInputActions(action_enumerator, EnumerateInputActionContext::OnEvent);
 		});
 		return traverser.Traverse(this);
 	}
 
-	bool InputEventReceiverInterface::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator, EnumerateKeyActionContext in_context)
+	bool InputEventReceiverInterface::EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context)
 	{
 		return false;
 	}

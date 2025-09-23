@@ -158,9 +158,9 @@ protected:
 		texture_slice = (texture_slice + delta + texture_slice_count) % texture_slice_count;
 	}
 
-	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator, chaos::EnumerateKeyActionContext in_context) override
+	virtual bool EnumerateInputActions(chaos::InputActionEnumerator & in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
 	{
-		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::KP_ADD).RequireModifiers(chaos::KeyModifier::Shift), "Next Pixel Format", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::KP_ADD).RequireModifiers(chaos::KeyModifier::Shift), "Next Pixel Format", [this]()
 		{
 			ChangePixelFormat(+1);
 		}))
@@ -168,7 +168,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::KP_SUBTRACT).RequireModifiers(chaos::KeyModifier::Shift), "Previous Pixel Format", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::KP_SUBTRACT).RequireModifiers(chaos::KeyModifier::Shift), "Previous Pixel Format", [this]()
 		{
 			ChangePixelFormat(-1);
 		}))
@@ -176,7 +176,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::KP_ADD), "Next Slice", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::KP_ADD), "Next Slice", [this]()
 		{
 			ChangeSlice(+1);
 		}))
@@ -184,7 +184,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::KP_SUBTRACT), "Previous Slice", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::KP_SUBTRACT), "Previous Slice", [this]()
 		{
 			ChangeSlice(-1);
 		}))
@@ -192,7 +192,7 @@ protected:
 			return true;
 		}
 
-		return chaos::Window::EnumerateKeyActions(in_action_enumerator, in_context);
+		return chaos::Window::EnumerateInputActions(in_action_enumerator, in_context);
 	}
 
 	bool LoadBitmaps(boost::filesystem::path const & resources_path)

@@ -90,9 +90,9 @@ namespace chaos
 		return InputEventReceiverInterface::TraverseInputEventReceiverHierarchy(in_traverser);
 	}
 
-	bool Game::EnumerateKeyActions(KeyActionEnumerator & in_action_enumerator, EnumerateKeyActionContext in_context)
+	bool Game::EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context)
 	{
-		if (in_action_enumerator(RequestKeyPressed(KeyboardButton::ESCAPE).RequireModifiers(KeyModifier::Shift) , "Exit Game", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(KeyboardButton::ESCAPE).RequireModifiers(KeyModifier::Shift) , "Exit Game", [this]()
 		{
 			RequireExitGame();
 		}))
@@ -100,7 +100,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_enumerator(RequestKeyPressed(KeyboardButton::ESCAPE), "Toggle Pause", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(KeyboardButton::ESCAPE), "Toggle Pause", [this]()
 		{
 			RequireTogglePause();
 		}))
@@ -110,7 +110,7 @@ namespace chaos
 
 #if _DEBUG
 
-		if (in_action_enumerator(RequestKeyPressed(KeyboardButton::F1) , "Skip Level", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(KeyboardButton::F1) , "Skip Level", [this]()
 		{
 			SetCheatSkipLevelRequired(true);
 		}))
@@ -118,7 +118,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_enumerator(RequestKeyPressed(KeyboardButton::F2), "Toggle Cheat Mode", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(KeyboardButton::F2), "Toggle Cheat Mode", [this]()
 		{
 			SetCheatMode(!GetCheatMode());
 		}))
@@ -126,7 +126,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_enumerator(RequestKeyPressed(KeyboardButton::F3), "Reload Configuration", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(KeyboardButton::F3), "Reload Configuration", [this]()
 		{
 			ReloadGameConfiguration();
 		}))
@@ -134,7 +134,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_enumerator(RequestKeyPressed(KeyboardButton::F4), "Reload Current Level", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(KeyboardButton::F4), "Reload Current Level", [this]()
 		{
 			ReloadCurrentLevel();
 		}))
@@ -142,7 +142,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_enumerator(RequestKeyPressed(KeyboardButton::F5), "Quick Save", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(KeyboardButton::F5), "Quick Save", [this]()
 		{
 			SaveIntoCheckpoint();
 		}))
@@ -150,7 +150,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_enumerator(RequestKeyPressed(KeyboardButton::F6), "Toggle Free Camera Mode", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(KeyboardButton::F6), "Toggle Free Camera Mode", [this]()
 		{
 			SetFreeCameraMode(!IsFreeCameraMode());
 		}))
@@ -159,7 +159,7 @@ namespace chaos
 		}
 #endif
 
-		return InputEventReceiverInterface::EnumerateKeyActions(in_action_enumerator, in_context);
+		return InputEventReceiverInterface::EnumerateInputActions(in_action_enumerator, in_context);
 	}
 
 

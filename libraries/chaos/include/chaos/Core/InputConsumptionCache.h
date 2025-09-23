@@ -7,29 +7,28 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	 * InputConsumptionCache: a singleton to keep trace of inputs that have been handled this frame
+	 * InputConsumptionCache: an object that keeps that trace of which inputs have been handled this frame
 	 */
 
-	class InputConsumptionCache : public Singleton<InputConsumptionCache>
+	class InputConsumptionCache
 	{
 	public:
 
-		/** clear the cache */
-		void Clear();
+		/** check whether the key is still available and lock it for further requests (do the same for related inputs) */
+		bool TryConsumeInput(Key const& in_key, InputDeviceInterface const* in_input_device);
+		/** check whether the key is still available and lock it for further requests (do the same for related inputs) */
+		bool TryConsumeInput(GamepadAxis in_axis, InputDeviceInterface const* in_input_device);
+		/** check whether the key is still available and lock it for further requests (do the same for related inputs) */
+		bool TryConsumeInput(GamepadStick in_stick, InputDeviceInterface const* in_input_device);
 
-		/** returns whether the input has not been consumed yet, then mark it as consumed */
-		bool CheckAndMarkKeyConsumed(Key in_key, InputDeviceInterface const * in_input_device);
-		/** returns whether the input has not been consumed yet, then mark it as consumed */
-		bool CheckAndMarkAxisConsumed(GamepadAxis in_axis, InputDeviceInterface const * in_input_device);
-		/** returns whether the input has not been consumed yet, then mark it as consumed */
-		bool CheckAndMarkStickConsumed(GamepadStick in_stick, InputDeviceInterface const * in_input_device);
+	protected:
 
-		/** returns whether the input has not been consumed yet, then mark it as consumed */
-		bool CheckAndMarkKeyConsumed(Key in_key, KeyState const* in_state);
-		/** returns whether the input has not been consumed yet, then mark it as consumed */
-		bool CheckAndMarkAxisConsumed(GamepadAxis in_axis, AxisState const* in_state);
-		/** returns whether the input has not been consumed yet, then mark it as consumed */
-		bool CheckAndMarkStickConsumed(GamepadStick in_stick, StickState const* in_state);
+		/** internal method that check whether an input has already been consumed yet Mark it as consumed */
+		bool DoTryConsumeInput(Key in_key, InputDeviceInterface const* in_input_device);
+		/** internal method that check whether an input has already been consumed yet Mark it as consumed */
+		bool DoTryConsumeInput(GamepadAxis in_axis, InputDeviceInterface const* in_input_device);
+		/** internal method that check whether an input has already been consumed yet Mark it as consumed */
+		bool DoTryConsumeInput(GamepadStick in_stick, InputDeviceInterface const* in_input_device);
 
 	protected:
 

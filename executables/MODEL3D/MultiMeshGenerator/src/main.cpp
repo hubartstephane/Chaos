@@ -277,13 +277,13 @@ protected:
 		Window::OnDrawImGuiContent();
 	}
 
-	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator, chaos::EnumerateKeyActionContext in_context) override
+	virtual bool EnumerateInputActions(chaos::InputActionEnumerator & in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
 	{
 		size_t object_count = objects.size();
 
 		bool enabled = object_count > 0;
 
-		if (in_action_enumerator(RequestKeyPressed(KeyboardButton::KP_ADD), "Next Object", enabled, [&]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(KeyboardButton::KP_ADD), "Next Object", enabled, [&]()
 		{
 			objects[selected_object_index]->SetSelected(false);
 
@@ -298,7 +298,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator(RequestKeyPressed(KeyboardButton::KP_SUBTRACT), "Previous Object", enabled, [&]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(KeyboardButton::KP_SUBTRACT), "Previous Object", enabled, [&]()
 		{
 			objects[selected_object_index]->SetSelected(false);
 

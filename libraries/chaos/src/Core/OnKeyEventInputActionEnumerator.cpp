@@ -1,0 +1,25 @@
+#include "chaos/ChaosPCH.h"
+
+#include "chaos/ChaosInternals.h"
+
+namespace chaos
+{
+	OnKeyEventInputActionEnumerator::OnKeyEventInputActionEnumerator(KeyEventBase const& in_key_event, InputDeviceInterface const* in_input_device, InputConsumptionCache* in_consumption_cache) :
+		key_event(in_key_event),
+		input_device(in_input_device),
+		consumption_cache(in_consumption_cache)
+	{
+	}
+
+	bool OnKeyEventInputActionEnumerator::CheckAndProcess(InputRequestBase const& in_request, char const* in_title, bool in_enabled, InputActionFunction in_func)
+	{
+		if (in_request.Check(key_event, input_device, *consumption_cache))
+		{
+			if (in_enabled)
+				in_func();
+			return true; // stop
+		}
+		return false;
+	}
+
+}; // namespace chaos

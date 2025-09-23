@@ -2,37 +2,15 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class KeyRequestBase;
 	class KeyRequest;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* KeyRequestBase: a request for key event
+	* KeyRequest: a specialization of InputRequestBase for a single key
 	*/
 
-	class KeyRequestBase
-	{
-	public:
-
-		/** check whether the request matches a given key event */
-		virtual bool CheckAgainst(KeyEventBase const & key_event) const
-		{
-			return false;
-		}
-
-		/** check whether the request matches a given input device state */
-		virtual bool CheckAgainst(InputDeviceInterface const * in_input_device) const
-		{
-			return false;
-		}
-	};
-
-	/**
-	* KeyRequest: a specialization of KeyRequestBase for a single key
-	*/
-
-	class KeyRequest : public KeyRequestBase
+	class KeyRequest : public InputRequestBase
 	{
 
 	public:
@@ -49,14 +27,13 @@ namespace chaos
 
 		/** gets an equivalent request by updating required_modifiers */
 		KeyRequest RequireModifiers(KeyModifier in_modifiers) const;
-
 		/** gets an equivalent request by updating forbidden_modifiers */
 		KeyRequest ForbidModifiers(KeyModifier in_modifiers) const;
 
 		/** override */
-		virtual bool CheckAgainst(KeyEventBase const & key_event) const override;
+		virtual bool Check(KeyEventBase const& in_key_event, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const override;
 		/** override */
-		virtual bool CheckAgainst(InputDeviceInterface const * in_input_device) const override;
+		virtual bool Check(InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const override;
 
 	public:
 

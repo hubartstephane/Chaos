@@ -1071,9 +1071,9 @@ protected:
 	}
 
 
-	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator, chaos::EnumerateKeyActionContext in_context) override
+	virtual bool EnumerateInputActions(chaos::InputActionEnumerator & in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
 	{
-		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::T), "Toggle Clock", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::T), "Toggle Clock", [this]()
 		{
 			chaos::Clock * clock = chaos::WindowApplication::GetMainClockInstance();
 			if (clock != nullptr)
@@ -1083,7 +1083,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::KP_ADD), "Next Example", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::KP_ADD), "Next Example", [this]()
 		{
 			SetExample((TestID)((int)display_example + 1));
 			DebugDisplayExampleTitle();
@@ -1092,7 +1092,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::KP_SUBTRACT), "Previous Example", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::KP_SUBTRACT), "Previous Example", [this]()
 		{
 			SetExample((TestID)((int)display_example - 1));
 			DebugDisplayExampleTitle();
@@ -1101,7 +1101,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::KP_5), "Update Object Type", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::KP_5), "Update Object Type", [this]()
 		{
 			UpdateObjectType();
 			DebugDisplayExampleTitle();
@@ -1110,7 +1110,7 @@ protected:
 			return true;
 		}
 
-		return chaos::Window::EnumerateKeyActions(in_action_enumerator, in_context);
+		return chaos::Window::EnumerateInputActions(in_action_enumerator, in_context);
 	}
 
 	void SetExample(TestID new_display_example)

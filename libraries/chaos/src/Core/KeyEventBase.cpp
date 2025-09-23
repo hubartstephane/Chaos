@@ -26,22 +26,38 @@ namespace chaos
 
 	bool KeyEventBase::IsKeyPressed(Key in_key, KeyModifier in_required_modifiers, KeyModifier in_forbidden_modifiers) const
 	{
-		return RequestKeyPressed(in_key).RequireModifiers(in_required_modifiers).ForbidModifiers(in_forbidden_modifiers).CheckAgainst(*this);
+		// shuxxx
+		return false;
+
+
+
+
+		//return RequestKeyPressed(in_key).RequireModifiers(in_required_modifiers).ForbidModifiers(in_forbidden_modifiers).CheckAgainst(*this);
 	}
 
 	bool KeyEventBase::IsKeyReleased(Key in_key, KeyModifier in_required_modifiers, KeyModifier in_forbidden_modifiers) const
 	{
-		return RequestKeyReleased(in_key).RequireModifiers(in_required_modifiers).ForbidModifiers(in_forbidden_modifiers).CheckAgainst(*this);
+		// shuxxx
+		return false;
+
+
+		//return RequestKeyReleased(in_key).RequireModifiers(in_required_modifiers).ForbidModifiers(in_forbidden_modifiers).CheckAgainst(*this);
 	}
 
 	bool KeyEventBase::IsKeyRepeat(Key in_key, KeyModifier in_required_modifiers, KeyModifier in_forbidden_modifiers) const
 	{
-		return RequestKeyRepeat(in_key).RequireModifiers(in_required_modifiers).ForbidModifiers(in_forbidden_modifiers).CheckAgainst(*this);
+		// shuxxx
+		return false;
+
+		//return RequestKeyRepeat(in_key).RequireModifiers(in_required_modifiers).ForbidModifiers(in_forbidden_modifiers).CheckAgainst(*this);
 	}
 
 	bool KeyEventBase::IsKeyDown(Key in_key, KeyModifier in_required_modifiers, KeyModifier in_forbidden_modifiers) const
 	{
-		return RequestKeyDown(in_key).RequireModifiers(in_required_modifiers).ForbidModifiers(in_forbidden_modifiers).CheckAgainst(*this);
+		// shuxxx
+		return false;
+
+		//return RequestKeyDown(in_key).RequireModifiers(in_required_modifiers).ForbidModifiers(in_forbidden_modifiers).CheckAgainst(*this);
 	}
 
 }; // namespace chaos

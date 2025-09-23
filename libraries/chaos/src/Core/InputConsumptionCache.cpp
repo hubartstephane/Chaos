@@ -3,50 +3,84 @@
 
 namespace chaos
 {
-	void InputConsumptionCache::Clear()
+	bool InputConsumptionCache::TryConsumeInput(Key const& in_key, InputDeviceInterface const* in_input_device) // check whether the key is still available and lock it for further requests (do the same for related inputs)
 	{
-		consumed_keys.clear();
-		consumed_axes.clear();
-		consumed_sticks.clear();
+		bool result = true;
+
+		// handle key
+		result &= DoTryConsumeInput(in_key, in_input_device);
+		// handle 'virtual related' inputs
+		if (in_key == GamepadButton::LEFT_TRIGGER)
+			result &= DoTryConsumeInput(GamepadAxis::LEFT_TRIGGER, in_input_device);
+		if (in_key == GamepadButton::RIGHT_TRIGGER)
+			result &= DoTryConsumeInput(GamepadAxis::RIGHT_TRIGGER, in_input_device);
+
+		return result;
 	}
 
-	bool InputConsumptionCache::CheckAndMarkKeyConsumed(Key in_key, InputDeviceInterface const* in_input_device)
+	bool InputConsumptionCache::TryConsumeInput(GamepadAxis in_axis, InputDeviceInterface const* in_input_device) // check whether the axis is still available and lock it for further requests (do the same for related inputs)
+	{
+		bool result = true;
+
+		// handle axis
+		result &= DoTryConsumeInput(in_axis, in_input_device);
+		// handle 'virtual related' inputs
+		if (in_axis == GamepadAxis::LEFT_TRIGGER)
+			result &= DoTryConsumeInput(GamepadButton::LEFT_TRIGGER, in_input_device);
+		if (in_axis == GamepadAxis::RIGHT_TRIGGER)
+			result &= DoTryConsumeInput(GamepadButton::RIGHT_TRIGGER, in_input_device);
+
+		if (in_axis == GamepadAxis::LEFT_AXIS_X || in_axis == GamepadAxis::LEFT_AXIS_Y)
+			result &= DoTryConsumeInput(GamepadStick::LEFT_STICK, in_input_device);
+		if (in_axis == GamepadAxis::RIGHT_AXIS_X || in_axis == GamepadAxis::RIGHT_AXIS_Y)
+			result &= DoTryConsumeInput(GamepadStick::RIGHT_STICK, in_input_device);
+
+		return result;
+	}
+
+	bool InputConsumptionCache::TryConsumeInput(GamepadStick in_stick, InputDeviceInterface const* in_input_device) // check whether the stick is still available and lock it for further requests (do the same for related inputs)
+	{
+		bool result = true;
+
+		// handle stick
+		result &= DoTryConsumeInput(in_stick, in_input_device);
+		// handle 'virtual related' inputs
+		if (in_stick == GamepadStick::LEFT_STICK)
+		{
+			result &= DoTryConsumeInput(GamepadAxis::LEFT_AXIS_X, in_input_device);
+			result &= DoTryConsumeInput(GamepadAxis::LEFT_AXIS_Y, in_input_device);
+		}
+		if (in_stick == GamepadStick::RIGHT_STICK)
+		{
+			result &= DoTryConsumeInput(GamepadAxis::RIGHT_AXIS_X, in_input_device);
+			result &= DoTryConsumeInput(GamepadAxis::RIGHT_AXIS_Y, in_input_device);
+		}
+
+		return result;
+	}
+
+	bool InputConsumptionCache::DoTryConsumeInput(Key in_key, InputDeviceInterface const* in_input_device)
 	{
 		KeyState const* state = in_input_device->GetKeyState(in_key);
-		return CheckAndMarkKeyConsumed(in_key, state);
+		if (state == nullptr)
+			return false;
+		return consumed_keys.insert(std::make_pair(in_key, state)).second; // insert returns a pair. second element indicates whether the element has effectively been inserted
 	}
 
-	bool InputConsumptionCache::CheckAndMarkAxisConsumed(GamepadAxis in_axis, InputDeviceInterface const* in_input_device)
+	bool InputConsumptionCache::DoTryConsumeInput(GamepadAxis in_axis, InputDeviceInterface const* in_input_device)
 	{
 		AxisState const* state = in_input_device->GetAxisState(in_axis);
-		return CheckAndMarkAxisConsumed(in_axis, state);
+		if (state == nullptr)
+			return false;
+		return consumed_axes.insert(std::make_pair(in_axis, state)).second; // insert returns a pair. second element indicates whether the element has effectively been inserted
 	}
 
-	bool InputConsumptionCache::CheckAndMarkStickConsumed(GamepadStick in_stick, InputDeviceInterface const* in_input_device)
+	bool InputConsumptionCache::DoTryConsumeInput(GamepadStick in_stick, InputDeviceInterface const* in_input_device)
 	{
 		StickState const* state = in_input_device->GetStickState(in_stick);
-		return CheckAndMarkStickConsumed(in_stick, state);
-	}
-
-	bool InputConsumptionCache::CheckAndMarkKeyConsumed(Key in_key, KeyState const * in_state)
-	{
-		if (in_state == nullptr)
+		if (state == nullptr)
 			return false;
-		return consumed_keys.insert(std::make_pair(in_key, in_state)).second; // insert returns a pair. second element indicates whether the element has effectively been inserted
-	}
-
-	bool InputConsumptionCache::CheckAndMarkAxisConsumed(GamepadAxis in_axis, AxisState const* in_state)
-	{
-		if (in_state == nullptr)
-			return false;
-		return consumed_axes.insert(std::make_pair(in_axis, in_state)).second; // insert returns a pair. second element indicates whether the element has effectively been inserted
-	}
-
-	bool InputConsumptionCache::CheckAndMarkStickConsumed(GamepadStick in_stick, StickState const* in_state)
-	{
-		if (in_state == nullptr)
-			return false;
-		return consumed_sticks.insert(std::make_pair(in_stick, in_state)).second; // insert returns a pair. second element indicates whether the element has effectively been inserted
+		return consumed_sticks.insert(std::make_pair(in_stick, state)).second; // insert returns a pair. second element indicates whether the element has effectively been inserted
 	}
 
 }; // namespace chaos

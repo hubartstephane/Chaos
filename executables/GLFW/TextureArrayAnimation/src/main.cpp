@@ -156,9 +156,9 @@ protected:
 	}
 
 
-	virtual bool EnumerateKeyActions(chaos::KeyActionEnumerator & in_action_enumerator, chaos::EnumerateKeyActionContext in_context) override
+	virtual bool EnumerateInputActions(chaos::InputActionEnumerator & in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
 	{
-		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::KP_ADD), "Next Bitmap Index", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::KP_ADD), "Next Bitmap Index", [this]()
 		{
 			++bitmap_index;
 		}))
@@ -166,7 +166,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator(RequestKeyPressed(chaos::KeyboardButton::KP_SUBTRACT), "Previous Bitmap Index", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::KP_SUBTRACT), "Previous Bitmap Index", [this]()
 		{
 			if (bitmap_index > 0)
 				--bitmap_index;
@@ -175,7 +175,7 @@ protected:
 			return true;
 		}
 
-		return chaos::Window::EnumerateKeyActions(in_action_enumerator, in_context);
+		return chaos::Window::EnumerateInputActions(in_action_enumerator, in_context);
 	}
 
 protected:

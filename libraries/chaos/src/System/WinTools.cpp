@@ -282,8 +282,22 @@ namespace chaos
 
 		void ShowFile(FilePathParam const& path)
 		{
+			// XXX: ShellExecuteA may produce some message pumping
+			//      so if this function is called from a message callback, the message pump and the message callbacks may be
+			//      called from inside ShellExecuteA !!
+			//      That's why i call ShellExecuteA from another thread preserving the current thread message queue
 			boost::filesystem::path const& resolved_path = path.GetResolvedPath();
-			ShellExecuteA(nullptr, "open", resolved_path.string().c_str(), nullptr, nullptr, SW_SHOWNORMAL);     // XXX: require CoInitialize(nullptr);
+
+			boost::thread thread([resolved_path]()
+			{
+				if (SUCCEEDED(CoInitializeEx(nullptr, COINIT_MULTITHREADED)))
+				{
+					ShellExecuteA(nullptr, "open", resolved_path.string().c_str(), nullptr, nullptr, SW_SHOWNORMAL);
+					CoUninitialize();
+				}
+			});
+
+			thread.detach();
 		}
 
 		boost::filesystem::path GetUserLocalPath()

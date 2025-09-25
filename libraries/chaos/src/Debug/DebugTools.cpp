@@ -121,13 +121,15 @@ namespace chaos
 					fprintf(file, "%s(%d)  msg = [%s]   file = [%s]\r\n", location.c_str(), in_location.line(), in_message, in_location.file_name());
 				else
 					fprintf(file, "%s(%d)    file = [%s]\r\n", location.c_str(), in_location.line(), in_location.file_name());
+
 				fclose(file);
 			}
 			// start the application that shows .txt files
 			if (first_call)
+			{
+				first_call = false;
 				WinTools::ShowFile(filepath.c_str());
-
-			first_call = false;
+			}
 		}
 
 	}; // namespace DebugTools

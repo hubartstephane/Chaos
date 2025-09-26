@@ -12,6 +12,29 @@ namespace chaos
 	 *    A class that deserves to be used as argument in method instead of std::function.
 	 *    There is no copy, so any underlying object should have a longer lifetime.
 	 *    Not deserved to be stored for later
+	 * 
+	 * It's important that copy constructor/operator do not keep a reference upon their LightweightFunction parameter
+	 * (this parameter is on the stack and is being destroyed at the end of the constructor/operator)
+	 * 
+	 * the templated functions tend to absorb the copy constructor/operator
+	 * that's why the copy constructor/operator are removed and the distinction is being made thanks to if-constexpr
+	 * 
+	 * GOOD
+	 * ----
+	 *                      pointer
+	 * LightweightFunction ---------> Callable   (the callable lifetime must be greater than the LightweightFunction's
+	 * 
+	 * 
+	 * BAD
+	 * ---
+	 * 
+	 *                      pointer                        pointer
+	 * LightweightFunction ---------> LightweightFunction ---------> Callable
+	 *                                        ^
+	 *                                        |
+	 *                                 parameter on the stack
+	 *                   (being destroyed at the end of construor/copy operator)
+	 * 
 	 */
 
 	template<typename RETURN_TYPE, typename... PARAMS>
@@ -21,44 +44,68 @@ namespace chaos
 
 		/** default constructor */
 		LightweightFunction() = default;
-		/** copy constructor */
-		LightweightFunction(LightweightFunction const&) = default;
-		/** move constructor */
-		LightweightFunction(LightweightFunction&&) = default;
 		/** constructor with initializer */
 		template<typename CALLABLE>
 		LightweightFunction(CALLABLE const& callable)
 		{
-			process_function = &ProcessConst<CALLABLE>;
-			src = (void*)(&callable);
+			if constexpr (std::is_same_v<CALLABLE, LightweightFunction>)
+			{
+				process_function = callable.process_function;
+				src = callable.src;
+			}
+			else
+			{
+				process_function = &ProcessConst<CALLABLE>;
+				src = (void*)(&callable);
+			}
 		}
 		/** constructor with initializer */
 		template<typename CALLABLE>
 		LightweightFunction(CALLABLE& callable)
 		{
-			process_function = &Process<CALLABLE>;
-			src = (void*)(&callable);
+			if constexpr (std::is_same_v<CALLABLE, LightweightFunction>)
+			{
+				process_function = callable.process_function;
+				src = callable.src;
+			}
+			else
+			{
+				process_function = &Process<CALLABLE>;
+				src = (void*)(&callable);
+			}
 		}
-
-		/** assignation operator */
-		LightweightFunction& operator = (LightweightFunction const& src) = default;
-		/** move operator */
-		LightweightFunction& operator = (LightweightFunction&& src) = default;
 
 		/** assign a new real underlying function */
 		template<typename CALLABLE>
 		LightweightFunction& operator = (CALLABLE const& callable)
 		{
-			process_function = &ProcessConst<CALLABLE>;
-			src = (void*)(&callable);
+			if constexpr (std::is_same_v<CALLABLE, LightweightFunction>)
+			{
+				process_function = callable.process_function;
+				src = callable.src;
+			}
+			else
+			{
+
+				process_function = &ProcessConst<CALLABLE>;
+				src = (void*)(&callable);
+			}
 			return *this;
 		}
 		/** assign a new real underlying function */
 		template<typename CALLABLE>
 		LightweightFunction& operator = (CALLABLE& callable)
 		{
-			process_function = &Process<CALLABLE>;
-			src = (void*)(&callable);
+			if constexpr (std::is_same_v<CALLABLE, LightweightFunction>)
+			{
+				process_function = callable.process_function;
+				src = callable.src;
+			}
+			else
+			{
+				process_function = &Process<CALLABLE>;
+				src = (void*)(&callable);
+			}
 			return *this;
 		}
 

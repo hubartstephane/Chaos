@@ -14,6 +14,9 @@ namespace chaos
 	{
 	public:
 
+		/** clear the cache */
+		void Clear();
+
 		/** check whether the key is still available and lock it for further requests (do the same for related inputs) */
 		bool TryConsumeInput(Key const& in_key, InputDeviceInterface const* in_input_device);
 		/** check whether the key is still available and lock it for further requests (do the same for related inputs) */

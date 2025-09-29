@@ -480,27 +480,18 @@ namespace chaos
 			main_clock->TickClock(delta_time);
 		if (sound_manager != nullptr)
 			sound_manager->Tick(delta_time);
-		// ,  the inputs
-
-		//PollInputDevices();
-
+		// handle the inputs
+		PollInputDevices();
+		consumption_cache.Clear(); // clear the cache for input events to come
 
 		return true;
 	}
 
-
-
-
-
-
-
-
-
 	void WindowApplication::PollInputDevices()
 	{
 		KeyboardAndMouseState const* keyboard_and_mouse = KeyboardAndMouseState::GetInstance();
-
-		InputConsumptionCache consumption_cache;
+		if (keyboard_and_mouse == nullptr)
+			return;
 
 		OnPollInputEventReceiverHierarchyTraverser traverser(keyboard_and_mouse, &consumption_cache);
 

@@ -8,11 +8,6 @@ namespace chaos
 	{
 		double frame_time = FrameTimeManager::GetInstance()->GetCurrentFrameTime();
 
-		if (!in_value && frame_time == update_time)
-			frame_time = frame_time;
-
-
-
 		if (update_time < 0.0) // very first initialization
 		{
 			value = in_value;

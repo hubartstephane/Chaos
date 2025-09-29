@@ -222,6 +222,9 @@ namespace chaos
 		/** change the current input mode (search the application) */
 		static void SetApplicationInputMode(InputMode new_mode);
 
+		/** returns the consumption cache */
+		InputConsumptionCache& GetInputConsumptionCache() { return consumption_cache; }
+
 	protected:
 
 		/** remove the window from the handling list. destroy it if necessary */
@@ -393,6 +396,9 @@ namespace chaos
 
 		/** indicates whenever the application is being quit (closing windows in cascade may cause several Quit() calls */
 		bool is_quitting = false;
+
+		/** the input consumption cache. To avoid input events to be handled in both event callback and polling code */
+		InputConsumptionCache consumption_cache;
 	};
 
 #endif

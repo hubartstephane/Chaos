@@ -3,6 +3,13 @@
 
 namespace chaos
 {
+	void InputConsumptionCache::Clear()
+	{
+		consumed_keys.clear();
+		consumed_axes.clear();
+		consumed_sticks.clear();
+	}
+
 	bool InputConsumptionCache::TryConsumeInput(Key const& in_key, InputDeviceInterface const* in_input_device) // check whether the key is still available and lock it for further requests (do the same for related inputs)
 	{
 		bool result = true;

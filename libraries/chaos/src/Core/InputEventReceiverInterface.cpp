@@ -107,20 +107,32 @@ namespace chaos
 		return false;
 	}
 
-	bool InputEventReceiverInterface::OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event)
+	bool InputEventReceiverInterface::OnMouseButtonImpl(MouseButtonEvent const& mouse_button_event)
 	{
-		return ProcessKeyActions(mouse_button_event);
+		return ProcessKeyAction(mouse_button_event);
+	}
+
+	bool InputEventReceiverInterface::OnKeyEventImpl(KeyEvent const& key_event)
+	{
+		return ProcessKeyAction(key_event);
+	}
+
+	bool InputEventReceiverInterface::ProcessKeyAction(KeyEventBase const& key_event)
+	{
+		KeyboardAndMouseState const* keyboard_and_mouse = KeyboardAndMouseState::GetInstance();
+		if (keyboard_and_mouse == nullptr)
+			return false;
+
+		// XXX: do not use WindowApplication::consumption_cache
+		//      we only want to register inside it the key for current key_event
+		//      this is done inside OnKeyEventInputEventReceiverHierarchyTraverser
+		InputConsumptionCache consumption_cache;
+		OnKeyEventInputEventReceiverHierarchyTraverser traverser(key_event, keyboard_and_mouse, &consumption_cache);
+		return traverser.Traverse(this);
 	}
 
 	bool InputEventReceiverInterface::OnMouseWheelImpl(double scroll_x, double scroll_y)
 	{
-		return false;
-	}
-
-	bool InputEventReceiverInterface::OnKeyEventImpl(KeyEvent const & key_event)
-	{
-		return ProcessKeyActions(key_event);
-
 		return false;
 	}
 
@@ -132,17 +144,6 @@ namespace chaos
 	bool InputEventReceiverInterface::InvokeWithUpgradedInputDevice(InputDeviceInterface const * in_input_device, InvokeWithUpgradedInputDeviceFunction in_func)
 	{
 		return in_func(in_input_device); // by default, simple passthrough
-	}
-
-	bool InputEventReceiverInterface::ProcessKeyActions(KeyEventBase const & key_event)
-	{
-		KeyboardAndMouseState const* keyboard_and_mouse = KeyboardAndMouseState::GetInstance();
-
-		InputConsumptionCache consumption_cache;
-
-		OnKeyEventInputEventReceiverHierarchyTraverser traverser(key_event, keyboard_and_mouse, &consumption_cache);
-
-		return traverser.Traverse(this);
 	}
 
 	bool InputEventReceiverInterface::EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context)

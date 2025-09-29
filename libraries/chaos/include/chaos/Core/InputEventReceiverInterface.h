@@ -58,9 +58,6 @@ namespace chaos
 		/** called whenever a char is generated */
 		bool OnCharEvent(unsigned int c);
 
-		/** process an incomming event using the known KeyActions */
-		bool ProcessKeyActions(KeyEventBase const & key_event);
-
 		/** traverse all receivers hierarchy and call a functor on all elements */
 		virtual bool TraverseInputEventReceiverHierarchy(InputEventReceiverHierarchyTraverser & in_traverser);
 		/** enumerate some declared key actions */
@@ -83,6 +80,9 @@ namespace chaos
 
 		/** the user callback called when current input mode changes */
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode);
+
+		/** handle some key action */
+		bool ProcessKeyAction(KeyEventBase const& key_event);
 
 		/** internal method to check whether a button is pressed */
 		virtual bool DoCheckKeyDown(Key key) const;

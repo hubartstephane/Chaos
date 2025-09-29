@@ -698,22 +698,6 @@ namespace chaos
 
 	void Window::DoOnKeyEvent(GLFWwindow* in_glfw_window, int keycode, int scancode, int action, int modifiers)
 	{
-		static double last_call = -1.0f;
-
-
-		double tt = FrameTimeManager::GetInstance()->GetCurrentFrameTime();
-
-		if (tt == last_call)
-		{
-			tt = tt;
-
-		}
-		else
-		{
-			last_call = tt;
-		}
-
-
 		// notify the application of the keyboard state
 		WindowApplication::SetApplicationInputMode(InputMode::KEYBOARD);
 

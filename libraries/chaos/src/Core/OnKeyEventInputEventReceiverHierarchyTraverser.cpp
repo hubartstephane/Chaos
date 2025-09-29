@@ -13,7 +13,7 @@ namespace chaos
 
 	bool OnKeyEventInputEventReceiverHierarchyTraverser::Process(InputEventReceiverInterface* in_event_receiver)
 	{
-		OnKeyEventInputActionEnumerator action_enumerator(key_event, input_device, consumption_cache);
+		OnKeyEventInputActionEnumerator action_enumerator(in_event_receiver, key_event, input_device, consumption_cache);
 		return in_event_receiver->EnumerateInputActions(action_enumerator, EnumerateInputActionContext::OnEvent);
 	}
 

@@ -4,6 +4,11 @@
 
 namespace chaos
 {
+	InputActionEnumerator::InputActionEnumerator(InputEventReceiverInterface const* in_event_receiver) :
+		event_receiver(in_event_receiver)
+	{
+	}
+
 	bool InputActionEnumerator::CheckAndProcess(InputRequestBase const & in_request, char const * in_title, InputActionFunction in_action_func)
 	{
 		return CheckAndProcess(in_request, in_title, true, in_action_func);

@@ -12,7 +12,7 @@ namespace chaos
 
 	bool OnPollInputEventReceiverHierarchyTraverser::Process(InputEventReceiverInterface* in_event_receiver)
 	{
-		OnPollInputActionEnumerator action_enumerator(input_device, consumption_cache);
+		OnPollInputActionEnumerator action_enumerator(in_event_receiver, input_device, consumption_cache);
 		return in_event_receiver->EnumerateInputActions(action_enumerator, EnumerateInputActionContext::OnPolling);
 	}
 

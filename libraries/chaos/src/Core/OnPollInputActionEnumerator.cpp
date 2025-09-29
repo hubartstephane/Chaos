@@ -4,7 +4,8 @@
 
 namespace chaos
 {
-	OnPollInputActionEnumerator::OnPollInputActionEnumerator(InputDeviceInterface const* in_input_device, InputConsumptionCache* in_consumption_cache) :
+	OnPollInputActionEnumerator::OnPollInputActionEnumerator(InputEventReceiverInterface const* in_event_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache* in_consumption_cache) :
+		InputActionEnumerator(in_event_receiver),
 		input_device(in_input_device),
 		consumption_cache(in_consumption_cache)
 	{
@@ -12,7 +13,7 @@ namespace chaos
 
 	bool OnPollInputActionEnumerator::CheckAndProcess(InputRequestBase const& in_request, char const* in_title, bool in_enabled, InputActionFunction in_func)
 	{
-		if (in_request.Check(input_device, *consumption_cache))
+		if (in_request.Check(event_receiver, input_device, *consumption_cache))
 		{
 			if (in_enabled)
 				in_func(); // continue to next request

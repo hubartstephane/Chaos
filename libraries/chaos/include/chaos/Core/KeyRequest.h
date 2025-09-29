@@ -31,9 +31,9 @@ namespace chaos
 		KeyRequest ForbidModifiers(KeyModifier in_modifiers) const;
 
 		/** override */
-		virtual bool Check(KeyEventBase const& in_key_event, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const override;
+		virtual bool Check(InputEventReceiverInterface const* in_event_receiver, KeyEventBase const& in_key_event, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const override;
 		/** override */
-		virtual bool Check(InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const override;
+		virtual bool Check(InputEventReceiverInterface const* in_event_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const override;
 
 	public:
 

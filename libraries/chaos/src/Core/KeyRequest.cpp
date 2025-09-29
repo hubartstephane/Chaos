@@ -4,7 +4,7 @@
 
 namespace chaos
 {
-	bool KeyRequest::Check(InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const
+	bool KeyRequest::Check(InputEventReceiverInterface const* in_event_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const
 	{
 		// early exit
 		if (!key.IsValid())
@@ -98,7 +98,7 @@ namespace chaos
 		return false;
 	}
 
-	bool KeyRequest::Check(KeyEventBase const& in_key_event, InputDeviceInterface const * in_input_device, InputConsumptionCache & in_consumption_cache) const
+	bool KeyRequest::Check(InputEventReceiverInterface const* in_event_receiver, KeyEventBase const& in_key_event, InputDeviceInterface const * in_input_device, InputConsumptionCache & in_consumption_cache) const
 	{
 		// early exit
 		if (!key.IsValid())

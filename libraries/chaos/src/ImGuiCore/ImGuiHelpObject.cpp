@@ -39,19 +39,15 @@ namespace chaos
 					ImGui::TableSetColumnIndex(4); ImGui::Text("%s", in_title);
 					ImGui::EndDisabled();
 				}
-
-
-
 				return false;
 			}
 		};
 
 		ImGuiTools::DrawImGuiTable("objects", {}, "Key", "Mandatory Mod.", "Forbidden Mod.", "Action", "Description")([&]()
 		{
-			OnQueryInputActionEnumerator action_enumerator;
-
-			DelegateInputEventReceiverHierarchyTraverser traverser([&action_enumerator](InputEventReceiverInterface * in_event_receiver)
+			DelegateInputEventReceiverHierarchyTraverser traverser([](InputEventReceiverInterface * in_event_receiver)
 			{
+				OnQueryInputActionEnumerator action_enumerator(in_event_receiver);
 				in_event_receiver->EnumerateInputActions(action_enumerator, EnumerateInputActionContext::OnQuery);
 				return false;
 			});

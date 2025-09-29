@@ -15,7 +15,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		OnKeyEventInputActionEnumerator(KeyEventBase const& in_key_event, InputDeviceInterface const* in_input_device, InputConsumptionCache* in_consumption_cache);
+		OnKeyEventInputActionEnumerator(InputEventReceiverInterface const* in_event_receiver, KeyEventBase const& in_key_event, InputDeviceInterface const* in_input_device, InputConsumptionCache* in_consumption_cache);
 
 		/** override */
 		virtual bool CheckAndProcess(InputRequestBase const& in_request, char const* in_title, bool in_enabled, InputActionFunction in_func) override;
@@ -27,7 +27,7 @@ namespace chaos
 		/** the input device considered */
 		InputDeviceInterface const* input_device = nullptr;
 		/** the consumption cache */
-		InputConsumptionCache* consumption_cache = nullptr;
+		InputConsumptionCache* consumption_cache = nullptr;		
 	};
 
 #endif

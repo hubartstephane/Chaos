@@ -57,18 +57,6 @@ namespace chaos
 		{
 			value = T();
 			update_time = -1.0;
-			consumed = false;
-		}
-		/** lock the input until next frame */
-		void Consume() const
-		{
-			assert(!consumed);
-			consumed = true;
-		}
-		/** is the input already consumed this frame */
-		bool IsConsumed() const
-		{
-			return consumed;
 		}
 
 	public:
@@ -77,8 +65,6 @@ namespace chaos
 		T value = T();
 		/** time when the state has been updated */
 		double update_time = -1.0;
-		/** whether the input has been consumed this frame */
-		bool consumed = false;
 	};
 
 	/**

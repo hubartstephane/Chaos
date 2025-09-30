@@ -45,10 +45,10 @@ namespace chaos
 
 		ImGuiTools::DrawImGuiTable("objects", {}, "Key", "Mandatory Mod.", "Forbidden Mod.", "Action", "Description")([&]()
 		{
-			DelegateInputEventReceiverHierarchyTraverser traverser([](InputEventReceiverInterface * in_event_receiver)
+			DelegateInputReceiverTraverser traverser([](InputReceiverInterface * in_input_receiver)
 			{
-				OnQueryInputActionEnumerator action_enumerator(in_event_receiver);
-				in_event_receiver->EnumerateInputActions(action_enumerator, EnumerateInputActionContext::OnQuery);
+				OnQueryInputActionEnumerator action_enumerator(in_input_receiver);
+				in_input_receiver->EnumerateInputActions(action_enumerator, EnumerateInputActionContext::OnQuery);
 				return false;
 			});
 			traverser.Traverse(window);

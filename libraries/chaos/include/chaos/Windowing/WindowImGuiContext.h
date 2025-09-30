@@ -7,7 +7,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class CHAOS_API WindowImGuiContext : public InputEventReceiverInterface, public ImGuiInterface
+	class CHAOS_API WindowImGuiContext : public InputReceiverInterface, public ImGuiInterface
 	{
 		friend class Window;
 

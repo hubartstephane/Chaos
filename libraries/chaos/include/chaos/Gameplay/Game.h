@@ -8,7 +8,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class CHAOS_API Game : public Object, public InputEventReceiverInterface, public GPUProgramProviderInterface, public ConfigurationUserInterface
+	class CHAOS_API Game : public Object, public InputReceiverInterface, public GPUProgramProviderInterface, public ConfigurationUserInterface
 	{
 		friend class GameGamepadManager;
 		friend class GameViewportWidget;
@@ -197,7 +197,7 @@ namespace chaos
 		virtual void TickGameInputs(float delta_time);
 
 		/** override */
-		virtual bool TraverseInputEventReceiverHierarchy(InputEventReceiverHierarchyTraverser & in_traverser) override;
+		virtual bool TraverseInputReceiver(InputReceiverTraverser & in_traverser) override;
 		/** whenever a key event is received */
 		virtual bool OnKeyEventImpl(KeyEvent const& key_event) override;
 		/** whenever a mouse event is received */

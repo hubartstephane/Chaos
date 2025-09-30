@@ -571,19 +571,19 @@ namespace chaos
 		});
 	}
 
-	bool Window::TraverseInputEventReceiverHierarchy(InputEventReceiverHierarchyTraverser & in_traverser)
+	bool Window::TraverseInputReceiver(InputReceiverTraverser & in_traverser)
 	{
 		// try window client
 		if (window_client != nullptr)
 			if (in_traverser.Traverse(window_client.get()))
 				return true;
 		// try super call
-		return WindowInterface::TraverseInputEventReceiverHierarchy(in_traverser);
+		return WindowInterface::TraverseInputReceiver(in_traverser);
 	}
 
 	bool Window::DoDispatchInputEvent(DoDispatchInputEventFunction func)
 	{
-		DelegateInputEventReceiverHierarchyTraverser traverser(func);
+		DelegateInputReceiverTraverser traverser(func);
 
 		// try imgui context
 		if (traverser.Traverse(&window_imgui_context))
@@ -618,7 +618,7 @@ namespace chaos
 
 		my_window->mouse_position = position;
 
-		my_window->DispatchInputEventWithContext(&InputEventReceiverInterface::OnMouseMove, delta);
+		my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnMouseMove, delta);
 	}
 
 	static KeyAction GetKeyActionFromGLFW(int action)
@@ -679,7 +679,7 @@ namespace chaos
 		mouse_button_event.action = GetKeyActionFromGLFW(action);
 		mouse_button_event.modifiers = GetKeyModifiersFromGLFW(modifiers);
 
-		my_window->DispatchInputEventWithContext(&InputEventReceiverInterface::OnMouseButton, mouse_button_event);
+		my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnMouseButton, mouse_button_event);
 	}
 
 	void Window::DoOnMouseWheel(GLFWwindow* in_glfw_window, double scroll_x, double scroll_y)
@@ -693,7 +693,7 @@ namespace chaos
 			return;
 
 		// dispatch event
-		my_window->DispatchInputEventWithContext(&InputEventReceiverInterface::OnMouseWheel, scroll_x, scroll_y);
+		my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnMouseWheel, scroll_x, scroll_y);
 	}
 
 	void Window::DoOnKeyEvent(GLFWwindow* in_glfw_window, int keycode, int scancode, int action, int modifiers)
@@ -730,7 +730,7 @@ namespace chaos
 		if (keyboard_button == KeyboardButton::LEFT)
 			keyboard_button = keyboard_button;
 		
-		my_window->DispatchInputEventWithContext(&InputEventReceiverInterface::OnKeyEvent, key_event);
+		my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnKeyEvent, key_event);
 	}
 
 	void Window::DoOnCharEvent(GLFWwindow* in_glfw_window, unsigned int c)
@@ -744,7 +744,7 @@ namespace chaos
 			return;
 
 		// dispatch the event
-		my_window->DispatchInputEventWithContext(&InputEventReceiverInterface::OnCharEvent, c);
+		my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnCharEvent, c);
 	}
 
 	void Window::DoOnDropFile(GLFWwindow* in_glfw_window, int count, char const** paths)

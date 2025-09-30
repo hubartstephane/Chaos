@@ -111,11 +111,11 @@ protected:
 		return true; // refresh
 	}
 
-	virtual bool TraverseInputEventReceiverHierarchy(chaos::InputEventReceiverHierarchyTraverser & in_traverser) override
+	virtual bool TraverseInputReceiver(chaos::InputReceiverTraverser & in_traverser) override
 	{
 		if (in_traverser.Traverse(&fps_view_controller))
 			return true;
-		return chaos::Window::TraverseInputEventReceiverHierarchy(in_traverser);
+		return chaos::Window::TraverseInputReceiver(in_traverser);
 	}
 
 	virtual bool OnMouseButtonImpl(chaos::MouseButtonEvent const &mouse_button_event) override

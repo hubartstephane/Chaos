@@ -4,7 +4,7 @@
 
 namespace chaos
 {
-	void InputEventReceiverInterface::SetInputMode(InputMode new_mode)
+	void InputReceiverInterface::SetInputMode(InputMode new_mode)
 	{
 		if (new_mode == input_mode)
 			return;
@@ -13,7 +13,7 @@ namespace chaos
 		OnInputModeChanged(new_mode, old_mode);
 	}
 
-	bool InputEventReceiverInterface::CheckKeyDown(Key const* keys)
+	bool InputReceiverInterface::CheckKeyDown(Key const* keys)
 	{
 		// early exit
 		if (keys == nullptr)
@@ -25,7 +25,7 @@ namespace chaos
 		return false;
 	}
 
-	bool InputEventReceiverInterface::CheckKeyDown(Key key)
+	bool InputReceiverInterface::CheckKeyDown(Key key)
 	{
 		if (DoCheckKeyDown(key))
 		{
@@ -40,7 +40,7 @@ namespace chaos
 		return false;
 	}
 
-	bool InputEventReceiverInterface::DoCheckKeyDown(Key key) const
+	bool InputReceiverInterface::DoCheckKeyDown(Key key) const
 	{
 		if (KeyboardAndMouseState const * keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance())
 			if (KeyState const* state = keyboard_and_mouse_state->GetInputState(key))
@@ -48,11 +48,11 @@ namespace chaos
 		return false;
 	}
 
-	void InputEventReceiverInterface::OnInputModeChanged(InputMode new_mode, InputMode old_mode)
+	void InputReceiverInterface::OnInputModeChanged(InputMode new_mode, InputMode old_mode)
 	{
 	}
 
-	bool InputEventReceiverInterface::OnMouseMove(glm::vec2 const& delta)
+	bool InputReceiverInterface::OnMouseMove(glm::vec2 const& delta)
 	{
 		if (OnMouseMoveImpl(delta))
 		{
@@ -62,7 +62,7 @@ namespace chaos
 		return false;
 	}
 
-	bool InputEventReceiverInterface::OnMouseButton(MouseButtonEvent const &mouse_button_event)
+	bool InputReceiverInterface::OnMouseButton(MouseButtonEvent const &mouse_button_event)
 	{
 		if (OnMouseButtonImpl(mouse_button_event))
 		{
@@ -72,7 +72,7 @@ namespace chaos
 		return false;
 	}
 
-	bool InputEventReceiverInterface::OnMouseWheel(double scroll_x, double scroll_y)
+	bool InputReceiverInterface::OnMouseWheel(double scroll_x, double scroll_y)
 	{
 		if (OnMouseWheelImpl(scroll_x, scroll_y))
 		{
@@ -82,7 +82,7 @@ namespace chaos
 		return false;
 	}
 
-	bool InputEventReceiverInterface::OnKeyEvent(KeyEvent const & key_event)
+	bool InputReceiverInterface::OnKeyEvent(KeyEvent const & key_event)
 	{
 		if (OnKeyEventImpl(key_event))
 		{
@@ -92,7 +92,7 @@ namespace chaos
 		return false;
 	}
 
-	bool InputEventReceiverInterface::OnCharEvent(unsigned int c)
+	bool InputReceiverInterface::OnCharEvent(unsigned int c)
 	{
 		if (OnCharEventImpl(c))
 		{
@@ -102,22 +102,22 @@ namespace chaos
 		return false;
 	}
 
-	bool InputEventReceiverInterface::OnMouseMoveImpl(glm::vec2 const& delta)
+	bool InputReceiverInterface::OnMouseMoveImpl(glm::vec2 const& delta)
 	{
 		return false;
 	}
 
-	bool InputEventReceiverInterface::OnMouseButtonImpl(MouseButtonEvent const& mouse_button_event)
+	bool InputReceiverInterface::OnMouseButtonImpl(MouseButtonEvent const& mouse_button_event)
 	{
 		return ProcessKeyAction(mouse_button_event);
 	}
 
-	bool InputEventReceiverInterface::OnKeyEventImpl(KeyEvent const& key_event)
+	bool InputReceiverInterface::OnKeyEventImpl(KeyEvent const& key_event)
 	{
 		return ProcessKeyAction(key_event);
 	}
 
-	bool InputEventReceiverInterface::ProcessKeyAction(KeyEventBase const& key_event)
+	bool InputReceiverInterface::ProcessKeyAction(KeyEventBase const& key_event)
 	{
 		KeyboardAndMouseState const* keyboard_and_mouse = KeyboardAndMouseState::GetInstance();
 		if (keyboard_and_mouse == nullptr)
@@ -125,33 +125,33 @@ namespace chaos
 
 		// XXX: do not use WindowApplication::consumption_cache
 		//      we only want to register inside it the key for current key_event
-		//      this is done inside OnKeyEventInputEventReceiverHierarchyTraverser
+		//      this is done inside OnKeyEventInputReceiverTraverser
 		InputConsumptionCache consumption_cache;
-		OnKeyEventInputEventReceiverHierarchyTraverser traverser(key_event, keyboard_and_mouse, &consumption_cache);
+		OnKeyEventInputReceiverTraverser traverser(key_event, keyboard_and_mouse, &consumption_cache);
 		return traverser.Traverse(this);
 	}
 
-	bool InputEventReceiverInterface::OnMouseWheelImpl(double scroll_x, double scroll_y)
+	bool InputReceiverInterface::OnMouseWheelImpl(double scroll_x, double scroll_y)
 	{
 		return false;
 	}
 
-	bool InputEventReceiverInterface::OnCharEventImpl(unsigned int c)
+	bool InputReceiverInterface::OnCharEventImpl(unsigned int c)
 	{
 		return false;
 	}
 
-	bool InputEventReceiverInterface::InvokeWithUpgradedInputDevice(InputDeviceInterface const * in_input_device, InvokeWithUpgradedInputDeviceFunction in_func)
+	bool InputReceiverInterface::InvokeWithUpgradedInputDevice(InputDeviceInterface const * in_input_device, InvokeWithUpgradedInputDeviceFunction in_func)
 	{
 		return in_func(in_input_device); // by default, simple passthrough
 	}
 
-	bool InputEventReceiverInterface::EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context)
+	bool InputReceiverInterface::EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context)
 	{
 		return false;
 	}
 
-	bool InputEventReceiverInterface::TraverseInputEventReceiverHierarchy(InputEventReceiverHierarchyTraverser & in_traverser)
+	bool InputReceiverInterface::TraverseInputReceiver(InputReceiverTraverser & in_traverser)
 	{
 		return in_traverser.Process(this);
 	}

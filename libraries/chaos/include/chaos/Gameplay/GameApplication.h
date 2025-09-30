@@ -33,7 +33,7 @@ namespace chaos
 		virtual bool FillAtlasGeneratorInput(AtlasInput& input) override;
 
 		/** override */
-		virtual bool TraverseInputEventReceiverHierarchy(InputEventReceiverHierarchyTraverser & in_traverser) override;
+		virtual bool TraverseInputReceiver(InputReceiverTraverser & in_traverser) override;
 
 	protected:
 

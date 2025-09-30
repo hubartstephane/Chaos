@@ -10,7 +10,7 @@ namespace chaos
 	* WindowApplication
 	*/
 
-	class CHAOS_API WindowApplication : public Application, public TickableInterface, public GPUProgramProviderInterface, public InputEventReceiverInterface
+	class CHAOS_API WindowApplication : public Application, public TickableInterface, public GPUProgramProviderInterface, public InputReceiverInterface
 	{
 		friend class Window;
 

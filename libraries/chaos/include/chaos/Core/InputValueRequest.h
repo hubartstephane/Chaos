@@ -24,7 +24,7 @@ namespace chaos
 		}
 
 		/** override */
-		virtual InputRequestResult Check(InputEventReceiverInterface const* in_event_receiver, KeyEventBase const& in_key_event, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
+		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, KeyEventBase const& in_key_event, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
 		{
 			if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, Key>) // this is only valid for key event
 			{
@@ -46,7 +46,7 @@ namespace chaos
 		}
 
 		/** override */
-		virtual InputRequestResult Check(InputEventReceiverInterface const* in_event_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
+		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
 		{
 			// early exit
 			if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, Key>)

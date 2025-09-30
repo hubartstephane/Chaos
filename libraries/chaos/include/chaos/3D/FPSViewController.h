@@ -77,7 +77,7 @@ namespace chaos
 	* FPSViewController : an utility class to simply handle a FPS camera in a GLFW application. Handle keys ...
 	*/
 
-	class CHAOS_API FPSViewController : public InputEventReceiverInterface
+	class CHAOS_API FPSViewController : public InputReceiverInterface
 	{
 	public:
 

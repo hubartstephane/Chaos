@@ -2,7 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class InputEventReceiverInterface;
+	class InputReceiverInterface;
 
 	enum class EnumerateInputActionContext;
 
@@ -26,16 +26,16 @@ namespace chaos
 	};
 
 	/**
-	* InputEventReceiverInterface: an interface for objects that can handle inputs
+	* InputReceiverInterface: an interface for objects that can handle inputs
 	*/
 
-	class CHAOS_API InputEventReceiverInterface
+	class CHAOS_API InputReceiverInterface
 	{
 
 	public:
 	
 		/** destructor */
-		virtual ~InputEventReceiverInterface() = default;
+		virtual ~InputReceiverInterface() = default;
 
 		/** change the current input mode */
 		void SetInputMode(InputMode new_mode);
@@ -59,7 +59,7 @@ namespace chaos
 		bool OnCharEvent(unsigned int c);
 
 		/** traverse all receivers hierarchy and call a functor on all elements */
-		virtual bool TraverseInputEventReceiverHierarchy(InputEventReceiverHierarchyTraverser & in_traverser);
+		virtual bool TraverseInputReceiver(InputReceiverTraverser & in_traverser);
 		/** enumerate some declared key actions */
 		virtual bool EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context);
 		/** upgrade the input device and call some functor */

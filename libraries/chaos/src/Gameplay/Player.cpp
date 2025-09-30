@@ -355,7 +355,7 @@ namespace chaos
 			return gamepad->IsKeyDown(button.GetGamepadButton());
 		}
 		// super call
-		return InputEventReceiverInterface::DoCheckKeyDown(button);
+		return InputReceiverInterface::DoCheckKeyDown(button);
 	}
 
 	bool Player::InvokeWithUpgradedInputDevice(InputDeviceInterface const * in_input_device, InvokeWithUpgradedInputDeviceFunction in_func)

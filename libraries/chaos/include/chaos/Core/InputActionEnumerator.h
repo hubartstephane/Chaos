@@ -21,7 +21,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		InputActionEnumerator(InputEventReceiverInterface const* in_event_receiver);
+		InputActionEnumerator(InputReceiverInterface const* in_input_receiver);
 
 		/** the operator */
 		virtual bool CheckAndProcess(InputRequestBase const& in_request, char const* in_title, bool in_enabled, InputActionFunction in_action_func);
@@ -32,7 +32,7 @@ namespace chaos
 	protected:
 		
 		/** the handled receiver */
-		InputEventReceiverInterface const* event_receiver = nullptr;
+		InputReceiverInterface const* input_receiver = nullptr;
 	};
 
 #endif

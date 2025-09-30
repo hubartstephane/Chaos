@@ -4,12 +4,12 @@
 
 namespace chaos
 {
-	InputRequestResult InputRequestBase::Check(InputEventReceiverInterface const* in_event_receiver, KeyEventBase const& in_key_event, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const
+	InputRequestResult InputRequestBase::Check(InputReceiverInterface const* in_input_receiver, KeyEventBase const& in_key_event, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const
 	{
 		return InputRequestResult::Invalid;
 	}
 
-	InputRequestResult InputRequestBase::Check(InputEventReceiverInterface const* in_event_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const
+	InputRequestResult InputRequestBase::Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const
 	{
 		return InputRequestResult::Invalid;
 	}

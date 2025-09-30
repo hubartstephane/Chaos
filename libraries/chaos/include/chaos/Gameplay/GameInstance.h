@@ -10,7 +10,7 @@ namespace chaos
 	// GameInstance
 	// =============================================
 
-	class CHAOS_API GameInstance : public Tickable, public InputEventReceiverInterface, public GPUProgramProviderInterface, public CheckpointObject<GameCheckpoint>, public ConfigurationUserInterface
+	class CHAOS_API GameInstance : public Tickable, public InputReceiverInterface, public GPUProgramProviderInterface, public CheckpointObject<GameCheckpoint>, public ConfigurationUserInterface
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
@@ -83,7 +83,7 @@ namespace chaos
 		virtual bool OnGamepadInput(PhysicalGamepad* in_physical_gamepad);
 
 		/** override */
-		virtual bool TraverseInputEventReceiverHierarchy(InputEventReceiverHierarchyTraverser & in_traverser) override;
+		virtual bool TraverseInputReceiver(InputReceiverTraverser & in_traverser) override;
 
 		/** returns the maximum number of player */
 		virtual size_t GetMaxPlayerCount() const;

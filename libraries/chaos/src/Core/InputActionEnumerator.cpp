@@ -4,8 +4,8 @@
 
 namespace chaos
 {
-	InputActionEnumerator::InputActionEnumerator(InputEventReceiverInterface const* in_event_receiver) :
-		event_receiver(in_event_receiver)
+	InputActionEnumerator::InputActionEnumerator(InputReceiverInterface const* in_input_receiver) :
+		input_receiver(in_input_receiver)
 	{
 	}
 

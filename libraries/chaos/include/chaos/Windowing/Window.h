@@ -15,7 +15,7 @@ namespace chaos
 	 * some aliases
 	 */
 	 
-	using DoDispatchInputEventFunction = LightweightFunction<bool(InputEventReceiverInterface*)>;
+	using DoDispatchInputEventFunction = LightweightFunction<bool(InputReceiverInterface*)>;
 
 	/**
 	* CursorMode
@@ -200,7 +200,7 @@ namespace chaos
 		void SetWindowClient(WindowClient * in_client);
 
 		/** override */
-		virtual bool TraverseInputEventReceiverHierarchy(InputEventReceiverHierarchyTraverser & in_traverser) override;
+		virtual bool TraverseInputReceiver(InputReceiverTraverser & in_traverser) override;
 		/** override */
 		virtual bool EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context) override;
 
@@ -360,9 +360,9 @@ namespace chaos
 		template<typename FUNC, typename ...PARAMS>
 		bool DispatchInputEventWithContext(FUNC const & func, PARAMS&& ...params)
 		{
-			auto event_func = [&](InputEventReceiverInterface * in_event_receiver)
+			auto event_func = [&](InputReceiverInterface * in_input_receiver)
 			{
-				return (in_event_receiver->*func)(std::forward<PARAMS>(params)...);
+				return (in_input_receiver->*func)(std::forward<PARAMS>(params)...);
 			};
 
 			return WithWindowContext([this, &event_func]()

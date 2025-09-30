@@ -493,7 +493,7 @@ namespace chaos
 		if (keyboard_and_mouse == nullptr)
 			return;
 
-		OnPollInputEventReceiverHierarchyTraverser traverser(keyboard_and_mouse, &consumption_cache);
+		OnPollInputReceiverTraverser traverser(keyboard_and_mouse, &consumption_cache);
 
 		// give focused window opportunity to catch input first
 		if (Window * focus_window = GetFocusedWindow())
@@ -814,7 +814,7 @@ namespace chaos
 		}
 #endif // #if _DEBUG
 
-		return InputEventReceiverInterface::EnumerateInputActions(in_action_enumerator, in_context);
+		return InputReceiverInterface::EnumerateInputActions(in_action_enumerator, in_context);
 	}
 
 	GLFWwindow* WindowApplication::GetSharedGLContext()

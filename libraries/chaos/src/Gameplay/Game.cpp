@@ -80,14 +80,14 @@ namespace chaos
 			hud->Tick(delta_time);
 	}
 
-	bool Game::TraverseInputEventReceiverHierarchy(InputEventReceiverHierarchyTraverser & in_traverser)
+	bool Game::TraverseInputReceiver(InputReceiverTraverser & in_traverser)
 	{
 		// try with game instance
 		if (game_instance != nullptr)
 			if (in_traverser.Traverse(game_instance.get()))
 				return true;
 		// super 
-		return InputEventReceiverInterface::TraverseInputEventReceiverHierarchy(in_traverser);
+		return InputReceiverInterface::TraverseInputReceiver(in_traverser);
 	}
 
 	bool Game::EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context)
@@ -159,7 +159,7 @@ namespace chaos
 		}
 #endif
 
-		return InputEventReceiverInterface::EnumerateInputActions(in_action_enumerator, in_context);
+		return InputReceiverInterface::EnumerateInputActions(in_action_enumerator, in_context);
 	}
 
 
@@ -173,7 +173,7 @@ namespace chaos
 			return true;
 		}
 
-		return InputEventReceiverInterface::OnKeyEventImpl(key_event);
+		return InputReceiverInterface::OnKeyEventImpl(key_event);
 	}
 
 	bool Game::OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event)

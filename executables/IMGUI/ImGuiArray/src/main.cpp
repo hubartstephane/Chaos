@@ -195,7 +195,7 @@ public:
 	}
 
 	/** start a drag-and-drop */
-	bool CheckDragSource(size_t in_source_index, ImGuiDragDropFlags source_flags, LightweightFunction<void()> draw_tooltip_func = {})
+	bool CheckDragSource(size_t in_source_index, ImGuiDragDropFlags source_flags, LightweightFunction<void()> draw_tooltip_func)
 	{
 		if (ImGui::BeginDragDropSource(source_flags))
 		{

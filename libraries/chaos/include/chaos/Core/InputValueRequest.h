@@ -17,8 +17,8 @@ namespace chaos
 	public:
 
 		/** constructor */
-		InputValueRequest(INPUT_SEARCH_KEY_TYPE const& in_searched_key, RESULT_TYPE& in_result):
-			searched_key(in_searched_key),
+		InputValueRequest(INPUT_SEARCH_KEY_TYPE const& in_searched_input, RESULT_TYPE& in_result):
+			searched_input(in_searched_input),
 			result(in_result)
 		{
 		}
@@ -26,25 +26,40 @@ namespace chaos
 		/** override */
 		virtual InputRequestResult Check(InputEventReceiverInterface const* in_event_receiver, KeyEventBase const& in_key_event, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
 		{
-			if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, Key>)
-				if (!searched_key.IsValid())
+			if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, Key>) // this is only valid for key event
+			{
+				// early exit
+				if (!searched_input.IsValid())
 					return InputRequestResult::Invalid;
+				// consum the key of the request (no one can use it anymore until next frame)
+				if (!in_consumption_cache.TryConsumeInput(searched_input, in_input_device))
+					return InputRequestResult::Rejected;
+				// is this the input we are looking for
+				if (in_key_event.key != searched_input)
+					return InputRequestResult::False;
+				// get the result
+				result = in_key_event.IsKeyDownEvent();
 
-
+				return InputRequestResult::True;
+			}
 			return InputRequestResult::Invalid;
 		}
 
 		/** override */
 		virtual InputRequestResult Check(InputEventReceiverInterface const* in_event_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
 		{
+			// early exit
 			if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, Key>)
-				if (!searched_key.IsValid())
+				if (!searched_input.IsValid())
 					return InputRequestResult::Invalid;
-
-			auto const* input_state = in_input_device->GetInputState(searched_key);
-			if (input_state == nullptr)
+			// consum the key of the request (no one can use it anymore until next frame)
+			if (!in_consumption_cache.TryConsumeInput(searched_input, in_input_device))
 				return InputRequestResult::Rejected;
-
+			// find input
+			auto const* input_state = in_input_device->GetInputState(searched_input);
+			if (input_state == nullptr)
+				return InputRequestResult::Invalid;
+			// get the result
 			result = input_state->GetValue();
 
 			return InputRequestResult::True;
@@ -53,7 +68,7 @@ namespace chaos
 	protected:
 
 		/** the concerned input */
-		INPUT_SEARCH_KEY_TYPE searched_key;
+		INPUT_SEARCH_KEY_TYPE searched_input;
 		/** the result of the request */
 		RESULT_TYPE& result;
 	};

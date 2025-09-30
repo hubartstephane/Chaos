@@ -9,7 +9,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* FPSViewControllerConfiguration : a class that describes displacement speed for the FPS view
+	* FPSViewControllerConfiguration: a class that describes displacement speed for the FPS view
 	*/
 
 	class CHAOS_API FPSViewControllerConfiguration
@@ -38,6 +38,10 @@ namespace chaos
 		/** whether we need to capture to move the camera */
 		bool must_click_to_rotate = true;
 	};
+
+	/**
+	* FPSViewControllerInputConfiguration: a class that describes which keys are used for the inputs
+	*/
 
 	class CHAOS_API FPSViewControllerInputConfiguration
 	{
@@ -94,15 +98,6 @@ namespace chaos
 
 		/** override */
 		virtual bool OnMouseMoveImpl(glm::vec2 const& delta) override;
-		/** override */
-		//virtual bool OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event) override;
-
-	protected:
-
-		/** whether the mouse is enabled or not */
-		bool mouse_enabled = true;
-		/** whether the mouse has been captured */
-		bool mouse_captured = false;
 
 	public:
 
@@ -112,6 +107,13 @@ namespace chaos
 		FPSViewControllerConfiguration config;
 		/** the mapping for the displacement */
 		FPSViewControllerInputConfiguration input_config;
+
+	protected:
+
+		/** whether the mouse is enabled or not */
+		bool mouse_enabled = true;
+		/** whether the mouse has been captured */
+		bool mouse_captured = false;
 	};
 
 #endif

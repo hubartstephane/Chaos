@@ -12,11 +12,10 @@ namespace chaos
 		// consum the key of the request (no one can use it anymore until next frame)
 		if (!in_consumption_cache.TryConsumeInput(key, in_input_device))
 			return InputRequestResult::Rejected;
-
-		// find key
-		KeyState const* key_state = in_input_device->GetInputState(key);
-		if (key_state == nullptr)
-			return InputRequestResult::Rejected;
+		// find state
+		KeyState const* input_state = in_input_device->GetInputState(key);
+		if (input_state == nullptr)
+			return InputRequestResult::Invalid;
 		
 		if (required_modifiers != KeyModifier::None || forbidden_modifiers != KeyModifier::None)
 		{
@@ -56,21 +55,21 @@ namespace chaos
 					return InputRequestResult::False;
 		}
 
-		KeyStatus key_status = key_state->GetStatus();
+		KeyStatus input_status = input_state->GetStatus();
 
 		if (HasAnyFlags(action_mask, KeyActionMask::Release))
 		{
-			if (key_status == KeyStatus::BECOME_RELEASED || key_status == KeyStatus::STAY_RELEASED)
+			if (input_status == KeyStatus::BECOME_RELEASED || input_status == KeyStatus::STAY_RELEASED)
 				return InputRequestResult::True;
 		}
 		if (HasAnyFlags(action_mask, KeyActionMask::Press))
 		{
-			if (key_status == KeyStatus::BECOME_PRESSED)
+			if (input_status == KeyStatus::BECOME_PRESSED)
 				return InputRequestResult::True;
 		}
 		if (HasAnyFlags(action_mask, KeyActionMask::Repeat))
 		{
-			if (key_status == KeyStatus::STAY_PRESSED)
+			if (input_status == KeyStatus::STAY_PRESSED)
 				return InputRequestResult::True;
 		}
 		return InputRequestResult::False;

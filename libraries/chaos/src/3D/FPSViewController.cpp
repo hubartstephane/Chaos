@@ -42,29 +42,17 @@ namespace chaos
 			return true;
 		}
 
-		if (IsMouseEnabled() && config.must_click_to_rotate)
-		{
-
-
-		}
-#if 0
-		if (in_action_enumerator.CheckAndProcess(RequestKeyDown(input_config.rotation_button), "capture mouse", []()
-		{
-		}))
-		{
-
-		}
-
-		mouse_captured
-#endif
-
+		// capture mouse button state
+		if (mouse_enabled && config.must_click_to_rotate)
+			if (in_action_enumerator.CheckAndProcess(RequestInputValue(input_config.rotation_button, mouse_captured), "capture mouse", []() {}))
+				return true;
 
 		return false;
 	}
 
 	bool FPSViewController::OnMouseMoveImpl(glm::vec2 const& delta)
 	{
-		if (!IsMouseEnabled())
+		if (!mouse_enabled)
 			return false;
 
 		if (config.must_click_to_rotate && !mouse_captured) // not ready to handle the mouse movement
@@ -75,23 +63,5 @@ namespace chaos
 
 		return true;
 	}
-
-#if 0
-	bool FPSViewController::OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event)
-	{
-		if (!IsMouseEnabled())
-			return false;
-
-		if (!config.must_click_to_rotate) // no need to catch input
-			return false;
-
-		if (mouse_button_event.IsKeyDown(input_config.rotation_button))
-			mouse_captured = true;
-		else if (mouse_button_event.IsKeyReleased(input_config.rotation_button))
-			mouse_captured = false;
-
-		return true;
-	}
-#endif
 
 }; // namespace chaos

@@ -17,9 +17,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		DelegateInputReceiverTraverser(DelegateInputReceiverTraverserFunction in_process_function):
-			process_function(in_process_function)
-			{}
+		DelegateInputReceiverTraverser(DelegateInputReceiverTraverserFunction in_process_function);
 
 		/** override */
 		virtual bool Process(InputReceiverInterface * in_input_receiver) override;

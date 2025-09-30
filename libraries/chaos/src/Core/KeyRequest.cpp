@@ -4,44 +4,20 @@
 
 namespace chaos
 {
-	bool KeyRequest::Check(InputEventReceiverInterface const* in_event_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const
+	InputRequestResult KeyRequest::Check(InputEventReceiverInterface const* in_event_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const
 	{
 		// early exit
 		if (!key.IsValid())
-			return false;
+			return InputRequestResult::Invalid;
 		// consum the key of the request (no one can use it anymore until next frame)
 		if (!in_consumption_cache.TryConsumeInput(key, in_input_device))
-			return false;
+			return InputRequestResult::Rejected;
 
 		// find key
-		KeyState const* key_state = in_input_device->GetKeyState(key);
+		KeyState const* key_state = in_input_device->GetInputState(key);
 		if (key_state == nullptr)
-			return false;
-
-
-		KeyStatus key_status = key_state->GetStatus();
-
-		if (key == KeyboardButton::LEFT)
-		{
-			if (key_status == KeyStatus::BECOME_PRESSED)
-				in_input_device = in_input_device;
-			if (key_status == KeyStatus::STAY_PRESSED)
-				in_input_device = in_input_device;
-			if (key_status == KeyStatus::STAY_RELEASED)
-				in_input_device = in_input_device;
-			if (key_status == KeyStatus::BECOME_RELEASED)
-				in_input_device = in_input_device;
-
-
-
-		}
-
-
-
-
-
-
-
+			return InputRequestResult::Rejected;
+		
 		if (required_modifiers != KeyModifier::None || forbidden_modifiers != KeyModifier::None)
 		{
 			auto GetModifierKeyValue = [in_input_device](KeyboardButton key1, KeyboardButton key2)
@@ -58,56 +34,60 @@ namespace chaos
 			bool alt_value = GetModifierKeyValue(KeyboardButton::LEFT_ALT, KeyboardButton::RIGHT_ALT);
 			if (HasAnyFlags(required_modifiers, KeyModifier::Alt))
 				if (!alt_value)
-					return false;
+					return InputRequestResult::False;
 			if (HasAnyFlags(forbidden_modifiers, KeyModifier::Alt))
 				if (alt_value)
-					return false;
+					return InputRequestResult::False;
 
 			bool shift_value = GetModifierKeyValue(KeyboardButton::LEFT_SHIFT, KeyboardButton::RIGHT_SHIFT);
 			if (HasAnyFlags(required_modifiers, KeyModifier::Shift))
 				if (!shift_value)
-					return false;
+					return InputRequestResult::False;
 			if (HasAnyFlags(forbidden_modifiers, KeyModifier::Shift))
 				if (shift_value)
-					return false;
+					return InputRequestResult::False;
 
 			bool control_value = GetModifierKeyValue(KeyboardButton::LEFT_CONTROL, KeyboardButton::RIGHT_CONTROL);
 			if (HasAnyFlags(required_modifiers, KeyModifier::Control))
 				if (!control_value)
-					return false;
+					return InputRequestResult::False;
 			if (HasAnyFlags(forbidden_modifiers, KeyModifier::Control))
 				if (control_value)
-					return false;
+					return InputRequestResult::False;
 		}
+
+		KeyStatus key_status = key_state->GetStatus();
 
 		if (HasAnyFlags(action_mask, KeyActionMask::Release))
 		{
 			if (key_status == KeyStatus::BECOME_RELEASED || key_status == KeyStatus::STAY_RELEASED)
-				return true;
+				return InputRequestResult::True;
 		}
 		if (HasAnyFlags(action_mask, KeyActionMask::Press))
 		{
 			if (key_status == KeyStatus::BECOME_PRESSED)
-				return true;
+				return InputRequestResult::True;
 		}
 		if (HasAnyFlags(action_mask, KeyActionMask::Repeat))
 		{
 			if (key_status == KeyStatus::STAY_PRESSED)
-				return true;
+				return InputRequestResult::True;
 		}
-		return false;
+		return InputRequestResult::False;
 	}
 
-	bool KeyRequest::Check(InputEventReceiverInterface const* in_event_receiver, KeyEventBase const& in_key_event, InputDeviceInterface const * in_input_device, InputConsumptionCache & in_consumption_cache) const
+	InputRequestResult KeyRequest::Check(InputEventReceiverInterface const* in_event_receiver, KeyEventBase const& in_key_event, InputDeviceInterface const * in_input_device, InputConsumptionCache & in_consumption_cache) const
 	{
 		// early exit
 		if (!key.IsValid())
-			return false;
+			return InputRequestResult::Invalid;
 		// consum the key of the request (no one can use it anymore until next frame)
 		if (!in_consumption_cache.TryConsumeInput(key, in_input_device))
-			return false;
+			return InputRequestResult::Rejected;
 		//  effective request
-		return in_key_event.Check(key, action_mask, required_modifiers, forbidden_modifiers);
+		return in_key_event.Check(key, action_mask, required_modifiers, forbidden_modifiers)?
+			InputRequestResult::True:
+			InputRequestResult::False;
 	}
 
 	KeyRequest KeyRequest::RequireModifiers(KeyModifier in_modifiers) const

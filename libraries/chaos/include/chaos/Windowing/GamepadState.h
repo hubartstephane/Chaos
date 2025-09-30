@@ -34,11 +34,11 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual KeyState const * DoGetKeyState(Key key) const override;
+		virtual KeyState const * DoGetInputState(Key key) const override;
 		/** override */
-		virtual AxisState const * DoGetAxisState(GamepadAxis axis) const override;
+		virtual AxisState const * DoGetInputState(GamepadAxis axis) const override;
 		/** override */
-		virtual StickState const * DoGetStickState(GamepadStick stick) const override;
+		virtual StickState const * DoGetInputState(GamepadStick stick) const override;
 
 		/** override */
 		virtual bool DoForAllKeys(ForAllKeysFunction func) const override;

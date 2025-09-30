@@ -31,11 +31,11 @@ namespace chaos
 		virtual bool EnumerateDeviceHierarchy(EnumerateDeviceHierarchyFunction func) const;
 
 		/** gets one key state */
-		KeyState const * GetKeyState(Key key) const;
+		KeyState const * GetInputState(Key key) const;
 		/** gets one axis state */
-		AxisState const * GetAxisState(GamepadAxis axis) const;
+		AxisState const * GetInputState(GamepadAxis axis) const;
 		/** gets one stick state */
-		StickState const * GetStickState(GamepadStick stick) const;
+		StickState const * GetInputState(GamepadStick stick) const;
 
 		/** enumerate keys */
 		bool ForAllKeys(ForAllKeysFunction func) const;
@@ -45,7 +45,7 @@ namespace chaos
 		bool ForAllSticks(ForAllSticksFunction func) const;
 
 		/** get the key value */
-		bool GetKeyValue(Key key) const;
+		bool GetInputValue(Key key) const;
 		/** get the key state change */
 		KeyStatus GetKeyStatus(Key key) const;
 
@@ -59,10 +59,10 @@ namespace chaos
 		bool IsKeyJustReleased(Key key) const;
 
 		/** get the axis value */
-		float GetAxisValue(GamepadAxis axis) const;
+		float GetInputValue(GamepadAxis axis) const;
 
 		/** get the stick value */
-		glm::vec2 GetStickValue(GamepadStick stick) const;
+		glm::vec2 GetInputValue(GamepadStick stick) const;
 
 		/** returns true whether there is any actioned key */
 		bool IsAnyKeyAction() const;
@@ -77,11 +77,11 @@ namespace chaos
 	protected:
 
 		/** gets one key state */
-		virtual KeyState const * DoGetKeyState(Key key) const;
+		virtual KeyState const * DoGetInputState(Key key) const;
 		/** gets one axis state */
-		virtual AxisState const * DoGetAxisState(GamepadAxis axis) const;
+		virtual AxisState const * DoGetInputState(GamepadAxis axis) const;
 		/** gets one stick state */
-		virtual StickState const * DoGetStickState(GamepadStick stick) const;
+		virtual StickState const * DoGetInputState(GamepadStick stick) const;
 
 		/** enumerate keys */
 		virtual bool DoForAllKeys(ForAllKeysFunction func) const;

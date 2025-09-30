@@ -21,7 +21,7 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual KeyState const * DoGetKeyState(Key key) const override;
+		virtual KeyState const * DoGetInputState(Key key) const override;
 		/** override */
 		virtual bool DoForAllKeys(ForAllKeysFunction func) const override;
 

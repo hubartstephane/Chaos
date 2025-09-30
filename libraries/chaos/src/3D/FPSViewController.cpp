@@ -15,6 +15,7 @@ namespace chaos
 	{
 		float frame_duration = (float)FrameTimeManager::GetInstance()->GetCurrentFrameDuration();
 
+		// check for key displacement
 		auto CheckCameraKey = [this, frame_duration, &in_action_enumerator](const Key & key, char const * title, float speed, void (FPSView::*func)(float))
 		{
 			if (in_action_enumerator.CheckAndProcess(RequestKeyDown(key), title, [this, frame_duration, speed, &func, key]()
@@ -27,8 +28,7 @@ namespace chaos
 			return false; 
 		};
 
-		return 
-			CheckCameraKey(input_config.left_button, "Strafe Left", config.strafe_speed, &FPSView::StrafeLeft) ||
+		if (CheckCameraKey(input_config.left_button, "Strafe Left", config.strafe_speed, &FPSView::StrafeLeft) ||
 			CheckCameraKey(input_config.right_button, "Strafe Right", config.strafe_speed, &FPSView::StrafeRight) ||
 			CheckCameraKey(input_config.forward_button, "Move Forward", config.forward_speed, &FPSView::GoForward) ||
 			CheckCameraKey(input_config.backward_button, "Move Backward", config.back_speed, &FPSView::GoBackward) ||
@@ -37,7 +37,29 @@ namespace chaos
 			CheckCameraKey(input_config.yaw_left_button, "Increment Yaw", config.yaw_speed, &FPSView::IncrementYaw) ||
 			CheckCameraKey(input_config.yaw_right_button, "Decrement Yaw", -config.yaw_speed, &FPSView::IncrementYaw) ||
 			CheckCameraKey(input_config.pitch_up_button, "Increment Pitch", config.pitch_speed, &FPSView::IncrementPitch) ||
-			CheckCameraKey(input_config.pitch_down_button, "Decrement Pitch", -config.pitch_speed, &FPSView::IncrementPitch);
+			CheckCameraKey(input_config.pitch_down_button, "Decrement Pitch", -config.pitch_speed, &FPSView::IncrementPitch))
+		{
+			return true;
+		}
+
+		if (IsMouseEnabled() && config.must_click_to_rotate)
+		{
+
+
+		}
+#if 0
+		if (in_action_enumerator.CheckAndProcess(RequestKeyDown(input_config.rotation_button), "capture mouse", []()
+		{
+		}))
+		{
+
+		}
+
+		mouse_captured
+#endif
+
+
+		return false;
 	}
 
 	bool FPSViewController::OnMouseMoveImpl(glm::vec2 const& delta)
@@ -54,6 +76,7 @@ namespace chaos
 		return true;
 	}
 
+#if 0
 	bool FPSViewController::OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event)
 	{
 		if (!IsMouseEnabled())
@@ -69,5 +92,6 @@ namespace chaos
 
 		return true;
 	}
+#endif
 
 }; // namespace chaos

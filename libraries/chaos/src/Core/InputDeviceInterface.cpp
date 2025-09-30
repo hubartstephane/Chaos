@@ -8,34 +8,34 @@ namespace chaos
 		return func(this);
 	}
 
-	KeyState const * InputDeviceInterface::GetKeyState(Key key) const
+	KeyState const * InputDeviceInterface::GetInputState(Key key) const
 	{
 		KeyState const * result = nullptr;
 		EnumerateDeviceHierarchy([this, &result, &key](InputDeviceInterface const * in_input_device) 
 		{
-			result = in_input_device->DoGetKeyState(key);
+			result = in_input_device->DoGetInputState(key);
 			return (result != nullptr); // continue until some result is found
 		});
 		return result;
 	}
 
-	AxisState const * InputDeviceInterface::GetAxisState(GamepadAxis axis) const
+	AxisState const * InputDeviceInterface::GetInputState(GamepadAxis axis) const
 	{
 		AxisState const * result = nullptr;
 		EnumerateDeviceHierarchy([this, &result, &axis](InputDeviceInterface const * in_input_device)
 		{
-			result = in_input_device->DoGetAxisState(axis);
+			result = in_input_device->DoGetInputState(axis);
 			return (result != nullptr); // continue until some result is found
 		});
 		return result;
 	}
 
-	StickState const * InputDeviceInterface::GetStickState(GamepadStick stick) const
+	StickState const * InputDeviceInterface::GetInputState(GamepadStick stick) const
 	{	
 		StickState const * result = nullptr;
 		EnumerateDeviceHierarchy([this, &result, &stick](InputDeviceInterface const * in_input_device)
 		{
-			result = in_input_device->DoGetStickState(stick);
+			result = in_input_device->DoGetInputState(stick);
 			return (result != nullptr); // continue until some result is found
 		});
 		return result;
@@ -65,17 +65,17 @@ namespace chaos
 		});
 	}
 
-	KeyState const * InputDeviceInterface::DoGetKeyState(Key key) const
+	KeyState const * InputDeviceInterface::DoGetInputState(Key key) const
 	{
 		return nullptr;
 	}
 
-	AxisState const * InputDeviceInterface::DoGetAxisState(GamepadAxis axis) const
+	AxisState const * InputDeviceInterface::DoGetInputState(GamepadAxis axis) const
 	{
 		return nullptr;
 	}
 
-	StickState const * InputDeviceInterface::DoGetStickState(GamepadStick stick) const
+	StickState const * InputDeviceInterface::DoGetInputState(GamepadStick stick) const
 	{	
 		return nullptr;
 	}
@@ -95,58 +95,58 @@ namespace chaos
 		return false;
 	}
 
-	bool InputDeviceInterface::GetKeyValue(Key key) const
+	bool InputDeviceInterface::GetInputValue(Key key) const
 	{
-		if (KeyState const * key_state = GetKeyState(key))
+		if (KeyState const * key_state = GetInputState(key))
 			return key_state->GetValue();
 		return false;
 	}
 
 	KeyStatus InputDeviceInterface::GetKeyStatus(Key key) const
 	{
-		if (KeyState const * key_state = GetKeyState(key))
+		if (KeyState const * key_state = GetInputState(key))
 			return key_state->GetStatus();
 		return KeyStatus::NONE;
 	}
 
 	bool InputDeviceInterface::IsKeyDown(Key key) const
 	{
-		if (KeyState const * key_state = GetKeyState(key))
+		if (KeyState const * key_state = GetInputState(key))
 			return key_state->IsDown();
 		return false;
 	}
 
 	bool InputDeviceInterface::IsKeyUp(Key key) const
 	{
-		if (KeyState const * key_state = GetKeyState(key))
+		if (KeyState const * key_state = GetInputState(key))
 			return key_state->IsUp();
 		return true;
 	}
 
 	bool InputDeviceInterface::IsKeyJustPressed(Key key) const
 	{
-		if (KeyState const * key_state = GetKeyState(key))
+		if (KeyState const * key_state = GetInputState(key))
 			return key_state->IsJustPressed();
 		return false;
 	}
 
 	bool InputDeviceInterface::IsKeyJustReleased(Key key) const
 	{
-		if (KeyState const * key_state = GetKeyState(key))
+		if (KeyState const * key_state = GetInputState(key))
 			return key_state->IsJustReleased();
 		return false;
 	}
 
-	float InputDeviceInterface::GetAxisValue(GamepadAxis axis) const
+	float InputDeviceInterface::GetInputValue(GamepadAxis axis) const
 	{
-		if (AxisState const * axis_state = GetAxisState(axis))
+		if (AxisState const * axis_state = GetInputState(axis))
 			return axis_state->GetValue();
 		return 0.0f;
 	}
 
-	glm::vec2 InputDeviceInterface::GetStickValue(GamepadStick stick) const
+	glm::vec2 InputDeviceInterface::GetInputValue(GamepadStick stick) const
 	{
-		if (StickState const * stick_state = GetStickState(stick))
+		if (StickState const * stick_state = GetInputState(stick))
 			return stick_state->GetValue();
 		return {0.0f, 0.0f};
 	}

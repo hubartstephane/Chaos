@@ -14,7 +14,7 @@ namespace chaos
 
 	bool OnKeyEventInputActionEnumerator::CheckAndProcess(InputRequestBase const& in_request, char const* in_title, bool in_enabled, InputActionFunction in_func)
 	{
-		if (in_request.Check(event_receiver, key_event, input_device, *consumption_cache))
+		if (in_request.Check(event_receiver, key_event, input_device, *consumption_cache) == InputRequestResult::True)
 		{
 			if (in_enabled)
 				in_func();

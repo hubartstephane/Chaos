@@ -708,8 +708,8 @@ bool Game::OnPhysicalGamepadInput(chaos::PhysicalGamepad * physical_gamepad)
 			SetPause(!game_paused);
 	}
 
-	glm::vec2 left_stick_position  = physical_gamepad->GetStickValue(chaos::GamepadStick::LEFT_STICK);
-	glm::vec2 right_stick_position = physical_gamepad->GetStickValue(chaos::GamepadStick::RIGHT_STICK);
+	glm::vec2 left_stick_position  = physical_gamepad->GetInputValue(chaos::GamepadStick::LEFT_STICK);
+	glm::vec2 right_stick_position = physical_gamepad->GetInputValue(chaos::GamepadStick::RIGHT_STICK);
 
 	if (glm::length2(left_stick_position) > 0.0f)
 		stick_position = left_stick_position;

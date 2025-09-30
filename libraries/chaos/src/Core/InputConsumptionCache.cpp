@@ -68,7 +68,7 @@ namespace chaos
 
 	bool InputConsumptionCache::DoTryConsumeInput(Key in_key, InputDeviceInterface const* in_input_device)
 	{
-		KeyState const* state = in_input_device->GetKeyState(in_key);
+		KeyState const* state = in_input_device->GetInputState(in_key);
 		if (state == nullptr)
 			return false;
 		return consumed_keys.insert(std::make_pair(in_key, state)).second; // insert returns a pair. second element indicates whether the element has effectively been inserted
@@ -76,7 +76,7 @@ namespace chaos
 
 	bool InputConsumptionCache::DoTryConsumeInput(GamepadAxis in_axis, InputDeviceInterface const* in_input_device)
 	{
-		AxisState const* state = in_input_device->GetAxisState(in_axis);
+		AxisState const* state = in_input_device->GetInputState(in_axis);
 		if (state == nullptr)
 			return false;
 		return consumed_axes.insert(std::make_pair(in_axis, state)).second; // insert returns a pair. second element indicates whether the element has effectively been inserted
@@ -84,7 +84,7 @@ namespace chaos
 
 	bool InputConsumptionCache::DoTryConsumeInput(GamepadStick in_stick, InputDeviceInterface const* in_input_device)
 	{
-		StickState const* state = in_input_device->GetStickState(in_stick);
+		StickState const* state = in_input_device->GetInputState(in_stick);
 		if (state == nullptr)
 			return false;
 		return consumed_sticks.insert(std::make_pair(in_stick, state)).second; // insert returns a pair. second element indicates whether the element has effectively been inserted

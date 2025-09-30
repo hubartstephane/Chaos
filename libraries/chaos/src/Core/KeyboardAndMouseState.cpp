@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	KeyState const * KeyboardAndMouseState::DoGetKeyState(Key key) const
+	KeyState const * KeyboardAndMouseState::DoGetInputState(Key key) const
 	{
 		if (!key.IsValid())
 			return nullptr;

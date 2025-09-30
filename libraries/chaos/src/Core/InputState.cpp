@@ -97,7 +97,7 @@ namespace chaos
 		}
 		else 
 		{
-			auto GetAxisValueType = [](float value)
+			auto GetInputValueType = [](float value)
 			{
 				if (value == 0.0f)
 					return 0;
@@ -106,7 +106,7 @@ namespace chaos
 				return 1;
 			};
 
-			if (GetAxisValueType(value) != GetAxisValueType(in_raw_value)) // checking for strict equality for float values is nonsense. just check for 'sign' equality
+			if (GetInputValueType(value) != GetInputValueType(in_raw_value)) // checking for strict equality for float values is nonsense. just check for 'sign' equality
 				update_time = frame_time;
 
 			value = in_raw_value;

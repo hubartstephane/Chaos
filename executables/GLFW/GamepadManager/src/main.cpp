@@ -117,7 +117,7 @@ protected:
 			int axis_count = main_gamepad->GetAxisCount();
 			for (int i = 0; i < axis_count; ++i)
 			{
-				float value = main_gamepad->GetAxisValue(i);
+				float value = main_gamepad->GetInputValue(i);
 				if (value != 0.0f)
 					imgui_user_message.AddLine(chaos::StringTools::Printf("AXIS [%d] = %f", i, value).c_str(), 1.0f);
 			}
@@ -148,19 +148,19 @@ imgui_user_message.AddLine("Pressed : " #x, 1.0f);
 			TEST_BUTTON(DPAD_LEFT);
 			TEST_BUTTON(DPAD_RIGHT);
 
-			glm::vec2 l = main_gamepad->GetStickValue(chaos::GamepadStick::LEFT_STICK);
+			glm::vec2 l = main_gamepad->GetInputValue(chaos::GamepadStick::LEFT_STICK);
 			if (l.x != 0.0f || l.y != 0.0f)
 				imgui_user_message.AddLine(chaos::StringTools::Printf("LEFT AXIS x : %0.3f   y : %0.3f", l.x, l.y).c_str(), 1.0f);
 
-			glm::vec2 r = main_gamepad->GetStickValue(chaos::GamepadStick::RIGHT_STICK);
+			glm::vec2 r = main_gamepad->GetInputValue(chaos::GamepadStick::RIGHT_STICK);
 			if (r.x != 0.0f || r.y != 0.0f)
 				imgui_user_message.AddLine(chaos::StringTools::Printf("RIGHT AXIS x : %0.3f  y : %0.3f", r.x, r.y).c_str(), 1.0f);
 
-			float left_trigger = main_gamepad->GetAxisValue(chaos::GamepadAxis::LEFT_TRIGGER);
+			float left_trigger = main_gamepad->GetInputValue(chaos::GamepadAxis::LEFT_TRIGGER);
 			if (left_trigger)
 				imgui_user_message.AddLine(chaos::StringTools::Printf("LEFT TRIGGER  %0.3f", left_trigger).c_str(), 1.0f);
 
-			float right_trigger = main_gamepad->GetAxisValue(chaos::GamepadAxis::RIGHT_TRIGGER);
+			float right_trigger = main_gamepad->GetInputValue(chaos::GamepadAxis::RIGHT_TRIGGER);
 			if (right_trigger)
 				imgui_user_message.AddLine(chaos::StringTools::Printf("RIGHT TRIGGER  %0.3f", right_trigger).c_str(), 1.0f);
 #endif

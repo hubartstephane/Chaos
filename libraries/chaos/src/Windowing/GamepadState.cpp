@@ -21,21 +21,21 @@ namespace chaos
 		return axes.size();
 	}
 
-	KeyState const * GamepadState::DoGetKeyState(Key key) const
+	KeyState const * GamepadState::DoGetInputState(Key key) const
 	{
 		if (!key.IsValid() || !key.IsGamepadKey())
 			return nullptr;
 		return &buttons[(size_t)key.GetRawValue()];
 	}
 
-	AxisState const *GamepadState::DoGetAxisState(GamepadAxis axis) const
+	AxisState const *GamepadState::DoGetInputState(GamepadAxis axis) const
 	{
 		if (axis == GamepadAxis::UNKNOWN)
 			return nullptr;
 		return &axes[(size_t)axis];
 	}
 
-	StickState const *GamepadState::DoGetStickState(GamepadStick stick) const
+	StickState const *GamepadState::DoGetInputState(GamepadStick stick) const
 	{	
 		if (stick == GamepadStick::UNKNOWN)
 			return nullptr;
@@ -91,7 +91,7 @@ namespace chaos
 		// update virtual buttons
 		auto UpdateVirtualButton = [this](GamepadButton dst_button, GamepadAxis src_axis)
 		{
-			if (AxisState const * axis_state = GetAxisState(src_axis))
+			if (AxisState const * axis_state = GetInputState(src_axis))
 			{
 				KeyState key_state;
 				key_state.value = axis_state->value != 0.0f;
@@ -106,10 +106,10 @@ namespace chaos
 		// update sticks
 		auto UpdateVirtualStick = [&](GamepadStick dst_stick, GamepadAxis src_horizontal_axis, GamepadAxis src_vertical_axis)
 		{
-			AxisState const * horizontal_axis_state = GetAxisState(src_horizontal_axis);
+			AxisState const * horizontal_axis_state = GetInputState(src_horizontal_axis);
 			if (horizontal_axis_state == nullptr)
 				return;
-			AxisState const * vertical_axis_state = GetAxisState(src_vertical_axis);
+			AxisState const * vertical_axis_state = GetInputState(src_vertical_axis);
 			if (vertical_axis_state == nullptr)
 				return;
 

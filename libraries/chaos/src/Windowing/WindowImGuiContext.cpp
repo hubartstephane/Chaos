@@ -73,48 +73,18 @@ namespace chaos
 
 	bool WindowImGuiContext::OnKeyEventImpl(KeyEvent const& key_event)
 	{
-
-
-
-
-		if (key_event.key == KeyboardButton::LEFT)
-		{
-			int i = 0;
-			++i;
-		}
-
 		if (ShouldCaptureInputEvent())
 		{
 			ImGui_ImplGlfw_KeyCallback(window->GetGLFWHandler(), (int)key_event.key.GetKeyboardButton(), key_event.scancode, (int)key_event.action, (int)key_event.modifiers);
 
 			if (ImGui::GetIO().WantCaptureKeyboard)
 				return true;
-
-
-
-			if (key_event.key == KeyboardButton::LEFT)
-			{
-				int i = 0;
-				++i;
-			}
-
-
 		}
-
-		if (key_event.key == KeyboardButton::LEFT)
-		{
-			int i = 0;
-			++i;
-		}
-
-
 		return false;
 	}
 
 	bool WindowImGuiContext::OnCharEventImpl(unsigned int c)
 	{
-		return false;
-
 		if (ShouldCaptureInputEvent())
 		{
 			ImGui_ImplGlfw_CharCallback(window->GetGLFWHandler(), c);

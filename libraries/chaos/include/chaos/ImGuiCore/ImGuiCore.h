@@ -12,7 +12,7 @@
 #include "chaos/ImGuiCore/ImGuiMessageObject.h"
 #include "chaos/ImGuiCore/ImGuiWindowInformationObject.h"
 #include "chaos/ImGuiCore/ImGuiSystemInformationObject.h"
-#include "chaos/ImGuiCore/ImGuiHelpObject.h"
+#include "chaos/ImGuiCore/ImGuiInputActionObject.h"
 #include "chaos/ImGuiCore/ImGuiGlobalVariablesObject.h"
 #include "chaos/ImGuiCore/ImGuiDemoObject.h"
 #include "chaos/ImGuiCore/ImGuiInputStateObjectBase.h"

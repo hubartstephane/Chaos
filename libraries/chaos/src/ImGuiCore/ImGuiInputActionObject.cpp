@@ -3,12 +3,12 @@
 
 namespace chaos
 {
-	ImGuiHelpObject::ImGuiHelpObject()
+	ImGuiInputActionObject::ImGuiInputActionObject()
 	{
 		imgui_flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize;
 	}
 
-	void ImGuiHelpObject::OnDrawImGuiContent(Window * window)
+	void ImGuiInputActionObject::OnDrawImGuiContent(Window * window)
 	{
 		class OnQueryInputActionEnumerator : public InputActionEnumerator
 		{

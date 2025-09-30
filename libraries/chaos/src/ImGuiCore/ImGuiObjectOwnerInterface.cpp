@@ -47,7 +47,7 @@ namespace chaos
 		if (func("Window Information", ImGuiWindowInformationObject::GetStaticClass()))
 			return true;
 
-		if (func("Help", ImGuiHelpObject::GetStaticClass()))
+		if (func("Input Actions", ImGuiInputActionObject::GetStaticClass()))
 			return true;
 
 		return false;

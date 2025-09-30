@@ -2,22 +2,22 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class ImGuiHelpObject;
+	class ImGuiInputActionObject;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* ImGuiHelpObject: a drawable that displays some help for keys
+	* ImGuiInputActionObject: a drawable that displays some help for keys
 	*/
 
-	class ImGuiHelpObject : public ImGuiObject
+	class ImGuiInputActionObject : public ImGuiObject
 	{
 	public:
 
-		CHAOS_DECLARE_OBJECT_CLASS(ImGuiHelpObject, ImGuiObject);
+		CHAOS_DECLARE_OBJECT_CLASS(ImGuiInputActionObject, ImGuiObject);
 
 		/** constructor */
-		ImGuiHelpObject();
+		ImGuiInputActionObject();
 
 	protected:
 

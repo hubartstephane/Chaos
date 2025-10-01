@@ -313,36 +313,31 @@ protected:
 			return true;
 		}
 
+		auto MoveObject = [this, &in_action_enumerator, enabled](KeyboardButton button, size_t component_index, float direction, char const* title)
+		{
+			return in_action_enumerator.CheckAndProcess(RequestKeyDown(button), title, enabled, [this, component_index, direction]()
+			{
+				float delta_time = (float)FrameTimeManager::GetInstance()->GetCurrentFrameDuration();
+
+				Object3D* selected_object = objects[selected_object_index].get();
+				selected_object->transform.position[component_index] += direction * OBJECT_SPEED * delta_time;
+			});
+		};
+
+		if (MoveObject(KeyboardButton::KP_4, 0, -1.0f, "Move Object -X"))
+			return true;
+		if (MoveObject(KeyboardButton::KP_6, 0, +1.0f, "Move Object +X"))
+			return true;
+		if (MoveObject(KeyboardButton::KP_3, 1, -1.0f, "Move Object -Y"))
+			return true;
+		if (MoveObject(KeyboardButton::KP_9, 1, +1.0f, "Move Object +Y"))
+			return true;
+		if (MoveObject(KeyboardButton::KP_8, 2, -1.0f, "Move Object -Z"))
+			return true;
+		if (MoveObject(KeyboardButton::KP_2, 2, +1.0f, "Move Object +Z"))
+			return true;
 
 		return false;
-	}
-
-	virtual bool DoTick(float delta_time) override
-	{
-		// move objects
-		size_t object_count = objects.size();
-		if (object_count > 0)
-		{
-			auto MoveObject = [this, delta_time](KeyboardButton button, size_t component_index, float direction)
-			{
-				if (KeyState const* state = KeyboardAndMouseState::GetInstance()->GetInputState(button))
-				{
-					if (state->IsDown())
-					{
-						Object3D* selected_object = objects[selected_object_index].get();
-						selected_object->transform.position[component_index] += direction * OBJECT_SPEED * delta_time;
-					}
-				}
-			};
-
-			MoveObject(KeyboardButton::KP_4, 0, -1.0f);
-			MoveObject(KeyboardButton::KP_6, 0, +1.0f);
-			MoveObject(KeyboardButton::KP_8, 2, -1.0f);
-			MoveObject(KeyboardButton::KP_2, 2, +1.0f);
-			MoveObject(KeyboardButton::KP_9, 1, +1.0f);
-			MoveObject(KeyboardButton::KP_3, 1, -1.0f);
-		}
-		return Window::DoTick(delta_time);
 	}
 
 	virtual bool TraverseInputReceiver(chaos::InputReceiverTraverser & in_traverser) override

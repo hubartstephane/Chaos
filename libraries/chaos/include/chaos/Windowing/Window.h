@@ -204,6 +204,9 @@ namespace chaos
 		/** override */
 		virtual bool EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context) override;
 
+		/** special input receiver traversal for event dispatching (handle imgui and application) */
+		bool TraverseInputReceiverFull(InputReceiverTraverser& in_traverser);
+
 	protected:
 
 		/** override */
@@ -367,12 +370,10 @@ namespace chaos
 
 			return WithWindowContext([this, &event_func]()
 			{
-				return DoDispatchInputEvent(event_func);
+				DelegateInputReceiverTraverser traverser(event_func);
+				return TraverseInputReceiverFull(traverser);
 			});
 		}
-
-		/** dispatch input event utility method */
-		bool DoDispatchInputEvent(DoDispatchInputEventFunction func);
 
 		/** gets the window imgui context */
 		WindowImGuiContext * GetWindowImGuiContext() { return &window_imgui_context;}

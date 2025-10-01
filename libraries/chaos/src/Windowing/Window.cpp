@@ -581,19 +581,17 @@ namespace chaos
 		return WindowInterface::TraverseInputReceiver(in_traverser);
 	}
 
-	bool Window::DoDispatchInputEvent(DoDispatchInputEventFunction func)
+	bool Window::TraverseInputReceiverFull(InputReceiverTraverser& in_traverser)
 	{
-		DelegateInputReceiverTraverser traverser(func);
-
 		// try imgui context
-		if (traverser.Traverse(&window_imgui_context))
+		if (in_traverser.Traverse(&window_imgui_context))
 			return true;
 		// try window
-		if (traverser.Traverse(this))
+		if (in_traverser.Traverse(this))
 			return true;
 		// try application
 		if (WindowApplication* window_application = Application::GetInstance())
-			if (traverser.Traverse(window_application))
+			if (in_traverser.Traverse(window_application))
 				return true;
 
 		return false;

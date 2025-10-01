@@ -51,7 +51,7 @@ namespace chaos
 				in_input_receiver->EnumerateInputActions(action_enumerator, EnumerateInputActionContext::OnQuery);
 				return false;
 			});
-			traverser.Traverse(window);
+			window->TraverseInputReceiverFull(traverser); // include ImGuiWindowContext and WindowApplication in the traversal
 		});
 	}
 

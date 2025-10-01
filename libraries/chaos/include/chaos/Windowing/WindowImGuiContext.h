@@ -34,6 +34,8 @@ namespace chaos
 		bool ShouldCaptureInputEvent() const;
 
 		/** override */
+		virtual bool EnumerateInputActions(InputActionEnumerator& in_action_enumerator, EnumerateInputActionContext in_context) override;
+		/** override */
 		virtual bool OnMouseMoveImpl(glm::vec2 const& delta) override;
 		/** override */
 		virtual bool OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event) override;

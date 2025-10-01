@@ -119,10 +119,6 @@ namespace chaos
 
 	bool InputReceiverInterface::ProcessKeyAction(KeyEventBase const& key_event)
 	{
-		KeyboardAndMouseState const* keyboard_and_mouse = KeyboardAndMouseState::GetInstance();
-		if (keyboard_and_mouse == nullptr)
-			return false;
-
 		// XXX: do not use WindowApplication::consumption_cache
 		//      we only want to register inside it the key for current key_event
 		//      this is done inside OnKeyEventInputReceiverTraverser
@@ -143,7 +139,7 @@ namespace chaos
 		};
 		DelegateInputReceiverTraverser traverser(process_function);
 
-		return traverser.Traverse(this, keyboard_and_mouse);
+		return traverser.Traverse(this);
 	}
 
 	bool InputReceiverInterface::OnMouseWheelImpl(double scroll_x, double scroll_y)

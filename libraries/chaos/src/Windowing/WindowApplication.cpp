@@ -489,10 +489,6 @@ namespace chaos
 
 	void WindowApplication::PollInputDevices()
 	{
-		KeyboardAndMouseState const* keyboard_and_mouse = KeyboardAndMouseState::GetInstance();
-		if (keyboard_and_mouse == nullptr)
-			return;
-
 		auto process_function = [&consumption_cache = consumption_cache](InputReceiverInterface* in_input_receiver, InputDeviceInterface const* in_input_device) // XXX: mandatory to have a VARIABLE lambda so that the underlying DelegateTraverser's LightweightFunction does not point on a deleted object
 		{
 			OnPollInputActionEnumerator action_enumerator(in_input_receiver, in_input_device, &consumption_cache);
@@ -500,12 +496,17 @@ namespace chaos
 		};
 		DelegateInputReceiverTraverser traverser(process_function);
 
-		// give focused window opportunity to catch input first
-		if (Window * focused_window = GetFocusedWindow())
-			if (traverser.Traverse(focused_window, keyboard_and_mouse))
-				return;
-		// now time for the application
-		traverser.Traverse(this, keyboard_and_mouse);
+		if (Window* focused_window = GetFocusedWindow())
+		{
+			focused_window->WithWindowContext([&traverser, focused_window]() // important elsewhere the ImGuiContext wouldn't be processed  
+			{
+				focused_window->TraverseInputReceiverFull(traverser); // include ImGuiContext, window, application 
+			});			
+		}
+		else
+		{
+			traverser.Traverse(this); // only application
+		}
 	}
 
 	void WindowApplication::OnGLFWError(int code, const char* msg)

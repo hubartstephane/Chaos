@@ -54,7 +54,12 @@ namespace chaos
 			ImGui_ImplGlfw_MouseButtonCallback(window->GetGLFWHandler(), (int)mouse_button_event.key.GetMouseButton(), (int)mouse_button_event.action, (int)mouse_button_event.modifiers);
 
 			if (ImGui::GetIO().WantCaptureMouse)
+			{
+				if (WindowApplication* window_application = Application::GetInstance())
+					if (KeyboardAndMouseState const* keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance())
+						window_application->GetInputConsumptionCache().TryConsumeInput(mouse_button_event.key, keyboard_and_mouse_state);
 				return true;
+			}
 		}
 		return false;
 	}
@@ -78,7 +83,24 @@ namespace chaos
 			ImGui_ImplGlfw_KeyCallback(window->GetGLFWHandler(), (int)key_event.key.GetKeyboardButton(), key_event.scancode, (int)key_event.action, (int)key_event.modifiers);
 
 			if (ImGui::GetIO().WantCaptureKeyboard)
+			{
+				if (WindowApplication* window_application = Application::GetInstance())
+					if (KeyboardAndMouseState const* keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance())
+						window_application->GetInputConsumptionCache().TryConsumeInput(key_event.key, keyboard_and_mouse_state);
 				return true;
+			}
+		}
+		return false;
+	}
+
+	bool WindowImGuiContext::EnumerateInputActions(InputActionEnumerator& in_action_enumerator, EnumerateInputActionContext in_context)
+	{
+		if (ShouldCaptureInputEvent())
+		{
+			if (ImGui::GetIO().WantCaptureKeyboard)
+			{
+				return true;
+			}
 		}
 		return false;
 	}

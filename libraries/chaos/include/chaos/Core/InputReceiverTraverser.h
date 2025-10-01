@@ -12,13 +12,18 @@ namespace chaos
 
 	class CHAOS_API InputReceiverTraverser
 	{
+		friend class InputReceiverInterface;
+
 	public:
 
 		/** destructor */
 		virtual ~InputReceiverTraverser() = default;
 
 		/** enter an InputEventReceiver */
-		virtual bool Traverse(InputReceiverInterface * in_input_receiver, InputDeviceInterface const* in_input_device);
+		virtual bool Traverse(InputReceiverInterface * in_input_receiver, InputDeviceInterface const* in_input_device = KeyboardAndMouseState::GetInstance());
+
+	protected:
+
 		/** process the InputEventReceiver */
 		virtual bool Process(InputReceiverInterface * in_input_receiver, InputDeviceInterface const* in_input_device);
 	};

@@ -16,38 +16,73 @@ namespace chaos
 
 			using InputActionEnumerator::InputActionEnumerator;
 
+			OnQueryInputActionEnumerator(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache* in_consumption_cache):
+				InputActionEnumerator(in_input_receiver),
+				input_device(in_input_device),
+				consumption_cache(in_consumption_cache)
+			{
+			}
+
 			virtual bool CheckAndProcess(InputRequestBase const & in_request, char const * in_title, bool in_enabled, LightweightFunction<void()> in_key_action) override
 			{
 				char buffer[256];
 
 				if (KeyRequest const* key_request = auto_cast(&in_request))
 				{
+					ImVec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+					InputRequestResult request_result = in_request.Check(input_receiver, input_device, *consumption_cache);
+					if (request_result == InputRequestResult::Invalid)
+						color = { 1.0f, 0.0f, 0.0f, 1.0f };
+					else if (request_result == InputRequestResult::Rejected)
+						color = { 0.0f, 1.0f, 1.0f, 1.0f };
+
 					ImGui::TableNextRow();
 
 					ImGui::BeginDisabled(!in_enabled);
-					ImGui::TableSetColumnIndex(0); ImGui::Text("%s", key_request->key.GetName());
+					ImGui::TableSetColumnIndex(0); ImGui::TextColored(color, "%s", key_request->key.GetName());
 
 					char const* required_modifiers = EnumToString(key_request->required_modifiers, buffer, 256);
-					ImGui::TableSetColumnIndex(1); ImGui::Text("%s", required_modifiers);
+					ImGui::TableSetColumnIndex(1); ImGui::TextColored(color, "%s", required_modifiers);
 
 					char const* forbidden_modifiers = EnumToString(key_request->forbidden_modifiers, buffer, 256);
-					ImGui::TableSetColumnIndex(2); ImGui::Text("%s", forbidden_modifiers);
+					ImGui::TableSetColumnIndex(2); ImGui::TextColored(color, "%s", forbidden_modifiers);
 
 					char const* action_mask = EnumToString(key_request->action_mask, buffer, 256);
-					ImGui::TableSetColumnIndex(3); ImGui::Text("%s", action_mask);
+					ImGui::TableSetColumnIndex(3); ImGui::TextColored(color, "%s", action_mask);
 
-					ImGui::TableSetColumnIndex(4); ImGui::Text("%s", in_title);
+					ImGui::TableSetColumnIndex(4);
+					if (!in_enabled)
+						ImGui::TextColored(color, "Disabled", in_title);
+
+					ImGui::TableSetColumnIndex(5);
+					if (request_result == InputRequestResult::Invalid)
+						ImGui::TextColored(color, "Invalid", in_title);
+					else if (request_result == InputRequestResult::Rejected)
+						ImGui::TextColored(color, "Rejected", in_title);
+
+					ImGui::TableSetColumnIndex(6); ImGui::TextColored(color, "%s", in_title);
+
 					ImGui::EndDisabled();
 				}
 				return false; // continue with following input receivers
 			}
+
+		protected:
+
+			/** the input device considered */
+			InputDeviceInterface const* input_device = nullptr;
+			/** the consumption cache */
+			InputConsumptionCache* consumption_cache = nullptr;
 		};
 
-		ImGuiTools::DrawImGuiTable("objects", {}, "Key", "Mandatory Mod.", "Forbidden Mod.", "Action", "Description")([&]()
+		ImGuiTools::DrawImGuiTable("objects", {}, "Key", "Mandatory Mod.", "Forbidden Mod.", "Action", "Enabled", "Request Status", "Description")([&]()
 		{
-			auto process_function = [](InputReceiverInterface* in_input_receiver, InputDeviceInterface const * in_input_device) // XXX: mandatory to have a VARIABLE lambda so that the underlying DelegateTraverser's LightweightFunction does not point on a deleted object
+			InputConsumptionCache consumption_cache;
+
+			auto process_function = [&consumption_cache](InputReceiverInterface* in_input_receiver, InputDeviceInterface const * in_input_device) // XXX: mandatory to have a VARIABLE lambda so that the underlying DelegateTraverser's LightweightFunction does not point on a deleted object
 			{
-				OnQueryInputActionEnumerator action_enumerator(in_input_receiver);
+				OnQueryInputActionEnumerator action_enumerator(in_input_receiver, in_input_device, &consumption_cache);
 				in_input_receiver->EnumerateInputActions(action_enumerator, EnumerateInputActionContext::OnQuery);
 				return false; // pass through all receivers
 			};

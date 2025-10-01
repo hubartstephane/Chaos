@@ -130,7 +130,6 @@ namespace chaos
 			if (in_input_receiver->EnumerateInputActions(action_enumerator, EnumerateInputActionContext::OnEvent))
 			{
 				// XXX: prevent the key to be handled in poll event has well
-				//      this is the right place to do this because we have the proper input_device
 				if (WindowApplication* window_application = Application::GetInstance())
 					window_application->GetInputConsumptionCache().TryConsumeInput(key_event.key, in_input_device);
 				return true;

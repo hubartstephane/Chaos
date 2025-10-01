@@ -58,7 +58,7 @@ namespace chaos
 			// find input
 			auto const* input_state = in_input_device->GetInputState(searched_input);
 			if (input_state == nullptr)
-				return InputRequestResult::Invalid;
+				return InputRequestResult::Invalid; // abnormal (request for an input not handled by the receiver)
 			// get the result
 			result = input_state->GetValue();
 

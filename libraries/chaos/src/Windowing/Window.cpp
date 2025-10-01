@@ -571,27 +571,27 @@ namespace chaos
 		});
 	}
 
-	bool Window::TraverseInputReceiver(InputReceiverTraverser & in_traverser)
+	bool Window::TraverseInputReceiver(InputReceiverTraverser & in_traverser, InputDeviceInterface const* in_input_device)
 	{
 		// try window client
 		if (window_client != nullptr)
-			if (in_traverser.Traverse(window_client.get()))
+			if (in_traverser.Traverse(window_client.get(), in_input_device))
 				return true;
 		// try super call
-		return WindowInterface::TraverseInputReceiver(in_traverser);
+		return WindowInterface::TraverseInputReceiver(in_traverser, in_input_device);
 	}
 
-	bool Window::TraverseInputReceiverFull(InputReceiverTraverser& in_traverser)
+	bool Window::TraverseInputReceiverFull(InputReceiverTraverser& in_traverser, InputDeviceInterface const* in_input_device)
 	{
 		// try imgui context
-		if (in_traverser.Traverse(&window_imgui_context))
+		if (in_traverser.Traverse(&window_imgui_context, in_input_device))
 			return true;
 		// try window
-		if (in_traverser.Traverse(this))
+		if (in_traverser.Traverse(this, in_input_device))
 			return true;
 		// try application
 		if (WindowApplication* window_application = Application::GetInstance())
-			if (in_traverser.Traverse(window_application))
+			if (in_traverser.Traverse(window_application, in_input_device))
 				return true;
 
 		return false;

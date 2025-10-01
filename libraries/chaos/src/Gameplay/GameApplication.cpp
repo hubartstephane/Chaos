@@ -63,13 +63,13 @@ namespace chaos
 		return true;
 	}
 
-	bool GameApplication::TraverseInputReceiver(InputReceiverTraverser & in_traverser)
+	bool GameApplication::TraverseInputReceiver(InputReceiverTraverser & in_traverser, InputDeviceInterface const* in_input_device)
 	{
 		if (game != nullptr)
 			if (!IsGameSuspended())
-				if (in_traverser.Traverse(game.get()))
+				if (in_traverser.Traverse(game.get(), in_input_device))
 					return true;
-		return WindowApplication::TraverseInputReceiver(in_traverser);
+		return WindowApplication::TraverseInputReceiver(in_traverser, in_input_device);
 	}
 
 	bool GameApplication::IsGameSuspended() const

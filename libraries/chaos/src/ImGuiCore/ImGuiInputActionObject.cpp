@@ -45,13 +45,19 @@ namespace chaos
 
 		ImGuiTools::DrawImGuiTable("objects", {}, "Key", "Mandatory Mod.", "Forbidden Mod.", "Action", "Description")([&]()
 		{
-			DelegateInputReceiverTraverser traverser([](InputReceiverInterface * in_input_receiver)
+			KeyboardAndMouseState const* keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance();
+			if (keyboard_and_mouse_state == nullptr)
+				return;
+
+			auto process_function = [](InputReceiverInterface* in_input_receiver, InputDeviceInterface const * in_input_device) // XXX: mandatory to have a VARIABLE lambda so that the underlying DelegateTraverser's LightweightFunction does not point on a deleted object
 			{
 				OnQueryInputActionEnumerator action_enumerator(in_input_receiver);
 				in_input_receiver->EnumerateInputActions(action_enumerator, EnumerateInputActionContext::OnQuery);
 				return false;
-			});
-			window->TraverseInputReceiverFull(traverser); // include ImGuiWindowContext and WindowApplication in the traversal
+			};
+
+			DelegateInputReceiverTraverser traverser(process_function);
+			window->TraverseInputReceiverFull(traverser, keyboard_and_mouse_state); // include ImGuiWindowContext and WindowApplication in the traversal
 		});
 	}
 

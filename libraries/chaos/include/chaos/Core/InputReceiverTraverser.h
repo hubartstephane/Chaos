@@ -18,9 +18,9 @@ namespace chaos
 		virtual ~InputReceiverTraverser() = default;
 
 		/** enter an InputEventReceiver */
-		virtual bool Traverse(InputReceiverInterface * in_input_receiver);
+		virtual bool Traverse(InputReceiverInterface * in_input_receiver, InputDeviceInterface const* in_input_device);
 		/** process the InputEventReceiver */
-		virtual bool Process(InputReceiverInterface * in_input_receiver);
+		virtual bool Process(InputReceiverInterface * in_input_receiver, InputDeviceInterface const* in_input_device);
 	};
 
 #endif

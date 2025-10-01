@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	using DelegateInputReceiverTraverserFunction = LightweightFunction<bool(InputReceiverInterface*)>;
+	using DelegateInputReceiverTraverserFunction = LightweightFunction<bool(InputReceiverInterface*, InputDeviceInterface const*)>;
 
 	/**
 	* DelegateInputReceiverTraverser: a specialisation that makes possible to use a delegate rather to have to override Process method
@@ -20,7 +20,7 @@ namespace chaos
 		DelegateInputReceiverTraverser(DelegateInputReceiverTraverserFunction in_process_function);
 
 		/** override */
-		virtual bool Process(InputReceiverInterface * in_input_receiver) override;
+		virtual bool Process(InputReceiverInterface * in_input_receiver, InputDeviceInterface const* in_input_device) override;
 
 	protected:
 

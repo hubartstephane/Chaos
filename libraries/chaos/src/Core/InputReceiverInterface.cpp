@@ -127,8 +127,23 @@ namespace chaos
 		//      we only want to register inside it the key for current key_event
 		//      this is done inside OnKeyEventInputReceiverTraverser
 		InputConsumptionCache consumption_cache;
-		OnKeyEventInputReceiverTraverser traverser(key_event, keyboard_and_mouse, &consumption_cache);
-		return traverser.Traverse(this);
+
+		auto process_function = [&key_event, &consumption_cache](InputReceiverInterface* in_input_receiver, InputDeviceInterface const* in_input_device) // XXX: mandatory to have a VARIABLE lambda so that the underlying DelegateTraverser's LightweightFunction does not point on a deleted object
+		{
+			OnKeyEventInputActionEnumerator action_enumerator(in_input_receiver, key_event, in_input_device, &consumption_cache);
+			if (in_input_receiver->EnumerateInputActions(action_enumerator, EnumerateInputActionContext::OnEvent))
+			{
+				// XXX: prevent the key to be handled in poll event has well
+				//      this is the right place to do this because we have the proper input_device
+				if (WindowApplication* window_application = Application::GetInstance())
+					window_application->GetInputConsumptionCache().TryConsumeInput(key_event.key, in_input_device);
+				return true;
+			}
+			return false;
+		};
+		DelegateInputReceiverTraverser traverser(process_function);
+
+		return traverser.Traverse(this, keyboard_and_mouse);
 	}
 
 	bool InputReceiverInterface::OnMouseWheelImpl(double scroll_x, double scroll_y)
@@ -151,9 +166,9 @@ namespace chaos
 		return false;
 	}
 
-	bool InputReceiverInterface::TraverseInputReceiver(InputReceiverTraverser & in_traverser)
+	bool InputReceiverInterface::TraverseInputReceiver(InputReceiverTraverser & in_traverser, InputDeviceInterface const* in_input_device)
 	{
-		return in_traverser.Process(this);
+		return in_traverser.Process(this, in_input_device);
 	}
 
 }; // namespace chaos

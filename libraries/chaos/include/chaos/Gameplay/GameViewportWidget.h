@@ -41,7 +41,7 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual bool TraverseInputReceiver(InputReceiverTraverser & in_traverser) override;
+		virtual bool TraverseInputReceiver(InputReceiverTraverser & in_traverser, InputDeviceInterface const* in_input_device) override;
 		/** override */
 		virtual bool OnDraw(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, WindowDrawParams const& draw_params) override;
 		/** override */

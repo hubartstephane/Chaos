@@ -340,11 +340,11 @@ protected:
 		return false;
 	}
 
-	virtual bool TraverseInputReceiver(chaos::InputReceiverTraverser & in_traverser) override
+	virtual bool TraverseInputReceiver(chaos::InputReceiverTraverser & in_traverser, chaos::InputDeviceInterface const * in_input_device) override
 	{
-		if (in_traverser.Traverse(&fps_view_controller))
+		if (in_traverser.Traverse(&fps_view_controller, in_input_device))
 			return true;
-		return chaos::Window::TraverseInputReceiver(in_traverser);
+		return chaos::Window::TraverseInputReceiver(in_traverser, in_input_device);
 	}
 
 protected:
@@ -364,8 +364,6 @@ protected:
 	FPSViewController fps_view_controller;
 
 	size_t selected_object_index = 0;
-
-
 };
 
 int main(int argc, char ** argv, char ** env)

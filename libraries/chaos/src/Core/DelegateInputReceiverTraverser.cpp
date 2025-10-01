@@ -10,9 +10,9 @@ namespace chaos
 		assert(in_process_function);
 	}
 
-	bool DelegateInputReceiverTraverser::Process(InputReceiverInterface * in_input_receiver)
+	bool DelegateInputReceiverTraverser::Process(InputReceiverInterface * in_input_receiver, InputDeviceInterface const* in_input_device)
 	{
-		return process_function(in_input_receiver);
+		return process_function(in_input_receiver, in_input_device);
 	}
 
 }; // namespace chaos

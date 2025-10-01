@@ -200,12 +200,12 @@ namespace chaos
 		void SetWindowClient(WindowClient * in_client);
 
 		/** override */
-		virtual bool TraverseInputReceiver(InputReceiverTraverser & in_traverser) override;
+		virtual bool TraverseInputReceiver(InputReceiverTraverser & in_traverser, InputDeviceInterface const* in_input_device) override;
 		/** override */
 		virtual bool EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context) override;
 
 		/** special input receiver traversal for event dispatching (handle imgui and application) */
-		bool TraverseInputReceiverFull(InputReceiverTraverser& in_traverser);
+		bool TraverseInputReceiverFull(InputReceiverTraverser& in_traverser, InputDeviceInterface const * in_input_device);
 
 	protected:
 
@@ -363,15 +363,19 @@ namespace chaos
 		template<typename FUNC, typename ...PARAMS>
 		bool DispatchInputEventWithContext(FUNC const & func, PARAMS&& ...params)
 		{
-			auto event_func = [&](InputReceiverInterface * in_input_receiver)
+			KeyboardAndMouseState const* keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance();
+			if (keyboard_and_mouse_state == nullptr)
+				return false;
+
+			auto process_function = [&](InputReceiverInterface * in_input_receiver, InputDeviceInterface const* in_input_device)  // XXX: mandatory to have a VARIABLE lambda so that the underlying DelegateTraverser's LightweightFunction does not point on a deleted object
 			{
 				return (in_input_receiver->*func)(std::forward<PARAMS>(params)...);
 			};
 
-			return WithWindowContext([this, &event_func]()
+			return WithWindowContext([this, &process_function, keyboard_and_mouse_state]()
 			{
-				DelegateInputReceiverTraverser traverser(event_func);
-				return TraverseInputReceiverFull(traverser);
+				DelegateInputReceiverTraverser traverser(process_function);
+				return TraverseInputReceiverFull(traverser, keyboard_and_mouse_state);
 			});
 		}
 

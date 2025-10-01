@@ -71,8 +71,6 @@
 #include "chaos/Core/InputReceiverInterface.h"
 #include "chaos/Core/InputReceiverTraverser.h"
 #include "chaos/Core/DelegateInputReceiverTraverser.h"
-#include "chaos/Core/OnKeyEventInputReceiverTraverser.h"
-#include "chaos/Core/OnPollInputReceiverTraverser.h"
 #include "chaos/Core/Application.h"
 #include "chaos/Core/ResourceManager.h"
 #include "chaos/Core/ResourceManagerLoader.h"

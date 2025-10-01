@@ -59,7 +59,7 @@ namespace chaos
 		bool OnCharEvent(unsigned int c);
 
 		/** traverse all receivers hierarchy and call a functor on all elements */
-		virtual bool TraverseInputReceiver(InputReceiverTraverser & in_traverser, InputDeviceInterface const* in_input_device = KeyboardAndMouseState::GetInstance());
+		virtual bool TraverseInputReceiver(InputReceiverTraverser & in_traverser, InputDeviceInterface const* in_input_device = KeyboardAndMouseDevice::GetInstance());
 		/** enumerate some declared key actions */
 		virtual bool EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context);
 		/** upgrade the input device and call some functor */

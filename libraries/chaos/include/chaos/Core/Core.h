@@ -56,7 +56,7 @@
 #include "chaos/Core/InputConsumptionCache.h"
 #include "chaos/Core/InputMode.h"
 #include "chaos/Core/InputState.h"
-#include "chaos/Core/KeyboardAndMouseState.h"
+#include "chaos/Core/KeyboardAndMouseDevice.h"
 #include "chaos/Core/KeyAction.h"
 #include "chaos/Core/KeyModifier.h"
 #include "chaos/Core/KeyEventBase.h"

@@ -664,11 +664,11 @@ namespace chaos
 		// update global state
 		MouseButton mouse_button = (MouseButton)button;
 
-		KeyboardAndMouseState* keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance();
-		if (keyboard_and_mouse_state != nullptr)
+		KeyboardAndMouseDevice* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
+		if (keyboard_and_mouse_device != nullptr)
 		{
 			bool key_value = (action == GLFW_PRESS || action == GLFW_REPEAT);
-			keyboard_and_mouse_state->SetKeyValue(mouse_button, key_value);
+			keyboard_and_mouse_device->SetKeyValue(mouse_button, key_value);
 		}
 
 		// dispatch event
@@ -711,11 +711,11 @@ namespace chaos
 		// update global keyboard state
 		KeyboardButton keyboard_button = KeyboardButton(keycode);
 
-		KeyboardAndMouseState* keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance();
-		if (keyboard_and_mouse_state != nullptr)
+		KeyboardAndMouseDevice* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
+		if (keyboard_and_mouse_device != nullptr)
 		{
 			bool key_value = (action == GLFW_PRESS || action == GLFW_REPEAT);
-			keyboard_and_mouse_state->SetKeyValue(keyboard_button, key_value);
+			keyboard_and_mouse_device->SetKeyValue(keyboard_button, key_value);
 		}
 
 		// dispatch the event

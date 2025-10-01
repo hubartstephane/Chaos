@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	KeyState const * KeyboardAndMouseState::DoGetInputState(Key key) const
+	KeyState const * KeyboardAndMouseDevice::DoGetInputState(Key key) const
 	{
 		if (!key.IsValid())
 			return nullptr;
@@ -14,7 +14,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	bool KeyboardAndMouseState::DoForAllKeys(ForAllKeysFunction func) const
+	bool KeyboardAndMouseDevice::DoForAllKeys(ForAllKeysFunction func) const
 	{
 		for (int i = 0 ; i < keyboard_key_state.size() ; ++i)
 			if (func(KeyboardButton(i), keyboard_key_state[i]))
@@ -25,7 +25,7 @@ namespace chaos
 		return false;
 	}
 
-	void KeyboardAndMouseState::SetKeyValue(Key key, bool value)
+	void KeyboardAndMouseDevice::SetKeyValue(Key key, bool value)
 	{
 		if (key.IsKeyboardKey())
 		{

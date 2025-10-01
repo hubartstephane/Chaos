@@ -42,8 +42,8 @@ namespace chaos
 
 	bool InputReceiverInterface::DoCheckKeyDown(Key key) const
 	{
-		if (KeyboardAndMouseState const * keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance())
-			if (KeyState const* state = keyboard_and_mouse_state->GetInputState(key))
+		if (KeyboardAndMouseDevice const * keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance())
+			if (KeyState const* state = keyboard_and_mouse_device->GetInputState(key))
 				return state->IsDown();
 		return false;
 	}

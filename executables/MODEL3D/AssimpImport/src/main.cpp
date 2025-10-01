@@ -613,7 +613,7 @@ protected:
 		{
 			auto MoveObject = [this, delta_time](KeyboardButton button, size_t component_index, float direction)
 			{
-				if (KeyboardAndMouseState::GetInstance()->IsKeyDown(button))
+				if (KeyboardAndMouseDevice::GetInstance()->IsKeyDown(button))
 				{
 					Object3D* selected_object = objects[selected_object_index].get();
 					selected_object->transform.position[component_index] += direction * OBJECT_SPEED * delta_time;

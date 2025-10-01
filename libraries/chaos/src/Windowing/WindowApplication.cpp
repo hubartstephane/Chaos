@@ -948,7 +948,7 @@ namespace chaos
 	{
 		if (func("Log", &ImGuiWindow::CreateImGuiWindow<ImGuiLogObject>))
 			return true;
-		if (func("Keyboard and Mouse State", &ImGuiWindow::CreateImGuiWindow<ImGuiKeyboardAndMouseStateObject>))
+		if (func("Keyboard and Mouse State", &ImGuiWindow::CreateImGuiWindow<ImGuiKeyboardAndMouseDeviceObject>))
 			return true;
 		if (func("Gamepad", &ImGuiWindow::CreateImGuiWindow<ImGuiGamepadObject>))
 			return true;

@@ -2,15 +2,15 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class KeyboardAndMouseState;
+	class KeyboardAndMouseDevice;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* KeyboardAndMouseState: A singleton that contains the state of keyboard and mouse buttons
+	* KeyboardAndMouseDevice: A singleton that contains the state of keyboard and mouse buttons
 	*/
 
-	class CHAOS_API KeyboardAndMouseState : public Singleton<KeyboardAndMouseState>, public InputDeviceInterface
+	class CHAOS_API KeyboardAndMouseDevice : public Singleton<KeyboardAndMouseDevice>, public InputDeviceInterface
 	{
 
 	public:

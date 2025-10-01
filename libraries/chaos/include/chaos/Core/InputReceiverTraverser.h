@@ -20,7 +20,7 @@ namespace chaos
 		virtual ~InputReceiverTraverser() = default;
 
 		/** enter an InputEventReceiver */
-		virtual bool Traverse(InputReceiverInterface * in_input_receiver, InputDeviceInterface const* in_input_device = KeyboardAndMouseState::GetInstance());
+		virtual bool Traverse(InputReceiverInterface * in_input_receiver, InputDeviceInterface const* in_input_device = KeyboardAndMouseDevice::GetInstance());
 
 	protected:
 

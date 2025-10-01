@@ -205,7 +205,7 @@ namespace chaos
 		virtual bool EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context) override;
 
 		/** special input receiver traversal for event dispatching (handle imgui and application) */
-		bool TraverseInputReceiverFull(InputReceiverTraverser& in_traverser, InputDeviceInterface const * in_input_device = KeyboardAndMouseState::GetInstance());
+		bool TraverseInputReceiverFull(InputReceiverTraverser& in_traverser, InputDeviceInterface const * in_input_device = KeyboardAndMouseDevice::GetInstance());
 
 	protected:
 

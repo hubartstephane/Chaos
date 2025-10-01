@@ -56,8 +56,8 @@ namespace chaos
 			if (ImGui::GetIO().WantCaptureMouse)
 			{
 				if (WindowApplication* window_application = Application::GetInstance())
-					if (KeyboardAndMouseState const* keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance())
-						window_application->GetInputConsumptionCache().TryConsumeInput(mouse_button_event.key, keyboard_and_mouse_state);
+					if (KeyboardAndMouseDevice const* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance())
+						window_application->GetInputConsumptionCache().TryConsumeInput(mouse_button_event.key, keyboard_and_mouse_device);
 				return true;
 			}
 		}
@@ -85,8 +85,8 @@ namespace chaos
 			if (ImGui::GetIO().WantCaptureKeyboard)
 			{
 				if (WindowApplication* window_application = Application::GetInstance())
-					if (KeyboardAndMouseState const* keyboard_and_mouse_state = KeyboardAndMouseState::GetInstance())
-						window_application->GetInputConsumptionCache().TryConsumeInput(key_event.key, keyboard_and_mouse_state);
+					if (KeyboardAndMouseDevice const* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance())
+						window_application->GetInputConsumptionCache().TryConsumeInput(key_event.key, keyboard_and_mouse_device);
 				return true;
 			}
 		}

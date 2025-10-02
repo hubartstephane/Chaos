@@ -327,7 +327,7 @@ namespace chaos
 		case KeyType::MOUSE:
 			return EnumToString(mouse_button);
 		}
-		return nullptr;
+		return "Invalid";
 	}
 
 	bool Key::IsValid() const

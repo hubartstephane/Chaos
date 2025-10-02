@@ -24,6 +24,17 @@ namespace chaos
 		}
 
 		/** override */
+		virtual std::string GetInputTitle() const override
+		{
+			if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, Key>)
+				return StringTools::Printf("Query Value: %s", searched_input.GetName());
+			else if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, GamepadAxis> || std::is_same_v<INPUT_SEARCH_KEY_TYPE, GamepadStick>)
+				return StringTools::Printf("Query Value: %s", EnumToString(searched_input));
+			return {};
+		}
+
+
+		/** override */
 		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, KeyEventBase const& in_key_event, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
 		{
 			if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, Key>) // this is only valid for key event
@@ -31,6 +42,10 @@ namespace chaos
 				// early exit
 				if (!searched_input.IsValid())
 					return InputRequestResult::Invalid;
+				// find input
+				auto const* input_state = in_input_device->GetInputState(searched_input);
+				if (input_state == nullptr)
+					return InputRequestResult::Invalid; // abnormal (request for an input not handled by the receiver)
 				// consum the key of the request (no one can use it anymore until next frame)
 				if (!in_consumption_cache.TryConsumeInput(searched_input, in_input_device))
 					return InputRequestResult::Rejected;
@@ -52,13 +67,13 @@ namespace chaos
 			if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, Key>)
 				if (!searched_input.IsValid())
 					return InputRequestResult::Invalid;
-			// consum the key of the request (no one can use it anymore until next frame)
-			if (!in_consumption_cache.TryConsumeInput(searched_input, in_input_device))
-				return InputRequestResult::Rejected;
 			// find input
 			auto const* input_state = in_input_device->GetInputState(searched_input);
 			if (input_state == nullptr)
 				return InputRequestResult::Invalid; // abnormal (request for an input not handled by the receiver)
+			// consum the key of the request (no one can use it anymore until next frame)
+			if (!in_consumption_cache.TryConsumeInput(searched_input, in_input_device))
+				return InputRequestResult::Rejected;
 			// get the result
 			result = input_state->GetValue();
 

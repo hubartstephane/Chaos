@@ -12,7 +12,7 @@ namespace chaos
 	 * InputRequestResult: 
 	 */
 
-	enum class InputRequestResult : int
+	enum class CHAOS_API InputRequestResult : int
 	{
 		Invalid,   // the request is not properly initialized
 		Rejected,  // the inputs for this request have already been consumed
@@ -24,9 +24,12 @@ namespace chaos
 	* InputRequestBase: a base request for any user input (keyboard, mouse, gamepad)
 	*/
 
-	class InputRequestBase
+	class CHAOS_API InputRequestBase
 	{
 	public:
+
+		/** get the title of the input */
+		virtual std::string GetInputTitle() const;
 
 		/** check whether the request matches a given key event */
 		virtual InputRequestResult Check(InputReceiverInterface const * in_input_receiver, KeyEventBase const& in_key_event, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const;

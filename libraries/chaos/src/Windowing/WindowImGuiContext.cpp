@@ -53,7 +53,7 @@ namespace chaos
 		{
 			ImGui_ImplGlfw_MouseButtonCallback(window->GetGLFWHandler(), (int)mouse_button_event.key.GetMouseButton(), (int)mouse_button_event.action, (int)mouse_button_event.modifiers);
 
-			if (ImGui::GetIO().WantCaptureMouse)
+			//if (ImGui::GetIO().WantCaptureMouse)
 			{
 				if (WindowApplication* window_application = Application::GetInstance())
 					if (KeyboardAndMouseDevice const* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance())
@@ -82,7 +82,7 @@ namespace chaos
 		{
 			ImGui_ImplGlfw_KeyCallback(window->GetGLFWHandler(), (int)key_event.key.GetKeyboardButton(), key_event.scancode, (int)key_event.action, (int)key_event.modifiers);
 
-			if (ImGui::GetIO().WantCaptureKeyboard)
+			//if (ImGui::GetIO().WantCaptureKeyboard)
 			{
 				if (WindowApplication* window_application = Application::GetInstance())
 					if (KeyboardAndMouseDevice const* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance())
@@ -99,7 +99,8 @@ namespace chaos
 		{
 			if (ImGui::GetIO().WantCaptureKeyboard)
 			{
-				return true;
+				in_action_enumerator.CheckAndProcess(AnyInputRequest(), "Catch All");
+				return true; // stop traversal
 			}
 		}
 		return false;

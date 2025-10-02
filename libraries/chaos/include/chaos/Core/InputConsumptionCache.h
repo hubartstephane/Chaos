@@ -10,9 +10,12 @@ namespace chaos
 	 * InputConsumptionCache: an object that keeps that trace of which inputs have been handled this frame
 	 */
 
-	class InputConsumptionCache
+	class CHAOS_API InputConsumptionCache
 	{
 	public:
+
+		/** all incomming input requests will be considered as consumed */
+		void SetConsumeAllInputs(bool in_value);
 
 		/** clear the cache */
 		void Clear();
@@ -41,6 +44,9 @@ namespace chaos
 		std::set<std::pair<GamepadAxis, AxisState const*>> consumed_axes;
 		/** sticks that are consumed */
 		std::set<std::pair<GamepadStick, StickState const*>> consumed_sticks;
+
+		/** indicates whether incoming input request will be considered as consumed */
+		bool consume_all_inputs = false;
 	};
 
 #endif

@@ -44,7 +44,7 @@ namespace chaos
 
 		// capture mouse button state
 		if (mouse_enabled && config.must_click_to_rotate)
-			if (in_action_enumerator.CheckAndProcess(RequestInputValue(input_config.rotation_button, mouse_captured), "capture mouse"))
+			if (in_action_enumerator.CheckAndProcess(RequestInputValue(input_config.rotation_button, mouse_captured), "Mouse Look"))
 				return true;
 
 		return false;

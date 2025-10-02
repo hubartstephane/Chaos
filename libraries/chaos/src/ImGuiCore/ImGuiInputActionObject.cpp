@@ -25,23 +25,23 @@ namespace chaos
 
 			virtual bool CheckAndProcess(InputRequestBase const & in_request, char const * in_title, bool in_enabled, LightweightFunction<void()> in_key_action) override
 			{
+				ImGui::TableNextRow();
+				ImGui::BeginDisabled(!in_enabled);
+
 				char buffer[256];
+
+				ImVec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+				InputRequestResult request_result = in_request.Check(input_receiver, input_device, *consumption_cache);
+				if (request_result == InputRequestResult::Invalid)
+					color = { 1.0f, 0.0f, 0.0f, 1.0f };
+				else if (request_result == InputRequestResult::Rejected)
+					color = { 0.0f, 1.0f, 1.0f, 1.0f };
+
+				ImGui::TableSetColumnIndex(0); ImGui::TextColored(color, "%s", in_request.GetInputTitle().c_str());
 
 				if (KeyRequest const* key_request = auto_cast(&in_request))
 				{
-					ImVec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-					InputRequestResult request_result = in_request.Check(input_receiver, input_device, *consumption_cache);
-					if (request_result == InputRequestResult::Invalid)
-						color = { 1.0f, 0.0f, 0.0f, 1.0f };
-					else if (request_result == InputRequestResult::Rejected)
-						color = { 0.0f, 1.0f, 1.0f, 1.0f };
-
-					ImGui::TableNextRow();
-
-					ImGui::BeginDisabled(!in_enabled);
-					ImGui::TableSetColumnIndex(0); ImGui::TextColored(color, "%s", key_request->key.GetName());
-
 					char const* required_modifiers = EnumToString(key_request->required_modifiers, buffer, 256);
 					ImGui::TableSetColumnIndex(1); ImGui::TextColored(color, "%s", required_modifiers);
 
@@ -50,21 +50,22 @@ namespace chaos
 
 					char const* action_mask = EnumToString(key_request->action_mask, buffer, 256);
 					ImGui::TableSetColumnIndex(3); ImGui::TextColored(color, "%s", action_mask);
-
-					ImGui::TableSetColumnIndex(4);
-					if (!in_enabled)
-						ImGui::TextColored(color, "Disabled", in_title);
-
-					ImGui::TableSetColumnIndex(5);
-					if (request_result == InputRequestResult::Invalid)
-						ImGui::TextColored(color, "Invalid", in_title);
-					else if (request_result == InputRequestResult::Rejected)
-						ImGui::TextColored(color, "Rejected", in_title);
-
-					ImGui::TableSetColumnIndex(6); ImGui::TextColored(color, "%s", in_title);
-
-					ImGui::EndDisabled();
 				}
+
+				ImGui::TableSetColumnIndex(4);
+				if (!in_enabled)
+					ImGui::TextColored(color, "Disabled", in_title);
+
+				ImGui::TableSetColumnIndex(5);
+				if (request_result == InputRequestResult::Invalid)
+					ImGui::TextColored(color, "Invalid", in_title);
+				else if (request_result == InputRequestResult::Rejected)
+					ImGui::TextColored(color, "Rejected", in_title);
+
+				ImGui::TableSetColumnIndex(6); ImGui::TextColored(color, "%s", in_title);
+
+				ImGui::EndDisabled();
+
 				return false; // continue with following input receivers
 			}
 

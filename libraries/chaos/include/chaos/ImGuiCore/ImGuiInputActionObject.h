@@ -10,7 +10,7 @@ namespace chaos
 	* ImGuiInputActionObject: a drawable that displays some help for keys
 	*/
 
-	class ImGuiInputActionObject : public ImGuiObject
+	class CHAOS_API ImGuiInputActionObject : public ImGuiObject
 	{
 	public:
 

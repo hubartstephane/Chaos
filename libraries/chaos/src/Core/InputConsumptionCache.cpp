@@ -3,11 +3,17 @@
 
 namespace chaos
 {
+	void InputConsumptionCache::SetConsumeAllInputs(bool in_value)
+	{
+		consume_all_inputs = in_value;
+	}
+
 	void InputConsumptionCache::Clear()
 	{
 		consumed_keys.clear();
 		consumed_axes.clear();
 		consumed_sticks.clear();
+		consume_all_inputs = false;
 	}
 
 	bool InputConsumptionCache::TryConsumeInput(Key const& in_key, InputDeviceInterface const* in_input_device) // check whether the key is still available and lock it for further requests (do the same for related inputs)
@@ -22,7 +28,9 @@ namespace chaos
 		if (in_key == GamepadButton::RIGHT_TRIGGER)
 			result &= DoTryConsumeInput(GamepadAxis::RIGHT_TRIGGER, in_input_device);
 
-		return result;
+		return (consume_all_inputs)? 
+			false:
+			result;
 	}
 
 	bool InputConsumptionCache::TryConsumeInput(GamepadAxis in_axis, InputDeviceInterface const* in_input_device) // check whether the axis is still available and lock it for further requests (do the same for related inputs)
@@ -42,7 +50,9 @@ namespace chaos
 		if (in_axis == GamepadAxis::RIGHT_AXIS_X || in_axis == GamepadAxis::RIGHT_AXIS_Y)
 			result &= DoTryConsumeInput(GamepadStick::RIGHT_STICK, in_input_device);
 
-		return result;
+		return (consume_all_inputs) ?
+			false :
+			result;
 	}
 
 	bool InputConsumptionCache::TryConsumeInput(GamepadStick in_stick, InputDeviceInterface const* in_input_device) // check whether the stick is still available and lock it for further requests (do the same for related inputs)
@@ -63,7 +73,9 @@ namespace chaos
 			result &= DoTryConsumeInput(GamepadAxis::RIGHT_AXIS_Y, in_input_device);
 		}
 
-		return result;
+		return (consume_all_inputs) ?
+			false :
+			result;
 	}
 
 	bool InputConsumptionCache::DoTryConsumeInput(Key in_key, InputDeviceInterface const* in_input_device)

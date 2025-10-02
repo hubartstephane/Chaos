@@ -10,7 +10,7 @@ namespace chaos
 	* KeyRequest: a specialization of InputRequestBase for a single key
 	*/
 
-	class KeyRequest : public InputRequestBase
+	class CHAOS_API KeyRequest : public InputRequestBase
 	{
 
 	public:
@@ -30,6 +30,8 @@ namespace chaos
 		/** gets an equivalent request by updating forbidden_modifiers */
 		KeyRequest ForbidModifiers(KeyModifier in_modifiers) const;
 
+		/** override */
+		virtual std::string GetInputTitle() const override;
 		/** override */
 		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, KeyEventBase const& in_key_event, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const override;
 		/** override */

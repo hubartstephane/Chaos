@@ -4,18 +4,23 @@
 
 namespace chaos
 {
+	std::string KeyRequest::GetInputTitle() const
+	{
+		return key.GetName();
+	}
+
 	InputRequestResult KeyRequest::Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const
 	{
 		// early exit
 		if (!key.IsValid())
 			return InputRequestResult::Invalid;
-		// consum the key of the request (no one can use it anymore until next frame)
-		if (!in_consumption_cache.TryConsumeInput(key, in_input_device))
-			return InputRequestResult::Rejected;
 		// find state
 		KeyState const* input_state = in_input_device->GetInputState(key);
 		if (input_state == nullptr)
 			return InputRequestResult::Invalid; // abnormal (request for an input not handled by the receiver)
+		// consum the key of the request (no one can use it anymore until next frame)
+		if (!in_consumption_cache.TryConsumeInput(key, in_input_device))
+			return InputRequestResult::Rejected;
 		
 		if (required_modifiers != KeyModifier::None || forbidden_modifiers != KeyModifier::None)
 		{
@@ -80,13 +85,13 @@ namespace chaos
 		// early exit
 		if (!key.IsValid())
 			return InputRequestResult::Invalid;
-		// consum the key of the request (no one can use it anymore until next frame)
-		if (!in_consumption_cache.TryConsumeInput(key, in_input_device))
-			return InputRequestResult::Rejected;
 		// find state
 		KeyState const* input_state = in_input_device->GetInputState(key);
 		if (input_state == nullptr)
 			return InputRequestResult::Invalid; // abnormal (request for an input not handled by the receiver)
+		// consum the key of the request (no one can use it anymore until next frame)
+		if (!in_consumption_cache.TryConsumeInput(key, in_input_device))
+			return InputRequestResult::Rejected;
 		//  effective request
 		return in_key_event.Check(key, action_mask, required_modifiers, forbidden_modifiers)?
 			InputRequestResult::True:

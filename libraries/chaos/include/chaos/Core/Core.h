@@ -64,6 +64,7 @@
 #include "chaos/Core/InputRequestBase.h"
 #include "chaos/Core/KeyRequest.h"
 #include "chaos/Core/InputValueRequest.h"
+#include "chaos/Core/AnyInputRequest.h"
 #include "chaos/Core/MouseButtonEvent.h"
 #include "chaos/Core/InputActionEnumerator.h"
 #include "chaos/Core/OnKeyEventInputActionEnumerator.h"

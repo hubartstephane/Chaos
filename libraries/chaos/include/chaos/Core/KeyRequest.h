@@ -31,7 +31,7 @@ namespace chaos
 		KeyRequest ForbidModifiers(KeyModifier in_modifiers) const;
 
 		/** override */
-		virtual std::string GetInputTitle() const override;
+		virtual InputRequestDebugInfo GetDebugInfo() const override;
 		/** override */
 		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, KeyEventBase const& in_key_event, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const override;
 		/** override */

@@ -4,9 +4,19 @@
 
 namespace chaos
 {
-	std::string KeyRequest::GetInputTitle() const
+
+	InputRequestDebugInfo KeyRequest::GetDebugInfo() const
 	{
-		return key.GetName();
+		char buffer[256];
+
+		InputRequestDebugInfo result;
+		result.input = key.GetName();
+		if (required_modifiers != KeyModifier::None)
+			result.required_modifiers = EnumToString(required_modifiers, buffer, 256);
+		if (forbidden_modifiers != KeyModifier::None)
+			result.forbidden_modifiers = EnumToString(forbidden_modifiers, buffer, 256);
+		result.action_type = EnumToString(action_mask, buffer, 256);
+		return result;
 	}
 
 	InputRequestResult KeyRequest::Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const

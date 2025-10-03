@@ -24,15 +24,18 @@ namespace chaos
 		}
 
 		/** override */
-		virtual std::string GetInputTitle() const override
+		virtual InputRequestDebugInfo GetDebugInfo() const override
 		{
-			if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, Key>)
-				return StringTools::Printf("Query Value: %s", searched_input.GetName());
-			else if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, GamepadAxis> || std::is_same_v<INPUT_SEARCH_KEY_TYPE, GamepadStick>)
-				return StringTools::Printf("Query Value: %s", EnumToString(searched_input));
-			return {};
-		}
+			InputRequestDebugInfo result;
 
+			if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, Key>)
+				result.input = searched_input.GetName();
+			else if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, GamepadAxis> || std::is_same_v<INPUT_SEARCH_KEY_TYPE, GamepadStick>)
+				result.input = EnumToString(searched_input);
+			result.action_type = "Query Value";
+
+			return result;
+		}
 
 		/** override */
 		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, KeyEventBase const& in_key_event, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override

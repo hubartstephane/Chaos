@@ -4,7 +4,7 @@
 
 namespace chaos
 {
-	std::string InputRequestBase::GetInputTitle() const
+	InputRequestDebugInfo InputRequestBase::GetDebugInfo() const
 	{
 		return {};
 	}

@@ -802,7 +802,7 @@ namespace chaos
 
 	bool WindowApplication::EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context)
 	{
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(KeyboardButton::F7) , "Toggle ImGui", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(KeyboardButton::F7), "Toggle ImGui", [this]()
 		{
 			SetImGuiMenuEnabled(!IsImGuiMenuEnabled());
 		}))

@@ -23,12 +23,12 @@ namespace chaos
 			{
 			}
 
+
+
 			virtual bool CheckAndProcess(InputRequestBase const & in_request, char const * in_title, bool in_enabled, LightweightFunction<void()> in_key_action) override
 			{
 				ImGui::TableNextRow();
 				ImGui::BeginDisabled(!in_enabled);
-
-				char buffer[256];
 
 				ImVec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
@@ -38,24 +38,19 @@ namespace chaos
 				else if (request_result == InputRequestResult::Rejected)
 					color = { 0.0f, 1.0f, 1.0f, 1.0f };
 
-				ImGui::TableSetColumnIndex(0); ImGui::TextColored(color, "%s", in_request.GetInputTitle().c_str());
+				InputRequestDebugInfo debug_info = in_request.GetDebugInfo();
 
-				if (KeyRequest const* key_request = auto_cast(&in_request))
-				{
-					char const* required_modifiers = EnumToString(key_request->required_modifiers, buffer, 256);
-					ImGui::TableSetColumnIndex(1); ImGui::TextColored(color, "%s", required_modifiers);
-
-					char const* forbidden_modifiers = EnumToString(key_request->forbidden_modifiers, buffer, 256);
-					ImGui::TableSetColumnIndex(2); ImGui::TextColored(color, "%s", forbidden_modifiers);
-
-					char const* action_mask = EnumToString(key_request->action_mask, buffer, 256);
-					ImGui::TableSetColumnIndex(3); ImGui::TextColored(color, "%s", action_mask);
-				}
-
-				ImGui::TableSetColumnIndex(4);
+				ImGui::TableSetColumnIndex(0); ImGui::TextColored(color, "%s", debug_info.input.c_str());
+				ImGui::TableSetColumnIndex(1); ImGui::TextColored(color, "%s", debug_info.required_modifiers.c_str());
+				ImGui::TableSetColumnIndex(2); ImGui::TextColored(color, "%s", debug_info.forbidden_modifiers.c_str());
+				ImGui::TableSetColumnIndex(3); ImGui::TextColored(color, "%s", debug_info.action_type.c_str());
+			
 				if (!in_enabled)
+				{
+					ImGui::TableSetColumnIndex(4);
 					ImGui::TextColored(color, "Disabled", in_title);
-
+				}
+					
 				ImGui::TableSetColumnIndex(5);
 				if (request_result == InputRequestResult::Invalid)
 					ImGui::TextColored(color, "Invalid", in_title);
@@ -77,7 +72,7 @@ namespace chaos
 			InputConsumptionCache* consumption_cache = nullptr;
 		};
 
-		ImGuiTools::DrawImGuiTable("objects", {}, "Key", "Mandatory Mod.", "Forbidden Mod.", "Action", "Enabled", "Request Status", "Description")([&]()
+		ImGuiTools::DrawImGuiTable("objects", {}, "Input", "Mandatory Mod.", "Forbidden Mod.", "Action", "Enabled", "Request Status", "Description")([&]()
 		{
 			InputConsumptionCache consumption_cache;
 

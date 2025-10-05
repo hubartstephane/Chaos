@@ -78,30 +78,37 @@ namespace chaos
 
 	bool WindowImGuiContext::OnKeyEventImpl(KeyEvent const& key_event)
 	{
+		if (InputReceiverInterface::OnKeyEventImpl(key_event))
+		{
+			return true;
+		}
+
 		if (ShouldCaptureInputEvent())
 		{
 			ImGui_ImplGlfw_KeyCallback(window->GetGLFWHandler(), (int)key_event.key.GetKeyboardButton(), key_event.scancode, (int)key_event.action, (int)key_event.modifiers);
 
-			//if (ImGui::GetIO().WantCaptureKeyboard)
-			{
-				if (WindowApplication* window_application = Application::GetInstance())
-					if (KeyboardAndMouseDevice const* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance())
-						window_application->GetInputConsumptionCache().TryConsumeInput(key_event.key, keyboard_and_mouse_device);
-				return true;
-			}
+			if (WindowApplication* window_application = Application::GetInstance())
+				if (KeyboardAndMouseDevice const* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance())
+					window_application->GetInputConsumptionCache().TryConsumeInput(key_event.key, keyboard_and_mouse_device);
+			return true;
 		}
 		return false;
 	}
 
 	bool WindowImGuiContext::EnumerateInputActions(InputActionEnumerator& in_action_enumerator, EnumerateInputActionContext in_context)
 	{
-		if (ShouldCaptureInputEvent())
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(KeyboardButton::F7), "Toggle ImGui", [this]()
 		{
-			if (ImGui::GetIO().WantCaptureKeyboard)
-			{
-				in_action_enumerator.CheckAndProcess(AnyInputRequest(), "Catch All");
-				return true; // stop traversal
-			}
+			WindowApplication::SetImGuiMenuEnabled(!WindowApplication::IsImGuiMenuEnabled());
+		}))
+		{
+			return true;
+		}
+
+		if (ShouldCaptureInputEvent() && in_context != EnumerateInputActionContext::OnEvent)
+		{
+			in_action_enumerator.CheckAndProcess(AnyInputRequest(), "Catch All");
+			return true; // stop traversal
 		}
 		return false;
 	}

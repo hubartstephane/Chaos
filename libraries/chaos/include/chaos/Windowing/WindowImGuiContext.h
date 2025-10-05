@@ -21,6 +21,9 @@ namespace chaos
 		/** check whether the context is current */
 		bool IsImGuiContextCurrent() const;
 
+		/** override */
+		virtual bool EnumerateInputActions(InputActionEnumerator& in_action_enumerator, EnumerateInputActionContext in_context) override;
+
 	protected:
 	
 		/** called whenever the menu becomes enabled or disabled */
@@ -33,8 +36,6 @@ namespace chaos
 		/** check whether the input event should be handled */
 		bool ShouldCaptureInputEvent() const;
 
-		/** override */
-		virtual bool EnumerateInputActions(InputActionEnumerator& in_action_enumerator, EnumerateInputActionContext in_context) override;
 		/** override */
 		virtual bool OnMouseMoveImpl(glm::vec2 const& delta) override;
 		/** override */

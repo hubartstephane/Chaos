@@ -94,6 +94,9 @@ namespace chaos
 
 #if _DEBUG // File Redirection
 
+		// XXX: boost::filesystem::path comparaison is case sensitive even on WINDOWS
+		//      So we can't use lexically_relative()
+
 		static boost::filesystem::path BuildRedirectedPath(boost::filesystem::path const& p, boost::filesystem::path const & build_path, boost::filesystem::path const& src_path)
 		{
 			// work with absolute path
@@ -101,13 +104,18 @@ namespace chaos
 			{
 				return BuildRedirectedPath(boost::filesystem::current_path() / p, build_path, src_path);
 			}
+
 			// search whether incomming path is inside the build_path
 			auto it1 = p.begin();
 			auto it2 = build_path.begin();
 
 			while (it1 != p.end() && it2 != build_path.end())
 			{
-				if (*it1 != *it2)
+#if _WIN32
+				if (StringTools::Stricmp(it1->string(), it2->string()) != 0) // because even on windows, this is case sensitive
+#else
+				if (*it1 == *it2)
+#endif
 					return {};
 				++it1;
 				++it2;
@@ -115,8 +123,15 @@ namespace chaos
 			if (it2 != build_path.end()) // has all directories of build_path been consummed ?
 				return {};
 
+			// get suffix of path of interest relative to the build_path
+			boost::filesystem::path relative_path;
+			while (it1 != p.end())
+			{
+				relative_path /= *it1;
+				++it1;
+			}
+
 			// make substitution, build_path prefix to src_path prefix
-			boost::filesystem::path relative_path = p.lexically_relative(build_path);
 			boost::filesystem::path result = (src_path / relative_path);
 			return result.lexically_normal();
 		}

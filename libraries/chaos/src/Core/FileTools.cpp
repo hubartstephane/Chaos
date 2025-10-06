@@ -174,11 +174,11 @@ namespace chaos
 			return false;
 		}
 
-		bool WithDirectoryContent(FilePathParam const& p, LightweightFunction<bool(boost::filesystem::path const& p)> func)
+		bool WithDirectoryContent(FilePathParam const& path, LightweightFunction<bool(boost::filesystem::path const& p)> func)
 		{
-			std::vector<boost::filesystem::path> processed_relative_paths;
+			std::vector<boost::filesystem::path> filenames;
 
-			auto process_path_func = [&processed_relative_paths, func](boost::filesystem::path const& p)
+			auto process_path_func = [&filenames, func](boost::filesystem::path const& p)
 			{
 				if (boost::filesystem::is_directory(p))
 				{
@@ -186,19 +186,21 @@ namespace chaos
 					{
 #if _DEBUG // File Redirection
 
-						boost::filesystem::path relative_path = it->path().lexically_relative(p);
-						if (std::find(processed_relative_paths.begin(), processed_relative_paths.end(), relative_path) != processed_relative_paths.end())
+						boost::filesystem::path const & path = it->path();
+						boost::filesystem::path filename = path.filename();
+
+						if (std::find(filenames.begin(), filenames.end(), filename) != filenames.end())
 							continue;
-						processed_relative_paths.push_back(relative_path);
+						filenames.push_back(std::move(filename));
 #endif
-						if (func(it->path()))
+						if (func(path))
 							return true;
 					}
 				}
 				return false;
 			};
 
-			return WithFile(p, process_path_func);
+			return WithFile(path, process_path_func);
 		}
 
 		boost::filesystem::path GetRedirectedPath(boost::filesystem::path const& p)

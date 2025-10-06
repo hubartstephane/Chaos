@@ -92,11 +92,11 @@ namespace chaos
 	{
 		GLuint searched_vertex_buffer_id = (binding_info.vertex_buffer != nullptr)? binding_info.vertex_buffer->GetResourceID() : 0;
 		GLuint searched_index_buffer_id  = (binding_info.index_buffer  != nullptr)? binding_info.index_buffer->GetResourceID()  : 0;
-		GLuint searched_index_program_id = (binding_info.program  != nullptr)? binding_info.program->GetResourceID()  : 0;
+		GLuint searched_program_id       = (binding_info.program       != nullptr)? binding_info.program->GetResourceID()  : 0;
 
 		for (GPUVertexArrayCacheEntry const & entry : entries)
 		{
-			if (entry.program_id           == searched_index_program_id &&
+			if (entry.program_id           == searched_program_id &&
 				entry.vertex_buffer_id     == searched_vertex_buffer_id &&
 				entry.index_buffer_id      == searched_index_buffer_id  &&
 				entry.vertex_buffer_offset == binding_info.vertex_buffer_offset)

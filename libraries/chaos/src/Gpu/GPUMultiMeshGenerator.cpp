@@ -31,7 +31,7 @@ namespace chaos
 	//
 	// Mesh 1 & Mesh 2 are using the same vertex buffer
 	// Mesh 2 vertices are to be aligned on their size boundaries so that they can be properly indexed
-	// we add an extra padding at the end of Mesg 1 vertices
+	// we add an extra padding at the end of Mesh 1 vertices
 
 	bool GPUMultiMeshGenerator::GenerateMeshes(GPUDevice * in_gpu_device) const
 	{

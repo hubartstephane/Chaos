@@ -78,28 +78,11 @@ namespace chaos
 		entries.push_back(entry);
 	}
 
-	GPUVertexDeclarationEntry* GPUVertexDeclaration::GetEntry(char const * name)
-	{
-		assert(name != nullptr);
-		for (auto& entry : entries)
-			if (StringTools::Stricmp(entry.name, name) == 0)
-				return &entry;
-		return nullptr;
-	}
-
 	GPUVertexDeclarationEntry const* GPUVertexDeclaration::GetEntry(char const* name) const
 	{
 		assert(name != nullptr);
 		for (auto const& entry : entries)
 			if (StringTools::Stricmp(entry.name, name) == 0)
-				return &entry;
-		return nullptr;
-	}
-
-	GPUVertexDeclarationEntry * GPUVertexDeclaration::GetEntry(VertexAttributeSemantic semantic, int semantic_index)
-	{
-		for (auto & entry : entries)
-			if (entry.semantic == semantic && (entry.semantic_index < 0 || entry.semantic_index == semantic_index))
 				return &entry;
 		return nullptr;
 	}

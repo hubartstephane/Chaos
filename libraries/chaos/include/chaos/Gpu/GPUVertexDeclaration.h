@@ -130,13 +130,8 @@ namespace chaos
 
 		/** gets an entry from its name */
 		GPUVertexDeclarationEntry const* GetEntry(char const* name) const;
-		/** gets an entry from its name */
-		GPUVertexDeclarationEntry* GetEntry(char const* name);
-
 		/** gets an entry from its semantic (ignore semantic_index if negative) */
 		GPUVertexDeclarationEntry const* GetEntry(VertexAttributeSemantic semantic, int semantic_index) const;
-		/** gets an entry from its semantic (ignore semantic_index if negative) */
-		GPUVertexDeclarationEntry* GetEntry(VertexAttributeSemantic semantic, int semantic_index);
 
 	protected:
 

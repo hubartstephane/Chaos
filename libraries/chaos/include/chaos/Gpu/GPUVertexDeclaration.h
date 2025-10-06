@@ -73,9 +73,9 @@ namespace chaos
 	public:
 
 		/** compute the size in memory required for this component */
-		int GetEntrySize() const;
+		size_t GetEntrySize() const;
 		/** returns the number of component x, y, z, w = 1 .. 4 */
-		int GetComponentCount() const;
+		size_t GetComponentCount() const;
 		/** returns the type for component */
 		GLenum GetComponentType() const;
 		/** get a hash */
@@ -85,12 +85,12 @@ namespace chaos
 
 		/** the semantic of the vertex component */
 		VertexAttributeSemantic semantic = VertexAttributeSemantic::NONE;
-		/** for repetition of the same semantic */
-		int semantic_index = 0;
 		/** the type of the vertex component */
 		VertexAttributeType type;
+		/** for repetition of the same semantic */
+		int semantic_index = 0;
 		/** offset of this entry from the beginning of the vertex */
-		int offset = 0;
+		size_t offset = 0;
 		/** a name for the component */
 		std::string name;
 	};
@@ -103,20 +103,20 @@ namespace chaos
 	public:
 
 		/** compute the size in memory required for this vertex */
-		int GetVertexSize() const;
+		size_t GetVertexSize() const;
 		/** set the effective vertex size (for data that would not be declared) */
-		void SetEffectiveVertexSize(int in_effective_size);
+		void SetEffectiveVertexSize(size_t in_effective_size);
 
 		/** returns the number of elements for a given semantic */
-		int GetSemanticCount(VertexAttributeSemantic semantic) const;
+		size_t GetSemanticCount(VertexAttributeSemantic semantic) const;
 		/** returns the number of position */
-		int GetPositionCount() const;
+		size_t GetPositionCount() const;
 		/** returns the number of color */
-		int GetColorCount() const;
+		size_t GetColorCount() const;
 		/** returns the number of texture */
-		int GetTextureCount() const;
+		size_t GetTextureCount() const;
 		/** returns the number of bones */
-		int GetBoneCount() const;
+		size_t GetBoneCount() const;
 
 		/** get a hash for the declaration */
 		size_t GetHash() const;
@@ -138,15 +138,14 @@ namespace chaos
 		/** gets an entry from its semantic (ignore semantic_index if negative) */
 		GPUVertexDeclarationEntry* GetEntry(VertexAttributeSemantic semantic, int semantic_index);
 
-	public:
+	protected:
 
 		/** all the entries of the declaration */
 		std::vector<GPUVertexDeclarationEntry> entries;
 		/** the effective size of the vertex */
-		int effective_size = 0;
-
-	protected:
-
+		mutable std::optional<size_t> effective_size;
+		/** the vertex size */
+		mutable std::optional<size_t> size;
 		/** the hash for the declaration */
 		mutable std::optional<size_t> hash;
 	};

@@ -13,15 +13,15 @@ namespace chaos
 		return result;
 	}
 
-	int GPUVertexDeclarationEntry::GetComponentCount() const
+	size_t GPUVertexDeclarationEntry::GetComponentCount() const
 	{
-		int component_count = int(type) & 7;
+		size_t component_count = size_t(type) & 7;
 		return component_count;
 	}
 
 	GLenum GPUVertexDeclarationEntry::GetComponentType() const
 	{
-		VertexAttributeComponentType component_type = VertexAttributeComponentType((int(type) >> 3) & 7);
+		VertexAttributeComponentType component_type = VertexAttributeComponentType((size_t(type) >> 3) & 7);
 
 		if (component_type == VertexAttributeComponentType::FLOAT)
 			return GL_FLOAT;
@@ -36,11 +36,11 @@ namespace chaos
 		return GL_INVALID_ENUM;
 	}
 
-	int GPUVertexDeclarationEntry::GetEntrySize() const
+	size_t GPUVertexDeclarationEntry::GetEntrySize() const
 	{
-		VertexAttributeComponentType component_type = VertexAttributeComponentType((int(type) >> 3) & 7);
+		VertexAttributeComponentType component_type = VertexAttributeComponentType((size_t(type) >> 3) & 7);
 
-		int component_size = 0;
+		size_t component_size = 0;
 		if (component_type == VertexAttributeComponentType::FLOAT)
 			component_size = sizeof(float);
 		else if (component_type == VertexAttributeComponentType::DOUBLE)
@@ -52,14 +52,16 @@ namespace chaos
 		else if (component_type == VertexAttributeComponentType::INT)
 			component_size = sizeof(int32_t);
 
-		int component_count = int(type) & 7;
-
+		size_t component_count = size_t(type) & 7;
 		return component_count * component_size;
 	}
 
 	void GPUVertexDeclaration::Push(VertexAttributeSemantic semantic, int semantic_index, VertexAttributeType type, char const * name)
 	{
-		int offset = 0;
+		size.reset();
+		hash.reset();
+
+		size_t offset = 0;
 		if (entries.size() > 0)
 		{
 			GPUVertexDeclarationEntry const & previous_entry = entries.back();
@@ -110,48 +112,52 @@ namespace chaos
 		return nullptr;
 	}
 
-	int GPUVertexDeclaration::GetVertexSize() const
+	size_t GPUVertexDeclaration::GetVertexSize() const
 	{
 		// return the effective size
-		if (effective_size > 0)
-			return effective_size;
-		// fallback
-		int result = 0;
-		for (auto const & entry : entries)
-			result += entry.GetEntrySize();
-		return result;
+		if (effective_size.has_value())
+			return effective_size.value();
+		// get or compute the size
+		if (!size.has_value())
+		{
+			size_t result = 0;
+			for (auto const& entry : entries)
+				result += entry.GetEntrySize();
+			size = result;
+		}
+		return size.value();
 	}
 
-	void GPUVertexDeclaration::SetEffectiveVertexSize(int in_effective_size)
+	void GPUVertexDeclaration::SetEffectiveVertexSize(size_t in_effective_size)
 	{
 		effective_size = in_effective_size;
 	}
 
-	int GPUVertexDeclaration::GetSemanticCount(VertexAttributeSemantic semantic) const
+	size_t GPUVertexDeclaration::GetSemanticCount(VertexAttributeSemantic semantic) const
 	{
-		int result = -1;
-		for (auto const & entry : entries)
+		size_t result = 0;
+		for (auto const& entry : entries)
 			if (entry.semantic == semantic)
-				result = std::max(result, entry.semantic_index);
-		return result + 1;
+				++result;
+		return result;
 	}
 
-	int GPUVertexDeclaration::GetPositionCount() const
+	size_t GPUVertexDeclaration::GetPositionCount() const
 	{
 		return GetSemanticCount(VertexAttributeSemantic::POSITION);
 	}
 
-	int GPUVertexDeclaration::GetColorCount() const
+	size_t GPUVertexDeclaration::GetColorCount() const
 	{
 		return GetSemanticCount(VertexAttributeSemantic::COLOR);
 	}
 
-	int GPUVertexDeclaration::GetTextureCount() const
+	size_t GPUVertexDeclaration::GetTextureCount() const
 	{
 		return GetSemanticCount(VertexAttributeSemantic::TEXCOORD);
 	}
 
-	int GPUVertexDeclaration::GetBoneCount() const
+	size_t GPUVertexDeclaration::GetBoneCount() const
 	{
 		return std::min(GetSemanticCount(VertexAttributeSemantic::BONEINDEX), GetSemanticCount(VertexAttributeSemantic::BONEWEIGHT));
 	}
@@ -167,6 +173,5 @@ namespace chaos
 		}
 		return hash.value();
 	}
-
 
 }; // namespace chaos

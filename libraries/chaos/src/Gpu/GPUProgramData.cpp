@@ -277,7 +277,7 @@ namespace chaos
 
 	void GPUProgramData::BindAttributes(GLuint vertex_array, GPUVertexDeclaration const & declaration, GPUProgramProviderInterface const * attribute_provider) const
 	{
-		int vertex_size = declaration.GetVertexSize();
+		size_t vertex_size = declaration.GetVertexSize();
 
 		for (auto const& attrib : attributes) // for each attribute of the GPU program, try to find the correct attribute in Vertex Buffer
 		{
@@ -313,8 +313,8 @@ namespace chaos
 			}
 
 			// bind the attribute
-			int    entry_size = entry->GetEntrySize();
-			int    count = entry->GetComponentCount();
+			//int    entry_size = entry->GetEntrySize();
+			size_t count = entry->GetComponentCount();
 			GLenum type = entry->GetComponentType();
 			GLuint binding_index = 0;
 

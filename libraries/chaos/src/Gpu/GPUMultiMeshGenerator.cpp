@@ -154,7 +154,6 @@ namespace chaos
 						else
 						{
 							primitive.start += (int)data.vertex_start;
-
 						}
 					}
 				}

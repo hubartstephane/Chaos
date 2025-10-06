@@ -58,6 +58,8 @@ namespace chaos
 		GLuint index_buffer_id = 0;
 		/** the offset for the vertex buffer */
 		GLintptr vertex_buffer_offset = 0;
+		/** the hash for a given declaration */
+		size_t vertex_declaration_hash = 0;
 	};
 
 	// =================================================================================================

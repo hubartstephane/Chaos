@@ -3,6 +3,15 @@
 
 namespace chaos
 {
+	size_t GPUVertexDeclarationEntry::GetHash() const
+	{
+		size_t result = 0;
+		boost::hash_combine(result, int(semantic));
+		boost::hash_combine(result, int(type));
+		boost::hash_combine(result, semantic_index);
+		boost::hash_combine(result, offset);
+		return result;
+	}
 
 	int GPUVertexDeclarationEntry::GetComponentCount() const
 	{
@@ -145,6 +154,18 @@ namespace chaos
 	int GPUVertexDeclaration::GetBoneCount() const
 	{
 		return std::min(GetSemanticCount(VertexAttributeSemantic::BONEINDEX), GetSemanticCount(VertexAttributeSemantic::BONEWEIGHT));
+	}
+
+	size_t GPUVertexDeclaration::GetHash() const
+	{
+		if (!hash.has_value())
+		{
+			std::size_t hash_value = 0;
+			for (GPUVertexDeclarationEntry const& entry : entries)
+				boost::hash_combine(hash_value, entry.GetHash());
+			hash = hash_value;
+		}
+		return hash.value();
 	}
 
 

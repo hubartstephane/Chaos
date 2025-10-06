@@ -78,6 +78,8 @@ namespace chaos
 		int GetComponentCount() const;
 		/** returns the type for component */
 		GLenum GetComponentType() const;
+		/** get a hash */
+		size_t GetHash() const;
 
 	public:
 
@@ -116,6 +118,9 @@ namespace chaos
 		/** returns the number of bones */
 		int GetBoneCount() const;
 
+		/** get a hash for the declaration */
+		size_t GetHash() const;
+
 	public:
 
 		/** insert an entry into the declaration */
@@ -139,6 +144,11 @@ namespace chaos
 		std::vector<GPUVertexDeclarationEntry> entries;
 		/** the effective size of the vertex */
 		int effective_size = 0;
+
+	protected:
+
+		/** the hash for the declaration */
+		mutable std::optional<size_t> hash;
 	};
 
 #endif

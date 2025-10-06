@@ -96,10 +96,11 @@ namespace chaos
 
 		for (GPUVertexArrayCacheEntry const & entry : entries)
 		{
-			if (entry.program_id           == searched_program_id &&
-				entry.vertex_buffer_id     == searched_vertex_buffer_id &&
-				entry.index_buffer_id      == searched_index_buffer_id  &&
-				entry.vertex_buffer_offset == binding_info.vertex_buffer_offset)
+			if (entry.program_id              == searched_program_id &&
+				entry.vertex_buffer_id        == searched_vertex_buffer_id &&
+				entry.index_buffer_id         == searched_index_buffer_id  &&
+				entry.vertex_declaration_hash == binding_info.vertex_declaration->GetHash() &&
+				entry.vertex_buffer_offset    == binding_info.vertex_buffer_offset)
 			{
 				return entry.vertex_array.get();
 			}
@@ -146,11 +147,12 @@ namespace chaos
 
 		// create the entry in the cache
 		GPUVertexArrayCacheEntry new_entry;
-		new_entry.vertex_array         = result;
-		new_entry.program_id           = (binding_info.program != nullptr)? binding_info.program->GetResourceID() : 0;
-		new_entry.vertex_buffer_id     = (binding_info.vertex_buffer != nullptr)? binding_info.vertex_buffer->GetResourceID() : 0;
-		new_entry.index_buffer_id      = (binding_info.index_buffer != nullptr)? binding_info.index_buffer->GetResourceID() : 0;
-		new_entry.vertex_buffer_offset = binding_info.vertex_buffer_offset;
+		new_entry.vertex_array            = result;
+		new_entry.program_id              = (binding_info.program != nullptr)? binding_info.program->GetResourceID() : 0;
+		new_entry.vertex_buffer_id        = (binding_info.vertex_buffer != nullptr)? binding_info.vertex_buffer->GetResourceID() : 0;
+		new_entry.index_buffer_id         = (binding_info.index_buffer != nullptr)? binding_info.index_buffer->GetResourceID() : 0;
+		new_entry.vertex_buffer_offset    = binding_info.vertex_buffer_offset;
+		new_entry.vertex_declaration_hash = binding_info.vertex_declaration->GetHash();
 		entries.push_back(std::move(new_entry));
 
 		return result;

@@ -46,6 +46,10 @@ namespace chaos
 		ImGuiIO& io = ImGui::GetIO();
 		ImGui::Text("WantCaptureMouse    : %d", io.WantCaptureMouse);
 		ImGui::Text("WantCaptureKeyboard : %d", io.WantCaptureKeyboard);
+		ImGui::Text("WantTextInput       : %d", io.WantTextInput);
+		ImGui::Text("IsAnyItemActive     : %d", ImGui::IsAnyItemActive());
+		ImGui::Text("IsAnyItemHovered    : %d", ImGui::IsAnyItemHovered());
+		ImGui::Text("IsAnyItemFocused    : %d", ImGui::IsAnyItemFocused());
 	}
 
 }; // namespace chaos

@@ -21,11 +21,17 @@ namespace chaos
 	void Window::Destroy()
 	{
 		if (WindowApplication* window_application = Application::GetInstance())
-			window_application->RemoveWindowFromHandling(this);
+		{
+			shared_ptr<Window> prevent_destruction = this;
+			if (window_application->RemoveWindowFromHandling(this))
+				if (GetWindowDestructionGuard() == 0) // can destroy immediatly the window or must wait until no current operation ?
+					CompleteWindowDestruction();
+		}
 	}
 
 	void Window::CompleteWindowDestruction() // window is not more handled by WindowApplication
 	{
+		assert(glfw_window == glfwGetCurrentContext());
 		assert(!IsWindowHandledByApplication());
 
 		StorePersistentProperties(true);
@@ -34,6 +40,7 @@ namespace chaos
 		DestroyImGuiContext();
 		DestroyRenderContext();
 		DestroyGLFWWindow();
+
 		if (WindowApplication* window_application = Application::GetInstance())
 			window_application->OnWindowDestroyed(this);
 	}

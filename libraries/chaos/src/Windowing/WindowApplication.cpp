@@ -96,7 +96,7 @@ namespace chaos
 		});
 	}
 
-	void WindowApplication::RemoveWindowFromHandling(Window * window)
+	bool WindowApplication::RemoveWindowFromHandling(Window * window)
 	{
 		auto it = std::ranges::find_if(windows, [window](shared_ptr<Window> const& w)
 		{
@@ -105,11 +105,10 @@ namespace chaos
 
 		if (it != windows.end())
 		{
-			shared_ptr<Window> prevent_destruction = window;
 			windows.erase(it);
-			if (window->GetWindowDestructionGuard() == 0) // can destroy immediatly the window or must wait until no current operation ?
-				window->CompleteWindowDestruction();
+			return true;
 		}
+		return false;
 	}
 
 	Window* WindowApplication::CreateTypedWindow(CreateWindowFunc create_func, WindowPlacementInfo placement_info, WindowCreateParams const &create_params, ObjectRequest request)

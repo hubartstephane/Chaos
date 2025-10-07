@@ -130,36 +130,42 @@ namespace chaos
 		template<typename FUNC>
 		decltype(auto) WithWindowContext(FUNC const& func)
 		{
-			return PreventWindowDestruction([this, &func]()
+			using L = meta::LambdaInfo<FUNC>;
+
+			// set the GLFW context as current
+			GLFWwindow* previous_glfw_window = glfwGetCurrentContext();
+			GLFWwindow* new_glfw_window = glfw_window;
+			glfwMakeContextCurrent(glfw_window);
+
+			auto restore_contexts = [=]()
 			{
-				return window_imgui_context.WithImGuiContext([this, &func]()
+				if (new_glfw_window != previous_glfw_window) // maybe previous context was same then window's context and window's context has been deleted
+					glfwMakeContextCurrent(previous_glfw_window);
+			};
+
+			if constexpr (std::is_same_v<void, typename L::result_type>)
+			{
+				window_imgui_context.WithImGuiContext([this, &func]()
 				{
-					using L = meta::LambdaInfo<FUNC>;
-
-					// set the GLFW context as current
-					GLFWwindow* previous_glfw_window = glfwGetCurrentContext();
-					GLFWwindow* new_glfw_window = glfw_window;
-					glfwMakeContextCurrent(glfw_window);
-
-					auto restore_contexts = [=]()
-					{
-						if (new_glfw_window != previous_glfw_window) // maybe previous context was same then window's context and window's context has been deleted
-							glfwMakeContextCurrent(previous_glfw_window);
-					};
-
-					if constexpr (std::is_same_v<void, typename L::result_type>)
+					PreventWindowDestruction([this, &func]()
 					{
 						func();
-						restore_contexts();
-					}
-					else
-					{
-						decltype(auto) result = func();
-						restore_contexts();
-						return result;
-					}
+					});
 				});
-			});
+				restore_contexts();
+			}
+			else
+			{
+				decltype(auto) result = window_imgui_context.WithImGuiContext([this, &func]()
+				{
+					return PreventWindowDestruction([this, &func]()
+					{
+						return func();
+					});
+				});
+				restore_contexts();
+				return result;
+			}
 		}
 
 		/** change the cursor mode */

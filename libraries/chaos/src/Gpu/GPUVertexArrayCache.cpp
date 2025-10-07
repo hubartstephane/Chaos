@@ -1,9 +1,24 @@
 #include "chaos/ChaosPCH.h"
 #include "chaos/ChaosInternals.h"
 
-
 namespace chaos
 {
+	void GPUVertexArrayCacheEntry::MarkedForDestruction()
+	{
+		if (!marked_for_destruction)
+		{
+			program_id             = 0;
+			vertex_buffer_id       = 0;
+			index_buffer_id        = 0;
+			marked_for_destruction = true;
+		}
+	}
+
+	bool GPUVertexArrayCacheEntry::IsMarkedForDestruction() const
+	{
+		return marked_for_destruction;
+	}
+
 	bool GPUVertexArrayCacheEntry::IsValid() const
 	{
 		if (vertex_array == nullptr)
@@ -60,7 +75,7 @@ namespace chaos
 			size_t index = i - 1;
 
 			GPUVertexArrayCacheEntry& entry = entries[index];
-			if (!entry.IsValid())
+			if (entry.IsMarkedForDestruction() || !entry.IsValid())
 			{
 				ReleaseVertexArray(entry.vertex_array.get());
 				if (index != entries.size() - 1)
@@ -96,6 +111,9 @@ namespace chaos
 
 		for (GPUVertexArrayCacheEntry const & entry : entries)
 		{
+			if (entry.IsMarkedForDestruction())
+				continue;
+
 			if (entry.program_id              == searched_program_id &&
 				entry.vertex_buffer_id        == searched_vertex_buffer_id &&
 				entry.index_buffer_id         == searched_index_buffer_id  &&
@@ -110,7 +128,7 @@ namespace chaos
 
 	GPUVertexArray const* GPUVertexArrayCache::CreateVertexArray(GPUVertexArrayBindingInfo const& binding_info)
 	{
-		//assert(IsRenderContextCurrent());
+		assert(IsRenderContextCurrent());
 
 		// create new GPUVertexArray
 		GLuint vertex_array_id = 0;
@@ -134,7 +152,7 @@ namespace chaos
 				binding_index,
 				binding_info.vertex_buffer->GetResourceID(),
 				binding_info.vertex_buffer_offset,
-				binding_info.vertex_declaration->GetVertexSize());
+				(GLsizei)binding_info.vertex_declaration->GetVertexSize());
 		}
 
 		// set the index buffer
@@ -160,7 +178,7 @@ namespace chaos
 
 	void GPUVertexArrayCache::ReleaseVertexArray(GPUVertexArray * vertex_array)
 	{
-		//assert(IsRenderContextCurrent());
+		assert(IsRenderContextCurrent());
 
 		if (vertex_array->vertex_array_id != 0)
 		{
@@ -179,30 +197,16 @@ namespace chaos
 
 	void GPUVertexArrayCache::OnBufferDestroyed(GLuint in_buffer_id)
 	{
-		for (size_t i = entries.size() ; i > 0 ; --i)
-		{
-			GPUVertexArrayCacheEntry & entry = entries[i - 1];
+		for (GPUVertexArrayCacheEntry & entry : entries)
 			if (entry.IsUsingBuffer(in_buffer_id))
-			{
-				ReleaseVertexArray(entry.vertex_array.get());
-				entry = entries[entries.size() - 1];
-				entries.pop_back();
-			}
-		}
+				entry.MarkedForDestruction(); // do not destroy immediatly. The GLFW context may not be the proper one
 	}
 
 	void GPUVertexArrayCache::OnProgramDestroyed(GLuint in_program_id)
 	{
-		for (size_t i = entries.size() ; i > 0 ; --i)
-		{
-			GPUVertexArrayCacheEntry & entry = entries[i - 1];
+		for (GPUVertexArrayCacheEntry& entry : entries)
 			if (entry.IsUsingProgram(in_program_id))
-			{
-				ReleaseVertexArray(entry.vertex_array.get());
-				entry = entries[entries.size() - 1];
-				entries.pop_back();
-			}
-		}
+				entry.MarkedForDestruction(); // do not destroy immediatly. The GLFW context may not be the proper one
 	}
 
 }; // namespace chaos

@@ -38,6 +38,11 @@ namespace chaos
 
 	public:
 
+		/** mark the entry to be destroyed (when the request occurs, for buffer destruction for example, the context may not be the proper one. do not delete immediatly */
+		void MarkedForDestruction();
+		/** check whether the entry is marked for destruction */
+		bool IsMarkedForDestruction() const;
+
 		/** whether the entry is still valid (whether one of the pointed element has been destroyed) */
 		bool IsValid() const;
 		/** returns true whether the vertex_array is using the buffer */
@@ -60,6 +65,9 @@ namespace chaos
 		GLintptr vertex_buffer_offset = 0;
 		/** the hash for a given declaration */
 		size_t vertex_declaration_hash = 0;
+
+		/** whether this entry should be removed (and the underlying vertex array should be destroyed) */
+		bool marked_for_destruction = false;
 	};
 
 	// =================================================================================================

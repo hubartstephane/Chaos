@@ -228,7 +228,7 @@ namespace chaos
 	protected:
 
 		/** remove the window from the handling list. destroy it if necessary */
-		void RemoveWindowFromHandling(Window * window);
+		bool RemoveWindowFromHandling(Window * window);
 
 		/** Main method */
 		virtual int Main() override;

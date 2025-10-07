@@ -313,13 +313,12 @@ namespace chaos
 			}
 
 			// bind the attribute
-			//int    entry_size = entry->GetEntrySize();
-			size_t count = entry->GetComponentCount();
+			GLint  count = GLint(entry->GetComponentCount());
 			GLenum type = entry->GetComponentType();
 			GLuint binding_index = 0;
 
 			GLboolean normalized = false;
-			GLuint    relative_offset = entry->offset;
+			GLuint    relative_offset = GLuint(entry->offset);
 
 			// see : https://community.khronos.org/t/vertex-shader-integer-input-broken/72878
 			//

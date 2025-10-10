@@ -14,3 +14,4 @@ fi
 # start premake
 premake5 $TARGET --file=$SCRIPT_PATH/premake_scripts/premake5.lua --os=linux --arch=arm 2>&1 | tee generate.log
 
+echo "output to file: generate.log"

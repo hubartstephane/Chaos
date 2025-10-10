@@ -480,6 +480,12 @@ function Project:AddProjectToSolution()
 		compileas "Module"
 	filter {}
 
+	-- handle "natvis" files for visual studio
+	filter "action:vs*"
+		files { path.join(ROOT_PATH, "natvis", "glm.natvis") }
+		files { path.join(ROOT_PATH, "natvis", "nlohmann_json.natvis") }
+	filter {}
+
 	-- release/debug settings
 	Utility:AllTargets(
 		function(plat, conf)

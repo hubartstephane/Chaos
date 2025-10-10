@@ -19,3 +19,5 @@ fi
 
 # start premake
 $PREMAKE5_PATH --verbose $TARGET --file=$SCRIPT_PATH/premake_scripts/premake5.lua 2>&1 | tee generate.log
+
+echo "output to file: generate.log"

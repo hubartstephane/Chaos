@@ -138,8 +138,6 @@ protected:
 		fps_view_controller.input_config.pitch_up_button   = KeyboardButton::UNKNOWN;
 		fps_view_controller.input_config.pitch_down_button = KeyboardButton::UNKNOWN;
 
-		fps_view_controller.fps_view.position.z = 1000.0f;
-
 		return true;
 	}
 
@@ -200,11 +198,11 @@ protected:
 		circle.radius   = 50.0f;
 		generator.AddGenerator(new GPUCircleMeshGenerator(circle), circle_mesh);
 
-		triangle3 triangle;
-		triangle.a = {0.0f, 100.0f, 0.0f};
-		triangle.b = {-100.0f, -100.0f, 0.0f};
-		triangle.c = {+100.0f, -100.0f, 0.0f};
-		generator.AddGenerator(new GPUTriangleMeshGenerator(triangle), quad_mesh);
+		//triangle3 triangle;
+		//triangle.a = {0.0f, 100.0f, 0.0f};
+		//triangle.b = {-100.0f, -100.0f, 0.0f};
+		//triangle.c = {+100.0f, -100.0f, 0.0f};
+		//generator.AddGenerator(new GPUTriangleMeshGenerator(triangle), quad_mesh);
 
 		box3 box;
 		box.position = { 0.0f, 0.0f, 0.0f };
@@ -220,10 +218,21 @@ protected:
 		if (!generator.GenerateMeshes(GetGPUDevice()))
 			return false;
 
-		glm::vec3 primitive_position = { 0.0f, 0.0f, 0.0f };
-		auto AddObjectAndMesh = [this, &primitive_position](shared_ptr<GPUMesh> const & mesh, char const * name, bool wireframe)
+		meshes.push_back(quad_mesh);
+		meshes.push_back(circle_mesh);
+		meshes.push_back(box3_mesh);
+		meshes.push_back(box3_wireframe_mesh);
+		meshes.push_back(sphere_mesh);
+	
+		int const MESH_COUNT = 5;
+		int const DUPLICATION_COUNT = 6;
+
+		float angle = 0.0f;
+
+		auto AddObjectAndMesh = [this, &angle, MESH_COUNT, DUPLICATION_COUNT](shared_ptr<GPUMesh> const & mesh, char const * name, bool wireframe)
 		{
-			meshes.push_back(mesh);
+			float const OBJECT_DISTANCE = 2000.0f;
+			glm::vec3 primitive_position = { OBJECT_DISTANCE * std::cos(angle), 0.0f, OBJECT_DISTANCE * std::sin(angle) };
 
 			glm::vec3 scale          = { 1.0f, 1.0f, 1.0f};
 			glm::quat rotation       = { 1.0f, 0.0f, 0.0f, 0.0f };
@@ -231,15 +240,17 @@ protected:
 			glm::vec3 emissive_color = wireframe ? glm::vec3(1.0f, 1.0f, 1.0f) : glm::vec3(0.0f, 0.0f, 0.0f);
 			CreateObject3D(mesh.get(), primitive_position, scale, rotation, color, emissive_color,  name);
 		
-			primitive_position.x += 200.0f;
+			angle += 2.0f * float(M_PI) / float(MESH_COUNT * DUPLICATION_COUNT);
 		};
 
-		AddObjectAndMesh(quad_mesh, "quad", false);
-		AddObjectAndMesh(circle_mesh, "circle", false);
-		AddObjectAndMesh(box3_mesh, "box", false);
-		AddObjectAndMesh(box3_wireframe_mesh, "box wireframe", true);
-		AddObjectAndMesh(sphere_mesh, "sphere", false);
-
+		for (int i = 0; i < DUPLICATION_COUNT; ++i)
+		{
+			AddObjectAndMesh(quad_mesh, "quad", false);
+			AddObjectAndMesh(circle_mesh, "circle", false);
+			AddObjectAndMesh(box3_mesh, "box", false);
+			AddObjectAndMesh(box3_wireframe_mesh, "box wireframe", true);
+			AddObjectAndMesh(sphere_mesh, "sphere", false);
+		}
 		return true;
 	}
 

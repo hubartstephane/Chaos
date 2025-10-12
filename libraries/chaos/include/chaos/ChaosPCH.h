@@ -252,6 +252,7 @@
 // IMGUI
 #define IMGUI_USE_WCHAR32 // important: imgui should have been compiled with this flag
 #include "imgui.h"
+#include "imgui_internal.h" // not very nice, but i'd like to have access to ImGui::GetHoveredID()
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_glfw.h"
 

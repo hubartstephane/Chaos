@@ -135,47 +135,6 @@ protected:
 			return result.c_str();
 		}
 
-
-
-
-#if 0
-
-
-		if (example == TestID::RECTANGLE_CORNERS_TEST)         return "box.GetCorner(...)";
-		if (example == TestID::CORNERS_TO_RECTANGLE_TEST)      return "construct box from corners";
-		if (example == TestID::BOX_INTERSECTION_TEST)          return "box intersection";
-		if (example == TestID::BOX_UNION_TEST)                 return "box union";
-		if (example == TestID::RESTRICT_BOX_INSIDE_1_TEST)     return "restrict box displacement to inside : move bigger";
-		if (example == TestID::RESTRICT_BOX_INSIDE_2_TEST)     return "restrict box displacement to inside : move smaller";
-		if (example == TestID::RESTRICT_BOX_INSIDE_3_TEST)     return "restrict box displacement to inside : move bigger  (smaller is REAL bigger)";
-		if (example == TestID::RESTRICT_BOX_INSIDE_4_TEST)     return "restrict box displacement to inside : move smaller (smaller is REAL bigger)";
-		if (example == TestID::RESTRICT_SPHERE_INSIDE_1_TEST)  return "restrict sphere displacement to inside : move bigger";
-		if (example == TestID::RESTRICT_SPHERE_INSIDE_2_TEST)  return "restrict sphere displacement to inside : move smaller";
-
-		if (example == TestID::SPHERE_INTERSECTION_TEST)       return "sphere intersection";
-		if (example == TestID::SPHERE_UNION_TEST)              return "sphere union";
-		if (example == TestID::INNER_SPHERE_TEST)              return "inner sphere";
-		if (example == TestID::BOUNDING_SPHERE_TEST)           return "bounding sphere";
-		if (example == TestID::BOUNDING_BOX_TEST)              return "bounding box";
-		if (example == TestID::SPLIT_BOX_TEST)                 return "split box";
-		if (example == TestID::BOX_COLLISION_TEST)             return "box collision";
-		if (example == TestID::SPHERE_COLLISION_TEST)          return "sphere collision";
-		if (example == TestID::RESTRICT_BOX_OUTSIDE_TEST)      return "restrict box displacement to outside";
-		if (example == TestID::RESTRICT_SPHERE_OUTSIDE_TEST)   return "restrict sphere displacement to outside";
-		if (example == TestID::POINT_INSIDE_BOX_TEST)          return "point inside box";
-		if (example == TestID::POINT_INSIDE_SPHERE_TEST)       return "point inside sphere";
-		if (example == TestID::COLLISION_SHERE2_BOX2_TEST)     return "collision sphere2/box2";
-		if (example == TestID::COLLISION_SHERE2_TRIANGLE_TEST) return "collision sphere2/triangle2";
-		if (example == TestID::COLLISION_POINT_TRIANGLE_TEST)  return "collision point2/triangle2";
-		if (example == TestID::OBOX_DISPLAY_TEST)              return "obox";
-		if (example == TestID::OBOX_CORNERS_TEST)              return "obox corners";
-		if (example == TestID::OBOX_BOUNDING_SPHERE_TEST)      return "obox bounding sphere";
-		if (example == TestID::OBOX_BOUNDING_BOX_TEST)         return "obox bounding box";
-		if (example == TestID::OBOX_INNER_SPHERE_TEST)         return "obox inner sphere";
-		if (example == TestID::POINT_INSIDE_OBOX_TEST)         return "point inside obox";
-
-#endif
-
 		return nullptr;
 	}
 
@@ -1136,7 +1095,8 @@ protected:
 	{
 		chaos::Window::OnDrawImGuiContent();
 
-		chaos::ImGuiTools::FullViewportWindow("fullscreen", 0, [this]()
+		chaos::ImGuiTools::FullViewportWindow("fullscreen", ImGuiWindowFlags_NoInputs, [this]()
+		//chaos::ImGuiTools::FullViewportWindow("fullscreen", 0, [this]()
 		{
 			imgui_user_message.OnDrawImGuiContent(this);
 		});

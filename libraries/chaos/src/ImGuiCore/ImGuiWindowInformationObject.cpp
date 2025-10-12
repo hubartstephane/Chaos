@@ -43,6 +43,9 @@ namespace chaos
 		ImGui::Text("framesize top       : (%d)", framesize_info.top);
 		ImGui::Text("framesize bottom    : (%d)", framesize_info.bottom);
 		ImGui::Separator();
+		ImGui::Text("IsWindowHovered     : %d", ImGui::IsWindowHovered());
+		ImGui::Text("IsWindowFocused     : %d", ImGui::IsWindowFocused());
+		ImGui::Separator();
 		ImGuiIO& io = ImGui::GetIO();
 		ImGui::Text("WantCaptureMouse    : %d", io.WantCaptureMouse);
 		ImGui::Text("WantCaptureKeyboard : %d", io.WantCaptureKeyboard);
@@ -50,6 +53,7 @@ namespace chaos
 		ImGui::Text("IsAnyItemActive     : %d", ImGui::IsAnyItemActive());
 		ImGui::Text("IsAnyItemHovered    : %d", ImGui::IsAnyItemHovered());
 		ImGui::Text("IsAnyItemFocused    : %d", ImGui::IsAnyItemFocused());
+		ImGui::Text("GetHoveredID        : %d", ImGui::GetHoveredID());
 	}
 
 }; // namespace chaos

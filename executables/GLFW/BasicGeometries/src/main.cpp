@@ -1096,7 +1096,6 @@ protected:
 		chaos::Window::OnDrawImGuiContent();
 
 		chaos::ImGuiTools::FullViewportWindow("fullscreen", ImGuiWindowFlags_NoInputs, [this]()
-		//chaos::ImGuiTools::FullViewportWindow("fullscreen", 0, [this]()
 		{
 			imgui_user_message.OnDrawImGuiContent(this);
 		});

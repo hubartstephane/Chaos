@@ -153,9 +153,9 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 		stick_position.y = chaos::MathTools::AnalogicToDiscret(stick_position.y);
 	}
 
-	chaos::Key const accelerate_keys[] = { chaos::KeyboardButton::SPACE, chaos::GamepadButton::A, chaos::Key() };
+	chaos::Key const accelerate_keys[] = { chaos::Key::SPACE, chaos::Key::GAMEPAD_A, chaos::Key() };
 	particle.accelerate_pressed = player->CheckKeyDown(accelerate_keys);
-	chaos::Key const break_keys[] = { chaos::KeyboardButton::LEFT_CONTROL, chaos::GamepadButton::B, chaos::Key() };
+	chaos::Key const break_keys[] = { chaos::Key::LEFT_CONTROL, chaos::Key::GAMEPAD_B, chaos::Key() };
 	particle.break_pressed = player->CheckKeyDown(break_keys);
 
 	// no input before race really starts

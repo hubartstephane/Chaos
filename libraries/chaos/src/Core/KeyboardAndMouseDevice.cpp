@@ -5,45 +5,43 @@ namespace chaos
 {
 	KeyState const * KeyboardAndMouseDevice::DoGetInputState(Key key) const
 	{
-		if (!key.IsValid())
-			return nullptr;
-		if (key.IsKeyboardKey())
-			return &keyboard_key_state[int(key.GetKeyboardButton())];
-		if (key.IsMouseKey())
-			return &mouse_key_state[int(key.GetMouseButton())];
+		if (IsKeyboardKey(key))
+		{
+			size_t key_index = size_t(key) - size_t(Key::KEYBOARD_FIRST);
+			return &keyboard_key_state[key_index];
+		}
+		if (IsMouseKey(key))
+		{
+			size_t key_index = size_t(key) - size_t(Key::MOUSE_FIRST);
+			return &mouse_key_state[key_index];
+		}
 		return nullptr;
 	}
 
 	bool KeyboardAndMouseDevice::DoForAllKeys(ForAllKeysFunction func) const
 	{
-		for (int i = 0 ; i < keyboard_key_state.size() ; ++i)
-			if (func(KeyboardButton(i), keyboard_key_state[i]))
+		for (size_t i = 0 ; i < keyboard_key_state.size() ; ++i)
+			if (func(Key(i + size_t(Key::KEYBOARD_FIRST)), keyboard_key_state[i]))
 				return true;
-		for (int i = 0 ; i < mouse_key_state.size() ; ++i)
-			if (func(MouseButton(i), mouse_key_state[i]))
+		for (size_t i = 0 ; i < mouse_key_state.size() ; ++i)
+			if (func(Key(i + size_t(Key::MOUSE_FIRST)), mouse_key_state[i]))
 				return true;
 		return false;
 	}
 
 	void KeyboardAndMouseDevice::SetKeyValue(Key key, bool value)
 	{
-		if (key.IsKeyboardKey())
+		if (IsKeyboardKey(key))
 		{
-			if (key != KeyboardButton::UNKNOWN)
-			{
-				int key_index = int(key.GetKeyboardButton());
-				if (key_index >= 0 && key_index < keyboard_key_state.size())
-					keyboard_key_state[key_index].SetValue(value);
-			}
+			size_t key_index = size_t(key) - size_t(Key::KEYBOARD_FIRST);
+			if (key_index >= 0 && key_index < keyboard_key_state.size())
+				keyboard_key_state[key_index].SetValue(value);
 		}
-		else if (key.IsMouseKey())
+		else if (IsMouseKey(key))
 		{
-			if (key != MouseButton::UNKNOWN)
-			{
-				int key_index = int(key.GetMouseButton());
-				if (key_index >= 0 && key_index < mouse_key_state.size())
-					mouse_key_state[key_index].SetValue(value);
-			}
+			size_t key_index = size_t(key) - size_t(Key::MOUSE_FIRST);
+			if (key_index >= 0 && key_index < mouse_key_state.size())
+				mouse_key_state[key_index].SetValue(value);
 		}
 	}
 

@@ -6,14 +6,13 @@ namespace chaos
 	void ImGuiInputStateObjectBase::DisplayKeyInfo(Key key, KeyState const & state) const
 	{
 		// early exit for unknown key (whatever type is)
-		if (!key.IsValid())
+		if (key == Key::UNKNOWN)
 			return;
 
 		// ImGui display code
-		if (char const * key_name = key.GetName())
+		if (char const * key_name = EnumToString(key))
 		{
-			ImGui::PushID(int(key.GetType()));
-			ImGui::PushID(int(key.GetKeyboardButton()));
+			ImGui::PushID(int(key));
 
 			bool pressed = state.GetValue();
 
@@ -30,7 +29,6 @@ namespace chaos
 			ImGui::TableNextColumn();
 			ImGui::TextColored(color, "%f", state.GetSameValueTimer());
 
-			ImGui::PopID();
 			ImGui::PopID();
 		}
 	}

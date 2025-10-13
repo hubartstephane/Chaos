@@ -201,10 +201,10 @@ namespace chaos
 			stick_position.y = MathTools::AnalogicToDiscret(stick_position.y);
 		}
 
-		Key const jump_key_buttons[] = { KeyboardButton::SPACE, GamepadButton::A, Key() };
+		Key const jump_key_buttons[] = { Key::SPACE, Key::GAMEPAD_A, Key() };
 		bool jump_pressed = player->CheckKeyDown(jump_key_buttons);
 
-		Key const run_key_buttons[] = { KeyboardButton::LEFT_SHIFT, KeyboardButton::RIGHT_SHIFT, GamepadButton::RIGHT_TRIGGER, Key() };
+		Key const run_key_buttons[] = { Key::LEFT_SHIFT, Key::RIGHT_SHIFT, Key::GAMEPAD_RIGHT_TRIGGER, Key() };
 		bool run_pressed = player->CheckKeyDown(run_key_buttons);
 
 		// get player position

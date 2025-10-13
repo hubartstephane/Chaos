@@ -45,20 +45,20 @@ public:
 				ImGui::Separator();
 			};
 
-			ImGui_DisplayConversion(chaos::KeyboardButton::Q);
-			ImGui_DisplayConversion(chaos::KeyboardButton::W);
-			ImGui_DisplayConversion(chaos::KeyboardButton::E);
-			ImGui_DisplayConversion(chaos::KeyboardButton::R);
-			ImGui_DisplayConversion(chaos::KeyboardButton::T);
-			ImGui_DisplayConversion(chaos::KeyboardButton::Y);
-			ImGui_DisplayConversion(chaos::KeyboardButton::A);
-			ImGui_DisplayConversion(chaos::KeyboardButton::Z);
-			ImGui_DisplayConversion(chaos::KeyboardButton::COMMA);
-			ImGui_DisplayConversion(chaos::KeyboardButton::SPACE);
-			ImGui_DisplayConversion(chaos::KeyboardButton::NUM_1);
-			ImGui_DisplayConversion(chaos::KeyboardButton::KP_1);
-			ImGui_DisplayConversion(chaos::KeyboardButton::UP);
-			ImGui_DisplayConversion(chaos::KeyboardButton::PAGE_UP);
+			ImGui_DisplayConversion(chaos::Key::Q);
+			ImGui_DisplayConversion(chaos::Key::W);
+			ImGui_DisplayConversion(chaos::Key::E);
+			ImGui_DisplayConversion(chaos::Key::R);
+			ImGui_DisplayConversion(chaos::Key::T);
+			ImGui_DisplayConversion(chaos::Key::Y);
+			ImGui_DisplayConversion(chaos::Key::A);
+			ImGui_DisplayConversion(chaos::Key::Z);
+			ImGui_DisplayConversion(chaos::Key::COMMA);
+			ImGui_DisplayConversion(chaos::Key::SPACE);
+			ImGui_DisplayConversion(chaos::Key::NUM_1);
+			ImGui_DisplayConversion(chaos::Key::KP_1);
+			ImGui_DisplayConversion(chaos::Key::UP);
+			ImGui_DisplayConversion(chaos::Key::PAGE_UP);
 
 			ImGui_DisplayConversion(chaos::Key("SEMICOLON"));
 			ImGui_DisplayConversion(chaos::Key("A"));
@@ -74,7 +74,7 @@ protected:
 
 	int last_scancode = -1;
 
-	chaos::KeyboardButton last_button = chaos::KeyboardButton::UNKNOWN;
+	chaos::Key last_button = chaos::Key::UNKNOWN;
 };
 
 int main(int argc, char ** argv, char ** env)

@@ -98,8 +98,8 @@ namespace chaos
 	{
 #if _WIN32
 
-		if (key.IsKeyboardKey())
-			return Key(KeyboardButton(ConvertGLFWKeycode(key.GetRawValue(), src_layout_type, dst_layout_type)));
+		if (IsKeyboardKey(key))
+			return Key(Key(ConvertGLFWKeycode(int(key) - int(Key::KEYBOARD_FIRST), src_layout_type, dst_layout_type)));
 
 #endif // #if _WIN32
 

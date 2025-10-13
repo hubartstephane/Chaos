@@ -63,7 +63,7 @@ bool LudumPlayer::DoTick(float delta_time)
 	// suicidal
 	if (death_timer < 0.0f)
 	{
-		Key const suicidal_buttons[] = { KeyboardButton::SPACE, GamepadButton::Y, Key() };
+		Key const suicidal_buttons[] = { Key::SPACE, Key::GAMEPAD_Y, Key() };
 		if (CheckKeyDown(suicidal_buttons))
 		{
 			suicidal_timer = std::min(std::max(suicidal_timer, 0.0f) + delta_time, max_suicidal_timer);

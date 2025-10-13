@@ -4,7 +4,7 @@ using namespace chaos;
 
 int main(int argc, char ** argv, char ** env)
 {
-	chaos::GamepadButton::A;
+	chaos::Key::GAMEPAD_A;
 
 	return 0;
 }

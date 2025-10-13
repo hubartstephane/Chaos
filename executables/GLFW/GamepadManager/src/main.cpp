@@ -9,7 +9,7 @@ public:
 
   virtual bool AcceptPhysicalDevice(chaos::PhysicalGamepad * physical_device) override
   {
-	  if (!physical_device->IsKeyDown(chaos::GamepadButton::A))
+	  if (!physical_device->IsKeyDown(chaos::Key::GAMEPAD_A))
 		  return false;
 	  return true;
   }
@@ -30,7 +30,7 @@ public:
 
   virtual void OnGamepadStateUpdated(class chaos::GamepadState & gamepad_state) override
   {
-  //  if (gamepad_state.IsButtonPressed(chaos::GamepadButton::Y))
+  //  if (gamepad_state.IsButtonPressed(chaos::Key::GAMEPAD_Y))
     {
    //   if (imgui_user_message != nullptr)
     //    imgui_user_message->AddLine("Y");
@@ -127,7 +127,7 @@ protected:
 
 #else
 
-#define TEST_BUTTON(x) if (main_gamepad->IsKeyDown(chaos::GamepadButton::x))\
+#define TEST_BUTTON(x) if (main_gamepad->IsKeyDown(chaos::Key::GAMEPAD_x))\
 imgui_user_message.AddLine("Pressed : " #x, 1.0f);
 
 			TEST_BUTTON(A);

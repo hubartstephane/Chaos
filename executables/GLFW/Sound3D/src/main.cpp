@@ -120,7 +120,7 @@ protected:
 
 	virtual bool OnMouseButtonImpl(chaos::MouseButtonEvent const &mouse_button_event) override
 	{
-		if (mouse_button_event.IsKeyPressed(chaos::MouseButton::BUTTON_2))
+		if (mouse_button_event.IsKeyPressed(chaos::Key::MOUSE_BUTTON_2))
 		{
 			rotation_started = !rotation_started;
 			return true;

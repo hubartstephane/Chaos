@@ -23,9 +23,11 @@ namespace chaos
 
 	KeyState const * GamepadState::DoGetInputState(Key key) const
 	{
-		if (!key.IsValid() || !key.IsGamepadKey())
+		if (!IsGamepadKey(key))
 			return nullptr;
-		return &buttons[(size_t)key.GetRawValue()];
+
+		size_t key_index = size_t(key) - size_t(Key::GAMEPAD_FIRST);
+		return &buttons[key_index];
 	}
 
 	AxisState const *GamepadState::DoGetInputState(GamepadAxis axis) const
@@ -44,21 +46,21 @@ namespace chaos
 
 	bool GamepadState::DoForAllKeys(ForAllKeysFunction func) const
 	{
-		for (int i = 0 ; i < buttons.size() ; ++i)
-			if (func(GamepadButton(i), buttons[i]))
+		for (size_t i = 0 ; i < buttons.size() ; ++i)
+			if (func(Key(i + size_t(Key::GAMEPAD_FIRST)), buttons[i]))
 				return true;
 		return false;
 	}
 	bool GamepadState::DoForAllAxes(ForAllAxesFunction func) const
 	{
-		for (int i = 0 ; i < axes.size() ; ++i)
+		for (size_t i = 0 ; i < axes.size() ; ++i)
 			if (func(GamepadAxis(i), axes[i]))
 				return true;
 		return false;
 	}
 	bool GamepadState::DoForAllSticks(ForAllSticksFunction func) const
 	{
-		for (int i = 0 ; i < sticks.size() ; ++i)
+		for (size_t i = 0 ; i < sticks.size() ; ++i)
 			if (func(GamepadStick(i), sticks[i]))
 				return true;
 		return false;
@@ -89,19 +91,19 @@ namespace chaos
 		}
 
 		// update virtual buttons
-		auto UpdateVirtualButton = [this](GamepadButton dst_button, GamepadAxis src_axis)
+		auto UpdateVirtualButton = [this](Key dst_button, GamepadAxis src_axis)
 		{
 			if (AxisState const * axis_state = GetInputState(src_axis))
 			{
 				KeyState key_state;
 				key_state.value = axis_state->value != 0.0f;
 				key_state.update_time = axis_state->update_time;
-				buttons[int(dst_button)] = key_state;
+				buttons[size_t(dst_button) - size_t(Key::GAMEPAD_FIRST)] = key_state;
 			}
 		};
 
-		UpdateVirtualButton(GamepadButton::LEFT_TRIGGER, GamepadAxis::LEFT_TRIGGER);
-		UpdateVirtualButton(GamepadButton::RIGHT_TRIGGER, GamepadAxis::RIGHT_TRIGGER);
+		UpdateVirtualButton(Key::GAMEPAD_LEFT_TRIGGER, GamepadAxis::LEFT_TRIGGER);
+		UpdateVirtualButton(Key::GAMEPAD_RIGHT_TRIGGER, GamepadAxis::RIGHT_TRIGGER);
 
 		// update sticks
 		auto UpdateVirtualStick = [&](GamepadStick dst_stick, GamepadAxis src_horizontal_axis, GamepadAxis src_vertical_axis)

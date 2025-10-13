@@ -43,7 +43,7 @@ protected:
 
 	virtual bool EnumerateInputActions(chaos::InputActionEnumerator & in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
 	{
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::KP_ADD), "Next Font", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::KP_ADD), "Next Font", [this]()
 		{
 			ChangeFont(font_index + 1);
 		}))
@@ -51,7 +51,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::KP_SUBTRACT), "Previous Font", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::KP_SUBTRACT), "Previous Font", [this]()
 		{
 			ChangeFont(font_index - 1);
 		}))

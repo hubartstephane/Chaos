@@ -147,9 +147,9 @@ protected:
 
 		if (key.IsKeyboardKey())
 		{
-			if (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(key.GetKeyboardButton())->IsDown())
+			if (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(key)->IsDown())
 			{
-				float final_speed = (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(chaos::KeyboardButton::LEFT_SHIFT)->IsDown()) ? FAST_DISPLACEMENT_SPEED : DISPLACEMENT_SPEED;
+				float final_speed = (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(chaos::Key::LEFT_SHIFT)->IsDown()) ? FAST_DISPLACEMENT_SPEED : DISPLACEMENT_SPEED;
 				sphere.position += direction * delta_time * final_speed;
 				box.position += direction * delta_time * final_speed;
 				return true;
@@ -162,9 +162,9 @@ protected:
 	{
 		if (key.IsKeyboardKey())
 		{
-			if (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(key.GetKeyboardButton())->IsDown())
+			if (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(key)->IsDown())
 			{
-				float final_scale_speed = (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(chaos::KeyboardButton::LEFT_SHIFT)->IsDown()) ? SCALE_SPEED : FAST_SCALE_SPEED;
+				float final_scale_speed = (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(chaos::Key::LEFT_SHIFT)->IsDown()) ? SCALE_SPEED : FAST_SCALE_SPEED;
 
 				sphere.radius = std::max(1.0f, sphere.radius + direction * final_scale_speed);
 				return true;
@@ -573,7 +573,7 @@ protected:
 
 	virtual bool OnMouseButtonImpl(chaos::MouseButtonEvent const &mouse_button_event) override
 	{
-		if (mouse_button_event.IsKeyPressed(chaos::MouseButton::BUTTON_1))
+		if (mouse_button_event.IsKeyPressed(chaos::Key::MOUSE_BUTTON_1))
 		{
 			if (IsImGuiMenuEnabled())
 			{
@@ -612,7 +612,7 @@ protected:
 
 		bool action_enabled = (current_object != nullptr);
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(key_configuration.next_object.GetKeyboardButton()), "Next Object", action_enabled, [&]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(key_configuration.next_object), "Next Object", action_enabled, [&]()
 		{
 			current_object_index = (current_object_index.value() + 1) % geometric_objects.size();
 		}))
@@ -620,7 +620,7 @@ protected:
 			return true;
 		}
 		
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(key_configuration.previous_object.GetKeyboardButton()), "Previous Object", action_enabled, [&]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(key_configuration.previous_object), "Previous Object", action_enabled, [&]()
 		{
 			current_object_index = (current_object_index.value() + geometric_objects.size() - 1) % geometric_objects.size();
 		}))
@@ -628,7 +628,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(key_configuration.delete_object.GetKeyboardButton()), "Delete Object", action_enabled, [&]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(key_configuration.delete_object), "Delete Object", action_enabled, [&]()
 		{
 			if (geometric_objects.size() > 0)
 			{
@@ -651,7 +651,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(key_configuration.new_scene.GetKeyboardButton()), "New Scene", [&]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(key_configuration.new_scene), "New Scene", [&]()
 		{
 			geometric_objects.clear();
 			current_object_index = 0;

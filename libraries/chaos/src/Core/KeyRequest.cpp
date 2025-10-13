@@ -9,8 +9,8 @@ namespace chaos
 	{
 		char buffer[256];
 
-		InputRequestDebugInfo result;
-		result.input = key.GetName();
+		InputRequestDebugInfo result;		
+		result.input = (key != Key::UNKNOWN)? EnumToString(key) : "Unknown";
 		if (required_modifiers != KeyModifier::None)
 			result.required_modifiers = EnumToString(required_modifiers, buffer, 256);
 		if (forbidden_modifiers != KeyModifier::None)
@@ -22,7 +22,7 @@ namespace chaos
 	InputRequestResult KeyRequest::Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const
 	{
 		// early exit
-		if (!key.IsValid())
+		if (key == Key::UNKNOWN)
 			return InputRequestResult::Invalid;
 		// find state
 		KeyState const* input_state = in_input_device->GetInputState(key);
@@ -34,7 +34,7 @@ namespace chaos
 		
 		if (required_modifiers != KeyModifier::None || forbidden_modifiers != KeyModifier::None)
 		{
-			auto GetModifierKeyValue = [in_input_device](KeyboardButton key1, KeyboardButton key2)
+			auto GetModifierKeyValue = [in_input_device](Key key1, Key key2)
 			{
 				KeyStatus key1_status = in_input_device->GetKeyStatus(key1);
 				if (key1_status == KeyStatus::BECOME_PRESSED || key1_status == KeyStatus::STAY_PRESSED)
@@ -45,7 +45,7 @@ namespace chaos
 				return false;
 			};
 
-			bool alt_value = GetModifierKeyValue(KeyboardButton::LEFT_ALT, KeyboardButton::RIGHT_ALT);
+			bool alt_value = GetModifierKeyValue(Key::LEFT_ALT, Key::RIGHT_ALT);
 			if (HasAnyFlags(required_modifiers, KeyModifier::Alt))
 				if (!alt_value)
 					return InputRequestResult::False;
@@ -53,7 +53,7 @@ namespace chaos
 				if (alt_value)
 					return InputRequestResult::False;
 
-			bool shift_value = GetModifierKeyValue(KeyboardButton::LEFT_SHIFT, KeyboardButton::RIGHT_SHIFT);
+			bool shift_value = GetModifierKeyValue(Key::LEFT_SHIFT, Key::RIGHT_SHIFT);
 			if (HasAnyFlags(required_modifiers, KeyModifier::Shift))
 				if (!shift_value)
 					return InputRequestResult::False;
@@ -61,7 +61,7 @@ namespace chaos
 				if (shift_value)
 					return InputRequestResult::False;
 
-			bool control_value = GetModifierKeyValue(KeyboardButton::LEFT_CONTROL, KeyboardButton::RIGHT_CONTROL);
+			bool control_value = GetModifierKeyValue(Key::LEFT_CONTROL, Key::RIGHT_CONTROL);
 			if (HasAnyFlags(required_modifiers, KeyModifier::Control))
 				if (!control_value)
 					return InputRequestResult::False;
@@ -93,7 +93,7 @@ namespace chaos
 	InputRequestResult KeyRequest::Check(InputReceiverInterface const* in_input_receiver, KeyEventBase const& in_key_event, InputDeviceInterface const * in_input_device, InputConsumptionCache & in_consumption_cache) const
 	{
 		// early exit
-		if (!key.IsValid())
+		if (key == Key::UNKNOWN)
 			return InputRequestResult::Invalid;
 		// find state
 		KeyState const* input_state = in_input_device->GetInputState(key);

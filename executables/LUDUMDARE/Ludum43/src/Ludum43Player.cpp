@@ -161,12 +161,12 @@ void LudumPlayer::HandleInputs(float delta_time, chaos::GamepadState const * gpd
 {
 	chaos::Player::HandleInputs(delta_time, gpd);
 
-	chaos::Key const dash_keys[] = { chaos::KeyboardButton::SPACE, chaos::GamepadButton::A, chaos::Key() };
+	chaos::Key const dash_keys[] = { chaos::Key::SPACE, chaos::Key::GAMEPAD_A, chaos::Key() };
 
 	bool dash_mode = CheckKeyDown(dash_keys);
 	SetDashMode(dash_mode);
 
-	chaos::Key const reverse_mode_keys[] = { chaos::KeyboardButton::RIGHT_CONTROL, chaos::GamepadButton::B, chaos::Key() };
+	chaos::Key const reverse_mode_keys[] = { chaos::Key::RIGHT_CONTROL, chaos::Key::GAMEPAD_B, chaos::Key() };
 
 	bool reversed_mode = CheckKeyDown(reverse_mode_keys);
 	SetReverseMode(reversed_mode);

@@ -50,7 +50,7 @@ public:
 
 	void ResetWorld();
 
-	bool OnKeyEvent(chaos::KeyboardButton key, chaos::KeyAction action);
+	bool OnKeyEvent(chaos::Key key, chaos::KeyAction action);
 
 
 	chaos::Window* GetWindow() { return window; }

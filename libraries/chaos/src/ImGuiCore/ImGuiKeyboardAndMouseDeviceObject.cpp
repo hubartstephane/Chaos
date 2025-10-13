@@ -13,7 +13,7 @@ namespace chaos
 
 		DisplayKeysInfo(table_title, keyboard_and_mouse_device, [&](Key key, KeyState const & state)
 		{
-			if (key.GetType() != key_type)
+			if (GetKeyType(key) != key_type)
 				return false;
 
 			if (hide_cold_keys)

@@ -2,41 +2,41 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class Key;
-
+	enum class Key;
 	enum class KeyType;
 	enum class GamepadAxis;
 	enum class GamepadStick;
-	enum class GamepadButton;
-	enum class KeyboardButton;
-	enum class MouseButton;
+	enum class Key;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-#define CHAOS_KEYDEF(KEY) KEY = GLFW_KEY_##KEY
+#define CHAOS_KEYDEF(KEY) KEY = KEYBOARD_FIRST + GLFW_KEY_##KEY
 
 	/**
-	 * KeyboardButton : A keyboard key (this is an enum that mimics the GLFW_KEY_... described in glfw3.h)
+	 * Key: enumeration to match a key input (whether it is a a keyboard, mouse or gamepad input)
 	 */
-	enum class CHAOS_API KeyboardButton : int
+
+	enum class CHAOS_API Key : int
 	{
-		CHAOS_KEYDEF(UNKNOWN),
+		UNKNOWN = -1,
+
+		KEYBOARD_FIRST = 0,
 		CHAOS_KEYDEF(SPACE),
 		CHAOS_KEYDEF(APOSTROPHE),
 		CHAOS_KEYDEF(COMMA),
 		CHAOS_KEYDEF(MINUS),
 		CHAOS_KEYDEF(PERIOD),
 		CHAOS_KEYDEF(SLASH),
-		NUM_0 = GLFW_KEY_0,
-		NUM_1 = GLFW_KEY_1,
-		NUM_2 = GLFW_KEY_2,
-		NUM_3 = GLFW_KEY_3,
-		NUM_4 = GLFW_KEY_4,
-		NUM_5 = GLFW_KEY_5,
-		NUM_6 = GLFW_KEY_6,
-		NUM_7 = GLFW_KEY_7,
-		NUM_8 = GLFW_KEY_8,
-		NUM_9 = GLFW_KEY_9,
+		NUM_0 = KEYBOARD_FIRST + GLFW_KEY_0,
+		NUM_1 = KEYBOARD_FIRST + GLFW_KEY_1,
+		NUM_2 = KEYBOARD_FIRST + GLFW_KEY_2,
+		NUM_3 = KEYBOARD_FIRST + GLFW_KEY_3,
+		NUM_4 = KEYBOARD_FIRST + GLFW_KEY_4,
+		NUM_5 = KEYBOARD_FIRST + GLFW_KEY_5,
+		NUM_6 = KEYBOARD_FIRST + GLFW_KEY_6,
+		NUM_7 = KEYBOARD_FIRST + GLFW_KEY_7,
+		NUM_8 = KEYBOARD_FIRST + GLFW_KEY_8,
+		NUM_9 = KEYBOARD_FIRST + GLFW_KEY_9,
 		CHAOS_KEYDEF(SEMICOLON),
 		CHAOS_KEYDEF(EQUAL),
 		CHAOS_KEYDEF(A),
@@ -132,7 +132,7 @@ namespace chaos
 		CHAOS_KEYDEF(KP_ADD),
 		CHAOS_KEYDEF(KP_ENTER),
 		CHAOS_KEYDEF(KP_EQUAL),
-		CHAOS_KEYDEF(LEFT_SHIFT),
+		CHAOS_KEYDEF(LEFT_SHIFT), 
 		CHAOS_KEYDEF(LEFT_CONTROL),
 		CHAOS_KEYDEF(LEFT_ALT),
 		CHAOS_KEYDEF(LEFT_SUPER),
@@ -140,206 +140,98 @@ namespace chaos
 		CHAOS_KEYDEF(RIGHT_CONTROL),
 		CHAOS_KEYDEF(RIGHT_ALT),
 		CHAOS_KEYDEF(RIGHT_SUPER),
-		CHAOS_KEYDEF(MENU)
+		CHAOS_KEYDEF(MENU),
+		KEYBOARD_LAST = GLFW_KEY_MENU,
+
+		MOUSE_FIRST = 1000,
+		MOUSE_BUTTON_1 = MOUSE_FIRST + GLFW_MOUSE_BUTTON_1,
+		MOUSE_BUTTON_2 = MOUSE_FIRST + GLFW_MOUSE_BUTTON_2,
+		MOUSE_BUTTON_3 = MOUSE_FIRST + GLFW_MOUSE_BUTTON_3,
+		MOUSE_BUTTON_4 = MOUSE_FIRST + GLFW_MOUSE_BUTTON_4,
+		MOUSE_BUTTON_5 = MOUSE_FIRST + GLFW_MOUSE_BUTTON_5,
+		MOUSE_BUTTON_6 = MOUSE_FIRST + GLFW_MOUSE_BUTTON_6,
+		MOUSE_BUTTON_7 = MOUSE_FIRST + GLFW_MOUSE_BUTTON_7,
+		MOUSE_BUTTON_8 = MOUSE_FIRST + GLFW_MOUSE_BUTTON_8,
+		MOUSE_LAST = MOUSE_BUTTON_8,
+
+		GAMEPAD_FIRST = 2000,
+		GAMEPAD_A             = GAMEPAD_FIRST + GLFW_GAMEPAD_BUTTON_A,
+		GAMEPAD_B             = GAMEPAD_FIRST + GLFW_GAMEPAD_BUTTON_B,
+		GAMEPAD_X             = GAMEPAD_FIRST + GLFW_GAMEPAD_BUTTON_X,
+		GAMEPAD_Y             = GAMEPAD_FIRST + GLFW_GAMEPAD_BUTTON_Y,
+		GAMEPAD_LEFT_BUMPER   = GAMEPAD_FIRST + GLFW_GAMEPAD_BUTTON_LEFT_BUMPER,
+		GAMEPAD_RIGHT_BUMPER  = GAMEPAD_FIRST + GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER,
+		GAMEPAD_SPECIAL_LEFT  = GAMEPAD_FIRST + GLFW_GAMEPAD_BUTTON_BACK,
+		GAMEPAD_SPECIAL_RIGHT = GAMEPAD_FIRST + GLFW_GAMEPAD_BUTTON_START,
+		GAMEPAD_GUIDE         = GAMEPAD_FIRST + GLFW_GAMEPAD_BUTTON_GUIDE,
+		GAMEPAD_LEFT_THUMB    = GAMEPAD_FIRST + GLFW_GAMEPAD_BUTTON_LEFT_THUMB,
+		GAMEPAD_RIGHT_THUMB   = GAMEPAD_FIRST + GLFW_GAMEPAD_BUTTON_RIGHT_THUMB,
+		GAMEPAD_DPAD_UP       = GAMEPAD_FIRST + GLFW_GAMEPAD_BUTTON_DPAD_UP,
+		GAMEPAD_DPAD_RIGHT    = GAMEPAD_FIRST + GLFW_GAMEPAD_BUTTON_DPAD_RIGHT,
+		GAMEPAD_DPAD_DOWN     = GAMEPAD_FIRST + GLFW_GAMEPAD_BUTTON_DPAD_DOWN,
+		GAMEPAD_DPAD_LEFT     = GAMEPAD_FIRST + GLFW_GAMEPAD_BUTTON_DPAD_LEFT,
+
+		GAMEPAD_LEFT_TRIGGER  = GAMEPAD_FIRST + 15, // theses are simulated inputs (Left/Right Trigger is an axis for XBOX gamepad point of view)
+		GAMEPAD_RIGHT_TRIGGER = GAMEPAD_FIRST + 16,
+		GAMEPAD_LAST = GAMEPAD_RIGHT_TRIGGER
 	};
+
+	CHAOS_DECLARE_ENUM_METHOD(Key, CHAOS_API);
+
 #undef CHAOS_KEYDEF
 
-	CHAOS_DECLARE_ENUM_METHOD(KeyboardButton, CHAOS_API);
+	CHAOS_API bool IsKeyboardKey(Key in_key);
+
+	CHAOS_API bool IsMouseKey(Key in_key);
+
+	CHAOS_API bool IsGamepadKey(Key in_key);
+
+	CHAOS_API KeyType GetKeyType(Key in_key);
 
 	/**
-	 * MouseButton
+	 * KeyType: Indicates where the input is coming from
 	 */
-	enum class CHAOS_API MouseButton : int
-	{
-		UNKNOWN = -1,
-		BUTTON_1 = GLFW_MOUSE_BUTTON_1,
-		BUTTON_2 = GLFW_MOUSE_BUTTON_2,
-		BUTTON_3 = GLFW_MOUSE_BUTTON_3,
-		BUTTON_4 = GLFW_MOUSE_BUTTON_4,
-		BUTTON_5 = GLFW_MOUSE_BUTTON_5,
-		BUTTON_6 = GLFW_MOUSE_BUTTON_6,
-		BUTTON_7 = GLFW_MOUSE_BUTTON_7,
-		BUTTON_8 = GLFW_MOUSE_BUTTON_8
-	};
-
-	CHAOS_DECLARE_ENUM_METHOD(MouseButton, CHAOS_API);
-
-
-	// XXX: there are important changes in GLFW 3.3 relative to 3.1
-	//
-	//  -XBOX_RIGHT_AXIS_X and XBOX_RIGHT_AXIS_Y : are bound to other indices.
-	//
-	//  -in GLFW 3.1, LEFT and RIGHT triggers were bound to the same index
-	//                LEFT  giving a value in [-1 .. 0]
-	//                RIGHT giving a value in [0 .. +1]
-	//
-	//  -in GLFW 3.3, LEFT are RIGHT TRIGGERS are now bound to different indices
-	//                LEFT  giving a value in [-1 .. +1]
-	//                RIGHT giving a value in [-1 .. +1]
-	//
-	//                while they are not bound to the same index, you can check both values
-
-	// shuxxx see glfw3.h => some values seem to differ    GLFW_GAMEPAD_BUTTON_LEFT_THUMB ? etc
-
-	enum class CHAOS_API GamepadButton : int
-	{
-		/** undefined value */
-		UNKNOWN = -1,
-		/** index in buttons of A for XBOX like pad */
-		A = GLFW_GAMEPAD_BUTTON_A,
-		/** index in buttons of B for XBOX like pad */
-		B = GLFW_GAMEPAD_BUTTON_B,
-		/** index in buttons of X for XBOX like pad */
-		X = GLFW_GAMEPAD_BUTTON_X,
-		/** index in buttons of Y for XBOX like pad */
-		Y = GLFW_GAMEPAD_BUTTON_Y,
-		/** index in buttons of LEFT for XBOX like pad (the one behind the LEFT TRIGGER) */
-		LEFT_BUMPER = GLFW_GAMEPAD_BUTTON_LEFT_BUMPER,
-		/** index in buttons of RIGHT for XBOX like pad (the one behind the RIGHT TRIGGER) */
-		RIGHT_BUMPER = GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER,
-		/** index in buttons of SELECT for XBOX like pad */
-		SPECIAL_LEFT = GLFW_GAMEPAD_BUTTON_BACK,
-		/** index in buttons of START for XBOX like pad */
-		SPECIAL_RIGHT = GLFW_GAMEPAD_BUTTON_START,
-		/** index in buttons of SELECT for XBOX like pad */
-		GUIDE = GLFW_GAMEPAD_BUTTON_GUIDE,
-		/** index in buttons of LEFT-STICK-CLICKED for XBOX like pad */
-		LEFT_THUMB = GLFW_GAMEPAD_BUTTON_LEFT_THUMB,
-		/** index in buttons of RIGHT-STICK-CLICKED for XBOX like pad */
-		RIGHT_THUMB = GLFW_GAMEPAD_BUTTON_RIGHT_THUMB,
-		/** index in buttons of UP for XBOX like pad */
-		DPAD_UP = GLFW_GAMEPAD_BUTTON_DPAD_UP,
-		/** index in buttons of RIGHT for XBOX like pad */
-		DPAD_RIGHT = GLFW_GAMEPAD_BUTTON_DPAD_RIGHT,
-		/** index in buttons of DOWN for XBOX like pad */
-		DPAD_DOWN = GLFW_GAMEPAD_BUTTON_DPAD_DOWN,
-		/** index in buttons of LEFT for XBOX like pad */
-		DPAD_LEFT = GLFW_GAMEPAD_BUTTON_DPAD_LEFT,
-
-		/** index in buttons of LEFT TRIGGER for XBOX like pad (this is a simulate button, while the physical left trigger is an axis) */
-		LEFT_TRIGGER = 15,
-		/** index in buttons of RIGHT TRIGGER for XBOX like pad (this is a simulate button, while the physical right trigger is an axis) */
-		RIGHT_TRIGGER = 16
-	};
-
-	// GamepadState owns a raw array of buttons. Thoses values must match indexation requirement
-	static_assert(int(GamepadButton::LEFT_TRIGGER) == 15);
-	static_assert(int(GamepadButton::RIGHT_TRIGGER) == 16);
-
-	CHAOS_DECLARE_ENUM_METHOD(GamepadButton, CHAOS_API);
-
-	enum class CHAOS_API GamepadAxis : int
-	{
-		/** undefined value */
-		UNKNOWN = -1,
-		/** index in axis of LEFT X for XBOX like pad */
-		LEFT_AXIS_X = GLFW_GAMEPAD_AXIS_LEFT_X,
-		/** index in axis of LEFT Y for XBOX like pad */
-		LEFT_AXIS_Y = GLFW_GAMEPAD_AXIS_LEFT_Y, // STICK LEFT_TRIGGER DOWN = positive values
-
-		/** index in axis of RIGHT X for XBOX like pad */
-		RIGHT_AXIS_X = GLFW_GAMEPAD_AXIS_RIGHT_X,
-		/** index in axis of RIGHT Y for XBOX like pad */
-		RIGHT_AXIS_Y = GLFW_GAMEPAD_AXIS_RIGHT_Y,  // STICK DOWN = positive values
-
-		/** index in axis for the LEFT trigger for XBOX like pad (beware its value is between [-1 .. +1]) */
-		LEFT_TRIGGER = GLFW_GAMEPAD_AXIS_LEFT_TRIGGER,
-		/** index in axis for the RIGHT trigger for XBOX like pad (beware its value is between [-1 .. +1]) */
-		RIGHT_TRIGGER = GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER,
-	};
-
-	CHAOS_DECLARE_ENUM_METHOD(GamepadAxis, CHAOS_API);
-
-	enum class CHAOS_API GamepadStick : int
-	{
-		/** undefined value */
-		UNKNOWN = -1,
-		/** returns the direction of left stick */
-		LEFT_STICK = 0,
-		/** returns the direction of right stick */
-		RIGHT_STICK = 1
-	};
-
-	// GamepadState owns a raw array of buttons. Thoses values must match indexation requirement
-	static_assert(int(GamepadStick::LEFT_STICK) == 0);
-	static_assert(int(GamepadStick::RIGHT_STICK) == 1);
-
-	CHAOS_DECLARE_ENUM_METHOD(GamepadStick, CHAOS_API);
 
 	enum class CHAOS_API KeyType : int
 	{
-		/** undefined value */
-		UNKNOWN = -1,
-		/** undefined value */
+		UNKNOWN  = -1,
 		KEYBOARD = 0,
-		/** undefined value */
-		MOUSE = 1,
-		/** undefined value */
-		GAMEPAD = 2
+		MOUSE    = 1,
+		GAMEPAD  = 2
 	};
 
 	CHAOS_DECLARE_ENUM_METHOD(KeyType, CHAOS_API);
 
 	/**
-	 * Key : a generic key (gamepad, keyboard or mouse)
+	 * GamepadAxis: enumeration to match a 1D input axis
 	 */
-	class CHAOS_API Key
+
+	enum class CHAOS_API GamepadAxis : int
 	{
-	public:
-
-		/** default constructor */
-		Key();
-		/** copy constructor */
-		Key(Key const& src) = default;
-		/** key from its name */
-		Key(char const* name);
-		/** gamepad key constructor */
-		Key(GamepadButton button);
-		/** keyboard key constructor */
-		Key(KeyboardButton button);
-		/** mouse key constructor */
-		Key(MouseButton button);
-
-		/** get a key name  */
-		char const* GetName() const;
-		/** check whether the key is valid or not */
-		bool IsValid() const;
-		/** gets the type */
-		KeyType GetType() const;
-		/** returns whether the key is a keyboard one */
-		bool IsKeyboardKey() const { return type == KeyType::KEYBOARD; }
-		/** returns whether the key is a gamepad one */
-		bool IsGamepadKey() const { return type == KeyType::GAMEPAD; }
-		/** returns whether the key is a mouse one */
-		bool IsMouseKey() const { return type == KeyType::MOUSE; }
-
-		/** comparaison operator */
-		bool operator == (Key const& src) const;
-		/** comparaison operator */
-		std::strong_ordering operator <=> (const Key& src) const;
-
-		/** get the keyboard value for the key (UNKNOWN if it is not a keyboard key) */
-		KeyboardButton GetKeyboardButton() const;
-		/** get the gamepad value for the key (UNKNOWN if it is not a gamepad key) */
-		GamepadButton GetGamepadButton() const;
-		/** get the mouse value for the key (UNKNOWN if it is not a mouse key) */
-		MouseButton GetMouseButton() const;
-
-		/** get the raw value of the concerned union member */
-		int GetRawValue() const;
-
-	protected:
-
-		/** the type of key */
-		KeyType type = KeyType::UNKNOWN;
-		/** the value of the key */
-		union
-		{
-			KeyboardButton keyboard_button;
-			MouseButton mouse_button;
-			GamepadButton gamepad_button;
-		};
+		/** undefined value */
+		UNKNOWN       = -1,
+		LEFT_AXIS_X   = GLFW_GAMEPAD_AXIS_LEFT_X,
+		LEFT_AXIS_Y   = GLFW_GAMEPAD_AXIS_LEFT_Y,   // STICK LEFT_TRIGGER DOWN = positive values
+		RIGHT_AXIS_X  = GLFW_GAMEPAD_AXIS_RIGHT_X,
+		RIGHT_AXIS_Y  = GLFW_GAMEPAD_AXIS_RIGHT_Y,  // STICK DOWN = positive values
+		LEFT_TRIGGER  = GLFW_GAMEPAD_AXIS_LEFT_TRIGGER,
+		RIGHT_TRIGGER = GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER,
 	};
+
+	CHAOS_DECLARE_ENUM_METHOD(GamepadAxis, CHAOS_API);
+
+	/**
+	 * GamepadStick: enumeration to match a 2D input axis
+	 */
+
+	enum class CHAOS_API GamepadStick : int
+	{
+		UNKNOWN     = -1,
+		LEFT_STICK  = 0,
+		RIGHT_STICK = 1
+	};
+
+	CHAOS_DECLARE_ENUM_METHOD(GamepadStick, CHAOS_API);
 
 #endif
 

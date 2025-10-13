@@ -963,10 +963,10 @@ protected:
 		// place camera
 		fps_view_controller.fps_view.position.y = 10.0f;
 		fps_view_controller.fps_view.position.z = 30.0f;
-		fps_view_controller.input_config.pitch_down_button = chaos::KeyboardButton::UNKNOWN; // disable some inputs so they can be used else where
-		fps_view_controller.input_config.pitch_up_button = chaos::KeyboardButton::UNKNOWN;
-		fps_view_controller.input_config.yaw_left_button = chaos::KeyboardButton::UNKNOWN;
-		fps_view_controller.input_config.yaw_right_button = chaos::KeyboardButton::UNKNOWN;
+		fps_view_controller.input_config.pitch_down_button = chaos::Key::UNKNOWN; // disable some inputs so they can be used else where
+		fps_view_controller.input_config.pitch_up_button = chaos::Key::UNKNOWN;
+		fps_view_controller.input_config.yaw_left_button = chaos::Key::UNKNOWN;
+		fps_view_controller.input_config.yaw_right_button = chaos::Key::UNKNOWN;
 
 		// initialize the example
 		SetExample(TestID::BOX2_DISPLAY_TEST);
@@ -977,25 +977,25 @@ protected:
 		return true;
 	}
 
-	void UpdateObjectPosition(chaos::KeyboardButton button, float delta_time, glm::vec3 const & factor)
+	void UpdateObjectPosition(chaos::Key button, float delta_time, glm::vec3 const & factor)
 	{
 		static float SPEED = 5.0f;
 		if (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(button)->IsDown())
 		{
-			if (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(chaos::KeyboardButton::LEFT_CONTROL)->IsDown())
+			if (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(chaos::Key::LEFT_CONTROL)->IsDown())
 				position_object1 += SPEED * (float)(delta_time)* factor;
 			else
 				position_object2 += SPEED * (float)(delta_time)* factor;
 		}
 	}
 
-	void UpdateObjectRotation(chaos::KeyboardButton button, float delta_time, float factor)
+	void UpdateObjectRotation(chaos::Key button, float delta_time, float factor)
 	{
 		static float SPEED = 1.0f;
 
 		if (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(button)->IsDown())
 		{
-			if (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(chaos::KeyboardButton::LEFT_CONTROL)->IsDown())
+			if (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(chaos::Key::LEFT_CONTROL)->IsDown())
 				rotation_object1 += SPEED * (float)(delta_time)* factor;
 			else
 				rotation_object2 += SPEED * (float)(delta_time)* factor;
@@ -1004,7 +1004,7 @@ protected:
 
 	void UpdateObjectType()
 	{
-		if (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(chaos::KeyboardButton::LEFT_CONTROL)->IsDown())
+		if (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(chaos::Key::LEFT_CONTROL)->IsDown())
 			prim_type_object1 = (PrimitiveType)(((int)prim_type_object1 + 1) % (int)PrimitiveType::PRIMITIVE_TYPE_COUNT);
 		else
 			prim_type_object2 = (PrimitiveType)(((int)prim_type_object2 + 1) % (int)PrimitiveType::PRIMITIVE_TYPE_COUNT);
@@ -1015,15 +1015,15 @@ protected:
 		// update primitives
 		if (display_example == TestID::COLLISION_2D_TEST || display_example == TestID::COLLISION_3D_TEST)
 		{
-			UpdateObjectPosition(chaos::KeyboardButton::KP_6, delta_time, glm::vec3( 1.0f,  0.0f,  0.0f));
-			UpdateObjectPosition(chaos::KeyboardButton::KP_4, delta_time, glm::vec3(-1.0f,  0.0f,  0.0f));
-			UpdateObjectPosition(chaos::KeyboardButton::KP_8, delta_time, glm::vec3( 0.0f,  1.0f,  0.0f));
-			UpdateObjectPosition(chaos::KeyboardButton::KP_2, delta_time, glm::vec3( 0.0f, -1.0f,  0.0f));
-			UpdateObjectPosition(chaos::KeyboardButton::KP_1, delta_time, glm::vec3( 0.0f,  0.0f,  1.0f));
-			UpdateObjectPosition(chaos::KeyboardButton::KP_7, delta_time, glm::vec3( 0.0f,  0.0f, -1.0f));
+			UpdateObjectPosition(chaos::Key::KP_6, delta_time, glm::vec3( 1.0f,  0.0f,  0.0f));
+			UpdateObjectPosition(chaos::Key::KP_4, delta_time, glm::vec3(-1.0f,  0.0f,  0.0f));
+			UpdateObjectPosition(chaos::Key::KP_8, delta_time, glm::vec3( 0.0f,  1.0f,  0.0f));
+			UpdateObjectPosition(chaos::Key::KP_2, delta_time, glm::vec3( 0.0f, -1.0f,  0.0f));
+			UpdateObjectPosition(chaos::Key::KP_1, delta_time, glm::vec3( 0.0f,  0.0f,  1.0f));
+			UpdateObjectPosition(chaos::Key::KP_7, delta_time, glm::vec3( 0.0f,  0.0f, -1.0f));
 
-			UpdateObjectRotation(chaos::KeyboardButton::KP_9, delta_time,  1.0f);
-			UpdateObjectRotation(chaos::KeyboardButton::KP_3, delta_time, -1.0f);
+			UpdateObjectRotation(chaos::Key::KP_9, delta_time,  1.0f);
+			UpdateObjectRotation(chaos::Key::KP_3, delta_time, -1.0f);
 		}
 
 		return true; // refresh
@@ -1032,7 +1032,7 @@ protected:
 
 	virtual bool EnumerateInputActions(chaos::InputActionEnumerator & in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
 	{
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::T), "Toggle Clock", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::T), "Toggle Clock", [this]()
 		{
 			chaos::Clock * clock = chaos::WindowApplication::GetMainClockInstance();
 			if (clock != nullptr)
@@ -1042,7 +1042,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::KP_ADD), "Next Example", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::KP_ADD), "Next Example", [this]()
 		{
 			SetExample((TestID)((int)display_example + 1));
 			DebugDisplayExampleTitle();
@@ -1051,7 +1051,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::KP_SUBTRACT), "Previous Example", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::KP_SUBTRACT), "Previous Example", [this]()
 		{
 			SetExample((TestID)((int)display_example - 1));
 			DebugDisplayExampleTitle();
@@ -1060,7 +1060,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::KP_5), "Update Object Type", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::KP_5), "Update Object Type", [this]()
 		{
 			UpdateObjectType();
 			DebugDisplayExampleTitle();

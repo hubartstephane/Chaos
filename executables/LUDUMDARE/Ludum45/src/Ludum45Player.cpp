@@ -19,7 +19,7 @@ void LudumPlayer::UpdateBrightSideOfLife(float delta_time)
 {
 	if (GetSpecialPowerLevel() > 0)
 	{
-		chaos::Key const bright_key_buttons[] = { chaos::KeyboardButton::LEFT_ALT, chaos::KeyboardButton::RIGHT_ALT, chaos::GamepadButton::Y, chaos::Key()};
+		chaos::Key const bright_key_buttons[] = { chaos::Key::LEFT_ALT, chaos::Key::RIGHT_ALT, chaos::Key::GAMEPAD_Y, chaos::Key()};
 		bool bright_key_pressed = CheckKeyDown(bright_key_buttons);
 		if (bright_key_pressed)
 		{
@@ -87,7 +87,7 @@ void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 	float left_length_2 = glm::length2(left_stick_position);
 	float right_length_2 = glm::length2(right_stick_position);
 
-	chaos::Key const dash_key_buttons[] = { chaos::KeyboardButton::LEFT_CONTROL, chaos::KeyboardButton::RIGHT_CONTROL, chaos::GamepadButton::B, chaos::Key()};
+	chaos::Key const dash_key_buttons[] = { chaos::Key::LEFT_CONTROL, chaos::Key::RIGHT_CONTROL, chaos::Key::GAMEPAD_B, chaos::Key()};
 	bool dash_pressed = CheckKeyDown(dash_key_buttons);
 
 	if (dash_pressed)
@@ -192,7 +192,7 @@ void LudumPlayer::UpdatePlayerFire(float delta_time)
 	if (ludum_game == nullptr)
 		return;
 
-	chaos::Key const fire_key_buttons[] = { chaos::KeyboardButton::SPACE, chaos::GamepadButton::A, chaos::Key()};
+	chaos::Key const fire_key_buttons[] = { chaos::Key::SPACE, chaos::Key::GAMEPAD_A, chaos::Key()};
 	if (fire_timer <= 0.0f)
 	{
 		bool fire_pressed = CheckKeyDown(fire_key_buttons);

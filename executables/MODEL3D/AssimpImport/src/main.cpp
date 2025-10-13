@@ -159,10 +159,10 @@ protected:
 		fps_view_controller.config.forward_speed = CAMERA_SPEED;
 		fps_view_controller.config.strafe_speed = CAMERA_SPEED;
 
-		fps_view_controller.input_config.yaw_left_button   = KeyboardButton::UNKNOWN;
-		fps_view_controller.input_config.yaw_right_button  = KeyboardButton::UNKNOWN;
-		fps_view_controller.input_config.pitch_up_button   = KeyboardButton::UNKNOWN;
-		fps_view_controller.input_config.pitch_down_button = KeyboardButton::UNKNOWN;
+		fps_view_controller.input_config.yaw_left_button   = Key::UNKNOWN;
+		fps_view_controller.input_config.yaw_right_button  = Key::UNKNOWN;
+		fps_view_controller.input_config.pitch_up_button   = Key::UNKNOWN;
+		fps_view_controller.input_config.pitch_down_button = Key::UNKNOWN;
 
 		fps_view_controller.fps_view.position.z = 2000.0f;
 
@@ -571,7 +571,7 @@ protected:
 
 		bool enabled = object_count > 0;
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(KeyboardButton::KP_ADD), "Next Object", enabled, [&]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(Key::KP_ADD), "Next Object", enabled, [&]()
 		{
 			objects[selected_object_index]->SetSelected(false);
 
@@ -586,7 +586,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(KeyboardButton::KP_SUBTRACT), "Previous Object", enabled, [&]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(Key::KP_SUBTRACT), "Previous Object", enabled, [&]()
 		{
 			objects[selected_object_index]->SetSelected(false);
 
@@ -611,7 +611,7 @@ protected:
 		size_t object_count = objects.size();
 		if (object_count > 0)
 		{
-			auto MoveObject = [this, delta_time](KeyboardButton button, size_t component_index, float direction)
+			auto MoveObject = [this, delta_time](Key button, size_t component_index, float direction)
 			{
 				if (KeyboardAndMouseDevice::GetInstance()->IsKeyDown(button))
 				{
@@ -620,12 +620,12 @@ protected:
 				}
 			};
 
-			MoveObject(KeyboardButton::KP_4, 0, -1.0f);
-			MoveObject(KeyboardButton::KP_6, 0, +1.0f);
-			MoveObject(KeyboardButton::KP_8, 2, -1.0f);
-			MoveObject(KeyboardButton::KP_2, 2, +1.0f);
-			MoveObject(KeyboardButton::KP_9, 1, +1.0f);
-			MoveObject(KeyboardButton::KP_3, 1, -1.0f);
+			MoveObject(Key::KP_4, 0, -1.0f);
+			MoveObject(Key::KP_6, 0, +1.0f);
+			MoveObject(Key::KP_8, 2, -1.0f);
+			MoveObject(Key::KP_2, 2, +1.0f);
+			MoveObject(Key::KP_9, 1, +1.0f);
+			MoveObject(Key::KP_3, 1, -1.0f);
 		}
 		return Window::DoTick(delta_time);
 	}

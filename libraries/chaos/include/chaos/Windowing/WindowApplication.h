@@ -110,9 +110,9 @@ namespace chaos
 		// shuyyy
 
 		/** get the button map */
-		std::map<GamepadButton, std::pair<std::string, std::string>>& GetGamepadButtonMap() { return gamepad_button_map; }
+		std::map<Key, std::pair<std::string, std::string>>& GetGamepadButtonMap() { return gamepad_button_map; }
 		/** get the button map */
-		std::map<GamepadButton, std::pair<std::string, std::string>> const& GetGamepadButtonMap() const { return gamepad_button_map; }
+		std::map<Key, std::pair<std::string, std::string>> const& GetGamepadButtonMap() const { return gamepad_button_map; }
 
 
 
@@ -359,7 +359,7 @@ namespace chaos
 		// shuyyy
 
 		/** a mapping between the button index and its resource name + text generator alias */
-		std::map<GamepadButton, std::pair<std::string, std::string>> gamepad_button_map;
+		std::map<Key, std::pair<std::string, std::string>> gamepad_button_map;
 
 
 

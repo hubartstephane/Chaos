@@ -133,10 +133,10 @@ protected:
 		fps_view_controller.config.forward_speed = CAMERA_SPEED;
 		fps_view_controller.config.strafe_speed = CAMERA_SPEED;
 
-		fps_view_controller.input_config.yaw_left_button   = KeyboardButton::UNKNOWN;
-		fps_view_controller.input_config.yaw_right_button  = KeyboardButton::UNKNOWN;
-		fps_view_controller.input_config.pitch_up_button   = KeyboardButton::UNKNOWN;
-		fps_view_controller.input_config.pitch_down_button = KeyboardButton::UNKNOWN;
+		fps_view_controller.input_config.yaw_left_button   = Key::UNKNOWN;
+		fps_view_controller.input_config.yaw_right_button  = Key::UNKNOWN;
+		fps_view_controller.input_config.pitch_up_button   = Key::UNKNOWN;
+		fps_view_controller.input_config.pitch_down_button = Key::UNKNOWN;
 
 		return true;
 	}
@@ -294,7 +294,7 @@ protected:
 
 		bool enabled = object_count > 0;
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(KeyboardButton::KP_ADD), "Next Object", enabled, [&]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(Key::KP_ADD), "Next Object", enabled, [&]()
 		{
 			objects[selected_object_index]->SetSelected(false);
 
@@ -309,7 +309,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(KeyboardButton::KP_SUBTRACT), "Previous Object", enabled, [&]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(Key::KP_SUBTRACT), "Previous Object", enabled, [&]()
 		{
 			objects[selected_object_index]->SetSelected(false);
 
@@ -324,7 +324,7 @@ protected:
 			return true;
 		}
 
-		auto MoveObject = [this, &in_action_enumerator, enabled](KeyboardButton button, size_t component_index, float direction, char const* title)
+		auto MoveObject = [this, &in_action_enumerator, enabled](Key button, size_t component_index, float direction, char const* title)
 		{
 			return in_action_enumerator.CheckAndProcess(RequestKeyDown(button), title, enabled, [this, component_index, direction]()
 			{
@@ -335,17 +335,17 @@ protected:
 			});
 		};
 
-		if (MoveObject(KeyboardButton::KP_4, 0, -1.0f, "Move Object -X"))
+		if (MoveObject(Key::KP_4, 0, -1.0f, "Move Object -X"))
 			return true;
-		if (MoveObject(KeyboardButton::KP_6, 0, +1.0f, "Move Object +X"))
+		if (MoveObject(Key::KP_6, 0, +1.0f, "Move Object +X"))
 			return true;
-		if (MoveObject(KeyboardButton::KP_3, 1, -1.0f, "Move Object -Y"))
+		if (MoveObject(Key::KP_3, 1, -1.0f, "Move Object -Y"))
 			return true;
-		if (MoveObject(KeyboardButton::KP_9, 1, +1.0f, "Move Object +Y"))
+		if (MoveObject(Key::KP_9, 1, +1.0f, "Move Object +Y"))
 			return true;
-		if (MoveObject(KeyboardButton::KP_8, 2, -1.0f, "Move Object -Z"))
+		if (MoveObject(Key::KP_8, 2, -1.0f, "Move Object -Z"))
 			return true;
-		if (MoveObject(KeyboardButton::KP_2, 2, +1.0f, "Move Object +Z"))
+		if (MoveObject(Key::KP_2, 2, +1.0f, "Move Object +Z"))
 			return true;
 
 		return false;

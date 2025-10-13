@@ -23,9 +23,9 @@ namespace chaos
 		// handle key
 		result &= DoTryConsumeInput(in_key, in_input_device);
 		// handle 'virtual related' inputs
-		if (in_key == GamepadButton::LEFT_TRIGGER)
+		if (in_key == Key::GAMEPAD_LEFT_TRIGGER)
 			result &= DoTryConsumeInput(GamepadAxis::LEFT_TRIGGER, in_input_device);
-		if (in_key == GamepadButton::RIGHT_TRIGGER)
+		if (in_key == Key::GAMEPAD_RIGHT_TRIGGER)
 			result &= DoTryConsumeInput(GamepadAxis::RIGHT_TRIGGER, in_input_device);
 
 		return (consume_all_inputs)? 
@@ -41,9 +41,9 @@ namespace chaos
 		result &= DoTryConsumeInput(in_axis, in_input_device);
 		// handle 'virtual related' inputs
 		if (in_axis == GamepadAxis::LEFT_TRIGGER)
-			result &= DoTryConsumeInput(GamepadButton::LEFT_TRIGGER, in_input_device);
+			result &= DoTryConsumeInput(Key::GAMEPAD_LEFT_TRIGGER, in_input_device);
 		if (in_axis == GamepadAxis::RIGHT_TRIGGER)
-			result &= DoTryConsumeInput(GamepadButton::RIGHT_TRIGGER, in_input_device);
+			result &= DoTryConsumeInput(Key::GAMEPAD_RIGHT_TRIGGER, in_input_device);
 
 		if (in_axis == GamepadAxis::LEFT_AXIS_X || in_axis == GamepadAxis::LEFT_AXIS_Y)
 			result &= DoTryConsumeInput(GamepadStick::LEFT_STICK, in_input_device);

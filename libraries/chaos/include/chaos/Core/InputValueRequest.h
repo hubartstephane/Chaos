@@ -28,10 +28,7 @@ namespace chaos
 		{
 			InputRequestDebugInfo result;
 
-			if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, Key>)
-				result.input = searched_input.GetName();
-			else if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, GamepadAxis> || std::is_same_v<INPUT_SEARCH_KEY_TYPE, GamepadStick>)
-				result.input = EnumToString(searched_input);
+			result.input = EnumToString(searched_input);
 			result.action_type = "Query Value";
 
 			return result;
@@ -43,7 +40,7 @@ namespace chaos
 			if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, Key>) // this is only valid for key event
 			{
 				// early exit
-				if (!searched_input.IsValid())
+				if (searched_input == Key::UNKNOWN)
 					return InputRequestResult::Invalid;
 				// find input
 				auto const* input_state = in_input_device->GetInputState(searched_input);
@@ -68,7 +65,7 @@ namespace chaos
 		{
 			// early exit
 			if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, Key>)
-				if (!searched_input.IsValid())
+				if (searched_input == Key::UNKNOWN)
 					return InputRequestResult::Invalid;
 			// find input
 			auto const* input_state = in_input_device->GetInputState(searched_input);

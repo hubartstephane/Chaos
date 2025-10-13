@@ -5,57 +5,12 @@
 namespace chaos
 {
 	// -------------------------------------------------------------------
-	// MouseButton implementation
+	// Key implementation
 	// -------------------------------------------------------------------
 
-	static EnumMetaData<MouseButton> const MouseButton_metadata =
-	{
-		{ MouseButton::BUTTON_1, "MOUSE_BUTTON_1" },
-		{ MouseButton::BUTTON_2, "MOUSE_BUTTON_2" },
-		{ MouseButton::BUTTON_3, "MOUSE_BUTTON_3" },
-		{ MouseButton::BUTTON_4, "MOUSE_BUTTON_4" },
-		{ MouseButton::BUTTON_5, "MOUSE_BUTTON_5" },
-		{ MouseButton::BUTTON_6, "MOUSE_BUTTON_6" },
-		{ MouseButton::BUTTON_7, "MOUSE_BUTTON_7" },
-		{ MouseButton::BUTTON_8, "MOUSE_BUTTON_8" }
-	};
+	#define CHAOS_KEYBOARD_DEF(KEY) { Key::KEY, #KEY }
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(MouseButton, &MouseButton_metadata, CHAOS_API);
-
-	// -------------------------------------------------------------------
-	// GamepadButton implementation
-	// -------------------------------------------------------------------
-
-	static EnumMetaData<GamepadButton> const GamepadButton_metadata =
-	{
-		{ GamepadButton::A, "GAMEPAD_A" },
-		{ GamepadButton::B, "GAMEPAD_B" },
-		{ GamepadButton::X, "GAMEPAD_X" },
-		{ GamepadButton::Y, "GAMEPAD_Y" },
-		{ GamepadButton::LEFT_BUMPER, "GAMEPAD_LEFT_BUMPER" },
-		{ GamepadButton::RIGHT_BUMPER, "GAMEPAD_RIGHT_BUMPER" },
-		{ GamepadButton::SPECIAL_LEFT, "GAMEPAD_SPECIAL_LEFT" },
-		{ GamepadButton::SPECIAL_RIGHT, "GAMEPAD_SPECIAL_RIGHT" },
-		{ GamepadButton::GUIDE, "GAMEPAD_GUIDE" },
-		{ GamepadButton::LEFT_THUMB, "GAMEPAD_LEFT_THUMB" },
-		{ GamepadButton::RIGHT_THUMB, "GAMEPAD_RIGHT_THUMB" },
-		{ GamepadButton::DPAD_UP, "GAMEPAD_DPAD_UP" },
-		{ GamepadButton::DPAD_RIGHT, "GAMEPAD_DPAD_RIGHT" },
-		{ GamepadButton::DPAD_DOWN, "GAMEPAD_DPAD_DOWN" },
-		{ GamepadButton::DPAD_LEFT, "GAMEPAD_DPAD_LEFT" },
-		{ GamepadButton::LEFT_TRIGGER, "GAMEPAD_LEFT_TRIGGER" },
-		{ GamepadButton::RIGHT_TRIGGER, "GAMEPAD_RIGHT_TRIGGER" }
-	};
-
-	CHAOS_IMPLEMENT_ENUM_METHOD(GamepadButton, &GamepadButton_metadata, CHAOS_API);
-
-	// -------------------------------------------------------------------
-	// KeyboardButton implementation
-	// -------------------------------------------------------------------
-
-	#define CHAOS_KEYBOARD_DEF(KEY) { KeyboardButton::KEY, #KEY }
-
-	static EnumMetaData<KeyboardButton> const KeyboardButton_metadata =
+	static EnumMetaData<Key> const Key_metadata =
 	{
 		CHAOS_KEYBOARD_DEF(SPACE),
 		CHAOS_KEYBOARD_DEF(APOSTROPHE),
@@ -176,11 +131,64 @@ namespace chaos
 		CHAOS_KEYBOARD_DEF(RIGHT_CONTROL),
 		CHAOS_KEYBOARD_DEF(RIGHT_ALT),
 		CHAOS_KEYBOARD_DEF(RIGHT_SUPER),
-		CHAOS_KEYBOARD_DEF(MENU)
+		CHAOS_KEYBOARD_DEF(MENU),
+
+		{ Key::MOUSE_BUTTON_1, "MOUSE_BUTTON_1" },
+		{ Key::MOUSE_BUTTON_2, "MOUSE_BUTTON_2" },
+		{ Key::MOUSE_BUTTON_3, "MOUSE_BUTTON_3" },
+		{ Key::MOUSE_BUTTON_4, "MOUSE_BUTTON_4" },
+		{ Key::MOUSE_BUTTON_5, "MOUSE_BUTTON_5" },
+		{ Key::MOUSE_BUTTON_6, "MOUSE_BUTTON_6" },
+		{ Key::MOUSE_BUTTON_7, "MOUSE_BUTTON_7" },
+		{ Key::MOUSE_BUTTON_8, "MOUSE_BUTTON_8" },
+
+		{ Key::GAMEPAD_A, "GAMEPAD_A" },
+		{ Key::GAMEPAD_B, "GAMEPAD_B" },
+		{ Key::GAMEPAD_X, "GAMEPAD_X" },
+		{ Key::GAMEPAD_Y, "GAMEPAD_Y" },
+		{ Key::GAMEPAD_LEFT_BUMPER, "GAMEPAD_LEFT_BUMPER" },
+		{ Key::GAMEPAD_RIGHT_BUMPER, "GAMEPAD_RIGHT_BUMPER" },
+		{ Key::GAMEPAD_SPECIAL_LEFT, "GAMEPAD_SPECIAL_LEFT" },
+		{ Key::GAMEPAD_SPECIAL_RIGHT, "GAMEPAD_SPECIAL_RIGHT" },
+		{ Key::GAMEPAD_GUIDE, "GAMEPAD_GUIDE" },
+		{ Key::GAMEPAD_LEFT_THUMB, "GAMEPAD_LEFT_THUMB" },
+		{ Key::GAMEPAD_RIGHT_THUMB, "GAMEPAD_RIGHT_THUMB" },
+		{ Key::GAMEPAD_DPAD_UP, "GAMEPAD_DPAD_UP" },
+		{ Key::GAMEPAD_DPAD_RIGHT, "GAMEPAD_DPAD_RIGHT" },
+		{ Key::GAMEPAD_DPAD_DOWN, "GAMEPAD_DPAD_DOWN" },
+		{ Key::GAMEPAD_DPAD_LEFT, "GAMEPAD_DPAD_LEFT" },
+		{ Key::GAMEPAD_LEFT_TRIGGER, "GAMEPAD_LEFT_TRIGGER" },
+		{ Key::GAMEPAD_RIGHT_TRIGGER, "GAMEPAD_RIGHT_TRIGGER" }
 	};
 #undef CHAOS_KEYBOARD_DEF
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(KeyboardButton, &KeyboardButton_metadata, CHAOS_API);
+	CHAOS_IMPLEMENT_ENUM_METHOD(Key, &Key_metadata, CHAOS_API);
+
+	bool IsKeyboardKey(Key in_key)
+	{
+		return (in_key >= Key::KEYBOARD_FIRST) && (in_key <= Key::KEYBOARD_LAST);
+	}
+
+	bool IsMouseKey(Key in_key)
+	{
+		return (in_key >= Key::MOUSE_FIRST) && (in_key <= Key::MOUSE_LAST);
+	}
+
+	bool IsGamepadKey(Key in_key)
+	{
+		return (in_key >= Key::GAMEPAD_FIRST) && (in_key <= Key::GAMEPAD_LAST);
+	}
+
+	KeyType GetKeyType(Key in_key)
+	{
+		if (IsKeyboardKey(in_key))
+			return KeyType::KEYBOARD;
+		if (IsMouseKey(in_key))
+			return KeyType::MOUSE;
+		if (IsGamepadKey(in_key))
+			return KeyType::GAMEPAD;
+		return KeyType::UNKNOWN;
+	}
 
 	// -------------------------------------------------------------------
 	// GamepadAxis implementation
@@ -226,152 +234,5 @@ namespace chaos
 	};
 
 	CHAOS_IMPLEMENT_ENUM_METHOD(KeyType, &KeyType_metadata, CHAOS_API);
-
-	// -------------------------------------------------------------------
-	// Key implementation
-	// -------------------------------------------------------------------
-
-	Key::Key(char const* name) :
-		type(KeyType::UNKNOWN),
-		gamepad_button(GamepadButton::UNKNOWN) // due to union aliasing, this works fine
-	{
-		// early exit
-		if (StringTools::IsEmpty(name))
-			return;
-
-		// search the name in Keyboard's, Gamepad's and Mouse's
-		auto search_by_name = [this](KeyType key_type, char const * name, auto & result_enum) -> bool
-		{
-			if (StringToEnum(name, result_enum))
-			{
-				type = key_type;
-				return true;
-			}
-			return false;
-		};
-
-		if (!search_by_name(KeyType::KEYBOARD, name, keyboard_button))
-			if (!search_by_name(KeyType::GAMEPAD, name, gamepad_button))
-				search_by_name(KeyType::MOUSE, name, mouse_button);
-	}
-
-	Key::Key() :
-		type(KeyType::UNKNOWN),
-		gamepad_button(GamepadButton::UNKNOWN) // due to union aliasing, this works fine
-	{
-	}
-
-	Key::Key(GamepadButton button) :
-		type(KeyType::GAMEPAD),
-		gamepad_button(button)
-	{
-		if (gamepad_button == GamepadButton::UNKNOWN)
-			type = KeyType::UNKNOWN;
-	}
-
-	Key::Key(KeyboardButton button) :
-		type(KeyType::KEYBOARD),
-		keyboard_button(button)
-	{
-		if (keyboard_button == KeyboardButton::UNKNOWN)
-			type = KeyType::UNKNOWN;
-	}
-
-	Key::Key(MouseButton button) :
-		type(KeyType::MOUSE),
-		mouse_button(button)
-	{
-		if (mouse_button == MouseButton::UNKNOWN)
-			type = KeyType::UNKNOWN;
-	}
-
-	bool Key::operator == (Key const& src) const
-	{
-		if (type == src.type)
-		{
-			if (type == KeyType::UNKNOWN) // ignore other data if type is unknown
-				return true;
-			return (keyboard_button == src.keyboard_button); // this works for all types due to union aliasing
-		}
-		return false;
-	}
-
-	std::strong_ordering Key::operator <=> (const Key& src) const
-	{
-		std::strong_ordering c = (type <=> src.type);
-		if (c != 0)
-			return c;
-
-		switch (type)
-		{
-		case KeyType::KEYBOARD:
-			return (keyboard_button <=> src.keyboard_button);
-		case KeyType::MOUSE:
-			return (mouse_button <=> src.mouse_button);
-		case KeyType::GAMEPAD:
-			return (gamepad_button <=> src.gamepad_button);
-		case KeyType::UNKNOWN:
-		default:
-			return std::strong_ordering::equal;
-		}
-	}
-
-	char const* Key::GetName() const
-	{
-		switch (type)
-		{
-		case KeyType::KEYBOARD:
-			return EnumToString(keyboard_button);
-		case KeyType::GAMEPAD:
-			return EnumToString(gamepad_button);
-		case KeyType::MOUSE:
-			return EnumToString(mouse_button);
-		}
-		return "Invalid";
-	}
-
-	bool Key::IsValid() const
-	{
-		if (type == KeyType::UNKNOWN)
-			return false;
-		if (keyboard_button == KeyboardButton::UNKNOWN) // this works for all types due to union aliasing
-			return false;
-		return true;
-	}
-
-	KeyType Key::GetType() const
-	{
-		if (keyboard_button == KeyboardButton::UNKNOWN) // this works for all types due to union aliasing
-			return KeyType::UNKNOWN;
-		return type;
-	}
-
-	KeyboardButton Key::GetKeyboardButton() const
-	{
-		if (type != KeyType::KEYBOARD)
-			return KeyboardButton::UNKNOWN;
-		return keyboard_button;
-	}
-
-	GamepadButton Key::GetGamepadButton() const
-	{
-		if (type != KeyType::GAMEPAD)
-			return GamepadButton::UNKNOWN;
-		return gamepad_button;
-	}
-
-	MouseButton Key::GetMouseButton() const
-	{
-		if (type != KeyType::MOUSE)
-			return MouseButton::UNKNOWN;
-		return mouse_button;
-	}
-
-	int Key::GetRawValue() const
-	{
-		if (type == KeyType::UNKNOWN)
-			return -1;
-		return int(keyboard_button); // this works for all types due to union aliasing
-	}
 
 }; // namespace chaos

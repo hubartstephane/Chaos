@@ -43,7 +43,7 @@ protected:
 	{
 		chaos::ViewportGridLayout* layout = GetViewportLayout();
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::E), "ViewportGridMode EXPANDED", [this, layout]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::E), "ViewportGridMode EXPANDED", [this, layout]()
 		{
 			layout->SetMode(chaos::ViewportGridMode::EXPANDED);
 		}))
@@ -51,7 +51,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::P), "ViewportGridMode UNIFORM_PACKED", [this, layout]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::P), "ViewportGridMode UNIFORM_PACKED", [this, layout]()
 		{
 			layout->SetMode(chaos::ViewportGridMode::UNIFORM_PACKED);
 		}))
@@ -59,7 +59,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::C), "ViewportGridMode UNIFORM_CENTERED", [this, layout]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::C), "ViewportGridMode UNIFORM_CENTERED", [this, layout]()
 		{
 			layout->SetMode(chaos::ViewportGridMode::UNIFORM_CENTERED);
 		}))
@@ -77,37 +77,37 @@ protected:
 	{
 		chaos::ViewportGridLayout* layout = GetViewportLayout();
 
-		if (key_event.key == (int)chaos::KeyboardButton::E)
+		if (key_event.key == (int)chaos::Key::E)
 			layout->SetMode(chaos::ViewportGridMode::EXPANDED);
-		if (key_event.key == (int)chaos::KeyboardButton::P)
+		if (key_event.key == (int)chaos::Key::P)
 			layout->SetMode(chaos::ViewportGridMode::UNIFORM_PACKED);
-		if (key_event.key == (int)chaos::KeyboardButton::C)
+		if (key_event.key == (int)chaos::Key::C)
 			layout->SetMode(chaos::ViewportGridMode::UNIFORM_CENTERED);
 
-		if (key_event.key == (int)chaos::KeyboardButton::V)
+		if (key_event.key == (int)chaos::Key::V)
 			layout->SetOrientation(chaos::Orientation::VERTICAL);
-		if (key_event.key == (int)chaos::KeyboardButton::H)
+		if (key_event.key == (int)chaos::Key::H)
 			layout->SetOrientation(chaos::Orientation::HORIZONTAL);
 
-		if (key_event.key == (int)chaos::KeyboardButton::LEFT)
+		if (key_event.key == (int)chaos::Key::LEFT)
 			layout->SetHorizontalFillMode(chaos::ViewportGridHorizontalFillMode::RIGHT_TO_LEFT);
 
-		if (key_event.key == (int)chaos::KeyboardButton::RIGHT)
+		if (key_event.key == (int)chaos::Key::RIGHT)
 			layout->SetHorizontalFillMode(chaos::ViewportGridHorizontalFillMode::LEFT_TO_RIGHT);
 
-		if (key_event.key == (int)chaos::KeyboardButton::UP)
+		if (key_event.key == (int)chaos::Key::UP)
 			layout->SetVerticalFillMode(chaos::ViewportGridVerticalFillMode::BOTTOM_TO_TOP);
 
-		if (key_event.key == (int)chaos::KeyboardButton::DOWN)
+		if (key_event.key == (int)chaos::Key::DOWN)
 			layout->SetVerticalFillMode(chaos::ViewportGridVerticalFillMode::TOP_TO_BOTTOM);
 
-		if (key_event.key == (int)chaos::KeyboardButton::KP_1)
+		if (key_event.key == (int)chaos::Key::KP_1)
 			layout->SetMaxViewportCount(0);
 
-		if (key_event.key == (int)chaos::KeyboardButton::KP_2)
+		if (key_event.key == (int)chaos::Key::KP_2)
 			layout->SetMaxViewportCount(7);
 
-		if (key_event.key == (int)chaos::KeyboardButton::KP_3)
+		if (key_event.key == (int)chaos::Key::KP_3)
 			layout->SetMaxViewportCount(11);
 
 		return chaos::ViewportWindow::OnKeyEventImpl(key_event);

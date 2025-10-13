@@ -8,7 +8,7 @@ protected:
 
 	virtual bool EnumerateInputActions(chaos::InputActionEnumerator & in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
 	{
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::KP_ADD), "Next CubeMap", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::KP_ADD), "Next CubeMap", [this]()
 		{
 			ChangeCubeMap(cubemap_index + 1);
 		}))
@@ -16,7 +16,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::KP_SUBTRACT), "Previous CubeMap", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::KP_SUBTRACT), "Previous CubeMap", [this]()
 		{
 			ChangeCubeMap(cubemap_index - 1);
 		}))
@@ -233,7 +233,7 @@ protected:
 
 	virtual bool OnMouseButtonImpl(chaos::MouseButtonEvent const &mouse_button_event) override
 	{
-		if (mouse_button_event.IsKeyReleased(chaos::MouseButton::BUTTON_2))
+		if (mouse_button_event.IsKeyReleased(chaos::Key::MOUSE_BUTTON_2))
 		{
 			imgui_user_message.AddLine("HelloWorld");
 			return true;

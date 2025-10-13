@@ -66,7 +66,7 @@ namespace chaos
 			// features
 			DisplayKeysInfo("buttons", gamepad_state, [&](Key key, KeyState const & state)
 			{
-				return (key.GetType() == KeyType::GAMEPAD);
+				return (GetKeyType(key) == KeyType::GAMEPAD);
 			});
 			DisplayAxesInfo("axes", physical_gamepad);
 			DisplaySticksInfo("sticks", physical_gamepad);

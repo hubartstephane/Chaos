@@ -70,8 +70,8 @@ namespace chaos
 		if (gamepad_state == nullptr)
 			return;
 		// maybe a game/pause resume
-		if ((gamepad_state->IsKeyJustPressed(GamepadButton::SPECIAL_LEFT)) ||
-			(gamepad_state->IsKeyJustPressed(GamepadButton::SPECIAL_RIGHT)))
+		if ((gamepad_state->IsKeyJustPressed(Key::GAMEPAD_SPECIAL_LEFT)) ||
+			(gamepad_state->IsKeyJustPressed(Key::GAMEPAD_SPECIAL_RIGHT)))
 		{
 			Game* game = GetGame();
 			if (game != nullptr)
@@ -143,14 +143,14 @@ namespace chaos
 		// test whether the stick position can be overriden
 		glm::vec2 simulated_stick = glm::vec2(0.0f, 0.0f);
 
-		if (CheckKeyDown(KeyboardButton::LEFT))
+		if (CheckKeyDown(Key::LEFT))
 			simulated_stick.x -= 1.0f;
-		if (CheckKeyDown(KeyboardButton::RIGHT))
+		if (CheckKeyDown(Key::RIGHT))
 			simulated_stick.x += 1.0f;
 
-		if (CheckKeyDown(KeyboardButton::DOWN))
+		if (CheckKeyDown(Key::DOWN))
 			simulated_stick.y -= 1.0f;
-		if (CheckKeyDown(KeyboardButton::UP))
+		if (CheckKeyDown(Key::UP))
 			simulated_stick.y += 1.0f;
 
 		if (glm::length2(simulated_stick) > 0)
@@ -176,14 +176,14 @@ namespace chaos
 			left_stick_position = lsp;
 		else
 		{
-			if (gamepad_state->IsKeyDown(GamepadButton::DPAD_LEFT))
+			if (gamepad_state->IsKeyDown(Key::GAMEPAD_DPAD_LEFT))
 				left_stick_position.x = -1.0f;
-			else if (gamepad_state->IsKeyDown(GamepadButton::DPAD_RIGHT))
+			else if (gamepad_state->IsKeyDown(Key::GAMEPAD_DPAD_RIGHT))
 				left_stick_position.x = 1.0f;
 
-			if (gamepad_state->IsKeyDown(GamepadButton::DPAD_UP))
+			if (gamepad_state->IsKeyDown(Key::GAMEPAD_DPAD_UP))
 				left_stick_position.y = +1.0f;
-			else if (gamepad_state->IsKeyDown(GamepadButton::DPAD_DOWN))
+			else if (gamepad_state->IsKeyDown(Key::GAMEPAD_DPAD_DOWN))
 				left_stick_position.y = -1.0f;
 		}
 
@@ -348,11 +348,11 @@ namespace chaos
 	bool Player::DoCheckKeyDown(Key button) const
 	{
 		// gamepad input
-		if (button.IsGamepadKey())
+		if (IsGamepadKey(button))
 		{
 			if (gamepad == nullptr)
 				return false;
-			return gamepad->IsKeyDown(button.GetGamepadButton());
+			return gamepad->IsKeyDown(button);
 		}
 		// super call
 		return InputReceiverInterface::DoCheckKeyDown(button);

@@ -652,14 +652,6 @@ namespace chaos
 
 	void Window::DoOnMouseButton(GLFWwindow* in_glfw_window, int button, int action, int modifiers)
 	{
-		// shuxxx
-
-
-		//PendingInputEvents
-
-
-
-
 		// notify the application of the mouse state
 		WindowApplication::SetApplicationInputMode(InputMode::MOUSE);
 
@@ -669,18 +661,18 @@ namespace chaos
 			return;
 
 		// update global state
-		MouseButton mouse_button = (MouseButton)button;
+		Key mouse_key = Key(button + (int)Key::MOUSE_FIRST);
 
 		KeyboardAndMouseDevice* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
 		if (keyboard_and_mouse_device != nullptr)
 		{
 			bool key_value = (action == GLFW_PRESS || action == GLFW_REPEAT);
-			keyboard_and_mouse_device->SetKeyValue(mouse_button, key_value);
+			keyboard_and_mouse_device->SetKeyValue(mouse_key, key_value);
 		}
 
 		// dispatch event
 		MouseButtonEvent mouse_button_event;
-		mouse_button_event.key = MouseButton(button);
+		mouse_button_event.key = mouse_key;
 		mouse_button_event.action = GetKeyActionFromGLFW(action);
 		mouse_button_event.modifiers = GetKeyModifiersFromGLFW(modifiers);
 
@@ -716,25 +708,22 @@ namespace chaos
 		keycode = KeyboardLayoutConversion::ConvertGLFWKeycode(keycode, KeyboardLayoutType::QWERTY, KeyboardLayoutType::CURRENT);
 
 		// update global keyboard state
-		KeyboardButton keyboard_button = KeyboardButton(keycode);
+		Key keyboard_key = Key(keycode + int(Key::KEYBOARD_FIRST));
 
 		KeyboardAndMouseDevice* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
 		if (keyboard_and_mouse_device != nullptr)
 		{
 			bool key_value = (action == GLFW_PRESS || action == GLFW_REPEAT);
-			keyboard_and_mouse_device->SetKeyValue(keyboard_button, key_value);
+			keyboard_and_mouse_device->SetKeyValue(keyboard_key, key_value);
 		}
 
 		// dispatch the event
 		KeyEvent key_event;
-		key_event.key = keyboard_button;
+		key_event.key = keyboard_key;
 		key_event.scancode = scancode;
 		key_event.action = GetKeyActionFromGLFW(action);
 		key_event.modifiers = GetKeyModifiersFromGLFW(modifiers);
 
-		if (keyboard_button == KeyboardButton::LEFT)
-			keyboard_button = keyboard_button;
-		
 		my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnKeyEvent, key_event);
 	}
 
@@ -947,7 +936,7 @@ namespace chaos
 
 	bool Window::EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context)
 	{
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(KeyboardButton::F9) , "Screen Capture", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(Key::F9) , "Screen Capture", [this]()
 		{
 			ScreenCapture();
 		}))
@@ -955,7 +944,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(KeyboardButton::F10) , "Toggle Fullscreen", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(Key::F10) , "Toggle Fullscreen", [this]()
 		{
 			ToggleFullscreen();
 		}))

@@ -57,21 +57,21 @@ protected:
 
 	virtual bool OnMouseButtonImpl(chaos::MouseButtonEvent const &mouse_button_event) override
 	{
-		if (mouse_button_event.IsKeyPressed(chaos::MouseButton::BUTTON_1))
+		if (mouse_button_event.IsKeyPressed(chaos::Key::MOUSE_BUTTON_1))
 		{
 			irrklang::ISound * sound = engine->play2D(sound_source1.get(), false /* looped */, false /*  start paused */, true /* track */, true /* enable FX */);
 			playing_sounds.push_back(sound);
 			sound->drop();
 			return true;
 		}
-		else if (mouse_button_event.IsKeyPressed(chaos::MouseButton::BUTTON_2))
+		else if (mouse_button_event.IsKeyPressed(chaos::Key::MOUSE_BUTTON_2))
 		{
 			irrklang::ISound * sound = engine->play2D(sound_source2.get(), false /* looped */, false /*  start paused */, true /* track */, true /* enable FX */);
 			playing_sounds.push_back(sound);
 			sound->drop();
 			return true;
 		}
-		else if (mouse_button_event.IsKeyPressed(chaos::MouseButton::BUTTON_3))
+		else if (mouse_button_event.IsKeyPressed(chaos::Key::MOUSE_BUTTON_3))
 		{
 			DropAllSounds();
 			return true;

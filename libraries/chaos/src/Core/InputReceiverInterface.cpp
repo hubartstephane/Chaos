@@ -19,7 +19,7 @@ namespace chaos
 		if (keys == nullptr)
 			return false;
 		// iteration
-		for (size_t i = 0; keys[i].IsValid(); ++i)
+		for (size_t i = 0; keys[i] != Key::UNKNOWN; ++i)
 			if (CheckKeyDown(keys[i]))
 				return true;
 		return false;
@@ -29,11 +29,11 @@ namespace chaos
 	{
 		if (DoCheckKeyDown(key))
 		{
-			if (key.IsKeyboardKey())
+			if (IsKeyboardKey(key))
 				SetInputMode(InputMode::KEYBOARD);
-			else if (key.IsMouseKey())
+			else if (IsMouseKey(key))
 				SetInputMode(InputMode::MOUSE);
-			else if (key.IsGamepadKey())
+			else if (IsGamepadKey(key))
 				SetInputMode(InputMode::GAMEPAD);
 			return true;
 		}

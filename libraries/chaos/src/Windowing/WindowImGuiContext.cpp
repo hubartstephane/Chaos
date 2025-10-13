@@ -51,7 +51,9 @@ namespace chaos
 	{
 		if (ShouldCaptureInputEvent())
 		{
-			ImGui_ImplGlfw_MouseButtonCallback(window->GetGLFWHandler(), (int)mouse_button_event.key.GetMouseButton(), (int)mouse_button_event.action, (int)mouse_button_event.modifiers);
+			int key = int(mouse_button_event.key) - int(Key::MOUSE_FIRST);
+
+			ImGui_ImplGlfw_MouseButtonCallback(window->GetGLFWHandler(), key, (int)mouse_button_event.action, (int)mouse_button_event.modifiers);
 
 			//if (ImGui::GetIO().WantCaptureMouse)
 			{
@@ -85,7 +87,9 @@ namespace chaos
 
 		if (ShouldCaptureInputEvent())
 		{
-			ImGui_ImplGlfw_KeyCallback(window->GetGLFWHandler(), (int)key_event.key.GetKeyboardButton(), key_event.scancode, (int)key_event.action, (int)key_event.modifiers);
+			int key = int(key_event.key) - int(Key::KEYBOARD_FIRST);
+
+			ImGui_ImplGlfw_KeyCallback(window->GetGLFWHandler(), key, key_event.scancode, (int)key_event.action, (int)key_event.modifiers);
 
 			if (WindowApplication* window_application = Application::GetInstance())
 				if (KeyboardAndMouseDevice const* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance())
@@ -97,7 +101,7 @@ namespace chaos
 
 	bool WindowImGuiContext::EnumerateInputActions(InputActionEnumerator& in_action_enumerator, EnumerateInputActionContext in_context)
 	{
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(KeyboardButton::F7), "Toggle ImGui", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(Key::F7), "Toggle ImGui", [this]()
 		{
 			WindowApplication::SetImGuiMenuEnabled(!WindowApplication::IsImGuiMenuEnabled());
 		}))

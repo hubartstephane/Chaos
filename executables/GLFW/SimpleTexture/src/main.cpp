@@ -8,7 +8,7 @@ protected:
 
 	virtual bool EnumerateInputActions(chaos::InputActionEnumerator & in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
 	{
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::KP_ADD), "Next Texture", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::KP_ADD), "Next Texture", [this]()
 		{
 			ChangeTexture(texture_index + 1);
 		}))
@@ -16,7 +16,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::KP_SUBTRACT), "Previous Texture", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::KP_SUBTRACT), "Previous Texture", [this]()
 		{
 			ChangeTexture(texture_index - 1);
 		}))
@@ -24,7 +24,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::KeyboardButton::KP_ENTER), "Change Current Level", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::KP_ENTER), "Change Current Level", [this]()
 		{
 			ChangeTextureLevel();
 		}))
@@ -261,7 +261,7 @@ protected:
 
 	virtual bool OnMouseButtonImpl(chaos::MouseButtonEvent const &mouse_button_event) override
 	{
-		if (mouse_button_event.IsKeyReleased(chaos::MouseButton::BUTTON_1))
+		if (mouse_button_event.IsKeyReleased(chaos::Key::MOUSE_BUTTON_1))
 		{
 			chaos::TextureDescription desc = texture->GetTextureDescription();
 

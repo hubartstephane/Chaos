@@ -109,14 +109,21 @@ protected:
 		boost::filesystem::path src1_path = resources_path / "70_Stir_HiHatOpen.wav";
 		boost::filesystem::path src2_path = resources_path / "70_Stir_Kick.wav";
 
-		sound_source1 = engine->addSoundSourceFromFile(src1_path.string().c_str(), irrklang::ESM_NO_STREAMING, true);
+		chaos::Buffer file1 = chaos::FileTools::LoadFile(src1_path);
+		if (!file1)
+			return false;
+		sound_source1 = engine->addSoundSourceFromMemory(file1.data, file1.bufsize, "sound 1", true);
 		if (sound_source1 == nullptr)
 			return false;
+
 		// XXX :  Not from IRRKLANG   addSoundSourceFromFile(...)
 		//
 		// DONOT CALL  sound_source1->drop();
 
-		sound_source2 = engine->addSoundSourceFromFile(src2_path.string().c_str(), irrklang::ESM_NO_STREAMING, true);
+		chaos::Buffer file2 = chaos::FileTools::LoadFile(src2_path);
+		if (!file2)
+			return false;
+		sound_source2 = engine->addSoundSourceFromMemory(file2.data, file2.bufsize, "sound 2", true);
 		if (sound_source2 == nullptr)
 			return false;
 		// XXX :  Not from IRRKLANG   addSoundSourceFromFile(...)

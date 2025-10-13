@@ -8,8 +8,8 @@ namespace chaos
 	class InputState;
 
 	class KeyState;
-	class AxisState;
-	class StickState;
+	class Input1DState;
+	class Input2DState;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -92,10 +92,10 @@ namespace chaos
 	};
 
 	/**
-	* AxisState : while max and min values for sticks are not always 1 (some controllers has value lesser that 1.0),
+	* Input1DState : while max and min values for sticks are not always 1 (some controllers has value lesser that 1.0),
 	*            we have to store the upper and lower values to renormalize the output
 	*/
-	class CHAOS_API AxisState : public InputState<float>
+	class CHAOS_API Input1DState : public InputState<float>
 	{
 	public:
 
@@ -111,10 +111,10 @@ namespace chaos
 	};
 
 	/**
-	* StickState: state for a 2D stick
+	* Input2DState: state for a 2D stick
 	*/
 
-	class CHAOS_API StickState : public InputState<glm::vec2>
+	class CHAOS_API Input2DState : public InputState<glm::vec2>
 	{
 
 	public:

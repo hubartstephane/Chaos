@@ -7,7 +7,7 @@ namespace chaos
 	{
 		for (KeyState& b : buttons)
 			b.Clear();
-		for (AxisState& a : axes)
+		for (Input1DState& a : axes)
 			a.Clear();
 	}
 
@@ -30,18 +30,18 @@ namespace chaos
 		return &buttons[key_index];
 	}
 
-	AxisState const *GamepadState::DoGetInputState(GamepadAxis axis) const
+	Input1DState const *GamepadState::DoGetInputState(Input1D input) const
 	{
-		if (axis == GamepadAxis::UNKNOWN)
+		if (input == Input1D::UNKNOWN)
 			return nullptr;
-		return &axes[(size_t)axis];
+		return &axes[(size_t)input];
 	}
 
-	StickState const *GamepadState::DoGetInputState(GamepadStick stick) const
+	Input2DState const *GamepadState::DoGetInputState(Input2D input) const
 	{	
-		if (stick == GamepadStick::UNKNOWN)
+		if (input == Input2D::UNKNOWN)
 			return nullptr;
-		return &sticks[(size_t)stick];
+		return &sticks[(size_t)input];
 	}
 
 	bool GamepadState::DoForAllKeys(ForAllKeysFunction func) const
@@ -51,17 +51,17 @@ namespace chaos
 				return true;
 		return false;
 	}
-	bool GamepadState::DoForAllAxes(ForAllAxesFunction func) const
+	bool GamepadState::DoForAllInput1D(ForAllInput1DFunction func) const
 	{
 		for (size_t i = 0 ; i < axes.size() ; ++i)
-			if (func(GamepadAxis(i), axes[i]))
+			if (func(Input1D(i), axes[i]))
 				return true;
 		return false;
 	}
-	bool GamepadState::DoForAllSticks(ForAllSticksFunction func) const
+	bool GamepadState::DoForAllInput2D(ForAllInput2DFunction func) const
 	{
 		for (size_t i = 0 ; i < sticks.size() ; ++i)
-			if (func(GamepadStick(i), sticks[i]))
+			if (func(Input2D(i), sticks[i]))
 				return true;
 		return false;
 	}
@@ -76,10 +76,10 @@ namespace chaos
 		{
 			float value = state.axes[i];
 			// renormalize icomming value [-1 .. +1] => [0 .. 1]
-			if (i == (size_t)GamepadAxis::LEFT_TRIGGER || i == (size_t)GamepadAxis::RIGHT_TRIGGER)
+			if (i == (size_t)Input1D::LEFT_TRIGGER || i == (size_t)Input1D::RIGHT_TRIGGER)
 				value = (value * 0.5f + 0.5f);
 			// want positive Y when stick is UP
-			else if (i == (size_t)GamepadAxis::LEFT_AXIS_Y || i == (size_t)GamepadAxis::RIGHT_AXIS_Y)
+			else if (i == (size_t)Input1D::LEFT_AXIS_Y || i == (size_t)Input1D::RIGHT_AXIS_Y)
 				value = -value;
 			axes[i].SetValue(value, dead_zone);
 		}
@@ -91,9 +91,9 @@ namespace chaos
 		}
 
 		// update virtual buttons
-		auto UpdateVirtualButton = [this](Key dst_button, GamepadAxis src_axis)
+		auto UpdateVirtualButton = [this](Key dst_button, Input1D src_axis)
 		{
-			if (AxisState const * axis_state = GetInputState(src_axis))
+			if (Input1DState const * axis_state = GetInputState(src_axis))
 			{
 				KeyState key_state;
 				key_state.value = axis_state->value != 0.0f;
@@ -102,16 +102,16 @@ namespace chaos
 			}
 		};
 
-		UpdateVirtualButton(Key::GAMEPAD_LEFT_TRIGGER, GamepadAxis::LEFT_TRIGGER);
-		UpdateVirtualButton(Key::GAMEPAD_RIGHT_TRIGGER, GamepadAxis::RIGHT_TRIGGER);
+		UpdateVirtualButton(Key::GAMEPAD_LEFT_TRIGGER, Input1D::LEFT_TRIGGER);
+		UpdateVirtualButton(Key::GAMEPAD_RIGHT_TRIGGER, Input1D::RIGHT_TRIGGER);
 
 		// update sticks
-		auto UpdateVirtualStick = [&](GamepadStick dst_stick, GamepadAxis src_horizontal_axis, GamepadAxis src_vertical_axis)
+		auto UpdateVirtualStick = [&](Input2D dst_stick, Input1D src_horizontal_axis, Input1D src_vertical_axis)
 		{
-			AxisState const * horizontal_axis_state = GetInputState(src_horizontal_axis);
+			Input1DState const * horizontal_axis_state = GetInputState(src_horizontal_axis);
 			if (horizontal_axis_state == nullptr)
 				return;
-			AxisState const * vertical_axis_state = GetInputState(src_vertical_axis);
+			Input1DState const * vertical_axis_state = GetInputState(src_vertical_axis);
 			if (vertical_axis_state == nullptr)
 				return;
 
@@ -130,7 +130,7 @@ namespace chaos
 				stick_value.y /= len;
 			}
 
-			StickState stick_state;
+			Input2DState stick_state;
 			stick_state.value = stick_value;
 			stick_state.min_value = {horizontal_axis_state->min_value, vertical_axis_state->min_value};
 			stick_state.max_value = {horizontal_axis_state->max_value, vertical_axis_state->max_value};
@@ -138,8 +138,8 @@ namespace chaos
 			sticks[int(dst_stick)] = stick_state;
 		};
 
-		UpdateVirtualStick(GamepadStick::LEFT_STICK, GamepadAxis::LEFT_AXIS_X, GamepadAxis::LEFT_AXIS_Y);
-		UpdateVirtualStick(GamepadStick::RIGHT_STICK, GamepadAxis::RIGHT_AXIS_X, GamepadAxis::RIGHT_AXIS_Y);
+		UpdateVirtualStick(Input2D::LEFT_STICK, Input1D::LEFT_AXIS_X, Input1D::LEFT_AXIS_Y);
+		UpdateVirtualStick(Input2D::RIGHT_STICK, Input1D::RIGHT_AXIS_X, Input1D::RIGHT_AXIS_Y);
 	}
 
 }; // namespace chaos

@@ -4,8 +4,8 @@ namespace chaos
 
 	enum class Key;
 	enum class KeyType;
-	enum class GamepadAxis;
-	enum class GamepadStick;
+	enum class Input1D;
+	enum class Input2D;
 	enum class Key;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -207,10 +207,10 @@ namespace chaos
 	CHAOS_DECLARE_ENUM_METHOD(KeyType, CHAOS_API);
 
 	/**
-	 * GamepadAxis: enumeration to match a 1D input axis
+	 * Input1D: enumeration to match a 1D input axis
 	 */
 
-	enum class CHAOS_API GamepadAxis : int
+	enum class CHAOS_API Input1D : int
 	{
 		/** undefined value */
 		UNKNOWN       = -1,
@@ -222,20 +222,20 @@ namespace chaos
 		RIGHT_TRIGGER = GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER,
 	};
 
-	CHAOS_DECLARE_ENUM_METHOD(GamepadAxis, CHAOS_API);
+	CHAOS_DECLARE_ENUM_METHOD(Input1D, CHAOS_API);
 
 	/**
-	 * GamepadStick: enumeration to match a 2D input axis
+	 * Input2D: enumeration to match a 2D input axis
 	 */
 
-	enum class CHAOS_API GamepadStick : int
+	enum class CHAOS_API Input2D : int
 	{
 		UNKNOWN     = -1,
 		LEFT_STICK  = 0,
 		RIGHT_STICK = 1
 	};
 
-	CHAOS_DECLARE_ENUM_METHOD(GamepadStick, CHAOS_API);
+	CHAOS_DECLARE_ENUM_METHOD(Input2D, CHAOS_API);
 
 #endif
 

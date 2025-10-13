@@ -64,12 +64,12 @@ namespace chaos
 			ImGui::Dummy({0.0f, 20.0f});
 
 			// features
-			DisplayKeysInfo("buttons", gamepad_state, [&](Key key, KeyState const & state)
+			DisplayAllKeyInfo("buttons", gamepad_state, [&](Key key, KeyState const & state)
 			{
 				return (GetKeyType(key) == KeyType::GAMEPAD);
 			});
-			DisplayAxesInfo("axes", physical_gamepad);
-			DisplaySticksInfo("sticks", physical_gamepad);
+			DisplayAllInput1DInfo("axes", physical_gamepad);
+			DisplayAllInput2DInfo("sticks", physical_gamepad);
 
 			ImGui::PopID();
 		}

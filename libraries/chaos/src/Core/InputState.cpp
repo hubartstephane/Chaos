@@ -69,7 +69,7 @@ namespace chaos
 	//       if the stick goes further than theses values, we update them.
 	//       that help us to have a good evaluation of the stick range over time.
 
-	void AxisState::SetValue(float in_raw_value, float dead_zone)
+	void Input1DState::SetValue(float in_raw_value, float dead_zone)
 	{
 		assert(dead_zone >= 0.0f);
 		

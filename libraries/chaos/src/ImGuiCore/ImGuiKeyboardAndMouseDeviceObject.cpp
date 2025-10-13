@@ -11,7 +11,7 @@ namespace chaos
 
 		ImGui::SeparatorText(title);
 
-		DisplayKeysInfo(table_title, keyboard_and_mouse_device, [&](Key key, KeyState const & state)
+		DisplayAllKeyInfo(table_title, keyboard_and_mouse_device, [&](Key key, KeyState const & state)
 		{
 			if (GetKeyType(key) != key_type)
 				return false;

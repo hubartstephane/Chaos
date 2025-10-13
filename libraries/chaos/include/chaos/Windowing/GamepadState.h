@@ -17,7 +17,7 @@ namespace chaos
 		/** number of buttons in a gamepad (beware this does not take TRIGGER_LEFT/TRIGGER_RIGHT virtual buttons into account) */
 		static constexpr size_t BUTTON_COUNT = sizeof(meta::FakeInstance<GLFWgamepadstate>().buttons) / sizeof(meta::FakeInstance<GLFWgamepadstate>().buttons[0]);
 		/** number of sticks in gamepad */
-		static constexpr size_t STICK_COUNT = 2; // see GamepadStick
+		static constexpr size_t STICK_COUNT = 2; // see Input2D
 
 	public:
 
@@ -36,25 +36,25 @@ namespace chaos
 		/** override */
 		virtual KeyState const * DoGetInputState(Key key) const override;
 		/** override */
-		virtual AxisState const * DoGetInputState(GamepadAxis axis) const override;
+		virtual Input1DState const * DoGetInputState(Input1D input) const override;
 		/** override */
-		virtual StickState const * DoGetInputState(GamepadStick stick) const override;
+		virtual Input2DState const * DoGetInputState(Input2D input) const override;
 
 		/** override */
 		virtual bool DoForAllKeys(ForAllKeysFunction func) const override;
 		/** override */
-		virtual bool DoForAllAxes(ForAllAxesFunction func) const override;
+		virtual bool DoForAllInput1D(ForAllInput1DFunction func) const override;
 		/** override */
-		virtual bool DoForAllSticks(ForAllSticksFunction func) const override;
+		virtual bool DoForAllInput2D(ForAllInput2DFunction func) const override;
 
 	protected:
 
 		/** the state for axis */
-		std::array<AxisState, AXIS_COUNT> axes;
+		std::array<Input1DState, AXIS_COUNT> axes;
 		/** the state for buttons */
 		std::array<KeyState, BUTTON_COUNT + 2> buttons; // +2 for LEFT_TRIGGER/RIGHT_TRIGGER virtual buttons
 		/** the state for sticks */
-		std::array<StickState, STICK_COUNT> sticks;
+		std::array<Input2DState, STICK_COUNT> sticks;
 	};
 
 #endif

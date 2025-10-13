@@ -94,9 +94,9 @@ namespace chaos
 
 	CHAOS_API InputValueRequest<Key, bool> RequestInputValue(Key const& in_key, bool& in_result);
 
-	CHAOS_API InputValueRequest<GamepadAxis, float> RequestInputValue(GamepadAxis const& in_axis, float& in_result);
+	CHAOS_API InputValueRequest<Input1D, float> RequestInputValue(Input1D const& in_axis, float& in_result);
 
-	CHAOS_API InputValueRequest<GamepadStick, glm::vec2> RequestInputValue(GamepadStick const& in_stick, glm::vec2& in_result);
+	CHAOS_API InputValueRequest<Input2D, glm::vec2> RequestInputValue(Input2D const& in_stick, glm::vec2& in_result);
 
 #endif
 

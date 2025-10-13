@@ -171,7 +171,7 @@ namespace chaos
 			SetInputMode(InputMode::GAMEPAD);
 
 		// cache the LEFT stick position (it is aliases with the DPAD)
-		glm::vec2 lsp = gamepad_state->GetInputValue(GamepadStick::LEFT_STICK);
+		glm::vec2 lsp = gamepad_state->GetInputValue(Input2D::LEFT_STICK);
 		if (glm::length2(lsp) > 0.0f)
 			left_stick_position = lsp;
 		else
@@ -188,13 +188,13 @@ namespace chaos
 		}
 
 		// cache the RIGHT stick position
-		glm::vec2 rsp = gamepad_state->GetInputValue(GamepadStick::RIGHT_STICK);
+		glm::vec2 rsp = gamepad_state->GetInputValue(Input2D::RIGHT_STICK);
 		if (glm::length2(rsp) > 0.0f)
 			right_stick_position = rsp;
 
 		// cache the TRIGGERS
-		left_trigger  = gamepad_state->GetInputValue(GamepadAxis::LEFT_TRIGGER);
-		right_trigger = gamepad_state->GetInputValue(GamepadAxis::RIGHT_TRIGGER);
+		left_trigger  = gamepad_state->GetInputValue(Input1D::LEFT_TRIGGER);
+		right_trigger = gamepad_state->GetInputValue(Input1D::RIGHT_TRIGGER);
 	}
 
 	void Player::HandleInputs(float delta_time, GamepadState const* gamepad_state)

@@ -9,12 +9,12 @@ namespace chaos
 		return { in_key, in_result };
 	}
 
-	InputValueRequest<GamepadAxis, float> RequestInputValue(GamepadAxis const& in_axis, float& in_result)
+	InputValueRequest<Input1D, float> RequestInputValue(Input1D const& in_axis, float& in_result)
 	{
 		return { in_axis, in_result };
 	}
 
-	InputValueRequest<GamepadStick, glm::vec2> RequestInputValue(GamepadStick const& in_stick, glm::vec2& in_result)
+	InputValueRequest<Input2D, glm::vec2> RequestInputValue(Input2D const& in_stick, glm::vec2& in_result)
 	{
 		return { in_stick, in_result };
 	}

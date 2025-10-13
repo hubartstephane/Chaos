@@ -19,23 +19,23 @@ namespace chaos
 		return result;
 	}
 
-	AxisState const * InputDeviceInterface::GetInputState(GamepadAxis axis) const
+	Input1DState const * InputDeviceInterface::GetInputState(Input1D input) const
 	{
-		AxisState const * result = nullptr;
-		EnumerateDeviceHierarchy([this, &result, &axis](InputDeviceInterface const * in_input_device)
+		Input1DState const * result = nullptr;
+		EnumerateDeviceHierarchy([this, &result, input](InputDeviceInterface const * in_input_device)
 		{
-			result = in_input_device->DoGetInputState(axis);
+			result = in_input_device->DoGetInputState(input);
 			return (result != nullptr); // continue until some result is found
 		});
 		return result;
 	}
 
-	StickState const * InputDeviceInterface::GetInputState(GamepadStick stick) const
+	Input2DState const * InputDeviceInterface::GetInputState(Input2D input) const
 	{	
-		StickState const * result = nullptr;
-		EnumerateDeviceHierarchy([this, &result, &stick](InputDeviceInterface const * in_input_device)
+		Input2DState const * result = nullptr;
+		EnumerateDeviceHierarchy([this, &result, input](InputDeviceInterface const * in_input_device)
 		{
-			result = in_input_device->DoGetInputState(stick);
+			result = in_input_device->DoGetInputState(input);
 			return (result != nullptr); // continue until some result is found
 		});
 		return result;
@@ -49,19 +49,19 @@ namespace chaos
 		});
 	}
 
-	bool InputDeviceInterface::ForAllAxes(ForAllAxesFunction func) const
+	bool InputDeviceInterface::ForAllAxes(ForAllInput1DFunction func) const
 	{
 		return EnumerateDeviceHierarchy([this, &func](InputDeviceInterface const * in_input_device)
 		{
-			return in_input_device->DoForAllAxes(func);
+			return in_input_device->DoForAllInput1D(func);
 		});
 	}
 
-	bool InputDeviceInterface::ForAllSticks(ForAllSticksFunction func) const
+	bool InputDeviceInterface::ForAllSticks(ForAllInput2DFunction func) const
 	{
 		return EnumerateDeviceHierarchy([this, &func](InputDeviceInterface const * in_input_device)
 		{
-			return in_input_device->DoForAllSticks(func);
+			return in_input_device->DoForAllInput2D(func);
 		});
 	}
 
@@ -70,12 +70,12 @@ namespace chaos
 		return nullptr;
 	}
 
-	AxisState const * InputDeviceInterface::DoGetInputState(GamepadAxis axis) const
+	Input1DState const * InputDeviceInterface::DoGetInputState(Input1D input) const
 	{
 		return nullptr;
 	}
 
-	StickState const * InputDeviceInterface::DoGetInputState(GamepadStick stick) const
+	Input2DState const * InputDeviceInterface::DoGetInputState(Input2D input) const
 	{	
 		return nullptr;
 	}
@@ -85,12 +85,12 @@ namespace chaos
 		return false;
 	}
 
-	bool InputDeviceInterface::DoForAllAxes(ForAllAxesFunction func) const
+	bool InputDeviceInterface::DoForAllInput1D(ForAllInput1DFunction func) const
 	{
 		return false;
 	}
 
-	bool InputDeviceInterface::DoForAllSticks(ForAllSticksFunction func) const
+	bool InputDeviceInterface::DoForAllInput2D(ForAllInput2DFunction func) const
 	{
 		return false;
 	}
@@ -137,17 +137,17 @@ namespace chaos
 		return false;
 	}
 
-	float InputDeviceInterface::GetInputValue(GamepadAxis axis) const
+	float InputDeviceInterface::GetInputValue(Input1D input) const
 	{
-		if (AxisState const * axis_state = GetInputState(axis))
-			return axis_state->GetValue();
+		if (Input1DState const * input_state = GetInputState(input))
+			return input_state->GetValue();
 		return 0.0f;
 	}
 
-	glm::vec2 InputDeviceInterface::GetInputValue(GamepadStick stick) const
+	glm::vec2 InputDeviceInterface::GetInputValue(Input2D input) const
 	{
-		if (StickState const * stick_state = GetInputState(stick))
-			return stick_state->GetValue();
+		if (Input2DState const * input_state = GetInputState(input))
+			return input_state->GetValue();
 		return {0.0f, 0.0f};
 	}
 
@@ -161,7 +161,7 @@ namespace chaos
 
 	bool InputDeviceInterface::IsAnyAxisAction() const
 	{
-		return ForAllAxes([](GamepadAxis axis, AxisState const & state)
+		return ForAllAxes([](Input1D input, Input1DState const & state)
 		{
 			return (state.GetValue() != 0.0f);
 		});

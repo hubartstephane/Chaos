@@ -176,11 +176,11 @@ namespace chaos
 
 #undef CHAOS_KEYDEF
 
-	CHAOS_API bool IsKeyboardKey(Key in_key);
+	CHAOS_API bool IsKeyboardInput(Key in_key);
 
-	CHAOS_API bool IsMouseKey(Key in_key);
+	CHAOS_API bool IsMouseInput(Key in_key);
 
-	CHAOS_API bool IsGamepadKey(Key in_key);
+	CHAOS_API bool IsGamepadInput(Key in_key);
 
 	CHAOS_API Key GetKeyFromName(char const * in_name);
 

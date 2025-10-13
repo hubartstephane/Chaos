@@ -98,7 +98,7 @@ namespace chaos
 	{
 #if _WIN32
 
-		if (IsKeyboardKey(key))
+		if (IsKeyboardInput(key))
 			return Key(Key(ConvertGLFWKeycode(int(key) - int(Key::KEYBOARD_FIRST), src_layout_type, dst_layout_type)));
 
 #endif // #if _WIN32

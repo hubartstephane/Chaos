@@ -17,4 +17,19 @@ namespace chaos
 
 	CHAOS_IMPLEMENT_ENUM_METHOD(Input1D, &Input1D_metadata, CHAOS_API);
 
+	bool IsKeyboardInput(Input1D in_input)
+	{
+		return false;
+	}
+
+	bool IsMouseInput(Input1D in_input)
+	{
+		return false;
+	}
+
+	bool IsGamepadInput(Input1D in_input)
+	{
+		return (in_input >= Input1D::GAMEPAD_FIRST) && (in_input <= Input1D::GAMEPAD_LAST);
+	}
+
 }; // namespace chaos

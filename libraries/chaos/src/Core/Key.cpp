@@ -160,17 +160,17 @@ namespace chaos
 
 	CHAOS_IMPLEMENT_ENUM_METHOD(Key, &Key_metadata, CHAOS_API);
 
-	bool IsKeyboardKey(Key in_key)
+	bool IsKeyboardInput(Key in_key)
 	{
 		return (in_key >= Key::KEYBOARD_FIRST) && (in_key <= Key::KEYBOARD_LAST);
 	}
 
-	bool IsMouseKey(Key in_key)
+	bool IsMouseInput(Key in_key)
 	{
 		return (in_key >= Key::MOUSE_FIRST) && (in_key <= Key::MOUSE_LAST);
 	}
 
-	bool IsGamepadKey(Key in_key)
+	bool IsGamepadInput(Key in_key)
 	{
 		return (in_key >= Key::GAMEPAD_FIRST) && (in_key <= Key::GAMEPAD_LAST);
 	}
@@ -192,11 +192,11 @@ namespace chaos
 
 	InputDeviceType GetKeyInputDevice(Key in_key)
 	{
-		if (IsKeyboardKey(in_key))
+		if (IsKeyboardInput(in_key))
 			return InputDeviceType::KEYBOARD;
-		if (IsMouseKey(in_key))
+		if (IsMouseInput(in_key))
 			return InputDeviceType::MOUSE;
-		if (IsGamepadKey(in_key))
+		if (IsGamepadInput(in_key))
 			return InputDeviceType::GAMEPAD;
 		return InputDeviceType::UNKNOWN;
 	}

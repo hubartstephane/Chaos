@@ -29,11 +29,11 @@ namespace chaos
 	{
 		if (DoCheckKeyDown(key))
 		{
-			if (IsKeyboardKey(key))
+			if (IsKeyboardInput(key))
 				SetInputMode(InputMode::KEYBOARD);
-			else if (IsMouseKey(key))
+			else if (IsMouseInput(key))
 				SetInputMode(InputMode::MOUSE);
-			else if (IsGamepadKey(key))
+			else if (IsGamepadInput(key))
 				SetInputMode(InputMode::GAMEPAD);
 			return true;
 		}

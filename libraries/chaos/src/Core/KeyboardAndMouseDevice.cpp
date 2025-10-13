@@ -5,12 +5,12 @@ namespace chaos
 {
 	KeyState const * KeyboardAndMouseDevice::DoGetInputState(Key key) const
 	{
-		if (IsKeyboardKey(key))
+		if (IsKeyboardInput(key))
 		{
 			size_t key_index = size_t(key) - size_t(Key::KEYBOARD_FIRST);
 			return &keyboard_key_state[key_index];
 		}
-		if (IsMouseKey(key))
+		if (IsMouseInput(key))
 		{
 			size_t key_index = size_t(key) - size_t(Key::MOUSE_FIRST);
 			return &mouse_key_state[key_index];
@@ -31,13 +31,13 @@ namespace chaos
 
 	void KeyboardAndMouseDevice::SetKeyValue(Key key, bool value)
 	{
-		if (IsKeyboardKey(key))
+		if (IsKeyboardInput(key))
 		{
 			size_t key_index = size_t(key) - size_t(Key::KEYBOARD_FIRST);
 			if (key_index >= 0 && key_index < keyboard_key_state.size())
 				keyboard_key_state[key_index].SetValue(value);
 		}
-		else if (IsMouseKey(key))
+		else if (IsMouseInput(key))
 		{
 			size_t key_index = size_t(key) - size_t(Key::MOUSE_FIRST);
 			if (key_index >= 0 && key_index < mouse_key_state.size())

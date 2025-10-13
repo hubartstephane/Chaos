@@ -348,7 +348,7 @@ namespace chaos
 	bool Player::DoCheckKeyDown(Key button) const
 	{
 		// gamepad input
-		if (IsGamepadKey(button))
+		if (IsGamepadInput(button))
 		{
 			if (gamepad == nullptr)
 				return false;

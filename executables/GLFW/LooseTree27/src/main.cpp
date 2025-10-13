@@ -144,7 +144,7 @@ protected:
 
 	bool MoveObjectWithInputs(chaos::Key const & key, float delta_time, glm::vec3 const& direction)
 	{
-		if (IsKeyboardKey(key))
+		if (IsKeyboardInput(key))
 		{
 			if (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(key)->IsDown())
 			{
@@ -159,7 +159,7 @@ protected:
 
 	bool ScaleObjectWithInputs(chaos::Key const& key, float delta_time, float direction)
 	{
-		if (IsKeyboardKey(key))
+		if (IsKeyboardInput(key))
 		{
 			if (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(key)->IsDown())
 			{

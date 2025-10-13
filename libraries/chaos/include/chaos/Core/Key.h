@@ -3,10 +3,6 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	enum class Key;
-	enum class InputDeviceType;
-	enum class Input1D;
-	enum class Input2D;
-	enum class Key;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -191,51 +187,6 @@ namespace chaos
 	CHAOS_API char const* GetKeyName(Key in_key);
 
 	CHAOS_API InputDeviceType GetKeyInputDevice(Key in_key);
-
-	/**
-	 * InputDeviceType: Indicates where the input is coming from
-	 */
-
-	enum class CHAOS_API InputDeviceType : int
-	{
-		UNKNOWN  = -1,
-		KEYBOARD = 0,
-		MOUSE    = 1,
-		GAMEPAD  = 2
-	};
-
-	CHAOS_DECLARE_ENUM_METHOD(InputDeviceType, CHAOS_API);
-
-	/**
-	 * Input1D: enumeration to match a 1D input axis
-	 */
-
-	enum class CHAOS_API Input1D : int
-	{
-		/** undefined value */
-		UNKNOWN       = -1,
-		GAMEPAD_LEFT_AXIS_X   = GLFW_GAMEPAD_AXIS_LEFT_X,
-		GAMEPAD_LEFT_AXIS_Y   = GLFW_GAMEPAD_AXIS_LEFT_Y,   // for GLFW stick down = positive values (we would rather use positive values for UP)
-		GAMEPAD_RIGHT_AXIS_X  = GLFW_GAMEPAD_AXIS_RIGHT_X,
-		GAMEPAD_RIGHT_AXIS_Y  = GLFW_GAMEPAD_AXIS_RIGHT_Y,  // for GLFW stick down = positive values (we would rather use positive values for UP)
-		GAMEPAD_LEFT_TRIGGER  = GLFW_GAMEPAD_AXIS_LEFT_TRIGGER,
-		GAMEPAD_RIGHT_TRIGGER = GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER,
-	};
-
-	CHAOS_DECLARE_ENUM_METHOD(Input1D, CHAOS_API);
-
-	/**
-	 * Input2D: enumeration to match a 2D input axis
-	 */
-
-	enum class CHAOS_API Input2D : int
-	{
-		UNKNOWN     = -1,
-		GAMEPAD_LEFT_STICK  = 0,
-		GAMEPAD_RIGHT_STICK = 1
-	};
-
-	CHAOS_DECLARE_ENUM_METHOD(Input2D, CHAOS_API);
 
 #endif
 

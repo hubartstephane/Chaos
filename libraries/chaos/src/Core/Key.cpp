@@ -4,10 +4,6 @@
 
 namespace chaos
 {
-	// -------------------------------------------------------------------
-	// Key implementation
-	// -------------------------------------------------------------------
-
 	#define CHAOS_KEYBOARD_DEF(KEY) { Key::KEY, #KEY }
 
 	static EnumMetaData<Key> const Key_metadata =
@@ -204,50 +200,5 @@ namespace chaos
 			return InputDeviceType::GAMEPAD;
 		return InputDeviceType::UNKNOWN;
 	}
-
-	// -------------------------------------------------------------------
-	// Input1D implementation
-	// -------------------------------------------------------------------
-
-	static EnumMetaData<Input1D> const Input1D_metadata =
-	{
-		{ Input1D::UNKNOWN, "UNKNOWN" },
-		{ Input1D::GAMEPAD_LEFT_AXIS_X, "LEFT_AXIS_X" },
-		{ Input1D::GAMEPAD_LEFT_AXIS_Y, "LEFT_AXIS_Y" },
-		{ Input1D::GAMEPAD_RIGHT_AXIS_X, "RIGHT_AXIS_X" },
-		{ Input1D::GAMEPAD_RIGHT_AXIS_Y, "RIGHT_AXIS_Y" },
-		{ Input1D::GAMEPAD_LEFT_TRIGGER, "LEFT_TRIGGER" },
-		{ Input1D::GAMEPAD_RIGHT_TRIGGER, "RIGHT_TRIGGER" }
-	};
-
-	CHAOS_IMPLEMENT_ENUM_METHOD(Input1D, &Input1D_metadata, CHAOS_API);
-
-
-	// -------------------------------------------------------------------
-	// Input2D implementation
-	// -------------------------------------------------------------------
-
-	static EnumMetaData<Input2D> const Input2D_metadata =
-	{
-		{ Input2D::UNKNOWN, "UNKNOWN" },
-		{ Input2D::GAMEPAD_LEFT_STICK, "LEFT_STICK" },
-		{ Input2D::GAMEPAD_RIGHT_STICK, "RIGHT_STICK" }
-	};
-
-	CHAOS_IMPLEMENT_ENUM_METHOD(Input2D, &Input2D_metadata, CHAOS_API);
-
-	// -------------------------------------------------------------------
-	// InputDeviceType implementation
-	// -------------------------------------------------------------------
-
-	static EnumMetaData<InputDeviceType> const InputDeviceType_metadata =
-	{
-		{ InputDeviceType::UNKNOWN, "UNKNOWN" },
-		{ InputDeviceType::KEYBOARD, "KEYBOARD" },
-		{ InputDeviceType::MOUSE, "MOUSE" },
-		{ InputDeviceType::GAMEPAD, "GAMEPAD" }
-	};
-
-	CHAOS_IMPLEMENT_ENUM_METHOD(InputDeviceType, &InputDeviceType_metadata, CHAOS_API);
 
 }; // namespace chaos

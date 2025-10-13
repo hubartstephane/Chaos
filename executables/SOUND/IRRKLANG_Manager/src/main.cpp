@@ -18,20 +18,6 @@ protected:
     sound1    = nullptr;
     category1 = nullptr;
     source1   = nullptr;
-
-    if (sound_manager != nullptr)
-    {
-      sound_manager->StopManager();
-      sound_manager = nullptr;
-    }
-		chaos::Window::Finalize();
-  }
-
-  virtual bool DoTick(float delta_time) override
-  {
-    sound_manager->Tick(delta_time);
-
-    return false; // no redraw
   }
 
   virtual bool OnMouseButtonImpl(chaos::MouseButtonEvent const &mouse_button_event) override
@@ -73,34 +59,33 @@ protected:
 
   virtual bool OnInitialize(chaos::JSONReadConfiguration config) override
   {
-		if (!chaos::Window::OnInitialize(config))
-			return false;
+	if (!chaos::Window::OnInitialize(config))
+		return false;
 
-    chaos::Application * application = chaos::Application::GetInstance();
-    if (application == nullptr)
-      return false;
+    chaos::WindowApplication* window_application = chaos::Application::GetInstance();
+    if (window_application == nullptr)
+        return false;
 
-    // create the sound manager
-    sound_manager = new chaos::SoundManager;
+    chaos::SoundManager * sound_manager = window_application->GetSoundManager();
     if (sound_manager == nullptr)
-      return false;
-
-    sound_manager->StartManager();
+        return false;
 
     // create the sound
-    boost::filesystem::path resources_path = application->GetApplicationPath() / "resources";
+    boost::filesystem::path resources_path = window_application->GetApplicationPath() / "resources";
     boost::filesystem::path src1_path = resources_path / "The Pretender.ogg";
 
     source1 = sound_manager->AddSource(src1_path, nullptr);
+    if (source1 == nullptr)
+        return false;
 
     category1 = sound_manager->AddCategory(nullptr);
+    if (category1 == nullptr)
+        return false;
 
     return true;
   }
 
 protected:
-
-  chaos::shared_ptr<chaos::SoundManager> sound_manager;
 
   chaos::shared_ptr<chaos::SoundSource> source1;
 

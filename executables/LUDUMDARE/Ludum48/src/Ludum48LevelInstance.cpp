@@ -127,6 +127,23 @@ void LudumLevelInstance::CapturePlayerInputs()
 
 	// Fake move
 	Key const fake_move_keys[] = { Key::LEFT_CONTROL, Key::RIGHT_CONTROL, Key::GAMEPAD_A, Key() };
+
+
+	if (player->CheckKeyDown(fake_move_keys)) // current frame
+	{
+		if (beginning)
+		{
+			// button is just beeing pressed
+			if (!player->CheckKeyDown(fake_move_keys)) // previous frame
+				cached_fake_move = true;
+		}
+		else
+		{
+			cached_fake_move = true;
+		}
+	}
+
+#if 0
 	if (player->CheckKeyDown(fake_move_keys, false)) // current frame
 	{
 		if (beginning)
@@ -140,6 +157,7 @@ void LudumLevelInstance::CapturePlayerInputs()
 			cached_fake_move = true;
 		}
 	}
+#endif
 	// Stick
 	glm::ivec2 stick_position = GetAnalogicStickPosition(player->GetLeftStickPosition(false)); // current frame
 	if (stick_position != glm::ivec2(0, 0))

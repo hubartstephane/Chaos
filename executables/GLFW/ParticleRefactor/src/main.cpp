@@ -191,7 +191,7 @@ protected:
 			}
 			return true;
 		}
-		else if (mouse_button_event.IsKeyEvent(chaos::Key::MOUSE_BUTTON_3))
+		else if (mouse_button_event.key == chaos::Key::MOUSE_BUTTON_3)
 		{
 			if (mouse_button_event.IsKeyPressedEvent())
 				destroy_all_particles = true;

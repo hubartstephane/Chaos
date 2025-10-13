@@ -127,7 +127,7 @@ protected:
 
 #else
 
-#define TEST_BUTTON(x) if (main_gamepad->IsKeyDown(chaos::Key::GAMEPAD_x))\
+#define TEST_BUTTON(x) if (main_gamepad->IsKeyDown(chaos::Key::GAMEPAD_##x))\
 imgui_user_message.AddLine("Pressed : " #x, 1.0f);
 
 			TEST_BUTTON(A);

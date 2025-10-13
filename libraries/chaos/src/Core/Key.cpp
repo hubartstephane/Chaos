@@ -179,6 +179,21 @@ namespace chaos
 		return (in_key >= Key::GAMEPAD_FIRST) && (in_key <= Key::GAMEPAD_LAST);
 	}
 
+	Key GetKeyFromName(char const* in_name)
+	{
+		Key result = Key::UNKNOWN;
+		if (StringToEnum(in_name, result))
+			return result;
+		return Key::UNKNOWN;
+	}
+
+	char const* GetKeyName(Key in_key)
+	{
+		if (char const* result = EnumToString(in_key))
+			return result;
+		return "Unknown";
+	}
+
 	KeyType GetKeyType(Key in_key)
 	{
 		if (IsKeyboardKey(in_key))

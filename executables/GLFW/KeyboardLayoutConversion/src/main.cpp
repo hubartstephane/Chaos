@@ -40,7 +40,10 @@ public:
 						ImVec4{ 1.0f, 1.0f, 1.0f, 1.0f }:
 						ImVec4{ 1.0f, 0.0f, 0.0f, 1.0f };
 
-					ImGui::TextColored(color, "%s (%s) -> %s (current)", src.GetName(), src_layout_name, dst.GetName());
+					char const* src_name = GetKeyName(src);
+					char const* dst_name = GetKeyName(dst);
+
+					ImGui::TextColored(color, "%s (%s) -> %s (current)", src_name, src_layout_name, dst_name);
 				}
 				ImGui::Separator();
 			};
@@ -60,12 +63,11 @@ public:
 			ImGui_DisplayConversion(chaos::Key::UP);
 			ImGui_DisplayConversion(chaos::Key::PAGE_UP);
 
-			ImGui_DisplayConversion(chaos::Key("SEMICOLON"));
-			ImGui_DisplayConversion(chaos::Key("A"));
-			ImGui_DisplayConversion(chaos::Key("Q"));
-			ImGui_DisplayConversion(chaos::Key("MOUSE_BUTTON_1"));
+			ImGui_DisplayConversion(chaos::GetKeyFromName("SEMICOLON"));
+			ImGui_DisplayConversion(chaos::GetKeyFromName("A"));
+			ImGui_DisplayConversion(chaos::GetKeyFromName("Q"));
+			ImGui_DisplayConversion(chaos::GetKeyFromName("MOUSE_BUTTON_1"));
 		});
-
 	}
 
 protected:

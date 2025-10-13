@@ -186,6 +186,10 @@ namespace chaos
 
 	CHAOS_API bool IsGamepadKey(Key in_key);
 
+	CHAOS_API Key GetKeyFromName(char const * in_name);
+
+	CHAOS_API char const* GetKeyName(Key in_key);
+
 	CHAOS_API KeyType GetKeyType(Key in_key);
 
 	/**

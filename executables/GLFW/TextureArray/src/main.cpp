@@ -160,22 +160,6 @@ protected:
 
 	virtual bool EnumerateInputActions(chaos::InputActionEnumerator & in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
 	{
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::KP_ADD).RequireModifiers(chaos::KeyModifier::Shift), "Next Pixel Format", [this]()
-		{
-			ChangePixelFormat(+1);
-		}))
-		{
-			return true;
-		}
-
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::KP_SUBTRACT).RequireModifiers(chaos::KeyModifier::Shift), "Previous Pixel Format", [this]()
-		{
-			ChangePixelFormat(-1);
-		}))
-		{
-			return true;
-		}
-
 		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::KP_ADD), "Next Slice", [this]()
 		{
 			ChangeSlice(+1);
@@ -187,6 +171,22 @@ protected:
 		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::KP_SUBTRACT), "Previous Slice", [this]()
 		{
 			ChangeSlice(-1);
+		}))
+		{
+			return true;
+		}
+
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::KP_ADD).RequireModifiers(chaos::KeyModifier::Shift), "Next Pixel Format", [this]()
+		{
+			ChangePixelFormat(+1);
+		}))
+		{
+			return true;
+		}
+
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::KP_SUBTRACT).RequireModifiers(chaos::KeyModifier::Shift), "Previous Pixel Format", [this]()
+		{
+			ChangePixelFormat(-1);
 		}))
 		{
 			return true;

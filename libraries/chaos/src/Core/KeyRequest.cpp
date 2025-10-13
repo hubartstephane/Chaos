@@ -10,7 +10,7 @@ namespace chaos
 		char buffer[256];
 
 		InputRequestDebugInfo result;		
-		result.input = (key != Key::UNKNOWN)? EnumToString(key) : "Unknown";
+		result.input = GetKeyName(key);
 		if (required_modifiers != KeyModifier::None)
 			result.required_modifiers = EnumToString(required_modifiers, buffer, 256);
 		if (forbidden_modifiers != KeyModifier::None)

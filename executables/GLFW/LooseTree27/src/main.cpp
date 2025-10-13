@@ -18,24 +18,24 @@ class KeyConfiguration
 {
 public:
 
-	chaos::Key new_scene = chaos::KeyboardLayoutConversion::ConvertKey("Y", chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key delete_object = chaos::KeyboardLayoutConversion::ConvertKey("DELETE", chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key next_object = chaos::KeyboardLayoutConversion::ConvertKey("KP_ADD", chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key previous_object = chaos::KeyboardLayoutConversion::ConvertKey("KP_SUBTRACT", chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key new_scene = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Y"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key delete_object = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("DELETE"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key next_object = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("KP_ADD"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key previous_object = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("KP_SUBTRACT"), chaos::KeyboardLayoutType::AZERTY);
 
-	chaos::Key move_object_positive_x = chaos::KeyboardLayoutConversion::ConvertKey("D", chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key move_object_negative_x = chaos::KeyboardLayoutConversion::ConvertKey("Q", chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key move_object_positive_y = chaos::KeyboardLayoutConversion::ConvertKey("E", chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key move_object_negative_y = chaos::KeyboardLayoutConversion::ConvertKey("A", chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key move_object_positive_z = chaos::KeyboardLayoutConversion::ConvertKey("S", chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key move_object_negative_z = chaos::KeyboardLayoutConversion::ConvertKey("Z", chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key move_object_positive_x = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("D"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key move_object_negative_x = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Q"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key move_object_positive_y = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("E"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key move_object_negative_y = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("A"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key move_object_positive_z = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("S"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key move_object_negative_z = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Z"), chaos::KeyboardLayoutType::AZERTY);
 
-	chaos::Key scale_object_positive_x = chaos::KeyboardLayoutConversion::ConvertKey("D", chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key scale_object_negative_x = chaos::KeyboardLayoutConversion::ConvertKey("Q", chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key scale_object_positive_y = chaos::KeyboardLayoutConversion::ConvertKey("E", chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key scale_object_negative_y = chaos::KeyboardLayoutConversion::ConvertKey("A", chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key scale_object_positive_z = chaos::KeyboardLayoutConversion::ConvertKey("S", chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key scale_object_negative_z = chaos::KeyboardLayoutConversion::ConvertKey("Z", chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key scale_object_positive_x = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("D"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key scale_object_negative_x = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Q"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key scale_object_positive_y = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("E"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key scale_object_negative_y = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("A"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key scale_object_positive_z = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("S"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key scale_object_negative_z = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Z"), chaos::KeyboardLayoutType::AZERTY);
 };
 
 // =======================================================================
@@ -144,8 +144,7 @@ protected:
 
 	bool MoveObjectWithInputs(chaos::Key const & key, float delta_time, glm::vec3 const& direction)
 	{
-
-		if (key.IsKeyboardKey())
+		if (IsKeyboardKey(key))
 		{
 			if (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(key)->IsDown())
 			{
@@ -160,7 +159,7 @@ protected:
 
 	bool ScaleObjectWithInputs(chaos::Key const& key, float delta_time, float direction)
 	{
-		if (key.IsKeyboardKey())
+		if (IsKeyboardKey(key))
 		{
 			if (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(key)->IsDown())
 			{
@@ -264,9 +263,9 @@ protected:
 	void DrawTextItem(char const* title, chaos::Key const& key, bool enabled) const
 	{
 		if (enabled)
-			ImGui::Text("%s      : %s", key.GetName(), title);
+			ImGui::Text("%s      : %s", GetKeyName(key), title);
 		else
-			ImGui::TextDisabled("%s      : %s", key.GetName(), title);
+			ImGui::TextDisabled("%s      : %s", GetKeyName(key), title);
 	}
 
 	void OnDrawImGuiContent() override

@@ -5,10 +5,10 @@ namespace chaos
 {
 	void GamepadState::Clear()
 	{
-		for (KeyState& b : buttons)
-			b.Clear();
-		for (Input1DState& a : axes)
-			a.Clear();
+		for (KeyState& button : buttons)
+			button.Clear();
+		for (Input1DState& axis : axes)
+			axis.Clear();
 	}
 
 	size_t GamepadState::GetButtonCount() const
@@ -76,10 +76,10 @@ namespace chaos
 		{
 			float value = state.axes[i];
 			// renormalize icomming value [-1 .. +1] => [0 .. 1]
-			if (i == (size_t)Input1D::LEFT_TRIGGER || i == (size_t)Input1D::RIGHT_TRIGGER)
+			if (i == (size_t)Input1D::GAMEPAD_LEFT_TRIGGER || i == (size_t)Input1D::GAMEPAD_RIGHT_TRIGGER)
 				value = (value * 0.5f + 0.5f);
 			// want positive Y when stick is UP
-			else if (i == (size_t)Input1D::LEFT_AXIS_Y || i == (size_t)Input1D::RIGHT_AXIS_Y)
+			else if (i == (size_t)Input1D::GAMEPAD_LEFT_AXIS_Y || i == (size_t)Input1D::GAMEPAD_RIGHT_AXIS_Y)
 				value = -value;
 			axes[i].SetValue(value, dead_zone);
 		}
@@ -102,8 +102,8 @@ namespace chaos
 			}
 		};
 
-		UpdateVirtualButton(Key::GAMEPAD_LEFT_TRIGGER, Input1D::LEFT_TRIGGER);
-		UpdateVirtualButton(Key::GAMEPAD_RIGHT_TRIGGER, Input1D::RIGHT_TRIGGER);
+		UpdateVirtualButton(Key::GAMEPAD_LEFT_TRIGGER, Input1D::GAMEPAD_LEFT_TRIGGER);
+		UpdateVirtualButton(Key::GAMEPAD_RIGHT_TRIGGER, Input1D::GAMEPAD_RIGHT_TRIGGER);
 
 		// update sticks
 		auto UpdateVirtualStick = [&](Input2D dst_stick, Input1D src_horizontal_axis, Input1D src_vertical_axis)
@@ -138,8 +138,8 @@ namespace chaos
 			sticks[int(dst_stick)] = stick_state;
 		};
 
-		UpdateVirtualStick(Input2D::LEFT_STICK, Input1D::LEFT_AXIS_X, Input1D::LEFT_AXIS_Y);
-		UpdateVirtualStick(Input2D::RIGHT_STICK, Input1D::RIGHT_AXIS_X, Input1D::RIGHT_AXIS_Y);
+		UpdateVirtualStick(Input2D::GAMEPAD_LEFT_STICK, Input1D::GAMEPAD_LEFT_AXIS_X, Input1D::GAMEPAD_LEFT_AXIS_Y);
+		UpdateVirtualStick(Input2D::GAMEPAD_RIGHT_STICK, Input1D::GAMEPAD_RIGHT_AXIS_X, Input1D::GAMEPAD_RIGHT_AXIS_Y);
 	}
 
 }; // namespace chaos

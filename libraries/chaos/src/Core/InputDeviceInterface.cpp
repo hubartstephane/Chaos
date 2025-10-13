@@ -49,7 +49,7 @@ namespace chaos
 		});
 	}
 
-	bool InputDeviceInterface::ForAllAxes(ForAllInput1DFunction func) const
+	bool InputDeviceInterface::ForAllInput1D(ForAllInput1DFunction func) const
 	{
 		return EnumerateDeviceHierarchy([this, &func](InputDeviceInterface const * in_input_device)
 		{
@@ -57,7 +57,7 @@ namespace chaos
 		});
 	}
 
-	bool InputDeviceInterface::ForAllSticks(ForAllInput2DFunction func) const
+	bool InputDeviceInterface::ForAllInput2D(ForAllInput2DFunction func) const
 	{
 		return EnumerateDeviceHierarchy([this, &func](InputDeviceInterface const * in_input_device)
 		{
@@ -161,7 +161,7 @@ namespace chaos
 
 	bool InputDeviceInterface::IsAnyAxisAction() const
 	{
-		return ForAllAxes([](Input1D input, Input1DState const & state)
+		return ForAllInput1D([](Input1D input, Input1DState const & state)
 		{
 			return (state.GetValue() != 0.0f);
 		});

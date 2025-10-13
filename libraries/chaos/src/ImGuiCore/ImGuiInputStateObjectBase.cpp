@@ -86,7 +86,7 @@ namespace chaos
 	{
 		ImGuiTools::DrawImGuiTable(title, {}, "Axis", "State", "Min", "Max", "Repeat Timer")([&]()
 		{
-			in_input_device->ForAllAxes([&](Input1D input, Input1DState const & state)
+			in_input_device->ForAllInput1D([&](Input1D input, Input1DState const & state)
 			{
 				if (filter_func(input, state))
 					DisplayInput1DInfo(input, state);
@@ -138,7 +138,7 @@ namespace chaos
 	{
 		ImGuiTools::DrawImGuiTable(title, {}, "Stick", "State", "Min", "Max", "Repeat Timer")([&]()
 		{
-			in_input_device->ForAllSticks([&](Input2D input, Input2DState const & state)
+			in_input_device->ForAllInput2D([&](Input2D input, Input2DState const & state)
 			{
 				if (filter_func(input, state))
 					DisplayInput2DInfo(input, state);

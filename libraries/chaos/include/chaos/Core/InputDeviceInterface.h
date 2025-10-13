@@ -32,17 +32,17 @@ namespace chaos
 
 		/** gets one key state */
 		KeyState const * GetInputState(Key key) const;
-		/** gets one axis state */
+		/** gets one input1D state */
 		Input1DState const * GetInputState(Input1D input) const;
-		/** gets one stick state */
+		/** gets one input2D state */
 		Input2DState const * GetInputState(Input2D input) const;
 
 		/** enumerate keys */
 		bool ForAllKeys(ForAllKeysFunction func) const;
-		/** enumerate axes */
-		bool ForAllAxes(ForAllInput1DFunction func) const;
-		/** enumerate sticks */
-		bool ForAllSticks(ForAllInput2DFunction func) const;
+		/** enumerate input1D */
+		bool ForAllInput1D(ForAllInput1DFunction func) const;
+		/** enumerate input2D */
+		bool ForAllInput2D(ForAllInput2DFunction func) const;
 
 		/** get the key value */
 		bool GetInputValue(Key key) const;
@@ -78,16 +78,16 @@ namespace chaos
 
 		/** gets one key state */
 		virtual KeyState const * DoGetInputState(Key key) const;
-		/** gets one axis state */
+		/** gets one input1D state */
 		virtual Input1DState const * DoGetInputState(Input1D input) const;
-		/** gets one stick state */
+		/** gets one input2D state */
 		virtual Input2DState const * DoGetInputState(Input2D input) const;
 
 		/** enumerate keys */
 		virtual bool DoForAllKeys(ForAllKeysFunction func) const;
-		/** enumerate axes */
+		/** enumerate input1D */
 		virtual bool DoForAllInput1D(ForAllInput1DFunction func) const;
-		/** enumerate sticks */
+		/** enumerate input2D */
 		virtual bool DoForAllInput2D(ForAllInput2DFunction func) const;
 	};
 

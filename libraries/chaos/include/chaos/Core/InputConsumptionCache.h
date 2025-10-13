@@ -40,10 +40,10 @@ namespace chaos
 
 		/** keys that are consumed */
 		std::set<std::pair<Key, KeyState const*>> consumed_keys;
-		/** axes that are consumed */
-		std::set<std::pair<Input1D, Input1DState const*>> consumed_axes;
-		/** sticks that are consumed */
-		std::set<std::pair<Input2D, Input2DState const*>> consumed_sticks;
+		/** input1D that are consumed */
+		std::set<std::pair<Input1D, Input1DState const*>> consumed_input1D;
+		/** input2D that are consumed */
+		std::set<std::pair<Input2D, Input2DState const*>> consumed_input2D;
 
 		/** indicates whether incoming input request will be considered as consumed */
 		bool consume_all_inputs = false;

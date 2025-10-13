@@ -239,9 +239,10 @@ protected:
 		// load the foot
 		boost::filesystem::path resources_path = application->GetResourcesPath();
 		boost::filesystem::path font_path = resources_path / font_name;
+		chaos::Buffer buffer = chaos::FileTools::LoadFile(font_path);
 
 		FT_Face face;
-		Err = FT_New_Face(library, font_path.string().c_str(), 0, &face);
+		Err = FT_New_Memory_Face(library, (FT_Byte const *)buffer.data, buffer.bufsize, 0, &face);
 		if (Err)
 			return ReleaseResourceImpl(&library, nullptr);
 

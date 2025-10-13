@@ -3,7 +3,7 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	enum class Key;
-	enum class KeyType;
+	enum class InputDeviceType;
 	enum class Input1D;
 	enum class Input2D;
 	enum class Key;
@@ -190,13 +190,13 @@ namespace chaos
 
 	CHAOS_API char const* GetKeyName(Key in_key);
 
-	CHAOS_API KeyType GetKeyType(Key in_key);
+	CHAOS_API InputDeviceType GetKeyInputDevice(Key in_key);
 
 	/**
-	 * KeyType: Indicates where the input is coming from
+	 * InputDeviceType: Indicates where the input is coming from
 	 */
 
-	enum class CHAOS_API KeyType : int
+	enum class CHAOS_API InputDeviceType : int
 	{
 		UNKNOWN  = -1,
 		KEYBOARD = 0,
@@ -204,7 +204,7 @@ namespace chaos
 		GAMEPAD  = 2
 	};
 
-	CHAOS_DECLARE_ENUM_METHOD(KeyType, CHAOS_API);
+	CHAOS_DECLARE_ENUM_METHOD(InputDeviceType, CHAOS_API);
 
 	/**
 	 * Input1D: enumeration to match a 1D input axis

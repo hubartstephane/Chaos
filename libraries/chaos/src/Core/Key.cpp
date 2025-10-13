@@ -194,15 +194,15 @@ namespace chaos
 		return "Unknown";
 	}
 
-	KeyType GetKeyType(Key in_key)
+	InputDeviceType GetKeyInputDevice(Key in_key)
 	{
 		if (IsKeyboardKey(in_key))
-			return KeyType::KEYBOARD;
+			return InputDeviceType::KEYBOARD;
 		if (IsMouseKey(in_key))
-			return KeyType::MOUSE;
+			return InputDeviceType::MOUSE;
 		if (IsGamepadKey(in_key))
-			return KeyType::GAMEPAD;
-		return KeyType::UNKNOWN;
+			return InputDeviceType::GAMEPAD;
+		return InputDeviceType::UNKNOWN;
 	}
 
 	// -------------------------------------------------------------------
@@ -237,17 +237,17 @@ namespace chaos
 	CHAOS_IMPLEMENT_ENUM_METHOD(Input2D, &Input2D_metadata, CHAOS_API);
 
 	// -------------------------------------------------------------------
-	// KeyType implementation
+	// InputDeviceType implementation
 	// -------------------------------------------------------------------
 
-	static EnumMetaData<KeyType> const KeyType_metadata =
+	static EnumMetaData<InputDeviceType> const InputDeviceType_metadata =
 	{
-		{ KeyType::UNKNOWN, "UNKNOWN" },
-		{ KeyType::KEYBOARD, "KEYBOARD" },
-		{ KeyType::MOUSE, "MOUSE" },
-		{ KeyType::GAMEPAD, "GAMEPAD" }
+		{ InputDeviceType::UNKNOWN, "UNKNOWN" },
+		{ InputDeviceType::KEYBOARD, "KEYBOARD" },
+		{ InputDeviceType::MOUSE, "MOUSE" },
+		{ InputDeviceType::GAMEPAD, "GAMEPAD" }
 	};
 
-	CHAOS_IMPLEMENT_ENUM_METHOD(KeyType, &KeyType_metadata, CHAOS_API);
+	CHAOS_IMPLEMENT_ENUM_METHOD(InputDeviceType, &InputDeviceType_metadata, CHAOS_API);
 
 }; // namespace chaos

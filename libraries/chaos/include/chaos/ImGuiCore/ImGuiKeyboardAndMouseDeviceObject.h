@@ -22,7 +22,7 @@ namespace chaos
 		virtual void OnDrawImGuiContent(Window * window) override;
 
 		/** display all keyboard or mouse keys */
-		void DisplayKeyboardAndMouseKeyStates(char const * title, char const * table_title, bool hide_cold_keys, KeyType key_type) const;
+		void DisplayKeyboardAndMouseKeyStates(char const * title, char const * table_title, bool hide_cold_keys, InputDeviceType key_type) const;
 	};
 
 #endif

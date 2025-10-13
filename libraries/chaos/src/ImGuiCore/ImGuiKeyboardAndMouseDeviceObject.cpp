@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	void ImGuiKeyboardAndMouseDeviceObject::DisplayKeyboardAndMouseKeyStates(char const * title, char const * table_title, bool hide_cold_keys, KeyType key_type) const
+	void ImGuiKeyboardAndMouseDeviceObject::DisplayKeyboardAndMouseKeyStates(char const * title, char const * table_title, bool hide_cold_keys, InputDeviceType key_type) const
 	{
 		KeyboardAndMouseDevice const * keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
 		if (keyboard_and_mouse_device == nullptr)
@@ -13,7 +13,7 @@ namespace chaos
 
 		DisplayAllKeyInfo(table_title, keyboard_and_mouse_device, [&](Key key, KeyState const & state)
 		{
-			if (GetKeyType(key) != key_type)
+			if (GetKeyInputDevice(key) != key_type)
 				return false;
 
 			if (hide_cold_keys)
@@ -29,8 +29,8 @@ namespace chaos
 
 	void ImGuiKeyboardAndMouseDeviceObject::OnDrawImGuiContent(Window * window)
 	{
-		DisplayKeyboardAndMouseKeyStates("Mouse", "Mouse Table", false, KeyType::MOUSE);
-		DisplayKeyboardAndMouseKeyStates("Keyboard", "Keyboard Table", true, KeyType::KEYBOARD);
+		DisplayKeyboardAndMouseKeyStates("Mouse", "Mouse Table", false, InputDeviceType::MOUSE);
+		DisplayKeyboardAndMouseKeyStates("Keyboard", "Keyboard Table", true, InputDeviceType::KEYBOARD);
 	}
 
 }; // namespace chaos

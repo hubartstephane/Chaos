@@ -3,15 +3,11 @@
 
 namespace chaos
 {
-	void ImGuiKeyboardAndMouseDeviceObject::DisplayKeyboardAndMouseKeyStates(char const * title, char const * table_title, bool hide_cold_keys, InputDeviceType key_type) const
+	void ImGuiKeyboardAndMouseDeviceObject::DisplayKeyboardAndMouseKeyStates(KeyboardAndMouseDevice const* keyboard_and_mouse_device, char const* table_title, char const * title, bool hide_cold_keys, InputDeviceType key_type) const
 	{
-		KeyboardAndMouseDevice const * keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
-		if (keyboard_and_mouse_device == nullptr)
-			return;
-
 		ImGui::SeparatorText(title);
 
-		DisplayAllKeyInfo(table_title, keyboard_and_mouse_device, [&](Key key, KeyState const & state)
+		DisplayAllKeyInfo(keyboard_and_mouse_device, table_title, title, [&](Key key, KeyState const & state)
 		{
 			if (GetKeyInputDevice(key) != key_type)
 				return false;
@@ -29,8 +25,15 @@ namespace chaos
 
 	void ImGuiKeyboardAndMouseDeviceObject::OnDrawImGuiContent(Window * window)
 	{
-		DisplayKeyboardAndMouseKeyStates("Mouse", "Mouse Table", false, InputDeviceType::MOUSE);
-		DisplayKeyboardAndMouseKeyStates("Keyboard", "Keyboard Table", true, InputDeviceType::KEYBOARD);
+		KeyboardAndMouseDevice const* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
+		if (keyboard_and_mouse_device == nullptr)
+			return;
+
+		DisplayKeyboardAndMouseKeyStates(keyboard_and_mouse_device, "Mouse Table", "Mouse", false, InputDeviceType::MOUSE);
+		DisplayAllInput1DInfo(keyboard_and_mouse_device, "Mouse Input1D", "Input1D");
+		DisplayAllInput2DInfo(keyboard_and_mouse_device, "Mouse Input2D", "Input2D");
+
+		DisplayKeyboardAndMouseKeyStates(keyboard_and_mouse_device, "Keyboard Table", "Keyboard", true, InputDeviceType::KEYBOARD);
 	}
 
 }; // namespace chaos

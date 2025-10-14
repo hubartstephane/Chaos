@@ -33,9 +33,9 @@ namespace chaos
 		}
 	}
 
-	void ImGuiInputStateObjectBase::DisplayAllKeyInfo(char const * title, InputDeviceInterface const * in_input_device, ForAllKeysFunction filter_func) const
+	void ImGuiInputStateObjectBase::DisplayAllKeyInfo(InputDeviceInterface const* in_input_device, char const* table_title, char const * title, ForAllKeysFunction filter_func) const
 	{
-		ImGuiTools::DrawImGuiTable(title, {}, "Key", "State", "Repeat Timer")([&]()
+		ImGuiTools::DrawImGuiTable(table_title, {}, title, "State", "Repeat Timer")([&]()
 		{
 			in_input_device->ForAllKeys([&](Key key, KeyState const & state)
 			{
@@ -82,9 +82,9 @@ namespace chaos
 		}
 	}
 
-	void ImGuiInputStateObjectBase::DisplayAllInput1DInfo(char const * title, InputDeviceInterface const * in_input_device, ForAllInput1DFunction filter_func) const
+	void ImGuiInputStateObjectBase::DisplayAllInput1DInfo(InputDeviceInterface const* in_input_device, char const* table_title, char const * title, ForAllInput1DFunction filter_func) const
 	{
-		ImGuiTools::DrawImGuiTable(title, {}, "Axis", "State", "Min", "Max", "Repeat Timer")([&]()
+		ImGuiTools::DrawImGuiTable(table_title, {}, title, "State", "Min", "Max", "Repeat Timer")([&]()
 		{
 			in_input_device->ForAllInput1D([&](Input1D input, Input1DState const & state)
 			{
@@ -132,9 +132,9 @@ namespace chaos
 		}
 	}
 
-	void ImGuiInputStateObjectBase::DisplayAllInput2DInfo(char const * title, InputDeviceInterface const * in_input_device, ForAllInput2DFunction filter_func) const
+	void ImGuiInputStateObjectBase::DisplayAllInput2DInfo(InputDeviceInterface const* in_input_device, char const* table_title, char const * title, ForAllInput2DFunction filter_func) const
 	{
-		ImGuiTools::DrawImGuiTable(title, {}, "Stick", "State", "Length", "Max Length", "Repeat Timer")([&]()
+		ImGuiTools::DrawImGuiTable(table_title, {}, title, "State", "Length", "Max Length", "Repeat Timer")([&]()
 		{
 			in_input_device->ForAllInput2D([&](Input2D input, Input2DState const & state)
 			{

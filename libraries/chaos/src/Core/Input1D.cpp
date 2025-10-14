@@ -7,6 +7,10 @@ namespace chaos
 	static EnumMetaData<Input1D> const Input1D_metadata =
 	{
 		{ Input1D::UNKNOWN, "UNKNOWN" },
+
+		{ Input1D::MOUSE_WHEEL_X, "MOUSE_WHEEL_X" },
+		{ Input1D::MOUSE_WHEEL_Y, "MOUSE_WHEEL_Y" },
+
 		{ Input1D::GAMEPAD_LEFT_AXIS_X, "LEFT_AXIS_X" },
 		{ Input1D::GAMEPAD_LEFT_AXIS_Y, "LEFT_AXIS_Y" },
 		{ Input1D::GAMEPAD_RIGHT_AXIS_X, "RIGHT_AXIS_X" },

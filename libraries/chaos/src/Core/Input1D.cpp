@@ -24,7 +24,7 @@ namespace chaos
 
 	bool IsMouseInput(Input1D in_input)
 	{
-		return false;
+		return (in_input >= Input1D::MOUSE_FIRST) && (in_input <= Input1D::MOUSE_LAST);
 	}
 
 	bool IsGamepadInput(Input1D in_input)

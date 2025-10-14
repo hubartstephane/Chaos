@@ -31,7 +31,7 @@ namespace chaos
 		virtual bool EnumerateDeviceHierarchy(EnumerateDeviceHierarchyFunction func) const;
 
 		/** gets one key state */
-		KeyState const * GetInputState(Key key) const;
+		KeyState const * GetInputState(Key input) const;
 		/** gets one input1D state */
 		Input1DState const * GetInputState(Input1D input) const;
 		/** gets one input2D state */
@@ -45,7 +45,7 @@ namespace chaos
 		bool ForAllInput2D(ForAllInput2DFunction func) const;
 
 		/** get the key value */
-		bool GetInputValue(Key key) const;
+		bool GetInputValue(Key input) const;
 		/** get the axis value */
 		float GetInputValue(Input1D input) const;
 		/** get the stick value */
@@ -77,7 +77,7 @@ namespace chaos
 	protected:
 
 		/** gets one key state */
-		virtual KeyState const * DoGetInputState(Key key) const;
+		virtual KeyState const * DoGetInputState(Key input) const;
 		/** gets one input1D state */
 		virtual Input1DState const * DoGetInputState(Input1D input) const;
 		/** gets one input2D state */

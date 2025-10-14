@@ -70,10 +70,10 @@ namespace chaos
 			ImGui::TextColored(color, "%+f", value);
 
 			ImGui::TableNextColumn();
-			ImGui::TextColored(color, "%+f", state.min_value);
+			ImGui::TextColored(color, "%+f", state.min_raw_value);
 
 			ImGui::TableNextColumn();
-			ImGui::TextColored(color, "%+f", state.max_value);
+			ImGui::TextColored(color, "%+f", state.max_raw_value);
 
 			ImGui::TableNextColumn();
 			ImGui::TextColored(color, "%f", state.GetSameValueTimer());
@@ -120,12 +120,10 @@ namespace chaos
 			ImGui::TextColored(color, "%+f", value.y);
 
 			ImGui::TableNextColumn();
-			ImGui::TextColored(color, "%+f", state.min_value.x);
-			ImGui::TextColored(color, "%+f", state.min_value.y);
+			ImGui::TextColored(color, "%f", glm::length(state.value));
 
 			ImGui::TableNextColumn();
-			ImGui::TextColored(color, "%+f", state.max_value.x);
-			ImGui::TextColored(color, "%+f", state.max_value.y);
+			ImGui::TextColored(color, "%f", state.max_raw_length);
 
 			ImGui::TableNextColumn();
 			ImGui::TextColored(color, "%f", state.GetSameValueTimer());
@@ -136,7 +134,7 @@ namespace chaos
 
 	void ImGuiInputStateObjectBase::DisplayAllInput2DInfo(char const * title, InputDeviceInterface const * in_input_device, ForAllInput2DFunction filter_func) const
 	{
-		ImGuiTools::DrawImGuiTable(title, {}, "Stick", "State", "Min", "Max", "Repeat Timer")([&]()
+		ImGuiTools::DrawImGuiTable(title, {}, "Stick", "State", "Length", "Max Length", "Repeat Timer")([&]()
 		{
 			in_input_device->ForAllInput2D([&](Input2D input, Input2DState const & state)
 			{

@@ -59,6 +59,41 @@ namespace chaos
 			update_time = -1.0;
 		}
 
+	protected:
+
+		/** returns whether 2 input values should be considered as identical */
+		static bool AreValuesSimilar(bool src1, bool src2)
+		{
+			return (src1 == src2);
+		}
+		/** returns whether 2 input values should be considered as identical */
+		static bool AreValuesSimilar(float src1, float src2)
+		{
+			return (MathTools::GetExtendedSign(src1) == MathTools::GetExtendedSign(src2));
+		}
+		/** returns whether 2 input values should be considered as identical */
+		static bool AreValuesSimilar(glm::vec2 const & src1, glm::vec2 const & src2)
+		{
+			float sqr_length_src1 = glm::length2(src1);
+			float sqr_length_src2 = glm::length2(src2);
+			return (MathTools::GetExtendedSign(sqr_length_src1) == MathTools::GetExtendedSign(sqr_length_src2));
+		}
+		/** internal method to set value and update internal time */
+		void DoSetValue(T in_value)
+		{
+			double frame_time = FrameTimeManager::GetInstance()->GetCurrentFrameTime();
+
+			if (update_time < 0.0) // very first initialization
+			{
+				update_time = frame_time;
+			}
+			else if (!AreValuesSimilar(value, in_value)) // some change
+			{
+				update_time = frame_time;
+			}
+			value = in_value;
+		}
+
 	public:
 
 		/** value of the button (pressed or not) */
@@ -92,22 +127,22 @@ namespace chaos
 	};
 
 	/**
-	* Input1DState : while max and min values for sticks are not always 1 (some controllers has value lesser that 1.0),
-	*            we have to store the upper and lower values to renormalize the output
+	* Input1DState: while max and min values for sticks are not always 1 (some controllers has value lesser that 1.0),
+	*               we have to store the upper and lower values to renormalize the output
 	*/
 	class CHAOS_API Input1DState : public InputState<float>
 	{
 	public:
 
 		/** update the value */
-		void SetValue(float in_raw_value, float dead_zone);
+		void SetValue(float in_value, float dead_zone, InputDeviceType device_type);
 
 	public:
 
 		/** min value always encountered */
-		float min_value = -0.8f;
+		float min_raw_value = -0.8f;
 		/** max value always encountered */
-		float max_value = +0.8f;
+		float max_raw_value = +0.8f;
 	};
 
 	/**
@@ -116,13 +151,15 @@ namespace chaos
 
 	class CHAOS_API Input2DState : public InputState<glm::vec2>
 	{
+	public:
+
+		/** update the value */
+		void SetValue(glm::vec2 in_value, float dead_zone, InputDeviceType device_type);
 
 	public:
 
-		/** min value always encountered */
-		glm::vec2 min_value = {-0.8f, -0.8f};
-		/** max value always encountered */
-		glm::vec2 max_value = {+0.8f, +0.8f};
+		/** maximum length encoutered so far */
+		float max_raw_length = std::sqrt(0.8f * 0.8f + 0.8f * 0.8f); // distance if max.X = 0.8 && max.Y = 0.8
 	};
 
 #endif

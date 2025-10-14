@@ -11,6 +11,9 @@ namespace chaos
 		template<typename T>
 		bool IsPowerOf2(T src);
 
+		template<typename T>
+		T GetExtendedSign(T src);
+
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 		/** returns the mantissa of a float */
@@ -21,6 +24,17 @@ namespace chaos
 
 		/** returns the sign of a float */
 		CHAOS_API unsigned int GetSign(float f);
+
+		/** returns an 'extended' sign (-1, 0, +1) */
+		template<typename T>
+		T GetExtendedSign(T src)
+		{
+			if (src == T(0))
+				return T(0);
+			if (src < T(0))
+				return T(-1);
+			return T(1);
+		}
 
 		/** a functor used to repeatly map a range to another */
 		template<typename T, typename U>

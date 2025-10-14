@@ -34,7 +34,7 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual KeyState const * DoGetInputState(Key key) const override;
+		virtual KeyState const * DoGetInputState(Key input) const override;
 		/** override */
 		virtual Input1DState const * DoGetInputState(Input1D input) const override;
 		/** override */

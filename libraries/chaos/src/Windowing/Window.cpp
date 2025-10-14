@@ -623,6 +623,14 @@ namespace chaos
 
 		my_window->mouse_position = position;
 
+		// update device state
+		KeyboardAndMouseDevice* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
+		if (keyboard_and_mouse_device != nullptr)
+		{
+			glm::vec2 previous_delta = keyboard_and_mouse_device->GetInputValue(Input2D::MOUSE_DELTA); // accumulate. This will be set to zero at the beginning of next frame
+			keyboard_and_mouse_device->SetInputValue(Input2D::MOUSE_DELTA, delta + previous_delta);
+		}
+
 		my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnMouseMove, delta);
 	}
 
@@ -667,7 +675,7 @@ namespace chaos
 		if (keyboard_and_mouse_device != nullptr)
 		{
 			bool key_value = (action == GLFW_PRESS || action == GLFW_REPEAT);
-			keyboard_and_mouse_device->SetKeyValue(mouse_key, key_value);
+			keyboard_and_mouse_device->SetInputValue(mouse_key, key_value);
 		}
 
 		// dispatch event
@@ -688,6 +696,17 @@ namespace chaos
 		Window * my_window = GetWindowFromGLFWContext(in_glfw_window);
 		if (my_window == nullptr)
 			return;
+
+		// update device state
+		KeyboardAndMouseDevice* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
+		if (keyboard_and_mouse_device != nullptr)
+		{
+			glm::vec2 previous_wheel = keyboard_and_mouse_device->GetInputValue(Input2D::MOUSE_WHEEL); // accumulate. This will be set to zero at the beginning of next frame
+
+			keyboard_and_mouse_device->SetInputValue(Input1D::MOUSE_WHEEL_X, float(scroll_x + previous_wheel.x));
+			keyboard_and_mouse_device->SetInputValue(Input1D::MOUSE_WHEEL_Y, float(scroll_y + previous_wheel.y));
+			keyboard_and_mouse_device->SetInputValue(Input2D::MOUSE_WHEEL, { float(scroll_x + previous_wheel.x), float(scroll_y + previous_wheel.y) });
+		}
 
 		// dispatch event
 		my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnMouseWheel, scroll_x, scroll_y);
@@ -714,7 +733,7 @@ namespace chaos
 		if (keyboard_and_mouse_device != nullptr)
 		{
 			bool key_value = (action == GLFW_PRESS || action == GLFW_REPEAT);
-			keyboard_and_mouse_device->SetKeyValue(keyboard_key, key_value);
+			keyboard_and_mouse_device->SetInputValue(keyboard_key, key_value);
 		}
 
 		// dispatch the event

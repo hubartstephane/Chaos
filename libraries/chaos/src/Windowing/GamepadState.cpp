@@ -21,11 +21,11 @@ namespace chaos
 		return axes.size();
 	}
 
-	KeyState const * GamepadState::DoGetInputState(Key key) const
+	KeyState const * GamepadState::DoGetInputState(Key input) const
 	{
-		if (!IsGamepadInput(key))
+		if (!IsGamepadInput(input))
 			return nullptr;
-		return &buttons[size_t(key) - size_t(Key::GAMEPAD_FIRST)];
+		return &buttons[size_t(input) - size_t(Key::GAMEPAD_FIRST)];
 	}
 
 	Input1DState const *GamepadState::DoGetInputState(Input1D input) const
@@ -74,14 +74,14 @@ namespace chaos
 		{
 			Input1D input = Input1D(i + size_t(Input1D::GAMEPAD_FIRST));
 
-			float value = state.axes[i];
+			float & value = state.axes[i];
 			// renormalize icomming value [-1 .. +1] => [0 .. 1]
 			if (input == Input1D::GAMEPAD_LEFT_TRIGGER || input == Input1D::GAMEPAD_RIGHT_TRIGGER)
 				value = (value * 0.5f + 0.5f);
 			// want positive Y when stick is UP
 			else if (input == Input1D::GAMEPAD_LEFT_AXIS_Y || input == Input1D::GAMEPAD_RIGHT_AXIS_Y)
 				value = -value;
-			axes[i].SetValue(value, dead_zone);
+			axes[i].SetValue(value, dead_zone, InputDeviceType::GAMEPAD);
 		}
 
 		// update standard buttons
@@ -95,10 +95,8 @@ namespace chaos
 		{
 			if (Input1DState const * axis_state = GetInputState(src_axis))
 			{
-				KeyState key_state;
-				key_state.value = axis_state->value != 0.0f;
-				key_state.update_time = axis_state->update_time;
-				buttons[size_t(dst_button) - size_t(Key::GAMEPAD_FIRST)] = key_state;
+				bool value = (axis_state->value != 0.0f);
+				buttons[size_t(dst_button) - size_t(Key::GAMEPAD_FIRST)].SetValue(value);
 			}
 		};
 
@@ -108,34 +106,12 @@ namespace chaos
 		// update sticks
 		auto UpdateVirtualStick = [&](Input2D dst_stick, Input1D src_horizontal_axis, Input1D src_vertical_axis)
 		{
-			Input1DState const * horizontal_axis_state = GetInputState(src_horizontal_axis);
-			if (horizontal_axis_state == nullptr)
-				return;
-			Input1DState const * vertical_axis_state = GetInputState(src_vertical_axis);
-			if (vertical_axis_state == nullptr)
-				return;
-
 			glm::vec2 stick_value = 
 			{
-				horizontal_axis_state->GetValue(),
-				vertical_axis_state->GetValue()
+				state.axes[size_t(src_horizontal_axis) - size_t(Input1D::GAMEPAD_FIRST)],
+				state.axes[size_t(src_vertical_axis) - size_t(Input1D::GAMEPAD_FIRST)]
 			};
-
-			// if the length is greater than 1, renormalize it to 1.0f !
-			float sqr_len = stick_value.x * stick_value.x + stick_value.y * stick_value.y;
-			if (sqr_len > 1.0f)
-			{
-				float len = std::sqrt(sqr_len);
-				stick_value.x /= len;
-				stick_value.y /= len;
-			}
-
-			Input2DState stick_state;
-			stick_state.value = stick_value;
-			stick_state.min_value = {horizontal_axis_state->min_value, vertical_axis_state->min_value};
-			stick_state.max_value = {horizontal_axis_state->max_value, vertical_axis_state->max_value};
-			stick_state.update_time = std::max(horizontal_axis_state->update_time, vertical_axis_state->update_time);
-			sticks[size_t(dst_stick) - size_t(Input2D::GAMEPAD_FIRST)] = stick_state;
+			sticks[size_t(dst_stick) - size_t(Input2D::GAMEPAD_FIRST)].SetValue(stick_value, dead_zone, InputDeviceType::GAMEPAD);
 		};
 
 		UpdateVirtualStick(Input2D::GAMEPAD_LEFT_STICK, Input1D::GAMEPAD_LEFT_AXIS_X, Input1D::GAMEPAD_LEFT_AXIS_Y);

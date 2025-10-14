@@ -15,22 +15,38 @@ namespace chaos
 
 	public:
 
-		/** change the state of a keyboard or mouse key (notification from a window) */
-		void SetKeyValue(Key key, bool value);
+		/** change the state of a key (notification from a window) */
+		void SetInputValue(Key input, bool value);
+		/** change the state of a key (notification from a window) */
+		void SetInputValue(Input1D input, float value);
+		/** change the state of a key (notification from a window) */
+		void SetInputValue(Input2D input, glm::vec2 const & value);
 
 	protected:
 
 		/** override */
-		virtual KeyState const * DoGetInputState(Key key) const override;
+		virtual KeyState const * DoGetInputState(Key input) const override;
+		/** override */
+		virtual Input1DState const* DoGetInputState(Input1D input) const override;
+		/** override */
+		virtual Input2DState const* DoGetInputState(Input2D input) const override;
 		/** override */
 		virtual bool DoForAllKeys(ForAllKeysFunction func) const override;
+		/** override */
+		virtual bool DoForAllInput1D(ForAllInput1DFunction func) const override;
+		/** override */
+		virtual bool DoForAllInput2D(ForAllInput2DFunction func) const override;
 
 	protected:
 
 		/** the state of all keyboard buttons */
-		std::array<KeyState, GLFW_KEY_LAST + 1> keyboard_key_state;
+		std::array<KeyState, size_t(Key::KEYBOARD_LAST) - size_t(Key::KEYBOARD_FIRST) + 1> keyboard_key_state;
 		/** the state of all mouse buttons */
-		std::array<KeyState, GLFW_MOUSE_BUTTON_LAST + 1> mouse_key_state;
+		std::array<KeyState, size_t(Key::MOUSE_LAST) - size_t(Key::MOUSE_FIRST) + 1> mouse_key_state;
+		/** the state of all mouse input1D (basically the wheel) */
+		std::array<Input1DState, size_t(Input1D::MOUSE_LAST) - size_t(Input1D::MOUSE_FIRST) + 1> mouse_input1D_state;
+		/** the state of all mouse input2D (basically the delta position) */
+		std::array<Input2DState, size_t(Input2D::MOUSE_LAST) - size_t(Input2D::MOUSE_FIRST) + 1> mouse_input2D_state;
 	};
 
 #endif

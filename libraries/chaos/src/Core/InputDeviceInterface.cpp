@@ -8,12 +8,12 @@ namespace chaos
 		return func(this);
 	}
 
-	KeyState const * InputDeviceInterface::GetInputState(Key key) const
+	KeyState const * InputDeviceInterface::GetInputState(Key input) const
 	{
 		KeyState const * result = nullptr;
-		EnumerateDeviceHierarchy([this, &result, &key](InputDeviceInterface const * in_input_device) 
+		EnumerateDeviceHierarchy([this, &result, input](InputDeviceInterface const * in_input_device)
 		{
-			result = in_input_device->DoGetInputState(key);
+			result = in_input_device->DoGetInputState(input);
 			return (result != nullptr); // continue until some result is found
 		});
 		return result;
@@ -65,7 +65,7 @@ namespace chaos
 		});
 	}
 
-	KeyState const * InputDeviceInterface::DoGetInputState(Key key) const
+	KeyState const * InputDeviceInterface::DoGetInputState(Key input) const
 	{
 		return nullptr;
 	}
@@ -95,11 +95,25 @@ namespace chaos
 		return false;
 	}
 
-	bool InputDeviceInterface::GetInputValue(Key key) const
+	bool InputDeviceInterface::GetInputValue(Key input) const
 	{
-		if (KeyState const * key_state = GetInputState(key))
-			return key_state->GetValue();
+		if (KeyState const * input_state = GetInputState(input))
+			return input_state->GetValue();
 		return false;
+	}
+
+	float InputDeviceInterface::GetInputValue(Input1D input) const
+	{
+		if (Input1DState const* input_state = GetInputState(input))
+			return input_state->GetValue();
+		return 0.0f;
+	}
+
+	glm::vec2 InputDeviceInterface::GetInputValue(Input2D input) const
+	{
+		if (Input2DState const* input_state = GetInputState(input))
+			return input_state->GetValue();
+		return { 0.0f, 0.0f };
 	}
 
 	KeyStatus InputDeviceInterface::GetKeyStatus(Key key) const
@@ -135,20 +149,6 @@ namespace chaos
 		if (KeyState const * key_state = GetInputState(key))
 			return key_state->IsJustReleased();
 		return false;
-	}
-
-	float InputDeviceInterface::GetInputValue(Input1D input) const
-	{
-		if (Input1DState const * input_state = GetInputState(input))
-			return input_state->GetValue();
-		return 0.0f;
-	}
-
-	glm::vec2 InputDeviceInterface::GetInputValue(Input2D input) const
-	{
-		if (Input2DState const * input_state = GetInputState(input))
-			return input_state->GetValue();
-		return {0.0f, 0.0f};
 	}
 
 	bool InputDeviceInterface::IsAnyKeyAction() const

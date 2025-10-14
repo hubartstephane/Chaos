@@ -6,18 +6,7 @@ namespace chaos
 {
 	void KeyState::SetValue(bool in_value)
 	{
-		double frame_time = FrameTimeManager::GetInstance()->GetCurrentFrameTime();
-
-		if (update_time < 0.0) // very first initialization
-		{
-			value = in_value;
-			update_time = frame_time;
-		}
-		else if (value != in_value)
-		{
-			update_time = frame_time;
-			value = in_value;
-		}
+		DoSetValue(in_value);
 	}
 
 	bool KeyState::IsDown() const
@@ -69,48 +58,70 @@ namespace chaos
 	//       if the stick goes further than theses values, we update them.
 	//       that help us to have a good evaluation of the stick range over time.
 
-	void Input1DState::SetValue(float in_raw_value, float dead_zone)
+	void Input1DState::SetValue(float in_value, float dead_zone, InputDeviceType device_type)
 	{
-		assert(dead_zone >= 0.0f);
-		
-		if (in_raw_value < dead_zone && in_raw_value > -dead_zone) // apply dead zone to input
-			in_raw_value = 0.0f;
-		else
-			in_raw_value = std::clamp(in_raw_value, -1.0f, +1.0f); // clamp the raw value to -1 .. +1
-
 		// update min and max values
-		max_value = std::max(max_value, in_raw_value);
-		min_value = std::min(min_value, in_raw_value);
+		min_raw_value = std::min(min_raw_value, in_value);
+		max_raw_value = std::max(max_raw_value, in_value);
 
-		// normalize input
-		if (in_raw_value > 0.0f)
-			in_raw_value = (in_raw_value - dead_zone) / (max_value - dead_zone);
-		else if (in_raw_value < 0.0f)
-			in_raw_value = -(in_raw_value + dead_zone) / (min_value + dead_zone);
-
-		double frame_time = FrameTimeManager::GetInstance()->GetCurrentFrameTime();
-
-		if (update_time < 0.0)  // very first initialization: set both current and previous value to same
+		// apply dead zone, clamp and normalize
+		if (device_type == InputDeviceType::GAMEPAD)
 		{
-			value = in_raw_value;
-			update_time = frame_time;
-		}
-		else 
-		{
-			auto GetInputValueType = [](float value)
+			if (dead_zone > 0.0f)
 			{
-				if (value == 0.0f)
-					return 0;
-				if (value < 0.0f)
-					return -1;
-				return 1;
-			};
-
-			if (GetInputValueType(value) != GetInputValueType(in_raw_value)) // checking for strict equality for float values is nonsense. just check for 'sign' equality
-				update_time = frame_time;
-
-			value = in_raw_value;
+				if (in_value <= dead_zone && in_value >= -dead_zone)
+				{
+					in_value = 0.0f;
+				}
+				else if (in_value > 0.0f) // normalize input
+				{
+					in_value = (max_raw_value - dead_zone > 0.0f) ?
+						(in_value - dead_zone) / (max_raw_value - dead_zone) :
+						0.0f;
+				}
+				else if (in_value < 0.0f) // normalize input
+				{
+					in_value = (min_raw_value + dead_zone < 0.0f) ?
+						-(in_value + dead_zone) / (min_raw_value + dead_zone) :
+						0.0f;
+				}
+			}
+			else
+			{
+				in_value = std::clamp(in_value, -1.0f, +1.0f); // clamp the raw value to -1 .. +1
+			}
 		}
+		DoSetValue(in_value);
+	}
+
+	void Input2DState::SetValue(glm::vec2 in_value, float dead_zone, InputDeviceType device_type)
+	{
+		float value_length = glm::length(in_value);
+
+		// update max length
+		max_raw_length = std::max(max_raw_length, value_length);
+
+		// apply dead zone and clamp
+		if (device_type == InputDeviceType::GAMEPAD)
+		{
+			if (dead_zone > 0.0f)
+			{
+				if (value_length <= dead_zone)
+				{
+					in_value = { 0.0f, 0.0f };
+				}
+				else if (max_raw_length > dead_zone)
+				{
+					in_value = glm::normalize(in_value) * ((value_length - dead_zone) / (max_raw_length - dead_zone));
+				}
+			}
+			else if (value_length > 1.0f)
+			{
+				in_value /= value_length;
+			}
+		}
+
+		DoSetValue(in_value);
 	}
 
 }; // namespace chaos

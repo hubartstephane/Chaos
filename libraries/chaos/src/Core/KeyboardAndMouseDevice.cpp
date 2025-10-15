@@ -87,7 +87,7 @@ namespace chaos
 		{
 			size_t input_index = size_t(input) - size_t(Input1D::MOUSE_FIRST);
 			if (input_index >= 0 && input_index < mouse_input1D_state.size())
-				mouse_input1D_state[input_index].SetValue(value, -1.0f, -1.0f);
+				mouse_input1D_state[input_index].SetValue(value);
 		}
 	}
 
@@ -97,7 +97,7 @@ namespace chaos
 		{
 			size_t input_index = size_t(input) - size_t(Input2D::MOUSE_FIRST);
 			if (input_index >= 0 && input_index < mouse_input2D_state.size())
-				mouse_input2D_state[input_index].SetValue(value, -1.0f, -1.0f);
+				mouse_input2D_state[input_index].SetValue(value);
 		}
 	}
 

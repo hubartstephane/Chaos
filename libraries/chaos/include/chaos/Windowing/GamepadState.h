@@ -47,6 +47,11 @@ namespace chaos
 		/** override */
 		virtual bool DoForAllInput2D(ForAllInput2DFunction func) const override;
 
+		/** apply dead_zone and max_zone. renormalize input */
+		float ClampAndNormalizeInput1D(float value, float dead_zone, float max_zone) const;
+		/** apply dead_zone and max_zone. renormalize input */
+		glm::vec2 ClampAndNormalizeInput2D(glm::vec2 value, float dead_zone, float max_zone) const;
+
 	protected:
 
 		/** the state for axis */

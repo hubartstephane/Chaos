@@ -53,54 +53,13 @@ namespace chaos
 		}
 	}
 
-	void Input1DState::SetValue(float in_value, float dead_zone, float max_zone)
+	void Input1DState::SetValue(float in_value)
 	{
-		// apply dead zone, clamp and normalize
-		if (dead_zone >= 0.0f && max_zone > dead_zone)
-		{
-			if (in_value <= dead_zone && in_value >= -dead_zone)
-			{
-				in_value = 0.0f;
-			}
-			else if (in_value > 0.0f) // normalize input
-			{
-				in_value = (in_value - dead_zone) / (max_zone - dead_zone);
-				if (in_value > 1.0f)
-					in_value = 1.0f;
-			}
-			else if (in_value < 0.0f) // normalize input
-			{
-				in_value = (in_value + dead_zone) / (max_zone - dead_zone);
-				if (in_value < -1.0f)
-					in_value = -1.0f;
-			}
-		}
 		DoSetValue(in_value);
 	}
 
-	void Input2DState::SetValue(glm::vec2 in_value, float dead_zone, float max_zone)
+	void Input2DState::SetValue(glm::vec2 in_value)
 	{
-		// apply dead zone, clamp and normalize
-		if (dead_zone >= 0.0f && max_zone > dead_zone)
-		{
-			float value_length = glm::length(in_value);
-
-			if (value_length <= dead_zone)
-			{
-				in_value = { 0.0f, 0.0f };
-			}
-			else if (value_length >= max_zone)
-			{
-				in_value /= value_length; 
-			}
-			else
-			{
-				in_value = 
-					(in_value / value_length) * 
-					(value_length - dead_zone) / (max_zone - dead_zone);
-			}
-
-		}
 		DoSetValue(in_value);
 	}
 

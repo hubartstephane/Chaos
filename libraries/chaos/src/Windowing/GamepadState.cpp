@@ -64,6 +64,57 @@ namespace chaos
 		return false;
 	}
 
+	float GamepadState::ClampAndNormalizeInput1D(float value, float dead_zone, float max_zone) const
+	{
+		if (dead_zone >= 0.0f && max_zone > dead_zone)
+		{
+			if (value <= dead_zone && value >= -dead_zone)
+			{
+				value = 0.0f;
+			}
+			else if (value > 0.0f)
+			{
+				value = (value - dead_zone) / (max_zone - dead_zone);
+				if (value > 1.0f)
+					value = 1.0f;
+			}
+			else if (value < 0.0f)
+			{
+				value = (value + dead_zone) / (max_zone - dead_zone);
+				if (value < -1.0f)
+					value = -1.0f;
+			}
+		}
+		return value;
+	}
+
+	glm::vec2 GamepadState::ClampAndNormalizeInput2D(glm::vec2 value, float dead_zone, float max_zone) const
+	{
+		if (dead_zone >= 0.0f && max_zone > dead_zone)
+		{
+			float value_length = glm::length(value);
+
+			if (value_length <= dead_zone)
+			{
+				value = { 0.0f, 0.0f };
+			}
+			else if (value_length >= max_zone)
+			{
+				value /= value_length;
+			}
+			else
+			{
+				value =
+					(value / value_length) *
+					(value_length - dead_zone) / (max_zone - dead_zone);
+			}
+		}
+		return value;
+	}
+
+	// XXX: Not all devices are perfect (rest value may not be 0 and max value may be greater than 1)
+	//      Use a [dead_zone, max_zone] range for clamping and renormalization
+
 	void GamepadState::UpdateAxisAndButtons(int stick_index, float dead_zone, float max_zone)
 	{
 		GLFWgamepadstate state;
@@ -81,7 +132,7 @@ namespace chaos
 			// want positive Y when stick is UP
 			else if (input == Input1D::GAMEPAD_LEFT_AXIS_Y || input == Input1D::GAMEPAD_RIGHT_AXIS_Y)
 				value = -value;
-			axes[i].SetValue(value, dead_zone, max_zone);
+			axes[i].SetValue(ClampAndNormalizeInput1D(value, dead_zone, max_zone));
 		}
 
 		// update standard buttons
@@ -111,7 +162,7 @@ namespace chaos
 				state.axes[size_t(src_horizontal_axis) - size_t(Input1D::GAMEPAD_FIRST)],
 				state.axes[size_t(src_vertical_axis) - size_t(Input1D::GAMEPAD_FIRST)]
 			};
-			sticks[size_t(dst_stick) - size_t(Input2D::GAMEPAD_FIRST)].SetValue(stick_value, dead_zone, max_zone);
+			sticks[size_t(dst_stick) - size_t(Input2D::GAMEPAD_FIRST)].SetValue(ClampAndNormalizeInput2D(stick_value, dead_zone, max_zone));
 		};
 
 		UpdateVirtualStick(Input2D::GAMEPAD_LEFT_STICK, Input1D::GAMEPAD_LEFT_AXIS_X, Input1D::GAMEPAD_LEFT_AXIS_Y);

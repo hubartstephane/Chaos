@@ -128,21 +128,17 @@ namespace chaos
 
 	/**
 	* Input1DState: An input state for 1D values (gamepad axes, mouse wheel ...)
-	*               Not all devices are perfect (rest value may not be 0 and max value may be greater than 1)
-	*               Use a [dead_zone, max_zone] range for renormalization
 	*/
 	class CHAOS_API Input1DState : public InputState<float>
 	{
 	public:
 
 		/** update the value */
-		void SetValue(float in_value, float dead_zone, float max_zone);
+		void SetValue(float in_value);
 	};
 
 	/**
 	* Input2DState: An input state for 2D values (gamepad sticks, mouse movement ...)
-	*               Not all devices are perfect (rest value may not be 0 and max value may be greater than 1)
-	*               Use a [dead_zone, max_zone] range for renormalization
 	*/
 
 	class CHAOS_API Input2DState : public InputState<glm::vec2>
@@ -150,7 +146,7 @@ namespace chaos
 	public:
 
 		/** update the value */
-		void SetValue(glm::vec2 in_value, float dead_zone, float max_zone);
+		void SetValue(glm::vec2 in_value);
 	};
 
 #endif

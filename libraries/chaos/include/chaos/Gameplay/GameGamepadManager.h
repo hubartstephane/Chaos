@@ -11,7 +11,9 @@ namespace chaos
 	public:
 
 		/** the constructor */
-		GameGamepadManager(Game* in_game) : game(in_game)
+		GameGamepadManager(Game* in_game, float in_dead_zone = 0.4f, float in_max_zone = 0.9f): 
+			GamepadManager(in_dead_zone, in_max_zone),
+			game(in_game)
 		{
 			assert(in_game != nullptr);
 		}

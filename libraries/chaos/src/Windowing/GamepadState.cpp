@@ -64,7 +64,7 @@ namespace chaos
 		return false;
 	}
 
-	void GamepadState::UpdateAxisAndButtons(int stick_index, float dead_zone)
+	void GamepadState::UpdateAxisAndButtons(int stick_index, float dead_zone, float max_zone)
 	{
 		GLFWgamepadstate state;
 		glfwGetGamepadState(stick_index, &state);
@@ -81,7 +81,7 @@ namespace chaos
 			// want positive Y when stick is UP
 			else if (input == Input1D::GAMEPAD_LEFT_AXIS_Y || input == Input1D::GAMEPAD_RIGHT_AXIS_Y)
 				value = -value;
-			axes[i].SetValue(value, dead_zone, InputDeviceType::GAMEPAD);
+			axes[i].SetValue(value, dead_zone, max_zone);
 		}
 
 		// update standard buttons
@@ -111,7 +111,7 @@ namespace chaos
 				state.axes[size_t(src_horizontal_axis) - size_t(Input1D::GAMEPAD_FIRST)],
 				state.axes[size_t(src_vertical_axis) - size_t(Input1D::GAMEPAD_FIRST)]
 			};
-			sticks[size_t(dst_stick) - size_t(Input2D::GAMEPAD_FIRST)].SetValue(stick_value, dead_zone, InputDeviceType::GAMEPAD);
+			sticks[size_t(dst_stick) - size_t(Input2D::GAMEPAD_FIRST)].SetValue(stick_value, dead_zone, max_zone);
 		};
 
 		UpdateVirtualStick(Input2D::GAMEPAD_LEFT_STICK, Input1D::GAMEPAD_LEFT_AXIS_X, Input1D::GAMEPAD_LEFT_AXIS_Y);

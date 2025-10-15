@@ -29,11 +29,11 @@ namespace chaos
 		if (keyboard_and_mouse_device == nullptr)
 			return;
 
-		DisplayKeyboardAndMouseKeyStates(keyboard_and_mouse_device, "Mouse Table", "Mouse", false, InputDeviceType::MOUSE);
+		DisplayKeyboardAndMouseKeyStates(keyboard_and_mouse_device, "Mouse Table", "Buttons", false, InputDeviceType::MOUSE);
 		DisplayAllInput1DInfo(keyboard_and_mouse_device, "Mouse Input1D", "Input1D");
 		DisplayAllInput2DInfo(keyboard_and_mouse_device, "Mouse Input2D", "Input2D");
 
-		DisplayKeyboardAndMouseKeyStates(keyboard_and_mouse_device, "Keyboard Table", "Keyboard", true, InputDeviceType::KEYBOARD);
+		DisplayKeyboardAndMouseKeyStates(keyboard_and_mouse_device, "Keyboard Table", "Keys", true, InputDeviceType::KEYBOARD);
 	}
 
 }; // namespace chaos

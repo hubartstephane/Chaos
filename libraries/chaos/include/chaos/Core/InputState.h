@@ -127,26 +127,22 @@ namespace chaos
 	};
 
 	/**
-	* Input1DState: while max and min values for sticks are not always 1 (some controllers has value lesser that 1.0),
-	*               we have to store the upper and lower values to renormalize the output
+	* Input1DState: An input state for 1D values (gamepad axes, mouse wheel ...)
+	*               Not all devices are perfect (rest value may not be 0 and max value may be greater than 1)
+	*               Use a [dead_zone, max_zone] range for renormalization
 	*/
 	class CHAOS_API Input1DState : public InputState<float>
 	{
 	public:
 
 		/** update the value */
-		void SetValue(float in_value, float dead_zone, InputDeviceType device_type);
-
-	public:
-
-		/** min value always encountered */
-		float min_raw_value = -0.8f;
-		/** max value always encountered */
-		float max_raw_value = +0.8f;
+		void SetValue(float in_value, float dead_zone, float max_zone);
 	};
 
 	/**
-	* Input2DState: state for a 2D stick
+	* Input2DState: An input state for 2D values (gamepad sticks, mouse movement ...)
+	*               Not all devices are perfect (rest value may not be 0 and max value may be greater than 1)
+	*               Use a [dead_zone, max_zone] range for renormalization
 	*/
 
 	class CHAOS_API Input2DState : public InputState<glm::vec2>
@@ -154,12 +150,7 @@ namespace chaos
 	public:
 
 		/** update the value */
-		void SetValue(glm::vec2 in_value, float dead_zone, InputDeviceType device_type);
-
-	public:
-
-		/** maximum length encoutered so far */
-		float max_raw_length = std::sqrt(0.8f * 0.8f + 0.8f * 0.8f); // distance if max.X = 0.8 && max.Y = 0.8
+		void SetValue(glm::vec2 in_value, float dead_zone, float max_zone);
 	};
 
 #endif

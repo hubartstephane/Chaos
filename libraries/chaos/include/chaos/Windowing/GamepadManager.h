@@ -91,7 +91,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		virtual bool EnumerateDeviceHierarchy(EnumerateDeviceHierarchyFunction func) const override;
 
 		/** update all the values for the axis and buttons */
-		void UpdateAxisAndButtons(float dead_zone);
+		void UpdateAxisAndButtons(float dead_zone, float max_zone);
 		/** called at unconnection to be sure input cannot be consulted anymore */
 		void ClearInputs();
 
@@ -265,7 +265,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	public:
 
 		/** constructor */
-		GamepadManager(float in_dead_zone = 0.2f);
+		GamepadManager(float in_dead_zone = 0.4f, float in_max_zone = 0.9f);
 		/** destructor */
 		virtual ~GamepadManager();
 
@@ -316,6 +316,8 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 
 		/** the default dead zone value */
 		float dead_zone = 0.4f;
+		/** the max zone after which an input1D or 2D is clamped to 1.0f */
+		float max_zone = 0.9f;
 		/** the logical gamepads */
 		std::vector<Gamepad*> user_gamepads;
 		/** the physical gamepads */

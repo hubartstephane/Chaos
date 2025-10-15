@@ -5,8 +5,6 @@ namespace chaos
 {
 	void ImGuiKeyboardAndMouseDeviceObject::DisplayKeyboardAndMouseKeyStates(KeyboardAndMouseDevice const* keyboard_and_mouse_device, char const* table_title, char const * title, bool hide_cold_keys, InputDeviceType key_type) const
 	{
-		ImGui::SeparatorText(title);
-
 		DisplayAllKeyInfo(keyboard_and_mouse_device, table_title, title, [&](Key key, KeyState const & state)
 		{
 			if (GetKeyInputDevice(key) != key_type)
@@ -29,10 +27,14 @@ namespace chaos
 		if (keyboard_and_mouse_device == nullptr)
 			return;
 
+		ImGui::SeparatorText("Mouse");
 		DisplayKeyboardAndMouseKeyStates(keyboard_and_mouse_device, "Mouse Table", "Buttons", false, InputDeviceType::MOUSE);
-		DisplayAllInput1DInfo(keyboard_and_mouse_device, "Mouse Input1D", "Input1D");
-		DisplayAllInput2DInfo(keyboard_and_mouse_device, "Mouse Input2D", "Input2D");
+		DisplayAllInput1DInfo(keyboard_and_mouse_device, "MouseInput1D", "Input1D");
+		DisplayAllInput2DInfo(keyboard_and_mouse_device, "MouseInput2D", "Input2D");
 
+		ImGui::Dummy({ 0.0f, 20.0f });
+
+		ImGui::SeparatorText("Keyboard");
 		DisplayKeyboardAndMouseKeyStates(keyboard_and_mouse_device, "Keyboard Table", "Keys", true, InputDeviceType::KEYBOARD);
 	}
 

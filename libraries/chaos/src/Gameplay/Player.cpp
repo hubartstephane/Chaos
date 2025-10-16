@@ -48,7 +48,8 @@ namespace chaos
 			return false;
 		// try capture the device
 		shared_ptr<PlayerGamepadCallbacks> gamepad_callback = new PlayerGamepadCallbacks(this);
-		gamepad = in_physical_gamepad->CaptureDevice(gamepad_callback.get());
+
+		gamepad = in_physical_gamepad->CaptureDevice(&gamepad_filter_settings, gamepad_callback.get());
 		if (gamepad == nullptr)
 			return false;
 		return true;

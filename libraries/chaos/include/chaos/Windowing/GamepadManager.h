@@ -48,9 +48,9 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		/** max_zone applied to axes and sticks (using length for input2D). If value greater than this, consider it as 1 */
 		float max_zone  = 0.9f;
 		/** angle in radian to snap stick direction to any sector boundaries */
-		float sector_snap_angle = 0.3f;
+		float sector_snap_angle = 0.1f;
 		/** number of sector for angle snapping */
-		int sector_snap_count = 4;
+		int sector_snap_count = 8;
 	};
 
 	/**
@@ -98,7 +98,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		bool IsPresent() const { return is_present; }
 
 		/** take a physical device, and create a logical device if possible */
-		class Gamepad* CaptureDevice(GamepadCallbacks* in_callbacks);
+		class Gamepad* CaptureDevice(GamepadInputFilterSettings const* in_filter_settings, GamepadCallbacks* in_callbacks);
 
 	protected:
 
@@ -194,7 +194,8 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 
 	protected:
 
-		Gamepad(GamepadManager* in_gamepad_manager, PhysicalGamepad* in_physical_device); // protected constructor
+		/** constructor */
+		Gamepad(GamepadManager* in_gamepad_manager, PhysicalGamepad* in_physical_device);
 
 	public:
 
@@ -236,6 +237,11 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		/** remove force feedback effects */
 		void ClearForceFeedbackEffects();
 
+		/** get the filter settings */
+		GamepadInputFilterSettings const& GetInputFilterSettings() const;
+		/** set the filter settings */
+		void SetInputFilterSettings(GamepadInputFilterSettings const& in_filter_settings);
+
 	protected:
 
 		/** override */
@@ -254,6 +260,8 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		class GamepadManager* gamepad_manager = nullptr;
 		/* the device */
 		PhysicalGamepad* physical_device = nullptr;
+		/** configuration to handle input1D & input2D */
+		GamepadInputFilterSettings filter_settings;
 		/** the callbacks */
 		shared_ptr<GamepadCallbacks> callbacks;
 		/** indicates whether the stick has already be connected to a physical device */
@@ -285,14 +293,14 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	public:
 
 		/** constructor */
-		GamepadManager(GamepadInputFilterSettings const& in_filter_settings = {});
+		GamepadManager(GamepadInputFilterSettings const& in_gamepad_filter_settings = {});
 		/** destructor */
 		virtual ~GamepadManager();
 
 		/** update all the joysticks */
 		void Tick(float delta_time);
 		/** create a gamepad */
-		Gamepad* AllocateGamepad(bool want_present = false, GamepadCallbacks* in_callbacks = nullptr);
+		Gamepad* AllocateGamepad(bool want_present = false, GamepadInputFilterSettings const * in_filter_settings = nullptr, GamepadCallbacks* in_callbacks = nullptr);
 		/** enable / disable pooling */
 		void EnableInputPooling(bool in_pooling_enabled);
 		/** returns true whether input pooling is enabled */
@@ -300,9 +308,9 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 
 		/** returns whether the given stick has any input set */
 		static bool HasAnyInputs(int stick_index, float dead_zone);
-
+		/** returns the number of physical devices */
 		size_t GetPhysicalGamepadCount() const { return physical_gamepads.size(); }
-
+		/** gets a physical device */
 		PhysicalGamepad const * GetPhysicalGamepad(size_t index) const { return physical_gamepads[index]; }
 
 	protected:
@@ -322,9 +330,9 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		/** called to pool inputs on unbound connected physical device */
 		void PoolInputs(int& unallocated_present_physical_device_count);
 		/** internal method to allocate and initialize a gamepad */
-		Gamepad* DoAllocateGamepad(PhysicalGamepad* physical_gamepad, GamepadCallbacks* in_callbacks);
+		Gamepad* DoAllocateGamepad(PhysicalGamepad* physical_gamepad, GamepadInputFilterSettings const* in_filter_settings, GamepadCallbacks* in_callbacks);
 		/** capture a physical device and get a logical device */
-		Gamepad* DoCaptureDevice(PhysicalGamepad* in_physical_gamepad, GamepadCallbacks* in_callbacks);
+		Gamepad* DoCaptureDevice(PhysicalGamepad* in_physical_gamepad, GamepadInputFilterSettings const* in_filter_settings, GamepadCallbacks* in_callbacks);
 
 		/** tick the force feedback effects of all allocated gamepad */
 		void TickForceFeedbackEffects(float delta_time);
@@ -335,7 +343,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	protected:
 
 		/** configuration to handle input1D & input2D */
-		GamepadInputFilterSettings input_filter_settings;
+		GamepadInputFilterSettings gamepad_filter_settings;
 		/** the logical gamepads */
 		std::vector<Gamepad*> user_gamepads;
 		/** the physical gamepads */

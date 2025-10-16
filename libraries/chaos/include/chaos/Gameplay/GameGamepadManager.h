@@ -15,7 +15,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GameGamepadManager(Game* in_game, GamepadInputFilterSettings const& in_filter_settings = {});
+		GameGamepadManager(Game* in_game, GamepadInputFilterSettings const& in_gamepad_filter_settings = {});
 
 	protected:
 

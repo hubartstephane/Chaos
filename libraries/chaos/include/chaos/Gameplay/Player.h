@@ -143,6 +143,9 @@ namespace chaos
 		/** the index of the player */
 		size_t player_index = 0;
 
+		/** the settings for gamepad filtering */
+		GamepadInputFilterSettings gamepad_filter_settings;
+
 		/** the current life for the player */
 		int life_count = 3;
 		/** the current health of the player */

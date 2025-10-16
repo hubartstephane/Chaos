@@ -95,7 +95,7 @@ protected:
 
 		gamepad_manager = new MyGamepadManager(&imgui_user_message);
 
-		main_gamepad = gamepad_manager->AllocateGamepad(false, new TestGamepadCallbacks(&imgui_user_message));
+		main_gamepad = gamepad_manager->AllocateGamepad(false, nullptr, new TestGamepadCallbacks(&imgui_user_message));
 		return true;
 	}
 

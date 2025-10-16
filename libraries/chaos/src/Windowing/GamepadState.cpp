@@ -140,7 +140,8 @@ namespace chaos
 	void GamepadState::UpdateAxisAndButtons(int stick_index, GamepadInputFilterSettings const& in_filter_settings)
 	{
 		GLFWgamepadstate state;
-		glfwGetGamepadState(stick_index, &state);
+		if (glfwGetGamepadState(stick_index, &state) == GLFW_FALSE)
+			return;
 
 		// update axes
 		for (size_t i = 0; i < AXIS_COUNT; ++i)

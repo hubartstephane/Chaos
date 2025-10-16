@@ -36,9 +36,9 @@ namespace chaos
 		gamepad_state.UpdateAxisAndButtons(stick_index, in_filter_settings);
 	}
 
-	Gamepad* PhysicalGamepad::CaptureDevice(GamepadCallbacks* in_callbacks)
+	Gamepad* PhysicalGamepad::CaptureDevice(GamepadInputFilterSettings const* in_filter_settings, GamepadCallbacks* in_callbacks)
 	{
-		return gamepad_manager->DoCaptureDevice(this, in_callbacks);
+		return gamepad_manager->DoCaptureDevice(this, in_filter_settings, in_callbacks);
 	}
 
 	//
@@ -273,6 +273,14 @@ namespace chaos
 		}
 	}
 
+	GamepadInputFilterSettings const& Gamepad::GetInputFilterSettings() const
+	{
+		return filter_settings;
+	}
+	void Gamepad::SetInputFilterSettings(GamepadInputFilterSettings const& in_filter_settings)
+	{
+		filter_settings = in_filter_settings;
+	}
 
 	//
 	// GamepadManager functions
@@ -282,8 +290,8 @@ namespace chaos
 	GamepadManager::XINPUT_SET_STATE_FUNC GamepadManager::XInputSetStateFunc = nullptr;
 #endif
 
-	GamepadManager::GamepadManager(GamepadInputFilterSettings const & in_filter_settings):
-		input_filter_settings(in_filter_settings)
+	GamepadManager::GamepadManager(GamepadInputFilterSettings const & in_gamepad_filter_settings):
+		gamepad_filter_settings(in_gamepad_filter_settings)
 	{
 		// load manually module so that this work on windows 7 & windows +
 #if _WIN64
@@ -305,7 +313,7 @@ namespace chaos
 			{
 				physical_gamepad->is_present = (glfwJoystickPresent(i) > 0);
 				if (physical_gamepad->is_present)
-					physical_gamepad->UpdateAxisAndButtons(input_filter_settings);
+					physical_gamepad->UpdateAxisAndButtons(gamepad_filter_settings);
 			}
 			physical_gamepads.push_back(physical_gamepad);
 		}
@@ -392,16 +400,16 @@ namespace chaos
 		return best_physical_gamepad;
 	}
 
-	Gamepad* GamepadManager::AllocateGamepad(bool want_present, GamepadCallbacks* in_callbacks) // user explicitly require a gamepad
+	Gamepad* GamepadManager::AllocateGamepad(bool want_present, GamepadInputFilterSettings const* in_filter_settings, GamepadCallbacks* in_callbacks) // user explicitly require a gamepad
 	{
 		PhysicalGamepad* physical_gamepad = FindUnallocatedPhysicalGamepad(in_callbacks);
 		if (want_present && physical_gamepad == nullptr) // all physical device in use or not present ?
 			return nullptr;
 
-		return DoAllocateGamepad(physical_gamepad, in_callbacks);
+		return DoAllocateGamepad(physical_gamepad, in_filter_settings, in_callbacks);
 	}
 
-	Gamepad* GamepadManager::DoAllocateGamepad(PhysicalGamepad* physical_gamepad, GamepadCallbacks* in_callbacks)
+	Gamepad* GamepadManager::DoAllocateGamepad(PhysicalGamepad* physical_gamepad, GamepadInputFilterSettings const* in_filter_settings, GamepadCallbacks* in_callbacks)
 	{
 		Gamepad* result = new Gamepad(this, physical_gamepad);
 		if (result != nullptr)
@@ -409,6 +417,7 @@ namespace chaos
 			user_gamepads.push_back(result);
 			if (in_callbacks != nullptr)
 			{
+				result->SetInputFilterSettings((in_filter_settings != nullptr) ? *in_filter_settings : gamepad_filter_settings);
 				result->SetCallbacks(in_callbacks);
 				if (physical_gamepad != nullptr)
 					result->callbacks->OnGamepadConnected(result);
@@ -494,9 +503,10 @@ namespace chaos
 
 			if (is_present)
 			{
-				physical_gamepad->UpdateAxisAndButtons(input_filter_settings);
-
 				Gamepad* user_gamepad = physical_gamepad->user_gamepad;
+
+				physical_gamepad->UpdateAxisAndButtons((user_gamepad != nullptr)? user_gamepad->filter_settings : gamepad_filter_settings);
+				
 				if (user_gamepad != nullptr && user_gamepad->callbacks != nullptr)
 					user_gamepad->callbacks->OnGamepadStateUpdated(physical_gamepad->gamepad_state); // notify the user of the update
 
@@ -609,7 +619,7 @@ namespace chaos
 		return false;
 	}
 
-	Gamepad* GamepadManager::DoCaptureDevice(PhysicalGamepad* in_physical_gamepad, GamepadCallbacks* in_callbacks)
+	Gamepad* GamepadManager::DoCaptureDevice(PhysicalGamepad* in_physical_gamepad, GamepadInputFilterSettings const * in_filter_settings, GamepadCallbacks* in_callbacks)
 	{
 		// the physical device is not present
 		if (!in_physical_gamepad->IsPresent())
@@ -618,7 +628,7 @@ namespace chaos
 		if (in_physical_gamepad->user_gamepad != nullptr)
 			return nullptr;
 
-		return DoAllocateGamepad(in_physical_gamepad, in_callbacks);
+		return DoAllocateGamepad(in_physical_gamepad, in_filter_settings, in_callbacks);
 	}
 
 }; // namespace chaos

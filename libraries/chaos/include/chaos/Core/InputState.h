@@ -69,14 +69,14 @@ namespace chaos
 		/** returns whether 2 input values should be considered as identical */
 		static bool AreValuesSimilar(float src1, float src2)
 		{
-			return (MathTools::GetExtendedSign(src1) == MathTools::GetExtendedSign(src2));
+			return (MathTools::AnalogicToDiscret(src1) == MathTools::AnalogicToDiscret(src2));
 		}
 		/** returns whether 2 input values should be considered as identical */
 		static bool AreValuesSimilar(glm::vec2 const & src1, glm::vec2 const & src2)
 		{
 			float sqr_length_src1 = glm::length2(src1);
 			float sqr_length_src2 = glm::length2(src2);
-			return (MathTools::GetExtendedSign(sqr_length_src1) == MathTools::GetExtendedSign(sqr_length_src2));
+			return (MathTools::AnalogicToDiscret(sqr_length_src1) == MathTools::AnalogicToDiscret(sqr_length_src2));
 		}
 		/** internal method to set value and update internal time */
 		void DoSetValue(T in_value)

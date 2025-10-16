@@ -5,3 +5,4 @@
 build:ProcessSubPremake("ImGuiPopup")
 build:ProcessSubPremake("ImGuiArray")
 build:ProcessSubPremake("ImGuiGlobalVariables")
+build:ProcessSubPremake("ImGuiGraphViewer")

@@ -6,6 +6,8 @@ namespace chaos
 	// FORWARD DECLARATION / FRIENDSHIP MACROS
 	// ==============================================================
 
+class GamepadInputUpdateSettings;
+
 	// all classes in this file
 #define CHAOS_GAMEPAD_CLASSES \
 (PhysicalGamepad) \
@@ -32,6 +34,22 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 
 	/** maximum number of supported physical gamepads */
 	static constexpr int MAX_SUPPORTED_GAMEPAD_COUNT = GLFW_JOYSTICK_LAST + 1;
+
+	/**
+	* GamepadCallbacks : some callbacks that may be plugged into a gamepad
+	*/
+
+	class GamepadInputUpdateSettings
+	{
+	public:
+
+		/** dead_zone applyed to axes and sticks (using length for input2D). If value lower than this, consider it as 0 */
+		float dead_zone = 0.4f;
+		/** max_zone applyed to axes and sticks (using length for input2D). If value greater than this, consider it as 1 */
+		float max_zone  = 0.9f;
+		/** angle in radian to snap stick direction to any sector boundaries */
+		float stick_snap_angle = 0.3f;
+	};
 
 	/**
 	* GamepadCallbacks : some callbacks that may be plugged into a gamepad
@@ -91,7 +109,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		virtual bool EnumerateDeviceHierarchy(EnumerateDeviceHierarchyFunction func) const override;
 
 		/** update all the values for the axis and buttons */
-		void UpdateAxisAndButtons(float dead_zone, float max_zone);
+		void UpdateAxisAndButtons(GamepadInputUpdateSettings const & update_settings);
 		/** called at unconnection to be sure input cannot be consulted anymore */
 		void ClearInputs();
 
@@ -265,7 +283,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	public:
 
 		/** constructor */
-		GamepadManager(float in_dead_zone = 0.4f, float in_max_zone = 0.9f);
+		GamepadManager(GamepadInputUpdateSettings const& in_update_settings = {});
 		/** destructor */
 		virtual ~GamepadManager();
 
@@ -314,10 +332,8 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 
 	protected:
 
-		/** the default dead zone value */
-		float dead_zone = 0.4f;
-		/** the max zone after which an input1D or 2D is clamped to 1.0f */
-		float max_zone = 0.9f;
+		/** configuration to handle input1D & input2D */
+		GamepadInputUpdateSettings input_update_settings;
 		/** the logical gamepads */
 		std::vector<Gamepad*> user_gamepads;
 		/** the physical gamepads */

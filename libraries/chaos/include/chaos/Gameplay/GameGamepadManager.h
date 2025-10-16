@@ -6,17 +6,16 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+	/**
+	 * GameGamepadManager: specialization of GamepadManager that can poll input into game 
+	 */
+
 	class CHAOS_API GameGamepadManager : public GamepadManager
 	{
 	public:
 
-		/** the constructor */
-		GameGamepadManager(Game* in_game, float in_dead_zone = 0.4f, float in_max_zone = 0.9f): 
-			GamepadManager(in_dead_zone, in_max_zone),
-			game(in_game)
-		{
-			assert(in_game != nullptr);
-		}
+		/** constructor */
+		GameGamepadManager(Game* in_game, GamepadInputUpdateSettings const& in_update_settings = {});
 
 	protected:
 

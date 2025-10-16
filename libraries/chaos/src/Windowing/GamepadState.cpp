@@ -69,20 +69,18 @@ namespace chaos
 		if (dead_zone >= 0.0f && max_zone > dead_zone)
 		{
 			if (value <= dead_zone && value >= -dead_zone)
-			{
-				value = 0.0f;
-			}
-			else if (value > 0.0f)
+				return 0.0f;
+			
+			if (value > 0.0f)
 			{
 				value = (value - dead_zone) / (max_zone - dead_zone);
-				if (value > 1.0f)
-					value = 1.0f;
+				return std::min(value, 1.0f);
 			}
-			else if (value < 0.0f)
+			
+			if (value < 0.0f)
 			{
 				value = (value + dead_zone) / (max_zone - dead_zone);
-				if (value < -1.0f)
-					value = -1.0f;
+				return std::max(value, -1.0f);
 			}
 		}
 		return value;
@@ -95,27 +93,51 @@ namespace chaos
 			float value_length = glm::length(value);
 
 			if (value_length <= dead_zone)
-			{
-				value = { 0.0f, 0.0f };
-			}
-			else if (value_length >= max_zone)
-			{
-				value /= value_length;
-			}
-			else
-			{
-				value =
-					(value / value_length) *
-					(value_length - dead_zone) / (max_zone - dead_zone);
-			}
+				return { 0.0f, 0.0f };
+			if (value_length >= max_zone)
+				return value / value_length;
+
+			return (value / value_length) * (value_length - dead_zone) / (max_zone - dead_zone);
 		}
 		return value;
+	}
+
+	float GamepadState::SnapInput2DAngleToSectorBoundaries(float angle, float stick_snap_angle, int sector_count) const
+	{
+		assert(angle >= 0.0f);
+		assert(angle < 2.0f * float(M_PI));
+
+		assert(stick_snap_angle < 0.5f * 2.0f * float(M_PI) / float(sector_count)); // elsewhere the snap region for a sector and the next one overlap
+
+		// early exit
+		if (sector_count <= 1)
+			return angle;
+		if (stick_snap_angle <= 0.0f)
+			return angle;
+
+		// find the sector the stick belongs to
+		float sector_angle = 2.0f * float(M_PI) / float(sector_count);
+
+		int sector = int(angle / sector_angle);
+
+		// snap the angle to sector boundaries
+		float sector_start_angle = float(sector) * sector_angle;
+		float sector_end_angle   = float(sector + 1) * sector_angle;
+
+		if (angle < sector_start_angle + stick_snap_angle)
+			return sector_start_angle;
+		if (angle > sector_end_angle - stick_snap_angle)
+			return sector_end_angle;
+
+		return 
+			sector_start_angle + 
+			sector_angle * (angle - sector_start_angle - stick_snap_angle) / (sector_angle - 2.0f * stick_snap_angle);
 	}
 
 	// XXX: Not all devices are perfect (rest value may not be 0 and max value may be greater than 1)
 	//      Use a [dead_zone, max_zone] range for clamping and renormalization
 
-	void GamepadState::UpdateAxisAndButtons(int stick_index, float dead_zone, float max_zone)
+	void GamepadState::UpdateAxisAndButtons(int stick_index, GamepadInputUpdateSettings const& update_settings)
 	{
 		GLFWgamepadstate state;
 		glfwGetGamepadState(stick_index, &state);
@@ -132,7 +154,7 @@ namespace chaos
 			// want positive Y when stick is UP
 			else if (input == Input1D::GAMEPAD_LEFT_AXIS_Y || input == Input1D::GAMEPAD_RIGHT_AXIS_Y)
 				value = -value;
-			axes[i].SetValue(ClampAndNormalizeInput1D(value, dead_zone, max_zone));
+			axes[i].SetValue(ClampAndNormalizeInput1D(value, update_settings.dead_zone, update_settings.max_zone));
 		}
 
 		// update standard buttons
@@ -162,7 +184,24 @@ namespace chaos
 				state.axes[size_t(src_horizontal_axis) - size_t(Input1D::GAMEPAD_FIRST)],
 				state.axes[size_t(src_vertical_axis) - size_t(Input1D::GAMEPAD_FIRST)]
 			};
-			sticks[size_t(dst_stick) - size_t(Input2D::GAMEPAD_FIRST)].SetValue(ClampAndNormalizeInput2D(stick_value, dead_zone, max_zone));
+
+			// renormalize stick length so its length is always [0..1] (taking into account dead_zone & max_zone)
+			stick_value = ClampAndNormalizeInput2D(stick_value, update_settings.dead_zone, update_settings.max_zone);
+
+			// tweak the stick angle to have a slight snapping along X and Y directions 	
+			float stick_length = glm::length(stick_value);
+			float stick_alpha  = std::atan2(stick_value.y, stick_value.x);
+			if (stick_length > 0.0f)
+				stick_alpha = SnapInput2DAngleToSectorBoundaries(stick_alpha + float(M_PI), update_settings.stick_snap_angle, 4) - float(M_PI); // +/- pi so that stick_alpha is in range [0..2.pi] rather than [-pi..+pi]
+
+			// reconstitue the new stick value and apply it to gamepad state
+			stick_value = 
+			{
+				stick_length * std::cos(stick_alpha),
+				stick_length * std::sin(stick_alpha)
+			};
+
+			sticks[size_t(dst_stick) - size_t(Input2D::GAMEPAD_FIRST)].SetValue(stick_value);
 		};
 
 		UpdateVirtualStick(Input2D::GAMEPAD_LEFT_STICK, Input1D::GAMEPAD_LEFT_AXIS_X, Input1D::GAMEPAD_LEFT_AXIS_Y);

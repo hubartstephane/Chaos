@@ -21,7 +21,7 @@ namespace chaos
 		/** display for all keys matching certain criteria */
 		void DisplayAllKeyInfo(InputDeviceInterface const* in_input_device, char const* table_title, char const * title, ForAllKeysFunction filter_func = ConstantFunction(true)) const;
 		/** display a single key info */
-		void DisplayKeyInfo(Key key, KeyState const & state) const;
+		void DisplayKeyInfo(Key input, KeyState const & state) const;
 		/** display info for all axes matching certain criteria */
 		void DisplayAllInput1DInfo(InputDeviceInterface const* in_input_device, char const* table_title, char const * title, ForAllInput1DFunction filter_func = ConstantFunction(true)) const;
 		/** display a single axis info */

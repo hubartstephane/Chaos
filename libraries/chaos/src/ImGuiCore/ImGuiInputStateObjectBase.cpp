@@ -3,16 +3,16 @@
 
 namespace chaos
 {
-	void ImGuiInputStateObjectBase::DisplayKeyInfo(Key key, KeyState const & state) const
+	void ImGuiInputStateObjectBase::DisplayKeyInfo(Key input, KeyState const & state) const
 	{
-		// early exit for unknown key (whatever type is)
-		if (key == Key::UNKNOWN)
+		// early exit for unknown input
+		if (input == Key::UNKNOWN)
 			return;
 
 		// ImGui display code
-		if (char const * key_name = EnumToString(key))
+		if (char const * input_name = EnumToString(input))
 		{
-			ImGui::PushID(int(key));
+			ImGui::PushID(int(input));
 
 			bool pressed = state.GetValue();
 
@@ -21,7 +21,7 @@ namespace chaos
 				ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 			ImGui::TableNextColumn();
-			ImGui::TextColored(color, "%s", key_name);
+			ImGui::TextColored(color, "%s", input_name);
 
 			ImGui::TableNextColumn();
 			ImGui::TextColored(color, "%s", pressed? "pressed" : "released");
@@ -48,7 +48,7 @@ namespace chaos
 
 	void ImGuiInputStateObjectBase::DisplayInput1DInfo(Input1D input, Input1DState const & state) const
 	{
-		// early exit for unknown key (whatever type is)
+		// early exit for unknown input
 		if (input == Input1D::UNKNOWN)
 			return;
 
@@ -91,7 +91,7 @@ namespace chaos
 
 	void ImGuiInputStateObjectBase::DisplayInput2DInfo(Input2D input, Input2DState const & state) const
 	{
-		// early exit for unknown key (whatever type is)
+		// early exit for unknown input
 		if (input == Input2D::UNKNOWN)
 			return;
 

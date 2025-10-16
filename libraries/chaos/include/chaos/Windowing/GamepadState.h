@@ -27,7 +27,7 @@ namespace chaos
 		size_t GetAxisCount() const;
 
 		/** update all the values for the axis and buttons */
-		void UpdateAxisAndButtons(int stick_index, float dead_zone, float max_zone);
+		void UpdateAxisAndButtons(int stick_index, GamepadInputUpdateSettings const& update_settings);
 		/** reset the content of the object */
 		void Clear();
 
@@ -51,6 +51,8 @@ namespace chaos
 		float ClampAndNormalizeInput1D(float value, float dead_zone, float max_zone) const;
 		/** apply dead_zone and max_zone. renormalize input */
 		glm::vec2 ClampAndNormalizeInput2D(glm::vec2 value, float dead_zone, float max_zone) const;
+		/** try to snap stick angle to some sector boundaries (X & Y directions). Angle must be in [0, 2.pi] */
+		float SnapInput2DAngleToSectorBoundaries(float angle, float stick_angle_snap, int sector_count) const;
 
 	protected:
 

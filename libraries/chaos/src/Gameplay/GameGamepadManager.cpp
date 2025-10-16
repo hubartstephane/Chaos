@@ -3,6 +3,13 @@
 
 namespace chaos
 {
+	GameGamepadManager::GameGamepadManager(Game* in_game, GamepadInputUpdateSettings const& in_update_settings):
+		GamepadManager(in_update_settings),
+		game(in_game)
+	{
+		assert(in_game != nullptr);
+	}
+
 	bool GameGamepadManager::DoPoolGamepad(PhysicalGamepad * physical_gamepad)
 	{
 		if (game != nullptr)

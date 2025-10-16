@@ -141,7 +141,10 @@ namespace chaos
 	{
 		GLFWgamepadstate state;
 		if (glfwGetGamepadState(stick_index, &state) == GLFW_FALSE)
+		{
+			Clear();
 			return;
+		}
 
 		// update axes
 		for (size_t i = 0; i < AXIS_COUNT; ++i)

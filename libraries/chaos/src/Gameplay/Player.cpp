@@ -34,6 +34,7 @@ namespace chaos
 		CHAOS_JSON_ATTRIBUTE(config, life_count);
 		CHAOS_JSON_ATTRIBUTE(config, max_health);
 		CHAOS_JSON_ATTRIBUTE(config, invulnerability_duration);
+		CHAOS_JSON_ATTRIBUTE(config, gamepad_filter_settings);
 		health = max_health;
 		return true;
 	}

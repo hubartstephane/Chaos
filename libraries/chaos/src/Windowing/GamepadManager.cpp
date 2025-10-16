@@ -4,6 +4,28 @@
 namespace chaos
 {
 	//
+	// GamepadInputFilterSettings functions
+	//
+
+	bool DoSaveIntoJSON(nlohmann::json* json, GamepadInputFilterSettings const& src)
+	{
+		JSONTools::SetAttribute(json, "dead_zone", src.dead_zone);
+		JSONTools::SetAttribute(json, "max_zone", src.max_zone);
+		JSONTools::SetAttribute(json, "sector_snap_angle", src.sector_snap_angle);
+		JSONTools::SetAttribute(json, "sector_snap_count", src.sector_snap_count);
+		return true;
+	}
+
+	bool DoLoadFromJSON(JSONReadConfiguration config, GamepadInputFilterSettings& dst)
+	{
+		JSONTools::GetAttribute(config, "dead_zone", dst.dead_zone);
+		JSONTools::GetAttribute(config, "max_zone", dst.max_zone);
+		JSONTools::GetAttribute(config, "sector_snap_angle", dst.sector_snap_angle);
+		JSONTools::GetAttribute(config, "sector_snap_count", dst.sector_snap_count);
+		return true;
+	}
+
+	//
 	// PhysicalGamepad functions
 	//
 

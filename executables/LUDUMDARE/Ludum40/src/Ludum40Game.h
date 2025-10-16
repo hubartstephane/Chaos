@@ -161,7 +161,7 @@ protected:
 	int   initial_level = 0;
 	float initial_player_screen_speed = 500.0f;   // speed at which the player may move on screen
 	float initial_player_absolute_speed = 50.0f; // speed at which the player is push forward by its engine
-	float delta_speed = 7.0f;                    // the 'absolute_speed' increase that is applyed when power up is taken
+	float delta_speed = 7.0f;                    // the 'absolute_speed' increase that is applied when power up is taken
 
 	glm::vec2 screen_safe_aera = glm::vec2(0.5f, 0.9f);
 

@@ -65,7 +65,7 @@ namespace chaos
 		CubeMapImageType face = CubeMapImageType::ImageLeft;
 		/** the position of the face in the whole image */
 		glm::ivec2 position = {0, 0};
-		/** the transformation to be applyed */
+		/** the transformation to be applied */
 		ImageTransform transform = ImageTransform::NO_TRANSFORM;
 	};
 

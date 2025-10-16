@@ -12,7 +12,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* GPUProgramAction : base class action to be applyed to Providers
+	* GPUProgramAction : base class action to be applied to Providers
 	*/
 
 	class CHAOS_API GPUProgramAction

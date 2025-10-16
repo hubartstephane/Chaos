@@ -165,7 +165,7 @@ namespace chaos
 		bool enabled = true;
 		/** flag whether to can only trigger once */
 		bool trigger_once = false;
-		/** outside box factor (a factor applyed to bounding box to detect whether the player is going outside of the range) */
+		/** outside box factor (a factor applied to bounding box to detect whether the player is going outside of the range) */
 		float outside_box_factor = 1.0f;
 
 		/** whenever the trigger-enter event has happened */
@@ -267,7 +267,7 @@ namespace chaos
 		/** the name of the sound to play */
 		std::string sound_name;
 
-		/** a ratio applyed to max_distance to compute the min_distance of the sound (for 3D sounds) */
+		/** a ratio applied to max_distance to compute the min_distance of the sound (for 3D sounds) */
 		float min_distance_ratio = 0.3f;
 		/** 3D sound */
 		bool is_3D_sound = false;

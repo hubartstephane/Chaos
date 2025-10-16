@@ -43,6 +43,6 @@ protected:
 
 	/** the horizontal camera speed */
 	float camera_speed = 100.0f;
-	/** an additional factor that can be applyed on demand */
+	/** an additional factor that can be applied on demand */
 	float scroll_factor = 1.0f;
 };

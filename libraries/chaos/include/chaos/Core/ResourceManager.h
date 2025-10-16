@@ -106,7 +106,7 @@ namespace chaos
 			{
 				for (nlohmann::json::const_iterator it = objects_json->begin(); it != objects_json->end(); ++it)
 				{
-					LOADER other_loader = loader; // use copy so that name and path store in loader is not applyed to wrong object
+					LOADER other_loader = loader; // use copy so that name and path store in loader is not applied to wrong object
 					if (objects_json->is_array())
 						DoLoadObjects<RECURSE>(nullptr, &(*it), other_loader);
 					else if (objects_json->is_object())

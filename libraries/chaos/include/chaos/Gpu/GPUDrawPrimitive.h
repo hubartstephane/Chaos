@@ -25,7 +25,7 @@ namespace chaos
 		int    count = 0;
 		/** beginning in vertex or index buffer (if indexed rendering or not is used) */
 		int    start = 0;
-		/** for indexed rendering, this is an offset applyed to each index */
+		/** for indexed rendering, this is an offset applied to each index */
 		int    base_vertex_index = 0;
 	};
 

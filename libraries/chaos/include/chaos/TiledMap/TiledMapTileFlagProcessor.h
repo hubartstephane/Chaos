@@ -71,7 +71,7 @@ namespace chaos
 
 			/** the type of the tile */
 			std::string type;
-			/** the flag applyed */
+			/** the flag applied */
 			int flag = 0;
 		};
 

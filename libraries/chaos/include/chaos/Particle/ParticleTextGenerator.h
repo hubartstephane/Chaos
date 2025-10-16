@@ -44,7 +44,7 @@ namespace chaos
 			float max_text_width = 0.0f;
 			/** word wrap enabled */
 			bool word_wrap = true;
-			/** the maximum factor for space to apply when lines are to be justified. if a greater value should be applyed, ignore justification */
+			/** the maximum factor for space to apply when lines are to be justified. if a greater value should be applied, ignore justification */
 			float justify_space_factor = 2.0f;
 			/** the line alignment */
 			TextAlignment alignment = TextAlignment::LEFT;

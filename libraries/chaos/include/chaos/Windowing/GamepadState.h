@@ -27,7 +27,7 @@ namespace chaos
 		size_t GetAxisCount() const;
 
 		/** update all the values for the axis and buttons */
-		void UpdateAxisAndButtons(int stick_index, GamepadInputUpdateSettings const& update_settings);
+		void UpdateAxisAndButtons(int stick_index, GamepadInputFilterSettings const& in_filter_settings);
 		/** reset the content of the object */
 		void Clear();
 

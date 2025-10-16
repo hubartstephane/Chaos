@@ -6,7 +6,7 @@ namespace chaos
 	// FORWARD DECLARATION / FRIENDSHIP MACROS
 	// ==============================================================
 
-class GamepadInputUpdateSettings;
+class GamepadInputFilterSettings;
 
 	// all classes in this file
 #define CHAOS_GAMEPAD_CLASSES \
@@ -36,19 +36,21 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	static constexpr int MAX_SUPPORTED_GAMEPAD_COUNT = GLFW_JOYSTICK_LAST + 1;
 
 	/**
-	* GamepadCallbacks : some callbacks that may be plugged into a gamepad
+	* GamepadInputFilterSettings: some configuration describing how to handle gamepad input
 	*/
 
-	class GamepadInputUpdateSettings
+	class GamepadInputFilterSettings
 	{
 	public:
 
-		/** dead_zone applyed to axes and sticks (using length for input2D). If value lower than this, consider it as 0 */
+		/** dead_zone applied to axes and sticks (using length for input2D). If value lower than this, consider it as 0 */
 		float dead_zone = 0.4f;
-		/** max_zone applyed to axes and sticks (using length for input2D). If value greater than this, consider it as 1 */
+		/** max_zone applied to axes and sticks (using length for input2D). If value greater than this, consider it as 1 */
 		float max_zone  = 0.9f;
 		/** angle in radian to snap stick direction to any sector boundaries */
-		float stick_snap_angle = 0.3f;
+		float sector_snap_angle = 0.3f;
+		/** number of sector for angle snapping */
+		int sector_snap_count = 4;
 	};
 
 	/**
@@ -109,7 +111,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		virtual bool EnumerateDeviceHierarchy(EnumerateDeviceHierarchyFunction func) const override;
 
 		/** update all the values for the axis and buttons */
-		void UpdateAxisAndButtons(GamepadInputUpdateSettings const & update_settings);
+		void UpdateAxisAndButtons(GamepadInputFilterSettings const & in_filter_settings);
 		/** called at unconnection to be sure input cannot be consulted anymore */
 		void ClearInputs();
 
@@ -283,7 +285,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	public:
 
 		/** constructor */
-		GamepadManager(GamepadInputUpdateSettings const& in_update_settings = {});
+		GamepadManager(GamepadInputFilterSettings const& in_filter_settings = {});
 		/** destructor */
 		virtual ~GamepadManager();
 
@@ -333,7 +335,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	protected:
 
 		/** configuration to handle input1D & input2D */
-		GamepadInputUpdateSettings input_update_settings;
+		GamepadInputFilterSettings input_filter_settings;
 		/** the logical gamepads */
 		std::vector<Gamepad*> user_gamepads;
 		/** the physical gamepads */

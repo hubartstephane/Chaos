@@ -29,11 +29,11 @@ namespace chaos
 		return InputDeviceInterface::EnumerateDeviceHierarchy(func);
 	}
 
-	void PhysicalGamepad::UpdateAxisAndButtons(GamepadInputUpdateSettings const& update_settings)
+	void PhysicalGamepad::UpdateAxisAndButtons(GamepadInputFilterSettings const& in_filter_settings)
 	{
 		if (!IsPresent())
 			return;
-		gamepad_state.UpdateAxisAndButtons(stick_index, update_settings);
+		gamepad_state.UpdateAxisAndButtons(stick_index, in_filter_settings);
 	}
 
 	Gamepad* PhysicalGamepad::CaptureDevice(GamepadCallbacks* in_callbacks)
@@ -282,8 +282,8 @@ namespace chaos
 	GamepadManager::XINPUT_SET_STATE_FUNC GamepadManager::XInputSetStateFunc = nullptr;
 #endif
 
-	GamepadManager::GamepadManager(GamepadInputUpdateSettings const & in_update_settings):
-		input_update_settings(in_update_settings)
+	GamepadManager::GamepadManager(GamepadInputFilterSettings const & in_filter_settings):
+		input_filter_settings(in_filter_settings)
 	{
 		// load manually module so that this work on windows 7 & windows +
 #if _WIN64
@@ -305,7 +305,7 @@ namespace chaos
 			{
 				physical_gamepad->is_present = (glfwJoystickPresent(i) > 0);
 				if (physical_gamepad->is_present)
-					physical_gamepad->UpdateAxisAndButtons(input_update_settings);
+					physical_gamepad->UpdateAxisAndButtons(input_filter_settings);
 			}
 			physical_gamepads.push_back(physical_gamepad);
 		}
@@ -494,7 +494,7 @@ namespace chaos
 
 			if (is_present)
 			{
-				physical_gamepad->UpdateAxisAndButtons(input_update_settings);
+				physical_gamepad->UpdateAxisAndButtons(input_filter_settings);
 
 				Gamepad* user_gamepad = physical_gamepad->user_gamepad;
 				if (user_gamepad != nullptr && user_gamepad->callbacks != nullptr)

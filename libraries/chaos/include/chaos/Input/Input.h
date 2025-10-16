@@ -25,3 +25,5 @@
 #include "chaos/Input/InputReceiverInterface.h"
 #include "chaos/Input/InputReceiverTraverser.h"
 #include "chaos/Input/DelegateInputReceiverTraverser.h"
+#include "chaos/Input/GamepadState.h"
+#include "chaos/Input/GamepadManager.h"

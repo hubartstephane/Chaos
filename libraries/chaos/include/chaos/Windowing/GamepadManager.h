@@ -328,7 +328,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		void TickForceFeedbackEffects(float delta_time);
 
 		/** the pool method to override */
-		virtual bool DoPoolGamepad(PhysicalGamepad* physical_gamepad);
+		virtual bool DoPollGamepad(PhysicalGamepad* physical_gamepad);
 
 	protected:
 

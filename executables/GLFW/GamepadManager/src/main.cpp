@@ -54,7 +54,7 @@ public:
 
 protected:
 
-	virtual bool DoPoolGamepad(chaos::PhysicalGamepad * physical_gamepad) override
+	virtual bool DoPollGamepad(chaos::PhysicalGamepad * physical_gamepad) override
 	{
 		return true;
 	}

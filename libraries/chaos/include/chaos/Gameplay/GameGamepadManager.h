@@ -20,7 +20,7 @@ namespace chaos
 	protected:
 
 		/** the gamepad manager */
-		virtual bool DoPoolGamepad(PhysicalGamepad* physical_gamepad) override;
+		virtual bool DoPollGamepad(PhysicalGamepad* physical_gamepad) override;
 
 	protected:
 

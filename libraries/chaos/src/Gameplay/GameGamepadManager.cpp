@@ -10,7 +10,7 @@ namespace chaos
 		assert(in_game != nullptr);
 	}
 
-	bool GameGamepadManager::DoPoolGamepad(PhysicalGamepad * physical_gamepad)
+	bool GameGamepadManager::DoPollGamepad(PhysicalGamepad * physical_gamepad)
 	{
 		if (game != nullptr)
 			return game->OnPhysicalGamepadInput(physical_gamepad);

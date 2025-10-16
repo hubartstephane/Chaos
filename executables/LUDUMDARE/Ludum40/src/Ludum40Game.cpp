@@ -25,7 +25,7 @@
 
 // ======================================================================================
 
-bool MyGamepadManager::DoPoolGamepad(chaos::PhysicalGamepad * physical_gamepad)
+bool MyGamepadManager::DoPollGamepad(chaos::PhysicalGamepad * physical_gamepad)
 {
 	if (game != nullptr)
 		return game->OnPhysicalGamepadInput(physical_gamepad);

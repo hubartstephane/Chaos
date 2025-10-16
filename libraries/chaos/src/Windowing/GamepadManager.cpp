@@ -454,7 +454,7 @@ namespace chaos
 				continue;
 
 			--unallocated_present_physical_device_count;
-			if (!DoPoolGamepad(physical_gamepad))
+			if (!DoPollGamepad(physical_gamepad))
 				break;
 		}
 	}
@@ -473,7 +473,7 @@ namespace chaos
 		}
 	}
 
-	bool GamepadManager::DoPoolGamepad(PhysicalGamepad* physical_gamepad)
+	bool GamepadManager::DoPollGamepad(PhysicalGamepad* physical_gamepad)
 	{
 		return true;
 	}

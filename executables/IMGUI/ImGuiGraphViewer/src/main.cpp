@@ -60,21 +60,21 @@ protected:
 
 				ImPlot::PushColormap(ImPlotColormap_Deep);
 
-				DrawGraphic("Sin", "f(x) = sin(x.pi/2) / sin(pi/2)", chaos::InterpolationType::Sin);
+				DrawGraphic("Linear", "f(x) = x", chaos::InterpolationType::LINEAR);
 
-				DrawGraphic("Linear", "f(x) = x", chaos::InterpolationType::Linear);
+				DrawGraphic("Ease", "f(x) = (3.x^2) - (2.x^3)", chaos::InterpolationType::EASE);
 
-				DrawGraphic("Ease", "f(x) = (3.x^2) - (2.x^3)", chaos::InterpolationType::Ease);
+				DrawGraphic("Easier", "f(x) = (6.x^5) - (15.x^4) + (10.x^3)", chaos::InterpolationType::EASIER);
 
-				DrawGraphic("Easier", "f(x) = (6.x^5) - (15.x^4) + (10.x^3)", chaos::InterpolationType::Easier);
+				DrawGraphic("X^2", "f(x) = x^2", chaos::InterpolationType::POW_2);
 
-				DrawGraphic("X^2", "f(x) = x^2", chaos::InterpolationType::Pow2);
+				DrawGraphic("X^3", "f(x) = x^3", chaos::InterpolationType::POW_3);
 
-				DrawGraphic("X^3", "f(x) = x^3", chaos::InterpolationType::Pow3);
+				DrawGraphic("X^5", "f(x) = x^5", chaos::InterpolationType::POW_5);
 
-				DrawGraphic("X^5", "f(x) = x^5", chaos::InterpolationType::Pow5);
+				DrawGraphic("Sin", "f(x) = sin(x.pi/2) / sin(pi/2)", chaos::InterpolationType::SIN);
 
-				DrawGraphic("Exp(x, k=3, p=5)", "f(x) = (e^(k.x^p) - 1) / (e^k - 1)", chaos::InterpolationType::Exp);
+				DrawGraphic("Exp(x, k=3, p=5)", "f(x) = (e^(k.x^p) - 1) / (e^k - 1)", chaos::InterpolationType::EXP);
 
 				ImPlot::PopColormap();
 				ImPlot::PopStyleVar();

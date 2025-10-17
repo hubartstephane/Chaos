@@ -43,12 +43,14 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	{
 	public:
 
+		/** how axis and sticks are interpolated */
+		InterpolationType length_interpolation_type = InterpolationType::LINEAR;
 		/** dead_zone applied to axes and sticks (using length for input2D). If value lower than this, consider it as 0 */
 		float dead_zone = 0.1f;
 		/** max_zone applied to axes and sticks (using length for input2D). If value greater than this, consider it as 1 */
 		float max_zone  = 0.9f;
-		/** angle in radian to snap stick direction to any sector boundaries */
-		float sector_snap_angle = 0.1f;
+		/** factor of snapping. A factor of 0 mean no snapping. 1 full snapping */
+		float sector_snap_angle_factor = 0.3f;
 		/** number of sector for angle snapping */
 		int sector_snap_count = 4;
 	};

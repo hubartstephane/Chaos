@@ -102,22 +102,22 @@ namespace chaos
 		return value;
 	}
 
-	float GamepadState::SnapInput2DAngleToSectorBoundaries(float angle, float sector_snap_angle_factor, int sector_count) const
+	float GamepadState::SnapInput2DAngleToSectorBoundaries(float angle, float sector_snap_angle_ratio, int sector_count) const
 	{
 		assert(angle >= 0.0f);
 		assert(angle < 2.0f * float(M_PI));
 
 		// early exit
-		if (sector_snap_angle_factor <= 0.0f)
+		if (sector_snap_angle_ratio <= 0.0f)
 			return angle;
 		if (sector_count <= 1)
 			return angle;
-		sector_snap_angle_factor = std::min(sector_snap_angle_factor, 1.0f);
+		sector_snap_angle_ratio = std::min(sector_snap_angle_ratio, 1.0f);
 
 		// find the sector the stick belongs to
 		float sector_angle = 2.0f * float(M_PI) / float(sector_count);
 
-		float sector_snap_angle = sector_angle * 0.5f * sector_snap_angle_factor; // at most, the attraction of the axis is at half the sector size
+		float sector_snap_angle = sector_angle * 0.5f * sector_snap_angle_ratio; // at most, the attraction of the axis is at half the sector size
 
 		int sector = int(angle / sector_angle);
 
@@ -197,7 +197,7 @@ namespace chaos
 			float stick_length = glm::length(stick_value);
 			float stick_alpha  = std::atan2(stick_value.y, stick_value.x);
 			if (stick_length > 0.0f)
-				stick_alpha = SnapInput2DAngleToSectorBoundaries(stick_alpha + float(M_PI), in_filter_settings.sector_snap_angle_factor, in_filter_settings.sector_snap_count) - float(M_PI); // +/- pi so that stick_alpha is in range [0..2.pi] rather than [-pi..+pi]
+				stick_alpha = SnapInput2DAngleToSectorBoundaries(stick_alpha + float(M_PI), in_filter_settings.sector_snap_angle_ratio, in_filter_settings.sector_snap_count) - float(M_PI); // +/- pi so that stick_alpha is in range [0..2.pi] rather than [-pi..+pi]
 
 			// reconstitue the new stick value and apply it to gamepad state
 			stick_value = 

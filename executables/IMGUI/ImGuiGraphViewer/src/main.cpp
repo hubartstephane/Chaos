@@ -7,7 +7,7 @@ class WindowOpenGLTest : public chaos::Window
 protected:
 
 
-	void DrawGraphic(char const * title, char const * tip, chaos::LightweightFunction<float(float)> func)
+	void DrawGraphic(char const * title, char const * tip, chaos::InterpolationType interpolation_type)
 	{
 		constexpr size_t VALUE_COUNT = 256;
 
@@ -16,10 +16,8 @@ protected:
 
 		for (size_t i = 0; i < VALUE_COUNT; ++i)
 		{
-			float power = 1.0f;
-
 			x[i] = float(i) / float(VALUE_COUNT - 1);
-			y[i] = chaos::MathTools::Lerp(std::pow(func(x[i]), power), 0.0f, 1.0f);
+			y[i] = chaos::Interpolate(interpolation_type, x[i], 0.0f, 1.0f);
 		}
 
 		ImPlot::PlotLine(title, x, y, VALUE_COUNT);
@@ -62,59 +60,21 @@ protected:
 
 				ImPlot::PushColormap(ImPlotColormap_Deep);
 
-				DrawGraphic("Sin", "f(x) = sin(x.pi/2) / sin(pi/2)", [](float x)
-				{
-					return
-						std::sin(0.5f * float(M_PI) * x) /
-						std::sin(0.5f * float(M_PI));
-				});
+				DrawGraphic("Sin", "f(x) = sin(x.pi/2) / sin(pi/2)", chaos::InterpolationType::Sin);
 
-				DrawGraphic("Cos", "f(x) = 1 - cos(x.pi)/2", [](float x)
-				{
-					return (1.0f - std::cos(float(M_PI) * x)) * 0.5f;
-				});
+				DrawGraphic("Linear", "f(x) = x", chaos::InterpolationType::Linear);
 
-				DrawGraphic("Linear", "f(x) = x", [](float x)
-				{
-					return x;
-				});
+				DrawGraphic("Ease", "f(x) = (3.x^2) - (2.x^3)", chaos::InterpolationType::Ease);
 
-				DrawGraphic("Ease", "f(x) = (3.x^2) - (2.x^3)", [](float x)
-				{
-					return chaos::MathTools::Ease(x);
-				});
+				DrawGraphic("Easier", "f(x) = (6.x^5) - (15.x^4) + (10.x^3)", chaos::InterpolationType::Easier);
 
-				DrawGraphic("Easier", "f(x) = (6.x^5) - (15.x^4) + (10.x^3)", [](float x)
-				{
-					return 
-						   6.0f * (x * x * x * x * x)
-						- 15.0f * (x * x * x * x)
-						+ 10.0f * (x * x * x);
-				});
+				DrawGraphic("X^2", "f(x) = x^2", chaos::InterpolationType::Pow2);
 
-				DrawGraphic("X^2", "f(x) = x^2", [](float x)
-				{
-					return x * x;
-				});
+				DrawGraphic("X^3", "f(x) = x^3", chaos::InterpolationType::Pow3);
 
-				DrawGraphic("X^3", "f(x) = x^3", [](float x)
-				{
-					return x * x * x;
-				});
+				DrawGraphic("X^5", "f(x) = x^5", chaos::InterpolationType::Pow5);
 
-				DrawGraphic("X^5", "f(x) = x^5", [](float x)
-				{
-					return x * x * x * x * x;
-				});
-
-				DrawGraphic("Exp(x, k=3, p=5)", "f(x) = (e^(k.x^p) - 1) / (e^k - 1)", [](float x)
-				{
-					float k = 5.0f;
-					float power = 3.0f;
-					return 
-						(std::pow(float(M_E), k * std::pow(x, power)) - 1) / 
-						(std::pow(float(M_E), k) - 1);
-				});
+				DrawGraphic("Exp(x, k=3, p=5)", "f(x) = (e^(k.x^p) - 1) / (e^k - 1)", chaos::InterpolationType::Exp);
 
 				ImPlot::PopColormap();
 				ImPlot::PopStyleVar();

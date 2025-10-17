@@ -1,4 +1,5 @@
 #include "chaos/Math/MathTools.h"
+#include "chaos/Math/Interpolation.h"
 #include "chaos/Math/ComparisonOperator.h"
 #include "chaos/Math/GeometryClasses.h"
 #include "chaos/Math/GeometryFramework.h"

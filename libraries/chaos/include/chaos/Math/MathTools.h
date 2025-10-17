@@ -205,46 +205,6 @@ namespace chaos
 			return glm::tvec3<T>(std::cos(alpha) * c, std::sin(beta), std::sin(alpha) * c);
 		}
 
-		/** returns the linear interpolation between 2 values */
-		template<typename T>
-		T Lerp(T t, T a, T b)
-		{
-			return ((static_cast<T>(1) - t) * a) + (t * b);
-		}
-
-		/** returns the cos interpolation between 2 values */
-		template<typename T>
-		T Coserp(T t, T a, T b)
-		{
-			T f = (static_cast<T>(1) - std::cos(t * static_cast<T>(M_PI)) / static_cast<T>(2));
-
-			//
-			//               t   -->  [ 0 ..  1]
-			//         (PI * t)  -->  [ 0 .. PI]
-			//     cos (PI * t)  -->  [-1 ..  1]
-			// 1 - cos (PI * t)  -->  [ 0 ..  2]
-			//
-			// ----> f --> [0..1]
-			//
-
-			return Lerp(f, a, b);
-		}
-
-		/** an Ease-In, Ease-out function */
-		template<typename T>
-		T Ease(T x)
-		{
-			T x2 = x * x;
-			return static_cast<T>(3) * x2 - static_cast<T>(2) * x2 * x;
-		}
-
-		/** a linear function that is y(x) = a.x + b, but with a ease In (the derivative of    y(x) = x * x    as a value of 1 when x = 0.5) */
-		template<typename T>
-		T EaseInIdentity(T x)
-		{
-			return static_cast<T>(x) - (static_cast<T>(1.0 - 0.5 * 0.5));
-		}
-
 		/** transform range [-1 .. +1] into 3 integer values -1, 0, +1 */
 		template<typename T>
 		T AnalogicToDiscret(T value)

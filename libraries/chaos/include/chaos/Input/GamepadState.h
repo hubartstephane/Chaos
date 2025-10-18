@@ -48,11 +48,11 @@ namespace chaos
 		virtual bool DoForAllInput2D(ForAllInput2DFunction func) const override;
 
 		/** apply dead_zone and max_zone. renormalize input */
-		float ClampAndNormalizeInput1D(float value, float dead_zone, float max_zone) const;
+		float ClampAndNormalizeInput1D(float value, GamepadInputFilterSettings const& in_filter_settings) const;
 		/** apply dead_zone and max_zone. renormalize input */
-		glm::vec2 ClampAndNormalizeInput2D(glm::vec2 value, float dead_zone, float max_zone) const;
+		glm::vec2 ClampAndNormalizeInput2D(glm::vec2 value, GamepadInputFilterSettings const& in_filter_settings) const;
 		/** try to snap stick angle to some sector boundaries (X & Y directions). Angle must be in [0, 2.pi] */
-		float SnapInput2DAngleToSectorBoundaries(float angle, float stick_angle_snap, int sector_count) const;
+		float SnapInput2DAngleToSectorBoundaries(float angle, GamepadInputFilterSettings const& in_filter_settings) const;
 
 	protected:
 

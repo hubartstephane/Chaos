@@ -64,62 +64,55 @@ namespace chaos
 		return false;
 	}
 
-	float GamepadState::ClampAndNormalizeInput1D(float value, float dead_zone, float max_zone) const
+	float GamepadState::ClampAndNormalizeInput1D(float value, GamepadInputFilterSettings const& in_filter_settings) const
 	{
-		if (dead_zone >= 0.0f && max_zone > dead_zone)
+		if (in_filter_settings.dead_zone >= 0.0f && in_filter_settings.max_zone >= in_filter_settings.dead_zone)
 		{
-			if (value <= dead_zone && value >= -dead_zone)
+			if (value <= in_filter_settings.dead_zone && value >= -in_filter_settings.dead_zone)
 				return 0.0f;
 			
 			if (value > 0.0f)
-			{
-				value = (value - dead_zone) / (max_zone - dead_zone);
-				return std::min(value, 1.0f);
-			}
-			
-			if (value < 0.0f)
-			{
-				value = (value + dead_zone) / (max_zone - dead_zone);
-				return std::max(value, -1.0f);
-			}
+				value = (value - in_filter_settings.dead_zone) / (in_filter_settings.max_zone - in_filter_settings.dead_zone);
+			else if (value < 0.0f)
+				value = (value + in_filter_settings.dead_zone) / (in_filter_settings.max_zone - in_filter_settings.dead_zone);
 		}
-		return value;
+		return Interpolate(in_filter_settings.length_interpolation_type, std::clamp(value, -1.0f, +1.0f), 0.0f, 1.0f);
 	}
 
-	glm::vec2 GamepadState::ClampAndNormalizeInput2D(glm::vec2 value, float dead_zone, float max_zone) const
+	glm::vec2 GamepadState::ClampAndNormalizeInput2D(glm::vec2 value, GamepadInputFilterSettings const& in_filter_settings) const
 	{
-		if (dead_zone >= 0.0f && max_zone > dead_zone)
+		if (in_filter_settings.dead_zone >= 0.0f && in_filter_settings.max_zone > in_filter_settings.dead_zone)
 		{
 			float value_length = glm::length(value);
 
-			if (value_length <= dead_zone)
+			if (value_length <= in_filter_settings.dead_zone)
 				return { 0.0f, 0.0f };
-			if (value_length >= max_zone)
+			if (value_length >= in_filter_settings.max_zone)
 				return value / value_length;
 
-			return (value / value_length) * (value_length - dead_zone) / (max_zone - dead_zone);
+			float new_unfiltered_length = (value_length - in_filter_settings.dead_zone) / (in_filter_settings.max_zone - in_filter_settings.dead_zone);
+			float filtered_length = Interpolate(in_filter_settings.length_interpolation_type, new_unfiltered_length, 0.0f, 1.0f);
+			return (value / value_length) * filtered_length;
 		}
 		return value;
 	}
 
-	float GamepadState::SnapInput2DAngleToSectorBoundaries(float angle, float sector_snap_angle_ratio, int sector_count) const
+	float GamepadState::SnapInput2DAngleToSectorBoundaries(float angle, GamepadInputFilterSettings const& in_filter_settings) const
 	{
 		assert(angle >= 0.0f);
 		assert(angle < 2.0f * float(M_PI));
 
 		// early exit
-		if (sector_snap_angle_ratio <= 0.0f)
+		if (in_filter_settings.sector_snap_angle_ratio <= 0.0f)
 			return angle;
-		if (sector_count <= 1)
+		if (in_filter_settings.sector_snap_count <= 1)
 			return angle;
-		sector_snap_angle_ratio = std::min(sector_snap_angle_ratio, 1.0f);
+		float sector_snap_angle_ratio = std::min(in_filter_settings.sector_snap_angle_ratio, 1.0f);
 
 		// find the sector the stick belongs to
-		float sector_angle = 2.0f * float(M_PI) / float(sector_count);
-
+		float sector_angle      = 2.0f * float(M_PI) / float(in_filter_settings.sector_snap_count);
 		float sector_snap_angle = sector_angle * 0.5f * sector_snap_angle_ratio; // at most, the attraction of the axis is at half the sector size
-
-		int sector = int(angle / sector_angle);
+		int   sector            = int(angle / sector_angle);
 
 		// snap the angle to sector boundaries
 		float sector_start_angle = float(sector) * sector_angle;
@@ -159,7 +152,7 @@ namespace chaos
 			// want positive Y when stick is UP
 			else if (input == Input1D::GAMEPAD_LEFT_AXIS_Y || input == Input1D::GAMEPAD_RIGHT_AXIS_Y)
 				value = -value;
-			axes[i].SetValue(ClampAndNormalizeInput1D(value, in_filter_settings.dead_zone, in_filter_settings.max_zone));
+			axes[i].SetValue(ClampAndNormalizeInput1D(value, in_filter_settings));
 		}
 
 		// update standard buttons
@@ -191,13 +184,13 @@ namespace chaos
 			};
 
 			// renormalize stick length so its length is always [0..1] (taking into account dead_zone & max_zone)
-			stick_value = ClampAndNormalizeInput2D(stick_value, in_filter_settings.dead_zone, in_filter_settings.max_zone);
+			stick_value = ClampAndNormalizeInput2D(stick_value, in_filter_settings);
 
 			// tweak the stick angle to have a slight snapping along sector direction	
 			float stick_length = glm::length(stick_value);
 			float stick_alpha  = std::atan2(stick_value.y, stick_value.x);
 			if (stick_length > 0.0f)
-				stick_alpha = SnapInput2DAngleToSectorBoundaries(stick_alpha + float(M_PI), in_filter_settings.sector_snap_angle_ratio, in_filter_settings.sector_snap_count) - float(M_PI); // +/- pi so that stick_alpha is in range [0..2.pi] rather than [-pi..+pi]
+				stick_alpha = SnapInput2DAngleToSectorBoundaries(stick_alpha + float(M_PI), in_filter_settings) - float(M_PI); // +/- pi so that stick_alpha is in range [0..2.pi] rather than [-pi..+pi]
 
 			// reconstitue the new stick value and apply it to gamepad state
 			stick_value = 

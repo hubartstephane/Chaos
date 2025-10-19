@@ -1,13 +1,6 @@
 
 #include "chaos/Chaos.h"
 
-class MyApplicationTest : public chaos::WindowApplication
-{
-public:
-
-	using chaos::WindowApplication::WindowApplication;
-};
-
 class WindowOpenGLTest : public chaos::Window
 {
 	CHAOS_DECLARE_OBJECT_CLASS(WindowOpenGLTest, chaos::Window);
@@ -87,6 +80,6 @@ protected:
 
 int main(int argc, char ** argv, char ** env)
 {
-	return chaos::RunApplication<MyApplicationTest>(argc, argv, env, WindowOpenGLTest::GetStaticClass());
+	return chaos::RunSimpleWindowApplication<WindowOpenGLTest>(argc, argv, env);
 }
 

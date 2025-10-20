@@ -83,11 +83,11 @@ namespace chaos
 		case InterpolationType::EASIER:
 			return Easier(x);
 		case InterpolationType::POW_2:
-			return std::pow(x, static_cast<T>(2));
+			return x * x;
 		case InterpolationType::POW_3:
-			return std::pow(x, static_cast<T>(3));
+			return x * x * x;
 		case InterpolationType::POW_5:
-			return std::pow(x, static_cast<T>(5));
+			return x * x * x * x * x;
 		case InterpolationType::SIN:
 			return SinInterpolation(x);
 		case InterpolationType::EXP:

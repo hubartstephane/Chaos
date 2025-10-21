@@ -46,7 +46,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		/** how axis and sticks are interpolated */
 		InterpolationType length_interpolation_type = InterpolationType::LINEAR;
 		/** dead_zone applied to axes and sticks (using length for input2D). If value lower than this, consider it as 0 */
-		float dead_zone = 0.1f;
+		float dead_zone = 0.2f;
 		/** max_zone applied to axes and sticks (using length for input2D). If value greater than this, consider it as 1 */
 		float max_zone  = 0.9f;
 		/** factor of snapping. A factor of 0 mean no snapping. 1 full snapping */

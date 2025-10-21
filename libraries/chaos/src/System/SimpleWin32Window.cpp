@@ -15,7 +15,7 @@ namespace chaos
 		while (msg.message != WM_QUIT)
 		{
 			// with callback => PEEK
-			if (func)
+			if (func.IsValid())
 			{
 				while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) > 0)
 				{

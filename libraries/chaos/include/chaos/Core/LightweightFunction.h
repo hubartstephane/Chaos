@@ -122,9 +122,6 @@ namespace chaos
 			return (process_function != nullptr);
 		}
 
-		/** check whether the object is valid */
-		operator bool() const { return IsValid(); }
-
 	protected:
 
 		/** internal method that make casts and call the underlying code */

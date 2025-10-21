@@ -51,7 +51,7 @@ namespace chaos
 			FrameTimeManager * frame_time_manager = FrameTimeManager::GetInstance();
 			assert(frame_time_manager != nullptr);
 
-			while (!loop_condition_func || loop_condition_func())
+			while (!loop_condition_func.IsValid() || loop_condition_func())
 			{
 				frame_time_manager->SetCurrentFrameTime(glfwGetTime()); // this is important to be just before the glfwPollEvents() call
 

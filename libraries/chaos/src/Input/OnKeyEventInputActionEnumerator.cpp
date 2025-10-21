@@ -16,7 +16,7 @@ namespace chaos
 	{
 		if (in_request.Check(input_receiver, key_event, input_device, *consumption_cache) == InputRequestResult::True)
 		{
-			if (in_enabled && in_func)
+			if (in_enabled && in_func.IsValid())
 				in_func();
 			return true; // stop
 		}

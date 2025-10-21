@@ -17,7 +17,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		InputValueRequest(INPUT_SEARCH_KEY_TYPE const& in_searched_input, RESULT_TYPE& in_result):
+		InputValueRequest(INPUT_SEARCH_KEY_TYPE in_searched_input, RESULT_TYPE& in_result):
 			searched_input(in_searched_input),
 			result(in_result)
 		{
@@ -64,9 +64,8 @@ namespace chaos
 		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
 		{
 			// early exit
-			if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, Key>)
-				if (searched_input == Key::UNKNOWN)
-					return InputRequestResult::Invalid;
+			if (searched_input == INPUT_SEARCH_KEY_TYPE::UNKNOWN)
+				return InputRequestResult::Invalid;
 			// find input
 			auto const* input_state = in_input_device->GetInputState(searched_input);
 			if (input_state == nullptr)
@@ -92,11 +91,11 @@ namespace chaos
 	 * Some standalone functions
 	 */
 
-	CHAOS_API InputValueRequest<Key, bool> RequestInputValue(Key const& in_key, bool& in_result);
+	CHAOS_API InputValueRequest<Key, bool> RequestInputValue(Key in_key, bool& in_result);
 
-	CHAOS_API InputValueRequest<Input1D, float> RequestInputValue(Input1D const& in_axis, float& in_result);
+	CHAOS_API InputValueRequest<Input1D, float> RequestInputValue(Input1D in_axis, float& in_result);
 
-	CHAOS_API InputValueRequest<Input2D, glm::vec2> RequestInputValue(Input2D const& in_stick, glm::vec2& in_result);
+	CHAOS_API InputValueRequest<Input2D, glm::vec2> RequestInputValue(Input2D in_stick, glm::vec2& in_result);
 
 #endif
 

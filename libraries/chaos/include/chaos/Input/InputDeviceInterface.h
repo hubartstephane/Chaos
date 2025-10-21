@@ -37,6 +37,13 @@ namespace chaos
 		/** gets one input2D state */
 		Input2DState const * GetInputState(Input2D input) const;
 
+		/** gets one key state */
+		KeyState * GetInputState(Key input);
+		/** gets one input1D state */
+		Input1DState * GetInputState(Input1D input);
+		/** gets one input2D state */
+		Input2DState * GetInputState(Input2D input);
+
 		/** enumerate keys */
 		bool ForAllKeys(ForAllKeysFunction func) const;
 		/** enumerate input1D */

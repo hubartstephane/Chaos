@@ -481,7 +481,6 @@ namespace chaos
 			sound_manager->Tick(delta_time);
 		// handle the inputs
 		PollInputDevices();
-		consumption_cache.Clear(); // clear the cache for input events to come
 
 		return true;
 	}
@@ -506,6 +505,12 @@ namespace chaos
 		{
 			traverser.Traverse(this); // only application
 		}
+
+		// prepare next frame
+		if (KeyboardAndMouseDevice* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance())
+			keyboard_and_mouse_device->ResetCumulatedInputs();
+
+		consumption_cache.Clear(); 
 	}
 
 	void WindowApplication::OnGLFWError(int code, const char* msg)

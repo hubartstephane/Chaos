@@ -22,6 +22,9 @@ namespace chaos
 		/** change the state of a key (notification from a window) */
 		void SetInputValue(Input2D input, glm::vec2 const & value);
 
+		/** some states are accumulators (mouse wheel, delta). Reset them */
+		void ResetCumulatedInputs();
+
 	protected:
 
 		/** override */

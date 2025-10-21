@@ -101,4 +101,15 @@ namespace chaos
 		}
 	}
 
+	void KeyboardAndMouseDevice::ResetCumulatedInputs()
+	{
+		for (Input1D input : {Input1D::MOUSE_WHEEL_X, Input1D::MOUSE_WHEEL_Y})
+			if (Input1DState* state = GetInputState(input))
+				state->SetValue(0.0f);
+
+		for (Input2D input : {Input2D::MOUSE_DELTA, Input2D::MOUSE_WHEEL})
+			if (Input2DState* state = GetInputState(input))
+				state->SetValue({ 0.0f, 0.0f });
+	}
+
 }; // namespace chaos

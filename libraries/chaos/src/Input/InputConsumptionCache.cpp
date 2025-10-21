@@ -22,11 +22,14 @@ namespace chaos
 
 		// handle key
 		result &= DoTryConsumeInput(in_key, in_input_device);
-		// handle 'virtual related' inputs
-		if (in_key == Key::GAMEPAD_LEFT_TRIGGER)
-			result &= DoTryConsumeInput(Input1D::GAMEPAD_LEFT_TRIGGER, in_input_device);
-		if (in_key == Key::GAMEPAD_RIGHT_TRIGGER)
-			result &= DoTryConsumeInput(Input1D::GAMEPAD_RIGHT_TRIGGER, in_input_device);
+		// handle 'virtual related' keys/inputs
+		EnumerateVirtualKeys([this, in_key, &result, in_input_device](Key key, Input1D input)
+		{
+			if (key != in_key)
+				return false;
+			result &= DoTryConsumeInput(input, in_input_device);
+			return true;
+		});
 
 		return (consume_all_inputs)? 
 			false:
@@ -39,16 +42,23 @@ namespace chaos
 
 		// handle axis
 		result &= DoTryConsumeInput(in_input, in_input_device);
-		// handle 'virtual related' inputs
-		if (in_input == Input1D::GAMEPAD_LEFT_TRIGGER)
-			result &= DoTryConsumeInput(Key::GAMEPAD_LEFT_TRIGGER, in_input_device);
-		if (in_input == Input1D::GAMEPAD_RIGHT_TRIGGER)
-			result &= DoTryConsumeInput(Key::GAMEPAD_RIGHT_TRIGGER, in_input_device);
 
-		if (in_input == Input1D::GAMEPAD_LEFT_AXIS_X || in_input == Input1D::GAMEPAD_LEFT_AXIS_Y)
-			result &= DoTryConsumeInput(Input2D::GAMEPAD_LEFT_STICK, in_input_device);
-		if (in_input == Input1D::GAMEPAD_RIGHT_AXIS_X || in_input == Input1D::GAMEPAD_RIGHT_AXIS_Y)
-			result &= DoTryConsumeInput(Input2D::GAMEPAD_RIGHT_STICK, in_input_device);
+		// handle 'virtual related' keys/inputs
+		EnumerateVirtualKeys([this, in_input, &result, in_input_device](Key key, Input1D input)
+		{
+			if (input != in_input)
+				return false;
+			result &= DoTryConsumeInput(key, in_input_device);
+			return true;
+		});
+
+		EnumerateVirtualInputs([this, in_input, &result, in_input_device](Input1D input1D_x, Input1D input1D_y, Input2D input2D)
+		{
+			if (in_input != input1D_x && in_input != input1D_y)
+				return false;
+			result &= DoTryConsumeInput(input2D, in_input_device);
+			return true;
+		});
 
 		return (consume_all_inputs) ?
 			false :
@@ -61,21 +71,41 @@ namespace chaos
 
 		// handle stick
 		result &= DoTryConsumeInput(in_input, in_input_device);
+
 		// handle 'virtual related' inputs
-		if (in_input == Input2D::GAMEPAD_LEFT_STICK)
+		EnumerateVirtualInputs([this, in_input, &result, in_input_device](Input1D input1D_x, Input1D input1D_y, Input2D input2D)
 		{
-			result &= DoTryConsumeInput(Input1D::GAMEPAD_LEFT_AXIS_X, in_input_device);
-			result &= DoTryConsumeInput(Input1D::GAMEPAD_LEFT_AXIS_Y, in_input_device);
-		}
-		if (in_input == Input2D::GAMEPAD_RIGHT_STICK)
-		{
-			result &= DoTryConsumeInput(Input1D::GAMEPAD_RIGHT_AXIS_X, in_input_device);
-			result &= DoTryConsumeInput(Input1D::GAMEPAD_RIGHT_AXIS_Y, in_input_device);
-		}
+			if (in_input != input2D)
+				return false;
+			result &= DoTryConsumeInput(input1D_x, in_input_device);
+			result &= DoTryConsumeInput(input1D_y, in_input_device);
+			return true;
+		});
 
 		return (consume_all_inputs) ?
 			false :
 			result;
+	}
+
+	bool InputConsumptionCache::EnumerateVirtualKeys(VirtualKeyEnumerationFunction func)
+	{
+		if (func(Key::GAMEPAD_LEFT_TRIGGER, Input1D::GAMEPAD_LEFT_TRIGGER))
+			return true;
+		if (func(Key::GAMEPAD_RIGHT_TRIGGER, Input1D::GAMEPAD_RIGHT_TRIGGER))
+			return true;
+		return false;
+	}
+
+	bool InputConsumptionCache::EnumerateVirtualInputs(VirtualInputEnumerationFunction func)
+	{
+		if (func(Input1D::GAMEPAD_LEFT_AXIS_X, Input1D::GAMEPAD_LEFT_AXIS_Y, Input2D::GAMEPAD_LEFT_STICK))
+			return true;
+		if (func(Input1D::GAMEPAD_RIGHT_AXIS_X, Input1D::GAMEPAD_RIGHT_AXIS_Y, Input2D::GAMEPAD_RIGHT_STICK))
+			return true;
+		if (func(Input1D::MOUSE_WHEEL_X, Input1D::MOUSE_WHEEL_Y, Input2D::MOUSE_WHEEL))
+			return true;
+
+		return false;
 	}
 
 	bool InputConsumptionCache::DoTryConsumeInput(Key in_key, InputDeviceInterface const* in_input_device)

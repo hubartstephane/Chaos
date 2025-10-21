@@ -6,6 +6,10 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+	using VirtualKeyEnumerationFunction = LightweightFunction<bool(Key, Input1D)>;
+
+	using VirtualInputEnumerationFunction = LightweightFunction<bool(Input1D, Input1D, Input2D)>;
+
 	/**
 	 * InputConsumptionCache: an object that keeps that trace of which inputs have been handled this frame
 	 */
@@ -35,6 +39,11 @@ namespace chaos
 		bool DoTryConsumeInput(Input1D in_input, InputDeviceInterface const* in_input_device);
 		/** internal method that check whether an input has already been consumed yet Mark it as consumed */
 		bool DoTryConsumeInput(Input2D in_input, InputDeviceInterface const* in_input_device);
+
+		/** enumerate relations between some inputs */
+		bool EnumerateVirtualKeys(VirtualKeyEnumerationFunction func);
+		/** enumerate relations between some inputs */
+		bool EnumerateVirtualInputs(VirtualInputEnumerationFunction func);
 
 	protected:
 

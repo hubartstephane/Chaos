@@ -75,46 +75,24 @@ namespace chaos
 	 * AndInputRequestResultAggregation: an utility class used to aggregate child results altogether for AND composition
 	 */
 
-	class AndInputRequestResultAggregation
+	class CHAOS_API AndInputRequestResultAggregation
 	{
 	public:
 
 		/** aggregation method */
-		static InputRequestResult AggregateResult(std::optional<InputRequestResult> const & result, InputRequestResult child_result)
-		{
-			if (!result.has_value())
-				return child_result;
-			if (child_result == InputRequestResult::Rejected || result == InputRequestResult::Rejected)
-				return InputRequestResult::Rejected;
-			if (child_result == InputRequestResult::Invalid || result == InputRequestResult::Invalid)
-				return InputRequestResult::Invalid;
-			if (child_result == InputRequestResult::False || result == InputRequestResult::False)
-				return InputRequestResult::False;
-			return InputRequestResult::True;
-		}
+		static InputRequestResult AggregateResult(std::optional<InputRequestResult> const& result, InputRequestResult child_result);
 	};
 
 	/**
 	 * OrInputRequestResultAggregation: an utility class used to aggregate child results altogether for OR composition
 	 */
 
-	class OrInputRequestResultAggregation
+	class CHAOS_API OrInputRequestResultAggregation
 	{
 	public:
 
 		/** aggregation method */
-		static InputRequestResult AggregateResult(std::optional<InputRequestResult> const& result, InputRequestResult child_result)
-		{
-			if (!result.has_value())
-				return child_result;
-			if (child_result == InputRequestResult::True || result == InputRequestResult::True)
-				return InputRequestResult::True;
-			if (child_result == InputRequestResult::Rejected || result == InputRequestResult::Rejected)
-				return InputRequestResult::Rejected;
-			if (child_result == InputRequestResult::Invalid || result == InputRequestResult::Invalid)
-				return InputRequestResult::Invalid;
-			return InputRequestResult::False;
-		}
+		static InputRequestResult AggregateResult(std::optional<InputRequestResult> const& result, InputRequestResult child_result);
 	};
 
 	/**

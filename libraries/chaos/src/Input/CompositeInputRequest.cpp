@@ -3,29 +3,22 @@
 
 namespace chaos
 {
+	static InputRequestResult ComputeAggregationResult(std::optional<InputRequestResult> const& result, InputRequestResult child_result, std::initializer_list<InputRequestResult> const& ordered_values)
+	{
+		if (result.has_value())
+			for (InputRequestResult r : ordered_values)
+				if (child_result == r || result.value() == r)
+					return r;
+		return child_result;
+	}
+
 	InputRequestResult AndInputRequestResultAggregation::AggregateResult(std::optional<InputRequestResult> const& result, InputRequestResult child_result)
 	{
-		if (!result.has_value())
-			return child_result;
-		if (child_result == InputRequestResult::Rejected || result == InputRequestResult::Rejected)
-			return InputRequestResult::Rejected;
-		if (child_result == InputRequestResult::Invalid || result == InputRequestResult::Invalid)
-			return InputRequestResult::Invalid;
-		if (child_result == InputRequestResult::False || result == InputRequestResult::False)
-			return InputRequestResult::False;
-		return InputRequestResult::True;
+		return ComputeAggregationResult(result, child_result, {InputRequestResult::Rejected, InputRequestResult::Invalid, InputRequestResult::False, InputRequestResult::True});
 	}
 	InputRequestResult OrInputRequestResultAggregation::AggregateResult(std::optional<InputRequestResult> const& result, InputRequestResult child_result)
 	{
-		if (!result.has_value())
-			return child_result;
-		if (child_result == InputRequestResult::True || result == InputRequestResult::True)
-			return InputRequestResult::True;
-		if (child_result == InputRequestResult::Rejected || result == InputRequestResult::Rejected)
-			return InputRequestResult::Rejected;
-		if (child_result == InputRequestResult::Invalid || result == InputRequestResult::Invalid)
-			return InputRequestResult::Invalid;
-		return InputRequestResult::False;
+		return ComputeAggregationResult(result, child_result, { InputRequestResult::True, InputRequestResult::False, InputRequestResult::Invalid, InputRequestResult::Rejected });
 	}
 
 }; // namespace chaos

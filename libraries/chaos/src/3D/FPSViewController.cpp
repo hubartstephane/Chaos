@@ -5,9 +5,6 @@ namespace chaos
 {
 	void FPSViewController::SetMouseEnabled(bool in_mouse_enabled)
 	{
-		if (mouse_enabled == in_mouse_enabled)
-			return;
-		mouse_captured = false;
 		mouse_enabled = in_mouse_enabled;
 	}
 
@@ -42,26 +39,26 @@ namespace chaos
 			return true;
 		}
 
-		// capture mouse button state
-		if (mouse_enabled && config.must_click_to_rotate)
-			if (in_action_enumerator.CheckAndProcess(RequestInputValue(input_config.rotation_button, mouse_captured), "Mouse Look"))
+		// move the camera
+		if (mouse_enabled)
+		{
+			glm::vec2 mouse_delta = { 0.0f, 0.0f };
+
+			auto MoveCameraRequest = And(
+				RequestKeyDown(input_config.rotation_button), 
+				RequestInputValue(Input2D::MOUSE_DELTA, mouse_delta));
+
+			if (in_action_enumerator.CheckAndProcess(MoveCameraRequest, "GetDelta", [this, &mouse_delta]()
+			{
+				fps_view.IncrementYaw(-(float)(mouse_delta.x * config.mouse_sensibility));
+				fps_view.IncrementPitch(-(float)(mouse_delta.y * config.mouse_sensibility));
+			
+			}))
+			{
 				return true;
-
+			}
+		}
 		return false;
-	}
-
-	bool FPSViewController::OnMouseMoveImpl(glm::vec2 const& delta)
-	{
-		if (!mouse_enabled)
-			return false;
-
-		if (config.must_click_to_rotate && !mouse_captured) // not ready to handle the mouse movement
-			return false;
-
-		fps_view.IncrementYaw(-(float)(delta.x * config.mouse_sensibility));
-		fps_view.IncrementPitch(-(float)(delta.y * config.mouse_sensibility));
-
-		return true;
 	}
 
 }; // namespace chaos

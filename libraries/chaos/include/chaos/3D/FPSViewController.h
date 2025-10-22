@@ -94,11 +94,6 @@ namespace chaos
 		/** override */
 		virtual bool EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context) override;
 
-	protected:
-
-		/** override */
-		virtual bool OnMouseMoveImpl(glm::vec2 const& delta) override;
-
 	public:
 
 		/** the fps matrix handler */
@@ -112,8 +107,6 @@ namespace chaos
 
 		/** whether the mouse is enabled or not */
 		bool mouse_enabled = true;
-		/** whether the mouse has been captured */
-		bool mouse_captured = false;
 	};
 
 #endif

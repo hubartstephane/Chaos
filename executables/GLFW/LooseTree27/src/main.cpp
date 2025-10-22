@@ -688,7 +688,7 @@ protected:
 			return true;
 		}
 
-		return false;
+		return chaos::Window::EnumerateInputActions(in_action_enumerator, in_context);
 	}
 
 	GeometricObject* CreateNewGeometry(GeometryType type)

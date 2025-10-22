@@ -602,7 +602,7 @@ protected:
 		}
 
 
-		return false;
+		return chaos::Window::EnumerateInputActions(in_action_enumerator, in_context);
 	}
 
 	virtual bool DoTick(float delta_time) override

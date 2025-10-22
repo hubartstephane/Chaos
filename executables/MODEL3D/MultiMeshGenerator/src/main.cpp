@@ -348,7 +348,7 @@ protected:
 		if (MoveObject(Key::KP_2, 2, +1.0f, "Move Object +Z"))
 			return true;
 
-		return false;
+		return chaos::Window::EnumerateInputActions(in_action_enumerator, in_context);
 	}
 
 	virtual bool TraverseInputReceiver(chaos::InputReceiverTraverser & in_traverser, chaos::InputDeviceInterface const * in_input_device) override

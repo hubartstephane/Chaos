@@ -324,7 +324,7 @@ protected:
 		if (GenerateEvent(in_action_enumerator, clock3.get(), chaos::Key::E, "EVENT_FOREVER_TEST: Clock 3", EVENT_FOREVER_TEST))
 			return true;
 
-		return false;
+		return chaos::Window::EnumerateInputActions(in_action_enumerator, in_context);
 	}
 
 	virtual void OnDrawImGuiContent() override

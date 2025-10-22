@@ -415,7 +415,7 @@ namespace chaos
 			// the 1st best is to find a physical PRESENT gamepad and that has any input
 			// the 2nd best is to find a physical PRESENT gamepad (even if no input)
 
-			if (physical_gamepad->IsAnyAction())
+			if (physical_gamepad->IsAnyInputActive())
 				return physical_gamepad; // no better choice can be expected => immediate returns
 
 			if (best_physical_gamepad == nullptr)
@@ -483,7 +483,7 @@ namespace chaos
 				continue;
 			if (physical_gamepad->IsAllocated())
 				continue;
-			if (!physical_gamepad->IsAnyAction())
+			if (!physical_gamepad->IsAnyInputActive())
 				continue;
 
 			--unallocated_present_physical_device_count;
@@ -572,7 +572,7 @@ namespace chaos
 				if (physical_gamepad->IsAllocated()) // want unbound physical device
 					continue;
 
-				if (step == 0 && !physical_gamepad->IsAnyAction()) // in step 0, ignore sticks that have no inputs
+				if (step == 0 && !physical_gamepad->IsAnyInputActive()) // in step 0, ignore sticks that have no inputs
 					continue;
 
 				if (!DoGiveGamepadPhysicalDevice(physical_gamepad)) // returns false if no logical gamepad wants a physical device

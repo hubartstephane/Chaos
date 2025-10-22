@@ -9,9 +9,9 @@ public:
 
   virtual bool AcceptPhysicalDevice(chaos::PhysicalGamepad * physical_device) override
   {
-	  if (!physical_device->IsKeyDown(chaos::Key::GAMEPAD_A))
-		  return false;
-	  return true;
+	  if (IsInputActive(physical_device->GetInputState(chaos::Key::GAMEPAD_A)))
+		  return true;
+	  return false;
   }
 
   virtual bool OnGamepadConnected(chaos::Gamepad * gamepad) override
@@ -122,12 +122,12 @@ protected:
 					imgui_user_message.AddLine(chaos::StringTools::Printf("AXIS [%d] = %f", i, value).c_str(), 1.0f);
 			}
 
-			if (main_gamepad->IsAnyAxisAction())
+			if (main_gamepad->IsAnyInput1DActive())
 				imgui_user_message.AddLine("AXIS ACTION", 1.0f);
 
 #else
 
-#define TEST_BUTTON(x) if (main_gamepad->IsKeyDown(chaos::Key::GAMEPAD_##x))\
+#define TEST_BUTTON(x) if (IsInputActive(main_gamepad->GetInputState(chaos::Key::GAMEPAD_##x)))\
 imgui_user_message.AddLine("Pressed : " #x, 1.0f);
 
 			TEST_BUTTON(A);

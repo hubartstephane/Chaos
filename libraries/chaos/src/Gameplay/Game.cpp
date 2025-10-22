@@ -786,7 +786,7 @@ namespace chaos
 		// try start the game
 		if (game_instance == nullptr)
 		{
-			if (in_physical_gamepad->IsAnyKeyJustPressed())
+			if (in_physical_gamepad->HasAnyKeyJustBecameActive())
 				RequireStartGame(in_physical_gamepad);
 			return true;
 		}
@@ -799,7 +799,7 @@ namespace chaos
 	bool Game::OnPhysicalGamepadInput(PhysicalGamepad * physical_gamepad)
 	{
 		// ignore invalid gamepad : should never happen
-		if (!physical_gamepad->IsAnyAction())
+		if (!physical_gamepad->IsAnyInputActive())
 			return true;
 		// change the application mode
 		SetInputMode(InputMode::GAMEPAD);

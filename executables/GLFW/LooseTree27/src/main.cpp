@@ -146,9 +146,13 @@ protected:
 	{
 		if (IsKeyboardInput(key))
 		{
-			if (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(key)->IsDown())
+			chaos::KeyboardAndMouseDevice* keyboard_and_mouse_device = chaos::KeyboardAndMouseDevice::GetInstance();
+			if (keyboard_and_mouse_device == nullptr)
+				return false;
+
+			if (IsInputActive(keyboard_and_mouse_device->GetInputState(key)))
 			{
-				float final_speed = (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(chaos::Key::LEFT_SHIFT)->IsDown()) ? FAST_DISPLACEMENT_SPEED : DISPLACEMENT_SPEED;
+				float final_speed = (IsInputActive(keyboard_and_mouse_device->GetInputState(chaos::Key::LEFT_SHIFT))) ? FAST_DISPLACEMENT_SPEED : DISPLACEMENT_SPEED;
 				sphere.position += direction * delta_time * final_speed;
 				box.position += direction * delta_time * final_speed;
 				return true;
@@ -161,9 +165,13 @@ protected:
 	{
 		if (IsKeyboardInput(key))
 		{
-			if (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(key)->IsDown())
+			chaos::KeyboardAndMouseDevice* keyboard_and_mouse_device = chaos::KeyboardAndMouseDevice::GetInstance();
+			if (keyboard_and_mouse_device == nullptr)
+				return false;
+
+			if (IsInputActive(keyboard_and_mouse_device->GetInputState(key)))
 			{
-				float final_scale_speed = (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(chaos::Key::LEFT_SHIFT)->IsDown()) ? SCALE_SPEED : FAST_SCALE_SPEED;
+				float final_scale_speed = (IsInputActive(keyboard_and_mouse_device->GetInputState(chaos::Key::LEFT_SHIFT))) ? SCALE_SPEED : FAST_SCALE_SPEED;
 
 				sphere.radius = std::max(1.0f, sphere.radius + direction * final_scale_speed);
 				return true;

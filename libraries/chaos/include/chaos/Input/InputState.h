@@ -2,28 +2,28 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	enum class KeyStatus;
+	enum class InputStatus;
 
 	template<typename T>
 	class InputState;
 
-	class KeyState;
-	class Input1DState;
-	class Input2DState;
+	using KeyState     = InputState<bool>;
+	using Input1DState = InputState<float>;
+	using Input2DState = InputState<glm::vec2>;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* KeyStatus
+	* InputStatus
 	*/
 
-	enum class CHAOS_API KeyStatus : int
+	enum class CHAOS_API InputStatus : int
 	{
 		NONE = 0,
-		STAY_RELEASED = 1,
-		STAY_PRESSED = 2,
-		BECOME_RELEASED = 3,
-		BECOME_PRESSED = 4
+		STAY_INACTIVE = 1,
+		STAY_ACTIVE = 2,
+		BECOME_INACTIVE = 3,
+		BECOME_ACTIVE = 4
 	};
 
 	/**
@@ -39,6 +39,26 @@ namespace chaos
 		T GetValue() const
 		{
 			return value;
+		}
+		/** returns whether the input is activated */
+		bool IsActive() const
+		{
+			return IsValueActive(value);
+		}
+		/** whether the input is not active */
+		bool IsInactive() const
+		{
+			return !IsActive();
+		}
+		/** whether the input as just became active */
+		bool HasJustBecameActive() const
+		{
+			return (IsActive()) && (GetSameValueTimer() == 0.0f);
+		}
+		/** whether the input as just became inactive */
+		bool HasJustBecameInactive() const
+		{
+			return (IsInactive()) && (GetSameValueTimer() == 0.0f);
 		}
 		/** get the timer for the same value */
 		float GetSameValueTimer() const
@@ -58,28 +78,29 @@ namespace chaos
 			value = T();
 			update_time = -1.0;
 		}
+		/** get the input status */
+		InputStatus GetStatus() const
+		{
+			float same_value_time = GetSameValueTimer();
 
-	protected:
+			if (IsActive())
+			{
+				if (same_value_time == 0.0f && update_time >= 0.0f)
+					return InputStatus::BECOME_ACTIVE;
+				else
+					return InputStatus::STAY_ACTIVE;
+			}
+			else
+			{
+				if (same_value_time == 0.0f && update_time >= 0.0f)
+					return InputStatus::BECOME_INACTIVE;
+				else
+					return InputStatus::STAY_INACTIVE;
+			}
+		}
 
-		/** returns whether 2 input values should be considered as identical */
-		static bool AreValuesSimilar(bool src1, bool src2)
-		{
-			return (src1 == src2);
-		}
-		/** returns whether 2 input values should be considered as identical */
-		static bool AreValuesSimilar(float src1, float src2)
-		{
-			return (MathTools::AnalogicToDiscret(src1) == MathTools::AnalogicToDiscret(src2));
-		}
-		/** returns whether 2 input values should be considered as identical */
-		static bool AreValuesSimilar(glm::vec2 const & src1, glm::vec2 const & src2)
-		{
-			float sqr_length_src1 = glm::length2(src1);
-			float sqr_length_src2 = glm::length2(src2);
-			return (MathTools::AnalogicToDiscret(sqr_length_src1) == MathTools::AnalogicToDiscret(sqr_length_src2));
-		}
-		/** internal method to set value and update internal time */
-		void DoSetValue(T in_value)
+		/** change the value of the input */
+		void SetValue(T in_value)
 		{
 			double frame_time = FrameTimeManager::GetInstance()->GetCurrentFrameTime();
 
@@ -87,11 +108,26 @@ namespace chaos
 			{
 				update_time = frame_time;
 			}
-			else if (!AreValuesSimilar(value, in_value)) // some change
+			else if (IsValueActive(value) != IsValueActive(in_value)) // some effective change (because for float input, there always are some slight changes, we can't rely on strict comparison)
 			{
 				update_time = frame_time;
 			}
 			value = in_value;
+		}
+
+	protected:
+
+		/** check whether a data is an active value */
+		bool IsValueActive(T in_value) const
+		{
+			if constexpr (std::is_same_v<bool, T>)
+				return in_value;
+			if constexpr (std::is_same_v<float, T>)
+				return (in_value != 0.0f);
+			if constexpr (std::is_same_v<glm::vec2, T>)
+				return (in_value.x != 0.0f) || (in_value.y != 0.0f);
+			assert(0);
+			return false;
 		}
 
 	public:
@@ -103,51 +139,40 @@ namespace chaos
 	};
 
 	/**
-	* KeyState
-	*/
+	 * Some simple functions
+	 */
 
-	class CHAOS_API KeyState : public InputState<bool>
+	template<typename T>
+	bool IsInputActive(InputState<T> const * state)
 	{
-	public:
+		if (state == nullptr)
+			return false;
+		return state->IsActive();
+	}
 
-		/** update the value */
-		void SetValue(bool in_value);
-
-		/** whether the button is up (press or repeat) */
-		bool IsDown() const;
-		/** whether the button is up (released) */
-		bool IsUp() const;
-		/** whether the button has just been pressed */
-		bool IsJustPressed() const;
-		/** whether the button has just been released */
-		bool IsJustReleased() const;
-
-		/** get the button state change */
-		KeyStatus GetStatus() const;
-	};
-
-	/**
-	* Input1DState: An input state for 1D values (gamepad axes, mouse wheel ...)
-	*/
-	class CHAOS_API Input1DState : public InputState<float>
+	template<typename T>
+	bool IsInputInactive(InputState<T> const* state)
 	{
-	public:
+		if (state == nullptr)
+			return false;
+		return state->IsInactive();
+	}
 
-		/** update the value */
-		void SetValue(float in_value);
-	};
-
-	/**
-	* Input2DState: An input state for 2D values (gamepad sticks, mouse movement ...)
-	*/
-
-	class CHAOS_API Input2DState : public InputState<glm::vec2>
+	template<typename T>
+	bool HasInputJustBecameActive(InputState<T> const* state)
 	{
-	public:
+		if (state == nullptr)
+			return false;
+		return state->HasJustBecameActive();
+	}
 
-		/** update the value */
-		void SetValue(glm::vec2 in_value);
-	};
+	template<typename T>
+	bool HasInputJustBecameInactive(InputState<T> const* state)
+	{
+		if (state == nullptr)
+			return false;
+		return state->HasJustBecameInactive();
+	}
 
 #endif
 

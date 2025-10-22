@@ -16,7 +16,7 @@ namespace chaos
 	{
 		in_consumption_cache.SetConsumeAllInputs(true);
 
-		return in_input_device->IsAnyAction()?
+		return in_input_device->IsAnyInputActive()?
 			InputRequestResult::True:
 			InputRequestResult::False;
 	}

@@ -979,10 +979,14 @@ protected:
 
 	void UpdateObjectPosition(chaos::Key button, float delta_time, glm::vec3 const & factor)
 	{
+		chaos::KeyboardAndMouseDevice* keyboard_and_mouse_device = chaos::KeyboardAndMouseDevice::GetInstance();
+		if (keyboard_and_mouse_device == nullptr)
+			return;
+
 		static float SPEED = 5.0f;
-		if (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(button)->IsDown())
+		if (IsInputActive(keyboard_and_mouse_device->GetInputState(button)))
 		{
-			if (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(chaos::Key::LEFT_CONTROL)->IsDown())
+			if (IsInputActive(keyboard_and_mouse_device->GetInputState(chaos::Key::LEFT_CONTROL)))
 				position_object1 += SPEED * (float)(delta_time)* factor;
 			else
 				position_object2 += SPEED * (float)(delta_time)* factor;
@@ -991,11 +995,15 @@ protected:
 
 	void UpdateObjectRotation(chaos::Key button, float delta_time, float factor)
 	{
+		chaos::KeyboardAndMouseDevice* keyboard_and_mouse_device = chaos::KeyboardAndMouseDevice::GetInstance();
+		if (keyboard_and_mouse_device == nullptr)
+			return;
+
 		static float SPEED = 1.0f;
 
-		if (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(button)->IsDown())
+		if (IsInputActive(keyboard_and_mouse_device->GetInputState(button)))
 		{
-			if (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(chaos::Key::LEFT_CONTROL)->IsDown())
+			if (IsInputActive(keyboard_and_mouse_device->GetInputState(chaos::Key::LEFT_CONTROL)))
 				rotation_object1 += SPEED * (float)(delta_time)* factor;
 			else
 				rotation_object2 += SPEED * (float)(delta_time)* factor;
@@ -1004,7 +1012,11 @@ protected:
 
 	void UpdateObjectType()
 	{
-		if (chaos::KeyboardAndMouseDevice::GetInstance()->GetInputState(chaos::Key::LEFT_CONTROL)->IsDown())
+		chaos::KeyboardAndMouseDevice* keyboard_and_mouse_device = chaos::KeyboardAndMouseDevice::GetInstance();
+		if (keyboard_and_mouse_device == nullptr)
+			return;
+
+		if (IsInputActive(keyboard_and_mouse_device->GetInputState(chaos::Key::LEFT_CONTROL)))
 			prim_type_object1 = (PrimitiveType)(((int)prim_type_object1 + 1) % (int)PrimitiveType::PRIMITIVE_TYPE_COUNT);
 		else
 			prim_type_object2 = (PrimitiveType)(((int)prim_type_object2 + 1) % (int)PrimitiveType::PRIMITIVE_TYPE_COUNT);

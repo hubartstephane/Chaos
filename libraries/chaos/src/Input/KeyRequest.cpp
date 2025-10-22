@@ -36,11 +36,11 @@ namespace chaos
 		{
 			auto GetModifierKeyValue = [in_input_device](Key key1, Key key2)
 			{
-				KeyStatus key1_status = in_input_device->GetKeyStatus(key1);
-				if (key1_status == KeyStatus::BECOME_PRESSED || key1_status == KeyStatus::STAY_PRESSED)
+				InputStatus key1_status = in_input_device->GetInputStatus(key1);
+				if (key1_status == InputStatus::BECOME_ACTIVE || key1_status == InputStatus::STAY_ACTIVE)
 					return true;
-				KeyStatus key2_status = in_input_device->GetKeyStatus(key2);
-				if (key2_status == KeyStatus::BECOME_PRESSED || key2_status == KeyStatus::STAY_PRESSED)
+				InputStatus key2_status = in_input_device->GetInputStatus(key2);
+				if (key2_status == InputStatus::BECOME_ACTIVE || key2_status == InputStatus::STAY_ACTIVE)
 					return true;
 				return false;
 			};
@@ -70,21 +70,21 @@ namespace chaos
 					return InputRequestResult::False;
 		}
 
-		KeyStatus input_status = input_state->GetStatus();
+		InputStatus input_status = input_state->GetStatus();
 
 		if (HasAnyFlags(action_mask, KeyActionMask::Release))
 		{
-			if (input_status == KeyStatus::BECOME_RELEASED || input_status == KeyStatus::STAY_RELEASED)
+			if (input_status == InputStatus::BECOME_INACTIVE || input_status == InputStatus::STAY_INACTIVE)
 				return InputRequestResult::True;
 		}
 		if (HasAnyFlags(action_mask, KeyActionMask::Press))
 		{
-			if (input_status == KeyStatus::BECOME_PRESSED)
+			if (input_status == InputStatus::BECOME_ACTIVE)
 				return InputRequestResult::True;
 		}
 		if (HasAnyFlags(action_mask, KeyActionMask::Repeat))
 		{
-			if (input_status == KeyStatus::STAY_PRESSED)
+			if (input_status == InputStatus::STAY_ACTIVE)
 				return InputRequestResult::True;
 		}
 		return InputRequestResult::False;

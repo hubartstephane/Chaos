@@ -44,19 +44,19 @@ namespace chaos
 	KeyState* InputDeviceInterface::GetInputState(Key input)
 	{
 		InputDeviceInterface const* const_this = this;
-		return (KeyState*)const_this->GetInputState(input); // simply remove constness
+		return (KeyState*)const_this->GetInputState(input); // simply remove constness (not very nice, but far simpler)
 	}
 
 	Input1DState* InputDeviceInterface::GetInputState(Input1D input)
 	{
 		InputDeviceInterface const* const_this = this;
-		return (Input1DState*)const_this->GetInputState(input); // simply remove constness
+		return (Input1DState*)const_this->GetInputState(input); // simply remove constness (not very nice, but far simpler)
 	}
 
 	Input2DState* InputDeviceInterface::GetInputState(Input2D input)
 	{
 		InputDeviceInterface const* const_this = this;
-		return (Input2DState*)const_this->GetInputState(input); // simply remove constness
+		return (Input2DState*)const_this->GetInputState(input); // simply remove constness (not very nice, but far simpler)
 	}
 
 	bool InputDeviceInterface::ForAllKeys(ForAllKeysFunction func) const
@@ -134,67 +134,61 @@ namespace chaos
 		return { 0.0f, 0.0f };
 	}
 
-	KeyStatus InputDeviceInterface::GetKeyStatus(Key key) const
+	InputStatus InputDeviceInterface::GetInputStatus(Key input) const
 	{
-		if (KeyState const * key_state = GetInputState(key))
-			return key_state->GetStatus();
-		return KeyStatus::NONE;
+		if (KeyState const * input_state = GetInputState(input))
+			return input_state->GetStatus();
+		return InputStatus::NONE;
 	}
 
-	bool InputDeviceInterface::IsKeyDown(Key key) const
+	InputStatus InputDeviceInterface::GetInputStatus(Input1D input) const
 	{
-		if (KeyState const * key_state = GetInputState(key))
-			return key_state->IsDown();
-		return false;
+		if (Input1DState const* input_state = GetInputState(input))
+			return input_state->GetStatus();
+		return InputStatus::NONE;
 	}
 
-	bool InputDeviceInterface::IsKeyUp(Key key) const
+	InputStatus InputDeviceInterface::GetInputStatus(Input2D input) const
 	{
-		if (KeyState const * key_state = GetInputState(key))
-			return key_state->IsUp();
-		return true;
+		if (Input2DState const* input_state = GetInputState(input))
+			return input_state->GetStatus();
+		return InputStatus::NONE;
 	}
 
-	bool InputDeviceInterface::IsKeyJustPressed(Key key) const
-	{
-		if (KeyState const * key_state = GetInputState(key))
-			return key_state->IsJustPressed();
-		return false;
-	}
-
-	bool InputDeviceInterface::IsKeyJustReleased(Key key) const
-	{
-		if (KeyState const * key_state = GetInputState(key))
-			return key_state->IsJustReleased();
-		return false;
-	}
-
-	bool InputDeviceInterface::IsAnyKeyAction() const
+	bool InputDeviceInterface::IsAnyKeyActive() const
 	{
 		return ForAllKeys([](Key key, KeyState const & state)
 		{
-			return state.IsDown();
+			return state.IsActive();
 		});
 	}
 
-	bool InputDeviceInterface::IsAnyAxisAction() const
+	bool InputDeviceInterface::IsAnyInput1DActive() const
 	{
 		return ForAllInput1D([](Input1D input, Input1DState const & state)
 		{
-			return (state.GetValue() != 0.0f);
+			return state.IsActive();
 		});
 	}
 
-	bool InputDeviceInterface::IsAnyAction() const
+	bool InputDeviceInterface::IsAnyInput2DActive() const
 	{
-		return IsAnyKeyAction() || IsAnyAxisAction();
+		return ForAllInput2D([](Input2D input, Input2DState const & state)
+		{
+			return state.IsActive();
+		});
 	}
 
-	bool InputDeviceInterface::IsAnyKeyJustPressed() const
+	bool InputDeviceInterface::IsAnyInputActive() const
+	{
+		return IsAnyKeyActive() || IsAnyInput1DActive() || IsAnyInput2DActive();
+	}
+
+	bool InputDeviceInterface::HasAnyKeyJustBecameActive() const
 	{
 		return ForAllKeys([](Key key, KeyState const & state)
 		{
-			return state.IsJustPressed();
+			return HasInputJustBecameActive(&state);
 		});
 	}
 

@@ -58,28 +58,24 @@ namespace chaos
 		/** get the stick value */
 		glm::vec2 GetInputValue(Input2D input) const;
 
-
 		/** get the key state change */
-		KeyStatus GetKeyStatus(Key key) const;
+		InputStatus GetInputStatus(Key key) const;
+		/** get the input1D state change */
+		InputStatus GetInputStatus(Input1D input) const;
+		/** get the input2D state change */
+		InputStatus GetInputStatus(Input2D input) const;
 
-		/** whether the key is up (press or repeat) */
-		bool IsKeyDown(Key key) const;
-		/** whether the key is up (released) */
-		bool IsKeyUp(Key key) const;
-		/** whether the key has just been pressed */
-		bool IsKeyJustPressed(Key key) const;
-		/** whether the key has just been released */
-		bool IsKeyJustReleased(Key key) const;
-
-		/** returns true whether there is any actioned key */
-		bool IsAnyKeyAction() const;
-		/** returns true whether there is any axis in use */
-		bool IsAnyAxisAction() const;
-		/** returns true whenever a key is pressed or an axis is in action */
-		bool IsAnyAction() const;
+		/** returns true whether there is any k active */
+		bool IsAnyKeyActive() const;
+		/** returns true whether there is any input1D active */
+		bool IsAnyInput1DActive() const;
+		/** returns true whether there is any input2D active */
+		bool IsAnyInput2DActive() const;
+		/** returns true whenever any key, input1D or input2D is active */
+		bool IsAnyInputActive() const;
 
 		/** returns true whether there is a key that just has become pressed */
-		bool IsAnyKeyJustPressed() const;
+		bool HasAnyKeyJustBecameActive() const;
 
 	protected:
 

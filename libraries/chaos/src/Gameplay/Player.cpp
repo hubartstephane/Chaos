@@ -72,8 +72,8 @@ namespace chaos
 		if (gamepad_state == nullptr)
 			return;
 		// maybe a game/pause resume
-		if ((gamepad_state->IsKeyJustPressed(Key::GAMEPAD_SPECIAL_LEFT)) ||
-			(gamepad_state->IsKeyJustPressed(Key::GAMEPAD_SPECIAL_RIGHT)))
+		if (HasInputJustBecameActive(gamepad_state->GetInputState(Key::GAMEPAD_SPECIAL_LEFT)) ||
+			HasInputJustBecameActive(gamepad_state->GetInputState(Key::GAMEPAD_SPECIAL_RIGHT)))
 		{
 			Game* game = GetGame();
 			if (game != nullptr)
@@ -169,7 +169,7 @@ namespace chaos
 		if (gamepad_state == nullptr)
 			return;
 		// change the application mode
-		if (gamepad_state->IsAnyAction())
+		if (gamepad_state->IsAnyInputActive())
 			SetInputMode(InputMode::GAMEPAD);
 
 		// cache the LEFT stick position (it is aliases with the DPAD)
@@ -178,14 +178,14 @@ namespace chaos
 			left_stick_position = lsp;
 		else
 		{
-			if (gamepad_state->IsKeyDown(Key::GAMEPAD_DPAD_LEFT))
+			if (IsInputActive(gamepad_state->GetInputState(Key::GAMEPAD_DPAD_LEFT)))
 				left_stick_position.x = -1.0f;
-			else if (gamepad_state->IsKeyDown(Key::GAMEPAD_DPAD_RIGHT))
+			else if (IsInputActive(gamepad_state->GetInputState(Key::GAMEPAD_DPAD_RIGHT)))
 				left_stick_position.x = 1.0f;
 
-			if (gamepad_state->IsKeyDown(Key::GAMEPAD_DPAD_UP))
+			if (IsInputActive(gamepad_state->GetInputState(Key::GAMEPAD_DPAD_UP)))
 				left_stick_position.y = +1.0f;
-			else if (gamepad_state->IsKeyDown(Key::GAMEPAD_DPAD_DOWN))
+			else if (IsInputActive(gamepad_state->GetInputState(Key::GAMEPAD_DPAD_DOWN)))
 				left_stick_position.y = -1.0f;
 		}
 
@@ -354,7 +354,7 @@ namespace chaos
 		{
 			if (gamepad == nullptr)
 				return false;
-			return gamepad->IsKeyDown(button);
+			return IsInputActive(gamepad->GetInputState(button));
 		}
 		// super call
 		return InputReceiverInterface::DoCheckKeyDown(button);

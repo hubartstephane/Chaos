@@ -15,6 +15,11 @@ namespace chaos
 		assert(implot_context == nullptr);
 	}
 
+	char const* WindowImGuiContext::GetInputReceiverName() const
+	{
+		return "WindowImGuiContext";
+	}
+
 	bool WindowImGuiContext::IsImGuiContextCurrent() const
 	{
 		return

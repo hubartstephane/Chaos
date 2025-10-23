@@ -3,6 +3,11 @@
 
 namespace chaos
 {
+	char const* FPSViewController::GetInputReceiverName() const
+	{
+		return "FPSViewController";
+	}
+
 	void FPSViewController::SetMouseEnabled(bool in_mouse_enabled)
 	{
 		mouse_enabled = in_mouse_enabled;
@@ -48,7 +53,7 @@ namespace chaos
 				RequestKeyDown(input_config.rotation_button), 
 				RequestInputValue(Input2D::MOUSE_DELTA, mouse_delta));
 
-			if (in_action_enumerator.CheckAndProcess(MoveCameraRequest, "GetDelta", [this, &mouse_delta]()
+			if (in_action_enumerator.CheckAndProcess(MoveCameraRequest, "Move Camera", [this, &mouse_delta]()
 			{
 				fps_view.IncrementYaw(-(float)(mouse_delta.x * config.mouse_sensibility));
 				fps_view.IncrementPitch(-(float)(mouse_delta.y * config.mouse_sensibility));

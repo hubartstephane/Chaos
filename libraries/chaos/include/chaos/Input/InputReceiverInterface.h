@@ -37,6 +37,9 @@ namespace chaos
 		/** destructor */
 		virtual ~InputReceiverInterface() = default;
 
+		/** get a name for the receiver */
+		virtual char const* GetInputReceiverName() const;
+
 		/** change the current input mode */
 		void SetInputMode(InputMode new_mode);
 		/* get the current input mode */

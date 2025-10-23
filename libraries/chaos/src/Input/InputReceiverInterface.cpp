@@ -4,6 +4,13 @@
 
 namespace chaos
 {
+	char const* InputReceiverInterface::GetInputReceiverName() const
+	{
+		if (Object const* object = auto_cast(this))
+			return object->GetClass()->GetClassName().c_str();
+		return nullptr;
+	}
+
 	void InputReceiverInterface::SetInputMode(InputMode new_mode)
 	{
 		if (new_mode == input_mode)

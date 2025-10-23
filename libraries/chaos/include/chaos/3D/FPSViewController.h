@@ -93,6 +93,8 @@ namespace chaos
 
 		/** override */
 		virtual bool EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context) override;
+		/** override */
+		virtual char const* GetInputReceiverName() const override;
 
 	public:
 

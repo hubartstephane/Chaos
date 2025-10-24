@@ -135,11 +135,11 @@ namespace chaos
 		float GetViewportWantedAspect() const { return viewport_wanted_aspect; }
 
 		/** get current state ID */
-		TagType GetCurrentStateTag(bool strict_state = false, bool use_destination = false) const;
+		TagType GetCurrentStateTag() const;
 		/** returns whether were are in playing state */
-		bool IsPlaying(bool strict_state = false, bool use_destination = false) const;
+		bool IsPlaying() const;
 		/** returns whether were are in pause state */
-		bool IsPaused(bool strict_state = false, bool use_destination = false) const;
+		bool IsPaused() const;
 
 		/** create the background image */
 		virtual bool CreateBackgroundImage(ObjectRequest material_request, ObjectRequest texture_request);

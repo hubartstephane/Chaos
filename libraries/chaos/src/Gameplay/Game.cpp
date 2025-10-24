@@ -1050,28 +1050,26 @@ namespace chaos
 		return true;
 	}
 
-	TagType Game::GetCurrentStateTag(bool strict_state, bool use_destination) const
+	TagType Game::GetCurrentStateTag() const
 	{
 		if (game_sm_instance == nullptr)
 			return -1;
-		SM::StateBase const * current_state = (strict_state)?
-			game_sm_instance->GetCurrentStrictState(use_destination) :
-			game_sm_instance->GetCurrentState();
+		SM::StateBase const * current_state = game_sm_instance->GetCurrentState();
 		if (current_state == nullptr)
 			return -1;
 		return current_state->GetTag();
 	}
 
-	bool Game::IsPlaying(bool strict_state, bool use_destination) const
+	bool Game::IsPlaying() const
 	{
-		if (GetCurrentStateTag(strict_state, use_destination) == GameStateMachineKeys::STATE_PLAYING)
+		if (GetCurrentStateTag() == GameStateMachineKeys::STATE_PLAYING)
 			return true;
 		return false;
 	}
 
-	bool Game::IsPaused(bool strict_state, bool use_destination) const
+	bool Game::IsPaused() const
 	{
-		if (GetCurrentStateTag(strict_state, use_destination) == GameStateMachineKeys::STATE_PAUSE)
+		if (GetCurrentStateTag() == GameStateMachineKeys::STATE_PAUSE)
 			return true;
 		return false;
 	}

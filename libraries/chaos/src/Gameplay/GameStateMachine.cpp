@@ -239,5 +239,21 @@ namespace chaos
 		assert(in_game != nullptr);
 	}
 
+	bool GameStateMachineInstance::TraverseInputReceiver(chaos::InputReceiverTraverser& in_traverser, chaos::InputDeviceInterface const* in_input_device)
+	{
+		if (current_state != nullptr)
+		{
+			if (InputReceiverInterface* input_receiver_state = auto_cast(current_state))
+				if (in_traverser.Traverse(input_receiver_state))
+					return true;
+
+			//for (SM::Transition* transition : current_state->outgoing_transitions)
+			//	if (InputReceiverInterface* input_receiver_transition = auto_cast(current_state))
+			//		if (in_traverser.Traverse(input_receiver_transition))
+			//			return true;
+		}
+		return InputReceiverInterface::TraverseInputReceiver(in_traverser, in_input_device);
+	}
+
 }; // namespace chaos
 

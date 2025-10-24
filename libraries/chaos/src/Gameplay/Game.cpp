@@ -82,6 +82,10 @@ namespace chaos
 
 	bool Game::TraverseInputReceiver(InputReceiverTraverser & in_traverser, InputDeviceInterface const* in_input_device)
 	{
+		// try with game sm
+		if (game_sm_instance != nullptr)
+			if (in_traverser.Traverse(game_sm_instance.get(), in_input_device))
+				return true;
 		// try with game instance
 		if (game_instance != nullptr)
 			if (in_traverser.Traverse(game_instance.get(), in_input_device))
@@ -774,7 +778,7 @@ namespace chaos
 		return game_sm_class.CreateInstance();
 	}
 
-	SM::StateMachineInstance * Game::DoCreateGameStateMachineInstance(SM::StateMachine * state_machine)
+	GameStateMachineInstance * Game::DoCreateGameStateMachineInstance(SM::StateMachine * state_machine)
 	{
 		return new GameStateMachineInstance(this, state_machine);
 	}

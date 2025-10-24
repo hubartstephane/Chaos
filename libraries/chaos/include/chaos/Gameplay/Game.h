@@ -234,7 +234,7 @@ namespace chaos
 		/** allocate the state machine */
 		virtual SM::StateMachine* DoCreateGameStateMachine();
 		/** create the game state_machine instance */
-		virtual SM::StateMachineInstance* DoCreateGameStateMachineInstance(SM::StateMachine* state_machine);
+		virtual GameStateMachineInstance* DoCreateGameStateMachineInstance(SM::StateMachine* state_machine);
 
 		/** create windows necessery for the game */
 		virtual bool CreateGameWindow(JSONReadConfiguration config);
@@ -389,7 +389,7 @@ namespace chaos
 		shared_ptr<SM::StateMachine> game_sm;
 		SubClassOf<SM::StateMachine> game_sm_class;
 		/** pointer on the state_machine instance */
-		shared_ptr<SM::StateMachineInstance> game_sm_instance;
+		shared_ptr<GameStateMachineInstance> game_sm_instance;
 
 		/** cheating */
 #if _DEBUG

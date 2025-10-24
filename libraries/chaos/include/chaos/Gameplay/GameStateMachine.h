@@ -38,7 +38,7 @@ namespace chaos
 	// GameState
 	// =========================================================
 
-	class CHAOS_API GameState : public SM::State
+	class CHAOS_API GameState : public SM::State, public InputReceiverInterface
 	{
 	public:
 
@@ -54,7 +54,7 @@ namespace chaos
 	// GameTransition
 	// =========================================================
 
-	class CHAOS_API GameTransition : public SM::Transition
+	class CHAOS_API GameTransition : public SM::Transition, public InputReceiverInterface
 	{
 	public:
 
@@ -211,7 +211,7 @@ namespace chaos
 	// GameStateMachineInstance
 	// =========================================================
 
-	class CHAOS_API GameStateMachineInstance : public SM::StateMachineInstance
+	class CHAOS_API GameStateMachineInstance : public SM::StateMachineInstance, public InputReceiverInterface
 	{
 	public:
 
@@ -228,6 +228,9 @@ namespace chaos
 		{
 			return game;
 		}
+		
+		/** override */
+		virtual bool TraverseInputReceiver(chaos::InputReceiverTraverser& in_traverser, chaos::InputDeviceInterface const* in_input_device) override;
 
 	protected:
 

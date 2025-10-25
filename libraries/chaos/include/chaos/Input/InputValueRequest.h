@@ -47,7 +47,7 @@ namespace chaos
 				if (input_state == nullptr)
 					return InputRequestResult::Invalid; // abnormal (request for an input not handled by the receiver)
 				// consum the key of the request (no one can use it anymore until next frame)
-				if (!in_consumption_cache.TryConsumeInput(searched_input, in_input_device))
+				if (!in_consumption_cache.TryConsumeInput(in_input_receiver, searched_input, in_input_device))
 					return InputRequestResult::Rejected;
 				// is this the input we are looking for
 				if (in_key_event.key != searched_input)
@@ -71,7 +71,7 @@ namespace chaos
 			if (input_state == nullptr)
 				return InputRequestResult::Invalid; // abnormal (request for an input not handled by the receiver)
 			// consum the key of the request (no one can use it anymore until next frame)
-			if (!in_consumption_cache.TryConsumeInput(searched_input, in_input_device))
+			if (!in_consumption_cache.TryConsumeInput(in_input_receiver, searched_input, in_input_device))
 				return InputRequestResult::Rejected;
 			// get the result
 			result = input_state->GetValue();

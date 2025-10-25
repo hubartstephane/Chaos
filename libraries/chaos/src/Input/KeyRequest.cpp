@@ -29,7 +29,7 @@ namespace chaos
 		if (input_state == nullptr)
 			return InputRequestResult::Invalid; // abnormal (request for an input not handled by the receiver)
 		// consum the key of the request (no one can use it anymore until next frame)
-		if (!in_consumption_cache.TryConsumeInput(key, in_input_device))
+		if (!in_consumption_cache.TryConsumeInput(in_input_receiver, key, in_input_device))
 			return InputRequestResult::Rejected;
 		
 		if (required_modifiers != KeyModifier::None || forbidden_modifiers != KeyModifier::None)
@@ -100,7 +100,7 @@ namespace chaos
 		if (input_state == nullptr)
 			return InputRequestResult::Invalid; // abnormal (request for an input not handled by the receiver)
 		// consum the key of the request (no one can use it anymore until next frame)
-		if (!in_consumption_cache.TryConsumeInput(key, in_input_device))
+		if (!in_consumption_cache.TryConsumeInput(in_input_receiver, key, in_input_device))
 			return InputRequestResult::Rejected;
 		//  effective request
 		return in_key_event.Check(key, action_mask, required_modifiers, forbidden_modifiers)?

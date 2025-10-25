@@ -64,7 +64,7 @@ namespace chaos
 			{
 				if (WindowApplication* window_application = Application::GetInstance())
 					if (KeyboardAndMouseDevice const* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance())
-						window_application->GetInputConsumptionCache().TryConsumeInput(mouse_button_event.key, keyboard_and_mouse_device);
+						window_application->GetInputConsumptionCache().TryConsumeInput(nullptr, mouse_button_event.key, keyboard_and_mouse_device);
 				return true;
 			}
 		}
@@ -98,7 +98,7 @@ namespace chaos
 
 			if (WindowApplication* window_application = Application::GetInstance())
 				if (KeyboardAndMouseDevice const* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance())
-					window_application->GetInputConsumptionCache().TryConsumeInput(key_event.key, keyboard_and_mouse_device);
+					window_application->GetInputConsumptionCache().TryConsumeInput(nullptr, key_event.key, keyboard_and_mouse_device);
 			return true;
 		}
 		return false;

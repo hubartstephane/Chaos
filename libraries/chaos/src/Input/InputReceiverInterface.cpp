@@ -137,7 +137,7 @@ namespace chaos
 			{
 				// XXX: prevent the key to be handled in poll event has well
 				if (WindowApplication* window_application = Application::GetInstance())
-					window_application->GetInputConsumptionCache().TryConsumeInput(key_event.key, in_input_device);
+					window_application->GetInputConsumptionCache().TryConsumeInput(nullptr, key_event.key, in_input_device);
 				return true;
 			}
 			return false;

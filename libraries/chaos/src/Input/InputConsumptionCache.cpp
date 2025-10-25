@@ -3,9 +3,10 @@
 
 namespace chaos
 {
-	void InputConsumptionCache::SetConsumeAllInputs(InputReceiverInterface const* in_input_receiver, bool in_value)
+	void InputConsumptionCache::SetConsumeAllInputs(InputReceiverInterface const* in_input_receiver)
 	{
-		consume_all_inputs = in_value;
+		if (!all_inputs_consumer.has_value())
+			all_inputs_consumer = in_input_receiver;
 	}
 
 	void InputConsumptionCache::Clear()
@@ -13,7 +14,7 @@ namespace chaos
 		consumed_keys.clear();
 		consumed_input1D.clear();
 		consumed_input2D.clear();
-		consume_all_inputs = false;
+		all_inputs_consumer.reset();
 	}
 
 	bool InputConsumptionCache::TryConsumeInput(InputReceiverInterface const* in_input_receiver, Key const& in_key, InputDeviceInterface const* in_input_device) // check whether the key is still available and lock it for further requests (do the same for related inputs)
@@ -31,7 +32,7 @@ namespace chaos
 			return true;
 		});
 
-		return (consume_all_inputs)? 
+		return (all_inputs_consumer.has_value() && all_inputs_consumer.value() != in_input_receiver) ?
 			false:
 			result;
 	}
@@ -60,7 +61,7 @@ namespace chaos
 			return true;
 		});
 
-		return (consume_all_inputs) ?
+		return (all_inputs_consumer.has_value() && all_inputs_consumer.value() != in_input_receiver) ?
 			false :
 			result;
 	}
@@ -82,7 +83,7 @@ namespace chaos
 			return true;
 		});
 
-		return (consume_all_inputs) ?
+		return (all_inputs_consumer.has_value() && all_inputs_consumer.value() != in_input_receiver) ?
 			false :
 			result;
 	}

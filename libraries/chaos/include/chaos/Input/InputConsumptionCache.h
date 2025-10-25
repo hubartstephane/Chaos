@@ -12,6 +12,10 @@ namespace chaos
 
 	/**
 	 * InputConsumptionCache: an object that keeps that trace of which inputs have been handled this frame
+	 * 
+	 * XXX: A trace of the input receiver consuming an input is kept. The same input may be further request but only by the same consumer
+	 *      (nullptr is a valid consumer meaning no one will ever be allowed to consumed the input)
+	 *      The same is true for SetConsumeAllInputs(...)
 	 */
 
 	class CHAOS_API InputConsumptionCache
@@ -20,7 +24,7 @@ namespace chaos
 	public:
 
 		/** all incomming input requests will be considered as consumed */
-		void SetConsumeAllInputs(InputReceiverInterface const* in_input_receiver, bool in_value);
+		void SetConsumeAllInputs(InputReceiverInterface const* in_input_receiver);
 
 		/** clear the cache */
 		void Clear();
@@ -55,8 +59,8 @@ namespace chaos
 		/** input2D that are consumed */
 		std::map<std::pair<Input2D, Input2DState const*>, InputReceiverInterface const*> consumed_input2D;
 
-		/** indicates whether incoming input request will be considered as consumed */
-		bool consume_all_inputs = false;
+		/** the receiver that claimed for all inputs */
+		std::optional<InputReceiverInterface const*> all_inputs_consumer;
 	};
 
 #endif

@@ -14,7 +14,7 @@ namespace chaos
 
 	InputRequestResult AnyInputRequest::Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const
 	{
-		in_consumption_cache.SetConsumeAllInputs(in_input_receiver, true);
+		in_consumption_cache.SetConsumeAllInputs(in_input_receiver);
 
 		return in_input_device->IsAnyInputActive()?
 			InputRequestResult::True:
@@ -23,7 +23,7 @@ namespace chaos
 
 	InputRequestResult AnyInputRequest::Check(InputReceiverInterface const* in_input_receiver, KeyEventBase const& in_key_event, InputDeviceInterface const * in_input_device, InputConsumptionCache & in_consumption_cache) const
 	{
-		in_consumption_cache.SetConsumeAllInputs(in_input_receiver, true);
+		in_consumption_cache.SetConsumeAllInputs(in_input_receiver);
 		return in_key_event.IsKeyDownEvent()?
 			InputRequestResult::True:
 			InputRequestResult::False;

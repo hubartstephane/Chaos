@@ -104,7 +104,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(Key::ESCAPE), "Toggle Pause", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(Key::ESCAPE).ForbidModifiers(KeyModifier::Shift), "Toggle Pause", [this]()
 		{
 			RequireTogglePause();
 		}))

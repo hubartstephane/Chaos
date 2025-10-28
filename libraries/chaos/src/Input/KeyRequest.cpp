@@ -4,7 +4,6 @@
 
 namespace chaos
 {
-
 	InputRequestDebugInfo KeyRequest::GetDebugInfo() const
 	{
 		char buffer[256];
@@ -90,22 +89,9 @@ namespace chaos
 		return InputRequestResult::False;
 	}
 
-	InputRequestResult KeyRequest::Check(InputReceiverInterface const* in_input_receiver, KeyEventBase const& in_key_event, InputDeviceInterface const * in_input_device, InputConsumptionCache & in_consumption_cache) const
+	bool KeyRequest::IsRequestRelatedTo(Key in_input) const
 	{
-		// early exit
-		if (key == Key::UNKNOWN)
-			return InputRequestResult::Invalid;
-		// find state
-		KeyState const* input_state = in_input_device->GetInputState(key);
-		if (input_state == nullptr)
-			return InputRequestResult::Invalid; // abnormal (request for an input not handled by the receiver)
-		// consum the key of the request (no one can use it anymore until next frame)
-		if (!in_consumption_cache.TryConsumeInput(in_input_receiver, key, in_input_device))
-			return InputRequestResult::Rejected;
-		//  effective request
-		return in_key_event.Check(key, action_mask, required_modifiers, forbidden_modifiers)?
-			InputRequestResult::True:
-			InputRequestResult::False;
+		return (key == in_input);
 	}
 
 	KeyRequest KeyRequest::RequireModifiers(KeyModifier in_modifiers) const

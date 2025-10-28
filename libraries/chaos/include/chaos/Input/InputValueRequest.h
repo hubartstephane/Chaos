@@ -24,43 +24,6 @@ namespace chaos
 		}
 
 		/** override */
-		virtual InputRequestDebugInfo GetDebugInfo() const override
-		{
-			InputRequestDebugInfo result;
-
-			result.input = EnumToString(searched_input);
-			result.action_type = "Query Value";
-
-			return result;
-		}
-
-		/** override */
-		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, KeyEventBase const& in_key_event, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
-		{
-			if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, Key>) // this is only valid for key event
-			{
-				// early exit
-				if (searched_input == Key::UNKNOWN)
-					return InputRequestResult::Invalid;
-				// find input
-				auto const* input_state = in_input_device->GetInputState(searched_input);
-				if (input_state == nullptr)
-					return InputRequestResult::Invalid; // abnormal (request for an input not handled by the receiver)
-				// consum the key of the request (no one can use it anymore until next frame)
-				if (!in_consumption_cache.TryConsumeInput(in_input_receiver, searched_input, in_input_device))
-					return InputRequestResult::Rejected;
-				// is this the input we are looking for
-				if (in_key_event.key != searched_input)
-					return InputRequestResult::False;
-				// get the result
-				result = in_key_event.IsKeyDownEvent();
-
-				return InputRequestResult::True;
-			}
-			return InputRequestResult::Invalid;
-		}
-
-		/** override */
 		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
 		{
 			// early exit
@@ -77,6 +40,38 @@ namespace chaos
 			result = input_state->GetValue();
 
 			return InputRequestResult::True;
+		}
+
+		/** override */
+		virtual bool IsRequestRelatedTo(Key in_input) const override
+		{
+			if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, Key>)
+				return (searched_input == in_input);
+			return false;
+		}
+		/** override */
+		virtual bool IsRequestRelatedTo(Input1D in_input) const override
+		{
+			if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, Input1D>)
+				return (searched_input == in_input);
+			return false;
+		}
+		/** override */
+		virtual bool IsRequestRelatedTo(Input2D in_input) const override
+		{
+			if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, Input2D>)
+				return (searched_input == in_input);
+			return false;
+		}
+		/** override */
+		virtual InputRequestDebugInfo GetDebugInfo() const override
+		{
+			InputRequestDebugInfo result;
+
+			result.input = EnumToString(searched_input);
+			result.action_type = "Query Value";
+
+			return result;
 		}
 
 	protected:

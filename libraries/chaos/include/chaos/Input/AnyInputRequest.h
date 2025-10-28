@@ -16,11 +16,15 @@ namespace chaos
 	public:
 
 		/** override */
-		virtual InputRequestDebugInfo GetDebugInfo() const override;
-		/** override */
-		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, KeyEventBase const& in_key_event, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const override;
-		/** override */
 		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const override;
+		/** override */
+		virtual bool IsRequestRelatedTo(Key in_input) const override;
+		/** override */
+		virtual bool IsRequestRelatedTo(Input1D in_input) const override;
+		/** override */
+		virtual bool IsRequestRelatedTo(Input2D in_input) const override;
+		/** override */
+		virtual InputRequestDebugInfo GetDebugInfo() const override;
 	};
 
 #endif

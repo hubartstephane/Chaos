@@ -47,13 +47,18 @@ namespace chaos
 	{
 	public:
 
-		/** some debugging information */
-		virtual InputRequestDebugInfo GetDebugInfo() const;
-
-		/** check whether the request matches a given key event */
-		virtual InputRequestResult Check(InputReceiverInterface const * in_input_receiver, KeyEventBase const& in_key_event, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const;
 		/** check whether the request matches a given input device state (polling) */
 		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const;
+
+		/** check whether the request is related to some input */
+		virtual bool IsRequestRelatedTo(Key in_input) const;
+		/** check whether the request is related to some input */
+		virtual bool IsRequestRelatedTo(Input1D in_input) const;
+		/** check whether the request is related to some input */
+		virtual bool IsRequestRelatedTo(Input2D in_input) const;
+
+		/** some debugging information */
+		virtual InputRequestDebugInfo GetDebugInfo() const;
 	};
 
 #endif

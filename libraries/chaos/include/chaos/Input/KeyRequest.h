@@ -15,6 +15,8 @@ namespace chaos
 
 	public:
 
+		using InputRequestBase::IsRequestRelatedTo; // mandatory elsewhere IsRequestRelatedTo(input1D/2D) will be hidden by the single override method
+
 		/** default constructor */
 		KeyRequest() = default;
 		/** copy constructor */
@@ -25,17 +27,18 @@ namespace chaos
 			action_mask(in_action_mask)
 		{}
 
+		/** override */
+		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const override;
+		/** override */
+		virtual bool IsRequestRelatedTo(Key in_input) const override;
+
+		/** override */
+		virtual InputRequestDebugInfo GetDebugInfo() const override;
+
 		/** gets an equivalent request by updating required_modifiers */
 		KeyRequest RequireModifiers(KeyModifier in_modifiers) const;
 		/** gets an equivalent request by updating forbidden_modifiers */
 		KeyRequest ForbidModifiers(KeyModifier in_modifiers) const;
-
-		/** override */
-		virtual InputRequestDebugInfo GetDebugInfo() const override;
-		/** override */
-		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, KeyEventBase const& in_key_event, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const override;
-		/** override */
-		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const override;
 
 	public:
 

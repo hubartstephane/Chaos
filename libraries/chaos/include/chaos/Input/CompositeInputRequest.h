@@ -25,25 +25,7 @@ namespace chaos
 		/** constructor */
 		CompositeInputRequest(PARAMS... params):
 			child_input_requests(std::move(params)...)
-		{}
-
-		/** override */
-		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, KeyEventBase const& in_key_event, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
 		{
-			std::optional<InputRequestResult> result;
-
-			std::apply([&](auto const & ... child_request)
-			{
-				auto CheckChildInputRequest = [&](auto const& child_request)
-				{
-					InputRequestResult child_result = child_request.Check(in_input_receiver, in_key_event, in_input_device, in_consumption_cache);
-					result = RESULT_AGGREGATION_TYPE::AggregateResult(result, child_result);
-				};
-				(CheckChildInputRequest(child_request), ...);
-
-			}, child_input_requests);
-
-			return result.value_or(InputRequestResult::False);
 		}
 
 		/** override */
@@ -63,6 +45,36 @@ namespace chaos
 			}, child_input_requests);
 
 			return result.value_or(InputRequestResult::False);
+		}
+
+		/** override */
+		virtual bool IsRequestRelatedTo(Key in_input) const override
+		{
+			return IsRequestRelatedToImpl(in_input);
+		}
+
+		/** override */
+		virtual bool IsRequestRelatedTo(Input1D in_input) const override
+		{
+			return IsRequestRelatedToImpl(in_input);
+		}
+
+		/** override */
+		virtual bool IsRequestRelatedTo(Input2D in_input) const override
+		{
+			return IsRequestRelatedToImpl(in_input);
+		}
+
+	protected:
+
+		template<typename INPUT_TYPE>
+		bool IsRequestRelatedToImpl(INPUT_TYPE in_input) const
+		{
+			return std::apply([&](auto const & ... child_request) -> bool
+			{
+				return ((child_request.IsRequestRelatedTo(Input1D::UNKNOWN)) || ...);
+			},
+			child_input_requests);
 		}
 
 	protected:
@@ -102,13 +114,13 @@ namespace chaos
 	template<InputRequestType... PARAMS>
 	CompositeInputRequest<AndInputRequestResultAggregation, PARAMS...> And(PARAMS... params)
 	{
-		return CompositeInputRequest<AndInputRequestResultAggregation, PARAMS...>(std::move(params)...);
+		return CompositeInputRequest<AndInputRequestResultAggregation, PARAMS...>(std::forward<PARAMS>(params)...);
 	}
 
 	template<InputRequestType... PARAMS>
 	CompositeInputRequest<OrInputRequestResultAggregation, PARAMS...> Or(PARAMS... params)
 	{
-		return CompositeInputRequest<OrInputRequestResultAggregation, PARAMS...>(std::move(params)...);
+		return CompositeInputRequest<OrInputRequestResultAggregation, PARAMS...>(std::forward<PARAMS>(params)...);
 	}
 
 #endif

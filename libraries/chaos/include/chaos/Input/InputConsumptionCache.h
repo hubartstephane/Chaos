@@ -45,11 +45,6 @@ namespace chaos
 		/** internal method that check whether an input has already been consumed yet Mark it as consumed */
 		bool DoTryConsumeInput(InputReceiverInterface const* in_input_receiver, Input2D in_input, InputDeviceInterface const* in_input_device);
 
-		/** enumerate relations between some inputs */
-		bool EnumerateVirtualKeys(VirtualKeyEnumerationFunction func);
-		/** enumerate relations between some inputs */
-		bool EnumerateVirtualInputs(VirtualInputEnumerationFunction func);
-
 	protected:
 
 		/** keys that are consumed */

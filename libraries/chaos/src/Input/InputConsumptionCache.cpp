@@ -17,19 +17,17 @@ namespace chaos
 		all_inputs_consumer.reset();
 	}
 
-	bool InputConsumptionCache::TryConsumeInput(InputReceiverInterface const* in_input_receiver, Key const& in_key, InputDeviceInterface const* in_input_device) // check whether the key is still available and lock it for further requests (do the same for related inputs)
+	bool InputConsumptionCache::TryConsumeInput(InputReceiverInterface const* in_input_receiver, Key const& in_input, InputDeviceInterface const* in_input_device) // check whether the key is still available and lock it for further requests (do the same for related inputs)
 	{
 		bool result = true;
 
 		// handle key
-		result &= DoTryConsumeInput(in_input_receiver, in_key, in_input_device);
+		result &= DoTryConsumeInput(in_input_receiver, in_input, in_input_device);
 		// handle 'virtual related' keys/inputs
-		EnumerateVirtualKeys([this, in_key, &result, in_input_device, in_input_receiver](Key key, Input1D input)
+		InputTools::EnumerateRelatedInputs(in_input, [&](Key key, Input1D input)
 		{
-			if (key != in_key)
-				return false;
 			result &= DoTryConsumeInput(in_input_receiver, input, in_input_device);
-			return true;
+			return false; // don't stop and process next
 		});
 
 		return (all_inputs_consumer.has_value() && all_inputs_consumer.value() != in_input_receiver) ?
@@ -43,24 +41,17 @@ namespace chaos
 
 		// handle axis
 		result &= DoTryConsumeInput(in_input_receiver, in_input, in_input_device);
-
 		// handle 'virtual related' keys/inputs
-		EnumerateVirtualKeys([this, in_input, &result, in_input_device, in_input_receiver](Key key, Input1D input)
+		InputTools::EnumerateRelatedInputs(in_input, [&](Key key, Input1D input)
 		{
-			if (input != in_input)
-				return false;
 			result &= DoTryConsumeInput(in_input_receiver, key, in_input_device);
-			return true;
-		});
-
-		EnumerateVirtualInputs([this, in_input, &result, in_input_device, in_input_receiver](Input1D input1D_x, Input1D input1D_y, Input2D input2D)
+			return false; // don't stop and process next
+		},
+		[&](Input2D input2D, Input1D input1D_x, Input1D input1D_y)
 		{
-			if (in_input != input1D_x && in_input != input1D_y)
-				return false;
 			result &= DoTryConsumeInput(in_input_receiver, input2D, in_input_device);
-			return true;
+			return false; // don't stop and process next
 		});
-
 		return (all_inputs_consumer.has_value() && all_inputs_consumer.value() != in_input_receiver) ?
 			false :
 			result;
@@ -74,39 +65,16 @@ namespace chaos
 		result &= DoTryConsumeInput(in_input_receiver, in_input, in_input_device);
 
 		// handle 'virtual related' inputs
-		EnumerateVirtualInputs([this, in_input, &result, in_input_device, in_input_receiver](Input1D input1D_x, Input1D input1D_y, Input2D input2D)
+		InputTools::EnumerateRelatedInputs(in_input, [&](Input2D input2D, Input1D input1D_x, Input1D input1D_y)
 		{
-			if (in_input != input2D)
-				return false;
 			result &= DoTryConsumeInput(in_input_receiver, input1D_x, in_input_device);
 			result &= DoTryConsumeInput(in_input_receiver, input1D_y, in_input_device);
-			return true;
+			return false; // don't stop and process next
 		});
 
 		return (all_inputs_consumer.has_value() && all_inputs_consumer.value() != in_input_receiver) ?
 			false :
 			result;
-	}
-
-	bool InputConsumptionCache::EnumerateVirtualKeys(VirtualKeyEnumerationFunction func)
-	{
-		if (func(Key::GAMEPAD_LEFT_TRIGGER, Input1D::GAMEPAD_LEFT_TRIGGER))
-			return true;
-		if (func(Key::GAMEPAD_RIGHT_TRIGGER, Input1D::GAMEPAD_RIGHT_TRIGGER))
-			return true;
-		return false;
-	}
-
-	bool InputConsumptionCache::EnumerateVirtualInputs(VirtualInputEnumerationFunction func)
-	{
-		if (func(Input1D::GAMEPAD_LEFT_AXIS_X, Input1D::GAMEPAD_LEFT_AXIS_Y, Input2D::GAMEPAD_LEFT_STICK))
-			return true;
-		if (func(Input1D::GAMEPAD_RIGHT_AXIS_X, Input1D::GAMEPAD_RIGHT_AXIS_Y, Input2D::GAMEPAD_RIGHT_STICK))
-			return true;
-		if (func(Input1D::MOUSE_WHEEL_X, Input1D::MOUSE_WHEEL_Y, Input2D::MOUSE_WHEEL))
-			return true;
-
-		return false;
 	}
 
 	template<typename CONTAINER_TYPE, typename INPUT_TYPE, typename STATE_TYPE>

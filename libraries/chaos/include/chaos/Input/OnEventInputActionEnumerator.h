@@ -2,20 +2,20 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class OnKeyEventInputActionEnumerator;
+	class OnEventInputActionEnumerator;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	 * OnKeyEventInputActionEnumerator: a specialization of InputActionEnumerator dedicated to KeyEvent handling
+	 * OnEventInputActionEnumerator: a specialization of InputActionEnumerator dedicated to KeyEvent handling
 	 */
 
-	class CHAOS_API OnKeyEventInputActionEnumerator : public InputActionEnumerator
+	class CHAOS_API OnEventInputActionEnumerator : public InputActionEnumerator
 	{
 	public:
 
 		/** constructor */
-		OnKeyEventInputActionEnumerator(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, KeyEventBase const& in_key_event, InputConsumptionCache* in_consumption_cache);
+		OnEventInputActionEnumerator(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, KeyEventBase const& in_key_event, InputConsumptionCache* in_consumption_cache);
 
 		/** override */
 		virtual bool CheckAndProcess(InputRequestBase const& in_request, char const* in_title, bool in_enabled, InputActionFunction in_func) override;

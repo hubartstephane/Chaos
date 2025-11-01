@@ -130,9 +130,10 @@ namespace chaos
 		//      this is done inside OnKeyEventInputReceiverTraverser
 		InputConsumptionCache consumption_cache;
 
-		auto process_function = [&key_event, &consumption_cache](InputReceiverInterface* in_input_receiver, InputDeviceInterface const* in_input_device) // XXX: mandatory to have a VARIABLE lambda so that the underlying DelegateTraverser's LightweightFunction does not point on a deleted object
+		// XXX: mandatory to have a VARIABLE lambda so that the underlying DelegateTraverser's LightweightFunction does not point on a deleted object
+		auto process_function = [&key_event, &consumption_cache](InputReceiverInterface* in_input_receiver, InputDeviceInterface const* in_input_device)
 		{
-			OnKeyEventInputActionEnumerator action_enumerator(in_input_receiver, in_input_device, key_event, &consumption_cache);
+			OnEventInputActionEnumerator action_enumerator(in_input_receiver, in_input_device, key_event, &consumption_cache);
 			if (in_input_receiver->EnumerateInputActions(action_enumerator, EnumerateInputActionContext::OnEvent))
 			{
 				// XXX: prevent the key to be handled in poll event has well
@@ -142,6 +143,7 @@ namespace chaos
 			}
 			return false;
 		};
+
 		DelegateInputReceiverTraverser traverser(process_function);
 
 		return traverser.Traverse(this);

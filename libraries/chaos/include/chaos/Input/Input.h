@@ -21,7 +21,7 @@
 #include "chaos/Input/AnyInputRequest.h"
 #include "chaos/Input/MouseButtonEvent.h"
 #include "chaos/Input/InputActionEnumerator.h"
-#include "chaos/Input/OnKeyEventInputActionEnumerator.h"
+#include "chaos/Input/OnEventInputActionEnumerator.h"
 #include "chaos/Input/OnPollInputActionEnumerator.h"
 #include "chaos/Input/InputReceiverInterface.h"
 #include "chaos/Input/InputReceiverTraverser.h"

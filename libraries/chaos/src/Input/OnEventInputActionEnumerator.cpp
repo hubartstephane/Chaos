@@ -4,14 +4,14 @@
 
 namespace chaos
 {
-	OnKeyEventInputActionEnumerator::OnKeyEventInputActionEnumerator(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, KeyEventBase const& in_key_event, InputConsumptionCache* in_consumption_cache) :
+	OnEventInputActionEnumerator::OnEventInputActionEnumerator(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, KeyEventBase const& in_key_event, InputConsumptionCache* in_consumption_cache) :
 		InputActionEnumerator(in_input_receiver, in_input_device),
 		key_event(in_key_event),
 		consumption_cache(in_consumption_cache)
 	{
 	}
 
-	bool OnKeyEventInputActionEnumerator::CheckAndProcess(InputRequestBase const& in_request, char const* in_title, bool in_enabled, InputActionFunction in_func)
+	bool OnEventInputActionEnumerator::CheckAndProcess(InputRequestBase const& in_request, char const* in_title, bool in_enabled, InputActionFunction in_func)
 	{
 		// always consum input even if not related because, later on, maybe some composite request with the related key 
 		// and some consumed input will be checked

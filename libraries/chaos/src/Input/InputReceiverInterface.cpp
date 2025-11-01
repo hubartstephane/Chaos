@@ -110,7 +110,7 @@ namespace chaos
 
 	bool InputReceiverInterface::OnMouseMoveImpl(glm::vec2 const& delta)
 	{
-		return false;
+		return ProcessInputEvent(Input2D::MOUSE_DELTA);
 	}
 
 	bool InputReceiverInterface::OnMouseButtonImpl(MouseButtonEvent const& mouse_button_event)
@@ -125,7 +125,12 @@ namespace chaos
 
 	bool InputReceiverInterface::OnMouseWheelImpl(double scroll_x, double scroll_y)
 	{
-		return false;
+		bool result = false;
+		if (scroll_x != 0.0f)
+			result |= ProcessInputEvent(Input1D::MOUSE_WHEEL_X);
+		if (scroll_y != 0.0f)
+			result |= ProcessInputEvent(Input1D::MOUSE_WHEEL_Y);
+		return result;
 	}
 
 	bool InputReceiverInterface::OnCharEventImpl(unsigned int c)

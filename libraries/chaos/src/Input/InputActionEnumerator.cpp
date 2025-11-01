@@ -8,6 +8,8 @@ namespace chaos
 		input_receiver(in_input_receiver),
 		input_device(in_input_device)
 	{
+		assert(in_input_receiver != nullptr);
+		assert(in_input_device != nullptr);
 	}
 
 	bool InputActionEnumerator::CheckAndProcess(InputRequestBase const & in_request, char const * in_title, InputActionFunction in_action_func)

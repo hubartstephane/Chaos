@@ -69,8 +69,6 @@ namespace chaos
 
 		protected:
 
-			/** the input device considered */
-			InputDeviceInterface const* input_device = nullptr;
 			/** the consumption cache */
 			InputConsumptionCache* consumption_cache = nullptr;
 		};

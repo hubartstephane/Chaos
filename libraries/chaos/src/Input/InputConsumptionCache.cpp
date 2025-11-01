@@ -52,6 +52,7 @@ namespace chaos
 			result &= DoTryConsumeInput(in_input_receiver, input2D, in_input_device);
 			return false; // don't stop and process next
 		});
+
 		return (all_inputs_consumer.has_value() && all_inputs_consumer.value() != in_input_receiver) ?
 			false :
 			result;

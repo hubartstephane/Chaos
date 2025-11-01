@@ -17,13 +17,10 @@ namespace chaos
 			using InputActionEnumerator::InputActionEnumerator;
 
 			OnQueryInputActionEnumerator(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache* in_consumption_cache):
-				InputActionEnumerator(in_input_receiver),
-				input_device(in_input_device),
+				InputActionEnumerator(in_input_receiver, in_input_device),
 				consumption_cache(in_consumption_cache)
 			{
 			}
-
-
 
 			virtual bool CheckAndProcess(InputRequestBase const & in_request, char const * in_title, bool in_enabled, LightweightFunction<void()> in_key_action) override
 			{

@@ -132,7 +132,7 @@ namespace chaos
 
 		auto process_function = [&key_event, &consumption_cache](InputReceiverInterface* in_input_receiver, InputDeviceInterface const* in_input_device) // XXX: mandatory to have a VARIABLE lambda so that the underlying DelegateTraverser's LightweightFunction does not point on a deleted object
 		{
-			OnKeyEventInputActionEnumerator action_enumerator(in_input_receiver, key_event, in_input_device, &consumption_cache);
+			OnKeyEventInputActionEnumerator action_enumerator(in_input_receiver, in_input_device, key_event, &consumption_cache);
 			if (in_input_receiver->EnumerateInputActions(action_enumerator, EnumerateInputActionContext::OnEvent))
 			{
 				// XXX: prevent the key to be handled in poll event has well

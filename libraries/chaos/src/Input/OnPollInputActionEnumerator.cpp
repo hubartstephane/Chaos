@@ -5,8 +5,7 @@
 namespace chaos
 {
 	OnPollInputActionEnumerator::OnPollInputActionEnumerator(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache* in_consumption_cache) :
-		InputActionEnumerator(in_input_receiver),
-		input_device(in_input_device),
+		InputActionEnumerator(in_input_receiver, in_input_device),
 		consumption_cache(in_consumption_cache)
 	{
 	}

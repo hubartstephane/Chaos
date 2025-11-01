@@ -88,6 +88,10 @@ namespace chaos
 		template<typename INPUT_TYPE>
 		bool ProcessInputEvent(INPUT_TYPE in_input);
 
+		/** mark the input as consumed inside the WindowApplication ConsumCache */
+		template<typename INPUT_TYPE>
+		static void MarkInputConsumedInApplicationCache(INPUT_TYPE in_input, InputDeviceInterface const* in_input_device = KeyboardAndMouseDevice::GetInstance());
+
 		/** internal method to check whether a button is pressed */
 		virtual bool DoCheckKeyDown(Key key) const;
 
@@ -113,9 +117,7 @@ namespace chaos
 			OnEventInputActionEnumerator<INPUT_TYPE> action_enumerator(in_input_receiver, in_input_device, in_input, &consumption_cache);
 			if (in_input_receiver->EnumerateInputActions(action_enumerator, EnumerateInputActionContext::OnEvent))
 			{
-				// XXX: prevent the key to be handled in poll event has well
-				if (WindowApplication* window_application = Application::GetInstance())
-					window_application->GetInputConsumptionCache().TryConsumeInput(nullptr, in_input, in_input_device);
+				MarkInputConsumedInApplicationCache(in_input, in_input_device);
 				return true;
 			}
 			return false;
@@ -124,6 +126,14 @@ namespace chaos
 		DelegateInputReceiverTraverser traverser(process_function);
 
 		return traverser.Traverse(this);
+	}
+
+	template<typename INPUT_TYPE>
+	void InputReceiverInterface::MarkInputConsumedInApplicationCache(INPUT_TYPE in_input, InputDeviceInterface const* in_input_device)
+	{
+		if (in_input_device != nullptr)
+			if (WindowApplication* window_application = Application::GetInstance())
+				window_application->GetInputConsumptionCache().TryConsumeInput(nullptr, in_input, in_input_device);
 	}
 
 #endif

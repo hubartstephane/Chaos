@@ -632,8 +632,7 @@ namespace chaos
 		}
 
 		if (my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnMouseMove, delta)) // dispatch the event
-			if (keyboard_and_mouse_device != nullptr)
-				keyboard_and_mouse_device->SetInputValue(Input2D::MOUSE_DELTA, {0.0f, 0.0f}); // the mouse delta is a volatile amount. if catched, reset it
+			MarkInputConsumedInApplicationCache(Input2D::MOUSE_DELTA);
 	}
 
 	static KeyAction GetKeyActionFromGLFW(int action)
@@ -686,7 +685,9 @@ namespace chaos
 		mouse_button_event.action = GetKeyActionFromGLFW(action);
 		mouse_button_event.modifiers = GetKeyModifiersFromGLFW(modifiers);
 
-		my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnMouseButton, mouse_button_event);
+		if (my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnMouseButton, mouse_button_event))
+			MarkInputConsumedInApplicationCache(mouse_button_event.key);
+
 	}
 
 	void Window::DoOnMouseWheel(GLFWwindow* in_glfw_window, double scroll_x, double scroll_y)
@@ -713,6 +714,8 @@ namespace chaos
 		// dispatch event
 		if (my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnMouseWheel, scroll_x, scroll_y))
 		{
+			MarkInputConsumedInApplicationCache(Input2D::MOUSE_WHEEL);
+
 			if (keyboard_and_mouse_device != nullptr) // the mouse wheel is a volatile amount. if catched, reset it
 			{
 				keyboard_and_mouse_device->SetInputValue(Input1D::MOUSE_WHEEL_X, 0.0f);
@@ -753,7 +756,8 @@ namespace chaos
 		key_event.action = GetKeyActionFromGLFW(action);
 		key_event.modifiers = GetKeyModifiersFromGLFW(modifiers);
 
-		my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnKeyEvent, key_event);
+		if (my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnKeyEvent, key_event))
+			MarkInputConsumedInApplicationCache(key_event.key);
 	}
 
 	void Window::DoOnCharEvent(GLFWwindow* in_glfw_window, unsigned int c)

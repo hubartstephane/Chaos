@@ -20,7 +20,7 @@ namespace chaos
 		return false;
 	}
 
-	void InputActionEnumerator::MarkAllRequestInputsAsConsumed(InputRequestBase const& in_request)
+	void InputActionEnumerator::MarkAllRequestInputsAsConsumedInApplicationCache(InputRequestBase const& in_request)
 	{
 		if (WindowApplication* window_application = Application::GetInstance())
 			in_request.Check(nullptr, input_device, window_application->GetInputConsumptionCache());

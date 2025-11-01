@@ -125,12 +125,7 @@ namespace chaos
 
 	bool InputReceiverInterface::OnMouseWheelImpl(double scroll_x, double scroll_y)
 	{
-		bool result = false;
-		if (scroll_x != 0.0f)
-			result |= ProcessInputEvent(Input1D::MOUSE_WHEEL_X);
-		if (scroll_y != 0.0f)
-			result |= ProcessInputEvent(Input1D::MOUSE_WHEEL_Y);
-		return result;
+		return ProcessInputEvent(Input2D::MOUSE_WHEEL);
 	}
 
 	bool InputReceiverInterface::OnCharEventImpl(unsigned int c)

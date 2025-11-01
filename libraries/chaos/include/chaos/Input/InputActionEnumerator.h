@@ -32,7 +32,7 @@ namespace chaos
 	protected:
 
 		/** Mark input as consumed in the WindowApplication's InputConsumptionCache */
-		void MarkAllRequestInputsAsConsumed(InputRequestBase const& in_request);
+		void MarkAllRequestInputsAsConsumedInApplicationCache(InputRequestBase const& in_request);
 
 	protected:
 		

@@ -38,7 +38,7 @@ namespace chaos
 			{
 				if (in_request.IsRequestRelatedTo(input)) // ignore all Actions with no relation with the handled event
 				{
-					MarkAllRequestInputsAsConsumed(in_request);
+					MarkAllRequestInputsAsConsumedInApplicationCache(in_request);
 
 					if (in_enabled && in_func.IsValid())
 						in_func();

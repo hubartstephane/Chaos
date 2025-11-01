@@ -84,8 +84,9 @@ namespace chaos
 		/** the user callback called when current input mode changes */
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode);
 
-		/** handle some key action */
-		bool ProcessKeyAction(KeyEventBase const& key_event);
+		/** handle some event action */
+		template<typename INPUT_TYPE>
+		bool ProcessInputEvent(INPUT_TYPE in_input);
 
 		/** internal method to check whether a button is pressed */
 		virtual bool DoCheckKeyDown(Key key) const;
@@ -95,6 +96,35 @@ namespace chaos
 		/** the current input mode */
 		InputMode input_mode = InputMode::KEYBOARD;
 	};
+
+#else // defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+	template<typename INPUT_TYPE>
+	bool InputReceiverInterface::ProcessInputEvent(INPUT_TYPE in_input)
+	{
+		// XXX: do not use WindowApplication::consumption_cache
+		//      we only want to register inside it the key for current key_event
+		//      this is done inside OnKeyEventInputReceiverTraverser
+		InputConsumptionCache consumption_cache;
+
+		// XXX: mandatory to have a VARIABLE lambda so that the underlying DelegateTraverser's LightweightFunction does not point on a deleted object
+		auto process_function = [&](InputReceiverInterface* in_input_receiver, InputDeviceInterface const* in_input_device)
+		{
+			OnEventInputActionEnumerator<INPUT_TYPE> action_enumerator(in_input_receiver, in_input_device, in_input, &consumption_cache);
+			if (in_input_receiver->EnumerateInputActions(action_enumerator, EnumerateInputActionContext::OnEvent))
+			{
+				// XXX: prevent the key to be handled in poll event has well
+				if (WindowApplication* window_application = Application::GetInstance())
+					window_application->GetInputConsumptionCache().TryConsumeInput(nullptr, in_input, in_input_device);
+				return true;
+			}
+			return false;
+		};
+
+		DelegateInputReceiverTraverser traverser(process_function);
+
+		return traverser.Traverse(this);
+	}
 
 #endif
 

@@ -115,38 +115,12 @@ namespace chaos
 
 	bool InputReceiverInterface::OnMouseButtonImpl(MouseButtonEvent const& mouse_button_event)
 	{
-		return ProcessKeyAction(mouse_button_event);
+		return ProcessInputEvent(mouse_button_event.key);
 	}
 
 	bool InputReceiverInterface::OnKeyEventImpl(KeyEvent const& key_event)
 	{
-		return ProcessKeyAction(key_event);
-	}
-
-	bool InputReceiverInterface::ProcessKeyAction(KeyEventBase const& key_event)
-	{
-		// XXX: do not use WindowApplication::consumption_cache
-		//      we only want to register inside it the key for current key_event
-		//      this is done inside OnKeyEventInputReceiverTraverser
-		InputConsumptionCache consumption_cache;
-
-		// XXX: mandatory to have a VARIABLE lambda so that the underlying DelegateTraverser's LightweightFunction does not point on a deleted object
-		auto process_function = [&key_event, &consumption_cache](InputReceiverInterface* in_input_receiver, InputDeviceInterface const* in_input_device)
-		{
-			OnEventInputActionEnumerator<Key> action_enumerator(in_input_receiver, in_input_device, key_event.key, &consumption_cache);
-			if (in_input_receiver->EnumerateInputActions(action_enumerator, EnumerateInputActionContext::OnEvent))
-			{
-				// XXX: prevent the key to be handled in poll event has well
-				if (WindowApplication* window_application = Application::GetInstance())
-					window_application->GetInputConsumptionCache().TryConsumeInput(nullptr, key_event.key, in_input_device);
-				return true;
-			}
-			return false;
-		};
-
-		DelegateInputReceiverTraverser traverser(process_function);
-
-		return traverser.Traverse(this);
+		return ProcessInputEvent(key_event.key);
 	}
 
 	bool InputReceiverInterface::OnMouseWheelImpl(double scroll_x, double scroll_y)

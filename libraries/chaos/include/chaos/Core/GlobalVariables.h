@@ -167,7 +167,7 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 		{
 			if constexpr (meta::is_vector_type_v<T>)
 			{
-				if constexpr (IsIStreamable<T>)
+				if constexpr (IsIStreamable<typename T::value_type>)
 				{
 					// zero_tokens
 					//   accepts empty lists as

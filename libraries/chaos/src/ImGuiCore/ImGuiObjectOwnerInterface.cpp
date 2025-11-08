@@ -20,7 +20,7 @@ namespace chaos
 
 	bool ImGuiObjectOwnerInterface::SetKnownImGuiObjectVisibility(char const* name, bool visible)
 	{
-		return EnumerateKnownImGuiObjects([this, name, visible](char const* imgui_object_name, CreateImGuiObjectFunc create_func)
+		return EnumerateKnownImGuiObjects([this, name, visible](char const* imgui_object_name, char const * imgui_menu_path, CreateImGuiObjectFunc create_func)
 		{
 			// is it the window we are searching?
 			if (StringTools::Stricmp(name, imgui_object_name) != 0)
@@ -32,22 +32,28 @@ namespace chaos
 
 	bool ImGuiObjectOwnerInterface::EnumerateKnownImGuiObjects(EnumerateKnownImGuiObjectFunc func) const
 	{
-		if (func("FPS", ImGuiRenderingFPSStatObject::GetStaticClass()))
+		char const* gpu_menu_path = "GPU";
+
+		if (func("FPS", gpu_menu_path, ImGuiRenderingFPSStatObject::GetStaticClass()))
 			return true;
 
-		if (func("Draw calls", ImGuiRenderingDrawCallsStatObject::GetStaticClass()))
+		if (func("Draw calls", gpu_menu_path, ImGuiRenderingDrawCallsStatObject::GetStaticClass()))
 			return true;
 
-		if (func("Vertices", ImGuiRenderingVerticesStatObject::GetStaticClass()))
+		if (func("Vertices", gpu_menu_path, ImGuiRenderingVerticesStatObject::GetStaticClass()))
 			return true;
 
-		if (func("System Information", ImGuiSystemInformationObject::GetStaticClass()))
+		char const* imgui_menu_path = "ImGui";
+
+		if (func("System Information", imgui_menu_path, ImGuiSystemInformationObject::GetStaticClass()))
 			return true;
 
-		if (func("Window Information", ImGuiWindowInformationObject::GetStaticClass()))
+		if (func("Window Information", imgui_menu_path, ImGuiWindowInformationObject::GetStaticClass()))
 			return true;
 
-		if (func("Input Actions", ImGuiInputActionObject::GetStaticClass()))
+		char const* input_menu_path = "Inputs";
+
+		if (func("Input Actions", input_menu_path, ImGuiInputActionObject::GetStaticClass()))
 			return true;
 
 		return false;
@@ -144,18 +150,21 @@ namespace chaos
 
 	void ImGuiObjectOwnerInterface::OnDrawImGuiObjectOwnerMenu(BeginImGuiMenuFunc begin_menu_func)
 	{
-		EnumerateKnownImGuiObjects([this, &begin_menu_func](char const* name, CreateImGuiObjectFunc create_func)
+		EnumerateKnownImGuiObjects([this, &begin_menu_func](char const* name, char const * imgui_menu_path, CreateImGuiObjectFunc create_func)
 		{
-			begin_menu_func([this, &create_func, name]()
+			if (imgui_menu_path != nullptr)
 			{
-				if (ImGui::BeginMenu("Widgets"))
+				begin_menu_func([this, imgui_menu_path , &create_func, name]()
 				{
-					bool imgui_object_exists = (FindImGuiObject(name) != nullptr);
-					if (ImGui::MenuItem(name, nullptr, imgui_object_exists, true))
-						SetImGuiObjectInternalVisibility(!imgui_object_exists, name, create_func);
-					ImGui::EndMenu();
-				}
-			});
+					if (ImGui::BeginMenu(imgui_menu_path))
+					{
+						bool imgui_object_exists = (FindImGuiObject(name) != nullptr);
+						if (ImGui::MenuItem(name, nullptr, imgui_object_exists, true))
+							SetImGuiObjectInternalVisibility(!imgui_object_exists, name, create_func);
+						ImGui::EndMenu();
+					}
+				});
+			}
 			return false; // don't stop the loop
 		});
 	}

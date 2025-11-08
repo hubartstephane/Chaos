@@ -931,7 +931,7 @@ namespace chaos
 
 	bool WindowApplication::CreateOrDestroyKnownWindow(char const* name, bool create)
 	{
-		return EnumerateKnownWindows([this, name, create](char const* window_name, CreateWindowFunc create_func)
+		return EnumerateKnownWindows([this, name, create](char const* window_name, char const* imgui_menu_path, CreateWindowFunc create_func)
 		{
 			// is it the window we are searching?
 			if (StringTools::Stricmp(name, window_name) != 0)
@@ -943,18 +943,27 @@ namespace chaos
 
 	bool WindowApplication::EnumerateKnownWindows(EnumerateKnownWindowsFunc func) const
 	{
-		if (func("Log", &ImGuiWindow::CreateImGuiWindow<ImGuiLogObject>))
+		char const* default_imgui_menu = "Windows";
+
+		if (func("Log", default_imgui_menu, & ImGuiWindow::CreateImGuiWindow<ImGuiLogObject>))
 			return true;
-		if (func("Keyboard and Mouse State", &ImGuiWindow::CreateImGuiWindow<ImGuiKeyboardAndMouseDeviceObject>))
+		if (func("Global Variables", default_imgui_menu, &ImGuiWindow::CreateImGuiWindow<ImGuiGlobalVariablesObject>))
 			return true;
-		if (func("Gamepad", &ImGuiWindow::CreateImGuiWindow<ImGuiGamepadObject>))
+
+		char const* input_menu_path = "Inputs";
+
+		if (func("Keyboard and Mouse State", input_menu_path, &ImGuiWindow::CreateImGuiWindow<ImGuiKeyboardAndMouseDeviceObject>))
 			return true;
-		if (func("Global Variables", &ImGuiWindow::CreateImGuiWindow<ImGuiGlobalVariablesObject>))
+		if (func("Gamepad", input_menu_path, &ImGuiWindow::CreateImGuiWindow<ImGuiGamepadObject>))
 			return true;
+
 #if _DEBUG
-		if (func("ImGui Demo", &ImGuiWindow::CreateImGuiWindow<ImGuiDemoObject>))
+
+		char const* imgui_menu_path = "ImGui";
+
+		if (func("ImGui Demo", imgui_menu_path, &ImGuiWindow::CreateImGuiWindow<ImGuiDemoObject>))
 			return true;
-		if (func("ImPlot Demo", &ImGuiWindow::CreateImGuiWindow<ImGuiImPlotDemoObject>))
+		if (func("ImPlot Demo", imgui_menu_path, &ImGuiWindow::CreateImGuiWindow<ImGuiImPlotDemoObject>))
 			return true;
 #endif
 		return false;
@@ -1005,14 +1014,17 @@ namespace chaos
 				ImGui::EndMenu();
 			}
 
-			EnumerateKnownWindows([this](char const* name, CreateWindowFunc create_func)
+			EnumerateKnownWindows([this](char const* name, char const * imgui_menu_path, CreateWindowFunc create_func)
 			{
-				if (ImGui::BeginMenu("Windows"))
+				if (imgui_menu_path != nullptr)
 				{
-					bool window_exists = (FindWindow(name) != nullptr);
-					if (ImGui::MenuItem(name, nullptr, window_exists, true))
-						CreateOrDestroyWindow(!window_exists, name, create_func);
-					ImGui::EndMenu();
+					if (ImGui::BeginMenu(imgui_menu_path))
+					{
+						bool window_exists = (FindWindow(name) != nullptr);
+						if (ImGui::MenuItem(name, nullptr, window_exists, true))
+							CreateOrDestroyWindow(!window_exists, name, create_func);
+						ImGui::EndMenu();
+					}
 				}
 				return false; // don't stop the search
 			});

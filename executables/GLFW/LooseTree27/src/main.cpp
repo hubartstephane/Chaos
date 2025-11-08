@@ -499,6 +499,9 @@ protected:
 		fps_view_controller.config.strafe_speed = CAMERA_SPEED;
 
 		fps_view_controller.fps_view.position.y = 30.0f;
+
+		fps_view_controller.input_config.rotation_button = chaos::Key::MOUSE_BUTTON_2;
+
 		// create the very single sphere
 		chaos::box3 creation_box;
 		creation_box.position  = glm::vec3(0.0f, 0.0f, -200.0f);

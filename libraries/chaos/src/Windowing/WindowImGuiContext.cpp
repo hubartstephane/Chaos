@@ -42,6 +42,7 @@ namespace chaos
 
 	bool WindowImGuiContext::OnMouseMoveImpl(glm::vec2 const& delta)
 	{
+		// updating mouse position for ImGui is mandatory, elsewhere 'WantCaptureMouse' would never get a chance to be updated
 		if (ShouldCaptureInputEvent())
 		{
 			ImGui_ImplGlfw_CursorPosCallback(window->GetGLFWHandler(), delta.x, delta.y);
@@ -54,23 +55,21 @@ namespace chaos
 
 	bool WindowImGuiContext::OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event)
 	{
-		if (ShouldCaptureInputEvent())
+		// only gives click event to ImGui if the cursor hovers some window
+		if (ShouldCaptureInputEvent() && ImGui::GetIO().WantCaptureMouse)
 		{
 			int key = int(mouse_button_event.key) - int(Key::MOUSE_FIRST);
 
 			ImGui_ImplGlfw_MouseButtonCallback(window->GetGLFWHandler(), key, (int)mouse_button_event.action, (int)mouse_button_event.modifiers);
 
-			//if (ImGui::GetIO().WantCaptureMouse)
-			{
-				return true;
-			}
+			return true;
 		}
 		return false;
 	}
 
 	bool WindowImGuiContext::OnMouseWheelImpl(double scroll_x, double scroll_y)
 	{
-		if (ShouldCaptureInputEvent())
+		if (ShouldCaptureInputEvent() && ImGui::GetIO().WantCaptureMouse)
 		{
 			ImGui_ImplGlfw_ScrollCallback(window->GetGLFWHandler(), scroll_x, scroll_y);
 
@@ -132,17 +131,13 @@ namespace chaos
 	{
 		begin_menu_func([this]()
 		{
-			if (ImGui::BeginMenu("Managers"))
+			if (ImGui::BeginMenu("ImGui"))
 			{
-				if (ImGui::BeginMenu("ImGui"))
+				if (WindowApplication* window_application = Application::GetInstance())
 				{
-					if (WindowApplication* window_application = Application::GetInstance())
-					{
-						bool atlas_viewer_exists = (window_application->FindWindow("ImGuiAtlasViewer") != nullptr); // search the atlas viewer
-						if (ImGui::MenuItem("Show atlas", nullptr, atlas_viewer_exists))
-							window_application->CreateOrDestroyWindow(!atlas_viewer_exists, "ImGuiAtlasViewer", &ImGuiWindow::CreateImGuiWindow<ImGuiAtlasObject>); // create or destroy the atlas
-					}
-					ImGui::EndMenu();
+					bool atlas_viewer_exists = (window_application->FindWindow("ImGuiAtlasViewer") != nullptr); // search the atlas viewer
+					if (ImGui::MenuItem("Show atlas", nullptr, atlas_viewer_exists))
+						window_application->CreateOrDestroyWindow(!atlas_viewer_exists, "ImGuiAtlasViewer", &ImGuiWindow::CreateImGuiWindow<ImGuiAtlasObject>); // create or destroy the atlas
 				}
 				ImGui::EndMenu();
 			}

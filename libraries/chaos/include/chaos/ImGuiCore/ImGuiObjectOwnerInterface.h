@@ -15,7 +15,7 @@ class ImGuiObjectOwnerInterface
 public:
 
 	using CreateImGuiObjectFunc = LightweightFunction<ImGuiObject* ()>;
-	using EnumerateKnownImGuiObjectFunc = LightweightFunction<bool(char const*, CreateImGuiObjectFunc)>;
+	using EnumerateKnownImGuiObjectFunc = LightweightFunction<bool(char const*, char const *, CreateImGuiObjectFunc)>; // name, imgui menu path, create function
 
 	/** create and add a new imgui object */
 	template<typename IMGUIOBJECT, typename... PARAMS>

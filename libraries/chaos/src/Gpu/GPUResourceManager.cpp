@@ -504,15 +504,11 @@ namespace chaos
 	{
 		begin_menu_func([this]()
 		{
-			if (ImGui::BeginMenu("Managers"))
+			if (ImGui::BeginMenu("GPU"))
 			{
-				if (ImGui::BeginMenu("GPU Resources"))
+				if (ImGui::MenuItem("Reload Resources"))
 				{
-					if (ImGui::MenuItem("Reload"))
-					{
-						ReloadDefaultPropertiesFromFile(ReloadConfigurationMode::CurrentNodeOnly, true);
-					}
-					ImGui::EndMenu();
+					ReloadDefaultPropertiesFromFile(ReloadConfigurationMode::CurrentNodeOnly, true);
 				}
 				ImGui::EndMenu();
 			}

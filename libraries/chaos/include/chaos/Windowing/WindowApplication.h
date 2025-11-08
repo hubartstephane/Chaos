@@ -19,7 +19,7 @@ namespace chaos
 	public:
 
 		using CreateWindowFunc = LightweightFunction<Window*()>;
-		using EnumerateKnownWindowsFunc = LightweightFunction<bool(char const*, CreateWindowFunc)>;
+		using EnumerateKnownWindowsFunc = LightweightFunction<bool(char const*, char const *, CreateWindowFunc)>; // window name, imgui menu path, create function
 
 		/** gets the number of windows */
 		size_t GetWindowCount() const;

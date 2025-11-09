@@ -184,11 +184,11 @@ namespace chaos
 				{
 					for (auto it = boost::filesystem::directory_iterator(p) ; it != boost::filesystem::directory_iterator(); ++it)
 					{
+						boost::filesystem::path const& path = it->path();
+
 #if _DEBUG // File Redirection
 
-						boost::filesystem::path const & path = it->path();
 						boost::filesystem::path filename = path.filename();
-
 						if (std::find(filenames.begin(), filenames.end(), filename) != filenames.end())
 							continue;
 						filenames.push_back(std::move(filename));

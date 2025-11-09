@@ -253,11 +253,11 @@ protected:
 		return true;
 	}
 
-	void OnDrawImGuiMenu(chaos::BeginImGuiMenuFunc begin_menu_func) override
+	void OnDrawImGuiMenu(chaos::ImGuiMenuBuilder const & menu_builder) override
 	{
-		chaos::Window::OnDrawImGuiMenu(begin_menu_func);
+		chaos::Window::OnDrawImGuiMenu(menu_builder);
 
-		begin_menu_func([this]
+		menu_builder.WithMenu([this]
 		{
 			if (ImGui::BeginMenu("Windows"))
 			{

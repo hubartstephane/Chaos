@@ -1004,7 +1004,7 @@ namespace chaos
 		OnDrawImGuiContent();
 		// draw the menu
 		if (WindowApplication::IsImGuiMenuEnabled())
-			OnDrawImGuiMenu(ImGuiTools::BeginMainMenuBar());
+			OnDrawImGuiMenu(ImGuiMainMenuBuilder());
 		// draw the ImGui objects
 		OnDrawImGuiObjectOwnerContent();
 	}
@@ -1013,17 +1013,17 @@ namespace chaos
 	{
 	}
 
-	void Window::OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func)
+	void Window::OnDrawImGuiMenu(ImGuiMenuBuilder const & menu_builder)
 	{
 		if (IsStandardImGuiMenuPluggedIn())
 		{
 			// display application menu items
 			if (WindowApplication* window_application = Application::GetInstance())
-				window_application->OnDrawApplicationImGuiMenu(this, begin_menu_func);
+				window_application->OnDrawApplicationImGuiMenu(this, menu_builder);
 			// display the imgui context
-			window_imgui_context.OnDrawImGuiMenu(this, begin_menu_func);
+			window_imgui_context.OnDrawImGuiMenu(this, menu_builder);
 			// display menu items for widgets
-			OnDrawImGuiObjectOwnerMenu(begin_menu_func);
+			OnDrawImGuiObjectOwnerMenu(menu_builder);
 		}
 	}
 

@@ -500,9 +500,9 @@ namespace chaos
 		return ResourceManager::DoStopManager();
 	}
 
-	void GPUResourceManager::OnDrawImGuiMenu(Window* window, BeginImGuiMenuFunc begin_menu_func)
+	void GPUResourceManager::OnDrawImGuiMenu(Window* window, ImGuiMenuBuilder const & menu_builder)
 	{
-		begin_menu_func([this]()
+		menu_builder.WithMenu([this]()
 		{
 			if (ImGui::BeginMenu("GPU"))
 			{

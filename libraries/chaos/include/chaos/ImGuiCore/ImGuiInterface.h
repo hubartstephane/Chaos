@@ -20,7 +20,7 @@ namespace chaos
 		/** method to override to display content */
 		virtual void OnDrawImGuiContent(Window * window);
 		/** method to override to display menu */
-		virtual void OnDrawImGuiMenu(Window * window, BeginImGuiMenuFunc begin_menu_func);
+		virtual void OnDrawImGuiMenu(Window * window, ImGuiMenuBuilder const & menu_builder);
 	};
 
 #endif

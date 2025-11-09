@@ -19,14 +19,14 @@ namespace chaos
 		// display full window menu bar
 		if (HasAnyFlags(imgui_object_flags, ImGuiObjectFlags::UseViewportMenu))
 		{
-			OnDrawImGuiMenu(window, ImGuiTools::BeginMainMenuBar());
+			OnDrawImGuiMenu(window, ImGuiMainMenuBuilder());
 		}
 		// display floating window menu bar (default)
 		else
 		{
 			if ((imgui_window_flags & ImGuiWindowFlags_MenuBar) != 0)
 			{
-				OnDrawImGuiMenu(window, ImGuiTools::BeginMenuBar());
+				OnDrawImGuiMenu(window, ImGuiStandardMenuBuilder());
 			}
 		}
 	}
@@ -42,15 +42,27 @@ namespace chaos
 			return imgui_window_flags & ~ImGuiWindowFlags_MenuBar;
 
 		// request if there is really some menu content
-		bool menu_required = false;
-		auto fake_begin_menu_func = [&menu_required](LightweightFunction<void()> func)
+		class ImGuiFakeMenuBuilder : public ImGuiMenuBuilder
 		{
-			menu_required = true; // this implementation fully ignore the "func" content. we just check whether OnDrawImGuiMenu calls "fake_begin_menu_func"
+		public:
+
+			virtual bool WithMenu(LightweightFunction<void()> func) const override
+			{
+				menu_required = true; // this implementation fully ignore the "func" content. we just check whether a menu is necessary
+				return false;
+			}
+
+		public:
+
+			/** a flag that indicates whether a menu is necessary */
+			mutable bool menu_required = false;
 		};
-		OnDrawImGuiMenu(window, fake_begin_menu_func);
+
+		ImGuiFakeMenuBuilder menu_builder;
+		OnDrawImGuiMenu(window, menu_builder);
 
 		// add or remove menu bar flag
-		if (menu_required)
+		if (menu_builder.menu_required)
 			return imgui_window_flags | ImGuiWindowFlags_MenuBar;
 		else
 			return imgui_window_flags & ~ImGuiWindowFlags_MenuBar;

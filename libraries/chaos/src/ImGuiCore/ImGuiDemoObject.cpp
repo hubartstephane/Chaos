@@ -21,9 +21,9 @@ namespace chaos
 			ImGui::ShowUserGuide();
 	}
 
-	void ImGuiDemoObject::OnDrawImGuiMenu(Window* window, BeginImGuiMenuFunc begin_menu_func)
+	void ImGuiDemoObject::OnDrawImGuiMenu(Window* window, ImGuiMenuBuilder const & menu_builder)
 	{
-		begin_menu_func([this]()
+		menu_builder.WithMenu([this]()
 		{
 			if (ImGui::BeginMenu("ImGui"))
 			{

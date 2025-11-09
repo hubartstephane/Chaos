@@ -1,5 +1,6 @@
 #include "chaos/ImGuiCore/ImGuiLog.h"
 #include "chaos/ImGuiCore/ImGuiTools.h"
+#include "chaos/ImGuiCore/ImGuiMenuBuilder.h"
 #include "chaos/ImGuiCore/ImGuiInterface.h"
 #include "chaos/ImGuiCore/ImGuiWindowPlacement.h"
 #include "chaos/ImGuiCore/ImGuiObject.h"

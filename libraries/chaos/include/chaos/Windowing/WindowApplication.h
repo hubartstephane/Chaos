@@ -326,7 +326,7 @@ namespace chaos
 		virtual void OnWindowDestroyed(Window* window);
 
 		/** add some items to a windows menu */
-		virtual void OnDrawApplicationImGuiMenu(Window * window, BeginImGuiMenuFunc begin_menu_func);
+		virtual void OnDrawApplicationImGuiMenu(Window * window, ImGuiMenuBuilder const & menu_builder);
 
 		/** some window may be removed or created during a loop on 'windows' array itself. this intermediate array helps to detect such issues */
 		std::vector<weak_ptr<Window>> GetWeakWindowArray() const;

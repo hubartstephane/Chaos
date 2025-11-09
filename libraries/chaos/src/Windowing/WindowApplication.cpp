@@ -969,9 +969,9 @@ namespace chaos
 		return false;
 	}
 
-	void WindowApplication::OnDrawApplicationImGuiMenu(Window * window, BeginImGuiMenuFunc begin_menu_func)
+	void WindowApplication::OnDrawApplicationImGuiMenu(Window * window, ImGuiMenuBuilder const & menu_builder)
 	{
-		begin_menu_func([this]()
+		menu_builder.WithMenu([this]()
 		{
 			if (ImGui::BeginMenu("Actions"))
 			{
@@ -1031,7 +1031,7 @@ namespace chaos
 		});
 
 		if (gpu_resource_manager != nullptr)
-			gpu_resource_manager->OnDrawImGuiMenu(window, begin_menu_func);
+			gpu_resource_manager->OnDrawImGuiMenu(window, menu_builder);
 	}
 
 	std::vector<weak_ptr<Window>> WindowApplication::GetWeakWindowArray() const

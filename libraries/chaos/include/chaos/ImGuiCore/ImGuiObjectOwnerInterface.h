@@ -100,7 +100,7 @@ protected:
 	/** draw all ImGui objects */
 	void OnDrawImGuiObjectOwnerContent();
 	/** draw a menu for ImGuiObjects */
-	void OnDrawImGuiObjectOwnerMenu(BeginImGuiMenuFunc begin_menu_func);
+	void OnDrawImGuiObjectOwnerMenu(ImGuiMenuBuilder const & menu_builder);
 
 protected:
 

@@ -126,7 +126,7 @@ namespace chaos
 		GPUMesh* GetQuadMesh();
 
 		/** override */
-		virtual void OnDrawImGuiMenu(Window* window, BeginImGuiMenuFunc begin_menu_func) override;
+		virtual void OnDrawImGuiMenu(Window* window, ImGuiMenuBuilder const & menu_builder) override;
 
 	protected:
 

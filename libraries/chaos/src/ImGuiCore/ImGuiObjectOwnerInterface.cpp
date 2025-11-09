@@ -148,13 +148,13 @@ namespace chaos
 		}
 	}
 
-	void ImGuiObjectOwnerInterface::OnDrawImGuiObjectOwnerMenu(BeginImGuiMenuFunc begin_menu_func)
+	void ImGuiObjectOwnerInterface::OnDrawImGuiObjectOwnerMenu(ImGuiMenuBuilder const & menu_builder)
 	{
-		EnumerateKnownImGuiObjects([this, &begin_menu_func](char const* name, char const * imgui_menu_path, CreateImGuiObjectFunc create_func)
+		EnumerateKnownImGuiObjects([this, &menu_builder](char const* name, char const * imgui_menu_path, CreateImGuiObjectFunc create_func)
 		{
 			if (imgui_menu_path != nullptr)
 			{
-				begin_menu_func([this, imgui_menu_path , &create_func, name]()
+				menu_builder.WithMenu([this, imgui_menu_path , &create_func, name]()
 				{
 					if (ImGui::BeginMenu(imgui_menu_path))
 					{

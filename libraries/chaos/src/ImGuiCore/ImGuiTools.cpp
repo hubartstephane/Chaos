@@ -87,24 +87,6 @@ namespace chaos
 			return ImGui::InputText(label, (char*)str.c_str(), str.capacity() + 1, flags, InputTextCallback, &cb_user_data);
 		}
 
-		void BeginMenuBar::operator()(LightweightFunction<void()> func) const
-		{
-			if (ImGui::BeginMenuBar())
-			{
-				func();
-				ImGui::EndMenuBar();
-			}
-		}
-
-		void BeginMainMenuBar::operator()(LightweightFunction<void()> func) const
-		{
-			if (ImGui::BeginMainMenuBar())
-			{
-				func();
-				ImGui::EndMainMenuBar();
-			}
-		}
-
 		bool FullViewportWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func)
 		{
 			// update flags
@@ -120,6 +102,20 @@ namespace chaos
 				ImGui::End();
 			}
 			return true; // window must be kept alive
+		}
+
+		bool WithMenuItem(char const* path, LightweightFunction<void()> func)
+		{
+			if (path != nullptr)
+			{
+				if (ImGui::BeginMenu(path))
+				{
+					func();
+					ImGui::EndMenu();
+					return true;
+				}
+			}
+			return false;
 		}
 
 	}; // namespace ImGuiTools

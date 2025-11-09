@@ -50,7 +50,7 @@ namespace chaos
 		virtual bool OnCharEventImpl(unsigned int c) override;
 
 		/** override */
-		virtual void OnDrawImGuiMenu(Window* window, BeginImGuiMenuFunc begin_menu_func) override;
+		virtual void OnDrawImGuiMenu(Window* window, ImGuiMenuBuilder const & menu_builder) override;
 
 		/** called whenever a monitor is connected or disconnected */
 		void OnMonitorEvent(GLFWmonitor* monitor, int monitor_state);

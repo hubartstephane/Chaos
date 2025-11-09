@@ -112,9 +112,9 @@ namespace chaos
 		});
 	}
 
-	void ImGuiLogObject::OnDrawImGuiMenu(Window* window, BeginImGuiMenuFunc begin_menu_func)
+	void ImGuiLogObject::OnDrawImGuiMenu(Window* window, ImGuiMenuBuilder const & menu_builder)
 	{
-		begin_menu_func([this]()
+		menu_builder.WithMenu([this]()
 		{
 			// the types
 			if (ImGui::BeginMenu("Severity"))

@@ -21,7 +21,7 @@ namespace chaos
 		/** override */
 		virtual void OnDrawImGuiContent(Window* window) override;
 		/** override */
-		virtual void OnDrawImGuiMenu(Window* window, BeginImGuiMenuFunc begin_menu_func) override;
+		virtual void OnDrawImGuiMenu(Window* window, ImGuiMenuBuilder const & menu_builder) override;
 
 	protected:
 

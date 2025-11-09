@@ -195,7 +195,7 @@ namespace chaos
 		/** draw ImGui content */
 		virtual void OnDrawImGuiContent();
 		/** draw ImGui menu */
-		virtual void OnDrawImGuiMenu(BeginImGuiMenuFunc begin_menu_func);
+		virtual void OnDrawImGuiMenu(ImGuiMenuBuilder const & menu_builder);
 
 		/** get the owned client */
 		AutoCastable<WindowClient> GetWindowClient() { return window_client.get(); }

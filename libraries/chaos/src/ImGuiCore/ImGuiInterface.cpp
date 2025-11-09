@@ -12,7 +12,7 @@ namespace chaos
 	{
 	}
 
-	void ImGuiInterface::OnDrawImGuiMenu(Window* window, BeginImGuiMenuFunc begin_menu_func)
+	void ImGuiInterface::OnDrawImGuiMenu(Window* window, ImGuiMenuBuilder const & menu_builder)
 	{
 	}
 

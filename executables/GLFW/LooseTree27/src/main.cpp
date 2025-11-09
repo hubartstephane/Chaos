@@ -288,9 +288,9 @@ protected:
 			if (ImGui::Begin("help", &show_help, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
 			{
 				DrawTextItem("random scene", key_configuration.new_scene, true);
-				DrawTextItem("next object", key_configuration.next_object, enabled);
-				DrawTextItem("previous object", key_configuration.previous_object, enabled);
-				DrawTextItem("delete object", key_configuration.delete_object, enabled);
+				DrawTextItem("select next object", key_configuration.next_object, enabled);
+				DrawTextItem("select previous object", key_configuration.previous_object, enabled);
+				DrawTextItem("delete current object", key_configuration.delete_object, enabled);
 
 				if (current_action_type == ActionType::MOVE_OBJECT)
 				{

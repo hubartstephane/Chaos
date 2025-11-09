@@ -104,20 +104,6 @@ namespace chaos
 			return true; // window must be kept alive
 		}
 
-		bool WithMenuItem(char const* path, LightweightFunction<void()> func)
-		{
-			if (path != nullptr)
-			{
-				if (ImGui::BeginMenu(path))
-				{
-					func();
-					ImGui::EndMenu();
-					return true;
-				}
-			}
-			return false;
-		}
-
 	}; // namespace ImGuiTools
 
 }; // namespace chaos

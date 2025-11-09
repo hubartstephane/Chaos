@@ -248,8 +248,6 @@ namespace chaos
 		DrawImGuiVariable(((T&)value), flags); // call CONST version !
 	}
 
-	bool WithMenuItem(char const* path, LightweightFunction<void()> func);
-
 #endif
 
 }; // namespace chaos

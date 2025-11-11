@@ -98,6 +98,9 @@ namespace chaos
 			}
 		}
 
+		/** notify imgui of cursor position */
+		void SetCursorPos(glm::vec2 const& position);
+
 	protected:
 
 		/** the window owning this context */

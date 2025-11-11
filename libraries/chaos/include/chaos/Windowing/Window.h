@@ -394,6 +394,8 @@ namespace chaos
 		/** binding function with GLFW library */
 		static void DoOnWindowResize(GLFWwindow* in_glfw_window, int width, int height);
 		/** binding function with GLFW library */
+		static void DoOnCursorEnter(GLFWwindow* in_glfw_window, int entered);
+		/** binding function with GLFW library */
 		static void DoOnMouseMove(GLFWwindow* in_glfw_window, double x, double y);
 		/** binding function with GLFW library */
 		static void DoOnMouseButton(GLFWwindow* in_glfw_window, int button, int action, int modifiers);

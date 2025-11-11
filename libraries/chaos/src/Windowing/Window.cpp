@@ -525,6 +525,7 @@ namespace chaos
 		glfwSetWindowUserPointer(glfw_window, this);
 
 		// note: glfwSetWindowRefreshCallback(..) is not called to set a refresh function. The draw function is manually called from main loop
+		glfwSetCursorEnterCallback(glfw_window, DoOnCursorEnter);
 		glfwSetCursorPosCallback(glfw_window, DoOnMouseMove);
 		glfwSetMouseButtonCallback(glfw_window, DoOnMouseButton);
 		glfwSetScrollCallback(glfw_window, DoOnMouseWheel);
@@ -604,6 +605,11 @@ namespace chaos
 		return false;
 	}
 
+	void Window::DoOnCursorEnter(GLFWwindow* in_glfw_window, int entered)
+	{
+		ImGui_ImplGlfw_CursorEnterCallback(in_glfw_window, entered);
+	}
+
 	void Window::DoOnMouseMove(GLFWwindow* in_glfw_window, double x, double y)
 	{
 		// notify the application of the mouse state
@@ -614,8 +620,10 @@ namespace chaos
 		if (my_window == nullptr)
 			return;
 
-		// dispatch the event
+		// dispatch the event		
 		glm::vec2 position = { float(x), float(y) };
+
+		my_window->window_imgui_context.SetCursorPos(position); // always notify ImGui of the mouse position
 
 		glm::vec2 delta = my_window->IsMousePositionValid()?
 			position - my_window->mouse_position.value():
@@ -632,7 +640,12 @@ namespace chaos
 		}
 
 		if (my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnMouseMove, delta)) // dispatch the event
+		{
 			MarkInputConsumedInApplicationCache(Input2D::MOUSE_DELTA);
+
+			if (keyboard_and_mouse_device != nullptr)
+				keyboard_and_mouse_device->SetInputValue(Input2D::MOUSE_DELTA, { 0.0f, 0.0f });
+		}
 	}
 
 	static KeyAction GetKeyActionFromGLFW(int action)

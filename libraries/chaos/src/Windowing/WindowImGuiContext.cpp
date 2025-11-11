@@ -42,13 +42,12 @@ namespace chaos
 
 	bool WindowImGuiContext::OnMouseMoveImpl(glm::vec2 const& delta)
 	{
-		// updating mouse position for ImGui is mandatory, elsewhere 'WantCaptureMouse' would never get a chance to be updated
-		if (ShouldCaptureInputEvent())
-		{
-			ImGui_ImplGlfw_CursorPosCallback(window->GetGLFWHandler(), delta.x, delta.y);
+		assert(IsImGuiContextCurrent());
 
-			if (ImGui::GetIO().WantCaptureMouse)
-				return true;
+		// ImGui_ImplGlfw_CursorPosCallback is called elsewhere (this must always be called to have consistent imgui state)
+		if (ShouldCaptureInputEvent() && ImGui::GetIO().WantCaptureMouse)
+		{
+			return true;
 		}
 		return false;
 	}
@@ -61,7 +60,6 @@ namespace chaos
 			int key = int(mouse_button_event.key) - int(Key::MOUSE_FIRST);
 
 			ImGui_ImplGlfw_MouseButtonCallback(window->GetGLFWHandler(), key, (int)mouse_button_event.action, (int)mouse_button_event.modifiers);
-
 			return true;
 		}
 		return false;
@@ -69,29 +67,31 @@ namespace chaos
 
 	bool WindowImGuiContext::OnMouseWheelImpl(double scroll_x, double scroll_y)
 	{
+		assert(IsImGuiContextCurrent());
+
+		// only gives wheel event to ImGui if the cursor hovers some window
 		if (ShouldCaptureInputEvent() && ImGui::GetIO().WantCaptureMouse)
 		{
 			ImGui_ImplGlfw_ScrollCallback(window->GetGLFWHandler(), scroll_x, scroll_y);
-
-			if (ImGui::GetIO().WantCaptureMouse)
-				return true;
+			return true;
 		}
 		return false;
 	}
 
 	bool WindowImGuiContext::OnKeyEventImpl(KeyEvent const& key_event)
 	{
+		assert(IsImGuiContextCurrent());
+
 		if (InputReceiverInterface::OnKeyEventImpl(key_event))
 		{
 			return true;
 		}
 
-		if (ShouldCaptureInputEvent())
+		if (ShouldCaptureInputEvent() && ImGui::GetIO().WantCaptureMouse)
 		{
 			int key = int(key_event.key) - int(Key::KEYBOARD_FIRST);
 
 			ImGui_ImplGlfw_KeyCallback(window->GetGLFWHandler(), key, key_event.scancode, (int)key_event.action, (int)key_event.modifiers);
-
 			return true;
 		}
 		return false;
@@ -107,16 +107,25 @@ namespace chaos
 			return true;
 		}
 
-		if (ShouldCaptureInputEvent() && in_context != EnumerateInputActionContext::OnEvent)
+		if (ShouldCaptureInputEvent())
 		{
-			in_action_enumerator.CheckAndProcess(AnyInputRequest(), "Catch All");
-			return true; // stop traversal
+			if (in_context == EnumerateInputActionContext::OnQuery)
+			{
+				if (ImGui::GetIO().WantCaptureMouse)
+					in_action_enumerator.CheckAndProcess(AnyInputRequest(), "Catch All");
+			}
+			else if (ImGui::GetIO().WantCaptureMouse)
+			{
+				return true; // stop traversal
+			}
 		}
-		return false;
+		return false; // continue traversal
 	}
 
 	bool WindowImGuiContext::OnCharEventImpl(unsigned int c)
 	{
+		assert(IsImGuiContextCurrent());
+
 		if (ShouldCaptureInputEvent())
 		{
 			ImGui_ImplGlfw_CharCallback(window->GetGLFWHandler(), c);
@@ -129,6 +138,8 @@ namespace chaos
 
 	void WindowImGuiContext::OnDrawImGuiMenu(Window* window, ImGuiMenuBuilder const & menu_builder)
 	{
+		assert(IsImGuiContextCurrent());
+
 		menu_builder.WithMenu([this]()
 		{
 			if (ImGui::BeginMenu("ImGui"))
@@ -246,11 +257,18 @@ namespace chaos
 
 	void WindowImGuiContext::SetImGuiContextMouseFlag(bool enabled)
 	{
+		assert(IsImGuiContextCurrent());
 		ImGuiIO& io = ImGui::GetIO();
 		if (enabled)
 			io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse; // need mouse
 		else
 			io.ConfigFlags |= ImGuiConfigFlags_NoMouse; // don't want mouse (elsewhere imgui can react to an invisible cursor)
+	}
+
+	void WindowImGuiContext::SetCursorPos(glm::vec2 const& position)
+	{
+		assert(IsImGuiContextCurrent());
+		ImGui_ImplGlfw_CursorPosCallback(window->GetGLFWHandler(), position.x, position.y);
 	}
 
 }; // namespace chaos

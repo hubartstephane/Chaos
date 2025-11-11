@@ -171,48 +171,59 @@ public:
 	{
 		if (current_action_type == ActionType::MOVE_OBJECT)
 		{
-			auto MoveObjectWithInputs = [&](chaos::Key key, char const * title, glm::vec3 const& direction)
+			auto MoveObjectWithInputs = [&](chaos::Key key, char const * title, chaos::Direction direction)
 			{
 				return in_action_enumerator.CheckAndProcess(chaos::RequestKeyDown(key), title, [&]()
 				{
 					float delta_time = (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration();
 
 					float final_speed = DISPLACEMENT_SPEED;
-					sphere.position += direction * delta_time * final_speed;
-					box.position += direction * delta_time * final_speed;
+
+					glm::vec3 delta_position = DirectionToVector(direction) * delta_time * final_speed;
+					sphere.position += delta_position;
+					box.position += delta_position;
 				});
 			};
 
 			return
-				MoveObjectWithInputs(key_configuration.move_object_negative_x, "move object -X", {-1.0f,  0.0f,  0.0f }) ||
-				MoveObjectWithInputs(key_configuration.move_object_positive_x, "move object +X", { 1.0f,  0.0f,  0.0f }) ||
-				MoveObjectWithInputs(key_configuration.move_object_negative_y, "move object -Y", { 0.0f, -1.0f,  0.0f }) ||
-				MoveObjectWithInputs(key_configuration.move_object_positive_y, "move object +Y", { 0.0f,  1.0f,  0.0f }) ||
-				MoveObjectWithInputs(key_configuration.move_object_negative_z, "move object -Z", { 0.0f,  0.0f, -1.0f }) ||
-				MoveObjectWithInputs(key_configuration.move_object_positive_z, "move object +Z", { 0.0f,  0.0f,  1.0f });
+				MoveObjectWithInputs(key_configuration.move_object_negative_x, "move object -X", chaos::Direction::NEGATIVE_X) ||
+				MoveObjectWithInputs(key_configuration.move_object_positive_x, "move object +X", chaos::Direction::POSITIVE_X) ||
+				MoveObjectWithInputs(key_configuration.move_object_negative_y, "move object -Y", chaos::Direction::NEGATIVE_Y) ||
+				MoveObjectWithInputs(key_configuration.move_object_positive_y, "move object +Y", chaos::Direction::POSITIVE_Y) ||
+				MoveObjectWithInputs(key_configuration.move_object_negative_z, "move object -Z", chaos::Direction::NEGATIVE_Z) ||
+				MoveObjectWithInputs(key_configuration.move_object_positive_z, "move object +Z", chaos::Direction::POSITIVE_Z);
 		}
-		return chaos::InputReceiverInterface::EnumerateInputActions(in_action_enumerator, in_context);
-	}
 
-protected:
-
-	bool ScaleObjectWithInputs(chaos::Key const& key, float delta_time, float direction)
-	{
-		if (IsKeyboardInput(key))
+		if (current_action_type == ActionType::SCALE_OBJECT)
 		{
-			chaos::KeyboardAndMouseDevice* keyboard_and_mouse_device = chaos::KeyboardAndMouseDevice::GetInstance();
-			if (keyboard_and_mouse_device == nullptr)
-				return false;
+			auto ScaleObjectWithInputs = [&](chaos::Key key, char const* title, chaos::Direction direction)
+				{
+					return in_action_enumerator.CheckAndProcess(chaos::RequestKeyDown(key), title, [&]()
+					{
+						float delta_time = (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration();
 
-			if (IsInputActive(keyboard_and_mouse_device->GetInputState(key)))
-			{
-				float final_scale_speed = (IsInputActive(keyboard_and_mouse_device->GetInputState(chaos::Key::LEFT_SHIFT))) ? SCALE_SPEED : FAST_SCALE_SPEED;
+						float final_scale_speed = SCALE_SPEED;
 
-				sphere.radius = std::max(1.0f, sphere.radius + direction * final_scale_speed);
-				return true;
-			}
+						sphere.radius += GetDirectionSign(direction) * final_scale_speed;
+						sphere.radius = std::max(1.0f, sphere.radius);
+
+						float& half_size_component = box.half_size[size_t(DirectionToAxis(direction))];
+						half_size_component += GetDirectionSign(direction) * final_scale_speed;
+						half_size_component = std::max(1.0f, half_size_component);
+					});
+				};
+
+			return
+				ScaleObjectWithInputs(key_configuration.scale_object_negative_x, "scale object -X", chaos::Direction::NEGATIVE_X) ||
+				ScaleObjectWithInputs(key_configuration.scale_object_positive_x, "scale object +X", chaos::Direction::POSITIVE_X) ||
+				ScaleObjectWithInputs(key_configuration.scale_object_negative_y, "scale object -Y", chaos::Direction::NEGATIVE_Y) ||
+				ScaleObjectWithInputs(key_configuration.scale_object_positive_y, "scale object +Y", chaos::Direction::POSITIVE_Y) ||
+				ScaleObjectWithInputs(key_configuration.scale_object_negative_z, "scale object -Z", chaos::Direction::NEGATIVE_Z) ||
+				ScaleObjectWithInputs(key_configuration.scale_object_positive_z, "scale object +Z", chaos::Direction::POSITIVE_Z);
 		}
-		return false;
+
+
+		return chaos::InputReceiverInterface::EnumerateInputActions(in_action_enumerator, in_context);
 	}
 
 public:

@@ -14,6 +14,42 @@ using loose_tree_node_type = loose_tree_type::node_type;
 
 // =======================================================================
 
+class CameraInfo
+{
+public:
+
+	float fov = 60.0f;
+	float far_plane = 5000.0f;
+	float near_plane = 20.0f;
+};
+
+// =======================================================================
+
+class ImGuiCameraInformationObject : public chaos::ImGuiObject
+{
+public:
+
+	ImGuiCameraInformationObject(CameraInfo& in_camera_info) :
+		camera_info(in_camera_info)
+	{
+	}
+
+protected:
+
+	virtual void OnDrawImGuiContent(chaos::Window* window) override
+	{
+		ImGui::InputFloat("near_plane", &camera_info.near_plane, 10.0f, 50.0f);
+		ImGui::InputFloat("far_plane", &camera_info.far_plane, 10.0f, 50.0f);
+		ImGui::InputFloat("fov", &camera_info.fov, 1.0f, 5.0f);
+	}
+
+protected:
+
+	CameraInfo & camera_info;
+};
+
+// =======================================================================
+
 class KeyConfiguration
 {
 public:
@@ -212,13 +248,9 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	float fov = 60.0f;
-	float far_plane = 5000.0f;
-	float near_plane = 20.0f;
-
 	glm::mat4x4 GetProjectionMatrix(glm::vec2 viewport_size) const
 	{
-		return glm::perspectiveFov(fov * (float)M_PI / 180.0f, float(viewport_size.x), float(viewport_size.y), near_plane, far_plane);
+		return glm::perspectiveFov(camera_info.fov * (float)M_PI / 180.0f, float(viewport_size.x), float(viewport_size.y), camera_info.near_plane, camera_info.far_plane);
 	}
 
 	glm::mat4x4 GetGlobalToCameraMatrix() const
@@ -236,7 +268,7 @@ protected:
 		glm::vec4 clear_color(0.0f, 0.7f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
-		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
+		glClearBufferfi(GL_DEPTH_STENCIL, 0, camera_info.far_plane, 0);
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);   // when viewer is inside the cube
@@ -816,16 +848,25 @@ protected:
 						}
 					}
 				}
-
-				// trace debugging information
-				ImGui::Begin("Information", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
-				ImGui::InputFloat("near_plane", &near_plane, 10.0f, 50.0f);
-				ImGui::InputFloat("far_plane", &far_plane, 10.0f, 50.0f);
-				ImGui::InputFloat("fov", &fov, 1.0f, 5.0f);
-				ImGui::End();
 			}
 		}
 		return true; // refresh
+	}
+
+	bool EnumerateKnownImGuiObjects(EnumerateKnownImGuiObjectFunc func)
+	{
+		if (chaos::Window::EnumerateKnownImGuiObjects(func))
+			return true;
+
+		char const* camera_menu_path = "Camera";	
+		if (func("Camera", camera_menu_path, [this]()
+		{
+			return new ImGuiCameraInformationObject(camera_info);
+		}))
+		{
+			return true;
+		}
+		return false;
 	}
 
 	virtual void OnInputLanguageChanged() override
@@ -866,6 +907,8 @@ protected:
     loose_tree_type object_tree;
 
 	chaos::weak_ptr<GeometricObject> pointed_object;
+
+	CameraInfo camera_info;
 
 	bool show_help = true;
 

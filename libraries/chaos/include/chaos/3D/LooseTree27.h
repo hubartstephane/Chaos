@@ -631,17 +631,29 @@ namespace chaos
 			return root;
 		}
 
+		size_t GetNodeCount() const
+		{
+			return node_count;
+		}
+
 	protected:
 
 		/** allocate a node */
 		node_type* AllocateNode()
 		{
-			return node_allocator.Allocate();
+			if (node_type* result = node_allocator.Allocate())
+			{
+				++node_count;
+				return result;
+			}
+			return nullptr;
 		}
 
 		/** destroy the node */
 		void DeleteNode(node_type* node)
 		{
+			assert(node != nullptr);
+			--node_count;
 			node_allocator.Free(node);
 		}
 
@@ -712,6 +724,8 @@ namespace chaos
 		node_type* root = nullptr;
 		/** the node allocator */
 		node_allocator_type node_allocator;
+		/** the number of nodes */
+		size_t node_count = 0;
 	};
 
 

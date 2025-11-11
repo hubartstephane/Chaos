@@ -110,7 +110,7 @@ public:
 
 // =======================================================================
 
-class GeometricObject : public chaos::Object
+class GeometricObject : public chaos::Object, public chaos::InputReceiverInterface
 {
 public:
 
@@ -154,48 +154,38 @@ public:
 		return {};
 	}
 
-	bool DisplaceObjectWithInputs(ActionType action_type, KeyConfiguration const & key_configuration, float delta_time)
+	virtual bool EnumerateInputActions(chaos::InputActionEnumerator& in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
 	{
-		bool result = false;
+		WindowOpenGLTest const* window = WindowOpenGLTest::GetInstance();
+		if (window == nullptr)
+			return false;
 
-		if (action_type == ActionType::MOVE_OBJECT)
+		if (window->current_action_type == ActionType::MOVE_OBJECT)
 		{
-			result |= MoveObjectWithInputs(key_configuration.move_object_negative_x, delta_time, { -1.0f,  0.0f,  0.0f });
-			result |= MoveObjectWithInputs(key_configuration.move_object_positive_x, delta_time, { 1.0f,  0.0f,  0.0f });
-			result |= MoveObjectWithInputs(key_configuration.move_object_negative_y, delta_time, { 0.0f, -1.0f,  0.0f });
-			result |= MoveObjectWithInputs(key_configuration.move_object_positive_y, delta_time, { 0.0f,  1.0f,  0.0f });
-			result |= MoveObjectWithInputs(key_configuration.move_object_negative_z, delta_time, { 0.0f,  0.0f, -1.0f });
-			result |= MoveObjectWithInputs(key_configuration.move_object_positive_z, delta_time, { 0.0f,  0.0f,  1.0f });
-		}
-		else if (action_type == ActionType::SCALE_OBJECT)
-		{
-			//result |= ScaleObjectWithInputs(GLFW_KEY_R, delta_time, 1.0f);
-			//result |= ScaleObjectWithInputs(GLFW_KEY_F, delta_time, -1.0f);
-		}
+			auto MoveObjectWithInputs = [&](chaos::Key key, char const * title, glm::vec3 const& direction)
+			{
+				return in_action_enumerator.CheckAndProcess(chaos::RequestKeyDown(key), title, [&]()
+				{
+					float delta_time = (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration();
 
-		return result;
+					float final_speed = DISPLACEMENT_SPEED;
+					sphere.position += direction * delta_time * final_speed;
+					box.position += direction * delta_time * final_speed;
+				});
+			};
+
+			return
+				MoveObjectWithInputs(window->key_configuration.move_object_negative_x, "move object -X", {-1.0f,  0.0f,  0.0f }) ||
+				MoveObjectWithInputs(window->key_configuration.move_object_positive_x, "move object +X", { 1.0f,  0.0f,  0.0f }) ||
+				MoveObjectWithInputs(window->key_configuration.move_object_negative_y, "move object -Y", { 0.0f, -1.0f,  0.0f }) ||
+				MoveObjectWithInputs(window->key_configuration.move_object_positive_y, "move object +Y", { 0.0f,  1.0f,  0.0f }) ||
+				MoveObjectWithInputs(window->key_configuration.move_object_negative_z, "move object -Z", { 0.0f,  0.0f, -1.0f }) ||
+				MoveObjectWithInputs(window->key_configuration.move_object_positive_z, "move object +Z", { 0.0f,  0.0f,  1.0f });
+		}
+		return chaos::InputReceiverInterface::EnumerateInputActions(in_action_enumerator, in_context);
 	}
 
 protected:
-
-	bool MoveObjectWithInputs(chaos::Key const & key, float delta_time, glm::vec3 const& direction)
-	{
-		if (IsKeyboardInput(key))
-		{
-			chaos::KeyboardAndMouseDevice* keyboard_and_mouse_device = chaos::KeyboardAndMouseDevice::GetInstance();
-			if (keyboard_and_mouse_device == nullptr)
-				return false;
-
-			if (IsInputActive(keyboard_and_mouse_device->GetInputState(key)))
-			{
-				float final_speed = (IsInputActive(keyboard_and_mouse_device->GetInputState(chaos::Key::LEFT_SHIFT))) ? FAST_DISPLACEMENT_SPEED : DISPLACEMENT_SPEED;
-				sphere.position += direction * delta_time * final_speed;
-				box.position += direction * delta_time * final_speed;
-				return true;
-			}
-		}
-		return false;
-	}
 
 	bool ScaleObjectWithInputs(chaos::Key const& key, float delta_time, float direction)
 	{
@@ -240,7 +230,7 @@ public:
 
 // =======================================================================
 
-class WindowOpenGLTest : public chaos::Window
+class WindowOpenGLTest : public chaos::Window, chaos::Singleton<WindowOpenGLTest>
 {
 	CHAOS_DECLARE_OBJECT_CLASS(WindowOpenGLTest, chaos::Window);
 
@@ -285,21 +275,6 @@ protected:
 		return true;
 	}
 
-	void OnDrawImGuiMenu(chaos::ImGuiMenuBuilder const & menu_builder) override
-	{
-		chaos::Window::OnDrawImGuiMenu(menu_builder);
-
-		menu_builder.WithMenu([this]
-		{
-			if (ImGui::BeginMenu("Windows"))
-			{
-				if (ImGui::MenuItem("Show Help", nullptr, show_help, true))
-					show_help = !show_help;
-				ImGui::EndMenu();
-			}
-		});
-	}
-
 	void DrawTextItem(char const* title, chaos::Key const& key, bool enabled) const
 	{
 		if (enabled)
@@ -311,41 +286,6 @@ protected:
 	void OnDrawImGuiContent() override
 	{
 		chaos::Window::OnDrawImGuiContent();
-
-		// the HELP
-		if (show_help)
-		{
-			bool enabled = (GetCurrentGeometricObject() != nullptr);
-
-			if (ImGui::Begin("help", &show_help, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
-			{
-				DrawTextItem("random scene", key_configuration.new_scene, true);
-				DrawTextItem("select next object", key_configuration.next_object, enabled);
-				DrawTextItem("select previous object", key_configuration.previous_object, enabled);
-				DrawTextItem("delete current object", key_configuration.delete_object, enabled);
-
-				if (current_action_type == ActionType::MOVE_OBJECT)
-				{
-					DrawTextItem("move object -x", key_configuration.move_object_negative_x, enabled);
-					DrawTextItem("move object +x", key_configuration.move_object_positive_x, enabled);
-					DrawTextItem("move object -y", key_configuration.move_object_negative_y, enabled);
-					DrawTextItem("move object +y", key_configuration.move_object_positive_y, enabled);
-					DrawTextItem("move object -z", key_configuration.move_object_negative_z, enabled);
-					DrawTextItem("move object +z", key_configuration.move_object_positive_z, enabled);
-				}
-				else if (current_action_type == ActionType::SCALE_OBJECT)
-				{
-					DrawTextItem("scale object -x", key_configuration.scale_object_negative_x, enabled);
-					DrawTextItem("scale object +x", key_configuration.scale_object_positive_x, enabled);
-					DrawTextItem("scale object -y", key_configuration.scale_object_negative_y, enabled);
-					DrawTextItem("scale object +y", key_configuration.scale_object_positive_y, enabled);
-					DrawTextItem("scale object -z", key_configuration.scale_object_negative_z, enabled);
-					DrawTextItem("scale object +z", key_configuration.scale_object_positive_z, enabled);
-				}
-				ImGui::End();
-			}
-		}
-
 		OnDrawToolbar();
 	}
 
@@ -376,13 +316,6 @@ protected:
 					{
 						ImGui::SetCursorPosY(base_cursor_y + 4.0f);
 					}
-
-
-
-
-
-
-
 
 					ImTextureID textureID = (ImTextureID)((uint64_t)texture->GetResourceID()); // conversion into uint64_t to remove a C4312 warning
 
@@ -797,22 +730,14 @@ protected:
 	{
 		if (in_traverser.Traverse(&fps_view_controller, in_input_device))
 			return true;
+		if (GeometricObject* current_object = GetCurrentGeometricObject())
+			if (current_object->TraverseInputReceiver(in_traverser, in_input_device))
+				return true;
 		return chaos::Window::TraverseInputReceiver(in_traverser, in_input_device);
 	}
 
 	virtual bool DoTick(float delta_time) override
 	{
-		ImGuiIO& io = ImGui::GetIO();
-		if (!io.WantCaptureMouse && !io.WantCaptureKeyboard)
-		{
-			// move object
-			if (GeometricObject* current_object = GetCurrentGeometricObject())
-			{
-				if (current_object->DisplaceObjectWithInputs(current_action_type, key_configuration, delta_time))
-					OnObjectMoved(current_object);
-			}
-		}
-
 		// object selection with mouse
 		if (IsImGuiMenuEnabled())
 		{
@@ -909,8 +834,6 @@ protected:
 	chaos::weak_ptr<GeometricObject> pointed_object;
 
 	CameraInfo camera_info;
-
-	bool show_help = true;
 
 	/** the camera displacement speed */
 	static constexpr float CAMERA_SPEED = 400.0f;

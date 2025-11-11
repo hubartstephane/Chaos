@@ -62,6 +62,8 @@ ActionType current_action_type = ActionType::CREATE_BOX;
 
 KeyConfiguration key_configuration;
 
+loose_tree_type object_tree;
+
 // =======================================================================
 
 class CameraInfo
@@ -180,8 +182,12 @@ public:
 					float final_speed = DISPLACEMENT_SPEED;
 
 					glm::vec3 delta_position = DirectionToVector(direction) * delta_time * final_speed;
-					sphere.position += delta_position;
-					box.position += delta_position;
+
+					if (geometry_type == GeometryType::SPHERE)
+						sphere.position += delta_position;
+					else if (geometry_type == GeometryType::BOX)
+						box.position += delta_position;
+					OnObjectMoved();
 				});
 			};
 
@@ -204,12 +210,18 @@ public:
 
 						float final_scale_speed = SCALE_SPEED;
 
-						sphere.radius += GetDirectionSign(direction) * final_scale_speed;
-						sphere.radius = std::max(1.0f, sphere.radius);
-
-						float& half_size_component = box.half_size[size_t(DirectionToAxis(direction))];
-						half_size_component += GetDirectionSign(direction) * final_scale_speed;
-						half_size_component = std::max(1.0f, half_size_component);
+						if (geometry_type == GeometryType::SPHERE)
+						{
+							sphere.radius += GetDirectionSign(direction) * final_scale_speed;
+							sphere.radius = std::max(1.0f, sphere.radius);
+						}
+						else if (geometry_type == GeometryType::BOX)
+						{
+							float& half_size_component = box.half_size[size_t(DirectionToAxis(direction))];
+							half_size_component += GetDirectionSign(direction) * final_scale_speed;
+							half_size_component = std::max(1.0f, half_size_component);
+						}
+						OnObjectMoved();
 					});
 				};
 
@@ -224,6 +236,34 @@ public:
 
 
 		return chaos::InputReceiverInterface::EnumerateInputActions(in_action_enumerator, in_context);
+	}
+
+	void InsertIntoTree()
+	{
+		if (loose_tree_node_type* new_node = object_tree.GetOrCreateNode(GetBoundingBox()))
+		{
+			if (new_node != node)
+			{
+				new_node->objects.push_back(this);
+				RemoveFromTree();
+				node = new_node;
+			}
+		}
+	}
+
+	void RemoveFromTree()
+	{
+		if (node != nullptr)
+		{
+			node->objects.erase(std::ranges::find(node->objects, this));
+			object_tree.DeleteNodeIfPossible(node);
+			node = nullptr;
+		}
+	}
+
+	void OnObjectMoved()
+	{
+		InsertIntoTree();
 	}
 
 public:
@@ -293,14 +333,6 @@ protected:
 		DrawAction();
 
 		return true;
-	}
-
-	void DrawTextItem(char const* title, chaos::Key const& key, bool enabled) const
-	{
-		if (enabled)
-			ImGui::Text("%s      : %s", GetKeyName(key), title);
-		else
-			ImGui::TextDisabled("%s      : %s", GetKeyName(key), title);
 	}
 
 	void OnDrawImGuiContent() override
@@ -595,7 +627,7 @@ protected:
 			if (geometric_objects.size() > 0)
 			{
 				// remove the object from tree
-				EraseObjectFromNode(current_object);
+				current_object->RemoveFromTree();
 				// remove the object from object list
 				auto it = std::ranges::find_if(geometric_objects, [current_object](auto& v)
 				{
@@ -718,7 +750,7 @@ protected:
 		if (GeometricObject* result = CreateNewGeometry(GeometryType::BOX))
 		{
 			result->box = creation_box;
-			InsertObjectIntoNode(result, object_tree.GetOrCreateNode(creation_box));
+			result->InsertIntoTree();			
 			return result;
 		}
 		return nullptr;
@@ -729,35 +761,27 @@ protected:
 		if (GeometricObject* result = CreateNewGeometry(GeometryType::SPHERE))
 		{
 			result->sphere = creation_sphere;
-			InsertObjectIntoNode(result, object_tree.GetOrCreateNode(chaos::GetBoundingBox(creation_sphere)));
+			result->InsertIntoTree();
 			return result;
 		}
 		return nullptr;
 	}
 
-	void InsertObjectIntoNode(GeometricObject* object, loose_tree_node_type * node)
-	{
-		object->node = node;
-		object->node->objects.push_back(object);
-	}
 
-	void EraseObjectFromNode(GeometricObject* object)
-	{
-		object->node->objects.erase(std::ranges::find(object->node->objects, object));
-		object_tree.DeleteNodeIfPossible(object->node);
-		object->node = nullptr;
-	}
 
-	void OnObjectMoved(GeometricObject* object)
-	{
-		chaos::box3 new_box = object->GetBoundingBox();
 
-		if (chaos::ComputeTreeNodeInfo(new_box) != object->node->GetNodeInfo()) // changement required
-		{
-			EraseObjectFromNode(object);
-			InsertObjectIntoNode(object, object_tree.GetOrCreateNode(new_box));
-		}
-	}
+
+
+
+
+
+
+
+
+
+
+
+
 
 	virtual bool TraverseInputReceiver(chaos::InputReceiverTraverser & in_traverser, chaos::InputDeviceInterface const * in_input_device) override
 	{
@@ -859,8 +883,6 @@ protected:
 	chaos::shared_ptr<chaos::GPUTexture> scale_icon_texture;
 	/** the icon for rotate */
 	chaos::shared_ptr<chaos::GPUTexture> rotate_icon_texture;
-
-    loose_tree_type object_tree;
 
 	chaos::weak_ptr<GeometricObject> pointed_object;
 

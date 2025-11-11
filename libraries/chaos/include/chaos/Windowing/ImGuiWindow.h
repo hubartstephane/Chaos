@@ -44,7 +44,7 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual bool EnumerateKnownImGuiObjects(EnumerateKnownImGuiObjectFunc func) const override;
+		virtual bool EnumerateKnownImGuiObjects(EnumerateKnownImGuiObjectFunc func) override;
 
 	protected:
 

@@ -36,7 +36,7 @@ namespace chaos
 				RequireWindowClosure();
 	}
 
-	bool ImGuiWindow::EnumerateKnownImGuiObjects(EnumerateKnownImGuiObjectFunc func) const
+	bool ImGuiWindow::EnumerateKnownImGuiObjects(EnumerateKnownImGuiObjectFunc func)
 	{
 		return false; // don't call super method
 	}

@@ -30,7 +30,7 @@ namespace chaos
 		});
 	}
 
-	bool ImGuiObjectOwnerInterface::EnumerateKnownImGuiObjects(EnumerateKnownImGuiObjectFunc func) const
+	bool ImGuiObjectOwnerInterface::EnumerateKnownImGuiObjects(EnumerateKnownImGuiObjectFunc func)
 	{
 		char const* gpu_menu_path = "GPU";
 

@@ -94,7 +94,7 @@ public:
 protected:
 
 	/** enumerate ImGuiObjects that the window can create */
-	virtual bool EnumerateKnownImGuiObjects(EnumerateKnownImGuiObjectFunc func) const;
+	virtual bool EnumerateKnownImGuiObjects(EnumerateKnownImGuiObjectFunc func);
 	/** create or destroy an ImGuiObject */
 	void SetImGuiObjectInternalVisibility(bool visible, char const* name, CreateImGuiObjectFunc create_func);
 	/** draw all ImGui objects */

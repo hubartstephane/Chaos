@@ -107,8 +107,10 @@ namespace chaos
 	bool InputReceiverInterface::ProcessInputEvent(INPUT_TYPE in_input)
 	{
 		// XXX: do not use WindowApplication::consumption_cache
+		//      (elsewhere the event polling would fail)
 		//      we only want to register inside it the key for current key_event
-		//      this is done inside OnKeyEventInputReceiverTraverser
+		//      if current key/input1D/input2D is handled here, all inputs involved 
+		//      here will be locked in application cache (for that next poll step)
 		InputConsumptionCache consumption_cache;
 
 		// XXX: mandatory to have a VARIABLE lambda so that the underlying DelegateTraverser's LightweightFunction does not point on a deleted object
@@ -124,7 +126,6 @@ namespace chaos
 		};
 
 		DelegateInputReceiverTraverser traverser(process_function);
-
 		return traverser.Traverse(this);
 	}
 

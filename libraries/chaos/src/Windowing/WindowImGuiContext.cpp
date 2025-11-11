@@ -29,7 +29,7 @@ namespace chaos
 
 	bool WindowImGuiContext::ShouldCaptureInputEvent() const
 	{
-		if (IsImGuiContextCurrent() && WindowApplication::IsImGuiMenuEnabled())
+		if (IsImGuiContextCurrent() && WindowApplication::IsImGuiMenuEnabled() && ImGui::GetIO().WantCaptureMouse)
 			return true;
 		return false;
 	}
@@ -44,8 +44,9 @@ namespace chaos
 	{
 		assert(IsImGuiContextCurrent());
 
-		// ImGui_ImplGlfw_CursorPosCallback is called elsewhere (this must always be called to have consistent imgui state)
-		if (ShouldCaptureInputEvent() && ImGui::GetIO().WantCaptureMouse)
+		// ImGui_ImplGlfw_CursorPosCallback is called elsewhere 
+		// (it must always be called to have consistent imgui state)
+		if (ShouldCaptureInputEvent())
 		{
 			return true;
 		}
@@ -55,7 +56,7 @@ namespace chaos
 	bool WindowImGuiContext::OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event)
 	{
 		// only gives click event to ImGui if the cursor hovers some window
-		if (ShouldCaptureInputEvent() && ImGui::GetIO().WantCaptureMouse)
+		if (ShouldCaptureInputEvent())
 		{
 			int key = int(mouse_button_event.key) - int(Key::MOUSE_FIRST);
 
@@ -70,7 +71,7 @@ namespace chaos
 		assert(IsImGuiContextCurrent());
 
 		// only gives wheel event to ImGui if the cursor hovers some window
-		if (ShouldCaptureInputEvent() && ImGui::GetIO().WantCaptureMouse)
+		if (ShouldCaptureInputEvent())
 		{
 			ImGui_ImplGlfw_ScrollCallback(window->GetGLFWHandler(), scroll_x, scroll_y);
 			return true;
@@ -87,7 +88,7 @@ namespace chaos
 			return true;
 		}
 
-		if (ShouldCaptureInputEvent() && ImGui::GetIO().WantCaptureMouse)
+		if (ShouldCaptureInputEvent())
 		{
 			int key = int(key_event.key) - int(Key::KEYBOARD_FIRST);
 
@@ -107,19 +108,20 @@ namespace chaos
 			return true;
 		}
 
-		if (ShouldCaptureInputEvent())
-		{
-			if (in_context == EnumerateInputActionContext::OnQuery)
-			{
-				if (ImGui::GetIO().WantCaptureMouse)
-					in_action_enumerator.CheckAndProcess(AnyInputRequest(), "Catch All");
-			}
-			else if (ImGui::GetIO().WantCaptureMouse)
-			{
-				return true; // stop traversal
-			}
-		}
-		return false; // continue traversal
+		// coming from OnKeyEventImpl(...)
+		// let OnKeyEventImpl decides whether the input is the be catched bu ImGui
+		if (in_context == EnumerateInputActionContext::OnEvent)
+			return false;
+
+		if (in_context == EnumerateInputActionContext::OnPolling)
+			if (ShouldCaptureInputEvent())
+				return true; // don't let anyone else try to handle the input: catch everything
+
+		if (in_context == EnumerateInputActionContext::OnQuery)
+			if (ShouldCaptureInputEvent())
+				in_action_enumerator.CheckAndProcess(AnyInputRequest(), "Catch All"); // process query deeper
+
+		return false;
 	}
 
 	bool WindowImGuiContext::OnCharEventImpl(unsigned int c)
@@ -129,9 +131,7 @@ namespace chaos
 		if (ShouldCaptureInputEvent())
 		{
 			ImGui_ImplGlfw_CharCallback(window->GetGLFWHandler(), c);
-
-			if (ImGui::GetIO().WantCaptureKeyboard)
-				return true;
+			return true;
 		}
 		return false;
 	}

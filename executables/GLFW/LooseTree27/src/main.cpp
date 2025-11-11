@@ -14,6 +14,56 @@ using loose_tree_node_type = loose_tree_type::node_type;
 
 // =======================================================================
 
+enum class GeometryType
+{
+	SPHERE,
+	BOX,
+	COUNT
+};
+
+enum class ActionType
+{
+	CREATE_SPHERE,
+	CREATE_BOX,
+	MOVE_OBJECT,
+	SCALE_OBJECT,
+	ROTATE_OBJECT
+};
+
+// =======================================================================
+
+class KeyConfiguration
+{
+public:
+
+	chaos::Key new_scene = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Y"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key delete_object = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("DELETE"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key next_object = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("KP_ADD"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key previous_object = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("KP_SUBTRACT"), chaos::KeyboardLayoutType::AZERTY);
+
+	chaos::Key move_object_positive_x = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("D"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key move_object_negative_x = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Q"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key move_object_positive_y = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("E"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key move_object_negative_y = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("A"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key move_object_positive_z = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("S"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key move_object_negative_z = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Z"), chaos::KeyboardLayoutType::AZERTY);
+
+	chaos::Key scale_object_positive_x = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("D"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key scale_object_negative_x = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Q"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key scale_object_positive_y = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("E"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key scale_object_negative_y = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("A"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key scale_object_positive_z = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("S"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key scale_object_negative_z = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Z"), chaos::KeyboardLayoutType::AZERTY);
+};
+
+// =======================================================================
+
+ActionType current_action_type = ActionType::CREATE_BOX;
+
+KeyConfiguration key_configuration;
+
+// =======================================================================
+
 class CameraInfo
 {
 public:
@@ -48,49 +98,7 @@ protected:
 	CameraInfo & camera_info;
 };
 
-// =======================================================================
 
-class KeyConfiguration
-{
-public:
-
-	chaos::Key new_scene = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Y"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key delete_object = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("DELETE"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key next_object = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("KP_ADD"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key previous_object = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("KP_SUBTRACT"), chaos::KeyboardLayoutType::AZERTY);
-
-	chaos::Key move_object_positive_x = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("D"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key move_object_negative_x = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Q"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key move_object_positive_y = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("E"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key move_object_negative_y = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("A"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key move_object_positive_z = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("S"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key move_object_negative_z = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Z"), chaos::KeyboardLayoutType::AZERTY);
-
-	chaos::Key scale_object_positive_x = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("D"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key scale_object_negative_x = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Q"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key scale_object_positive_y = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("E"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key scale_object_negative_y = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("A"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key scale_object_positive_z = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("S"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key scale_object_negative_z = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Z"), chaos::KeyboardLayoutType::AZERTY);
-};
-
-// =======================================================================
-
-enum class GeometryType
-{
-	SPHERE,
-	BOX,
-	COUNT
-};
-
-enum class ActionType
-{
-	CREATE_SPHERE,
-	CREATE_BOX,
-	MOVE_OBJECT,
-	SCALE_OBJECT,
-	ROTATE_OBJECT
-};
 
 // =======================================================================
 
@@ -113,6 +121,11 @@ public:
 class GeometricObject : public chaos::Object, public chaos::InputReceiverInterface
 {
 public:
+
+	virtual char const* GetInputReceiverName() const override
+	{
+		return "Geometric Object";
+	}
 
 	chaos::box3 GetBoundingBox() const
 	{
@@ -156,11 +169,7 @@ public:
 
 	virtual bool EnumerateInputActions(chaos::InputActionEnumerator& in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
 	{
-		WindowOpenGLTest const* window = WindowOpenGLTest::GetInstance();
-		if (window == nullptr)
-			return false;
-
-		if (window->current_action_type == ActionType::MOVE_OBJECT)
+		if (current_action_type == ActionType::MOVE_OBJECT)
 		{
 			auto MoveObjectWithInputs = [&](chaos::Key key, char const * title, glm::vec3 const& direction)
 			{
@@ -175,12 +184,12 @@ public:
 			};
 
 			return
-				MoveObjectWithInputs(window->key_configuration.move_object_negative_x, "move object -X", {-1.0f,  0.0f,  0.0f }) ||
-				MoveObjectWithInputs(window->key_configuration.move_object_positive_x, "move object +X", { 1.0f,  0.0f,  0.0f }) ||
-				MoveObjectWithInputs(window->key_configuration.move_object_negative_y, "move object -Y", { 0.0f, -1.0f,  0.0f }) ||
-				MoveObjectWithInputs(window->key_configuration.move_object_positive_y, "move object +Y", { 0.0f,  1.0f,  0.0f }) ||
-				MoveObjectWithInputs(window->key_configuration.move_object_negative_z, "move object -Z", { 0.0f,  0.0f, -1.0f }) ||
-				MoveObjectWithInputs(window->key_configuration.move_object_positive_z, "move object +Z", { 0.0f,  0.0f,  1.0f });
+				MoveObjectWithInputs(key_configuration.move_object_negative_x, "move object -X", {-1.0f,  0.0f,  0.0f }) ||
+				MoveObjectWithInputs(key_configuration.move_object_positive_x, "move object +X", { 1.0f,  0.0f,  0.0f }) ||
+				MoveObjectWithInputs(key_configuration.move_object_negative_y, "move object -Y", { 0.0f, -1.0f,  0.0f }) ||
+				MoveObjectWithInputs(key_configuration.move_object_positive_y, "move object +Y", { 0.0f,  1.0f,  0.0f }) ||
+				MoveObjectWithInputs(key_configuration.move_object_negative_z, "move object -Z", { 0.0f,  0.0f, -1.0f }) ||
+				MoveObjectWithInputs(key_configuration.move_object_positive_z, "move object +Z", { 0.0f,  0.0f,  1.0f });
 		}
 		return chaos::InputReceiverInterface::EnumerateInputActions(in_action_enumerator, in_context);
 	}
@@ -230,7 +239,7 @@ public:
 
 // =======================================================================
 
-class WindowOpenGLTest : public chaos::Window, chaos::Singleton<WindowOpenGLTest>
+class WindowOpenGLTest : public chaos::Window
 {
 	CHAOS_DECLARE_OBJECT_CLASS(WindowOpenGLTest, chaos::Window);
 
@@ -481,6 +490,8 @@ protected:
 		scale_icon_texture = LoadTexture("ScaleIcon.png");
 		rotate_icon_texture = LoadTexture("RotateIcon.png");
 
+		key_configuration = KeyConfiguration(); // necessary because the global instance is not properly constructed
+
 		return true;
 	}
 
@@ -544,41 +555,6 @@ protected:
 		}
 
 		return chaos::ray3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	}
-
-	virtual bool OnMouseButtonImpl(chaos::MouseButtonEvent const &mouse_button_event) override
-	{
-		if (mouse_button_event.IsKeyPressed(chaos::Key::MOUSE_BUTTON_1))
-		{
-			if (IsImGuiMenuEnabled())
-			{
-				if (current_action_type == ActionType::CREATE_BOX)
-				{
-					CreateNewBox(GetBoxToCreateFromMousePosition());
-				}
-				else if (current_action_type == ActionType::CREATE_SPHERE)
-				{
-					CreateNewSphere(GetSphereToCreateFromMousePosition());
-				}
-				else if (current_action_type == ActionType::MOVE_OBJECT || current_action_type == ActionType::SCALE_OBJECT || current_action_type == ActionType::ROTATE_OBJECT)
-				{
-					if (pointed_object == nullptr)
-						current_object_index.reset();
-					else
-					{
-						for (size_t i = 0; i < geometric_objects.size(); ++i)
-						{
-							if (pointed_object == geometric_objects[i].get())
-							{
-								current_object_index = i;
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-		return true;
 	}
 
 	virtual bool EnumerateInputActions(chaos::InputActionEnumerator & in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
@@ -662,6 +638,52 @@ protected:
 		}))
 		{
 			return true;
+		}
+
+		if (current_action_type == ActionType::CREATE_BOX)
+		{
+			if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::MOUSE_BUTTON_1), "Create Box", [&]()
+			{
+				CreateNewBox(GetBoxToCreateFromMousePosition());
+			}))
+			{
+				return true;
+			}
+		}
+
+		if (current_action_type == ActionType::CREATE_SPHERE)
+		{
+			if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::MOUSE_BUTTON_1), "Create Sphere", [&]()
+			{
+				CreateNewSphere(GetSphereToCreateFromMousePosition());
+			}))
+			{
+				return true;
+			}
+		}
+
+		if (current_action_type == ActionType::MOVE_OBJECT || current_action_type == ActionType::SCALE_OBJECT || current_action_type == ActionType::ROTATE_OBJECT)
+		{
+			if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::MOUSE_BUTTON_1), "Select Object", [&]()
+			{
+				if (pointed_object == nullptr)
+					current_object_index.reset();
+				else
+				{
+					for (size_t i = 0; i < geometric_objects.size(); ++i)
+					{
+						if (pointed_object == geometric_objects[i].get())
+						{
+							current_object_index = i;
+							break;
+						}
+					}
+				}
+			}))
+			{
+				return true;
+			}
+
 		}
 
 		return chaos::Window::EnumerateInputActions(in_action_enumerator, in_context);
@@ -816,8 +838,6 @@ protected:
 	/** the object to create */
 	GeometryType current_creation_type = GeometryType::BOX;
 
-	ActionType current_action_type = ActionType::CREATE_BOX;
-
 	/** the icon for the sphere */
 	chaos::shared_ptr<chaos::GPUTexture> sphere_icon_texture;
 	/** the icon for the box */
@@ -839,8 +859,6 @@ protected:
 	static constexpr float CAMERA_SPEED = 400.0f;
 	/** the distance at which object are being created */
 	static constexpr float CREATE_OBJECT_DISTANCE = 100.0f;
-
-	KeyConfiguration key_configuration;
 };
 
 int main(int argc, char ** argv, char ** env)

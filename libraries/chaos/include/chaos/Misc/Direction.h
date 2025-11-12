@@ -20,11 +20,11 @@ namespace chaos
 	CHAOS_DECLARE_ENUM_METHOD(Direction, CHAOS_API);
 
 	/** get the 3d vector corresponding to a direction */
-	glm::vec3 CHAOS_API DirectionToVector(Direction in_direction);
+	CHAOS_API glm::vec3 DirectionToVector(Direction in_direction);
 	/** get the axis corresponding to a direction */
-	Axis CHAOS_API DirectionToAxis(Direction in_direction);
+	CHAOS_API Axis DirectionToAxis(Direction in_direction);
 	/** returns whether the direction is positive or negative */
-	float CHAOS_API GetDirectionSign(Direction in_direction);
+	CHAOS_API float GetDirectionSign(Direction in_direction);
 
 #endif
 

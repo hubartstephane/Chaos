@@ -17,7 +17,7 @@ namespace chaos
 	CHAOS_DECLARE_ENUM_METHOD(Axis, CHAOS_API);
 
 	/** get the 3d vector corresponding to an axis */
-	glm::vec3 CHAOS_API AxisToVector(Axis in_axis);
+	CHAOS_API glm::vec3 AxisToVector(Axis in_axis);
 
 #endif
 

@@ -339,6 +339,20 @@ protected:
 	{
 		chaos::Window::OnDrawImGuiContent();
 		OnDrawToolbar();
+		OnDrawTreeInfo();
+	}
+
+	void OnDrawTreeInfo()
+	{
+		if (ImGuiViewport* viewport = ImGui::GetMainViewport())
+		{
+			ImGui::SetNextWindowPos(ImVec2(viewport->Size.x - 15.0f, viewport->Size.y - 15.0f), ImGuiCond_FirstUseEver, ImVec2(1.0f, 1.0f));
+			if (ImGui::Begin("Tree Info", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
+			{
+				ImGui::Text("NodeCount = %d", object_tree.GetNodeCount());
+				ImGui::End();
+			}
+		}
 	}
 
 	void OnDrawToolbar()
@@ -346,60 +360,58 @@ protected:
 		if (ImGuiViewport* viewport = ImGui::GetMainViewport())
 		{
 			ImGui::SetNextWindowPos(ImVec2(15.0f, viewport->Size.y - 15.0f), ImGuiCond_FirstUseEver, ImVec2(0.0f, 1.0f));
-			ImGui::Begin("Toolbar", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
-
-			auto AddButton = [this](ActionType type, chaos::GPUTexture * texture, char const * tooltip, float base_cursor_y)
+			
+			if (ImGui::Begin("Toolbar", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
 			{
-				if (texture != nullptr)
+				auto AddButton = [this](ActionType type, chaos::GPUTexture* texture, char const* tooltip, float base_cursor_y)
 				{
-					ImVec2 icon_size = { 32.0f, 32.0f };
-
-					bool selected = (current_action_type == type);
-
-					if (selected)
+					if (texture != nullptr)
 					{
-						ImGui::SetCursorPosY(base_cursor_y);
-						ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.0f, 0.0f, 1.0f));
-						ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
-						ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.0f, 0.0f, 1.0f));
-						icon_size = { 40.0f, 40.0f };
+						ImVec2 icon_size = { 32.0f, 32.0f };
+
+						bool selected = (current_action_type == type);
+
+						if (selected)
+						{
+							ImGui::SetCursorPosY(base_cursor_y);
+							ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.0f, 0.0f, 1.0f));
+							ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+							ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.0f, 0.0f, 1.0f));
+							icon_size = { 40.0f, 40.0f };
+						}
+						else
+						{
+							ImGui::SetCursorPosY(base_cursor_y + 4.0f);
+						}
+
+						ImTextureID textureID = (ImTextureID)((uint64_t)texture->GetResourceID()); // conversion into uint64_t to remove a C4312 warning
+
+						if (ImGui::ImageButton(tooltip, textureID, icon_size, ImVec2(0, 1), ImVec2(1, 0))) // reverse the texture coordinate along Y
+						{
+							current_action_type = type;
+						}
+						if (ImGui::IsItemHovered())
+							ImGui::SetTooltip(tooltip);
+
+						if (selected)
+							ImGui::PopStyleColor(3);
 					}
-					else
-					{
-						ImGui::SetCursorPosY(base_cursor_y + 4.0f);
-					}
+				};
 
-					ImTextureID textureID = (ImTextureID)((uint64_t)texture->GetResourceID()); // conversion into uint64_t to remove a C4312 warning
+				float base_cursor_y = ImGui::GetCursorPosY();
 
-					if (ImGui::ImageButton(tooltip, textureID, icon_size, ImVec2(0, 1), ImVec2(1, 0))) // reverse the texture coordinate along Y
-					{
-						current_action_type = type;
-					}
-					if (ImGui::IsItemHovered())
-						ImGui::SetTooltip(tooltip);
+				AddButton(ActionType::CREATE_BOX, box_icon_texture.get(), "create box", base_cursor_y);
+				ImGui::SameLine();
+				AddButton(ActionType::CREATE_SPHERE, sphere_icon_texture.get(), "create sphere", base_cursor_y);
+				ImGui::SameLine();
+				AddButton(ActionType::MOVE_OBJECT, move_icon_texture.get(), "move object", base_cursor_y);
+				ImGui::SameLine();
+				AddButton(ActionType::SCALE_OBJECT, scale_icon_texture.get(), "scale object", base_cursor_y);
+				ImGui::SameLine();
+				AddButton(ActionType::ROTATE_OBJECT, rotate_icon_texture.get(), "rotate object", base_cursor_y);
 
-					if (selected)
-						ImGui::PopStyleColor(3);
-				}
-			};
-
-			float base_cursor_y = ImGui::GetCursorPosY();
-
-			AddButton(ActionType::CREATE_BOX, box_icon_texture.get(), "create box", base_cursor_y);
-
-			ImGui::SameLine();
-			AddButton(ActionType::CREATE_SPHERE, sphere_icon_texture.get(), "create sphere", base_cursor_y);
-
-			ImGui::SameLine();
-			AddButton(ActionType::MOVE_OBJECT, move_icon_texture.get(), "move object", base_cursor_y);
-
-			ImGui::SameLine();
-			AddButton(ActionType::SCALE_OBJECT, scale_icon_texture.get(), "scale object", base_cursor_y);
-
-			ImGui::SameLine();
-			AddButton(ActionType::ROTATE_OBJECT, rotate_icon_texture.get(), "rotate object", base_cursor_y);
-
-			ImGui::End();
+				ImGui::End();
+			}
 		}
 	}
 
@@ -683,50 +695,53 @@ protected:
 			return true;
 		}
 
-		if (current_action_type == ActionType::CREATE_BOX)
+		if (IsImGuiMenuEnabled())
 		{
-			if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::MOUSE_BUTTON_1), "Create Box", [&]()
-			{
-				CreateNewBox(GetBoxToCreateFromMousePosition());
-			}))
-			{
-				return true;
-			}
-		}
 
-		if (current_action_type == ActionType::CREATE_SPHERE)
-		{
-			if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::MOUSE_BUTTON_1), "Create Sphere", [&]()
+			if (current_action_type == ActionType::CREATE_BOX)
 			{
-				CreateNewSphere(GetSphereToCreateFromMousePosition());
-			}))
-			{
-				return true;
-			}
-		}
-
-		if (current_action_type == ActionType::MOVE_OBJECT || current_action_type == ActionType::SCALE_OBJECT || current_action_type == ActionType::ROTATE_OBJECT)
-		{
-			if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::MOUSE_BUTTON_1), "Select Object", [&]()
-			{
-				if (pointed_object == nullptr)
-					current_object_index.reset();
-				else
+				if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::MOUSE_BUTTON_1), "Create Box", [&]()
 				{
-					for (size_t i = 0; i < geometric_objects.size(); ++i)
+					CreateNewBox(GetBoxToCreateFromMousePosition());
+				}))
+				{
+					return true;
+				}
+			}
+
+			if (current_action_type == ActionType::CREATE_SPHERE)
+			{
+				if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::MOUSE_BUTTON_1), "Create Sphere", [&]()
+				{
+					CreateNewSphere(GetSphereToCreateFromMousePosition());
+				}))
+				{
+					return true;
+				}
+			}
+
+			if (current_action_type == ActionType::MOVE_OBJECT || current_action_type == ActionType::SCALE_OBJECT || current_action_type == ActionType::ROTATE_OBJECT)
+			{
+				if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::MOUSE_BUTTON_1), "Select Object", [&]()
+				{
+					if (pointed_object == nullptr)
+						current_object_index.reset();
+					else
 					{
-						if (pointed_object == geometric_objects[i].get())
+						for (size_t i = 0; i < geometric_objects.size(); ++i)
 						{
-							current_object_index = i;
-							break;
+							if (pointed_object == geometric_objects[i].get())
+							{
+								current_object_index = i;
+								break;
+							}
 						}
 					}
+				}))
+				{
+					return true;
 				}
-			}))
-			{
-				return true;
 			}
-
 		}
 
 		return chaos::Window::EnumerateInputActions(in_action_enumerator, in_context);

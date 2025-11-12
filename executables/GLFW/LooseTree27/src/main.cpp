@@ -349,7 +349,8 @@ protected:
 			ImGui::SetNextWindowPos(ImVec2(viewport->Size.x - 15.0f, viewport->Size.y - 15.0f), ImGuiCond_FirstUseEver, ImVec2(1.0f, 1.0f));
 			if (ImGui::Begin("Tree Info", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
 			{
-				ImGui::Text("NodeCount = %d", object_tree.GetNodeCount());
+				ImGui::Text("Node Count = %d", object_tree.GetNodeCount());
+				ImGui::Text("Node Size  = %s", chaos::StringTools::MemorySizeToString(sizeof(loose_tree_node_type)).c_str());
 				ImGui::End();
 			}
 		}

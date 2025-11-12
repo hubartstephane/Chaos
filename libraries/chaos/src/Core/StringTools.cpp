@@ -53,6 +53,22 @@ namespace chaos
 				tm.tm_sec);
 		}
 
+		std::string MemorySizeToString(size_t bytes)
+		{
+			static const char* suffixes[] = { "B", "KB", "MB", "GB", "TB", "PB" };
+			double count = static_cast<double>(bytes);
+			int i = 0;
+			while (count >= 1024 && i < 5)
+			{
+				count /= 1024;
+				++i;
+			}
+
+			char buffer[64];
+			std::snprintf(buffer, sizeof(buffer), "%.2f %s", count, suffixes[i]);
+			return buffer;
+		}
+
 		char const * SkipNumber(char const * c, bool reverse_condition)
 		{
 			while (*c != 0)

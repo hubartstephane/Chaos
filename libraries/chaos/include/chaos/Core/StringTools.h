@@ -103,6 +103,8 @@ namespace chaos
 		CHAOS_API std::string TimeToString(std::time_t t, TimeToStringFormatType format);
 		/** returns a string representation of a date */
 		CHAOS_API std::string TimeToString(std::chrono::system_clock::time_point time_point, TimeToStringFormatType format);
+		/** returns a string representation of a memory size */
+		CHAOS_API std::string MemorySizeToString(size_t bytes);
 
 		/** skip 0x prefix if existing */
 		CHAOS_API char const * SkipHEXPrefix(char const * c);

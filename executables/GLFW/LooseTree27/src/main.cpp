@@ -349,8 +349,14 @@ protected:
 			ImGui::SetNextWindowPos(ImVec2(viewport->Size.x - 15.0f, viewport->Size.y - 15.0f), ImGuiCond_FirstUseEver, ImVec2(1.0f, 1.0f));
 			if (ImGui::Begin("Tree Info", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
 			{
-				ImGui::Text("Node Count = %d", object_tree.GetNodeCount());
-				ImGui::Text("Node Size  = %s", chaos::StringTools::MemorySizeToString(sizeof(loose_tree_node_type)).c_str());
+				size_t object_count = geometric_objects.size();
+				size_t node_count = object_tree.GetNodeCount();
+				size_t node_size  = sizeof(loose_tree_node_type);
+				size_t total_size = node_count * node_size;
+				ImGui::Text("Object Count = %d", object_count);
+				ImGui::Text("Node   Count = %d", node_count);
+				ImGui::Text("Node   Size  = %s", chaos::StringTools::MemorySizeToString(node_size).c_str());
+				ImGui::Text("Total  Size  = %s", chaos::StringTools::MemorySizeToString(total_size).c_str());
 				ImGui::End();
 			}
 		}
@@ -664,7 +670,7 @@ protected:
 			current_object_index = 0;
 			object_tree.Clear();
 
-			for (int i = 0; i < 200; ++i)
+			for (int i = 0; i < 2000; ++i)
 			{
 				glm::vec3 center = {
 					chaos::MathTools::RandFloat(-1000.0f, 1000.0f),

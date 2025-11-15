@@ -149,10 +149,9 @@ public:
 // -> no need to test this plane for rejection anymore, every node are to be accepted
 //
 
-#if 0
 
-template<int DIMENSION, typename FUNCTOR, bool DEPTH_FIRST = false>
-class Tree27PlaneClipVisitor : public FUNCTOR
+template<int DIMENSION>
+class Tree27PlaneClipVisitor
 {
 	/** the dimension */
 	static constexpr int dimension = DIMENSION;
@@ -162,8 +161,6 @@ class Tree27PlaneClipVisitor : public FUNCTOR
 	using plane_type = typename chaos::type_geometric<float, DIMENSION>::plane_type;
 	/** the type for box */
 	using box_type = chaos::type_geometric<float, dimension>::box_type;
-	/** the type for NodeInfo */
-	using node_info_type = chaos::Tree27NodeInfo<dimension>;
 	
 public:
 
@@ -177,22 +174,32 @@ public:
 	}
 
 	/** entry point of the visit algorithm */
-	template<typename NODE_PARENT, template<typename> class NODE_ALLOCATOR_TEMPLATE>
-	bool Visit(chaos::LooseTree27<DIMENSION, NODE_PARENT, NODE_ALLOCATOR_TEMPLATE> const& tree)
+	template<bool DEPTH_FIRST = false, typename LOOSE_TREE27_TYPE, typename FUNC>
+	auto Visit(LOOSE_TREE27_TYPE & tree27, FUNC const & func) -> chaos::meta::LambdaInfo<FUNC, decltype(tree27.GetRootNode()), plane_type const *, size_t, uint32_t>::result_type
 	{
-		if (tree.GetRootNode() == nullptr)
-			return false;
+		using L = chaos::meta::LambdaInfo<FUNC, decltype(tree27.GetRootNode()), plane_type const *, size_t, uint32_t>;
 
-		uint32_t plane_bitfield = (1 << uint32_t(plane_count + 1)) - 1;
-		return Visit(tree.GetRootNode(), plane_bitfield);
+		if (tree27.GetRootNode() == nullptr)
+		{
+			if constexpr (L::convertible_to_bool)
+				return typename L::result_type{};
+		}
+		else
+		{
+			uint32_t plane_bitfield = (1 << uint32_t(plane_count + 1)) - 1;
+			return Visit<DEPTH_FIRST>(tree27.GetRootNode(), plane_bitfield, func);
+		}
 	}
 
 protected:
 
-	template<typename NODE_PARENT>
-	bool Visit(chaos::Tree27Node<DIMENSION, NODE_PARENT> const* node, uint32_t plane_bitfield)
+	template<bool DEPTH_FIRST, typename NODE27_TYPE, typename FUNC>
+	auto Visit(NODE27_TYPE * node, uint32_t plane_bitfield, FUNC const& func) -> chaos::meta::LambdaInfo<FUNC, NODE27_TYPE* , plane_type const*, size_t, uint32_t>::result_type
 	{
+		using L = chaos::meta::LambdaInfo<FUNC, NODE27_TYPE *, plane_type const* , size_t, uint32_t>;
+
 		assert(node != nullptr);
+		assert(plane_bitfield != 0);
 
 		box_type box = node->GetBoundingBox();
 
@@ -231,40 +238,59 @@ protected:
 		});
 
 		if (node_rejected)
-			return;
-
-		return true;
-	}
-	
-
-#if 0
-
-		for (int i = 0; i < 2; ++i)
 		{
-			if ((i == 0 && DEPTH_FIRST) || (i == 1 && !DEPTH_FIRST))
+			if constexpr (L::convertible_to_bool)
+				return typename L::result_type{};
+		}
+		else
+		{
+			if (plane_bitfield == 0)
 			{
-				if (plane_bitfield == 0)
+				return node->Visit<DEPTH_FIRST>([&](auto * node) // no need to bother with planes anymore
 				{
-					node->ForEachNode([]()
-					{
-
-					});
-				}
-				else
-				{
-					node->F
-
-				}
-
-
+					return func(node, planes, plane_count, plane_bitfield);
+				});
 			}
 			else
 			{
-				FUNC(node, planes, plane_count, plane_bitfield);
+				for (int i = 0; i < 2; ++i)
+				{
+					if ((i == 0 && DEPTH_FIRST) || (i == 1 && !DEPTH_FIRST))
+					{
+						if constexpr (L::convertible_to_bool)
+						{
+							decltype(auto) result = node->ForEachChildren([&](auto* node)
+							{
+								return Visit<DEPTH_FIRST>(node, plane_bitfield, func);
+							});
+							if (result)
+								return result;
+						}
+						else
+						{
+							node->ForEachChildren([&](auto* node)
+							{
+								Visit<DEPTH_FIRST>(node, plane_bitfield, func);
+							});
+						}
+					}
+					else
+					{
+						if constexpr (L::convertible_to_bool)
+						{
+							decltype(auto) result = func(node, planes, plane_count, plane_bitfield);
+							if (result)
+								return result;
+						}
+						else
+						{
+							func(node, planes, plane_count, plane_bitfield);
+						}						
+					}
+				}
 			}
-#endif
-
-
+		}
+	}
 
 protected:
 
@@ -275,7 +301,7 @@ protected:
 };
 
 
-#endif
+
 
 
 
@@ -482,9 +508,21 @@ protected:
 		return fps_view_controller.LocalToGlobal();
 	}
 
+	template<typename FUNC>
+	decltype(auto) fff(uint32_t bitfield, FUNC const& func)
+	{
+		return chaos::BitTools::ForEachBitForward(bitfield, [&](uint32_t i)
+		{
+			return func(i);
+		});
+	}
+
 	virtual bool OnDraw(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
 		glm::vec4 plane(0.0f, 1.0f, 0.0f, 0.0f);
+
+
+
 
 		//Tree27PlaneClipVisitor<3, chaos::EmptyClass> V(&plane, 1);
 		//V.Visit(object_tree);
@@ -605,10 +643,33 @@ protected:
 	{
 		glDisable(GL_CULL_FACE);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		
+		
+		
+#if 0
 		object_tree.Visit([this](loose_tree_node_type const* node)
 		{
 			primitive_renderer->DrawPrimitive(node->GetBoundingBox(), white, false, true);
 		});
+#endif
+
+		glm::vec4 plane = { 0.0f, 1.0f, 0.0f, 0.0f };
+
+		Tree27PlaneClipVisitor<3> visitor(&plane, 1);
+
+#if 1
+		visitor.Visit<true>(object_tree, [&](loose_tree_node_type const* node, glm::vec4 const * planes, size_t plane_count, uint32_t plane_bitfield)
+		{
+			primitive_renderer->DrawPrimitive(node->GetBoundingBox(), white, false, true);
+		});
+#endif
+
+
+
+
+
+
+
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glEnable(GL_CULL_FACE);
 	}

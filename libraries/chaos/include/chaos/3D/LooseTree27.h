@@ -400,6 +400,34 @@ namespace chaos
 			return parent;
 		}
 
+		/** iterate over all children (non recursive) */
+		template<typename FUNC>
+		decltype(auto) ForEachChildren(FUNC const& func) const
+		{
+			return ForEachChildrenHelper(this, func);
+		}
+
+		/** iterate over all children (non recursive) */
+		template<typename FUNC>
+		decltype(auto) ForEachChildren(FUNC const& func)
+		{
+			return ForEachChildrenHelper(this, func);
+		}
+
+		/** recursively visit all children */
+		template<bool DEPTH_FIRST = false, typename FUNC>
+		decltype(auto) Visit(FUNC const& func) const
+		{
+			return VisitHelper<DEPTH_FIRST>(this, func);
+		}
+
+		/** recursively visit all children */
+		template<bool DEPTH_FIRST = false, typename FUNC>
+		decltype(auto) Visit(FUNC const& func)
+		{
+			return VisitHelper<DEPTH_FIRST>(this, func);
+		}
+
 	protected:
 
 		/** if the node has a single child, extract it and return it */
@@ -435,21 +463,6 @@ namespace chaos
 			existing_children = BitTools::SetBit(existing_children, index, child != nullptr);
 		}
 
-		/** recursively visit all children */
-		template<bool DEPTH_FIRST = false, typename FUNC>
-		decltype(auto) Visit(FUNC const& func) const
-		{
-			return VisitHelper<DEPTH_FIRST>(this, func);
-		}
-
-
-		/** recursively visit all children */
-		template<bool DEPTH_FIRST = false, typename FUNC>
-		decltype(auto) Visit(FUNC const& func)
-		{
-			return VisitHelper<DEPTH_FIRST>(this, func);
-		}
-
 	protected:
 
 		/** gets a child by its index */
@@ -462,6 +475,17 @@ namespace chaos
 		{
 			return children[index];
 		}
+
+		/** utility method to get iterate over all children for both CONST and NON-CONST version (non recursive) */
+		template<typename SELF, typename FUNC>
+		static decltype(auto) ForEachChildrenHelper(SELF* self, FUNC const& func)
+		{
+			return BitTools::ForEachBitForward(self->existing_children, [&](int index)
+			{
+				return func(self->GetChild(index));
+			});
+		}
+
 		/** utility method to get recursively iterate over children for both CONST and NON-CONST version */
 		template<bool DEPTH_FIRST, typename SELF, typename FUNC>
 		static auto VisitHelper(SELF * self, FUNC const& func) -> meta::LambdaInfo<FUNC, SELF*>::result_type
@@ -474,18 +498,18 @@ namespace chaos
 				{
 					if constexpr (L::convertible_to_bool)
 					{
-						decltype(auto) result = BitTools::ForEachBitForward(self->existing_children, [self, &func](int index)
+						decltype(auto) result = self->ForEachChildren([&](SELF * child)
 						{
-							return self->GetChild(index)->Visit<DEPTH_FIRST>(func); // GetChild() is necessary to have proper constness of the node and though call the proper
-						});                                                         // version of Node::Visit
+							return child->Visit<DEPTH_FIRST>(func);
+						});
 						if (result)
 							return result;
 					}
 					else
 					{
-						BitTools::ForEachBitForward(self->existing_children, [self, &func](int index)
+						self->ForEachChildren([&](SELF* child)
 						{
-							self->GetChild(index)->Visit<DEPTH_FIRST>(func); // GetChild(): same here
+							child->Visit<DEPTH_FIRST>(func);
 						});
 					}
 				}
@@ -493,7 +517,8 @@ namespace chaos
 				{
 					if constexpr (L::convertible_to_bool)
 					{
-						if (decltype(auto) result = func(self))
+						decltype(auto) result = func(self);
+						if (result)
 							return result;
 					}
 					else

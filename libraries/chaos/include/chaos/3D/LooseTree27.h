@@ -147,15 +147,15 @@ namespace chaos
 		/** the dimension */
 		static constexpr int dimension = DIMENSION;
 		/** the type for vector */
-		using vec_type = type_geometric<int, dimension>::vec_type;
+		using ivec_type = type_geometric<int, dimension>::vec_type;
 		/** the type for box */
 		using box_type = type_geometric<float, dimension>::box_type;
 
 		/** gets info for one of the children */
-		Tree27NodeInfo GetChildNodeInfo(vec_type const & child_position) const
+		Tree27NodeInfo GetChildNodeInfo(ivec_type const & child_position) const
 		{
-			assert(!glm::any(glm::greaterThan(child_position, vec_type(1))));
-			assert(!glm::any(glm::lessThan(child_position, vec_type(-1))));
+			assert(!glm::any(glm::greaterThan(child_position, ivec_type(1))));
+			assert(!glm::any(glm::lessThan(child_position, ivec_type(-1))));
 
 			Tree27NodeInfo result;
 			result.level = level - 1;
@@ -178,7 +178,7 @@ namespace chaos
 		}
 
 		/** compute the range for possible descendants */
-		std::pair<vec_type, vec_type> GetDescendantRange(int sub_level) const // sub level is number of levels relatively to current level
+		std::pair<ivec_type, ivec_type> GetDescendantRange(int sub_level) const // sub level is number of levels relatively to current level
 		{
 			assert(sub_level >= 0);
 
@@ -188,8 +188,8 @@ namespace chaos
 
 			int p3 = details::pow3i(sub_level);
 
-			vec_type a = p3 * position;
-			vec_type b = vec_type((p3 - 1) / 2);
+			ivec_type a = p3 * position;
+			ivec_type b = ivec_type((p3 - 1) / 2);
 
 			return std::make_pair(a - b, a + b);
 		}
@@ -207,7 +207,7 @@ namespace chaos
 			if (glm::any(glm::lessThan(info.position, descendant_range.first)))
 				return -1;
 			// compute the central child range for info
-			Tree27NodeInfo<dimension> central_child_node_info = GetChildNodeInfo(vec_type(0));
+			Tree27NodeInfo<dimension> central_child_node_info = GetChildNodeInfo(ivec_type(0));
 			auto central_child_range = central_child_node_info.GetDescendantRange(central_child_node_info.level - info.level);
 
 			// compute index
@@ -233,7 +233,7 @@ namespace chaos
 		/** the level in the hierarchy of this node */
 		int level = 0;
 		/** the position of this node in space (indices) */
-		vec_type position = vec_type(0);
+		ivec_type position = ivec_type(0);
 	};
 
 	template<int DIMENSION>
@@ -288,7 +288,7 @@ namespace chaos
 	template<int DIMENSION>
 	Tree27NodeInfo<DIMENSION> ComputeCommonParent(Tree27NodeInfo<DIMENSION> info1, Tree27NodeInfo<DIMENSION> info2)
 	{
-		auto GetParentNodePosition = [](Tree27NodeInfo<DIMENSION>::vec_type v)
+		auto GetParentNodePosition = [](Tree27NodeInfo<DIMENSION>::ivec_type v)
 		{
 			for (int i = 0; i < DIMENSION; ++i)
 				v[i] = (v[i] > 0) ? (v[i] + 1) / 3 : (v[i] - 1) / 3;
@@ -331,7 +331,7 @@ namespace chaos
 		/** the number of children this node has */
 		static constexpr int children_count = details::static_pow(3, dimension);
 		/** the type for vector */
-		using vec_type = type_geometric<int, dimension>::vec_type;
+		using ivec_type = type_geometric<int, dimension>::vec_type;
 		/** the type for box */
 		using box_type = type_geometric<float, dimension>::box_type;
 		/** the type for NodeInfo */
@@ -531,7 +531,7 @@ namespace chaos
 		/** the number of children this node has */
 		static constexpr int children_count = details::static_pow(3, dimension);
 		/** the type for vector */
-		using vec_type = type_geometric<int, dimension>::vec_type;
+		using ivec_type = type_geometric<int, dimension>::vec_type;
 		/** the type for box */
 		using box_type = type_geometric<float, dimension>::box_type;
 		/** the type for NodeInfo */

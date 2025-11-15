@@ -437,17 +437,17 @@ namespace chaos
 
 		/** recursively visit all children */
 		template<bool DEPTH_FIRST = false, typename FUNC>
-		decltype(auto) ForEachNode(FUNC const& func) const
+		decltype(auto) Visit(FUNC const& func) const
 		{
-			return ForEachNodeHelper<DEPTH_FIRST>(this, func);
+			return VisitHelper<DEPTH_FIRST>(this, func);
 		}
 
 
 		/** recursively visit all children */
 		template<bool DEPTH_FIRST = false, typename FUNC>
-		decltype(auto) ForEachNode(FUNC const& func)
+		decltype(auto) Visit(FUNC const& func)
 		{
-			return ForEachNodeHelper<DEPTH_FIRST>(this, func);
+			return VisitHelper<DEPTH_FIRST>(this, func);
 		}
 
 	protected:
@@ -464,7 +464,7 @@ namespace chaos
 		}
 		/** utility method to get recursively iterate over children for both CONST and NON-CONST version */
 		template<bool DEPTH_FIRST, typename SELF, typename FUNC>
-		static auto ForEachNodeHelper(SELF * self, FUNC const& func) -> meta::LambdaInfo<FUNC, SELF*>::result_type
+		static auto VisitHelper(SELF * self, FUNC const& func) -> meta::LambdaInfo<FUNC, SELF*>::result_type
 		{
 			using L = meta::LambdaInfo<FUNC, SELF*>;
 
@@ -476,8 +476,8 @@ namespace chaos
 					{
 						decltype(auto) result = BitTools::ForEachBitForward(self->existing_children, [self, &func](int index)
 						{
-							return self->GetChild(index)->ForEachNode<DEPTH_FIRST>(func); // GetChild() is necessary to have proper constness of the node and though call the proper
-						});                                                               // version of Node::ForEachNode
+							return self->GetChild(index)->Visit<DEPTH_FIRST>(func); // GetChild() is necessary to have proper constness of the node and though call the proper
+						});                                                         // version of Node::Visit
 						if (result)
 							return result;
 					}
@@ -485,7 +485,7 @@ namespace chaos
 					{
 						BitTools::ForEachBitForward(self->existing_children, [self, &func](int index)
 						{
-							self->GetChild(index)->ForEachNode<DEPTH_FIRST>(func); // GetChild(): same here
+							self->GetChild(index)->Visit<DEPTH_FIRST>(func); // GetChild(): same here
 						});
 					}
 				}
@@ -550,7 +550,7 @@ namespace chaos
 		/** destroy the whole hierarchy */
 		void Clear()
 		{
-			ForEachNode<true>([this](node_type * node) // depth first to avoid deleting a node before its children
+			Visit<true>([this](node_type * node) // depth first to avoid deleting a node before its children
 			{
 				DeleteNode(node);
 			});
@@ -595,12 +595,12 @@ namespace chaos
 
 		/** visit the tree */
 		template<bool DEPTH_FIRST = false, typename FUNC>
-		decltype(auto) ForEachNode(FUNC const& func)
+		decltype(auto) Visit(FUNC const& func)
 		{
 			using L = meta::LambdaInfo<FUNC, node_type *>;
 
 			if (auto* root_node = GetRootNode()) // GetRootNode() is necessary to work with proper constness of the node
-				return root_node->ForEachNode<DEPTH_FIRST>(func);
+				return root_node->Visit<DEPTH_FIRST>(func);
 
 			if constexpr (L::convertible_to_bool)
 				return typename L::result_type{};
@@ -608,12 +608,12 @@ namespace chaos
 
 		/** visit the tree */
 		template<bool DEPTH_FIRST = false, typename FUNC>
-		decltype(auto) ForEachNode(FUNC const& func) const
+		decltype(auto) Visit(FUNC const& func) const
 		{
 			using L = meta::LambdaInfo<FUNC, node_type const*>;
 
 			if (auto* root_node = GetRootNode()) // GetRootNode() is necessary to work with proper constness of the node
-				return root_node->ForEachNode<DEPTH_FIRST>(func);
+				return root_node->Visit<DEPTH_FIRST>(func);
 
 			if constexpr (L::convertible_to_bool)
 				return typename L::result_type{};

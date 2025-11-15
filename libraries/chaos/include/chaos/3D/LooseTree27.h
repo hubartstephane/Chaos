@@ -140,7 +140,7 @@ namespace chaos
 	};
 
 	template<int DIMENSION>
-	class Tree27NodeInfo
+	class Tree27NodeInfo : public type_geometric<float, DIMENSION>
 	{
 	public:
 
@@ -319,7 +319,7 @@ namespace chaos
 	}
 
 	template<int DIMENSION, typename PARENT>
-	class Tree27Node : public PARENT
+	class Tree27Node : public PARENT, public type_geometric<float, DIMENSION>
 	{
 		template<int DIMENSION, typename PARENT, template<typename> class NODE_ALLOCATOR>
 		friend class LooseTree27;
@@ -547,7 +547,7 @@ namespace chaos
 	};
 
 	template<int DIMENSION, typename NODE_PARENT, template<typename> class NODE_ALLOCATOR_TEMPLATE = StandardAllocator>
-	class LooseTree27
+	class LooseTree27 : public type_geometric<float, DIMENSION>
 	{
 	public:
 

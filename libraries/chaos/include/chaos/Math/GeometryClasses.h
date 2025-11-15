@@ -157,7 +157,7 @@ namespace chaos
 	// ==============================================================================================
 
 	template<typename T, int dimension>
-	class type_box_base
+	class type_box_base : public type_geometric<T, dimension>
 	{
 	public:
 
@@ -188,8 +188,8 @@ namespace chaos
 	{
 	public:
 
-		using vec_type = typename type_geometric<T, dimension>::vec_type;
-		using type     = typename type_geometric<T, dimension>::type;
+		using vec_type = typename type_box_base<T, dimension>::vec_type;
+		using type     = typename type_box_base<T, dimension>::type;
 
 		/** constructor (empty box) */
 		type_box() = default;
@@ -220,9 +220,9 @@ namespace chaos
 	{
 	public:
 
-		using vec_type = typename type_geometric<T, dimension>::vec_type;
-		using type     = typename type_geometric<T, dimension>::type;
-		using rot_type = typename type_geometric<T, dimension>::rot_type;
+		using vec_type = typename type_box_base<T, dimension>::vec_type;
+		using type     = typename type_box_base<T, dimension>::type;
+		using rot_type = typename type_box_base<T, dimension>::rot_type;
 
 		/** constructor (empty box) */
 		type_obox() = default;
@@ -244,7 +244,7 @@ namespace chaos
 	// ==============================================================================================
 
 	template<typename T, int dimension>
-	class type_aabox
+	class type_aabox : public type_geometric<T, dimension>
 	{
 	public:
 
@@ -280,7 +280,7 @@ namespace chaos
 	// ==============================================================================================
 
 	template<typename T, int dimension>
-	class type_sphere
+	class type_sphere : public type_geometric<T, dimension>
 	{
 	public:
 
@@ -307,7 +307,7 @@ namespace chaos
 	// ==============================================================================================
 
 	template<typename T, int dimension>
-	class type_triangle
+	class type_triangle : public type_geometric<T, dimension>
 	{
 	public:
 
@@ -350,7 +350,7 @@ namespace chaos
 	// ==============================================================================================
 
 	template<typename T, int dimension>
-	class type_ray
+	class type_ray : public type_geometric<T, dimension>
 	{
 	public:
 

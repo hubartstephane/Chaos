@@ -186,7 +186,7 @@ public:
 		}
 		else
 		{
-			uint32_t plane_bitfield = (1 << uint32_t(plane_count + 1)) - 1;
+			uint32_t plane_bitfield = (1 << uint32_t(plane_count)) - 1;
 			return Visit<DEPTH_FIRST>(tree27.GetRootNode(), plane_bitfield, func);
 		}
 	}
@@ -646,18 +646,16 @@ protected:
 		
 		
 		
-#if 0
+#if 1
 		object_tree.Visit([this](loose_tree_node_type const* node)
 		{
 			primitive_renderer->DrawPrimitive(node->GetBoundingBox(), white, false, true);
 		});
-#endif
-
+#else
 		glm::vec4 plane = { 0.0f, 1.0f, 0.0f, 0.0f };
 
 		Tree27PlaneClipVisitor<3> visitor(&plane, 1);
 
-#if 1
 		visitor.Visit<true>(object_tree, [&](loose_tree_node_type const* node, glm::vec4 const * planes, size_t plane_count, uint32_t plane_bitfield)
 		{
 			primitive_renderer->DrawPrimitive(node->GetBoundingBox(), white, false, true);
@@ -676,6 +674,32 @@ protected:
 
 	void DrawGeometryObjects()
 	{
+#if 1
+		glm::vec4 planes[] =
+		{
+			{1.0f, 0.0f, 0.0f, 0.0f},
+			{0.0f, 1.0f, 0.0f, 0.0f},			
+			{0.0f, 0.0f, 1.0f, 0.0f}
+		};
+
+		Tree27PlaneClipVisitor<3> visitor(planes, 3);
+
+		visitor.Visit(object_tree, [&](loose_tree_node_type const* node, glm::vec4 const* planes, size_t plane_count, uint32_t plane_bitfield)
+		{
+			for (GeometricObject const* geometric_object : node->objects)
+			{
+				glm::vec4 color = white;
+				if (pointed_object == geometric_object)
+					color = red;
+				else if (geometric_object == GetCurrentGeometricObject())
+					color = blue;
+
+				geometric_object->DrawPrimitive(primitive_renderer.get(), color);
+			}
+
+		});
+#else
+
 		for (auto& geometric_object : geometric_objects)
 		{
 			glm::vec4 color = white;
@@ -686,6 +710,7 @@ protected:
 
 			geometric_object->DrawPrimitive(primitive_renderer.get(), color);
 		}
+#endif
 	}
 
 	chaos::box3 GetBoxToCreateFromMousePosition() const

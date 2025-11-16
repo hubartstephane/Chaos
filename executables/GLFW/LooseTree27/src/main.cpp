@@ -36,6 +36,7 @@ class KeyConfiguration
 {
 public:
 
+	chaos::Key toggle_render_all = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("R"), chaos::KeyboardLayoutType::AZERTY);
 	chaos::Key new_scene = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Y"), chaos::KeyboardLayoutType::AZERTY);
 	chaos::Key delete_object = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("DELETE"), chaos::KeyboardLayoutType::AZERTY);
 	chaos::Key next_object = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("KP_ADD"), chaos::KeyboardLayoutType::AZERTY);
@@ -508,30 +509,8 @@ protected:
 		return fps_view_controller.LocalToGlobal();
 	}
 
-	template<typename FUNC>
-	decltype(auto) fff(uint32_t bitfield, FUNC const& func)
-	{
-		return chaos::BitTools::ForEachBitForward(bitfield, [&](uint32_t i)
-		{
-			return func(i);
-		});
-	}
-
 	virtual bool OnDraw(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
-		glm::vec4 plane(0.0f, 1.0f, 0.0f, 0.0f);
-
-
-
-
-		//Tree27PlaneClipVisitor<3, chaos::EmptyClass> V(&plane, 1);
-		//V.Visit(object_tree);
-
-
-
-
-
-
 		glm::vec4 clear_color(0.0f, 0.7f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
@@ -568,12 +547,15 @@ protected:
 			{
 				size_t object_count = geometric_objects.size();
 				size_t node_count = object_tree.GetNodeCount();
-				size_t node_size  = sizeof(loose_tree_node_type);
+				size_t node_size = sizeof(loose_tree_node_type);
 				size_t total_size = node_count * node_size;
-				ImGui::Text("Object Count = %d", object_count);
-				ImGui::Text("Node   Count = %d", node_count);
-				ImGui::Text("Node   Size  = %s", chaos::StringTools::MemorySizeToString(node_size).c_str());
-				ImGui::Text("Total  Size  = %s", chaos::StringTools::MemorySizeToString(total_size).c_str());
+				ImGui::Text("Object Count          = %d", object_count);
+				ImGui::Text("Node   Count          = %d", node_count);
+				ImGui::Text("Node   Size           = %s", chaos::StringTools::MemorySizeToString(node_size).c_str());
+				ImGui::Text("Total  Size           = %s", chaos::StringTools::MemorySizeToString(total_size).c_str());
+				ImGui::Text("Object Rendered       = %d", object_rendered);
+				ImGui::Text("Node   Visited        = %d", node_visited);
+				ImGui::Text("Node   No plane check = %d", node_noplanecheck_visited);
 				ImGui::End();
 			}
 		}
@@ -584,43 +566,43 @@ protected:
 		if (ImGuiViewport* viewport = ImGui::GetMainViewport())
 		{
 			ImGui::SetNextWindowPos(ImVec2(15.0f, viewport->Size.y - 15.0f), ImGuiCond_FirstUseEver, ImVec2(0.0f, 1.0f));
-			
+
 			if (ImGui::Begin("Toolbar", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
 			{
 				auto AddButton = [this](ActionType type, chaos::GPUTexture* texture, char const* tooltip, float base_cursor_y)
-				{
-					if (texture != nullptr)
 					{
-						ImVec2 icon_size = { 32.0f, 32.0f };
-
-						bool selected = (current_action_type == type);
-
-						if (selected)
+						if (texture != nullptr)
 						{
-							ImGui::SetCursorPosY(base_cursor_y);
-							ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.0f, 0.0f, 1.0f));
-							ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
-							ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.0f, 0.0f, 1.0f));
-							icon_size = { 40.0f, 40.0f };
-						}
-						else
-						{
-							ImGui::SetCursorPosY(base_cursor_y + 4.0f);
-						}
+							ImVec2 icon_size = { 32.0f, 32.0f };
 
-						ImTextureID textureID = (ImTextureID)((uint64_t)texture->GetResourceID()); // conversion into uint64_t to remove a C4312 warning
+							bool selected = (current_action_type == type);
 
-						if (ImGui::ImageButton(tooltip, textureID, icon_size, ImVec2(0, 1), ImVec2(1, 0))) // reverse the texture coordinate along Y
-						{
-							current_action_type = type;
+							if (selected)
+							{
+								ImGui::SetCursorPosY(base_cursor_y);
+								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.0f, 0.0f, 1.0f));
+								ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+								ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.0f, 0.0f, 1.0f));
+								icon_size = { 40.0f, 40.0f };
+							}
+							else
+							{
+								ImGui::SetCursorPosY(base_cursor_y + 4.0f);
+							}
+
+							ImTextureID textureID = (ImTextureID)((uint64_t)texture->GetResourceID()); // conversion into uint64_t to remove a C4312 warning
+
+							if (ImGui::ImageButton(tooltip, textureID, icon_size, ImVec2(0, 1), ImVec2(1, 0))) // reverse the texture coordinate along Y
+							{
+								current_action_type = type;
+							}
+							if (ImGui::IsItemHovered())
+								ImGui::SetTooltip(tooltip);
+
+							if (selected)
+								ImGui::PopStyleColor(3);
 						}
-						if (ImGui::IsItemHovered())
-							ImGui::SetTooltip(tooltip);
-
-						if (selected)
-							ImGui::PopStyleColor(3);
-					}
-				};
+					};
 
 				float base_cursor_y = ImGui::GetCursorPosY();
 
@@ -643,30 +625,11 @@ protected:
 	{
 		glDisable(GL_CULL_FACE);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		
-		
-		
-#if 1
+
 		object_tree.Visit([this](loose_tree_node_type const* node)
-		{
-			primitive_renderer->DrawPrimitive(node->GetBoundingBox(), white, false, true);
-		});
-#else
-		glm::vec4 plane = { 0.0f, 1.0f, 0.0f, 0.0f };
-
-		Tree27PlaneClipVisitor<3> visitor(&plane, 1);
-
-		visitor.Visit<true>(object_tree, [&](loose_tree_node_type const* node, glm::vec4 const * planes, size_t plane_count, uint32_t plane_bitfield)
-		{
-			primitive_renderer->DrawPrimitive(node->GetBoundingBox(), white, false, true);
-		});
-#endif
-
-
-
-
-
-
+			{
+				//primitive_renderer->DrawPrimitive(node->GetBoundingBox(), white, false, true);
+			});
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glEnable(GL_CULL_FACE);
@@ -674,33 +637,7 @@ protected:
 
 	void DrawGeometryObjects()
 	{
-#if 1
-		glm::vec4 planes[] =
-		{
-			{1.0f, 0.0f, 0.0f, 0.0f},
-			{0.0f, 1.0f, 0.0f, 0.0f},			
-			{0.0f, 0.0f, 1.0f, 0.0f}
-		};
-
-		Tree27PlaneClipVisitor<3> visitor(planes, 3);
-
-		visitor.Visit(object_tree, [&](loose_tree_node_type const* node, glm::vec4 const* planes, size_t plane_count, uint32_t plane_bitfield)
-		{
-			for (GeometricObject const* geometric_object : node->objects)
-			{
-				glm::vec4 color = white;
-				if (pointed_object == geometric_object)
-					color = red;
-				else if (geometric_object == GetCurrentGeometricObject())
-					color = blue;
-
-				geometric_object->DrawPrimitive(primitive_renderer.get(), color);
-			}
-
-		});
-#else
-
-		for (auto& geometric_object : geometric_objects)
+		auto RenderObject = [&](GeometricObject const* geometric_object)
 		{
 			glm::vec4 color = white;
 			if (pointed_object == geometric_object)
@@ -709,8 +646,39 @@ protected:
 				color = blue;
 
 			geometric_object->DrawPrimitive(primitive_renderer.get(), color);
+		};
+
+		node_visited = 0;
+		node_noplanecheck_visited = 0;
+		object_rendered = 0;
+
+		if (render_all)
+		{
+			for (auto& geometric_object : geometric_objects)
+				RenderObject(geometric_object.get());
+			object_rendered += geometric_objects.size();
 		}
-#endif
+		else
+		{
+			float SIZE = 500.0f;
+			chaos::box3 b(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(SIZE, SIZE, SIZE));
+			chaos::box_plane3 planes = GetBoxPlanes(b);
+
+			Tree27PlaneClipVisitor<3> visitor(&planes[0], planes.size());
+
+			visitor.Visit(object_tree, [&](loose_tree_node_type const* node, glm::vec4 const* planes, size_t plane_count, uint32_t plane_bitfield)
+			{
+				for (GeometricObject const* geometric_object : node->objects)
+					RenderObject(geometric_object);
+				object_rendered += node->objects.size();
+				++node_visited;
+				if (plane_bitfield == 0)
+					++node_noplanecheck_visited;
+
+			});
+
+			primitive_renderer->DrawPrimitive(b, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), false, true);
+		}	
 	}
 
 	chaos::box3 GetBoxToCreateFromMousePosition() const
@@ -799,13 +767,11 @@ protected:
 		fps_view_controller.config.forward_speed = CAMERA_SPEED;
 		fps_view_controller.config.strafe_speed = CAMERA_SPEED;
 
-		fps_view_controller.fps_view.position.y = 30.0f;
-
 		fps_view_controller.input_config.rotation_button = chaos::Key::MOUSE_BUTTON_2;
 
 		// create the very single sphere
 		chaos::box3 creation_box;
-		creation_box.position  = glm::vec3(0.0f, 0.0f, -200.0f);
+		creation_box.position  = glm::vec3(0.0f, 0.0f, 0.0f);
 		creation_box.half_size = glm::vec3(5.0f, 7.0f, 9.0f);
 
 		CreateNewBox(creation_box);
@@ -929,13 +895,23 @@ protected:
 			return true;
 		}
 
+		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(key_configuration.toggle_render_all), "Toggle Render All", [&]()
+		{
+			render_all = !render_all;
+
+		}))
+		{
+			return true;
+		}
+
 		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(key_configuration.new_scene), "New Scene", [&]()
 		{
 			geometric_objects.clear();
 			current_object_index = 0;
 			object_tree.Clear();
 
-			for (int i = 0; i < 2000; ++i)
+			int OBJECT_COUNT = 5000;
+			for (int i = 0; i < OBJECT_COUNT; ++i)
 			{
 				glm::vec3 center = {
 					chaos::MathTools::RandFloat(-1000.0f, 1000.0f),
@@ -1172,6 +1148,12 @@ protected:
 	chaos::shared_ptr<chaos::GPUTexture> rotate_icon_texture;
 
 	chaos::weak_ptr<GeometricObject> pointed_object;
+
+
+	bool render_all = true;
+	size_t node_visited = 0;
+	size_t node_noplanecheck_visited = 0;
+	size_t object_rendered = 0;
 
 	CameraInfo camera_info;
 

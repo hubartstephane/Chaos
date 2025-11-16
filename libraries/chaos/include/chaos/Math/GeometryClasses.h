@@ -123,6 +123,8 @@ namespace chaos
 		using triangle_type = type_triangle<type, dimension>;
 		/** the type of aabox */
 		using aabox_type = type_aabox<type, dimension>;
+		/** the type of box plane */
+		using box_plane_type = type_box_plane<type, dimension>;
 	};
 
 	template<typename T>
@@ -154,6 +156,8 @@ namespace chaos
 		using triangle_type = type_triangle<type, dimension>;
 		/** the type of aabox */
 		using aabox_type = type_aabox<type, dimension>;
+		/** the type of box plane */
+		using box_plane_type = type_box_plane<type, dimension>;
 	};
 
 	// ==============================================================================================
@@ -552,7 +556,7 @@ namespace chaos
 			return span().end();
 		}
 
-	protected:
+	public:
 
 		/** the plane whose normal is facing toward negative X direction */
 		plane_type neg_x;

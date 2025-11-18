@@ -977,71 +977,6 @@ protected:
 		return true;
 	}
 
-	void UpdateObjectPosition(chaos::Key button, float delta_time, glm::vec3 const & factor)
-	{
-		chaos::KeyboardAndMouseDevice* keyboard_and_mouse_device = chaos::KeyboardAndMouseDevice::GetInstance();
-		if (keyboard_and_mouse_device == nullptr)
-			return;
-
-		static float SPEED = 5.0f;
-		if (IsInputActive(keyboard_and_mouse_device->GetInputState(button)))
-		{
-			if (IsInputActive(keyboard_and_mouse_device->GetInputState(chaos::Key::LEFT_CONTROL)))
-				position_object1 += SPEED * (float)(delta_time)* factor;
-			else
-				position_object2 += SPEED * (float)(delta_time)* factor;
-		}
-	}
-
-	void UpdateObjectRotation(chaos::Key button, float delta_time, float factor)
-	{
-		chaos::KeyboardAndMouseDevice* keyboard_and_mouse_device = chaos::KeyboardAndMouseDevice::GetInstance();
-		if (keyboard_and_mouse_device == nullptr)
-			return;
-
-		static float SPEED = 1.0f;
-
-		if (IsInputActive(keyboard_and_mouse_device->GetInputState(button)))
-		{
-			if (IsInputActive(keyboard_and_mouse_device->GetInputState(chaos::Key::LEFT_CONTROL)))
-				rotation_object1 += SPEED * (float)(delta_time)* factor;
-			else
-				rotation_object2 += SPEED * (float)(delta_time)* factor;
-		}
-	}
-
-	void UpdateObjectType()
-	{
-		chaos::KeyboardAndMouseDevice* keyboard_and_mouse_device = chaos::KeyboardAndMouseDevice::GetInstance();
-		if (keyboard_and_mouse_device == nullptr)
-			return;
-
-		if (IsInputActive(keyboard_and_mouse_device->GetInputState(chaos::Key::LEFT_CONTROL)))
-			prim_type_object1 = (PrimitiveType)(((int)prim_type_object1 + 1) % (int)PrimitiveType::PRIMITIVE_TYPE_COUNT);
-		else
-			prim_type_object2 = (PrimitiveType)(((int)prim_type_object2 + 1) % (int)PrimitiveType::PRIMITIVE_TYPE_COUNT);
-	}
-
-	virtual bool DoTick(float delta_time) override
-	{
-		// update primitives
-		if (display_example == TestID::COLLISION_2D_TEST || display_example == TestID::COLLISION_3D_TEST)
-		{
-			UpdateObjectPosition(chaos::Key::KP_6, delta_time, glm::vec3( 1.0f,  0.0f,  0.0f));
-			UpdateObjectPosition(chaos::Key::KP_4, delta_time, glm::vec3(-1.0f,  0.0f,  0.0f));
-			UpdateObjectPosition(chaos::Key::KP_8, delta_time, glm::vec3( 0.0f,  1.0f,  0.0f));
-			UpdateObjectPosition(chaos::Key::KP_2, delta_time, glm::vec3( 0.0f, -1.0f,  0.0f));
-			UpdateObjectPosition(chaos::Key::KP_1, delta_time, glm::vec3( 0.0f,  0.0f,  1.0f));
-			UpdateObjectPosition(chaos::Key::KP_7, delta_time, glm::vec3( 0.0f,  0.0f, -1.0f));
-
-			UpdateObjectRotation(chaos::Key::KP_9, delta_time,  1.0f);
-			UpdateObjectRotation(chaos::Key::KP_3, delta_time, -1.0f);
-		}
-
-		return true; // refresh
-	}
-
-
 	virtual bool EnumerateInputActions(chaos::InputActionEnumerator & in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
 	{
 		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::T), "Toggle Clock", [this]()
@@ -1072,15 +1007,92 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::KP_5), "Update Object Type", [this]()
+		bool left_control = false;
+		auto update_type_request = chaos::And(chaos::RequestKeyDown(chaos::Key::KP_5), chaos::RequestInputValue(chaos::Key::LEFT_CONTROL, left_control));
+
+		if (in_action_enumerator.CheckAndProcess(update_type_request, "Update Object Type", [&]()
 		{
-			UpdateObjectType();
+			if (left_control)
+				prim_type_object1 = (PrimitiveType)(((int)prim_type_object1 + 1) % (int)PrimitiveType::PRIMITIVE_TYPE_COUNT);
+			else
+				prim_type_object2 = (PrimitiveType)(((int)prim_type_object2 + 1) % (int)PrimitiveType::PRIMITIVE_TYPE_COUNT);
+
 			DebugDisplayExampleTitle();
 		}))
 		{
 			return true;
 		}
 
+		// update primitives
+		if (display_example == TestID::COLLISION_2D_TEST || display_example == TestID::COLLISION_3D_TEST)
+		{
+			float delta_time = (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration();
+
+			auto UpdateObjectPosition = [&](chaos::Key key, glm::vec3 const& delta_position, char const* title)
+			{
+				bool left_control = false;
+				auto request = chaos::And(chaos::RequestKeyDown(key), chaos::RequestInputValue(chaos::Key::LEFT_CONTROL, left_control));
+
+				return in_action_enumerator.CheckAndProcess(request, title, [&]()
+				{
+					static float SPEED = 5.0f;
+					if (left_control)
+						position_object1 += SPEED * (float)(delta_time) * delta_position;
+					else
+						position_object2 += SPEED * (float)(delta_time) * delta_position;
+				});
+			};
+
+			if (UpdateObjectPosition(chaos::Key::KP_6, glm::vec3(1.0f, 0.0f, 0.0f), "Move Object +X"))
+			{
+				return true;
+			}
+			if (UpdateObjectPosition(chaos::Key::KP_4, glm::vec3(-1.0f, 0.0f, 0.0f), "Move Object -X"))
+			{
+				return true;
+			}
+			if (UpdateObjectPosition(chaos::Key::KP_8, glm::vec3(0.0f, 1.0f, 0.0f), "Move Object +Y"))
+			{
+				return true;
+			}
+			if (UpdateObjectPosition(chaos::Key::KP_2, glm::vec3(0.0f, -1.0f, 0.0f), "Move Object -Y"))
+			{
+				return true;
+			}
+			if (UpdateObjectPosition(chaos::Key::KP_1, glm::vec3(0.0f, 0.0f, 1.0f), "Move Object +Z"))
+			{
+				return true;
+			}
+			if (UpdateObjectPosition(chaos::Key::KP_7, glm::vec3(0.0f, 0.0f, -1.0f), "Move Object -Z"))
+			{
+				return true;
+			}
+
+			auto UpdateObjectRotation = [&](chaos::Key key, float delta_rotation, char const * title)
+			{			
+				bool left_control = false;
+				auto request = chaos::And(chaos::RequestKeyDown(key), chaos::RequestInputValue(chaos::Key::LEFT_CONTROL, left_control));
+
+				return in_action_enumerator.CheckAndProcess(request, title, [&]()
+				{
+					static float SPEED = 1.0f;
+
+					if (left_control)
+						rotation_object1 += SPEED * (float)(delta_time) * delta_rotation;
+					else
+						rotation_object2 += SPEED * (float)(delta_time) * delta_rotation;
+				});
+			};
+
+			if (UpdateObjectRotation(chaos::Key::KP_9, 1.0f, "Rotate Object +"))
+			{
+				return true;
+			}
+			if (UpdateObjectRotation(chaos::Key::KP_3, -1.0f, "Rotate Object -"))
+			{
+				return true;
+			}
+		}
 		return chaos::Window::EnumerateInputActions(in_action_enumerator, in_context);
 	}
 

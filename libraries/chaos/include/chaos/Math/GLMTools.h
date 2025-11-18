@@ -156,7 +156,6 @@ namespace chaos
 			return glm::vec4(MathTools::RandFloat(), MathTools::RandFloat(), MathTools::RandFloat(), MathTools::RandFloat());
 		}
 
-
 		/** convert argument into a glm::vector, returns value remains unchanged if it is already a vector */
 		template<typename T>
 		static glm::tvec1<T> const& ConvertIntoVector(glm::tvec1<T> const& value)
@@ -197,14 +196,15 @@ namespace chaos
 		}
 
 		/** Rotation of a vector (with Cos and Sin already computed) */
-		static glm::vec2 Rotate(glm::vec2 const& src, float c, float s)
+		template<std::floating_point T>
+		static glm::tvec2<T> Rotate(glm::tvec2<T> const& src, T _cs, T _sn)
 		{
 			// copy form glm/gtx/rotate_vector.inl
 			// here we avoid multiple computation of cosinus and sinus
 
-			glm::vec2 result;
-			result.x = src.x * c - src.y * s;
-			result.y = src.x * s + src.y * c;
+			glm::tvec2<T> result;
+			result.x = src.x * _cs - src.y * _sn;
+			result.y = src.x * _sn + src.y * _cs;
 			return result;
 		}
 

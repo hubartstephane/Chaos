@@ -147,7 +147,7 @@ namespace chaos
 		/** the dimension */
 		static constexpr int dimension = DIMENSION;
 		/** the type for vector */
-		using ivec_type = type_geometric<int, dimension>::vec_type;
+		using ivec_type = glm::vec<dimension, int>;
 		/** the type for box */
 		using box_type = type_geometric<float, dimension>::box_type;
 
@@ -331,7 +331,7 @@ namespace chaos
 		/** the number of children this node has */
 		static constexpr int children_count = details::static_pow(3, dimension);
 		/** the type for vector */
-		using ivec_type = type_geometric<int, dimension>::vec_type;
+		using ivec_type = glm::vec<dimension, int>;
 		/** the type for box */
 		using box_type = type_geometric<float, dimension>::box_type;
 		/** the type for NodeInfo */
@@ -556,7 +556,7 @@ namespace chaos
 		/** the number of children this node has */
 		static constexpr int children_count = details::static_pow(3, dimension);
 		/** the type for vector */
-		using ivec_type = type_geometric<int, dimension>::vec_type;
+		using ivec_type = glm::vec<dimension, int>;
 		/** the type for box */
 		using box_type = type_geometric<float, dimension>::box_type;
 		/** the type for NodeInfo */

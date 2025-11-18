@@ -7,16 +7,16 @@ namespace chaos
 	// ==============================================================================================
 
 	// the base template (two arguments, type and dimension)
-	template<typename T, int dimension> class type_geometric;
-	template<typename T, int dimension> class type_ray;
-	template<typename T, int dimension> class type_box_base;
-	template<typename T, int dimension> class type_box;
-	template<typename T, int dimension> class type_obox;
-	template<typename T, int dimension> class type_sphere;
-	template<typename T, int dimension> class type_triangle;
-	template<typename T, int dimension> class type_rotator;   // this is not an object that describes a rotation, but a meta object that gives the rotation in a meta function
-	template<typename T, int dimension> class type_aabox;     // aligned axis box
-	template<typename T, int dimension> class type_box_plane; // a set of 4 or 6 clip planes
+	template<std::floating_point T, int dimension> class type_geometric;
+	template<std::floating_point T, int dimension> class type_ray;
+	template<std::floating_point T, int dimension> class type_box_base;
+	template<std::floating_point T, int dimension> class type_box;
+	template<std::floating_point T, int dimension> class type_obox;
+	template<std::floating_point T, int dimension> class type_sphere;
+	template<std::floating_point T, int dimension> class type_triangle;
+	template<std::floating_point T, int dimension> class type_rotator;   // this is not an object that describes a rotation, but a meta object that gives the rotation in a meta function
+	template<std::floating_point T, int dimension> class type_aabox;     // aligned axis box
+	template<std::floating_point T, int dimension> class type_box_plane; // a set of 4 or 6 clip planes
 
 	class zero_rotator;
 
@@ -41,8 +41,6 @@ namespace chaos
 
 	using aabox2  = type_aabox<float, 2>;
 	using aabox3  = type_aabox<float, 3>;
-	using aabox2i = type_aabox<int, 2>; // for box and obox it does not make many sense to have an integer specification
-	using aabox3i = type_aabox<int, 3>; // (because half_size does not fit well with int)
 
 	using box_plane2 = type_box_plane<float, 2>;
 	using box_plane3 = type_box_plane<float, 3>;
@@ -75,7 +73,7 @@ namespace chaos
 
 
 	// base template
-	template<typename T, int dimension>
+	template<std::floating_point T, int dimension>
 	class type_rotator : public boost::mpl::identity<void> {};
 	// specialization
 	template<>
@@ -94,7 +92,7 @@ namespace chaos
 	// geometric class
 	// ==============================================================================================
 
-	template<typename T>
+	template<std::floating_point T>
 	class type_geometric<T, 2>
 	{
 	public:
@@ -127,7 +125,7 @@ namespace chaos
 		using box_plane_type = type_box_plane<type, dimension>;
 	};
 
-	template<typename T>
+	template<std::floating_point T>
 	class type_geometric<T, 3>
 	{
 	public:
@@ -164,13 +162,12 @@ namespace chaos
 	// type_box_base class
 	// ==============================================================================================
 
-	template<typename T, int dimension>
+	template<std::floating_point T, int dimension>
 	class type_box_base : public type_geometric<T, dimension>
 	{
 	public:
 
 		using vec_type = typename type_geometric<T, dimension>::vec_type;
-		using type     = typename type_geometric<T, dimension>::type;
 
 		/** constructor (empty box) */
 		type_box_base() = default;
@@ -191,13 +188,12 @@ namespace chaos
 	// box class
 	// ==============================================================================================
 
-	template<typename T, int dimension>
+	template<std::floating_point T, int dimension>
 	class type_box : public type_box_base<T, dimension>
 	{
 	public:
 
 		using vec_type = typename type_box_base<T, dimension>::vec_type;
-		using type     = typename type_box_base<T, dimension>::type;
 
 		/** constructor (empty box) */
 		type_box() = default;
@@ -223,13 +219,12 @@ namespace chaos
 	// ==============================================================================================
 
 	/** an oriented bounding box */
-	template<typename T, int dimension>
+	template<std::floating_point T, int dimension>
 	class type_obox : public type_box_base<T, dimension>
 	{
 	public:
 
 		using vec_type = typename type_box_base<T, dimension>::vec_type;
-		using type     = typename type_box_base<T, dimension>::type;
 		using rot_type = typename type_box_base<T, dimension>::rot_type;
 
 		/** constructor (empty box) */
@@ -251,13 +246,12 @@ namespace chaos
 	// type_aabox class
 	// ==============================================================================================
 
-	template<typename T, int dimension>
+	template<std::floating_point T, int dimension>
 	class type_aabox : public type_geometric<T, dimension>
 	{
 	public:
 
 		using vec_type = typename type_geometric<T, dimension>::vec_type;
-		using type = typename type_geometric<T, dimension>::type;
 
 		/** constructor (empty box) */
 		type_aabox() = default;
@@ -287,7 +281,7 @@ namespace chaos
 	// sphere/circle classes
 	// ==============================================================================================
 
-	template<typename T, int dimension>
+	template<std::floating_point T, int dimension>
 	class type_sphere : public type_geometric<T, dimension>
 	{
 	public:
@@ -314,13 +308,12 @@ namespace chaos
 	// triangle classes
 	// ==============================================================================================
 
-	template<typename T, int dimension>
+	template<std::floating_point T, int dimension>
 	class type_triangle : public type_geometric<T, dimension>
 	{
 	public:
 
 		using vec_type = typename type_geometric<T, dimension>::vec_type;
-		using type = typename type_geometric<T, dimension>::type;
 
 		/** default constructor */
 		type_triangle() = default;
@@ -357,13 +350,12 @@ namespace chaos
 	// ray classes
 	// ==============================================================================================
 
-	template<typename T, int dimension>
+	template<std::floating_point T, int dimension>
 	class type_ray : public type_geometric<T, dimension>
 	{
 	public:
 
 		using vec_type = typename type_geometric<T, dimension>::vec_type;
-		using type = typename type_geometric<T, dimension>::type;
 
 		/** default constructor */
 		type_ray() = default;
@@ -386,7 +378,7 @@ namespace chaos
 // type_box_plane classes
 // ==============================================================================================
 
-	template<typename T>
+	template<std::floating_point T>
 	class type_box_plane<T, 2> : public chaos::type_geometric<T, 2>
 	{
 	public:
@@ -477,7 +469,7 @@ namespace chaos
 		plane_type pos_y;
 	};
 
-	template<typename T>
+	template<std::floating_point T>
 	class type_box_plane<T, 3> : public chaos::type_geometric<T, 3>
 	{
 	public:

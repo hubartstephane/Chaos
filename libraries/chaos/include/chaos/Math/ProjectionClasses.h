@@ -4,10 +4,10 @@ namespace chaos
 
 	enum class ProjectionType;
 
-	template<typename T, int dimension>
+	template<std::floating_point T, int dimension>
 	class projection_volume;
 
-	template<typename T, int dimension>
+	template<std::floating_point T, int dimension>
 	class perspective;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -26,7 +26,7 @@ namespace chaos
 	 * projection_volume: describe the clipping volume for a camera projection
 	 */
 
-	template<typename T>
+	template<std::floating_point T>
 	class projection_volume<T, 2>
 	{
 	public:
@@ -37,7 +37,7 @@ namespace chaos
 		T back  = 0;
 	};
 
-	template<typename T>
+	template<std::floating_point T>
 	class projection_volume<T, 3>
 	{
 	public:
@@ -54,7 +54,7 @@ namespace chaos
 	 * perspective: parameters to describe a perspective projection in a user friendly way
 	 */
 
-	template<typename T>
+	template<std::floating_point T>
 	class perspective<T, 2>
 	{
 	public:
@@ -69,7 +69,7 @@ namespace chaos
 		T back  = 0;
 	};
 
-	template<typename T>
+	template<std::floating_point T>
 	class perspective<T, 3>
 	{
 	public:
@@ -90,7 +90,7 @@ namespace chaos
 	 * Some functions
 	 */
 
-	template<typename T, int dimension>
+	template<std::floating_point T, int dimension>
 	projection_volume<T, dimension> GetProjectionVolume(perspective<T, dimension> const& p)
 	{
 		//          +

@@ -2,7 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	template<typename T, int dimension>
+	template<std::floating_point T, int dimension>
 	class SceneTransform;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -53,7 +53,7 @@ namespace chaos
 	//  This is not possible due to non-uniform scale (see how scale values are spread in column for first matrix, but in row for second one)
 	//
 
-	template<typename T, int dimension>
+	template<std::floating_point T, int dimension>
 	class SceneTransform
 	{
 		using vec_type = typename type_geometric<T, dimension>::vec_type;

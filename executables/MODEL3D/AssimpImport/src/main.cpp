@@ -601,33 +601,46 @@ protected:
 			return true;
 		}
 
-
-		return chaos::Window::EnumerateInputActions(in_action_enumerator, in_context);
-	}
-
-	virtual bool DoTick(float delta_time) override
-	{
-		// move objects
-		size_t object_count = objects.size();
 		if (object_count > 0)
 		{
-			auto MoveObject = [this, delta_time](Key button, size_t component_index, float direction)
+			float delta_time = (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration();
+
+			auto MoveObject = [&](Key key, size_t component_index, float direction, char const * title)
 			{
-				if (KeyboardAndMouseDevice::GetInstance()->IsKeyDown(button))
+				return in_action_enumerator.CheckAndProcess(chaos::RequestKeyDown(key), title, [&]()
 				{
 					Object3D* selected_object = objects[selected_object_index].get();
 					selected_object->transform.position[component_index] += direction * OBJECT_SPEED * delta_time;
-				}
+				});
 			};
 
-			MoveObject(Key::KP_4, 0, -1.0f);
-			MoveObject(Key::KP_6, 0, +1.0f);
-			MoveObject(Key::KP_8, 2, -1.0f);
-			MoveObject(Key::KP_2, 2, +1.0f);
-			MoveObject(Key::KP_9, 1, +1.0f);
-			MoveObject(Key::KP_3, 1, -1.0f);
+			if (MoveObject(Key::KP_4, 0, -1.0f, "Move object -X"))
+			{
+				return true;
+			}
+			if (MoveObject(Key::KP_6, 0, +1.0f, "Move object +X"))
+			{
+				return true;
+			}
+			if (MoveObject(Key::KP_8, 2, -1.0f, "Move object -Y"))
+			{
+				return true;
+			}
+			if (MoveObject(Key::KP_2, 2, +1.0f, "Move object +Y"))
+			{
+				return true;
+			}
+			if (MoveObject(Key::KP_3, 1, -1.0f, "Move object -Z"))
+			{
+				return true;
+			}
+			if (MoveObject(Key::KP_9, 1, +1.0f, "Move object +Z"))
+			{
+				return true;
+			}
 		}
-		return Window::DoTick(delta_time);
+
+		return chaos::Window::EnumerateInputActions(in_action_enumerator, in_context);
 	}
 
 	virtual bool TraverseInputReceiver(chaos::InputReceiverTraverser & in_traverser, chaos::InputDeviceInterface const * in_input_device) override

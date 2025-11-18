@@ -109,12 +109,25 @@ namespace chaos
 
 		T fov_radian = p.fov * T(M_PI) / T(180.0);
 
-		T distance = T(0.5) * p.height / std::tan(fov_radian * T(0.5)); // distance at which field of view is statisfied
+		if constexpr (dimension == 2)
+		{
+			T distance = T(0.5) * p.width / std::tan(fov_radian * T(0.5)); // distance at which field of view is statisfied
+			T ratio = T(0.5) * (p.front / distance);
 
-		result.left   = -T(0.5) * p.width * (p.front / distance);
-		result.right  = -result.left;
-		result.bottom = -T(0.5) * p.height * (p.front / distance);
-		result.top    = -result.bottom;
+			result.left = -p.width * ratio;
+			result.right = -result.left;
+		} 
+		else if constexpr (dimension == 3)
+		{
+			T distance = T(0.5) * p.height / std::tan(fov_radian * T(0.5)); // distance at which field of view is statisfied
+			T ratio = T(0.5) * (p.front / distance);
+
+			result.left = -p.width * ratio;
+			result.right = -result.left;
+			result.bottom = -p.height * ratio;
+			result.top = -result.bottom;
+		}
+
 		result.front  = p.front;
 		result.back   = p.back;
 		return result;

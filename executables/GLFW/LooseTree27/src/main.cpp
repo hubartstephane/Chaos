@@ -496,7 +496,19 @@ protected:
 
 	glm::mat4x4 GetProjectionMatrix(glm::vec2 viewport_size) const
 	{
-		return glm::perspectiveFov(camera_info.fov * (float)M_PI / 180.0f, float(viewport_size.x), float(viewport_size.y), camera_info.near_plane, camera_info.far_plane);
+		chaos::perspective<float, 3> persp;
+		persp.fov    = camera_info.fov;
+		persp.width  = viewport_size.x;
+		persp.height = viewport_size.y;
+		persp.front  = camera_info.near_plane;
+		persp.back   = camera_info.far_plane;
+
+		chaos::projection_volume<float, 3> vol = chaos::GetProjectionVolume(persp);
+
+		return glm::frustum(vol.left, vol.right, vol.bottom, vol.top, vol.front, vol.back);
+
+
+		//return glm::perspectiveFov(camera_info.fov * (float)M_PI / 180.0f, float(viewport_size.x), float(viewport_size.y), camera_info.near_plane, camera_info.far_plane);
 	}
 
 	glm::mat4x4 GetGlobalToCameraMatrix() const

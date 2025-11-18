@@ -414,10 +414,10 @@ namespace chaos
 	type_box_plane<T, 2> GetBoxPlanes(type_box_base<T, 2> const& b)
 	{
 		type_box_plane<T, 2> result;
-		result.neg_x = { -1.0f, 0.0f, -b.half_size.x };
-		result.pos_x = {  1.0f, 0.0f, -b.half_size.x };
-		result.neg_y = { 0.0f, -1.0f, -b.half_size.y };
-		result.pos_y = { 0.0f,  1.0f, -b.half_size.y };
+		result.neg_x = { T(-1),  T(0), -b.half_size.x};
+		result.pos_x = { T(+1),  T(0), -b.half_size.x };
+		result.neg_y = {  T(0), T(-1), -b.half_size.y};
+		result.pos_y = {  T(0), T(+1), -b.half_size.y };
 		return result;
 	}
 	/** get planes from a box */
@@ -425,12 +425,12 @@ namespace chaos
 	type_box_plane<T, 3> GetBoxPlanes(type_box_base<T, 3> const& b)
 	{
 		type_box_plane<T, 3> result;
-		result.neg_x = { -1.0f, 0.0f, 0.0f, -b.half_size.x };
-		result.pos_x = {  1.0f, 0.0f, 0.0f, -b.half_size.x };
-		result.neg_y = { 0.0f, -1.0f, 0.0f, -b.half_size.y };
-		result.pos_y = { 0.0f,  1.0f, 0.0f, -b.half_size.y };
-		result.neg_z = { 0.0f, 0.0f, -1.0f, -b.half_size.z };
-		result.pos_z = { 0.0f, 0.0f,  1.0f, -b.half_size.z };
+		result.neg_x = { T(-1),  T(0),  T(0), -b.half_size.x};
+		result.pos_x = { T(+1),  T(0),  T(0), -b.half_size.x };
+		result.neg_y = {  T(0), T(-1),  T(0), -b.half_size.y };
+		result.pos_y = {  T(0), T(+1),  T(0), -b.half_size.y };
+		result.neg_z = {  T(0),  T(0), T(-1), -b.half_size.z };
+		result.pos_z = {  T(0),  T(0), T(+1), -b.half_size.z };
 		return result;
 	}
 

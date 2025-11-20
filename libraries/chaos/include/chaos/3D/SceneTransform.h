@@ -56,9 +56,10 @@ namespace chaos
 	template<std::floating_point T, int dimension>
 	class SceneTransform
 	{
-		using vec_type = typename type_geometric<T, dimension>::vec_type;
-		using rot_type = typename type_geometric<T, dimension>::rot_type;
-		using mat_type = typename type_geometric<T, dimension>::mat_type;
+		using geometry = type_geometric<T, dimension>;
+		using vec_type = typename geometry::vec_type;
+		using rot_type = typename geometry::rot_type;
+		using mat_type = typename geometry::mat_type;
 
 	public:
 

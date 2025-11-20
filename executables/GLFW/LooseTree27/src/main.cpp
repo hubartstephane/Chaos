@@ -503,12 +503,9 @@ protected:
 		persp.front  = camera_info.near_plane;
 		persp.back   = camera_info.far_plane;
 
-		chaos::projection_volume<float, 3> vol = chaos::GetProjectionVolume(persp);
+		auto p = chaos::GetProjectionPlanes(persp);
 
-		return glm::frustum(vol.left, vol.right, vol.bottom, vol.top, vol.front, vol.back);
-
-
-		//return glm::perspectiveFov(camera_info.fov * (float)M_PI / 180.0f, float(viewport_size.x), float(viewport_size.y), camera_info.near_plane, camera_info.far_plane);
+		return chaos::GetProjectionMatrix(persp);
 	}
 
 	glm::mat4x4 GetGlobalToCameraMatrix() const

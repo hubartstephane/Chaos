@@ -169,14 +169,14 @@ namespace chaos
 		}
 
 		/** convert an angle into Radian (for float or double) */
-		template<typename T>
+		template<std::floating_point T>
 		T DegreeToRadian(T degree)
 		{
 			return degree * static_cast<T>(M_PI / 180.0);
 		}
 
 		/** convert an angle into Degree (for float or double) */
-		template<typename T>
+		template<std::floating_point T>
 		T RadianToDegree(T radian)
 		{
 			return radian * static_cast<T>(180.0 / M_PI);

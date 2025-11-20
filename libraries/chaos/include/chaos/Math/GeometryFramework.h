@@ -31,15 +31,36 @@ namespace chaos
 	// plane functions
 	// ==============================================================================================
 
-	CHAOS_API glm::vec2  GetPlaneNormal(glm::vec3  const& p);
-	CHAOS_API glm::vec3  GetPlaneNormal(glm::vec4  const& p);
-	CHAOS_API glm::dvec2 GetPlaneNormal(glm::dvec3 const& p);
-	CHAOS_API glm::dvec3 GetPlaneNormal(glm::dvec4 const& p);
+	template<std::floating_point T, int plane_dimension>
+	glm::vec<plane_dimension - 1, T> GetPlaneNormal(glm::vec<plane_dimension, T> const& src)
+	{
+		return *(glm::vec<plane_dimension - 1, T>*)&src;
+	}
 
-	CHAOS_API float  GetPlaneOffset(glm::vec3  const& p);
-	CHAOS_API float  GetPlaneOffset(glm::vec4  const& p);
-	CHAOS_API double GetPlaneOffset(glm::dvec3 const& p);
-	CHAOS_API double GetPlaneOffset(glm::dvec4 const& p);
+	template<std::floating_point T, int plane_dimension>
+	T GetPlaneOffset(glm::vec<plane_dimension, T> const& src)
+	{
+		return src[plane_dimension - 1];
+	}
+
+	template<std::floating_point T, int plane_dimension>
+	void NormalizePlane(glm::vec<plane_dimension, T> & src)
+	{
+		 auto normal = GetPlaneNormal(src);
+		 T len = glm::length2(normal);
+		 if (len != T(0) && len != T(1))
+			 src /= std::sqrt(len);
+	}
+
+	template<std::floating_point T, int plane_dimension>
+	glm::vec<plane_dimension, T> GetNormalizedPlane(glm::vec<plane_dimension, T> const & src)
+	{
+		auto normal = GetPlaneNormal(src);
+		T len = glm::length2(normal);
+		if (len != T(0) && len != T(1))
+			return src / std::sqrt(len);
+		return src;
+	}
 
 	// ==============================================================================================
 	// GLM vector functions

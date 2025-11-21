@@ -4,10 +4,10 @@ namespace chaos
 
 	enum class ProjectionType;
 
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	class projection_volume;
 
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	class perspective;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -90,7 +90,7 @@ namespace chaos
 	 * Some functions
 	 */
 
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	projection_volume<T, dimension> GetProjectionVolume(perspective<T, dimension> const& persp)
 	{
 		//          +
@@ -155,7 +155,7 @@ namespace chaos
 		}
 	}
 
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	type_box_plane<T, dimension> GetProjectionPlanes(perspective<T, dimension> const& persp)
 	{
 		type_box_plane<T, dimension> result;
@@ -163,7 +163,7 @@ namespace chaos
 		return result;
 	}
 
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	type_box_plane<T, dimension> GetProjectionPlanes(ProjectionType type, projection_volume<T, dimension> const& vol)
 	{
 		using geometry   = type_geometric<T, dimension>;

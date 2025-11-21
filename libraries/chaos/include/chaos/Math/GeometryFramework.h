@@ -121,7 +121,7 @@ namespace chaos
 
 
 	/** returns true whether the box is empty */
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	bool IsGeometryEmpty(type_box_base<T, dimension> const& b)
 	{
 		return glm::any(glm::lessThan(b.half_size, type_box_base<T, dimension>::vec_type(0)));
@@ -249,14 +249,14 @@ namespace chaos
 	// ==============================================================================================
 
 	/** equality function for box */
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	bool operator == (type_box<T, dimension> const& b1, type_box<T, dimension> const& b2)
 	{
 		return (b1.position == b1.position) && (b1.half_size == b2.half_size);
 	}
 
 	/** intersection of 2 boxes */
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	type_box<T, dimension> operator & (type_box<T, dimension> const& b1, type_box<T, dimension> const& b2)
 	{
 		using vec_type = typename type_box<T, dimension>::vec_type;
@@ -283,7 +283,7 @@ namespace chaos
 	}
 
 	/** union of 2 boxes */
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	type_box<T, dimension> operator | (type_box<T, dimension> const& b1, type_box<T, dimension> const& b2)
 	{
 		using vec_type = typename type_box<T, dimension>::vec_type;
@@ -342,7 +342,7 @@ namespace chaos
 	}
 
 	/** get the corners of the box */
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	auto GetBoxCorners(type_box<T, dimension> const& b) // returns a std::pair<vec_type, vec_type>
 	{
 		if (!IsGeometryEmpty(b))
@@ -351,7 +351,7 @@ namespace chaos
 	}
 
 	/** increase the box size with a single vertex */
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	void ExtendBox(type_box<T, dimension>& b, typename type_box<T, dimension>::vec_type const& v)
 	{
 		using vec_type = typename type_box<T, dimension>::vec_type;
@@ -460,7 +460,7 @@ namespace chaos
 	// ==============================================================================================
 
 	/** equality function for obox */
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	bool operator == (type_obox<T, dimension> const& b1, type_obox<T, dimension> const& b2)
 	{
 		return (b1.position == b1.position) && (b1.half_size == b2.half_size) && (b1.rotator == b2.rotator);
@@ -555,14 +555,14 @@ namespace chaos
 	// ==============================================================================================
 
 	/** equality function for obox */
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	bool operator == (type_aabox<T, dimension> const& b1, type_aabox<T, dimension> const& b2)
 	{
 		return (b1.position == b1.position) && (b1.size == b2.size);
 	}
 
 	/** returns true whether the box is empty */
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	bool IsGeometryEmpty(type_aabox<T, dimension> const& b)
 	{
 		return glm::any(glm::lessThan(b.size, type_aabox<T, dimension>::vec_type(0)));
@@ -661,7 +661,7 @@ namespace chaos
 	// ==============================================================================================
 
 	/** equality test function for triangles */
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	bool operator == (type_triangle<T, dimension> const& t1, type_triangle<T, dimension> const& t2)
 	{
 		if (t1.a == t2.a)
@@ -689,7 +689,7 @@ namespace chaos
 	}
 
 	/** returns true whether the triangle is empty */
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	bool IsGeometryEmpty(type_triangle<T, dimension> const& t)
 	{
 		if (t.a == t.b || t.a == t.c || t.b == t.c)
@@ -698,7 +698,7 @@ namespace chaos
 	}
 
 	/** get the reversed triangle */
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	type_triangle<T, dimension> GetInvertedTriangle(type_triangle<T, dimension> const& t)
 	{
 		return type_triangle<T, dimension>(t.a, t.c, t.b);
@@ -709,7 +709,7 @@ namespace chaos
 	// ==============================================================================================
 
 	/** equality function for ray */
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	bool operator == (type_ray<T, dimension> const& r1, type_ray<T, dimension> const& r2)
 	{
 		return (r1.position == r2.position) && (r1.direction == r2.direction);
@@ -720,14 +720,14 @@ namespace chaos
 	// ==============================================================================================
 
 	/** returns true whether the circle is empty */
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	bool IsGeometryEmpty(type_sphere<T, dimension> const& c)
 	{
 		return (c.radius < 0);
 	}
 
 	/** equality function for circle */
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	bool operator == (type_sphere<T, dimension> const& c1, type_sphere<T, dimension> const& c2)
 	{
 		return (c1.position == c2.position) && (c1.radius == c2.radius);
@@ -800,7 +800,7 @@ namespace chaos
 	}
 
 	/** returns intersection of 2 spheres */
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	type_sphere<T, dimension> operator & (type_sphere<T, dimension> const& s1, type_sphere<T, dimension> const& s2) // intersection
 	{
 		using vec_type = typename type_sphere<T, dimension>::vec_type;
@@ -828,7 +828,7 @@ namespace chaos
 	}
 
 	/** returns union of 2 spheres */
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	type_sphere<T, dimension> operator | (type_sphere<T, dimension> const& s1, type_sphere<T, dimension> const& s2) // union
 	{
 		using vec_type = typename type_sphere<T, dimension>::vec_type;
@@ -858,7 +858,7 @@ namespace chaos
 	// JSON functions
 	// ==============================================================================================
 
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	bool DoSaveIntoJSON(nlohmann::json* json, type_box<T, dimension> const& src)
 	{
 		if (!PrepareSaveObjectIntoJSON(json))
@@ -868,7 +868,7 @@ namespace chaos
 		return true;
 	}
 
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	bool DoLoadFromJSON(JSONReadConfiguration config, type_box<T, dimension>& dst)
 	{
 		JSONTools::GetAttribute(config, "position", dst.position);
@@ -876,7 +876,7 @@ namespace chaos
 		return true;
 	}
 
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	bool DoSaveIntoJSON(nlohmann::json* json, type_obox<T, dimension> const& src)
 	{
 		if (!PrepareSaveObjectIntoJSON(json))
@@ -887,7 +887,7 @@ namespace chaos
 		return true;
 	}
 
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	bool DoLoadFromJSON(JSONReadConfiguration config, type_obox<T, dimension>& dst)
 	{
 		JSONTools::GetAttribute(config, "position", dst.position);
@@ -896,7 +896,7 @@ namespace chaos
 		return true;
 	}
 
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	bool DoSaveIntoJSON(nlohmann::json* json, type_aabox<T, dimension> const& src)
 	{
 		if (!PrepareSaveObjectIntoJSON(json))
@@ -906,7 +906,7 @@ namespace chaos
 		return true;
 	}
 
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	bool DoLoadFromJSON(JSONReadConfiguration config, type_aabox<T, dimension>& dst)
 	{
 		JSONTools::GetAttribute(config, "position", dst.position);
@@ -914,7 +914,7 @@ namespace chaos
 		return true;
 	}
 
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	bool DoSaveIntoJSON(nlohmann::json* json, type_sphere<T, dimension> const& src)
 	{
 		if (!PrepareSaveObjectIntoJSON(json))
@@ -924,7 +924,7 @@ namespace chaos
 		return true;
 	}
 
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	bool DoLoadFromJSON(JSONReadConfiguration config, type_sphere<T, dimension>& dst)
 	{
 		JSONTools::GetAttribute(config, "position", dst.position);
@@ -932,7 +932,7 @@ namespace chaos
 		return true;
 	}
 
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	bool DoSaveIntoJSON(nlohmann::json* json, type_ray<T, dimension> const& src)
 	{
 		if (!PrepareSaveObjectIntoJSON(json))
@@ -942,7 +942,7 @@ namespace chaos
 		return true;
 	}
 
-	template<std::floating_point T, int dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 	bool DoLoadFromJSON(JSONReadConfiguration config, type_ray<T, dimension>& dst)
 	{
 		JSONTools::GetAttribute(config, "position", dst.position);

@@ -27,7 +27,7 @@ protected:
 
 			// XXX : the scaling is used to avoid the near plane clipping
 			static float FOV = 60.0f;
-			glm::mat4 projection_matrix = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, float(draw_params.viewport.size.x), float(draw_params.viewport.size.y), 1.0f, far_plane);
+			glm::mat4 projection_matrix = glm::perspectiveFov(chaos::MathTools::DegreeToRadian(FOV), float(draw_params.viewport.size.x), float(draw_params.viewport.size.y), 1.0f, far_plane);
 
 			glm::mat4 local_to_world_matrix = glm::mat4(10.0f);
 

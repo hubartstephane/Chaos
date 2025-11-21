@@ -98,7 +98,7 @@ protected:
 		if (program != nullptr)
 		{
 			// compute matrices
-			glm::mat4x4 projection = glm::perspectiveFov(fov * (float)M_PI / 180.0f, float(draw_params.viewport.size.x), float(draw_params.viewport.size.y), near_plane, far_plane);
+			glm::mat4x4 projection = glm::perspectiveFov(MathTools::DegreeToRadian(fov), float(draw_params.viewport.size.x), float(draw_params.viewport.size.y), near_plane, far_plane);
 			glm::mat4x4 world_to_camera = fps_view_controller.GlobalToLocal();
 
 			// prepare unforms

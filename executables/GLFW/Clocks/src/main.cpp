@@ -152,7 +152,7 @@ protected:
 		ctx.render_context = render_context;
 
 		static float FOV = 60.0f;
-		ctx.projection = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, float(draw_params.viewport.size.x), float(draw_params.viewport.size.y), 1.0f, far_plane);
+		ctx.projection = glm::perspectiveFov(chaos::MathTools::DegreeToRadian(FOV), float(draw_params.viewport.size.x), float(draw_params.viewport.size.y), 1.0f, far_plane);
 		ctx.world_to_camera = fps_view_controller.GlobalToLocal();
 
 		DrawGeometryObjects(ctx);

@@ -26,7 +26,7 @@ protected:
 		chaos::box3 b(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
 		static float FOV = 60.0f;
-		glm::mat4 projection      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, float(draw_params.viewport.size.x), float(draw_params.viewport.size.y), 1.0f, far_plane);
+		glm::mat4 projection      = glm::perspectiveFov(chaos::MathTools::DegreeToRadian(FOV), float(draw_params.viewport.size.x), float(draw_params.viewport.size.y), 1.0f, far_plane);
 		glm::mat4 world_to_camera = fps_view_controller.GlobalToLocal();
 		glm::mat4 local_to_world  = glm::translate(b.position) * glm::scale(b.half_size);
 

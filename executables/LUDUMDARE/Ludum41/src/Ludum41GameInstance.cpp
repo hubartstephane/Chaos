@@ -98,10 +98,8 @@ void LudumGameInstance::TickBallSplit(float delta_time)
 	ParticleMovableObject * new_ball = &balls[ball_count];
 	*new_ball = *parent_ball;
 
-	float const TO_RAD = (float)M_PI / 180.0f;
-
-	RotateVelocity(parent_ball->velocity, ludum_game->split_angle * TO_RAD);
-	RotateVelocity(new_ball->velocity, -ludum_game->split_angle * TO_RAD);
+	RotateVelocity(parent_ball->velocity, chaos::MathTools::DegreeToRadian(ludum_game->split_angle));
+	RotateVelocity(new_ball->velocity, -chaos::MathTools::DegreeToRadian(ludum_game->split_angle));
 
 	pending_split_count = 0;
 }

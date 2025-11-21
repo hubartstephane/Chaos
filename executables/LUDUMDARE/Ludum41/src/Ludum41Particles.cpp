@@ -176,10 +176,8 @@ bool ParticleMovableObjectLayerTrait::UpdateParticle(float delta_time, ParticleM
 				float bound_factor = delta_position / pawn_box.half_size.x;
 				bound_factor = std::clamp(bound_factor, -1.0f, 1.0f);
 
-				float const TO_RAD = (float)M_PI / 180.0f;
-
-				float rebound_angle_decrease = game->rebound_angle_decrease * TO_RAD;
-				float rebound_angle_increase = game->rebound_angle_increase * TO_RAD;
+				float rebound_angle_decrease = chaos::MathTools::DegreeToRadian(game->rebound_angle_decrease);
+				float rebound_angle_increase = chaos::MathTools::DegreeToRadian(game->rebound_angle_increase);
 
 				float const PI_2 = (float)M_PI_2;
 
@@ -270,8 +268,6 @@ void CompareDistanceAndReplace(float angle, float value, float & best_value, flo
 
 float ClampAngleToNearestRange(float angle, std::pair<float, float> const* ranges, size_t range_count)
 {
-	float const TO_RAD = (float)M_PI / 180.0f;
-
 	float best_value = angle;
 	float best_distance = std::numeric_limits<float>::max();
 
@@ -282,8 +278,8 @@ float ClampAngleToNearestRange(float angle, std::pair<float, float> const* range
 
 		// degree to rad
 
-		min_angle = min_angle * TO_RAD;
-		max_angle = max_angle * TO_RAD;
+		min_angle = chaos::MathTools::DegreeToRadian(min_angle);
+		max_angle = chaos::MathTools::DegreeToRadian(max_angle);
 		if (min_angle > max_angle)
 			std::swap(min_angle, max_angle);
 

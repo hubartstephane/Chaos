@@ -923,7 +923,7 @@ protected:
 
 		// XXX : the scaling is used to avoid the near plane clipping
 		static float FOV = 60.0f;
-		primitive_renderer->projection      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, float(draw_params.viewport.size.x), float(draw_params.viewport.size.y), 1.0f, far_plane);
+		primitive_renderer->projection      = glm::perspectiveFov(chaos::MathTools::DegreeToRadian(FOV), float(draw_params.viewport.size.x), float(draw_params.viewport.size.y), 1.0f, far_plane);
 		primitive_renderer->world_to_camera = fps_view_controller.GlobalToLocal();
 		primitive_renderer->render_context        = render_context;
 

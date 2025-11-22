@@ -2,7 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
+	CHAOS_GEOMETRY_TEMPLATE(T , dimension)
 	class SceneTransform;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -53,7 +53,7 @@ namespace chaos
 	//  This is not possible due to non-uniform scale (see how scale values are spread in column for first matrix, but in row for second one)
 	//
 
-	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
+	CHAOS_GEOMETRY_TEMPLATE(T , dimension)
 	class SceneTransform
 	{
 		using geometry = type_geometric<T, dimension>;

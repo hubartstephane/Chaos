@@ -121,8 +121,8 @@ public:
 
 // =======================================================================
 
-//template<typename T, int DIMENSION, typename NODE_PARENT, template<typename> class NODE_ALLOCATOR_TEMPLATE>
-//concept Tree27Type = std::is_base_of_v<chaos::LooseTree27<DIMENSION, NODE_PARENT, NODE_ALLOCATOR_TEMPLATE>, std::remove_cvref_t<T>>;
+//template<typename T, int dimension, typename NODE_PARENT, template<typename> class NODE_ALLOCATOR_TEMPLATE>
+//concept Tree27Type = std::is_base_of_v<chaos::LooseTree27<dimension, NODE_PARENT, NODE_ALLOCATOR_TEMPLATE>, std::remove_cvref_t<T>>;
 
 
 
@@ -151,15 +151,15 @@ public:
 //
 
 
-template<int DIMENSION>
+template<int dimension>
 class Tree27PlaneClipVisitor
 {
 	/** the dimension */
-	static constexpr int dimension = DIMENSION;
+	static constexpr int dimension = dimension;
 	/** the type for vector */
 	using vec_type = chaos::type_geometric<float, dimension>::vec_type;
 	/** the type for plane */
-	using plane_type = typename chaos::type_geometric<float, DIMENSION>::plane_type;
+	using plane_type = typename chaos::type_geometric<float, dimension>::plane_type;
 	/** the type for box */
 	using box_type = chaos::type_geometric<float, dimension>::box_type;
 	
@@ -219,7 +219,7 @@ protected:
 			};
 
 			vec_type directed_half_size;
-			for (size_t i = 0; i < DIMENSION; ++i)
+			for (size_t i = 0; i < dimension; ++i)
 			{
 				uint32_t normal_direction_sign = AsUint32(plane[i]) & (1 << 31);                       // just keep the sign
 				uint32_t half_size_component   = AsUint32(box.half_size[i]) & ~(1 << 31);              // remove the sign from half_size
@@ -502,8 +502,6 @@ protected:
 		persp.height = viewport_size.y;
 		persp.front  = camera_info.near_plane;
 		persp.back   = camera_info.far_plane;
-
-		auto p = chaos::GetProjectionPlanes(persp);
 
 		return chaos::GetProjectionMatrix(persp);
 	}

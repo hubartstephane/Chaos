@@ -139,13 +139,13 @@ namespace chaos
 		};
 	};
 
-	template<int DIMENSION>
-	class Tree27NodeInfo : public type_geometric<float, DIMENSION>
+	template<int dimension>
+	class Tree27NodeInfo : public type_geometric<float, dimension>
 	{
 	public:
 
 		/** the dimension */
-		static constexpr int dimension = DIMENSION;
+		static constexpr int dimension = dimension;
 		/** the type for vector */
 		using ivec_type = glm::vec<dimension, int>;
 		/** the type for box */
@@ -236,18 +236,18 @@ namespace chaos
 		ivec_type position = ivec_type(0);
 	};
 
-	template<int DIMENSION>
-	bool operator == (Tree27NodeInfo<DIMENSION> const& src1, Tree27NodeInfo<DIMENSION> const& src2)
+	template<int dimension>
+	bool operator == (Tree27NodeInfo<dimension> const& src1, Tree27NodeInfo<dimension> const& src2)
 	{
 		return (src1.level == src2.level) && (src1.position == src2.position);
 	}
 
-	template<int DIMENSION>
-	Tree27NodeInfo<DIMENSION> ComputeTreeNodeInfo(type_box<float, DIMENSION> const& box)
+	template<int dimension>
+	Tree27NodeInfo<dimension> ComputeTreeNodeInfo(type_box<float, dimension> const& box)
 	{
 		assert(!IsGeometryEmpty(box));
 
-		Tree27NodeInfo<DIMENSION> result;
+		Tree27NodeInfo<dimension> result;
 
 		// get size to take into account
 		float box_size = 2.0f * GLMTools::GetMaxComponent(box.half_size);
@@ -276,7 +276,7 @@ namespace chaos
 
 		float widthL = details::pow3(float(result.level));
 		float denum = (2.0f / 3.0f) * widthL;
-		for (int i = 0; i < DIMENSION; ++i)
+		for (int i = 0; i < dimension; ++i)
 		{
 			float num = (box.position[i] - box.half_size[i]) + 0.5f * widthL;
 			result.position[i] = int(std::floor(num / denum));
@@ -285,12 +285,12 @@ namespace chaos
 		return result;
 	}
 
-	template<int DIMENSION>
-	Tree27NodeInfo<DIMENSION> ComputeCommonParent(Tree27NodeInfo<DIMENSION> info1, Tree27NodeInfo<DIMENSION> info2)
+	template<int dimension>
+	Tree27NodeInfo<dimension> ComputeCommonParent(Tree27NodeInfo<dimension> info1, Tree27NodeInfo<dimension> info2)
 	{
-		auto GetParentNodePosition = [](Tree27NodeInfo<DIMENSION>::ivec_type v)
+		auto GetParentNodePosition = [](Tree27NodeInfo<dimension>::ivec_type v)
 		{
-			for (int i = 0; i < DIMENSION; ++i)
+			for (int i = 0; i < dimension; ++i)
 				v[i] = (v[i] > 0) ? (v[i] + 1) / 3 : (v[i] - 1) / 3;
 			return v;
 		};
@@ -318,16 +318,16 @@ namespace chaos
 		return info1;
 	}
 
-	template<int DIMENSION, typename PARENT>
-	class Tree27Node : public PARENT, public type_geometric<float, DIMENSION>
+	template<int dimension, typename PARENT>
+	class Tree27Node : public PARENT, public type_geometric<float, dimension>
 	{
-		template<int DIMENSION, typename PARENT, template<typename> class NODE_ALLOCATOR>
+		template<int dimension, typename PARENT, template<typename> class NODE_ALLOCATOR>
 		friend class LooseTree27;
 
 	public:
 
 		/** the dimension */
-		static constexpr int dimension = DIMENSION;
+		static constexpr int dimension = dimension;
 		/** the number of children this node has */
 		static constexpr int children_count = details::static_pow(3, dimension);
 		/** the type for vector */
@@ -546,13 +546,13 @@ namespace chaos
 		int index_in_parent = 0;
 	};
 
-	template<int DIMENSION, typename NODE_PARENT, template<typename> class NODE_ALLOCATOR_TEMPLATE = StandardAllocator>
-	class LooseTree27 : public type_geometric<float, DIMENSION>
+	template<int dimension, typename NODE_PARENT, template<typename> class NODE_ALLOCATOR_TEMPLATE = StandardAllocator>
+	class LooseTree27 : public type_geometric<float, dimension>
 	{
 	public:
 
 		/** the dimension */
-		static constexpr int dimension = DIMENSION;
+		static constexpr int dimension = dimension;
 		/** the number of children this node has */
 		static constexpr int children_count = details::static_pow(3, dimension);
 		/** the type for vector */

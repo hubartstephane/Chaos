@@ -1,6 +1,6 @@
 namespace chaos
 {
-	#define CHAOS_GEOMETRY_TEMPLATE(T, dimension) template<std::floating_point T, int dimension> requires (dimension == 2 || dimension == 3)
+	#define CHAOS_GEOMETRY_TEMPLATE(T , dimension) template<std::floating_point T, int dimension> requires (dimension == 2 || dimension == 3)
 
 #ifdef CHAOS_FORWARD_DECLARATION
 
@@ -9,16 +9,16 @@ namespace chaos
 	// ==============================================================================================
 
 	// the base template (two arguments, type and dimension)
-	CHAOS_GEOMETRY_TEMPLATE(T, dimension) class type_geometric;
-	CHAOS_GEOMETRY_TEMPLATE(T, dimension) class type_ray;
-	CHAOS_GEOMETRY_TEMPLATE(T, dimension) class type_box_base;
-	CHAOS_GEOMETRY_TEMPLATE(T, dimension) class type_box;
-	CHAOS_GEOMETRY_TEMPLATE(T, dimension) class type_obox;
-	CHAOS_GEOMETRY_TEMPLATE(T, dimension) class type_sphere;
-	CHAOS_GEOMETRY_TEMPLATE(T, dimension) class type_triangle;
-	CHAOS_GEOMETRY_TEMPLATE(T, dimension) class type_rotator;   // this is not an object that describes a rotation, but a meta object that gives the rotation in a meta function
-	CHAOS_GEOMETRY_TEMPLATE(T, dimension) class type_aabox;     // aligned axis box
-	CHAOS_GEOMETRY_TEMPLATE(T, dimension) class type_box_plane; // a set of 4 or 6 clip planes
+	CHAOS_GEOMETRY_TEMPLATE(T , dimension) class type_geometric;
+	CHAOS_GEOMETRY_TEMPLATE(T , dimension) class type_ray;
+	CHAOS_GEOMETRY_TEMPLATE(T , dimension) class type_box_base;
+	CHAOS_GEOMETRY_TEMPLATE(T , dimension) class type_box;
+	CHAOS_GEOMETRY_TEMPLATE(T , dimension) class type_obox;
+	CHAOS_GEOMETRY_TEMPLATE(T , dimension) class type_sphere;
+	CHAOS_GEOMETRY_TEMPLATE(T , dimension) class type_triangle;
+	CHAOS_GEOMETRY_TEMPLATE(T , dimension) class type_rotator;   // this is not an object that describes a rotation, but a meta object that gives the rotation in a meta function
+	CHAOS_GEOMETRY_TEMPLATE(T , dimension) class type_aabox;     // aligned axis box
+	CHAOS_GEOMETRY_TEMPLATE(T , dimension) class type_box_plane; // a set of 4 or 6 clip planes
 
 	class zero_rotator;
 
@@ -75,7 +75,7 @@ namespace chaos
 
 
 	// base template
-	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
+	CHAOS_GEOMETRY_TEMPLATE(T , dimension)
 	class type_rotator : public boost::mpl::identity<void> {};
 	// specialization
 	template<>
@@ -164,7 +164,7 @@ namespace chaos
 	// type_box_base class
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
+	CHAOS_GEOMETRY_TEMPLATE(T , dimension)
 	class type_box_base : public type_geometric<T, dimension>
 	{
 	public:
@@ -190,7 +190,7 @@ namespace chaos
 	// box class
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
+	CHAOS_GEOMETRY_TEMPLATE(T , dimension)
 	class type_box : public type_box_base<T, dimension>
 	{
 	public:
@@ -221,7 +221,7 @@ namespace chaos
 	// ==============================================================================================
 
 	/** an oriented bounding box */
-	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
+	CHAOS_GEOMETRY_TEMPLATE(T , dimension)
 	class type_obox : public type_box_base<T, dimension>
 	{
 	public:
@@ -248,7 +248,7 @@ namespace chaos
 	// type_aabox class
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
+	CHAOS_GEOMETRY_TEMPLATE(T , dimension)
 	class type_aabox : public type_geometric<T, dimension>
 	{
 	public:
@@ -283,7 +283,7 @@ namespace chaos
 	// sphere/circle classes
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
+	CHAOS_GEOMETRY_TEMPLATE(T , dimension)
 	class type_sphere : public type_geometric<T, dimension>
 	{
 	public:
@@ -310,7 +310,7 @@ namespace chaos
 	// triangle classes
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
+	CHAOS_GEOMETRY_TEMPLATE(T , dimension)
 	class type_triangle : public type_geometric<T, dimension>
 	{
 	public:
@@ -352,7 +352,7 @@ namespace chaos
 	// ray classes
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
+	CHAOS_GEOMETRY_TEMPLATE(T , dimension)
 	class type_ray : public type_geometric<T, dimension>
 	{
 	public:

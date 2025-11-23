@@ -259,7 +259,8 @@ namespace chaos
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	type_box<DIMENSION, T> operator & (type_box<DIMENSION, T> const& b1, type_box<DIMENSION, T> const& b2)
 	{
-		using vec_type = typename type_box<DIMENSION, T>::vec_type;
+		using geometry = type_geometric<DIMENSION, T>;
+		using vec_type = typename geometry::vec_type;
 
 		if (IsGeometryEmpty(b1) || IsGeometryEmpty(b2)) // any of the 2 is empty, intersection is empty
 			return type_box<DIMENSION, T>();
@@ -286,7 +287,8 @@ namespace chaos
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	type_box<DIMENSION, T> operator | (type_box<DIMENSION, T> const& b1, type_box<DIMENSION, T> const& b2)
 	{
-		using vec_type = typename type_box<DIMENSION, T>::vec_type;
+		using geometry = type_geometric<DIMENSION, T>;
+		using vec_type = typename geometry::vec_type;
 
 		if (IsGeometryEmpty(b1)) // if one is empty, returns other
 			return b2;
@@ -309,7 +311,8 @@ namespace chaos
 	template<std::floating_point T>
 	type_box<2, T> GetSplitBox(type_box<2, T> const& b, int i, int j)
 	{
-		using vec_type = typename type_box<2, T>::vec_type;
+		using geometry = type_geometric<2, T>;
+		using vec_type = typename geometry::vec_type;
 
 		assert((i == 0) || (i == 1));
 		assert((j == 0) || (j == 1));
@@ -326,7 +329,8 @@ namespace chaos
 	template<std::floating_point T>
 	type_box<3, T> GetSplitBox(type_box<3, T> const& b, int i, int j, int k)
 	{
-		using vec_type = typename type_box<3, T>::vec_type;
+		using geometry = type_geometric<3, T>;
+		using vec_type = typename geometry::vec_type;
 
 		assert((i == 0) || (i == 1));
 		assert((j == 0) || (j == 1));
@@ -354,7 +358,8 @@ namespace chaos
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	void ExtendBox(type_box<DIMENSION, T>& b, typename type_box<DIMENSION, T>::vec_type const& v)
 	{
-		using vec_type = typename type_box<DIMENSION, T>::vec_type;
+		using geometry = type_geometric<DIMENSION, T>;
+		using vec_type = typename geometry::vec_type;
 
 		if (IsGeometryEmpty(b))
 		{
@@ -375,7 +380,8 @@ namespace chaos
 	{
 		assert(result != nullptr);
 
-		using vec_type = typename type_box_base<2, T>::vec_type;
+		using geometry = type_geometric<2, T>;
+		using vec_type = typename geometry::vec_type;
 
 		T NX = -b.half_size.x;
 		T PX = +b.half_size.x;
@@ -400,7 +406,8 @@ namespace chaos
 	{
 		assert(result != nullptr);
 
-		using vec_type = typename type_box_base<3, T>::vec_type;
+		using geometry = type_geometric<3, T>;
+		using vec_type = typename geometry::vec_type;
 
 		T NX = -b.half_size.x;
 		T PX = +b.half_size.x;
@@ -765,7 +772,8 @@ namespace chaos
 	template<std::floating_point T>
 	type_box<2, T> GetBoundingBox(type_sphere<2, T> const& c)
 	{
-		using vec_type = typename type_sphere<2, T>::vec_type;
+		using geometry = type_geometric<2, T>;
+		using vec_type = typename geometry::vec_type;
 
 		return IsGeometryEmpty(c) ? type_box<2, T>() : type_box<2, T>(c.position, vec_type(c.radius, c.radius));
 	}
@@ -774,7 +782,8 @@ namespace chaos
 	template<std::floating_point T>
 	type_box<2, T> GetInnerBox(type_sphere<2, T> const& c)
 	{
-		using vec_type = typename type_sphere<2, T>::vec_type;
+		using geometry = type_geometric<2, T>;
+		using vec_type = typename geometry::vec_type;
 
 		static double const INV_SQRT2 = 0.707106781186547; /* 1.0 / sqrtf(2.0) */
 
@@ -784,7 +793,8 @@ namespace chaos
 	template<std::floating_point T>
 	type_box<3, T> GetBoundingBox(type_sphere<3, T> const& s)
 	{
-		using vec_type = typename type_sphere<3, T>::vec_type;
+		using geometry = type_geometric<3, T>;
+		using vec_type = typename geometry::vec_type;
 
 		return IsGeometryEmpty(s) ? type_box<3, T>() : type_box<3, T>(s.position, vec_type(s.radius));
 	}
@@ -792,7 +802,8 @@ namespace chaos
 	template<std::floating_point T>
 	type_box<3, T> GetInnerBox(type_sphere<3, T> const& s)
 	{
-		using vec_type = typename type_sphere<3, T>::vec_type;
+		using geometry = type_geometric<3, T>;
+		using vec_type = typename geometry::vec_type;
 
 		static double const INV_SQRT3 = 0.577350269189625; /* 1.0 / sqrtf(3.0) */
 
@@ -803,7 +814,8 @@ namespace chaos
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	type_sphere<DIMENSION, T> operator & (type_sphere<DIMENSION, T> const& s1, type_sphere<DIMENSION, T> const& s2) // intersection
 	{
-		using vec_type = typename type_sphere<DIMENSION, T>::vec_type;
+		using geometry = type_geometric<DIMENSION, T>;
+		using vec_type = typename geometry::vec_type;
 
 		if (IsGeometryEmpty(s1) || IsGeometryEmpty(s2))
 			return type_sphere<DIMENSION, T>();
@@ -831,7 +843,8 @@ namespace chaos
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	type_sphere<DIMENSION, T> operator | (type_sphere<DIMENSION, T> const& s1, type_sphere<DIMENSION, T> const& s2) // union
 	{
-		using vec_type = typename type_sphere<DIMENSION, T>::vec_type;
+		using geometry = type_geometric<DIMENSION, T>;
+		using vec_type = typename geometry::vec_type;
 
 		if (IsGeometryEmpty(s1))
 			return s2;

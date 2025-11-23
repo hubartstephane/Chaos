@@ -135,7 +135,7 @@ namespace chaos
 
 
 	template<std::floating_point T>
-	glm::mat<4, 4, T, glm::defaultp> GetProjectionMatrix(perspective<3, T> const& persp)
+	glm::mat<4, 4, T> GetProjectionMatrix(perspective<3, T> const& persp)
 	{
 		return glm::perspectiveFov(persp.fov * T(M_PI) / T(180.0), T(persp.width), float(persp.height), persp.front, persp.back);
 	}

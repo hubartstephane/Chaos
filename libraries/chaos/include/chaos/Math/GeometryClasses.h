@@ -104,7 +104,7 @@ namespace chaos
 		/** the type of the components */
 		using type = T;
 		/** the type for matrix */
-		using mat_type = glm::tmat4x4<T, glm::highp>;
+		using mat_type = glm::tmat4x4<T>;
 		/** the type of vector */
 		using vec_type = glm::vec<dimension, type>;
 		/** the type of plane */
@@ -137,7 +137,7 @@ namespace chaos
 		/** the type of the components */
 		using type = T;
 		/** the type for matrix */
-		using mat_type = glm::tmat4x4<T, glm::defaultp>;
+		using mat_type = glm::tmat4x4<T>;
 		/** the type of vector */
 		using vec_type = glm::vec<dimension, type>;
 		/** the type of plane */
@@ -169,7 +169,8 @@ namespace chaos
 	{
 	public:
 
-		using vec_type = typename type_geometric<DIMENSION, T>::vec_type;
+		using geometry = type_geometric<DIMENSION, T>;
+		using vec_type = typename geometry::vec_type;
 
 		/** constructor (empty box) */
 		type_box_base() = default;
@@ -195,7 +196,8 @@ namespace chaos
 	{
 	public:
 
-		using vec_type = typename type_box_base<DIMENSION, T>::vec_type;
+		using geometry = type_geometric<DIMENSION, T>;
+		using vec_type = typename geometry::vec_type;
 
 		/** constructor (empty box) */
 		type_box() = default;
@@ -226,8 +228,9 @@ namespace chaos
 	{
 	public:
 
-		using vec_type = typename type_box_base<DIMENSION, T>::vec_type;
-		using rot_type = typename type_box_base<DIMENSION, T>::rot_type;
+		using geometry = type_geometric<DIMENSION, T>;
+		using vec_type = typename geometry::vec_type;
+		using rot_type = typename geometry::rot_type;
 
 		/** constructor (empty box) */
 		type_obox() = default;
@@ -253,7 +256,8 @@ namespace chaos
 	{
 	public:
 
-		using vec_type = typename type_geometric<DIMENSION, T>::vec_type;
+		using geometry = type_geometric<DIMENSION, T>;
+		using vec_type = typename geometry::vec_type;
 
 		/** constructor (empty box) */
 		type_aabox() = default;
@@ -288,8 +292,9 @@ namespace chaos
 	{
 	public:
 
-		using vec_type = typename type_geometric<DIMENSION, T>::vec_type;
-		using type = typename type_geometric<DIMENSION, T>::type;
+		using geometry = type_geometric<DIMENSION, T>;
+		using vec_type = typename geometry::vec_type;
+		using type = typename geometry::type;
 
 		/** constructor (empty circle) */
 		type_sphere() = default;
@@ -315,7 +320,8 @@ namespace chaos
 	{
 	public:
 
-		using vec_type = typename type_geometric<DIMENSION, T>::vec_type;
+		using geometry = type_geometric<DIMENSION, T>;
+		using vec_type = typename geometry::vec_type;
 
 		/** default constructor */
 		type_triangle() = default;
@@ -357,7 +363,8 @@ namespace chaos
 	{
 	public:
 
-		using vec_type = typename type_geometric<DIMENSION, T>::vec_type;
+		using geometry = type_geometric<DIMENSION, T>;
+		using vec_type = typename geometry::vec_type;
 
 		/** default constructor */
 		type_ray() = default;
@@ -387,7 +394,8 @@ namespace chaos
 
 		static constexpr size_t plane_count = 4;
 
-		using plane_type = chaos::type_geometric<2, T>::plane_type;
+		using geometry = type_geometric<2, T>;
+		using plane_type = typename geometry::plane_type;
 
 		/** number of planes in the box */
 		size_t size() const
@@ -478,7 +486,8 @@ namespace chaos
 
 		static constexpr size_t plane_count = 6;
 
-		using plane_type = chaos::type_geometric<3, T>::plane_type;
+		using geometry = type_geometric<2, T>;
+		using plane_type = typename geometry::plane_type;
 
 		/** number of planes in the box */
 		size_t size() const

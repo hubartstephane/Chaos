@@ -148,8 +148,9 @@ namespace chaos
 	{
 	public:
 
+		using geometry = type_geometric<DIMENSION, T>;
 		/** the type for box */
-		using box_type = type_geometric<DIMENSION, T>::box_type;
+		using box_type = typename geometry::box_type;
 		/** the type for indexation vector */
 		using ivec_type = glm::vec<DIMENSION, int>;
 
@@ -328,12 +329,13 @@ namespace chaos
 
 	public:
 
+		using geometry = type_geometric<DIMENSION, T>;
 		/** the number of children this node has */
 		static constexpr int children_count = details::static_pow(3, DIMENSION);
 		/** the type for vector */
 		using ivec_type = glm::vec<DIMENSION, int>;
 		/** the type for box */
-		using box_type = type_geometric<DIMENSION, T>::box_type;
+		using box_type = typename geometry::box_type;
 		/** the type for NodeInfo */
 		using node_info_type = Tree27NodeInfo<DIMENSION, T>;
 
@@ -553,10 +555,12 @@ namespace chaos
 
 		/** the number of children this node has */
 		static constexpr int children_count = details::static_pow(3, DIMENSION);
+
+		using geometry = type_geometric<DIMENSION, T>;
 		/** the type for indexation vector */
 		using ivec_type = glm::vec<DIMENSION, int>;
 		/** the type for box */
-		using box_type = type_geometric<DIMENSION, T>::box_type;
+		using box_type = typename geometry::box_type;
 		/** the type for NodeInfo */
 		using node_info_type = Tree27NodeInfo<DIMENSION, T>;
 		/** the type for nodes */

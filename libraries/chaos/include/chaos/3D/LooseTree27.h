@@ -123,9 +123,13 @@ namespace chaos
 			return src * static_pow(src, exponent - 1);
 		}
 		/** compute log 3 */
+		CHAOS_API double log3(double src);
+		/** compute log 3 */
 		CHAOS_API float log3(float src);
 		/** compute log 3 */
 		CHAOS_API int log3i(int src);
+		/** compute pow 3 */
+		CHAOS_API double pow3(double src);
 		/** compute pow 3 */
 		CHAOS_API float pow3(float src);
 		/** compute pow 3 */
@@ -139,17 +143,17 @@ namespace chaos
 		};
 	};
 
-	template<int dimension>
-	class Tree27NodeInfo : public type_geometric<float, dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
+	class Tree27NodeInfo : public type_geometric<T, dimension>
 	{
 	public:
 
 		/** the dimension */
 		static constexpr int dimension = dimension;
-		/** the type for vector */
-		using ivec_type = glm::vec<dimension, int>;
 		/** the type for box */
-		using box_type = type_geometric<float, dimension>::box_type;
+		using box_type = type_geometric<T, dimension>::box_type;
+		/** the type for indexation vector */
+		using ivec_type = glm::vec<dimension, int>;
 
 		/** gets info for one of the children */
 		Tree27NodeInfo GetChildNodeInfo(ivec_type const & child_position) const
@@ -168,11 +172,11 @@ namespace chaos
 		{
 			box_type result;
 
-			float width = details::pow3(float(level));
+			T width = details::pow3(T(level));
 			for (int i = 0; i < dimension; ++i)
 			{
-				result.half_size[i] = width * 0.5f;
-				result.position[i] = (2.0f / 3.0f) * float(position[i]) * width;
+				result.half_size[i] = width * T(0.5);
+				result.position[i] = T(2.0 / 3.0) * T(position[i]) * width;
 			}
 			return result;
 		}
@@ -195,7 +199,7 @@ namespace chaos
 		}
 
 		/** gets the index in children corresponding to this info (-1 the node is not a descendant) */
-		int GetDescendantIndex(Tree27NodeInfo<dimension> const& info) const
+		int GetDescendantIndex(Tree27NodeInfo<T, dimension> const& info) const
 		{
 			// check for level
 			if (info.level >= level)
@@ -207,7 +211,7 @@ namespace chaos
 			if (glm::any(glm::lessThan(info.position, descendant_range.first)))
 				return -1;
 			// compute the central child range for info
-			Tree27NodeInfo<dimension> central_child_node_info = GetChildNodeInfo(ivec_type(0));
+			Tree27NodeInfo<T, dimension> central_child_node_info = GetChildNodeInfo(ivec_type(0));
 			auto central_child_range = central_child_node_info.GetDescendantRange(central_child_node_info.level - info.level);
 
 			// compute index
@@ -236,21 +240,21 @@ namespace chaos
 		ivec_type position = ivec_type(0);
 	};
 
-	template<int dimension>
-	bool operator == (Tree27NodeInfo<dimension> const& src1, Tree27NodeInfo<dimension> const& src2)
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
+	bool operator == (Tree27NodeInfo<T, dimension> const& src1, Tree27NodeInfo<T, dimension> const& src2)
 	{
 		return (src1.level == src2.level) && (src1.position == src2.position);
 	}
 
-	template<int dimension>
-	Tree27NodeInfo<dimension> ComputeTreeNodeInfo(type_box<float, dimension> const& box)
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
+	Tree27NodeInfo<T, dimension> ComputeTreeNodeInfo(type_box<T, dimension> const& box)
 	{
 		assert(!IsGeometryEmpty(box));
 
-		Tree27NodeInfo<dimension> result;
+		Tree27NodeInfo<T, dimension> result;
 
 		// get size to take into account
-		float box_size = 2.0f * GLMTools::GetMaxComponent(box.half_size);
+		T box_size = T(2.0) * GLMTools::GetMaxComponent(box.half_size);
 
 		// compute level:
 
@@ -260,7 +264,7 @@ namespace chaos
 		//
 		// L >= ceilf(log3(size) + 1)
 
-		result.level = int(std::ceil(details::log3(box_size) + 1.0f));
+		result.level = int(std::ceil(details::log3(box_size) + T(1.0)));
 
 		// compute node position:
 
@@ -274,21 +278,21 @@ namespace chaos
 		// X = floor[ -----------------------------------]
 		//                       (2/3).width(L)
 
-		float widthL = details::pow3(float(result.level));
-		float denum = (2.0f / 3.0f) * widthL;
+		T widthL = details::pow3(T(result.level));
+		T denum = T(2.0 / 3.0) * widthL;
 		for (int i = 0; i < dimension; ++i)
 		{
-			float num = (box.position[i] - box.half_size[i]) + 0.5f * widthL;
+			T num = (box.position[i] - box.half_size[i]) + T(0.5) * widthL;
 			result.position[i] = int(std::floor(num / denum));
 		}
 
 		return result;
 	}
 
-	template<int dimension>
-	Tree27NodeInfo<dimension> ComputeCommonParent(Tree27NodeInfo<dimension> info1, Tree27NodeInfo<dimension> info2)
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension)
+	Tree27NodeInfo<T, dimension> ComputeCommonParent(Tree27NodeInfo<T, dimension> info1, Tree27NodeInfo<T, dimension> info2)
 	{
-		auto GetParentNodePosition = [](Tree27NodeInfo<dimension>::ivec_type v)
+		auto GetParentNodePosition = [](Tree27NodeInfo<T, dimension>::ivec_type v)
 		{
 			for (int i = 0; i < dimension; ++i)
 				v[i] = (v[i] > 0) ? (v[i] + 1) / 3 : (v[i] - 1) / 3;
@@ -318,10 +322,10 @@ namespace chaos
 		return info1;
 	}
 
-	template<int dimension, typename PARENT>
-	class Tree27Node : public PARENT, public type_geometric<float, dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension, typename PARENT)
+	class Tree27Node : public PARENT, public type_geometric<T, dimension>
 	{
-		template<int dimension, typename PARENT, template<typename> class NODE_ALLOCATOR>
+		CHAOS_GEOMETRY_TEMPLATE(T, dimension, typename PARENT, template<typename> class NODE_ALLOCATOR)
 		friend class LooseTree27;
 
 	public:
@@ -333,9 +337,9 @@ namespace chaos
 		/** the type for vector */
 		using ivec_type = glm::vec<dimension, int>;
 		/** the type for box */
-		using box_type = type_geometric<float, dimension>::box_type;
+		using box_type = type_geometric<T, dimension>::box_type;
 		/** the type for NodeInfo */
-		using node_info_type = Tree27NodeInfo<dimension>;
+		using node_info_type = Tree27NodeInfo<T, dimension>;
 
 		/** constructor */
 		Tree27Node()
@@ -535,7 +539,7 @@ namespace chaos
 	protected:
 
 		/** the node information */
-		Tree27NodeInfo<dimension> info;
+		Tree27NodeInfo<T, dimension> info;
 		/** the parent node */
 		Tree27Node* parent = nullptr;
 		/** the children */
@@ -546,8 +550,8 @@ namespace chaos
 		int index_in_parent = 0;
 	};
 
-	template<int dimension, typename NODE_PARENT, template<typename> class NODE_ALLOCATOR_TEMPLATE = StandardAllocator>
-	class LooseTree27 : public type_geometric<float, dimension>
+	CHAOS_GEOMETRY_TEMPLATE(T, dimension, typename NODE_PARENT, template<typename> class NODE_ALLOCATOR_TEMPLATE = StandardAllocator)
+	class LooseTree27 : public type_geometric<T, dimension>
 	{
 	public:
 
@@ -555,14 +559,14 @@ namespace chaos
 		static constexpr int dimension = dimension;
 		/** the number of children this node has */
 		static constexpr int children_count = details::static_pow(3, dimension);
-		/** the type for vector */
+		/** the type for indexation vector */
 		using ivec_type = glm::vec<dimension, int>;
 		/** the type for box */
-		using box_type = type_geometric<float, dimension>::box_type;
+		using box_type = type_geometric<T, dimension>::box_type;
 		/** the type for NodeInfo */
-		using node_info_type = Tree27NodeInfo<dimension>;
+		using node_info_type = Tree27NodeInfo<T, dimension>;
 		/** the type for nodes */
-		using node_type = Tree27Node<dimension, NODE_PARENT>;
+		using node_type = Tree27Node<T, dimension, NODE_PARENT>;
 		/** the type for allocator */
 		using node_allocator_type = NODE_ALLOCATOR_TEMPLATE<node_type>;
 
@@ -583,7 +587,7 @@ namespace chaos
 		}
 
 		/** add a node for a given object */
-		node_type* GetOrCreateNode(type_box<float, dimension> const& box)
+		node_type* GetOrCreateNode(type_box<T, dimension> const& box)
 		{
 			node_info_type node_info = ComputeTreeNodeInfo(box);
 			return DoGetOrCreateNode(node_info, root, nullptr, 0);

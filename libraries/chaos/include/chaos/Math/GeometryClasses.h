@@ -1,6 +1,6 @@
 namespace chaos
 {
-	#define CHAOS_GEOMETRY_TEMPLATE(T , dimension) template<std::floating_point T, int dimension> requires (dimension == 2 || dimension == 3)
+	#define CHAOS_GEOMETRY_TEMPLATE(T , dimension, ...) template<std::floating_point T, int dimension, __VA_ARGS__> requires (dimension == 2 || dimension == 3)
 
 #ifdef CHAOS_FORWARD_DECLARATION
 

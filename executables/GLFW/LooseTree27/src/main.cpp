@@ -9,7 +9,7 @@ static glm::vec4 const white = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 class Tree27NodeBase;
 
-using loose_tree_type = chaos::LooseTree27<3, Tree27NodeBase, chaos::ObjectPool>;
+using loose_tree_type = chaos::LooseTree27<float, 3, Tree27NodeBase, chaos::ObjectPool>;
 using loose_tree_node_type = loose_tree_type::node_type;
 
 // =======================================================================
@@ -151,17 +151,17 @@ public:
 //
 
 
-template<int dimension>
+CHAOS_GEOMETRY_TEMPLATE(T, dimension)
 class Tree27PlaneClipVisitor
 {
 	/** the dimension */
 	static constexpr int dimension = dimension;
 	/** the type for vector */
-	using vec_type = chaos::type_geometric<float, dimension>::vec_type;
+	using vec_type = chaos::type_geometric<T, dimension>::vec_type;
 	/** the type for plane */
-	using plane_type = typename chaos::type_geometric<float, dimension>::plane_type;
+	using plane_type = typename chaos::type_geometric<T, dimension>::plane_type;
 	/** the type for box */
-	using box_type = chaos::type_geometric<float, dimension>::box_type;
+	using box_type = chaos::type_geometric<T, dimension>::box_type;
 	
 public:
 
@@ -671,7 +671,7 @@ protected:
 			chaos::box3 b(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(SIZE, SIZE, SIZE));
 			chaos::box_plane3 planes = GetBoxPlanes(b);
 
-			Tree27PlaneClipVisitor<3> visitor(&planes[0], planes.size());
+			Tree27PlaneClipVisitor<float, 3> visitor(&planes[0], planes.size());
 
 			visitor.Visit(object_tree, [&](loose_tree_node_type const* node, glm::vec4 const* planes, size_t plane_count, uint32_t plane_bitfield)
 			{

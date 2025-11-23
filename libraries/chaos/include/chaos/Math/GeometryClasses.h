@@ -1,6 +1,6 @@
 namespace chaos
 {
-	#define CHAOS_GEOMETRY_TEMPLATE(dimension, T, ...) template<int dimension, std::floating_point T, __VA_ARGS__> requires (dimension == 2 || dimension == 3)
+	#define CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T, ...) template<int DIMENSION, std::floating_point T, __VA_ARGS__> requires (DIMENSION == 2 || DIMENSION == 3)
 
 #ifdef CHAOS_FORWARD_DECLARATION
 
@@ -9,16 +9,16 @@ namespace chaos
 	// ==============================================================================================
 
 	// the base template (two arguments, type and dimension)
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T) class type_geometric;
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T) class type_ray;
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T) class type_box_base;
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T) class type_box;
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T) class type_obox;
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T) class type_sphere;
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T) class type_triangle;
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T) class type_rotator;   // this is not an object that describes a rotation, but a meta object that gives the rotation in a meta function
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T) class type_aabox;     // aligned axis box
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T) class type_box_plane; // a set of 4 or 6 clip planes
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class type_geometric;
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class type_ray;
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class type_box_base;
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class type_box;
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class type_obox;
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class type_sphere;
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class type_triangle;
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class type_rotator;   // this is not an object that describes a rotation, but a meta object that gives the rotation in a meta function
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class type_aabox;     // aligned axis box
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class type_box_plane; // a set of 4 or 6 clip planes
 
 	class zero_rotator;
 
@@ -75,7 +75,7 @@ namespace chaos
 
 
 	// base template
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	class type_rotator : public boost::mpl::identity<void> {};
 	// specialization
 	template<>
@@ -164,12 +164,12 @@ namespace chaos
 	// type_box_base class
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	class type_box_base : public type_geometric<dimension, T>
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	class type_box_base : public type_geometric<DIMENSION, T>
 	{
 	public:
 
-		using vec_type = typename type_geometric<dimension, T>::vec_type;
+		using vec_type = typename type_geometric<DIMENSION, T>::vec_type;
 
 		/** constructor (empty box) */
 		type_box_base() = default;
@@ -190,21 +190,21 @@ namespace chaos
 	// box class
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	class type_box : public type_box_base<dimension, T>
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	class type_box : public type_box_base<DIMENSION, T>
 	{
 	public:
 
-		using vec_type = typename type_box_base<dimension, T>::vec_type;
+		using vec_type = typename type_box_base<DIMENSION, T>::vec_type;
 
 		/** constructor (empty box) */
 		type_box() = default;
 		/** copy constructor */
 		type_box(type_box const & src) = default;
 		/** constructor from base (usefull for obox conversion) */
-		type_box(type_box_base<dimension, T> const & src) : type_box_base<dimension, T>(src.position, src.half_size) {}
+		type_box(type_box_base<DIMENSION, T> const & src) : type_box_base<DIMENSION, T>(src.position, src.half_size) {}
 		/** other constructor */
-		type_box(vec_type const & in_position, vec_type const & in_half_size) : type_box_base<dimension, T>(in_position, in_half_size) {}
+		type_box(vec_type const & in_position, vec_type const & in_half_size) : type_box_base<DIMENSION, T>(in_position, in_half_size) {}
 		/** construct a box from 2 points */
 		type_box(std::pair<vec_type, vec_type> const & pts)
 		{
@@ -221,22 +221,22 @@ namespace chaos
 	// ==============================================================================================
 
 	/** an oriented bounding box */
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	class type_obox : public type_box_base<dimension, T>
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	class type_obox : public type_box_base<DIMENSION, T>
 	{
 	public:
 
-		using vec_type = typename type_box_base<dimension, T>::vec_type;
-		using rot_type = typename type_box_base<dimension, T>::rot_type;
+		using vec_type = typename type_box_base<DIMENSION, T>::vec_type;
+		using rot_type = typename type_box_base<DIMENSION, T>::rot_type;
 
 		/** constructor (empty box) */
 		type_obox() = default;
 		/** copy constructor */
 		type_obox(type_obox const& src) = default;
 		/** constructor from base (usefull for box conversion) */
-		type_obox(type_box_base<dimension, T> const& src) : type_box_base<dimension, T>(src.position, src.half_size){}
+		type_obox(type_box_base<DIMENSION, T> const& src) : type_box_base<DIMENSION, T>(src.position, src.half_size){}
 		/** other constructor */
-		type_obox(vec_type const & in_position, vec_type const & in_half_size, rot_type const & in_rotator) : type_box_base<dimension, T>(in_position, in_half_size), rotator(in_rotator) {}
+		type_obox(vec_type const & in_position, vec_type const & in_half_size, rot_type const & in_rotator) : type_box_base<DIMENSION, T>(in_position, in_half_size), rotator(in_rotator) {}
 
 	public:
 
@@ -248,12 +248,12 @@ namespace chaos
 	// type_aabox class
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	class type_aabox : public type_geometric<dimension, T>
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	class type_aabox : public type_geometric<DIMENSION, T>
 	{
 	public:
 
-		using vec_type = typename type_geometric<dimension, T>::vec_type;
+		using vec_type = typename type_geometric<DIMENSION, T>::vec_type;
 
 		/** constructor (empty box) */
 		type_aabox() = default;
@@ -283,13 +283,13 @@ namespace chaos
 	// sphere/circle classes
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	class type_sphere : public type_geometric<dimension, T>
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	class type_sphere : public type_geometric<DIMENSION, T>
 	{
 	public:
 
-		using vec_type = typename type_geometric<dimension, T>::vec_type;
-		using type = typename type_geometric<dimension, T>::type;
+		using vec_type = typename type_geometric<DIMENSION, T>::vec_type;
+		using type = typename type_geometric<DIMENSION, T>::type;
 
 		/** constructor (empty circle) */
 		type_sphere() = default;
@@ -310,12 +310,12 @@ namespace chaos
 	// triangle classes
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	class type_triangle : public type_geometric<dimension, T>
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	class type_triangle : public type_geometric<DIMENSION, T>
 	{
 	public:
 
-		using vec_type = typename type_geometric<dimension, T>::vec_type;
+		using vec_type = typename type_geometric<DIMENSION, T>::vec_type;
 
 		/** default constructor */
 		type_triangle() = default;
@@ -352,12 +352,12 @@ namespace chaos
 	// ray classes
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	class type_ray : public type_geometric<dimension, T>
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	class type_ray : public type_geometric<DIMENSION, T>
 	{
 	public:
 
-		using vec_type = typename type_geometric<dimension, T>::vec_type;
+		using vec_type = typename type_geometric<DIMENSION, T>::vec_type;
 
 		/** default constructor */
 		type_ray() = default;

@@ -14,44 +14,43 @@ public:
 
 	bool Initialize();
 
-	template<typename T, int dimension>
-	chaos::type_box<dimension, T> SlightIncreaseSize(chaos::type_box<dimension, T> src) const
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	chaos::type_box<DIMENSION, T> SlightIncreaseSize(chaos::type_box<DIMENSION, T> src) const
 	{
 		src.half_size *= static_cast<T>(1.01);
 		return src;
 	}
 
-	template<typename T, int dimension>
-	chaos::type_obox<dimension, T> SlightIncreaseSize(chaos::type_obox<dimension, T> src) const
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	chaos::type_obox<DIMENSION, T> SlightIncreaseSize(chaos::type_obox<DIMENSION, T> src) const
 	{
 		src.half_size *= static_cast<T>(1.01);
 		return src;
 	}
 
-	template<typename T, int dimension>
-	chaos::type_sphere<dimension, T> SlightIncreaseSize(chaos::type_sphere<dimension, T> src) const
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	chaos::type_sphere<DIMENSION, T> SlightIncreaseSize(chaos::type_sphere<DIMENSION, T> src) const
 	{
 		src.radius *= static_cast<T>(1.01);
 		return src;
 	}
 
-
-	template<typename T, int dimension>
-	chaos::type_box<dimension, T> SlightDecreaseSize(chaos::type_box<dimension, T> src) const
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	chaos::type_box<DIMENSION, T> SlightDecreaseSize(chaos::type_box<DIMENSION, T> src) const
 	{
 		src.half_size *= static_cast<T>(0.90);
 		return src;
 	}
 
-	template<typename T, int dimension>
-	chaos::type_obox<dimension, T> SlightDecreaseSize(chaos::type_obox<dimension, T> src) const
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	chaos::type_obox<DIMENSION, T> SlightDecreaseSize(chaos::type_obox<DIMENSION, T> src) const
 	{
 		src.half_size *= static_cast<T>(0.90);
 		return src;
 	}
 
-	template<typename T, int dimension>
-	chaos::type_sphere<dimension, T> SlightDecreaseSize(chaos::type_sphere<dimension, T> src) const
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	chaos::type_sphere<DIMENSION, T> SlightDecreaseSize(chaos::type_sphere<DIMENSION, T> src) const
 	{
 		src.radius *= static_cast<T>(0.90);
 		return src;

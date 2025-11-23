@@ -4,10 +4,10 @@ namespace chaos
 
 	enum class ProjectionType;
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	class projection_volume;
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	class perspective;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -90,8 +90,8 @@ namespace chaos
 	 * Some functions
 	 */
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	projection_volume<dimension, T> GetProjectionVolume(perspective<dimension, T> const& persp)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	projection_volume<DIMENSION, T> GetProjectionVolume(perspective<DIMENSION, T> const& persp)
 	{
 		//          +
 		//          | \ 
@@ -105,11 +105,11 @@ namespace chaos
 		//          | /
         //          +			
 
-		projection_volume<dimension, T> result;
+		projection_volume<DIMENSION, T> result;
 
 		T fov_radian = persp.fov * T(M_PI) / T(180.0);
 
-		if constexpr (dimension == 2)
+		if constexpr (DIMENSION == 2)
 		{
 			T distance = T(0.5) * persp.width / std::tan(fov_radian * T(0.5)); // distance at which field of view is statisfied
 			T ratio = T(0.5) * (persp.front / distance);
@@ -117,7 +117,7 @@ namespace chaos
 			result.left = -persp.width * ratio;
 			result.right = -result.left;
 		} 
-		else if constexpr (dimension == 3)
+		else if constexpr (DIMENSION == 3)
 		{
 			T distance = T(0.5) * persp.height / std::tan(fov_radian * T(0.5)); // distance at which field of view is statisfied
 			T ratio = T(0.5) * (persp.front / distance);
@@ -155,22 +155,22 @@ namespace chaos
 		}
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	type_box_plane<dimension, T> GetProjectionPlanes(perspective<dimension, T> const& persp)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	type_box_plane<DIMENSION, T> GetProjectionPlanes(perspective<DIMENSION, T> const& persp)
 	{
-		type_box_plane<dimension, T> result;
+		type_box_plane<DIMENSION, T> result;
 
 		return result;
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	type_box_plane<dimension, T> GetProjectionPlanes(ProjectionType type, projection_volume<dimension, T> const& vol)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	type_box_plane<DIMENSION, T> GetProjectionPlanes(ProjectionType type, projection_volume<DIMENSION, T> const& vol)
 	{
-		using geometry   = type_geometric<dimension, T>;
+		using geometry   = type_geometric<DIMENSION, T>;
 		using vec_type   = typename geometry::vec_type;
 		using plane_type = typename geometry::plane_type;
 
-		type_box_plane<dimension, T> result;
+		type_box_plane<DIMENSION, T> result;
 
 		switch (type)
 		{
@@ -184,14 +184,14 @@ namespace chaos
 		}
 		case ProjectionType::ORTHOGRAPHIC:
 		{
-			if constexpr (dimension == 2)
+			if constexpr (DIMENSION == 2)
 			{
 				result.neg_x = { -T(1),  T(0), -vol.left };
 				result.pos_x = { +T(1),  T(0), -vol.right };
 				result.neg_y = {  T(0), -T(1), -vol.bottom };
 				result.pos_y = {  T(0), +T(1), -vol.top };
 			}
-			else if constexpr (dimension == 3)
+			else if constexpr (DIMENSION == 3)
 			{
 				result.neg_x = { -T(1),  T(0), T(0), -vol.left };
 				result.pos_x = { +T(1),  T(0), T(0), -vol.right };
@@ -204,12 +204,12 @@ namespace chaos
 			assert(0);
 		}
 
-		if constexpr (dimension == 2)
+		if constexpr (DIMENSION == 2)
 		{
 			result.front = { T(0), -T(1), -vol.front};
 			result.back  = { T(0), +T(1), -vol.back };
 		}
-		else if constexpr (dimension == 3)
+		else if constexpr (DIMENSION == 3)
 		{
 			result.front = { T(0), T(0), -T(1), -vol.front};
 			result.back  = { T(0), T(0), +T(1), -vol.back };

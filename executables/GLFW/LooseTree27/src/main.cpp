@@ -122,7 +122,7 @@ public:
 // =======================================================================
 
 //template<typename T, int dimension, typename NODE_PARENT, template<typename> class NODE_ALLOCATOR_TEMPLATE>
-//concept Tree27Type = std::is_base_of_v<chaos::LooseTree27<dimension, NODE_PARENT, NODE_ALLOCATOR_TEMPLATE>, std::remove_cvref_t<T>>;
+//concept Tree27Type = std::is_base_of_v<chaos::LooseTree27<DIMENSION, NODE_PARENT, NODE_ALLOCATOR_TEMPLATE>, std::remove_cvref_t<T>>;
 
 
 
@@ -151,17 +151,17 @@ public:
 //
 
 
-CHAOS_GEOMETRY_TEMPLATE(dimension, T)
+CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 class Tree27PlaneClipVisitor
 {
 	/** the dimension */
-	static constexpr int dimension = dimension;
+	static constexpr int dimension = DIMENSION;
 	/** the type for vector */
-	using vec_type = chaos::type_geometric<dimension, T>::vec_type;
+	using vec_type = chaos::type_geometric<DIMENSION, T>::vec_type;
 	/** the type for plane */
-	using plane_type = typename chaos::type_geometric<dimension, T>::plane_type;
+	using plane_type = typename chaos::type_geometric<DIMENSION, T>::plane_type;
 	/** the type for box */
-	using box_type = chaos::type_geometric<dimension, T>::box_type;
+	using box_type = chaos::type_geometric<DIMENSION, T>::box_type;
 	
 public:
 

@@ -121,10 +121,10 @@ namespace chaos
 
 
 	/** returns true whether the box is empty */
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool IsGeometryEmpty(type_box_base<dimension, T> const& b)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool IsGeometryEmpty(type_box_base<DIMENSION, T> const& b)
 	{
-		return glm::any(glm::lessThan(b.half_size, type_box_base<dimension, T>::vec_type(0)));
+		return glm::any(glm::lessThan(b.half_size, type_box_base<DIMENSION, T>::vec_type(0)));
 	}
 
 	/** returns the perimeter of the box */
@@ -249,44 +249,44 @@ namespace chaos
 	// ==============================================================================================
 
 	/** equality function for box */
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool operator == (type_box<dimension, T> const& b1, type_box<dimension, T> const& b2)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool operator == (type_box<DIMENSION, T> const& b1, type_box<DIMENSION, T> const& b2)
 	{
 		return (b1.position == b1.position) && (b1.half_size == b2.half_size);
 	}
 
 	/** intersection of 2 boxes */
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	type_box<dimension, T> operator & (type_box<dimension, T> const& b1, type_box<dimension, T> const& b2)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	type_box<DIMENSION, T> operator & (type_box<DIMENSION, T> const& b1, type_box<DIMENSION, T> const& b2)
 	{
-		using vec_type = typename type_box<dimension, T>::vec_type;
+		using vec_type = typename type_box<DIMENSION, T>::vec_type;
 
 		if (IsGeometryEmpty(b1) || IsGeometryEmpty(b2)) // any of the 2 is empty, intersection is empty
-			return type_box<dimension, T>();
+			return type_box<DIMENSION, T>();
 
 		vec_type A1 = b1.position + b1.half_size;
 		vec_type B2 = b2.position - b2.half_size;
 
 		if (glm::any(glm::lessThanEqual(A1, B2)))
-			return type_box<dimension, T>();
+			return type_box<DIMENSION, T>();
 
 		vec_type B1 = b1.position - b1.half_size;
 		vec_type A2 = b2.position + b2.half_size;
 
 		if (glm::any(glm::lessThanEqual(A2, B1)))
-			return type_box<dimension, T>();
+			return type_box<DIMENSION, T>();
 
 		vec_type A = glm::min(A1, A2);
 		vec_type B = glm::max(B1, B2);
 
-		return type_box<dimension, T>(std::make_pair(A, B));
+		return type_box<DIMENSION, T>(std::make_pair(A, B));
 	}
 
 	/** union of 2 boxes */
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	type_box<dimension, T> operator | (type_box<dimension, T> const& b1, type_box<dimension, T> const& b2)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	type_box<DIMENSION, T> operator | (type_box<DIMENSION, T> const& b1, type_box<DIMENSION, T> const& b2)
 	{
-		using vec_type = typename type_box<dimension, T>::vec_type;
+		using vec_type = typename type_box<DIMENSION, T>::vec_type;
 
 		if (IsGeometryEmpty(b1)) // if one is empty, returns other
 			return b2;
@@ -302,7 +302,7 @@ namespace chaos
 		vec_type A = glm::max(A1, A2);
 		vec_type B = glm::min(B1, B2);
 
-		return type_box<dimension, T>(std::make_pair(A, B));
+		return type_box<DIMENSION, T>(std::make_pair(A, B));
 	}
 
 	/** returns one of the sub-boxes obtained by splitting the src */
@@ -342,8 +342,8 @@ namespace chaos
 	}
 
 	/** get the corners of the box */
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	auto GetBoxCorners(type_box<dimension, T> const& b) // returns a std::pair<vec_type, vec_type>
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	auto GetBoxCorners(type_box<DIMENSION, T> const& b) // returns a std::pair<vec_type, vec_type>
 	{
 		if (!IsGeometryEmpty(b))
 			return std::make_pair(b.position - b.half_size, b.position + b.half_size);
@@ -351,10 +351,10 @@ namespace chaos
 	}
 
 	/** increase the box size with a single vertex */
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	void ExtendBox(type_box<dimension, T>& b, typename type_box<dimension, T>::vec_type const& v)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	void ExtendBox(type_box<DIMENSION, T>& b, typename type_box<DIMENSION, T>::vec_type const& v)
 	{
-		using vec_type = typename type_box<dimension, T>::vec_type;
+		using vec_type = typename type_box<DIMENSION, T>::vec_type;
 
 		if (IsGeometryEmpty(b))
 		{
@@ -366,7 +366,7 @@ namespace chaos
 			std::pair<vec_type, vec_type> corners = GetBoxCorners(b);
 			corners.first = glm::min(corners.first, v);
 			corners.second = glm::max(corners.second, v);
-			b = type_box<dimension, T>(corners);
+			b = type_box<DIMENSION, T>(corners);
 		}
 	}
 
@@ -460,8 +460,8 @@ namespace chaos
 	// ==============================================================================================
 
 	/** equality function for obox */
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool operator == (type_obox<dimension, T> const& b1, type_obox<dimension, T> const& b2)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool operator == (type_obox<DIMENSION, T> const& b1, type_obox<DIMENSION, T> const& b2)
 	{
 		return (b1.position == b1.position) && (b1.half_size == b2.half_size) && (b1.rotator == b2.rotator);
 	}
@@ -555,17 +555,17 @@ namespace chaos
 	// ==============================================================================================
 
 	/** equality function for obox */
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool operator == (type_aabox<dimension, T> const& b1, type_aabox<dimension, T> const& b2)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool operator == (type_aabox<DIMENSION, T> const& b1, type_aabox<DIMENSION, T> const& b2)
 	{
 		return (b1.position == b1.position) && (b1.size == b2.size);
 	}
 
 	/** returns true whether the box is empty */
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool IsGeometryEmpty(type_aabox<dimension, T> const& b)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool IsGeometryEmpty(type_aabox<DIMENSION, T> const& b)
 	{
-		return glm::any(glm::lessThan(b.size, type_aabox<dimension, T>::vec_type(0)));
+		return glm::any(glm::lessThan(b.size, type_aabox<DIMENSION, T>::vec_type(0)));
 	}
 
 	/** returns the perimeter of the box */
@@ -661,8 +661,8 @@ namespace chaos
 	// ==============================================================================================
 
 	/** equality test function for triangles */
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool operator == (type_triangle<dimension, T> const& t1, type_triangle<dimension, T> const& t2)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool operator == (type_triangle<DIMENSION, T> const& t1, type_triangle<DIMENSION, T> const& t2)
 	{
 		if (t1.a == t2.a)
 		{
@@ -689,8 +689,8 @@ namespace chaos
 	}
 
 	/** returns true whether the triangle is empty */
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool IsGeometryEmpty(type_triangle<dimension, T> const& t)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool IsGeometryEmpty(type_triangle<DIMENSION, T> const& t)
 	{
 		if (t.a == t.b || t.a == t.c || t.b == t.c)
 			return true;
@@ -698,10 +698,10 @@ namespace chaos
 	}
 
 	/** get the reversed triangle */
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	type_triangle<dimension, T> GetInvertedTriangle(type_triangle<dimension, T> const& t)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	type_triangle<DIMENSION, T> GetInvertedTriangle(type_triangle<DIMENSION, T> const& t)
 	{
-		return type_triangle<dimension, T>(t.a, t.c, t.b);
+		return type_triangle<DIMENSION, T>(t.a, t.c, t.b);
 	}
 
 	// ==============================================================================================
@@ -709,8 +709,8 @@ namespace chaos
 	// ==============================================================================================
 
 	/** equality function for ray */
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool operator == (type_ray<dimension, T> const& r1, type_ray<dimension, T> const& r2)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool operator == (type_ray<DIMENSION, T> const& r1, type_ray<DIMENSION, T> const& r2)
 	{
 		return (r1.position == r2.position) && (r1.direction == r2.direction);
 	}
@@ -720,15 +720,15 @@ namespace chaos
 	// ==============================================================================================
 
 	/** returns true whether the circle is empty */
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool IsGeometryEmpty(type_sphere<dimension, T> const& c)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool IsGeometryEmpty(type_sphere<DIMENSION, T> const& c)
 	{
 		return (c.radius < 0);
 	}
 
 	/** equality function for circle */
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool operator == (type_sphere<dimension, T> const& c1, type_sphere<dimension, T> const& c2)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool operator == (type_sphere<DIMENSION, T> const& c1, type_sphere<DIMENSION, T> const& c2)
 	{
 		return (c1.position == c2.position) && (c1.radius == c2.radius);
 	}
@@ -800,21 +800,21 @@ namespace chaos
 	}
 
 	/** returns intersection of 2 spheres */
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	type_sphere<dimension, T> operator & (type_sphere<dimension, T> const& s1, type_sphere<dimension, T> const& s2) // intersection
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	type_sphere<DIMENSION, T> operator & (type_sphere<DIMENSION, T> const& s1, type_sphere<DIMENSION, T> const& s2) // intersection
 	{
-		using vec_type = typename type_sphere<dimension, T>::vec_type;
+		using vec_type = typename type_sphere<DIMENSION, T>::vec_type;
 
 		if (IsGeometryEmpty(s1) || IsGeometryEmpty(s2))
-			return type_sphere<dimension, T>();
+			return type_sphere<DIMENSION, T>();
 		if (s1.position == s2.position)
-			return type_sphere<dimension, T>(s1.position, glm::min(s1.radius, s2.radius));
+			return type_sphere<DIMENSION, T>(s1.position, glm::min(s1.radius, s2.radius));
 
 		vec_type delta_pos = s2.position - s1.position;   // vector that go from center 1 to center 2
 		T        distance = glm::length(delta_pos);      // length of such a vector
 
 		if (distance >= s1.radius + s2.radius) // sphere too far => returns the empty sphere
-			return type_sphere<dimension, T>();
+			return type_sphere<DIMENSION, T>();
 
 		T t1 = s1.radius / distance;  // positive
 		T t2 = s2.radius / distance;  // positive
@@ -822,23 +822,23 @@ namespace chaos
 		T a = glm::max(-t1, static_cast<T>(1) - t2);
 		T b = glm::min(t1, static_cast<T>(1) + t2);
 
-		return type_sphere<dimension, T>(
+		return type_sphere<DIMENSION, T>(
 			s1.position + ((b + a) / static_cast<T>(2)) * delta_pos,
 			((b - a) / static_cast<T>(2)) * distance);
 	}
 
 	/** returns union of 2 spheres */
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	type_sphere<dimension, T> operator | (type_sphere<dimension, T> const& s1, type_sphere<dimension, T> const& s2) // union
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	type_sphere<DIMENSION, T> operator | (type_sphere<DIMENSION, T> const& s1, type_sphere<DIMENSION, T> const& s2) // union
 	{
-		using vec_type = typename type_sphere<dimension, T>::vec_type;
+		using vec_type = typename type_sphere<DIMENSION, T>::vec_type;
 
 		if (IsGeometryEmpty(s1))
 			return s2;
 		if (IsGeometryEmpty(s2))
 			return s1;
 		if (s1.position == s2.position)
-			return type_sphere<dimension, T>(s1.position, glm::max(s1.radius, s2.radius));
+			return type_sphere<DIMENSION, T>(s1.position, glm::max(s1.radius, s2.radius));
 
 		vec_type delta_pos = s2.position - s1.position;    // vector that go from center 1 to center 2
 		T        distance = glm::length(delta_pos);       // length of such a vector
@@ -849,7 +849,7 @@ namespace chaos
 		T a = glm::min(-t1, static_cast<T>(1) - t2);
 		T b = glm::max(t1, static_cast<T>(1) + t2);
 
-		return type_sphere<dimension, T>(
+		return type_sphere<DIMENSION, T>(
 			s1.position + ((b + a) / static_cast<T>(2)) * delta_pos,
 			((b - a) / static_cast<T>(2)) * distance);
 	}
@@ -858,8 +858,8 @@ namespace chaos
 	// JSON functions
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool DoSaveIntoJSON(nlohmann::json* json, type_box<dimension, T> const& src)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool DoSaveIntoJSON(nlohmann::json* json, type_box<DIMENSION, T> const& src)
 	{
 		if (!PrepareSaveObjectIntoJSON(json))
 			return false;
@@ -868,16 +868,16 @@ namespace chaos
 		return true;
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool DoLoadFromJSON(JSONReadConfiguration config, type_box<dimension, T>& dst)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool DoLoadFromJSON(JSONReadConfiguration config, type_box<DIMENSION, T>& dst)
 	{
 		JSONTools::GetAttribute(config, "position", dst.position);
 		JSONTools::GetAttribute(config, "half_size", dst.half_size);
 		return true;
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool DoSaveIntoJSON(nlohmann::json* json, type_obox<dimension, T> const& src)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool DoSaveIntoJSON(nlohmann::json* json, type_obox<DIMENSION, T> const& src)
 	{
 		if (!PrepareSaveObjectIntoJSON(json))
 			return false;
@@ -887,8 +887,8 @@ namespace chaos
 		return true;
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool DoLoadFromJSON(JSONReadConfiguration config, type_obox<dimension, T>& dst)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool DoLoadFromJSON(JSONReadConfiguration config, type_obox<DIMENSION, T>& dst)
 	{
 		JSONTools::GetAttribute(config, "position", dst.position);
 		JSONTools::GetAttribute(config, "half_size", dst.half_size);
@@ -896,8 +896,8 @@ namespace chaos
 		return true;
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool DoSaveIntoJSON(nlohmann::json* json, type_aabox<dimension, T> const& src)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool DoSaveIntoJSON(nlohmann::json* json, type_aabox<DIMENSION, T> const& src)
 	{
 		if (!PrepareSaveObjectIntoJSON(json))
 			return false;
@@ -906,16 +906,16 @@ namespace chaos
 		return true;
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool DoLoadFromJSON(JSONReadConfiguration config, type_aabox<dimension, T>& dst)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool DoLoadFromJSON(JSONReadConfiguration config, type_aabox<DIMENSION, T>& dst)
 	{
 		JSONTools::GetAttribute(config, "position", dst.position);
 		JSONTools::GetAttribute(config, "size", dst.size);
 		return true;
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool DoSaveIntoJSON(nlohmann::json* json, type_sphere<dimension, T> const& src)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool DoSaveIntoJSON(nlohmann::json* json, type_sphere<DIMENSION, T> const& src)
 	{
 		if (!PrepareSaveObjectIntoJSON(json))
 			return false;
@@ -924,16 +924,16 @@ namespace chaos
 		return true;
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool DoLoadFromJSON(JSONReadConfiguration config, type_sphere<dimension, T>& dst)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool DoLoadFromJSON(JSONReadConfiguration config, type_sphere<DIMENSION, T>& dst)
 	{
 		JSONTools::GetAttribute(config, "position", dst.position);
 		JSONTools::GetAttribute(config, "radius", dst.radius);
 		return true;
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool DoSaveIntoJSON(nlohmann::json* json, type_ray<dimension, T> const& src)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool DoSaveIntoJSON(nlohmann::json* json, type_ray<DIMENSION, T> const& src)
 	{
 		if (!PrepareSaveObjectIntoJSON(json))
 			return false;
@@ -942,8 +942,8 @@ namespace chaos
 		return true;
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool DoLoadFromJSON(JSONReadConfiguration config, type_ray<dimension, T>& dst)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool DoLoadFromJSON(JSONReadConfiguration config, type_ray<DIMENSION, T>& dst)
 	{
 		JSONTools::GetAttribute(config, "position", dst.position);
 		JSONTools::GetAttribute(config, "direction", dst.direction);

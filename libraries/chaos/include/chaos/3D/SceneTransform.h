@@ -2,7 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	class SceneTransform;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -53,10 +53,11 @@ namespace chaos
 	//  This is not possible due to non-uniform scale (see how scale values are spread in column for first matrix, but in row for second one)
 	//
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	class SceneTransform
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	class SceneTransform : public type_geometric<DIMENSION, T>
 	{
-		using geometry = type_geometric<dimension, T>;
+		using geometry = type_geometric<DIMENSION, T>;
+
 		using vec_type = typename geometry::vec_type;
 		using rot_type = typename geometry::rot_type;
 		using mat_type = typename geometry::mat_type;
@@ -68,16 +69,16 @@ namespace chaos
 		{
 			mat_type s, r, t;
 
-			if constexpr (dimension == 2)
+			if constexpr (DIMENSION == 2)
 				s = glm::scale(glm::tvec3<T>(scale, 1));
-			else if constexpr (dimension == 3)
+			else if constexpr (DIMENSION == 3)
 				s = glm::scale(scale);
 
 			r = GetRotatorMatrix(rotator);
 
-			if constexpr (dimension == 2)
+			if constexpr (DIMENSION == 2)
 				t = glm::translate(glm::tvec3<T>(position, 0));
-			else if constexpr (dimension == 3)
+			else if constexpr (DIMENSION == 3)
 				t = glm::translate(position);
 
 			return t * r * s;
@@ -87,16 +88,16 @@ namespace chaos
 		{
 			mat_type t, r, s;
 
-			if constexpr (dimension == 2)
+			if constexpr (DIMENSION == 2)
 				t = glm::translate(glm::tvec3<T>(-position, 0));
-			else if constexpr (dimension == 3)
+			else if constexpr (DIMENSION == 3)
 				t = glm::translate(-position);
 
 			r = GetRotatorMatrix(-rotator);
 
-			if constexpr (dimension == 2)
+			if constexpr (DIMENSION == 2)
 				s = glm::scale(glm::tvec3<T>(T(1) / scale, 1));
-			else if constexpr (dimension == 3)
+			else if constexpr (DIMENSION == 3)
 				s = glm::scale(T(1) / scale);
 
 			return s * r * t;

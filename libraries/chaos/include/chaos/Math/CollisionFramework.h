@@ -4,7 +4,7 @@ namespace chaos
 
 	enum class CollisionType;
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	class RayConvexGeometryIntersectionResult;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -43,8 +43,8 @@ namespace chaos
 	// Restriction functions
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool IsPointInside(typename type_box<dimension, T>::vec_type const& pt, type_box<dimension, T> const& b, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool IsPointInside(typename type_box<DIMENSION, T>::vec_type const& pt, type_box<DIMENSION, T> const& b, bool open_geometry = false)
 	{
 		if (IsGeometryEmpty(b))
 			return false;
@@ -63,8 +63,8 @@ namespace chaos
 		}
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool IsPointInside(typename type_aabox<dimension, T>::vec_type const& pt, type_aabox<dimension, T> const& b, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool IsPointInside(typename type_aabox<DIMENSION, T>::vec_type const& pt, type_aabox<DIMENSION, T> const& b, bool open_geometry = false)
 	{
 		if (IsGeometryEmpty(b))
 			return false;
@@ -84,8 +84,8 @@ namespace chaos
 	}
 
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool IsPointInside(typename type_obox<dimension, T>::vec_type const& pt, type_obox<dimension, T> const& b, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool IsPointInside(typename type_obox<DIMENSION, T>::vec_type const& pt, type_obox<DIMENSION, T> const& b, bool open_geometry = false)
 	{
 
 
@@ -93,8 +93,8 @@ namespace chaos
 		return false;
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool IsPointInside(typename type_sphere<dimension, T>::vec_type const& pt, type_sphere<dimension, T> const& s, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool IsPointInside(typename type_sphere<DIMENSION, T>::vec_type const& pt, type_sphere<DIMENSION, T> const& s, bool open_geometry = false)
 	{
 		if (IsGeometryEmpty(s))
 			return false;
@@ -110,17 +110,17 @@ namespace chaos
 	// Restriction functions
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	auto GetClosestPoint(type_box<dimension, T> const& b, typename type_box<dimension, T>::vec_type const& src)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	auto GetClosestPoint(type_box<DIMENSION, T> const& b, typename type_box<DIMENSION, T>::vec_type const& src)
 	{
 		// clamp X, Y, Z for all planes
 		return glm::min(glm::max(src, b.position - b.half_size), b.position + b.half_size);
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	auto GetClosestPoint(type_obox<dimension, T> const& b, typename type_obox<dimension, T>::vec_type const& src)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	auto GetClosestPoint(type_obox<DIMENSION, T> const& b, typename type_obox<DIMENSION, T>::vec_type const& src)
 	{
-		typename type_sphere<dimension, T>::vec_type result;
+		typename type_sphere<DIMENSION, T>::vec_type result;
 
 
 
@@ -130,10 +130,10 @@ namespace chaos
 		return result;
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	auto GetClosestPoint(type_sphere<dimension, T> const& b, typename type_sphere<dimension, T>::vec_type const& src)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	auto GetClosestPoint(type_sphere<DIMENSION, T> const& b, typename type_sphere<DIMENSION, T>::vec_type const& src)
 	{
-		typename type_sphere<dimension, T>::vec_type result;
+		typename type_sphere<DIMENSION, T>::vec_type result;
 
 
 
@@ -148,10 +148,10 @@ namespace chaos
 		return result;
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	auto GetClosestPoint(type_triangle<dimension, T> const& b, typename type_sphere<dimension, T>::vec_type const& src)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	auto GetClosestPoint(type_triangle<DIMENSION, T> const& b, typename type_sphere<DIMENSION, T>::vec_type const& src)
 	{
-		typename type_triangle<dimension, T>::vec_type result;
+		typename type_triangle<DIMENSION, T>::vec_type result;
 
 
 
@@ -177,8 +177,8 @@ namespace chaos
 		return true;
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool RestrictToInside(type_box<dimension, T>& bigger, type_box<dimension, T>& smaller, bool move_big)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool RestrictToInside(type_box<DIMENSION, T>& bigger, type_box<DIMENSION, T>& smaller, bool move_big)
 	{
 		bool result = false;
 
@@ -189,7 +189,7 @@ namespace chaos
 		auto big_corners = GetBoxCorners(bigger);
 		auto small_corners = GetBoxCorners(smaller);
 
-		int const count = dimension;
+		int const count = DIMENSION;
 		for (int i = 0; i < count; ++i)
 		{
 			// degenerated case : smaller ISNOT the smallest
@@ -237,11 +237,11 @@ namespace chaos
 		return result;
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	auto GetRestrictToOutsideDisplacement(type_box<dimension, T> const& src, type_box<dimension, T> const& target, int axis_of_interrests = -1)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	auto GetRestrictToOutsideDisplacement(type_box<DIMENSION, T> const& src, type_box<DIMENSION, T> const& target, int axis_of_interrests = -1)
 	{
 		// the null result
-		typename type_box<dimension, T>::vec_type result = type_box<dimension, T>::vec_type(0);
+		typename type_box<DIMENSION, T>::vec_type result = type_box<DIMENSION, T>::vec_type(0);
 
 		if (IsGeometryEmpty(src) || IsGeometryEmpty(target))
 			return result;
@@ -253,7 +253,7 @@ namespace chaos
 		// (best_direction encode the axis as X = 2 , Y = 4  and the negative/direction as a bitfield)
 		T   best_distance = (T)-1;
 		int best_direction = -1;
-		for (int i = 0; i < dimension; ++i)
+		for (int i = 0; i < DIMENSION; ++i)
 		{
 			// in negative direction (dist_neg is to be positive)
 			T dist_neg = target_corners.second[i] - src_corners.first[i];
@@ -299,11 +299,11 @@ namespace chaos
 	}
 
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool RestrictToOutside(type_box<dimension, T>& src, type_box<dimension, T>& target, int axis_of_interrests = -1)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool RestrictToOutside(type_box<DIMENSION, T>& src, type_box<DIMENSION, T>& target, int axis_of_interrests = -1)
 	{
 		auto delta_position = GetRestrictToOutsideDisplacement(src, target, axis_of_interrests);
-		if (delta_position == type_box<dimension, T>::vec_type(0))
+		if (delta_position == type_box<DIMENSION, T>::vec_type(0))
 			return false;
 		target.position += delta_position;
 		return true;
@@ -323,8 +323,8 @@ namespace chaos
 
 
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool RestrictToInside(type_sphere<dimension, T>& bigger, type_sphere<dimension, T>& smaller, bool move_big)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool RestrictToInside(type_sphere<DIMENSION, T>& bigger, type_sphere<DIMENSION, T>& smaller, bool move_big)
 	{
 		// if one is empty, nothing to do
 		if (IsGeometryEmpty(bigger) || IsGeometryEmpty(smaller))
@@ -351,8 +351,8 @@ namespace chaos
 		return true;
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool RestrictToOutside(type_sphere<dimension, T>& src, type_sphere<dimension, T>& target)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool RestrictToOutside(type_sphere<DIMENSION, T>& src, type_sphere<DIMENSION, T>& target)
 	{
 		if (IsGeometryEmpty(src) || IsGeometryEmpty(target))
 			return false;
@@ -370,7 +370,7 @@ namespace chaos
 		}
 		else
 		{
-			auto new_direction = type_sphere<dimension, T>::vec_type(0);
+			auto new_direction = type_sphere<DIMENSION, T>::vec_type(0);
 			new_direction[0] = (T)1;
 
 			T factor = (src.radius + target.radius);
@@ -391,10 +391,10 @@ namespace chaos
 	// shu49 le passage de parametre est pourri. pourquoi pas directement type_plane et type_vec
 
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	int GetIntersection(type_ray<dimension, T> const& r, typename type_ray<dimension, T>::plane_type const& p, typename type_ray<dimension, T>::vec_type& res)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	int GetIntersection(type_ray<DIMENSION, T> const& r, typename type_ray<DIMENSION, T>::plane_type const& p, typename type_ray<DIMENSION, T>::vec_type& res)
 	{
-		using vec_type = typename type_ray<dimension, T>::vec_type;
+		using vec_type = typename type_ray<DIMENSION, T>::vec_type;
 
 		auto normal = GetPlaneNormal(p);
 
@@ -413,8 +413,8 @@ namespace chaos
 
 
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	int GetIntersection(type_ray<dimension, T> const& r, type_triangle<dimension, T> const& t, typename type_ray<dimension, T>::vec_type& res)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	int GetIntersection(type_ray<DIMENSION, T> const& r, type_triangle<DIMENSION, T> const& t, typename type_ray<DIMENSION, T>::vec_type& res)
 	{
 
 
@@ -441,7 +441,7 @@ namespace chaos
 	// ----------------------------------------------------------
 	// size2(AC) + 2.t.dot(AC, dir) + t^2.size2(dir) - r^2 = 0
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	class RayConvexGeometryIntersectionResult
 	{
 	public:
@@ -452,7 +452,7 @@ namespace chaos
 		public:
 
 			/** position of the solution */
-			glm::vec<dimension, T> position = glm::vec<dimension, T>(T(0));
+			glm::vec<DIMENSION, T> position = glm::vec<DIMENSION, T>(T(0));
 			/** distance along the ray for that solution */
 			float t = 0.0f;
 		};
@@ -466,7 +466,7 @@ namespace chaos
 		}
 
 		/** add an intersection to the solution */
-		void AddIntersectionPoint(float t, glm::vec<dimension, T> const& position)
+		void AddIntersectionPoint(float t, glm::vec<DIMENSION, T> const& position)
 		{
 			assert(count < 2);
 			info[count++] = { position, t};
@@ -514,10 +514,10 @@ namespace chaos
 		size_t count = 0;
 	};
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	RayConvexGeometryIntersectionResult<dimension, T> GetIntersection(type_ray<dimension, T> const& r, type_sphere<dimension, T> const& s)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	RayConvexGeometryIntersectionResult<DIMENSION, T> GetIntersection(type_ray<DIMENSION, T> const& r, type_sphere<DIMENSION, T> const& s)
 	{
-		RayConvexGeometryIntersectionResult<dimension, T> result;
+		RayConvexGeometryIntersectionResult<DIMENSION, T> result;
 
 		auto AC = r.position - s.position;
 
@@ -532,8 +532,8 @@ namespace chaos
 		return result;
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	int GetIntersection(type_ray<dimension, T> const& r, type_box<dimension, T> const& b, typename type_ray<dimension, T>::vec_type& res1, typename type_ray<dimension, T>::vec_type& res2)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	int GetIntersection(type_ray<DIMENSION, T> const& r, type_box<DIMENSION, T> const& b, typename type_ray<DIMENSION, T>::vec_type& res1, typename type_ray<DIMENSION, T>::vec_type& res2)
 	{
 
 
@@ -541,8 +541,8 @@ namespace chaos
 		return 0;
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	int GetIntersection(type_ray<dimension, T> const& r, type_obox<dimension, T> const& b, typename type_ray<dimension, T>::vec_type& res1, typename type_ray<dimension, T>::vec_type& res2)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	int GetIntersection(type_ray<DIMENSION, T> const& r, type_obox<DIMENSION, T> const& b, typename type_ray<DIMENSION, T>::vec_type& res1, typename type_ray<DIMENSION, T>::vec_type& res2)
 	{
 
 
@@ -554,8 +554,8 @@ namespace chaos
 	// Symetric Collisions
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool Collide(type_box<dimension, T> const& src1, type_box<dimension, T> const& src2, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool Collide(type_box<DIMENSION, T> const& src1, type_box<DIMENSION, T> const& src2, bool open_geometry = false)
 	{
 		if (IsGeometryEmpty(src1) || IsGeometryEmpty(src2))
 			return false;
@@ -580,8 +580,8 @@ namespace chaos
 		return true;
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool Collide(type_sphere<dimension, T> const& src1, type_sphere<dimension, T> const& src2, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool Collide(type_sphere<DIMENSION, T> const& src1, type_sphere<DIMENSION, T> const& src2, bool open_geometry = false)
 	{
 		if (IsGeometryEmpty(src1) || IsGeometryEmpty(src2))
 			return false;
@@ -739,8 +739,8 @@ namespace chaos
 	}
 
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool Collide(type_triangle<dimension, T> const& src1, type_triangle<dimension, T> const& src2, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool Collide(type_triangle<DIMENSION, T> const& src1, type_triangle<DIMENSION, T> const& src2, bool open_geometry = false)
 	{
 
 
@@ -811,8 +811,8 @@ namespace chaos
 #endif
 
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool Collide(type_box<dimension, T> const& b, type_sphere<dimension, T> const& s, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool Collide(type_box<DIMENSION, T> const& b, type_sphere<DIMENSION, T> const& s, bool open_geometry = false)
 	{
 		if (IsGeometryEmpty(s) || IsGeometryEmpty(b))
 			return false;
@@ -825,8 +825,8 @@ namespace chaos
 			return glm::distance2(pt, s.position) <= (s.radius * s.radius);
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool Collide(type_sphere<dimension, T> const& s, type_box<dimension, T> const& b, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool Collide(type_sphere<DIMENSION, T> const& s, type_box<DIMENSION, T> const& b, bool open_geometry = false)
 	{
 		return Collide(b, s, open_geometry);
 	}
@@ -893,8 +893,8 @@ namespace chaos
 		return false;
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool Collide(type_sphere<dimension, T> const& s, type_triangle<dimension, T> const& t, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool Collide(type_sphere<DIMENSION, T> const& s, type_triangle<DIMENSION, T> const& t, bool open_geometry = false)
 	{
 		return Collide(t, s, open_geometry);
 	}
@@ -903,8 +903,8 @@ namespace chaos
 	// Collisions box/triangle
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool Collide(type_box<dimension, T> const& b, type_triangle<dimension, T> const& t, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool Collide(type_box<DIMENSION, T> const& b, type_triangle<DIMENSION, T> const& t, bool open_geometry = false)
 	{
 
 
@@ -917,8 +917,8 @@ namespace chaos
 		return false; // TODO COLLISION
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool Collide(type_triangle<dimension, T> const& t, type_box<dimension, T> const& b, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool Collide(type_triangle<DIMENSION, T> const& t, type_box<DIMENSION, T> const& b, bool open_geometry = false)
 	{
 		return Collide(b, t, open_geometry);
 	}
@@ -927,8 +927,8 @@ namespace chaos
 	// Collisions obox/triangle
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool Collide(type_obox<dimension, T> const& b, type_triangle<dimension, T> const& t, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool Collide(type_obox<DIMENSION, T> const& b, type_triangle<DIMENSION, T> const& t, bool open_geometry = false)
 	{
 
 
@@ -939,8 +939,8 @@ namespace chaos
 		return false; // TODO COLLISION
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool Collide(type_triangle<dimension, T> const& t, type_obox<dimension, T> const& b, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool Collide(type_triangle<DIMENSION, T> const& t, type_obox<DIMENSION, T> const& b, bool open_geometry = false)
 	{
 		return Collide(b, t, open_geometry);
 	}
@@ -949,8 +949,8 @@ namespace chaos
 	// Collisions obox/sphere
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool Collide(type_obox<dimension, T> const& b, type_sphere<dimension, T> const& s, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool Collide(type_obox<DIMENSION, T> const& b, type_sphere<DIMENSION, T> const& s, bool open_geometry = false)
 	{
 
 
@@ -961,8 +961,8 @@ namespace chaos
 		return false; // TODO COLLISION
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool Collide(type_sphere<dimension, T> const& s, type_obox<dimension, T> const& b, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool Collide(type_sphere<DIMENSION, T> const& s, type_obox<DIMENSION, T> const& b, bool open_geometry = false)
 	{
 		return Collide(b, s, open_geometry);
 	}
@@ -971,8 +971,8 @@ namespace chaos
 	// Collision obox/box
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool Collide(type_obox<dimension, T> const& b, type_box<dimension, T> const& s, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool Collide(type_obox<DIMENSION, T> const& b, type_box<DIMENSION, T> const& s, bool open_geometry = false)
 	{
 
 
@@ -983,8 +983,8 @@ namespace chaos
 		return false; // TODO COLLISION
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool Collide(type_box<dimension, T> const& b, type_obox<dimension, T> const& ob, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool Collide(type_box<DIMENSION, T> const& b, type_obox<DIMENSION, T> const& ob, bool open_geometry = false)
 	{
 		return Collide(ob, b, open_geometry);
 	}
@@ -994,8 +994,8 @@ namespace chaos
 	// ==============================================================================================
 
 	/** returns true whether the point is contained in the box */
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool Collide(typename type_box<dimension, T>::vec_type const& pt, type_box<dimension, T> const& b, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool Collide(typename type_box<DIMENSION, T>::vec_type const& pt, type_box<DIMENSION, T> const& b, bool open_geometry = false)
 	{
 		if (open_geometry)
 			return glm::all(glm::lessThan(glm::abs(pt - b.position), b.half_size));
@@ -1003,8 +1003,8 @@ namespace chaos
 			return glm::all(glm::lessThanEqual(glm::abs(pt - b.position), b.half_size));
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool Collide(type_box<dimension, T> const& b, typename type_box<dimension, T>::vec_type const& pt, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool Collide(type_box<DIMENSION, T> const& b, typename type_box<DIMENSION, T>::vec_type const& pt, bool open_geometry = false)
 	{
 		return Collide(pt, b, open_geometry);
 	}
@@ -1013,8 +1013,8 @@ namespace chaos
 	// Collision point/obox
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool Collide(typename type_obox<dimension, T>::vec_type const& pt, type_obox<dimension, T> const& b, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool Collide(typename type_obox<DIMENSION, T>::vec_type const& pt, type_obox<DIMENSION, T> const& b, bool open_geometry = false)
 	{
 		// set point from global to local system
 		auto transform = GetRotatorMatrix(-b.rotator);
@@ -1026,8 +1026,8 @@ namespace chaos
 			return glm::all(glm::lessThanEqual(glm::abs(transformed_ptr), b.half_size));
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool Collide(type_obox<dimension, T> const& b, typename type_obox<dimension, T>::vec_type const& pt, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool Collide(type_obox<DIMENSION, T> const& b, typename type_obox<DIMENSION, T>::vec_type const& pt, bool open_geometry = false)
 	{
 		return Collide(pt, b, open_geometry);
 	}
@@ -1037,10 +1037,10 @@ namespace chaos
 	// ==============================================================================================
 
 	/** returns true whether the point is contained in the triangle */
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool Collide(typename type_triangle<dimension, T>::vec_type const& pt, type_triangle<dimension, T> const& t, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool Collide(typename type_triangle<DIMENSION, T>::vec_type const& pt, type_triangle<DIMENSION, T> const& t, bool open_geometry = false)
 	{
-		using vec_type = typename type_triangle<dimension, T>::vec_type;
+		using vec_type = typename type_triangle<DIMENSION, T>::vec_type;
 
 		// test whether the triangle is null
 		if (IsGeometryEmpty(t))
@@ -1062,8 +1062,8 @@ namespace chaos
 		return true;
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool Collide(type_triangle<dimension, T> const& t, typename type_triangle<dimension, T>::vec_type const& pt, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool Collide(type_triangle<DIMENSION, T> const& t, typename type_triangle<DIMENSION, T>::vec_type const& pt, bool open_geometry = false)
 	{
 		return Collide(pt, t, open_geometry);
 	}
@@ -1073,8 +1073,8 @@ namespace chaos
 	// ==============================================================================================
 
 	/** returns true whether the point is contained in the sphere */
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool Collide(typename type_sphere<dimension, T>::vec_type const& pt, type_sphere<dimension, T> const& s, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool Collide(typename type_sphere<DIMENSION, T>::vec_type const& pt, type_sphere<DIMENSION, T> const& s, bool open_geometry = false)
 	{
 		if (open_geometry)
 			return glm::distance2(pt, s.position) < (s.radius * s.radius);
@@ -1082,8 +1082,8 @@ namespace chaos
 			return glm::distance2(pt, s.position) <= (s.radius * s.radius);
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
-	bool Collide(type_sphere<dimension, T> const& s, typename type_sphere<dimension, T>::vec_type const& pt, bool open_geometry = false)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool Collide(type_sphere<DIMENSION, T> const& s, typename type_sphere<DIMENSION, T>::vec_type const& pt, bool open_geometry = false)
 	{
 		return Collide(pt, s, open_geometry);
 	}

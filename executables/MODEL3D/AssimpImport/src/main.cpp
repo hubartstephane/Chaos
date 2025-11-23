@@ -60,7 +60,7 @@ public:
 
 	std::string name;
 
-	SceneTransform<float, 3> transform;
+	SceneTransform<3, float> transform;
 
 	glm::vec3 color = { 0.0f, 0.0f, 1.0f };
 

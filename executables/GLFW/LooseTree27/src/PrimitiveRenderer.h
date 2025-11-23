@@ -15,21 +15,21 @@ public:
 	bool Initialize();
 
 	template<typename T, int dimension>
-	chaos::type_box<T, dimension> SlightIncreaseSize(chaos::type_box<T, dimension> src) const
+	chaos::type_box<dimension, T> SlightIncreaseSize(chaos::type_box<dimension, T> src) const
 	{
 		src.half_size *= static_cast<T>(1.01);
 		return src;
 	}
 
 	template<typename T, int dimension>
-	chaos::type_obox<T, dimension> SlightIncreaseSize(chaos::type_obox<T, dimension> src) const
+	chaos::type_obox<dimension, T> SlightIncreaseSize(chaos::type_obox<dimension, T> src) const
 	{
 		src.half_size *= static_cast<T>(1.01);
 		return src;
 	}
 
 	template<typename T, int dimension>
-	chaos::type_sphere<T, dimension> SlightIncreaseSize(chaos::type_sphere<T, dimension> src) const
+	chaos::type_sphere<dimension, T> SlightIncreaseSize(chaos::type_sphere<dimension, T> src) const
 	{
 		src.radius *= static_cast<T>(1.01);
 		return src;
@@ -37,21 +37,21 @@ public:
 
 
 	template<typename T, int dimension>
-	chaos::type_box<T, dimension> SlightDecreaseSize(chaos::type_box<T, dimension> src) const
+	chaos::type_box<dimension, T> SlightDecreaseSize(chaos::type_box<dimension, T> src) const
 	{
 		src.half_size *= static_cast<T>(0.90);
 		return src;
 	}
 
 	template<typename T, int dimension>
-	chaos::type_obox<T, dimension> SlightDecreaseSize(chaos::type_obox<T, dimension> src) const
+	chaos::type_obox<dimension, T> SlightDecreaseSize(chaos::type_obox<dimension, T> src) const
 	{
 		src.half_size *= static_cast<T>(0.90);
 		return src;
 	}
 
 	template<typename T, int dimension>
-	chaos::type_sphere<T, dimension> SlightDecreaseSize(chaos::type_sphere<T, dimension> src) const
+	chaos::type_sphere<dimension, T> SlightDecreaseSize(chaos::type_sphere<dimension, T> src) const
 	{
 		src.radius *= static_cast<T>(0.90);
 		return src;

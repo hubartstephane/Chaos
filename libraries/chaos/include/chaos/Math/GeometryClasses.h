@@ -1,6 +1,6 @@
 namespace chaos
 {
-	#define CHAOS_GEOMETRY_TEMPLATE(T , dimension, ...) template<std::floating_point T, int dimension, __VA_ARGS__> requires (dimension == 2 || dimension == 3)
+	#define CHAOS_GEOMETRY_TEMPLATE(dimension, T, ...) template<int dimension, std::floating_point T, __VA_ARGS__> requires (dimension == 2 || dimension == 3)
 
 #ifdef CHAOS_FORWARD_DECLARATION
 
@@ -9,16 +9,16 @@ namespace chaos
 	// ==============================================================================================
 
 	// the base template (two arguments, type and dimension)
-	CHAOS_GEOMETRY_TEMPLATE(T , dimension) class type_geometric;
-	CHAOS_GEOMETRY_TEMPLATE(T , dimension) class type_ray;
-	CHAOS_GEOMETRY_TEMPLATE(T , dimension) class type_box_base;
-	CHAOS_GEOMETRY_TEMPLATE(T , dimension) class type_box;
-	CHAOS_GEOMETRY_TEMPLATE(T , dimension) class type_obox;
-	CHAOS_GEOMETRY_TEMPLATE(T , dimension) class type_sphere;
-	CHAOS_GEOMETRY_TEMPLATE(T , dimension) class type_triangle;
-	CHAOS_GEOMETRY_TEMPLATE(T , dimension) class type_rotator;   // this is not an object that describes a rotation, but a meta object that gives the rotation in a meta function
-	CHAOS_GEOMETRY_TEMPLATE(T , dimension) class type_aabox;     // aligned axis box
-	CHAOS_GEOMETRY_TEMPLATE(T , dimension) class type_box_plane; // a set of 4 or 6 clip planes
+	CHAOS_GEOMETRY_TEMPLATE(dimension, T) class type_geometric;
+	CHAOS_GEOMETRY_TEMPLATE(dimension, T) class type_ray;
+	CHAOS_GEOMETRY_TEMPLATE(dimension, T) class type_box_base;
+	CHAOS_GEOMETRY_TEMPLATE(dimension, T) class type_box;
+	CHAOS_GEOMETRY_TEMPLATE(dimension, T) class type_obox;
+	CHAOS_GEOMETRY_TEMPLATE(dimension, T) class type_sphere;
+	CHAOS_GEOMETRY_TEMPLATE(dimension, T) class type_triangle;
+	CHAOS_GEOMETRY_TEMPLATE(dimension, T) class type_rotator;   // this is not an object that describes a rotation, but a meta object that gives the rotation in a meta function
+	CHAOS_GEOMETRY_TEMPLATE(dimension, T) class type_aabox;     // aligned axis box
+	CHAOS_GEOMETRY_TEMPLATE(dimension, T) class type_box_plane; // a set of 4 or 6 clip planes
 
 	class zero_rotator;
 
@@ -27,25 +27,25 @@ namespace chaos
 	// ==============================================================================================
 
 	// remove all arguments from template (the objects to use for real)
-	using ray2 = type_ray<float, 2>;
-	using ray3 = type_ray<float, 3>;
-	using box2 = type_box<float, 2>;
-	using box3 = type_box<float, 3>;
-	using obox2 = type_obox<float, 2>;
-	using obox3 = type_obox<float, 3>;
-	using sphere2 = type_sphere<float, 2>;
-	using sphere3 = type_sphere<float, 3>;
-	using triangle2 = type_triangle<float, 2>;
-	using triangle3 = type_triangle<float, 3>;
+	using ray2 = type_ray<2, float>;
+	using ray3 = type_ray<3, float>;
+	using box2 = type_box<2, float>;
+	using box3 = type_box<3, float>;
+	using obox2 = type_obox<2, float>;
+	using obox3 = type_obox<3, float>;
+	using sphere2 = type_sphere<2, float>;
+	using sphere3 = type_sphere<3, float>;
+	using triangle2 = type_triangle<2, float>;
+	using triangle3 = type_triangle<3, float>;
 
 	using rotator2 = float; // this are ROTATION here (angle or quaternion)
 	using rotator3 = glm::quat;
 
-	using aabox2  = type_aabox<float, 2>;
-	using aabox3  = type_aabox<float, 3>;
+	using aabox2  = type_aabox<2, float>;
+	using aabox3  = type_aabox<3, float>;
 
-	using box_plane2 = type_box_plane<float, 2>;
-	using box_plane3 = type_box_plane<float, 3>;
+	using box_plane2 = type_box_plane<2, float>;
+	using box_plane3 = type_box_plane<3, float>;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -75,27 +75,27 @@ namespace chaos
 
 
 	// base template
-	CHAOS_GEOMETRY_TEMPLATE(T , dimension)
+	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
 	class type_rotator : public boost::mpl::identity<void> {};
 	// specialization
 	template<>
-	class type_rotator<float, 2> : public boost::mpl::identity<float> {};
+	class type_rotator<2, float> : public boost::mpl::identity<float> {};
 	// specialization
 	template<>
-	class type_rotator<double, 2> : public boost::mpl::identity<double> {};
+	class type_rotator<2, double> : public boost::mpl::identity<double> {};
 	// specialization
 	template<>
-	class type_rotator<float, 3> : public boost::mpl::identity<glm::quat> {};
+	class type_rotator<3, float> : public boost::mpl::identity<glm::quat> {};
 	// specialization
 	template<>
-	class type_rotator<double, 3> : public boost::mpl::identity<glm::dquat> {};
+	class type_rotator<3, double> : public boost::mpl::identity<glm::dquat> {};
 
 	// ==============================================================================================
 	// geometric class
 	// ==============================================================================================
 
 	template<std::floating_point T>
-	class type_geometric<T, 2>
+	class type_geometric<2, T>
 	{
 	public:
 		/** the dimension of the space */
@@ -110,25 +110,25 @@ namespace chaos
 		/** the type of plane */
 		using plane_type = glm::vec<dimension + 1, type>;
 		/** the type of rotator */
-		using rot_type = typename type_rotator<type, dimension>::type;
+		using rot_type = typename type_rotator<dimension, type>::type;
 		/** the type of ray */
-		using ray_type = type_ray<type, dimension>;
+		using ray_type = type_ray<dimension, type>;
 		/** the type of sphere */
-		using sphere_type = type_sphere<type, dimension>;
+		using sphere_type = type_sphere<dimension, type>;
 		/** the type of box */
-		using box_type = type_box<type, dimension>;
+		using box_type = type_box<dimension, type>;
 		/** the type of obox */
-		using obox_type = type_obox<type, dimension>;
+		using obox_type = type_obox<dimension, type>;
 		/** the type of triangle */
-		using triangle_type = type_triangle<type, dimension>;
+		using triangle_type = type_triangle<dimension, type>;
 		/** the type of aabox */
-		using aabox_type = type_aabox<type, dimension>;
+		using aabox_type = type_aabox<dimension, type>;
 		/** the type of box plane */
-		using box_plane_type = type_box_plane<type, dimension>;
+		using box_plane_type = type_box_plane<dimension, type>;
 	};
 
 	template<std::floating_point T>
-	class type_geometric<T, 3>
+	class type_geometric<3, T>
 	{
 	public:
 		/** the dimension of the space */
@@ -143,33 +143,33 @@ namespace chaos
 		/** the type of plane */
 		using plane_type = glm::vec<dimension + 1, type>;
 		/** the type of rotator */
-		using rot_type = typename type_rotator<type, dimension>::type;
+		using rot_type = typename type_rotator<dimension, type>::type;
 		/** the type of ray */
-		using ray_type = type_ray<type, dimension>;
+		using ray_type = type_ray<dimension, type>;
 		/** the type of sphere */
-		using sphere_type = type_sphere<type, dimension>;
+		using sphere_type = type_sphere<dimension, type>;
 		/** the type of box */
-		using box_type = type_box<type, dimension>;
+		using box_type = type_box<dimension, type>;
 		/** the type of obox */
-		using obox_type = type_obox<type, dimension>;
+		using obox_type = type_obox<dimension, type>;
 		/** the type of triangle */
-		using triangle_type = type_triangle<type, dimension>;
+		using triangle_type = type_triangle<dimension, type>;
 		/** the type of aabox */
-		using aabox_type = type_aabox<type, dimension>;
+		using aabox_type = type_aabox<dimension, type>;
 		/** the type of box plane */
-		using box_plane_type = type_box_plane<type, dimension>;
+		using box_plane_type = type_box_plane<dimension, type>;
 	};
 
 	// ==============================================================================================
 	// type_box_base class
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(T , dimension)
-	class type_box_base : public type_geometric<T, dimension>
+	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
+	class type_box_base : public type_geometric<dimension, T>
 	{
 	public:
 
-		using vec_type = typename type_geometric<T, dimension>::vec_type;
+		using vec_type = typename type_geometric<dimension, T>::vec_type;
 
 		/** constructor (empty box) */
 		type_box_base() = default;
@@ -190,21 +190,21 @@ namespace chaos
 	// box class
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(T , dimension)
-	class type_box : public type_box_base<T, dimension>
+	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
+	class type_box : public type_box_base<dimension, T>
 	{
 	public:
 
-		using vec_type = typename type_box_base<T, dimension>::vec_type;
+		using vec_type = typename type_box_base<dimension, T>::vec_type;
 
 		/** constructor (empty box) */
 		type_box() = default;
 		/** copy constructor */
 		type_box(type_box const & src) = default;
 		/** constructor from base (usefull for obox conversion) */
-		type_box(type_box_base<T, dimension> const & src) : type_box_base<T, dimension>(src.position, src.half_size) {}
+		type_box(type_box_base<dimension, T> const & src) : type_box_base<dimension, T>(src.position, src.half_size) {}
 		/** other constructor */
-		type_box(vec_type const & in_position, vec_type const & in_half_size) : type_box_base<T, dimension>(in_position, in_half_size) {}
+		type_box(vec_type const & in_position, vec_type const & in_half_size) : type_box_base<dimension, T>(in_position, in_half_size) {}
 		/** construct a box from 2 points */
 		type_box(std::pair<vec_type, vec_type> const & pts)
 		{
@@ -221,22 +221,22 @@ namespace chaos
 	// ==============================================================================================
 
 	/** an oriented bounding box */
-	CHAOS_GEOMETRY_TEMPLATE(T , dimension)
-	class type_obox : public type_box_base<T, dimension>
+	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
+	class type_obox : public type_box_base<dimension, T>
 	{
 	public:
 
-		using vec_type = typename type_box_base<T, dimension>::vec_type;
-		using rot_type = typename type_box_base<T, dimension>::rot_type;
+		using vec_type = typename type_box_base<dimension, T>::vec_type;
+		using rot_type = typename type_box_base<dimension, T>::rot_type;
 
 		/** constructor (empty box) */
 		type_obox() = default;
 		/** copy constructor */
 		type_obox(type_obox const& src) = default;
 		/** constructor from base (usefull for box conversion) */
-		type_obox(type_box_base<T, dimension> const& src) : type_box_base<T, dimension>(src.position, src.half_size){}
+		type_obox(type_box_base<dimension, T> const& src) : type_box_base<dimension, T>(src.position, src.half_size){}
 		/** other constructor */
-		type_obox(vec_type const & in_position, vec_type const & in_half_size, rot_type const & in_rotator) : type_box_base<T, dimension>(in_position, in_half_size), rotator(in_rotator) {}
+		type_obox(vec_type const & in_position, vec_type const & in_half_size, rot_type const & in_rotator) : type_box_base<dimension, T>(in_position, in_half_size), rotator(in_rotator) {}
 
 	public:
 
@@ -248,12 +248,12 @@ namespace chaos
 	// type_aabox class
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(T , dimension)
-	class type_aabox : public type_geometric<T, dimension>
+	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
+	class type_aabox : public type_geometric<dimension, T>
 	{
 	public:
 
-		using vec_type = typename type_geometric<T, dimension>::vec_type;
+		using vec_type = typename type_geometric<dimension, T>::vec_type;
 
 		/** constructor (empty box) */
 		type_aabox() = default;
@@ -283,13 +283,13 @@ namespace chaos
 	// sphere/circle classes
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(T , dimension)
-	class type_sphere : public type_geometric<T, dimension>
+	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
+	class type_sphere : public type_geometric<dimension, T>
 	{
 	public:
 
-		using vec_type = typename type_geometric<T, dimension>::vec_type;
-		using type = typename type_geometric<T, dimension>::type;
+		using vec_type = typename type_geometric<dimension, T>::vec_type;
+		using type = typename type_geometric<dimension, T>::type;
 
 		/** constructor (empty circle) */
 		type_sphere() = default;
@@ -310,12 +310,12 @@ namespace chaos
 	// triangle classes
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(T , dimension)
-	class type_triangle : public type_geometric<T, dimension>
+	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
+	class type_triangle : public type_geometric<dimension, T>
 	{
 	public:
 
-		using vec_type = typename type_geometric<T, dimension>::vec_type;
+		using vec_type = typename type_geometric<dimension, T>::vec_type;
 
 		/** default constructor */
 		type_triangle() = default;
@@ -352,12 +352,12 @@ namespace chaos
 	// ray classes
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(T , dimension)
-	class type_ray : public type_geometric<T, dimension>
+	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
+	class type_ray : public type_geometric<dimension, T>
 	{
 	public:
 
-		using vec_type = typename type_geometric<T, dimension>::vec_type;
+		using vec_type = typename type_geometric<dimension, T>::vec_type;
 
 		/** default constructor */
 		type_ray() = default;
@@ -381,13 +381,13 @@ namespace chaos
 // ==============================================================================================
 
 	template<std::floating_point T>
-	class type_box_plane<T, 2> : public chaos::type_geometric<T, 2>
+	class type_box_plane<2, T> : public chaos::type_geometric<2, T>
 	{
 	public:
 
 		static constexpr size_t plane_count = 4;
 
-		using plane_type = chaos::type_geometric<T, 2>::plane_type;
+		using plane_type = chaos::type_geometric<2, T>::plane_type;
 
 		/** number of planes in the box */
 		size_t size() const
@@ -472,13 +472,13 @@ namespace chaos
 	};
 
 	template<std::floating_point T>
-	class type_box_plane<T, 3> : public chaos::type_geometric<T, 3>
+	class type_box_plane<3, T> : public chaos::type_geometric<3, T>
 	{
 	public:
 
 		static constexpr size_t plane_count = 6;
 
-		using plane_type = chaos::type_geometric<T, 3>::plane_type;
+		using plane_type = chaos::type_geometric<3, T>::plane_type;
 
 		/** number of planes in the box */
 		size_t size() const

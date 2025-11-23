@@ -4,10 +4,10 @@ namespace chaos
 
 	enum class ProjectionType;
 
-	CHAOS_GEOMETRY_TEMPLATE(T , dimension)
+	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
 	class projection_volume;
 
-	CHAOS_GEOMETRY_TEMPLATE(T , dimension)
+	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
 	class perspective;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -27,7 +27,7 @@ namespace chaos
 	 */
 
 	template<std::floating_point T>
-	class projection_volume<T, 2>
+	class projection_volume<2, T>
 	{
 	public:
 
@@ -38,7 +38,7 @@ namespace chaos
 	};
 
 	template<std::floating_point T>
-	class projection_volume<T, 3>
+	class projection_volume<3, T>
 	{
 	public:
 
@@ -55,7 +55,7 @@ namespace chaos
 	 */
 
 	template<std::floating_point T>
-	class perspective<T, 2>
+	class perspective<2, T>
 	{
 	public:
 
@@ -70,7 +70,7 @@ namespace chaos
 	};
 
 	template<std::floating_point T>
-	class perspective<T, 3>
+	class perspective<3, T>
 	{
 	public:
 
@@ -90,8 +90,8 @@ namespace chaos
 	 * Some functions
 	 */
 
-	CHAOS_GEOMETRY_TEMPLATE(T , dimension)
-	projection_volume<T, dimension> GetProjectionVolume(perspective<T, dimension> const& persp)
+	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
+	projection_volume<dimension, T> GetProjectionVolume(perspective<dimension, T> const& persp)
 	{
 		//          +
 		//          | \ 
@@ -105,7 +105,7 @@ namespace chaos
 		//          | /
         //          +			
 
-		projection_volume<T, dimension> result;
+		projection_volume<dimension, T> result;
 
 		T fov_radian = persp.fov * T(M_PI) / T(180.0);
 
@@ -135,13 +135,13 @@ namespace chaos
 
 
 	template<std::floating_point T>
-	glm::mat<4, 4, T, glm::defaultp> GetProjectionMatrix(perspective<T, 3> const& persp)
+	glm::mat<4, 4, T, glm::defaultp> GetProjectionMatrix(perspective<3, T> const& persp)
 	{
 		return glm::perspectiveFov(persp.fov * T(M_PI) / T(180.0), T(persp.width), float(persp.height), persp.front, persp.back);
 	}
 
 	template<std::floating_point T>
-	glm::mat<4, 4, T> GetProjectionMatrix(ProjectionType type, projection_volume<T, 3> const& vol)
+	glm::mat<4, 4, T> GetProjectionMatrix(ProjectionType type, projection_volume<3, T> const& vol)
 	{
 		switch (type)
 		{
@@ -155,22 +155,22 @@ namespace chaos
 		}
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(T , dimension)
-	type_box_plane<T, dimension> GetProjectionPlanes(perspective<T, dimension> const& persp)
+	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
+	type_box_plane<dimension, T> GetProjectionPlanes(perspective<dimension, T> const& persp)
 	{
-		type_box_plane<T, dimension> result;
+		type_box_plane<dimension, T> result;
 
 		return result;
 	}
 
-	CHAOS_GEOMETRY_TEMPLATE(T , dimension)
-	type_box_plane<T, dimension> GetProjectionPlanes(ProjectionType type, projection_volume<T, dimension> const& vol)
+	CHAOS_GEOMETRY_TEMPLATE(dimension, T)
+	type_box_plane<dimension, T> GetProjectionPlanes(ProjectionType type, projection_volume<dimension, T> const& vol)
 	{
-		using geometry   = type_geometric<T, dimension>;
+		using geometry   = type_geometric<dimension, T>;
 		using vec_type   = typename geometry::vec_type;
 		using plane_type = typename geometry::plane_type;
 
-		type_box_plane<T, dimension> result;
+		type_box_plane<dimension, T> result;
 
 		switch (type)
 		{

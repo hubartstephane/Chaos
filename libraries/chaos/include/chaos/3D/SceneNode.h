@@ -58,7 +58,7 @@ namespace chaos
 	protected:
 
 		/** the transform */
-		SceneTransform<float, 2> transform;
+		SceneTransform<2, float> transform;
 
 		/** the cached local to parent matrix */
 		mutable glm::mat4 local_to_parent;

@@ -388,7 +388,7 @@ namespace chaos
 // ==============================================================================================
 
 	template<std::floating_point T>
-	class type_box_plane<2, T> : public chaos::type_geometric<2, T>
+	class type_box_plane<2, T> : public type_geometric<2, T>
 	{
 	public:
 
@@ -480,13 +480,13 @@ namespace chaos
 	};
 
 	template<std::floating_point T>
-	class type_box_plane<3, T> : public chaos::type_geometric<3, T>
+	class type_box_plane<3, T> : public type_geometric<3, T>
 	{
 	public:
 
 		static constexpr size_t plane_count = 6;
 
-		using geometry = type_geometric<2, T>;
+		using geometry = type_geometric<3, T>;
 		using plane_type = typename geometry::plane_type;
 
 		/** number of planes in the box */

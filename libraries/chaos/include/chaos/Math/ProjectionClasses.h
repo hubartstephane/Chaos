@@ -158,9 +158,7 @@ namespace chaos
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	type_box_plane<DIMENSION, T> GetProjectionPlanes(perspective<DIMENSION, T> const& persp)
 	{
-		type_box_plane<DIMENSION, T> result;
-
-		return result;
+		return GetProjectionPlanes(ProjectionType::PERSPECTIVE, GetProjectionVolume(persp));
 	}
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
@@ -176,10 +174,48 @@ namespace chaos
 		{
 		case ProjectionType::PERSPECTIVE:
 		{
-			
+			if constexpr (DIMENSION == 2)
+			{
 
+			}
+			else if constexpr (DIMENSION == 3)
+			{
+				T factor = vol.back / vol.front;
 
+				auto ComputePlaneX = [](vec_type const& A, vec_type const& B)
+				{
+					vec_type AB = B - A;
+					vec_type normal = glm::normalize(vec_type(-AB.z, T(0), AB.x));
+					return plane_type(normal.x, normal.y, normal.z, T(0));
+				};
 
+				result.neg_x = ComputePlaneX(
+					{ vol.left, T(0), vol.front },
+					{ vol.left * factor, T(0), vol.back }
+				);
+
+				result.pos_x = -ComputePlaneX(
+					{ vol.right, T(0), vol.front },
+					{ vol.right * factor, T(0), vol.back }
+				);
+
+				auto ComputePlaneY = [](vec_type const& A, vec_type const& B)
+				{
+					vec_type AB = B - A;
+					vec_type normal = glm::normalize(vec_type(T(0), -AB.z, AB.y));
+					return plane_type(normal.x, normal.y, normal.z, T(0));
+				};
+
+				result.neg_y = ComputePlaneY(
+					{ T(0), vol.bottom, vol.front },
+					{ T(0), vol.bottom * factor, vol.back }
+				);
+
+				result.pos_y = -ComputePlaneY(
+					{ T(0), vol.top, vol.front },
+					{ T(0), vol.top * factor, vol.back }
+				);
+			}
 			break;
 		}
 		case ProjectionType::ORTHOGRAPHIC:
@@ -206,13 +242,13 @@ namespace chaos
 
 		if constexpr (DIMENSION == 2)
 		{
-			result.front = { T(0), -T(1), -vol.front};
-			result.back  = { T(0), +T(1), -vol.back };
+			result.neg_z = { T(0), -T(1), -vol.front};
+			result.pos_z = { T(0), +T(1), -vol.back };
 		}
 		else if constexpr (DIMENSION == 3)
 		{
-			result.front = { T(0), T(0), -T(1), -vol.front};
-			result.back  = { T(0), T(0), +T(1), -vol.back };
+			result.neg_z = { T(0), T(0), -T(1), -vol.front};
+			result.pos_z = { T(0), T(0), +T(1), -vol.back };
 		}
 
 		return result;

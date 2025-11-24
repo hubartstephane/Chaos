@@ -299,16 +299,20 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
+	chaos::perspective<3, float> GetPerspective(glm::vec2 viewport_size) const
+	{
+		chaos::perspective<3, float> result;
+		result.fov = camera_info.fov;
+		result.width = viewport_size.x;
+		result.height = viewport_size.y;
+		result.front = camera_info.near_plane;
+		result.back = camera_info.far_plane;
+		return result;
+	}
+
 	glm::mat4x4 GetProjectionMatrix(glm::vec2 viewport_size) const
 	{
-		chaos::perspective<3, float> persp;
-		persp.fov    = camera_info.fov;
-		persp.width  = viewport_size.x;
-		persp.height = viewport_size.y;
-		persp.front  = camera_info.near_plane;
-		persp.back   = camera_info.far_plane;
-
-		return chaos::GetProjectionMatrix(persp);
+		return chaos::GetProjectionMatrix(GetPerspective(viewport_size));
 	}
 
 	glm::mat4x4 GetGlobalToCameraMatrix() const
@@ -336,9 +340,9 @@ protected:
 		primitive_renderer->world_to_camera = GetGlobalToCameraMatrix();
 		primitive_renderer->render_context        = render_context;
 
-		DrawGeometryObjects();
-		DrawTree27();
-		DrawAction();
+		DrawGeometryObjects(render_context, uniform_provider, draw_params);
+		DrawTree27(render_context, uniform_provider, draw_params);
+		DrawAction(render_context, uniform_provider, draw_params);
 
 		return true;
 	}
@@ -433,21 +437,21 @@ protected:
 		}
 	}
 
-	void DrawTree27()
+	void DrawTree27(chaos::GPURenderContext* render_context, chaos::GPUProgramProviderInterface const* uniform_provider, chaos::WindowDrawParams const& draw_params)
 	{
 		glDisable(GL_CULL_FACE);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		object_tree.Visit([this](loose_tree_node_type const* node)
 		{
-			//primitive_renderer->DrawPrimitive(node->GetBoundingBox(), white, false, true);
+			primitive_renderer->DrawPrimitive(node->GetBoundingBox(), white, false, true);
 		});
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glEnable(GL_CULL_FACE);
 	}
 
-	void DrawGeometryObjects()
+	void DrawGeometryObjects(chaos::GPURenderContext* render_context, chaos::GPUProgramProviderInterface const* uniform_provider, chaos::WindowDrawParams const& draw_params)
 	{
 		auto RenderObject = [&](GeometricObject const* geometric_object)
 		{
@@ -472,9 +476,13 @@ protected:
 		}
 		else
 		{
-			float SIZE = 500.0f;
-			chaos::box3 b(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(SIZE, SIZE, SIZE));
-			chaos::box_plane3 planes = GetBoxPlanes(b);
+			chaos::perspective<3, float> perspective = GetPerspective(draw_params.viewport.size);
+			chaos::box_plane3 planes = GetProjectionPlanes(perspective);
+
+
+			//float SIZE = 500.0f;
+			//chaos::box3 b(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(SIZE, SIZE, SIZE));
+			//chaos::box_plane3 planes = GetBoxPlanes(b);
 
 			chaos::Tree27PlaneClipVisitor::Visit(object_tree, &planes[0], planes.size(), [&](loose_tree_node_type const* node, glm::vec4 const* planes, size_t plane_count, uint32_t plane_bitfield)
 			{
@@ -485,7 +493,6 @@ protected:
 				if (plane_bitfield == 0)
 					++node_noplanecheck_visited;
 			});
-			primitive_renderer->DrawPrimitive(b, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), false, true);
 		}	
 	}
 
@@ -513,7 +520,7 @@ protected:
 		return result;
 	}
 
-	void DrawAction()
+	void DrawAction(chaos::GPURenderContext* render_context, chaos::GPUProgramProviderInterface const* uniform_provider, chaos::WindowDrawParams const& draw_params)
 	{
 		if (IsImGuiMenuEnabled())
 		{

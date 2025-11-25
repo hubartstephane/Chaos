@@ -417,8 +417,8 @@ namespace chaos
 		// generate the quad mesh:  x,y inside[-1 .. +1]
 		GPUMultiMeshGenerator generators;
 
-		box2 box = box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
-		generators.AddGenerator(new GPUQuadMeshGenerator(box), quad_mesh);
+		box2 b = box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
+		generators.AddGenerator(new GPUQuadMeshGenerator(b), quad_mesh);
 		if (!generators.GenerateMeshes(GetGPUDevice()))
 			return false;
 

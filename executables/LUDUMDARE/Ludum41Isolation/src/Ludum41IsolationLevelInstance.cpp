@@ -286,9 +286,9 @@ chaos::PlayerPawn * LudumLevelInstance::CreatePlayerPawn(chaos::Player* player)
 
 	if (player_pawn != nullptr)
 	{
-		chaos::box2 box = player_pawn->GetBoundingBox();
-		box.half_size = glm::vec2(player_length * 0.5f, LudumPlayer::PLAYER_HEIGHT * 0.5f);
-		player_pawn->SetBoundingBox(box);
+		chaos::box2 player_box = player_pawn->GetBoundingBox();
+		player_box.half_size = glm::vec2(player_length * 0.5f, LudumPlayer::PLAYER_HEIGHT * 0.5f);
+		player_pawn->SetBoundingBox(player_box);
 
 		RestrictPawnToWorld(player_pawn);
 	}

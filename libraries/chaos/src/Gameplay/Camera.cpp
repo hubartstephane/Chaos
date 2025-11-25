@@ -81,11 +81,11 @@ namespace chaos
 
 	obox2 Camera::GetCameraOBox(bool apply_modifiers) const
 	{
-		box2 box = GetCameraBox(apply_modifiers);
+		box2 camera_box = GetCameraBox(apply_modifiers);
 
 		obox2 result;
-		result.position = box.position;
-		result.half_size = box.half_size;
+		result.position = camera_box.position;
+		result.half_size = camera_box.half_size;
 		result.rotation = 0.0f;
 		return result;
 	}

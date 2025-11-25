@@ -191,10 +191,10 @@ protected:
 
 	bool CreateWireframeBoxMesh()
 	{
-		box3 box;
-		box.position  = { 0.0f, 0.0f, 0.0f };
-		box.half_size = { 1.0f, 1.0f, 1.0f };
-		GPUWireframeBoxMeshGenerator generator(box);
+		box3 b;
+		b.position  = { 0.0f, 0.0f, 0.0f };
+		b.half_size = { 1.0f, 1.0f, 1.0f };
+		GPUWireframeBoxMeshGenerator generator(b);
 		 	
 		wireframe_box_mesh = generator.GenerateMesh(GetGPUDevice());
 

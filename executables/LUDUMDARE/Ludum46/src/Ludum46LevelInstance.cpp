@@ -144,16 +144,16 @@ bool LudumLevelInstance::CanCompleteLevel() const
 }
 
 
-void LudumLevelInstance::SpawnBloodParticles(chaos::box2 const& box, int particles_count)
+void LudumLevelInstance::SpawnBloodParticles(chaos::box2 const& b, int particles_count)
 {
 	chaos::ParticleSpawner spawner = GetParticleSpawner("Blood", "Blood");
 	if (spawner.IsValid())
 	{
-		spawner.SpawnParticles(particles_count, false).Process([this, box, &spawner](chaos::ParticleAccessor<ParticleBlood> accessor)
+		spawner.SpawnParticles(particles_count, false).Process([this, b, &spawner](chaos::ParticleAccessor<ParticleBlood> accessor)
 		{
 			for (ParticleBlood& p : accessor)
 			{
-				p.bounding_box = box;
+				p.bounding_box = b;
 				p.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 				float angle = chaos::MathTools::RandFloat() * (float)M_PI;
@@ -169,7 +169,7 @@ void LudumLevelInstance::SpawnBloodParticles(chaos::box2 const& box, int particl
 
 }
 
-void LudumLevelInstance::SpawnBurnedSoulParticles(chaos::box2 const& box, int particles_count)
+void LudumLevelInstance::SpawnBurnedSoulParticles(chaos::box2 const& b, int particles_count)
 {
 	LudumPlayer* ludum_player = GetPlayer(0);
 	if (ludum_player != nullptr)
@@ -178,11 +178,11 @@ void LudumLevelInstance::SpawnBurnedSoulParticles(chaos::box2 const& box, int pa
 	chaos::ParticleSpawner spawner = GetParticleSpawner("BurnedSouls", "BurnedSoulAnim");
 	if (spawner.IsValid())
 	{
-		spawner.SpawnParticles(particles_count, false).Process([this, box, &spawner](chaos::ParticleAccessor<ParticleBurnedSoul> accessor)
+		spawner.SpawnParticles(particles_count, false).Process([this, b, &spawner](chaos::ParticleAccessor<ParticleBurnedSoul> accessor)
 		{
 			for (ParticleBurnedSoul& p : accessor)
 			{
-				p.bounding_box = box;
+				p.bounding_box = b;
 				p.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 				p.velocity = glm::vec2(0.0f, chaos::MathTools::RandFloat(50.0f, 100.0f) );
 				p.duration = 6.0f;

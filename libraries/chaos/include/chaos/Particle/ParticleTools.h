@@ -27,7 +27,7 @@ namespace chaos
         /** set the particle position */
         CHAOS_API bool SetParticlePosition(ParticleAllocationBase* allocation, size_t index, glm::vec2 const& position);
         /** set the particle box */
-        CHAOS_API bool SetParticleBox(ParticleAllocationBase* allocation, size_t index, box2 const& box);
+        CHAOS_API bool SetParticleBox(ParticleAllocationBase* allocation, size_t index, box2 const& b);
 
 
         // shu47

@@ -116,13 +116,13 @@ namespace chaos
 
 	bool TMTrigger::IsCollisionWith(box2 const& other_box, CollisionType collision_type) const
 	{
-		box2 box = GetBoundingBox(true);
+		box2 bounding_box = GetBoundingBox(true);
 
 		// the box is bigger when we want to go outside !
 		if (collision_type == CollisionType::AGAIN && outside_box_factor > 1.0f)
-			box.half_size *= outside_box_factor;
+			bounding_box.half_size *= outside_box_factor;
 
-		return Collide(other_box, box);
+		return Collide(other_box, bounding_box);
 	}
 
 	bool TMTrigger::OnCollisionEvent(float delta_time, Object* object, CollisionType event_type)
@@ -349,8 +349,8 @@ namespace chaos
 		Game* game = layer_instance->GetGame();
 		if (game != nullptr)
 		{
-			box2 box = GetBoundingBox(true);
-			glm::vec2   position = box.position;
+			box2 bounding_box = GetBoundingBox(true);
+			glm::vec2   position = bounding_box.position;
 
 			PlaySoundDesc play_desc;
 			play_desc.paused = false;
@@ -359,7 +359,7 @@ namespace chaos
 			play_desc.pause_timer_when_too_far = pause_timer_when_too_far;
 
 			play_desc.SetPosition(glm::vec3(position, 0.0f), is_3D_sound);
-			play_desc.max_distance = glm::length(box.half_size);
+			play_desc.max_distance = glm::length(bounding_box.half_size);
 			play_desc.min_distance = play_desc.max_distance * min_distance_ratio;
 
 			result = game->PlaySound(sound_name.c_str(), play_desc, SoundContext::LEVEL);

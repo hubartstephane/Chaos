@@ -117,7 +117,7 @@ namespace chaos
 		/** purge all collisions with object deleted */
 		void PurgeCollisionInfo();
 		/** handle all collision for a given object (TriggerObject) */
-		void HandleTriggerCollisions(float delta_time, Object* object, box2 const& box, int mask);
+		void HandleTriggerCollisions(float delta_time, Object* object, box2 const& b, int mask);
 
 
 		/** override */

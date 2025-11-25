@@ -92,9 +92,9 @@ void LudumPlayer::SetPlayerLength(float in_length, bool increment)
 
 	if (pawn != nullptr)
 	{
-		chaos::box2 box = pawn->GetBoundingBox();
-		box.half_size = glm::vec2(player_length * 0.5f, PLAYER_HEIGHT * 0.5f);
-		pawn->SetBoundingBox(box);
+		chaos::box2 player_box = pawn->GetBoundingBox();
+		player_box.half_size = glm::vec2(player_length * 0.5f, PLAYER_HEIGHT * 0.5f);
+		pawn->SetBoundingBox(player_box);
 
 		LudumLevelInstance* ludum_level_instance = GetLevelInstance();
 		if (ludum_level_instance != nullptr)

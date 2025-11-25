@@ -246,14 +246,14 @@ namespace chaos
 	}
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	Tree27NodeInfo<DIMENSION, T> ComputeTreeNodeInfo(type_box<DIMENSION, T> const& box)
+	Tree27NodeInfo<DIMENSION, T> ComputeTreeNodeInfo(type_box<DIMENSION, T> const& b)
 	{
-		assert(!IsGeometryEmpty(box));
+		assert(!IsGeometryEmpty(b));
 
 		Tree27NodeInfo<DIMENSION, T> result;
 
 		// get size to take into account
-		T box_size = T(2.0) * GLMTools::GetMaxComponent(box.half_size);
+		T box_size = T(2.0) * GLMTools::GetMaxComponent(b.half_size);
 
 		// compute level:
 
@@ -281,7 +281,7 @@ namespace chaos
 		T denum = T(2.0 / 3.0) * widthL;
 		for (int i = 0; i < DIMENSION; ++i)
 		{
-			T num = (box.position[i] - box.half_size[i]) + T(0.5) * widthL;
+			T num = (b.position[i] - b.half_size[i]) + T(0.5) * widthL;
 			result.position[i] = int(std::floor(num / denum));
 		}
 
@@ -585,9 +585,9 @@ namespace chaos
 		}
 
 		/** add a node for a given object */
-		node_type* GetOrCreateNode(type_box<DIMENSION, T> const& box)
+		node_type* GetOrCreateNode(type_box<DIMENSION, T> const& b)
 		{
-			node_info_type node_info = ComputeTreeNodeInfo(box);
+			node_info_type node_info = ComputeTreeNodeInfo(b);
 			return DoGetOrCreateNode(node_info, root, nullptr, 0);
 		}
 

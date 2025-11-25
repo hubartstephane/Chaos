@@ -77,12 +77,12 @@ namespace chaos
             return true;
         }
 
-        bool SetParticleBox(ParticleAllocationBase* allocation, size_t index, box2 const& box)
+        bool SetParticleBox(ParticleAllocationBase* allocation, size_t index, box2 const& b)
         {
             ParticleDefault* particle = GetParticle(allocation, index);
             if (particle == nullptr)
                 return false;
-            particle->bounding_box = box;
+            particle->bounding_box = b;
             return true;
         }
 

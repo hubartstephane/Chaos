@@ -814,8 +814,8 @@ protected:
 
 			if (display_example == TestID::OBOX_BOUNDING_BOX_TEST)
 			{
-				chaos::box3 box = GetBoundingBox(b);
-				primitive_renderer->DrawPrimitive(box, blue, true);
+				chaos::box3 bounding_box = GetBoundingBox(b);
+				primitive_renderer->DrawPrimitive(bounding_box, blue, true);
 			}
 
 			if (display_example == TestID::OBOX_INNER_SPHERE_TEST)
@@ -869,8 +869,8 @@ protected:
 
 			if (display_example == TestID::OBOX_BOUNDING_BOX_TEST)
 			{
-				chaos::box2 box = GetBoundingBox(b);
-				primitive_renderer->DrawPrimitive(box, blue, true);
+				chaos::box2 bounding_box = GetBoundingBox(b);
+				primitive_renderer->DrawPrimitive(bounding_box, blue, true);
 			}
 
 			if (display_example == TestID::OBOX_INNER_SPHERE_TEST)

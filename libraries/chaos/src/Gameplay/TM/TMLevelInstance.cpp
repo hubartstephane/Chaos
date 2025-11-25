@@ -76,14 +76,14 @@ namespace chaos
 		return nullptr;
 	}
 
-	void TMLevelInstance::HandleTriggerCollisions(float delta_time, Object* object, box2 const& box, int mask)
+	void TMLevelInstance::HandleTriggerCollisions(float delta_time, Object* object, box2 const& b, int mask)
 	{
 		TMTriggerCollisionInfo* previous_collisions = FindTriggerCollisionInfo(object);
 
 		TMTriggerCollisionInfo new_collisions;
 
 		// search all new collisions
-		for (TMTriggerCollisionIterator it = GetTriggerCollisionIterator(box, mask, true) ; it ; ++it)
+		for (TMTriggerCollisionIterator it = GetTriggerCollisionIterator(b, mask, true) ; it ; ++it)
 		{
 			TMTrigger& trigger = *it;
 			// trigger only enabled trigger
@@ -98,7 +98,7 @@ namespace chaos
 				if (previous_collisions->FindTrigger(&trigger))
 					collision_type = CollisionType::AGAIN;
 			// check for collision (bounding box may change when wanting to go outside)
-			if (trigger.IsCollisionWith(box, collision_type))
+			if (trigger.IsCollisionWith(b, collision_type))
 				new_collisions.triggers.push_back(&trigger);
 		}
 

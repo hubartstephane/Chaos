@@ -49,7 +49,7 @@ glm::vec2 ClosestPoint(glm::vec2 const& p, glm::vec2 const& a, glm::vec2 const& 
 
 
 
-std::vector<CollisionEntry> ComputeCollisions(box2 box, LudumLevelInstance* ludum_level)
+std::vector<CollisionEntry> ComputeCollisions(box2 b, LudumLevelInstance* ludum_level)
 {
 #if _DEBUG
 	GPUDrawInterface<VertexDefault> * DI = GetDebugDrawInterface();
@@ -57,7 +57,7 @@ std::vector<CollisionEntry> ComputeCollisions(box2 box, LudumLevelInstance* ludu
 
 	std::vector<CollisionEntry> result;
 
-	sphere2 pawn_sphere = GetInnerSphere(box);
+	sphere2 pawn_sphere = GetInnerSphere(b);
 
 
 	// The CollisionIterator does not correctly detect
@@ -70,9 +70,9 @@ std::vector<CollisionEntry> ComputeCollisions(box2 box, LudumLevelInstance* ludu
 	//   -> increase pawn bbox to increase early detection
 	//
 
-	box.half_size *= 4.0f;
+	b.half_size *= 4.0f;
 
-	TMObjectCollisionIterator Iterator = ludum_level->GetObjectCollisionIterator(box, COLLISION_LANDSCAPE, false);
+	TMObjectCollisionIterator Iterator = ludum_level->GetObjectCollisionIterator(b, COLLISION_LANDSCAPE, false);
 	while (Iterator)
 	{
 		TMObject & object = *Iterator;

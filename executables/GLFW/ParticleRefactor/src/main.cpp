@@ -13,7 +13,7 @@ class ParticleExample
 {
 public:
 
-	chaos::box2 box;
+	chaos::box2 bounding_box;
 	glm::vec2 velocity;
 	chaos::ParticleTexcoords texcoords;
 	float lifetime;
@@ -44,7 +44,7 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticleExample & particle, AllocationData const & data) const
 	{
-		particle.box.position += particle.velocity * delta_time;
+		particle.bounding_box.position += particle.velocity * delta_time;
 		particle.remaining_time -= delta_time;
 
 		return (particle.remaining_time <= 0.0f);
@@ -58,7 +58,7 @@ public:
 		chaos::QuadPrimitive<VertexExample> primitive = output.AddQuads();
 
 		glm::vec2 vertex_positions[4];
-		chaos::GenerateVertexPositionAttributes(particle.box, 0.0f, vertex_positions);
+		chaos::GenerateVertexPositionAttributes(particle.bounding_box, 0.0f, vertex_positions);
 
 		glm::vec3 vertex_texcoords[4];
 		chaos::GenerateVertexTextureAttributes(particle.texcoords, 0, vertex_texcoords);
@@ -241,8 +241,8 @@ protected:
         float speed = WORLD_HEIGHT * chaos::MathTools::RandFloat() * 0.1f;
         float lifetime = 4.0f + chaos::MathTools::RandFloat() * 2.0f;
 
-        particle.box.position = center;
-        particle.box.half_size = 0.5f * glm::vec2(size, size);
+        particle.bounding_box.position = center;
+        particle.bounding_box.half_size = 0.5f * glm::vec2(size, size);
         particle.velocity = glm::vec2(
             speed * std::cos(alpha),
             speed * std::sin(alpha));

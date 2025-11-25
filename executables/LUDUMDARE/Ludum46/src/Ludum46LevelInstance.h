@@ -17,9 +17,9 @@ public:
 
 	LudumLevelInstance();
 
-	void SpawnBloodParticles(chaos::box2 const& box, int particles_count);
+	void SpawnBloodParticles(chaos::box2 const& b, int particles_count);
 
-	void SpawnBurnedSoulParticles(chaos::box2 const& box, int particles_count);
+	void SpawnBurnedSoulParticles(chaos::box2 const& b, int particles_count);
 
 protected:
 

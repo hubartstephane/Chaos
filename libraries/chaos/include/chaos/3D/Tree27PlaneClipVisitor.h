@@ -99,7 +99,7 @@ namespace chaos
 				assert(node != nullptr);
 				assert(plane_bitfield != 0);
 
-				box_type box = node->GetBoundingBox();
+				box_type node_box = node->GetBoundingBox();
 
 				bool node_rejected = BitTools::ForEachBitForward(plane_bitfield, [&](uint32_t index)
 					{
@@ -119,16 +119,16 @@ namespace chaos
 						for (size_t i = 0; i < DIMENSION; ++i)
 						{
 							uint32_t normal_direction_sign = AsUint32(plane[i]) & (1 << 31);                       // just keep the sign
-							uint32_t half_size_component = AsUint32(box.half_size[i]) & ~(1 << 31);              // remove the sign from half_size
+							uint32_t half_size_component = AsUint32(node_box.half_size[i]) & ~(1 << 31);              // remove the sign from half_size
 							directed_half_size[i] = AsFloat(half_size_component | normal_direction_sign); // add to half sign the sign coming from the plane normal
 						}
 
-						vec_type A = box.position - directed_half_size;
+						vec_type A = node_box.position - directed_half_size;
 						float section_A = glm::dot({ A, 1.0f }, plane);
 						if (section_A > 0.0f)
 							return true; // stop processing (whole node & hierarchy is rejected)
 
-						vec_type B = box.position + directed_half_size;
+						vec_type B = node_box.position + directed_half_size;
 						float section_B = glm::dot({ B, 1.0f }, plane);
 						if (section_B < 0.0f)
 							plane_bitfield &= ~(1 << index); // this plane does need to be processed ever anymore

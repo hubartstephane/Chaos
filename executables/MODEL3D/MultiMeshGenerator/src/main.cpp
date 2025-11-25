@@ -204,16 +204,16 @@ protected:
 		//triangle.c = {+100.0f, -100.0f, 0.0f};
 		//generator.AddGenerator(new GPUTriangleMeshGenerator(triangle), quad_mesh);
 
-		box3 box;
-		box.position = { 0.0f, 0.0f, 0.0f };
-		box.half_size = { 50.0f, 50.0f, 50.0f };
-		generator.AddGenerator(new GPUBoxMeshGenerator(box), box3_mesh);
-		generator.AddGenerator(new GPUWireframeBoxMeshGenerator(box), box3_wireframe_mesh);
+		box3 object_box;
+		object_box.position = { 0.0f, 0.0f, 0.0f };
+		object_box.half_size = { 50.0f, 50.0f, 50.0f };
+		generator.AddGenerator(new GPUBoxMeshGenerator(object_box), box3_mesh);
+		generator.AddGenerator(new GPUWireframeBoxMeshGenerator(object_box), box3_wireframe_mesh);
 
-		sphere3 sphere;
-		sphere.position = { 0.0f, 0.0f, 0.0f };
-		sphere.radius = 50.0f;
-		generator.AddGenerator(new GPUSphereMeshGenerator(sphere), sphere_mesh);
+		sphere3 object_sphere;
+		object_sphere.position = { 0.0f, 0.0f, 0.0f };
+		object_sphere.radius = 50.0f;
+		generator.AddGenerator(new GPUSphereMeshGenerator(object_sphere), sphere_mesh);
 
 		if (!generator.GenerateMeshes(GetGPUDevice()))
 			return false;

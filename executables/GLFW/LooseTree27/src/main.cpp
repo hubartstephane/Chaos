@@ -134,8 +134,8 @@ public:
 	{
 		switch (geometry_type)
 		{
-		case GeometryType::SPHERE: return chaos::GetBoundingBox(sphere);
-		case GeometryType::BOX: return box;
+		case GeometryType::SPHERE: return chaos::GetBoundingBox(object_sphere);
+		case GeometryType::BOX: return object_box;
 		default: assert(0);
 		};
 		return {};
@@ -146,10 +146,10 @@ public:
 		switch (geometry_type)
 		{
 		case GeometryType::SPHERE:
-			primitive_renderer->DrawPrimitive(sphere, color, false);
+			primitive_renderer->DrawPrimitive(object_sphere, color, false);
 			break;
 		case GeometryType::BOX:
-			primitive_renderer->DrawPrimitive(box, color, false, false);
+			primitive_renderer->DrawPrimitive(object_box, color, false, false);
 			break;
 		default:
 			assert(0);
@@ -161,7 +161,7 @@ public:
 		switch (geometry_type)
 		{
 		case GeometryType::SPHERE:
-			return chaos::GetIntersection(r, sphere);
+			return chaos::GetIntersection(r, object_sphere);
 		case GeometryType::BOX:
 			break;
 		default:
@@ -185,9 +185,9 @@ public:
 					glm::vec3 delta_position = DirectionToVector(direction) * delta_time * final_speed;
 
 					if (geometry_type == GeometryType::SPHERE)
-						sphere.position += delta_position;
+						object_sphere.position += delta_position;
 					else if (geometry_type == GeometryType::BOX)
-						box.position += delta_position;
+						object_box.position += delta_position;
 					OnObjectMoved();
 				});
 			};
@@ -213,12 +213,12 @@ public:
 
 						if (geometry_type == GeometryType::SPHERE)
 						{
-							sphere.radius += GetDirectionSign(direction) * final_scale_speed;
-							sphere.radius = std::max(1.0f, sphere.radius);
+							object_sphere.radius += GetDirectionSign(direction) * final_scale_speed;
+							object_sphere.radius = std::max(1.0f, object_sphere.radius);
 						}
 						else if (geometry_type == GeometryType::BOX)
 						{
-							float& half_size_component = box.half_size[size_t(DirectionToAxis(direction))];
+							float& half_size_component = object_box.half_size[size_t(DirectionToAxis(direction))];
 							half_size_component += GetDirectionSign(direction) * final_scale_speed;
 							half_size_component = std::max(1.0f, half_size_component);
 						}
@@ -271,9 +271,9 @@ public:
 
 	GeometryType geometry_type = GeometryType::SPHERE;
 
-	chaos::sphere3 sphere;
+	chaos::sphere3 object_sphere;
 
-	chaos::box3    box;
+	chaos::box3    object_box;
 
 	size_t object_id = 0;
 
@@ -827,7 +827,7 @@ protected:
 	{
 		if (GeometricObject* result = CreateNewGeometry(GeometryType::BOX))
 		{
-			result->box = creation_box;
+			result->object_box = creation_box;
 			result->InsertIntoTree();			
 			return result;
 		}
@@ -838,7 +838,7 @@ protected:
 	{
 		if (GeometricObject* result = CreateNewGeometry(GeometryType::SPHERE))
 		{
-			result->sphere = creation_sphere;
+			result->object_sphere = creation_sphere;
 			result->InsertIntoTree();
 			return result;
 		}

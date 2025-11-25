@@ -150,7 +150,7 @@ protected:
 		result->mesh               = mesh;
 		result->transform.position = position;
 		result->transform.scale    = scale;
-		result->transform.rotator  = rotation;
+		result->transform.rotation  = rotation;
 		result->color              = color;
 		result->emissive_color     = emissive_color;
 		result->name               = name;

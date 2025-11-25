@@ -214,12 +214,12 @@ namespace chaos
 		/** constructor from base (usefull for box conversion) */
 		type_obox(type_box_base<DIMENSION, T> const& src) : type_box_base<DIMENSION, T>(src.position, src.half_size){}
 		/** other constructor */
-		type_obox(vec_type const & in_position, vec_type const & in_half_size, rot_type const & in_rotator) : type_box_base<DIMENSION, T>(in_position, in_half_size), rotator(in_rotator) {}
+		type_obox(vec_type const & in_position, vec_type const & in_half_size, rot_type const & in_rotation) : type_box_base<DIMENSION, T>(in_position, in_half_size), rotation(in_rotation) {}
 
 	public:
 
 		/** the angle/quaternion of rotation to apply to a box to have this obox */
-		rot_type rotator = zero_rotator();
+		rot_type rotation = zero_rotator();
 	};
 
 	// ==============================================================================================

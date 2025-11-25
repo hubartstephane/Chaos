@@ -279,12 +279,12 @@ bool LudumRoad::DoTick(float delta_time)
 			chaos::obox2 ob1;
 			ob1.position = b1.position;
 			ob1.half_size = b1.half_size;
-			ob1.rotator = opp1->GetRotation();
+			ob1.rotation = opp1->GetRotation();
 
 			chaos::obox2 ob2;
 			ob2.position = b2.position;
 			ob2.half_size = b2.half_size;
-			ob2.rotator = opp2->GetRotation();
+			ob2.rotation = opp2->GetRotation();
 
 			// raw evaluation
 			if (!Collide(GetBoundingSphere(ob1), GetBoundingSphere(ob2)))   // shu47 : peut etre faire une fonction dediée pour eviter les [2 x sqrtf] pour les creations de bounding sphere
@@ -370,12 +370,12 @@ bool LudumRoad::DoTick(float delta_time)
 			chaos::obox2 ob1;
 			ob1.position = b1.position;
 			ob1.half_size = b1.half_size;
-			ob1.rotator = opp1->GetRotation();
+			ob1.rotation = opp1->GetRotation();
 
 			chaos::obox2 ob2;
 			ob2.position = b2.position;
 			ob2.half_size = b2.half_size;
-			ob2.rotator = player_particle->rotation;
+			ob2.rotation = player_particle->rotation;
 
 			// raw evaluation
 			if (!Collide(GetBoundingSphere(ob1), GetBoundingSphere(ob2)))   // shu47 : peut etre faire une fonction dediée pour eviter les [2 x sqrtf] pour les creations de bounding sphere

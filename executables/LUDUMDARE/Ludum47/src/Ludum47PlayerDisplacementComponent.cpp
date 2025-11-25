@@ -30,14 +30,14 @@ bool LudumPlayerDisplacementComponent::ComputeBorderCollision(ParticleBase & par
 	transformed_box.half_size = particle.bounding_box.half_size;
 
 	glm::mat4x4 transform =
-		chaos::GetRotatorMatrix(-particle.rotation) *
+		chaos::GetRotationMatrix(-particle.rotation) *
 		glm::translate(glm::vec3(-particle.bounding_box.position, 0.0f));
 
 
 	chaos::obox2 player_obox;
 	player_obox.position = particle.bounding_box.position;
 	player_obox.half_size = particle.bounding_box.half_size;
-	player_obox.rotator = particle.rotation;
+	player_obox.rotation = particle.rotation;
 
 
 	glm::vec2 player_box_vertices[4];

@@ -13,23 +13,23 @@ namespace chaos
 		return result;
 	}
 
-	glm::mat4x4 GetRotatorMatrix(glm::quat const & rotator)
+	glm::mat4x4 GetRotationMatrix(glm::quat const & rotation)
 	{
-		return glm::toMat4(rotator);
+		return glm::toMat4(rotation);
 	}
 	/** rotator to matrix */
-	glm::dmat4x4 GetRotatorMatrix(glm::dquat const & rotator)
+	glm::dmat4x4 GetRotationMatrix(glm::dquat const & rotation)
 	{
-		return glm::toMat4(rotator);
+		return glm::toMat4(rotation);
 	}
 	/** rotator to matrix */
-	glm::mat4x4 GetRotatorMatrix(float rotator)
+	glm::mat4x4 GetRotationMatrix(float rotation)
 	{
 		// hand made rotation for 2D to avoid the usage of a quaternion
 		glm::mat4x4 result = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
 
-		auto c = std::cos(rotator);
-		auto s = std::sin(rotator);
+		auto c = std::cos(rotation);
+		auto s = std::sin(rotation);
 		result[0][0] =  c;
 		result[0][1] =  s;
 		result[1][0] = -s;
@@ -37,13 +37,13 @@ namespace chaos
 		return result;
 	}
 	/** rotator to matrix */
-	glm::dmat4x4 GetRotatorMatrix(double rotator)
+	glm::dmat4x4 GetRotationMatrix(double rotation)
 	{
 		// hand made rotation for 2D to avoid the usage of a quaternion
 		glm::dmat4x4 result = glm::scale(glm::dvec3(1.0, 1.0, 1.0));
 
-		auto c = std::cos(rotator);
-		auto s = std::sin(rotator);
+		auto c = std::cos(rotation);
+		auto s = std::sin(rotation);
 		result[0][0] =  c;
 		result[0][1] =  s;
 		result[1][0] = -s;

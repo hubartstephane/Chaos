@@ -425,7 +425,7 @@ protected:
 	{
 		res.position = Get2DVector(p);
 		res.half_size = Get2DVector(glm::vec3(1.0f, 2.0f, 3.0f));
-		res.rotator = r;
+		res.rotation = r;
 	}
 
 	void GetCollisionPrimitive(chaos::obox3 & res, glm::vec3 const & p, float r)
@@ -434,7 +434,7 @@ protected:
 		res.half_size = glm::vec3(1.0f, 2.0f, 3.0f);
 
 		glm::vec3 axis = glm::normalize(glm::vec3(0.0f, 1.0f, 1.0f));
-		res.rotator = glm::angleAxis(r, axis);
+		res.rotation = glm::angleAxis(r, axis);
 	}
 
 	void GetCollisionPrimitive(chaos::sphere2 & res, glm::vec3 const & p, float r)

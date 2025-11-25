@@ -19,13 +19,13 @@ namespace chaos
 	// ==============================================================================================
 
 	/** rotator to matrix */
-	CHAOS_API glm::mat4x4 GetRotatorMatrix(glm::quat const& rotator);
+	CHAOS_API glm::mat4x4 GetRotationMatrix(glm::quat const& rotation);
 	/** rotator to matrix */
-	CHAOS_API glm::dmat4x4 GetRotatorMatrix(glm::dquat const& rotator);
+	CHAOS_API glm::dmat4x4 GetRotationMatrix(glm::dquat const& rotation);
 	/** rotator to matrix */
-	CHAOS_API glm::mat4x4 GetRotatorMatrix(float rotator);
+	CHAOS_API glm::mat4x4 GetRotationMatrix(float rotation);
 	/** rotator to matrix */
-	CHAOS_API glm::dmat4x4 GetRotatorMatrix(double rotator);
+	CHAOS_API glm::dmat4x4 GetRotationMatrix(double rotation);
 
 	// ==============================================================================================
 	// plane functions
@@ -470,7 +470,7 @@ namespace chaos
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	bool operator == (type_obox<DIMENSION, T> const& b1, type_obox<DIMENSION, T> const& b2)
 	{
-		return (b1.position == b1.position) && (b1.half_size == b2.half_size) && (b1.rotator == b2.rotator);
+		return (b1.position == b1.position) && (b1.half_size == b2.half_size) && (b1.rotation == b2.rotation);
 	}
 
 	// shu49. Ca vaut le coup de savoir dans quel ordre on genere ces vertex
@@ -488,7 +488,7 @@ namespace chaos
 
 		if (global)
 		{
-			auto transform = GetRotatorMatrix(b.rotator);
+			auto transform = GetRotationMatrix(b.rotation);
 			for (int i = 0; i < 4; ++i)
 			{
 				result[i] = GLMTools::Mult(transform, result[i]);
@@ -505,7 +505,7 @@ namespace chaos
 
 		if (global)
 		{
-			auto transform = GetRotatorMatrix(b.rotator);
+			auto transform = GetRotationMatrix(b.rotation);
 			for (int i = 0; i < 8; ++i)
 			{
 				result[i] = GLMTools::Mult(transform, result[i]);
@@ -527,7 +527,7 @@ namespace chaos
 
 		auto max_vec = glm::tvec2<T>(-std::numeric_limits<T>::max(), -std::numeric_limits<T>::max());
 
-		auto transform = GetRotatorMatrix(b.rotator);
+		auto transform = GetRotationMatrix(b.rotation);
 		for (int i = 0; i < 4; ++i)
 			max_vec = glm::max(max_vec, GLMTools::Mult(transform, vertices[i]));
 		result.half_size = max_vec;
@@ -549,7 +549,7 @@ namespace chaos
 
 		auto max_vec = glm::tvec3<T>(-std::numeric_limits<T>::max(), -std::numeric_limits<T>::max(), -std::numeric_limits<T>::max());
 
-		auto transform = GetRotatorMatrix(b.rotator);
+		auto transform = GetRotationMatrix(b.rotation);
 		for (int i = 0; i < 8; ++i)
 			max_vec = glm::max(max_vec, GLMTools::Mult(transform, vertices[i]));
 		result.half_size = max_vec;

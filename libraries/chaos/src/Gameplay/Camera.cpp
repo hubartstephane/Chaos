@@ -13,7 +13,7 @@ namespace chaos
 	glm::mat4x4 CameraTools::GetCameraTransform(obox2 const & obox)
 	{
 		glm::mat4x4 result;
-		result = GetRotatorMatrix(-obox.rotator) * glm::translate(glm::vec3(-obox.position.x, -obox.position.y, 0.0f));
+		result = GetRotationMatrix(-obox.rotation) * glm::translate(glm::vec3(-obox.position.x, -obox.position.y, 0.0f));
 		return result;
 	}
 
@@ -86,7 +86,7 @@ namespace chaos
 		obox2 result;
 		result.position = box.position;
 		result.half_size = box.half_size;
-		result.rotator = 0.0f;
+		result.rotation = 0.0f;
 		return result;
 	}
 

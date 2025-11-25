@@ -713,7 +713,7 @@ namespace chaos
 			b.position = { 0, 0 };
 			b.half_size = sources[i]->half_size;
 
-			auto transform = GetRotatorMatrix(-sources[i]->rotator) * glm::translate(glm::tvec3<T>(-sources[i]->position, 0)); // world => local BOX
+			auto transform = GetRotationMatrix(-sources[i]->rotation) * glm::translate(glm::tvec3<T>(-sources[i]->position, 0)); // world => local BOX
 
 			// get vertices of the other source and search a separating plane
 			glm::tvec2<T> vertices[4];
@@ -1018,7 +1018,7 @@ namespace chaos
 	bool Collide(typename type_obox<DIMENSION, T>::vec_type const& pt, type_obox<DIMENSION, T> const& b, bool open_geometry = false)
 	{
 		// set point from global to local system
-		auto transform = GetRotatorMatrix(-b.rotator);
+		auto transform = GetRotationMatrix(-b.rotation);
 		auto transformed_ptr = GLMTools::Mult(transform, pt - b.position);
 		// now we can considere we are in a standard BOX
 		if (open_geometry)

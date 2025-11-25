@@ -74,7 +74,7 @@ namespace chaos
 			else if constexpr (DIMENSION == 3)
 				s = glm::scale(scale);
 
-			r = GetRotatorMatrix(rotator);
+			r = GetRotationMatrix(rotation);
 
 			if constexpr (DIMENSION == 2)
 				t = glm::translate(glm::tvec3<T>(position, 0));
@@ -93,7 +93,7 @@ namespace chaos
 			else if constexpr (DIMENSION == 3)
 				t = glm::translate(-position);
 
-			r = GetRotatorMatrix(-rotator);
+			r = GetRotationMatrix(-rotation);
 
 			if constexpr (DIMENSION == 2)
 				s = glm::scale(glm::tvec3<T>(T(1) / scale, 1));
@@ -109,8 +109,8 @@ namespace chaos
 		vec_type position = vec_type(0);
 		/** the scale */
 		vec_type scale = vec_type(1);
-		/** the rotator */
-		rot_type rotator = zero_rotator();
+		/** the rotation */
+		rot_type rotation = zero_rotator();
 	};
 
 #endif

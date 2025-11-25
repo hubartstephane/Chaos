@@ -372,7 +372,7 @@ namespace chaos
 		obox2 result;
 		result.position = glm::vec3(0.0f, 0.0f, 0.0f);
 		result.half_size = GetGame()->GetCanvasBox().half_size;
-		result.rotator = 0.0f;
+		result.rotation = 0.0f;
 
 		// apply the aspect ratio
 		if (game != nullptr)

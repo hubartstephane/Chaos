@@ -68,9 +68,9 @@ namespace chaos
 		cache_state |= (INVALID_LOCAL_TO_PARENT | INVALID_PARENT_TO_LOCAL);
 	}
 
-	void SceneNode::SetRotator(float in_rotator)
+	void SceneNode::SetRotator(float in_rotation)
 	{
-		transform.rotator = in_rotator;
+		transform.rotation = in_rotation;
 		cache_state |= (INVALID_LOCAL_TO_PARENT | INVALID_PARENT_TO_LOCAL);
 	}
 

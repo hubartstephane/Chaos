@@ -222,7 +222,7 @@ void PrimitiveRenderer::DrawPrimitive(chaos::obox3 const & b, glm::vec4 const & 
 
 	glm::mat4 local_to_world =
 		glm::translate(b.position) *
-		chaos::GetRotatorMatrix(b.rotator) *
+		chaos::GetRotationMatrix(b.rotation) *
 		glm::scale(b.half_size);
 
 	DrawPrimitiveImpl(
@@ -243,7 +243,7 @@ void PrimitiveRenderer::DrawPrimitive(chaos::obox2 const & b, glm::vec4 const & 
 
 	glm::mat4 local_to_world =
 		glm::translate(glm::vec3(b.position.x, b.position.y, 0.0f)) *
-		chaos::GetRotatorMatrix(b.rotator) *
+		chaos::GetRotationMatrix(b.rotation) *
 		glm::scale(glm::vec3(b.half_size.x, b.half_size.y, 1.0f));
 
 	DrawPrimitiveImpl(

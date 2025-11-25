@@ -37,7 +37,7 @@ namespace chaos
 		obox2 result;
 		result.position = ob.position;
 		result.half_size = ob.half_size;
-		result.rotator = GetRotation();
+		result.rotation = GetRotation();
 
 		return result;
 	}

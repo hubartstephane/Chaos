@@ -31,14 +31,14 @@ namespace chaos
 		/** get the scale of the node */
 		glm::vec2 const& GetScale() const { return transform.scale; }
 		/** get the rotation of the node */
-		float GetRotator() const { return transform.rotator; }
+		float GetRotation() const { return transform.rotation; }
 
 		/** set the position of the node */
 		void SetPosition(glm::vec2 const& in_position);
 		/** set the scale of the node */
 		void SetScale(glm::vec2 const& in_scale);
 		/** set the rotation of the node */
-		void SetRotator(float in_rotator);
+		void SetRotator(float in_rotation);
 
 		/** insert a children node */
 		void AddChildNode(SceneNode* in_child);

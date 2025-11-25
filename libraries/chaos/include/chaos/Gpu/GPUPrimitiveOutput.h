@@ -283,7 +283,7 @@ namespace chaos
     void DrawBox(GPUPrimitiveOutput<VERTEX_TYPE>& output, obox2 const& b, glm::vec4 const& color, bool fill)
     {
         glm::vec2 vertex_positions[4];
-        GenerateVertexPositionAttributes(b, b.rotator, vertex_positions); // in order BL, BR, TR, TL
+        GenerateVertexPositionAttributes(b, b.rotation, vertex_positions); // in order BL, BR, TR, TL
 
         if (!fill)
         {

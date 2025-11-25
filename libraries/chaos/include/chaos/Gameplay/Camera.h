@@ -18,9 +18,9 @@ namespace chaos
 	public:
 
 		/** returns the transformation matrix from a camera obox */
-		static glm::mat4x4 GetCameraTransform(obox2 const& obox);
+		static glm::mat4x4 GetCameraTransform(obox2 const& ob);
 		/** returns the projection matrix from a camera obox */
-		static glm::mat4x4 GetProjectionMatrix(obox2 const& obox);
+		static glm::mat4x4 GetProjectionMatrix(obox2 const& ob);
 
 		/** apply safe zone to a camera box */
 		static box2 GetSafeCameraBox(box2 const& camera_box, SafeZone const& safe_zone);

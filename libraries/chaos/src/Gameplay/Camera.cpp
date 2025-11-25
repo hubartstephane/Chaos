@@ -10,17 +10,17 @@ namespace chaos
 	// CameraTools
 	// =================================================
 
-	glm::mat4x4 CameraTools::GetCameraTransform(obox2 const & obox)
+	glm::mat4x4 CameraTools::GetCameraTransform(obox2 const & ob)
 	{
 		glm::mat4x4 result;
-		result = GetRotationMatrix(-obox.rotation) * glm::translate(glm::vec3(-obox.position.x, -obox.position.y, 0.0f));
+		result = GetRotationMatrix(-ob.rotation) * glm::translate(glm::vec3(-ob.position.x, -ob.position.y, 0.0f));
 		return result;
 	}
 
-	glm::mat4x4 CameraTools::GetProjectionMatrix(obox2 const& obox)
+	glm::mat4x4 CameraTools::GetProjectionMatrix(obox2 const& ob)
 	{
 		glm::mat4x4 result;
-		result = glm::scale(glm::vec3(1.0f / obox.half_size.x, 1.0f / obox.half_size.y, 1.0f));
+		result = glm::scale(glm::vec3(1.0f / ob.half_size.x, 1.0f / ob.half_size.y, 1.0f));
 		return result;
 	}
 

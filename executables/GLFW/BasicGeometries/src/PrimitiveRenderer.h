@@ -15,42 +15,42 @@ public:
 	bool Initialize();
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	chaos::type_box<DIMENSION, T> SlightIncreaseSize(chaos::type_box<DIMENSION, T> src) const
+	chaos::box<DIMENSION, T> SlightIncreaseSize(chaos::box<DIMENSION, T> src) const
 	{
 		src.half_size *= static_cast<T>(1.01);
 		return src;
 	}
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	chaos::type_obox<DIMENSION, T> SlightIncreaseSize(chaos::type_obox<DIMENSION, T> src) const
+	chaos::obox<DIMENSION, T> SlightIncreaseSize(chaos::obox<DIMENSION, T> src) const
 	{
 		src.half_size *= static_cast<T>(1.01);
 		return src;
 	}
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	chaos::type_sphere<DIMENSION, T> SlightIncreaseSize(chaos::type_sphere<DIMENSION, T> src) const
+	chaos::sphere<DIMENSION, T> SlightIncreaseSize(chaos::sphere<DIMENSION, T> src) const
 	{
 		src.radius *= static_cast<T>(1.01);
 		return src;
 	}
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	chaos::type_box<DIMENSION, T> SlightDecreaseSize(chaos::type_box<DIMENSION, T> src) const
+	chaos::box<DIMENSION, T> SlightDecreaseSize(chaos::box<DIMENSION, T> src) const
 	{
 		src.half_size *= static_cast<T>(0.90);
 		return src;
 	}
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	chaos::type_obox<DIMENSION, T> SlightDecreaseSize(chaos::type_obox<DIMENSION, T> src) const
+	chaos::obox<DIMENSION, T> SlightDecreaseSize(chaos::obox<DIMENSION, T> src) const
 	{
 		src.half_size *= static_cast<T>(0.90);
 		return src;
 	}
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	chaos::type_sphere<DIMENSION, T> SlightDecreaseSize(chaos::type_sphere<DIMENSION, T> src) const
+	chaos::sphere<DIMENSION, T> SlightDecreaseSize(chaos::sphere<DIMENSION, T> src) const
 	{
 		src.radius *= static_cast<T>(0.90);
 		return src;

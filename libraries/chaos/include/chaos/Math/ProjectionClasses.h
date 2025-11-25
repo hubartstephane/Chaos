@@ -156,19 +156,19 @@ namespace chaos
 	}
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	type_box_plane<DIMENSION, T> GetProjectionPlanes(perspective<DIMENSION, T> const& persp)
+	box_plane<DIMENSION, T> GetProjectionPlanes(perspective<DIMENSION, T> const& persp)
 	{
 		return GetProjectionPlanes(ProjectionType::PERSPECTIVE, GetProjectionVolume(persp));
 	}
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	type_box_plane<DIMENSION, T> GetProjectionPlanes(ProjectionType type, projection_volume<DIMENSION, T> const& vol)
+	box_plane<DIMENSION, T> GetProjectionPlanes(ProjectionType type, projection_volume<DIMENSION, T> const& vol)
 	{
 		using geometry   = type_geometric<DIMENSION, T>;
 		using vec_type   = typename geometry::vec_type;
 		using plane_type = typename geometry::plane_type;
 
-		type_box_plane<DIMENSION, T> result;
+		box_plane<DIMENSION, T> result;
 
 		switch (type)
 		{

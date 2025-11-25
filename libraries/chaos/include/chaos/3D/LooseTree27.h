@@ -246,7 +246,7 @@ namespace chaos
 	}
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	Tree27NodeInfo<DIMENSION, T> ComputeTreeNodeInfo(type_box<DIMENSION, T> const& b)
+	Tree27NodeInfo<DIMENSION, T> ComputeTreeNodeInfo(box<DIMENSION, T> const& b)
 	{
 		assert(!IsGeometryEmpty(b));
 
@@ -585,7 +585,7 @@ namespace chaos
 		}
 
 		/** add a node for a given object */
-		node_type* GetOrCreateNode(type_box<DIMENSION, T> const& b)
+		node_type* GetOrCreateNode(box<DIMENSION, T> const& b)
 		{
 			node_info_type node_info = ComputeTreeNodeInfo(b);
 			return DoGetOrCreateNode(node_info, root, nullptr, 0);

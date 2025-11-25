@@ -9,7 +9,7 @@ namespace chaos
 	// ==============================================================================================
 
 	// the base template (two arguments, type and dimension)
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class type_geometric;
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class geometry;
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class ray;
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class box_base;
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class box;
@@ -20,17 +20,22 @@ namespace chaos
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class aabox;     // aligned axis box
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class box_plane; // a set of 4 or 6 clip planes
 
-	// for our geometric classes (ray, box, ...) defines using & templates that mimic glm
+	// for our geometric classes (ray, box, ...) defines using & templates that mimic glm conventions
 	//   box2
 	//   box3
+	//   dbox2
+	//   dbox3
 	//   tbox2<float>
 	//   tbox3<float>
 	//   ...
-#define CHAOS_GEOMETRY_DEFINE_T_TEMPLATE(CLS)\
-	template<std::floating_point T> using t##CLS##2 = CLS<2, T>;\
-	template<std::floating_point T> using t##CLS##3 = CLS<3, T>;\
-	using CLS##2 = CLS<2, float>;\
-	using CLS##3 = CLS<3, float>;
+#define CHAOS_GEOMETRY_DEFINE_T_TEMPLATE(TYPENAME)\
+	template<std::floating_point T> using t##TYPENAME##2 = TYPENAME<2, T>;\
+	template<std::floating_point T> using t##TYPENAME##3 = TYPENAME<3, T>;\
+	using TYPENAME##2 = TYPENAME<2, float>;\
+	using TYPENAME##3 = TYPENAME<3, float>;\
+	using d##TYPENAME##2 = TYPENAME<2, double>;\
+	using d##TYPENAME##3 = TYPENAME<3, double>;
+	CHAOS_GEOMETRY_DEFINE_T_TEMPLATE(geometry);
 	CHAOS_GEOMETRY_DEFINE_T_TEMPLATE(ray);
 	CHAOS_GEOMETRY_DEFINE_T_TEMPLATE(box_base);
 	CHAOS_GEOMETRY_DEFINE_T_TEMPLATE(box);
@@ -88,51 +93,20 @@ namespace chaos
 	class rotator<3, double> : public boost::mpl::identity<glm::dquat> {};
 
 	// ==============================================================================================
-	// geometric class
+	// geometry class
 	// ==============================================================================================
 
-	template<std::floating_point T>
-	class type_geometric<2, T>
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	class geometry
 	{
 	public:
 		/** the dimension of the space */
-		static constexpr int dimension = 2;
+		static constexpr int dimension = DIMENSION;
 
 		/** the type of the components */
 		using type = T;
-		/** the type for matrix */
-		using mat_type = glm::tmat4x4<T>;
-		/** the type of vector */
-		using vec_type = glm::vec<dimension, type>;
-		/** the type of plane */
-		using plane_type = glm::vec<dimension + 1, type>;
-		/** the type of rotator */
-		using rot_type = typename rotator<dimension, type>::type;
-		/** the type of ray */
-		using ray_type = ray<dimension, type>;
-		/** the type of sphere */
-		using sphere_type = sphere<dimension, type>;
-		/** the type of box */
-		using box_type = box<dimension, type>;
-		/** the type of obox */
-		using obox_type = obox<dimension, type>;
-		/** the type of triangle */
-		using triangle_type = triangle<dimension, type>;
-		/** the type of aabox */
-		using aabox_type = aabox<dimension, type>;
-		/** the type of box plane */
-		using box_plane_type = box_plane<dimension, type>;
-	};
-
-	template<std::floating_point T>
-	class type_geometric<3, T>
-	{
-	public:
-		/** the dimension of the space */
-		static constexpr int dimension = 3;
-
-		/** the type of the components */
-		using type = T;
+		/** the type for the geometry itself */
+		using geometry_type = geometry<dimension, type>;
 		/** the type for matrix */
 		using mat_type = glm::tmat4x4<T>;
 		/** the type of vector */
@@ -162,12 +136,12 @@ namespace chaos
 	// ==============================================================================================
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	class box_base : public type_geometric<DIMENSION, T>
+	class box_base : public geometry<DIMENSION, T>
 	{
 	public:
 
-		using geometry = type_geometric<DIMENSION, T>;
-		using vec_type = typename geometry::vec_type;
+		using geometry_type = geometry<DIMENSION, T>;
+		using vec_type = typename geometry_type::vec_type;
 
 		/** constructor (empty box) */
 		box_base() = default;
@@ -193,8 +167,8 @@ namespace chaos
 	{
 	public:
 
-		using geometry = type_geometric<DIMENSION, T>;
-		using vec_type = typename geometry::vec_type;
+		using geometry_type = geometry<DIMENSION, T>;
+		using vec_type = typename geometry_type::vec_type;
 
 		/** constructor (empty box) */
 		box() = default;
@@ -225,9 +199,9 @@ namespace chaos
 	{
 	public:
 
-		using geometry = type_geometric<DIMENSION, T>;
-		using vec_type = typename geometry::vec_type;
-		using rot_type = typename geometry::rot_type;
+		using geometry_type = geometry<DIMENSION, T>;
+		using vec_type = typename geometry_type::vec_type;
+		using rot_type = typename geometry_type::rot_type;
 
 		/** constructor (empty box) */
 		obox() = default;
@@ -249,12 +223,12 @@ namespace chaos
 	// ==============================================================================================
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	class aabox : public type_geometric<DIMENSION, T>
+	class aabox : public geometry<DIMENSION, T>
 	{
 	public:
 
-		using geometry = type_geometric<DIMENSION, T>;
-		using vec_type = typename geometry::vec_type;
+		using geometry_type = geometry<DIMENSION, T>;
+		using vec_type = typename geometry_type::vec_type;
 
 		/** constructor (empty box) */
 		aabox() = default;
@@ -285,13 +259,13 @@ namespace chaos
 	// ==============================================================================================
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	class sphere : public type_geometric<DIMENSION, T>
+	class sphere : public geometry<DIMENSION, T>
 	{
 	public:
 
-		using geometry = type_geometric<DIMENSION, T>;
-		using vec_type = typename geometry::vec_type;
-		using type = typename geometry::type;
+		using geometry_type = geometry<DIMENSION, T>;
+		using vec_type = typename geometry_type::vec_type;
+		using type = typename geometry_type::type;
 
 		/** constructor (empty circle) */
 		sphere() = default;
@@ -313,12 +287,12 @@ namespace chaos
 	// ==============================================================================================
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	class triangle : public type_geometric<DIMENSION, T>
+	class triangle : public geometry<DIMENSION, T>
 	{
 	public:
 
-		using geometry = type_geometric<DIMENSION, T>;
-		using vec_type = typename geometry::vec_type;
+		using geometry_type = geometry<DIMENSION, T>;
+		using vec_type = typename geometry_type::vec_type;
 
 		/** default constructor */
 		triangle() = default;
@@ -356,12 +330,12 @@ namespace chaos
 	// ==============================================================================================
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	class ray : public type_geometric<DIMENSION, T>
+	class ray : public geometry<DIMENSION, T>
 	{
 	public:
 
-		using geometry = type_geometric<DIMENSION, T>;
-		using vec_type = typename geometry::vec_type;
+		using geometry_type = geometry<DIMENSION, T>;
+		using vec_type = typename geometry_type::vec_type;
 
 		/** default constructor */
 		ray() = default;
@@ -385,14 +359,14 @@ namespace chaos
 // ==============================================================================================
 
 	template<std::floating_point T>
-	class box_plane<2, T> : public type_geometric<2, T>
+	class box_plane<2, T> : public geometry<2, T>
 	{
 	public:
 
 		static constexpr size_t plane_count = 4;
 
-		using geometry = type_geometric<2, T>;
-		using plane_type = typename geometry::plane_type;
+		using geometry_type = geometry<2, T>;
+		using plane_type = typename geometry_type::plane_type;
 
 		/** number of planes in the box */
 		size_t size() const
@@ -477,14 +451,14 @@ namespace chaos
 	};
 
 	template<std::floating_point T>
-	class box_plane<3, T> : public type_geometric<3, T>
+	class box_plane<3, T> : public geometry<3, T>
 	{
 	public:
 
 		static constexpr size_t plane_count = 6;
 
-		using geometry = type_geometric<3, T>;
-		using plane_type = typename geometry::plane_type;
+		using geometry_type = geometry<3, T>;
+		using plane_type = typename geometry_type::plane_type;
 
 		/** number of planes in the box */
 		size_t size() const

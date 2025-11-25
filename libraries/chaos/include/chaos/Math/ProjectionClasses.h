@@ -164,9 +164,9 @@ namespace chaos
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	box_plane<DIMENSION, T> GetProjectionPlanes(ProjectionType type, projection_volume<DIMENSION, T> const& vol)
 	{
-		using geometry   = type_geometric<DIMENSION, T>;
-		using vec_type   = typename geometry::vec_type;
-		using plane_type = typename geometry::plane_type;
+		using geometry_type   = geometry<DIMENSION, T>;
+		using vec_type   = typename geometry_type::vec_type;
+		using plane_type = typename geometry_type::plane_type;
 
 		box_plane<DIMENSION, T> result;
 

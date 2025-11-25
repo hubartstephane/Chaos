@@ -50,14 +50,14 @@ namespace chaos
 		CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T, bool DEPTH_FIRST, typename FUNC)
 		class Tree27PlaneClipVisitorImpl
 		{
-			using geometry = type_geometric<DIMENSION, T>;
+			using geometry_type = geometry<DIMENSION, T>;
 
 			/** the type for vector */
-			using vec_type = geometry::vec_type;
+			using vec_type = geometry_type::vec_type;
 			/** the type for plane */
-			using plane_type = typename geometry::plane_type;
+			using plane_type = typename geometry_type::plane_type;
 			/** the type for box */
-			using box_type = typename geometry::box_type;
+			using box_type = typename geometry_type::box_type;
 
 		public:
 

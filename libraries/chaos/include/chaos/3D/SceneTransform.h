@@ -54,13 +54,13 @@ namespace chaos
 	//
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	class SceneTransform : public type_geometric<DIMENSION, T>
+	class SceneTransform : public geometry<DIMENSION, T>
 	{
-		using geometry = type_geometric<DIMENSION, T>;
+		using geometry_type = geometry<DIMENSION, T>;
 
-		using vec_type = typename geometry::vec_type;
-		using rot_type = typename geometry::rot_type;
-		using mat_type = typename geometry::mat_type;
+		using vec_type = typename geometry_type::vec_type;
+		using rot_type = typename geometry_type::rot_type;
+		using mat_type = typename geometry_type::mat_type;
 
 	public:
 

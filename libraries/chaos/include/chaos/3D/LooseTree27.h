@@ -144,13 +144,13 @@ namespace chaos
 	};
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	class Tree27NodeInfo : public type_geometric<DIMENSION, T>
+	class Tree27NodeInfo : public geometry<DIMENSION, T>
 	{
 	public:
 
-		using geometry = type_geometric<DIMENSION, T>;
+		using geometry_type = geometry<DIMENSION, T>;
 		/** the type for box */
-		using box_type = typename geometry::box_type;
+		using box_type = typename geometry_type::box_type;
 		/** the type for indexation vector */
 		using ivec_type = glm::vec<DIMENSION, int>;
 
@@ -322,20 +322,20 @@ namespace chaos
 	}
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T, typename PARENT)
-	class Tree27Node : public PARENT, public type_geometric<DIMENSION, T>
+	class Tree27Node : public PARENT, public geometry<DIMENSION, T>
 	{
 		CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T, typename PARENT, template<typename> class NODE_ALLOCATOR)
 		friend class LooseTree27;
 
 	public:
 
-		using geometry = type_geometric<DIMENSION, T>;
+		using geometry_type = geometry<DIMENSION, T>;
 		/** the number of children this node has */
 		static constexpr int children_count = details::static_pow(3, DIMENSION);
 		/** the type for vector */
 		using ivec_type = glm::vec<DIMENSION, int>;
 		/** the type for box */
-		using box_type = typename geometry::box_type;
+		using box_type = typename geometry_type::box_type;
 		/** the type for NodeInfo */
 		using node_info_type = Tree27NodeInfo<DIMENSION, T>;
 
@@ -549,18 +549,18 @@ namespace chaos
 	};
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T, typename NODE_PARENT, template<typename> class NODE_ALLOCATOR_TEMPLATE = StandardAllocator)
-	class LooseTree27 : public type_geometric<DIMENSION, T>
+	class LooseTree27 : public geometry<DIMENSION, T>
 	{
 	public:
 
 		/** the number of children this node has */
 		static constexpr int children_count = details::static_pow(3, DIMENSION);
 
-		using geometry = type_geometric<DIMENSION, T>;
+		using geometry_type = geometry<DIMENSION, T>;
 		/** the type for indexation vector */
 		using ivec_type = glm::vec<DIMENSION, int>;
 		/** the type for box */
-		using box_type = typename geometry::box_type;
+		using box_type = typename geometry_type::box_type;
 		/** the type for NodeInfo */
 		using node_info_type = Tree27NodeInfo<DIMENSION, T>;
 		/** the type for nodes */

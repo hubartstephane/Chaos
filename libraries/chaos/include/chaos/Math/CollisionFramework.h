@@ -394,8 +394,8 @@ namespace chaos
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	int GetIntersection(ray<DIMENSION, T> const& r, typename ray<DIMENSION, T>::plane_type const& p, typename ray<DIMENSION, T>::vec_type& res)
 	{
-		using geometry = type_geometric<DIMENSION, T>;
-		using vec_type = typename geometry::vec_type;
+		using geometry_type = geometry<DIMENSION, T>;
+		using vec_type = typename geometry_type::vec_type;
 
 		auto normal = GetPlaneNormal(p);
 
@@ -1041,8 +1041,8 @@ namespace chaos
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	bool Collide(typename triangle<DIMENSION, T>::vec_type const& pt, triangle<DIMENSION, T> const& t, bool open_geometry = false)
 	{
-		using geometry = type_geometric<DIMENSION, T>;
-		using vec_type = typename geometry::vec_type;
+		using geometry_type = geometry<DIMENSION, T>;
+		using vec_type = typename geometry_type::vec_type;
 
 		// test whether the triangle is null
 		if (IsGeometryEmpty(t))

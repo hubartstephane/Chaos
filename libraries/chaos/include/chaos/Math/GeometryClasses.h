@@ -22,31 +22,6 @@ namespace chaos
 
 	class zero_rotator;
 
-	// ==============================================================================================
-	// The final objects
-	// ==============================================================================================
-
-	// remove all arguments from template (the objects to use for real)
-	using ray2 = type_ray<2, float>;
-	using ray3 = type_ray<3, float>;
-	using box2 = type_box<2, float>;
-	using box3 = type_box<3, float>;
-	using obox2 = type_obox<2, float>;
-	using obox3 = type_obox<3, float>;
-	using sphere2 = type_sphere<2, float>;
-	using sphere3 = type_sphere<3, float>;
-	using triangle2 = type_triangle<2, float>;
-	using triangle3 = type_triangle<3, float>;
-
-	using rotator2 = float; // this are ROTATION here (angle or quaternion)
-	using rotator3 = glm::quat;
-
-	using aabox2  = type_aabox<2, float>;
-	using aabox3  = type_aabox<3, float>;
-
-	using box_plane2 = type_box_plane<2, float>;
-	using box_plane3 = type_box_plane<3, float>;
-
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	// ==============================================================================================
@@ -574,6 +549,31 @@ namespace chaos
 		/** the plane whose normal is facing toward positive Z direction */
 		plane_type pos_z;
 	};
+
+	// ==============================================================================================
+	// The final objects
+	// ==============================================================================================
+
+	// remove all arguments from template (the objects to use for real)
+	using ray2 = type_ray<2, float>;
+	using ray3 = type_ray<3, float>;
+	using box2 = type_box<2, float>;
+	using box3 = type_box<3, float>;
+	using obox2 = type_obox<2, float>;
+	using obox3 = type_obox<3, float>;
+	using sphere2 = type_sphere<2, float>;
+	using sphere3 = type_sphere<3, float>;
+	using triangle2 = type_triangle<2, float>;
+	using triangle3 = type_triangle<3, float>;
+
+	using rotator2 = typename type_rotator<2, float>::type; // this are ROTATION here (angle or quaternion)
+	using rotator3 = typename type_rotator<3, float>::type;
+
+	using aabox2 = type_aabox<2, float>;
+	using aabox3 = type_aabox<3, float>;
+
+	using box_plane2 = type_box_plane<2, float>;
+	using box_plane3 = type_box_plane<3, float>;
 
 #endif
 

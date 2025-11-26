@@ -16,9 +16,9 @@ namespace chaos
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class obox;
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class sphere;
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class triangle;
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class rotator;   // this is not an object that describes a rotation, but a meta object that gives the rotation in a meta function
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class aabox;     // aligned axis box
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class box_plane; // a set of 4 or 6 clip planes
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class getrotatortype;
 
 	// for our geometric classes (ray, box, ...) defines using & templates that mimic glm conventions
 	//   box2
@@ -42,7 +42,6 @@ namespace chaos
 	CHAOS_GEOMETRY_DEFINE_T_TEMPLATE(obox);
 	CHAOS_GEOMETRY_DEFINE_T_TEMPLATE(sphere);
 	CHAOS_GEOMETRY_DEFINE_T_TEMPLATE(triangle);
-	//CHAOS_GEOMETRY_DEFINE_T_TEMPLATE(rotator);
 	CHAOS_GEOMETRY_DEFINE_T_TEMPLATE(aabox);
 	CHAOS_GEOMETRY_DEFINE_T_TEMPLATE(box_plane);
 #undef CHAOS_GEOMETRY_DEFINE_T_TEMPLATE
@@ -76,22 +75,22 @@ namespace chaos
 	};
 
 
-	// base template
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	class rotator : public boost::mpl::identity<void> {};
-	// specialization
-	template<>
-	class rotator<2, float> : public boost::mpl::identity<float> {};
-	// specialization
-	template<>
-	class rotator<2, double> : public boost::mpl::identity<double> {};
-	// specialization
-	template<>
-	class rotator<3, float> : public boost::mpl::identity<glm::quat> {};
-	// specialization
-	template<>
-	class rotator<3, double> : public boost::mpl::identity<glm::dquat> {};
+	// getrotatortype specializations
+	template<> class getrotatortype<2, float>  : public boost::mpl::identity<float> {};
+	template<> class getrotatortype<2, double> : public boost::mpl::identity<double> {};
+	template<> class getrotatortype<3, float>  : public boost::mpl::identity<glm::quat> {};
+	template<> class getrotatortype<3, double> : public boost::mpl::identity<glm::dquat> {};
 
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) using rotator = typename getrotatortype<DIMENSION, T>::type;
+
+	template<std::floating_point T>	using trotator2 = typename getrotatortype<2, T>::type;	
+	template<std::floating_point T>	using trotator3 = typename getrotatortype<3, T>::type;
+
+	using rotator2  = typename getrotatortype<2, float>::type;
+	using rotator3  = typename getrotatortype<3, float>::type;
+	using drotator2 = typename getrotatortype<2, double>::type;
+	using drotator3 = typename getrotatortype<3, double>::type;
+	
 	// ==============================================================================================
 	// geometry class
 	// ==============================================================================================
@@ -114,7 +113,7 @@ namespace chaos
 		/** the type of plane */
 		using plane_type = glm::vec<dimension + 1, type>;
 		/** the type of rotator */
-		using rot_type = typename rotator<dimension, type>::type;
+		using rot_type =  rotator<dimension, type>;
 		/** the type of ray */
 		using ray_type = ray<dimension, type>;
 		/** the type of sphere */
@@ -545,34 +544,6 @@ namespace chaos
 		/** the plane whose normal is facing toward positive Z direction */
 		plane_type pos_z;
 	};
-
-	// ==============================================================================================
-	// The final objects
-	// ==============================================================================================
-
-	// remove all arguments from template (the objects to use for real)
-#if 0
-	using ray2 = ray<2, float>;
-	using ray3 = ray<3, float>;
-	using box2 = box<2, float>;
-	using box3 = box<3, float>;
-	using obox2 = obox<2, float>;
-	using obox3 = obox<3, float>;
-	using sphere2 = sphere<2, float>;
-	using sphere3 = sphere<3, float>;
-	using triangle2 = triangle<2, float>;
-	using triangle3 = triangle<3, float>;
-#endif
-	using rotator2 = typename rotator<2, float>::type; // this are ROTATION here (angle or quaternion)
-	using rotator3 = typename rotator<3, float>::type;
-
-#if 0
-	using aabox2 = aabox<2, float>;
-	using aabox3 = aabox<3, float>;
-
-	using box_plane2 = box_plane<2, float>;
-	using box_plane3 = box_plane<3, float>;
-#endif
 
 #endif
 

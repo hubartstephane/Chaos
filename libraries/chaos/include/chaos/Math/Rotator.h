@@ -8,9 +8,21 @@
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	// ==============================================================================================
-	// rotators
-	// ==============================================================================================
+	 // getrotatortype specializations
+	 template<> class getrotatortype<2, float> : public boost::mpl::identity<float> {};
+	 template<> class getrotatortype<2, double> : public boost::mpl::identity<double> {};
+	 template<> class getrotatortype<3, float> : public boost::mpl::identity<glm::quat> {};
+	 template<> class getrotatortype<3, double> : public boost::mpl::identity<glm::dquat> {};
+
+	 CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) using rotator = typename getrotatortype<DIMENSION, T>::type;
+
+	 template<std::floating_point T>	using trotator2 = typename getrotatortype<2, T>::type;
+	 template<std::floating_point T>	using trotator3 = typename getrotatortype<3, T>::type;
+
+	 using rotator2 = typename trotator2<float>;
+	 using rotator3 = typename trotator3<float>;
+	 using drotator2 = typename trotator2<double>;
+	 using drotator3 = typename trotator3<double>;
 
 	// XXX : depending whether we are in 2D or 3D a rotation can be described by a single float or a quaternion
 	//       this code is here to provide some common interface
@@ -29,22 +41,14 @@
 		operator glm::dquat() const { return glm::dquat(1.0, 0.0, 0.0, 0.0); }   // BEWARE: first argument is W !!! want a normalized quaternion (0,0,0,0 is invalid)
 	};
 
-
-	// getrotatortype specializations
-	template<> class getrotatortype<2, float>  : public boost::mpl::identity<float> {};
-	template<> class getrotatortype<2, double> : public boost::mpl::identity<double> {};
-	template<> class getrotatortype<3, float>  : public boost::mpl::identity<glm::quat> {};
-	template<> class getrotatortype<3, double> : public boost::mpl::identity<glm::dquat> {};
-
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) using rotator = typename getrotatortype<DIMENSION, T>::type;
-
-	template<std::floating_point T>	using trotator2 = typename getrotatortype<2, T>::type;	
-	template<std::floating_point T>	using trotator3 = typename getrotatortype<3, T>::type;
-
-	using rotator2  = typename trotator2<float>;
-	using rotator3  = typename trotator3<float>;
-	using drotator2 = typename trotator2<double>;
-	using drotator3 = typename trotator3<double>;
+	/** rotator to matrix */
+	CHAOS_API glm::mat4x4 GetRotationMatrix(glm::quat const& rotation);
+	/** rotator to matrix */
+	CHAOS_API glm::dmat4x4 GetRotationMatrix(glm::dquat const& rotation);
+	/** rotator to matrix */
+	CHAOS_API glm::mat4x4 GetRotationMatrix(float rotation);
+	/** rotator to matrix */
+	CHAOS_API glm::dmat4x4 GetRotationMatrix(double rotation);
 
 #endif
 

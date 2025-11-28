@@ -16,14 +16,7 @@ namespace chaos
 	// rotator functions
 	// ==============================================================================================
 
-	/** rotator to matrix */
-	CHAOS_API glm::mat4x4 GetRotationMatrix(glm::quat const& rotation);
-	/** rotator to matrix */
-	CHAOS_API glm::dmat4x4 GetRotationMatrix(glm::dquat const& rotation);
-	/** rotator to matrix */
-	CHAOS_API glm::mat4x4 GetRotationMatrix(float rotation);
-	/** rotator to matrix */
-	CHAOS_API glm::dmat4x4 GetRotationMatrix(double rotation);
+
 
 	// ==============================================================================================
 	// plane functions

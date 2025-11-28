@@ -4,12 +4,10 @@ namespace chaos
 
 	enum class ProjectionType;
 
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	class projection_volume;
-	CHAOS_GEOMETRY_DEFINE_GLMLIKE_TEMPLATES(projection_volume);
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class projection_volume;
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class perspective;
 
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	class perspective;
+	CHAOS_GEOMETRY_DEFINE_GLMLIKE_TEMPLATES(projection_volume);
 	CHAOS_GEOMETRY_DEFINE_GLMLIKE_TEMPLATES(perspective);
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION

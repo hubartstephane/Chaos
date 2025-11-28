@@ -2,8 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	class SceneTransform;
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class SceneTransform;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 

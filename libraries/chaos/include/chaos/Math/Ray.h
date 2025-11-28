@@ -32,6 +32,32 @@
 		vec_type direction;
 	};
 
+	/** equality function for ray */
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool operator == (ray<DIMENSION, T> const& r1, ray<DIMENSION, T> const& r2)
+	{
+		return (r1.position == r2.position) && (r1.direction == r2.direction);
+	}
+
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool DoSaveIntoJSON(nlohmann::json* json, ray<DIMENSION, T> const& src)
+	{
+		if (!PrepareSaveObjectIntoJSON(json))
+			return false;
+		JSONTools::SetAttribute(json, "position", src.position);
+		JSONTools::SetAttribute(json, "direction", src.direction);
+		return true;
+	}
+
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool DoLoadFromJSON(JSONReadConfiguration config, ray<DIMENSION, T>& dst)
+	{
+		JSONTools::GetAttribute(config, "position", dst.position);
+		JSONTools::GetAttribute(config, "direction", dst.direction);
+		return true;
+	}
+
+
 #endif
 
 }; // namespace chaos

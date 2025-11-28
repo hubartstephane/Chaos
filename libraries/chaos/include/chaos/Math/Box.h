@@ -121,6 +121,96 @@
 		vec_type size = vec_type(-1);
 	};
 
+	/** equality function for box */
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool operator == (box<DIMENSION, T> const& b1, box<DIMENSION, T> const& b2)
+	{
+		if (IsGeometryEmpty(b1) != IsGeometryEmpty(b2))
+			return false;
+		return (b1.position == b1.position) && (b1.half_size == b2.half_size);
+	}
+
+	/** equality function for obox */
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool operator == (obox<DIMENSION, T> const& b1, obox<DIMENSION, T> const& b2)
+	{
+		if (IsGeometryEmpty(b1) != IsGeometryEmpty(b2))
+			return false;
+		return (b1.position == b1.position) && (b1.half_size == b2.half_size) && (b1.rotation == b2.rotation);
+	}
+
+	/** equality function for aabox */
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool operator == (aabox<DIMENSION, T> const& b1, aabox<DIMENSION, T> const& b2)
+	{
+		if (IsGeometryEmpty(b1) != IsGeometryEmpty(b2))
+			return false;
+		return (b1.position == b1.position) && (b1.size == b2.size);
+	}
+
+	/** returns true whether the box is empty */
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool IsGeometryEmpty(box_base<DIMENSION, T> const& b)
+	{
+		return glm::any(glm::lessThan(b.half_size, box_base<DIMENSION, T>::vec_type(0)));
+	}
+
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool DoSaveIntoJSON(nlohmann::json* json, box<DIMENSION, T> const& src)
+	{
+		if (!PrepareSaveObjectIntoJSON(json))
+			return false;
+		JSONTools::SetAttribute(json, "position", src.position);
+		JSONTools::SetAttribute(json, "half_size", src.half_size);
+		return true;
+	}
+
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool DoLoadFromJSON(JSONReadConfiguration config, box<DIMENSION, T>& dst)
+	{
+		JSONTools::GetAttribute(config, "position", dst.position);
+		JSONTools::GetAttribute(config, "half_size", dst.half_size);
+		return true;
+	}
+
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool DoSaveIntoJSON(nlohmann::json* json, obox<DIMENSION, T> const& src)
+	{
+		if (!PrepareSaveObjectIntoJSON(json))
+			return false;
+		JSONTools::SetAttribute(json, "position", src.position);
+		JSONTools::SetAttribute(json, "half_size", src.half_size);
+		JSONTools::SetAttribute(json, "rotation", src.rotation);
+		return true;
+	}
+
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool DoLoadFromJSON(JSONReadConfiguration config, obox<DIMENSION, T>& dst)
+	{
+		JSONTools::GetAttribute(config, "position", dst.position);
+		JSONTools::GetAttribute(config, "half_size", dst.half_size);
+		JSONTools::GetAttribute(config, "rotation", dst.rotation);
+		return true;
+	}
+
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool DoSaveIntoJSON(nlohmann::json* json, aabox<DIMENSION, T> const& src)
+	{
+		if (!PrepareSaveObjectIntoJSON(json))
+			return false;
+		JSONTools::SetAttribute(json, "position", src.position);
+		JSONTools::SetAttribute(json, "size", src.size);
+		return true;
+	}
+
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool DoLoadFromJSON(JSONReadConfiguration config, aabox<DIMENSION, T>& dst)
+	{
+		JSONTools::GetAttribute(config, "position", dst.position);
+		JSONTools::GetAttribute(config, "size", dst.size);
+		return true;
+	}
+
 #endif
 
 }; // namespace chaos

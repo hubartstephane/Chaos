@@ -46,6 +46,50 @@
 		vec_type c;
 	};
 
+	/** equality test function for triangles */
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool operator == (triangle<DIMENSION, T> const& t1, triangle<DIMENSION, T> const& t2)
+	{
+		if (t1.a == t2.a)
+		{
+			if (t1.b == t2.b && t1.c == t2.c)
+				return true;
+			if (t1.c == t2.b && t1.b == t2.c)
+				return true;
+		}
+		if (t1.a == t2.b)
+		{
+			if (t1.b == t2.a && t1.c == t2.c)
+				return true;
+			if (t1.c == t2.a && t1.b == t2.c)
+				return true;
+		}
+		if (t1.a == t2.c)
+		{
+			if (t1.b == t2.a && t1.c == t2.b)
+				return true;
+			if (t1.c == t2.a && t1.b == t2.b)
+				return true;
+		}
+		return false;
+	}
+
+	/** returns true whether the triangle is empty */
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool IsGeometryEmpty(triangle<DIMENSION, T> const& t)
+	{
+		if (t.a == t.b || t.a == t.c || t.b == t.c)
+			return true;
+		return false;
+	}
+
+	/** get the reversed triangle */
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	triangle<DIMENSION, T> GetInvertedTriangle(triangle<DIMENSION, T> const& t)
+	{
+		return triangle<DIMENSION, T>(t.a, t.c, t.b);
+	}
+
 #endif
 
 }; // namespace chaos

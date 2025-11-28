@@ -120,12 +120,7 @@ namespace chaos
 	// shu46 : half_size.x == 0  -> pas vide
 
 
-	/** returns true whether the box is empty */
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	bool IsGeometryEmpty(box_base<DIMENSION, T> const& b)
-	{
-		return glm::any(glm::lessThan(b.half_size, box_base<DIMENSION, T>::vec_type(0)));
-	}
+
 
 	/** returns the perimeter of the box */
 	template<std::floating_point T>
@@ -248,12 +243,7 @@ namespace chaos
 	// box functions
 	// ==============================================================================================
 
-	/** equality function for box */
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	bool operator == (box<DIMENSION, T> const& b1, box<DIMENSION, T> const& b2)
-	{
-		return (b1.position == b1.position) && (b1.half_size == b2.half_size);
-	}
+
 
 	/** intersection of 2 boxes */
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
@@ -466,12 +456,7 @@ namespace chaos
 	// obox functions
 	// ==============================================================================================
 
-	/** equality function for obox */
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	bool operator == (obox<DIMENSION, T> const& b1, obox<DIMENSION, T> const& b2)
-	{
-		return (b1.position == b1.position) && (b1.half_size == b2.half_size) && (b1.rotation == b2.rotation);
-	}
+
 
 	// shu49. Ca vaut le coup de savoir dans quel ordre on genere ces vertex
 
@@ -561,12 +546,7 @@ namespace chaos
 	// aabox functions
 	// ==============================================================================================
 
-	/** equality function for obox */
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	bool operator == (aabox<DIMENSION, T> const& b1, aabox<DIMENSION, T> const& b2)
-	{
-		return (b1.position == b1.position) && (b1.size == b2.size);
-	}
+
 
 	/** returns true whether the box is empty */
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
@@ -667,78 +647,19 @@ namespace chaos
 	// triangles functions
 	// ==============================================================================================
 
-	/** equality test function for triangles */
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	bool operator == (triangle<DIMENSION, T> const& t1, triangle<DIMENSION, T> const& t2)
-	{
-		if (t1.a == t2.a)
-		{
-			if (t1.b == t2.b && t1.c == t2.c)
-				return true;
-			if (t1.c == t2.b && t1.b == t2.c)
-				return true;
-		}
-		if (t1.a == t2.b)
-		{
-			if (t1.b == t2.a && t1.c == t2.c)
-				return true;
-			if (t1.c == t2.a && t1.b == t2.c)
-				return true;
-		}
-		if (t1.a == t2.c)
-		{
-			if (t1.b == t2.a && t1.c == t2.b)
-				return true;
-			if (t1.c == t2.a && t1.b == t2.b)
-				return true;
-		}
-		return false;
-	}
 
-	/** returns true whether the triangle is empty */
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	bool IsGeometryEmpty(triangle<DIMENSION, T> const& t)
-	{
-		if (t.a == t.b || t.a == t.c || t.b == t.c)
-			return true;
-		return false;
-	}
-
-	/** get the reversed triangle */
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	triangle<DIMENSION, T> GetInvertedTriangle(triangle<DIMENSION, T> const& t)
-	{
-		return triangle<DIMENSION, T>(t.a, t.c, t.b);
-	}
 
 	// ==============================================================================================
 	// ray functions
 	// ==============================================================================================
 
-	/** equality function for ray */
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	bool operator == (ray<DIMENSION, T> const& r1, ray<DIMENSION, T> const& r2)
-	{
-		return (r1.position == r2.position) && (r1.direction == r2.direction);
-	}
+
 
 	// ==============================================================================================
 	// sphere/circle functions
 	// ==============================================================================================
 
-	/** returns true whether the circle is empty */
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	bool IsGeometryEmpty(sphere<DIMENSION, T> const& c)
-	{
-		return (c.radius < 0);
-	}
 
-	/** equality function for circle */
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	bool operator == (sphere<DIMENSION, T> const& c1, sphere<DIMENSION, T> const& c2)
-	{
-		return (c1.position == c2.position) && (c1.radius == c2.radius);
-	}
 
 	/** returns the perimeter of the circle */
 	template<std::floating_point T>
@@ -871,97 +792,11 @@ namespace chaos
 	// JSON functions
 	// ==============================================================================================
 
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	bool DoSaveIntoJSON(nlohmann::json* json, box<DIMENSION, T> const& src)
-	{
-		if (!PrepareSaveObjectIntoJSON(json))
-			return false;
-		JSONTools::SetAttribute(json, "position", src.position);
-		JSONTools::SetAttribute(json, "half_size", src.half_size);
-		return true;
-	}
 
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	bool DoLoadFromJSON(JSONReadConfiguration config, box<DIMENSION, T>& dst)
-	{
-		JSONTools::GetAttribute(config, "position", dst.position);
-		JSONTools::GetAttribute(config, "half_size", dst.half_size);
-		return true;
-	}
 
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	bool DoSaveIntoJSON(nlohmann::json* json, obox<DIMENSION, T> const& src)
-	{
-		if (!PrepareSaveObjectIntoJSON(json))
-			return false;
-		JSONTools::SetAttribute(json, "position", src.position);
-		JSONTools::SetAttribute(json, "half_size", src.half_size);
-		JSONTools::SetAttribute(json, "rotation", src.rotation);
-		return true;
-	}
 
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	bool DoLoadFromJSON(JSONReadConfiguration config, obox<DIMENSION, T>& dst)
-	{
-		JSONTools::GetAttribute(config, "position", dst.position);
-		JSONTools::GetAttribute(config, "half_size", dst.half_size);
-		JSONTools::GetAttribute(config, "rotation", dst.rotation);
-		return true;
-	}
 
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	bool DoSaveIntoJSON(nlohmann::json* json, aabox<DIMENSION, T> const& src)
-	{
-		if (!PrepareSaveObjectIntoJSON(json))
-			return false;
-		JSONTools::SetAttribute(json, "position", src.position);
-		JSONTools::SetAttribute(json, "size", src.size);
-		return true;
-	}
 
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	bool DoLoadFromJSON(JSONReadConfiguration config, aabox<DIMENSION, T>& dst)
-	{
-		JSONTools::GetAttribute(config, "position", dst.position);
-		JSONTools::GetAttribute(config, "size", dst.size);
-		return true;
-	}
-
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	bool DoSaveIntoJSON(nlohmann::json* json, sphere<DIMENSION, T> const& src)
-	{
-		if (!PrepareSaveObjectIntoJSON(json))
-			return false;
-		JSONTools::SetAttribute(json, "position", src.position);
-		JSONTools::SetAttribute(json, "radius", src.radius);
-		return true;
-	}
-
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	bool DoLoadFromJSON(JSONReadConfiguration config, sphere<DIMENSION, T>& dst)
-	{
-		JSONTools::GetAttribute(config, "position", dst.position);
-		JSONTools::GetAttribute(config, "radius", dst.radius);
-		return true;
-	}
-
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	bool DoSaveIntoJSON(nlohmann::json* json, ray<DIMENSION, T> const& src)
-	{
-		if (!PrepareSaveObjectIntoJSON(json))
-			return false;
-		JSONTools::SetAttribute(json, "position", src.position);
-		JSONTools::SetAttribute(json, "direction", src.direction);
-		return true;
-	}
-
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	bool DoLoadFromJSON(JSONReadConfiguration config, ray<DIMENSION, T>& dst)
-	{
-		JSONTools::GetAttribute(config, "position", dst.position);
-		JSONTools::GetAttribute(config, "direction", dst.direction);
-		return true;
-	}
 
 }; // namespace chaos
 

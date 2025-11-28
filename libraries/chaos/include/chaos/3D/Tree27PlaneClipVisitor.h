@@ -33,7 +33,7 @@ namespace chaos
 	{
 	public:
 
-		/** entry point of the visit algorithm */
+		/** entry point of the visit algorithm (with templated tree27 parameter, this works for both const and non const tree) */
 		template<bool DEPTH_FIRST = false, typename LOOSE_TREE27_TYPE, typename FUNC>
 		static auto Visit(
 			LOOSE_TREE27_TYPE& tree27,
@@ -71,7 +71,7 @@ namespace chaos
 				assert(plane_count > 0 && plane_count < 32);
 			}
 
-			/** entry point of the visit algorithm */
+			/** entry point of the visit algorithm (with templated tree27 parameter, this works for both const and non const tree) */
 			template<typename LOOSE_TREE27_TYPE>
 			auto Visit(LOOSE_TREE27_TYPE& tree27) -> meta::LambdaInfo<FUNC, decltype(tree27.GetRootNode()), plane_type const*, size_t, uint32_t>::result_type
 			{
@@ -91,6 +91,7 @@ namespace chaos
 
 		protected:
 
+			/** internal method for visit algorithm (with templated node parameter, this works for both const and non const tree) */
 			template<typename NODE27_TYPE>
 			auto Visit(NODE27_TYPE* node, uint32_t plane_bitfield) -> meta::LambdaInfo<FUNC, NODE27_TYPE*, plane_type const*, size_t, uint32_t>::result_type
 			{
@@ -102,38 +103,38 @@ namespace chaos
 				box_type node_box = node->GetBoundingBox();
 
 				bool node_rejected = BitTools::ForEachBitForward(plane_bitfield, [&](uint32_t index)
+				{
+					plane_type const& plane = planes[index];
+
+					// compute A & B (see schema above)
+					auto AsUint32 = [](float src)
 					{
-						plane_type const& plane = planes[index];
+						return *(uint32_t*)(&src);
+					};
+					auto AsFloat = [](uint32_t src)
+					{
+						return *(float*)(&src);
+					};
 
-						// compute A & B (see schema above)
-						auto AsUint32 = [](float src)
-						{
-							return *(uint32_t*)(&src);
-						};
-						auto AsFloat = [](uint32_t src)
-						{
-							return *(float*)(&src);
-						};
+					vec_type directed_half_size;
+					for (size_t i = 0; i < DIMENSION; ++i)
+					{
+						uint32_t normal_direction_sign = AsUint32(plane[i]) & (1 << 31);                       // just keep the sign
+						uint32_t half_size_component = AsUint32(node_box.half_size[i]) & ~(1 << 31);              // remove the sign from half_size
+						directed_half_size[i] = AsFloat(half_size_component | normal_direction_sign); // add to half sign the sign coming from the plane normal
+					}
 
-						vec_type directed_half_size;
-						for (size_t i = 0; i < DIMENSION; ++i)
-						{
-							uint32_t normal_direction_sign = AsUint32(plane[i]) & (1 << 31);                       // just keep the sign
-							uint32_t half_size_component = AsUint32(node_box.half_size[i]) & ~(1 << 31);              // remove the sign from half_size
-							directed_half_size[i] = AsFloat(half_size_component | normal_direction_sign); // add to half sign the sign coming from the plane normal
-						}
+					vec_type A = node_box.position - directed_half_size;
+					float section_A = glm::dot({ A, 1.0f }, plane);
+					if (section_A > 0.0f)
+						return true; // stop processing (whole node & hierarchy is rejected)
 
-						vec_type A = node_box.position - directed_half_size;
-						float section_A = glm::dot({ A, 1.0f }, plane);
-						if (section_A > 0.0f)
-							return true; // stop processing (whole node & hierarchy is rejected)
-
-						vec_type B = node_box.position + directed_half_size;
-						float section_B = glm::dot({ B, 1.0f }, plane);
-						if (section_B < 0.0f)
-							plane_bitfield &= ~(1 << index); // this plane does need to be processed ever anymore
-						return false; // continue processing
-					});
+					vec_type B = node_box.position + directed_half_size;
+					float section_B = glm::dot({ B, 1.0f }, plane);
+					if (section_B < 0.0f)
+						plane_bitfield &= ~(1 << index); // this plane does need to be processed ever anymore
+					return false; // continue processing
+				});
 
 				if (node_rejected)
 				{

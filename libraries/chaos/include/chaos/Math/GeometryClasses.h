@@ -1,6 +1,14 @@
-namespace chaos
+ namespace chaos
 {
 	#define CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T, ...) template<int DIMENSION, std::floating_point T, __VA_ARGS__> requires (DIMENSION == 2 || DIMENSION == 3)
+
+	#define CHAOS_GEOMETRY_DEFINE_GLMLIKE_TEMPLATES(TYPENAME)\
+		template<std::floating_point T> using t##TYPENAME##2 = TYPENAME<2, T>;\
+		template<std::floating_point T> using t##TYPENAME##3 = TYPENAME<3, T>;\
+		using TYPENAME##2 = TYPENAME<2, float>;\
+		using TYPENAME##3 = TYPENAME<3, float>;\
+		using d##TYPENAME##2 = TYPENAME<2, double>;\
+		using d##TYPENAME##3 = TYPENAME<3, double>;
 
 #ifdef CHAOS_FORWARD_DECLARATION
 
@@ -28,23 +36,16 @@ namespace chaos
 	//   tbox2<float>
 	//   tbox3<float>
 	//   ...
-#define CHAOS_GEOMETRY_DEFINE_T_TEMPLATE(TYPENAME)\
-	template<std::floating_point T> using t##TYPENAME##2 = TYPENAME<2, T>;\
-	template<std::floating_point T> using t##TYPENAME##3 = TYPENAME<3, T>;\
-	using TYPENAME##2 = TYPENAME<2, float>;\
-	using TYPENAME##3 = TYPENAME<3, float>;\
-	using d##TYPENAME##2 = TYPENAME<2, double>;\
-	using d##TYPENAME##3 = TYPENAME<3, double>;
-	CHAOS_GEOMETRY_DEFINE_T_TEMPLATE(geometry);
-	CHAOS_GEOMETRY_DEFINE_T_TEMPLATE(ray);
-	CHAOS_GEOMETRY_DEFINE_T_TEMPLATE(box_base);
-	CHAOS_GEOMETRY_DEFINE_T_TEMPLATE(box);
-	CHAOS_GEOMETRY_DEFINE_T_TEMPLATE(obox);
-	CHAOS_GEOMETRY_DEFINE_T_TEMPLATE(sphere);
-	CHAOS_GEOMETRY_DEFINE_T_TEMPLATE(triangle);
-	CHAOS_GEOMETRY_DEFINE_T_TEMPLATE(aabox);
-	CHAOS_GEOMETRY_DEFINE_T_TEMPLATE(box_plane);
-#undef CHAOS_GEOMETRY_DEFINE_T_TEMPLATE
+
+	CHAOS_GEOMETRY_DEFINE_GLMLIKE_TEMPLATES(geometry);
+	CHAOS_GEOMETRY_DEFINE_GLMLIKE_TEMPLATES(ray);
+	CHAOS_GEOMETRY_DEFINE_GLMLIKE_TEMPLATES(box_base);
+	CHAOS_GEOMETRY_DEFINE_GLMLIKE_TEMPLATES(box);
+	CHAOS_GEOMETRY_DEFINE_GLMLIKE_TEMPLATES(obox);
+	CHAOS_GEOMETRY_DEFINE_GLMLIKE_TEMPLATES(sphere);
+	CHAOS_GEOMETRY_DEFINE_GLMLIKE_TEMPLATES(triangle);
+	CHAOS_GEOMETRY_DEFINE_GLMLIKE_TEMPLATES(aabox);
+	CHAOS_GEOMETRY_DEFINE_GLMLIKE_TEMPLATES(box_plane);
 
 	class zero_rotator;
 

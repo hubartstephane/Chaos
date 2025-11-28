@@ -6,9 +6,11 @@ namespace chaos
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	class projection_volume;
+	CHAOS_GEOMETRY_DEFINE_GLMLIKE_TEMPLATES(projection_volume);
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	class perspective;
+	CHAOS_GEOMETRY_DEFINE_GLMLIKE_TEMPLATES(perspective);
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -27,7 +29,7 @@ namespace chaos
 	 */
 
 	template<std::floating_point T>
-	class projection_volume<2, T>
+	class projection_volume<2, T> : public geometry<2, T>
 	{
 	public:
 
@@ -38,7 +40,7 @@ namespace chaos
 	};
 
 	template<std::floating_point T>
-	class projection_volume<3, T>
+	class projection_volume<3, T> : public geometry<3, T>
 	{
 	public:
 
@@ -55,7 +57,7 @@ namespace chaos
 	 */
 
 	template<std::floating_point T>
-	class perspective<2, T>
+	class perspective<2, T> : public geometry<2, T>
 	{
 	public:
 
@@ -70,7 +72,7 @@ namespace chaos
 	};
 
 	template<std::floating_point T>
-	class perspective<3, T>
+	class perspective<3, T> : public geometry<3, T>
 	{
 	public:
 

@@ -16,6 +16,10 @@
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+	/**
+	 * box_base: base classes for most boxes
+	 */
+
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	class box_base : public geometry<DIMENSION, T>
 	{
@@ -38,6 +42,10 @@
 		/** the half size the box */
 		vec_type half_size = vec_type(-1);
 	};
+
+	/**
+	 * box: the simple box, axes aligned to the system axes
+	 */
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	class box : public box_base<DIMENSION, T>
@@ -66,7 +74,10 @@
 		}
 	};
 
-	/** an oriented bounding box */
+	/**
+	 * obox: a box with any orientation in space
+	 */
+
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	class obox : public box_base<DIMENSION, T>
 	{
@@ -123,6 +134,14 @@
 		vec_type size = vec_type(-1);
 	};
 
+	/** how box must be modified to match wanted aspect */
+	enum class SetBoxAspectMethod : int
+	{
+		SHRINK_BOX,           // shrink the side along the axis that is too long
+		PREFER_UPDATE_WIDTH,  // prefere to modify width whenever possible
+		PREFER_UPDATE_HEIGHT  // prefere to modify height whenever possible
+	};
+
 	/** equality function for box */
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	bool operator == (box<DIMENSION, T> const& b1, box<DIMENSION, T> const& b2)
@@ -157,10 +176,18 @@
 		return glm::any(glm::lessThan(b.half_size, box_base<DIMENSION, T>::vec_type(0)));
 	}
 
+	/** returns true whether the box is empty */
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool IsGeometryEmpty(aabox<DIMENSION, T> const& b)
+	{
+		return glm::any(glm::lessThan(b.size, aabox<DIMENSION, T>::vec_type(0)));
+	}
+
 	/** returns the perimeter of the box */
 	template<std::floating_point T>
 	T GetPerimeter(box_base<2, T> const& b)
 	{
+		assert(!IsGeometryEmpty(b));
 		return static_cast<T>(4) * (b.half_size.x + b.half_size.y);
 	}
 
@@ -168,6 +195,7 @@
 	template<std::floating_point T>
 	T GetSurface(box_base<2, T> const& b)
 	{
+		assert(!IsGeometryEmpty(b));
 		return static_cast<T>(4) * (b.half_size.x * b.half_size.y);
 	}
 
@@ -175,6 +203,7 @@
 	template<std::floating_point T>
 	T GetVolume(box_base<3, T> const& b)
 	{
+		assert(!IsGeometryEmpty(b));
 		return static_cast<T>(8) * b.half_size.x * b.half_size.y * b.half_size.z;
 	}
 
@@ -182,15 +211,39 @@
 	template<std::floating_point T>
 	T GetSurface(box_base<3, T> const& b)
 	{
+		assert(!IsGeometryEmpty(b));
 		return static_cast<T>(8) * ((b.half_size.x * b.half_size.y) + (b.half_size.y * b.half_size.z) + (b.half_size.z * b.half_size.x));
 	};
 
-	/** how box must be modified to match wanted aspect*/
-	enum class SetBoxAspectMethod : int
+	/** returns the perimeter of the box */
+	template<std::floating_point T>
+	T GetPerimeter(aabox<2, T> const& b)
 	{
-		SHRINK_BOX,           // shrink the side along the axis that is too long
-		PREFER_UPDATE_WIDTH, // prefere to modify width whenever possible
-		PREFER_UPDATE_HEIGHT // prefere to modify height whenever possible
+		assert(!IsGeometryEmpty(b));
+		return static_cast<T>(2) * (b.size.x + b.size.y);
+	}
+
+	/** returns the surface of the box */
+	template<std::floating_point T>
+	T GetSurface(aabox<2, T> const& b)
+	{
+		assert(!IsGeometryEmpty(b));
+		return (b.size.x * b.size.y);
+	}
+
+	/** return the volume of the box */
+	template<std::floating_point T>
+	T GetVolume(aabox<3, T> const& b)
+	{
+		return b.size.x * b.size.y * b.size.z;
+	}
+
+	/** return the surface of the box */
+	template<std::floating_point T>
+	T GetSurface(aabox<3, T> const& b)
+	{
+		assert(!IsGeometryEmpty(b));
+		return static_cast<T>(2) * ((b.size.x * b.size.y) + (b.size.y * b.size.z) + (b.size.z * b.size.x));
 	};
 
 	/** update a box aspect */
@@ -265,6 +318,66 @@
 		vec_type B = glm::max(B1, B2);
 
 		return box<DIMENSION, T>(std::make_pair(A, B));
+	}
+
+	/** returns the "aspect" of the box (width/height) */
+	template<std::floating_point T>
+	T GetBoxAspect(aabox<2, T> const& b)
+	{
+		assert(!IsGeometryEmpty(b));
+		return (b.size.y) ? (b.size.x / b.size.y) : static_cast<T>(1);
+	}
+
+	/** update a box aspect */
+	template<std::floating_point T>
+	aabox<2, T> SetBoxAspect(aabox<2, T> const& src, typename T aspect, SetBoxAspectMethod method)
+	{
+		// any negative component
+		if (IsGeometryEmpty(src))
+			return src;
+
+		// shrink method
+		if (method == SetBoxAspectMethod::SHRINK_BOX)
+		{
+			auto effective_aspect = GetBoxAspect(src);
+			if (effective_aspect == aspect)
+				return src;
+
+			if (effective_aspect > aspect) // width too large
+				method = SetBoxAspectMethod::PREFER_UPDATE_WIDTH;
+			else if (effective_aspect < aspect) // height too large
+				method = SetBoxAspectMethod::PREFER_UPDATE_HEIGHT;
+		}
+		// other method
+		else
+		{
+			// cannot have no size
+			if (src.size.x == 0 && src.size.y == 0)
+				return src;
+
+			// if size is 0 along one axis, force/alter this axis
+			if (src.size.x == 0)
+				method = SetBoxAspectMethod::PREFER_UPDATE_WIDTH;
+			else if (src.size.y == 0)
+				method = SetBoxAspectMethod::PREFER_UPDATE_HEIGHT;
+		}
+
+		// make the update
+		assert((method == SetBoxAspectMethod::PREFER_UPDATE_WIDTH) || (method == SetBoxAspectMethod::PREFER_UPDATE_HEIGHT));
+
+		aabox<2, T> result = src;
+		if (method == SetBoxAspectMethod::PREFER_UPDATE_WIDTH)
+		{
+			result.size.x = src.size.y * aspect;
+			result.position.x -= (result.size.x - src.size.x) / static_cast<T>(2);
+		}
+		else if (method == SetBoxAspectMethod::PREFER_UPDATE_HEIGHT)
+		{
+			result.size.y = src.size.x / aspect;
+			result.position.y -= (result.size.y - src.size.y) / static_cast<T>(2);
+		}
+
+		return result;
 	}
 
 	/** union of 2 boxes */

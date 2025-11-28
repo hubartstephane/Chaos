@@ -7,6 +7,10 @@
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+	/**
+	 * box_plane: a class to hold the planes of a box or projection volume
+	 */
+
 	template<std::floating_point T>
 	class box_plane<2, T> : public geometry<2, T>
 	{
@@ -98,6 +102,10 @@
 		/** the plane whose normal is facing toward positive Y direction */
 		plane_type pos_y;
 	};
+
+	/**
+	 * box_plane: a class to hold the planes of a box or projection volume
+	 */
 
 	template<std::floating_point T>
 	class box_plane<3, T> : public geometry<3, T>

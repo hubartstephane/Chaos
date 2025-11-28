@@ -40,6 +40,10 @@
 		using aabox_type = aabox<dimension, type>;
 		/** the type of box plane */
 		using box_plane_type = box_plane<dimension, type>;
+		/** the type for a projection volume */
+		using projection_volume_type = projection_volume<dimension, type>;
+		/** the type for a perspective volume */
+		using perspective_type = perspective<dimension, type>;	
 	};
 
 #endif

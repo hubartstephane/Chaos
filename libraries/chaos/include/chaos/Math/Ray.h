@@ -7,6 +7,10 @@
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+	/**
+	 * ray: self describing
+	 */
+
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	class ray : public geometry<DIMENSION, T>
 	{
@@ -43,6 +47,8 @@
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	bool operator == (ray<DIMENSION, T> const& r1, ray<DIMENSION, T> const& r2)
 	{
+		if (IsValid(r1) != IsValid(r2))
+			return false;
 		return (r1.position == r2.position) && (r1.direction == r2.direction);
 	}
 

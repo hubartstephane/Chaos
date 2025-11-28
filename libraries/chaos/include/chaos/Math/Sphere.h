@@ -7,6 +7,9 @@
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+	/**
+	 * sphere: self describing
+	 */
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	class sphere : public geometry<DIMENSION, T>
 	{
@@ -136,6 +139,7 @@
 			((b - a) / static_cast<T>(2)) * distance);
 	}
 
+	/** save a sphere into JSON */
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	bool DoSaveIntoJSON(nlohmann::json* json, sphere<DIMENSION, T> const& src)
 	{
@@ -146,6 +150,7 @@
 		return true;
 	}
 
+	/** load a sphere from JSON */
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	bool DoLoadFromJSON(JSONReadConfiguration config, sphere<DIMENSION, T>& dst)
 	{

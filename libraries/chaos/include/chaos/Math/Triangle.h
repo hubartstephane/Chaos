@@ -7,6 +7,9 @@
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+	/**
+	 * triangle: self describing
+	 */
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	class triangle : public geometry<DIMENSION, T>
 	{
@@ -88,6 +91,28 @@
 	triangle<DIMENSION, T> GetInvertedTriangle(triangle<DIMENSION, T> const& t)
 	{
 		return triangle<DIMENSION, T>(t.a, t.c, t.b);
+	}
+
+	/** save triangle into JSON */
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool DoSaveIntoJSON(nlohmann::json* json, triangle<DIMENSION, T> const& src)
+	{
+		if (!PrepareSaveObjectIntoJSON(json))
+			return false;
+		JSONTools::SetAttribute(json, "a", src.a);
+		JSONTools::SetAttribute(json, "b", src.b);
+		JSONTools::SetAttribute(json, "c", src.c);
+		return true;
+	}
+
+	/** load triangle into JSON */
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool DoLoadFromJSON(JSONReadConfiguration config, triangle<DIMENSION, T>& dst)
+	{
+		JSONTools::GetAttribute(config, "a", dst.a);
+		JSONTools::GetAttribute(config, "b", dst.b);
+		JSONTools::GetAttribute(config, "c", dst.c);
+		return true;
 	}
 
 #endif

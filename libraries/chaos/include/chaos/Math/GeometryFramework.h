@@ -31,19 +31,19 @@ namespace chaos
 	// plane functions
 	// ==============================================================================================
 
-	template<std::floating_point T, int plane_dimension>
+	template<std::floating_point T, int plane_dimension> requires (plane_dimension == 3 || plane_dimension == 4)
 	glm::vec<plane_dimension - 1, T> GetPlaneNormal(glm::vec<plane_dimension, T> const& src)
 	{
 		return *(glm::vec<plane_dimension - 1, T>*)&src;
 	}
 
-	template<std::floating_point T, int plane_dimension>
+	template<std::floating_point T, int plane_dimension> requires (plane_dimension == 3 || plane_dimension == 4)
 	T GetPlaneOffset(glm::vec<plane_dimension, T> const& src)
 	{
 		return src[plane_dimension - 1];
 	}
 
-	template<std::floating_point T, int plane_dimension>
+	template<std::floating_point T, int plane_dimension> requires (plane_dimension == 3 || plane_dimension == 4)
 	void NormalizePlane(glm::vec<plane_dimension, T> & src)
 	{
 		 auto normal = GetPlaneNormal(src);
@@ -52,7 +52,7 @@ namespace chaos
 			 src /= std::sqrt(len);
 	}
 
-	template<std::floating_point T, int plane_dimension>
+	template<std::floating_point T, int plane_dimension> requires (plane_dimension == 3 || plane_dimension == 4)
 	glm::vec<plane_dimension, T> GetNormalizedPlane(glm::vec<plane_dimension, T> const & src)
 	{
 		auto normal = GetPlaneNormal(src);

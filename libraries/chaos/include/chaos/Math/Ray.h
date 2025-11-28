@@ -32,6 +32,13 @@
 		vec_type direction;
 	};
 
+	/** check whether the ray is valid */
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	bool IsValid(ray<DIMENSION, T> const& r)
+	{
+		return glm::length2(r) > T(0);
+	}
+
 	/** equality function for ray */
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	bool operator == (ray<DIMENSION, T> const& r1, ray<DIMENSION, T> const& r2)
@@ -39,6 +46,7 @@
 		return (r1.position == r2.position) && (r1.direction == r2.direction);
 	}
 
+	/** save a ray into a JSON object */
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	bool DoSaveIntoJSON(nlohmann::json* json, ray<DIMENSION, T> const& src)
 	{
@@ -49,6 +57,7 @@
 		return true;
 	}
 
+	/** load a ray from a JSON object */
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	bool DoLoadFromJSON(JSONReadConfiguration config, ray<DIMENSION, T>& dst)
 	{
@@ -56,7 +65,6 @@
 		JSONTools::GetAttribute(config, "direction", dst.direction);
 		return true;
 	}
-
 
 #endif
 

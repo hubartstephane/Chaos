@@ -47,6 +47,95 @@
 		return (c.radius < 0);
 	}
 
+	/** returns the perimeter of the circle */
+	template<std::floating_point T>
+	T GetPerimeter(sphere<2, T> const& c)
+	{
+		assert(!IsGeometryEmpty(c));
+		return static_cast<T>(2.0 * M_PI) * c.radius;
+	}
+
+	/** returns the surface of the circle */
+	template<std::floating_point T>
+	T GetSurface(sphere<2, T> const& c)
+	{
+		assert(!IsGeometryEmpty(c));
+		return static_cast<T>(M_PI) * c.radius * c.radius;
+	}
+
+	/** returns the volume of the sphere */
+	template<std::floating_point T>
+	T GetVolume(sphere<3, T> const& s)
+	{
+		assert(!IsGeometryEmpty(s));
+		return static_cast<T>((4.0 / 3.0) * M_PI) * s.radius * s.radius * s.radius;
+	}
+
+	/** returns the surface of the sphere */
+	template<std::floating_point T>
+	T GetSurface(sphere<3, T> const& s)
+	{
+		assert(!IsGeometryEmpty(s));
+		return static_cast<T>(4.0 * M_PI) * s.radius * s.radius;
+	}
+
+	/** returns intersection of 2 spheres */
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	sphere<DIMENSION, T> operator & (sphere<DIMENSION, T> const& s1, sphere<DIMENSION, T> const& s2) // intersection
+	{
+		using geometry_type = geometry<DIMENSION, T>;
+		using vec_type = typename geometry_type::vec_type;
+
+		if (IsGeometryEmpty(s1) || IsGeometryEmpty(s2))
+			return sphere<DIMENSION, T>();
+		if (s1.position == s2.position)
+			return sphere<DIMENSION, T>(s1.position, glm::min(s1.radius, s2.radius));
+
+		vec_type delta_pos = s2.position - s1.position;   // vector that go from center 1 to center 2
+		T        distance  = glm::length(delta_pos);      // length of such a vector
+
+		if (distance >= s1.radius + s2.radius) // sphere too far => returns the empty sphere
+			return sphere<DIMENSION, T>();
+
+		T t1 = s1.radius / distance;  // positive
+		T t2 = s2.radius / distance;  // positive
+
+		T a = glm::max(-t1, static_cast<T>(1) - t2);
+		T b = glm::min(t1, static_cast<T>(1) + t2);
+
+		return sphere<DIMENSION, T>(
+			s1.position + ((b + a) / static_cast<T>(2)) * delta_pos,
+			((b - a) / static_cast<T>(2)) * distance);
+	}
+
+	/** returns union of 2 spheres */
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	sphere<DIMENSION, T> operator | (sphere<DIMENSION, T> const& s1, sphere<DIMENSION, T> const& s2) // union
+	{
+		using geometry_type = geometry<DIMENSION, T>;
+		using vec_type = typename geometry_type::vec_type;
+
+		if (IsGeometryEmpty(s1))
+			return s2;
+		if (IsGeometryEmpty(s2))
+			return s1;
+		if (s1.position == s2.position)
+			return sphere<DIMENSION, T>(s1.position, glm::max(s1.radius, s2.radius));
+
+		vec_type delta_pos = s2.position - s1.position;    // vector that go from center 1 to center 2
+		T        distance = glm::length(delta_pos);       // length of such a vector
+
+		T t1 = s1.radius / distance;  // positive
+		T t2 = s2.radius / distance;  // positive
+
+		T a = glm::min(-t1, static_cast<T>(1) - t2);
+		T b = glm::max(t1, static_cast<T>(1) + t2);
+
+		return sphere<DIMENSION, T>(
+			s1.position + ((b + a) / static_cast<T>(2)) * delta_pos,
+			((b - a) / static_cast<T>(2)) * distance);
+	}
+
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	bool DoSaveIntoJSON(nlohmann::json* json, sphere<DIMENSION, T> const& src)
 	{

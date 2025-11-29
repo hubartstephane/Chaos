@@ -2,6 +2,7 @@
 #include "chaos/Math/Interpolation.h"
 #include "chaos/Math/ComparisonOperator.h"
 #include "chaos/Math/GeometryDefines.h"
+#include "chaos/Math/Vector.h"
 #include "chaos/Math/Rotator.h"
 #include "chaos/Math/Geometry.h"
 #include "chaos/Math/Box.h"

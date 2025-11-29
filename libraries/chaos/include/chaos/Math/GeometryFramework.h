@@ -5,10 +5,6 @@
 
 namespace chaos
 {
-	/** encode a box2 into a vector4 */
-	CHAOS_API glm::vec4 EncodeBoxToVector(box2 const& src);
-
-
 
 
 	/** returns the bounding circle for the box */
@@ -39,12 +35,6 @@ namespace chaos
 		return IsGeometryEmpty(b) ? sphere<3, T>() : sphere<3, T>(b.position, GLMTools::GetMinComponent(b.half_size));
 	}
 
-	/** returns the "aspect" of the box (width/height) */
-	template<std::floating_point T>
-	T GetBoxAspect(box_base<2, T> const& b)
-	{
-		return (b.half_size.y) ? (b.half_size.x / b.half_size.y) : static_cast<T>(1);
-	}
 
 
 

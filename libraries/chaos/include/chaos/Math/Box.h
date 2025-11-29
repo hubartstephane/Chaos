@@ -165,6 +165,13 @@
 		return static_cast<T>(8) * ((b.half_size.x * b.half_size.y) + (b.half_size.y * b.half_size.z) + (b.half_size.z * b.half_size.x));
 	};
 
+	/** returns the "aspect" of the box (width/height) */
+	template<std::floating_point T>
+	T GetBoxAspect(box_base<2, T> const& b)
+	{
+		return (b.half_size.y) ? (b.half_size.x / b.half_size.y) : static_cast<T>(1);
+	}
+
 	/** update a box aspect */
 	template<typename BOX_TYPE>
 	BOX_TYPE SetBoxAspect(BOX_TYPE const& src, typename BOX_TYPE::type aspect, SetBoxAspectMethod method)
@@ -300,6 +307,9 @@
 			b.position + new_half_size * vec_type(static_cast<T>(i), static_cast<T>(j), static_cast<T>(k)),
 			new_half_size);
 	}
+
+	/** encode a box2 into a vector4 */
+	CHAOS_API glm::vec4 EncodeBoxToVector(box2 const& src);
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	bool DoSaveIntoJSON(nlohmann::json* json, box<DIMENSION, T> const& src)

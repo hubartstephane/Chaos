@@ -6,6 +6,7 @@
 #include "chaos/Math/Rotator.h"
 #include "chaos/Math/Geometry.h"
 #include "chaos/Math/Box.h"
+#include "chaos/Math/AABox.h"
 #include "chaos/Math/Sphere.h"
 #include "chaos/Math/Ray.h"
 #include "chaos/Math/BoxPlane.h"

@@ -58,38 +58,6 @@ namespace chaos
 	template<typename T>
 	AutoCastableVector<T> auto_cast_vector(T const& src) { return src; }
 
-
-	template<std::floating_point T, int plane_dimension> requires (plane_dimension == 3 || plane_dimension == 4)
-	glm::vec<plane_dimension - 1, T> GetPlaneNormal(glm::vec<plane_dimension, T> const& src)
-	{
-		return *(glm::vec<plane_dimension - 1, T>*)&src;
-	}
-
-	template<std::floating_point T, int plane_dimension> requires (plane_dimension == 3 || plane_dimension == 4)
-	T GetPlaneOffset(glm::vec<plane_dimension, T> const& src)
-	{
-		return src[plane_dimension - 1];
-	}
-
-	template<std::floating_point T, int plane_dimension> requires (plane_dimension == 3 || plane_dimension == 4)
-	void NormalizePlane(glm::vec<plane_dimension, T> & src)
-	{
-		 auto normal = GetPlaneNormal(src);
-		 T len = glm::length2(normal);
-		 if (len != T(0) && len != T(1))
-			 src /= std::sqrt(len);
-	}
-
-	template<std::floating_point T, int plane_dimension> requires (plane_dimension == 3 || plane_dimension == 4)
-	glm::vec<plane_dimension, T> GetNormalizedPlane(glm::vec<plane_dimension, T> const & src)
-	{
-		auto normal = GetPlaneNormal(src);
-		T len = glm::length2(normal);
-		if (len != T(0) && len != T(1))
-			return src / std::sqrt(len);
-		return src;
-	}
-
 }; // namespace chaos
 
 	// XXX: for namespace resolution in JSONTools::LoadFromJSON(...) and JSONTools::SaveIntoJSON(...),

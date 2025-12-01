@@ -150,6 +150,122 @@
 		return result;
 	}
 
+
+
+
+
+
+
+
+	/** intersection of 2 boxes */
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	aabox<DIMENSION, T> operator & (aabox<DIMENSION, T> const& b1, aabox<DIMENSION, T> const& b2)
+	{
+#if 0
+		using geometry_type = geometry<DIMENSION, T>;
+		using vec_type = typename geometry_type::vec_type;
+
+		if (IsGeometryEmpty(b1) || IsGeometryEmpty(b2)) // any of the 2 is empty, intersection is empty
+			return box<DIMENSION, T>();
+
+		vec_type A1 = b1.position + b1.half_size;
+		vec_type B2 = b2.position - b2.half_size;
+
+		if (glm::any(glm::lessThanEqual(A1, B2)))
+			return box<DIMENSION, T>();
+
+		vec_type B1 = b1.position - b1.half_size;
+		vec_type A2 = b2.position + b2.half_size;
+
+		if (glm::any(glm::lessThanEqual(A2, B1)))
+			return box<DIMENSION, T>();
+
+		vec_type A = glm::min(A1, A2);
+		vec_type B = glm::max(B1, B2);
+
+		return box<DIMENSION, T>(std::make_pair(A, B));
+#endif
+		return {};
+	}
+
+	/** union of 2 boxes */
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	aabox<DIMENSION, T> operator | (aabox<DIMENSION, T> const& b1, aabox<DIMENSION, T> const& b2)
+	{
+#if 0
+		using geometry_type = geometry<DIMENSION, T>;
+		using vec_type = typename geometry_type::vec_type;
+
+		if (IsGeometryEmpty(b1)) // if one is empty, returns other
+			return b2;
+		if (IsGeometryEmpty(b2))
+			return b1;
+
+		vec_type A1 = b1.position + b1.half_size;
+		vec_type A2 = b2.position + b2.half_size;
+
+		vec_type B1 = b1.position - b1.half_size;
+		vec_type B2 = b2.position - b2.half_size;
+
+		vec_type A = glm::max(A1, A2);
+		vec_type B = glm::min(B1, B2);
+
+		return box<DIMENSION, T>(std::make_pair(A, B));
+#endif
+
+		return {};
+	}
+
+
+	/** increase the box size with a single vertex */
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	void ExtendBox(aabox<DIMENSION, T>& b, glm::vec<DIMENSION, T> const& v)
+	{
+
+#if 0
+		using geometry_type = geometry<DIMENSION, T>;
+		using vec_type = typename geometry_type::vec_type;
+
+		if (IsGeometryEmpty(b))
+		{
+			b.position = v;
+			b.half_size = vec_type(0);
+		}
+		else
+		{
+			std::pair<vec_type, vec_type> corners = GetBoxCorners(b);
+			corners.first = glm::min(corners.first, v);
+			corners.second = glm::max(corners.second, v);
+			b = box<DIMENSION, T>(corners);
+		}
+#endif
+	}
+
+	/** returns one of the sub-boxes obtained by splitting the src */
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	aabox<DIMENSION, T> GetSplitBox(aabox<DIMENSION, T> const& b, glm::vec<DIMENSION, int> const& p)
+	{
+		using geometry_type = geometry<DIMENSION, T>;
+		using vec_type = typename geometry_type::vec_type;
+
+		vec_type v0 = vec_type(T(0));
+		vec_type v1 = vec_type(T(1));
+		vec_type v2 = vec_type(T(2));
+
+		assert(!glm::any(glm::lessThan(p, v0)));
+		assert(!glm::any(glm::greaterThan(p, v1)));
+
+		vec_type factor = auto_cast_vector(p);
+		vec_type new_size = b.size / v2;
+
+		return
+		{
+			b.position + new_size * factor,
+			new_size
+		};
+	}
+
+	/** save aabox into JSON */
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	bool DoSaveIntoJSON(nlohmann::json* json, aabox<DIMENSION, T> const& src)
 	{
@@ -160,6 +276,7 @@
 		return true;
 	}
 
+	/** load aabox from JSON */
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	bool DoLoadFromJSON(JSONReadConfiguration config, aabox<DIMENSION, T>& dst)
 	{

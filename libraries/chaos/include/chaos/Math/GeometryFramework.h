@@ -55,26 +55,7 @@ namespace chaos
 		return std::make_pair(b.position, b.position);
 	}
 
-	/** increase the box size with a single vertex */
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	void ExtendBox(box<DIMENSION, T>& b, typename box<DIMENSION, T>::vec_type const& v)
-	{
-		using geometry_type = geometry<DIMENSION, T>;
-		using vec_type = typename geometry_type::vec_type;
 
-		if (IsGeometryEmpty(b))
-		{
-			b.position = v;
-			b.half_size = vec_type(0);
-		}
-		else
-		{
-			std::pair<vec_type, vec_type> corners = GetBoxCorners(b);
-			corners.first = glm::min(corners.first, v);
-			corners.second = glm::max(corners.second, v);
-			b = box<DIMENSION, T>(corners);
-		}
-	}
 
 	template<std::floating_point T>
 	auto GetBoxVertices(box_base<2, T> const& b, typename box_base<2, T>::vec_type* result, bool global = true) // expect an array of 4 elements

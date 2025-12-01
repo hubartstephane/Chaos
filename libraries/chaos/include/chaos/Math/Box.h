@@ -270,47 +270,56 @@
 		return box<DIMENSION, T>(std::make_pair(A, B));
 	}
 
-	/** returns one of the sub-boxes obtained by splitting the src */
-	template<std::floating_point T>
-	box<2, T> GetSplitBox(box<2, T> const& b, int i, int j)
+	/** increase the box size with a single vertex */
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	void ExtendBox(box<DIMENSION, T>& b, glm::vec<DIMENSION, T> const& v)
 	{
-		using geometry_type = geometry<2, T>;
+		using geometry_type = geometry<DIMENSION, T>;
 		using vec_type = typename geometry_type::vec_type;
 
-		assert((i == 0) || (i == 1));
-		assert((j == 0) || (j == 1));
-		i = (i << 1) - 1;
-		j = (j << 1) - 1;
-		vec_type new_half_size = b.half_size / static_cast<T>(2);
-
-		return box<2, T>(
-			b.position + new_half_size * vec_type(static_cast<T>(i), static_cast<T>(j)),
-			new_half_size);
+		if (IsGeometryEmpty(b))
+		{
+			b.position = v;
+			b.half_size = vec_type(0);
+		}
+		else
+		{
+			std::pair<vec_type, vec_type> corners = GetBoxCorners(b);
+			corners.first = glm::min(corners.first, v);
+			corners.second = glm::max(corners.second, v);
+			b = box<DIMENSION, T>(corners);
+		}
 	}
 
-	/** returns one of the sub-boxes obtained by splitting the src */
-	template<std::floating_point T>
-	box<3, T> GetSplitBox(box<3, T> const& b, int i, int j, int k)
+	/* returns one of the sub-boxes obtained by splitting the src */
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	box<DIMENSION, T> GetSplitBox(box<DIMENSION, T> const& b, glm::vec<DIMENSION, int> const& p)
 	{
-		using geometry_type = geometry<3, T>;
+		using geometry_type = geometry<DIMENSION, T>;
 		using vec_type = typename geometry_type::vec_type;
 
-		assert((i == 0) || (i == 1));
-		assert((j == 0) || (j == 1));
-		assert((k == 0) || (k == 1));
-		i = (i << 1) - 1;
-		j = (j << 1) - 1;
-		k = (k << 1) - 1;
-		vec_type new_half_size = b.half_size / static_cast<T>(2);
+		vec_type v0 = vec_type(T(0));
+		vec_type v1 = vec_type(T(1));
+		vec_type v2 = vec_type(T(2));
 
-		return box<3, T>(
-			b.position + new_half_size * vec_type(static_cast<T>(i), static_cast<T>(j), static_cast<T>(k)),
-			new_half_size);
+		assert(!glm::any(glm::lessThan(p, v0)));
+		assert(!glm::any(glm::greaterThan(p, v1)));
+
+		vec_type factor = auto_cast_vector(p);
+		factor = factor * v2 - v1;
+		vec_type new_half_size = b.half_size / v2;
+
+		return
+		{
+			b.position + new_half_size * factor,
+			new_half_size
+		};
 	}
 
 	/** encode a box2 into a vector4 */
 	CHAOS_API glm::vec4 EncodeBoxToVector(box2 const& src);
 
+	/** save box into JSON */
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	bool DoSaveIntoJSON(nlohmann::json* json, box<DIMENSION, T> const& src)
 	{
@@ -321,6 +330,7 @@
 		return true;
 	}
 
+	/** load box from JSON */
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	bool DoLoadFromJSON(JSONReadConfiguration config, box<DIMENSION, T>& dst)
 	{
@@ -329,6 +339,7 @@
 		return true;
 	}
 
+	/** save box into JSON */
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	bool DoSaveIntoJSON(nlohmann::json* json, obox<DIMENSION, T> const& src)
 	{
@@ -340,6 +351,7 @@
 		return true;
 	}
 
+	/** load box from JSON */
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	bool DoLoadFromJSON(JSONReadConfiguration config, obox<DIMENSION, T>& dst)
 	{

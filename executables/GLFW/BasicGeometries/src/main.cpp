@@ -708,7 +708,7 @@ protected:
 				{
 					for (int k = 0 ; k < 2 ; ++k)
 					{
-						chaos::box3 split_b = GetSplitBox(b, i, j, k);
+						chaos::box3 split_b = GetSplitBox(b, glm::vec3(i, j, k));
 						primitive_renderer->DrawPrimitive(primitive_renderer->SlightDecreaseSize(split_b), red, false);
 					}
 				}

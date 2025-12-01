@@ -240,8 +240,10 @@ namespace chaos
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	auto GetRestrictToOutsideDisplacement(box<DIMENSION, T> const& src, box<DIMENSION, T> const& target, int axis_of_interrests = -1)
 	{
+		using geometry_type = geometry<DIMENSION, T>;
+
 		// the null result
-		typename box<DIMENSION, T>::vec_type result = box<DIMENSION, T>::vec_type(0);
+		typename geometry_type::vec_type result = geometry_type::vector_zero;
 
 		if (IsGeometryEmpty(src) || IsGeometryEmpty(target))
 			return result;
@@ -302,8 +304,10 @@ namespace chaos
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	bool RestrictToOutside(box<DIMENSION, T>& src, box<DIMENSION, T>& target, int axis_of_interrests = -1)
 	{
+		using geometry_type = geometry<DIMENSION, T>;
+
 		auto delta_position = GetRestrictToOutsideDisplacement(src, target, axis_of_interrests);
-		if (delta_position == box<DIMENSION, T>::vec_type(0))
+		if (delta_position == geometry_type::vector_zero)
 			return false;
 		target.position += delta_position;
 		return true;
@@ -354,6 +358,8 @@ namespace chaos
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	bool RestrictToOutside(sphere<DIMENSION, T>& src, sphere<DIMENSION, T>& target)
 	{
+		using geometry_type = geometry<DIMENSION, T>;
+
 		if (IsGeometryEmpty(src) || IsGeometryEmpty(target))
 			return false;
 
@@ -370,8 +376,8 @@ namespace chaos
 		}
 		else
 		{
-			auto new_direction = sphere<DIMENSION, T>::vec_type(0);
-			new_direction[0] = (T)1;
+			auto new_direction = geometry_type::vector_zero;
+			new_direction[0] = T(1);
 
 			T factor = (src.radius + target.radius);
 			delta_pos = new_direction * factor;

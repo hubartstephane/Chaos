@@ -105,9 +105,9 @@ namespace chaos
 	public:
 
 		/** the position */
-		vec_type position = vec_type(0);
+		vec_type position = geometry_type::vector_zero;
 		/** the scale */
-		vec_type scale = vec_type(1);
+		vec_type scale = geometry_type::vector_one;
 		/** the rotation */
 		rot_type rotation = zero_rotator();
 	};

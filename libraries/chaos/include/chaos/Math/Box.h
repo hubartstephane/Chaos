@@ -130,7 +130,9 @@
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	bool IsGeometryEmpty(box_base<DIMENSION, T> const& b)
 	{
-		return glm::any(glm::lessThan(b.half_size, box_base<DIMENSION, T>::vec_type(0)));
+		using geometry_type = geometry<DIMENSION, T>;
+
+		return glm::any(glm::lessThan(b.half_size, geometry_type::vector_zero));
 	}
 
 	/** returns the perimeter of the box */
@@ -280,7 +282,7 @@
 		if (IsGeometryEmpty(b))
 		{
 			b.position = v;
-			b.half_size = vec_type(0);
+			b.half_size = geometry_type::vector_zero;
 		}
 		else
 		{
@@ -298,16 +300,12 @@
 		using geometry_type = geometry<DIMENSION, T>;
 		using vec_type = typename geometry_type::vec_type;
 
-		vec_type v0 = vec_type(T(0));
-		vec_type v1 = vec_type(T(1));
-		vec_type v2 = vec_type(T(2));
-
-		assert(!glm::any(glm::lessThan(p, v0)));
-		assert(!glm::any(glm::greaterThan(p, v1)));
+		assert(!glm::any(glm::lessThan(p, geometry::vector_zero)));
+		assert(!glm::any(glm::greaterThan(p, geometry::vector_one)));
 
 		vec_type factor = auto_cast_vector(p);
-		factor = factor * v2 - v1;
-		vec_type new_half_size = b.half_size / v2;
+		factor = factor * geometry::vector_two - geometry::vector_one;
+		vec_type new_half_size = b.half_size * geometry::vector_half;
 
 		return
 		{

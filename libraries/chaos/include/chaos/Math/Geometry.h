@@ -44,6 +44,15 @@
 		using projection_volume_type = projection_volume<dimension, type>;
 		/** the type for a perspective volume */
 		using perspective_type = perspective<dimension, type>;	
+
+		/** some alias for vector 0 */
+		static constexpr glm::vec<DIMENSION, T> vector_zero = glm::vec<DIMENSION, T>(T(0));
+		/** some alias for vector 1 */
+		static constexpr glm::vec<DIMENSION, T> vector_one  = glm::vec<DIMENSION, T>(T(1));
+		/** some alias for vector 2 */
+		static constexpr glm::vec<DIMENSION, T> vector_two  = glm::vec<DIMENSION, T>(T(2));
+		/** some alias for vector 0.5 */
+		static constexpr glm::vec<DIMENSION, T> vector_half = glm::vec<DIMENSION, T>(T(0.5));
 	};
 
 #endif

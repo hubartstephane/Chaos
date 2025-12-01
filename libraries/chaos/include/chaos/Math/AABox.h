@@ -56,7 +56,9 @@
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	bool IsGeometryEmpty(aabox<DIMENSION, T> const& b)
 	{
-		return glm::any(glm::lessThan(b.size, aabox<DIMENSION, T>::vec_type(0)));
+		using geometry_type = geometry<DIMENSION, T>;
+
+		return glm::any(glm::lessThan(b.size, geometry_type::vector_zero));
 	}
 
 	/** returns the perimeter of the box */
@@ -248,15 +250,11 @@
 		using geometry_type = geometry<DIMENSION, T>;
 		using vec_type = typename geometry_type::vec_type;
 
-		vec_type v0 = vec_type(T(0));
-		vec_type v1 = vec_type(T(1));
-		vec_type v2 = vec_type(T(2));
-
-		assert(!glm::any(glm::lessThan(p, v0)));
-		assert(!glm::any(glm::greaterThan(p, v1)));
+		assert(!glm::any(glm::lessThan(p, geometry::vector_zero)));
+		assert(!glm::any(glm::greaterThan(p, geometry::vector_one)));
 
 		vec_type factor = auto_cast_vector(p);
-		vec_type new_size = b.size / v2;
+		vec_type new_size = b.size * geometry::vector_half;
 
 		return
 		{

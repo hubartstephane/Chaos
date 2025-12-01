@@ -163,61 +163,49 @@
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	aabox<DIMENSION, T> operator & (aabox<DIMENSION, T> const& b1, aabox<DIMENSION, T> const& b2)
 	{
-#if 0
 		using geometry_type = geometry<DIMENSION, T>;
 		using vec_type = typename geometry_type::vec_type;
+		using result_type = typename geometry_type::aabox_type;
 
 		if (IsGeometryEmpty(b1) || IsGeometryEmpty(b2)) // any of the 2 is empty, intersection is empty
-			return box<DIMENSION, T>();
+			return result_type();
 
-		vec_type A1 = b1.position + b1.half_size;
-		vec_type B2 = b2.position - b2.half_size;
+		vec_type B1 = b1.position + b1.size;
+		vec_type A2 = b2.position;
 
-		if (glm::any(glm::lessThanEqual(A1, B2)))
-			return box<DIMENSION, T>();
+		if (glm::any(glm::lessThanEqual(B1, A2)))
+			return result_type();
 
-		vec_type B1 = b1.position - b1.half_size;
-		vec_type A2 = b2.position + b2.half_size;
+		vec_type A1 = b1.position;
+		vec_type B2 = b2.position + b2.size;
 
-		if (glm::any(glm::lessThanEqual(A2, B1)))
-			return box<DIMENSION, T>();
+		if (glm::any(glm::lessThanEqual(B2, A1)))
+			return result_type();
 
-		vec_type A = glm::min(A1, A2);
-		vec_type B = glm::max(B1, B2);
+		vec_type A = glm::max(A1, A2);
+		vec_type B = glm::min(B1, B2);
 
-		return box<DIMENSION, T>(std::make_pair(A, B));
-#endif
-		return {};
+		return result(A, B - A);
 	}
 
 	/** union of 2 boxes */
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	aabox<DIMENSION, T> operator | (aabox<DIMENSION, T> const& b1, aabox<DIMENSION, T> const& b2)
 	{
-#if 0
 		using geometry_type = geometry<DIMENSION, T>;
 		using vec_type = typename geometry_type::vec_type;
+		using result_type = typename geometry_type::aabox_type;
 
 		if (IsGeometryEmpty(b1)) // if one is empty, returns other
 			return b2;
 		if (IsGeometryEmpty(b2))
 			return b1;
 
-		vec_type A1 = b1.position + b1.half_size;
-		vec_type A2 = b2.position + b2.half_size;
+		vec_type A = glm::min(b1.position, b2.position);
+		vec_type B = glm::max(b1.position + b1.size, b2.position + b2.size);
 
-		vec_type B1 = b1.position - b1.half_size;
-		vec_type B2 = b2.position - b2.half_size;
-
-		vec_type A = glm::max(A1, A2);
-		vec_type B = glm::min(B1, B2);
-
-		return box<DIMENSION, T>(std::make_pair(A, B));
-#endif
-
-		return {};
+		return result_type(A, B - A);
 	}
-
 
 	/** increase the box size with a single vertex */
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)

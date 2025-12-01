@@ -1,18 +1,18 @@
- namespace chaos
+namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class box_plane; // a set of 4 or 6 clip planes
-	CHAOS_GEOMETRY_DEFINE_GLMLIKE_TEMPLATES(box_plane);
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T) class box_planes; // a set of 4 or 6 clip planes
+	CHAOS_GEOMETRY_DEFINE_GLMLIKE_TEMPLATES(box_planes);
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	 * box_plane: a class to hold the planes of a box or projection volume
+	 * box_planes: a class to hold the planes of a box or projection volume
 	 */
 
 	template<std::floating_point T>
-	class box_plane<2, T> : public geometry<2, T>
+	class box_planes<2, T> : public geometry<2, T>
 	{
 	public:
 
@@ -104,11 +104,11 @@
 	};
 
 	/**
-	 * box_plane: a class to hold the planes of a box or projection volume
+	 * box_planes: a class to hold the planes of a box or projection volume
 	 */
 
 	template<std::floating_point T>
-	class box_plane<3, T> : public geometry<3, T>
+	class box_planes<3, T> : public geometry<3, T>
 	{
 	public:
 

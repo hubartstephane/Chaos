@@ -119,9 +119,9 @@ namespace chaos
 
 	/** get planes from a box */
 	template<std::floating_point T>
-	box_plane<2, T> GetBoxPlanes(box_base<2, T> const& b)
+	box_planes<2, T> GetBoxPlanes(box_base<2, T> const& b)
 	{
-		box_plane<2, T> result;
+		box_planes<2, T> result;
 		result.neg_x = { T(-1),  T(0), -b.half_size.x};
 		result.pos_x = { T(+1),  T(0), -b.half_size.x };
 		result.neg_y = {  T(0), T(-1), -b.half_size.y};
@@ -130,9 +130,9 @@ namespace chaos
 	}
 	/** get planes from a box */
 	template<std::floating_point T>
-	box_plane<3, T> GetBoxPlanes(box_base<3, T> const& b)
+	box_planes<3, T> GetBoxPlanes(box_base<3, T> const& b)
 	{
-		box_plane<3, T> result;
+		box_planes<3, T> result;
 		result.neg_x = { T(-1),  T(0),  T(0), -b.half_size.x};
 		result.pos_x = { T(+1),  T(0),  T(0), -b.half_size.x };
 		result.neg_y = {  T(0), T(-1),  T(0), -b.half_size.y };

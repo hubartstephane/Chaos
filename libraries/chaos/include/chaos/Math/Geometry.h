@@ -38,8 +38,10 @@
 		using triangle_type = triangle<dimension, type>;
 		/** the type of aabox */
 		using aabox_type = aabox<dimension, type>;
-		/** the type of box plane */
-		using box_plane_type = box_plane<dimension, type>;
+		/** the type of box corners */
+		using box_corners_type = box_corners<dimension, type>;
+		/** the type of box planes */
+		using box_planes_type = box_planes<dimension, type>;
 		/** the type for a projection volume */
 		using projection_volume_type = projection_volume<dimension, type>;
 		/** the type for a perspective volume */

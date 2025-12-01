@@ -152,13 +152,6 @@
 		return result;
 	}
 
-
-
-
-
-
-
-
 	/** intersection of 2 boxes */
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	aabox<DIMENSION, T> operator & (aabox<DIMENSION, T> const& b1, aabox<DIMENSION, T> const& b2)
@@ -211,24 +204,21 @@
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	void ExtendBox(aabox<DIMENSION, T>& b, glm::vec<DIMENSION, T> const& v)
 	{
-
-#if 0
 		using geometry_type = geometry<DIMENSION, T>;
 		using vec_type = typename geometry_type::vec_type;
 
 		if (IsGeometryEmpty(b))
 		{
 			b.position = v;
-			b.half_size = vec_type(0);
+			b.size = geometry_type::vector_zero;
 		}
 		else
 		{
 			std::pair<vec_type, vec_type> corners = GetBoxCorners(b);
 			corners.first = glm::min(corners.first, v);
 			corners.second = glm::max(corners.second, v);
-			b = box<DIMENSION, T>(corners);
+			b = aabox<DIMENSION, T>(corners);
 		}
-#endif
 	}
 
 	/** returns one of the sub-boxes obtained by splitting the src */

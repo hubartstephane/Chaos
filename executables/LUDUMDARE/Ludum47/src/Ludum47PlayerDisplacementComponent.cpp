@@ -65,7 +65,7 @@ bool LudumPlayerDisplacementComponent::ComputeBorderCollision(ParticleBase & par
 							if (a == b)
 								continue;
 
-							if (!Collide(chaos::box2(std::make_pair(a, b)), extended_box))
+							if (!Collide(chaos::box2(a, b, chaos::AnyTwoPoints), extended_box))
 								continue;
 
 							if (chaos::GLMTools::Get2DCrossProductZ(velocity_vector, b - a) < 0.0f) // CLOCKWISE

@@ -91,7 +91,7 @@ namespace chaos
 			// TOP-LEFT
 			glm::vec2 p1 = position;
 			glm::vec2 p2 = position + size * REVERSE_Y_AXIS;
-			return box2(std::make_pair(p1, p2));
+			return box2(p1, p2, AnyTwoPoints);
 		}
 
 		// ==========================================
@@ -303,7 +303,7 @@ namespace chaos
 			glm::vec2 p1 = ConvertHotpointToBottomLeft(position, size, hotpoint);
 			glm::vec2 p2 = p1 + glm::vec2(size.x, -size.y) * REVERSE_Y_AXIS;
 
-			return box2(std::make_pair(p1, p2));
+			return box2(p1, p2, AnyTwoPoints);
 		}
 
 		TileInfo GeometricObjectTile::FindTileInfo() const

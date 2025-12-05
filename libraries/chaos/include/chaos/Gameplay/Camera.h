@@ -2,7 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	using SafeZone = std::pair<glm::vec2, glm::vec2>;
+	using SafeZone = box_corners2;
 
 	class CameraTools;
 	class Camera;
@@ -87,7 +87,7 @@ namespace chaos
 		/** the initial camera obox (at level startup) */
 		obox2 initial_camera_obox;
 		/** the safe zone of the camera */
-		SafeZone safe_zone = { {0.1f, 0.1f}, {0.9f, 0.9f} };
+		SafeZone safe_zone = box_corners2(glm::vec2(0.1f, 0.1f), glm::vec2(0.9f, 0.9f));
 
 		/** the game instance owning the camera */
 		LevelInstance* level_instance = nullptr;

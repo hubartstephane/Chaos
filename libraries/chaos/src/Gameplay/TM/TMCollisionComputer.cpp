@@ -106,9 +106,9 @@ namespace chaos
 	//               +-----------
 	//               |
 
-	static bool RangeOverlaps(std::pair<glm::vec2, glm::vec2> const & range1, std::pair<glm::vec2, glm::vec2> const& range2, int component)
+	static bool RangeOverlaps(box_corners2 const & range1, box_corners2 const& range2, int component)
 	{
-		if (range1.first[component] > range2.second[component] || range1.second[component] < range2.first[component])
+		if (range1.min[component] > range2.max[component] || range1.max[component] < range2.min[component])
 			return false;
 		return true;
 	}
@@ -169,8 +169,8 @@ namespace chaos
 			wangtile.ApplyParticleFlags(particle_flags);
 		}
 
-		std::pair<glm::vec2, glm::vec2> particle_corners = GetBoxCorners(collision_info.particle->bounding_box);
-		std::pair<glm::vec2, glm::vec2> dst_corners = GetBoxCorners(dst_box);
+		box_corners2 particle_corners = GetBoxCorners(collision_info.particle->bounding_box);
+		box_corners2 dst_corners = GetBoxCorners(dst_box);
 
 		// XXX : an edge with wang value
 		//         0 -> the tile does not use the wangset at all
@@ -187,17 +187,17 @@ namespace chaos
 		if (left_collision_candidate && delta_position.x >= 0.0f)
 		{
 			// check whether EDGE/BOX collision may happen
-			if (MathTools::IsInRange(particle_corners.first.x, dst_box.position.x, dst_corners.second.x + box_extend.x) && RangeOverlaps(dst_corners, particle_corners, 1))
+			if (MathTools::IsInRange(particle_corners.min.x, dst_box.position.x, dst_corners.max.x + box_extend.x) && RangeOverlaps(dst_corners, particle_corners, 1))
 			{
 				// check whether the collision is at least in ZONE 2
-				if (particle_corners.first.x < dst_corners.second.x + box_extend.x)
+				if (particle_corners.min.x < dst_corners.max.x + box_extend.x)
 				{
 					bool displacement_enabled = func(collision_info, Edge::LEFT); // ZONE 1 or 2 : indicates to caller that there is a touch
 
 					// in ZONE 1 ?
-					if (displacement_enabled && (particle_corners.first.x < dst_corners.second.x + box_extend.x * 0.5f))
+					if (displacement_enabled && (particle_corners.min.x < dst_corners.max.x + box_extend.x * 0.5f))
 					{
-						float new_x = particle_corners.first.x - dst_box.half_size.x - box_extend.x * 0.5f;
+						float new_x = particle_corners.min.x - dst_box.half_size.x - box_extend.x * 0.5f;
 
 						float distance = std::abs(dst_box.position.x - new_x);
 
@@ -220,17 +220,17 @@ namespace chaos
 		if (right_collision_candidate && delta_position.x <= 0.0f)
 		{
 			// check whether EDGE/BOX collision may happen
-			if (MathTools::IsInRange(particle_corners.second.x, dst_corners.first.x - box_extend.x, dst_box.position.x) && RangeOverlaps(dst_corners, particle_corners, 1))
+			if (MathTools::IsInRange(particle_corners.max.x, dst_corners.min.x - box_extend.x, dst_box.position.x) && RangeOverlaps(dst_corners, particle_corners, 1))
 			{
 				// check whether the collision is at least in ZONE 2
-				if (particle_corners.second.x > dst_corners.first.x - box_extend.x)
+				if (particle_corners.max.x > dst_corners.min.x - box_extend.x)
 				{
 					bool displacement_enabled = func(collision_info, Edge::RIGHT); // ZONE 1 or 2 : indicates to caller that there is a touch
 
 					// in ZONE 1 ?
-					if (displacement_enabled && (particle_corners.second.x > dst_corners.first.x - box_extend.x * 0.5f))
+					if (displacement_enabled && (particle_corners.max.x > dst_corners.min.x - box_extend.x * 0.5f))
 					{
-						float new_x = particle_corners.second.x + dst_box.half_size.x + box_extend.x * 0.5f;
+						float new_x = particle_corners.max.x + dst_box.half_size.x + box_extend.x * 0.5f;
 
 						float distance = std::abs(dst_box.position.x - new_x);
 
@@ -253,17 +253,17 @@ namespace chaos
 		if (bottom_collision_candidate && delta_position.y >= 0.0f)
 		{
 			// check whether EDGE/BOX collision may happen
-			if (MathTools::IsInRange(particle_corners.first.y, dst_box.position.y, dst_corners.second.y + box_extend.y) && RangeOverlaps(dst_corners, particle_corners, 0))
+			if (MathTools::IsInRange(particle_corners.min.y, dst_box.position.y, dst_corners.max.y + box_extend.y) && RangeOverlaps(dst_corners, particle_corners, 0))
 			{
 				// check whether the collision is at least in ZONE 2
-				if (particle_corners.first.y < dst_corners.second.y + box_extend.y)
+				if (particle_corners.min.y < dst_corners.max.y + box_extend.y)
 				{
 					bool displacement_enabled = func(collision_info, Edge::BOTTOM); // ZONE 1 or 2 : indicates to caller that there is a touch
 
 					// in ZONE 1 ?
-					if (displacement_enabled && (particle_corners.first.y < dst_corners.second.y + box_extend.y * 0.5f))
+					if (displacement_enabled && (particle_corners.min.y < dst_corners.max.y + box_extend.y * 0.5f))
 					{
-						float new_y = particle_corners.first.y - dst_box.half_size.y - box_extend.y * 0.5f;
+						float new_y = particle_corners.min.y - dst_box.half_size.y - box_extend.y * 0.5f;
 
 						float distance = std::abs(dst_box.position.y - new_y);
 
@@ -286,17 +286,17 @@ namespace chaos
 		if (top_collision_candidate && delta_position.y <= 0.0f)
 		{
 			// check whether EDGE/BOX collision may happen
-			if (MathTools::IsInRange(particle_corners.second.y, dst_corners.first.y - box_extend.y, dst_box.position.y) && RangeOverlaps(dst_corners, particle_corners, 0))
+			if (MathTools::IsInRange(particle_corners.max.y, dst_corners.min.y - box_extend.y, dst_box.position.y) && RangeOverlaps(dst_corners, particle_corners, 0))
 			{
 				// check whether the collision is at least in ZONE 2
-				if (particle_corners.second.y > dst_corners.first.y - box_extend.y)
+				if (particle_corners.max.y > dst_corners.min.y - box_extend.y)
 				{
 					bool displacement_enabled = func(collision_info, Edge::TOP); // ZONE 1 or 2 : indicates to caller that there is a touch
 
 					// in ZONE 1 ?
-					if (displacement_enabled && (particle_corners.second.y > dst_corners.first.y - box_extend.y * 0.5f))
+					if (displacement_enabled && (particle_corners.max.y > dst_corners.min.y - box_extend.y * 0.5f))
 					{
-						float new_y = particle_corners.second.y + dst_box.half_size.y + box_extend.y * 0.5f;
+						float new_y = particle_corners.max.y + dst_box.half_size.y + box_extend.y * 0.5f;
 
 						float distance = std::abs(dst_box.position.y - new_y);
 

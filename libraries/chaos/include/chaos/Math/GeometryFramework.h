@@ -48,11 +48,14 @@ namespace chaos
 
 	/** get the corners of the box */
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	auto GetBoxCorners(box<DIMENSION, T> const& b) // returns a std::pair<vec_type, vec_type>
+	box_corners<DIMENSION,T> GetBoxCorners(box<DIMENSION, T> const& b)
 	{
-		if (!IsGeometryEmpty(b))
-			return std::make_pair(b.position - b.half_size, b.position + b.half_size);
-		return std::make_pair(b.position, b.position);
+
+
+
+
+		assert(!IsGeometryEmpty(b));
+		return box_corners<DIMENSION, T>(b.position - b.half_size, b.position + b.half_size);
 	}
 
 

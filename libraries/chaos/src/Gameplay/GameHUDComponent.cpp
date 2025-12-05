@@ -106,21 +106,21 @@ namespace chaos
 
 	glm::vec2 GameHUDComponent::GetCanvasBoxCorner(box2 const & canvas_box, Hotpoint hotpoint)
 	{
-		std::pair<glm::vec2, glm::vec2> corners = GetBoxCorners(canvas_box);
+		box_corners2 corners = GetBoxCorners(canvas_box);
 
 		glm::vec2 result;
 		// search the X position
 		if (int(hotpoint) & int(Hotpoint::LEFT))
-			result.x = corners.first.x;
+			result.x = corners.min.x;
 		else if (int(hotpoint) & int(Hotpoint::RIGHT))
-			result.x = corners.second.x;
+			result.x = corners.max.x;
 		else
 			result.x = canvas_box.position.x;
 		// search the Y position
 		if (int(hotpoint) & int(Hotpoint::BOTTOM))
-			result.y = corners.first.y;
+			result.y = corners.min.y;
 		else if (int(hotpoint) & int(Hotpoint::TOP))
-			result.y = corners.second.y;
+			result.y = corners.max.y;
 		else
 			result.y = canvas_box.position.y;
 

@@ -203,13 +203,13 @@ namespace chaos
 
 			if (smaller.half_size[i] >= bigger.half_size[i])
 			{
-				T delta1 = small_corners.first[i] - big_corners.first[i];
+				T delta1 = small_corners.min[i] - big_corners.min[i];
 
 				if (delta1 > 0)
 					result |= MoveValue(bigger.position[i], smaller.position[i], move_big, delta1);
 				else
 				{
-					T delta2 = small_corners.second[i] - big_corners.second[i];
+					T delta2 = small_corners.max[i] - big_corners.max[i];
 					if (delta2 < 0)
 						result |= MoveValue(bigger.position[i], smaller.position[i], move_big, delta2);
 				}
@@ -223,12 +223,12 @@ namespace chaos
 			//                'bigger'
 			else
 			{
-				T delta1 = small_corners.first[i] - big_corners.first[i];
+				T delta1 = small_corners.min[i] - big_corners.min[i];
 				if (delta1 < 0)
 					result |= MoveValue(bigger.position[i], smaller.position[i], move_big, delta1);
 				else
 				{
-					T delta2 = small_corners.second[i] - big_corners.second[i];
+					T delta2 = small_corners.max[i] - big_corners.max[i];
 					if (delta2 > 0)
 						result |= MoveValue(bigger.position[i], smaller.position[i], move_big, delta2);
 				}
@@ -258,7 +258,7 @@ namespace chaos
 		for (int i = 0; i < DIMENSION; ++i)
 		{
 			// in negative direction (dist_neg is to be positive)
-			T dist_neg = target_corners.second[i] - src_corners.first[i];
+			T dist_neg = target_corners.max[i] - src_corners.min[i];
 			if (dist_neg <= 0)
 				return result; // separating plane -> no collision -> exit
 
@@ -274,7 +274,7 @@ namespace chaos
 			}
 
 			// in positive direction (dist_pos is to be positive)
-			T dist_pos = src_corners.second[i] - target_corners.first[i];
+			T dist_pos = src_corners.max[i] - target_corners.min[i];
 			if (dist_pos <= 0)
 				return result; // separating plane -> no collision -> exit
 
@@ -572,16 +572,16 @@ namespace chaos
 
 		if (open_geometry)
 		{
-			if (glm::any(glm::lessThanEqual(src1_corners.second, src2_corners.first)))
+			if (glm::any(glm::lessThanEqual(src1_corners.max, src2_corners.min)))
 				return false;
-			if (glm::any(glm::greaterThanEqual(src1_corners.first, src2_corners.second)))
+			if (glm::any(glm::greaterThanEqual(src1_corners.min, src2_corners.max)))
 				return false;
 		}
 		else
 		{
-			if (glm::any(glm::lessThan(src1_corners.second, src2_corners.first)))
+			if (glm::any(glm::lessThan(src1_corners.max, src2_corners.min)))
 				return false;
-			if (glm::any(glm::greaterThan(src1_corners.first, src2_corners.second)))
+			if (glm::any(glm::greaterThan(src1_corners.min, src2_corners.max)))
 				return false;
 		}
 		return true;
@@ -785,8 +785,8 @@ namespace chaos
 		auto r2 = s.radius * s.radius;
 
 		auto corners = GetBoxCorners(b);
-		auto const& A = corners.first;
-		auto const& C = corners.second;
+		auto const& A = corners.min;
+		auto const& C = corners.max;
 
 		vec_type V[4] =
 		{

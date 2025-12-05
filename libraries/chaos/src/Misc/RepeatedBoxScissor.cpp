@@ -19,8 +19,8 @@ namespace chaos
 		// Then,
 		//   whenever there are no wrap, we can skip the whole rendering if the instancee (0, 0) is not in the visible range
 
-		glm::vec2 target_bottomleft = GetBoxCorners(in_target_box).first;
-		glm::vec2 scissor_bottomleft = GetBoxCorners(in_scissor_box).first;
+		glm::vec2 target_bottomleft = GetBoxCorners(in_target_box).min;
+		glm::vec2 scissor_bottomleft = GetBoxCorners(in_scissor_box).min;
 
 		glm::vec2 target_size = 2.0f * in_target_box.half_size;
 		glm::vec2 scissor_size = 2.0f * in_scissor_box.half_size;

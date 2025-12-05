@@ -626,7 +626,7 @@ box2 BoxFromPoints(std::vector<glm::vec2> const& v)
 		min_position = glm::min(min_position, p);
 		max_position = glm::max(max_position, p);
 	}
-	return std::make_pair(min_position, max_position);
+	return chaos::box_corners2(min_position, max_position);
 }
 
 

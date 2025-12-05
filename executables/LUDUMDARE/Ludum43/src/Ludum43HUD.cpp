@@ -64,7 +64,7 @@ void GameHUDHealthBarComponent::UpdateMesh()
 	chaos::ParticleDefault particle;
 	particle.texcoords.bitmap_index = -1;
 	// the border
-	particle.bounding_box = chaos::box2(std::make_pair(position1, position2));
+	particle.bounding_box = chaos::box2(position1, position2, chaos::AnyTwoPoints);
 	particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	ParticleToPrimitive(particle, quads);
 	++quads;
@@ -76,8 +76,8 @@ void GameHUDHealthBarComponent::UpdateMesh()
 	++quads;
 
 	// the life bar
-	std::pair<glm::vec2, glm::vec2> corners = chaos::GetBoxCorners(particle.bounding_box);
-	corners.second.x = corners.first.x + (cached_value.health / cached_value.max_health) * (corners.second.x - corners.first.x);
+	chaos::box_corners2 corners = chaos::GetBoxCorners(particle.bounding_box);
+	corners.max.x = corners.min.x + (cached_value.health / cached_value.max_health) * (corners.max.x - corners.min.x);
 	particle.bounding_box = chaos::box2(corners);
 	particle.color = glm::vec4(1.0, 0.0, 0.0, 1.0);
 	ParticleToPrimitive(particle, quads);

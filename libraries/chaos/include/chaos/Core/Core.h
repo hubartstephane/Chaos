@@ -1,3 +1,4 @@
+#include "chaos/Core/Token.h"
 #include "chaos/Core/Identifiable.h"
 #include "chaos/Core/HashBuilder.h"
 #include "chaos/Core/Preprocessor.h"

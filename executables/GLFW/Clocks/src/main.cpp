@@ -124,10 +124,11 @@ protected:
 		chaos::box3 b1(glm::vec3(0.0f, Y1, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 		chaos::box3 b2(glm::vec3(2.0f, Y2, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 		chaos::box3 b3(glm::vec3(4.0f, Y3, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-		chaos::box3 b4(std::make_pair(
+		chaos::box3 b4(
 			glm::vec3(time_line_box_position - 10.0f, 8.0f, 0.0f),
-			glm::vec3(time_line_box_position + time_line_box_size - 10.0f, 10.0f, 2.0f)
-		));
+			glm::vec3(time_line_box_position + time_line_box_size - 10.0f, 10.0f, 2.0f),
+			chaos::AnyTwoPoints
+		);
 
 		DrawPrimitive(ctx, b1, red);
 		DrawPrimitive(ctx, b2, green);

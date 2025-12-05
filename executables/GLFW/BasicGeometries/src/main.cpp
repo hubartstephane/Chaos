@@ -620,9 +620,9 @@ protected:
 
 			primitive_renderer->DrawPrimitive(b, red, false);
 
-			std::pair<glm::vec3, glm::vec3> corners = GetBoxCorners(b);
-			primitive_renderer->DrawPrimitive(corners.first, white, false);
-			primitive_renderer->DrawPrimitive(corners.second, white, false);
+			box_corners3 corners = GetBoxCorners(b);
+			primitive_renderer->DrawPrimitive(corners.min, white, false);
+			primitive_renderer->DrawPrimitive(corners.max, white, false);
 		}
 
 		// box construction from corners
@@ -631,7 +631,7 @@ protected:
 			glm::vec3 p1(0.0f, 0.0f, 0.0f);
 			glm::vec3 p2(1.0f, 2.0f, 3.0f);
 
-			chaos::box3 b(std::make_pair(p1, p2));
+			chaos::box3 b(p1, p2, chaos::MinAndMaxPoints);
 
 			primitive_renderer->DrawPrimitive(b, red, false);
 			primitive_renderer->DrawPrimitive(p1, white, false);
@@ -1163,5 +1163,31 @@ protected:
 
 int main(int argc, char ** argv, char ** env)
 {
+	using namespace chaos;
+
+	box2  b;
+	obox2 ob;
+	aabox2 ab;
+	box_corners2 bc;
+
+	
+	b = ob;
+	b = ab;
+	b = bc;
+
+	ob = b;
+	ob = ab;
+	ob = bc;
+
+	ab = b;
+	ab = ob;
+	ab = bc;
+
+	bc = b;
+	bc = ob;
+	bc = ab;
+
+
+
 	return chaos::RunSimpleWindowApplication<WindowOpenGLTest>(argc, argv, env);
 }

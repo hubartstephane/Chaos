@@ -18,22 +18,38 @@
 
 		using geometry_type = geometry<DIMENSION, T>;
 		using vec_type = typename geometry_type::vec_type;
+		using box_corners_type = typename geometry_type::box_corners_type;
+		using box_base_type = typename box_base<DIMENSION, T>;
 
 		/** constructor (empty box) */
 		aabox() = default;
 		/** copy constructor */
 		aabox(aabox const& src) = default;
 		/** other constructor */
-		aabox(vec_type const& in_position, vec_type const& in_size) : position(in_position), size(in_size) {}
-		/** construct a box from 2 points */
-		aabox(std::pair<vec_type, vec_type> const& pts)
+		aabox(vec_type const& in_position, vec_type const& in_half_size, CenterAndHalfSizeToken):
+			position(in_position - in_half_size),
+			size(in_half_size + in_half_size){}
+		/** other constructor */
+		aabox(vec_type const& in_min, vec_type const& in_max, MinAndMaxPointsToken) :
+			position(in_min),
+			size(in_max - in_min)
 		{
-			vec_type a = glm::min(pts.first, pts.second);
-			vec_type b = glm::max(pts.first, pts.second);
-
-			this->position = a;
-			this->size     = (b - a);
+			assert(!glm::any(glm::greaterThan(in_min, in_max)));
 		}
+		/** other constructor */
+		aabox(vec_type const& in_A, vec_type const& in_B, AnyTwoPointsToken):
+			position(glm::min(in_A, in_B)),
+			size(glm::abs(in_A - in_B)){}
+		/** other constructor */
+		aabox(vec_type const& in_min, vec_type const& in_size, MinCornerAndSizeToken = {}) :
+			position(in_min),
+			size(in_size){}
+		/** conversion constructor */
+		aabox(box_base_type const& src): 
+			aabox(src.position, src.half_size, CenterAndHalfSize){}
+		/** construct a box from the corners */
+		aabox(box_corners_type const& corners):
+			aabox(corners.min, corners.max, MinAndMaxPoints){}
 
 	public:
 
@@ -47,8 +63,15 @@
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	bool operator == (aabox<DIMENSION, T> const& b1, aabox<DIMENSION, T> const& b2)
 	{
-		if (IsGeometryEmpty(b1) != IsGeometryEmpty(b2))
+		if (IsGeometryEmpty(b1))
+		{
+			if (IsGeometryEmpty(b2))
+				return true;
+		}
+		else if (IsGeometryEmpty(b2))
+		{
 			return false;
+		}
 		return (b1.position == b1.position) && (b1.size == b2.size);
 	}
 
@@ -58,7 +81,7 @@
 	{
 		using geometry_type = geometry<DIMENSION, T>;
 
-		return glm::any(glm::lessThan(b.size, geometry_type::vector_zero));
+		return glm::any(glm::lessThan(b.size, geometry_type::vector_zero)); // a zero size box is valid !
 	}
 
 	/** returns the perimeter of the box */
@@ -206,6 +229,7 @@
 	{
 		using geometry_type = geometry<DIMENSION, T>;
 		using vec_type = typename geometry_type::vec_type;
+		using box_corners_type = typename geometry_type::box_corners_type;
 
 		if (IsGeometryEmpty(b))
 		{
@@ -214,9 +238,9 @@
 		}
 		else
 		{
-			std::pair<vec_type, vec_type> corners = GetBoxCorners(b);
-			corners.first = glm::min(corners.first, v);
-			corners.second = glm::max(corners.second, v);
+			box_corners_type corners = GetBoxCorners(b);
+			corners.min = glm::min(corners.min, v);
+			corners.max = glm::max(corners.max, v);
 			b = aabox<DIMENSION, T>(corners);
 		}
 	}

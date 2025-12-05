@@ -103,10 +103,10 @@ chaos::box2 Game::GetWorldBox(bool use_padding) const
 			glm::vec2 bottom_left = glm::vec2(min_x, min_y);
 			glm::vec2 top_right   = glm::vec2(max_x, max_y);
 
-			return chaos::box2(std::make_pair(bottom_left, top_right));
+			return chaos::box2(bottom_left, top_right, chaos::MinAndMaxPoints);
 		}
 	}
-	return chaos::box2(world_position, 0.5f * world_size);;
+	return chaos::box2(world_position, 0.5f * world_size);
 }
 
 void Game::ResetPlayerCachedInputs()
@@ -608,10 +608,10 @@ void Game::DisplayFullscreen(chaos::GPURenderContext * render_context, glm::ivec
 	chaos::TextureDescription texture_description = texture->GetTextureDescription();
 
 
-  chaos::box2 texture_box = chaos::box2(std::make_pair(
-    glm::vec2(0.0f, 0.0f),
-    glm::vec2((float)texture_description.width, (float)texture_description.height)
-  ));
+	chaos::box2 texture_box = chaos::box2(
+		glm::vec2(0.0f, 0.0f),
+		glm::vec2((float)texture_description.width, (float)texture_description.height),
+		chaos::MinAndMaxPoints);
 
   float world_aspect = chaos::MathTools::CastAndDiv<float>(world_size.x, world_size.y);
 
@@ -622,8 +622,8 @@ void Game::DisplayFullscreen(chaos::GPURenderContext * render_context, glm::ivec
   glm::vec2 max_texture_coord = glm::vec2(1.0f, 1.0f);
 
   auto texture_corners = GetBoxCorners(shrinked_texture_box);
-  min_texture_coord = texture_corners.first  / (2.0f * texture_box.half_size);
-  max_texture_coord = texture_corners.second / (2.0f * texture_box.half_size);
+  min_texture_coord = texture_corners.min  / (2.0f * texture_box.half_size);
+  max_texture_coord = texture_corners.max / (2.0f * texture_box.half_size);
 
 	// set the data for program
 	float life_ratio = chaos::MathTools::CastAndDiv<float>(life, initial_life);

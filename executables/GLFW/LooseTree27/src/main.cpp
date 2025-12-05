@@ -477,7 +477,7 @@ protected:
 		else
 		{
 			chaos::perspective<3, float> perspective = GetPerspective(draw_params.viewport.size);
-			chaos::box_plane3 planes = GetProjectionPlanes(perspective);
+			chaos::box_planes3 planes = GetProjectionPlanes(perspective);
 
 
 			//float SIZE = 500.0f;

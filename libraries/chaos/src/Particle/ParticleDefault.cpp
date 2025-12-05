@@ -5,10 +5,10 @@ namespace chaos
 {
 	void GenerateVertexPositionAttributes(box2 const& bounding_box, float rotation, glm::vec2* vertex_positions) // in order BL, BR, TR, TL
 	{
-		std::pair<glm::vec2, glm::vec2> corners = GetBoxCorners(bounding_box);
+		box_corners2 corners = GetBoxCorners(bounding_box);
 
-		glm::vec2 const & bottomleft = corners.first;
-		glm::vec2 const & topright   = corners.second;
+		glm::vec2 const & bottomleft = corners.min;
+		glm::vec2 const & topright   = corners.max;
 
 		// compute the vertices
 		vertex_positions[0] = glm::vec2(bottomleft.x, bottomleft.y);

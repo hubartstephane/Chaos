@@ -113,8 +113,8 @@ namespace chaos
 			glm::vec2 target_min_limit = { 0.0f, 0.0f }; // limit expressed with safe_zone as unit
 			glm::vec2 target_max_limit = { 0.0f, 0.0f }; // 0 for limits on the slow_safe_zone
 
-			std::pair<glm::vec2, glm::vec2> safe_corners = GetBoxCorners(safe_box);
-			std::pair<glm::vec2, glm::vec2> slow_safe_corners = GetBoxCorners(slow_safe_box);
+			box_corners2 safe_corners = GetBoxCorners(safe_box);
+			box_corners2 slow_safe_corners = GetBoxCorners(slow_safe_box);
 
 			glm::vec2 pawn_box_ratio = PAWNBOX_INCREASE_FACTOR * pawn_box.half_size / safe_box.half_size;
 
@@ -132,14 +132,14 @@ namespace chaos
 					// pawn going right/up
 					if (pawn_previous_position[axis] < pawn_box.position[axis])
 					{
-						target_min_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.first[axis], safe_corners.first[axis], safe_box.half_size[axis]);
-						target_max_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.second[axis], safe_corners.first[axis], safe_box.half_size[axis]) + pawn_box_ratio[axis];
+						target_min_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.min[axis], safe_corners.min[axis], safe_box.half_size[axis]);
+						target_max_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.max[axis], safe_corners.min[axis], safe_box.half_size[axis]) + pawn_box_ratio[axis];
 					}
 					// pawn going left/down
 					else if (pawn_previous_position[axis] > pawn_box.position[axis])
 					{
-						target_min_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.first[axis], safe_corners.second[axis], safe_box.half_size[axis]) - pawn_box_ratio[axis];
-						target_max_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.second[axis], safe_corners.second[axis], safe_box.half_size[axis]);
+						target_min_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.min[axis], safe_corners.max[axis], safe_box.half_size[axis]) - pawn_box_ratio[axis];
+						target_max_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.max[axis], safe_corners.max[axis], safe_box.half_size[axis]);
 					}
 				}
 				// camera manually displaced to the right/up
@@ -147,16 +147,16 @@ namespace chaos
 				{
 					idle_timer = 0.0f;
 					min_speed[axis] = max_speed[axis] = manual_limit_speed;
-					target_min_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.first[axis], safe_corners.first[axis], safe_box.half_size[axis]);
-					target_max_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.second[axis], safe_corners.first[axis], safe_box.half_size[axis]) + pawn_box_ratio[axis];
+					target_min_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.min[axis], safe_corners.min[axis], safe_box.half_size[axis]);
+					target_max_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.max[axis], safe_corners.min[axis], safe_box.half_size[axis]) + pawn_box_ratio[axis];
 				}
 				// camera manually displaced to the left/down
 				else if (right_stick[axis] < 0.0f)
 				{
 					idle_timer = 0.0f;
 					min_speed[axis] = max_speed[axis] = manual_limit_speed;
-					target_min_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.first[axis], safe_corners.second[axis], safe_box.half_size[axis]) - pawn_box_ratio[axis];
-					target_max_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.second[axis], safe_corners.second[axis], safe_box.half_size[axis]);
+					target_min_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.min[axis], safe_corners.max[axis], safe_box.half_size[axis]) - pawn_box_ratio[axis];
+					target_max_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.max[axis], safe_corners.max[axis], safe_box.half_size[axis]);
 				}
 				else if (pawn_speed <= idle_pawn_speed)
 				{
@@ -180,8 +180,8 @@ namespace chaos
 			{
 				for (size_t axis : {0, 1})
 				{
-					target_min_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.first[axis], slow_safe_box.position[axis] - pawn_box.half_size[axis], safe_box.half_size[axis]);
-					target_max_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.second[axis], slow_safe_box.position[axis] + pawn_box.half_size[axis], safe_box.half_size[axis]);
+					target_min_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.min[axis], slow_safe_box.position[axis] - pawn_box.half_size[axis], safe_box.half_size[axis]);
+					target_max_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.max[axis], slow_safe_box.position[axis] + pawn_box.half_size[axis], safe_box.half_size[axis]);
 				}
 				// XXX : we do not want both axis to be interpolated as the same speed
 				//       because depending to the position of the pawn on the camera, one axis interpolation would ends before the other
@@ -228,10 +228,11 @@ namespace chaos
 				max_dynamic_safe_zone[axis] = MathTools::TargetValue(max_dynamic_safe_zone[axis], target_max_limit[axis], max_delta, max_delta);
 			}
 			// restrict the pawn to the dynamic safe zone
-			glm::vec2 mn = slow_safe_corners.first + 2.0f * min_dynamic_safe_zone * safe_box.half_size;
-			glm::vec2 mx = slow_safe_corners.second + 2.0f * max_dynamic_safe_zone * safe_box.half_size;
+			glm::vec2 mn = slow_safe_corners.min + 2.0f * min_dynamic_safe_zone * safe_box.half_size;
+			glm::vec2 mx = slow_safe_corners.max + 2.0f * max_dynamic_safe_zone * safe_box.half_size;
 
-			box2 dynamic_safe_box = std::make_pair(mn, mx);
+			box2 dynamic_safe_box = box2(mn, mx, MinAndMaxPoints);
+
 			glm::vec2 p = dynamic_safe_box.position;
 			RestrictToInside(dynamic_safe_box, pawn_box, true);
 			camera_box.position += (dynamic_safe_box.position - p);

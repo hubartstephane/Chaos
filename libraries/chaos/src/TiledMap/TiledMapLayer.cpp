@@ -190,7 +190,7 @@ namespace chaos
 			else
 				p2 = p1 + glm::vec2(image_size.y, -image_size.x) * REVERSE_Y_AXIS;
 
-			box2 result = box2(std::make_pair(p1, p2));
+			box2 result = box2(p1, p2, AnyTwoPoints);
 			if (world_system)
 				result.position += offset;
 			return result;

@@ -10,6 +10,11 @@
 	CHAOS_GEOMETRY_DEFINE_GLMLIKE_TEMPLATES(box);
 	CHAOS_GEOMETRY_DEFINE_GLMLIKE_TEMPLATES(obox);
 
+	CHAOS_DECLARE_TOKEN(MinAndMaxPoints);
+	CHAOS_DECLARE_TOKEN(AnyTwoPoints);
+	CHAOS_DECLARE_TOKEN(CenterAndHalfSize);
+	CHAOS_DECLARE_TOKEN(MinCornerAndSize);
+
 	enum class SetBoxAspectMethod;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -25,13 +30,38 @@
 
 		using geometry_type = geometry<DIMENSION, T>;
 		using vec_type = typename geometry_type::vec_type;
+		using box_corners_type = typename geometry_type::box_corners_type;
+		using aabox_type = geometry_type::aabox_type;
 
 		/** constructor (empty box) */
 		box_base() = default;
 		/** copy constructor */
 		box_base(box_base const& src) = default;
 		/** other constructor */
-		box_base(vec_type const & in_position, vec_type const & in_half_size) : position(in_position), half_size(in_half_size) {}
+		box_base(vec_type const& in_center, vec_type const& in_half_size, CenterAndHalfSizeToken = {}):
+			position(in_center),
+			half_size(in_half_size){}
+		/** other constructor */
+		box_base(vec_type const& in_min, vec_type const& in_max, MinAndMaxPointsToken):
+			position((in_min + in_max) / T(2)),
+			half_size((in_max - in_min) / T(2))
+		{
+			assert(!glm::any(glm::greaterThan(in_min, in_max)));
+		}
+		/** other constructor */
+		box_base(vec_type const& in_A, vec_type const& in_B, AnyTwoPointsToken):
+			position((in_A + in_B) / T(2)),
+			half_size(glm::abs(in_A - in_B) / T(2)){}
+		/** other constructor */
+		box_base(vec_type const& in_min, vec_type const& in_size, MinCornerAndSizeToken):
+			position(in_min + in_size / T(2)),
+			half_size(in_size / T(2)){}
+		/** conversion constructor */
+		box_base(box_corners_type const& src):
+			box_base(src.min, src.max, MinAndMaxPoints){}
+		/** conversion constructor */
+		box_base(aabox_type const& src):
+			box_base(src.position, src.size, AnyTwoPoints){}
 
 	public:
 
@@ -50,26 +80,37 @@
 	{
 	public:
 
+		using base = box_base<DIMENSION, T>;
 		using geometry_type = geometry<DIMENSION, T>;
 		using vec_type = typename geometry_type::vec_type;
+		using box_corners_type = typename geometry_type::box_corners_type;
+		using aabox_type = geometry_type::aabox_type;
 
 		/** constructor (empty box) */
 		box() = default;
 		/** copy constructor */
-		box(box const & src) = default;
-		/** constructor from base (usefull for obox conversion) */
-		box(box_base<DIMENSION, T> const & src) : box_base<DIMENSION, T>(src.position, src.half_size) {}
+		box(box const& src) = default;
 		/** other constructor */
-		box(vec_type const & in_position, vec_type const & in_half_size) : box_base<DIMENSION, T>(in_position, in_half_size) {}
-		/** construct a box from 2 points */
-		box(std::pair<vec_type, vec_type> const & pts)
-		{
-			vec_type a = glm::min(pts.first, pts.second);
-			vec_type b = glm::max(pts.first, pts.second);
-
-			this->position = (b + a) / static_cast<T>(2);
-			this->half_size = (b - a) / static_cast<T>(2);
-		}
+		box(vec_type const& in_center, vec_type const& in_half_size, CenterAndHalfSizeToken token = {}):
+			base(in_center, in_half_size, token){}
+		/** other constructor */
+		box(vec_type const& in_min, vec_type const& in_max, MinAndMaxPointsToken token):
+			base(in_min, in_max, token){}
+		/** other constructor */
+		box(vec_type const& in_A, vec_type const& in_B, AnyTwoPointsToken token):
+			base(in_A, in_B, token){}
+		/** other constructor */
+		box(vec_type const& in_min, vec_type const& in_size, MinCornerAndSizeToken token):
+			base(in_min, in_size, token){}
+		/** conversion constructor */
+		box(base const& src):
+			base(src){}
+		/** conversion constructor */
+		box(box_corners_type const& src):
+			base(src){}
+		/** conversion constructor */
+		box(aabox_type const& src):
+			base(src){}
 	};
 
 	/**
@@ -81,18 +122,45 @@
 	{
 	public:
 
+		using base = box_base<DIMENSION, T>;
 		using geometry_type = geometry<DIMENSION, T>;
 		using vec_type = typename geometry_type::vec_type;
 		using rot_type = typename geometry_type::rot_type;
+		using box_corners_type = typename geometry_type::box_corners_type;
+		using aabox_type = geometry_type::aabox_type;
 
 		/** constructor (empty box) */
 		obox() = default;
 		/** copy constructor */
 		obox(obox const& src) = default;
-		/** constructor from base (usefull for box conversion) */
-		obox(box_base<DIMENSION, T> const& src) : box_base<DIMENSION, T>(src.position, src.half_size){}
 		/** other constructor */
-		obox(vec_type const & in_position, vec_type const & in_half_size, rot_type const & in_rotation) : box_base<DIMENSION, T>(in_position, in_half_size), rotation(in_rotation) {}
+		obox(vec_type const& in_center, vec_type const& in_half_size, rot_type const& in_rotation = zero_rotator(), CenterAndHalfSizeToken token = {}):
+			base(in_center, in_half_size, token),
+			rotation(in_rotation){}
+		/** other constructor */
+		obox(vec_type const& in_min, vec_type const& in_max, rot_type const& in_rotation, MinAndMaxPointsToken token):
+			base(in_min, in_max, token),
+			rotation(in_rotation){}
+		/** other constructor */
+		obox(vec_type const& in_A, vec_type const& in_B, rot_type const& in_rotation, AnyTwoPointsToken token):
+			base(in_A, in_B, token),
+			rotation(in_rotation){}
+		/** other constructor */
+		obox(vec_type const& in_min, vec_type const& in_size, rot_type const& in_rotation, MinCornerAndSizeToken token):
+			base(in_min, in_size, token),
+			rotation(in_rotation){}
+		/** conversion constructor */
+		obox(base const& src, rot_type const& in_rotation = zero_rotator()):
+			base(src),
+			rotation(in_rotation){}
+		/** conversion constructor */
+		obox(box_corners_type const& src, rot_type const& in_rotation = zero_rotator()):
+			base(src),
+			rotation(in_rotation){}
+		/** conversion constructor */
+		obox(aabox_type const& src, rot_type const& in_rotation = zero_rotator()):
+			base(src),
+			rotation(in_rotation){}
 
 	public:
 
@@ -112,8 +180,15 @@
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	bool operator == (box<DIMENSION, T> const& b1, box<DIMENSION, T> const& b2)
 	{
-		if (IsGeometryEmpty(b1) != IsGeometryEmpty(b2))
+		if (IsGeometryEmpty(b1))
+		{
+			if (IsGeometryEmpty(b2))
+				return true;
+		}
+		else if (IsGeometryEmpty(b2))
+		{
 			return false;
+		}
 		return (b1.position == b1.position) && (b1.half_size == b2.half_size);
 	}
 
@@ -121,8 +196,15 @@
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	bool operator == (obox<DIMENSION, T> const& b1, obox<DIMENSION, T> const& b2)
 	{
-		if (IsGeometryEmpty(b1) != IsGeometryEmpty(b2))
+		if (IsGeometryEmpty(b1))
+		{
+			if (IsGeometryEmpty(b2))
+				return true;
+		}
+		else if (IsGeometryEmpty(b2))
+		{
 			return false;
+		}
 		return (b1.position == b1.position) && (b1.half_size == b2.half_size) && (b1.rotation == b2.rotation);
 	}
 
@@ -132,7 +214,7 @@
 	{
 		using geometry_type = geometry<DIMENSION, T>;
 
-		return glm::any(glm::lessThan(b.half_size, geometry_type::vector_zero));
+		return glm::any(glm::lessThan(b.half_size, geometry_type::vector_zero)); // a 0 size box is a valid box !
 	}
 
 	/** returns the perimeter of the box */
@@ -227,6 +309,7 @@
 		using geometry_type = geometry<DIMENSION, T>;
 		using vec_type = typename geometry_type::vec_type;
 		using result_type = typename geometry_type::box_type;
+		using box_corners_type = typename geometry_type::box_corners_type;
 
 		if (IsGeometryEmpty(b1) || IsGeometryEmpty(b2)) // any of the 2 is empty, intersection is empty
 			return result_type();
@@ -246,7 +329,7 @@
 		vec_type A = glm::max(A1, A2);
 		vec_type B = glm::min(B1, B2);
 
-		return result_type(std::make_pair(A, B));
+		return result_type(A, B, MinAndMaxPoints);
 	}
 
 	/** union of 2 boxes */
@@ -256,6 +339,7 @@
 		using geometry_type = geometry<DIMENSION, T>;
 		using vec_type = typename geometry_type::vec_type;
 		using result_type = typename geometry_type::box_type;
+		using box_corners_type = typename geometry_type::box_corners_type;
 
 		if (IsGeometryEmpty(b1)) // if one is empty, returns other
 			return b2;
@@ -271,7 +355,7 @@
 		vec_type A = glm::min(A1, A2);
 		vec_type B = glm::max(B1, B2);
 
-		return result_type(std::make_pair(A, B));
+		return result_type(A, B, MinAndMaxPoints);
 	}
 
 	/** increase the box size with a single vertex */
@@ -280,6 +364,7 @@
 	{
 		using geometry_type = geometry<DIMENSION, T>;
 		using vec_type = typename geometry_type::vec_type;
+		using box_corners_type = typename geometry_type::box_corners_type;
 
 		if (IsGeometryEmpty(b))
 		{
@@ -288,9 +373,9 @@
 		}
 		else
 		{
-			std::pair<vec_type, vec_type> corners = GetBoxCorners(b);
-			corners.first = glm::min(corners.first, v);
-			corners.second = glm::max(corners.second, v);
+			box_corners_type corners = GetBoxCorners(b);
+			corners.min = glm::min(corners.min, v);
+			corners.max = glm::max(corners.max, v);
 			b = box<DIMENSION, T>(corners);
 		}
 	}
@@ -317,7 +402,7 @@
 	}
 
 	/** encode a box2 into a vector4 */
-	CHAOS_API glm::vec4 EncodeBoxToVector(box2 const& src);
+	CHAOS_API glm::vec4 EncodeBoxToVector(box_base2 const& src);
 
 	/** save box into JSON */
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)

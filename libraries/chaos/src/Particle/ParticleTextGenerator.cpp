@@ -719,7 +719,7 @@ namespace chaos
 		ParticleDefault TokenToParticle(ParticleTextGenerator::Token const& token)
 		{
 			ParticleDefault result;
-			result.bounding_box = box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
+			result.bounding_box = box2(token.corners.bottomleft, token.corners.topright, MinAndMaxPoints);
 			result.texcoords = token.texcoords;
 			result.color = token.color;
 			return result;
@@ -730,9 +730,11 @@ namespace chaos
 			glm::vec2 padding = glm::vec2(allocation_params.background_padding, allocation_params.background_padding);
 
 			ParticleDefault result;
-			result.bounding_box = box2(std::make_pair(
+			result.bounding_box = box2(
 				generator_result.bounding_box.bottomleft - padding,
-				generator_result.bounding_box.topright + padding));
+				generator_result.bounding_box.topright + padding,
+				MinAndMaxPoints
+			);
 			result.texcoords.bitmap_index = -1;
 			result.texcoords.bottomleft = glm::vec2(-1.0f, -1.0f);
 			result.texcoords.topright = glm::vec2(-1.0f, -1.0f);

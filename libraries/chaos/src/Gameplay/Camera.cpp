@@ -26,10 +26,10 @@ namespace chaos
 
 	box2 CameraTools::GetSafeCameraBox(box2 const & camera_box, SafeZone const & safe_zone)
 	{
-		std::pair<glm::vec2, glm::vec2> corners = GetBoxCorners(camera_box);
-		return std::make_pair(
-			corners.first + safe_zone.first * (corners.second - corners.first),
-			corners.first + safe_zone.second * (corners.second - corners.first)
+		box_corners corners = GetBoxCorners(camera_box);
+		return box2(
+			corners.min + safe_zone.min * (corners.max - corners.min),
+			corners.min + safe_zone.max * (corners.max - corners.min)
 		);
 	}
 
@@ -92,7 +92,7 @@ namespace chaos
 
 	void Camera::SetSafeZone(glm::vec2 const& in_safe_zone)
 	{
-		SetSafeZone(std::make_pair(
+		SetSafeZone(box_corners2(
 			glm::vec2(0.5f, 0.5f) - in_safe_zone * 0.5f,
 			glm::vec2(0.5f, 0.5f) + in_safe_zone * 0.5f
 		));
@@ -105,12 +105,12 @@ namespace chaos
 
 	void Camera::SetSafeZone(SafeZone const& in_safe_zone)
 	{
-		assert(in_safe_zone.first.x >= 0.0f && in_safe_zone.first.x <= 1.0f);
-		assert(in_safe_zone.first.y >= 0.0f && in_safe_zone.first.y <= 1.0f);
-		assert(in_safe_zone.second.x >= 0.0f && in_safe_zone.second.x <= 1.0f);
-		assert(in_safe_zone.second.y >= 0.0f && in_safe_zone.second.y <= 1.0f);
-		assert(in_safe_zone.first.x <= in_safe_zone.second.x);
-		assert(in_safe_zone.first.y <= in_safe_zone.second.y);
+		assert(in_safe_zone.min.x >= 0.0f && in_safe_zone.min.x <= 1.0f);
+		assert(in_safe_zone.min.y >= 0.0f && in_safe_zone.min.y <= 1.0f);
+		assert(in_safe_zone.max.x >= 0.0f && in_safe_zone.max.x <= 1.0f);
+		assert(in_safe_zone.max.y >= 0.0f && in_safe_zone.max.y <= 1.0f);
+		assert(in_safe_zone.min.x <= in_safe_zone.max.x);
+		assert(in_safe_zone.min.y <= in_safe_zone.max.y);
 		safe_zone = in_safe_zone;
 	}
 

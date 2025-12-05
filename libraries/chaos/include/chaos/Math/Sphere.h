@@ -36,34 +36,41 @@
 
 	/** equality function for circle */
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	bool operator == (sphere<DIMENSION, T> const& c1, sphere<DIMENSION, T> const& c2)
+	bool operator == (sphere<DIMENSION, T> const& s1, sphere<DIMENSION, T> const& s2)
 	{
-		if (IsGeometryEmpty(c1) != IsGeometryEmpty(c2))
+		if (IsGeometryEmpty(s1))
+		{
+			if (IsGeometryEmpty(s2))
+				return true;
+		}
+		else if (IsGeometryEmpty(s2))
+		{
 			return false;
-		return (c1.position == c2.position) && (c1.radius == c2.radius);
+		}
+		return (s1.position == s2.position) && (s1.radius == s2.radius);
 	}
 
 	/** returns true whether the circle is empty */
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
-	bool IsGeometryEmpty(sphere<DIMENSION, T> const& c)
+	bool IsGeometryEmpty(sphere<DIMENSION, T> const& s)
 	{
-		return (c.radius < 0);
+		return (s.radius < 0); // a zero radius point is Valid !
 	}
 
 	/** returns the perimeter of the circle */
 	template<std::floating_point T>
-	T GetPerimeter(sphere<2, T> const& c)
+	T GetPerimeter(sphere<2, T> const& s)
 	{
-		assert(!IsGeometryEmpty(c));
-		return static_cast<T>(2.0 * M_PI) * c.radius;
+		assert(!IsGeometryEmpty(s));
+		return static_cast<T>(2.0 * M_PI) * s.radius;
 	}
 
 	/** returns the surface of the circle */
 	template<std::floating_point T>
-	T GetSurface(sphere<2, T> const& c)
+	T GetSurface(sphere<2, T> const& s)
 	{
-		assert(!IsGeometryEmpty(c));
-		return static_cast<T>(M_PI) * c.radius * c.radius;
+		assert(!IsGeometryEmpty(s));
+		return static_cast<T>(M_PI) * s.radius * s.radius;
 	}
 
 	/** returns the volume of the sphere */

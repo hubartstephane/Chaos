@@ -32,10 +32,7 @@ namespace chaos
 		/** other constructor */
 		box_corners(vec_type const& in_min, vec_type const& in_max, MinAndMaxPointsToken = {}):
 			min(in_min), 
-			max(in_max)
-		{
-			assert(!glm::any(glm::greaterThan(in_min, in_max)));
-		}
+			max(in_max){}
 		/** other constructor */
 		box_corners(vec_type const& in_A, vec_type const& in_B, AnyTwoPointsToken):
 			min(glm::min(in_A, in_B)),

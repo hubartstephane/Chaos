@@ -32,10 +32,7 @@
 		/** other constructor */
 		aabox(vec_type const& in_min, vec_type const& in_max, MinAndMaxPointsToken) :
 			position(in_min),
-			size(in_max - in_min)
-		{
-			assert(!glm::any(glm::greaterThan(in_min, in_max)));
-		}
+			size(in_max - in_min){}
 		/** other constructor */
 		aabox(vec_type const& in_A, vec_type const& in_B, AnyTwoPointsToken):
 			position(glm::min(in_A, in_B)),

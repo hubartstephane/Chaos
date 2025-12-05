@@ -50,11 +50,8 @@ namespace chaos
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	box_corners<DIMENSION,T> GetBoxCorners(box<DIMENSION, T> const& b)
 	{
-
-
-
-
-		assert(!IsGeometryEmpty(b));
+		if(IsGeometryEmpty(b))
+			return {};
 		return box_corners<DIMENSION, T>(b.position - b.half_size, b.position + b.half_size);
 	}
 

@@ -44,10 +44,7 @@
 		/** other constructor */
 		box_base(vec_type const& in_min, vec_type const& in_max, MinAndMaxPointsToken):
 			position((in_min + in_max) / T(2)),
-			half_size((in_max - in_min) / T(2))
-		{
-			assert(!glm::any(glm::greaterThan(in_min, in_max)));
-		}
+			half_size((in_max - in_min) / T(2)){}
 		/** other constructor */
 		box_base(vec_type const& in_A, vec_type const& in_B, AnyTwoPointsToken):
 			position((in_A + in_B) / T(2)),

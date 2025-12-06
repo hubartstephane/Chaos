@@ -1163,31 +1163,5 @@ protected:
 
 int main(int argc, char ** argv, char ** env)
 {
-	using namespace chaos;
-
-	box2  b;
-	obox2 ob;
-	aabox2 ab;
-	box_corners2 bc;
-
-	
-	b = ob;
-	b = ab;
-	b = bc;
-
-	ob = b;
-	ob = ab;
-	ob = bc;
-
-	ab = b;
-	ab = ob;
-	ab = bc;
-
-	bc = b;
-	bc = ob;
-	bc = ab;
-
-
-
 	return chaos::RunSimpleWindowApplication<WindowOpenGLTest>(argc, argv, env);
 }

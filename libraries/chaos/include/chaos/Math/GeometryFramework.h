@@ -3,37 +3,47 @@
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+/** make min & max operator valid for glm::vec */
+namespace std
+{
+	template<int DIMENSION, typename T> requires (DIMENSION >= 1 && DIMENSION <= 4)
+	glm::vec<DIMENSION, T> min(glm::vec<DIMENSION, T> const& src1, glm::vec<DIMENSION, T> const& src2)
+	{
+		return glm::min(src1, src2);
+	}
+
+	template<int DIMENSION, typename T> requires (DIMENSION >= 1 && DIMENSION <= 4)
+	glm::vec<DIMENSION, T> max(glm::vec<DIMENSION, T> const& src1, glm::vec<DIMENSION, T> const& src2)
+	{
+		return glm::max(src1, src2);
+	}
+}; // namespace std
+
 namespace chaos
 {
-
-
-	/** returns the bounding circle for the box */
-	template<std::floating_point T>
-	sphere<2, T> GetBoundingSphere(box_base<2, T> const& b)
-	{
-		return IsGeometryEmpty(b) ? sphere<2, T>() : sphere<2, T>(b.position, glm::length(b.half_size));
-	}
-
-	/** returns the inner circle for the box */
-	template<std::floating_point T>
-	sphere<2, T> GetInnerSphere(box_base<2, T> const& b)
-	{
-		return IsGeometryEmpty(b) ? sphere<2, T>() : sphere<2, T>(b.position, GLMTools::GetMinComponent(b.half_size));
-	}
-
 	/** returns the bounding sphere for the box */
-	template<std::floating_point T>
-	sphere<3, T> GetBoundingSphere(box_base<3, T> const& b)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	sphere<DIMENSION, T> GetBoundingSphere(box_base<DIMENSION, T> const& b)
 	{
-		return IsGeometryEmpty(b) ? sphere<3, T>() : sphere<3, T>(b.position, glm::length(b.half_size));
+		if (IsGeometryEmpty(b))
+			return {};
+		return sphere<DIMENSION, T>(b.position, glm::length(b.half_size));
+	}
+	
+	/** returns the inner circle for the box */
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	sphere<DIMENSION, T> GetInnerSphere(box_base<DIMENSION, T> const& b)
+	{
+		if (IsGeometryEmpty(b))
+			return {};
+		return sphere<DIMENSION, T>(b.position, GLMTools::GetMinComponent(b.half_size));
 	}
 
-	/** returns the inner sphere for the box */
-	template<std::floating_point T>
-	sphere<3, T> GetInnerSphere(box_base<3, T> const& b)
-	{
-		return IsGeometryEmpty(b) ? sphere<3, T>() : sphere<3, T>(b.position, GLMTools::GetMinComponent(b.half_size));
-	}
+
+
+
+
+
 
 
 
@@ -233,18 +243,18 @@ namespace chaos
 	}
 
 
-
-	
-
 	/** returns the bounding box of the circle */
-	template<std::floating_point T>
-	box<2, T> GetBoundingBox(sphere<2, T> const& c)
+	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
+	box<DIMENSION, T> GetBoundingBox(sphere<DIMENSION, T> const& c)
 	{
-		using geometry_type = geometry<2, T>;
+		using geometry_type = geometry<DIMENSION, T>;
 		using vec_type = typename geometry_type::vec_type;
 
-		return IsGeometryEmpty(c) ? box<2, T>() : box<2, T>(c.position, vec_type(c.radius, c.radius));
+		if (IsGeometryEmpty(c))
+			return {};
+		return box<DIMENSION, T>(c.position, vec_type(c.radius));
 	}
+
 
 	/** returns the bounding box of the circle (square) */
 	template<std::floating_point T>
@@ -258,14 +268,7 @@ namespace chaos
 		return IsGeometryEmpty(c) ? box<2, T>() : box<2, T>(c.position, vec_type(c.radius * static_cast<T>(INV_SQRT2)));
 	}
 
-	template<std::floating_point T>
-	box<3, T> GetBoundingBox(sphere<3, T> const& s)
-	{
-		using geometry_type = geometry<3, T>;
-		using vec_type = typename geometry_type::vec_type;
 
-		return IsGeometryEmpty(s) ? box<3, T>() : box<3, T>(s.position, vec_type(s.radius));
-	}
 
 	template<std::floating_point T>
 	box<3, T> GetInnerBox(sphere<3, T> const& s)

@@ -69,14 +69,9 @@ namespace chaos
 	bool operator == (box_corners<DIMENSION, T> const& b1, box_corners<DIMENSION, T> const& b2)
 	{
 		if (IsGeometryEmpty(b1))
-		{
-			if (IsGeometryEmpty(b2))
-				return true;
-		}
-		else if (IsGeometryEmpty(b2))
-		{
+			return IsGeometryEmpty(b2);
+		if (IsGeometryEmpty(b2))
 			return false;
-		}
 		return (b1.min == b1.min) && (b1.max == b2.max);
 	}
 

@@ -178,14 +178,9 @@
 	bool operator == (box<DIMENSION, T> const& b1, box<DIMENSION, T> const& b2)
 	{
 		if (IsGeometryEmpty(b1))
-		{
-			if (IsGeometryEmpty(b2))
-				return true;
-		}
-		else if (IsGeometryEmpty(b2))
-		{
+			return IsGeometryEmpty(b2);
+		if (IsGeometryEmpty(b2))
 			return false;
-		}
 		return (b1.position == b1.position) && (b1.half_size == b2.half_size);
 	}
 
@@ -194,14 +189,9 @@
 	bool operator == (obox<DIMENSION, T> const& b1, obox<DIMENSION, T> const& b2)
 	{
 		if (IsGeometryEmpty(b1))
-		{
-			if (IsGeometryEmpty(b2))
-				return true;
-		}
-		else if (IsGeometryEmpty(b2))
-		{
+			return IsGeometryEmpty(b2);
+		if (IsGeometryEmpty(b2))
 			return false;
-		}
 		return (b1.position == b1.position) && (b1.half_size == b2.half_size) && (b1.rotation == b2.rotation);
 	}
 

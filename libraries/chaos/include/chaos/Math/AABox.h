@@ -61,14 +61,9 @@
 	bool operator == (aabox<DIMENSION, T> const& b1, aabox<DIMENSION, T> const& b2)
 	{
 		if (IsGeometryEmpty(b1))
-		{
-			if (IsGeometryEmpty(b2))
-				return true;
-		}
-		else if (IsGeometryEmpty(b2))
-		{
+			return IsGeometryEmpty(b2);
+		if (IsGeometryEmpty(b2))
 			return false;
-		}
 		return (b1.position == b1.position) && (b1.size == b2.size);
 	}
 

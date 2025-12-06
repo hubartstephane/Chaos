@@ -39,14 +39,9 @@
 	bool operator == (sphere<DIMENSION, T> const& s1, sphere<DIMENSION, T> const& s2)
 	{
 		if (IsGeometryEmpty(s1))
-		{
-			if (IsGeometryEmpty(s2))
-				return true;
-		}
-		else if (IsGeometryEmpty(s2))
-		{
+			return IsGeometryEmpty(s2);
+		if (IsGeometryEmpty(s2))
 			return false;
-		}
 		return (s1.position == s2.position) && (s1.radius == s2.radius);
 	}
 

@@ -29,7 +29,8 @@ namespace chaos
 		box_corners corners = GetBoxCorners(camera_box);
 		return box2(
 			corners.min + safe_zone.min * (corners.max - corners.min),
-			corners.min + safe_zone.max * (corners.max - corners.min)
+			corners.min + safe_zone.max * (corners.max - corners.min),
+			MinAndMaxPoints
 		);
 	}
 

@@ -3,5 +3,5 @@
 -- =============================================================================
 
 local project = build:WindowedApp()
-project:DependOnLib("CHAOS")
+project:DependOnLib("chaos")
 project:DependOnLib("CommonFonts")

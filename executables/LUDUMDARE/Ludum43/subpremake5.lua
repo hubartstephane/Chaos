@@ -3,7 +3,7 @@
 -- =============================================================================
 
 local project = build:WindowedApp()
-project:DependOnLib("CHAOS")
+project:DependOnLib("chaos")
 project:DependOnLib("CommonFonts")
 project:PrecompiledHeader(
 	path.join("Ludum43PCH.h"),

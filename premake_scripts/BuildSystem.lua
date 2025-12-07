@@ -48,7 +48,7 @@ function BuildSystem:ProcessSubPremake(dir_name, create_sub_group)
 			if (create_sub_group) then
 				self.current_group = path.join(self.current_group, name)
 			end
-			self.project_name       = string.upper(path.getbasename(name))
+			self.project_name       = path.getbasename(name)
 			self.project_path       = path.join(self.project_path, path.getbasename(name))
 			self.project_src_path   = path.join(ROOT_PATH, self.project_path)
 			self.project_build_path = path.join(BUILD_PATH, self.project_path)
@@ -66,10 +66,8 @@ end
 --------------------------------------------------------------------
 function BuildSystem:AddProject(name, data)
 
-	local upper_name = string.upper(name)
-
-	if (self.projects[upper_name]) then
-		assert(false, "Project " .. upper_name .. " already definied")
+	if (self.projects[name]) then
+		assert(false, "Project " .. name .. " already definied")
 	else
 		local result = Project:new(data)
 		result.project_name     = name
@@ -80,7 +78,7 @@ function BuildSystem:AddProject(name, data)
 		result.dependencies     = {}
 		result.tocopy           = result.tocopy or Utility:GetPlatConfArray({})
 		result.linkoptions      = Utility:GetPlatConfArray(result.linkoptions or {})
-		self.projects[upper_name] = result
+		self.projects[name] = result
 
 		return result
 	end

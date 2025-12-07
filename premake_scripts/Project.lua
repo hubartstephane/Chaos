@@ -140,7 +140,7 @@ end
 function Project:DependOnLib(lib_names)
 	Utility:ForEachElement(lib_names,
 		function(lib_name)
-			table.insert(self.dependencies, string.upper(lib_name))
+			table.insert(self.dependencies, lib_name)
 		end
 	)
 end
@@ -569,14 +569,14 @@ end
 
 function Project:HandleGeneratedConfigFile()
 
-	local patterns = { PROJECT_NAME = self.project_name}
+	local patterns = { PROJECT_NAME = string.upper(self.project_name)}
 
 	if (self:IsExecutable()) then
-		patterns["PROJECT_BUILD_TYPE"] = self.project_name .. "_IS_EXECUTABLE"
+		patterns["PROJECT_BUILD_TYPE"] = string.upper(self.project_name) .. "_IS_EXECUTABLE"
 	elseif (self:IsStaticLibrary()) then
-		patterns["PROJECT_BUILD_TYPE"] = self.project_name .. "_IS_STATIC_LIBRARY"
+		patterns["PROJECT_BUILD_TYPE"] = string.upper(self.project_name) .. "_IS_STATIC_LIBRARY"
 	elseif (self:IsSharedLibrary()) then
-		patterns["PROJECT_BUILD_TYPE"] = self.project_name .. "_IS_SHARED_LIBRARY"
+		patterns["PROJECT_BUILD_TYPE"] = string.upper(self.project_name) .. "_IS_SHARED_LIBRARY"
 	end
 
 	if (os.isfile(CONFIG_TEMPLATE_PATH)) then

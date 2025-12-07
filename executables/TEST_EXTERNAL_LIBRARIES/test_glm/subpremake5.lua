@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/linux/test_glm
+-- ROOT_PATH/executables/TEST_EXTERNAL_LIBRARIES/test_glm
 -- =============================================================================
 
 local project = build:WindowedApp()

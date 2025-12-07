@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/Misc/ConfigurationTest
+-- ROOT_PATH/executables/MISC/ConfigurationTest
 -- =============================================================================
 
 local project = build:WindowedApp()

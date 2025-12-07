@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/linux/test_tinyxml2
+-- ROOT_PATH/executables/TEST_EXTERNAL_LIBRARIES/test_tinyxml2
 -- =============================================================================
 
 local project = build:WindowedApp()

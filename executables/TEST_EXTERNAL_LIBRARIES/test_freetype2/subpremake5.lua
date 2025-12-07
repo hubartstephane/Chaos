@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/linux/test_freetype2
+-- ROOT_PATH/executables/TEST_EXTERNAL_LIBRARIES/test_freetype2
 -- =============================================================================
 
 local project = build:WindowedApp()

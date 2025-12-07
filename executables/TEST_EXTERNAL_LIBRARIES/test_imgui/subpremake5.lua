@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/linux/test_imgui
+-- ROOT_PATH/executables/TEST_EXTERNAL_LIBRARIES/test_imgui
 -- =============================================================================
 
 local project = build:WindowedApp()

@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/linux/test_lua
+-- ROOT_PATH/executables/TEST_EXTERNAL_LIBRARIES/test_lua
 -- =============================================================================
 
 local project = build:WindowedApp()

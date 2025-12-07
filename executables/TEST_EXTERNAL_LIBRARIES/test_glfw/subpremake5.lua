@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/linux/test_glfw
+-- ROOT_PATH/executables/TEST_EXTERNAL_LIBRARIES/test_glfw
 -- =============================================================================
 
 local project = build:WindowedApp()

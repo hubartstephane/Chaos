@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/linux/test_freeimage
+-- ROOT_PATH/executables/TEST_EXTERNAL_LIBRARIES/test_freeimage
 -- =============================================================================
 
 local project = build:WindowedApp()

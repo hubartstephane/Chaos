@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/linux/test_nlohmann
+-- ROOT_PATH/executables/TEST_EXTERNAL_LIBRARIES/test_nlohmann
 -- =============================================================================
 
 local project = build:WindowedApp()

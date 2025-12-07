@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/linux/test_glslang
+-- ROOT_PATH/executables/TEST_EXTERNAL_LIBRARIES/test_glslang
 -- =============================================================================
 
 local project = build:WindowedApp()

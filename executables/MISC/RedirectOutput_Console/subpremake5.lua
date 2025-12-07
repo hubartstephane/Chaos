@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/Misc/RedirectOutput_Console
+-- ROOT_PATH/executables/MISC/RedirectOutput_Console
 -- =============================================================================
 
 local project = build:WindowedApp()

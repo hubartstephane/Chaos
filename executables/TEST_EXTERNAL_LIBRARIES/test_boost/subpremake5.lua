@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/linux/test_boost
+-- ROOT_PATH/executables/TEST_EXTERNAL_LIBRARIES/test_boost
 -- =============================================================================
 
 local project = build:WindowedApp()

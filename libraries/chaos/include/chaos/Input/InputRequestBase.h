@@ -7,6 +7,9 @@ namespace chaos
 
 	enum class InputRequestResult;
 
+	template<typename T>
+	concept InputRequestType = std::is_base_of_v<InputRequestBase, std::remove_cvref_t<T>>;
+
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**

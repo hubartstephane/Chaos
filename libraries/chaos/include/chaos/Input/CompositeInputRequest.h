@@ -2,9 +2,6 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	template<typename T>
-	concept InputRequestType = std::is_base_of_v<InputRequestBase, std::remove_cvref_t<T>>;
-
 	template<typename RESULT_AGGREGATION_TYPE, InputRequestType... PARAMS>
 	class CompositeInputRequest;
 

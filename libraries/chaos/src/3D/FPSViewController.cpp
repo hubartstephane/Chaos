@@ -51,7 +51,7 @@ namespace chaos
 
 			auto MoveCameraRequest = And(
 				RequestKeyDown(input_config.rotation_button), 
-				RequestInputValue(Input2D::MOUSE_DELTA, mouse_delta));
+				QueryValue(Input2D::MOUSE_DELTA, mouse_delta));
 
 			if (in_action_enumerator.CheckAndProcess(MoveCameraRequest, "Move Camera", [this, &mouse_delta]()
 			{

@@ -1008,7 +1008,7 @@ protected:
 		}
 
 		bool left_control = false;
-		auto update_type_request = chaos::And(chaos::RequestKeyDown(chaos::Key::KP_5), chaos::RequestInputValue(chaos::Key::LEFT_CONTROL, left_control));
+		auto update_type_request = chaos::And(chaos::RequestKeyDown(chaos::Key::KP_5), chaos::QueryValue(chaos::Key::LEFT_CONTROL, left_control));
 
 		if (in_action_enumerator.CheckAndProcess(update_type_request, "Update Object Type", [&]()
 		{
@@ -1031,7 +1031,7 @@ protected:
 			auto UpdateObjectPosition = [&](chaos::Key key, glm::vec3 const& delta_position, char const* title)
 			{
 				bool left_control = false;
-				auto request = chaos::And(chaos::RequestKeyDown(key), chaos::RequestInputValue(chaos::Key::LEFT_CONTROL, left_control));
+				auto request = chaos::And(chaos::RequestKeyDown(key), chaos::QueryValue(chaos::Key::LEFT_CONTROL, left_control));
 
 				return in_action_enumerator.CheckAndProcess(request, title, [&]()
 				{
@@ -1071,7 +1071,7 @@ protected:
 			auto UpdateObjectRotation = [&](chaos::Key key, float delta_rotation, char const * title)
 			{			
 				bool left_control = false;
-				auto request = chaos::And(chaos::RequestKeyDown(key), chaos::RequestInputValue(chaos::Key::LEFT_CONTROL, left_control));
+				auto request = chaos::And(chaos::RequestKeyDown(key), chaos::QueryValue(chaos::Key::LEFT_CONTROL, left_control));
 
 				return in_action_enumerator.CheckAndProcess(request, title, [&]()
 				{

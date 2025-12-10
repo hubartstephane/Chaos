@@ -86,11 +86,11 @@ namespace chaos
 	 * Some standalone functions
 	 */
 
-	CHAOS_API ValueInputRequest<Key, bool> RequestInputValue(Key in_key, bool& in_result);
+	CHAOS_API ValueInputRequest<Key, bool> QueryValue(Key in_key, bool& in_result);
 
-	CHAOS_API ValueInputRequest<Input1D, float> RequestInputValue(Input1D in_axis, float& in_result);
+	CHAOS_API ValueInputRequest<Input1D, float> QueryValue(Input1D in_axis, float& in_result);
 
-	CHAOS_API ValueInputRequest<Input2D, glm::vec2> RequestInputValue(Input2D in_stick, glm::vec2& in_result);
+	CHAOS_API ValueInputRequest<Input2D, glm::vec2> QueryValue(Input2D in_stick, glm::vec2& in_result);
 
 #endif
 

@@ -294,7 +294,7 @@ protected:
 
 		bool enabled = object_count > 0;
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(Key::KP_ADD), "Next Object", enabled, [&]()
+		if (in_action_enumerator.CheckAndProcess(KeyPressed(Key::KP_ADD), "Next Object", enabled, [&]()
 		{
 			objects[selected_object_index]->SetSelected(false);
 
@@ -309,7 +309,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(Key::KP_SUBTRACT), "Previous Object", enabled, [&]()
+		if (in_action_enumerator.CheckAndProcess(KeyPressed(Key::KP_SUBTRACT), "Previous Object", enabled, [&]()
 		{
 			objects[selected_object_index]->SetSelected(false);
 
@@ -326,7 +326,7 @@ protected:
 
 		auto MoveObject = [this, &in_action_enumerator, enabled](Key button, size_t component_index, float direction, char const* title)
 		{
-			return in_action_enumerator.CheckAndProcess(RequestKeyDown(button), title, enabled, [this, component_index, direction]()
+			return in_action_enumerator.CheckAndProcess(KeyDown(button), title, enabled, [this, component_index, direction]()
 			{
 				float delta_time = (float)FrameTimeManager::GetInstance()->GetCurrentFrameDuration();
 

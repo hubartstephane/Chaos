@@ -49,22 +49,22 @@ namespace chaos
 		return (key == in_input);
 	}
 
-	KeyInputRequest RequestKeyDown(Key key)
+	KeyInputRequest KeyDown(Key key)
 	{
 		return KeyInputRequest(key, KeyActionMask::Down);
 	}
 
-	KeyInputRequest RequestKeyPressed(Key key)
+	KeyInputRequest KeyPressed(Key key)
 	{
 		return KeyInputRequest(key, KeyActionMask::Press);
 	}
 
-	KeyInputRequest RequestKeyRepeat(Key key)
+	KeyInputRequest KeyRepeat(Key key)
 	{
 		return KeyInputRequest(key, KeyActionMask::Repeat);
 	}
 
-	KeyInputRequest RequestKeyReleased(Key key)
+	KeyInputRequest KeyReleased(Key key)
 	{
 		return KeyInputRequest(key, KeyActionMask::Release);
 	}

@@ -43,7 +43,7 @@ protected:
 	{
 		chaos::ViewportGridLayout* layout = GetViewportLayout();
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::E), "ViewportGridMode EXPANDED", [this, layout]()
+		if (in_action_enumerator.CheckAndProcess(KeyPressed(chaos::Key::E), "ViewportGridMode EXPANDED", [this, layout]()
 		{
 			layout->SetMode(chaos::ViewportGridMode::EXPANDED);
 		}))
@@ -51,7 +51,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::P), "ViewportGridMode UNIFORM_PACKED", [this, layout]()
+		if (in_action_enumerator.CheckAndProcess(KeyPressed(chaos::Key::P), "ViewportGridMode UNIFORM_PACKED", [this, layout]()
 		{
 			layout->SetMode(chaos::ViewportGridMode::UNIFORM_PACKED);
 		}))
@@ -59,7 +59,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::C), "ViewportGridMode UNIFORM_CENTERED", [this, layout]()
+		if (in_action_enumerator.CheckAndProcess(KeyPressed(chaos::Key::C), "ViewportGridMode UNIFORM_CENTERED", [this, layout]()
 		{
 			layout->SetMode(chaos::ViewportGridMode::UNIFORM_CENTERED);
 		}))

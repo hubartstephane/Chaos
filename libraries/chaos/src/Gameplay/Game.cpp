@@ -96,7 +96,7 @@ namespace chaos
 
 	bool Game::EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context)
 	{
-		if (in_action_enumerator.CheckAndProcess(RequireModifiers(KeyModifier::Shift, RequestKeyPressed(Key::ESCAPE)) , "Exit Game", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequireModifiers(KeyModifier::Shift, KeyPressed(Key::ESCAPE)) , "Exit Game", [this]()
 		{
 			RequireExitGame();
 		}))
@@ -104,7 +104,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(ForbidModifiers(KeyModifier::Shift, RequestKeyPressed(Key::ESCAPE)), "Toggle Pause", [this]()
+		if (in_action_enumerator.CheckAndProcess(ForbidModifiers(KeyModifier::Shift, KeyPressed(Key::ESCAPE)), "Toggle Pause", [this]()
 		{
 			RequireTogglePause();
 		}))
@@ -114,7 +114,7 @@ namespace chaos
 
 #if _DEBUG
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(Key::F1) , "Skip Level", [this]()
+		if (in_action_enumerator.CheckAndProcess(KeyPressed(Key::F1) , "Skip Level", [this]()
 		{
 			SetCheatSkipLevelRequired(true);
 		}))
@@ -122,7 +122,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(Key::F2), "Toggle Cheat Mode", [this]()
+		if (in_action_enumerator.CheckAndProcess(KeyPressed(Key::F2), "Toggle Cheat Mode", [this]()
 		{
 			SetCheatMode(!GetCheatMode());
 		}))
@@ -130,7 +130,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(Key::F3), "Reload Configuration", [this]()
+		if (in_action_enumerator.CheckAndProcess(KeyPressed(Key::F3), "Reload Configuration", [this]()
 		{
 			ReloadGameConfiguration();
 		}))
@@ -138,7 +138,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(Key::F4), "Reload Current Level", [this]()
+		if (in_action_enumerator.CheckAndProcess(KeyPressed(Key::F4), "Reload Current Level", [this]()
 		{
 			ReloadCurrentLevel();
 		}))
@@ -146,7 +146,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(Key::F5), "Quick Save", [this]()
+		if (in_action_enumerator.CheckAndProcess(KeyPressed(Key::F5), "Quick Save", [this]()
 		{
 			SaveIntoCheckpoint();
 		}))
@@ -154,7 +154,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(Key::F6), "Toggle Free Camera Mode", [this]()
+		if (in_action_enumerator.CheckAndProcess(KeyPressed(Key::F6), "Toggle Free Camera Mode", [this]()
 		{
 			SetFreeCameraMode(!IsFreeCameraMode());
 		}))

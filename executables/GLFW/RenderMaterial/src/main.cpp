@@ -63,7 +63,7 @@ protected:
 
 	virtual bool EnumerateInputActions(chaos::InputActionEnumerator & in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
 	{
-		if (in_action_enumerator.CheckAndProcess(RequireModifiers(chaos::KeyModifier::Shift, RequestKeyPressed(chaos::Key::KP_ADD)) , "Next RenderPass", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequireModifiers(chaos::KeyModifier::Shift, KeyPressed(chaos::Key::KP_ADD)) , "Next RenderPass", [this]()
 		{
 			ChangeRenderpass(+1);
 		}))
@@ -71,7 +71,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::KP_ADD), "Next Material", [this]()
+		if (in_action_enumerator.CheckAndProcess(KeyPressed(chaos::Key::KP_ADD), "Next Material", [this]()
 		{
 			ChangeMaterial(+1);
 		}))
@@ -79,7 +79,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequireModifiers(chaos::KeyModifier::Shift, RequestKeyPressed(chaos::Key::KP_SUBTRACT)), "Previous RenderPass", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequireModifiers(chaos::KeyModifier::Shift, KeyPressed(chaos::Key::KP_SUBTRACT)), "Previous RenderPass", [this]()
 		{
 			ChangeRenderpass(-1);
 		}))
@@ -87,7 +87,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::KP_SUBTRACT), "Previous Material", [this]()
+		if (in_action_enumerator.CheckAndProcess(KeyPressed(chaos::Key::KP_SUBTRACT), "Previous Material", [this]()
 		{
 			ChangeMaterial(-1);
 		}))

@@ -982,7 +982,7 @@ namespace chaos
 
 	bool Window::EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context)
 	{
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(Key::F9) , "Screen Capture", [this]()
+		if (in_action_enumerator.CheckAndProcess(KeyPressed(Key::F9) , "Screen Capture", [this]()
 		{
 			ScreenCapture();
 		}))
@@ -990,7 +990,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(Key::F10) , "Toggle Fullscreen", [this]()
+		if (in_action_enumerator.CheckAndProcess(KeyPressed(Key::F10) , "Toggle Fullscreen", [this]()
 		{
 			ToggleFullscreen();
 		}))

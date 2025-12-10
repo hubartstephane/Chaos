@@ -20,7 +20,7 @@ namespace chaos
 		// check for key displacement
 		auto CheckCameraKey = [this, frame_duration, &in_action_enumerator](const Key & key, char const * title, float speed, void (FPSView::*func)(float))
 		{
-			if (in_action_enumerator.CheckAndProcess(RequestKeyDown(key), title, [this, frame_duration, speed, &func, key]()
+			if (in_action_enumerator.CheckAndProcess(KeyDown(key), title, [this, frame_duration, speed, &func, key]()
 			{
 				(fps_view.*func)(speed * frame_duration);
 			}))
@@ -50,7 +50,7 @@ namespace chaos
 			glm::vec2 mouse_delta = { 0.0f, 0.0f };
 
 			auto MoveCameraRequest = And(
-				RequestKeyDown(input_config.rotation_button), 
+				KeyDown(input_config.rotation_button), 
 				QueryValue(Input2D::MOUSE_DELTA, mouse_delta));
 
 			if (in_action_enumerator.CheckAndProcess(MoveCameraRequest, "Move Camera", [this, &mouse_delta]()

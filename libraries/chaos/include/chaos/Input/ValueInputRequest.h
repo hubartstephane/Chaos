@@ -3,21 +3,21 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	template<typename INPUT_SEARCH_KEY_TYPE, typename RESULT_TYPE>
-	class InputValueRequest;
+	class ValueInputRequest;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	 * InputValueRequest: a request that gets the value of an input
+	 * ValueInputRequest: a request that gets the value of an input
 	 */
 
 	template<typename INPUT_SEARCH_KEY_TYPE, typename RESULT_TYPE>
-	class InputValueRequest : public InputRequestBase
+	class ValueInputRequest : public InputRequestBase
 	{
 	public:
 
 		/** constructor */
-		InputValueRequest(INPUT_SEARCH_KEY_TYPE in_searched_input, RESULT_TYPE& in_result):
+		ValueInputRequest(INPUT_SEARCH_KEY_TYPE in_searched_input, RESULT_TYPE& in_result):
 			searched_input(in_searched_input),
 			result(in_result)
 		{
@@ -86,11 +86,11 @@ namespace chaos
 	 * Some standalone functions
 	 */
 
-	CHAOS_API InputValueRequest<Key, bool> RequestInputValue(Key in_key, bool& in_result);
+	CHAOS_API ValueInputRequest<Key, bool> RequestInputValue(Key in_key, bool& in_result);
 
-	CHAOS_API InputValueRequest<Input1D, float> RequestInputValue(Input1D in_axis, float& in_result);
+	CHAOS_API ValueInputRequest<Input1D, float> RequestInputValue(Input1D in_axis, float& in_result);
 
-	CHAOS_API InputValueRequest<Input2D, glm::vec2> RequestInputValue(Input2D in_stick, glm::vec2& in_result);
+	CHAOS_API ValueInputRequest<Input2D, glm::vec2> RequestInputValue(Input2D in_stick, glm::vec2& in_result);
 
 #endif
 

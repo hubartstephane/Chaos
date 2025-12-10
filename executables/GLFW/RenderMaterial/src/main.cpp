@@ -63,7 +63,7 @@ protected:
 
 	virtual bool EnumerateInputActions(chaos::InputActionEnumerator & in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
 	{
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::KP_ADD).RequireModifiers(chaos::KeyModifier::Shift) , "Next RenderPass", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequireModifiers(chaos::KeyModifier::Shift, RequestKeyPressed(chaos::Key::KP_ADD)) , "Next RenderPass", [this]()
 		{
 			ChangeRenderpass(+1);
 		}))
@@ -79,7 +79,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::KP_SUBTRACT).RequireModifiers(chaos::KeyModifier::Shift), "Previous RenderPass", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequireModifiers(chaos::KeyModifier::Shift, RequestKeyPressed(chaos::Key::KP_SUBTRACT)), "Previous RenderPass", [this]()
 		{
 			ChangeRenderpass(-1);
 		}))

@@ -17,6 +17,7 @@
 #include "chaos/Input/InputRequestBase.h"
 #include "chaos/Input/CompositeInputRequest.h"
 #include "chaos/Input/KeyRequest.h"
+#include "chaos/Input/ModifiersInputRequest.h"
 #include "chaos/Input/InputValueRequest.h"
 #include "chaos/Input/AnyInputRequest.h"
 #include "chaos/Input/MouseButtonEvent.h"

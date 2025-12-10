@@ -6,6 +6,14 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+
+
+
+
+
+
+
+
 	/**
 	* KeyRequest: a specialization of InputRequestBase for a single key
 	*/

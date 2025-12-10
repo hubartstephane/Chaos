@@ -21,7 +21,7 @@ namespace chaos
 		
 		/** constructor */
 		CompositeInputRequest(PARAMS... params):
-			child_input_requests(std::move(params)...)
+			child_input_requests(std::forward<PARAMS>(params)...)
 		{
 		}
 

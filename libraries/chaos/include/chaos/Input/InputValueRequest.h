@@ -39,7 +39,7 @@ namespace chaos
 			// get the result
 			result = input_state->GetValue();
 
-			return InputRequestResult::True;
+			return InputRequestResult::True; // whatever the value is, it's a success !
 		}
 
 		/** override */

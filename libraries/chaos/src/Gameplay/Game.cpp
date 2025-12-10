@@ -96,7 +96,7 @@ namespace chaos
 
 	bool Game::EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context)
 	{
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(Key::ESCAPE).RequireModifiers(KeyModifier::Shift) , "Exit Game", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequireModifiers(KeyModifier::Shift, RequestKeyPressed(Key::ESCAPE)) , "Exit Game", [this]()
 		{
 			RequireExitGame();
 		}))
@@ -104,7 +104,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(Key::ESCAPE).ForbidModifiers(KeyModifier::Shift), "Toggle Pause", [this]()
+		if (in_action_enumerator.CheckAndProcess(ForbidModifiers(KeyModifier::Shift, RequestKeyPressed(Key::ESCAPE)), "Toggle Pause", [this]()
 		{
 			RequireTogglePause();
 		}))

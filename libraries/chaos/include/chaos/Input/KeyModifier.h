@@ -19,7 +19,7 @@ namespace chaos
 	};
 
 	CHAOS_DECLARE_ENUM_METHOD(KeyModifier, CHAOS_API);
-	CHAOS_DECLARE_ENUM_BITMASK_METHOD(KeyModifier, CHAOS_API);
+	CHAOS_DECLARE_ENUM_BITMASK_METHOD(KeyModifier, CHAOS_API); // this is possible because GLFW_MOD_SHIFT, GLFW_MOD_CONTROL and GLFW_MOD_ALT are already a bit mask
 
 #endif
 

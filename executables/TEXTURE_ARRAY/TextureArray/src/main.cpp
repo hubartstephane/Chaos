@@ -176,7 +176,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::KP_ADD).RequireModifiers(chaos::KeyModifier::Shift), "Next Pixel Format", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequireModifiers(chaos::KeyModifier::Shift, RequestKeyPressed(chaos::Key::KP_ADD)), "Next Pixel Format", [this]()
 		{
 			ChangePixelFormat(+1);
 		}))
@@ -184,7 +184,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequestKeyPressed(chaos::Key::KP_SUBTRACT).RequireModifiers(chaos::KeyModifier::Shift), "Previous Pixel Format", [this]()
+		if (in_action_enumerator.CheckAndProcess(RequireModifiers(chaos::KeyModifier::Shift, RequestKeyPressed(chaos::Key::KP_SUBTRACT)), "Previous Pixel Format", [this]()
 		{
 			ChangePixelFormat(-1);
 		}))

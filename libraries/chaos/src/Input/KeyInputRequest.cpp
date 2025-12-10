@@ -4,14 +4,14 @@
 
 namespace chaos
 {
-	InputRequestDebugInfo KeyRequest::GetDebugInfo() const
+	InputRequestDebugInfo KeyInputRequest::GetDebugInfo() const
 	{
 		InputRequestDebugInfo result;		
 		result.input = GetKeyName(key);
 		return result;
 	}
 
-	InputRequestResult KeyRequest::Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const
+	InputRequestResult KeyInputRequest::Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const
 	{
 		// early exit
 		if (key == Key::UNKNOWN)
@@ -44,29 +44,29 @@ namespace chaos
 		return InputRequestResult::False;
 	}
 
-	bool KeyRequest::IsRequestRelatedTo(Key in_input) const
+	bool KeyInputRequest::IsRequestRelatedTo(Key in_input) const
 	{
 		return (key == in_input);
 	}
 
-	KeyRequest RequestKeyDown(Key key)
+	KeyInputRequest RequestKeyDown(Key key)
 	{
-		return KeyRequest(key, KeyActionMask::Down);
+		return KeyInputRequest(key, KeyActionMask::Down);
 	}
 
-	KeyRequest RequestKeyPressed(Key key)
+	KeyInputRequest RequestKeyPressed(Key key)
 	{
-		return KeyRequest(key, KeyActionMask::Press);
+		return KeyInputRequest(key, KeyActionMask::Press);
 	}
 
-	KeyRequest RequestKeyRepeat(Key key)
+	KeyInputRequest RequestKeyRepeat(Key key)
 	{
-		return KeyRequest(key, KeyActionMask::Repeat);
+		return KeyInputRequest(key, KeyActionMask::Repeat);
 	}
 
-	KeyRequest RequestKeyReleased(Key key)
+	KeyInputRequest RequestKeyReleased(Key key)
 	{
-		return KeyRequest(key, KeyActionMask::Release);
+		return KeyInputRequest(key, KeyActionMask::Release);
 	}
 
 }; // namespace chaos

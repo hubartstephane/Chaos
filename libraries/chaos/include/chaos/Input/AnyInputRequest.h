@@ -2,7 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class KeyRequest;
+	class AnyInputRequest;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 

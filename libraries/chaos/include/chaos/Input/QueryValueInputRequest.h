@@ -17,11 +17,14 @@ namespace chaos
 	public:
 
 		/** constructor */
-		QueryValueInputRequest(INPUT_SEARCH_KEY_TYPE in_searched_input, RESULT_TYPE& in_result):
+		QueryValueInputRequest(INPUT_SEARCH_KEY_TYPE in_searched_input, RESULT_TYPE& in_result, bool in_fail_on_inactive_input = false):
 			searched_input(in_searched_input),
-			result(in_result)
+			result(in_result),
+			fail_on_inactive_input(in_fail_on_inactive_input)
 		{
 		}
+		/** copy constructor */
+		QueryValueInputRequest(QueryValueInputRequest const& src) = default;
 
 		/** override */
 		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
@@ -38,6 +41,10 @@ namespace chaos
 				return InputRequestResult::Rejected;
 			// get the result
 			result = input_state->GetValue();
+
+			if (fail_on_inactive_input)
+				if (!IsInputActive(result))
+					return InputRequestResult::False;
 
 			return InputRequestResult::True; // whatever the value is, it's a success !
 		}
@@ -66,8 +73,26 @@ namespace chaos
 		/** override */
 		virtual char const * GetDebugInfo(char* in_buffer, size_t in_size) const override
 		{
-			std::snprintf(in_buffer, in_size, "Query(%s)", EnumToString(searched_input));
+			std::snprintf(in_buffer, in_size, "Query[%s]", EnumToString(searched_input));
 			return in_buffer;
+		}
+
+	protected:
+
+		/** check whether an input is active */
+		bool IsInputActive(bool value) const
+		{
+			return value;
+		}
+		/** check whether an input is active */
+		bool IsInputActive(float value) const
+		{
+			return value != 0.0f;
+		}
+		/** check whether an input is active */
+		bool IsInputActive(glm::vec2 const& value) const
+		{
+			return value != glm::vec2(0.0f, 0.0f);
 		}
 
 	protected:
@@ -76,17 +101,19 @@ namespace chaos
 		INPUT_SEARCH_KEY_TYPE searched_input;
 		/** the result of the request */
 		RESULT_TYPE& result;
+		/** whether an inactive input is a success or not */
+		bool fail_on_inactive_input = false;
 	};
 
 	/**
 	 * Some standalone functions
 	 */
 
-	CHAOS_API QueryValueInputRequest<Key, bool> QueryValue(Key in_key, bool& in_result);
+	CHAOS_API QueryValueInputRequest<Key, bool> QueryValue(Key in_key, bool& in_result, bool in_fail_on_inactive_input = false);
 
-	CHAOS_API QueryValueInputRequest<Input1D, float> QueryValue(Input1D in_axis, float& in_result);
+	CHAOS_API QueryValueInputRequest<Input1D, float> QueryValue(Input1D in_axis, float& in_result, bool in_fail_on_inactive_input = false);
 
-	CHAOS_API QueryValueInputRequest<Input2D, glm::vec2> QueryValue(Input2D in_stick, glm::vec2& in_result);
+	CHAOS_API QueryValueInputRequest<Input2D, glm::vec2> QueryValue(Input2D in_stick, glm::vec2& in_result, bool in_fail_on_inactive_input = false);
 
 #endif
 

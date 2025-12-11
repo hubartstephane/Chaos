@@ -24,7 +24,7 @@ namespace chaos
 		/** override */
 		virtual bool IsRequestRelatedTo(Input2D in_input) const override;
 		/** override */
-		virtual char const * GetDebugInfo(char * in_buffer, size_t in_size) const override;
+		virtual char const * GetDebugInfo(InputRequestDebugInfoStorage& debug_info_storage) const override;
 	};
 
 #endif

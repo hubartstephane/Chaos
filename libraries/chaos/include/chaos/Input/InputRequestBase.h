@@ -4,6 +4,8 @@ namespace chaos
 
 	class InputRequestBase;
 
+	class InputRequestDebugInfoStorage;
+
 	enum class InputRequestResult;
 
 	template<typename T>
@@ -21,6 +23,21 @@ namespace chaos
 		Rejected,  // the inputs for this request have already been consumed
 		False,     // the request is not satisfied
 		True       // the request is satisfied
+	};
+
+	/**
+	 * InputRequestDebugInfoStorage: a structure to get debug information
+	 */
+
+	class CHAOS_API InputRequestDebugInfoStorage
+	{
+	public:
+
+		/** the size of the buffer */
+		static constexpr size_t buffer_size = 256;
+
+		/** the buffer to store the string */
+		char buffer[buffer_size];
 	};
 
 	/**
@@ -42,7 +59,7 @@ namespace chaos
 		virtual bool IsRequestRelatedTo(Input2D in_input) const;
 
 		/** some debugging information */
-		virtual char const * GetDebugInfo(char* in_buffer, size_t in_size) const;
+		virtual char const * GetDebugInfo(InputRequestDebugInfoStorage & debug_info_storage) const;
 	};
 
 #endif

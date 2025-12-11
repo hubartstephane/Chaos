@@ -45,6 +45,14 @@ namespace chaos
 		}
 
 		/** override */
+		virtual char const* GetDebugInfo(InputRequestDebugInfoStorage & debug_info_storage) const override
+		{
+
+			return RESULT_AGGREGATION_TYPE::DebugInfoSeparator;
+
+		}
+
+		/** override */
 		virtual bool IsRequestRelatedTo(Key in_input) const override
 		{
 			return IsRequestRelatedToImpl(in_input);
@@ -88,6 +96,9 @@ namespace chaos
 	{
 	public:
 
+		/** a separator for aggregation */
+		static inline char const* DebugInfoSeparator = " & ";
+
 		/** aggregation method */
 		static InputRequestResult AggregateResult(std::optional<InputRequestResult> const& result, InputRequestResult child_result);
 	};
@@ -99,6 +110,9 @@ namespace chaos
 	class CHAOS_API OrInputRequestResultAggregation
 	{
 	public:
+
+		/** a separator for aggregation */
+		static inline char const * DebugInfoSeparator = " | ";
 
 		/** aggregation method */
 		static InputRequestResult AggregateResult(std::optional<InputRequestResult> const& result, InputRequestResult child_result);

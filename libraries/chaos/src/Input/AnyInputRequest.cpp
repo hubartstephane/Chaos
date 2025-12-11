@@ -4,7 +4,7 @@
 
 namespace chaos
 {
-	char const * AnyInputRequest::GetDebugInfo(char* in_buffer, size_t in_size) const
+	char const * AnyInputRequest::GetDebugInfo(InputRequestDebugInfoStorage & debug_info_storage) const
 	{
 		return "Consume All Inputs";
 	}

@@ -15,10 +15,10 @@ namespace chaos
 
 	CHAOS_IMPLEMENT_ENUM_METHOD(KeyStatusRequestType, &KeyStatusRequestType_metadata, CHAOS_API);
 
-	char const * KeyInputRequest::GetDebugInfo(char* in_buffer, size_t in_size) const
+	char const * KeyInputRequest::GetDebugInfo(InputRequestDebugInfoStorage & debug_info_storage) const
 	{
-		std::snprintf(in_buffer, in_size, "%s[%s]", EnumToString(request_type), GetKeyName(key));
-		return in_buffer;
+		std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "%s [%s]", EnumToString(request_type), GetKeyName(key));
+		return debug_info_storage.buffer;
 	}
 
 	InputRequestResult KeyInputRequest::Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const

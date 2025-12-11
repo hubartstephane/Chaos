@@ -15,6 +15,14 @@ namespace chaos
 		return false;
 	}
 
+	char const* ModifiersInputRequest::GetDebugInfo(InputRequestDebugInfoStorage & debug_info_storage) const
+	{
+
+
+
+		return "";
+	}
+
 #if 0
 	char buffer[256];
 	if (required_modifiers != KeyModifier::None)

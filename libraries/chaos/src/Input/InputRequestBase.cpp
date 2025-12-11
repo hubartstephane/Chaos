@@ -24,7 +24,7 @@ namespace chaos
 		return false;
 	}
 
-	char const * InputRequestBase::GetDebugInfo(char* in_buffer, size_t in_size) const
+	char const * InputRequestBase::GetDebugInfo(InputRequestDebugInfoStorage & debug_info_storage) const
 	{
 		return "";
 	}

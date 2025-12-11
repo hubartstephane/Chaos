@@ -27,6 +27,9 @@ namespace chaos
 		/** override */
 		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override;
 
+		/** override */
+		virtual char const* GetDebugInfo(InputRequestDebugInfoStorage & debug_info_storage) const override;
+
 	protected:
 
 		/** check whether one of the 2 keys is down */

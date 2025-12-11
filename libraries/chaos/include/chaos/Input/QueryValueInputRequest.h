@@ -71,10 +71,13 @@ namespace chaos
 			return false;
 		}
 		/** override */
-		virtual char const * GetDebugInfo(char* in_buffer, size_t in_size) const override
+		virtual char const * GetDebugInfo(InputRequestDebugInfoStorage & debug_info_storage) const override
 		{
-			std::snprintf(in_buffer, in_size, "Query[%s]", EnumToString(searched_input));
-			return in_buffer;
+			if (fail_on_inactive_input)
+				std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Mandatory Query [%s]", EnumToString(searched_input));
+			else
+				std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Query [%s]", EnumToString(searched_input));
+			return debug_info_storage.buffer;
 		}
 
 	protected:

@@ -17,21 +17,14 @@ namespace chaos
 
 	char const* ModifiersInputRequest::GetDebugInfo(InputRequestDebugInfoStorage & debug_info_storage) const
 	{
-
-
-
-		return "";
+		char buffer[256];
+		char const * modifiers_string = EnumToString(modifiers, buffer, sizeof(buffer));
+		if (wanted_value)
+			std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Require [%s]", modifiers_string);
+		else
+			std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Forbid [%s]", modifiers_string);
+		return debug_info_storage.buffer;
 	}
-
-#if 0
-	char buffer[256];
-	if (required_modifiers != KeyModifier::None)
-		result.required_modifiers = EnumToString(required_modifiers, buffer, 256);
-	if (forbidden_modifiers != KeyModifier::None)
-		result.forbidden_modifiers = EnumToString(forbidden_modifiers, buffer, 256);
-	result.action_type = EnumToString(action_mask, buffer, 256);
-#endif
-
 
 	InputRequestResult ModifiersInputRequest::Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const
 	{

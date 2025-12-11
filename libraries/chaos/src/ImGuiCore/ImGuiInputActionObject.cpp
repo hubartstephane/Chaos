@@ -35,32 +35,26 @@ namespace chaos
 				else if (request_result == InputRequestResult::Rejected)
 					color = { 0.0f, 1.0f, 1.0f, 1.0f };
 
-				InputRequestDebugInfo debug_info = in_request.GetDebugInfo();
+				int column_index = 0;
+				ImGui::TableSetColumnIndex(column_index++); ImGui::TextColored(color, "%s", in_title);
 
+				ImGui::TableSetColumnIndex(column_index++);
 				if (char const * receiver_name = input_receiver->GetInputReceiverName())
-				{
-					ImGui::TableSetColumnIndex(0); 
 					ImGui::TextColored(color, "%s", receiver_name);
-				}
 
-				ImGui::TableSetColumnIndex(1); ImGui::TextColored(color, "%s", debug_info.input.c_str());
-				ImGui::TableSetColumnIndex(2); ImGui::TextColored(color, "%s", debug_info.required_modifiers.c_str());
-				ImGui::TableSetColumnIndex(3); ImGui::TextColored(color, "%s", debug_info.forbidden_modifiers.c_str());
-				ImGui::TableSetColumnIndex(4); ImGui::TextColored(color, "%s", debug_info.action_type.c_str());
-			
+				char buffer[256];
+				char const* debug_info = in_request.GetDebugInfo(buffer, sizeof(buffer));
+				ImGui::TableSetColumnIndex(column_index++); ImGui::TextColored(color, "%s", debug_info);
+
+				ImGui::TableSetColumnIndex(column_index++);
 				if (!in_enabled)
-				{
-					ImGui::TableSetColumnIndex(5);
 					ImGui::TextColored(color, "Disabled", in_title);
-				}
 					
-				ImGui::TableSetColumnIndex(6);
+				ImGui::TableSetColumnIndex(column_index++);
 				if (request_result == InputRequestResult::Invalid)
 					ImGui::TextColored(color, "Invalid", in_title);
 				else if (request_result == InputRequestResult::Rejected)
 					ImGui::TextColored(color, "Rejected", in_title);
-
-				ImGui::TableSetColumnIndex(7); ImGui::TextColored(color, "%s", in_title);
 
 				ImGui::EndDisabled();
 
@@ -73,7 +67,7 @@ namespace chaos
 			InputConsumptionCache* consumption_cache = nullptr;
 		};
 
-		ImGuiTools::DrawImGuiTable("objects", {}, "Object", "Input", "Mandatory Mod.", "Forbidden Mod.", "Action", "Enabled", "Request Status", "Description")([&]()
+		ImGuiTools::DrawImGuiTable("objects", {}, "Description", "Object", "Input", "Enabled", "Request Status")([&]()
 		{
 			InputConsumptionCache consumption_cache;
 

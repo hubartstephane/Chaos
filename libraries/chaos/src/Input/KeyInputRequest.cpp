@@ -4,11 +4,21 @@
 
 namespace chaos
 {
-	InputRequestDebugInfo KeyInputRequest::GetDebugInfo() const
+	static EnumMetaData<KeyStatusRequestType> const KeyStatusRequestType_metadata =
 	{
-		InputRequestDebugInfo result;		
-		result.input = GetKeyName(key);
-		return result;
+		{ KeyStatusRequestType::Up, "Up" },
+		{ KeyStatusRequestType::Release, "Release" },
+		{ KeyStatusRequestType::Press, "Press" },
+		{ KeyStatusRequestType::Repeat, "Repeat" },
+		{ KeyStatusRequestType::Down, "Down" }
+	};
+
+	CHAOS_IMPLEMENT_ENUM_METHOD(KeyStatusRequestType, &KeyStatusRequestType_metadata, CHAOS_API);
+
+	char const * KeyInputRequest::GetDebugInfo(char* in_buffer, size_t in_size) const
+	{
+		std::snprintf(in_buffer, in_size, "%s[%s]", EnumToString(request_type), GetKeyName(key));
+		return in_buffer;
 	}
 
 	InputRequestResult KeyInputRequest::Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const
@@ -23,23 +33,28 @@ namespace chaos
 		// consum the key of the request (no one can use it anymore until next frame)
 		if (!in_consumption_cache.TryConsumeInput(in_input_receiver, key, in_input_device))
 			return InputRequestResult::Rejected;
-		
-		InputStatus input_status = input_state->GetStatus();
+			
+		auto ConvertResultType = [](bool result)
+		{
+			return result? InputRequestResult::True: InputRequestResult::False;
+		};
 
-		if (HasAnyFlags(action_mask, KeyActionMask::Release))
+		InputStatus input_status = input_state->GetStatus();
+		switch (request_type)
 		{
-			if (input_status == InputStatus::BECOME_INACTIVE || input_status == InputStatus::STAY_INACTIVE)
-				return InputRequestResult::True;
-		}
-		if (HasAnyFlags(action_mask, KeyActionMask::Press))
-		{
-			if (input_status == InputStatus::BECOME_ACTIVE)
-				return InputRequestResult::True;
-		}
-		if (HasAnyFlags(action_mask, KeyActionMask::Repeat))
-		{
-			if (input_status == InputStatus::STAY_ACTIVE)
-				return InputRequestResult::True;
+		case KeyStatusRequestType::Up:
+			return ConvertResultType(input_status == InputStatus::BECOME_INACTIVE || input_status == InputStatus::STAY_INACTIVE);
+		case KeyStatusRequestType::Release:
+			return ConvertResultType(input_status == InputStatus::BECOME_INACTIVE);
+		case KeyStatusRequestType::Press:
+			return ConvertResultType(input_status == InputStatus::BECOME_ACTIVE);
+		case KeyStatusRequestType::Repeat:
+			return ConvertResultType(input_status == InputStatus::STAY_ACTIVE);
+		case KeyStatusRequestType::Down:
+			return ConvertResultType(input_status == InputStatus::BECOME_ACTIVE || input_status == InputStatus::STAY_ACTIVE);
+		default:
+
+			assert(0);
 		}
 		return InputRequestResult::False;
 	}
@@ -49,24 +64,29 @@ namespace chaos
 		return (key == in_input);
 	}
 
-	KeyInputRequest KeyDown(Key key)
+	KeyInputRequest KeyUp(Key key)
 	{
-		return KeyInputRequest(key, KeyActionMask::Down);
-	}
-
-	KeyInputRequest KeyPressed(Key key)
-	{
-		return KeyInputRequest(key, KeyActionMask::Press);
-	}
-
-	KeyInputRequest KeyRepeat(Key key)
-	{
-		return KeyInputRequest(key, KeyActionMask::Repeat);
+		return KeyInputRequest(key, KeyStatusRequestType::Up);
 	}
 
 	KeyInputRequest KeyReleased(Key key)
 	{
-		return KeyInputRequest(key, KeyActionMask::Release);
+		return KeyInputRequest(key, KeyStatusRequestType::Release);
+	}
+
+	KeyInputRequest KeyPressed(Key key)
+	{
+		return KeyInputRequest(key, KeyStatusRequestType::Press);
+	}
+
+	KeyInputRequest KeyRepeat(Key key)
+	{
+		return KeyInputRequest(key, KeyStatusRequestType::Repeat);
+	}
+
+	KeyInputRequest KeyDown(Key key)
+	{
+		return KeyInputRequest(key, KeyStatusRequestType::Down);
 	}
 
 }; // namespace chaos

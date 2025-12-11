@@ -24,9 +24,9 @@ namespace chaos
 		return false;
 	}
 
-	InputRequestDebugInfo InputRequestBase::GetDebugInfo() const
+	char const * InputRequestBase::GetDebugInfo(char* in_buffer, size_t in_size) const
 	{
-		return {};
+		return "";
 	}
 
 }; // namespace chaos

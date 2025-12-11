@@ -4,7 +4,24 @@ namespace chaos
 
 	class KeyInputRequest;
 
+	enum class KeyStatusRequestType;
+
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+	/**
+	* KeyStatusRequestType: The requested input status
+	*/
+
+	enum class CHAOS_API KeyStatusRequestType : int
+	{
+		Up,
+		Release,
+		Press,
+		Repeat,
+		Down
+	};
+
+	CHAOS_DECLARE_ENUM_METHOD(KeyStatusRequestType, CHAOS_API);
 
 	/**
 	* KeyInputRequest: a specialization of InputRequestBase for a single key
@@ -22,9 +39,9 @@ namespace chaos
 		/** copy constructor */
 		KeyInputRequest(KeyInputRequest const & src) = default;
 		/** constructor with initialization */
-		KeyInputRequest(Key const & in_key, KeyActionMask in_action_mask = KeyActionMask::Press):
+		KeyInputRequest(Key const & in_key, KeyStatusRequestType in_request_type = KeyStatusRequestType::Press):
 			key(in_key),
-			action_mask(in_action_mask)
+			request_type(in_request_type)
 		{}
 
 		/** override */
@@ -33,27 +50,29 @@ namespace chaos
 		virtual bool IsRequestRelatedTo(Key in_input) const override;
 
 		/** override */
-		virtual InputRequestDebugInfo GetDebugInfo() const override;
+		virtual char const * GetDebugInfo(char* in_buffer, size_t in_size) const override;
 
 	public:
 
 		/** the concerned key */
 		Key key;
 		/** the required state of the key */
-		KeyActionMask action_mask = KeyActionMask::Press;
+		KeyStatusRequestType request_type = KeyStatusRequestType::Press;
 	};
 
 	/**
 	* Some request getters
 	**/
 
-	CHAOS_API KeyInputRequest KeyDown(Key key);
-
-	CHAOS_API KeyInputRequest KeyPressed(Key key);
+	CHAOS_API KeyInputRequest KeyUp(Key key);
 
 	CHAOS_API KeyInputRequest KeyRepeat(Key key);
 
+	CHAOS_API KeyInputRequest KeyPressed(Key key);
+
 	CHAOS_API KeyInputRequest KeyReleased(Key key);
+
+	CHAOS_API KeyInputRequest KeyDown(Key key);
 
 #endif
 

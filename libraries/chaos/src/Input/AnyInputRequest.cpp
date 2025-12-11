@@ -4,12 +4,9 @@
 
 namespace chaos
 {
-	InputRequestDebugInfo AnyInputRequest::GetDebugInfo() const
+	char const * AnyInputRequest::GetDebugInfo(char* in_buffer, size_t in_size) const
 	{
-		InputRequestDebugInfo result;
-		result.input = "All Inputs";
-		result.action_type = "Consume all";
-		return result;
+		return "Consume All Inputs";
 	}
 
 	bool AnyInputRequest::IsRequestRelatedTo(Key in_input) const

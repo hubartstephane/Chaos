@@ -3,7 +3,6 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	class InputRequestBase;
-	class InputRequestDebugInfo;
 
 	enum class InputRequestResult;
 
@@ -25,24 +24,6 @@ namespace chaos
 	};
 
 	/**
-	* InputRequestDebugInfo: some information to be displayed to user for debugging purpose
-	*/
-
-	class CHAOS_API InputRequestDebugInfo
-	{
-	public:
-
-		/** the input concerned by the request */
-		std::string input;
-		/** the required modifiers string */
-		std::string required_modifiers;
-		/** the forbidden modifiers string */
-		std::string forbidden_modifiers;
-		/** the type of action */
-		std::string action_type;
-	};
-
-	/**
 	* InputRequestBase: a base request for any user input (keyboard, mouse, gamepad)
 	*/
 
@@ -61,7 +42,7 @@ namespace chaos
 		virtual bool IsRequestRelatedTo(Input2D in_input) const;
 
 		/** some debugging information */
-		virtual InputRequestDebugInfo GetDebugInfo() const;
+		virtual char const * GetDebugInfo(char* in_buffer, size_t in_size) const;
 	};
 
 #endif

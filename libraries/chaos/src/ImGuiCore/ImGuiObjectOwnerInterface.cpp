@@ -36,10 +36,8 @@ namespace chaos
 
 		if (func("FPS", gpu_menu_path, ImGuiRenderingFPSStatObject::GetStaticClass()))
 			return true;
-
 		if (func("Draw calls", gpu_menu_path, ImGuiRenderingDrawCallsStatObject::GetStaticClass()))
 			return true;
-
 		if (func("Vertices", gpu_menu_path, ImGuiRenderingVerticesStatObject::GetStaticClass()))
 			return true;
 
@@ -47,13 +45,12 @@ namespace chaos
 
 		if (func("System Information", imgui_menu_path, ImGuiSystemInformationObject::GetStaticClass()))
 			return true;
-
 		if (func("Window Information", imgui_menu_path, ImGuiWindowInformationObject::GetStaticClass()))
 			return true;
 
 		char const* input_menu_path = "Inputs";
 
-		if (func("Input Actions", input_menu_path, ImGuiInputActionObject::GetStaticClass()))
+		if (func("Show Input Actions", input_menu_path, ImGuiInputActionObject::GetStaticClass()))
 			return true;
 
 		return false;

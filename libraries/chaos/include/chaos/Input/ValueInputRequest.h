@@ -64,14 +64,10 @@ namespace chaos
 			return false;
 		}
 		/** override */
-		virtual InputRequestDebugInfo GetDebugInfo() const override
+		virtual char const * GetDebugInfo(char* in_buffer, size_t in_size) const override
 		{
-			InputRequestDebugInfo result;
-
-			result.input = EnumToString(searched_input);
-			result.action_type = "Query Value";
-
-			return result;
+			std::snprintf(in_buffer, in_size, "Query(%s)", EnumToString(searched_input));
+			return in_buffer;
 		}
 
 	protected:

@@ -33,7 +33,7 @@ namespace chaos
 	protected:
 
 		/** check whether one of the 2 keys is down */
-		bool GetModifierKeyValue(InputDeviceInterface const* in_input_device, Key key1, Key key2) const;
+		bool GetModifierKeyPairValue(InputDeviceInterface const* in_input_device, Key key1, Key key2) const;
 
 	protected:
 
@@ -50,25 +50,25 @@ namespace chaos
 	template<InputRequestType REQUEST_TYPE> 
 	auto RequireModifiers(KeyModifier in_modifiers, REQUEST_TYPE const& in_request)
 	{
-		return And(ModifiersInputRequest(in_modifiers, true), in_request);
+		return And(in_request, ModifiersInputRequest(in_modifiers, true));
 	}
 
 	template<InputRequestType REQUEST_TYPE>
 	auto RequireModifiers(KeyModifier in_modifiers, REQUEST_TYPE && in_request)
 	{
-		return And(ModifiersInputRequest(in_modifiers, true), std::move(in_request));
+		return And(std::move(in_request), ModifiersInputRequest(in_modifiers, true));
 	}
 
 	template<InputRequestType REQUEST_TYPE>
 	auto ForbidModifiers(KeyModifier in_modifiers, REQUEST_TYPE const& in_request)
 	{
-		return And(ModifiersInputRequest(in_modifiers, false), in_request);
+		return And(in_request, ModifiersInputRequest(in_modifiers, false));
 	}
 
 	template<InputRequestType REQUEST_TYPE>
 	auto ForbidModifiers(KeyModifier in_modifiers, REQUEST_TYPE&& in_request)
 	{
-		return And(ModifiersInputRequest(in_modifiers, false), std::move(in_request));
+		return And(std::move(in_request), ModifiersInputRequest(in_modifiers, false));
 	}
 
 #endif

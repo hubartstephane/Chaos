@@ -74,9 +74,9 @@ namespace chaos
 		virtual char const * GetDebugInfo(InputRequestDebugInfoStorage & debug_info_storage) const override
 		{
 			if (fail_on_inactive_input)
-				std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Mandatory Query [%s]", EnumToString(searched_input));
+				std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Query+[%s]", EnumToString(searched_input));
 			else
-				std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Query [%s]", EnumToString(searched_input));
+				std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Query[%s]", EnumToString(searched_input));
 			return debug_info_storage.buffer;
 		}
 

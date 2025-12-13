@@ -17,7 +17,7 @@ namespace chaos
 
 	char const * KeyInputRequest::GetDebugInfo(InputRequestDebugInfoStorage & debug_info_storage) const
 	{
-		std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "%s [%s]", EnumToString(request_type), GetKeyName(key));
+		std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "%s[%s]", EnumToString(request_type), GetKeyName(key));
 		return debug_info_storage.buffer;
 	}
 

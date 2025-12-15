@@ -53,12 +53,22 @@ namespace chaos
 		/** whether the input as just became active */
 		bool IsJustActivated() const
 		{
-			return (IsActive()) && (GetSameValueTimer() == 0.0f);
+			return GetStatus() == InputStatus::BECOME_ACTIVE;
 		}
 		/** whether the input as just became inactive */
 		bool IsJustDeactivated() const
 		{
-			return (IsInactive()) && (GetSameValueTimer() == 0.0f);
+			return GetStatus() == InputStatus::BECOME_INACTIVE;
+		}
+		/** returns whether the input is active and repeated */
+		bool IsActiveRepeated() const
+		{
+			return GetStatus() == InputStatus::STAY_ACTIVE;
+		}
+		/** returns whether the input is inactive and repeated */
+		bool IsInactiveRepeated() const
+		{
+			return GetStatus() == InputStatus::STAY_INACTIVE;
 		}
 		/** get the timer for the same value */
 		float GetSameValueTimer() const
@@ -82,17 +92,18 @@ namespace chaos
 		InputStatus GetStatus() const
 		{
 			float same_value_time = GetSameValueTimer();
+			bool  initialized     = IsStateInitialized();
 
-			if (IsActive())
+			if (IsValueActive(value))
 			{
-				if (same_value_time == 0.0f && update_time >= 0.0f)
+				if (same_value_time == 0.0f && initialized)
 					return InputStatus::BECOME_ACTIVE;
 				else
 					return InputStatus::STAY_ACTIVE;
 			}
 			else
 			{
-				if (same_value_time == 0.0f && update_time >= 0.0f)
+				if (same_value_time == 0.0f && initialized)
 					return InputStatus::BECOME_INACTIVE;
 				else
 					return InputStatus::STAY_INACTIVE;
@@ -172,6 +183,22 @@ namespace chaos
 		if (state == nullptr)
 			return false;
 		return state->IsJustDeactivated();
+	}
+
+	template<typename T>
+	bool IsInputActiveRepeated(InputState<T> const* state)
+	{
+		if (state == nullptr)
+			return false;
+		return state->IsActiveRepeated();
+	}
+
+	template<typename T>
+	bool IsInputInactiveRepeated(InputState<T> const* state)
+	{
+		if (state == nullptr)
+			return false;
+		return state->IsInactiveRepeated();
 	}
 
 #endif

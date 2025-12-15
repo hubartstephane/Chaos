@@ -3,17 +3,17 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	template<typename INPUT_SEARCH_KEY_TYPE, typename STATE_TYPE, typename VALUE_TYPE>
-	class QueryValueInputRequest;
+	class QueryInputRequest;
 
-	enum class QueryStatusRequestType;
+	enum class QueryInputRequestType;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* QueryStatusRequestType: The requested input status
+	* QueryInputRequestType: The requested input status
 	*/
 
-	enum class CHAOS_API QueryStatusRequestType : int
+	enum class CHAOS_API QueryInputRequestType : int
 	{
 		None,
 		Inactive,
@@ -24,19 +24,19 @@ namespace chaos
 		ActiveRepeated,
 	};
 
-	CHAOS_DECLARE_ENUM_METHOD(QueryStatusRequestType, CHAOS_API);
+	CHAOS_DECLARE_ENUM_METHOD(QueryInputRequestType, CHAOS_API);
 
 	/**
-	 * QueryValueInputRequest: a request that gets the value of an input
+	 * QueryInputRequest: a request that gets the value of an input
 	 */
 
 	template<typename INPUT_SEARCH_KEY_TYPE, typename STATE_TYPE, typename VALUE_TYPE>
-	class QueryValueInputRequest : public InputRequestBase
+	class QueryInputRequest : public InputRequestBase
 	{
 	public:
 
 		/** constructor */
-		QueryValueInputRequest(INPUT_SEARCH_KEY_TYPE in_searched_input, STATE_TYPE* in_out_state, VALUE_TYPE * in_out_value, QueryStatusRequestType in_query_type):
+		QueryInputRequest(INPUT_SEARCH_KEY_TYPE in_searched_input, STATE_TYPE* in_out_state, VALUE_TYPE * in_out_value, QueryInputRequestType in_query_type):
 			searched_input(in_searched_input),
 			out_state(in_out_state),
 			out_value(in_out_value),
@@ -44,7 +44,7 @@ namespace chaos
 		{
 		}
 		/** copy constructor */
-		QueryValueInputRequest(QueryValueInputRequest const& src) = default;
+		QueryInputRequest(QueryInputRequest const& src) = default;
 
 		/** override */
 		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
@@ -76,19 +76,19 @@ namespace chaos
 
 			switch (query_type)
 			{
-			case QueryStatusRequestType::None:
+			case QueryInputRequestType::None:
 				return InputRequestResult::True;
-			case QueryStatusRequestType::Inactive:
+			case QueryInputRequestType::Inactive:
 				return ConvertResultType(input_state->IsInactive());
-			case QueryStatusRequestType::JustDeactivated:
+			case QueryInputRequestType::JustDeactivated:
 				return ConvertResultType(input_state->IsJustDeactivated());
-			case QueryStatusRequestType::InactiveRepeated:
+			case QueryInputRequestType::InactiveRepeated:
 				return ConvertResultType(input_state->IsInactiveRepeated());
-			case QueryStatusRequestType::Active:
+			case QueryInputRequestType::Active:
 				return ConvertResultType(input_state->IsActive());
-			case QueryStatusRequestType::JustActivated:
+			case QueryInputRequestType::JustActivated:
 				return ConvertResultType(input_state->IsJustActivated());
-			case QueryStatusRequestType::ActiveRepeated:
+			case QueryInputRequestType::ActiveRepeated:
 				return ConvertResultType(input_state->IsActiveRepeated());
 			default:
 				assert(0);
@@ -139,32 +139,32 @@ namespace chaos
 		/** the result of the request */
 		VALUE_TYPE* out_value = nullptr;
 		/** whether an inactive input is a success or not */
-		QueryStatusRequestType query_type = QueryStatusRequestType::None;
+		QueryInputRequestType query_type = QueryInputRequestType::None;
 	};
 
 	/**
 	 * Some standalone functions
 	 */
 
-	CHAOS_API QueryValueInputRequest<Key, KeyState, bool> QueryValue(Key in_key, QueryStatusRequestType in_query_type = QueryStatusRequestType::None);
+	CHAOS_API QueryInputRequest<Key, KeyState, bool> QueryInput(Key in_input, QueryInputRequestType in_query_type = QueryInputRequestType::None);
 
-	CHAOS_API QueryValueInputRequest<Input1D, Input1DState, float> QueryValue(Input1D in_axis, QueryStatusRequestType in_query_type = QueryStatusRequestType::None);
+	CHAOS_API QueryInputRequest<Input1D, Input1DState, float> QueryInput(Input1D in_input, QueryInputRequestType in_query_type = QueryInputRequestType::None);
 
-	CHAOS_API QueryValueInputRequest<Input2D, Input2DState, glm::vec2> QueryValue(Input2D in_stick, QueryStatusRequestType in_query_type = QueryStatusRequestType::None);
-
-
-	CHAOS_API QueryValueInputRequest<Key, KeyState, bool> QueryValue(Key in_key, bool* out_value, QueryStatusRequestType in_query_type = QueryStatusRequestType::None);
-
-	CHAOS_API QueryValueInputRequest<Input1D, Input1DState, float> QueryValue(Input1D in_axis, float* out_value, QueryStatusRequestType in_query_type = QueryStatusRequestType::None);
-
-	CHAOS_API QueryValueInputRequest<Input2D, Input2DState, glm::vec2> QueryValue(Input2D in_stick, glm::vec2* out_value, QueryStatusRequestType in_query_type = QueryStatusRequestType::None);
+	CHAOS_API QueryInputRequest<Input2D, Input2DState, glm::vec2> QueryInput(Input2D in_input, QueryInputRequestType in_query_type = QueryInputRequestType::None);
 
 
-	CHAOS_API QueryValueInputRequest<Key, KeyState, bool> QueryValue(Key in_key, KeyState* out_state, QueryStatusRequestType in_query_type = QueryStatusRequestType::None);
+	CHAOS_API QueryInputRequest<Key, KeyState, bool> QueryInput(Key in_input, bool* out_value, QueryInputRequestType in_query_type = QueryInputRequestType::None);
 
-	CHAOS_API QueryValueInputRequest<Input1D, Input1DState, float> QueryValue(Input1D in_axis, Input1DState* out_state, QueryStatusRequestType in_query_type = QueryStatusRequestType::None);
+	CHAOS_API QueryInputRequest<Input1D, Input1DState, float> QueryInput(Input1D in_input, float* out_value, QueryInputRequestType in_query_type = QueryInputRequestType::None);
 
-	CHAOS_API QueryValueInputRequest<Input2D, Input2DState, glm::vec2> QueryValue(Input2D in_stick, Input2DState* out_state, QueryStatusRequestType in_query_type = QueryStatusRequestType::None);
+	CHAOS_API QueryInputRequest<Input2D, Input2DState, glm::vec2> QueryInput(Input2D in_input, glm::vec2* out_value, QueryInputRequestType in_query_type = QueryInputRequestType::None);
+
+
+	CHAOS_API QueryInputRequest<Key, KeyState, bool> QueryInput(Key in_input, KeyState* out_state, QueryInputRequestType in_query_type = QueryInputRequestType::None);
+
+	CHAOS_API QueryInputRequest<Input1D, Input1DState, float> QueryInput(Input1D in_input, Input1DState* out_state, QueryInputRequestType in_query_type = QueryInputRequestType::None);
+
+	CHAOS_API QueryInputRequest<Input2D, Input2DState, glm::vec2> QueryInput(Input2D in_input, Input2DState* out_state, QueryInputRequestType in_query_type = QueryInputRequestType::None);
 
 #endif
 

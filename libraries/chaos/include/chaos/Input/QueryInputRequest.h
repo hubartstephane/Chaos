@@ -5,6 +5,10 @@ namespace chaos
 	template<typename INPUT_SEARCH_KEY_TYPE, typename STATE_TYPE, typename VALUE_TYPE>
 	class QueryInputRequest;
 
+	using QueryKeyInputRequest = QueryInputRequest<Key, KeyState, bool>;
+	using QueryInput1DRequest  = QueryInputRequest<Input1D, Input1DState, float>;
+	using QueryInput2DRequest  = QueryInputRequest<Input2D, Input2DState, glm::vec2>;
+
 	enum class QueryInputRequestType;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -146,25 +150,62 @@ namespace chaos
 	 * Some standalone functions
 	 */
 
-	CHAOS_API QueryInputRequest<Key, KeyState, bool> QueryInput(Key in_input, QueryInputRequestType in_query_type = QueryInputRequestType::None);
+	CHAOS_API QueryKeyInputRequest QueryInput(Key in_input, QueryInputRequestType in_query_type = QueryInputRequestType::None);
 
-	CHAOS_API QueryInputRequest<Input1D, Input1DState, float> QueryInput(Input1D in_input, QueryInputRequestType in_query_type = QueryInputRequestType::None);
+	CHAOS_API QueryInput1DRequest QueryInput(Input1D in_input, QueryInputRequestType in_query_type = QueryInputRequestType::None);
 
-	CHAOS_API QueryInputRequest<Input2D, Input2DState, glm::vec2> QueryInput(Input2D in_input, QueryInputRequestType in_query_type = QueryInputRequestType::None);
-
-
-	CHAOS_API QueryInputRequest<Key, KeyState, bool> QueryInput(Key in_input, bool* out_value, QueryInputRequestType in_query_type = QueryInputRequestType::None);
-
-	CHAOS_API QueryInputRequest<Input1D, Input1DState, float> QueryInput(Input1D in_input, float* out_value, QueryInputRequestType in_query_type = QueryInputRequestType::None);
-
-	CHAOS_API QueryInputRequest<Input2D, Input2DState, glm::vec2> QueryInput(Input2D in_input, glm::vec2* out_value, QueryInputRequestType in_query_type = QueryInputRequestType::None);
+	CHAOS_API QueryInput2DRequest QueryInput(Input2D in_input, QueryInputRequestType in_query_type = QueryInputRequestType::None);
 
 
-	CHAOS_API QueryInputRequest<Key, KeyState, bool> QueryInput(Key in_input, KeyState* out_state, QueryInputRequestType in_query_type = QueryInputRequestType::None);
+	CHAOS_API QueryKeyInputRequest QueryInput(Key in_input, bool* out_value, QueryInputRequestType in_query_type = QueryInputRequestType::None);
 
-	CHAOS_API QueryInputRequest<Input1D, Input1DState, float> QueryInput(Input1D in_input, Input1DState* out_state, QueryInputRequestType in_query_type = QueryInputRequestType::None);
+	CHAOS_API QueryInput1DRequest QueryInput(Input1D in_input, float* out_value, QueryInputRequestType in_query_type = QueryInputRequestType::None);
 
-	CHAOS_API QueryInputRequest<Input2D, Input2DState, glm::vec2> QueryInput(Input2D in_input, Input2DState* out_state, QueryInputRequestType in_query_type = QueryInputRequestType::None);
+	CHAOS_API QueryInput2DRequest QueryInput(Input2D in_input, glm::vec2* out_value, QueryInputRequestType in_query_type = QueryInputRequestType::None);
+
+
+	CHAOS_API QueryKeyInputRequest QueryInput(Key in_input, KeyState* out_state, QueryInputRequestType in_query_type = QueryInputRequestType::None);
+
+	CHAOS_API QueryInput1DRequest QueryInput(Input1D in_input, Input1DState* out_state, QueryInputRequestType in_query_type = QueryInputRequestType::None);
+
+	CHAOS_API QueryInput2DRequest QueryInput(Input2D in_input, Input2DState* out_state, QueryInputRequestType in_query_type = QueryInputRequestType::None);
+
+
+	template<InputType T, typename ...PARAMS>
+	auto Active(T in_input, PARAMS... params)
+	{
+		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::Active);
+	}
+
+	template<InputType T, typename ...PARAMS>
+	auto JustActivated(T in_input, PARAMS... params)
+	{
+		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::JustActivated);
+	}
+
+	template<InputType T, typename ...PARAMS>
+	auto ActiveRepeated(T in_input, PARAMS... params)
+	{
+		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::ActiveRepeated);
+	}
+
+	template<InputType T, typename ...PARAMS>
+	auto Inactive(T in_input, PARAMS... params)
+	{
+		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::Inactive);
+	}
+
+	template<InputType T, typename ...PARAMS>
+	auto JustDeactivated(T in_input, PARAMS... params)
+	{
+		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::JustDeactivated);
+	}
+
+	template<InputType T, typename ...PARAMS>
+	auto InactiveRepeated(T in_input, PARAMS... params)
+	{
+		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::InactiveRepeated);
+	}
 
 #endif
 

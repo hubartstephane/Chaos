@@ -808,7 +808,7 @@ namespace chaos
 	{
 
 #if _DEBUG
-		if (in_action_enumerator.CheckAndProcess(KeyPressed(Key::F8) , "Reload GPU Resources", [this]()
+		if (in_action_enumerator.CheckAndProcess(JustActivated(Key::F8) , "Reload GPU Resources", [this]()
 		{
 			ReloadGPUResources();
 		}))

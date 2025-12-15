@@ -571,7 +571,7 @@ protected:
 
 		bool enabled = object_count > 0;
 
-		if (in_action_enumerator.CheckAndProcess(KeyPressed(Key::KP_ADD), "Next Object", enabled, [&]()
+		if (in_action_enumerator.CheckAndProcess(JustActivated(Key::KP_ADD), "Next Object", enabled, [&]()
 		{
 			objects[selected_object_index]->SetSelected(false);
 
@@ -586,7 +586,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(KeyPressed(Key::KP_SUBTRACT), "Previous Object", enabled, [&]()
+		if (in_action_enumerator.CheckAndProcess(JustActivated(Key::KP_SUBTRACT), "Previous Object", enabled, [&]()
 		{
 			objects[selected_object_index]->SetSelected(false);
 
@@ -607,7 +607,7 @@ protected:
 
 			auto MoveObject = [&](Key key, size_t component_index, float direction, char const * title)
 			{
-				return in_action_enumerator.CheckAndProcess(chaos::KeyDown(key), title, [&]()
+				return in_action_enumerator.CheckAndProcess(chaos::Active(key), title, [&]()
 				{
 					Object3D* selected_object = objects[selected_object_index].get();
 					selected_object->transform.position[component_index] += direction * OBJECT_SPEED * delta_time;

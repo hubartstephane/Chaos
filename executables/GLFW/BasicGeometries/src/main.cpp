@@ -979,7 +979,7 @@ protected:
 
 	virtual bool EnumerateInputActions(chaos::InputActionEnumerator & in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
 	{
-		if (in_action_enumerator.CheckAndProcess(KeyPressed(chaos::Key::T), "Toggle Clock", [this]()
+		if (in_action_enumerator.CheckAndProcess(JustActivated(chaos::Key::T), "Toggle Clock", [this]()
 		{
 			chaos::Clock * clock = chaos::WindowApplication::GetMainClockInstance();
 			if (clock != nullptr)
@@ -989,7 +989,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(KeyPressed(chaos::Key::KP_ADD), "Next Example", [this]()
+		if (in_action_enumerator.CheckAndProcess(JustActivated(chaos::Key::KP_ADD), "Next Example", [this]()
 		{
 			SetExample((TestID)((int)display_example + 1));
 			DebugDisplayExampleTitle();
@@ -998,7 +998,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(KeyPressed(chaos::Key::KP_SUBTRACT), "Previous Example", [this]()
+		if (in_action_enumerator.CheckAndProcess(JustActivated(chaos::Key::KP_SUBTRACT), "Previous Example", [this]()
 		{
 			SetExample((TestID)((int)display_example - 1));
 			DebugDisplayExampleTitle();
@@ -1008,7 +1008,7 @@ protected:
 		}
 
 		bool left_control = false;
-		auto update_type_request = chaos::And(chaos::KeyDown(chaos::Key::KP_5), chaos::QueryInput(chaos::Key::LEFT_CONTROL, &left_control));
+		auto update_type_request = chaos::And(chaos::Active(chaos::Key::KP_5), chaos::QueryInput(chaos::Key::LEFT_CONTROL, &left_control));
 
 		if (in_action_enumerator.CheckAndProcess(update_type_request, "Update Object Type", [&]()
 		{
@@ -1031,7 +1031,7 @@ protected:
 			auto UpdateObjectPosition = [&](chaos::Key key, glm::vec3 const& delta_position, char const* title)
 			{
 				bool left_control = false;
-				auto request = chaos::And(chaos::KeyDown(key), chaos::QueryInput(chaos::Key::LEFT_CONTROL, &left_control));
+				auto request = chaos::And(chaos::Active(key), chaos::QueryInput(chaos::Key::LEFT_CONTROL, &left_control));
 
 				return in_action_enumerator.CheckAndProcess(request, title, [&]()
 				{
@@ -1071,7 +1071,7 @@ protected:
 			auto UpdateObjectRotation = [&](chaos::Key key, float delta_rotation, char const * title)
 			{			
 				bool left_control = false;
-				auto request = chaos::And(chaos::KeyDown(key), chaos::QueryInput(chaos::Key::LEFT_CONTROL, &left_control));
+				auto request = chaos::And(chaos::Active(key), chaos::QueryInput(chaos::Key::LEFT_CONTROL, &left_control));
 
 				return in_action_enumerator.CheckAndProcess(request, title, [&]()
 				{

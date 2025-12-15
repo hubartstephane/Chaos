@@ -245,7 +245,7 @@ protected:
 
 	bool UpdateClockTimeScaleWithKeys(chaos::InputActionEnumerator & in_action_enumerator, chaos::Clock * clock, chaos::Key incr_key, chaos::Key decr_key, char const * incr_title, char const * decr_title)
 	{
-		if (in_action_enumerator.CheckAndProcess(KeyPressed(incr_key), incr_title, [&]()
+		if (in_action_enumerator.CheckAndProcess(JustActivated(incr_key), incr_title, [&]()
 		{
 			UpdateClockTimeScale(clock, 0.2f);
 		}))
@@ -253,7 +253,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(KeyPressed(decr_key), decr_title, [&]()
+		if (in_action_enumerator.CheckAndProcess(JustActivated(decr_key), decr_title, [&]()
 		{
 			UpdateClockTimeScale(clock, -0.2f);
 		}))
@@ -265,7 +265,7 @@ protected:
 
 	bool GenerateEvent(chaos::InputActionEnumerator & in_action_enumerator, chaos::Clock * clock, chaos::Key create_key, char const * in_title, int type)
 	{
-		if (in_action_enumerator.CheckAndProcess(KeyPressed(create_key), in_title, [&]()
+		if (in_action_enumerator.CheckAndProcess(JustActivated(create_key), in_title, [&]()
 		{
 			// remove previous event
 			if (clock_event != nullptr)
@@ -303,7 +303,7 @@ protected:
 
 	virtual bool EnumerateInputActions(chaos::InputActionEnumerator & in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
 	{
-		if (in_action_enumerator.CheckAndProcess(KeyPressed(chaos::Key::T), "Toggle Main Clock", [this]()
+		if (in_action_enumerator.CheckAndProcess(JustActivated(chaos::Key::T), "Toggle Main Clock", [this]()
 		{
 			if (chaos::Clock * clock = chaos::WindowApplication::GetMainClockInstance())
 				clock->Toggle();

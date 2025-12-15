@@ -11,6 +11,9 @@ namespace chaos
 	using Input1DState = InputState<float>;
 	using Input2DState = InputState<glm::vec2>;
 
+	template<typename T>
+	concept InputType = std::is_same_v<T, Key> || std::is_same_v<T, Input1D> || std::is_same_v<T, Input2D>;
+
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**

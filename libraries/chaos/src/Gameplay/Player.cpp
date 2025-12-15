@@ -72,8 +72,8 @@ namespace chaos
 		if (gamepad_state == nullptr)
 			return;
 		// maybe a game/pause resume
-		if (HasInputJustBecameActive(gamepad_state->GetInputState(Key::GAMEPAD_SPECIAL_LEFT)) ||
-			HasInputJustBecameActive(gamepad_state->GetInputState(Key::GAMEPAD_SPECIAL_RIGHT)))
+		if (IsInputJustActivated(gamepad_state->GetInputState(Key::GAMEPAD_SPECIAL_LEFT)) ||
+			IsInputJustActivated(gamepad_state->GetInputState(Key::GAMEPAD_SPECIAL_RIGHT)))
 		{
 			Game* game = GetGame();
 			if (game != nullptr)

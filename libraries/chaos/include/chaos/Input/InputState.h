@@ -51,12 +51,12 @@ namespace chaos
 			return !IsActive();
 		}
 		/** whether the input as just became active */
-		bool HasJustBecameActive() const
+		bool IsJustActivated() const
 		{
 			return (IsActive()) && (GetSameValueTimer() == 0.0f);
 		}
 		/** whether the input as just became inactive */
-		bool HasJustBecameInactive() const
+		bool IsJustDeactivated() const
 		{
 			return (IsInactive()) && (GetSameValueTimer() == 0.0f);
 		}
@@ -159,19 +159,19 @@ namespace chaos
 	}
 
 	template<typename T>
-	bool HasInputJustBecameActive(InputState<T> const* state)
+	bool IsInputJustActivated(InputState<T> const* state)
 	{
 		if (state == nullptr)
 			return false;
-		return state->HasJustBecameActive();
+		return state->IsJustActivated();
 	}
 
 	template<typename T>
-	bool HasInputJustBecameInactive(InputState<T> const* state)
+	bool IsInputJustDeactivated(InputState<T> const* state)
 	{
 		if (state == nullptr)
 			return false;
-		return state->HasJustBecameInactive();
+		return state->IsJustDeactivated();
 	}
 
 #endif

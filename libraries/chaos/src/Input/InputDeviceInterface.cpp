@@ -188,7 +188,7 @@ namespace chaos
 	{
 		return ForAllKeys([](Key key, KeyState const & state)
 		{
-			return HasInputJustBecameActive(&state);
+			return IsInputJustActivated(&state);
 		});
 	}
 

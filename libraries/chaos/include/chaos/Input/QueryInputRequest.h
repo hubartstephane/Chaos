@@ -56,6 +56,8 @@ namespace chaos
 			// early exit
 			if (searched_input == INPUT_SEARCH_KEY_TYPE::UNKNOWN)
 				return InputRequestResult::Invalid;
+			if (out_state == nullptr && out_value == nullptr && query_type == QueryInputRequestType::None) // this request is useless
+				return InputRequestResult::Invalid;
 			// find input
 			STATE_TYPE const* input_state = in_input_device->GetInputState(searched_input);
 			if (input_state == nullptr)
@@ -124,14 +126,18 @@ namespace chaos
 		/** override */
 		virtual char const * GetDebugInfo(InputRequestDebugInfoStorage & debug_info_storage) const override
 		{
-			return "";
-#if 0
-			if (fail_on_inactive_input)
-				std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Query+[%s]", EnumToString(searched_input));
+			if (query_type == QueryInputRequestType::None)
+			{
+				if (out_state != nullptr || out_value != nullptr)
+					std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Query[%s]", EnumToString(searched_input));
+				else
+					std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Misformed Query[%s]", EnumToString(searched_input));
+			}
 			else
-				std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Query[%s]", EnumToString(searched_input));
+			{
+				std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "%s[%s]", EnumToString(query_type), EnumToString(searched_input));
+			}
 			return debug_info_storage.buffer;
-#endif
 		}
 
 	protected:

@@ -34,6 +34,8 @@ namespace chaos
 
 		/** override */
 		virtual bool TraverseInputReceiver(InputReceiverTraverser & in_traverser, InputDeviceInterface const* in_input_device) override;
+		/** override */
+		virtual bool DoPollGamepad(PhysicalGamepad* physical_gamepad) override;
 
 	protected:
 

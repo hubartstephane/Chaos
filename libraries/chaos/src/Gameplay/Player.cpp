@@ -63,24 +63,6 @@ namespace chaos
 			game->RequirePauseGame();
 	}
 
-	void Player::HandleSpecialGamepadCommands(float delta_time)
-	{
-		if (gamepad == nullptr)
-			return;
-		// get the gamepad data
-		GamepadState const* gamepad_state = gamepad->GetGamepadState();
-		if (gamepad_state == nullptr)
-			return;
-		// maybe a game/pause resume
-		if (IsInputJustActivated(gamepad_state->GetInputState(Key::GAMEPAD_SPECIAL_LEFT)) ||
-			IsInputJustActivated(gamepad_state->GetInputState(Key::GAMEPAD_SPECIAL_RIGHT)))
-		{
-			Game* game = GetGame();
-			if (game != nullptr)
-				game->RequireTogglePause();
-		}
-	}
-
 	bool Player::DoTick(float delta_time)
 	{
 		// remove previous frame cached input
@@ -107,8 +89,6 @@ namespace chaos
 			paused_force_feedback = false;
 		}
 
-		// some gamepad commands that should be handled even when not in Game
-		HandleSpecialGamepadCommands(delta_time);
 		// update the forcefeedback mute state
 		if (gamepad != nullptr)
 		{
@@ -376,6 +356,35 @@ namespace chaos
 
 	bool Player::EnumerateInputActions(InputActionEnumerator& in_action_enumerator, EnumerateInputActionContext in_context)
 	{
+		if (gamepad != nullptr)
+		{
+			KeyState const * st = gamepad->GetInputState(Key::GAMEPAD_SPECIAL_LEFT);
+			if (st != nullptr)
+			{
+				bool b = st->GetValue();
+
+				if (b)
+					b = b;
+			}
+
+
+		}
+		
+
+		if (Game* game = GetGame())
+		{
+			//auto PauseRequest = Or(JustActivated(Key::GAMEPAD_SPECIAL_LEFT), JustActivated(Key::GAMEPAD_SPECIAL_RIGHT));
+
+			auto PauseRequest = JustActivated(Key::GAMEPAD_SPECIAL_LEFT);
+
+			if (in_action_enumerator.CheckAndProcess(PauseRequest, "Toggle Pause", [&]()
+			{
+				game->RequireTogglePause();
+			}))
+			{
+				return true;
+			}
+		}
 		return InputReceiverInterface::EnumerateInputActions(in_action_enumerator, in_context);
 	}
 

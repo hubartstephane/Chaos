@@ -16,6 +16,7 @@
 
   "atlas": { "[include]": "$SCRIPT_PATH/atlas.json" },
   "imgui": { "[include]": "$SCRIPT_PATH/imgui.json" },
+  "gamepad_manager": { "[include]": "$SCRIPT_PATH/gamepad_manager.json" },
   "fonts": { "[include]": "$SCRIPT_PATH/fonts.json" },
 
   "sprite_directory": "$SCRIPT_PATH/sprites"

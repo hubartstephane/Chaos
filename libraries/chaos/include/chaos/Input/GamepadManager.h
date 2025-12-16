@@ -287,7 +287,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	* GamepadManager : used to handle gamepads, there allocation, the dynamic change of their index ...
 	*/
 
-	class CHAOS_API GamepadManager : public Object
+	class CHAOS_API GamepadManager : public Object, public ConfigurationUserInterface
 	{
 		CHAOS_GAMEPAD_ALL_FRIENDS;
 
@@ -318,6 +318,9 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		size_t GetPhysicalGamepadCount() const { return physical_gamepads.size(); }
 		/** gets a physical device */
 		PhysicalGamepad const * GetPhysicalGamepad(size_t index) const { return physical_gamepads[index]; }
+
+		/** override */
+		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
 
 	protected:
 
@@ -356,6 +359,8 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		std::vector<PhysicalGamepad*> physical_gamepads;
 		/** enable pooling unused inputs */
 		bool pooling_enabled = true;
+		/** whether the manager is enabled */
+		bool enabled = true;
 
 #if _WIN64
 		/** the function pointer to use for ForceFeedback */

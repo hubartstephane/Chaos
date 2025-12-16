@@ -1,6 +1,4 @@
 {
-  "gamepad_enabled": false,
-
   "small_french_dictionnary": "$SCRIPT_PATH/dictionnary/small_french.txt",
   "small_english_dictionnary": "$SCRIPT_PATH/dictionnary/small_english.txt",
   "french_dictionnary": "$SCRIPT_PATH/dictionnary/french.txt",

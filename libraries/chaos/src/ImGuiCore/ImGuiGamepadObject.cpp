@@ -5,15 +5,11 @@ namespace chaos
 {
 	void ImGuiGamepadObject::OnDrawImGuiContent(Window * window)
 	{
-		GameApplication const * game_application = Application::GetConstInstance();
-		if (game_application == nullptr)
+		WindowApplication const * window_application = Application::GetConstInstance();
+		if (window_application == nullptr)
 			return;
 
-		Game const * game = game_application->GetGame();
-		if (game == nullptr)
-			return;
-
-		GamepadManager const * gamepad_manager = game->GetGamepadManager();
+		GamepadManager const * gamepad_manager = window_application->GetGamepadManager();
 		if (gamepad_manager == nullptr)
 			return;
 

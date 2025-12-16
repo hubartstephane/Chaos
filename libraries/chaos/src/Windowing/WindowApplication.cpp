@@ -479,6 +479,8 @@ namespace chaos
 			main_clock->TickClock(delta_time);
 		if (sound_manager != nullptr)
 			sound_manager->Tick(delta_time);
+		if (gamepad_manager != nullptr)
+			gamepad_manager->Tick(delta_time);
 		// handle the inputs
 		PollInputDevices();
 
@@ -647,6 +649,19 @@ namespace chaos
 			ApplicationLog::Error("InitializeManagers(...) fails to initialize ImGuiManager");
 			return false;
 		}
+		// initialize the gamepad manager
+		gamepad_manager = new GamepadManager;
+		if (gamepad_manager == nullptr)
+		{
+			ApplicationLog::Error("InitializeManagers(...) fails to create GamepadManager");
+			return false;
+		}
+		GiveChildConfiguration(gamepad_manager.get(), "gamepad_manager");
+		if (!gamepad_manager->ReadConfigurableProperties(ReadConfigurablePropertiesContext::Initialization, false))
+		{
+			ApplicationLog::Error("InitializeManagers(...) fails to initialize GamepadManager");
+			return false;
+		}
 
 		return true;
 	}
@@ -685,6 +700,9 @@ namespace chaos
 			imgui_manager->StopManager();
 			imgui_manager = nullptr;
 		}
+
+		// stop the gamepad_manager
+		gamepad_manager = nullptr;
 
 		// stop the clock
 		main_clock = nullptr;
@@ -1071,7 +1089,11 @@ namespace chaos
 				return window;
 			return nullptr;
 		});
+	}
 
+	bool WindowApplication::DoPollGamepad(PhysicalGamepad* physical_gamepad)
+	{
+		return true;
 	}
 
 }; // namespace chaos

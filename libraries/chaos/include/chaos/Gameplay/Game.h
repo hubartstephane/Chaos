@@ -10,7 +10,6 @@ namespace chaos
 
 	class CHAOS_API Game : public Object, public InputReceiverInterface, public GPUProgramProviderInterface, public ConfigurationUserInterface
 	{
-		friend class GameGamepadManager;
 		friend class GameViewportWidget;
 
 		friend class GameStateMachine;
@@ -178,11 +177,6 @@ namespace chaos
 		/** override */
 		virtual bool EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context) override;
 
-		/** returns the gamepad manager */
-		GamepadManager * GetGamepadManager(){ return gamepad_manager.get();}
-		/** returns the gamepad manager */
-		GamepadManager const * GetGamepadManager() const { return gamepad_manager.get();}
-
 	protected:
 
 		/** override */
@@ -193,8 +187,6 @@ namespace chaos
 
 		/** the tick method */
 		virtual void Tick(float delta_time);
-		/** tick the game inputs */
-		virtual void TickGameInputs(float delta_time);
 
 		/** override */
 		virtual bool TraverseInputReceiver(InputReceiverTraverser & in_traverser, InputDeviceInterface const * in_input_device) override;
@@ -227,8 +219,6 @@ namespace chaos
 		/** prepare data before saving */
 		virtual void UpdatePersistentGameData();
 
-		/** create the gamepad manager */
-		virtual bool CreateGamepadManager(JSONReadConfiguration config);
 		/** create the game state_machine */
 		virtual bool CreateGameStateMachine(JSONReadConfiguration config);
 		/** allocate the state machine */
@@ -369,8 +359,6 @@ namespace chaos
 
 	protected:
 
-		/** the current gamepad manager */
-		shared_ptr<GamepadManager> gamepad_manager;
 		/** the particle manager */
 		shared_ptr<ParticleManager> particle_manager;
 

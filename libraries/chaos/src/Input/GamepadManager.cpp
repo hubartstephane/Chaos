@@ -508,6 +508,8 @@ namespace chaos
 
 	bool GamepadManager::DoPollGamepad(PhysicalGamepad* physical_gamepad)
 	{
+		if (WindowApplication* window_application = Application::GetInstance())
+			return window_application->DoPollGamepad(physical_gamepad);
 		return true;
 	}
 
@@ -653,6 +655,12 @@ namespace chaos
 			return nullptr;
 
 		return DoAllocateGamepad(in_physical_gamepad, in_filter_settings, in_callbacks);
+	}
+
+	bool GamepadManager::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
+	{
+		JSONTools::GetAttribute(config, "enabled", enabled, true);
+		return true;
 	}
 
 }; // namespace chaos

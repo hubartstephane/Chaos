@@ -52,17 +52,8 @@ namespace chaos
 	}
 #endif // _DEBUG
 
-	void Game::TickGameInputs(float delta_time)
-	{
-		// catch all stick inputs
-		if (gamepad_manager != nullptr)
-			gamepad_manager->Tick(delta_time);
-	}
-
 	void Game::Tick(float delta_time)
 	{
-		// update player inputs
-		TickGameInputs(delta_time);
 		// tick the free camera
 		if (free_camera != nullptr)
 			free_camera->Tick(delta_time);
@@ -532,19 +523,6 @@ namespace chaos
 		return true;
 	}
 
-	bool Game::CreateGamepadManager(JSONReadConfiguration config)
-	{
-		bool gamepad_enabled = true;
-		JSONTools::GetAttribute(config, "gamepad_enabled", gamepad_enabled, true);
-		if (gamepad_enabled)
-		{
-			gamepad_manager = new GameGamepadManager(this);
-			if (gamepad_manager == nullptr)
-				return false;
-		}
-		return true;
-	}
-
 	void Game::Finalize()
 	{
 	}
@@ -559,9 +537,6 @@ namespace chaos
 
 	bool Game::OnInitialize(JSONReadConfiguration config)
 	{
-		// initialize the gamepad manager
-		if (!CreateGamepadManager(config))
-			return false;
 		// create game state_machine
 		if (!CreateGameStateMachine(config))
 			return false;

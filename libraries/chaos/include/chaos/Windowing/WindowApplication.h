@@ -13,6 +13,7 @@ namespace chaos
 	class CHAOS_API WindowApplication : public Application, public TickableInterface, public GPUProgramProviderInterface, public InputReceiverInterface
 	{
 		friend class Window;
+		friend class GamepadManager;
 
 		CHAOS_DECLARE_OBJECT_CLASS(WindowApplication, Application);
 
@@ -77,6 +78,11 @@ namespace chaos
 		GPUResourceManager* GetGPUResourceManager() { return gpu_resource_manager.get(); }
 		/** gets the graphic resource manager */
 		GPUResourceManager const* GetGPUResourceManager() const { return gpu_resource_manager.get(); }
+
+		/** returns the gamepad manager */
+		GamepadManager* GetGamepadManager() { return gamepad_manager.get(); }
+		/** returns the gamepad manager */
+		GamepadManager const* GetGamepadManager() const { return gamepad_manager.get(); }
 
 		/** override */
 		virtual bool EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context) override;
@@ -296,7 +302,8 @@ namespace chaos
 		/** generate atlas entries relative to fonts */
 		virtual bool FillAtlasGeneratorInputFonts(AtlasInput& input);
 
-
+		/** called whenever a gamepad has some uncatched input */
+		virtual bool DoPollGamepad(PhysicalGamepad* physical_gamepad);
 
 
 
@@ -348,6 +355,8 @@ namespace chaos
 		shared_ptr<ImGuiManager> imgui_manager;
 		/** the main clock of the manager */
 		shared_ptr<Clock> main_clock;
+		/** the current gamepad manager */
+		shared_ptr<GamepadManager> gamepad_manager;
 
 		/** the texture atlas */
 		shared_ptr<GPUAtlas> texture_atlas;

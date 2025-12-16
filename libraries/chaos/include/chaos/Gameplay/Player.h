@@ -23,6 +23,11 @@ namespace chaos
 
 		CHAOS_DECLARE_GAMEPLAY_GETTERS();
 
+		/** override */
+		virtual bool TraverseInputReceiver(InputReceiverTraverser& in_traverser, InputDeviceInterface const* in_input_device) override;
+		/** override */
+		virtual bool EnumerateInputActions(InputActionEnumerator& in_action_enumerator, EnumerateInputActionContext in_context) override;
+
 		/** get the index of the player */
 		size_t GetPlayerIndex() const { return player_index; }
 

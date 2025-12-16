@@ -441,5 +441,13 @@ namespace chaos
 
 	}
 
+	bool LevelInstance::TraverseInputReceiver(InputReceiverTraverser& in_traverser, InputDeviceInterface const* in_input_device)
+	{
+		if (Camera* camera = DoGetCamera(0, true))
+			if (in_traverser.Traverse(camera, in_input_device))
+				return true;
+		return InputReceiverInterface::TraverseInputReceiver(in_traverser, in_input_device);
+	}
+
 }; // namespace chaos
 

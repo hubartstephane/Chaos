@@ -18,4 +18,14 @@ namespace chaos
 		return true;
 	}
 
+	bool PlayerDisplacementComponent::TraverseInputReceiver(InputReceiverTraverser& in_traverser, InputDeviceInterface const* in_input_device)
+	{
+		return InputReceiverInterface::TraverseInputReceiver(in_traverser, in_input_device);
+	}
+
+	bool PlayerDisplacementComponent::EnumerateInputActions(InputActionEnumerator& in_action_enumerator, EnumerateInputActionContext in_context)
+	{
+		return InputReceiverInterface::EnumerateInputActions(in_action_enumerator, in_context);
+	}
+
 }; // namespace chaos

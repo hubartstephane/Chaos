@@ -10,7 +10,7 @@ namespace chaos
 	// LevelInstance : this is the runtime part of a level
 	// =====================================
 
-	class CHAOS_API LevelInstance : public GPURenderable, public JSONSerializableInterface, public GPUProgramProviderInterface
+	class CHAOS_API LevelInstance : public GPURenderable, public InputReceiverInterface, public JSONSerializableInterface, public GPUProgramProviderInterface
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
@@ -19,6 +19,9 @@ namespace chaos
 	public:
 
 		CHAOS_DECLARE_GAMEPLAY_GETTERS();
+
+		/** override */
+		virtual bool TraverseInputReceiver(InputReceiverTraverser& in_traverser, InputDeviceInterface const* in_input_device) override;
 
 		/** destroy cameras when the level is finished */
 		virtual void DestroyCameras();

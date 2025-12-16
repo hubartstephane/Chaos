@@ -366,6 +366,19 @@ namespace chaos
 		return in_func(&composed_device);
 	}
 
+	bool Player::TraverseInputReceiver(InputReceiverTraverser& in_traverser, InputDeviceInterface const* in_input_device)
+	{
+		if (displacement_component != nullptr)
+			if (in_traverser.Traverse(displacement_component.get(), in_input_device))
+				return true;
+		return InputReceiverInterface::TraverseInputReceiver(in_traverser, in_input_device);
+	}
+
+	bool Player::EnumerateInputActions(InputActionEnumerator& in_action_enumerator, EnumerateInputActionContext in_context)
+	{
+		return InputReceiverInterface::EnumerateInputActions(in_action_enumerator, in_context);
+	}
+
 	// =================================================
 	// PlayerGamepadCallbacks
 	// =================================================

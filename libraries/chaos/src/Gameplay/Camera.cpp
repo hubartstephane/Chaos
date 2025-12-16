@@ -133,6 +133,21 @@ namespace chaos
 		return true;
 	}
 
+	bool Camera::TraverseInputReceiver(InputReceiverTraverser& in_traverser, InputDeviceInterface const* in_input_device)
+	{
+		for (size_t i = 0; i < components.size(); ++i)
+			if (CameraComponent* component = components[i].get())
+				if (in_traverser.Traverse(component, in_input_device))
+					return true;
+
+		return InputReceiverInterface::TraverseInputReceiver(in_traverser, in_input_device);
+	}
+
+	bool Camera::EnumerateInputActions(InputActionEnumerator& in_action_enumerator, EnumerateInputActionContext in_context)
+	{
+		return InputReceiverInterface::EnumerateInputActions(in_action_enumerator, in_context);
+	}
+
 	CHAOS_IMPLEMENT_COMPONENT_OWNER(Camera, CameraComponent, Component, components, camera)
 
 }; // namespace chaos

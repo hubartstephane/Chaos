@@ -90,6 +90,10 @@ namespace chaos
 		if (game_instance != nullptr)
 			if (in_traverser.Traverse(game_instance.get(), in_input_device))
 				return true;
+		// try with level instance
+		if (level_instance != nullptr)
+			if (in_traverser.Traverse(level_instance.get(), in_input_device))
+				return true;
 		// super 
 		return InputReceiverInterface::TraverseInputReceiver(in_traverser, in_input_device);
 	}

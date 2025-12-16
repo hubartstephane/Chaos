@@ -10,7 +10,7 @@ namespace chaos
 	// CameraComponent
 	// =============================================
 
-	class CHAOS_API CameraComponent : public Tickable, public JSONSerializableInterface
+	class CHAOS_API CameraComponent : public Tickable, public InputReceiverInterface, public JSONSerializableInterface
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
@@ -19,6 +19,11 @@ namespace chaos
 	public:
 
 		CHAOS_DECLARE_GAMEPLAY_GETTERS();
+
+		/** override */
+		virtual bool TraverseInputReceiver(InputReceiverTraverser& in_traverser, InputDeviceInterface const* in_input_device) override;
+		/** override */
+		virtual bool EnumerateInputActions(InputActionEnumerator& in_action_enumerator, EnumerateInputActionContext in_context) override;
 
 		/** gets the camera the component belongs to */
 		AutoCastable<Camera> GetCamera() { return camera; }

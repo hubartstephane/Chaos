@@ -215,9 +215,9 @@ namespace chaos
 
 	void Gamepad::DoUpdateForceFeedbackDevice(ForceFeedbackMotorValues in_motor_values)
 	{
+#if _WIN64
 		if (!IsPresent())
 			return;
-#if _WIN64
 		if (GamepadManager::XInputSetStateFunc == nullptr)
 			return;
 #if _DEBUG
@@ -231,7 +231,10 @@ namespace chaos
 		XINPUT_VIBRATION vibration;
 		vibration.wLeftMotorSpeed = (WORD)(in_motor_values.left_value * 65535.0f);
 		vibration.wRightMotorSpeed = (WORD)(in_motor_values.right_value * 65535.0f);
-		GamepadManager::XInputSetStateFunc(DWORD(GetGamepadIndex()), &vibration);
+
+		size_t gamepad_index = GetGamepadIndex();
+		GamepadManager::XInputSetStateFunc(DWORD(gamepad_index), &vibration);
+
 #endif // _WIN64
 	}
 

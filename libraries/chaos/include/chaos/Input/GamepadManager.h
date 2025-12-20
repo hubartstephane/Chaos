@@ -139,9 +139,9 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	public:
 
 		/** the left engine of the gamepad ('shocks') */
-		float left_value = 1.0f;
+		float left_value = 0.0f;
 		/** the right engine of the gamepad ('vibration') */
-		float right_value = 1.0f;
+		float right_value = 0.0f;
 	};
 
 	/**

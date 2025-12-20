@@ -103,7 +103,10 @@ namespace chaos
 		{
 			timer += delta_time;
 			if (timer >= duration)
+			{
+				out_motor_values = {};
 				return true; // end of the effect
+			}
 		}
 		out_motor_values = motor_values;
 		return false; // do not destroy the effect
@@ -246,14 +249,10 @@ namespace chaos
 
 				ForceFeedbackMotorValues motor_values;
 				if (feedback_effects[index]->TickAndGetMotorValues(delta_time, motor_values))
-				{
 					RemoveForceFeedbackAt(index);
-				}
-				else
-				{
-					final_motor_values.left_value  = std::max(final_motor_values.left_value, motor_values.left_value);
-					final_motor_values.right_value = std::max(final_motor_values.right_value, motor_values.right_value);
-				}
+
+				final_motor_values.left_value  = std::max(final_motor_values.left_value, motor_values.left_value);
+				final_motor_values.right_value = std::max(final_motor_values.right_value, motor_values.right_value);
 			}
 		}
 		// reduce feedback to 0 (do not skip TickAndGetMotorValues(...) calls so the effects tick themselves even if muted

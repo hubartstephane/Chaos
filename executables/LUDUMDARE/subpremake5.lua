@@ -5,7 +5,7 @@
 build:ProcessSubPremake("Ludum40-AskiPaouf")
 build:ProcessSubPremake("Ludum41-AsciiPaouf")
 build:ProcessSubPremake("Ludum41-AsciiPaouf-Isolation")
-build:ProcessSubPremake("Ludum41-AsciiPaouf-JujuAndBarbara")
+build:ProcessSubPremake("Ludum41-AsciiPaouf-JujuAndBarb")
 build:ProcessSubPremake("Ludum43-QuanticPaouf")
 build:ProcessSubPremake("Ludum44-KillPaouf")
 build:ProcessSubPremake("Ludum45-Jesaouf")

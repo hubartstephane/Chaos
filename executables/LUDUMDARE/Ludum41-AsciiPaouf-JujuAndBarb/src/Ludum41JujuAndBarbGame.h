@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Ludum41CustomPCH.h"
-#include "Ludum41CustomChallenge.h"
-#include "Ludum41CustomParticles.h"
-#include "Ludum41CustomChallengeRewardPunishment.h"
-#include "Ludum41CustomLevel.h"
-#include "Ludum41CustomHUD.h"
+#include "Ludum41JujuAndBarbPCH.h"
+#include "Ludum41JujuAndBarbChallenge.h"
+#include "Ludum41JujuAndBarbParticles.h"
+#include "Ludum41JujuAndBarbChallengeRewardPunishment.h"
+#include "Ludum41JujuAndBarbLevel.h"
+#include "Ludum41JujuAndBarbHUD.h"
 
 
 

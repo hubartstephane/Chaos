@@ -1,9 +1,9 @@
-#include "Ludum41CustomPCH.h"
-#include "Ludum41CustomPlayer.h"
-#include "Ludum41CustomGame.h"
-#include "Ludum41CustomGameInstance.h"
-#include "Ludum41CustomLevel.h"
-#include "Ludum41CustomLevelInstance.h"
+#include "Ludum41JujuAndBarbPCH.h"
+#include "Ludum41JujuAndBarbPlayer.h"
+#include "Ludum41JujuAndBarbGame.h"
+#include "Ludum41JujuAndBarbGameInstance.h"
+#include "Ludum41JujuAndBarbLevel.h"
+#include "Ludum41JujuAndBarbLevelInstance.h"
 
 bool LudumPlayer::Initialize(chaos::GameInstance* in_game_instance)
 {

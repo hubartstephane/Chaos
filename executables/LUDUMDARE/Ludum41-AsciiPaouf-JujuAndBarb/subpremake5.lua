@@ -1,11 +1,11 @@
 -- =============================================================================
--- ROOT_PATH/executables/LUDUM/Ludum41-AsciiPaouf-JujuAndBarbara
+-- ROOT_PATH/executables/LUDUM/Ludum41-AsciiPaouf-JujuAndBarb
 -- =============================================================================
 
 local project = build:WindowedApp()
 project:DependOnLib("chaos")
 project:DependOnLib("CommonFonts")
 project:PrecompiledHeader(
-	path.join("Ludum41CustomPCH.h"),
-	path.join("src","Ludum41CustomPCH.cpp")
+	path.join("Ludum41JujuAndBarbPCH.h"),
+	path.join("src","Ludum41JujuAndBarbPCH.cpp")
 )

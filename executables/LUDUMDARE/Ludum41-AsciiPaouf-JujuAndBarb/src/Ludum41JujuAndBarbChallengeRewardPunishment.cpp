@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Ludum41CustomPCH.h"
-#include "Ludum41CustomChallengeRewardPunishment.h"
-#include "Ludum41CustomGame.h"
-#include "Ludum41CustomGameInstance.h"
+#include "Ludum41JujuAndBarbPCH.h"
+#include "Ludum41JujuAndBarbChallengeRewardPunishment.h"
+#include "Ludum41JujuAndBarbGame.h"
+#include "Ludum41JujuAndBarbGameInstance.h"
 
 // =========================================================
 

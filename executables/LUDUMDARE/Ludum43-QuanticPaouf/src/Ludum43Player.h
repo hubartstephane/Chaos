@@ -27,12 +27,8 @@ protected:
 	/** override */
 	virtual void TickInternal(float delta_time) override;
 	/** override */
-	virtual void TickPlayerDisplacement(float delta_time) override;
-	/** override */
-	virtual void HandleInputs(float delta_time, chaos::GamepadState const * gpd) override;
+	virtual bool EnumerateInputActions(chaos::InputActionEnumerator& in_action_enumerator, chaos::EnumerateInputActionContext in_context) override;
 
-	/** update player displacement with the stick values that are stored */
-	virtual void UpdatePlayerAcceleration(float delta_time);
 	/** cooldown the weapon */
 	void TickCooldown(float delta_time);
 	void TickDashValues(float delta_time);

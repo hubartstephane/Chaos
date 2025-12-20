@@ -1,11 +1,11 @@
 -- =============================================================================
--- ROOT_PATH/executables/LUDUM/Ludum41Isolation
+-- ROOT_PATH/executables/LUDUM/Ludum43-QuanticPaouf
 -- =============================================================================
 
 local project = build:WindowedApp()
 project:DependOnLib("chaos")
 project:DependOnLib("CommonFonts")
 project:PrecompiledHeader(
-	path.join("Ludum41IsolationPCH.h"),
-	path.join("src","Ludum41IsolationPCH.cpp")
+	path.join("Ludum43PCH.h"),
+	path.join("src","Ludum43PCH.cpp")
 )

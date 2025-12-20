@@ -1,11 +1,11 @@
 -- =============================================================================
--- ROOT_PATH/executables/LUDUM/Ludum44
+-- ROOT_PATH/executables/LUDUM/Ludum48-BouldaoufDash
 -- =============================================================================
 
 local project = build:WindowedApp()
 project:DependOnLib("chaos")
 project:DependOnLib("CommonFonts")
 project:PrecompiledHeader(
-	path.join("Ludum44PCH.h"),
-	path.join("src","Ludum44PCH.cpp")
+	path.join("Ludum48PCH.h"),
+	path.join("src","Ludum48PCH.cpp")
 )

@@ -1,11 +1,10 @@
 -- =============================================================================
--- ROOT_PATH/executables/LUDUM/Ludum41Custom
+-- ROOT_PATH/executables/LUDUM/Ludum40-AskiPaouf
 -- =============================================================================
 
 local project = build:WindowedApp()
 project:DependOnLib("chaos")
-project:DependOnLib("CommonFonts")
 project:PrecompiledHeader(
-	path.join("Ludum41CustomPCH.h"),
-	path.join("src","Ludum41CustomPCH.cpp")
+	path.join("Ludum40PCH.h"),
+	path.join("src","Ludum40PCH.cpp")
 )

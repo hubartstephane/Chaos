@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/LUDUM/Ludum45
+-- ROOT_PATH/executables/LUDUM/Ludum45-Jesaouf
 -- =============================================================================
 
 local project = build:WindowedApp()

@@ -308,7 +308,7 @@ namespace chaos
 	{
 		// force feedback effect
 		if (gamepad != nullptr)
-			gamepad->AddForceFeedbackEffect(new DefaultForceFeedbackEffect(-0.9f, { 1.0f, 1.0f }));
+			gamepad->AddForceFeedbackEffect(new DefaultForceFeedbackEffect(0.9f, { 1.0f, 1.0f }));
 		// camera effect
 		Camera* camera = GetLevelInstance()->GetCamera(0);
 		if (camera != nullptr)

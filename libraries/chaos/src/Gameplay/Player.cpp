@@ -308,7 +308,7 @@ namespace chaos
 	{
 		// force feedback effect
 		if (gamepad != nullptr)
-			gamepad->AddForceFeedbackEffect(new DefaultForceFeedbackEffect(0.9f, { 1.0f, 1.0f }));
+			gamepad->AddForceFeedbackEffect(new DefaultForceFeedbackEffect(0.5f, { 1.0f, 1.0f }));
 		// camera effect
 		Camera* camera = GetLevelInstance()->GetCamera(0);
 		if (camera != nullptr)
@@ -356,26 +356,9 @@ namespace chaos
 
 	bool Player::EnumerateInputActions(InputActionEnumerator& in_action_enumerator, EnumerateInputActionContext in_context)
 	{
-		if (gamepad != nullptr)
-		{
-			KeyState const * st = gamepad->GetInputState(Key::GAMEPAD_SPECIAL_LEFT);
-			if (st != nullptr)
-			{
-				bool b = st->GetValue();
-
-				if (b)
-					b = b;
-			}
-
-
-		}
-		
-
 		if (Game* game = GetGame())
 		{
-			//auto PauseRequest = Or(JustActivated(Key::GAMEPAD_SPECIAL_LEFT), JustActivated(Key::GAMEPAD_SPECIAL_RIGHT));
-
-			auto PauseRequest = JustActivated(Key::GAMEPAD_SPECIAL_LEFT);
+			auto PauseRequest = Or(JustActivated(Key::GAMEPAD_SPECIAL_LEFT), JustActivated(Key::GAMEPAD_SPECIAL_RIGHT));
 
 			if (in_action_enumerator.CheckAndProcess(PauseRequest, "Toggle Pause", [&]()
 			{

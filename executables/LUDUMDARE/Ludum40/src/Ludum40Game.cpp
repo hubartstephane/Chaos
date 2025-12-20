@@ -25,18 +25,9 @@
 
 // ======================================================================================
 
-bool MyGamepadManager::DoPollGamepad(chaos::PhysicalGamepad * physical_gamepad)
-{
-	if (game != nullptr)
-		return game->OnPhysicalGamepadInput(physical_gamepad);
-	return true;
-}
-
-// ======================================================================================
-
 void Game::Tick(float delta_time)
 {
-	gamepad_manager->Tick(delta_time);
+	gamepad_manager->Tick(delta_time, this);
 
 	if (pending_gameover || pending_restart_game)
 	{
@@ -367,7 +358,7 @@ bool Game::DoInitialize(boost::filesystem::path const & resource_path, boost::fi
 
 bool Game::InitializeGamepadManager()
 {
-	gamepad_manager = new MyGamepadManager(this);
+	gamepad_manager = new chaos::GamepadManager();
 
 	return (gamepad_manager != nullptr);
 }
@@ -694,8 +685,10 @@ void Game::Display(chaos::GPURenderContext * render_context, glm::ivec2 viewport
 	DisplayControls(render_context, viewport_size);
 }
 
-bool Game::OnPhysicalGamepadInput(chaos::PhysicalGamepad * physical_gamepad)
+bool Game::DoPollGamepad(chaos::PhysicalGamepad * physical_gamepad)
 {
+	assert(physical_gamepad != nullptr);
+
 	if (!game_started)
 	{
 		if (physical_gamepad->IsAnyKeyActive())

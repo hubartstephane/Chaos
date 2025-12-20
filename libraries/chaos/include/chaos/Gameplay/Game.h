@@ -230,9 +230,9 @@ namespace chaos
 		virtual bool CreateGameWindow(JSONReadConfiguration config);
 
 		/** special action on gamepad input reception */
-		virtual bool OnGamepadInput(PhysicalGamepad* in_physical_gamepad);
+		virtual bool OnGamepadInput(PhysicalGamepad * in_physical_gamepad);
 		/** called whenever a gamepad input is comming */
-		virtual bool OnPhysicalGamepadInput(PhysicalGamepad* physical_gamepad);
+		virtual bool OnPhysicalGamepadInput(PhysicalGamepad * physical_gamepad);
 
 		/** called whenever the input mode changes */
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;

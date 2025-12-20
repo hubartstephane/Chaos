@@ -6,24 +6,7 @@
 
 // ======================================================================================
 
-class MyGamepadManager : public chaos::GamepadManager
-{
-public:
-
-	MyGamepadManager(class Game * in_game) : game(in_game) {}
-
-protected:
-
-	virtual bool DoPollGamepad(chaos::PhysicalGamepad * physical_gamepad) override;
-
-protected:
-
-	class Game * game = nullptr;
-};
-
-// ======================================================================================
-
-class Game : public chaos::Object
+class Game : public chaos::Object, public chaos::GamepadPollInterface
 {
 	static constexpr int PLAYER_LAYER = -1;
 	static constexpr int PAUSED_OBJECT_LAYER = -3;
@@ -91,7 +74,7 @@ protected:
 
 	void OnGameStarted();
 
-	bool OnPhysicalGamepadInput(chaos::PhysicalGamepad * physical_gamepad);
+	virtual bool DoPollGamepad(chaos::PhysicalGamepad * physical_gamepad) override;
 
 	class SpriteLayer * FindSpriteLayer(int layer);
 
@@ -136,7 +119,7 @@ protected:
 
 	std::vector<ObjectDefinition> object_definitions;
 
-	chaos::shared_ptr<MyGamepadManager> gamepad_manager;
+	chaos::shared_ptr<chaos::GamepadManager> gamepad_manager;
 
 	// screen information
 	glm::vec2 world_size;

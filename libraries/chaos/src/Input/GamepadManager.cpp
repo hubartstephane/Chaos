@@ -3,6 +3,13 @@
 
 namespace chaos
 {
+#if _DEBUG
+	namespace GlobalVariables
+	{
+		CHAOS_GLOBAL_VARIABLE(bool, ForceFeedbackEnabled, true);
+	};
+#endif
+
 	//
 	// GamepadInputFilterSettings functions
 	//
@@ -31,17 +38,8 @@ namespace chaos
 	// PhysicalGamepad functions
 	//
 
-	PhysicalGamepad::PhysicalGamepad(GamepadManager* in_gamepad_manager, int in_stick_index) :
-		gamepad_manager(in_gamepad_manager),
-		stick_index(in_stick_index)
-	{
-		assert(in_gamepad_manager != nullptr);
-	}
-
 	void PhysicalGamepad::ClearInputs()
 	{
-		if (!IsPresent())
-			return;
 		gamepad_state.Clear();
 	}
 
@@ -57,7 +55,7 @@ namespace chaos
 	{
 		if (!IsPresent())
 			return;
-		gamepad_state.UpdateAxisAndButtons(stick_index, in_filter_settings);
+		gamepad_state.UpdateAxisAndButtons(gamepad_index, in_filter_settings);
 	}
 
 	Gamepad* PhysicalGamepad::CaptureDevice(GamepadInputFilterSettings const* in_filter_settings, GamepadCallbacks* in_callbacks)
@@ -71,18 +69,20 @@ namespace chaos
 
 	void ForceFeedbackEffect::SubReference()
 	{
-		// the ParticleAllocation is handled as usual
+		// the object is handled as usual
 		if (gamepad == nullptr)
 			Object::SubReference();
-		// the last reference is the one from the layer. Destroy it
+		// the last reference is the one from the gamepad. Destroy it
 		else if (--shared_count == 1)
+		{
+			assert(gamepad != nullptr);
 			RemoveFromGamepad();
+		}
 	}
 
-	bool ForceFeedbackEffect::GetForceFeedbackValues(float delta_time, float& result_left_value, float& result_right_value)
+	bool ForceFeedbackEffect::TickAndGetMotorValues(float delta_time, ForceFeedbackMotorValues& out_motor_values)
 	{
-		result_left_value = 0.0f;
-		result_right_value = 0.0f;
+		out_motor_values = {};
 		return false; // do not destroy the effect
 	}
 
@@ -97,13 +97,15 @@ namespace chaos
 	// DefaultForceFeedbackEffect functions
 	//
 
-	bool DefaultForceFeedbackEffect::GetForceFeedbackValues(float delta_time, float& result_left_value, float& result_right_value)
+	bool DefaultForceFeedbackEffect::TickAndGetMotorValues(float delta_time, ForceFeedbackMotorValues& out_motor_values)
 	{
-		timer += delta_time;
-		if (timer >= duration)
-			return true; // end of the effect
-		result_left_value = left_value;
-		result_right_value = right_value;
+		if (duration > 0.0f)
+		{
+			timer += delta_time;
+			if (timer >= duration)
+				return true; // end of the effect
+		}
+		out_motor_values = motor_values;
 		return false; // do not destroy the effect
 	}
 
@@ -111,47 +113,56 @@ namespace chaos
 	// Gamepad functions
 	//
 
-	Gamepad::Gamepad(GamepadManager* in_gamepad_manager, PhysicalGamepad* in_physical_device) :
+	Gamepad::Gamepad(GamepadManager* in_gamepad_manager, PhysicalGamepad* in_physical_gamepad, GamepadInputFilterSettings const* in_filter_settings, GamepadCallbacks* in_callbacks) :
 		gamepad_manager(in_gamepad_manager),
-		physical_device(in_physical_device)
+		physical_gamepad(in_physical_gamepad),
+		filter_settings(*in_filter_settings),
+		callbacks(in_callbacks)
 	{
-		assert(gamepad_manager != nullptr);
-		if (physical_device != nullptr)
-		{
-			assert(physical_device->IsPresent());
-			physical_device->user_gamepad = this;
-			ever_connected = true;
-		}
+		assert(in_gamepad_manager != nullptr);
+		assert(in_filter_settings != nullptr);
 	}
 
-	Gamepad::~Gamepad()
+	void Gamepad::SubReference()
 	{
-		if (gamepad_manager != nullptr)
-			gamepad_manager->OnGamepadDestroyed(this);
-		if (physical_device != nullptr)
-			physical_device->user_gamepad = nullptr;
+		// the object is handled as usual
+		if (gamepad_manager == nullptr)
+			Object::SubReference();
+		// the last reference is the one from the manager. Destroy it
+		else if (--shared_count == 1)
+		{
+			assert(gamepad_manager != nullptr);
+			gamepad_manager->RemoveGamepad(this);
+		}
 	}
 
 	bool Gamepad::EnumerateDeviceHierarchy(EnumerateDeviceHierarchyFunction func) const
 	{
-		if (physical_device != nullptr)
-			if (physical_device->EnumerateDeviceHierarchy(func))
+		if (physical_gamepad != nullptr)
+			if (physical_gamepad->EnumerateDeviceHierarchy(func))
 				return true;
 		return InputDeviceInterface::EnumerateDeviceHierarchy(func);
 	}
 
-	bool Gamepad::IsPresent() const
+	void Gamepad::ClearInputs()
 	{
-		if (physical_device == nullptr)
-			return false;
-		return physical_device->IsPresent();
+		if (physical_gamepad == nullptr)
+			return;
+		physical_gamepad->ClearInputs();
 	}
 
-	int Gamepad::GetGamepadIndex() const
+	bool Gamepad::IsPresent() const
 	{
-		if (physical_device == nullptr)
-			return -1;
-		return physical_device->GetGamepadIndex();
+		if (physical_gamepad == nullptr)
+			return false;
+		return physical_gamepad->IsPresent();
+	}
+
+	size_t Gamepad::GetGamepadIndex() const
+	{
+		if (physical_gamepad == nullptr)
+			return 0;
+		return physical_gamepad->GetGamepadIndex();
 	}
 
 	void Gamepad::SetCallbacks(GamepadCallbacks* in_callbacks)
@@ -161,18 +172,16 @@ namespace chaos
 
 	GamepadState const* Gamepad::GetGamepadState() const
 	{
-		if (physical_device == nullptr)
+		if (physical_gamepad == nullptr)
 			return nullptr;
-		return physical_device->GetGamepadState();
+		return physical_gamepad->GetGamepadState();
 	}
 
 	void Gamepad::ClearForceFeedbackEffects()
 	{
-		if (feedback_effects.size() > 0)
-		{
-			feedback_effects.clear();
-			TickForceFeedbackEffects(0.0f);
-		}
+		while (feedback_effects.size() > 0)
+			RemoveForceFeedbackAt(feedback_effects.size() - 1);
+		TickForceFeedbackEffects(0.0f);
 	}
 
 	bool Gamepad::ShouldReduceForceFeedbackToZero() const
@@ -201,76 +210,57 @@ namespace chaos
 			TickForceFeedbackEffects(0.0f);
 	}
 
-	namespace GlobalVariables
+	void Gamepad::DoUpdateForceFeedbackDevice(ForceFeedbackMotorValues in_motor_values)
 	{
-#if _DEBUG
-		CHAOS_GLOBAL_VARIABLE(bool, NoForceFeedback, false);
-#endif
-	};
-
-	void Gamepad::DoUpdateForceFeedbackDevice(float max_left_value, float max_right_value)
-	{
-#if _DEBUG
-		if (GlobalVariables::NoForceFeedback.Get())
-		{
-			max_left_value = 0.0f;
-			max_right_value = 0.0f;
-		}
-#endif
 		if (!IsPresent())
 			return;
 #if _WIN64
 		if (GamepadManager::XInputSetStateFunc == nullptr)
 			return;
+#if _DEBUG
+		if (!GlobalVariables::ForceFeedbackEnabled.Get())
+			in_motor_values = {};
+#endif // _DEBUG
 
-		max_left_value = std::clamp(max_left_value, 0.0f, 1.0f);
-		max_right_value = std::clamp(max_right_value, 0.0f, 1.0f);
+		in_motor_values.left_value  = std::clamp(in_motor_values.left_value, 0.0f, 1.0f);
+		in_motor_values.right_value = std::clamp(in_motor_values.right_value, 0.0f, 1.0f);
 
 		XINPUT_VIBRATION vibration;
-		vibration.wLeftMotorSpeed = (WORD)(max_left_value * 65535.0f);
-		vibration.wRightMotorSpeed = (WORD)(max_right_value * 65535.0f);
-		GamepadManager::XInputSetStateFunc(GetGamepadIndex(), &vibration);
-#endif
+		vibration.wLeftMotorSpeed = (WORD)(in_motor_values.left_value * 65535.0f);
+		vibration.wRightMotorSpeed = (WORD)(in_motor_values.right_value * 65535.0f);
+		GamepadManager::XInputSetStateFunc(DWORD(GetGamepadIndex()), &vibration);
+#endif // _WIN64
 	}
 
 	void Gamepad::TickForceFeedbackEffects(float delta_time)
 	{
-		// compute the max left & right values, destroy finished values
-		float max_left_value = 0.0f;
-		float max_right_value = 0.0f;
+		ForceFeedbackMotorValues final_motor_values;
 
+		// compute force feedback intensity
 		if (!force_feedback_paused)
 		{
 			size_t count = feedback_effects.size();
-			for (size_t i = count; i > 0; --i)
+			for (size_t i = count; i > 0; --i) // in reverse order for better removal
 			{
 				size_t index = i - 1;
 
-				ForceFeedbackEffect* effect = feedback_effects[index].get();
-				if (effect == nullptr)
-					continue;
-
-				float left_value = 0.0f;
-				float right_value = 0.0f;
-				if (effect->GetForceFeedbackValues(delta_time, left_value, right_value))
+				ForceFeedbackMotorValues motor_values;
+				if (feedback_effects[index]->TickAndGetMotorValues(delta_time, motor_values))
 				{
-					feedback_effects.erase(feedback_effects.begin() + index);
+					RemoveForceFeedbackAt(index);
 				}
 				else
 				{
-					max_left_value = std::max(max_left_value, left_value);
-					max_right_value = std::max(max_right_value, right_value);
+					final_motor_values.left_value  = std::max(final_motor_values.left_value, motor_values.left_value);
+					final_motor_values.right_value = std::max(final_motor_values.right_value, motor_values.right_value);
 				}
 			}
 		}
-		// reduce feedback to 0 (do not skip GetForceFeedbackValues(...) calls so the effects tick themselves even if muted
+		// reduce feedback to 0 (do not skip TickAndGetMotorValues(...) calls so the effects tick themselves even if muted
 		if (ShouldReduceForceFeedbackToZero())
-		{
-			max_left_value = 0.0f;
-			max_right_value = 0.0f;
-		}
+			final_motor_values = {};
 		// update the device
-		DoUpdateForceFeedbackDevice(max_left_value, max_right_value);
+		DoUpdateForceFeedbackDevice(final_motor_values);
 	}
 
 	void Gamepad::AddForceFeedbackEffect(ForceFeedbackEffect* effect)
@@ -281,20 +271,33 @@ namespace chaos
 		feedback_effects.push_back(effect);
 	}
 
-	void Gamepad::RemoveForceFeedbackEffect(ForceFeedbackEffect* effect)
+	bool Gamepad::RemoveForceFeedbackEffect(ForceFeedbackEffect* effect)
 	{
 		assert(effect != nullptr);
 		assert(effect->gamepad == this);
 
-		for (size_t i = feedback_effects.size(); i > 0; --i) // from end to beginning because ... maybe a future DetachAllFeedback(...) function will be from end to beginning
+		size_t count = feedback_effects.size();
+		for (size_t i = count; i > 0; --i) // from end to beginning because ... maybe a future DetachAllFeedback(...) function will be from end to beginning
 		{
 			size_t index = i - 1;
 			if (feedback_effects[index] == effect)
-			{
-				feedback_effects.erase(feedback_effects.begin() + index);
-				return;
-			}
+				return RemoveForceFeedbackAt(index);
 		}
+		return false;
+	}
+
+	bool Gamepad::RemoveForceFeedbackAt(size_t index)
+	{
+		ForceFeedbackEffect * effect = feedback_effects[index].get();
+		assert(effect != nullptr);
+		assert(effect->gamepad == this);
+
+		effect->gamepad = nullptr;
+
+		feedback_effects[index] = feedback_effects[feedback_effects.size() - 1];
+		feedback_effects.pop_back();
+
+		return true;
 	}
 
 	GamepadInputFilterSettings const& Gamepad::GetInputFilterSettings() const
@@ -304,6 +307,16 @@ namespace chaos
 	void Gamepad::SetInputFilterSettings(GamepadInputFilterSettings const& in_filter_settings)
 	{
 		filter_settings = in_filter_settings;
+	}
+
+	//
+	// GamepadPollInterface functions
+	//
+
+	bool GamepadPollInterface::DoPollGamepad(PhysicalGamepad * physical_gamepad)
+	{
+		assert(physical_gamepad != nullptr);
+		return true;
 	}
 
 	//
@@ -328,226 +341,149 @@ namespace chaos
 				XInputSetStateFunc = (XINPUT_SET_STATE_FUNC)GetProcAddress(hModule, "XInputSetState");
 		}
 #endif
-		// allocate a PhysicalGamepad for all supported inputs
-		physical_gamepads.reserve(MAX_SUPPORTED_GAMEPAD_COUNT);
-		for (int i = 0; i < MAX_SUPPORTED_GAMEPAD_COUNT; ++i)
+		// initialize all physical gamepads
+		for (size_t i = 0; i < MAX_SUPPORTED_GAMEPAD_COUNT; ++i)
 		{
-			PhysicalGamepad* physical_gamepad = new PhysicalGamepad(this, i);
-			if (physical_gamepad != nullptr)
+			PhysicalGamepad& physical_gamepad = physical_gamepads[i];
+			physical_gamepad.gamepad_index   = i;
+			physical_gamepad.gamepad_manager = this;
+
+			int physical_index = int(i);
+
+			if (glfwJoystickPresent(physical_index) && glfwJoystickIsGamepad(physical_index))
 			{
-				physical_gamepad->is_present = (glfwJoystickPresent(i) > 0);
-				if (physical_gamepad->is_present)
-					physical_gamepad->UpdateAxisAndButtons(gamepad_filter_settings);
+				present_physical_gamepads |= uint32_t(1 << i);
+				
+				physical_gamepad.is_present = true;
+				physical_gamepad.UpdateAxisAndButtons(gamepad_filter_settings);
 			}
-			physical_gamepads.push_back(physical_gamepad);
 		}
 	}
 
 	GamepadManager::~GamepadManager()
 	{
-		for (PhysicalGamepad* physical_gamepad : physical_gamepads) // destroy all physical gamepads
-			if (physical_gamepad != nullptr)
-				delete(physical_gamepad);
-		physical_gamepads.clear();
-
-		for (Gamepad* gamepad : user_gamepads) // notify all user gamepads about the destruction
-		{
-			if (gamepad != nullptr)
-			{
-				gamepad->gamepad_manager = nullptr;
-				gamepad->physical_device = nullptr;
-				if (gamepad->callbacks != nullptr)
-					gamepad->callbacks->OnManagerDestroyed(gamepad);
-			}
-		}
-		user_gamepads.clear();
+		while (user_gamepads.size() > 0)
+			RemoveGamepadAt(user_gamepads.size() - 1); // remove last gamepad
 	}
 
-	void GamepadManager::EnableInputPooling(bool in_pooling_enabled)
+	bool GamepadManager::RemoveGamepadAt(size_t index)
 	{
-		pooling_enabled = in_pooling_enabled;
-	}
-
-	bool GamepadManager::IsInputPoolingEnabled() const
-	{
-		return pooling_enabled;
-	}
-
-	bool GamepadManager::OnGamepadDestroyed(Gamepad* gamepad)
-	{
+		Gamepad* gamepad = user_gamepads[index].get();
 		assert(gamepad != nullptr);
+		assert(gamepad->gamepad_manager == this);
 
 		// remove all force feedback effect that could remains on physical device after its destruction
 		gamepad->ClearForceFeedbackEffects();
-		// remove the gamepad for list
-		size_t count = user_gamepads.size();
-		for (size_t i = 0; i < count; ++i)
+
+		// give physical device back to the manager		
+		if (PhysicalGamepad* physical_gamepad = gamepad->physical_gamepad)
 		{
-			if (user_gamepads[i] == gamepad) // remove the gamepad from the list
-			{
-				if (i != count - 1)
-					user_gamepads[i] = user_gamepads[count - 1]; // remove swap
-				user_gamepads.pop_back();
-				break;
-			}
+			allocated_physical_gamepads &= ~uint32_t(1 << physical_gamepad->gamepad_index);
+
+			physical_gamepad->user_gamepad = nullptr;
+			gamepad->physical_gamepad = nullptr;
+
+			if (gamepad->callbacks != nullptr)
+				gamepad->callbacks->OnGamepadDisconnected(gamepad); // notify that the gamepad is loosing its physical device
+		}
+
+		gamepad->gamepad_manager = nullptr;
+
+		user_gamepads[index] = user_gamepads[user_gamepads.size() - 1];
+		user_gamepads.pop_back();
+		return true;
+	}
+
+	bool GamepadManager::RemoveGamepad(Gamepad* in_gamepad)
+	{
+		size_t count = user_gamepads.size();
+		for (size_t i = count; i > 0; --i)
+		{
+			size_t index = i - 1;
+
+			Gamepad* gamepad = user_gamepads[index].get();
+			if (gamepad == in_gamepad)
+				return RemoveGamepadAt(index);
 		}
 		return true;
 	}
 
-	// user explicitly require a physical gamepad
-	PhysicalGamepad* GamepadManager::FindUnallocatedPhysicalGamepad(GamepadCallbacks* in_callbacks)
+	size_t GamepadManager::GetPhysicalGamepadCount() const
 	{
-		PhysicalGamepad* best_physical_gamepad = nullptr;
-
-		size_t count = physical_gamepads.size();
-		for (size_t i = 0; i < count; ++i)
-		{
-			PhysicalGamepad* physical_gamepad = physical_gamepads[i];
-			if (physical_gamepad == nullptr)
-				continue;
-			if (!physical_gamepad->IsPresent())
-				continue;
-			if (physical_gamepad->IsAllocated()) // we want an entry that is owned by nobody
-				continue;
-			if (in_callbacks != nullptr && !in_callbacks->AcceptPhysicalDevice(physical_gamepad)) // user filter
-				continue;
-
-			// the 1st best is to find a physical PRESENT gamepad and that has any input
-			// the 2nd best is to find a physical PRESENT gamepad (even if no input)
-
-			if (physical_gamepad->IsAnyInputActive())
-				return physical_gamepad; // no better choice can be expected => immediate returns
-
-			if (best_physical_gamepad == nullptr)
-				best_physical_gamepad = physical_gamepad; // keep the first in allocation order that fits (XXX : not really allocation order due to remove swap)
-		}
-		return best_physical_gamepad;
-	}
-
-	Gamepad* GamepadManager::AllocateGamepad(bool want_present, GamepadInputFilterSettings const* in_filter_settings, GamepadCallbacks* in_callbacks) // user explicitly require a gamepad
-	{
-		PhysicalGamepad* physical_gamepad = FindUnallocatedPhysicalGamepad(in_callbacks);
-		if (want_present && physical_gamepad == nullptr) // all physical device in use or not present ?
-			return nullptr;
-
-		return DoAllocateGamepad(physical_gamepad, in_filter_settings, in_callbacks);
-	}
-
-	Gamepad* GamepadManager::DoAllocateGamepad(PhysicalGamepad* physical_gamepad, GamepadInputFilterSettings const* in_filter_settings, GamepadCallbacks* in_callbacks)
-	{
-		Gamepad* result = new Gamepad(this, physical_gamepad);
-		if (result != nullptr)
-		{
-			user_gamepads.push_back(result);
-			if (in_callbacks != nullptr)
-			{
-				result->SetInputFilterSettings((in_filter_settings != nullptr) ? *in_filter_settings : gamepad_filter_settings);
-				result->SetCallbacks(in_callbacks);
-				if (physical_gamepad != nullptr)
-					result->callbacks->OnGamepadConnected(result);
-			}
-		}
-		return result;
-	}
-
-	void GamepadManager::Tick(float delta_time)
-	{
-		// update physical stick state / handle disconnection
-		int unallocated_present_physical_device_count = 0;
-		UpdateAndUnconnectPhysicalGamepads(unallocated_present_physical_device_count); // get the number of physical devices to bind
-
-		// try to give all logical device a physical device
-		if (unallocated_present_physical_device_count > 0)
-			GiveGamepadPhysicalDevices(unallocated_present_physical_device_count);
-
-		// uncatched inputs pooling
-		if (unallocated_present_physical_device_count > 0 && pooling_enabled)
-			PoolInputs(unallocated_present_physical_device_count);
-
-		// tick the force feedback effects
-		TickForceFeedbackEffects(delta_time);
-	}
-
-	void GamepadManager::PoolInputs(int& unallocated_present_physical_device_count)
-	{
-		size_t count = physical_gamepads.size();
-		for (size_t i = 0; i < count; ++i)
-		{
-			if (unallocated_present_physical_device_count == 0) // early exit
-				return;
-
-			PhysicalGamepad* physical_gamepad = physical_gamepads[i];
-			if (physical_gamepad == nullptr)
-				continue;
-			if (!physical_gamepad->IsPresent())
-				continue;
-			if (physical_gamepad->IsAllocated())
-				continue;
-			if (!physical_gamepad->IsAnyInputActive())
-				continue;
-
-			--unallocated_present_physical_device_count;
-			if (!DoPollGamepad(physical_gamepad))
-				break;
-		}
+		return size_t(BitTools::popcount(present_physical_gamepads));
 	}
 
 	void GamepadManager::TickForceFeedbackEffects(float delta_time)
 	{
-		size_t count = user_gamepads.size();
-		for (size_t i = 0; i < count; ++i)
-		{
-			Gamepad* gamepad = user_gamepads[i];
-			if (gamepad == nullptr)
-				continue;
-			if (!gamepad->IsPresent())
-				continue;
-			gamepad->TickForceFeedbackEffects(delta_time);
-		}
+		for (auto & gamepad : user_gamepads)
+			if (gamepad->IsPresent())
+				gamepad->TickForceFeedbackEffects(delta_time);
 	}
 
-	bool GamepadManager::DoPollGamepad(PhysicalGamepad* physical_gamepad)
+	void GamepadManager::Tick(float delta_time, GamepadPollInterface* in_poll_target)
 	{
-		if (WindowApplication* window_application = Application::GetInstance())
-			return window_application->DoPollGamepad(physical_gamepad);
-		return true;
+		if (!enabled)
+			return;
+		// update physical gamepad state / handle disconnection
+		UpdateAndHandlePhysicalDeviceDisconnection();
+		// try to give all logical device a physical device
+		AssociateUnallocatedPhysicalDevicesToGamepads();
+		// uncatched inputs polling
+		PollInputs(in_poll_target);
+		// tick the force feedback effects
+		TickForceFeedbackEffects(delta_time);
 	}
 
-	void GamepadManager::UpdateAndUnconnectPhysicalGamepads(int& unallocated_present_physical_device_count)
+	void GamepadManager::PollInputs(GamepadPollInterface * in_poll_target)
 	{
-		size_t count = physical_gamepads.size();
-		for (size_t i = 0; i < count; ++i)
+		if (in_poll_target == nullptr || !polling_enabled)
+			return;
+
+		uint32_t unallocated_present_physical_gamepads = present_physical_gamepads & ~allocated_physical_gamepads; // only poll unallocated physical gamepads
+
+		BitTools::ForEachBitForward(unallocated_present_physical_gamepads, [&](uint32_t gamepad_index)
 		{
-			PhysicalGamepad* physical_gamepad = physical_gamepads[i];
-			if (physical_gamepad == nullptr)
-				continue;
+			PhysicalGamepad & physical_gamepad = physical_gamepads[size_t(gamepad_index)];
+			assert(physical_gamepad.IsPresent());
+			assert(!physical_gamepad.IsAllocated());
 
-			bool is_present = (glfwJoystickPresent(int(i)) > 0);
-			bool was_present = physical_gamepad->IsPresent();
+			if (physical_gamepad.IsAnyInputActive())
+				in_poll_target->DoPollGamepad(&physical_gamepad);
+		});
+	}
 
-			physical_gamepad->is_present = is_present; // update presence flag
+	void GamepadManager::UpdateAndHandlePhysicalDeviceDisconnection()
+	{
+		for (PhysicalGamepad & physical_gamepad : physical_gamepads)
+		{
+			uint32_t physical_gamepad_bit = uint32_t(1 << physical_gamepad.gamepad_index);
 
+			int  physical_index = int(physical_gamepad.gamepad_index);
+			bool is_present     = glfwJoystickPresent(physical_index) && glfwJoystickIsGamepad(physical_index);
+			bool was_present    = physical_gamepad.IsPresent();
+
+			physical_gamepad.is_present = is_present;
+			
 			if (is_present)
 			{
-				Gamepad* user_gamepad = physical_gamepad->user_gamepad;
+				present_physical_gamepads |= physical_gamepad_bit;
 
-				physical_gamepad->UpdateAxisAndButtons((user_gamepad != nullptr)? user_gamepad->filter_settings : gamepad_filter_settings);
-				
-				if (user_gamepad != nullptr && user_gamepad->callbacks != nullptr)
-					user_gamepad->callbacks->OnGamepadStateUpdated(physical_gamepad->gamepad_state); // notify the user of the update
+				physical_gamepad.UpdateAxisAndButtons((physical_gamepad.user_gamepad != nullptr) ? physical_gamepad.user_gamepad->filter_settings : gamepad_filter_settings);
 
-				if (!physical_gamepad->IsAllocated())
-					++unallocated_present_physical_device_count; // count the number of physical device not owned by a logical device
+				if (physical_gamepad.user_gamepad != nullptr && physical_gamepad.user_gamepad->callbacks != nullptr)
+					physical_gamepad.user_gamepad->callbacks->OnGamepadStateUpdated(physical_gamepad.gamepad_state); // notify the user of the update
 			}
 			else if (was_present)
 			{
-				physical_gamepad->ClearInputs();
+				present_physical_gamepads   &= ~physical_gamepad_bit; // gamepad is not present anymore
+				allocated_physical_gamepads &= ~physical_gamepad_bit; // gamepad is no allocated anymore (if it was)
 
-				Gamepad* user_gamepad = physical_gamepad->user_gamepad;
-				if (user_gamepad != nullptr)
+				physical_gamepad.ClearInputs();
+
+				if (Gamepad* user_gamepad = physical_gamepad.user_gamepad)
 				{
-					user_gamepad->physical_device = nullptr; // unbind physical and logical device
-					physical_gamepad->user_gamepad = nullptr;
+					user_gamepad->physical_gamepad = nullptr; // unbind physical and logical devices
+					physical_gamepad.user_gamepad = nullptr;
 					if (user_gamepad->callbacks != nullptr)
 						user_gamepad->callbacks->OnGamepadDisconnected(user_gamepad);
 				}
@@ -555,112 +491,210 @@ namespace chaos
 		}
 	}
 
-	void GamepadManager::GiveGamepadPhysicalDevices(int& unallocated_present_physical_device_count)
+	Gamepad* GamepadManager::DoCaptureDevice(PhysicalGamepad* in_physical_gamepad, GamepadInputFilterSettings const* in_filter_settings, GamepadCallbacks* in_callbacks)
 	{
-		size_t count = physical_gamepads.size();
+		assert(in_physical_gamepad != nullptr);
 
-		for (int step = 0; step < 2; ++step) // 2 steps algorithm : 1 - physical device with any inputs  2 - any physical device (even without inputs)
-		{
-			for (size_t i = 0; i < count; ++i)
-			{
-				if (unallocated_present_physical_device_count == 0) // no more present physical device ?
-					return;
-
-				PhysicalGamepad* physical_gamepad = physical_gamepads[i];
-				if (physical_gamepad == nullptr)
-					continue;
-				if (!physical_gamepad->IsPresent())
-					continue;
-				if (physical_gamepad->IsAllocated()) // want unbound physical device
-					continue;
-
-				if (step == 0 && !physical_gamepad->IsAnyInputActive()) // in step 0, ignore sticks that have no inputs
-					continue;
-
-				if (!DoGiveGamepadPhysicalDevice(physical_gamepad)) // returns false if no logical gamepad wants a physical device
-					return;
-
-				--unallocated_present_physical_device_count;
-			}
-		}
-	}
-
-	Gamepad* GamepadManager::FindBestGamepadToBeBoundToPhysicalDevice(PhysicalGamepad* physical_gamepad)
-	{
-		Gamepad* best_gamepad = nullptr;
-
-		size_t count = user_gamepads.size();
-		for (size_t i = 0; i < count; ++i)
-		{
-			Gamepad* gamepad = user_gamepads[i];
-			if (gamepad == nullptr)
-				continue;
-			if (gamepad->physical_device != nullptr) // logical device does not need to be bound to a physical device
-				continue;
-			if (gamepad->callbacks != nullptr && !gamepad->callbacks->AcceptPhysicalDevice(physical_gamepad)) // user filter
-				continue;
-			if (gamepad->IsEverConnected()) // the best is to use a gamepad that has already received a physical device (more likely to have been really used)
-				return gamepad;
-			if (best_gamepad == nullptr)
-				best_gamepad = gamepad; // in a second step, we will return any gamepad (by order of allocation)
-		}
-		return best_gamepad;
-	}
-
-	bool GamepadManager::DoGiveGamepadPhysicalDevice(PhysicalGamepad* physical_gamepad)
-	{
-		Gamepad* best_gamepad = FindBestGamepadToBeBoundToPhysicalDevice(physical_gamepad);
-		if (best_gamepad == nullptr)
-			return false;               // no orphan logical device
-
-		physical_gamepad->user_gamepad = best_gamepad;
-		best_gamepad->physical_device = physical_gamepad;
-		best_gamepad->ever_connected = true;
-
-		if (best_gamepad->callbacks != nullptr)
-			best_gamepad->callbacks->OnGamepadConnected(best_gamepad);
-
-		return true;
-	}
-
-	bool GamepadManager::HasAnyInputs(int stick_index, float dead_zone)
-	{
-		if (glfwJoystickPresent(stick_index)) // ensure any input is triggered
-		{
-			int buttons_count = 0;
-			int axis_count = 0;
-
-			float const* axis_buffer = glfwGetJoystickAxes(stick_index, &axis_count);
-			if (axis_buffer != nullptr)
-				for (size_t i = 0; i < (size_t)axis_count; ++i)
-					if (axis_buffer[i] > dead_zone || axis_buffer[i] < -dead_zone) // is axis valid
-						return true;
-
-			unsigned char const* buttons_buffer = glfwGetJoystickButtons(stick_index, &buttons_count);
-			if (buttons_buffer != nullptr)
-				for (size_t i = 0; i < (size_t)buttons_count; ++i)
-					if (buttons_buffer[i]) // is button pressed ?
-						return true;
-		}
-		return false;
-	}
-
-	Gamepad* GamepadManager::DoCaptureDevice(PhysicalGamepad* in_physical_gamepad, GamepadInputFilterSettings const * in_filter_settings, GamepadCallbacks* in_callbacks)
-	{
 		// the physical device is not present
 		if (!in_physical_gamepad->IsPresent())
 			return nullptr;
 		// the device is already allocated
-		if (in_physical_gamepad->user_gamepad != nullptr)
+		if (in_physical_gamepad->IsAllocated())
 			return nullptr;
 
 		return DoAllocateGamepad(in_physical_gamepad, in_filter_settings, in_callbacks);
 	}
 
+	Gamepad* GamepadManager::AllocateGamepad(bool want_present, GamepadInputFilterSettings const* in_filter_settings, GamepadCallbacks* in_callbacks) // user explicitly require a gamepad
+	{
+		PhysicalGamepad* physical_gamepad = FindUnallocatedPhysicalDevice(in_callbacks);
+		if (want_present && physical_gamepad == nullptr) // all physical device in use or not present ?
+			return nullptr;
+
+		return DoAllocateGamepad(physical_gamepad, in_filter_settings, in_callbacks);
+	}
+
+	PhysicalGamepad* GamepadManager::FindUnallocatedPhysicalDevice(GamepadCallbacks* in_callbacks)
+	{
+		uint32_t unallocated_present_physical_gamepads = present_physical_gamepads & ~allocated_physical_gamepads; // only interrested in present unallocated devices
+
+		PhysicalGamepad* best_physical_gamepad = nullptr;
+
+		// the 1st best is to find a physical PRESENT gamepad and that has any input
+		// the 2nd best is to find a physical PRESENT gamepad (even if no input)
+		PhysicalGamepad * result = BitTools::ForEachBitForward(unallocated_present_physical_gamepads, [&](uint32_t gamepad_index) -> PhysicalGamepad *
+		{
+			PhysicalGamepad & physical_gamepad = physical_gamepads[size_t(gamepad_index)];
+			assert(physical_gamepad.IsPresent());
+			assert(!physical_gamepad.IsAllocated());
+
+			if (in_callbacks != nullptr && !in_callbacks->AcceptPhysicalDevice(&physical_gamepad)) // user filter
+				return nullptr;
+
+			if (physical_gamepad.IsAnyInputActive()) // no better choice can be expected
+				return &physical_gamepad;
+
+			if (best_physical_gamepad == nullptr)
+				best_physical_gamepad = &physical_gamepad; // keep the first that fits
+
+			return nullptr;
+		});
+
+		return (result != nullptr) ? result : best_physical_gamepad;
+	}
+
+	Gamepad* GamepadManager::DoAllocateGamepad(PhysicalGamepad* in_physical_gamepad, GamepadInputFilterSettings const* in_filter_settings, GamepadCallbacks* in_callbacks)
+	{
+		if (in_filter_settings == nullptr)
+			in_filter_settings = &gamepad_filter_settings;
+
+		Gamepad* result = new Gamepad(this, in_physical_gamepad, in_filter_settings, in_callbacks);
+		if (result == nullptr)
+			return nullptr;
+
+		user_gamepads.push_back(result);
+
+		if (in_physical_gamepad != nullptr)
+		{
+			assert(in_physical_gamepad->IsPresent());
+			assert(!in_physical_gamepad->IsAllocated());
+
+			result->ever_connected = true;
+
+			in_physical_gamepad->user_gamepad = result;
+
+			allocated_physical_gamepads |= uint32_t(1 << in_physical_gamepad->gamepad_index);
+
+			if (in_callbacks != nullptr)
+				in_callbacks->OnGamepadConnected(result);
+		}
+		return result;
+	}
+
+	void GamepadManager::AssociateUnallocatedPhysicalDevicesToGamepads()
+	{
+		for (bool require_active_inputs : {true, false}) // 2 steps algorithm : 1 - physical device with any inputs  2 - any physical device (even without inputs)
+		{
+			uint32_t unallocated_present_physical_gamepads = present_physical_gamepads & ~allocated_physical_gamepads;
+
+			BitTools::ForEachBitForward(unallocated_present_physical_gamepads, [&](uint32_t gamepad_index)
+			{
+				PhysicalGamepad & physical_gamepad = physical_gamepads[size_t(gamepad_index)];
+				assert(physical_gamepad.IsPresent());
+				assert(!physical_gamepad.IsAllocated());
+
+				if (require_active_inputs && !physical_gamepad.IsAnyInputActive()) // in step 0, ignore gamepads that have no inputs
+					return;
+				DoGivePhysicalDeviceToAnyGamepad(&physical_gamepad);
+			});
+		}
+	}
+
+	Gamepad * GamepadManager::DoGivePhysicalDeviceToAnyGamepad(PhysicalGamepad * in_physical_gamepad)
+	{
+		assert(in_physical_gamepad != nullptr);
+
+		Gamepad* result = FindBestGamepadCandidateForPhysicalDevice(in_physical_gamepad);
+		if (result == nullptr)
+			return nullptr;
+
+		allocated_physical_gamepads |= uint32_t(1 << in_physical_gamepad->gamepad_index);
+
+		in_physical_gamepad->user_gamepad = result;
+		result->physical_gamepad = in_physical_gamepad;
+		result->ever_connected   = true;
+
+		if (result->callbacks != nullptr)
+			result->callbacks->OnGamepadConnected(result);
+
+		return result;
+	}
+
+	Gamepad* GamepadManager::FindBestGamepadCandidateForPhysicalDevice(PhysicalGamepad* in_physical_gamepad)
+	{
+		assert(in_physical_gamepad != nullptr);
+
+		Gamepad* best_gamepad = nullptr;
+
+		size_t count = user_gamepads.size();
+		for (auto & gamepad : user_gamepads)
+		{
+			if (gamepad->physical_gamepad != nullptr) // already bound
+				continue;
+			if (gamepad->callbacks != nullptr && !gamepad->callbacks->AcceptPhysicalDevice(in_physical_gamepad)) // user filter
+				continue;
+			if (gamepad->IsEverConnected()) // the best is to use a gamepad that has already received a physical device (more likely to have been really used)
+				return gamepad.get();
+			if (best_gamepad == nullptr)
+				best_gamepad = gamepad.get(); // in a second step, we will return any gamepad (by order of allocation)
+		}
+		return best_gamepad;
+	}
+
+	bool GamepadManager::HasAnyInputs(size_t gamepad_index, float dead_zone)
+	{
+		int physical_index = int(gamepad_index);
+
+		if (glfwJoystickPresent(physical_index) == FALSE || glfwJoystickIsGamepad(physical_index) == GLFW_FALSE)
+			return false;
+
+		GLFWgamepadstate state;
+		if (glfwGetGamepadState(physical_index, &state) == GLFW_FALSE)
+			return false;
+
+		for (size_t i = 0; i < GamepadState::BUTTON_COUNT; ++i)
+			if (state.buttons[i])
+				return true;
+
+		for (size_t i = 0; i < GamepadState::AXIS_COUNT; ++i)
+			if (state.axes[i] > dead_zone || state.axes[i] < -dead_zone)
+				return true;
+
+		return false;
+	}
+
 	bool GamepadManager::OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context)
 	{
-		JSONTools::GetAttribute(config, "enabled", enabled, true);
+		bool is_enabled = true;
+		JSONTools::GetAttribute(config, "enabled", is_enabled, true);
+		SetEnabled(is_enabled);
+
+		bool is_polling_enabled = true;
+		JSONTools::GetAttribute(config, "polling_enabled", is_polling_enabled, true);
+		SetPollingEnabled(is_polling_enabled);
+
 		return true;
+	}
+
+	bool GamepadManager::IsEnabled() const
+	{
+		return enabled;
+	}
+
+	void GamepadManager::SetEnabled(bool in_enabled)
+	{
+		if (enabled != in_enabled)
+		{
+			enabled = in_enabled;
+			if (!enabled)
+			{
+				for (auto& gamepad : user_gamepads)
+				{
+					gamepad->ClearInputs();
+					gamepad->ClearForceFeedbackEffects();
+				}
+			}
+		}
+	}
+
+	void GamepadManager::SetPollingEnabled(bool in_polling_enabled)
+	{
+		polling_enabled = in_polling_enabled;
+	}
+
+	bool GamepadManager::IsPollingEnabled() const
+	{
+		return polling_enabled;
 	}
 
 }; // namespace chaos

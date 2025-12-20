@@ -14,8 +14,10 @@ class GamepadInputFilterSettings;
 (Gamepad) \
 (GamepadCallbacks) \
 (GamepadManager) \
+(ForceFeedbackMotorValues) \
 (ForceFeedbackEffect) \
-(DefaultForceFeedbackEffect)
+(DefaultForceFeedbackEffect)\
+(GamepadPollInterface)
 
 // forward declaration
 #define CHAOS_GAMEPAD_FORWARD_DECL(r, data, elem) class elem;
@@ -33,7 +35,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	*/
 
 	/** maximum number of supported physical gamepads */
-	static constexpr int MAX_SUPPORTED_GAMEPAD_COUNT = GLFW_JOYSTICK_LAST + 1;
+	static constexpr size_t MAX_SUPPORTED_GAMEPAD_COUNT = GLFW_JOYSTICK_LAST + 1;
 
 	/**
 	* GamepadInputFilterSettings: some configuration describing how to handle gamepad input
@@ -78,8 +80,6 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		virtual bool OnGamepadDisconnected(class Gamepad*) { return true; }
 		/** called whenever a gamepad is "connected" (a new ID is given to it) */
 		virtual bool OnGamepadConnected(class Gamepad*) { return true; }
-		/** called whenever the manager is destroyed before the gamepad */
-		virtual bool OnManagerDestroyed(class Gamepad*) { return true; }
 		/** called to add some filters on inputs */
 		virtual void OnGamepadStateUpdated(class GamepadState&) {}
 	};
@@ -96,8 +96,8 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		/** get a reference on the state */
 		GamepadState const* GetGamepadState() const { return &gamepad_state; }
 
-		/** returns the stick index */
-		int GetGamepadIndex() const { return stick_index; }
+		/** returns the gamepad index */
+		size_t GetGamepadIndex() const { return gamepad_index; }
 		/** returns whether the gamepad is allocated for a user */
 		bool IsAllocated() const { return (user_gamepad != nullptr); }
 		/** returns true whether the gamepad is connected */
@@ -108,31 +108,40 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 
 	protected:
 
-		/** the constructor is protected */
-		PhysicalGamepad(GamepadManager* in_gamepad_manager, int in_stick_index);
-		/** destructor is protected */
-		~PhysicalGamepad() {}
-
 		/** override */
 		virtual bool EnumerateDeviceHierarchy(EnumerateDeviceHierarchyFunction func) const override;
 
 		/** update all the values for the axis and buttons */
 		void UpdateAxisAndButtons(GamepadInputFilterSettings const & in_filter_settings);
-		/** called at unconnection to be sure input cannot be consulted anymore */
+		/** called at disconnection to be sure input cannot be consulted anymore */
 		void ClearInputs();
 
 	protected:
 
 		/** the manager */
 		class GamepadManager* gamepad_manager = nullptr;
-		/** the current stick index */
-		int stick_index = -1;
-		/** indicates whether the stick is present */
+		/** the current gamepad index */
+		size_t gamepad_index = 0;
+		/** indicates whether the gamepad is present */
 		bool is_present = false;
-		/** indicates whether the stick is allocated to a client */
+		/** indicates whether the gamepad is allocated to a client */
 		class Gamepad* user_gamepad = nullptr;
 		/** the device state */
 		GamepadState gamepad_state;
+	};
+
+	/**
+	 * ForceFeedbackMotorValues: get the motor values for forcefeedback effects
+	 */
+
+	class CHAOS_API ForceFeedbackMotorValues
+	{
+	public:
+
+		/** the left engine of the gamepad ('shocks') */
+		float left_value = 1.0f;
+		/** the right engine of the gamepad ('vibration') */
+		float right_value = 1.0f;
 	};
 
 	/**
@@ -146,7 +155,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	public:
 
 		/** returns the values for left and right motors. returns true whether the effect is to be finished */
-		virtual bool GetForceFeedbackValues(float delta_time, float& result_left_value, float& result_right_value);
+		virtual bool TickAndGetMotorValues(float delta_time, ForceFeedbackMotorValues& out_motor_values);
 		/** remove the forcefeedback from its gamepad */
 		void RemoveFromGamepad();
 		/** the force feedbaack effect may deleted itself as soon as a reference is removed and the last one is from the gamepad */
@@ -169,13 +178,12 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	public:
 
 		/** constructor */
-		DefaultForceFeedbackEffect(float in_duration, float in_left_value, float in_right_value) :
+		DefaultForceFeedbackEffect(float in_duration, ForceFeedbackMotorValues const & in_motor_values):
 			duration(in_duration),
-			left_value(in_left_value),
-			right_value(in_right_value) {}
+			motor_values(in_motor_values){}
 
 		/** override */
-		virtual bool GetForceFeedbackValues(float delta_time, float& result_left_value, float& result_right_value) override;
+		virtual bool TickAndGetMotorValues(float delta_time, ForceFeedbackMotorValues & out_motor_values) override;
 
 	protected:
 
@@ -183,10 +191,8 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		float duration = 0.0f;
 		/** the remaining time */
 		float timer = 0.0f;
-		/** the left engine of the gamepad ('shocks') */
-		float left_value = 1.0f;
-		/** the right engine of the gamepad ('vibration') */
-		float right_value = 1.0f;
+		/** the motor values */
+		ForceFeedbackMotorValues motor_values;
 	};
 
 	/**
@@ -201,18 +207,15 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	protected:
 
 		/** constructor */
-		Gamepad(GamepadManager* in_gamepad_manager, PhysicalGamepad* in_physical_device);
+		Gamepad(GamepadManager* in_gamepad_manager, PhysicalGamepad* in_physical_gamepad, GamepadInputFilterSettings const* in_filter_settings, GamepadCallbacks* in_callbacks);
 
 	public:
-
-		/** destructor */
-		virtual ~Gamepad();
 
 		/** get a reference on the state (if connected) */
 		GamepadState const* GetGamepadState() const;
 
-		/** returns the stick index */
-		int GetGamepadIndex() const;
+		/** returns the gamepad index */
+		size_t GetGamepadIndex() const;
 		/** returns true whether the gamepad is connected */
 		bool IsPresent() const;
 		/** returns whether the gamepad has already been connected once */
@@ -239,14 +242,20 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		/** add a force feedback effect */
 		void AddForceFeedbackEffect(ForceFeedbackEffect* effect);
 		/** remove a forcefeedback effect */
-		void RemoveForceFeedbackEffect(ForceFeedbackEffect* effect);
+		bool RemoveForceFeedbackEffect(ForceFeedbackEffect* effect);
 		/** remove force feedback effects */
 		void ClearForceFeedbackEffects();
+
+		/** clear all inputs of the gamepad */
+		void ClearInputs();
 
 		/** get the filter settings */
 		GamepadInputFilterSettings const& GetInputFilterSettings() const;
 		/** set the filter settings */
 		void SetInputFilterSettings(GamepadInputFilterSettings const& in_filter_settings);
+
+		/** override */
+		virtual void SubReference() override;
 
 	protected:
 
@@ -256,21 +265,24 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		/** tick force feedback effects */
 		void TickForceFeedbackEffects(float delta_time);
 		/** setting the left & right values to the device */
-		void DoUpdateForceFeedbackDevice(float max_left_value, float max_right_value);
+		void DoUpdateForceFeedbackDevice(ForceFeedbackMotorValues in_motor_values);
 		/** returns whether forcefeedback should be reduced to 0 */
 		bool ShouldReduceForceFeedbackToZero() const;
+
+		/** remove an effect at a given index */
+		bool RemoveForceFeedbackAt(size_t index);
 
 	protected:
 
 		/** the manager */
 		class GamepadManager* gamepad_manager = nullptr;
 		/* the device */
-		PhysicalGamepad* physical_device = nullptr;
+		PhysicalGamepad* physical_gamepad = nullptr;
 		/** configuration to handle input1D & input2D */
 		GamepadInputFilterSettings filter_settings;
 		/** the callbacks */
 		shared_ptr<GamepadCallbacks> callbacks;
-		/** indicates whether the stick has already be connected to a physical device */
+		/** indicates whether the gamepad has already be connected to a physical device */
 		bool ever_connected = false;
 		/** indicates whether the force feedback is enabled */
 		bool force_feedback_enabled = true;
@@ -281,6 +293,20 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 
 		/** the forcefeedback effects */
 		std::vector<shared_ptr<ForceFeedbackEffect>> feedback_effects;
+	};
+
+	/**
+	* GamepadPollInterface: an interface for objects that want to poll gamepad states
+	*/
+
+	class GamepadPollInterface
+	{
+		CHAOS_GAMEPAD_ALL_FRIENDS;
+
+	public:
+
+		/** called whenever a physical state is to be polled */
+		virtual bool DoPollGamepad(PhysicalGamepad * physical_gamepad);
 	};
 
 	/**
@@ -303,21 +329,26 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		/** destructor */
 		virtual ~GamepadManager();
 
-		/** update all the joysticks */
-		void Tick(float delta_time);
+		/** update all the system */
+		void Tick(float delta_time, GamepadPollInterface* in_poll_target);
 		/** create a gamepad */
 		Gamepad* AllocateGamepad(bool want_present = false, GamepadInputFilterSettings const * in_filter_settings = nullptr, GamepadCallbacks* in_callbacks = nullptr);
-		/** enable / disable pooling */
-		void EnableInputPooling(bool in_pooling_enabled);
-		/** returns true whether input pooling is enabled */
-		bool IsInputPoolingEnabled() const;
-
-		/** returns whether the given stick has any input set */
-		static bool HasAnyInputs(int stick_index, float dead_zone);
+		
+		/** returns whether the given gamepad has any input set */
+		static bool HasAnyInputs(size_t in_gamepad_index, float in_dead_zone);
 		/** returns the number of physical devices */
-		size_t GetPhysicalGamepadCount() const { return physical_gamepads.size(); }
+		size_t GetPhysicalGamepadCount() const;
 		/** gets a physical device */
-		PhysicalGamepad const * GetPhysicalGamepad(size_t index) const { return physical_gamepads[index]; }
+		PhysicalGamepad const & GetPhysicalGamepad(size_t in_index) const { return physical_gamepads[in_index]; }
+
+		/** return whether the manager is enabled */
+		bool IsEnabled() const;
+		/** change the enable state */
+		void SetEnabled(bool in_enabled);
+		/** enable / disable polling */
+		void SetPollingEnabled(bool in_polling_enabled);
+		/** returns true whether input polling is enabled */
+		bool IsPollingEnabled() const;
 
 		/** override */
 		virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
@@ -325,40 +356,46 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	protected:
 
 		/** find a gamepad that is used by nobody */
-		PhysicalGamepad* FindUnallocatedPhysicalGamepad(GamepadCallbacks* in_callbacks);
-		/** update the physical devices and detect unconnections */
-		void UpdateAndUnconnectPhysicalGamepads(int& unallocated_present_physical_device_count);
-		/** try to give a physical device to all unconnected logical device */
-		void GiveGamepadPhysicalDevices(int& unallocated_present_physical_device_count);
-		/** returns false if no more logical device to bound with */
-		bool DoGiveGamepadPhysicalDevice(PhysicalGamepad* physical_gamepad);
+		PhysicalGamepad* FindUnallocatedPhysicalDevice(GamepadCallbacks* in_callbacks);
+		/** update the physical devices and detect disconnections */
+		void UpdateAndHandlePhysicalDeviceDisconnection();
+		/** try to give a physical device to all disconnected logical device */
+		void AssociateUnallocatedPhysicalDevicesToGamepads();
+		/** search and bound a gamepad for a given physical device */
+		Gamepad * DoGivePhysicalDeviceToAnyGamepad(PhysicalGamepad * in_physical_gamepad);
 		/** find the best gamepad that can be bound */
-		Gamepad* FindBestGamepadToBeBoundToPhysicalDevice(PhysicalGamepad* physical_gamepad);
-		/** called whenever a gamepad is destroyed */
-		bool OnGamepadDestroyed(Gamepad* gamepad);
-		/** called to pool inputs on unbound connected physical device */
-		void PoolInputs(int& unallocated_present_physical_device_count);
+		Gamepad * FindBestGamepadCandidateForPhysicalDevice(PhysicalGamepad * in_physical_gamepad);
+		/** remove a gamepad from manager */
+		bool RemoveGamepad(Gamepad* in_gamepad);
+		/** remove a gamepad from manager by its index */
+		bool RemoveGamepadAt(size_t index);
+		/** called to poll inputs on unbound connected physical device */
+		void PollInputs(GamepadPollInterface* in_poll_target);
 		/** internal method to allocate and initialize a gamepad */
-		Gamepad* DoAllocateGamepad(PhysicalGamepad* physical_gamepad, GamepadInputFilterSettings const* in_filter_settings, GamepadCallbacks* in_callbacks);
+		Gamepad* DoAllocateGamepad(PhysicalGamepad * in_physical_gamepad, GamepadInputFilterSettings const* in_filter_settings, GamepadCallbacks* in_callbacks);
 		/** capture a physical device and get a logical device */
-		Gamepad* DoCaptureDevice(PhysicalGamepad* in_physical_gamepad, GamepadInputFilterSettings const* in_filter_settings, GamepadCallbacks* in_callbacks);
+		Gamepad* DoCaptureDevice(PhysicalGamepad * in_physical_gamepad, GamepadInputFilterSettings const* in_filter_settings, GamepadCallbacks* in_callbacks);
 
 		/** tick the force feedback effects of all allocated gamepad */
 		void TickForceFeedbackEffects(float delta_time);
-
-		/** the pool method to override */
-		virtual bool DoPollGamepad(PhysicalGamepad* physical_gamepad);
 
 	protected:
 
 		/** configuration to handle input1D & input2D */
 		GamepadInputFilterSettings gamepad_filter_settings;
+
 		/** the logical gamepads */
-		std::vector<Gamepad*> user_gamepads;
+		std::vector<shared_ptr<Gamepad>> user_gamepads;
+
 		/** the physical gamepads */
-		std::vector<PhysicalGamepad*> physical_gamepads;
-		/** enable pooling unused inputs */
-		bool pooling_enabled = true;
+		std::array<PhysicalGamepad, MAX_SUPPORTED_GAMEPAD_COUNT> physical_gamepads;
+		/** present physical gamepads */
+		uint32_t present_physical_gamepads = 0;
+		/** allocated physical gamepads */
+		uint32_t allocated_physical_gamepads = 0;
+				
+		/** enable polling unused inputs */
+		bool polling_enabled = true;
 		/** whether the manager is enabled */
 		bool enabled = true;
 

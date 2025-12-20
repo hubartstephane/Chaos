@@ -80,7 +80,7 @@ namespace chaos
 		virtual bool DoTick(float delta_time) override;
 
 		/** handle an uncatched gamepad input incomming */
-		virtual bool OnGamepadInput(PhysicalGamepad* in_physical_gamepad);
+		virtual bool OnGamepadInput(PhysicalGamepad * in_physical_gamepad);
 
 		/** override */
 		virtual bool TraverseInputReceiver(InputReceiverTraverser & in_traverser, InputDeviceInterface const* in_input_device) override;

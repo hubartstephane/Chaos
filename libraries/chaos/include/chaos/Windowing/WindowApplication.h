@@ -10,7 +10,7 @@ namespace chaos
 	* WindowApplication
 	*/
 
-	class CHAOS_API WindowApplication : public Application, public TickableInterface, public GPUProgramProviderInterface, public InputReceiverInterface
+	class CHAOS_API WindowApplication : public Application, public TickableInterface, public GPUProgramProviderInterface, public InputReceiverInterface, public GamepadPollInterface
 	{
 		friend class Window;
 		friend class GamepadManager;
@@ -301,10 +301,6 @@ namespace chaos
 		virtual bool FillAtlasGeneratorInputSprites(AtlasInput& input);
 		/** generate atlas entries relative to fonts */
 		virtual bool FillAtlasGeneratorInputFonts(AtlasInput& input);
-
-		/** called whenever a gamepad has some uncatched input */
-		virtual bool DoPollGamepad(PhysicalGamepad* physical_gamepad);
-
 
 
 

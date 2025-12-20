@@ -764,7 +764,8 @@ namespace chaos
 
 	bool Game::OnGamepadInput(PhysicalGamepad * in_physical_gamepad) // an uncatched gamepad input incomming
 	{
-		assert(in_physical_gamepad != nullptr && !in_physical_gamepad->IsAllocated());
+		assert(in_physical_gamepad != nullptr);
+		assert(!in_physical_gamepad->IsAllocated());
 
 		// try start the game
 		if (game_instance == nullptr)
@@ -781,6 +782,8 @@ namespace chaos
 
 	bool Game::OnPhysicalGamepadInput(PhysicalGamepad * physical_gamepad)
 	{
+		assert(physical_gamepad != nullptr);
+
 		// ignore invalid gamepad : should never happen
 		if (!physical_gamepad->IsAnyInputActive())
 			return true;

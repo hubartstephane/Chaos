@@ -11,7 +11,7 @@ class WindowOpenGLTest : public chaos::Window
 	static constexpr float VIEWPORT_WANTED_ASPECT = (16.0f / 9.0f);
 
 protected:
-
+	
 	virtual bool OnKeyEventImpl(chaos::KeyEvent const & key_event) override
 	{
 		if (game != nullptr)

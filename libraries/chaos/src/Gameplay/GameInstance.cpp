@@ -16,9 +16,8 @@ namespace chaos
 		return result;
 	}
 
-	bool GameInstance::OnGamepadInput(PhysicalGamepad* in_physical_gamepad)
+	bool GameInstance::OnGamepadInput(PhysicalGamepad * in_physical_gamepad)
 	{
-		assert(in_physical_gamepad != nullptr);
 		// try to give the gamepad to a player
 		if (GivePhysicalGamepadToPlayer(in_physical_gamepad) != nullptr)
 			return true;

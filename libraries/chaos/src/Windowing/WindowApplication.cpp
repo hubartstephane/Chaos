@@ -53,7 +53,10 @@ namespace chaos
 
 			while (!loop_condition_func.IsValid() || loop_condition_func())
 			{
-				frame_time_manager->SetCurrentFrameTime(glfwGetTime()); // this is important to be just before the glfwPollEvents() call
+				// this is important to be just before the glfwPollEvents() call because
+				// glfwPollEvents is responsible for handling mouse & keyboard events and so
+				// set the new InputStates
+				frame_time_manager->SetCurrentFrameTime(glfwGetTime());
 
 				glfwPollEvents();
 
@@ -480,7 +483,7 @@ namespace chaos
 		if (sound_manager != nullptr)
 			sound_manager->Tick(delta_time);
 		if (gamepad_manager != nullptr)
-			gamepad_manager->Tick(delta_time);
+			gamepad_manager->Tick(delta_time, this);
 		// handle the inputs
 		PollInputDevices();
 
@@ -1089,11 +1092,6 @@ namespace chaos
 				return window;
 			return nullptr;
 		});
-	}
-
-	bool WindowApplication::DoPollGamepad(PhysicalGamepad* physical_gamepad)
-	{
-		return true;
 	}
 
 }; // namespace chaos

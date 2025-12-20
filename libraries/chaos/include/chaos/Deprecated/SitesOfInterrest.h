@@ -3,6 +3,46 @@
 
 #if 0
 
+//-------------------------------------------------------------------------------
+// Softwares
+//-------------------------------------------------------------------------------
+
+// work with ubuntu (or other distributions) on windows
+wsl
+
+// a software to very quickly find a file by its name
+anything
+
+// a software to make very quick search in the content of files (not only text files)
+Agent Ransack
+
+// Basic
+BlitzMax
+
+// Free License for resources
+cc0
+
+// Particle system editor
+Pixel FX Editor
+
+// Font Tool
+FontLab
+
+// Wool : have a look on it. Narrative tools ?
+
+// OBS : Open BroadCaster Studio
+https://obsproject.com/fr
+
+// a library to use web cam
+Escapi
+
+// get your IP
+https ://www.monip.org
+
+//-------------------------------------------------------------------------------
+// Sites
+//-------------------------------------------------------------------------------
+
 // An online editor for Markdown
 https://markdownlivepreview.com/
 
@@ -39,25 +79,15 @@ https://cppinsights.io/
 // tuto GIT
 https://learngitbranching.js.org/?locale=fr_FR
 
-// Basic
-BlitzMax
+// reflexion/introspection library
+www.rttr.org
 
-// Free License for resources
-cc0
+// list of interresing projects
+https://github.com/Caerind/AwesomeCppGameDev
 
-// Particle system editor
-Pixel FX Editor
-
-// Font Tool
-FontLab
-
-// Wool : have a look on it. Narrative tools ?
-
-// OBS : Open BroadCaster Studio
-https://obsproject.com/fr
-
-// a library to use web cam
-Escapi
+//-------------------------------------------------------------------------------
+// Youtubers
+//-------------------------------------------------------------------------------
 
 // youtube programmer's of interrest
 javidx9
@@ -68,11 +98,5 @@ C++ Weekly With Jason Turner
 // youtube 8bit artist of interrest
 Pixel Pete
 Brandon James Greer
-
-// reflexion/introspection library
-www.rttr.org
-
-// list of interresing projects
-https ://github.com/Caerind/AwesomeCppGameDev
 
 #endif

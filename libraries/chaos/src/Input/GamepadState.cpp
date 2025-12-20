@@ -131,10 +131,15 @@ namespace chaos
 	// XXX: Not all devices are perfect (rest value may not be 0 and max value may be greater than 1)
 	//      Use a [dead_zone, max_zone] range for clamping and renormalization
 
-	void GamepadState::UpdateAxisAndButtons(int stick_index, GamepadInputFilterSettings const& in_filter_settings)
+	void GamepadState::UpdateAxisAndButtons(size_t gamepad_index, GamepadInputFilterSettings const& in_filter_settings)
 	{
+		int physical_index = int(gamepad_index);
+
+		if (glfwJoystickPresent(physical_index) == FALSE || glfwJoystickIsGamepad(physical_index) == GLFW_FALSE)
+			return;
+
 		GLFWgamepadstate state;
-		if (glfwGetGamepadState(stick_index, &state) == GLFW_FALSE)
+		if (glfwGetGamepadState(physical_index, &state) == GLFW_FALSE)
 		{
 			Clear();
 			return;

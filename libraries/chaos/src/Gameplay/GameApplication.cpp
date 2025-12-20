@@ -77,7 +77,7 @@ namespace chaos
 		return IsImGuiMenuEnabled();
 	}
 
-	bool GameApplication::DoPollGamepad(PhysicalGamepad* physical_gamepad)
+	bool GameApplication::DoPollGamepad(PhysicalGamepad * physical_gamepad)
 	{
 		if (game != nullptr)
 			return game->OnPhysicalGamepadInput(physical_gamepad);

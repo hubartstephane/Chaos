@@ -9,7 +9,7 @@
 
 LudumGame::LudumGame()
 {
-	game_name = "Jesaouf\nVI";
+	game_name = "Jesaouf";
 	game_instructions = R"INSTRUCTIONS(
 	[ButtonA] or [KEYBOARD SPACE] : Fire
 	[ButtonB] or [KEYBOARD CTRL]  : Dash

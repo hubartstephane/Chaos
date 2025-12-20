@@ -9,7 +9,7 @@
 
 LudumGame::LudumGame()
 {
-	game_name = "World Of Hell\nIsolation Edition";
+	game_name = "AsciiPaouf\nIsolation Edition";
 	game_instructions = R"INSTRUCTIONS(
 	Enter : Pause
 	F10   : Toggle Fullscreen)INSTRUCTIONS";

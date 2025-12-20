@@ -9,7 +9,7 @@
 
 LudumGame::LudumGame()
 {
-	game_name = "Quantic Paouf IV";
+	game_name = "Quantic Paouf";
 	game_instructions = R"INSTRUCTIONS(
 Save particles to the level exit.
 Black holes and Shadows are dangerous.

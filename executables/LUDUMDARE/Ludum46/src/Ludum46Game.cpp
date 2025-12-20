@@ -11,7 +11,7 @@ LudumGame::LudumGame()
 {
 	// 	Don't let the Flames of Hell die
 
-	game_name = "Burnaouf Paradise\nVII";
+	game_name = "Burnaouf Paradise";
 	game_instructions = R"INSTRUCTIONS(
 	[ButtonA] or [KEYBOARD SPACE] : Jump
 	[ButtonB] or [KEYBOARD CTRL]  : Attack

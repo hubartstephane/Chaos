@@ -9,7 +9,7 @@
 
 LudumGame::LudumGame()
 {
-	game_name = "Kill Paouf V";
+	game_name = "Kill Paouf";
 	game_instructions = R"INSTRUCTIONS(
 	[ButtonA] or [KEYBOARD SPACE] : Fire
 	[ButtonB] or [KEYBOARD CTRL]  : Charged fire

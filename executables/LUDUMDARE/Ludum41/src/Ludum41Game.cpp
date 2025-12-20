@@ -12,7 +12,7 @@
 
 LudumGame::LudumGame()
 {
-	game_name = "AsciiPaouf 2";
+	game_name = "AsciiPaouf";
 
 	game_instance_class = LudumGameInstance::GetStaticClass();
 }

@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/INPUTS/GamepadDetection
+-- ROOT_PATH/executables/INPUTS/GamepadManagerCallbacks
 -- =============================================================================
 
 local project = build:WindowedApp()

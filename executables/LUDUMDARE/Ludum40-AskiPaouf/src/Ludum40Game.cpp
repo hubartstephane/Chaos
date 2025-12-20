@@ -696,8 +696,8 @@ bool Game::DoPollGamepad(chaos::PhysicalGamepad * physical_gamepad)
 	}
 	else
 	{
-		if (IsInputActive(physical_gamepad->GetInputState(chaos::Key::GAMEPAD_SPECIAL_LEFT)) ||
-			IsInputActive(physical_gamepad->GetInputState(chaos::Key::GAMEPAD_SPECIAL_RIGHT)))
+		if (IsInputJustActivated(physical_gamepad->GetInputState(chaos::Key::GAMEPAD_SPECIAL_LEFT)) ||
+			IsInputJustActivated(physical_gamepad->GetInputState(chaos::Key::GAMEPAD_SPECIAL_RIGHT)))
 			SetPause(!game_paused);
 	}
 

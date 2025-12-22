@@ -17,6 +17,10 @@ bool LudumPlayer::Initialize(chaos::GameInstance* in_game_instance)
 	return true;
 }
 
+
+
+
+#if 0
 void LudumPlayer::TickPlayerDisplacement(float delta_time)
 {
 	float value = left_stick_position.x;
@@ -24,6 +28,7 @@ void LudumPlayer::TickPlayerDisplacement(float delta_time)
 		value = right_stick_position.x;
 	DisplacePlayerRacket(value * GetGame()->GetGamepadSensitivity() * delta_time); // even if 0 because this will ensure player Y is well placed even if no input is pressed
 }
+#endif
 
 void LudumPlayer::DisplacePlayerRacket(float delta_x)
 {
@@ -50,25 +55,31 @@ bool LudumPlayer::OnMouseMoveImpl(glm::vec2 const & delta)
 	return true;
 }
 
-bool LudumPlayer::OnCharEventImpl(unsigned int c)
+bool LudumPlayer::EnumerateInputActions(chaos::InputActionEnumerator& in_action_enumerator, chaos::EnumerateInputActionContext in_context)
 {
-	LudumGameInstance * ludum_game_instance = GetGameInstance();
-
-	// CHALLENGE
-	if (c >= 'a' && c <= 'z')
+	if (LudumGame const* ludum_game = GetGame())
 	{
-		ludum_game_instance->SendKeyboardButtonToChallenge((char)c);
-		return true;
-	}
-	else if (c >= 'A' && c <= 'Z')
-	{
-		ludum_game_instance->SendKeyboardButtonToChallenge((char)(c - 'A' + 'a'));
-		return true;
+		float value = 0.0f;
+
+		auto MoveRequest = QueryInput(chaos::Input1DMappingInfo::default_keyboard_mapping, &value);
+
+		if (in_action_enumerator.CheckAndProcess(MoveRequest, "Move", [&]()
+		{
+			float delta_time = (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration();
+
+			DisplacePlayerRacket(value * ludum_game->GetGamepadSensitivity() * delta_time); // even if 0 because this will ensure player Y is well placed even if no input is pressed
+		}))
+		{
+			return true;
+		}
 	}
 
-	return chaos::Player::OnCharEventImpl(c);
+	return chaos::Player::EnumerateInputActions(in_action_enumerator, in_context);
 }
 
+
+
+#if 0
 void LudumPlayer::HandleInputs(float delta_time, chaos::GamepadState const * gpd)
 {
 	chaos::Player::HandleInputs(delta_time, gpd);
@@ -78,6 +89,12 @@ void LudumPlayer::HandleInputs(float delta_time, chaos::GamepadState const * gpd
 		ludum_game_instance->SendGamepadButtonToChallenge(gpd);
 	}
 }
+#endif
+
+
+
+
+
 
 void LudumPlayer::SetPlayerLength(float in_length, bool increment)
 {

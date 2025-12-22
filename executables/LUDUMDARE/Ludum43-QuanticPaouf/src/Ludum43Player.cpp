@@ -161,6 +161,30 @@ bool LudumPlayer::EnumerateInputActions(chaos::InputActionEnumerator& in_action_
 		{
 			if (ParticlePlayer* player_particle = GetPlayerParticle())
 			{
+				glm::vec2 stick_value = { 0.0f, 0.0f };
+
+				auto MoveRequest = QueryInput(chaos::Input2DMappingInfo::default_keyboard_mapping, &stick_value);
+
+				if (in_action_enumerator.CheckAndProcess(MoveRequest, "Move", [&]()
+				{
+					player_particle->acceleration = ludum_game->player_acceleration * stick_value;
+				}))
+				{
+					return true;
+				}
+			}
+		}
+
+
+
+
+
+#if 0
+
+		if (LudumGame const* ludum_game = GetGame())
+		{
+			if (ParticlePlayer* player_particle = GetPlayerParticle())
+			{
 				glm::vec2 left_stick_value  = { 0.0f, 0.0f };
 				glm::vec2 right_stick_value = { 0.0f, 0.0f };
 				bool      up_value1    = false;
@@ -225,6 +249,7 @@ bool LudumPlayer::EnumerateInputActions(chaos::InputActionEnumerator& in_action_
 				}
 			}
 		}
+#endif
 	}
 
 	return chaos::Player::EnumerateInputActions(in_action_enumerator, in_context);

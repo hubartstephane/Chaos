@@ -64,6 +64,16 @@ namespace chaos
 		AutoConstCastable<PlayerDisplacementComponent> GetDisplacementComponent() const { return displacement_component.get(); }
 
 
+
+
+
+
+
+
+
+
+
+#if 1
 		// shu48
 
 		/** gets the left stick position */
@@ -75,6 +85,15 @@ namespace chaos
 		float GetLeftTrigger(bool previous_frame = false) const { return (previous_frame) ? previous_left_trigger : left_trigger; }
 		/** gets the right trigger */
 		float GetRightTrigger(bool previous_frame = false) const { return (previous_frame) ? previous_right_trigger : right_trigger; }
+#endif
+
+
+
+
+
+
+
+
 
 		/** the processor may save its configuration into a JSON file */
 		virtual bool SerializeIntoJSON(nlohmann::json * json) const override;
@@ -92,15 +111,25 @@ namespace chaos
 		/** override */
 		virtual bool DoTick(float delta_time) override;
 
+
+
+
+
+
+#if 0
 		/** extract stick values from keyboard state */
 		virtual void CacheKeyboardPlayerDisplacementInputs();
 		/** extract stick values from gamepad state */
 		virtual void CacheGamepadPlayerDisplacementInputs();
 		/** handle the player input */
 		virtual void HandleInputs(float delta_time, GamepadState const* gamepad_state);
-
 		/** reset the cached inputs (exists because we emulate keyboard arrow combinaison as un stick) */
 		virtual void ResetCachedInputs();
+#endif
+
+
+
+
 
 		/** called whenever player gamepad is disconnected */
 		virtual void OnGamepadDisconnected();
@@ -162,6 +191,11 @@ namespace chaos
 		/** the score for the player */
 		int score = 0;
 
+
+
+
+
+#if 1
 		/** the current stick position */
 		glm::vec2 left_stick_position = glm::vec2(0.0f, 0.0f);
 		glm::vec2 right_stick_position = glm::vec2(0.0f, 0.0f);
@@ -174,7 +208,7 @@ namespace chaos
 		glm::vec2 previous_right_stick_position = glm::vec2(0.0f, 0.0f);
 		float previous_left_trigger = 0.0f;
 		float previous_right_trigger = 0.0f;
-
+#endif
 	};
 
 	// =============================================

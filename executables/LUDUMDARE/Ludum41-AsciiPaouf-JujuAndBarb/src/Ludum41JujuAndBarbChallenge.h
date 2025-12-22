@@ -2,7 +2,7 @@
 
 #include "Ludum41JujuAndBarbPCH.h"
 
-class LudumChallenge : public chaos::Object
+class LudumChallenge : public chaos::Object, public chaos::InputReceiverInterface
 {
 	friend class LudumGameInstance;
 	friend class LudumPlayer;
@@ -14,8 +14,8 @@ public:
 
 	/** try to catch button input */
 	void OnGamepadButtonReceived(chaos::GamepadState const * in_gamepad_state);
-	/** try to catch keyboard input */
-	void OnKeyboardButtonReceived(char c);
+	/** override */
+	virtual bool OnCharEventImpl(unsigned int c) override;
 
 	/** returns the position inside the challenge */
 	size_t GetChallengePosition(bool gamepad) const;
@@ -64,4 +64,8 @@ protected:
 
 	/** the visible hud */
 	chaos::shared_ptr<chaos::ParticleAllocationBase> particle_range;
+
+
+	/** override */
+	virtual bool EnumerateInputActions(chaos::InputActionEnumerator& in_action_enumerator, chaos::EnumerateInputActionContext in_context) override;
 };

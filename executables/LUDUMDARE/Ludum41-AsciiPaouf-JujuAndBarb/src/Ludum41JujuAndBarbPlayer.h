@@ -37,10 +37,18 @@ protected:
 	virtual void TickPlayerDisplacement(float delta_time) override;
 	/** override */
 	virtual bool OnMouseMoveImpl(glm::vec2 const & delta) override;
+
 	/** override */
-	virtual bool OnCharEventImpl(unsigned int c) override;
+	virtual bool EnumerateInputActions(chaos::InputActionEnumerator& in_action_enumerator, chaos::EnumerateInputActionContext in_context);
+
+#if 0
 	/** override */
 	virtual void HandleInputs(float delta_time, chaos::GamepadState const * gpd) override;
+#endif
+
+
+
+
 	/** override */
 	virtual bool OnReadConfigurableProperties(chaos::JSONReadConfiguration config, chaos::ReadConfigurablePropertiesContext context) override;
 	/** override */

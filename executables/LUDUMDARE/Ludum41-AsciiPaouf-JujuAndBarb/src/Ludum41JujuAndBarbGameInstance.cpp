@@ -168,14 +168,6 @@ void LudumGameInstance::TickBrickOffset(float delta_time)
 	}
 }
 
-void LudumGameInstance::SendKeyboardButtonToChallenge(unsigned int c)
-{
-	if (!game->IsPlaying())
-		return;
-	if (sequence_challenge != nullptr)
-		sequence_challenge->OnKeyboardButtonReceived((char)c);
-}
-
 void LudumGameInstance::SendGamepadButtonToChallenge(chaos::GamepadState const * in_gamepad_state)
 {
 	if (!game->IsPlaying())
@@ -798,4 +790,12 @@ bool LudumGameInstance::Initialize(chaos::Game * in_game)
 	ball_speed = ludum_game->ball_initial_speed;
 
 	return true;
+}
+
+bool LudumGameInstance::TraverseInputReceiver(chaos::InputReceiverTraverser& in_traverser, chaos::InputDeviceInterface const* in_input_device)
+{
+	if (game->IsPlaying() && sequence_challenge != nullptr)
+		if (in_traverser.Traverse(sequence_challenge.get(), in_input_device))
+			return true;
+	return chaos::GameInstance::TraverseInputReceiver(in_traverser, in_input_device);
 }

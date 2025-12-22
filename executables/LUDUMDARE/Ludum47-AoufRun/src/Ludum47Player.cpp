@@ -67,17 +67,26 @@ bool LudumPlayer::OnReadConfigurableProperties(chaos::JSONReadConfiguration conf
 	return true;
 }
 
-void LudumPlayer::HandleInputs(float delta_time, chaos::GamepadState const* gpd)
+
+
+
+
+bool LudumPlayer::EnumerateInputActions(chaos::InputActionEnumerator& in_action_enumerator, chaos::EnumerateInputActionContext in_context)
 {
-	chaos::Player::HandleInputs(delta_time, gpd);
+	if (GetGame() != nullptr && !GetGame()->IsPaused())
+	{
+		auto HonkRequest = Or(JustActivated(chaos::Key::GAMEPAD_X), JustActivated(chaos::Key::LEFT_SHIFT));
 
-	chaos::Key const honk_keys[] = { chaos::Key::GAMEPAD_X, chaos::Key::LEFT_SHIFT, chaos::Key() };
+		if (in_action_enumerator.CheckAndProcess(HonkRequest, "Honk", [&]()
+		{
+			Honk();
+		}))
+		{
+			return true;
+		}
+	}
 
-	bool honk_pressed = CheckKeyDown(honk_keys);
-	if (honk_pressed && !was_honk_pressed_gamepad)
-		Honk();
-	was_honk_pressed_gamepad = honk_pressed;
-
+	return chaos::Player::EnumerateInputActions(in_action_enumerator, in_context);
 }
 
 void LudumPlayer::Honk()

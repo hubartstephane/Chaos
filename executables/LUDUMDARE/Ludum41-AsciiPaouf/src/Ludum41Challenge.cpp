@@ -5,17 +5,24 @@
 #include "Ludum41Game.h"
 #include "Ludum41GameInstance.h"
 
-void LudumChallenge::OnKeyboardButtonReceived(char c)
-{
-	LudumGame * game = game_instance->GetGame();
-	if (game->IsFreeCameraMode())
-		return;
 
-	// test the challenge
-	if (keyboard_challenge[keyboard_challenge_position] == c)
-		AdvanceChallenge();
-	else
-		OnChallengeError(false);
+bool LudumChallenge::OnCharEventImpl(unsigned int c)
+{
+	LudumGame* game = game_instance->GetGame();
+	if (game->IsPaused())
+		return false;
+	if (game->IsFreeCameraMode())
+		return false;
+
+	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+	{
+		if (keyboard_challenge[keyboard_challenge_position] == c)
+			AdvanceChallenge();
+		else
+			OnChallengeError(false);
+		return true;
+	}
+	return chaos::InputReceiverInterface::OnCharEventImpl(c);
 }
 
 void LudumChallenge::Show(bool visible)
@@ -23,6 +30,17 @@ void LudumChallenge::Show(bool visible)
 	if (particle_range != nullptr)
 		particle_range->Show(visible);
 }
+
+
+
+
+
+
+
+
+
+
+
 
 void LudumChallenge::OnGamepadButtonReceived(chaos::GamepadState const * in_gamepad_state)
 {
@@ -151,3 +169,12 @@ size_t LudumChallenge::GetChallengePosition(bool gamepad) const
 		gamepad_challenge_position:
 		keyboard_challenge_position;
 }
+
+
+bool LudumChallenge::EnumerateInputActions(chaos::InputActionEnumerator& in_action_enumerator, chaos::EnumerateInputActionContext in_context)
+{
+
+
+	return chaos::InputReceiverInterface::EnumerateInputActions(in_action_enumerator, in_context);
+}
+

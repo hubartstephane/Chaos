@@ -65,12 +65,27 @@ namespace chaos
 
 	bool Player::DoTick(float delta_time)
 	{
+
+
+
+#if 0
+
 		// remove previous frame cached input
 		ResetCachedInputs();
 		// cache values for stick displacement
 		CacheKeyboardPlayerDisplacementInputs();
 		// cache values for stick displacement
 		CacheGamepadPlayerDisplacementInputs();
+#endif
+
+
+
+
+
+
+
+
+
 
 		bool mute_force_feedback   = true; // no forcefeedback except during main loop
 		bool paused_force_feedback = true;
@@ -79,9 +94,15 @@ namespace chaos
 		Game* game = GetGame();
 		if (game != nullptr && !game->IsFreeCameraMode() && game->IsPlaying())
 		{
+
+#if 0
 			// tick the inputs
 			GamepadState const* gamepad_state = (gamepad != nullptr)? gamepad->GetGamepadState() : nullptr;
 			HandleInputs(delta_time, gamepad_state);
+#endif
+
+
+
 			// tick other player objects
 			TickInternal(delta_time);
 
@@ -120,6 +141,13 @@ namespace chaos
 			displacement_component->Tick(delta_time);
 	}
 
+
+
+
+
+
+
+#if 0
 	void Player::CacheKeyboardPlayerDisplacementInputs()
 	{
 		// test whether the stick position can be overriden
@@ -196,6 +224,16 @@ namespace chaos
 		left_trigger  = 0.0f;
 		right_trigger = 0.0f;
 	}
+#endif
+
+
+
+
+
+
+
+
+
 
 	void Player::SetScore(int in_score, bool increment)
 	{

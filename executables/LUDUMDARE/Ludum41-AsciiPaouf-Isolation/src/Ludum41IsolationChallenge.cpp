@@ -5,17 +5,23 @@
 #include "Ludum41IsolationGame.h"
 #include "Ludum41IsolationGameInstance.h"
 
-void LudumChallenge::OnKeyboardButtonReceived(char c)
+bool LudumChallenge::OnCharEventImpl(unsigned int c)
 {
-	LudumGame * game = game_instance->GetGame();
+	LudumGame* game = game_instance->GetGame();
+	if (game->IsPaused())
+		return false;
 	if (game->IsFreeCameraMode())
-		return;
+		return false;
 
-	// test the challenge
-	if (std::toupper(keyboard_challenge[keyboard_challenge_position]) == std::toupper(c))
-		AdvanceChallenge();
-	else
-		OnChallengeError(false);
+	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+	{
+		if (keyboard_challenge[keyboard_challenge_position] == c)
+			AdvanceChallenge();
+		else
+			OnChallengeError(false);
+		return true;
+	}
+	return chaos::InputReceiverInterface::OnCharEventImpl(c);
 }
 
 void LudumChallenge::Show(bool visible)
@@ -149,4 +155,11 @@ size_t LudumChallenge::GetChallengePosition(bool gamepad) const
 	return (gamepad)?
 		gamepad_challenge_position:
 		keyboard_challenge_position;
+}
+
+bool LudumChallenge::EnumerateInputActions(chaos::InputActionEnumerator& in_action_enumerator, chaos::EnumerateInputActionContext in_context)
+{
+
+
+	return chaos::InputReceiverInterface::EnumerateInputActions(in_action_enumerator, in_context);
 }

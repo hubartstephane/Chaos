@@ -77,8 +77,6 @@ public:
 
 	/** test whether a button is being pressed and whether it correspond to the current challenge */
 	void SendGamepadButtonToChallenge(chaos::GamepadState const * in_gamepad_state);
-	/** test whether a key is being pressed and whether it correspond to the current challenge */
-	void SendKeyboardButtonToChallenge(unsigned int C);
 	/** called whenever a challenge is completed */
 	void OnChallengeCompleted(LudumChallenge * challenge, bool success, size_t challenge_size);
 
@@ -125,6 +123,8 @@ protected:
 
 	/** destroying game objects*/
 	void DestroyGameObjects();
+	/** override */
+	virtual bool TraverseInputReceiver(chaos::InputReceiverTraverser& in_traverser, chaos::InputDeviceInterface const* in_input_device) override;
 
 protected:
 

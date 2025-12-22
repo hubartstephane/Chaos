@@ -42,8 +42,9 @@ protected:
 	virtual void OnLifeLost() override;
     /** override */
     virtual void OnLevelChanged(chaos::Level* new_level, chaos::Level* old_level, chaos::LevelInstance* new_level_instance) override;
-    /** override */
-    virtual void HandleInputs(float delta_time, chaos::GamepadState const* gpd) override;
+
+    virtual bool EnumerateInputActions(chaos::InputActionEnumerator& in_action_enumerator, chaos::EnumerateInputActionContext in_context) override;
+
     /** override */
     virtual bool OnReadConfigurableProperties(chaos::JSONReadConfiguration config, chaos::ReadConfigurablePropertiesContext context) override;
 
@@ -52,10 +53,6 @@ public:
     chaos::shared_ptr<LudumRoad> road;
 
     chaos::shared_ptr<chaos::Sound> honk_sound;
-    bool was_honk_pressed_keyboard = false;
-    bool was_honk_pressed_gamepad = false;
-
-
 
     float velocity_collision_factor = 0.7f;
 

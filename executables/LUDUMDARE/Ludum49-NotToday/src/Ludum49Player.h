@@ -37,10 +37,7 @@ protected:
     /** override */
     virtual void OnLevelChanged(Level* new_level, Level* old_level, LevelInstance* new_level_instance) override;
     /** override */
-    virtual void HandleInputs(float delta_time, GamepadState const* gpd) override;
-    /** override */
     virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
-
 
 public:
 

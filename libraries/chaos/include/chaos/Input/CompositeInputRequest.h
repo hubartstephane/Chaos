@@ -142,7 +142,7 @@ namespace chaos
 		{
 			return std::apply([&](auto const & ... child_request) -> bool
 			{
-				return ((child_request.IsRequestRelatedTo(Input1D::UNKNOWN)) || ...);
+				return (child_request.IsRequestRelatedTo(in_input) || ...);
 			},
 			child_input_requests);
 		}

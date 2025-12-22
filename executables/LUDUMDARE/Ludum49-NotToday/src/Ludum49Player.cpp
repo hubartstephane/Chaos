@@ -52,13 +52,6 @@ bool LudumPlayer::OnReadConfigurableProperties(JSONReadConfiguration config, Rea
 	return true;
 }
 
-void LudumPlayer::HandleInputs(float delta_time, GamepadState const* gpd)
-{
-	Player::HandleInputs(delta_time, gpd);
-
-
-}
-
 
 
 void LudumPlayer::OnLifeLost()

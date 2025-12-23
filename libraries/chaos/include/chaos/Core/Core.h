@@ -14,6 +14,7 @@
 #include "chaos/Core/AllocatorTools.h"
 #include "chaos/Core/Buffer.h"
 #include "chaos/Core/Concepts.h"
+#include "chaos/Core/ClassMapping.h"
 #include "chaos/Core/MetaProgramming.h"
 #include "chaos/Core/BitTools.h"
 #include "chaos/Core/StringTools.h"

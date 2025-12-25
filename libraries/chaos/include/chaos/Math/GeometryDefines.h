@@ -4,7 +4,7 @@
 
 	// template 'header' for geometry functions
 	#define CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T, ...)\
-		template<int DIMENSION, std::floating_point T, __VA_ARGS__> requires (DIMENSION == 2 || DIMENSION == 3)
+		template<int DIMENSION, std::floating_point T __VA_OPT__(,) __VA_ARGS__> requires (DIMENSION == 2 || DIMENSION == 3)
 
 	 // defines 'using' & templates that mimic glm conventions
 	 //   box2

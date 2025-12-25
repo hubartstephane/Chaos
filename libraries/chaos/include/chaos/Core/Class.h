@@ -12,7 +12,7 @@ namespace chaos
 	 * CHAOS_REGISTER_CLASS : a macro that helps register classes automatically
 	 */
 
-#define CHAOS_REGISTER_CLASS(CLASS, ...) static inline chaos::Class const * CLASS##_class = chaos::ClassManager::GetDefaultInstance()->DeclareCPPClass<CLASS, __VA_ARGS__>(#CLASS)
+#define CHAOS_REGISTER_CLASS(CLASS, ...) static inline chaos::Class const * CLASS##_class = chaos::ClassManager::GetDefaultInstance()->DeclareCPPClass<CLASS __VA_OPT__(,) __VA_ARGS__>(#CLASS)
 
 	/**
 	 * InheritanceType : the kind if inheritance that can exist between 2 classes

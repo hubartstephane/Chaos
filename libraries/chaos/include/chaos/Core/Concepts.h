@@ -10,11 +10,11 @@ namespace chaos
 
 	#define CHAOS_GENERATE_IS_ANY_OF_CONCEPT(concept_name, ...)\
 	template<typename T>\
-	concept concept_name = chaos::IsAnyOf_v<T, __VA_ARGS__>;
+	concept concept_name = chaos::IsAnyOf_v<T __VA_OPT__(,) __VA_ARGS__>;
 
 	#define CHAOS_GENERATE_INHERIT_FROM_ANY_CONCEPT(concept_name, ...)\
 	template<typename T>\
-	concept concept_name = chaos::InheritFromAny_v<T, __VA_ARGS__>;
+	concept concept_name = chaos::InheritFromAny_v<T __VA_OPT__(,) __VA_ARGS__>;
 
 #endif
 

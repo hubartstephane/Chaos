@@ -15,7 +15,7 @@ namespace chaos
 	class GlobalVariable;
 
 #define CHAOS_GLOBAL_VARIABLE(TYPE, VARIABLE_NAME, ...)\
-static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::GlobalVariableManager::GetInstance()->RegisterVariable<TYPE>(#VARIABLE_NAME, __VA_ARGS__);\
+static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::GlobalVariableManager::GetInstance()->RegisterVariable<TYPE>(#VARIABLE_NAME __VA_OPT__(,) __VA_ARGS__);\
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 

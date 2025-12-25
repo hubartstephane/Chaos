@@ -277,6 +277,11 @@ function BuildSystem:MakeSolution()
 	platforms {table.unpack(PLATFORMS)}
 	configurations {table.unpack(CONFIGS)}
 
+	-- necessary to have __VA_OPT__ macro available
+	filter "toolset:msc*"
+		buildoptions { "/Zc:preprocessor" }
+	filter {}
+
 	local arch = _OPTIONS['arch']
 	if arch then
 		Log:Output("Architecture: " .. arch)

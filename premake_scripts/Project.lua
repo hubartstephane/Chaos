@@ -569,14 +569,16 @@ end
 
 function Project:HandleGeneratedConfigFile()
 
-	local patterns = { PROJECT_NAME = string.upper(self.project_name)}
+	local project_name = string.gsub(string.upper(self.project_name), "-", "_")
+
+	local patterns = { PROJECT_NAME = project_name}
 
 	if (self:IsExecutable()) then
-		patterns["PROJECT_BUILD_TYPE"] = string.upper(self.project_name) .. "_IS_EXECUTABLE"
+		patterns["PROJECT_BUILD_TYPE"] = project_name .. "_IS_EXECUTABLE"
 	elseif (self:IsStaticLibrary()) then
-		patterns["PROJECT_BUILD_TYPE"] = string.upper(self.project_name) .. "_IS_STATIC_LIBRARY"
+		patterns["PROJECT_BUILD_TYPE"] = project_name .. "_IS_STATIC_LIBRARY"
 	elseif (self:IsSharedLibrary()) then
-		patterns["PROJECT_BUILD_TYPE"] = string.upper(self.project_name) .. "_IS_SHARED_LIBRARY"
+		patterns["PROJECT_BUILD_TYPE"] = project_name .. "_IS_SHARED_LIBRARY"
 	end
 
 	if (os.isfile(CONFIG_TEMPLATE_PATH)) then

@@ -64,8 +64,8 @@ end)
 -- =============================================================================
 
 function traceError(err)
-    print("Error: ", err)
-    print(debug.traceback())
+	print("Error: ", err)
+	print(debug.traceback())
 end
 
 local success, errorMsg = xpcall(function()
@@ -84,5 +84,5 @@ local success, errorMsg = xpcall(function()
 end, traceError)
 
 if not success then
-    print("Failed with error: ", errorMsg)
+	print("Failed with error: ", errorMsg)
 end

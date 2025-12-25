@@ -23,10 +23,13 @@
 // declare all friendship for main game classes
 #define CHAOS_GAMEPLAY_ALLFRIENDS CHAOS_DECLARE_GAMEPLAY_FRIENDSHIPS(BOOST_PP_EMPTY())
 
+
 // declare main classes for death
 namespace chaos
 {
-	CHAOS_DECLARE_GAMEPLAY_UTILITY(BOOST_PP_EMPTY(), BOOST_PP_EMPTY())
+	//CHAOS_DECLARE_GAMEPLAY_UTILITY(BOOST_PP_EMPTY(), BOOST_PP_EMPTY())
+
+	CHAOS_DECLARE_GAMEPLAY_UTILITY(, );
 
 }; // namespace chaos
 

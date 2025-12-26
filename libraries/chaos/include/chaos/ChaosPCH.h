@@ -125,7 +125,9 @@
 #include <boost/mpl/apply_wrap.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/mpl/aux_/has_type.hpp>
+#include <boost/mpl/quote.hpp>
 
+#include <boost/preprocessor/facilities/is_empty_variadic.hpp>
 #include <boost/preprocessor/repetition/enum_params.hpp>
 #include <boost/preprocessor/repetition/enum_binary_params.hpp>
 #include <boost/preprocessor/repetition/repeat.hpp>
@@ -137,6 +139,10 @@
 #include <boost/preprocessor/logical/or.hpp>
 #include <boost/preprocessor/variadic/size.hpp>
 #include <boost/preprocessor/facilities/expand.hpp>
+#include <boost/preprocessor/comparison/greater_equal.hpp>
+#include <boost/preprocessor/comparison/greater.hpp>
+#include <boost/preprocessor/comparison/less_equal.hpp>
+#include <boost/preprocessor/comparison/less.hpp>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #define GLM_FORCE_SIZE_T_LENGTH

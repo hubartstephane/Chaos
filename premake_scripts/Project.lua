@@ -492,6 +492,9 @@ function Project:AddProjectToSolution()
 
 			filter {"configurations:" .. conf, "platforms:" .. plat}
 
+			-- necessary to have __VA_OPT__ macro available (see /Zc:preprocessor)
+			usestandardpreprocessor 'On'
+
 			if (conf == DEBUG) then
 				self:DebugConf(plat)
 			else

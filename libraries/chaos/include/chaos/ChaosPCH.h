@@ -3,6 +3,15 @@
 #include "chaos/Config.h"
 
 /**
+* Some Initial checks
+*/
+
+// must use preprecessor settings:    /Zc:preprocessor
+#if !defined __VA_OPT__
+#	error "__VA_OPT__ is not enabled: set /Zc:preprocessor flag in Visual Studio project settings"
+#endif
+
+/**
 * Common "macros"
 */
 

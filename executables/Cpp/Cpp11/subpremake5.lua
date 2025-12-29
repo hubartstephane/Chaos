@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/C++/C++20_StackAllocator
+-- ROOT_PATH/executables/Cpp/Cpp11
 -- =============================================================================
 
 local project = build:WindowedApp()

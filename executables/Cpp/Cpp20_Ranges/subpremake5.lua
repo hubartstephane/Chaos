@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/C++/C++20_Coroutine
+-- ROOT_PATH/executables/Cpp/Cpp20_Ranges
 -- =============================================================================
 
 local project = build:WindowedApp()

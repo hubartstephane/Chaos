@@ -146,6 +146,7 @@
 #include <boost/preprocessor/facilities/empty.hpp>
 #include <boost/preprocessor/control/if.hpp>
 #include <boost/preprocessor/logical/or.hpp>
+#include <boost/preprocessor/logical/and.hpp>
 #include <boost/preprocessor/variadic/size.hpp>
 #include <boost/preprocessor/facilities/expand.hpp>
 #include <boost/preprocessor/comparison/greater_equal.hpp>

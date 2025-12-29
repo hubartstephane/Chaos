@@ -7,9 +7,12 @@
 // select an elem from a variadic number of arg if present or take the default value
 #define CHAOS_PP_SELECT_ELEM_OR_DEFAULT(index, default_value, ...)\
 	BOOST_PP_IIF(\
-		BOOST_PP_GREATER_EQUAL(\
-			index,\
-			BOOST_PP_VARIADIC_SIZE(__VA_ARGS__)\
+		BOOST_PP_OR(\
+			BOOST_PP_IS_EMPTY(__VA_ARGS__),\
+			BOOST_PP_GREATER_EQUAL(\
+				index,\
+				BOOST_PP_VARIADIC_SIZE(__VA_ARGS__)\
+			)\
 		),\
 		CHAOS_PP_SELECT_ELEM_OR_DEFAULT_TAKE_DEFAULT,\
 		CHAOS_PP_SELECT_ELEM_OR_DEFAULT_TAKE_ELEM\

@@ -153,6 +153,8 @@
 #include <boost/preprocessor/comparison/less_equal.hpp>
 #include <boost/preprocessor/comparison/less.hpp>
 
+static_assert(BOOST_PP_IS_EMPTY(), "/Zc:preprocessor flag is required for windows");
+
 #define GLM_ENABLE_EXPERIMENTAL
 #define GLM_FORCE_SIZE_T_LENGTH
 #include <glm/glm.hpp>

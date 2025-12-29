@@ -3,7 +3,7 @@
 -- =============================================================================
 
 local create_sub_groups = true
-build:ProcessSubPremake("C++", create_sub_groups)
+build:ProcessSubPremake("Cpp", create_sub_groups)
 build:ProcessSubPremake("GLFW", create_sub_groups)
 build:ProcessSubPremake("IMGUI", create_sub_groups)
 build:ProcessSubPremake("INPUTS", create_sub_groups)

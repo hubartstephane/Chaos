@@ -2,12 +2,12 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	template<typename INPUT_SEARCH_KEY_TYPE, typename STATE_TYPE, typename VALUE_TYPE>
+	template<InputType INPUT_TYPE>
 	class QueryInputRequest;
 
-	using QueryKeyInputRequest = QueryInputRequest<Key, KeyState, bool>;
-	using QueryInput1DRequest  = QueryInputRequest<Input1D, Input1DState, float>;
-	using QueryInput2DRequest  = QueryInputRequest<Input2D, Input2DState, glm::vec2>;
+	using QueryKeyInputRequest = QueryInputRequest<Key>;
+	using QueryInput1DRequest  = QueryInputRequest<Input1D>;
+	using QueryInput2DRequest  = QueryInputRequest<Input2D>;
 
 	enum class QueryInputRequestType;
 
@@ -34,13 +34,17 @@ namespace chaos
 	 * QueryInputRequest: a request that gets the value of an input
 	 */
 
-	template<typename INPUT_SEARCH_KEY_TYPE, typename STATE_TYPE, typename VALUE_TYPE>
+	template<InputType INPUT_TYPE>
 	class QueryInputRequest : public InputRequestBase
 	{
 	public:
 
+		using input_type = INPUT_TYPE;
+		using state_type = InputState<input_type>;
+		using value_type = InputValueType_t<input_type>;
+
 		/** constructor */
-		QueryInputRequest(INPUT_SEARCH_KEY_TYPE in_searched_input, STATE_TYPE* in_out_state, VALUE_TYPE * in_out_value, QueryInputRequestType in_query_type):
+		QueryInputRequest(input_type in_searched_input, state_type* in_out_state, value_type* in_out_value, QueryInputRequestType in_query_type):
 			searched_input(in_searched_input),
 			out_state(in_out_state),
 			out_value(in_out_value),
@@ -54,19 +58,19 @@ namespace chaos
 		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
 		{
 			// early exit
-			if (searched_input == INPUT_SEARCH_KEY_TYPE::UNKNOWN)
+			if (searched_input == input_type::UNKNOWN)
 				return InputRequestResult::Invalid;
 			if (out_state == nullptr && out_value == nullptr && query_type == QueryInputRequestType::None) // this request is useless
 				return InputRequestResult::Invalid;
 			// find input
-			STATE_TYPE const* input_state = in_input_device->GetInputState(searched_input);
+			state_type const* input_state = in_input_device->GetInputState(searched_input);
 			if (input_state == nullptr)
 				return InputRequestResult::Invalid; // abnormal (request for an input not handled by the receiver)
 			// consum the key of the request (no one can use it anymore until next frame)
 			if (!in_consumption_cache.TryConsumeInput(in_input_receiver, searched_input, in_input_device))
 				return InputRequestResult::Rejected;
 
-			VALUE_TYPE value = input_state->GetValue();
+			value_type value = input_state->GetValue();
 
 			// output results
 			if (out_state != nullptr)
@@ -105,21 +109,21 @@ namespace chaos
 		/** override */
 		virtual bool IsRequestRelatedTo(Key in_input) const override
 		{
-			if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, Key>)
+			if constexpr (std::is_same_v<input_type, Key>)
 				return (searched_input == in_input);
 			return false;
 		}
 		/** override */
 		virtual bool IsRequestRelatedTo(Input1D in_input) const override
 		{
-			if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, Input1D>)
+			if constexpr (std::is_same_v<input_type, Input1D>)
 				return (searched_input == in_input);
 			return false;
 		}
 		/** override */
 		virtual bool IsRequestRelatedTo(Input2D in_input) const override
 		{
-			if constexpr (std::is_same_v<INPUT_SEARCH_KEY_TYPE, Input2D>)
+			if constexpr (std::is_same_v<input_type, Input2D>)
 				return (searched_input == in_input);
 			return false;
 		}
@@ -143,11 +147,11 @@ namespace chaos
 	protected:
 
 		/** the concerned input */
-		INPUT_SEARCH_KEY_TYPE searched_input;
+		input_type searched_input;
 		/** the state of the request */
-		STATE_TYPE* out_state = nullptr;
+		state_type* out_state = nullptr;
 		/** the result of the request */
-		VALUE_TYPE* out_value = nullptr;
+		value_type* out_value = nullptr;
 		/** whether an inactive input is a success or not */
 		QueryInputRequestType query_type = QueryInputRequestType::None;
 	};
@@ -156,26 +160,23 @@ namespace chaos
 	 * Some standalone functions
 	 */
 
-	CHAOS_API QueryKeyInputRequest QueryInput(Key in_input, QueryInputRequestType in_query_type = QueryInputRequestType::None);
+	template<InputType INPUT_TYPE>
+	QueryInputRequest<INPUT_TYPE> QueryInput(INPUT_TYPE in_input, QueryInputRequestType in_query_type = QueryInputRequestType::None)
+	{
+		return { in_input, nullptr, nullptr, in_query_type };
+	}
 
-	CHAOS_API QueryInput1DRequest QueryInput(Input1D in_input, QueryInputRequestType in_query_type = QueryInputRequestType::None);
+	template<InputType INPUT_TYPE>
+	QueryInputRequest<INPUT_TYPE> QueryInput(INPUT_TYPE in_input, InputValueType_t<INPUT_TYPE> *out_value, QueryInputRequestType in_query_type = QueryInputRequestType::None)
+	{
+		return { in_input, nullptr, out_value, in_query_type };
+	}
 
-	CHAOS_API QueryInput2DRequest QueryInput(Input2D in_input, QueryInputRequestType in_query_type = QueryInputRequestType::None);
-
-
-	CHAOS_API QueryKeyInputRequest QueryInput(Key in_input, bool* out_value, QueryInputRequestType in_query_type = QueryInputRequestType::None);
-
-	CHAOS_API QueryInput1DRequest QueryInput(Input1D in_input, float* out_value, QueryInputRequestType in_query_type = QueryInputRequestType::None);
-
-	CHAOS_API QueryInput2DRequest QueryInput(Input2D in_input, glm::vec2* out_value, QueryInputRequestType in_query_type = QueryInputRequestType::None);
-
-
-	CHAOS_API QueryKeyInputRequest QueryInput(Key in_input, KeyState* out_state, QueryInputRequestType in_query_type = QueryInputRequestType::None);
-
-	CHAOS_API QueryInput1DRequest QueryInput(Input1D in_input, Input1DState* out_state, QueryInputRequestType in_query_type = QueryInputRequestType::None);
-
-	CHAOS_API QueryInput2DRequest QueryInput(Input2D in_input, Input2DState* out_state, QueryInputRequestType in_query_type = QueryInputRequestType::None);
-
+	template<InputType INPUT_TYPE>
+	QueryInputRequest<INPUT_TYPE> QueryInput(INPUT_TYPE in_input, InputState<INPUT_TYPE>* out_state, QueryInputRequestType in_query_type = QueryInputRequestType::None)
+	{
+		return { in_input, out_state, nullptr, in_query_type };
+	}
 
 	template<InputType T, typename ...PARAMS>
 	auto Active(T in_input, PARAMS... params)

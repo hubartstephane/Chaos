@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/LUDUM/Ludum46-BurnaoufParadise
+-- ROOT_PATH/executables/LUDUM/Ludum46_BurnaoufParadise
 -- =============================================================================
 
 local project = build:WindowedApp()

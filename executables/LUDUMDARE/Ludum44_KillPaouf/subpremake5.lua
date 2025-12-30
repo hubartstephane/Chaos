@@ -1,11 +1,11 @@
 -- =============================================================================
--- ROOT_PATH/executables/LUDUM/Ludum41-AsciiPaouf-Isolation
+-- ROOT_PATH/executables/LUDUM/Ludum44_KillPaouf
 -- =============================================================================
 
 local project = build:WindowedApp()
 project:DependOnLib("chaos")
 project:DependOnLib("CommonFonts")
 project:PrecompiledHeader(
-	path.join("Ludum41IsolationPCH.h"),
-	path.join("src","Ludum41IsolationPCH.cpp")
+	path.join("Ludum44PCH.h"),
+	path.join("src","Ludum44PCH.cpp")
 )

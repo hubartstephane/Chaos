@@ -4,15 +4,17 @@ namespace chaos
 
 	enum class InputStatus;
 
-	template<typename T>
+	template<InputType T>
 	class InputState;
 
-	using KeyState     = InputState<bool>;
-	using Input1DState = InputState<float>;
-	using Input2DState = InputState<glm::vec2>;
+	using KeyState     = InputState<Key>;
+	using Input1DState = InputState<Input1D>;
+	using Input2DState = InputState<Input2D>;
 
-	template<typename T>
-	concept InputType = std::is_same_v<T, Key> || std::is_same_v<T, Input1D> || std::is_same_v<T, Input2D>;
+	CHAOS_GENERATE_DECLARE_CLASS_MAPPING(InputValueType);
+	CHAOS_GENERATE_SPECIALIZE_CLASS_MAPPING(InputValueType, Key, bool);
+	CHAOS_GENERATE_SPECIALIZE_CLASS_MAPPING(InputValueType, Input1D, float);
+	CHAOS_GENERATE_SPECIALIZE_CLASS_MAPPING(InputValueType, Input2D, glm::vec2);
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -33,13 +35,15 @@ namespace chaos
 	* InputState: base class for key/axis/stick state
 	*/
 
-	template<typename T>
+	template<InputType T>
 	class InputState
 	{
 	public:
 
+		using type = InputValueType_t<T>;
+
 		/** get the value */
-		T GetValue() const
+		type GetValue() const
 		{
 			return value;
 		}
@@ -88,7 +92,7 @@ namespace chaos
 		/** clear the input */
 		void Clear()
 		{
-			value = T();
+			value = type();
 			update_time = -1.0;
 		}
 		/** get the input status */
@@ -114,7 +118,7 @@ namespace chaos
 		}
 
 		/** change the value of the input */
-		void SetValue(T in_value)
+		void SetValue(type in_value)
 		{
 			double frame_time = FrameTimeManager::GetInstance()->GetCurrentFrameTime();
 
@@ -132,13 +136,13 @@ namespace chaos
 	protected:
 
 		/** check whether a data is an active value */
-		bool IsValueActive(T in_value) const
+		static bool IsValueActive(type in_value)
 		{
-			if constexpr (std::is_same_v<bool, T>)
+			if constexpr (std::is_same_v<bool, type>)
 				return in_value;
-			if constexpr (std::is_same_v<float, T>)
+			if constexpr (std::is_same_v<float, type>)
 				return (in_value != 0.0f);
-			if constexpr (std::is_same_v<glm::vec2, T>)
+			if constexpr (std::is_same_v<glm::vec2, type>)
 				return (in_value.x != 0.0f) || (in_value.y != 0.0f);
 			assert(0);
 			return false;
@@ -147,7 +151,7 @@ namespace chaos
 	public:
 
 		/** value of the button (pressed or not) */
-		T value = T();
+		type value = type();
 		/** time when the state has been updated */
 		double update_time = -1.0;
 	};
@@ -156,7 +160,7 @@ namespace chaos
 	 * Some simple functions
 	 */
 
-	template<typename T>
+	template<InputType T>
 	bool IsInputActive(InputState<T> const * state)
 	{
 		if (state == nullptr)
@@ -164,7 +168,7 @@ namespace chaos
 		return state->IsActive();
 	}
 
-	template<typename T>
+	template<InputType T>
 	bool IsInputInactive(InputState<T> const* state)
 	{
 		if (state == nullptr)
@@ -172,7 +176,7 @@ namespace chaos
 		return state->IsInactive();
 	}
 
-	template<typename T>
+	template<InputType T>
 	bool IsInputJustActivated(InputState<T> const* state)
 	{
 		if (state == nullptr)
@@ -180,7 +184,7 @@ namespace chaos
 		return state->IsJustActivated();
 	}
 
-	template<typename T>
+	template<InputType T>
 	bool IsInputJustDeactivated(InputState<T> const* state)
 	{
 		if (state == nullptr)
@@ -188,7 +192,7 @@ namespace chaos
 		return state->IsJustDeactivated();
 	}
 
-	template<typename T>
+	template<InputType T>
 	bool IsInputActiveRepeated(InputState<T> const* state)
 	{
 		if (state == nullptr)
@@ -196,7 +200,7 @@ namespace chaos
 		return state->IsActiveRepeated();
 	}
 
-	template<typename T>
+	template<InputType T>
 	bool IsInputInactiveRepeated(InputState<T> const* state)
 	{
 		if (state == nullptr)

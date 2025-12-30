@@ -7,7 +7,7 @@ namespace chaos
 	{
 		DisplayAllKeyInfo(keyboard_and_mouse_device, table_title, title, [&](Key key, KeyState const & state)
 		{
-			if (GetKeyInputDevice(key) != key_type)
+			if (GetDeviceForInput(key) != key_type)
 				return false;
 
 			if (hide_cold_keys)

@@ -4,6 +4,20 @@ namespace chaos
 
 	CHAOS_GENERATE_IS_ANY_OF_CONCEPT(InputType, Key, Input1D, Input2D);
 
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+	template<InputType INPUT_TYPE>
+	InputDeviceType GetDeviceForInput(INPUT_TYPE in_input)
+	{
+		if (IsKeyboardInput(in_input))
+			return InputDeviceType::KEYBOARD;
+		if (IsMouseInput(in_input))
+			return InputDeviceType::MOUSE;
+		if (IsGamepadInput(in_input))
+			return InputDeviceType::GAMEPAD;
+		return InputDeviceType::UNKNOWN;
+	}
+
 #endif
 
 }; // namespace chaos

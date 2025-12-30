@@ -186,8 +186,6 @@ namespace chaos
 
 	CHAOS_API char const* GetKeyName(Key in_key);
 
-	CHAOS_API InputDeviceType GetKeyInputDevice(Key in_key);
-
 #endif
 
 }; // namespace chaos

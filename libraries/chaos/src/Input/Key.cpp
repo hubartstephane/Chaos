@@ -190,15 +190,4 @@ namespace chaos
 		return "Unknown";
 	}
 
-	InputDeviceType GetKeyInputDevice(Key in_key)
-	{
-		if (IsKeyboardInput(in_key))
-			return InputDeviceType::KEYBOARD;
-		if (IsMouseInput(in_key))
-			return InputDeviceType::MOUSE;
-		if (IsGamepadInput(in_key))
-			return InputDeviceType::GAMEPAD;
-		return InputDeviceType::UNKNOWN;
-	}
-
 }; // namespace chaos

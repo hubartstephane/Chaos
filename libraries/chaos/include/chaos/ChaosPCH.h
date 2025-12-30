@@ -3,15 +3,6 @@
 #include "chaos/Config.h"
 
 /**
-* Some Initial checks
-*/
-
-// must use preprecessor settings:    /Zc:preprocessor
-#if !defined __VA_OPT__
-#	error "__VA_OPT__ is not enabled: set /Zc:preprocessor flag in Visual Studio project settings"
-#endif
-
-/**
 * Common "macros"
 */
 
@@ -154,7 +145,7 @@
 #include <boost/preprocessor/comparison/less_equal.hpp>
 #include <boost/preprocessor/comparison/less.hpp>
 
-static_assert(BOOST_PP_IS_EMPTY(), "/Zc:preprocessor flag is required for windows");
+static_assert(BOOST_PP_IS_EMPTY(), "/Zc:preprocessor flag is required for windows. __VA_OPT_ is mandatory");
 
 #define GLM_ENABLE_EXPERIMENTAL
 #define GLM_FORCE_SIZE_T_LENGTH

@@ -183,11 +183,4 @@ namespace chaos
 		return Key::UNKNOWN;
 	}
 
-	char const* GetKeyName(Key in_key)
-	{
-		if (char const* result = EnumToString(in_key))
-			return result;
-		return "Unknown";
-	}
-
 }; // namespace chaos

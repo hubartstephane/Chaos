@@ -33,6 +33,8 @@ namespace chaos
 
 	CHAOS_API bool IsGamepadInput(Input2D in_input);
 
+	CHAOS_API Input2D GetInput2DFromName(char const* in_name);
+
 #endif
 
 }; // namespace chaos

@@ -36,4 +36,12 @@ namespace chaos
 		return (in_input >= Input1D::GAMEPAD_FIRST) && (in_input <= Input1D::GAMEPAD_LAST);
 	}
 
+	Input1D GetInput1DFromName(char const* in_name)
+	{
+		Input1D result = Input1D::UNKNOWN;
+		if (StringToEnum(in_name, result))
+			return result;
+		return Input1D::UNKNOWN;
+	}
+
 }; // namespace chaos

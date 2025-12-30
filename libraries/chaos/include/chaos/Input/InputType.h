@@ -18,6 +18,14 @@ namespace chaos
 		return InputDeviceType::UNKNOWN;
 	}
 
+	template<InputType INPUT_TYPE>
+	char const* GetInputName(INPUT_TYPE in_input)
+	{
+		if (char const* result = EnumToString(in_input))
+			return result;
+		return "Unknown";
+	}
+
 #endif
 
 }; // namespace chaos

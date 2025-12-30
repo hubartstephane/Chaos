@@ -40,8 +40,8 @@ public:
 						ImVec4{ 1.0f, 1.0f, 1.0f, 1.0f }:
 						ImVec4{ 1.0f, 0.0f, 0.0f, 1.0f };
 
-					char const* src_name = GetKeyName(src);
-					char const* dst_name = GetKeyName(dst);
+					char const* src_name = GetInputName(src);
+					char const* dst_name = GetInputName(dst);
 
 					ImGui::TextColored(color, "%s (%s) -> %s (current)", src_name, src_layout_name, dst_name);
 				}

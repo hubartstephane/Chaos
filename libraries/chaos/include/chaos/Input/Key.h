@@ -184,8 +184,6 @@ namespace chaos
 
 	CHAOS_API Key GetKeyFromName(char const * in_name);
 
-	CHAOS_API char const* GetKeyName(Key in_key);
-
 #endif
 
 }; // namespace chaos

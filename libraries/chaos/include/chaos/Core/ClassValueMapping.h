@@ -7,22 +7,22 @@
 // 
 // You first need to declare the mapping itself
 //
-//     CHAOS_GENERATE_DECLARE_CLASS_VALUE_MAPPING(MyMapping)
+//     CHAOS_DECLARE_CLASS_VALUE_MAPPING(MyMapping)
 // 
 //        or 
 // 
-//     CHAOS_GENERATE_DECLARE_CLASS_VALUE_MAPPING(MyMapping, default_value_type, default_value)
+//     CHAOS_DECLARE_CLASS_VALUE_MAPPING(MyMapping, default_value_type, default_value)
 //
 // Then the specializations
 //
-//     CHAOS_GENERATE_SPECIALIZE_CLASS_VALUE_MAPPING(MyMapping, A, float, 666.0f)
-//     CHAOS_GENERATE_SPECIALIZE_CLASS_VALUE_MAPPING(MyMapping, B, int, 666)
+//     CHAOS_SPECIALIZE_CLASS_VALUE_MAPPING(MyMapping, A, float, 666.0f)
+//     CHAOS_SPECIALIZE_CLASS_VALUE_MAPPING(MyMapping, B, int, 666)
 //
 // You can then access the value with the following code
 //
 //     auto value = MyMapping_v<A>;
 
-#define CHAOS_GENERATE_DECLARE_CLASS_VALUE_MAPPING(mapping_name, ...)\
+#define CHAOS_DECLARE_CLASS_VALUE_MAPPING(mapping_name, ...)\
 template<typename T>\
 struct mapping_name BOOST_PP_IIF(\
 	BOOST_PP_OR(\
@@ -32,16 +32,16 @@ struct mapping_name BOOST_PP_IIF(\
 			2\
 		)\
 	),\
-	CHAOS_GENERATE_DECLARE_CLASS_VALUE_MAPPING_NODEFAULT, \
-	CHAOS_GENERATE_DECLARE_CLASS_VALUE_MAPPING_WITHDEFAULT\
+	CHAOS_DECLARE_CLASS_VALUE_MAPPING_NODEFAULT, \
+	CHAOS_DECLARE_CLASS_VALUE_MAPPING_WITHDEFAULT\
 )(__VA_ARGS__); \
 template<typename T>\
 static auto constexpr mapping_name##_v = mapping_name<T>::value;
 
-#define CHAOS_GENERATE_DECLARE_CLASS_VALUE_MAPPING_NODEFAULT(...)
-#define CHAOS_GENERATE_DECLARE_CLASS_VALUE_MAPPING_WITHDEFAULT(value_type, default_value, ...) { static constexpr value_type value = default_value; }
+#define CHAOS_DECLARE_CLASS_VALUE_MAPPING_NODEFAULT(...)
+#define CHAOS_DECLARE_CLASS_VALUE_MAPPING_WITHDEFAULT(value_type, default_value, ...) { static constexpr value_type value = default_value; }
 
-#define CHAOS_GENERATE_SPECIALIZE_CLASS_VALUE_MAPPING(mapping_name, target_class, value_type, target_value)\
+#define CHAOS_SPECIALIZE_CLASS_VALUE_MAPPING(mapping_name, target_class, value_type, target_value)\
 template<> struct mapping_name<target_class> { static constexpr value_type value = target_value; };
 
 #endif

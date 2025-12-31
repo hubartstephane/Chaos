@@ -5,29 +5,17 @@ namespace chaos
 	class Input1DMappingInfo;
 	class Input2DMappingInfo;
 
-	template<typename T>
-	class InputTypeToMappingInfo;
-
-	//template<typename INPUT_TYPE, size_t MAPPING_COUNT>
-	//class MappedInputRequest;
-
-	template<typename INPUT_TYPE, typename VALUE_TYPE>
+	template<InputType INPUT_TYPE>
 	class MappedInputRequest;
 
-	using QueryMapped1DInputRequest = MappedInputRequest<Input1D, float>;
-	using QueryMapped2DInputRequest = MappedInputRequest<Input2D, glm::vec2>;
+	using QueryMapped1DInputRequest = MappedInputRequest<Input1D>;
+	using QueryMapped2DInputRequest = MappedInputRequest<Input2D>;
+
+	CHAOS_DECLARE_CLASS_MAPPING(InputTypeToMappingInfo);
+	CHAOS_SPECIALIZE_CLASS_MAPPING(InputTypeToMappingInfo, Input1D, Input1DMappingInfo);
+	CHAOS_SPECIALIZE_CLASS_MAPPING(InputTypeToMappingInfo, Input2D, Input2DMappingInfo);
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-	/**
-	 * InputTypeToMappingInfo: a class to get the MappingInfo type (1D/2D) from an InputType (1D/2D)
-	 */
-
-	template<>
-	class InputTypeToMappingInfo<Input1D> : public boost::mpl::identity<Input1DMappingInfo> {};
-
-	template<>
-	class InputTypeToMappingInfo<Input2D> : public boost::mpl::identity<Input2DMappingInfo> {};
 
 	/**
 	 * Input1DMappingInfo: some key binding to get an input1D from keys
@@ -75,80 +63,18 @@ namespace chaos
 		Key down_key  = Key::UNKNOWN;
 	};
 
-
-
-
-#if 0
-
 	/**
-	 * MappedInputRequest: a request dedicated to read input1D value from input1D but from key as well
+	 * MappedInputRequest: a request to map 2 keys to a Input1D and 4 keys to an Input2D query
 	 */
 
-	template<typename INPUT_TYPE, size_t MAPPING_COUNT>
+	template<InputType INPUT_TYPE>
 	class MappedInputRequest : public InputRequestBase
 	{
 	public:
 
 		using input_type = INPUT_TYPE;
-		using mapping_info_type = typename InputTypeToMappingInfo<INPUT_TYPE>::type;
-
-
-		/** constructor */
-		template<typename... MAPPINGS> requires(sizeof...(MAPPINGS) == MAPPING_COUNT)
-		MappedInputRequest(input_type in_input, MAPPINGS... in_mapping):
-			input(in_input),
-			mappings(in_mapping...)
-		{
-		}
-
-
-#if 0
-		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
-		{
-			std::optional<InputRequestResult> result;
-
-			std::apply([&](auto const & ... child_request)
-				{
-					auto CheckChildInputRequest = [&](auto const& child_request)
-						{
-							InputRequestResult child_result = child_request.Check(in_input_receiver, in_input_device, in_consumption_cache);
-							result = RESULT_AGGREGATION_TYPE::AggregateResult(result, child_result);
-						};
-					(CheckChildInputRequest(child_request), ...);
-
-				}, child_input_requests);
-
-			return result.value_or(InputRequestResult::False);
-		}
-#endif
-
-	protected:
-
-		/** the 1D/2D input to check for */
-		input_type input = input_type::UNKNOWN;
-		/** the available key mappings */
-		std::array<mapping_info_type, MAPPING_COUNT> mappings;
-	};
-
-
-	template<typename INPUT_TYPE, typename... MAPPINGS>
-	MappedInputRequest<INPUT_TYPE, sizeof...(MAPPINGS)> MappedInput(INPUT_TYPE in_input, MAPPINGS... in_mapping)
-	{
-		return MappedInputRequest<INPUT_TYPE, sizeof...(MAPPINGS)>(in_input, std::forward<MAPPINGS>(in_mapping)...);
-	}
-
-
-#endif
-
-
-	template<typename INPUT_TYPE, typename VALUE_TYPE>
-	class MappedInputRequest : public InputRequestBase
-	{
-	public:
-
-		using input_type = INPUT_TYPE;
-		using value_type = VALUE_TYPE;
-		using mapping_info_type = typename InputTypeToMappingInfo<INPUT_TYPE>::type;
+		using value_type = InputValueType_t<input_type>;
+		using mapping_info_type = InputTypeToMappingInfo_t<INPUT_TYPE>;
 
 		/** copy constructor */
 		MappedInputRequest(MappedInputRequest const& src) = default;
@@ -210,6 +136,17 @@ namespace chaos
 					else if (!up_value && down_value)
 						out_value->y = -1.0f;
 				}
+
+
+
+
+				// use query_type here
+
+
+
+
+
+
 				return internal_result;
 			}
 			return InputRequestResult::Invalid;

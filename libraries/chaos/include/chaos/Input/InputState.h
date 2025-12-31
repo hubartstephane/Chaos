@@ -11,11 +11,6 @@ namespace chaos
 	using Input1DState = InputState<Input1D>;
 	using Input2DState = InputState<Input2D>;
 
-	CHAOS_DECLARE_CLASS_MAPPING(InputValueType);
-	CHAOS_SPECIALIZE_CLASS_MAPPING(InputValueType, Key, bool);
-	CHAOS_SPECIALIZE_CLASS_MAPPING(InputValueType, Input1D, float);
-	CHAOS_SPECIALIZE_CLASS_MAPPING(InputValueType, Input2D, glm::vec2);
-
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
@@ -157,7 +152,7 @@ namespace chaos
 	};
 
 	/**
-	 * Some simple functions
+	 * Standalone functions
 	 */
 
 	template<InputType T>

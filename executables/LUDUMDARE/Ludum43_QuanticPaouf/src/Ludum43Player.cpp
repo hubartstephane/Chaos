@@ -163,7 +163,7 @@ bool LudumPlayer::EnumerateInputActions(chaos::InputActionEnumerator& in_action_
 			{
 				glm::vec2 stick_value = { 0.0f, 0.0f };
 
-				auto MoveRequest = QueryInput(chaos::Input2DMappingInfo::default_keyboard_mapping, &stick_value);
+				auto MoveRequest = QueryInput(chaos::MappedInput2D::default_keyboard_mapping, &stick_value);
 
 				if (in_action_enumerator.CheckAndProcess(MoveRequest, "Move", [&]()
 				{

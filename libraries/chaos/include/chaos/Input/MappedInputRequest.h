@@ -2,64 +2,16 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class MappedInput1D;
-	class MappedInput2D;
-
 	CHAOS_GENERATE_IS_ANY_OF_CONCEPT(MappedInputType, MappedInput1D, MappedInput2D);
 
 	template<MappedInputType INPUT_TYPE>
 	class MappedInputRequest;
 
-	CHAOS_SPECIALIZE_CLASS_MAPPING(InputValueType, MappedInput1D, float);
-	CHAOS_SPECIALIZE_CLASS_MAPPING(InputValueType, MappedInput2D, glm::vec2);
-
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	/**
-	 * MappedInput1D: some key binding to get an input1D from keys
-	 */
 
-	class MappedInput1D
-	{
-	public:
 
-		/** the default mapping with keyboard */
-		static MappedInput1D const default_keyboard_mapping;
-		/** the default mapping with dpad */
-		static MappedInput1D const default_dpad_mapping;
-
-	public:
-
-		/** the key bound to negative direction */
-		Key neg_key = Key::UNKNOWN;
-		/** the key bound to positive direction */
-		Key pos_key = Key::UNKNOWN;
-	};
-
-	/**
-	 * MappedInput2D: some key binding to get an input2D from keys
-	 */
-
-	class MappedInput2D
-	{
-	public:
-
-		/** the default mapping with keyboard */
-		static MappedInput2D const default_keyboard_mapping;
-		/** the default mapping with dpad */
-		static MappedInput2D const default_dpad_mapping;
-
-	public:
-
-		/** the key bound to left direction */
-		Key left_key  = Key::UNKNOWN;
-		/** the key bound to right direction */
-		Key right_key = Key::UNKNOWN;
-		/** the key bound to up direction */
-		Key up_key    = Key::UNKNOWN;
-		/** the key bound to down direction */
-		Key down_key  = Key::UNKNOWN;
-	};
+#if 0
 
 	/**
 	 * MappedInputRequest: a request to map 2 keys to a Input1D and 4 keys to an Input2D query
@@ -87,6 +39,9 @@ namespace chaos
 		{
 			if constexpr (std::is_same_v<mapped_input_type, MappedInput1D>)
 			{
+				InputState<Key> neg_state;
+				InputState<Key> pos_state;
+
 				bool neg_value = false;
 				bool pos_value = false;
 
@@ -96,6 +51,9 @@ namespace chaos
 				);
 
 				InputRequestResult internal_result = internal_query.Check(in_input_receiver, in_input_device, in_consumption_cache);
+				if (internal_result == InputRequestResult::Invalid || internal_result == InputRequestResult::Rejected)
+					return internal_result;
+
 				if (out_value != nullptr)
 				{
 					if (neg_value && !pos_value)
@@ -121,6 +79,9 @@ namespace chaos
 				);
 
 				InputRequestResult internal_result = internal_query.Check(in_input_receiver, in_input_device, in_consumption_cache);
+				if (internal_result == InputRequestResult::Invalid || internal_result == InputRequestResult::Rejected)
+					return internal_result;
+
 				if (out_value != nullptr)
 				{
 					if (left_value && !right_value)
@@ -199,11 +160,12 @@ namespace chaos
 		/** whether an inactive input is a success or not */
 		QueryInputRequestType query_type = QueryInputRequestType::None;
 	};
+#endif
 
 	/**
 	 * Standalone functions
 	 */
-
+#if 0
 	template<MappedInputType MAPPED_INPUT_TYPE>
 	MappedInputRequest<MAPPED_INPUT_TYPE> QueryInput(MAPPED_INPUT_TYPE const& in_input, QueryInputRequestType in_query_type = QueryInputRequestType::None)
 	{
@@ -215,6 +177,7 @@ namespace chaos
 	{
 		return MappedInputRequest<MAPPED_INPUT_TYPE>(in_input, out_value, in_query_type);
 	}
+#endif
 
 #endif
 

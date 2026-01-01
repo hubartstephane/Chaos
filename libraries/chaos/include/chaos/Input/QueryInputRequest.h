@@ -2,12 +2,8 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	template<InputType INPUT_TYPE>
+	template<InputTypeExt INPUT_TYPE_EXT>
 	class QueryInputRequest;
-
-	using QueryKeyInputRequest = QueryInputRequest<Key>;
-	using QueryInput1DRequest  = QueryInputRequest<Input1D>;
-	using QueryInput2DRequest  = QueryInputRequest<Input2D>;
 
 	enum class QueryInputRequestType;
 
@@ -34,18 +30,18 @@ namespace chaos
 	 * QueryInputRequest: a request that gets the value of an input
 	 */
 
-	template<InputType INPUT_TYPE>
+	template<InputTypeExt INPUT_TYPE_EXT>
 	class QueryInputRequest : public InputRequestBase
 	{
 	public:
 
-		using input_type = INPUT_TYPE;
+		using input_type = INPUT_TYPE_EXT;
 		using state_type = InputState<input_type>;
 		using value_type = InputValueType_t<input_type>;
 
 		/** constructor */
-		QueryInputRequest(input_type in_searched_input, state_type* in_out_state, value_type* in_out_value, QueryInputRequestType in_query_type):
-			searched_input(in_searched_input),
+		QueryInputRequest(input_type in_input, state_type* in_out_state, value_type* in_out_value, QueryInputRequestType in_query_type):
+			input(in_input),
 			out_state(in_out_state),
 			out_value(in_out_value),
 			query_type(in_query_type)
@@ -58,30 +54,121 @@ namespace chaos
 		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
 		{
 			// early exit
-			if (searched_input == input_type::UNKNOWN)
-				return InputRequestResult::Invalid;
+			if constexpr (InputType<input_type>) // only valid for Key, Input1D, Input2D
+			{
+				if (input == input_type::UNKNOWN)
+					return InputRequestResult::Invalid;
+			}
+			if constexpr (std::is_same_v<input_type, MappedInput1D>)
+			{
+				if (input.pos_key == Key::UNKNOWN || input.neg_key == Key::UNKNOWN)
+					return InputRequestResult::Invalid;			
+			}
+			if constexpr (std::is_same_v<input_type, MappedInput2D>)
+			{
+				if (input.left_key == Key::UNKNOWN || input.right_key == Key::UNKNOWN || input.up_key == Key::UNKNOWN || input.down_key == Key::UNKNOWN)
+					return InputRequestResult::Invalid;
+			}			
 			if (out_state == nullptr && out_value == nullptr && query_type == QueryInputRequestType::None) // this request is useless
 				return InputRequestResult::Invalid;
-			// find input
-			state_type const* input_state = in_input_device->GetInputState(searched_input);
-			if (input_state == nullptr)
-				return InputRequestResult::Invalid; // abnormal (request for an input not handled by the receiver)
-			// consum the key of the request (no one can use it anymore until next frame)
-			if (!in_consumption_cache.TryConsumeInput(in_input_receiver, searched_input, in_input_device))
-				return InputRequestResult::Rejected;
 
-			value_type value = input_state->GetValue();
+			// find and handle state
+			if constexpr (std::is_same_v<input_type, MappedInput1D>)
+			{
+				InputState<Key> neg_state;
+				InputState<Key> pos_state;
+
+				auto internal_query = Or(
+					QueryInput(input.neg_key, &neg_state),
+					QueryInput(input.pos_key, &pos_state)
+				);
+
+				InputRequestResult internal_result = internal_query.Check(in_input_receiver, in_input_device, in_consumption_cache);
+				if (internal_result == InputRequestResult::Invalid || internal_result == InputRequestResult::Rejected)
+					return internal_result;
+
+				MappedInput1DState input_state;
+
+				input_state.update_time = std::max(neg_state.update_time, pos_state.update_time); // this work for negative time (that correspond to unitialized state)
+
+				if (neg_state.value)
+					input_state.value -= 1.0f;
+				if (pos_state.value)
+					input_state.value += 1.0f;
+
+				return OuputDataAndReturnResult(&input_state);
+			}
+
+			if constexpr (std::is_same_v<input_type, MappedInput2D>)
+			{
+				InputState<Key> left_state;
+				InputState<Key> right_state;
+				InputState<Key> down_state;
+				InputState<Key> up_state;
+
+				auto internal_query = Or(
+					QueryInput(input.left_key, &left_state),
+					QueryInput(input.right_key, &right_state),
+					QueryInput(input.down_key, &down_state),
+					QueryInput(input.up_key, &up_state)
+				);
+
+				InputRequestResult internal_result = internal_query.Check(in_input_receiver, in_input_device, in_consumption_cache);
+				if (internal_result == InputRequestResult::Invalid || internal_result == InputRequestResult::Rejected)
+					return internal_result;
+
+				MappedInput2DState input_state;
+
+				// this work for negative time (that correspond to unitialized state)
+				input_state.update_time = std::max(
+					std::max(left_state.update_time, right_state.update_time),
+					std::max(down_state.update_time, up_state.update_time)
+				);
+
+				if (left_state.value)
+					input_state.value.x -= 1.0f;
+				if (right_state.value)
+					input_state.value.x += 1.0f;
+
+				if (down_state.value)
+					input_state.value.y -= 1.0f;
+				if (up_state.value)
+					input_state.value.y += 1.0f;
+
+				return OuputDataAndReturnResult(&input_state);
+			}
+
+			if constexpr (InputType<input_type>) // ignore mapped inputs
+			{
+				state_type const* input_state = in_input_device->GetInputState(input);
+				if (input_state == nullptr)
+					return InputRequestResult::Invalid; // abnormal (request for an input not handled by the receiver)
+
+				// consum the key of the request (no one can use it anymore until next frame)
+				if (!in_consumption_cache.TryConsumeInput(in_input_receiver, input, in_input_device))
+					return InputRequestResult::Rejected;
+
+				return OuputDataAndReturnResult(input_state);
+			}
+
+			return OuputDataAndReturnResult(nullptr);
+		}
+
+		/** output necessary data and get request result from the state and the query */
+		InputRequestResult OuputDataAndReturnResult(state_type const * in_input_state) const
+		{
+			assert(in_input_state != nullptr);
 
 			// output results
 			if (out_state != nullptr)
-				*out_state = *input_state;
+				*out_state = *in_input_state;
 			if (out_value != nullptr)
-				*out_value = value;
+				*out_value = in_input_state->GetValue();
 
-			// compute query result
+			// compute return value
 			auto ConvertResultType = [](bool result)
 			{
-				return result? InputRequestResult::True: InputRequestResult::False;
+				return result ? InputRequestResult::True : InputRequestResult::False;
 			};
 
 			switch (query_type)
@@ -89,17 +176,17 @@ namespace chaos
 			case QueryInputRequestType::None:
 				return InputRequestResult::True;
 			case QueryInputRequestType::Inactive:
-				return ConvertResultType(input_state->IsInactive());
+				return ConvertResultType(in_input_state->IsInactive());
 			case QueryInputRequestType::JustDeactivated:
-				return ConvertResultType(input_state->IsJustDeactivated());
+				return ConvertResultType(in_input_state->IsJustDeactivated());
 			case QueryInputRequestType::InactiveRepeated:
-				return ConvertResultType(input_state->IsInactiveRepeated());
+				return ConvertResultType(in_input_state->IsInactiveRepeated());
 			case QueryInputRequestType::Active:
-				return ConvertResultType(input_state->IsActive());
+				return ConvertResultType(in_input_state->IsActive());
 			case QueryInputRequestType::JustActivated:
-				return ConvertResultType(input_state->IsJustActivated());
+				return ConvertResultType(in_input_state->IsJustActivated());
 			case QueryInputRequestType::ActiveRepeated:
-				return ConvertResultType(input_state->IsActiveRepeated());
+				return ConvertResultType(in_input_state->IsActiveRepeated());
 			default:
 				assert(0);
 			}
@@ -110,36 +197,64 @@ namespace chaos
 		virtual bool IsRequestRelatedTo(Key in_input) const override
 		{
 			if constexpr (std::is_same_v<input_type, Key>)
-				return (searched_input == in_input);
+				return (input == in_input);
+
+			if constexpr (std::is_same_v<input_type, MappedInput1D>)
+				return (input.pos_key == in_input || input.neg_key == in_input);
+
+			if constexpr (std::is_same_v<input_type, MappedInput2D>)
+				return (input.left_key == in_input || input.right_key == in_input || input.up_key == in_input || input.down_key == in_input);
+
 			return false;
 		}
 		/** override */
 		virtual bool IsRequestRelatedTo(Input1D in_input) const override
 		{
 			if constexpr (std::is_same_v<input_type, Input1D>)
-				return (searched_input == in_input);
+				return (input == in_input);
 			return false;
 		}
 		/** override */
 		virtual bool IsRequestRelatedTo(Input2D in_input) const override
 		{
 			if constexpr (std::is_same_v<input_type, Input2D>)
-				return (searched_input == in_input);
+				return (input == in_input);
 			return false;
 		}
 		/** override */
 		virtual char const * GetDebugInfo(InputRequestDebugInfoStorage & debug_info_storage) const override
 		{
+			char input_buffer[256];
+
+			if constexpr (std::is_same_v<input_type, MappedInput1D>)
+			{
+				std::snprintf(input_buffer, sizeof(input_buffer), "%s/%s",
+					EnumToString(input.neg_key),
+					EnumToString(input.pos_key));
+			}
+			if constexpr (std::is_same_v<input_type, MappedInput2D>)
+			{
+				std::snprintf(input_buffer, sizeof(input_buffer), "%s/%s/%s/%s",
+					EnumToString(input.left_key),
+					EnumToString(input.right_key),
+					EnumToString(input.up_key),
+					EnumToString(input.down_key));
+			}
+			if constexpr (InputType<input_type>) // ignore mapped inputs
+			{
+				strcpy_s(input_buffer, sizeof(input_buffer), EnumToString(input));
+			}
+
 			if (query_type == QueryInputRequestType::None)
 			{
 				if (out_state != nullptr || out_value != nullptr)
-					std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Query[%s]", EnumToString(searched_input));
+					std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Query[%s]", input_buffer);
 				else
-					std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Misformed Query[%s]", EnumToString(searched_input));
+					std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Misformed Query[%s]", input_buffer);
 			}
 			else
 			{
-				std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "%s[%s]", EnumToString(query_type), EnumToString(searched_input));
+				std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "%s[%s]", EnumToString(query_type), input_buffer);
 			}
 			return debug_info_storage.buffer;
 		}
@@ -147,7 +262,7 @@ namespace chaos
 	protected:
 
 		/** the concerned input */
-		input_type searched_input;
+		input_type input;
 		/** the state of the request */
 		state_type* out_state = nullptr;
 		/** the result of the request */
@@ -160,56 +275,56 @@ namespace chaos
 	 * Some standalone functions
 	 */
 
-	template<InputType INPUT_TYPE>
-	QueryInputRequest<INPUT_TYPE> QueryInput(INPUT_TYPE in_input, QueryInputRequestType in_query_type = QueryInputRequestType::None)
+	template<InputTypeExt INPUT_TYPE_EXT>
+	QueryInputRequest<INPUT_TYPE_EXT> QueryInput(INPUT_TYPE_EXT in_input, QueryInputRequestType in_query_type = QueryInputRequestType::None)
 	{
 		return { in_input, nullptr, nullptr, in_query_type };
 	}
 
-	template<InputType INPUT_TYPE>
-	QueryInputRequest<INPUT_TYPE> QueryInput(INPUT_TYPE in_input, InputValueType_t<INPUT_TYPE> *out_value, QueryInputRequestType in_query_type = QueryInputRequestType::None)
+	template<InputTypeExt INPUT_TYPE_EXT>
+	QueryInputRequest<INPUT_TYPE_EXT> QueryInput(INPUT_TYPE_EXT in_input, InputValueType_t<INPUT_TYPE_EXT> *out_value, QueryInputRequestType in_query_type = QueryInputRequestType::None)
 	{
 		return { in_input, nullptr, out_value, in_query_type };
 	}
 
-	template<InputType INPUT_TYPE>
-	QueryInputRequest<INPUT_TYPE> QueryInput(INPUT_TYPE in_input, InputState<INPUT_TYPE>* out_state, QueryInputRequestType in_query_type = QueryInputRequestType::None)
+	template<InputTypeExt INPUT_TYPE_EXT>
+	QueryInputRequest<INPUT_TYPE_EXT> QueryInput(INPUT_TYPE_EXT in_input, InputState<INPUT_TYPE_EXT>* out_state, QueryInputRequestType in_query_type = QueryInputRequestType::None)
 	{
 		return { in_input, out_state, nullptr, in_query_type };
 	}
 
-	template<InputType T, typename ...PARAMS>
-	auto Active(T in_input, PARAMS... params)
+	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
+	auto Active(INPUT_TYPE_EXT in_input, PARAMS... params)
 	{
 		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::Active);
 	}
 
-	template<InputType T, typename ...PARAMS>
-	auto JustActivated(T in_input, PARAMS... params)
+	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
+	auto JustActivated(INPUT_TYPE_EXT in_input, PARAMS... params)
 	{
 		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::JustActivated);
 	}
 
-	template<InputType T, typename ...PARAMS>
-	auto ActiveRepeated(T in_input, PARAMS... params)
+	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
+	auto ActiveRepeated(INPUT_TYPE_EXT in_input, PARAMS... params)
 	{
 		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::ActiveRepeated);
 	}
 
-	template<InputType T, typename ...PARAMS>
-	auto Inactive(T in_input, PARAMS... params)
+	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
+	auto Inactive(INPUT_TYPE_EXT in_input, PARAMS... params)
 	{
 		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::Inactive);
 	}
 
-	template<InputType T, typename ...PARAMS>
-	auto JustDeactivated(T in_input, PARAMS... params)
+	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
+	auto JustDeactivated(INPUT_TYPE_EXT in_input, PARAMS... params)
 	{
 		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::JustDeactivated);
 	}
 
-	template<InputType T, typename ...PARAMS>
-	auto InactiveRepeated(T in_input, PARAMS... params)
+	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
+	auto InactiveRepeated(INPUT_TYPE_EXT in_input, PARAMS... params)
 	{
 		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::InactiveRepeated);
 	}

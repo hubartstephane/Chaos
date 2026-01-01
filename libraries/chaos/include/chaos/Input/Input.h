@@ -2,6 +2,8 @@
 #include "chaos/Input/Key.h"
 #include "chaos/Input/Input1D.h"
 #include "chaos/Input/Input2D.h"
+#include "chaos/Input/MappedInput1D.h"
+#include "chaos/Input/MappedInput2D.h"
 #include "chaos/Input/InputType.h"
 #include "chaos/Input/KeyboardLayout.h"
 #include "chaos/Input/KeyboardLayoutConversion.h"

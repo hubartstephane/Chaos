@@ -21,7 +21,6 @@
 #include "chaos/Input/CompositeInputRequest.h"
 #include "chaos/Input/ModifiersInputRequest.h"
 #include "chaos/Input/QueryInputRequest.h"
-#include "chaos/Input/MappedInputRequest.h"
 #include "chaos/Input/AnyInputRequest.h"
 #include "chaos/Input/MouseButtonEvent.h"
 #include "chaos/Input/InputActionEnumerator.h"

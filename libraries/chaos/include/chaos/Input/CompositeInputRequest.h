@@ -137,7 +137,7 @@ namespace chaos
 			}
 		}
 
-		template<typename INPUT_TYPE>
+		template<InputType INPUT_TYPE>
 		bool IsRequestRelatedToImpl(INPUT_TYPE in_input) const
 		{
 			return std::apply([&](auto const & ... child_request) -> bool

@@ -2,7 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	template<typename INPUT_TYPE>
+	template<InputType INPUT_TYPE>
 	class OnEventInputActionEnumerator;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -11,7 +11,7 @@ namespace chaos
 	 * OnEventInputActionEnumerator: a specialization of InputActionEnumerator dedicated to window's events handling
 	 */
 
-	template<typename INPUT_TYPE>
+	template<InputType INPUT_TYPE>
 	class OnEventInputActionEnumerator : public InputActionEnumerator
 	{
 	public:

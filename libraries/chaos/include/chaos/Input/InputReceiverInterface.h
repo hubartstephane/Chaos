@@ -85,11 +85,11 @@ namespace chaos
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode);
 
 		/** handle some event action */
-		template<typename INPUT_TYPE>
+		template<InputType INPUT_TYPE>
 		bool ProcessInputEvent(INPUT_TYPE in_input);
 
 		/** mark the input as consumed inside the WindowApplication ConsumCache */
-		template<typename INPUT_TYPE>
+		template<InputType INPUT_TYPE>
 		static void MarkInputConsumedInApplicationCache(INPUT_TYPE in_input, InputDeviceInterface const* in_input_device = KeyboardAndMouseDevice::GetInstance());
 
 		/** internal method to check whether a button is pressed */
@@ -103,7 +103,7 @@ namespace chaos
 
 #else // defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	template<typename INPUT_TYPE>
+	template<InputType INPUT_TYPE>
 	bool InputReceiverInterface::ProcessInputEvent(INPUT_TYPE in_input)
 	{
 		// XXX: do not use WindowApplication::consumption_cache
@@ -129,7 +129,7 @@ namespace chaos
 		return traverser.Traverse(this);
 	}
 
-	template<typename INPUT_TYPE>
+	template<InputType INPUT_TYPE>
 	void InputReceiverInterface::MarkInputConsumedInApplicationCache(INPUT_TYPE in_input, InputDeviceInterface const* in_input_device)
 	{
 		if (in_input_device != nullptr)

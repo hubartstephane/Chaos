@@ -697,7 +697,11 @@ bool LudumGameInstance::Initialize(chaos::Game * in_game)
 bool LudumGameInstance::TraverseInputReceiver(chaos::InputReceiverTraverser& in_traverser, chaos::InputDeviceInterface const* in_input_device)
 {
 	if (game->IsPlaying() && sequence_challenge != nullptr)
+	{
+		chaos::shared_ptr<chaos::Object> keep_alive = sequence_challenge;
+
 		if (in_traverser.Traverse(sequence_challenge.get(), in_input_device))
 			return true;
+	}
 	return chaos::GameInstance::TraverseInputReceiver(in_traverser, in_input_device);
 }

@@ -193,7 +193,8 @@ namespace chaos
 		SmartPointerBase(AutoCastable<U> const& src)
 		{
 			if (src != nullptr)
-				target = POLICY::AddReference((T*)src);
+				if (T * casted_src = (T*)src)
+					target = POLICY::AddReference(casted_src);
 		}
 
 		/** destructor */

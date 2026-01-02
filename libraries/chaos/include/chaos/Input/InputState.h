@@ -4,14 +4,19 @@ namespace chaos
 
 	enum class InputStatus;
 
-	template<InputTypeExt INPUT_TYPE_EXT>
-	class InputState;
+	template<InputType INPUT_TYPE>
+	class InputStateBase;
 
-	using KeyState           = InputState<Key>;
-	using Input1DState       = InputState<Input1D>;
-	using Input2DState       = InputState<Input2D>;
-	using MappedInput1DState = InputState<MappedInput1D>;
-	using MappedInput2DState = InputState<MappedInput2D>;
+	CHAOS_DECLARE_CLASS_MAPPING(InputState)
+	CHAOS_SPECIALIZE_CLASS_MAPPING(InputState, Key, InputStateBase<Key>);
+	CHAOS_SPECIALIZE_CLASS_MAPPING(InputState, Input1D, InputStateBase<Input1D>);
+	CHAOS_SPECIALIZE_CLASS_MAPPING(InputState, Input2D, InputStateBase<Input2D>);
+	CHAOS_SPECIALIZE_CLASS_MAPPING(InputState, MappedInput1D, InputStateBase<Input1D>);
+	CHAOS_SPECIALIZE_CLASS_MAPPING(InputState, MappedInput2D, InputStateBase<Input2D>);
+
+	using KeyState     = InputState_t<Key>;
+	using Input1DState = InputState_t<Input1D>;
+	using Input2DState = InputState_t<Input2D>;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -29,15 +34,15 @@ namespace chaos
 	};
 
 	/**
-	* InputState: base class for key/axis/stick state
+	* InputStateBase: base class for key/axis/stick state
 	*/
 
-	template<InputTypeExt INPUT_TYPE_EXT>
-	class InputState
+	template<InputType INPUT_TYPE>
+	class InputStateBase
 	{
 	public:
 
-		using type = InputValueType_t<INPUT_TYPE_EXT>;
+		using type = InputValueType_t<INPUT_TYPE>;
 
 		/** get the value */
 		type GetValue() const
@@ -157,48 +162,48 @@ namespace chaos
 	 * Standalone functions
 	 */
 
-	template<InputTypeExt INPUT_TYPE_EXT>
-	bool IsInputActive(InputState<INPUT_TYPE_EXT> const * state)
+	template<InputType INPUT_TYPE>
+	bool IsInputActive(InputStateBase<INPUT_TYPE> const * state)
 	{
 		if (state == nullptr)
 			return false;
 		return state->IsActive();
 	}
 
-	template<InputTypeExt INPUT_TYPE_EXT>
-	bool IsInputInactive(InputState<INPUT_TYPE_EXT> const* state)
+	template<InputType INPUT_TYPE>
+	bool IsInputInactive(InputStateBase<INPUT_TYPE> const* state)
 	{
 		if (state == nullptr)
 			return false;
 		return state->IsInactive();
 	}
 
-	template<InputTypeExt INPUT_TYPE_EXT>
-	bool IsInputJustActivated(InputState<INPUT_TYPE_EXT> const* state)
+	template<InputType INPUT_TYPE>
+	bool IsInputJustActivated(InputStateBase<INPUT_TYPE> const* state)
 	{
 		if (state == nullptr)
 			return false;
 		return state->IsJustActivated();
 	}
 
-	template<InputTypeExt INPUT_TYPE_EXT>
-	bool IsInputJustDeactivated(InputState<INPUT_TYPE_EXT> const* state)
+	template<InputType INPUT_TYPE>
+	bool IsInputJustDeactivated(InputStateBase<INPUT_TYPE> const* state)
 	{
 		if (state == nullptr)
 			return false;
 		return state->IsJustDeactivated();
 	}
 
-	template<InputTypeExt INPUT_TYPE_EXT>
-	bool IsInputActiveRepeated(InputState<INPUT_TYPE_EXT> const* state)
+	template<InputType INPUT_TYPE>
+	bool IsInputActiveRepeated(InputStateBase<INPUT_TYPE> const* state)
 	{
 		if (state == nullptr)
 			return false;
 		return state->IsActiveRepeated();
 	}
 
-	template<InputTypeExt INPUT_TYPE_EXT>
-	bool IsInputInactiveRepeated(InputState<INPUT_TYPE_EXT> const* state)
+	template<InputType INPUT_TYPE>
+	bool IsInputInactiveRepeated(InputStateBase<INPUT_TYPE> const* state)
 	{
 		if (state == nullptr)
 			return false;

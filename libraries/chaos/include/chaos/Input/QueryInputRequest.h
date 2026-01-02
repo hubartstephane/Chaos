@@ -36,7 +36,7 @@ namespace chaos
 	public:
 
 		using input_type = INPUT_TYPE_EXT;
-		using state_type = InputState<input_type>;
+		using state_type = InputState_t<input_type>;
 		using value_type = InputValueType_t<input_type>;
 
 		/** constructor */
@@ -75,8 +75,8 @@ namespace chaos
 			// find and handle state
 			if constexpr (std::is_same_v<input_type, MappedInput1D>)
 			{
-				InputState<Key> neg_state;
-				InputState<Key> pos_state;
+				KeyState neg_state;
+				KeyState pos_state;
 
 				auto internal_query = Or(
 					QueryInput(input.neg_key, &neg_state),
@@ -87,7 +87,7 @@ namespace chaos
 				if (internal_result == InputRequestResult::Invalid || internal_result == InputRequestResult::Rejected)
 					return internal_result;
 
-				MappedInput1DState input_state;
+				Input1DState input_state;
 
 				input_state.update_time = std::max(neg_state.update_time, pos_state.update_time); // this work for negative time (that correspond to unitialized state)
 
@@ -101,10 +101,10 @@ namespace chaos
 
 			if constexpr (std::is_same_v<input_type, MappedInput2D>)
 			{
-				InputState<Key> left_state;
-				InputState<Key> right_state;
-				InputState<Key> down_state;
-				InputState<Key> up_state;
+				KeyState left_state;
+				KeyState right_state;
+				KeyState down_state;
+				KeyState up_state;
 
 				auto internal_query = Or(
 					QueryInput(input.left_key, &left_state),
@@ -117,7 +117,7 @@ namespace chaos
 				if (internal_result == InputRequestResult::Invalid || internal_result == InputRequestResult::Rejected)
 					return internal_result;
 
-				MappedInput2DState input_state;
+				Input2DState input_state;
 
 				// this work for negative time (that correspond to unitialized state)
 				input_state.update_time = std::max(
@@ -288,7 +288,7 @@ namespace chaos
 	}
 
 	template<InputTypeExt INPUT_TYPE_EXT>
-	QueryInputRequest<INPUT_TYPE_EXT> QueryInput(INPUT_TYPE_EXT in_input, InputState<INPUT_TYPE_EXT>* out_state, QueryInputRequestType in_query_type = QueryInputRequestType::None)
+	QueryInputRequest<INPUT_TYPE_EXT> QueryInput(INPUT_TYPE_EXT in_input, InputState_t<INPUT_TYPE_EXT>* out_state, QueryInputRequestType in_query_type = QueryInputRequestType::None)
 	{
 		return { in_input, out_state, nullptr, in_query_type };
 	}

@@ -79,7 +79,7 @@ namespace chaos
 	}
 
 	template<typename CONTAINER_TYPE, InputType INPUT_TYPE>
-	bool TryInsertConsumedInput(CONTAINER_TYPE & inout_consumed_input, InputReceiverInterface const* in_input_receiver, INPUT_TYPE in_input, InputState<INPUT_TYPE> const* in_state)
+	bool TryInsertConsumedInput(CONTAINER_TYPE & inout_consumed_input, InputReceiverInterface const* in_input_receiver, INPUT_TYPE in_input, InputState_t<INPUT_TYPE> const* in_state)
 	{
 		auto consumed_input_key = std::make_pair(in_input, in_state);
 

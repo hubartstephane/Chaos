@@ -12,22 +12,18 @@ namespace chaos
 	template<typename T>
 	class EnumBitmaskMetaData;
 
-	template<typename T>
-	concept IsEnumBitmask = requires()
-	{
-		{IsEnumBitmaskImpl(boost::mpl::identity<typename std::remove_const<T>::type>())};
-	};
+	CHAOS_DECLARE_CLASS_VALUE_MAPPING(IsEnumBitmask, bool, false);
 
 }; // namespace chaos
 
 /** you may use an additionnal argument to represent the function API (CHAOS_API for example) */
 #define CHAOS_DECLARE_ENUM_BITMASK_METHOD(enum_type, ...)\
+CHAOS_SPECIALIZE_CLASS_VALUE_MAPPING(IsEnumBitmask, enum_type, bool, true)\
 __VA_ARGS__ enum_type operator|(enum_type a, enum_type b);\
 __VA_ARGS__ enum_type operator&(enum_type a, enum_type b);\
 __VA_ARGS__ enum_type operator~(enum_type a);\
 __VA_ARGS__ enum_type & operator|=(enum_type & a, enum_type b);\
 __VA_ARGS__ enum_type & operator&=(enum_type & a, enum_type b);\
-__VA_ARGS__ bool IsEnumBitmaskImpl(boost::mpl::identity<enum_type>);\
 __VA_ARGS__ chaos::EnumBitmaskMetaData<enum_type> const * GetEnumBitmaskMetaData(boost::mpl::identity<enum_type>);\
 __VA_ARGS__ bool IsNull(enum_type src);\
 __VA_ARGS__ bool HasAnyFlags(enum_type src, enum_type flags);\
@@ -41,7 +37,6 @@ __VA_ARGS__ enum_type operator&(enum_type a, enum_type b){ return static_cast<en
 __VA_ARGS__ enum_type operator~(enum_type a){ return static_cast<enum_type>(~static_cast<int>(a));}\
 __VA_ARGS__ enum_type& operator|=(enum_type& a, enum_type b) { a = a | b; return a; }\
 __VA_ARGS__ enum_type& operator&=(enum_type& a, enum_type b) { a = a & b; return a; }\
-__VA_ARGS__ bool IsEnumBitmaskImpl(boost::mpl::identity<enum_type>){ return true;}\
 __VA_ARGS__ chaos::EnumBitmaskMetaData<enum_type> const * GetEnumBitmaskMetaData(boost::mpl::identity<enum_type>)\
 {\
 	return bitmask_metadata;\
@@ -64,7 +59,6 @@ __VA_ARGS__ bool AreValidFlags(enum_type src)\
 {\
 	return GetEnumBitmaskMetaData(boost::mpl::identity<enum_type>())->AreValidFlags(src);\
 }
-
 
 /** you may use an additionnal argument to represent the function API (CHAOS_API for example) */
 #define CHAOS_DECLARE_ENUM_METHOD(enum_type, ...)\
@@ -182,7 +176,7 @@ namespace chaos
 		bool StringToValue(char const* src, T & dst) const
 		{
 			// normal enums
-			if constexpr (!IsEnumBitmask<T>)
+			if constexpr (!IsEnumBitmask_v<T>)
 			{
 				if (EnumMetaDataEntry<T> const * entry = FindEntryByName(src))
 				{
@@ -220,8 +214,8 @@ namespace chaos
 		{
 			int value_as_int = static_cast<int>(value);
 
-			if ((!IsEnumBitmask<T>) ||                 // standard enum -> normal search by name
-				(value_as_int == 0) ||                 // this is a bitfield enum, but no bit set -> normal search by name
+			if ((!IsEnumBitmask_v<T>) ||               // standard enum -> normal search by name
+				(value_as_int == 0)   ||               // this is a bitfield enum, but no bit set -> normal search by name
 				(MathTools::IsPowerOf2(value_as_int))) // this is a bitfield enum, but a single bit set -> normal search by name
 			{
 				if (EnumMetaDataEntry<T> const * entry = FindEntryByValue(value))

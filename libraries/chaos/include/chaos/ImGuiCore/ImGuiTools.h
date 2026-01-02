@@ -143,7 +143,7 @@ namespace chaos
 
 			if (EnumMetaData<T> const* metadata = GetEnumMetaData(boost::mpl::identity<T>()))
 			{
-				if constexpr (IsEnumBitmask<T>)
+				if constexpr (IsEnumBitmask_v<T>)
 				{
 					char buffer[256];
 					char const* preview = EnumToString(value, buffer, 256);
@@ -151,25 +151,25 @@ namespace chaos
 					// start a combo
 					if (ImGui::BeginCombo("", preview, ImGuiComboFlags_None))
 					{
-						for (size_t i = 0; i < metadata->values.size(); ++i) // enumerate all possible values
+						for (size_t i = 0; i < metadata->GetEntryCount(); ++i) // enumerate all possible values
 						{
-							if (MathTools::IsPowerOf2(static_cast<int>(metadata->values[i]))) // the enum may have "extra" values not corresponding to flag (NONE for example or some conjuction of other flags as BOTTOM+LEFT for example). Ignore them
+							if (MathTools::IsPowerOf2(static_cast<int>(metadata->GetEntry(i).value))) // the enum may have "extra" values not corresponding to flag (NONE for example or some conjuction of other flags as BOTTOM+LEFT for example). Ignore them
 							{
-								bool selected = (static_cast<int>(value & metadata->values[i]) != 0);
+								bool selected = (static_cast<int>(value & metadata->GetEntry(i).value) != 0);
 
-								if (ImGui::Selectable(metadata->names[i], selected, ImGuiSelectableFlags_DontClosePopups)) // ImGuiSelectableFlags_DontClosePopups -> clicking on selection does not close combo
+								if (ImGui::Selectable(metadata->GetEntry(i).name, selected, ImGuiSelectableFlags_DontClosePopups)) // ImGuiSelectableFlags_DontClosePopups -> clicking on selection does not close combo
 								{
 									if (selected) // was selected -> unselect
 									{
-										value &= ~metadata->values[i]; // invert bit value
+										value &= ~metadata->GetEntry(i).value; // invert bit value
 									}
 									else // was not selected -> select
 									{
-										value |= metadata->values[i]; // invert bit value
+										value |= metadata->GetEntry(i).value; // invert bit value
 
 										if (EnumBitmaskMetaData<T> const* bitmask_metadata = GetEnumBitmaskMetaData(boost::mpl::identity<T>()))
 										{
-											bitmask_metadata->ForEachIncompatibleValue(metadata->values[i], [&value](T other_value)
+											bitmask_metadata->ForEachIncompatibleValue(metadata->GetEntry(i).value, [&value](T other_value)
 											{
 												value &= ~other_value; // remove incompatible values
 											});
@@ -183,14 +183,21 @@ namespace chaos
 				}
 				else
 				{
+					auto GetEntryNameByIndex = [](void * user_data, int index) -> char const * // a lambda with no capture is convertible into a function pointer
+					{
+						EnumMetaData<T> const* metadata = (EnumMetaData<T> const*)user_data;
+						return metadata->GetEntry(size_t(index)).name;
+					};
+					
 					// get value corresponding index
 					int index = 0;
-					if (std::optional<size_t> selected_index = metadata->GetValueIndex(value))
-						index = (int)selected_index.value();
+					if (EnumMetaDataEntry<T> const* entry = metadata->FindEntryByValue(value))
+						index = int(entry - &metadata->GetEntry(0));
+
 					// display combo
-					if (ImGui::Combo("", &index, &metadata->names[0], (int)metadata->names.size()))
+					if (ImGui::Combo("", &index, GetEntryNameByIndex, (void*)metadata, (int)metadata->GetEntryCount()))
 					{
-						value = metadata->GetValueByIndex((size_t)index);
+						value = metadata->GetEntry((size_t)index).value;
 					}
 				}
 			}

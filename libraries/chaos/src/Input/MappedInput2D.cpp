@@ -20,4 +20,12 @@ namespace chaos
 		Key::GAMEPAD_DPAD_UP
 	};
 
+	MappedInput2D const MappedInput2D::UNKNOWN =
+	{
+		Key::UNKNOWN,
+		Key::UNKNOWN,
+		Key::UNKNOWN,
+		Key::UNKNOWN
+	};
+
 }; // namespace chaos

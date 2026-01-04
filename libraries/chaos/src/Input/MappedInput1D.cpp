@@ -16,4 +16,10 @@ namespace chaos
 		Key::GAMEPAD_DPAD_RIGHT
 	};
 
+	MappedInput1D const MappedInput1D::UNKNOWN =
+	{
+		Key::UNKNOWN,
+		Key::UNKNOWN
+	};
+
 }; // namespace chaos

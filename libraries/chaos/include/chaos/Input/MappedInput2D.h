@@ -18,6 +18,8 @@ namespace chaos
 		static MappedInput2D const default_keyboard_mapping;
 		/** the default mapping with dpad */
 		static MappedInput2D const default_dpad_mapping;
+		/** the unknown object */
+		static MappedInput2D const UNKNOWN;
 
 	public:
 

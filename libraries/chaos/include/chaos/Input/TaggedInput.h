@@ -7,6 +7,13 @@ namespace chaos
 	template<InputTypeExt INPUT_TYPE_EXT>
 	class TaggedInput;
 
+	CHAOS_DECLARE_CLASS_VALUE_MAPPING(IsTaggedInput, bool, false);
+	CHAOS_SPECIALIZE_CLASS_VALUE_MAPPING(IsTaggedInput, TaggedInput<Key>, bool, true);
+	CHAOS_SPECIALIZE_CLASS_VALUE_MAPPING(IsTaggedInput, TaggedInput<Input1D>, bool, true);
+	CHAOS_SPECIALIZE_CLASS_VALUE_MAPPING(IsTaggedInput, TaggedInput<Input2D>, bool, true);
+	CHAOS_SPECIALIZE_CLASS_VALUE_MAPPING(IsTaggedInput, TaggedInput<MappedInput1D>, bool, true);
+	CHAOS_SPECIALIZE_CLASS_VALUE_MAPPING(IsTaggedInput, TaggedInput<MappedInput2D>, bool, true);
+
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 

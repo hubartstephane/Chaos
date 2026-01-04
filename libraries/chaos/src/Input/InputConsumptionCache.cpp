@@ -18,16 +18,16 @@ namespace chaos
 	}
 
 
-	bool InputConsumptionCache::TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, Key in_input, TaggedInputFlags in_flags) // check whether the key is still available and lock it for further requests (do the same for related inputs)
+	bool InputConsumptionCache::TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<Key> in_input) // check whether the key is still available and lock it for further requests (do the same for related inputs)
 	{
 		bool result = true;
 
 		// handle key
-		result &= DoTryConsumeInput(in_input_receiver, in_input_device, in_input, in_flags);
+		result &= DoTryConsumeInput(in_input_receiver, in_input_device, in_input);
 		// handle 'virtual related' keys/inputs
 		InputTools::EnumerateRelatedInputs(in_input, [&](Key key, Input1D input)
 		{
-			result &= DoTryConsumeInput(in_input_receiver, in_input_device, input, in_flags);
+			result &= DoTryConsumeInput(in_input_receiver, in_input_device, input);
 			return false; // don't stop and process next
 		});
 
@@ -36,21 +36,21 @@ namespace chaos
 			result;
 	}
 
-	bool InputConsumptionCache::TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, Input1D in_input, TaggedInputFlags in_flags) // check whether the axis is still available and lock it for further requests (do the same for related inputs)
+	bool InputConsumptionCache::TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<Input1D> in_input) // check whether the axis is still available and lock it for further requests (do the same for related inputs)
 	{
 		bool result = true;
 
 		// handle axis
-		result &= DoTryConsumeInput(in_input_receiver, in_input_device, in_input, in_flags);
+		result &= DoTryConsumeInput(in_input_receiver, in_input_device, in_input);
 		// handle 'virtual related' keys/inputs
 		InputTools::EnumerateRelatedInputs(in_input, [&](Key key, Input1D input)
 		{
-			result &= DoTryConsumeInput(in_input_receiver, in_input_device, key, in_flags);
+			result &= DoTryConsumeInput(in_input_receiver, in_input_device, key);
 			return false; // don't stop and process next
 		},
 		[&](Input2D input2D, Input1D input1D_x, Input1D input1D_y)
 		{
-			result &= DoTryConsumeInput(in_input_receiver, in_input_device, input2D, in_flags);
+			result &= DoTryConsumeInput(in_input_receiver, in_input_device, input2D);
 			return false; // don't stop and process next
 		});
 
@@ -59,18 +59,18 @@ namespace chaos
 			result;
 	}
 
-	bool InputConsumptionCache::TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, Input2D in_input, TaggedInputFlags in_flags) // check whether the stick is still available and lock it for further requests (do the same for related inputs)
+	bool InputConsumptionCache::TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<Input2D> in_input) // check whether the stick is still available and lock it for further requests (do the same for related inputs)
 	{
 		bool result = true;
 
 		// handle stick
-		result &= DoTryConsumeInput(in_input_receiver, in_input_device, in_input, in_flags);
+		result &= DoTryConsumeInput(in_input_receiver, in_input_device, in_input);
 
 		// handle 'virtual related' inputs
 		InputTools::EnumerateRelatedInputs(in_input, [&](Input2D input2D, Input1D input1D_x, Input1D input1D_y)
 		{
-			result &= DoTryConsumeInput(in_input_receiver, in_input_device, input1D_x, in_flags);
-			result &= DoTryConsumeInput(in_input_receiver, in_input_device, input1D_y, in_flags);
+			result &= DoTryConsumeInput(in_input_receiver, in_input_device, input1D_x);
+			result &= DoTryConsumeInput(in_input_receiver, in_input_device, input1D_y);
 			return false; // don't stop and process next
 		});
 
@@ -80,7 +80,7 @@ namespace chaos
 	}
 
 	template<typename CONTAINER_TYPE, InputType INPUT_TYPE>
-	bool TryInsertConsumedInput(CONTAINER_TYPE & inout_consumed_input, InputReceiverInterface const* in_input_receiver, InputState_t<INPUT_TYPE> const* in_state, INPUT_TYPE in_input, TaggedInputFlags in_flags)
+	bool TryInsertConsumedInput(CONTAINER_TYPE & inout_consumed_input, InputReceiverInterface const* in_input_receiver, InputState_t<INPUT_TYPE> const* in_state, TaggedInput<INPUT_TYPE> in_input)
 	{
 		auto consumed_input_key = std::make_pair(in_input, in_state);
 
@@ -89,7 +89,7 @@ namespace chaos
 		// input is not required yet
 		if (it == inout_consumed_input.end())
 		{
-			if (!HasAnyFlags(in_flags, TaggedInputFlags::CONSULT_ONLY))
+			if (!HasAnyFlags(in_input.flags, TaggedInputFlags::CONSULT_ONLY))
 				inout_consumed_input.emplace(consumed_input_key, in_input_receiver);
 			return true;
 		}
@@ -100,28 +100,28 @@ namespace chaos
 		return false;
 	}
 
-	bool InputConsumptionCache::DoTryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, Key in_input, TaggedInputFlags in_flags)
+	bool InputConsumptionCache::DoTryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<Key> in_input)
 	{
 		auto const* state = in_input_device->GetInputState(in_input);
 		if (state == nullptr)
 			return false;
-		return TryInsertConsumedInput(consumed_keys, in_input_receiver, state, in_input, in_flags);
+		return TryInsertConsumedInput(consumed_keys, in_input_receiver, state, in_input);
 	}
 
-	bool InputConsumptionCache::DoTryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, Input1D in_input, TaggedInputFlags in_flags)
+	bool InputConsumptionCache::DoTryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<Input1D> in_input)
 	{
 		auto const* state = in_input_device->GetInputState(in_input);
 		if (state == nullptr)
 			return false;
-		return TryInsertConsumedInput(consumed_input1D, in_input_receiver, state, in_input, in_flags);
+		return TryInsertConsumedInput(consumed_input1D, in_input_receiver, state, in_input);
 	}
 
-	bool InputConsumptionCache::DoTryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, Input2D in_input, TaggedInputFlags in_flags)
+	bool InputConsumptionCache::DoTryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<Input2D> in_input)
 	{
 		auto const* state = in_input_device->GetInputState(in_input);
 		if (state == nullptr)
 			return false;
-		return TryInsertConsumedInput(consumed_input2D, in_input_receiver, state, in_input, in_flags);
+		return TryInsertConsumedInput(consumed_input2D, in_input_receiver, state, in_input);
 	}
 
 }; // namespace chaos

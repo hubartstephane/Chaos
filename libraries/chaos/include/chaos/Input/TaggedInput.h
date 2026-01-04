@@ -39,12 +39,14 @@ namespace chaos
 	public:
 
 		/** initializer constructor */
-		TaggedInput(INPUT_TYPE_EXT in_input, TaggedInputFlags in_flags) :
+		TaggedInput(INPUT_TYPE_EXT in_input, TaggedInputFlags in_flags = TaggedInputFlags::NONE) :
 			input(in_input),
-			flags(in_flags) {
-		}
+			flags(in_flags){}
 		/** copy constructor */
 		TaggedInput(TaggedInput const& src) = default;
+
+		/** cast operator */
+		operator INPUT_TYPE_EXT () const { return input; }
 
 	public:
 

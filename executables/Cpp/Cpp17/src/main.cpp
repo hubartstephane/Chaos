@@ -14,15 +14,6 @@ int main(int argc, char** argv, char** env)
 	auto  s = mystring.Get();
 	auto vi = myvectorint.Get();
 
-
-#if 0
-	chaos::Object o1, o2;
-	o1.AddReference();
-
-	o1 = o2;
-#endif
-
-
 	return 0;
 }
 

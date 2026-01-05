@@ -17,9 +17,47 @@ namespace chaos
 		all_inputs_consumer.reset();
 	}
 
-
-	bool InputConsumptionCache::TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<Key> in_input) // check whether the key is still available and lock it for further requests (do the same for related inputs)
+	bool InputConsumptionCache::TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<MappedInput1D> in_input)
 	{
+		// a single rejection among input and related inputs is enough for a whole rejection
+		// (but we still need to lock all related inputs even if the very first is a rejection)
+		bool result = true;
+
+		MappedInput1D const & effective_input = GetInput(in_input);
+		TaggedInputFlags input_flags = GetInputFlags(in_input);
+
+		result &= TryConsumeInput(in_input_receiver, in_input_device, TaggedInput(effective_input.neg_key, input_flags)); // propagate all flags from TaggedInput to basic input
+		result &= TryConsumeInput(in_input_receiver, in_input_device, TaggedInput(effective_input.pos_key, input_flags));
+
+		return (all_inputs_consumer.has_value() && all_inputs_consumer.value() != in_input_receiver) ? // somebody else has locked all inputs
+			false :
+			result;
+	}
+
+	bool InputConsumptionCache::TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<MappedInput2D> in_input)
+	{
+		// a single rejection among input and related inputs is enough for a whole rejection
+		// (but we still need to lock all related inputs even if the very first is a rejection)
+		bool result = true;
+
+		MappedInput2D const& effective_input = GetInput(in_input);
+		TaggedInputFlags input_flags = GetInputFlags(in_input);
+
+		result &= TryConsumeInput(in_input_receiver, in_input_device, TaggedInput(effective_input.left_key, input_flags)); // propagate all flags from TaggedInput to basic input
+		result &= TryConsumeInput(in_input_receiver, in_input_device, TaggedInput(effective_input.right_key, input_flags));
+		result &= TryConsumeInput(in_input_receiver, in_input_device, TaggedInput(effective_input.down_key, input_flags));
+		result &= TryConsumeInput(in_input_receiver, in_input_device, TaggedInput(effective_input.up_key, input_flags));
+
+		return (all_inputs_consumer.has_value() && all_inputs_consumer.value() != in_input_receiver) ? // somebody else has locked all inputs
+			false :
+			result;
+	}
+
+
+	bool InputConsumptionCache::TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<Key> in_input)
+	{
+		// a single rejection among input and related inputs is enough for a whole rejection
+		// (but we still need to lock all related inputs even if the very first is a rejection)
 		bool result = true;
 
 		// handle key
@@ -31,13 +69,15 @@ namespace chaos
 			return false; // don't stop and process next
 		});
 
-		return (all_inputs_consumer.has_value() && all_inputs_consumer.value() != in_input_receiver) ?
+		return (all_inputs_consumer.has_value() && all_inputs_consumer.value() != in_input_receiver) ? // somebody else has locked all inputs
 			false:
 			result;
 	}
 
-	bool InputConsumptionCache::TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<Input1D> in_input) // check whether the axis is still available and lock it for further requests (do the same for related inputs)
+	bool InputConsumptionCache::TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<Input1D> in_input)
 	{
+		// a single rejection among input and related inputs is enough for a whole rejection
+		// (but we still need to lock all related inputs even if the very first is a rejection)
 		bool result = true;
 
 		// handle axis
@@ -54,13 +94,15 @@ namespace chaos
 			return false; // don't stop and process next
 		});
 
-		return (all_inputs_consumer.has_value() && all_inputs_consumer.value() != in_input_receiver) ?
+		return (all_inputs_consumer.has_value() && all_inputs_consumer.value() != in_input_receiver) ? // somebody else has locked all inputs
 			false :
 			result;
 	}
 
-	bool InputConsumptionCache::TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<Input2D> in_input) // check whether the stick is still available and lock it for further requests (do the same for related inputs)
+	bool InputConsumptionCache::TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<Input2D> in_input)
 	{
+		// a single rejection among input and related inputs is enough for a whole rejection
+		// (but we still need to lock all related inputs even if the very first is a rejection)
 		bool result = true;
 
 		// handle stick
@@ -74,7 +116,7 @@ namespace chaos
 			return false; // don't stop and process next
 		});
 
-		return (all_inputs_consumer.has_value() && all_inputs_consumer.value() != in_input_receiver) ?
+		return (all_inputs_consumer.has_value() && all_inputs_consumer.value() != in_input_receiver) ? // somebody else has locked all inputs
 			false :
 			result;
 	}
@@ -104,7 +146,8 @@ namespace chaos
 	{
 		auto const* state = in_input_device->GetInputState(in_input);
 		if (state == nullptr)
-			return false;
+			return true; // if the device doesn't handle this input, this shouldn't be considered as a rejection (for example if in_input == UNKOWN that is legit)
+
 		return TryInsertConsumedInput(consumed_keys, in_input_receiver, state, in_input);
 	}
 
@@ -112,7 +155,8 @@ namespace chaos
 	{
 		auto const* state = in_input_device->GetInputState(in_input);
 		if (state == nullptr)
-			return false;
+			return true; // if the device doesn't handle this input, this shouldn't be considered as a rejection (for example if in_input == UNKOWN that is legit)
+
 		return TryInsertConsumedInput(consumed_input1D, in_input_receiver, state, in_input);
 	}
 
@@ -120,7 +164,8 @@ namespace chaos
 	{
 		auto const* state = in_input_device->GetInputState(in_input);
 		if (state == nullptr)
-			return false;
+			return true; // if the device doesn't handle this input, this shouldn't be considered as a rejection (for example if in_input == UNKOWN that is legit)
+
 		return TryInsertConsumedInput(consumed_input2D, in_input_receiver, state, in_input);
 	}
 

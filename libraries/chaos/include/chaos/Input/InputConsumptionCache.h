@@ -16,6 +16,10 @@ namespace chaos
 	 * XXX: A trace of the input receiver consuming an input is kept. The same input may be further request but only by the same consumer
 	 *      (nullptr is a valid consumer meaning no one will ever be allowed to consumed the input)
 	 *      The same is true for SetConsumeAllInputs(...)
+	 * 
+	 * XXX: among Keyboard, Mouse and Gamepad the State is a persistent pointer that may be used as a map key
+	 * 
+	 *      there is no such concept for MappedInput1D/MappedInput2D
 	 */
 
 	class CHAOS_API InputConsumptionCache
@@ -35,6 +39,10 @@ namespace chaos
 		bool TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<Input1D> in_input);
 		/** check whether the input is still available and lock it for further requests (do the same for related inputs) */
 		bool TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<Input2D> in_input);
+		/** check whether the input is still available and lock it for further requests (do the same for related inputs) */
+		bool TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<MappedInput1D> in_input);
+		/** check whether the input is still available and lock it for further requests (do the same for related inputs) */
+		bool TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<MappedInput2D> in_input);
 
 	protected:
 

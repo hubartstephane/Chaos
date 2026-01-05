@@ -1,3 +1,4 @@
+#include "chaos/Meta/Meta.h"
 #include "chaos/Core/Core.h"
 #include "chaos/Math/Math.h"
 #include "chaos/Input/Input.h"

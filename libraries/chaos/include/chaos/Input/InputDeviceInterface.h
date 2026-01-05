@@ -30,18 +30,22 @@ namespace chaos
 		/** call a function on all devices handled by this whole hierarchy (composition pattern) */
 		virtual bool EnumerateDeviceHierarchy(EnumerateDeviceHierarchyFunction func) const;
 
-		/** gets one key state */
+		/** gets any key state */
 		KeyState const * GetInputState(Key input) const;
-		/** gets one input1D state */
+		/** gets any input1D state */
 		Input1DState const * GetInputState(Input1D input) const;
-		/** gets one input2D state */
+		/** gets any input2D state */
 		Input2DState const * GetInputState(Input2D input) const;
+		/** gets any Mappedinput1D state (this function can't return a state pointer because such a persistent state doesn't exist) */
+		std::optional<Input1DState> GetMappedInputState(MappedInput1D input) const;
+		/** gets any Mappedinput2D state (this function can't return a state pointer because such a persistent state doesn't exist) */
+		std::optional<Input2DState> GetMappedInputState(MappedInput2D input) const;
 
-		/** gets one key state */
+		/** gets any key state */
 		KeyState * GetInputState(Key input);
-		/** gets one input1D state */
+		/** gets any input1D state */
 		Input1DState * GetInputState(Input1D input);
-		/** gets one input2D state */
+		/** gets any input2D state */
 		Input2DState * GetInputState(Input2D input);
 
 		/** enumerate keys */
@@ -57,6 +61,10 @@ namespace chaos
 		float GetInputValue(Input1D input) const;
 		/** get the stick value */
 		glm::vec2 GetInputValue(Input2D input) const;
+		/** get the axis value */
+		float GetMappedInputValue(MappedInput1D input) const;
+		/** get the stick value */
+		glm::vec2 GetMappedInputValue(MappedInput2D input) const;
 
 		/** get the key state change */
 		InputStatus GetInputStatus(Key key) const;
@@ -64,6 +72,10 @@ namespace chaos
 		InputStatus GetInputStatus(Input1D input) const;
 		/** get the input2D state change */
 		InputStatus GetInputStatus(Input2D input) const;
+		/** get the Mappedinput1D state change */
+		InputStatus GetMappedInputStatus(MappedInput1D input) const;
+		/** get the Mappedinput2D state change */
+		InputStatus GetMappedInputStatus(MappedInput2D input) const;
 
 		/** returns true whether there is any k active */
 		bool IsAnyKeyActive() const;
@@ -78,6 +90,10 @@ namespace chaos
 		bool HasAnyKeyJustBecameActive() const;
 
 	protected:
+
+		/** utility method to get a state */
+		template<InputType INPUT_TYPE>
+		InputState_t<INPUT_TYPE> const * GetInputStateHelper(INPUT_TYPE in_input) const;
 
 		/** gets one key state */
 		virtual KeyState const * DoGetInputState(Key input) const;

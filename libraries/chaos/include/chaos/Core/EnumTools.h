@@ -12,7 +12,7 @@ namespace chaos
 	template<typename T>
 	class EnumBitmaskMetaData;
 
-	CHAOS_DECLARE_CLASS_VALUE_MAPPING(IsEnumBitmask, bool, false);
+	CHAOS_DECLARE_CLASS_VALUE_MAPPING(IsEnumBitmask, typename, bool, false);
 
 }; // namespace chaos
 

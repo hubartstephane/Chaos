@@ -2,11 +2,10 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	template<typename RESULT_AGGREGATION_TYPE, InputRequestType... PARAMS>
-	class CompositeInputRequest;
+	enum class CompositeInputType ;
 
-	class AndInputRequestResultAggregation;
-	class OrInputRequestResultAggregation;
+	template<CompositeInputType COMPOSITE_INPUT_TYPE, InputRequestType... PARAMS>
+	class CompositeInputRequest;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -21,10 +20,20 @@ namespace chaos
 	};
 
 	/**
+	 * CompositeInputType: describes are input are to be combined together
+	 */
+
+	enum class CompositeInputType : int
+	{
+		Or,
+		And
+	};
+
+	/**
 	 * CompositeInputRequest: a composite input request used to AND or OR request alltogether
 	 */
 
-	template<typename RESULT_AGGREGATION_TYPE, InputRequestType... PARAMS>
+	template<CompositeInputType COMPOSITE_INPUT_TYPE, InputRequestType... PARAMS>
 	class CompositeInputRequest : public InputRequestBase
 	{
 	public:
@@ -45,7 +54,7 @@ namespace chaos
 				auto CheckChildInputRequest = [&](auto const& child_request)
 				{
 					InputRequestResult child_result = child_request.Check(in_input_receiver, in_input_device, in_consumption_cache);
-					result = RESULT_AGGREGATION_TYPE::AggregateResult(result, child_result);
+					result = AggregateResult(result, child_result);
 				};
 				(CheckChildInputRequest(child_request), ...);
 
@@ -96,7 +105,7 @@ namespace chaos
 
 	protected:
 
-
+		/** utility function to build debug info string */
 		template<size_t INDEX>
 		void ConcatChildDebugInfo(InputRequestDebugInfoStorage& debug_info_storage, size_t current_position) const
 		{
@@ -120,10 +129,10 @@ namespace chaos
 				child_input_request.GetDebugInfo(child_debug_info_storage);
 
 				char found_separator = details::FindAccessibleOperator(child_debug_info_storage.buffer);
-				bool parenthesis_required = (found_separator != 0 && found_separator != RESULT_AGGREGATION_TYPE::DebugInfoSeparator);
+				bool parenthesis_required = (found_separator != 0 && found_separator != GetDebugInfoSeparator());
 
 				if constexpr (INDEX > 0)
-					if (!ConcatDebugInfo(RESULT_AGGREGATION_TYPE::DebugInfoSeparatorString))
+					if (!ConcatDebugInfo(GetDebugInfoSeparatorString()))
 						return;
 
 				if (parenthesis_required && !ConcatDebugInfo("("))
@@ -137,6 +146,8 @@ namespace chaos
 			}
 		}
 
+
+		/** helper function to find whether the InputRequest is related to input */
 		template<InputType INPUT_TYPE>
 		bool IsRequestRelatedToImpl(INPUT_TYPE in_input) const
 		{
@@ -147,6 +158,68 @@ namespace chaos
 			child_input_requests);
 		}
 
+		/** combine results altogether */
+		InputRequestResult AggregateResult(std::optional<InputRequestResult> const& result, InputRequestResult child_result) const
+		{
+			auto ComputeAggregationResult = [&](std::initializer_list<InputRequestResult> const& ordered_values)
+			{
+				if (result.has_value())
+					for (InputRequestResult r : ordered_values)
+						if (child_result == r || result.value() == r)
+							return r;
+				return child_result;
+			};
+
+			if constexpr (COMPOSITE_INPUT_TYPE == CompositeInputType::And)
+			{
+				return ComputeAggregationResult({ InputRequestResult::Rejected, InputRequestResult::Invalid, InputRequestResult::False, InputRequestResult::True });
+			}
+			else if constexpr (COMPOSITE_INPUT_TYPE == CompositeInputType::Or)
+			{
+				return ComputeAggregationResult({ InputRequestResult::True, InputRequestResult::False, InputRequestResult::Invalid, InputRequestResult::Rejected });
+			}
+			else
+			{
+				static_assert(0);
+			}
+		}
+
+		/** get separator */
+		char GetDebugInfoSeparator() const
+		{
+			if constexpr (COMPOSITE_INPUT_TYPE == CompositeInputType::And)
+			{
+				return '&';
+			}
+			else if constexpr (COMPOSITE_INPUT_TYPE == CompositeInputType::Or)
+			{
+				return '|';
+			}
+			else
+			{
+				static_assert(0);
+				return 0;
+			}
+		}
+
+		/** get separator string */
+		char const * GetDebugInfoSeparatorString() const
+		{
+			if constexpr (COMPOSITE_INPUT_TYPE == CompositeInputType::And)
+			{
+				return " & ";
+			}
+			else if constexpr (COMPOSITE_INPUT_TYPE == CompositeInputType::Or)
+			{
+				return " | ";
+			}
+			else
+			{
+				static_assert(0);
+				return 0;
+			}
+		}
+
 	protected:
 
 		/** the input requests in the composition */
@@ -154,51 +227,51 @@ namespace chaos
 	};
 
 	/**
-	 * AndInputRequestResultAggregation: an utility class used to aggregate child results altogether for AND composition
-	 */
-
-	class CHAOS_API AndInputRequestResultAggregation
-	{
-	public:
-
-		/** a separator for aggregation */
-		static char const DebugInfoSeparator = '&';
-		static inline char const* DebugInfoSeparatorString = " & ";
-
-		/** aggregation method */
-		static InputRequestResult AggregateResult(std::optional<InputRequestResult> const& result, InputRequestResult child_result);
-	};
-
-	/**
-	 * OrInputRequestResultAggregation: an utility class used to aggregate child results altogether for OR composition
-	 */
-
-	class CHAOS_API OrInputRequestResultAggregation
-	{
-	public:
-
-		/** a separator for aggregation */
-		static char const DebugInfoSeparator = '|';
-		static inline char const * DebugInfoSeparatorString = " | ";
-
-		/** aggregation method */
-		static InputRequestResult AggregateResult(std::optional<InputRequestResult> const& result, InputRequestResult child_result);
-	};
-
-	/**
 	 * Utility methods
 	 */
 
-	template<InputRequestType... PARAMS> requires (sizeof...(PARAMS) >= 2)
-	CompositeInputRequest<AndInputRequestResultAggregation, PARAMS...> And(PARAMS... params)
+	template<typename... PARAMS> requires (sizeof...(PARAMS) >= 2)
+	auto And(PARAMS... params)
 	{
-		return CompositeInputRequest<AndInputRequestResultAggregation, PARAMS...>(std::forward<PARAMS>(params)...);
+		if constexpr ((InputRequestType<PARAMS> && ...))
+		{
+			return CompositeInputRequest<CompositeInputType::And, PARAMS...>(std::forward<PARAMS>(params)...);
+		}
+		else if constexpr ((std::is_same_v<PARAMS, Key> && ...)) // every parameters have a bool value
+		{
+		}
+		else if constexpr (((std::is_same_v<PARAMS, Input1D> || std::is_same_v<PARAMS, MappedInput1D>) && ...)) // every parameters have a float value
+		{
+		}
+		else if constexpr (((std::is_same_v<PARAMS, Input2D> || std::is_same_v<PARAMS, MappedInput2D>) && ...)) // every parameters have a vec2 value
+		{
+		}
+		else
+		{
+			static_assert(0); // incoherent parameters
+		}		
 	}
 
-	template<InputRequestType... PARAMS> requires (sizeof...(PARAMS) >= 2)
-	CompositeInputRequest<OrInputRequestResultAggregation, PARAMS...> Or(PARAMS... params)
+	template<typename... PARAMS> requires (sizeof...(PARAMS) >= 2)
+	auto Or(PARAMS... params)
 	{
-		return CompositeInputRequest<OrInputRequestResultAggregation, PARAMS...>(std::forward<PARAMS>(params)...);
+		if constexpr ((InputRequestType<PARAMS> && ...))
+		{
+			return CompositeInputRequest<CompositeInputType::Or, PARAMS...>(std::forward<PARAMS>(params)...);
+		}
+		else if constexpr ((std::is_same_v<PARAMS, Key> && ...)) // every parameters have a bool value
+		{
+		}
+		else if constexpr (((std::is_same_v<PARAMS, Input1D> || std::is_same_v<PARAMS, MappedInput1D>) && ...)) // every parameters have a float value
+		{
+		}
+		else if constexpr (((std::is_same_v<PARAMS, Input2D> || std::is_same_v<PARAMS, MappedInput2D>) && ...)) // every parameters have a vec2 value
+		{
+		}
+		else
+		{
+			static_assert(0); // incoherent parameters
+		}
 	}
 
 #endif

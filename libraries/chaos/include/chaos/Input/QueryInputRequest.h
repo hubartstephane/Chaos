@@ -53,89 +53,21 @@ namespace chaos
 		/** override */
 		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
 		{
-			// early exit
-			if constexpr (InputType<input_type>) // only valid for Key, Input1D, Input2D
-			{
-				if (input == input_type::UNKNOWN)
-					return InputRequestResult::Invalid;
-			}
-			if constexpr (std::is_same_v<input_type, MappedInput1D>)
-			{
-				if (input.pos_key == Key::UNKNOWN || input.neg_key == Key::UNKNOWN)
-					return InputRequestResult::Invalid;			
-			}
-			if constexpr (std::is_same_v<input_type, MappedInput2D>)
-			{
-				if (input.left_key == Key::UNKNOWN || input.right_key == Key::UNKNOWN || input.up_key == Key::UNKNOWN || input.down_key == Key::UNKNOWN)
-					return InputRequestResult::Invalid;
-			}			
 			if (out_state == nullptr && out_value == nullptr && query_type == QueryInputRequestType::None) // this request is useless
 				return InputRequestResult::Invalid;
 
 			// find and handle state
-			if constexpr (std::is_same_v<input_type, MappedInput1D>)
+			if constexpr (std::is_same_v<input_type, MappedInput1D> || std::is_same_v<input_type, MappedInput2D>)
 			{
-				KeyState neg_state;
-				KeyState pos_state;
+				std::optional<state_type> input_state = in_input_device->GetMappedInputState(input);
+				if (!input_state.has_value())
+					return InputRequestResult::Invalid; // abnormal (request for an input not handled by the receiver)
 
-				auto internal_query = Or(
-					QueryInput(input.neg_key, &neg_state),
-					QueryInput(input.pos_key, &pos_state)
-				);
+				// consum the key of the request (no one can use it anymore until next frame)
+				if (!in_consumption_cache.TryConsumeInput(in_input_receiver, in_input_device, input))
+					return InputRequestResult::Rejected;
 
-				InputRequestResult internal_result = internal_query.Check(in_input_receiver, in_input_device, in_consumption_cache);
-				if (internal_result == InputRequestResult::Invalid || internal_result == InputRequestResult::Rejected)
-					return internal_result;
-
-				Input1DState input_state;
-
-				input_state.update_time = std::max(neg_state.update_time, pos_state.update_time); // this work for negative time (that correspond to unitialized state)
-
-				if (neg_state.value)
-					input_state.value -= 1.0f;
-				if (pos_state.value)
-					input_state.value += 1.0f;
-
-				return OuputDataAndReturnResult(&input_state);
-			}
-
-			if constexpr (std::is_same_v<input_type, MappedInput2D>)
-			{
-				KeyState left_state;
-				KeyState right_state;
-				KeyState down_state;
-				KeyState up_state;
-
-				auto internal_query = Or(
-					QueryInput(input.left_key, &left_state),
-					QueryInput(input.right_key, &right_state),
-					QueryInput(input.down_key, &down_state),
-					QueryInput(input.up_key, &up_state)
-				);
-
-				InputRequestResult internal_result = internal_query.Check(in_input_receiver, in_input_device, in_consumption_cache);
-				if (internal_result == InputRequestResult::Invalid || internal_result == InputRequestResult::Rejected)
-					return internal_result;
-
-				Input2DState input_state;
-
-				// this work for negative time (that correspond to unitialized state)
-				input_state.update_time = std::max(
-					std::max(left_state.update_time, right_state.update_time),
-					std::max(down_state.update_time, up_state.update_time)
-				);
-
-				if (left_state.value)
-					input_state.value.x -= 1.0f;
-				if (right_state.value)
-					input_state.value.x += 1.0f;
-
-				if (down_state.value)
-					input_state.value.y -= 1.0f;
-				if (up_state.value)
-					input_state.value.y += 1.0f;
-
-				return OuputDataAndReturnResult(&input_state);
+				return OuputDataAndReturnResult(&input_state.value());
 			}
 
 			if constexpr (InputType<input_type>) // ignore mapped inputs

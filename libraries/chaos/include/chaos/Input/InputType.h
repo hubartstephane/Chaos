@@ -5,7 +5,7 @@ namespace chaos
 	CHAOS_GENERATE_IS_ANY_OF_CONCEPT(InputType, Key, Input1D, Input2D);
 	CHAOS_GENERATE_IS_ANY_OF_CONCEPT(InputTypeExt, Key, Input1D, Input2D, MappedInput1D, MappedInput2D);
 
-	CHAOS_DECLARE_CLASS_MAPPING(InputValueType);
+	CHAOS_DECLARE_CLASS_MAPPING(InputValueType, typename);
 	CHAOS_SPECIALIZE_CLASS_MAPPING(InputValueType, Key, bool);
 	CHAOS_SPECIALIZE_CLASS_MAPPING(InputValueType, Input1D, float);
 	CHAOS_SPECIALIZE_CLASS_MAPPING(InputValueType, Input2D, glm::vec2);

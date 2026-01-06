@@ -1,6 +1,6 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
-// Class mapping is a meta programming feature that is used to map on anything into a value
+// Class mapping is a meta programming feature that is used to map anything into a value
 //
 //   MyMapping_v<MyClassA> ---> float 666.0f
 //   MyMapping_v<MyClassB> ---> int 666

@@ -7,7 +7,7 @@ namespace chaos
 	template<InputType INPUT_TYPE>
 	class InputStateBase;
 
-	CHAOS_DECLARE_CLASS_MAPPING(InputState)
+	CHAOS_DECLARE_CLASS_MAPPING(InputState, InputTypeExt)
 	CHAOS_SPECIALIZE_CLASS_MAPPING(InputState, Key, InputStateBase<Key>);
 	CHAOS_SPECIALIZE_CLASS_MAPPING(InputState, Input1D, InputStateBase<Input1D>);
 	CHAOS_SPECIALIZE_CLASS_MAPPING(InputState, Input2D, InputStateBase<Input2D>);

@@ -36,6 +36,13 @@ namespace chaos
 	template<CompositeInputType COMPOSITE_INPUT_TYPE, InputRequestType... PARAMS>
 	class CompositeInputRequest : public InputRequestBase
 	{
+		CHAOS_GENERATE_VALUE_MAPPING_DECLARATION(InputDebugInfoSeparator, CompositeInputType);
+		CHAOS_GENERATE_VALUE_MAPPING_SPECIALIZATION(InputDebugInfoSeparator, CompositeInputType::Or, char, '|');
+		CHAOS_GENERATE_VALUE_MAPPING_SPECIALIZATION(InputDebugInfoSeparator, CompositeInputType::And, char, '&');
+		CHAOS_GENERATE_VALUE_MAPPING_DECLARATION(InputDebugInfoSeparatorString, CompositeInputType);
+		CHAOS_GENERATE_VALUE_MAPPING_SPECIALIZATION(InputDebugInfoSeparatorString, CompositeInputType::Or, char const*, " | ");
+		CHAOS_GENERATE_VALUE_MAPPING_SPECIALIZATION(InputDebugInfoSeparatorString, CompositeInputType::And, char const*, " & ");
+
 	public:
 		
 		/** constructor */
@@ -129,10 +136,10 @@ namespace chaos
 				child_input_request.GetDebugInfo(child_debug_info_storage);
 
 				char found_separator = details::FindAccessibleOperator(child_debug_info_storage.buffer);
-				bool parenthesis_required = (found_separator != 0 && found_separator != GetDebugInfoSeparator());
+				bool parenthesis_required = (found_separator != 0 && found_separator != InputDebugInfoSeparator_v<COMPOSITE_INPUT_TYPE>);
 
 				if constexpr (INDEX > 0)
-					if (!ConcatDebugInfo(GetDebugInfoSeparatorString()))
+					if (!ConcatDebugInfo(InputDebugInfoSeparatorString_v<COMPOSITE_INPUT_TYPE>))
 						return;
 
 				if (parenthesis_required && !ConcatDebugInfo("("))
@@ -181,42 +188,6 @@ namespace chaos
 			else
 			{
 				static_assert(0);
-			}
-		}
-
-		/** get separator */
-		char GetDebugInfoSeparator() const
-		{
-			if constexpr (COMPOSITE_INPUT_TYPE == CompositeInputType::And)
-			{
-				return '&';
-			}
-			else if constexpr (COMPOSITE_INPUT_TYPE == CompositeInputType::Or)
-			{
-				return '|';
-			}
-			else
-			{
-				static_assert(0);
-				return 0;
-			}
-		}
-
-		/** get separator string */
-		char const * GetDebugInfoSeparatorString() const
-		{
-			if constexpr (COMPOSITE_INPUT_TYPE == CompositeInputType::And)
-			{
-				return " & ";
-			}
-			else if constexpr (COMPOSITE_INPUT_TYPE == CompositeInputType::Or)
-			{
-				return " | ";
-			}
-			else
-			{
-				static_assert(0);
-				return 0;
 			}
 		}
 

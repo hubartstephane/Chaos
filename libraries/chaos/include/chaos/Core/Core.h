@@ -14,8 +14,6 @@
 #include "chaos/Core/AllocatorTools.h"
 #include "chaos/Core/Buffer.h"
 #include "chaos/Core/BoolTag.h"
-#include "chaos/Core/ClassMapping.h"
-#include "chaos/Core/ClassValueMapping.h"
 #include "chaos/Core/BitTools.h"
 #include "chaos/Core/StringTools.h"
 #include "chaos/Core/EnumTools.h"

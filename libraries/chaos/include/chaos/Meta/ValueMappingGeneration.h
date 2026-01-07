@@ -13,24 +13,24 @@
 // 
 // You first need to declare the mapping itself
 //
-//     CHAOS_DECLARE_CLASS_VALUE_MAPPING(MyMapping, XXX)
+//     CHAOS_GENERATE_VALUE_MAPPING_DECLARATION(MyMapping, XXX)
 // 
 //        or 
 // 
-//     CHAOS_DECLARE_CLASS_VALUE_MAPPING(MyMapping, XXX, default_value_type, default_value)
+//     CHAOS_GENERATE_VALUE_MAPPING_DECLARATION(MyMapping, XXX, default_value_type, default_value)
 // 
 // where XXX, is what you want to map with (it can be 'typename', 'MyEnum', 'int' ...)
 //
 // Then the specializations
 //
-//     CHAOS_SPECIALIZE_CLASS_VALUE_MAPPING(MyMapping, MyClassA, float, 666.0f)
-//     CHAOS_SPECIALIZE_CLASS_VALUE_MAPPING(MyMapping, MyClassB, int, 666)
+//     CHAOS_GENERATE_VALUE_MAPPING_SPECIALIZATION(MyMapping, MyClassA, float, 666.0f)
+//     CHAOS_GENERATE_VALUE_MAPPING_SPECIALIZATION(MyMapping, MyClassB, int, 666)
 // 
-//     CHAOS_SPECIALIZE_CLASS_VALUE_MAPPING(MyMapping, MyEnum::A, float, 666.0f)
-//     CHAOS_SPECIALIZE_CLASS_VALUE_MAPPING(MyMapping, MyEnum::B, int, 666)
+//     CHAOS_GENERATE_VALUE_MAPPING_SPECIALIZATION(MyMapping, MyEnum::A, float, 666.0f)
+//     CHAOS_GENERATE_VALUE_MAPPING_SPECIALIZATION(MyMapping, MyEnum::B, int, 666)
 // 
-//     CHAOS_SPECIALIZE_CLASS_VALUE_MAPPING(MyMapping, 7, float, 666.0f)
-//     CHAOS_SPECIALIZE_CLASS_VALUE_MAPPING(MyMapping, 8, int, 666)
+//     CHAOS_GENERATE_VALUE_MAPPING_SPECIALIZATION(MyMapping, 7, float, 666.0f)
+//     CHAOS_GENERATE_VALUE_MAPPING_SPECIALIZATION(MyMapping, 8, int, 666)
 //
 // You can then access the value with the following code
 //
@@ -38,7 +38,7 @@
 //
 // During specialization, you re not forced to use the same type as return value (float/int here)
 
-#define CHAOS_DECLARE_CLASS_VALUE_MAPPING(mapping_name, template_param_type, ...)\
+#define CHAOS_GENERATE_VALUE_MAPPING_DECLARATION(mapping_name, template_param_type, ...)\
 template<template_param_type T>\
 struct mapping_name BOOST_PP_IIF(\
 	BOOST_PP_OR(\
@@ -48,16 +48,16 @@ struct mapping_name BOOST_PP_IIF(\
 			2\
 		)\
 	),\
-	CHAOS_DECLARE_CLASS_VALUE_MAPPING_NODEFAULT, \
-	CHAOS_DECLARE_CLASS_VALUE_MAPPING_WITHDEFAULT\
+	CHAOS_GENERATE_VALUE_MAPPING_DECLARATION_NODEFAULT, \
+	CHAOS_GENERATE_VALUE_MAPPING_DECLARATION_WITHDEFAULT\
 )(__VA_ARGS__); \
 template<template_param_type T>\
 static auto constexpr mapping_name##_v = mapping_name<T>::value;
 
-#define CHAOS_DECLARE_CLASS_VALUE_MAPPING_NODEFAULT(...)
-#define CHAOS_DECLARE_CLASS_VALUE_MAPPING_WITHDEFAULT(value_type, default_value, ...) { static constexpr value_type value = default_value; }
+#define CHAOS_GENERATE_VALUE_MAPPING_DECLARATION_NODEFAULT(...)
+#define CHAOS_GENERATE_VALUE_MAPPING_DECLARATION_WITHDEFAULT(value_type, default_value, ...) { static constexpr value_type value = default_value; }
 
-#define CHAOS_SPECIALIZE_CLASS_VALUE_MAPPING(mapping_name, template_param_specialization, value_type, target_value)\
+#define CHAOS_GENERATE_VALUE_MAPPING_SPECIALIZATION(mapping_name, template_param_specialization, value_type, target_value)\
 template<> struct mapping_name<template_param_specialization> { static constexpr value_type value = target_value; };
 
 #endif

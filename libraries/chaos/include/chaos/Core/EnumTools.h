@@ -12,13 +12,13 @@ namespace chaos
 	template<typename T>
 	class EnumBitmaskMetaData;
 
-	CHAOS_DECLARE_CLASS_VALUE_MAPPING(IsEnumBitmask, typename, bool, false);
+	CHAOS_GENERATE_VALUE_MAPPING_DECLARATION(IsEnumBitmask, typename, bool, false);
 
 }; // namespace chaos
 
 /** you may use an additionnal argument to represent the function API (CHAOS_API for example) */
 #define CHAOS_DECLARE_ENUM_BITMASK_METHOD(enum_type, ...)\
-CHAOS_SPECIALIZE_CLASS_VALUE_MAPPING(IsEnumBitmask, enum_type, bool, true)\
+CHAOS_GENERATE_VALUE_MAPPING_SPECIALIZATION(IsEnumBitmask, enum_type, bool, true)\
 __VA_ARGS__ enum_type operator|(enum_type a, enum_type b);\
 __VA_ARGS__ enum_type operator&(enum_type a, enum_type b);\
 __VA_ARGS__ enum_type operator~(enum_type a);\

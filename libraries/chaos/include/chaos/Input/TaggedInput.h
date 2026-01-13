@@ -7,13 +7,14 @@ namespace chaos
 	template<InputTypeExt INPUT_TYPE_EXT>
 	class TaggedInput;
 
-	CHAOS_GENERATE_VALUE_MAPPING_DECLARATION(IsTaggedInput, typename, bool, false);
-	CHAOS_GENERATE_VALUE_MAPPING_SPECIALIZATION(IsTaggedInput, TaggedInput<Key>, bool, true);
-	CHAOS_GENERATE_VALUE_MAPPING_SPECIALIZATION(IsTaggedInput, TaggedInput<Input1D>, bool, true);
-	CHAOS_GENERATE_VALUE_MAPPING_SPECIALIZATION(IsTaggedInput, TaggedInput<Input2D>, bool, true);
-	CHAOS_GENERATE_VALUE_MAPPING_SPECIALIZATION(IsTaggedInput, TaggedInput<MappedInput1D>, bool, true);
-	CHAOS_GENERATE_VALUE_MAPPING_SPECIALIZATION(IsTaggedInput, TaggedInput<MappedInput2D>, bool, true);
+	CHAOS_GENERATE_IS_ANY_OF_CONCEPT(TaggedInputType, TaggedInput<Key>, TaggedInput<Input1D>, TaggedInput<Input2D>);
+	CHAOS_GENERATE_IS_ANY_OF_CONCEPT(TaggedInputTypeExt, TaggedInput<Key>, TaggedInput<Input1D>, TaggedInput<Input2D>, TaggedInput<MappedInput1D>, TaggedInput<MappedInput2D>);
 
+	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputValueType, TaggedInput<Key>, bool);
+	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputValueType, TaggedInput<Input1D>, float);
+	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputValueType, TaggedInput<Input2D>, glm::vec2);
+	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputValueType, TaggedInput<MappedInput1D>, float);
+	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputValueType, TaggedInput<MappedInput2D>, glm::vec2);
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -38,20 +39,22 @@ namespace chaos
 	{
 	public:
 
+		using input_type = INPUT_TYPE_EXT;
+
 		/** initializer constructor */
-		TaggedInput(INPUT_TYPE_EXT in_input, TaggedInputFlags in_flags = TaggedInputFlags::NONE) :
+		TaggedInput(input_type in_input, TaggedInputFlags in_flags = TaggedInputFlags::NONE) :
 			input(in_input),
 			flags(in_flags){}
 		/** copy constructor */
 		TaggedInput(TaggedInput const& src) = default;
 
 		/** cast operator */
-		operator INPUT_TYPE_EXT () const { return input; }
+		operator input_type () const { return input; }
 
 	public:
 
 		/** the input of interest */
-		INPUT_TYPE_EXT input = INPUT_TYPE_EXT::UNKOWN;
+		input_type input = input_type::UNKOWN;
 		/** the tags */
 		TaggedInputFlags flags = TaggedInputFlags::NONE;
 	};
@@ -64,22 +67,22 @@ namespace chaos
 	}
 
 	/** get the input from a tagged input */
-	template<InputTypeExt INPUT_TYPE_EXT>
-	INPUT_TYPE_EXT GetInput(TaggedInput<INPUT_TYPE_EXT> in_input)
+	template<TaggedInputTypeExt TAGGED_INPUT_TYPE_EXT>
+	auto GetInput(TAGGED_INPUT_TYPE_EXT in_input)
 	{
 		return in_input.input;
 	}
 
 	/** get the input flags from a basic input (key, input1D, input2D) */
 	template<InputTypeExt INPUT_TYPE_EXT>
-	TaggedInputFlags GetInputFlags(INPUT_TYPE_EXT in_input)
+	auto GetInputFlags(INPUT_TYPE_EXT in_input)
 	{
 		return TaggedInputFlags::NONE;
 	}
 
 	/** get the input flags from a tagged input */
-	template<InputTypeExt INPUT_TYPE_EXT>
-	TaggedInputFlags GetInputFlags(TaggedInput<INPUT_TYPE_EXT> in_input)
+	template<TaggedInputTypeExt TAGGED_INPUT_TYPE_EXT>
+	auto GetInputFlags(TAGGED_INPUT_TYPE_EXT in_input)
 	{
 		return in_input.flags;
 	}
@@ -92,8 +95,8 @@ namespace chaos
 	}
 
 	/** add the flag CONSULT_ONLY to a tagged input */
-	template<InputTypeExt INPUT_TYPE_EXT>
-	TaggedInput<INPUT_TYPE_EXT> ConsultOnly(TaggedInput<INPUT_TYPE_EXT> in_input) // the input won't lock any further request (it will still require for an authorization from the cache)
+	template<TaggedInputTypeExt TAGGED_INPUT_TYPE_EXT>
+	TAGGED_INPUT_TYPE_EXT ConsultOnly(TAGGED_INPUT_TYPE_EXT in_input) // the input won't lock any further request (it will still require for an authorization from the cache)
 	{
 		return { GetInput(in_input) , GetInputFlags(in_input) | TaggedInputFlags::CONSULT_ONLY };
 	}

@@ -35,12 +35,13 @@ namespace chaos
 	{
 	public:
 
-		using input_type = INPUT_TYPE_EXT;
-		using state_type = InputState_t<input_type>;
-		using value_type = InputValueType_t<input_type>;
+		using input_type        = INPUT_TYPE_EXT;
+		using state_type        = InputState_t<input_type>;
+		using value_type        = InputValueType_t<input_type>;
+		using tagged_input_type = TaggedInput<input_type>;
 
 		/** constructor */
-		QueryInputRequest(input_type in_input, state_type* in_out_state, value_type* in_out_value, QueryInputRequestType in_query_type):
+		QueryInputRequest(tagged_input_type in_input, state_type* in_out_state, value_type* in_out_value, QueryInputRequestType in_query_type):
 			input(in_input),
 			out_state(in_out_state),
 			out_value(in_out_value),
@@ -69,8 +70,7 @@ namespace chaos
 
 				return OuputDataAndReturnResult(&input_state.value());
 			}
-
-			if constexpr (InputType<input_type>) // ignore mapped inputs
+			else if constexpr (InputType<input_type>) // ignore mapped inputs
 			{
 				state_type const* input_state = in_input_device->GetInputState(input);
 				if (input_state == nullptr)
@@ -82,8 +82,11 @@ namespace chaos
 
 				return OuputDataAndReturnResult(input_state);
 			}
-
-			return OuputDataAndReturnResult(nullptr);
+			else
+			{
+				static_assert(0);
+				return OuputDataAndReturnResult(nullptr); // should never happens
+			}
 		}
 
 		/** output necessary data and get request result from the state and the query */
@@ -132,10 +135,16 @@ namespace chaos
 				return (input == in_input);
 
 			if constexpr (std::is_same_v<input_type, MappedInput1D>)
-				return (input.pos_key == in_input || input.neg_key == in_input);
-
+			{
+				auto effective_input = GetInput(input);
+				return (effective_input.pos_key == in_input || effective_input.neg_key == in_input);
+			}
+			
 			if constexpr (std::is_same_v<input_type, MappedInput2D>)
-				return (input.left_key == in_input || input.right_key == in_input || input.up_key == in_input || input.down_key == in_input);
+			{
+				auto effective_input = GetInput(input);
+				return (effective_input.left_key == in_input || effective_input.right_key == in_input || effective_input.up_key == in_input || effective_input.down_key == in_input);
+			}
 
 			return false;
 		}
@@ -160,19 +169,23 @@ namespace chaos
 
 			if constexpr (std::is_same_v<input_type, MappedInput1D>)
 			{
+				auto effective_input = GetInput(input);
+
 				std::snprintf(input_buffer, sizeof(input_buffer), "%s/%s",
-					EnumToString(input.neg_key),
-					EnumToString(input.pos_key));
+					EnumToString(effective_input.neg_key),
+					EnumToString(effective_input.pos_key));
 			}
-			if constexpr (std::is_same_v<input_type, MappedInput2D>)
+			else if constexpr (std::is_same_v<input_type, MappedInput2D>)
 			{
+				auto effective_input = GetInput(input);
+
 				std::snprintf(input_buffer, sizeof(input_buffer), "%s/%s/%s/%s",
-					EnumToString(input.left_key),
-					EnumToString(input.right_key),
-					EnumToString(input.up_key),
-					EnumToString(input.down_key));
+					EnumToString(effective_input.left_key),
+					EnumToString(effective_input.right_key),
+					EnumToString(effective_input.up_key),
+					EnumToString(effective_input.down_key));
 			}
-			if constexpr (InputType<input_type>) // ignore mapped inputs
+			else if constexpr (InputType<input_type>) // ignore mapped inputs
 			{
 				strcpy_s(input_buffer, sizeof(input_buffer), EnumToString(input));
 			}
@@ -194,7 +207,7 @@ namespace chaos
 	protected:
 
 		/** the concerned input */
-		input_type input;
+		tagged_input_type input;
 		/** the state of the request */
 		state_type* out_state = nullptr;
 		/** the result of the request */
@@ -206,60 +219,54 @@ namespace chaos
 	/**
 	 * Some standalone functions
 	 */
-
-	template<InputTypeExt INPUT_TYPE_EXT>
-	QueryInputRequest<INPUT_TYPE_EXT> QueryInput(INPUT_TYPE_EXT in_input, QueryInputRequestType in_query_type = QueryInputRequestType::None)
-	{
-		return { in_input, nullptr, nullptr, in_query_type };
+	
+#define CHAOS_DECLARE_QUERY_INPUT(INPUT_TYPE, QUERY_INPUT_REQUEST_PARAM_TYPE)\
+	QueryInputRequest<QUERY_INPUT_REQUEST_PARAM_TYPE> QueryInput(INPUT_TYPE in_input, QueryInputRequestType in_query_type = QueryInputRequestType::None);\
+	QueryInputRequest<QUERY_INPUT_REQUEST_PARAM_TYPE> QueryInput(INPUT_TYPE in_input, InputValueType_t<INPUT_TYPE> *out_value, QueryInputRequestType in_query_type = QueryInputRequestType::None);\
+	QueryInputRequest<QUERY_INPUT_REQUEST_PARAM_TYPE> QueryInput(INPUT_TYPE in_input, InputState_t<INPUT_TYPE>* out_state, QueryInputRequestType in_query_type = QueryInputRequestType::None);\
+	template<typename ...PARAMS>\
+	auto Active(INPUT_TYPE in_input, PARAMS... params)\
+	{\
+		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::Active);\
+	}\
+	template<typename ...PARAMS>\
+	auto JustActivated(INPUT_TYPE in_input, PARAMS... params)\
+	{\
+		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::JustActivated);\
+	}\
+	template<typename ...PARAMS>\
+	auto ActiveRepeated(INPUT_TYPE in_input, PARAMS... params)\
+	{\
+		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::ActiveRepeated);\
+	}\
+	template<typename ...PARAMS>\
+	auto Inactive(INPUT_TYPE in_input, PARAMS... params)\
+	{\
+		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::Inactive);\
+	}\
+	template<typename ...PARAMS>\
+	auto JustDeactivated(INPUT_TYPE in_input, PARAMS... params)\
+	{\
+		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::JustDeactivated);\
+	}\
+	template<typename ...PARAMS>\
+	auto InactiveRepeated(INPUT_TYPE in_input, PARAMS... params)\
+	{\
+		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::InactiveRepeated);\
 	}
 
-	template<InputTypeExt INPUT_TYPE_EXT>
-	QueryInputRequest<INPUT_TYPE_EXT> QueryInput(INPUT_TYPE_EXT in_input, InputValueType_t<INPUT_TYPE_EXT> *out_value, QueryInputRequestType in_query_type = QueryInputRequestType::None)
-	{
-		return { in_input, nullptr, out_value, in_query_type };
-	}
+	CHAOS_DECLARE_QUERY_INPUT(Key, Key);
+	CHAOS_DECLARE_QUERY_INPUT(Input1D, Input1D);
+	CHAOS_DECLARE_QUERY_INPUT(Input2D, Input2D);
+	CHAOS_DECLARE_QUERY_INPUT(MappedInput1D, MappedInput1D);
+	CHAOS_DECLARE_QUERY_INPUT(MappedInput2D, MappedInput2D);
+	CHAOS_DECLARE_QUERY_INPUT(TaggedInput<Key>, Key);
+	CHAOS_DECLARE_QUERY_INPUT(TaggedInput<Input1D>, Input1D);
+	CHAOS_DECLARE_QUERY_INPUT(TaggedInput<Input2D>, Input2D);
+	CHAOS_DECLARE_QUERY_INPUT(TaggedInput<MappedInput1D>, MappedInput1D);
+	CHAOS_DECLARE_QUERY_INPUT(TaggedInput<MappedInput2D>, MappedInput2D);
 
-	template<InputTypeExt INPUT_TYPE_EXT>
-	QueryInputRequest<INPUT_TYPE_EXT> QueryInput(INPUT_TYPE_EXT in_input, InputState_t<INPUT_TYPE_EXT>* out_state, QueryInputRequestType in_query_type = QueryInputRequestType::None)
-	{
-		return { in_input, out_state, nullptr, in_query_type };
-	}
-
-	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
-	auto Active(INPUT_TYPE_EXT in_input, PARAMS... params)
-	{
-		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::Active);
-	}
-
-	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
-	auto JustActivated(INPUT_TYPE_EXT in_input, PARAMS... params)
-	{
-		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::JustActivated);
-	}
-
-	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
-	auto ActiveRepeated(INPUT_TYPE_EXT in_input, PARAMS... params)
-	{
-		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::ActiveRepeated);
-	}
-
-	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
-	auto Inactive(INPUT_TYPE_EXT in_input, PARAMS... params)
-	{
-		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::Inactive);
-	}
-
-	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
-	auto JustDeactivated(INPUT_TYPE_EXT in_input, PARAMS... params)
-	{
-		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::JustDeactivated);
-	}
-
-	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
-	auto InactiveRepeated(INPUT_TYPE_EXT in_input, PARAMS... params)
-	{
-		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::InactiveRepeated);
-	}
+#undef CHAOS_DECLARE_QUERY_INPUT
 
 #endif
 

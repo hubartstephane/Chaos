@@ -2,21 +2,21 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class InputRequestBase;
+	class InputConditionBase;
 
 	class InputRequestDebugInfoStorage;
 
-	enum class InputRequestResult;
+	enum class InputConditionResult;
 
-	CHAOS_GENERATE_INHERIT_FROM_ANY_CONCEPT(InputRequestType, InputRequestBase);
+	CHAOS_GENERATE_INHERIT_FROM_ANY_CONCEPT(InputRequestType, InputConditionBase);
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	 * InputRequestResult: 
+	 * InputConditionResult: 
 	 */
 
-	enum class CHAOS_API InputRequestResult : int
+	enum class CHAOS_API InputConditionResult : int
 	{
 		Invalid,   // the request is not properly initialized
 		Rejected,  // the inputs for this request have already been consumed
@@ -40,15 +40,15 @@ namespace chaos
 	};
 
 	/**
-	* InputRequestBase: a base request for any user input (keyboard, mouse, gamepad)
+	* InputConditionBase: a base request for any user input (keyboard, mouse, gamepad)
 	*/
 
-	class CHAOS_API InputRequestBase
+	class CHAOS_API InputConditionBase
 	{
 	public:
 
 		/** check whether the request matches a given input device state (polling) */
-		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const;
+		virtual InputConditionResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const;
 
 		/** check whether the request is related to some input */
 		virtual bool IsRequestRelatedTo(Key in_input) const;

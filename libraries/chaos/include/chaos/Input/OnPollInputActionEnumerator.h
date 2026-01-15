@@ -18,7 +18,7 @@ namespace chaos
 		OnPollInputActionEnumerator(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache* in_consumption_cache);
 
 		/** override */
-		virtual bool CheckAndProcess(InputRequestBase const& in_request, char const* in_title, bool in_enabled, InputActionFunction in_func) override;
+		virtual bool CheckAndProcess(InputConditionBase const& in_request, char const* in_title, bool in_enabled, InputActionFunction in_func) override;
 
 	protected:
 

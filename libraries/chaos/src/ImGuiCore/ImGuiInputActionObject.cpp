@@ -22,17 +22,17 @@ namespace chaos
 			{
 			}
 
-			virtual bool CheckAndProcess(InputRequestBase const & in_request, char const * in_title, bool in_enabled, LightweightFunction<void()> in_key_action) override
+			virtual bool CheckAndProcess(InputConditionBase const & in_request, char const * in_title, bool in_enabled, LightweightFunction<void()> in_key_action) override
 			{
 				ImGui::TableNextRow();
 				ImGui::BeginDisabled(!in_enabled);
 
 				ImVec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-				InputRequestResult request_result = in_request.Check(input_receiver, input_device, *consumption_cache);
-				if (request_result == InputRequestResult::Invalid)
+				InputConditionResult request_result = in_request.Check(input_receiver, input_device, *consumption_cache);
+				if (request_result == InputConditionResult::Invalid)
 					color = { 1.0f, 0.0f, 0.0f, 1.0f };
-				else if (request_result == InputRequestResult::Rejected)
+				else if (request_result == InputConditionResult::Rejected)
 					color = { 0.0f, 1.0f, 1.0f, 1.0f };
 
 				int column_index = 0;
@@ -51,9 +51,9 @@ namespace chaos
 					ImGui::TextColored(color, "Disabled", in_title);
 					
 				ImGui::TableSetColumnIndex(column_index++);
-				if (request_result == InputRequestResult::Invalid)
+				if (request_result == InputConditionResult::Invalid)
 					ImGui::TextColored(color, "Invalid", in_title);
-				else if (request_result == InputRequestResult::Rejected)
+				else if (request_result == InputConditionResult::Rejected)
 					ImGui::TextColored(color, "Rejected", in_title);
 
 				ImGui::EndDisabled();

@@ -5,7 +5,7 @@ namespace chaos
 	enum class CompositeInputType ;
 
 	template<CompositeInputType COMPOSITE_INPUT_TYPE, InputRequestType... PARAMS>
-	class CompositeInputRequest;
+	class CompositeInputCondition;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -30,11 +30,11 @@ namespace chaos
 	};
 
 	/**
-	 * CompositeInputRequest: a composite input request used to AND or OR request alltogether
+	 * CompositeInputCondition: a composite input request used to AND or OR request alltogether
 	 */
 
 	template<CompositeInputType COMPOSITE_INPUT_TYPE, InputRequestType... PARAMS>
-	class CompositeInputRequest : public InputRequestBase
+	class CompositeInputCondition : public InputConditionBase
 	{
 		CHAOS_GENERATE_VALUE_MAPPING_DECLARATION(InputDebugInfoSeparator, CompositeInputType);
 		CHAOS_GENERATE_VALUE_MAPPING_SPECIALIZATION(InputDebugInfoSeparator, CompositeInputType::Or, char, '|');
@@ -46,28 +46,28 @@ namespace chaos
 	public:
 		
 		/** constructor */
-		CompositeInputRequest(PARAMS... params):
+		CompositeInputCondition(PARAMS... params):
 			child_input_requests(std::forward<PARAMS>(params)...)
 		{
 		}
 
 		/** override */
-		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
+		virtual InputConditionResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
 		{
-			std::optional<InputRequestResult> result;
+			std::optional<InputConditionResult> result;
 
 			std::apply([&](auto const & ... child_request)
 			{
 				auto CheckChildInputRequest = [&](auto const& child_request)
 				{
-					InputRequestResult child_result = child_request.Check(in_input_receiver, in_input_device, in_consumption_cache);
+					InputConditionResult child_result = child_request.Check(in_input_receiver, in_input_device, in_consumption_cache);
 					result = AggregateResult(result, child_result);
 				};
 				(CheckChildInputRequest(child_request), ...);
 
 			}, child_input_requests);
 
-			return result.value_or(InputRequestResult::False);
+			return result.value_or(InputConditionResult::False);
 		}
 
 		// By construction, we concat expressions
@@ -132,7 +132,7 @@ namespace chaos
 
 				InputRequestDebugInfoStorage child_debug_info_storage;
 
-				InputRequestBase const& child_input_request = std::get<INDEX>(child_input_requests);
+				InputConditionBase const& child_input_request = std::get<INDEX>(child_input_requests);
 				child_input_request.GetDebugInfo(child_debug_info_storage);
 
 				char found_separator = details::FindAccessibleOperator(child_debug_info_storage.buffer);
@@ -166,12 +166,12 @@ namespace chaos
 		}
 
 		/** combine results altogether */
-		InputRequestResult AggregateResult(std::optional<InputRequestResult> const& result, InputRequestResult child_result) const
+		InputConditionResult AggregateResult(std::optional<InputConditionResult> const& result, InputConditionResult child_result) const
 		{
-			auto ComputeAggregationResult = [&](std::initializer_list<InputRequestResult> const& ordered_values)
+			auto ComputeAggregationResult = [&](std::initializer_list<InputConditionResult> const& ordered_values)
 			{
 				if (result.has_value())
-					for (InputRequestResult r : ordered_values)
+					for (InputConditionResult r : ordered_values)
 						if (child_result == r || result.value() == r)
 							return r;
 				return child_result;
@@ -179,11 +179,11 @@ namespace chaos
 
 			if constexpr (COMPOSITE_INPUT_TYPE == CompositeInputType::And)
 			{
-				return ComputeAggregationResult({ InputRequestResult::Rejected, InputRequestResult::Invalid, InputRequestResult::False, InputRequestResult::True });
+				return ComputeAggregationResult({ InputConditionResult::Rejected, InputConditionResult::Invalid, InputConditionResult::False, InputConditionResult::True });
 			}
 			else if constexpr (COMPOSITE_INPUT_TYPE == CompositeInputType::Or)
 			{
-				return ComputeAggregationResult({ InputRequestResult::True, InputRequestResult::False, InputRequestResult::Invalid, InputRequestResult::Rejected });
+				return ComputeAggregationResult({ InputConditionResult::True, InputConditionResult::False, InputConditionResult::Invalid, InputConditionResult::Rejected });
 			}
 			else
 			{
@@ -206,7 +206,7 @@ namespace chaos
 	{
 		if constexpr ((InputRequestType<PARAMS> && ...))
 		{
-			return CompositeInputRequest<CompositeInputType::And, PARAMS...>(std::forward<PARAMS>(params)...);
+			return CompositeInputCondition<CompositeInputType::And, PARAMS...>(std::forward<PARAMS>(params)...);
 		}
 		else if constexpr ((std::is_same_v<PARAMS, Key> && ...)) // every parameters have a bool value
 		{
@@ -228,7 +228,7 @@ namespace chaos
 	{
 		if constexpr ((InputRequestType<PARAMS> && ...))
 		{
-			return CompositeInputRequest<CompositeInputType::Or, PARAMS...>(std::forward<PARAMS>(params)...);
+			return CompositeInputCondition<CompositeInputType::Or, PARAMS...>(std::forward<PARAMS>(params)...);
 		}
 		else if constexpr ((std::is_same_v<PARAMS, Key> && ...)) // every parameters have a bool value
 		{

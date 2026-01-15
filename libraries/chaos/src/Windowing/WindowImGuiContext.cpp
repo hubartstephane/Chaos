@@ -119,7 +119,7 @@ namespace chaos
 
 		if (in_context == EnumerateInputActionContext::OnQuery)
 			if (ShouldCaptureInputEvent())
-				in_action_enumerator.CheckAndProcess(AnyInputRequest(), "Catch All"); // process query deeper
+				in_action_enumerator.CheckAndProcess(AnyInputCondition(), "Catch All"); // process query deeper
 
 		return false;
 	}

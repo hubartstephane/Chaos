@@ -18,17 +18,17 @@ namespace chaos
 	CHAOS_IMPLEMENT_ENUM_METHOD(QueryInputRequestType, &QueryStatusRequestType_metadata, CHAOS_API);
 
 #define CHAOS_IMPLEMENT_QUERY_INPUT(INPUT_TYPE, QUERY_INPUT_REQUEST_PARAM_TYPE)\
-	QueryInputRequest<QUERY_INPUT_REQUEST_PARAM_TYPE> QueryInput(INPUT_TYPE in_input, QueryInputRequestType in_query_type)\
+	InspectInputCondition<QUERY_INPUT_REQUEST_PARAM_TYPE> QueryInput(INPUT_TYPE in_input, QueryInputRequestType in_query_type)\
 	{\
-		return QueryInputRequest<QUERY_INPUT_REQUEST_PARAM_TYPE>(in_input, nullptr, nullptr, in_query_type);\
+		return InspectInputCondition<QUERY_INPUT_REQUEST_PARAM_TYPE>(in_input, nullptr, nullptr, in_query_type);\
 	}\
-	QueryInputRequest<QUERY_INPUT_REQUEST_PARAM_TYPE> QueryInput(INPUT_TYPE in_input, InputValueType_t<INPUT_TYPE> *out_value, QueryInputRequestType in_query_type)\
+	InspectInputCondition<QUERY_INPUT_REQUEST_PARAM_TYPE> QueryInput(INPUT_TYPE in_input, InputValueType_t<INPUT_TYPE> *out_value, QueryInputRequestType in_query_type)\
 	{\
-		return QueryInputRequest<QUERY_INPUT_REQUEST_PARAM_TYPE>(in_input, nullptr, out_value, in_query_type);\
+		return InspectInputCondition<QUERY_INPUT_REQUEST_PARAM_TYPE>(in_input, nullptr, out_value, in_query_type);\
 	}\
-	QueryInputRequest<QUERY_INPUT_REQUEST_PARAM_TYPE> QueryInput(INPUT_TYPE in_input, InputState_t<INPUT_TYPE>* out_state, QueryInputRequestType in_query_type)\
+	InspectInputCondition<QUERY_INPUT_REQUEST_PARAM_TYPE> QueryInput(INPUT_TYPE in_input, InputState_t<INPUT_TYPE>* out_state, QueryInputRequestType in_query_type)\
 	{\
-		return QueryInputRequest<QUERY_INPUT_REQUEST_PARAM_TYPE>(in_input, out_state, nullptr, in_query_type);\
+		return InspectInputCondition<QUERY_INPUT_REQUEST_PARAM_TYPE>(in_input, out_state, nullptr, in_query_type);\
 	}
 
 	CHAOS_IMPLEMENT_QUERY_INPUT(Key, Key);

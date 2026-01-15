@@ -3,7 +3,7 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	template<InputTypeExt INPUT_TYPE_EXT>
-	class QueryInputRequest;
+	class InspectInputCondition;
 
 	enum class QueryInputRequestType;
 
@@ -27,11 +27,11 @@ namespace chaos
 	CHAOS_DECLARE_ENUM_METHOD(QueryInputRequestType, CHAOS_API);
 
 	/**
-	 * QueryInputRequest: a request that gets the value of an input
+	 * InspectInputCondition: a request that gets the value of an input
 	 */
 
 	template<InputTypeExt INPUT_TYPE_EXT>
-	class QueryInputRequest : public InputRequestBase
+	class InspectInputCondition : public InputConditionBase
 	{
 	public:
 
@@ -41,7 +41,7 @@ namespace chaos
 		using tagged_input_type = TaggedInput<input_type>;
 
 		/** constructor */
-		QueryInputRequest(tagged_input_type in_input, state_type* in_out_state, value_type* in_out_value, QueryInputRequestType in_query_type):
+		InspectInputCondition(tagged_input_type in_input, state_type* in_out_state, value_type* in_out_value, QueryInputRequestType in_query_type):
 			input(in_input),
 			out_state(in_out_state),
 			out_value(in_out_value),
@@ -49,24 +49,24 @@ namespace chaos
 		{
 		}
 		/** copy constructor */
-		QueryInputRequest(QueryInputRequest const& src) = default;
+		InspectInputCondition(InspectInputCondition const& src) = default;
 
 		/** override */
-		virtual InputRequestResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
+		virtual InputConditionResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
 		{
 			if (out_state == nullptr && out_value == nullptr && query_type == QueryInputRequestType::None) // this request is useless
-				return InputRequestResult::Invalid;
+				return InputConditionResult::Invalid;
 
 			// find and handle state
 			if constexpr (std::is_same_v<input_type, MappedInput1D> || std::is_same_v<input_type, MappedInput2D>)
 			{
 				std::optional<state_type> input_state = in_input_device->GetMappedInputState(input);
 				if (!input_state.has_value())
-					return InputRequestResult::Invalid; // abnormal (request for an input not handled by the receiver)
+					return InputConditionResult::Invalid; // abnormal (request for an input not handled by the receiver)
 
 				// consum the key of the request (no one can use it anymore until next frame)
 				if (!in_consumption_cache.TryConsumeInput(in_input_receiver, in_input_device, input))
-					return InputRequestResult::Rejected;
+					return InputConditionResult::Rejected;
 
 				return OuputDataAndReturnResult(&input_state.value());
 			}
@@ -74,11 +74,11 @@ namespace chaos
 			{
 				state_type const* input_state = in_input_device->GetInputState(input);
 				if (input_state == nullptr)
-					return InputRequestResult::Invalid; // abnormal (request for an input not handled by the receiver)
+					return InputConditionResult::Invalid; // abnormal (request for an input not handled by the receiver)
 
 				// consum the key of the request (no one can use it anymore until next frame)
 				if (!in_consumption_cache.TryConsumeInput(in_input_receiver, in_input_device, input))
-					return InputRequestResult::Rejected;
+					return InputConditionResult::Rejected;
 
 				return OuputDataAndReturnResult(input_state);
 			}
@@ -90,7 +90,7 @@ namespace chaos
 		}
 
 		/** output necessary data and get request result from the state and the query */
-		InputRequestResult OuputDataAndReturnResult(state_type const * in_input_state) const
+		InputConditionResult OuputDataAndReturnResult(state_type const * in_input_state) const
 		{
 			assert(in_input_state != nullptr);
 
@@ -103,13 +103,13 @@ namespace chaos
 			// compute return value
 			auto ConvertResultType = [](bool result)
 			{
-				return result ? InputRequestResult::True : InputRequestResult::False;
+				return result ? InputConditionResult::True : InputConditionResult::False;
 			};
 
 			switch (query_type)
 			{
 			case QueryInputRequestType::None:
-				return InputRequestResult::True;
+				return InputConditionResult::True;
 			case QueryInputRequestType::Inactive:
 				return ConvertResultType(in_input_state->IsInactive());
 			case QueryInputRequestType::JustDeactivated:
@@ -125,7 +125,7 @@ namespace chaos
 			default:
 				assert(0);
 			}
-			return InputRequestResult::True; // whatever the value is, it's a success !
+			return InputConditionResult::True; // whatever the value is, it's a success !
 		}
 
 		/** override */
@@ -221,9 +221,9 @@ namespace chaos
 	 */
 	
 #define CHAOS_DECLARE_QUERY_INPUT(INPUT_TYPE, QUERY_INPUT_REQUEST_PARAM_TYPE)\
-	QueryInputRequest<QUERY_INPUT_REQUEST_PARAM_TYPE> QueryInput(INPUT_TYPE in_input, QueryInputRequestType in_query_type = QueryInputRequestType::None);\
-	QueryInputRequest<QUERY_INPUT_REQUEST_PARAM_TYPE> QueryInput(INPUT_TYPE in_input, InputValueType_t<INPUT_TYPE> *out_value, QueryInputRequestType in_query_type = QueryInputRequestType::None);\
-	QueryInputRequest<QUERY_INPUT_REQUEST_PARAM_TYPE> QueryInput(INPUT_TYPE in_input, InputState_t<INPUT_TYPE>* out_state, QueryInputRequestType in_query_type = QueryInputRequestType::None);\
+	InspectInputCondition<QUERY_INPUT_REQUEST_PARAM_TYPE> QueryInput(INPUT_TYPE in_input, QueryInputRequestType in_query_type = QueryInputRequestType::None);\
+	InspectInputCondition<QUERY_INPUT_REQUEST_PARAM_TYPE> QueryInput(INPUT_TYPE in_input, InputValueType_t<INPUT_TYPE> *out_value, QueryInputRequestType in_query_type = QueryInputRequestType::None);\
+	InspectInputCondition<QUERY_INPUT_REQUEST_PARAM_TYPE> QueryInput(INPUT_TYPE in_input, InputState_t<INPUT_TYPE>* out_state, QueryInputRequestType in_query_type = QueryInputRequestType::None);\
 	template<typename ...PARAMS>\
 	auto Active(INPUT_TYPE in_input, PARAMS... params)\
 	{\

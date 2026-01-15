@@ -22,14 +22,14 @@ namespace chaos
 			{
 			}
 
-			virtual bool CheckAndProcess(InputConditionBase const & in_request, char const * in_title, bool in_enabled, LightweightFunction<void()> in_key_action) override
+			virtual bool CheckAndProcess(InputConditionBase const & in_condition, char const * in_title, bool in_enabled, LightweightFunction<void()> in_key_action) override
 			{
 				ImGui::TableNextRow();
 				ImGui::BeginDisabled(!in_enabled);
 
 				ImVec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-				InputConditionResult request_result = in_request.Check(input_receiver, input_device, *consumption_cache);
+				InputConditionResult request_result = in_condition.Check(input_receiver, input_device, *consumption_cache);
 				if (request_result == InputConditionResult::Invalid)
 					color = { 1.0f, 0.0f, 0.0f, 1.0f };
 				else if (request_result == InputConditionResult::Rejected)
@@ -43,7 +43,7 @@ namespace chaos
 					ImGui::TextColored(color, "%s", receiver_name);
 
 				InputRequestDebugInfoStorage debug_info_storage;
-				char const* debug_info = in_request.GetDebugInfo(debug_info_storage);
+				char const* debug_info = in_condition.GetDebugInfo(debug_info_storage);
 				ImGui::TableSetColumnIndex(column_index++); ImGui::TextColored(color, "%s", debug_info);
 
 				ImGui::TableSetColumnIndex(column_index++);

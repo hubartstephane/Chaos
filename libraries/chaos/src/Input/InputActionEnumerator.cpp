@@ -12,20 +12,20 @@ namespace chaos
 		assert(in_input_device != nullptr);
 	}
 
-	bool InputActionEnumerator::CheckAndProcess(InputConditionBase const & in_request, char const * in_title, InputActionFunction in_action_func)
+	bool InputActionEnumerator::CheckAndProcess(InputConditionBase const & in_condition, char const * in_title, InputActionFunction in_action_func)
 	{
-		return CheckAndProcess(in_request, in_title, true, in_action_func);
+		return CheckAndProcess(in_condition, in_title, true, in_action_func);
 	}
 
-	bool InputActionEnumerator::CheckAndProcess(InputConditionBase const& in_request, char const* in_title, bool in_enabled, InputActionFunction in_action_func)
+	bool InputActionEnumerator::CheckAndProcess(InputConditionBase const& in_condition, char const* in_title, bool in_enabled, InputActionFunction in_action_func)
 	{
 		return false;
 	}
 
-	void InputActionEnumerator::MarkAllRequestInputsAsConsumedInApplicationCache(InputConditionBase const& in_request)
+	void InputActionEnumerator::MarkAllRequestInputsAsConsumedInApplicationCache(InputConditionBase const& in_condition)
 	{
 		if (WindowApplication* window_application = Application::GetInstance())
-			in_request.Check(nullptr, input_device, window_application->GetInputConsumptionCache());
+			in_condition.Check(nullptr, input_device, window_application->GetInputConsumptionCache());
 	}
 
 }; // namespace chaos

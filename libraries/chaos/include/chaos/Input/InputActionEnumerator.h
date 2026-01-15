@@ -33,15 +33,15 @@ namespace chaos
 #endif
 
 		/** the operator */
-		virtual bool CheckAndProcess(InputConditionBase const& in_request, char const* in_title, bool in_enabled, InputActionFunction in_action_func);
+		virtual bool CheckAndProcess(InputConditionBase const& in_condition, char const* in_title, bool in_enabled, InputActionFunction in_action_func);
 
 		/** lighter function, with in_enabled defaulted to true */
-		bool CheckAndProcess(InputConditionBase const& in_request, char const* in_title, InputActionFunction in_action_func = {});
+		bool CheckAndProcess(InputConditionBase const& in_condition, char const* in_title, InputActionFunction in_action_func = {});
 
 	protected:
 
 		/** Mark input as consumed in the WindowApplication's InputConsumptionCache */
-		void MarkAllRequestInputsAsConsumedInApplicationCache(InputConditionBase const& in_request);
+		void MarkAllRequestInputsAsConsumedInApplicationCache(InputConditionBase const& in_condition);
 
 	protected:
 		

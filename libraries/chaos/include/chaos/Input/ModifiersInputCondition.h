@@ -48,27 +48,27 @@ namespace chaos
 	**/
 
 	template<InputRequestType REQUEST_TYPE> 
-	auto RequireModifiers(KeyModifier in_modifiers, REQUEST_TYPE const& in_request)
+	auto RequireModifiers(KeyModifier in_modifiers, REQUEST_TYPE const& in_condition)
 	{
-		return And(in_request, ModifiersInputCondition(in_modifiers, true));
+		return And(in_condition, ModifiersInputCondition(in_modifiers, true));
 	}
 
 	template<InputRequestType REQUEST_TYPE>
-	auto RequireModifiers(KeyModifier in_modifiers, REQUEST_TYPE && in_request)
+	auto RequireModifiers(KeyModifier in_modifiers, REQUEST_TYPE && in_condition)
 	{
-		return And(std::move(in_request), ModifiersInputCondition(in_modifiers, true));
+		return And(std::move(in_condition), ModifiersInputCondition(in_modifiers, true));
 	}
 
 	template<InputRequestType REQUEST_TYPE>
-	auto ForbidModifiers(KeyModifier in_modifiers, REQUEST_TYPE const& in_request)
+	auto ForbidModifiers(KeyModifier in_modifiers, REQUEST_TYPE const& in_condition)
 	{
-		return And(in_request, ModifiersInputCondition(in_modifiers, false));
+		return And(in_condition, ModifiersInputCondition(in_modifiers, false));
 	}
 
 	template<InputRequestType REQUEST_TYPE>
-	auto ForbidModifiers(KeyModifier in_modifiers, REQUEST_TYPE&& in_request)
+	auto ForbidModifiers(KeyModifier in_modifiers, REQUEST_TYPE&& in_condition)
 	{
-		return And(std::move(in_request), ModifiersInputCondition(in_modifiers, false));
+		return And(std::move(in_condition), ModifiersInputCondition(in_modifiers, false));
 	}
 
 #endif

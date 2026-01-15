@@ -977,9 +977,9 @@ protected:
 		return true;
 	}
 
-	virtual bool EnumerateInputActions(chaos::InputActionEnumerator & in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
+	virtual bool EnumerateInputActions(chaos::InputActionProcessor & in_action_processor, chaos::EnumerateInputActionContext in_context) override
 	{
-		if (in_action_enumerator.CheckAndProcess(JustActivated(chaos::Key::T), "Toggle Clock", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::T), "Toggle Clock", [this]()
 		{
 			chaos::Clock * clock = chaos::WindowApplication::GetMainClockInstance();
 			if (clock != nullptr)
@@ -989,7 +989,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(JustActivated(chaos::Key::KP_ADD), "Next Example", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KP_ADD), "Next Example", [this]()
 		{
 			SetExample((TestID)((int)display_example + 1));
 			DebugDisplayExampleTitle();
@@ -998,7 +998,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(JustActivated(chaos::Key::KP_SUBTRACT), "Previous Example", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KP_SUBTRACT), "Previous Example", [this]()
 		{
 			SetExample((TestID)((int)display_example - 1));
 			DebugDisplayExampleTitle();
@@ -1010,7 +1010,7 @@ protected:
 		bool left_control = false;
 		auto update_type_request = chaos::And(chaos::Active(chaos::Key::KP_5), chaos::QueryInput(chaos::Key::LEFT_CONTROL, &left_control));
 
-		if (in_action_enumerator.CheckAndProcess(update_type_request, "Update Object Type", [&]()
+		if (in_action_processor.CheckAndProcess(update_type_request, "Update Object Type", [&]()
 		{
 			if (left_control)
 				prim_type_object1 = (PrimitiveType)(((int)prim_type_object1 + 1) % (int)PrimitiveType::PRIMITIVE_TYPE_COUNT);
@@ -1033,7 +1033,7 @@ protected:
 				bool left_control = false;
 				auto request = chaos::And(chaos::Active(key), chaos::QueryInput(chaos::Key::LEFT_CONTROL, &left_control));
 
-				return in_action_enumerator.CheckAndProcess(request, title, [&]()
+				return in_action_processor.CheckAndProcess(request, title, [&]()
 				{
 					static float SPEED = 5.0f;
 					if (left_control)
@@ -1073,7 +1073,7 @@ protected:
 				bool left_control = false;
 				auto request = chaos::And(chaos::Active(key), chaos::QueryInput(chaos::Key::LEFT_CONTROL, &left_control));
 
-				return in_action_enumerator.CheckAndProcess(request, title, [&]()
+				return in_action_processor.CheckAndProcess(request, title, [&]()
 				{
 					static float SPEED = 1.0f;
 
@@ -1093,7 +1093,7 @@ protected:
 				return true;
 			}
 		}
-		return chaos::Window::EnumerateInputActions(in_action_enumerator, in_context);
+		return chaos::Window::EnumerateInputActions(in_action_processor, in_context);
 	}
 
 	void SetExample(TestID new_display_example)

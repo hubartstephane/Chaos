@@ -128,7 +128,7 @@ void LudumPlayer::SetDashMode(bool dash)
 	}
 }
 
-bool LudumPlayer::EnumerateInputActions(chaos::InputActionEnumerator& in_action_enumerator, chaos::EnumerateInputActionContext in_context)
+bool LudumPlayer::EnumerateInputActions(chaos::InputActionProcessor& in_action_processor, chaos::EnumerateInputActionContext in_context)
 {
 	if (GetGame() != nullptr && !GetGame()->IsPaused())
 	{
@@ -136,7 +136,7 @@ bool LudumPlayer::EnumerateInputActions(chaos::InputActionEnumerator& in_action_
 		bool dash_key2 = false;
 		auto DashRequest = Or(QueryInput(chaos::Key::SPACE, &dash_key1), QueryInput(chaos::Key::GAMEPAD_A, &dash_key2));
 
-		if (in_action_enumerator.CheckAndProcess(DashRequest, "Dash", [&]()
+		if (in_action_processor.CheckAndProcess(DashRequest, "Dash", [&]()
 		{
 			SetDashMode(dash_key1 || dash_key2);
 		}))
@@ -148,7 +148,7 @@ bool LudumPlayer::EnumerateInputActions(chaos::InputActionEnumerator& in_action_
 		bool reverse_mode_key2 = false;
 		auto ReverseModeRequest = Or(QueryInput(chaos::Key::RIGHT_CONTROL, &reverse_mode_key1), QueryInput(chaos::Key::GAMEPAD_B, &reverse_mode_key2));
 
-		if (in_action_enumerator.CheckAndProcess(ReverseModeRequest, "Reverse Mode", [&]()
+		if (in_action_processor.CheckAndProcess(ReverseModeRequest, "Reverse Mode", [&]()
 		{
 			SetReverseMode(reverse_mode_key1 || reverse_mode_key2);
 			
@@ -165,7 +165,7 @@ bool LudumPlayer::EnumerateInputActions(chaos::InputActionEnumerator& in_action_
 
 				auto MoveRequest = QueryInput(chaos::MappedInput2D::default_keyboard_mapping, &stick_value);
 
-				if (in_action_enumerator.CheckAndProcess(MoveRequest, "Move", [&]()
+				if (in_action_processor.CheckAndProcess(MoveRequest, "Move", [&]()
 				{
 					player_particle->acceleration = ludum_game->player_acceleration * stick_value;
 				}))
@@ -211,7 +211,7 @@ bool LudumPlayer::EnumerateInputActions(chaos::InputActionEnumerator& in_action_
 					QueryInput(chaos::Key::DOWN, &down_value2)
 				);
 
-				if (in_action_enumerator.CheckAndProcess(StickRequest, "Move", [&]()
+				if (in_action_processor.CheckAndProcess(StickRequest, "Move", [&]()
 				{	
 					glm::vec2 stick_value = { 0.0f, 0.0f };
 
@@ -252,7 +252,7 @@ bool LudumPlayer::EnumerateInputActions(chaos::InputActionEnumerator& in_action_
 #endif
 	}
 
-	return chaos::Player::EnumerateInputActions(in_action_enumerator, in_context);
+	return chaos::Player::EnumerateInputActions(in_action_processor, in_context);
 }
 void LudumPlayer::OnLevelChanged(chaos::Level * new_level, chaos::Level * old_level, chaos::LevelInstance * new_level_instance)
 {

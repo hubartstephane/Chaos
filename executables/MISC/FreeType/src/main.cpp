@@ -41,9 +41,9 @@ protected:
 
 
 
-	virtual bool EnumerateInputActions(chaos::InputActionEnumerator & in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
+	virtual bool EnumerateInputActions(chaos::InputActionProcessor & in_action_processor, chaos::EnumerateInputActionContext in_context) override
 	{
-		if (in_action_enumerator.CheckAndProcess(JustActivated(chaos::Key::KP_ADD), "Next Font", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KP_ADD), "Next Font", [this]()
 		{
 			ChangeFont(font_index + 1);
 		}))
@@ -51,7 +51,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(JustActivated(chaos::Key::KP_SUBTRACT), "Previous Font", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KP_SUBTRACT), "Previous Font", [this]()
 		{
 			ChangeFont(font_index - 1);
 		}))
@@ -59,7 +59,7 @@ protected:
 			return true;
 		}
 
-		return chaos::Window::EnumerateInputActions(in_action_enumerator, in_context);
+		return chaos::Window::EnumerateInputActions(in_action_processor, in_context);
 	}
 
 	void ChangeFont(int index)

@@ -13,14 +13,14 @@ namespace chaos
 		mouse_enabled = in_mouse_enabled;
 	}
 
-	bool FPSViewController::EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context)
+	bool FPSViewController::EnumerateInputActions(InputActionProcessor & in_action_processor, EnumerateInputActionContext in_context)
 	{
 		float frame_duration = (float)FrameTimeManager::GetInstance()->GetCurrentFrameDuration();
 
 		// check for key displacement
-		auto CheckCameraKey = [this, frame_duration, &in_action_enumerator](const Key & key, char const * title, float speed, void (FPSView::*func)(float))
+		auto CheckCameraKey = [this, frame_duration, &in_action_processor](const Key & key, char const * title, float speed, void (FPSView::*func)(float))
 		{
-			if (in_action_enumerator.CheckAndProcess(Active(key), title, [this, frame_duration, speed, &func, key]()
+			if (in_action_processor.CheckAndProcess(Active(key), title, [this, frame_duration, speed, &func, key]()
 			{
 				(fps_view.*func)(speed * frame_duration);
 			}))
@@ -53,7 +53,7 @@ namespace chaos
 				Active(input_config.rotation_button), 
 				QueryInput(Input2D::MOUSE_DELTA, &mouse_delta, QueryInputRequestType::Active));
 
-			if (in_action_enumerator.CheckAndProcess(MoveCameraRequest, "Move Camera", [this, &mouse_delta]()
+			if (in_action_processor.CheckAndProcess(MoveCameraRequest, "Move Camera", [this, &mouse_delta]()
 			{
 				fps_view.IncrementYaw(-(float)(mouse_delta.x * config.mouse_sensibility));
 				fps_view.IncrementPitch(-(float)(mouse_delta.y * config.mouse_sensibility));

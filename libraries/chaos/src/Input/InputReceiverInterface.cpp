@@ -138,7 +138,7 @@ namespace chaos
 		return in_func(in_input_device); // by default, simple passthrough
 	}
 
-	bool InputReceiverInterface::EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context)
+	bool InputReceiverInterface::EnumerateInputActions(InputActionProcessor & in_action_processor, EnumerateInputActionContext in_context)
 	{
 		return false;
 	}

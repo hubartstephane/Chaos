@@ -158,9 +158,9 @@ size_t LudumChallenge::GetChallengePosition(bool gamepad) const
 		keyboard_challenge_position;
 }
 
-bool LudumChallenge::EnumerateInputActions(chaos::InputActionEnumerator& in_action_enumerator, chaos::EnumerateInputActionContext in_context)
+bool LudumChallenge::EnumerateInputActions(chaos::InputActionProcessor& in_action_processor, chaos::EnumerateInputActionContext in_context)
 {
 
 
-	return chaos::InputReceiverInterface::EnumerateInputActions(in_action_enumerator, in_context);
+	return chaos::InputReceiverInterface::EnumerateInputActions(in_action_processor, in_context);
 }

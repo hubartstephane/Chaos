@@ -85,7 +85,7 @@ namespace chaos
 		GamepadManager const* GetGamepadManager() const { return gamepad_manager.get(); }
 
 		/** override */
-		virtual bool EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context) override;
+		virtual bool EnumerateInputActions(InputActionProcessor & in_action_processor, EnumerateInputActionContext in_context) override;
 
 
 

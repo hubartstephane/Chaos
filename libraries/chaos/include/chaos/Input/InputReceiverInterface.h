@@ -64,7 +64,7 @@ namespace chaos
 		/** traverse all receivers hierarchy and call a functor on all elements */
 		virtual bool TraverseInputReceiver(InputReceiverTraverser & in_traverser, InputDeviceInterface const* in_input_device = KeyboardAndMouseDevice::GetInstance());
 		/** enumerate some declared key actions */
-		virtual bool EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context);
+		virtual bool EnumerateInputActions(InputActionProcessor & in_action_processor, EnumerateInputActionContext in_context);
 		/** upgrade the input device and call some functor */
 		virtual bool InvokeWithUpgradedInputDevice(InputDeviceInterface const * in_input_device, InvokeWithUpgradedInputDeviceFunction in_func);
 
@@ -116,8 +116,8 @@ namespace chaos
 		// XXX: mandatory to have a VARIABLE lambda so that the underlying DelegateTraverser's LightweightFunction does not point on a deleted object
 		auto process_function = [&](InputReceiverInterface* in_input_receiver, InputDeviceInterface const* in_input_device)
 		{
-			OnEventInputActionEnumerator<INPUT_TYPE> action_enumerator(in_input_receiver, in_input_device, in_input, &consumption_cache);
-			if (in_input_receiver->EnumerateInputActions(action_enumerator, EnumerateInputActionContext::OnEvent))
+			OnEventInputActionProcessor<INPUT_TYPE> action_processor(in_input_receiver, in_input_device, in_input, &consumption_cache);
+			if (in_input_receiver->EnumerateInputActions(action_processor, EnumerateInputActionContext::OnEvent))
 			{
 				MarkInputConsumedInApplicationCache(in_input, in_input_device);
 				return true;

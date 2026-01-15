@@ -3,27 +3,27 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	template<InputType INPUT_TYPE>
-	class OnEventInputActionEnumerator;
+	class OnEventInputActionProcessor;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	 * OnEventInputActionEnumerator: a specialization of InputActionEnumerator dedicated to window's events handling
+	 * OnEventInputActionProcessor: a specialization of InputActionProcessor dedicated to window's events handling
 	 */
 
 	template<InputType INPUT_TYPE>
-	class OnEventInputActionEnumerator : public InputActionEnumerator
+	class OnEventInputActionProcessor : public InputActionProcessor
 	{
 	public:
 
 		/** constructor */
-		OnEventInputActionEnumerator(
+		OnEventInputActionProcessor(
 			InputReceiverInterface const* in_input_receiver,
 			InputDeviceInterface const* in_input_device,
 			INPUT_TYPE const& in_input,
 			InputConsumptionCache* in_consumption_cache
 		):
-			InputActionEnumerator(in_input_receiver, in_input_device),
+			InputActionProcessor(in_input_receiver, in_input_device),
 			input(in_input),
 			consumption_cache(in_consumption_cache)
 		{

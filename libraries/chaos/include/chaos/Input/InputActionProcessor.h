@@ -2,7 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class InputActionEnumerator;
+	class InputActionProcessor;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -13,15 +13,15 @@ namespace chaos
 	using InputActionFunction = LightweightFunction<void()>;
 
 	/**
-	* InputActionEnumerator
+	* InputActionProcessor
 	*/
 
-	class CHAOS_API InputActionEnumerator 
+	class CHAOS_API InputActionProcessor 
 	{
 	public:
 
 		/** constructor */
-		InputActionEnumerator(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device);
+		InputActionProcessor(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device);
 
 
 #if 1
@@ -55,7 +55,7 @@ namespace chaos
 
 #if 1
 	template<InputType INPUT_TYPE>
-	bool InputActionEnumerator::CheckAndProcess(INPUT_TYPE in_input, char const* in_title, InputActionFunction in_action_func)
+	bool InputActionProcessor::CheckAndProcess(INPUT_TYPE in_input, char const* in_title, InputActionFunction in_action_func)
 	{
 		return CheckAndProcess(
 
@@ -68,7 +68,7 @@ namespace chaos
 	}
 
 	template<InputType INPUT_TYPE>
-	bool InputActionEnumerator::CheckAndProcess(INPUT_TYPE in_input, char const* in_title, bool in_enabled, InputActionFunction in_action_func)
+	bool InputActionProcessor::CheckAndProcess(INPUT_TYPE in_input, char const* in_title, bool in_enabled, InputActionFunction in_action_func)
 	{
 		return CheckAndProcess(
 		

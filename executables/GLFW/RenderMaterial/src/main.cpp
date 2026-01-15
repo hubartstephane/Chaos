@@ -61,9 +61,9 @@ protected:
 
 
 
-	virtual bool EnumerateInputActions(chaos::InputActionEnumerator & in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
+	virtual bool EnumerateInputActions(chaos::InputActionProcessor & in_action_processor, chaos::EnumerateInputActionContext in_context) override
 	{
-		if (in_action_enumerator.CheckAndProcess(RequireModifiers(chaos::KeyModifier::Shift, JustActivated(chaos::Key::KP_ADD)) , "Next RenderPass", [this]()
+		if (in_action_processor.CheckAndProcess(RequireModifiers(chaos::KeyModifier::Shift, JustActivated(chaos::Key::KP_ADD)) , "Next RenderPass", [this]()
 		{
 			ChangeRenderpass(+1);
 		}))
@@ -71,7 +71,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(JustActivated(chaos::Key::KP_ADD), "Next Material", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KP_ADD), "Next Material", [this]()
 		{
 			ChangeMaterial(+1);
 		}))
@@ -79,7 +79,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequireModifiers(chaos::KeyModifier::Shift, JustActivated(chaos::Key::KP_SUBTRACT)), "Previous RenderPass", [this]()
+		if (in_action_processor.CheckAndProcess(RequireModifiers(chaos::KeyModifier::Shift, JustActivated(chaos::Key::KP_SUBTRACT)), "Previous RenderPass", [this]()
 		{
 			ChangeRenderpass(-1);
 		}))
@@ -87,7 +87,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(JustActivated(chaos::Key::KP_SUBTRACT), "Previous Material", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KP_SUBTRACT), "Previous Material", [this]()
 		{
 			ChangeMaterial(-1);
 		}))
@@ -95,7 +95,7 @@ protected:
 			return true;
 		}
 
-		return chaos::Window::EnumerateInputActions(in_action_enumerator, in_context);
+		return chaos::Window::EnumerateInputActions(in_action_processor, in_context);
 	}
 
 	virtual bool OnDraw(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override

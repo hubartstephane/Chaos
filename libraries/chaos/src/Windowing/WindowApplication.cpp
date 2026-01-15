@@ -494,8 +494,8 @@ namespace chaos
 	{
 		auto process_function = [&consumption_cache = consumption_cache](InputReceiverInterface* in_input_receiver, InputDeviceInterface const* in_input_device) // XXX: mandatory to have a VARIABLE lambda so that the underlying DelegateTraverser's LightweightFunction does not point on a deleted object
 		{
-			OnPollInputActionEnumerator action_enumerator(in_input_receiver, in_input_device, &consumption_cache);
-			return in_input_receiver->EnumerateInputActions(action_enumerator, EnumerateInputActionContext::OnPolling);
+			OnPollInputActionProcessor action_processor(in_input_receiver, in_input_device, &consumption_cache);
+			return in_input_receiver->EnumerateInputActions(action_processor, EnumerateInputActionContext::OnPolling);
 		};
 		DelegateInputReceiverTraverser traverser(process_function);
 
@@ -825,11 +825,11 @@ namespace chaos
 		return application->GetGPUResourceManager();
 	}
 
-	bool WindowApplication::EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context)
+	bool WindowApplication::EnumerateInputActions(InputActionProcessor & in_action_processor, EnumerateInputActionContext in_context)
 	{
 
 #if _DEBUG
-		if (in_action_enumerator.CheckAndProcess(JustActivated(Key::F8) , "Reload GPU Resources", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(Key::F8) , "Reload GPU Resources", [this]()
 		{
 			ReloadGPUResources();
 		}))
@@ -838,7 +838,7 @@ namespace chaos
 		}
 #endif // #if _DEBUG
 
-		return InputReceiverInterface::EnumerateInputActions(in_action_enumerator, in_context);
+		return InputReceiverInterface::EnumerateInputActions(in_action_processor, in_context);
 	}
 
 	GLFWwindow* WindowApplication::GetSharedGLContext()

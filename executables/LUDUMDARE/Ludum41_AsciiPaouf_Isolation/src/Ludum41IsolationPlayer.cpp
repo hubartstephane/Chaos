@@ -56,7 +56,7 @@ bool LudumPlayer::OnMouseMoveImpl(glm::vec2 const & delta)
 	return true;
 }
 
-bool LudumPlayer::EnumerateInputActions(chaos::InputActionEnumerator& in_action_enumerator, chaos::EnumerateInputActionContext in_context)
+bool LudumPlayer::EnumerateInputActions(chaos::InputActionProcessor& in_action_processor, chaos::EnumerateInputActionContext in_context)
 {
 	if (LudumGame const* ludum_game = GetGame())
 	{
@@ -64,7 +64,7 @@ bool LudumPlayer::EnumerateInputActions(chaos::InputActionEnumerator& in_action_
 
 		auto MoveRequest = QueryInput(chaos::MappedInput1D::default_keyboard_mapping, &value);
 
-		if (in_action_enumerator.CheckAndProcess(MoveRequest, "Move", [&]()
+		if (in_action_processor.CheckAndProcess(MoveRequest, "Move", [&]()
 		{
 			float delta_time = (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration();
 
@@ -75,7 +75,7 @@ bool LudumPlayer::EnumerateInputActions(chaos::InputActionEnumerator& in_action_
 		}
 	}
 
-	return chaos::Player::EnumerateInputActions(in_action_enumerator, in_context);
+	return chaos::Player::EnumerateInputActions(in_action_processor, in_context);
 }
 
 #if 0

@@ -89,9 +89,9 @@ namespace chaos
 		return InputReceiverInterface::TraverseInputReceiver(in_traverser, in_input_device);
 	}
 
-	bool Game::EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context)
+	bool Game::EnumerateInputActions(InputActionProcessor & in_action_processor, EnumerateInputActionContext in_context)
 	{
-		if (in_action_enumerator.CheckAndProcess(RequireModifiers(KeyModifier::Shift, JustActivated(Key::ESCAPE)) , "Exit Game", [this]()
+		if (in_action_processor.CheckAndProcess(RequireModifiers(KeyModifier::Shift, JustActivated(Key::ESCAPE)) , "Exit Game", [this]()
 		{
 			RequireExitGame();
 		}))
@@ -99,7 +99,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(ForbidModifiers(KeyModifier::Shift, JustActivated(Key::ESCAPE)), "Toggle Pause", [this]()
+		if (in_action_processor.CheckAndProcess(ForbidModifiers(KeyModifier::Shift, JustActivated(Key::ESCAPE)), "Toggle Pause", [this]()
 		{
 			RequireTogglePause();
 		}))
@@ -109,7 +109,7 @@ namespace chaos
 
 #if _DEBUG
 
-		if (in_action_enumerator.CheckAndProcess(JustActivated(Key::F1) , "Skip Level", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(Key::F1) , "Skip Level", [this]()
 		{
 			SetCheatSkipLevelRequired(true);
 		}))
@@ -117,7 +117,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(JustActivated(Key::F2), "Toggle Cheat Mode", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(Key::F2), "Toggle Cheat Mode", [this]()
 		{
 			SetCheatMode(!GetCheatMode());
 		}))
@@ -125,7 +125,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(JustActivated(Key::F3), "Reload Configuration", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(Key::F3), "Reload Configuration", [this]()
 		{
 			ReloadGameConfiguration();
 		}))
@@ -133,7 +133,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(JustActivated(Key::F4), "Reload Current Level", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(Key::F4), "Reload Current Level", [this]()
 		{
 			ReloadCurrentLevel();
 		}))
@@ -141,7 +141,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(JustActivated(Key::F5), "Quick Save", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(Key::F5), "Quick Save", [this]()
 		{
 			SaveIntoCheckpoint();
 		}))
@@ -149,7 +149,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(JustActivated(Key::F6), "Toggle Free Camera Mode", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(Key::F6), "Toggle Free Camera Mode", [this]()
 		{
 			SetFreeCameraMode(!IsFreeCameraMode());
 		}))
@@ -158,7 +158,7 @@ namespace chaos
 		}
 #endif
 
-		return InputReceiverInterface::EnumerateInputActions(in_action_enumerator, in_context);
+		return InputReceiverInterface::EnumerateInputActions(in_action_processor, in_context);
 	}
 
 

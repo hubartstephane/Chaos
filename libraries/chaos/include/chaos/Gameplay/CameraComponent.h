@@ -23,7 +23,7 @@ namespace chaos
 		/** override */
 		virtual bool TraverseInputReceiver(InputReceiverTraverser& in_traverser, InputDeviceInterface const* in_input_device) override;
 		/** override */
-		virtual bool EnumerateInputActions(InputActionEnumerator& in_action_enumerator, EnumerateInputActionContext in_context) override;
+		virtual bool EnumerateInputActions(InputActionProcessor& in_action_processor, EnumerateInputActionContext in_context) override;
 
 		/** gets the camera the component belongs to */
 		AutoCastable<Camera> GetCamera() { return camera; }

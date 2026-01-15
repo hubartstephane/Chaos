@@ -158,9 +158,9 @@ protected:
 		texture_slice = (texture_slice + delta + texture_slice_count) % texture_slice_count;
 	}
 
-	virtual bool EnumerateInputActions(chaos::InputActionEnumerator & in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
+	virtual bool EnumerateInputActions(chaos::InputActionProcessor & in_action_processor, chaos::EnumerateInputActionContext in_context) override
 	{
-		if (in_action_enumerator.CheckAndProcess(JustActivated(chaos::Key::KP_ADD), "Next Slice", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KP_ADD), "Next Slice", [this]()
 		{
 			ChangeSlice(+1);
 		}))
@@ -168,7 +168,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(JustActivated(chaos::Key::KP_SUBTRACT), "Previous Slice", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KP_SUBTRACT), "Previous Slice", [this]()
 		{
 			ChangeSlice(-1);
 		}))
@@ -176,7 +176,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequireModifiers(chaos::KeyModifier::Shift, JustActivated(chaos::Key::KP_ADD)), "Next Pixel Format", [this]()
+		if (in_action_processor.CheckAndProcess(RequireModifiers(chaos::KeyModifier::Shift, JustActivated(chaos::Key::KP_ADD)), "Next Pixel Format", [this]()
 		{
 			ChangePixelFormat(+1);
 		}))
@@ -184,7 +184,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(RequireModifiers(chaos::KeyModifier::Shift, JustActivated(chaos::Key::KP_SUBTRACT)), "Previous Pixel Format", [this]()
+		if (in_action_processor.CheckAndProcess(RequireModifiers(chaos::KeyModifier::Shift, JustActivated(chaos::Key::KP_SUBTRACT)), "Previous Pixel Format", [this]()
 		{
 			ChangePixelFormat(-1);
 		}))
@@ -192,7 +192,7 @@ protected:
 			return true;
 		}
 
-		return chaos::Window::EnumerateInputActions(in_action_enumerator, in_context);
+		return chaos::Window::EnumerateInputActions(in_action_processor, in_context);
 	}
 
 	bool LoadBitmaps(boost::filesystem::path const & resources_path)

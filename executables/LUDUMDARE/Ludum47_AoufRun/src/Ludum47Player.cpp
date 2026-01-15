@@ -71,13 +71,13 @@ bool LudumPlayer::OnReadConfigurableProperties(chaos::JSONReadConfiguration conf
 
 
 
-bool LudumPlayer::EnumerateInputActions(chaos::InputActionEnumerator& in_action_enumerator, chaos::EnumerateInputActionContext in_context)
+bool LudumPlayer::EnumerateInputActions(chaos::InputActionProcessor& in_action_processor, chaos::EnumerateInputActionContext in_context)
 {
 	if (GetGame() != nullptr && !GetGame()->IsPaused())
 	{
 		auto HonkRequest = Or(JustActivated(chaos::Key::GAMEPAD_X), JustActivated(chaos::Key::LEFT_SHIFT));
 
-		if (in_action_enumerator.CheckAndProcess(HonkRequest, "Honk", [&]()
+		if (in_action_processor.CheckAndProcess(HonkRequest, "Honk", [&]()
 		{
 			Honk();
 		}))
@@ -86,7 +86,7 @@ bool LudumPlayer::EnumerateInputActions(chaos::InputActionEnumerator& in_action_
 		}
 	}
 
-	return chaos::Player::EnumerateInputActions(in_action_enumerator, in_context);
+	return chaos::Player::EnumerateInputActions(in_action_processor, in_context);
 }
 
 void LudumPlayer::Honk()

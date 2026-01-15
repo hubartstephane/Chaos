@@ -170,13 +170,13 @@ public:
 		return {};
 	}
 
-	virtual bool EnumerateInputActions(chaos::InputActionEnumerator& in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
+	virtual bool EnumerateInputActions(chaos::InputActionProcessor& in_action_processor, chaos::EnumerateInputActionContext in_context) override
 	{
 		if (current_action_type == ActionType::MOVE_OBJECT)
 		{
 			auto MoveObjectWithInputs = [&](chaos::Key key, char const * title, chaos::Direction direction)
 			{
-				return in_action_enumerator.CheckAndProcess(chaos::Active(key), title, [&]()
+				return in_action_processor.CheckAndProcess(chaos::Active(key), title, [&]()
 				{
 					float delta_time = (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration();
 
@@ -205,7 +205,7 @@ public:
 		{
 			auto ScaleObjectWithInputs = [&](chaos::Key key, char const* title, chaos::Direction direction)
 				{
-					return in_action_enumerator.CheckAndProcess(chaos::Active(key), title, [&]()
+					return in_action_processor.CheckAndProcess(chaos::Active(key), title, [&]()
 					{
 						float delta_time = (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration();
 
@@ -236,7 +236,7 @@ public:
 		}
 
 
-		return chaos::InputReceiverInterface::EnumerateInputActions(in_action_enumerator, in_context);
+		return chaos::InputReceiverInterface::EnumerateInputActions(in_action_processor, in_context);
 	}
 
 	void InsertIntoTree()
@@ -665,13 +665,13 @@ protected:
 		return chaos::ray3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	}
 
-	virtual bool EnumerateInputActions(chaos::InputActionEnumerator & in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
+	virtual bool EnumerateInputActions(chaos::InputActionProcessor & in_action_processor, chaos::EnumerateInputActionContext in_context) override
 	{
 		GeometricObject* current_object = GetCurrentGeometricObject();
 
 		bool action_enabled = (current_object != nullptr);
 
-		if (in_action_enumerator.CheckAndProcess(JustActivated(key_configuration.next_object), "Next Object", action_enabled, [&]()
+		if (in_action_processor.CheckAndProcess(JustActivated(key_configuration.next_object), "Next Object", action_enabled, [&]()
 		{
 			current_object_index = (current_object_index.value() + 1) % geometric_objects.size();
 		}))
@@ -679,7 +679,7 @@ protected:
 			return true;
 		}
 		
-		if (in_action_enumerator.CheckAndProcess(JustActivated(key_configuration.previous_object), "Previous Object", action_enabled, [&]()
+		if (in_action_processor.CheckAndProcess(JustActivated(key_configuration.previous_object), "Previous Object", action_enabled, [&]()
 		{
 			current_object_index = (current_object_index.value() + geometric_objects.size() - 1) % geometric_objects.size();
 		}))
@@ -687,7 +687,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(JustActivated(key_configuration.delete_object), "Delete Object", action_enabled, [&]()
+		if (in_action_processor.CheckAndProcess(JustActivated(key_configuration.delete_object), "Delete Object", action_enabled, [&]()
 		{
 			if (geometric_objects.size() > 0)
 			{
@@ -710,7 +710,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(JustActivated(key_configuration.toggle_render_all), "Toggle Render All", [&]()
+		if (in_action_processor.CheckAndProcess(JustActivated(key_configuration.toggle_render_all), "Toggle Render All", [&]()
 		{
 			render_all = !render_all;
 
@@ -719,7 +719,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(JustActivated(key_configuration.new_scene), "New Scene", [&]()
+		if (in_action_processor.CheckAndProcess(JustActivated(key_configuration.new_scene), "New Scene", [&]()
 		{
 			geometric_objects.clear();
 			current_object_index = 0;
@@ -763,7 +763,7 @@ protected:
 
 			if (current_action_type == ActionType::CREATE_BOX)
 			{
-				if (in_action_enumerator.CheckAndProcess(JustActivated(chaos::Key::MOUSE_BUTTON_1), "Create Box", [&]()
+				if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::MOUSE_BUTTON_1), "Create Box", [&]()
 				{
 					CreateNewBox(GetBoxToCreateFromMousePosition());
 				}))
@@ -774,7 +774,7 @@ protected:
 
 			if (current_action_type == ActionType::CREATE_SPHERE)
 			{
-				if (in_action_enumerator.CheckAndProcess(JustActivated(chaos::Key::MOUSE_BUTTON_1), "Create Sphere", [&]()
+				if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::MOUSE_BUTTON_1), "Create Sphere", [&]()
 				{
 					CreateNewSphere(GetSphereToCreateFromMousePosition());
 				}))
@@ -785,7 +785,7 @@ protected:
 
 			if (current_action_type == ActionType::MOVE_OBJECT || current_action_type == ActionType::SCALE_OBJECT || current_action_type == ActionType::ROTATE_OBJECT)
 			{
-				if (in_action_enumerator.CheckAndProcess(JustActivated(chaos::Key::MOUSE_BUTTON_1), "Select Object", [&]()
+				if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::MOUSE_BUTTON_1), "Select Object", [&]()
 				{
 					if (pointed_object == nullptr)
 						current_object_index.reset();
@@ -807,7 +807,7 @@ protected:
 			}
 		}
 
-		return chaos::Window::EnumerateInputActions(in_action_enumerator, in_context);
+		return chaos::Window::EnumerateInputActions(in_action_processor, in_context);
 	}
 
 	GeometricObject* CreateNewGeometry(GeometryType type)

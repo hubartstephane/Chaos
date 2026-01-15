@@ -98,9 +98,9 @@ namespace chaos
 		return false;
 	}
 
-	bool WindowImGuiContext::EnumerateInputActions(InputActionEnumerator& in_action_enumerator, EnumerateInputActionContext in_context)
+	bool WindowImGuiContext::EnumerateInputActions(InputActionProcessor& in_action_processor, EnumerateInputActionContext in_context)
 	{
-		if (in_action_enumerator.CheckAndProcess(JustActivated(Key::F7), "Toggle ImGui", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(Key::F7), "Toggle ImGui", [this]()
 		{
 			WindowApplication::SetImGuiMenuEnabled(!WindowApplication::IsImGuiMenuEnabled());
 		}))
@@ -119,7 +119,7 @@ namespace chaos
 
 		if (in_context == EnumerateInputActionContext::OnQuery)
 			if (ShouldCaptureInputEvent())
-				in_action_enumerator.CheckAndProcess(AnyInputCondition(), "Catch All"); // process query deeper
+				in_action_processor.CheckAndProcess(AnyInputCondition(), "Catch All"); // process query deeper
 
 		return false;
 	}

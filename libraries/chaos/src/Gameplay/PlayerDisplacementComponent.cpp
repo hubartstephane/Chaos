@@ -23,9 +23,9 @@ namespace chaos
 		return InputReceiverInterface::TraverseInputReceiver(in_traverser, in_input_device);
 	}
 
-	bool PlayerDisplacementComponent::EnumerateInputActions(InputActionEnumerator& in_action_enumerator, EnumerateInputActionContext in_context)
+	bool PlayerDisplacementComponent::EnumerateInputActions(InputActionProcessor& in_action_processor, EnumerateInputActionContext in_context)
 	{
-		return InputReceiverInterface::EnumerateInputActions(in_action_enumerator, in_context);
+		return InputReceiverInterface::EnumerateInputActions(in_action_processor, in_context);
 	}
 
 }; // namespace chaos

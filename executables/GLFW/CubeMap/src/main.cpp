@@ -6,9 +6,9 @@ class WindowOpenGLTest : public chaos::Window
 
 protected:
 
-	virtual bool EnumerateInputActions(chaos::InputActionEnumerator & in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
+	virtual bool EnumerateInputActions(chaos::InputActionProcessor & in_action_processor, chaos::EnumerateInputActionContext in_context) override
 	{
-		if (in_action_enumerator.CheckAndProcess(JustActivated(chaos::Key::KP_ADD), "Next CubeMap", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KP_ADD), "Next CubeMap", [this]()
 		{
 			ChangeCubeMap(cubemap_index + 1);
 		}))
@@ -16,7 +16,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(JustActivated(chaos::Key::KP_SUBTRACT), "Previous CubeMap", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KP_SUBTRACT), "Previous CubeMap", [this]()
 		{
 			ChangeCubeMap(cubemap_index - 1);
 		}))
@@ -24,7 +24,7 @@ protected:
 			return true;
 		}
 
-		return chaos::Window::EnumerateInputActions(in_action_enumerator, in_context);
+		return chaos::Window::EnumerateInputActions(in_action_processor, in_context);
 	}
 
 	void ChangeCubeMap(int index)

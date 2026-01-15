@@ -92,7 +92,7 @@ namespace chaos
 		void SetMouseEnabled(bool in_mouse_enabled);
 
 		/** override */
-		virtual bool EnumerateInputActions(InputActionEnumerator & in_action_enumerator, EnumerateInputActionContext in_context) override;
+		virtual bool EnumerateInputActions(InputActionProcessor & in_action_processor, EnumerateInputActionContext in_context) override;
 		/** override */
 		virtual char const* GetInputReceiverName() const override;
 

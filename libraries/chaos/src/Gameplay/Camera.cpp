@@ -143,9 +143,9 @@ namespace chaos
 		return InputReceiverInterface::TraverseInputReceiver(in_traverser, in_input_device);
 	}
 
-	bool Camera::EnumerateInputActions(InputActionEnumerator& in_action_enumerator, EnumerateInputActionContext in_context)
+	bool Camera::EnumerateInputActions(InputActionProcessor& in_action_processor, EnumerateInputActionContext in_context)
 	{
-		return InputReceiverInterface::EnumerateInputActions(in_action_enumerator, in_context);
+		return InputReceiverInterface::EnumerateInputActions(in_action_processor, in_context);
 	}
 
 	CHAOS_IMPLEMENT_COMPONENT_OWNER(Camera, CameraComponent, Component, components, camera)

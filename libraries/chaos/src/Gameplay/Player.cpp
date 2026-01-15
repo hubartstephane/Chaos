@@ -392,13 +392,13 @@ namespace chaos
 		return InputReceiverInterface::TraverseInputReceiver(in_traverser, in_input_device);
 	}
 
-	bool Player::EnumerateInputActions(InputActionEnumerator& in_action_enumerator, EnumerateInputActionContext in_context)
+	bool Player::EnumerateInputActions(InputActionProcessor& in_action_processor, EnumerateInputActionContext in_context)
 	{
 		if (Game* game = GetGame())
 		{
 			auto PauseRequest = Or(JustActivated(Key::GAMEPAD_SPECIAL_LEFT), JustActivated(Key::GAMEPAD_SPECIAL_RIGHT));
 
-			if (in_action_enumerator.CheckAndProcess(PauseRequest, "Toggle Pause", [&]()
+			if (in_action_processor.CheckAndProcess(PauseRequest, "Toggle Pause", [&]()
 			{
 				game->RequireTogglePause();
 			}))
@@ -406,7 +406,7 @@ namespace chaos
 				return true;
 			}
 		}
-		return InputReceiverInterface::EnumerateInputActions(in_action_enumerator, in_context);
+		return InputReceiverInterface::EnumerateInputActions(in_action_processor, in_context);
 	}
 
 	// =================================================

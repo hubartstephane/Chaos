@@ -565,13 +565,13 @@ protected:
 		Window::OnDrawImGuiContent();
 	}
 
-	virtual bool EnumerateInputActions(chaos::InputActionEnumerator & in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
+	virtual bool EnumerateInputActions(chaos::InputActionProcessor & in_action_processor, chaos::EnumerateInputActionContext in_context) override
 	{
 		size_t object_count = objects.size();
 
 		bool enabled = object_count > 0;
 
-		if (in_action_enumerator.CheckAndProcess(JustActivated(Key::KP_ADD), "Next Object", enabled, [&]()
+		if (in_action_processor.CheckAndProcess(JustActivated(Key::KP_ADD), "Next Object", enabled, [&]()
 		{
 			objects[selected_object_index]->SetSelected(false);
 
@@ -586,7 +586,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(JustActivated(Key::KP_SUBTRACT), "Previous Object", enabled, [&]()
+		if (in_action_processor.CheckAndProcess(JustActivated(Key::KP_SUBTRACT), "Previous Object", enabled, [&]()
 		{
 			objects[selected_object_index]->SetSelected(false);
 
@@ -607,7 +607,7 @@ protected:
 
 			auto MoveObject = [&](Key key, size_t component_index, float direction, char const * title)
 			{
-				return in_action_enumerator.CheckAndProcess(chaos::Active(key), title, [&]()
+				return in_action_processor.CheckAndProcess(chaos::Active(key), title, [&]()
 				{
 					Object3D* selected_object = objects[selected_object_index].get();
 					selected_object->transform.position[component_index] += direction * OBJECT_SPEED * delta_time;
@@ -640,7 +640,7 @@ protected:
 			}
 		}
 
-		return chaos::Window::EnumerateInputActions(in_action_enumerator, in_context);
+		return chaos::Window::EnumerateInputActions(in_action_processor, in_context);
 	}
 
 	virtual bool TraverseInputReceiver(chaos::InputReceiverTraverser & in_traverser, chaos::InputDeviceInterface const * in_input_device) override

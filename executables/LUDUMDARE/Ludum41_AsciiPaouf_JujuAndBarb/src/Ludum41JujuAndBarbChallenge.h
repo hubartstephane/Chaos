@@ -67,5 +67,5 @@ protected:
 
 
 	/** override */
-	virtual bool EnumerateInputActions(chaos::InputActionEnumerator& in_action_enumerator, chaos::EnumerateInputActionContext in_context) override;
+	virtual bool EnumerateInputActions(chaos::InputActionProcessor& in_action_processor, chaos::EnumerateInputActionContext in_context) override;
 };

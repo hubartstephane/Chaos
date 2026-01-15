@@ -27,7 +27,7 @@ protected:
 	/** override */
 	virtual void TickInternal(float delta_time) override;
 	/** override */
-	virtual bool EnumerateInputActions(chaos::InputActionEnumerator& in_action_enumerator, chaos::EnumerateInputActionContext in_context) override;
+	virtual bool EnumerateInputActions(chaos::InputActionProcessor& in_action_processor, chaos::EnumerateInputActionContext in_context) override;
 
 	/** cooldown the weapon */
 	void TickCooldown(float delta_time);

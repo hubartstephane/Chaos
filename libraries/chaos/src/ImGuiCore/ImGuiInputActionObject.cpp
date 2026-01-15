@@ -10,14 +10,14 @@ namespace chaos
 
 	void ImGuiInputActionObject::OnDrawImGuiContent(Window * window)
 	{
-		class OnQueryInputActionEnumerator : public InputActionEnumerator
+		class OnQueryInputActionProcessor : public InputActionProcessor
 		{
 		public:
 
-			using InputActionEnumerator::InputActionEnumerator;
+			using InputActionProcessor::InputActionProcessor;
 
-			OnQueryInputActionEnumerator(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache* in_consumption_cache):
-				InputActionEnumerator(in_input_receiver, in_input_device),
+			OnQueryInputActionProcessor(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache* in_consumption_cache):
+				InputActionProcessor(in_input_receiver, in_input_device),
 				consumption_cache(in_consumption_cache)
 			{
 			}
@@ -73,8 +73,8 @@ namespace chaos
 
 			auto process_function = [&consumption_cache](InputReceiverInterface* in_input_receiver, InputDeviceInterface const * in_input_device) // XXX: mandatory to have a VARIABLE lambda so that the underlying DelegateTraverser's LightweightFunction does not point on a deleted object
 			{
-				OnQueryInputActionEnumerator action_enumerator(in_input_receiver, in_input_device, &consumption_cache);
-				in_input_receiver->EnumerateInputActions(action_enumerator, EnumerateInputActionContext::OnQuery);
+				OnQueryInputActionProcessor action_processor(in_input_receiver, in_input_device, &consumption_cache);
+				in_input_receiver->EnumerateInputActions(action_processor, EnumerateInputActionContext::OnQuery);
 				return false; // pass through all receivers
 			};
 

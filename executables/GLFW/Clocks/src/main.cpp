@@ -243,9 +243,9 @@ protected:
 		DebugDisplayTips();
 	}
 
-	bool UpdateClockTimeScaleWithKeys(chaos::InputActionEnumerator & in_action_enumerator, chaos::Clock * clock, chaos::Key incr_key, chaos::Key decr_key, char const * incr_title, char const * decr_title)
+	bool UpdateClockTimeScaleWithKeys(chaos::InputActionProcessor & in_action_processor, chaos::Clock * clock, chaos::Key incr_key, chaos::Key decr_key, char const * incr_title, char const * decr_title)
 	{
-		if (in_action_enumerator.CheckAndProcess(JustActivated(incr_key), incr_title, [&]()
+		if (in_action_processor.CheckAndProcess(JustActivated(incr_key), incr_title, [&]()
 		{
 			UpdateClockTimeScale(clock, 0.2f);
 		}))
@@ -253,7 +253,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_enumerator.CheckAndProcess(JustActivated(decr_key), decr_title, [&]()
+		if (in_action_processor.CheckAndProcess(JustActivated(decr_key), decr_title, [&]()
 		{
 			UpdateClockTimeScale(clock, -0.2f);
 		}))
@@ -263,9 +263,9 @@ protected:
 		return false;
 	}
 
-	bool GenerateEvent(chaos::InputActionEnumerator & in_action_enumerator, chaos::Clock * clock, chaos::Key create_key, char const * in_title, int type)
+	bool GenerateEvent(chaos::InputActionProcessor & in_action_processor, chaos::Clock * clock, chaos::Key create_key, char const * in_title, int type)
 	{
-		if (in_action_enumerator.CheckAndProcess(JustActivated(create_key), in_title, [&]()
+		if (in_action_processor.CheckAndProcess(JustActivated(create_key), in_title, [&]()
 		{
 			// remove previous event
 			if (clock_event != nullptr)
@@ -301,9 +301,9 @@ protected:
 		return false;
 	}
 
-	virtual bool EnumerateInputActions(chaos::InputActionEnumerator & in_action_enumerator, chaos::EnumerateInputActionContext in_context) override
+	virtual bool EnumerateInputActions(chaos::InputActionProcessor & in_action_processor, chaos::EnumerateInputActionContext in_context) override
 	{
-		if (in_action_enumerator.CheckAndProcess(JustActivated(chaos::Key::T), "Toggle Main Clock", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::T), "Toggle Main Clock", [this]()
 		{
 			if (chaos::Clock * clock = chaos::WindowApplication::GetMainClockInstance())
 				clock->Toggle();
@@ -311,21 +311,21 @@ protected:
 		{
 			return true;
 		}
-		if (UpdateClockTimeScaleWithKeys(in_action_enumerator, clock1.get(), chaos::Key::KP_1, chaos::Key::KP_2, "Increment timer Clock 1", "Decrement timer Clock 1"))
+		if (UpdateClockTimeScaleWithKeys(in_action_processor, clock1.get(), chaos::Key::KP_1, chaos::Key::KP_2, "Increment timer Clock 1", "Decrement timer Clock 1"))
 			return true;
-		if (UpdateClockTimeScaleWithKeys(in_action_enumerator, clock2.get(), chaos::Key::KP_4, chaos::Key::KP_5, "Increment timer Clock 2", "Decrement timer Clock 2"))
+		if (UpdateClockTimeScaleWithKeys(in_action_processor, clock2.get(), chaos::Key::KP_4, chaos::Key::KP_5, "Increment timer Clock 2", "Decrement timer Clock 2"))
 			return true;
-		if (UpdateClockTimeScaleWithKeys(in_action_enumerator, clock3.get(), chaos::Key::KP_7, chaos::Key::KP_8, "Increment timer Clock 3", "Decrement timer Clock 3"))
-			return true;
-
-		if (GenerateEvent(in_action_enumerator, clock1.get(), chaos::Key::A, "EVENT_SINGLE_TEST: Clock 1", EVENT_SINGLE_TEST))
-			return true;
-		if (GenerateEvent(in_action_enumerator, clock2.get(), chaos::Key::Z, "EVENT_RANGE_TEST: Clock 2", EVENT_RANGE_TEST))
-			return true;
-		if (GenerateEvent(in_action_enumerator, clock3.get(), chaos::Key::E, "EVENT_FOREVER_TEST: Clock 3", EVENT_FOREVER_TEST))
+		if (UpdateClockTimeScaleWithKeys(in_action_processor, clock3.get(), chaos::Key::KP_7, chaos::Key::KP_8, "Increment timer Clock 3", "Decrement timer Clock 3"))
 			return true;
 
-		return chaos::Window::EnumerateInputActions(in_action_enumerator, in_context);
+		if (GenerateEvent(in_action_processor, clock1.get(), chaos::Key::A, "EVENT_SINGLE_TEST: Clock 1", EVENT_SINGLE_TEST))
+			return true;
+		if (GenerateEvent(in_action_processor, clock2.get(), chaos::Key::Z, "EVENT_RANGE_TEST: Clock 2", EVENT_RANGE_TEST))
+			return true;
+		if (GenerateEvent(in_action_processor, clock3.get(), chaos::Key::E, "EVENT_FOREVER_TEST: Clock 3", EVENT_FOREVER_TEST))
+			return true;
+
+		return chaos::Window::EnumerateInputActions(in_action_processor, in_context);
 	}
 
 	virtual void OnDrawImGuiContent() override

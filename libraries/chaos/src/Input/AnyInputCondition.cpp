@@ -4,7 +4,7 @@
 
 namespace chaos
 {
-	char const * AnyInputCondition::GetDebugInfo(InputRequestDebugInfoStorage & debug_info_storage) const
+	char const * AnyInputCondition::GetDebugInfo(InputConditionDebugInfoStorage & debug_info_storage) const
 	{
 		return "Consume All Inputs";
 	}

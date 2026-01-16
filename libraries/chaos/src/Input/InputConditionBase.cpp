@@ -24,7 +24,7 @@ namespace chaos
 		return false;
 	}
 
-	char const * InputConditionBase::GetDebugInfo(InputRequestDebugInfoStorage & debug_info_storage) const
+	char const * InputConditionBase::GetDebugInfo(InputConditionDebugInfoStorage & debug_info_storage) const
 	{
 		return "";
 	}

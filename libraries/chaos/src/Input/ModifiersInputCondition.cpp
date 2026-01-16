@@ -15,7 +15,7 @@ namespace chaos
 		return false;
 	}
 
-	char const* ModifiersInputCondition::GetDebugInfo(InputRequestDebugInfoStorage & debug_info_storage) const
+	char const* ModifiersInputCondition::GetDebugInfo(InputConditionDebugInfoStorage & debug_info_storage) const
 	{
 		char buffer[256];
 		char const * modifiers_string = EnumToString(modifiers, buffer, sizeof(buffer));

@@ -163,7 +163,7 @@ namespace chaos
 			return false;
 		}
 		/** override */
-		virtual char const * GetDebugInfo(InputRequestDebugInfoStorage & debug_info_storage) const override
+		virtual char const * GetDebugInfo(InputConditionDebugInfoStorage & debug_info_storage) const override
 		{
 			char input_buffer[256];
 

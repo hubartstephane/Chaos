@@ -28,7 +28,7 @@ namespace chaos
 		virtual InputConditionResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override;
 
 		/** override */
-		virtual char const* GetDebugInfo(InputRequestDebugInfoStorage & debug_info_storage) const override;
+		virtual char const* GetDebugInfo(InputConditionDebugInfoStorage & debug_info_storage) const override;
 
 	protected:
 

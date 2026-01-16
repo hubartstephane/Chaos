@@ -42,7 +42,7 @@ namespace chaos
 				if (char const * receiver_name = input_receiver->GetInputReceiverName())
 					ImGui::TextColored(color, "%s", receiver_name);
 
-				InputRequestDebugInfoStorage debug_info_storage;
+				InputConditionDebugInfoStorage debug_info_storage;
 				char const* debug_info = in_condition.GetDebugInfo(debug_info_storage);
 				ImGui::TableSetColumnIndex(column_index++); ImGui::TextColored(color, "%s", debug_info);
 

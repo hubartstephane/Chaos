@@ -4,7 +4,7 @@ namespace chaos
 
 	class InputConditionBase;
 
-	class InputRequestDebugInfoStorage;
+	class InputConditionDebugInfoStorage;
 
 	enum class InputConditionResult;
 
@@ -25,10 +25,10 @@ namespace chaos
 	};
 
 	/**
-	 * InputRequestDebugInfoStorage: a structure to get debug information
+	 * InputConditionDebugInfoStorage: a structure to get debug information
 	 */
 
-	class CHAOS_API InputRequestDebugInfoStorage
+	class CHAOS_API InputConditionDebugInfoStorage
 	{
 	public:
 
@@ -58,7 +58,7 @@ namespace chaos
 		virtual bool IsRequestRelatedTo(Input2D in_input) const;
 
 		/** some debugging information */
-		virtual char const * GetDebugInfo(InputRequestDebugInfoStorage & debug_info_storage) const;
+		virtual char const * GetDebugInfo(InputConditionDebugInfoStorage & debug_info_storage) const;
 	};
 
 #endif

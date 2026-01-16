@@ -85,7 +85,7 @@ namespace chaos
 		//  If   A = (....) | (....)     ----->     use (A) = ((....) | (....)) for concatenation instead
 
 		/** override */
-		virtual char const* GetDebugInfo(InputRequestDebugInfoStorage & debug_info_storage) const override
+		virtual char const* GetDebugInfo(InputConditionDebugInfoStorage & debug_info_storage) const override
 		{
 			ConcatChildDebugInfo<0>(debug_info_storage, 0);
 			debug_info_storage.buffer[debug_info_storage.buffer_size - 1] = 0; // zero terminal, just in case
@@ -114,7 +114,7 @@ namespace chaos
 
 		/** utility function to build debug info string */
 		template<size_t INDEX>
-		void ConcatChildDebugInfo(InputRequestDebugInfoStorage& debug_info_storage, size_t current_position) const
+		void ConcatChildDebugInfo(InputConditionDebugInfoStorage& debug_info_storage, size_t current_position) const
 		{
 			if constexpr (INDEX < std::tuple_size_v<decltype(child_input_requests)>)
 			{	
@@ -130,7 +130,7 @@ namespace chaos
 					return current_position < debug_info_storage.buffer_size - 1; // still some empty room in the buffer ?
 				};
 
-				InputRequestDebugInfoStorage child_debug_info_storage;
+				InputConditionDebugInfoStorage child_debug_info_storage;
 
 				InputConditionBase const& child_input_request = std::get<INDEX>(child_input_requests);
 				child_input_request.GetDebugInfo(child_debug_info_storage);

@@ -10,7 +10,7 @@ namespace chaos
 			size_t i = 0;
 			while (buffer[i] != 0)
 			{
-				char c = buffer[i];
+				char c = buffer[i]; 
 
 				// operator caracter found
 				if (c == '&' || c == '|')

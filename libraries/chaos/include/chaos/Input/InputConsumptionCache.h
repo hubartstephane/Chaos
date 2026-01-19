@@ -4,11 +4,24 @@ namespace chaos
 
 	class InputConsumptionCache;
 
+	enum class InputConsumptionFlags;
+	CHAOS_DECLARE_ENUM_BITMASK_METHOD(InputConsumptionFlags, CHAOS_API);
+
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	using VirtualKeyEnumerationFunction = LightweightFunction<bool(Key, Input1D)>;
 
 	using VirtualInputEnumerationFunction = LightweightFunction<bool(Input1D, Input1D, Input2D)>;
+
+	/**
+	 * InputConsumptionFlags: a bitfields to customize InputConsumptionCache request
+	 */
+
+	enum class InputConsumptionFlags : int
+	{
+		NONE = 0,
+		CONSULT_ONLY = 1 // consult cache (so call can fail) but do not lock resource for further calls
+	};
 
 	/**
 	 * InputConsumptionCache: an object that keeps that trace of which inputs have been handled this frame
@@ -34,24 +47,24 @@ namespace chaos
 		void Clear();
 
 		/** check whether the input is still available and lock it for further requests (do the same for related inputs) */
-		bool TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<Key> in_input);
+		bool TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, Key in_input, InputConsumptionFlags in_flags = InputConsumptionFlags::NONE);
 		/** check whether the input is still available and lock it for further requests (do the same for related inputs) */
-		bool TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<Input1D> in_input);
+		bool TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, Input1D in_input, InputConsumptionFlags in_flags = InputConsumptionFlags::NONE);
 		/** check whether the input is still available and lock it for further requests (do the same for related inputs) */
-		bool TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<Input2D> in_input);
+		bool TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, Input2D in_input, InputConsumptionFlags in_flags = InputConsumptionFlags::NONE);
 		/** check whether the input is still available and lock it for further requests (do the same for related inputs) */
-		bool TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<MappedInput1D> in_input);
+		bool TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, MappedInput1D in_input, InputConsumptionFlags in_flags = InputConsumptionFlags::NONE);
 		/** check whether the input is still available and lock it for further requests (do the same for related inputs) */
-		bool TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<MappedInput2D> in_input);
+		bool TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, MappedInput2D in_input, InputConsumptionFlags in_flags = InputConsumptionFlags::NONE);
 
 	protected:
 
 		/** internal method that check whether an input has already been consumed yet Mark it as consumed */
-		bool DoTryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<Key> in_input);
+		bool DoTryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, Key in_input, InputConsumptionFlags in_flags);
 		/** internal method that check whether an input has already been consumed yet Mark it as consumed */
-		bool DoTryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<Input1D> in_input);
+		bool DoTryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, Input1D in_input, InputConsumptionFlags in_flags);
 		/** internal method that check whether an input has already been consumed yet Mark it as consumed */
-		bool DoTryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, TaggedInput<Input2D> in_input);
+		bool DoTryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, Input2D in_input, InputConsumptionFlags in_flags);
 
 	protected:
 

@@ -186,48 +186,54 @@ namespace chaos
 	 * Some standalone functions
 	 */
 	
-#define CHAOS_DECLARE_QUERY_INPUT(INPUT_TYPE, QUERY_INPUT_REQUEST_PARAM_TYPE)\
-	InspectInputCondition<QUERY_INPUT_REQUEST_PARAM_TYPE> QueryInput(INPUT_TYPE in_input, QueryInputRequestType in_query_type = QueryInputRequestType::None);\
-	InspectInputCondition<QUERY_INPUT_REQUEST_PARAM_TYPE> QueryInput(INPUT_TYPE in_input, InputValueType_t<INPUT_TYPE> *out_value, QueryInputRequestType in_query_type = QueryInputRequestType::None);\
-	InspectInputCondition<QUERY_INPUT_REQUEST_PARAM_TYPE> QueryInput(INPUT_TYPE in_input, InputState_t<INPUT_TYPE>* out_state, QueryInputRequestType in_query_type = QueryInputRequestType::None);\
-	template<typename ...PARAMS>\
-	auto Active(INPUT_TYPE in_input, PARAMS... params)\
-	{\
-		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::Active);\
-	}\
-	template<typename ...PARAMS>\
-	auto JustActivated(INPUT_TYPE in_input, PARAMS... params)\
-	{\
-		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::JustActivated);\
-	}\
-	template<typename ...PARAMS>\
-	auto ActiveRepeated(INPUT_TYPE in_input, PARAMS... params)\
-	{\
-		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::ActiveRepeated);\
-	}\
-	template<typename ...PARAMS>\
-	auto Inactive(INPUT_TYPE in_input, PARAMS... params)\
-	{\
-		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::Inactive);\
-	}\
-	template<typename ...PARAMS>\
-	auto JustDeactivated(INPUT_TYPE in_input, PARAMS... params)\
-	{\
-		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::JustDeactivated);\
-	}\
-	template<typename ...PARAMS>\
-	auto InactiveRepeated(INPUT_TYPE in_input, PARAMS... params)\
-	{\
-		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::InactiveRepeated);\
+	template<InputTypeExt INPUT_TYPE_EXT>
+	InspectInputCondition<INPUT_TYPE_EXT> QueryInput(INPUT_TYPE_EXT in_input, QueryInputRequestType in_query_type = QueryInputRequestType::None)
+	{
+		return InspectInputCondition<INPUT_TYPE_EXT>(in_input, nullptr, nullptr, in_query_type);
 	}
 
-	CHAOS_DECLARE_QUERY_INPUT(Key, Key);
-	CHAOS_DECLARE_QUERY_INPUT(Input1D, Input1D);
-	CHAOS_DECLARE_QUERY_INPUT(Input2D, Input2D);
-	CHAOS_DECLARE_QUERY_INPUT(MappedInput1D, MappedInput1D);
-	CHAOS_DECLARE_QUERY_INPUT(MappedInput2D, MappedInput2D);
+	template<InputTypeExt INPUT_TYPE_EXT>
+	InspectInputCondition<INPUT_TYPE_EXT> QueryInput(INPUT_TYPE_EXT in_input, InputValueType_t<INPUT_TYPE_EXT> *out_value, QueryInputRequestType in_query_type = QueryInputRequestType::None)
+	{
+		return InspectInputCondition<INPUT_TYPE_EXT>(in_input, nullptr, out_value, in_query_type);
+	}
 
-#undef CHAOS_DECLARE_QUERY_INPUT
+	template<InputTypeExt INPUT_TYPE_EXT>
+	InspectInputCondition<INPUT_TYPE_EXT> QueryInput(INPUT_TYPE_EXT in_input, InputState_t<INPUT_TYPE_EXT>* out_state, QueryInputRequestType in_query_type = QueryInputRequestType::None)
+	{
+		return InspectInputCondition<INPUT_TYPE_EXT>(in_input, out_state, nullptr, in_query_type);
+	}
+	
+	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
+	auto Active(INPUT_TYPE_EXT in_input, PARAMS... params)
+	{
+		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::Active);
+	}
+	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
+	auto JustActivated(INPUT_TYPE_EXT in_input, PARAMS... params)
+	{
+		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::JustActivated);
+	}
+	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
+	auto ActiveRepeated(INPUT_TYPE_EXT in_input, PARAMS... params)
+	{
+		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::ActiveRepeated);
+	}
+	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
+	auto Inactive(INPUT_TYPE_EXT in_input, PARAMS... params)
+	{
+		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::Inactive);
+	}
+	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
+	auto JustDeactivated(INPUT_TYPE_EXT in_input, PARAMS... params)
+	{
+		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::JustDeactivated);
+	}
+	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
+	auto InactiveRepeated(INPUT_TYPE_EXT in_input, PARAMS... params)
+	{
+		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::InactiveRepeated);
+	}
 
 #endif
 

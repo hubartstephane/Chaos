@@ -41,13 +41,6 @@ namespace chaos
 		/** gets any Mappedinput2D state (this function can't return a state pointer because such a persistent state doesn't exist) */
 		std::optional<Input2DState> GetMappedInputState(MappedInput2D input) const;
 
-		/** gets any key state */
-		KeyState * GetInputState(Key input);
-		/** gets any input1D state */
-		Input1DState * GetInputState(Input1D input);
-		/** gets any input2D state */
-		Input2DState * GetInputState(Input2D input);
-
 		/** enumerate keys */
 		bool ForAllKeys(ForAllKeysFunction func) const;
 		/** enumerate input1D */

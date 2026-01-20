@@ -96,24 +96,6 @@ namespace chaos
 		return result;
 	}
 
-	KeyState* InputDeviceInterface::GetInputState(Key input)
-	{
-		InputDeviceInterface const* const_this = this;
-		return (KeyState*)const_this->GetInputState(input); // simply remove constness (not very nice, but far simpler)
-	}
-
-	Input1DState* InputDeviceInterface::GetInputState(Input1D input)
-	{
-		InputDeviceInterface const* const_this = this;
-		return (Input1DState*)const_this->GetInputState(input); // simply remove constness (not very nice, but far simpler)
-	}
-
-	Input2DState* InputDeviceInterface::GetInputState(Input2D input)
-	{
-		InputDeviceInterface const* const_this = this;
-		return (Input2DState*)const_this->GetInputState(input); // simply remove constness (not very nice, but far simpler)
-	}
-
 	bool InputDeviceInterface::ForAllKeys(ForAllKeysFunction func) const
 	{
 		return EnumerateDeviceHierarchy([this, &func](InputDeviceInterface const * in_input_device)

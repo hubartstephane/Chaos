@@ -169,51 +169,87 @@ namespace chaos
 	 */
 
 	template<InputType INPUT_TYPE>
-	bool IsInputActive(InputStateBase<INPUT_TYPE> const * state)
+	bool IsInputActive(InputStateBase<INPUT_TYPE> const& state)
 	{
-		if (state == nullptr)
-			return false;
-		return state->IsActive();
+		return state.IsActive();
 	}
 
 	template<InputType INPUT_TYPE>
-	bool IsInputInactive(InputStateBase<INPUT_TYPE> const* state)
+	bool IsInputInactive(InputStateBase<INPUT_TYPE> const& state)
 	{
-		if (state == nullptr)
-			return false;
-		return state->IsInactive();
+		return state.IsInactive();
 	}
 
 	template<InputType INPUT_TYPE>
-	bool IsInputJustActivated(InputStateBase<INPUT_TYPE> const* state)
+	bool IsInputJustActivated(InputStateBase<INPUT_TYPE> const& state)
 	{
-		if (state == nullptr)
-			return false;
-		return state->IsJustActivated();
+		return state.IsJustActivated();
 	}
 
 	template<InputType INPUT_TYPE>
-	bool IsInputJustDeactivated(InputStateBase<INPUT_TYPE> const* state)
+	bool IsInputJustDeactivated(InputStateBase<INPUT_TYPE> const& state)
 	{
-		if (state == nullptr)
-			return false;
-		return state->IsJustDeactivated();
+		return state.IsJustDeactivated();
 	}
 
 	template<InputType INPUT_TYPE>
-	bool IsInputActiveRepeated(InputStateBase<INPUT_TYPE> const* state)
+	bool IsInputActiveRepeated(InputStateBase<INPUT_TYPE> const& state)
 	{
-		if (state == nullptr)
-			return false;
-		return state->IsActiveRepeated();
+		return state.IsActiveRepeated();
 	}
 
 	template<InputType INPUT_TYPE>
-	bool IsInputInactiveRepeated(InputStateBase<INPUT_TYPE> const* state)
+	bool IsInputInactiveRepeated(InputStateBase<INPUT_TYPE> const& state)
 	{
-		if (state == nullptr)
+		return state.IsInactiveRepeated();
+	}
+
+	template<InputType INPUT_TYPE>
+	bool IsInputActive(std::optional<InputStateBase<INPUT_TYPE>> const & state)
+	{
+		if (!state.has_value())
 			return false;
-		return state->IsInactiveRepeated();
+		return IsInputActive(state.value());
+	}
+
+	template<InputType INPUT_TYPE>
+	bool IsInputInactive(std::optional<InputStateBase<INPUT_TYPE>> const & state)
+	{
+		if (!state.has_value())
+			return false;
+		return IsInputInactive(state.value());
+	}
+
+	template<InputType INPUT_TYPE>
+	bool IsInputJustActivated(std::optional<InputStateBase<INPUT_TYPE>> const & state)
+	{
+		if (!state.has_value())
+			return false;
+		return IsInputJustActivated(state.value());
+	}
+
+	template<InputType INPUT_TYPE>
+	bool IsInputJustDeactivated(std::optional<InputStateBase<INPUT_TYPE>> const & state)
+	{
+		if (!state.has_value())
+			return false;
+		return IsInputJustDeactivated(state.value());
+	}
+
+	template<InputType INPUT_TYPE>
+	bool IsInputActiveRepeated(std::optional<InputStateBase<INPUT_TYPE>> const & state)
+	{
+		if (!state.has_value())
+			return false;
+		return IsInputActiveRepeated(state.value());
+	}
+
+	template<InputType INPUT_TYPE>
+	bool IsInputInactiveRepeated(std::optional<InputStateBase<INPUT_TYPE>> const & state)
+	{
+		if (!state.has_value())
+			return false;
+		return IsInputInactiveRepeated(state.value());
 	}
 
 #endif

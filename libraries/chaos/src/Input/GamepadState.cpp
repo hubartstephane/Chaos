@@ -21,25 +21,25 @@ namespace chaos
 		return axes.size();
 	}
 
-	KeyState const * GamepadState::DoGetInputState(Key input) const
+	std::optional<KeyState> GamepadState::DoGetInputState(Key input) const
 	{
 		if (!IsGamepadInput(input))
-			return nullptr;
-		return &buttons[size_t(input) - size_t(Key::GAMEPAD_FIRST)];
+			return {};
+		return buttons[size_t(input) - size_t(Key::GAMEPAD_FIRST)];
 	}
 
-	Input1DState const *GamepadState::DoGetInputState(Input1D input) const
+	std::optional<Input1DState> GamepadState::DoGetInputState(Input1D input) const
 	{
 		if (!IsGamepadInput(input))
-			return nullptr;
-		return &axes[size_t(input) - size_t(Input1D::GAMEPAD_FIRST)];
+			return {};
+		return axes[size_t(input) - size_t(Input1D::GAMEPAD_FIRST)];
 	}
 
-	Input2DState const *GamepadState::DoGetInputState(Input2D input) const
+	std::optional<Input2DState> GamepadState::DoGetInputState(Input2D input) const
 	{	
 		if (!IsGamepadInput(input))
-			return nullptr;
-		return &sticks[size_t(input) - size_t(Input2D::GAMEPAD_FIRST)];
+			return {};
+		return sticks[size_t(input) - size_t(Input2D::GAMEPAD_FIRST)];
 	}
 
 	bool GamepadState::DoForAllKeys(ForAllKeysFunction func) const
@@ -169,7 +169,7 @@ namespace chaos
 		// update virtual buttons
 		auto UpdateVirtualButton = [this](Key dst_button, Input1D src_axis)
 		{
-			if (Input1DState const * axis_state = GetInputState(src_axis))
+			if (std::optional<Input1DState> axis_state = GetInputState(src_axis))
 			{
 				bool value = (axis_state->value != 0.0f);
 				buttons[size_t(dst_button) - size_t(Key::GAMEPAD_FIRST)].SetValue(value);

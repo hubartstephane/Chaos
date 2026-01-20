@@ -9,36 +9,36 @@ namespace chaos
 	}
 
 	template<InputType INPUT_TYPE> 
-	InputState_t<INPUT_TYPE> const * InputDeviceInterface::GetInputStateHelper(INPUT_TYPE input) const
+	std::optional<InputState_t<INPUT_TYPE>> InputDeviceInterface::GetInputStateHelper(INPUT_TYPE input) const
 	{
 		if (input == INPUT_TYPE::UNKNOWN)
-			return nullptr;
+			return {};
 
-		InputState_t<INPUT_TYPE> const * result = nullptr;
+		std::optional<InputState_t<INPUT_TYPE>> result;
 		EnumerateDeviceHierarchy([this, &result, input](InputDeviceInterface const * in_input_device)
 		{
 			result = in_input_device->DoGetInputState(input);
-			return (result != nullptr); // continue until some result is found
+			return result.has_value(); // continue until some result is found
 		});
 		return result;
 	}
 
-	KeyState const * InputDeviceInterface::GetInputState(Key input) const
+	std::optional<KeyState> InputDeviceInterface::GetInputState(Key input) const
 	{
 		return GetInputStateHelper(input);
 	}
 
-	Input1DState const * InputDeviceInterface::GetInputState(Input1D input) const
+	std::optional<Input1DState> InputDeviceInterface::GetInputState(Input1D input) const
 	{
 		return GetInputStateHelper(input);
 	}
 
-	Input2DState const * InputDeviceInterface::GetInputState(Input2D input) const
+	std::optional<Input2DState> InputDeviceInterface::GetInputState(Input2D input) const
 	{	
 		return GetInputStateHelper(input);
 	}
 
-	std::optional<Input1DState> InputDeviceInterface::GetMappedInputState(MappedInput1D input) const
+	std::optional<Input1DState> InputDeviceInterface::GetInputState(MappedInput1D input) const
 	{
 		Input1DState result;
 
@@ -46,15 +46,12 @@ namespace chaos
 		{
 			if (in_key == Key::UNKNOWN)
 				return true;
-			KeyState const* state = GetInputState(in_key);
-			if (state == nullptr)
+			std::optional<KeyState> state = GetInputState(in_key);
+			if (!state.has_value())
 				return false;
-			if (state != nullptr)
-			{
-				if (state->GetValue())
-					result.value += delta_value;
-				result.update_time = std::max(result.update_time, state->update_time); // works even if unitialized (-1.0)
-			}
+			if (state->GetValue())
+				result.value += delta_value;
+			result.update_time = std::max(result.update_time, state->update_time); // works even if unitialized (-1.0)
 			return true;
 		};
 
@@ -65,7 +62,7 @@ namespace chaos
 		return result;
 	}
 
-	std::optional<Input2DState> InputDeviceInterface::GetMappedInputState(MappedInput2D input) const
+	std::optional<Input2DState> InputDeviceInterface::GetInputState(MappedInput2D input) const
 	{
 		Input2DState result;
 
@@ -73,15 +70,12 @@ namespace chaos
 		{
 			if (in_key == Key::UNKNOWN)
 				return true;
-			KeyState const* state = GetInputState(in_key);
-			if (state == nullptr)
+			std::optional<KeyState> state = GetInputState(in_key);
+			if (!state.has_value())
 				return false;
-			if (state != nullptr)
-			{
-				if (state->GetValue())
-					result.value[axis] += delta_value;
-				result.update_time = std::max(result.update_time, state->update_time); // works even if unitialized (-1.0)
-			}
+			if (state->GetValue())
+				result.value[axis] += delta_value;
+			result.update_time = std::max(result.update_time, state->update_time); // works even if unitialized (-1.0)
 			return true;
 		};
 		
@@ -120,19 +114,19 @@ namespace chaos
 		});
 	}
 
-	KeyState const * InputDeviceInterface::DoGetInputState(Key input) const
+	std::optional<KeyState> InputDeviceInterface::DoGetInputState(Key input) const
 	{
-		return nullptr;
+		return {};
 	}
 
-	Input1DState const * InputDeviceInterface::DoGetInputState(Input1D input) const
+	std::optional<Input1DState> InputDeviceInterface::DoGetInputState(Input1D input) const
 	{
-		return nullptr;
+		return {};
 	}
 
-	Input2DState const * InputDeviceInterface::DoGetInputState(Input2D input) const
+	std::optional<Input2DState> InputDeviceInterface::DoGetInputState(Input2D input) const
 	{	
-		return nullptr;
+		return {};
 	}
 
 	bool InputDeviceInterface::DoForAllKeys(ForAllKeysFunction func) const
@@ -152,70 +146,70 @@ namespace chaos
 
 	bool InputDeviceInterface::GetInputValue(Key input) const
 	{
-		if (KeyState const * input_state = GetInputState(input))
+		if (std::optional<KeyState> input_state = GetInputState(input))
 			return input_state->GetValue();
 		return false;
 	}
 
 	float InputDeviceInterface::GetInputValue(Input1D input) const
 	{
-		if (Input1DState const* input_state = GetInputState(input))
+		if (std::optional<Input1DState> input_state = GetInputState(input))
 			return input_state->GetValue();
 		return 0.0f;
 	}
 
 	glm::vec2 InputDeviceInterface::GetInputValue(Input2D input) const
 	{
-		if (Input2DState const* input_state = GetInputState(input))
+		if (std::optional<Input2DState> input_state = GetInputState(input))
 			return input_state->GetValue();
 		return { 0.0f, 0.0f };
 	}
 
-	float InputDeviceInterface::GetMappedInputValue(MappedInput1D input) const
+	float InputDeviceInterface::GetInputValue(MappedInput1D input) const
 	{
-		if (std::optional<Input1DState> input_state = GetMappedInputState(input))
+		if (std::optional<Input1DState> input_state = GetInputState(input))
 			return input_state->GetValue();
 		return 0.0f;
 	}
 
-	glm::vec2 InputDeviceInterface::GetMappedInputValue(MappedInput2D input) const
+	glm::vec2 InputDeviceInterface::GetInputValue(MappedInput2D input) const
 	{
-		if (std::optional<Input2DState> input_state = GetMappedInputState(input))
+		if (std::optional<Input2DState> input_state = GetInputState(input))
 			return input_state->GetValue();
 		return { 0.0f, 0.0f };
 	}
 
 	InputStatus InputDeviceInterface::GetInputStatus(Key input) const
 	{
-		if (KeyState const * input_state = GetInputState(input))
+		if (std::optional<KeyState> input_state = GetInputState(input))
 			return input_state->GetStatus();
 		return InputStatus::NONE;
 	}
 
 	InputStatus InputDeviceInterface::GetInputStatus(Input1D input) const
 	{
-		if (Input1DState const* input_state = GetInputState(input))
+		if (std::optional<Input1DState> input_state = GetInputState(input))
 			return input_state->GetStatus();
 		return InputStatus::NONE;
 	}
 
 	InputStatus InputDeviceInterface::GetInputStatus(Input2D input) const
 	{
-		if (Input2DState const* input_state = GetInputState(input))
+		if (std::optional<Input2DState> input_state = GetInputState(input))
 			return input_state->GetStatus();
 		return InputStatus::NONE;
 	}
 
-	InputStatus InputDeviceInterface::GetMappedInputStatus(MappedInput1D input) const
+	InputStatus InputDeviceInterface::GetInputStatus(MappedInput1D input) const
 	{
-		if (std::optional<Input1DState> input_state = GetMappedInputState(input))
+		if (std::optional<Input1DState> input_state = GetInputState(input))
 			return input_state->GetStatus();
 		return InputStatus::NONE;
 	}
 
-	InputStatus InputDeviceInterface::GetMappedInputStatus(MappedInput2D input) const
+	InputStatus InputDeviceInterface::GetInputStatus(MappedInput2D input) const
 	{
-		if (std::optional<Input2DState> input_state = GetMappedInputState(input))
+		if (std::optional<Input2DState> input_state = GetInputState(input))
 			return input_state->GetStatus();
 		return InputStatus::NONE;
 	}
@@ -253,7 +247,7 @@ namespace chaos
 	{
 		return ForAllKeys([](Key key, KeyState const & state)
 		{
-			return IsInputJustActivated(&state);
+			return IsInputJustActivated(state);
 		});
 	}
 

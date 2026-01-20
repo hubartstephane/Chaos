@@ -58,35 +58,15 @@ namespace chaos
 				return InputConditionResult::Invalid;
 
 			// find and handle state
-			if constexpr (std::is_same_v<input_type, MappedInput1D> || std::is_same_v<input_type, MappedInput2D>)
-			{
-				std::optional<state_type> input_state = in_input_device->GetMappedInputState(input);
-				if (!input_state.has_value())
-					return InputConditionResult::Invalid; // abnormal (request for an input not handled by the receiver)
+			std::optional<state_type> input_state = in_input_device->GetInputState(input);
+			if (!input_state.has_value())
+				return InputConditionResult::Invalid; // abnormal (request for an input not handled by the receiver)
 
-				// consum the key of the request (no one can use it anymore until next frame)
-				if (!in_consumption_cache.TryConsumeInput(in_input_receiver, in_input_device, input))
-					return InputConditionResult::Rejected;
+			// consum the key of the request (no one can use it anymore until next frame)
+			if (!in_consumption_cache.TryConsumeInput(in_input_receiver, in_input_device, input))
+				return InputConditionResult::Rejected;
 
-				return OuputDataAndReturnResult(&input_state.value());
-			}
-			else if constexpr (InputType<input_type>) // ignore mapped inputs
-			{
-				state_type const* input_state = in_input_device->GetInputState(input);
-				if (input_state == nullptr)
-					return InputConditionResult::Invalid; // abnormal (request for an input not handled by the receiver)
-
-				// consum the key of the request (no one can use it anymore until next frame)
-				if (!in_consumption_cache.TryConsumeInput(in_input_receiver, in_input_device, input))
-					return InputConditionResult::Rejected;
-
-				return OuputDataAndReturnResult(input_state);
-			}
-			else
-			{
-				static_assert(0);
-				return OuputDataAndReturnResult(nullptr); // should never happens
-			}
+			return OuputDataAndReturnResult(&input_state.value());
 		}
 
 		/** output necessary data and get request result from the state and the query */

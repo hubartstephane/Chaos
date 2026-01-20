@@ -118,17 +118,15 @@ namespace chaos
 	}
 
 	template<typename CONTAINER_TYPE, InputType INPUT_TYPE>
-	bool TryInsertConsumedInput(CONTAINER_TYPE & inout_consumed_input, InputReceiverInterface const* in_input_receiver, InputState_t<INPUT_TYPE> const* in_state, INPUT_TYPE in_input, InputConsumptionFlags in_flags)
+	bool TryInsertConsumedInput(CONTAINER_TYPE & inout_consumed_input, InputReceiverInterface const* in_input_receiver, INPUT_TYPE in_input, InputConsumptionFlags in_flags)
 	{
-		auto consumed_input_key = std::make_pair(in_input, in_state);
-
-		auto it = inout_consumed_input.find(consumed_input_key);
+		auto it = inout_consumed_input.find(in_input);
 
 		// input is not required yet
 		if (it == inout_consumed_input.end())
 		{
 			if (!HasAnyFlags(in_flags, InputConsumptionFlags::CONSULT_ONLY))
-				inout_consumed_input.emplace(consumed_input_key, in_input_receiver);
+				inout_consumed_input.emplace(in_input, in_input_receiver);
 			return true;
 		}
 		// the same input receiver requires for the input. that's ok
@@ -140,29 +138,29 @@ namespace chaos
 
 	bool InputConsumptionCache::DoTryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, Key in_input, InputConsumptionFlags in_flags)
 	{
-		auto const* state = in_input_device->GetInputState(in_input);
-		if (state == nullptr)
+		std::optional<KeyState> state = in_input_device->GetInputState(in_input);
+		if (!state.has_value())
 			return true; // if the device doesn't handle this input, this shouldn't be considered as a rejection (for example if in_input == UNKOWN that is legit)
 
-		return TryInsertConsumedInput(consumed_keys, in_input_receiver, state, in_input, in_flags);
+		return TryInsertConsumedInput(consumed_keys, in_input_receiver, in_input, in_flags);
 	}
 
 	bool InputConsumptionCache::DoTryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, Input1D in_input, InputConsumptionFlags in_flags)
 	{
-		auto const* state = in_input_device->GetInputState(in_input);
-		if (state == nullptr)
+		std::optional<Input1DState> state = in_input_device->GetInputState(in_input);
+		if (!state.has_value())
 			return true; // if the device doesn't handle this input, this shouldn't be considered as a rejection (for example if in_input == UNKOWN that is legit)
 
-		return TryInsertConsumedInput(consumed_input1D, in_input_receiver, state, in_input, in_flags);
+		return TryInsertConsumedInput(consumed_input1D, in_input_receiver, in_input, in_flags);
 	}
 
 	bool InputConsumptionCache::DoTryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, Input2D in_input, InputConsumptionFlags in_flags)
 	{
-		auto const* state = in_input_device->GetInputState(in_input);
-		if (state == nullptr)
+		std::optional<Input2DState> state = in_input_device->GetInputState(in_input);
+		if (!state.has_value())
 			return true; // if the device doesn't handle this input, this shouldn't be considered as a rejection (for example if in_input == UNKOWN that is legit)
 
-		return TryInsertConsumedInput(consumed_input2D, in_input_receiver, state, in_input, in_flags);
+		return TryInsertConsumedInput(consumed_input2D, in_input_receiver, in_input, in_flags);
 	}
 
 }; // namespace chaos

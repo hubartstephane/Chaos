@@ -69,11 +69,11 @@ namespace chaos
 	protected:
 
 		/** keys that are consumed */
-		std::map<std::pair<Key, KeyState const*>, InputReceiverInterface const*> consumed_keys;
+		std::map<Key, InputReceiverInterface const*> consumed_keys;
 		/** input1D that are consumed */
-		std::map<std::pair<Input1D, Input1DState const*>, InputReceiverInterface const*> consumed_input1D;
+		std::map<Input1D, InputReceiverInterface const*> consumed_input1D;
 		/** input2D that are consumed */
-		std::map<std::pair<Input2D, Input2DState const*>, InputReceiverInterface const*> consumed_input2D;
+		std::map<Input2D, InputReceiverInterface const*> consumed_input2D;
 
 		/** the receiver that claimed for all inputs */
 		std::optional<InputReceiverInterface const*> all_inputs_consumer;

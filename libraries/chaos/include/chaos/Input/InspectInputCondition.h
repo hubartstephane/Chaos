@@ -35,13 +35,12 @@ namespace chaos
 	{
 	public:
 
-		using input_type        = INPUT_TYPE_EXT;
-		using state_type        = InputState_t<input_type>;
-		using value_type        = InputValueType_t<input_type>;
-		using tagged_input_type = TaggedInput<input_type>;
+		using input_type = INPUT_TYPE_EXT;
+		using state_type = InputState_t<input_type>;
+		using value_type = InputValueType_t<input_type>;
 
 		/** constructor */
-		InspectInputCondition(tagged_input_type in_input, state_type* in_out_state, value_type* in_out_value, QueryInputRequestType in_query_type):
+		InspectInputCondition(input_type in_input, state_type* in_out_state, value_type* in_out_value, QueryInputRequestType in_query_type):
 			input(in_input),
 			out_state(in_out_state),
 			out_value(in_out_value),
@@ -113,19 +112,10 @@ namespace chaos
 		{
 			if constexpr (std::is_same_v<input_type, Key>)
 				return (input == in_input);
-
 			if constexpr (std::is_same_v<input_type, MappedInput1D>)
-			{
-				auto effective_input = GetInput(input);
-				return (effective_input.pos_key == in_input || effective_input.neg_key == in_input);
-			}
-			
+				return (input.pos_key == in_input || input.neg_key == in_input);
 			if constexpr (std::is_same_v<input_type, MappedInput2D>)
-			{
-				auto effective_input = GetInput(input);
-				return (effective_input.left_key == in_input || effective_input.right_key == in_input || effective_input.up_key == in_input || effective_input.down_key == in_input);
-			}
-
+				return (input.left_key == in_input || input.right_key == in_input || input.up_key == in_input || input.down_key == in_input);
 			return false;
 		}
 		/** override */
@@ -149,21 +139,17 @@ namespace chaos
 
 			if constexpr (std::is_same_v<input_type, MappedInput1D>)
 			{
-				auto effective_input = GetInput(input);
-
 				std::snprintf(input_buffer, sizeof(input_buffer), "%s/%s",
-					EnumToString(effective_input.neg_key),
-					EnumToString(effective_input.pos_key));
+					EnumToString(input.neg_key),
+					EnumToString(input.pos_key));
 			}
 			else if constexpr (std::is_same_v<input_type, MappedInput2D>)
 			{
-				auto effective_input = GetInput(input);
-
 				std::snprintf(input_buffer, sizeof(input_buffer), "%s/%s/%s/%s",
-					EnumToString(effective_input.left_key),
-					EnumToString(effective_input.right_key),
-					EnumToString(effective_input.up_key),
-					EnumToString(effective_input.down_key));
+					EnumToString(input.left_key),
+					EnumToString(input.right_key),
+					EnumToString(input.up_key),
+					EnumToString(input.down_key));
 			}
 			else if constexpr (InputType<input_type>) // ignore mapped inputs
 			{
@@ -187,7 +173,7 @@ namespace chaos
 	protected:
 
 		/** the concerned input */
-		tagged_input_type input;
+		input_type input;
 		/** the state of the request */
 		state_type* out_state = nullptr;
 		/** the result of the request */
@@ -240,11 +226,6 @@ namespace chaos
 	CHAOS_DECLARE_QUERY_INPUT(Input2D, Input2D);
 	CHAOS_DECLARE_QUERY_INPUT(MappedInput1D, MappedInput1D);
 	CHAOS_DECLARE_QUERY_INPUT(MappedInput2D, MappedInput2D);
-	CHAOS_DECLARE_QUERY_INPUT(TaggedInput<Key>, Key);
-	CHAOS_DECLARE_QUERY_INPUT(TaggedInput<Input1D>, Input1D);
-	CHAOS_DECLARE_QUERY_INPUT(TaggedInput<Input2D>, Input2D);
-	CHAOS_DECLARE_QUERY_INPUT(TaggedInput<MappedInput1D>, MappedInput1D);
-	CHAOS_DECLARE_QUERY_INPUT(TaggedInput<MappedInput2D>, MappedInput2D);
 
 #undef CHAOS_DECLARE_QUERY_INPUT
 

@@ -5,7 +5,6 @@
 #include "chaos/Input/MappedInput1D.h"
 #include "chaos/Input/MappedInput2D.h"
 #include "chaos/Input/InputType.h"
-#include "chaos/Input/TaggedInput.h"
 #include "chaos/Input/KeyboardLayout.h"
 #include "chaos/Input/KeyboardLayoutConversion.h"
 #include "chaos/Input/InputDeviceInterface.h"

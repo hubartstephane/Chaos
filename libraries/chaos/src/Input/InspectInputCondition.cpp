@@ -36,11 +36,6 @@ namespace chaos
 	CHAOS_IMPLEMENT_QUERY_INPUT(Input2D, Input2D);
 	CHAOS_IMPLEMENT_QUERY_INPUT(MappedInput1D, MappedInput1D);
 	CHAOS_IMPLEMENT_QUERY_INPUT(MappedInput2D, MappedInput2D);
-	CHAOS_IMPLEMENT_QUERY_INPUT(TaggedInput<Key>, Key);
-	CHAOS_IMPLEMENT_QUERY_INPUT(TaggedInput<Input1D>, Input1D);
-	CHAOS_IMPLEMENT_QUERY_INPUT(TaggedInput<Input2D>, Input2D);
-	CHAOS_IMPLEMENT_QUERY_INPUT(TaggedInput<MappedInput1D>, MappedInput1D);
-	CHAOS_IMPLEMENT_QUERY_INPUT(TaggedInput<MappedInput2D>, MappedInput2D);
 
 #undef CHAOS_IMPLEMENT_QUERY_INPUT
 

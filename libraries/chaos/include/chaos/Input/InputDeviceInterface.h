@@ -48,27 +48,23 @@ namespace chaos
 		/** enumerate input2D */
 		bool ForAllInput2D(ForAllInput2DFunction func) const;
 
-		/** get the key value */
-		bool GetInputValue(Key input) const;
-		/** get the axis value */
-		float GetInputValue(Input1D input) const;
-		/** get the stick value */
-		glm::vec2 GetInputValue(Input2D input) const;
-		/** get the axis value */
-		float GetInputValue(MappedInput1D input) const;
-		/** get the stick value */
-		glm::vec2 GetInputValue(MappedInput2D input) const;
+		/** get state value for any input */
+		template<InputTypeExt INPUT_TYPE_EXT>
+		InputValueType_t<INPUT_TYPE_EXT> GetInputValue(INPUT_TYPE_EXT in_input) const
+		{
+			if (auto input_state = GetInputState(in_input))
+				return input_state->GetValue();
+			return {};
+		}
 
-		/** get the key state change */
-		InputStatus GetInputStatus(Key key) const;
-		/** get the input1D state change */
-		InputStatus GetInputStatus(Input1D input) const;
-		/** get the input2D state change */
-		InputStatus GetInputStatus(Input2D input) const;
-		/** get the Mappedinput1D state change */
-		InputStatus GetInputStatus(MappedInput1D input) const;
-		/** get the Mappedinput2D state change */
-		InputStatus GetInputStatus(MappedInput2D input) const;
+		/** get state status for any input */
+		template<InputTypeExt INPUT_TYPE_EXT>
+		InputStatus GetInputStatus(INPUT_TYPE_EXT in_input) const
+		{
+			if (auto input_state = GetInputState(in_input))
+				return input_state->GetStatus();
+			return InputStatus::NONE;
+		}
 
 		/** returns true whether there is any k active */
 		bool IsAnyKeyActive() const;

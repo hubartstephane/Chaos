@@ -134,7 +134,7 @@ namespace chaos
 	{
 		if (in_input_device != nullptr)
 			if (WindowApplication* window_application = Application::GetInstance())
-				window_application->GetInputConsumptionCache().TryConsumeInput(nullptr, in_input_device, in_input);
+				window_application->GetInputConsumptionCache().TryConsumeInput(in_input, nullptr, in_input_device);
 	}
 
 #endif

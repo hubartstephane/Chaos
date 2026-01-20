@@ -62,7 +62,7 @@ namespace chaos
 				return InputConditionResult::Invalid; // abnormal (request for an input not handled by the receiver)
 
 			// consum the key of the request (no one can use it anymore until next frame)
-			if (!in_consumption_cache.TryConsumeInput(in_input_receiver, in_input_device, input))
+			if (!in_consumption_cache.TryConsumeInput(input, in_input_receiver, in_input_device))
 				return InputConditionResult::Rejected;
 
 			return OuputDataAndReturnResult(&input_state.value());

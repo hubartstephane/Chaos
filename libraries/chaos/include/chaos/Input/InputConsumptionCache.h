@@ -47,24 +47,24 @@ namespace chaos
 		void Clear();
 
 		/** check whether the input is still available and lock it for further requests (do the same for related inputs) */
-		bool TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, Key in_input, InputConsumptionFlags in_flags = InputConsumptionFlags::NONE);
+		bool TryConsumeInput(Key in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionFlags in_flags = InputConsumptionFlags::NONE);
 		/** check whether the input is still available and lock it for further requests (do the same for related inputs) */
-		bool TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, Input1D in_input, InputConsumptionFlags in_flags = InputConsumptionFlags::NONE);
+		bool TryConsumeInput(Input1D in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionFlags in_flags = InputConsumptionFlags::NONE);
 		/** check whether the input is still available and lock it for further requests (do the same for related inputs) */
-		bool TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, Input2D in_input, InputConsumptionFlags in_flags = InputConsumptionFlags::NONE);
+		bool TryConsumeInput(Input2D in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionFlags in_flags = InputConsumptionFlags::NONE);
 		/** check whether the input is still available and lock it for further requests (do the same for related inputs) */
-		bool TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, MappedInput1D in_input, InputConsumptionFlags in_flags = InputConsumptionFlags::NONE);
+		bool TryConsumeInput(MappedInput1D in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionFlags in_flags = InputConsumptionFlags::NONE);
 		/** check whether the input is still available and lock it for further requests (do the same for related inputs) */
-		bool TryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, MappedInput2D in_input, InputConsumptionFlags in_flags = InputConsumptionFlags::NONE);
+		bool TryConsumeInput(MappedInput2D in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionFlags in_flags = InputConsumptionFlags::NONE);
 
 	protected:
 
 		/** internal method that check whether an input has already been consumed yet Mark it as consumed */
-		bool DoTryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, Key in_input, InputConsumptionFlags in_flags);
+		bool DoTryConsumeInput(Key in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionFlags in_flags);
 		/** internal method that check whether an input has already been consumed yet Mark it as consumed */
-		bool DoTryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, Input1D in_input, InputConsumptionFlags in_flags);
+		bool DoTryConsumeInput(Input1D in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionFlags in_flags);
 		/** internal method that check whether an input has already been consumed yet Mark it as consumed */
-		bool DoTryConsumeInput(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, Input2D in_input, InputConsumptionFlags in_flags);
+		bool DoTryConsumeInput(Input2D in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionFlags in_flags);
 
 	protected:
 

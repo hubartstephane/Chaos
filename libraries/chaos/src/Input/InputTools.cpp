@@ -6,61 +6,69 @@ namespace chaos
 {
 	namespace InputTools
 	{
-		bool EnumerateVirtualKey(VirtualKeyEnumerationFunction func)
+		bool EnumerateVirtualKeyDefinition(VirtualKeyDefinitionEnumerationFunction func)
 		{
-			if (func(Key::GAMEPAD_LEFT_TRIGGER, Input1D::GAMEPAD_LEFT_TRIGGER))
-				return true;
-			if (func(Key::GAMEPAD_RIGHT_TRIGGER, Input1D::GAMEPAD_RIGHT_TRIGGER))
-				return true;
-			return false;
-		}
-
-		bool EnumerateVirtualInput2D(VirtualInput2DEnumerationFunction func)
-		{
-			if (func(Input2D::GAMEPAD_LEFT_STICK, Input1D::GAMEPAD_LEFT_AXIS_X, Input1D::GAMEPAD_LEFT_AXIS_Y))
-				return true;
-			if (func(Input2D::GAMEPAD_RIGHT_STICK, Input1D::GAMEPAD_RIGHT_AXIS_X, Input1D::GAMEPAD_RIGHT_AXIS_Y))
-				return true;
-			if (func(Input2D::MOUSE_WHEEL, Input1D::MOUSE_WHEEL_X, Input1D::MOUSE_WHEEL_Y))
-				return true;
-
-			return false;
-		}
-
-		bool EnumerateRelatedInputs(Key in_input, VirtualKeyEnumerationFunction func)
-		{
-			return EnumerateVirtualKey([&](Key key, Input1D input)
+			static const std::array<VirtualKeyDefinition, 2> definitions = 
 			{
-				if (key != in_input)
+				VirtualKeyDefinition{Key::GAMEPAD_LEFT_TRIGGER, Input1D::GAMEPAD_LEFT_TRIGGER},
+				VirtualKeyDefinition{Key::GAMEPAD_RIGHT_TRIGGER, Input1D::GAMEPAD_RIGHT_TRIGGER}
+			};
+
+			for (VirtualKeyDefinition const & def : definitions)
+				if (func(def))
+					return true;
+			return false;
+		}
+
+		bool EnumerateVirtualInput2DDefinition(VirtualInput2DDefinitionEnumerationFunction func)
+		{
+			static const std::array<VirtualInput2DDefinition, 3> definitions =
+			{
+				VirtualInput2DDefinition { Input2D::GAMEPAD_LEFT_STICK, Input1D::GAMEPAD_LEFT_AXIS_X, Input1D::GAMEPAD_LEFT_AXIS_Y },
+				VirtualInput2DDefinition { Input2D::GAMEPAD_RIGHT_STICK, Input1D::GAMEPAD_RIGHT_AXIS_X, Input1D::GAMEPAD_RIGHT_AXIS_Y },
+				VirtualInput2DDefinition { Input2D::MOUSE_WHEEL, Input1D::MOUSE_WHEEL_X, Input1D::MOUSE_WHEEL_Y }
+			};
+
+			for (VirtualInput2DDefinition const& def : definitions)
+				if (func(def))
+					return true;
+			return false;
+		}
+
+		bool EnumerateRelatedInputsDefinition(Key in_input, VirtualKeyDefinitionEnumerationFunction func)
+		{
+			return EnumerateVirtualKeyDefinition([&](VirtualKeyDefinition const & def)
+			{
+				if (in_input != def.key)
 					return false;
-				return func(key, input);
+				return func(def);
 			});
 		}
 
-		bool EnumerateRelatedInputs(Input1D in_input, VirtualKeyEnumerationFunction key_func, VirtualInput2DEnumerationFunction input2D_func)
+		bool EnumerateRelatedInputsDefinition(Input1D in_input, VirtualKeyDefinitionEnumerationFunction key_func, VirtualInput2DDefinitionEnumerationFunction input2D_func)
 		{
-			return EnumerateVirtualKey([&](Key key, Input1D input)
+			return EnumerateVirtualKeyDefinition([&](VirtualKeyDefinition const& def)
 			{
-				if (in_input != input)
+				if (in_input != def.input1D)
 					return false;
-				return key_func(key, input);
+				return key_func(def);
 			}) 
 			&&
-			EnumerateVirtualInput2D([&](Input2D input2D, Input1D input1D_x, Input1D input1D_y)
+			EnumerateVirtualInput2DDefinition([&](VirtualInput2DDefinition const& def)
 			{
-				if (in_input != input1D_x && in_input != input1D_y)
+				if (in_input != def.input1D_x && in_input != def.input1D_y)
 					return false;
-				return input2D_func(input2D, input1D_x, input1D_y);
+				return input2D_func(def);
 			});
 		}
 
-		bool EnumerateRelatedInputs(Input2D in_input, VirtualInput2DEnumerationFunction func)
+		bool EnumerateRelatedInputsDefinition(Input2D in_input, VirtualInput2DDefinitionEnumerationFunction func)
 		{
-			return EnumerateVirtualInput2D([&](Input2D input2D, Input1D input1D_x, Input1D input1D_y)
+			return EnumerateVirtualInput2DDefinition([&](VirtualInput2DDefinition const& def)
 			{
-				if (in_input != input2D)
+				if (in_input != def.input2D)
 					return false;
-				return func(input2D, input1D_x, input1D_y);
+				return func(def);
 			});
 		}
 

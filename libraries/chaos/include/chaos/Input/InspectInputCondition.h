@@ -56,16 +56,29 @@ namespace chaos
 			if (out_state == nullptr && out_value == nullptr && query_type == QueryInputRequestType::None) // this request is useless
 				return InputConditionResult::Invalid;
 
+
+			shuxxxx
+
+
+			auto query_result = in_consumption_cache.QueryInputState(input, in_input_receiver, in_input_device);
+			if (HasAnyFlags(query_result.flags, QueryInputStateResultFlags::REJECTED_INPUT))
+				return InputConditionResult::Rejected;
+			if (HasAnyFlags(query_result.flags, QueryInputStateResultFlags::REJECTED_INPUT))
+				return InputConditionResult::Invalid;
+
+
+
+
 			// find and handle state
 			std::optional<state_type> input_state = in_input_device->GetInputState(input);
 			if (!input_state.has_value())
 				return InputConditionResult::Invalid; // abnormal (request for an input not handled by the receiver)
 
 			// consum the key of the request (no one can use it anymore until next frame)
-			if (!in_consumption_cache.TryConsumeInput(input, in_input_receiver, in_input_device))
-				return InputConditionResult::Rejected;
+			//if (!in_consumption_cache.QueryInputState(input, in_input_receiver, in_input_device))
+			//	return InputConditionResult::Rejected;
 
-			return OuputDataAndReturnResult(&input_state.value());
+			return OuputDataAndReturnResult(&query_result.state.value());
 		}
 
 		/** output necessary data and get request result from the state and the query */

@@ -55,6 +55,7 @@ namespace chaos
 			return true;
 		};
 
+		// if neg_key or pos_key is not handled by the InputDevice (and not UNKNOWN), the function fails
 		if (!AccumulateKeyState(input.neg_key, -1.0f))
 			return {};
 		if (!AccumulateKeyState(input.pos_key, +1.0f))
@@ -79,6 +80,7 @@ namespace chaos
 			return true;
 		};
 		
+		// if left_key, right_key, down_key or up_key is not handled by the InputDevice (and not UNKNOWN), the function fails
 		if (!AccumulateKeyState(input.left_key,  0, -1.0f))
 			return {};
 		if (!AccumulateKeyState(input.right_key, 0, +1.0f))

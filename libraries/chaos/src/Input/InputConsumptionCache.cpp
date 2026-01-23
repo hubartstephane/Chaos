@@ -3,7 +3,172 @@
 
 namespace chaos
 {
-	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(InputConsumptionFlags, nullptr, CHAOS_API);
+	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(QueryInputStateFlags, nullptr, CHAOS_API);
+	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(QueryInputStateResultFlags, nullptr, CHAOS_API);
+
+	// requesting for an InputState is a two steps process
+	// -first, we require authorization from InputConsumptionCache
+	// -then,  we require the InputDevice for the state
+	//
+	// if, during first step their is a rejection, we don't bother asking InputDevice at all
+	// so we don't get extra information as UNHANDLED_INPUT
+	// that's why, for consistency, if we get a rejection, we just return REJECTED_INPUT state
+
+	template<typename CONTAINER_TYPE, InputType INPUT_TYPE>
+	QueryInputStateResultFlags DoCheckAndConsumeInputHelper(INPUT_TYPE in_input, CONTAINER_TYPE& inout_consumed_input, InputReceiverInterface const* in_input_receiver, QueryInputStateFlags in_flags)
+	{
+		// check wether the input is known
+		if (in_input == INPUT_TYPE::UNKNOWN)
+			return QueryInputStateResultFlags::UNKNOWN_INPUT;
+	
+		// input is not required yet
+		auto it = inout_consumed_input.find(in_input);
+
+		if (it == inout_consumed_input.end())
+		{
+			if (!HasAnyFlags(in_flags, QueryInputStateFlags::CONSULT_ONLY))
+				inout_consumed_input.emplace(in_input, in_input_receiver);
+			return QueryInputStateResultFlags::SUCCESSFULL_INPUT | QueryInputStateResultFlags::KNOWN_INPUT;
+		}
+
+		// the same input receiver requires for the input. that's ok
+		if (it->second == in_input_receiver)
+			return QueryInputStateResultFlags::SUCCESSFULL_INPUT | QueryInputStateResultFlags::KNOWN_INPUT;
+
+		// another receiver requires the input. that's a rejection
+		return QueryInputStateResultFlags::REJECTED_INPUT;
+	}
+
+	QueryInputStateResultFlags InputConsumptionCache::DoCheckAndConsumeInput(Key in_input, InputReceiverInterface const* in_input_receiver, QueryInputStateFlags in_flags)
+	{
+		return DoCheckAndConsumeInputHelper(in_input, consumed_keys, in_input_receiver, in_flags);
+	}
+
+	QueryInputStateResultFlags InputConsumptionCache::DoCheckAndConsumeInput(Input1D in_input, InputReceiverInterface const* in_input_receiver, QueryInputStateFlags in_flags)
+	{
+		return DoCheckAndConsumeInputHelper(in_input, consumed_input1D, in_input_receiver, in_flags);
+	}
+
+	QueryInputStateResultFlags InputConsumptionCache::DoCheckAndConsumeInput(Input2D in_input, InputReceiverInterface const* in_input_receiver, QueryInputStateFlags in_flags)
+	{
+		return DoCheckAndConsumeInputHelper(in_input, consumed_input2D, in_input_receiver, in_flags);
+	}
+
+	template<InputType INPUT_TYPE>
+	QueryInputStateResultFlags InputConsumptionCache::DoCheckAndConsumeInputAndRelated(
+		INPUT_TYPE in_input, 
+		InputReceiverInterface const* in_input_receiver, 
+		QueryInputStateFlags in_flags, 
+		LightweightFunction<QueryInputStateResultFlags(QueryInputStateResultFlags)> check_related_input_func
+	)
+	{
+		// query for the input
+		QueryInputStateResultFlags result = DoCheckAndConsumeInput(in_input, in_input_receiver, in_flags);
+
+		// query for the related inputs
+		result = check_related_input_func(result);
+	
+		// all inputs are locked ?
+		if (all_inputs_consumer.has_value() && all_inputs_consumer.value() != in_input_receiver)
+			return QueryInputStateResultFlags::REJECTED_INPUT;
+
+		// In case of rejection, we only keep rejection bit
+		if (HasAnyFlags(result, QueryInputStateResultFlags::REJECTED_INPUT))
+			return QueryInputStateResultFlags::REJECTED_INPUT;
+
+		return result;
+	}
+
+	QueryInputStateResultFlags InputConsumptionCache::CheckAndConsumeInput(Key in_input, InputReceiverInterface const* in_input_receiver, QueryInputStateFlags in_flags)
+	{
+		return DoCheckAndConsumeInputAndRelated(in_input, in_input_receiver, in_flags, [&](QueryInputStateResultFlags result)
+		{
+			InputTools::EnumerateRelatedInputsDefinition(in_input, [&](VirtualKeyDefinition const& def)
+			{
+				result |= DoCheckAndConsumeInput(def.input1D, in_input_receiver, in_flags);
+				return false; // don't stop and process next
+			});
+			return result;
+		});
+	}
+
+	QueryInputStateResultFlags InputConsumptionCache::CheckAndConsumeInput(Input1D in_input, InputReceiverInterface const* in_input_receiver, QueryInputStateFlags in_flags)
+	{
+		return DoCheckAndConsumeInputAndRelated(in_input, in_input_receiver, in_flags, [&](QueryInputStateResultFlags result)
+		{
+			InputTools::EnumerateRelatedInputsDefinition(in_input,
+				[&](VirtualKeyDefinition const& def)
+				{
+					result |= DoCheckAndConsumeInput(def.key, in_input_receiver, in_flags);
+					return false; // don't stop and process next
+				},
+				[&](VirtualInput2DDefinition const& def)
+				{
+					result |= DoCheckAndConsumeInput(def.input2D, in_input_receiver, in_flags);
+					return false; // don't stop and process next			
+				}
+			);
+			return result;
+		});
+	}
+
+	QueryInputStateResultFlags InputConsumptionCache::CheckAndConsumeInput(Input2D in_input, InputReceiverInterface const* in_input_receiver, QueryInputStateFlags in_flags)
+	{
+		return DoCheckAndConsumeInputAndRelated(in_input, in_input_receiver, in_flags, [&](QueryInputStateResultFlags result)
+		{
+			InputTools::EnumerateRelatedInputsDefinition(in_input, [&](VirtualInput2DDefinition const& def)
+			{
+				result |= DoCheckAndConsumeInput(def.input1D_x, in_input_receiver, in_flags);
+				result |= DoCheckAndConsumeInput(def.input1D_y, in_input_receiver, in_flags);
+				return false; // don't stop and process next			
+			});
+			return result;
+		});
+	}
+
+	template<MappedInputType MAPPED_INPUT_TYPE>
+	QueryInputStateResult_t<MAPPED_INPUT_TYPE> QueryMappedInputStateFinalization(MAPPED_INPUT_TYPE in_input, InputDeviceInterface const* in_input_device, QueryInputStateResultFlags result_flags)
+	{
+		// in case of rejection we onlyu keep rejection bit
+		if (HasAnyFlags(result_flags, QueryInputStateResultFlags::REJECTED_INPUT))
+			return { {}, QueryInputStateResultFlags::REJECTED_INPUT };
+
+		std::optional<Input1DState> state = in_input_device->GetInputState(in_input);
+
+		// an unhandled event happens whenver neg_key or pos_key is defined but not handled by the event
+		// in that case, the state returned is empty
+		if (HasAnyFlags(result_flags, QueryInputStateResultFlags::KNOWN_INPUT))
+			if (!state.has_value())
+				result_flags |= QueryInputStateResultFlags::UNHANDLED_INPUT;
+
+		return { state, result_flags };
+	}
+
+	QueryInputStateResult_t<MappedInput1D> InputConsumptionCache::QueryInputState(MappedInput1D in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, QueryInputStateFlags in_flags)
+	{
+		QueryInputStateResultFlags result_flags = QueryInputStateResultFlags::NONE;
+
+		// check and consume all keys
+		result_flags |= CheckAndConsumeInput(in_input.neg_key, in_input_receiver, in_flags);
+		result_flags |= CheckAndConsumeInput(in_input.pos_key, in_input_receiver, in_flags);
+
+		// request finalization
+		return QueryMappedInputStateFinalization(in_input, in_input_device, result_flags);
+	}
+
+	QueryInputStateResult_t<MappedInput2D> InputConsumptionCache::QueryInputState(MappedInput2D in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, QueryInputStateFlags in_flags)
+	{
+		QueryInputStateResultFlags result_flags = QueryInputStateResultFlags::NONE;
+
+		// check and consume all keys
+		result_flags |= CheckAndConsumeInput(in_input.left_key, in_input_receiver, in_flags);
+		result_flags |= CheckAndConsumeInput(in_input.right_key, in_input_receiver, in_flags);
+		result_flags |= CheckAndConsumeInput(in_input.down_key, in_input_receiver, in_flags);
+		result_flags |= CheckAndConsumeInput(in_input.up_key, in_input_receiver, in_flags);
+
+		// request finalization
+		return QueryMappedInputStateFinalization(in_input, in_input_device, result_flags);
+	}
 
 	void InputConsumptionCache::SetConsumeAllInputs(InputReceiverInterface const* in_input_receiver)
 	{
@@ -17,150 +182,6 @@ namespace chaos
 		consumed_input1D.clear();
 		consumed_input2D.clear();
 		all_inputs_consumer.reset();
-	}
-
-	bool InputConsumptionCache::TryConsumeInput(MappedInput1D in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionFlags in_flags)
-	{
-		// a single rejection among input and related inputs is enough for a whole rejection
-		// (but we still need to lock all related inputs even if the very first is a rejection)
-		bool result = true;
-
-		result &= TryConsumeInput(in_input.neg_key, in_input_receiver, in_input_device, in_flags);
-		result &= TryConsumeInput(in_input.pos_key, in_input_receiver, in_input_device, in_flags);
-
-		return (all_inputs_consumer.has_value() && all_inputs_consumer.value() != in_input_receiver) ? // somebody else has locked all inputs
-			false :
-			result;
-	}
-
-	bool InputConsumptionCache::TryConsumeInput(MappedInput2D in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionFlags in_flags)
-	{
-		// a single rejection among input and related inputs is enough for a whole rejection
-		// (but we still need to lock all related inputs even if the very first is a rejection)
-		bool result = true;
-
-		result &= TryConsumeInput(in_input.left_key, in_input_receiver, in_input_device, in_flags);
-		result &= TryConsumeInput(in_input.right_key, in_input_receiver, in_input_device, in_flags);
-		result &= TryConsumeInput(in_input.down_key, in_input_receiver, in_input_device, in_flags);
-		result &= TryConsumeInput(in_input.up_key, in_input_receiver, in_input_device, in_flags);
-
-		return (all_inputs_consumer.has_value() && all_inputs_consumer.value() != in_input_receiver) ? // somebody else has locked all inputs
-			false :
-			result;
-	}
-
-
-	bool InputConsumptionCache::TryConsumeInput(Key in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionFlags in_flags)
-	{
-		// a single rejection among input and related inputs is enough for a whole rejection
-		// (but we still need to lock all related inputs even if the very first is a rejection)
-		bool result = true;
-
-		// handle key
-		result &= DoTryConsumeInput(in_input, in_input_receiver, in_input_device, in_flags);
-		// handle 'virtual related' keys/inputs
-		InputTools::EnumerateRelatedInputs(in_input, [&](Key key, Input1D input)
-		{
-			result &= DoTryConsumeInput(input, in_input_receiver, in_input_device, in_flags);
-			return false; // don't stop and process next
-		});
-
-		return (all_inputs_consumer.has_value() && all_inputs_consumer.value() != in_input_receiver) ? // somebody else has locked all inputs
-			false:
-			result;
-	}
-
-	bool InputConsumptionCache::TryConsumeInput(Input1D in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionFlags in_flags)
-	{
-		// a single rejection among input and related inputs is enough for a whole rejection
-		// (but we still need to lock all related inputs even if the very first is a rejection)
-		bool result = true;
-
-		// handle axis
-		result &= DoTryConsumeInput(in_input, in_input_receiver, in_input_device, in_flags);
-		// handle 'virtual related' keys/inputs
-		InputTools::EnumerateRelatedInputs(in_input, [&](Key key, Input1D input)
-		{
-			result &= DoTryConsumeInput(key, in_input_receiver, in_input_device, in_flags);
-			return false; // don't stop and process next
-		},
-		[&](Input2D input2D, Input1D input1D_x, Input1D input1D_y)
-		{
-			result &= DoTryConsumeInput(input2D, in_input_receiver, in_input_device, in_flags);
-			return false; // don't stop and process next
-		});
-
-		return (all_inputs_consumer.has_value() && all_inputs_consumer.value() != in_input_receiver) ? // somebody else has locked all inputs
-			false :
-			result;
-	}
-
-	bool InputConsumptionCache::TryConsumeInput(Input2D in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionFlags in_flags)
-	{
-		// a single rejection among input and related inputs is enough for a whole rejection
-		// (but we still need to lock all related inputs even if the very first is a rejection)
-		bool result = true;
-
-		// handle stick
-		result &= DoTryConsumeInput(in_input, in_input_receiver, in_input_device, in_flags);
-
-		// handle 'virtual related' inputs
-		InputTools::EnumerateRelatedInputs(in_input, [&](Input2D input2D, Input1D input1D_x, Input1D input1D_y)
-		{
-			result &= DoTryConsumeInput(input1D_x, in_input_receiver, in_input_device, in_flags);
-			result &= DoTryConsumeInput(input1D_y, in_input_receiver, in_input_device, in_flags);
-			return false; // don't stop and process next
-		});
-
-		return (all_inputs_consumer.has_value() && all_inputs_consumer.value() != in_input_receiver) ? // somebody else has locked all inputs
-			false :
-			result;
-	}
-
-	template<typename CONTAINER_TYPE, InputType INPUT_TYPE>
-	bool TryInsertConsumedInput(INPUT_TYPE in_input, CONTAINER_TYPE & inout_consumed_input, InputReceiverInterface const* in_input_receiver, InputConsumptionFlags in_flags)
-	{
-		auto it = inout_consumed_input.find(in_input);
-
-		// input is not required yet
-		if (it == inout_consumed_input.end())
-		{
-			if (!HasAnyFlags(in_flags, InputConsumptionFlags::CONSULT_ONLY))
-				inout_consumed_input.emplace(in_input, in_input_receiver);
-			return true;
-		}
-		// the same input receiver requires for the input. that's ok
-		if (it->second == in_input_receiver)
-			return true;
-		// another receiver requires the input. that's a rejection
-		return false;
-	}
-
-	bool InputConsumptionCache::DoTryConsumeInput(Key in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionFlags in_flags)
-	{
-		std::optional<KeyState> state = in_input_device->GetInputState(in_input);
-		if (!state.has_value())
-			return true; // if the device doesn't handle this input, this shouldn't be considered as a rejection (for example if in_input == UNKOWN that is legit)
-
-		return TryInsertConsumedInput(in_input, consumed_keys, in_input_receiver, in_flags);
-	}
-
-	bool InputConsumptionCache::DoTryConsumeInput(Input1D in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionFlags in_flags)
-	{
-		std::optional<Input1DState> state = in_input_device->GetInputState(in_input);
-		if (!state.has_value())
-			return true; // if the device doesn't handle this input, this shouldn't be considered as a rejection (for example if in_input == UNKOWN that is legit)
-
-		return TryInsertConsumedInput(in_input, consumed_input1D, in_input_receiver, in_flags);
-	}
-
-	bool InputConsumptionCache::DoTryConsumeInput(Input2D in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionFlags in_flags)
-	{
-		std::optional<Input2DState> state = in_input_device->GetInputState(in_input);
-		if (!state.has_value())
-			return true; // if the device doesn't handle this input, this shouldn't be considered as a rejection (for example if in_input == UNKOWN that is legit)
-
-		return TryInsertConsumedInput(in_input, consumed_input2D, in_input_receiver, in_flags);
 	}
 
 }; // namespace chaos

@@ -126,48 +126,22 @@ namespace chaos
 		});
 	}
 
-	template<MappedInputType MAPPED_INPUT_TYPE>
-	QueryInputStateResult_t<MAPPED_INPUT_TYPE> QueryMappedInputStateFinalization(MAPPED_INPUT_TYPE in_input, InputDeviceInterface const* in_input_device, QueryInputStateResultFlags result_flags)
-	{
-		// in case of rejection we onlyu keep rejection bit
-		if (HasAnyFlags(result_flags, QueryInputStateResultFlags::REJECTED_INPUT))
-			return { {}, QueryInputStateResultFlags::REJECTED_INPUT };
-
-		std::optional<Input1DState> state = in_input_device->GetInputState(in_input);
-
-		// an unhandled event happens whenver neg_key or pos_key is defined but not handled by the event
-		// in that case, the state returned is empty
-		if (HasAnyFlags(result_flags, QueryInputStateResultFlags::KNOWN_INPUT))
-			if (!state.has_value())
-				result_flags |= QueryInputStateResultFlags::UNHANDLED_INPUT;
-
-		return { state, result_flags };
-	}
-
 	QueryInputStateResult_t<MappedInput1D> InputConsumptionCache::QueryInputState(MappedInput1D in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, QueryInputStateFlags in_flags)
 	{
 		QueryInputStateResultFlags result_flags = QueryInputStateResultFlags::NONE;
-
-		// check and consume all keys
 		result_flags |= CheckAndConsumeInput(in_input.neg_key, in_input_receiver, in_flags);
 		result_flags |= CheckAndConsumeInput(in_input.pos_key, in_input_receiver, in_flags);
-
-		// request finalization
-		return QueryMappedInputStateFinalization(in_input, in_input_device, result_flags);
+		return QueryInputStateResultFinalization(in_input, in_input_device, result_flags);
 	}
 
 	QueryInputStateResult_t<MappedInput2D> InputConsumptionCache::QueryInputState(MappedInput2D in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, QueryInputStateFlags in_flags)
 	{
 		QueryInputStateResultFlags result_flags = QueryInputStateResultFlags::NONE;
-
-		// check and consume all keys
 		result_flags |= CheckAndConsumeInput(in_input.left_key, in_input_receiver, in_flags);
 		result_flags |= CheckAndConsumeInput(in_input.right_key, in_input_receiver, in_flags);
 		result_flags |= CheckAndConsumeInput(in_input.down_key, in_input_receiver, in_flags);
 		result_flags |= CheckAndConsumeInput(in_input.up_key, in_input_receiver, in_flags);
-
-		// request finalization
-		return QueryMappedInputStateFinalization(in_input, in_input_device, result_flags);
+		return QueryInputStateResultFinalization(in_input, in_input_device, result_flags);
 	}
 
 	void InputConsumptionCache::SetConsumeAllInputs(InputReceiverInterface const* in_input_receiver)

@@ -117,12 +117,21 @@ namespace chaos
 		/** internal method that check whether an input has already been consumed yet. Mark it as consumed */
 		QueryInputStateResultFlags DoCheckAndConsumeInput(Input2D in_input, InputReceiverInterface const* in_input_receiver, QueryInputStateFlags in_flags);
 
+		/** consomme all inputs (with relations) for a given one */
 		template<InputType INPUT_TYPE>
 		QueryInputStateResultFlags DoCheckAndConsumeInputAndRelated(
 			INPUT_TYPE in_input, 
 			InputReceiverInterface const* in_input_receiver, 
 			QueryInputStateFlags in_flags, 
 			LightweightFunction<QueryInputStateResultFlags(QueryInputStateResultFlags)> check_related_input_func
+		);
+
+		/** finalize query result */
+		template<InputTypeExt INPUT_TYPE_EXT>
+		QueryInputStateResult_t<INPUT_TYPE_EXT> QueryInputStateResultFinalization(
+			INPUT_TYPE_EXT in_input,
+			InputDeviceInterface const* in_input_device, 
+			QueryInputStateResultFlags result_flags
 		);
 
 	protected:
@@ -144,13 +153,24 @@ namespace chaos
 	QueryInputStateResult_t<INPUT_TYPE> InputConsumptionCache::QueryInputState(INPUT_TYPE in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, QueryInputStateFlags in_flags)
 	{
 		QueryInputStateResultFlags result_flags = CheckAndConsumeInput(in_input, in_input_receiver, in_flags);
+		return QueryInputStateResultFinalization(in_input, in_input_device, result_flags);
+	}
 
+	template<InputTypeExt INPUT_TYPE_EXT>
+	QueryInputStateResult_t<INPUT_TYPE_EXT> InputConsumptionCache::QueryInputStateResultFinalization(INPUT_TYPE_EXT in_input, InputDeviceInterface const* in_input_device, QueryInputStateResultFlags result_flags)
+	{
+		// in case of rejection we onlyu keep rejection bit
 		if (HasAnyFlags(result_flags, QueryInputStateResultFlags::REJECTED_INPUT))
 			return { {}, QueryInputStateResultFlags::REJECTED_INPUT };
-
+		
 		auto state = in_input_device->GetInputState(in_input);
-		if (!state.has_value() && HasAnyFlags(result_flags, QueryInputStateResultFlags::KNOWN_INPUT))
-			result_flags |= QueryInputStateResultFlags::UNHANDLED_INPUT;
+
+		// an unhandled event happens whenver neg_key or pos_key is defined but not handled by the event
+		// in that case, the state returned is empty
+		if (HasAnyFlags(result_flags, QueryInputStateResultFlags::KNOWN_INPUT))
+			if (!state.has_value())
+				result_flags |= QueryInputStateResultFlags::UNHANDLED_INPUT;
+
 		return { state, result_flags };
 	}
 

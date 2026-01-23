@@ -53,6 +53,17 @@ namespace chaos
 		/** override */
 		virtual InputConditionResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
 		{
+
+
+
+
+			return {};
+
+
+
+#if 0
+
+
 			if (out_state == nullptr && out_value == nullptr && query_type == QueryInputRequestType::None) // this request is useless
 				return InputConditionResult::Invalid;
 
@@ -118,6 +129,8 @@ namespace chaos
 				assert(0);
 			}
 			return InputConditionResult::True; // whatever the value is, it's a success !
+
+#endif
 		}
 
 		/** override */

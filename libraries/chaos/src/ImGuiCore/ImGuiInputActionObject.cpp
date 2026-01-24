@@ -29,7 +29,7 @@ namespace chaos
 
 				ImVec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-				InputConditionResult request_result = in_condition.Check(input_receiver, input_device, *consumption_cache);
+				InputConditionResult request_result = in_condition.Check({ input_receiver, input_device, consumption_cache });
 				if (request_result == InputConditionResult::Invalid)
 					color = { 1.0f, 0.0f, 0.0f, 1.0f };
 				else if (request_result == InputConditionResult::Rejected)

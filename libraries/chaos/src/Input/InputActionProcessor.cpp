@@ -25,7 +25,7 @@ namespace chaos
 	void InputActionProcessor::MarkAllRequestInputsAsConsumedInApplicationCache(InputConditionBase const& in_condition)
 	{
 		if (WindowApplication* window_application = Application::GetInstance())
-			in_condition.Check(nullptr, input_device, window_application->GetInputConsumptionCache());
+			in_condition.Check({nullptr, input_device, &window_application->GetInputConsumptionCache()});
 	}
 
 }; // namespace chaos

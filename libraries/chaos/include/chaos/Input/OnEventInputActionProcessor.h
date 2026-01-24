@@ -34,7 +34,7 @@ namespace chaos
 		{
 			// always consum input even if not related because, later on, maybe some composite request with the related key 
 			// and some consumed input will be checked
-			if (in_condition.Check(input_receiver, input_device, *consumption_cache) == InputConditionResult::True)
+			if (in_condition.Check({input_receiver, input_device, consumption_cache}) == InputConditionResult::True)
 			{
 				if (in_condition.IsRequestRelatedTo(input)) // ignore all Actions with no relation with the handled event
 				{

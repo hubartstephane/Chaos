@@ -4,7 +4,7 @@
 
 namespace chaos
 {
-	InputConditionResult InputConditionBase::Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const
+	InputConditionResult InputConditionBase::Check(InputConditionCheckParams const& in_params) const
 	{
 		return InputConditionResult::Invalid;
 	}

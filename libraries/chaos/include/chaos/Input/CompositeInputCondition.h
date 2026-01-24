@@ -52,7 +52,7 @@ namespace chaos
 		}
 
 		/** override */
-		virtual InputConditionResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
+		virtual InputConditionResult Check(InputConditionCheckParams const& in_params) const override
 		{
 			std::optional<InputConditionResult> result;
 
@@ -60,7 +60,7 @@ namespace chaos
 			{
 				auto CheckChildInputRequest = [&](auto const& child_request)
 				{
-					InputConditionResult child_result = child_request.Check(in_input_receiver, in_input_device, in_consumption_cache);
+					InputConditionResult child_result = child_request.Check(in_params);
 					result = AggregateResult(result, child_result);
 				};
 				(CheckChildInputRequest(child_request), ...);

@@ -51,12 +51,12 @@ namespace chaos
 		InspectInputCondition(InspectInputCondition const& src) = default;
 
 		/** override */
-		virtual InputConditionResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
+		virtual InputConditionResult Check(InputConditionCheckParams const& in_params) const override
 		{
 			if (out_state == nullptr && out_value == nullptr && query_type == QueryInputRequestType::None) // this request is useless
 				return InputConditionResult::Invalid;
 
-			auto query_result = in_consumption_cache.QueryInputState(input, in_input_receiver, in_input_device);
+			auto query_result = in_params.consumption_cache->QueryInputState(input, in_params.input_receiver, in_params.input_device);
 			if (query_result.response_status == InputStateResponseStatus::FAILURE)
 				return InputConditionResult::Rejected;
 			if (!query_result.input_state.has_value())

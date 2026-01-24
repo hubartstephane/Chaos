@@ -25,7 +25,7 @@ namespace chaos
 		ModifiersInputCondition(ModifiersInputCondition const& src) = default;
 
 		/** override */
-		virtual InputConditionResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override;
+		virtual InputConditionResult Check(InputConditionCheckParams const& in_params) const override;
 
 		/** override */
 		virtual char const* GetDebugInfo(InputConditionDebugInfoStorage & debug_info_storage) const override;

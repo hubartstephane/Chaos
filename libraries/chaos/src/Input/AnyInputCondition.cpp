@@ -24,11 +24,11 @@ namespace chaos
 		return true;
 	}
 
-	InputConditionResult AnyInputCondition::Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const
+	InputConditionResult AnyInputCondition::Check(InputConditionCheckParams const& in_params) const
 	{
-		in_consumption_cache.SetConsumeAllInputs(in_input_receiver);
+		in_params.consumption_cache->SetConsumeAllInputs(in_params.input_receiver);
 
-		return in_input_device->IsAnyInputActive()?
+		return in_params.input_device->IsAnyInputActive()?
 			InputConditionResult::True:
 			InputConditionResult::False;
 	}

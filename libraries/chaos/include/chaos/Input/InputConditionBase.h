@@ -40,6 +40,22 @@ namespace chaos
 	};
 
 	/**
+	* InputConditionCheckContext: a class that contains all information required for InputConditionBase::Check(...) methods
+	*/
+
+	class InputConditionCheckParams
+	{
+	public:
+
+		/** the input receiver that requested the condition */
+		InputReceiverInterface const * input_receiver = nullptr;
+		/** the input device that provides all inputs */
+		InputDeviceInterface const * input_device = nullptr;
+		/** the consumption cache to use */
+		InputConsumptionCache * consumption_cache = nullptr;
+	};
+
+	/**
 	* InputConditionBase: a base request for any user input (keyboard, mouse, gamepad)
 	*/
 
@@ -48,7 +64,7 @@ namespace chaos
 	public:
 
 		/** check whether the request matches a given input device state (polling) */
-		virtual InputConditionResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache & in_consumption_cache) const;
+		virtual InputConditionResult Check(InputConditionCheckParams const & in_params) const;
 
 		/** check whether the request is related to some input */
 		virtual bool IsRequestRelatedTo(Key in_input) const;

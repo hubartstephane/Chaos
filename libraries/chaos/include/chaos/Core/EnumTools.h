@@ -17,13 +17,25 @@ namespace chaos
 }; // namespace chaos
 
 /** you may use an additionnal argument to represent the function API (CHAOS_API for example) */
-#define CHAOS_DECLARE_ENUM_BITMASK_METHOD(enum_type, ...)\
-CHAOS_GENERATE_VALUE_MAPPING_SPECIALIZATION(IsEnumBitmask, enum_type, bool, true)\
+#define CHAOS_DECLARE_ENUM_BOOL_METHOD(enum_type, ...)\
 __VA_ARGS__ enum_type operator|(enum_type a, enum_type b);\
 __VA_ARGS__ enum_type operator&(enum_type a, enum_type b);\
 __VA_ARGS__ enum_type operator~(enum_type a);\
 __VA_ARGS__ enum_type & operator|=(enum_type & a, enum_type b);\
-__VA_ARGS__ enum_type & operator&=(enum_type & a, enum_type b);\
+__VA_ARGS__ enum_type & operator&=(enum_type & a, enum_type b);
+
+/** you may use an additionnal argument to represent the function API (CHAOS_API for example) */
+#define CHAOS_IMPLEMENT_ENUM_BOOL_METHOD(enum_type, ...)\
+__VA_ARGS__ enum_type operator|(enum_type a, enum_type b){ return static_cast<enum_type>(static_cast<int>(a) | static_cast<int>(b));}\
+__VA_ARGS__ enum_type operator&(enum_type a, enum_type b){ return static_cast<enum_type>(static_cast<int>(a) & static_cast<int>(b));};\
+__VA_ARGS__ enum_type operator~(enum_type a){ return static_cast<enum_type>(~static_cast<int>(a));}\
+__VA_ARGS__ enum_type& operator|=(enum_type& a, enum_type b) { a = a | b; return a; }\
+__VA_ARGS__ enum_type& operator&=(enum_type& a, enum_type b) { a = a & b; return a; }
+
+/** you may use an additionnal argument to represent the function API (CHAOS_API for example) */
+#define CHAOS_DECLARE_ENUM_BITMASK_METHOD(enum_type, ...)\
+CHAOS_GENERATE_VALUE_MAPPING_SPECIALIZATION(IsEnumBitmask, enum_type, bool, true)\
+CHAOS_DECLARE_ENUM_BOOL_METHOD(enum_type, __VA_ARGS__)\
 __VA_ARGS__ chaos::EnumBitmaskMetaData<enum_type> const * GetEnumBitmaskMetaData(boost::mpl::identity<enum_type>);\
 __VA_ARGS__ bool IsNull(enum_type src);\
 __VA_ARGS__ bool HasAnyFlags(enum_type src, enum_type flags);\
@@ -32,11 +44,7 @@ __VA_ARGS__ bool AreValidFlags(enum_type src);
 
 /** you may use an additionnal argument to represent the function API (CHAOS_API for example) */
 #define CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(enum_type, bitmask_metadata, ...)\
-__VA_ARGS__ enum_type operator|(enum_type a, enum_type b){ return static_cast<enum_type>(static_cast<int>(a) | static_cast<int>(b));}\
-__VA_ARGS__ enum_type operator&(enum_type a, enum_type b){ return static_cast<enum_type>(static_cast<int>(a) & static_cast<int>(b));};\
-__VA_ARGS__ enum_type operator~(enum_type a){ return static_cast<enum_type>(~static_cast<int>(a));}\
-__VA_ARGS__ enum_type& operator|=(enum_type& a, enum_type b) { a = a | b; return a; }\
-__VA_ARGS__ enum_type& operator&=(enum_type& a, enum_type b) { a = a & b; return a; }\
+CHAOS_IMPLEMENT_ENUM_BOOL_METHOD(enum_type, __VA_ARGS__)\
 __VA_ARGS__ chaos::EnumBitmaskMetaData<enum_type> const * GetEnumBitmaskMetaData(boost::mpl::identity<enum_type>)\
 {\
 	return bitmask_metadata;\

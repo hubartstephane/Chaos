@@ -144,11 +144,7 @@ namespace chaos
 		InputStateResponseFlags  response_flags  = InputStateResponseFlags::NONE;
 		InputStateResponseStatus response_status = InputStateResponseStatus::SUCCESS;
 		for (Key key : {in_input.neg_key, in_input.pos_key})
-		{
-			InputStateResponseStatus intermediate_response_status = TryConsumeInput(key, in_input_receiver, in_query_flags, response_flags);
-			if (intermediate_response_status == InputStateResponseStatus::FAILURE)
-				response_status = InputStateResponseStatus::FAILURE;					
-		}
+			response_status &= TryConsumeInput(key, in_input_receiver, in_query_flags, response_flags);
 		return FinalizeResponse(in_input, in_input_device, response_flags, response_status);
 	}
 
@@ -157,11 +153,7 @@ namespace chaos
 		InputStateResponseFlags  response_flags  = InputStateResponseFlags::NONE;
 		InputStateResponseStatus response_status = InputStateResponseStatus::SUCCESS;
 		for (Key key : {in_input.left_key, in_input.right_key, in_input.down_key, in_input.up_key})
-		{
-			InputStateResponseStatus intermediate_response_status = TryConsumeInput(key, in_input_receiver, in_query_flags, response_flags);
-			if (intermediate_response_status == InputStateResponseStatus::FAILURE)
-				response_status = InputStateResponseStatus::FAILURE;
-		}
+			response_status &= TryConsumeInput(key, in_input_receiver, in_query_flags, response_flags);
 		return FinalizeResponse(in_input, in_input_device, response_flags, response_status);
 	}
 

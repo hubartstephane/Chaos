@@ -67,19 +67,12 @@ namespace chaos
 		LightweightFunction<InputStateResponseStatus()> consume_related_input_func
 	)
 	{
-		// query for the input
-		InputStateResponseStatus response_status = DoTryConsumeInput(in_input, in_input_receiver, in_query_flags, out_response_flags);
-
-		// query for the related inputs
-		InputStateResponseStatus intermediate_response_status = consume_related_input_func();
-		if (intermediate_response_status == InputStateResponseStatus::FAILURE)
+		InputStateResponseStatus response_status = InputStateResponseStatus::SUCCESS;
+		response_status &= DoTryConsumeInput(in_input, in_input_receiver, in_query_flags, out_response_flags);
+		response_status &= consume_related_input_func();
+		
+		if (response_status == InputStateResponseStatus::FAILURE)
 			return InputStateResponseStatus::FAILURE;
-	
-		// check whether all inputs are locked by another user
-		// the order is important. 'consume_related_input_func' must have been called before, no matter what
-		// -USER1 locks every inputs
-		// -USER2 requests KEY1 -> this fails due to the lock
-		// -USER1 requests KEY1 -> this fails due to USER2
 		if (all_inputs_consumer.has_value() && all_inputs_consumer.value() != in_input_receiver)
 			return InputStateResponseStatus::FAILURE;
 

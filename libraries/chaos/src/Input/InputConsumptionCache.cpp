@@ -129,18 +129,16 @@ namespace chaos
 	QueryInputStateResult_t<MappedInput1D> InputConsumptionCache::QueryInputState(MappedInput1D in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, QueryInputStateFlags in_flags)
 	{
 		QueryInputStateResultFlags result_flags = QueryInputStateResultFlags::NONE;
-		result_flags |= CheckAndConsumeInput(in_input.neg_key, in_input_receiver, in_flags);
-		result_flags |= CheckAndConsumeInput(in_input.pos_key, in_input_receiver, in_flags);
+		for (Key key : {in_input.neg_key, in_input.pos_key})
+			result_flags |= CheckAndConsumeInput(key, in_input_receiver, in_flags);
 		return QueryInputStateResultFinalization(in_input, in_input_device, result_flags);
 	}
 
 	QueryInputStateResult_t<MappedInput2D> InputConsumptionCache::QueryInputState(MappedInput2D in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, QueryInputStateFlags in_flags)
 	{
 		QueryInputStateResultFlags result_flags = QueryInputStateResultFlags::NONE;
-		result_flags |= CheckAndConsumeInput(in_input.left_key, in_input_receiver, in_flags);
-		result_flags |= CheckAndConsumeInput(in_input.right_key, in_input_receiver, in_flags);
-		result_flags |= CheckAndConsumeInput(in_input.down_key, in_input_receiver, in_flags);
-		result_flags |= CheckAndConsumeInput(in_input.up_key, in_input_receiver, in_flags);
+		for (Key key : {in_input.left_key, in_input.right_key, in_input.down_key, in_input.up_key})
+			result_flags |= CheckAndConsumeInput(key, in_input_receiver, in_flags);
 		return QueryInputStateResultFinalization(in_input, in_input_device, result_flags);
 	}
 

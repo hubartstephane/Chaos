@@ -61,14 +61,6 @@ namespace chaos
 	};
 
 	/**
-	 * Some functor  
-	 **/
-
-	using VirtualKeyEnumerationFunction = LightweightFunction<bool(Key, Input1D)>;
-
-	using VirtualInputEnumerationFunction = LightweightFunction<bool(Input1D, Input1D, Input2D)>;
-
-	/**
 	 * InputConsumptionCache: an object that keeps that trace of which inputs have been handled this frame
 	 * 
 	 * XXX: A trace of the input receiver consuming an input is kept. The same input may be further request but only by the same consumer

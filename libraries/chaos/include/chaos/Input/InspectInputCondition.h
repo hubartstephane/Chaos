@@ -53,43 +53,16 @@ namespace chaos
 		/** override */
 		virtual InputConditionResult Check(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) const override
 		{
-
-
-
-
-			return {};
-
-
-
-#if 0
-
-
 			if (out_state == nullptr && out_value == nullptr && query_type == QueryInputRequestType::None) // this request is useless
 				return InputConditionResult::Invalid;
-
-
-			shuxxxx
-
 
 			auto query_result = in_consumption_cache.QueryInputState(input, in_input_receiver, in_input_device);
 			if (HasAnyFlags(query_result.flags, QueryInputStateResultFlags::REJECTED_INPUT))
 				return InputConditionResult::Rejected;
-			if (HasAnyFlags(query_result.flags, QueryInputStateResultFlags::REJECTED_INPUT))
-				return InputConditionResult::Invalid;
-
-
-
-
-			// find and handle state
-			std::optional<state_type> input_state = in_input_device->GetInputState(input);
-			if (!input_state.has_value())
+			if (!query_result.input_state.has_value())
 				return InputConditionResult::Invalid; // abnormal (request for an input not handled by the receiver)
 
-			// consum the key of the request (no one can use it anymore until next frame)
-			//if (!in_consumption_cache.QueryInputState(input, in_input_receiver, in_input_device))
-			//	return InputConditionResult::Rejected;
-
-			return OuputDataAndReturnResult(&query_result.state.value());
+			return OuputDataAndReturnResult(&query_result.input_state.value());
 		}
 
 		/** output necessary data and get request result from the state and the query */
@@ -129,8 +102,6 @@ namespace chaos
 				assert(0);
 			}
 			return InputConditionResult::True; // whatever the value is, it's a success !
-
-#endif
 		}
 
 		/** override */

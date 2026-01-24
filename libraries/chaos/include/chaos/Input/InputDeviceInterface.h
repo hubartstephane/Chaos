@@ -50,7 +50,7 @@ namespace chaos
 
 		/** get state value for any input */
 		template<InputTypeExt INPUT_TYPE_EXT>
-		InputValueType_t<INPUT_TYPE_EXT> GetInputValue(INPUT_TYPE_EXT in_input) const
+		InputValue_t<INPUT_TYPE_EXT> GetInputValue(INPUT_TYPE_EXT in_input) const
 		{
 			if (auto input_state = GetInputState(in_input))
 				return input_state->GetValue();

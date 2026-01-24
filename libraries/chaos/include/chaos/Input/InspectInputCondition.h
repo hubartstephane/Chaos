@@ -37,7 +37,7 @@ namespace chaos
 
 		using input_type = INPUT_TYPE_EXT;
 		using state_type = InputState_t<input_type>;
-		using value_type = InputValueType_t<input_type>;
+		using value_type = InputValue_t<input_type>;
 
 		/** constructor */
 		InspectInputCondition(input_type in_input, state_type* in_out_state, value_type* in_out_value, QueryInputRequestType in_query_type):
@@ -190,7 +190,7 @@ namespace chaos
 	}
 
 	template<InputTypeExt INPUT_TYPE_EXT>
-	InspectInputCondition<INPUT_TYPE_EXT> QueryInput(INPUT_TYPE_EXT in_input, InputValueType_t<INPUT_TYPE_EXT> *out_value, QueryInputRequestType in_query_type = QueryInputRequestType::None)
+	InspectInputCondition<INPUT_TYPE_EXT> QueryInput(INPUT_TYPE_EXT in_input, InputValue_t<INPUT_TYPE_EXT> *out_value, QueryInputRequestType in_query_type = QueryInputRequestType::None)
 	{
 		return InspectInputCondition<INPUT_TYPE_EXT>(in_input, nullptr, out_value, in_query_type);
 	}

@@ -38,7 +38,7 @@ namespace chaos
 		return GetInputStateHelper(input);
 	}
 
-	std::optional<Input1DState> InputDeviceInterface::GetInputState(MappedInput1D input) const
+	std::optional<Input1DState> InputDeviceInterface::GetInputState(MappedInput1D const & input) const
 	{
 		Input1DState result;
 
@@ -63,7 +63,7 @@ namespace chaos
 		return result;
 	}
 
-	std::optional<Input2DState> InputDeviceInterface::GetInputState(MappedInput2D input) const
+	std::optional<Input2DState> InputDeviceInterface::GetInputState(MappedInput2D const & input) const
 	{
 		Input2DState result;
 

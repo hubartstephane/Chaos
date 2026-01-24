@@ -37,9 +37,9 @@ namespace chaos
 		/** gets any input2D state */
 		std::optional<Input2DState> GetInputState(Input2D input) const;
 		/** gets any Mappedinput1D state */
-		std::optional<Input1DState> GetInputState(MappedInput1D input) const;
+		std::optional<Input1DState> GetInputState(MappedInput1D const & input) const;
 		/** gets any Mappedinput2D state */
-		std::optional<Input2DState> GetInputState(MappedInput2D input) const;
+		std::optional<Input2DState> GetInputState(MappedInput2D const & input) const;
 
 		/** enumerate keys */
 		bool ForAllKeys(ForAllKeysFunction func) const;

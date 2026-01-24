@@ -139,22 +139,16 @@ namespace chaos
 		});
 	}
 
-	InputStateResponse_t<MappedInput1D> InputConsumptionCache::QueryInputState(MappedInput1D in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputStateQueryFlags in_query_flags)
+	InputStateResponse_t<MappedInput1D> InputConsumptionCache::QueryInputState(MappedInput1D const &in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputStateQueryFlags in_query_flags)
 	{
-		InputStateResponseFlags  response_flags  = InputStateResponseFlags::NONE;
-		InputStateResponseStatus response_status = InputStateResponseStatus::SUCCESS;
-		for (Key key : {in_input.neg_key, in_input.pos_key})
-			response_status &= TryConsumeInput(key, in_input_receiver, in_query_flags, response_flags);
-		return FinalizeResponse(in_input, in_input_device, response_flags, response_status);
+		std::initializer_list<Key> keys = { in_input.neg_key, in_input.pos_key };
+		return QueryMappedInputState(in_input, keys, in_input_receiver, in_input_device, in_query_flags);
 	}
 
-	InputStateResponse_t<MappedInput2D> InputConsumptionCache::QueryInputState(MappedInput2D in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputStateQueryFlags in_query_flags)
+	InputStateResponse_t<MappedInput2D> InputConsumptionCache::QueryInputState(MappedInput2D const &in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputStateQueryFlags in_query_flags)
 	{
-		InputStateResponseFlags  response_flags  = InputStateResponseFlags::NONE;
-		InputStateResponseStatus response_status = InputStateResponseStatus::SUCCESS;
-		for (Key key : {in_input.left_key, in_input.right_key, in_input.down_key, in_input.up_key})
-			response_status &= TryConsumeInput(key, in_input_receiver, in_query_flags, response_flags);
-		return FinalizeResponse(in_input, in_input_device, response_flags, response_status);
+		std::initializer_list<Key> keys = { in_input.left_key, in_input.right_key, in_input.down_key, in_input.up_key };
+		return QueryMappedInputState(in_input, keys, in_input_receiver, in_input_device, in_query_flags);
 	}
 
 	void InputConsumptionCache::SetConsumeAllInputs(InputReceiverInterface const* in_input_receiver)

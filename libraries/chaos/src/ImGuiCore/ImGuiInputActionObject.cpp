@@ -45,16 +45,16 @@ namespace chaos
 				InputConditionDebugInfoStorage debug_info_storage;
 				char const* debug_info = in_condition.GetDebugInfo(debug_info_storage);
 				ImGui::TableSetColumnIndex(column_index++); ImGui::TextColored(color, "%s", debug_info);
-
-				ImGui::TableSetColumnIndex(column_index++);
-				if (!in_enabled)
-					ImGui::TextColored(color, "Disabled", in_title);
 					
 				ImGui::TableSetColumnIndex(column_index++);
 				if (request_result == InputConditionResult::Invalid)
 					ImGui::TextColored(color, "Invalid", in_title);
 				else if (request_result == InputConditionResult::Rejected)
 					ImGui::TextColored(color, "Rejected", in_title);
+
+				ImGui::TableSetColumnIndex(column_index++);
+				if (!in_enabled)
+					ImGui::TextColored(color, "Disabled", in_title);
 
 				ImGui::EndDisabled();
 
@@ -67,7 +67,7 @@ namespace chaos
 			InputConsumptionCache* consumption_cache = nullptr;
 		};
 
-		ImGuiTools::DrawImGuiTable("objects", {}, "Description", "Object", "Input", "Enabled", "Request Status")([&]()
+		ImGuiTools::DrawImGuiTable("objects", {}, "Description", "Object", "Input", "Request Status", "Enabled")([&]()
 		{
 			InputConsumptionCache consumption_cache;
 

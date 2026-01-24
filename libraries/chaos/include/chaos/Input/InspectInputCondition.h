@@ -57,7 +57,7 @@ namespace chaos
 				return InputConditionResult::Invalid;
 
 			auto query_result = in_consumption_cache.QueryInputState(input, in_input_receiver, in_input_device);
-			if (HasAnyFlags(query_result.flags, InputStateResponseFlags::REJECTED_INPUT))
+			if (query_result.response_status == InputStateResponseStatus::FAILURE)
 				return InputConditionResult::Rejected;
 			if (!query_result.input_state.has_value())
 				return InputConditionResult::Invalid; // abnormal (request for an input not handled by the receiver)

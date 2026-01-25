@@ -45,7 +45,7 @@ namespace chaos
 		/** default constructor */
 		LightweightFunction() = default;
 		/** constructor with initializer */
-		template<typename CALLABLE>
+		template<std::invocable<PARAMS...> CALLABLE>
 		LightweightFunction(CALLABLE const& callable)
 		{
 			if constexpr (std::is_same_v<CALLABLE, LightweightFunction>)
@@ -60,7 +60,7 @@ namespace chaos
 			}
 		}
 		/** constructor with initializer */
-		template<typename CALLABLE>
+		template<std::invocable<PARAMS...> CALLABLE>
 		LightweightFunction(CALLABLE& callable)
 		{
 			if constexpr (std::is_same_v<CALLABLE, LightweightFunction>)
@@ -76,7 +76,7 @@ namespace chaos
 		}
 
 		/** assign a new real underlying function */
-		template<typename CALLABLE>
+		template<std::invocable<PARAMS...> CALLABLE>
 		LightweightFunction& operator = (CALLABLE const& callable)
 		{
 			if constexpr (std::is_same_v<CALLABLE, LightweightFunction>)
@@ -86,14 +86,13 @@ namespace chaos
 			}
 			else
 			{
-
 				process_function = &ProcessConst<CALLABLE>;
 				src = (void*)(&callable);
 			}
 			return *this;
 		}
 		/** assign a new real underlying function */
-		template<typename CALLABLE>
+		template<std::invocable<PARAMS...> CALLABLE>
 		LightweightFunction& operator = (CALLABLE& callable)
 		{
 			if constexpr (std::is_same_v<CALLABLE, LightweightFunction>)
@@ -125,7 +124,7 @@ namespace chaos
 	protected:
 
 		/** internal method that make casts and call the underlying code */
-		template<typename CALLABLE>
+		template<std::invocable<PARAMS...> CALLABLE>
 		static RETURN_TYPE Process(void* src, PARAMS... params)
 		{
 			auto callable = reinterpret_cast<CALLABLE*>(src);
@@ -133,7 +132,7 @@ namespace chaos
 		}
 
 		/** internal method that make casts and call the underlying code */
-		template<typename CALLABLE>
+		template<std::invocable<PARAMS...> CALLABLE>
 		static RETURN_TYPE ProcessConst(void* src, PARAMS... params)
 		{
 			auto callable = reinterpret_cast<CALLABLE const*>(src);

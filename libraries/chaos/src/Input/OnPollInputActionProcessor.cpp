@@ -5,8 +5,7 @@
 namespace chaos
 {
 	OnPollInputActionProcessor::OnPollInputActionProcessor(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache* in_consumption_cache) :
-		InputActionProcessor(in_input_receiver, in_input_device),
-		consumption_cache(in_consumption_cache)
+		InputActionProcessor(in_input_receiver, in_input_device, in_consumption_cache)
 	{
 	}
 

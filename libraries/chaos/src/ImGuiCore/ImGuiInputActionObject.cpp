@@ -17,8 +17,7 @@ namespace chaos
 			using InputActionProcessor::InputActionProcessor;
 
 			OnQueryInputActionProcessor(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache* in_consumption_cache):
-				InputActionProcessor(in_input_receiver, in_input_device),
-				consumption_cache(in_consumption_cache)
+				InputActionProcessor(in_input_receiver, in_input_device, in_consumption_cache)
 			{
 			}
 
@@ -60,11 +59,6 @@ namespace chaos
 
 				return false; // continue with following input receivers
 			}
-
-		protected:
-
-			/** the consumption cache */
-			InputConsumptionCache* consumption_cache = nullptr;
 		};
 
 		ImGuiTools::DrawImGuiTable("objects", {}, "Description", "Object", "Input", "Request Status", "Enabled")([&]()

@@ -15,7 +15,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		InputActionProcessor(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device);
+		InputActionProcessor(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache* in_consumption_cache);
 
 		/** check for condition then process rquested action */
 		virtual bool CheckAndProcess(InputConditionBase const& in_condition, char const* in_title, InputAction const & in_action = {});
@@ -28,16 +28,13 @@ namespace chaos
 		}
 
 	protected:
-
-		/** Mark input as consumed in the WindowApplication's InputConsumptionCache */
-		void MarkAllRequestInputsAsConsumedInApplicationCache(InputConditionBase const& in_condition);
-
-	protected:
 		
 		/** the handled receiver */
 		InputReceiverInterface const* input_receiver = nullptr;
 		/** the input device considered */
 		InputDeviceInterface const* input_device = nullptr;
+		/** the consumption cache */
+		InputConsumptionCache* consumption_cache = nullptr;
 	};
 
 #endif

@@ -19,11 +19,6 @@ namespace chaos
 
 		/** override */
 		virtual bool CheckAndProcess(InputConditionBase const& in_condition, char const* in_title, InputAction const & in_action) override;
-
-	protected:
-
-		/** the consumption cache */
-		InputConsumptionCache* consumption_cache = nullptr;
 	};
 
 #endif

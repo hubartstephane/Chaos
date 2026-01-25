@@ -8,6 +8,8 @@ namespace chaos
 
 	static EnumMetaData<Key> const Key_metadata =
 	{
+		CHAOS_KEYBOARD_DEF(UNKNOWN),
+
 		CHAOS_KEYBOARD_DEF(SPACE),
 		CHAOS_KEYBOARD_DEF(APOSTROPHE),
 		CHAOS_KEYBOARD_DEF(COMMA),

@@ -4,47 +4,7 @@ namespace chaos
 
 	class InputActionProcessor;
 
-	using InputActionFunction = LightweightFunction<void()>;
-
-	class InputAction;
-
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-	/**
-	* InputAction: defines an action to process (when some conditions are meet)
-	*/
-
-	class CHAOS_API InputAction
-	{
-	public:
-
-		/** default constructor */
-		InputAction(){}
-
-		/** initializer constructor */
-		template<std::invocable CALLABLE>
-		InputAction(CALLABLE const & in_action_function, bool in_enabled = true):
-			action_function(in_action_function),
-			enabled(in_enabled)
-		{}
-
-		/** copy constructor */
-		InputAction(InputAction const &) = default;
-
-		/** processing function */
-		void Process() const
-		{
-			if (enabled && action_function.IsValid())
-				action_function();
-		}
-
-	public:
-
-		/** the function to execute */
-		InputActionFunction action_function;
-		/** whether the action is to be really done */
-		bool enabled = true;
-	};
 
 	/**
 	* InputActionProcessor

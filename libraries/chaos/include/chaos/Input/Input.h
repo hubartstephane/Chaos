@@ -23,6 +23,7 @@
 #include "chaos/Input/InspectInputCondition.h"
 #include "chaos/Input/AnyInputCondition.h"
 #include "chaos/Input/MouseButtonEvent.h"
+#include "chaos/Input/InputAction.h"
 #include "chaos/Input/InputActionProcessor.h"
 #include "chaos/Input/OnEventInputActionProcessor.h"
 #include "chaos/Input/OnPollInputActionProcessor.h"

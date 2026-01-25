@@ -10,13 +10,10 @@ namespace chaos
 	{
 	}
 
-	bool OnPollInputActionProcessor::CheckAndProcess(InputConditionBase const& in_condition, char const* in_title, bool in_enabled, InputActionFunction in_func)
+	bool OnPollInputActionProcessor::CheckAndProcess(InputConditionBase const& in_condition, char const* in_title, InputAction const & in_action)
 	{
 		if (in_condition.Check({input_receiver, input_device, consumption_cache}) == InputConditionResult::True)
-		{
-			if (in_enabled && in_func.IsValid())
-				in_func(); // continue to next request
-		}
+			in_action.Process();
 		return false;
 	}
 

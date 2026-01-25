@@ -12,12 +12,7 @@ namespace chaos
 		assert(in_input_device != nullptr);
 	}
 
-	bool InputActionProcessor::CheckAndProcess(InputConditionBase const & in_condition, char const * in_title, InputActionFunction in_action_func)
-	{
-		return CheckAndProcess(in_condition, in_title, true, in_action_func);
-	}
-
-	bool InputActionProcessor::CheckAndProcess(InputConditionBase const& in_condition, char const* in_title, bool in_enabled, InputActionFunction in_action_func)
+	bool InputActionProcessor::CheckAndProcess(InputConditionBase const& in_condition, char const* in_title, InputAction const & in_action)
 	{
 		return false;
 	}

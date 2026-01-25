@@ -30,7 +30,7 @@ namespace chaos
 		}
 
 		/** override */
-		virtual bool CheckAndProcess(InputConditionBase const& in_condition, char const* in_title, bool in_enabled, InputActionFunction in_func) override
+		virtual bool CheckAndProcess(InputConditionBase const& in_condition, char const* in_title, InputAction const & in_action) override
 		{
 			// always consum input even if not related because, later on, maybe some composite request with the related key 
 			// and some consumed input will be checked
@@ -39,9 +39,7 @@ namespace chaos
 				if (in_condition.IsRequestRelatedTo(input)) // ignore all Actions with no relation with the handled event
 				{
 					MarkAllRequestInputsAsConsumedInApplicationCache(in_condition);
-
-					if (in_enabled && in_func.IsValid())
-						in_func();
+					in_action.Process();
 					return true; // stop
 				}
 			}

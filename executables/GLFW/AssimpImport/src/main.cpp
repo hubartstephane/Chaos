@@ -571,7 +571,7 @@ protected:
 
 		bool enabled = object_count > 0;
 
-		if (in_action_processor.CheckAndProcess(JustActivated(Key::KP_ADD), "Next Object", enabled, [&]()
+		auto next_object_func = [&]()
 		{
 			objects[selected_object_index]->SetSelected(false);
 
@@ -580,13 +580,14 @@ protected:
 				selected_object_index + 1;
 
 			objects[selected_object_index]->SetSelected(true);
-		
-		}))
+		};
+
+		if (in_action_processor.CheckAndProcess(JustActivated(Key::KP_ADD), "Next Object", chaos::InputAction(next_object_func, enabled)))
 		{
 			return true;
 		}
 
-		if (in_action_processor.CheckAndProcess(JustActivated(Key::KP_SUBTRACT), "Previous Object", enabled, [&]()
+		auto previous_object_func = [&]()
 		{
 			objects[selected_object_index]->SetSelected(false);
 
@@ -595,8 +596,9 @@ protected:
 				selected_object_index - 1;
 
 			objects[selected_object_index]->SetSelected(true);
-		
-		}))
+		};
+
+		if (in_action_processor.CheckAndProcess(JustActivated(Key::KP_SUBTRACT), "Previous Object", chaos::InputAction(previous_object_func, enabled)))
 		{
 			return true;
 		}

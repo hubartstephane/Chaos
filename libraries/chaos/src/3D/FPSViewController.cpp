@@ -18,7 +18,7 @@ namespace chaos
 		float frame_duration = (float)FrameTimeManager::GetInstance()->GetCurrentFrameDuration();
 
 		// check for key displacement
-		auto CheckCameraKey = [this, frame_duration, &in_action_processor](const Key & key, char const * title, float speed, void (FPSView::*func)(float))
+		auto CheckCameraKey = [this, frame_duration, &in_action_processor](Key const & key, char const * title, float speed, void (FPSView::*func)(float))
 		{
 			if (in_action_processor.CheckAndProcess(Active(key), title, [this, frame_duration, speed, &func, key]()
 			{

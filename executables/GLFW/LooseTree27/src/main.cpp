@@ -671,23 +671,20 @@ protected:
 
 		bool action_enabled = (current_object != nullptr);
 
-		if (in_action_processor.CheckAndProcess(JustActivated(key_configuration.next_object), "Next Object", action_enabled, [&]()
-		{
-			current_object_index = (current_object_index.value() + 1) % geometric_objects.size();
-		}))
+		auto next_object_func = [&] { current_object_index = (current_object_index.value() + 1) % geometric_objects.size(); };
+		auto previous_object_func = [&] { current_object_index = (current_object_index.value() + geometric_objects.size() - 1) % geometric_objects.size(); };
+
+		if (in_action_processor.CheckAndProcess(JustActivated(key_configuration.next_object), "Next Object", chaos::InputAction(next_object_func, action_enabled)))
 		{
 			return true;
 		}
 		
-		if (in_action_processor.CheckAndProcess(JustActivated(key_configuration.previous_object), "Previous Object", action_enabled, [&]()
-		{
-			current_object_index = (current_object_index.value() + geometric_objects.size() - 1) % geometric_objects.size();
-		}))
+		if (in_action_processor.CheckAndProcess(JustActivated(key_configuration.previous_object), "Previous Object", chaos::InputAction(previous_object_func, action_enabled)))
 		{
 			return true;
 		}
 
-		if (in_action_processor.CheckAndProcess(JustActivated(key_configuration.delete_object), "Delete Object", action_enabled, [&]()
+		auto delete_action_func = [&]()
 		{
 			if (geometric_objects.size() > 0)
 			{
@@ -705,7 +702,9 @@ protected:
 				else
 					current_object_index = (current_object_index.value() == 0)? 0 : (current_object_index.value() - 1); // while there is always at least one object in the array, this is always valid
 			}
-		}))
+		};
+
+		if (in_action_processor.CheckAndProcess(JustActivated(key_configuration.delete_object), "Delete Object", chaos::InputAction(delete_action_func, action_enabled)))
 		{
 			return true;
 		}

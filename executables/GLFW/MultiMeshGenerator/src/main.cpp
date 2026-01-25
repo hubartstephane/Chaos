@@ -294,7 +294,7 @@ protected:
 
 		bool enabled = object_count > 0;
 
-		if (in_action_processor.CheckAndProcess(JustActivated(Key::KP_ADD), "Next Object", enabled, [&]()
+		auto next_object_func = [&]()
 		{
 			objects[selected_object_index]->SetSelected(false);
 
@@ -303,13 +303,14 @@ protected:
 				selected_object_index + 1;
 
 			objects[selected_object_index]->SetSelected(true);
-		
-		}))
+		};
+
+		if (in_action_processor.CheckAndProcess(JustActivated(Key::KP_ADD), "Next Object", chaos::InputAction(next_object_func, enabled)))
 		{
 			return true;
 		}
 
-		if (in_action_processor.CheckAndProcess(JustActivated(Key::KP_SUBTRACT), "Previous Object", enabled, [&]()
+		auto previous_object_func = [&]()
 		{
 			objects[selected_object_index]->SetSelected(false);
 
@@ -318,21 +319,24 @@ protected:
 				selected_object_index - 1;
 
 			objects[selected_object_index]->SetSelected(true);
-		
-		}))
+		};
+
+		if (in_action_processor.CheckAndProcess(JustActivated(Key::KP_SUBTRACT), "Previous Object", chaos::InputAction(previous_object_func, enabled)))
 		{
 			return true;
 		}
 
 		auto MoveObject = [this, &in_action_processor, enabled](Key button, size_t component_index, float direction, char const* title)
 		{
-			return in_action_processor.CheckAndProcess(Active(button), title, enabled, [this, component_index, direction]()
+			auto move_object_func = [this, component_index, direction]()
 			{
 				float delta_time = (float)FrameTimeManager::GetInstance()->GetCurrentFrameDuration();
 
 				Object3D* selected_object = objects[selected_object_index].get();
 				selected_object->transform.position[component_index] += direction * OBJECT_SPEED * delta_time;
-			});
+			};
+
+			return in_action_processor.CheckAndProcess(Active(button), title, chaos::InputAction(move_object_func, enabled));
 		};
 
 		if (MoveObject(Key::KP_4, 0, -1.0f, "Move Object -X"))

@@ -7,7 +7,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/** the possible axis */
-	enum class CHAOS_API Axis : int
+	enum class Axis : int
 	{
 		AXIS_X = 0,
 		AXIS_Y = 1,

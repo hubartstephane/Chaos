@@ -13,7 +13,7 @@ namespace chaos
 	// CollisionType : kind of collision event that can happen
 	// ==============================================================================================
 
-	enum class CHAOS_API CollisionType : int
+	enum class CollisionType : int
 	{
 		FINISHED = 0,
 		STARTED = 1,

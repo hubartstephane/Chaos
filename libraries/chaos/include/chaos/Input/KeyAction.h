@@ -11,7 +11,7 @@ namespace chaos
 	* KeyAction: the state of the key
 	*/
 
-	enum class CHAOS_API KeyAction : int
+	enum class KeyAction : int
 	{
 		Release = GLFW_RELEASE,
 		Press = GLFW_PRESS,
@@ -22,7 +22,7 @@ namespace chaos
 	* KeyActionMask: a mask of wanted action 
 	*/
 
-	enum class CHAOS_API KeyActionMask : int
+	enum class KeyActionMask : int
 	{
 		None    = 0,
 		Release = 1,

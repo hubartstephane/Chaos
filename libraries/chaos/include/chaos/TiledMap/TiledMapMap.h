@@ -15,7 +15,7 @@ namespace chaos
 		// Map
 		// ==========================================
 
-		enum class CHAOS_API MapOrientation : int
+		enum class MapOrientation : int
 		{
 			ORTHOGONAL = 0,
 			ISOMETRIC = 1,
@@ -25,7 +25,7 @@ namespace chaos
 
 		CHAOS_DECLARE_ENUM_METHOD(MapOrientation, CHAOS_API);
 
-		enum class CHAOS_API StaggerAxis : int
+		enum class StaggerAxis : int
 		{
 			AXIS_X = 0,
 			AXIS_Y = 1
@@ -33,7 +33,7 @@ namespace chaos
 
 		CHAOS_DECLARE_ENUM_METHOD(StaggerAxis, CHAOS_API);
 
-		enum class CHAOS_API StaggerIndex : int
+		enum class StaggerIndex : int
 		{
 			ODD = 0,
 			EVEN = 1
@@ -41,7 +41,7 @@ namespace chaos
 
 		CHAOS_DECLARE_ENUM_METHOD(StaggerIndex, CHAOS_API);
 
-		enum class CHAOS_API RenderOrder : int
+		enum class RenderOrder : int
 		{
 			RIGHT_UP = 0,
 			RIGHT_DOWN = 1,

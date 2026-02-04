@@ -10,7 +10,7 @@ namespace chaos
 	* KeyModifier: the keyboard modifier
 	*/
 
-	enum class CHAOS_API KeyModifier : int
+	enum class KeyModifier : int
 	{
 		None = 0,
 		Shift = GLFW_MOD_SHIFT,

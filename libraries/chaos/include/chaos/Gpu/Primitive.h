@@ -26,7 +26,7 @@ namespace chaos
      * PrimitiveType : the type of primitives that can be rendered
      */
 
-    enum class CHAOS_API PrimitiveType : int
+    enum class PrimitiveType : int
     {
         NONE,
         POINT,

@@ -26,7 +26,7 @@ namespace chaos
 	// =========================================================
 
 	/** the states for the displacement */
-	enum class CHAOS_API PlatformerDisplacementState : int
+	enum class PlatformerDisplacementState : int
 	{
 		GROUNDED,     // player is on the ground
 		FALLING,      // player in the air and going down

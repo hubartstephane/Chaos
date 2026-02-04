@@ -13,7 +13,7 @@ namespace chaos
 	 * LinearComposerLayoutMode: indicates whether widgets are displayed normally or in reverse direction
 	 */
 
-	enum class CHAOS_API LinearComposerLayoutMode : int
+	enum class LinearComposerLayoutMode : int
 	{
 		NORMAL,    // left to right or top to bottom
 		REVERSED   // right to left or bottom to top
@@ -47,7 +47,7 @@ namespace chaos
 	// |   | X | X | X | X |   | UNIFORM_CENTERED: all cells have same size. there are packed alltogether but centered on lined
 	// +---+---+---+---+---+---+
 
-	enum class CHAOS_API LinearComposerLayoutFillMode : int
+	enum class LinearComposerLayoutFillMode : int
 	{
 		EXPANDED, // viewports take as many size on their line/row as possible
 		UNIFORM_PACKED, // all viewports have same size. for incomplete line/row the viewports are packed alltogether

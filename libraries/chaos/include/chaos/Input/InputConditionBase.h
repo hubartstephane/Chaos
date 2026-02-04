@@ -16,7 +16,7 @@ namespace chaos
 	 * InputConditionResult: 
 	 */
 
-	enum class CHAOS_API InputConditionResult : int
+	enum class InputConditionResult : int
 	{
 		Invalid,   // the request is not properly initialized
 		Rejected,  // the inputs for this request have already been consumed

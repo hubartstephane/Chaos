@@ -54,7 +54,7 @@ namespace chaos
 	 * KeyboardLayoutType: known layout
 	 */
 
-	enum class CHAOS_API KeyboardLayoutType
+	enum class KeyboardLayoutType
 	{
 		AZERTY,
 		QWERTY,

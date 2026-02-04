@@ -34,7 +34,7 @@ namespace chaos
 	// SoundBlendType
 	// ==============================================================
 
-	enum class CHAOS_API SoundBlendType : int
+	enum class SoundBlendType : int
 	{
 		BLEND_NONE = 0,
 		BLEND_IN = 1,

@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	enum class CHAOS_API InputMode : int
+	enum class InputMode : int
 	{
 		/** the mode for keyboard */
 		KEYBOARD = 0,

@@ -13,7 +13,7 @@ namespace chaos
 	 * GPUBufferFlags: indicates the properties of the buffer
 	 */
 
-	enum class CHAOS_API GPUBufferFlags : int
+	enum class GPUBufferFlags : int
 	{
 		None = 0,
 		Dynamic = 1
@@ -25,7 +25,7 @@ namespace chaos
 	 * GPUBufferMapFlags: flags for mapping buffers
 	 */
 
-	enum class CHAOS_API GPUBufferMapFlags : int
+	enum class GPUBufferMapFlags : int
 	{
 		Read = 1,
 		Write = 2

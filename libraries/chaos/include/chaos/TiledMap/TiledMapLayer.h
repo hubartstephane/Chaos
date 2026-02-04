@@ -83,7 +83,7 @@ namespace chaos
 		// ObjectLayer
 		// ==========================================
 
-		enum class CHAOS_API DrawOrder : int
+		enum class DrawOrder : int
 		{
 			MANUAL = 0,
 			TOPDOWN = 1

@@ -178,7 +178,7 @@ namespace chaos
 		// TileSetOrientation
 		// ==========================================
 
-		enum class CHAOS_API TileSetOrientation : int
+		enum class TileSetOrientation : int
 		{
 			ORTHOGONAL = 0,
 			ISOMETRIC = 1

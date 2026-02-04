@@ -18,7 +18,7 @@ namespace chaos
 	 * InheritanceType : the kind if inheritance that can exist between 2 classes
 	 */
 
-	enum class CHAOS_API InheritanceType : int
+	enum class InheritanceType : int
 	{
 		UNKNOWN = -1,
 		NO = 0,

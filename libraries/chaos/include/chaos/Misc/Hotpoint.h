@@ -7,7 +7,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	enum class CHAOS_API Hotpoint : int
+	enum class Hotpoint : int
 	{
 		LEFT = 1,
 		RIGHT = 2,

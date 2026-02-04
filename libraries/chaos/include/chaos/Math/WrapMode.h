@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	enum class CHAOS_API WrapMode : int
+	enum class WrapMode : int
 	{
 		NONE = 0,
 		CLAMP = 1,

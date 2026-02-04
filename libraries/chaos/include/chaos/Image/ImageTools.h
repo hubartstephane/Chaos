@@ -16,7 +16,7 @@ namespace chaos
 
 	CHAOS_DEFINE_LOG(ImageLog, "Image")
 
-	enum class CHAOS_API ImageTransform : int
+	enum class ImageTransform : int
 	{
 		NO_TRANSFORM = 0,
 		CENTRAL_SYMETRY = 1

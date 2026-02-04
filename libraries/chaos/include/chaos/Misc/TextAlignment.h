@@ -6,7 +6,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	enum class CHAOS_API TextAlignment : int
+	enum class TextAlignment : int
 	{
 		LEFT = 0,
 		RIGHT = 1,

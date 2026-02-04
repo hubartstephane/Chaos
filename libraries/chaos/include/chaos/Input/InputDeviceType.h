@@ -10,7 +10,7 @@ namespace chaos
 	 * InputDeviceType: Indicates where the input is coming from
 	 */
 
-	enum class CHAOS_API InputDeviceType : int
+	enum class InputDeviceType : int
 	{
 		UNKNOWN  = -1,
 		KEYBOARD = 0,

@@ -12,7 +12,7 @@ namespace chaos
 	 * Key: enumeration to match a key input (whether it is a a keyboard, mouse or gamepad input)
 	 */
 
-	enum class CHAOS_API Key : int
+	enum class Key : int
 	{
 		UNKNOWN = -1,
 

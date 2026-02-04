@@ -10,7 +10,7 @@ namespace chaos
 	 * Input2D: enumeration to match a 2D input axis
 	 */
 
-	enum class CHAOS_API Input2D : int
+	enum class Input2D : int
 	{
 		UNKNOWN     = -1,
 

@@ -13,7 +13,7 @@ namespace chaos
 	* LinearComposerWidgetInsertType: how a widget must be inserted in its parent
 	*/
 
-	enum class CHAOS_API LinearComposerWidgetInsertType : int
+	enum class LinearComposerWidgetInsertType : int
 	{
 		START,               // insert at the beginning of the children list
 		END,                 // insert at the end of the children list

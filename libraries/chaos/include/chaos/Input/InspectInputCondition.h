@@ -13,7 +13,7 @@ namespace chaos
 	* QueryInputRequestType: The requested input status
 	*/
 
-	enum class CHAOS_API QueryInputRequestType : int
+	enum class QueryInputRequestType : int
 	{
 		None,
 		Inactive,

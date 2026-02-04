@@ -26,7 +26,7 @@ namespace chaos
 	 * CubeMapFaceType: the faces of the cube
 	 */
 
-	enum class CHAOS_API CubeMapFaceType : int // values are important for OpenGL cubeface transfert
+	enum class CubeMapFaceType : int // values are important for OpenGL cubeface transfert
 	{
 		PositiveX = 0,
 		NegativeX = 1,
@@ -40,7 +40,7 @@ namespace chaos
 	 * CubeMapImageType: the possible different image that compose a cubemap
 	 */
 
-	enum class CHAOS_API CubeMapImageType : int
+	enum class CubeMapImageType : int
 	{
 
 		ImageLeft   = 0,

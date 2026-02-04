@@ -18,7 +18,7 @@ namespace chaos
 	* EnumerateInputActionContext: indicates when action processing occurs
 	*/
 
-	enum class CHAOS_API EnumerateInputActionContext : int
+	enum class EnumerateInputActionContext : int
 	{
 		OnEvent,     // direct event (key down/up)
 		OnPolling,   // per-tick polling

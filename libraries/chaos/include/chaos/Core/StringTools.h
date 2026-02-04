@@ -11,7 +11,7 @@ namespace chaos
 	 * TimeToStringFormatType: How to format a date
 	 **/
 
-	enum class CHAOS_API TimeToStringFormatType : int
+	enum class TimeToStringFormatType : int
 	{
 		SHORT,
 		FULL,

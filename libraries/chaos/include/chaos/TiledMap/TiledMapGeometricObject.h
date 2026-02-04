@@ -187,7 +187,7 @@ namespace chaos
 		// GeometricObjectText
 		// ==========================================
 
-		enum class CHAOS_API HorizontalTextAlignment : int
+		enum class HorizontalTextAlignment : int
 		{
 			LEFT = 0,
 			CENTER = 1,
@@ -197,7 +197,7 @@ namespace chaos
 
 		CHAOS_DECLARE_ENUM_METHOD(HorizontalTextAlignment, CHAOS_API);
 
-		enum class CHAOS_API VerticalTextAlignment : int
+		enum class VerticalTextAlignment : int
 		{
 			TOP = 0,
 			CENTER = 1,

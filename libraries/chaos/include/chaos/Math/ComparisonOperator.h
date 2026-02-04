@@ -10,7 +10,7 @@ namespace chaos
 	* ComparisonOperator
 	*/
 
-	enum class CHAOS_API ComparisonOperator : int
+	enum class ComparisonOperator : int
 	{
 		NEVER,
 		ALWAYS,

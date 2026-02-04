@@ -9,7 +9,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/** a utility class for parameter passing */
-	enum class CHAOS_API ObjectRequestType
+	enum class ObjectRequestType
 	{
 		/** accept nothing */
 		NONE = 0,

@@ -24,7 +24,7 @@ namespace chaos
 	* LogSeverity: severity of the message
 	*/
 
-	enum class CHAOS_API LogSeverity : int
+	enum class LogSeverity : int
 	{
 		Message,
 		Warning,

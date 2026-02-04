@@ -24,7 +24,7 @@ namespace chaos
 	* InputStatus
 	*/
 
-	enum class CHAOS_API InputStatus : int
+	enum class InputStatus : int
 	{
 		NONE = 0,
 		STAY_INACTIVE = 1,

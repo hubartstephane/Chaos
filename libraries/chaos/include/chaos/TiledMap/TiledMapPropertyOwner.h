@@ -10,7 +10,7 @@ namespace chaos
 		// ==========================================
 
 			/** types of particle */
-		enum class CHAOS_API PropertyType : int
+		enum class PropertyType : int
 		{
 			ANY = 0,
 			INT = 1,

@@ -21,7 +21,7 @@ namespace chaos
 	* CursorMode
 	*/
 
-	enum class CHAOS_API CursorMode : int
+	enum class CursorMode : int
 	{
 		NORMAL = GLFW_CURSOR_NORMAL,
 		DISABLED = GLFW_CURSOR_DISABLED,
@@ -46,7 +46,7 @@ namespace chaos
 	* WindowCategory: Indicate window closing behaviour relative to others (windows)
 	*/
 
-	enum class CHAOS_API WindowCategory
+	enum class WindowCategory
 	{
 		MAIN_WINDOW, // once last main window has been close, all other windows should be closed and application quit
 		OPTIONAL_WINDOW

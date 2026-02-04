@@ -11,7 +11,7 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	enum class CHAOS_API ZonePartitionType : int
+	enum class ZonePartitionType : int
 	{
 		/** point is inside inner zone */
 		NEAR_ZONE = 0,
@@ -21,7 +21,7 @@ namespace chaos
 		FAR_ZONE = 2
 	};
 
-	enum class CHAOS_API ZonePartitionChangeType : int
+	enum class ZonePartitionChangeType : int
 	{
 		/** no zone of change */
 		NOCHANGE = 0,

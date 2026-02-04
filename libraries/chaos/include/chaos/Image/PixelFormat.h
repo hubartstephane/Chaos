@@ -12,7 +12,7 @@ namespace chaos
 	 * the type of each component of each pixels
 	 */
 
-	enum class CHAOS_API PixelComponentType : int
+	enum class PixelComponentType : int
 	{
 		UNKNOWN = 0,
 		UNSIGNED_CHAR = 1,

@@ -65,7 +65,7 @@ CHAOS_GENERATE_IS_ANY_OF_CONCEPT(InputConditionValueType,
 	InputValue_t<Input2D>);
 
 
-enum class CHAOS_API InputConditionResultXXX : int
+enum class InputConditionResultXXX : int
 {
 	Success,
 	Invalid,  // the request is not properly formed

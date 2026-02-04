@@ -9,7 +9,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/** describe the possible styles for ImGui */
-	enum class ImGuiWindowStyle
+	enum class ImGuiWindowStyle : int
 	{
 		Dark,
 		Light,

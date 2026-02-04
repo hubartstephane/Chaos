@@ -11,7 +11,7 @@ namespace chaos
 	/**
 	 * how widget is placed inside the area that is given to it
 	 */
-	enum class WidgetFillMode
+	enum class WidgetFillMode : int
 	{
 		CENTERED,       // take only space given to widget. do not want more
 		PACKED_NORMAL,  // the widget is packed to the LEFT or BOTTOM of the available area

@@ -50,7 +50,7 @@ public:
 // LudumRoad
 //=================================================
 
-enum class RoadUpdateValue
+enum class RoadUpdateValue : int
 {
 	NOP,
 	NEW_CHECKPOINT,

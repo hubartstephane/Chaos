@@ -7,7 +7,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/** a bitfield to hold all known button types */
-	enum class ImGuiButtonType
+	enum class ImGuiButtonType : int
 	{
 		None               = 0,
 		Yes                = (1 << 0),

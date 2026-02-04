@@ -1,6 +1,6 @@
 #include "chaos/Chaos.h"
 
-enum class AnalyticExpressionType
+enum class AnalyticExpressionType : int
 {
 	Value,
 	Name,
@@ -450,7 +450,7 @@ AnalyticMatrix MakeRotationMatrixZ(char const* angle_name)
 
 #if 0
 
-enum class ImGuiWindowPlacementType
+enum class ImGuiWindowPlacementType : int
 {
 	ScreenCenter,
 	CursorPosition
@@ -642,7 +642,7 @@ protected:
 
 // ----------------------------------------------------------------------------------------
 
-enum class MatrixCreationType
+enum class MatrixCreationType : int
 {
 	Identity,
 	Scale,
@@ -718,7 +718,7 @@ protected:
 
 // ----------------------------------------------------------------------------------------
 
-enum class IterationState
+enum class IterationState : int
 {
 	Continue,
 	Stop

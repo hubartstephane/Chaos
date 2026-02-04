@@ -14,14 +14,14 @@ using loose_tree_node_type = loose_tree_type::node_type;
 
 // =======================================================================
 
-enum class GeometryType
+enum class GeometryType : int
 {
 	SPHERE,
 	BOX,
 	COUNT
 };
 
-enum class ActionType
+enum class ActionType : int
 {
 	CREATE_SPHERE,
 	CREATE_BOX,

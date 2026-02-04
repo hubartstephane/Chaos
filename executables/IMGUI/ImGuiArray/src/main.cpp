@@ -69,7 +69,7 @@ template<typename T>
 class ImGuiDrawVectorOperationProcessor
 {
 	/** possible operations to do on a vector */
-	enum class VectorOperation
+	enum class VectorOperation : int
 	{
 		Delete,
 		Duplicate,

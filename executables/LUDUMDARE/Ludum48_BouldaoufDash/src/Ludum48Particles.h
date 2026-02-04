@@ -77,7 +77,7 @@ public:
 // GameObjectParticle
 // ===========================================================================
 
-enum class GameObjectType
+enum class GameObjectType : int
 {
 	None = 0,
 	Rock = 1,

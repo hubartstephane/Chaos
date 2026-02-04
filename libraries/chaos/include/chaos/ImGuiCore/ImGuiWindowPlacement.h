@@ -8,7 +8,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/** the reference point for placing a imgui popup */
-	enum class ImGuiWindowPlacementType
+	enum class ImGuiWindowPlacementType : int
 	{
 		ScreenCenter,
 		CursorPosition,

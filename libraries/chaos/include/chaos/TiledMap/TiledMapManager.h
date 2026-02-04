@@ -49,7 +49,7 @@ namespace chaos
 			ObjectTypeSet const * FindObjectTypeSet(FilePathParam const & path) const;
 
 			/** find the property in an ObjectTypeSet */
-			virtual Property const * FindObjectProperty(char const * type, char const * name, PropertyType type_id = PropertyType::ANY) const;
+			virtual Property const * FindObjectProperty(char const * type, char const * name, PropertyType type_id = PropertyType::Any) const;
 
 			/** returns the number of map */
 			size_t GetMapCount() const { return maps.size();}

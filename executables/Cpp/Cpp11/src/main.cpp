@@ -182,7 +182,7 @@ public:
 
 protected:
 
-	InputStatus status = InputStatus::NONE;
+	InputStatus status = InputStatus::None;
 	CHILD_CONDITION child_condition;
 };
 
@@ -261,9 +261,9 @@ int main(int argc, char** argv, char** env)
 	if (InputType<Key>)
 		argc = 0;
 
-	decltype(auto) p1 = TransformToInputCondition(Key::UNKNOWN);
+	decltype(auto) p1 = TransformToInputCondition(Key::Unknown);
 
-	decltype(auto) p2 = TransformToInputCondition(TransformToInputCondition(Key::UNKNOWN));
+	decltype(auto) p2 = TransformToInputCondition(TransformToInputCondition(Key::Unknown));
 
 
 	InputConditionStateXXX<Key> CS;

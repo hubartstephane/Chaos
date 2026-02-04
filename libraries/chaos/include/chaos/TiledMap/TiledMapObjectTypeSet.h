@@ -55,7 +55,7 @@ namespace chaos
 			ObjectTypeDefinition const * FindObjectType(char const * name) const;
 
 			/** find the property in an ObjectType */
-			Property const * FindObjectProperty(char const * type, char const * name, PropertyType type_id = PropertyType::ANY) const;
+			Property const * FindObjectProperty(char const * type, char const * name, PropertyType type_id = PropertyType::Any) const;
 
 
 			/** returns the number of object type */

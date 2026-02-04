@@ -26,12 +26,12 @@ namespace chaos
 			return result;
 
 		// we know that the iterator points on a valid entry. get the string that made this entry a good one
-		std::string const& searched_name = (match_type == ClassMatchType::MATCH_NAME) ?
+		std::string const& searched_name = (match_type == ClassMatchType::Name) ?
 			(*iterator)->GetClassName() :
 			(*iterator)->GetShortName();
 
 		// check for the very first entry (string comparaison not necessary)
-		if (check_class == nullptr || (*iterator)->InheritsFrom(check_class, true) == InheritanceType::YES)
+		if (check_class == nullptr || (*iterator)->InheritsFrom(check_class, true) == InheritanceType::Yes)
 		{
 			result = *iterator;
 			return result;

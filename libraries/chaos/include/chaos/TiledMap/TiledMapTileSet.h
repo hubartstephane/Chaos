@@ -180,8 +180,8 @@ namespace chaos
 
 		enum class TileSetOrientation : int
 		{
-			ORTHOGONAL = 0,
-			ISOMETRIC = 1
+			Orthogonal = 0,
+			Isometric = 1
 		};
 
 		CHAOS_DECLARE_ENUM_METHOD(TileSetOrientation, CHAOS_API);
@@ -230,7 +230,7 @@ namespace chaos
 			/** object information */
 			std::string name;
 			/** object information */
-			TileSetOrientation orientation = TileSetOrientation::ORTHOGONAL;
+			TileSetOrientation orientation = TileSetOrientation::Orthogonal;
 			/** object information */
 			glm::ivec2  size = glm::ivec2(32, 32);
 			/** object information */
@@ -252,7 +252,7 @@ namespace chaos
 			/** object information */
 			glm::vec4	transparent_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 			/** object information */
-			Hotpoint	object_alignment = Hotpoint::BOTTOM_LEFT;
+			Hotpoint	object_alignment = Hotpoint::BottomLeft;
 
 			/** the data for the tiles */
 			std::vector<shared_ptr<TileData>> tiles;

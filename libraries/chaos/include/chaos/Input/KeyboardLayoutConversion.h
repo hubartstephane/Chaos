@@ -73,14 +73,14 @@ namespace chaos
 #if _WIN32
 
 		/** convert VK from one layout to another */
-		static unsigned int ConvertVK(unsigned int vk, KeyboardLayoutType src_layout_type = KeyboardLayoutType::QWERTY, KeyboardLayoutType dst_layout_type = KeyboardLayoutType::CURRENT);
+		static unsigned int ConvertVK(unsigned int vk, KeyboardLayoutType src_layout_type = KeyboardLayoutType::Qwerty, KeyboardLayoutType dst_layout_type = KeyboardLayoutType::Current);
 
 #endif // #if _WIN32
 
 		/** convert a GLFW keycode from a layout to another layout (into a key that has the same position) */
-		static int ConvertGLFWKeycode(int keycode, KeyboardLayoutType src_layout_type = KeyboardLayoutType::QWERTY, KeyboardLayoutType dst_layout_type = KeyboardLayoutType::CURRENT);
+		static int ConvertGLFWKeycode(int keycode, KeyboardLayoutType src_layout_type = KeyboardLayoutType::Qwerty, KeyboardLayoutType dst_layout_type = KeyboardLayoutType::Current);
 		/** convert a key by position */
-		static Key ConvertKey(Key key, KeyboardLayoutType src_layout_type = KeyboardLayoutType::QWERTY, KeyboardLayoutType dst_layout_type = KeyboardLayoutType::CURRENT);
+		static Key ConvertKey(Key key, KeyboardLayoutType src_layout_type = KeyboardLayoutType::Qwerty, KeyboardLayoutType dst_layout_type = KeyboardLayoutType::Current);
 
 	protected:
 

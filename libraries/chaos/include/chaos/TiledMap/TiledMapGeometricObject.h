@@ -189,19 +189,19 @@ namespace chaos
 
 		enum class HorizontalTextAlignment : int
 		{
-			LEFT = 0,
-			CENTER = 1,
-			RIGHT = 2,
-			JUSTIFY = 3
+			Left = 0,
+			Center = 1,
+			Right = 2,
+			Justify = 3
 		};
 
 		CHAOS_DECLARE_ENUM_METHOD(HorizontalTextAlignment, CHAOS_API);
 
 		enum class VerticalTextAlignment : int
 		{
-			TOP = 0,
-			CENTER = 1,
-			BOTTOM = 2
+			Top = 0,
+			Center = 1,
+			Bottom = 2
 		};
 
 		CHAOS_DECLARE_ENUM_METHOD(VerticalTextAlignment, CHAOS_API);
@@ -225,9 +225,9 @@ namespace chaos
 		public:
 
 			/** object information */
-			HorizontalTextAlignment halign = HorizontalTextAlignment::LEFT;
+			HorizontalTextAlignment halign = HorizontalTextAlignment::Left;
 			/** object information */
-			VerticalTextAlignment valign = VerticalTextAlignment::TOP;
+			VerticalTextAlignment valign = VerticalTextAlignment::Top;
 			/** object information */
 			std::string fontfamily;
 			/** object information */

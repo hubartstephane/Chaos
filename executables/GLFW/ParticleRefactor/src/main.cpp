@@ -149,7 +149,7 @@ protected:
 		double mouse_y = 0.0;
 		glfwGetCursorPos(glfw_window, &mouse_x, &mouse_y);
 
-		if (mouse_button_event.IsKeyPressed(chaos::Key::MOUSE_BUTTON_1))
+		if (mouse_button_event.IsKeyPressed(chaos::Key::MouseButton1))
 		{
 			int layer_index    = rand() % LAYER_COUNT;
 			int material_index = rand() % MATERIAL_COUNT;
@@ -179,7 +179,7 @@ protected:
 			}
 			return true;
 		}
-		else if (mouse_button_event.IsKeyPressed(chaos::Key::MOUSE_BUTTON_2))
+		else if (mouse_button_event.IsKeyPressed(chaos::Key::MouseButton2))
 		{
 			size_t count = particle_allocations.size();
 			if (count > 0)
@@ -191,7 +191,7 @@ protected:
 			}
 			return true;
 		}
-		else if (mouse_button_event.key == chaos::Key::MOUSE_BUTTON_3)
+		else if (mouse_button_event.key == chaos::Key::MouseButton3)
 		{
 			if (mouse_button_event.IsKeyPressedEvent())
 				destroy_all_particles = true;

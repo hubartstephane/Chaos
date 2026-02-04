@@ -40,7 +40,7 @@ GameHUDUpgradeComponent::GameHUDUpgradeComponent() :
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
 	generator_params.position = glm::vec2(-40.0f, 100.0f);
-	generator_params.hotpoint = chaos::Hotpoint::BOTTOM_RIGHT;
+	generator_params.hotpoint = chaos::Hotpoint::BottomRight;
 }
 
 bool GameHUDUpgradeComponent::QueryValue(std::string & result) const
@@ -81,12 +81,12 @@ void GameHUDShroudLifeComponent::UpdateMesh()
 	float image_count = (float)bitmap_info->GetAnimationImageCount();
 	int index = (int)(image_count * (1.0 - (cached_value.health / cached_value.max_health)));
 
-	chaos::AtlasBitmapLayout layout = bitmap_info->GetAnimationLayout(index, chaos::WrapMode::CLAMP);
+	chaos::AtlasBitmapLayout layout = bitmap_info->GetAnimationLayout(index, chaos::WrapMode::Clamp);
 
 	glm::vec2 final_particle_size = layout.ApplyRatioToSize(particle_size);
 
 	glm::vec2 screen_ref = GetCanvasBoxCorner(GetGame()->GetCanvasBox(), hotpoint);
-	glm::vec2 particle_position = chaos::ConvertHotpoint(screen_ref + position, final_particle_size, hotpoint, chaos::Hotpoint::CENTER);
+	glm::vec2 particle_position = chaos::ConvertHotpoint(screen_ref + position, final_particle_size, hotpoint, chaos::Hotpoint::Center);
 
 	chaos::ParticleDefault particle;
 

@@ -169,7 +169,7 @@ namespace chaos
 			return nullptr;
 		// fill the bitmap
 		ImageDescription dst_desc = GetImageDescription(result);
-		ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, 0, 0, src_desc.width, src_desc.height, ImageTransform::NO_TRANSFORM);
+		ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, 0, 0, src_desc.width, src_desc.height, ImageTransform::None);
 
 		return result;
 	}
@@ -190,12 +190,12 @@ namespace chaos
 
 	FREE_IMAGE_FORMAT ImageTools::GetFreeImageFormat(PixelFormat const & pixel_format)
 	{
-		return (pixel_format.component_type == PixelComponentType::UNSIGNED_CHAR) ? FIF_PNG : FIF_EXR;
+		return (pixel_format.component_type == PixelComponentType::UnsignedChar) ? FIF_PNG : FIF_EXR;
 	}
 
 	FREE_IMAGE_TYPE ImageTools::GetFreeImageType(PixelFormat const & pixel_format, int * bpp)
 	{
-		if (pixel_format.component_type == PixelComponentType::UNSIGNED_CHAR)
+		if (pixel_format.component_type == PixelComponentType::UnsignedChar)
 		{
 			if (pixel_format.component_count == 1 || pixel_format.component_count == 3 || pixel_format.component_count == 4)
 			{
@@ -204,7 +204,7 @@ namespace chaos
 				return FIT_BITMAP;
 			}
 		}
-		else if (pixel_format.component_type == PixelComponentType::FLOAT)
+		else if (pixel_format.component_type == PixelComponentType::Float)
 		{
 			if (pixel_format.component_count == 1)
 				return FIT_FLOAT;
@@ -213,7 +213,7 @@ namespace chaos
 			if (pixel_format.component_count == 4)
 				return FIT_RGBAF;
 		}
-		else if (pixel_format.component_type == PixelComponentType::DEPTH_STENCIL)
+		else if (pixel_format.component_type == PixelComponentType::DepthStencil)
 		{
 			assert(0);
 		}
@@ -233,12 +233,12 @@ namespace chaos
 			if (bpp != 8 && bpp != 24 && bpp != 32)
 				return result;
 
-			result.component_type = PixelComponentType::UNSIGNED_CHAR;
+			result.component_type = PixelComponentType::UnsignedChar;
 			result.component_count = bpp / 8;
 		}
 		else if (image_type == FIT_FLOAT || image_type == FIT_RGBF || image_type == FIT_RGBAF) // floating points format are accepted
 		{
-			result.component_type = PixelComponentType::FLOAT;
+			result.component_type = PixelComponentType::Float;
 
 			if (image_type == FIT_FLOAT)
 				result.component_count = 1;
@@ -304,7 +304,7 @@ namespace chaos
 				ImagePixelAccessor<dst_pixel_type> dst_acc(dst_desc);
 
 				// normal copy
-				if (image_transform == ImageTransform::NO_TRANSFORM)
+				if (image_transform == ImageTransform::None)
 				{
 					if (boost::is_same<dst_pixel_type, src_pixel_type>::value)
 					{
@@ -328,7 +328,7 @@ namespace chaos
 				}
 				// copy with central symetry
 				//   no interest to test if source type and dest types are identical because we cannot use memcpy(...) due to symetry
-				else if (image_transform == ImageTransform::CENTRAL_SYMETRY)
+				else if (image_transform == ImageTransform::CentralSymetry)
 				{
 					for (int l = 0; l < height; ++l)
 					{
@@ -414,7 +414,7 @@ namespace chaos
 			return false;
 
 		// a 'luminance' image is a grayscale
-		if (pixel_format.component_type == PixelComponentType::FLOAT)
+		if (pixel_format.component_type == PixelComponentType::Float)
 			return true;
 
 		// 1 component of type UNSIGNED CHAR :
@@ -511,7 +511,7 @@ namespace chaos
 
 	FIBITMAP * ImageTools::LoadImageFromFile(FilePathParam const & path)
 	{
-		Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::NO_ERROR_TRACE);
+		Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::NoErrorTrace);
 		if (buffer == nullptr)
 		{
 			ImageLog::Error("LoadImageFromFile: fail to load image [%s]", path.GetResolvedPath().string().c_str());
@@ -523,7 +523,7 @@ namespace chaos
 	std::vector<FIBITMAP*> ImageTools::LoadMultipleImagesFromFile(FilePathParam const & path, ImageAnimationDescription * anim_description)
 	{
 		// load the image and get multi image
-		Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::NO_ERROR_TRACE);
+		Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::NoErrorTrace);
 		if (buffer == nullptr)
 		{
 			ImageLog::Error("LoadMultipleImagesFromFile: fail to load image [%s]", path.GetResolvedPath().string().c_str());

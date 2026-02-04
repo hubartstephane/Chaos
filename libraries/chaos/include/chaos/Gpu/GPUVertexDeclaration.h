@@ -14,55 +14,55 @@ namespace chaos
 	/** the possible semantics */
 	enum class VertexAttributeSemantic : int
 	{
-		NONE = -1,
-		POSITION = 0,
-		COLOR = 1,
-		NORMAL = 2,
-		BINORMAL = 3,
-		TANGENT = 4,
-		TEXCOORD = 5,
-		BONEINDEX = 6,
-		BONEWEIGHT = 7,
-		USERDATA = 8
+		None = -1,
+		Position = 0,
+		Color = 1,
+		Normal = 2,
+		Binormal = 3,
+		Tangent = 4,
+		Texcoord = 5,
+		BoneIndex = 6,
+		BoneWeight = 7,
+		UserData = 8
 	};
 
 	/** the possible component types */
 	enum class VertexAttributeComponentType : int
 	{
-		FLOAT = 1,
-		DOUBLE = 2,
-		HALF = 3,
-		BYTE = 4,
-		INT = 5
+		Float = 1,
+		Double = 2,
+		Half = 3,
+		Byte = 4,
+		Int = 5
 	};
 
 	/** the possible vector types */
 	enum class VertexAttributeType : int
 	{
-		FLOAT1 = (int(VertexAttributeComponentType::FLOAT) << 3) | 1,
-		FLOAT2 = (int(VertexAttributeComponentType::FLOAT) << 3) | 2,
-		FLOAT3 = (int(VertexAttributeComponentType::FLOAT) << 3) | 3,
-		FLOAT4 = (int(VertexAttributeComponentType::FLOAT) << 3) | 4,
+		Float1 = (int(VertexAttributeComponentType::Float) << 3) | 1,
+		Float2 = (int(VertexAttributeComponentType::Float) << 3) | 2,
+		Float3 = (int(VertexAttributeComponentType::Float) << 3) | 3,
+		Float4 = (int(VertexAttributeComponentType::Float) << 3) | 4,
 
-		DOUBLE1 = (int(VertexAttributeComponentType::DOUBLE) << 3) | 1,
-		DOUBLE2 = (int(VertexAttributeComponentType::DOUBLE) << 3) | 2,
-		DOUBLE3 = (int(VertexAttributeComponentType::DOUBLE) << 3) | 3,
-		DOUBLE4 = (int(VertexAttributeComponentType::DOUBLE) << 3) | 4,
+		Double1 = (int(VertexAttributeComponentType::Double) << 3) | 1,
+		Double2 = (int(VertexAttributeComponentType::Double) << 3) | 2,
+		Double3 = (int(VertexAttributeComponentType::Double) << 3) | 3,
+		Double4 = (int(VertexAttributeComponentType::Double) << 3) | 4,
 
-		HALF1 = (int(VertexAttributeComponentType::HALF) << 3) | 1,
-		HALF2 = (int(VertexAttributeComponentType::HALF) << 3) | 2,
-		HALF3 = (int(VertexAttributeComponentType::HALF) << 3) | 3,
-		HALF4 = (int(VertexAttributeComponentType::HALF) << 3) | 4,
+		Half1 = (int(VertexAttributeComponentType::Half) << 3) | 1,
+		Half2 = (int(VertexAttributeComponentType::Half) << 3) | 2,
+		Half3 = (int(VertexAttributeComponentType::Half) << 3) | 3,
+		Half4 = (int(VertexAttributeComponentType::Half) << 3) | 4,
 
-		BYTE1 = (int(VertexAttributeComponentType::BYTE) << 3) | 1,
-		BYTE2 = (int(VertexAttributeComponentType::BYTE) << 3) | 2,
-		BYTE3 = (int(VertexAttributeComponentType::BYTE) << 3) | 3,
-		BYTE4 = (int(VertexAttributeComponentType::BYTE) << 3) | 4,
+		Byte1 = (int(VertexAttributeComponentType::Byte) << 3) | 1,
+		Byte2 = (int(VertexAttributeComponentType::Byte) << 3) | 2,
+		Byte3 = (int(VertexAttributeComponentType::Byte) << 3) | 3,
+		Byte4 = (int(VertexAttributeComponentType::Byte) << 3) | 4,
 
-		INT1 = (int(VertexAttributeComponentType::INT) << 3) | 1,
-		INT2 = (int(VertexAttributeComponentType::INT) << 3) | 2,
-		INT3 = (int(VertexAttributeComponentType::INT) << 3) | 3,
-		INT4 = (int(VertexAttributeComponentType::INT) << 3) | 4,
+		Int1 = (int(VertexAttributeComponentType::Int) << 3) | 1,
+		Int2 = (int(VertexAttributeComponentType::Int) << 3) | 2,
+		Int3 = (int(VertexAttributeComponentType::Int) << 3) | 3,
+		Int4 = (int(VertexAttributeComponentType::Int) << 3) | 4,
 	};
 
 	/**
@@ -84,7 +84,7 @@ namespace chaos
 	public:
 
 		/** the semantic of the vertex component */
-		VertexAttributeSemantic semantic = VertexAttributeSemantic::NONE;
+		VertexAttributeSemantic semantic = VertexAttributeSemantic::None;
 		/** the type of the vertex component */
 		VertexAttributeType type;
 		/** for repetition of the same semantic */

@@ -6,8 +6,8 @@ namespace chaos
 	namespace TiledMap
 	{
 		static EnumMetaData<DrawOrder> const DrawOrder_metadata = {
-			{ DrawOrder::MANUAL, "index"  },
-			{ DrawOrder::TOPDOWN, "topdown" } // default
+			{ DrawOrder::Manual, "index"  },
+			{ DrawOrder::TopDown, "topdown" } // default
 		};
 
 		CHAOS_IMPLEMENT_ENUM_METHOD(DrawOrder, &DrawOrder_metadata, CHAOS_API);
@@ -83,7 +83,7 @@ namespace chaos
 
 			ReadXMLColor(element, "color", color);
 
-			draw_order = DrawOrder::TOPDOWN;
+			draw_order = DrawOrder::TopDown;
 			XMLTools::ReadAttribute(element, "draworder", draw_order);
 			if (!DoLoadObjects(element))
 				return false;

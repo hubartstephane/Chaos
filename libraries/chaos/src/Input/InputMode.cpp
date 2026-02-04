@@ -5,12 +5,12 @@ namespace chaos
 {
 	bool IsPCMode(InputMode mode)
 	{
-		return (mode == InputMode::KEYBOARD) || (mode == InputMode::MOUSE);
+		return (mode == InputMode::Keyboard) || (mode == InputMode::Mouse);
 	}
 
 	bool IsConsoleMode(InputMode mode)
 	{
-		return (mode == InputMode::GAMEPAD);
+		return (mode == InputMode::Gamepad);
 	}
 
 	bool IsPlatformChanged(InputMode new_mode, InputMode old_mode)

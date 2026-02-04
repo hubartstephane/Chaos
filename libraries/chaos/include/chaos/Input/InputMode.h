@@ -8,12 +8,9 @@ namespace chaos
 
 	enum class InputMode : int
 	{
-		/** the mode for keyboard */
-		KEYBOARD = 0,
-		/** the mode for Mouse */
-		MOUSE = 1,
-		/** the mode for Gamepad */
-		GAMEPAD = 2
+		Keyboard = 0,
+		Mouse = 1,
+		Gamepad = 2
 	};
 
 	/** returns true whether given mode correspond to mouse or keyboard */

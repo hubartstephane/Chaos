@@ -5,17 +5,17 @@ namespace chaos
 {
 	static EnumMetaData<Hotpoint> const Hotpoint_metadata =
 	{
-		{ Hotpoint::TOP, "top" },
-		{ Hotpoint::BOTTOM, "bottom" },
-		{ Hotpoint::LEFT, "left" },
-		{ Hotpoint::RIGHT, "right" },
-		{ Hotpoint::CENTER, "center" }
+		{ Hotpoint::Top, "top" },
+		{ Hotpoint::Bottom, "bottom" },
+		{ Hotpoint::Left, "left" },
+		{ Hotpoint::Right, "right" },
+		{ Hotpoint::Center, "center" }
 	};
 
 	static EnumBitmaskMetaData<Hotpoint> const Hotpoint_bitmask_metadata =
 	{
-		{Hotpoint::LEFT, Hotpoint::RIGHT},
-		{Hotpoint::TOP, Hotpoint::BOTTOM}
+		{Hotpoint::Left, Hotpoint::Right},
+		{Hotpoint::Top, Hotpoint::Bottom}
 	};
 
 	CHAOS_IMPLEMENT_ENUM_METHOD(Hotpoint, &Hotpoint_metadata, CHAOS_API);

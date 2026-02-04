@@ -56,9 +56,9 @@ namespace chaos
 
 	enum class KeyboardLayoutType : int
 	{
-		AZERTY,
-		QWERTY,
-		CURRENT
+		Azerty,
+		Qwerty,
+		Current
 	};
 
 	CHAOS_DECLARE_ENUM_METHOD(KeyboardLayoutType, CHAOS_API);

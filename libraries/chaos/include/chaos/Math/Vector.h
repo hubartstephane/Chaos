@@ -66,7 +66,7 @@ namespace chaos
 namespace glm
 {
 	template<int DIMENSION, typename T> requires (DIMENSION >= 1 && DIMENSION <= 4)
-	void DrawImGuiVariableImpl(glm::vec<DIMENSION, T>& value, chaos::DrawImGuiVariableFlags flags = chaos::DrawImGuiVariableFlags::NONE)
+	void DrawImGuiVariableImpl(glm::vec<DIMENSION, T>& value, chaos::DrawImGuiVariableFlags flags = chaos::DrawImGuiVariableFlags::None)
 	{
 		// ImGui does not provide a InputDoubleX method, that's why we are using InputScalarN here instead of (InputIntX and InputFloatX)
 		// (InputScalarN is easier because the size can be given has an argument)	
@@ -74,7 +74,7 @@ namespace glm
 			ImGui::InputScalarN("", ImGuiDataType_S32, &value, DIMENSION, NULL, NULL, "%d", 0);
 		else if constexpr (std::is_same_v<T, float>)
 		{
-			if (HasAnyFlags(flags, chaos::DrawImGuiVariableFlags::COLOR)) // special case for colors
+			if (HasAnyFlags(flags, chaos::DrawImGuiVariableFlags::Color)) // special case for colors
 			{
 				if (DIMENSION == 3)
 				{

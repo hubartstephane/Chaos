@@ -93,10 +93,10 @@ namespace chaos
 			if (trigger.IsTriggerOnce() && trigger.enter_event_triggered)
 				continue;
 			// collision type
-			CollisionType collision_type = CollisionType::STARTED;
+			CollisionType collision_type = CollisionType::Started;
 			if (previous_collisions != nullptr)
 				if (previous_collisions->FindTrigger(&trigger))
-					collision_type = CollisionType::AGAIN;
+					collision_type = CollisionType::Repeat;
 			// check for collision (bounding box may change when wanting to go outside)
 			if (trigger.IsCollisionWith(b, collision_type))
 				new_collisions.triggers.push_back(&trigger);
@@ -110,10 +110,10 @@ namespace chaos
 			TMTrigger* trigger = new_collisions.triggers[i].get();
 
 			// search in previous frame data
-			CollisionType collision_type = CollisionType::STARTED;
+			CollisionType collision_type = CollisionType::Started;
 			if (previous_collisions != nullptr)
 				if (previous_collisions->FindTrigger(trigger))
-					collision_type = CollisionType::AGAIN;
+					collision_type = CollisionType::Repeat;
 
 			// trigger event
 			if (trigger->OnCollisionEvent(delta_time, object, collision_type))
@@ -132,7 +132,7 @@ namespace chaos
 			for (size_t i = 0; i < previous_count; ++i)
 			{
 				if (std::find(new_collisions.triggers.begin(), new_collisions.triggers.end(), previous_collisions->triggers[i]) == new_collisions.triggers.end()) // no more colliding
-					previous_collisions->triggers[i]->OnCollisionEvent(delta_time, object, CollisionType::FINISHED);
+					previous_collisions->triggers[i]->OnCollisionEvent(delta_time, object, CollisionType::Ended);
 			}
 		}
 
@@ -340,7 +340,7 @@ namespace chaos
 			aspect_ratio = game->GetViewportWantedAspect();
 
 		// compute the surface
-		box2 camera_box = SetBoxAspect(camera_template->GetBoundingBox(true), aspect_ratio, SetBoxAspectMethod::PREFER_UPDATE_WIDTH);
+		box2 camera_box = SetBoxAspect(camera_template->GetBoundingBox(true), aspect_ratio, SetBoxAspectMethod::UpdateWidth);
 
 		// create the real camera
 		Camera* camera = CreateCamera();
@@ -400,7 +400,7 @@ namespace chaos
 		int particle_flags = 0;
 		bool keep_aspect_ratio = true;
 
-		Hotpoint hotpoint = Hotpoint::BOTTOM_LEFT;
+		Hotpoint hotpoint = Hotpoint::BottomLeft;
 
 
 

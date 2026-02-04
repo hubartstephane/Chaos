@@ -78,7 +78,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramProviderVariableBase(char const* in_name, T const& in_value, GPUProgramProviderPassType in_pass_type = GPUProgramProviderPassType::EXPLICIT) :
+		GPUProgramProviderVariableBase(char const* in_name, T const& in_value, GPUProgramProviderPassType in_pass_type = GPUProgramProviderPassType::Explicit) :
 			handled_name(in_name), value(in_value), pass_type(in_pass_type) {}
 
 	protected:
@@ -98,7 +98,7 @@ namespace chaos
 		/** the value of the uniform */
 		MEMBER_TYPE value;
 		/** the type of this provider */
-		GPUProgramProviderPassType pass_type = GPUProgramProviderPassType::EXPLICIT;
+		GPUProgramProviderPassType pass_type = GPUProgramProviderPassType::Explicit;
 	};
 
 	/**
@@ -112,7 +112,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramProviderTexture(char const* in_name, shared_ptr<GPUTexture> in_value, GPUProgramProviderPassType in_pass_type = GPUProgramProviderPassType::EXPLICIT) :
+		GPUProgramProviderTexture(char const* in_name, shared_ptr<GPUTexture> in_value, GPUProgramProviderPassType in_pass_type = GPUProgramProviderPassType::Explicit) :
 			handled_name(in_name), value(in_value), pass_type(in_pass_type) {}
 
 	protected:
@@ -127,7 +127,7 @@ namespace chaos
 		/** the value of the uniform */
 		shared_ptr<GPUTexture> value;
 		/** the type of this provider */
-		GPUProgramProviderPassType pass_type = GPUProgramProviderPassType::EXPLICIT;
+		GPUProgramProviderPassType pass_type = GPUProgramProviderPassType::Explicit;
 	};
 
 
@@ -173,18 +173,18 @@ namespace chaos
 
 		/** register a uniform value */
 		template<typename T>
-		void AddVariable(char const* name, T const& value, GPUProgramProviderPassType pass_type = GPUProgramProviderPassType::EXPLICIT)
+		void AddVariable(char const* name, T const& value, GPUProgramProviderPassType pass_type = GPUProgramProviderPassType::Explicit)
 		{
 			AddProvider(new GPUProgramProviderValue<T>(name, value, pass_type));
 		}
 		/** register a uniform reference */
 		template<typename T>
-		void AddVariableReference(char const* name, T const& value, GPUProgramProviderPassType pass_type = GPUProgramProviderPassType::EXPLICIT)
+		void AddVariableReference(char const* name, T const& value, GPUProgramProviderPassType pass_type = GPUProgramProviderPassType::Explicit)
 		{
 			AddProvider(new GPUProgramProviderReference<T>(name, value, pass_type));
 		}
 		/** register a uniform texture */
-		void AddTexture(char const* name, shared_ptr<class GPUTexture> texture, GPUProgramProviderPassType pass_type = GPUProgramProviderPassType::EXPLICIT)
+		void AddTexture(char const* name, shared_ptr<class GPUTexture> texture, GPUProgramProviderPassType pass_type = GPUProgramProviderPassType::Explicit)
 		{
 			AddProvider(new GPUProgramProviderTexture(name, texture, pass_type));
 		}

@@ -11,11 +11,11 @@ namespace chaos
 
 	enum class DrawImGuiVariableFlags : int
 	{
-		NONE = 0,
-		READ_ONLY           = (1 << 0),
-		COLOR               = (1 << 1),  // treat glm::vec3 and glm::vec4 has a colour
-		FIXED_SIZE_ARRAY    = (1 << 2),  // prevent add/suppress element from array
-		FIXED_REORDER_ARRAY = (1 << 3)   // prevent reordering element from an array
+		None = 0,
+		ReadOnly          = (1 << 0),
+		Color             = (1 << 1),  // treat glm::vec3 and glm::vec4 has a colour
+		FixedSizeArray    = (1 << 2),  // prevent add/suppress element from array
+		FixedReorderArray = (1 << 3)   // prevent reordering element from an array
 
 	};
 
@@ -86,14 +86,14 @@ namespace chaos
 		template<typename T>
 		concept HasDrawImGuiVariableImplFunction = requires(std::remove_const<T>::type & t)
 		{
-			{DrawImGuiVariableImpl(t, chaos::DrawImGuiVariableFlags::NONE)};
+			{DrawImGuiVariableImpl(t, chaos::DrawImGuiVariableFlags::None)};
 		};
 
 		/** check whether there is a method named DrawImGuiVariable */
 		template<typename T>
 		concept HasDrawImGuiVariableMethod = requires(std::remove_const<T>::type & t)
 		{
-			{t.DrawImGuiVariable(chaos::DrawImGuiVariableFlags::NONE)};
+			{t.DrawImGuiVariable(chaos::DrawImGuiVariableFlags::None)};
 		};
 
 		template<typename T>
@@ -123,21 +123,21 @@ namespace chaos
 	}; // namespace ImGuiTools
 
 	/** implementation of DrawImGui for a string */
-	CHAOS_API void DrawImGuiVariableImpl(std::string& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::NONE);
+	CHAOS_API void DrawImGuiVariableImpl(std::string& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::None);
 	/** implementation of DrawImGui for a bool */
-	CHAOS_API void DrawImGuiVariableImpl(bool& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::NONE);
+	CHAOS_API void DrawImGuiVariableImpl(bool& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::None);
 	/** implementation of DrawImGui for a int */
-	CHAOS_API void DrawImGuiVariableImpl(int& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::NONE);
+	CHAOS_API void DrawImGuiVariableImpl(int& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::None);
 	/** implementation of DrawImGui for a float */
-	CHAOS_API void DrawImGuiVariableImpl(float& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::NONE);
+	CHAOS_API void DrawImGuiVariableImpl(float& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::None);
 	/** implementation of DrawImGui for a double */
-	CHAOS_API void DrawImGuiVariableImpl(double& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::NONE);
+	CHAOS_API void DrawImGuiVariableImpl(double& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::None);
 
 	namespace details
 	{
 		/** internal implementation of DrawImGui for enums */
 		template<typename T>
-		void DrawImGuiVariableEnum(T& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::NONE)
+		void DrawImGuiVariableEnum(T& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::None)
 		{
 			assert(std::is_enum_v<T> && ImGuiTools::HasEnumMetaData<T>);
 
@@ -207,10 +207,10 @@ namespace chaos
 
 	/** a template to display const variables */
 	template<typename T>
-	void DrawImGuiVariable(T & value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::NONE)
+	void DrawImGuiVariable(T & value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::None)
 	{
 		// disable control if necessary
-		if (HasAnyFlags(flags, DrawImGuiVariableFlags::READ_ONLY))
+		if (HasAnyFlags(flags, DrawImGuiVariableFlags::ReadOnly))
 		{
 			ImGui::BeginDisabled();
 		}
@@ -241,16 +241,16 @@ namespace chaos
 		ImGui::PopID();
 
 		// enable control back if necessary
-		if (HasAnyFlags(flags, DrawImGuiVariableFlags::READ_ONLY))
+		if (HasAnyFlags(flags, DrawImGuiVariableFlags::ReadOnly))
 		{
 			ImGui::EndDisabled();
 		}
 	}
 
 	template<typename T>
-	void DrawImGuiVariable(T const& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::NONE)
+	void DrawImGuiVariable(T const& value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::None)
 	{
-		flags |= DrawImGuiVariableFlags::READ_ONLY; // ensure flag is coherent
+		flags |= DrawImGuiVariableFlags::ReadOnly; // ensure flag is coherent
 
 		DrawImGuiVariable(((T&)value), flags); // call CONST version !
 	}

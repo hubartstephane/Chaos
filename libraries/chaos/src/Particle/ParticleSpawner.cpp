@@ -66,7 +66,7 @@ namespace chaos
 				ParticleTexcoords texcoords;
 
 				if (bitmap_info->HasAnimation() && bitmap_info->GetAnimationImageCount() > 0)
-					texcoords = bitmap_info->GetAnimationLayout(0, WrapMode::CLAMP).GetTexcoords();
+					texcoords = bitmap_info->GetAnimationLayout(0, WrapMode::Clamp).GetTexcoords();
 				else
 					texcoords = bitmap_info->GetTexcoords();
 

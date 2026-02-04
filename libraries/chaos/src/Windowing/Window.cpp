@@ -270,7 +270,7 @@ namespace chaos
 		// some input mode
 		glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, 1);
 		// prepare cursor mode
-		SetCursorMode(CursorMode::DISABLED);
+		SetCursorMode(CursorMode::Disabled);
 		// set the window position
 		UpdatePlacementInfoAccordingToConfig(placement_info);
 		SetWindowPlacement(placement_info);
@@ -321,7 +321,7 @@ namespace chaos
 	CursorMode Window::GetEffectiveCursorMode() const
 	{
 		if (WindowApplication::IsImGuiMenuEnabled())
-			return CursorMode::NORMAL;
+			return CursorMode::Normal;
 		return cursor_mode;
 	}
 	
@@ -613,7 +613,7 @@ namespace chaos
 	void Window::DoOnMouseMove(GLFWwindow* in_glfw_window, double x, double y)
 	{
 		// notify the application of the mouse state
-		WindowApplication::SetApplicationInputMode(InputMode::MOUSE);
+		WindowApplication::SetApplicationInputMode(InputMode::Mouse);
 
 		// get the window
 		Window * my_window = GetWindowFromGLFWContext(in_glfw_window);
@@ -635,16 +635,16 @@ namespace chaos
 		KeyboardAndMouseDevice* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
 		if (keyboard_and_mouse_device != nullptr)
 		{
-			glm::vec2 previous_delta = keyboard_and_mouse_device->GetInputValue(Input2D::MOUSE_DELTA); // accumulate. This will be set to zero at the beginning of next frame
-			keyboard_and_mouse_device->SetInputValue(Input2D::MOUSE_DELTA, delta + previous_delta);
+			glm::vec2 previous_delta = keyboard_and_mouse_device->GetInputValue(Input2D::MouseDelta); // accumulate. This will be set to zero at the beginning of next frame
+			keyboard_and_mouse_device->SetInputValue(Input2D::MouseDelta, delta + previous_delta);
 		}
 
 		if (my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnMouseMove, delta)) // dispatch the event
 		{
-			MarkInputConsumedInApplicationCache(Input2D::MOUSE_DELTA);
+			MarkInputConsumedInApplicationCache(Input2D::MouseDelta);
 
 			if (keyboard_and_mouse_device != nullptr)
-				keyboard_and_mouse_device->SetInputValue(Input2D::MOUSE_DELTA, { 0.0f, 0.0f });
+				keyboard_and_mouse_device->SetInputValue(Input2D::MouseDelta, { 0.0f, 0.0f });
 		}
 	}
 
@@ -675,7 +675,7 @@ namespace chaos
 	void Window::DoOnMouseButton(GLFWwindow* in_glfw_window, int button, int action, int modifiers)
 	{
 		// notify the application of the mouse state
-		WindowApplication::SetApplicationInputMode(InputMode::MOUSE);
+		WindowApplication::SetApplicationInputMode(InputMode::Mouse);
 
 		// get the window
 		Window * my_window = GetWindowFromGLFWContext(in_glfw_window);
@@ -683,7 +683,7 @@ namespace chaos
 			return;
 
 		// update global state
-		Key mouse_key = Key(button + (int)Key::MOUSE_FIRST);
+		Key mouse_key = Key(button + (int)Key::MouseFirst);
 
 		KeyboardAndMouseDevice* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
 		if (keyboard_and_mouse_device != nullptr)
@@ -706,7 +706,7 @@ namespace chaos
 	void Window::DoOnMouseWheel(GLFWwindow* in_glfw_window, double scroll_x, double scroll_y)
 	{
 		// notify the application of the mouse state
-		WindowApplication::SetApplicationInputMode(InputMode::MOUSE);
+		WindowApplication::SetApplicationInputMode(InputMode::Mouse);
 
 		// get the window
 		Window * my_window = GetWindowFromGLFWContext(in_glfw_window);
@@ -717,23 +717,23 @@ namespace chaos
 		KeyboardAndMouseDevice* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
 		if (keyboard_and_mouse_device != nullptr)
 		{
-			glm::vec2 previous_wheel = keyboard_and_mouse_device->GetInputValue(Input2D::MOUSE_WHEEL); // accumulate. This will be set to zero at the beginning of next frame
+			glm::vec2 previous_wheel = keyboard_and_mouse_device->GetInputValue(Input2D::MouseWheel); // accumulate. This will be set to zero at the beginning of next frame
 
-			keyboard_and_mouse_device->SetInputValue(Input1D::MOUSE_WHEEL_X, float(scroll_x + previous_wheel.x));
-			keyboard_and_mouse_device->SetInputValue(Input1D::MOUSE_WHEEL_Y, float(scroll_y + previous_wheel.y));
-			keyboard_and_mouse_device->SetInputValue(Input2D::MOUSE_WHEEL, { float(scroll_x + previous_wheel.x), float(scroll_y + previous_wheel.y) });
+			keyboard_and_mouse_device->SetInputValue(Input1D::MouseWheelX, float(scroll_x + previous_wheel.x));
+			keyboard_and_mouse_device->SetInputValue(Input1D::MouseWheelY, float(scroll_y + previous_wheel.y));
+			keyboard_and_mouse_device->SetInputValue(Input2D::MouseWheel, { float(scroll_x + previous_wheel.x), float(scroll_y + previous_wheel.y) });
 		}
 
 		// dispatch event
 		if (my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnMouseWheel, scroll_x, scroll_y))
 		{
-			MarkInputConsumedInApplicationCache(Input2D::MOUSE_WHEEL);
+			MarkInputConsumedInApplicationCache(Input2D::MouseWheel);
 
 			if (keyboard_and_mouse_device != nullptr) // the mouse wheel is a volatile amount. if catched, reset it
 			{
-				keyboard_and_mouse_device->SetInputValue(Input1D::MOUSE_WHEEL_X, 0.0f);
-				keyboard_and_mouse_device->SetInputValue(Input1D::MOUSE_WHEEL_Y, 0.0f);
-				keyboard_and_mouse_device->SetInputValue(Input2D::MOUSE_WHEEL, { 0.0f, 0.0f });
+				keyboard_and_mouse_device->SetInputValue(Input1D::MouseWheelX, 0.0f);
+				keyboard_and_mouse_device->SetInputValue(Input1D::MouseWheelY, 0.0f);
+				keyboard_and_mouse_device->SetInputValue(Input2D::MouseWheel, { 0.0f, 0.0f });
 			}
 		}
 	}
@@ -741,7 +741,7 @@ namespace chaos
 	void Window::DoOnKeyEvent(GLFWwindow* in_glfw_window, int keycode, int scancode, int action, int modifiers)
 	{
 		// notify the application of the keyboard state
-		WindowApplication::SetApplicationInputMode(InputMode::KEYBOARD);
+		WindowApplication::SetApplicationInputMode(InputMode::Keyboard);
 
 		// get the window
 		Window * my_window = GetWindowFromGLFWContext(in_glfw_window);
@@ -750,10 +750,10 @@ namespace chaos
 
 		// GLFW keycode corresponds to the character that would be produced on a QWERTY layout
 		// we have to make a conversion to know the character is to be produced on CURRENT layout
-		keycode = KeyboardLayoutConversion::ConvertGLFWKeycode(keycode, KeyboardLayoutType::QWERTY, KeyboardLayoutType::CURRENT);
+		keycode = KeyboardLayoutConversion::ConvertGLFWKeycode(keycode, KeyboardLayoutType::Qwerty, KeyboardLayoutType::Current);
 
 		// update global keyboard state
-		Key keyboard_key = Key(keycode + int(Key::KEYBOARD_FIRST));
+		Key keyboard_key = Key(keycode + int(Key::KeyboardFirst));
 
 		KeyboardAndMouseDevice* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
 		if (keyboard_and_mouse_device != nullptr)
@@ -776,7 +776,7 @@ namespace chaos
 	void Window::DoOnCharEvent(GLFWwindow* in_glfw_window, unsigned int c)
 	{
 		// notify the application of the keyboard button state
-		WindowApplication::SetApplicationInputMode(InputMode::KEYBOARD);
+		WindowApplication::SetApplicationInputMode(InputMode::Keyboard);
 
 		// get the window
 		Window * my_window = GetWindowFromGLFWContext(in_glfw_window);
@@ -960,7 +960,7 @@ namespace chaos
 			// save the image
 			std::string format = StringTools::Printf(
 				"capture_%s_%%d.png",
-				StringTools::TimeToString(std::chrono::system_clock::now(), TimeToStringFormatType::FILENAME).c_str());
+				StringTools::TimeToString(std::chrono::system_clock::now(), TimeToStringFormatType::Filename).c_str());
 
 			boost::filesystem::path file_path = FileTools::GetUniquePath(capture_directory_path, format.c_str(), true);
 			if (file_path.empty())
@@ -977,7 +977,7 @@ namespace chaos
 		aabox2 result;
 		result.position = { 0, 0 };
 		result.size = size;
-		return SetBoxAspect(result, 16.0f / 9.0f, SetBoxAspectMethod::SHRINK_BOX);
+		return SetBoxAspect(result, 16.0f / 9.0f, SetBoxAspectMethod::Shrink);
 	}
 
 	bool Window::EnumerateInputActions(InputActionProcessor & in_action_processor, EnumerateInputActionContext in_context)

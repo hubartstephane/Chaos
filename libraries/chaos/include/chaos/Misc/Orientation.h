@@ -9,8 +9,8 @@ namespace chaos
 	/** the possible axis */
 	enum class Orientation : int
 	{
-		HORIZONTAL = 0,
-		VERTICAL = 1
+		Horizontal = 0,
+		Vertical = 1
 	};
 
 	CHAOS_DECLARE_ENUM_METHOD(Orientation, CHAOS_API);

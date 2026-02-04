@@ -314,17 +314,17 @@ namespace chaos
 
 		bool LoadJSONFile(FilePathParam const& path, nlohmann::json& result, LoadFileFlag flag)
 		{
-			if (HasAnyFlags(flag, LoadFileFlag::RECURSIVE))
+			if (HasAnyFlags(flag, LoadFileFlag::Recursive))
 			{
 				JSONRecursiveLoader loader;
 				return loader.LoadJSONFile(path, result, flag);
 			}
 			else
 			{
-				Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::ASCII | LoadFileFlag::NO_ERROR_TRACE);
+				Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::Ascii | LoadFileFlag::NoErrorTrace);
 				if (buffer == nullptr)
 				{
-					if (int(flag & LoadFileFlag::NO_ERROR_TRACE) == 0)
+					if (int(flag & LoadFileFlag::NoErrorTrace) == 0)
 					{
 						JsonLog::Error("JSONTools::LoadJSONFile: fail to load [%s]", path.GetResolvedPath().string().c_str());
 					}

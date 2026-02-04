@@ -39,7 +39,7 @@ LudumHUDDiamondComponent::LudumHUDDiamondComponent(char const* in_text) :
 	generator_params.line_height = 130.0f;
 	generator_params.font_info_name = "normal";
 	generator_params.position = glm::vec2(-20.0f, -80.0f);
-	generator_params.hotpoint = Hotpoint::TOP_RIGHT;
+	generator_params.hotpoint = Hotpoint::TopRight;
 }
 
 bool LudumHUDDiamondComponent::QueryValue(std::pair<int, int>& result) const
@@ -65,7 +65,7 @@ LudumHUDLifeComponent::LudumHUDLifeComponent(char const* in_text) :
 	generator_params.line_height = 130.0f;
 	generator_params.font_info_name = "normal";
 	generator_params.position = glm::vec2(-20.0f, -80.0f);
-	generator_params.hotpoint = Hotpoint::TOP_RIGHT;
+	generator_params.hotpoint = Hotpoint::TopRight;
 }
 
 bool LudumHUDLifeComponent::QueryValue(int & result) const

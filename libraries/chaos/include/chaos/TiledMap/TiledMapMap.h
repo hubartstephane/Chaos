@@ -17,36 +17,36 @@ namespace chaos
 
 		enum class MapOrientation : int
 		{
-			ORTHOGONAL = 0,
-			ISOMETRIC = 1,
-			STAGGERED = 2,
-			HEXAGONAL = 3,
+			Orthogonal = 0,
+			Isometric = 1,
+			Staggered = 2,
+			Hexagonal = 3,
 		};
 
 		CHAOS_DECLARE_ENUM_METHOD(MapOrientation, CHAOS_API);
 
 		enum class StaggerAxis : int
 		{
-			AXIS_X = 0,
-			AXIS_Y = 1
+			AxisX = 0,
+			AxisY = 1
 		};
 
 		CHAOS_DECLARE_ENUM_METHOD(StaggerAxis, CHAOS_API);
 
 		enum class StaggerIndex : int
 		{
-			ODD = 0,
-			EVEN = 1
+			Odd = 0,
+			Even = 1
 		};
 
 		CHAOS_DECLARE_ENUM_METHOD(StaggerIndex, CHAOS_API);
 
 		enum class RenderOrder : int
 		{
-			RIGHT_UP = 0,
-			RIGHT_DOWN = 1,
-			LEFT_UP = 2,
-			LEFT_DOWN = 3
+			RightUp = 0,
+			RightDown = 1,
+			LeftUp = 2,
+			LeftDown = 3
 		};
 
 		CHAOS_DECLARE_ENUM_METHOD(RenderOrder, CHAOS_API);
@@ -146,7 +146,7 @@ namespace chaos
 		public:
 
 			/** object information */
-			MapOrientation orientation = MapOrientation::ORTHOGONAL;
+			MapOrientation orientation = MapOrientation::Orthogonal;
 			/** object information */
 			glm::ivec2 size = glm::ivec2(100, 100);
 			/** object information */
@@ -156,11 +156,11 @@ namespace chaos
 			/** object information */
 			int hex_side_length = 0;
 			/** object information */
-			StaggerAxis stagger_axis = StaggerAxis::AXIS_Y;
+			StaggerAxis stagger_axis = StaggerAxis::AxisY;
 			/** object information */
-			StaggerIndex stagger_index = StaggerIndex::ODD;
+			StaggerIndex stagger_index = StaggerIndex::Odd;
 			/** object information */
-			RenderOrder render_order = RenderOrder::RIGHT_DOWN;
+			RenderOrder render_order = RenderOrder::RightDown;
 			/** object information */
 			int compressionlevel = 0;
 			/** object information */

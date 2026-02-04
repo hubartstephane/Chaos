@@ -83,7 +83,7 @@ namespace chaos
 		/** the duration of a the whole animation in seconds */
 		float anim_duration = -1.0f;
 		/** the default wrap mode */
-		WrapMode default_wrap_mode = WrapMode::NONE; // let the code decide in a single location (see  AtlasBitmapInfo::GetEffectiveRequestWrapMode(...))
+		WrapMode default_wrap_mode = WrapMode::None; // let the code decide in a single location (see  AtlasBitmapInfo::GetEffectiveRequestWrapMode(...))
 		/** the directory path that contains the child images */
 		boost::filesystem::path images_path;
 
@@ -250,7 +250,7 @@ namespace chaos
 
 			boost::filesystem::path json_path = resolved_path;
 			json_path.replace_extension("json");
-			JSONTools::LoadJSONFile(json_path, json_manifest, LoadFileFlag::NO_ERROR_TRACE);
+			JSONTools::LoadJSONFile(json_path, json_manifest, LoadFileFlag::NoErrorTrace);
 
 			// do not individually load the manifest in recursive calls
 			add_data.ignore_files.push_back(json_path);
@@ -289,7 +289,7 @@ namespace chaos
 		// load the face and set pixel size
 		FT_Face face = nullptr;
 
-		Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::NO_ERROR_TRACE); // for direct access to resource directory
+		Buffer<char> buffer = FileTools::LoadFile(path, LoadFileFlag::NoErrorTrace); // for direct access to resource directory
 		if (buffer == nullptr)
 			BitmapAtlasLog::Error("AtlasFolderInfoInput::AddFontFileWithManifestImpl: fail to load [%s]", path.GetResolvedPath().string().c_str());
 		if (buffer != nullptr)
@@ -542,7 +542,7 @@ namespace chaos
 
 			boost::filesystem::path json_path = resolved_path;
 			json_path.replace_extension("json");
-			JSONTools::LoadJSONFile(json_path, json_manifest, LoadFileFlag::NO_ERROR_TRACE);
+			JSONTools::LoadJSONFile(json_path, json_manifest, LoadFileFlag::NoErrorTrace);
 
 			// do not individually load the manifest in recursive calls
 			add_data.ignore_files.push_back(json_path);

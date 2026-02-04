@@ -105,7 +105,7 @@ void LudumGameInstance::TickBackgroundFillRatio(float delta_time)
 
 bool LudumGameInstance::DoProcessAction(chaos::GPUProgramProviderExecutionData const& execution_data) const
 {
-	if (execution_data.Match("fill_ratio", chaos::GPUProgramProviderPassType::EXPLICIT))
+	if (execution_data.Match("fill_ratio", chaos::GPUProgramProviderPassType::Explicit))
 	{
 		if (LudumGame const* ludum_game = GetGame())
 		{
@@ -726,7 +726,7 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateChallengeParticles(Ludu
 	chaos::ParticleTextGenerator::GeneratorParams params;
 
 	params.line_height = CHALLENGE_SIZE;
-	params.hotpoint = chaos::Hotpoint::TOP;
+	params.hotpoint = chaos::Hotpoint::Top;
 	params.position.x = 0.0f;
 	params.position.y = CHALLENGE_PLACEMENT_Y;
 	params.font_info_name = "challenge";

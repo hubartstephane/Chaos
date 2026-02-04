@@ -63,7 +63,7 @@ namespace chaos
 		{
 			if (auto input_state = GetInputState(in_input))
 				return input_state->GetStatus();
-			return InputStatus::NONE;
+			return InputStatus::None;
 		}
 
 		/** returns true whether there is any k active */

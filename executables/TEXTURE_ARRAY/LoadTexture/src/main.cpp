@@ -8,7 +8,7 @@ protected:
 
 	virtual bool EnumerateInputActions(chaos::InputActionProcessor & in_action_processor, chaos::EnumerateInputActionContext in_context) override
 	{
-		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KP_ADD), "Next Texture", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KeypadAdd), "Next Texture", [this]()
 		{
 			ChangeTexture(texture_index + 1);
 		}))
@@ -16,7 +16,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KP_SUBTRACT), "Previous Texture", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KeypadSubtract), "Previous Texture", [this]()
 		{
 			ChangeTexture(texture_index - 1);
 		}))
@@ -125,8 +125,8 @@ protected:
 			return false;
 
 		chaos::GPUProgramGenerator program_generator;
-		program_generator.AddShaderSourceFile(chaos::ShaderType::FRAGMENT, fragment_shader_path);
-		program_generator.AddShaderSourceFile(chaos::ShaderType::VERTEX,   vertex_shader_path);
+		program_generator.AddShaderSourceFile(chaos::ShaderType::Fragment, fragment_shader_path);
+		program_generator.AddShaderSourceFile(chaos::ShaderType::Vertex,   vertex_shader_path);
 
 		program = program_generator.GenProgramObject();
 		if (program == nullptr)

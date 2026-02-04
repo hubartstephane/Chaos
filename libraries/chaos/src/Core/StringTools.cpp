@@ -37,9 +37,9 @@ namespace chaos
 			char const* format_str = nullptr;
 			switch (format)
 			{
-				case TimeToStringFormatType::SHORT:    format_str = "%04d/%02d/%02d"; break;
-				case TimeToStringFormatType::FULL:     format_str = "%04d/%02d/%02d %02d:%02d:%02d"; break;
-				case TimeToStringFormatType::FILENAME: format_str = "%04d%02d%02d_%02dh%02dm%02ds"; break;
+				case TimeToStringFormatType::Short:    format_str = "%04d/%02d/%02d"; break;
+				case TimeToStringFormatType::Full:     format_str = "%04d/%02d/%02d %02d:%02d:%02d"; break;
+				case TimeToStringFormatType::Filename: format_str = "%04d%02d%02d_%02dh%02dm%02ds"; break;
 				default: assert(0);
 			}
 

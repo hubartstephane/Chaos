@@ -5,8 +5,8 @@ namespace chaos
 {
 	static EnumMetaData<Orientation> const Orientation_metadata =
 	{
-		{ Orientation::HORIZONTAL, "horizontal" },
-		{ Orientation::VERTICAL, "vertical" }
+		{ Orientation::Horizontal, "horizontal" },
+		{ Orientation::Vertical, "vertical" }
 	};
 
 	CHAOS_IMPLEMENT_ENUM_METHOD(Orientation, &Orientation_metadata, CHAOS_API);

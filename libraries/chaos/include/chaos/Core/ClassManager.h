@@ -15,10 +15,10 @@ namespace chaos
 
 	enum class FindClassFlags : int
 	{
-		NAME = 1,             // consider name when searching
-		SHORTNAME = 2,        // consider shortname when searching
-		PARENT_MANAGER = 4,   // search into child managers
-		ALL = NAME | SHORTNAME | PARENT_MANAGER
+		Name = 1,             // consider name when searching
+		Shortname = 2,        // consider shortname when searching
+		ParentManager = 4,    // search into child managers
+		All = Name | Shortname | ParentManager
 	};
 
 	/**
@@ -46,7 +46,7 @@ namespace chaos
 		ClassManager const * GetParentManager() const { return parent_manager.get(); }
 
 		/** find a class by name */
-		ClassFindResult FindClass(char const* name, FindClassFlags flags = FindClassFlags::ALL);
+		ClassFindResult FindClass(char const* name, FindClassFlags flags = FindClassFlags::All);
 
 		/** find a class by type */
 		template<typename CLASS_TYPE>

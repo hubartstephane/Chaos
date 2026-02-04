@@ -15,10 +15,10 @@ namespace chaos
 
 	enum class LinearComposerWidgetInsertType : int
 	{
-		START,               // insert at the beginning of the children list
-		END,                 // insert at the end of the children list
-		POSITIONAL,          // insert at position (all elements after are pushed toward the end)
-		POSITIONAL_REPLACE   // insert at position (if an element already exists at this position it is being removed from the children list)
+		Start,               // insert at the beginning of the children list
+		End,                 // insert at the end of the children list
+		Positional,          // insert at position (all elements after are pushed toward the end)
+		PositionalReplace    // insert at position (if an element already exists at this position it is being removed from the children list)
 	};
 
 	/**
@@ -43,7 +43,7 @@ namespace chaos
 	public:
 
 		/** how the child must be inserted */
-		LinearComposerWidgetInsertType type = LinearComposerWidgetInsertType::END;
+		LinearComposerWidgetInsertType type = LinearComposerWidgetInsertType::End;
 		/** where the child must be inserted */
 		size_t position = 0;
 	};

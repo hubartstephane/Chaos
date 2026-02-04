@@ -68,10 +68,10 @@ namespace chaos
 
 	void GetTypedVertexDeclaration(GPUVertexDeclaration* result, boost::mpl::identity<VertexDefault>)
 	{
-		result->Push(VertexAttributeSemantic::POSITION, 0, VertexAttributeType::FLOAT2, "position");
-		result->Push(VertexAttributeSemantic::TEXCOORD, 0, VertexAttributeType::FLOAT3, "texcoord");
-		result->Push(VertexAttributeSemantic::COLOR, 0, VertexAttributeType::FLOAT4, "color");
-		result->Push(VertexAttributeSemantic::NONE, -1, VertexAttributeType::INT1, "flags");
+		result->Push(VertexAttributeSemantic::Position, 0, VertexAttributeType::Float2, "position");
+		result->Push(VertexAttributeSemantic::Texcoord, 0, VertexAttributeType::Float3, "texcoord");
+		result->Push(VertexAttributeSemantic::Color, 0, VertexAttributeType::Float4, "color");
+		result->Push(VertexAttributeSemantic::None, -1, VertexAttributeType::Int1, "flags");
 	}
 
 }; // namespace chaos

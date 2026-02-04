@@ -5,14 +5,14 @@ namespace chaos
 {
 	bool JSONRecursiveLoader::LoadJSONFile(FilePathParam const & path, nlohmann::json & result, LoadFileFlag flag)
 	{
-		flag &= ~LoadFileFlag::RECURSIVE;
+		flag &= ~LoadFileFlag::Recursive;
 		ComputeSubstitutionChain(path, flag);
 		return FinalizeSubstitutions(result);
 	}
 
 	bool JSONRecursiveLoader::ParseJSONFile(char const * buffer, boost::filesystem::path const & config_path, nlohmann::json & result, LoadFileFlag flag)
 	{
-		flag &= ~LoadFileFlag::RECURSIVE;
+		flag &= ~LoadFileFlag::Recursive;
 		ComputeSubstitutionChain(buffer, config_path, flag);
 		return FinalizeSubstitutions(result);
 	}

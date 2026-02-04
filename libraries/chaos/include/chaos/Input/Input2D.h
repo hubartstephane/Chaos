@@ -12,17 +12,17 @@ namespace chaos
 
 	enum class Input2D : int
 	{
-		UNKNOWN     = -1,
+		Unknown     = -1,
 
-		MOUSE_FIRST = 1000,
-		MOUSE_DELTA = MOUSE_FIRST + 0,
-		MOUSE_WHEEL = MOUSE_FIRST + 1,
-		MOUSE_LAST  = MOUSE_WHEEL,
+		MouseFirst = 1000,
+		MouseDelta = MouseFirst + 0,
+		MouseWheel = MouseFirst + 1,
+		MouseLast  = MouseWheel,
 
-		GAMEPAD_FIRST       = 2000,
-		GAMEPAD_LEFT_STICK  = GAMEPAD_FIRST + 0,
-		GAMEPAD_RIGHT_STICK = GAMEPAD_FIRST + 1,
-		GAMEPAD_LAST        = GAMEPAD_RIGHT_STICK
+		GamepadFirst      = 2000,
+		GamepadLeftStick  = GamepadFirst + 0,
+		GamepadRightStick = GamepadFirst + 1,
+		GamepadLast       = GamepadRightStick
 	};
 
 	CHAOS_DECLARE_ENUM_METHOD(Input2D, CHAOS_API);

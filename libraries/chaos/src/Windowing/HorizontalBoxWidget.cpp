@@ -6,7 +6,7 @@ namespace chaos
 	LinearComposerLayout HorizontalBoxWidget::GetComposerLayout() const
 	{
 		LinearComposerLayout result;
-		result.orientation = Orientation::HORIZONTAL;
+		result.orientation = Orientation::Horizontal;
 		return result;
 	}
 

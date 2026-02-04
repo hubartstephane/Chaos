@@ -10,8 +10,8 @@ namespace chaos
 		{
 			static const std::array<VirtualKeyDefinition, 2> definitions = 
 			{
-				VirtualKeyDefinition{Key::GAMEPAD_LEFT_TRIGGER, Input1D::GAMEPAD_LEFT_TRIGGER},
-				VirtualKeyDefinition{Key::GAMEPAD_RIGHT_TRIGGER, Input1D::GAMEPAD_RIGHT_TRIGGER}
+				VirtualKeyDefinition{Key::GamepadLeftTrigger, Input1D::GamepadLeftTrigger},
+				VirtualKeyDefinition{Key::GamepadRightTrigger, Input1D::GamepadRightTrigger}
 			};
 
 			for (VirtualKeyDefinition const & def : definitions)
@@ -24,9 +24,9 @@ namespace chaos
 		{
 			static const std::array<VirtualInput2DDefinition, 3> definitions =
 			{
-				VirtualInput2DDefinition { Input2D::GAMEPAD_LEFT_STICK, Input1D::GAMEPAD_LEFT_AXIS_X, Input1D::GAMEPAD_LEFT_AXIS_Y },
-				VirtualInput2DDefinition { Input2D::GAMEPAD_RIGHT_STICK, Input1D::GAMEPAD_RIGHT_AXIS_X, Input1D::GAMEPAD_RIGHT_AXIS_Y },
-				VirtualInput2DDefinition { Input2D::MOUSE_WHEEL, Input1D::MOUSE_WHEEL_X, Input1D::MOUSE_WHEEL_Y }
+				VirtualInput2DDefinition { Input2D::GamepadLeftStick, Input1D::GamepadLeftAxisX, Input1D::GamepadLeftAxisY },
+				VirtualInput2DDefinition { Input2D::GamepadRightStick, Input1D::GamepadRightAxisX, Input1D::GamepadRightAxisY },
+				VirtualInput2DDefinition { Input2D::MouseWheel, Input1D::MouseWheelX, Input1D::MouseWheelY }
 			};
 
 			for (VirtualInput2DDefinition const& def : definitions)

@@ -78,7 +78,7 @@ void LudumGame::DoDisplayGame(GPURenderContext* render_context, GPUProgramProvid
 		{
 			ParticleTextGenerator::GeneratorParams params;
 			params.line_height = 80.0f;
-			params.hotpoint = Hotpoint::BOTTOM;
+			params.hotpoint = Hotpoint::Bottom;
 			params.position.y = -300.0f;
 
 			WindowApplication * window_application = Application::GetInstance();

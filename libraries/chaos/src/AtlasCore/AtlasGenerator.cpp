@@ -277,7 +277,7 @@ namespace chaos
 					int w = src_desc.width;
 					int h = src_desc.height;
 
-					ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x, tex_y, w, src_desc.height, ImageTransform::NO_TRANSFORM);
+					ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x, tex_y, w, src_desc.height, ImageTransform::None);
 
 					// XXX:
 					// Duplicate the first/last rows/column of each subimage so that the sampling errors would give us a duplicate value
@@ -296,18 +296,18 @@ namespace chaos
 						//       (we force a padding of at least 1)
 
 						// 4 edges
-						ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x, tex_y - 1, w, 1, ImageTransform::NO_TRANSFORM);
-						ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x - 1, tex_y, 1, h, ImageTransform::NO_TRANSFORM);
+						ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x, tex_y - 1, w, 1, ImageTransform::None);
+						ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x - 1, tex_y, 1, h, ImageTransform::None);
 
-						ImageTools::CopyPixels(src_desc, dst_desc, 0, h - 1, tex_x, tex_y + h, w, 1, ImageTransform::NO_TRANSFORM);
-						ImageTools::CopyPixels(src_desc, dst_desc, w - 1, 0, tex_x + w, tex_y, 1, h, ImageTransform::NO_TRANSFORM);
+						ImageTools::CopyPixels(src_desc, dst_desc, 0, h - 1, tex_x, tex_y + h, w, 1, ImageTransform::None);
+						ImageTools::CopyPixels(src_desc, dst_desc, w - 1, 0, tex_x + w, tex_y, 1, h, ImageTransform::None);
 
 						// 4 extra corners
-						ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x - 1, tex_y - 1, 1, 1, ImageTransform::NO_TRANSFORM);
-						ImageTools::CopyPixels(src_desc, dst_desc, w - 1, 0, tex_x + w, tex_y - 1, 1, 1, ImageTransform::NO_TRANSFORM);
+						ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x - 1, tex_y - 1, 1, 1, ImageTransform::None);
+						ImageTools::CopyPixels(src_desc, dst_desc, w - 1, 0, tex_x + w, tex_y - 1, 1, 1, ImageTransform::None);
 
-						ImageTools::CopyPixels(src_desc, dst_desc, 0, h - 1, tex_x - 1, tex_y + h, 1, 1, ImageTransform::NO_TRANSFORM);
-						ImageTools::CopyPixels(src_desc, dst_desc, w - 1, h - 1, tex_x + w, tex_y + h, 1, 1, ImageTransform::NO_TRANSFORM);
+						ImageTools::CopyPixels(src_desc, dst_desc, 0, h - 1, tex_x - 1, tex_y + h, 1, 1, ImageTransform::None);
+						ImageTools::CopyPixels(src_desc, dst_desc, w - 1, h - 1, tex_x + w, tex_y + h, 1, 1, ImageTransform::None);
 					}
 				}
 				result.push_back(std::move(bitmap));

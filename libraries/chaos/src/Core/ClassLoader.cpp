@@ -116,7 +116,7 @@ namespace chaos
 		// check parameter and not already registered
 		assert(!StringTools::IsEmpty(class_name));
 
-		if (manager->FindClass(class_name.c_str(), FindClassFlags::NAME) != nullptr)
+		if (manager->FindClass(class_name.c_str(), FindClassFlags::Name) != nullptr)
 		{
 			ClassLog::Error("ClassLoader::DoCreateSpecialClass(...): class already existing [%s]", class_name.c_str());
 			return nullptr;

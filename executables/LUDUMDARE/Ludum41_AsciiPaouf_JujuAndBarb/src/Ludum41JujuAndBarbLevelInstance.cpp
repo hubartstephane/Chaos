@@ -183,7 +183,7 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 				position.x += particle_size.x * (float)j;
 				position.y -= particle_size.y * (float)i;
 
-				accessor[k].bounding_box.position = chaos::ConvertHotpoint(position, particle_size, chaos::Hotpoint::TOP_LEFT, chaos::Hotpoint::CENTER);
+				accessor[k].bounding_box.position = chaos::ConvertHotpoint(position, particle_size, chaos::Hotpoint::TopLeft, chaos::Hotpoint::Center);
 				accessor[k].bounding_box.half_size = 0.5f * particle_size;
 
 				++k;

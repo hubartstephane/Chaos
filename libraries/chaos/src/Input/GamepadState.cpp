@@ -25,41 +25,41 @@ namespace chaos
 	{
 		if (!IsGamepadInput(input))
 			return {};
-		return buttons[size_t(input) - size_t(Key::GAMEPAD_FIRST)];
+		return buttons[size_t(input) - size_t(Key::GamepadFirst)];
 	}
 
 	std::optional<Input1DState> GamepadState::DoGetInputState(Input1D input) const
 	{
 		if (!IsGamepadInput(input))
 			return {};
-		return axes[size_t(input) - size_t(Input1D::GAMEPAD_FIRST)];
+		return axes[size_t(input) - size_t(Input1D::GamepadFirst)];
 	}
 
 	std::optional<Input2DState> GamepadState::DoGetInputState(Input2D input) const
 	{	
 		if (!IsGamepadInput(input))
 			return {};
-		return sticks[size_t(input) - size_t(Input2D::GAMEPAD_FIRST)];
+		return sticks[size_t(input) - size_t(Input2D::GamepadFirst)];
 	}
 
 	bool GamepadState::DoForAllKeys(ForAllKeysFunction func) const
 	{
 		for (size_t i = 0 ; i < buttons.size() ; ++i)
-			if (func(Key(i + size_t(Key::GAMEPAD_FIRST)), buttons[i]))
+			if (func(Key(i + size_t(Key::GamepadFirst)), buttons[i]))
 				return true;
 		return false;
 	}
 	bool GamepadState::DoForAllInput1D(ForAllInput1DFunction func) const
 	{
 		for (size_t i = 0 ; i < axes.size() ; ++i)
-			if (func(Input1D(i + size_t(Input1D::GAMEPAD_FIRST)), axes[i]))
+			if (func(Input1D(i + size_t(Input1D::GamepadFirst)), axes[i]))
 				return true;
 		return false;
 	}
 	bool GamepadState::DoForAllInput2D(ForAllInput2DFunction func) const
 	{
 		for (size_t i = 0 ; i < sticks.size() ; ++i)
-			if (func(Input2D(i + size_t(Input2D::GAMEPAD_FIRST)), sticks[i]))
+			if (func(Input2D(i + size_t(Input2D::GamepadFirst)), sticks[i]))
 				return true;
 		return false;
 	}
@@ -148,14 +148,14 @@ namespace chaos
 		// update axes
 		for (size_t i = 0; i < AXIS_COUNT; ++i)
 		{
-			Input1D input = Input1D(i + size_t(Input1D::GAMEPAD_FIRST));
+			Input1D input = Input1D(i + size_t(Input1D::GamepadFirst));
 
 			float & value = state.axes[i];
 			// renormalize icomming value [-1 .. +1] => [0 .. 1]
-			if (input == Input1D::GAMEPAD_LEFT_TRIGGER || input == Input1D::GAMEPAD_RIGHT_TRIGGER)
+			if (input == Input1D::GamepadLeftTrigger || input == Input1D::GamepadRightTrigger)
 				value = (value * 0.5f + 0.5f);
 			// want positive Y when stick is UP
-			else if (input == Input1D::GAMEPAD_LEFT_AXIS_Y || input == Input1D::GAMEPAD_RIGHT_AXIS_Y)
+			else if (input == Input1D::GamepadLeftAxisY || input == Input1D::GamepadRightAxisY)
 				value = -value;
 			axes[i].SetValue(ClampAndNormalizeInput1D(value, in_filter_settings));
 		}
@@ -172,20 +172,20 @@ namespace chaos
 			if (std::optional<Input1DState> axis_state = GetInputState(src_axis))
 			{
 				bool value = (axis_state->value != 0.0f);
-				buttons[size_t(dst_button) - size_t(Key::GAMEPAD_FIRST)].SetValue(value);
+				buttons[size_t(dst_button) - size_t(Key::GamepadFirst)].SetValue(value);
 			}
 		};
 
-		UpdateVirtualButton(Key::GAMEPAD_LEFT_TRIGGER, Input1D::GAMEPAD_LEFT_TRIGGER);
-		UpdateVirtualButton(Key::GAMEPAD_RIGHT_TRIGGER, Input1D::GAMEPAD_RIGHT_TRIGGER);
+		UpdateVirtualButton(Key::GamepadLeftTrigger, Input1D::GamepadLeftTrigger);
+		UpdateVirtualButton(Key::GamepadRightTrigger, Input1D::GamepadRightTrigger);
 
 		// update sticks
 		auto UpdateVirtualStick = [&](Input2D dst_stick, Input1D src_horizontal_axis, Input1D src_vertical_axis)
 		{
 			glm::vec2 stick_value = 
 			{
-				state.axes[size_t(src_horizontal_axis) - size_t(Input1D::GAMEPAD_FIRST)],
-				state.axes[size_t(src_vertical_axis) - size_t(Input1D::GAMEPAD_FIRST)]
+				state.axes[size_t(src_horizontal_axis) - size_t(Input1D::GamepadFirst)],
+				state.axes[size_t(src_vertical_axis) - size_t(Input1D::GamepadFirst)]
 			};
 
 			// renormalize stick length so its length is always [0..1] (taking into account dead_zone & max_zone)
@@ -204,11 +204,11 @@ namespace chaos
 				stick_length * std::sin(stick_alpha)
 			};
 
-			sticks[size_t(dst_stick) - size_t(Input2D::GAMEPAD_FIRST)].SetValue(stick_value);
+			sticks[size_t(dst_stick) - size_t(Input2D::GamepadFirst)].SetValue(stick_value);
 		};
 
-		UpdateVirtualStick(Input2D::GAMEPAD_LEFT_STICK, Input1D::GAMEPAD_LEFT_AXIS_X, Input1D::GAMEPAD_LEFT_AXIS_Y);
-		UpdateVirtualStick(Input2D::GAMEPAD_RIGHT_STICK, Input1D::GAMEPAD_RIGHT_AXIS_X, Input1D::GAMEPAD_RIGHT_AXIS_Y);
+		UpdateVirtualStick(Input2D::GamepadLeftStick, Input1D::GamepadLeftAxisX, Input1D::GamepadLeftAxisY);
+		UpdateVirtualStick(Input2D::GamepadRightStick, Input1D::GamepadRightAxisX, Input1D::GamepadRightAxisY);
 	}
 
 }; // namespace chaos

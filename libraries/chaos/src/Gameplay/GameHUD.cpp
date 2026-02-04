@@ -191,7 +191,7 @@ namespace chaos
 			RegisterComponent(CreateHUDComponent<GameHUDTextComponent>(
 				GameHUDKeys::TITLE_ID,
 				game_name,
-				ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), Hotpoint::CENTER)));
+				ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), Hotpoint::Center)));
 		// the best score
 		if (game->GetBestScore() > 0)
 		{
@@ -203,7 +203,7 @@ namespace chaos
 			RegisterComponent(CreateHUDComponent<GameHUDTextComponent>(
 				GameHUDKeys::INSTRUCTIONS_ID,
 				game_instructions,
-				ParticleTextGenerator::GeneratorParams("normal", 40.0f, glm::vec2(0.0f, 40.0f), Hotpoint::BOTTOM)));
+				ParticleTextGenerator::GeneratorParams("normal", 40.0f, glm::vec2(0.0f, 40.0f), Hotpoint::Bottom)));
 
 		return true;
 	}
@@ -221,7 +221,7 @@ namespace chaos
 		RegisterComponent(CreateHUDComponent<GameHUDTextComponent>(
 			GameHUDKeys::TITLE_ID,
 			"Pause",
-			ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), Hotpoint::CENTER)));
+			ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), Hotpoint::Center)));
 		return true;
 	}
 
@@ -238,7 +238,7 @@ namespace chaos
 		RegisterComponent(CreateHUDComponent<GameHUDTextComponent>(
 			GameHUDKeys::TITLE_ID,
 			"Game Over",
-			ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), Hotpoint::CENTER)));
+			ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), Hotpoint::Center)));
 		return true;
 	}
 

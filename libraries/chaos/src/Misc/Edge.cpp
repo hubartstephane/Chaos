@@ -5,10 +5,10 @@ namespace chaos
 {
 	static EnumMetaData<Edge> const Edge_metadata =
 	{
-		{ Edge::TOP, "top" },
-		{ Edge::RIGHT, "right" },
-		{ Edge::BOTTOM, "bottom" },
-		{ Edge::LEFT, "left" }
+		{ Edge::Top, "top" },
+		{ Edge::Right, "right" },
+		{ Edge::Bottom, "bottom" },
+		{ Edge::Left, "left" }
 	};
 
 	CHAOS_IMPLEMENT_ENUM_METHOD(Edge, &Edge_metadata, CHAOS_API);

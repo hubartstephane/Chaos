@@ -72,8 +72,8 @@ protected:
 		sound = sound_source->Play(desc);
 
 		chaos::GPUProgramGenerator program_generator;
-		program_generator.AddShaderSourceFile(chaos::ShaderType::FRAGMENT, resources_path / "pixel_shader_cube.txt");
-		program_generator.AddShaderSourceFile(chaos::ShaderType::VERTEX, resources_path / "vertex_shader.txt");
+		program_generator.AddShaderSourceFile(chaos::ShaderType::Fragment, resources_path / "pixel_shader_cube.txt");
+		program_generator.AddShaderSourceFile(chaos::ShaderType::Vertex, resources_path / "vertex_shader.txt");
 
 		program = program_generator.GenProgramObject();
 		if (program == nullptr)
@@ -120,7 +120,7 @@ protected:
 
 	virtual bool OnMouseButtonImpl(chaos::MouseButtonEvent const &mouse_button_event) override
 	{
-		if (mouse_button_event.IsKeyPressed(chaos::Key::MOUSE_BUTTON_2))
+		if (mouse_button_event.IsKeyPressed(chaos::Key::MouseButton2))
 		{
 			rotation_started = !rotation_started;
 			return true;

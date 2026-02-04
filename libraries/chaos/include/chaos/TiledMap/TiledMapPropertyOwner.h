@@ -12,13 +12,13 @@ namespace chaos
 			/** types of particle */
 		enum class PropertyType : int
 		{
-			ANY = 0,
-			INT = 1,
-			FLOAT = 2,
-			BOOL = 3,
-			STRING = 4,
-			COLOR = 5,
-			OBJECT = 6
+			Any = 0,
+			Int = 1,
+			Float = 2,
+			Bool = 3,
+			String = 4,
+			Color = 5,
+			Object = 6
 		};
 
 		class CHAOS_API Property : public BaseObject
@@ -44,17 +44,17 @@ namespace chaos
 			int const* GetPropertyObject() const;
 
 			/** returns whether the property is of type int */
-			bool IsPropertyInt() const { return (type == PropertyType::INT); }
+			bool IsPropertyInt() const { return (type == PropertyType::Int); }
 			/** returns whether the property is of type float */
-			bool IsPropertyFloat() const { return (type == PropertyType::FLOAT); }
+			bool IsPropertyFloat() const { return (type == PropertyType::Float); }
 			/** returns whether the property is of type bool */
-			bool IsPropertyBool() const { return (type == PropertyType::BOOL); }
+			bool IsPropertyBool() const { return (type == PropertyType::Bool); }
 			/** returns whether the property is of type string */
-			bool IsPropertyString() const { return (type == PropertyType::STRING); }
+			bool IsPropertyString() const { return (type == PropertyType::String); }
 			/** returns whether the property is of type color */
-			bool IsPropertyColor() const { return (type == PropertyType::COLOR); }
+			bool IsPropertyColor() const { return (type == PropertyType::Color); }
 			/** returns whether the property is of type object */
-			bool IsPropertyObject() const { return (type == PropertyType::OBJECT); }
+			bool IsPropertyObject() const { return (type == PropertyType::Object); }
 
 			/** returns the name of the property */
 			char const * GetName() const { return name.c_str(); }
@@ -66,7 +66,7 @@ namespace chaos
 			/** the name of the property */
 			std::string name;
 			/** the type of the property */
-			PropertyType type = PropertyType::ANY;
+			PropertyType type = PropertyType::Any;
 		};
 
 		// ==========================================
@@ -103,12 +103,12 @@ namespace chaos
 		// Specialization of properties
 		// ==========================================
 
-		using PropertyInt = PropertyTemplate<int, PropertyType::INT>;
-		using PropertyFloat = PropertyTemplate<float, PropertyType::FLOAT>;
-		using PropertyBool = PropertyTemplate<bool, PropertyType::BOOL>;
-		using PropertyString = PropertyTemplate<std::string, PropertyType::STRING>;
-		using PropertyColor = PropertyTemplate<glm::vec4, PropertyType::COLOR>;
-		using PropertyObject = PropertyTemplate<int, PropertyType::OBJECT>;
+		using PropertyInt = PropertyTemplate<int, PropertyType::Int>;
+		using PropertyFloat = PropertyTemplate<float, PropertyType::Float>;
+		using PropertyBool = PropertyTemplate<bool, PropertyType::Bool>;
+		using PropertyString = PropertyTemplate<std::string, PropertyType::String>;
+		using PropertyColor = PropertyTemplate<glm::vec4, PropertyType::Color>;
+		using PropertyObject = PropertyTemplate<int, PropertyType::Object>;
 
 		// ==========================================
 		// PropertyOwner : some objects that have dynamic properties
@@ -124,7 +124,7 @@ namespace chaos
 			using BaseObject::BaseObject;
 
 			/** find property by name */
-			virtual Property const * FindProperty(char const * name, PropertyType type_id = PropertyType::ANY) const;
+			virtual Property const * FindProperty(char const * name, PropertyType type_id = PropertyType::Any) const;
 
 			/** find property without looking elsewhere than our own table */
 			Property const * FindInternalProperty(char const * name, PropertyType type_id) const;

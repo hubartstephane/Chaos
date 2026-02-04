@@ -153,9 +153,9 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 		stick_position.y = chaos::MathTools::AnalogicToDiscret(stick_position.y);
 	}
 
-	chaos::Key const accelerate_keys[] = { chaos::Key::SPACE, chaos::Key::GAMEPAD_A, chaos::Key() };
+	chaos::Key const accelerate_keys[] = { chaos::Key::Space, chaos::Key::GamepadA, chaos::Key() };
 	particle.accelerate_pressed = player->CheckKeyDown(accelerate_keys);
-	chaos::Key const break_keys[] = { chaos::Key::LEFT_CONTROL, chaos::Key::GAMEPAD_B, chaos::Key() };
+	chaos::Key const break_keys[] = { chaos::Key::LeftControl, chaos::Key::GamepadB, chaos::Key() };
 	particle.break_pressed = player->CheckKeyDown(break_keys);
 
 	// no input before race really starts
@@ -201,7 +201,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 		velocity_vector = particle.velocity * glm::vec2(std::cos(clamped_rotation), std::sin(clamped_rotation));
 
-		chaos::ApplyWrapMode(particle.rotation, -(float)M_PI, (float)M_PI, chaos::WrapMode::WRAP, particle.rotation);
+		chaos::ApplyWrapMode(particle.rotation, -(float)M_PI, (float)M_PI, chaos::WrapMode::Wrap, particle.rotation);
 
 		particle.bounding_box.position += velocity_vector * delta_time;
 	}

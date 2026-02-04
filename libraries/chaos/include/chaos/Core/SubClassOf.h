@@ -164,7 +164,7 @@ SubClassOf<T>::SubClassOf(Class const* src)
 		Class const* base_class = ClassManager::GetDefaultInstance()->FindCPPClass<T>();
 		if (base_class == nullptr)
 			ClassLog::Error("SubClassOf constructor : FindCPPClass<T> failure");
-		else if (src->InheritsFrom(base_class, true) != InheritanceType::YES)
+		else if (src->InheritsFrom(base_class, true) != InheritanceType::Yes)
 			ClassLog::Error("SubClassOf constructor : src class does not inherit from base_class");
 		else
 			internal_class = src;

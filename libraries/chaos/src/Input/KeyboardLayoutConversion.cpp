@@ -9,7 +9,7 @@ namespace chaos
 
 	int KeyboardLayoutConversion::QwertyVKToGLFWKeycode(unsigned int vk)
 	{
-		if (ScancodeInformation const* scancode_info = KeyboardLayout::GetKnownLayout(KeyboardLayoutType::QWERTY).GetInformationFromVK(vk))
+		if (ScancodeInformation const* scancode_info = KeyboardLayout::GetKnownLayout(KeyboardLayoutType::Qwerty).GetInformationFromVK(vk))
 			return QwertyScancodeToGLFWKeycode(scancode_info->scancode);
 		return 0;
 	}
@@ -17,7 +17,7 @@ namespace chaos
 	unsigned int KeyboardLayoutConversion::QwertyGLFWKeycodeToVK(int keycode)
 	{
 		if (unsigned int scancode = QwertyGLFWKeycodeToScancode(keycode))
-			if (ScancodeInformation const* scancode_info = KeyboardLayout::GetKnownLayout(KeyboardLayoutType::QWERTY).GetInformationFromScancode(scancode))
+			if (ScancodeInformation const* scancode_info = KeyboardLayout::GetKnownLayout(KeyboardLayoutType::Qwerty).GetInformationFromScancode(scancode))
 				return scancode_info->vk;
 		return 0;
 	}
@@ -99,7 +99,7 @@ namespace chaos
 #if _WIN32
 
 		if (IsKeyboardInput(key))
-			return Key(Key(ConvertGLFWKeycode(int(key) - int(Key::KEYBOARD_FIRST), src_layout_type, dst_layout_type)));
+			return Key(Key(ConvertGLFWKeycode(int(key) - int(Key::KeyboardFirst), src_layout_type, dst_layout_type)));
 
 #endif // #if _WIN32
 

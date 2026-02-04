@@ -48,29 +48,29 @@ namespace chaos
 	public:
 
 		/** self descriptive key */
-		Key left_button = Key::LEFT;
+		Key left_button = Key::Left;
 		/** self descriptive key */
-		Key right_button = Key::RIGHT;
+		Key right_button = Key::Right;
 		/** self descriptive key */
-		Key forward_button = Key::UP;
+		Key forward_button = Key::Up;
 		/** self descriptive key */
-		Key backward_button = Key::DOWN;
+		Key backward_button = Key::Down;
 		/** self descriptive key */
-		Key up_button = Key::PAGE_UP;
+		Key up_button = Key::PageUp;
 		/** self descriptive key */
-		Key down_button = Key::PAGE_DOWN;
+		Key down_button = Key::PageDown;
 
 		/** self descriptive key */
-		Key yaw_left_button = Key::KP_4;
+		Key yaw_left_button = Key::Keypad4;
 		/** self descriptive key */
-		Key yaw_right_button = Key::KP_6;
+		Key yaw_right_button = Key::Keypad6;
 		/** self descriptive key */
-		Key pitch_up_button = Key::KP_8;
+		Key pitch_up_button = Key::Keypad8;
 		/** self descriptive key */
-		Key pitch_down_button = Key::KP_2;
+		Key pitch_down_button = Key::Keypad2;
 
 		/** self descriptive key */
-		Key rotation_button = Key::MOUSE_BUTTON_1;
+		Key rotation_button = Key::MouseButton1;
 	};
 
 	/**

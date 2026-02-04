@@ -8,25 +8,25 @@ namespace chaos
 
 	enum class WrapMode : int
 	{
-		NONE = 0,
-		CLAMP = 1,
-		WRAP = 2,
-		CHECK_RANGES = 3
+		None = 0,
+		Clamp = 1,
+		Wrap = 2,
+		CheckLimits = 3
 	};
 
 	// apply the wrap mode (return whether this is not an out of bounds)
 	template<typename T>
 	bool ApplyWrapMode(T src, T min_value, T max_value, WrapMode mode, T& result)
 	{
-		if (mode == WrapMode::NONE)
+		if (mode == WrapMode::None)
 		{
 			result = src;
 		}
-		else if (mode == WrapMode::CLAMP)
+		else if (mode == WrapMode::Clamp)
 		{
 			result = std::clamp(src, min_value, max_value);
 		}
-		else if (mode == WrapMode::WRAP)
+		else if (mode == WrapMode::Wrap)
 		{
 			if (std::is_integral_v<T>)
 			{
@@ -37,7 +37,7 @@ namespace chaos
 				result = min_value + MathTools::Modulo(src - min_value, max_value - min_value); // XXX : beware wrap mode for floating values does not work identicaly than for integers
 			}
 		}
-		else if (mode == WrapMode::CHECK_RANGES)
+		else if (mode == WrapMode::CheckLimits)
 		{
 			if (src < min_value)
 				return false;

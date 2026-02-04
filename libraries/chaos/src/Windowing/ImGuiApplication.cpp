@@ -17,7 +17,7 @@ namespace chaos
 			if (ImGuiWindow* imgui_window = auto_cast(result))
 			{
 				imgui_window->SetContent(imgui_object.get());
-				imgui_window->SetWindowCategory(WindowCategory::MAIN_WINDOW);
+				imgui_window->SetWindowCategory(WindowCategory::MainWindow);
 			}
 			return result;
 		}

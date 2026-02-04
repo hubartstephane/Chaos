@@ -182,8 +182,8 @@ protected:
 	chaos::shared_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
 	{
 		chaos::GPUProgramGenerator program_generator;
-		program_generator.AddShaderSourceFile(chaos::ShaderType::FRAGMENT, resources_path / ps_filename);
-		program_generator.AddShaderSourceFile(chaos::ShaderType::VERTEX, resources_path / vs_filename);
+		program_generator.AddShaderSourceFile(chaos::ShaderType::Fragment, resources_path / ps_filename);
+		program_generator.AddShaderSourceFile(chaos::ShaderType::Vertex, resources_path / vs_filename);
 
 		return program_generator.GenProgramObject();
 	}
@@ -311,11 +311,11 @@ protected:
 		{
 			return true;
 		}
-		if (UpdateClockTimeScaleWithKeys(in_action_processor, clock1.get(), chaos::Key::KP_1, chaos::Key::KP_2, "Increment timer Clock 1", "Decrement timer Clock 1"))
+		if (UpdateClockTimeScaleWithKeys(in_action_processor, clock1.get(), chaos::Key::Keypad1, chaos::Key::Keypad2, "Increment timer Clock 1", "Decrement timer Clock 1"))
 			return true;
-		if (UpdateClockTimeScaleWithKeys(in_action_processor, clock2.get(), chaos::Key::KP_4, chaos::Key::KP_5, "Increment timer Clock 2", "Decrement timer Clock 2"))
+		if (UpdateClockTimeScaleWithKeys(in_action_processor, clock2.get(), chaos::Key::Keypad4, chaos::Key::Keypad5, "Increment timer Clock 2", "Decrement timer Clock 2"))
 			return true;
-		if (UpdateClockTimeScaleWithKeys(in_action_processor, clock3.get(), chaos::Key::KP_7, chaos::Key::KP_8, "Increment timer Clock 3", "Decrement timer Clock 3"))
+		if (UpdateClockTimeScaleWithKeys(in_action_processor, clock3.get(), chaos::Key::Keypad7, chaos::Key::Keypad8, "Increment timer Clock 3", "Decrement timer Clock 3"))
 			return true;
 
 		if (GenerateEvent(in_action_processor, clock1.get(), chaos::Key::A, "EVENT_SINGLE_TEST: Clock 1", EVENT_SINGLE_TEST))

@@ -616,7 +616,7 @@ namespace chaos
 			// displace all the sprites to match the position
 			glm::vec2 offset =
 				generator_data.params.position -
-				ConvertHotpoint(min_position, max_position - min_position, Hotpoint::BOTTOM_LEFT, generator_data.params.hotpoint);
+				ConvertHotpoint(min_position, max_position - min_position, Hotpoint::BottomLeft, generator_data.params.hotpoint);
 
 			MoveParticles(generator_data.result, offset);
 
@@ -633,11 +633,11 @@ namespace chaos
 		bool Generator::JustifyLines(GeneratorParams const & params, GeneratorData & generator_data) const
 		{
 			// left align : nothing to do
-			if (params.alignment == TextAlignment::LEFT)
+			if (params.alignment == TextAlignment::Left)
 				return true;
 
 			// justifaction : cannot increase line size if the factor is below 1.0
-			if (params.alignment == TextAlignment::JUSTIFY && params.justify_space_factor <= 1.0f)
+			if (params.alignment == TextAlignment::Justify && params.justify_space_factor <= 1.0f)
 				return true;
 
 			// compute the whole text bounding box
@@ -661,17 +661,17 @@ namespace chaos
 						continue;
 
 					// right align
-					if (params.alignment == TextAlignment::RIGHT)
+					if (params.alignment == TextAlignment::Right)
 					{
 						MoveParticles(line, glm::vec2(W1 - W2, 0.0f));
 					}
 					// center align
-					else if (params.alignment == TextAlignment::CENTER)
+					else if (params.alignment == TextAlignment::Center)
 					{
 						MoveParticles(line, glm::vec2((W1 - W2) * 0.5f, 0.0f));
 					}
 					// justification
-					else if (params.alignment == TextAlignment::JUSTIFY && W2 < W1) // cannot justify to decrease line size
+					else if (params.alignment == TextAlignment::Justify && W2 < W1) // cannot justify to decrease line size
 					{
 						// count the total size of whitespace token
 						float whitespace_width = 0.0f;

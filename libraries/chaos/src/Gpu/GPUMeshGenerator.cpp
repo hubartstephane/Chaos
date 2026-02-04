@@ -102,8 +102,8 @@ namespace chaos
         GPUVertexDeclaration* result = new GPUVertexDeclaration();
         if (result != nullptr)
         {
-            result->Push(VertexAttributeSemantic::POSITION, 0, VertexAttributeType::FLOAT3);
-            result->Push(VertexAttributeSemantic::NORMAL, 0, VertexAttributeType::FLOAT3);
+            result->Push(VertexAttributeSemantic::Position, 0, VertexAttributeType::Float3);
+            result->Push(VertexAttributeSemantic::Normal, 0, VertexAttributeType::Float3);
         }
         return result;
 	}
@@ -170,8 +170,8 @@ namespace chaos
         GPUVertexDeclaration* result = new GPUVertexDeclaration();
         if (result != nullptr)
         {
-            result->Push(VertexAttributeSemantic::POSITION, 0, VertexAttributeType::FLOAT3);
-            result->Push(VertexAttributeSemantic::NORMAL, 0, VertexAttributeType::FLOAT3);
+            result->Push(VertexAttributeSemantic::Position, 0, VertexAttributeType::Float3);
+            result->Push(VertexAttributeSemantic::Normal, 0, VertexAttributeType::Float3);
         }
         return result;
 	}
@@ -280,8 +280,8 @@ namespace chaos
         GPUVertexDeclaration* result = new GPUVertexDeclaration();
         if (result != nullptr)
         {
-            result->Push(VertexAttributeSemantic::POSITION, 0, VertexAttributeType::FLOAT3);
-            result->Push(VertexAttributeSemantic::NORMAL, 0, VertexAttributeType::FLOAT3);
+            result->Push(VertexAttributeSemantic::Position, 0, VertexAttributeType::Float3);
+            result->Push(VertexAttributeSemantic::Normal, 0, VertexAttributeType::Float3);
         }
         return result;
 	}
@@ -370,7 +370,7 @@ namespace chaos
 		GPUVertexDeclaration* result = new GPUVertexDeclaration();
 		if (result != nullptr)
 		{
-			result->Push(VertexAttributeSemantic::POSITION, 0, VertexAttributeType::FLOAT3);
+			result->Push(VertexAttributeSemantic::Position, 0, VertexAttributeType::Float3);
 		}
 		return result;
 	}
@@ -424,8 +424,8 @@ namespace chaos
         GPUVertexDeclaration* result = new GPUVertexDeclaration();
         if (result != nullptr)
         {
-            result->Push(VertexAttributeSemantic::POSITION, 0, VertexAttributeType::FLOAT3);
-            result->Push(VertexAttributeSemantic::NORMAL, 0, VertexAttributeType::FLOAT3);
+            result->Push(VertexAttributeSemantic::Position, 0, VertexAttributeType::Float3);
+            result->Push(VertexAttributeSemantic::Normal, 0, VertexAttributeType::Float3);
         }
         return result;
 	}
@@ -505,8 +505,8 @@ namespace chaos
         GPUVertexDeclaration* result = new GPUVertexDeclaration();
         if (result != nullptr)
         {
-            result->Push(VertexAttributeSemantic::POSITION, 0, VertexAttributeType::FLOAT3);
-            result->Push(VertexAttributeSemantic::NORMAL, 0, VertexAttributeType::FLOAT3);
+            result->Push(VertexAttributeSemantic::Position, 0, VertexAttributeType::Float3);
+            result->Push(VertexAttributeSemantic::Normal, 0, VertexAttributeType::Float3);
         }
         return result;
 	}

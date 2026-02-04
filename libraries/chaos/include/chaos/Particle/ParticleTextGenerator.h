@@ -47,7 +47,7 @@ namespace chaos
 			/** the maximum factor for space to apply when lines are to be justified. if a greater value should be applied, ignore justification */
 			float justify_space_factor = 2.0f;
 			/** the line alignment */
-			TextAlignment alignment = TextAlignment::LEFT;
+			TextAlignment alignment = TextAlignment::Left;
 			/** the color to use by default */
 			glm::vec4 default_color = { 1.0f, 1.0f, 1.0f, 1.0f };
 			/** the font to use by default */
@@ -58,7 +58,7 @@ namespace chaos
 			/** the position */
 			glm::vec2 position = { 0.0f, 0.0f };
 			/** the hotpoint */
-			Hotpoint hotpoint = Hotpoint::BOTTOM_LEFT;
+			Hotpoint hotpoint = Hotpoint::BottomLeft;
 		};
 
 		/** json functions */

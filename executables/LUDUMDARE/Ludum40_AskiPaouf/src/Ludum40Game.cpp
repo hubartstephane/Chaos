@@ -300,7 +300,7 @@ bool Game::Initialize(chaos::Window * in_window, nlohmann::json const * config, 
 	boost::filesystem::path object_path = resources_path / "objects" / "objects.json";
 
 	// Load the file
-	chaos::Buffer<char> buf = chaos::FileTools::LoadFile(object_path, chaos::LoadFileFlag::ASCII);
+	chaos::Buffer<char> buf = chaos::FileTools::LoadFile(object_path, chaos::LoadFileFlag::Ascii);
 	if (buf == nullptr)
 		return false;
 
@@ -493,8 +493,8 @@ bool Game::GenerateBackgroundResources(boost::filesystem::path const & path)
 
 	// generate the background program
 	chaos::GPUProgramGenerator background_program_generator;
-	background_program_generator.AddShaderSourceFile(chaos::ShaderType::VERTEX, path / "background_vertex_shader.txt");
-	background_program_generator.AddShaderSourceFile(chaos::ShaderType::FRAGMENT, path / "background_pixel_shader.txt");
+	background_program_generator.AddShaderSourceFile(chaos::ShaderType::Vertex, path / "background_vertex_shader.txt");
+	background_program_generator.AddShaderSourceFile(chaos::ShaderType::Fragment, path / "background_pixel_shader.txt");
 
 	background_program = background_program_generator.GenProgramObject();
 	if (background_program == nullptr)
@@ -502,8 +502,8 @@ bool Game::GenerateBackgroundResources(boost::filesystem::path const & path)
 
 	// generate the controls program
 	chaos::GPUProgramGenerator control_program_generator;
-	control_program_generator.AddShaderSourceFile(chaos::ShaderType::VERTEX, path / "control_vertex_shader.txt");
-	control_program_generator.AddShaderSourceFile(chaos::ShaderType::FRAGMENT, path / "control_pixel_shader.txt");
+	control_program_generator.AddShaderSourceFile(chaos::ShaderType::Vertex, path / "control_vertex_shader.txt");
+	control_program_generator.AddShaderSourceFile(chaos::ShaderType::Fragment, path / "control_pixel_shader.txt");
 
 	control_program = control_program_generator.GenProgramObject();
 	if (control_program == nullptr)
@@ -607,7 +607,7 @@ void Game::DisplayFullscreen(chaos::GPURenderContext * render_context, glm::ivec
   float world_aspect = chaos::MathTools::CastAndDiv<float>(world_size.x, world_size.y);
 
   // get a box that fit the texture size and wanted aspect
-  chaos::box2 shrinked_texture_box = chaos::SetBoxAspect(texture_box, world_aspect, chaos::SetBoxAspectMethod::SHRINK_BOX);
+  chaos::box2 shrinked_texture_box = chaos::SetBoxAspect(texture_box, world_aspect, chaos::SetBoxAspectMethod::Shrink);
 
   glm::vec2 min_texture_coord = glm::vec2(0.0f, 0.0f);
   glm::vec2 max_texture_coord = glm::vec2(1.0f, 1.0f);
@@ -696,13 +696,13 @@ bool Game::DoPollGamepad(chaos::PhysicalGamepad * physical_gamepad)
 	}
 	else
 	{
-		if (IsInputJustActivated(physical_gamepad->GetInputState(chaos::Key::GAMEPAD_SPECIAL_LEFT)) ||
-			IsInputJustActivated(physical_gamepad->GetInputState(chaos::Key::GAMEPAD_SPECIAL_RIGHT)))
+		if (IsInputJustActivated(physical_gamepad->GetInputState(chaos::Key::GamepadSpecialLeft)) ||
+			IsInputJustActivated(physical_gamepad->GetInputState(chaos::Key::GamepadSpecialRight)))
 			SetPause(!game_paused);
 	}
 
-	glm::vec2 left_stick_position  = physical_gamepad->GetInputValue(chaos::Input2D::GAMEPAD_LEFT_STICK);
-	glm::vec2 right_stick_position = physical_gamepad->GetInputValue(chaos::Input2D::GAMEPAD_RIGHT_STICK);
+	glm::vec2 left_stick_position  = physical_gamepad->GetInputValue(chaos::Input2D::GamepadLeftStick);
+	glm::vec2 right_stick_position = physical_gamepad->GetInputValue(chaos::Input2D::GamepadRightStick);
 
 	if (glm::length2(left_stick_position) > 0.0f)
 		stick_position = left_stick_position;
@@ -725,7 +725,7 @@ bool Game::OnKeyEvent(chaos::Key key, chaos::KeyAction action)
 	}
 	else
 	{
-		if (key == chaos::Key::ESCAPE && action == chaos::KeyAction::Press)
+		if (key == chaos::Key::Escape && action == chaos::KeyAction::Press)
 		{
 			pending_restart_game = true;
 			return true;

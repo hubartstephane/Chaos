@@ -126,7 +126,7 @@ void LudumLevelInstance::CapturePlayerInputs()
 	bool beginning = (frame_timer < frame_duration * 0.3f);
 
 	// Fake move
-	Key const fake_move_keys[] = { Key::LEFT_CONTROL, Key::RIGHT_CONTROL, Key::GAMEPAD_A, Key() };
+	Key const fake_move_keys[] = { Key::LeftControl, Key::RightControl, Key::GamepadA, Key() };
 
 
 	if (player->CheckKeyDown(fake_move_keys)) // current frame

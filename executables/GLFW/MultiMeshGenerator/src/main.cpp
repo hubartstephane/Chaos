@@ -122,8 +122,8 @@ protected:
 		boost::filesystem::path const& resources_path = GetResourcesPath();
 
 		GPUProgramGenerator program_generator;
-		program_generator.AddShaderSourceFile(ShaderType::FRAGMENT, resources_path / "pixel_shader.txt");
-		program_generator.AddShaderSourceFile(ShaderType::VERTEX, resources_path / "vertex_shader.txt");
+		program_generator.AddShaderSourceFile(ShaderType::Fragment, resources_path / "pixel_shader.txt");
+		program_generator.AddShaderSourceFile(ShaderType::Vertex, resources_path / "vertex_shader.txt");
 		program = program_generator.GenProgramObject();
 
 		// update the camera speed
@@ -133,10 +133,10 @@ protected:
 		fps_view_controller.config.forward_speed = CAMERA_SPEED;
 		fps_view_controller.config.strafe_speed = CAMERA_SPEED;
 
-		fps_view_controller.input_config.yaw_left_button   = Key::UNKNOWN;
-		fps_view_controller.input_config.yaw_right_button  = Key::UNKNOWN;
-		fps_view_controller.input_config.pitch_up_button   = Key::UNKNOWN;
-		fps_view_controller.input_config.pitch_down_button = Key::UNKNOWN;
+		fps_view_controller.input_config.yaw_left_button   = Key::Unknown;
+		fps_view_controller.input_config.yaw_right_button  = Key::Unknown;
+		fps_view_controller.input_config.pitch_up_button   = Key::Unknown;
+		fps_view_controller.input_config.pitch_down_button = Key::Unknown;
 
 		return true;
 	}
@@ -305,7 +305,7 @@ protected:
 			objects[selected_object_index]->SetSelected(true);
 		};
 
-		if (in_action_processor.CheckAndProcess(JustActivated(Key::KP_ADD), "Next Object", chaos::InputAction(next_object_func, enabled)))
+		if (in_action_processor.CheckAndProcess(JustActivated(Key::KeypadAdd), "Next Object", chaos::InputAction(next_object_func, enabled)))
 		{
 			return true;
 		}
@@ -321,7 +321,7 @@ protected:
 			objects[selected_object_index]->SetSelected(true);
 		};
 
-		if (in_action_processor.CheckAndProcess(JustActivated(Key::KP_SUBTRACT), "Previous Object", chaos::InputAction(previous_object_func, enabled)))
+		if (in_action_processor.CheckAndProcess(JustActivated(Key::KeypadSubtract), "Previous Object", chaos::InputAction(previous_object_func, enabled)))
 		{
 			return true;
 		}
@@ -339,17 +339,17 @@ protected:
 			return in_action_processor.CheckAndProcess(Active(button), title, chaos::InputAction(move_object_func, enabled));
 		};
 
-		if (MoveObject(Key::KP_4, 0, -1.0f, "Move Object -X"))
+		if (MoveObject(Key::Keypad4, 0, -1.0f, "Move Object -X"))
 			return true;
-		if (MoveObject(Key::KP_6, 0, +1.0f, "Move Object +X"))
+		if (MoveObject(Key::Keypad6, 0, +1.0f, "Move Object +X"))
 			return true;
-		if (MoveObject(Key::KP_3, 1, -1.0f, "Move Object -Y"))
+		if (MoveObject(Key::Keypad3, 1, -1.0f, "Move Object -Y"))
 			return true;
-		if (MoveObject(Key::KP_9, 1, +1.0f, "Move Object +Y"))
+		if (MoveObject(Key::Keypad9, 1, +1.0f, "Move Object +Y"))
 			return true;
-		if (MoveObject(Key::KP_8, 2, -1.0f, "Move Object -Z"))
+		if (MoveObject(Key::Keypad8, 2, -1.0f, "Move Object -Z"))
 			return true;
-		if (MoveObject(Key::KP_2, 2, +1.0f, "Move Object +Z"))
+		if (MoveObject(Key::Keypad2, 2, +1.0f, "Move Object +Z"))
 			return true;
 
 		return chaos::Window::EnumerateInputActions(in_action_processor, in_context);

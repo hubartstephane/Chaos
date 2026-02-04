@@ -5,12 +5,12 @@ namespace chaos
 {
 	static EnumMetaData<Direction> const Direction_metadata =
 	{
-		{ Direction::NEGATIVE_X, "negative_y" },
-		{ Direction::POSITIVE_X, "positive_x" },
-		{ Direction::NEGATIVE_Y, "negative_y" },
-		{ Direction::POSITIVE_Y, "positive_x" },
-		{ Direction::NEGATIVE_Z, "negative_z" },
-		{ Direction::POSITIVE_Z, "positive_y" },
+		{ Direction::NegativeX, "negative_y" },
+		{ Direction::PositiveX, "positive_x" },
+		{ Direction::NegativeY, "negative_y" },
+		{ Direction::PositiveY, "positive_x" },
+		{ Direction::NegativeZ, "negative_z" },
+		{ Direction::PositiveZ, "positive_y" },
 	};
 
 	CHAOS_IMPLEMENT_ENUM_METHOD(Direction, &Direction_metadata, CHAOS_API);
@@ -19,17 +19,17 @@ namespace chaos
 	{
 		switch (in_direction)
 		{
-		case Direction::NEGATIVE_X:
+		case Direction::NegativeX:
 			return { -1.0f, 0.0f, 0.0f };
-		case Direction::POSITIVE_X:
+		case Direction::PositiveX:
 			return { 1.0f, 0.0f, 0.0f };
-		case Direction::NEGATIVE_Y:
+		case Direction::NegativeY:
 			return { 0.0f, -1.0f, 0.0f };
-		case Direction::POSITIVE_Y:
+		case Direction::PositiveY:
 			return { 0.0f, 1.0f, 0.0f };
-		case Direction::NEGATIVE_Z:
+		case Direction::NegativeZ:
 			return { 0.0f, 0.0f, -1.0f };
-		case Direction::POSITIVE_Z:
+		case Direction::PositiveZ:
 			return { 0.0f, 0.0f, 1.0f };
 		default:
 			assert(0);
@@ -41,18 +41,18 @@ namespace chaos
 	{
 		switch (in_direction)
 		{
-		case Direction::NEGATIVE_X:
-		case Direction::POSITIVE_X:
-			return Axis::AXIS_X;
-		case Direction::NEGATIVE_Y:
-		case Direction::POSITIVE_Y:
-			return Axis::AXIS_Y;
-		case Direction::NEGATIVE_Z:
-		case Direction::POSITIVE_Z:
-			return Axis::AXIS_Z;
+		case Direction::NegativeX:
+		case Direction::PositiveX:
+			return Axis::AxisX;
+		case Direction::NegativeY:
+		case Direction::PositiveY:
+			return Axis::AxisY;
+		case Direction::NegativeZ:
+		case Direction::PositiveZ:
+			return Axis::AxisZ;
 		default:
 			assert(0);
-			return Axis::AXIS_X;
+			return Axis::AxisX;
 		}
 	}
 
@@ -60,13 +60,13 @@ namespace chaos
 	{
 		switch (in_direction)
 		{
-		case Direction::NEGATIVE_X:
-		case Direction::NEGATIVE_Y:
-		case Direction::NEGATIVE_Z:
+		case Direction::NegativeX:
+		case Direction::NegativeY:
+		case Direction::NegativeZ:
 			return -1.0f;
-		case Direction::POSITIVE_X:
-		case Direction::POSITIVE_Y:
-		case Direction::POSITIVE_Z:
+		case Direction::PositiveX:
+		case Direction::PositiveY:
+		case Direction::PositiveZ:
 			return 1.0f;
 		default:
 			assert(0);

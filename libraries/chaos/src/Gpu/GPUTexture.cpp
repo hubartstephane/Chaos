@@ -66,7 +66,7 @@ namespace chaos
 		if (mipmap_level < 0 || mipmap_level >= GetMipmapCount())
 			return false;
 
-		if (image_description.pixel_format.component_type != PixelComponentType::UNSIGNED_CHAR && image_description.pixel_format.component_type != PixelComponentType::FLOAT)
+		if (image_description.pixel_format.component_type != PixelComponentType::UnsignedChar && image_description.pixel_format.component_type != PixelComponentType::Float)
 			return false;
 
 		if (offset.x < 0 || offset.y < 0 || offset.z < 0)
@@ -92,7 +92,7 @@ namespace chaos
 
 		GLPixelFormat gl_pixel_format = GLTextureTools::GetGLPixelFormat(image_description.pixel_format);
 
-		GLenum gl_component_type = (image_description.pixel_format.component_type == PixelComponentType::UNSIGNED_CHAR) ?
+		GLenum gl_component_type = (image_description.pixel_format.component_type == PixelComponentType::UnsignedChar) ?
 			GL_UNSIGNED_BYTE :
 			GL_FLOAT;
 
@@ -125,7 +125,7 @@ namespace chaos
 
 		GLPixelFormat gl_pixel_format = GLTextureTools::GetGLPixelFormat(image_description.pixel_format);
 
-		GLenum gl_component_type = (image_description.pixel_format.component_type == PixelComponentType::UNSIGNED_CHAR)?
+		GLenum gl_component_type = (image_description.pixel_format.component_type == PixelComponentType::UnsignedChar)?
 			GL_UNSIGNED_BYTE:
 			GL_FLOAT;
 

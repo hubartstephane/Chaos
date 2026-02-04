@@ -391,9 +391,9 @@ namespace chaos
 	}};
 
 	static EnumMetaData<KeyboardLayoutType> const KeyboardLayoutType_metadata = {
-		{ KeyboardLayoutType::AZERTY, "azerty" }, //default
-		{ KeyboardLayoutType::QWERTY, "qwerty" },
-		{ KeyboardLayoutType::CURRENT, "current" }
+		{ KeyboardLayoutType::Azerty, "azerty" }, //default
+		{ KeyboardLayoutType::Qwerty, "qwerty" },
+		{ KeyboardLayoutType::Current, "current" }
 	};
 
 	CHAOS_IMPLEMENT_ENUM_METHOD(KeyboardLayoutType, &KeyboardLayoutType_metadata, CHAOS_API);
@@ -462,7 +462,7 @@ namespace chaos
 			{
 				if (vk != 0) // there is a valid VK to look at
 				{
-					for (KeyboardLayoutType type : {KeyboardLayoutType::AZERTY, KeyboardLayoutType::QWERTY})
+					for (KeyboardLayoutType type : {KeyboardLayoutType::Azerty, KeyboardLayoutType::Qwerty})
 					{
 						if (ScancodeInformation const* scancode_info = KeyboardLayout::GetKnownLayout(type).GetInformationFromVK(vk))
 						{
@@ -477,7 +477,7 @@ namespace chaos
 
 				if (new_scancode_info.name.length() == 0) // no name yet: search with scancode
 				{
-					for (KeyboardLayoutType type : {KeyboardLayoutType::AZERTY, KeyboardLayoutType::QWERTY})
+					for (KeyboardLayoutType type : {KeyboardLayoutType::Azerty, KeyboardLayoutType::Qwerty})
 					{
 						if (ScancodeInformation const* scancode_info = KeyboardLayout::GetKnownLayout(type).GetInformationFromScancode(scancode))
 						{
@@ -517,11 +517,11 @@ namespace chaos
 
 	KeyboardLayout const & KeyboardLayout::GetKnownLayout(KeyboardLayoutType type)
 	{
-		if (type == KeyboardLayoutType::AZERTY)
+		if (type == KeyboardLayoutType::Azerty)
 			return AzertyKeyboardLayout;
-		if (type == KeyboardLayoutType::QWERTY)
+		if (type == KeyboardLayoutType::Qwerty)
 			return QwertyKeyboardLayout;
-		assert(type == KeyboardLayoutType::CURRENT);
+		assert(type == KeyboardLayoutType::Current);
 		return GetCurrentLayout();
 	}
 

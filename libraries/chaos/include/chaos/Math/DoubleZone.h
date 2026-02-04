@@ -14,21 +14,21 @@ namespace chaos
 	enum class ZonePartitionType : int
 	{
 		/** point is inside inner zone */
-		NEAR_ZONE = 0,
+		NearZone = 0,
 		/** point is betwen inner_zone and outer_zone */
-		MIDDLE_ZONE = 1,
+		MiddleZone = 1,
 		/** point is outside outer_zone */
-		FAR_ZONE = 2
+		FarZone = 2
 	};
 
 	enum class ZonePartitionChangeType : int
 	{
 		/** no zone of change */
-		NOCHANGE = 0,
+		None = 0,
 		/** was not in the near zone, and then enters in it */
-		ENTER = 1,
+		Enter = 1,
 		/** was not in the far zone and enters in it */
-		LEAVE = 2
+		Leave = 2
 	};
 
 	/**
@@ -61,10 +61,10 @@ namespace chaos
 		ZonePartitionType GetPointZone(vec_type const& p) const
 		{
 			if (!inside(p, outer_zone))
-				return ZonePartitionType::FAR_ZONE;
+				return ZonePartitionType::FarZone;
 			if (!inside(p, inner_zone))
-				return ZonePartitionType::MIDDLE_ZONE;
-			return ZonePartitionType::NEAR_ZONE;
+				return ZonePartitionType::MiddleZone;
+			return ZonePartitionType::NearZone;
 		}
 
 		/** returns the point zone changement */
@@ -80,12 +80,12 @@ namespace chaos
 		{
 			if (before != after)
 			{
-				if (after == ZonePartitionType::NEAR_ZONE)
-					return ZonePartitionChangeType::ENTER;
-				if (after == ZonePartitionType::FAR_ZONE)
-					return ZonePartitionChangeType::LEAVE;
+				if (after == ZonePartitionType::NearZone)
+					return ZonePartitionChangeType::Enter;
+				if (after == ZonePartitionType::FarZone)
+					return ZonePartitionChangeType::Leave;
 			}
-			return ZonePartitionChangeType::NOCHANGE;
+			return ZonePartitionChangeType::None;
 		}
 
 	public:

@@ -13,7 +13,7 @@ namespace chaos
 	{}
 
 	LinearComposerWidgetInsertData::LinearComposerWidgetInsertData(size_t in_position):
-		type(LinearComposerWidgetInsertType::POSITIONAL),
+		type(LinearComposerWidgetInsertType::Positional),
 		position(in_position)
 	{}
 
@@ -27,11 +27,11 @@ namespace chaos
 		assert(widget->GetParentWidget() == nullptr);
 		assert(dynamic_cast<WindowRootWidget*>(widget) == nullptr); // may not insert a root widget
 
-		if (insert_data.type == LinearComposerWidgetInsertType::END)
+		if (insert_data.type == LinearComposerWidgetInsertType::End)
 		{
 			child_widgets.push_back(widget);
 		}
-		else if (insert_data.type == LinearComposerWidgetInsertType::START)
+		else if (insert_data.type == LinearComposerWidgetInsertType::Start)
 		{
 			child_widgets.insert(child_widgets.begin(), widget);
 		}
@@ -43,11 +43,11 @@ namespace chaos
 			}
 			else
 			{
-				if (insert_data.type == LinearComposerWidgetInsertType::POSITIONAL)
+				if (insert_data.type == LinearComposerWidgetInsertType::Positional)
 				{
 					child_widgets.insert(child_widgets.begin() + insert_data.position, widget);
 				}
-				else if (insert_data.type == LinearComposerWidgetInsertType::POSITIONAL_REPLACE)
+				else if (insert_data.type == LinearComposerWidgetInsertType::PositionalReplace)
 				{
 					// we want to always keep list of children coherent
 					// that's why we have a

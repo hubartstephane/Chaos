@@ -85,8 +85,8 @@ namespace chaos
 
 		enum class DrawOrder : int
 		{
-			MANUAL = 0,
-			TOPDOWN = 1
+			Manual = 0,
+			TopDown = 1
 		};
 
 		CHAOS_DECLARE_ENUM_METHOD(DrawOrder, CHAOS_API);
@@ -112,7 +112,7 @@ namespace chaos
 			/** object information */
 			glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 			/** object information */
-			DrawOrder draw_order = DrawOrder::MANUAL;
+			DrawOrder draw_order = DrawOrder::Manual;
 
 			/** the properties of the object */
 			std::vector<shared_ptr<GeometricObject>> geometric_objects;

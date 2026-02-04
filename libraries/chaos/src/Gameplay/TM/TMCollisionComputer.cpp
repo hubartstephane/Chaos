@@ -181,7 +181,7 @@ namespace chaos
 		float best_distance = std::numeric_limits<float>::max();
 
 		// LEFT EDGE
-		bool left_collision_candidate = (wangset != nullptr) ? (wangtile.GetEdgeValue(Edge::LEFT) > 1) : ((particle_flags & TiledMap::TileParticleFlags::NEIGHBOUR_LEFT) == 0);
+		bool left_collision_candidate = (wangset != nullptr) ? (wangtile.GetEdgeValue(Edge::Left) > 1) : ((particle_flags & TiledMap::TileParticleFlags::NEIGHBOUR_LEFT) == 0);
 
 		// check whether the EDGE is valid and whether the distance between the objects does no increase
 		if (left_collision_candidate && delta_position.x >= 0.0f)
@@ -192,7 +192,7 @@ namespace chaos
 				// check whether the collision is at least in ZONE 2
 				if (particle_corners.min.x < dst_corners.max.x + box_extend.x)
 				{
-					bool displacement_enabled = func(collision_info, Edge::LEFT); // ZONE 1 or 2 : indicates to caller that there is a touch
+					bool displacement_enabled = func(collision_info, Edge::Left); // ZONE 1 or 2 : indicates to caller that there is a touch
 
 					// in ZONE 1 ?
 					if (displacement_enabled && (particle_corners.min.x < dst_corners.max.x + box_extend.x * 0.5f))
@@ -214,7 +214,7 @@ namespace chaos
 		}
 
 		// RIGHT EDGE
-		bool right_collision_candidate = (wangset != nullptr) ? (wangtile.GetEdgeValue(Edge::RIGHT) > 1) : ((particle_flags & TiledMap::TileParticleFlags::NEIGHBOUR_RIGHT) == 0);
+		bool right_collision_candidate = (wangset != nullptr) ? (wangtile.GetEdgeValue(Edge::Right) > 1) : ((particle_flags & TiledMap::TileParticleFlags::NEIGHBOUR_RIGHT) == 0);
 
 		// check whether the EDGE is valid and whether the distance between the objects does no increase
 		if (right_collision_candidate && delta_position.x <= 0.0f)
@@ -225,7 +225,7 @@ namespace chaos
 				// check whether the collision is at least in ZONE 2
 				if (particle_corners.max.x > dst_corners.min.x - box_extend.x)
 				{
-					bool displacement_enabled = func(collision_info, Edge::RIGHT); // ZONE 1 or 2 : indicates to caller that there is a touch
+					bool displacement_enabled = func(collision_info, Edge::Right); // ZONE 1 or 2 : indicates to caller that there is a touch
 
 					// in ZONE 1 ?
 					if (displacement_enabled && (particle_corners.max.x > dst_corners.min.x - box_extend.x * 0.5f))
@@ -247,7 +247,7 @@ namespace chaos
 		}
 
 		// BOTTOM EDGE
-		bool bottom_collision_candidate = (wangset != nullptr) ? (wangtile.GetEdgeValue(Edge::BOTTOM) > 1) : ((particle_flags & TiledMap::TileParticleFlags::NEIGHBOUR_BOTTOM) == 0);
+		bool bottom_collision_candidate = (wangset != nullptr) ? (wangtile.GetEdgeValue(Edge::Bottom) > 1) : ((particle_flags & TiledMap::TileParticleFlags::NEIGHBOUR_BOTTOM) == 0);
 
 		// check whether the EDGE is valid and whether the distance between the objects does no increase
 		if (bottom_collision_candidate && delta_position.y >= 0.0f)
@@ -258,7 +258,7 @@ namespace chaos
 				// check whether the collision is at least in ZONE 2
 				if (particle_corners.min.y < dst_corners.max.y + box_extend.y)
 				{
-					bool displacement_enabled = func(collision_info, Edge::BOTTOM); // ZONE 1 or 2 : indicates to caller that there is a touch
+					bool displacement_enabled = func(collision_info, Edge::Bottom); // ZONE 1 or 2 : indicates to caller that there is a touch
 
 					// in ZONE 1 ?
 					if (displacement_enabled && (particle_corners.min.y < dst_corners.max.y + box_extend.y * 0.5f))
@@ -280,7 +280,7 @@ namespace chaos
 		}
 
 		// TOP EDGE
-		bool top_collision_candidate = (wangset != nullptr) ? (wangtile.GetEdgeValue(Edge::TOP) > 1) : ((particle_flags & TiledMap::TileParticleFlags::NEIGHBOUR_TOP) == 0);
+		bool top_collision_candidate = (wangset != nullptr) ? (wangtile.GetEdgeValue(Edge::Top) > 1) : ((particle_flags & TiledMap::TileParticleFlags::NEIGHBOUR_TOP) == 0);
 
 		// check whether the EDGE is valid and whether the distance between the objects does no increase
 		if (top_collision_candidate && delta_position.y <= 0.0f)
@@ -291,7 +291,7 @@ namespace chaos
 				// check whether the collision is at least in ZONE 2
 				if (particle_corners.max.y > dst_corners.min.y - box_extend.y)
 				{
-					bool displacement_enabled = func(collision_info, Edge::TOP); // ZONE 1 or 2 : indicates to caller that there is a touch
+					bool displacement_enabled = func(collision_info, Edge::Top); // ZONE 1 or 2 : indicates to caller that there is a touch
 
 					// in ZONE 1 ?
 					if (displacement_enabled && (particle_corners.max.y > dst_corners.min.y - box_extend.y * 0.5f))

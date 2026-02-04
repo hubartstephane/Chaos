@@ -76,7 +76,7 @@ namespace chaos
 
 				size_t file_size = (size_t)(end - start);
 
-				bool ascii = ((flags & LoadFileFlag::ASCII) == LoadFileFlag::ASCII);
+				bool ascii = ((flags & LoadFileFlag::Ascii) == LoadFileFlag::Ascii);
 
 				result = SharedBufferPolicy<char>::NewBuffer(file_size + ((ascii) ? 1 : 0));
 
@@ -235,7 +235,7 @@ namespace chaos
 				return result; // convert to bool
 			});
 
-			if (result == nullptr && int(flags & LoadFileFlag::NO_ERROR_TRACE) == 0)
+			if (result == nullptr && int(flags & LoadFileFlag::NoErrorTrace) == 0)
 			{
 				FileLog::Error("LoadFile fails [%s]", path.GetResolvedPath().string().c_str());
 			}
@@ -273,7 +273,7 @@ namespace chaos
 				return (result.size() > 0); // convert to bool
 			});
 
-			if ((result.size() == 0) && int(flags & LoadFileFlag::NO_ERROR_TRACE) == 0)
+			if ((result.size() == 0) && int(flags & LoadFileFlag::NoErrorTrace) == 0)
 			{
 				FileLog::Error("ReadFileLines fails [%s]", path.GetResolvedPath().string().c_str());
 			}

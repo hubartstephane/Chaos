@@ -16,7 +16,7 @@ GameHUDLifeCountComponent::GameHUDLifeCountComponent() :
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
 	generator_params.position = glm::vec2(20.0f, -80.0f);
-	generator_params.hotpoint = chaos::Hotpoint::TOP_LEFT;
+	generator_params.hotpoint = chaos::Hotpoint::TopLeft;
 }
 
 bool GameHUDLifeCountComponent::QueryValue(int & result) const
@@ -52,20 +52,20 @@ void GameHUDPowerUpComponent::UpdateMesh()
 	// get box
 	chaos::box2 canvas_box = GetGame()->GetCanvasBox();
 
-	chaos::Hotpoint hotpoint = chaos::Hotpoint::BOTTOM_LEFT;
+	chaos::Hotpoint hotpoint = chaos::Hotpoint::BottomLeft;
 	glm::vec2 corner = GetCanvasBoxCorner(canvas_box, hotpoint);
 
 	// create the level title
 	chaos::ParticleTextGenerator::GeneratorParams params;
 	params.line_height = 40;
-	params.hotpoint = chaos::Hotpoint::BOTTOM_LEFT;
+	params.hotpoint = chaos::Hotpoint::BottomLeft;
 	params.position.x = corner.x + 40.0f;
 	params.position.y = corner.y + 100.0f;
 	params.default_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	params.font_info_name = "normal";
 	params.bitmap_padding = glm::vec2(-5.0f, -5.0f);
 	params.character_spacing = 0.0f;
-	params.alignment = chaos::TextAlignment::CENTER;
+	params.alignment = chaos::TextAlignment::Center;
 
 	std::string title;
 

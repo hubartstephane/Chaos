@@ -89,7 +89,7 @@ namespace chaos
 		// get the real layout of the bitmap by removing animation
 		AtlasBitmapLayout layout = *bitmap_info;
 		if (bitmap_info->HasAnimation() && bitmap_info->GetAnimationImageCount() > 0)
-			layout = bitmap_info->GetAnimationLayout(0, WrapMode::CLAMP); // take frame 0 by default
+			layout = bitmap_info->GetAnimationLayout(0, WrapMode::Clamp); // take frame 0 by default
 		// compute the bounding box
 		if (IsGeometryEmpty(particle_box))
 		{
@@ -105,7 +105,7 @@ namespace chaos
 				if ((particle_flags & ParticleFlags::TEXTURE_DIAGONAL_FLIP) != 0)
 					std::swap(layout_width, layout_height);
 
-				particle_box = SetBoxAspect(particle_box, MathTools::CastAndDiv<float>(layout_width, layout_height), SetBoxAspectMethod::PREFER_UPDATE_WIDTH);
+				particle_box = SetBoxAspect(particle_box, MathTools::CastAndDiv<float>(layout_width, layout_height), SetBoxAspectMethod::UpdateWidth);
 			}
 		}
 
@@ -122,7 +122,7 @@ namespace chaos
 		// for tiled map objects, rotation use BOTTOM-LEFT as pivot whereas in our particle system, the  pivot is center
 		if (rotation != 0.0f)
 		{
-			glm::vec2 pivot = ConvertHotpoint(particle_box.position, particle_box.half_size * 2.0f, Hotpoint::CENTER, hotpoint);
+			glm::vec2 pivot = ConvertHotpoint(particle_box.position, particle_box.half_size * 2.0f, Hotpoint::Center, hotpoint);
 
 			float c = std::cos(rotation);
 			float s = std::sin(rotation);

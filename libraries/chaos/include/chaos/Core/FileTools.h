@@ -37,10 +37,10 @@ namespace chaos
 
 	enum class LoadFileFlag : int // depending on the function, some flags may not be relevant
 	{
-		NONE = 0,
-		ASCII = 1,
-		NO_ERROR_TRACE = 2,
-		RECURSIVE = 4
+		None = 0,
+		Ascii = 1,
+		NoErrorTrace = 2,
+		Recursive = 4
 	};
 
 	namespace FileTools
@@ -48,7 +48,7 @@ namespace chaos
 		/** returns true if the extension of a file correspond to a string */
 		CHAOS_API bool IsTypedFile(FilePathParam const& path, char const* expected_ext);
 		/** loading a whole file into memory */
-		CHAOS_API Buffer<char> LoadFile(FilePathParam const& path, LoadFileFlag flags = LoadFileFlag::NONE);
+		CHAOS_API Buffer<char> LoadFile(FilePathParam const& path, LoadFileFlag flags = LoadFileFlag::None);
 
 		/** try path redirection and call func (until it returns true) */
 		CHAOS_API bool WithFile(FilePathParam const& path, LightweightFunction<bool(boost::filesystem::path const& p)> func);
@@ -62,7 +62,7 @@ namespace chaos
 		CHAOS_API bool CreateTemporaryDirectory(char const* pattern, boost::filesystem::path& result);
 
 		/** read file as a vector of strings */
-		CHAOS_API std::vector<std::string> ReadFileLines(FilePathParam const& path, LoadFileFlag flags = LoadFileFlag::NONE);
+		CHAOS_API std::vector<std::string> ReadFileLines(FilePathParam const& path, LoadFileFlag flags = LoadFileFlag::None);
 		/** write a file with a vector of strings */
 		CHAOS_API bool WriteFileLines(FilePathParam const& path, std::vector<std::string> const& lines);
 

@@ -45,7 +45,7 @@ namespace chaos
 		/** the displacement speed */
 		float scroll_speed = 0.0f;
 		/** the axis of displacement */
-		Axis axis = Axis::AXIS_X;
+		Axis axis = Axis::AxisX;
 	};
 
 #endif

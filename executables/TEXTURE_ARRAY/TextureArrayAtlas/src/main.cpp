@@ -75,8 +75,8 @@ protected:
 	chaos::shared_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
 	{
 		chaos::GPUProgramGenerator program_generator;
-		program_generator.AddShaderSourceFile(chaos::ShaderType::FRAGMENT, resources_path / ps_filename);
-		program_generator.AddShaderSourceFile(chaos::ShaderType::VERTEX, resources_path / vs_filename);
+		program_generator.AddShaderSourceFile(chaos::ShaderType::Fragment, resources_path / ps_filename);
+		program_generator.AddShaderSourceFile(chaos::ShaderType::Vertex, resources_path / vs_filename);
 
 		return program_generator.GenProgramObject();
 	}
@@ -140,7 +140,7 @@ protected:
 
 	virtual bool EnumerateInputActions(chaos::InputActionProcessor & in_action_processor, chaos::EnumerateInputActionContext in_context) override
 	{
-		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KP_ADD), "Next Bitmap Index", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KeypadAdd), "Next Bitmap Index", [this]()
 		{
 			++bitmap_index;
 		}))
@@ -148,7 +148,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KP_SUBTRACT), "Previous Bitmap Index", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KeypadSubtract), "Previous Bitmap Index", [this]()
 		{
 			if (bitmap_index > 0)
 				--bitmap_index;

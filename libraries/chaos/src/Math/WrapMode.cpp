@@ -5,10 +5,10 @@ namespace chaos
 {
 	static EnumMetaData<WrapMode> const WrapMode_metadata =
 	{
-		{ WrapMode::NONE, "NONE" },
-		{ WrapMode::CLAMP, "CLAMP" },
-		{ WrapMode::WRAP, "WRAP" },
-		{ WrapMode::CHECK_RANGES, "CHECK_RANGES" }
+		{ WrapMode::None, "NONE" },
+		{ WrapMode::Clamp, "CLAMP" },
+		{ WrapMode::Wrap, "WRAP" },
+		{ WrapMode::CheckLimits, "CHECK_RANGES" }
 	};
 
 	CHAOS_IMPLEMENT_ENUM_METHOD(WrapMode, &WrapMode_metadata, CHAOS_API);

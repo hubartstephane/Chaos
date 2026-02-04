@@ -58,8 +58,8 @@ namespace chaos
 		if (!params.accept_luminance && src.component_count == 1) // transform luminance into RGB
 			src.component_count = 3;
 
-		if (!params.accept_float && src.component_type == PixelComponentType::FLOAT) // transform float into unsigned char
-			src.component_type = PixelComponentType::UNSIGNED_CHAR;
+		if (!params.accept_float && src.component_type == PixelComponentType::Float) // transform float into unsigned char
+			src.component_type = PixelComponentType::UnsignedChar;
 
 		if (!result_is_available)
 		{

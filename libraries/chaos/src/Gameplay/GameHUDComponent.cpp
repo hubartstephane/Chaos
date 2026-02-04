@@ -110,16 +110,16 @@ namespace chaos
 
 		glm::vec2 result;
 		// search the X position
-		if (int(hotpoint) & int(Hotpoint::LEFT))
+		if (int(hotpoint) & int(Hotpoint::Left))
 			result.x = corners.min.x;
-		else if (int(hotpoint) & int(Hotpoint::RIGHT))
+		else if (int(hotpoint) & int(Hotpoint::Right))
 			result.x = corners.max.x;
 		else
 			result.x = canvas_box.position.x;
 		// search the Y position
-		if (int(hotpoint) & int(Hotpoint::BOTTOM))
+		if (int(hotpoint) & int(Hotpoint::Bottom))
 			result.y = corners.min.y;
-		else if (int(hotpoint) & int(Hotpoint::TOP))
+		else if (int(hotpoint) & int(Hotpoint::Top))
 			result.y = corners.max.y;
 		else
 			result.y = canvas_box.position.y;
@@ -242,7 +242,7 @@ namespace chaos
 		generator_params.line_height = 80.0f;
 		generator_params.font_info_name = "normal";
 		generator_params.position = glm::vec2(-40.0f, 100.0f);
-		generator_params.hotpoint = Hotpoint::BOTTOM_RIGHT;
+		generator_params.hotpoint = Hotpoint::BottomRight;
 	}
 
 	GameHUDNotificationComponent::GameHUDNotificationComponent(ParticleTextGenerator::GeneratorParams const & in_params):
@@ -291,7 +291,7 @@ namespace chaos
 		generator_params.line_height = 60.0f;
 		generator_params.font_info_name = "normal";
 		generator_params.position = glm::vec2(0.0f, -110.0f);
-		generator_params.hotpoint = Hotpoint::CENTER;
+		generator_params.hotpoint = Hotpoint::Center;
 	}
 
 	bool GameHUDBestScoreComponent::QueryValue(int & result) const
@@ -314,7 +314,7 @@ namespace chaos
 		generator_params.line_height = 60.0f;
 		generator_params.font_info_name = "normal";
 		generator_params.position = glm::vec2(20.0f, -20.0f);
-		generator_params.hotpoint = Hotpoint::TOP_LEFT;
+		generator_params.hotpoint = Hotpoint::TopLeft;
 	}
 
 	bool GameHUDScoreComponent::QueryValue(int & result) const
@@ -346,7 +346,7 @@ namespace chaos
 		generator_params.line_height = 60.0f;
 		generator_params.font_info_name = "normal";
 		generator_params.position = glm::vec2(-20.0f, -20.0f);
-		generator_params.hotpoint = Hotpoint::TOP_RIGHT;
+		generator_params.hotpoint = Hotpoint::TopRight;
 	}
 
 	int GameHUDFramerateComponent::DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
@@ -383,7 +383,7 @@ namespace chaos
 		generator_params.line_height = 30.0f;
 		generator_params.font_info_name = "normal";
 		generator_params.position = glm::vec2(-20.0f, -80.0f);
-		generator_params.hotpoint = Hotpoint::TOP_RIGHT;
+		generator_params.hotpoint = Hotpoint::TopRight;
 	}
 
 	int GameHUDPerfsComponent::DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params)
@@ -428,7 +428,7 @@ namespace chaos
 		generator_params.line_height = 60.0f;
 		generator_params.font_info_name = "normal";
 		generator_params.position = glm::vec2(0.0f, -20.0f);
-		generator_params.hotpoint = Hotpoint::TOP;
+		generator_params.hotpoint = Hotpoint::Top;
 	}
 
 	bool GameHUDTimeoutComponent::QueryValue(float & result) const
@@ -550,7 +550,7 @@ namespace chaos
 			// compute the reference point relative to the screen
 			glm::vec2 screen_ref = GetCanvasBoxCorner(GetGame()->GetCanvasBox(), hotpoint);
 			// compute the bottom-left corner of the whole sprite rectangle
-			glm::vec2 whole_particle_ref = ConvertHotpoint(screen_ref + position, whole_particle_size, hotpoint, Hotpoint::BOTTOM_LEFT);
+			glm::vec2 whole_particle_ref = ConvertHotpoint(screen_ref + position, whole_particle_size, hotpoint, Hotpoint::BottomLeft);
 			// update the particles members
 			glm::vec2 particle_position = whole_particle_ref;
 			// get the color
@@ -562,7 +562,7 @@ namespace chaos
 			while (quads.GetVerticesCount() > 0)
 			{
 				ParticleDefault particle;
-				particle.bounding_box.position = ConvertHotpoint(particle_position, particle_final_size, Hotpoint::BOTTOM_LEFT, Hotpoint::CENTER);
+				particle.bounding_box.position = ConvertHotpoint(particle_position, particle_final_size, Hotpoint::BottomLeft, Hotpoint::Center);
 				particle.bounding_box.half_size = 0.5f * particle_final_size;
 				particle.texcoords = bitmap_info->GetTexcoords();
 				particle.color = { 1.0f, 1.0f, 1.0f, fadeout };
@@ -586,7 +586,7 @@ namespace chaos
 		generator_params.line_height = 80.0f;
 		generator_params.font_info_name = "normal";
 		generator_params.position = glm::vec2(-40.0f, 100.0f);
-		generator_params.hotpoint = Hotpoint::BOTTOM_RIGHT;
+		generator_params.hotpoint = Hotpoint::BottomRight;
 	}
 
 
@@ -629,7 +629,7 @@ namespace chaos
 		generator_params.line_height = 60.0f;
 		generator_params.font_info_name = "normal";
 		generator_params.position = glm::vec2(-20.0f, -80.0f);
-		generator_params.hotpoint = Hotpoint::TOP_RIGHT;
+		generator_params.hotpoint = Hotpoint::TopRight;
 		generator_params.default_color = glm::vec4(0.0f, 0.45f, 1.0f, 1.0f); // light blue
 	}
 
@@ -657,7 +657,7 @@ namespace chaos
 		generator_params.line_height = 30.0f;
 		generator_params.font_info_name = "normal";
 		generator_params.position = glm::vec2(40.0f, -100.0f);
-		generator_params.hotpoint = Hotpoint::TOP_LEFT;
+		generator_params.hotpoint = Hotpoint::TopLeft;
 	}
 
 	void GameHUDDebugValuesComponent::AddValue(char const* title, char const* value, float life_time)

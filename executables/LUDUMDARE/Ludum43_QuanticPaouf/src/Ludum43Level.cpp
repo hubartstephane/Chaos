@@ -159,7 +159,7 @@ bool MyChangeLevelTrigger::OnCollisionEvent(float delta_time, chaos::Object * ob
 	if (player == nullptr)
 		return false;
 
-	if (event_type != chaos::CollisionType::STARTED)
+	if (event_type != chaos::CollisionType::Started)
 		return false;
 
 	LudumPlayer* ludum_player = auto_cast(player);

@@ -43,10 +43,10 @@ namespace chaos
 		bool touching_ladder = (collision_flags & PlatformerDisplacementCollisionFlags::TOUCHING_LADDER);
 
 		// current state
-		bool is_jumping = (displacement_state == PlatformerDisplacementState::JUMPING);
-		bool is_jumping_down = (displacement_state == PlatformerDisplacementState::JUMPING_DOWN);
-		bool is_climbing = (displacement_state == PlatformerDisplacementState::CLIMBING);
-		bool is_grounded = (displacement_state == PlatformerDisplacementState::GROUNDED);
+		bool is_jumping = (displacement_state == PlatformerDisplacementState::Jumping);
+		bool is_jumping_down = (displacement_state == PlatformerDisplacementState::JumpingDown);
+		bool is_climbing = (displacement_state == PlatformerDisplacementState::Climbing);
+		bool is_grounded = (displacement_state == PlatformerDisplacementState::Grounded);
 
 		if (jump_pressed)
 		{
@@ -56,14 +56,14 @@ namespace chaos
 				if (!was_jump_pressed)
 				{
 					if (is_climbing)
-						return PlatformerDisplacementState::FALLING;
+						return PlatformerDisplacementState::Falling;
 
 					if (!is_jumping_down)
 					{
 						if (is_grounded && touching_bridge && !touching_floor)
 						{
 							current_jumpdown_start_y = pawn_position.y;
-							return PlatformerDisplacementState::JUMPING_DOWN;
+							return PlatformerDisplacementState::JumpingDown;
 						}
 					}
 				}
@@ -74,9 +74,9 @@ namespace chaos
 				if (touching_ceil || current_jump_timer >= GetMaxJumpDuration())
 				{
 					pawn_velocity.y = 0.0f;
-					return PlatformerDisplacementState::FALLING;
+					return PlatformerDisplacementState::Falling;
 				}
-				return PlatformerDisplacementState::JUMPING;
+				return PlatformerDisplacementState::Jumping;
 			}
 			// start jumping ?
 			else if (!was_jump_pressed)
@@ -87,7 +87,7 @@ namespace chaos
 					current_jump_start_y = pawn_position.y;
 					if (!is_grounded && !is_climbing)
 						++current_jump_count;
-					return PlatformerDisplacementState::JUMPING;
+					return PlatformerDisplacementState::Jumping;
 				}
 			}
 		}
@@ -96,7 +96,7 @@ namespace chaos
 			// jump button is released before the end of the jump ...
 			if (is_jumping)
 			{
-				displacement_state = PlatformerDisplacementState::FALLING;
+				displacement_state = PlatformerDisplacementState::Falling;
 				pawn_velocity.y = std::max(0.0f, displacement_info.jump_released_velocity_factor * GetJumpVelocity(current_jump_timer)); // do not clamp the velocity to 0 => smooth it instead
 			}
 		}
@@ -109,25 +109,25 @@ namespace chaos
 		if (touching_ladder && is_grounded && stick_position.y != 0.0f)
 		{
 			if (displacement_info.climb_max_horizontal_velocity <= 0.0f || std::abs(pawn_velocity.x) < displacement_info.climb_max_horizontal_velocity) // cannot walk too fast to start a climb
-				return PlatformerDisplacementState::CLIMBING;
+				return PlatformerDisplacementState::Climbing;
 		}
 
 		if (touching_floor || touching_bridge)
 		{
 			pawn_velocity.y = 0.0f;
-			return PlatformerDisplacementState::GROUNDED;
+			return PlatformerDisplacementState::Grounded;
 		}
 		else
 		{
 			if (is_climbing)
 			{
 				if (!touching_ladder)
-					return PlatformerDisplacementState::GROUNDED;
-				return PlatformerDisplacementState::CLIMBING;
+					return PlatformerDisplacementState::Grounded;
+				return PlatformerDisplacementState::Climbing;
 			}
 			if (is_jumping_down)
-				return PlatformerDisplacementState::JUMPING_DOWN;
-			return PlatformerDisplacementState::FALLING;
+				return PlatformerDisplacementState::JumpingDown;
+			return PlatformerDisplacementState::Falling;
 		}
 	}
 
@@ -201,10 +201,10 @@ namespace chaos
 			stick_position.y = MathTools::AnalogicToDiscret(stick_position.y);
 		}
 
-		Key const jump_key_buttons[] = { Key::SPACE, Key::GAMEPAD_A, Key() };
+		Key const jump_key_buttons[] = { Key::Space, Key::GamepadA, Key() };
 		bool jump_pressed = player->CheckKeyDown(jump_key_buttons);
 
-		Key const run_key_buttons[] = { Key::LEFT_SHIFT, Key::RIGHT_SHIFT, Key::GAMEPAD_RIGHT_TRIGGER, Key() };
+		Key const run_key_buttons[] = { Key::LeftShift, Key::RightShift, Key::GamepadRightTrigger, Key() };
 		bool run_pressed = player->CheckKeyDown(run_key_buttons);
 
 		// get player position
@@ -216,11 +216,11 @@ namespace chaos
 		// sum the forces
 		glm::vec2 sum_forces = glm::vec2(0.0f, 0.0f);
 
-		if (displacement_state == PlatformerDisplacementState::FALLING || displacement_state == PlatformerDisplacementState::JUMPING_DOWN) // do not fall otherway
+		if (displacement_state == PlatformerDisplacementState::Falling || displacement_state == PlatformerDisplacementState::JumpingDown) // do not fall otherway
 			sum_forces += glm::vec2(0.0f, -displacement_info.gravity);
 
 		// compute horizonral velocity (based on uniform acceleration or not for climbing)
-		if (displacement_state == PlatformerDisplacementState::CLIMBING)
+		if (displacement_state == PlatformerDisplacementState::Climbing)
 		{
 			pawn_velocity.x = stick_position.x * displacement_info.climp_velocity.x;
 		}
@@ -242,29 +242,29 @@ namespace chaos
 		}
 
 		// compute vertical velocity
-		if (displacement_state == PlatformerDisplacementState::GROUNDED)
+		if (displacement_state == PlatformerDisplacementState::Grounded)
 		{
 			current_jump_count = 0;
 			pawn_velocity.y = 0.0f;
 		}
-		else if (displacement_state == PlatformerDisplacementState::CLIMBING)
+		else if (displacement_state == PlatformerDisplacementState::Climbing)
 		{
 			current_jump_count = 0;
 			pawn_velocity.y = stick_position.y * displacement_info.climp_velocity.y;
 		}
-		else if (displacement_state == PlatformerDisplacementState::JUMPING)
+		else if (displacement_state == PlatformerDisplacementState::Jumping)
 		{
 			current_jump_timer = std::min(current_jump_timer + delta_time, GetMaxJumpDuration());
 			pawn_position.y = current_jump_start_y + GetJumpRelativeHeight(current_jump_timer);
 			pawn_velocity.y = 0.0f; // no physics (ignore gravity, velocity) for the jump, just use a curve for the height of the player (even if that curve is based on physical equations)
 		}
-		else if (displacement_state == PlatformerDisplacementState::JUMPING_DOWN || displacement_state == PlatformerDisplacementState::FALLING)
+		else if (displacement_state == PlatformerDisplacementState::JumpingDown || displacement_state == PlatformerDisplacementState::Falling)
 		{
 			pawn_velocity += (sum_forces * delta_time);
 		}
 
 		// update pawn position
-		pawn_velocity = ClampPlayerVelocity(pawn_velocity, run_pressed && displacement_state != PlatformerDisplacementState::CLIMBING);
+		pawn_velocity = ClampPlayerVelocity(pawn_velocity, run_pressed && displacement_state != PlatformerDisplacementState::Climbing);
 		pawn_position += pawn_velocity * delta_time;
 
 		// search collisions, apply collision reaction
@@ -287,15 +287,15 @@ namespace chaos
 			{
 				computer.ComputeReaction(collision_info, [&collision_flags](TileCollisionInfo const& collision_info, Edge edge)
 				{
-					if (edge == Edge::TOP)
+					if (edge == Edge::Top)
 					{
 						if ((collision_info.particle->flags & PlatformerParticleFlags::BRIDGE) != 0)
 							collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_BRIDGE;
 						collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_FLOOR;
 					}
-					else if (edge == Edge::BOTTOM)
+					else if (edge == Edge::Bottom)
 						collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_CEIL;
-					else if (edge == Edge::LEFT || edge == Edge::RIGHT)
+					else if (edge == Edge::Left || edge == Edge::Right)
  						collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_WALL;
 					return true;
 				});

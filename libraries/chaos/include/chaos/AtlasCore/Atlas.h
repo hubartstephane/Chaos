@@ -96,11 +96,11 @@ namespace chaos
 		bool HasGridAnimation() const;
 
 		/** returns the animation layout with a time */
-		AtlasBitmapLayout GetAnimationLayoutFromTime(float time, WrapMode mode = WrapMode::NONE) const;
+		AtlasBitmapLayout GetAnimationLayoutFromTime(float time, WrapMode mode = WrapMode::None) const;
 		/** returns the layout for one linear frame of the animation */
-		AtlasBitmapLayout GetAnimationLayout(int index, WrapMode mode = WrapMode::NONE) const;
+		AtlasBitmapLayout GetAnimationLayout(int index, WrapMode mode = WrapMode::None) const;
 		/** returns the layout for one grid frame of the animation */
-		AtlasBitmapLayout GetAnimationLayout(glm::ivec2 const& grid_index, WrapMode mode = WrapMode::NONE) const;
+		AtlasBitmapLayout GetAnimationLayout(glm::ivec2 const& grid_index, WrapMode mode = WrapMode::None) const;
 		/** returns the number of frames in the animation */
 		int GetAnimationImageCount() const;
 		/** returns the duration of a frame in seconds */

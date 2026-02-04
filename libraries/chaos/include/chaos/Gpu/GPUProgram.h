@@ -10,8 +10,8 @@ namespace chaos
 
 	enum class GPUProgramType : int
 	{
-		RENDER,
-		COMPUTE
+		Render,
+		Compute
 	};
 
 	class CHAOS_API GPUProgram : public GPUResource, public NamedInterface, public FileResource
@@ -22,7 +22,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgram(GLuint in_id = 0, GPUProgramType in_type = GPUProgramType::RENDER);
+		GPUProgram(GLuint in_id = 0, GPUProgramType in_type = GPUProgramType::Render);
 		/** destructor */
 		virtual ~GPUProgram();
 
@@ -49,7 +49,7 @@ namespace chaos
 		/** the resource id */
 		GLuint program_id = 0;
 		/** the type of program */
-		GPUProgramType type = GPUProgramType::RENDER;
+		GPUProgramType type = GPUProgramType::Render;
 		/** the program data */
 		GPUProgramData program_data;
 		/** the default material */

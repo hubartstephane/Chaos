@@ -13,10 +13,10 @@ namespace chaos
 	 */
 	enum class WidgetFillMode : int
 	{
-		CENTERED,       // take only space given to widget. do not want more
-		PACKED_NORMAL,  // the widget is packed to the LEFT or BOTTOM of the available area
-		PACKED_REVERSE, // the widget is packed to the RIGHT or TOP of the available area
-		FILL,           // take as much size as possible
+		Centered,       // take only space given to widget. do not want more
+		PackedNormal,   // the widget is packed to the LEFT or BOTTOM of the available area
+		PackedReverse,  // the widget is packed to the RIGHT or TOP of the available area
+		Fill            // take as much size as possible
 	};
 
 	/**
@@ -31,9 +31,9 @@ namespace chaos
 		/** whether the aspect_ratio of the widget has to be forced (if > 0.0f) */
 		float aspect_ratio = 0.0f;
 		/** how to place the widget inside the area that is being given to it */
-		WidgetFillMode fill_mode_x = WidgetFillMode::CENTERED;
+		WidgetFillMode fill_mode_x = WidgetFillMode::Centered;
 		/** how to place the widget inside the area that is being given to it */
-		WidgetFillMode fill_mode_y = WidgetFillMode::CENTERED;
+		WidgetFillMode fill_mode_y = WidgetFillMode::Centered;
 	};
 
 #endif

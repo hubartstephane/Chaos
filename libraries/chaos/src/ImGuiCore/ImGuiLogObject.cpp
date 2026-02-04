@@ -74,7 +74,7 @@ namespace chaos
 				// time
 				ImGui::PushID(int(i * COLUMN_COUNT + 0));
 				ImGui::TableNextColumn();
-				ImGui::TextColored(color, "%s", StringTools::TimeToString(line.time, TimeToStringFormatType::FULL).c_str());
+				ImGui::TextColored(color, "%s", StringTools::TimeToString(line.time, TimeToStringFormatType::Full).c_str());
 				ImGui::PopID();
 
 				// type

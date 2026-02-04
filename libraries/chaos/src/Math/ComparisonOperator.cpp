@@ -6,34 +6,34 @@ namespace chaos
 
 	static EnumMetaData<ComparisonOperator> const ComparisonOperator_metadata =
 	{
-		{ ComparisonOperator::NEVER, "NEVER" },
-		{ ComparisonOperator::ALWAYS, "ALWAYS" },
-		{ ComparisonOperator::EQUAL, "EQUAL" },
-		{ ComparisonOperator::NOT_EQUAL, "NOT_EQUAL" },
-		{ ComparisonOperator::GREATER, "GREATER" },
-		{ ComparisonOperator::GREATER_EQUAL, "GREATER_EQUAL" },
-		{ ComparisonOperator::LESS, "LESS" },
-		{ ComparisonOperator::LESS_EQUAL, "LESS_EQUAL" }
+		{ ComparisonOperator::Never, "NEVER" },
+		{ ComparisonOperator::Always, "ALWAYS" },
+		{ ComparisonOperator::Equal, "EQUAL" },
+		{ ComparisonOperator::NotEqual, "NOT_EQUAL" },
+		{ ComparisonOperator::Greater, "GREATER" },
+		{ ComparisonOperator::GreaterEqual, "GREATER_EQUAL" },
+		{ ComparisonOperator::Less, "LESS" },
+		{ ComparisonOperator::LessEqual, "LESS_EQUAL" }
 	};
 
 	ComparisonOperator operator ! (ComparisonOperator op)
 	{
-		if (op == ComparisonOperator::NEVER)
-			return ComparisonOperator::ALWAYS;
-		if (op == ComparisonOperator::ALWAYS)
-			return ComparisonOperator::NEVER;
-		if (op == ComparisonOperator::EQUAL)
-			return ComparisonOperator::NOT_EQUAL;
-		if (op == ComparisonOperator::NOT_EQUAL)
-			return ComparisonOperator::EQUAL;
-		if (op == ComparisonOperator::GREATER)
-			return ComparisonOperator::LESS_EQUAL;
-		if (op == ComparisonOperator::GREATER_EQUAL)
-			return ComparisonOperator::LESS;
-		if (op == ComparisonOperator::LESS)
-			return ComparisonOperator::GREATER_EQUAL;
-		if (op == ComparisonOperator::LESS_EQUAL)
-			return ComparisonOperator::GREATER;
+		if (op == ComparisonOperator::Never)
+			return ComparisonOperator::Always;
+		if (op == ComparisonOperator::Always)
+			return ComparisonOperator::Never;
+		if (op == ComparisonOperator::Equal)
+			return ComparisonOperator::NotEqual;
+		if (op == ComparisonOperator::NotEqual)
+			return ComparisonOperator::Equal;
+		if (op == ComparisonOperator::Greater)
+			return ComparisonOperator::LessEqual;
+		if (op == ComparisonOperator::GreaterEqual)
+			return ComparisonOperator::Less;
+		if (op == ComparisonOperator::Less)
+			return ComparisonOperator::GreaterEqual;
+		if (op == ComparisonOperator::LessEqual)
+			return ComparisonOperator::Greater;
 		assert(0);
 		return op;
 	}

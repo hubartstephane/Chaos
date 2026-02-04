@@ -233,7 +233,7 @@ namespace chaos
 			ImageDescription const & image = slice_registry.slices[i].description;
 
 			ImageDescription effective_image = (pixel_format.component_count != 1 && image.pixel_format.component_count == 1)?
-				ImageTools::ConvertPixels(image, pixel_format, conversion_buffer, ImageTransform::NO_TRANSFORM) :
+				ImageTools::ConvertPixels(image, pixel_format, conversion_buffer, ImageTransform::None) :
 				image;
 
 			result->SetSubImage(effective_image, {0, 0, i});

@@ -149,10 +149,10 @@ bool LudumGame::OnInitialize(chaos::JSONReadConfiguration config)
 	if (!InitializeRewardsAndPunishments())
 		return false;
 
-	gamepad_buttons.push_back((int)chaos::Key::GAMEPAD_A);
-	gamepad_buttons.push_back((int)chaos::Key::GAMEPAD_B);
-	gamepad_buttons.push_back((int)chaos::Key::GAMEPAD_X);
-	gamepad_buttons.push_back((int)chaos::Key::GAMEPAD_Y);
+	gamepad_buttons.push_back((int)chaos::Key::GamepadA);
+	gamepad_buttons.push_back((int)chaos::Key::GamepadB);
+	gamepad_buttons.push_back((int)chaos::Key::GamepadX);
+	gamepad_buttons.push_back((int)chaos::Key::GamepadY);
 
 	return true;
 }

@@ -98,7 +98,7 @@ namespace chaos
 	protected:
 
 		/** the current input mode */
-		InputMode input_mode = InputMode::KEYBOARD;
+		InputMode input_mode = InputMode::Keyboard;
 	};
 
 #else // defined CHAOS_TEMPLATE_IMPLEMENTATION

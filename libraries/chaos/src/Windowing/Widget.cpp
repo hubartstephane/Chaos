@@ -96,7 +96,7 @@ namespace chaos
 			in_placement.position.y + (float)layout.padding.bottom;
 
 		if (layout.aspect_ratio > 0.0f)
-			result = SetBoxAspect(result, layout.aspect_ratio, SetBoxAspectMethod::SHRINK_BOX);
+			result = SetBoxAspect(result, layout.aspect_ratio, SetBoxAspectMethod::Shrink);
 
 		return result;
 	}

@@ -21,7 +21,7 @@ namespace chaos
 
 	GPUProgramFileSourceGenerator::GPUProgramFileSourceGenerator(FilePathParam const & path)
 	{
-		buffer = FileTools::LoadFile(path, LoadFileFlag::ASCII | LoadFileFlag::NO_ERROR_TRACE);
+		buffer = FileTools::LoadFile(path, LoadFileFlag::Ascii | LoadFileFlag::NoErrorTrace);
 		if (buffer == nullptr)
 			GLLog::Error("GPUProgramFileSourceGenerator: fail to load [%s]", path.GetResolvedPath().string().c_str());
 	}

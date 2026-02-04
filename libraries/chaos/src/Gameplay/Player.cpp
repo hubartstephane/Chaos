@@ -113,7 +113,7 @@ namespace chaos
 		// update the forcefeedback mute state
 		if (gamepad != nullptr)
 		{
-			gamepad->SetForceFeedbackMuted(mute_force_feedback || (GetInputMode() != InputMode::GAMEPAD));
+			gamepad->SetForceFeedbackMuted(mute_force_feedback || (GetInputMode() != InputMode::Gamepad));
 			gamepad->SetForceFeedbackPaused(paused_force_feedback);
 		}
 
@@ -153,14 +153,14 @@ namespace chaos
 		// test whether the stick position can be overriden
 		glm::vec2 simulated_stick = glm::vec2(0.0f, 0.0f);
 
-		if (CheckKeyDown(Key::LEFT))
+		if (CheckKeyDown(Key::Left))
 			simulated_stick.x -= 1.0f;
-		if (CheckKeyDown(Key::RIGHT))
+		if (CheckKeyDown(Key::Right))
 			simulated_stick.x += 1.0f;
 
-		if (CheckKeyDown(Key::DOWN))
+		if (CheckKeyDown(Key::Down))
 			simulated_stick.y -= 1.0f;
-		if (CheckKeyDown(Key::UP))
+		if (CheckKeyDown(Key::Up))
 			simulated_stick.y += 1.0f;
 
 		if (glm::length2(simulated_stick) > 0)
@@ -181,30 +181,30 @@ namespace chaos
 			SetInputMode(InputMode::GAMEPAD);
 
 		// cache the LEFT stick position (it is aliases with the DPAD)
-		glm::vec2 lsp = gamepad_state->GetInputValue(Input2D::GAMEPAD_LEFT_STICK);
+		glm::vec2 lsp = gamepad_state->GetInputValue(Input2D::GamepadLeftStick);
 		if (glm::length2(lsp) > 0.0f)
 			left_stick_position = lsp;
 		else
 		{
-			if (IsInputActive(gamepad_state->GetInputState(Key::GAMEPAD_DPAD_LEFT)))
+			if (IsInputActive(gamepad_state->GetInputState(Key::GamepadDpadLeft)))
 				left_stick_position.x = -1.0f;
-			else if (IsInputActive(gamepad_state->GetInputState(Key::GAMEPAD_DPAD_RIGHT)))
+			else if (IsInputActive(gamepad_state->GetInputState(Key::GamepadDpadRight)))
 				left_stick_position.x = 1.0f;
 
-			if (IsInputActive(gamepad_state->GetInputState(Key::GAMEPAD_DPAD_UP)))
+			if (IsInputActive(gamepad_state->GetInputState(Key::GamepadDpadUp)))
 				left_stick_position.y = +1.0f;
-			else if (IsInputActive(gamepad_state->GetInputState(Key::GAMEPAD_DPAD_DOWN)))
+			else if (IsInputActive(gamepad_state->GetInputState(Key::GamepadDpadDown)))
 				left_stick_position.y = -1.0f;
 		}
 
 		// cache the RIGHT stick position
-		glm::vec2 rsp = gamepad_state->GetInputValue(Input2D::GAMEPAD_RIGHT_STICK);
+		glm::vec2 rsp = gamepad_state->GetInputValue(Input2D::GamepadRightStick);
 		if (glm::length2(rsp) > 0.0f)
 			right_stick_position = rsp;
 
 		// cache the TRIGGERS
-		left_trigger  = gamepad_state->GetInputValue(Input1D::GAMEPAD_LEFT_TRIGGER);
-		right_trigger = gamepad_state->GetInputValue(Input1D::GAMEPAD_RIGHT_TRIGGER);
+		left_trigger  = gamepad_state->GetInputValue(Input1D::GamepadLeftTrigger);
+		right_trigger = gamepad_state->GetInputValue(Input1D::GamepadRightTrigger);
 	}
 
 	void Player::HandleInputs(float delta_time, GamepadState const* gamepad_state)
@@ -396,7 +396,7 @@ namespace chaos
 	{
 		if (Game* game = GetGame())
 		{
-			auto PauseRequest = Or(JustActivated(Key::GAMEPAD_SPECIAL_LEFT), JustActivated(Key::GAMEPAD_SPECIAL_RIGHT));
+			auto PauseRequest = Or(JustActivated(Key::GamepadSpecialLeft), JustActivated(Key::GamepadSpecialRight));
 
 			if (in_action_processor.CheckAndProcess(PauseRequest, "Toggle Pause", [&]()
 			{

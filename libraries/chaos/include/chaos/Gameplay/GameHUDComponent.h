@@ -412,7 +412,7 @@ namespace chaos
 	protected:
 
 		/** the hotpoint of the first particle */
-		Hotpoint hotpoint = Hotpoint::BOTTOM_LEFT;
+		Hotpoint hotpoint = Hotpoint::BottomLeft;
 		/** the position of the very first particle */
 		glm::vec2 position = glm::vec2(0.0f, 0.0f);
 		/** the particle size of the particle (special meaning, see .cpp) */

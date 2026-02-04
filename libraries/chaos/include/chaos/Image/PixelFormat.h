@@ -14,10 +14,10 @@ namespace chaos
 
 	enum class PixelComponentType : int
 	{
-		UNKNOWN = 0,
-		UNSIGNED_CHAR = 1,
-		FLOAT = 2,
-		DEPTH_STENCIL = 3
+		Unknown = 0,
+		UnsignedChar = 1,
+		Float = 2,
+		DepthStencil = 3
 	};
 
 	CHAOS_DECLARE_ENUM_METHOD(PixelComponentType, CHAOS_API);
@@ -83,7 +83,7 @@ namespace chaos
 	public:
 
 		/** the type of the components */
-		PixelComponentType component_type = PixelComponentType::UNKNOWN;
+		PixelComponentType component_type = PixelComponentType::Unknown;
 		/** the number of components for each pixels */
 		int component_count = 0;
 	};

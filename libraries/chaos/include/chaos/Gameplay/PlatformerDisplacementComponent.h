@@ -28,11 +28,11 @@ namespace chaos
 	/** the states for the displacement */
 	enum class PlatformerDisplacementState : int
 	{
-		GROUNDED,     // player is on the ground
-		FALLING,      // player in the air and going down
-		JUMPING,      // player jump button has been pressed
-		JUMPING_DOWN, // whether the player has jumped down through a bridge
-		CLIMBING      // whether the player is on a ladder a goind up or down
+		Grounded,     // player is on the ground
+		Falling,      // player in the air and going down
+		Jumping,      // player jump button has been pressed
+		JumpingDown,  // whether the player has jumped down through a bridge
+		Climbing      // whether the player is on a ladder a goind up or down
 	};
 
 	// =========================================================
@@ -154,7 +154,7 @@ namespace chaos
 		PlatformerDisplacementComponentInfo displacement_info;
 
 		/** the current state for the player */
-		PlatformerDisplacementState displacement_state = PlatformerDisplacementState::GROUNDED;
+		PlatformerDisplacementState displacement_state = PlatformerDisplacementState::Grounded;
 
 		/** the current velocity of the pawn */
 		glm::vec2 pawn_velocity = glm::vec2(0.0f, 0.0f);

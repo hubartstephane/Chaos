@@ -15,9 +15,9 @@ namespace chaos
 
 	enum class CollisionType : int
 	{
-		FINISHED = 0,
-		STARTED = 1,
-		AGAIN = 2
+		Ended = 0,
+		Started = 1,
+		Repeat = 2
 	};
 
 	// ==============================================================================================

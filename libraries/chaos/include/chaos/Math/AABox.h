@@ -124,16 +124,16 @@
 			return src;
 
 		// shrink method
-		if (method == SetBoxAspectMethod::SHRINK_BOX)
+		if (method == SetBoxAspectMethod::Shrink)
 		{
 			auto effective_aspect = GetBoxAspect(src);
 			if (effective_aspect == aspect)
 				return src;
 
 			if (effective_aspect > aspect) // width too large
-				method = SetBoxAspectMethod::PREFER_UPDATE_WIDTH;
+				method = SetBoxAspectMethod::UpdateWidth;
 			else if (effective_aspect < aspect) // height too large
-				method = SetBoxAspectMethod::PREFER_UPDATE_HEIGHT;
+				method = SetBoxAspectMethod::UpdateHeight;
 		}
 		// other method
 		else
@@ -144,21 +144,21 @@
 
 			// if size is 0 along one axis, force/alter this axis
 			if (src.size.x == 0)
-				method = SetBoxAspectMethod::PREFER_UPDATE_WIDTH;
+				method = SetBoxAspectMethod::UpdateWidth;
 			else if (src.size.y == 0)
-				method = SetBoxAspectMethod::PREFER_UPDATE_HEIGHT;
+				method = SetBoxAspectMethod::UpdateHeight;
 		}
 
 		// make the update
-		assert((method == SetBoxAspectMethod::PREFER_UPDATE_WIDTH) || (method == SetBoxAspectMethod::PREFER_UPDATE_HEIGHT));
+		assert((method == SetBoxAspectMethod::UpdateWidth) || (method == SetBoxAspectMethod::UpdateHeight));
 
 		aabox<2, T> result = src;
-		if (method == SetBoxAspectMethod::PREFER_UPDATE_WIDTH)
+		if (method == SetBoxAspectMethod::UpdateWidth)
 		{
 			result.size.x = src.size.y * aspect;
 			result.position.x -= (result.size.x - src.size.x) / static_cast<T>(2);
 		}
-		else if (method == SetBoxAspectMethod::PREFER_UPDATE_HEIGHT)
+		else if (method == SetBoxAspectMethod::UpdateHeight)
 		{
 			result.size.y = src.size.x / aspect;
 			result.position.y -= (result.size.y - src.size.y) / static_cast<T>(2);

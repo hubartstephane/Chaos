@@ -34,7 +34,7 @@ namespace chaos
 		ApplicationLog::TransactionConcatLN("== Informations");
 		ApplicationLog::TransactionConcatLN("==========================================");
 		ApplicationLog::TransactionConcatLN("Working directory: %s", boost::filesystem::current_path().string().c_str());
-		ApplicationLog::TransactionConcatLN("%s", StringTools::TimeToString(std::chrono::system_clock::now(), TimeToStringFormatType::FULL).c_str());
+		ApplicationLog::TransactionConcatLN("%s", StringTools::TimeToString(std::chrono::system_clock::now(), TimeToStringFormatType::Full).c_str());
 
 		ApplicationLog::EndTransaction();
 	}

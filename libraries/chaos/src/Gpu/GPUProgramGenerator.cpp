@@ -5,13 +5,13 @@ namespace chaos
 {
 	static EnumMetaData<ShaderType> const ShaderType_metadata =
 	{
-		{ ShaderType::ANY, "any" },
-		{ ShaderType::VERTEX, "vertex" },
-		{ ShaderType::FRAGMENT, "fragment" },
-		{ ShaderType::GEOMETRY, "geometry" },
-		{ ShaderType::TESS_EVALUATION, "tess_evaluation" },
-		{ ShaderType::TESS_CONTROL, "tess_control" },
-		{ ShaderType::COMPUTE, "compute" }
+		{ ShaderType::Any, "any" },
+		{ ShaderType::Vertex, "vertex" },
+		{ ShaderType::Fragment, "fragment" },
+		{ ShaderType::Geometry, "geometry" },
+		{ ShaderType::TessEvaluation, "tess_evaluation" },
+		{ ShaderType::TessControl, "tess_control" },
+		{ ShaderType::Compute, "compute" }
 	};
 
 	CHAOS_IMPLEMENT_ENUM_METHOD(ShaderType, &ShaderType_metadata, CHAOS_API);
@@ -103,7 +103,7 @@ namespace chaos
 		// shared generators
 		GeneratorSet const * global_generators = nullptr;
 
-		std::map<ShaderType, GeneratorSet>::const_iterator global_generators_it = shaders.find(ShaderType::ANY);
+		std::map<ShaderType, GeneratorSet>::const_iterator global_generators_it = shaders.find(ShaderType::Any);
 		if (global_generators_it != shaders.cend())
 			global_generators = &global_generators_it->second;
 
@@ -146,7 +146,7 @@ namespace chaos
 		}
 
 		// tweak the pixel shader source
-		if (shader_type == ShaderType::FRAGMENT)
+		if (shader_type == ShaderType::Fragment)
 		{
 
 
@@ -242,10 +242,10 @@ namespace chaos
 		{
 			ShaderType shader_type = shader_generators.first;
 			// this type is a joker and does not deserve to generate a shader
-			if (shader_type == ShaderType::ANY)
+			if (shader_type == ShaderType::Any)
 				continue;
 			// keep trace whether a vertex shader is provided
-			if (shader_type == ShaderType::VERTEX)
+			if (shader_type == ShaderType::Vertex)
 				has_vertex_shader = true;
 			// generate the shader for this TYPE
 			GLuint shader_id = GenerateShader(result, shader_type, shader_generators.second, definitions, definitions_string);
@@ -293,10 +293,10 @@ namespace chaos
 	{
 		if (GLuint program_id = GenProgram(definitions))
 		{
-			GPUProgramType program_type = (HasComputeShaderSources()) ? GPUProgramType::COMPUTE : GPUProgramType::RENDER;
+			GPUProgramType program_type = (HasComputeShaderSources()) ? GPUProgramType::Compute : GPUProgramType::Render;
 			if (GPUProgram* result = new GPUProgram(program_id, program_type))
 			{
-				if (program_type == GPUProgramType::RENDER)
+				if (program_type == GPUProgramType::Render)
 					result->default_material = GPURenderMaterial::GenRenderMaterialObject(result, true);
 				return result;
 			}
@@ -316,8 +316,8 @@ namespace chaos
 		// insert the shader (even in case of error -> this will produce an error at program creation)
 		shaders[shader_type].push_back(generator);
 		// check whether there is both a compute and a rendering shader
-		has_compute_shader |= (shader_type == ShaderType::COMPUTE);
-		has_render_shader  |= (shader_type != ShaderType::COMPUTE && shader_type != ShaderType::ANY);
+		has_compute_shader |= (shader_type == ShaderType::Compute);
+		has_render_shader  |= (shader_type != ShaderType::Compute && shader_type != ShaderType::Any);
 		if (has_compute_shader && has_render_shader)
 		{
 			GLLog::Warning("GPUProgramGenerator::AddSourceGenerator(...) cannot have both compute and rendering shaders");

@@ -17,7 +17,7 @@ void LudumLevelInstance::CreateCameraComponents(chaos::Camera* camera, chaos::TM
 	camera->AddComponent(new chaos::ShakeCameraComponent(0.15f, 0.05f, 0.15f, true, true));
 	camera->AddComponent(new chaos::SoundListenerCameraComponent());
 	if (LudumGame* ludum_game = GetGame())
-		camera->AddComponent(new chaos::ScrollCameraComponent(ludum_game->scroll_factor * camera_speed, chaos::Axis::AXIS_X));
+		camera->AddComponent(new chaos::ScrollCameraComponent(ludum_game->scroll_factor * camera_speed, chaos::Axis::AxisX));
 }
 
 bool LudumLevelInstance::DoTick(float delta_time)

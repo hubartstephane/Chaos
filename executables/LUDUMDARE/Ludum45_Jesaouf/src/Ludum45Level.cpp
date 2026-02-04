@@ -29,7 +29,7 @@ bool BonusSpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * obj
 	if (camera == nullptr)
 		return false;
 
-	if (event_type != chaos::CollisionType::STARTED)
+	if (event_type != chaos::CollisionType::Started)
 		return false;
 
 	LudumGame * ludum_game = GetLayerInstance()->GetGame();
@@ -76,7 +76,7 @@ bool EnemySpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * obj
 	if (camera == nullptr)
 		return false;
 
-	if (event_type != chaos::CollisionType::STARTED)
+	if (event_type != chaos::CollisionType::Started)
 		return false;
 
 	if (type == nullptr || pattern == nullptr || pattern->enemy_count == 0)

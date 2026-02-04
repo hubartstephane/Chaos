@@ -19,12 +19,12 @@ namespace chaos
 	InputDeviceType GetDeviceForInput(INPUT_TYPE in_input)
 	{
 		if (IsKeyboardInput(in_input))
-			return InputDeviceType::KEYBOARD;
+			return InputDeviceType::Keyboard;
 		if (IsMouseInput(in_input))
-			return InputDeviceType::MOUSE;
+			return InputDeviceType::Mouse;
 		if (IsGamepadInput(in_input))
-			return InputDeviceType::GAMEPAD;
-		return InputDeviceType::UNKNOWN;
+			return InputDeviceType::Gamepad;
+		return InputDeviceType::Unknown;
 	}
 
 	template<InputType INPUT_TYPE>

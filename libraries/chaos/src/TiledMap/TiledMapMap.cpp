@@ -6,33 +6,33 @@ namespace chaos
 	namespace TiledMap
 	{
 		static EnumMetaData<MapOrientation> const MapOrientation_metadata = {
-			{ MapOrientation::ORTHOGONAL, "orthogonal" }, //default
-			{ MapOrientation::ISOMETRIC, "isometric" },
-			{ MapOrientation::STAGGERED, "staggered" },
-			{ MapOrientation::HEXAGONAL, "hexagonal" }
+			{ MapOrientation::Orthogonal, "orthogonal" }, //default
+			{ MapOrientation::Isometric, "isometric" },
+			{ MapOrientation::Staggered, "staggered" },
+			{ MapOrientation::Hexagonal, "hexagonal" }
 		};
 
 		CHAOS_IMPLEMENT_ENUM_METHOD(MapOrientation, &MapOrientation_metadata, CHAOS_API);
 
 		static EnumMetaData<StaggerAxis> const StaggerAxis_metadata = {
-			{ StaggerAxis::AXIS_X, "X",  }, // default
-			{ StaggerAxis::AXIS_Y, "Y",  }
+			{ StaggerAxis::AxisX, "X",  }, // default
+			{ StaggerAxis::AxisY, "Y",  }
 		};
 
 		CHAOS_IMPLEMENT_ENUM_METHOD(StaggerAxis, &StaggerAxis_metadata, CHAOS_API);
 
 		static EnumMetaData<StaggerIndex> const StaggerIndex_metadata = {
-			{ StaggerIndex::ODD, "odd" }, // default
-			{ StaggerIndex::EVEN, "even" }
+			{ StaggerIndex::Odd, "odd" }, // default
+			{ StaggerIndex::Even, "even" }
 		};
 
 		CHAOS_IMPLEMENT_ENUM_METHOD(StaggerIndex, &StaggerIndex_metadata, CHAOS_API);
 
 		static EnumMetaData<RenderOrder> const RenderOrder_metadata = {
-			{ RenderOrder::RIGHT_UP, "right-up" }, // default
-			{ RenderOrder::RIGHT_DOWN, "right-down" },
-			{ RenderOrder::LEFT_UP, "left-up" },
-			{ RenderOrder::LEFT_DOWN, "left-down" }
+			{ RenderOrder::RightUp, "right-up" }, // default
+			{ RenderOrder::RightDown, "right-down" },
+			{ RenderOrder::LeftUp, "left-up" },
+			{ RenderOrder::LeftDown, "left-down" }
 		};
 
 		CHAOS_IMPLEMENT_ENUM_METHOD(RenderOrder, &RenderOrder_metadata, CHAOS_API);
@@ -44,13 +44,13 @@ namespace chaos
 		bool Map::DoLoadMembers(tinyxml2::XMLElement const * element)
 		{
 
-			orientation = MapOrientation::ORTHOGONAL;
+			orientation = MapOrientation::Orthogonal;
 			XMLTools::ReadAttribute(element, "orientation", orientation);
-			stagger_axis = StaggerAxis::AXIS_X;
+			stagger_axis = StaggerAxis::AxisX;
 			XMLTools::ReadAttribute(element, "staggeraxis", stagger_axis);
-			stagger_index = StaggerIndex::ODD;
+			stagger_index = StaggerIndex::Odd;
 			XMLTools::ReadAttribute(element, "staggerindex", stagger_index);
-			render_order = RenderOrder::RIGHT_UP;
+			render_order = RenderOrder::RightUp;
 			XMLTools::ReadAttribute(element, "renderorder", render_order);
 			XMLTools::ReadAttribute(element, "compressionlevel", compressionlevel);
 			XMLTools::ReadAttribute(element, "version", version);

@@ -15,10 +15,10 @@ namespace chaos
 	InputStateResponseStatus DoTryConsumeInputHelper(INPUT_TYPE in_input, CONTAINER_TYPE& inout_consumed_input, InputReceiverInterface const* in_input_receiver, InputStateQueryFlags in_query_flags, InputStateResponseFlags& out_response_flags)
 	{
 		// check wether the input is known
-		if (in_input == INPUT_TYPE::UNKNOWN)
+		if (in_input == INPUT_TYPE::Unknown)
 		{
-			out_response_flags |= InputStateResponseFlags::UNKNOWN_INPUT;
-			return InputStateResponseStatus::SUCCESS; // this is not an error
+			out_response_flags |= InputStateResponseFlags::UnknownInput;
+			return InputStateResponseStatus::Success; // this is not an error
 		}
 	
 		// input is not required yet
@@ -26,21 +26,21 @@ namespace chaos
 
 		if (it == inout_consumed_input.end())
 		{
-			if (!HasAnyFlags(in_query_flags, InputStateQueryFlags::CONSULT_ONLY))
+			if (!HasAnyFlags(in_query_flags, InputStateQueryFlags::ConsultOnly))
 				inout_consumed_input.emplace(in_input, in_input_receiver);
-			out_response_flags |= InputStateResponseFlags::SUCCESSFUL_INPUT | InputStateResponseFlags::KNOWN_INPUT;
-			return InputStateResponseStatus::SUCCESS;
+			out_response_flags |= InputStateResponseFlags::SuccessfulInput | InputStateResponseFlags::KnownInput;
+			return InputStateResponseStatus::Success;
 		}
 
 		// the same input receiver requires for the input. that's ok
 		if (it->second == in_input_receiver)
 		{
-			out_response_flags |= InputStateResponseFlags::SUCCESSFUL_INPUT | InputStateResponseFlags::KNOWN_INPUT;
-			return InputStateResponseStatus::SUCCESS;
+			out_response_flags |= InputStateResponseFlags::SuccessfulInput | InputStateResponseFlags::KnownInput;
+			return InputStateResponseStatus::Success;
 		}
 
 		// another receiver requires the input. that's a rejection
-		return InputStateResponseStatus::FAILURE;
+		return InputStateResponseStatus::Failure;
 	}
 
 	InputStateResponseStatus InputConsumptionCache::DoTryConsumeInput(Key in_input, InputReceiverInterface const* in_input_receiver, InputStateQueryFlags in_query_flags, InputStateResponseFlags& out_response_flags)
@@ -67,14 +67,14 @@ namespace chaos
 		LightweightFunction<InputStateResponseStatus()> consume_related_input_func
 	)
 	{
-		InputStateResponseStatus response_status = InputStateResponseStatus::SUCCESS;
+		InputStateResponseStatus response_status = InputStateResponseStatus::Success;
 		response_status &= DoTryConsumeInput(in_input, in_input_receiver, in_query_flags, out_response_flags);
 		response_status &= consume_related_input_func();
 		
-		if (response_status == InputStateResponseStatus::FAILURE)
-			return InputStateResponseStatus::FAILURE;
+		if (response_status == InputStateResponseStatus::Failure)
+			return InputStateResponseStatus::Failure;
 		if (all_inputs_consumer.has_value() && all_inputs_consumer.value() != in_input_receiver)
-			return InputStateResponseStatus::FAILURE;
+			return InputStateResponseStatus::Failure;
 
 		return response_status;
 	}
@@ -83,7 +83,7 @@ namespace chaos
 	{
 		return TryConsumeInputAndRelated(in_input, in_input_receiver, in_query_flags, out_response_flags, [&]()
 		{
-			InputStateResponseStatus response_status = InputStateResponseStatus::SUCCESS;
+			InputStateResponseStatus response_status = InputStateResponseStatus::Success;
 
 			InputTools::EnumerateRelatedInputsDefinition(in_input, [&](VirtualKeyDefinition const& def)
 			{
@@ -98,7 +98,7 @@ namespace chaos
 	{
 		return TryConsumeInputAndRelated(in_input, in_input_receiver, in_query_flags, out_response_flags, [&]()
 		{
-			InputStateResponseStatus response_status = InputStateResponseStatus::SUCCESS;
+			InputStateResponseStatus response_status = InputStateResponseStatus::Success;
 
 			InputTools::EnumerateRelatedInputsDefinition(in_input,
 				[&](VirtualKeyDefinition const& def)
@@ -120,7 +120,7 @@ namespace chaos
 	{	
 		return TryConsumeInputAndRelated(in_input, in_input_receiver, in_query_flags, out_response_flags, [&]()
 		{
-			InputStateResponseStatus response_status = InputStateResponseStatus::SUCCESS;
+			InputStateResponseStatus response_status = InputStateResponseStatus::Success;
 
 			InputTools::EnumerateRelatedInputsDefinition(in_input, [&](VirtualInput2DDefinition const& def)
 			{

@@ -115,11 +115,11 @@ bool PowerUpTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
 	if (ludum_game_instance == nullptr)
 		return false;
 
-	if (event_type == chaos::CollisionType::STARTED)
+	if (event_type == chaos::CollisionType::Started)
 		ludum_game_instance->OnPowerUpZone(player, true, this);
-	else if (event_type == chaos::CollisionType::AGAIN && reset_trigger)
+	else if (event_type == chaos::CollisionType::Repeat && reset_trigger)
 		ludum_game_instance->OnPowerUpZone(player, true, this);
-	else if (event_type == chaos::CollisionType::FINISHED)
+	else if (event_type == chaos::CollisionType::Ended)
 		ludum_game_instance->OnPowerUpZone(player, false, this);
 	else
 		return false;
@@ -148,7 +148,7 @@ bool SpeedUpTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
 	if (player == nullptr)
 		return false;
 
-	if (event_type != chaos::CollisionType::STARTED) // already handled
+	if (event_type != chaos::CollisionType::Started) // already handled
 		return false;
 
 	LudumLevelInstance * ludum_level_instance = GetLayerInstance()->GetLevelInstance();
@@ -188,7 +188,7 @@ bool SpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
 		return false;
 
 	// only the first time collision is detected
-	if (event_type != chaos::CollisionType::STARTED)
+	if (event_type != chaos::CollisionType::Started)
 		return false;
 
     // shuludum

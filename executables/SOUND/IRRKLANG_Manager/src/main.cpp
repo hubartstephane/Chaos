@@ -22,7 +22,7 @@ protected:
 
   virtual bool OnMouseButtonImpl(chaos::MouseButtonEvent const &mouse_button_event) override
   {
-    if (mouse_button_event.IsKeyPressed(chaos::Key::MOUSE_BUTTON_1))
+    if (mouse_button_event.IsKeyPressed(chaos::Key::MouseButton1))
     {
       chaos::PlaySoundDesc desc;
       desc.categories.push_back(category1.get());
@@ -30,24 +30,24 @@ protected:
       sound1 = source1->Play(desc);
 			return true;
     }
-    else if (mouse_button_event.IsKeyPressed(chaos::Key::MOUSE_BUTTON_2))
+    else if (mouse_button_event.IsKeyPressed(chaos::Key::MouseButton2))
     {
       if (sound1 != nullptr)
       {
         chaos::BlendVolumeDesc desc;
-        desc.blend_type = chaos::SoundBlendType::BLEND_OUT;
+        desc.blend_type = chaos::SoundBlendType::BlendOut;
         desc.blend_time = 2.0f;
         desc.kill_at_end = true;
         sound1->StartBlend(desc, true);
       }
 			return true;
     }
-    else if (mouse_button_event.IsKeyPressed(chaos::Key::MOUSE_BUTTON_3))
+    else if (mouse_button_event.IsKeyPressed(chaos::Key::MouseButton3))
     {
       if (category1 != nullptr)
       {
         chaos::BlendVolumeDesc desc;
-        desc.blend_type = chaos::SoundBlendType::BLEND_OUT;
+        desc.blend_type = chaos::SoundBlendType::BlendOut;
         desc.blend_time = 2.0f;
         desc.kill_at_end = true;
         category1->StartBlend(desc, true);

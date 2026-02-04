@@ -85,29 +85,29 @@ protected:
 			layout->SetMode(chaos::ViewportGridMode::UNIFORM_CENTERED);
 
 		if (key_event.key == (int)chaos::Key::V)
-			layout->SetOrientation(chaos::Orientation::VERTICAL);
+			layout->SetOrientation(chaos::Orientation::Vertical);
 		if (key_event.key == (int)chaos::Key::H)
-			layout->SetOrientation(chaos::Orientation::HORIZONTAL);
+			layout->SetOrientation(chaos::Orientation::Horizontal);
 
-		if (key_event.key == (int)chaos::Key::LEFT)
+		if (key_event.key == (int)chaos::Key::Left)
 			layout->SetHorizontalFillMode(chaos::ViewportGridHorizontalFillMode::RIGHT_TO_LEFT);
 
-		if (key_event.key == (int)chaos::Key::RIGHT)
+		if (key_event.key == (int)chaos::Key::Right)
 			layout->SetHorizontalFillMode(chaos::ViewportGridHorizontalFillMode::LEFT_TO_RIGHT);
 
-		if (key_event.key == (int)chaos::Key::UP)
+		if (key_event.key == (int)chaos::Key::Up)
 			layout->SetVerticalFillMode(chaos::ViewportGridVerticalFillMode::BOTTOM_TO_TOP);
 
-		if (key_event.key == (int)chaos::Key::DOWN)
+		if (key_event.key == (int)chaos::Key::Down)
 			layout->SetVerticalFillMode(chaos::ViewportGridVerticalFillMode::TOP_TO_BOTTOM);
 
-		if (key_event.key == (int)chaos::Key::KP_1)
+		if (key_event.key == (int)chaos::Key::Keypad1)
 			layout->SetMaxViewportCount(0);
 
-		if (key_event.key == (int)chaos::Key::KP_2)
+		if (key_event.key == (int)chaos::Key::Keypad2)
 			layout->SetMaxViewportCount(7);
 
-		if (key_event.key == (int)chaos::Key::KP_3)
+		if (key_event.key == (int)chaos::Key::Keypad3)
 			layout->SetMaxViewportCount(11);
 
 		return chaos::ViewportWindow::OnKeyEventImpl(key_event);

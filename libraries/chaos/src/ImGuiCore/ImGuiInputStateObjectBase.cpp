@@ -6,7 +6,7 @@ namespace chaos
 	void ImGuiInputStateObjectBase::DisplayKeyInfo(Key input, KeyState const & state) const
 	{
 		// early exit for unknown input
-		if (input == Key::UNKNOWN)
+		if (input == Key::Unknown)
 			return;
 
 		// ImGui display code
@@ -49,7 +49,7 @@ namespace chaos
 	void ImGuiInputStateObjectBase::DisplayInput1DInfo(Input1D input, Input1DState const & state) const
 	{
 		// early exit for unknown input
-		if (input == Input1D::UNKNOWN)
+		if (input == Input1D::Unknown)
 			return;
 
 		// ImGui display code
@@ -92,7 +92,7 @@ namespace chaos
 	void ImGuiInputStateObjectBase::DisplayInput2DInfo(Input2D input, Input2DState const & state) const
 	{
 		// early exit for unknown input
-		if (input == Input2D::UNKNOWN)
+		if (input == Input2D::Unknown)
 			return;
 
 		// ImGui display code

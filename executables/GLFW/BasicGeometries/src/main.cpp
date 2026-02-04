@@ -963,10 +963,10 @@ protected:
 		// place camera
 		fps_view_controller.fps_view.position.y = 10.0f;
 		fps_view_controller.fps_view.position.z = 30.0f;
-		fps_view_controller.input_config.pitch_down_button = chaos::Key::UNKNOWN; // disable some inputs so they can be used else where
-		fps_view_controller.input_config.pitch_up_button = chaos::Key::UNKNOWN;
-		fps_view_controller.input_config.yaw_left_button = chaos::Key::UNKNOWN;
-		fps_view_controller.input_config.yaw_right_button = chaos::Key::UNKNOWN;
+		fps_view_controller.input_config.pitch_down_button = chaos::Key::Unknown; // disable some inputs so they can be used else where
+		fps_view_controller.input_config.pitch_up_button = chaos::Key::Unknown;
+		fps_view_controller.input_config.yaw_left_button = chaos::Key::Unknown;
+		fps_view_controller.input_config.yaw_right_button = chaos::Key::Unknown;
 
 		// initialize the example
 		SetExample(TestID::BOX2_DISPLAY_TEST);
@@ -989,7 +989,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KP_ADD), "Next Example", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KeypadAdd), "Next Example", [this]()
 		{
 			SetExample((TestID)((int)display_example + 1));
 			DebugDisplayExampleTitle();
@@ -998,7 +998,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KP_SUBTRACT), "Previous Example", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KeypadSubtract), "Previous Example", [this]()
 		{
 			SetExample((TestID)((int)display_example - 1));
 			DebugDisplayExampleTitle();
@@ -1008,7 +1008,7 @@ protected:
 		}
 
 		bool left_control = false;
-		auto update_type_request = chaos::And(chaos::Active(chaos::Key::KP_5), chaos::QueryInput(chaos::Key::LEFT_CONTROL, &left_control));
+		auto update_type_request = chaos::And(chaos::Active(chaos::Key::Keypad5), chaos::QueryInput(chaos::Key::LeftControl, &left_control));
 
 		if (in_action_processor.CheckAndProcess(update_type_request, "Update Object Type", [&]()
 		{
@@ -1031,7 +1031,7 @@ protected:
 			auto UpdateObjectPosition = [&](chaos::Key key, glm::vec3 const& delta_position, char const* title)
 			{
 				bool left_control = false;
-				auto request = chaos::And(chaos::Active(key), chaos::QueryInput(chaos::Key::LEFT_CONTROL, &left_control));
+				auto request = chaos::And(chaos::Active(key), chaos::QueryInput(chaos::Key::LeftControl, &left_control));
 
 				return in_action_processor.CheckAndProcess(request, title, [&]()
 				{
@@ -1043,27 +1043,27 @@ protected:
 				});
 			};
 
-			if (UpdateObjectPosition(chaos::Key::KP_6, glm::vec3(1.0f, 0.0f, 0.0f), "Move Object +X"))
+			if (UpdateObjectPosition(chaos::Key::Keypad6, glm::vec3(1.0f, 0.0f, 0.0f), "Move Object +X"))
 			{
 				return true;
 			}
-			if (UpdateObjectPosition(chaos::Key::KP_4, glm::vec3(-1.0f, 0.0f, 0.0f), "Move Object -X"))
+			if (UpdateObjectPosition(chaos::Key::Keypad4, glm::vec3(-1.0f, 0.0f, 0.0f), "Move Object -X"))
 			{
 				return true;
 			}
-			if (UpdateObjectPosition(chaos::Key::KP_8, glm::vec3(0.0f, 1.0f, 0.0f), "Move Object +Y"))
+			if (UpdateObjectPosition(chaos::Key::Keypad8, glm::vec3(0.0f, 1.0f, 0.0f), "Move Object +Y"))
 			{
 				return true;
 			}
-			if (UpdateObjectPosition(chaos::Key::KP_2, glm::vec3(0.0f, -1.0f, 0.0f), "Move Object -Y"))
+			if (UpdateObjectPosition(chaos::Key::Keypad2, glm::vec3(0.0f, -1.0f, 0.0f), "Move Object -Y"))
 			{
 				return true;
 			}
-			if (UpdateObjectPosition(chaos::Key::KP_1, glm::vec3(0.0f, 0.0f, 1.0f), "Move Object +Z"))
+			if (UpdateObjectPosition(chaos::Key::Keypad1, glm::vec3(0.0f, 0.0f, 1.0f), "Move Object +Z"))
 			{
 				return true;
 			}
-			if (UpdateObjectPosition(chaos::Key::KP_7, glm::vec3(0.0f, 0.0f, -1.0f), "Move Object -Z"))
+			if (UpdateObjectPosition(chaos::Key::Keypad7, glm::vec3(0.0f, 0.0f, -1.0f), "Move Object -Z"))
 			{
 				return true;
 			}
@@ -1071,7 +1071,7 @@ protected:
 			auto UpdateObjectRotation = [&](chaos::Key key, float delta_rotation, char const * title)
 			{			
 				bool left_control = false;
-				auto request = chaos::And(chaos::Active(key), chaos::QueryInput(chaos::Key::LEFT_CONTROL, &left_control));
+				auto request = chaos::And(chaos::Active(key), chaos::QueryInput(chaos::Key::LeftControl, &left_control));
 
 				return in_action_processor.CheckAndProcess(request, title, [&]()
 				{
@@ -1084,11 +1084,11 @@ protected:
 				});
 			};
 
-			if (UpdateObjectRotation(chaos::Key::KP_9, 1.0f, "Rotate Object +"))
+			if (UpdateObjectRotation(chaos::Key::Keypad9, 1.0f, "Rotate Object +"))
 			{
 				return true;
 			}
-			if (UpdateObjectRotation(chaos::Key::KP_3, -1.0f, "Rotate Object -"))
+			if (UpdateObjectRotation(chaos::Key::Keypad3, -1.0f, "Rotate Object -"))
 			{
 				return true;
 			}

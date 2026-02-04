@@ -9,12 +9,12 @@ namespace chaos
 	/** the possible direction */
 	enum class Direction : int // order is important
 	{
-		NEGATIVE_X = 0,
-		POSITIVE_X = 1,
-		NEGATIVE_Y = 2,
-		POSITIVE_Y = 3,
-		NEGATIVE_Z = 4,
-		POSITIVE_Z = 5		
+		NegativeX = 0,
+		PositiveX = 1,
+		NegativeY = 2,
+		PositiveY = 3,
+		NegativeZ = 4,
+		PositiveZ = 5		
 	};
 
 	CHAOS_DECLARE_ENUM_METHOD(Direction, CHAOS_API);

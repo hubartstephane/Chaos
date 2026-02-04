@@ -15,9 +15,9 @@ namespace chaos
 
 	enum class GPUProgramProviderPassType : int
 	{
-		FALLBACK = 1,
-		DEDUCED = 2,
-		EXPLICIT = 4
+		Fallback = 1,
+		Deduced = 2,
+		Explicit = 4
 	};
 
 	/**
@@ -48,7 +48,7 @@ namespace chaos
 		GPUProgramAction& GetAction() { return action; }
 
 		/** returns whether the proposed name + type match the initial request */
-		bool Match(char const* other_name, GPUProgramProviderPassType in_pass_type = GPUProgramProviderPassType::EXPLICIT) const;
+		bool Match(char const* other_name, GPUProgramProviderPassType in_pass_type = GPUProgramProviderPassType::Explicit) const;
 
 		/** gets the pass type */
 		GPUProgramProviderPassType GetPassType() const { return pass_type; }
@@ -68,7 +68,7 @@ namespace chaos
 		/** the top level provider, used for deduction */
 		GPUProgramProviderInterface const* top_provider = nullptr;
 		/** the type of provider we want to work on */
-		GPUProgramProviderPassType pass_type = GPUProgramProviderPassType::EXPLICIT;
+		GPUProgramProviderPassType pass_type = GPUProgramProviderPassType::Explicit;
 		/** the vector on which the search is effectively done (it may comes from another execution_data) */
 		std::vector<char const*>* deduced_searches = nullptr;
 		/** the pending searches. No need to make a deep copy of the string */
@@ -115,15 +115,15 @@ namespace chaos
 
 		GPUProgramProviderExecutionData other_execution_data(name, action, this); // another data that shares the same vector than us !
 		// search for explicit first ...
-		other_execution_data.pass_type = GPUProgramProviderPassType::EXPLICIT;
+		other_execution_data.pass_type = GPUProgramProviderPassType::Explicit;
 		if (top_provider->DoProcessAction(other_execution_data))
 			return true;
 		// ... then use deduced rules
-		other_execution_data.pass_type = GPUProgramProviderPassType::DEDUCED;
+		other_execution_data.pass_type = GPUProgramProviderPassType::Deduced;
 		if (top_provider->DoProcessAction(other_execution_data))
 			return true;
 		// ... finally accept any fallback values
-		other_execution_data.pass_type = GPUProgramProviderPassType::FALLBACK;
+		other_execution_data.pass_type = GPUProgramProviderPassType::Fallback;
 		if (top_provider->DoProcessAction(other_execution_data))
 			return true;
 		return false;

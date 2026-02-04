@@ -115,7 +115,7 @@ namespace chaos
         /** our internal cache for the buffer we have started to use */
         std::vector<GPUPrimitiveBufferCacheEntry> internal_buffer_pool;
         /** the current type of primitive we are working on */
-        PrimitiveType current_primitive_type = PrimitiveType::NONE;
+        PrimitiveType current_primitive_type = PrimitiveType::None;
         /** the pending primitives */
         std::vector<GPUDrawPrimitive> pending_primitives;
     };
@@ -175,55 +175,55 @@ namespace chaos
         PointPrimitive<vertex_type> AddPoints(size_t primitive_count = 1)
         {
             size_t vertex_count = primitive_count * 1;
-            return { GeneratePrimitiveAndConstruct(vertex_size, vertex_count, PrimitiveType::POINT), vertex_size, vertex_count };
+            return { GeneratePrimitiveAndConstruct(vertex_size, vertex_count, PrimitiveType::Point), vertex_size, vertex_count };
         }
         /** insert some quads */
         QuadPrimitive<vertex_type> AddQuads(size_t primitive_count = 1)
         {
             size_t vertex_count = primitive_count * 4;
-            return { GeneratePrimitiveAndConstruct(vertex_size, vertex_count, PrimitiveType::QUAD), vertex_size, vertex_count };
+            return { GeneratePrimitiveAndConstruct(vertex_size, vertex_count, PrimitiveType::Quad), vertex_size, vertex_count };
         }
         /** insert some triangles */
         TrianglePrimitive<vertex_type> AddTriangles(size_t primitive_count = 1)
         {
             size_t vertex_count = primitive_count * 3;
-            return { GeneratePrimitiveAndConstruct(vertex_size, vertex_count, PrimitiveType::TRIANGLE), vertex_size, vertex_count };
+            return { GeneratePrimitiveAndConstruct(vertex_size, vertex_count, PrimitiveType::Triangle), vertex_size, vertex_count };
         }
         /** insert some triangles pairs */
         TrianglePairPrimitive<vertex_type> AddTrianglePairs(size_t primitive_count = 1)
         {
             size_t vertex_count = primitive_count * 6;
-            return { GeneratePrimitiveAndConstruct(vertex_size, vertex_count, PrimitiveType::TRIANGLE_PAIR), vertex_size, vertex_count };
+            return { GeneratePrimitiveAndConstruct(vertex_size, vertex_count, PrimitiveType::TrianglePair), vertex_size, vertex_count };
         }
         /** insert a triangle strip */
         TriangleStripPrimitive<vertex_type> AddTriangleStrip(size_t vertex_count)
         {
             assert(vertex_count >= 3);
-            return { GeneratePrimitiveAndConstruct(vertex_size, vertex_count, PrimitiveType::TRIANGLE_STRIP), vertex_size, vertex_count };
+            return { GeneratePrimitiveAndConstruct(vertex_size, vertex_count, PrimitiveType::TriangleStrip), vertex_size, vertex_count };
         }
         /** insert a triangle fan */
         TriangleFanPrimitive<vertex_type> AddTriangleFan(size_t vertex_count)
         {
             assert(vertex_count >= 3);
-            return { GeneratePrimitiveAndConstruct(vertex_size, vertex_count, PrimitiveType::TRIANGLE_FAN), vertex_size, vertex_count };
+            return { GeneratePrimitiveAndConstruct(vertex_size, vertex_count, PrimitiveType::TriangleFan), vertex_size, vertex_count };
         }
         /** insert a line */
         LinePrimitive<vertex_type> AddLines(size_t primitive_count = 1)
         {
             size_t vertex_count = primitive_count * 2;
-            return { GeneratePrimitiveAndConstruct(vertex_size, vertex_count, PrimitiveType::LINE), vertex_size, vertex_count };
+            return { GeneratePrimitiveAndConstruct(vertex_size, vertex_count, PrimitiveType::Line), vertex_size, vertex_count };
         }
         /** insert a line strip */
         LineStripPrimitive<vertex_type> AddLineStrip(size_t vertex_count)
         {
             assert(vertex_count >= 2);
-            return { GeneratePrimitiveAndConstruct(vertex_size, vertex_count, PrimitiveType::LINE_STRIP), vertex_size, vertex_count };
+            return { GeneratePrimitiveAndConstruct(vertex_size, vertex_count, PrimitiveType::LineStrip), vertex_size, vertex_count };
         }
         /** insert a line loop */
         LineLoopPrimitive<vertex_type> AddLineLoop(size_t vertex_count)
         {
             assert(vertex_count >= 2);
-            return { GeneratePrimitiveAndConstruct(vertex_size, vertex_count, PrimitiveType::LINE_LOOP), vertex_size, vertex_count };
+            return { GeneratePrimitiveAndConstruct(vertex_size, vertex_count, PrimitiveType::LineLoop), vertex_size, vertex_count };
         }
 
     protected:

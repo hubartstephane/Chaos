@@ -28,14 +28,14 @@ namespace chaos
 			return;
 
 		ImGui::SeparatorText("Mouse");
-		DisplayKeyboardAndMouseKeyStates(keyboard_and_mouse_device, "Mouse Table", "Buttons", false, InputDeviceType::MOUSE);
+		DisplayKeyboardAndMouseKeyStates(keyboard_and_mouse_device, "Mouse Table", "Buttons", false, InputDeviceType::Mouse);
 		DisplayAllInput1DInfo(keyboard_and_mouse_device, "MouseInput1D", "Input1D");
 		DisplayAllInput2DInfo(keyboard_and_mouse_device, "MouseInput2D", "Input2D");
 
 		ImGui::Dummy({ 0.0f, 20.0f });
 
 		ImGui::SeparatorText("Keyboard");
-		DisplayKeyboardAndMouseKeyStates(keyboard_and_mouse_device, "Keyboard Table", "Keys", true, InputDeviceType::KEYBOARD);
+		DisplayKeyboardAndMouseKeyStates(keyboard_and_mouse_device, "Keyboard Table", "Keys", true, InputDeviceType::Keyboard);
 	}
 
 }; // namespace chaos

@@ -168,9 +168,9 @@
 	/** how box must be modified to match wanted aspect */
 	enum class SetBoxAspectMethod : int
 	{
-		SHRINK_BOX,           // shrink the side along the axis that is too long
-		PREFER_UPDATE_WIDTH,  // prefere to modify width whenever possible
-		PREFER_UPDATE_HEIGHT  // prefere to modify height whenever possible
+		Shrink,       // shrink the side along the axis that is too long
+		UpdateWidth,  // prefere to modify width whenever possible
+		UpdateHeight  // prefere to modify height whenever possible
 	};
 
 	/** equality function for box */
@@ -252,16 +252,16 @@
 			return src;
 
 		// shrink method
-		if (method == SetBoxAspectMethod::SHRINK_BOX)
+		if (method == SetBoxAspectMethod::Shrink)
 		{
 			auto effective_aspect = GetBoxAspect(src);
 			if (effective_aspect == aspect)
 				return src;
 
 			if (effective_aspect > aspect) // width too large
-				method = SetBoxAspectMethod::PREFER_UPDATE_WIDTH;
+				method = SetBoxAspectMethod::UpdateWidth;
 			else if (effective_aspect < aspect) // height too large
-				method = SetBoxAspectMethod::PREFER_UPDATE_HEIGHT;
+				method = SetBoxAspectMethod::UpdateHeight;
 		}
 		// other methods
 		else
@@ -272,18 +272,18 @@
 
 			// if size is 0 along one axis, force/alter this axis
 			if (src.half_size.x == 0)
-				method = SetBoxAspectMethod::PREFER_UPDATE_WIDTH;
+				method = SetBoxAspectMethod::UpdateWidth;
 			else if (src.half_size.y == 0)
-				method = SetBoxAspectMethod::PREFER_UPDATE_HEIGHT;
+				method = SetBoxAspectMethod::UpdateHeight;
 		}
 
 		// make the update
-		assert((method == SetBoxAspectMethod::PREFER_UPDATE_WIDTH) || (method == SetBoxAspectMethod::PREFER_UPDATE_HEIGHT));
+		assert((method == SetBoxAspectMethod::UpdateWidth) || (method == SetBoxAspectMethod::UpdateHeight));
 
 		BOX_TYPE result = src;
-		if (method == SetBoxAspectMethod::PREFER_UPDATE_WIDTH)
+		if (method == SetBoxAspectMethod::UpdateWidth)
 			result.half_size.x = src.half_size.y * aspect;
-		else if (method == SetBoxAspectMethod::PREFER_UPDATE_HEIGHT)
+		else if (method == SetBoxAspectMethod::UpdateHeight)
 			result.half_size.y = src.half_size.x / aspect;
 
 		return result;

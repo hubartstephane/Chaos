@@ -28,16 +28,16 @@ namespace chaos
 
     enum class PrimitiveType : int
     {
-        NONE,
-        POINT,
-        TRIANGLE,
-        TRIANGLE_PAIR,
-        QUAD,
-        TRIANGLE_STRIP,
-        TRIANGLE_FAN,
-        LINE,
-        LINE_STRIP,
-        LINE_LOOP
+        None,
+        Point,
+        Triangle,
+        TrianglePair,
+        Quad,
+        TriangleStrip,
+        TriangleFan,
+        Line,
+        LineStrip,
+        LineLoop
     };
 
     template<typename VERTEX_TYPE>
@@ -46,18 +46,18 @@ namespace chaos
     template<typename VERTEX_TYPE, PrimitiveType PRIMITIVE_TYPE>
     class TypedPrimitive;
 
-    template<typename VERTEX_TYPE> using PointPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::POINT>;
+    template<typename VERTEX_TYPE> using PointPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::Point>;
 
-    template<typename VERTEX_TYPE> using TrianglePrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::TRIANGLE>;
-    template<typename VERTEX_TYPE> using TrianglePairPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::TRIANGLE_PAIR>;
-    template<typename VERTEX_TYPE> using QuadPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::QUAD>;
+    template<typename VERTEX_TYPE> using TrianglePrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::Triangle>;
+    template<typename VERTEX_TYPE> using TrianglePairPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::TrianglePair>;
+    template<typename VERTEX_TYPE> using QuadPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::Quad>;
 
-    template<typename VERTEX_TYPE> using TriangleStripPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::TRIANGLE_STRIP>;
-    template<typename VERTEX_TYPE> using TriangleFanPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::TRIANGLE_FAN>;
+    template<typename VERTEX_TYPE> using TriangleStripPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::TriangleStrip>;
+    template<typename VERTEX_TYPE> using TriangleFanPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::TriangleFan>;
 
-    template<typename VERTEX_TYPE> using LinePrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::LINE>;
-    template<typename VERTEX_TYPE> using LineStripPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::LINE_STRIP>;
-    template<typename VERTEX_TYPE> using LineLoopPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::LINE_LOOP>;
+    template<typename VERTEX_TYPE> using LinePrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::Line>;
+    template<typename VERTEX_TYPE> using LineStripPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::LineStrip>;
+    template<typename VERTEX_TYPE> using LineLoopPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::LineLoop>;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -189,15 +189,15 @@ namespace chaos
         TypedPrimitive<VERTEX_TYPE, PRIMITIVE_TYPE>& operator += (size_t count)
         {
             size_t vertices_per_primitive = 0;
-            if constexpr (PRIMITIVE_TYPE == PrimitiveType::POINT)
+            if constexpr (PRIMITIVE_TYPE == PrimitiveType::Point)
                 vertices_per_primitive = 1;
-            else if constexpr (PRIMITIVE_TYPE == PrimitiveType::TRIANGLE)
+            else if constexpr (PRIMITIVE_TYPE == PrimitiveType::Triangle)
                 vertices_per_primitive = 3;
-            else if constexpr (PRIMITIVE_TYPE == PrimitiveType::TRIANGLE_PAIR)
+            else if constexpr (PRIMITIVE_TYPE == PrimitiveType::TrianglePair)
                 vertices_per_primitive = 6;
-            else if constexpr (PRIMITIVE_TYPE == PrimitiveType::QUAD)
+            else if constexpr (PRIMITIVE_TYPE == PrimitiveType::Quad)
                 vertices_per_primitive = 4;
-            else if constexpr (PRIMITIVE_TYPE == PrimitiveType::LINE)
+            else if constexpr (PRIMITIVE_TYPE == PrimitiveType::Line)
                 vertices_per_primitive = 2;
             else
                 assert(0); // no meaning for strips, fan, strip_lines ... because they have infinite number of vertices

@@ -126,27 +126,27 @@ namespace chaos
 
 	bool GameInstance::DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const
 	{
-		if (execution_data.Match("main_time", GPUProgramProviderPassType::EXPLICIT))
+		if (execution_data.Match("main_time", GPUProgramProviderPassType::Explicit))
 		{
 			double main_time = GetMainClockTime();
 			return execution_data.Process(main_time);
 		}
-		if (execution_data.Match("game_time", GPUProgramProviderPassType::EXPLICIT))
+		if (execution_data.Match("game_time", GPUProgramProviderPassType::Explicit))
 		{
 			double game_time = GetGameClockTime();
 			return execution_data.Process(game_time);
 		}
-		if (execution_data.Match("pause_time", GPUProgramProviderPassType::EXPLICIT))
+		if (execution_data.Match("pause_time", GPUProgramProviderPassType::Explicit))
 		{
 			double pause_time = GetPauseClockTime();
 			return execution_data.Process(pause_time);
 		}
-		if (execution_data.Match("pause_time", GPUProgramProviderPassType::EXPLICIT))
+		if (execution_data.Match("pause_time", GPUProgramProviderPassType::Explicit))
 		{
 			double pause_time = GetPauseClockTime();
 			return execution_data.Process(pause_time);
 		}
-		if (execution_data.Match("pawn_box", GPUProgramProviderPassType::EXPLICIT))
+		if (execution_data.Match("pawn_box", GPUProgramProviderPassType::Explicit))
 		{
 			if (PlayerPawn const* player_pawn = GetPlayerPawn(0))
 			{

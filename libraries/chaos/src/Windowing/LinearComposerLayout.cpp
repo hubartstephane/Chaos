@@ -11,11 +11,11 @@ namespace chaos
 	{
 		aabox2 result;
 
-		bool reverse_horizontal = (horizontal_mode == LinearComposerLayoutMode::REVERSED);
-		bool reverse_vertical = (vertical_mode == LinearComposerLayoutMode::REVERSED);
+		bool reverse_horizontal = (horizontal_mode == LinearComposerLayoutMode::Reversed);
+		bool reverse_vertical = (vertical_mode == LinearComposerLayoutMode::Reversed);
 
 		aabox2 placement_copy = placement;
-		if (orientation == Orientation::VERTICAL)
+		if (orientation == Orientation::Vertical)
 		{
 			std::swap(placement_copy.position.x, placement_copy.position.y);
 			std::swap(placement_copy.size.x, placement_copy.size.y);
@@ -89,7 +89,7 @@ namespace chaos
 		}
 
 		// correct orientation
-		if (orientation == Orientation::VERTICAL)
+		if (orientation == Orientation::Vertical)
 		{
 			std::swap(result.position.x, result.position.y);
 			std::swap(result.size.x, result.size.y);

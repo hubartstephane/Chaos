@@ -5,10 +5,10 @@ namespace chaos
 {
 	static EnumMetaData<TextAlignment> const TextAlignment_metadata =
 	{
-		{ TextAlignment::LEFT, "left" },
-		{ TextAlignment::RIGHT, "right" },
-		{ TextAlignment::CENTER, "center" },
-		{ TextAlignment::JUSTIFY, "justify" }
+		{ TextAlignment::Left, "left" },
+		{ TextAlignment::Right, "right" },
+		{ TextAlignment::Center, "center" },
+		{ TextAlignment::Justify, "justify" }
 	};
 
 	CHAOS_IMPLEMENT_ENUM_METHOD(TextAlignment, &TextAlignment_metadata, CHAOS_API);

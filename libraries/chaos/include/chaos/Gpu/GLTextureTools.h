@@ -2,9 +2,9 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	enum class TextureWrapMethod : GLenum;
-	enum class TextureMagnificationFilter : GLenum;
-	enum class TextureMinificationFilter : GLenum;
+	enum class TextureWrapMethod;
+	enum class TextureMagnificationFilter;
+	enum class TextureMinificationFilter;
 
 	class TextureWrapMethods;
 
@@ -16,7 +16,7 @@ namespace chaos
 	 * TextureWrapMethod: express how texture wrapped during sampling
 	 */
 
-	enum class TextureWrapMethod : GLenum
+	enum class TextureWrapMethod : int
 	{
 		Repeat = GL_REPEAT,
 		MirroredRepeat = GL_MIRRORED_REPEAT,
@@ -29,7 +29,7 @@ namespace chaos
 	 * TextureMagnificationFilter: Magnification filter
 	 */
 
-	enum class TextureMagnificationFilter : GLenum
+	enum class TextureMagnificationFilter : int
 	{
 		Nearest = GL_NEAREST,
 		Linear = GL_LINEAR
@@ -39,7 +39,7 @@ namespace chaos
 	 * TextureMinificationFilter: Mignification filter
 	 */
 
-	enum class TextureMinificationFilter : GLenum
+	enum class TextureMinificationFilter : int
 	{
 		Nearest = GL_NEAREST,
 		Linear = GL_LINEAR,

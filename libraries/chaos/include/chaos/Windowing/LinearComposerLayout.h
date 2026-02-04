@@ -15,8 +15,8 @@ namespace chaos
 
 	enum class LinearComposerLayoutMode : int
 	{
-		NORMAL,    // left to right or top to bottom
-		REVERSED   // right to left or bottom to top
+		Normal,    // left to right or top to bottom
+		Reversed   // right to left or bottom to top
 	};
 
 	/**
@@ -49,10 +49,10 @@ namespace chaos
 
 	enum class LinearComposerLayoutFillMode : int
 	{
-		EXPANDED, // viewports take as many size on their line/row as possible
-		UNIFORM_PACKED, // all viewports have same size. for incomplete line/row the viewports are packed alltogether
-		UNIFORM_PACKED_REVERSED, // all viewports have same size. for incomplete line/row the viewports are packed alltogether
-		UNIFORM_CENTERED, // all viewports have same size. for incomplete line/row the viewports are centered
+		Expanded, // viewports take as many size on their line/row as possible
+		UniformPacked, // all viewports have same size. for incomplete line/row the viewports are packed alltogether
+		UniformPackedReversed, // all viewports have same size. for incomplete line/row the viewports are packed alltogether
+		UniformCentered, // all viewports have same size. for incomplete line/row the viewports are centered
 	};
 
 	/**
@@ -70,15 +70,15 @@ namespace chaos
 	public:
 
 		/** the orientation of the viewports */
-		Orientation orientation = Orientation::HORIZONTAL;
+		Orientation orientation = Orientation::Horizontal;
 		/** the max number of viewports along the orientation (0 for infinite) */
 		size_t max_count = 0;
 		/** insertion mode */
-		LinearComposerLayoutMode horizontal_mode = LinearComposerLayoutMode::NORMAL;
+		LinearComposerLayoutMode horizontal_mode = LinearComposerLayoutMode::Normal;
 		/** insertion mode */
-		LinearComposerLayoutMode vertical_mode = LinearComposerLayoutMode::NORMAL;
+		LinearComposerLayoutMode vertical_mode = LinearComposerLayoutMode::Normal;
 		/** whether all viewports are to have the same size even for incomplete lines/rows */
-		LinearComposerLayoutFillMode fill_mode = LinearComposerLayoutFillMode::EXPANDED;
+		LinearComposerLayoutFillMode fill_mode = LinearComposerLayoutFillMode::Expanded;
 		/** some padding */
 		Padding padding;
 	};

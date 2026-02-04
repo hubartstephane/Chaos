@@ -277,7 +277,7 @@ void GlobalVariableImGuiRenderer<T>::DrawVariable(GlobalVariableBase* target) co
 	if constexpr (ImGuiTools::CanDrawImGuiVariable<T>)
 	{
 		T& target_value = ((GlobalVariable<T> *)target)->Get();
-		DrawImGuiVariable(target_value, DrawImGuiVariableFlags::NONE);
+		DrawImGuiVariable(target_value, DrawImGuiVariableFlags::None);
 	}
 }
 

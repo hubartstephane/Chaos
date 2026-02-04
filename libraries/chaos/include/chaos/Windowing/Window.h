@@ -23,9 +23,9 @@ namespace chaos
 
 	enum class CursorMode : int
 	{
-		NORMAL = GLFW_CURSOR_NORMAL,
-		DISABLED = GLFW_CURSOR_DISABLED,
-		HIDDEN = GLFW_CURSOR_HIDDEN
+		Normal = GLFW_CURSOR_NORMAL,
+		Disabled = GLFW_CURSOR_DISABLED,
+		Hidden = GLFW_CURSOR_HIDDEN
 	};
 
 	/**
@@ -48,8 +48,8 @@ namespace chaos
 
 	enum class WindowCategory : int
 	{
-		MAIN_WINDOW, // once last main window has been close, all other windows should be closed and application quit
-		OPTIONAL_WINDOW
+		MainWindow, // once last main window has been close, all other windows should be closed and application quit
+		OptionalWindow
 	};
 
 	/**
@@ -436,11 +436,11 @@ namespace chaos
 		/** if the window is fullscreen, this points to the concerned monitor */
 		GLFWmonitor* fullscreen_monitor = nullptr;
 		/** the current cursor mode */
-		CursorMode cursor_mode = CursorMode::NORMAL;
+		CursorMode cursor_mode = CursorMode::Normal;
 		/** a counter that prevent destruction of the window resources */
 		int window_destruction_guard = 0;
 		/** the window category */
-		WindowCategory window_category = WindowCategory::MAIN_WINDOW;
+		WindowCategory window_category = WindowCategory::MainWindow;
 		/** whether application is enabled to be plugged into the window */
 		bool standard_imgui_menu_plugged_in = true;
 

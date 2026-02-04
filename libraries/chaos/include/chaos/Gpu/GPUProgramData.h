@@ -61,7 +61,7 @@ namespace chaos
 	public:
 
 		/** see GPUVertexDeclaration */
-		VertexAttributeSemantic semantic = VertexAttributeSemantic::NONE;
+		VertexAttributeSemantic semantic = VertexAttributeSemantic::None;
 		/** see GPUVertexDeclaration */
 		int semantic_index = 0;
 	};

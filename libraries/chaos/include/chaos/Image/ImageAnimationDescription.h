@@ -72,7 +72,7 @@ namespace chaos
 		/** the duration of the whole animation */
 		float anim_duration = -1.0f;
 		/** the default wrap mode */
-		WrapMode default_wrap_mode = WrapMode::NONE; // let the code decide in a single location (see  AtlasBitmapInfo::GetEffectiveRequestWrapMode(...))
+		WrapMode default_wrap_mode = WrapMode::None; // let the code decide in a single location (see  AtlasBitmapInfo::GetEffectiveRequestWrapMode(...))
 	};
 
 	/**

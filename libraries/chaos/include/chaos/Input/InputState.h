@@ -26,11 +26,11 @@ namespace chaos
 
 	enum class InputStatus : int
 	{
-		NONE = 0,
-		STAY_INACTIVE = 1,
-		STAY_ACTIVE = 2,
-		BECOME_INACTIVE = 3,
-		BECOME_ACTIVE = 4
+		None = 0,
+		RepeatInactive = 1,
+		RepeatActive = 2,
+		JustActivated = 3,
+		JustDeactivated = 4
 	};
 
 	/**
@@ -62,22 +62,22 @@ namespace chaos
 		/** whether the input as just became active */
 		bool IsJustActivated() const
 		{
-			return GetStatus() == InputStatus::BECOME_ACTIVE;
+			return GetStatus() == InputStatus::JustDeactivated;
 		}
 		/** whether the input as just became inactive */
 		bool IsJustDeactivated() const
 		{
-			return GetStatus() == InputStatus::BECOME_INACTIVE;
+			return GetStatus() == InputStatus::JustActivated;
 		}
 		/** returns whether the input is active and repeated */
 		bool IsActiveRepeated() const
 		{
-			return GetStatus() == InputStatus::STAY_ACTIVE;
+			return GetStatus() == InputStatus::RepeatActive;
 		}
 		/** returns whether the input is inactive and repeated */
 		bool IsInactiveRepeated() const
 		{
-			return GetStatus() == InputStatus::STAY_INACTIVE;
+			return GetStatus() == InputStatus::RepeatInactive;
 		}
 		/** get the timer for the same value */
 		float GetSameValueTimer() const
@@ -106,16 +106,16 @@ namespace chaos
 			if (IsValueActive(value))
 			{
 				if (same_value_time == 0.0f && initialized)
-					return InputStatus::BECOME_ACTIVE;
+					return InputStatus::JustDeactivated;
 				else
-					return InputStatus::STAY_ACTIVE;
+					return InputStatus::RepeatActive;
 			}
 			else
 			{
 				if (same_value_time == 0.0f && initialized)
-					return InputStatus::BECOME_INACTIVE;
+					return InputStatus::JustActivated;
 				else
-					return InputStatus::STAY_INACTIVE;
+					return InputStatus::RepeatInactive;
 			}
 		}
 

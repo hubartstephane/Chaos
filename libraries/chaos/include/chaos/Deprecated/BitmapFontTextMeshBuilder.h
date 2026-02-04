@@ -33,7 +33,7 @@ namespace chaos
 			/** the size of a tab in 'SPACE' equivalent */
 			int          tab_size = 2;
 			/** the alignment for the vertices */
-			Hotpoint hotpoint = Hotpoint::TOP_LEFT;
+			Hotpoint hotpoint = Hotpoint::TopLeft;
 			/** maximum number of characters on a line */
 			int          line_limit = 0;
 

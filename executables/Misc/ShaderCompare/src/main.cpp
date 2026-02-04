@@ -29,8 +29,8 @@ protected:
 
 		chaos::GPUProgramGenerator generator;
 
-		generator.AddShaderSourceFile(chaos::ShaderType::VERTEX, directory / "vertex_shader.txt");
-		generator.AddShaderSourceFile(chaos::ShaderType::FRAGMENT, directory / "pixel_shader.txt");
+		generator.AddShaderSourceFile(chaos::ShaderType::Vertex, directory / "vertex_shader.txt");
+		generator.AddShaderSourceFile(chaos::ShaderType::Fragment, directory / "pixel_shader.txt");
 
 		result.program = generator.GenProgramObject(definitions);
 		if (result.program != nullptr)

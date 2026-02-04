@@ -20,9 +20,9 @@ namespace chaos
 
 	enum class InheritanceType : int
 	{
-		UNKNOWN = -1,
-		NO = 0,
-		YES = 1
+		Unknown = -1,
+		No = 0,
+		Yes = 1
 	};
 
 	/**

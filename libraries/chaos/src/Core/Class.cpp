@@ -82,7 +82,7 @@ namespace chaos
 	InheritanceType Class::InheritsFrom(Class const* child_class, Class const* parent_class, bool accept_equal)
 	{
 		if (child_class == nullptr)
-			return InheritanceType::UNKNOWN;
+			return InheritanceType::Unknown;
 		return child_class->InheritsFrom(parent_class, accept_equal);
 	}
 
@@ -92,27 +92,27 @@ namespace chaos
 		if (this == parent_class)
 		{
 			if (!accept_equal)
-				return InheritanceType::NO;
+				return InheritanceType::No;
 			else
-				return InheritanceType::YES;
+				return InheritanceType::Yes;
 		}
 		// class not registered, cannot known result
 		if (!IsDeclared())
-			return InheritanceType::UNKNOWN;
+			return InheritanceType::Unknown;
 		// parent not registered, cannot known result
 		if (parent_class == nullptr || !parent_class->IsDeclared())
-			return InheritanceType::UNKNOWN;
+			return InheritanceType::Unknown;
 		// from top to root in the hierarchy
 		for (Class const* p = parent; p != nullptr; p = p->parent)
 		{
 			// found the searched parent
 			if (p == parent_class)
-				return InheritanceType::YES;
+				return InheritanceType::Yes;
 			// unintialized class
 			if (!p->IsDeclared())
-				return InheritanceType::UNKNOWN;
+				return InheritanceType::Unknown;
 		}
-		return InheritanceType::NO;
+		return InheritanceType::No;
 	}
 
 	void Class::SetShortName(std::string in_short_name)

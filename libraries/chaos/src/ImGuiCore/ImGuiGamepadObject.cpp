@@ -59,7 +59,7 @@ namespace chaos
 			// features
 			DisplayAllKeyInfo(gamepad_state, "Gamepad Buttons", "Buttons", [&](Key key, KeyState const & state)
 			{
-				return (GetDeviceForInput(key) == InputDeviceType::GAMEPAD);
+				return (GetDeviceForInput(key) == InputDeviceType::Gamepad);
 			});
 			DisplayAllInput1DInfo(gamepad_state, "Gamepad Axes", "Axes");
 			DisplayAllInput2DInfo(gamepad_state, "Gamepad Sticks", "Sticks");

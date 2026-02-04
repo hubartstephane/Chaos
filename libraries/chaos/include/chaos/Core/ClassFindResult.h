@@ -13,8 +13,8 @@ namespace chaos
 
 	enum class ClassMatchType : int
 	{
-		MATCH_NAME,
-		MATCH_SHORTNAME
+		Name,
+		Shortname
 	};
 
 	/**
@@ -63,7 +63,7 @@ namespace chaos
 		/** the very first name matching the request. we can use it for further research instead to store the name somehow (that would be costly) */
 		mutable iterator_type iterator;
 		/** whether the iterator correspond to a matching name or a matching short name */
-		ClassMatchType match_type = ClassMatchType::MATCH_NAME;
+		ClassMatchType match_type = ClassMatchType::Name;
 	};
 
 #endif

@@ -8,10 +8,10 @@ namespace chaos
 
 	enum class TextAlignment : int
 	{
-		LEFT = 0,
-		RIGHT = 1,
-		CENTER = 2,
-		JUSTIFY = 3
+		Left = 0,
+		Right = 1,
+		Center = 2,
+		Justify = 3
 	};
 
 	CHAOS_DECLARE_ENUM_METHOD(TextAlignment, CHAOS_API);

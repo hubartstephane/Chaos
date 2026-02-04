@@ -9,9 +9,9 @@ namespace chaos
 	/** the possible axis */
 	enum class Axis : int
 	{
-		AXIS_X = 0,
-		AXIS_Y = 1,
-		AXIS_Z = 2
+		AxisX = 0,
+		AxisY = 1,
+		AxisZ = 2
 	};
 
 	CHAOS_DECLARE_ENUM_METHOD(Axis, CHAOS_API);

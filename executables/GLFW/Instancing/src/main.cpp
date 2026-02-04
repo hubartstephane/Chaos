@@ -73,8 +73,8 @@ protected:
 
 		// create shader
 		chaos::GPUProgramGenerator program_generator;
-		program_generator.AddShaderSourceFile(chaos::ShaderType::FRAGMENT, resources_path / "pixel_shader_cube.txt");
-		program_generator.AddShaderSourceFile(chaos::ShaderType::VERTEX, resources_path / "vertex_shader.txt");
+		program_generator.AddShaderSourceFile(chaos::ShaderType::Fragment, resources_path / "pixel_shader_cube.txt");
+		program_generator.AddShaderSourceFile(chaos::ShaderType::Vertex, resources_path / "vertex_shader.txt");
 
 		program = program_generator.GenProgramObject();
 		if (program == nullptr)

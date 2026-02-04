@@ -23,15 +23,15 @@ namespace chaos
 	{
 		VertexAttributeComponentType component_type = VertexAttributeComponentType((size_t(type) >> 3) & 7);
 
-		if (component_type == VertexAttributeComponentType::FLOAT)
+		if (component_type == VertexAttributeComponentType::Float)
 			return GL_FLOAT;
-		else if (component_type == VertexAttributeComponentType::DOUBLE)
+		else if (component_type == VertexAttributeComponentType::Double)
 			return GL_DOUBLE;
-		else if (component_type == VertexAttributeComponentType::HALF)
+		else if (component_type == VertexAttributeComponentType::Half)
 			return GL_HALF_FLOAT;
-		else if (component_type == VertexAttributeComponentType::BYTE)
+		else if (component_type == VertexAttributeComponentType::Byte)
 			return GL_BYTE;
-		else if (component_type == VertexAttributeComponentType::INT)
+		else if (component_type == VertexAttributeComponentType::Int)
 			return GL_INT;
 		return GL_INVALID_ENUM;
 	}
@@ -41,15 +41,15 @@ namespace chaos
 		VertexAttributeComponentType component_type = VertexAttributeComponentType((size_t(type) >> 3) & 7);
 
 		size_t component_size = 0;
-		if (component_type == VertexAttributeComponentType::FLOAT)
+		if (component_type == VertexAttributeComponentType::Float)
 			component_size = sizeof(float);
-		else if (component_type == VertexAttributeComponentType::DOUBLE)
+		else if (component_type == VertexAttributeComponentType::Double)
 			component_size = sizeof(double);
-		else if (component_type == VertexAttributeComponentType::HALF)
+		else if (component_type == VertexAttributeComponentType::Half)
 			component_size = sizeof(float) / 2;
-		else if (component_type == VertexAttributeComponentType::BYTE)
+		else if (component_type == VertexAttributeComponentType::Byte)
 			component_size = sizeof(unsigned char);
-		else if (component_type == VertexAttributeComponentType::INT)
+		else if (component_type == VertexAttributeComponentType::Int)
 			component_size = sizeof(int32_t);
 
 		size_t component_count = size_t(type) & 7;
@@ -127,22 +127,22 @@ namespace chaos
 
 	size_t GPUVertexDeclaration::GetPositionCount() const
 	{
-		return GetSemanticCount(VertexAttributeSemantic::POSITION);
+		return GetSemanticCount(VertexAttributeSemantic::Position);
 	}
 
 	size_t GPUVertexDeclaration::GetColorCount() const
 	{
-		return GetSemanticCount(VertexAttributeSemantic::COLOR);
+		return GetSemanticCount(VertexAttributeSemantic::Color);
 	}
 
 	size_t GPUVertexDeclaration::GetTextureCount() const
 	{
-		return GetSemanticCount(VertexAttributeSemantic::TEXCOORD);
+		return GetSemanticCount(VertexAttributeSemantic::Texcoord);
 	}
 
 	size_t GPUVertexDeclaration::GetBoneCount() const
 	{
-		return std::min(GetSemanticCount(VertexAttributeSemantic::BONEINDEX), GetSemanticCount(VertexAttributeSemantic::BONEWEIGHT));
+		return std::min(GetSemanticCount(VertexAttributeSemantic::BoneIndex), GetSemanticCount(VertexAttributeSemantic::BoneWeight));
 	}
 
 	size_t GPUVertexDeclaration::GetHash() const

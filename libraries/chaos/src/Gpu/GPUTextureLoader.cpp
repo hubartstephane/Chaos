@@ -84,7 +84,7 @@ namespace chaos
 		// load the buffer
 		GPUTexture * result = nullptr;
 
-		Buffer<char> ascii_buffer = FileTools::LoadFile(path, LoadFileFlag::ASCII | LoadFileFlag::NO_ERROR_TRACE); // ascii mode for JSON
+		Buffer<char> ascii_buffer = FileTools::LoadFile(path, LoadFileFlag::Ascii | LoadFileFlag::NoErrorTrace); // ascii mode for JSON
 		if (ascii_buffer == nullptr)
 		{
 			GLLog::Error("GPUTextureLoader::GenTextureObject: fail to load [%s]", path.GetResolvedPath().string().c_str());
@@ -226,7 +226,7 @@ namespace chaos
 			if (is_single_image)
 			{
 				CubeMapSingleImageLayoutFaceInfo face_info = cubemap->GetSingleImageLayoutFaceInfo((CubeMapImageType)i);
-				if (face_info.transform == ImageTransform::CENTRAL_SYMETRY)
+				if (face_info.transform == ImageTransform::CentralSymetry)
 					subimage_face_info[i].central_symetry = subimage_face_info[i].conversion_required = true;
 			}
 			// compute memory required
@@ -271,7 +271,7 @@ namespace chaos
 			ImageDescription image = cubemap->GetImageFaceDescription((CubeMapImageType)i);
 
 			ImageDescription effective_image = (subimage_face_info[i].conversion_required) ?
-				ImageTools::ConvertPixels(image, pixel_format, conversion_buffer, subimage_face_info[i].central_symetry ? ImageTransform::CENTRAL_SYMETRY : ImageTransform::NO_TRANSFORM) :
+				ImageTools::ConvertPixels(image, pixel_format, conversion_buffer, subimage_face_info[i].central_symetry ? ImageTransform::CentralSymetry : ImageTransform::None) :
 				image;
 
 			CubeMapFaceType face_type;

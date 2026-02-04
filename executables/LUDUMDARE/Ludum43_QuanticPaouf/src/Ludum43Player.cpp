@@ -134,7 +134,7 @@ bool LudumPlayer::EnumerateInputActions(chaos::InputActionProcessor& in_action_p
 	{
 		bool dash_key1 = false;
 		bool dash_key2 = false;
-		auto DashRequest = Or(QueryInput(chaos::Key::SPACE, &dash_key1), QueryInput(chaos::Key::GAMEPAD_A, &dash_key2));
+		auto DashRequest = Or(QueryInput(chaos::Key::Space, &dash_key1), QueryInput(chaos::Key::GamepadA, &dash_key2));
 
 		if (in_action_processor.CheckAndProcess(DashRequest, "Dash", [&]()
 		{
@@ -146,7 +146,7 @@ bool LudumPlayer::EnumerateInputActions(chaos::InputActionProcessor& in_action_p
 
 		bool reverse_mode_key1 = false;
 		bool reverse_mode_key2 = false;
-		auto ReverseModeRequest = Or(QueryInput(chaos::Key::RIGHT_CONTROL, &reverse_mode_key1), QueryInput(chaos::Key::GAMEPAD_B, &reverse_mode_key2));
+		auto ReverseModeRequest = Or(QueryInput(chaos::Key::RightControl, &reverse_mode_key1), QueryInput(chaos::Key::GamepadB, &reverse_mode_key2));
 
 		if (in_action_processor.CheckAndProcess(ReverseModeRequest, "Reverse Mode", [&]()
 		{
@@ -197,18 +197,18 @@ bool LudumPlayer::EnumerateInputActions(chaos::InputActionProcessor& in_action_p
 				bool      right_value2 = false;
 
 				auto StickRequest = Or(
-					QueryInput(chaos::Input2D::GAMEPAD_LEFT_STICK, &left_stick_value),
-					QueryInput(chaos::Input2D::GAMEPAD_RIGHT_STICK, &right_stick_value),
+					QueryInput(chaos::Input2D::GamepadLeftStick, &left_stick_value),
+					QueryInput(chaos::Input2D::GamepadRightStick, &right_stick_value),
 
-					QueryInput(chaos::Key::GAMEPAD_DPAD_LEFT,  &left_value1),
-					QueryInput(chaos::Key::GAMEPAD_DPAD_RIGHT, &right_value1),
-					QueryInput(chaos::Key::GAMEPAD_DPAD_UP,    &up_value1),
-					QueryInput(chaos::Key::GAMEPAD_DPAD_DOWN,  &down_value1),
+					QueryInput(chaos::Key::GamepadDpadLeft,  &left_value1),
+					QueryInput(chaos::Key::GamepadDpadRight, &right_value1),
+					QueryInput(chaos::Key::GamepadDpadUp,    &up_value1),
+					QueryInput(chaos::Key::GamepadDpadDown,  &down_value1),
 
-					QueryInput(chaos::Key::LEFT, &left_value2),
-					QueryInput(chaos::Key::RIGHT, &right_value2),
-					QueryInput(chaos::Key::UP, &up_value2),
-					QueryInput(chaos::Key::DOWN, &down_value2)
+					QueryInput(chaos::Key::Left, &left_value2),
+					QueryInput(chaos::Key::Right, &right_value2),
+					QueryInput(chaos::Key::Up, &up_value2),
+					QueryInput(chaos::Key::Down, &down_value2)
 				);
 
 				if (in_action_processor.CheckAndProcess(StickRequest, "Move", [&]()

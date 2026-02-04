@@ -119,7 +119,7 @@ namespace chaos
 		box2 bounding_box = GetBoundingBox(true);
 
 		// the box is bigger when we want to go outside !
-		if (collision_type == CollisionType::AGAIN && outside_box_factor > 1.0f)
+		if (collision_type == CollisionType::Repeat && outside_box_factor > 1.0f)
 			bounding_box.half_size *= outside_box_factor;
 
 		return Collide(other_box, bounding_box);
@@ -158,7 +158,7 @@ namespace chaos
 		if (camera == nullptr)
 			return false;
 
-		if (event_type != CollisionType::STARTED)
+		if (event_type != CollisionType::Started)
 			return false;
 
 		GameInstance* game_instance = GetLayerInstance()->GetGame()->GetGameInstance();
@@ -267,9 +267,9 @@ namespace chaos
 		}
 
 		// early exit
-		if (event_type != CollisionType::STARTED && event_type != CollisionType::FINISHED) // ignore AGAIN event
+		if (event_type != CollisionType::Started && event_type != CollisionType::Ended) // ignore AGAIN event
 			return false;
-		if (event_type == CollisionType::FINISHED && !stop_when_collision_over) // ignore FINISHED if you do not want to kill the notification
+		if (event_type == CollisionType::Ended && !stop_when_collision_over) // ignore FINISHED if you do not want to kill the notification
 			return false;
 		// get some variables
 		Game* game = layer_instance->GetGame();
@@ -282,10 +282,10 @@ namespace chaos
 		if (notification_component == nullptr)
 			return false;
 		// show notification
-		if (event_type == CollisionType::STARTED)
+		if (event_type == CollisionType::Started)
 			notification_component->ShowNotification(notification_string.c_str(), notification_lifetime);
 		// hide notification
-		else if (event_type == CollisionType::FINISHED) // XXX : 'stop_when_collision_over' has already be checked
+		else if (event_type == CollisionType::Ended) // XXX : 'stop_when_collision_over' has already be checked
 			notification_component->HideNotification();
 		return true;
 	}
@@ -374,14 +374,14 @@ namespace chaos
 		if (camera == nullptr)
 			return false;
 
-		if (event_type == CollisionType::STARTED)
+		if (event_type == CollisionType::Started)
 		{
 			Sound* new_sound = CreateSound();
 			if (stop_when_collision_over)
 				sound = new_sound;
 			return true;
 		}
-		if (event_type == CollisionType::FINISHED)
+		if (event_type == CollisionType::Ended)
 		{
 			if (stop_when_collision_over && sound != nullptr)
 			{
@@ -413,7 +413,7 @@ namespace chaos
 		if (player == nullptr)
 			return false;
 
-		if (event_type != CollisionType::STARTED)
+		if (event_type != CollisionType::Started)
 			return false;
 
 		Game* game = layer_instance->GetGame();

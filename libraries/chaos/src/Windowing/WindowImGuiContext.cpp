@@ -58,7 +58,7 @@ namespace chaos
 		// only gives click event to ImGui if the cursor hovers some window
 		if (ShouldCaptureInputEvent())
 		{
-			int key = int(mouse_button_event.key) - int(Key::MOUSE_FIRST);
+			int key = int(mouse_button_event.key) - int(Key::MouseFirst);
 
 			ImGui_ImplGlfw_MouseButtonCallback(window->GetGLFWHandler(), key, (int)mouse_button_event.action, (int)mouse_button_event.modifiers);
 			return true;
@@ -90,7 +90,7 @@ namespace chaos
 
 		if (ShouldCaptureInputEvent())
 		{
-			int key = int(key_event.key) - int(Key::KEYBOARD_FIRST);
+			int key = int(key_event.key) - int(Key::KeyboardFirst);
 
 			ImGui_ImplGlfw_KeyCallback(window->GetGLFWHandler(), key, key_event.scancode, (int)key_event.action, (int)key_event.modifiers);
 			return true;

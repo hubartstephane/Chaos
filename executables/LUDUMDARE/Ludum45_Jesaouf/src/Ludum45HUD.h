@@ -88,7 +88,7 @@ protected:
 
 	std::string bitmap_name;
 
-	chaos::Hotpoint hotpoint = chaos::Hotpoint::BOTTOM_LEFT;
+	chaos::Hotpoint hotpoint = chaos::Hotpoint::BottomLeft;
 	glm::vec2 particle_size = glm::vec2(0.0f, 0.0f);
 	glm::vec2 position = glm::vec2(0.0f, 0.0f);
 };

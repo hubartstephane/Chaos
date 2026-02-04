@@ -12,14 +12,14 @@ namespace chaos
 
 	enum class InterpolationType : int
 	{
-		LINEAR,
-		EASE,
-		EASIER,
-		POW_2,
-		POW_3,
-		POW_5,
-		SIN,
-		EXP
+		Linear,
+		Ease,
+		Easier,
+		Pow2,
+		Pow3,
+		Pow5,
+		Sin,
+		Exp
 	};
 
 	CHAOS_DECLARE_ENUM_METHOD(InterpolationType, CHAOS_API);
@@ -76,21 +76,21 @@ namespace chaos
 	{
 		switch (interpolation_type)
 		{
-		case InterpolationType::LINEAR:
+		case InterpolationType::Linear:
 			return x;
-		case InterpolationType::EASE:
+		case InterpolationType::Ease:
 			return Ease(x);
-		case InterpolationType::EASIER:
+		case InterpolationType::Easier:
 			return Easier(x);
-		case InterpolationType::POW_2:
+		case InterpolationType::Pow2:
 			return x * x;
-		case InterpolationType::POW_3:
+		case InterpolationType::Pow3:
 			return x * x * x;
-		case InterpolationType::POW_5:
+		case InterpolationType::Pow5:
 			return x * x * x * x * x;
-		case InterpolationType::SIN:
+		case InterpolationType::Sin:
 			return SinInterpolation(x);
-		case InterpolationType::EXP:
+		case InterpolationType::Exp:
 			return ExpInterpolation(x);
 		default:
 			assert(0);

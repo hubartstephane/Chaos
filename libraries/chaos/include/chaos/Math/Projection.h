@@ -18,8 +18,8 @@ namespace chaos
 
 	enum class ProjectionType : int
 	{
-		PERSPECTIVE,
-		ORTHOGRAPHIC
+		Perspective,
+		Orthographic
 	};
 
 	/**
@@ -145,9 +145,9 @@ namespace chaos
 	{
 		switch (type)
 		{
-			case ProjectionType::PERSPECTIVE:
+			case ProjectionType::Perspective:
 				return glm::frustum(vol.left, vol.right, vol.bottom, vol.top, vol.front, vol.back);
-			case ProjectionType::ORTHOGRAPHIC:
+			case ProjectionType::Orthographic:
 				return glm::ortho(vol.left, vol.right, vol.bottom, vol.top, vol.front, vol.back);
 			default:
 				assert(0);
@@ -158,7 +158,7 @@ namespace chaos
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
 	box_planes<DIMENSION, T> GetProjectionPlanes(perspective<DIMENSION, T> const& persp)
 	{
-		return GetProjectionPlanes(ProjectionType::PERSPECTIVE, GetProjectionVolume(persp));
+		return GetProjectionPlanes(ProjectionType::Perspective, GetProjectionVolume(persp));
 	}
 
 	CHAOS_GEOMETRY_TEMPLATE(DIMENSION, T)
@@ -172,7 +172,7 @@ namespace chaos
 
 		switch (type)
 		{
-		case ProjectionType::PERSPECTIVE:
+		case ProjectionType::Perspective:
 		{
 			if constexpr (DIMENSION == 2)
 			{
@@ -218,7 +218,7 @@ namespace chaos
 			}
 			break;
 		}
-		case ProjectionType::ORTHOGRAPHIC:
+		case ProjectionType::Orthographic:
 		{
 			if constexpr (DIMENSION == 2)
 			{

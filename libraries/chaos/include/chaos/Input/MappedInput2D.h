@@ -24,13 +24,13 @@ namespace chaos
 	public:
 
 		/** the key bound to left direction */
-		Key left_key = Key::UNKNOWN;
+		Key left_key = Key::Unknown;
 		/** the key bound to right direction */
-		Key right_key = Key::UNKNOWN;
+		Key right_key = Key::Unknown;
 		/** the key bound to down direction */
-		Key down_key = Key::UNKNOWN;
+		Key down_key = Key::Unknown;
 		/** the key bound to up direction */
-		Key up_key = Key::UNKNOWN;
+		Key up_key = Key::Unknown;
 	};
 
 #endif

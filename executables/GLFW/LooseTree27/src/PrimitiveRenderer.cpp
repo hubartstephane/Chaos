@@ -45,8 +45,8 @@ bool PrimitiveRenderer::Initialize()
 chaos::shared_ptr<chaos::GPUProgram> PrimitiveRenderer::LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
 {
 	chaos::GPUProgramGenerator program_generator;
-	program_generator.AddShaderSourceFile(chaos::ShaderType::FRAGMENT, resources_path / ps_filename);
-	program_generator.AddShaderSourceFile(chaos::ShaderType::VERTEX, resources_path / vs_filename);
+	program_generator.AddShaderSourceFile(chaos::ShaderType::Fragment, resources_path / ps_filename);
+	program_generator.AddShaderSourceFile(chaos::ShaderType::Vertex, resources_path / vs_filename);
 
 	return program_generator.GenProgramObject();
 }

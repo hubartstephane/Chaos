@@ -66,7 +66,7 @@ namespace chaos
 		/** the position of the face in the whole image */
 		glm::ivec2 position = {0, 0};
 		/** the transformation to be applied */
-		ImageTransform transform = ImageTransform::NO_TRANSFORM;
+		ImageTransform transform = ImageTransform::None;
 	};
 
 	/**

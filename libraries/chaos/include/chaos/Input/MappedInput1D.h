@@ -24,9 +24,9 @@ namespace chaos
 	public:
 
 		/** the key bound to negative direction */
-		Key neg_key = Key::UNKNOWN;
+		Key neg_key = Key::Unknown;
 		/** the key bound to positive direction */
-		Key pos_key = Key::UNKNOWN;
+		Key pos_key = Key::Unknown;
 	};
 
 #endif

@@ -88,7 +88,7 @@ namespace chaos
 			else if (status.type() == boost::filesystem::file_type::regular_file)
 			{
 				nlohmann::json json;
-				if (JSONTools::LoadJSONFile(p, json, LoadFileFlag::RECURSIVE))
+				if (JSONTools::LoadJSONFile(p, json, LoadFileFlag::Recursive))
 					result = GenProgramObject(&json);
 			}
 			return (result != nullptr); // stops as soon some result is found
@@ -102,19 +102,19 @@ namespace chaos
 		boost::filesystem::path pgm_filename = p / p.filename().replace_extension("pgm");
 
 		nlohmann::json json;
-		if (JSONTools::LoadJSONFile(pgm_filename, json, LoadFileFlag::RECURSIVE))
+		if (JSONTools::LoadJSONFile(pgm_filename, json, LoadFileFlag::Recursive))
 			return GenProgramObject(&json);
 
 		// search all files in the directory
 		static std::map<char const*, ShaderType, StringTools::RawStringILess> extension_map =
 		{
-			{".vsh", ShaderType::VERTEX},
-			{".fsh", ShaderType::FRAGMENT},
-			{".gsh", ShaderType::GEOMETRY},
-			{".tcsh", ShaderType::TESS_CONTROL},
-			{".tesh", ShaderType::TESS_EVALUATION},
-			{".tcsh", ShaderType::ANY},
-			{".csh", ShaderType::COMPUTE}
+			{".vsh", ShaderType::Vertex},
+			{".fsh", ShaderType::Fragment},
+			{".gsh", ShaderType::Geometry},
+			{".tcsh", ShaderType::TessControl},
+			{".tesh", ShaderType::TessEvaluation},
+			{".tcsh", ShaderType::Any},
+			{".csh", ShaderType::Compute}
 		};
 
 		GPUProgramGenerator program_generator;

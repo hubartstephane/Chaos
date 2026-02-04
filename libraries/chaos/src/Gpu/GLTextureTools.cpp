@@ -59,19 +59,19 @@ namespace chaos
 		PixelFormat GetPixelFormat(GLenum internal_format)
 		{
 			if (internal_format == GL_R8)
-				return PixelFormat(PixelComponentType::UNSIGNED_CHAR, 1);
+				return PixelFormat(PixelComponentType::UnsignedChar, 1);
 			if (internal_format == GL_RGB8)
-				return PixelFormat(PixelComponentType::UNSIGNED_CHAR, 3);
+				return PixelFormat(PixelComponentType::UnsignedChar, 3);
 			if (internal_format == GL_RGBA8)
-				return PixelFormat(PixelComponentType::UNSIGNED_CHAR, 4);
+				return PixelFormat(PixelComponentType::UnsignedChar, 4);
 			if (internal_format == GL_R32F)
-				return PixelFormat(PixelComponentType::FLOAT, 1);
+				return PixelFormat(PixelComponentType::Float, 1);
 			if (internal_format == GL_RGB32F)
-				return PixelFormat(PixelComponentType::FLOAT, 3);
+				return PixelFormat(PixelComponentType::Float, 3);
 			if (internal_format == GL_RGBA32F)
-				return PixelFormat(PixelComponentType::FLOAT, 4);
+				return PixelFormat(PixelComponentType::Float, 4);
 			if (internal_format == GL_DEPTH24_STENCIL8)
-				return PixelFormat(PixelComponentType::DEPTH_STENCIL, 1);
+				return PixelFormat(PixelComponentType::DepthStencil, 1);
 			return PixelFormat();
 		}
 
@@ -106,7 +106,7 @@ namespace chaos
 							GLPixelFormat gl_pixel_format = GetGLPixelFormat(pixel_format);
 							if (gl_pixel_format.IsValid())
 							{
-								GLenum type = (pixel_format.component_type == PixelComponentType::UNSIGNED_CHAR) ? GL_UNSIGNED_BYTE : GL_FLOAT;
+								GLenum type = (pixel_format.component_type == PixelComponentType::UnsignedChar) ? GL_UNSIGNED_BYTE : GL_FLOAT;
 
 								int buffer_size = ImageTools::GetMemoryRequirementForAlignedTexture(pixel_format, width, height);
 
@@ -202,7 +202,7 @@ namespace chaos
 		GLPixelFormat GetGLPixelFormat(PixelFormat const& pixel_format) // format / internal format
 		{
 			// XXX : GL_LUMINANCE / GL_LUMINANCE8 deprecated in OpenGL 4.5
-			if (pixel_format.component_type == PixelComponentType::UNSIGNED_CHAR)
+			if (pixel_format.component_type == PixelComponentType::UnsignedChar)
 			{
 				if (pixel_format.component_count == 1)
 					return GLPixelFormat(GL_RED, GL_R8);
@@ -211,7 +211,7 @@ namespace chaos
 				if (pixel_format.component_count == 4)
 					return GLPixelFormat(GL_BGRA, GL_RGBA8);
 			}
-			else if (pixel_format.component_type == PixelComponentType::FLOAT)
+			else if (pixel_format.component_type == PixelComponentType::Float)
 			{
 				if (pixel_format.component_count == 1)
 					return GLPixelFormat(GL_RED, GL_R32F);
@@ -220,7 +220,7 @@ namespace chaos
 				if (pixel_format.component_count == 4)
 					return GLPixelFormat(GL_RGBA, GL_RGBA32F);
 			}
-			else if (pixel_format.component_type == PixelComponentType::DEPTH_STENCIL)
+			else if (pixel_format.component_type == PixelComponentType::DepthStencil)
 			{
 				return GLPixelFormat(GL_NONE, GL_DEPTH24_STENCIL8);
 			}

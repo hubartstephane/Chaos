@@ -31,8 +31,8 @@ namespace chaos
 
 	enum class InputStateQueryFlags : int
 	{
-		NONE = 0,
-		CONSULT_ONLY = 1 // consult cache (so call can fail) but do not lock resource for further calls
+		None = 0,
+		ConsultOnly = 1 // consult cache (so call can fail) but do not lock resource for further calls
 	};
 
 	/**
@@ -41,8 +41,8 @@ namespace chaos
 
 	enum class InputStateResponseStatus : int
 	{
-		FAILURE = 0,
-		SUCCESS = 1
+		Failure = 0,
+		Success = 1
 	};
 
 	/**
@@ -51,11 +51,11 @@ namespace chaos
 
 	enum class InputStateResponseFlags : int
 	{
-		NONE              = 0,
-		UNKNOWN_INPUT     = 1, // the request involved the input UNKNOWN
-		KNOWN_INPUT       = 2, // the request involved a KNOWN input
-		UNHANDLED_INPUT   = 4, // the request involved an input that was not handled by the InputDevice
-		SUCCESSFUL_INPUT  = 8 // the request involved an input that was succesfully 
+		None             = 0,
+		UnknownInput     = 1, // the request involved the input UNKNOWN
+		KnownInput       = 2, // the request involved a KNOWN input
+		UnhandledInput   = 4, // the request involved an input that was not handled by the InputDevice
+		SuccessfulInput  = 8 // the request involved an input that was succesfully 
 	};
 
 	/**
@@ -70,9 +70,9 @@ namespace chaos
 		/** the state of the input */
 		std::optional<InputState_t<INPUT_TYPE>> input_state;
 		/** indicates whether the response is a success or not */
-		InputStateResponseStatus response_status = InputStateResponseStatus::FAILURE;
+		InputStateResponseStatus response_status = InputStateResponseStatus::Failure;
 		/** the bitfield of what happened during request */
-		InputStateResponseFlags response_flags = InputStateResponseFlags::NONE;
+		InputStateResponseFlags response_flags = InputStateResponseFlags::None;
 	};
 
 	/**
@@ -94,13 +94,13 @@ namespace chaos
 			INPUT_TYPE in_input,
 			InputReceiverInterface const* in_input_receiver,
 			InputDeviceInterface const* in_input_device,
-			InputStateQueryFlags in_query_flags = InputStateQueryFlags::NONE
+			InputStateQueryFlags in_query_flags = InputStateQueryFlags::None
 		);
 
 		/** check whether the input is still available and lock it for further requests (do the same for related inputs) */
-		InputStateResponse_t<MappedInput1D> QueryInputState(MappedInput1D const & in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputStateQueryFlags in_query_flags = InputStateQueryFlags::NONE);
+		InputStateResponse_t<MappedInput1D> QueryInputState(MappedInput1D const & in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputStateQueryFlags in_query_flags = InputStateQueryFlags::None);
 		/** check whether the input is still available and lock it for further requests (do the same for related inputs) */
-		InputStateResponse_t<MappedInput2D> QueryInputState(MappedInput2D const & in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputStateQueryFlags in_query_flags = InputStateQueryFlags::NONE);
+		InputStateResponse_t<MappedInput2D> QueryInputState(MappedInput2D const & in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputStateQueryFlags in_query_flags = InputStateQueryFlags::None);
 
 		/** all incomming input requests will be considered as consumed */
 		void SetConsumeAllInputs(InputReceiverInterface const* in_input_receiver);
@@ -171,7 +171,7 @@ namespace chaos
 	template<InputType INPUT_TYPE>
 	InputStateResponse_t<INPUT_TYPE> InputConsumptionCache::QueryInputState(INPUT_TYPE in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputStateQueryFlags in_query_flags)
 	{
-		InputStateResponseFlags  response_flags  = InputStateResponseFlags::NONE;
+		InputStateResponseFlags  response_flags  = InputStateResponseFlags::None;
 		InputStateResponseStatus response_status = TryConsumeInput(in_input, in_input_receiver, in_query_flags, response_flags);
 		return FinalizeResponse(in_input, in_input_device, response_flags, response_status);
 	}
@@ -179,25 +179,25 @@ namespace chaos
 	template<InputTypeExt INPUT_TYPE_EXT>
  	InputStateResponse_t<INPUT_TYPE_EXT> InputConsumptionCache::FinalizeResponse(INPUT_TYPE_EXT const & in_input, InputDeviceInterface const* in_input_device, InputStateResponseFlags response_flags, InputStateResponseStatus response_status)
 	{
-		if (response_status == InputStateResponseStatus::FAILURE)
-			return { {}, InputStateResponseStatus::FAILURE, InputStateResponseFlags::NONE }; // in case of FAILURE, ignore additionnal flags info. They are incomplete (missing UNHANDLED_INPUT)
+		if (response_status == InputStateResponseStatus::Failure)
+			return { {}, InputStateResponseStatus::Failure, InputStateResponseFlags::None }; // in case of FAILURE, ignore additionnal flags info. They are incomplete (missing UNHANDLED_INPUT)
 
 		auto input_state = in_input_device->GetInputState(in_input);
 
 		// an unhandled event happens whenver neg_key or pos_key is defined but not handled by the event
 		// in that case, the state returned is empty
-		if (HasAnyFlags(response_flags, InputStateResponseFlags::KNOWN_INPUT))
+		if (HasAnyFlags(response_flags, InputStateResponseFlags::KnownInput))
 			if (!input_state.has_value())
-				response_flags |= InputStateResponseFlags::UNHANDLED_INPUT;
+				response_flags |= InputStateResponseFlags::UnhandledInput;
 
-		return { input_state, InputStateResponseStatus::SUCCESS, response_flags };
+		return { input_state, InputStateResponseStatus::Success, response_flags };
 	}
 
 	template<MappedInputType MAPPED_INPUT_TYPE>
 	InputStateResponse_t<MAPPED_INPUT_TYPE> InputConsumptionCache::QueryMappedInputState(MAPPED_INPUT_TYPE const& in_input, std::initializer_list<Key> const& keys, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputStateQueryFlags in_query_flags)
 	{
-		InputStateResponseFlags  response_flags = InputStateResponseFlags::NONE;
-		InputStateResponseStatus response_status = InputStateResponseStatus::SUCCESS;
+		InputStateResponseFlags  response_flags = InputStateResponseFlags::None;
+		InputStateResponseStatus response_status = InputStateResponseStatus::Success;
 		for (Key key : keys)
 			response_status &= TryConsumeInput(key, in_input_receiver, in_query_flags, response_flags);
 		return FinalizeResponse(in_input, in_input_device, response_flags, response_status);

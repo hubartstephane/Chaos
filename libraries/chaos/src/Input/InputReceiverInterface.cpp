@@ -26,7 +26,7 @@ namespace chaos
 		if (keys == nullptr)
 			return false;
 		// iteration
-		for (size_t i = 0; keys[i] != Key::UNKNOWN; ++i)
+		for (size_t i = 0; keys[i] != Key::Unknown; ++i)
 			if (CheckKeyDown(keys[i]))
 				return true;
 		return false;
@@ -37,11 +37,11 @@ namespace chaos
 		if (DoCheckKeyDown(key))
 		{
 			if (IsKeyboardInput(key))
-				SetInputMode(InputMode::KEYBOARD);
+				SetInputMode(InputMode::Keyboard);
 			else if (IsMouseInput(key))
-				SetInputMode(InputMode::MOUSE);
+				SetInputMode(InputMode::Mouse);
 			else if (IsGamepadInput(key))
-				SetInputMode(InputMode::GAMEPAD);
+				SetInputMode(InputMode::Gamepad);
 			return true;
 		}
 		return false;
@@ -62,7 +62,7 @@ namespace chaos
 	{
 		if (OnMouseMoveImpl(delta))
 		{
-			SetInputMode(InputMode::MOUSE);
+			SetInputMode(InputMode::Mouse);
 			return true;
 		}
 		return false;
@@ -72,7 +72,7 @@ namespace chaos
 	{
 		if (OnMouseButtonImpl(mouse_button_event))
 		{
-			SetInputMode(InputMode::MOUSE);
+			SetInputMode(InputMode::Mouse);
 			return true;
 		}
 		return false;
@@ -82,7 +82,7 @@ namespace chaos
 	{
 		if (OnMouseWheelImpl(scroll_x, scroll_y))
 		{
-			SetInputMode(InputMode::MOUSE);
+			SetInputMode(InputMode::Mouse);
 			return true;
 		}
 		return false;
@@ -92,7 +92,7 @@ namespace chaos
 	{
 		if (OnKeyEventImpl(key_event))
 		{
-			SetInputMode(InputMode::KEYBOARD);
+			SetInputMode(InputMode::Keyboard);
 			return true;
 		}
 		return false;
@@ -102,7 +102,7 @@ namespace chaos
 	{
 		if (OnCharEventImpl(c))
 		{
-			SetInputMode(InputMode::KEYBOARD);
+			SetInputMode(InputMode::Keyboard);
 			return true;
 		}
 		return false;
@@ -110,7 +110,7 @@ namespace chaos
 
 	bool InputReceiverInterface::OnMouseMoveImpl(glm::vec2 const& delta)
 	{
-		return ProcessInputEvent(Input2D::MOUSE_DELTA);
+		return ProcessInputEvent(Input2D::MouseDelta);
 	}
 
 	bool InputReceiverInterface::OnMouseButtonImpl(MouseButtonEvent const& mouse_button_event)
@@ -125,7 +125,7 @@ namespace chaos
 
 	bool InputReceiverInterface::OnMouseWheelImpl(double scroll_x, double scroll_y)
 	{
-		return ProcessInputEvent(Input2D::MOUSE_WHEEL);
+		return ProcessInputEvent(Input2D::MouseWheel);
 	}
 
 	bool InputReceiverInterface::OnCharEventImpl(unsigned int c)

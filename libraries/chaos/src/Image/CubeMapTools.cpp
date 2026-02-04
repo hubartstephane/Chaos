@@ -28,24 +28,24 @@ namespace chaos
 		{
 			4, 3,
 			{
-				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageLeft,   glm::ivec2(0, 1), ImageTransform::NO_TRANSFORM),
-				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageRight,  glm::ivec2(2, 1), ImageTransform::NO_TRANSFORM),
-				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageTop,    glm::ivec2(1, 2), ImageTransform::NO_TRANSFORM),
-				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageBottom, glm::ivec2(1, 0), ImageTransform::NO_TRANSFORM),
-				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageFront,  glm::ivec2(1, 1), ImageTransform::NO_TRANSFORM),
-				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageBack,   glm::ivec2(3, 1), ImageTransform::NO_TRANSFORM)
+				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageLeft,   glm::ivec2(0, 1), ImageTransform::None),
+				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageRight,  glm::ivec2(2, 1), ImageTransform::None),
+				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageTop,    glm::ivec2(1, 2), ImageTransform::None),
+				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageBottom, glm::ivec2(1, 0), ImageTransform::None),
+				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageFront,  glm::ivec2(1, 1), ImageTransform::None),
+				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageBack,   glm::ivec2(3, 1), ImageTransform::None)
 			}
 		};
 		static const CubeMapSingleImageLayout vertical_layout =
 		{
 			3, 4,
 			{
-				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageLeft,   glm::ivec2(0, 2), ImageTransform::NO_TRANSFORM),
-				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageRight,  glm::ivec2(2, 2), ImageTransform::NO_TRANSFORM),
-				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageTop,    glm::ivec2(1, 3), ImageTransform::NO_TRANSFORM),
-				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageBottom, glm::ivec2(1, 1), ImageTransform::NO_TRANSFORM),
-				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageFront,  glm::ivec2(1, 2), ImageTransform::NO_TRANSFORM),
-				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageBack,   glm::ivec2(1, 0), ImageTransform::CENTRAL_SYMETRY)
+				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageLeft,   glm::ivec2(0, 2), ImageTransform::None),
+				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageRight,  glm::ivec2(2, 2), ImageTransform::None),
+				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageTop,    glm::ivec2(1, 3), ImageTransform::None),
+				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageBottom, glm::ivec2(1, 1), ImageTransform::None),
+				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageFront,  glm::ivec2(1, 2), ImageTransform::None),
+				CubeMapSingleImageLayoutFaceInfo(CubeMapImageType::ImageBack,   glm::ivec2(1, 0), ImageTransform::CentralSymetry)
 			}
 		};
 

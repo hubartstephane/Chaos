@@ -301,7 +301,7 @@ namespace chaos
 			ParticleTextGenerator::GeneratorParams params;
 
 			params.line_height = (float)text->pixelsize;
-			params.hotpoint = Hotpoint::TOP;
+			params.hotpoint = Hotpoint::Top;
 			params.position = text->position;
 			params.default_color = text->color;
 
@@ -341,7 +341,7 @@ namespace chaos
 					particle_box = surface_object->GetBoundingBox(false); // shuxxx : the TILE is generated on the same layer then the surface. does it get the layer_offset ????
 			}
 
-			Hotpoint hotpoint = (tile_info.tileset != nullptr) ? tile_info.tileset->object_alignment : Hotpoint::BOTTOM_LEFT;
+			Hotpoint hotpoint = (tile_info.tileset != nullptr) ? tile_info.tileset->object_alignment : Hotpoint::BottomLeft;
 
 			bool keep_aspect_ratio = false;
 			effective_particle_populator->AddParticle(
@@ -695,7 +695,7 @@ namespace chaos
 					continue; // while we have a factory, let the concerned object create its particle
 				}
 
-				Hotpoint hotpoint = Hotpoint::BOTTOM_LEFT;
+				Hotpoint hotpoint = Hotpoint::BottomLeft;
 
 				// create a simple particle => as soon as there is an error, stop trying producing particles
 				bool keep_aspect_ratio = true;

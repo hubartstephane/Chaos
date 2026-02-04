@@ -115,8 +115,8 @@ void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl:
 {
 	GetTypedVertexDeclaration(result, boost::mpl::identity<VertexBase>());
 
-    result->Push(chaos::VertexAttributeSemantic::TEXCOORD, 1, chaos::VertexAttributeType::FLOAT3); // top-right of sprite in atlas (bottom-left was in parent function)
-    result->Push(chaos::VertexAttributeSemantic::TEXCOORD, 2, chaos::VertexAttributeType::FLOAT2);
+    result->Push(chaos::VertexAttributeSemantic::Texcoord, 1, chaos::VertexAttributeType::Float3); // top-right of sprite in atlas (bottom-left was in parent function)
+    result->Push(chaos::VertexAttributeSemantic::Texcoord, 2, chaos::VertexAttributeType::Float2);
 }
 
 bool PowerUpZoneParticleLayerTrait::UpdateParticle(float delta_time, ParticlePowerUpZone& particle)
@@ -182,7 +182,7 @@ bool ParticleExplosionLayerTrait::UpdateParticle(float delta_time, ParticleExplo
 
 	int image_index = (int)(particle.age / frame_duration);
 
-	chaos::AtlasBitmapLayout bitmap_layout = particle.explosion_info->GetAnimationLayout(image_index, chaos::WrapMode::CHECK_RANGES);
+	chaos::AtlasBitmapLayout bitmap_layout = particle.explosion_info->GetAnimationLayout(image_index, chaos::WrapMode::CheckLimits);
 	if (bitmap_layout.bitmap_index < 0)
 		return true;
 

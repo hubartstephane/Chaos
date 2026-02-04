@@ -52,8 +52,8 @@ protected:
 	chaos::shared_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
 	{
 		chaos::GPUProgramGenerator program_generator;
-		program_generator.AddShaderSourceFile(chaos::ShaderType::FRAGMENT, resources_path / ps_filename);
-		program_generator.AddShaderSourceFile(chaos::ShaderType::VERTEX, resources_path / vs_filename);
+		program_generator.AddShaderSourceFile(chaos::ShaderType::Fragment, resources_path / ps_filename);
+		program_generator.AddShaderSourceFile(chaos::ShaderType::Vertex, resources_path / vs_filename);
 
 		return program_generator.GenProgramObject();
 	}
@@ -160,7 +160,7 @@ protected:
 
 	virtual bool EnumerateInputActions(chaos::InputActionProcessor & in_action_processor, chaos::EnumerateInputActionContext in_context) override
 	{
-		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KP_ADD), "Next Slice", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KeypadAdd), "Next Slice", [this]()
 		{
 			ChangeSlice(+1);
 		}))
@@ -168,7 +168,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KP_SUBTRACT), "Previous Slice", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KeypadSubtract), "Previous Slice", [this]()
 		{
 			ChangeSlice(-1);
 		}))
@@ -176,7 +176,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_processor.CheckAndProcess(RequireModifiers(chaos::KeyModifier::Shift, JustActivated(chaos::Key::KP_ADD)), "Next Pixel Format", [this]()
+		if (in_action_processor.CheckAndProcess(RequireModifiers(chaos::KeyModifier::Shift, JustActivated(chaos::Key::KeypadAdd)), "Next Pixel Format", [this]()
 		{
 			ChangePixelFormat(+1);
 		}))
@@ -184,7 +184,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_processor.CheckAndProcess(RequireModifiers(chaos::KeyModifier::Shift, JustActivated(chaos::Key::KP_SUBTRACT)), "Previous Pixel Format", [this]()
+		if (in_action_processor.CheckAndProcess(RequireModifiers(chaos::KeyModifier::Shift, JustActivated(chaos::Key::KeypadSubtract)), "Previous Pixel Format", [this]()
 		{
 			ChangePixelFormat(-1);
 		}))

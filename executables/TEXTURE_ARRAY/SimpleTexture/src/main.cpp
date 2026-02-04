@@ -8,7 +8,7 @@ protected:
 
 	virtual bool EnumerateInputActions(chaos::InputActionProcessor & in_action_processor, chaos::EnumerateInputActionContext in_context) override
 	{
-		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KP_ADD), "Next Texture", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KeypadAdd), "Next Texture", [this]()
 		{
 			ChangeTexture(texture_index + 1);
 		}))
@@ -16,7 +16,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KP_SUBTRACT), "Previous Texture", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KeypadSubtract), "Previous Texture", [this]()
 		{
 			ChangeTexture(texture_index - 1);
 		}))
@@ -24,7 +24,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KP_ENTER), "Change Current Level", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KeypadEnter), "Change Current Level", [this]()
 		{
 			ChangeTextureLevel();
 		}))
@@ -216,7 +216,7 @@ protected:
 		// test for background
 		if (index == GENERATE_BACKGROUND)
 		{
-			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat(chaos::PixelComponentType::UNSIGNED_CHAR, 4), TEXTURE_SIZE, TEXTURE_SIZE);
+			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat(chaos::PixelComponentType::UnsignedChar, 4), TEXTURE_SIZE, TEXTURE_SIZE);
 			if (image != nullptr)
 			{
 				chaos::ImageDescription image_description = chaos::ImageTools::GetImageDescription(image);
@@ -230,7 +230,7 @@ protected:
 
 		if (index == GENERATE_BACKGROUND_GRAY)
 		{
-			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat(chaos::PixelComponentType::UNSIGNED_CHAR, 1), TEXTURE_SIZE, TEXTURE_SIZE);
+			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat(chaos::PixelComponentType::UnsignedChar, 1), TEXTURE_SIZE, TEXTURE_SIZE);
 			if (image != nullptr)
 			{
 				chaos::ImageDescription image_description = chaos::ImageTools::GetImageDescription(image);
@@ -244,7 +244,7 @@ protected:
 
 		if (index == GENERATE_FLOAT_BACKGROUND)
 		{
-			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat(chaos::PixelComponentType::FLOAT, 4), TEXTURE_SIZE, TEXTURE_SIZE);
+			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat(chaos::PixelComponentType::Float, 4), TEXTURE_SIZE, TEXTURE_SIZE);
 			if (image != nullptr)
 			{
 				chaos::ImageDescription image_description = chaos::ImageTools::GetImageDescription(image);
@@ -261,7 +261,7 @@ protected:
 
 	virtual bool OnMouseButtonImpl(chaos::MouseButtonEvent const &mouse_button_event) override
 	{
-		if (mouse_button_event.IsKeyReleased(chaos::Key::MOUSE_BUTTON_1))
+		if (mouse_button_event.IsKeyReleased(chaos::Key::MouseButton1))
 		{
 			chaos::TextureDescription desc = texture->GetTextureDescription();
 
@@ -322,8 +322,8 @@ protected:
 			return false;
 
 		chaos::GPUProgramGenerator program_generator;
-		program_generator.AddShaderSourceFile(chaos::ShaderType::FRAGMENT, fragment_shader_path);
-		program_generator.AddShaderSourceFile(chaos::ShaderType::VERTEX,   vertex_shader_path);
+		program_generator.AddShaderSourceFile(chaos::ShaderType::Fragment, fragment_shader_path);
+		program_generator.AddShaderSourceFile(chaos::ShaderType::Vertex,   vertex_shader_path);
 
 		program = program_generator.GenProgramObject();
 		if (program == nullptr)

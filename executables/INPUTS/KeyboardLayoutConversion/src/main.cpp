@@ -12,7 +12,7 @@ public:
 		{
 			last_scancode = key_event.scancode;
 			last_button  = key_event.key;
-			last_key_pressed = chaos::KeyboardLayout::GetKnownLayout(chaos::KeyboardLayoutType::AZERTY).GetInformationFromScancode(key_event.scancode);
+			last_key_pressed = chaos::KeyboardLayout::GetKnownLayout(chaos::KeyboardLayoutType::Azerty).GetInformationFromScancode(key_event.scancode);
 		}
 
 		return chaos::Window::OnKeyEventImpl(key_event);
@@ -31,10 +31,10 @@ public:
 
 			auto ImGui_DisplayConversion = [](chaos::Key src)
 			{
-				for (chaos::KeyboardLayoutType src_layout : {chaos::KeyboardLayoutType::QWERTY, chaos::KeyboardLayoutType::AZERTY, chaos::KeyboardLayoutType::CURRENT})
+				for (chaos::KeyboardLayoutType src_layout : {chaos::KeyboardLayoutType::Qwerty, chaos::KeyboardLayoutType::Azerty, chaos::KeyboardLayoutType::Current})
 				{
 					char const* src_layout_name = EnumToString(src_layout);
-					chaos::Key dst = chaos::KeyboardLayoutConversion::ConvertKey(src, src_layout, chaos::KeyboardLayoutType::CURRENT);
+					chaos::Key dst = chaos::KeyboardLayoutConversion::ConvertKey(src, src_layout, chaos::KeyboardLayoutType::Current);
 
 					ImVec4 color = (src == dst) ?
 						ImVec4{ 1.0f, 1.0f, 1.0f, 1.0f }:
@@ -56,17 +56,17 @@ public:
 			ImGui_DisplayConversion(chaos::Key::Y);
 			ImGui_DisplayConversion(chaos::Key::A);
 			ImGui_DisplayConversion(chaos::Key::Z);
-			ImGui_DisplayConversion(chaos::Key::COMMA);
-			ImGui_DisplayConversion(chaos::Key::SPACE);
-			ImGui_DisplayConversion(chaos::Key::NUM_1);
-			ImGui_DisplayConversion(chaos::Key::KP_1);
-			ImGui_DisplayConversion(chaos::Key::UP);
-			ImGui_DisplayConversion(chaos::Key::PAGE_UP);
+			ImGui_DisplayConversion(chaos::Key::Comma);
+			ImGui_DisplayConversion(chaos::Key::Space);
+			ImGui_DisplayConversion(chaos::Key::Num1);
+			ImGui_DisplayConversion(chaos::Key::Keypad1);
+			ImGui_DisplayConversion(chaos::Key::Up);
+			ImGui_DisplayConversion(chaos::Key::PageUp);
 
-			ImGui_DisplayConversion(chaos::GetKeyFromName("SEMICOLON"));
+			ImGui_DisplayConversion(chaos::GetKeyFromName("Semicolon"));
 			ImGui_DisplayConversion(chaos::GetKeyFromName("A"));
 			ImGui_DisplayConversion(chaos::GetKeyFromName("Q"));
-			ImGui_DisplayConversion(chaos::GetKeyFromName("MOUSE_BUTTON_1"));
+			ImGui_DisplayConversion(chaos::GetKeyFromName("MouseButton1"));
 		});
 	}
 
@@ -76,7 +76,7 @@ protected:
 
 	int last_scancode = -1;
 
-	chaos::Key last_button = chaos::Key::UNKNOWN;
+	chaos::Key last_button = chaos::Key::Unknown;
 };
 
 int main(int argc, char ** argv, char ** env)

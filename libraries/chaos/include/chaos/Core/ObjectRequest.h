@@ -12,13 +12,13 @@ namespace chaos
 	enum class ObjectRequestType : int
 	{
 		/** accept nothing */
-		NONE = 0,
+		None = 0,
 		/** accept anything */
-		ANY = 1,
+		Any = 1,
 		/** search by string */
-		STRING = 2,
+		String = 2,
 		/** search by tag */
-		TAG = 3
+		Tag = 3
 	};
 
 	/** a utility class for parameter passing */
@@ -32,53 +32,53 @@ namespace chaos
 		ObjectRequest(ObjectRequest const& src) = default;
 		/** constructor */
 		ObjectRequest(char const* in_name) :
-			name(in_name), request_type(ObjectRequestType::STRING)
+			name(in_name), request_type(ObjectRequestType::String)
 		{
 			if (StringTools::IsEmpty(name))
-				request_type = ObjectRequestType::NONE;
+				request_type = ObjectRequestType::None;
 		}
 		/** constructor */
 		ObjectRequest(std::string const& in_name) :
-			name(in_name.c_str()), request_type(ObjectRequestType::STRING)
+			name(in_name.c_str()), request_type(ObjectRequestType::String)
 		{
 			if (StringTools::IsEmpty(name))
-				request_type = ObjectRequestType::NONE;
+				request_type = ObjectRequestType::None;
 		}
 		/** constructor */
 		ObjectRequest(TagType in_tag) :
-			tag(in_tag), request_type(ObjectRequestType::TAG)
+			tag(in_tag), request_type(ObjectRequestType::Tag)
 		{
 		}
 
 		/** returns whether the request is none */
 		bool IsNoneRequest() const
 		{
-			return (request_type == ObjectRequestType::NONE);
+			return (request_type == ObjectRequestType::None);
 		}
 
 		/** returns whether the request is any */
 		bool IsAnyRequest() const
 		{
-			return (request_type == ObjectRequestType::ANY);
+			return (request_type == ObjectRequestType::Any);
 		}
 
 		/** returns whether this is a request for the string */
 		bool IsStringRequest() const
 		{
-			return (request_type == ObjectRequestType::STRING);
+			return (request_type == ObjectRequestType::String);
 		}
 
 		/** returns whether there is a request for the tag */
 		bool IsTagRequest() const
 		{
-			return (request_type == ObjectRequestType::TAG);
+			return (request_type == ObjectRequestType::Tag);
 		}
 
 		/** returns a request that accept anything */
 		static ObjectRequest Any()
 		{
 			ObjectRequest result;
-			result.request_type = ObjectRequestType::ANY;
+			result.request_type = ObjectRequestType::Any;
 			return result;
 		}
 
@@ -86,7 +86,7 @@ namespace chaos
 		static ObjectRequest None()
 		{
 			ObjectRequest result;
-			result.request_type = ObjectRequestType::NONE;
+			result.request_type = ObjectRequestType::None;
 			return result;
 		}
 
@@ -178,7 +178,7 @@ namespace chaos
 		/** the tag for the request */
 		TagType tag = 0;
 		/** the kind of request of interrest */
-		ObjectRequestType request_type = ObjectRequestType::NONE;
+		ObjectRequestType request_type = ObjectRequestType::None;
 	};
 
 #endif

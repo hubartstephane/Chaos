@@ -154,7 +154,7 @@ bool LudumOpponent::DoTick(float delta_time)
 
 		rotation = chaos::MathTools::UpdateRotationForTargetAngle(rotation, wr, delta_time * car_data.angular_velocity * angular_tweak);
 
-		chaos::ApplyWrapMode(rotation, -(float)M_PI, (float)M_PI, chaos::WrapMode::WRAP, rotation);
+		chaos::ApplyWrapMode(rotation, -(float)M_PI, (float)M_PI, chaos::WrapMode::Wrap, rotation);
 
 
 		float velocity_tweak = road->opponent_velocity_tweak;

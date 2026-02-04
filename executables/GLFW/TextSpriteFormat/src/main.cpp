@@ -121,12 +121,12 @@ protected:
 		generator_params.line_height = 50;
 		generator_params.font_info_name = "font_info1"; // the default character set
 		generator_params.position = glm::vec2(0.0f, 0.0f);
-		generator_params.hotpoint = chaos::Hotpoint::BOTTOM_LEFT;
+		generator_params.hotpoint = chaos::Hotpoint::BottomLeft;
 		generator_params.character_spacing = 0.0f;
 		generator_params.line_spacing = 0.0f;
 		generator_params.bitmap_padding.x = 1.0f * 30.0f;
 		generator_params.bitmap_padding.y = 5.0f;
-		generator_params.alignment = chaos::TextAlignment::LEFT;
+		generator_params.alignment = chaos::TextAlignment::Left;
 		generator_params.justify_space_factor = 8.0f;
 		generator_params.max_text_width = 200.0f;
 		generator_params.word_wrap = true;

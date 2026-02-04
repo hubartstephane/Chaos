@@ -36,9 +36,9 @@ namespace chaos
 
 	enum class SoundBlendType : int
 	{
-		BLEND_NONE = 0,
-		BLEND_IN = 1,
-		BLEND_OUT = 2
+		None = 0,
+		BlendIn = 1,
+		BlendOut = 2
 	};
 
 	// ==============================================================
@@ -104,7 +104,7 @@ namespace chaos
 	public:
 
 		/** the kind of blending */
-		SoundBlendType blend_type = SoundBlendType::BLEND_NONE;
+		SoundBlendType blend_type = SoundBlendType::None;
 		/** the time to blend from [0 to 1] or [1 to 0] => if current blend value is between, the time is renormalized */
 		float blend_time = 1.0f;
 		/** whether the object should be paused at the end of blend */

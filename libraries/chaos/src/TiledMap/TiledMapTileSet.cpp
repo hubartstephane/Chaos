@@ -6,8 +6,8 @@ namespace chaos
 	namespace TiledMap
 	{
 		static EnumMetaData<TileSetOrientation> const TileSetOrientation_metadata = {
-			{ TileSetOrientation::ISOMETRIC, "isometric" },
-			{ TileSetOrientation::ORTHOGONAL, "orthogonal" } // default
+			{ TileSetOrientation::Isometric, "isometric" },
+			{ TileSetOrientation::Orthogonal, "orthogonal" } // default
 		};
 
 		CHAOS_IMPLEMENT_ENUM_METHOD(TileSetOrientation, &TileSetOrientation_metadata, CHAOS_API);
@@ -49,15 +49,15 @@ namespace chaos
 				return;
 
 			// get values
-			int top_edge    = GetEdgeValue(Edge::TOP);
-			int right_edge  = GetEdgeValue(Edge::RIGHT);
-			int bottom_edge = GetEdgeValue(Edge::BOTTOM);
-			int left_edge   = GetEdgeValue(Edge::LEFT);
+			int top_edge    = GetEdgeValue(Edge::Top);
+			int right_edge  = GetEdgeValue(Edge::Right);
+			int bottom_edge = GetEdgeValue(Edge::Bottom);
+			int left_edge   = GetEdgeValue(Edge::Left);
 
-			int topright_corner    = GetCornerValue(Corner::TOP_RIGHT);
-			int bottomright_corner = GetCornerValue(Corner::BOTTOM_RIGHT);
-			int bottomleft_corner  = GetCornerValue(Corner::BOTTOM_LEFT);
-			int topleft_corner     = GetCornerValue(Corner::TOP_LEFT);
+			int topright_corner    = GetCornerValue(Corner::TopRight);
+			int bottomright_corner = GetCornerValue(Corner::BottomRight);
+			int bottomleft_corner  = GetCornerValue(Corner::BottomLeft);
+			int topleft_corner     = GetCornerValue(Corner::TopLeft);
 
 			// apply transforms
 			if ((flags & ParticleFlags::TEXTURE_DIAGONAL_FLIP) != 0)
@@ -297,19 +297,19 @@ namespace chaos
 			// XXX : theses tokens are not exactly the same that for JSON serialization !!!
 			static std::vector<std::pair<Hotpoint, char const*>> const hotpoint_map =
 			{
-				{ Hotpoint::TOP, "top" },
-				{ Hotpoint::BOTTOM, "bottom" },
-				{ Hotpoint::LEFT, "left" },
-				{ Hotpoint::RIGHT, "right" },
-				{ Hotpoint::TOP_LEFT, "topleft" },
-				{ Hotpoint::TOP_RIGHT, "topright" },
-				{ Hotpoint::BOTTOM_LEFT, "bottomleft" }, // default
-				{ Hotpoint::BOTTOM_RIGHT, "bottomright" },
-				{ Hotpoint::CENTER, "center" }
+				{ Hotpoint::Top, "top" },
+				{ Hotpoint::Bottom, "bottom" },
+				{ Hotpoint::Left, "left" },
+				{ Hotpoint::Right, "right" },
+				{ Hotpoint::TopLeft, "topleft" },
+				{ Hotpoint::TopRight, "topright" },
+				{ Hotpoint::BottomLeft, "bottomleft" }, // default
+				{ Hotpoint::BottomRight, "bottomright" },
+				{ Hotpoint::Center, "center" }
 			};
 
 			// do our own conversion to enum here because the names are alternative
-			object_alignment = Hotpoint::BOTTOM_LEFT;
+			object_alignment = Hotpoint::BottomLeft;
 			std::string object_alignment_str;
 			if (XMLTools::ReadAttribute(element, "objectalignment", object_alignment_str))
 			{
@@ -321,7 +321,7 @@ namespace chaos
 			tinyxml2::XMLElement const * grid_element = element->FirstChildElement("grid");
 			if (grid_element != nullptr)
 			{
-				orientation = TileSetOrientation::ORTHOGONAL;
+				orientation = TileSetOrientation::Orthogonal;
 				XMLTools::ReadAttribute(grid_element, "orientation", orientation);
 				XMLTools::ReadAttribute(grid_element, "width", size.x);
 				XMLTools::ReadAttribute(grid_element, "height", size.y);

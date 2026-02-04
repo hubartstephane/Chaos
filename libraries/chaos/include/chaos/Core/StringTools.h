@@ -13,9 +13,9 @@ namespace chaos
 
 	enum class TimeToStringFormatType : int
 	{
-		SHORT,
-		FULL,
-		FILENAME
+		Short,
+		Full,
+		Filename
 	};
 
 	/**

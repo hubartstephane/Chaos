@@ -70,7 +70,7 @@ namespace chaos
 		{
 			assert(name != nullptr);
 			for (auto & property : properties)
-				if (type_id == PropertyType::ANY || type_id == property->GetPropertyType())
+				if (type_id == PropertyType::Any || type_id == property->GetPropertyType())
 					if (StringTools::Stricmp(property->GetName(), name) == 0)
 						return property.get();
 			return nullptr;
@@ -78,7 +78,7 @@ namespace chaos
 
 		int const * PropertyOwner::FindPropertyInt(char const * name) const
 		{
-			Property const * property = FindProperty(name, PropertyType::INT);
+			Property const * property = FindProperty(name, PropertyType::Int);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetPropertyInt();
@@ -86,7 +86,7 @@ namespace chaos
 
 		float const * PropertyOwner::FindPropertyFloat(char const * name) const
 		{
-			Property const * property = FindProperty(name, PropertyType::FLOAT);
+			Property const * property = FindProperty(name, PropertyType::Float);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetPropertyFloat();
@@ -94,7 +94,7 @@ namespace chaos
 
 		bool const * PropertyOwner::FindPropertyBool(char const * name) const
 		{
-			Property const * property = FindProperty(name, PropertyType::BOOL);
+			Property const * property = FindProperty(name, PropertyType::Bool);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetPropertyBool();
@@ -102,7 +102,7 @@ namespace chaos
 
 		std::string const * PropertyOwner::FindPropertyString(char const * name) const
 		{
-			Property const * property = FindProperty(name, PropertyType::STRING);
+			Property const * property = FindProperty(name, PropertyType::String);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetPropertyString();
@@ -110,7 +110,7 @@ namespace chaos
 
 		glm::vec4 const* PropertyOwner::FindPropertyColor(char const* name) const
 		{
-			Property const* property = FindProperty(name, PropertyType::COLOR);
+			Property const* property = FindProperty(name, PropertyType::Color);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetPropertyColor();
@@ -118,7 +118,7 @@ namespace chaos
 
 		int const* PropertyOwner::FindPropertyObject(char const* name) const
 		{
-			Property const* property = FindProperty(name, PropertyType::OBJECT);
+			Property const* property = FindProperty(name, PropertyType::Object);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetPropertyObject();
@@ -165,7 +165,7 @@ namespace chaos
 				if (name_attribute == nullptr)
 					continue;
 				char const * property_name = name_attribute->Value();
-				if (FindInternalProperty(property_name, PropertyType::ANY) != nullptr) // and must be unique
+				if (FindInternalProperty(property_name, PropertyType::Any) != nullptr) // and must be unique
 					continue;
 
 				tinyxml2::XMLAttribute const * value_attribute = node->FindAttribute("value"); // value is NOT mandatory (for multiline strings, we use node->GetText())

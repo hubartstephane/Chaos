@@ -6,26 +6,26 @@ namespace chaos
 	// returns the OpenGL primitive type corresponding to the primitive
 	constexpr GLenum PrimitiveTypeToGLType(PrimitiveType primitive_type)
 	{
-		if (primitive_type == PrimitiveType::POINT)
+		if (primitive_type == PrimitiveType::Point)
 			return GL_POINTS;
 
-		if (primitive_type == PrimitiveType::TRIANGLE)
+		if (primitive_type == PrimitiveType::Triangle)
 			return GL_TRIANGLES;
-		if (primitive_type == PrimitiveType::TRIANGLE_PAIR)
+		if (primitive_type == PrimitiveType::TrianglePair)
 			return GL_TRIANGLES;
-		if (primitive_type == PrimitiveType::QUAD)
+		if (primitive_type == PrimitiveType::Quad)
 			return GL_TRIANGLES;
 
-		if (primitive_type == PrimitiveType::TRIANGLE_STRIP)
+		if (primitive_type == PrimitiveType::TriangleStrip)
 			return GL_TRIANGLE_STRIP;
-		if (primitive_type == PrimitiveType::TRIANGLE_FAN)
+		if (primitive_type == PrimitiveType::TriangleFan)
 			return GL_TRIANGLE_FAN;
 
-		if (primitive_type == PrimitiveType::LINE)
+		if (primitive_type == PrimitiveType::Line)
 			return GL_LINES;
-		if (primitive_type == PrimitiveType::LINE_STRIP)
+		if (primitive_type == PrimitiveType::LineStrip)
 			return GL_LINE_STRIP;
-		if (primitive_type == PrimitiveType::LINE_LOOP)
+		if (primitive_type == PrimitiveType::LineLoop)
 			return GL_LINE_LOOP;
 
 		return GL_NONE;
@@ -205,15 +205,15 @@ namespace chaos
 		FlushDrawPrimitive();
 		if (pending_primitives.size() > 0)
 		{
-			assert(current_primitive_type != PrimitiveType::NONE);
+			assert(current_primitive_type != PrimitiveType::None);
 
 			GPUMeshElement& element = mesh->AddMeshElement(
 				vertex_declaration,
 				vertex_buffer.get(),
-				(current_primitive_type == PrimitiveType::QUAD)? quad_index_buffer : nullptr);
+				(current_primitive_type == PrimitiveType::Quad)? quad_index_buffer : nullptr);
 			element.primitives = std::move(pending_primitives);
 			element.render_material = render_material;
-			current_primitive_type = PrimitiveType::NONE;
+			current_primitive_type = PrimitiveType::None;
 		}
 	}
 
@@ -221,13 +221,13 @@ namespace chaos
 	{
 		if (buffer_unflushed != buffer_position) // something to flush
 		{
-			assert(current_primitive_type != PrimitiveType::NONE);
+			assert(current_primitive_type != PrimitiveType::None);
 
 			GPUDrawPrimitive primitive;
 			primitive.primitive_type = PrimitiveTypeToGLType(current_primitive_type);
 
 			// quads are indexed and uses a shared index_buffer. The flush may so produce multiple primitive (if there are not enougth indices in this buffer)
-			if (current_primitive_type == PrimitiveType::QUAD)
+			if (current_primitive_type == PrimitiveType::Quad)
 			{
 				// flush
 				primitive.indexed = true;
@@ -262,18 +262,18 @@ namespace chaos
 	char* GPUPrimitiveOutputBase::GeneratePrimitive(size_t requested_size, PrimitiveType primitive_type)
 	{
 		assert(requested_size != 0);
-		assert(primitive_type != PrimitiveType::NONE);
+		assert(primitive_type != PrimitiveType::None);
 
 		// 1/ must create a new mesh element if we were indexed and we are no more indexed (or the opposite)
 		// 2/ must create a new primitive when starting a FAN/STRIP/LOOP
 
 		// was indexed, becomes not indexed (or the opposite) (or current_primitive_type was none)
-		if ((primitive_type == PrimitiveType::QUAD) ^ (current_primitive_type == PrimitiveType::QUAD)) // one or the other but not twice (this works if current_primitive_type == NONE)
+		if ((primitive_type == PrimitiveType::Quad) ^ (current_primitive_type == PrimitiveType::Quad)) // one or the other but not twice (this works if current_primitive_type == NONE)
 		{
 			FlushMeshElement();
 		}
 		// cannot concat the new primitive in the same draw call
-		else if (primitive_type == PrimitiveType::TRIANGLE_FAN || primitive_type == PrimitiveType::TRIANGLE_STRIP || primitive_type == PrimitiveType::LINE_STRIP || primitive_type == PrimitiveType::LINE_LOOP)
+		else if (primitive_type == PrimitiveType::TriangleFan || primitive_type == PrimitiveType::TriangleStrip || primitive_type == PrimitiveType::LineStrip || primitive_type == PrimitiveType::LineLoop)
 		{
 			FlushDrawPrimitive(); // flush pending primitives
 		}

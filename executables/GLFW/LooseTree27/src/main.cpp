@@ -36,25 +36,25 @@ class KeyConfiguration
 {
 public:
 
-	chaos::Key toggle_render_all = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("R"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key new_scene = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Y"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key delete_object = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("DELETE"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key next_object = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("KP_ADD"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key previous_object = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("KP_SUBTRACT"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key toggle_render_all = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("R"), chaos::KeyboardLayoutType::Azerty);
+	chaos::Key new_scene = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Y"), chaos::KeyboardLayoutType::Azerty);
+	chaos::Key delete_object = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("DELETE"), chaos::KeyboardLayoutType::Azerty);
+	chaos::Key next_object = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("KeypadAdd"), chaos::KeyboardLayoutType::Azerty);
+	chaos::Key previous_object = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("KeypadSubtract"), chaos::KeyboardLayoutType::Azerty);
 
-	chaos::Key move_object_positive_x = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("D"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key move_object_negative_x = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Q"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key move_object_positive_y = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("E"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key move_object_negative_y = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("A"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key move_object_positive_z = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("S"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key move_object_negative_z = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Z"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key move_object_positive_x = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("D"), chaos::KeyboardLayoutType::Azerty);
+	chaos::Key move_object_negative_x = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Q"), chaos::KeyboardLayoutType::Azerty);
+	chaos::Key move_object_positive_y = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("E"), chaos::KeyboardLayoutType::Azerty);
+	chaos::Key move_object_negative_y = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("A"), chaos::KeyboardLayoutType::Azerty);
+	chaos::Key move_object_positive_z = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("S"), chaos::KeyboardLayoutType::Azerty);
+	chaos::Key move_object_negative_z = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Z"), chaos::KeyboardLayoutType::Azerty);
 
-	chaos::Key scale_object_positive_x = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("D"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key scale_object_negative_x = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Q"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key scale_object_positive_y = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("E"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key scale_object_negative_y = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("A"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key scale_object_positive_z = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("S"), chaos::KeyboardLayoutType::AZERTY);
-	chaos::Key scale_object_negative_z = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Z"), chaos::KeyboardLayoutType::AZERTY);
+	chaos::Key scale_object_positive_x = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("D"), chaos::KeyboardLayoutType::Azerty);
+	chaos::Key scale_object_negative_x = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Q"), chaos::KeyboardLayoutType::Azerty);
+	chaos::Key scale_object_positive_y = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("E"), chaos::KeyboardLayoutType::Azerty);
+	chaos::Key scale_object_negative_y = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("A"), chaos::KeyboardLayoutType::Azerty);
+	chaos::Key scale_object_positive_z = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("S"), chaos::KeyboardLayoutType::Azerty);
+	chaos::Key scale_object_negative_z = chaos::KeyboardLayoutConversion::ConvertKey(chaos::GetKeyFromName("Z"), chaos::KeyboardLayoutType::Azerty);
 };
 
 // =======================================================================
@@ -193,12 +193,12 @@ public:
 			};
 
 			return
-				MoveObjectWithInputs(key_configuration.move_object_negative_x, "move object -X", chaos::Direction::NEGATIVE_X) ||
-				MoveObjectWithInputs(key_configuration.move_object_positive_x, "move object +X", chaos::Direction::POSITIVE_X) ||
-				MoveObjectWithInputs(key_configuration.move_object_negative_y, "move object -Y", chaos::Direction::NEGATIVE_Y) ||
-				MoveObjectWithInputs(key_configuration.move_object_positive_y, "move object +Y", chaos::Direction::POSITIVE_Y) ||
-				MoveObjectWithInputs(key_configuration.move_object_negative_z, "move object -Z", chaos::Direction::NEGATIVE_Z) ||
-				MoveObjectWithInputs(key_configuration.move_object_positive_z, "move object +Z", chaos::Direction::POSITIVE_Z);
+				MoveObjectWithInputs(key_configuration.move_object_negative_x, "move object -X", chaos::Direction::NegativeX) ||
+				MoveObjectWithInputs(key_configuration.move_object_positive_x, "move object +X", chaos::Direction::PositiveX) ||
+				MoveObjectWithInputs(key_configuration.move_object_negative_y, "move object -Y", chaos::Direction::NegativeY) ||
+				MoveObjectWithInputs(key_configuration.move_object_positive_y, "move object +Y", chaos::Direction::PositiveY) ||
+				MoveObjectWithInputs(key_configuration.move_object_negative_z, "move object -Z", chaos::Direction::NegativeZ) ||
+				MoveObjectWithInputs(key_configuration.move_object_positive_z, "move object +Z", chaos::Direction::PositiveZ);
 		}
 
 		if (current_action_type == ActionType::SCALE_OBJECT)
@@ -227,12 +227,12 @@ public:
 				};
 
 			return
-				ScaleObjectWithInputs(key_configuration.scale_object_negative_x, "scale object -X", chaos::Direction::NEGATIVE_X) ||
-				ScaleObjectWithInputs(key_configuration.scale_object_positive_x, "scale object +X", chaos::Direction::POSITIVE_X) ||
-				ScaleObjectWithInputs(key_configuration.scale_object_negative_y, "scale object -Y", chaos::Direction::NEGATIVE_Y) ||
-				ScaleObjectWithInputs(key_configuration.scale_object_positive_y, "scale object +Y", chaos::Direction::POSITIVE_Y) ||
-				ScaleObjectWithInputs(key_configuration.scale_object_negative_z, "scale object -Z", chaos::Direction::NEGATIVE_Z) ||
-				ScaleObjectWithInputs(key_configuration.scale_object_positive_z, "scale object +Z", chaos::Direction::POSITIVE_Z);
+				ScaleObjectWithInputs(key_configuration.scale_object_negative_x, "scale object -X", chaos::Direction::NegativeX) ||
+				ScaleObjectWithInputs(key_configuration.scale_object_positive_x, "scale object +X", chaos::Direction::PositiveX) ||
+				ScaleObjectWithInputs(key_configuration.scale_object_negative_y, "scale object -Y", chaos::Direction::NegativeY) ||
+				ScaleObjectWithInputs(key_configuration.scale_object_positive_y, "scale object +Y", chaos::Direction::PositiveY) ||
+				ScaleObjectWithInputs(key_configuration.scale_object_negative_z, "scale object -Z", chaos::Direction::NegativeZ) ||
+				ScaleObjectWithInputs(key_configuration.scale_object_positive_z, "scale object +Z", chaos::Direction::PositiveZ);
 		}
 
 
@@ -582,7 +582,7 @@ protected:
 		fps_view_controller.config.forward_speed = CAMERA_SPEED;
 		fps_view_controller.config.strafe_speed = CAMERA_SPEED;
 
-		fps_view_controller.input_config.rotation_button = chaos::Key::MOUSE_BUTTON_2;
+		fps_view_controller.input_config.rotation_button = chaos::Key::MouseButton2;
 
 		// create the very single sphere
 		chaos::box3 creation_box;
@@ -762,7 +762,7 @@ protected:
 
 			if (current_action_type == ActionType::CREATE_BOX)
 			{
-				if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::MOUSE_BUTTON_1), "Create Box", [&]()
+				if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::MouseButton1), "Create Box", [&]()
 				{
 					CreateNewBox(GetBoxToCreateFromMousePosition());
 				}))
@@ -773,7 +773,7 @@ protected:
 
 			if (current_action_type == ActionType::CREATE_SPHERE)
 			{
-				if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::MOUSE_BUTTON_1), "Create Sphere", [&]()
+				if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::MouseButton1), "Create Sphere", [&]()
 				{
 					CreateNewSphere(GetSphereToCreateFromMousePosition());
 				}))
@@ -784,7 +784,7 @@ protected:
 
 			if (current_action_type == ActionType::MOVE_OBJECT || current_action_type == ActionType::SCALE_OBJECT || current_action_type == ActionType::ROTATE_OBJECT)
 			{
-				if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::MOUSE_BUTTON_1), "Select Object", [&]()
+				if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::MouseButton1), "Select Object", [&]()
 				{
 					if (pointed_object == nullptr)
 						current_object_index.reset();

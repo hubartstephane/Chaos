@@ -91,7 +91,7 @@ namespace chaos
 
 	bool Game::EnumerateInputActions(InputActionProcessor & in_action_processor, EnumerateInputActionContext in_context)
 	{
-		if (in_action_processor.CheckAndProcess(RequireModifiers(KeyModifier::Shift, JustActivated(Key::ESCAPE)) , "Exit Game", [this]()
+		if (in_action_processor.CheckAndProcess(RequireModifiers(KeyModifier::Shift, JustActivated(Key::Escape)) , "Exit Game", [this]()
 		{
 			RequireExitGame();
 		}))
@@ -99,7 +99,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_processor.CheckAndProcess(ForbidModifiers(KeyModifier::Shift, JustActivated(Key::ESCAPE)), "Toggle Pause", [this]()
+		if (in_action_processor.CheckAndProcess(ForbidModifiers(KeyModifier::Shift, JustActivated(Key::Escape)), "Toggle Pause", [this]()
 		{
 			RequireTogglePause();
 		}))
@@ -195,17 +195,17 @@ namespace chaos
 
 	bool Game::DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const
 	{
-		if (execution_data.Match("canvas_box", GPUProgramProviderPassType::EXPLICIT))
+		if (execution_data.Match("canvas_box", GPUProgramProviderPassType::Explicit))
 		{
 			box2 view = GetCanvasBox();
 			return execution_data.Process(EncodeBoxToVector(view));
 		}
-		if (execution_data.Match("world_box", GPUProgramProviderPassType::EXPLICIT))
+		if (execution_data.Match("world_box", GPUProgramProviderPassType::Explicit))
 		{
 			box2 world = GetWorldBox();
 			return execution_data.Process(EncodeBoxToVector(world));
 		}
-		if (execution_data.Match("root_time", GPUProgramProviderPassType::EXPLICIT))
+		if (execution_data.Match("root_time", GPUProgramProviderPassType::Explicit))
 		{
 			double root_time = GetRootClockTime();
 			return execution_data.Process(root_time);
@@ -788,7 +788,7 @@ namespace chaos
 		if (!physical_gamepad->IsAnyInputActive())
 			return true;
 		// change the application mode
-		SetInputMode(InputMode::GAMEPAD);
+		SetInputMode(InputMode::Gamepad);
 		// special action on gamepad input
 		OnGamepadInput(physical_gamepad);
 

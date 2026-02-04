@@ -9,10 +9,10 @@ namespace chaos
 	/** the possible edges (XXX: values are related to TiledMap::Wang. do not change them without a check) */
 	enum class Edge : int
 	{
-		TOP = 0,
-		RIGHT = 1,
-		BOTTOM = 2,
-		LEFT = 3
+		Top = 0,
+		Right = 1,
+		Bottom = 2,
+		Left = 3
 	};
 
 	CHAOS_DECLARE_ENUM_METHOD(Edge, CHAOS_API);

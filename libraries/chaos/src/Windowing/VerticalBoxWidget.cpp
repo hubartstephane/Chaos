@@ -6,7 +6,7 @@ namespace chaos
 	LinearComposerLayout VerticalBoxWidget::GetComposerLayout() const
 	{
 		LinearComposerLayout result;
-		result.orientation = Orientation::VERTICAL;
+		result.orientation = Orientation::Vertical;
 		return result;
 	}
 

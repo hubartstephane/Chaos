@@ -6,18 +6,18 @@ namespace chaos
 	namespace TiledMap
 	{
 		static EnumMetaData<HorizontalTextAlignment> const HorizontalTextAlignment_metadata = {
-			{ HorizontalTextAlignment::LEFT, "left" }, // default
-			{ HorizontalTextAlignment::CENTER, "center" },
-			{ HorizontalTextAlignment::RIGHT, "right" },
-			{ HorizontalTextAlignment::JUSTIFY, "justify" }
+			{ HorizontalTextAlignment::Left, "left" }, // default
+			{ HorizontalTextAlignment::Center, "center" },
+			{ HorizontalTextAlignment::Right, "right" },
+			{ HorizontalTextAlignment::Justify, "justify" }
 		};
 
 		CHAOS_IMPLEMENT_ENUM_METHOD(HorizontalTextAlignment, &HorizontalTextAlignment_metadata, CHAOS_API);
 
 		static EnumMetaData<VerticalTextAlignment> const VerticalTextAlignment_metadata = {
-			{ VerticalTextAlignment::TOP, "top" }, // default
-			{ VerticalTextAlignment::CENTER, "center" },
-			{ VerticalTextAlignment::BOTTOM, "bottom" }
+			{ VerticalTextAlignment::Top, "top" }, // default
+			{ VerticalTextAlignment::Center, "center" },
+			{ VerticalTextAlignment::Bottom, "bottom" }
 		};
 
 		CHAOS_IMPLEMENT_ENUM_METHOD(VerticalTextAlignment, &VerticalTextAlignment_metadata);
@@ -256,9 +256,9 @@ namespace chaos
 
 			tinyxml2::XMLElement const * text_element = element->FirstChildElement("text");
 
-			halign = HorizontalTextAlignment::LEFT;
+			halign = HorizontalTextAlignment::Left;
 			XMLTools::ReadAttribute(text_element, "halign", halign);
-			valign = VerticalTextAlignment::TOP;
+			valign = VerticalTextAlignment::Top;
 			XMLTools::ReadAttribute(text_element, "valign", valign);
 			XMLTools::ReadAttribute(text_element, "pixelsize", pixelsize);
 			XMLTools::ReadAttribute(text_element, "wrap", wrap);
@@ -293,7 +293,7 @@ namespace chaos
 		box2 GeometricObjectTile::DoGetBoundingBox() const
 		{
 			// search the alignment for this tile
-			Hotpoint hotpoint = Hotpoint::BOTTOM_LEFT; // default value for tileset
+			Hotpoint hotpoint = Hotpoint::BottomLeft; // default value for tileset
 
 			TileInfo tile_info = FindTileInfo();
 			if (tile_info.tileset != nullptr)

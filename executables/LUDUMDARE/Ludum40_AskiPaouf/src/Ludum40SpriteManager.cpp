@@ -79,8 +79,8 @@ bool SpriteManager::DoInitialize(SpriteManagerInitParams& params)
 	else
 	{
 		chaos::GPUProgramGenerator program_generator;
-		program_generator.AddShaderSource(chaos::ShaderType::VERTEX, vertex_shader_source);
-		program_generator.AddShaderSource(chaos::ShaderType::FRAGMENT, fragment_shader_source);
+		program_generator.AddShaderSource(chaos::ShaderType::Vertex, vertex_shader_source);
+		program_generator.AddShaderSource(chaos::ShaderType::Fragment, fragment_shader_source);
 
 		program = program_generator.GenProgramObject();
 		if (program == nullptr)
@@ -88,9 +88,9 @@ bool SpriteManager::DoInitialize(SpriteManagerInitParams& params)
 	}
 
 	// prepare the vertex declaration
-	declaration.Push(chaos::VertexAttributeSemantic::POSITION, 0, chaos::VertexAttributeType::FLOAT2);
-	declaration.Push(chaos::VertexAttributeSemantic::TEXCOORD, 0, chaos::VertexAttributeType::FLOAT3);
-	declaration.Push(chaos::VertexAttributeSemantic::COLOR, 0, chaos::VertexAttributeType::FLOAT3);
+	declaration.Push(chaos::VertexAttributeSemantic::Position, 0, chaos::VertexAttributeType::Float2);
+	declaration.Push(chaos::VertexAttributeSemantic::Texcoord, 0, chaos::VertexAttributeType::Float3);
+	declaration.Push(chaos::VertexAttributeSemantic::Color, 0, chaos::VertexAttributeType::Float3);
 
 	return true;
 }

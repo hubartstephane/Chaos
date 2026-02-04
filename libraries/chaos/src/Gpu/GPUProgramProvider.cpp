@@ -13,15 +13,15 @@ namespace chaos
 		execution_data.top_provider = this;
 
 		// search for explict first ...
-		execution_data.pass_type = GPUProgramProviderPassType::EXPLICIT;
+		execution_data.pass_type = GPUProgramProviderPassType::Explicit;
 		if (DoProcessAction(execution_data))
 			return true;
 		// ... then use deduced rules
-		execution_data.pass_type = GPUProgramProviderPassType::DEDUCED;
+		execution_data.pass_type = GPUProgramProviderPassType::Deduced;
 		if (DoProcessAction(execution_data))
 			return true;
 		// ... finally accept any fallback values
-		execution_data.pass_type = GPUProgramProviderPassType::FALLBACK;
+		execution_data.pass_type = GPUProgramProviderPassType::Fallback;
 		if (DoProcessAction(execution_data))
 			return true;
 		return false;
@@ -244,37 +244,37 @@ namespace chaos
 		static const glm::mat4 identity = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
 
 		// transforms
-		if (execution_data.Match("local_to_world", GPUProgramProviderPassType::FALLBACK))
+		if (execution_data.Match("local_to_world", GPUProgramProviderPassType::Fallback))
 		{
 			return execution_data.Process(identity);
 		}
-		if (execution_data.Match("world_to_local", GPUProgramProviderPassType::FALLBACK))
+		if (execution_data.Match("world_to_local", GPUProgramProviderPassType::Fallback))
 		{
 			return execution_data.Process(identity);
 		}
-		if (execution_data.Match("world_to_camera", GPUProgramProviderPassType::FALLBACK))
+		if (execution_data.Match("world_to_camera", GPUProgramProviderPassType::Fallback))
 		{
 			return execution_data.Process(identity);
 		}
-		if (execution_data.Match("camera_to_world", GPUProgramProviderPassType::FALLBACK))
+		if (execution_data.Match("camera_to_world", GPUProgramProviderPassType::Fallback))
 		{
 			return execution_data.Process(identity);
 		}
 
 		// normal transforms
-		if (execution_data.Match("local_to_world_normal", GPUProgramProviderPassType::FALLBACK))
+		if (execution_data.Match("local_to_world_normal", GPUProgramProviderPassType::Fallback))
 		{
 			return execution_data.Process(identity);
 		}
-		if (execution_data.Match("world_to_local_normal", GPUProgramProviderPassType::FALLBACK))
+		if (execution_data.Match("world_to_local_normal", GPUProgramProviderPassType::Fallback))
 		{
 			return execution_data.Process(identity);
 		}
-		if (execution_data.Match("world_to_camera_normal", GPUProgramProviderPassType::FALLBACK))
+		if (execution_data.Match("world_to_camera_normal", GPUProgramProviderPassType::Fallback))
 		{
 			return execution_data.Process(identity);
 		}
-		if (execution_data.Match("camera_to_world_normal", GPUProgramProviderPassType::FALLBACK))
+		if (execution_data.Match("camera_to_world_normal", GPUProgramProviderPassType::Fallback))
 		{
 			return execution_data.Process(identity);
 		}

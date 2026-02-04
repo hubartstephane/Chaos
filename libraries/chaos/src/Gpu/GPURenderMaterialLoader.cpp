@@ -98,7 +98,7 @@ namespace chaos
 		// inplace declared program
 		GPUProgramLoader program_loader(GetGPUDevice(), manager);
 		GPUProgram * program = program_loader.LoadObject(nullptr, json_program);
-		if (program == nullptr || program->GetProgramType() != GPUProgramType::RENDER)
+		if (program == nullptr || program->GetProgramType() != GPUProgramType::Render)
 			return false;
 
 		// initialize the program
@@ -404,7 +404,7 @@ namespace chaos
 			return nullptr;
 		// the file for material is in JSON format
 		nlohmann::json json;
-		if (JSONTools::LoadJSONFile(path, json, LoadFileFlag::RECURSIVE))
+		if (JSONTools::LoadJSONFile(path, json, LoadFileFlag::Recursive))
 			return LoadObject(nullptr, &json);
 		return nullptr;
 	}

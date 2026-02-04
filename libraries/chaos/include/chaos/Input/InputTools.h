@@ -20,8 +20,8 @@ namespace chaos
 	{
 	public:
 
-		Key     key     = Key::UNKNOWN;
-		Input1D input1D = Input1D::UNKNOWN;
+		Key     key     = Key::Unknown;
+		Input1D input1D = Input1D::Unknown;
 	};
 
 	/**
@@ -32,9 +32,9 @@ namespace chaos
 	{
 	public:
 
-		Input2D input2D   = Input2D::UNKNOWN;
-		Input1D input1D_x = Input1D::UNKNOWN;
-		Input1D input1D_y = Input1D::UNKNOWN;
+		Input2D input2D   = Input2D::Unknown;
+		Input1D input1D_x = Input1D::Unknown;
+		Input1D input1D_y = Input1D::Unknown;
 	};
 
 	namespace InputTools

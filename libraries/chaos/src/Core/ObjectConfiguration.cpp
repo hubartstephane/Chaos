@@ -275,7 +275,7 @@ namespace chaos
 			if (!default_config_path.empty())
 			{
 				storage_default_config = nlohmann::json();
-				JSONTools::LoadJSONFile(default_config_path, storage_default_config, LoadFileFlag::RECURSIVE | LoadFileFlag::NO_ERROR_TRACE);
+				JSONTools::LoadJSONFile(default_config_path, storage_default_config, LoadFileFlag::Recursive | LoadFileFlag::NoErrorTrace);
 				changed = true;
 			}
 		}
@@ -285,7 +285,7 @@ namespace chaos
 			if (!persistent_config_path.empty())
 			{
 				storage_persistent_config = nlohmann::json();
-				JSONTools::LoadJSONFile(persistent_config_path, storage_persistent_config, LoadFileFlag::RECURSIVE | LoadFileFlag::NO_ERROR_TRACE);
+				JSONTools::LoadJSONFile(persistent_config_path, storage_persistent_config, LoadFileFlag::Recursive | LoadFileFlag::NoErrorTrace);
 				changed = true;
 			}
 		}
@@ -323,7 +323,7 @@ namespace chaos
 
 	nlohmann::json const* RootObjectConfiguration::ReloadHelper(nlohmann::json& new_root_storage, std::string_view in_path)
 	{
-		JSONTools::LoadJSONFile(default_config_path, new_root_storage, LoadFileFlag::RECURSIVE | LoadFileFlag::NO_ERROR_TRACE);
+		JSONTools::LoadJSONFile(default_config_path, new_root_storage, LoadFileFlag::Recursive | LoadFileFlag::NoErrorTrace);
 		return JSONTools::GetAttributeStructureNode(&new_root_storage, in_path);
 	}
 

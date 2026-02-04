@@ -54,16 +54,16 @@ namespace chaos
 	{
 		static std::pair<char const *, VertexAttributeSemantic> const names[] = // should be a prefix for name
 		{
-			{ "position",   VertexAttributeSemantic::POSITION },
-			{ "color",      VertexAttributeSemantic::COLOR },
-			{ "normal",     VertexAttributeSemantic::NORMAL },
-			{ "binormal",   VertexAttributeSemantic::BINORMAL },
-			{ "tangent",    VertexAttributeSemantic::TANGENT },
-			{ "texcoord",   VertexAttributeSemantic::TEXCOORD },
-			{ "boneindex",  VertexAttributeSemantic::BONEINDEX },
-			{ "boneweight", VertexAttributeSemantic::BONEWEIGHT },
-			{ "userdata",   VertexAttributeSemantic::USERDATA },
-			{ nullptr, VertexAttributeSemantic::NONE }
+			{ "position",   VertexAttributeSemantic::Position },
+			{ "color",      VertexAttributeSemantic::Color },
+			{ "normal",     VertexAttributeSemantic::Normal },
+			{ "binormal",   VertexAttributeSemantic::Binormal },
+			{ "tangent",    VertexAttributeSemantic::Tangent },
+			{ "texcoord",   VertexAttributeSemantic::Texcoord },
+			{ "boneindex",  VertexAttributeSemantic::BoneIndex },
+			{ "boneweight", VertexAttributeSemantic::BoneWeight },
+			{ "userdata",   VertexAttributeSemantic::UserData },
+			{ nullptr, VertexAttributeSemantic::None }
 		};
 
 		is_array = false;
@@ -98,7 +98,7 @@ namespace chaos
 		}
 
 		// just a named attribute without any known semantic
-		semantic_data = std::make_pair(VertexAttributeSemantic::NONE, -1);
+		semantic_data = std::make_pair(VertexAttributeSemantic::None, -1);
 		return attrib_name;
 	}
 
@@ -288,7 +288,7 @@ namespace chaos
 			GPUVertexDeclarationEntry const* entry = nullptr;
 
 			// this entry does not have a well known semantic
-			if (attrib.semantic == VertexAttributeSemantic::NONE)
+			if (attrib.semantic == VertexAttributeSemantic::None)
 			{
 				entry = declaration.GetEntry(attrib.name.c_str());
 			}

@@ -19,17 +19,17 @@ namespace chaos
 
 	bool LevelInstance::DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const
 	{
-		if (execution_data.Match("level_time", GPUProgramProviderPassType::EXPLICIT))
+		if (execution_data.Match("level_time", GPUProgramProviderPassType::Explicit))
 		{
 			double level_time = GetLevelClockTime();
 			return execution_data.Process(level_time);
 		}
-		if (execution_data.Match("world_to_camera", GPUProgramProviderPassType::EXPLICIT))
+		if (execution_data.Match("world_to_camera", GPUProgramProviderPassType::Explicit))
 		{
 			obox2 camera_obox = GetCameraOBox(0);
 			return execution_data.Process(CameraTools::GetCameraTransform(camera_obox));
 		}
-		if (execution_data.Match("projection_matrix", GPUProgramProviderPassType::EXPLICIT))
+		if (execution_data.Match("projection_matrix", GPUProgramProviderPassType::Explicit))
 		{
 			obox2 camera_obox = GetCameraOBox(0);
 			box2 camera_box;
@@ -376,7 +376,7 @@ namespace chaos
 
 		// apply the aspect ratio
 		if (game != nullptr)
-			SetBoxAspect(result, game->GetViewportWantedAspect(), SetBoxAspectMethod::PREFER_UPDATE_WIDTH);
+			SetBoxAspect(result, game->GetViewportWantedAspect(), SetBoxAspectMethod::UpdateWidth);
 
 		return result;
 	}

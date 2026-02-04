@@ -9,19 +9,19 @@ namespace chaos
 
 	enum class Hotpoint : int
 	{
-		LEFT = 1,
-		RIGHT = 2,
-		HMIDDLE = 0,
+		Left = 1,
+		Right = 2,
+		HMiddle = 0,
 
-		BOTTOM = 4,
-		TOP = 8,
-		VMIDDLE = 0,
+		Bottom = 4,
+		Top = 8,
+		VMiddle = 0,
 
-		BOTTOM_LEFT = BOTTOM | LEFT,
-		TOP_LEFT = TOP | LEFT,
-		BOTTOM_RIGHT = BOTTOM | RIGHT,
-		TOP_RIGHT = TOP | RIGHT,
-		CENTER = VMIDDLE | HMIDDLE
+		BottomLeft = Bottom | Left,
+		TopLeft = Top | Left,
+		BottomRight = Bottom | Right,
+		TopRight = Top | Right,
+		Center = VMiddle | HMiddle
 	};
 
 	/** given a hotpoint and a hotpoint, returns the BottomLeft hotpoint position */

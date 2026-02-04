@@ -16,7 +16,7 @@ GameHUDComboComponent::GameHUDComboComponent() :
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
 	generator_params.position = glm::vec2(20.0f, -80.0f);
-	generator_params.hotpoint = chaos::Hotpoint::TOP_LEFT;
+	generator_params.hotpoint = chaos::Hotpoint::TopLeft;
 }
 
 bool GameHUDComboComponent::QueryValue(int & result) const

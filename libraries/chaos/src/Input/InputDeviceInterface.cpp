@@ -11,7 +11,7 @@ namespace chaos
 	template<InputType INPUT_TYPE> 
 	std::optional<InputState_t<INPUT_TYPE>> InputDeviceInterface::GetInputStateHelper(INPUT_TYPE input) const
 	{
-		if (input == INPUT_TYPE::UNKNOWN)
+		if (input == INPUT_TYPE::Unknown)
 			return {};
 
 		std::optional<InputState_t<INPUT_TYPE>> result;
@@ -44,7 +44,7 @@ namespace chaos
 
 		auto AccumulateKeyState = [&](Key in_key, float delta_value)
 		{
-			if (in_key == Key::UNKNOWN)
+			if (in_key == Key::Unknown)
 				return true;
 			std::optional<KeyState> state = GetInputState(in_key);
 			if (!state.has_value())
@@ -69,7 +69,7 @@ namespace chaos
 
 		auto AccumulateKeyState = [&](Key in_key, int axis, float delta_value)
 		{
-			if (in_key == Key::UNKNOWN)
+			if (in_key == Key::Unknown)
 				return true;
 			std::optional<KeyState> state = GetInputState(in_key);
 			if (!state.has_value())

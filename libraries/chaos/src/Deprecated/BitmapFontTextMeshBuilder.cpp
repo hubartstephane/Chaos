@@ -129,14 +129,14 @@ namespace chaos
 		// recenter the whole box
 		glm::vec2 offset(0.0f, 0.0f);
 
-		if (HasAnyFlags(params.hotpoint, Hotpoint::RIGHT))
+		if (HasAnyFlags(params.hotpoint, Hotpoint::Right))
 			offset.x = -2.0f * result.half_size.x;
-		else if (!HasAnyFlags(params.hotpoint, Hotpoint::LEFT)) // horizontal middle
+		else if (!HasAnyFlags(params.hotpoint, Hotpoint::Left)) // horizontal middle
 			offset.x = -result.half_size.x;
 
-		if (HasAnyFlags(params.hotpoint, Hotpoint::BOTTOM))
+		if (HasAnyFlags(params.hotpoint, Hotpoint::Bottom))
 			offset.y = 2.0f * result.half_size.y;
-		else if (!HasAnyFlags(params.hotpoint, Hotpoint::TOP)) // vertical middle
+		else if (!HasAnyFlags(params.hotpoint, Hotpoint::Top)) // vertical middle
 			offset.y = result.half_size.y;
 
 		if (offset.x != 0.0f || offset.y != 0.0f)

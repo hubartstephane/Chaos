@@ -112,9 +112,9 @@ namespace chaos
 		/** parsing a JSON file (catch exceptions) */
 		CHAOS_API bool Parse(char const* buffer, nlohmann::json& result);
 		/** parsing a JSON file from a buffer (load any dependant files) */
-		CHAOS_API bool ParseRecursive(char const* buffer, boost::filesystem::path const& config_path, nlohmann::json& result, LoadFileFlag flag = LoadFileFlag::NONE);
+		CHAOS_API bool ParseRecursive(char const* buffer, boost::filesystem::path const& config_path, nlohmann::json& result, LoadFileFlag flag = LoadFileFlag::None);
 		/** Load a JSON file in a recursive whay */
-		CHAOS_API bool LoadJSONFile(FilePathParam const& path, nlohmann::json& result, LoadFileFlag flag = LoadFileFlag::NONE);
+		CHAOS_API bool LoadJSONFile(FilePathParam const& path, nlohmann::json& result, LoadFileFlag flag = LoadFileFlag::None);
 		/** create a temporary directory to hold the configuration (returns the path of the directory where the file is) */
 		CHAOS_API boost::filesystem::path DumpConfigFile(nlohmann::json const * json, char const* filename = "myconfig.json");
 		/** save the json into a file */
@@ -408,7 +408,7 @@ namespace chaos
 			{
 				Class const* dst_class = ClassManager::GetDefaultInstance()->FindCPPClass<T>();
 				if (dst_class != nullptr)
-					if (json_class->InheritsFrom(dst_class, true) == InheritanceType::YES) // accept equal
+					if (json_class->InheritsFrom(dst_class, true) == InheritanceType::Yes) // accept equal
 						return (T*)json_class->CreateInstance();
 			}
 		}

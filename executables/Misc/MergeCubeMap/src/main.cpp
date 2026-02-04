@@ -11,7 +11,7 @@ protected:
 
 	virtual bool EnumerateInputActions(chaos::InputActionProcessor & in_action_processor, chaos::EnumerateInputActionContext in_context) override
 	{
-		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KP_ADD) , "Next CubeMap", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KeypadAdd) , "Next CubeMap", [this]()
 		{
 			ChangeCubeMap(cubemap_index + 1);
 		}))
@@ -19,7 +19,7 @@ protected:
 			return true;
 		}
 
-		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KP_SUBTRACT), "Previous CubeMap", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(chaos::Key::KeypadSubtract), "Previous CubeMap", [this]()
 		{
 			ChangeCubeMap(cubemap_index - 1);
 		}))
@@ -41,7 +41,7 @@ protected:
 
 			chaos::PixelFormat pf = pixel_formats[index];
 
-			char const * component_type = (pf.component_type == chaos::PixelComponentType::UNSIGNED_CHAR) ? "unsigned char" : "float";
+			char const * component_type = (pf.component_type == chaos::PixelComponentType::UnsignedChar) ? "unsigned char" : "float";
 
 			imgui_user_message.AddLine(chaos::StringTools::Printf("format : index = [%d] component = [%d] type = [%s]", index, pf.component_count, component_type).c_str());
 		}
@@ -162,7 +162,7 @@ protected:
 
 			chaos::ImageDescription desc = chaos::ImageTools::GetImageDescription(bitmap);
 
-			void * color = (desc.pixel_format.component_type == chaos::PixelComponentType::UNSIGNED_CHAR) ? (void*)&c1[0] : (void*)&c2; // select a color for background
+			void * color = (desc.pixel_format.component_type == chaos::PixelComponentType::UnsignedChar) ? (void*)&c1[0] : (void*)&c2; // select a color for background
 
 			int dx = size - desc.width;
 			int dy = size - desc.height;
@@ -204,8 +204,8 @@ protected:
 			return false;
 
 		chaos::GPUProgramGenerator program_generator;
-		program_generator.AddShaderSourceFile(chaos::ShaderType::FRAGMENT, resources_path / "pixel_shader_cube.txt");
-		program_generator.AddShaderSourceFile(chaos::ShaderType::VERTEX,   resources_path / "vertex_shader.txt");
+		program_generator.AddShaderSourceFile(chaos::ShaderType::Fragment, resources_path / "pixel_shader_cube.txt");
+		program_generator.AddShaderSourceFile(chaos::ShaderType::Vertex,   resources_path / "vertex_shader.txt");
 
 		program = program_generator.GenProgramObject();
 		if (program == nullptr)
@@ -229,7 +229,7 @@ protected:
 
 	virtual bool OnMouseButtonImpl(chaos::MouseButtonEvent const &mouse_button_event) override
 	{
-		if (mouse_button_event.IsKeyReleased(chaos::Key::MOUSE_BUTTON_2))
+		if (mouse_button_event.IsKeyReleased(chaos::Key::MouseButton2))
 		{
 			imgui_user_message.AddLine("HelloWorld");
 			return true;

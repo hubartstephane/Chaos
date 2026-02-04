@@ -141,14 +141,14 @@ namespace chaos
 	WrapMode AtlasBitmapInfo::GetEffectiveRequestWrapMode(WrapMode src) const
 	{
 		// mode is none, see in the animation itself if there is a default settings
-		if (src == WrapMode::NONE)
+		if (src == WrapMode::None)
 		{
 			if (animation_info != nullptr)
 			{
 				src = animation_info->default_wrap_mode;
 				// still no mode by default, take clamp
-				if (src == WrapMode::NONE)
-					src = WrapMode::CLAMP; // do not use 'check_ranges' by default because it is more to detect error for an invisible sprite than for bad animation
+				if (src == WrapMode::None)
+					src = WrapMode::Clamp; // do not use 'check_ranges' by default because it is more to detect error for an invisible sprite than for bad animation
 			}
 		}
 		return src;
@@ -212,7 +212,7 @@ namespace chaos
 		// frame base animation
 		if (animation_info->IsFrameAnimation())
 		{
-			if (mode == WrapMode::CHECK_RANGES && grid_index.y != 0)
+			if (mode == WrapMode::CheckLimits && grid_index.y != 0)
 				return AtlasBitmapLayout();
 			return DoGetFrameAnimationLayout(grid_index.x, mode);
 		}
@@ -442,7 +442,7 @@ namespace chaos
 		boost::filesystem::path bitmap_filename;
 		SplitFilename(path, target_dir, index_filename, bitmap_filename); // will be ignored during loading, real name is read from .JSON index
 		// load the file into memory
-		Buffer<char> buffer = FileTools::LoadFile(index_filename, LoadFileFlag::ASCII | LoadFileFlag::NO_ERROR_TRACE);
+		Buffer<char> buffer = FileTools::LoadFile(index_filename, LoadFileFlag::Ascii | LoadFileFlag::NoErrorTrace);
 		if (buffer == nullptr)
 		{
 			BitmapAtlasLog::Error("Atlas::LoadAtlas: fail to load [%s]", index_filename.string().c_str());

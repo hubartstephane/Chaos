@@ -5,26 +5,7 @@ namespace chaos
 	template<InputTypeExt INPUT_TYPE_EXT>
 	class InspectInputCondition;
 
-	enum class QueryInputRequestType;
-
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-	/**
-	* QueryInputRequestType: The requested input status
-	*/
-
-	enum class QueryInputRequestType : int
-	{
-		None,
-		Inactive,
-		JustDeactivated,
-		InactiveRepeated,
-		Active,
-		JustActivated,
-		ActiveRepeated,
-	};
-
-	CHAOS_DECLARE_ENUM_METHOD(QueryInputRequestType, CHAOS_API);
 
 	/**
 	 * InspectInputCondition: a request that gets the value of an input
@@ -40,11 +21,11 @@ namespace chaos
 		using value_type = InputValue_t<input_type>;
 
 		/** constructor */
-		InspectInputCondition(input_type in_input, state_type* in_out_state, value_type* in_out_value, QueryInputRequestType in_query_type):
+		InspectInputCondition(input_type in_input, state_type* in_out_state, value_type* in_out_value, InputStateCheckType in_check_type):
 			input(in_input),
 			out_state(in_out_state),
 			out_value(in_out_value),
-			query_type(in_query_type)
+			check_type(in_check_type)
 		{
 		}
 		/** copy constructor */
@@ -53,7 +34,7 @@ namespace chaos
 		/** override */
 		virtual InputConditionResult Check(InputConditionCheckParams const& in_params) const override
 		{
-			if (out_state == nullptr && out_value == nullptr && query_type == QueryInputRequestType::None) // this request is useless
+			if (out_state == nullptr && out_value == nullptr && check_type == InputStateCheckType::None) // this request is useless
 				return InputConditionResult::Invalid;
 
 			auto query_result = in_params.consumption_cache->QueryInputState(input, in_params.input_receiver, in_params.input_device);
@@ -82,26 +63,9 @@ namespace chaos
 				return result ? InputConditionResult::True : InputConditionResult::False;
 			};
 
-			switch (query_type)
-			{
-			case QueryInputRequestType::None:
-				return InputConditionResult::True;
-			case QueryInputRequestType::Inactive:
-				return ConvertResultType(in_input_state->IsInactive());
-			case QueryInputRequestType::JustDeactivated:
-				return ConvertResultType(in_input_state->IsJustDeactivated());
-			case QueryInputRequestType::InactiveRepeated:
-				return ConvertResultType(in_input_state->IsInactiveRepeated());
-			case QueryInputRequestType::Active:
-				return ConvertResultType(in_input_state->IsActive());
-			case QueryInputRequestType::JustActivated:
-				return ConvertResultType(in_input_state->IsJustActivated());
-			case QueryInputRequestType::ActiveRepeated:
-				return ConvertResultType(in_input_state->IsActiveRepeated());
-			default:
-				assert(0);
-			}
-			return InputConditionResult::True; // whatever the value is, it's a success !
+			return in_input_state->CheckState(check_type)?
+				InputConditionResult::True: 
+				InputConditionResult::False;
 		}
 
 		/** override */
@@ -153,7 +117,7 @@ namespace chaos
 				strcpy_s(input_buffer, sizeof(input_buffer), EnumToString(input));
 			}
 
-			if (query_type == QueryInputRequestType::None)
+			if (check_type == InputStateCheckType::None)
 			{
 				if (out_state != nullptr || out_value != nullptr)
 					std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Query[%s]", input_buffer);
@@ -162,7 +126,7 @@ namespace chaos
 			}
 			else
 			{
-				std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "%s[%s]", EnumToString(query_type), input_buffer);
+				std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "%s[%s]", EnumToString(check_type), input_buffer);
 			}
 			return debug_info_storage.buffer;
 		}
@@ -176,7 +140,7 @@ namespace chaos
 		/** the result of the request */
 		value_type* out_value = nullptr;
 		/** whether an inactive input is a success or not */
-		QueryInputRequestType query_type = QueryInputRequestType::None;
+		InputStateCheckType check_type = InputStateCheckType::None;
 	};
 
 	/**
@@ -184,52 +148,52 @@ namespace chaos
 	 */
 	
 	template<InputTypeExt INPUT_TYPE_EXT>
-	InspectInputCondition<INPUT_TYPE_EXT> QueryInput(INPUT_TYPE_EXT in_input, QueryInputRequestType in_query_type = QueryInputRequestType::None)
+	InspectInputCondition<INPUT_TYPE_EXT> QueryInput(INPUT_TYPE_EXT in_input, InputStateCheckType in_check_type = InputStateCheckType::None)
 	{
-		return InspectInputCondition<INPUT_TYPE_EXT>(in_input, nullptr, nullptr, in_query_type);
+		return InspectInputCondition<INPUT_TYPE_EXT>(in_input, nullptr, nullptr, in_check_type);
 	}
 
 	template<InputTypeExt INPUT_TYPE_EXT>
-	InspectInputCondition<INPUT_TYPE_EXT> QueryInput(INPUT_TYPE_EXT in_input, InputValue_t<INPUT_TYPE_EXT> *out_value, QueryInputRequestType in_query_type = QueryInputRequestType::None)
+	InspectInputCondition<INPUT_TYPE_EXT> QueryInput(INPUT_TYPE_EXT in_input, InputValue_t<INPUT_TYPE_EXT> *out_value, InputStateCheckType in_check_type = InputStateCheckType::None)
 	{
-		return InspectInputCondition<INPUT_TYPE_EXT>(in_input, nullptr, out_value, in_query_type);
+		return InspectInputCondition<INPUT_TYPE_EXT>(in_input, nullptr, out_value, in_check_type);
 	}
 
 	template<InputTypeExt INPUT_TYPE_EXT>
-	InspectInputCondition<INPUT_TYPE_EXT> QueryInput(INPUT_TYPE_EXT in_input, InputState_t<INPUT_TYPE_EXT>* out_state, QueryInputRequestType in_query_type = QueryInputRequestType::None)
+	InspectInputCondition<INPUT_TYPE_EXT> QueryInput(INPUT_TYPE_EXT in_input, InputState_t<INPUT_TYPE_EXT>* out_state, InputStateCheckType in_check_type = InputStateCheckType::None)
 	{
-		return InspectInputCondition<INPUT_TYPE_EXT>(in_input, out_state, nullptr, in_query_type);
+		return InspectInputCondition<INPUT_TYPE_EXT>(in_input, out_state, nullptr, in_check_type);
 	}
 	
 	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
 	auto Active(INPUT_TYPE_EXT in_input, PARAMS... params)
 	{
-		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::Active);
+		return QueryInput(in_input, std::forward<PARAMS>(params)..., InputStateCheckType::Active);
 	}
 	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
 	auto JustActivated(INPUT_TYPE_EXT in_input, PARAMS... params)
 	{
-		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::JustActivated);
+		return QueryInput(in_input, std::forward<PARAMS>(params)..., InputStateCheckType::JustActivated);
 	}
 	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
 	auto ActiveRepeated(INPUT_TYPE_EXT in_input, PARAMS... params)
 	{
-		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::ActiveRepeated);
+		return QueryInput(in_input, std::forward<PARAMS>(params)..., InputStateCheckType::ActiveRepeated);
 	}
 	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
 	auto Inactive(INPUT_TYPE_EXT in_input, PARAMS... params)
 	{
-		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::Inactive);
+		return QueryInput(in_input, std::forward<PARAMS>(params)..., InputStateCheckType::Inactive);
 	}
 	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
 	auto JustDeactivated(INPUT_TYPE_EXT in_input, PARAMS... params)
 	{
-		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::JustDeactivated);
+		return QueryInput(in_input, std::forward<PARAMS>(params)..., InputStateCheckType::JustDeactivated);
 	}
 	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
 	auto InactiveRepeated(INPUT_TYPE_EXT in_input, PARAMS... params)
 	{
-		return QueryInput(in_input, std::forward<PARAMS>(params)..., QueryInputRequestType::InactiveRepeated);
+		return QueryInput(in_input, std::forward<PARAMS>(params)..., InputStateCheckType::InactiveRepeated);
 	}
 
 #endif

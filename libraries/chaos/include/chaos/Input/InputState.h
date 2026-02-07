@@ -3,6 +3,7 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	enum class InputStatus;
+	enum class InputStateCheckType;
 
 	template<InputType INPUT_TYPE>
 	class InputStateType;
@@ -32,6 +33,24 @@ namespace chaos
 		JustActivated = 3,
 		JustDeactivated = 4
 	};
+
+	/**
+	* InputStateCheckType: The requested input status
+	*/
+
+	enum class InputStateCheckType : int
+	{
+		None,
+		Inactive,
+		JustDeactivated,
+		InactiveRepeated,
+		Active,
+		JustActivated,
+		ActiveRepeated,
+	};
+
+	CHAOS_DECLARE_ENUM_METHOD(InputStateCheckType, CHAOS_API);
+
 
 	/**
 	* InputStateType: base class for key/axis/stick state
@@ -133,6 +152,31 @@ namespace chaos
 				update_time = frame_time;
 			}
 			value = in_value;
+		}
+
+		/** a generic check function */
+		bool CheckState(InputStateCheckType check_type) const
+		{
+			switch (check_type)
+			{
+			case InputStateCheckType::None:
+				return true;
+			case InputStateCheckType::Inactive:
+				return IsInactive();
+			case InputStateCheckType::JustDeactivated:
+				return IsJustDeactivated();
+			case InputStateCheckType::InactiveRepeated:
+				return IsInactiveRepeated();
+			case InputStateCheckType::Active:
+				return IsActive();
+			case InputStateCheckType::JustActivated:
+				return IsJustActivated();
+			case InputStateCheckType::ActiveRepeated:
+				return IsActiveRepeated();
+			default:
+				assert(0);
+			}
+			return true;
 		}
 
 	protected:

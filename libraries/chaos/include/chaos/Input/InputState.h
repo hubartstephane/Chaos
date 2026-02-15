@@ -3,7 +3,7 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	enum class InputStatus;
-	enum class InputStateCheckType;
+	enum class InputStatusCheckType;
 
 	template<InputType INPUT_TYPE>
 	class InputStateType;
@@ -35,10 +35,10 @@ namespace chaos
 	};
 
 	/**
-	* InputStateCheckType: The requested input status
+	* InputStatusCheckType: The requested input status
 	*/
 
-	enum class InputStateCheckType : int
+	enum class InputStatusCheckType : int
 	{
 		None,
 		Inactive,
@@ -49,7 +49,7 @@ namespace chaos
 		ActiveRepeated,
 	};
 
-	CHAOS_DECLARE_ENUM_METHOD(InputStateCheckType, CHAOS_API);
+	CHAOS_DECLARE_ENUM_METHOD(InputStatusCheckType, CHAOS_API);
 
 
 	/**
@@ -155,23 +155,23 @@ namespace chaos
 		}
 
 		/** a generic check function */
-		bool CheckState(InputStateCheckType check_type) const
+		bool CheckState(InputStatusCheckType check_type) const
 		{
 			switch (check_type)
 			{
-			case InputStateCheckType::None:
+			case InputStatusCheckType::None:
 				return true;
-			case InputStateCheckType::Inactive:
+			case InputStatusCheckType::Inactive:
 				return IsInactive();
-			case InputStateCheckType::JustDeactivated:
+			case InputStatusCheckType::JustDeactivated:
 				return IsJustDeactivated();
-			case InputStateCheckType::InactiveRepeated:
+			case InputStatusCheckType::InactiveRepeated:
 				return IsInactiveRepeated();
-			case InputStateCheckType::Active:
+			case InputStatusCheckType::Active:
 				return IsActive();
-			case InputStateCheckType::JustActivated:
+			case InputStatusCheckType::JustActivated:
 				return IsJustActivated();
-			case InputStateCheckType::ActiveRepeated:
+			case InputStatusCheckType::ActiveRepeated:
 				return IsActiveRepeated();
 			default:
 				assert(0);
@@ -201,6 +201,21 @@ namespace chaos
 		/** time when the state has been updated */
 		double update_time = -1.0;
 	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+	// will be removed when refactor is over
+
 
 	/**
 	 * Standalone functions

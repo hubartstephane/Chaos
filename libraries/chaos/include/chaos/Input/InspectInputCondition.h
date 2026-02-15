@@ -63,7 +63,7 @@ namespace chaos
 				return result ? InputConditionResult::True : InputConditionResult::False;
 			};
 
-			return in_input_state->CheckState(check_type)?
+			return in_input_state->CheckStatus(check_type)?
 				InputConditionResult::True: 
 				InputConditionResult::False;
 		}

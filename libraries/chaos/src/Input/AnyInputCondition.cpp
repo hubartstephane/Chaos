@@ -26,7 +26,7 @@ namespace chaos
 
 	InputConditionResult AnyInputCondition::Check(InputConditionCheckParams const& in_params) const
 	{
-		in_params.consumption_cache->SetConsumeAllInputs(in_params.input_receiver);
+		in_params.consumption_cache->SetAllInputConsumer(in_params.input_receiver);
 
 		return in_params.input_device->IsAnyInputActive()?
 			InputConditionResult::True:

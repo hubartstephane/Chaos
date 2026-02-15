@@ -155,7 +155,7 @@ namespace chaos
 		}
 
 		/** a generic check function */
-		bool CheckState(InputStatusCheckType check_type) const
+		bool CheckStatus(InputStatusCheckType check_type) const
 		{
 			switch (check_type)
 			{

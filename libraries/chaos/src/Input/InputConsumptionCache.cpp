@@ -73,9 +73,15 @@ namespace chaos
 		
 		if (response_status == InputStateResponseStatus::Failure)
 			return InputStateResponseStatus::Failure;
-		if (all_inputs_consumer.has_value() && all_inputs_consumer.value() != in_input_receiver)
-			return InputStateResponseStatus::Failure;
-
+		if constexpr (std::is_same_v<Key, INPUT_TYPE>)
+			if (all_key_consumer.has_value() && all_key_consumer.value() != in_input_receiver)
+				return InputStateResponseStatus::Failure;
+		if constexpr (std::is_same_v<Input1D, INPUT_TYPE>)
+			if (all_input1D_consumer.has_value() && all_input1D_consumer.value() != in_input_receiver)
+				return InputStateResponseStatus::Failure;
+		if constexpr (std::is_same_v<Input2D, INPUT_TYPE>)
+			if (all_input2D_consumer.has_value() && all_input2D_consumer.value() != in_input_receiver)
+				return InputStateResponseStatus::Failure;
 		return response_status;
 	}
 
@@ -144,10 +150,44 @@ namespace chaos
 		return QueryMappedInputState(in_input, keys, in_input_receiver, in_input_device, in_query_flags);
 	}
 
-	void InputConsumptionCache::SetConsumeAllInputs(InputReceiverInterface const* in_input_receiver)
+	bool InputConsumptionCache::SetAllKeyConsumer(InputReceiverInterface const* in_input_receiver)
 	{
-		if (!all_inputs_consumer.has_value())
-			all_inputs_consumer = in_input_receiver;
+		if (!all_key_consumer.has_value() || all_key_consumer.value() == in_input_receiver)
+		{
+			all_key_consumer = in_input_receiver;
+			return true;
+		}
+		return true;
+	}
+
+	bool InputConsumptionCache::SetAllInput1DConsumer(InputReceiverInterface const* in_input_receiver)
+	{
+		if (!all_input1D_consumer.has_value() || all_input1D_consumer.value() == in_input_receiver)
+		{
+			all_input1D_consumer = in_input_receiver;
+			return true;
+		}
+		return true;
+	}
+
+	bool InputConsumptionCache::SetAllInput2DConsumer(InputReceiverInterface const* in_input_receiver)
+	{
+		if (!all_input2D_consumer.has_value() || all_input2D_consumer.value() == in_input_receiver)
+		{
+			all_input2D_consumer = in_input_receiver;
+			return true;
+		}
+		return true;
+	}
+
+	bool InputConsumptionCache::SetAllInputConsumer(InputReceiverInterface const* in_input_receiver)
+	{
+		// we must force all 3 calls to be done
+		bool result = false;
+		result |= SetAllKeyConsumer(in_input_receiver);
+		result |= SetAllInput1DConsumer(in_input_receiver);
+		result |= SetAllInput2DConsumer(in_input_receiver);
+		return result;
 	}
 
 	void InputConsumptionCache::Clear()
@@ -155,7 +195,10 @@ namespace chaos
 		consumed_keys.clear();
 		consumed_input1D.clear();
 		consumed_input2D.clear();
-		all_inputs_consumer.reset();
+
+		all_key_consumer.reset();
+		all_input1D_consumer.reset();
+		all_input2D_consumer.reset();
 	}
 
 }; // namespace chaos

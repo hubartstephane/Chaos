@@ -80,7 +80,7 @@ namespace chaos
 	 * 
 	 * XXX: A trace of the input receiver consuming an input is kept. The same input may be further request but only by the same consumer
 	 *      (nullptr is a valid consumer meaning no one will ever be allowed to consumed the input)
-	 *      The same is true for SetConsumeAllInputs(...)
+	 *      The same is true for SetAllInputConsumer(...)
 	 */
 
 	class CHAOS_API InputConsumptionCache
@@ -103,7 +103,13 @@ namespace chaos
 		InputStateResponse_t<MappedInput2D> QueryInputState(MappedInput2D const & in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputStateQueryFlags in_query_flags = InputStateQueryFlags::None);
 
 		/** all incomming input requests will be considered as consumed */
-		void SetConsumeAllInputs(InputReceiverInterface const* in_input_receiver);
+		bool SetAllInputConsumer(InputReceiverInterface const* in_input_receiver);
+		/** all incomming key requests will be considered as consumed */
+		bool SetAllKeyConsumer(InputReceiverInterface const* in_input_receiver);
+		/** all incomming input1D requests will be considered as consumed */
+		bool SetAllInput1DConsumer(InputReceiverInterface const* in_input_receiver);
+		/** all incomming input2D requests will be considered as consumed */
+		bool SetAllInput2DConsumer(InputReceiverInterface const* in_input_receiver);
 
 		/** clear the cache */
 		void Clear();
@@ -162,8 +168,12 @@ namespace chaos
 		/** input2D that are consumed */
 		std::map<Input2D, InputReceiverInterface const*> consumed_input2D;
 
-		/** the receiver that claimed for all inputs */
-		std::optional<InputReceiverInterface const*> all_inputs_consumer;
+		/** the receiver that claimed for all key */
+		std::optional<InputReceiverInterface const*> all_key_consumer;
+		/** the receiver that claimed for all input1D */
+		std::optional<InputReceiverInterface const*> all_input1D_consumer;
+		/** the receiver that claimed for all input2D */
+		std::optional<InputReceiverInterface const*> all_input2D_consumer;
 	};
 
 #else

@@ -156,7 +156,7 @@ function Project:DependOnStandardLib(lib_name)
 		function(lib)
 			Utility:AllTargets(
 				function(plat, conf)
-					table.insert(self.additionnal_libs[plat][conf], lib_name)
+					table.insert(self.additionnal_libs[plat][conf], lib)
 				end
 			)
 		end

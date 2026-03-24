@@ -2,8 +2,9 @@
 
 # This script compiles and installs most libraries into "external" directory
 SCRIPT=$(readlink -f "$0")
+SCRIPT_PATH=$(dirname $SCRIPT)
 
-. install_scripts/install-extra-tools.bsh
+. $SCRIPT_PATH/install_scripts/install-extra-tools.bsh
 
 ###########################################################################
 # Initial Clean

@@ -1,0 +1,47 @@
+#! /usr/bin/bash
+
+SCRIPT_PATH=$(dirname $SCRIPT)
+EXTERNAL_PATH=$SCRIPT_PATH/external
+INSTALLATION_PATH=$EXTERNAL_PATH/installation
+BASE_INSTALL_PATH=$EXTERNAL_PATH
+BASE_BUILD_PATH=$EXTERNAL_PATH/build
+
+function ShowPaths()
+{
+	echo "SCRIPT:            " $SCRIPT
+	echo "SCRIPT_PATH:       " $SCRIPT_PATH
+	echo "EXTERNAL_PATH:     " $EXTERNAL_PATH
+	echo "INSTALLATION_PATH: " $INSTALLATION_PATH
+	echo "BASE_INSTALL_PATH: " $BASE_INSTALL_PATH
+	echo "BASE_BUILD_PATH:   " $BASE_BUILD_PATH
+}
+
+function Title()
+{
+	echo "========================================================="
+	echo "== " $1
+	echo "========================================================="
+}
+
+function BeginBuildLibrary()
+{
+	LIBRARY=$1
+	CONFIG_TYPE=$2
+	SRC_PATH=$INSTALLATION_PATH/$LIBRARY
+	BUILD_PATH=$BASE_BUILD_PATH/$LIBRARY/$CONFIG_TYPE
+	INSTALL_PATH=$BASE_INSTALL_PATH/$LIBRARY/$CONFIG_TYPE
+	
+	echo "========================================================="
+	echo "  -> Building: " $LIBRARY
+	echo "       CONFIG_TYPE:  " $CONFIG_TYPE	
+	echo "       SRC_PATH:     " $SRC_PATH
+	echo "       BUILD_PATH:   " $BUILD_PATH
+	echo "       INSTALL_PATH: " $INSTALL_PATH
+	echo "========================================================="
+}
+
+function DoInstall()
+{
+	Title "Install $1"
+	sudo apt install $1 -y
+}

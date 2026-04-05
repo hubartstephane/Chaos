@@ -51,8 +51,6 @@ else
 
 			ParuInstall freeimage
 
-			if false; then
-
 			# (re)create the build directory
 			Title "Clean Build Directory"
 			#rm -fr $BASE_BUILD_PATH

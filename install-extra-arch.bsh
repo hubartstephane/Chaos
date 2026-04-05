@@ -1,0 +1,99 @@
+#! /usr/bin/bash
+
+SCRIPT=$(readlink -f "$0")
+SCRIPT_PATH=$(dirname $SCRIPT)
+EXTERNAL_PATH=$SCRIPT_PATH/external
+INSTALLATION_PATH=$EXTERNAL_PATH/installation
+BASE_INSTALL_PATH=$EXTERNAL_PATH
+BASE_BUILD_PATH=$EXTERNAL_PATH/build
+
+function Title()
+{
+	echo "========================================================="
+	echo "== " $1
+	echo "========================================================="
+}
+
+
+function PacmanInstall()
+{
+	Title "Install $1"
+	sudo pacman -S --noconfirm $1
+}
+
+function ParuInstall()
+{
+	Title "Install $1"
+	paru -S --noconfirm $1
+}
+
+
+if [ "$#" -eq 0 ]; then
+	echo "usage: $0 -lib   -> install most of the libraries"
+	echo "usage: $0 -exe   -> install some necessary executables"
+	echo "usage: $0 -tools -> install some extra tools"
+else
+	for i in $* ; do
+		if [ "$i" == "-lib" ] ; then
+		
+			PacmanInstall glm
+			PacmanInstall boost
+			PacmanInstall lua54
+			PacmanInstall freetype2
+			PacmanInstall nlohmann-json
+			PacmanInstall glfw
+			PacmanInstall glew
+			PacmanInstall assimp
+			PacmanInstall tinyxml2
+			PacmanInstall clang
+			PacmanInstall glslang
+			PacmanInstall vulkan-devel
+
+			ParuInstall freeimage
+
+			# (re)create the build directory
+			Title "Clean Build Directory"
+			#rm -fr $BASE_BUILD_PATH
+			#mkdir -p $BASE_BUILD_PATH
+
+			# install IRRKLANG
+			Title "Install Irrklang"
+			IRRKLANG=$INSTALLATION_PATH/irrKlang-64bit-1.6.0.zip
+			#rm -fr $EXTERNAL_PATH/irrKlang-64bit-1.6.0
+			#unzip $IRRKLANG -d $EXTERNAL_PATH
+									
+			# install IMGUI
+			Title "Install ImGui"
+			#rm -fr $BASE_INSTALL_PATH/ImGui
+			#unzip $INSTALLATION_PATH/ImGui.zip -d $BASE_INSTALL_PATH
+			
+			# Final Clean
+			FINAL_CLEAN=1
+			if [ $FINAL_CLEAN -gt 0 ] ; then
+				Title "Final Clean"	
+				#rm -fr $BASE_BUILD_PATH
+			fi
+				
+		fi
+		if [ "$i" == "-exe" ] ; then
+		
+
+			PacmanInstall premake
+			PacmanInstall codeblocks
+			PacmanInstall kdevelop
+			PacmanInstall cmake
+			PacmanInstall libpython3-all-dev
+			PacmanInstall dos2unix
+
+			ParuInstall codelite
+		fi
+		if [ "$i" == "-tools" ] ; then
+		
+			PacmanInstall blender
+			PacmanInstall krita
+			PacmanInstall vlc
+			PacmanInstall audacity
+			PacmanInstall tiled
+		fi		
+	done
+fi

@@ -22,6 +22,12 @@ function Title()
 	echo "========================================================="
 }
 
+function DoInstall()
+{
+	Title "Install $1"
+	sudo apt install $1 -y
+}
+
 function BeginBuildLibrary()
 {
 	LIBRARY=$1
@@ -39,8 +45,19 @@ function BeginBuildLibrary()
 	echo "========================================================="
 }
 
-function DoInstall()
+function BuildCMakeLibrary()
 {
-	Title "Install $1"
-	sudo apt install $1 -y
+	LIBRARY=$1
+	EXTRA_DEBUG_PARAMS=$2
+	EXTRA_RELEASE_PARAMS=$3
+
+	BeginBuildLibrary $LIBRARY Debug
+	echo cmake -S $SRC_PATH -B $BUILD_PATH -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH $EXTRA_DEBUG_PARAMS
+	echo cmake --build $BUILD_PATH --config Debug
+	echo cmake --install $BUILD_PATH --config Debug
+	
+	BeginBuildLibrary $LIBRARY Release
+	echo cmake -S $SRC_PATH -B $BUILD_PATH -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH $EXTRA_RELEASE_PARAMS
+	echo cmake --build $BUILD_PATH --config Release
+	echo cmake --install $BUILD_PATH --config Release
 }

@@ -62,16 +62,29 @@ else
 			rm -fr $BASE_BUILD_PATH
 			mkdir -p $BASE_BUILD_PATH
 
-			# install IRRKLANG
-			Title "Install Irrklang"
-			IRRKLANG=$INSTALLATION_PATH/irrKlang-64bit-1.6.0.zip
-			rm -fr $EXTERNAL_PATH/irrKlang-64bit-1.6.0
-			unzip $IRRKLANG -d $EXTERNAL_PATH
+			# install some libraries
+			for LIBRARY in imgui implot
+			do
 
-			# install IMGUI
-			Title "Install ImGui"
-			rm -fr $BASE_INSTALL_PATH/ImGui
-			unzip $INSTALLATION_PATH/ImGui.zip -d $BASE_INSTALL_PATH
+				Title "Install $LIBRARY"
+				rm -fr $EXTERNAL_PATH/$LIBRARY
+				BuildCMakeLibrary $LIBRARY
+
+			done
+
+			# install IRRKLANG
+			#Title "Install Irrklang"
+			#IRRKLANG=$INSTALLATION_PATH/irrKlang-64bit-1.6.0.zip
+			#rm -fr $EXTERNAL_PATH/irrKlang-64bit-1.6.0
+			#unzip $IRRKLANG -d $EXTERNAL_PATH
+
+
+
+
+
+
+
+
 			
 			# Final Clean
 			FINAL_CLEAN=1

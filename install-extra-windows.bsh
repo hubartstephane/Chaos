@@ -27,11 +27,11 @@ mkdir -p $BASE_BUILD_PATH
 # Configuration of wanted operations
 ###########################################################################
 
-UNZIP_FILES=0
+UNZIP_FILES=1
 INSTALL_GENERIC_LIBS=1
 INSTALL_ZLIB=1
 INSTALL_FREETYPE2=1
-INSTALL_BOOST=0
+INSTALL_BOOST=1
 FINAL_CLEAN=1
 
 ###########################################################################
@@ -71,7 +71,9 @@ if [ $INSTALL_GENERIC_LIBS -gt 0 ] ; then
 	 
 		rm -fr $EXTERNAL_PATH/$LIBRARY
 
-		BuildCMakeLibrary $LIBRARY
+		EXTRA_DEBUG_PARAMS='-DCHAOS_BUILD_TYPE=Debug'
+		EXTRA_RELEASE_PARAMS='-DCHAOS_BUILD_TYPE=Release'
+		BuildCMakeLibrary $LIBRARY "$EXTRA_DEBUG_PARAMS" "$EXTRA_RELEASE_PARAMS"
 	
 		#BeginBuildLibrary $LIBRARY Debug
 		#cmake -DCHAOS_BUILD_TYPE=Debug -S $SRC_PATH -B $BUILD_PATH

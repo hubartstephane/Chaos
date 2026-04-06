@@ -46,12 +46,12 @@ function BuildCMakeLibrary()
 	EXTRA_RELEASE_PARAMS=$3
 
 	BeginBuildLibrary $LIBRARY Debug
-	echo cmake -S $SRC_PATH -B $BUILD_PATH -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH $EXTRA_DEBUG_PARAMS
-	echo cmake --build $BUILD_PATH --config Debug
-	echo cmake --install $BUILD_PATH --config Debug
+	cmake -S $SRC_PATH -B $BUILD_PATH -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH $EXTRA_DEBUG_PARAMS
+	cmake --build $BUILD_PATH --config Debug
+	cmake --install $BUILD_PATH --config Debug
 	
 	BeginBuildLibrary $LIBRARY Release
-	echo cmake -S $SRC_PATH -B $BUILD_PATH -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH $EXTRA_RELEASE_PARAMS
-	echo cmake --build $BUILD_PATH --config Release
-	echo cmake --install $BUILD_PATH --config Release
+	cmake -S $SRC_PATH -B $BUILD_PATH -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH $EXTRA_RELEASE_PARAMS
+	cmake --build $BUILD_PATH --config Release
+	cmake --install $BUILD_PATH --config Release
 }

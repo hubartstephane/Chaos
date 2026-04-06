@@ -22,12 +22,6 @@ function Title()
 	echo "========================================================="
 }
 
-function DoInstall()
-{
-	Title "Install $1"
-	sudo apt install $1 -y
-}
-
 function BeginBuildLibrary()
 {
 	LIBRARY=$1

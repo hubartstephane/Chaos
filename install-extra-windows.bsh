@@ -1,10 +1,17 @@
 #! /usr/bin/bash
 
 # This script compiles and installs most libraries into "external" directory
+
+###########################################################################
+# Initialization
+###########################################################################
+
 SCRIPT=$(readlink -f "$0")
 SCRIPT_PATH=$(dirname $SCRIPT)
 
 . $SCRIPT_PATH/install_scripts/install-extra-tools.bsh
+
+ShowPaths
 
 ###########################################################################
 # Initial Clean
@@ -64,10 +71,18 @@ if [ $INSTALL_GENERIC_LIBS -gt 0 ] ; then
 	 
 		rm -fr $EXTERNAL_PATH/$LIBRARY
 
-		DEBUG_EXTRA_PARAMS='-DCMAKE_INSTALL_PREFIX=$INSTALL_PATH'
-		RELEASE_EXTRA_PARAMS='-DCMAKE_INSTALL_PREFIX=$INSTALL_PATH'
-		BuildCMakeLibrary $LIBRARY '$DEBUG_EXTRA_PARAMS' '$RELEASE_EXTRA_PARAMS'
-
+		BuildCMakeLibrary $LIBRARY
+	
+		#BeginBuildLibrary $LIBRARY Debug
+		#cmake -DCHAOS_BUILD_TYPE=Debug -S $SRC_PATH -B $BUILD_PATH
+		#cmake --build $BUILD_PATH --config Debug
+		#cmake --install $BUILD_PATH --prefix $INSTALL_PATH --config Debug
+	
+		#BeginBuildLibrary $LIBRARY Release
+		#cmake -DCHAOS_BUILD_TYPE=Release -S $SRC_PATH -B $BUILD_PATH
+		#cmake --build $BUILD_PATH --config Release
+		#cmake --install $BUILD_PATH --prefix $INSTALL_PATH --config Release
+	
 	done
 fi
 
@@ -87,6 +102,16 @@ if [ $INSTALL_ZLIB -gt 0 ] ; then
 
 	BuildCMakeLibrary "zlib-1.3"
 
+	#BeginBuildLibrary "zlib-1.3" Debug
+	#cmake -S $SRC_PATH -B $BUILD_PATH -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH
+	#cmake --build $BUILD_PATH --config Debug
+	#cmake --install $BUILD_PATH --config Debug
+	
+	#BeginBuildLibrary "zlib-1.3" Release
+	#cmake -S $SRC_PATH -B $BUILD_PATH -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH
+	#cmake --build $BUILD_PATH --config Release
+	#cmake --install $BUILD_PATH --config Release
+
 	rm -fr $INSTALLATION_PATH/zlib-1.3
 	cd -
 fi
@@ -105,10 +130,20 @@ if [ $INSTALL_FREETYPE2 -gt 0 ] ; then
 
 	rm -fr $EXTERNAL_PATH/freetype2
 
-	DEBUG_EXTRA_PARAMS='-DZLIB_LIBRARY=zlibstaticd -DZLIB_INCLUDE_DIR=$BASE_INSTALL_PATH/zlib-1.3/Debug/include'
-	RELEASE_EXTRA_PARAMS='-DZLIB_LIBRARY=zlibstatic -DZLIB_INCLUDE_DIR=$BASE_INSTALL_PATH/zlib-1.3/Release/include'
-	BuildCMakeLibrary freetype2 '$DEBUG_EXTRA_PARAMS' '$RELEASE_EXTRA_PARAMS'
 
+	EXTRA_DEBUG_PARAMS='-DZLIB_LIBRARY=zlibstaticd -DZLIB_INCLUDE_DIR=$BASE_INSTALL_PATH/zlib-1.3/Debug/include'
+	EXTRA_RELEASE_PARAMS='-DZLIB_LIBRARY=zlibstatic -DZLIB_INCLUDE_DIR=$BASE_INSTALL_PATH/zlib-1.3/Release/include'
+	BuildCMakeLibrary "freetype2" '$EXTRA_DEBUG_PARAMS' '$EXTRA_RELEASE_PARAMS'
+
+	#BeginBuildLibrary freetype2 Debug
+	#cmake -S $SRC_PATH -B $BUILD_PATH -DZLIB_LIBRARY=zlibstaticd -DZLIB_INCLUDE_DIR=$BASE_INSTALL_PATH/zlib-1.3/Debug/include
+	#cmake --build $BUILD_PATH --config Debug
+	#cmake --install $BUILD_PATH --prefix $INSTALL_PATH --config Debug
+
+	#BeginBuildLibrary freetype2 Release
+	#cmake -S $SRC_PATH -B $BUILD_PATH  -DZLIB_LIBRARY=zlibstatic -DZLIB_INCLUDE_DIR=$BASE_INSTALL_PATH/zlib-1.3/Release/include
+	#cmake --build $BUILD_PATH --config Release
+	#cmake --install $BUILD_PATH --prefix $INSTALL_PATH --config Release
 fi
 
 

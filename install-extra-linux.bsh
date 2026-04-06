@@ -1,21 +1,23 @@
 #! /usr/bin/bash
 
+# This script compiles and installs most libraries into "external" directory
+
+###########################################################################
+# Initialization
+###########################################################################
+
 SCRIPT=$(readlink -f "$0")
 SCRIPT_PATH=$(dirname $SCRIPT)
-EXTERNAL_PATH=$SCRIPT_PATH/external
-INSTALLATION_PATH=$EXTERNAL_PATH/installation
-BASE_INSTALL_PATH=$EXTERNAL_PATH
-BASE_BUILD_PATH=$EXTERNAL_PATH/build
 
-function Title()
-{
-	echo "========================================================="
-	echo "== " $1
-	echo "========================================================="
-}
+. $SCRIPT_PATH/install_scripts/install-extra-tools.bsh
 
+ShowPaths
 
-function DoInstall()
+###########################################################################
+# Functions
+###########################################################################
+
+function AptInstall()
 {
 	Title "Install $1"
 	sudo apt install $1 -y
@@ -29,80 +31,80 @@ else
 	for i in $* ; do
 		if [ "$i" == "-lib" ] ; then
 		
-			DoInstall libglm-dev
-			DoInstall libboost-all-dev
-			DoInstall liblua5.4-dev
-			DoInstall libfreetype6-dev
-			DoInstall libfreeimage-dev
-			DoInstall libfreeimageplus-dev
-			DoInstall nlohmann-json3-dev
-			DoInstall libglfw3-dev
-			DoInstall libglew2.0
-			DoInstall libglew-dev
-			DoInstall libassimp-dev
-			DoInstall libtinyxml2-dev
-			DoInstall clang
-			DoInstall gcc-multilib 
-			DoInstall g++-multilib
-			DoInstall glslang-dev
-			DoInstall vulkan-tools
-			DoInstall vulkan-validationlayers
-			DoInstall vulkan-validationlayers-dev
+			AptInstall libglm-dev
+			AptInstall libboost-all-dev
+			AptInstall liblua5.4-dev
+			AptInstall libfreetype6-dev
+			AptInstall libfreeimage-dev
+			AptInstall libfreeimageplus-dev
+			AptInstall nlohmann-json3-dev
+			AptInstall libglfw3-dev
+			AptInstall libglew2.0
+			AptInstall libglew-dev
+			AptInstall libassimp-dev
+			AptInstall libtinyxml2-dev
+			AptInstall clang
+			AptInstall gcc-multilib
+			AptInstall g++-multilib
+			AptInstall glslang-dev
+			AptInstall vulkan-tools
+			AptInstall vulkan-validationlayers
+			AptInstall vulkan-validationlayers-dev
 			
 			# (re)create the build directory
 			Title "Clean Build Directory"
 			rm -fr $BASE_BUILD_PATH 
-			mkdir -p $BASE_BUILD_PATH			
+			mkdir -p $BASE_BUILD_PATH
 
 			# install IRRKLANG
 			Title "Install Irrklang"
 			IRRKLANG=$INSTALLATION_PATH/irrKlang-64bit-1.6.0.zip
-			rm -fr $EXTERNAL_PATH/irrKlang-64bit-1.6.0						
-			unzip $IRRKLANG -d $EXTERNAL_PATH				
-									
+			rm -fr $EXTERNAL_PATH/irrKlang-64bit-1.6.0
+			unzip $IRRKLANG -d $EXTERNAL_PATH
+
 			# install IMGUI
-			Title "Install ImGui"			
-			rm -fr $BASE_INSTALL_PATH/ImGui	
-			unzip $INSTALLATION_PATH/ImGui.zip -d $BASE_INSTALL_PATH							
+			Title "Install ImGui"
+			rm -fr $BASE_INSTALL_PATH/ImGui
+			unzip $INSTALLATION_PATH/ImGui.zip -d $BASE_INSTALL_PATH
 			
 			# Final Clean
 			FINAL_CLEAN=1
 			if [ $FINAL_CLEAN -gt 0 ] ; then
-				Title "Final Clean"	
+				Title "Final Clean"
 				rm -fr $BASE_BUILD_PATH
-			fi			
+			fi
 				
 		fi
 		if [ "$i" == "-exe" ] ; then
 		
-			DoInstall codelite
-			#DoInstall premake4
-			#DoInstall codeblocks
-			#DoInstall kdevelop
-			DoInstall cmake
-			DoInstall libpython3-all-dev
-			DoInstall dos2unix
-			DoInstall unix2dos 
+			AptInstall codelite
+			#AptInstall premake4
+			#AptInstall codeblocks
+			#AptInstall kdevelop
+			AptInstall cmake
+			AptInstall libpython3-all-dev
+			AptInstall dos2unix
+			AptInstall unix2dos
 			
-			# Install Premake5			
+			# Install Premake5
 			Title "Install Premake5"
 			PREMAKE5_URL=https://github.com/premake/premake-core/releases/download/v5.0.0-beta2/premake-5.0.0-beta2-linux.tar.gz
 			curl -L $PREMAKE5_URL --output $BASE_INSTALL_PATH/premake5.tar.gz  --ssl-no-revoke
 			mkdir -p $BASE_INSTALL_PATH/premake5_tmp
 			gunzip --stdout $BASE_INSTALL_PATH/premake5.tar.gz | tar -x -C $BASE_INSTALL_PATH/premake5_tmp
-			sudo mv $BASE_INSTALL_PATH/premake5_tmp/premake5 /usr/bin						
+			sudo mv $BASE_INSTALL_PATH/premake5_tmp/premake5 /usr/bin
 			rm -fr $BASE_INSTALL_PATH/premake5_tmp
-			rm -fr $BASE_INSTALL_PATH/premake5.tar.gz									
+			rm -fr $BASE_INSTALL_PATH/premake5.tar.gz
 		fi
 		if [ "$i" == "-tools" ] ; then
 		
-			DoInstall blender
-			DoInstall blender-data
-			DoInstall krita
-			DoInstall krita-data
-			DoInstall vlc
-			DoInstall audacity
-			DoInstall tiled
+			AptInstall blender
+			AptInstall blender-data
+			AptInstall krita
+			AptInstall krita-data
+			AptInstall vlc
+			AptInstall audacity
+			AptInstall tiled
 		fi		
 	done
 fi

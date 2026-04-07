@@ -68,7 +68,8 @@ else
 
 				Title "Install $LIBRARY"
 				rm -fr $EXTERNAL_PATH/$LIBRARY
-				BuildCMakeLibrary $LIBRARY
+				EXTRA="-DGLFW_PATH=/usr/include/GLFW"
+				BuildCMakeLibrary $LIBRARY $EXTRA $EXTRA
 
 			done
 

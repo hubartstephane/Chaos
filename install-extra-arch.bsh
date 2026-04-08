@@ -42,20 +42,20 @@ else
 	for i in $* ; do
 		if [ "$i" == "-lib" ] ; then
 		
-			#PacmanInstall glm
-			#PacmanInstall boost
-			#PacmanInstall lua54
-			#PacmanInstall freetype2
-			#PacmanInstall nlohmann-json
-			#PacmanInstall glfw
-			#PacmanInstall glew
-			#PacmanInstall assimp
-			#PacmanInstall tinyxml2
-			#PacmanInstall clang
-			#PacmanInstall glslang
-			#PacmanInstall vulkan-devel
+			PacmanInstall glm
+			PacmanInstall boost
+			PacmanInstall lua54
+			PacmanInstall freetype2
+			PacmanInstall nlohmann-json
+			PacmanInstall glfw
+			PacmanInstall glew
+			PacmanInstall assimp
+			PacmanInstall tinyxml2
+			PacmanInstall clang
+			PacmanInstall glslang
+			PacmanInstall vulkan-devel
 
-			#ParuInstall freeimage
+			ParuInstall freeimage
 
 			# (re)create the build directory
 			Title "Clean Build Directory"
@@ -68,25 +68,16 @@ else
 
 				Title "Install $LIBRARY"
 				rm -fr $EXTERNAL_PATH/$LIBRARY
-				EXTRA="-DGLFW_PATH=/usr/include/GLFW"
-				BuildCMakeLibrary $LIBRARY $EXTRA $EXTRA
+				BuildCMakeLibrary $LIBRARY
 
 			done
 
 			# install IRRKLANG
-			#Title "Install Irrklang"
-			#IRRKLANG=$INSTALLATION_PATH/irrKlang-64bit-1.6.0.zip
-			#rm -fr $EXTERNAL_PATH/irrKlang-64bit-1.6.0
-			#unzip $IRRKLANG -d $EXTERNAL_PATH
+			Title "Install Irrklang"
+			IRRKLANG=$INSTALLATION_PATH/irrKlang-64bit-1.6.0.zip
+			rm -fr $EXTERNAL_PATH/irrKlang-64bit-1.6.0
+			unzip $IRRKLANG -d $EXTERNAL_PATH
 
-
-
-
-
-
-
-
-			
 			# Final Clean
 			FINAL_CLEAN=1
 			if [ $FINAL_CLEAN -gt 0 ] ; then

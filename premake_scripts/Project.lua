@@ -217,7 +217,8 @@ function Project:DebugConf(plat)
 	defines {"_DEBUG"}
 	staticruntime "off"
 	symbols "On"
-	flags {"MultiProcessorCompile"}
+	multiprocessorcompile("on")
+	linktimeoptimization("off")
 end
 
 
@@ -233,8 +234,8 @@ function Project:ReleaseConf(plat)
 	staticruntime "off"
 	optimize "On"
 	symbols "Off"
-	flags {"MultiProcessorCompile"}
-	flags {"LinkTimeOptimization"}
+	multiprocessorcompile("on")
+	linktimeoptimization("on")
 end
 
 --------------------------------------------------------------------

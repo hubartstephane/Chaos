@@ -62,10 +62,15 @@ else
 			rm -fr $EXTERNAL_PATH/irrKlang-64bit-1.6.0
 			unzip $IRRKLANG -d $EXTERNAL_PATH
 
-			# install IMGUI
-			Title "Install ImGui"
-			rm -fr $BASE_INSTALL_PATH/ImGui
-			unzip $INSTALLATION_PATH/ImGui.zip -d $BASE_INSTALL_PATH
+			# install some libraries
+			for LIBRARY in imgui implot
+			do
+
+				Title "Install $LIBRARY"
+				rm -fr $EXTERNAL_PATH/$LIBRARY
+				BuildCMakeLibrary $LIBRARY
+
+			done
 			
 			# Final Clean
 			FINAL_CLEAN=1

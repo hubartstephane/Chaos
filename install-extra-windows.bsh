@@ -1,3 +1,4 @@
+INSTALL_PREMAKE
 #! /usr/bin/bash
 
 # This script compiles and installs most libraries into "external" directory
@@ -32,7 +33,9 @@ INSTALL_GENERIC_LIBS=1
 INSTALL_ZLIB=1
 INSTALL_FREETYPE2=1
 INSTALL_BOOST=1
+INSTALL_PREMAKE=1
 FINAL_CLEAN=1
+
 
 ###########################################################################
 # Unzip libraries
@@ -139,6 +142,22 @@ if [ $INSTALL_BOOST -gt 0 ] ; then
 	$BASE_BUILD_PATH/boost_1_88_0/b2
 	$BASE_BUILD_PATH/boost_1_88_0/b2 install --prefix=$BASE_INSTALL_PATH/boost_1_88_0
 	cd -
+fi
+
+###########################################################################
+# Premake
+###########################################################################
+
+if [ $INSTALL_PREMAKE -gt 0 ] ; then
+
+	Title "Install Premake5"
+    PREMAKE5_URL=https://github.com/premake/premake-core/releases/download/v5.0.0-beta8/premake-5.0.0-beta8-windows.zip
+	curl -L $PREMAKE5_URL --output $BASE_INSTALL_PATH/premake5.zip  --ssl-no-revoke
+	mkdir -p $BASE_INSTALL_PATH/premake5_tmp
+	gunzip --stdout $BASE_INSTALL_PATH/premake5.zip > $BASE_INSTALL_PATH/../build_tools/premake5.exe
+	rm -fr $BASE_INSTALL_PATH/premake5_tmp
+	rm -fr $BASE_INSTALL_PATH/premake5.zip
+
 fi
 
 ###########################################################################

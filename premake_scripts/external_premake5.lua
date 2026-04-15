@@ -231,7 +231,8 @@ end
 if LINUX then
 	GLSLANG_BASE_PATH = path.join("/","usr", "include")
 	GLSLANG_INC_PATH = "glslang"
-	GLSLANG_LIB_NAME = {"glslang", "MachineIndependent", "OSDependent", "HLSL", "OGLCompiler", "GenericCodeGen", "SPVRemapper", "pthread"}
+	--GLSLANG_LIB_NAME = {"glslang", "MachineIndependent", "OSDependent", "HLSL", "OGLCompiler", "GenericCodeGen", "SPVRemapper", "pthread"}
+    GLSLANG_LIB_NAME = {"glslang", "MachineIndependent", "OSDependent", "GenericCodeGen", "pthread"}
 end
 build:DeclareExternalLib("GLSLANG")
 

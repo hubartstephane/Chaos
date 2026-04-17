@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/MISC/FreeType
+-- ROOT_PATH/executables/MISC/FreeTypeTest
 -- =============================================================================
 
 local project = build:WindowedApp()

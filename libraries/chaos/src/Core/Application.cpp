@@ -286,13 +286,24 @@ namespace chaos
 	{
 		redirection_build_path = build_path.lexically_normal();
 
+		ApplicationLog::BeginTransaction(LogSeverity::Message);
+		ApplicationLog::TransactionConcatLN("SetFileRedirectionDirectories:");
+		ApplicationLog::TransactionConcatLN("  build_path:      [%s]", redirection_build_path.string().c_str());
+
 		std::vector<std::string> extra = StringTools::Split(direct_access_paths.c_str(), ';');
 		for (std::string & e : extra)
 		{
 			boost::filesystem::path p = std::move(e);
 			if (!p.empty())
-				redirection_source_paths.push_back(p.lexically_normal());
+			{
+				boost::filesystem::path redirected_path = p.lexically_normal();
+				redirection_source_paths.push_back(redirected_path);
+				ApplicationLog::TransactionConcatLN("  redirected_path: [%s]", redirected_path.string().c_str());
+			}
 		}
+
+		ApplicationLog::EndTransaction();
+
 	}
 #endif // _DEBUG
 

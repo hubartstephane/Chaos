@@ -83,14 +83,13 @@ This applies naturally to:
 
 ---
 
-### Log Window
+## Activation & Control
 
-You can inspect redirections at runtime via the log window:
+This feature can be controlled at runtime using application launch parameters:
 
-- Open with **ALT + 7**
-- It displays the resolved paths and redirection behavior
+- `--NoDirectResourceFiles`
 
-![Path Redirection Logs](C:\Users\hubar\programming\Chaos\documentation\RedirectPathLog.png)
+When this flag is provided, the direct resource access behavior is disabled, forcing the application to use standard resource resolution instead.
 
 ---
 

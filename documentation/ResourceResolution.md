@@ -39,6 +39,7 @@ In **DEBUG**:
 - Assets are loaded from their original location in the workspace
 
 This means:
+
 - Editing a file immediately affects what the executable sees
 - There is no intermediate “build version” of assets
 
@@ -74,10 +75,32 @@ Because resources are read directly from source:
 - The runtime can reload data without restarting
 
 This applies naturally to:
+
 - Shaders
 - Config files
 - Textures
 - Any file-based asset
+
+---
+
+### Log Window
+
+You can inspect redirections at runtime via the log window:
+
+- Open with **ALT + 7**
+- It displays the resolved paths and redirection behavior
+
+![Path Redirection Logs](C:\Users\hubar\programming\Chaos\documentation\RedirectPathLog.png)
+
+---
+
+## Implementation Notes
+
+The mechanism relies on a combination of runtime setup and compile-time configuration:
+
+- `Application::SetFileRedirectionDirectories(...)`
+- `DEATH_PROJECT_BUILD_PATH`
+- `DEATH_PROJECT_DIRECT_RESOURCE_PATH`
 
 ---
 
@@ -94,9 +117,11 @@ This applies naturally to:
 ## Debug vs Release
 
 In **DEBUG**:
+
 - Resources come from the workspace
 - No copy or packaging is involved
 
 In **RELEASE**:
+
 - Resources are expected to be packaged or installed
 - The executable no longer depends on the workspace

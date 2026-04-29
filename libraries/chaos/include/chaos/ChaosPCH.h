@@ -50,7 +50,11 @@
 #include <utility>
 #include <fstream>
 #include <sstream> // for ostringstream
-#include <strstream> // for ostrstream (deprecated, will be replaced by spanstream in C++23)
+//#include <strstream> // for ostrstream (deprecated, will be replaced by spanstream in C++23)
+
+#include <spanstream> // for ostrstream (deprecated, will be replaced by spanstream in C++23)
+
+
 #include <set>
 #include <cmath>
 #include <cfloat>
@@ -232,8 +236,16 @@ static_assert(BOOST_PP_IS_EMPTY(), "/Zc:preprocessor flag is required for window
 // If you call in your executable some OpenGL function this would crash
 
 //#define GLEW_STATIC
+#if _WIN32
 #include <GL/glew.h>
 #include <GL/wglew.h>
+#endif
+#if __linux__
+#include <GL/glxew.h>
+#endif
+
+
+
 
 // XXX : GL.h requires windows.h
 #include <GL/gl.h>

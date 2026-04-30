@@ -452,7 +452,7 @@ function Project:AddProjectToSolution()
 	if (_ACTION == "codelite") then
 		cppdialect "C++2a"
 	else
-		cppdialect "C++20"
+		cppdialect "C++23"
 	end
 
 	-- entry point (avoid WinMain to main)

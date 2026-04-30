@@ -30,7 +30,6 @@
 #endif
 
 #define NOMINMAX // remove min(...) and max(...) macro
-#define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS // due to ostrstream
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -49,12 +48,8 @@
 #include <iostream>
 #include <utility>
 #include <fstream>
-#include <sstream> // for ostringstream
-//#include <strstream> // for ostrstream (deprecated, will be replaced by spanstream in C++23)
-
-#include <spanstream> // for ostrstream (deprecated, will be replaced by spanstream in C++23)
-
-
+#include <sstream>
+#include <spanstream>
 #include <set>
 #include <cmath>
 #include <cfloat>

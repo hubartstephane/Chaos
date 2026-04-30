@@ -242,7 +242,7 @@ namespace chaos
 				assert(buffer != nullptr);
 				assert(buflen > 0);
 
-				std::ostrstream stream(buffer, buflen - 1); // -1 to keep at least zero terminal
+				std::ospanstream stream(std::span<char>(buffer, buflen - 1)); // -1 to keep at least zero terminal
 
 				bool error = BitTools::ForEachBitForward(value_as_int, [this, &stream](int index)
 				{
@@ -250,7 +250,7 @@ namespace chaos
 
 					if (EnumMetaDataEntry<T> const * entry = FindEntryByValue(bit_as_value))
 					{
-						if (stream.pcount() > 0)
+						if (stream.tellp() > std::streampos(0))
 							stream << "|";
 						stream << entry->name;
 						return false;
@@ -258,9 +258,10 @@ namespace chaos
 					return true; // error
 				});
 
-				if (!error)
+				std::streampos pos = stream.tellp();
+				if (!error && pos >= std::streampos(0))
 				{
-					buffer[stream.pcount()] = 0; // terminal zero
+					buffer[static_cast<size_t>(pos)] = '\0'; // terminal zero
 					return buffer;
 				}
 			}

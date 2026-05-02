@@ -45,6 +45,11 @@ newoption {
 	description = "the architecture for the build"
 }
 
+newoption {
+	trigger = "linux-display-server",
+	description = "the display server for linux builds: x11 or wayland"
+}
+
 -- =============================================================================
 -- Fix crashing premake for codelite
 -- =============================================================================

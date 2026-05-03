@@ -447,9 +447,9 @@ function Project:AddProjectToSolution()
 	defines('DEATH_IS_BUILDING_' .. self.project_name) -- the name of the the project beeing built
 
 	if _OPTIONS["linux-display-server"] == "x11" then
-		defines { "CHAOS_USE_X11" }
+		defines { "DEATH_USE_X11" }
 	elseif _OPTIONS["linux-display-server"] == "wayland" then
-		defines { "CHAOS_USE_WAYLAND" }
+		defines { "DEATH_USE_WAYLAND" }
 	end
 
 	-- language/dialect

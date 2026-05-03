@@ -2,6 +2,17 @@
 
 #include "chaos/Config.h"
 
+#if _WIN32
+#	if !_WIN64
+#		error "cannot compile in x32. Compile in x64 instead"
+#	endif
+#endif
+
+#ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable: 4091) // warning C4091: 'typedef ': ignored on left of '' when no variable is declared  (CAUSED by dbghelp.h)
+#endif
+
 /**
 * Common "macros"
 */
@@ -14,20 +25,9 @@
 #  undef max
 #endif
 
-#if _WIN32
-#	if !_WIN64
-#		error "cannot compile in x32. Compile in x64 instead"
-#	endif
-#endif
-
 /**
 * This file only deserve to include most external common includes
 */
-
-#ifdef _MSC_VER
-#  pragma warning(push)
-#  pragma warning(disable: 4091) // warning C4091: 'typedef ': ignored on left of '' when no variable is declared  (CAUSED by dbghelp.h)
-#endif
 
 #define NOMINMAX // remove min(...) and max(...) macro
 #include <stdio.h>
@@ -58,7 +58,7 @@
 #include <source_location>
 
 #if _WIN32
-#include <io.h>
+#	include <io.h>
 #endif
 
 #include <fcntl.h>
@@ -74,7 +74,7 @@
 // boost is full of #pragma comment(lib, ...)
 // ignore theses link directive for STATIC_LIBRARIES that would use this header
 #if !defined DEATH_BUILDING_SHARED_LIBRARY && !defined DEATH_BUILDING_EXECUTABLE
-#define BOOST_ALL_NO_LIB
+#	define BOOST_ALL_NO_LIB
 #endif
 #define BOOST_LIB_DIAGNOSTIC // display all #pragma comment(lib, ...) directives
 #include <boost/static_assert.hpp>
@@ -165,17 +165,15 @@ static_assert(BOOST_PP_IS_EMPTY(), "/Zc:preprocessor flag is required for window
 #include <math.h>
 
 #if _WIN32
-#  include <intrin.h>
-#  include <tchar.h>
-#  include <windows.h>
-#  include <Windowsx.h>
-#  include <Mmsystem.h>
-#  include <Shlobj.h>
-#  include <Dbghelp.h>
-#  include <WinUser.h>
-
-#undef DELETE // thanks to winnt.h we have this define !
-
+#	include <intrin.h>
+#	include <tchar.h>
+#	include <windows.h>
+#	include <Windowsx.h>
+#	include <Mmsystem.h>
+#	include <Shlobj.h>
+#	include <Dbghelp.h>
+#	include <WinUser.h>
+#	undef DELETE // thanks to winnt.h we have this define !
 #endif // #if _WIN32
 
 #include <lua.hpp>
@@ -230,40 +228,50 @@ static_assert(BOOST_PP_IS_EMPTY(), "/Zc:preprocessor flag is required for window
 // there will be 2 sets of thoses global variables (duplication), and only the set used in chaos with DLL will be initialized
 // If you call in your executable some OpenGL function this would crash
 
-//#define GLEW_STATIC
-#if _WIN32
-#include <GL/glew.h>
-#include <GL/wglew.h>
+
+#define CHAOS_USE_OPENGL 1
+#define CHAOS_USE_VULKAN 0
+
+// GLEW
+#if CHAOS_USE_OPENGL
+#	if _WIN32
+#		include <GL/glew.h>
+#		include <GL/wglew.h>
+#	elif __linux__
+#		include <GL/glxew.h>
+#	endif
 #endif
-#if __linux__
-#include <GL/glxew.h>
+
+// OPENGL
+#if CHAOS_USE_OPENGL
+#	include <GL/gl.h> // XXX : GL.h requires windows.h
+#	include <GL/glu.h>
 #endif
 
-
-
-
-// XXX : GL.h requires windows.h
-#include <GL/gl.h>
-#include <GL/glu.h>
+// VULKAN
+#if CHAOS_USE_VULKAN
+#	define VK_USE_PLATFORM_WIN32_KHR
+#	include <vulkan/vulkan.h>
+#	include <vulkan/vulkan_win32.h>
+#endif
 
 // GLFW
-#if WITH_VULKAN
-#include <vulkan/vulkan.h>
-#include <vulkan/vulkan_win32.h>
-
-#define VK_USE_PLATFORM_WIN32_KHR
-#define GLFW_INCLUDE_VULKAN
+#if CHAOS_USE_VULKAN
+#	define GLFW_INCLUDE_VULKAN
+#endif
 #include <GLFW/glfw3.h>
-#define GLFW_EXPOSE_NATIVE_WIN32
-#include <GLFW/glfw3native.h>
-#else // WITH_VULKAN
-
+#if _WIN32
 //#define GLFW_DLL
-#include <GLFW/glfw3.h>
-#define GLFW_EXPOSE_NATIVE_WIN32
+#	define GLFW_EXPOSE_NATIVE_WIN32
+#elif __linux__
+#	if DEATH_USE_WAYLAND
+#		define GLFW_EXPOSE_NATIVE_WAYLAND
+#	elif DEATH_USE_X11
+#		define GLFW_EXPOSE_NATIVE_X11
+#	endif
+#endif
 #define GLFW_EXPOSE_NATIVE_WGL
 #include <GLFW/glfw3native.h>
-#endif
 
 // IMGUI
 #define IMGUI_USE_WCHAR32 // important: imgui should have been compiled with this flag
@@ -272,13 +280,15 @@ static_assert(BOOST_PP_IS_EMPTY(), "/Zc:preprocessor flag is required for window
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_glfw.h"
 
+// IMPLOT
+#include "implot.h"
+
 // for forcefeedback
-#include "xinput.h"
-#pragma comment(lib, "xinput.lib")
+#if _WIN32
+#	include "xinput.h"
+#	pragma comment(lib, "xinput.lib")
+#endif // #if _WIN32
 
 #ifdef _MSC_VER
 #  pragma warning(pop)
 #endif
-
-// IMPLOT
-#include "implot.h"

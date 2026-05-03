@@ -4,3 +4,4 @@
 
 local project = build:WindowedApp()
 project:DependOnLib("IRRKLANG")
+project:DependOnLib("BOOST")

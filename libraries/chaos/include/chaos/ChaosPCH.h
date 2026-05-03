@@ -263,14 +263,15 @@ static_assert(BOOST_PP_IS_EMPTY(), "/Zc:preprocessor flag is required for window
 #if _WIN32
 //#define GLFW_DLL
 #	define GLFW_EXPOSE_NATIVE_WIN32
+#	define GLFW_EXPOSE_NATIVE_WGL
 #elif __linux__
 #	if DEATH_USE_WAYLAND
 #		define GLFW_EXPOSE_NATIVE_WAYLAND
 #	elif DEATH_USE_X11
 #		define GLFW_EXPOSE_NATIVE_X11
 #	endif
+#	define GLFW_EXPOSE_NATIVE_GLX
 #endif
-#define GLFW_EXPOSE_NATIVE_WGL
 #include <GLFW/glfw3native.h>
 
 // IMGUI

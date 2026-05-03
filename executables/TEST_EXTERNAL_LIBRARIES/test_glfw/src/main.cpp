@@ -2,45 +2,50 @@
 #include <stdio.h>
 #include <iostream>
 
+#define CHAOS_USE_OPENGL 1
+#define CHAOS_USE_VULKAN 0
 
-
-//#define GLEW_STATIC
-#include <GL/glew.h>
-#if _WIN32
-#include <GL/wglew.h>
+// GLEW
+#if CHAOS_USE_OPENGL
+#	if _WIN32
+#		include <GL/glew.h>
+#		include <GL/wglew.h>
+#	elif __linux__
+#		include <GL/glxew.h>
+#	endif
 #endif
 
-#if __linux__
-#include <GL/glxew.h>
+// OPENGL
+#if CHAOS_USE_OPENGL
+#	include <GL/gl.h> // XXX : GL.h requires windows.h
+#	include <GL/glu.h>
 #endif
 
-// XXX : GL.h requires windows.h
-#include <GL/gl.h>
-#include <GL/glu.h>
+// VULKAN
+#if CHAOS_USE_VULKAN
+#	define VK_USE_PLATFORM_WIN32_KHR
+#	include <vulkan/vulkan.h>
+#	include <vulkan/vulkan_win32.h>
+#endif
 
-#if __linux__
+// GLFW
+#if CHAOS_USE_VULKAN
+#	define GLFW_INCLUDE_VULKAN
+#endif
 #include <GLFW/glfw3.h>
-#define GLFW_EXPOSE_NATIVE_X11
-#define GLFW_EXPOSE_NATIVE_GLX
-#include <GLFW/glfw3native.h>
-#endif
-
-
 #if _WIN32
-#include <GLFW/glfw3.h>
-#define GLFW_EXPOSE_NATIVE_WIN32
-#define GLFW_EXPOSE_NATIVE_WGL
-#include <GLFW/glfw3native.h>
+//#define GLFW_DLL
+#	define GLFW_EXPOSE_NATIVE_WIN32
+#	define GLFW_EXPOSE_NATIVE_WGL
+#elif __linux__
+#	if DEATH_USE_WAYLAND
+#		define GLFW_EXPOSE_NATIVE_WAYLAND
+#	elif DEATH_USE_X11
+#		define GLFW_EXPOSE_NATIVE_X11
+#	endif
+#	define GLFW_EXPOSE_NATIVE_GLX
 #endif
-
-
-
-
-
-
-
-
-
+#include <GLFW/glfw3native.h>
 
 void DrawWindow(GLFWwindow * window)
 {

@@ -232,13 +232,13 @@ static_assert(BOOST_PP_IS_EMPTY(), "/Zc:preprocessor flag is required for window
 #define CHAOS_USE_OPENGL 1
 #define CHAOS_USE_VULKAN 0
 
-#define XMD_H
 // GLEW
 #if CHAOS_USE_OPENGL
 #	if _WIN32
 #		include <GL/glew.h>
 #		include <GL/wglew.h>
 #	elif __linux__
+#		define XMD_H // hack to avoid collisions due to X11 inclusion (and FreeImage)
 #		include <GL/glxew.h>
 #	endif
 #endif
@@ -282,14 +282,8 @@ static_assert(BOOST_PP_IS_EMPTY(), "/Zc:preprocessor flag is required for window
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_glfw.h"
 
-
-
-
-
-
-
 // IMPLOT
-//#include "implot.h"
+#include "implot.h"
 
 // for forcefeedback
 #if _WIN32

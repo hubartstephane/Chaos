@@ -11,7 +11,7 @@
 #include "chaos/Image/Image.h"
 #include "chaos/Font/Font.h"
 #include "chaos/AtlasCore/AtlasCore.h"
-#include "chaos/Gpu/Gpu.h"
+#include "chaos/GPU/GPU.h"
 #include "chaos/Particle/Particle.h"
 #include "chaos/Windowing/Windowing.h"
 #include "chaos/Deprecated/Deprecated.h"

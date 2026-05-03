@@ -1,5 +1,5 @@
 #include "chaos/ChaosPCH.h"
-#include <Chaos/Chaos.h>
+#include <chaos/Chaos.h>
 
 namespace chaos
 {

@@ -153,11 +153,177 @@ protected:
 #endif
 
 
+class ImageGenerationParams
+{
+public:
+
+	bool IsCountValid() const
+	{
+		return (count > 0 && count < 500);
+	}
+
+	bool IsMinSizeXValid() const
+	{
+		return IsSizeValid(min_size.x) && (min_size.x < max_size.x);
+	}
+
+	bool IsMinSizeYValid() const
+	{
+		return IsSizeValid(min_size.y) && (min_size.y < max_size.y);
+	}
+
+	bool IsMaxSizeXValid() const
+	{
+		return IsSizeValid(max_size.x) && (min_size.x < max_size.x);
+	}
+
+	bool IsMaxSizeYValid() const
+	{
+		return IsSizeValid(max_size.y) && (min_size.y < max_size.y);
+	}
+
+	bool IsSizeValid(int size) const
+	{
+		return (size > 0) && (size < 1024);
+	}
+
+public:
+
+	int count = 15;
+	glm::ivec2 min_size = { 1, 1 };
+	glm::ivec2 max_size = { 256, 256 };
+};
+
 class AtlasBuilderWindow : public chaos::Window
 {
+	CHAOS_DECLARE_OBJECT_CLASS(AtlasBuilderWindow, chaos::Window);
+
+public:
+
+	virtual void OnDrawImGuiContent() override
+	{
+		chaos::ImGuiTools::FullViewportWindow("content", 0, [this]()
+		{
+			ImGui::SeparatorText("Generate images");
+
+			//ImGui::InputInt("count", &image_generation_params.count);
+			//ImGui::InputInt2("min size", &image_generation_params.min_size.x, image_generation_params.min_size.y);
+			//ImGui::InputInt2("max size", &image_generation_params.max_size.x, image_generation_params.max_size.y);
+
+			if (ImGui::BeginTable("image_generation_params", 2, 0))
+			{
+				// count 
+				bool count_valid = image_generation_params.IsCountValid();
+
+				ImGui::TableNextColumn();
+				ImGui::Text("count");
+
+				ImGui::TableNextColumn();
+				SelectTextColor(count_valid, [&]()
+				{
+					ImGui::InputInt("##count", &image_generation_params.count);
+				});
+
+				// min size
+				bool min_size_x_valid = image_generation_params.IsMinSizeXValid();
+				bool min_size_y_valid = image_generation_params.IsMinSizeYValid();
+
+				ImGui::TableNextColumn();
+				ImGui::Text("min size");
+
+				ImGui::TableNextColumn();
+				SelectTextColor(min_size_x_valid, [&]()
+				{
+					ImGui::InputInt("##min_size.x", &image_generation_params.min_size.x);
+				});
+
+				ImGui::TableNextColumn();
+				//ImGui::Text("##min size.y.title");
+
+				ImGui::TableNextColumn();
+				SelectTextColor(min_size_y_valid, [&]()
+				{
+					ImGui::InputInt("##min_size.y", &image_generation_params.min_size.y);
+				});
+
+				// max size
+				bool max_size_x_valid = image_generation_params.IsMaxSizeXValid();
+				bool max_size_y_valid = image_generation_params.IsMaxSizeYValid();
+
+				ImGui::TableNextColumn();
+				ImGui::Text("max size");
+
+				ImGui::TableNextColumn();
+				SelectTextColor(max_size_x_valid, [&]()
+				{
+					ImGui::InputInt("##max_size.x", &image_generation_params.max_size.x);
+				});
+
+				ImGui::TableNextColumn();
+				//ImGui::Text("##max size.y.title");
+
+				ImGui::TableNextColumn();
+				SelectTextColor(max_size_y_valid, [&]()
+				{
+					ImGui::InputInt("##max_size.y", &image_generation_params.max_size.y);
+				});
+
+
+
+
+				
+
+				ImGui::EndTable();
+			};
+
+			ImGui::SeparatorText("Generate altas");
+		
+		});
+	}
+
+	virtual void OnDropFile(int count, char const** paths) override
+	{
+
+
+
+	}
+
+protected:
+
+	void SelectTextColor(bool normal, chaos::LightweightFunction<void()> func)
+	{
+		ImVec4 normal_color = ImGui::GetStyle().Colors[ImGuiCol_Text];
+		ImVec4 error_color  = ImVec4(1.0f, 0, 0, 1.0f);
+
+		ImGui::PushStyleColor(ImGuiCol_Text, normal ? normal_color : error_color);
+		func();
+		ImGui::PopStyleColor(1);
+	}
+
+protected:
+
+	ImageGenerationParams image_generation_params;
+
+};
+
+
+class AtlasBuilderApplication : public chaos::SimpleWindowApplication
+{
+	using chaos::SimpleWindowApplication::SimpleWindowApplication;
+
+	CHAOS_DECLARE_OBJECT_CLASS(AtlasBuilderApplication, chaos::SimpleWindowApplication);
+
+protected:
+
+	virtual int MainBody() override
+	{
+		//chaos::WinTools::ShowFile(GetResourcesPath());
+		return chaos::SimpleWindowApplication::MainBody();
+	}
+
 };
 
 int main(int argc, char ** argv, char ** env)
 {
-	return chaos::RunSimpleWindowApplication<AtlasBuilderWindow>(argc, argv, env);
+	return chaos::RunApplication<AtlasBuilderApplication>(argc, argv, env, AtlasBuilderWindow::GetStaticClass());
 }

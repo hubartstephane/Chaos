@@ -137,11 +137,9 @@ namespace chaos
 		assert(width >= 0);
 		assert(height >= 0);
 
-		FIBITMAP * result = nullptr;
-
 		// test whether pixel format is valid and supported
 		if (!pixel_format.IsValid())
-			return result;
+			return nullptr;
 
 		// get freeimage format
 		int bpp = 0;

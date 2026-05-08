@@ -214,6 +214,68 @@ class AtlasBuilderApplication : public chaos::SimpleWindowApplication
 
 public:
 
+	bool SaveImage(FIBITMAP* image, FREE_IMAGE_FORMAT target_format, boost::filesystem::path const path)
+	{
+		if (image == nullptr)
+			return false;
+
+		chaos::ImageDescription desc = chaos::ImageTools::GetImageDescription(image);
+		if (!desc.IsValid(false))
+			return false;
+
+
+		FREE_IMAGE_TYPE pixel_type = chaos::ImageTools::GetFreeImageType(desc.pixel_format);
+
+
+
+
+
+		FIBITMAP* converted_image = nullptr;
+		if (!FreeImage_FIFSupportsExportType(target_format, pixel_type))
+		{
+			switch(target_format)
+			{
+			case FIF_BMP:
+				converted_image = FreeImage_ConvertToType(image, FIT_BITMAP);
+				break;
+			case FIF_JPEG:
+				converted_image = FreeImage_ConvertToType(image, FIT_BITMAP);
+				break;
+			case FIF_PNG:
+				converted_image = FreeImage_ConvertToType(image, FIT_BITMAP);
+				break;
+			case FIF_DDS:
+				converted_image = FreeImage_ConvertToType(image, FIT_BITMAP);
+				break;
+			case FIF_GIF:
+				converted_image = FreeImage_ConvertToType(image, FIT_BITMAP);
+				break;
+			case FIF_HDR:
+				converted_image = FreeImage_ConvertToType(image, FIT_BITMAP);
+				break;
+			case FIF_EXR:	
+				converted_image = FreeImage_ConvertToType(image, FIT_BITMAP);
+				break;
+			default:
+				break;
+			}
+			if (converted_image == nullptr)
+				return false;
+		}
+
+		bool result = false;
+		if (converted_image == nullptr)
+		{
+			result = FreeImage_Save(target_format, image, path.string().c_str());
+		}
+		else
+		{
+			result = FreeImage_Save(target_format, converted_image, path.string().c_str());
+			FreeImage_Unload(converted_image);
+		}
+		return result;
+	}
+
 	bool GenerateImages(ImageGenerationParams const& image_generation_params)
 	{
 		if (!image_generation_params.IsValid())
@@ -273,7 +335,7 @@ public:
 				std::string image_name = chaos::StringTools::Printf("image%d.%s", i, extension);
 				boost::filesystem::path image_path = image_generation_directory / image_name;
 
-				FreeImage_Save(format, image, image_path.string().c_str());
+				SaveImage(image, format, image_path);
 
 				// free image
 				FreeImage_Unload(image);

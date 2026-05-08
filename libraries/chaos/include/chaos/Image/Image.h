@@ -8,4 +8,6 @@
 #include "chaos/Image/ImageAnimationDescription.h"
 #include "chaos/Image/ImageTools.h"
 #include "chaos/Image/ImageProcessor.h"
+#include "chaos/Image/ImageProcessorAddAlpha.h"
+#include "chaos/Image/ImageProcessorOutline.h"
 #include "chaos/Image/CubeMapTools.h"

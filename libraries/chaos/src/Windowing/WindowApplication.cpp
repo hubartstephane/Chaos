@@ -1002,9 +1002,13 @@ namespace chaos
 					{
 						WinTools::ShowFile(GetResourcesPath());
 					}
+					if (ImGui::MenuItem("Open User Local Dir.", nullptr, false, true))
+					{
+						WinTools::ShowFile(GetApplicationUserLocalPath());
+					}
 					if (ImGui::MenuItem("Open Temp Dir.", nullptr, false, true))
 					{
-						WinTools::ShowFile(GetUserLocalTempPath());
+						WinTools::ShowFile(GetApplicationTemporaryPath());
 					}
 					ImGui::EndMenu();
 				}

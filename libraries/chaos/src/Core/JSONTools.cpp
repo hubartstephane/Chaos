@@ -355,7 +355,7 @@ namespace chaos
 				boost::filesystem::path result;
 				// get the directory to write to
 				if (Application* application = Application::GetInstance())
-					result = application->CreateUserLocalTempDirectory();
+					result = application->GetApplicationTemporaryPath();
 				else
 					FileTools::CreateTemporaryDirectory("MyTempDirectory_%d", result);
 				// dump to file

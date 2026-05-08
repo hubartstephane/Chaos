@@ -9,7 +9,7 @@ public:
 		FIBITMAP * bitmap = chaos::WinTools::CaptureWindowToImage(GetHwnd());
 		if (bitmap != NULL)
 		{
-			boost::filesystem::path p = chaos::Application::GetInstance()->GetUserLocalTempPath() / "capture.png";
+			boost::filesystem::path p = chaos::Application::GetInstance()->GetApplicationUserLocalPath() / "capture.png";
 
 			FreeImage_Save(FIF_PNG, bitmap, p.string().c_str());
 			FreeImage_Unload(bitmap);

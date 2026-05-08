@@ -88,7 +88,7 @@ namespace chaos
 				Application const* application = Application::GetInstance(); // this function could be called before the initialization of the application. need to check
 				if (application == nullptr)
 					return;
-				filepath = (application->GetUserLocalTempPath() / "log_source_locations.txt").string();
+				filepath = (application->GetApplicationUserLocalPath() / "log_source_locations.txt").string();
 			}
 
 			// open the file and log info

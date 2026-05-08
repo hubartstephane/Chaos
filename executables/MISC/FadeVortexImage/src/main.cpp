@@ -437,7 +437,7 @@ protected:
 
 	virtual int Main() override
 	{
-		boost::filesystem::path dst_directory_path = GetUserLocalTempPath() / "GeneratedTexture";
+		boost::filesystem::path dst_directory_path = GetApplicationUserLocalPath() / "GeneratedTexture";
 		if (!boost::filesystem::is_directory(dst_directory_path))
 			if (!boost::filesystem::create_directories(dst_directory_path))
 				return -1;
@@ -446,7 +446,7 @@ protected:
 		glm::ivec2 cell_count = glm::ivec2(8, 5);
 
 		int texture_count = 160;
-		int recurse_count = 1;
+		int recurse_count = 2;
 
 		for (int i = 0; i < texture_count; ++i)
 		{

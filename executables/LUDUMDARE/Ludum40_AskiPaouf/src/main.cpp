@@ -51,13 +51,6 @@ protected:
 		if (!chaos::Window::OnInitialize(config))
 			return false;
 
-		// open user temp directory and dump the config file
-		chaos::Application * application = chaos::Application::GetInstance();
-		if (application != nullptr)
-		{
-			boost::filesystem::path user_temp = application->CreateUserLocalTempDirectory();
-		}
-
 		game = new Game;
 		if (game == nullptr)
 			return false;

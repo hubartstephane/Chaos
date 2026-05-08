@@ -36,7 +36,7 @@ protected:
 
 		boost::filesystem::path const & resource_path = application->GetResourcesPath();
 
-		boost::filesystem::path const & user_local = application->GetUserLocalPath();
+		boost::filesystem::path const & user_local = application->GetApplicationUserLocalPath();
 
 		// ==========================================================
 

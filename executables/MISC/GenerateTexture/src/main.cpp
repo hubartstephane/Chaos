@@ -53,7 +53,7 @@ protected:
 
 	virtual int Main() override
 	{
-		boost::filesystem::path dst_directory_path = GetUserLocalTempPath() / "GeneratedTexture";
+		boost::filesystem::path dst_directory_path = GetApplicationUserLocalPath() / "GeneratedTexture";
 		if (!boost::filesystem::is_directory(dst_directory_path))
 			if (!boost::filesystem::create_directories(dst_directory_path))
 				return -1;

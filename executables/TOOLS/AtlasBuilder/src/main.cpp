@@ -80,7 +80,7 @@ public:
 			chaos::Application* application = chaos::Application::GetInstance();
 			if (application != nullptr)
 			{
-				boost::filesystem::path const& user_path = application->GetUserLocalTempPath();
+				boost::filesystem::path const& user_path = application->GetApplicationUserLocalPath();
 
 				boost::filesystem::path dest = user_path / boost::filesystem::path(filename).filename();
 
@@ -221,11 +221,11 @@ public:
 
 		if (image_generation_directory.empty())
 		{
-			boost::filesystem::path const & temp_directory = CreateUserLocalTempDirectory();
-
-			//image_generation_directory = 
-			//if (image_generation_directory.empty())
-			//	return false;
+			boost::filesystem::path dst_path = GetApplicationTemporaryPath() / "GeneratedImages";
+			if (boost::filesystem::create_directories(dst_path))
+				image_generation_directory = std::move(dst_path);
+			else
+				return false;
 		}
 
 		chaos::WinTools::ShowFile(image_generation_directory);

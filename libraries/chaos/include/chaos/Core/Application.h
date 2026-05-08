@@ -48,18 +48,14 @@ namespace chaos
 		/** get the application name */
 		boost::filesystem::path const& GetApplicationFilename() const { return application_filename; }
 		/** get the application local path for execution data */
-		boost::filesystem::path const& GetUserLocalPath() const { return userlocal_path; }
+		boost::filesystem::path const& GetApplicationUserLocalPath() const { return application_userlocal_path; }
 		/** get the application local temp path for execution data */
-		boost::filesystem::path const& GetUserLocalTempPath() const { return userlocal_temp_path; }
+		boost::filesystem::path const& GetApplicationTemporaryPath() const { return application_temporary_path; }
 
 		/** get the configuration file path */
 		boost::filesystem::path GetConfigurationPath() const;
-
 		/** get the persistent data file path */
 		boost::filesystem::path GetPersistentDataPath() const;
-
-		/** create the use local temp directory */
-		boost::filesystem::path const& CreateUserLocalTempDirectory() const;
 
 		/** check whether -flag_name is in command line */
 		bool HasCommandLineFlag(char const* flag_name) const;
@@ -109,6 +105,11 @@ namespace chaos
 		/** log some application information */
 		virtual void LogExecutionInformation();
 
+		/** create the application user local directory */
+		bool CreateApplicationUserLocalDirectory() const;
+		/** create the application temporary directory */
+		bool CreateApplicationTemporaryDirectory() const;
+
 	protected:
 
 		/** the single application instance */
@@ -127,9 +128,9 @@ namespace chaos
 		/** the path of the resources */
 		boost::filesystem::path resources_path;
 		/** path of the application to store user data */
-		boost::filesystem::path userlocal_path;
+		boost::filesystem::path application_userlocal_path;
 		/** path of the application to store user temp data */
-		boost::filesystem::path userlocal_temp_path;
+		boost::filesystem::path application_temporary_path;
 
 		/** redirection source directories */
 #if _DEBUG

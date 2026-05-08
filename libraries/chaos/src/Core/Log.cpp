@@ -66,7 +66,7 @@ namespace chaos
 	{
 		if (Application* application = Application::GetInstance())
 		{
-			return application->GetUserLocalTempPath() / "logs.txt";
+			return application->GetApplicationUserLocalPath() / "logs.txt";
 		}
 		return {};
 	}

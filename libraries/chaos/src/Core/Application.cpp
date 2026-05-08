@@ -46,7 +46,7 @@ namespace chaos
 
 	boost::filesystem::path Application::GetPersistentDataPath() const
 	{
-		return GetUserLocalTempPath() / "persistent_data.json";
+		return GetApplicationUserLocalPath() / "persistent_data.json";
 	}
 
 	bool Application::LoadClasses(JSONReadConfiguration config)
@@ -154,8 +154,9 @@ namespace chaos
 		{
 			// store a copy of the parameters
 			StoreParameters(argc, argv, env);
-			// create a user temp directory if necessary */
-			CreateUserLocalTempDirectory();
+			// create some directories if necessary */
+			CreateApplicationUserLocalDirectory();
+			CreateApplicationTemporaryDirectory();
 			// initialize logging system (need to be done after StoreParameters so that application paths are known for loggers)
 			InitializeLogging();
 			// initialize global variables using parameters (requires logger)
@@ -227,8 +228,8 @@ namespace chaos
 
 		application_path = p.parent_path();
 		resources_path = application_path / "resources";
-		userlocal_path = WinTools::GetUserLocalPath() / "chaos" / application_name;
-		userlocal_temp_path = userlocal_path / "temp";
+		application_userlocal_path = WinTools::GetUserLocalPath() / "chaos" / application_name;
+		application_temporary_path = WinTools::GetTemporaryPath() / "chaos" / application_name;
 	}
 
 	char const* Application::GetApplicationName()
@@ -256,12 +257,22 @@ namespace chaos
 		return nullptr;
 	}
 
-	boost::filesystem::path const & Application::CreateUserLocalTempDirectory() const
+	bool Application::CreateApplicationUserLocalDirectory() const
 	{
-		boost::filesystem::path const & result = GetUserLocalTempPath();
-		if (!boost::filesystem::is_directory(result))
-			boost::filesystem::create_directories(result);
-		return result;
+		if (application_userlocal_path.empty())
+			return false;
+		if (boost::filesystem::is_directory(application_userlocal_path))
+			return true;
+		return boost::filesystem::create_directories(application_userlocal_path);
+	}
+
+	bool Application::CreateApplicationTemporaryDirectory() const
+	{
+		if (application_temporary_path.empty())
+			return false;
+		if (boost::filesystem::is_directory(application_temporary_path))
+			return true;
+		return boost::filesystem::create_directories(application_temporary_path);
 	}
 
 	bool Application::HasApplicationCommandLineFlag(char const * flag_name)

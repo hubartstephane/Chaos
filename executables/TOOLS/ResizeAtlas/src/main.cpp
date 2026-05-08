@@ -78,7 +78,7 @@ public:
 			chaos::Application* application = chaos::Application::GetInstance();
 			if (application != nullptr)
 			{
-				boost::filesystem::path const& user_path = application->GetUserLocalTempPath();
+				boost::filesystem::path const& user_path = application->GetApplicationUserLocalPath();
 
 				boost::filesystem::path dest = user_path / boost::filesystem::path(filename).filename();
 
@@ -131,7 +131,7 @@ protected:
 
 	virtual int Main() override
 	{
-		boost::filesystem::path user_temp = CreateUserLocalTempDirectory();
+		boost::filesystem::path const & user_temp = GetApplication
 		chaos::WinTools::ShowFile(user_temp);
 
 

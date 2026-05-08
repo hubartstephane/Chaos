@@ -952,7 +952,7 @@ namespace chaos
 				return false;
 
 			// create the directory
-			boost::filesystem::path capture_directory_path = window_application->GetUserLocalTempPath() / "Captures";
+			boost::filesystem::path capture_directory_path = window_application->GetApplicationUserLocalPath() / "Captures";
 			if (!boost::filesystem::is_directory(capture_directory_path))
 				if (!boost::filesystem::create_directories(capture_directory_path))
 					return false;

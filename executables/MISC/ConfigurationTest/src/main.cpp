@@ -101,7 +101,7 @@ protected:
 
 	boost::filesystem::path GetJSONWritePath() const
 	{
-		return GetUserLocalTempPath() / "json_write.json";
+		return GetApplicationUserLocalPath() / "json_write.json";
 	}
 
 	boost::filesystem::path GetJSONReadPath() const

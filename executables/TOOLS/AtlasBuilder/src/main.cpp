@@ -222,35 +222,63 @@ public:
 		if (image_generation_directory.empty())
 		{
 			boost::filesystem::path dst_path = GetApplicationTemporaryPath() / "GeneratedImages";
-			if (boost::filesystem::create_directories(dst_path))
-				image_generation_directory = std::move(dst_path);
-			else
-				return false;
+
+			if (!boost::filesystem::is_directory(dst_path))
+				if (!boost::filesystem::create_directories(dst_path))
+					return false;
+			image_generation_directory = std::move(dst_path);
 		}
 
+		ClearDirectory(image_generation_directory);
 		chaos::WinTools::ShowFile(image_generation_directory);
 
+		std::vector<std::pair<FREE_IMAGE_FORMAT, char const* >> format_maps =
+		{
+			{FIF_BMP, "bmp"},
+			{FIF_JPEG, "jpg"},
+			{FIF_PNG, "png"},
+			{FIF_DDS, "dds"},
+			{FIF_GIF, "gif"},
+			{FIF_HDR, "hdr"},
+			{FIF_EXR, "exr"}
+		};
 
+		std::random_device rd;
+		std::mt19937 rng(rd());
 
-
-
-#if 0
 		for (int i = 0; i < image_generation_params.count; ++i)
 		{
-			std::random_device rd;
-			std::mt19937 rng(rd());
-
 			int width = std::uniform_int_distribution<int>(image_generation_params.min_size.x, image_generation_params.max_size.x)(rng);
 			int height = std::uniform_int_distribution<int>(image_generation_params.min_size.y, image_generation_params.max_size.y)(rng);
 			int bpp = 4;
 
-			if (FIBITMAP* image = FreeImage_Allocate(width, height, bpp))
-			{
+			size_t format_index = std::uniform_int_distribution<size_t>(0, format_maps.size() - 1)(rng);
 
+			if (FIBITMAP* image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat::BGRA, width, height))
+			{
+				chaos::ImageDescription desc = chaos::ImageTools::GetImageDescription(image);
+
+				glm::vec4 color;
+				color.r = std::uniform_real_distribution<float>(0.0f, 1.0f)(rng);
+				color.g = std::uniform_real_distribution<float>(0.0f, 1.0f)(rng);
+				color.b = std::uniform_real_distribution<float>(0.0f, 1.0f)(rng);
+				color.a = 1.0f;
+
+				chaos::ImageTools::FillImageBackground(desc, color);
+
+				// save image
+				FREE_IMAGE_FORMAT format = format_maps[format_index].first;
+				char const * extension = format_maps[format_index].second;
+
+				std::string image_name = chaos::StringTools::Printf("image%d.%s", i, extension);
+				boost::filesystem::path image_path = image_generation_directory / image_name;
+
+				FreeImage_Save(format, image, image_path.string().c_str());
+
+				// free image
 				FreeImage_Unload(image);
 			}
 		}
-#endif
 
 		return true;
 
@@ -262,6 +290,14 @@ protected:
 	{
 		//chaos::WinTools::ShowFile(GetResourcesPath());
 		return chaos::SimpleWindowApplication::MainBody();
+	}
+
+	void ClearDirectory(boost::filesystem::path const & path) const
+	{
+		if (!boost::filesystem::is_directory(path))
+			return;
+		for (const auto& entry : boost::filesystem::directory_iterator(path))
+			boost::filesystem::remove_all(entry.path());
 	}
 
 protected:

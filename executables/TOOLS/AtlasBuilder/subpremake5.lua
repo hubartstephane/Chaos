@@ -1,7 +1,6 @@
 -- =============================================================================
--- ROOT_PATH/executables/TOOLS
+-- ROOT_PATH/executables/TOOLS/AtlasBuilder
 -- =============================================================================
 
-build:ProcessSubPremake("AnalyticMatrix")
-build:ProcessSubPremake("ResizeAtlas")
-build:ProcessSubPremake("AtlasBuilder")
+local project = build:WindowedApp()
+project:DependOnLib("chaos")

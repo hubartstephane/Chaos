@@ -104,6 +104,15 @@ namespace chaos
 			return true; // window must be kept alive
 		}
 
+		void ConditionalDisable(bool disabled, LightweightFunction<void()> func)
+		{
+			if (disabled)
+				ImGui::BeginDisabled();
+			func();
+			if (disabled)
+				ImGui::EndDisabled();
+		}
+
 	}; // namespace ImGuiTools
 
 }; // namespace chaos

@@ -120,6 +120,9 @@ namespace chaos
 		/** create a ImGui window that fills the whole GLFW window (returns true if the window must be kept alive) */
 		CHAOS_API bool FullViewportWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func);
 
+		/** conditionnally disable some content */
+		CHAOS_API void ConditionalDisable(bool disabled, LightweightFunction<void()> func);
+
 	}; // namespace ImGuiTools
 
 	/** implementation of DrawImGui for a string */
@@ -209,42 +212,33 @@ namespace chaos
 	template<typename T>
 	void DrawImGuiVariable(T & value, DrawImGuiVariableFlags flags = DrawImGuiVariableFlags::None)
 	{
-		// disable control if necessary
-		if (HasAnyFlags(flags, DrawImGuiVariableFlags::ReadOnly))
+		ImGuiTools::ConditionalDisable(HasAnyFlags(flags, DrawImGuiVariableFlags::ReadOnly), [&]()
 		{
-			ImGui::BeginDisabled();
-		}
+			ImGui::PushID((void*)&value);
 
-		ImGui::PushID((void*)&value);
+			// call method if exists
+			if constexpr (ImGuiTools::HasDrawImGuiVariableMethod<T>)
+			{
+				value.DrawImGuiVariable(flags);
+			}
+			// call function if exists
+			else if constexpr (ImGuiTools::HasDrawImGuiVariableImplFunction<T>)
+			{
+				DrawImGuiVariableImpl(value, flags);
+			}
+			// enum case
+			else if constexpr (std::is_enum_v<T> && ImGuiTools::HasEnumMetaData<T>)
+			{
+				details::DrawImGuiVariableEnum(value, flags);
+			}
+			// error
+			else
+			{
+				assert(0);
+			}
 
-		// call method if exists
-		if constexpr (ImGuiTools::HasDrawImGuiVariableMethod<T>)
-		{
-			value.DrawImGuiVariable(flags);
-		}
-		// call function if exists
-		else if constexpr (ImGuiTools::HasDrawImGuiVariableImplFunction<T>)
-		{
-			DrawImGuiVariableImpl(value, flags);
-		}
-		// enum case
-		else if constexpr (std::is_enum_v<T> && ImGuiTools::HasEnumMetaData<T>)
-		{
-			details::DrawImGuiVariableEnum(value, flags);
-		}
-		// error
-		else
-		{
-			assert(0);
-		}
-
-		ImGui::PopID();
-
-		// enable control back if necessary
-		if (HasAnyFlags(flags, DrawImGuiVariableFlags::ReadOnly))
-		{
-			ImGui::EndDisabled();
-		}
+			ImGui::PopID();
+		});
 	}
 
 	template<typename T>

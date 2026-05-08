@@ -186,7 +186,7 @@ namespace chaos
 		return result;
 	}
 
-	FREE_IMAGE_FORMAT ImageTools::GetFreeImageFormat(PixelFormat const & pixel_format)
+	FREE_IMAGE_FORMAT ImageTools::GetPreferredFreeImageFormat(PixelFormat const & pixel_format)
 	{
 		return (pixel_format.component_type == PixelComponentType::UnsignedChar) ? FIF_PNG : FIF_EXR;
 	}

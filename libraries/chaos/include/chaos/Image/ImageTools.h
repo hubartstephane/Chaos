@@ -91,8 +91,8 @@ namespace chaos
 
 		/** get the free image description frm a type */
 		static FREE_IMAGE_TYPE GetFreeImageType(PixelFormat const& pixel_format, int* bpp = nullptr);
-		/** the free image prefered file format for a given PixelFormat */
-		static FREE_IMAGE_FORMAT GetFreeImageFormat(PixelFormat const& pixel_format);
+		/** the free image preferred file format for a given PixelFormat */
+		static FREE_IMAGE_FORMAT GetPreferredFreeImageFormat(PixelFormat const& pixel_format);
 
 		/** load an image from a buffer */
 		static FIBITMAP* LoadImageFromBuffer(Buffer<char> buffer);

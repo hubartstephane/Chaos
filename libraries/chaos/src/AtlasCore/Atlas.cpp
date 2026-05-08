@@ -388,7 +388,7 @@ namespace chaos
 			if (!image_desc.IsValid(false))
 				continue;
 
-			FREE_IMAGE_FORMAT image_format = ImageTools::GetFreeImageFormat(image_desc.pixel_format);
+			FREE_IMAGE_FORMAT image_format = ImageTools::GetPreferredFreeImageFormat(image_desc.pixel_format);
 
 			boost::filesystem::path dst_filename = target_dir / GetBitmapFilename(image_format, bitmap_filename, int(i));
 
@@ -419,7 +419,7 @@ namespace chaos
 				if (!image_desc.IsValid(false))
 					continue;
 
-				FREE_IMAGE_FORMAT image_format = ImageTools::GetFreeImageFormat(image_desc.pixel_format);
+				FREE_IMAGE_FORMAT image_format = ImageTools::GetPreferredFreeImageFormat(image_desc.pixel_format);
 
 				json["bitmaps"].push_back(GetBitmapFilename(image_format, bitmap_filename, int(i)).string());
 			}

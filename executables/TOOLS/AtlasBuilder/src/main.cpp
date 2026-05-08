@@ -157,6 +157,16 @@ class ImageGenerationParams
 {
 public:
 
+	bool IsValid() const
+	{
+		return
+			IsCountValid() &&
+			IsMinSizeXValid() &&
+			IsMinSizeYValid() &&
+			IsMaxSizeXValid() &&
+			IsMaxSizeYValid();
+	}
+
 	bool IsCountValid() const
 	{
 		return (count > 0 && count < 500);
@@ -193,6 +203,73 @@ public:
 	glm::ivec2 min_size = { 1, 1 };
 	glm::ivec2 max_size = { 256, 256 };
 };
+
+// ---------------------------------------------------------------------------------
+
+class AtlasBuilderApplication : public chaos::SimpleWindowApplication
+{
+	using chaos::SimpleWindowApplication::SimpleWindowApplication;
+
+	CHAOS_DECLARE_OBJECT_CLASS(AtlasBuilderApplication, chaos::SimpleWindowApplication);
+
+public:
+
+	bool GenerateImages(ImageGenerationParams const& image_generation_params)
+	{
+		if (!image_generation_params.IsValid())
+			return false;
+
+		if (image_generation_directory.empty())
+		{
+			boost::filesystem::path const & temp_directory = CreateUserLocalTempDirectory();
+
+			//image_generation_directory = 
+			//if (image_generation_directory.empty())
+			//	return false;
+		}
+
+		chaos::WinTools::ShowFile(image_generation_directory);
+
+
+
+
+
+#if 0
+		for (int i = 0; i < image_generation_params.count; ++i)
+		{
+			std::random_device rd;
+			std::mt19937 rng(rd());
+
+			int width = std::uniform_int_distribution<int>(image_generation_params.min_size.x, image_generation_params.max_size.x)(rng);
+			int height = std::uniform_int_distribution<int>(image_generation_params.min_size.y, image_generation_params.max_size.y)(rng);
+			int bpp = 4;
+
+			if (FIBITMAP* image = FreeImage_Allocate(width, height, bpp))
+			{
+
+				FreeImage_Unload(image);
+			}
+		}
+#endif
+
+		return true;
+
+	}
+
+protected:
+
+	virtual int MainBody() override
+	{
+		//chaos::WinTools::ShowFile(GetResourcesPath());
+		return chaos::SimpleWindowApplication::MainBody();
+	}
+
+protected:
+
+	boost::filesystem::path image_generation_directory;
+};
+
+// ---------------------------------------------------------------------------------
 
 class AtlasBuilderWindow : public chaos::Window
 {
@@ -297,9 +374,13 @@ protected:
 		});	
 	}
 
-	void GenerateImages()
+	bool GenerateImages() const
 	{
-	
+		if (AtlasBuilderApplication* application = chaos::Application::GetInstance())
+		{
+			return application->GenerateImages(image_generation_params);
+		}
+		return false;
 	}
 
 	void SelectTextColor(bool normal, chaos::LightweightFunction<void()> func)
@@ -315,25 +396,12 @@ protected:
 protected:
 
 	ImageGenerationParams image_generation_params;
-
 };
 
+// ---------------------------------------------------------------------------------
 
-class AtlasBuilderApplication : public chaos::SimpleWindowApplication
-{
-	using chaos::SimpleWindowApplication::SimpleWindowApplication;
 
-	CHAOS_DECLARE_OBJECT_CLASS(AtlasBuilderApplication, chaos::SimpleWindowApplication);
 
-protected:
-
-	virtual int MainBody() override
-	{
-		//chaos::WinTools::ShowFile(GetResourcesPath());
-		return chaos::SimpleWindowApplication::MainBody();
-	}
-
-};
 
 int main(int argc, char ** argv, char ** env)
 {

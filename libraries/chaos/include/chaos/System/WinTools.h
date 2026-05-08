@@ -46,6 +46,9 @@ namespace chaos
 		/** use the windows register to "open" a file */
 		CHAOS_API void ShowFile(FilePathParam const& path);
 
+		/** returns the temporary path */
+		CHAOS_API boost::filesystem::path GetTemporaryPath();
+
 		/** returns the current user Document path */
 		CHAOS_API boost::filesystem::path GetUserDocumentPath();
 

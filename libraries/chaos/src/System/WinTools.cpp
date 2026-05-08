@@ -300,6 +300,11 @@ namespace chaos
 			thread.detach();
 		}
 
+		boost::filesystem::path GetTemporaryPath()
+		{
+			return boost::filesystem::temp_directory_path();
+		}
+
 		boost::filesystem::path GetUserLocalPath()
 		{
 			return GetKnownFolderPath(FOLDERID_LocalAppData); // FOLDERID_RoamingAppData

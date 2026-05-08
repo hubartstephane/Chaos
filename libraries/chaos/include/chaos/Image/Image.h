@@ -1,4 +1,5 @@
 #include "chaos/Image/PixelTypes.h"
+#include "chaos/Image/PixelConverter.h"
 #include "chaos/Image/PixelFormat.h"
 #include "chaos/Image/PixelFormatMerger.h"
 #include "chaos/Image/ColorFilter.h"

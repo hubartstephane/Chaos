@@ -204,80 +204,8 @@ public:
 	{
 		chaos::ImGuiTools::FullViewportWindow("content", 0, [this]()
 		{
-			ImGui::SeparatorText("Generate images");
-
-			//ImGui::InputInt("count", &image_generation_params.count);
-			//ImGui::InputInt2("min size", &image_generation_params.min_size.x, image_generation_params.min_size.y);
-			//ImGui::InputInt2("max size", &image_generation_params.max_size.x, image_generation_params.max_size.y);
-
-			if (ImGui::BeginTable("image_generation_params", 2, 0))
-			{
-				// count 
-				bool count_valid = image_generation_params.IsCountValid();
-
-				ImGui::TableNextColumn();
-				ImGui::Text("count");
-
-				ImGui::TableNextColumn();
-				SelectTextColor(count_valid, [&]()
-				{
-					ImGui::InputInt("##count", &image_generation_params.count);
-				});
-
-				// min size
-				bool min_size_x_valid = image_generation_params.IsMinSizeXValid();
-				bool min_size_y_valid = image_generation_params.IsMinSizeYValid();
-
-				ImGui::TableNextColumn();
-				ImGui::Text("min size");
-
-				ImGui::TableNextColumn();
-				SelectTextColor(min_size_x_valid, [&]()
-				{
-					ImGui::InputInt("##min_size.x", &image_generation_params.min_size.x);
-				});
-
-				ImGui::TableNextColumn();
-				//ImGui::Text("##min size.y.title");
-
-				ImGui::TableNextColumn();
-				SelectTextColor(min_size_y_valid, [&]()
-				{
-					ImGui::InputInt("##min_size.y", &image_generation_params.min_size.y);
-				});
-
-				// max size
-				bool max_size_x_valid = image_generation_params.IsMaxSizeXValid();
-				bool max_size_y_valid = image_generation_params.IsMaxSizeYValid();
-
-				ImGui::TableNextColumn();
-				ImGui::Text("max size");
-
-				ImGui::TableNextColumn();
-				SelectTextColor(max_size_x_valid, [&]()
-				{
-					ImGui::InputInt("##max_size.x", &image_generation_params.max_size.x);
-				});
-
-				ImGui::TableNextColumn();
-				//ImGui::Text("##max size.y.title");
-
-				ImGui::TableNextColumn();
-				SelectTextColor(max_size_y_valid, [&]()
-				{
-					ImGui::InputInt("##max_size.y", &image_generation_params.max_size.y);
-				});
-
-
-
-
-				
-
-				ImGui::EndTable();
-			};
-
-			ImGui::SeparatorText("Generate altas");
-		
+			ImGuiDrawImageGenerationPanel();
+			ImGuiDrawAtlasGenerationPanel();		
 		});
 	}
 
@@ -289,6 +217,90 @@ public:
 	}
 
 protected:
+
+	void ImGuiDrawAtlasGenerationPanel()
+	{
+		ImGui::SeparatorText("Generate altas");
+	}
+
+	void ImGuiDrawImageGenerationPanel()
+	{
+		ImGui::SeparatorText("Generate images");
+
+		bool count_valid      = image_generation_params.IsCountValid();
+		bool min_size_x_valid = image_generation_params.IsMinSizeXValid();
+		bool min_size_y_valid = image_generation_params.IsMinSizeYValid();
+		bool max_size_x_valid = image_generation_params.IsMaxSizeXValid();
+		bool max_size_y_valid = image_generation_params.IsMaxSizeYValid();
+		bool valid = count_valid && min_size_x_valid && min_size_y_valid && max_size_x_valid && max_size_y_valid;
+
+		if (ImGui::BeginTable("image_generation_params", 2, 0))
+		{
+			ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed);
+			ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthStretch);
+
+			// count 
+			ImGui::TableNextColumn();
+			ImGui::Text("count");
+
+			ImGui::TableNextColumn();
+			SelectTextColor(count_valid, [&]()
+			{
+				ImGui::InputInt("##count", &image_generation_params.count);
+			});
+
+			// min size
+			ImGui::TableNextColumn();
+			ImGui::Text("min size");
+
+			ImGui::TableNextColumn();
+			SelectTextColor(min_size_x_valid, [&]()
+			{
+				ImGui::InputInt("##min_size.x", &image_generation_params.min_size.x);
+			});
+
+			ImGui::TableNextColumn(); // empty column for min_size.y
+
+			ImGui::TableNextColumn();
+			SelectTextColor(min_size_y_valid, [&]()
+			{
+				ImGui::InputInt("##min_size.y", &image_generation_params.min_size.y);
+			});
+
+			// max size
+			ImGui::TableNextColumn();
+			ImGui::Text("max size");
+
+			ImGui::TableNextColumn();
+			SelectTextColor(max_size_x_valid, [&]()
+			{
+				ImGui::InputInt("##max_size.x", &image_generation_params.max_size.x);
+			});
+
+			ImGui::TableNextColumn(); // empty column for max_size.y
+
+			ImGui::TableNextColumn();
+			SelectTextColor(max_size_y_valid, [&]()
+			{
+				ImGui::InputInt("##max_size.y", &image_generation_params.max_size.y);
+			});
+
+			ImGui::EndTable();
+		};
+
+		chaos::ImGuiTools::ConditionalDisable(!valid, [&]()
+		{
+			if (ImGui::Button("Generate"))
+			{
+				GenerateImages();
+			}
+		});	
+	}
+
+	void GenerateImages()
+	{
+	
+	}
 
 	void SelectTextColor(bool normal, chaos::LightweightFunction<void()> func)
 	{

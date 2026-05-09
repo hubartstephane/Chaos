@@ -6,6 +6,7 @@
 #include "chaos/Image/ImageDescription.h"
 #include "chaos/Image/ImagePixelAccessor.h"
 #include "chaos/Image/ImageAnimationDescription.h"
+#include "chaos/Image/ImagePointer.h"
 #include "chaos/Image/ImageTools.h"
 #include "chaos/Image/ImageProcessor.h"
 #include "chaos/Image/ImageProcessorAddAlpha.h"

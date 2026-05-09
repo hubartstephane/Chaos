@@ -3,71 +3,20 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	enum class ImageTransform;
-
-	class FIBITMAPDeleter;
-	class FIMULTIBITMAPDeleter;
-
-	using bitmap_ptr = std::unique_ptr<FIBITMAP, FIBITMAPDeleter>;
-	using multibitmap_ptr = std::unique_ptr<FIMULTIBITMAP, FIMULTIBITMAPDeleter>;
-
 	class ImageTools;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	CHAOS_DEFINE_LOG(ImageLog, "Image")
 
+	/**
+	* ImageTransform: basic transformation that can be applyed to image
+	*/
+
 	enum class ImageTransform : int
 	{
 		None = 0,
 		CentralSymetry = 1
-	};
-
-	/**
-	* FIBITMAPDeleter : deleter for FIBITMAP
-	*/
-
-	class CHAOS_API FIBITMAPDeleter
-	{
-	public:
-
-		/** constructor */
-		FIBITMAPDeleter(bool in_release = true) :
-			release(in_release) {}
-		/** the destruction method */
-		void operator ()(FIBITMAP* bitmap)
-		{
-			if (release)
-				FreeImage_Unload(bitmap);
-		}
-
-	protected:
-
-		/** whether the resource is to be destroyed or not */
-		bool release = true;
-	};
-
-	/**
-	* FIBITMAPDeleter : deleter for FIBITMAP
-	*/
-
-	class CHAOS_API FIMULTIBITMAPDeleter
-	{
-	public:
-
-		/** constructor */
-		FIMULTIBITMAPDeleter(bool in_release = true) :
-			release(in_release) {}
-		/** the destruction method */
-		void operator ()(FIMULTIBITMAP* multi_bitmap)
-		{
-			if (release)
-				FreeImage_CloseMultiBitmap(multi_bitmap);
-		}
-
-	protected:
-
-		/** whether the resource is to be destroyed or not */
-		bool release = true;
 	};
 
 	/**

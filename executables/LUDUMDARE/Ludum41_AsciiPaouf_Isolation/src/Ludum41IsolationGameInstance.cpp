@@ -697,7 +697,7 @@ std::string LudumGameInstance::GenerateGamepadChallengeString(std::vector<int> c
 
 	chaos::WindowApplication* window_application = chaos::Application::GetInstance();
 	if (window_application == nullptr)
-		return nullptr;
+		return {};
 
 	for (size_t i = 0; i < gamepad_challenge.size(); ++i)
 	{

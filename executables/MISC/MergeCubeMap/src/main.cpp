@@ -54,7 +54,7 @@ protected:
 			return nullptr;
 
 		chaos::PixelFormat pixel_format = pixel_formats[index];
-		if (pixel_format != chaos::PixelFormat::Unknown)
+		if (!IsValidFormat(pixel_format))
 			return nullptr;
 
 		chaos::PixelFormatMergeParams merge_params;
@@ -163,7 +163,9 @@ protected:
 
 			chaos::ImageDescription desc = chaos::ImageTools::GetImageDescription(bitmap);
 
-			void * color = (desc.pixel_format.component_type == chaos::PixelComponentType::UnsignedChar) ? (void*)&c1[0] : (void*)&c2; // select a color for background
+			chaos::PixelDescription pixel_description = GetPixelDescription(desc.pixel_format);
+
+			void * color = (pixel_description.component_type == chaos::PixelComponentType::UnsignedChar) ? (void*)&c1[0] : (void*)&c2; // select a color for background
 
 			int dx = size - desc.width;
 			int dy = size - desc.height;

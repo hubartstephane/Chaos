@@ -1,4 +1,3 @@
-INSTALL_PREMAKE
 #! /usr/bin/bash
 
 # This script compiles and installs most libraries into "external" directory
